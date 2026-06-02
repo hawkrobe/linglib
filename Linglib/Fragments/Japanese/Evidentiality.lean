@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Japanese Evidentiality
@@ -11,15 +11,13 @@ modal rather than evidential; Studies-side override.
 
 namespace Japanese.Evidentiality
 
-open Typology.Modality
+/-! ### Typed evidential inventory (Aikhenvald-strict view)
 
-/-- Japanese evidentiality typology per WALS @cite{de-haan-2013}. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "Japanese" "jpn" "Japonic"
-    (markers := ["soo da", "rashii"])
-    (notes := "soo da (hearsay) and rashii (inferential) are modal per Aikhenvald")
+No grammatical evidentials per @cite{aikhenvald-2004}. WALS divergence
+(modal *soo da* / *rashii*) is documented in `Studies/Aikhenvald2004.lean`. -/
 
-example : evidentialityProfile.iso = "jpn" ∧ evidentialityProfile.language = "Japanese" :=
-  ⟨rfl, rfl⟩
+def evidentials : List Semantics.Evidential.Entry := []
+
+example : evidentials.length = 0 := by decide
 
 end Japanese.Evidentiality

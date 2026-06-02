@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Tibetan (Lhasa) Evidentiality
@@ -11,20 +11,23 @@ Egophoric system. WALS Ch 77 has no entry; the fallback fires.
 
 namespace Tibetan.Evidentiality
 
-open Typology.Modality
-open Features.Evidentiality (EvidentialSource)
+/-! ### Typed evidential inventory
 
-/-- Tibetan (Lhasa) evidentiality: 2-way egophoric system via copula contrast. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "Tibetan (Lhasa)" "bod" "Sino-Tibetan"
-    (markers := ["red (direct)", "'dug (indirect)", "yod (direct)", "yin (indirect)"])
-    (notes := "Egophoric system; direct/personal knowledge vs indirect/new info; " ++
-              "expressed via copula and auxiliary contrasts")
-    (attestedEvidentials := [.direct, .inference])
-    (systemFb := .directAndIndirect)
-    (codingFb := .particle)
+Lhasa Tibetan's 2-way direct/indirect contrast realized in the copula
+and auxiliary system: `red`/`yod` (direct, personal knowledge) vs
+`'dug`/`yin` (indirect, new information). Grammaticalized lexical
+opposition. -/
 
-example : evidentialityProfile.iso = "bod" ∧
-    evidentialityProfile.language = "Tibetan (Lhasa)" := ⟨rfl, rfl⟩
+open Semantics.Evidential
+
+def evidentials : List Entry :=
+  [ .direct      { form := "red", exponent := .lexicalFrame },
+    .direct      { form := "yod", exponent := .lexicalFrame },
+    .inferential { form := "'dug", exponent := .lexicalFrame },
+    .inferential { form := "yin", exponent := .lexicalFrame } ]
+
+example : evidentials.length = 4 := by decide
+example : (evidentials.filter Entry.IsDirect).length = 2 := by decide
+example : (evidentials.filter Entry.IsInferential).length = 2 := by decide
 
 end Tibetan.Evidentiality

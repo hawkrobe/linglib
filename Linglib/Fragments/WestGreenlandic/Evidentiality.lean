@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # West Greenlandic Evidentiality
@@ -10,19 +10,17 @@ WALS and Aikhenvald agree.
 
 namespace WestGreenlandic.Evidentiality
 
-open Typology.Modality
-open Features.Evidentiality (EvidentialSource)
+/-! ### Typed evidential inventory
 
-/-- West Greenlandic evidentiality: inferential mood only. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "West Greenlandic" "kal" "Eskimo-Aleut"
-    (markers := ["-gunarpoq (inferential mood)"])
-    (notes := "Inferential mood only; no dedicated direct marker")
-    (attestedEvidentials := [.inference])
-    (systemFb := .indirectOnly)
-    (codingFb := .verbalAffix)
+West Greenlandic's inferential mood: a single verbal-affix marker
+covering inference; no dedicated direct or reportative marker. -/
 
-example : evidentialityProfile.iso = "kal" ∧
-    evidentialityProfile.language = "West Greenlandic" := ⟨rfl, rfl⟩
+open Semantics.Evidential
+
+def evidentials : List Entry :=
+  [ .inferential { form := "-gunarpoq", exponent := .verbalAffix } ]
+
+example : evidentials.length = 1 := by decide
+example : (evidentials.filter Entry.IsInferential).length = 1 := by decide
 
 end WestGreenlandic.Evidentiality
