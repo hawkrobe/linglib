@@ -1,5 +1,5 @@
 import Linglib.Features.Accessibility
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Basic
 import Linglib.Features.Givenness
 
 /-!

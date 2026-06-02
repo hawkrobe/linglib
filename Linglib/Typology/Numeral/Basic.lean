@@ -15,7 +15,7 @@ phrases and gradable comparatives, per @cite{kennedy-2015}, @cite{rett-2014});
 this file just records that a numeral *entry* carries one. The denotation (the
 `relationalGQ`-based meaning, the Kennedy-vs-Horn bare-form choice) lives in
 `Semantics/Numerals/`, which imports this object — the same object/denotation
-split as `Typology/Pronoun/Basic.lean` vs.
+split as `Syntax/Pronoun/Basic.lean` vs.
 `Semantics/Reference/PronounDenotation.lean`. The WALS typological survey
 (`Numeral.Profile`, `fromWALS*`) lives in the sibling `Typology/Numeral/WALS.lean`.
 
