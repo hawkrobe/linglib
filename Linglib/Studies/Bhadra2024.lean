@@ -6,7 +6,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 /-!
 # Bhadra 2024: Verb roots encode outcomes
 
-@cite{bhadra-2024}
+[bhadra-2024]
 
 Bhadra, D. (2024). Verb roots encode outcomes: argument structure and
 lexical semantics of reversal and restitution. *Linguistics and Philosophy*
@@ -410,7 +410,7 @@ theorem nochange_empty :
     (ForceTransmissionClass.outcomeCardinality .noForceTransmission) = .empty := rfl
 
 -- ════════════════════════════════════════════════════
--- § 4. Worked Example: fold/unfold (@cite{bhadra-2024} §5.2, eqs. 74–75)
+-- § 4. Worked Example: fold/unfold ([bhadra-2024] §5.2, eqs. 74–75)
 -- ════════════════════════════════════════════════════
 
 /-- Possible states of a parchment under folding.
@@ -438,7 +438,7 @@ theorem fold_refold_restitutive :
     restitutive foldBoundary refoldBoundary = true := rfl
 
 -- ════════════════════════════════════════════════════
--- § 5. Worked Example: paint/repaint (@cite{bhadra-2024} §5.2, eqs. 76–77)
+-- § 5. Worked Example: paint/repaint ([bhadra-2024] §5.2, eqs. 76–77)
 -- ════════════════════════════════════════════════════
 
 /-- States of a wall under painting. Singleton outcome set:
@@ -479,12 +479,12 @@ theorem pfc_is_overlap_class :
 -- § 7. Bridge: Bhadra Reclassifies Bend from COS to PFC
 -- ════════════════════════════════════════════════════
 
-/-- @cite{bhadra-2024} reclassifies the bend class (45.2) from COS to PFC.
+/-- [bhadra-2024] reclassifies the bend class (45.2) from COS to PFC.
 
-    @cite{levin-1993}: bend has `changeOfState = true` (diagnosed by
+    [levin-1993]: bend has `changeOfState = true` (diagnosed by
     causative/inchoative alternation: "the paper folded" / "she folded the paper").
 
-    @cite{bhadra-2024}: fold has multi-membered outcomes (slightly creased,
+    [bhadra-2024]: fold has multi-membered outcomes (slightly creased,
     halfway bent, tightly folded, etc.) → PFC, not COS. The change IS
     possible but not to a SPECIFIC fixed state.
 
@@ -506,9 +506,9 @@ theorem bend_reclassification :
 -- ════════════════════════════════════════════════════
 
 /-- The wiping-verbs class (Levin 10.4) is classified as IE in
-@cite{bhadra-2024}. Its event-structure template is `.accomplishment`
+[bhadra-2024]. Its event-structure template is `.accomplishment`
 (via the standard decision tree); the deeper two-predicate motion+contact
-substructure of these verbs (@cite{rappaport-hovav-levin-2024}) is at
+substructure of these verbs ([rappaport-hovav-levin-2024]) is at
 `Studies/RappaportHovavLevin2024.lean`. -/
 theorem wipe_is_ie :
     LevinClass.eventTemplate .wipe = .accomplishment ∧
@@ -548,7 +548,7 @@ theorem break_end_to_end :
     LevinClass.reCompatible .break_ = true := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 10. Compositional VRO Worked Examples (@cite{bhadra-2024} §5)
+-- § 10. Compositional VRO Worked Examples ([bhadra-2024] §5)
 -- ════════════════════════════════════════════════════
 
 section CompositionalExamples

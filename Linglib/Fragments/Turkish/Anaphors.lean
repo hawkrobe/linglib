@@ -2,7 +2,7 @@ import Linglib.Fragments.Turkish.Case
 
 /-!
 # Turkish Anaphors
-@cite{kornfilt-1997} @cite{goksel-kerslake-2005}
+[kornfilt-1997] [goksel-kerslake-2005]
 
 Turkish local anaphors relevant to binding theory and processing.
 
@@ -10,12 +10,12 @@ Turkish local anaphors relevant to binding theory and processing.
 
 The preverbal reciprocal *birbirleri* 'each other' is subject to
 Principle A: it must be bound by a local, c-commanding, clause-mate
-antecedent (@cite{kornfilt-1997}). The antecedent must be plural.
+antecedent ([kornfilt-1997]). The antecedent must be plural.
 
 Turkish's head-final structure places the reciprocal *before* the verb,
 which is critical for visual-world studies: the anaphor region precedes
 the verb region, ensuring that looks to antecedents at the anaphor reflect
-retrieval rather than post-verbal integration (@cite{bakay-etal-2026}).
+retrieval rather than post-verbal integration ([bakay-etal-2026]).
 
 The reciprocal receives case from the embedding predicate:
 - ACC (-I) as direct object of a transitive verb
@@ -63,7 +63,7 @@ structure TurkishAnaphor where
   deriving Repr
 
 /-- birbirleri as direct object (ACC case).
-    Used in @cite{bakay-etal-2026} Experiments 1–3 as the critical anaphor. -/
+    Used in [bakay-etal-2026] Experiments 1–3 as the critical anaphor. -/
 def birbirleriAcc : TurkishAnaphor :=
   { anaphorType := .reciprocal, caseMarking := .acc }
 
@@ -89,7 +89,7 @@ theorem birbirleri_requires_plural :
 /-- All birbirleri variants are preverbal -/
 theorem birbirleriAcc_preverbal : birbirleriAcc.preverbal = true := rfl
 
-/-- The case inventory of birbirleri forms used in @cite{bakay-etal-2026} -/
+/-- The case inventory of birbirleri forms used in [bakay-etal-2026] -/
 def experimentalCases : List Features.Case :=
   [birbirleriAcc.caseMarking, birbirleriDat.caseMarking, birbirleriGen.caseMarking]
 

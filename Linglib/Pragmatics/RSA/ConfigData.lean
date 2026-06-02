@@ -24,14 +24,14 @@ Each `S1ScoreSpec` variant has:
 
 | Variant | Formula | Papers |
 |---------|---------|--------|
-| `beliefBased` | `L0(w\|u)^α` | @cite{frank-goodman-2012}, @cite{beller-gerstenberg-2025} |
-| `beliefAction` | `if L0=0 then 0 else exp(α·(log L0 - cost u))` | @cite{qing-franke-2015} σ_b |
-| `actionBased` | `exp(α·(L0(w\|u) - cost u))` | @cite{qing-franke-2015} σ_a |
-| `weightedBeliefAction` | `if L0=0 then 0 else exp(α·(γ·log L0 + bonus u))` | @cite{hawkins-etal-2025} |
-| `beliefWeighted` | `if qualOk then exp(α·Σ_s b(l,s)·log L0(u,s)) else 0` | @cite{goodman-stuhlmuller-2013} |
+| `beliefBased` | `L0(w\|u)^α` | [frank-goodman-2012], [beller-gerstenberg-2025] |
+| `beliefAction` | `if L0=0 then 0 else exp(α·(log L0 - cost u))` | [qing-franke-2015] σ_b |
+| `actionBased` | `exp(α·(L0(w\|u) - cost u))` | [qing-franke-2015] σ_a |
+| `weightedBeliefAction` | `if L0=0 then 0 else exp(α·(γ·log L0 + bonus u))` | [hawkins-etal-2025] |
+| `beliefWeighted` | `if qualOk then exp(α·Σ_s b(l,s)·log L0(u,s)) else 0` | [goodman-stuhlmuller-2013] |
 
 QUD projection is orthogonal to scoring: set `RSAConfigData.qudProject` to apply
-`L0(w|u) → Σ_{w'∼w} L0(w'|u)` before S1 scoring. Used by @cite{kao-etal-2014-hyperbole}.
+`L0(w|u) → Σ_{w'∼w} L0(w'|u)` before S1 scoring. Used by [kao-etal-2014-hyperbole].
 -/
 
 namespace RSA
@@ -70,29 +70,29 @@ def S1UtilityTerm.isLogTerm {U W L : Type*} : S1UtilityTerm U W L → Bool
 inductive S1ScoreSpec (U W L : Type*) where
   /-- score = L0(w|u)^α.
       Standard belief-based informativity.
-      Used by @cite{frank-goodman-2012}, @cite{beller-gerstenberg-2025}. -/
+      Used by [frank-goodman-2012], [beller-gerstenberg-2025]. -/
   | beliefBased
   /-- score = if L0(w|u) = 0 then 0 else exp(α · (log L0(w|u) - cost u)).
       Belief-oriented with utterance cost (gated).
-      Used by @cite{qing-franke-2015} σ_b. -/
+      Used by [qing-franke-2015] σ_b. -/
   | beliefAction (cost : U → ℚ)
   /-- score = exp(α · (L0(w|u) - cost u)).
       Action-oriented: raw L0 probability, no log.
-      Used by @cite{qing-franke-2015} σ_a. -/
+      Used by [qing-franke-2015] σ_a. -/
   | actionBased (cost : U → ℚ)
   /-- score = if L0(w|u) = 0 then 0 else exp(α · (infWeight · log L0(w|u) + bonus u)).
       Weighted belief-action: informativity weight γ on log L0, plus a per-utterance
       bonus that can encode action relevance, cost, or any u-dependent term.
       Subsumes `beliefAction`: `beliefAction(cost) = weightedBeliefAction 1 (fun u => -cost u)`.
-      Used by @cite{hawkins-etal-2025} (PRIOR-PQ). -/
+      Used by [hawkins-etal-2025] (PRIOR-PQ). -/
   | weightedBeliefAction (infWeight : ℚ) (bonus : U → ℚ)
   /-- score = if quality(l, u) then exp(α · Σ_w belief(l, w) · log L0(u, w)) else 0.
       Belief-weighted expected log-informativity, gated by quality.
-      Used by @cite{goodman-stuhlmuller-2013}. -/
+      Used by [goodman-stuhlmuller-2013]. -/
   | beliefWeighted (belief : L → W → ℚ) (quality : L → U → Bool)
   /-- score = if (logActive(l) ∧ L0=0) then 0 else exp(α · Σ_i term_i(l, u, w, L0)).
       Arbitrary sum of utility terms. Subsumes `weightedBeliefAction`.
-      Used by @cite{yoon-etal-2020} (politeness).
+      Used by [yoon-etal-2020] (politeness).
 
       The `logActive` gate controls when L0=0 forces score=0. When the
       informativity weight is 0 (pure social speaker), setting `logActive l = false`

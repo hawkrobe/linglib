@@ -4,7 +4,7 @@ import Mathlib.Data.Fintype.Basic
 /-!
 # Bare NPs as Properties
 
-@cite{krifka-2004} @cite{krifka-2003}
+[krifka-2004] [krifka-2003]
 
 Formalizes Krifka's analysis from "Bare NPs: Kind-referring, Indefinites,
 Both, or Neither?" (SALT 2003 / EISS5 2004).
@@ -14,7 +14,7 @@ readings depending on context. Count nouns carry a number argument
 (`⟨s,⟨n,⟨e,t⟩⟩⟩`); pluralization existentially binds it locally.
 Kind readings require topic position.
 
-| Aspect | @cite{chierchia-1998} | @cite{krifka-2004} |
+| Aspect | [chierchia-1998] | [krifka-2004] |
 |--------|----------------|-------------|
 | Basic denotation | Kind (via ∩) | Property |
 | Existential reading | DKP coercion | Direct ∃ type shift |
@@ -126,7 +126,7 @@ theorem kind_requires_topic :
 
 /-!
 ## Position-Sensitive ∃-Shift
-@cite{carlson-1977} @cite{le-bruyn-de-swart-2022} @cite{partee-1987}
+[carlson-1977] [le-bruyn-de-swart-2022] [partee-1987]
 
 ∃-shift applies at the surface position of the bare plural,
 predicting that scrambled BPs take wide scope over negation.

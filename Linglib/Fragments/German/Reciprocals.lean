@@ -2,7 +2,7 @@ import Linglib.Syntax.Pronoun.Basic
 
 /-!
 # German Reciprocal Fragment
-@cite{nordlinger-2023}
+[nordlinger-2023]
 
 German has two reciprocal strategies:
 

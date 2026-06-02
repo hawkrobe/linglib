@@ -3,7 +3,7 @@ import Mathlib.ModelTheory.Syntax
 
 /-!
 # From DRT to predicate logic: the DRS → first-order reduction
-@cite{kamp-reyle-1993} (§1.5), @cite{muskens-1996}
+[kamp-reyle-1993] (§1.5), [muskens-1996]
 
 The "surprise" theorem of the whole development: the bespoke DRS box language is
 *equivalent to ordinary first-order logic*. We translate each DRS into a mathlib
@@ -50,7 +50,7 @@ noncomputable def closeForall [DecidableEq V] (U : Finset V) (φ : L.Formula V) 
 
 mutual
 /-- Translate a DRS to a first-order formula: existentially close the universe
-over the conjunction of the (translated) conditions (@cite{kamp-reyle-1993} §1.5). -/
+over the conjunction of the (translated) conditions ([kamp-reyle-1993] §1.5). -/
 noncomputable def DRS.toFormula [DecidableEq V] : DRS L V → L.Formula V
   | .mk U conds => closeExists U (Condition.toFormulaAll conds)
 /-- The conjunction of a DRS's conditions, *without* closing its universe (used
@@ -140,7 +140,7 @@ theorem realize_closeForall [DecidableEq V] (U : Finset V) (φ : L.Formula V) (v
   exact forall_extend_iff U v (Formula.Realize φ)
 
 mutual
-/-- **DRT ⊆ FOL** (@cite{kamp-reyle-1993} §1.5; @cite{muskens-1996}): the
+/-- **DRT ⊆ FOL** ([kamp-reyle-1993] §1.5; [muskens-1996]): the
 translated formula's `Realize` coincides with the bespoke `DRS.Realize`. As
 `toFormula` existentially closes the universe, the correspondence is with an
 embedding `v'` extending `v` over `K.referents`. -/

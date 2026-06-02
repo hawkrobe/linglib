@@ -8,8 +8,8 @@ import Linglib.Fragments.Japanese.TemporalConnectives
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
-# @cite{ogihara-steinert-threlkeld-2024} — Data
-@cite{ogihara-steinert-threlkeld-2024}
+# [ogihara-steinert-threlkeld-2024] — Data
+[ogihara-steinert-threlkeld-2024]
 
 Theory-neutral empirical data on the veridicality asymmetry between
 temporal connectives *before* and *after*.
@@ -71,7 +71,7 @@ def before_nonveridical : VeridicalityDatum where
 
 /-- "The bomb exploded before anyone defused it" — the complement
     event (defusing) did NOT occur. This is the counterfactual reading
-    of *before* (@cite{beaver-condoravdi-2003}, "barely prevented"). -/
+    of *before* ([beaver-condoravdi-2003], "barely prevented"). -/
 def before_counterfactual : VeridicalityDatum where
   sentence := "The bomb exploded before anyone defused it"
   connective := "before"
@@ -86,12 +86,12 @@ def after_veridical_2 : VeridicalityDatum where
   gloss := "after(finish, leave) |= leave"
 
 -- ════════════════════════════════════════════════════════════════
--- § 3: Additional Veridicality Data (@cite{beaver-condoravdi-2003}, §2)
+-- § 3: Additional Veridicality Data ([beaver-condoravdi-2003], §2)
 -- ════════════════════════════════════════════════════════════════
 
 /-- "The Supreme Court decided the election before the votes were
     counted" — non-committal: compatible with votes eventually being
-    counted or never counted (@cite{beaver-condoravdi-2003}, ex. 22). -/
+    counted or never counted ([beaver-condoravdi-2003], ex. 22). -/
 def before_noncommittal : VeridicalityDatum where
   sentence := "The Supreme Court decided the election before the votes were counted"
   connective := "before"
@@ -99,7 +99,7 @@ def before_noncommittal : VeridicalityDatum where
   gloss := "before(decide, count) |/= count (non-committal)"
 
 /-- "Mozart died before he finished the Requiem" — counterfactual:
-    Mozart never finished the Requiem (@cite{beaver-condoravdi-2003}, ex. 24). -/
+    Mozart never finished the Requiem ([beaver-condoravdi-2003], ex. 24). -/
 def before_counterfactual_mozart : VeridicalityDatum where
   sentence := "Mozart died before he finished the Requiem"
   connective := "before"
@@ -107,7 +107,7 @@ def before_counterfactual_mozart : VeridicalityDatum where
   gloss := "before(die, finish) ∧ ¬finish (counterfactual)"
 
 -- ════════════════════════════════════════════════════════════════
--- § 4: Logical Property Data (@cite{beaver-condoravdi-2003}, §1)
+-- § 4: Logical Property Data ([beaver-condoravdi-2003], §1)
 -- ════════════════════════════════════════════════════════════════
 
 /-- A judgment about a logical property of a temporal connective:
@@ -127,7 +127,7 @@ structure LogicalPropertyDatum where
 
 /-- *Before* is antisymmetric: "Cleo was in America before David was"
     and "David was in America before Cleo was" cannot both be true
-    (with non-overlapping intervals). (@cite{beaver-condoravdi-2003}, exx. 3-4) -/
+    (with non-overlapping intervals). ([beaver-condoravdi-2003], exx. 3-4) -/
 def before_antisymmetric : LogicalPropertyDatum where
   property := "antisymmetry"
   connective := "before"
@@ -136,7 +136,7 @@ def before_antisymmetric : LogicalPropertyDatum where
   gloss := "before(A,B) → ¬before(B,A) (when A,B non-overlapping)"
 
 /-- *After* is NOT antisymmetric: overlapping intervals allow both
-    directions. (@cite{beaver-condoravdi-2003}, exx. 5-7, diagram 7) -/
+    directions. ([beaver-condoravdi-2003], exx. 5-7, diagram 7) -/
 def after_not_antisymmetric : LogicalPropertyDatum where
   property := "antisymmetry"
   connective := "after"
@@ -145,7 +145,7 @@ def after_not_antisymmetric : LogicalPropertyDatum where
   gloss := "after(A,B) ∧ after(B,A) possible with overlapping intervals"
 
 /-- *Before* is transitive: if A before B and B before C, then A before C.
-    (@cite{beaver-condoravdi-2003}, exx. 12-14) -/
+    ([beaver-condoravdi-2003], exx. 12-14) -/
 def before_transitive : LogicalPropertyDatum where
   property := "transitivity"
   connective := "before"
@@ -154,7 +154,7 @@ def before_transitive : LogicalPropertyDatum where
   gloss := "before(A,B) ∧ before(B,C) → before(A,C)"
 
 /-- *After* is NOT transitive: overlapping intervals allow
-    after(A,B) ∧ after(B,C) ∧ ¬after(A,C). (@cite{beaver-condoravdi-2003}, exx. 8-11) -/
+    after(A,B) ∧ after(B,C) ∧ ¬after(A,C). ([beaver-condoravdi-2003], exx. 8-11) -/
 def after_not_transitive : LogicalPropertyDatum where
   property := "transitivity"
   connective := "after"
@@ -162,7 +162,7 @@ def after_not_transitive : LogicalPropertyDatum where
   example_ := "Fred after Ginger, Ginger after Delores, but #Fred after Delores"
   gloss := "after(A,B) ∧ after(B,C) ↛ after(A,C)"
 
-/-- *Before* licenses NPIs; *after* does not. (@cite{beaver-condoravdi-2003}, exx. 15-18) -/
+/-- *Before* licenses NPIs; *after* does not. ([beaver-condoravdi-2003], exx. 15-18) -/
 def before_licenses_npis : LogicalPropertyDatum where
   property := "NPI licensing"
   connective := "before"
@@ -171,12 +171,12 @@ def before_licenses_npis : LogicalPropertyDatum where
   gloss := "before licenses NPIs; after does not"
 
 -- ════════════════════════════════════════════════════════════════
--- § 5: Pragmatic Oddity Data (@cite{beaver-condoravdi-2003}, exx. 32-33)
+-- § 5: Pragmatic Oddity Data ([beaver-condoravdi-2003], exx. 32-33)
 -- ════════════════════════════════════════════════════════════════
 
 /-- "David won the race before he entered it" — pragmatically odd because
     winning temporally presupposes entering: there is no historical
-    alternative where one wins before entering. (@cite{beaver-condoravdi-2003}, ex. 32) -/
+    alternative where one wins before entering. ([beaver-condoravdi-2003], ex. 32) -/
 def before_oddity_win : VeridicalityDatum where
   sentence := "David won the race before he entered it"
   connective := "before"
@@ -185,7 +185,7 @@ def before_oddity_win : VeridicalityDatum where
 
 /-- "David entered the race after he won it" — same temporal impossibility
     viewed through *after*: entering after winning reverses the natural
-    temporal order. (@cite{beaver-condoravdi-2003}, ex. 33) -/
+    temporal order. ([beaver-condoravdi-2003], ex. 33) -/
 def after_oddity_enter : VeridicalityDatum where
   sentence := "David entered the race after he won it"
   connective := "after"
@@ -195,7 +195,7 @@ def after_oddity_enter : VeridicalityDatum where
 open Semantics.Tense.TemporalConnectives.BeaverCondoravdi
 
 -- ════════════════════════════════════════════════════════════════
--- § 6: Counterexamples to B&C (O&@cite{ogihara-steinert-threlkeld-2024}, §5)
+-- § 6: Counterexamples to B&C (O&[ogihara-steinert-threlkeld-2024], §5)
 -- ════════════════════════════════════════════════════════════════
 
 /-- A counterexample to B&C's branching-time analysis.
@@ -240,7 +240,7 @@ theorem bc_cannot_place_bounded_complement
     earns his 10th win of the season." (Uttered in the middle of September 2021.)
     The A-time is the end of the 2021 MLB season (October 3, 2021 = day 276).
     The complement (Ohtani's 10th win) can only occur during the season
-    (before day 276). (O&@cite{ogihara-steinert-threlkeld-2024}, §5.1, ex. 20a) -/
+    (before day 276). (O&[ogihara-steinert-threlkeld-2024], §5.1, ex. 20a) -/
 def ost_counterexample_ohtani : BCCounterexampleDatum where
   sentence := "Unfortunately, the 2021 MLB season will be over before Shohei Ohtani earns his 10th win of the season"
   aTime := 276
@@ -252,7 +252,7 @@ def ost_counterexample_ohtani : BCCounterexampleDatum where
     (Uttered on Christmas Day in 2020.) The expression *this year* refers back
     to 2020. Since the first snow of 2020 can only occur in 2020, the modal
     proposal that posits a fictitious snow event after the end of 2020 does not
-    work. (O&@cite{ogihara-steinert-threlkeld-2024}, §5.1, ex. 20b) -/
+    work. (O&[ogihara-steinert-threlkeld-2024], §5.1, ex. 20b) -/
 def ost_counterexample_snow : BCCounterexampleDatum where
   sentence := "2020 might come to an end before it snows for the first time this year"
   aTime := 366
@@ -265,7 +265,7 @@ def ost_counterexample_snow : BCCounterexampleDatum where
     1999. Assumes Michel de Nostradamus predicted that in July 1999, a great King
     of terror would come from the sky and destroy the world.) The prophecy can
     only come true if the world is destroyed in July 1999 — it cannot come true
-    after the end of July 1999. (O&@cite{ogihara-steinert-threlkeld-2024}, §5.1, ex. 20c) -/
+    after the end of July 1999. (O&[ogihara-steinert-threlkeld-2024], §5.1, ex. 20c) -/
 def ost_counterexample_nostradamus : BCCounterexampleDatum where
   sentence := "July 1999 will come to an end before Nostradamus' prophecy about the end of the world comes true"
   aTime := 31
@@ -274,7 +274,7 @@ def ost_counterexample_nostradamus : BCCounterexampleDatum where
   reading := .counterfactual
 
 -- ════════════════════════════════════════════════════════════════
--- § 7: Non-Committal Reading Problems (O&@cite{ogihara-steinert-threlkeld-2024}, §5.2)
+-- § 7: Non-Committal Reading Problems (O&[ogihara-steinert-threlkeld-2024], §5.2)
 -- ════════════════════════════════════════════════════════════════
 
 /-- A datum recording asymmetries in the availability of non-committal
@@ -292,7 +292,7 @@ structure NonCommittalDatum where
 /-- "Mary will leave the party before Bill gets drunk."
     Non-committal reading is available: maybe Bill gets drunk, maybe not.
     B&C's Event Continuation Condition is satisfied (Bill getting drunk is
-    a normal continuation). (O&@cite{ogihara-steinert-threlkeld-2024}, §5.2) -/
+    a normal continuation). (O&[ogihara-steinert-threlkeld-2024], §5.2) -/
 def noncommittal_available : NonCommittalDatum where
   sentence := "Mary will leave the party before Bill gets drunk"
   nonCommittalAvailable := true
@@ -303,7 +303,7 @@ def noncommittal_available : NonCommittalDatum where
     independence is not a normal continuation of the party. B&C's Event
     Continuation Condition should block this, but the mechanism is unclear
     for *before*-clauses with pragmatically impossible complements.
-    (O&@cite{ogihara-steinert-threlkeld-2024}, §5.2) -/
+    (O&[ogihara-steinert-threlkeld-2024], §5.2) -/
 def noncommittal_unavailable : NonCommittalDatum where
   sentence := "Mary will leave the party before Quebec becomes an independent country"
   nonCommittalAvailable := false
@@ -318,7 +318,7 @@ theorem noncommittal_plausibility_sensitive :
   ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 8: Cross-Linguistic Data (O&@cite{ogihara-steinert-threlkeld-2024}, §3)
+-- § 8: Cross-Linguistic Data (O&[ogihara-steinert-threlkeld-2024], §3)
 -- ════════════════════════════════════════════════════════════════
 
 /-- Cross-linguistic morphological evidence for the veridicality asymmetry. -/
@@ -338,7 +338,7 @@ structure CrossLinguisticDatum where
 /-- Japanese *mae* ('before') requires non-past tense in its complement,
     even when describing past events. This independently supports the
     non-veridical analysis: the complement is presented as unrealized
-    from the perspective of the main-clause event. (O&@cite{ogihara-steinert-threlkeld-2024}, §3) -/
+    from the perspective of the main-clause event. (O&[ogihara-steinert-threlkeld-2024], §3) -/
 def japanese_mae : CrossLinguisticDatum where
   language := "Japanese"
   connective := "mae (前)"
@@ -348,7 +348,7 @@ def japanese_mae : CrossLinguisticDatum where
 
 /-- Japanese *ato* ('after') allows past tense in its complement,
     consistent with the veridical analysis: the complement event
-    is presented as having occurred. (O&@cite{ogihara-steinert-threlkeld-2024}, §3) -/
+    is presented as having occurred. (O&[ogihara-steinert-threlkeld-2024], §3) -/
 def japanese_ato : CrossLinguisticDatum where
   language := "Japanese"
   connective := "ato (後)"
@@ -494,7 +494,7 @@ theorem scenario_before_projects :
   AnscombeEvent.before_implies_anscombe _ _ scenario_before_punctual
 
 -- ════════════════════════════════════════════════════════════════
--- § 14: Logical Properties (@cite{beaver-condoravdi-2003}, §1)
+-- § 14: Logical Properties ([beaver-condoravdi-2003], §1)
 -- ════════════════════════════════════════════════════════════════
 
 /-! The logical properties of *before* and *after* noted by B&C follow
@@ -505,7 +505,7 @@ private def i_cleo_b : Core.Time.Interval ℤ := ⟨1, 5, by omega⟩
 private def i_david_b : Core.Time.Interval ℤ := ⟨8, 12, by omega⟩
 
 /-- *Before* is antisymmetric on non-overlapping statives: if A before B,
-    then ¬(B before A). (@cite{beaver-condoravdi-2003}, exx. 3-4)
+    then ¬(B before A). ([beaver-condoravdi-2003], exx. 3-4)
 
     Scenario: Cleo [1,5], David [8,12]. Cleo before David holds;
     David before Cleo does not.
@@ -526,7 +526,7 @@ private def i_cleo_a : Core.Time.Interval ℤ := ⟨1, 8, by omega⟩
 private def i_david_a : Core.Time.Interval ℤ := ⟨5, 12, by omega⟩
 
 /-- *After* is NOT antisymmetric: overlapping intervals allow both
-    after(A,B) and after(B,A). (@cite{beaver-condoravdi-2003}, exx. 5-7, diagram 7)
+    after(A,B) and after(B,A). ([beaver-condoravdi-2003], exx. 5-7, diagram 7)
 
     Scenario: Cleo [1,8], David [5,12]. Both Cleo-after-David and
     David-after-Cleo hold because ∃ requires only one witness. -/
@@ -545,7 +545,7 @@ private def i_ginger_t : Core.Time.Interval ℤ := ⟨6, 8, by omega⟩
 private def i_fred_t : Core.Time.Interval ℤ := ⟨11, 13, by omega⟩
 
 /-- *Before* is transitive: A before B ∧ B before C → A before C.
-    (@cite{beaver-condoravdi-2003}, exx. 12-14)
+    ([beaver-condoravdi-2003], exx. 12-14)
 
     Scenario: Delores [1,3], Ginger [6,8], Fred [11,13]. -/
 theorem before_transitive_scenario :
@@ -563,7 +563,7 @@ private def i_ginger_a : Core.Time.Interval ℤ := ⟨2, 5, by omega⟩
 private def i_delores_a : Core.Time.Interval ℤ := ⟨4, 7, by omega⟩
 
 /-- *After* is NOT transitive: overlapping intervals allow
-    after(A,B) ∧ after(B,C) ∧ ¬after(A,C). (@cite{beaver-condoravdi-2003}, exx. 8-11)
+    after(A,B) ∧ after(B,C) ∧ ¬after(A,C). ([beaver-condoravdi-2003], exx. 8-11)
 
     Scenario: Fred [1,3], Ginger [2,5], Delores [4,7].
     Fred after Ginger: t=3, t'=2. ✓
@@ -641,15 +641,15 @@ theorem japanese_ato_matches_datum :
   ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 18: Progressive Analogy (O&@cite{ogihara-steinert-threlkeld-2024}, §3)
+-- § 18: Progressive Analogy (O&[ogihara-steinert-threlkeld-2024], §3)
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{ogihara-steinert-threlkeld-2024} §3 observe that the progressive and
+/-! [ogihara-steinert-threlkeld-2024] §3 observe that the progressive and
     anti-veridical *before* share the same modal-temporal structure:
 
     - **Progressive** "Mozart was composing the Requiem (when he died)":
       at the reference time, there is an ongoing event (composing) that in
-      some **inertia worlds** (@cite{landman-1992}) reaches completion.
+      some **inertia worlds** ([landman-1992]) reaches completion.
 
     - **Anti-veridical before** "Mozart died before he finished the Requiem":
       at the A-time, there is an ongoing event (composing) that in some
@@ -766,7 +766,7 @@ theorem csip_determines_modal_need
     exact ⟨e, hSub, hP⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 19: Revamped Truth Conditions (O&@cite{ogihara-steinert-threlkeld-2024}, def 19)
+-- § 19: Revamped Truth Conditions (O&[ogihara-steinert-threlkeld-2024], def 19)
 -- ════════════════════════════════════════════════════════════════
 
 /-! The paper's central formal contribution: revamped truth conditions for
@@ -951,7 +951,7 @@ end OgiharaST2024
 -- ════════════════════════════════════════════════════════════════
 
 /-! ## Veridicality ↔ Presupposition Bridge
-@cite{beaver-condoravdi-2003} @cite{heim-1983} @cite{ogihara-steinert-threlkeld-2024}
+[beaver-condoravdi-2003] [heim-1983] [ogihara-steinert-threlkeld-2024]
 
 Connects three layers of the temporal connective formalization:
 

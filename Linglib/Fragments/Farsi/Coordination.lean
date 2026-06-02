@@ -2,7 +2,7 @@ import Linglib.Features.Coordination
 
 /-!
 # Persian (Farsi) Coordination Morphemes
-@cite{haspelmath-2007} @cite{mitrovic-sauerland-2016}
+[haspelmath-2007] [mitrovic-sauerland-2016]
 
 Persian has:
 

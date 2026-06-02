@@ -10,8 +10,8 @@ import Linglib.Studies.KehlerRohde2013
 import Linglib.Studies.KwonLee2026
 
 /-!
-# @cite{grosz-joshi-weinstein-1995}: Centering Theory
-@cite{kameyama-1986} @cite{gordon-grosz-gilliom-1993} @cite{kehler-rohde-2013} @cite{sidner-1983}
+# [grosz-joshi-weinstein-1995]: Centering Theory
+[kameyama-1986] [gordon-grosz-gilliom-1993] [kehler-rohde-2013] [sidner-1983]
 
 Centering: A Framework for Modeling the Local Coherence of Discourse.
 *Computational Linguistics* 21(2): 203–225.
@@ -40,7 +40,7 @@ plus the `GrammaticalRole` Cf-ranker instance from
 `Instances/GrammaticalRole.lean`. Per linglib's import-don't-restipulate
 discipline, no Centering primitives are redefined here — the file's
 contribution is the empirical-example anchor for the substrate plus
-the §8 comparison with @cite{sidner-1983}.
+the §8 comparison with [sidner-1983].
 -/
 
 set_option autoImplicit false
@@ -195,7 +195,7 @@ theorem d15_a_to_b_satisfies_rule1 :
 -- § 3. Discourses 7-10: Cf ranking + Rule 1 interaction
 -- ════════════════════════════════════════════════════
 
-/-! @cite{grosz-joshi-weinstein-1995} §5 examples (7)-(10). All four
+/-! [grosz-joshi-weinstein-1995] §5 examples (7)-(10). All four
     variants share utterances (a) and (b); they differ only in (c)'s
     realization choices. Variants (7) and (8) satisfy Rule 1; variants
     (9) and (10) violate it. The paper notes (10) is "completely
@@ -328,25 +328,25 @@ theorem discourse20_rule1_c_d : Rule1GJW95 D20.c D20.d := by decide
 theorem discourse20_rule1_d_e : Rule1GJW95 D20.d D20.e := by decide
 
 -- ════════════════════════════════════════════════════
--- § 5. Bridge to @cite{kehler-rohde-2013} (Topichood)
+-- § 5. Bridge to [kehler-rohde-2013] (Topichood)
 -- ════════════════════════════════════════════════════
 
 /-- Centering's "highest-ranked Cf element" — the `Cp` (preferred
-    center) — corresponds to @cite{kehler-rohde-2013}'s **topichood**
+    center) — corresponds to [kehler-rohde-2013]'s **topichood**
     side of the Bayesian decomposition: the production component
     P(pronoun | referent) is conditioned on whether the referent is
     the topic. The Cp of an active-clause subject is precisely the
-    `default_` topichood level in @cite{kehler-rohde-2013}'s scheme. -/
+    `default_` topichood level in [kehler-rohde-2013]'s scheme. -/
 def cpTopichood : KehlerRohde2013.TopichoodLevel :=
   KehlerRohde2013.topichood .Act true
 
 theorem cp_is_default_topichood : cpTopichood = .default_ := rfl
 
 -- ════════════════════════════════════════════════════
--- § 6. Bridge to @cite{kwon-lee-2026} (Korean Pronouns)
+-- § 6. Bridge to [kwon-lee-2026] (Korean Pronouns)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{kwon-lee-2026}'s Korean Exp 3 finding (null pronouns
+/-! [kwon-lee-2026]'s Korean Exp 3 finding (null pronouns
     strongly prefer subject antecedents) is **predicted** by Centering
     Theory:
 
@@ -354,7 +354,7 @@ theorem cp_is_default_topichood : cpTopichood = .default_ := rfl
     2. The subject of `U_n` typically becomes the Cb of `U_{n+1}`.
     3. By Rule 1, the Cb is preferentially realized by a pronoun.
     4. In Korean, the highest-accessibility marker (most preferred
-       pronominal form) is the *null* pronoun (@cite{ariel-2001}).
+       pronominal form) is the *null* pronoun ([ariel-2001]).
 
     Composing: subject → Cb → pronoun → null in Korean.
 
@@ -365,7 +365,7 @@ theorem cp_is_default_topichood : cpTopichood = .default_ := rfl
 namespace KoreanContinuation
 
 /-- (a) Mary often took Tom to the sea. — adapted from
-    @cite{kwon-lee-2026} Exp 3 stimulus pattern. -/
+    [kwon-lee-2026] Exp 3 stimulus pattern. -/
 def utt_a : Utt :=
   ⟨[⟨"Mary", .subject, false⟩, ⟨"Tom", .object, false⟩,
     ⟨"sea", .other, false⟩]⟩
@@ -400,19 +400,19 @@ theorem korean_null_is_top_form :
 
 /-- **Centering predicts Korean's null-subject preference**: combining
     Rule 1 with Korean's accessibility-scale calibration. The 71%
-    empirical subject bias for null pronouns (@cite{kwon-lee-2026} Exp
+    empirical subject bias for null pronouns ([kwon-lee-2026] Exp
     3) is the predicted consequence of this composition. -/
 theorem korean_subject_bias_for_null_exceeds_chance :
     KwonLee2026.exp3_pro.subjectPercent > 50 := by decide
 
 -- ════════════════════════════════════════════════════
--- § 7. Bridge to @cite{ariel-2001} (Accessibility Marking)
+-- § 7. Bridge to [ariel-2001] (Accessibility Marking)
 -- ════════════════════════════════════════════════════
 
 open Features
 
 /-- Centering's Cb (the "currently centered" entity) corresponds to a
-    high-accessibility referent on @cite{ariel-2001}'s scale. Rule 1
+    high-accessibility referent on [ariel-2001]'s scale. Rule 1
     predicts that the Cb's realization should use a high-accessibility
     marker — typically a pronoun. -/
 def cbExpectedAccessibility : AccessibilityLevel := .unstressedPron
@@ -422,7 +422,7 @@ theorem cb_marker_is_high_accessibility :
   decide
 
 -- ════════════════════════════════════════════════════
--- § 8. Comparison with @cite{sidner-1983}: example (34)
+-- § 8. Comparison with [sidner-1983]: example (34)
 -- ════════════════════════════════════════════════════
 
 /-! This section mechanizes the Sidner-comparison the paper makes in

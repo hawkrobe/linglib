@@ -3,7 +3,7 @@ import Linglib.Semantics.Gradability.GradableNouns
 /-!
 # Morzycki (2009)
 
-@cite{morzycki-2009}
+[morzycki-2009]
 
 Degree modification of gradable nouns: size adjectives and adnominal degree morphemes.
 *Natural Language Semantics* 17:175–203.

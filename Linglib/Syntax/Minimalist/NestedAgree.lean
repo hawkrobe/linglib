@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.Probe
 
 /-!
-# Nested Agree @cite{amato-2025}
+# Nested Agree [amato-2025]
 
 A configuration on a Minimalist `SyntacticObject`: a single head bears
 two (or more) ordered probes that share a goal-head, and each
@@ -19,7 +19,7 @@ A `NestedAgreeConfig` packages:
 4. `goalHead : SyntacticObject` — the shared goal targeted under MME.
 5. `validGoal : SyntacticObject → Bool` — *lexical* primitive: which
    subtrees carry active φ-features. Defective v of unaccusatives
-   gets `false`; this is what blocks π-Agree in @cite{amato-2025}'s
+   gets `false`; this is what blocks π-Agree in [amato-2025]'s
    §3.4.2 unaccusative analysis.
 
 `initialDomain`, `daughters`, `searchDomain` are *derived* via
@@ -48,8 +48,8 @@ with `[Decidable]` instances; `runStack` returns
 
 ## Sibling mechanisms in `Syntax/Minimalism/`
 
-`Syntax/Minimalism/CyclicAgree.lean` (@cite{bejar-rezac-2009})
-and `LongDistanceAgree.lean` (@cite{szabolcsi-2009}) are sibling
+`Syntax/Minimalism/CyclicAgree.lean` ([bejar-rezac-2009])
+and `LongDistanceAgree.lean` ([szabolcsi-2009]) are sibling
 Layer-2 patterns. All three address "what does a probe do beyond its
 first operation," but the answers differ:
 
@@ -144,7 +144,7 @@ end NestedAgreeConfig
     a structural claim about `root` (via `cCommandsIn`) plus the
     lexical primitive (`validGoal`). When phi-Agree fails (unaccusative
     v has `validGoal = false`), this predicate is correctly false —
-    the formal expression of @cite{amato-2025}'s "the chain breaks
+    the formal expression of [amato-2025]'s "the chain breaks
     down at π-Agree." -/
 def IsNestedAgreeConfig (c : NestedAgreeConfig) : Prop :=
   c.goalHead ∈ c.initialDomain
@@ -279,7 +279,7 @@ Tree: `Perf [DPsubj [v DPobj]]`. Probe 0 (Infl-Agree) targets v;
 probe 1 (π-Agree) is restricted by Nested Agree to v's c-command
 domain (reflexively including v). The apparent intervener DPsubj is
 in Perf's c-command but not in v's, so it is structurally excluded
-from probe 1 — encoding @cite{amato-2025}'s resolution of the
+from probe 1 — encoding [amato-2025]'s resolution of the
 apparent minimality violation.
 
 `validGoal` is `true` everywhere here (transitive case); the

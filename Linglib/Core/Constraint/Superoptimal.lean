@@ -4,9 +4,9 @@ import Mathlib.Order.Preorder.Finite
 /-!
 # Superoptimal: Bidirectional OT via OrderHom.gfp
 
-@cite{blutner-2000} @cite{jaeger-2002}
+[blutner-2000] [jaeger-2002]
 
-Mathlib-grounded formulation of @cite{blutner-2000}'s weak Bidirectional OT
+Mathlib-grounded formulation of [blutner-2000]'s weak Bidirectional OT
 "superoptimality" (eq. 14). The set of superoptimal form-meaning pairs is
 the **greatest fixed point** of the squared blocking operator on `Set (F × M)`,
 defined via mathlib's `OrderHom.gfp` on the `Set α` complete lattice.
@@ -109,7 +109,7 @@ def superoptimalSetStepSq (pairs : Set (F × M)) (profile : F × M → List Nat)
 -- § 3. The canonical superoptimal set: greatest fixed point
 -- ============================================================================
 
-/-- @cite{blutner-2000}'s superoptimality (eq. 14): the greatest fixed point
+/-- [blutner-2000]'s superoptimality (eq. 14): the greatest fixed point
     of the squared blocking operator. Set-valued, anchored in mathlib's
     `OrderHom.gfp` via `Set α`'s `CompleteLattice` instance.
 
@@ -281,7 +281,7 @@ private def superoptimalLoop (pairs : Finset (F × M)) (profile : F × M → Lis
     let S' := superoptimalSetStep_TEMPFIN pairs profile S
     if S' = S then S else superoptimalLoop pairs profile S' n
 
-/-- @cite{blutner-2000}'s superoptimality (Finset-native, computable). Iterates
+/-- [blutner-2000]'s superoptimality (Finset-native, computable). Iterates
     `superoptimalSetStep_TEMPFIN` from `pairs` (top) until fixed.
 
     For consumer use, this is the canonical form — output equality with a
@@ -373,7 +373,7 @@ end Computable
 -- § 7. Strong BiOT (eq. 9): Set-valued Prop + Finset-native form
 -- ============================================================================
 
-/-- @cite{blutner-2000}'s **strong bidirectional OT** (eq. 9): a pair `p` is
+/-- [blutner-2000]'s **strong bidirectional OT** (eq. 9): a pair `p` is
     strong-optimal iff it survives one step of the blocking operator starting
     from the full pair set. Equivalently: `p ∈ pairs` and no element of `pairs`
     blocks `p` (the Q- and I-principles are evaluated independently against
@@ -420,7 +420,7 @@ end StrongComputable
 -- § 8. Strong ⊂ Weak: the structural meta-theorem
 -- ============================================================================
 
-/-- @cite{blutner-2000} p. 12: "It is simple to prove that a pair which is
+/-- [blutner-2000] p. 12: "It is simple to prove that a pair which is
     optimal (strong bidirection), is super-optimal (weak bidirection) as
     well."
 

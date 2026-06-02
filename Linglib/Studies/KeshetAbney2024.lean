@@ -11,10 +11,10 @@ import Mathlib.Data.Fintype.Basic
 /-!
 # Keshet & Abney (2024): Intensional Anaphora
 
-@cite{keshet-abney-2024} @cite{partee-1972} @cite{roberts-1987}
-@cite{stone-1999} @cite{brasoveanu-2010}
+[keshet-abney-2024] [partee-1972] [roberts-1987]
+[stone-1999] [brasoveanu-2010]
 
-Formalizes the core contributions of @cite{keshet-abney-2024}'s PIP
+Formalizes the core contributions of [keshet-abney-2024]'s PIP
 (Plural Intensional Presuppositional predicate calculus) and connects
 them to the theory-neutral anaphora data in `Phenomena/Anaphora/`.
 
@@ -59,7 +59,7 @@ open Phenomena.Anaphora
 section Stone
 
 /--
-Stone's puzzle world model (@cite{stone-1999}, @cite{roberts-1987}).
+Stone's puzzle world model ([stone-1999], [roberts-1987]).
 
 Three possible worlds:
 - `actual`: the evaluation world (no wolf present)
@@ -211,7 +211,7 @@ end Stone
 
 section Bathroom
 
-/-- @cite{partee-1972}'s bathroom sentence world model. -/
+/-- [partee-1972]'s bathroom sentence world model. -/
 inductive BWorld where
   | bath | noBath
   deriving DecidableEq, Repr, Inhabited
@@ -347,7 +347,7 @@ end Paycheck
 
 
 -- ============================================================
--- Modal Subordination Data (from @cite{roberts-1989})
+-- Modal Subordination Data (from [roberts-1989])
 -- ============================================================
 
 /-- A modal subordination datum. -/
@@ -902,7 +902,7 @@ PIP provides a unified account via TWO mechanisms:
    → might blocks anaphora, must allows it
 
 No stipulated accommodation rules, no "in" predicate (contra
-@cite{stone-1999} / @cite{brasoveanu-2010}), no special accessibility conditions.
+[stone-1999] / [brasoveanu-2010]), no special accessibility conditions.
 
 Evidence: all 5 phenomena are verified by the theorems above:
 - `stone_discourse_consistent` + `stone_discourse_rejects_unbound`
@@ -1064,7 +1064,7 @@ DPL double negation does not recover anaphora.
 
 For `Nontrivial E`, there exist `x : Nat` and `φ : Update (Assignment E)` such
 that `test (dneg (test (dneg (existsAt x φ))))` ≠ `existsAt x φ`. The
-substrate-name restatement of @cite{groenendijk-stokhof-1991}'s observation
+substrate-name restatement of [groenendijk-stokhof-1991]'s observation
 that DPL negation collapses positive update information.
 
 `private` until promoted to

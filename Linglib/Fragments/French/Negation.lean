@@ -2,8 +2,8 @@ import Linglib.Typology.Negation
 
 /-!
 # French Negation Fragment
-@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
-@cite{zanuttini-1997} @cite{cinque-1999}
+[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
+[zanuttini-1997] [cinque-1999]
 
 French uses bipartite negation *ne...pas*, with the preverbal clitic *ne*
 and the postverbal reinforcer *pas*. In colloquial speech, *ne* is
@@ -32,7 +32,7 @@ open Typology.Negation
 
 /-- The French preverbal negative clitic. Phonologically a clitic on the
     finite verb (or auxiliary); syntactically the head of NegP per
-    @cite{zanuttini-1997}'s cartography. Near-categorically dropped in
+    [zanuttini-1997]'s cartography. Near-categorically dropped in
     spoken French (Jespersen cycle stage III), categorically present in
     formal written French. -/
 def neClitic : String := "ne"
@@ -40,7 +40,7 @@ def neClitic : String := "ne"
 /-- The French postverbal negative reinforcer *pas*. Originally a noun
     'step' grammaticalized via the Jespersen cycle into the load-bearing
     negation marker of modern French. Sits in the specifier of NegP per
-    @cite{zanuttini-1997}. -/
+    [zanuttini-1997]. -/
 def pasReinforcer : String := "pas"
 
 /-- *(ne) pas* — French's bipartite standard negation.
@@ -122,7 +122,7 @@ def allExamples : List NegExample :=
 theorem all_tenses_available : allExamples.length = 5 := by decide
 
 /-! ## Expletive Negation
-@cite{jin-koenig-2021}
+[jin-koenig-2021]
 
 French has a **dedicated** expletive negation marker: the preverbal clitic
 *ne* used alone (without *pas*). This is the grammaticalized form of EN,
@@ -146,7 +146,7 @@ in the form of the negator itself.
 
 /-- An expletive negation marker and its trigger context. -/
 structure ENTriggerNegator where
-  /-- The trigger class label (from @cite{jin-koenig-2021} Table 5) -/
+  /-- The trigger class label (from [jin-koenig-2021] Table 5) -/
   triggerClass : String
   /-- French lexical trigger -/
   triggerForm : String
@@ -159,7 +159,7 @@ structure ENTriggerNegator where
 /-- *ne* alone is the dedicated EN marker (grammaticalized). -/
 def enMarker : String := neClitic
 
-/-- EN trigger-negator pairings from @cite{jin-koenig-2021}, Table 5
+/-- EN trigger-negator pairings from [jin-koenig-2021], Table 5
     and §6.1–6.4. -/
 def enTriggerNegators : List ENTriggerNegator :=
   [ { triggerClass := "FEAR", triggerForm := "avoir peur"

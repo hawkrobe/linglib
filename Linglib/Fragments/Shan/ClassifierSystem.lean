@@ -3,14 +3,14 @@ import Linglib.Fragments.Shan.Classifiers
 
 /-!
 # Shan noun-categorization system
-@cite{aikhenvald-2000} (typological schema); @cite{moroney-2021} (Shan empirical anchor)
+[aikhenvald-2000] (typological schema); [moroney-2021] (Shan empirical anchor)
 
 Classifier-system metadata for Shan (ISO `shn`). The lexical classifier
 inventory lives in `Fragments/Shan/Classifiers.lean`; this file
 aggregates that inventory into a `NounCategorizationSystem` summary.
 
-Per-language claims (consensus, see @cite{moroney-2021},
-@cite{little-moroney-royer-2022}): free-morpheme classifiers derived
+Per-language claims (consensus, see [moroney-2021],
+[little-moroney-royer-2022]): free-morpheme classifiers derived
 from nominal elements (e.g. *tǒ* = 'body'); uniform classifier
 requirement on numerals; scope extending beyond numerals to
 quantifiers, demonstratives, and relative clauses.
@@ -33,6 +33,6 @@ def classifierSystem : Typology.NounCategorizationSystem :=
   , hasUnmarkedDefault := true
   , preferredSemantics := collectSemantics Classifiers.allClassifiers
   , pluralClfCooccur := false
-  , source := "@cite{moroney-2021}; @cite{aikhenvald-2000} (schema)" }
+  , source := "[moroney-2021]; [aikhenvald-2000] (schema)" }
 
 end Shan

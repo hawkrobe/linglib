@@ -4,12 +4,12 @@ import Linglib.Phonology.Process.Harmony.Defs
 
 /-!
 # Hungarian Vowel Harmony
-@cite{siptar-torkenczy-2000} @cite{rose-walker-2011}
+[siptar-torkenczy-2000] [rose-walker-2011]
 
 Hungarian has **palatal vowel harmony**: the [±back] value of the last
 harmonic (non-neutral) stem vowel spreads rightward to suffix vowels.
 This is the most widely studied vowel harmony system in the literature,
-with over 50 theoretical treatments cited in @cite{siptar-torkenczy-2000}.
+with over 50 theoretical treatments cited in [siptar-torkenczy-2000].
 
 ## Why Hungarian stress-tests `HarmonySystem`
 
@@ -31,7 +31,7 @@ that push beyond a simple `triggerValue` analysis:
    as opaque. The binary `isTransparent` predicate cannot express this
    gradient.
 
-## Vowel inventory (@cite{siptar-torkenczy-2000} §2.2.1, system (7))
+## Vowel inventory ([siptar-torkenczy-2000] §2.2.1, system (7))
 
 |          | Front           |                 | Back            |
 |----------|-----------------|-----------------|-----------------|
@@ -40,13 +40,13 @@ that push beyond a simple `triggerValue` analysis:
 | **Mid**  | e / é           | ö / ő           | o / ó           |
 | **Low**  |                 |                 | a / á           |
 
-## Harmony classification (@cite{siptar-torkenczy-2000} §3.2, (27))
+## Harmony classification ([siptar-torkenczy-2000] §3.2, (27))
 
 - **Front harmonic**: ö, ő, ü, ű (front rounded)
 - **Back harmonic**: a, á, o, ó, u, ú (back)
 - **Neutral**: i, í, e, é (front unrounded)
 
-## Stem classes (@cite{siptar-torkenczy-2000} §3.2.2)
+## Stem classes ([siptar-torkenczy-2000] §3.2.2)
 
 - **IA** (simple harmonic): all harmonic vowels same backness
 - **IB** (complex harmonic / disharmonic): conflicting harmonic vowels,
@@ -55,7 +55,7 @@ that push beyond a simple `triggerValue` analysis:
   but some are antiharmonic (IIA-b)
 - **IIB** (complex neutral): harmonic + neutral, neutral is transparent
 
-## Rounding harmony (@cite{siptar-torkenczy-2000} §3.2.4)
+## Rounding harmony ([siptar-torkenczy-2000] §3.2.4)
 
 Three-way suffixes (hoz/höz/hez, tok/tök/tek) depend on BOTH
 backness and rounding of the last stem vowel:
@@ -69,7 +69,7 @@ vacillation. It only matters for front stems.
 
 ## Architectural limitation: Clements/Hume place-node spreading
 
-@cite{siptar-torkenczy-2000} §6.1 analyses Hungarian VH using
+[siptar-torkenczy-2000] §6.1 analyses Hungarian VH using
 Clements/Hume unary place features (COR, LAB, DOR) with four rules:
 Link Place, Link DOR, Spread Place, Spread DOR. This is place-NODE
 spreading, not individual binary-feature spreading. Our `HarmonySystem`
@@ -93,11 +93,11 @@ open Phonology.Harmony (HarmonySystem HarmonyDir triggerValue
 
 /-! We define the 7 short vowels using the Hayes feature system.
     Long vowels have identical features for harmony purposes — length
-    is prosodic, not segmental (@cite{siptar-torkenczy-2000} §3.1).
+    is prosodic, not segmental ([siptar-torkenczy-2000] §3.1).
 
     Representational note: Hungarian /a/ = [ɒ] is phonetically rounded
     but phonologically [+back, −round, +low]. Surface rounding is a
-    phonetic implementation detail (@cite{siptar-torkenczy-2000} p. 54). -/
+    phonetic implementation detail ([siptar-torkenczy-2000] p. 54). -/
 
 /-- /i/: [+syll, +high, −back, −round, −low, +dorsal]. Neutral. -/
 def i_vowel : Segment := Segment.ofSpecs
@@ -132,7 +132,7 @@ def o_vowel : Segment := Segment.ofSpecs
 
 /-- /a/: [+syll, −high, +back, −round, +low, +dorsal]. Back harmonic.
     Surface [ɒ] is phonetically rounded; phonological rounding is absent
-    (@cite{siptar-torkenczy-2000} p. 54). -/
+    ([siptar-torkenczy-2000] p. 54). -/
 def a_vowel : Segment := Segment.ofSpecs
   [(.syllabic, true), (.dorsal, true), (.high, false),
    (.back, true), (.round, false), (.low, true)]
@@ -142,7 +142,7 @@ def a_vowel : Segment := Segment.ofSpecs
 -- ============================================================================
 
 /-- A vowel is neutral iff it is front and unrounded: /i, í, e, é/.
-    @cite{siptar-torkenczy-2000} §3.2, (27). -/
+    [siptar-torkenczy-2000] §3.2, (27). -/
 def isNeutral (s : Segment) : Bool :=
   s.HasValue .syllabic true &&
   s.HasValue .back false &&
@@ -183,8 +183,8 @@ def classifyVowel (s : Segment) : HarmonyRole :=
     /i, í, e, é/ are transparent — they neither trigger nor undergo harmony.
 
     Structurally identical to `finnishHarmony` but with a larger neutral
-    class (4 vowels vs 2). @cite{siptar-torkenczy-2000} §3.2.1,
-    @cite{rose-walker-2011}. -/
+    class (4 vowels vs 2). [siptar-torkenczy-2000] §3.2.1,
+    [rose-walker-2011]. -/
 def hungarianPalatalHarmony : HarmonySystem :=
   HarmonySystem.mk' (feature := .back)
     (isTrigger     := (λ s => s.HasValue .syllabic true && !isNeutral s))
@@ -197,7 +197,7 @@ def hungarianPalatalHarmony : HarmonySystem :=
 
     Unlike backness harmony, rounding harmony has NO transparency — every
     vowel is either rounded or not. There are no antiharmonic stems and
-    no vacillation w.r.t. rounding (@cite{siptar-torkenczy-2000} §3.2.4).
+    no vacillation w.r.t. rounding ([siptar-torkenczy-2000] §3.2.4).
 
     The rounding value only matters for front stems (back stems always
     get the back suffix variant regardless of rounding). -/
@@ -209,7 +209,7 @@ def hungarianLabialHarmony : HarmonySystem :=
     (direction     := .rightward)
 
 -- ============================================================================
--- § 4: Stem Classes (@cite{siptar-torkenczy-2000} §3.2.2)
+-- § 4: Stem Classes ([siptar-torkenczy-2000] §3.2.2)
 -- ============================================================================
 
 /-- Stem class for Hungarian vowel harmony.
@@ -219,7 +219,7 @@ def hungarianLabialHarmony : HarmonySystem :=
     - Simple (A) vs Complex (B): are all harmonic vowels the same backness?
 
     Within each, -f and -b indicate whether the stem selects front or back
-    suffixes. @cite{siptar-torkenczy-2000} §3.2.2. -/
+    suffixes. [siptar-torkenczy-2000] §3.2.2. -/
 inductive StemClass where
   | IA_f   -- simple harmonic, front: tűz, tükör, öröm
   | IA_b   -- simple harmonic, back: ház, kupa, koszorú, bika, hernyó
@@ -237,10 +237,10 @@ def StemClass.isBack : StemClass → Bool
   | _ => false
 
 -- ============================================================================
--- § 5: Suffix Alternation Pairs (@cite{siptar-torkenczy-2000} §3.2.1, (28))
+-- § 5: Suffix Alternation Pairs ([siptar-torkenczy-2000] §3.2.1, (28))
 -- ============================================================================
 
-/-- Suffix alternation types. @cite{siptar-torkenczy-2000} §3.2.1, (28).
+/-- Suffix alternation types. [siptar-torkenczy-2000] §3.2.1, (28).
 
     Hungarian suffixes alternate in pairs (two-way) or triplets (three-way).
     Two-way alternation depends on [±back] alone. Three-way alternation
@@ -259,7 +259,7 @@ def resolveA (back : Bool) : Segment :=
   if back then a_vowel else e_vowel
 
 /-- Resolve a three-way o/ö/e suffix given backness and rounding.
-    @cite{siptar-torkenczy-2000} §3.2.4, (39):
+    [siptar-torkenczy-2000] §3.2.4, (39):
     - Back → /o/ (always, regardless of stem rounding)
     - Front rounded → /ö/
     - Front unrounded (including neutral) → /e/ -/
@@ -340,7 +340,7 @@ theorem tükör_front :
 /-- *hernyó* 'caterpillar' (IA-b): vowels /e, o/ — /e/ is neutral,
     /o/ is the last vowel and is back harmonic → back harmony.
     Suffixes: hernyó-nak, hernyó-tól.
-    @cite{siptar-torkenczy-2000} p. 67. -/
+    [siptar-torkenczy-2000] p. 67. -/
 theorem hernyó_back :
     triggerValue hungarianPalatalHarmony [e_vowel, o_vowel] =
       some true := by
@@ -452,7 +452,7 @@ theorem cél_no_trigger :
 
     Some stems allow BOTH front and back suffixes. This is common with
     mixed stems where back-harmonic vowels are followed by neutral vowels,
-    especially /e/ (@cite{siptar-torkenczy-2000} §3.2.3.1, Table 11).
+    especially /e/ ([siptar-torkenczy-2000] §3.2.3.1, Table 11).
 
     `spreadSuffix` is deterministic — it returns a single list. A
     vacillating stem like *hotel* would need to return a SET of possible
@@ -498,7 +498,7 @@ theorem tűz_suffix_becomes_front :
   native_decide
 
 -- ============================================================================
--- § 10: Rounding Harmony Verification (@cite{siptar-torkenczy-2000} §3.2.4)
+-- § 10: Rounding Harmony Verification ([siptar-torkenczy-2000] §3.2.4)
 -- ============================================================================
 
 /-! Three-way suffix resolution verified against (39):
@@ -532,7 +532,7 @@ theorem ház_hoz_suffix :
     resolveThreeWay true false = o_vowel := rfl
 
 /-- Back stems always get /o/ in three-way suffixes, regardless of whether
-    the stem vowel is rounded or not. @cite{siptar-torkenczy-2000} §3.2.4. -/
+    the stem vowel is rounded or not. [siptar-torkenczy-2000] §3.2.4. -/
 theorem back_rounding_irrelevant :
     resolveThreeWay true true = resolveThreeWay true false := rfl
 
@@ -565,7 +565,7 @@ theorem szemölcs_round :
 
     This decomposition mirrors the book's observation that rounding harmony
     is a "minor subsidiary pattern" layered on top of backness harmony
-    (@cite{siptar-torkenczy-2000} §3.2.4). -/
+    ([siptar-torkenczy-2000] §3.2.4). -/
 
 /-- Compose both harmony dimensions for a back stem. -/
 theorem ház_twoDim :
@@ -620,7 +620,7 @@ theorem hungarian_turkish_both_twoDim :
     hungarianLabialHarmony.feature = .round := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 13: Blocker Model — /e/ as opaque (@cite{siptar-torkenczy-2000} §3.2.3)
+-- § 13: Blocker Model — /e/ as opaque ([siptar-torkenczy-2000] §3.2.3)
 -- ============================================================================
 
 /-! The height-graded transparency problem (§3.2.3) can be partially addressed
@@ -641,7 +641,7 @@ theorem hungarian_turkish_both_twoDim :
 
 /-- Alternative palatal harmony with /e/ as a blocker (opaque).
     Only /i, í/ are transparent; /e, é/ block spreading.
-    @cite{siptar-torkenczy-2000} §3.2.3: /e/ is the least transparent
+    [siptar-torkenczy-2000] §3.2.3: /e/ is the least transparent
     neutral vowel (most likely to block). -/
 def palatalHarmony_eBlocks : HarmonySystem :=
   HarmonySystem.mk' (feature := .back)

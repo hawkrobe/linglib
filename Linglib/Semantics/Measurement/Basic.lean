@@ -5,7 +5,7 @@ import Linglib.Features.Dimension
 
 /-!
 # Measurement Semantics
-@cite{bale-schwarz-2026} @cite{kennedy-2015} @cite{krifka-1989} @cite{scontras-2014} @cite{zabbal-2005}
+[bale-schwarz-2026] [kennedy-2015] [krifka-1989] [scontras-2014] [zabbal-2005]
 
 Formal semantics of measurement: measure functions, the bridge to bare numerals
 via CARD, the quantity-uniform property, and the connection to existing
@@ -13,11 +13,11 @@ degree-semantics infrastructure.
 
 ## Theoretical Foundation
 
-@cite{scontras-2014}'s *The Semantics of Measurement* (Ch. 2) aligns measure
+[scontras-2014]'s *The Semantics of Measurement* (Ch. 2) aligns measure
 terms (kilo, liter) with the Num-head CARD, treating both as instances of a
-single category M. The CARD primitive originates with @cite{zabbal-2005}; its
+single category M. The CARD primitive originates with [zabbal-2005]; its
 relational shape (numerals as relations between numbers and individuals) follows
-@cite{krifka-1989}. Scontras's contribution is the unification: CARD and kilo
+[krifka-1989]. Scontras's contribution is the unification: CARD and kilo
 share the type signature of a measure term, and number marking on basic nouns
 (`one boy` vs. `two boys`) is the same operation as number marking on measure
 terms (`one kilo` vs. `two kilos`).
@@ -36,7 +36,7 @@ which carries the tag plus the underlying `apply` function.
 ### Measure Terms
 
 A measure term (gram, liter, mile) **names** a specific measure function.
-Its (intransitive) denotation in @cite{scontras-2014}, eq. (33):
+Its (intransitive) denotation in [scontras-2014], eq. (33):
 
     ⟦kilo⟧ = λn. λx. μ_kg(x) = n
 
@@ -66,7 +66,7 @@ gives `E → α`. This module adds:
   cardinality — `MeasureFn` is not a typeclass)
 - the quantity-uniform property (Scontras's QU_μ, eq. (44) p. 43)
 
-## Connection to @cite{bale-schwarz-2026}
+## Connection to [bale-schwarz-2026]
 
 `Features/Dimension.lean` provides the typed-dimension substrate
 (`Dimension`, `QuotientDimension`, `DimensionType`) used by
@@ -88,7 +88,7 @@ open Features.Dimension (Dimension)
 /-- A measure function maps entities to non-negative rational magnitudes
 along a specific dimension.
 
-@cite{scontras-2014}: degrees are pairs ⟨μ, n⟩ where μ is the measure
+[scontras-2014]: degrees are pairs ⟨μ, n⟩ where μ is the measure
 function and n is the numerical value. A measure function is individuated
 by its dimension: μ_kg measures mass, μ_L measures volume, μ_CARD counts.
 
@@ -114,7 +114,7 @@ instance {E : Type*} : CoeFun (MeasureFn E) (fun _ => E → ℚ) where
 
     ⟦kilo⟧(3) = λx. μ_kg(x) = 3
 
-@cite{scontras-2014}: measure terms are nouns that name specific measure
+[scontras-2014]: measure terms are nouns that name specific measure
 functions. Their type is ⟨n, ⟨e,t⟩⟩ — they take a numeral and return a
 predicate. This is the **exact (`=`) case of the shared comparison-over-a-
 measure primitive** `Core.Scale.Comparison.over`: `⟦kilo⟧(n)` is
@@ -138,9 +138,9 @@ instance {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) :
 
 /-- The cardinality measure: μ_CARD x = |x|.
 
-The CARD Num-head originates with @cite{zabbal-2005}; its relational shape
+The CARD Num-head originates with [zabbal-2005]; its relational shape
 (numerals as relations between numbers and individuals) follows
-@cite{krifka-1989}. @cite{scontras-2014} (eqs. (23), (36)) gives CARD the form
+[krifka-1989]. [scontras-2014] (eqs. (23), (36)) gives CARD the form
 
     ⟦CARD⟧ = λP. λn. λx. P(x) ∧ μ_CARD(x) = n
 
@@ -156,7 +156,7 @@ def cardMeasure (E : Type*) (cardFn : E → ℚ) (h : ∀ e, cardFn e ≥ 0) : M
 -- ============================================================================
 
 /-- A predicate P is **quantity-uniform** with respect to measure function μ
-(@cite{scontras-2014}, eq. (44), p. 43; restated as eq. (53), p. 48):
+([scontras-2014], eq. (44), p. 43; restated as eq. (53), p. 48):
 
     QU_μ(P) ↔ ∀ x y, P(x) ∧ P(y) → μ(x) = μ(y)
 
@@ -190,13 +190,13 @@ def MeasureFn.toHasDegree {E : Type*} (μ : MeasureFn E) : Core.Scale.HasDegree 
   { degree := μ.apply }
 
 -- ============================================================================
--- § 6. Quantizing Nouns (@cite{scontras-2014}, Ch. 3)
+-- § 6. Quantizing Nouns ([scontras-2014], Ch. 3)
 -- ============================================================================
 
 /-- Classification of quantizing nouns (Scontras Ch. 3): nouns that turn
 substance terms into countable expressions.
 
-@cite{scontras-2014} identifies three classes via Rothstein-style
+[scontras-2014] identifies three classes via Rothstein-style
 diagnostics (Table 3.5, p. 89):
 
 - **Measure terms** (kilo, liter): name a measure function directly;
@@ -266,7 +266,7 @@ theorem measureTerm_always_licensesMeasure (r : Option ContainerReading) :
   cases r <;> trivial
 
 /-- Atomizers never license a MEASURE reading
-(@cite{scontras-2014} Ch. 3 §3.3, Table 3.5 p. 89). They impose a partition
+([scontras-2014] Ch. 3 §3.3, Table 3.5 p. 89). They impose a partition
 into atoms (eq. (77)) and are counted by CARD, not measured. -/
 theorem atomizer_no_MEASURE_reading (r : Option ContainerReading) :
     ¬ licensesMeasureReading .atomizer r := by
@@ -285,11 +285,11 @@ theorem containerNoun_licensesMeasure_iff_measure (r : ContainerReading) :
 
 /-! ### Formalization-internal observation
 
-@cite{scontras-2014}'s measure-term denotation gives exact meaning directly:
+[scontras-2014]'s measure-term denotation gives exact meaning directly:
 
     ⟦kilo⟧(n)(x) = (μ_kg(x) = n)               -- eq. (33), p. 37
 
-@cite{kennedy-2015}'s "de-Fregean" analysis gives bare numerals a two-sided
+[kennedy-2015]'s "de-Fregean" analysis gives bare numerals a two-sided
 meaning via `max`:
 
     ⟦three⟧ = λD. max{n | D(n)} = 3            -- eq. (29), p. 15
@@ -347,9 +347,9 @@ Wellwood admissibility (`StrictMono` / `admissibleMeasure`) — are properties
 that a `MeasureFn` may carry. The bridges below let consumers move between
 the concrete and abstract views without re-stipulation. -/
 
-/-- A `MeasureFn` is **extensive** in the @cite{krifka-1998} sense (additive
+/-- A `MeasureFn` is **extensive** in the [krifka-1998] sense (additive
 over non-overlapping entities, positive, strictly monotone over the part-whole
-order; the formalism traces to @cite{krifka-1989}'s cumulative/quantized
+order; the formalism traces to [krifka-1989]'s cumulative/quantized
 distinction). Definitionally `Mereology.ExtMeasure E μ.apply`; declared as
 `abbrev` so the underlying class instance elaborates through it without manual
 unfolding. -/
@@ -357,8 +357,8 @@ abbrev MeasureFn.IsExtensive {E : Type*} [SemilatticeSup E]
     (μ : MeasureFn E) : Prop :=
   Mereology.ExtMeasure E μ.apply
 
-/-- A `MeasureFn` is **admissible** (in @cite{wellwood-2015}'s /
-@cite{schwarzschild-2006}'s Monotonicity Constraint sense) iff its underlying
+/-- A `MeasureFn` is **admissible** (in [wellwood-2015]'s /
+[schwarzschild-2006]'s Monotonicity Constraint sense) iff its underlying
 function is `StrictMono` on the part-whole order. Definitionally equal to
 `Semantics.Gradability.StatesBased.admissibleMeasure μ.apply` — both are
 `StrictMono μ.apply` — so consumers can prove the equivalence by `Iff.rfl`
@@ -368,7 +368,7 @@ abbrev MeasureFn.IsAdmissible {E : Type*} [Preorder E]
   StrictMono μ.apply
 
 /-- **Scontras-Krifka bridge.** When a `MeasureFn` is extensive, applying
-@cite{krifka-1989}'s QMOD with that measure function at any positive value
+[krifka-1989]'s QMOD with that measure function at any positive value
 produces a QUA predicate. Measure terms ("three kilos of rice") yield
 quantized predicates because their measure function is extensive. -/
 theorem extensive_measureFn_qmod_qua

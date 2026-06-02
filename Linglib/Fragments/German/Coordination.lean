@@ -2,7 +2,7 @@ import Linglib.Features.Coordination
 
 /-!
 # German Coordination Morphology
-@cite{schwarzer-2026}
+[schwarzer-2026]
 
 German conjunction morphology. German uses a J-only strategy
 (like English and Irish): the single conjunction particle *und*

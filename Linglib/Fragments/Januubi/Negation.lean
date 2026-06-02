@@ -3,11 +3,11 @@ import Linglib.Phenomena.Negation.ExpletiveNegation
 
 /-!
 # Januubi Arabic: Negation and Expletive Negation Markers
-@cite{jin-koenig-2021}
+[jin-koenig-2021]
 
 Januubi is a dialect of Gulf Arabic spoken in the province of Asir in
 southwestern Saudi Arabia. It had not been documented for expletive
-negation (EN) prior to @cite{jin-koenig-2021}.
+negation (EN) prior to [jin-koenig-2021].
 
 ## Standard Negation
 
@@ -101,7 +101,7 @@ structure ENExample where
   enNegator : String
   deriving Repr
 
-/-- BEFORE trigger: *gabl* 'before' (@cite{jin-koenig-2021}, ex. 24). -/
+/-- BEFORE trigger: *gabl* 'before' ([jin-koenig-2021], ex. 24). -/
 def beforeExample : ENExample where
   triggerClass := "BEFORE"
   triggerForm := "gabl"
@@ -112,7 +112,7 @@ def beforeExample : ENExample where
   enNegator := "maa"
 
 /-- BARELY trigger: *b-il-guwah* 'by force / barely'
-    (@cite{jin-koenig-2021}, ex. 23). -/
+    ([jin-koenig-2021], ex. 23). -/
 def barelyExample : ENExample where
   triggerClass := "BARELY"
   triggerForm := "b-il-guwah"
@@ -131,7 +131,7 @@ open Phenomena.Negation.ExpletiveNegation (ENBlockingReason)
 
 /-- Why REGRET does not trigger EN in Januubi: Januubi speakers disprefer
     modal operators in complement clauses, and REGRET-class EN requires
-    a deontic modal (e.g. *should*) (@cite{jin-koenig-2021}, §6.1.2, §7). -/
+    a deontic modal (e.g. *should*) ([jin-koenig-2021], §6.1.2, §7). -/
 def regretBlocked : ENBlockingReason := .modalRestriction
 
 /-- Why comparatives (MORE THAN, TOO…TO) do not trigger EN in Januubi. -/

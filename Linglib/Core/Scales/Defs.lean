@@ -3,7 +3,7 @@ import Linglib.Tactics.OntSort
 
 /-!
 # Core/Scales/Defs.lean — basic types
-@cite{kennedy-mcnally-2005} @cite{kennedy-2007} @cite{rotstein-winter-2004} @cite{rouillard-2026}
+[kennedy-mcnally-2005] [kennedy-2007] [rotstein-winter-2004] [rouillard-2026]
 
 Foundational scale-classification types used across all gradability/degree
 substrate. No framework-specific operators here (those live in
@@ -26,10 +26,10 @@ namespace Core.Scale
 -- ════════════════════════════════════════════════════
 
 /-- Classification of scale boundedness.
-    @cite{kennedy-mcnally-2005} eq (1) and @cite{kennedy-2007} §4.2 eq (59):
+    [kennedy-mcnally-2005] eq (1) and [kennedy-2007] §4.2 eq (59):
     four scale types based on which endpoints exist (independently
-    discovered by @cite{rotstein-winter-2004}).
-    @cite{rouillard-2026}: temporal domains have similar boundary structure
+    discovered by [rotstein-winter-2004]).
+    [rouillard-2026]: temporal domains have similar boundary structure
     (closed intervals have both bounds, open intervals lack them).
 
     This enum is the **lexical data tag** for classifying scales in fragment
@@ -39,7 +39,7 @@ namespace Core.Scale
     encoded via Mathlib typeclasses (`OrderTop`, `OrderBot`, `NoMaxOrder`,
     `NoMinOrder`); the two encodings serve different roles and both are real.
 
-    **Standard-type dimension.** @cite{kennedy-2007} §4.3 eq (66) (Interpretive
+    **Standard-type dimension.** [kennedy-2007] §4.3 eq (66) (Interpretive
     Economy) DERIVES standard type (relative / min-absolute / max-absolute)
     from scale structure for `open_`, `lowerBounded`, and `upperBounded`. For
     `closed`, all three interpretations are licensed (see eq 67: *opaque*,
@@ -47,7 +47,7 @@ namespace Core.Scale
     entries with `boundedness = .closed` may need a separate `standardType`
     slot if downstream theorems care about the distinction.
 
-    **Open-bounded sub-distinction.** @cite{kennedy-2007} fn 28: open scales
+    **Open-bounded sub-distinction.** [kennedy-2007] fn 28: open scales
     can be further distinguished by whether they approach a value (e.g. 0 for
     cost) but don't include it, vs. completely unbounded. Not captured here. -/
 inductive Boundedness where
@@ -70,9 +70,9 @@ def Boundedness.hasMin : Boundedness → Bool
 /-- "Any endpoint exists" predicate: returns `true` whenever the scale
     has at least one bound (max or min). An open scale returns `false`.
 
-    **NOT @cite{kennedy-2007}'s full licensing prediction.** Kennedy's actual
-    prediction is the 4×2 modifier-class matrix in @cite{kennedy-2007}
-    eq (61) (= @cite{kennedy-mcnally-2005} eq (15)): maximizers
+    **NOT [kennedy-2007]'s full licensing prediction.** Kennedy's actual
+    prediction is the 4×2 modifier-class matrix in [kennedy-2007]
+    eq (61) (= [kennedy-mcnally-2005] eq (15)): maximizers
     (*completely, perfectly*) require an UPPER endpoint; minimizers
     (*slightly, partially*) require a LOWER endpoint; proportional modifiers
     (*half*) require BOTH. A single Bool can't encode this — to be faithful,
@@ -80,8 +80,8 @@ def Boundedness.hasMin : Boundedness → Bool
 
     The current Bool is sufficient for callers that only need to distinguish
     "open" from "any-endpoint-exists" (e.g. Interpretive Economy gating a
-    relative vs. absolute interpretation, @cite{kennedy-2007} §4.3, or
-    Rouillard's MIP, @cite{rouillard-2026}). For modifier-specific
+    relative vs. absolute interpretation, [kennedy-2007] §4.3, or
+    Rouillard's MIP, [rouillard-2026]). For modifier-specific
     licensing, consumers must consult `hasMax`/`hasMin` directly. -/
 def Boundedness.isLicensed : Boundedness → Bool
   | .closed | .lowerBounded | .upperBounded => true

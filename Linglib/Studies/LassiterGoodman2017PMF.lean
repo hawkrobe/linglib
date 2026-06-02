@@ -5,8 +5,8 @@ import Linglib.Studies.CobrerosEtAl2012
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
-# @cite{lassiter-goodman-2017} on mathlib `PMF` — structural shell
-@cite{lassiter-goodman-2017}
+# [lassiter-goodman-2017] on mathlib `PMF` — structural shell
+[lassiter-goodman-2017]
 
 L&G 2017 ("Adjectival vagueness in a Bayesian model of interpretation",
 *Synthese* 194:3801-3836) gives a Bayesian/RSA account of vague gradable
@@ -112,7 +112,7 @@ borderline cases are *one* of several formalised positions in linglib:
 Per linglib's "no bridge files" discipline, framework-comparison content
 is anchored *here* (the chronologically-later paper) rather than in a
 dedicated comparison file. The §7 theorem below proves the L&G
-prediction, contrasts it with the @cite{alxatib-pelletier-2011}
+prediction, contrasts it with the [alxatib-pelletier-2011]
 borderline-contradiction data, and so makes the empirical incompatibility
 between L&G's literal-meaning rule and the observed acceptance rate
 visible at theorem level.
@@ -193,7 +193,7 @@ Supervaluation (`Fine1975.lean`) maps borderline to `Truth3.indet`;
 epistemicism denies the very framing (borderline cases have determinate
 Boolean truth values we don't know); TCS predicts borderline
 contradictions are tolerantly *true*, with empirical support from
-@cite{alxatib-pelletier-2011}. See `Phenomena/Gradability/Compare.lean`
+[alxatib-pelletier-2011]. See `Phenomena/Gradability/Compare.lean`
 for the comparison taxonomy. -/
 
 /-- **Borderline-case theorem**: when both some threshold below `h` AND
@@ -221,7 +221,7 @@ L&G use as exposition. It is genuinely RSA-architectural (depends on
 rational speaker over alternatives + Bayesian listener), but does not
 capture L&G's novel contribution. Anchored to L&G only because they
 present this mechanism in §3; the canonical reference is
-@cite{frank-goodman-2012}. -/
+[frank-goodman-2012]. -/
 
 /-- **Pragmatic strengthening (FG2012 mechanism)**: when `u_weak` applies
 at both `w_strong` and `w_only_weak` but a stronger alternative
@@ -441,14 +441,14 @@ example {Utt World : Type*}
     PMF.posterior S1 worldPrior u h_marg w_unique = 1 :=
   PMF.posterior_eq_one_of_singleton_score_support S1 worldPrior u h_marg w_unique h_unique
 
-/-! ## §7. Empirical contrast with @cite{alxatib-pelletier-2011}
+/-! ## §7. Empirical contrast with [alxatib-pelletier-2011]
 
 L&G's literal-meaning prediction for "X is tall and X is not tall" — the
 joint-Boolean conjunction of two complementary truth-conditional
 contributions — is bounded by `P_T(tall) · (1 - P_T(tall)) ≤ 1/4`,
 maximised at the maximally borderline `P_T = 1/2`.
 
-Empirical contrast: @cite{alxatib-pelletier-2011} report **44.7%
+Empirical contrast: [alxatib-pelletier-2011] report **44.7%
 acceptance** for "X is tall and not tall" applied to the median
 (borderline) man in their visual stimulus. The data is encoded at
 `Phenomena/Gradability/Vagueness.lean::alxatibPelletier2011Tall`.
@@ -456,7 +456,7 @@ acceptance** for "X is tall and not tall" applied to the median
 `44.7% > 25%`, so a literal-meaning probabilistic account cannot
 reproduce the data. This is the formal expression of the empirical
 challenge that motivated TCS (`Linglib/Semantics/Supervaluation/TCS.lean`,
-@cite{cobreros-etal-2012}), where borderline cases tolerantly satisfy
+[cobreros-etal-2012]), where borderline cases tolerantly satisfy
 `P ∧ ¬P` *as a tolerantly-true proposition* — not via probability
 multiplication.
 
@@ -470,9 +470,9 @@ literal-meaning rule `P("X is P and not P") = P_T(P) · P_T(¬P)`, the
 predicted acceptance is bounded by `1/4`, regardless of the underlying
 threshold posterior or the height being judged.
 
-Empirical contrast: @cite{alxatib-pelletier-2011} report 44.7% — well
+Empirical contrast: [alxatib-pelletier-2011] report 44.7% — well
 above 25% — so the literal-rule prediction is empirically refuted.
-TCS (`@cite{cobreros-etal-2012}`, formalised in
+TCS (`[cobreros-etal-2012]`, formalised in
 `Semantics/Supervaluation/TCS.lean`) accommodates the data via
 non-probabilistic tolerant satisfaction. -/
 theorem lg_literal_borderline_bounded {S : Type*} (L1_latent : PMF S) (s : Set S) :

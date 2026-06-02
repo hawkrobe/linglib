@@ -9,7 +9,7 @@ import Linglib.Morphology.Nanosyntax.Basic
 --      relocated 0.230.455 — sole consumer is this study file; PFM dir dissolves)
 -- ============================================================================
 
-/-! Paradigm Function Morphology (@cite{stump-2001}) — a lexicalist,
+/-! Paradigm Function Morphology ([stump-2001]) — a lexicalist,
 parallel, process-based, realizational theory used by K-B 2026 §2.2 as
 one of the four positions in the theory space. -/
 
@@ -96,7 +96,7 @@ end Morphology.PFM
 --      inlined as sole consumer per CLAUDE.md anchoring rules)
 -- ============================================================================
 
-/-! @cite{kalin-bjorkman-etal-2026} (§3.2) argue that solving the wordhood
+/-! [kalin-bjorkman-etal-2026] (§3.2) argue that solving the wordhood
 problem requires distinguishing at minimum two notions of "word":
 
 - **ms-word** (morphosyntactic/grammatical word): a constituent containing
@@ -113,31 +113,31 @@ four-way typology of morpheme attachment (Table 3). -/
 
 namespace Morphology.Wordhood
 
-/-- Morphosyntactic boundedness. @cite{kalin-bjorkman-etal-2026} §3.2.1. -/
+/-- Morphosyntactic boundedness. [kalin-bjorkman-etal-2026] §3.2.1. -/
 inductive MSBoundedness where
   | free   -- independent ms-word (can stand alone, be reordered, etc.)
   | bound  -- must be internal to a host ms-word
   deriving DecidableEq, Repr
 
-/-- Phonological/prosodic boundedness. @cite{kalin-bjorkman-etal-2026} §3.2.2. -/
+/-- Phonological/prosodic boundedness. [kalin-bjorkman-etal-2026] §3.2.2. -/
 inductive PBoundedness where
   | free   -- forms its own p-word
   | bound  -- must be internal to a host p-word
   deriving DecidableEq, Repr
 
-/-- A morpheme's wordhood profile. @cite{kalin-bjorkman-etal-2026} Table 3. -/
+/-- A morpheme's wordhood profile. [kalin-bjorkman-etal-2026] Table 3. -/
 structure WordhoodProfile where
   ms : MSBoundedness
   p  : PBoundedness
   deriving DecidableEq, Repr
 
 /-- The four-way classification of morpheme attachment.
-    @cite{kalin-bjorkman-etal-2026} §3.2.3. -/
+    [kalin-bjorkman-etal-2026] §3.2.3. -/
 inductive WordhoodClass where
   /-- ms-free, p-free: an independent word by both criteria. -/
   | canonicalWord
   /-- ms-free, p-bound: syntactically independent but phonologically
-      dependent. @cite{zwicky-1977} -/
+      dependent. [zwicky-1977] -/
   | simpleClitic
   /-- ms-bound, p-free: morphosyntactically part of a word but
       phonologically independent. -/
@@ -194,7 +194,7 @@ end Morphology.Wordhood
 - **Wordhood typology** (`Morphology.Wordhood`): K-B 2026 §3.2 two-
   dimensional classification (ms-boundedness × p-boundedness → 4 wordhood
   classes).
-- **Clitic vs. affix diagnostics** (`Morphology.Diagnostics`): @cite{zwicky-pullum-1983}'s
+- **Clitic vs. affix diagnostics** (`Morphology.Diagnostics`): [zwicky-pullum-1983]'s
   six criteria for affix-vs-clitic.
 
 The bridge: ZP's criteria diagnose **ms-boundedness**. The p-boundedness
@@ -294,11 +294,11 @@ theorem postposition_prWdExternal_is_canonicalWord :
 end Morphology.WordhoodBridge
 
 /-!
-# @cite{kalin-bjorkman-etal-2026}: The Morphology/Syntax Interface
-@cite{kalin-bjorkman-etal-2026}
+# [kalin-bjorkman-etal-2026]: The Morphology/Syntax Interface
+[kalin-bjorkman-etal-2026]
 
 This study file verifies the core contributions of
-@cite{kalin-bjorkman-etal-2026}'s *Elements in Generative Syntax*
+[kalin-bjorkman-etal-2026]'s *Elements in Generative Syntax*
 survey against Linglib's independent formalizations of DM, PFM,
 Nanosyntax, and the Wordhood typology.
 
@@ -356,7 +356,7 @@ theorem all_theories_wellFormed :
 
 /-! ### 1b. DM and Nanosyntax are indistinguishable on these dimensions
 
-@cite{kalin-bjorkman-etal-2026} §2: DM and Nanosyntax agree on all four
+[kalin-bjorkman-etal-2026] §2: DM and Nanosyntax agree on all four
 dimensions. Their differences (Subset vs Superset Principle, terminal vs
 phrasal spellout) are mechanism-level, not dimension-level. -/
 
@@ -366,7 +366,7 @@ theorem dm_nanosyntax_same_position : dm = nanosyntax := rfl
 
 /-! ### 1c. Structural impossibilities
 
-@cite{kalin-bjorkman-etal-2026} §2.1: not all 2⁴ = 16 combinations
+[kalin-bjorkman-etal-2026] §2.1: not all 2⁴ = 16 combinations
 are possible. Process-based theories must be lexicalist (syntax is
 piece-based). -/
 
@@ -422,8 +422,8 @@ theorem wordhood_injective (w₁ w₂ : WordhoodProfile)
 
 /-! ### 2b. ZP diagnostics determine ms-boundedness
 
-@cite{kalin-bjorkman-etal-2026} §3.2.1: the six criteria from
-@cite{zwicky-pullum-1983} diagnose whether a morpheme is ms-bound.
+[kalin-bjorkman-etal-2026] §3.2.1: the six criteria from
+[zwicky-pullum-1983] diagnose whether a morpheme is ms-bound.
 This is formalized in `WordhoodBridge`. -/
 
 /-- Affixhood (in MorphStatus) is equivalent to ms-boundedness. -/
@@ -438,7 +438,7 @@ theorem clitic_implies_msfree (s : Morphology.MorphStatus)
 
 /-! ### 2c. PrWd diagnostics determine p-boundedness
 
-@cite{kalin-bjorkman-etal-2026} §3.2.2: prosodic diagnostics (vowel
+[kalin-bjorkman-etal-2026] §3.2.2: prosodic diagnostics (vowel
 harmony scope, minimal word constraints, hiatus resolution) diagnose
 p-boundedness. This is formalized via the ProsodicWord bridge. -/
 
@@ -466,14 +466,14 @@ theorem zpAffix_plus_prWdExternal :
 --     (Inlined from former Morphology/FormMeaningMapping.lean.)
 -- ============================================================================
 
-/-! §4 of @cite{kalin-bjorkman-etal-2026} identifies seven descriptive types
+/-! §4 of [kalin-bjorkman-etal-2026] identifies seven descriptive types
 of form-meaning mapping — the relationships between phonological exponents
 and morphosyntactic features/functions. -/
 
 namespace Morphology.FormMeaningMapping
 
 /-- The seven descriptive types of form-meaning mapping.
-    @cite{kalin-bjorkman-etal-2026} §4. -/
+    [kalin-bjorkman-etal-2026] §4. -/
 inductive MappingType where
   /-- One meaning/function ↔ one exponent, invariant.
       Example: root *cat* is always `\/kæt\/`. -/
@@ -509,7 +509,7 @@ open Morphology.FormMeaningMapping
 
 /-! ### 3a. The seven descriptive types
 
-@cite{kalin-bjorkman-etal-2026} §4 identifies seven form-meaning
+[kalin-bjorkman-etal-2026] §4 identifies seven form-meaning
 mapping types. Any theory of morphology must account for all of them. -/
 
 /-- The seven types are mutually exclusive. -/
@@ -528,7 +528,7 @@ theorem mappingTypes_distinct :
 
 /-! ### 4a. *ABA impossibility (Nanosyntax contribution)
 
-@cite{caha-2009}: the fseq-based Superset Principle derives the *ABA
+[caha-2009]: the fseq-based Superset Principle derives the *ABA
 constraint. If entry β beats entry α for case Y, β also beats α
 for all cases below Y on the fseq. -/
 
@@ -541,7 +541,7 @@ theorem starABA_verified :
 
 /-! ### 4b. PFM's Paradigm Function architecture
 
-@cite{stump-2001}: PFM is the only major theory that is both
+[stump-2001]: PFM is the only major theory that is both
 process-based and parallel in architecture. This combination is
 well-formed because process-based requires lexicalism, and parallel
 is a lexicalist architecture. -/
@@ -559,7 +559,7 @@ theorem pfm_processBased_parallel_consistent :
 
 /-! ### 5. Theory × mapping-type matrix
 
-@cite{kalin-bjorkman-etal-2026} Table 4 captures the culminating insight
+[kalin-bjorkman-etal-2026] Table 4 captures the culminating insight
 of the Element: different theories handle form-meaning mapping complexities
 differently, and simplification in theory trades off against empirical
 coverage. Each cell records whether a theory handles a mapping type:
@@ -578,7 +578,7 @@ Key mechanisms referenced:
   reanalyzed as involving distinct morphemes or features -/
 
 /-- How a morphological theory handles a form-meaning mapping type.
-    @cite{kalin-bjorkman-etal-2026} Table 4. -/
+    [kalin-bjorkman-etal-2026] Table 4. -/
 inductive Coverage where
   /-- Handled natively by the theory's basic mechanisms. -/
   | yes
@@ -588,7 +588,7 @@ inductive Coverage where
   | extra
   deriving DecidableEq, Repr, BEq
 
-/-- The four named theories from @cite{kalin-bjorkman-etal-2026}. -/
+/-- The four named theories from [kalin-bjorkman-etal-2026]. -/
 inductive TheoryName where
   | pfm | mas | nanosyntax | dm
   deriving DecidableEq, Repr, BEq
@@ -600,7 +600,7 @@ def TheoryName.position : TheoryName → TheoryPosition
   | .nanosyntax => Morphology.TheorySpace.nanosyntax
   | .dm => Morphology.TheorySpace.dm
 
-/-- @cite{kalin-bjorkman-etal-2026} Table 4: for each (mapping type,
+/-- [kalin-bjorkman-etal-2026] Table 4: for each (mapping type,
     theory) pair, the coverage verdicts across subcases.
 
     Multiple values indicate different subcases receive different
@@ -700,7 +700,7 @@ theorem mas_rejects_all_complex (m : MappingType)
 
 /-! ### 5f. Realizational vs incremental split
 
-@cite{kalin-bjorkman-etal-2026} §4.6: realizational theories handle
+[kalin-bjorkman-etal-2026] §4.6: realizational theories handle
 at least some non-one-to-one mappings natively, because separating
 features from exponents makes mismatches structurally possible.
 Incremental theories (MaS) must reanalyze all of them. -/

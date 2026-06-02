@@ -1,12 +1,12 @@
 import Linglib.Morphology.MorphRule
 
 /-!
-# @cite{baker-1985}: The Mirror Principle and Morphosyntactic Explanation
-@cite{baker-1985}
+# [baker-1985]: The Mirror Principle and Morphosyntactic Explanation
+[baker-1985]
 
 This study file verifies the Mirror Principle's predictions against
 data from Chamorro, Quechua, and Bantu languages, as presented in
-@cite{baker-1985}.
+[baker-1985].
 
 ## Structure
 
@@ -27,14 +27,14 @@ data from Chamorro, Quechua, and Bantu languages, as presented in
 -- ============================================================================
 
 /-! "Morphological derivations must directly reflect syntactic derivations
-(and vice versa)." (@cite{baker-1985} (4)) Each grammatical function
+(and vice versa)." ([baker-1985] (4)) Each grammatical function
 changing rule (GF-rule) — passive, causative, applicative, reflexive/
 reciprocal — simultaneously adds an affix to the verb and changes the
 grammatical functions of arguments. The Mirror Principle requires the
 morphological ordering (affix layering) to match the syntactic ordering
 (rule application sequence).
 
-@cite{baker-1985} §6 argues the Mirror Principle should not be a
+[baker-1985] §6 argues the Mirror Principle should not be a
 stipulation but follow from the architecture: in a framework where
 GF-rules are a single process with both effects, mirroring is by
 construction. Formalized below via `DerivationStep`. -/
@@ -43,7 +43,7 @@ namespace Morphology.MirrorPrinciple
 
 open Morphology (MorphCategory)
 
-/-- Grammatical function changing rules (GF-rules). @cite{baker-1985} §§2-4. -/
+/-- Grammatical function changing rules (GF-rules). [baker-1985] §§2-4. -/
 inductive GFRuleType where
   | passive
   | causative
@@ -51,7 +51,7 @@ inductive GFRuleType where
   | reflexReciprocal
   deriving DecidableEq, Repr, BEq
 
-/-- Map GF-rules to @cite{bybee-1985}'s morphological categories. -/
+/-- Map GF-rules to [bybee-1985]'s morphological categories. -/
 def GFRuleType.toMorphCategory : GFRuleType → MorphCategory
   | .passive => .voice
   | .causative => .valence
@@ -141,7 +141,7 @@ theorem appl_feeds_passive :
 theorem appl_pass_predicted :
     feedingOrder .applicative .passive = [.applicative, .passive] := rfl
 
-/-- The morphological domain of the Mirror Principle. @cite{baker-1985} §5. -/
+/-- The morphological domain of the Mirror Principle. [baker-1985] §5. -/
 inductive MorphDomain where
   | concatenative | cliticization | nonconcatenative
   deriving DecidableEq, Repr
@@ -178,7 +178,7 @@ open Morphology.MirrorPrinciple
 -- are explained by the Mirror Principle: fan-'s position relative to
 -- the GF-rule morpheme determines which GFs it references.
 --
--- @cite{baker-1985} §§1, 3.1.
+-- [baker-1985] §§1, 3.1.
 
 section Chamorro
 
@@ -191,7 +191,7 @@ section Chamorro
     so it references the post-passive (surface) subject —
     'the children', the derived subject.
 
-    @cite{baker-1985} (15b), (21). -/
+    [baker-1985] (15b), (21). -/
 def chamorroPassiveAgreement : AgreementPattern :=
   ⟨.outer, .surface⟩
 
@@ -204,7 +204,7 @@ def chamorroPassiveAgreement : AgreementPattern :=
     so it references the pre-causative (semantic) subject —
     the underlying subject of 'eat'.
 
-    @cite{baker-1985} (15c), (23). -/
+    [baker-1985] (15c), (23). -/
 def chamorroCausativeAgreement : AgreementPattern :=
   ⟨.inner, .semantic⟩
 
@@ -217,7 +217,7 @@ theorem chamorro_causative_attested :
 
 /-- Chamorro exhibits both attested patterns in a single language,
     confirming the Agreement Restriction is a property of UG, not a
-    language-specific parameter. @cite{baker-1985} §3.1. -/
+    language-specific parameter. [baker-1985] §3.1. -/
 theorem chamorro_shows_both_attested :
     chamorroPassiveAgreement.isAttested = true ∧
     chamorroCausativeAgreement.isAttested = true :=
@@ -232,7 +232,7 @@ theorem chamorro_shows_both_attested :
     → References the intermediate subject (post-passive, pre-causative)
     = 'the children' (the derived subject of the passive).
 
-    @cite{baker-1985} (25), (26). -/
+    [baker-1985] (25), (26). -/
 def chamorroCausativePassive : Derivation :=
   [{ rule := .passive, affix := "-in-", isPrefix := true },
    { rule := .causative, affix := "na'-", isPrefix := true }]
@@ -255,7 +255,7 @@ morpheme ordering corresponds to a difference in which arguments
 are bound by the reciprocal, which follows from the different
 syntactic derivation orders.
 
-@cite{baker-1985} §4.1. -/
+[baker-1985] §4.1. -/
 
 section Quechua
 
@@ -268,7 +268,7 @@ section Quechua
     → Causative adds a new causer
     → Causer causes [reciprocal beating]
 
-    @cite{baker-1985} (39a), (45)–(46). -/
+    [baker-1985] (39a), (45)–(46). -/
 def quechuaRecipInsideCaus : Derivation :=
   [{ rule := .reflexReciprocal, affix := "-naku" },
    { rule := .causative, affix := "-chi" }]
@@ -282,7 +282,7 @@ def quechuaRecipInsideCaus : Derivation :=
     → Reciprocal then binds the causer and the patient
     → The causers reciprocally [let someone beat them]
 
-    @cite{baker-1985} (39b), (47)–(48). -/
+    [baker-1985] (39b), (47)–(48). -/
 def quechuaCausInsideRecip : Derivation :=
   [{ rule := .causative, affix := "-chi" },
    { rule := .reflexReciprocal, affix := "-naku" }]
@@ -319,27 +319,27 @@ apply first (its affix is inner).
 Attested: V-appl-pass
 Not attested: *V-pass-appl (for oblique-to-subject promotion)
 
-@cite{baker-1985} §4.2. -/
+[baker-1985] §4.2. -/
 
 section PassiveApplicative
 
 /-- Chi-Mwi:ni: *tet-el-el-a* 'bring-appl-asp-pass'
     Applicative *-el* closer to root than passive.
-    @cite{baker-1985} (56c). -/
+    [baker-1985] (56c). -/
 def chiMwini : Derivation :=
   [{ rule := .applicative, affix := "-el" },
    { rule := .passive, affix := "-a" }]
 
 /-- Kinyarwanda: *andik-iish-w-a* 'write-instr-pass-asp'
     Applicative *-iish* closer to root than passive *-w*.
-    @cite{baker-1985} (57c). -/
+    [baker-1985] (57c). -/
 def kinyarwanda : Derivation :=
   [{ rule := .applicative, affix := "-iish" },
    { rule := .passive, affix := "-w" }]
 
 /-- Huichol: *puutinanai-ri-yeri* 'buy-ben-pass'
     Benefactive-applicative *-ri* closer to root than passive *-yeri*.
-    @cite{baker-1985} (55). -/
+    [baker-1985] (55). -/
 def huichol : Derivation :=
   [{ rule := .applicative, affix := "-ri" },
    { rule := .passive, affix := "-yeri" }]
@@ -377,7 +377,7 @@ theorem all_match_feeding_prediction :
     new causer occupies the object position, so reciprocal
     must apply after causative to bind it.
 
-    @cite{baker-1985} (49), (52). -/
+    [baker-1985] (49), (52). -/
 def bembaCausRecip : Derivation :=
   [{ rule := .causative, affix := "-eshy" },
    { rule := .reflexReciprocal, affix := "-ana" }]
@@ -393,7 +393,7 @@ end PassiveApplicative
 
 /-! ### The Agreement Restriction across languages
 
-@cite{baker-1985} (27) predicts that of four logical possibilities
+[baker-1985] (27) predicts that of four logical possibilities
 for combining agreement position and GF reference, only two are
 attested cross-linguistically:
 
@@ -447,7 +447,7 @@ theorem chamorro_causative_is_derived :
     Since there is no GF-rule morpheme on the verb, the agreement
     morpheme is trivially "inner" (there is nothing for it to be
     outer to), and it references semantic GFs — consistent with
-    pattern (27a). @cite{baker-1985} (31). -/
+    pattern (27a). [baker-1985] (31). -/
 def acheneseAgreement : AgreementPattern :=
   ⟨.inner, .semantic⟩
 

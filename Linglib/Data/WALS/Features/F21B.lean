@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 21B: Exponence of Tense-Aspect-Mood Inflection
-@cite{bickel-nichols-2013b}
+[bickel-nichols-2013b]
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 21B`.

@@ -126,12 +126,12 @@ theorem compositionalRSA_local_excludes_SA :
 theorem compositionalRSA_global_allows_SA :
     compositionalMeaning ⟨.SA, .global⟩ = true := rfl
 
--- SECTION 6: Connection to @cite{franke-2011} and IBR
+-- SECTION 6: Connection to [franke-2011] and IBR
 
 /-!
 ## The IBR Perspective
 
-@cite{franke-2011} shows that IBR (the α→∞ limit of RSA) equals exhMW.
+[franke-2011] shows that IBR (the α→∞ limit of RSA) equals exhMW.
 But this is still SCOPE-BLIND - it's exhMW applied to the WHOLE sentence.
 
 The IBR/exhMW analysis of "every student read some book":

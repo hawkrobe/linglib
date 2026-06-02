@@ -5,13 +5,13 @@ import Linglib.Fragments.Basque.Postsyntax
 
 /-!
 # Middleton (2026) — Ordering of Impoverishment Rules in Taos and Basque
-@cite{middleton-2026} @cite{arregi-nevins-2012} @cite{halle-marantz-1993}
-@cite{harbour-2014} @cite{harbour-2016} @cite{kontak-kunkel-1987}
-@cite{watkins-1984} @cite{harbour-middleton-2026}
+[middleton-2026] [arregi-nevins-2012] [halle-marantz-1993]
+[harbour-2014] [harbour-2016] [kontak-kunkel-1987]
+[watkins-1984] [harbour-middleton-2026]
 
-This file formalises the architectural argument of @cite{middleton-2026}.
-Working within Distributed Morphology (@cite{halle-marantz-1993}),
-@cite{arregi-nevins-2012} propose a strict modular postsyntax in
+This file formalises the architectural argument of [middleton-2026].
+Working within Distributed Morphology ([halle-marantz-1993]),
+[arregi-nevins-2012] propose a strict modular postsyntax in
 which paradigmatic Impoverishment applies *as a block* before
 syntagmatic Impoverishment, and Metathesis follows all
 Impoverishment. Middleton shows from Taos verbal agreement that the
@@ -34,13 +34,13 @@ re-derive the entire paradigm. What lives here:
   are drawn from the Harbour decomposition the paper uses, but the
   rules themselves are not literal transcriptions of paper rules —
   they are minimal witnesses to the para-vs-syn ordering interaction
-  in @cite{middleton-2026} §4.2.1–§4.2.4.
+  in [middleton-2026] §4.2.1–§4.2.4.
 * The general claim — that `runStrict` is strictly less expressive
   than `runInterleaved` whenever a syntagmatic rule needs to feed a
   paradigmatic one — is `runStrict_forces_paraSyn_order` /
   `runInterleaved_admits_synPara`; instantiated on the witness below.
 * A small VI set demonstrates how the postsyntactic output feeds
-  Vocabulary Insertion (Subset Principle, @cite{halle-marantz-1993}),
+  Vocabulary Insertion (Subset Principle, [halle-marantz-1993]),
   again schematically.
 * The Basque half of the paper requires *whole terminal* deletion
   (Participant Dissimilation, rule 16) and *adjacent terminal* swap
@@ -54,7 +54,7 @@ re-derive the entire paradigm. What lives here:
 What is **not** modeled:
 
 * The full Taos paradigm and the literal rule statements of
-  @cite{middleton-2026} (rule numbers and conditioning environments
+  [middleton-2026] (rule numbers and conditioning environments
   vary across the four §4.2 cases).
 * Harbour's Reciprocal Containment constraints on feature bundles.
 * Real Taos VI competition — only enough VIs to demonstrate the
@@ -72,7 +72,7 @@ open Minimalist Morphology.DM.Impoverishment Morphology.DM.VI
 carries a decidable condition. The structural change is to swap two
 distinguished feature *types* in the focus bundle — the rule names a pair
 of feature types and exchanges the positions of the first occurrences of
-each. The directionality matches @cite{arregi-nevins-2012}'s
+each. The directionality matches [arregi-nevins-2012]'s
 `[[X] ⟩ ⟨ [Y]] / Z` notation: "swap X and Y in environment Z."
 -/
 
@@ -87,7 +87,7 @@ instance (rule : MetathesisRule) (n : Neighborhood) :
 
 /-- Build a metathesis rule from a Boolean condition over the focus
     bundle (paradigmatic-style — the most common case in the Taos rules
-    of @cite{middleton-2026}, where the condition refers only to the
+    of [middleton-2026], where the condition refers only to the
     feature inventory of the same node being reordered). -/
 def focusRule (focusCheck : FeatureBundle → Bool)
     (swapFst swapSnd : FeatureVal) : MetathesisRule where
@@ -142,12 +142,12 @@ def MetathesisRule.applyToBundle (rule : MetathesisRule)
 
 Two architectures for the postsyntactic component:
 
-* **`runStrict` (@cite{arregi-nevins-2012}, Fig. 1).** Postsyntax is a
+* **`runStrict` ([arregi-nevins-2012], Fig. 1).** Postsyntax is a
   strict modular pipeline: paradigmatic Impoverishment → syntagmatic
   Impoverishment → Metathesis → VI. Within Feature Markedness,
   paradigmatic rules apply *as a block* before any syntagmatic rule.
 
-* **`runInterleaved` (@cite{middleton-2026}).** Impoverishment rules
+* **`runInterleaved` ([middleton-2026]).** Impoverishment rules
   apply in whatever order the analysis demands — paradigmatic and
   syntagmatic may interleave. Metathesis still follows all
   impoverishment (this ordering is preserved).
@@ -155,16 +155,16 @@ Two architectures for the postsyntactic component:
 The two pipelines coincide on inputs whose impoverishment list is in
 para-then-syn order (`runStrict_eq_interleaved_paraSyn`). They diverge
 when a syntagmatic rule must precede a paradigmatic one
-(@cite{middleton-2026} §4.2.1–§4.2.4) *or* when a paradigmatic rule
+([middleton-2026] §4.2.1–§4.2.4) *or* when a paradigmatic rule
 must precede a syntagmatic one and one cannot guarantee the strict
-block ordering (@cite{middleton-2026} §4.2.5).
+block ordering ([middleton-2026] §4.2.5).
 -/
 
 /-- The Arregi & Nevins postsyntax (their Fig. 1, simplified to the two
     contested layers): paradigmatic Impoverishment, then syntagmatic
     Impoverishment, then Metathesis. Exponence Conversion and
     Morphological Concord are abstracted away — their internal ordering
-    is not at issue in @cite{middleton-2026}. -/
+    is not at issue in [middleton-2026]. -/
 structure ModularPostsyntax where
   paradigmatic : List ImpoverishmentRule
   syntagmatic  : List ImpoverishmentRule
@@ -226,7 +226,7 @@ theorem runStrict_eq_interleaved_paraSyn
     `n`, the strict pipeline ⟨[p], [s], []⟩ is *forced* to yield the
     `[p, s]` answer — the `[s, p]` derivation is unreachable.
 
-    This is the formal counterpart of @cite{middleton-2026}'s argument
+    This is the formal counterpart of [middleton-2026]'s argument
     that A&N's modular ordering cannot derive Taos: the four cases in
     §4.2.1–§4.2.4 require precisely the syn-before-para derivation that
     `runStrict` excludes by construction. -/
@@ -260,7 +260,7 @@ def runImpovThenMeta (rs : List ImpoverishmentRule) (ms : List MetathesisRule)
 
 /-- The reversed two-step pipeline: metathesis first, then impoverishment
     (the order both A&N and Middleton reject — supported by Basque in §3.1
-    and by Taos in §3.2 of @cite{middleton-2026}). -/
+    and by Taos in §3.2 of [middleton-2026]). -/
 def runMetaThenImpov (rs : List ImpoverishmentRule) (ms : List MetathesisRule)
     (n : Neighborhood) : FeatureBundle :=
   applyImpoverishmentChain rs { n with focus := applyMetathesisChain ms n }
@@ -289,7 +289,7 @@ theorem runImpov_neq_runMeta_of_diverges
     (`paradigmatic_isParadigmatic`).
 
     This is a minimal stand-in for the paradigmatic rules involved in
-    @cite{middleton-2026} §4.2.1–§4.2.4 — it is not a transcription of
+    [middleton-2026] §4.2.1–§4.2.4 — it is not a transcription of
     any specific paper rule. -/
 def paraAtomicRule : ImpoverishmentRule :=
   paradigmatic
@@ -424,7 +424,7 @@ theorem middleton_witness :
     `ModularPostsyntax` built from `paraAtomicRule` (paradigmatic) and
     `synMinimalRule` (syntagmatic) — and no extension that adds
     further rules to the same phases — can yield the syn-first output
-    that Taos requires in @cite{middleton-2026} §4.2.1–§4.2.4. -/
+    that Taos requires in [middleton-2026] §4.2.1–§4.2.4. -/
 theorem arregiNevins_neq_middleton_at_witness :
     runStrict arregiNevinsPostsyntax witness ≠
       runInterleaved middletonPostsyntax witness := by
@@ -435,7 +435,7 @@ theorem arregiNevins_neq_middleton_at_witness :
 
 /-- A metathesis rule that swaps `[+author]` with `[+atomic]` when the
     focus contains all three of `[+author]`, `[+atomic]`, `[+minimal]`.
-    Schematic of @cite{middleton-2026}'s metathesis rules: a metathesis
+    Schematic of [middleton-2026]'s metathesis rules: a metathesis
     triggered in the presence of a particular number feature. The
     dependence on `[+minimal]` is what couples this rule to
     `synMinimalRule` (which deletes `[+minimal]`), so that the IM/MI
@@ -482,12 +482,12 @@ def middletonOutput : FeatureBundle :=
   runInterleaved middletonPostsyntax witness
 
 /-- A small schematic Vocabulary Item set keyed on `FeatureVal`. The
-    Subset Principle (@cite{halle-marantz-1993}) selects the longest
+    Subset Principle ([halle-marantz-1993]) selects the longest
     matching entry. We use `Morpheme.surface` for the exponents to
     keep the connection to the Taos morpheme inventory in the
     Fragment. -/
 def viSet : List (FeatureVI FeatureVal String) :=
-  [ -- specific: 1st-person + minimal (surfaces with `n` per @cite{middleton-2026} rule 21)
+  [ -- specific: 1st-person + minimal (surfaces with `n` per [middleton-2026] rule 21)
     ⟨[fAuthor true, fMinimal true], Morpheme.n.surface⟩
   , -- specific: 1st-person + atomic
     ⟨[fAuthor true, fAtomic true], Morpheme.o.surface⟩
@@ -544,7 +544,7 @@ abbrev MorphPhrase := List FeatureBundle
     Parallel to the focus-level `ImpoverishmentRule` whose target is a
     feature within one terminal; here the target is the terminal
     itself. Motivating case: Basque Participant Dissimilation,
-    @cite{middleton-2026} (16). -/
+    [middleton-2026] (16). -/
 structure TermImpovRule where
   condition : Neighborhood → Prop
   decCond : DecidablePred condition
@@ -576,7 +576,7 @@ def applyTermImpov (rule : TermImpovRule) (phrase : MorphPhrase) :
 /-- A **terminal-level Metathesis** rule: swaps two adjacent terminals
     when the condition holds at their joint context. By convention `t1`
     is the immediate left of `t2`. Motivating case: Basque Ergative
-    Metathesis, @cite{middleton-2026} (13). -/
+    Metathesis, [middleton-2026] (13). -/
 structure TermMetaRule where
   condition : List FeatureBundle → FeatureBundle → FeatureBundle →
               List FeatureBundle → Prop
@@ -611,7 +611,7 @@ def applyTermMeta (rule : TermMetaRule) (phrase : MorphPhrase) :
   go [] phrase
 
 /-- Run impoverishment first, then metathesis — the endorsed pipeline
-    of both @cite{arregi-nevins-2012} and @cite{middleton-2026}. -/
+    of both [arregi-nevins-2012] and [middleton-2026]. -/
 def runPhraseImpovThenMeta
     (impovs : List TermImpovRule) (metas : List TermMetaRule)
     (phrase : MorphPhrase) : MorphPhrase :=
@@ -619,7 +619,7 @@ def runPhraseImpovThenMeta
     (impovs.foldl (λ p r => applyTermImpov r p) phrase)
 
 /-- Run metathesis first, then impoverishment — the order both authors
-    reject; the Basque Ondarru `*s-endu-s-n` form @cite{middleton-2026}
+    reject; the Basque Ondarru `*s-endu-s-n` form [middleton-2026]
     (17b) is the diagnostic witness. -/
 def runPhraseMetaThenImpov
     (impovs : List TermImpovRule) (metas : List TermMetaRule)
@@ -627,8 +627,8 @@ def runPhraseMetaThenImpov
   impovs.foldl (λ p r => applyTermImpov r p)
     (metas.foldl (λ p r => applyTermMeta r p) phrase)
 
-/-- **Participant Dissimilation** (@cite{middleton-2026} (16),
-    @cite{arregi-nevins-2012} §4.6). Delete a 1p absolutive clitic
+/-- **Participant Dissimilation** ([middleton-2026] (16),
+    [arregi-nevins-2012] §4.6). Delete a 1p absolutive clitic
     (`[CL +participant +author]`) when there is a participant ergative
     clitic somewhere to the right in the same auxiliary. The rule
     operates at the terminal level — it deletes a whole bundle, not a
@@ -638,8 +638,8 @@ def participantDissimilation : TermImpovRule :=
     isAbsParticipantAuthor n.focus &&
     n.rightCtx.any isErgParticipant)
 
-/-- **Ergative Metathesis** (@cite{middleton-2026} (13),
-    @cite{arregi-nevins-2012} §3.2). Swap T with an immediately
+/-- **Ergative Metathesis** ([middleton-2026] (13),
+    [arregi-nevins-2012] §3.2). Swap T with an immediately
     following ergative clitic when T is leftmost in the auxiliary.
     The leftmost requirement (`left.isEmpty`) is what lets
     Participant Dissimilation *feed* Ergative Metathesis: only
@@ -648,7 +648,7 @@ def ergativeMetathesis : TermMetaRule :=
   termMeta (λ left t1 t2 _ =>
     left.isEmpty && isT t1 && isErgClitic t2)
 
-/-- The Ondarru witness phrase from @cite{middleton-2026} (17a):
+/-- The Ondarru witness phrase from [middleton-2026] (17a):
     `s-endu-n` `[1pABS, T:past, 2sERG]`. The complementizer is
     suppressed — it does not participate in either rule. -/
 def basqueWitnessPhrase : MorphPhrase :=
@@ -668,7 +668,7 @@ theorem basqueImpovThenMeta_eq :
     leftmost (the absolutive clitic precedes it). PD then deletes
     the absolutive clitic, but it is too late to feed metathesis;
     the result is the T-leftmost order `[T, ERG]`, the form
-    @cite{middleton-2026} marks ungrammatical (would require
+    [middleton-2026] marks ungrammatical (would require
     L-Support repair `*d-endu-s-n`). -/
 theorem basqueMetaThenImpov_eq :
     runPhraseMetaThenImpov [participantDissimilation] [ergativeMetathesis]
@@ -678,7 +678,7 @@ theorem basqueMetaThenImpov_eq :
 /-- **The two phrase-level pipelines diverge on the Ondarru witness.**
     This is the Basque counterpart to
     `arregiNevins_neq_middleton_at_witness`; together they are the two
-    empirical legs of @cite{middleton-2026}'s claim that metathesis must
+    empirical legs of [middleton-2026]'s claim that metathesis must
     follow impoverishment. -/
 theorem basque_orderings_diverge :
     runPhraseImpovThenMeta [participantDissimilation] [ergativeMetathesis]

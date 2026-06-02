@@ -5,26 +5,26 @@ import Linglib.Semantics.Causation.ProductionDependence
 
 /-!
 # Resultatives as Concealed Causatives
-@cite{baglini-bar-asher-siegal-2025} @cite{goldberg-jackendoff-2004} @cite{levin-2019} @cite{martin-rose-nichols-2025}
+[baglini-bar-asher-siegal-2025] [goldberg-jackendoff-2004] [levin-2019] [martin-rose-nichols-2025]
 
 Theory-side connection between the resultative construction and the
 causative semantics infrastructure. Per-scenario `BoolSEM` witnesses
 (HammerFlat, IndependentSourceBreaksNecessity, etc.) live with the paper
 that uses them — see `Levin2026`
-and `Studies.Tay2024`. Per-datum @cite{goldberg-jackendoff-2004} verifications
+and `Studies.Tay2024`. Per-datum [goldberg-jackendoff-2004] verifications
 live in `GoldbergJackendoff2004`.
 
 Sections:
 
 1. **Causative bridge**: `deriveCausativeBuilder` derives the resultative's
-   `Causative` value from the @cite{goldberg-jackendoff-2004} MEANS subevent
+   `Causative` value from the [goldberg-jackendoff-2004] MEANS subevent
    relation + constructional CAUSE flag. Specialized to MEANS-relation
-   causative resultatives; @cite{goldberg-jackendoff-2004}'s sound-emission
+   causative resultatives; [goldberg-jackendoff-2004]'s sound-emission
    and disappearance subtypes (RESULT/INSTANCE relations) are out of scope
    for the derivation here and would need their own builders.
 2. **CC-selection**: resultatives select via completion of a sufficient set
-   (@cite{baglini-bar-asher-siegal-2025}, alongside change-of-state verbs).
-3. **Three-way convergence**: @cite{martin-rose-nichols-2025} thick manner ↔
+   ([baglini-bar-asher-siegal-2025], alongside change-of-state verbs).
+3. **Three-way convergence**: [martin-rose-nichols-2025] thick manner ↔
    `.production` ↔ `.make` builder ↔ resultative builder. Independently
    motivated paths converge on `.make`.
 4. **Aspect**: bounded RP telicizes activity → accomplishment.
@@ -55,7 +55,7 @@ theorem causative_iff_has_cause (sc : ResultativeSubconstruction) :
     sc.isCausative = sc.constructionalDesc.hasCause := by
   cases sc <;> rfl
 
-/-! ## CC-selection (@cite{baglini-bar-asher-siegal-2025})
+/-! ## CC-selection ([baglini-bar-asher-siegal-2025])
 
 Resultatives select via completion of a sufficient set: the verbal subevent
 must be the final condition that makes the result inevitable. -/
@@ -68,7 +68,7 @@ def resultativeCCSelection : CCSelectionMode := .completionOfSufficientSet
 The resultative's `Causative` is `.make`, derived from two
 independently-motivated properties:
 
-1. **MEANS relation** (@cite{goldberg-jackendoff-2004}): the verbal subevent
+1. **MEANS relation** ([goldberg-jackendoff-2004]): the verbal subevent
    is the means by which the constructional subevent is brought about.
    MEANS ↔ causal sufficiency.
 2. **CAUSE in constructional subevent**: causative subconstructions have
@@ -154,7 +154,7 @@ theorem prevent_incompatible_with_resultative :
 /-! ## Three-Way Convergence: Thick ↔ P-CAUSE ↔ Resultative -/
 
 /-- Three independent paths converge on `.make`:
-    @cite{martin-rose-nichols-2025} thick manner classification +
+    [martin-rose-nichols-2025] thick manner classification +
     `.production` analogous-builder + the resultative-from-MEANS+CAUSE
     derivation above. -/
 theorem thick_manner_resultative_convergence :

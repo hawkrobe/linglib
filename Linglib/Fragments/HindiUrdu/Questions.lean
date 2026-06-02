@@ -2,7 +2,7 @@ import Linglib.Typology.Question
 
 /-!
 # Hindi-Urdu question profile
-@cite{wals-2013} @cite{bhatt-dayal-2020} @cite{dayal-2025}
+[wals-2013] [bhatt-dayal-2020] [dayal-2025]
 
 `QuestionProfile` bundle for Hindi-Urdu (ISO `hin`) per the project's
 "per-language data flows through Fragments" rule. Substrate types live in

@@ -2,7 +2,7 @@ import Linglib.Semantics.Causation.Sufficiency
 import Linglib.Semantics.Causation.Necessity
 
 /-!
-# Coercive Implication (@cite{nadathur-lauer-2020})
+# Coercive Implication ([nadathur-lauer-2020])
 
 "X made Y do Z" with volitional Z implies coercion: sufficiency
 (Z was determined) + volitionality (Y could choose otherwise) →

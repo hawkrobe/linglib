@@ -5,8 +5,8 @@ import Linglib.Core.Prototype
 import Linglib.Studies.DaleReiter1995
 
 /-!
-# @cite{westerbeek-koolen-maes-2015}
-@cite{dale-reiter-1995}
+# [westerbeek-koolen-maes-2015]
+[dale-reiter-1995]
 
 Stored Object Knowledge and the Production of Referring Expressions:
 The Case of Color Typicality. *Frontiers in Psychology* 6, 935.
@@ -353,7 +353,7 @@ open RSA Real in
 /-- RSA model for the atypical color condition. Demonstrates that the
     ℚ-valued predictions correspond to a genuine RSAConfig.
 
-    Architecture: same as @cite{degen-etal-2020}'s cs-RSA — the only
+    Architecture: same as [degen-etal-2020]'s cs-RSA — the only
     difference is the meaning function, which now varies with color
     typicality rather than with perceptual noise parameters. -/
 noncomputable def atypicalCfg : RSAConfig Utterance World where
@@ -586,7 +586,7 @@ end IA
 -- §14. Bridge: Noise and Typicality Are Complementary
 -- ============================================================================
 
-/-! @cite{degen-etal-2020}'s cs-RSA derives the color > size asymmetry
+/-! [degen-etal-2020]'s cs-RSA derives the color > size asymmetry
 from noise discrimination parameters. This paper's contribution is
 orthogonal: typicality modulates the meaning function **within** a single
 feature dimension (color), varying the effectiveness of the bare noun

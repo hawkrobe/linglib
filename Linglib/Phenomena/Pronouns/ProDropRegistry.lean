@@ -5,10 +5,10 @@ import Linglib.Studies.Allotey2021
 import Linglib.Studies.Ostrove2026
 
 /-!
-# Pro-Drop / Overt-PRO Registry @cite{ostrove-2026}
+# Pro-Drop / Overt-PRO Registry [ostrove-2026]
 
 Coverage registry for the languages currently formalized against
-@cite{ostrove-2026}'s implicational universal (overt PRO ⇒
+[ostrove-2026]'s implicational universal (overt PRO ⇒
 non-*pro*-drop). Each language constructor names a profile defined in
 a study file; `profile : Language → ProDropProfile` is the unified
 endpoint.
@@ -29,15 +29,15 @@ verified against the universal by construction.
 
 | Language | Source                                | Cell                |
 |----------|---------------------------------------|---------------------|
-| English  | @cite{ostrove-2026}                   | nullPRONoProDrop    |
-| SMPM     | @cite{ostrove-2026}                   | overtPRONoProDrop   |
-| Büli     | @cite{ostrove-2026} via Sulemana 2021 | overtPRONoProDrop   |
-| Gã       | @cite{allotey-2021}                   | overtPRONoProDrop   |
+| English  | [ostrove-2026]                   | nullPRONoProDrop    |
+| SMPM     | [ostrove-2026]                   | overtPRONoProDrop   |
+| Büli     | [ostrove-2026] via Sulemana 2021 | overtPRONoProDrop   |
+| Gã       | [allotey-2021]                   | overtPRONoProDrop   |
 
 The forbidden cell `overtPROProDrop` has no formalized witness, in
 agreement with the universal.
 
-## WALS F101A bridge (@cite{dryer-2013-wals})
+## WALS F101A bridge ([dryer-2013-wals])
 
 `F101A.toAllowsProDrop` derives a partial `allowsProDrop : Option Bool`
 from Dryer's "Expression of Pronominal Subjects" classification (711
@@ -57,7 +57,7 @@ The classification is **lossy**: WALS does not record overt PRO (so
 agreement-as-pro-drop reading inflates the *pro*-drop count for
 languages whose "subject affixes" are arguably overt pronominal
 clitics. Gã is exactly such a case: WALS classifies its subject
-proclitic as a "subject affix" (→ *pro*-drop), while @cite{allotey-2021}
+proclitic as a "subject affix" (→ *pro*-drop), while [allotey-2021]
 treats it as an overt pronominal clitic that fills subject position
 (→ non-*pro*-drop and overt PRO). The disagreement is surfaced as a
 named theorem (`ga_disagrees_with_F101A`) rather than papered over.
@@ -86,7 +86,7 @@ def profile : Language → ProDropProfile
   | .buli    => Ostrove2026.buliProfile
   | .ga      => Allotey2021.gaProfile
 
-/-- Every language formalized in linglib satisfies @cite{ostrove-2026}'s
+/-- Every language formalized in linglib satisfies [ostrove-2026]'s
     implicational universal. Closed by `cases L <;> decide`:
     case-checks all constructors of `Language`, decides `Satisfies`
     for each profile. Adding a constructor that lands in
@@ -94,7 +94,7 @@ def profile : Language → ProDropProfile
 theorem all_satisfy (L : Language) : (profile L).Satisfies := by
   cases L <;> decide
 
-/-- The forbidden cell of @cite{ostrove-2026}'s typology
+/-- The forbidden cell of [ostrove-2026]'s typology
     (`overtPROProDrop`) has no formalized witness. This is the
     explicit, falsifiable form of the universal: a future language
     formalization that placed its profile in the forbidden cell would
@@ -152,7 +152,7 @@ theorem english_agrees_with_F101A :
 
 /-- **Gã disagreement.** WALS classifies Gã's subject proclitic as a
     "subject affix on verb" (→ pro-drop under the standard reading),
-    while @cite{allotey-2021} treats it as an overt pronominal clitic
+    while [allotey-2021] treats it as an overt pronominal clitic
     that fills subject position (→ non-pro-drop, overt PRO). The
     project deliberately surfaces the disagreement rather than papering
     over it with a fudge in the WALS-bridging direction. -/

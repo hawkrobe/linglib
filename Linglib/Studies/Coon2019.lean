@@ -4,9 +4,9 @@ import Linglib.Fragments.Chuj.VerbBuilding
 
 /-!
 # Chuj Verb Building: Empirical Data and Bridge Theorems
-@cite{coon-2019}
+[coon-2019]
 
-Minimalist analysis and bridge theorems for @cite{coon-2019} "Building verbs
+Minimalist analysis and bridge theorems for [coon-2019] "Building verbs
 in Chuj: Consequences for the nature of roots." *Journal of Linguistics*
 55(1): 35–81.
 
@@ -28,7 +28,7 @@ causative alternation proved from the Voice–root split.
 
 Connect the fragment's theory-neutral types (`CRootClass`, `ChujVoiceSuffix`,
 `isGrammatical`, etc.) to Minimalist VoiceHead properties and to the
-@cite{beavers-etal-2021} root typology.
+[beavers-etal-2021] root typology.
 
 ### Chuj fragment bridge (§§10–15)
 
@@ -43,7 +43,7 @@ Connect the fragment's theory-neutral types (`CRootClass`, `ChujVoiceSuffix`,
 
 ### Root typology bridge
 
-The chronologically-later @cite{beavers-etal-2021} paper hosts the bridge
+The chronologically-later [beavers-etal-2021] paper hosts the bridge
 content connecting Coon's Chuj root classes to the cross-linguistic CoS
 typology (relocated to `Studies/BeaversEtAl2021.lean`
 §§8-14 per the chronological-dependency rule — Coon 2019 < Beavers 2021,
@@ -149,7 +149,7 @@ theorem examples_grammaticality :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 3. Minimalist Voice Analysis (@cite{coon-2019}, ex. (78))
+-- § 3. Minimalist Voice Analysis ([coon-2019], ex. (78))
 -- ════════════════════════════════════════════════════
 
 open Minimalist
@@ -314,7 +314,7 @@ theorem w_cross_class :
 -- § 9. Minimalist Division of Labor
 -- ════════════════════════════════════════════════════
 
-/-- Division of labor (@cite{coon-2019}, ex. (2)/(77), p. 75): the root
+/-- Division of labor ([coon-2019], ex. (2)/(77), p. 75): the root
     determines whether a theme is present; Voice determines whether an
     agent is present. Same root with different Voice → different event type;
     same Voice with different root → same external argument status. -/
@@ -521,7 +521,7 @@ theorem theme_persists_all_voices :
 -- § 16. Denotation Type Alignment
 -- ════════════════════════════════════════════════════
 
-/-- The four root classes have distinct denotation types (@cite{coon-2019}, (3)).
+/-- The four root classes have distinct denotation types ([coon-2019], (3)).
     The fragment's `denotationType` field captures these:
     √TV/√ITV = indivStatePred ⟨e,⟨s,t⟩⟩, √POS = measureFn ⟨e,⟨s,d⟩⟩,
     √NOM = entityPred ⟨e,t⟩. -/
@@ -533,7 +533,7 @@ theorem denotation_type_alignment :
 
 /-- √TV and √ITV share semantic type (event predicate) but differ in arity.
     This is the formal content of the observation that both compose with
-    an entity argument per @cite{davis-1997}, but only √TV projects a syntactic
+    an entity argument per [davis-1997], but only √TV projects a syntactic
     complement. -/
 theorem tv_itv_same_type_different_arity :
     (toFragmentRoot .tv).denotationType = (toFragmentRoot .itv).denotationType ∧

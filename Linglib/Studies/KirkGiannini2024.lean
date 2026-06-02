@@ -9,7 +9,7 @@ import Linglib.Studies.KocurekJerzakRudolph2020
 
 /-!
 # Kirk-Giannini 2024: Covert Mixed Quotation
-@cite{kirk-giannini-2024}
+[kirk-giannini-2024]
 
 Covert mixed quotation. Semantics and Pragmatics 17, Article 5: 1-54.
 
@@ -35,14 +35,14 @@ covert mixed quotation `𝔐` with four additional operators (`↓`, `†`,
    MONGEESE" derives via the chain `𝔐 → 𝔄 → ↓ → ¬`, with `↓` shunting
    the appropriateness content into the at-issue dimension before
    negation applies. The analysis predicts three syntactic restrictions
-   identified by @cite{horn-1985} / @cite{horn-1989} and
-   @cite{burton-roberts-1989}: morpheme incorporation failure, NPI
+   identified by [horn-1985] / [horn-1989] and
+   [burton-roberts-1989]: morpheme incorporation failure, NPI
    licensing failure, and DN-elimination failure.
 
 4. **Metalinguistic negotiation** (§4, paper §6): "Secretariat is /
    isn't an athlete" — A and B express literally **incompatible**
    appropriateness contents on a **shared** standard, contra
-   @cite{plunkett-sundell-2013}'s "consistent contents" diagnosis.
+   [plunkett-sundell-2013]'s "consistent contents" diagnosis.
 
 5. **"In a sense"** (§5, paper §7): "Viruses are alive in a sense"
    contributes `∃μ ∃sₓ [⟨*⟩(q)(wc)(sₓ) ∧ [^⟨*⟩(q)(wc)(sₓ)] = μ]` —
@@ -93,7 +93,7 @@ the architecture that derives them).
 ## Note on Denial Taxonomy
 
 The three-way `DenialType` taxonomy (propositional / presuppositional /
-implicature) from @cite{van-der-sandt-maier-2003} — formalized in
+implicature) from [van-der-sandt-maier-2003] — formalized in
 `Phenomena/Negation/Denial.lean` — groups register and connotation
 denials under `implicature`. K-G's analysis (paper §5, p.28-30) derives
 metalinguistic-negation truth conditions from `♦` (appropriateness
@@ -210,7 +210,7 @@ theorem gd_strip_then_remix_loses_original_ci :
 
 /--
 **K-G refutes Potts's universal CI projection.** Per
-@cite{potts-2005} (formalised as
+[potts-2005] (formalised as
 `Pragmatics.Expressives.Basic.ci_projects_through_neg`):
 `(neg p).ci = p.ci`. The CI of a `TwoDimProp` projects unchanged
 through any at-issue operator. K-G's analysis predicts that under
@@ -248,7 +248,7 @@ theorem kg_refutes_potts_universal_projection :
 
 /--
 **K-G refutes Harris-Potts orientation variables.**
-@cite{harris-potts-2009} posit a free orientation variable on each CI
+[harris-potts-2009] posit a free orientation variable on each CI
 item, contextually resolved (formalised as
 `HarrisPotts2009.CIItem` with a
 `ciFor : Orientation → W → Prop` field). K-G's strip-then-remix
@@ -535,7 +535,7 @@ theorem mongeese_metalinguistic_neg :
 
 /--
 **Prediction 1 — morpheme incorporation failure** (Horn 1989 p.392,
-@cite{horn-1985}). Morphologically incorporated negation (`unhappy`)
+[horn-1985]). Morphologically incorporated negation (`unhappy`)
 cannot host metalinguistic readings. K-G derives this without lexical
 ambiguity in *not*: the metalinguistic chain `𝔐 → 𝔄 → ↓ → ¬` requires
 syntactically separate `not`, `𝔄`, and `↓` nodes — incorporation into
@@ -566,7 +566,7 @@ theorem mongeese_blocks_npi_licensing
   Horn1989.metalinguistic_neg_blocks_npi_licensing occ
 
 /--
-**Prediction 3 — DN-elimination failure** (@cite{burton-roberts-1989}).
+**Prediction 3 — DN-elimination failure** ([burton-roberts-1989]).
 "She's not not happy, she's inconsolable" does NOT reduce to "She's
 happy" — the metalinguistic chain blocks DN-elimination. K-G's
 account: each `¬` in the metalinguistic chain scopes over a distinct
@@ -586,7 +586,7 @@ theorem mongeese_blocks_dn_elimination
 /--
 **K-G's metalinguistic negation does NOT match `DenialType.implicature`.**
 
-`Phenomena.Negation.Denial` (formalising @cite{van-der-sandt-maier-2003})
+`Phenomena.Negation.Denial` (formalising [van-der-sandt-maier-2003])
 classifies register/connotation denials as `DenialType.implicature`,
 which maps to `ContentLayer.implicature`. K-G's chain produces content
 on the **appropriateness** dimension via `applyApprop` —

@@ -3,7 +3,7 @@ import Linglib.Semantics.Polarity.Israel
 import Linglib.Fragments.English.PolarityItems
 
 /-!
-# @cite{israel-2001}: Minimizers, Maximizers, and the Rhetoric of Scalar Reasoning
+# [israel-2001]: Minimizers, Maximizers, and the Rhetoric of Scalar Reasoning
 
 Formalizes the core contributions of Israel's Scalar Model of Polarity:
 
@@ -235,7 +235,7 @@ example : ∀ d ∈ allData, d.item.canonicityConsistent := by decide
 -- § 6. Bridge to Entailment Profiles
 -- ════════════════════════════════════════════════════
 
-/-! @cite{israel-2001} §4 discusses Dowty's proto-roles (fn. 6) as a
+/-! [israel-2001] §4 discusses Dowty's proto-roles (fn. 6) as a
 possible basis for the canonical/inverted distinction. The connection
 to `EntailmentProfile` is:
 
@@ -321,7 +321,7 @@ def loudestNoise : AmbiguousSuperlativeDatum :=
 -- § 8. Bridge: Scale-Reversing = DE, Scale-Preserving = UE
 -- ════════════════════════════════════════════════════
 
-/-! @cite{israel-2001} §2 connects the Scalar Model to the Fauconnier-Ladusaw
+/-! [israel-2001] §2 connects the Scalar Model to the Fauconnier-Ladusaw
 tradition of monotonicity-based licensing:
 
 - **Scale-reversing** contexts (NPI-licensing): inferences run from high to

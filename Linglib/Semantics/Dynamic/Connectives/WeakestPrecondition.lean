@@ -2,7 +2,7 @@ import Linglib.Semantics.Dynamic.Core.DynamicTy2
 
 /-!
 # Weakest Precondition Calculus
-@cite{muskens-1996}
+[muskens-1996]
 
 §III.6 (pp. 172–175): The weakest precondition calculus provides a
 compositional algorithm for extracting first-order truth conditions
@@ -93,7 +93,7 @@ theorem wp_dexists [AssignmentStructure S E] (u : S → E) (D : Update S) (χ : 
 -- § 3. Propositions 2 and 3
 -- ════════════════════════════════════════════════════════════════
 
-/-- Proposition 2 (@cite{muskens-1996}, p. 175):
+/-- Proposition 2 ([muskens-1996], p. 175):
 
 `wp(K, ⊤)` is equivalent to `∃j K(i)(j)` — the existential closure.
 In the semantic formulation, this is definitional. -/
@@ -101,14 +101,14 @@ theorem wp_true_eq_closure (D : Update S) :
     wp D (λ _ => True) = closure D := by
   ext i; simp only [wp, closure, and_true]
 
-/-- DRT entailment (@cite{muskens-1996}, p. 175):
+/-- DRT entailment ([muskens-1996], p. 175):
 
 `K₁,...,Kₙ ⊨_DRT K` iff for every state `i`, if all premises
 are true at `i`, then the conclusion is true at `i`. -/
 def drtEntails (premises : List (Update S)) (conclusion : Update S) : Prop :=
   ∀ i, (∀ D ∈ premises, closure D i) → closure conclusion i
 
-/-- Proposition 3 (@cite{muskens-1996}, p. 175):
+/-- Proposition 3 ([muskens-1996], p. 175):
 
 DRT entailment reduces to entailment of truth conditions.
 `K₁,...,Kₙ ⊨_DRT K` iff `wp(K₁, ⊤),...,wp(Kₙ, ⊤)` entail `wp(K, ⊤)`. -/
@@ -121,7 +121,7 @@ theorem proposition_3 (premises : List (Update S)) (conclusion : Update S) :
 def dplEntails (D₁ D₂ : Update S) : Prop :=
   ∀ i j, D₁ i j → ∃ k, D₂ j k
 
-/-- Corollary (@cite{muskens-1996}, p. 175):
+/-- Corollary ([muskens-1996], p. 175):
 
 DPL entailment = validity of dynamic implication.
 `K₁,...,Kₙ ⊨_DPL K` iff `⊢ tr((K₁;...;Kₙ) ⇒ K)`. -/
@@ -180,7 +180,7 @@ theorem tr_impl_eq (D₁ D₂ : Update S) :
 across input states: satisfiability doesn't depend on the input
 assignment.
 
-This is the semantic counterpart of @cite{muskens-1996}'s syntactic
+This is the semantic counterpart of [muskens-1996]'s syntactic
 notion of properness (§III.5, p. 171): an Update with no free discourse
 referents. Proposition 1 (p. 174) connects the two: K is proper iff
 `wp(K, ⊤)` is a closed formula. -/

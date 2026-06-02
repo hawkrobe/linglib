@@ -3,7 +3,7 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Tagalog Temporal Connectives Fragment
-@cite{dell-1983} @cite{rett-2020}
+[dell-1983] [rett-2020]
 
 Cross-linguistic data on Tagalog *bago* ('before') and *pagkatapos* ('after')
 showing overt morphological marking of the aspectual coercion that English
@@ -14,7 +14,7 @@ Tagalog distinguishes two perfective aspects in embedded temporal clauses:
 - **AIA** (ability-and-involuntary-action, culminating perfective): yields
   finish-point reading
 
-This morphological evidence supports @cite{rett-2020}'s ambiguity analysis:
+This morphological evidence supports [rett-2020]'s ambiguity analysis:
 the covert INCHOAT/COMPLET operators posited for English correspond to
 overt aspect markers in Tagalog.
 
@@ -46,11 +46,11 @@ structure AspectReadingEntry where
   deriving Repr, BEq
 
 -- ============================================================================
--- § 2: *bago* ('before') Entries (@cite{rett-2020}, ex. 12; @cite{dell-1983})
+-- § 2: *bago* ('before') Entries ([rett-2020], ex. 12; [dell-1983])
 -- ============================================================================
 
 /-- *bago* + PFV.NEUT → before-start (≺ initial).
-    @cite{rett-2020} ex. (12a): "She left before he swept the floor" with neutral
+    [rett-2020] ex. (12a): "She left before he swept the floor" with neutral
     perfective yields the default initial-point reading. -/
 def bago_neut : AspectReadingEntry :=
   { connective := "bago"
@@ -60,7 +60,7 @@ def bago_neut : AspectReadingEntry :=
   , reading := .beforeStart }
 
 /-- *bago* + AIA → before-finish (≺ final).
-    @cite{rett-2020} ex. (12b): "She left before he swept the floor" with AIA
+    [rett-2020] ex. (12b): "She left before he swept the floor" with AIA
     (ability-and-involuntary-action) yields the coerced final-point reading.
     AIA is the morphological realization of COMPLET. -/
 def bago_aia : AspectReadingEntry :=

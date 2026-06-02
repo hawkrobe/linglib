@@ -2,21 +2,21 @@ import Linglib.Fragments.Icelandic.Case
 
 /-!
 # Icelandic Verb Case Frames
-@cite{thrainsson-2007} @cite{yip-maling-jackendoff-1987}
-@cite{zaenen-maling-thrainsson-1985}
+[thrainsson-2007] [yip-maling-jackendoff-1987]
+[zaenen-maling-thrainsson-1985]
 
-## Case Frames (@cite{thrainsson-2007} §4.1.2.2, ex. 4.48)
+## Case Frames ([thrainsson-2007] §4.1.2.2, ex. 4.48)
 
 Of the 16 logically possible two-case combinations (4 × 4), only **5** are
-reasonably common for dyadic verbs (@cite{yip-maling-jackendoff-1987}):
+reasonably common for dyadic verbs ([yip-maling-jackendoff-1987]):
 NA, ND, NG, DN, AA. Two more (AN, GN) are extremely rare or restricted
 to one construction each. Seven (DA, DD, DG, GA, GD, GG, and transitive
 NN) do not occur at all.
 
-## Quirky Subject Properties (@cite{thrainsson-2007} §4.1.2.1)
+## Quirky Subject Properties ([thrainsson-2007] §4.1.2.1)
 
 Oblique subjects pass 9 of 10 subject diagnostics
-(@cite{zaenen-maling-thrainsson-1985}, @cite{thrainsson-2007} §4.1.1):
+([zaenen-maling-thrainsson-1985], [thrainsson-2007] §4.1.1):
 1. Precede verb in default word order (§4.1.1.1)
 2. Invert with verb in yes/no questions (§4.1.1.1)
 3. Block expletive *það* constructions (§4.1.1.3)
@@ -30,15 +30,15 @@ Oblique subjects pass 9 of 10 subject diagnostics
 The ONE diagnostic they fail: **verb agreement**. The finite verb agrees
 with the nominative argument (regardless of position), not the quirky
 subject. When no nominative argument is present, the verb shows default
-3sg agreement (@cite{thrainsson-2007} ex. 4.47).
+3sg agreement ([thrainsson-2007] ex. 4.47).
 
-## Triadic (Ditransitive) Frames (@cite{thrainsson-2007} §4.1.2.3, ex. 4.62)
+## Triadic (Ditransitive) Frames ([thrainsson-2007] §4.1.2.3, ex. 4.62)
 
 Subject is always nominative in ditransitives. Six patterns are attested
 for the two objects: NDA (>220 verbs), NAD (~40), NDG (~30), NDD (~30),
 NAG (~20), NAA (~2).
 
-## Case Assignment (@cite{zaenen-maling-thrainsson-1985})
+## Case Assignment ([zaenen-maling-thrainsson-1985])
 
 Quirky case is **fixed** (lexical): it is preserved under raising and is
 not affected by passivization. Structural case (NOM, ACC in standard
@@ -62,7 +62,7 @@ open Features (Case CaseAssignment)
     The two post-verbal argument slots follow **linear order**: `firstObject`
     is the first NP after the verb (typically IO in NDA frames),
     `secondObject` is the second (typically DO in NDA frames).
-    @cite{thrainsson-2007} §4.1.2.3 discusses the difficulty of labeling
+    [thrainsson-2007] §4.1.2.3 discusses the difficulty of labeling
     these as "direct" vs "indirect" in Icelandic. -/
 structure VerbCaseFrame where
   /-- Icelandic citation form -/
@@ -93,13 +93,13 @@ def VerbCaseFrame.quirkySubject (v : VerbCaseFrame) : Bool :=
 
 -- § 2.1: NOM-ACC (NA) — default, most common
 
-/-- *elska* 'love' — NA frame (@cite{thrainsson-2007} ex. 4.56a).
+/-- *elska* 'love' — NA frame ([thrainsson-2007] ex. 4.56a).
     *Hann elskar hana.* 'He(N) loves her(A).' -/
 def elska : VerbCaseFrame :=
   { form := "elska", gloss := "love"
     subjectCase := .nom, firstObject := some .acc }
 
-/-- *lesa* 'read' — NA frame (@cite{thrainsson-2007} ex. 4.56b).
+/-- *lesa* 'read' — NA frame ([thrainsson-2007] ex. 4.56b).
     *Hún las bókina.* 'She(N) read book-the(A).' -/
 def lesa : VerbCaseFrame :=
   { form := "lesa", gloss := "read"
@@ -107,19 +107,19 @@ def lesa : VerbCaseFrame :=
 
 -- § 2.2: NOM-DAT (ND) — ~750 verbs
 
-/-- *hjálpa* 'help' — ND frame (@cite{thrainsson-2007} ex. 4.57a).
+/-- *hjálpa* 'help' — ND frame ([thrainsson-2007] ex. 4.57a).
     *Hún hjálpaði honum.* 'She(N) helped him(D).' -/
 def hjalpa : VerbCaseFrame :=
   { form := "hjálpa", gloss := "help"
     subjectCase := .nom, firstObject := some .dat }
 
-/-- *strauka* 'pet' — ND frame (@cite{thrainsson-2007} ex. 4.57b).
+/-- *strauka* 'pet' — ND frame ([thrainsson-2007] ex. 4.57b).
     *Ég strauk kettinum.* 'I(N) petted cat-the(D).' -/
 def strauka : VerbCaseFrame :=
   { form := "strauka", gloss := "pet"
     subjectCase := .nom, firstObject := some .dat }
 
-/-- *kasta* 'throw' — ND frame (@cite{thrainsson-2007} ex. 4.57c).
+/-- *kasta* 'throw' — ND frame ([thrainsson-2007] ex. 4.57c).
     *Hann kastaði boltanum.* 'He(N) threw ball-the(D).' -/
 def kasta : VerbCaseFrame :=
   { form := "kasta", gloss := "throw"
@@ -127,13 +127,13 @@ def kasta : VerbCaseFrame :=
 
 -- § 2.3: NOM-GEN (NG) — less common
 
-/-- *sakna* 'miss' — NG frame (@cite{thrainsson-2007} ex. 4.58a).
+/-- *sakna* 'miss' — NG frame ([thrainsson-2007] ex. 4.58a).
     *Hann saknar hennar.* 'He(N) misses her(G).' -/
 def sakna : VerbCaseFrame :=
   { form := "sakna", gloss := "miss"
     subjectCase := .nom, firstObject := some .gen }
 
-/-- *krefja* 'demand' — NG frame (@cite{thrainsson-2007} ex. 4.58b).
+/-- *krefja* 'demand' — NG frame ([thrainsson-2007] ex. 4.58b).
     *Ég krefst bóta.* 'I(N) demand compensation(G).' -/
 def krefja : VerbCaseFrame :=
   { form := "krefja", gloss := "demand"
@@ -141,27 +141,27 @@ def krefja : VerbCaseFrame :=
 
 -- § 2.4: DAT-NOM (DN) — quirky dative subject, common
 
-/-- *líka* 'like' — DN frame (@cite{thrainsson-2007} ex. 4.61b).
+/-- *líka* 'like' — DN frame ([thrainsson-2007] ex. 4.61b).
     *Henni líkuðu hestarnir.* 'Her(D) liked(pl.) horses-the(Npl.).'
     Verb agrees with NOM object *hestarnir*, not DAT subject *henni*. -/
 def lika : VerbCaseFrame :=
   { form := "líka", gloss := "like"
     subjectCase := .dat, firstObject := some .nom }
 
-/-- *batna* 'get better' — DN frame (@cite{thrainsson-2007} ex. 4.61c).
+/-- *batna* 'get better' — DN frame ([thrainsson-2007] ex. 4.61c).
     *Barninu batnaði veikin.* 'Child-the(D) got-better sickness(N).' -/
 def batna : VerbCaseFrame :=
   { form := "batna", gloss := "get better/recover"
     subjectCase := .dat, firstObject := some .nom }
 
-/-- *leiðast* 'be bored' — DN frame (@cite{thrainsson-2007} ex. 4.61d).
+/-- *leiðast* 'be bored' — DN frame ([thrainsson-2007] ex. 4.61d).
     *Stráknum leiddust kennararnir.* 'Boy-the(D) bored(pl.) teachers-the(Npl.).'
     Also an -st verb (see Predicates.lean). -/
 def leidastCF : VerbCaseFrame :=
   { form := "leiðast", gloss := "be bored"
     subjectCase := .dat, firstObject := some .nom }
 
-/-- *áskotnast* 'get by luck' — DN frame (@cite{thrainsson-2007} ex. 4.61a).
+/-- *áskotnast* 'get by luck' — DN frame ([thrainsson-2007] ex. 4.61a).
     *Mér áskotnuðust peningar.* 'Me(D) lucked-onto(pl.) money(Npl.).' -/
 def askotnast : VerbCaseFrame :=
   { form := "áskotnast", gloss := "get by luck"
@@ -169,19 +169,19 @@ def askotnast : VerbCaseFrame :=
 
 -- § 2.5: ACC-ACC (AA) — quirky accusative subject, not very stable
 
-/-- *vanta* 'lack/need' — AA frame (@cite{thrainsson-2007} ex. 4.60a).
+/-- *vanta* 'lack/need' — AA frame ([thrainsson-2007] ex. 4.60a).
     *Hana vantar vinnu.* 'Her(A) lacks work(A).' -/
 def vanta : VerbCaseFrame :=
   { form := "vanta", gloss := "lack/need"
     subjectCase := .acc, firstObject := some .acc }
 
-/-- *dreyma* 'dream' — AA frame (@cite{thrainsson-2007} ex. 4.60b).
+/-- *dreyma* 'dream' — AA frame ([thrainsson-2007] ex. 4.60b).
     *Mig dreymdi draum.* 'Me(A) dreamt dream(A).' -/
 def dreyma : VerbCaseFrame :=
   { form := "dreyma", gloss := "dream"
     subjectCase := .acc, firstObject := some .acc }
 
-/-- *bresta* 'fail (of courage)' — AA frame (@cite{thrainsson-2007} ex. 4.60c).
+/-- *bresta* 'fail (of courage)' — AA frame ([thrainsson-2007] ex. 4.60c).
     *Harald brast kjark.* 'Harold(A) failed courage(A).' -/
 def bresta : VerbCaseFrame :=
   { form := "bresta", gloss := "fail (of courage)"
@@ -192,7 +192,7 @@ def bresta : VerbCaseFrame :=
 -- ============================================================================
 
 /-- ACC-NOM impersonal — extremely rare, possibly one construction
-    (@cite{thrainsson-2007} ex. 4.52a, parenthesized in ex. 4.48 grid).
+    ([thrainsson-2007] ex. 4.52a, parenthesized in ex. 4.48 grid).
     *Hana hefur líklega sótt syfja.* 'Her(A) has probably sought sleepiness(N).'
     The ACC experiencer occupies subject position; the NOM theme *syfja*
     'sleepiness' is a nominative noun, not a verb. The verbal predicate
@@ -202,7 +202,7 @@ def syfja : VerbCaseFrame :=
     subjectCase := .acc, firstObject := some .nom }
 
 /-- GEN-NOM — extremely restricted, all examples involve the copula *vera*
-    and a fixed predicative noun (@cite{thrainsson-2007} ex. 4.54-4.55).
+    and a fixed predicative noun ([thrainsson-2007] ex. 4.54-4.55).
     *Þess var þá enginn kostur.* 'Of-that(G) was then no(N) choice(N).'
     'That was not possible then.' -/
 def vera_kostur : VerbCaseFrame :=
@@ -213,58 +213,58 @@ def vera_kostur : VerbCaseFrame :=
 -- § 4: Triadic (Ditransitive) Verb Data
 -- ============================================================================
 
-/-- *gefa* 'give' — NDA frame (@cite{thrainsson-2007} ex. 4.63a).
+/-- *gefa* 'give' — NDA frame ([thrainsson-2007] ex. 4.63a).
     *María gaf Haraldi bókina.* 'Mary(N) gave Harold(D) book-the(A).'
     Most common ditransitive pattern (>220 verbs). -/
 def gefa : VerbCaseFrame :=
   { form := "gefa", gloss := "give"
     subjectCase := .nom, firstObject := some .dat, secondObject := some .acc }
 
-/-- *segja* 'tell' — NDA frame (@cite{thrainsson-2007} ex. 4.62). -/
+/-- *segja* 'tell' — NDA frame ([thrainsson-2007] ex. 4.62). -/
 def segja : VerbCaseFrame :=
   { form := "segja", gloss := "tell"
     subjectCase := .nom, firstObject := some .dat, secondObject := some .acc }
 
-/-- *svipta* 'deprive' — NAD frame (@cite{thrainsson-2007} ex. 4.65a).
+/-- *svipta* 'deprive' — NAD frame ([thrainsson-2007] ex. 4.65a).
     *Lögreglan svipti hann ökuleyfinu.* 'Police-the(N) deprived him(A)
     driver's-licence-the(D).' -/
 def svipta : VerbCaseFrame :=
   { form := "svipta", gloss := "deprive"
     subjectCase := .nom, firstObject := some .acc, secondObject := some .dat }
 
-/-- *leyna* 'conceal' — NAD frame (@cite{thrainsson-2007} ex. 4.65b).
+/-- *leyna* 'conceal' — NAD frame ([thrainsson-2007] ex. 4.65b).
     *Þeir leyndu hana sannleikanum.* 'They(N) concealed her(A)
     truth-the(D).' -/
 def leyna : VerbCaseFrame :=
   { form := "leyna", gloss := "conceal"
     subjectCase := .nom, firstObject := some .acc, secondObject := some .dat }
 
-/-- *lofa* 'promise' — NDD frame (@cite{thrainsson-2007} ex. 4.72a).
+/-- *lofa* 'promise' — NDD frame ([thrainsson-2007] ex. 4.72a).
     *Ég lofaði henni því.* 'I(N) promised her(D) it(D).' -/
 def lofa : VerbCaseFrame :=
   { form := "lofa", gloss := "promise"
     subjectCase := .nom, firstObject := some .dat, secondObject := some .dat }
 
-/-- *skila* 'return' — NDD frame (@cite{thrainsson-2007} ex. 4.72b).
+/-- *skila* 'return' — NDD frame ([thrainsson-2007] ex. 4.72b).
     *Hún skilaði mér bókinni.* 'She(N) returned me(D) book-the(D).' -/
 def skila : VerbCaseFrame :=
   { form := "skila", gloss := "return"
     subjectCase := .nom, firstObject := some .dat, secondObject := some .dat }
 
-/-- *spyrja* 'ask' — NAG frame (@cite{thrainsson-2007} ex. 4.70a).
+/-- *spyrja* 'ask' — NAG frame ([thrainsson-2007] ex. 4.70a).
     *Þeir spurðu hana margra spurninga.* 'They(N) asked her(A) many
     questions(G).' -/
 def spyrja : VerbCaseFrame :=
   { form := "spyrja", gloss := "ask"
     subjectCase := .nom, firstObject := some .acc, secondObject := some .gen }
 
-/-- *óska* 'wish' — NDG frame (@cite{thrainsson-2007} ex. 4.69a).
+/-- *óska* 'wish' — NDG frame ([thrainsson-2007] ex. 4.69a).
     *Ég óska þér velfarnaðar.* 'I(N) wish you(D) well-being(G).' -/
 def oska : VerbCaseFrame :=
   { form := "óska", gloss := "wish"
     subjectCase := .nom, firstObject := some .dat, secondObject := some .gen }
 
-/-- *kosta* 'cost' — NAA frame (@cite{thrainsson-2007} ex. 4.74).
+/-- *kosta* 'cost' — NAA frame ([thrainsson-2007] ex. 4.74).
     *Maturinn kostaði mig fjóra dollara.* 'Food-the(N) cost me(A) four
     dollars(A).' Extremely rare pattern (~2 verbs). -/
 def kosta : VerbCaseFrame :=
@@ -276,7 +276,7 @@ def kosta : VerbCaseFrame :=
 -- ============================================================================
 
 /-- The 10 standard subject diagnostics for Icelandic
-    (@cite{thrainsson-2007} §4.1.1, @cite{zaenen-maling-thrainsson-1985}). -/
+    ([thrainsson-2007] §4.1.1, [zaenen-maling-thrainsson-1985]). -/
 inductive SubjectDiagnostic where
   | defaultPosition        -- precedes verb in declaratives (§4.1.1.1)
   | yesNoInversion         -- inverts with verb in questions (§4.1.1.1)
@@ -292,7 +292,7 @@ inductive SubjectDiagnostic where
 
 /-- Does a quirky (non-nominative) subject pass this diagnostic?
     Quirky subjects pass all diagnostics EXCEPT verb agreement
-    (@cite{thrainsson-2007} §4.1.2.1). -/
+    ([thrainsson-2007] §4.1.2.1). -/
 def SubjectDiagnostic.passedByQuirkySubject : SubjectDiagnostic → Bool
   | .verbAgreement => false
   | _              => true
@@ -304,7 +304,7 @@ def SubjectDiagnostic.passedByQuirkySubject : SubjectDiagnostic → Bool
 /-- Which argument does the finite verb agree with?
     In Icelandic, the verb agrees with the **nominative** argument,
     regardless of whether it is the subject or the object
-    (@cite{thrainsson-2007} §4.1.2.1, ex. 4.47).
+    ([thrainsson-2007] §4.1.2.1, ex. 4.47).
     When no nominative argument is present, default 3sg appears. -/
 inductive AgreementTarget where
   | nominativeArg  -- verb agrees with whichever NP bears nominative
@@ -345,7 +345,7 @@ def ditransitiveVerbs : List VerbCaseFrame :=
 -- ============================================================================
 
 /-- The 5 productive dyadic case patterns in Icelandic
-    (@cite{thrainsson-2007} §4.1.2.2, @cite{yip-maling-jackendoff-1987}).
+    ([thrainsson-2007] §4.1.2.2, [yip-maling-jackendoff-1987]).
     Out of 16 logically possible combinations (4 cases × 4 cases),
     7 do not occur (DA, DD, DG, GA, GD, GG, transitive NN) and
     4 are very rare (AN, AG, GN, NN-copular). -/

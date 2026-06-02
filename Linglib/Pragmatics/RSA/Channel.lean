@@ -6,7 +6,7 @@ import Linglib.Features.PropertyDomain
 /-!
 # Unified Noise Theory for RSA
 
-@cite{waldon-degen-2021} @cite{kursat-degen-2021} @cite{giles-etal-2026}
+[waldon-degen-2021] [kursat-degen-2021] [giles-etal-2026]
 
 This module provides a unified treatment of noise in RSA models.
 
@@ -14,10 +14,10 @@ This module provides a unified treatment of noise in RSA models.
 
 | Paper | Noise Type | Location |
 |-------|-----------|----------|
-| @cite{bergen-goodman-2015} | Channel | Transmission |
-| @cite{degen-etal-2020} | Semantic | Perception |
-| @cite{kursat-degen-2021} | Perceptual | Verification |
-| @cite{giles-etal-2026} | Search efficiency | Psychophysics |
+| [bergen-goodman-2015] | Channel | Transmission |
+| [degen-etal-2020] | Semantic | Perception |
+| [kursat-degen-2021] | Perceptual | Verification |
+| [giles-etal-2026] | Search efficiency | Psychophysics |
 
 ## Insight
 
@@ -28,7 +28,7 @@ noiseChannel(match, mismatch, b) = match * b + mismatch * (1 - b)
 
 ## Perceptual Grounding
 
-@cite{giles-etal-2026} provide experimental evidence for the perceptual
+[giles-etal-2026] provide experimental evidence for the perceptual
 grounding of noise parameters: discriminability (noise gap) is measured
 via psychophysical staircases, connecting the abstract match/mismatch
 parameters to observable perceptual thresholds. Their Exp 1 shows that
@@ -38,8 +38,8 @@ visual (colour) and auditory (material) modalities.
 However, noise discrimination alone does not explain why colour is
 disproportionately overinformed relative to other privileged features
 like orientation (Exp 2). The residual colour privilege may reflect
-the optimality of colour naming systems (@cite{regier-etal-2007},
-@cite{zaslavsky-etal-2019}): colour categories are partitioned to
+the optimality of colour naming systems ([regier-etal-2007],
+[zaslavsky-etal-2019]): colour categories are partitioned to
 maximise perceptual discriminability, making colour inherently more
 search-efficient than attributes whose category boundaries are not
 perceptually optimised.
@@ -52,11 +52,11 @@ reliability parameters, so there is no canonical `NoisySemantics` instance
 per `(U, W)` pair — each study constructs an explicit value of one of:
 
 - `RSA.NoisyLex` (`Noisy.lean`) — Product-of-Experts noisy semantics
-  (@cite{degen-etal-2020}, @cite{waldon-degen-2021},
-  @cite{schlotterbeck-wang-2023}). PoE prefix product via
+  ([degen-etal-2020], [waldon-degen-2021],
+  [schlotterbeck-wang-2023]). PoE prefix product via
   `RSA.prefixMeaning` (`Sequential.lean`).
 - `RSA.IncrementalSemantics` (`Incremental.lean`) — extension-counting
-  Boolean semantics (@cite{cohn-gordon-goodman-potts-2019}).
+  Boolean semantics ([cohn-gordon-goodman-potts-2019]).
 
 Information-theoretic refinement (channel capacity `C = 1 - H(ε)` for
 binary symmetric channels) is a future direction; the current
@@ -99,27 +99,27 @@ theorem noiseChannel_discrimination (onMatch onMismatch : ℚ) :
 
 -- Standard Noise Parameters
 
-/-- Color parameters from @cite{degen-etal-2020}: low noise -/
+/-- Color parameters from [degen-etal-2020]: low noise -/
 def colorMatch : ℚ := 99/100
 def colorMismatch : ℚ := 1/100
 def colorDiscrimination : ℚ := colorMatch - colorMismatch  -- 0.98
 
-/-- Size parameters from @cite{degen-etal-2020}: medium noise -/
+/-- Size parameters from [degen-etal-2020]: medium noise -/
 def sizeMatch : ℚ := 8/10
 def sizeMismatch : ℚ := 2/10
 def sizeDiscrimination : ℚ := sizeMatch - sizeMismatch  -- 0.60
 
 /-- Material parameters (HYPOTHETICAL, not from any paper): high noise.
-    @cite{kursat-degen-2021} establishes the *ordering* (material harder
+    [kursat-degen-2021] establishes the *ordering* (material harder
     than color) but not specific channel parameters. -/
 def materialMatch : ℚ := 7/10
 def materialMismatch : ℚ := 3/10
 def materialDiscrimination : ℚ := materialMatch - materialMismatch  -- 0.40
 
 /-- Orientation parameters: high discrimination (like colour).
-    @cite{giles-etal-2026} Exp 2 confirms ≥99% labelling accuracy for
+    [giles-etal-2026] Exp 2 confirms ≥99% labelling accuracy for
     orientation (vertical vs horizontal), comparable to colour. Orientation
-    is a privileged visual feature (@cite{wolfe-horowitz-2017}) capable of
+    is a privileged visual feature ([wolfe-horowitz-2017]) capable of
     producing pop-out effects and guiding pre-attentive search.
 
     Despite equal discrimination, colour is overinformed more than
@@ -185,7 +185,7 @@ theorem easier_higher_discrimination :
     equal noise discrimination (0.98), so the noise model predicts no
     preference between them.
 
-    @cite{giles-etal-2026} Exp 2 falsifies this prediction: colour is
+    [giles-etal-2026] Exp 2 falsifies this prediction: colour is
     overinformed significantly more than orientation (β = −0.97,
     95% CI = [−1.20, −0.75]) even when controlling for:
     - Perceptual discriminability (both ≥99% labelling accuracy)
@@ -196,7 +196,7 @@ theorem easier_higher_discrimination :
     This means the noise model is *necessary but not sufficient*:
     discriminability drives overinformativeness (Exp 1), but something
     additional about colour — plausibly the perceptual optimality of
-    colour category boundaries (@cite{regier-etal-2007}) — produces a
+    colour category boundaries ([regier-etal-2007]) — produces a
     residual privilege. -/
 theorem noise_model_predicts_no_colour_orientation_difference :
     colorDiscrimination = orientationDiscrimination := by

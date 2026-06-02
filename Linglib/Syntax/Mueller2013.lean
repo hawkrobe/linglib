@@ -8,8 +8,8 @@ import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
 
 /-!
-# @cite{mueller-2013}: Unifying Everything
-@cite{mueller-2013}
+# [mueller-2013]: Unifying Everything
+[mueller-2013]
 
 Cross-theory comparison formalizing Müller's central thesis: Minimalism, HPSG,
 CCG, Construction Grammar, and Dependency Grammar converge on three universal
@@ -64,7 +64,7 @@ def classifyCCGDerivStep : CCG.DerivStep → Option CombinationKind
 
 /-- Classify an HPSG schema application as one of the three schemata.
 
-    @cite{mueller-2013}'s three universal schemata are Head-Complement,
+    [mueller-2013]'s three universal schemata are Head-Complement,
     Head-Subject, and Head-Filler. HPSG's fourth schema, Head-Modifier
     (adjunction), falls outside this classification — Müller does not
     include adjunction in the convergence claim. -/

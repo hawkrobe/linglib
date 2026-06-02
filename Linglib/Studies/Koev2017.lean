@@ -4,7 +4,7 @@ import Linglib.Semantics.Presupposition.Basic
 import Linglib.Fragments.Slavic.Bulgarian.Evidentials
 
 /-!
-# @cite{koev-2017}: Bulgarian Evidentials and Spatiotemporal Distance
+# [koev-2017]: Bulgarian Evidentials and Spatiotemporal Distance
 
 The Bulgarian evidential (-l participle) is felicitous when the speaker's
 evidence acquisition is **spatiotemporally distant** from the described
@@ -13,7 +13,7 @@ spatially distant (same time, different place). Direct witness (same
 time, same place) is infelicitous. Plus: the evidential contribution
 projects past negation/modals (not-at-issue) and the speaker is fully
 committed to the proposition (non-modal analysis, contra
-@cite{izvorski-1997}).
+[izvorski-1997]).
 
 ## Main definitions
 
@@ -32,13 +32,13 @@ committed to the proposition (non-modal analysis, contra
 * **Learning event `e_l` ontology**: Koev's deepest contribution (74b) is
   the existential introduction of a learning event with `learn_{cs(k)}`
   subscripted on the context set. Not yet formalized; the substrate
-  bridge to @cite{cumming-2026}'s downstream T ≤ A constraint is partial.
+  bridge to [cumming-2026]'s downstream T ≤ A constraint is partial.
 
 ## References
 
-* @cite{koev-2017} (primary)
-* @cite{cumming-2026} (downstream consumer of △ → T ≤ A bridge)
-* @cite{izvorski-1997} (contra: modal analysis Koev rejects)
+* [koev-2017] (primary)
+* [cumming-2026] (downstream consumer of △ → T ≤ A bridge)
+* [izvorski-1997] (contra: modal analysis Koev rejects)
 -/
 
 namespace Koev2017
@@ -59,7 +59,7 @@ inductive SpatialRelation where
 
 /-! ### Evidential Datum Structure -/
 
-/-- An evidential felicity datum from @cite{koev-2017}.
+/-- An evidential felicity datum from [koev-2017].
     Each records the spatiotemporal configuration of the described event
     and the learning event, and whether the evidential is felicitous. -/
 structure EvidentialDatum where
@@ -69,11 +69,11 @@ structure EvidentialDatum where
   spatial : SpatialRelation
   /-- Whether the Bulgarian evidential is felicitous in this configuration -/
   evidentialFelicitous : Bool
-  /-- Example number in @cite{koev-2017} -/
+  /-- Example number in [koev-2017] -/
   exampleNum : String
   deriving Repr, BEq
 
-/-! ### Core △ Data (@cite{koev-2017}, §4) -/
+/-! ### Core △ Data ([koev-2017], §4) -/
 
 /-- (3)/(25a): Standard indirect evidence — speaker was not present when
     the event occurred. Non-overlapping in time, same place. Felicitous. -/
@@ -104,12 +104,12 @@ def smokeFromChimney : EvidentialDatum where
 
 /-- The evidential does not weaken commitment: "EV(p) and I know
     because I was there" is not contradictory (unlike a modal which
-    would predict contradiction). @cite{koev-2017}, §3. -/
+    would predict contradiction). [koev-2017], §3. -/
 def commitmentDatum : Bool := true
 
 /-- The evidential contribution projects past negation: "It is not the
     case that Ivan EV-came" presupposes indirect evidence while negating
-    the proposition. @cite{koev-2017}, §5. -/
+    the proposition. [koev-2017], §5. -/
 def projectionDatum : Bool := true
 
 /-! ### △ Felicity Generalization -/
@@ -138,7 +138,7 @@ theorem triangle_predicts_all :
 
 /-! ### Bridge: Connecting to Linglib Infrastructure -/
 
-/-! Bridge theorems connecting @cite{koev-2017}'s spatiotemporal distance analysis
+/-! Bridge theorems connecting [koev-2017]'s spatiotemporal distance analysis
 to existing linglib infrastructure, organized around the paper's four
 properties (property 6):
 
@@ -148,7 +148,7 @@ properties (property 6):
 
 Plus structural bridges:
 - **△ vs. temporal ordering** — these are independent constraints: §4
-- **Bridge to @cite{cumming-2026}** — △ → T ≤ A (downstream evidence): §7
+- **Bridge to [cumming-2026]** — △ → T ≤ A (downstream evidence): §7
 - **Bridge to nfutL** — existing fragment connection: §8
 
 ## Central Claim: Learning Events
@@ -172,7 +172,7 @@ open Bulgarian.Evidentials
 
 /-! ### Spatiotemporal distance △ substrate (inlined) -/
 
-/-! @cite{koev-2017} Definition 24: two events satisfy △ when either
+/-! [koev-2017] Definition 24: two events satisfy △ when either
     their temporal traces don't overlap (standard indirect evidence) or
     they occur at different locations (smoke-from-chimney scenario).
     Inlined from former `Semantics/Events/SpatiotemporalDistance.lean`
@@ -238,7 +238,7 @@ theorem spatiotemporallyDistant_of_temporallyDisjoint
     (h : temporallyDisjoint e₁ e₂) : spatiotemporallyDistant loc e₁ e₂ :=
   Or.inl h
 
-/-! ### Learning Scenarios (@cite{koev-2017}, §4) -/
+/-! ### Learning Scenarios ([koev-2017], §4) -/
 
 /-- A learning scenario: the evidential introduces a
     learning event e_l — the event through which the speaker acquired
@@ -503,7 +503,7 @@ theorem projection_past_negation (s : LearningScenario ℤ) {W : Type*} (p : W �
     (PrProp.neg (s.toEvidentialProp p)).presup = (s.toEvidentialProp p).presup :=
   PrProp.neg_presup _
 
-/-! ### Bridge to @cite{cumming-2026}: △ → T ≤ A -/
+/-! ### Bridge to [cumming-2026]: △ → T ≤ A -/
 
 /-- For the indirect evidence case, temporal disjointness + ordering
     gives isBefore: τ(e).finish ≤ τ(e_l).start. -/

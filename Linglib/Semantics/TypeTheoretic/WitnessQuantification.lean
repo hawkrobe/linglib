@@ -6,14 +6,14 @@ import Mathlib.Data.Finset.Powerset
 /-!
 # Witness-set quantification
 
-@cite{cooper-2023} @cite{barwise-cooper-1981}
+[cooper-2023] [barwise-cooper-1981]
 
 Witness-set semantics for natural-language quantifiers: a quantifier `q(P, Q)`
 is witnessed by a finite set `X` of `P`-individuals satisfying a
 quantifier-specific cardinality condition, together with evidence that each
 member of `X` (or alternatively each member outside `X`) bears `Q`. The
-architecture descends from @cite{barwise-cooper-1981}'s notion of *witness
-sets*, formulated as type-theoretic predicates in @cite{cooper-2023} Ch. 7.
+architecture descends from [barwise-cooper-1981]'s notion of *witness
+sets*, formulated as type-theoretic predicates in [cooper-2023] Ch. 7.
 
 This file extracts the framework as reusable substrate. It is consumed by
 `Studies.Cooper2023.Ch7` (Cooper's own deployment) and
@@ -42,7 +42,7 @@ refset/compset/maxset framework).
 
 * `witnessGQ_exist_conservative`, `witnessGQ_every_conservative` —
   conservativity follows structurally from the `WitnessSet` subset
-  condition, rather than being stipulated as in @cite{barwise-cooper-1981}.
+  condition, rather than being stipulated as in [barwise-cooper-1981].
 * `particular_exist_iff_witnessGQ`, `universal_iff_witnessGQ`,
   `particularWC_to_witnessGQ`, `particularWC_no_to_witnessGQ` — bridges
   between particular witness conditions and the classical GQ denotations.
@@ -56,7 +56,7 @@ refset/compset/maxset framework).
 ## Implementation notes
 
 * All witness-set predicates take a `DecidablePred` `P : E → Prop` rather
-  than a `Ppty E := E → Type`. This matches @cite{barwise-cooper-1981}'s
+  than a `Ppty E := E → Type`. This matches [barwise-cooper-1981]'s
   set-theoretic formulation and lets Lean's `decide` close finite
   cardinality goals. `Ppty`-shaped witness conditions
   (`ParticularWC_*`, `GeneralWC_*`) coexist for the Type-valued TTR
@@ -80,7 +80,7 @@ def fullExtFinset {E : Type} [Fintype E] (P : E → Prop) [DecidablePred P] :
 
 variable {E : Type}
 
-/-- Base witness-set condition (@cite{barwise-cooper-1981}): a witness set
+/-- Base witness-set condition ([barwise-cooper-1981]): a witness set
 for `P` is a subset of `[↓P]`. Every quantifier-specific witness type
 extends this condition. -/
 structure WitnessSet (P : E → Prop) (X : Finset E) : Prop where
@@ -162,7 +162,7 @@ theorem isEveryW_iff [DecidableEq E] [Fintype E] (P : E → Prop) [DecidablePred
 /-! ### General and particular witness conditions -/
 
 /-- General witness condition for monotone-increasing quantifiers
-(@cite{cooper-2023} §7.4): a witness set `X` plus a per-element
+([cooper-2023] §7.4): a witness set `X` plus a per-element
 mapping into `Q`-evidence. -/
 structure GeneralWC_Incr (P Q : Ppty E)
     (isWS : Finset E → Prop) [DecidableEq E] where
@@ -225,7 +225,7 @@ def particular_no_implies_general [DecidableEq E]
 /-! ### Anaphora-set predictions
 
 The witness-set architecture predicts which anaphora sets each
-quantifier makes available (@cite{cooper-2023} §7.4.1, Table). -/
+quantifier makes available ([cooper-2023] §7.4.1, Table). -/
 
 /-- Anaphora-set kinds reachable from a quantified noun phrase. -/
 inductive AnaphoraRef where
@@ -245,7 +245,7 @@ inductive QuantName where
   | exist | existPl | no | every | most | many | few | aFew
   deriving DecidableEq, Repr
 
-/-- Per-quantifier anaphora-set predictions (@cite{cooper-2023} §7.4.1). -/
+/-- Per-quantifier anaphora-set predictions ([cooper-2023] §7.4.1). -/
 def anaphoraAvailable : QuantName → List AnaphoraRef
   | .exist   => [.refset]
   | .existPl => [.refset, .maxset]
@@ -272,7 +272,7 @@ def witnessGQ_every : GQ E :=
 
 /-- Conservativity of `witnessGQ_exist` follows structurally from the
 `WitnessSet` subset condition — not stipulated as in
-@cite{barwise-cooper-1981}. -/
+[barwise-cooper-1981]. -/
 theorem witnessGQ_exist_conservative :
     Conservative (α := E) witnessGQ_exist := by
   intro R S

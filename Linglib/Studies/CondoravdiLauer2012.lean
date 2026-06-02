@@ -3,16 +3,16 @@ import Linglib.Studies.Krifka2015
 
 /-!
 # Imperatives as Preferential Commitment
-@cite{condoravdi-lauer-2012} @cite{lauer-2013}
+[condoravdi-lauer-2012] [lauer-2013]
 
 Worked examples exercising the substrate's `force = .preferential` axis,
 which had no consumer prior to this file. Anchored on
-@cite{condoravdi-lauer-2012} ("Imperatives: meaning and illocutionary
+[condoravdi-lauer-2012] ("Imperatives: meaning and illocutionary
 force", *Empirical Issues in Syntax and Semantics 9*, pp. 37–58).
 
 ## Paper's central distinction (§§3.2–3.3)
 
-@cite{condoravdi-lauer-2012} argue that declarative and imperative
+[condoravdi-lauer-2012] argue that declarative and imperative
 utterances create commitments of *different attitudinal types*:
 
 - **Declarative utterance** (e.g., "It's raining"): adds
@@ -49,8 +49,8 @@ This is the substrate's `CommitmentForce` axis.
   varying the contextual conditions on the SAME PEP commitment;
   worked examples for each group would multiply the file. Single-case
   worked example here.
-- Comparison with @cite{kaufmann-2012} and @cite{portner-2007} (paper
-  §6) — separate study files would cover these; the @cite{roberts-2023}
+- Comparison with [kaufmann-2012] and [portner-2007] (paper
+  §6) — separate study files would cover these; the [roberts-2023]
   study at sibling `Studies/Roberts2023.lean` already engages the
   Kaufmann-Portner debate.
 
@@ -80,7 +80,7 @@ def isSitting : AddrPosture → Prop
 -- ════════════════════════════════════════════════════
 
 /-- Speaker utters the declarative "The addressee is sitting".
-    Creates a doxastic commitment (Krifka 2015 default; @cite{condoravdi-lauer-2012}
+    Creates a doxastic commitment (Krifka 2015 default; [condoravdi-lauer-2012]
     paper §3.3 Convention applied to assertions). -/
 def declarativeState : KrifkaState AddrPosture :=
   KrifkaState.empty.assert isSitting .speaker
@@ -117,7 +117,7 @@ theorem declarative_preferential_unchanged (w : AddrPosture) :
     operator with `force := .preferential` models the paper's
     `PEP_w(Sp, ⟦sit_down⟧)` commitment.
 
-    Per @cite{condoravdi-lauer-2012} §3.3: the convention for imperatives
+    Per [condoravdi-lauer-2012] §3.3: the convention for imperatives
     parallels the convention for declaratives, but commits the speaker
     to a PREFERENCE rather than a BELIEF. -/
 def imperativeState : KrifkaState AddrPosture :=

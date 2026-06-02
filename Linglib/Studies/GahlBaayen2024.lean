@@ -4,8 +4,8 @@ import Linglib.Processing.Lexical.Discriminative.Normed
 
 /-!
 # Gahl & Baayen (2024): English homophone duration via DLM
-@cite{gahl-baayen-2024} @cite{baayen-2019}
-@cite{heitmeier-chuang-baayen-2026}
+[gahl-baayen-2024] [baayen-2019]
+[heitmeier-chuang-baayen-2026]
 
 Gahl, S., & Baayen, R. H. (2024). Time and thyme again: Connecting
 English spoken word duration to models of the mental lexicon.
@@ -231,7 +231,7 @@ entry need carry a frequency property.
 ### Implications recorded in the paper's discussion
 
 - **Anti-lexical-storage** (paper §6.1, §6.2 contra
-  @cite{levelt-roelofs-meyer-1999} and the Dell-style spreading-
+  [levelt-roelofs-meyer-1999] and the Dell-style spreading-
   activation lineage): frequency effects on duration emerge from a
   model *without* stored words. The DL model has only the matrices
   `C`, `S`, and the trained mappings `G`, `F`, `W` — no lexical
@@ -247,7 +247,7 @@ entry need carry a frequency property.
   *without* its co-occurring contexts, and is correlated with
   visual lexical decision times (paper appendix §A5.1, validated
   against the British Lexicon Project).
-- **Convergence with @cite{saito-tomaschek-baayen-2025}**: both
+- **Convergence with [saito-tomaschek-baayen-2025]**: both
   papers find that DL-derived semantic-support measures replace
   categorical morphological / lexical predictors with smaller AIC
   values and (in Saito) fewer effective degrees of freedom. The

@@ -19,7 +19,7 @@ import Linglib.Fragments.French.Comparison
 
 /-!
 # Stassen (2013): WALS chapter 121 on comparative constructions
-@cite{stassen-2013} @cite{wals-2013} @cite{haspelmath-2001}
+[stassen-2013] [wals-2013] [haspelmath-2001]
 
 WALS Chapter 121 by Leon Stassen covering comparative-construction typology
 across 167 languages: the five-way classification
@@ -132,7 +132,7 @@ theorem sample_no_superlative :
 -- ============================================================================
 
 /-- All particle languages in the sample (English, German, Russian, French)
-    are SVO (or V2). This reflects @cite{haspelmath-2001}'s identification of
+    are SVO (or V2). This reflects [haspelmath-2001]'s identification of
     the comparative particle as a Standard Average European feature. -/
 def particleLanguages : List ComparativeProfile :=
   allLanguages.filter (·.hasType .particle)

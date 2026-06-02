@@ -36,9 +36,9 @@ import Linglib.Fragments.Mayan.Kiche.Adposition
 
 /-!
 # Greenberg 1963: Implicational Universals on Basic Word Order
-@cite{greenberg-1963} @cite{dryer-haspelmath-2013}
+[greenberg-1963] [dryer-haspelmath-2013]
 
-@cite{greenberg-1963} stated 45 cross-linguistic implicational universals on
+[greenberg-1963] stated 45 cross-linguistic implicational universals on
 basic constituent order, adposition order, and related construction-pair
 correlations. This file formalises three of the most cited, tested over a
 curated 15-language Fragment-derived sample:
@@ -106,8 +106,8 @@ def fragmentSample : Finset SampleEntry :=
   -- Object-initial / verb-final-object orders for shape diversity:
   , ⟨ "tzo", "Tzotzil",    Tzotzil.wordOrder,         Tzotzil.adposition ⟩    -- VOS
   , ⟨ "hix", "Hixkaryana", Hixkaryana.wordOrder,      Hixkaryana.adposition ⟩ -- OVS
-  -- K'iche' (Mayan, ergative, VOS, prepositional per @cite{mondloch-2017} Ch 85
-  -- absence; classification contested per @cite{clemens-coon-2018}):
+  -- K'iche' (Mayan, ergative, VOS, prepositional per [mondloch-2017] Ch 85
+  -- absence; classification contested per [clemens-coon-2018]):
   , ⟨ "quc", "K'iche'",    Kiche.wordOrder,     Kiche.adposition ⟩ -- VOS
   }
 
@@ -138,7 +138,7 @@ abbrev isPostpositional (p : SampleEntry) : Prop :=
   p.adposition.IsPostpositional
 
 /-- Language is OV (object precedes verb) per WALS Ch 83.
-    @cite{dryer-1992}'s primary classification under BDT. -/
+    [dryer-1992]'s primary classification under BDT. -/
 abbrev isOV (p : SampleEntry) : Prop := p.wordOrder.ovOrder.IsOV
 
 -- ============================================================================
@@ -149,7 +149,7 @@ abbrev isOV (p : SampleEntry) : Prop := p.wordOrder.ovOrder.IsOV
 -- sites (see `Typology/Universal.lean` for the discussion).
 
 set_option maxRecDepth 4096 in
-/-- @cite{greenberg-1963} Universal 1: in declarative sentences with nominal
+/-- [greenberg-1963] Universal 1: in declarative sentences with nominal
     subject and object, the subject almost always precedes the object.
     Tested over `fragmentSample`: subject-before-object entries (SOV + SVO +
     VSO) outnumber object-before-subject entries (VOS + OVS + OSV) by more
@@ -163,7 +163,7 @@ theorem greenberg_universal_1 :
   decide
 
 set_option maxRecDepth 4096 in
-/-- @cite{greenberg-1963} Universal 3: "Languages with dominant VSO order
+/-- [greenberg-1963] Universal 3: "Languages with dominant VSO order
     are always prepositional." Tested over `fragmentSample`; antecedent is
     triggered by Arabic, Welsh, Irish, all of which are prepositional. -/
 theorem greenberg_universal_3 :
@@ -171,7 +171,7 @@ theorem greenberg_universal_3 :
   decide
 
 set_option maxRecDepth 4096 in
-/-- @cite{greenberg-1963} Universal 4: "With overwhelmingly greater than
+/-- [greenberg-1963] Universal 4: "With overwhelmingly greater than
     chance frequency, languages with normal SOV order are postpositional."
     Tested over `fragmentSample`; antecedent triggers Japanese, Korean,
     Turkish, Hindi, and Basque — all postpositional in WALS. -/
@@ -184,7 +184,7 @@ theorem greenberg_universal_4 :
 -- ============================================================================
 
 set_option maxRecDepth 4096 in
-/-- @cite{dryer-1992}'s Branching Direction Theory primary correlation,
+/-- [dryer-1992]'s Branching Direction Theory primary correlation,
     stated as an implicational universal: in the sample, every OV
     (object-precedes-verb) language is postpositional.
 

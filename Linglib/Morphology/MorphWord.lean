@@ -2,7 +2,7 @@ import Linglib.Morphology.MorphRule
 
 /-!
 # Morphological Word Structure
-@cite{hayes-2009}
+[hayes-2009]
 
 Hierarchical representation of word-internal structure via the `MorphWord`
 inductive type: a tree of morphemes where affixation, compounding,

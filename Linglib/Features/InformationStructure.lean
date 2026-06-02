@@ -1,15 +1,15 @@
 /-!
 # Features.InformationStructure
 
-@cite{rooth-1992} @cite{steedman-2000} @cite{kuroda-1972}
-@cite{umbach-2004} @cite{turco-braun-dimroth-2014}
+[rooth-1992] [steedman-2000] [kuroda-1972]
+[umbach-2004] [turco-braun-dimroth-2014]
 
 Theory-neutral substance taxonomies for Information Structure: theme/
 rheme partitions, focus/background (binary `FocusMark` + structured
 Roothian `Focus α`), focus-marking strategies, judgment type.
 
-@cite{krifka-2008} enumerates four IS notions — focus, givenness,
-topic, and **delimitation** (frame-setting); @cite{fery-ishihara-2016}
+[krifka-2008] enumerates four IS notions — focus, givenness,
+topic, and **delimitation** (frame-setting); [fery-ishihara-2016]
 (Oxford Handbook of Information Structure) adopts Krifka's
 definitions as the unifying baseline. At-issueness (the QUD-tradition
 axis from Roberts / Tonhauser-Beaver-Roberts-Simons / Tonhauser-Beaver-Degen)
@@ -39,8 +39,8 @@ namespace Features.InformationStructure
     The theme:
     - Presupposes a QUD (set of alternatives)
     - Is often prosodically marked (L+H* LH% in English per
-      @cite{pierrehumbert-hirschberg-1990}; attributed by
-      @cite{steedman-2000} to the Theme tune)
+      [pierrehumbert-hirschberg-1990]; attributed by
+      [steedman-2000] to the Theme tune)
     - Corresponds to the λ-abstract in structured meanings
 
     Example: in "FRED ate the beans" (answering "Who ate the beans?"),
@@ -54,7 +54,7 @@ structure Theme (P : Type) where
     The rheme:
     - Restricts the QUD alternatives to one
     - Is often prosodically marked (H* LL% in English per
-      @cite{pierrehumbert-hirschberg-1990})
+      [pierrehumbert-hirschberg-1990])
     - Provides the "answer" to the implicit question
 
     Example: in "FRED ate the beans", the rheme is "Fred". -/
@@ -80,7 +80,7 @@ inductive FocusMark where
 /-- Focus: the contrasted element(s) within theme or rheme.
 
     Focus is marked by pitch accent and:
-    - Evokes alternatives (@cite{rooth-1992} alternative semantics — note
+    - Evokes alternatives ([rooth-1992] alternative semantics — note
       that Schwarzschild 1999, Wagner 2012 contest the alt-set primitive;
       the field `alternatives : List α` here commits to the Roothian view)
     - Associates with focus-sensitive particles (only, even)
@@ -133,7 +133,7 @@ structure InfoStructure (P : Type) where
     (focusing adverbs, contrast/parallelism, scalar implicature,
     question–answer congruence). UNVERIFIED whether the paper specifies
     exactly these four under a single header — earlier prose claimed
-    `@cite{rooth-1992} §2`, removed pending PDF check. -/
+    `[rooth-1992] §2`, removed pending PDF check. -/
 inductive FIPApplication where
   /-- Focusing adverbs: only, even, also -/
   | focusingAdverb
@@ -147,7 +147,7 @@ inductive FIPApplication where
 
 /-! ## Categorical vs Thetic Judgment (Kuroda 1972)
 
-@cite{kuroda-1972} distinguishes two types of judgment that correspond
+[kuroda-1972] distinguishes two types of judgment that correspond
 to different information structures:
 
 - **Categorical** judgment: a subject-predicate structure where the
@@ -159,9 +159,9 @@ to different information structures:
 
 Cross-linguistically attested in Japanese (wa/ga), Romance (subject
 inversion), and Mayan (ψ-subject constructions,
-@cite{aissen-polian-2025}). -/
+[aissen-polian-2025]). -/
 
-/-- Judgment type following @cite{kuroda-1972}.
+/-- Judgment type following [kuroda-1972].
     Categorical judgments have a subject of predication (ψ-subject);
     thetic judgments present an event without one. -/
 inductive JudgmentType where

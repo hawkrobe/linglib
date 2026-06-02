@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Modification
 
 /-!
 # German Adjective Agreement
-@cite{alexeyenko-zeijlstra-2025}
+[alexeyenko-zeijlstra-2025]
 
 German predicative adjectives are bare (uninflected): *Er ist stolz*
 'He is proud.' Attributive adjectives carry strong/weak/mixed agreement

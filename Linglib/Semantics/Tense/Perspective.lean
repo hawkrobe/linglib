@@ -5,8 +5,8 @@ import Linglib.Semantics.Tense.Basic
 
 /-!
 # Perspectival Tense Theory
-@cite{tsilia-zhao-2026} @cite{sharvit-2003} @cite{zhao-2025}
-@cite{anand-nevins-2004} @cite{deal-2020}
+[tsilia-zhao-2026] [sharvit-2003] [zhao-2025]
+[anand-nevins-2004] [deal-2020]
 
 Reusable infrastructure for perspectival tense interpretation:
 tense presuppositions anchored to a perspective parameter π,
@@ -23,7 +23,7 @@ The interpretation function ⟦·⟧^{c,π,g} takes three parameters:
 Two shift operators with the same shape ("overwrite parameter with evaluation
 index") but operating on *independent* parameters:
 - **OP_c**: overwrites c with the evaluation index (indexical shift,
-  @cite{anand-nevins-2004})
+  [anand-nevins-2004])
 - **OP_π**: overwrites π with the time component of the evaluation index
   (tense shift)
 
@@ -197,7 +197,7 @@ theorem presAsPrProp_defined_iff {Time : Type*} [DecidableEq Time]
 
 /-- The interpretation parameter tuple ⟨c, π⟩ from ⟦·⟧^{c,π,g}.
 
-    Context c (for indexical interpretation, @cite{anand-nevins-2004}) and
+    Context c (for indexical interpretation, [anand-nevins-2004]) and
     perspective π (for tense interpretation) are independent parameters.
     This structure makes their independence explicit and architectural:
     `shiftPerspective` preserves `context`, and `shiftContext` preserves

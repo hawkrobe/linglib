@@ -2,7 +2,7 @@ import Linglib.Features.Coordination
 
 /-!
 # Irish Coordination Morphemes
-@cite{haspelmath-2007}
+[haspelmath-2007]
 
 Irish coordination morphemes. Irish is a J-only language for conjunction:
 "agus" is the sole conjunctive coordinator. There is no MU (additive

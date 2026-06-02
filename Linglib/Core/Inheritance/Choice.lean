@@ -3,7 +3,7 @@ import Linglib.Core.Inheritance.Basic
 /-!
 # Choice Sets (OR / Mutual Exclusivity)
 
-@cite{hudson-2010} §3.3
+[hudson-2010] §3.3
 
 OR-links partition values into mutually exclusive alternatives. The schematic
 example: `male --or--> gender`, `female --or--> gender` says that `male` and

@@ -10,7 +10,7 @@ import Linglib.Core.Computability.Subregular.StrictlyLocal
 
 A language `L` is **locally `k`-testable** when membership depends only on
 which length-`k` factors occur in the boundary-augmented form of the input —
-ignoring order and multiplicity @cite{rogers-pullum-2011} @cite{lambert-2022}.
+ignoring order and multiplicity [rogers-pullum-2011] [lambert-2022].
 The **threshold-testable** variant LTT_{k,t} relaxes "ignoring multiplicity"
 to "saturating multiplicities at threshold `t`": LT counts only presence vs
 absence (`t = 1`), LTT_{k,t} counts up to `t` and treats anything beyond as

@@ -24,7 +24,7 @@ licenses it).
 
 ## Positive and negative transfer
 
-Following @cite{berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016}:
+Following [berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016]:
 
 - **Positive transfer**: if the L1 expresses function *f* morphologically,
   speakers can interpret XX as morphological reduplication for *f*
@@ -37,8 +37,8 @@ REALIZE-MORPH is active for function *f* when (i) the L1 marks *f*
 morphologically AND (ii) the L1 has no negative evidence (does not use
 reduplication for other functions while excluding *f*).
 
-@cite{berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016}
-@cite{berent-2026}
+[berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016]
+[berent-2026]
 -/
 
 namespace Phonology.Doubling
@@ -109,7 +109,7 @@ def DoublingGrammar.hasAnyRedup (g : DoublingGrammar) : Bool :=
          at all, it must include *f* among the functions expressed by
          reduplication.
 
-    Negative transfer (@cite{berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016}):
+    Negative transfer ([berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016]):
     when a speaker's L1 uses reduplication for function A but not B,
     the speaker has positive evidence that reduplication != B. This
     blocks the reduplication parse for B even if B is morphologically

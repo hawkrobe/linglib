@@ -4,14 +4,14 @@ import Linglib.Core.Nominal.Maximality
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
-# Paape & Vasishth (2026) @cite{paape-vasishth-2026}
+# Paape & Vasishth (2026) [paape-vasishth-2026]
 
 Context ameliorates but does not eliminate garden-pathing: Novel insights
 from latent-process modeling. *Journal of Memory and Language* 148, 104748.
 
 ## Overview
 
-The paper replicates @cite{altmann-garnham-dennis-1992}'s CC/RC × referential
+The paper replicates [altmann-garnham-dennis-1992]'s CC/RC × referential
 context design (3×2: {amb-CC, amb-RC, unamb-RC} × {unique, non-unique referents})
 with N = 319 using masked bidirectional self-paced reading (BSPR). The central
 contribution is a **multinomial processing tree (MPT)** model that decomposes
@@ -38,7 +38,7 @@ fit (PSIS-LOO elpd). The key architectural difference: the MPT assumes reading
 times at disambiguation are *mixture distributions* — bimodal with garden-pathed
 (slow) and non-garden-pathed (fast) components. Surprisal-based models assume
 unimodal distributions shifted by surprisal value, which cannot capture this
-bimodality (@cite{van-schijndel-linzen-2021}, @cite{huang-etal-2024}).
+bimodality ([van-schijndel-linzen-2021], [huang-etal-2024]).
 
 ## Connections
 
@@ -163,10 +163,10 @@ structure MPTParams where
 
 /-! ### Study Design
 
-Replication of @cite{altmann-garnham-dennis-1992} with N = 319 English
+Replication of [altmann-garnham-dennis-1992] with N = 319 English
 speakers (Prolific) via masked BSPR with end-of-sentence acceptability
 judgments. 36 stimulus sentences adapted from the original (replacing
-*told* with varied verbs per @cite{staub-etal-2018}), crossed with
+*told* with varied verbs per [staub-etal-2018]), crossed with
 2-level context (unique vs. non-unique referents). -/
 
 /-- Experimental conditions in the 3 × 2 design. -/
@@ -395,7 +395,7 @@ theorem gp_cost_small_relative_to_reanalysis :
 
 /-! ### Why the MPT outperforms surprisal
 
-Surprisal theory (@cite{hale-2001}, @cite{levy-2008}) predicts that
+Surprisal theory ([hale-2001], [levy-2008]) predicts that
 processing difficulty is proportional to the negative log probability
 of a word in context. For garden-path sentences, surprisal at the
 disambiguating region should be higher for less expected continuations.
@@ -408,7 +408,7 @@ each with distinct cost distributions. Single-stage surprisal models
 predict a unimodal distribution shifted by the surprisal value.
 
 This is structurally analogous to the limitation identified by
-@cite{van-schijndel-linzen-2021} and @cite{huang-etal-2024}: single-stage
+[van-schijndel-linzen-2021] and [huang-etal-2024]: single-stage
 surprisal models underestimate the magnitude of garden-path effects
 because they lack a distinct, costly reanalysis mechanism. -/
 
@@ -494,7 +494,7 @@ his life for") intersects the restrictor with the RC predicate, narrowing
 to a single entity and rescuing uniqueness.
 
 This makes the RC pragmatically *necessary* in non-unique contexts — the same
-mechanism underlying @cite{sedivy-etal-1999}'s contrastive inference: a
+mechanism underlying [sedivy-etal-1999]'s contrastive inference: a
 modifier is informative when a contrast set is available. In Sedivy et al.'s
 visual-world paradigm, the contrast set is perceptual (tall glass vs. short
 glass); here, it is discourse-referential (woman₁ vs. woman₂). Both are
@@ -609,7 +609,7 @@ theorem uniqueness_grounds_context_supports :
 
 `modifierNecessary` (defined in `Definite.lean`) captures the abstract
 predicate: a modifier rescues a failed uniqueness presupposition. Both
-Paape & Vasishth's context-sensitive attachment and @cite{sedivy-etal-1999}'s
+Paape & Vasishth's context-sensitive attachment and [sedivy-etal-1999]'s
 contrastive inference are instances of the same predicate — the modifier
 type differs (RC vs. scalar adjective) but the referential mechanism is
 identical. -/
@@ -628,7 +628,7 @@ theorem pv_modifier_unnecessary :
 
 -- Sedivy et al. (1999) visual-world scenario
 
-/-- Toy visual-world entity for the @cite{sedivy-etal-1999} scenario. -/
+/-- Toy visual-world entity for the [sedivy-etal-1999] scenario. -/
 inductive SedivyEntity where
   | tallGlass    -- target
   | shortGlass   -- same-category competitor

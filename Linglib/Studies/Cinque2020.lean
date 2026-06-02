@@ -2,15 +2,15 @@ import Linglib.Typology.RelativeClause.Basic
 
 /-!
 # Cinque (2020): a unified double-Headed analysis of relative clauses
-@cite{cinque-2020}
+[cinque-2020]
 
-Formalizes the core of @cite{cinque-2020}: all attested relative-clause types
+Formalizes the core of [cinque-2020]: all attested relative-clause types
 derive from a single **double-Headed** structure — an *internal* Head and an
 *external* Head (both indefinite `dP`s, smaller than DP), with the relative
 clause merged pre-nominally — via two derivation routes (§1.5):
 
 * **Raising** — the *internal* Head raises to Spec,CP and is the overt Head,
-  licensing deletion of the external Head (@cite{kayne-1994} ch. 8).
+  licensing deletion of the external Head ([kayne-1994] ch. 8).
   Reconstruction / island effects are detectable: the overt Head is in a chain
   with the RC-internal position.
 * **Matching** — the *external* Head raises and is overt, licensing deletion of
@@ -32,7 +32,7 @@ This is the genuine syntactic treatment that **computes** a
 `RelativeClause.Realization` from the reified derivation — the consumer the
 substrate's projection hook was built for, and the honest counterpart to the
 HPSG `RelClauseDerivation.realization` (which `RelativeClause.Realization`
-already serves). @cite{de-vries-2018} surveys the framework-neutral typology
+already serves). [de-vries-2018] surveys the framework-neutral typology
 this single structure is meant to cover.
 
 ## Main declarations
@@ -56,10 +56,10 @@ open RelativeClause
 
 /-! ### The two derivations from the single double-Headed structure -/
 
-/-- The derivation route (@cite{cinque-2020} §1.5). -/
+/-- The derivation route ([cinque-2020] §1.5). -/
 inductive Derivation
   /-- The internal Head raises to Spec,CP and is overt; the external Head is
-      deleted (@cite{kayne-1994}). -/
+      deleted ([kayne-1994]). -/
   | raising
   /-- The external Head is overt; the internal Head is deleted / a proform. -/
   | matching
@@ -78,7 +78,7 @@ def Derivation.overtHead : Derivation → HeadChoice
 
 /-! ### The internal Head and its realization strategy -/
 
-/-- Category of the relativized internal Head (@cite{cinque-2020} §1.5).
+/-- Category of the relativized internal Head ([cinque-2020] §1.5).
     Deletion under identity with the external Head turns on this: only an
     indefinite `dP` exactly matches the (indefinite `dP`) external Head. -/
 inductive InternalHeadCategory
@@ -88,7 +88,7 @@ inductive InternalHeadCategory
   | biggerDPKP
   deriving DecidableEq, Repr
 
-/-- Strategies for realizing the internal Head (@cite{cinque-2020} ch. 4). -/
+/-- Strategies for realizing the internal Head ([cinque-2020] ch. 4). -/
 inductive Strategy
   /-- Gap + invariant relativizer (English *that*, Italian *che*). -/
   | invariantRelativizer
@@ -107,7 +107,7 @@ inductive Strategy
 /-- Does this strategy realize the internal Head by *deleting* it under identity
     with the external Head (the gap + invariant-relativizer case)? Only the
     invariant-relativizer strategy does. PRO is a null *proform*, not deletion:
-    @cite{cinque-2020} keeps deletion / non-pronunciation distinct from
+    [cinque-2020] keeps deletion / non-pronunciation distinct from
     proform-replacement, so PRO is not subject to the exact-match licensing. -/
 def Strategy.DeletesInternalHead (s : Strategy) : Prop := s = .invariantRelativizer
 
@@ -128,7 +128,7 @@ def Strategy.toNPRelType : Strategy → NPRelType
 /-! ### Relative-clause types and merge height -/
 
 /-- RC types, by increasing height of external merge in the nominal extended
-    projection (@cite{cinque-2020} §3.5): a bigger external Head merges higher. -/
+    projection ([cinque-2020] §3.5): a bigger external Head merges higher. -/
 inductive RCType
   | participial
   | restrictive
@@ -137,7 +137,7 @@ inductive RCType
   | nonRestrictive
   deriving DecidableEq, Repr
 
-/-- Relative merge height (bigger external Head = higher), per @cite{cinque-2020}
+/-- Relative merge height (bigger external Head = higher), per [cinque-2020]
     §3.5: participials lowest (smallest external Head); amount/maximalizing below
     ordinary restrictives (§3.5.5, presented as a tentative refinement of the
     §1.5 simplification that they merge alike); kind-defining between restrictives
@@ -151,7 +151,7 @@ def RCType.mergeHeight : RCType → Nat
 
 /-! ### The reified relative clause -/
 
-/-- A relative clause in @cite{cinque-2020}'s unified analysis: the single
+/-- A relative clause in [cinque-2020]'s unified analysis: the single
     double-Headed structure (both Heads present by construction), a derivation
     route, the internal-Head category and realization strategy, the relativized
     AH position, and the position of the RC w.r.t. the Head. -/
@@ -169,13 +169,13 @@ def RC.overtHead (r : RC) : HeadChoice := r.derivation.overtHead
 
 /-- Reconstruction / island effects are detectable iff the overt Head is the
     *internal* one (raising) — it is then in a chain with the RC-internal
-    position (@cite{cinque-2020} §1.5). -/
+    position ([cinque-2020] §1.5). -/
 def RC.Reconstructs (r : RC) : Prop := r.derivation = .raising
 
 instance (r : RC) : Decidable r.Reconstructs := by
   unfold RC.Reconstructs; infer_instance
 
-/-- @cite{cinque-2020}'s deletion-licensing condition: the internal Head may be
+/-- [cinque-2020]'s deletion-licensing condition: the internal Head may be
     deleted (the gap + invariant-relativizer strategy) only when it exactly
     matches the external Head (an indefinite `dP`). A bigger internal Head
     (oblique DP/KP, or DP/KP in a PP) must be spelled out — a relative pronoun
@@ -195,7 +195,7 @@ def RC.realization (r : RC) : Realization :=
 
 /-! ### Consequences -/
 
-/-- A matching derivation shows no reconstruction (@cite{cinque-2020} §1.5). -/
+/-- A matching derivation shows no reconstruction ([cinque-2020] §1.5). -/
 theorem matching_not_reconstructs (r : RC) (h : r.derivation = .matching) :
     ¬ r.Reconstructs := by
   unfold RC.Reconstructs; rw [h]; decide
@@ -212,7 +212,7 @@ theorem bigger_head_no_gap_deletion (r : RC) (h : r.WellFormed)
   rw [hbig] at hmatch
   exact absurd hmatch (by decide)
 
-/-- Non-restrictive RCs merge higher than restrictives (@cite{cinque-2020} §3.5). -/
+/-- Non-restrictive RCs merge higher than restrictives ([cinque-2020] §3.5). -/
 theorem nonRestrictive_above_restrictive :
     RCType.restrictive.mergeHeight < RCType.nonRestrictive.mergeHeight := by decide
 
@@ -222,7 +222,7 @@ theorem participial_lowest (t : RCType) :
   cases t <;> decide
 
 /-- Amount/maximalizing RCs merge lower (closer to the Head) than ordinary
-    restrictives — @cite{cinque-2020} §3.5.5, presented there as a tentative
+    restrictives — [cinque-2020] §3.5.5, presented there as a tentative
     refinement of the §1.5 simplification that they merge in the same position. -/
 theorem maximalizing_below_restrictive :
     RCType.maximalizing.mergeHeight < RCType.restrictive.mergeHeight := by decide

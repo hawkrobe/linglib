@@ -2,9 +2,9 @@ import Linglib.Phenomena.Questions.Basic
 
 /-!
 # Phenomena/Questions/MentionSome.lean
-@cite{groenendijk-stokhof-1984} @cite{belnap-1982}
+[groenendijk-stokhof-1984] [belnap-1982]
 
-Empirical data on mention-some interpretations from @cite{groenendijk-stokhof-1984}, Chapter VI, Section 5.
+Empirical data on mention-some interpretations from [groenendijk-stokhof-1984], Chapter VI, Section 5.
 
 ## Overview
 
@@ -13,12 +13,12 @@ This file contains theory-neutral empirical data on:
 2. Embedded mention-some paraphrases
 3. The negative answer problem (why "not in drawer" fails)
 4. Verb licensing (why "depends" blocks mention-some)
-5. Mention-two / cumulative quantification (@cite{belnap-1982} examples)
+5. Mention-two / cumulative quantification ([belnap-1982] examples)
 
 ## Sources
 
-- @cite{groenendijk-stokhof-1984}. Studies on the Semantics of Questions. Ch. VI, Sec. 5.
-- @cite{belnap-1982}. Questions and Answers in Montague Grammar.
+- [groenendijk-stokhof-1984]. Studies on the Semantics of Questions. Ch. VI, Sec. 5.
+- [belnap-1982]. Questions and Answers in Montague Grammar.
 -/
 
 namespace Phenomena.Questions.MentionSome
@@ -302,7 +302,7 @@ structure MentionNDatum where
   source : String := "G&S 1984, Section 5.3; Belnap 1982"
   deriving Repr
 
-/-- @cite{belnap-1982}'s unicorn example.
+/-- [belnap-1982]'s unicorn example.
 
 "Where do two unicorns live?" - classic example of cumulative quantification. -/
 def whereTwoUnicorns : MentionNDatum :=

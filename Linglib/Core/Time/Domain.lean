@@ -3,11 +3,11 @@ import Linglib.Core.Time.Orientation
 
 /-!
 # Temporal Domains
-@cite{declerck-2006} @cite{reichenbach-1947}
+[declerck-2006] [reichenbach-1947]
 
 A **temporal domain**: a central **time of orientation** (TO) — the
 binding TO of the domain — together with related sub-TOs. The same
-shape covers @cite{reichenbach-1947}'s S/P/R/E and Declerck's
+shape covers [reichenbach-1947]'s S/P/R/E and Declerck's
 binding-TO + sub-TOs; a `Domain` is what they share.
 
 ## Concepts
@@ -38,7 +38,7 @@ namespace Core.Time
 -- § Times of Orientation
 -- ════════════════════════════════════════════════════
 
-/-- A **time of orientation** (TO, @cite{declerck-2006}): a temporal
+/-- A **time of orientation** (TO, [declerck-2006]): a temporal
     anchor used by tense/aspect frameworks. Realized as
     `Interval Time` so the same type covers both point times
     (degenerate intervals via `Interval.point`) and extended
@@ -87,7 +87,7 @@ end NamedTO
 -- § Domain
 -- ════════════════════════════════════════════════════
 
-/-- A **temporal domain** (@cite{declerck-2006}): a central time of
+/-- A **temporal domain** ([declerck-2006]): a central time of
     orientation (the *binding TO* of the domain) together with a list
     of related sub-TOs. The Allen relations between any pair of TOs
     are computed on-demand from the underlying linear order on `Time`
@@ -177,7 +177,7 @@ namespace Domain
 variable {Time : Type*} [LinearOrder Time]
 
 /-- The four canonical Reichenbach role labels (extended with
-    @cite{kiparsky-2002}'s perspective time P) as `Orientation`
+    [kiparsky-2002]'s perspective time P) as `Orientation`
     values: utterance (S), perspective (P), topic (R), situation (E). -/
 def reichenbachLabels : List Orientation :=
   [.utterance, .perspective, .topic, .situation]

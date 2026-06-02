@@ -4,9 +4,9 @@ import Linglib.Syntax.DependencyGrammar.LongDistance
 
 /-!
 # Discontinuities as risen catenae
-@cite{osborne-2019} @cite{osborne-gross-2012}
+[osborne-2019] [osborne-gross-2012]
 
-A **risen catena** (@cite{osborne-2019}, Ch 7 §7.10) is a catena whose string
+A **risen catena** ([osborne-2019], Ch 7 §7.10) is a catena whose string
 yield is not contiguous: the catena is connected in the dependency graph but
 intervening words separate it in linear order. Osborne treats every
 discontinuity (wh-fronting, topicalization, scrambling, extraposition, right
@@ -44,7 +44,7 @@ open DepGrammar
 
 /-! ### Discontinuity classification -/
 
-/-- Discontinuity types (@cite{osborne-2019}, Ch 8 Table 19). -/
+/-- Discontinuity types ([osborne-2019], Ch 8 Table 19). -/
 inductive DiscontinuityType where
   | whFronting        -- "Which song do you like?"
   | topicalization    -- "That song, you don't like"
@@ -78,7 +78,7 @@ def displacementDir : DiscontinuityType → DisplacementDir
 def isContiguous (nodes : List Nat) : Bool :=
   isInterval (nodes.insertionSort (· ≤ ·))
 
-/-- A **risen catena** (@cite{osborne-2019}, Ch 7 §7.10) is a catena whose
+/-- A **risen catena** ([osborne-2019], Ch 7 §7.10) is a catena whose
     string yield is not contiguous — connected in the dependency tree but
     separated in linear order by intervening material. -/
 def isRisenCatena (t : DepTree) (nodes : List Nat) : Bool :=
@@ -89,7 +89,7 @@ def isRisenCatena (t : DepTree) (nodes : List Nat) : Bool :=
 def classifyDisplacement (d : Dependency) : DisplacementDir :=
   if d.depIdx < d.headIdx then .rising else .lowering
 
-/-! ### Example trees from @cite{osborne-2019} Ch 8 -/
+/-! ### Example trees from [osborne-2019] Ch 8 -/
 
 /-- **Wh-fronting**: "What did you eat?". The catena `{what(0), eat(3)}` is
     risen — connected via `obj` but `did(1), you(2)` intervene. -/

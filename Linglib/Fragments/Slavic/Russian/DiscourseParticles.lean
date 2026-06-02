@@ -1,6 +1,6 @@
 /-!
 # Russian Discourse Particles
-@cite{ippolito-kiss-williams-2025}
+[ippolito-kiss-williams-2025]
 
 Lexical entry for Russian *tol'ko* (только) — the discourse *only*
 connective. Allows all clause types as S'.

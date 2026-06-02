@@ -3,7 +3,7 @@ import Linglib.Semantics.Degree.Basic
 
 /-!
 # Antonymy: Contradictory vs. Contrary Negation
-@cite{krifka-2007b} @cite{cruse-1986} @cite{horn-1989}
+[krifka-2007b] [cruse-1986] [horn-1989]
 
 Two models of gradable adjective antonymy and their formal properties.
 
@@ -15,7 +15,7 @@ eliminates and "not unhappy" = "happy".
 gap. `notContraryNegMeaning d tp ≠ positiveMeaning' d tp` in the gap region.
 Double negation does NOT eliminate.
 
-@cite{krifka-2007b} argues that antonyms are *literally* contradictory (single
+[krifka-2007b] argues that antonyms are *literally* contradictory (single
 θ) and the gap emerges through pragmatic strengthening (M-principle). The
 contrary model captures the *effective* semantics after strengthening. Both
 models are formalized here; the pragmatic derivation connecting them is in
@@ -48,7 +48,7 @@ open Semantics.Degree (positiveMeaning antonymMeaning)
 
 /-- Double contradictory negation eliminates: "not [not happy]" = "happy".
 
-    @cite{krifka-2007b}: this is the LITERAL semantics. If antonyms are
+    [krifka-2007b]: this is the LITERAL semantics. If antonyms are
     contradictory, then "not unhappy" and "happy" are synonymous —
     the puzzle that motivates pragmatic strengthening. -/
 theorem contradictory_dne {max : Nat}

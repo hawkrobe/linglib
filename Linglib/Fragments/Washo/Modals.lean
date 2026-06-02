@@ -4,13 +4,13 @@ import Linglib.Semantics.Modality.Typology
 # Washo Modal Inventory
 
 Modal expressions from Washo (isolate), based on
-@cite{bochnak-2015a} and @cite{bochnak-2015b}.
+[bochnak-2015a] and [bochnak-2015b].
 
-Washo is a key counterexample to the SAV universal (@cite{nauze-2008}):
+Washo is a key counterexample to the SAV universal ([nauze-2008]):
 the modal verb *-eʔ* expresses both possibility and necessity with both
 epistemic and deontic flavors, varying on **both** axes simultaneously.
 Despite this, *-eʔ* satisfies the IFF universal
-(@cite{steinert-threlkeld-imel-guo-2023}): its meaning is the full
+([steinert-threlkeld-imel-guo-2023]): its meaning is the full
 Cartesian product {necessity, possibility} × {epistemic, deontic}.
 -/
 

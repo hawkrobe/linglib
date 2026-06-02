@@ -9,16 +9,16 @@ import Linglib.Core.Computability.Subregular.ForbiddenPairs
 import Linglib.Core.Computability.Subregular.Multitier
 
 /-!
-# Frisch, Pierrehumbert & Broe (2004) @cite{frisch-pierrehumbert-broe-2004}
+# Frisch, Pierrehumbert & Broe (2004) [frisch-pierrehumbert-broe-2004]
 
 Similarity Avoidance and the OCP. *Natural Language & Linguistic Theory*
 22(1):179–228.
 
-@cite{frisch-pierrehumbert-broe-2004} (FPB) argue that the OCP-Place
+[frisch-pierrehumbert-broe-2004] (FPB) argue that the OCP-Place
 constraint in Arabic verbal roots is a **gradient** constraint whose
 strength is a quantitative function of the **similarity** between
 homorganic consonants. The categorical OCP-Place analyses of
-@cite{mccarthy-1986}, @cite{padgett-1995}, and @cite{mccarthy-1994} all
+[mccarthy-1986], [padgett-1995], and [mccarthy-1994] all
 face the same trade-off: dividing consonants into co-occurrence classes
 either ignores robust within-class variation (broad classes — many
 exceptions) or fragments the data into ad-hoc sub-classes (narrow
@@ -68,7 +68,7 @@ guttural/dorsal OCPs.
 
 ## What this file does *not* formalise
 
-* The **2,674-root corpus** from @cite{cowan-1979} (the *Hans Wehr*
+* The **2,674-root corpus** from [cowan-1979] (the *Hans Wehr*
   Arabic-English dictionary) that anchors FPB's O/E computations is
   not in the paper text. We use the paper's reported O/E values
   (Table IV) as data, not a re-derived corpus.
@@ -76,29 +76,29 @@ guttural/dorsal OCPs.
   Soft 0.73, Feature 0.71, Natural Classes 0.75) require the corpus.
   Reproduction is deferred.
 * The **stochastic constraint model** of FPB §3.4 (logistic fit
-  with K, S parameters; @cite{frisch-broe-pierrehumbert-1997}, Rutgers
+  with K, S parameters; [frisch-broe-pierrehumbert-1997], Rutgers
   Optimality Archive) requires the corpus and is deferred.
 * **§4.1 Frisch–Zawaydeh nonce-verb judgments**
-  (@cite{frisch-zawaydeh-2001}: Arabic speakers rate /baba**θ**a/
+  ([frisch-zawaydeh-2001]: Arabic speakers rate /baba**θ**a/
   identical < /**θ**ab**a**ma/ similar adjacent < /ba**ʃ**afa/ similar
   nonadjacent < /ba**ʔ**ada/ nonhomorganic in OCP-violation severity)
   — experimental data, summarised in docstring only.
 * **§4.2 Maltese borrowings from Italian** (FPB Table VI p. 213:
   identical 0.26, similar homorganic 0.45, coronal stop/fric 0.78
   — gradient OCP applied selectively to incorporated Italian forms;
-  @cite{mifsud-1995}) — corpus-based, summarised only.
+  [mifsud-1995]) — corpus-based, summarised only.
 * **§4.2 cross-linguistic similarity-OCP attestations** (Tigrinya
-  @cite{buckley-1997-ocp}, Russian @cite{padgett-1995}, English
-  @cite{berkley-1994}, Thai @cite{frisch-2000a}) — referenced in
+  [buckley-1997-ocp], Russian [padgett-1995], English
+  [berkley-1994], Thai [frisch-2000a]) — referenced in
   docstring.
-* **§4.3 phonetic / cognitive origin** (@cite{berg-1998},
-  @cite{boersma-1998}, @cite{frisch-1996} processing-difficulty
-  argument; speech-error data of @cite{abd-el-jawad-abu-salim-1987}:
+* **§4.3 phonetic / cognitive origin** ([berg-1998],
+  [boersma-1998], [frisch-1996] processing-difficulty
+  argument; speech-error data of [abd-el-jawad-abu-salim-1987]:
   /takriib/ for /takbiir/ 'glorification', /maraaʕiʃ/ for /maʃaaʕir/
   'feelings') — diachronic-functional grounding, summarised only.
 * **Full natural-class derivation from a feature matrix** —
   the paper sketches this (eq. 8 lays out the feature matrix;
-  @cite{broe-1993}'s specification theory provides the lattice
+  [broe-1993]'s specification theory provides the lattice
   machinery), but a faithful Lean implementation requires a substrate
   effort the audit explicitly flagged as a separate next step. This
   file reproduces the paper's worked-example natural-class lists
@@ -123,7 +123,7 @@ specific Table IV bins.
 
 ## Connection to `Hansson2010.lean`
 
-@cite{hansson-2010} (`Studies/Hansson2010.lean`)
+[hansson-2010] (`Studies/Hansson2010.lean`)
 cites FPB at line 76 in its design-boundary section on
 similarity-graded transparency: cases where intervening segments
 behave differently depending on similarity to the harmonising pair
@@ -149,7 +149,7 @@ namespace Phonology.Studies.FrischPierrehumbertBroe2004
 /-! ## § 1: The Arabic Consonant Inventory (FPB feature matrix (8), p. 201) -/
 
 /-- The 28-segment Arabic consonant inventory used by
-@cite{frisch-pierrehumbert-broe-2004} eq. 8 (p. 201). The labelling
+[frisch-pierrehumbert-broe-2004] eq. 8 (p. 201). The labelling
 follows the paper's IPA-with-superscript-`ˁ`-for-emphatic convention.
 
 This file's worked examples and divergence theorem use only the labial
@@ -231,7 +231,7 @@ instance : DecidablePred Arabic.isLabial
 
 /-! ### Per-pair enumerations vs unified lattice
 
-@cite{frisch-pierrehumbert-broe-2004} p. 199 enumerates the labial
+[frisch-pierrehumbert-broe-2004] p. 199 enumerates the labial
 natural classes relevant for two specific worked examples:
 
 * /f, m/: 2 shared classes + 7 non-shared = 9 total. The non-shared
@@ -241,7 +241,7 @@ natural classes relevant for two specific worked examples:
   `b` and would naturally appear in a unified lattice.
 
 This difference is **most likely a paper enumeration error**, not a
-principled per-pair-relativised derivation: under @cite{broe-1993}'s
+principled per-pair-relativised derivation: under [broe-1993]'s
 specification-theory lattice the relevant labial natural classes are
 inventory-determined (closed under intersection of feature-class
 extensions), so once the lattice is fixed the set of classes containing
@@ -431,7 +431,7 @@ theorem thresholdedTSL_lang_isTSL2 (xs : List (Finset Arabic)) (t : ℚ) :
 /-- **BTSL_2 corollary** (via `IsTierStrictlyLocal.toIsBTSL` in
 `Core.Computability.Subregular.Multitier`): every threshold-induced FPB
 grammar's stringset is in the multitier closure of strictly local
-languages, hence consumed by the @cite{lambert-2026} BTC framework. -/
+languages, hence consumed by the [lambert-2026] BTC framework. -/
 theorem thresholdedTSL_lang_isBTSL2 (xs : List (Finset Arabic)) (t : ℚ) :
     Core.Computability.Subregular.IsBTSL 2 (thresholdedTSL xs t).lang :=
   (thresholdedTSL_lang_isTSL2 xs t).toIsBTSL
@@ -460,7 +460,7 @@ model cannot match all three of FPB Table IV's data points
 (sim=0, O/E=1.22), (sim=0.25, O/E=0.59), (sim=0.55, O/E=0.06).
 
 **Significance**: any similarity-threshold TSL_2 grammar (per
-`thresholdedTSL`, instantiating @cite{heinz-rawal-tanner-2011}'s
+`thresholdedTSL`, instantiating [heinz-rawal-tanner-2011]'s
 substrate) makes a binary step-function decision on each pair (per
 `thresholdedTSL_pair_iff`), so its O/E prediction collapses to two
 values: one for permitted (similarity < t) pairs, one for forbidden
@@ -473,7 +473,7 @@ p. 207) and requires the lexical corpus to formalise. The 3-bin
 separation captured here is the corpus-free Lean-formal version.
 
 The natural downstream extension of FPB's gradient observation is the
-weighted-constraint MaxEnt phonotactic learner of @cite{hayes-wilson-2008},
+weighted-constraint MaxEnt phonotactic learner of [hayes-wilson-2008],
 which uses similarity-relevant features as primitives and reproduces
 gradient phonotactic patterns by fitting log-linear weights — a
 positive-fit complement to this file's negative-fit (categorical-fails)

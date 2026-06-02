@@ -2,7 +2,7 @@ import Linglib.Typology.Negation
 
 /-!
 # English Negation Fragment
-@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
+[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
 
 English expresses standard negation with the particle *not* (contracted *n't*).
 WALS classifies English as **both symmetric and asymmetric** (SymAsy):

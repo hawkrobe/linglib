@@ -6,7 +6,7 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.Greek.StandardModern.Nouns
 
 /-! # Longobardi (2001): A Unified Parametric Theory of Bare Nouns and Proper Names
-@cite{longobardi-2001}
+[longobardi-2001]
 
 Natural Language Semantics 9: 335--369.
 
@@ -20,9 +20,9 @@ transparently (`transparentAlpha`). The paper establishes:
 1. **Romance BNs are always indefinites** — quantificational variables
    (existentially or generically bound), never kind-denoting constants.
 2. **English BNs are ambiguous** — they can be *referential* (kind names,
-   in the spirit of @cite{carlson-1977}) OR *quantificational* (indefinite
+   in the spirit of [carlson-1977]) OR *quantificational* (indefinite
    variables, like Romance BNs).
-3. **Two types of genericity** (supporting @cite{gerstner-krifka-1987}):
+3. **Two types of genericity** (supporting [gerstner-krifka-1987]):
    - Indefinite/quantificational generics: variables bound by GEN
    - Definite/referential generics: kind-denoting constants (via D)
 4. **Typological generalization**: PN syntax (N-to-D raising) and BN
@@ -32,7 +32,7 @@ transparently (`transparentAlpha`). The paper establishes:
 ## Connection to Existing Theory
 
 Longobardi's `ArgumentType` distinction (referential vs quantificational)
-cross-cuts @cite{chierchia-1998}'s Nominal Mapping Parameter:
+cross-cuts [chierchia-1998]'s Nominal Mapping Parameter:
 - Chierchia's NMP captures *which denotation types* are available
 - Longobardi's parameters capture *why* the denotation types vary,
   grounding the variation in DP-internal syntax (N-to-D raising)
@@ -54,12 +54,12 @@ open Semantics.Kinds.SortedOntology (PredicateLevel barePluralTranslation
 
 /-- The semantic type of a nominal argument.
 
-@cite{longobardi-2001} §2: All nominal arguments denote entities from
+[longobardi-2001] §2: All nominal arguments denote entities from
 Carlson's ontology (objects and kinds). They divide into two types:
 
 - **Referential**: constants — denote directly through the lexical
   referring potential of the head noun. Proper names and kind names.
-  Rigid designators with widest scope (@cite{kripke-1980}).
+  Rigid designators with widest scope ([kripke-1980]).
 - **Quantificational**: variables — denote via a variable bound by
   a (possibly covert) operator, with the noun's kind-naming meaning
   serving as predicative restrictor. Overt indefinites and Romance BNs. -/
@@ -76,7 +76,7 @@ inductive ArgumentType where
 -- § 2: DP Parameters — Strong D × Transparent α
 -- ============================================================================
 
-/-- The DP-internal parametric system from @cite{longobardi-2001} table (61).
+/-- The DP-internal parametric system from [longobardi-2001] table (61).
 
 Two binary parameters on the nominal projection:
 
@@ -119,7 +119,7 @@ def english : DPParameter := { strongD := false, transparentAlpha := false }
 def greek : DPParameter := { strongD := true, transparentAlpha := false }
 
 /-- Celtic (speculative): weak D, transparent α — the other intermediate.
-    @cite{longobardi-2001} fn. 35: "The other intermediate pair of values
+    [longobardi-2001] fn. 35: "The other intermediate pair of values
     ('weak' D and transparent α) is likely to be instantiated by Celtic
     languages and is irrelevant to the present reasoning." Included for
     completeness of the 2×2 table; not empirically developed in the paper. -/
@@ -132,7 +132,7 @@ def celtic : DPParameter := { strongD := false, transparentAlpha := true }
 /-- Whether bare nouns can be referential (kind-denoting constants)
     in a given language's parametric setting.
 
-    @cite{longobardi-2001} (44): English BNs can be referential (kind names)
+    [longobardi-2001] (44): English BNs can be referential (kind names)
     because D is weak — referential status doesn't require overt D.
     Romance BNs are always quantificational because D is strong —
     referential status requires overt D (only definite plurals achieve it).
@@ -163,8 +163,8 @@ def bnArgumentTypes (dp : DPParameter) : List ArgumentType :=
 -- § 4: Two Types of Genericity
 -- ============================================================================
 
-/-- Generic reading type, following @cite{gerstner-krifka-1987} as
-    adopted by @cite{longobardi-2001}.
+/-- Generic reading type, following [gerstner-krifka-1987] as
+    adopted by [longobardi-2001].
 
     The paper shows that 'genericity' is an epiphenomenon covering
     two structurally distinct interpretive strategies. -/
@@ -194,7 +194,7 @@ def bnGenericTypes (dp : DPParameter) : List GenericType :=
 
 /-- Whether proper names require overt D (an article or N-to-D raising).
 
-    @cite{longobardi-2001} (52): In some languages (Romance), argument PNs
+    [longobardi-2001] (52): In some languages (Romance), argument PNs
     must undergo N-to-D raising or appear with an expletive article.
     In others (English), they need neither.
 
@@ -207,7 +207,7 @@ def pnRequiresOvertD (dp : DPParameter) : Bool :=
 /-- Whether proper names require an overt *article* specifically
     (as opposed to satisfying strong D by N-to-D raising).
 
-    @cite{longobardi-2001} §9.5: In Romance (strong D, transparent α),
+    [longobardi-2001] §9.5: In Romance (strong D, transparent α),
     PNs can satisfy strong D by N-raising across the transparent α
     constituent. In Greek (strong D, opaque α), N cannot raise past α,
     so PNs MUST appear with an overt definite article. This is the
@@ -227,7 +227,7 @@ theorem pn_article_romance_vs_greek :
     pnRequiresArticle english = false ∧
     pnRequiresArticle celtic = false := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Typological generalization (56) from @cite{longobardi-2001}:
+/-- Typological generalization (56) from [longobardi-2001]:
     Object-referring nouns may occur without a phonetically filled D
     iff kind-referring nouns may.
 
@@ -244,7 +244,7 @@ theorem typological_generalization :
 -- § 6: Generalization (5) — The Natural Class
 -- ============================================================================
 
-/-- The four nominal types considered by @cite{longobardi-2001}.
+/-- The four nominal types considered by [longobardi-2001].
 
     The paper's key empirical observation (p.355, table) is that three of
     these four pattern identically (as quantificational indefinites), while
@@ -261,7 +261,7 @@ inductive NominalClass where
 
 /-- Whether a nominal class can be referential (kind-denoting).
 
-    @cite{longobardi-2001} (5): Three of four nominal types are purely
+    [longobardi-2001] (5): Three of four nominal types are purely
     quantificational. Only English BNs have the additional referential
     (kind-denoting) reading. -/
 def nominalClassReferential : NominalClass → Bool
@@ -294,7 +294,7 @@ theorem natural_class :
 
 /-- Italian BN reading datum.
 
-    @cite{longobardi-2001} §3--7: Italian BNs distribute their readings
+    [longobardi-2001] §3--7: Italian BNs distribute their readings
     identically to overt indefinites (generalization (5a)). -/
 structure ItalianBNDatum where
   sentence : String
@@ -395,7 +395,7 @@ def italianBNData : List ItalianBNDatum :=
 
 /-- Italian definite generics can appear in ALL environments where Italian
     BNs cannot — including with K-level predicates and in episodic contexts
-    with generic readings. @cite{longobardi-2001} examples (34)--(37). -/
+    with generic readings. [longobardi-2001] examples (34)--(37). -/
 structure ItalianDefGenericDatum where
   sentence : String
   gloss : String
@@ -438,7 +438,7 @@ def italianDefGenericData : List ItalianDefGenericDatum :=
 -- § 9: Anaphoric Binding Diagnostic (§5)
 -- ============================================================================
 
-/-- @cite{longobardi-2001} §5: The anaphoric binding test distinguishes
+/-- [longobardi-2001] §5: The anaphoric binding test distinguishes
     referential from quantificational BNs.
 
     English (22): "Cats think very highly of themselves."
@@ -500,7 +500,7 @@ theorem anaphoric_binding_from_referentiality :
 -- § 10: English vs Italian BN Contrast
 -- ============================================================================
 
-/-- @cite{longobardi-2001} §§4,9.1: English BNs can be generic with
+/-- [longobardi-2001] §§4,9.1: English BNs can be generic with
     predicates where Italian BNs cannot — episodic S-level, K-level,
     and stative I-level predicates. The contrast arises because English
     BNs can be referential (kind names), while Italian BNs cannot.
@@ -549,7 +549,7 @@ example : (contrastData.filter (fun d => d.italianBNgeneric && d.englishBNgeneri
 -- § 11: Greek Evidence — The Intermediate Case
 -- ============================================================================
 
-/-- @cite{longobardi-2001} §9.5: Greek has strong D + opaque α.
+/-- [longobardi-2001] §9.5: Greek has strong D + opaque α.
     This predicts:
     - BNs are quantificational only (like Romance) → no K-level predicates
     - PNs require overt definite article (strong D + opaque α blocks
@@ -661,7 +661,7 @@ theorem greek_bn_cannot_denote_kind :
 -- § 14: Bridge to Carlson (1977) — English BNs as Proper Names of Kinds
 -- ============================================================================
 
-/-- @cite{longobardi-2001} (43) recovers @cite{carlson-1977}'s original
+/-- [longobardi-2001] (43) recovers [carlson-1977]'s original
     insight: English generic BNs (outside characterizing environments)
     are kind-referential expressions — proper names of kinds.
 
@@ -671,7 +671,7 @@ theorem greek_bn_cannot_denote_kind :
     (like Romance BNs). The referential reading is the one that
     behaves like proper names — rigid, scopeless, opaque-only.
 
-    When a BN is referential, its semantics is @cite{carlson-1977}'s
+    When a BN is referential, its semantics is [carlson-1977]'s
     `barePluralTranslation`: λP.P{k}. -/
 theorem english_bn_referential_is_carlson :
     .referential ∈ bnArgumentTypes english := by
@@ -683,7 +683,7 @@ theorem romance_bn_never_referential :
     .referential ∉ bnArgumentTypes romance := by
   simp [bnArgumentTypes, bnCanBeReferential, romance]
 
-/-- Referential BNs denote kinds via @cite{carlson-1977}'s λP.P{k}.
+/-- Referential BNs denote kinds via [carlson-1977]'s λP.P{k}.
 
     The bare plural "dogs" denotes the kind d; applying any predicate P
     just evaluates P at d — no quantificational structure. This is what
@@ -693,14 +693,14 @@ theorem referential_bn_semantics (Entity : Type) (k : Entity) (P : Entity → Bo
     barePluralTranslation k P = P k := rfl
 
 /-- Kind-level predicates apply directly to a referential BN via
-    @cite{carlson-1977}'s `genericDerivation`. This is why English BNs
+    [carlson-1977]'s `genericDerivation`. This is why English BNs
     (which can be referential) appear with kind-level predicates
     ("Dogs are extinct") while Italian BNs (always quantificational) cannot. -/
 theorem kind_level_via_carlson (Entity : Type) (k : Entity) (P : Entity → Bool) :
     genericDerivation k P = P k := rfl
 
 /-- Existential readings of referential BNs arise via
-    @cite{carlson-1977}'s `existentialDerivation`: the predicate
+    [carlson-1977]'s `existentialDerivation`: the predicate
     introduces ∃ over stages, not the NP.
 
     "Dogs are in the yard" = ∃y[R(y,d) ∧ in-yard'(y)]
@@ -790,7 +790,7 @@ theorem kind_reference_predictions :
 -- § 17: The Full Parametric Table
 -- ============================================================================
 
-/-- Full parametric table (61) from @cite{longobardi-2001} with
+/-- Full parametric table (61) from [longobardi-2001] with
     derived properties.
 
     | Language | Strong D | Transp. α | BN ref. | PN needs D | PN needs art. |
@@ -833,7 +833,7 @@ theorem four_language_types :
 -- § 18: Mapping Systems (45)-(46) — Reading Distribution
 -- ============================================================================
 
-/-- @cite{longobardi-2001} (45)-(46): The two mapping systems.
+/-- [longobardi-2001] (45)-(46): The two mapping systems.
 
     English BNs have two sources of Ex/Gen ambiguity:
     1. Referential → Gen (in all environments, kind-level)
@@ -883,7 +883,7 @@ theorem contrast_environments :
 -- § 19: Bridge to Carlson (1977) — Predicate Level ↔ BN Environment
 -- ============================================================================
 
-/-- Maps @cite{carlson-1977}'s `PredicateLevel` to Longobardi's
+/-- Maps [carlson-1977]'s `PredicateLevel` to Longobardi's
     `BNEnvironment` for the purpose of determining whether referential
     (kind) denotation is needed.
 
@@ -908,8 +908,8 @@ theorem slp_episodic_needs_referential :
     bnGenericAvailable romance (predicateLevelToEnvironment .stageLevel) = false :=
   ⟨rfl, rfl⟩
 
-/-- The full chain: @cite{carlson-1977}'s `PredicateLevel` determines
-    `BNEnvironment`, which together with @cite{longobardi-2001}'s
+/-- The full chain: [carlson-1977]'s `PredicateLevel` determines
+    `BNEnvironment`, which together with [longobardi-2001]'s
     `DPParameter` determines whether a generic reading is available.
 
     | PredicateLevel    | Environment    | English BN Gen | Italian BN Gen |
@@ -919,7 +919,7 @@ theorem slp_episodic_needs_referential :
     | (kind-level pred) | kindLevel      | yes            | no             |
 
     The Italian/English contrast arises only in non-characterizing
-    environments — exactly where @cite{carlson-1977}'s referential
+    environments — exactly where [carlson-1977]'s referential
     kind-denotation is needed. -/
 theorem carlson_longobardi_integration :
     -- Individual-level: both languages get Gen

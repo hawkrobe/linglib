@@ -5,15 +5,15 @@ import Linglib.Data.WALS.Features.F64A
 
 /-!
 # Typology.Coordination
-@cite{haspelmath-2007} @cite{stassen-2000} @cite{mitrovic-sauerland-2016}
-@cite{dryer-haspelmath-2013} @cite{wals-2013}
+[haspelmath-2007] [stassen-2000] [mitrovic-sauerland-2016]
+[dryer-haspelmath-2013] [wals-2013]
 
 Per-language typological substrate for coordination across three frameworks:
 
-1. **@cite{haspelmath-2007} structural typology**: syndesis (asyndetic /
+1. **[haspelmath-2007] structural typology**: syndesis (asyndetic /
    monosyndetic / bisyndetic), coordinator position, structural patterns,
    and diachronic source (comitative vs additive focus particle).
-2. **@cite{stassen-2000} AND/WITH typology**: derived from WALS Ch 63
+2. **[stassen-2000] AND/WITH typology**: derived from WALS Ch 63
    (lexical identity of "and" and "with").
 3. **WALS Ch 56/63/64**: conjunction-quantifier relation, NP conjunction,
    nominal-vs-verbal conjunction.
@@ -47,7 +47,7 @@ language WALS sample).
 * `DiachronicSource` collapses Heine's full grammaticalization-source
   taxonomy to two main pathways relevant for coordination (comitative,
   focus particle); other pathways are conflated under `.other`.
-* `AndWithStatus` is @cite{stassen-2000}'s binary classification; some
+* `AndWithStatus` is [stassen-2000]'s binary classification; some
   authors (e.g. Mauri 2008) argue for a finer multi-way split.
 -/
 
@@ -61,7 +61,7 @@ private abbrev ch64 := Data.WALS.F64A.allData
 
 /-! ### Haspelmath 2007 structural enums -/
 
-/-- Syndesis: presence and number of overt coordinators (@cite{haspelmath-2007} §1). -/
+/-- Syndesis: presence and number of overt coordinators ([haspelmath-2007] §1). -/
 inductive Syndesis where
   /-- A B (juxtaposition, no overt linker). -/
   | asyndetic
@@ -71,10 +71,10 @@ inductive Syndesis where
   | bisyndetic
   deriving DecidableEq, BEq, Repr
 
-/-- Coordinator position relative to its coordinand (@cite{haspelmath-2007} §1.2).
+/-- Coordinator position relative to its coordinand ([haspelmath-2007] §1.2).
 
-    @cite{haspelmath-2007} notes that **co-A B (prepositive on first
-    coordinand only) is unattested** (cf. @cite{stassen-2000}, n=260). -/
+    [haspelmath-2007] notes that **co-A B (prepositive on first
+    coordinand only) is unattested** (cf. [stassen-2000], n=260). -/
 inductive CoordinatorPosition where
   /-- co precedes coordinand: "and A" / English "both X". -/
   | prepositive
@@ -82,11 +82,11 @@ inductive CoordinatorPosition where
   | postpositive
   deriving DecidableEq, BEq, Repr
 
-/-- Structural pattern for binary coordination (@cite{haspelmath-2007} (17)).
+/-- Structural pattern for binary coordination ([haspelmath-2007] (17)).
 
     Monosyndetic: 3 attested patterns (of 4 logically possible). The fourth
     monosyndetic pattern `co-A B` (prepositive on first coordinand only) is
-    unattested per @cite{stassen-2000}, n=260; the absence is encoded as a
+    unattested per [stassen-2000], n=260; the absence is encoded as a
     theorem rather than by omission (see `Studies/Haspelmath2007.lean`).
 
     Bisyndetic: 4 attested patterns. -/
@@ -98,7 +98,7 @@ inductive CoordPattern where
   /-- A B-co: final postpositive (Latin "senatus populus-que"). -/
   | a_b'co
   /-- co-A B: prepositive on first coordinand only — typologically
-      unattested for conjunction (@cite{stassen-2000}, n=260). -/
+      unattested for conjunction ([stassen-2000], n=260). -/
   | co'a_b
   /-- co-A co-B: prepositive bisyndetic (Yoruba "àtí A àtí B"). -/
   | co'a_co'b
@@ -115,7 +115,7 @@ def CoordPattern.syndesis : CoordPattern → Syndesis
   | .a_co_b | .a'co_b | .a_b'co | .co'a_b => .monosyndetic
   | .co'a_co'b | .a'co_b'co | .a'co_co'b | .co'a_b'co => .bisyndetic
 
-/-- Diachronic source of conjunction constructions (@cite{haspelmath-2007} §5.1). -/
+/-- Diachronic source of conjunction constructions ([haspelmath-2007] §5.1). -/
 inductive DiachronicSource where
   /-- "with" → coordinator (gives A co-B or A-co B). -/
   | comitative
@@ -135,7 +135,7 @@ def DiachronicSource.expectedSyndesis : DiachronicSource → Option Syndesis
 
 /-! ### Stassen 2000 AND/WITH classification -/
 
-/-- @cite{stassen-2000} AND/WITH classification of languages.
+/-- [stassen-2000] AND/WITH classification of languages.
     AND-languages have structurally distinct coordinate and comitative
     strategies. WITH-languages use comitative encoding as the only strategy
     for NP conjunction (lexical identity of "and" and "with"). -/
@@ -158,7 +158,7 @@ abbrev ConjComitativeRelation := Data.WALS.F63A.NounPhraseConjunction
 abbrev NomVerbalConjRelation := Data.WALS.F64A.NominalAndVerbalConjunction
 
 /-- Derive AND/WITH status from the conjunction-comitative relation
-    (@cite{stassen-2000}'s diagnostic). -/
+    ([stassen-2000]'s diagnostic). -/
 def ConjComitativeRelation.toAndWithStatus :
     ConjComitativeRelation → AndWithStatus
   | .andDifferentFromWith => .andLang
@@ -185,7 +185,7 @@ structure ConjunctionSystem where
   morphemes : List SourcedEntry
   /-- Which conjunction strategies are available (M&S classification). -/
   strategies : List ConjunctionStrategy
-  /-- Structural patterns attested (@cite{haspelmath-2007} classification). -/
+  /-- Structural patterns attested ([haspelmath-2007] classification). -/
   patterns : List CoordPattern := []
   /-- ISO 639-3 code. -/
   iso : String := ""

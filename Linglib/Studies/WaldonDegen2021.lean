@@ -5,8 +5,8 @@ import Linglib.Pragmatics.RSA.Noisy
 import Linglib.Pragmatics.RSA.Sequential
 
 /-!
-# @cite{waldon-degen-2021} — Continuous-Incremental RSA (CI-RSA)
-@cite{cohn-gordon-goodman-potts-2019} @cite{degen-etal-2020}
+# [waldon-degen-2021] — Continuous-Incremental RSA (CI-RSA)
+[cohn-gordon-goodman-potts-2019] [degen-etal-2020]
 
 Waldon, B. & Degen, J. (2021). Modeling cross-linguistic production of
 referring expressions. *Proceedings of the Society for Computation in
@@ -15,9 +15,9 @@ Linguistics (SCiL)* 4, 206–215.
 ## The Model
 
 CI-RSA synthesizes two RSA extensions:
-1. **Incremental RSA** (@cite{cohn-gordon-goodman-potts-2019}): Word-by-word production
+1. **Incremental RSA** ([cohn-gordon-goodman-potts-2019]): Word-by-word production
    via the chain rule S1(u|r) = ∏ₖ S1(wₖ | [w₁,...,wₖ₋₁], r)
-2. **Continuous semantics** (@cite{degen-etal-2020}): Noisy adjective reliability
+2. **Continuous semantics** ([degen-etal-2020]): Noisy adjective reliability
    L^C(r, i) = v^i if i true of r, else 1 - v^i
 
 The incremental meaning function averages continuous semantics over
@@ -31,7 +31,7 @@ least one scene member are included (Figure 1).
 ## Formalization
 
 This builds on `RSAConfig`'s sequential infrastructure (following
-@cite{cohn-gordon-goodman-potts-2019}), adding:
+[cohn-gordon-goodman-potts-2019]), adding:
 - Continuous (ℚ-valued) meaning instead of Boolean extension-counting
 - `rpow`-based s1Score with α = 7
 - Scene-parameterized configs for cross-condition comparisons
@@ -52,7 +52,7 @@ different `RSAConfig` instances (language × scene).
 
 - **Noise theory**: `lexContinuousQ` instantiates the unified noise channel
   from `RSA.Core.Noise`. See `lexContinuous_as_noiseChannel`.
-- **Incremental RSA**: Extends @cite{cohn-gordon-goodman-potts-2019} with
+- **Incremental RSA**: Extends [cohn-gordon-goodman-potts-2019] with
   continuous semantics and cross-linguistic word order variation.
 -/
 
@@ -238,7 +238,7 @@ def csScene : Referent → Bool
     - S1(i|c,r) ∝ L0(r|c,i)^α · exp(−α · C(i))  (Section 4)
 
     Note: v^color = 0.95 here, matching the paper's fitted values.
-    This differs from the @cite{degen-etal-2020} value of v^color = 0.99
+    This differs from the [degen-etal-2020] value of v^color = 0.99
     used in `RSA.Core.Noise`, because the two papers fit different
     experimental datasets. -/
 noncomputable def mkCIRSA (utts : List (List Word)) (scene : Referent → Bool) :
@@ -348,7 +348,7 @@ theorem semantic_values_positive :
     exactly the noise channel with onMatch = v^i, onMismatch = 1 - v^i,
     b = 1 if item i is true of referent r, 0 otherwise.
 
-    This connects @cite{waldon-degen-2021} to the @cite{degen-etal-2020}
+    This connects [waldon-degen-2021] to the [degen-etal-2020]
     parameterization where mismatch = 1 - match. -/
 theorem lexContinuous_as_noiseChannel (r : Referent) (w : Word) :
     lexContinuousQ r w =
@@ -358,7 +358,7 @@ theorem lexContinuous_as_noiseChannel (r : Referent) (w : Word) :
   split <;> ring
 
 /-- `lexContinuousQ` packaged as a `RSA.NoisyLex` bundle. The bundle is
-    the substrate this study and @cite{schlotterbeck-wang-2023} share —
+    the substrate this study and [schlotterbeck-wang-2023] share —
     each provides its own `lex` and reliability parameters; the PoE
     prefix-product machinery (`RSA.prefixMeaning` and friends) is reused. -/
 def noisyLex : RSA.NoisyLex Word Referent where

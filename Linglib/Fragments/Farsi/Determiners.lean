@@ -4,13 +4,13 @@ import Linglib.Semantics.Modality.ModalTypes
 import Mathlib.Data.Rat.Defs
 
 /-! # Farsi Determiner and Indefinite Lexicon
-@cite{mirrazi-2024} @cite{alonso-ovalle-moghiseh-2025}
+[mirrazi-2024] [alonso-ovalle-moghiseh-2025]
 
 ## Plain Indefinites (Choice Functions)
 
 Farsi plain indefinites *ye* (singular), *čand-ta* (plural classifier "some-CL"),
 and *do-ta* (numeral classifier "two-CL") are choice-function indefinites
-with an independent world/situation variable. @cite{mirrazi-2024} shows
+with an independent world/situation variable. [mirrazi-2024] shows
 that this world variable, when bound by an intensional operator, produces
 wide pseudo-scope de dicto readings: the indefinite appears to scope above
 negation (via the ∃-closure over the CF) while remaining de dicto with
@@ -20,7 +20,7 @@ respect to the intensional operator (via the bound world variable).
 
 *yek-i* is an Existential Free Choice Item (EFCI): uniqueness in root,
 free choice under deontic, modal variation under epistemic.
-@cite{alonso-ovalle-moghiseh-2025}.
+[alonso-ovalle-moghiseh-2025].
 -/
 
 namespace Farsi.Determiners
@@ -141,7 +141,7 @@ open Semantics.Modality (ModalFlavor)
 
 /--
 Context for determining EFCI reading. Uses the project-canonical
-`Semantics.Modality.ModalFlavor`; @cite{alonso-ovalle-moghiseh-2025} only
+`Semantics.Modality.ModalFlavor`; [alonso-ovalle-moghiseh-2025] only
 distinguishes deontic (free choice) from epistemic (modal variation), so the
 other canonical flavors are not licensing-relevant here (see `getReading`).
 -/
@@ -189,7 +189,7 @@ def getReading (entry : IndefiniteDeterminer) (ctx : EFCIContext) : Option EFCIR
   else match ctx.modalFlavor with
     | some .deontic => some .freeChoice
     | some .epistemic => some .modalVariation
-    -- @cite{alonso-ovalle-moghiseh-2025} specifies only deontic/epistemic;
+    -- [alonso-ovalle-moghiseh-2025] specifies only deontic/epistemic;
     -- other flavors do not license an EFCI reading.
     | some .bouletic | some .circumstantial => some .plainExistential
     | none =>
@@ -217,7 +217,7 @@ theorem yeki_de : getReading yeki deContext = some .plainExistential := rfl
 
 /-- German *irgendein*: EFCI with modal insertion available.
 Cross-linguistic comparison entry; canonical German entry in `German.ModalIndefinites`.
-@cite{kratzer-shimoyama-2002} -/
+[kratzer-shimoyama-2002] -/
 def irgendein_de : IndefiniteDeterminer :=
   { form := "irgendein"
   , romanization := "irgendein"
@@ -230,7 +230,7 @@ def irgendein_de : IndefiniteDeterminer :=
   }
 
 /-- Romanian *vreun*: EFCI with no rescue mechanism.
-Cross-linguistic comparison entry; see @cite{falaus-2014}. -/
+Cross-linguistic comparison entry; see [falaus-2014]. -/
 def vreun_ro : IndefiniteDeterminer :=
   { form := "vreun"
   , romanization := "vreun"
@@ -242,7 +242,7 @@ def vreun_ro : IndefiniteDeterminer :=
 
 /--
 Irgendein in root yields epistemic ignorance (via modal insertion).
-@cite{kratzer-shimoyama-2002}
+[kratzer-shimoyama-2002]
 -/
 theorem irgendein_root : getReading irgendein_de rootContext = some .epistemicIgnorance := rfl
 
@@ -259,12 +259,12 @@ theorem vreun_root_ungrammatical : getReading vreun_ro rootContext = none := rfl
 open Semantics.Quantification.ChoiceFunction (IndefType SkolemCF)
 
 /-- Farsi plain indefinite entry, extending `IndefiniteDeterminer` with
-    choice-function properties relevant to @cite{mirrazi-2024}. -/
+    choice-function properties relevant to [mirrazi-2024]. -/
 structure PlainIndefiniteEntry extends IndefiniteDeterminer where
   /-- Semantic analysis: choice function or ∃-quantifier. -/
   indefType : IndefType
   /-- Does this determiner carry an independent world/situation variable?
-      @cite{schwarz-2012}: cross-linguistic parameter — some determiners
+      [schwarz-2012]: cross-linguistic parameter — some determiners
       combine with a world pronoun, others do not. -/
   hasWorldVar : Bool
   /-- Number: singular or plural. -/
@@ -274,7 +274,7 @@ structure PlainIndefiniteEntry extends IndefiniteDeterminer where
 /-- *ye*: Farsi singular indefinite determiner.
 
     Takes wide pseudo-scope de dicto under negated intensional operators.
-    @cite{mirrazi-2024} exx. (1), (4): under negated *think*, the indefinite
+    [mirrazi-2024] exx. (1), (4): under negated *think*, the indefinite
     is interpreted de dicto (under *think*) but above negation. -/
 def ye : PlainIndefiniteEntry :=
   { form := "یه"
@@ -289,7 +289,7 @@ def ye : PlainIndefiniteEntry :=
 /-- *čand-ta*: Farsi plural classifier indefinite ("some-CL").
 
     Same scope behavior as *ye*: wide pseudo-scope de dicto available.
-    @cite{mirrazi-2024} exx. (1), (4): *čand-ta* alternates with *ye*
+    [mirrazi-2024] exx. (1), (4): *čand-ta* alternates with *ye*
     in the key examples. -/
 def candTa : PlainIndefiniteEntry :=
   { form := "چندتا"
@@ -304,7 +304,7 @@ def candTa : PlainIndefiniteEntry :=
 /-- *do-ta*: Farsi numeral classifier indefinite ("two-CL").
 
     Numeral indefinites behave like other indefinites in their
-    scope-taking properties. @cite{mirrazi-2024} exx. (8a), (9a):
+    scope-taking properties. [mirrazi-2024] exx. (8a), (9a):
     under negated *necessary* and *can*, *do-ta* gets wide pseudo-scope
     de dicto readings. -/
 def doTa : PlainIndefiniteEntry :=

@@ -2,7 +2,7 @@ import Linglib.Semantics.Dynamic.Core.DynamicTy2
 
 /-!
 # Compositional CDRT Fragment
-@cite{muskens-1996}
+[muskens-1996]
 
 §III.4 and §IV: Lexical translations (T₀) and generalized coordination
 for a fragment of English in Compositional DRT.
@@ -40,10 +40,10 @@ variable {S E : Type*}
 -- § 1. Semantic Types
 -- ════════════════════════════════════════════════════════════════
 
-/-- Dynamic one-place predicate: type `[π]` in @cite{muskens-1996}. -/
+/-- Dynamic one-place predicate: type `[π]` in [muskens-1996]. -/
 abbrev DynPred (S E : Type*) := Dref S E → Update S
 
-/-- Dynamic generalized quantifier: type `[[π]]` in @cite{muskens-1996}. -/
+/-- Dynamic generalized quantifier: type `[[π]]` in [muskens-1996]. -/
 abbrev DynQuant (S E : Type*) := DynPred S E → Update S
 
 -- ════════════════════════════════════════════════════════════════
@@ -100,7 +100,7 @@ def cond : Update S → Update S → Update S :=
 
 /-- Auxiliary negation: `doesn't ↝ λPλQ[|not Q(P)]` (T₀, p. 165).
     Type: `[π] → [[π]] → Update`. Takes VP (P) then subject NP (Q),
-    matching @cite{muskens-1996}'s argument order. -/
+    matching [muskens-1996]'s argument order. -/
 def auxNeg : DynPred S E → DynQuant S E → Update S :=
   λ P Q => test (dneg (Q P))
 

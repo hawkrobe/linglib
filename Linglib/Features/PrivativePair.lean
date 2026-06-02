@@ -1,12 +1,12 @@
 /-!
 # Privative Feature Pairs
-@cite{harbour-2016}
+[harbour-2016]
 
 A neutral abstraction over pairs of privative features with containment:
 the inner feature entails the outer feature ([+inner] → [+outer]).
 
 This pattern recurs across the two φ-feature domains established in
-@cite{harbour-2016}:
+[harbour-2016]:
 
 - **Person**: [±author] (inner) ⊂ [±participant] (outer)
 - **Number**: [±atomic] (inner) ⊂ [±minimal] (outer)
@@ -21,7 +21,7 @@ Boolean combinations, yielding exactly **three** well-formed cells:
 |   −   |   −   | least specified| 3rd person  | plural   |
 |   −   |   +   | **ill-formed** | —           | —        |
 
-@cite{harbour-2016} calls this shared skeleton the **phi kernel**: the
+[harbour-2016] calls this shared skeleton the **phi kernel**: the
 same formal mechanism generates the partition structure of both person
 and number.
 

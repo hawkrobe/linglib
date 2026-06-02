@@ -3,16 +3,16 @@ import Linglib.Semantics.Questions.Hamblin
 
 /-!
 # Highlighting
-@cite{roelofsen-vangool-2010} @cite{roelofsen-farkas-2015}
-@cite{simons-tonhauser-beaver-roberts-2010} @cite{krifka-2017}
+[roelofsen-vangool-2010] [roelofsen-farkas-2015]
+[simons-tonhauser-beaver-roberts-2010] [krifka-2017]
 
 A *highlighted* proposition is one that has been made salient by a recent
 utterance and that addresses the current question under discussion (QUD).
-The notion was introduced by @cite{roelofsen-vangool-2010} for disjunctive
+The notion was introduced by [roelofsen-vangool-2010] for disjunctive
 questions (the affirmative disjunct is highlighted and feeds the polarity
-particle response in @cite{roelofsen-farkas-2015}). It generalises in
-@cite{krifka-2017} and the verum-marker literature
-(e.g. @cite{martinez-vera-2026}) to a discourse-management primitive
+particle response in [roelofsen-farkas-2015]). It generalises in
+[krifka-2017] and the verum-marker literature
+(e.g. [martinez-vera-2026]) to a discourse-management primitive
 shared across focus, biased polar questions, and verum strategies.
 
 ## What this module provides
@@ -20,11 +20,11 @@ shared across focus, biased polar questions, and verum strategies.
 - `HighlightingContext W` — bundles a set of salient propositions with
   the current QUD.
 - `AddressesQUD` — a proposition is comparable to a QUD alternative,
-  the simplest @cite{simons-tonhauser-beaver-roberts-2010} version of
+  the simplest [simons-tonhauser-beaver-roberts-2010] version of
   "contextually entails an answer".
 - `Highlighted` — the conjunction `salient ∧ addresses-QUD`. This is
-  exactly the @cite{martinez-vera-2026} (38) presupposition.
-- @cite{roelofsen-farkas-2015} polarity particles `agree`/`reverse`
+  exactly the [martinez-vera-2026] (38) presupposition.
+- [roelofsen-farkas-2015] polarity particles `agree`/`reverse`
   with a `commitment` projection.
 
 Consumers (verum studies, biased polar question studies, evidential
@@ -33,7 +33,7 @@ predicate locally.
 
 ## Known unmigrated consumers (deferred)
 
-This substrate landed alongside @cite{martinez-vera-2026}'s formalisation;
+This substrate landed alongside [martinez-vera-2026]'s formalisation;
 existing files that use highlighting-shaped notions but have not yet been
 migrated:
 
@@ -42,7 +42,7 @@ migrated:
 * `Studies/FarkasRoelofsen2017.lean` — paper-side
   highlighted-alternative prose; F&R 2015 is the substrate's own anchor.
 * `Semantics/Questions/Singleton.lean` — `IsSingleton` documents itself in
-  @cite{roelofsen-farkas-2015} terminology but is a different abstraction
+  [roelofsen-farkas-2015] terminology but is a different abstraction
   (property of a `Question`, not a discourse context).
 * `Semantics/Modality/BiasedPQ.lean` — `OriginalBias` /
   `ContextualEvidence` cover adjacent ground (prior-discourse bias) with
@@ -67,12 +67,12 @@ variable {W : Type*}
 
 /-- A proposition `p` *addresses* a question `q` iff it is comparable to
     some alternative — entailing it or being entailed by it. The simplest
-    Set-valued version of @cite{simons-tonhauser-beaver-roberts-2010}'s
+    Set-valued version of [simons-tonhauser-beaver-roberts-2010]'s
     "contextually entails an answer". -/
 def AddressesQUD (q : Question W) (p : Set W) : Prop :=
   ∃ a ∈ q.alt, p ⊆ a ∨ a ⊆ p
 
-/-- @cite{martinez-vera-2026} (38): proposition `p` is **highlighted** in
+/-- [martinez-vera-2026] (38): proposition `p` is **highlighted** in
     context `c` iff it has been made salient by an utterance and addresses
     the current QUD. -/
 def Highlighted (c : HighlightingContext W) (p : Set W) : Prop :=
@@ -116,9 +116,9 @@ def addSalient (c : HighlightingContext W) (p : Set W) : HighlightingContext W :
 @[simp] theorem qud_singleton (p : Set W) :
     (singleton p : HighlightingContext W).qud = Question.declarative p := rfl
 
-/-! ### @cite{roelofsen-farkas-2015}: polarity particles -/
+/-! ### [roelofsen-farkas-2015]: polarity particles -/
 
-/-- @cite{roelofsen-farkas-2015}'s polarity-particle response slot.
+/-- [roelofsen-farkas-2015]'s polarity-particle response slot.
 
     `agree` (English `yes`, German `ja`, Romance `sí/oui`) confirms the
     highlighted proposition; `reverse` (English `no`, German `nein`,

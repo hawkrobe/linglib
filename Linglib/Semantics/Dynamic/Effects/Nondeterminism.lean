@@ -3,7 +3,7 @@ import Linglib.Semantics.Dynamic.Connectives.CCP
 
 /-!
 # Nondeterminism Effect: Plural / Choice Alternatives
-@cite{charlow-2019} @cite{charlow-2021} @cite{muskens-1996}
+[charlow-2019] [charlow-2021] [muskens-1996]
 
 The nondeterminism effect models indefinites as introducing sets of alternatives
 rather than single values. This underlies:
@@ -76,10 +76,10 @@ end Semantics.Dynamic.Nondeterminism
 -- ════════════════════════════════════════════════════════════════
 
 /-!
-Connects the pointwise `Update S := S → S → Prop` type (Dynamic Ty2, @cite{muskens-1996})
+Connects the pointwise `Update S := S → S → Prop` type (Dynamic Ty2, [muskens-1996])
 to the update-theoretic `StateCCP W E := State W E → State W E` type.
 
-The key operations are @cite{charlow-2021}'s ↑ (lift) and ↓ (lower):
+The key operations are [charlow-2021]'s ↑ (lift) and ↓ (lower):
 - `liftPW`: promotes a pointwise Update to a context-level update
 - `lowerPW`: extracts a pointwise relation from a context update
 
@@ -137,7 +137,7 @@ theorem liftPW_injective [Nonempty W] (D₁ D₂ : Update (Assignment E))
     _ = lowerPW (liftPW D₂) w₀ := by rw [h]
     _ = D₂ := lowerPW_liftPW D₂ w₀
 
-/-- Lifted pointwise DRSs are always distributive (@cite{charlow-2021}, §6, key lemma).
+/-- Lifted pointwise DRSs are always distributive ([charlow-2021], §6, key lemma).
 
     `↑D` processes each element of the input state independently — the output
     at `p` depends only on whether some `q ∈ s` satisfies `D q.2 p.2` with

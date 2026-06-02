@@ -3,13 +3,13 @@ import Linglib.Core.Logic.Team.Closure
 /-!
 # Definability and expressive completeness for team-semantic logics
 
-@cite{anttila-2025}
+[anttila-2025]
 
 A **team property** over a point type `α` is a class of teams,
 `Set (Finset α)` — the same object `Team/Closure.lean` calls a "team-set".
 A formula `φ` *defines* the team property consisting of all teams that
 support it. The organizing theorem for the team-semantic family
-(@cite{anttila-2025}) is **expressive completeness**: the class of
+([anttila-2025]) is **expressive completeness**: the class of
 properties a logic can define equals a class fixed by closure conditions
 (downward closure, union closure, convexity, the empty-team property) —
 plus invariance under bounded bisimulation in the modal case.
@@ -33,7 +33,7 @@ per-logic work the roadmap tracks.
 * `TeamProperty α` — a class of teams, `Set (Finset α)`.
 * `definedBy s φ` — the team property defined by `φ` under support `s`.
 * `Definable s P`, `definableClass s` — the definable properties (written
-  `⟦L⟧` in @cite{anttila-2025} for a logic `L` with support relation `s`).
+  `⟦L⟧` in [anttila-2025] for a logic `L` with support relation `s`).
 * `ExpressivelyCompleteFor s C`, `SoundFor s C` — the completeness and
   soundness relations against a class `C` of team properties.
 * `definableClassWhere s Q` — the *fragment-relative* definable class
@@ -79,7 +79,7 @@ def Definable (s : Form → Finset α → Prop) (P : TeamProperty α) : Prop :=
   ∃ φ : Form, P = definedBy s φ
 
 /-- The class of team properties **definable** under `s` — written `⟦L⟧` in
-    @cite{anttila-2025} for a logic `L` with support relation `s`. Expressive
+    [anttila-2025] for a logic `L` with support relation `s`. Expressive
     completeness is the statement `definableClass s = C`. -/
 def definableClass (s : Form → Finset α → Prop) : Set (TeamProperty α) :=
   { P | Definable s P }
@@ -120,7 +120,7 @@ theorem ExpressivelyCompleteFor.soundFor {s : Form → Finset α → Prop}
 /-! ### Fragment-relative definability
 
 Some logics have no unconditional closure cell — only a *fragment* of the
-language does. The leading case is QBSML (@cite{aloni-vanormondt-2023}), whose
+language does. The leading case is QBSML ([aloni-vanormondt-2023]), whose
 support is flat only for NE-free formulas (Proposition 4.1 / Fact 2). For such
 logics the soundness statement is `definableClassWhere s Q ⊆ C`, where `Q`
 carves out the fragment. -/

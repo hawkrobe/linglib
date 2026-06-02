@@ -3,10 +3,10 @@ import Linglib.Core.Scales.EpistemicScale.Defs
 /-!
 # Representability of Epistemic Systems
 
-@cite{kraft-pratt-seidenberg-1959} @cite{holliday-icard-2013}
+[kraft-pratt-seidenberg-1959] [holliday-icard-2013]
 
 FA systems on small domains (|W| ≤ 4) are representable by finitely additive
-probability measures (**Theorem 8a**, @cite{kraft-pratt-seidenberg-1959}).
+probability measures (**Theorem 8a**, [kraft-pratt-seidenberg-1959]).
 For |W| ≥ 5, this fails: the KPS counterexample provides an FA system with
 no representing measure (**Theorem 8b**).
 
@@ -29,7 +29,7 @@ private def finsetIdx (s : Finset (Fin 5)) : ℕ :=
   s.sum (λ i => 2 ^ i.val)
 
 /-- The KPS rank table: maps bitmask index to rank (0–31).
-    Ordering from @cite{kraft-pratt-seidenberg-1959}, Section 4.
+    Ordering from [kraft-pratt-seidenberg-1959], Section 4.
     Elements: p=0, q=1, r=2, s=3, t=4.
     ∅ < q < r < s < qr < qs < p < pq < rs < t < qrs < rp < ps < tq < qrp < rt
     and complements in reverse (by supplementation, from axiom A). -/

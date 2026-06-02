@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.Phase
 
 /-!
 # Minimalist Scope Theory: QR and Scope Economy
-@cite{bruening-2001} @cite{may-1985}
+[bruening-2001] [may-1985]
 
 Formalization of quantifier scope in the Minimalist tradition.
 
@@ -27,7 +27,7 @@ In earlier versions, `PositionedQuantifier` carried a stipulated
 provides `superiorityFromTree`, which derives superiority from
 asymmetric c-command in a `SyntacticObject` tree. Bridge files in
 `Phenomena/` use this to connect DOC scope freezing to
-@cite{larson-1988}'s tree derivation.
+[larson-1988]'s tree derivation.
 
 -/
 
@@ -100,13 +100,13 @@ def qrIsBlocked (q : PositionedQuantifier) : Option QRBarrier :=
     when `q1` asymmetrically c-commands `q2` in `tree`.
 
     This is the theory-layer primitive. Bridge files use it to derive
-    DOC scope freezing from @cite{pylkkanen-2008}'s Voice + low-Appl
+    DOC scope freezing from [pylkkanen-2008]'s Voice + low-Appl
     tree derivation. -/
 def superiorityFromTree (tree : SyntacticObject)
     (q1 q2 : SyntacticObject) : Bool :=
   decide (asymCCommandsIn tree q1 q2)
 
--- Scope Economy (@cite{fox-2000})
+-- Scope Economy ([fox-2000])
 
 /--
 Scope Economy: QR is only licensed if it creates a truth-conditional difference.

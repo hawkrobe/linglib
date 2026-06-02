@@ -2,22 +2,22 @@ import Linglib.Syntax.ArgumentStructure.Alternation
 import Linglib.Semantics.Lexical.Roots.RootFeatures
 
 /-!
-# Dargwa (Tanti / Muira) Complex Predicates @cite{sumbatova-2021}
-@cite{kalyakin-2026}
+# Dargwa (Tanti / Muira) Complex Predicates [sumbatova-2021]
+[kalyakin-2026]
 
 Complex verbs in Dargwa consist of a **light verb** (LV, = v) and a
 **lexical stem** (NV, = nominal root inside VP). The lexical stems
 are highly variable: noun stems, adjectives, numerals, verbs, or
 ideophones. Often the lexical element does not occur independently.
 
-This is the structural basis for @cite{kalyakin-2026}'s analysis of
+This is the structural basis for [kalyakin-2026]'s analysis of
 **v-stranding VP ellipsis (vVPE)** in Muira Dargwa: the light verb
 (= v) survives while its complement (= VP, containing the nominal
 root) is elided. The theoretical analysis (mismatch predictions,
 root position mapping, *again* diagnostics) lives in the study file
 `Studies/Kalyakin2026.lean`.
 
-## Light Verbs (§4.5.1 of @cite{sumbatova-2021})
+## Light Verbs (§4.5.1 of [sumbatova-2021])
 
 The most common light verbs (ex. 31a):
 - *b-arq'*- 'do, make'
@@ -28,7 +28,7 @@ Other light verbs include *b-at*- 'leave', *b-ič*- 'fall',
 *b-ig*- 'sit down', *aq*- 'hang', *aʁ*- 'reach', *b-ač'*- 'come',
 etc. (ex. 31b).
 
-## Connection to vVPE (@cite{kalyakin-2026})
+## Connection to vVPE ([kalyakin-2026])
 
 Under vVPE, the light verb (v head) survives while the nominal root
 (in VP) is elided. This directly explains why:
@@ -126,7 +126,7 @@ def allLightVerbs : List LightVerb :=
 -- ============================================================================
 
 /-- A complex predicate: lexical stem + light verb.
-    Examples from @cite{sumbatova-2021} (32):
+    Examples from [sumbatova-2021] (32):
     - taman 'end' (N) + b-arq' 'do' = 'finish'
     - ħaˁdur 'ready' (ADJ) + b-arq' 'do' = 'prepare'
     - č'u 'two' (NUM) + b-ut' 'cut' = 'divide by two' -/
@@ -159,7 +159,7 @@ def cough : ComplexPredicate :=
   , lightVerb := ik, meaning := "cough" }
 
 -- ============================================================================
--- § 4: Causative (@cite{sumbatova-2021} §4.5.7)
+-- § 4: Causative ([sumbatova-2021] §4.5.7)
 -- ============================================================================
 
 /-- Dargwa has a productive causative morpheme *-aq*.
@@ -167,7 +167,7 @@ def cough : ComplexPredicate :=
     Causatives from transitives make the causee appear in the elative case.
 
     This is the construction that undergoes alternation under vVPE
-    in @cite{kalyakin-2026}: inchoative → causative and vice versa. -/
+    in [kalyakin-2026]: inchoative → causative and vice versa. -/
 structure CausativeEntry where
   baseVerb : String
   baseGloss : String
@@ -204,7 +204,7 @@ theorem tr_causative_elat_causee :
     causDig.causeeCase = "elative" := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 5: Valency Alternations (@cite{sumbatova-2021} §4.7.3)
+-- § 5: Valency Alternations ([sumbatova-2021] §4.7.3)
 -- ============================================================================
 
 /-- Dargwa antipassive (A-lability): the A-argument takes absolutive case
@@ -212,18 +212,18 @@ theorem tr_causative_elat_causee :
     never controls person or gender agreement). Only available in
     imperfective forms. Affective verbs are excluded.
 
-    This maps to @cite{creissels-2025}'s `antipassivization`: A is
+    This maps to [creissels-2025]'s `antipassivization`: A is
     maintained (becomes S), P is denucleativized. -/
 def antipassive : Syntax.ArgumentStructure.Alternation.ValencyAlternation :=
   Syntax.ArgumentStructure.Alternation.antipassivization
 
 /-- Dargwa P-lability: many transitive verbs can be used intransitively
-    without morphological marking (@cite{sumbatova-2021} §4.7.3, ex. 87).
+    without morphological marking ([sumbatova-2021] §4.7.3, ex. 87).
     The patient is dropped; the remaining S corresponds to the initial A.
     This is characteristic of verbs denoting situations that can occur with
     or without an agent (break, open, fill).
 
-    Maps to @cite{creissels-2025}'s `P_ambitransitivity`: uncoded
+    Maps to [creissels-2025]'s `P_ambitransitivity`: uncoded
     decausativization where S = initial P. -/
 def pLability : Syntax.ArgumentStructure.Alternation.AmbitransitivityType :=
   .P_ambitransitivity
@@ -264,11 +264,11 @@ theorem some_lvs_bound :
   native_decide
 
 -- ============================================================================
--- § 7: NV Root Position (@cite{kalyakin-2026} §2.2)
+-- § 7: NV Root Position ([kalyakin-2026] §2.2)
 -- ============================================================================
 
 /-- A complex predicate annotated with its NV root position, following
-    Marantz (2009a;b, 2013) as applied to Dargwa by @cite{kalyakin-2026} §2.2.
+    Marantz (2009a;b, 2013) as applied to Dargwa by [kalyakin-2026] §2.2.
 
     Uses `RootPosition` from `Core.Lexical.RootFeatures`:
     - `.complement`: change-of-state roots — *wana* 'warm', *hark* 'open'
@@ -283,7 +283,7 @@ structure AnnotatedCPr where
   meaning : String
   deriving Repr
 
--- § 7a: Paper examples (@cite{kalyakin-2026})
+-- § 7a: Paper examples ([kalyakin-2026])
 
 /-- *wana AGR-arq'*- 'to warm smth. up' (exx. 3, 8a, 64, 66).
     NV *wana* 'warm' is a change-of-state root → object-adjoined. -/

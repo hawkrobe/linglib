@@ -3,10 +3,10 @@ import Linglib.Semantics.Lexical.Roots.Typology
 /-!
 # Entailment Closure on Roots
 
-@cite{beavers-koontz-garboden-2020}
+[beavers-koontz-garboden-2020]
 
 `Root.entailments` is the *base* entailment set: atoms asserted directly
-by the lexicographer. But @cite{beavers-koontz-garboden-2020}'s typology
+by the lexicographer. But [beavers-koontz-garboden-2020]'s typology
 treats roots as *networks* of entailments, where some atoms entail
 others. The closure of the base under such network rules is the root's
 full entailment set.

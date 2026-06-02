@@ -3,12 +3,12 @@ import Linglib.Semantics.Lexical.Roots.Typology
 /-!
 # Beavers & Koontz-Garboden (2020): The Roots of Verbal Meaning
 
-@cite{beavers-koontz-garboden-2020} @cite{rappaport-hovav-levin-2010}
+[beavers-koontz-garboden-2020] [rappaport-hovav-levin-2010]
 
 Six representative roots illustrating the four-feature typology of
-@cite{beavers-koontz-garboden-2020}, and falsifying both the
+[beavers-koontz-garboden-2020], and falsifying both the
 Bifurcation Thesis of Roots and Manner/Result Complementarity
-(@cite{rappaport-hovav-levin-2010}).
+([rappaport-hovav-levin-2010]).
 
 | Root      | state | manner | result | cause | violates B? | M ∧ R? |
 |-----------|-------|--------|--------|-------|-------------|--------|
@@ -53,7 +53,7 @@ def crack : Root := ⟨"crack", [.becomesState "fissured", .hasCause]⟩
 
 /-- √hand — full feature load: state, manner, result, cause.
     Falsifies both the Bifurcation Thesis and Manner/Result
-    Complementarity (@cite{beavers-koontz-garboden-2020} ch. 5). -/
+    Complementarity ([beavers-koontz-garboden-2020] ch. 5). -/
 def hand : Root := ⟨"hand",
   [.hasState "in-recipient-possession",
    .hasManner "by-hand-transfer",
@@ -113,7 +113,7 @@ theorem bifurcation_thesis_false :
 
 /-- √hand entails both manner ("by-hand-transfer") AND result
     ("possessed") — a counterexample to Manner/Result
-    Complementarity (@cite{rappaport-hovav-levin-2010}). -/
+    Complementarity ([rappaport-hovav-levin-2010]). -/
 theorem hand_has_manner_and_result :
     hand.HasMannerAndResult := by decide
 

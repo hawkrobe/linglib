@@ -3,9 +3,9 @@ import Linglib.Semantics.Lexical.MeaningComponents
 
 /-!
 # Features.DiathesisAlternation
-@cite{levin-1993}
+[levin-1993]
 
-Twenty-five curated diathesis alternations from @cite{levin-1993} Part One,
+Twenty-five curated diathesis alternations from [levin-1993] Part One,
 the prediction map from `MeaningComponents`, the per-class participation
 profile, and structural theorems characterising how alternation
 participation interacts with `MeaningComponents.fuse`.
@@ -15,7 +15,7 @@ participation interacts with `MeaningComponents.fuse`.
 Moved from `Core/Lexical/DiathesisAlternation.lean` in the cleanup that
 dissolved `Core/Lexical/`. Sibling of `LevinClass.lean`, `MeaningComponents.lean`,
 `LevinTheory.lean`, `LevinClassProfiles.lean` — all paper-anchored on
-@cite{levin-1993} and not theory-neutral substrate.
+[levin-1993] and not theory-neutral substrate.
 
 ## Selection caveat
 
@@ -29,7 +29,7 @@ against the empirical needs of any downstream consumer.
 
 UNVERIFIED: Per-alternation section numbers (e.g., `§1.1.2.1`, `§2.1`,
 `§7.4`) cited from memory throughout. Verify against published
-@cite{levin-1993} before treating as authoritative.
+[levin-1993] before treating as authoritative.
 
 ## Sections
 
@@ -48,7 +48,7 @@ namespace Semantics.Lexical
 -- ════════════════════════════════════════════════════
 
 /-- Classification of diathesis alternations by the chapter of
-    @cite{levin-1993} Part One where they are primarily discussed.
+    [levin-1993] Part One where they are primarily discussed.
 
     Organizational grouping for the curated 25-alternation enum;
     the remaining ~50 narrow alternations from Part One are documented
@@ -79,7 +79,7 @@ inductive AlternationFamily where
 -- § 1b. Diathesis Alternation Diagnostics
 -- ════════════════════════════════════════════════════
 
-/-- Curated diathesis alternations from @cite{levin-1993} Part One.
+/-- Curated diathesis alternations from [levin-1993] Part One.
 
     The first four (causativeInchoative / inducedAction / middle / conative)
     are the canonical diagnostics from the Introduction; others are from
@@ -163,7 +163,7 @@ inductive DiathesisAlternation where
   | directionalPhrase
   deriving DecidableEq, Repr
 
-/-- Which family of @cite{levin-1993} Part One each alternation belongs to.
+/-- Which family of [levin-1993] Part One each alternation belongs to.
     Classifies the 25 curated alternations into 6 families matching
     the chapter structure of Part One. -/
 def DiathesisAlternation.family : DiathesisAlternation → AlternationFamily
@@ -190,7 +190,7 @@ def DiathesisAlternation.family : DiathesisAlternation → AlternationFamily
 
 /-- Predicted alternation participation derived from meaning components.
 
-    The core claim of @cite{levin-1993}: meaning components — diagnosed by
+    The core claim of [levin-1993]: meaning components — diagnosed by
     alternation participation — form the bridge between verb semantics and
     verb syntax. Each diagnostic alternation corresponds to a specific
     configuration of meaning components:
@@ -346,7 +346,7 @@ theorem fuse_blocks_only_via_instrumentSpec (v c : MeaningComponents)
     bodyPartPossessorAscension, instrumentSubject, resultative.
 
     Class-specific overrides below; these are the formaliser's reading of
-    @cite{levin-1993} Part I verb lists and Part II class descriptions.
+    [levin-1993] Part I verb lists and Part II class descriptions.
     UNVERIFIED: Per-class participation rows cited from memory; verify
     against the published monograph. -/
 def LevinClass.participatesIn (c : LevinClass) (alt : DiathesisAlternation) : Bool :=
@@ -454,7 +454,7 @@ def LevinClass.participatesIn (c : LevinClass) (alt : DiathesisAlternation) : Bo
 -- ════════════════════════════════════════════════════
 
 /-! The four verbs *break*, *cut*, *hit*, *touch* are distinguished by exactly
-their pattern of alternation participation (per @cite{levin-1993} Introduction). -/
+their pattern of alternation participation (per [levin-1993] Introduction). -/
 
 /-- Break participates in causative/inchoative and middle (CoS + causation). -/
 theorem break_alternations :

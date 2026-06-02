@@ -3,13 +3,13 @@ import Linglib.Syntax.DependencyGrammar.Dominance
 /-!
 # Mildly non-projective dependency structures
 
-Formalizes the structural theory of @cite{kuhlmann-nivre-2006},
-@cite{kuhlmann-2013}, @cite{mueller-2013}: planarity, well-nestedness, and
+Formalizes the structural theory of [kuhlmann-nivre-2006],
+[kuhlmann-2013], [mueller-2013]: planarity, well-nestedness, and
 the hierarchy
 
   projective ⊂ planar ⊂ well-nested ⊂ unrestricted.
 
-The cross-serial / nested verb-cluster pair (@cite{kuhlmann-2013} Figure 1)
+The cross-serial / nested verb-cluster pair ([kuhlmann-2013] Figure 1)
 witnesses the gap between projectivity and well-nestedness in attested
 language data.
 
@@ -49,7 +49,7 @@ namespace DepGrammar
 /-! ### Arc-crossing detection -/
 
 /-- Two dependencies cross iff their spans overlap without containment.
-    (@cite{kuhlmann-nivre-2006}, implicit in Definition 4) -/
+    ([kuhlmann-nivre-2006], implicit in Definition 4) -/
 def depsCross (d1 d2 : Dependency) : Bool :=
   if d1 == d2 then false
   else if d1.headIdx == d2.headIdx then false
@@ -68,7 +68,7 @@ def nonProjectiveDeps (t : DepTree) : List Dependency :=
 def hasFillerGap (t : DepTree) : Bool :=
   (nonProjectiveDeps t).length > 0
 
-/-! ### Planarity (@cite{kuhlmann-nivre-2006}, Definition 4) -/
+/-! ### Planarity ([kuhlmann-nivre-2006], Definition 4) -/
 
 /-- Whether two positions are linked by an edge (in either direction). -/
 def linked (deps : List Dependency) (a b : Nat) : Bool :=
@@ -77,7 +77,7 @@ def linked (deps : List Dependency) (a b : Nat) : Bool :=
 
 /-- A dependency tree is **planar** iff its edges can be drawn above the
     sentence without crossing: no nodes `a < b < c < d` with `linked a c`
-    and `linked b d`. (@cite{kuhlmann-nivre-2006}, Definition 4) -/
+    and `linked b d`. ([kuhlmann-nivre-2006], Definition 4) -/
 def DepTree.isPlanar (t : DepTree) : Bool :=
   let deps := t.deps
   let n := t.words.length
@@ -87,7 +87,7 @@ def DepTree.isPlanar (t : DepTree) : Bool :=
         List.range n |>.any λ d =>
           a < b && b < c && c < d && linked deps a c && linked deps b d)
 
-/-! ### Well-nestedness (@cite{kuhlmann-nivre-2006}, Definition 8) -/
+/-! ### Well-nestedness ([kuhlmann-nivre-2006], Definition 8) -/
 
 /-- Two projections **interleave** if there exist `l₁, r₁ ∈ p1` and
     `l₂, r₂ ∈ p2` with `l₁ < l₂ < r₁ < r₂`. -/
@@ -107,7 +107,7 @@ private theorem disjoint_symm {deps : List Dependency} {u v : Nat}
   exact ⟨h.2, h.1⟩
 
 /-- A dependency tree is **well-nested** if no two disjoint nodes have
-    interleaving projections. (@cite{kuhlmann-nivre-2006}, Definition 8) -/
+    interleaving projections. ([kuhlmann-nivre-2006], Definition 8) -/
 def DepTree.isWellNested (t : DepTree) : Bool :=
   let deps := t.deps
   let n := t.words.length
@@ -118,7 +118,7 @@ def DepTree.isWellNested (t : DepTree) : Bool :=
 
 /-! ### Example trees
 
-Cross-serial Dutch and nested German from @cite{kuhlmann-2013} Figure 1 —
+Cross-serial Dutch and nested German from [kuhlmann-2013] Figure 1 —
 the canonical pair witnessing that mild non-projectivity (well-nested,
 gap degree 1) covers attested data. -/
 
@@ -177,7 +177,7 @@ example : DepTree.isWellNested nonProjectiveTree = false := by decide
 
 /-- **Projective ⟺ gap degree 0**: a tree is projective iff no node's
     projection has any gaps.
-    (@cite{kuhlmann-nivre-2006}, Definition 3 + Definition 7) -/
+    ([kuhlmann-nivre-2006], Definition 3 + Definition 7) -/
 theorem projective_iff_gapDegree_zero (t : DepTree) :
     isProjective t = true ↔ t.gapDegree = 0 := by
   unfold isProjective DepTree.gapDegree
@@ -247,7 +247,7 @@ theorem projective_iff_blockDegree_one (t : DepTree)
     omega
 
 /-- **Block-degree = gap degree + 1** for non-empty projections.
-    (@cite{kuhlmann-2013}, §7.1 footnote 2) -/
+    ([kuhlmann-2013], §7.1 footnote 2) -/
 theorem blockDegree_eq_gapDegree_succ (deps : List Dependency) (root : Nat) :
     blockDegreeAt deps root = gapDegreeAt deps root + 1 := by
   unfold blockDegreeAt gapDegreeAt
@@ -317,7 +317,7 @@ private theorem unique_parent_of_hasUniqueHeads {t : DepTree}
   rw [List.eq_of_mem_singleton hf₁, List.eq_of_mem_singleton hf₂]
 
 /-- **Projective ⊂ planar** for well-formed trees.
-    (@cite{kuhlmann-nivre-2006}, §3.5) -/
+    ([kuhlmann-nivre-2006], §3.5) -/
 theorem projective_implies_planar (t : DepTree)
     (hwf : t.WF) (hacyc : isAcyclic t = true)
     (hproj : isProjective t = true) : t.isPlanar = true := by
@@ -763,7 +763,7 @@ private theorem interleaving_not_planar (t : DepTree)
       hr₁ hp₂_lt hc₂_gt hc₁_mem (Or.inl hc₁_lt_p₂)
 
 /-- **Planar ⊂ well-nested** for well-formed trees.
-    (@cite{kuhlmann-nivre-2006}, Theorem 1) -/
+    ([kuhlmann-nivre-2006], Theorem 1) -/
 theorem planar_implies_wellNested (t : DepTree)
     (hwf : t.WF)
     (hplanar : t.isPlanar = true) : t.isWellNested = true := by

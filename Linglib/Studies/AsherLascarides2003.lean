@@ -4,7 +4,7 @@ import Linglib.Discourse.Rhetorical.RightFrontier
 /-!
 # Asher & Lascarides 2003: SDRT Right Frontier Constraint worked example
 
-@cite{asher-lascarides-2003}
+[asher-lascarides-2003]
 
 Example (21) from p. 149 — the discourse where the book explicitly
 enumerates which attachment sites are available under the Right
@@ -49,7 +49,7 @@ coordinating sibling boundary.
 
 ## Substrate note
 
-@cite{asher-lascarides-2003}'s ⇓ topic-relation is not in the
+[asher-lascarides-2003]'s ⇓ topic-relation is not in the
 substrate's `RhetoricalRelation` enum (it's a structural relation
 the book uses informally; the headline truth-conditional inventory
 is Narration / Elaboration / Explanation / Result / Background /
@@ -71,7 +71,7 @@ open Discourse.Rhetorical
 abbrev Label := Nat
 abbrev Content := String
 
-/-- Example (21) from @cite{asher-lascarides-2003} p. 149, with
+/-- Example (21) from [asher-lascarides-2003] p. 149, with
     LAST = π₂.
 
     Labels: 0 = π₀, 1 = π₁, 2 = π₂, 3 = π₃, 4 = π₄.

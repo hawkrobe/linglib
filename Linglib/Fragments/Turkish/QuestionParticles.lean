@@ -2,7 +2,7 @@ import Linglib.Semantics.Polarity.Operator
 
 /-!
 # Turkish Question Particles
-@cite{atlamaz-2023} @cite{turk-hirsch-2026}
+[atlamaz-2023] [turk-hirsch-2026]
 
 Lexical entries for Turkish polar question particles. The fragment commits
 only to *lexical primitives* — citation form, vowel-harmony allomorphs, and
@@ -10,8 +10,8 @@ semantic contribution (a bare operator on propositions). It does not commit
 to a syntactic theory: there is no UPOS tag, no head-position label, no
 left-periphery layer here. Those decisions are theory-laden and belong in
 study files that actually adopt the relevant theory (e.g.,
-@cite{fox-katzir-2011}-style category match needs a UPOS tagging;
-@cite{laka-1990}-style PolP needs a head label).
+[fox-katzir-2011]-style category match needs a UPOS tagging;
+[laka-1990]-style PolP needs a head label).
 
 The semantic operator is `Semantics.Polarity.affirm` (identity), reflecting
 the consensus that *mI* is propositionally vacuous and contributes only

@@ -32,7 +32,7 @@ predicates `atLeastOne`/`universal`/`notUniversal` give the literal
 - Gazdar, G. (1979). Pragmatics: Implicature, Presupposition, and Logical Form.
 - Singh, R. (2008). On the interpretation of disjunction.
 - Geurts, B. (2010). Quantity Implicatures. Cambridge University Press. Ch. 2-3.
-- @cite{fox-spector-2018}. Economy and embedded exhaustification.
+- [fox-spector-2018]. Economy and embedded exhaustification.
 -/
 
 namespace Phenomena.ScalarImplicatures
@@ -120,7 +120,7 @@ structure DEBlockingDatum where
 
 /--
 Classic example: "some" in DE blocks "not all" implicature.
-Source: @cite{ladusaw-1980}, @cite{geurts-2010} Ch. 3.2
+Source: [ladusaw-1980], [geurts-2010] Ch. 3.2
 -/
 def someAllBlocking : DEBlockingDatum :=
   { ueExample := "John ate some of the cookies"
@@ -133,7 +133,7 @@ def someAllBlocking : DEBlockingDatum :=
 
 /--
 "or" in DE blocks "not and" implicature.
-Source: @cite{geurts-2010} Ch. 3.2
+Source: [geurts-2010] Ch. 3.2
 -/
 def orAndBlocking : DEBlockingDatum :=
   { ueExample := "John ate cake or pie"
@@ -146,7 +146,7 @@ def orAndBlocking : DEBlockingDatum :=
 
 /--
 "possible" in DE contexts.
-Source: @cite{horn-1989}
+Source: [horn-1989]
 -/
 def possibleNecessaryBlocking : DEBlockingDatum :=
   { ueExample := "It's possible that John will come"
@@ -159,7 +159,7 @@ def possibleNecessaryBlocking : DEBlockingDatum :=
 
 /--
 Restrictor of "every" is DE.
-Source: @cite{ladusaw-1980}, @cite{barwise-cooper-1981}
+Source: [ladusaw-1980], [barwise-cooper-1981]
 -/
 def everyRestrictorDE : DEBlockingDatum :=
   { ueExample := "Every student who solved some problems passed"
@@ -186,7 +186,7 @@ From "some students came":
 
 The strong requires a competence assumption.
 
-Source: @cite{soames-1982}, @cite{geurts-2010} Ch. 2.3
+Source: [soames-1982], [geurts-2010] Ch. 2.3
 -/
 structure WeakStrongDatum where
   /-- The utterance -/
@@ -205,7 +205,7 @@ structure WeakStrongDatum where
 
 /--
 Classic "some" example.
-Source: @cite{horn-1972}, @cite{geurts-2010} Ch. 2.3
+Source: [horn-1972], [geurts-2010] Ch. 2.3
 -/
 def someStudents : WeakStrongDatum :=
   { utterance := "Some students came"
@@ -218,7 +218,7 @@ def someStudents : WeakStrongDatum :=
 
 /--
 "Or" example showing weak vs strong.
-Source: @cite{gazdar-1979}
+Source: [gazdar-1979]
 -/
 def orWeakStrong : WeakStrongDatum :=
   { utterance := "John ate cake or pie"
@@ -231,7 +231,7 @@ def orWeakStrong : WeakStrongDatum :=
 
 /--
 Numeral example.
-Source: @cite{horn-1972}
+Source: [horn-1972]
 -/
 def numeralWeakStrong : WeakStrongDatum :=
   { utterance := "John has three children"
@@ -251,7 +251,7 @@ def weakStrongExamples : List WeakStrongDatum :=
 
 /--
 A Horn scale with its members and example implicatures.
-Source: @cite{horn-1972}
+Source: [horn-1972]
 -/
 structure HornScaleDatum where
   /-- Name of the scale -/
@@ -266,7 +266,7 @@ structure HornScaleDatum where
 
 /--
 Quantifier scale.
-Source: @cite{horn-1972}
+Source: [horn-1972]
 -/
 def quantifierScale : HornScaleDatum :=
   { name := "Quantifiers"
@@ -277,7 +277,7 @@ def quantifierScale : HornScaleDatum :=
 
 /--
 Connective scale.
-Source: @cite{horn-1972}
+Source: [horn-1972]
 -/
 def connectiveScale : HornScaleDatum :=
   { name := "Connectives"
@@ -288,7 +288,7 @@ def connectiveScale : HornScaleDatum :=
 
 /--
 Modal scale.
-Source: @cite{horn-1972}
+Source: [horn-1972]
 -/
 def modalScale : HornScaleDatum :=
   { name := "Modals"
@@ -299,7 +299,7 @@ def modalScale : HornScaleDatum :=
 
 /--
 Numeral scale (with lower-bound semantics).
-Source: @cite{horn-1972}
+Source: [horn-1972]
 -/
 def numeralScale : HornScaleDatum :=
   { name := "Numerals"

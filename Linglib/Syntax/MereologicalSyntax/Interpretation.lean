@@ -5,11 +5,11 @@ set_option autoImplicit false
 
 /-!
 # Mereological Syntax → Semantics Bridge
-@cite{adger-2025} @cite{borer-2005} @cite{wang-sun-2026}
+[adger-2025] [borer-2005] [wang-sun-2026]
 
 Connects the syntactic visibility predicate (`labelInOnePartChain`) from
 mereological syntax to the semantic individuation operator (`Div`) from
-@cite{borer-2005}'s nominal theory, closing the gap between two
+[borer-2005]'s nominal theory, closing the gap between two
 independent uses of mereology in the library:
 
 1. **Semantic mereology** (`Core/Mereology.lean`): part-whole over entities.
@@ -24,7 +24,7 @@ whether individuation (`Div`) applies:
 - **Cl visible** (in 1-part chain) → `Div` applies → QUA → sortal
 - **Cl invisible** (cross-dimensional) → root passes through → CUM → mensural
 
-This is the formal content of @cite{wang-sun-2026}'s 的-contrast.
+This is the formal content of [wang-sun-2026]'s 的-contrast.
 -/
 
 namespace MereologicalSyntax
@@ -104,7 +104,7 @@ theorem invisible_cl_cum (d : SynObj) (P : α → Prop)
     structures differing only in dimensional attachment, yields opposite
     mereological properties.
 
-    The hypothesis `CUM P` is @cite{borer-2005}'s thesis that root
+    The hypothesis `CUM P` is [borer-2005]'s thesis that root
     predicates are cumulative. -/
 theorem de_semantic_contrast (d_no_de d_de : SynObj) (P : α → Prop)
     (h_vis : individuates d_no_de = true)

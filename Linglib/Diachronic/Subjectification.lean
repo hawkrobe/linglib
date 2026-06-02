@@ -2,7 +2,7 @@ import Linglib.Features.Subjectivity
 
 /-!
 # Subjectification and Intersubjectification
-@cite{traugott-dasher-2002} @cite{traugott-2010}
+[traugott-dasher-2002] [traugott-2010]
 
 The diachronic hypothesis that lexical items acquire subjective and
 intersubjective meanings over time, in a fixed order:
@@ -57,7 +57,7 @@ structure SubjectificationStep where
   deriving Repr
 
 /-- Canonical examples of subjectification.
-    @cite{traugott-dasher-2002} Table 1, @cite{traugott-2010} §2. -/
+    [traugott-dasher-2002] Table 1, [traugott-2010] §2. -/
 def canonicalExamples : List SubjectificationStep :=
   [ -- "while": temporal → concessive → polite refusal
     { expression := "while"
@@ -102,7 +102,7 @@ theorem all_directed :
 
 /-- Subjectification steps in the binominal (N₁-of-N₂) domain.
 
-@cite{ten-wolde-2023} §4.5: the EBNP → EM → BI transitions are driven by
+[ten-wolde-2023] §4.5: the EBNP → EM → BI transitions are driven by
 subjectification — N₁ shifts from ascribing objective/physical properties
 to expressing the speaker's subjective evaluation. -/
 def binominalSubjectificationSteps : List SubjectificationStep :=
@@ -148,7 +148,7 @@ theorem binominal_steps_directed :
 /-- Intersubjectification: the final stage of the cline, where meanings
     come to encode attention to the addressee's face/self-image.
 
-    @cite{traugott-2010}: intersubjectification presupposes subjectification.
+    [traugott-2010]: intersubjectification presupposes subjectification.
     An expression must first acquire speaker-oriented meaning before it can
     develop addressee-oriented meaning. -/
 theorem intersubjectification_presupposes_subjectification :

@@ -3,17 +3,17 @@ import Linglib.Semantics.Evidential.Basic
 
 /-!
 # Typology.Evidentiality
-@cite{aikhenvald-2004} @cite{de-haan-2013}
+[aikhenvald-2004] [de-haan-2013]
 
-@cite{aikhenvald-2004}'s system-type classification of evidentiality
+[aikhenvald-2004]'s system-type classification of evidentiality
 paradigms by paradigm shape (term count + cell distribution),
-complementing the WALS Ch 77 (@cite{de-haan-2013}) 3-way classification
+complementing the WALS Ch 77 ([de-haan-2013]) 3-way classification
 already encoded in `Typology.Modality.EvidentialSystem`.
 
 The catalog runs A1–D1, where the letter encodes term count
 (A: 2-term, B: 3-term, C: 4-term, D: 5+-term) and the digit encodes
 paradigm shape (which cells of the source × inference space are
-distinguished). Catalog drawn from @cite{aikhenvald-2004} Ch 2 §§2.1-2.4.
+distinguished). Catalog drawn from [aikhenvald-2004] Ch 2 §§2.1-2.4.
 
 ## Main declarations
 
@@ -38,7 +38,7 @@ namespace Typology.Evidentiality
 
 open Typology.Modality (EvidentialSystem)
 
-/-- @cite{aikhenvald-2004} Ch 2 paradigm system-type classification. The
+/-- [aikhenvald-2004] Ch 2 paradigm system-type classification. The
     letter encodes term count (A=2, B=3, C=4, D=5); the digit encodes
     paradigm shape. -/
 inductive AikhenvaldSystem where
@@ -119,7 +119,7 @@ def termCount : AikhenvaldSystem → Nat
   | .C1 | .C2 | .C3             => 4
   | .D1                         => 5
 
-/-- Projection to the WALS Ch 77 (@cite{de-haan-2013}) classification,
+/-- Projection to the WALS Ch 77 ([de-haan-2013]) classification,
     extended with `threeOrMore`. A-systems map per their direct/indirect
     coverage; B/C/D map uniformly to `.threeOrMore`. WALS itself
     collapses B/C/D into `.directAndIndirect`; the `.threeOrMore`
@@ -151,7 +151,7 @@ open Semantics.Evidential.Entry (Cell)
 
 namespace AikhenvaldSystem
 
-/-- Derive @cite{aikhenvald-2004}'s paradigm system-type letter from a
+/-- Derive [aikhenvald-2004]'s paradigm system-type letter from a
     declared inventory by inspecting which cells of her paradigm space are
     covered. Mirrors `Determiner.markingStrategy`'s derivation pattern.
     Returns `none` for inventories whose cell pattern doesn't fit any

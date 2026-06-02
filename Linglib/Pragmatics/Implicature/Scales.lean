@@ -4,7 +4,7 @@ import Linglib.Semantics.Entailment.Polarity
 
 /-!
 # Generic Scalar Implicature Helpers
-@cite{geurts-2010}
+[geurts-2010]
 
 Generic scalar-implicature computation built on `HornScale` (from
 `Semantics/Alternatives/Lexical.lean`) and contextual polarity

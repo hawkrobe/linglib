@@ -23,17 +23,17 @@ finiteness to a clause *gaining* it. So MSA negation is WALS Ch 113 `.both`
 (symmetric *laa* / *maa* plus asymmetric *lam* / *lan* / *lays-a*) with the
 Ch 114 `.finAndCat` subtype.
 
-MSA (`arb`) is absent from @cite{miestamo-2005} and from WALS Ch 113A/114A
+MSA (`arb`) is absent from [miestamo-2005] and from WALS Ch 113A/114A
 (which carry only Egyptian `arz`), so `symmetry` and `asymmetrySubtype` are a
 project-internal extrapolation, not Miestamo's own coding; the position fields
 (Ch 143A/144A) are WALS-pulled by `NegationSystem.ofISO`.
 
 ## References
 
-* @cite{ryding-2005} ch. 37: §37.1 *lays-a* (paradigm chart §37.1.1),
+* [ryding-2005] ch. 37: §37.1 *lays-a* (paradigm chart §37.1.1),
   §37.2 the particles (*laa* §37.2.1, *lam* §37.2.2.1, *maa* §37.2.2.2,
   *lan* §37.2.3); jussive §35.1, subjunctive §34.2.
-* @cite{benmamoun-2000} ch. 6.
+* [benmamoun-2000] ch. 6.
 -/
 
 namespace Arabic.ModernStandard.Negation

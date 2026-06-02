@@ -4,9 +4,9 @@ import Linglib.Morphology.DM.VocabularyInsertion
 
 /-!
 # Copula Theory: HAVE, BE, and Delayed Gratification
-@cite{myler-2016} @cite{freeze-1992} @cite{kayne-1993} @cite{wood-2015}
+[myler-2016] [freeze-1992] [kayne-1993] [wood-2015]
 
-@cite{myler-2016} proposes that the copula verb (v) is a **semantically
+[myler-2016] proposes that the copula verb (v) is a **semantically
 vacuous light verb**: ⟦v⟧ = λx.x. The PF realization of v is determined
 by Vocabulary Insertion sensitive to the syntactic environment:
 
@@ -32,7 +32,7 @@ be gratified at any position in the clausal spine, the cross-linguistic
 variation in possession constructions reduces to where in the structure
 the possessor is first-merged.
 
-## FreeP (@cite{myler-2016} §4.1.1.3)
+## FreeP ([myler-2016] §4.1.1.3)
 
 The Free head introduces an experiencer θ-role in eventive *have*
 constructions. Like Voice, Free varies cross-linguistically in whether
@@ -58,7 +58,7 @@ inductive CopulaForm where
 
 /-- Vocabulary Insertion rule for the copula.
 
-    @cite{myler-2016} (89):
+    [myler-2016] (89):
     - v ⇔ HAVE / ___Voice_{D},φ
     - v ⇔ BE   / elsewhere
 
@@ -133,7 +133,7 @@ theorem vi_characterization (v : VoiceHead) :
 
 /-- How a θ-role introduced by a head X is satisfied.
 
-    @cite{myler-2016} §1.3 (69–73) distinguishes three mechanisms:
+    [myler-2016] §1.3 (69–73) distinguishes three mechanisms:
 
     - **Instant**: the DP merges in Spec,XP — the standard case.
       The DP is both the syntactic and semantic argument of X.
@@ -191,7 +191,7 @@ theorem raising_has_both :
 
 /-- The Free head introduces an experiencer θ-role above an embedded VoiceP.
 
-    @cite{myler-2016} §4.1.1.3: Free is a functional head that merges
+    [myler-2016] §4.1.1.3: Free is a functional head that merges
     above the embedded VoiceP inside *have*'s complement. It is related
     to but distinct from Appl:
     - Like high Appl, Free relates an individual to an event
@@ -204,7 +204,7 @@ theorem raising_has_both :
     - Free_{D} (Spanish): specifier required → instant gratification →
       free datives exist, eventive experiencer HAVE does not
 
-    @cite{myler-2016} table (35):
+    [myler-2016] table (35):
     | Free heads  | Phenomena                           | Languages    |
     |-------------|-------------------------------------|--------------|
     | Free_{}     | Eventive Exp HAVE, No free datives  | English      |
@@ -273,7 +273,7 @@ theorem free_complementarity (f : FreeHead) :
 
 /-- The complement of *have* (= the complement of v_BE).
 
-    @cite{myler-2016} table (100): the interpretation of a HAVE
+    [myler-2016] table (100): the interpretation of a HAVE
     sentence depends on the interaction between the complement type
     and the Voice alloseme selected. The complement types are:
 
@@ -361,7 +361,7 @@ inductive HaveReading where
   | modal                -- "John has to leave" (modal base containment)
   deriving DecidableEq, Repr
 
-/-- @cite{myler-2016} table (100): Which Voice alloseme is selected
+/-- [myler-2016] table (100): Which Voice alloseme is selected
     given a particular complement type.
 
     **Derived** from complement properties via
@@ -511,7 +511,7 @@ theorem modal_no_theta :
     gratification — i.e., can its possessor role percolate up to
     be gratified at Spec,VoiceP?
 
-    @cite{myler-2016} §4.1.2.1 observes that complex event nominals
+    [myler-2016] §4.1.2.1 observes that complex event nominals
     (CENs) resist delayed gratification and thus cannot appear in
     relational *have* constructions:
 

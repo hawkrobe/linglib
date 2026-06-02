@@ -2,15 +2,15 @@ import Linglib.Syntax.Minimalist.Aspect
 
 /-!
 # Cantonese Aspect Markers
-@cite{matthews-yip-1994} @cite{cheung-1972} @cite{cheung-2007} @cite{yip-k-f-2025}
-@cite{liu-yip-2026} App. B (127)
+[matthews-yip-1994] [cheung-1972] [cheung-2007] [yip-k-f-2025]
+[liu-yip-2026] App. B (127)
 
 Cantonese (ISO `yue`, Sinitic) postverbal aspect markers, organized along the
 inner / outer split (Travis 2010, MacDonald 2008, Sybesma 2017): outer markers
 sit above vP and host viewpoint distinctions; inner markers sit inside vP and
 host Aktionsart-derived distinctions (notably the rich inventory of phase
-complements catalogued by @cite{yip-k-f-2025} and reproduced in
-@cite{liu-yip-2026} Appendix B).
+complements catalogued by [yip-k-f-2025] and reproduced in
+[liu-yip-2026] Appendix B).
 
 This file commits the lexical data; the analytical positioning of -faan as
 outer-aspect-associated (and -gwo as inner-aspect-associated) is per Liu &
@@ -39,7 +39,7 @@ structure AspectMarker where
 /-! ## Outer-aspect markers (canonically associate with AspP_outer above vP) -/
 
 /-- *-zo* 咗 — perfective, postverbal suffix (Cantonese counterpart of Mandarin
-    *-le*). Outer aspect per @cite{yip-k-f-2025}. -/
+    *-le*). Outer aspect per [yip-k-f-2025]. -/
 def zo : AspectMarker :=
   { form := "-zo", hanzi := "咗", gloss := "PFV"
   , flavor := .outer, semantic := "perfective" }
@@ -62,7 +62,7 @@ def faan : AspectMarker :=
 /-! ## Inner-aspect markers (canonically associate with AspP_inner within vP) -/
 
 /-- *-gwo* 過 — experiential aspect, postverbal suffix (Cantonese counterpart of
-    Mandarin *-guo*). @cite{liu-yip-2026} §5 analyse the *repetitive*-flavored
+    Mandarin *-guo*). [liu-yip-2026] §5 analyse the *repetitive*-flavored
     *-gwo* as AspP_inner-associated, distinct from the experiential reading.
     The entry here records the lexical form; the dual analysis lives in
     `LiuYip2026.lean`. -/
@@ -72,7 +72,7 @@ def gwo : AspectMarker :=
   , notes := "Liu&Yip2026: repetitive use is AspP_inner; no scope lowering" }
 
 /-- *-zyu* 住 — continuative / durative postverbal suffix. Per
-    @cite{matthews-yip-1994}: ngo5 zo6-zyu6 'I am sitting'. Inner aspect. -/
+    [matthews-yip-1994]: ngo5 zo6-zyu6 'I am sitting'. Inner aspect. -/
 def zyu : AspectMarker :=
   { form := "-zyu", hanzi := "住", gloss := "CONT"
   , flavor := .inner, semantic := "continuative" }

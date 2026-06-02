@@ -9,7 +9,7 @@ Closed-class items that don't fit a more specific Fragment file:
   `from_`, `before`, `after`)
 - **Coordinating conjunctions** (`and_`, `or_`, `but`, `nor`)
 - **Discourse particles** — focus-sensitive `just_`, `only_`
-- **Adverbial quantifiers** (@cite{percus-2000}) — `always`, `usually`,
+- **Adverbial quantifiers** ([percus-2000]) — `always`, `usually`,
   `sometimes`, `never`
 
 The auxiliaries (modals + do-support + be + have + modal adverbs +
@@ -86,7 +86,7 @@ def only_ : ParticleEntry := { form := "only", requiresSharedCQ := true, nonRoot
 def allParticles : List ParticleEntry := [just_, only_]
 
 -- ============================================================================
--- Adverbial Quantifiers (@cite{percus-2000})
+-- Adverbial Quantifiers ([percus-2000])
 -- ============================================================================
 
 /-- Quantificational force for adverbial quantifiers. -/
@@ -100,7 +100,7 @@ inductive AdvQuantForce where
 /-- An adverbial quantifier entry: a closed-class adverb that quantifies
     over situations (times, events, occasions).
 
-    In @cite{percus-2000}'s framework, adverbial quantifiers take a situation
+    In [percus-2000]'s framework, adverbial quantifiers take a situation
     pronoun that determines their domain and introduce a new λs binder
     over their nuclear scope. Generalization Y constrains the situation
     pronoun to be bound by the nearest c-commanding λ. -/

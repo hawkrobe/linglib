@@ -23,7 +23,7 @@ sentential negation.
 
 ## References
 
-* @cite{turco-braun-dimroth-2014}, @cite{hohle-1992}.
+* [turco-braun-dimroth-2014], [hohle-1992].
 -/
 
 namespace Semantics.Focus.PolarityLevel
@@ -42,7 +42,7 @@ inductive PolarityMarkingLevel where
       Affirmative particles (Dutch *wel*) set [+Pol]. -/
   | polarity
   /-- Assertion level: highlights the assertion operator (finiteness).
-      German Verum focus (@cite{hohle-1992}). -/
+      German Verum focus ([hohle-1992]). -/
   | assertion
   deriving DecidableEq, Repr
 
@@ -144,7 +144,7 @@ theorem levels_differ_on_negation :
 /-- Despite operating at different semantic levels, both strategies yield
     the same truth conditions when applied to a positive proposition.
 
-    @cite{turco-braun-dimroth-2014}: Dutch *wel* and German VF are
+    [turco-braun-dimroth-2014]: Dutch *wel* and German VF are
     "functionally equivalent" for polarity contrast/correction —
     the pragmatic effect is the same even though the structural target
     differs. -/

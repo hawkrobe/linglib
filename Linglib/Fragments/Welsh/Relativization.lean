@@ -3,13 +3,13 @@ import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Welsh Relativization Fragment
-@cite{keenan-comrie-1977}
+[keenan-comrie-1977]
 
 Two relative clause markers (discussed §1.3.2):
 - Particle *a* with gap in NP_rel (-case, covers SU/DO)
 - Particle *y* with resumptive pronoun (+case, covers IO–OCOMP)
 
-Data from @cite{keenan-comrie-1977} Table 1 and §1.3.2.
+Data from [keenan-comrie-1977] Table 1 and §1.3.2.
 -/
 
 namespace Welsh

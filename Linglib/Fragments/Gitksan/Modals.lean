@@ -4,21 +4,21 @@ import Linglib.Semantics.Modality.Typology
 /-!
 # Gitksan Modal Inventory
 
-@cite{matthewson-2013} @cite{matthewson-2016} @cite{peterson-2010}
+[matthewson-2013] [matthewson-2016] [peterson-2010]
 
 Gitksan (Tsimshianic, ISO 639-3 `git`) modal system, spoken in northern
 British Columbia. The system shows two key typological properties:
 
 1. **Absolute epistemic/circumstantial split**: epistemic modals cannot
-   be used circumstantially and vice versa (@cite{matthewson-2016} Table 18.1).
+   be used circumstantially and vice versa ([matthewson-2016] Table 18.1).
 2. **Variable-force epistemic modals**: ima('a) and gat are compatible with
    both necessity and possibility contexts, contrasting only in information
-   source — not in force (@cite{peterson-2010}).
+   source — not in force ([peterson-2010]).
 3. **Prospective aspect `dim`**: obligatorily marks future temporal orientation
    for modals; without it, epistemic ima('a) cannot be future-oriented
-   (@cite{matthewson-2016} §18.4.3, examples 60–63).
+   ([matthewson-2016] §18.4.3, examples 60–63).
 
-## @cite{matthewson-2013} Figure 1: Gitksan modal system
+## [matthewson-2013] Figure 1: Gitksan modal system
 
 |                  | Possibility  | (Weak) Necessity |
 |------------------|-------------|-----------------|
@@ -31,7 +31,7 @@ British Columbia. The system shows two key typological properties:
 
 The (WEAK) annotation in the column header is load-bearing: Gitksan has
 no STRONG circumstantial necessity modal — pure-necessity cases like
-"I have to sneeze" use a plain future, not sgi (@cite{matthewson-2013}
+"I have to sneeze" use a plain future, not sgi ([matthewson-2013]
 ex. 95–98). This asymmetry is the crux of Matthewson's "mixed system"
 typological claim: strength is encoded in the circumstantial domain,
 but only weakly.
@@ -53,21 +53,21 @@ private abbrev pb := ForceFlavor.mk .possibility .bouletic
 /-! ## Modal expressions -/
 
 /-- Variable-force plain epistemic modal.
-    @cite{peterson-2010}: analysed as a possibility modal strengthened via
+    [peterson-2010]: analysed as a possibility modal strengthened via
     ordering source, compatible with both necessity and possibility contexts.
-    @cite{matthewson-2016} §18.3.2: not specialized for a particular force. -/
+    [matthewson-2016] §18.3.2: not specialized for a particular force. -/
 def imaa : ModalExpression := ⟨"ima('a)", [pe, ne]⟩
 
 /-- Variable-force reportative epistemic modal.
     Distinguished from ima('a) by information source: gat requires
-    reportative evidence. Under @cite{kratzer-2012}'s reclassification,
+    reportative evidence. Under [kratzer-2012]'s reclassification,
     gat is **content-evidential** (the speaker can disbelieve the report),
     while ima('a) is **factual-evidential**. -/
 def gat : ModalExpression := ⟨"gat", [pe, ne]⟩
 
 /-- General circumstantial possibility: pure circumstantial, ability,
     bouletic, teleological, and (in competition with `anookxw`) deontic
-    permission. @cite{matthewson-2013} §4.1, ex. 63–65: da'akhlxw allows
+    permission. [matthewson-2013] §4.1, ex. 63–65: da'akhlxw allows
     bouletic interpretations ('You could eat less cake'), teleological
     interpretations (subsumed under circumstantial in linglib's flavor
     inventory), and deontic permission ('My mother told me I could play').
@@ -75,13 +75,13 @@ def gat : ModalExpression := ⟨"gat", [pe, ne]⟩
     teleological), deontic (permission overlap with anookxw), bouletic. -/
 def daakhlxw : ModalExpression := ⟨"da'akhlxw", [pc, pd, pb]⟩
 
-/-- Specialized deontic possibility ('allowed to'). @cite{matthewson-2013}
+/-- Specialized deontic possibility ('allowed to'). [matthewson-2013]
     §4.2: anook competes with da'akhlxw in permission contexts but is
     strictly deontic — infelicitous in pure circumstantial situations
     (ex. 79). -/
 def anookxw : ModalExpression := ⟨"anook(xw)", [pd]⟩
 
-/-- Circumstantial **weak** necessity. @cite{matthewson-2013} §4.3 (and
+/-- Circumstantial **weak** necessity. [matthewson-2013] §4.3 (and
     Figure 1: column header is "(WEAK) NECESSITY"): sgi expresses
     obligation, deontic 'should', and weak circumstantial necessity. The
     preferred English translation is 'should', a weak necessity modal.
@@ -114,7 +114,7 @@ def forceAnalysis : ModalExpression → ForceAnalysis
   | ⟨"sgi", _⟩ => .fixed .weakNecessity
   | _ => .fixed .possibility
 
-/-! ## Three-way background classification (@cite{matthewson-2016} Table 18.3)
+/-! ## Three-way background classification ([matthewson-2016] Table 18.3)
 
 Gitksan lexicalizes all three background classes:
 - **factual-circumstantial**: da'akhlxw, anookxw, sgi
@@ -130,7 +130,7 @@ def backgroundClass : ModalExpression → BackgroundClass
 
 The epistemic and circumstantial domains are strictly separated:
 epistemic modals cannot be used circumstantially and vice versa.
-@cite{matthewson-2016} §18.2.3, example 20. -/
+[matthewson-2016] §18.2.3, example 20. -/
 
 /-- Epistemic modals. -/
 def epistemicModals : List ModalExpression := [imaa, gat]
@@ -150,7 +150,7 @@ theorem circumstantial_no_epistemic :
 
 /-! ## Prospective aspect marker `dim`
 
-@cite{matthewson-2013} §3–4: prospective aspect marking with `dim` is
+[matthewson-2013] §3–4: prospective aspect marking with `dim` is
 required *asymmetrically*. Circumstantial modals (`da'akhlxw`, `anookxw`,
 `sgi`) require `dim` regardless of temporal orientation — past, present,
 or future, dim must always co-occur (§4.1 ex. 51–58, §4.2 ex. 73–78,
@@ -158,7 +158,7 @@ or future, dim must always co-occur (§4.1 ex. 51–58, §4.2 ex. 73–78,
 when the temporal orientation is future (§3.3 ex. 38–42); past and
 present orientations are felicitous without dim.
 
-The contrast with English is the central typological mirror @cite{matthewson-2013}
+The contrast with English is the central typological mirror [matthewson-2013]
 §3.3 draws: English obligatorily marks past orientation (via *have*),
 Gitksan obligatorily marks future orientation (via *dim*) — but for
 Gitksan epistemics only. Circumstantials uniformly demand the marker. -/
@@ -177,7 +177,7 @@ def requiresDim (e : ModalExpression) (orient : TemporalOrientation) : Bool :=
 
 /-! ### Per-modal dim requirements
 
-@cite{matthewson-2013} §3.3 ex. 38–42 (`imaa`), §3.3 (`gat`):
+[matthewson-2013] §3.3 ex. 38–42 (`imaa`), §3.3 (`gat`):
 epistemic modals are felicitous without `dim` for past/present
 orientations and require `dim` for future. -/
 

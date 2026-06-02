@@ -2,9 +2,9 @@ import Linglib.Dialogue.CommitmentSpace
 
 /-!
 # Superlative Quantifiers and Meta-Speech Acts
-@cite{cohen-krifka-2014} @cite{krifka-2015}
+[cohen-krifka-2014] [krifka-2015]
 
-@cite{cohen-krifka-2014} ("Superlative quantifiers and meta-speech
+[cohen-krifka-2014] ("Superlative quantifiers and meta-speech
 acts", *Linguistics & Philosophy* 37, 41–90) argues that superlative
 quantifiers (`at least n`, `at most n`) are quantifiers over META-SPEECH-ACTS.
 The apparatus: speech-act denegation `~A` (a meta-speech-act) and

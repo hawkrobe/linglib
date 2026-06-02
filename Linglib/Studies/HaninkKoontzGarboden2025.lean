@@ -5,7 +5,7 @@ import Linglib.Semantics.ArgumentStructure.Relational
 
 /-!
 # Variation in the lexical semantics of property concept roots
-@cite{hanink-koontz-garboden-2025}
+[hanink-koontz-garboden-2025]
 
 Hanink, E.A. & Koontz-Garboden, A. (2025). Variation in the lexical
 semantics of property concept roots: Evidence from Wá·šiw. *Natural
@@ -51,13 +51,13 @@ Property concept (PC) roots in Wá·šiw come in two semantic types:
 ## Connections
 
 - Both -iʔ and ʔil- ADD semantic content (possession, ∇) — monotonic
-  operations consistent with the MH (@cite{koontz-garboden-2009}).
+  operations consistent with the MH ([koontz-garboden-2009]).
 - π is Barker's relationalizer from possessive NP semantics, reused
   inside the verbal categorizer's denotation.
-- Against @cite{menon-pancheva-2014}'s universalist claim: not all PC
+- Against [menon-pancheva-2014]'s universalist claim: not all PC
   roots have the same meaning.
 - All Wá·šiw PC roots are `RootEntailments.propertyConcept` (+S −M −R −C)
-  per @cite{beavers-koontz-garboden-2020} — the variation is in *semantic
+  per [beavers-koontz-garboden-2020] — the variation is in *semantic
   type*, not in structural entailments.
 -/
 
@@ -113,7 +113,7 @@ theorem class3_can_be_final :
 
 /-- Class 2 roots CANNOT appear as bipartite verb finals — type mismatch
     with v_become because `statePred.hasIndivArg = false`.
-    (@cite{hanink-koontz-garboden-2025} §5.1) -/
+    ([hanink-koontz-garboden-2025] §5.1) -/
 theorem class2_cannot_be_final :
     MorphClass.class2.canBeResultFinal = false := rfl
 
@@ -129,7 +129,7 @@ theorem bipartite_gap_iff_no_indiv_arg (mc : MorphClass) :
 
 variable {Entity State : Type}
 
-/-- Denotation of -iʔ as v_have (@cite{hanink-koontz-garboden-2025} (34)):
+/-- Denotation of -iʔ as v_have ([hanink-koontz-garboden-2025] (34)):
     `⟦-iʔ⟧ = λP λx ∃y[P(y) & π(x, y)]`
 
     Takes a one-place predicate P (the quality/state) and a possession
@@ -154,7 +154,7 @@ theorem vHave_is_ex_pi (entities : List Entity)
 -- ════════════════════════════════════════════════════
 
 /-- The ∇ operator (ʔil-): type-shifts an individual/state relation to
-    a quality predicate (@cite{hanink-koontz-garboden-2025} (57)).
+    a quality predicate ([hanink-koontz-garboden-2025] (57)).
 
     `⟦ʔil-⟧ = λP_⟨e,⟨v,t⟩⟩ λs_v[∇P(s)]`
 
@@ -196,7 +196,7 @@ def MorphClass.requiresNabla : MorphClass → Bool
 
 /-- Class 1 roots are the only class that can be zero-categorized
     as verbs — they predicate directly without v_have
-    (@cite{hanink-koontz-garboden-2025} §4.3 / Table 1; reaffirmed §7 Table 2). -/
+    ([hanink-koontz-garboden-2025] §4.3 / Table 1; reaffirmed §7 Table 2). -/
 theorem only_class1_zero_categorizes (mc : MorphClass) :
     mc.requiresVHave = false ↔ mc = .class1 := by
   cases mc <;> decide
@@ -251,8 +251,8 @@ theorem all_derivations_monotonic :
 -- § 7. Against Universalist Root Meaning
 -- ════════════════════════════════════════════════════
 
-/-- @cite{menon-pancheva-2014} claim all PC roots have the same semantic
-    type crosslinguistically. @cite{hanink-koontz-garboden-2025} refutes this
+/-- [menon-pancheva-2014] claim all PC roots have the same semantic
+    type crosslinguistically. [hanink-koontz-garboden-2025] refutes this
     with language-internal evidence: Wá·šiw has PC roots of BOTH denotation
     types, correlated with different morphosyntax. -/
 theorem within_language_variation :
@@ -294,7 +294,7 @@ def mkWasiwRoot (stem gloss : String) (mc : MorphClass) (cat : PCClass) :
     WasiwPCRoot :=
   { stem, gloss, morphClass := mc, dixonCat := cat }
 
-/-- Selected sample of Wá·šiw PC roots from @cite{hanink-koontz-garboden-2025}'s
+/-- Selected sample of Wá·šiw PC roots from [hanink-koontz-garboden-2025]'s
     Table A1 (Appendix). The full table reports 30 Class 1, 15 Class 2, and 35
     Class 3 roots; the 36-root sample below covers ~13/11/12 from each class
     plus the 5 attested color roots (all Class 3 per §7), so proportions are
@@ -363,7 +363,7 @@ def sampleRoots : List WasiwPCRoot := [
     claims about the sample's *composition*, not its constructor's consistency. -/
 
 /-- All color roots are Class 3 — the only fully predictable Dixon
-    category (@cite{hanink-koontz-garboden-2025} §7, Appendix). -/
+    category ([hanink-koontz-garboden-2025] §7, Appendix). -/
 theorem color_roots_are_class3 :
     (sampleRoots.filter (·.dixonCat == .color)).all
       (·.morphClass == .class3) = true := by decide

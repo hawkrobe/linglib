@@ -15,10 +15,10 @@ set_option autoImplicit false
 
 /-!
 # The Guin-Oudom isomorphism for pre-Lie algebras
-@cite{oudom-guin-2008}
-@cite{foissy-typed-decorated-rooted-trees-2018}
-@cite{chapoton-livernet-2001}
-@cite{manchon-2011}
+[oudom-guin-2008]
+[foissy-typed-decorated-rooted-trees-2018]
+[chapoton-livernet-2001]
+[manchon-2011]
 
 Let `(L, ▷)` be a (right) pre-Lie algebra over a commutative ring `R`. The
 **Guin-Oudom theorem** (Oudom-Guin 2008) states that the symmetric algebra

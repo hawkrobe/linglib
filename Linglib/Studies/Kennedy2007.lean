@@ -5,9 +5,9 @@ import Linglib.Core.Scales.Scale
 
 /-!
 # Kennedy Framework on Comparative Data
-@cite{kennedy-2007} @cite{kennedy-mcnally-2005} @cite{schwarzschild-2005} @cite{solt-2015} @cite{winter-2005}
+[kennedy-2007] [kennedy-mcnally-2005] [schwarzschild-2005] [solt-2015] [winter-2005]
 
-Bridge connecting @cite{kennedy-2007}'s measure function approach to the
+Bridge connecting [kennedy-2007]'s measure function approach to the
 comparative construction data in `Phenomena/Comparison/`.
 
 ## Key Bridges
@@ -26,8 +26,8 @@ comparative construction data in `Phenomena/Comparison/`.
 
 ## Differential Comparative Data
 
-Empirical data on differential comparatives (@cite{schwarzschild-2005},
-@cite{solt-2015}): constructions that specify the extent of the
+Empirical data on differential comparatives ([schwarzschild-2005],
+[solt-2015]): constructions that specify the extent of the
 comparison ("3 inches taller", "twice as expensive", "much faster").
 
 1. **Measure phrase differentials** require specific scale structure:

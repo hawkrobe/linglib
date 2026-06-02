@@ -3,7 +3,7 @@ import Linglib.Studies.Larson1988
 import Linglib.Studies.Pylkkanen2008
 
 /-! # Bruening 2021 — Implicit Arguments in English Double Object Constructions
-@cite{bruening-2021}
+[bruening-2021]
 
 Implicit arguments in English double object constructions.
 *Natural Language and Linguistic Theory* 39:1023–1085.
@@ -28,8 +28,8 @@ summary, p. 1040):
 
 ## Theoretical analysis
 
-Bruening adopts the ApplP analysis of @cite{marantz-1993}, developed for
-English in @cite{bruening-2010a}: in DOC, the second object is selected
+Bruening adopts the ApplP analysis of [marantz-1993], developed for
+English in [bruening-2010a]: in DOC, the second object is selected
 by V while the first object is projected by Appl(icative) above VP.
 Implicit arguments of V are licensed by functional heads ∃ (indefinite)
 or ι (definite) that adjoin to V; implicit arguments of functional heads
@@ -37,9 +37,9 @@ or ι (definite) that adjoin to V; implicit arguments of functional heads
 implicit.
 
 Bruening explicitly *rejects* the rival accounts that this file's
-contrastive theorems engage with: @cite{pesetsky-1995}'s "both objects
-selected by V" view (§3.1 p. 1041), @cite{larson-1988}'s VP-shell
-(§3.1), small-clause analyses including @cite{pylkkanen-2008}'s low
+contrastive theorems engage with: [pesetsky-1995]'s "both objects
+selected by V" view (§3.1 p. 1041), [larson-1988]'s VP-shell
+(§3.1), small-clause analyses including [pylkkanen-2008]'s low
 applicative (§3.1 + fn. 10 p. 1042), and Landau 2010's null-NP
 implicit-argument view (§4.1).
 
@@ -281,7 +281,7 @@ implicit second objects — both arguments-of-V should behave alike.
 Bruening's data refute the prediction: *pay* has indef-implicit second
 object (`some .indef`) but def-implicit first object (`some .def`). The
 asymmetry is the load-bearing argument against Larson (§3.1 p. 1041),
-and against @cite{pesetsky-1995}'s "both selected by V" view. -/
+and against [pesetsky-1995]'s "both selected by V" view. -/
 theorem bruening_vs_larson_implicit_first_obj :
     pay.implicitObj = some .indef
     ∧ pay.implicitGoal = some .def

@@ -7,15 +7,15 @@ import Linglib.Typology.Complementation
 
 /-!
 # Ostrove (2026): Obligatorily Overt PRO in San Martín Peras Mixtec
-@cite{ostrove-2026}
+[ostrove-2026]
 
 Linguistic Inquiry 57(1): 1–48.
 
 San Martín Peras Mixtec (SMPM), an Oto-Manguean language (ISO: jmx), has
 obligatory control constructions where the controlled subject must be an
 **overt clitic pronoun** — null PRO is strongly ungrammatical. This is analyzed
-via the minimal pronoun framework (@cite{kratzer-2009}, @cite{safir-2014},
-@cite{landau-2015}): SMPM simply lacks a null vocabulary item for controlled
+via the minimal pronoun framework ([kratzer-2009], [safir-2014],
+[landau-2015]): SMPM simply lacks a null vocabulary item for controlled
 subject position. The elsewhere item (→ pronoun) applies.
 
 ## Core Contributions
@@ -35,14 +35,14 @@ subject position. The elsewhere item (→ pronoun) applies.
 
 ## Landau (2004) Bridge
 
-SMPM's subjunctive types map onto @cite{landau-2004}'s finiteness scale,
+SMPM's subjunctive types map onto [landau-2004]'s finiteness scale,
 connecting clause-level tense properties to control. The paper explicitly
 discusses this connection (p.8), following Landau's distinction between
 "C-subjunctives" (untensed, OC) and "F-subjunctives" (tensed, non-OC).
 
 ## Wurmbrand (2014) Partial Bridge
 
-@cite{wurmbrand-2014}'s three-way classification of infinitival tense
+[wurmbrand-2014]'s three-way classification of infinitival tense
 (futureIrrealis, restructuring, propositional) maps partially to SMPM's
 subjunctive types. The mapping applies only to subjunctives — SMPM's
 finite embedded clauses are genuinely finite and fall outside Wurmbrand's
@@ -122,7 +122,7 @@ theorem finite_not_OC :
 -- § 3: Wurmbrand Bridge (partial — subjunctives only)
 -- ════════════════════════════════════════════════════════════════
 
-/-- SMPM's two subjunctive types correspond to @cite{wurmbrand-2014}'s
+/-- SMPM's two subjunctive types correspond to [wurmbrand-2014]'s
     infinitival tense classes. The mapping applies only to subjunctives —
     SMPM's finite embedded clauses are genuinely finite and fall outside
     Wurmbrand's infinitival classification.
@@ -164,7 +164,7 @@ theorem wurmbrand_propositional_no_correspondent :
 -- § 4: Landau (2004) Bridge
 -- ════════════════════════════════════════════════════════════════
 
-/-- SMPM clause types map onto @cite{landau-2004}'s finiteness scale.
+/-- SMPM clause types map onto [landau-2004]'s finiteness scale.
     This is the framework the paper explicitly uses (p.8).
 
     | Landau class    | SMPM clause type       | OC? |
@@ -184,7 +184,7 @@ def landauToSMPM : LandauClauseClass → EmbeddedClauseType
       which indicates independent agreement capability
     - Finite: [+Agr] — full agreement
 
-    Under the TTC's OC-NC generalization ((70) in @cite{landau-2015}),
+    Under the TTC's OC-NC generalization ((70) in [landau-2015]),
     [+Agr] blocks logophoric control. This is why SMPM tensed subjunctives
     (F-subjunctives with [+Agr]) show no OC despite structurally permitting
     logophoric control. -/
@@ -223,7 +223,7 @@ def englishInventory : MinPronInventory PronForm where
 
     Two items: null for controlled, pronoun elsewhere. Crucially
     LACKS a reflexive allomorph — reflexives and bound variables
-    are both realized as pronouns (@cite{dechaine-manfredi-1994}). -/
+    are both realized as pronouns ([dechaine-manfredi-1994]). -/
 def haitianInventory : MinPronInventory PronForm where
   items := [ ⟨.controlledSubject, .null⟩ ]      -- (96a) D[πφ] → ∅ / controlled
   elsewhere := .pronoun                          -- (96b) D[πφ] → pronoun
@@ -238,7 +238,7 @@ def smpmInventory : MinPronInventory PronForm where
   elsewhere := .pronoun                          -- (98b) D[πφ] → pronoun
 
 /-- Quiegolani Zapotec: no context-specific items at all
-    (@cite{black-1994}).
+    ([black-1994]).
 
     Everything — reflexives, controlled subjects, bound variables —
     surfaces as a single pronoun form (*men*). Total syncretism. -/
@@ -246,7 +246,7 @@ def quiegolaniInventory : MinPronInventory PronForm where
   items := []
   elsewhere := .pronoun
 
-/-- Büli vocabulary items (inferred from @cite{sulemana-2021}).
+/-- Büli vocabulary items (inferred from [sulemana-2021]).
 
     Like SMPM and Gã: lacks a null allomorph for controlled subjects.
     Overt PRO in nonfinite complementation. -/
@@ -465,7 +465,7 @@ theorem buli_classified : buliProfile.classify = .overtPRONoProDrop := by decide
 
 open Typology.Complementation
 
-/-- SMPM clause types map to @cite{noonan-2007}'s complement typology.
+/-- SMPM clause types map to [noonan-2007]'s complement typology.
 
     - Finite embedded → indicative complement (unrestricted TAM)
     - Tensed subjunctive → subjunctive complement (irrealis only)

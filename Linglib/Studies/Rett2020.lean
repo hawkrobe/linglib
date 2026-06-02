@@ -6,8 +6,8 @@ import Linglib.Fragments.English.TemporalExpressions
 
 
 /-!
-# @cite{rett-2020}: Antonymy + Aspectual Coercion
-@cite{rett-2020} @cite{rett-2026} @cite{jin-koenig-2021} @cite{krifka-2010b}*before* and *after* are antonyms on converse scales, with strong defaults @cite{de-swart-1998} @cite{dolling-2014}
+# [rett-2020]: Antonymy + Aspectual Coercion
+[rett-2020] [rett-2026] [jin-koenig-2021] [krifka-2010b]*before* and *after* are antonyms on converse scales, with strong defaults [de-swart-1998] [dolling-2014]
 (before-start, after-finish). Non-default readings require aspectual coercion:
 **INCHOAT** (GLB, atelic → onset) or **COMPLET** (LUB, telic → telos), which
 incur processing cost.
@@ -69,7 +69,7 @@ def Rett.after (A B : SentDenotation Time) : Prop :=
 -- § 2: Aspectual Coercion Operators
 -- ============================================================================
 
-/-- Inchoative coercion / GLB (@cite{rett-2020}, eq. 19; @cite{de-swart-1998}; @cite{dolling-2014}).
+/-- Inchoative coercion / GLB ([rett-2020], eq. 19; [de-swart-1998]; [dolling-2014]).
     Maps a process (atelic) denotation to a singleton containing its onset point.
     GLB(T) = ιt[t ∈ T ∧ ∀t' ∈ T, t ≤ t']
 
@@ -82,7 +82,7 @@ def INCHOAT (p : SentDenotation Time) : SentDenotation Time :=
     (∀ t, (∀ j ∈ p, t ≤ j.start) → t ≤ onset) ∧
     i = Interval.point onset }
 
-/-- Completive coercion / LUB (@cite{rett-2020}, eq. 21; @cite{dolling-2014}).
+/-- Completive coercion / LUB ([rett-2020], eq. 21; [dolling-2014]).
     Maps a culmination (telic) denotation to a singleton containing its telos.
     LUB(T) = ιt[t ∈ T ∧ ∀t' ∈ T, t ≥ t']
 
@@ -196,15 +196,15 @@ theorem rett_after_implies_anscombe (A B : SentDenotation Time) :
   exact ⟨t, ht, m, hm_mem, htm⟩
 
 -- ============================================================================
--- § 6: Ambidirectionality (@cite{rett-2026})
+-- § 6: Ambidirectionality ([rett-2026])
 -- ============================================================================
 
 /-! ### Expletive negation and ambidirectionality
 
-@cite{rett-2026} shows that *before* is **ambidirectional**: negating B
+[rett-2026] shows that *before* is **ambidirectional**: negating B
 in "A before B" doesn't change truth conditions. This is why
 *before*-clauses license expletive negation cross-linguistically
-(@cite{jin-koenig-2021}: 50 of 74 EN-attesting languages, from a 722-language survey).
+([jin-koenig-2021]: 50 of 74 EN-attesting languages, from a 722-language survey).
 
 The mechanism: for B = [s, f], both B and its
 **pre-event complement** (−∞, s] share s as their "most informative
@@ -334,13 +334,13 @@ end Semantics.Tense.TemporalConnectives
 
 /-!
 # Temporal Connective Truth-Condition Examples
-@cite{heinamaki-1974} @cite{rett-2020} @cite{karttunen-1974}
+[heinamaki-1974] [rett-2020] [karttunen-1974]
 
 Concrete scenarios verifying that the Anscombe, Rett, and Karttunen
 formalizations produce correct truth-value judgments.
 
-Scenarios 1–6 verify @cite{rett-2020} Table 1 for *before*/*after*.
-Scenarios 7–10 verify @cite{heinamaki-1974} Chs. 6, 8, 9 for *since*, *by*, *till*.
+Scenarios 1–6 verify [rett-2020] Table 1 for *before*/*after*.
+Scenarios 7–10 verify [heinamaki-1974] Chs. 6, 8, 9 for *since*, *by*, *till*.
 
 ## Scenarios (ℕ time points)
 
@@ -569,7 +569,7 @@ theorem complet_telic_ee :
   complet_bridges_cessation ee_accomplishment
 
 -- ============================================================================
--- § 9: *Since*, *By*, *Till* on Concrete Data (@cite{heinamaki-1974})
+-- § 9: *Since*, *By*, *Till* on Concrete Data ([heinamaki-1974])
 -- ============================================================================
 
 /-- ME: stative [5, 10] — "He has been happy." -/
@@ -659,7 +659,7 @@ theorem till_matches_until_scenario :
   till_iff_until _ _
 
 -- ============================================================================
--- § 10: Punctual *Until* + Negation (@cite{karttunen-1974})
+-- § 10: Punctual *Until* + Negation ([karttunen-1974])
 -- ============================================================================
 
 /-! ### Not...until scenarios

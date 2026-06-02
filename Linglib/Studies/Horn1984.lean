@@ -3,7 +3,7 @@ import Linglib.Studies.Rett2015
 
 /-!
 # Bridge: NeoGricean Alternatives → M-Alternative Verification
-@cite{horn-1984} @cite{rett-2015}
+[horn-1984] [rett-2015]
 
 Verifies M-alternative generation for concrete adjective pairs.
 

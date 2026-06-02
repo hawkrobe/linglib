@@ -4,7 +4,7 @@ import Linglib.Phonology.Process.LocalRewrite
 /-!
 # Hayes (1989): Compensatory Lengthening in Moraic Phonology
 
-@cite{hayes-1989}
+[hayes-1989]
 
 Bruce Hayes. "Compensatory Lengthening in Moraic Phonology."
 *Linguistic Inquiry* 20(2): 253–306.
@@ -259,7 +259,7 @@ theorem kaanus_satisfies_minword :
     restructuring. Input ⟨talə⟩ = [L, L] (2μ); output [ta:l] = [H] (2μ).
     Both satisfy the bimoraic minimum.
 
-    This follows from Moraic Conservation (Rule (64), @cite{hayes-1989}):
+    This follows from Moraic Conservation (Rule (64), [hayes-1989]):
     CL does not change total mora count, so it cannot cause a minimal word
     violation that wasn't already present. -/
 theorem tale_minword_preserved :

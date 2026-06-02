@@ -7,11 +7,11 @@ import Linglib.Data.WALS.Features.F131A
 
 /-!
 # Numeral typology — substrate types and WALS data
-@cite{wals-2013} (Chs 53, 54, 55, 56, 131) @cite{aikhenvald-2000}
-@cite{greenberg-1978} @cite{stolz-veselinova-2013}
+[wals-2013] (Chs 53, 54, 55, 56, 131) [aikhenvald-2000]
+[greenberg-1978] [stolz-veselinova-2013]
 
 Type-level enums + per-language profile struct for numeral systems
-across @cite{wals-2013} chapters 53–56 (Gil, Comrie) and 131:
+across [wals-2013] chapters 53–56 (Gil, Comrie) and 131:
 ordinal formation, distributive numerals, numeral classifiers,
 conjunction-quantifier identity, numeral base. Plus `Profile.fromWALS` (inherit
 a language's codings from the WALS datasets) and the Greenberg suppletion
@@ -211,7 +211,7 @@ def fromWALS131A : Data.WALS.F131A.NumeralBases → NumeralBase
     Both "formally similar" values (with and without the interrogative) collapse
     to `identity` — the conjunction and the universal share form; "formally
     different" maps to `differentiation`. The interrogative distinction
-    (@cite{wals-2013} Ch 56) is finer than the binary substrate. -/
+    ([wals-2013] Ch 56) is finer than the binary substrate. -/
 def fromWALS56A : Data.WALS.F56A.ConjunctionsAndUniversalQuantifiers → ConjunctionQuantifier
   | .different => .differentiation
   | .similarWithoutInterrogative => .identity
@@ -248,7 +248,7 @@ def Profile.fromWALS (language iso : String) (region : Region)
       (Data.WALS.Datapoint.lookupISO Data.WALS.F131A.allData iso).map
         (fun d => fromWALS131A d.value) }
 
-/-! ### Cross-linguistic frequencies (@cite{wals-2013})
+/-! ### Cross-linguistic frequencies ([wals-2013])
 
 WALS reports these dominant tendencies. They are *descriptive statistics* over
 each chapter's sample, not formal results, so they live as cited prose rather
@@ -271,7 +271,7 @@ is structural (about `rank`), not a count. -/
 -- Greenberg's suppletion hierarchy for ordinals
 -- ============================================================================
 
-/-- @cite{greenberg-1978}'s implicational universal for ordinal suppletion:
+/-- [greenberg-1978]'s implicational universal for ordinal suppletion:
     if a language has a suppletive ordinal for numeral N, then it has
     suppletive ordinals for all numerals less than N. Equivalently:
     suppletion cuts off at some point in the sequence 1st, 2nd, 3rd,…

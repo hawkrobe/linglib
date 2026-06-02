@@ -4,8 +4,8 @@ import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Studies.DaleReiter1995
 
 /-!
-# @cite{qing-franke-2015}
-@cite{frank-goodman-2012} @cite{grice-1975} @cite{dale-reiter-1995}
+# [qing-franke-2015]
+[frank-goodman-2012] [grice-1975] [dale-reiter-1995]
 
 "Variations on a Bayesian Theme: Comparing Bayesian Models of Referential Reasoning"
 
@@ -20,7 +20,7 @@ Utterances: {square, circle, green, blue}
 ## The Decomposition
 
 The paper decomposes Bayesian reference games along 3 orthogonal dimensions,
-yielding a family of models that includes @cite{frank-goodman-2012} as one instance:
+yielding a family of models that includes [frank-goodman-2012] as one instance:
 
 ### Speaker Belief (y ∈ {U, S}): What does L0 assume?
 
@@ -100,7 +100,7 @@ open Real (exp log exp_pos exp_lt_exp)
 -- §1. Empirical Data
 -- ============================================================================
 
-/-- The 6 qualitative findings from @cite{qing-franke-2015}. -/
+/-- The 6 qualitative findings from [qing-franke-2015]. -/
 inductive Finding where
   /-- For green_square targets, speakers prefer the unique shape word "square"
       over the shared color word "green". Evidence: 135/144 trials (Table 1). -/
@@ -173,7 +173,7 @@ def Utterance.appliesTo : Utterance → Object → Bool
 -- ============================================================================
 
 /-- Adjective cost: shape words (nouns) cost 0, color words (adjectives) cost c.
-    From @cite{qing-franke-2015} Eq. 11: Cost(m) = c if m is an adjective, 0 otherwise. -/
+    From [qing-franke-2015] Eq. 11: Cost(m) = c if m is an adjective, 0 otherwise. -/
 noncomputable def adjCost (c : ℝ) : Utterance → ℝ
   | .square | .circle => 0
   | .green  | .blue   => c
@@ -648,7 +648,7 @@ def formalize : Finding → Prop
       (costCfg.L1 .green .green_circle > costCfg.L1 .green .green_square) ∧
       (salienceCfg.L1 .green .green_square > salienceCfg.L1 .green .green_circle)
 
-/-- The RSA model accounts for all 6 qualitative findings from @cite{qing-franke-2015}. -/
+/-- The RSA model accounts for all 6 qualitative findings from [qing-franke-2015]. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
   intro f; cases f
   · exact speaker_prefers_unique_shape
@@ -832,7 +832,7 @@ theorem listenerData_green_matches_pragmatic :
 -- §18. FG2012 Bridge
 -- ============================================================================
 
-/-! σ_bU with zero cost IS @cite{frank-goodman-2012}'s model. FG2012 defines:
+/-! σ_bU with zero cost IS [frank-goodman-2012]'s model. FG2012 defines:
 
     s1Score l0 α _ w u := if l0 u w = 0 then 0 else exp(α * log(l0 u w))
 
@@ -902,24 +902,24 @@ theorem zeroCost_beliefGoal_eq
    follows pragmatics — a richer pattern than uniform salience dominance.
 
 10. **FG2012 bridge** (§18): `zeroCost_beliefGoal_eq` proves that belief-oriented
-    scoring at zero cost recovers @cite{frank-goodman-2012}'s scoring rule.
+    scoring at zero cost recovers [frank-goodman-2012]'s scoring rule.
 -/
 
 -- ============================================================================
 -- §19. Bridge: Cost = Q2 (Gricean/D&R Connection)
 -- ============================================================================
 
-/-! The cost dimension in @cite{qing-franke-2015}'s S1 score decomposition
-IS @cite{grice-1975}'s Q2 sub-maxim (brevity):
+/-! The cost dimension in [qing-franke-2015]'s S1 score decomposition
+IS [grice-1975]'s Q2 sub-maxim (brevity):
 
     σ_b(m|t) ∝ exp(λ · (log L0(t|m) − Cost(m)))
                         ╰── Q1 ──╯   ╰── Q2 ──╯
 
 This connects three frameworks:
 
-- @cite{grice-1975}: Q1 (be informative) and Q2 (be brief) are independent
-- @cite{dale-reiter-1995}: No-Brevity = Q2 not enforced (strength = 0)
-- @cite{qing-franke-2015}: Cost = 0 ↔ no Q2 pressure ↔ No Brevity
+- [grice-1975]: Q1 (be informative) and Q2 (be brief) are independent
+- [dale-reiter-1995]: No-Brevity = Q2 not enforced (strength = 0)
+- [qing-franke-2015]: Cost = 0 ↔ no Q2 pressure ↔ No Brevity
 
 The zero-cost ↔ cost comparison (`no_cost_symmetry` vs `cost_breaks_symmetry`)
 directly demonstrates Q2's role: it is the *tiebreaker* when Q1 (informativity)
@@ -932,7 +932,7 @@ open Pragmatics.GriceanMaxims
 /-- Q&F's cost dimension IS Grice's Q2 sub-maxim. Without cost
     (No Brevity regime), ambiguous words with equal informativity are
     symmetric — Q1 alone cannot break the tie. With cost (Q2 active),
-    the cheaper word wins. This maps onto @cite{dale-reiter-1995}'s
+    the cheaper word wins. This maps onto [dale-reiter-1995]'s
     No-Brevity interpretation (strength = 0), the weakest Q2. -/
 theorem cost_is_q2 :
     -- No cost = no symmetry breaking (No Brevity regime)

@@ -6,7 +6,7 @@ import Linglib.Semantics.Lexical.MeaningComponents
 import Linglib.Core.Causal.SEM.Counterfactual
 
 /-!
-# Implicative Verbs (@cite{nadathur-2024})
+# Implicative Verbs ([nadathur-2024])
 
 Causal-prerequisite semantics for implicative verbs. Implicatives
 (*manage*, *fail*, *dare*, *bother*, *jaksaa*, *hesitate*, ...) all
@@ -46,7 +46,7 @@ open Features
 open Core.Causal (SEM CausalGraph Valuation DecidableValuation)
 
 -- ════════════════════════════════════════════════════
--- § Prerequisite Types (@cite{nadathur-2024})
+-- § Prerequisite Types ([nadathur-2024])
 -- ════════════════════════════════════════════════════
 
 /-- Lexically-specified prerequisite types for implicative verbs.
@@ -108,7 +108,7 @@ abbrev necessityPresup {V : Type*} {α : V → Type*}
 -- § Directionality
 -- ════════════════════════════════════════════════════
 
-/-- Directionality of complement entailment (@cite{nadathur-2024}).
+/-- Directionality of complement entailment ([nadathur-2024]).
 
     - **oneWay**: complement entailment under only one matrix polarity.
     - **twoWay**: complement entailment under both polarities. -/
@@ -121,7 +121,7 @@ inductive Directionality where
 -- § ImplicativeClass
 -- ════════════════════════════════════════════════════
 
-/-- The full lexical signature of an implicative verb (@cite{nadathur-2024}). -/
+/-- The full lexical signature of an implicative verb ([nadathur-2024]). -/
 structure ImplicativeClass where
   /-- Positive (manage, force) or negative (fail, prevent) polarity -/
   polarity : Implicative

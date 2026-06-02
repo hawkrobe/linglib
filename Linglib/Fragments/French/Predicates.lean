@@ -2,10 +2,10 @@ import Linglib.Semantics.Verb.Basic
 
 /-!
 # French Predicate Lexicon Fragment
-@cite{song-1996}
+[song-1996]
 
 French causative predicates, centered on the *faire* causative.
-@cite{song-1996} classifies *faire* as a COMPACT causative with free morpheme
+[song-1996] classifies *faire* as a COMPACT causative with free morpheme
 realization: the causative and effect verbs form a tight syntactic unit
 despite being separate words.
 
@@ -69,7 +69,7 @@ theorem faire_laisser_different :
 
 -- ============================================================================
 -- § Change-of-state verbs: property-change anticausative profile
--- @cite{martin-schaefer-kastner-2025} experiments 1a & 1b
+-- [martin-schaefer-kastner-2025] experiments 1a & 1b
 -- ============================================================================
 
 /-- Entailment profile for anticausative subjects of property-change verbs.
@@ -124,7 +124,7 @@ def rougir : FrenchVerbEntry where
 
 -- ============================================================================
 -- § Change-of-state verbs: motion anticausative profile
--- @cite{martin-schaefer-kastner-2025} experiment 1b (motion verbs)
+-- [martin-schaefer-kastner-2025] experiment 1b (motion verbs)
 -- ============================================================================
 
 /-- Entailment profile for anticausative subjects of motion/posture
@@ -177,11 +177,11 @@ def refroidir : FrenchVerbEntry where
 
 -- ============================================================================
 -- § Passive Agent preposition selection: par vs de
--- @cite{staps-rooryck-2024}
+-- [staps-rooryck-2024]
 -- ============================================================================
 
 /-- Prototypical transitive subject: V+S+C+M+IE (5 P-Ag).
-    Identical to @cite{dowty-1991}'s canonical agent (`kickSubjectProfile`).
+    Identical to [dowty-1991]'s canonical agent (`kickSubjectProfile`).
     Used for *laver*, *écrire*, *construire*, *tuer*, etc. -/
 abbrev protoTransSubjectProfile := kickSubjectProfile
 
@@ -195,7 +195,7 @@ def protoTransObjectProfile : EntailmentProfile where
   dependentExistence := false
 
 /-- Experiencer subject: S+IE (2 P-Ag).
-    Identical to @cite{dowty-1991}'s perception profile (`seeSubjectProfile`).
+    Identical to [dowty-1991]'s perception profile (`seeSubjectProfile`).
     Used for *aimer*, *adorer*, *respecter*. -/
 abbrev experiencerSubjectProfile := seeSubjectProfile
 

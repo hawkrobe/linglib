@@ -1,6 +1,6 @@
 /-!
 # Serbian Question Particles
-@cite{simik-2024}
+[simik-2024]
 
 Lexical entries for Serbian interrogative particles. The fragment
 commits only to theory-neutral lexical primitives; the left-peripheral
@@ -34,7 +34,7 @@ structure QParticleEntry where
   requiresEpistemicBias : Bool
   deriving Repr, DecidableEq
 
-/-- da li — default PQ particle combination (@cite{simik-2024} ex. 31).
+/-- da li — default PQ particle combination ([simik-2024] ex. 31).
 Particle + verb movement. Neutral baseline. -/
 def daLi : QParticleEntry where
   form := "da li"
@@ -45,7 +45,7 @@ def daLi : QParticleEntry where
   requiresEvidentialBias := false
   requiresEpistemicBias := false
 
-/-- zar — mirative/dubitative particle (RAZVE family, @cite{simik-2024} §4.2.4).
+/-- zar — mirative/dubitative particle (RAZVE family, [simik-2024] §4.2.4).
 Compatible with both outer and inner negation (like Russian razve). -/
 def zar_ : QParticleEntry where
   form := "zar"

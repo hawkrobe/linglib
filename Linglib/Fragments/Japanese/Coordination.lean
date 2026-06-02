@@ -3,7 +3,7 @@ import Linglib.Fragments.Japanese.Determiners
 
 /-!
 # Japanese Coordination Morphemes
-@cite{mitrovic-sauerland-2016} @cite{haspelmath-2007}
+[mitrovic-sauerland-2016] [haspelmath-2007]
 
 Japanese makes the Boolean algebra foundation of coordination
 morphologically transparent. Two particles systematically mark
@@ -23,7 +23,7 @@ quantification = interrogative (all are ∨ over elements).
 ## Entries
 
 - *to* (と) — J, bound, postpositive: "A to B". Also comitative ("with"),
-  making Japanese a WITH-language in @cite{stassen-2000}'s classification
+  making Japanese a WITH-language in [stassen-2000]'s classification
   (WALS Ch 63: `andIdenticalToWith`).
 - *mo* (も) — MU, bound, postpositive: "A-mo B-mo". Also additive particle
   ("A-mo" = "A too") and universal quantifier component ("dare-mo" =

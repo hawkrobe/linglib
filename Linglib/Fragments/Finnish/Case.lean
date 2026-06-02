@@ -5,8 +5,8 @@ import Linglib.Morphology.Case.Allomorphy
 open Morphology.Case.Allomorphy
 
 /-!
-# Finnish Case Inventory @cite{blake-1994}
-@cite{karlsson-2017}
+# Finnish Case Inventory [blake-1994]
+[karlsson-2017]
 
 Finnish has **15 morphological cases**, one of the richest
 case systems in Europe:
@@ -28,7 +28,7 @@ elative/ablative → ABL, illative/allative → ALL) are collapsed into a
 single rank.
 
 Finnish lacks a dedicated **dative** case — the allative covers recipient
-function (@cite{blake-1994}, Ch. 6: ALL → DAT extension). This creates a gap at
+function ([blake-1994], Ch. 6: ALL → DAT extension). This creates a gap at
 rank 4 (DAT) on Blake's hierarchy, making Finnish a known exception to
 strict contiguity.
 
@@ -63,7 +63,7 @@ theorem inventory_fails_strict :
     ¬ Features.Case.IsValidInventory caseInventory := by decide
 
 /-- The allative-for-dative substitution is exactly the extension path
-    in @cite{heine-2009} Table 29.6, formalized in `Features.Case.Extends`. -/
+    in [heine-2009] Table 29.6, formalized in `Features.Case.Extends`. -/
 theorem allative_extends_to_dative :
     Features.Case.Extends .all .dat := by decide
 
@@ -87,7 +87,7 @@ theorem abl_inst_distinct :
 -- ============================================================================
 
 /-- Direction of motion/relation in the Finnish local case system.
-    @cite{karlsson-2017}: the three directional dimensions —
+    [karlsson-2017]: the three directional dimensions —
     static location, source of motion, and goal of motion. -/
 inductive Direction where
   | static   -- at/in/on (no motion)
@@ -97,7 +97,7 @@ inductive Direction where
 
 /-- Location type: whether the spatial relation is conceptualized as
     internal (containment) or external (surface/proximity).
-    @cite{karlsson-2017}: Finnish systematically distinguishes
+    [karlsson-2017]: Finnish systematically distinguishes
     "inside" (inessive/elative/illative) from "at/on" (adessive/ablative/allative). -/
 inductive LocationType where
   | internal  -- containment: in, out of, into

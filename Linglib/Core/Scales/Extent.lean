@@ -2,7 +2,7 @@ import Mathlib.Order.Interval.Set.LinearOrder
 
 /-!
 # Extent Functions
-@cite{kennedy-1999} Ch. 3
+[kennedy-1999] Ch. 3
 
 Algebraic primitives for Kennedy's degree-semantic extent ontology,
 named aliases over Mathlib's `Set.Iic`/`Set.Ioi`.
@@ -16,9 +16,9 @@ Both are `abbrev`s; all of Mathlib's `Iic`/`Ioi` algebra applies
 transparently — partition (`Set.Iic_disjoint_Ioi`, `Set.Iic_union_Ioi`),
 downward/upward closure, the lattice complement (`Set.compl_Iic`).
 
-## Boundary convention deviation from @cite{kennedy-1999}
+## Boundary convention deviation from [kennedy-1999]
 
-@cite{kennedy-1999} eqs (30)–(31) define POSδ and NEGδ both with `≤`,
+[kennedy-1999] eqs (30)–(31) define POSδ and NEGδ both with `≤`,
 placing the boundary point in BOTH (a *cover*; eqs (52)–(53) state
 their join-complementarity). We use strict `<` for `negExt` (`Ioi`),
 giving a strict partition. Convention impact:
@@ -30,7 +30,7 @@ giving a strict partition. Convention impact:
 
 ## Scope: lattice-algebraic, not sortal
 
-@cite{kennedy-1999}'s own cross-polar anomaly argument (§3.1.7) is
+[kennedy-1999]'s own cross-polar anomaly argument (§3.1.7) is
 **sortal**: positive and negative extents are different sorts, and
 the comparative DEG operator is undefined on cross-sort arguments —
 an interpretation failure, not a set-inclusion non-fact. This file
@@ -52,7 +52,7 @@ abbrev posExt [Preorder D] (μ : Entity → D) (x : Entity) : Set D :=
 
 /-- Negative extent: degrees entity `x` "lacks" on scale `μ`.
     Definitionally `Set.Ioi (μ x)`. See module docstring for the
-    boundary deviation from @cite{kennedy-1999}. -/
+    boundary deviation from [kennedy-1999]. -/
 abbrev negExt [Preorder D] (μ : Entity → D) (x : Entity) : Set D :=
   Set.Ioi (μ x)
 
@@ -76,7 +76,7 @@ theorem negExt_ssubset_iff [LinearOrder D] (μ : Entity → D) (a b : Entity) :
     negExt μ a ⊂ negExt μ b ↔ μ b < μ a :=
   Set.Ioi_ssubset_Ioi_iff
 
-/-- **Antonymy biconditional** (@cite{kennedy-1999} eq (54)).
+/-- **Antonymy biconditional** ([kennedy-1999] eq (54)).
 
     `posExt μ b ⊂ posExt μ a  ↔  negExt μ a ⊂ negExt μ b`
 
@@ -93,7 +93,7 @@ theorem antonymy_biconditional [LinearOrder D] (μ : Entity → D) (a b : Entity
 
 /-- `posExt` and `negExt` are set-theoretic complements on a linear order
     (`Set.compl_Iic` under the abbrev). The lattice expression of
-    @cite{kennedy-1999} eqs (52)–(53)'s join-complementarity. -/
+    [kennedy-1999] eqs (52)–(53)'s join-complementarity. -/
 theorem compl_posExt [LinearOrder D] (μ : Entity → D) (x : Entity) :
     (posExt μ x)ᶜ = negExt μ x :=
   Set.compl_Iic
@@ -102,7 +102,7 @@ theorem compl_posExt [LinearOrder D] (μ : Entity → D) (x : Entity) :
     The Galois-antitone framing is `compl_subset_compl` specialized at
     `Iic`/`Ioi` via `compl_posExt`. Linglib's
     `Semantics.Degree.Little.littlePred` defines
-    @cite{heim-2006}'s LITTLE as predicate complement; LITTLE is *not*
+    [heim-2006]'s LITTLE as predicate complement; LITTLE is *not*
     this map (it operates on type ⟨d,t⟩, not the powerset lattice),
     but the algebraic shadow of LITTLE *is* this antitone identity. -/
 theorem extent_galois_antitone [LinearOrder D] (μ : Entity → D) (a b : Entity) :
@@ -118,7 +118,7 @@ abbrev crossExtentInclusion [Preorder D] (μ : Entity → D) (a b : Entity) : Pr
 
 /-- Convention-specific cross-polar non-inclusion: under the strict-
     partition convention used here, `crossExtentInclusion` is always
-    false on a linear order. **Not** @cite{kennedy-1999}'s sortal
+    false on a linear order. **Not** [kennedy-1999]'s sortal
     cross-polar anomaly argument (§3.1.7); see module docstring. -/
 theorem crossExtent_always_false [LinearOrder D]
     (μ : Entity → D) (a b : Entity) : ¬ crossExtentInclusion μ a b :=

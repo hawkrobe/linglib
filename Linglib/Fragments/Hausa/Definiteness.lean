@@ -2,11 +2,11 @@ import Linglib.Core.Nominal.Determiner
 
 /-!
 # Hausa Definiteness Fragment
-@cite{schwarz-2013}
+[schwarz-2013]
 
 Hausa (Chadic, ISO `ha`). Two definite forms differentiating two types of
 definiteness: a weak suffixal *-n* (situational uniqueness) and a strong *ɗîn*
-(anaphoric) — a *bipartite* article system (@cite{schwarz-2013} §4.2).
+(anaphoric) — a *bipartite* article system ([schwarz-2013] §4.2).
 -/
 
 namespace Hausa.Definiteness

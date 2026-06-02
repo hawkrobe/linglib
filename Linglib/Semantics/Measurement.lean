@@ -7,9 +7,9 @@ import Linglib.Semantics.Kinds.MeaningPreservation
 /-!
 # Cross-Categorial Measurement Semantics
 
-@cite{wellwood-2015} @cite{kennedy-2007}
+[wellwood-2015] [kennedy-2007]
 
-@cite{wellwood-2015} argues that all comparative sentences contain a covert `much`
+[wellwood-2015] argues that all comparative sentences contain a covert `much`
 morpheme whose semantics is a measure function μ assigned by a variable
 assignment A:
 
@@ -17,7 +17,7 @@ assignment A:
 
 The measure function must be **monotonic**: for all α, β in a
 part-whole ordered domain, if α ≺^Part β then μ(α) ≺^Deg μ(β). This is
-@cite{schwarzschild-wilkinson-2002}'s monotonicity condition, and corresponds exactly
+[schwarzschild-wilkinson-2002]'s monotonicity condition, and corresponds exactly
 to `StrictMono` / `MereoDim` / CSW's `admissibleMeasure` in linglib.
 
 The key insight is a three-way cross-categorial parallel:
@@ -38,15 +38,15 @@ agree on the comparative ordering — which holds exactly for linear orders
 
 ## Key Identifications
 
-- @cite{wellwood-2015}'s monotonicity condition = `StrictMono` = `MereoDim` = CSW's `admissibleMeasure`
-- @cite{wellwood-2015}'s measurability condition = `CUM` (mereological structure)
-- @cite{wellwood-2015}'s counting condition = `QUA` (quantized reference)
-- @cite{wellwood-2015}'s dimensional restriction = `LinearOrder` on the measured domain
-- @cite{wellwood-2015}'s comparative = CSW's `statesComparativeSem` = `μ b < μ a`
+- [wellwood-2015]'s monotonicity condition = `StrictMono` = `MereoDim` = CSW's `admissibleMeasure`
+- [wellwood-2015]'s measurability condition = `CUM` (mereological structure)
+- [wellwood-2015]'s counting condition = `QUA` (quantized reference)
+- [wellwood-2015]'s dimensional restriction = `LinearOrder` on the measured domain
+- [wellwood-2015]'s comparative = CSW's `statesComparativeSem` = `μ b < μ a`
 
 ## Interpretive Note
 
-@cite{wellwood-2015} does not explicitly label GA state domains as "cumulative" in
+[wellwood-2015] does not explicitly label GA state domains as "cumulative" in
 Krifka's technical sense (closure under join). She argues they "form
 mereologies" — ordered domains with proper parts. We classify
 them as `.cumulative` because the structural consequence is the same:
@@ -100,10 +100,10 @@ theorem toBoundedness_coherent :
     MereologicalStatus.cumulative.toBoundedness = cumBoundedness ∧
     MereologicalStatus.quantized.toBoundedness = quaBoundedness := ⟨rfl, rfl⟩
 
-/-- Direct conversion from @cite{wellwood-2015}'s `MereologicalStatus` to
+/-- Direct conversion from [wellwood-2015]'s `MereologicalStatus` to
     the cross-framework `Core.Scale.MereoTag` substrate. Wellwood's
     framework uses "monotonic" / "structure-preserving" terminology
-    (see module docstring "Interpretive Note"); we lift to @cite{krifka-1989}'s
+    (see module docstring "Interpretive Note"); we lift to [krifka-1989]'s
     `cum`/`qua` labels for cross-framework dialogue. -/
 def MereologicalStatus.toMereoTag : MereologicalStatus → Core.Scale.MereoTag
   | .cumulative => .cum
@@ -111,7 +111,7 @@ def MereologicalStatus.toMereoTag : MereologicalStatus → Core.Scale.MereoTag
 
 /-- The `MereologicalStatus → Boundedness` mapping agrees with the
     `MereoTag → Boundedness` mapping via `toMereoTag`. Closes the
-    silent divergence between @cite{wellwood-2015}'s labels and the
+    silent divergence between [wellwood-2015]'s labels and the
     cross-framework `MereoTag` substrate noted by the Scale.lean §1b
     "shared abstraction underlying all four licensing frameworks" claim. -/
 theorem toBoundedness_matches_mereoTag :
@@ -120,8 +120,8 @@ theorem toBoundedness_matches_mereoTag :
   ⟨rfl, rfl⟩
 
 /-- `MereologicalStatus` joins `Boundedness` and `MereoTag` as a
-    `LicensingPipeline` instance, putting @cite{wellwood-2015} in literal
-    dialogue with @cite{krifka-1989}/@cite{kennedy-2007}/@cite{rouillard-2026}
+    `LicensingPipeline` instance, putting [wellwood-2015] in literal
+    dialogue with [krifka-1989]/[kennedy-2007]/[rouillard-2026]
     via `Core.Scale.LicensingPipeline.universal` (which now derives
     cross-framework licensing agreement automatically when the underlying
     boundedness coincides). -/
@@ -168,7 +168,7 @@ def numberToStatus : NumberFeature → MereologicalStatus
   | .pl      => .quantized
   | .neutral => .quantized  -- Number-neutral nouns (Shan) have identifiable
                              -- atomic parts despite lacking obligatory number
-                             -- marking (@cite{moroney-2021} §2.2).
+                             -- marking ([moroney-2021] §2.2).
 
 /-- Gradable adjectives predicate of states that "form mereologies", enabling monotonic measurement by `much`.
 

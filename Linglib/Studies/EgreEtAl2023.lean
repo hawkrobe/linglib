@@ -8,7 +8,7 @@ import Mathlib.Tactic.NormNum
 
 /-!
 # Égré et al. (2023)
-@cite{egre-etal-2023}
+[egre-etal-2023]
 
 "On the optimality of vagueness: 'around', 'between', and the Sorites"
 Linguistics and Philosophy 46:1101–1130

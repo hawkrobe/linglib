@@ -7,7 +7,7 @@ import Mathlib.Data.Fin.Basic
 
 /-!
 # Tsiakmakis (2025): On the Non-Homogeneity of Expletive Negation
-@cite{tsiakmakis-2025}
+[tsiakmakis-2025]
 
 Linguistics (2025). DOI: 10.1515/ling-2024-0063.
 
@@ -58,7 +58,7 @@ iv. Biased questions
 v. (Conditionals)
 vi. (Free relatives — tentative)
 
-## Connection to @cite{jin-koenig-2021}
+## Connection to [jin-koenig-2021]
 
 The bipartite classification cross-cuts Jin & Koenig's trigger taxonomy:
 their propositional attitude triggers (FEAR, DENY) map to NEG₂ (modal
@@ -232,7 +232,7 @@ def ENHostCategory.negatorType : ENHostCategory → NegatorType
 
 /-! ### Mapping trigger subclasses to negator types
 
-Each of @cite{jin-koenig-2021}'s trigger subclasses is classified as
+Each of [jin-koenig-2021]'s trigger subclasses is classified as
 hosting NEG₁ or NEG₂. The negator type is **derived from** the host
 category: `negatorType t = (t.toHostCategory.map negatorType).getD .neg1`.
 This makes the trigger-level and host-level classifications agree by
@@ -241,8 +241,8 @@ construction, not by bridge theorem. -/
 /-- Map each trigger subclass to its EN host category (partial).
 
     The mapping is partial because some trigger subclasses do not
-    correspond to any EN host in @cite{tsiakmakis-2025}'s inventory:
-    - FORGET: semantically heterogeneous (§6.1.4 of @cite{jin-koenig-2021})
+    correspond to any EN host in [tsiakmakis-2025]'s inventory:
+    - FORGET: semantically heterogeneous (§6.1.4 of [jin-koenig-2021])
     - RARELY/IMPOSSIBLE: not listed as EN hosts in §5.12 -/
 @[reducible] def triggerToHost : TriggerSubclass → Option ENHostCategory
   -- Propositional attitude triggers → NEG₂ hosts
@@ -300,7 +300,7 @@ surface form may instantiate either type depending on context.
 
 Cross-linguistic evidence from §5:
 - **French**: *ne* is NEG₁ in temporals/comparatives, NEG₂ in
-  fear-predicate complements (@cite{tahar-2021})
+  fear-predicate complements ([tahar-2021])
 - **Italian**: *non* is NEG₁ in *finché*-clauses (§5.4) and
   comparatives (§5.7), NEG₂ tentatively in fear contexts
 - **Spanish**: *no* is NEG₁ in comparatives, NEG₂ in *dudar* complements
@@ -428,7 +428,7 @@ theorem italian_non_is_neg1 :
 /-! ### Connecting negator types to licensing conditions
 
 The central structural claim: NEG₂ hosts correspond to
-@cite{jin-koenig-2021}'s propositional attitude licensing condition,
+[jin-koenig-2021]'s propositional attitude licensing condition,
 while NEG₁ hosts correspond to temporal, logical, and comparative
 conditions. -/
 
@@ -522,7 +522,7 @@ differs by host type (§3.4, §5.4, §5.5, §5.7, §5.9, §5.10):
 
 - Temporal expressions: negation obscured by verbal aspect (achievement
   verbs make the endpoint coincide, so the *non*-variant and the bare
-  variant are truth-conditionally equivalent; @cite{tovena-1996}, §5.4)
+  variant are truth-conditionally equivalent; [tovena-1996], §5.4)
 - Negative adverbials (*without*): Negative Concord between the
   adverbial and the EN marker (§5.5)
 - Comparatives: negation is a spell-out of the comparative operator's
@@ -536,7 +536,7 @@ differs by host type (§3.4, §5.4, §5.5, §5.7, §5.9, §5.10):
 /-- The mechanism that masks NEG₁'s negative semantics. -/
 inductive MaskingMechanism where
   /-- Verbal aspect makes negated/non-negated variants equivalent
-      (temporal expressions with achievement verbs; @cite{tovena-1996}) -/
+      (temporal expressions with achievement verbs; [tovena-1996]) -/
   | verbalAspect
   /-- Negative Concord between embedding operator and NEG₁
       (negative adverbials; §5.5) -/
@@ -615,12 +615,12 @@ Rett 2026 can reference Tsiakmakis 2025, not vice versa). -/
 /-! ### Fear predicates: negative valence → dual inference → NEG₂
 
 The connection between NEG₂ classification of fear predicates and
-@cite{villalta-2008}'s negative valence, mediated by @cite{jin-koenig-2021}:
+[villalta-2008]'s negative valence, mediated by [jin-koenig-2021]:
 
 1. Fear has negative valence (Preferential.lean)
-2. Negative valence → dual inference (@cite{jin-koenig-2021} §5.5, §6.1.1)
-3. Propositional attitude licensing condition (@cite{jin-koenig-2021} (13a))
-4. NEG₂ classification with deontic ordering (@cite{tsiakmakis-2025} §5.1, eq. 60)
+2. Negative valence → dual inference ([jin-koenig-2021] §5.5, §6.1.1)
+3. Propositional attitude licensing condition ([jin-koenig-2021] (13a))
+4. NEG₂ classification with deontic ordering ([tsiakmakis-2025] §5.1, eq. 60)
 
 This is a four-layer argumentation chain connecting attitude semantics
 to the negator-type classification. -/
@@ -641,7 +641,7 @@ theorem fear_neg2_from_negative_valence :
 /-- Deny predicates: NEG₂ with deontic ordering.
 
     DENY triggers entail that X believes ¬p or says ¬p
-    (@cite{jin-koenig-2021} §6.1.3). This propositional attitude
+    ([jin-koenig-2021] §6.1.3). This propositional attitude
     licensing condition maps to NEG₂ with a deontic ordering source
     (the speaker's beliefs about what the denier believes). -/
 theorem deny_neg2_with_deontic_ordering :

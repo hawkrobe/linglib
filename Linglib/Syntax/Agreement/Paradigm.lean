@@ -3,12 +3,12 @@ import Linglib.Features.Prominence
 
 /-!
 # Agreement paradigms — the descriptive realization table
-@cite{corbett-1998} @cite{scott-2023}
+[corbett-1998] [scott-2023]
 
 A **theory-neutral** representation of an agreement paradigm: the descriptive
 table mapping agreement-feature cells to their surface exponents, in the sense
-of @cite{corbett-1998} (*Morphology and Agreement*, Handbook of Morphology) and
-the grammar-sketch chapters of descriptive work like @cite{scott-2023} (Ch. 2:
+of [corbett-1998] (*Morphology and Agreement*, Handbook of Morphology) and
+the grammar-sketch chapters of descriptive work like [scott-2023] (Ch. 2:
 Set A / Set B person–number inflection).
 
 ## Theory-neutrality
@@ -18,12 +18,12 @@ a reference grammar lists. It deliberately commits to **no** generative account
 of *how* the table arises. Syncretism is recorded as a plain fact (two cells, one
 form — a non-injective table), not explained. The competing realizational
 analyses — Distributed Morphology (vocabulary insertion + impoverishment;
-@cite{scott-2023} Ch. 4), Paradigm Function Morphology, HPSG type-hierarchy
+[scott-2023] Ch. 4), Paradigm Function Morphology, HPSG type-hierarchy
 unification — are *theories of* this table and belong in `Studies/`, not here.
 
 ## One φ-space with pronouns
 
-Per @cite{corbett-1998} (§1), agreement in the wider sense *includes* pronouns —
+Per [corbett-1998] (§1), agreement in the wider sense *includes* pronouns —
 diachronically, agreement morphology grammaticalizes from pronouns. The three
 indisputable agreement features (§2) are exactly **person, number, gender**
 (case is government, not agreement). So an `Cell` is the canonical φ-subspace
@@ -43,7 +43,7 @@ agreement realization — no parallel person/number enum.
 namespace Agreement
 
 /-- An agreement-feature cell: the canonical φ-features that may be realized by
-    agreement (@cite{corbett-1998} §2 — person, number, gender; case excluded as
+    agreement ([corbett-1998] §2 — person, number, gender; case excluded as
     government). Uses the same `UD` feature types a `Pronoun`/`Word` carries, so a
     controller's φ projects directly into the index (`Word.agrCell`). A `none`
     field is a feature the paradigm does not distinguish. -/
@@ -58,7 +58,7 @@ def Cell.pn (p : UD.Person) (n : UD.Number) : Cell :=
   { person := some p, number := some n }
 
 /-- Is this a speech-act-participant (1st/2nd person) cell? Drives
-    person-conditioned phenomena like differential indexing (@cite{corbett-1998}). -/
+    person-conditioned phenomena like differential indexing ([corbett-1998]). -/
 def Cell.isSAP (c : Cell) : Bool :=
   c.person == some .first || c.person == some .second
 
@@ -82,7 +82,7 @@ def Cell.pnCells : List Cell :=
 
 /-- The φ-cell of a word: its person/number/gender features, as an agreement
     index. The bridge that lets a pronoun (or any controller) drive an agreement
-    paradigm in the *same* feature space (@cite{corbett-1998} §1). -/
+    paradigm in the *same* feature space ([corbett-1998] §1). -/
 def _root_.Word.agrCell (w : Word) : Cell :=
   { person := w.features.person, number := w.features.number,
     gender := w.features.gender }

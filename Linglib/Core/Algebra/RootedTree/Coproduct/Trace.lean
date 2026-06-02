@@ -6,7 +6,7 @@ set_option autoImplicit false
 
 /-!
 # Δ^c (trace-aware admissible-cut) coproduct on `RootedTree.Planar (α ⊕ β)`
-@cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
+[marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 The **trace-preserving variant** of the Connes-Kreimer admissible-cut
 coproduct on planar n-ary rooted trees, parameterized by a trace

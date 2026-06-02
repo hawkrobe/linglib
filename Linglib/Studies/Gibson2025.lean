@@ -4,11 +4,11 @@ import Linglib.Core.Word
 
 /-!
 # Gibson 2025: DLM and the Head-Direction Generalization
-@cite{gibson-2025} @cite{dryer-1992} @cite{greenberg-1963} @cite{dryer-haspelmath-2013}
+[gibson-2025] [dryer-1992] [greenberg-1963] [dryer-haspelmath-2013]
 
-@cite{gibson-2025} argues that Dependency Length Minimization (DLM) explains
-the head-direction generalization originally documented by @cite{greenberg-1963}
-and systematized by @cite{dryer-1992}: languages overwhelmingly prefer
+[gibson-2025] argues that Dependency Length Minimization (DLM) explains
+the head-direction generalization originally documented by [greenberg-1963]
+and systematized by [dryer-1992]: languages overwhelmingly prefer
 consistent (harmonic) head direction across construction types, because
 disharmonic order incurs higher total dependency length on recursive structures.
 
@@ -34,7 +34,7 @@ level).
 
 `fromWALSCh95` constructs a `CrossTab` directly from
 `Data.WALS.F95A.allData` (verb-object × adposition correlation;
-@cite{dryer-haspelmath-2013} Ch 95). This is internal evidence that
+[dryer-haspelmath-2013] Ch 95). This is internal evidence that
 Gibson's hand-coded Table 1 corresponds to the substrate-derivable
 form: same correlation, same harmonic-dominance conclusion. Counts
 differ in magnitude (Gibson 981 = 454+41+14+472; WALS Ch 95 raw =
@@ -101,7 +101,7 @@ def CrossTab.totalCount (t : CrossTab) : Nat :=
 
 /-- Harmonic pairings strictly outnumber disharmonic. A *raw-count*
     primitive; serious typological generalisations require sample-bias
-    correction (cf. @cite{dryer-1992}'s genus method). -/
+    correction (cf. [dryer-1992]'s genus method). -/
 def CrossTab.IsHarmonicDominant (t : CrossTab) : Prop :=
   t.harmonicCount > t.disharmonicCount
 
@@ -173,13 +173,13 @@ theorem hihf_is_disharmonic : ¬ voAdposition.hihf.IsHarmonic := by decide
 theorem hfhi_is_disharmonic : ¬ voAdposition.hfhi.IsHarmonic := by decide
 
 -- ============================================================================
--- §3. The Head-Direction Generalization (@cite{greenberg-1963} / @cite{dryer-1992})
+-- §3. The Head-Direction Generalization ([greenberg-1963] / [dryer-1992])
 -- ============================================================================
 
 /-- The head-direction generalization: across all three of Gibson's
     construction-pair tables, harmonic word-order pairings dominate. The
-    underlying observation goes back to @cite{greenberg-1963} and was
-    systematized by @cite{dryer-1992}; @cite{gibson-2025} argues DLM explains
+    underlying observation goes back to [greenberg-1963] and was
+    systematized by [dryer-1992]; [gibson-2025] argues DLM explains
     it (consistent head direction keeps recursive spine dependencies local). -/
 theorem head_direction_generalization :
     ∀ t ∈ allTables, t.IsHarmonicDominant := by decide
@@ -237,7 +237,7 @@ def dlmWalsConsistent (t : CrossTab) : Bool :=
 
 /-- For all three of Gibson's construction pairs, DLM predicts harmonic is
     cheaper AND WALS confirms harmonic is more common. This is
-    @cite{gibson-2025}'s central claim: DLM explains the head-direction
+    [gibson-2025]'s central claim: DLM explains the head-direction
     generalization. -/
 theorem dlm_explains_head_direction_generalization :
     allTables.all dlmWalsConsistent = true := by decide
@@ -283,7 +283,7 @@ example : oberstesGesetz disharmonicFH 2 = false := by native_decide
 
 /-- Build a `CrossTab` for WALS Ch 95 (verb-object × adposition) by
     counting datapoints in each of the four cells of
-    @cite{dryer-haspelmath-2013}'s WALS Ch 95. The same underlying
+    [dryer-haspelmath-2013]'s WALS Ch 95. The same underlying
     correlation viewed via raw WALS counts rather than Gibson's
     hand-coded snapshot. -/
 def CrossTab.fromWALSCh95 : CrossTab :=

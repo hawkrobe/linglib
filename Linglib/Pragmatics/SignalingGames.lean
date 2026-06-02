@@ -2,7 +2,7 @@ import Linglib.Core.Agent.DecisionTheory
 
 /-!
 # Signaling Games — credible communication
-@cite{lewis-1969} @cite{van-rooy-2003}
+[lewis-1969] [van-rooy-2003]
 
 Signaling games and the analysis of credible communication. Sibling of
 `Pragmatics/GameTheory.lean` (general 2-player strategic
@@ -262,7 +262,7 @@ def isTruthful {T M : Type*}
 -- Crawford-Sobel: Partition Equilibria
 
 /-!
-## @cite{crawford-sobel-1982}: How Much Communication?
+## [crawford-sobel-1982]: How Much Communication?
 
 In cheap-talk games, the amount of credible communication depends on
 how aligned sender and receiver preferences are.

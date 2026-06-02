@@ -11,7 +11,7 @@ import Linglib.Fragments.Danish.V2
 
 /-!
 # Westergaard (2009): Micro-Cues, Information Structure, and Economy
-@cite{westergaard-2009}
+[westergaard-2009]
 
 Marit Westergaard. *The Acquisition of Word Order: Micro-Cues, Information
 Structure, and Economy.* Linguistik Aktuell/Linguistics Today 145.
@@ -42,31 +42,31 @@ The book distinguishes two levels:
 
 ## Adjacent literature
 
-- @cite{holmberg-2015} (HSK 42 handbook entry on Verb second) is the
+- [holmberg-2015] (HSK 42 handbook entry on Verb second) is the
   standard recent survey of V2 covering the same Pol°/Int°/Decl° split
   Westergaard formalizes.
-- @cite{wiklund-bentzen-hroarsdottir-hrafnbjargarson-2009} elaborates
+- [wiklund-bentzen-hroarsdottir-hrafnbjargarson-2009] elaborates
   embedded-V2 micro-variation across Scandinavian *that*-clauses,
   conditioning embedded V2 on matrix predicate class — a dimension
   Table 3.1 collapses.
 
 ## The Split-ForceP Model
 
-@cite{westergaard-2009} splits @cite{rizzi-1997}'s ForceP into
+[westergaard-2009] splits [rizzi-1997]'s ForceP into
 clause-type-specific projections. All seven heads are in the CP domain
 (above FinP). Crucially, the distinctions among Decl°, Int°, Pol°, Excl°,
-Imp° are **finer** than @cite{rizzi-1997}'s inventory — they are all
+Imp° are **finer** than [rizzi-1997]'s inventory — they are all
 "flavors of Force" that the existing `Cat` enum does not distinguish.
 
 Fin° and Wh° do correspond to existing `Cat` heads (`.Fin` and `.C`
 respectively), but the five Force-level heads (Decl°, Int°, Pol°, Excl°,
-Imp°) are all at the Force level. Note: @cite{westergaard-2009}'s Pol°
+Imp°) are all at the Force level. Note: [westergaard-2009]'s Pol°
 is a CP-domain head for yes/no-questions (the verb-fronting target;
 y/n questions surface as V1, with Spec-PolP either empty or hosting
-a covert Q-operator depending on analysis — @cite{roberts-1993},
+a covert Q-operator depending on analysis — [roberts-1993],
 Rizzi 1996 posit a Q-operator satisfying a wh-criterion; the V1
 surface order is what `.Pol` records, theory-neutrally).
-NOT @cite{laka-1990}'s ΣP
+NOT [laka-1990]'s ΣP
 (which is `Cat.Pol` in linglib at F-value 2).
 -/
 
@@ -122,7 +122,7 @@ structure V2Datum where
 -- § 1  Table 3.1 Verification
 -- ============================================================================
 
-/-! @cite{westergaard-2009}'s Table 3.1 enumerates V2 micro-parameter
+/-! [westergaard-2009]'s Table 3.1 enumerates V2 micro-parameter
     settings for six Germanic varieties (Standard Norwegian, Standard
     English, Nordmøre Norwegian, Belfast English, German, Danish).
     Each row is a `V2Profile` set literal in the corresponding Fragment
@@ -342,7 +342,7 @@ def belfast_emb_q : V2Datum :=
     clauseType := .embeddedQuestion
     v2Status := .obligatory
     description := "Belfast English: V2 in embedded questions"
-    citation := "Ch. 3 Table 3.1; @cite{henry-1995}" }
+    citation := "Ch. 3 Table 3.1; [henry-1995]" }
 
 /-- Danish: V2 in exclamatives (unlike Norwegian and English). -/
 def da_excl : V2Datum :=
@@ -360,14 +360,14 @@ def de_decl : V2Datum :=
     clauseType := .declarative
     v2Status := .obligatory
     description := "German root declarative: V2"
-    citation := "@cite{vikner-1995}" }
+    citation := "[vikner-1995]" }
 
 /-- German embedded clauses with complementizer: verb-final (no V2).
-    @cite{westergaard-2009}'s analysis: the verb raises to Fin° (hence
+    [westergaard-2009]'s analysis: the verb raises to Fin° (hence
     +Fin° in Table 3.1) but not to C, surfacing clause-finally because
     Westergaard tacitly assumes a head-final FinP for German embedded
     clauses (Vikner-style V-to-I where the I-position itself is final).
-    Alternative analyses (Haider 2010; @cite{harizanov-gribanova-2019})
+    Alternative analyses (Haider 2010; [harizanov-gribanova-2019])
     derive the same surface order without V-to-Fin, leaving the verb
     in its base position. The codebase records the Westergaard +Fin°
     side; see `HarizanovGribanova2019.lean` for the formal contrast. -/
@@ -377,7 +377,7 @@ def de_emb : V2Datum :=
     clauseType := .embeddedDecl
     v2Status := .impossible
     description := "German embedded clause with dass: surface verb-final (V-to-Fin into head-final FinP per Westergaard; alternative analyses leave V in V)"
-    citation := "@cite{vikner-1995}; cf. @cite{harizanov-gribanova-2019}" }
+    citation := "[vikner-1995]; cf. [harizanov-gribanova-2019]" }
 
 -- ============================================================================
 -- § 4  Cross-Language Comparison Theorems
@@ -405,7 +405,7 @@ theorem danish_no_differ_only_on_excl :
   · simp only [Set.mem_symmDiff]; decide
   · intro fh hne; cases fh <;> first | (exact absurd rfl hne) | (constructor <;> decide)
 
-/-- All six languages in @cite{westergaard-2009} Table 3.1 agree on
+/-- All six languages in [westergaard-2009] Table 3.1 agree on
     +Pol° (verb-fronting / V1 in yes/no-questions). NOT a Germanic
     universal beyond this sample: Yiddish embedded y/n questions with
     *tsi* and certain colloquial registers complicate the picture, and
@@ -617,7 +617,7 @@ theorem new_predicts_V2 : tromsøWhV2Preference .new = .obligatory := rfl
 -- § 11  Economy
 -- ============================================================================
 
-/-! @cite{westergaard-2009}'s structural economy (p. 4):
+/-! [westergaard-2009]'s structural economy (p. 4):
 
     (9a) Only build as much structure as there is evidence for in the input.
     (9b) Only move elements as far as there is evidence for in the input.

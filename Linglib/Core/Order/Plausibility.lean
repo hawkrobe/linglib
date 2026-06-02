@@ -4,7 +4,7 @@ import Mathlib.Data.Set.Basic
 /-!
 # Plausibility Orderings and Preferential Consequence
 
-@cite{kraus-magidor-1990} @cite{halpern-2003}
+[kraus-magidor-1990] [halpern-2003]
 
 Plausibility orderings and preferential consequence relations are the
 general mathematical structures underlying default reasoning. This file
@@ -40,7 +40,7 @@ namespace Core.Order
 /-- A preferential consequence relation: `φ |~ ψ` reads "normally, if φ then ψ".
 
     System P axiomatizes the minimal
-    properties of default reasoning. @cite{halpern-2003} shows that
+    properties of default reasoning. [halpern-2003] shows that
     System P is sound and complete for preferential models — structures
     where worlds are ordered by plausibility, and `φ |~ ψ` iff ψ holds
     at all most-plausible φ-worlds. -/
@@ -75,7 +75,7 @@ structure PreferentialConsequence (W : Type*) where
 
 /-- Rational Monotonicity: if φ |~ χ and ¬(φ |~ ¬ψ), then (φ ∧ ψ) |~ χ.
 
-    This is strictly stronger than System P. @cite{halpern-2003} shows
+    This is strictly stronger than System P. [halpern-2003] shows
     it corresponds to ranked (well-ordered) plausibility models, not
     merely preferential ones. -/
 def rationalMonotonicity {W : Type*} (pc : PreferentialConsequence W) : Prop :=
@@ -94,7 +94,7 @@ def rationalMonotonicity {W : Type*} (pc : PreferentialConsequence W) : Prop :=
     Extends `NormalityOrder` with the **smoothness condition** (also
     called "limit assumption"): every satisfiable proposition has
     minimal elements. This is automatic for finite W; for infinite W
-    it rules out infinite descending chains. @cite{kraus-magidor-1990} call this
+    it rules out infinite descending chains. [kraus-magidor-1990] call this
     "stopperedness". -/
 structure PlausibilityOrder (W : Type*) extends NormalityOrder W where
   /-- Smoothness: every satisfiable φ has a minimal element -/
@@ -113,7 +113,7 @@ def PlausibilityOrder.minimal {W : Type*} (po : PlausibilityOrder W)
 /-- A plausibility ordering induces a preferential consequence relation:
     φ |~ ψ iff all minimal φ-worlds satisfy ψ.
 
-    @cite{halpern-2003}, Theorem 8.1.1: System P is sound and complete for
+    [halpern-2003], Theorem 8.1.1: System P is sound and complete for
     this semantics. -/
 def PlausibilityOrder.toPreferential {W : Type*}
     (po : PlausibilityOrder W) : PreferentialConsequence W where

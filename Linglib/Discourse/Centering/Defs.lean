@@ -4,7 +4,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.DeriveFintype
 /-!
 # Centering Theory — Core Definitions
-@cite{grosz-joshi-weinstein-1995} @cite{kameyama-1986} @cite{sidner-1979}
+[grosz-joshi-weinstein-1995] [kameyama-1986] [sidner-1979]
 Theory-neutral types for Centering: realizations, utterances, and
 typeclass plug-ins for ranking schemes (`CfRanker`/`CfRankerOf`),
 realization (`Realizes`), and pronominalization (`Pronominalizes`).

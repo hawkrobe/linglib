@@ -2,9 +2,9 @@ import Linglib.Semantics.Attitudes.Desire
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# @cite{cariani-2013} — `Ought' and Resolution Semantics
+# [cariani-2013] — `Ought' and Resolution Semantics
 
-`@cite{cariani-2013}` (*Noûs* 47:534-558) presents an anti-INHERITANCE
+`[cariani-2013]` (*Noûs* 47:534-558) presents an anti-INHERITANCE
 account of `ought`: standard "boxing" semantics treats `ought` as
 universal quantification over best worlds (Kratzer 1981/1991), which
 validates **INHERITANCE** (`If p ⊨ q then ought(p) ⊨ ought(q)`) — but
@@ -51,7 +51,7 @@ Cariani's **Resolution Semantics** (§4 p.544-546):
 
 ## Coarseness and Coarse Falsemaking
 
-@cite{cariani-2013} §1 (p.534) opens with:
+[cariani-2013] §1 (p.534) opens with:
 
 > [COARSENESS] `S ought to φ` can be true even though there are
 > impermissible ways of φ-ing.
@@ -73,7 +73,7 @@ Our `ought_negation_via_coarse_falsemaking` makes this precise.
 
 Cariani's `visible` is **definitionally identical** to Phillips-Brown's
 `isConsidered` (`Semantics/Attitudes/Desire.lean`,
-@cite{phillips-brown-2025} §3.6) — so much so that we don't redefine
+[phillips-brown-2025] §3.6) — so much so that we don't redefine
 it: `Cariani2013.isVisible` is an `abbrev` for `isConsidered` over the
 options list. The bridge theorem `isVisible_iff_isConsidered` is
 `Iff.rfl`.
@@ -102,7 +102,7 @@ open Semantics.Attitudes.Desire (DecProp mkDec isConsidered)
 
 /-! ## §1. Resolution Semantics primitives
 
-Following @cite{cariani-2013} §4 (pp.544-545). The three contextual
+Following [cariani-2013] §4 (pp.544-545). The three contextual
 parameters are options, ordering, benchmark. Per §4 (p.545):
 
 > If individual options are modeled as propositions, a range of
@@ -250,7 +250,7 @@ instance (rc : ResolutionContext W) (p : Set W) [DecidablePred p] :
 
 /-! ## §4. Bridge to Phillips-Brown's `isConsidered`
 
-@cite{phillips-brown-2025}'s `isConsidered`
+[phillips-brown-2025]'s `isConsidered`
 (`Semantics.Attitudes.Desire`) is *definitionally* the same
 predicate as Cariani's `isVisible`. Since `isVisible` is now an
 `abbrev` (§2 above), the bridge theorem is `Iff.rfl`.
@@ -638,12 +638,12 @@ theorem cariani_ought_inheritance_failure_implies_duality_concern :
         have := hWay RossW.burn (by decide : burnProp RossW.burn)
         cases this
 
-/-! ## §10. Weakening failure (paper §III pre-figured; @cite{cariani-2016} core)
+/-! ## §10. Weakening failure (paper §III pre-figured; [cariani-2016] core)
 
 Cariani 2013 §III flags conditional-ought issues that *prefigure*
 Weakening failures, but the explicit Weakening attack
 (`ought(A) ∧ ought(B) ⊨ ought(A ∨ B)`) is the central topic of
-@cite{cariani-2016}. We formalize the failure here using rossContext:
+[cariani-2016]. We formalize the failure here using rossContext:
 `ought(attend)` and `ought(stay_home)` are both true, but
 `ought(attend ∨ stay_home ∨ burn)` is false — because `burn` is a
 way-of-the-disjunction that doesn't meet benchmark.

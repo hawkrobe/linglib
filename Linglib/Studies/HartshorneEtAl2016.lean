@@ -3,9 +3,9 @@ import Linglib.Semantics.Causation.Psych
 import Linglib.Semantics.Causation.PsychLink
 
 /-!
-# @cite{hartshorne-etal-2016} — Empirical Data
+# [hartshorne-etal-2016] — Empirical Data
 
-@cite{hartshorne-etal-2016}
+[hartshorne-etal-2016]
 
 Psych verbs, the linking problem, and the acquisition of language.
 Cognition 157: 268–288.
@@ -57,7 +57,7 @@ open Phenomena.PsychVerbs (PsychVerbClass ClassIIReading SubjectRole)
 -- § 1. Semantic Type Distinction
 -- ════════════════════════════════════════════════════
 
-/-- The two semantic types for psych verbs (@cite{hartshorne-etal-2016}, Fig. 11).
+/-- The two semantic types for psych verbs ([hartshorne-etal-2016], Fig. 11).
 
     This is the paper's central theoretical claim: psych verb classes
     correspond to distinct semantic types, not merely different linking
@@ -149,7 +149,7 @@ def SemanticType.prominentRole : SemanticType → SubjectRole
   | .habitualAttitude => .experiencer
   | .causedEpisode => .stimulus
 
-/-- Prominence preservation (@cite{hartshorne-etal-2016}, Section 5.4.1):
+/-- Prominence preservation ([hartshorne-etal-2016], Section 5.4.1):
     the most prominent argument in the semantic decomposition becomes the
     subject. This is the paper's central theoretical claim about HOW
     semantic type determines argument structure.
@@ -166,7 +166,7 @@ theorem prominence_determines_linking (c : PsychVerbClass) (t : SemanticType)
 -- § 4. Cross-Linguistic Data
 -- ════════════════════════════════════════════════════
 
-/-- Languages tested in @cite{hartshorne-etal-2016}. -/
+/-- Languages tested in [hartshorne-etal-2016]. -/
 inductive Language where
   | english | mandarin | korean | japanese | russian
   deriving DecidableEq, Repr
@@ -241,7 +241,7 @@ structure VerbDatum where
   brClass : PsychVerbClass
   deriving BEq, Repr
 
-/-- Representative verb data from @cite{hartshorne-etal-2016}.
+/-- Representative verb data from [hartshorne-etal-2016].
     Fear-type verbs are habitual attitudes, frighten-type are caused episodes. -/
 def verbData : List VerbDatum := [
   -- Fear-type (exp-subject, habitual attitude)

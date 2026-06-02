@@ -2,7 +2,7 @@ import Linglib.Typology.Gender
 
 /-!
 # Irish Gender
-@cite{corbett-1991} @cite{corbett-2013}
+[corbett-1991] [corbett-2013]
 
 2 genders (masc/fem), sex-based, semantic + formal. Agreement on attributive
 adjectives and personal pronouns; no predicate adjective agreement (unlike
@@ -27,7 +27,7 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "gle" ∧ genderTypology.name = "Irish" :=
   ⟨rfl, rfl⟩
 
-/-- Irish is in @cite{corbett-1991}'s "canonical" cell. -/
+/-- Irish is in [corbett-1991]'s "canonical" cell. -/
 example : genderTypology.IsCanonicalGender := by decide
 
 end Irish.Gender

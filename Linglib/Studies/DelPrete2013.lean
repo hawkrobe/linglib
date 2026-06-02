@@ -1,7 +1,7 @@
 import Linglib.Semantics.Aspect.Basic
 
 /-!
-# @cite{del-prete-2013} — Imperfectivity and Habituality in Italian
+# [del-prete-2013] — Imperfectivity and Habituality in Italian
 
 Fabio Del Prete, ch. 8 of *Genericity* (Mari, Beyssade, Del Prete eds.),
 OUP, Oxford Studies in Theoretical Linguistics 43.
@@ -52,7 +52,7 @@ the SOE conflicting with common knowledge (§8.7).
 2. **`Fragments/Italian/Tense.lean`**: `imperfetto` TAMEEntry — the tense
    form that this chapter is about.
 
-3. **@cite{boneh-doron-2013}** (`BonehDoron2013.lean`): Boneh & Doron's HAB/GEN
+3. **[boneh-doron-2013]** (`BonehDoron2013.lean`): Boneh & Doron's HAB/GEN
    distinction in ch. 6 of the same volume. Del Prete's analysis is
    explicitly built on their modal analysis of HAB (§8.4, eq. 41).
    Their English same-object data (exx. 6b, 7b) parallels Del Prete's
@@ -67,7 +67,7 @@ open Semantics.Aspect (ViewpointAspectB)
 
 /-- The two readings available for the Italian Imperfetto.
 
-    @cite{del-prete-2013} §8.1: Imperfetto sentences "can have both
+    [del-prete-2013] §8.1: Imperfetto sentences "can have both
     habitual (HAB) and progressive (PROG) readings, in correlation
     with whether temporal anchoring is to a large or to a small
     reference time." -/
@@ -84,7 +84,7 @@ inductive ImperfettoReading where
 
 /-- The type of the object NP, which determines SOE behavior.
 
-    @cite{del-prete-2013} §8.1, §8.3, §8.5: The crucial variable is
+    [del-prete-2013] §8.1, §8.3, §8.5: The crucial variable is
     whether the object is a singular indefinite (triggers SOE), a bare
     plural (no SOE, analyzed as kind-denoting), or a definite (no SOE). -/
 inductive ObjectType where
@@ -102,7 +102,7 @@ inductive ObjectType where
 
 /-- Whether a sentence displays a Same-Object Effect on its HAB reading.
 
-    @cite{del-prete-2013} §8.1, §8.5: Singular indefinites in object
+    [del-prete-2013] §8.1, §8.5: Singular indefinites in object
     position under Imperfetto trigger SOEs — the object must be
     the same across habitual events. When this is implausible, the
     HAB reading is blocked. -/
@@ -117,7 +117,7 @@ inductive SOEStatus where
   | absent
   deriving DecidableEq, Repr
 
-/-- An Italian imperfective datum from @cite{del-prete-2013}. -/
+/-- An Italian imperfective datum from [del-prete-2013]. -/
 structure ItalianDatum where
   italian : String
   gloss : String
@@ -318,7 +318,7 @@ theorem bare_indef_triggers_soe :
 /-- The two problematic scope assumptions that the GEN analysis must
     make to explain the SOE data.
 
-    @cite{del-prete-2013} §8.2, discussion around exx. (7)–(8): the GEN
+    [del-prete-2013] §8.2, discussion around exx. (7)–(8): the GEN
     approach requires:
     (α1) Singular indefinites obligatorily scope above GEN
     (α2) Singular indefinites *can* scope below overt Q-adverbs
@@ -448,7 +448,7 @@ theorem twostep_soe_oddness :
 /-- Whether a given viewpoint aspect permits habitual readings.
 
     Background observation: imperfective permits HAB; perfective does not.
-    @cite{del-prete-2013} takes this as given — the chapter's contribution
+    [del-prete-2013] takes this as given — the chapter's contribution
     is analyzing HOW the Imperfetto gives rise to HAB readings via IMPF's
     forward expansion and event plurality. -/
 def permitsHabitualReading : ViewpointAspectB → Bool
@@ -470,7 +470,7 @@ theorem aspect_permits_hab_for_all :
 -- ═══ Cross-Study Connections ═══
 
 /-- The SOE phenomenon is cross-linguistic: English shows the same
-    pattern. @cite{boneh-doron-2013} exx. (6b), (7b) in the same
+    pattern. [boneh-doron-2013] exx. (6b), (7b) in the same
     volume give the English counterparts:
 
     - "A flower grew out of the tree trunk" (plausible SOE → ✓)

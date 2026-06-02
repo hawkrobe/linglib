@@ -2,9 +2,9 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Finnish Temporal Connectives Fragment
-@cite{heinamaki-1974} @cite{karttunen-1974} @cite{rett-2020}
+[heinamaki-1974] [karttunen-1974] [rett-2020]
 
-Finnish lexicalizes the two-*until* distinction that @cite{karttunen-1974} argues
+Finnish lexicalizes the two-*until* distinction that [karttunen-1974] argues
 is covert in English:
 
 - **kunnes** / **siihen saakka** (durative *until*): "John slept until 3pm."
@@ -112,7 +112,7 @@ def ennenkuin : TemporalExprEntry :=
   , triggeredCoercion := none }
 
 -- ============================================================================
--- § 1b: Additional Connective Entries (@cite{heinamaki-1974})
+-- § 1b: Additional Connective Entries ([heinamaki-1974])
 -- ============================================================================
 
 /-- Finnish *sillä aikaa kun* ('while', literally 'that time when'):

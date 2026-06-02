@@ -2,7 +2,7 @@ import Linglib.Semantics.Dynamic.Core.Update
 
 /-!
 # File Change Semantics
-@cite{heim-1982} @cite{heim-1983}
+[heim-1982] [heim-1983]
 
 Heim's File Change Semantics, the pioneering dynamic semantic framework
 that treats sentence meanings as context change potentials (FCPs) operating
@@ -23,7 +23,7 @@ definedness:
 
 When a precondition fails, the FCP is *undefined*, not empty.
 
-## FCP Rules (@cite{heim-1982}, Ch III §2.1)
+## FCP Rules ([heim-1982], Ch III §2.1)
 
 | Connective | FCP |
 |------------|-----|
@@ -33,7 +33,7 @@ When a precondition fails, the FCP is *undefined*, not empty.
 | if φ then ψ | F + ¬(φ ∧ ¬ψ) |
 | ∃x.φ (indefinite) | Extend Dom by x, widen Sat, then update with φ |
 
-**Design note on atomic domain expansion.** @cite{heim-1982}'s rule (i'')
+**Design note on atomic domain expansion.** [heim-1982]'s rule (i'')
 specifies that atomic updates *expand* the domain: Dom(F + φ) = Dom(F) ∪
 {i₁,...,iₙ}. We follow the modern convention (shared by DRT and DPL) where
 domain expansion is handled solely by the indefinite operator (`indef`),
@@ -42,7 +42,7 @@ without affecting truth conditions, since in practice every variable
 mentioned in an atomic predicate has already been introduced by an
 indefinite or a definite.
 
-## Truth (@cite{heim-1982}, Ch III §3.2, criterion (C))
+## Truth ([heim-1982], Ch III §3.2, criterion (C))
 
 φ is true w.r.t. F iff F + φ is defined and Sat(F + φ) is nonempty.
 This is *not* idempotency — it is a weaker condition that builds
@@ -282,7 +282,7 @@ iff updating with φ changes nothing. This is stronger than truth —
 support implies truth (when F is consistent) but not vice versa.
 
 Note: this is sometimes called "truth as idempotency" in the update
-semantics literature (@cite{veltman-1996}), but it is NOT
+semantics literature ([veltman-1996]), but it is NOT
 truth definition, which is the weaker `trueIn`. -/
 def supports (F : HeimFile W E) (φ : FCP W E) : Prop :=
   φ F = some F
@@ -475,7 +475,7 @@ def liftDRS (R : DynProp.Update (Possibility W E)) : FCP W E :=
 sequence equals sequencing lifted FCPs.
 
 This shows the FCS algebra homomorphically embeds the DynProp
-algebra — the unification underlying @cite{muskens-1996}. -/
+algebra — the unification underlying [muskens-1996]. -/
 theorem liftDRS_seq (R₁ R₂ : DynProp.Update (Possibility W E)) :
     liftDRS (DynProp.dseq R₁ R₂) = FCP.seq (liftDRS R₁) (liftDRS R₂) := by
   simp only [liftDRS]

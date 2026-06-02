@@ -8,7 +8,7 @@ import Linglib.Core.Scales.Scale
 /-!
 # Beltrama 2025: Evaluation, thresholds, and practical commitments
 
-@cite{beltrama-2025}
+[beltrama-2025]
 
 Beltrama, A. (2025). Evaluation, thresholds, and practical commitments:
 the grammar of adjectival mildness. *Natural Language Semantics* 33, 169--205.
@@ -20,13 +20,13 @@ the grammar of adjectival mildness. *Natural Language Semantics* 33, 169--205.
 
 2. MPAs encode a **necessity standard**: the minimum value required for an object's
    pursuit to be possible given the norms and circumstances in the current world.
-   This is a *functional standard* (cf. @cite{kagan-alexeyenko-2011}), not a
+   This is a *functional standard* (cf. [kagan-alexeyenko-2011]), not a
    distributional (contextual) or endpoint standard.
 
 3. The **middling inference** ("not great") is a scalar implicature, not hardwired
    semantics: it is cancelable, reinforceable, and suspended in DE contexts.
 
-4. The **standard function s** must be generalized beyond @cite{kennedy-2007}'s
+4. The **standard function s** must be generalized beyond [kennedy-2007]'s
    Principle of Interpretive Economy to handle functional standards.
 
 ## Key formal definitions
@@ -103,7 +103,7 @@ theorem mpa_good_diverge :
 -- ============================================================================
 
 /-- The value scale is lower-bounded at 0 (purpose-thwarting → purpose-serving),
-    open above. Following @cite{wolfsdorf-2019} and @cite{qing-2021}. -/
+    open above. Following [wolfsdorf-2019] and [qing-2021]. -/
 def valueScaleBoundedness : Boundedness := .lowerBounded
 
 /-- Interpretive Economy would predict a minEndpoint standard for a
@@ -147,7 +147,7 @@ theorem mpa_good_both_cc_sensitive :
     ¬ minsaaStandard.RequiresComparisonClass := ⟨trivial, trivial, id⟩
 
 -- ============================================================================
--- § 4. MinSAA Rejection (@cite{beltrama-2025} §4)
+-- § 4. MinSAA Rejection ([beltrama-2025] §4)
 -- ============================================================================
 
 /-- The MinSAA hypothesis: MPAs are minimum-standard absolute adjectives.
@@ -188,7 +188,7 @@ theorem minsaa_hypothesis_rejected :
 /-- A simplified finite model for the necessity standard.
 
     The accessibility relation is exclusively **circumstantial**
-    (@cite{beltrama-2025} p. 196): the accessible worlds are those
+    ([beltrama-2025] p. 196): the accessible worlds are those
     compatible with the norms and circumstances in the current world.
 
 - `W` — possible worlds
@@ -230,7 +230,7 @@ def mpaPositiveForm {W : Type} (m : NecStandardModel W) (actualValue : Nat) : Bo
 
 /-- Degree modifier compatibility data for MPAs.
 
-@cite{beltrama-2025} §2.2.2, §6.4--6.5:
+[beltrama-2025] §2.2.2, §6.4--6.5:
 - *quite/pretty/somewhat*: OK (moderate degree)
 - *very/extremely/super*: degraded (conflict with middling flavor)
 - *barely*: OK (necessity standard provides crisp boundary)
@@ -336,7 +336,7 @@ theorem good_no_middling_against_decent :
 -- § 8. Non-Vague Behavior: No Zone of Indifference
 -- ============================================================================
 
-/-- MPAs lack a zone of indifference (@cite{beltrama-2025} §6.3, p. 199--200).
+/-- MPAs lack a zone of indifference ([beltrama-2025] §6.3, p. 199--200).
 
     The necessity standard provides a crisp boundary: an object either
     meets the minimum value for pursuit (MPA) or falls below it (¬MPA).
@@ -372,7 +372,7 @@ theorem mpa_not_relative :
 open Core.Scale (LicensingPipeline)
 
 /-- MPAs (lower-bounded scale) are licensed for degree modification by
-    @cite{kennedy-2007}'s scale-structure licensing pipeline. This is
+    [kennedy-2007]'s scale-structure licensing pipeline. This is
     consistent with MPAs combining with *barely* and moderate modifiers,
     while their resistance to *very*/*extremely* is pragmatic (§6.2),
     not structural. -/
@@ -394,7 +394,7 @@ theorem good_also_licensed :
 open Features (EvaluativeValence)
 
 /-- MPAs have positive evaluative valence: they denote a favorable
-    (if mild) assessment. This connects to @cite{nouwen-2024}'s
+    (if mild) assessment. This connects to [nouwen-2024]'s
     evaluative measure semantics. -/
 def mpaValence : EvaluativeValence := .positive
 
@@ -413,7 +413,7 @@ theorem mpa_good_same_valence :
 open Semantics.Degree (DegPType)
 
 /-- MPAs encode the same necessity component as *enough*
-    (@cite{beltrama-2025} §5.3; Nadathur 2023): the minimum degree
+    ([beltrama-2025] §5.3; Nadathur 2023): the minimum degree
     required for the complement/pursuit to be circumstantially possible.
 
     The parallel: "old enough to drink" ≈ "acceptable (for the purpose)".
@@ -435,7 +435,7 @@ def enoughParallel : DegPType := .sufficiency
 
     This demonstrates that IE must be generalized: the **s** function
     can assign functional standards when the adjective's lexical semantics
-    introduces practical commitments (@cite{beltrama-2025} §5.4, p. 195). -/
+    introduces practical commitments ([beltrama-2025] §5.4, p. 195). -/
 theorem ie_divergence_on_value_scale :
     interpretiveEconomy valueScaleBoundedness = .minEndpoint ∧
     goodStandard = .contextual ∧

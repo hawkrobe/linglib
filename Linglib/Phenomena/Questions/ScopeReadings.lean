@@ -1,7 +1,7 @@
 /-
 # Scope Readings in Embedded Questions
 
-Pair-list and choice readings from @cite{groenendijk-stokhof-1984}, Chapter VI, Sections 2.1-2.2.
+Pair-list and choice readings from [groenendijk-stokhof-1984], Chapter VI, Sections 2.1-2.2.
 
 ## Pair-List Readings (Section 2.1)
 

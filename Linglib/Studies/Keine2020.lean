@@ -2,13 +2,13 @@ import Linglib.Syntax.Minimalist.Probe
 import Linglib.Syntax.Minimalist.ClauseSpine
 
 /-!
-# Probes and Their Horizons @cite{keine-2020}
+# Probes and Their Horizons [keine-2020]
 
 *Probes and Their Horizons*. MIT Press, LI Monograph 81.
 
 ## Summary
 
-@cite{keine-2020} is the monograph expansion of @cite{keine-2019}.
+[keine-2020] is the monograph expansion of [keine-2019].
 It develops a comprehensive theory of selective opacity — where the same
 domain is opaque to some operations but transparent to others — based
 on probe-specific *horizons* and *bilateral labeling*.
@@ -55,8 +55,8 @@ on probe-specific *horizons* and *bilateral labeling*.
 
 12. **Movement–agreement mismatches** (§3.4.5): Itelmen and Tsez show that
     φ-agreement and A-movement can have different horizons in *opposite*
-    directions, via @cite{bobaljik-wurmbrand-2005} and
-    @cite{polinsky-potsdam-2001}.
+    directions, via [bobaljik-wurmbrand-2005] and
+    [polinsky-potsdam-2001].
 
 13. **Smuggling constraints** (§3.4.3, (248)–(259)): A-movement out of
     Ā-moved constituents is blocked by horizons (CP encapsulates);
@@ -83,7 +83,7 @@ open Minimalist (ProbeProfile LanguageProbeConfig ClauseSpine Cat fValue english
   lubukusuAProbe)
 
 -- ============================================================================
--- § 1: Hindi Transparency Table (@cite{keine-2020} (168))
+-- § 1: Hindi Transparency Table ([keine-2020] (168))
 -- ============================================================================
 
 /-! ### Hindi 4×4 Transparency Table
@@ -159,7 +159,7 @@ theorem hindi_ābar_transparent_cP :
     hindiCfg.ābar.transparentToLabel cPLabel = true := by decide
 
 -- ============================================================================
--- § 2: NmlzP ≱ CP (@cite{keine-2020} ch. 2)
+-- § 2: NmlzP ≱ CP ([keine-2020] ch. 2)
 -- ============================================================================
 
 /-- NmlzP and CP are incomparable: each is opaque to one probe but
@@ -189,7 +189,7 @@ theorem cP_has_c_not_nmlz :
     ClauseSpine.cP.projects .Nmlz = false := by decide
 
 -- ============================================================================
--- § 3: German Transparency Table (@cite{keine-2020} ch. 4)
+-- § 3: German Transparency Table ([keine-2020] ch. 4)
 -- ============================================================================
 
 /-! ### German 4×4 Transparency Table
@@ -263,7 +263,7 @@ theorem german_top_transparent_forceP :
     germanCfg.ābar.transparentToLabel forcePLabel = true := by decide
 
 -- ============================================================================
--- § 4: English Opacity (@cite{keine-2020} (241))
+-- § 4: English Opacity ([keine-2020] (241))
 -- ============================================================================
 
 private def englishCfg := LanguageProbeConfig.english
@@ -294,7 +294,7 @@ theorem hindi_finite_selective_opacity :
     hindiCfg.ābar.transparentToLabel cPLabel = true := by decide
 
 -- ============================================================================
--- § 6: Default Horizon (@cite{keine-2020} (307))
+-- § 6: Default Horizon ([keine-2020] (307))
 -- ============================================================================
 
 /-- Hindi φ and A probes use the default horizon: probe on T⁰ with
@@ -327,7 +327,7 @@ theorem hindi_four_locality_types :
     hindiProfile hindiCfg.wh ≠ hindiProfile hindiCfg.ābar := by decide
 
 -- ============================================================================
--- § 8: Horizon Category Matters (@cite{keine-2020} §3.6)
+-- § 8: Horizon Category Matters ([keine-2020] §3.6)
 -- ============================================================================
 
 /-- Under bilateral labeling, the specific horizon category matters.
@@ -355,7 +355,7 @@ theorem forceP_larger_than_cP :
     ClauseSpine.cP.size < ClauseSpine.forceP.size := by decide
 
 -- ============================================================================
--- § 10: Vacuous Probes (@cite{keine-2020} §3.5, (274)–(278))
+-- § 10: Vacuous Probes ([keine-2020] §3.5, (274)–(278))
 -- ============================================================================
 
 /-! ### Vacuous probes: bilateral-labeling-derived
@@ -395,7 +395,7 @@ theorem german_all_nonvacuous :
     germanCfg.ābar.isVacuous = false := by decide
 
 -- ============================================================================
--- § 11: Height-Locality Theorem (@cite{keine-2020} (279))
+-- § 11: Height-Locality Theorem ([keine-2020] (279))
 -- ============================================================================
 
 /-! ### HLT: Location→Horizon and Horizon→Location constraints
@@ -427,7 +427,7 @@ theorem hindi_hlt_T_horizon :
     (ProbeProfile.mk .Force (some .T)).isVacuous = true := by decide
 
 -- ============================================================================
--- § 12: Ban on Improper Movement (@cite{keine-2020} §3.4.1–3.4.2)
+-- § 12: Ban on Improper Movement ([keine-2020] §3.4.1–3.4.2)
 -- ============================================================================
 
 /-! ### BIM: Ā cannot feed A
@@ -454,7 +454,7 @@ theorem proper_movement_english :
     LanguageProbeConfig.english.ābar.transparentToLabel cPLabel = true := by decide
 
 -- ============================================================================
--- § 13: A-movement–Agreement Generalization (@cite{keine-2020} (231))
+-- § 13: A-movement–Agreement Generalization ([keine-2020] (231))
 -- ============================================================================
 
 /-! ### (231): A-extraction forces obligatory LDA
@@ -477,7 +477,7 @@ theorem generalization_231_ābar_no_agreement :
     hindiCfg.phi.transparentToLabel cPLabel = false := by decide
 
 -- ============================================================================
--- § 14: English Extraposition (@cite{keine-2020} (241))
+-- § 14: English Extraposition ([keine-2020] (241))
 -- ============================================================================
 
 /-! ### English has three probes, including extraposition
@@ -495,23 +495,23 @@ theorem english_extr_is_default :
     english_extr = ProbeProfile.defaultHorizon .T := rfl
 
 -- ============================================================================
--- § 15: Movement–Agreement Mismatches (@cite{keine-2020} §3.4.5)
+-- § 15: Movement–Agreement Mismatches ([keine-2020] §3.4.5)
 -- ============================================================================
 
 /-! ### Itelmen and Tsez: φ-agreement ≠ A-movement
 
-@cite{keine-2020} §3.4.5 discusses languages where φ-agreement and
+[keine-2020] §3.4.5 discusses languages where φ-agreement and
 A-movement have different locality — the A-movement–Agreement
 Generalization ((231)) is Hindi-specific, not universal.
 
 The two languages show *opposite* mismatch directions:
 
-- **Itelmen** (@cite{bobaljik-wurmbrand-2005}, (269)): A-movement out of
+- **Itelmen** ([bobaljik-wurmbrand-2005], (269)): A-movement out of
   a nonfinite clause forces obligatory high scope, but there are
   locality constraints on agreement that do not apply to movement.
   A-movement is *more permissive* than φ-agreement.
 
-- **Tsez** (@cite{polinsky-potsdam-2001}, (271)): LDA into an embedded
+- **Tsez** ([polinsky-potsdam-2001], (271)): LDA into an embedded
   clause is possible, but crossclausal movement is blocked.
   φ-agreement is *more permissive* than A-movement.
 
@@ -542,12 +542,12 @@ theorem itelmen_tsez_opposite_mismatch :
     LanguageProbeConfig.itelmen.aMove ≠ LanguageProbeConfig.tsez.aMove := by decide
 
 -- ============================================================================
--- § 16: Smuggling Constraints (@cite{keine-2020} §3.4.3, (248)–(259))
+-- § 16: Smuggling Constraints ([keine-2020] §3.4.3, (248)–(259))
 -- ============================================================================
 
 /-! ### Smuggling: selective opacity in nonidentity movement
 
-@cite{keine-2020} §3.4.3 shows that smuggling derivations (where XP is
+[keine-2020] §3.4.3 shows that smuggling derivations (where XP is
 Ā-moved to [Spec,CP], then YP is A-subextracted from XP) exhibit
 selective-opacity effects. The horizon account derives these without any
 special constraint on movement sequences:
@@ -587,12 +587,12 @@ theorem smuggling_ābar_not_blocked :
     englishCfg.wh.transparentToLabel tPLabel = true := by decide
 
 -- ============================================================================
--- § 17: Crosslinguistic A-Movement Typology (@cite{keine-2020} (300))
+-- § 17: Crosslinguistic A-Movement Typology ([keine-2020] (300))
 -- ============================================================================
 
 /-! ### Three attested A-movement horizons
 
-@cite{keine-2020} §3.6, (300) identifies three crosslinguistically
+[keine-2020] §3.6, (300) identifies three crosslinguistically
 attested A-movement probe settings:
 
 | Language       | Horizon | Hyperraising? |
@@ -617,12 +617,12 @@ theorem crosslinguistic_a_movement :
     hindiCfg.aMove.transparentToLabel vPLabel = true := by decide
 
 -- ============================================================================
--- § 18: Phase + Horizon Orthogonality (@cite{keine-2020} ch. 4)
+-- § 18: Phase + Horizon Orthogonality ([keine-2020] ch. 4)
 -- ============================================================================
 
 /-! ### Horizons and CP phases coexist
 
-@cite{keine-2020} ch. 4 argues that horizons and CP phases are
+[keine-2020] ch. 4 argues that horizons and CP phases are
 orthogonal constraints on syntactic locality:
 
 - **Horizons** determine *selective opacity*: which operations can

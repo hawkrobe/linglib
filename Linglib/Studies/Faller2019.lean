@@ -5,9 +5,9 @@ import Linglib.Discourse.Commitment.Table
 /-!
 # Faller (2019): The discourse commitments of illocutionary reportatives
 
-@cite{faller-2019a} @cite{farkas-bruce-2010} @cite{stalnaker-1978}
-@cite{walker-1996} @cite{krifka-2014} @cite{anderbois-2014}
-@cite{gunlogson-2008} @cite{murray-2014} @cite{goffman-1979}
+[faller-2019a] [farkas-bruce-2010] [stalnaker-1978]
+[walker-1996] [krifka-2014] [anderbois-2014]
+[gunlogson-2008] [murray-2014] [goffman-1979]
 
 Faller's discourse-update account of the Cuzco Quechua reportative `=si`.
 The puzzle (her display (1)): a speaker of a reportative declarative need
@@ -15,7 +15,7 @@ not be committed to the reported proposition `φ` — they may even deny it
 (1a) — yet often intends `φ` to resolve the QUD (1b). Faller's solution
 splits Goffman's *animator* from *principal*: the reportative commits the
 animator only to having reportative evidence, while the distinct principal
-carries the truth commitment. The Collaborative Principle (@cite{walker-1996})
+carries the truth commitment. The Collaborative Principle ([walker-1996])
 then derives the animator's *dependent* truth commitment when they do not
 disagree.
 
@@ -40,11 +40,11 @@ disagree.
 ## Todo
 
 * Model the (1b) half of the puzzle: the Collaborative Principle
-  (@cite{walker-1996}, her (29)) deriving the animator's *dependent* truth
+  ([walker-1996], her (29)) deriving the animator's *dependent* truth
   commitment when they do not disagree (her Figure 6). Only the (1a)
   Absence-of-Commitment half is formalized here.
 * Promote `GoffmanRole` / `EvidenceType` to `Discourse/` once a second
-  consumer (e.g. @cite{anderbois-2014}, @cite{murray-2014}) imports them.
+  consumer (e.g. [anderbois-2014], [murray-2014]) imports them.
 -/
 
 namespace Faller2019
@@ -53,7 +53,7 @@ open Discourse.Commitment (CommitmentSlate TaggedSlate CommitmentSource)
 
 /-! ### Goffman 1979 speaker roles -/
 
-/-- @cite{goffman-1979} "Footing" distinguishes three roles within
+/-- [goffman-1979] "Footing" distinguishes three roles within
     "speaker": the **animator** physically utters; the **author** chose the
     words; the **principal** is committed by the words. In standard cases all
     three coincide; reportatives, quotations, and messengers separate them. -/
@@ -103,7 +103,7 @@ end RoleAssignment
     extension — Faller mentions inferential commitment in prose but defines no
     `InfC` set. -/
 inductive EvidenceType where
-  /-- Adequate evidence (@cite{faller-2019a}, after Grice): the default for
+  /-- Adequate evidence ([faller-2019a], after Grice): the default for
       unmarked assertions. -/
   | adequate
   /-- Reportative evidence (hearsay). The CQ `=si` adds to this. -/
@@ -149,7 +149,7 @@ def pushTable (s : DiscourseState A W) (φ : Set W) : DiscourseState A W :=
 /-- Add `φ` to agent `a`'s truth commitments (the inherited slate `dc`), with
     provenance `src` (default self-generated — the plain-assertion case;
     `reportativePRESENT` marks the principal's animator-introduced commitment
-    other-generated, per @cite{faller-2019a} fn. 30 / §6.1). -/
+    other-generated, per [faller-2019a] fn. 30 / §6.1). -/
 def addTruthCommit [DecidableEq A] (s : DiscourseState A W) (a : A) (φ : Set W)
     (src : CommitmentSource := .selfGenerated) : DiscourseState A W :=
   { s with toDiscourseState := s.toDiscourseState.addCommit a φ src }
@@ -276,7 +276,7 @@ namespace DiscourseState
 
 variable {A W : Type*}
 
-/-- @cite{faller-2019a} (34): with defaults active, PRESENT pushes `φ` to the
+/-- [faller-2019a] (34): with defaults active, PRESENT pushes `φ` to the
     Table, commits the principal to truth, and the animator to adequate
     evidence. The `roles` argument carries (34iv) flexibility: the canonical
     speaker uses `RoleAssignment.canonical`; a messenger uses the explicit
@@ -287,7 +287,7 @@ def PRESENT [DecidableEq A] (φ : Set W) (roles : RoleAssignment A)
     |>.addTruthCommit roles.principal φ
     |>.addEvidCommit .adequate roles.animator φ
 
-/-- @cite{faller-2019a} (35): the CQ `=si` modifier on PRESENT overrides
+/-- [faller-2019a] (35): the CQ `=si` modifier on PRESENT overrides
     (34iii) (commit to RepC, not AeC) and requires (35ii) (animator ≠
     principal). The distinctness requirement is a precondition: the operator
     updates only when `roles.animator ≠ roles.principal`, else returns the
@@ -306,21 +306,21 @@ These lift Faller's verbal claims to provable statements over the substrate
 discourse state.
 -/
 
-/-- @cite{faller-2019a} (34ii): default PRESENT puts `φ` in the principal's
+/-- [faller-2019a] (34ii): default PRESENT puts `φ` in the principal's
     truth commitments. -/
 theorem present_commits_principal_to_truth [DecidableEq A]
     (φ : Set W) (e : A) (s : DiscourseState A W) :
     (PRESENT φ (RoleAssignment.canonical e) s).CommittedTrue e φ := by
   simp [PRESENT]
 
-/-- @cite{faller-2019a} (34iii): default PRESENT puts `φ` in the animator's
+/-- [faller-2019a] (34iii): default PRESENT puts `φ` in the animator's
     adequate-evidence commitments. -/
 theorem present_commits_animator_to_adequate_evidence [DecidableEq A]
     (φ : Set W) (e : A) (s : DiscourseState A W) :
     (PRESENT φ (RoleAssignment.canonical e) s).CommittedEvid .adequate e φ := by
   simp [PRESENT]
 
-/-- @cite{faller-2019a} (35i): `=si` adds `φ` to the animator's reportative
+/-- [faller-2019a] (35i): `=si` adds `φ` to the animator's reportative
     commitments — the headline that reportatives flag the evidence type. -/
 theorem reportative_commits_animator_to_reportative_evidence [DecidableEq A]
     (φ : Set W) (anim prin : A) (h : anim ≠ prin) (s : DiscourseState A W) :
@@ -328,7 +328,7 @@ theorem reportative_commits_animator_to_reportative_evidence [DecidableEq A]
         .reportative anim φ := by
   simp [reportativePRESENT, if_neg h]
 
-/-- @cite{faller-2019a} (35): `=si` commits the *principal* (not the animator)
+/-- [faller-2019a] (35): `=si` commits the *principal* (not the animator)
     to truth — the reportative shifts truth-commitment to the third party. -/
 theorem reportative_commits_principal_to_truth [DecidableEq A]
     (φ : Set W) (anim prin : A) (h : anim ≠ prin) (s : DiscourseState A W) :
@@ -336,7 +336,7 @@ theorem reportative_commits_principal_to_truth [DecidableEq A]
         prin φ := by
   simp [reportativePRESENT, if_neg h]
 
-/-- @cite{faller-2019a} *Absence of Commitment* (1a): after `=si(PRESENT(φ))`
+/-- [faller-2019a] *Absence of Commitment* (1a): after `=si(PRESENT(φ))`
     with distinct animator and principal, the animator is *not* truth-committed
     to `φ`. Starting from `empty`, the animator's truth commitments stay empty
     because `=si`'s truth update fires only on the principal. -/
@@ -346,7 +346,7 @@ theorem reportative_does_not_commit_animator_to_truth [DecidableEq A]
           DiscourseState.empty).CommittedTrue anim φ := by
   simp [reportativePRESENT, h]
 
-/-- @cite{faller-2019a} (25): truth and evidential commitments are formally
+/-- [faller-2019a] (25): truth and evidential commitments are formally
     independent — witnessed by the reportative configuration, where the animator
     holds `φ` as reportative evidence yet is *not* truth-committed to it. -/
 theorem reportative_evidence_without_truth [DecidableEq A]

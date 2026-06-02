@@ -5,7 +5,7 @@ import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Trinh & Haida 2015: Constraining the Derivation of Alternatives
-@cite{trinh-haida-2015}
+[trinh-haida-2015]
 
 Trinh, T. & Haida, A. (2015). Constraining the derivation of alternatives.
 Natural Language Semantics, 23(4), 249–270.
@@ -14,8 +14,8 @@ Natural Language Semantics, 23(4), 249–270.
 
 The **Atomicity constraint** (def 32): expressions in the substitution
 source are syntactically atomic — their internal structure is inaccessible
-to structural operations. This refines @cite{fox-katzir-2011} /
-@cite{katzir-2007} to correctly distinguish:
+to structural operations. This refines [fox-katzir-2011] /
+[katzir-2007] to correctly distinguish:
 
 - **Symmetry-breaking cases** (§3.2.2): "Bill ran and didn't smoke.
   John ran." → John smoked. Atomicity blocks "ran ∧ smoked" from F(S),
@@ -37,7 +37,7 @@ to structural operations. This refines @cite{fox-katzir-2011} /
 ## Relation to the `Excluder.preFilter` combinator
 
 Atomicity is a restriction on the formal-alternative source `F`, the
-@cite{fox-katzir-2011} `F` (not `C`) side of the asymmetry.
+[fox-katzir-2011] `F` (not `C`) side of the asymmetry.
 `Semantics/Exhaustification/Combinators.lean` packages F-side
 restrictions as the abstract combinator `Excluder.preFilter`, with the
 algebraic non-monotonicity theorem `preFilter_can_create_implicature`.

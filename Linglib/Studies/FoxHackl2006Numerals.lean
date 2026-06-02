@@ -4,12 +4,12 @@ import Linglib.Semantics.Numerals.Basic
 
 /-!
 # Numeral MIP Bridge
-@cite{fox-hackl-2006} @cite{kennedy-2015}
+[fox-hackl-2006] [kennedy-2015]
 
 Surfaces the maximal informativity theorems from
 `Semantics/Entailment/Extremum.lean` at the Phenomena level,
 connecting numeral semantics (the named `*Meaning` functions) to the
-`HasMaxInf` / `IsMaxInf` infrastructure and the @cite{fox-hackl-2006}
+`HasMaxInf` / `IsMaxInf` infrastructure and the [fox-hackl-2006]
 density predictions.
 
 ## Bridge Structure
@@ -71,7 +71,7 @@ theorem moreThan_has_maxInf_nat :
 
 /-- max⊨ of "at least n" at world w ↔ the true value equals n.
     This is the MIP derivation of exact meaning from lower-bound semantics:
-    @cite{kennedy-2015}'s "de-Fregean" type-shift IS the MIP. -/
+    [kennedy-2015]'s "de-Fregean" type-shift IS the MIP. -/
 theorem mip_derives_exact (m n : ℕ) :
     IsMaxInf (atLeastDeg (α := ℕ) id) m n ↔ n = m :=
   isMaxInf_atLeast_iff_eq id m n Function.surjective_id
@@ -80,7 +80,7 @@ theorem mip_derives_exact (m n : ℕ) :
 -- § 4. Fox & Hackl Asymmetry Data
 -- ════════════════════════════════════════════════════
 
-/-- The @cite{fox-hackl-2006} implicature asymmetry prediction:
+/-- The [fox-hackl-2006] implicature asymmetry prediction:
     - "at least n" generates scalar implicatures (HasMaxInf) ✓
     - "more than n" on dense scales does NOT (moreThan_noMaxInf)
     - "more than n" on ℕ DOES (discrete rescue)

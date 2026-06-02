@@ -7,9 +7,9 @@ import Mathlib.Order.Interval.Set.Disjoint
 
 /-!
 # Heim 2001: Degree Operators and Scope
-@cite{heim-2001} @cite{heim-1999} @cite{kennedy-1999} @cite{percus-2000}
-@cite{von-stechow-1984} @cite{fox-hackl-2006} @cite{schwarzschild-wilkinson-2002}
-@cite{beck-2001} @cite{kennedy-mcnally-2005} @cite{szabolcsi-1986}
+[heim-2001] [heim-1999] [kennedy-1999] [percus-2000]
+[von-stechow-1984] [fox-hackl-2006] [schwarzschild-wilkinson-2002]
+[beck-2001] [kennedy-mcnally-2005] [szabolcsi-1986]
 
 Irene Heim. Degree Operators and Scope. In C. Féry & W. Sternefeld (eds.),
 *Audiatur Vox Sapientiae*, Akademie Verlag, pp. 214–239.
@@ -31,7 +31,7 @@ the ∀ direction; see `heim_collapse_forall_low_to_high`, paper fn. 6).
 For the negation case (paper exs. 17–19), `no_isGreatest_Ioi_of_noMaxOrder`
 shows the high-DegP LF is undefined: the negated degree set `Ioi (μ a)` has
 no greatest element on any `NoMaxOrder` scale. This is the same mechanism
-behind @cite{fox-hackl-2006} negative islands.
+behind [fox-hackl-2006] negative islands.
 
 Kennedy's generalization (paper ex. (27)) is formalized via the
 Heim-Kennedy Constraint substrate
@@ -52,7 +52,7 @@ re-exported below.
 ## What this file does NOT formalize
 
 - **Heim's free-world-variable implementation of de re/de dicto**
-  (paper §2.4, ex. (40); Percus-style binding per @cite{percus-2000} and
+  (paper §2.4, ex. (40); Percus-style binding per [percus-2000] and
   Abusch 1994 — paper fn. 16). The substrate's
   `Semantics/Degree/Intensional.lean` formalizes the alternative
   ACTUALLY-operator implementation (von Stechow 1984), used in
@@ -67,10 +67,10 @@ re-exported below.
 
 ## Recent literature this file does not engage
 
-- @cite{schwarzschild-wilkinson-2002} interval semantics, which Heim's
+- [schwarzschild-wilkinson-2002] interval semantics, which Heim's
   own fn. 21 flags as work that may force her to revise basic assumptions
-- @cite{beck-2001} intervention effects, parallel to Kennedy's generalization
-- @cite{kennedy-mcnally-2005} closed-scale adjective behavior under negation
+- [beck-2001] intervention effects, parallel to Kennedy's generalization
+- [kennedy-mcnally-2005] closed-scale adjective behavior under negation
 
 -/
 
@@ -149,7 +149,7 @@ theorem heim_collapse_forall_low_to_high {α D : Type*} [LinearOrder D]
 
 /-- **The lattice fact behind Heim's negation argument**: on any
 `NoMaxOrder` linear order, the strict upper interval `Ioi a` has no
-greatest element. This is the same mechanism behind @cite{fox-hackl-2006}
+greatest element. This is the same mechanism behind [fox-hackl-2006]
 negative islands. -/
 theorem no_isGreatest_Ioi_of_noMaxOrder {α : Type*} [LinearOrder α]
     [NoMaxOrder α] (a : α) :
@@ -190,7 +190,7 @@ Minimalism–degree-semantics interface substrate. The exemplar binding
 `⟨degHeight := 0, qpHeight := 1, qpBindsDeg := true⟩` covers Heim's
 §2.2 examples uniformly: `exactly`-differentials (exs 20, 22),
 `less`-comparatives (24), and object-position quantifiers (25).
-@cite{bhatt-pancheva-2004} §4 is the dedicated formalization; see
+[bhatt-pancheva-2004] §4 is the dedicated formalization; see
 `BhattPancheva2004.bp_hkc_matches_heim_intensional_data`. -/
 theorem nonMonotone_blocked_by_HKC (degH qpH : Nat) (h : degH < qpH) :
     ¬ IsHeimKennedy ⟨degH, qpH, qpH, true⟩ :=
@@ -212,7 +212,7 @@ this 4-vs-4 split as descriptive, **not** explanatory: paper p. 226
 of (33–36), and it is only a hope that it will follow without specific
 stipulations about DegP-movement").
 
-@cite{bhatt-pancheva-2004} §5.2 derives the split from the Heim-Kennedy
+[bhatt-pancheva-2004] §5.2 derives the split from the Heim-Kennedy
 Constraint plus the assumption that intensional subjects bind into the
 degree predicate; see `BhattPancheva2004.bp_hkc_matches_heim_intensional_data`. -/
 inductive IntensionalVerbClass where
@@ -288,7 +288,7 @@ theorem verbClass_predicts_highDegPAvailable :
 --
 -- Heim's *implementation* of the de re / de dicto distinction (paper
 -- exs. (40a/b), p. 228) uses **free world-variables** on than-clause
--- predicates (`long_w'` vs `long_w`), citing @cite{percus-2000} and
+-- predicates (`long_w'` vs `long_w`), citing [percus-2000] and
 -- Abusch 1994 (paper fn. 16). This is distinct from von Stechow 1984's
 -- own ACTUALLY-operator implementation, which the substrate
 -- (`Semantics/Degree/Intensional.lean`) formalizes — see
@@ -311,7 +311,7 @@ theorem verbClass_predicts_highDegPAvailable :
 --
 -- The contrast "Kim climbed the highest mountain" / "KIM climbed the
 -- highest mountain" (focus-sensitive relative reading) is from
--- @cite{szabolcsi-1986} / @cite{heim-1999} — *not* from Heim 2001 — and
+-- [szabolcsi-1986] / [heim-1999] — *not* from Heim 2001 — and
 -- belongs in a future `Heim1999.lean` study file.
 
 end Heim2001

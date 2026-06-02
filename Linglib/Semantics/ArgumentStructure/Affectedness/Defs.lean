@@ -2,8 +2,8 @@ import Mathlib.Logic.Basic
 
 /-!
 # Scalar Result Substrate
-@cite{beavers-2011} @cite{beavers-koontz-garboden-2020}
-@cite{rappaport-hovav-levin-2001}
+[beavers-2011] [beavers-koontz-garboden-2020]
+[rappaport-hovav-levin-2001]
 
 Substrate primitives for the scalar-theoretic affectedness hierarchy.
 
@@ -14,7 +14,7 @@ Two independent typeclasses, mirroring Beavers' two empirical primitives:
 - `HasLatentScale α β` — patient `x` is a force-recipient at event `e`
   (related to a latent scale, no transition entailed). Drives Beavers
   (60c) Potential. The "force recipient" terminology and the
-  empirical primitive originate with @cite{rappaport-hovav-levin-2001}.
+  empirical primitive originate with [rappaport-hovav-levin-2001].
 
 Three abstract Props characterise Beavers (60a-c) on a thematic relation
 `θ : α → β → Prop`. Beavers (60d) `Unspecified` (mere participation) is
@@ -36,7 +36,7 @@ Mathlib pattern: cf. `MeasurableSpace α` (structure) +
 `IsFiniteMeasure μ` (Prop using both).
 ## Why `Unspecified` is not formalised
 
-@cite{beavers-2011} (60d): `φ → ∃e∃θ'[θ'(x, e)]` — mere participation.
+[beavers-2011] (60d): `φ → ∃e∃θ'[θ'(x, e)]` — mere participation.
 For any binary `θ : α → β → Prop`, `θ x e` IS the participation, so
 the implication `θ x e → ∃ θ', θ'(x, e)` holds vacuously by taking
 `θ' = θ`. A formal definition `Unspecified θ := True` (or its
@@ -57,13 +57,13 @@ namespace Semantics.ArgumentStructure.Affectedness
     `resultAt x g e`: "patient `x : α` ends event `e : β` holding
     degree `g : δ`."
 
-    The primitive that @cite{beavers-2011} eq. (60a-b) requires to
+    The primitive that [beavers-2011] eq. (60a-b) requires to
     define Quantized and Non-quantized affectedness. The "state" token
     `s` in Beavers' eq. (60) is decorative for level-typing
     (Quantized / Non-quantized are existential generalisations over `s`)
     and elided in the 3-place form here. Consumers needing `s` for
     result-XP licensing or *halfway*-modification semantics
-    (@cite{beavers-koontz-garboden-2020} §1.6.1) reintroduce it
+    ([beavers-koontz-garboden-2020] §1.6.1) reintroduce it
     downstream.
 
     Mathlib pattern: structural typeclass with multiple type
@@ -81,9 +81,9 @@ class HasScalarResult (α : Type*) (δ : Type*) (β : Type*) where
     "patient `x : α` is a force-recipient at event `e : β`, related
     to some scale (latent), no transition entailed."
 
-    The primitive that @cite{beavers-2011} eq. (60c) requires to
+    The primitive that [beavers-2011] eq. (60c) requires to
     define Potential affectedness. Originates with
-    @cite{rappaport-hovav-levin-2001}'s "force recipient" — a verb
+    [rappaport-hovav-levin-2001]'s "force recipient" — a verb
     that imparts force to its theme without committing to a
     specific result state (surface contact / impact verbs:
     *wipe, scrub, rub, punch, hit, kick, slap*).
@@ -99,7 +99,7 @@ class HasLatentScale (α : Type*) (β : Type*) where
 
 /-! ### Beavers (60a-c) Affectedness Props -/
 
-/-- @cite{beavers-2011} eq. (60a) **Quantized**: `θ` entails patient
+/-- [beavers-2011] eq. (60a) **Quantized**: `θ` entails patient
     `x` ends event `e` holding the SPECIFIC degree `g_φ`.
     `φ → ∃e∃s[result'(x, s, g_φ, e)]`.
 
@@ -116,7 +116,7 @@ def Quantized {α δ β : Type*} [HasScalarResult α δ β]
     (θ : α → β → Prop) (g_φ : δ) : Prop :=
   ∀ x e, θ x e → HasScalarResult.resultAt x g_φ e
 
-/-- @cite{beavers-2011} eq. (60b) **Non-quantized**: `θ` entails patient
+/-- [beavers-2011] eq. (60b) **Non-quantized**: `θ` entails patient
     `x` ends event `e` holding SOME degree (not necessarily specific).
     `φ → ∃e∃s∃g[result'(x, s, g, e)]`.
 
@@ -126,7 +126,7 @@ def NonQuantized {α δ β : Type*} [HasScalarResult α δ β]
     (θ : α → β → Prop) : Prop :=
   ∀ x e, θ x e → ∃ g : δ, HasScalarResult.resultAt x g e
 
-/-- @cite{beavers-2011} eq. (60c) **Potential**: `θ` entails patient
+/-- [beavers-2011] eq. (60c) **Potential**: `θ` entails patient
     `x` is a force-recipient at event `e` (latent scale exists, no
     transition entailed).
     `φ → ∃e∃s∃θ_scale[θ_scale(x, s, e)]`.
@@ -135,7 +135,7 @@ def NonQuantized {α δ β : Type*} [HasScalarResult α δ β]
     over a result state (that encoding would be vacuous, equivalent to
     `Nonempty δ` via `Classical.em`). The latent-scale relation IS the
     formal content of "force recipient" per
-    @cite{rappaport-hovav-levin-2001}.
+    [rappaport-hovav-levin-2001].
 
     Linguistic exemplars: surface contact / impact verbs
     (*wipe, scrub, rub, punch, hit, kick, slap x*). -/
@@ -145,7 +145,7 @@ def Potential {α β : Type*} [HasLatentScale α β]
 
 /-! ### Implication Chain (Beavers eq. 62) -/
 
-/-! @cite{beavers-2011} eq. (62) — *The Affectedness Hierarchy*:
+/-! [beavers-2011] eq. (62) — *The Affectedness Hierarchy*:
     `quantized → non-quantized → potential`. Each level entails the
     next-weaker. The Quantized → Non-quantized step is direct; the
     Non-quantized → Potential step requires a forgetful link from
@@ -153,7 +153,7 @@ def Potential {α β : Type*} [HasLatentScale α β]
     typeclasses by design — see §2 docstring rationale). -/
 
 /-- Quantized entails Non-quantized: a specific final degree witnesses
-    the existential. @cite{beavers-2011} eq. (62) leftmost arrow. -/
+    the existential. [beavers-2011] eq. (62) leftmost arrow. -/
 theorem nonQuantized_of_quantized {α δ β : Type*} [HasScalarResult α δ β]
     {θ : α → β → Prop} {g_φ : δ}
     (h : Quantized θ g_φ) : NonQuantized (δ := δ) θ :=
@@ -163,7 +163,7 @@ theorem nonQuantized_of_quantized {α δ β : Type*} [HasScalarResult α δ β]
     `HasScalarResult` instance can be projected to a
     `HasLatentScale` instance (i.e., having a result state at any
     degree implies being a force-recipient), then NonQuantized lifts
-    to Potential. @cite{beavers-2011} eq. (62) middle arrow.
+    to Potential. [beavers-2011] eq. (62) middle arrow.
 
     The link witness `forget` is the explicit assumption that
     "patient ends event with some result state" implies "patient is a

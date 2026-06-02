@@ -7,7 +7,7 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Linarith
 /-!
 # Gradient At-Issueness and Projectivity
-@cite{roberts-2012} @cite{tonhauser-beaver-degen-2018}
+[roberts-2012] [tonhauser-beaver-degen-2018]
 Tonhauser-Beaver-Degen 2018's gradient at-issueness model: degrees
 and thresholds in `Rat01`, with at-issueness anti-correlated with
 projectivity. Mirrors the gradable-adjective pattern (degree > θ →
@@ -62,7 +62,7 @@ structure GradientPair where
 /-- A monotone-anti-correlation bundle: every pair ordering on at-issueness
     forces the reverse weak ordering on projectivity. This is a *structural*
     strengthening of the empirical Gradient Projection Principle of
-    @cite{tonhauser-beaver-degen-2018}, who establish a gradient negative
+    [tonhauser-beaver-degen-2018], who establish a gradient negative
     correlation across content classes (with substantial within-class and
     item-level variance), not a deterministic monotone pairing across every
     stimulus pair. Suitable for analytical scenarios where the strict-monotone
@@ -75,7 +75,7 @@ structure MonotoneAntiCorrelation where
     (pairs.get j).projectivity ≤ (pairs.get i).projectivity
 /-! ### QUD Connection -/
 /-- Qualitative QUD-based at-issueness: content varying within QUD cells
-    counts as at-issue (@cite{roberts-2012}). -/
+    counts as at-issue ([roberts-2012]). -/
 def atIssuenessFromQUD {M : Type*} (q : QUD M)
     (content : M → Bool) (worlds : List M) : AtIssuenessDegree :=
   let varies := worlds.any λ w₁ =>

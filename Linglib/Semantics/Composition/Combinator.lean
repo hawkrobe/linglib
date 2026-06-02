@@ -8,7 +8,7 @@ standard identities relating them (`I = S K K`, `B = S (K _) _`, `T = C I`).
 
 These are the substrate of variable-free / combinatory semantics: CCG's combinatory rules
 correspond to them (forward composition to `B`, type-raising to `T`, the substitution rule
-to `S`; @cite{steedman-2000}), and continuation/applicative composition and Jacobson-style
+to `S`; [steedman-2000]), and continuation/applicative composition and Jacobson-style
 binding use the same algebra. They live here in `Semantics/Composition/` alongside the
 other composition primitives rather than inside the CCG files.
 
@@ -25,8 +25,8 @@ other composition primitives rather than inside the CCG files.
 
 ## References
 
-- @cite{curry-feys-1958}
-- @cite{smullyan-1985}
+- [curry-feys-1958]
+- [smullyan-1985]
 -/
 
 namespace Combinator

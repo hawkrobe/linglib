@@ -2,7 +2,7 @@ import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{labov-2006} — The Social Stratification of English in New York City
+# [labov-2006] — The Social Stratification of English in New York City
 
 Cambridge University Press (2nd edition, 2006; first edition 1966).
 
@@ -243,7 +243,7 @@ def oh_B : ClassGroup → ℚ | .lower => 24 | .working => 39/2 | .middle => 47/
 def oh_C : ClassGroup → ℚ | .lower => 24 | .working => 23 | .middle => 53/2
 def oh_D : ClassGroup → ℚ | .lower => 21 | .working => 24 | .middle => 59/2
 
-/-- The (oh) *real deviation* (@cite{labov-2006} Ch. 7, p. 146):
+/-- The (oh) *real deviation* ([labov-2006] Ch. 7, p. 146):
     the lower class does not treat (oh) as a socially significant variable.
 
     Three key properties:
@@ -344,7 +344,7 @@ inductive NYCVariable where
   deriving DecidableEq, Repr
 
 /-- Classification of each variable by indexical order and change
-    status, following @cite{labov-2006} Ch. 7.
+    status, following [labov-2006] Ch. 7.
 
     All five variables show style shifting (Table 7.8), making them
     markers (second-order). The lower class's "real deviation" for (oh)
@@ -500,7 +500,7 @@ theorem ingProfile_classStrat_B :
   exact ⟨by native_decide, by native_decide, by native_decide⟩
 
 /-- (ing) is a marker (second-order): it shows both social stratification
-    and style shifting. Classified as Case I-A by @cite{labov-2006} —
+    and style shifting. Classified as Case I-A by [labov-2006] —
     a stigmatized feature not involved in change. -/
 def ing_behavior : VariableBehavior where
   order := .second

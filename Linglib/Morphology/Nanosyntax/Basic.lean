@@ -3,12 +3,12 @@ import Linglib.Morphology.Case.Allomorphy
 
 /-!
 # Nanosyntax: Core
-@cite{caha-2009}
+[caha-2009]
 
-Nanosyntax (@cite{caha-2009}, @cite{starke-2009}) is a non-lexicalist,
+Nanosyntax ([caha-2009], [starke-2009]) is a non-lexicalist,
 post-syntactic, piece-based, realizational theory of morphology —
 identical to Distributed Morphology on all four of
-@cite{kalin-bjorkman-etal-2026}'s dimensions, but distinguished by
+[kalin-bjorkman-etal-2026]'s dimensions, but distinguished by
 two mechanism-level differences:
 
 1. **Phrasal spellout**: lexical items spell out entire syntactic
@@ -17,7 +17,7 @@ two mechanism-level differences:
 
 2. **The Superset Principle**: a lexical entry matches a syntactic
    node if it has a sub-constituent identical to the node
-   (@cite{caha-2009} §2.2). Among competing entries, the
+   ([caha-2009] §2.2). Among competing entries, the
    Elsewhere Condition selects the most specific (smallest) match.
 
 ## The functional sequence (fseq)
@@ -44,7 +44,7 @@ hierarchy formalized in `Morphology.Case.Allomorphy`.
 ## Deriving *ABA
 
 The Superset Principle + fseq structure derives the *ABA
-constraint (@cite{caha-2009} §2.3). If entry β stores rank 2
+constraint ([caha-2009] §2.3). If entry β stores rank 2
 (ACC-sized) and entry α stores rank 3 (GEN-sized), then:
 
 - NOM (rank 0): both match, β wins (smaller) → β
@@ -93,7 +93,7 @@ structure LexEntry where
     sub-constituent — equivalently, if the entry's rank is at least
     as large as the target's rank.
 
-    @cite{caha-2009} §2.2: "A phonological exponent is inserted into
+    [caha-2009] §2.2: "A phonological exponent is inserted into
     a node if its lexical entry has a (sub-)constituent that is
     identical to the node." -/
 def LexEntry.matches (entry : LexEntry) (targetRank : Nat) : Bool :=

@@ -3,9 +3,9 @@ import Linglib.Core.Probability.Gaussian
 import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 
 /-!
-# Thurstone's Theory of Discriminal Processes @cite{luce-1959}
+# Thurstone's Theory of Discriminal Processes [luce-1959]
 
-@cite{luce-1959} §2.D (pp. 53-60): @cite{thurstone-1927}'s Case V model of
+[luce-1959] §2.D (pp. 53-60): [thurstone-1927]'s Case V model of
 paired comparison, and the logistic approximation that connects it to the
 Luce choice rule.
 
@@ -49,7 +49,7 @@ open Real MeasureTheory BigOperators Set
 -- §2. Thurstone Case V
 -- ============================================================================
 
-/-- Thurstone's Case V model (@cite{thurstone-1927}; @cite{luce-1959}, §2.D).
+/-- Thurstone's Case V model ([thurstone-1927]; [luce-1959], §2.D).
 
     Each stimulus has a scale value `scale(a)` and all stimuli share a common
     discriminal dispersion `sigma > 0`. The choice probability is determined
@@ -154,7 +154,7 @@ rewrites the Thurstone formula as:
   `P_T(a,b) = Φ(d / (σ√2)) = Φ(k·d · √3/π)`
 
 Since `Φ(y · √3/π) ≈ logistic(y)` numerically (max error ~0.023 with
-variance matching; see @cite{luce-1959} §2.D.2, Table 3), this gives:
+variance matching; see [luce-1959] §2.D.2, Table 3), this gives:
 
   `P_T(a,b) ≈ logistic(k·d) = 1/(1 + exp(-k·(u(a) - u(b))))`
 
@@ -175,7 +175,7 @@ with the optimal constant 1.702).
 noncomputable def thurstoneLuceK (sigma : ℝ) : ℝ :=
   Real.pi / (sigma * Real.sqrt 6)
 
-/-- **Thurstone–Luce identity** (@cite{luce-1959}, §2.D): the Thurstone
+/-- **Thurstone–Luce identity** ([luce-1959], §2.D): the Thurstone
     choice probability equals `normalCDF` evaluated at the variance-matched
     Luce argument scaled by `√3/π`.
 
@@ -206,7 +206,7 @@ theorem thurstone_luce_identity (m : ThurstoneCaseV Stimulus)
 /-!
 ## Theorem 7: Luce and Thurstone Diverge for Three or More Alternatives
 
-@cite{luce-1959} Theorem 7 (§2.D.3): for pairwise comparisons (n = 2),
+[luce-1959] Theorem 7 (§2.D.3): for pairwise comparisons (n = 2),
 the Luce and Thurstone models are approximately equivalent
 (`thurstone_luce_identity`). For n ≥ 3 alternatives, they are
 **fundamentally incompatible**: no independent Thurstone discriminal
@@ -227,7 +227,7 @@ The proof has two steps:
 The algebraic core (step 2) is formalized below.
 -/
 
-/-- **Luce–Thurstone incompatibility** (@cite{luce-1959}, Theorem 7):
+/-- **Luce–Thurstone incompatibility** ([luce-1959], Theorem 7):
     for three alternatives with positive Luce scales, the axiom 1
     "best-worst difference" does NOT equal `P(x,y) + P(x,z) - 1`
     (the value predicted by independent Thurstone processes).

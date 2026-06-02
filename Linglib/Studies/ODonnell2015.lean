@@ -4,11 +4,11 @@ import Linglib.Morphology.FragmentGrammars.FragmentGrammar
 /-!
 # O'Donnell 2015: English derivational morphology
 
-@cite{odonnell-2015}
+[odonnell-2015]
 
 First study file using the FG-family substrate from
 `Morphology/FragmentGrammars/`. Demonstrates the API on
-the central empirical contrast of @cite{odonnell-2015} Chapter 7
+the central empirical contrast of [odonnell-2015] Chapter 7
 (Fig 7.3, p. 262 / Table 7.1, p. 265): the productivity contrast
 between the highly productive English nominaliser *-ness* and the
 unproductive *-ion* and *-ate*. Data anchor:
@@ -25,23 +25,23 @@ file `FrequencySpectrum.lean` encodes a strict ordering
 `ness > ion > ate` via `Suffix.productivityIndex`; the
 `ion > ate` half is a tie-break (both are unproductive on novel
 forms but `-ate` is structurally more restricted), not part of
-@cite{odonnell-2015}'s central contrast.
+[odonnell-2015]'s central contrast.
 
 Note that `-ate` is **not** a nominaliser — it is a verb-forming
 suffix that selects bound stems (e.g. *segregate* from bound
 *segregat-*). The toy grammar below reflects this: `rAte` produces
 `V`, not `N`, with a `BND` (bound-stem) nonterminal as its argument.
 The three suffixes are grouped here by being the central derivational
-contrast of @cite{odonnell-2015} Ch 7, not by sharing an output category.
+contrast of [odonnell-2015] Ch 7, not by sharing an output category.
 
 ## DMPCFG critique (Ch 7)
 
 The DMPCFG model bases its productivity inferences on the token
-frequency of suffixes (@cite{odonnell-2015} Ch 7, p. 268). Per
-@cite{odonnell-2015} Fig 7.4 (p. 267), `-ion` has roughly an order
+frequency of suffixes ([odonnell-2015] Ch 7, p. 268). Per
+[odonnell-2015] Fig 7.4 (p. 267), `-ion` has roughly an order
 of magnitude more CELEX tokens than `-ness`, so a learned DMPCFG
 posterior places `-ion` above `-ness` in productivity — exactly the
-failure mode @cite{odonnell-2015} uses to discriminate FG from
+failure mode [odonnell-2015] uses to discriminate FG from
 DMPCFG. The pseudo-counts in `dmpcfgFromObserved` are *stipulated*
 to track the empirical productivity (via `productivityIndex`),
 not learned from a corpus. Two PMF-form theorems below
@@ -50,7 +50,7 @@ dichotomy Lean-checkable.
 
 ## References
 
-- @cite{odonnell-2015} Ch 6–7.
+- [odonnell-2015] Ch 6–7.
 -/
 
 namespace ODonnell2015
@@ -90,7 +90,7 @@ def rNess : ContextFreeRule Sym SuffixNT :=
 def rIon : ContextFreeRule Sym SuffixNT :=
   ⟨SuffixNT.N, [.nonterminal SuffixNT.V, .terminal Sym.ion]⟩
 
-/-- Rule V → BND · ate. Reflects @cite{odonnell-2015}'s `-ate:BND>V`
+/-- Rule V → BND · ate. Reflects [odonnell-2015]'s `-ate:BND>V`
     classification (p. 261): `-ate` is a verb-forming suffix that
     selects bound stems, not a noun-forming suffix. -/
 def rAte : ContextFreeRule Sym SuffixNT :=
@@ -235,7 +235,7 @@ theorem dmpcfgFromObserved_pseudo_respects_productivity
     exact_mod_cast h
   linarith
 
-/-- The central failure mode @cite{odonnell-2015} Ch 7 documents
+/-- The central failure mode [odonnell-2015] Ch 7 documents
     (p. 268; Fig 7.4 p. 267 supplies the CELEX evidence). DMPCFG
     posterior MAP weights track `pseudo + count`, so any corpus
     where `rIon` derivations exceed `rNess` derivations by more than
@@ -272,7 +272,7 @@ theorem dmpcfgFromObserved_mapWeightPMF_lt_of_count_gap
     pseudo-counts. Since `pseudoVal rNess > pseudoVal rIon` by
     construction, the PMF mass at `rNess` exceeds that at `rIon`.
 
-    The *first half* of the @cite{odonnell-2015} Ch 7 critique of
+    The *first half* of the [odonnell-2015] Ch 7 critique of
     DMPCFG: it does not start wrong. The model's failure mode is
     data-driven, not prior-driven. -/
 theorem dmpcfgFromObserved_mapWeightPMF_prior_lt :
@@ -300,7 +300,7 @@ theorem dmpcfgFromObserved_posteriorMAP_prior_lt :
       (dmpcfgFromObserved.posteriorMAP 0).rulePMF SuffixNT.N nNess :=
   dmpcfgFromObserved_mapWeightPMF_prior_lt
 
-/-- The full @cite{odonnell-2015} Ch 7 critique of DMPCFG, in one
+/-- The full [odonnell-2015] Ch 7 critique of DMPCFG, in one
     theorem. Two facts that look contradictory but aren't:
 
     - Without data (empty corpus), DMPCFG's PMF over the N-rules
@@ -309,7 +309,7 @@ theorem dmpcfgFromObserved_posteriorMAP_prior_lt :
     - Given a corpus with sufficiently many `rIon` derivations
       (more than `rNess` by more than the pseudo-count gap of 1),
       the PMF flips and ranks `rIon` above `rNess` — contradicting
-      the empirical productivity ordering @cite{odonnell-2015}
+      the empirical productivity ordering [odonnell-2015]
       reports for English.
 
     Per Ch 7 (Fig 7.4 p. 267), DMPCFG is built with the right prior
@@ -338,17 +338,17 @@ TODO(theorem) — bridge claims for future study files. Each is
 followed by the substrate gap that currently blocks stating it
 as a Lean theorem.
 
-- `fg_predicts_ness_in_top_5` — @cite{odonnell-2015} Fig 7.3 central
+- `fg_predicts_ness_in_top_5` — [odonnell-2015] Fig 7.3 central
   claim. Needs a "top-K productivity ranking" primitive over
   `FragmentGrammar` posteriors (substrate has `corpusProbGivenStorage`
   but no MAP-extraction lemma).
-- `fg_baayen_correlation` — @cite{odonnell-2015} Table 7.1. Needs a
+- `fg_baayen_correlation` — [odonnell-2015] Table 7.1. Needs a
   Baayen P-measure (hapax/N) substrate; `grep hapax Theories/`
   returns no matches.
-- `fg_consistent_with_hay_relative_frequency` — @cite{odonnell-2015}
+- `fg_consistent_with_hay_relative_frequency` — [odonnell-2015]
   §7.3.2 (p. 269). Needs a relative-frequency comparator primitive
   (Hay 2001 / Hay & Baayen 2002).
-- `ability_paradox_discriminates_fg_from_mag` — @cite{odonnell-2015}
+- `ability_paradox_discriminates_fg_from_mag` — [odonnell-2015]
   Ch 8. "MAG" is `AdaptorGrammar` (already formalised in
   `FragmentGrammars/AdaptorGrammar.lean`); needs a richer toy grammar
   with `-able`/`-ity` rules and a stored `-ability` fragment.

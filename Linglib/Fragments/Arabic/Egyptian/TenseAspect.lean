@@ -2,7 +2,7 @@ import Linglib.Typology.TenseAspect
 
 /-!
 # Arabic (Egyptian) tense-aspect profile (WALS Chs 65–69)
-@cite{wals-2013}
+[wals-2013]
 -/
 
 namespace Arabic.Egyptian

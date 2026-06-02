@@ -5,7 +5,7 @@ import Linglib.Fragments.Akan.Phonology
 
 /-!
 # McCarthy & Prince (1995): Faithfulness and Reduplicative Identity
-@cite{mccarthy-prince-1995}
+[mccarthy-prince-1995]
 
 Formalizes the core empirical results of Correspondence Theory: the
 interaction between I-O faithfulness, B-R identity, and phonological
@@ -451,7 +451,7 @@ theorem basic_model_factorial :
 
 /-! ### Underapplication is not a Basic Model category (§5)
 
-@cite{mccarthy-prince-1995} §5 argues that underapplication cannot emerge
+[mccarthy-prince-1995] §5 argues that underapplication cannot emerge
 from the Basic Model. Unlike overapplication and emergence of the unmarked,
 which follow from ranking permutations of {IO-Faith, Phono, BR-Id},
 underapplication requires an additional independent constraint (like the
@@ -470,7 +470,7 @@ unmarked) are the only optima. No ranking produces a 4th outcome. -/
     an underapplicational candidate because the Basic Model has no
     independent blocking constraint to exclude overapplication.
 
-    This is the formal content of @cite{mccarthy-prince-1995} §5's
+    This is the formal content of [mccarthy-prince-1995] §5's
     argument that underapplication requires an additional constraint
     beyond the three in the Basic Model. -/
 theorem basic_model_no_underapplication :

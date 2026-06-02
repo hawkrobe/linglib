@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Plurals.Projection
 
 /-!
-# @cite{kriz-chemla-2015}: Trivalent truth-value judgments for embedded plurals
+# [kriz-chemla-2015]: Trivalent truth-value judgments for embedded plurals
 
 Empirical anchor for the homogeneity-projection literature. Križ & Chemla
 (2015), "Two methods to find truth-value gaps and their application to the
@@ -22,8 +22,8 @@ The encoded stimulus rows themselves live in the pool at
 [[Phenomena.Plurals.Projection]] (generated from
 `Linglib/Data/Examples/KrizChemla2015.json` via `scripts/gen_examples.py`,
 routed by `Linglib/Data/Examples/KrizChemla2015.target`). The pool is
-where cross-account testing of rival theories (@cite{magri-2014},
-@cite{kriz-2016}, @cite{kriz-spector-2021}, @cite{bar-lev-2021}) lands.
+where cross-account testing of rival theories ([magri-2014],
+[kriz-2016], [kriz-spector-2021], [bar-lev-2021]) lands.
 
 ## Implementation notes
 
@@ -46,15 +46,15 @@ verified against the paper PDF:
 
 A fourth correction was the `no` projection finding: the prior
 encoding's `gapDetectable := false` reflected the A2/B2 null, but
-@cite{kriz-chemla-2015} §5.2.3 (Exp. C2) explicitly overturns it ("E-no
+[kriz-chemla-2015] §5.2.3 (Exp. C2) explicitly overturns it ("E-no
 does show a gap, which, albeit small, is robust" — β=1.3 χ²=8.2 p=.004 on
 Diag. 1, Table 9). The C2 finding lands as
 `Examples.no_C2_gap` with `gap_detected = "true"`.
 
 ## Todo
 
-* The presupposition account named by @cite{kriz-chemla-2015}
-  (Schwarzschild 1994 + @cite{gajewski-2005}) has no linglib study file
+* The presupposition account named by [kriz-chemla-2015]
+  (Schwarzschild 1994 + [gajewski-2005]) has no linglib study file
   yet; adding one would close the three-rival theoretical landscape the
   paper discusses.
 -/

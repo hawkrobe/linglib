@@ -7,12 +7,12 @@ import Linglib.Data.WALS.Features.F78A
 
 /-!
 # Tense-aspect typology — substrate types and WALS data
-@cite{wals-2013} (Chs 65–69, 78) @cite{comrie-1985}
-@cite{dahl-velupillai-2013} @cite{de-haan-2013} @cite{dryer-haspelmath-2013}
-@cite{bybee-perkins-pagliuca-1994}
+[wals-2013] (Chs 65–69, 78) [comrie-1985]
+[dahl-velupillai-2013] [de-haan-2013] [dryer-haspelmath-2013]
+[bybee-perkins-pagliuca-1994]
 
 Type-level enums + per-language profile struct for tense-aspect-mood-
-evidentiality systems across @cite{wals-2013} chapters 65–69 and 78, plus
+evidentiality systems across [wals-2013] chapters 65–69 and 78, plus
 WALS distribution data and the principal cross-linguistic generalizations.
 
 ## Schema
@@ -171,7 +171,7 @@ def EvidentialityCoding.hasEvidentiality : EvidentialityCoding → Bool
 -- ============================================================================
 
 /-- A language's tense-aspect-mood-evidentiality profile across
-    @cite{wals-2013} Chs 65–69 (mandatory) and Ch 78 (optional). -/
+    [wals-2013] Chs 65–69 (mandatory) and Ch 78 (optional). -/
 structure TAProfile where
   language : String
   iso : String
@@ -312,12 +312,12 @@ def walsCh69 : Ch69Counts :=
 -- Cross-linguistic generalizations
 -- ============================================================================
 
-/-- A majority of @cite{wals-2013} Ch 66 languages have past marking
+/-- A majority of [wals-2013] Ch 66 languages have past marking
     (134 of 222 = 60%). -/
 theorem past_marking_majority :
     walsCh66.totalWithPast > walsCh66.noMarking := by decide
 
-/-- Suffix dominance: @cite{wals-2013} Ch 69 suffixes outnumber prefixes by
+/-- Suffix dominance: [wals-2013] Ch 69 suffixes outnumber prefixes by
     more than 4:1 (667 vs 153). -/
 theorem suffix_dominant_over_prefix :
     walsCh69.suffixing > 4 * walsCh69.prefixing := by decide
@@ -365,7 +365,7 @@ theorem remoteness_uncommon :
     walsCh66.markedRemoteness2_3 + walsCh66.markedRemoteness4plus := by decide
 
 /-- Extreme remoteness (4+ degrees) is attested in only 2 languages worldwide
-    in the @cite{wals-2013} sample. -/
+    in the [wals-2013] sample. -/
 theorem extreme_remoteness_very_rare :
     walsCh66.markedRemoteness4plus = 2 := by decide
 

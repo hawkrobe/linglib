@@ -3,9 +3,9 @@ import Linglib.Studies.Ross1967
 
 /-!
 # Bridge: DG Islands → Phenomena Island Constraints
-@cite{osborne-2019} @cite{ross-1967}
+[osborne-2019] [ross-1967]
 
-Maps the DG rising-catena island taxonomy from @cite{osborne-2019} to the
+Maps the DG rising-catena island taxonomy from [osborne-2019] to the
 Phenomena island constraint types from `Ross1967`.
 
 Three of Osborne's island types have direct Phenomena equivalents:

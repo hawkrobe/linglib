@@ -4,9 +4,9 @@ import Linglib.Core.Nominal.Maximality
 
 /-!
 # Coppock & Beaver (2015): Definiteness and Determinacy
-@cite{coppock-beaver-2015}
+[coppock-beaver-2015]
 
-The central thesis of @cite{coppock-beaver-2015} is that the Russellian iota
+The central thesis of [coppock-beaver-2015] is that the Russellian iota
 condition `∃!x. P x` is not a primitive, but the conjunction of two
 logically independent components:
 
@@ -73,7 +73,7 @@ def planet : F.Denot .et
   | _    => False
 
 /-- Empty restrictor: `kingOfFrance` has no satisfier. The
-    @cite{coppock-beaver-2015} motivating case. -/
+    [coppock-beaver-2015] motivating case. -/
 def kingOfFrance : F.Denot .et := fun _ => False
 
 -- ════════════════════════════════════════════════════════════════
@@ -81,7 +81,7 @@ def kingOfFrance : F.Denot .et := fun _ => False
 -- ════════════════════════════════════════════════════════════════
 
 /-- The empty restrictor satisfies Uniqueness vacuously, but not
-    Existence. The exact configuration @cite{coppock-beaver-2015} use
+    Existence. The exact configuration [coppock-beaver-2015] use
     to argue that Uniqueness is a separate component, projecting
     through assertion polarity. -/
 theorem kingOfFrance_uniqueness_without_existence :
@@ -179,7 +179,7 @@ theorem interpret_planet :
 -- ════════════════════════════════════════════════════════════════
 
 /-- Predicate-level negation does not affect Uniqueness. This is the
-    @cite{coppock-beaver-2015} projection diagnostic, expressed at the
+    [coppock-beaver-2015] projection diagnostic, expressed at the
     restrictor layer: whether the King of France is bald or non-bald,
     the Uniqueness presupposition on `kingOfFrance` survives.
     Operationalized here as: Uniqueness is a property of the *restrictor*,

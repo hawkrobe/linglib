@@ -7,17 +7,17 @@ import Mathlib.Data.Rat.Defs
 /-!
 # Credence-Threshold Assertion
 
-@cite{lauer-2013}
+[lauer-2013]
 
 A credence-gated model of assertion: a proposition is assertable when
 the speaker's credence exceeds a context-dependent threshold.
-Lauer-adjacent in motivation but **not** the central @cite{lauer-2013}
+Lauer-adjacent in motivation but **not** the central [lauer-2013]
 contribution.
 
 ## ⚠ Naming history (was `Lauer.lean`)
 
 This file was previously named `Lauer.lean` but its content is a
-credence-threshold model, not @cite{lauer-2013}'s headline doxastic /
+credence-threshold model, not [lauer-2013]'s headline doxastic /
 preferential commitment split. The actual Lauer 2013 framework is
 substrate-supported elsewhere:
 
@@ -28,7 +28,7 @@ substrate-supported elsewhere:
   `Dialogue/CommitmentSpace.lean` (the `force` parameter on
   `IndexedWeightedCommitment.commit/refuse` and the
   `toDoxasticContextSet` / `toPreferentialContextSet` projections).
-- The @cite{condoravdi-lauer-2012} imperative-as-PEP study lives in
+- The [condoravdi-lauer-2012] imperative-as-PEP study lives in
   `Studies/CondoravdiLauer2012.lean`.
 
 ## Key properties of this file

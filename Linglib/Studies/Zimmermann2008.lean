@@ -4,12 +4,12 @@ import Linglib.Semantics.Quantification.ONEModifiers
 import Linglib.Core.Logic.Quantification.Basic
 
 /-!
-# @cite{zimmermann-2008}: Quantification in Hausa
+# [zimmermann-2008]: Quantification in Hausa
 
 Selected formalization from Zimmermann's handbook chapter in
-@cite{matthewson-2008}, the first formal-semantic treatment of the
+[matthewson-2008], the first formal-semantic treatment of the
 Hausa quantifier system whose textbook description is given in
-@cite{newman-2000} and @cite{jaggar-2001}. The two reference grammars
+[newman-2000] and [jaggar-2001]. The two reference grammars
 fix the inventory typed in `Hausa.Determiners`; this file
 consumes those entries, states Zimmermann's predicted denotations, and
 checks their consequences on a small concrete model.
@@ -19,10 +19,10 @@ checks their consequences on a small concrete model.
 * `Hausa.Determiners.UniversalQuantifier.z2008Denot` —
   the predicted denotation each Hausa universal entry receives under
   Zimmermann 2008's GQ analysis, reframed via the
-  @cite{haslinger-etal-2025-nllt} Q_∀ + ONE decomposition.
+  [haslinger-etal-2025-nllt] Q_∀ + ONE decomposition.
 * `Zimmermann2008.Faasinjee` — a 3-passenger SG-count domain
   instantiating the *kō-wh* restrictor case
-  (@cite{jaggar-2001} ex. *faasinjojî-n* p.376).
+  ([jaggar-2001] ex. *faasinjojî-n* p.376).
 * `Zimmermann2008.kowWh_buckled_false` — *kō-wh*'s singulative-
   distributive prediction on a model where one passenger falsifies
   the scope.
@@ -44,8 +44,8 @@ exhibited here (see Todo).
 
 ## References
 
-* @cite{newman-2000} §17.5, §20, §21 — Hausa reference grammar.
-* @cite{jaggar-2001} §9.5 — Hausa universal quantifiers.
+* [newman-2000] §17.5, §20, §21 — Hausa reference grammar.
+* [jaggar-2001] §9.5 — Hausa universal quantifiers.
 
 ## Todo
 
@@ -61,8 +61,8 @@ open Semantics.Quantification.ONEModifiers
 
 namespace Hausa.Determiners.UniversalQuantifier
 
-/-- @cite{zimmermann-2008}'s predicted denotation for each Hausa
-universal entry, reframed via the @cite{haslinger-etal-2025-nllt}
+/-- [zimmermann-2008]'s predicted denotation for each Hausa
+universal entry, reframed via the [haslinger-etal-2025-nllt]
 Q_∀ + ONE decomposition. *kō-wh* receives Q_∀ + ONE_∅ (atom-by-atom
 distributivity, Jaggar §9.5.1); *DUK* receives bare Q_∀ on a CUM
 restrictor (collective single-set scope, Jaggar §9.5.4). -/
@@ -80,14 +80,14 @@ open Core.Quantification (some_sem)
 
 /-! ### A 3-passenger SG-count Hausa domain
 
-Three passengers (*faasinjojî* @cite{jaggar-2001} §9.5.4 p.376) —
+Three passengers (*faasinjojî* [jaggar-2001] §9.5.4 p.376) —
 *Audù*, *Bàlki*, *Càdi* — board a plane; *Audù* and *Bàlki* buckle
 their seatbelts, *Càdi* does not. The minimal SG-count atomic domain
 on which *UniversalQuantifier.kowWh*'s atom-by-atom predication and
 *Indefinite.wani*'s scope ambiguity under negation are observable. -/
 
 /-- *faasinjèe* 'passenger'; *faasinjojî* PL.
-@cite{jaggar-2001} §9.5.4 p.376. -/
+[jaggar-2001] §9.5.4 p.376. -/
 inductive Faasinjee where | audu | balki | cadi
   deriving DecidableEq, Repr
 

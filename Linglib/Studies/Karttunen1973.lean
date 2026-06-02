@@ -6,7 +6,7 @@ import Linglib.Semantics.Presupposition.BeliefEmbedding
 
 /-!
 # Karttunen 1973: Presuppositions of Compound Sentences
-@cite{karttunen-1973} @cite{hintikka-1962} @cite{karttunen-1971}
+[karttunen-1973] [hintikka-1962] [karttunen-1971]
 
 Linguistic Inquiry 4(2): 169–193.
 
@@ -16,8 +16,8 @@ plug/hole/filter taxonomy of complement-takers (§§3–5), the asymmetric
 filtering rules for the connectives (§§5–7), the §8 Harman derivation of
 the conditional/conjunction-filter coincidence, and the §9 admission that
 filtering must be relativized to a set of background assumptions — the
-genealogical ancestor of CCP local contexts (@cite{heim-1983},
-@cite{schlenker-2009}).
+genealogical ancestor of CCP local contexts ([heim-1983],
+[schlenker-2009]).
 
 This file makes load-bearing the contributions that survive: the
 classification (§§3–4), the rule (13)/(17)/(24) filters, the §8 Harman
@@ -116,7 +116,7 @@ theorem promise_force_minimal_pair :
 /-! K1973 §11 (pp. 188–190) discusses propositional attitudes at length.
     §4 raised the question (hole or plug?) and postponed it. §11
     considers the hole-with-equivalence-machinery analysis: the (37)/(38)
-    move uses @cite{hintikka-1962}'s `believe(A) ∧ believe(B) ↔
+    move uses [hintikka-1962]'s `believe(A) ∧ believe(B) ↔
     believe(A ∧ B)` to let *believe* survive as a hole even when the
     complement-internal presupposition appears not to project. (38) keeps
     the hole verdict safe for cases like
@@ -137,7 +137,7 @@ theorem promise_force_minimal_pair :
     approach." So K1973's published verdict on `believe` is **tentative
     plug, with explicit hedging**. The Fragment annotation
     `believe.projectionBehavior = some .hole` reflects the post-1974 /
-    @cite{heim-1992} consensus, not K1973. -/
+    [heim-1992] consensus, not K1973. -/
 
 /-- The Fragment `believe` annotation diverges from K1973 §11. -/
 theorem believe_fragment_is_hole :
@@ -189,7 +189,7 @@ theorem plug_vs_hole_diverge_at_actual :
   refine ⟨trivial, ?_⟩
   simp [holeSpeakerCommitment, maryUsedToSmoke]
 
-/-- Heim 1992 / @cite{schlenker-2009} resolve the dispute by attributing
+/-- Heim 1992 / [schlenker-2009] resolve the dispute by attributing
     the presupposition to the *attitude holder*, not the speaker. The
     holder-attribution analysis lives in
     `Semantics/Presupposition/BeliefEmbedding.lean` as

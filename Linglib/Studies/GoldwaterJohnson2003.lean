@@ -2,10 +2,10 @@ import Linglib.Core.Constraint.Dequantization.OTLimit
 import Linglib.Core.Constraint.MaxEnt
 
 /-!
-# @cite{goldwater-johnson-2003}: Learning OT Constraint Rankings Using a Maximum Entropy Model
-@cite{goldwater-johnson-2003}
+# [goldwater-johnson-2003]: Learning OT Constraint Rankings Using a Maximum Entropy Model
+[goldwater-johnson-2003]
 
-@cite{goldwater-johnson-2003} introduce Maximum Entropy models to
+[goldwater-johnson-2003] introduce Maximum Entropy models to
 constraint-based phonology. Their eq (1) defines the conditional probability
 of output y given input x as:
 
@@ -48,7 +48,7 @@ open Core.Constraint Core Finset Real
 -- § 1: MaxEnt = softmax (eq (1))
 -- ============================================================================
 
-/-- @cite{goldwater-johnson-2003} eq (1) is `MaxEntGrammar.prob` by
+/-- [goldwater-johnson-2003] eq (1) is `MaxEntGrammar.prob` by
     definition — both are `softmax(harmonyScoreR, 1)`.
 
     The same `softmax` function powers RSA pragmatic reasoning
@@ -77,7 +77,7 @@ noncomputable def logPseudoLikelihood {I O : Type} [Fintype O] [Nonempty O]
 
     `J(w) = logPL(w) − Σᵢ (wᵢ − μᵢ)² / (2σᵢ²)`
 
-    @cite{goldwater-johnson-2003} use μᵢ = 0, σᵢ = σ for all constraints. -/
+    [goldwater-johnson-2003] use μᵢ = 0, σᵢ = σ for all constraints. -/
 noncomputable def regularizedObjective {I O : Type} [Fintype O] [Nonempty O]
     (g : MaxEntGrammar I O)
     (data : List (I × O))

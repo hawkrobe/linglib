@@ -5,7 +5,7 @@ import Mathlib.Probability.Distributions.Uniform
 
 /-!
 # RSA — Unbundled Operators
-@cite{frank-goodman-2012} @cite{degen-2023}
+[frank-goodman-2012] [degen-2023]
 
 Mathlib-shaped, struct-free formulation of RSA's three core operators, sitting
 alongside the bundled `RSAConfig` API (`Defs.lean` / `Basic.lean`). Each
@@ -127,7 +127,7 @@ theorem L0OfBoolMeaning_apply_of_not_mem [Fintype W] {m : U → W → Bool} {u :
 
 /-! ## S1: Pragmatic Speaker (belief-based) -/
 
-/-- Belief-based pragmatic speaker (@cite{frank-goodman-2012}):
+/-- Belief-based pragmatic speaker ([frank-goodman-2012]):
 `S1(u | w) ∝ L0(w | u)^α · costFactor(u)`, normalised over utterances.
 
 * `L0 : U → PMF W` — the literal listener kernel (often built via
@@ -193,7 +193,7 @@ theorem S1Belief_apply_le_iff_score_le (L0 : U → PMF W) (costFactor : U → �
 
 /-! ## S1: Pragmatic Speaker (softmax-of-expected-log form) -/
 
-/-- @cite{goodman-stuhlmuller-2013} / @cite{kao-etal-2014-metaphor}-style speaker:
+/-- [goodman-stuhlmuller-2013] / [kao-etal-2014-metaphor]-style speaker:
 `S1(u | obs) ∝ exp(α · Σ_s belief(s) · log lex(u, s))` when `qOk u`, else 0.
 
 Real-valued internally; lifted to `ℝ≥0∞` at the `PMF.normalize` boundary. The
@@ -265,7 +265,7 @@ gives back `lex u s*` rather than `1`.
 
 This is the bridge that lets transcendental softmax expressions reduce to
 rational arithmetic in models with deterministic full-access observations
-(e.g., @cite{goodman-stuhlmuller-2013} at access `.a3`). -/
+(e.g., [goodman-stuhlmuller-2013] at access `.a3`). -/
 theorem softmaxBelief_concentrated_apply [Fintype W] [DecidableEq W]
     (lex : U → W → ℝ) (sStar : W) (qOk : U → Prop) [DecidablePred qOk] (u : U)
     (h : qOk u → 0 < lex u sStar) :

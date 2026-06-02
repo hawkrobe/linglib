@@ -7,7 +7,7 @@ import Linglib.Core.Scales.Predicate
 
 /-!
 # Core/Scales/Bounds.lean — bounded-scale theorems + maxOnScale
-@cite{rett-2026}
+[rett-2026]
 
 Two clusters of theorems:
 
@@ -90,12 +90,12 @@ theorem open_scale_unlicensable [NoMaxOrder α] [NoMinOrder α]
     exact ⟨y, hy, le_trans hx (le_of_lt hy)⟩
 
 -- ════════════════════════════════════════════════════
--- § 6b. Order-Sensitive MAX (@cite{rett-2026})
+-- § 6b. Order-Sensitive MAX ([rett-2026])
 -- ════════════════════════════════════════════════════
 
 /-! ### Scale-sensitive maximality operator
 
-@cite{rett-2026}: MAX_R(X) picks the element(s)
+[rett-2026]: MAX_R(X) picks the element(s)
 of X that R-dominate all other members. For the `<` scale this is the GLB
 (earliest / smallest), for `>` the LUB (latest / largest). The same operator
 underlies both temporal connectives (*before*/*after*) and degree comparatives.
@@ -103,7 +103,7 @@ underlies both temporal connectives (*before*/*after*) and degree comparatives.
 - Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
 -/
 
-/-- Order-sensitive maximality (@cite{rett-2026}, def. 1):
+/-- Order-sensitive maximality ([rett-2026], def. 1):
     MAX_R(X) = { x ∈ X | ∀ x' ∈ X, x' ≠ x → R x x' }.
     Domain-general over any relation R and set X. -/
 def maxOnScale {α : Type*} (R : α → α → Prop) (X : Set α) : Set α :=

@@ -3,11 +3,11 @@ import Linglib.Features.LicensingContext
 
 /-!
 # Semantics.Polarity.Licensing
-@cite{ladusaw-1979} @cite{kadmon-landman-1993} @cite{zwarts-1998}
-@cite{von-fintel-1999} @cite{chierchia-2006}
-@cite{horn-1996} @cite{hoeksema-1983} @cite{bhatt-pancheva-2004}
-@cite{heim-2006} @cite{iatridou-2000} @cite{dayal-1996}
-@cite{van-rooy-2003}
+[ladusaw-1979] [kadmon-landman-1993] [zwarts-1998]
+[von-fintel-1999] [chierchia-2006]
+[horn-1996] [hoeksema-1983] [bhatt-pancheva-2004]
+[heim-2006] [iatridou-2000] [dayal-1996]
+[van-rooy-2003]
 
 Monotonicity-based licensing infrastructure for polarity-sensitive items:
 the `LicensingContext` enum (~22 contexts), the `LicensingMechanism`
@@ -30,9 +30,9 @@ model is documented there.
 ## Framework commitment
 
 The `contextProperties` map encodes the **monotonicity-based**
-licensing tradition: @cite{ladusaw-1979} (DE-licensing), @cite{zwarts-1998}
-(anti-additive/anti-morphic refinement), @cite{kadmon-landman-1993}
-(domain widening + strengthening), @cite{von-fintel-1999} (Strawson-DE
+licensing tradition: [ladusaw-1979] (DE-licensing), [zwarts-1998]
+(anti-additive/anti-morphic refinement), [kadmon-landman-1993]
+(domain widening + strengthening), [von-fintel-1999] (Strawson-DE
 extension), and the every-restrictor-as-LAA result (variously
 attributed to Zwarts 1981 / van Benthem 1986 / Sánchez Valencia 1991;
 none currently in `references.bib`).
@@ -47,8 +47,8 @@ substantively distinct cases:
 - `byStrengthening`: K&L-canonical DE + widening (covers Ladusaw 1979).
 - `byGenericIndefinite`: non-DE FC any (modals, generics, free relatives).
 - `byStrawsonDE`: licensing via Strawson entailment (superlatives) —
-  @cite{von-fintel-1999} / Herdan & Sharvit (UNVERIFIED — bib entry missing).
-- `byEntropy`: entropy-based licensing (questions per @cite{van-rooy-2003}).
+  [von-fintel-1999] / Herdan & Sharvit (UNVERIFIED — bib entry missing).
+- `byEntropy`: entropy-based licensing (questions per [van-rooy-2003]).
 - `strengtheningFails`: contexts that *don't* license despite surface
   appearance (e.g., NP-comparatives that lack covert clausal structure).
 
@@ -79,18 +79,18 @@ open Features (LicensingContext)
 
 /-- The mechanism by which a context licenses NPIs.
 
-    @cite{kadmon-landman-1993} unify NPI licensing under domain widening +
+    [kadmon-landman-1993] unify NPI licensing under domain widening +
     strengthening. The substrate refines K&L's original 3-way classification
     into 5 substantively distinct cases.
 
     - `byStrengthening` — DE contexts where widening strengthens the assertion.
-      Covers @cite{ladusaw-1979}'s monotonicity-based licensing.
+      Covers [ladusaw-1979]'s monotonicity-based licensing.
     - `byGenericIndefinite` — Non-DE contexts (modals, generics, free relatives)
       where *any* surfaces as the generic indefinite (FC any).
     - `byStrawsonDE` — Strawson-DE licensing (superlatives per
       Herdan & Sharvit's superlative-NPI work [UNVERIFIED — bib entry
-      missing] and @cite{von-fintel-1999}).
-    - `byEntropy` — Entropy-based licensing (questions per @cite{van-rooy-2003}).
+      missing] and [von-fintel-1999]).
+    - `byEntropy` — Entropy-based licensing (questions per [van-rooy-2003]).
     - `strengtheningFails` — contexts that *don't* license despite surface
       appearance (e.g., NP-comparatives that lack covert clausal structure).
       Used by study files (e.g., `KadmonLandman1993.lean`) for ungrammatical
@@ -123,14 +123,14 @@ structure ContextProperties where
   prototype : String
   /-- BibTeX keys for the works that established this classification. -/
   citations : List String
-  /-- Strawson-DE flag (@cite{von-fintel-1999}): when `true`, the
+  /-- Strawson-DE flag ([von-fintel-1999]): when `true`, the
       `signature` field over-promises classical DE — the context is in
       fact only DE under presupposition (Strawson-DE), not classically.
       Default `false` (the signature stands as a classical claim).
 
       Examples requiring this flag: `.onlyFocus`, `.adversative`,
       `.sinceTemporal` — classical-DE-on-paper but shown by
-      @cite{von-fintel-1999} to be only Strawson-DE. The
+      [von-fintel-1999] to be only Strawson-DE. The
       `byStrawsonDE` mechanism case is for items whose licensing
       *primarily* comes from Strawson-DE (e.g., superlative);
       `isStrawsonOnly` is for cases where the signature *also* needs
@@ -192,10 +192,10 @@ def contextProperties : LicensingContext → ContextProperties
       , prototype := "He was too tired to say anything."
       , citations := ["ladusaw-1979"] }
   | .comparativeNP =>
-      -- @cite{hoeksema-1983}: the NP-comparative is a Boolean
+      -- [hoeksema-1983]: the NP-comparative is a Boolean
       -- homomorphism `Set (Set U) → Set U`, hence monotone increasing — it
       -- does *not* license NPIs. Modern interval-semantic accounts
-      -- (@cite{bhatt-pancheva-2004}, @cite{heim-2006}) reduce surface
+      -- ([bhatt-pancheva-2004], [heim-2006]) reduce surface
       -- "than NP" with NPI to a covert clausal source — those NPIs are
       -- licensed by `.comparativeS`, not by this slot.
       { signature := .mono, mechanism := .strengtheningFails

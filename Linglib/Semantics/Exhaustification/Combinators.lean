@@ -2,26 +2,26 @@ import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Excluder Combinators
-@cite{fox-2007} @cite{magri-2009} @cite{fox-katzir-2011} @cite{trinh-haida-2015}
+[fox-2007] [magri-2009] [fox-katzir-2011] [trinh-haida-2015]
 
 Two combinators on `Excluder W`, modelling the two ways a base excluder
 can be modified by linguistic constraints:
 
 - `Excluder.restrict E R` filters the **output** of `E.excluded`. Only
   alternatives the base excluder already chose AND that satisfy `R`
-  remain. This is @cite{magri-2009}'s relevance modifier and the natural
+  remain. This is [magri-2009]'s relevance modifier and the natural
   home for any post-exclusion filter.
 
 - `Excluder.preFilter E P` filters the **input** alternative set before
   `E` runs. The base excluder sees a smaller `ALT`, which can change
   which alternatives become innocently excludable. This is the natural
   home for restrictions on **what counts as a formal alternative** —
-  e.g. @cite{trinh-haida-2015}'s Atomicity constraint, @cite{katzir-2007}'s
+  e.g. [trinh-haida-2015]'s Atomicity constraint, [katzir-2007]'s
   structural-complexity bound on `F(S)`.
 
 ## The Fox–Katzir asymmetry
 
-@cite{fox-katzir-2011}'s central thesis distinguishes the contextual
+[fox-katzir-2011]'s central thesis distinguishes the contextual
 restriction `C` (what is contextually relevant) from the formal
 alternative source `F` (what counts as an alternative at all). They
 argue that `C` cannot break symmetry — only `F` can. As an algebraic
@@ -37,7 +37,7 @@ theorem about excluder combinators:
   `preFilter_can_create_implicature` witness shows this strengthening
   for the canonical symmetric pair `{{w₀}, {w₁}}`.
 
-So the structural asymmetry that @cite{fox-katzir-2011} state as a
+So the structural asymmetry that [fox-katzir-2011] state as a
 constraint on theories of alternatives falls out, in this library, as
 an algebraic fact about which combinator one chose: post-filter
 (`restrict`) is conservative; pre-filter (`preFilter`) is not.
@@ -99,7 +99,7 @@ theorem exh_subset_restrict_exh (E : Excluder W) (R : Finset W → Bool)
     Contrapositively: an implicature licensed under `E.restrict R` was
     already licensed under `E`. The contextual modifier can drop
     implicatures, never add them. This is the algebraic statement of
-    @cite{fox-katzir-2011}'s claim that contextual restriction `C`
+    [fox-katzir-2011]'s claim that contextual restriction `C`
     cannot break symmetry. -/
 theorem restrict_preserves_no_implicature (E : Excluder W)
     (R : Finset W → Bool) (ALT : Finset (Finset W)) (φ ψ : Finset W)
@@ -174,7 +174,7 @@ private theorem preFilter_innocent_exh_at_symmetric_pair :
     Compare `restrict_preserves_no_implicature` (positive half): this
     strengthening is impossible for `restrict`, because its monotonicity
     is structural. The asymmetry between `restrict` and `preFilter` is
-    exactly @cite{fox-katzir-2011}'s thesis that `C` cannot break
+    exactly [fox-katzir-2011]'s thesis that `C` cannot break
     symmetry but `F` can. -/
 theorem preFilter_can_create_implicature :
     ∃ (E : Excluder Bool) (ALT : Finset (Finset Bool)) (φ ψ : Finset Bool)

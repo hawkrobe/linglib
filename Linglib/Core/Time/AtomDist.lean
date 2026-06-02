@@ -3,15 +3,15 @@ import Linglib.Core.Time.Interval.Basic
 /-!
 # Atomic distributivity
 
-@cite{champollion-2015} @cite{zhao-2025}
+[champollion-2015] [zhao-2025]
 
-`AtomDist` is the event-quantifier-level form of @cite{zhao-2025}'s
+`AtomDist` is the event-quantifier-level form of [zhao-2025]'s
 ATOM-DIST_t (Def. 5.36, p. 165): an event quantifier `V` satisfies
 ATOM-DIST with respect to a trace `τ` iff whenever it applies to an
 event property fixing the trace as `i`, it also applies to the property
 fixing the trace as any subinterval `i'` of `i`.
 
-Per the strata-theory unification (@cite{champollion-2017}), this is
+Per the strata-theory unification ([champollion-2017]), this is
 the quantifier-level form of stratified reference at point-interval
 granularity along the time dimension — a sibling of the Bennett-Partee
 1972 strict subinterval property (`HasSubintervalProp` in
@@ -23,7 +23,7 @@ quantification structure and are not directly interderivable without
 explicit witness-existence assumptions.
 
 The `antiAtomDistLicensed` predicate is the licensing condition for
-Mandarin perfective particles in @cite{zhao-2025} (le, méi-yǒu).
+Mandarin perfective particles in [zhao-2025] (le, méi-yǒu).
 -/
 
 namespace Core.Time
@@ -33,7 +33,7 @@ namespace Core.Time
     quantificational force. The Champollion 2015 typed shape. -/
 abbrev EvQuant (Event : Type*) := (Event → Prop) → Prop
 
-/-- ATOM-DIST_α (@cite{zhao-2025} Def. 5.36, p. 165): an event quantifier
+/-- ATOM-DIST_α ([zhao-2025] Def. 5.36, p. 165): an event quantifier
     V satisfies ATOM-DIST with respect to trace function τ iff for every
     event predicate P and subinterval i' of τ(e), V also holds for the
     restriction of P to events whose trace is i'.
@@ -55,7 +55,7 @@ def AtomDist {Event : Type*} {α : Type*} [LinearOrder α]
 /-- NOT-ATOM-DIST_α licensing condition:
     A particle is licensed by an event quantifier V (w.r.t. trace τ) iff
     V does NOT satisfy ATOM-DIST_α. This is the presupposition of
-    Mandarin le and méi-yǒu (@cite{zhao-2025} eq. 5.42). -/
+    Mandarin le and méi-yǒu ([zhao-2025] eq. 5.42). -/
 def antiAtomDistLicensed {Event : Type*} {α : Type*} [LinearOrder α]
     (τ : Event → Interval α) (V : EvQuant Event) : Prop :=
   ¬ AtomDist τ V
@@ -63,7 +63,7 @@ def antiAtomDistLicensed {Event : Type*} {α : Type*} [LinearOrder α]
 namespace EvQuant
 
 /-- Existential lift of an event predicate to an event quantifier:
-    `λf. ∃e, P e ∧ f e`. The standard way (per @cite{champollion-2015})
+    `λf. ∃e, P e ∧ f e`. The standard way (per [champollion-2015])
     to view a verb's predicate denotation as an event quantifier; used
     to bridge the predicate-level strata theory (`SR_univ` etc.) to the
     quantifier-level `AtomDist`. -/

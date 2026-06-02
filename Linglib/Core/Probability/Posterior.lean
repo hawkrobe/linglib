@@ -418,7 +418,7 @@ Both intermediate normalisations cancel: the outer `marginal` cancels via
 `mul_lt_mul_iff_left`. The result is "Bayes' rule for two conditionally-
 independent observations sharing a prior".
 
-Used in chained-RSA models like @cite{nouwen-2024}'s intersective
+Used in chained-RSA models like [nouwen-2024]'s intersective
 intensifier inference (paper Eq. 73): first update Π = stage-1 L1, then
 second update against Π. Mathlib has the `Kernel`-categorical version
 (`posterior_comp`); this is the discrete-PMF analogue. -/
@@ -525,7 +525,7 @@ they cross-multiply.
 
 This is the "competition at the boundary" pattern in RSA: `L1 u₁ w > L1 u₂ w`
 where both u₁ and u₂ apply at the same world. Used in
-@cite{kennedy-2015}-style findings for boundary numerals.
+[kennedy-2015]-style findings for boundary numerals.
 
 The `μ a` cancellation requires `μ a ≠ 0` and `≠ ⊤`. -/
 private theorem posterior_cross_obs_lt_iff {α β : Type*} (κ : α → PMF β) (μ : PMF α) (a : α)

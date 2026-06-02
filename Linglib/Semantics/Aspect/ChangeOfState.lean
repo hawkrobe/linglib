@@ -235,7 +235,7 @@ theorem continuation_assertion_equals_presup (P : W → Prop) :
 -- Class C Property
 
 /--
-All CoS predicates shift under belief (@cite{tonhauser-beaver-roberts-simons-2013}: Class C).
+All CoS predicates shift under belief ([tonhauser-beaver-roberts-simons-2013]: Class C).
 
 The presupposition is attributed to the speaker by default, but shifts
 to a belief holder in embedded contexts:

@@ -2,7 +2,7 @@ import Linglib.Semantics.Composition.SetMonad
 
 /-!
 # Charlow (2020): The Scope of Alternatives
-@cite{charlow-2020}
+[charlow-2020]
 
 The scope of alternatives: indefiniteness and islands.
 *Linguistics and Philosophy* 43(4): 427–472.
@@ -47,7 +47,7 @@ open Semantics.Composition.SetMonad
 
 /-! ### §1 Exceptional scope out of conditional islands
 
-@cite{charlow-2020} §2.1, eqs (1)–(2): indefinites (but not universals)
+[charlow-2020] §2.1, eqs (1)–(2): indefinites (but not universals)
 can take scope out of the antecedent of a conditional.
 
   (1) If [a rich relative of mine dies], I'll inherit a house.
@@ -60,7 +60,7 @@ The indefinite *a rich relative of mine* denotes a set of individuals
 (type `S e`). The monad's `⫝̸` turns the island into a set of alternative
 propositions, and ASSOCIATIVITY guarantees this equals direct wide scope.
 
-The derivation follows @cite{charlow-2020} §4.1–4.2, eq. (33),
+The derivation follows [charlow-2020] §4.1–4.2, eq. (33),
 Figures 6–7. -/
 
 section ConditionalIsland
@@ -90,7 +90,7 @@ def house : Prop := True
     island edge via `⫝̸`, turning the island into a set of alternative
     antecedent propositions.
 
-    @cite{charlow-2020} eq. (33), first `⫝̸`:
+    [charlow-2020] eq. (33), first `⫝̸`:
     `aRel ⫝̸ (λx. η(dies x)) = {dies r₁, dies r₂}`. -/
 def islandMeaning : Prop → Prop :=
   setBind aRichRelative (fun x => eta (dies x))
@@ -98,7 +98,7 @@ def islandMeaning : Prop → Prop :=
 /-- **Step 2** (island-external): the pied-piped island takes scope
     over the conditional via a second `⫝̸`.
 
-    @cite{charlow-2020} eq. (33), second `⫝̸`:
+    [charlow-2020] eq. (33), second `⫝̸`:
     `{dies x | rel x} ⫝̸ (λp. η(p → house))`. -/
 def conditionalMeaning : Prop → Prop :=
   setBind islandMeaning (fun antecedent => eta (antecedent → house))
@@ -142,7 +142,7 @@ end ConditionalIsland
 
 /-! ### §2 Intermediate exceptional scope
 
-@cite{charlow-2020} §2.1, eq. (3), §4.2 Figure 8: indefinites allow not
+[charlow-2020] §2.1, eq. (3), §4.2 Figure 8: indefinites allow not
 just widest scope but also **intermediate** exceptional scope.
 
   (3) Each student has to come up with three arguments showing that
@@ -157,7 +157,7 @@ universal *each student*.
 The difference from §1 is simply WHERE the indefinite stops. Each
 application of ASSOCIATIVITY crosses one island boundary. The indefinite
 can always "forego one or more of the secondary island scopings, come
-what may higher up in the tree" (@cite{charlow-2020} p. 442). -/
+what may higher up in the tree" ([charlow-2020] p. 442). -/
 
 section IntermediateScope
 
@@ -213,7 +213,7 @@ end IntermediateScope
 
 /-! ### §3 Selectivity
 
-@cite{charlow-2020} §5: when multiple indefinites occur on an island,
+[charlow-2020] §5: when multiple indefinites occur on an island,
 the grammar generates **selective** exceptional scope — each indefinite
 can independently take scope inside or outside the island.
 
@@ -254,7 +254,7 @@ def visits : LawyerOrRel → LawyerOrRel → Prop := fun _ _ => True
 /-- **Higher-order island meaning**: two applications of `η` produce
     `S(S t)` — a set of sets.
 
-    @cite{charlow-2020} §5.2, Figure 10 (left tree): the lawyer
+    [charlow-2020] §5.2, Figure 10 (left tree): the lawyer
     indefinite sits in the outer layer (via an extra `η`), the relative
     in the inner layer.
 
@@ -300,7 +300,7 @@ def bothWide : Prop → Prop :=
 
     This arises from the higher-order island: the outer layer (lawyers)
     scopes above the conditional, while the inner layer (relatives)
-    is existentially closed inside it (@cite{charlow-2020} eq. 49). -/
+    is existentially closed inside it ([charlow-2020] eq. 49). -/
 def lawyerWide : Prop → Prop :=
   setBind isLawyer (fun l =>
     eta ((∃ r, isRelative r ∧ visits l r) → house))
@@ -321,7 +321,7 @@ end Selectivity
 
 /-! ### §4 Binder Roof Constraint
 
-@cite{charlow-2020} §6.4: when an operator binds into an indefinite,
+[charlow-2020] §6.4: when an operator binds into an indefinite,
 the indefinite cannot scope over that operator.
 
   (52) Every boyˣ who talked to a friend of hisₓ left.     *∃ ≫ ∀
@@ -342,7 +342,7 @@ For the indefinite to scope OVER x's binder, we would need:
 There is no well-typed term that achieves this. The constraint is
 enforced by the type system, not by a stipulation.
 
-This contrasts with **choice-function** approaches (@cite{reinhart-1997}),
+This contrasts with **choice-function** approaches ([reinhart-1997]),
 which leave indefinites in situ and therefore need additional stipulations
 to block the wide-scope reading (cf. eqs (67)–(69) in the paper). -/
 

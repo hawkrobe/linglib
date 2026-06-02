@@ -6,7 +6,7 @@ import Linglib.Studies.Beaver2001.ABLE
 import Mathlib.Data.Set.Basic
 
 /-!
-# Beaver (2001) @cite{beaver-2001}
+# Beaver (2001) [beaver-2001]
 
 Presupposition and Assertion in Dynamic Semantics: A Critical Review of
 Linguistic Theories of Presupposition. CSLI Publications.
@@ -43,7 +43,7 @@ from the same source — **PrProp.presup**.
 - Local context for q in `p → q` = `{ w ∈ c | p.assertion w }` (from PrProp)
 - Accommodation operates on `p.presup` directly
 
-`PrProp` IS the two-dimensional representation of @cite{karttunen-peters-1979}:
+`PrProp` IS the two-dimensional representation of [karttunen-peters-1979]:
 `.presup` = their P-function, `.assertion` = their A-function. The filtering
 connectives resolve the "binding problem" (variables not linked between
 dimensions) by computing compound presuppositions from BOTH `.presup` and
@@ -74,7 +74,7 @@ variable {W : Type*}
 
 -- ══════════════════════════════════════════════════════════
 -- § 1. The Symmetry Problem and Fact 2.1
--- (@cite{beaver-2001} Ch. 2)
+-- ([beaver-2001] Ch. 2)
 -- ══════════════════════════════════════════════════════════
 
 /-! ### SK vs MK: Symmetry and Presupposition Projection
@@ -86,7 +86,7 @@ projection, which favors the SK/heritage prediction over CCP.
 
 ### Fact 2.1: SK Projection Predictions
 
-@cite{beaver-2001} Fact 2.1 gives the SK projection predictions for all
+[beaver-2001] Fact 2.1 gives the SK projection predictions for all
 binary connectives. The hallmark of SK is **uniformity**: every binary
 connective (∧, ∨, →) predicts the same presupposition — π(φ) ∧ π(ψ) —
 and **symmetry**: swapping φ and ψ does not change the projection.
@@ -96,13 +96,13 @@ This uniformity is empirically too strong: "if p then q" presupposes
 (`PrProp.impFilter`, etc.) capture this asymmetry. -/
 
 /-- SK disjunction is symmetric for presupposition projection.
-    @cite{beaver-2001} Ch. 2: the correct empirical prediction. -/
+    [beaver-2001] Ch. 2: the correct empirical prediction. -/
 theorem sk_disjunction_symmetric (a b : Truth3) :
     a ⊔ b = b ⊔ a := by
   cases a <;> cases b <;> rfl
 
 /-- MK disjunction is NOT symmetric.
-    @cite{beaver-2001} Ch. 2: MK captures left-to-right processing
+    [beaver-2001] Ch. 2: MK captures left-to-right processing
     but overpredicts asymmetry for disjunction. -/
 theorem mk_disjunction_asymmetric :
     ∃ a b : Truth3, Truth3.joinMiddle a b ≠ Truth3.joinMiddle b a :=
@@ -144,19 +144,19 @@ theorem filtering_presup_not_symmetric :
 
 -- ══════════════════════════════════════════════════════════
 -- § 2. PrProp as Two-Dimensional Representation
--- (@cite{beaver-2001} Ch. 2, §2.2; @cite{karttunen-peters-1979})
+-- ([beaver-2001] Ch. 2, §2.2; [karttunen-peters-1979])
 -- ══════════════════════════════════════════════════════════
 
 /-! ### The Two-Dimensional Approach
 
-@cite{karttunen-peters-1979} proposed parallel translation functions A(·)
+[karttunen-peters-1979] proposed parallel translation functions A(·)
 and P(·) that compute assertion and presupposition separately. This is
 structurally identical to `PrProp`:
 
 - `PrProp.assertion` = A(·) (assertion translation)
 - `PrProp.presup` = P(·) (presupposition translation)
 
-The **binding problem** (@cite{beaver-2001} Ch. 2): in Karttunen & Peters'
+The **binding problem** ([beaver-2001] Ch. 2): in Karttunen & Peters'
 system, quantifier variables in the assertion dimension are not linked to
 variables in the presupposition dimension. For example, in "Every student
 stopped smoking", the student bound by "every" in the assertion should be
@@ -184,19 +184,19 @@ theorem sk_ignores_assertion (p q : PrProp W) (w : W) :
 
 -- ══════════════════════════════════════════════════════════
 -- § 3. Heritage = Filtering (by construction)
--- (@cite{beaver-2001} Ch. 3)
+-- ([beaver-2001] Ch. 3)
 -- ══════════════════════════════════════════════════════════
 
 /-! Karttunen's heritage function for a connective is the presupposition
 that the compound inherits from its parts. For filtering connectives,
 this IS the `.presup` field — no separate heritage type needed.
 
-The convergence of heritage, filtering, and CCP is @cite{beaver-2001}'s
+The convergence of heritage, filtering, and CCP is [beaver-2001]'s
 central result for Chs. 2-4. We show it holds by construction: all three
 read from the same `PrProp.presup` and `PrProp.assertion` fields. -/
 
 /-- Heritage function for conditionals IS `.presup` of `impFilter`.
-    @cite{beaver-2001} Ch. 3: heritage, filtering, and CCP agree. -/
+    [beaver-2001] Ch. 3: heritage, filtering, and CCP agree. -/
 example (p q : PrProp W) : (PrProp.impFilter p q).presup =
     (λ w => p.presup w ∧ (p.assertion w → q.presup w)) := rfl
 
@@ -224,7 +224,7 @@ theorem filtering_weaker_than_sk (p q : PrProp W)
 
 -- ══════════════════════════════════════════════════════════
 -- § 4. Static ↔ Dynamic Agreement
--- (@cite{beaver-2001} Chs. 3-4)
+-- ([beaver-2001] Chs. 3-4)
 -- ══════════════════════════════════════════════════════════
 
 /-! The static filtering connectives and the dynamic CCP approach
@@ -235,8 +235,8 @@ q's presupposition (from q.presup).
 
 ### Connection to Common Ground and File Change Semantics
 
-@cite{beaver-2001} Ch. 4 discusses @cite{stalnaker-1974}'s common ground
-and @cite{heim-1983}'s File Change Semantics in detail. The `ContextSet W`
+[beaver-2001] Ch. 4 discusses [stalnaker-1974]'s common ground
+and [heim-1983]'s File Change Semantics in detail. The `ContextSet W`
 type used here IS the context set from `CommonGround`.
 `ContextSet.update` IS Heim's FCS update: intersect the context set with a
 proposition, keeping only worlds where the proposition holds.
@@ -245,7 +245,7 @@ The local context at position q in `p → q` is
 `ContextSet.update c p.assertion` — exactly
 `Semantics.Presupposition.LocalContext.localCtxConsequent`. -/
 
-/-- File Change Semantics update (@cite{heim-1983}) IS `ContextSet.update`.
+/-- File Change Semantics update ([heim-1983]) IS `ContextSet.update`.
     The context set c updated with proposition p keeps only worlds where
     p holds. This is the foundation of CCP/dynamic semantics (Ch. 4). -/
 example (c : ContextSet W) (p : Set W) :
@@ -254,9 +254,9 @@ example (c : ContextSet W) (p : Set W) :
 /-- Static filtering = dynamic local context for conditionals.
     Both derive from PrProp fields: `.presup` and `.assertion`.
     This is the cornerstone theorem connecting three approaches:
-    1. Static filtering (@cite{karttunen-1973})
-    2. Heim's CCP / File Change Semantics (@cite{heim-1983})
-    3. Local contexts (@cite{schlenker-2009}) -/
+    1. Static filtering ([karttunen-1973])
+    2. Heim's CCP / File Change Semantics ([heim-1983])
+    3. Local contexts ([schlenker-2009]) -/
 theorem static_dynamic_agreement (c : ContextSet W)
     (p q : PrProp W) :
     (∀ w, c w → (PrProp.impFilter p q).presup w) ↔
@@ -266,7 +266,7 @@ theorem static_dynamic_agreement (c : ContextSet W)
 
 -- ══════════════════════════════════════════════════════════
 -- § 5. Accommodation and Cancellation
--- (@cite{beaver-2001} Ch. 5)
+-- ([beaver-2001] Ch. 5)
 -- ══════════════════════════════════════════════════════════
 
 /-! Heim's observation: global accommodation preference ≈ Gazdar cancellation.
@@ -295,10 +295,10 @@ theorem heim_synthesis_cancellation (c : ContextSet W)
 
 -- ══════════════════════════════════════════════════════════
 -- § 6. Conditional Presuppositions
--- (@cite{beaver-2001} Ch. 5)
+-- ([beaver-2001] Ch. 5)
 -- ══════════════════════════════════════════════════════════
 
-/-! @cite{beaver-2001} argues that presuppositions can themselves be
+/-! [beaver-2001] argues that presuppositions can themselves be
 conditional. The Spaceman Spiff example:
 
   "If Spaceman Spiff lands on Planet X, he will be bothered by the
@@ -357,7 +357,7 @@ theorem conditional_presup_stronger_than_filtering :
 
 -- ══════════════════════════════════════════════════════════
 -- § 7. PUL: Presuppositional Update Logic
--- (@cite{beaver-2001} Ch. 6)
+-- ([beaver-2001] Ch. 6)
 -- ══════════════════════════════════════════════════════════
 
 /-! ### Beaver's Dynamic Theory
@@ -386,7 +386,7 @@ through `PrProp.presup`: a PUL update from a PrProp sentence p is
 defined at context σ iff `∀ w, σ w → p.presup w = true`. -/
 
 /-- PUL atomic update: intersect context with proposition.
-    @cite{beaver-2001} Ch. 6. Equivalent to `ContextSet.update`. -/
+    [beaver-2001] Ch. 6. Equivalent to `ContextSet.update`. -/
 def pulUpdate (p : Set W) (σ : ContextSet W) : ContextSet W :=
   ContextSet.update σ p
 
@@ -443,7 +443,7 @@ theorem pulImpl_atomic (p q : Set W) (σ : ContextSet W) (w : W) :
 
 -- ══════════════════════════════════════════════════════════
 -- § 8. ABLE Worked Examples
--- (@cite{beaver-2001} Chs. 7-8)
+-- ([beaver-2001] Chs. 7-8)
 -- ══════════════════════════════════════════════════════════
 
 /-! ### ABLE Fragment Demonstrations

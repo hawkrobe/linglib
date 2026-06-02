@@ -5,7 +5,7 @@ import Linglib.Semantics.Lexical.LevinClass
 /-!
 # Variable Agentivity: Polysemy or Underspecification?
 
-@cite{rappaport-hovav-levin-2024}
+[rappaport-hovav-levin-2024]
 
 A formalization of Rappaport Hovav & Levin's 2024 *Glossa* paper on the
 English verb *sweep* and the wiping-verbs class. The paper argues that the
@@ -16,7 +16,7 @@ of two mechanisms, not one.
 ## Main claims
 
 1. **basic-*sweep*** is unspecified for agentivity. Its event structure
-   (@cite{rappaport-hovav-levin-2024} p.17, eq.42) is a complex activity
+   ([rappaport-hovav-levin-2024] p.17, eq.42) is a complex activity
    with two grammatically relevant predicates: motion and force-transmission
    through contact. Either predicate can determine argument realization
    per-frame, yielding the simple transitive, transitive+PP, and
@@ -24,21 +24,21 @@ of two mechanisms, not one.
 
 2. **broom-*sweep*** is obligatorily agentive. It is derived from
    basic-*sweep* by lexicalization of the moving entity as a broom
-   (@cite{kiparsky-1997} on canonical-use of denominal verbs). The broom's
+   ([kiparsky-1997] on canonical-use of denominal verbs). The broom's
    instrument status forces an agent who manipulates it; the broom's
    design purpose underlies the routine-activity narrowing that licenses
-   the unspecified-object frame (@cite{glass-2022}, @cite{brisson-1994},
-   @cite{mittwoch-2005}). The two senses constitute motivated polysemy
+   the unspecified-object frame ([glass-2022], [brisson-1994],
+   [mittwoch-2005]). The two senses constitute motivated polysemy
    (distinct from regular polysemy à la Apresjan; zeugma test eq.35).
 
 3. The motion-and-sustained-contact event structure generalizes to the
-   wiping-verbs class (@cite{levin-1993} 10.4): *sweep*, *rub*, *scrape*,
-   *wipe*. Force-dynamic primitives follow @cite{talmy-1988},
-   @cite{croft-2012}, @cite{copley-harley-2015},
-   @cite{goldschmidt-zwarts-2016}.
+   wiping-verbs class ([levin-1993] 10.4): *sweep*, *rub*, *scrape*,
+   *wipe*. Force-dynamic primitives follow [talmy-1988],
+   [croft-2012], [copley-harley-2015],
+   [goldschmidt-zwarts-2016].
 
 4. **Counterexample to the resultative restriction.**
-   @cite{schaefer-2012}'s and @cite{folli-harley-2008}'s claim that
+   [schaefer-2012]'s and [folli-harley-2008]'s claim that
    non-agentive external arguments require a result phrase fails for
    basic-*sweep* (eq.92: *A breeze moved the willows, the tips of their
    branches sweeping the ground*).
@@ -48,7 +48,7 @@ of two mechanisms, not one.
 * `MotionContactES`: the two-predicate complex-activity event structure for
   the wiping-verbs class. `basicSweep` and `broomSweep` are instances.
 * `ForceRole` and `Effector`: force-dynamic primitives following
-  @cite{talmy-1988}, @cite{croft-2012}, @cite{copley-harley-2015}.
+  [talmy-1988], [croft-2012], [copley-harley-2015].
 * `DeterminingPredicate` (motion / contact): per-frame parameter to the
   argument-realization principles.
 * `Frame`: the five syntactic frames attested for basic-*sweep* and
@@ -56,7 +56,7 @@ of two mechanisms, not one.
 * `realizeFrame`: applies argument-realization principles (43)-(45) to
   produce the predicted frame from an event structure and a determining
   predicate.
-* `WipingVerb`: the @cite{levin-1993} class 10.4 (sweep / rub / scrape /
+* `WipingVerb`: the [levin-1993] class 10.4 (sweep / rub / scrape /
   wipe) sharing the basic-*sweep* event structure.
 
 ## Implementation notes
@@ -72,8 +72,8 @@ case in `Features/EventStructure.lean` is a misformalization of the
 Footnote 31 of the paper explicitly disclaims the asymmetric "x moves...
 while x imparts..." formulation: the subordination is prose-only.
 Footnote 32 generalizes the mechanism beyond *sweep* to locative
-alternation (@cite{rappaport-hovav-levin-1998} 1c–d), substance-emission
-verbs (@cite{levin-krejci-2019}), and *drown*.
+alternation ([rappaport-hovav-levin-1998] 1c–d), substance-emission
+verbs ([levin-krejci-2019]), and *drown*.
 
 ## Todo
 
@@ -81,10 +81,10 @@ verbs (@cite{levin-krejci-2019}), and *drown*.
   `sweepBroomSubjectProfile` once the inline `EntailmentProfile` records
   are promoted to named exports (project decision pending).
 * Formalize the lexicon-uniformity blocker for some causative-alternation
-  pairs (@cite{rappaport-hovav-2014} on direct-causation requirement).
-* Engage @cite{ramchand-2008}'s first-phase syntax and
-  @cite{borer-2005} as syntactic rivals to the lexical-projection account
-  this paper inherits from @cite{rappaport-hovav-levin-1998}.
+  pairs ([rappaport-hovav-2014] on direct-causation requirement).
+* Engage [ramchand-2008]'s first-phase syntax and
+  [borer-2005] as syntactic rivals to the lexical-projection account
+  this paper inherits from [rappaport-hovav-levin-1998].
 -/
 
 namespace RappaportHovavLevin2024
@@ -96,7 +96,7 @@ open Semantics.Lexical
 /-! ### Force-dynamic primitives -/
 
 /-- Role in a force-transmission sub-event
-(@cite{talmy-1988}, @cite{croft-2012}, @cite{goldschmidt-zwarts-2016}).
+([talmy-1988], [croft-2012], [goldschmidt-zwarts-2016]).
 
 In basic-*sweep*'s event structure (p.17, eq.42), x is the **force-bearer**
 (it imparts the force) and y is the **force-recipient** (the surface
@@ -118,14 +118,14 @@ intentional control. Instruments and body parts qualify as force-bearers
 only under agent control (footnote 9, p.7). -/
 inductive Effector where
   /-- Volitional, intentional human or animal participant
-      (@cite{cruse-1973}, @cite{van-valin-wilkins-1996}, p.7). -/
+      ([cruse-1973], [van-valin-wilkins-1996], p.7). -/
   | agent
   /-- Wind, fire, water, storms — inherently self-energetic
       (p.25). -/
   | naturalPhenomenon
   /-- Physical objects with kinetic energy imparted by an unmentioned
       causer; can transmit that energy through contact
-      (@cite{kearns-2000} on projectiles; p.23). -/
+      ([kearns-2000] on projectiles; p.23). -/
   | projectile
   /-- Self-propelled artifact (footnote 9, p.7); patterns with agents
       grammatically but not in the strict animate-intentional sense. -/
@@ -159,7 +159,7 @@ abbrev Effector.QualifiesAsSimpleTransitiveSubject : Effector → Prop :=
   Effector.IsSelfEnergetic
 
 /-- An effector can intentionally manipulate an instrument
-(@cite{rappaport-hovav-levin-2024} p.7, footnote 9). Only agents and
+([rappaport-hovav-levin-2024] p.7, footnote 9). Only agents and
 self-propelled machines pattern this way; machines pattern with agents
 grammatically but are not animate-intentional. Natural phenomena and
 projectiles, despite being self-energetic, do not manipulate
@@ -177,11 +177,11 @@ instance (e : Effector) : Decidable e.CanManipulateInstrument := by
 The grammatically relevant meaning components of *sweep* and other
 verbs in the wiping-verbs class. Encoded as a structure type so that
 broom-*sweep* (with the moving entity lexicalized) is derived by
-field-level minimal adjustment per @cite{rappaport-hovav-levin-2024} §3.5
+field-level minimal adjustment per [rappaport-hovav-levin-2024] §3.5
 (eq.76). -/
 
 /-- The motion-and-sustained-contact event structure
-(@cite{rappaport-hovav-levin-2024} p.17, eq.42):
+([rappaport-hovav-levin-2024] p.17, eq.42):
 
 > *x moves across a surface y while x imparts a force to y through contact*
 
@@ -197,7 +197,7 @@ structure MotionContactES where
   /-- Lexicalization status of the moving entity x.
       `none` = unsaturated (basic-*sweep*); `some "broom"` =
       basic-*sweep*'s moving-entity variable saturated by broom (broom-*sweep*).
-      Other instrument-lexicalizations in English (@cite{harley-haugen-2007}):
+      Other instrument-lexicalizations in English ([harley-haugen-2007]):
       `comb`, `funnel`, `hoe`, `mop`, `plow`, `rake`, `saw`, `shovel`,
       `staple`, `towel`, `whip` (paper eq.77). -/
   movingEntityLexicalization : Option String := none
@@ -232,7 +232,7 @@ instance (es : MotionContactES) : Decidable es.IsLexicallySaturated := by
 /-! ### Argument-realization principles ((43)-(45)) -/
 
 /-- Per-frame choice of which predicate in the event structure
-@cite{rappaport-hovav-levin-2024} (eq.42) determines argument realization.
+[rappaport-hovav-levin-2024] (eq.42) determines argument realization.
 
 > "When an event structure includes two grammatically relevant predicates,
 > the argument realization principles are applied with respect to only
@@ -256,7 +256,7 @@ inductive DeterminingPredicate where
 /-! ### Syntactic frames -/
 
 /-- The five syntactic frames attested for the wiping-verbs class
-(@cite{rappaport-hovav-levin-2024} §2, p.5-13). -/
+([rappaport-hovav-levin-2024] §2, p.5-13). -/
 inductive Frame where
   /-- *the branch of the tree swept the window*: contact determines AR
       from basic-*sweep*. Subject is force-bearer/effector; surface is
@@ -272,7 +272,7 @@ inductive Frame where
   | unaccusativePP
   /-- *Yesterday I swept in the morning*: contact determines AR from
       broom-*sweep*; surface omitted under routine-activity narrowing
-      (@cite{glass-2022}, @cite{brisson-1994}, @cite{mittwoch-2005}). -/
+      ([glass-2022], [brisson-1994], [mittwoch-2005]). -/
   | unspecifiedObject
   deriving DecidableEq, Repr
 
@@ -328,7 +328,7 @@ simple-transitive subject because it's self-energetic via intentional
 control. The `with`-phrase requirement is a separate condition on the
 syntactic frame, not on the effector classification.
 
-@cite{rissman-vanputten-majid-2022}: body parts as instrument-like
+[rissman-vanputten-majid-2022]: body parts as instrument-like
 extensions of the subject. -/
 theorem basicSweep_simple_transitive_admits_agent :
     Effector.agent.QualifiesAsSimpleTransitiveSubject := trivial
@@ -342,7 +342,7 @@ theorem basicSweep_rejects_bare_instrument :
 /-! ### Obligatory agentivity in broom-*sweep* -/
 
 /-- broom-*sweep*'s lexically saturated moving entity is a broom — an
-artifact-noun-derived instrument (@cite{kiparsky-1997} on canonical-use).
+artifact-noun-derived instrument ([kiparsky-1997] on canonical-use).
 Brooms require intentional manipulation (paper footnote 9, p.7);
 therefore the external argument of broom-*sweep* must be capable of
 intentional instrument manipulation: agent or machine.
@@ -384,9 +384,9 @@ theorem broomSweep_contact_yields_simple_transitive (hc : Bool) :
 
 /-! ### Counterexample to the resultative restriction -/
 
-/-- @cite{schaefer-2012}'s **resultative restriction**: non-agentive
+/-- [schaefer-2012]'s **resultative restriction**: non-agentive
 external arguments require a result phrase in the VP (or imply one).
-@cite{folli-harley-2008} refined this to *external arguments lacking
+[folli-harley-2008] refined this to *external arguments lacking
 teleological capability*.
 
 basic-*sweep* with the contact-determines derivation falsifies both:
@@ -410,7 +410,7 @@ theorem resultative_restriction_falsified :
 /-! ### Routine-activity narrowing -/
 
 /-- broom-*sweep*'s unspecified-object frame is licensed by routine-activity
-narrowing (@cite{glass-2022}, @cite{brisson-1994}, @cite{mittwoch-2005}):
+narrowing ([glass-2022], [brisson-1994], [mittwoch-2005]):
 denominal-like verbs derived via lexicalization of artifacts come to
 refer to culturally-recognized routine activities for which the
 canonical-purpose object can be omitted.
@@ -419,7 +419,7 @@ Parallel cases (p.28-29):
 * `mop` (denominal from *mop*, the canonical activity is floor-mopping)
 * `bake` (non-denominal but specialized to baked-goods preparation in the
   unspecified-object frame: *I baked this morning* ≠ baking potatoes)
-* `clean` (@cite{levin-rappaport-hovav-2014})
+* `clean` ([levin-rappaport-hovav-2014])
 * `wash` (Alexiadou et al. 2017 from the references)
 
 basic-*sweep* does NOT license the unspecified-object frame
@@ -438,8 +438,8 @@ instance (es : MotionContactES) : Decidable (LicensesUnspecifiedObject es) :=
 /-! ### Motivated polysemy
 
 The paper distinguishes its analysis of *sweep*'s two senses from
-"regular polysemy" (@cite{apresjan-1973}, Pustejovsky 1995, 1998,
-@cite{nunberg-1995}, @cite{cruse-1995}, @cite{dolling-2014}) by two
+"regular polysemy" ([apresjan-1973], Pustejovsky 1995, 1998,
+[nunberg-1995], [cruse-1995], [dolling-2014]) by two
 diagnostics:
 
 1. **Zeugma test** (Zwicky & Sadock 1975, Cruse 1986, Asher 2011 §3-4;
@@ -476,17 +476,17 @@ def sweepPolysemy : MotivatedPolysemy where
 /-! ### Wiping-verbs class generalization -/
 
 /-- The motion-and-sustained-contact event structure generalizes to the
-@cite{levin-1993} class 10.4 (wiping verbs): *sweep*, *rub*, *scrape*,
+[levin-1993] class 10.4 (wiping verbs): *sweep*, *rub*, *scrape*,
 *wipe*. The paper establishes generalization in §2.3-2.4
 (p.13-14): *rub* and *scrape* show the same constellation of syntactic
 frames as basic-*sweep*, supporting the contention that basic-*sweep*'s
 event structure is shared by the class. *wipe* itself is not explicitly
 worked through but is assumed to pattern with the class
-(@cite{levin-rappaport-hovav-1991}).
+([levin-rappaport-hovav-1991]).
 
 These verbs differ in lexicalized **manner** (the type of motion-with-contact):
 * *sweep*: extended movement across a planar surface, contact during
-  trajectory (@cite{mcnally-spalek-2022}).
+  trajectory ([mcnally-spalek-2022]).
 * *rub*: contact with pressure, back-and-forth or circular movement.
 * *scrape*: similar to sweep but with a harder contact and removal
   affordance.
@@ -514,11 +514,11 @@ instance (v : WipingVerb) : Decidable v.HasSpecializedSense := by
 
 /-! ### Bridge to existing substrate
 
-The wiping-verbs class corresponds to @cite{levin-1993} class 10.4,
+The wiping-verbs class corresponds to [levin-1993] class 10.4,
 encoded as `LevinClass.wipe` in `Linglib/Semantics/Lexical/LevinClass.lean`.
 Verbs in this class share the basic-*sweep* event structure. -/
 
-/-- @cite{levin-1993} 10.4 — the wiping-verbs Levin class. -/
+/-- [levin-1993] 10.4 — the wiping-verbs Levin class. -/
 def wipingLevinClass : LevinClass := .wipe
 
 /-- All `WipingVerb` instances belong to `LevinClass.wipe`. -/

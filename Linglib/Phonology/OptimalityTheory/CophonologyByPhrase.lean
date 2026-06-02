@@ -3,15 +3,15 @@ import Linglib.Syntax.Minimalist.Phase
 
 /-!
 # Cophonologies by Ph(r)ase
-@cite{sande-jenks-inkelas-2020}
+[sande-jenks-inkelas-2020]
 
-@cite{sande-jenks-2017} (formalized in `CophonologyTheory.lean`)
+[sande-jenks-2017] (formalized in `CophonologyTheory.lean`)
 proposed that the cophonology trigger is the individual **Vocabulary
 Item** inserted at a terminal node — the **R** component of a VI lists
 constraints promoted above the default ranking when that VI wins
 insertion.
 
-@cite{sande-jenks-inkelas-2020} extends this to handle **long-distance
+[sande-jenks-inkelas-2020] extends this to handle **long-distance
 morphologically conditioned phonological effects** — phonological
 processes in one word affected by morphemes in another word, within
 the same syntactic phase. Two architectural moves:
@@ -29,16 +29,16 @@ the same syntactic phase. Two architectural moves:
    selector), but the cophonology itself is a pure constraint
    subranking with no syntactic vocabulary.
 
-This gives @cite{newell-2008}-style cyclic phase phonology a CPT shape
+This gives [newell-2008]-style cyclic phase phonology a CPT shape
 without violating the modularity assumption that phonology operates on
 phonological strings, not on syntactic trees.
 
 ## Why this substrate is needed
 
-@cite{sande-clem-dabkowski-2026} ground their analysis of Guébie
+[sande-clem-dabkowski-2026] ground their analysis of Guébie
 discontinuous harmony in this framework: the vP phase carries the
 ATR-harmony cophonology (the *ATRHARM(ONY)* constraint, formulated
-under @cite{hansson-2014}'s Agreement-by-Projection), so that when V
+under [hansson-2014]'s Agreement-by-Projection), so that when V
 and the particle are both spelled out within vP, harmony applies; in
 SVO clauses where V has moved out of vP to T, only the particle is
 in the vP-spell-out and harmony does not apply. The substrate change
@@ -60,10 +60,10 @@ machinery, just a different trigger.
 ## What this substrate does NOT do
 
 It does not implement bracket erasure (Lexical Phonology /
-@cite{kiparsky-1982}) nor PF discharge / rewrite (Distributed
-Morphology / @cite{harley-noyer-1999}, @cite{embick-noyer-2007}). Both
+[kiparsky-1982]) nor PF discharge / rewrite (Distributed
+Morphology / [harley-noyer-1999], [embick-noyer-2007]). Both
 are competing theories of the syntax-phonology interface;
-@cite{sande-clem-dabkowski-2026} §6.2 explicitly argues against them.
+[sande-clem-dabkowski-2026] §6.2 explicitly argues against them.
 The substrate's neutral position is to make the SBJ 2020 / SCD 2026
 view expressible without forcing it on consumers.
 -/
@@ -80,10 +80,10 @@ open Minimalist (Phase SyntacticObject)
 -- ============================================================================
 
 /-- A cophonology triggered by spell-out of a particular kind of phase
-    (@cite{sande-jenks-inkelas-2020}). Bundles a phase-head predicate
+    ([sande-jenks-inkelas-2020]). Bundles a phase-head predicate
     with a constraint subranking promoted within the matched phase.
 
-    Examples (per @cite{sande-clem-dabkowski-2026}):
+    Examples (per [sande-clem-dabkowski-2026]):
     - vP phase carries the ATR-harmony cophonology — `phaseSelector`
       matches v heads, `subranking` lists ATRHARM ≫ IDENT-IO(ATR).
     - DP phase carries definite-marker phonology — `phaseSelector`
@@ -140,7 +140,7 @@ theorem phrasalCophonologicalEval_empty_sub {C : Type} [DecidableEq C]
     phase, return the *first* cophonology whose `phaseSelector` matches
     the phase head. The "first" convention encodes lexicographic
     precedence — earlier-listed cophonologies win, mimicking the
-    English-style elsewhere ordering of @cite{sande-jenks-inkelas-2020}.
+    English-style elsewhere ordering of [sande-jenks-inkelas-2020].
 
     Returns `none` if no registered cophonology matches; in that case
     callers should fall back to the default ranking. -/

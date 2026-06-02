@@ -3,9 +3,9 @@ import Linglib.Semantics.Degree.Basic
 
 /-!
 # Kennedy 1999: Projecting the Adjective
-@cite{kennedy-1999} @cite{bresnan-1973} @cite{bhatt-pancheva-2004} @cite{kennedy-2007} @cite{lechner-2004} @cite{rett-2020} @cite{schwarzschild-2008}
+[kennedy-1999] [bresnan-1973] [bhatt-pancheva-2004] [kennedy-2007] [lechner-2004] [rett-2020] [schwarzschild-2008]
 
-@cite{kennedy-1999} "Projecting the Adjective" (dissertation, UC Santa Cruz;
+[kennedy-1999] "Projecting the Adjective" (dissertation, UC Santa Cruz;
 published 1999, Garland). The foundational argument that gradable adjectives
 denote **measure functions** (Entity → Degree), with degree morphemes (-er,
 as, -est, too, enough) as functional heads of a DegP projection that bind
@@ -31,7 +31,7 @@ the degree argument.
    as a lexical property (proved in `Core.Scale.antonymy_biconditional`).
 
 5. **DegP projection**: Degree morphemes head their own syntactic phrase.
-   This has been refined by @cite{heim-2001} (sentential operator approach)
+   This has been refined by [heim-2001] (sentential operator approach)
    and subsequent work. The core insight — that degree binding is syntactic,
    not lexical — is consensus.
 
@@ -42,9 +42,9 @@ the degree argument.
 
 The measure function denotation and extent functions (§ 1–4) are current
 consensus — they underlie all subsequent degree-semantic work including
-@cite{kennedy-2007} and @cite{schwarzschild-2008}.
+[kennedy-2007] and [schwarzschild-2008].
 
-The specific DegP syntax (§ 5) has been refined: @cite{heim-2001}'s
+The specific DegP syntax (§ 5) has been refined: [heim-2001]'s
 sentential operator approach is now co-standard, and the two make
 different scope predictions. This study file records both the data and
 the 1999-era analysis.
@@ -52,9 +52,9 @@ the 1999-era analysis.
 ## Additional Data
 
 This file also collects comparison construction data from
-@cite{bresnan-1973} (phrasal/clausal comparatives, morphological
-distribution), @cite{bhatt-pancheva-2004} and @cite{lechner-2004}
-(subcomparatives), and @cite{kennedy-2007} and @cite{rett-2020}
+[bresnan-1973] (phrasal/clausal comparatives, morphological
+distribution), [bhatt-pancheva-2004] and [lechner-2004]
+(subcomparatives), and [kennedy-2007] and [rett-2020]
 (equative constructions).
 
 -/
@@ -82,7 +82,7 @@ structure CrossPolarDatum where
   note : String := ""
   deriving Repr
 
-/-- Cross-polar anomaly data from @cite{kennedy-1999}. -/
+/-- Cross-polar anomaly data from [kennedy-1999]. -/
 def crossPolarData : List CrossPolarDatum :=
   [ { sentence := "Kim is as tall as Lee"
     , acceptable := true, samePolarity := true, isEquative := true
@@ -98,12 +98,12 @@ def crossPolarData : List CrossPolarDatum :=
     , note := "cross-polar: neg-ext(height, Kim) vs pos-ext(height, Lee)" }
   , { sentence := "??Kim is taller than Lee is short"
     , acceptable := false, samePolarity := false, isEquative := false
-    , note := "cross-polar anomaly: direct antonyms on same dimension (@cite{buring-2007} §1, ex. 1b)" }
+    , note := "cross-polar anomaly: direct antonyms on same dimension ([buring-2007] §1, ex. 1b)" }
   ]
 
 /-- Cross-polar = unacceptable for both equatives and comparatives
     when the adjectives are direct antonyms on the same dimension.
-    @cite{buring-2007} shows this holds uniformly (§1, ex. 1). -/
+    [buring-2007] shows this holds uniformly (§1, ex. 1). -/
 theorem crossPolar_iff_unacceptable :
     ∀ d ∈ crossPolarData,
       (d.acceptable = false ↔ d.samePolarity = false) := by
@@ -152,7 +152,7 @@ theorem comparative_extent_bridge {Entity D : Type*} [LinearOrder D]
 -- § 5. Antonymy Biconditional
 -- ════════════════════════════════════════════════════
 
-/-- **Central theorem of @cite{kennedy-1999} Ch. 3**: antonymy
+/-- **Central theorem of [kennedy-1999] Ch. 3**: antonymy
     equivalence is DERIVED from the complementarity of positive and
     negative extents, not stipulated as a lexical property.
 
@@ -180,12 +180,12 @@ theorem equative_antonymy_extent {Entity D : Type*} [LinearOrder D]
 -- § 6. Historical: DegP Projection
 -- ════════════════════════════════════════════════════
 
-/-- @cite{kennedy-1999}'s DegP projection: degree morphemes are
+/-- [kennedy-1999]'s DegP projection: degree morphemes are
     functional heads taking AdjP as complement.
 
     `[DegP [Deg° -er, as, -est, too, enough] [AdjP tall]]`
 
-    This specific syntactic structure was refined by @cite{heim-2001},
+    This specific syntactic structure was refined by [heim-2001],
     who treats -er as a sentential operator rather than a DegP head.
     Both agree that degree binding is syntactic.
 
@@ -198,7 +198,7 @@ structure HistoricalDegP where
   adjective : String
   deriving Repr
 
-/-- Example DegP constructions from @cite{kennedy-1999}. -/
+/-- Example DegP constructions from [kennedy-1999]. -/
 def exampleDegPs : List HistoricalDegP :=
   [ { head := .comparative, adjective := "tall" }   -- "taller"
   , { head := .equative, adjective := "tall" }       -- "as tall"
@@ -211,7 +211,7 @@ def exampleDegPs : List HistoricalDegP :=
 -- § 7. Measure Phrase Distribution
 -- ════════════════════════════════════════════════════
 
-/-- @cite{kennedy-1999} §3.1.8 observes that measure phrases are acceptable
+/-- [kennedy-1999] §3.1.8 observes that measure phrases are acceptable
     with positive adjectives but not negative ones:
 
     (69) "My Cadillac is 8 feet long."     ✓
@@ -247,7 +247,7 @@ theorem measurePhrase_positive_only :
 -- ════════════════════════════════════════════════════
 
 /-- An acceptability judgment for a comparative construction.
-    @cite{bresnan-1973} @cite{kennedy-1999} @cite{lechner-2004} -/
+    [bresnan-1973] [kennedy-1999] [lechner-2004] -/
 structure ComparativeJudgment where
   /-- The example sentence -/
   sentence : String
@@ -316,7 +316,7 @@ def morphDistribution : List MorphDistributionDatum :=
     adjectives (Gradability/).
 
     Note: "bare comparative" = comparative without an explicit standard.
-    This is NOT "comparative deletion" in @cite{bresnan-1973}'s sense
+    This is NOT "comparative deletion" in [bresnan-1973]'s sense
     (= identity-based deletion of a clause constituent from the
     than-clause). -/
 structure BareComparativeDatum where
@@ -341,7 +341,7 @@ def bareComparativeExamples : List BareComparativeDatum :=
 -- ════════════════════════════════════════════════════
 
 /-- A subcomparative judgment.
-    @cite{bhatt-pancheva-2004} @cite{kennedy-1999} @cite{lechner-2004} @cite{schwarzschild-2008} -/
+    [bhatt-pancheva-2004] [kennedy-1999] [lechner-2004] [schwarzschild-2008] -/
 structure SubcomparativeDatum where
   sentence : String
   acceptable : Bool
@@ -373,7 +373,7 @@ def subcomparativeExamples : List SubcomparativeDatum :=
   ]
 
 /-- Cross-linguistic variation in subcomparative availability.
-    @cite{bhatt-pancheva-2004} -/
+    [bhatt-pancheva-2004] -/
 structure SubcomparativeTypologyDatum where
   language : String
   available : Bool
@@ -395,7 +395,7 @@ def subcomparativeTypology : List SubcomparativeTypologyDatum :=
 -- ════════════════════════════════════════════════════
 
 /-- An equative judgment.
-    @cite{kennedy-2007} @cite{rett-2020} -/
+    [kennedy-2007] [rett-2020] -/
 structure EquativeJudgment where
   sentence : String
   acceptable : Bool
@@ -422,7 +422,7 @@ def equativeExamples : List EquativeJudgment :=
     , note := "adverbial equative" }
   ]
 
-/-- Equative encoding strategy. @cite{rett-2020} -/
+/-- Equative encoding strategy. [rett-2020] -/
 inductive EquativeStrategy where
   | parameterMarker  -- "as...as" (English, German)
   | reach            -- "tall reaching/to X" (many West African languages)

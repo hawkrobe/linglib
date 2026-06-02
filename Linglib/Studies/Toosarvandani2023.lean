@@ -9,8 +9,8 @@ import Linglib.Features.Person
 
 /-!
 # Toosarvandani (2023): The Interpretation and Grammatical Representation of Animacy
-@cite{toosarvandani-2023} @cite{harbour-2016} @cite{kratzer-2009}
-@cite{foley-toosarvandani-2022}
+[toosarvandani-2023] [harbour-2016] [kratzer-2009]
+[foley-toosarvandani-2022]
 
 Language 99(4): 760–808.
 
@@ -78,7 +78,7 @@ def npow {α : Type*} [DecidableEq α] (atoms : Finset α) : Finset (Finset α) 
 
 /-- ⊕ (oplus): pointwise lattice join of two feature denotations (50):
     `[⊕ G F] = λx . ∃y∃z[x = y ⊔ z, y ∈ ⟦F⟧, z ∈ ⟦G⟧]`.
-    Following @cite{harbour-2016}, generalising @cite{kratzer-2009}'s sum
+    Following [harbour-2016], generalising [kratzer-2009]'s sum
     operator. Generates heterogeneous pluralities: `oplus SPEAKER ANIMATE`
     includes `{speaker, animal}`.
 

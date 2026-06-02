@@ -3,21 +3,21 @@ import Linglib.Semantics.Degree.Comparative
 
 /-!
 # Degree Movement
-@cite{bhatt-pancheva-2004} @cite{heim-2000} @cite{williams-1974}
+[bhatt-pancheva-2004] [heim-2000] [williams-1974]
 
 The interpretation of degree clauses requires them to take scope at LF.
 Their syntactic placement is constrained by late merger
-(@cite{bhatt-pancheva-2004}); their semantic scope is constrained by
-the Heim-Kennedy Constraint (@cite{heim-2000}). Both constraints
+([bhatt-pancheva-2004]); their semantic scope is constrained by
+the Heim-Kennedy Constraint ([heim-2000]). Both constraints
 relate the LF position of a DegP to the LF position of any
 quantificational DP whose trace appears inside it.
 
 Specializes `lateMergerBleeds` for degree clauses, formalizes the
 Heim-Kennedy Constraint as a structural filter, derives the Williams
-correlation as a corollary, and adds the @cite{bhatt-takahashi-2011}
+correlation as a corollary, and adds the [bhatt-takahashi-2011]
 §4 (43) base-position generalization.
 
-## Heim-Kennedy Constraint (@cite{heim-2000})
+## Heim-Kennedy Constraint ([heim-2000])
 
 > If the scope of a quantificational DP contains the trace of a DegP,
 > it also contains that DegP itself.
@@ -26,7 +26,7 @@ Mechanically: any LF in which a QP scopes between a DegP and the DegP's
 trace is illicit. Equivalently, a binding dependency QP → DegP-trace
 forces the DegP to scope at or above the QP.
 
-## Williams 1974 generalization (@cite{williams-1974}; B&P §5.2)
+## Williams 1974 generalization ([williams-1974]; B&P §5.2)
 
 > DegPs cannot escape an intensional verb whose subject's trace is in
 > the DegP's restrictor.
@@ -88,7 +88,7 @@ theorem no_scopeOK_forces_reconstruction
     whether the QP's trace appears inside the DegP's restrictor.
     `qpBasePosition` records the QP's base (theta) position separately
     from its surface-scope position `qpHeight`; this is needed for
-    @cite{bhatt-takahashi-2011} §4 (43), which states the than-phrase-
+    [bhatt-takahashi-2011] §4 (43), which states the than-phrase-
     internal scope generalization in terms of the QP's *base* position
     relative to the degree trace, not its surface-scope position. For
     B&P 2004 / Heim 2001 usages where the distinction is irrelevant,
@@ -107,7 +107,7 @@ structure ScopeBinding where
   qpBindsDeg : Bool
   deriving DecidableEq, Repr
 
-/-- Heim-Kennedy Constraint (@cite{heim-2000}; B&P §4.1):
+/-- Heim-Kennedy Constraint ([heim-2000]; B&P §4.1):
     a scope binding is licit iff either
     (a) there is no binding dependency from the QP into the DegP, OR
     (b) the DegP scopes at or above the QP. -/
@@ -143,7 +143,7 @@ theorem not_isHeimKennedy_QP_above_bound_DegP
 -- § 3. Williams 1974 as a Derivable Corollary
 -- ════════════════════════════════════════════════════
 
-/-- Williams 1974 (@cite{williams-1974}; B&P §5.2 (37)): a DegP cannot
+/-- Williams 1974 ([williams-1974]; B&P §5.2 (37)): a DegP cannot
     take inverse scope over an intensional verb whose subject's trace
     is in the DegP's restrictor.
 
@@ -170,7 +170,7 @@ theorem williams_exempt_when_no_binding
 -- § 4. Bhatt-Takahashi (43): Base-Position Generalization
 -- ════════════════════════════════════════════════════
 
-/-- @cite{bhatt-takahashi-2011} §4 (43): English allows than-phrase-
+/-- [bhatt-takahashi-2011] §4 (43): English allows than-phrase-
     internal scope for QPs whose *base position* does not c-command
     the degree trace. Stated as a structural filter on `ScopeBinding`,
     `IsBhattTakahashiScopeLicit` returns `True` when the QP's base

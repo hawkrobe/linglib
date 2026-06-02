@@ -2,9 +2,9 @@ import Linglib.Syntax.Minimalist.Basic
 
 /-!
 # Verb Movement Parameter
-@cite{chomsky-1995} @cite{pollock-1989}
+[chomsky-1995] [pollock-1989]
 
-@cite{pollock-1989} established that languages differ parametrically in whether
+[pollock-1989] established that languages differ parametrically in whether
 lexical verbs raise to T (Inflection). French lexical verbs obligatorily raise
 past negation, adverbs, and floating quantifiers; English lexical verbs remain
 in situ. English auxiliaries, however, *do* raise — patterning with French

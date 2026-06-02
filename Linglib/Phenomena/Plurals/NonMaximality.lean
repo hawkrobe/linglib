@@ -1,6 +1,6 @@
 /-
 # Non-Maximality: Empirical Data
-@cite{malamud-2012}
+[malamud-2012]
 
 Theory-neutral empirical patterns for non-maximal readings of plural sentences.
 
@@ -113,7 +113,7 @@ def switchesAllBlocks : AllBlocksNonMaxDatum :=
 
 
 /--
-The bank robbery scenario from @cite{krifka-1996}.
+The bank robbery scenario from [krifka-1996].
 
 Shows that non-maximal readings can be very fine-grained,
 not just "existential" weakening.
@@ -121,7 +121,7 @@ not just "existential" weakening.
 Context: Bank vault with 4 doors in a configuration.
 Some doors are parallel paths, others are sequential.
 
-Source: @cite{krifka-1996}, dissertation (16), Figure 2.1
+Source: [krifka-1996], dissertation (16), Figure 2.1
 -/
 structure BankRobberyDatum where
   /-- The sentence -/
@@ -281,7 +281,7 @@ Strong relevance: a proposition "perfectly fits" an issue.
 A proposition p is strongly relevant to issue I iff p is expressible
 as a disjunction of a proper subset of I's partition cells.
 
-Source: Križ & @cite{kriz-spector-2021}
+Source: Križ & [kriz-spector-2021]
 -/
 structure StrongRelevanceDatum where
   /-- The proposition (informal) -/
@@ -322,7 +322,7 @@ Homogeneity acquisition in plural definites.
 Children show sensitivity to homogeneity gaps, preferring existential
 interpretations over universal ones for plural definites.
 
-Source: @cite{tieu-kriz-chemla-2019}
+Source: [tieu-kriz-chemla-2019]
 -/
 structure DevelopmentalDatum where
   /-- Age group -/

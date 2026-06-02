@@ -4,9 +4,9 @@ import Linglib.Core.NestedRestriction
 /-!
 # Quantifier Domain Restriction
 
-@cite{ritchie-schiller-2024} @cite{cutting-vishton-1995} @cite{previc-1998} @cite{stanley-szab-2000} @cite{von-fintel-1994} @cite{barwise-cooper-1981}
+[ritchie-schiller-2024] [cutting-vishton-1995] [previc-1998] [stanley-szab-2000] [von-fintel-1994] [barwise-cooper-1981]
 
-@cite{ritchie-schiller-2024}: Default Domain Restriction Possibilities.
+[ritchie-schiller-2024]: Default Domain Restriction Possibilities.
 *Semantics & Pragmatics* 17, Article 13: 1–49.
 
 ## Core Idea
@@ -23,8 +23,8 @@ then selects among.
 ## Nested Spatial Regions
 
 The cognitive heuristic account is grounded in ecological psychology's parsing
-of space into nested regions. @cite{cutting-vishton-1995} distinguish three zones
-(personal, action, vista); @cite{previc-1998} proposes four (peripersonal, focal
+of space into nested regions. [cutting-vishton-1995] distinguish three zones
+(personal, action, vista); [previc-1998] proposes four (peripersonal, focal
 extrapersonal, action extrapersonal, ambient extrapersonal). We adopt a hybrid
 terminology with four levels:
 
@@ -163,7 +163,7 @@ open Core.Quantification (Conservative GQ) in
     then Q restricted by any domain predicate C is also conservative.
     Generalizes `every_restricted_conservative` from `every_sem` to any
     conservative GQ. This is the formal justification for the DDRP
-    infrastructure: @cite{barwise-cooper-1981}'s conservativity universal
+    infrastructure: [barwise-cooper-1981]'s conservativity universal
     guarantees that C-intersection preserves the fundamental GQ property. -/
 theorem conservative_domain_restricted {E : Type*}
     {Q : GQ E} {C : DomainRestrictor E}
@@ -182,8 +182,8 @@ theorem conservative_domain_restricted {E : Type*}
 
 /-- Spatial scales from ecological psychology.
 
-    @cite{cutting-vishton-1995} distinguish three zones (personal, action, vista).
-    @cite{previc-1998} proposes four (peripersonal, focal extrapersonal, action
+    [cutting-vishton-1995] distinguish three zones (personal, action, vista).
+    [previc-1998] proposes four (peripersonal, focal extrapersonal, action
     extrapersonal, ambient extrapersonal). We adopt a hybrid:
     - **Peripersonal**: Within arm's reach (~2m). Direct manipulation.
     - **Action**: Accessible by locomotion (~30m).

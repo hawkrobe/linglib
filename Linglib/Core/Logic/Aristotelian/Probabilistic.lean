@@ -15,7 +15,7 @@ relations generalise to linear (in)equalities on `P_μ[φ] := μ {w | φ w = tru
 | `IsSubaltern φ ψ`      | `P[φ] ≤ P[ψ]`             |
 
 The discrete case (`μ a ∈ {0,1}`) recovers Definition 1 of
-@cite{demey-smessaert-2018}. The main results are the transfer theorems: a
+[demey-smessaert-2018]. The main results are the transfer theorems: a
 Boolean Aristotelian relation implies its probabilistic counterpart under every
 `μ` (the converse fails).
 -/

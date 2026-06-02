@@ -4,7 +4,7 @@ import Linglib.Semantics.Mood.IllocutionaryMood
 
 /-!
 # The Table Model
-@cite{farkas-bruce-2010}
+[farkas-bruce-2010]
 
 n-agent table-model substrate: a stack of at-issue items, per-agent
 commitment slates, and a common ground.
@@ -19,7 +19,7 @@ commitment slates, and a common ground.
 
 ## TODO
 
-* Projected set `ps(CommonGround)`, highlighting (@cite{farkas-roelofsen-2017}),
+* Projected set `ps(CommonGround)`, highlighting ([farkas-roelofsen-2017]),
   item identity (for withdrawal).
 -/
 
@@ -41,7 +41,7 @@ structure Item (A W : Type*) where
       polar question, the answer set for wh-questions. -/
   alternatives : List (W → Prop)
 
-/-- The discourse structure (DS) of @cite{farkas-bruce-2010}, polymorphic
+/-- The discourse structure (DS) of [farkas-bruce-2010], polymorphic
     in the table-element type `I` (full model: `I := Item A W`). -/
 structure DiscourseState (A W I : Type*) where
   /-- Stack of unresolved items, head = most recent. -/
@@ -205,7 +205,7 @@ abbrev ItemState (A W : Type*) := DiscourseState A W (Item A W)
 
 /-! ### Farkas-Bruce dynamics
 
-The @cite{farkas-bruce-2010} discourse moves — assertion, polar question,
+The [farkas-bruce-2010] discourse moves — assertion, polar question,
 acceptance — over the 2-participant specialisation `State W`, with the plain
 speaker/listener commitment views (`dcS`/`dcL`) recovered from the per-agent
 slate so an F&B trace yields one-line equational facts. -/

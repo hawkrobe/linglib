@@ -7,16 +7,16 @@ import Linglib.Fragments.Hungarian.Predicates
 
 /-!
 Differential Indexing ↔ DOM, PersonGeometry, Kaqchikel
-@cite{aissen-2003} @cite{just-2024} @cite{preminger-2014}
+[aissen-2003] [just-2024] [preminger-2014]
 
-Connects @cite{just-2024} differential indexing to three existing formalizations:
+Connects [just-2024] differential indexing to three existing formalizations:
 
-1. **@cite{aissen-2003} DOM profiles** (`Features/Prominence`): DOM is the
+1. **[aissen-2003] DOM profiles** (`Features/Prominence`): DOM is the
    P-flagging specialization of the general differential marking framework.
    This bridge proves that DOM profiles and P-indexing profiles share the
    same monotonicity constraint over the same scales.
 
-2. **@cite{preminger-2014} PersonGeometry** (`Syntax/Minimalism/`):
+2. **[preminger-2014] PersonGeometry** (`Syntax/Minimalism/`):
    Just's binary person split (SAP vs 3rd) is precisely Preminger's
    [±participant] feature. This bridge makes the connection explicit.
 
@@ -83,7 +83,7 @@ theorem personLevel_rank_matches_probe_rank :
     person-number combinations. This is a NON-differential system: there is
     no prominence-based asymmetry in which arguments get indexed.
 
-    @cite{just-2024} defines differential indexing against this kind of
+    [just-2024] defines differential indexing against this kind of
     baseline: a differential system is one where indexing depends on
     prominence properties. -/
 
@@ -139,8 +139,8 @@ theorem erg_abs_matches_AP :
 /-! Person is the dominant conditioning factor for both P indexing and
     A indexing. The structural correlate is that the [participant]
     probe (π⁰) takes priority over the [plural] probe (#⁰) under the
-    two-probe relativized-probing system @cite{bejar-rezac-2003} —
-    NOT a salience hierarchy. @cite{preminger-2014} Ch. 7 explicitly
+    two-probe relativized-probing system [bejar-rezac-2003] —
+    NOT a salience hierarchy. [preminger-2014] Ch. 7 explicitly
     argues against direct salience-scale primitives; the rank
     ordering below is a surface effect of probe priority, not a
     hierarchy-as-grammatical-primitive. See
@@ -157,7 +157,7 @@ theorem person_dominates_both :
       (aIndexingLanguages.filter (·.definitenessConditioned)).length := by
   native_decide
 
-/-- Two-probe surface ranking @cite{bejar-rezac-2003}: [+participant]
+/-- Two-probe surface ranking [bejar-rezac-2003]: [+participant]
     cells outrank [+plural,−participant] cells, which outrank 3SG. The
     typological frequency hierarchy (person > animacy > definiteness)
     parallels this — person features are both structurally privileged
@@ -171,7 +171,7 @@ theorem two_probe_surface_ranking :
 -- ============================================================================
 
 /-! The Basque agreement fragment (`Basque.Agreement`) encodes
-    the same person-conditioned P indexing that @cite{just-2024} reports.
+    the same person-conditioned P indexing that [just-2024] reports.
     We prove that the Fragment's `pIsIndexed` matches the survey data. -/
 
 /-- Basque Fragment's P indexing matches the Just survey: SAP → indexed,

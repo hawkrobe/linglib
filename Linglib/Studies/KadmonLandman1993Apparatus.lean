@@ -3,7 +3,7 @@ import Linglib.Semantics.Quantification.DomainRestriction
 /-!
 # Domain Vagueness
 
-@cite{kadmon-landman-1993}
+[kadmon-landman-1993]
 
 Kadmon & Landman (1993) "Any". *Linguistics and Philosophy* 16: 353–422.
 
@@ -281,7 +281,7 @@ quantifiers are the degenerate case where all precisifications agree.
 The bridge theorem below shows that any `DomainRestrictor`-based quantifier
 is trivially domain precise in K&L's sense: the restriction has only one
 precisification (the restrictor itself), so all precisifications yield the
-same domain. This connects @cite{ritchie-schiller-2024}'s DDRP apparatus
+same domain. This connects [ritchie-schiller-2024]'s DDRP apparatus
 to K&L's domain vagueness distinction.
 -/
 

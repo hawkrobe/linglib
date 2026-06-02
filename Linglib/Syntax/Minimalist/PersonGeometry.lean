@@ -1,10 +1,10 @@
 import Linglib.Features.Person
 
 /-!
-# Person Feature Geometry @cite{harley-ritter-2002} @cite{bejar-rezac-2003}
-@cite{bejar-rezac-2009} @cite{preminger-2014} @cite{pancheva-zubizarreta-2018}
+# Person Feature Geometry [harley-ritter-2002] [bejar-rezac-2003]
+[bejar-rezac-2009] [preminger-2014] [pancheva-zubizarreta-2018]
 
-The privative-feature geometry @cite{harley-ritter-2002} decomposes
+The privative-feature geometry [harley-ritter-2002] decomposes
 person into a containment hierarchy where each sub-feature
 implies the next:
 
@@ -12,30 +12,30 @@ implies the next:
     [φ] → [NUMBER] → [plural]
 
 This decomposition drives **relativized probing**
-(@cite{bejar-rezac-2003}): a probe seeking [participant] skips DPs
+([bejar-rezac-2003]): a probe seeking [participant] skips DPs
 that lack it (3rd person), targeting only 1st/2nd person DPs. A
 separate probe seeking [plural] skips DPs that lack it (singulars),
 targeting only plurals.
 
-@cite{bejar-rezac-2003} apply this two-probe mechanism to derive
-the Person Case Constraint; @cite{bejar-rezac-2009} formalize it as
-Cyclic Agree. @cite{preminger-2014} §4.4 applies the same B&R 2003
+[bejar-rezac-2003] apply this two-probe mechanism to derive
+the Person Case Constraint; [bejar-rezac-2009] formalize it as
+Cyclic Agree. [preminger-2014] §4.4 applies the same B&R 2003
 mechanism to Kichean Agent Focus — explicitly reframing earlier
 "omnivorous hierarchy" accounts in terms of two independently
-relativized probes π⁰ ([participant]) and #⁰ ([plural]). @cite{preminger-2014} Ch. 7 then argues against
+relativized probes π⁰ ([participant]) and #⁰ ([plural]). [preminger-2014] Ch. 7 then argues against
 direct hierarchy/scale primitives like
 `[+participant] > [+plural] > default`, on four grounds:
 restrictedness of "salience" effects to AF, K'ichee' formal
 addressee *la* (a 2nd-person form patterning as 3rd-person under
 AF), the AF person restriction (1+2 blocked but 3pl+3pl licit),
 and the morphophonological 1st/2nd vs 3rd asymmetry (clitic
-doubling vs direct exponence, @cite{preminger-2014} §3.4 and
+doubling vs direct exponence, [preminger-2014] §3.4 and
 §4.4). The relativized-probing mechanism derives the same surface
 patterns without committing to a salience scale.
 
 ## Extended Geometry: [±proximate]
 
-@cite{pancheva-zubizarreta-2018} extend the hierarchy with a
+[pancheva-zubizarreta-2018] extend the hierarchy with a
 `[±proximate]` feature for the Person Case Constraint:
 
     [+author] ⊂ [+participant] ⊂ [+proximate]
@@ -44,7 +44,7 @@ patterns without committing to a salience scale.
 [-proximate] by default but can be contextually marked [+proximate]
 (when co-occurring with another 3P). The [±proximate] distinction
 also captures the 3P proximate/obviative split in direct/inverse
-alignment systems (@cite{pancheva-zubizarreta-2018} §2.1 (11)).
+alignment systems ([pancheva-zubizarreta-2018] §2.1 (11)).
 
 ## Relationship to Core PersonFeatures
 
@@ -52,7 +52,7 @@ alignment systems (@cite{pancheva-zubizarreta-2018} §2.1 (11)).
 (the framework-neutral [±participant, ±author] decomposition) with
 the Minimalism-specific [±proximate] feature. The two-feature core
 is shared across all theoretical frameworks; `[±proximate]` is
-specific to @cite{pancheva-zubizarreta-2018}'s P-Constraint.
+specific to [pancheva-zubizarreta-2018]'s P-Constraint.
 
 ## Person Type
 
@@ -70,7 +70,7 @@ rank 0 elsewhere. This is a CONVENIENCE encoding of the
 *surface effect* of the two-probe (π⁰ ≫ #⁰) system on a single DP
 — useful for downstream computations that need a totally ordered
 target — but it should not be read as endorsing the salience-scale
-analysis @cite{preminger-2014} Ch. 7 argues against. The actual
+analysis [preminger-2014] Ch. 7 argues against. The actual
 derivation goes via two independently relativized probes; the rank
 is a derived quantity, not a primitive.
 
@@ -84,9 +84,9 @@ open Features.Prominence
 -- § 1: Decomposed Person Features
 -- ============================================================================
 
-/-- Person features decomposed according to @cite{preminger-2014}'s
+/-- Person features decomposed according to [preminger-2014]'s
     geometry, extended with `[±proximate]` from
-    @cite{pancheva-zubizarreta-2018}.
+    [pancheva-zubizarreta-2018].
 
     Extends `Features.Person.Features` (the framework-neutral
     [±participant, ±author] core) with the Minimalism-specific
@@ -173,14 +173,14 @@ def probeVisible (target : ProbeTarget) (person : PersonLevel) (isPlural : Bool)
     - Rank 1: visible to #⁰ but not π⁰ ([+plural, −participant])
     - Rank 0: invisible to both probes (3SG default)
 
-    Derived from the probing mechanism (@cite{bejar-rezac-2003}),
+    Derived from the probing mechanism ([bejar-rezac-2003]),
     not stipulated as a salience scale: π⁰ takes priority over #⁰
     by virtue of being structurally higher and earlier in the
     derivation, and each probe targets any DP bearing the sought
     feature. The rank captures the combined effect on a single DP.
     See module docstring for why this is a convenience encoding,
     not an endorsement of the salience-scale analyses
-    @cite{preminger-2014} Ch. 7 argues against. -/
+    [preminger-2014] Ch. 7 argues against. -/
 def probeResolutionRank (person : PersonLevel) (isPlural : Bool) : Nat :=
   if (decomposePerson person).hasParticipant then 2
   else if isPlural then 1

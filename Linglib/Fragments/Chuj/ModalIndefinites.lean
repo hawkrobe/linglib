@@ -2,14 +2,14 @@ import Linglib.Features.ModalIndefinite
 
 /-!
 # Chuj Modal Indefinite Fragment
-@cite{alonso-ovalle-royer-2021} @cite{alonso-ovalle-royer-2024}
+[alonso-ovalle-royer-2021] [alonso-ovalle-royer-2024]
 
 Lexical entries for Chuj modal indefinites *yalnhej* (singular) and
-*komon* (mass/plural), following @cite{alonso-ovalle-royer-2024}.
+*komon* (mass/plural), following [alonso-ovalle-royer-2024].
 
 ## Connection to VerbBuilding.lean
 
-The Chuj voice system (@cite{coon-2019}, formalized in `VerbBuilding.lean`)
+The Chuj voice system ([coon-2019], formalized in `VerbBuilding.lean`)
 determines whether a *yalnhej* DP is in external or internal argument
 position, which in turn constrains the available modal flavor:
 

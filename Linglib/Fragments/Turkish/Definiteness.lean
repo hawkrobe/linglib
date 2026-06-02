@@ -2,11 +2,11 @@ import Linglib.Fragments.Turkish.Case
 
 /-!
 # Turkish Definiteness and Specificity
-@cite{goksel-kerslake-2005}
+[goksel-kerslake-2005]
 
 Turkish lacks definite and indefinite articles. Instead, definiteness and
 specificity are marked by **accusative case** and **word order**
-(@cite{goksel-kerslake-2005} Ch 14, 22).
+([goksel-kerslake-2005] Ch 14, 22).
 
 ## The ACC/bare alternation
 
@@ -25,7 +25,7 @@ ACC-marked objects can appear in any preverbal position (scramble freely).
 
 This is a canonical instance of **differential object marking** (DOM):
 definite/specific objects receive overt case, nonspecific ones do not.
-The Turkish pattern is often cited in @cite{aissen-2003} as a paradigm
+The Turkish pattern is often cited in [aissen-2003] as a paradigm
 case of specificity-driven DOM.
 -/
 

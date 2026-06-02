@@ -4,8 +4,8 @@ import Linglib.Semantics.Mood.POSWQ
 
 /-!
 # Partition as Inquiry — Setoid → Question embedding
-@cite{ciardelli-groenendijk-roelofsen-2018} @cite{theiler-etal-2018}
-@cite{puncochar-2019}
+[ciardelli-groenendijk-roelofsen-2018] [theiler-etal-2018]
+[puncochar-2019]
 
 The faithful embedding of partition-based inquiry (`Setoid W` — what
 `POSWQ.inquiry` carries) into the more general inquisitive-content
@@ -25,7 +25,7 @@ as an Question (each equivalence class becomes a maximal
 proposition / alternative), but the reverse fails — mention-some,
 intermediate-exhaustive, and conditional question alternatives are
 non-disjoint or non-exhaustive and so are not representable as the
-classes of any equivalence relation (see @cite{theiler-etal-2018}).
+classes of any equivalence relation (see [theiler-etal-2018]).
 
 This mirrors mathlib's `Set.toFinset` / `Filter.principal` /
 `UniformSpace.toTopologicalSpace` pattern: the "less general" structure

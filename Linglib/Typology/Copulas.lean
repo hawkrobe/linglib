@@ -5,8 +5,8 @@ import Linglib.Data.WALS.Features.F120A
 
 /-!
 # Typology.Copulas
-@cite{stassen-2013} @cite{hengeveld-1992} @cite{pustet-2003}
-@cite{haspelmath-2001}
+[stassen-2013] [hengeveld-1992] [pustet-2003]
+[haspelmath-2001]
 
 Per-language typological substrate for copula and predication strategies,
 covering WALS chapters 117--120 (all four authored by Leon Stassen):
@@ -30,7 +30,7 @@ Fragment-importable.
 - `ZeroCopulaStatus` (Ch 120 + finer: impossible/restricted/widespread,
   whereas WALS F120A only distinguishes impossible vs. possible).
 - `CopulaType` (supplementary: verbal/pronominal/particle/zero, after
-  @cite{pustet-2003} and @cite{hengeveld-1992}).
+  [pustet-2003] and [hengeveld-1992]).
 - `CopulaProfile` per-language struct.
 - WALS converters `fromWALS{118A, 119A, 120A}` + the `wals120A_allowsZero`
   weakening predicate (since F120A collapses restricted/widespread).
@@ -181,7 +181,7 @@ inductive ZeroCopulaStatus where
 /-- Morphosyntactic type of copula, when present.
 
     Supplements the WALS classification with a finer-grained typology of
-    copular elements, following @cite{pustet-2003} and @cite{hengeveld-1992}. -/
+    copular elements, following [pustet-2003] and [hengeveld-1992]. -/
 inductive CopulaType where
   /-- Fully inflecting verbal copula: takes tense, agreement, negation
       like other verbs. Example: English `be` (am/is/are/was/were). -/
@@ -292,7 +292,7 @@ theorem ch118_119_120_same_sample :
 -- §9. Theory-neutral WALS distribution facts
 -- ============================================================================
 
-/-- Ch 118 cell counts (from @cite{stassen-2013}'s map). -/
+/-- Ch 118 cell counts (from [stassen-2013]'s map). -/
 theorem ch118_verbal_count :
     (ch118.filter (·.value == .verbalEncoding)).length = 151 := by native_decide
 theorem ch118_nonverbal_count :

@@ -3,10 +3,10 @@ import Linglib.Core.Word
 import Linglib.Features.Gender
 
 /-!
-# Dargwa (Tanti) Agreement @cite{sumbatova-2021}
+# Dargwa (Tanti) Agreement [sumbatova-2021]
 
 Dargwa is among the few Nakh-Dagestanian languages with both **gender
-agreement** and **person agreement** (@cite{sumbatova-2021} §4.5.8, §4.7.6).
+agreement** and **person agreement** ([sumbatova-2021] §4.5.8, §4.7.6).
 
 ## Gender Agreement
 
@@ -23,7 +23,7 @@ In copular clauses with two absolutives, the predicate controls agreement.
 
 Person agreement follows the hierarchy **1, 2 > 3** and
 **absolutive > ergative**. The agreement paradigm configuration is the
-"Dargic type" (@cite{cysouw-2003}): a typologically rare opposition of
+"Dargic type" ([cysouw-2003]): a typologically rare opposition of
 2SG versus {1SG, 1PL, 2PL}, where the 3rd person is usually unmarked.
 
 Three person-marker sets distribute across TAM paradigms:
@@ -66,7 +66,7 @@ def SgGender.toSurfaceGender : SgGender → Features.SurfaceGender
 /-- Gender agreement prefix on the verb stem.
     The prefix immediately precedes the root in simplex verbs and
     attaches to the light verb, preverb, or lexical stem in complex verbs
-    (@cite{sumbatova-2021} §4.5.2.3, Table 4.12). -/
+    ([sumbatova-2021] §4.5.2.3, Table 4.12). -/
 def sgGenderPrefix : SgGender → String
   | .masculine => "w-"
   | .feminine  => "r-"
@@ -79,7 +79,7 @@ def plGenderPrefix : PlGender → String
 
 /-- Gender assignment is semantically transparent: masculine = male
     humans, feminine = female humans, neuter = everything else
-    (@cite{sumbatova-2021} §4.4.1). A small set of nouns have a
+    ([sumbatova-2021] §4.4.1). A small set of nouns have a
     *variable* gender morpheme determined by the referent's actual
     gender (if human) or the possessor's gender: e.g., *w-eˁ.ʔ*
     'proprietor (M)' / *r-eˁ.ʔ* 'proprietor (F)'. -/
@@ -96,7 +96,7 @@ inductive MarkerSet where
   | optative  -- optative
   deriving DecidableEq, Repr
 
-/-- Person clitic/suffix forms (Table 4.20, 4.21 of @cite{sumbatova-2021}).
+/-- Person clitic/suffix forms (Table 4.20, 4.21 of [sumbatova-2021]).
     Returns `none` when the person is unmarked.
 
     **Clitic set** ("Dargic type"): =da covers 1SG, 1PL, and 2PL
@@ -158,11 +158,11 @@ def personAgreementController (aPerson pPerson : PersonLevel) : PersonLevel :=
   | _,       p       => p          -- both SAP → absolutive (P) wins
 
 -- ============================================================================
--- § 4: Thematic Suffixes (Table 4.10 of @cite{sumbatova-2021})
+-- § 4: Thematic Suffixes (Table 4.10 of [sumbatova-2021])
 -- ============================================================================
 
 /-- Thematic suffix for transitive verbs, determined by the person features
-    of A and P arguments (Table 4.10, §4.5.2.5 of @cite{sumbatova-2021}).
+    of A and P arguments (Table 4.10, §4.5.2.5 of [sumbatova-2021]).
 
     *-i* when A is SAP (1st/2nd) and P is 3rd — the configuration where
     A outranks P in the person hierarchy (1, 2 > 3).
@@ -207,7 +207,7 @@ theorem thematic_suffix_tracks_controller :
 -- § 5: Verification
 -- ============================================================================
 
-/-- "Dargic type" (@cite{cysouw-2003}): in the clitic set, 1SG, 1PL,
+/-- "Dargic type" ([cysouw-2003]): in the clitic set, 1SG, 1PL,
     and 2PL all receive the same marker (=da), while 2SG alone gets a
     distinct marker (=de). This is the typologically rare opposition
     described in the abstract: "2SG versus {1SG, 1PL, 2PL}". -/

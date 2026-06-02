@@ -2,9 +2,9 @@ import Linglib.Fragments.Slavic.Case
 
 /-!
 # Serbo-Croat Case Inventory
-@cite{browne-1993} @cite{blake-1994}
+[browne-1993] [blake-1994]
 
-Per @cite{browne-1993} (p. 319), Serbo-Croat has a 7-case system with
+Per [browne-1993] (p. 319), Serbo-Croat has a 7-case system with
 productive VOC; DAT and LOC have merged in the noun paradigm except for
 accentual distinctions in some monosyllables. `caseInventory` aliases
 the shared 6-case core; `Slavic.Case.sevenCaseInventory`

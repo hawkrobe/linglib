@@ -5,9 +5,9 @@ import Linglib.Syntax.Minimalist.Voice
 
 /-!
 # Allosemy: Contextual Meaning Variation of Functional Heads
-@cite{benz-2025} @cite{wood-2023} @cite{kratzer-1996}
+[benz-2025] [wood-2023] [kratzer-1996]
 
-@cite{benz-2025} "Structure and Interpretation Across Categories" examines allosemy — the
+[benz-2025] "Structure and Interpretation Across Categories" examines allosemy — the
 meaning-side analog of allomorphy in Distributed Morphology. Where
 allomorphy concerns contextually conditioned variation in *form* (PF),
 allosemy concerns contextually conditioned variation in *meaning* (LF).
@@ -33,7 +33,7 @@ linglib already formalizes several cases of allosemy without naming them:
 This module provides the general abstraction: `AllosemicEntry` and
 `AllosemicHead` capture the pattern that a single morpheme has
 multiple context-dependent meanings. The module then instantiates
-this for v (critical for @cite{benz-2025} Ch. 3 on nominalizations)
+this for v (critical for [benz-2025] Ch. 3 on nominalizations)
 and retroactively classifies existing n and Voice types as allosemy.
 
 -/
@@ -98,7 +98,7 @@ def AllosemicHead.allosemeCount {Sem : Type} (h : AllosemicHead Sem) : Nat :=
 
 /-- Allosemes of the verbal categorizer v.
 
-    @cite{benz-2025} §2.2 / @cite{wood-2023} Ch. 5: v can be semantically
+    [benz-2025] §2.2 / [wood-2023] Ch. 5: v can be semantically
     null (identity function) or contribute eventive semantics, depending
     on its syntactic context. This distinction drives the nominalization
     reading typology:
@@ -108,7 +108,7 @@ def AllosemicHead.allosemeCount {Sem : Type} (h : AllosemicHead Sem) : Nat :=
       ("the frequent observation of the sky").
     - `zero`: v is semantically Ø (identity function). The root combines
       directly with n, yielding SEN or RN readings depending on n's
-      alloseme. @cite{wood-2023} Ch. 5: "When n is semantically zero and
+      alloseme. [wood-2023] Ch. 5: "When n is semantically zero and
       v gets its ordinary verbal interpretation" (CEN); "when the v head
       is Ø" the root interacts directly with n (SEN/RN).
 
@@ -146,7 +146,7 @@ theorem v_has_two_allosemes : vAllosemic.allosemeCount = 2 := rfl
     entailed by the root requires an event variable in v.
     Property concept roots yield stative v — no inherent change event.
 
-    This connects @cite{beavers-etal-2021}'s root typology to
+    This connects [beavers-etal-2021]'s root typology to
     v allosemy: the root's lexical semantics
     determines which v alloseme is selected. -/
 def VAlloseme.fromRootType : _root_.RootType → VAlloseme
@@ -174,25 +174,25 @@ theorem fromRootType_iff_entailsChange (rt : _root_.RootType) :
 /-- n allosemy: the three semantic types from `CategorizerSemantics`
     are allosemes of n conditioned by morphosyntactic features.
 
-    @cite{benz-2025} Ch. 3 adds a `content` possibility for content
-    nominalizations. @cite{wood-2023} Ch. 5 adds `zero` (identity
+    [benz-2025] Ch. 3 adds a `content` possibility for content
+    nominalizations. [wood-2023] Ch. 5 adds `zero` (identity
     function, yielding CEN reading) and `simpleEvent` (yielding SEN).
 
     The full inventory:
     - `relational`: introduces a relation (body-part-of); type ⟨e,⟨e,t⟩⟩
     - `sortal`: bare categorization; type ⟨e,t⟩
     - `alienator`: existentially closes possessor; type ⟨e,t⟩
-    - `content`: selects CP complement (CCN reading, @cite{benz-2025})
+    - `content`: selects CP complement (CCN reading, [benz-2025])
     - `zero`: semantically Ø (identity), noun = verb meaning (CEN,
-      @cite{wood-2023} Ch. 5 (5.4e))
+      [wood-2023] Ch. 5 (5.4e))
     - `simpleEvent`: λP⟨e,t⟩λx∃e. P(x) & x = e — picks out entities
-      equal to an event (SEN, @cite{wood-2023} Ch. 5 (5.4c))
+      equal to an event (SEN, [wood-2023] Ch. 5 (5.4c))
     - `result`: λP⟨s,t⟩λx∃e. P(e) & result(x)(e) — picks out entity
-      created as result of event (@cite{wood-2023} Ch. 6 (6.30))
+      created as result of event ([wood-2023] Ch. 6 (6.30))
     - `state`: λP⟨e,t⟩λx∃e. P(x) & x = e — picks out states
-      (@cite{wood-2023} Ch. 1 (1.18), Ch. 6 §6.2)
+      ([wood-2023] Ch. 1 (1.18), Ch. 6 §6.2)
     - `entity`: λP⟨e,t⟩λx. P(x) — picks out entities described by the
-      root, no event connection (@cite{wood-2023} Ch. 5 (5.4d)) -/
+      root, no event connection ([wood-2023] Ch. 5 (5.4d)) -/
 inductive NAlloseme where
   | relational    -- introduces a relation (body-part-of); type ⟨e,⟨e,t⟩⟩
   | sortal        -- bare categorization; type ⟨e,t⟩
@@ -218,8 +218,8 @@ theorem content_is_new : ∀ (t : NSemanticType),
   intro t; cases t <;> simp [NAlloseme.ofNSemanticType]
 
 /-- n has nine allosemes (extending the three from CategorizerSemantics
-    with content from @cite{benz-2025} and zero/simpleEvent/result/state/
-    entity from @cite{wood-2023}). -/
+    with content from [benz-2025] and zero/simpleEvent/result/state/
+    entity from [wood-2023]). -/
 def nAllosemic : AllosemicHead NAlloseme where
   morpheme := .n
   entries := [
@@ -255,22 +255,22 @@ def nAllosemic : AllosemicHead NAlloseme where
 theorem n_has_nine_allosemes : nAllosemic.allosemeCount = 9 := rfl
 
 -- ════════════════════════════════════════════════════
--- § 4. Voice Allosemy (@cite{kratzer-1996}; §2.3)
+-- § 4. Voice Allosemy ([kratzer-1996]; §2.3)
 -- ════════════════════════════════════════════════════
 
 /-- Voice allosemy: the thematic interpretation of the external argument
     depends on the semantics of the VP it combines with.
 
-    @cite{kratzer-1996}: "What we cannot do, however, is combine the
+    [kratzer-1996]: "What we cannot do, however, is combine the
     holder function with the denotation of an action predicate or the
     agent function with the denotation of a stative predicate."
 
     §2.3: while Voice_{D} must introduce a DP argument,
     the thematic interpretation of that argument can be left to allosemy.
-    The denotations in @cite{kratzer-1996} correspond not to separate
+    The denotations in [kratzer-1996] correspond not to separate
     syntactic heads, but to allosemes of a single Voice head.
 
-    @cite{myler-2016} Ch. 4 extends this to four allosemes, adding
+    [myler-2016] Ch. 4 extends this to four allosemes, adding
     the engineer role (for ECM *have*) and the expletive/identity
     alloseme (for relational and light-verb *have* where Voice assigns
     no θ-role). The conditioning environments (98a–d):
@@ -295,7 +295,7 @@ def VoiceAlloseme.assignsTheta : VoiceAlloseme → Bool
 
 /-- Voice alloseme selection from complement properties.
 
-    @cite{myler-2016} table (100): the alloseme is determined by
+    [myler-2016] table (100): the alloseme is determined by
     the nature of *have*'s complement and whether the VP is eventive.
     Engineer is the most specific: it requires a saturated eventive
     VoiceP as complement. The elsewhere case is expletive (identity). -/
@@ -308,7 +308,7 @@ def VoiceAlloseme.fromComplement
 
 /-- Bridge: Voice allosemes to syntactic `VoiceFlavor`.
 
-    @cite{myler-2016}: syntactically, all four allosemes realize
+    [myler-2016]: syntactically, all four allosemes realize
     the same Voice_{D} — transitive Voice with a DP specifier.
     The θ-role distinction is resolved at LF, not in the syntax.
     We map to the flavor that best captures the syntactic behavior:
@@ -334,8 +334,8 @@ theorem voice_alloseme_theta_consistent (a : VoiceAlloseme) :
 
 /-- Reading types for deverbal nominalizations.
 
-    @cite{wood-2023} Ch. 1 (1.18) identifies five terminal reading types;
-    @cite{benz-2025} Ch. 3 adds the CCN for German, yielding six:
+    [wood-2023] Ch. 1 (1.18) identifies five terminal reading types;
+    [benz-2025] Ch. 3 adds the CCN for German, yielding six:
 
     - **CEN** (Complex Event Nominal): v eventive + n zero. Noun inherits
       full verb meaning including event variable and argument structure.
@@ -349,7 +349,7 @@ theorem voice_alloseme_theta_consistent (a : VoiceAlloseme) :
     - **Simple Entity Nominal**: v zero + n entity. Entity reading with
       no event connection (e.g. *þvottur* 'laundry' = the clothes).
     - **CCN** (Complex Content Nominal): v eventive + n content. Takes
-      CP complement (@cite{benz-2025}). -/
+      CP complement ([benz-2025]). -/
 inductive NominalizationReading where
   | complexEvent   -- CEN: event reading (takes temporal modifiers, telicity PPs)
   | simpleEvent    -- SEN: event reading without full arg structure
@@ -361,15 +361,15 @@ inductive NominalizationReading where
 
 /-- Derive the nominalization reading from the allosemes of v and n.
 
-    Integrates @cite{benz-2025} Ch. 3 and @cite{wood-2023} Ch. 5–6:
+    Integrates [benz-2025] Ch. 3 and [wood-2023] Ch. 5–6:
 
     - v_eventive + n_zero → CEN (n is identity, noun = verb meaning)
-    - v_eventive + n_sortal → CEN (@cite{benz-2025} mapping)
+    - v_eventive + n_sortal → CEN ([benz-2025] mapping)
     - v_eventive + n_result → result/product RN (entity from event)
     - v_zero + n_simpleEvent → SEN (v absent, n picks out event-entity)
     - v_zero + n_state → simple state (v absent, n picks out state)
     - v_zero + n_entity → simple entity RN (no event connection)
-    - v_zero + n_sortal → simple entity RN (@cite{benz-2025} mapping)
+    - v_zero + n_sortal → simple entity RN ([benz-2025] mapping)
     - v_eventive + n_content → CCN (content requires eventive v)
     - v_zero + n_content → impossible (content requires eventive v) -/
 def readingFromAllosemes : VAlloseme → NAlloseme → Option NominalizationReading
@@ -390,31 +390,31 @@ def readingFromAllosemes : VAlloseme → NAlloseme → Option NominalizationRead
   | .eventive, .state       => none   -- state requires v = Ø
   | .eventive, .entity      => none   -- entity-n requires v = Ø
 
-/-- CEN from eventive v + zero n (@cite{wood-2023} Ch. 5). -/
+/-- CEN from eventive v + zero n ([wood-2023] Ch. 5). -/
 theorem cen_from_zero_n :
     readingFromAllosemes .eventive .zero = some .complexEvent := rfl
 
-/-- CEN from eventive v + sortal n (@cite{benz-2025}). -/
+/-- CEN from eventive v + sortal n ([benz-2025]). -/
 theorem cen_from_sortal_n :
     readingFromAllosemes .eventive .sortal = some .complexEvent := rfl
 
-/-- Result/product RN from eventive v + result n (@cite{wood-2023} Ch. 6 (6.30)). -/
+/-- Result/product RN from eventive v + result n ([wood-2023] Ch. 6 (6.30)). -/
 theorem result_from_eventive_v :
     readingFromAllosemes .eventive .result = some .result := rfl
 
-/-- SEN from zero v + simpleEvent n (@cite{wood-2023} Ch. 5). -/
+/-- SEN from zero v + simpleEvent n ([wood-2023] Ch. 5). -/
 theorem sen_from_zero_v :
     readingFromAllosemes .zero .simpleEvent = some .simpleEvent := rfl
 
-/-- Simple state from zero v + state n (@cite{wood-2023} Ch. 1 (1.18)). -/
+/-- Simple state from zero v + state n ([wood-2023] Ch. 1 (1.18)). -/
 theorem state_from_zero_v :
     readingFromAllosemes .zero .state = some .simpleState := rfl
 
-/-- Simple entity from zero v + entity n (@cite{wood-2023} Ch. 5). -/
+/-- Simple entity from zero v + entity n ([wood-2023] Ch. 5). -/
 theorem simpleEntity_from_entity_n :
     readingFromAllosemes .zero .entity = some .simpleEntity := rfl
 
-/-- Simple entity from zero v + sortal n (@cite{benz-2025}). -/
+/-- Simple entity from zero v + sortal n ([benz-2025]). -/
 theorem simpleEntity_from_sortal_n :
     readingFromAllosemes .zero .sortal = some .simpleEntity := rfl
 

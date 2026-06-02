@@ -10,7 +10,7 @@ import Linglib.Core.Computability.Subregular.Defs
 
 A language `L` is **strictly `k`-local** when membership in `L` is
 determined by which length-`k` substrings the boundary-augmented form of
-the input contains @cite{rogers-pullum-2011} @cite{lambert-2022}. The two
+the input contains [rogers-pullum-2011] [lambert-2022]. The two
 equivalent presentations are:
 
 * **Positive**: a set `G` of *permitted* `k`-factors. `w ∈ L` iff every

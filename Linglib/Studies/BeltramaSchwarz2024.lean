@@ -7,10 +7,10 @@ import Linglib.Studies.BeltramaSoltBurnett2022
 import Mathlib.Tactic.NormNum
 
 /-!
-# @cite{beltrama-schwarz-2024}: Empirical Data
-@cite{beltrama-schwarz-2024}
+# [beltrama-schwarz-2024]: Empirical Data
+[beltrama-schwarz-2024]
 
-Experimental data from @cite{beltrama-schwarz-2024}, showing that speaker
+Experimental data from [beltrama-schwarz-2024], showing that speaker
 persona stereotypes affect imprecision resolution for round numerals.
 
 ## Experiments
@@ -85,7 +85,7 @@ def personaDescriptors : PersonaCondition → List String
 
 /-- A coefficient from a mixed-effects logistic regression model.
     Models fitted via `lmer_alt` from the afex package in R, which wraps
-    lme4 (@cite{bates-etal-2015}; see footnote 6 of paper). -/
+    lme4 ([bates-etal-2015]; see footnote 6 of paper). -/
 structure RegressionCoefficient where
   predictor : String
   /-- Coefficient estimate (log-odds) -/
@@ -442,7 +442,7 @@ theorem div10_enables_imprecision (n : Nat) (h10 : n % 10 = 0) :
 
 /-! The precision field can be lifted to a grounded field over the SCM
 property space via `fromIndexicalField`, connecting it to
-@cite{burnett-2019}'s persona-theoretic infrastructure. -/
+[burnett-2019]'s persona-theoretic infrastructure. -/
 
 /-- The precision field converted to a grounded field over the SCM
     property space. -/
@@ -463,7 +463,7 @@ theorem approx_scmProperties :
 
 -- BSB2022 bridge
 
-/-! @cite{beltrama-solt-burnett-2023}'s three-way variant contrast
+/-! [beltrama-solt-burnett-2023]'s three-way variant contrast
 (precise/underspecified/approximate) refines B&S2024's binary distinction.
 The "underspecified" variant — a bare round numeral like "fifty" — is
 exactly the kind of stimulus B&S2024 studies: its precision is
@@ -479,7 +479,7 @@ theorem bsb_stim_also_round :
 
 -- Speaker-conditioned precision
 
-/-! The core finding of @cite{beltrama-schwarz-2024} — that numeral
+/-! The core finding of [beltrama-schwarz-2024] — that numeral
 precision is jointly determined by roundness AND speaker identity — is
 captured by `speakerModulatedHalo` in the theory layer
 (`Semantics.Numerals.Precision`). Nerdy speakers get narrower

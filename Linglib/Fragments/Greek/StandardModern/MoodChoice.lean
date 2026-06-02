@@ -1,17 +1,17 @@
 import Linglib.Semantics.Verb.Basic
 
 /-!
-# Greek Mood-Choice Verb Entries @cite{grano-2024}
+# Greek Mood-Choice Verb Entries [grano-2024]
 
 Minimal verb entries for Modern Greek attitude and causative predicates
-relevant to cross-linguistic mood choice (@cite{grano-2024}, Table 1).
+relevant to cross-linguistic mood choice ([grano-2024], Table 1).
 
 In Greek, mood is reflected in complementizer choice (*na* = SBJV vs
 *oti* = IND) rather than verb inflection. Greek lacks nonfinite
 complementation. 'want' and 'intend' take *na* (SBJV); 'hope' allows
 both *na* and *oti* (IND/SBJV). Causatives take *na* (SBJV).
 
-## Key examples (from @cite{grano-2024})
+## Key examples (from [grano-2024])
 
 - (5) Thelo **na**/\*oti kerdisi o Janis. ('want': SBJV/\*IND)
 - (13) Elpizo **na**/oti kerdise o Janis. ('hope': SBJV/IND)
@@ -24,8 +24,8 @@ namespace Greek.StandardModern.MoodChoice
 open Semantics.Lexical
 
 /-- *thélo* (θέλω) 'want' — robustly subjunctive-selecting via *na*.
-    @cite{grano-2024}, (5): *na* (SBJV) required, *oti* (IND) rejected.
-    Cited from @cite{giannakidou-mari-2021}. -/
+    [grano-2024], (5): *na* (SBJV) required, *oti* (IND) rejected.
+    Cited from [giannakidou-mari-2021]. -/
 def thelo : Verb where
   form := "thélo"
   complementType := .finiteClause
@@ -35,8 +35,8 @@ def thelo : Verb where
   levinClass := some .want
 
 /-- *elpízo* (ελπίζω) 'hope' — accepts both *na* (SBJV) and *oti* (IND).
-    @cite{grano-2024}, (13): both complementizers accepted.
-    Cited from @cite{giannakidou-mari-2021}. -/
+    [grano-2024], (13): both complementizers accepted.
+    Cited from [giannakidou-mari-2021]. -/
 def elpizo : Verb where
   form := "elpízo"
   complementType := .finiteClause
@@ -45,8 +45,8 @@ def elpizo : Verb where
   attitude := some (.preferential (.degreeComparison .positive))
 
 /-- *protíthete* (προτίθεται) 'intend' — robustly rejects indicative.
-    @cite{grano-2024}, (22): *na* (SBJV) required, *oti* (IND) rejected.
-    Cited from @cite{giannakidou-mari-2021}. -/
+    [grano-2024], (22): *na* (SBJV) required, *oti* (IND) rejected.
+    Cited from [giannakidou-mari-2021]. -/
 def protithete : Verb where
   form := "protíthete"
   complementType := .finiteClause
@@ -56,7 +56,7 @@ def protithete : Verb where
   levinClass := some .want
 
 /-- *vázo* (βάζω) 'put/make' — causative, subjunctive-selecting via *na*.
-    @cite{grano-2024}, (45): *na* (SBJV) required, *oti* (IND) rejected.
+    [grano-2024], (45): *na* (SBJV) required, *oti* (IND) rejected.
     Past tense form *évala* used in the paper's examples. -/
 def vazo : Verb where
   form := "vázo"

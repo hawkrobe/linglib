@@ -4,7 +4,7 @@ import Linglib.Paradigms.VisualWorld
 import Linglib.Studies.SedivyEtAl1999
 
 /-!
-# @cite{cohn-gordon-goodman-potts-2019} — Incremental Iterated Response Model
+# [cohn-gordon-goodman-potts-2019] — Incremental Iterated Response Model
 
 Cohn-Gordon, R., Goodman, N. D., & Potts, C. (2019). An Incremental Iterated
 Response Model of Pragmatics. *Proceedings of the Society for Computation in
@@ -35,8 +35,8 @@ Each scene in this file is a single value of `RSA.IncrementalSemantics U W`
 (`wordApplies`), the closed set of complete utterances, and the world set.
 The bundle's `toRSAConfig` builder produces the full `RSAConfig` with chain-
 rule speaker, α = 1, no cost, uniform priors, and extension-based L0 — so
-the three scenes (Figure 1, the @cite{sedivy-2007} reference game, the
-@cite{rubio-fernandez-2016} display) share machinery rather than duplicating it.
+the three scenes (Figure 1, the [sedivy-2007] reference game, the
+[rubio-fernandez-2016] display) share machinery rather than duplicating it.
 
 The bundle exposes a single deep theorem, `l0Utt_ge_inv_card`, proving
 the §2.4 weakly-informative bound generically: any complete utterance true
@@ -219,8 +219,8 @@ theorem uniform_after_red_for_r2 (w : Word) (hw : w ≠ .red) :
     for R3 (S1(red|[],R3) = 1), so hearing "red" raises R3's probability.
     For R1, the speaker could have said "dress" instead, so "red" is less
     diagnostic. We pick this up below as a structural foreshadowing of
-    @cite{sedivy-etal-1999}'s contrastive-inference findings; CommonGround themselves
-    cite @cite{sedivy-2007} for the same effect. -/
+    [sedivy-etal-1999]'s contrastive-inference findings; CommonGround themselves
+    cite [sedivy-2007] for the same effect. -/
 theorem listener_anticipation :
     incRSA.L1 .red .redHat > incRSA.L1 .red .redDress := by
   rsa_predict
@@ -284,7 +284,7 @@ theorem all_findings_verified : ∀ f : Finding, formalize f := by
 -- §6b. §2.4 Weakly-Informative Greedy Unrolling
 -- ============================================================================
 
-/-! @cite{cohn-gordon-goodman-potts-2019} §2.4 establishes a *weakly
+/-! [cohn-gordon-goodman-potts-2019] §2.4 establishes a *weakly
 informative* lower bound on greedy unrolling: even though the
 incremental speaker has no global view of the utterance space, the
 greedy choice at each step yields a complete utterance under which the
@@ -329,7 +329,7 @@ theorem greedyUnroll_weakly_informative (r : Referent) :
 /-! The global RSA model treats each complete utterance as an atomic
 option, normalizing over the whole utterance space rather than chaining
 word-by-word. The divergence between global and incremental predictions
-for R1 is a central result of @cite{cohn-gordon-goodman-potts-2019} §2.4:
+for R1 is a central result of [cohn-gordon-goodman-potts-2019] §2.4:
 the global model prefers the more-informative "red dress" over the bare
 "dress" (standard RSA Q-implicature), but the incremental model prefers
 "dress" because chain-rule products penalize longer trajectories
@@ -352,7 +352,7 @@ def uttApplies : Utterance → Referent → Bool
 
 /-- Global RSA model for the Figure 1 reference game: U = full utterances,
     one-shot normalization, α = 1 with no cost term. The same model class
-    @cite{frank-goodman-2012} would write for a non-incremental speaker. -/
+    [frank-goodman-2012] would write for a non-incremental speaker. -/
 noncomputable def globalRSA : RSAConfig Utterance Referent where
   meaning _ _ u r := if uttApplies u r then 1 else 0
   meaning_nonneg _ _ u r := by split <;> norm_num
@@ -379,8 +379,8 @@ theorem global_prefers_red_dress :
 -- §8. Sedivy §3.2 Bridge (Anticipatory Contrastive Inference)
 -- ============================================================================
 
-/-! @cite{cohn-gordon-goodman-potts-2019} §3.2 reanalyses
-@cite{sedivy-2007}'s review of contrastive-inference findings within the
+/-! [cohn-gordon-goodman-potts-2019] §3.2 reanalyses
+[sedivy-2007]'s review of contrastive-inference findings within the
 incremental RSA framework. The scene contains a target tall cup, a
 contrasting short cup (same category, opposite scale pole), a tall
 pitcher (cross-category competitor at the same scale pole), and an
@@ -392,8 +392,8 @@ need for "tall" to disambiguate from the only other pitcher: there
 isn't one). The "tall" is therefore diagnostic of the cup with a
 same-category contrast.
 
-The original empirical effect is from @cite{sedivy-etal-1999}; CommonGround cite
-the @cite{sedivy-2007} review article that summarizes it.
+The original empirical effect is from [sedivy-etal-1999]; CommonGround cite
+the [sedivy-2007] review article that summarizes it.
 
 This file formalises both contrast cells. The contrast scene is the
 five-word, four-referent `sedivyBundle` from CommonGround's text. The no-contrast
@@ -447,7 +447,7 @@ end SedivyScene
 
 /-! **No-contrast variant** of the Sedivy scene, sharing
 `SedivyScene.Referent` but with a smaller word inventory. Empirically
-this is the no-contrast cell of @cite{sedivy-etal-1999}'s 2 × 2 × 2
+this is the no-contrast cell of [sedivy-etal-1999]'s 2 × 2 × 2
 design: the same-category contrast object (the short cup) is removed
 from the visual display.
 
@@ -498,9 +498,9 @@ open SedivyScene in
     referent for which "tall" is the speaker's preferred first word is
     the tall cup, where "cup" alone leaves shortCup ambiguous.
 
-    This formalises @cite{sedivy-2007}'s anticipatory contrast effect
+    This formalises [sedivy-2007]'s anticipatory contrast effect
     within the incremental RSA framework (and indirectly captures the
-    @cite{sedivy-etal-1999} empirical pattern Sedivy 2007 reviews).
+    [sedivy-etal-1999] empirical pattern Sedivy 2007 reviews).
     The paradigm-level statement (Sedivy Pattern 2,
     `Paradigms.VisualWorld.ContrastReducesCompetitorLooks`) requires a
     contrast vs no-contrast comparison; this theorem captures the
@@ -526,9 +526,9 @@ open Paradigms.VisualWorld SedivyEtAl1999 in
       object being the referent at the same point in the unfolding
       utterance.
 
-    @cite{cohn-gordon-goodman-potts-2019} do not state this assumption;
+    [cohn-gordon-goodman-potts-2019] do not state this assumption;
     they discuss the contrastive-inference effect at the level of L1
-    posteriors and treat empirical contact with @cite{sedivy-2007}'s
+    posteriors and treat empirical contact with [sedivy-2007]'s
     look data informally. The Bayesian linking hypothesis used here is
     the strongest natural choice given a single normalised posterior.
     A weaker alternative would be a Luce-choice rule over a
@@ -598,8 +598,8 @@ theorem cgSedivyLooks_satisfy_contrast_reduces_competitor :
 -- §9. Rubio-Fernández §3.1 Bridge (English Over-Modification, STOP token)
 -- ============================================================================
 
-/-! @cite{cohn-gordon-goodman-potts-2019} §3.1 reanalyses
-@cite{rubio-fernandez-2016}'s finding that English speakers
+/-! [cohn-gordon-goodman-potts-2019] §3.1 reanalyses
+[rubio-fernandez-2016]'s finding that English speakers
 over-modify (saying "the red dress" when "the dress" suffices in a
 display with one dress). The mechanism: an explicit `STOP` token
 marks the end of the utterance, so trajectories of different lengths
@@ -627,7 +627,7 @@ inductive Word where
   deriving DecidableEq, Fintype, Repr
 
 /-- Display referents: a red dress and a blue hat, the canonical
-    minimal pair from @cite{rubio-fernandez-2016}'s display. -/
+    minimal pair from [rubio-fernandez-2016]'s display. -/
 inductive Referent where
   | redDress | blueHat
   deriving DecidableEq, Fintype, Repr

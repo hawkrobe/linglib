@@ -17,18 +17,18 @@ import Mathlib.Tactic.NormNum
 
 This file collects three formalizations of desire ascriptions:
 
-1. **von Fintel @cite{von-fintel-1999}** (`wantVF`): "every undominated
+1. **von Fintel [von-fintel-1999]** (`wantVF`): "every undominated
    belief-world is a p-world", where the world ordering is induced by
    which desires each world satisfies.
 
-2. **@cite{heim-1992}** (`wantHeim`): "for every doxastic alternative
+2. **[heim-1992]** (`wantHeim`): "for every doxastic alternative
    `w'`, every closest p-world to `w'` is more desirable than every
    closest ¬p-world to `w'`". Three successive formulations from the
    paper are exposed: (27) naive Hintikka-style, (31) truth-conditional
    comparative-belief, and (37/39) the CCP-rephrased version with the
    (40) amendment as `wantHeimDefined`.
 
-3. **@cite{phillips-brown-2025}** (`wantQuestionBased`): "every best
+3. **[phillips-brown-2025]** (`wantQuestionBased`): "every best
    answer in Q_c-Bel_S entails p", parameterized on a contextual
    question Q_c. Handles conflicting-desire ascriptions ("S wants p" +
    "S wants ¬p") by varying Q_c.
@@ -45,22 +45,22 @@ selecting from `Q-Bel_S` rather than directly from `Bel_S`.
 The PB substrate exposes four metasemantic constraints:
 
 * **Considering** (paper §3.6): every cell of Q_c settles p.
-* **Diversity** (paper §3.7, attributed to @cite{condoravdi-2002}):
+* **Diversity** (paper §3.7, attributed to [condoravdi-2002]):
   Q_c contains both p-cells and ¬p-cells.
 * **Anti-deckstacking** (paper §3.7): for every "natural" proposition q,
   if some cell of Q_c entails q, then q is itself considered. The
   substrate parameterizes the constraint on a `naturalProps` test set
   rather than quantifying over all of `Set W` (see `isAntiDeckstacking`).
-* **Belief-sensitivity** (paper §4.2, building on @cite{yalcin-2018}'s
+* **Belief-sensitivity** (paper §4.2, building on [yalcin-2018]'s
   question-sensitive belief): Bel_S discriminates among the cells of Q_c.
 
-The question-based mechanism is inspired by @cite{crnic-2014} (an idea
+The question-based mechanism is inspired by [crnic-2014] (an idea
 the paper credits as previously unformalized), parallels Yalcin's
 question-sensitive belief on the doxastic side, and was independently
 arrived at via a different route by Dandelet (situations rather than
 questions).
 
-The von Fintel @cite{von-fintel-1999} baseline (`wantVF`) is included as
+The von Fintel [von-fintel-1999] baseline (`wantVF`) is included as
 a foil. The paper's central metasemantic identity (paper §3.4) is that
 when Q_c is the finest partition (singleton cells), question-based want
 reduces to von Fintel's standard semantics — see
@@ -69,7 +69,7 @@ reduces to von Fintel's standard semantics — see
 `wantVF_no_simultaneous_pq_and_negpq` covers von Fintel only.
 
 The world ordering used by `wantVF` is structurally identical to
-@cite{kratzer-1981}'s ordering (every desire satisfied at z is also
+[kratzer-1981]'s ordering (every desire satisfied at z is also
 satisfied at w); see `worldAtLeastAsGood_iff_kratzer_atLeastAsGoodAs`
 for the bridge.
 -/
@@ -133,7 +133,7 @@ Pareto-undominated elements (see paper §3.5, p. 11:21). -/
 
 /-- Proposition ordering: `a ≤ a'` iff every desire in `GS` that `a'`
     entails, `a` also entails. The Pareto-undominated elements under
-    this relation are the "best answers" of @cite{phillips-brown-2025}
+    this relation are the "best answers" of [phillips-brown-2025]
     §3.5. -/
 def propositionOrdering (GS : List (DecProp W)) :
     SatisfactionOrdering (DecProp W) (DecProp W) :=
@@ -170,7 +170,7 @@ instance (belS : Set W) [DecidablePred belS]
 
 `wantVF` evaluates to "every undominated belief-world is a p-world",
 where the world ordering is induced by which desires each world
-satisfies. Structurally identical to @cite{kratzer-1981}'s
+satisfies. Structurally identical to [kratzer-1981]'s
 `atLeastAsGoodAs`; see the bridge theorem
 `worldAtLeastAsGood_iff_kratzer`. -/
 
@@ -195,7 +195,7 @@ theorem worldAtLeastAsGood_iff_kratzer (GS : List (DecProp W)) (w z : W) :
   refine ⟨fun h _ ⟨a, ha, hap⟩ hpz => hap ▸ h a ha (hap ▸ hpz),
           fun h a ha hpz => h a.prop ⟨a, ha, rfl⟩ hpz⟩
 
-/-- Standard von Fintel @cite{von-fintel-1999} semantics: every undominated
+/-- Standard von Fintel [von-fintel-1999] semantics: every undominated
     belS-world is a p-world. The `[DecidablePred]` hypotheses are not
     used in the definition body; they live on the `Decidable` instance
     so that abstract reasoning (e.g. instances of
@@ -225,7 +225,7 @@ instance (answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-- **Diversity Constraint** (paper §3.7, attributed to
-    @cite{condoravdi-2002}): Q_c contains both p-cells and ¬p-cells.
+    [condoravdi-2002]): Q_c contains both p-cells and ¬p-cells.
     Without diversity, ⟦want p⟧ would be vacuously true (or false). -/
 def isDiverse (answers : List (DecProp W))
     (p : Set W) [DecidablePred p] : Prop :=
@@ -274,7 +274,7 @@ instance (naturalProps answers : List (DecProp W)) :
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-- **Belief-sensitivity Constraint** (paper §4.2, building on
-    @cite{yalcin-2018}'s question-sensitive belief): Bel_S discriminates
+    [yalcin-2018]'s question-sensitive belief): Bel_S discriminates
     among the cells of Q_c — at least one answer is compatible with
     S's beliefs and at least one is incompatible. Blocks inferences
     like William III ⊨ "Avoid nuclear war" when the agent lacks the
@@ -483,7 +483,7 @@ theorem wantVF_no_simultaneous_pq_and_negpq
 
 omit [Fintype W] [DecidableEq W] in
 /-- vF is **upward monotonic**: if `p ⊆ q` and `wantVF belS GS p`,
-    then `wantVF belS GS q`. This is the @cite{villalta-2008}
+    then `wantVF belS GS q`. This is the [villalta-2008]
     doxastic-closure problem that motivates the question-based
     approach (paper §4.1). -/
 theorem wantVF_upward_monotonic (belS : Set W) [DecidablePred belS]
@@ -507,7 +507,7 @@ theorem wantQuestionBased_strawson_upward_monotonic
     wantQuestionBased belS GS answers q :=
   fun a ha w hw => hpq w (h a ha w hw)
 
-/-! ## @cite{heim-1992} comparative-belief desire semantics
+/-! ## [heim-1992] comparative-belief desire semantics
 
 The paper has three successive truth conditions for `want`, each fixing
 a defect of the prior. We expose all three as a feature, not a bug — it
@@ -533,7 +533,7 @@ formal mechanism behind Heim's account being unable to predict
 simultaneous `want(p) ∧ want(¬p)`.
 
 Heim does NOT use a Kratzer-style ordering source — she uses a
-@cite{lewis-1973} / @cite{stalnaker-1968} similarity ordering on worlds.
+[lewis-1973] / [stalnaker-1968] similarity ordering on worlds.
 The desirability `<_{α,w}` is treated as primitive (a relation between
 worlds, parameterized by agent and evaluation world), not derived from
 a desire-list the way vF's is. -/
@@ -883,17 +883,17 @@ theorem isConsidered_iff_polar_partial_answer
 
 end Generic
 
-/-! ## @cite{lassiter-2017} (apparatus) / @cite{lassiter-2011} (want application):
+/-! ## [lassiter-2017] (apparatus) / [lassiter-2011] (want application):
        Expected-value desire semantics
 
-@cite{lassiter-2017} ch.7 (titled "Scalar goodness", *not* a desire
+[lassiter-2017] ch.7 (titled "Scalar goodness", *not* a desire
 chapter) develops an expected-value semantics for evaluative gradable
 predicates: `E_V(φ) = Σ_{w ∈ φ ∩ D} V(w) · prob({w} | φ ∩ D)` (eq. 7.22,
 p.187). The book's positive-form *ought* (§8.14 eq. 8.72a, p.253) is
 exactly the threshold reading `μ_ought(φ) > θ_ought` we adopt as `want`.
 The book extends to *want* in a single sentence at §8.13 (p.249):
 "*want* behaves as a gradable verb like *like, matter, care, [...]
-need*." The detailed *want*-as-EU account lives in @cite{lassiter-2011}
+need*." The detailed *want*-as-EU account lives in [lassiter-2011]
 ch.6 (NYU dissertation).
 
 The substrate exposes:
@@ -1034,7 +1034,7 @@ Sloman) admits simultaneous `want(p) ∧ want(¬p)`. Uniform prior 1/4 over
 `p = {w₀, w₁}`. Then `E_V(p) = 7 > 3/2` and `E_V(¬p) = 2 > 3/2`.
 
 This is Lassiter Table 8.4 p.239 — Lassiter's reconstruction of the
-Weakening-failure pattern @cite{cariani-2016} attacks within actualism,
+Weakening-failure pattern [cariani-2016] attacks within actualism,
 applied to the EV semantics. Cariani 2016's own counter-model
 (p.405) uses an actualist closeness ordering, not EV. Lassiter's
 *response* is to add Sloman's Principle, which excludes the witness
@@ -1172,14 +1172,14 @@ Lassiter eq. 8.54 collects three constraints on `ought`:
   (already formalized as `slomanPrinciple`)
 * (b) **Smith** (Horty 1993, 2003): `[(φ ∨ ψ) = W ∧ ought(φ) ∧ ought(ψ)]
   → ought(φ ∧ ψ)` — restricted agglomeration
-* (c) **Weakening** (@cite{cariani-2016}): `ought(φ) ∧ ought(ψ) → ought(φ ∨ ψ)`
+* (c) **Weakening** ([cariani-2016]): `ought(φ) ∧ ought(ψ) → ought(φ ∨ ψ)`
 
 These are constraints on the `want` operator, not properties of single
 propositions. We formalize each as a `Prop` relating two propositions;
 the universally-quantified "operator satisfies the constraint" is the
 `∀ p q` closure.
 
-**Provenance for Weakening**: @cite{cariani-2016} introduces the name
+**Provenance for Weakening**: [cariani-2016] introduces the name
 and argues the principle is valid within actualist deontic semantics
 (Cariani's own Counterexample to Weakening on p.405 attacks the
 *conjunction* actualism + simple alternatives mapping; he wants to

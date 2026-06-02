@@ -2,7 +2,7 @@ import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# Fox 2007: Free Choice via Recursive Exhaustification @cite{fox-2007}
+# Fox 2007: Free Choice via Recursive Exhaustification [fox-2007]
 
 The original grammatical account of free-choice permission. Recursive
 application of the covert exhaustivity operator `exh` (Innocent

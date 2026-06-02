@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Bilateral.Defs
 import Mathlib.Order.UpperLower.Basic
 import Mathlib.Order.UpperLower.CompleteLattice
 
-/-! # Truthmaker Semantics @cite{fine-2017} @cite{bondarenko-elliott-2026} @cite{jago-2026}
+/-! # Truthmaker Semantics [fine-2017] [bondarenko-elliott-2026] [jago-2026]
 
 State-based propositions grounded in `Core/Mereology.lean`. Propositions are
 sets of *verifying states*, where states form a join-semilattice (the same
@@ -22,7 +22,7 @@ sets of *verifying states*, where states form a join-semilattice (the same
 ## Part I: Unilateral propositions
 
 The first part formalizes the unilateral fragment needed by
-@cite{bondarenko-elliott-2026}: propositions as sets of verifiers,
+[bondarenko-elliott-2026]: propositions as sets of verifiers,
 conjunction via fusion, content parthood (Down clause), and attitude
 distribution. Both halves of Jago's conjunctive parthood are exposed
 (`IsSubsumedBy`, `Subserves`, `IsContentPart`).
@@ -53,7 +53,7 @@ the verification/falsification level:
    the *Down* clause holds (every verifier of p has a part verifying q)
    AND the *Up* clause holds (every verifier of q is part of some verifier
    of p). The Down-only relation `IsSubsumedBy` is the relation
-   @cite{bondarenko-elliott-2026} use for monotonicity arguments.
+   [bondarenko-elliott-2026] use for monotonicity arguments.
 
 4. **Bilateral propositions**: Propositions are (V, F) pairs. Negation swaps
    them; conjunction fuses verifiers but unions falsifiers; disjunction unions
@@ -69,12 +69,12 @@ the verification/falsification level:
 
 ## Citation discipline
 
-- The encyclopedia survey @cite{jago-2026} is the entry point; specific
+- The encyclopedia survey [jago-2026] is the entry point; specific
   technical claims trace back to Fine's two-part *Truthmaker Content*
   series (which are in *Journal of Philosophical Logic* 46(6), not the
   Wiley *Companion* chapter `fine-2017`). Section/page numbers internal
   to those papers are flagged `UNVERIFIED` until checked against PDFs.
-- @cite{bondarenko-elliott-2026} definitions/theorem numbers are flagged
+- [bondarenko-elliott-2026] definitions/theorem numbers are flagged
   `UNVERIFIED` since the manuscript has not been cross-checked.
 
 -/
@@ -101,7 +101,7 @@ def tmOr (p q : TMProp S) : TMProp S :=
 
 variable [SemilatticeSup S]
 
-/-- Conjunction via fusion (@cite{fine-2017}; @cite{bondarenko-elliott-2026}).
+/-- Conjunction via fusion ([fine-2017]; [bondarenko-elliott-2026]).
     `s` verifies `p ∧ q` iff `s = s₁ ⊔ s₂` for some `s₁` verifying `p`
     and `s₂` verifying `q`.
     The key departure from classical conjunction (set intersection). -/
@@ -114,19 +114,19 @@ end Connectives
 -- § 2. Content Parthood (Jago Def 5: Up + Down)
 -- ════════════════════════════════════════════════════
 
-/-- **Down clause** of conjunctive parthood (@cite{jago-2026} Def 5;
-    @cite{bondarenko-elliott-2026} content parthood):
+/-- **Down clause** of conjunctive parthood ([jago-2026] Def 5;
+    [bondarenko-elliott-2026] content parthood):
     every verifier of `p` has a part verifying `q`.
 
     Re-export of `Mereology.IsSubsumedBy` — the Down clause is a generic
     poset relation, not truthmaker-specific.
 
-    The Down-only relation suffices for @cite{bondarenko-elliott-2026}'s
+    The Down-only relation suffices for [bondarenko-elliott-2026]'s
     monotonicity arguments. -/
 abbrev IsSubsumedBy {S : Type*} [Preorder S] (q p : TMProp S) : Prop :=
   Mereology.IsSubsumedBy q p
 
-/-- **Up clause** of conjunctive parthood (@cite{jago-2026} Def 5):
+/-- **Up clause** of conjunctive parthood ([jago-2026] Def 5):
     every verifier of `q` is part of some verifier of `p`.
 
     Re-export of `Mereology.Subserves`. The Up clause is more delicate:
@@ -136,7 +136,7 @@ abbrev IsSubsumedBy {S : Type*} [Preorder S] (q p : TMProp S) : Prop :=
 abbrev Subserves {S : Type*} [Preorder S] (q p : TMProp S) : Prop :=
   Mereology.Subserves q p
 
-/-- Full conjunctive parthood (@cite{jago-2026} Def 5):
+/-- Full conjunctive parthood ([jago-2026] Def 5):
     `q` is a content part of `p` iff both the Down and Up clauses hold.
 
     Re-export of `Mereology.IsContentPart`. Written `q ≤ p` in Jago's
@@ -190,7 +190,7 @@ theorem IsContentPart.tmAnd_right (hp : ∃ s, p s) :
 end ConjunctionParts
 
 -- ════════════════════════════════════════════════════
--- § 4. Attitude Semantics (@cite{bondarenko-elliott-2026})
+-- § 4. Attitude Semantics ([bondarenko-elliott-2026])
 -- ════════════════════════════════════════════════════
 
 section Attitudes
@@ -222,7 +222,7 @@ theorem attHolds_tmAnd_of (hp : attHolds σ p x) (hq : attHolds σ q x) :
   exact ⟨s₁ ⊔ s₂, ⟨s₁, s₂, hps₁, hqs₂, rfl⟩, sup_le hle₁ hle₂⟩
 
 /-- Full conjunction-distribution biconditional for upward-monotone attitudes
-    (@cite{bondarenko-elliott-2026}, monotonicity-via-mereology theorem). -/
+    ([bondarenko-elliott-2026], monotonicity-via-mereology theorem). -/
 theorem attHolds_tmAnd_iff :
     attHolds σ (tmAnd p q) x ↔ attHolds σ p x ∧ attHolds σ q x :=
   ⟨attHolds_tmAnd_imp σ p q x,
@@ -251,7 +251,7 @@ theorem isSubsumedBy_or_not_general :
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- PART II: BILATERAL PROPOSITIONS
--- @cite{fine-2017}; cf. @cite{jago-2026} for the bilateral/unilateral choice
+-- [fine-2017]; cf. [jago-2026] for the bilateral/unilateral choice
 -- ════════════════════════════════════════════════════════════════════════════
 
 -- ════════════════════════════════════════════════════
@@ -260,7 +260,7 @@ theorem isSubsumedBy_or_not_general :
 
 /-- A bilateral proposition: separate sets of verifiers and falsifiers.
 
-    Per @cite{fine-2017}, a bilateral model assigns each atom a pair
+    Per [fine-2017], a bilateral model assigns each atom a pair
     `(V, F)` of a verification set `V` and a falsification set `F`.
     The unilateral `TMProp` is recovered by `BilProp.toTM`. -/
 @[ext] structure BilProp (S : Type*) where
@@ -291,7 +291,7 @@ namespace BilProp
 
 variable {S : Type*}
 
-/-- Negation: swap verifiers and falsifiers (@cite{fine-2017}). -/
+/-- Negation: swap verifiers and falsifiers ([fine-2017]). -/
 def neg (p : BilProp S) : BilProp S :=
   ⟨p.fal, p.ver⟩
 
@@ -379,7 +379,7 @@ section Possibility
 variable {S : Type*} [SemilatticeSup S]
 
 /-- Two states are *compatible* iff their fusion is possible
-    (@cite{fine-2017}). Incompatible states represent conflicting
+    ([fine-2017]). Incompatible states represent conflicting
     information — e.g., a state verifying "it's cold" and a state
     verifying "it's hot" are incompatible because their fusion is impossible. -/
 def compatible (P : Possibility S) (s t : S) : Prop :=
@@ -404,13 +404,13 @@ end Possibility
 section ExclEx
 variable {S : Type*} [SemilatticeSup S]
 
-/-- **Exclusivity** (@cite{fine-2017}): no verifier is compatible with
+/-- **Exclusivity** ([fine-2017]): no verifier is compatible with
     a falsifier. One direction of bivalence: verification and falsification
     are mutually incompatible. -/
 def Exclusive (P : Possibility S) (A : BilProp S) : Prop :=
   ∀ s t, A.ver s → A.fal t → ¬ compatible P s t
 
-/-- **Exhaustivity** (@cite{fine-2017}): every possible state is
+/-- **Exhaustivity** ([fine-2017]): every possible state is
     compatible with a verifier or a falsifier. The other direction of
     bivalence: no possible state is undecided about A.
 
@@ -468,13 +468,13 @@ section SubjectMatter
 variable {S : Type*} [SupSet S]
 
 /-- Subject-matter of a unilateral proposition: the fusion of all its
-    verifiers (@cite{jago-2026} p. 5; cf. @cite{fine-2017}'s *Truthmaker
+    verifiers ([jago-2026] p. 5; cf. [fine-2017]'s *Truthmaker
     Content* series in JPL 46(6) for the original presentation). -/
 noncomputable def TMProp.subjectMatter (p : TMProp S) : S :=
   sSup {s | p s}
 
 /-- Subject-matter of a bilateral proposition: the fusion of *both*
-    verifiers and falsifiers (@cite{jago-2026} p. 5).
+    verifiers and falsifiers ([jago-2026] p. 5).
 
     This is the formulation that makes `subjectMatter` invariant under
     negation — the headline structural property that distinguishes
@@ -483,7 +483,7 @@ noncomputable def TMProp.subjectMatter (p : TMProp S) : S :=
 noncomputable def BilProp.subjectMatter (A : BilProp S) : S :=
   sSup ({s | A.ver s} ∪ {s | A.fal s})
 
-/-- **Negation invariance** of subject-matter (@cite{jago-2026} p. 5):
+/-- **Negation invariance** of subject-matter ([jago-2026] p. 5):
     `σ(¬A) = σ(A)`. The headline structural property of bilateral
     subject-matter, falling out structurally because `BilProp.neg`
     swaps `ver` and `fal` and `Set.union_comm` does the rest. -/
@@ -493,7 +493,7 @@ noncomputable def BilProp.subjectMatter (A : BilProp S) : S :=
 
 variable [Preorder S]
 
-/-- "A is about B" iff A's subject-matter is a part of B's (@cite{jago-2026}).
+/-- "A is about B" iff A's subject-matter is a part of B's ([jago-2026]).
     Mereological account of aboutness: "It's raining" is about the weather;
     "It's raining and 2+2=4" is about the weather AND arithmetic. -/
 def BilProp.isAbout (A B : BilProp S) : Prop :=
@@ -511,8 +511,8 @@ private inductive TwoAtom where
   | b
   deriving DecidableEq
 
-/-- **The load-bearing claim of the framework** (@cite{jago-2026},
-    @cite{fine-2017}). Two bilateral propositions can be *pointwise
+/-- **The load-bearing claim of the framework** ([jago-2026],
+    [fine-2017]). Two bilateral propositions can be *pointwise
     equivalent on verifiers* (= classically equivalent at every world)
     yet have *distinct subject-matters* (= mereologically different content).
 

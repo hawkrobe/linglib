@@ -2,38 +2,38 @@ import Linglib.Semantics.Dynamic.PPCDRT.Defs
 
 /-!
 # PPCDRT — Anaphoric Relations and Maximize Anaphora
-@cite{haug-dalrymple-2020} @cite{dotlacil-2013} @cite{murray-2008}
-@cite{langendoen-1978}
+[haug-dalrymple-2020] [dotlacil-2013] [murray-2008]
+[langendoen-1978]
 
 The anaphoric-relation conditions on top of the PPCDRT substrate, plus
 the `R_u` set construction and the Maximize Anaphora principle.
 
-Three relations distinguished by @cite{higginbotham-1985}, @cite{williams-1991}
-and formalized in @cite{haug-dalrymple-2020}:
+Three relations distinguished by [higginbotham-1985], [williams-1991]
+and formalized in [haug-dalrymple-2020]:
 
 - **Binding** (`u_anaph = u_ant`): pointwise equality of dref values
   across the plural state. Requires c-command in the syntax.
-  @cite{haug-dalrymple-2020} eq 30.
+  [haug-dalrymple-2020] eq 30.
 
 - **Group identity** (`∪u_anaph = ∪u_ant`): the *summed* set of values
   across the plural state is identical. The pronoun denotes the same
   plurality as its antecedent. No c-command required.
-  @cite{haug-dalrymple-2020} §2.3.
+  [haug-dalrymple-2020] §2.3.
 
 - **Reciprocity** (group identity + `∂(u ≠ u')`): same plurality, plus
   per-state distinctness. The semantic core of *each other*.
-  @cite{haug-dalrymple-2020} eq 41.
+  [haug-dalrymple-2020] eq 41.
 
 - **Underspecified** (group identity, no distinctness): German *sich*,
   Czech *se*, Cheyenne REFL/RECIP affix. Permits reflexive, reciprocal,
-  and mixed readings (@cite{murray-2008}, @cite{cable-2014}).
+  and mixed readings ([murray-2008], [cable-2014]).
 
-The reciprocity-as-cumulativity link asserted by @cite{langendoen-1978}
+The reciprocity-as-cumulativity link asserted by [langendoen-1978]
 shows up as a structural theorem in `Cumulativity.lean`: `groupIdentityCond`
 is the bidirectional-coverage shape that `Plurality.Cumulativity.cumulativeOp`
 expresses for plural arguments.
 
-§6 of @cite{haug-dalrymple-2020} adds the **Maximize Anaphora** principle
+§6 of [haug-dalrymple-2020] adds the **Maximize Anaphora** principle
 (eq 128): when interpreting a discourse referent introduced by a reciprocal
 with antecedent and relation φ, maximize the set `R_u` of pairs in the
 relation, subject to consistency with world knowledge. The substrate-level
@@ -51,14 +51,14 @@ universe u
 variable {E : Type u}
 
 -- ════════════════════════════════════════════════════════════════
--- § 1: Binding (=) — @cite{haug-dalrymple-2020} eq 30
+-- § 1: Binding (=) — [haug-dalrymple-2020] eq 30
 -- ════════════════════════════════════════════════════════════════
 
 /-- Binding (`u_anaph = u_ant`): pointwise dref equality across the plural
     state. The two drefs hold the same `Option E` value at every state —
     either both defined and equal, or both undefined.
 
-    Per @cite{haug-dalrymple-2020} eq 30: `u_anaph = u_ant ≡ ∀ s ∈ S.
+    Per [haug-dalrymple-2020] eq 30: `u_anaph = u_ant ≡ ∀ s ∈ S.
     v(s)(u_anaph) = v(s)(u_ant)`. The pointwise `Option` equality matches
     this — both drefs hold the same value (defined or undefined) at every
     state. Stronger than the *coreference* presupposition (the eq-29 `→`
@@ -68,13 +68,13 @@ def bindingCond (uAnaph uAnt : Nat) : PPDRSCond E := λ S _Δ =>
   ∀ s ∈ S, s uAnaph = s uAnt
 
 -- ════════════════════════════════════════════════════════════════
--- § 2: Group Identity (∪) — @cite{haug-dalrymple-2020} §2.3
+-- § 2: Group Identity (∪) — [haug-dalrymple-2020] §2.3
 -- ════════════════════════════════════════════════════════════════
 
 /-- One-direction sum-dref coverage: every value `uAnaph` takes across
     the plural state is also a value `uAnt` takes.
 
-    *Note*: this is NOT @cite{haug-dalrymple-2020} eq 29 (the asymmetric
+    *Note*: this is NOT [haug-dalrymple-2020] eq 29 (the asymmetric
     `→`). Paper eq 29 is `λS.λΔ.∀s ∈ S. u_anaph(s,[s]_Δ) = u_ant(s,S)` —
     an *equation* between two evaluations, not a subset relation. At
     Δ = ∅ paper eq 29 reduces to pointwise `bindingCond`, not to
@@ -91,7 +91,7 @@ def coverCond (uAnaph uAnt : Nat) : PPDRSCond E := λ S _Δ =>
 /-- Group identity (`∪u_anaph = ∪u_ant`): the value-sets of the two
     drefs across the plural state are equal.
 
-    @cite{haug-dalrymple-2020} eq 41 stipulates `∂(∪u = ∪𝒜(u))` for *each
+    [haug-dalrymple-2020] eq 41 stipulates `∂(∪u = ∪𝒜(u))` for *each
     other* — exactly this symmetric equality on sum-drefs. Bidirectional
     `coverCond` is an alternative formulation provable via
     `groupIdentityCond_iff_bidir_coverCond` below. -/
@@ -107,7 +107,7 @@ theorem groupIdentityCond_iff_bidir_coverCond (uAnaph uAnt : Nat)
   exact ⟨fun h => ⟨h.le, h.ge⟩, fun ⟨h₁, h₂⟩ => Set.Subset.antisymm h₁ h₂⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 3: Reciprocity (R) — @cite{haug-dalrymple-2020} eq 41
+-- § 3: Reciprocity (R) — [haug-dalrymple-2020] eq 41
 -- ════════════════════════════════════════════════════════════════
 
 /-- Reciprocity (`∂(∪u = ∪u') ∧ ∂(u ≠ u')`): group identity plus
@@ -118,12 +118,12 @@ def reciprocityCond (uAnaph uAnt : Nat) : PPDRSCond E := λ S Δ =>
   ∀ s ∈ S, ∀ d_a d_b, s uAnaph = some d_a → s uAnt = some d_b → d_a ≠ d_b
 
 -- ════════════════════════════════════════════════════════════════
--- § 4: Underspecified — @cite{haug-dalrymple-2020} §4.2 + @cite{murray-2008}
+-- § 4: Underspecified — [haug-dalrymple-2020] §4.2 + [murray-2008]
 -- ════════════════════════════════════════════════════════════════
 
 /-- Underspecified reflexive/reciprocal: group identity with no
     distinctness. Permits reflexive, reciprocal, and mixed readings.
-    @cite{murray-2008} (Cheyenne), @cite{cable-2014} (German *sich*). -/
+    [murray-2008] (Cheyenne), [cable-2014] (German *sich*). -/
 def underspecifiedCond (uAnaph uAnt : Nat) : PPDRSCond E :=
   groupIdentityCond uAnaph uAnt
 
@@ -133,7 +133,7 @@ def underspecifiedCond (uAnaph uAnt : Nat) : PPDRSCond E :=
 -- ════════════════════════════════════════════════════════════════
 
 /-- Binding implies group identity: pointwise `Option` equality of dref
-    values yields equality of value-sets. @cite{haug-dalrymple-2020} fig 1. -/
+    values yields equality of value-sets. [haug-dalrymple-2020] fig 1. -/
 theorem binding_implies_groupIdentity (uAnaph uAnt : Nat) (S : PluralAssign E) (Δ : Set Nat)
     (h : bindingCond uAnaph uAnt S Δ) : groupIdentityCond uAnaph uAnt S Δ := by
   unfold groupIdentityCond
@@ -171,11 +171,11 @@ theorem reciprocity_strengthens_underspecified (uAnaph uAnt : Nat)
     underspecifiedCond uAnaph uAnt S Δ := h.1
 
 -- ════════════════════════════════════════════════════════════════
--- § 6: R_u (@cite{haug-dalrymple-2020} eq 127)
+-- § 6: R_u ([haug-dalrymple-2020] eq 127)
 -- ════════════════════════════════════════════════════════════════
 
 /-- The set of (anaphor-value, antecedent-value) pairs across the plural
-    state. @cite{haug-dalrymple-2020} eq 127:
+    state. [haug-dalrymple-2020] eq 127:
     `R_u = {⟨v(s)(u_anaph), v(s)(u_ant)⟩ : s ∈ S}`. -/
 def R_u (uAnaph uAnt : Nat) (S : PluralAssign E) : Set (E × E) :=
   { p | ∃ s ∈ S, s uAnaph = some p.1 ∧ s uAnt = some p.2 }
@@ -188,10 +188,10 @@ theorem R_u_mono (uAnaph uAnt : Nat) {S₁ S₂ : PluralAssign E}
   exact ⟨g, h g hg, hAnaph, hAnt⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 7: Maximize Anaphora (@cite{haug-dalrymple-2020} eq 128)
+-- § 7: Maximize Anaphora ([haug-dalrymple-2020] eq 128)
 -- ════════════════════════════════════════════════════════════════
 
-/-- **Maximize Anaphora** (@cite{haug-dalrymple-2020} eq 128). In
+/-- **Maximize Anaphora** ([haug-dalrymple-2020] eq 128). In
     interpreting a DRS containing a discourse referent `u` introduced by
     a reciprocal with antecedent `u'` and relation `φ`, maximize the set
     `R_u` of pairs standing in `φ`, subject to the constraint that `φ`
@@ -199,12 +199,12 @@ theorem R_u_mono (uAnaph uAnt : Nat) {S₁ S₂ : PluralAssign E}
 
     The substrate-level statement: for the chosen plural state `S`, no
     proper extension of `S` (in the lifted-Set sense on `R_u`) also
-    satisfies `φ`. Per @cite{haug-dalrymple-2020} §6, this is a
+    satisfies `φ`. Per [haug-dalrymple-2020] §6, this is a
     *generation principle*, not a decidable predicate — concrete examples
     supply per-instance `decide`-checks.
 
     Note: the principle replaces the Strongest Meaning Hypothesis of
-    @cite{dalrymple-et-al-1998}; §6.1 of @cite{haug-dalrymple-2020}
+    [dalrymple-et-al-1998]; §6.1 of [haug-dalrymple-2020]
     discusses the empirical contrast (paper eq 132–133). -/
 def maximizeAnaphora (φ : Nat → Nat → PPDRSCond E) (uAnaph uAnt : Nat)
     (S : PluralAssign E) (Δ : Set Nat) : Prop :=

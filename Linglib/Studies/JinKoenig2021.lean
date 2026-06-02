@@ -16,7 +16,7 @@ import Mathlib.Data.Fin.Basic
 
 /-!
 # Jin & Koenig (2021): A Cross-Linguistic Study of Expletive Negation
-@cite{jin-koenig-2021}
+[jin-koenig-2021]
 
 Linguistic Typology, 25(1), 39–78.
 
@@ -31,7 +31,7 @@ Januubi, Mandarin, and Zarma-Sonrai.
 The paper's central insight: EN occurs when a trigger's meaning activates
 both a proposition **p** and its dual **¬p** (in different modal or
 temporal domains). This dual activation, via spreading activation in
-language production (@cite{dell-1986}), sometimes causes the negator
+language production ([dell-1986]), sometimes causes the negator
 for ¬p to surface in the complement clause.
 
 ## Four Licensing Conditions (§5.5, ex. 13)
@@ -90,7 +90,7 @@ structure ENSurveyResult where
   fearTriggerCount : Nat
   deriving Repr
 
-/-- The overall EN survey from @cite{jin-koenig-2021}. -/
+/-- The overall EN survey from [jin-koenig-2021]. -/
 def enSurvey : ENSurveyResult where
   totalSurveyed := 722
   languagesWithEN := 74
@@ -121,7 +121,7 @@ theorem en_before_trigger_majority :
 -- § 1.5. Table 2: EN by Continental Area
 -- ════════════════════════════════════════════════════
 
-/-- Continental areas from @cite{jin-koenig-2021} Table 2. -/
+/-- Continental areas from [jin-koenig-2021] Table 2. -/
 inductive ContinentalArea where
   | africa
   | australiaNewGuinea
@@ -141,7 +141,7 @@ structure ENAreaData where
   deriving Repr
 
 /-- Table 2: Distribution of languages with and without EN by
-    continental area (@cite{jin-koenig-2021}). -/
+    continental area ([jin-koenig-2021]). -/
 def enByArea : List ENAreaData :=
   [ ⟨.africa,             177, 11, some 74, some 5⟩
   , ⟨.australiaNewGuinea,  96,  2, some 57, some 2⟩
@@ -192,7 +192,7 @@ structure ENLanguageEntry where
   deriving Repr
 
 /-- Table 3: All 74 languages where EN was attested, with their trigger
-    concepts (@cite{jin-koenig-2021}, pp. 45–48). -/
+    concepts ([jin-koenig-2021], pp. 45–48). -/
 def enLanguages : List ENLanguageEntry :=
   -- ── Africa (11 languages) ──────────────────────────────────────────
   [ ⟨"Shupamem",        "bax", "Bantoid",    .africa,
@@ -495,7 +495,7 @@ structure DualInferenceProfile where
   deriving Repr
 
 /-- Table 6 data: positive and negative inferences for each trigger
-    concept (@cite{jin-koenig-2021}, pp. 70–71). All 28 rows of the
+    concept ([jin-koenig-2021], pp. 70–71). All 28 rows of the
     paper's Table 6 are encoded. Within each class, concepts often have
     *different* inference profiles (e.g., AVOID adds "and in w₀" to FEAR's
     positive inference; DESPAIR has three sources of inference). -/
@@ -608,7 +608,7 @@ The FEAR trigger class (§6.1.1) licenses EN because the meaning of
 fear-type verbs activates both p (content of attitude — what X fears)
 and ¬p (content of desire — what X wants). This dual activation
 corresponds precisely to **negative valence** in the preferential
-attitude semantics of @cite{villalta-2008}:
+attitude semantics of [villalta-2008]:
 
 - Positive valence (hope, wish): X wants p → only p is activated
 - Negative valence (fear, dread): X fears p but wants ¬p → both activated
@@ -645,7 +645,7 @@ theorem worry_has_dual_inference {W E : Type*}
 
 /-- Hope has positive valence → does NOT satisfy the dual-inference
     condition → NOT an EN trigger. While 'hope' has been reported as a
-    possible EN trigger in Japanese/Korean (@cite{jin-koenig-2021}, §2,
+    possible EN trigger in Japanese/Korean ([jin-koenig-2021], §2,
     exx. 5–6), JK2021 exclude these based on their definition (2): the
     complement negation reflects epistemic uncertainty, not EN. -/
 theorem hope_no_dual_inference {W E : Type*}
@@ -1021,7 +1021,7 @@ theorem unless_licensing :
 
 /-! ### MORE THAN satisfies the comparative licensing condition
 
-"Y is MORE Q THAN Z" entails (via @cite{jin-koenig-2021}, Table 6):
+"Y is MORE Q THAN Z" entails (via [jin-koenig-2021], Table 6):
 - **Positive**: Q(Z, D) — Z has property Q to degree D
 - **Negative**: ¬Q(Z, D'), D' > D — Z does NOT have Q to degree D'
 
@@ -1078,14 +1078,14 @@ open Features (Causative Implicative)
 /-- FORGET is a negative implicative: "X forgot to do Y" entails that
     Y did NOT happen (¬p in w₀). This is DERIVED from the implicative
     builder's polarity, not stipulated.
-    @cite{nadathur-2023}: negative implicatives entail complement falsity. -/
+    [nadathur-2023]: negative implicatives entail complement falsity. -/
 theorem forget_grounded_in_implicativity :
     Implicative.negative.entailsComplement = false := rfl
 
 /-- STOP/PREVENT are causative preventatives: "X prevented Y" entails
     that Y did NOT occur (¬p in w₀). The negative entailment comes from
     the causal blocking semantics of `preventSem`.
-    @cite{nadathur-lauer-2020}: prevent = effect blocked with preventer,
+    [nadathur-lauer-2020]: prevent = effect blocked with preventer,
     would have occurred without it. -/
 theorem prevent_is_causative_builder :
     (Causative.prevent).assertsSufficiency = false := rfl
@@ -1111,7 +1111,7 @@ that the fragment data is consistent with the attestation table:
 each language's EN markers exist and have the expected properties. -/
 
 /-- French uses dedicated *ne* (without *pas*) for high-entrenchment EN.
-    This is distinct from standard *ne...pas* negation (@cite{jin-koenig-2021}, §4). -/
+    This is distinct from standard *ne...pas* negation ([jin-koenig-2021], §4). -/
 theorem french_has_dedicated_en_marker :
     French.Negation.enMarker = French.Negation.neClitic := rfl
 
@@ -1184,7 +1184,7 @@ by that trigger's lexical semantics, and (iii) truth-conditionally vacuous
 in the complement clause. -/
 
 /-- The three necessary conditions for an instance of negation to count
-    as expletive negation (EN), per @cite{jin-koenig-2021}, ex. (2). -/
+    as expletive negation (EN), per [jin-koenig-2021], ex. (2). -/
 structure ENDefinition where
   /-- (i) The negator is in a syntactic dependent of a lexical item
       (verb, adposition, adverb, or collocation). -/
@@ -1223,7 +1223,7 @@ theorem wish_is_not_en : isEN french_ne_wish = false := rfl
 
 /-! ### Connecting JK2021 licensing conditions to Rett's ambidirectionality
 
-@cite{rett-2026} (formalized in `Rett2026`)
+[rett-2026] (formalized in `Rett2026`)
 proposes that EN is licensed in *ambidirectional* constructions — those
 where negating an argument doesn't change truth conditions. This is
 a stronger, unified condition that subsumes JK2021's four conditions.
@@ -1359,7 +1359,7 @@ theorem almost_barely_same_class :
     almostProfile.subclass = barelyProfile.subclass := rfl
 
 /-- ALMOST and BARELY swap their domains
-    (@cite{jin-koenig-2021}, §6.1.4):
+    ([jin-koenig-2021], §6.1.4):
     - ALMOST: p holds "close to w₀", ¬p in "w₀"
     - BARELY: p holds in "w₀", ¬p "close to w₀"
     The real-world (w₀) and close-to-real-world domains are exchanged. -/

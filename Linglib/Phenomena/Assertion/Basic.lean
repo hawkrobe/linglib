@@ -2,7 +2,7 @@ import Linglib.Features.Acceptability
 
 /-!
 # Assertion Phenomena: Theory-Neutral Data
-@cite{gunlogson-2001} @cite{lauer-2013} @cite{searle-1969}
+[gunlogson-2001] [lauer-2013] [searle-1969]
 
 Empirical observations about assertion that any theory should account for.
 These data points are theory-neutral: they describe observable patterns

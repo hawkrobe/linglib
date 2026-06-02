@@ -2,7 +2,7 @@ import Linglib.Features.Case
 import Linglib.Typology.Comparison
 import Linglib.Typology.Comparison
 /-!
-# Turkish Comparative Construction @cite{stassen-1985}
+# Turkish Comparative Construction [stassen-1985]
 
 Turkish uses a **separative** comparative construction: the standard NP is
 marked with the ablative suffix `-dan`/`-den` (subject to vowel harmony). The
@@ -13,7 +13,7 @@ Example: *Ali Veli-den (daha) uzun*
          = 'Ali is taller than Veli'
 
 The ablative case suffix `-dan`/`-den` is the same morpheme used for spatial
-'from' (*İstanbul'dan* 'from Istanbul'), exemplifying @cite{stassen-1985}'s
+'from' (*İstanbul'dan* 'from Istanbul'), exemplifying [stassen-1985]'s
 localistic hypothesis: comparative markers derive from spatial case morphology.
 The optional adverb *daha* ('more') may intensify but is not required.
 -/

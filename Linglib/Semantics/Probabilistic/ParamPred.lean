@@ -2,7 +2,7 @@ import Linglib.Core.Probability.Finite
 
 /-!
 # Parameterized Predicates
-@cite{lassiter-goodman-2017} @cite{grove-white-2025}
+[lassiter-goodman-2017] [grove-white-2025]
 
 Boolean predicates parameterized by a latent variable, with a prior over
 that variable. Graded truth values **emerge** from marginalizing over the

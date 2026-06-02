@@ -2,7 +2,7 @@ import Linglib.Features.PropertyDomain
 
 /-!
 # Comparison Class: Empirical Data
-@cite{tessler-goodman-2022} @cite{tessler-goodman-2019} @cite{weicker-schulz-2024}
+[tessler-goodman-2022] [tessler-goodman-2019] [weicker-schulz-2024]
 
 Theory-neutral empirical patterns for comparison class inference with
 gradable adjectives.
@@ -31,7 +31,7 @@ Prediction:
 - The pattern reverses when expectations reverse
   (e.g., "short jockey" → compared to people; "tall jockey" → compared to jockeys)
 
-Source: @cite{tessler-goodman-2022}, Section 3
+Source: [tessler-goodman-2022], Section 3
 -/
 structure PolarityExpectationsDatum where
   /-- The adjective used -/
@@ -53,7 +53,7 @@ When you hear someone is a "tall basketball player", the most informative
 interpretation is that they are tall even compared to people in general,
 since basketball players are expected to be tall anyway.
 
-Source: @cite{tessler-goodman-2022}, Section 3.2.1, Figure 3
+Source: [tessler-goodman-2022], Section 3.2.1, Figure 3
 -/
 def tallBasketball : PolarityExpectationsDatum :=
   { adjective := "tall"
@@ -69,7 +69,7 @@ def tallBasketball : PolarityExpectationsDatum :=
 The negative adjective with high prior expectation leads to subordinate
 comparison: "short for a basketball player".
 
-Source: @cite{tessler-goodman-2022}, Section 3.2.1, Figure 3
+Source: [tessler-goodman-2022], Section 3.2.1, Figure 3
 -/
 def shortBasketball : PolarityExpectationsDatum :=
   { adjective := "short"
@@ -85,7 +85,7 @@ def shortBasketball : PolarityExpectationsDatum :=
 The pattern reverses for jockeys: negative adjective + low prior → superordinate.
 "Short for a person" is more informative than "short for a jockey".
 
-Source: @cite{tessler-goodman-2022}, Section 3.2.1, Figure 3
+Source: [tessler-goodman-2022], Section 3.2.1, Figure 3
 -/
 def shortJockey : PolarityExpectationsDatum :=
   { adjective := "short"
@@ -100,7 +100,7 @@ def shortJockey : PolarityExpectationsDatum :=
 
 Positive adjective + low prior → subordinate comparison class.
 
-Source: @cite{tessler-goodman-2022}, Section 3.2.1, Figure 3
+Source: [tessler-goodman-2022], Section 3.2.1, Figure 3
 -/
 def tallJockey : PolarityExpectationsDatum :=
   { adjective := "tall"
@@ -125,7 +125,7 @@ This captures the core empirical generalization:
 - positive adjective + low prior → subordinate
 - negative adjective + low prior → superordinate
 
-Source: @cite{tessler-goodman-2022}, Section 3.2.1, Figure 3
+Source: [tessler-goodman-2022], Section 3.2.1, Figure 3
 -/
 structure PolarityExpectationsPattern where
   /-- Examples demonstrating the pattern -/
@@ -149,7 +149,7 @@ Adjective type: Relative Gradable (RGA) vs Absolute Gradable (AGA).
 - RGA: Requires comparison class for interpretation (big, tall, expensive)
 - AGA: Has inherent standard, less dependent on comparison class (wet, closed, full)
 
-Source: @cite{weicker-schulz-2024}, Section 1.2
+Source: [weicker-schulz-2024], Section 1.2
 -/
 inductive AdjectiveType where
   | RGA  -- Relative Gradable Adjective
@@ -160,7 +160,7 @@ inductive AdjectiveType where
 Structure capturing the difference in comparison class dependency between
 RGA and AGA adjectives.
 
-Source: @cite{weicker-schulz-2024}, Section 1.2
+Source: [weicker-schulz-2024], Section 1.2
 -/
 structure AdjectiveTypeDatum where
   /-- The adjective -/
@@ -178,7 +178,7 @@ structure AdjectiveTypeDatum where
 /--
 "Big" is an RGA - threshold shifts with comparison class.
 
-Source: @cite{weicker-schulz-2024}, citing @cite{kennedy-2007}
+Source: [weicker-schulz-2024], citing [kennedy-2007]
 -/
 def bigRGA : AdjectiveTypeDatum :=
   { adjective := "big"
@@ -191,7 +191,7 @@ def bigRGA : AdjectiveTypeDatum :=
 /--
 "Wet" is an AGA - has inherent minimum standard.
 
-Source: @cite{weicker-schulz-2024}, Section 1.2
+Source: [weicker-schulz-2024], Section 1.2
 -/
 def wetAGA : AdjectiveTypeDatum :=
   { adjective := "wet"
@@ -208,7 +208,7 @@ def adjectiveTypeExamples : List AdjectiveTypeDatum :=
 /--
 Cue type for comparison class determination.
 
-Source: @cite{weicker-schulz-2024}, Section 1.3
+Source: [weicker-schulz-2024], Section 1.3
 -/
 inductive CueType where
   | linguistic  -- Taxonomic label (e.g., "the tall animal")
@@ -218,7 +218,7 @@ inductive CueType where
 /--
 Noun level in taxonomic hierarchy (Rosch & Mervis, 1975).
 
-This is distinct from @cite{tessler-goodman-2022}'s `ComparisonClass`
+This is distinct from [tessler-goodman-2022]'s `ComparisonClass`
 (subordinate/superordinate reference population). `NounLevel` classifies
 the noun's position in a conceptual taxonomy; `ComparisonClass` classifies
 the reference population used for adjective threshold computation.
@@ -227,7 +227,7 @@ classes — but the mapping is not identity: "basketball player" (basic-level
 noun) is the subordinate comparison class, while "people" (superordinate
 noun) is the superordinate comparison class.
 
-Source: @cite{weicker-schulz-2024}, Section 2
+Source: [weicker-schulz-2024], Section 2
 -/
 inductive NounLevel where
   | basic        -- "dog", "mouse", "elephant"
@@ -244,7 +244,7 @@ and adults privilege the linguistic information.
 - Basic-level nouns trigger subordinate class, superordinate nouns trigger
   superordinate class
 
-Source: @cite{weicker-schulz-2024}, Section 4
+Source: [weicker-schulz-2024], Section 4
 -/
 structure LinguisticVsVisualDatum where
   /-- The adjective used -/
@@ -267,7 +267,7 @@ structure LinguisticVsVisualDatum where
 The superordinate noun "animal" triggers the superordinate comparison class,
 overriding the visual context of only mice being present.
 
-Source: @cite{weicker-schulz-2024}, Experiment 1
+Source: [weicker-schulz-2024], Experiment 1
 -/
 def bigAnimalMice : LinguisticVsVisualDatum :=
   { adjective := "big"
@@ -284,7 +284,7 @@ def bigAnimalMice : LinguisticVsVisualDatum :=
 The basic-level noun "mouse" triggers the subordinate comparison class
 (compared to mice), even when other animals are visually salient.
 
-Source: @cite{weicker-schulz-2024}, Experiment 1
+Source: [weicker-schulz-2024], Experiment 1
 -/
 def bigMouseAnimals : LinguisticVsVisualDatum :=
   { adjective := "big"
@@ -306,7 +306,7 @@ Both 4-6 year olds and adults privilege linguistic over visual
 information, though adults show larger subordinate selections with basic-level
 nouns (possible scalar implicature contribution).
 
-Source: @cite{weicker-schulz-2024}, Section 4
+Source: [weicker-schulz-2024], Section 4
 -/
 structure DevelopmentalDatum where
   /-- Age group -/
@@ -322,7 +322,7 @@ structure DevelopmentalDatum where
 /--
 Adults with basic-level nouns strongly prefer subordinate interpretation.
 
-Source: @cite{weicker-schulz-2024}, Figure 2
+Source: [weicker-schulz-2024], Figure 2
 -/
 def adultBasicLevel : DevelopmentalDatum :=
   { ageGroup := "Adults"
@@ -334,7 +334,7 @@ def adultBasicLevel : DevelopmentalDatum :=
 /--
 Adults with superordinate nouns prefer superordinate interpretation.
 
-Source: @cite{weicker-schulz-2024}, Figure 2
+Source: [weicker-schulz-2024], Figure 2
 -/
 def adultSuperordinate : DevelopmentalDatum :=
   { ageGroup := "Adults"
@@ -346,7 +346,7 @@ def adultSuperordinate : DevelopmentalDatum :=
 /--
 Children with basic-level nouns prefer subordinate interpretation.
 
-Source: @cite{weicker-schulz-2024}, Figure 2
+Source: [weicker-schulz-2024], Figure 2
 -/
 def childBasicLevel : DevelopmentalDatum :=
   { ageGroup := "4-6 year olds"
@@ -358,7 +358,7 @@ def childBasicLevel : DevelopmentalDatum :=
 /--
 Children with superordinate nouns prefer superordinate interpretation.
 
-Source: @cite{weicker-schulz-2024}, Figure 2
+Source: [weicker-schulz-2024], Figure 2
 -/
 def childSuperordinate : DevelopmentalDatum :=
   { ageGroup := "4-6 year olds"
@@ -374,7 +374,7 @@ def developmentalExamples : List DevelopmentalDatum :=
 /--
 Main empirical generalizations about comparison class inference.
 
-Source: @cite{tessler-goodman-2022}, @cite{weicker-schulz-2024}
+Source: [tessler-goodman-2022], [weicker-schulz-2024]
 -/
 structure ComparisonClassGeneralizations where
   /-- Polarity interacts with prior expectations -/

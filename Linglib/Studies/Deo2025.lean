@@ -7,7 +7,7 @@ import Linglib.Fragments.Marathi.Particles
 
 /-!
 # Deo (2025): The Marathi Discourse Particle *bərə*
-@cite{deo-2025-bara}
+[deo-2025-bara]
 
 Take on This Commitment: The Particle *bərə* in Marathi (Indo-Aryan).
 *Proceedings of Sinn und Bedeutung 29*, ed. F. Longo and D. Panizza.
@@ -24,13 +24,13 @@ curses (11d), declarative commissives (9), agreement-with-addressee (16).
 
 ## Architectural claim (§ 3)
 
-@cite{deo-2025-bara} proposes a discourse model with two innovations
-beyond @cite{farkas-bruce-2010} / @cite{gunlogson-2001}:
+[deo-2025-bara] proposes a discourse model with two innovations
+beyond [farkas-bruce-2010] / [gunlogson-2001]:
 
 * Each interlocutor's discourse commitments split into doxastic vs
   preferential (eq. 17a–c) — formalized at
   `Discourse.Commitment.CommitmentForce`.
-* The @cite{gunlogson-2001} source/dependent distinction lifts to
+* The [gunlogson-2001] source/dependent distinction lifts to
   *both* commitment forces — the 2×2 cross
   `CommitmentSource × CommitmentForce`. The four cells are exposed as
   `Discourse.Commitment.TaggedSlate.{dependent, independent,
@@ -80,13 +80,13 @@ scope of this study file.
 
 /-- The bərə meta-content: "*p* is among the addressee's dependent
     commitments." This is the proposition the speaker preferentially
-    commits to. @cite{deo-2025-bara} (20). -/
+    commits to. [deo-2025-bara] (20). -/
 def baraMetaContent (p : W → Prop) (K : GunlogsonState W) : Prop :=
   p ∈ (K.slateOf .addressee).otherGenerated
 
 /-! ## § 3. Empirical felicity profile (Deo § 2) -/
 
-/-- The illocutionary acts surveyed by @cite{deo-2025-bara}.
+/-- The illocutionary acts surveyed by [deo-2025-bara].
 
     Refines `Discourse.IllocutionaryForce.SearleClass` for the
     directive subset (warning/advice/reminder/command/strongRec/
@@ -107,7 +107,7 @@ def IllocutionaryAct.toSearleClass : IllocutionaryAct → SearleClass
   | .agreement  => .assertive
 
 /-- Deo's reported empirical felicity of bərə across illocutionary acts.
-    Acts where bərə is felicitous (per @cite{deo-2025-bara} § 2):
+    Acts where bərə is felicitous (per [deo-2025-bara] § 2):
     `warning` (exx. 1, 4, 5a, 8, 13), `advice` (ex. 6), `reminder`
     (ex. 7), `command` (ex. 12), `strongRecommendation` (ex. 14). All
     other acts in the enum are infelicitous: `request` (ex. 10a),

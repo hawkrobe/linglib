@@ -1,7 +1,7 @@
 import Linglib.Fragments.Dargwa.Case
 
 /-!
-# Dargwa (Tanti) Locative System @cite{sumbatova-2021}
+# Dargwa (Tanti) Locative System [sumbatova-2021]
 
 In addition to the 6 grammatical cases (see `Dargwa/Case.lean`), Dargwa
 has a rich **spatial case** system. Locative forms decompose into three
@@ -23,7 +23,7 @@ namespace Dargwa.Locatives
 -- ============================================================================
 
 /-- Localization values: spatial domain w.r.t. the reference point.
-    Tanti has 8 localizations (@cite{sumbatova-2021} §4.4.3.3). -/
+    Tanti has 8 localizations ([sumbatova-2021] §4.4.3.3). -/
 inductive Localization where
   | super  -- -ja: 'on the surface'
   | sub    -- -gu: 'under'
@@ -36,7 +36,7 @@ inductive Localization where
   deriving DecidableEq, Repr
 
 /-- Orientation values: motion w.r.t. the reference point.
-    Tanti has 4 orientations (@cite{sumbatova-2021} §4.4.3.3). -/
+    Tanti has 4 orientations ([sumbatova-2021] §4.4.3.3). -/
 inductive Orientation where
   | lative       -- unmarked: motion toward
   | elative      -- -r: motion from
@@ -45,7 +45,7 @@ inductive Orientation where
   deriving DecidableEq, Repr
 
 /-- Direction values: motion w.r.t. the speaker.
-    Tanti has 4 directions (@cite{sumbatova-2021} §4.4.3.3). -/
+    Tanti has 4 directions ([sumbatova-2021] §4.4.3.3). -/
 inductive Direction where
   | up      -- -ha(le)
   | down    -- -ka(le)
@@ -61,7 +61,7 @@ structure LocativeForm where
   deriving Repr
 
 /-- Well-formedness of a locative form, encoding all combinatorial
-    constraints from @cite{sumbatova-2021} §4.4.3.3:
+    constraints from [sumbatova-2021] §4.4.3.3:
 
     **Direction**: absent in essive and translative, obligatory in
     elative, optional in lative.
@@ -98,7 +98,7 @@ theorem eight_localizations :
     [Localization.super, .sub, .ante, .in_, .inter, .ad, .apud, .post].length = 8 := rfl
 
 /-- Translative combines only with SUB, ANTE, and POST
-    (@cite{sumbatova-2021} ex. 13). -/
+    ([sumbatova-2021] ex. 13). -/
 theorem translative_restricted_sub :
     Orientation.translativeRestricted .sub = true := rfl
 

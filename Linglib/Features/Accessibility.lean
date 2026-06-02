@@ -4,17 +4,17 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Accessibility Marking Scale — Referential Form Taxonomy
-@cite{ariel-2001} @cite{arnold-wasow-losongco-ginstrom-2000}
+[ariel-2001] [arnold-wasow-losongco-ginstrom-2000]
 
 Per-entry feature taxonomy classifying referring expressions by
 **accessibility** — the degree to which the referent's mental
 representation is available to the addressee. Speakers choose between
 reduced (pronoun) and full (name, description) forms based on this
-accessibility (@cite{ariel-2001}).
+accessibility ([ariel-2001]).
 
 ## The Accessibility Marking Scale
 
-`AccessibilityLevel` is @cite{ariel-2001}'s 18-level ordering from
+`AccessibilityLevel` is [ariel-2001]'s 18-level ordering from
 least accessible (full name + modifier) to most accessible (zero /
 pro-drop). This replaces the earlier conflation with `DefinitenessLevel`
 — the accessibility and definiteness scales are **non-monotonically**
@@ -50,7 +50,7 @@ open Features.Prominence
 -- § 1. Accessibility Marking Scale
 -- ════════════════════════════════════════════════════
 
-/-- @cite{ariel-2001}'s Accessibility Marking Scale: a fine-grained ordering
+/-- [ariel-2001]'s Accessibility Marking Scale: a fine-grained ordering
     of referential form types from least to most accessible.
 
     Each constructor represents a class of referring expressions.
@@ -127,7 +127,7 @@ def AccessibilityLevel.toDefLevel : AccessibilityLevel → DefinitenessLevel
 -- ════════════════════════════════════════════════════
 
 /-- Referential form options for referring to a discourse entity.
-    Uses @cite{ariel-2001}'s 18-level accessibility marking scale. -/
+    Uses [ariel-2001]'s 18-level accessibility marking scale. -/
 abbrev ReferentialForm := AccessibilityLevel
 
 /-- An unstressed pronoun is more reduced than a full name. -/
@@ -151,7 +151,7 @@ inductive NextMentionBias where
     referential form (unstressed pronoun); low bias requires full form
     (full name).
 
-    This is the monotone link at the heart of @cite{ariel-2001}'s
+    This is the monotone link at the heart of [ariel-2001]'s
     Accessibility Marking Scale: more accessible referents → more
     reduced forms. The same relationship underlies the Probabilistic
     Reduction Hypothesis (more predictable → shorter/more reduced). -/
@@ -176,8 +176,8 @@ theorem high_bias_more_reduced :
     shift, DLM).
 
     The same choice that makes a referent "more reduced" also makes
-    it "lighter", linking @cite{ariel-2001}'s accessibility hierarchy
-    to @cite{arnold-wasow-losongco-ginstrom-2000}'s heaviness effects. -/
+    it "lighter", linking [ariel-2001]'s accessibility hierarchy
+    to [arnold-wasow-losongco-ginstrom-2000]'s heaviness effects. -/
 def ReferentialForm.typicalWeight : ReferentialForm → Nat
   | .fullNameMod                              => 4  -- "the former governor of Alaska, Sarah Palin"
   | .longDefDescription                       => 4  -- "the former governor of Alaska"
@@ -204,12 +204,12 @@ theorem pronoun_lightest :
 
 /-- How elaborated a referent's discourse representation is.
 
-    @cite{arnold-2026} §2: the key criterion for underspecified singular
+    [arnold-2026] §2: the key criterion for underspecified singular
     *they* is "discourse specificity" — whether the speaker intends to
     evoke a detailed mental representation for the addressee.
 
-    This extends @cite{newman-1992}'s "solidity" (existence of a specific
-    concrete referent) and @cite{newman-1998}'s "individuation" (referents
+    This extends [newman-1992]'s "solidity" (existence of a specific
+    concrete referent) and [newman-1998]'s "individuation" (referents
     treated as individuals with identity-relevant details).
 
     The scale runs from `underspecified` (the referent is barely sketched
@@ -230,7 +230,7 @@ inductive DiscourseElaboration where
 
 /-- Bridge from Ariel's accessibility scale to discourse elaboration.
 
-    @cite{ariel-2001}'s Accessibility Marking Scale describes which
+    [ariel-2001]'s Accessibility Marking Scale describes which
     referential form is appropriate given how accessible a referent is.
     Arnold's discourse elaboration is related but distinct: low
     accessibility *tends to co-occur with* underspecified elaboration

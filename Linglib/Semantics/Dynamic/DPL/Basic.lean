@@ -1,6 +1,6 @@
 /-
 # Dynamic Predicate Logic
-@cite{groenendijk-stokhof-1991}
+[groenendijk-stokhof-1991]
 
 Stub for Dynamic Predicate Logic (DPL), the foundational dynamic semantic
 theory that treats meanings as relations between assignments.
@@ -263,7 +263,7 @@ theorem neg_exists_eq_forall_neg {E : Type*} (x : Nat) (φ : DPLRel E) :
 /--
 **The donkey equivalence: ∃xφ → ψ ≈ ∀x[φ → ψ]**
 
-The central theorem of @cite{groenendijk-stokhof-1991}: an existential
+The central theorem of [groenendijk-stokhof-1991]: an existential
 quantifier in the antecedent of an implication has *universal* force.
 This is what makes donkey sentences compositional — "if a farmer owns
 a donkey, he beats it" gets the universal reading from the dynamic

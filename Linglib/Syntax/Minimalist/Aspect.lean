@@ -4,7 +4,7 @@ import Linglib.Features.Aktionsart
 
 /-!
 # Aspect Heads (Outer / Inner Split)
-@cite{travis-2010} @cite{macdonald-2008} @cite{tsai-2008} @cite{sybesma-2017}
+[travis-2010] [macdonald-2008] [tsai-2008] [sybesma-2017]
 
 Substrate types for the bipartite split-aspect cartography that has emerged
 from work on Mandarin and Cantonese (and before them, English event-structure
@@ -32,7 +32,7 @@ unchanged.
   `-le ↦ ViewpointType.perfective` in `Fragments/Mandarin/Aspect.lean`);
   the substrate stays neutral.
 
-- The [±D] dynamic feature analysis (@cite{lin-liu-2009}; @cite{shen-2004}).
+- The [±D] dynamic feature analysis ([lin-liu-2009]; [shen-2004]).
   `[+D]` does two distinct jobs: (a) a property of the *predicate*
   (Aktionsart-derived), (b) a *selectional requirement* on AspO to combine
   with a dynamic complement. We model only (b) here, by exposing
@@ -40,7 +40,7 @@ unchanged.
   property already lives in `Features/Aktionsart.lean` (`Dynamicity`); this
   field on AspHead encodes which value (if any) the head requires.
 
-- @cite{liu-yip-2026}'s Cantonese -faan does NOT carry the dynamicity
+- [liu-yip-2026]'s Cantonese -faan does NOT carry the dynamicity
   restriction (it composes with stative *jau* 'have'). Encoded by leaving
   `selectsDynamicity = none` on -faan's AspHead; encoding it as
   `some .dynamic` would over-predict.
@@ -49,8 +49,8 @@ unchanged.
   Cantonese *-faan*, *-gwo*, *jau*, *zoi*) lives in the per-language Fragment files.
 
 - The "split aspect" framework as a *named theory* (the cluster of
-  @cite{travis-2010}, @cite{macdonald-2008}, @cite{tsai-2008},
-  @cite{sybesma-2017}) — its analytical claims live in
+  [travis-2010], [macdonald-2008], [tsai-2008],
+  [sybesma-2017]) — its analytical claims live in
   `Studies/LiuYip2026.lean`, which is the first
   paper-anchored consumer of this substrate. Promotion to a separate
   `SplitAspect.lean` theory file would follow when a second study consumes
@@ -65,9 +65,9 @@ namespace Minimalist
 
 /-- Flavor of an aspect head.
 
-    The outer/inner cut is the binary simplification (@cite{travis-2010},
-    @cite{macdonald-2008}, @cite{tsai-2008}, @cite{sybesma-2017}) of
-    @cite{cinque-1999}'s finer-grained adverbial sequence. Outer aspect sits
+    The outer/inner cut is the binary simplification ([travis-2010],
+    [macdonald-2008], [tsai-2008], [sybesma-2017]) of
+    [cinque-1999]'s finer-grained adverbial sequence. Outer aspect sits
     above vP (and is what `viewpoint` morphemes like Mandarin *-le*, *-guo*,
     *-zhe* and Cantonese *-zo*, *-gwo*, *-gan*, *-faan* canonically associate
     with); inner aspect sits inside the v-shell (and is what Aktionsart
@@ -77,7 +77,7 @@ namespace Minimalist
 
     This file does NOT take a position on whether the cut is binary
     cross-linguistically; languages with finer cartographies (e.g.,
-    @cite{cinque-1999}'s 30+ adverbial heads) would need a richer flavor
+    [cinque-1999]'s 30+ adverbial heads) would need a richer flavor
     type. -/
 inductive AspFlavor where
   /-- Outer aspect: above vP, viewpoint-host position. -/
@@ -126,7 +126,7 @@ def AspFlavor.defaultFLevel : AspFlavor → Nat
 
     Carries: (a) which flavor (outer/inner), (b) optional selectional
     requirement on the complement's dynamicity, (c) optional `ProbeProfile`
-    when the head is itself an Agree probe (@cite{liu-yip-2026} analyzes
+    when the head is itself an Agree probe ([liu-yip-2026] analyzes
     Mandarin *you* and Cantonese -faan as probe-bearing AspO heads),
     (d) any Agree-relevant features (e.g., `[+EXP]` on the experiential
     AspO that licenses -guo).
@@ -141,7 +141,7 @@ structure AspHead where
   flavor : AspFlavor
   /-- Selectional requirement on the complement's dynamicity, if any.
       `none` = no requirement (compatible with stative or dynamic complements);
-      `some .dynamic` = requires dynamic complement (@cite{lin-liu-2009}'s [+D]);
+      `some .dynamic` = requires dynamic complement ([lin-liu-2009]'s [+D]);
       `some .stative` = requires stative complement (rare; defensive default). -/
   selectsDynamicity : Option Features.Dynamicity := none
   /-- Optional probe profile: populated when the head triggers Agree.
@@ -163,7 +163,7 @@ def AspHead.bareOuter : AspHead := { flavor := .outer }
 def AspHead.bareInner : AspHead := { flavor := .inner }
 
 /-- Outer-aspect head with a `[+D]` dynamic-complement selectional
-    requirement (@cite{lin-liu-2009}). Used to type Mandarin's matrix
+    requirement ([lin-liu-2009]). Used to type Mandarin's matrix
     Asp_outer when it needs to license *you* via Agree. -/
 def AspHead.outerDynamic : AspHead :=
   { flavor := .outer, selectsDynamicity := some .dynamic }
@@ -204,7 +204,7 @@ theorem bareOuter_licenses_all (d : Features.Dynamicity) :
   simp [AspHead.licensesDynamicity, AspHead.bareOuter]
 
 /-- An `outerDynamic` head licenses dynamic but not stative complements
-    — this is the @cite{lin-liu-2009} [+D] constraint, derived rather
+    — this is the [lin-liu-2009] [+D] constraint, derived rather
     than stipulated. -/
 theorem outerDynamic_licenses_dynamic_only :
     AspHead.outerDynamic.licensesDynamicity .dynamic = true ∧

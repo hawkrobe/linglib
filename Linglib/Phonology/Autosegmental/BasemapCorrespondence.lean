@@ -6,9 +6,9 @@ import Linglib.Core.Constraint.OT.Basic
 /-!
 # Matrix-Basemap Correspondence (MxBM-C)
 
-Matrix-Basemap Correspondence is @cite{rolle-2018}'s central theoretical
+Matrix-Basemap Correspondence is [rolle-2018]'s central theoretical
 contribution (Ch 5). It extends Output-Output Correspondence
-(@cite{benua-1997}) to explain **dominant grammatical tone** as a special
+([benua-1997]) to explain **dominant grammatical tone** as a special
 type of faithfulness rather than markedness.
 
 Any theory of dominant vs. non-dominant GT must address three problems:
@@ -49,7 +49,7 @@ proves that the overwrite function produces the same tonal output as
 basemap-faithful evaluation.
 
 Matrix-Basemap Correspondence is the IDENT-OO correspondence relation of
-@cite{mccarthy-prince-1995} / @cite{benua-1997} specialized to the tonal
+[mccarthy-prince-1995] / [benua-1997] specialized to the tonal
 tier. `basemapViolations` is defined as `Corr.identViol` on the
 `(matrix, basemap)` edge of a binary correspondence diagram between the
 two tonal tiers — making the connection true by construction rather than
@@ -57,10 +57,10 @@ via a separate Hamming-distance implementation.
 
 ## References
 
-* @cite{rolle-2018}
-* @cite{benua-1997}
-* @cite{mccarthy-prince-1995}
-* @cite{goldsmith-1976}
+* [rolle-2018]
+* [benua-1997]
+* [mccarthy-prince-1995]
+* [goldsmith-1976]
 -/
 
 namespace Phonology.Autosegmental.BasemapCorrespondence
@@ -73,7 +73,7 @@ open Core.Constraint.OT (NamedConstraint ConstraintFamily)
 /-! ### Basemap — deficient projection -/
 
 /-- Strip all tones from a host word, replacing them with a default tone.
-    The **deficient projection** of @cite{rolle-2018} Ch 5: the input with
+    The **deficient projection** of [rolle-2018] Ch 5: the input with
     all valued (lexical) tones removed, leaving only the segmental skeleton
     ready to receive floating (grammatical) tones.
 
@@ -111,7 +111,7 @@ def basemapOutput {S : Type} [DecidableEq S] [BEq S] [Repr S]
     Grounded in the unified `Phonology.Tier` abstraction
     (`Tier.apply Tier.tonal`): an erasing string homomorphism
     `(TBU S)* → TRN*` in the Kleisli category of `Option`. The
-    tonal tier is the `total` (no-erasure) case @cite{goldsmith-1976}. -/
+    tonal tier is the `total` (no-erasure) case [goldsmith-1976]. -/
 def tonalTier {S : Type} (tbus : List (TBU S)) : List TRN :=
   Core.Tier.apply Phonology.Tier.tonal tbus
 
@@ -128,8 +128,8 @@ def tonalTier {S : Type} (tbus : List (TBU S)) : List TRN :=
 
     **Derived from `Corr.identViol`** on the `(false, true)` edge of the
     binary parallel-pair correspondence between the two tiers. This
-    structurally identifies MxBM-C as IDENT-OO of @cite{mccarthy-prince-1995}
-    / @cite{benua-1997} specialized to the tonal tier — no separate Hamming
+    structurally identifies MxBM-C as IDENT-OO of [mccarthy-prince-1995]
+    / [benua-1997] specialized to the tonal tier — no separate Hamming
     implementation, no bridge theorem required.
 
     On unequal-length tiers, the underlying `Corr.parallel` truncates to the
@@ -168,7 +168,7 @@ theorem basemapViolations_eq_zero_imp
 
     Given a fixed basemap output (the tonal tier of the basemap-faithful
     form), this constraint evaluates each candidate by comparing its
-    tonal tier against the basemap. In @cite{rolle-2018}'s analysis,
+    tonal tier against the basemap. In [rolle-2018]'s analysis,
     dominant triggers promote this constraint above default markedness
     in their cophonology's subranking.
 
@@ -195,7 +195,7 @@ private theorem tonalOverwrite_whole_eq_map {S : Type}
     whole-word single-tone melody, the matrix output's tonal tier
     equals the basemap output's tonal tier.
 
-    This captures @cite{rolle-2018}'s key insight: dominant GT is not
+    This captures [rolle-2018]'s key insight: dominant GT is not
     a special deletion rule or markedness constraint, but faithfulness
     to an abstract basemap. The target's underlying tones go unrealized
     because the output must match what would happen if those tones
@@ -217,7 +217,7 @@ theorem tonalOverwrite_basemap_faithful {S : Type}
     the same basemap tonal tier.
 
     The formal content of "transparadigmatic uniformity"
-    (@cite{rolle-2018} Ch 5): the basemap abstracts away from the
+    ([rolle-2018] Ch 5): the basemap abstracts away from the
     paradigmatic tonal variation of the target. -/
 theorem basemapOutput_tone_independent_whole {S : Type}
     [DecidableEq S] [BEq S] [Repr S]

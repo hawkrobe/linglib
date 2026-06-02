@@ -8,9 +8,9 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Degree Achievements
-@cite{kennedy-levin-2008}
+[kennedy-levin-2008]
 
-@cite{kennedy-levin-2008}: the telicity of degree achievements is **derived** from
+[kennedy-levin-2008]: the telicity of degree achievements is **derived** from
 the boundedness of the underlying adjectival scale. This bridge file verifies
 that the fragment annotations are consistent with that derivation.
 
@@ -165,7 +165,7 @@ theorem warm_adj_verb_scale :
 
 /-- hot (adj, open) ↔ boil (verb, closed scale for boiling point).
     Note: boil reaches a closed endpoint (boiling point) even though the
-    base adjective "hot" has an open scale. @cite{kennedy-levin-2008} notes that the verb
+    base adjective "hot" has an open scale. [kennedy-levin-2008] notes that the verb
     selects the relevant portion of the scale. -/
 theorem hot_boil_scale_diverges :
     English.Predicates.Adjectival.hot.scaleType = .open_ ∧

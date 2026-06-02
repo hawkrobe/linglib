@@ -1,7 +1,7 @@
 import Linglib.Pragmatics.RelevanceTheory.CognitiveEnvironment
 
 /-!
-# Ostensive Communication — @cite{sperber-wilson-1986}
+# Ostensive Communication — [sperber-wilson-1986]
 
 Ostensive communication involves two layers of intention:
 

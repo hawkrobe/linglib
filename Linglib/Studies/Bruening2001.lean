@@ -3,9 +3,9 @@ import Linglib.Features.ScopeTypes
 import Linglib.Studies.Pylkkanen2008
 
 /-!
-# @cite{bruening-2001} — QR Obeys Superiority
-@cite{bruening-2001} @cite{larson-1988} @cite{may-1985}
-@cite{pylkkanen-2008}
+# [bruening-2001] — QR Obeys Superiority
+[bruening-2001] [larson-1988] [may-1985]
+[pylkkanen-2008]
 
 Bruening's *Linguistic Inquiry* paper "QR Obeys Superiority: Frozen
 Scope and ACD" — both the empirical scope-freezing data set and the
@@ -15,8 +15,8 @@ phase-theoretic barriers).
 ## Part I: Empirical data
 
 Theory-neutral scope-freezing examples primarily compiled from
-@cite{bruening-2001}, with contributions from @cite{larson-1988}
-(double-object construction examples) and @cite{may-1985}
+[bruening-2001], with contributions from [larson-1988]
+(double-object construction examples) and [may-1985]
 (foundational scope-availability vocabulary). Was formerly
 `Phenomena/Quantification/Data.lean`; renamed per the
 provenance-tracking policy.
@@ -27,7 +27,7 @@ Downstream consumer `Steedman2000.lean` imports from here.
 
 Bruening's central thesis — *QR obeys Superiority* — is derived
 formally: double-object scope freezing follows from asymmetric
-c-command in @cite{pylkkanen-2008}'s Voice + low-Appl tree, where the
+c-command in [pylkkanen-2008]'s Voice + low-Appl tree, where the
 goal asymmetrically c-commands the theme. Other freezing contexts
 (possessor, passive, attitude) are analyzed via DP-phase /
 adjunct-island / clause-boundary barriers.
@@ -172,7 +172,7 @@ def dative_frozen : Example :=
   , confidence := .clear
   , surfaceGloss := "There's someone who gave every student a book"
   , inverseGloss := "*For every student, someone gave them a book"
-  , notes := "Double object: frozen (@cite{barss-lasnik-1986})" }
+  , notes := "Double object: frozen ([barss-lasnik-1986])" }
 
 def dative_variant : Example :=
   { id := "dat-2"
@@ -382,7 +382,7 @@ def german_97 : GermanScopeExample :=
   , wordOrder := .verbProjectionRaising
   , observed := .surfaceOnly }
 
-/-- West Flemish data from @cite{haegeman-van-riemsdijk-1986}. -/
+/-- West Flemish data from [haegeman-van-riemsdijk-1986]. -/
 structure WestFlemishScopeExample where
   surface : String
   translation : String
@@ -402,7 +402,7 @@ def westFlemish_98b : WestFlemishScopeExample :=
   , wordOrder := .verbProjectionRaising
   , observed := .surfaceOnly }
 
-/-- Dutch equi verb data from @cite{steedman-2000}. -/
+/-- Dutch equi verb data from [steedman-2000]. -/
 structure DutchScopeExample where
   surface : String
   translation : String
@@ -484,7 +484,7 @@ open Minimalist.Scope
 /-! Connects Minimalist QR / Scope Economy theory to the empirical
 scope-freezing data above. The central claim is Bruening's "QR obeys
 superiority": double-object freezing falls out of asymmetric c-command
-in the @cite{pylkkanen-2008} ditransitive tree. -/
+in the [pylkkanen-2008] ditransitive tree. -/
 
 -- Freezing Context Analysis
 
@@ -587,14 +587,14 @@ theorem baseline_is_ambiguous :
 -- DOC Scope Freezing — superiority derived from c-command
 -- ============================================================================
 
-/-! @cite{pylkkanen-2008}'s low-Appl tree (`ditransitiveTree`) produces
+/-! [pylkkanen-2008]'s low-Appl tree (`ditransitiveTree`) produces
 the DOC structure where V takes ApplP as complement, so the goal in
 Spec-ApplP asymmetrically c-commands the theme in complement of Appl.
 QR of the theme over the goal is blocked by superiority, derived
 from c-command rather than stipulated. -/
 
 open Pylkkanen2008 in
-/-- DOC scope freezing config with @cite{pylkkanen-2008}'s tree:
+/-- DOC scope freezing config with [pylkkanen-2008]'s tree:
     superiority is derived from goal asymmetrically c-commanding theme
     in the Voice + low-Appl structure. -/
 def docScopeConfig : MinimalistScopeConfig :=
@@ -609,7 +609,7 @@ def docScopeConfig : MinimalistScopeConfig :=
 
 open Pylkkanen2008 in
 /-- Superiority in the DOC is DERIVED from c-command in
-@cite{pylkkanen-2008}'s tree: goal (Mary) asymmetrically c-commands
+[pylkkanen-2008]'s tree: goal (Mary) asymmetrically c-commands
 theme (a letter) via low Appl, so QR of theme over goal is blocked. -/
 theorem doc_superiority_from_tree :
     superiorityBlocked docScopeConfig = true := by decide
@@ -619,7 +619,7 @@ theorem doc_superiority_from_tree :
 | Context | Minimalist Explanation |
 |---------|----------------------|
 | Possessor | DP phase blocks QR |
-| Double object | Superiority: goal c-commands theme (@cite{pylkkanen-2008} tree) |
+| Double object | Superiority: goal c-commands theme ([pylkkanen-2008] tree) |
 | Passive | Adjunct island |
 | Heavy NP | NOT grammatical (processing) |
 | Attitude | Clause boundary |

@@ -1,16 +1,16 @@
 import Mathlib.Data.List.MinMax
 
 /-!
-# @cite{sidner-1983}: Focusing in the Comprehension of Definite Anaphora
-@cite{sidner-1979}
+# [sidner-1983]: Focusing in the Comprehension of Definite Anaphora
+[sidner-1979]
 
-Chapter 5 of @cite{sidner-1983} (originally in Brady & Berwick eds.,
+Chapter 5 of [sidner-1983] (originally in Brady & Berwick eds.,
 *Computational Models of Discourse*, MIT Press), based on
-@cite{sidner-1979} (PhD thesis, MIT AI-TR-537).
+[sidner-1979] (PhD thesis, MIT AI-TR-537).
 
-## Architectural difference from @cite{grosz-joshi-weinstein-1995}
+## Architectural difference from [grosz-joshi-weinstein-1995]
 
-@cite{grosz-joshi-weinstein-1995} §9 (p. 222) describes Sidner's
+[grosz-joshi-weinstein-1995] §9 (p. 222) describes Sidner's
 account this way:
 
 > In Sidner's theory, each utterance provides an immediate discourse
@@ -41,7 +41,7 @@ This file formalizes:
 
 * The two-slot focus state (discourse focus + actor focus).
 * The expected-focus algorithm for the discourse focus, from
-  @cite{sidner-1983} §5.2.3 (p. 287). The thematic preference order
+  [sidner-1983] §5.2.3 (p. 287). The thematic preference order
   is `theme > other-non-agent > agent > VP` — note that **agent is
   ranked LAST among non-theme positions** for discourse focus, and is
   picked separately as the actor focus. This is the opposite of what
@@ -78,7 +78,7 @@ inductive Position where
   | nonAgent
   deriving DecidableEq, Repr
 
-/-- @cite{sidner-1983} §5.2.3 (p. 287) — thematic preference for
+/-- [sidner-1983] §5.2.3 (p. 287) — thematic preference for
     expected discourse focus. The DEF list is ordered:
 
     > - theme unless the theme is a verb complement in which case
@@ -96,7 +96,7 @@ inductive ThematicSlot where
   | verbPhrase
   deriving DecidableEq, Repr
 
-/-- The DEF preference order from @cite{sidner-1983} §5.2.3 (p. 287),
+/-- The DEF preference order from [sidner-1983] §5.2.3 (p. 287),
     encoded as a ranking. Lower number = higher preference for
     discourse focus. -/
 def ThematicSlot.defRank : ThematicSlot → Nat
@@ -106,7 +106,7 @@ def ThematicSlot.defRank : ThematicSlot → Nat
   | .verbPhrase    => 3
 
 /-- Sentence-form distinction used by the expected-focus algorithm
-    (@cite{sidner-1983} §5.2.3 step 1 p. 287): is-a and there-insertion
+    ([sidner-1983] §5.2.3 step 1 p. 287): is-a and there-insertion
     sentences pick the *subject* as expected focus; other sentences use
     the DEF preference order. -/
 inductive SentenceForm where
@@ -137,7 +137,7 @@ structure Sentence (E : Type) where
 -- § 2. Two-slot focus state
 -- ════════════════════════════════════════════════════
 
-/-- @cite{sidner-1983} §5.2 (p. 282): "An actor focus is a discourse
+/-- [sidner-1983] §5.2 (p. 282): "An actor focus is a discourse
     item which is predicated as the agent in some event. It is
     distinct from the main focus, which will be called the discourse
     focus." Reasons given: "(1) the focus of the discourse is often
@@ -147,7 +147,7 @@ structure Sentence (E : Type) where
 
     The two slots are *independently* updated and queried — this is
     the architectural point that distinguishes Sidner from
-    @cite{grosz-joshi-weinstein-1995}'s single-Cb account. -/
+    [grosz-joshi-weinstein-1995]'s single-Cb account. -/
 structure FocusState (E : Type) where
   discourseFocus : Option E
   actorFocus : Option E
@@ -165,7 +165,7 @@ end FocusState
 -- ════════════════════════════════════════════════════
 
 /-- The expected discourse focus computed from a single sentence by
-    the algorithm at @cite{sidner-1983} §5.2.3 (p. 287):
+    the algorithm at [sidner-1983] §5.2.3 (p. 287):
 
     * For an *is-a* or *there*-insertion sentence: the subject (modeled
       as the agent-position phrase).
@@ -197,7 +197,7 @@ theorem expectedDiscourseFocus_normal_le {E : Type}
   exact List.le_of_mem_argmin (f := fun q : Phrase E => q.thematic.defRank) hp' hpArg
 
 /-- The expected actor focus, by the analogous algorithm to the
-    discourse-focus one but selecting the agent (@cite{sidner-1983}
+    discourse-focus one but selecting the agent ([sidner-1983]
     §5.2.3 p. 287, second algorithm sketch). -/
 def expectedActorFocus {E : Type} (s : Sentence E) : Option E :=
   (s.phrases.find? (fun p => p.position = .agent)).map (·.entity)
@@ -208,7 +208,7 @@ def expectedActorFocus {E : Type} (s : Sentence E) : Option E :=
     actor focus when one exists.
 
     This is a simplified version of the full focusing algorithm
-    (@cite{sidner-1983} §5.2.6 pp. 292-294). It captures the
+    ([sidner-1983] §5.2.6 pp. 292-294). It captures the
     discourse-initial step and the basic "movement on each new
     sentence" pattern, sufficient for the (34) example. -/
 def updateState {E : Type} (state : FocusState E) (s : Sentence E) :
@@ -220,8 +220,8 @@ def updateState {E : Type} (state : FocusState E) (s : Sentence E) :
 -- § 4. Pronoun resolution (§5.2.6 step 3, p. 293)
 -- ════════════════════════════════════════════════════
 
-/-- @cite{sidner-1983} §5.2.6 step 3 (p. 293), the rule that drives
-    the @cite{grosz-joshi-weinstein-1995} §9 example (34) disagreement:
+/-- [sidner-1983] §5.2.6 step 3 (p. 293), the rule that drives
+    the [grosz-joshi-weinstein-1995] §9 example (34) disagreement:
 
     > If there is an anaphor co-specifying the CF and another
     > co-specifying some member of the ALFL, retain the CF as focus
@@ -240,7 +240,7 @@ def resolvePronounAt {E : Type} (state : FocusState E) (pos : Position) :
   | .nonAgent => state.discourseFocus
 
 -- ════════════════════════════════════════════════════
--- § 5. Application: @cite{grosz-joshi-weinstein-1995} example (34)
+-- § 5. Application: [grosz-joshi-weinstein-1995] example (34)
 -- ════════════════════════════════════════════════════
 
 /-! GJW (1995) §9 (p. 222) discusses this discourse to contrast their

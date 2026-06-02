@@ -3,9 +3,9 @@ import Linglib.Semantics.Degree.Basic
 
 /-!
 # Schwarzschild's Interval Semantics
-@cite{schwarzschild-2005} @cite{schwarzschild-2008} @cite{schwarzschild-wilkinson-2002}
+[schwarzschild-2005] [schwarzschild-2008] [schwarzschild-wilkinson-2002]
 
-@cite{schwarzschild-2008} "The Semantics of Comparatives and Other Degree
+[schwarzschild-2008] "The Semantics of Comparatives and Other Degree
 Constructions": degrees are reified as **intervals** on a scale, and
 degree morphology manipulates these intervals.
 
@@ -125,14 +125,14 @@ theorem positiveInterval_iff_posExt {Entity D : Type*}
     narrow, shallow) denote negative intervals on the same underlying
     measure function as their positive counterpart.
 
-    @cite{buring-2007} §4 (def. 22): ⟦short⟧ = ⟦LITTLE tall⟧, where
+    [buring-2007] §4 (def. 22): ⟦short⟧ = ⟦LITTLE tall⟧, where
     LITTLE inverts the interval: the positive interval [⊥, μ(x)]
     becomes the negative interval [μ(x), ⊤]. -/
 def negativeInterval {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
     (μ : Entity → D) (x : Entity) : Interval D :=
   { lower := μ x, upper := ⊤, valid := le_top }
 
-/-- MUCH is the identity on intervals (@cite{buring-2007} §4, def. 21b):
+/-- MUCH is the identity on intervals ([buring-2007] §4, def. 21b):
     ⟦MUCH⟧ = λi. i. It contributes "little to the meaning of a plain
     comparative" — it simply denotes the identity function on intervals,
     which by the semantics of -er is compared by ⊂ before ⊂ applies. -/
@@ -142,7 +142,7 @@ def much {D : Type*} [Preorder D] (i : Interval D) : Interval D := i
     On degree predicates: LITTLE(λd. d ≤ μ(x)) = λd. μ(x) < d.
     On intervals: maps [⊥, μ(x)] to [μ(x), ⊤].
 
-    @cite{buring-2007} §4 (def. 21d): ⟦LITTLE⟧ = λi.λd. i(d) = 0.
+    [buring-2007] §4 (def. 21d): ⟦LITTLE⟧ = λi.λd. i(d) = 0.
     The result: x is LITTLE-er long than y iff x's LITTLE-longness
     (= negative interval) is a proper superset of y's — i.e., x is
     shorter than y. -/

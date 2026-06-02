@@ -2,16 +2,16 @@ import Mathlib.Data.Finset.Basic
 
 /-!
 # Existential Pluralization Operator (∃-PL)
-@cite{bar-lev-2021} @cite{schwarzschild-1996} @cite{krifka-1996}
+[bar-lev-2021] [schwarzschild-1996] [krifka-1996]
 
 The existential pluralization operator ∃-PL gives definite plurals a
 basic *existential* meaning: "the kids laughed" ≈ "at least one kid
 laughed." This contrasts with Link's `*` (`AlgClosure`), which gives
 universal closure under join. The choice between ∃-PL and `*`
 distinguishes the two main families of homogeneity theories:
-implicature accounts (@cite{magri-2014}, @cite{bar-lev-2021}) build on
+implicature accounts ([magri-2014], [bar-lev-2021]) build on
 ∃-PL + `Exh^{IE+II}` strengthening; trivalent accounts
-(@cite{schwarzschild-1996}, @cite{kriz-2015}) build on `*`/DIST + a
+([schwarzschild-1996], [kriz-2015]) build on `*`/DIST + a
 truth-value gap.
 
 ## Main declarations
@@ -27,7 +27,7 @@ truth-value gap.
 ∃-PL takes a domain variable `D`; replacing `D` with `D' ⊆ D` generates
 **subdomain alternatives** — a set NOT closed under conjunction.
 This non-closure is the structural property shared with Free Choice
-disjunction (@cite{fox-2007}).
+disjunction ([fox-2007]).
 
 The plural individual `x` is modelled as `Finset Atom` with `a ∈ x`
 for "a is an atomic part of x". The paper uses mereological `≤_AT`

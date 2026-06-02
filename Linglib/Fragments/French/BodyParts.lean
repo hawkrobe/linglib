@@ -2,7 +2,7 @@ import Linglib.Typology.BodyParts
 
 /-!
 # French body-part profile (WALS Chs 129–130)
-@cite{wals-2013}
+[wals-2013]
 -/
 
 namespace French

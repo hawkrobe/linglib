@@ -1,8 +1,8 @@
 import Linglib.Core.Word
 
 /-!
-# Intentional Identity Data @cite{chatzikyriakidis-etal-2025}
-@cite{geach-1967}
+# Intentional Identity Data [chatzikyriakidis-etal-2025]
+[geach-1967]
 
 Empirical data for intentional identity — the phenomenon where
 two attitude reports appear to be "about the same thing" even
@@ -44,7 +44,7 @@ structure IntentionalIdentityDatum where
   deriving Repr
 
 /-- Geach's original Hob-Nob example.
-@cite{geach-1967}: "Hob thinks a witch has blighted Bob's mare,
+[geach-1967]: "Hob thinks a witch has blighted Bob's mare,
 and Nob wonders whether she killed Cob's sow." -/
 def hobNob : IntentionalIdentityDatum :=
   { sentence := "Hob thinks a witch has blighted Bob's mare, and Nob wonders whether she killed Cob's sow"

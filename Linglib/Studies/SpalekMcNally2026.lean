@@ -7,7 +7,7 @@ import Linglib.Semantics.Lexical.LevinClass
 import Linglib.Semantics.Lexical.MeaningComponents
 
 /-!
-# @cite{spalek-mcnally-2026}: The Anatomy of a Verb
+# [spalek-mcnally-2026]: The Anatomy of a Verb
 
 Empirical data and bridge theorems for the contrastive study of English
 *tear* and Spanish *rasgar*. These putative translation equivalents share
@@ -64,7 +64,7 @@ theorem both_causative :
 -- ════════════════════════════════════════════════════
 
 /-- *tear* accepts robust patients; *rasgar* does not.
-    @cite{spalek-mcnally-2026} ex. (14): "she tore a chunk off her slice of bread" ✓
+    [spalek-mcnally-2026] ex. (14): "she tore a chunk off her slice of bread" ✓
     vs. "??rasgó un trozo de pan" (§3.2). -/
 theorem patient_restriction_differs :
     tear_.rootProfile ≠ rasgar.rootProfile := by
@@ -78,7 +78,7 @@ theorem force_direction_differs :
   simp [tear_, rasgar]
 
 /-- *tear* is compatible with controlled action; *rasgar* is not.
-    @cite{spalek-mcnally-2026} ex. (17): "carefully tore the tin foil" ✓
+    [spalek-mcnally-2026] ex. (17): "carefully tore the tin foil" ✓
     vs. "??rasgaron con cuidado el papel de aluminio" (§3.2). -/
 theorem agent_control_differs :
     tear_.rootProfile.bind (·.agentControl) ≠

@@ -3,7 +3,7 @@ import Linglib.Core.Time.Interval.Basic
 
 /-!
 # Temporal Connective Infrastructure
-@cite{allen-1983} @cite{krifka-1989}
+[allen-1983] [krifka-1989]
 
 Shared types and basic lemmas for temporal connective semantics.
 
@@ -42,7 +42,7 @@ abbrev SentDenotation (Time : Type*) [LinearOrder Time] := Set (Interval Time)
 
 /-- The set of all time points contained in some interval of a denotation.
     This projects from interval-set representation to time-set representation,
-    which is what @cite{rett-2020}'s formalization quantifies over. -/
+    which is what [rett-2020]'s formalization quantifies over. -/
 def timeTrace (p : SentDenotation Time) : Set Time :=
   { t | ∃ i ∈ p, i.contains t }
 

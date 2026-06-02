@@ -7,7 +7,7 @@ import Linglib.Core.Logic.Modal.Kripke
 
 /-!
 # Bilateral State-based Modal Logic (BSML) — Core Definitions
-@cite{aloni-2022}
+[aloni-2022]
 
 BSML is a bilateral, state-based modal logic in which formulas are evaluated
 against **teams** (sets of worlds):
@@ -22,14 +22,14 @@ Key innovations over classical modal logic:
 
 Despite being state-based, BSML is a **static** logic (not dynamic):
 formulas are evaluated against teams, not updated by them
-(@cite{aloni-2022} p. 22).
+([aloni-2022] p. 22).
 
 ## Atom polymorphism
 
 Both `BSMLFormula` and `BSMLModel` are parameterized over an atom type
 `Atom : Type*`. This eliminates the silent typo trap of String-keyed
 valuations and aligns with the predicate-level extension in QBSML
-(@cite{aloni-vanormondt-2023}), which generalizes atoms to typed
+([aloni-vanormondt-2023]), which generalizes atoms to typed
 predicates with terms.
 
 ## Substrate dependencies
@@ -74,7 +74,7 @@ namespace Core.Logic.Modal.BSML
 -- §1: Formulas (Definition 1)
 -- ============================================================================
 
-/-- BSML formula language (Definition 1 from @cite{aloni-2022}).
+/-- BSML formula language (Definition 1 from [aloni-2022]).
 
     Parameterized over an atom type `Atom : Type*`. The base language is:
     p | ¬φ | φ∧ψ | φ∨ψ | ◇φ | NE.
@@ -107,7 +107,7 @@ def BSMLFormula.nec (φ : BSMLFormula Atom) : BSMLFormula Atom :=
 
 /-- A formula is NE-free if it does not contain the NE atom.
     For NE-free formulas, BSML reduces to classical modal logic
-    on singleton teams (Fact 15, @cite{aloni-2022}). -/
+    on singleton teams (Fact 15, [aloni-2022]). -/
 def BSMLFormula.isNEFree : BSMLFormula Atom → Bool
   | .atom _ => true
   | .ne => false
@@ -139,7 +139,7 @@ theorem BSMLFormula.isAtom_implies_isNEFree (φ : BSMLFormula Atom)
 -- §2: Models
 -- ============================================================================
 
-/-- A BSML model (Definition 1, @cite{aloni-2022}): accessibility and
+/-- A BSML model (Definition 1, [aloni-2022]): accessibility and
     valuation over a finite type of worlds. Aliased to the generic
     `Core.Logic.Modal.KripkeModel`; the carrier structure is identical,
     `BSMLModel` is just the name BSML literature uses. -/
@@ -152,7 +152,7 @@ abbrev BSMLModel (W : Type*) (Atom : Type*) [DecidableEq W] [Fintype W] :=
 
 variable {W : Type*} [DecidableEq W] [Fintype W]
 
-/-- Bilateral evaluation with polarity parameter (Definition 2, @cite{aloni-2022}).
+/-- Bilateral evaluation with polarity parameter (Definition 2, [aloni-2022]).
 
     `eval M true φ t` is support (⊨⁺), `eval M false φ t` is anti-support (⊨⁻).
     Negation flips polarity, making DNE definitional:
@@ -240,7 +240,7 @@ lemma empty_supports_atom (M : BSMLModel W Atom) (p : Atom) :
 -- ============================================================================
 
 /-- Indisputable accessibility: all worlds in team see the same accessible worlds.
-    Required for wide-scope FC (Fact 5, @cite{aloni-2022}).
+    Required for wide-scope FC (Fact 5, [aloni-2022]).
 
     Defined via `Core.Logic.Team.IsIndisputable` to share substrate
     with QBSML and any other state-based logic. -/
@@ -280,7 +280,7 @@ def equivalent (φ ψ : BSMLFormula Atom) : Prop :=
 /-- BSML* support: like standard BSML support but ∅ is excluded from all
     intermediate states. The only difference from `eval M true` is in
     disjunction, where both parts of the split must be non-empty.
-    (@cite{aloni-2022} §6.3.1).
+    ([aloni-2022] §6.3.1).
 
     NOTE: the negation case `| .neg _, _ => True` is a placeholder. Aloni's
     actual BSML* uses bilateral polarity mirror BSML's; completing this
@@ -298,7 +298,7 @@ def supportStar (M : BSMLModel W Atom) : BSMLFormula Atom → Finset W → Prop
 
 /-- BSML* consequence: consequence using BSML* support (non-empty intermediate
     states) on non-empty teams. In BSML*, the empty set ∅ is not among the
-    possible states (@cite{aloni-2022} §6.3.1). -/
+    possible states ([aloni-2022] §6.3.1). -/
 def consequenceStar (φ ψ : BSMLFormula Atom) : Prop :=
   ∀ (M : BSMLModel W Atom) (t : Finset W), t.Nonempty → supportStar M φ t → supportStar M ψ t
 

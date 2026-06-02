@@ -12,15 +12,15 @@ import Linglib.Fragments.Cantonese.Definiteness
 
 /-!
 # Jenks (2018): Articulated Definiteness without Articles
-@cite{jenks-2018}
+[jenks-2018]
 
 Mandarin distinguishes **unique** definites (bare N) from **anaphoric**
 definites (Dem-Clf-N), with a documented exception for matrix subjects
 (§5.3). A Chierchia-style ι type-shift handles the bare-N route
-(@cite{chierchia-1998}, @cite{yang-2001}, @cite{dayal-2004},
-@cite{jiang-2012}); demonstratives carry an indexical argument supplying
+([chierchia-1998], [yang-2001], [dayal-2004],
+[jiang-2012]); demonstratives carry an indexical argument supplying
 ι^x (a Schwarz-style strong article); an `Index!` principle (Heim 1990
-Maximize Presupposition + @cite{schlenker-2012} Gricean reduction)
+Maximize Presupposition + [schlenker-2012] Gricean reduction)
 selects between them.
 
 The substrate already operationalizes the inventory layer:
@@ -191,7 +191,7 @@ theorem bridging_split_distinct :
   bridging_subtypes_realize_both_presup_types
 
 /-- Donkey anaphora projects familiarity at the use-type layer (paper
-    §3.3; @cite{schwarz-2009} §3). For Mandarin's `.markedAnaphoric`
+    §3.3; [schwarz-2009] §3). For Mandarin's `.markedAnaphoric`
     strategy this predicts demonstrative use in both donkey
     sub-configurations.
 
@@ -199,7 +199,7 @@ theorem bridging_split_distinct :
     (use indeterminate pronouns only — no def expression) and
     *ruguo*/*dou*-conditionals plus relative-clause donkey
     (definite expression required, instantiated as Dem-Clf-N).
-    @cite{cheng-huang-1996} originally observed the contrast. The
+    [cheng-huang-1996] originally observed the contrast. The
     use-type collapse to `.familiarity` covers the second environment
     (the one where definite expressions are licensed); bare conditionals
     are out of the scope of `useTypeToPresupType` because they involve
@@ -220,9 +220,9 @@ theorem donkey_patterns_with_anaphoric :
 
 /-! Paper p. 514 introduces the **Blocking Principle** (eq. 23: "Don't
 do covertly what you can do overtly"), inherited from
-@cite{chierchia-1998}. In Mandarin, the absence of an overt unique
+[chierchia-1998]. In Mandarin, the absence of an overt unique
 article means ι is unblocked — bare N can route to a unique-definite
-reading via the type-shift hierarchy of @cite{dayal-2004}.
+reading via the type-shift hierarchy of [dayal-2004].
 
 The substrate has Dayal's hierarchy (`Semantics/Kinds/MeaningPreservation.lean`),
 already used by `Moroney2021.lean`. The Mandarin parallel theorem is
@@ -261,7 +261,7 @@ theorem clf_is_atomization {α : Type*} [PartialOrder α]
 
 /-! Jenks (2018, p. 513) is explicit that his anaphoric article ι^x
 takes an index argument of type ⟨e,t⟩ (a property), departing from
-@cite{schwarz-2009}/@cite{schwarz-2013}'s type ⟨e⟩ (an individual).
+[schwarz-2009]/[schwarz-2013]'s type ⟨e⟩ (an individual).
 The substrate's `Description.anaphoric R d` carries `d : Nat` — a
 discourse-index slot resolved through the entity assignment, which
 matches Schwarz's individual-typed index, not Jenks's property-typed
@@ -343,7 +343,7 @@ theorem index_neutral_when_unavailable :
 matrix subject position, bare N is licensed for *anaphoric* reference
 (not just unique). Examples 51–53 establish that the exception is
 pragmatic — bare N in subject position marks the noun as a *continuing
-topic* (in the sense of @cite{roberts-2003} QUD-relativized topics),
+topic* (in the sense of [roberts-2003] QUD-relativized topics),
 which short-circuits Index! because the topic-marking pragmatic
 function takes precedence.
 

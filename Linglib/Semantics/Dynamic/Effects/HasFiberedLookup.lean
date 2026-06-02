@@ -3,8 +3,8 @@ import Linglib.Semantics.Dynamic.DiscourseRef
 /-!
 # Dynamic Context — Effect-Functor-Parameterized Interface
 
-@cite{groenendijk-stokhof-1991} @cite{muskens-1996} @cite{heim-1982}
-@cite{charlow-2019} @cite{hofmann-2025} @cite{grove-white-2025b}
+[groenendijk-stokhof-1991] [muskens-1996] [heim-1982]
+[charlow-2019] [hofmann-2025] [grove-white-2025b]
 
 A typeclass interface for dynamic-semantics contexts, parameterized on
 the **effect functor `M`** that wraps each variable's value at a world.
@@ -50,10 +50,10 @@ What does "no referent for `v` at `w`" mean?
 
 | Family | Falsifier | Source |
 |---|---|---|
-| ICDRT | `Entity.star` (bivalent distinguished value) | @cite{hofmann-2025} |
-| Charlow | `∅` (empty alternative-set; no value-level falsifier) | @cite{charlow-2019} |
-| Bayesian | zero-mass (PMF assigns probability 0; no value-level falsifier) | @cite{grove-white-2025b} |
-| FCS | `Dom`-partiality (FCP undefined; no value-level falsifier at all) | @cite{heim-1982} |
+| ICDRT | `Entity.star` (bivalent distinguished value) | [hofmann-2025] |
+| Charlow | `∅` (empty alternative-set; no value-level falsifier) | [charlow-2019] |
+| Bayesian | zero-mass (PMF assigns probability 0; no value-level falsifier) | [grove-white-2025b] |
+| FCS | `Dom`-partiality (FCP undefined; no value-level falsifier at all) | [heim-1982] |
 
 Charlow's argument: bivalence undermines compositional negation.
 Hofmann's argument: alternative-sets underdetermine anaphora projection.
@@ -68,7 +68,7 @@ Does the underlying state remember world–assignment correlation?
 |---|---|---|
 | ICDRT | fibered (`indiv : IVar → W → Entity E`) | `HasFiberedLookup` only |
 | Charlow | joint (`Set (W × Assignment E)`) | `HasFiberedLookup` + `HasJointState` |
-| Bayesian (PDS) | joint (`PMF (W × Assignment E)`, per @cite{grove-white-2025b}) | `HasFiberedLookup` + `HasJointState` |
+| Bayesian (PDS) | joint (`PMF (W × Assignment E)`, per [grove-white-2025b]) | `HasFiberedLookup` + `HasJointState` |
 | Bayesian (fibered) | fibered (`W → PMF (Assignment E)`) | `HasFiberedLookup` only |
 | FCS | joint (`Sat ⊆ World × Assignment`) | `HasFiberedLookup` + `HasJointState` |
 
@@ -215,7 +215,7 @@ typeclass field.
 
 Frameworks committing to this typeclass: Charlow 2019
 (`State W E := Set (W × Assignment E)`), FCS (`HeimFile` with
-`Sat ⊆ World × Assignment`), PDS Bayesian per @cite{grove-white-2025b}
+`Sat ⊆ World × Assignment`), PDS Bayesian per [grove-white-2025b]
 (`PMF (W × Assignment E)`). Frameworks that deliberately do *not*
 declare it: ICDRT, fibered-Bayesian.
 
@@ -241,8 +241,8 @@ class HasJointState (M : outParam (Type u → Type u)) [Functor M]
 
 /-- Assignments themselves serve as the *extensional* dynamic-semantic
 context, with `M = Id` (no effect) and `W = PUnit` (no world parameter).
-This is the trivial baseline shared by @cite{groenendijk-stokhof-1991}
-DPL, @cite{muskens-1996} CDRT, and @cite{kamp-reyle-1993} DRT —
+This is the trivial baseline shared by [groenendijk-stokhof-1991]
+DPL, [muskens-1996] CDRT, and [kamp-reyle-1993] DRT —
 their state types are all definitionally `Nat → E = Assignment E`, so
 this single instance covers all three.
 
@@ -412,7 +412,7 @@ In any `Ctx` with prop drefs, if we extend `i` to `j` keeping `φ_DC` and
 (`φ_anaphor(j) ⊆ φ_neg(j)`) forces `φ_DC(j) = ∅`, i.e. discourse
 inconsistency.
 
-This is the typeclass-only version of @cite{hofmann-2025}'s bathroom-
+This is the typeclass-only version of [hofmann-2025]'s bathroom-
 sentence theorem: "There isn't a bathroom. #It is upstairs."
 
 ## SEAM 6 (Anaphora resolution): The theorem only needs `HasPropDrefs`

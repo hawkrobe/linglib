@@ -9,11 +9,11 @@ construction takes a relation `θ' : α → β → Prop` and closes it under
 `(x₁, e₁), (x₂, e₂) ↦ (x₁ ⊔ x₂, e₁ ⊔ e₂)`, optionally subject to an
 inter-event constraint `cond : β → β → Prop`. Two specializations:
 
-* **Unconditional** (`cond = fun _ _ ↦ True`): @cite{krifka-1998} §3.6
+* **Unconditional** (`cond = fun _ _ ↦ True`): [krifka-1998] §3.6
   eq. 59 incremental-theme closure (`IncClosure` in
   `Events/Aspect/Incremental.lean`). Permits arbitrary sum formation —
   models *read the article* (re-reading allowed).
-* **Precedence-respecting** (`cond := precedes`): @cite{krifka-1998}
+* **Precedence-respecting** (`cond := precedes`): [krifka-1998]
   §4.3 eq. 71 movement-relation closure (`MovementClosure` in
   `Studies/Krifka1998.lean` Part II). Only events in precedence order
   combine — prevents telekinetic concatenations.
@@ -27,8 +27,8 @@ inter-event constraint `cond : β → β → Prop`. Two specializations:
 
 ## References
 
-* @cite{krifka-1998} §3.6 eq. 59 (incremental-theme closure)
-* @cite{krifka-1998} §4.3 eq. 71 (movement-relation closure, modulo TANG_H)
+* [krifka-1998] §3.6 eq. 59 (incremental-theme closure)
+* [krifka-1998] §4.3 eq. 71 (movement-relation closure, modulo TANG_H)
 -/
 
 namespace Semantics.Aspect

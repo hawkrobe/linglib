@@ -4,7 +4,7 @@ import Linglib.Core.Combinatorics.RootedTree.Decorated
 
 /-!
 # Bialgebra of Decorated Forests: Linguistic Specialization
-@cite{marcolli-chomsky-berwick-2025}
+[marcolli-chomsky-berwick-2025]
 
 The `[LINGLIB]` half of the original `Hopf/Defs.lean` (renamed to
 `Merge/Defs.lean` at 0.230.770 along with the `Hopf/` → `Merge/`

@@ -88,8 +88,8 @@ theorem classify_total (p : CliticAffixProfile) :
 end Morphology.Diagnostics
 
 /-!
-# @cite{zwicky-pullum-1983}: Cliticization vs. Inflection
-@cite{zwicky-pullum-1983}
+# [zwicky-pullum-1983]: Cliticization vs. Inflection
+[zwicky-pullum-1983]
 
 Empirical data and classification theorems for the argument that
 English contracted negator *-n't* is an inflectional affix, not a

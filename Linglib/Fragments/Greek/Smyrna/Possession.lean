@@ -2,8 +2,8 @@ import Linglib.Typology.Possession
 
 /-!
 # Smyrna Greek possession profile
-@cite{stassen-2009} @cite{nichols-1986} @cite{heine-1997}
-@cite{liosis-2016} @cite{kampanarou-alexiadou-2026}
+[stassen-2009] [nichols-1986] [heine-1997]
+[liosis-2016] [kampanarou-alexiadou-2026]
 
 `PossessionProfile` bundle for Smyrna Greek (Aegean), the
 *genitive-over-extension* endpoint within the Modern Greek dialect
@@ -12,11 +12,11 @@ continuum — the opposite direction from Grevena Greek.
 ## What makes Smyrna different from SMG
 
 Smyrna Greek **tolerates inflectional genitive forms that SMG rejects** as
-paradigm gaps. @cite{liosis-2016} (cited in @cite{kampanarou-alexiadou-2026}
+paradigm gaps. [liosis-2016] (cited in [kampanarou-alexiadou-2026]
 fn 7 p. 11) lists *tu luluðakju* 'little flower-DIM.SG.GEN' and
 *ton naftakjo(n)* 'little sailor-DIM.PL.GEN' as acceptable in Smyrna —
 both starred in SMG, where the *-aki* diminutive class systematically
-lacks inflectional genitive forms (@cite{kampanarou-alexiadou-2026} §3
+lacks inflectional genitive forms ([kampanarou-alexiadou-2026] §3
 exx 14a–b).
 
 This matters for the cross-dialectal argument: the Modern Greek dialect

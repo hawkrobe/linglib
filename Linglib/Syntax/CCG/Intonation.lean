@@ -5,7 +5,7 @@ import Linglib.Features.Prosody
 /-!
 # CCG Intonation and Information Structure
 
-@cite{steedman-2000}'s theory of how prosodic structure aligns with CCG derivations.
+[steedman-2000]'s theory of how prosodic structure aligns with CCG derivations.
 
 ## Insight
 
@@ -23,7 +23,7 @@ Intonation selects among these:
 
 - Pitch accents (H*, L+H*): Mark focus/contrast at word level
 - Terminal contours (phrase accent + boundary tone): Mark prosodic phrase edges
-  (@cite{beckman-pierrehumbert-1986} §4)
+  ([beckman-pierrehumbert-1986] §4)
 - Information feature (theta/rho): Projects theme/rheme through derivation
 
 -/
@@ -119,7 +119,7 @@ def ProsodicLexEntry.prosodicCat (e : ProsodicLexEntry) : ProsodicCat :=
 /--
 An intonational tune: pitch accent + terminal contour.
 
-The two main tunes in English (@cite{steedman-2000}):
+The two main tunes in English ([steedman-2000]):
 - L+H* L H%: Theme tune (fall-rise)
 - H* L L%: Rheme tune (fall)
 -/

@@ -2,11 +2,11 @@ import Linglib.Semantics.Modality.Kratzer.Flavor
 
 /-!
 # Inertial modality for Italian non-finite belief/action readings
-@cite{fusco-sgrizzi-2026} @cite{dowty-1979} @cite{kratzer-2012}
+[fusco-sgrizzi-2026] [dowty-1979] [kratzer-2012]
 
-@cite{fusco-sgrizzi-2026} analyse the belief/action ambiguity of Italian
+[fusco-sgrizzi-2026] analyse the belief/action ambiguity of Italian
 non-finite complements (*convincere a* + INF, *promettere di* + INF) via
-inertial modality in the @cite{dowty-1979} sense, recast as a Kratzer
+inertial modality in the [dowty-1979] sense, recast as a Kratzer
 circumstantial-base + inertial-ordering pair.
 
 ## Main declarations
@@ -21,7 +21,7 @@ circumstantial-base + inertial-ordering pair.
 
 ## Implementation notes
 
-@cite{dowty-1979}: w' is an inertia world of w iff w' matches w up to the
+[dowty-1979]: w' is an inertia world of w iff w' matches w up to the
 reference time and the course of events in w continues without interruption.
 In Kratzer's framework this is a circumstantial modal base paired with an
 ordering source whose propositions describe normal continuation.

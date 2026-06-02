@@ -6,10 +6,10 @@ import Linglib.Data.Examples.Schema
 
 /-!
 # Del Pinal (2015): Dual Content Semantics
-@cite{delpinal-2015}
+[delpinal-2015]
 
 Dual-content reanalysis of privative adjectives: nouns have
-E-structure + qualia C-structure (@cite{pustejovsky-1995});
+E-structure + qualia C-structure ([pustejovsky-1995]);
 privatives operate on C-structure. Sibling to `Partee2010.lean`
 (same data, opposite mechanism: Partee re-types fake as subsective
 plus noun-coercion, DC keeps fake's Kamp-privative typing and pairs
@@ -26,7 +26,7 @@ it with C-structure).
 * `AdjMeaning.toDCAdjMeaning`: lift a classical `AdjMeaning` to a
   `DCAdjMeaning` by inheriting noun qualia.
 * `DelPinalReanalysis.no_LicensedCoercion`: cross-framework divergence
-  with @cite{partee-2010} (any DC reanalysis projects to a Kamp-privative
+  with [partee-2010] (any DC reanalysis projects to a Kamp-privative
   `AdjMeaning`, hence admits no NVP-licensed coercion).
 * `Kamp1975_fakeAdj_lift_not_DelPinalReanalysis`: Kamp's classical typing
   of `fake` is genuinely impoverished — the lift to `DCAdjMeaning` fails
@@ -54,8 +54,8 @@ satisfies `extension_implies_formal`.
 
 ## References
 
-* @cite{pustejovsky-1995} (qualia roles).
-* @cite{partee-2010} (sibling reanalysis).
+* [pustejovsky-1995] (qualia roles).
+* [partee-2010] (sibling reanalysis).
 -/
 
 namespace DelPinal2015
@@ -162,7 +162,7 @@ theorem artificialDC_not_DelPinalReanalysis :
     rw [hr]; exact ⟨id, id, trivial⟩
   exact r.extension_implies_formal N () () hext
 
-/-! ### Cross-framework divergence with @cite{partee-2010} -/
+/-! ### Cross-framework divergence with [partee-2010] -/
 
 /-- Classical-`AdjMeaning` projection of a DC operator under a
     per-noun qualia assignment `Q`. -/

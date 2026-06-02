@@ -5,7 +5,7 @@ import Linglib.Core.Algebra.ConnesKreimer.Coproduct
 
 /-!
 # Algebraic Phase Coproduct Δ^c_Φ
-@cite{marcolli-chomsky-berwick-2025} §1.14, Definition 1.14.5
+[marcolli-chomsky-berwick-2025] §1.14, Definition 1.14.5
 
 Implements the **phase-restricted coproduct** Δ^c_Φ of MCB §1.14, eq (1.14.6):
 
@@ -144,7 +144,7 @@ noncomputable def isInaccessibleSubtree (h : HeadFunction) (T : SyntacticObject)
     (i.e., not in the inaccessibility set `Y_ℓ`).
 
     This is the predicate that filters the standard Connes-Kreimer
-    coproduct sum to obtain Δ^c_Φ (@cite{marcolli-chomsky-berwick-2025}
+    coproduct sum to obtain Δ^c_Φ ([marcolli-chomsky-berwick-2025]
     Definition 1.14.5 eq 1.14.6).
 
     `noncomputable` because `Finset.toList` (via `Multiset.toList`)
@@ -162,7 +162,7 @@ noncomputable def cutPhaseCompatible (h : HeadFunction) (T : SyntacticObject)
 -- ============================================================================
 
 /-- The **tree-level phase coproduct** Δ^c_Φ
-    (@cite{marcolli-chomsky-berwick-2025} Definition 1.14.5 eq 1.14.6),
+    ([marcolli-chomsky-berwick-2025] Definition 1.14.5 eq 1.14.6),
     using the contraction coproduct shape (Δ^c, with `remainder` rather than
     `remainderDeletion`).
 
@@ -241,7 +241,7 @@ The current substrate is sufficient for downstream tree-level reasoning.
     `inaccessibleTerms` where heads of lower phases remain accessible
     (only the rest of their interior is closed).
 
-    Per @cite{marcolli-chomsky-berwick-2025} Remark 1.14.4 (book p. 136):
+    Per [marcolli-chomsky-berwick-2025] Remark 1.14.4 (book p. 136):
     "There are reasons in the current theory of Merge for excluding head
     movement, which would indicate that the head itself would also not
     remain accessible. A more restrictive Phase Theory would then also
@@ -285,7 +285,7 @@ noncomputable def comulPhaseC_weak (h : HeadFunction) (T : SyntacticObject)
 
     - `.strong`: standard Δ^c_Φ with strict `Y_ℓ` (`comulPhaseC`).
     - `.weak`: Δ^c_Φ with relaxed `Y_ℓ_weak` (`comulPhaseC_weak`); phase-heads
-      accessible per @cite{marcolli-chomsky-berwick-2025} Remark 1.14.4.
+      accessible per [marcolli-chomsky-berwick-2025] Remark 1.14.4.
     - `.linearizationBound`: unrestricted Δ^c (no phase filtering); the
       linearization gate is enforced separately at the externalization layer. -/
 noncomputable def comulPICStrength (mode : PICStrength)

@@ -9,7 +9,7 @@ import Linglib.Typology.NegativeConcord
 
 /-!
 # Typology.Negation
-@cite{dryer-2013-wals} @cite{haspelmath-2013} @cite{miestamo-2005}
+[dryer-2013-wals] [haspelmath-2013] [miestamo-2005]
 
 Per-language typological substrate for the standard sentential negation
 marker of a language: form, morphological status, position, symmetric/
@@ -27,7 +27,7 @@ substrate carries (a) per-paradigm-entry schema (`NegMarkerEntry`,
   classification (`negativeAffix`, `negativeParticle`, `negativeAuxiliaryVerb`,
   `negativeWordUnclearIfVerbOrParticle`, `variationBetweenNegativeWordAndAffix`,
   `doubleNegation`). This is **Dryer's WALS Ch 112 morpheme typology**, NOT
-  @cite{miestamo-2005}'s construction-level typology — Miestamo classifies
+  [miestamo-2005]'s construction-level typology — Miestamo classifies
   *constructions*, not morphemes. The substrate carries Dryer's classification
   for cross-linguistic indexing; Miestamo's framework lives in
   `Studies/Miestamo2005.lean`.
@@ -52,7 +52,7 @@ substrate carries (a) per-paradigm-entry schema (`NegMarkerEntry`,
 ## Theory-laden caveats
 
 `NegSymmetry` and `AsymmetrySubtype` are **WALS Ch 113/114** values
-(@cite{dryer-haspelmath-2013}). @cite{miestamo-2005}'s richer
+([dryer-haspelmath-2013]). [miestamo-2005]'s richer
 two-dimension framework (constructional vs paradigmatic asymmetry,
 derived vs independent source) lives in `Studies/Miestamo2005.lean`
 because it goes beyond what WALS encodes.
@@ -73,7 +73,7 @@ namespace Typology.Negation
 
 /-! ### Substrate enums -/
 
-/-- Type of the standard negation morpheme @cite{dryer-2013-wals}.
+/-- Type of the standard negation morpheme [dryer-2013-wals].
 
     Six categories anchored on WALS Ch 112A (negative morpheme classification).
     Direct projection from `Data.WALS.F112A.NegativeMorphemeType` via
@@ -125,12 +125,12 @@ inductive NegSymmetry where
   deriving DecidableEq, BEq, Repr
 
 /-- WALS Ch 114A: which grammatical domain is affected by asymmetric
-    negation. The four primary subtypes correspond to @cite{miestamo-2005}'s
+    negation. The four primary subtypes correspond to [miestamo-2005]'s
     A/Fin (finiteness), A/NonReal (reality status), A/Emph (emphasis),
     A/Cat (other categories) plus combined codings.
 
     Note: WALS Ch 114 does not encode A/Emph as a separate value
-    (@cite{miestamo-2005} Table 2 distinguishes it; WALS collapses it). -/
+    ([miestamo-2005] Table 2 distinguishes it; WALS collapses it). -/
 inductive AsymmetrySubtype where
   | finiteness
   | realityStatus
@@ -237,7 +237,7 @@ structure NegationSystem where
 /-! ### NegationProfile (Fragment typology-feature joint) -/
 
 /-- A language's negation profile across WALS Chapters 112-115, plus
-    fields from @cite{greco-2020} (`negIsHead`) and @cite{jin-koenig-2021}
+    fields from [greco-2020] (`negIsHead`) and [jin-koenig-2021]
     (`enAttested`).
 
     Sibling Fragment-side joint to `NegationSystem`: every
@@ -262,12 +262,12 @@ structure NegationProfile where
   /-- Illustrative negative marker form(s). -/
   negMarkers : List String := []
   /-- Is the negation marker a syntactic head (X°) rather than a phrase (XP)?
-      Relevant for @cite{greco-2020}: only head-status markers can merge in
+      Relevant for [greco-2020]: only head-status markers can merge in
       CP to produce surprise negation. -/
   negIsHead : Option Bool := none
   /-- Is expletive negation attested in this language?
-      @cite{jin-koenig-2021} (722-language survey: EN in 74 languages)
-      and @cite{rett-2026}. -/
+      [jin-koenig-2021] (722-language survey: EN in 74 languages)
+      and [rett-2026]. -/
   enAttested : Option Bool := none
   deriving Repr
 
@@ -370,7 +370,7 @@ def countBySymmetry (langs : List NegationProfile) (s : NegSymmetry) : Nat :=
 open Typology.NegativeConcord (NWordStatus)
 
 /-- Whether the negative-indefinite system shows negative concord
-    (@cite{van-der-auwera-van-alsenoy-2016}): WALS 115A `cooccur` (concord) and `mixed`
+    ([van-der-auwera-van-alsenoy-2016]): WALS 115A `cooccur` (concord) and `mixed`
     (position-dependent) do; `preclude` (double negation) and `negExistential` do not.
     Broader than `NegationProfile.hasNegConcord`, which tests `cooccur` only. -/
 def NegIndefiniteStrategy.hasNegativeConcord : NegIndefiniteStrategy → Bool
@@ -380,14 +380,14 @@ def NegIndefiniteStrategy.hasNegativeConcord : NegIndefiniteStrategy → Bool
 /-- Whether an item-level n-word status is consistent with a language's WALS 115A
     negative-indefinite strategy: an n-word needs a concord system, an inherently
     negative quantifier a non-concord (double-negation / neg-existential) one, an NPI
-    any (@cite{van-der-auwera-van-alsenoy-2016}). -/
+    any ([van-der-auwera-van-alsenoy-2016]). -/
 def NegIndefiniteStrategy.admits : NegIndefiniteStrategy → NWordStatus → Bool
   | strat, .nWord => strat.hasNegativeConcord
   | strat, .negQuantifier => !strat.hasNegativeConcord
   | _, .npi => true
 
 /-- N-words live in negative-concord systems, inherently negative quantifiers in
-    double-negation ones (@cite{van-der-auwera-van-alsenoy-2016}). -/
+    double-negation ones ([van-der-auwera-van-alsenoy-2016]). -/
 theorem nWord_vs_negQuantifier :
     (NegIndefiniteStrategy.cooccur).admits .nWord = true ∧
     (NegIndefiniteStrategy.preclude).admits .nWord = false ∧

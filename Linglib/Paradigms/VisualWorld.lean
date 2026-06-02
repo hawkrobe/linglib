@@ -5,7 +5,7 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # Visual-World Paradigm
 
-@cite{huettig-rommers-meyer-2011}
+[huettig-rommers-meyer-2011]
 
 Shared vocabulary for the visual-world eye-tracking paradigm. A subject
 sees a display of objects and hears a sentence; their eye movements reveal
@@ -25,7 +25,7 @@ shape of output a theory must produce*.
 ## Anchoring on a methodological review
 
 This file's type structure follows the data-field ontology of
-@cite{huettig-rommers-meyer-2011}'s methodological review of the
+[huettig-rommers-meyer-2011]'s methodological review of the
 paradigm. Each paradigm-level type cites the section of the review it
 comes from, so the lineage stays auditable. New paradigm primitives
 should not be added without a corresponding review section motivating
@@ -65,7 +65,7 @@ namespace Paradigms.VisualWorld
 -- §1. Display
 -- ============================================================================
 
-/-- Display kind, per @cite{huettig-rommers-meyer-2011} §2.1.1.
+/-- Display kind, per [huettig-rommers-meyer-2011] §2.1.1.
 
     Different display kinds tap different representations:
 
@@ -83,7 +83,7 @@ inductive DisplayKind where
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Role an object plays in the visual display, per
-    @cite{huettig-rommers-meyer-2011} §2.1.2.
+    [huettig-rommers-meyer-2011] §2.1.2.
 
     The four-way split is the standard vocabulary for studies that
     cross a same-category-contrast manipulation (Sedivy 1999, Engelhardt
@@ -128,7 +128,7 @@ inductive ContrastCondition where
 -- §2. Task
 -- ============================================================================
 
-/-- Communicative task, per @cite{huettig-rommers-meyer-2011} §2.1.3.
+/-- Communicative task, per [huettig-rommers-meyer-2011] §2.1.3.
 
     Task choice affects which competition effects appear:
     look-and-listen tasks reveal general language–vision interactions,
@@ -285,7 +285,7 @@ def ContrastSpeedsTargetLooks [HasContrastCondition Cell] [LT R]
 -- ============================================================================
 
 /-! Studies that cross *multiple* within-subject factors (e.g.
-@cite{ronderos-etal-2024}'s 2 × 3 contrast × adjective-type design)
+[ronderos-etal-2024]'s 2 × 3 contrast × adjective-type design)
 need to express the contrast-effect predicates *per stratum* rather
 than universally over all cells — Ronderos finds a contrast effect for
 color and scalar adjectives but *not* for material adjectives, so a
@@ -338,7 +338,7 @@ abbrev ContrastReducesCompetitorLooksWhen [HasContrastCondition Cell] [LT R]
 /-- Interaction predicate: the contrast effect on `role` looks is
     strictly larger in the `P` stratum than in the `Q` stratum. The
     paradigm-level shape of an "X × condition" interaction — e.g.
-    @cite{ronderos-etal-2024}'s adjective-type × contrast interaction,
+    [ronderos-etal-2024]'s adjective-type × contrast interaction,
     where color/scalar cells show a contrast effect that material cells
     lack. Universal quantification over both strata is the strongest
     qualitative reading: every `P`-cell's effect strictly exceeds every
@@ -371,12 +371,12 @@ theorem ContrastReducesRoleLooks_iff_when_True
 overall fixations on a *subset of roles* in the no-contrast (or other
 designated baseline) condition across strata. Examples:
 
-- @cite{aparicio-xiang-kennedy-2015} / @cite{aparicio-2017}: in the
+- [aparicio-xiang-kennedy-2015] / [aparicio-2017]: in the
   No-Contrast baseline, fixations on target + cross-category competitor
   are lower for scalar adjectives than for color adjectives, attributed
   to scalar adjectives requiring more comparison-class processing time
   (more distributed gaze across all four display objects).
-- @cite{ronderos-etal-2024}: extends the same finding to the
+- [ronderos-etal-2024]: extends the same finding to the
   scalar-vs-material comparison and treats it as evidence for an
   Aparicio-style semantic factor distinct from the contrast effect
   itself.

@@ -6,8 +6,8 @@ import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 
 /-!
-# @cite{kao-etal-2014-hyperbole} on mathlib `PMF` — headline architectural theorem
-@cite{kao-etal-2014-hyperbole}
+# [kao-etal-2014-hyperbole] on mathlib `PMF` — headline architectural theorem
+[kao-etal-2014-hyperbole]
 
 "Nonliteral understanding of number words", PNAS 111(33):12002-12007.
 

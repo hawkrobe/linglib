@@ -7,9 +7,9 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Prod
 
 /-!
-# @cite{roberts-2012} — Information Structure in Discourse
+# [roberts-2012] — Information Structure in Discourse
 
-@cite{roberts-2012} "Information structure in discourse: Towards an integrated
+[roberts-2012] "Information structure in discourse: Towards an integrated
 formal theory of pragmatics" (Semantics & Pragmatics 5(6): 1–69).
 
 ## Core Contributions Formalized
@@ -305,7 +305,7 @@ private theorem singleton_w_zero_in_alt_q1 :
       rfl
 
 -- ════════════════════════════════════════════════════
--- § Question Entailment (@cite{roberts-2012} Def. 8)
+-- § Question Entailment ([roberts-2012] Def. 8)
 -- ════════════════════════════════════════════════════
 
 -- Polar→polar entailment decides via `questionEntails_polar_polar_iff`.
@@ -436,7 +436,7 @@ theorem qai_not_entails_qa : ¬ questionEntails q_ai q_a := by
   · exact Bool.false_ne_true (hqc hw1q).1.symm
 
 -- ════════════════════════════════════════════════════
--- § Subquestions (@cite{roberts-2012} Def. 8–9)
+-- § Subquestions ([roberts-2012] Def. 8–9)
 -- ════════════════════════════════════════════════════
 
 /-- q_a is a subquestion of q_1. -/
@@ -446,7 +446,7 @@ theorem qa_sub_q1 : isSubquestion q_a q_1 := q1_entails_qa
 theorem qb_sub_q1 : isSubquestion q_b q_1 := q1_entails_qb
 
 -- ════════════════════════════════════════════════════
--- § Strategy of Inquiry (@cite{roberts-2012} Def. 12)
+-- § Strategy of Inquiry ([roberts-2012] Def. 12)
 -- ════════════════════════════════════════════════════
 
 /-- Roberts' strategy for the D₀ scenario:
@@ -590,7 +590,7 @@ theorem hb_partially_answers_q1 :
   exact Bool.false_ne_true hw
 
 -- ════════════════════════════════════════════════════
--- § Relevance (@cite{roberts-2012} Def. 15)
+-- § Relevance ([roberts-2012] Def. 15)
 -- ════════════════════════════════════════════════════
 
 /-- "Hannah ate beans" as a single-alternative declarative issue. -/

@@ -2,9 +2,9 @@ import Linglib.Semantics.Events.CEM
 
 /-!
 # Event Adjacency and Temporal Precedence
-@cite{krifka-1998} @cite{bach-1986} @cite{champollion-2017}
+[krifka-1998] [bach-1986] [champollion-2017]
 
-Two events are temporally adjacent (`∞_E` in @cite{krifka-1998}'s
+Two events are temporally adjacent (`∞_E` in [krifka-1998]'s
 notation) if their runtime intervals meet; one event temporally
 precedes another (`«_E`) if its runtime is entirely before the
 other's. These primitives are event-general — they're not specific
@@ -18,7 +18,7 @@ are consumed by:
   convex-time derivation)
 -/
 
-/-- Two events are temporally adjacent (`∞_E` in @cite{krifka-1998}'s
+/-- Two events are temporally adjacent (`∞_E` in [krifka-1998]'s
     notation) if their runtime intervals meet: one's finish equals
     the other's start. The natural concrete instance of K98's
     abstract event-adjacency primitive (eq. 14) on the `Event Time`

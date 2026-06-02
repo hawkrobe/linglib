@@ -2,7 +2,7 @@ import Linglib.Syntax.HPSG.RelativeClauses
 
 /-!
 # Bridge: HPSG Relative Clauses to Filler-Gap Phenomena
-@cite{sag-wasow-bender-2003} @cite{pollard-sag-1994}
+[sag-wasow-bender-2003] [pollard-sag-1994]
 
 Connects the HPSG relative clause mechanism (MOD feature + SLASH/GAP
 + Head-Modifier Schema) to empirical data in `Phenomena.FillerGap`.

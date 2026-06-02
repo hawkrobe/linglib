@@ -2,10 +2,10 @@ import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Abkhaz Evidentiality
-@cite{de-haan-2013} @cite{aikhenvald-2004}
+[de-haan-2013] [aikhenvald-2004]
 
-WALS @cite{de-haan-2013} F77A: `indirectOnly` (verbal-affix coding).
-@cite{aikhenvald-2004} analyzes Abkhaz as 2-way direct/indirect (fused with
+WALS [de-haan-2013] F77A: `indirectOnly` (verbal-affix coding).
+[aikhenvald-2004] analyzes Abkhaz as 2-way direct/indirect (fused with
 TAM). Studies-side override.
 -/
 
@@ -13,7 +13,7 @@ namespace Abkhaz.Evidentiality
 
 /-! ### Typed evidential inventory
 
-Abkhaz's 2-way direct/indirect contrast per @cite{aikhenvald-2004}: the
+Abkhaz's 2-way direct/indirect contrast per [aikhenvald-2004]: the
 finite-verb form (direct) vs the nonfinite + copula construction
 (indirect, covering inference and report). Fused with TAM. -/
 

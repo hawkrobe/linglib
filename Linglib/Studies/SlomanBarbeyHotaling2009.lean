@@ -4,7 +4,7 @@ import Mathlib.Data.Finset.Card
 
 /-!
 # Sloman, Barbey & Hotaling (2009): A Causal Model Theory of *cause*/*enable*/*prevent*
-@cite{sloman-barbey-hotaling-2009}
+[sloman-barbey-hotaling-2009]
 
 Cognitive Science 33(1): 21–50.
 
@@ -12,9 +12,9 @@ The foundational deterministic-binary statement of the **structural-equation
 theory of causal verbs**: *cause*, *enable*, and *prevent* denote distinct
 structural forms (Figure 4, eqs 2, 3, 4a–c). Subsequent literature has
 generalized this to graded/probabilistic causation
-(@cite{cao-white-lassiter-2025}), counterfactual simulation
-(@cite{beller-gerstenberg-2025}), and refined necessity definitions
-(@cite{nadathur-2024}). This file formalizes SBH 2009's specific
+([cao-white-lassiter-2025]), counterfactual simulation
+([beller-gerstenberg-2025]), and refined necessity definitions
+([nadathur-2024]). This file formalizes SBH 2009's specific
 *structural* claims as the historical foundation.
 
 ## What is formalized
@@ -39,10 +39,10 @@ generalized this to graded/probabilistic causation
 
 - **Multi-premise inference (§4–§9)**: SBH's substitution composition
   has been superseded by counterfactual simulation
-  (@cite{beller-gerstenberg-2025}).
+  ([beller-gerstenberg-2025]).
 - **Experiments 1–3 (certainty inequalities)**: graded SUF / Bayesian
   models predict these directly; deterministic SBH has no graded
-  analogue (see @cite{cao-white-lassiter-2025}).
+  analogue (see [cao-white-lassiter-2025]).
 - **Truth-conditional `enableSem` over `develop`**: the structural
   predicate is the contemporary view; the develop-based version (with
   required-accessory truth conditions) reduces to a special case.

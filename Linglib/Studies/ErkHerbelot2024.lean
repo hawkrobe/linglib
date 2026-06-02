@@ -4,7 +4,7 @@ import Mathlib.Probability.Distributions.Uniform
 
 /-!
 # Erk & Herbelot 2024 — How to Marry a Star
-@cite{erk-herbelot-2024}
+[erk-herbelot-2024]
 
 Erk, K. & Herbelot, A. (2024). How to Marry a Star: Probabilistic Constraints
 for Meaning in Context. *Journal of Semantics* 40(4), 549–583.

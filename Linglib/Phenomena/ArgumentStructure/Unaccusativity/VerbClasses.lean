@@ -8,11 +8,11 @@ import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
 # Levin verb classes and unaccusativity
-@cite{levin-1993} @cite{levin-hovav-1995} @cite{storment-2026}
+[levin-1993] [levin-hovav-1995] [storment-2026]
 
-How @cite{levin-1993}'s lexical-semantic verb classes (§37–§51) align
+How [levin-1993]'s lexical-semantic verb classes (§37–§51) align
 with the syntactic unaccusativity diagnostic. This file is the
-formalizer's synthesis: @cite{storment-2026} doesn't run a Levin-class
+formalizer's synthesis: [storment-2026] doesn't run a Levin-class
 analysis, and Levin 1993 predates the QI diagnostic. The interaction
 is what we're after.
 
@@ -22,7 +22,7 @@ unaccusativity status. Inherently directed motion (§51.1), existence
 unaccusative status; manner of motion (§51.3), body-internal motion
 (§49), and contact (§18.1) predict and obtain unergative/transitive.
 The interesting fault line is manner-of-speaking (§37.3): the class
-predicts unergative, but @cite{storment-2026}'s QI diagnostic
+predicts unergative, but [storment-2026]'s QI diagnostic
 classifies the verbs as unaccusative — and the class is internally
 split (`whisper` unaccusative, `speak` unergative on QI).
 
@@ -73,7 +73,7 @@ theorem aligned_nonunaccusatives_levin_agrees :
 Manner-of-speaking (§37.3) is the cleanest fault line. The class
 predicts non-unaccusative (it's an agentive activity class), but the
 Fragment annotates the verbs as unaccusative on the basis of
-@cite{storment-2026}'s QI diagnostic. -/
+[storment-2026]'s QI diagnostic. -/
 
 /-- Levin's `mannerOfSpeaking` does not predict unaccusative status. -/
 theorem mannerOfSpeaking_predicts_nonunaccusative :

@@ -10,14 +10,14 @@ import Linglib.Fragments.Slavic.Russian.Color
 
 /-!
 # Zaslavsky, Kemp, Regier & Tishby (2018): efficient compression in color naming
-@cite{zaslavsky-kemp-regier-tishby-2018} @cite{berlin-kay-1969} @cite{wals-2013}
+[zaslavsky-kemp-regier-tishby-2018] [berlin-kay-1969] [wals-2013]
 
-@cite{zaslavsky-kemp-regier-tishby-2018} argue that color-naming systems
+[zaslavsky-kemp-regier-tishby-2018] argue that color-naming systems
 efficiently compress meanings into words by optimizing the Information
 Bottleneck (IB) trade-off between lexicon **complexity** (the information rate
 `I(M;W)`) and **accuracy** (`I(W;U)`). Cross-language variation is captured by a
 single trade-off parameter β, and the Berlin & Kay evolutionary sequence
-(@cite{berlin-kay-1969}: dark/light, then red, then green/yellow, then blue, …)
+([berlin-kay-1969]: dark/light, then red, then green/yellow, then blue, …)
 falls out as motion *up the complexity axis* — successive systems carve color
 space more finely, paying complexity for accuracy.
 
@@ -76,7 +76,7 @@ def ibComplexity (p : ColorProfile) : ℕ := (p.basic.map basicCount).getD 0
 
 /-- The category-count handle is strictly monotone along the WALS Ch 133
     ordering — i.e. along the Berlin & Kay evolutionary sequence
-    (@cite{berlin-kay-1969}). -/
+    ([berlin-kay-1969]). -/
 theorem bk_complexity_strictMono :
     basicCount .v3to4 < basicCount .v4to5 ∧
     basicCount .v4to5 < basicCount .v6to6h ∧

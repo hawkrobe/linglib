@@ -4,12 +4,12 @@ import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Incremental Alternative Sampling: Real-Valued Foundation
-@cite{giulianelli-etal-2026} @cite{giulianelli-opedal-cotterell-2024}
+[giulianelli-etal-2026] [giulianelli-opedal-cotterell-2024]
 
 The probabilistic backbone underneath `Config.lean`'s enum-level
 configuration. The `LangModel` primitive lives in
 `Processing/LanguageModel/Basic.lean`; this file builds on it
-to define the `genSurprisal` family of @cite{giulianelli-etal-2026}'s
+to define the `genSurprisal` family of [giulianelli-etal-2026]'s
 Eq. 3 — real-valued functions of an LM, context, and target — and shows
 that classical surprisal is recovered as the special case
 (warp = −log, score = indicator).
@@ -34,7 +34,7 @@ classical −log p(w | c).
   arguments are the denotations of `standardSurprisal`'s warping and
   scoring tags, `genSurprisal` collapses to `LangModel.surprisal`. This
   is the formal content of the surprisal-as-prefix-expectation identity
-  (Eqs. 2a–2d of @cite{giulianelli-etal-2026}).
+  (Eqs. 2a–2d of [giulianelli-etal-2026]).
 -/
 
 set_option autoImplicit false
@@ -48,7 +48,7 @@ open Processing.LanguageModel (LangModel)
 -- §1: Generalised Surprisal (Eq. 3)
 -- ============================================================================
 
-/-- Generalised surprisal (@cite{giulianelli-etal-2026} Eq. 3):
+/-- Generalised surprisal ([giulianelli-etal-2026] Eq. 3):
 
   γ(w; c) = warp( E_{a ~ p(·|c)} [score(a, w, c)] )
 
@@ -110,7 +110,7 @@ noncomputable def SurprisalConfig.applyTo
 /-- **Standard surprisal is the special case** of `genSurprisal` with
 `warp = −log` and `score = indicator`. Choosing these (warp, score)
 collapses Eq. 3 to γ(w; c) = −log p(w | c) — i.e., classical surprisal
-@cite{levy-2008}.
+[levy-2008].
 
 This is the non-trivial reduction theorem: it shows that the enum-level
 claim `standardSurprisal = (negLog, indicator, 1, predictive)` in
@@ -159,7 +159,7 @@ theorem standardSurprisal_applyTo_eq_surprisal
 between sampled next-symbols and the actual outcome.
 
 This is the single-step specialisation of the IAS measure
-(@cite{giulianelli-etal-2026}'s V_{r,d,1}, Eq. 6). The full IAS
+([giulianelli-etal-2026]'s V_{r,d,1}, Eq. 6). The full IAS
 generalises to horizon h ≥ 1 by sampling h-grams; we keep the h = 1
 case here as the load-bearing definition (it is what is needed to
 recover surprisal as a special instance via choice of distance d).
@@ -175,7 +175,7 @@ noncomputable def informationValue1
 /-- Information value at horizon 1 is `genSurprisal` with the identity
 warping. The sampler is the LM, the scoring function is the distance,
 and there is no warping — exactly the (identity, distance, 1, l)
-instantiation of @cite{giulianelli-etal-2026}'s family. -/
+instantiation of [giulianelli-etal-2026]'s family. -/
 theorem informationValue1_eq_genSurprisal
     {Voc : Type*} [Fintype Voc]
     (lm : LangModel Voc) (d : Option Voc → Voc → ℝ)

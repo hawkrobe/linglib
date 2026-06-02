@@ -2,11 +2,11 @@ import Linglib.Semantics.Presupposition.TriggerTypology
 
 /-!
 # Mandarin Presuppositional Particles
-@cite{wang-2025}
+[wang-2025]
 
 Lexical entries for Mandarin presupposition triggers, linking Fragment-level
-lexical data to the NeoGricean trigger typology (@cite{wang-2025} Table 4.1) and
-experimental data (@cite{wang-2025} Experiments 1-3).
+lexical data to the NeoGricean trigger typology ([wang-2025] Table 4.1) and
+experimental data ([wang-2025] Experiments 1-3).
 
 ## Triggers
 
@@ -35,7 +35,7 @@ namespace Mandarin.Particles
 
 open Semantics.Presupposition.TriggerTypology (PresupTrigger AltStructure PresupTriggerEntry)
 
-/-- Mandarin presupposition triggers studied in @cite{wang-2025} Experiments 1-2. -/
+/-- Mandarin presupposition triggers studied in [wang-2025] Experiments 1-2. -/
 inductive MandarinTrigger where
   | ye     -- 也 'also' (additive)
   | you    -- 又 'again' (repetitive)
@@ -124,7 +124,7 @@ def er : PresupParticle :=
   , triggerEntry := { trigger := .iterative, altStructure := .replacement, altForm := some "和" }
   , dataTrigger := .er }
 
-/-- All particles studied in @cite{wang-2025}. -/
+/-- All particles studied in [wang-2025]. -/
 def wang2025Particles : List PresupParticle :=
   [ye, you, reng, jiu, zhidao, buzai, kaishi, faner, er]
 

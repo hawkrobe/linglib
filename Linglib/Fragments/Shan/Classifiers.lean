@@ -2,7 +2,7 @@ import Linglib.Typology.ClassifierSystem
 
 /-!
 # Shan Numeral Classifier Lexicon
-@cite{little-moroney-royer-2022} @cite{moroney-2021} @cite{cushing-1887}
+[little-moroney-royer-2022] [moroney-2021] [cushing-1887]
 
 Typed classifier entries for Shan (Southwestern Tai, Kra-Dai), a
 classifier-for-noun language spoken in Myanmar and surrounding countries
@@ -15,8 +15,8 @@ the head of the compound *ton-mâj* 'tree'.
 
 ## CLF-for-N semantics
 
-In the CLF-for-N analysis (@cite{little-moroney-royer-2022} §4;
-@cite{chierchia-1998}; @cite{jenks-2011}), the classifier atomizes the
+In the CLF-for-N analysis ([little-moroney-royer-2022] §4;
+[chierchia-1998]; [jenks-2011]), the classifier atomizes the
 noun denotation:
   ⟦CLF⟧ = λPλx.[P(x) ∧ ¬∃y[P(y) ∧ y < x]]
 
@@ -27,7 +27,7 @@ numeral), it appears in contexts beyond numerals: with quantifiers (*ku*
 ## Word order
 
 Shan word order is [N Num CLF], with the noun preceding the numeral and
-classifier. @cite{moroney-2021} analyzes this as NP-movement from a base
+classifier. [moroney-2021] analyzes this as NP-movement from a base
 position below ClfP to a position above the numeral and classifier.
 -/
 
@@ -36,7 +36,7 @@ namespace Shan.Classifiers
 open Typology (ClassifierEntry SemanticParameter ShapeDimension)
 
 -- ============================================================================
--- Numeral classifiers (Table 6 of @cite{little-moroney-royer-2022})
+-- Numeral classifiers (Table 6 of [little-moroney-royer-2022])
 -- ============================================================================
 
 /-- ʔǎn — inanimates (generic/default classifier for inanimate objects). -/

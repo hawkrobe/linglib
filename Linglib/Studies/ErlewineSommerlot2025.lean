@@ -4,11 +4,11 @@ import Linglib.Syntax.Minimalist.Voice
 
 /-!
 # Voice and Extraction in Malayic
-@cite{erlewine-sommerlot-2025}
+[erlewine-sommerlot-2025]
 
-@cite{erlewine-sommerlot-2025} propose a new analysis of Malayic clausal
+[erlewine-sommerlot-2025] propose a new analysis of Malayic clausal
 morphosyntax that derives the interaction between voice morphology and
-nominal A'-extraction from cyclic linearization (@cite{fox-pesetsky-2005}).
+nominal A'-extraction from cyclic linearization ([fox-pesetsky-2005]).
 
 ## Core claims
 
@@ -36,14 +36,14 @@ nominal A'-extraction from cyclic linearization (@cite{fox-pesetsky-2005}).
 
 ## PIC mode
 
-@cite{erlewine-sommerlot-2025}'s analysis derives the meN-deletion
+[erlewine-sommerlot-2025]'s analysis derives the meN-deletion
 constraint from cyclic linearization alone, without invoking the
 Phase Impenetrability Condition. This positions them at
 `PICStrength.linearizationBound` (per `Syntax/Minimalist/Phase.lean`):
 no opacity constraint per se, only ordering constraints from
 `SpelloutAndCheck`. Same regime adopted by
-@cite{sande-clem-dabkowski-2026} for Guébie discontinuous harmony,
-@cite{branan-davis-2019} for agreement-edge unlocking, and others.
+[sande-clem-dabkowski-2026] for Guébie discontinuous harmony,
+[branan-davis-2019] for agreement-edge unlocking, and others.
 The structural diagnostic that the meN-deletion derivation is
 ruled out is precisely *not* a PIC-violation but a Cyclic Linearization
 contradiction — see `men_deletion` below.
@@ -159,7 +159,7 @@ Each grammatical derivation produces consistent ordering across phases.
 -/
 
 /-- Active clause is consistently linearizable.
-    @cite{erlewine-sommerlot-2025} (36). -/
+    [erlewine-sommerlot-2025] (36). -/
 theorem active_consistent :
     SpelloutAndCheck [voiceP_active, cp_active] := by decide
 
@@ -170,27 +170,27 @@ theorem active_short_consistent :
 /-- Subject extraction from active is consistent.
     The subject (agent) was already leftmost in VoiceP and moves further
     left through Spec,TP to Spec,CP — classic edge movement (Scenario 1
-    of @cite{fox-pesetsky-2005}). -/
+    of [fox-pesetsky-2005]). -/
 theorem subject_extraction_consistent :
     SpelloutAndCheck [voiceP_active, cp_subjExtr] := by decide
 
 /-- *di-* passive is consistently linearizable.
-    @cite{erlewine-sommerlot-2025} (37a). -/
+    [erlewine-sommerlot-2025] (37a). -/
 theorem di_passive_consistent :
     SpelloutAndCheck [voiceP_diPassive, cp_diPassive] := by decide
 
 /-- Bare passive is consistently linearizable.
-    @cite{erlewine-sommerlot-2025} (37b)/(39c). -/
+    [erlewine-sommerlot-2025] (37b)/(39c). -/
 theorem bare_passive_consistent :
     SpelloutAndCheck [voiceP_barePassive, cp_barePassive] := by decide
 
 /-- Object extraction with null Voice (Desa) is consistent.
-    @cite{erlewine-sommerlot-2025} (44). -/
+    [erlewine-sommerlot-2025] (44). -/
 theorem obj_extraction_desa_consistent :
     SpelloutAndCheck [voiceP_objExtr_null, cp_objExtr_desa] := by decide
 
 /-- Object extraction with null Voice (SI/SM) is consistent.
-    @cite{erlewine-sommerlot-2025} (54)–(56). -/
+    [erlewine-sommerlot-2025] (54)–(56). -/
 theorem obj_extraction_sism_consistent :
     SpelloutAndCheck [voiceP_objExtr_null_sism, cp_objExtr_sism] := by decide
 
@@ -201,7 +201,7 @@ VoiceP Spell-out establishes *me-* < agent (Voice precedes agent in
 Spec,*v*P). But at CP Spell-out, the agent has moved past Voice,
 establishing agent < *me-*. The two are contradictory.
 
-@cite{erlewine-sommerlot-2025} (57).
+[erlewine-sommerlot-2025] (57).
 -/
 
 /-- **meN-deletion theorem**: object extraction with overt Voice
@@ -240,7 +240,7 @@ implicated in the ordering paradox. In SI/SM, *N-* is lost because
 object extraction, Voice is null (pruned), so the adjacency condition
 fails.
 
-@cite{erlewine-sommerlot-2025} §2.3, (3) vs (22), (25).
+[erlewine-sommerlot-2025] §2.3, (3) vs (22), (25).
 -/
 
 /-- Desa object extraction: verb bears short *N-* but not *me-*.
@@ -263,12 +263,12 @@ theorem sism_full_deletion :
 
 /-! ### Polite vs familiar Madurese
 
-@cite{jeoung-2017} documents that polite Madurese has three voices
+[jeoung-2017] documents that polite Madurese has three voices
 (active, *e-* passive, bare passive) plus object extraction, while
 familiar Madurese has only two voices (active, *e-* passive). The
 contrast reduces to whether Voice has a null elsewhere allomorph.
 
-@cite{erlewine-sommerlot-2025} §5.3, (76)–(83).
+[erlewine-sommerlot-2025] §5.3, (76)–(83).
 -/
 
 /-- Polite Madurese allows object extraction (null Voice available). -/
@@ -289,7 +289,7 @@ theorem madurese_minimal_pair :
 
 /-! ### PP A'-movement
 
-@cite{erlewine-sommerlot-2025} correctly predict that nonnominal
+[erlewine-sommerlot-2025] correctly predict that nonnominal
 constituents (PPs) can A'-extract freely, regardless of voice, because
 VoiceP hosts nonnominal specifiers in addition to its one nominal
 specifier ((35b), (42)). PP extraction from active clauses retains
@@ -339,14 +339,14 @@ theorem all_grammatical_derivations_consistent :
 
 /-! ### Connecting Malayic Voice/v to Core VoiceHead
 
-@cite{erlewine-sommerlot-2025}'s two-head system (Voice + v) maps onto
-Core's single `VoiceHead` type (@cite{kratzer-1996}, @cite{schaefer-2008}).
+[erlewine-sommerlot-2025]'s two-head system (Voice + v) maps onto
+Core's single `VoiceHead` type ([kratzer-1996], [schaefer-2008]).
 
 - v_ACT (introduces agent) → agentive Voice flavor
 - v_PASS (no θ) → passive Voice flavor
 - VoiceP is ALWAYS a phase in E&S's system, diverging from Core's
   flavor-default tabulation in which passive Voice is non-phasal
-  (@cite{collins-2005}, @cite{chomsky-2001}). This divergence is captured
+  ([collins-2005], [chomsky-2001]). This divergence is captured
   by the `malayic_passive_phase_diverges` theorem below.
 
 The phase divergence is theoretically significant: E&S need VoiceP to be
@@ -367,7 +367,7 @@ def vFlavorToCore : LittleVFlavor → Minimalist.VoiceFlavor
     Active and object-extraction Voice are agentive (flavor-default phasal).
     `di-`passive and bare passive use `phaseOverride := some true` to express
     E&S 2025's claim that VoiceP is universally a phase, diverging from the
-    Core default for passive Voice (@cite{chomsky-2001}, @cite{collins-2005},
+    Core default for passive Voice ([chomsky-2001], [collins-2005],
     encoded in `VoiceFlavor.defaultPhasal`). -/
 def clauseToVoiceHead : VoiceConstruction → Minimalist.VoiceHead
   | .active          => { flavor := .agentive, hasD := true }
@@ -385,7 +385,7 @@ theorem voice_always_phase (ct : VoiceConstruction) :
     (clauseToVoiceHead ct).IsPhasal := by cases ct <;> decide
 
 /-- Phase divergence: Malayic passives are phases, but Core's default
-    passive Voice (following @cite{collins-2005}) is not. -/
+    passive Voice (following [collins-2005]) is not. -/
 theorem malayic_passive_phase_diverges :
     (clauseToVoiceHead .diPassive).IsPhasal ∧
     ¬ Minimalist.voicePassive.IsPhasal := by decide

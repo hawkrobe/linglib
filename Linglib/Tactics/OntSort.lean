@@ -2,7 +2,7 @@ import Lean
 
 /-!
 # @[ont_sort] — Natural Language Ontological Sort Marker
-@cite{liefke-2024}
+[liefke-2024]
 
 Marks a type definition as a natural language ontological category. Tagged types are the posits of semantic theory —
 individuals, events, propositions, degrees, etc. — as opposed to

@@ -3,7 +3,7 @@ import Linglib.Core.Agent.RationalAction
 
 /-!
 # MaxEnt → OT Limit
-@cite{smolensky-legendre-2006} @cite{prince-smolensky-1993}
+[smolensky-legendre-2006] [prince-smolensky-1993]
 
 As the rationality parameter α → ∞, MaxEnt Harmonic Grammar recovers
 Optimality Theory's categorical optimization. OT is the "infinite-temperature"
@@ -11,7 +11,7 @@ limit of MaxEnt.
 
 The argument has two components:
 
-1. **HG–OT agreement** (@cite{smolensky-legendre-2006} ch. 14): with
+1. **HG–OT agreement** ([smolensky-legendre-2006] ch. 14): with
    exponentially separated weights, the Harmonic Grammar winner (argmax of
    harmony score) equals the OT winner (lexicographic comparison of violation
    profiles). The key: if weight wₖ exceeds M · Σᵢ₍ᵢ>ₖ₎ wᵢ (where M bounds
@@ -154,7 +154,7 @@ theorem expWeights_separated (n : Nat) (M : Nat) (hM : 0 < M) :
     than a third weight w₃, but jointly stronger.
 
     This is the hallmark of weighted constraint interaction that distinguishes
-    MaxEnt/HG from OT (@cite{hayes-wilson-2008}). In OT (strict ranking), a
+    MaxEnt/HG from OT ([hayes-wilson-2008]). In OT (strict ranking), a
     lower-ranked constraint can never override a higher-ranked one regardless
     of how many violations accumulate. In MaxEnt, constraint effects are
     *additive*, so multiple weak constraints can "gang up" to outweigh a
@@ -197,7 +197,7 @@ theorem no_ganging_when_separated {n : Nat} (w : Fin n → ℚ)
 def weightedViolations {n : Nat} (w : Fin n → ℚ) (v : Fin n → Nat) : ℚ :=
   univ.sum fun i => w i * (v i : ℚ)
 
-/-- **HG–OT agreement lemma** (@cite{smolensky-legendre-2006}): with
+/-- **HG–OT agreement lemma** ([smolensky-legendre-2006]): with
     exponentially separated weights and bounded violations, lexicographic
     dominance implies strictly lower weighted violations.
 
@@ -361,7 +361,7 @@ theorem maxent_concentrates_on_hg_winner {C : Type} [Fintype C] [Nonempty C]
       |softmax (α • harmonyScoreR constraints) c_opt - 1| < ε :=
   softmax_argmax_limit (harmonyScoreR constraints) c_opt h_opt
 
-/-- **MaxEnt → OT limit** (@cite{smolensky-legendre-2006}): as α → ∞,
+/-- **MaxEnt → OT limit** ([smolensky-legendre-2006]): as α → ∞,
     MaxEnt probability concentrates on the OT winner.
 
     Given a constraint ranking with violation bound M and a candidate `c_opt`

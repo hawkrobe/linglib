@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 98A: Alignment of Case Marking of Full Noun Phrases
-@cite{comrie-2013b}
+[comrie-2013b]
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 98A`.

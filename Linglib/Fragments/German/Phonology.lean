@@ -2,7 +2,7 @@ import Linglib.Data.PHOIBLE.Inventories.German
 
 /-!
 # German phonological inventory
-@cite{moran-mccloy-2019}
+[moran-mccloy-2019]
 
 Canonical PHOIBLE 2.0 phoneme inventory for German (ISO `deu`). Pure
 pass-through to the auto-generated PHOIBLE doculect data in

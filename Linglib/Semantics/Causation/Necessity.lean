@@ -2,13 +2,13 @@ import Linglib.Core.Causal.SEM.Counterfactual
 
 /-!
 # Causal Necessity
-@cite{nadathur-2024} @cite{nadathur-lauer-2020} @cite{schulz-2011}
+[nadathur-2024] [nadathur-lauer-2020] [schulz-2011]
 
 Causal necessity semantics for the verb "cause." The core definition
 `causallyNecessary` (in `Core.Causal.SEM`) implements
-@cite{nadathur-2024} Definition 10b (supersituation necessity:
+[nadathur-2024] Definition 10b (supersituation necessity:
 precondition + achievability + but-for), superseding the simple but-for
-test from @cite{nadathur-lauer-2020} Definition 24.
+test from [nadathur-lauer-2020] Definition 24.
 
 ## Insight
 

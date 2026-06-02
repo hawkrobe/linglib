@@ -1,7 +1,7 @@
 /-
 # Local Context Computation
 
-Formalizes @cite{schlenker-2009}'s local contexts algorithm for computing
+Formalizes [schlenker-2009]'s local contexts algorithm for computing
 presupposition projection compositionally.
 
 ## Insight
@@ -239,7 +239,7 @@ theorem local_context_matches_impFilter (c : ContextSet W) (p q : PrProp W) :
 
     These are the same condition (currying/uncurrying the conjunction).
     Analogous to `local_context_matches_impFilter` for conditionals.
-    @cite{schlenker-2009}, @cite{karttunen-1973} -/
+    [schlenker-2009], [karttunen-1973] -/
 theorem local_context_matches_disjFilterLeft (c : ContextSet W)
     (firstDisjunct : PrProp W) (second : PrProp W) :
     presupFiltered (localCtxSecondDisjunct (initialLocalCtx c) firstDisjunct) second ↔
@@ -267,7 +267,7 @@ particular sentence structure (each operator must push one shift).
 
 /-- When each embedding operator pushes exactly one shift onto the tower,
     the local context depth at the corresponding position equals the
-    tower depth. This connects @cite{schlenker-2009}'s incremental depth
+    tower depth. This connects [schlenker-2009]'s incremental depth
     tracking to the tower's structural depth.
 
     Concretely: `localCtxNegation` increments depth by 1, and pushing

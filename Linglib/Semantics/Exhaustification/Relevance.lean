@@ -2,9 +2,9 @@ import Linglib.Semantics.Exhaustification.Combinators
 
 /-!
 # Relevance-Sensitive Exhaustification (Magri 2009)
-@cite{magri-2009}
+[magri-2009]
 
-@cite{magri-2009} parameterizes EXH by a contextual relevance relation
+[magri-2009] parameterizes EXH by a contextual relevance relation
 `R` on alternatives. Only alternatives that are *both* innocently
 excludable and relevant get negated; irrelevant alternatives are silently
 dropped.
@@ -19,9 +19,9 @@ identity, monotonicity, the Fox–Katzir asymmetry theorem
 can be reused by other base excluders. This file holds only the
 Magri-specific naming and corollaries.
 
-This factoring is faithful to @cite{magri-2009} eq. (42), which writes
+This factoring is faithful to [magri-2009] eq. (42), which writes
 relevance as a side filter on the I-E set, and matches the way
-@cite{fox-katzir-2011} treats the contextual constraint `C` as orthogonal
+[fox-katzir-2011] treats the contextual constraint `C` as orthogonal
 to the choice-of-alternatives problem solved by the structural source.
 -/
 
@@ -32,7 +32,7 @@ variable {W : Type*} [Fintype W] [DecidableEq W]
 /-- Magri 2009's relevance-sensitive operator: innocent exclusion filtered
     by a contextual relevance predicate on alternatives.
 
-    @cite{magri-2009} eq. (42): `EXH_R(A)(p)(w) = p(w) ∧ ∀q ∈ I-E(p,A).
+    [magri-2009] eq. (42): `EXH_R(A)(p)(w) = p(w) ∧ ∀q ∈ I-E(p,A).
     (¬R(q) ∨ ¬q(w))`. Irrelevant alternatives drop out of the conjunction. -/
 def magri (R : Finset W → Bool) : Excluder W := innocent.restrict R
 

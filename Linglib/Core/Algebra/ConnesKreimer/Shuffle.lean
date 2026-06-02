@@ -12,8 +12,8 @@ set_option autoImplicit false
 
 /-!
 # Shuffle coproduct on `ConnesKreimer R T`
-@cite{oudom-guin-2008}
-@cite{foissy-typed-decorated-rooted-trees-2018}
+[oudom-guin-2008]
+[foissy-typed-decorated-rooted-trees-2018]
 
 The **shuffle coproduct** Δ on `ConnesKreimer R T = R[Multiset T]` makes
 each tree-singleton `of' {t}` primitive: `Δ(of' {t}) = of' {t} ⊗ 1 + 1 ⊗ of' {t}`.

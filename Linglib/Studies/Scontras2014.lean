@@ -2,8 +2,8 @@ import Linglib.Semantics.Measurement.Basic
 import Linglib.Fragments.English.MeasurePhrases
 
 /-!
-# @cite{scontras-2014} — The Semantics of Measurement
-@cite{chierchia-1998} @cite{krifka-1989} @cite{scontras-2014} @cite{zabbal-2005}
+# [scontras-2014] — The Semantics of Measurement
+[chierchia-1998] [krifka-1989] [scontras-2014] [zabbal-2005]
 
 Empirical observations and bridge theorems for Scontras's quantizing noun
 typology (Ch. 3).

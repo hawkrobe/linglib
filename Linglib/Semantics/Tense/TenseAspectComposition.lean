@@ -2,7 +2,7 @@
 # Tense–Aspect Composition
 
 End-to-end composition chain bridging viewpoint aspect operators to tense
-evaluation, following @cite{knick-sharf-2026}.
+evaluation, following [knick-sharf-2026].
 
 ## The Pipeline
 
@@ -91,7 +91,7 @@ def presPerfSimple (V : W → Event Time → Prop) (tc : Time) (w : W) : Prop :=
   evalPres (PERF (PRFV V)) tc w
 
 /-- **Present perfect progressive with Extended Now**: PRES(PERF_XN(IMPF(V), tᵣ)).
-    @cite{knick-sharf-2026} eq. 39b: the U-perf reading.
+    [knick-sharf-2026] eq. 39b: the U-perf reading.
     "John has been running (since Monday)" with domain restriction tᵣ on LB. -/
 def presPerfProgXN (V : W → Event Time → Prop) (tᵣ : Set Time) (tc : Time) (w : W) : Prop :=
   evalPres (PERF_XN (IMPF V) tᵣ) tc w
@@ -121,10 +121,10 @@ theorem presPerfProgXN_unfold (V : W → Event Time → Prop) (tᵣ : Set Time)
   rfl
 
 -- ════════════════════════════════════════════════════
--- § @cite{knick-sharf-2026} Core Results
+-- § [knick-sharf-2026] Core Results
 -- ════════════════════════════════════════════════════
 
-/-- **Theorem 3** (@cite{knick-sharf-2026}): U-perf(tᵣ) entails simple present.
+/-- **Theorem 3** ([knick-sharf-2026]): U-perf(tᵣ) entails simple present.
 
     For any domain restriction tᵣ, the present perfect progressive with
     Extended Now entails the simple present. Intuitively: if there is a PTS
@@ -144,7 +144,7 @@ theorem u_perf_entails_simple_present (V : W → Event Time → Prop)
                (fun h => Or.inl (lt_of_lt_of_le h (le_trans pts.valid (le_of_eq hRB))))
                (fun h => Or.inr (lt_of_eq_of_lt hRB.symm h))⟩, hV⟩
 
-/-- **Theorem 4** (@cite{knick-sharf-2026}): U-perf with maximal domain ↔ simple present.
+/-- **Theorem 4** ([knick-sharf-2026]): U-perf with maximal domain ↔ simple present.
 
     Under broad focus (tᵣ = Set.univ), the U-perf reading is equivalent to
     the simple present. This is the "degenerate" case where no LB constraint
@@ -161,7 +161,7 @@ theorem broad_focus_equiv (V : W → Event Time → Prop) (tc : Time) (w : W) :
   · intro h
     exact ⟨Interval.point tc, tc, Set.mem_univ _, rfl, rfl, h⟩
 
-/-- **Theorem 5** (@cite{knick-sharf-2026}): Earlier LB is stronger under IMPF.
+/-- **Theorem 5** ([knick-sharf-2026]): Earlier LB is stronger under IMPF.
 
     If tLB₁ < tLB₂, then PERF_XN(IMPF(V), {tLB₁}) entails
     PERF_XN(IMPF(V), {tLB₂}).
@@ -191,7 +191,7 @@ theorem earlier_lb_stronger_impf (V : W → Event Time → Prop)
     have : tLB = tLB₁ := htLB
     exact Or.inl (lt_of_le_of_lt (this ▸ hLB ▸ hS1) h)
 
-/-- **Theorem 6** (@cite{knick-sharf-2026}): Later LB is stronger under PRFV.
+/-- **Theorem 6** ([knick-sharf-2026]): Later LB is stronger under PRFV.
 
     If tLB₁ < tLB₂, then PERF_XN(PRFV(V), {tLB₂}) entails
     PERF_XN(PRFV(V), {tLB₁}).
@@ -219,7 +219,7 @@ theorem later_lb_stronger_prfv (V : W → Event Time → Prop)
   · -- e.τ.finish ≤ tc: from e.τ.finish ≤ pts.finish = tc
     exact le_trans hS2 (le_of_eq hRB)
 
-/-- **Theorem 7** (@cite{knick-sharf-2026}): Converse of Theorem 5 is FALSE.
+/-- **Theorem 7** ([knick-sharf-2026]): Converse of Theorem 5 is FALSE.
 
     PERF_XN(IMPF(V), {tLB₂}) does NOT entail PERF_XN(IMPF(V), {tLB₁})
     when tLB₁ < tLB₂. An event that has been going on since tLB₂ need not

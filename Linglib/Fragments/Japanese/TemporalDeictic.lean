@@ -2,7 +2,7 @@ import Linglib.Semantics.Tense.Basic
 
 /-!
 # Japanese Temporal Deictic Adverbs
-@cite{zhao-2025}
+[zhao-2025]
 
 Lexical entry for Japanese その時 "sono-toki" (that time), typed by `ThenAdverb`.
 

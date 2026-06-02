@@ -2,7 +2,7 @@ import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Evidential — derived properties
-@cite{aikhenvald-2004}
+[aikhenvald-2004]
 
 Derived predicates and the Aikhenvald-cell mapping that lets typological
 classifications be DERIVED from declared inventories rather than hardcoded
@@ -12,7 +12,7 @@ about the declared inventory, not stipulations.
 
 ## Main declarations
 
-* `Entry.Cell` — the cells of @cite{aikhenvald-2004} Ch 2's paradigm
+* `Entry.Cell` — the cells of [aikhenvald-2004] Ch 2's paradigm
   space, distinct evidence-source categories a paradigm can carve out.
 * `Entry.cell : Entry → Cell` — projection from a typed entry to its
   Aikhenvald cell. Direct entries map via `DirectSource` (visual,
@@ -27,7 +27,7 @@ namespace Semantics.Evidential
 
 open Features.Evidentiality (DirectSource ReportativeSource InferentialBasis)
 
-/-- A cell in @cite{aikhenvald-2004} Ch 2's paradigm space. Each `Entry`
+/-- A cell in [aikhenvald-2004] Ch 2's paradigm space. Each `Entry`
     covers one cell; `AikhenvaldSystem.fromInventory` then classifies a
     paradigm by inspecting which cells are filled. -/
 inductive Entry.Cell where

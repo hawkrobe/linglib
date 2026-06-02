@@ -3,13 +3,13 @@ import Linglib.Semantics.Quantification.Quantifier
 
 /-!
 # Canonical 6-Element Quantifier Paradigm
-@cite{barwise-cooper-1981} @cite{van-tiel-franke-sauerland-2021}
+[barwise-cooper-1981] [van-tiel-franke-sauerland-2021]
 
 The canonical ⟨none, few, some, half, most, all⟩ scale used cross-paper
 to evaluate quantifier theories — empirical implicature studies
-(@cite{van-tiel-franke-sauerland-2021}), GQ universals
-(@cite{barwise-cooper-1981}), polarity bridges
-(@cite{von-fintel-1993}), and cross-linguistic typology. Lives at the
+([van-tiel-franke-sauerland-2021]), GQ universals
+([barwise-cooper-1981]), polarity bridges
+([von-fintel-1993]), and cross-linguistic typology. Lives at the
 top level of `Phenomena/Quantification/` because it is genuinely
 cross-paper data, not study-specific.
 

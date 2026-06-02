@@ -1,8 +1,8 @@
 /-!
 # Theory Space for the Morphology/Syntax Interface
-@cite{kalin-bjorkman-etal-2026}
+[kalin-bjorkman-etal-2026]
 
-@cite{kalin-bjorkman-etal-2026} identify four binary dimensions along which
+[kalin-bjorkman-etal-2026] identify four binary dimensions along which
 theories of the morphology/syntax interface vary. These dimensions are
 partially independent: some combinations are structurally impossible
 (a process-based theory cannot be non-lexicalist, since generative syntax
@@ -53,7 +53,7 @@ namespace Morphology.TheorySpace
 
 /-- Whether the Morphology is a dedicated component separate from the
     Syntax (lexicalist) or uses the same computational system
-    (non-lexicalist). @cite{kalin-bjorkman-etal-2026} §2.1.1. -/
+    (non-lexicalist). [kalin-bjorkman-etal-2026] §2.1.1. -/
 inductive Lexicalism where
   /-- Morphology is a separate component; the Lexical Integrity Hypothesis
       holds (syntax cannot manipulate sub-word pieces). -/
@@ -64,7 +64,7 @@ inductive Lexicalism where
   deriving DecidableEq, Repr
 
 /-- The relative ordering of morphological and syntactic computation.
-    @cite{kalin-bjorkman-etal-2026} §2.1.2.
+    [kalin-bjorkman-etal-2026] §2.1.2.
 
     Lexicalist theories use `preSyntactic` or `parallel` architectures.
     Non-lexicalist theories use `syntactic` or `postSyntactic`. -/
@@ -85,7 +85,7 @@ inductive Architecture where
 
 /-- Whether complex morphological forms result from combining discrete
     stored pieces (Item-and-Arrangement) or from applying rules to stems
-    (Item-and-Process). @cite{kalin-bjorkman-etal-2026} §2.1.3. -/
+    (Item-and-Process). [kalin-bjorkman-etal-2026] §2.1.3. -/
 inductive Exponence where
   /-- Complex words = combination of discrete, independently-stored
       morphemes. Traditional morphemes are primitive. -/
@@ -98,7 +98,7 @@ inductive Exponence where
 
 /-- Whether phonological exponents are independent of or unified with
     the meanings/functions they realize.
-    @cite{kalin-bjorkman-etal-2026} §2.1.4. -/
+    [kalin-bjorkman-etal-2026] §2.1.4. -/
 inductive Mapping where
   /-- Features/meanings precede or are independent of phonological
       exponents. Exponents *realize* already-present features. Late
@@ -114,7 +114,7 @@ inductive Mapping where
 -- ============================================================================
 
 /-- A position in the four-dimensional theory space.
-    @cite{kalin-bjorkman-etal-2026} Table 2. -/
+    [kalin-bjorkman-etal-2026] Table 2. -/
 structure TheoryPosition where
   lexicalism   : Lexicalism
   architecture : Architecture
@@ -122,7 +122,7 @@ structure TheoryPosition where
   mapping      : Mapping
   deriving DecidableEq, Repr
 
-/-- Distributed Morphology (@cite{halle-marantz-1993}).
+/-- Distributed Morphology ([halle-marantz-1993]).
     Non-lexicalist, post-syntactic, piece-based, realizational. -/
 def dm : TheoryPosition :=
   { lexicalism   := .nonLexicalist
@@ -130,7 +130,7 @@ def dm : TheoryPosition :=
     exponence    := .pieceBased
     mapping      := .realizational }
 
-/-- Paradigm Function Morphology (@cite{stump-2001}).
+/-- Paradigm Function Morphology ([stump-2001]).
     Lexicalist, parallel, process-based, realizational. -/
 def pfm : TheoryPosition :=
   { lexicalism   := .lexicalist
@@ -138,7 +138,7 @@ def pfm : TheoryPosition :=
     exponence    := .processBased
     mapping      := .realizational }
 
-/-- Nanosyntax (@cite{starke-2009}).
+/-- Nanosyntax ([starke-2009]).
     Non-lexicalist, post-syntactic, piece-based, realizational.
     Shares DM's position on all four dimensions; differs in the
     *size* of spellout (phrasal, not terminal). -/
@@ -148,7 +148,7 @@ def nanosyntax : TheoryPosition :=
     exponence    := .pieceBased
     mapping      := .realizational }
 
-/-- Morphology as Syntax (@cite{collins-kayne-2023}).
+/-- Morphology as Syntax ([collins-kayne-2023]).
     Non-lexicalist, syntactic (integrated), piece-based, incremental. -/
 def mas : TheoryPosition :=
   { lexicalism   := .nonLexicalist
@@ -162,7 +162,7 @@ def mas : TheoryPosition :=
 
 /-- A theory position is **well-formed** if its dimension values respect
     the structural dependencies identified by
-    @cite{kalin-bjorkman-etal-2026}:
+    [kalin-bjorkman-etal-2026]:
     - Process-based → lexicalist (syntax is piece-based)
     - Syntactic/post-syntactic architecture → non-lexicalist
     - Pre-syntactic/parallel architecture → lexicalist -/

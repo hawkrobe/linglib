@@ -2,7 +2,7 @@ import Linglib.Data.PHOIBLE.Inventories.Turkish
 
 /-!
 # Turkish phonological inventory
-@cite{moran-mccloy-2019}
+[moran-mccloy-2019]
 
 Canonical PHOIBLE 2.0 phoneme inventory for Turkish (ISO `tur`). Pure
 pass-through to the auto-generated PHOIBLE doculect data in

@@ -1,5 +1,5 @@
 /-!
-# @cite{sikos-etal-2021}
+# [sikos-etal-2021]
 
 Sikos, L., Venhuizen, N. J., Drenhaus, H. & Crocker, M. W. (2021).
 Reevaluating pragmatic reasoning in language games.
@@ -7,7 +7,7 @@ Reevaluating pragmatic reasoning in language games.
 
 ## Core Contribution
 
-Replicates @cite{frank-goodman-2012} reference games and tests whether RSA's
+Replicates [frank-goodman-2012] reference games and tests whether RSA's
 recursive reasoning (S1→L1) adds predictive value beyond a simpler baseline
 model that uses only the prior and literal semantics (= L0).
 

@@ -11,7 +11,7 @@ import Mathlib.Data.Set.Basic
 /-!
 # Bar-Lev (2021): An Implicature Account of Homogeneity and Non-Maximality
 
-@cite{bar-lev-2021}
+[bar-lev-2021]
 
 An Implicature Account of Homogeneity and Non-Maximality.
 Linguistics and Philosophy 44:1045–1097.
@@ -20,7 +20,7 @@ Linguistics and Philosophy 44:1045–1097.
 
 Bar-Lev derives homogeneity, universality, and non-maximality for plural
 definites from a single mechanism: **exhaustification with subdomain
-alternatives** via the Exh^{IE+II} operator of @cite{bar-lev-fox-2020}.
+alternatives** via the Exh^{IE+II} operator of [bar-lev-fox-2020].
 
 The key ingredients:
 
@@ -31,7 +31,7 @@ The key ingredients:
 2. **Subdomain alternatives**: Replacing the domain variable D with
    subsets D' ⊆ D generates alternatives that are NOT closed under
    conjunction — structurally parallel to free choice disjunction
-   (@cite{fox-2007}).
+   ([fox-2007]).
 
 3. **Exh^{IE+II}**: The same exhaustivity operator that derives free
    choice from ◇(A ∨ B) derives universality from ∃-PL. Since the
@@ -511,7 +511,7 @@ theorem onlyJane_is_gap :
 /-!
 ## Non-Maximality via Pruning
 
-@cite{bar-lev-2021} §5 derives non-maximal readings via **pruning**: when
+[bar-lev-2021] §5 derives non-maximal readings via **pruning**: when
 context makes certain subdomain alternatives irrelevant, they are
 removed from ALT before exhaustification. With fewer alternatives,
 Exh^{IE+II} produces a weaker (non-maximal) reading.
@@ -736,7 +736,7 @@ theorem is_implicature_account (t : PluralTheory)
 -- ============================================================
 
 /-!
-## Comparison with @cite{magri-2014}
+## Comparison with [magri-2014]
 
 Both Magri and Bar-Lev derive universality from exhaustification of an
 existential basic meaning. The key differences:
@@ -775,7 +775,7 @@ theorem magri_agreement :
 /-!
 ## How "All" Removes Homogeneity
 
-@cite{bar-lev-2021} §8.3: "all the kids laughed" does not display
+[bar-lev-2021] §8.3: "all the kids laughed" does not display
 homogeneity because `all` universally quantifies over the plurality,
 eliminating the domain variable D. Without D, there are no subdomain
 alternatives, so Exh^{IE+II} is vacuous — the universal reading is
@@ -784,7 +784,7 @@ it can't be weakened by pruning, which is why "all" blocks
 non-maximality.
 
 This connects to `Homogeneity.lean`'s `HomogeneityRemover.all` and to
-@cite{kriz-2016}'s `removeGap` (which collapses the truth-value gap
+[kriz-2016]'s `removeGap` (which collapses the truth-value gap
 into the negative extension — a different mechanism but the same
 empirical prediction).
 -/
@@ -820,9 +820,9 @@ theorem all_exh_vacuous :
 -- ============================================================
 
 /-!
-## Comparison with @cite{kriz-2016} (Trivalent Account)
+## Comparison with [kriz-2016] (Trivalent Account)
 
-@cite{kriz-2016} and @cite{kriz-spector-2021} derive homogeneity from
+[kriz-2016] and [kriz-spector-2021] derive homogeneity from
 trivalent semantics: plural predication yields a three-valued denotation
 (true/false/gap), and non-maximality arises when the gap is pragmatically
 exploitable. The two accounts differ in:
@@ -861,7 +861,7 @@ through the gap mechanism symmetrically.
     This is a distinguishing prediction of the implicature account:
     `universality` needs the full Exh^{IE+II} machinery, but
     `negative_universal` is a simple logical entailment. In the trivalent
-    account (@cite{kriz-2016}), both arise from the gap structure. -/
+    account ([kriz-2016]), both arise from the gap structure. -/
 theorem positive_negative_asymmetry :
     -- Positive: exhaustification is necessary (without it, universality fails)
     (∃ w, someLaughed w ∧ ¬(kellyLaughed w ∧ janeLaughed w)) ∧

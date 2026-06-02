@@ -3,11 +3,11 @@ import Linglib.Core.Logic.RankingFunction
 /-!
 # Darwiche & Pearl (1997): On the Logic of Iterated Belief Revision
 
-@cite{darwiche-pearl-1997}
+[darwiche-pearl-1997]
 
 AGM belief revision constrains how a *single* revision should update
 an agent's beliefs, but says nothing about how the agent's *disposition
-to revise* should change. @cite{darwiche-pearl-1997} show that AGM-
+to revise* should change. [darwiche-pearl-1997] show that AGM-
 compatible revision operators can behave pathologically under iteration,
 and propose four additional postulates C1–C4 that rule out these
 pathologies.
@@ -222,7 +222,7 @@ theorem A4_violates_CR4 :
 /-- The four conditions are logically independent: for each CR_i,
     there exists an AGM-compatible revision that violates CR_i alone.
 
-    This is the content of @cite{darwiche-pearl-1997}, Appendix A. -/
+    This is the content of [darwiche-pearl-1997], Appendix A. -/
 theorem CR_independence :
     -- CR1 independent: violated alone
     (∃ p q : NormalityOrder W4, ∃ μ,
@@ -261,7 +261,7 @@ theorem CR_independence :
 -- § 8. Bridge: Ranking Conditioning Satisfies All C_i
 -- ══════════════════════════════════════════════════════════════════════
 
-/-! @cite{darwiche-pearl-1997}, Theorem 17: Spohn's ranking conditioning
+/-! [darwiche-pearl-1997], Theorem 17: Spohn's ranking conditioning
     satisfies C1–C4 (equivalently CR1–CR4). The proofs are in
     `Core.Logic.Ranking`:
 

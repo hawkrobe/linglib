@@ -12,8 +12,8 @@ semantic property of event predicates that determines their aspectual class:
   [Jan, Dec], he did not build a house in [Jan, Feb]
 
 This property is central to the semantics of temporal adverbials
-(@cite{rouillard-2026}), NPI licensing in boundary adverbials
-(@cite{iatridou-zeijlstra-2021}), and the distribution of progressive
+([rouillard-2026]), NPI licensing in boundary adverbials
+([iatridou-zeijlstra-2021]), and the distribution of progressive
 and imperfective aspect crosslinguistically.
 
 Originally extracted from a Rouillard-2026 substrate file (since deleted in
@@ -37,7 +37,7 @@ variable {W Time : Type*} [LinearOrder Time]
 
     This is the universal-witness (Bennett-Partee 1972) form of stativity
     along the time dimension. The `SR_univ` decomposition form at
-    @cite{champollion-2017}'s analogous parameter-space point (dim = τ,
+    [champollion-2017]'s analogous parameter-space point (dim = τ,
     point-interval granularity) is genuinely different math — ∃-decomposition
     over P-parts vs ∀-projection over hypothetical witness events. The
     quantifier-level cousin (Zhao 2025 Def. 5.36, ATOM-DIST_t) lives in
@@ -66,7 +66,7 @@ def HasClosedSubintervalProp (P : W → Event Time → Prop) : Prop :=
 -- ════════════════════════════════════════════════════
 
 /-! The subinterval property's consequences at the level of aspect operators.
-    @cite{smith-1997} Ch. 2: states and activities have the subinterval
+    [smith-1997] Ch. 2: states and activities have the subinterval
     property; accomplishments, achievements, and semelfactives lack it.
 
     `Features/Aktionsart.lean` carries the VendlerClass enum used to
@@ -82,7 +82,7 @@ def HasClosedSubintervalProp (P : W → Event Time → Prop) : Prop :=
 
 open Features
 
-/-- **Activity entailment** (@cite{smith-1997} p. 25):
+/-- **Activity entailment** ([smith-1997] p. 25):
     If an activity predicate P holds at interval I (IMPF reading: I is
     inside the event's runtime), then P holds at every subinterval of I
     (PRFV reading: subinterval is contained in the event).
@@ -99,7 +99,7 @@ theorem activity_entailment
     ∃ (e₂ : Event Time), e₂.τ = t ∧ P w e₂ :=
   hSub e₁ w hP t hSub'
 
-/-- **Imperfective paradox** (@cite{smith-1997} p. 29):
+/-- **Imperfective paradox** ([smith-1997] p. 29):
     The subinterval property fails for accomplishments. This is why
     "John was building a house" does not entail "John built a house":
     proper subintervals of a house-building event are not themselves
@@ -159,7 +159,7 @@ theorem imperfective_paradox_possible
     3. CSIP with e, w, t yields witness e₂ with τ(e₂) = t and P(w, e₂)
     4. Since τ(e₂) = t ⊆ t (reflexive), PRFV holds with witness e₂ -/
 
-/-- **IMPF entails PRFV for CSIP predicates** (@cite{smith-1997} Ch. 2).
+/-- **IMPF entails PRFV for CSIP predicates** ([smith-1997] Ch. 2).
     If P has the closed subinterval property, then IMPF(P)(w)(t) entails
     PRFV(P)(w)(t) — the imperfective entails the perfective at the same
     reference interval.

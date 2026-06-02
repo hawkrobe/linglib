@@ -13,12 +13,12 @@ import Linglib.Semantics.Quantification.UnifiedUniversal
 
 /-!
 # Sauerland (2003): A New Semantics for Number
-@cite{sauerland-2003}
+[sauerland-2003]
 
 Sauerland, U. (2003). A new semantics for number.
 *Proceedings of SALT 13*, 258–275.
 
-See also @cite{sauerland-anderssen-yatsushiro-2005} for the companion
+See also [sauerland-anderssen-yatsushiro-2005] for the companion
 chapter "The Plural is Semantically Unmarked."
 
 ## Core Insight
@@ -124,7 +124,7 @@ theorem feature_subset_is_spec_order :
 When the referent is atomic, [Sg]'s presupposition is satisfied. Since
 [Sg] and [Pl] have the same assertive content (both are identity), and
 [Sg] has a strictly stronger presupposition, Maximize Presupposition
-(@cite{heim-1991}) blocks [Pl]: the speaker must use [Sg].
+([heim-1991]) blocks [Pl]: the speaker must use [Sg].
 
 When the referent is non-atomic, [Sg]'s presupposition fails. [Pl]
 (with its vacuous presupposition) is the only available option.
@@ -240,7 +240,7 @@ Sauerland (eq. 16-17) defines the `*`-operator via covers:
 
 This is structurally equivalent to Link's inductive `AlgClosure` (=
 `Plurality.Algebra.star`): both characterize "x is a sum of P-elements".
-The cover-based formulation foregrounds @cite{schwarzschild-1996}'s
+The cover-based formulation foregrounds [schwarzschild-1996]'s
 notion that `*` is anaphoric on a contextually-salient cover. The
 forward direction (cover witnesses star) is the substrate bridge
 `Plurality.Cover.algClosure_of_finCover`.
@@ -253,7 +253,7 @@ variable {E : Type*} [SemilatticeSup E]
 /-- **Sauerland 2003 eq. (16) forward direction**: a finite cover `C`
     of `X` whose parts all satisfy `R` witnesses `*R(X)` (= `star R X`
     = `AlgClosure R X`). This is the substrate bridge between
-    @cite{schwarzschild-1996}-style cover semantics and Link 1983's
+    [schwarzschild-1996]-style cover semantics and Link 1983's
     inductive `*` operator. Restatement of `Cover.algClosure_of_finCover`
     under Sauerland's eq. (16) labeling. -/
 theorem sauerland_star_from_cover
@@ -286,7 +286,7 @@ atoms — this is why *every* quantifies over atomic individuals.
 
 ### Connection to QForall
 
-@cite{haslinger-etal-2025-nllt}'s unified universal Q_∀ and Sauerland's
+[haslinger-etal-2025-nllt]'s unified universal Q_∀ and Sauerland's
 JE ∘ DER compute the same truth conditions for singular (atomic) NP
 restrictors: both reduce to ∀x[R(x) → Q(x)]. The derivation paths
 differ — Sauerland goes through DER (maximal *R element) + JE (atoms
@@ -322,7 +322,7 @@ theorem je_presup_projects {E : Type*} [PartialOrder E]
     (h : (JE X P domP).defined w) :
     ∀ a, Atom a → a ≤ X → domP a := h
 
-/-- **JE assertion = Link's D operator** (@cite{link-1987} eq. 48,
+/-- **JE assertion = Link's D operator** ([link-1987] eq. 48,
     p. 171). Sauerland's JE (eq. 30b) quantifying universally over the
     atoms of a group individual is *the same primitive* as Link's D
     operator on its assertion side. The substrate-level connection
@@ -381,7 +381,7 @@ theorem je_assertion_eq_forall {E : Type*} [PartialOrder E]
 
 /-- **JE ∘ DER agrees with Q_∀ on atomic restrictors.**
 
-    Both Sauerland's JE∘DER and @cite{haslinger-etal-2025-nllt}'s QForall
+    Both Sauerland's JE∘DER and [haslinger-etal-2025-nllt]'s QForall
     reduce to `∀x[R(x) → Q(x)]` when the restrictor is atomic with no
     overlap. Combined with `je_assertion_eq_forall`, this gives the full
     equivalence chain:
@@ -477,7 +477,7 @@ would be satisfied violates Maximize Presupposition. So using [Pl]
 **implicates** that [Sg]'s presupposition fails — i.e., the referent
 is non-atomic (more than one).
 
-On the modern (2020s) account (@cite{delpinal-bassi-sauerland-2024}),
+On the modern (2020s) account ([delpinal-bassi-sauerland-2024]),
 this is derived via presuppositional exhaustification (pex): pex over
 {⟦Sg⟧, ⟦Pl⟧} presupposes the negation of [Sg]'s presupposition (= ¬Atom).
 See `Semantics/Exhaustification/Presuppositional.lean`.
@@ -683,7 +683,7 @@ they impose no domain restriction and hence no falsehood risk.
 
 The formal content of this prediction is captured by
 `isSemanticUnmarked` in `PhiFeatures.lean §5` and verified by
-@cite{wang-r-2023} (see `Studies/Wang2023.lean`),
+[wang-r-2023] (see `Studies/Wang2023.lean`),
 which proves that all three cross-linguistic honorific strategies
 (plural, 3rd person, indefinite) recruit the minimal (unmarked) cell.
 -/

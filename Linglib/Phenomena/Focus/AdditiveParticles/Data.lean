@@ -2,7 +2,7 @@ import Linglib.Features.Acceptability
 
 /-!
 # Additive Particle Data
-@cite{heim-1992} @cite{kripke-2009} @cite{rooth-1992}
+[heim-1992] [kripke-2009] [rooth-1992]
 
 Empirical data on additive particles (too, also, either) and their felicity conditions.
 
@@ -27,7 +27,7 @@ inductive FelicityJudgment where
 
 /-- Type of additive particle use.
 
-Binary classification following @cite{thomas-2026}: standard (focus-alternative)
+Binary classification following [thomas-2026]: standard (focus-alternative)
 vs argument-building. Degree-"too" ("too expensive") is a distinct lexeme,
 not an additive particle use. -/
 inductive UseType where
@@ -223,12 +223,12 @@ def crossLinguisticData : List CrossLinguisticDatum :=
   , frenchAussi
   ]
 
--- @cite{rooth-1992} Examples: Focus and "Too"
+-- [rooth-1992] Examples: Focus and "Too"
 
 /-!
 ## Rooth's Focus-Based Analysis
 
-@cite{rooth-1992} §2.2 analyzes "too" via the Focus Interpretation Principle (FIP):
+[rooth-1992] §2.2 analyzes "too" via the Focus Interpretation Principle (FIP):
 - The antecedent must be a **focus alternative** of the prejacent
 - "Mary read Lear, and she read Macbeth too"
 - Focus: MACBETH

@@ -2,7 +2,7 @@ import Linglib.Semantics.Genericity.Generics
 import Linglib.Semantics.Quantification.CovertQuantifier
 
 /-!
-# @cite{cohen-1999a}: Probability-Based Generic Quantification
+# [cohen-1999a]: Probability-Based Generic Quantification
 
 Ariel Cohen, *Think Generic! The Meaning and Use of Generic Sentences*, 1999.
 
@@ -40,9 +40,9 @@ This constraint is discussed in the introduction to *Genericity*
 > probability in every part of a suitable partition of any admissible
 > history H must be the same as the probability in the whole H."
 
-## Nickel's Critique (@cite{nickel-2009})
+## Nickel's Critique ([nickel-2009])
 
-@cite{nickel-2009} shows that even with homogeneity, the majority-based
+[nickel-2009] shows that even with homogeneity, the majority-based
 view cannot handle conjunctive generics like "Elephants live in Africa
 and Asia." If this is equivalent to the conjunction "Elephants live in
 Africa AND Elephants live in Asia," then both conjuncts would need to
@@ -191,12 +191,12 @@ However, Cohen's approach faces its own challenges:
    despite prevalence well below 50%. Cohen must either deny these are
    true generics or invoke the homogeneity constraint.
 
-2. **Conjunctive generics**: @cite{nickel-2009}'s "Elephants live in Africa
+2. **Conjunctive generics**: [nickel-2009]'s "Elephants live in Africa
    and Asia" shows the majority-based view predicts the wrong truth conditions
    for conjoined habitat claims.
 
 3. **Striking property generics**: "Sharks attack swimmers" — low prevalence
-   but judged true. @cite{tessler-goodman-2019}'s RSA account handles this
+   but judged true. [tessler-goodman-2019]'s RSA account handles this
    via pragmatic reasoning over priors, not a fixed threshold.
 -/
 
@@ -217,7 +217,7 @@ def carriesMalaria : Scope := λ s => s.id == 0
 -- This is the key empirical challenge for fixed-threshold approaches.
 #guard !cohenGEN mosquitoSituations isMosquito carriesMalaria
 
-/-- Cohen's prediction conflicts with empirical judgments (@cite{leslie-2008}):
+/-- Cohen's prediction conflicts with empirical judgments ([leslie-2008]):
     "Mosquitos carry malaria" has prevalence ~1/100 but judgment ~85/100 (clearly
     true). Cohen predicts false (1/100 < 1/2). -/
 theorem cohen_wrong_on_mosquitoes :

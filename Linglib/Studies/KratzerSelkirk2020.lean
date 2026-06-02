@@ -34,8 +34,8 @@ discourse salience), with no separate feature for newness.
 
 ## References
 
-* @cite{kratzer-selkirk-2020}, @cite{schwarzschild-1999},
-  @cite{beaver-2007}, @cite{katz-selkirk-2011}.
+* [kratzer-selkirk-2020], [schwarzschild-1999],
+  [beaver-2007], [katz-selkirk-2011].
 -/
 
 open Features.InformationStructure
@@ -46,7 +46,7 @@ open Semantics.Presupposition
 
 namespace KratzerSelkirk2020
 
-/-- The two privative morphosyntactic features of @cite{kratzer-selkirk-2020}.
+/-- The two privative morphosyntactic features of [kratzer-selkirk-2020].
 
 [FoC] and [G] are genuinely syntactic features: crosslinguistically they
 trigger displacement, agreement, and ellipsis (§2). They happen to be
@@ -382,7 +382,7 @@ def englishSpelloutRanking : List SpelloutRanking :=
 
 SOF is the strongest empirical argument for the two-feature system.
 
-Example (@cite{beaver-2007}, K&S 42):
+Example ([beaver-2007], K&S 42):
   "Both Sid and his accomplices should have been named in this morning's
    court session. But the defendant only named [Síd]_{FoC} in court today."
 
@@ -392,7 +392,7 @@ The second "Sid" is [FoC]-marked (it associates with *only*) but sits inside
 a [G]-marked constituent. The ranking [G]=No-φ >> [FoC]=φ-Level-Head
 predicts: Sid gets ω-level head status but NOT φ-level prominence.
 Result: an H accent but no phrase-level pitch scaling — exactly what
-@cite{beaver-2007} @cite{selkirk-2008} found experimentally. -/
+[beaver-2007] [selkirk-2008] found experimentally. -/
 
 /-- A Second Occurrence Focus datum: [FoC] inside [G]. -/
 structure SOFDatum where
@@ -410,7 +410,7 @@ structure SOFDatum where
   source : String := ""
   deriving Repr
 
-/-- @cite{beaver-2007} SOF example. -/
+/-- [beaver-2007] SOF example. -/
 def beaverEtAl2007_sid : SOFDatum := {
   sentence := "Even the prosecutor only named Sid in court today"
   sofWord := "Sid"
@@ -420,7 +420,7 @@ def beaverEtAl2007_sid : SOFDatum := {
   source := "Beaver et al. (2007: 256), K&S (42)"
 }
 
-/-- @cite{katz-selkirk-2011} FoC-New vs New-FoC vs New-New triples.
+/-- [katz-selkirk-2011] FoC-New vs New-FoC vs New-New triples.
     K&S (36): Phonetic evidence distinguishing [FoC] from newness.
 
     The K&S contrast here is FOCUS marking on otherwise-new material;

@@ -2,8 +2,8 @@ import Mathlib.Logic.Basic
 import Linglib.Tactics.OntSort
 
 /-!
-# Content Individuals (@cite{kratzer-2006}; @cite{liefke-2024} §4.3) @cite{kratzer-2006}
-@cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{liefke-2024} @cite{moulton-2015} @cite{hintikka-1962} @cite{hintikka-1962}
+# Content Individuals ([kratzer-2006]; [liefke-2024] §4.3) [kratzer-2006]
+[baker-jara-ettinger-saxe-tenenbaum-2017] [liefke-2024] [moulton-2015] [hintikka-1962] [hintikka-1962]
 
 A content individual is a first-class mental state carrying propositional
 content — the denotation of content DPs like *John's belief that p*,
@@ -12,7 +12,7 @@ content — the denotation of content DPs like *John's belief that p*,
 ## Ontological Status
 
 Content individuals are the shared sort underlying beliefs, desires, and
-percepts (@cite{liefke-2024} §4.3). What distinguishes a belief from a desire or
+percepts ([liefke-2024] §4.3). What distinguishes a belief from a desire or
 a percept is not the ontological sort — it is the attitude relation (the
 verb) that embeds it.
 
@@ -26,8 +26,8 @@ Two ways to relate a content individual x_c to a proposition p:
 
 | Relation    | Definition           | Gloss                  | Source              |
 |-------------|----------------------|------------------------|---------------------|
-| Identity    | CONT(x_c) = p       | p IS the content       | @cite{kratzer-2006}        |
-| Entailment  | CONT(x_c) ⊆ p       | p FOLLOWS from content | @cite{hintikka-1962}       |
+| Identity    | CONT(x_c) = p       | p IS the content       | [kratzer-2006]        |
+| Entailment  | CONT(x_c) ⊆ p       | p FOLLOWS from content | [hintikka-1962]       |
 
 Identity is strictly stronger (§3 below).
 
@@ -42,10 +42,10 @@ namespace Semantics.Attitudes
 /-- A content individual: a first-class mental state carrying propositional
     content.
 
-    This is @cite{kratzer-2006}'s *content individual* — the denotation of content
+    This is [kratzer-2006]'s *content individual* — the denotation of content
     DPs like *John's belief that p*, *the claim*, *every rumor*, *her wish*.
     It is the shared ontological sort underlying beliefs, desires, and percepts
-    (@cite{liefke-2024} §4.3), and the *frame* created by `thinks[...]` in memo.
+    ([liefke-2024] §4.3), and the *frame* created by `thinks[...]` in memo.
 
     The `cont` field is Kratzer's CONT function: the propositional content
     this mental state carries. Two distinct content individuals can share
@@ -87,7 +87,7 @@ def ContentIndividual.sameContent {W : Type*} (c₁ c₂ : ContentIndividual W) 
       ∀w. CONT(x_c)(w) → p(w)
 
     This is the Hintikka reading of attitude reports: "x believes that p"
-    means p follows from x's belief content. @cite{kratzer-2006} and @cite{moulton-2015} use the stronger notion of content *identity* (CONT = p). -/
+    means p follows from x's belief content. [kratzer-2006] and [moulton-2015] use the stronger notion of content *identity* (CONT = p). -/
 def ContentIndividual.entails {W : Type*}
     (xc : ContentIndividual W) (p : W → Prop) : Prop :=
   ∀ w, xc.cont w → p w

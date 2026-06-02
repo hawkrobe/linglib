@@ -3,9 +3,9 @@ import Linglib.Dialogue.KOS.Basic
 
 /-!
 # KOS: Self-Repair via MaxPending (= head of Pending)
-@cite{ginzburg-2012} §8.2 (pp. 282–290) "Unifying Self- and Other-Correction"
+[ginzburg-2012] §8.2 (pp. 282–290) "Unifying Self- and Other-Correction"
 
-Per @cite{ginzburg-2012} §6.3 footnote 31 p. 168 and §8.2: **MaxPending is
+Per [ginzburg-2012] §6.3 footnote 31 p. 168 and §8.2: **MaxPending is
 the maximal element of `dgb.pending`**, not a separate field. Self-repair
 operates on the head of Pending directly.
 
@@ -41,7 +41,7 @@ namespace Dialogue.KOS
 -- ════════════════════════════════════════════════════
 
 /-- The current MaxPending: the head of `dgb.pending`, if any.
-@cite{ginzburg-2012} §6.3 footnote 31 p. 168. -/
+[ginzburg-2012] §6.3 footnote 31 p. 168. -/
 def TIS.maxPending {P Fact QContent : Type*} {Cont : Type}
     (tis : TIS P Fact QContent Cont) : Option (LocProp Cont) :=
   tis.dgb.pending.head?
@@ -71,7 +71,7 @@ def TIS.clearMaxPending {P Fact QContent : Type*} {Cont : Type}
 /-- Backwards-looking appropriateness repair: replace the current
 MaxPending with a corrected LocProp.
 
-@cite{ginzburg-2012} ex. 31 (p. 287): the speaker recognises that the
+[ginzburg-2012] ex. 31 (p. 287): the speaker recognises that the
 current maxpending's content fails appropriateness (wrong word, wrong
 referent) and updates it to a candidate replacement.
 

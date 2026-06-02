@@ -5,7 +5,7 @@ import Linglib.Semantics.Quantification.Quantifier
 
 /-!
 # Ladusaw (1979): Polarity Sensitivity as Inherent Scope Relations
-@cite{ladusaw-1979}
+[ladusaw-1979]
 
 Ladusaw's dissertation established the foundational generalization connecting
 NPI licensing to downward entailingness (DE). The core claim:
@@ -41,8 +41,8 @@ open Semantics.Quantification.Quantifier
 -- ============================================================================
 
 /-- The monotonicity-based licensing strength of a context.
-    @cite{ladusaw-1979}: DE licenses weak NPIs.
-    @cite{zwarts-1998}: anti-additive licenses strong NPIs.
+    [ladusaw-1979]: DE licenses weak NPIs.
+    [zwarts-1998]: anti-additive licenses strong NPIs.
 
     A coarsening of `Core.NaturalLogic.DEStrength` that collapses the
     `.antiMorphic` and `.antiAdditive` cases (Ladusaw treats them
@@ -131,7 +131,7 @@ def no_restrictor_licenses_weak :
 -- §3. Anti-additivity → strong NPI licensing
 -- ============================================================================
 
-/-- @cite{zwarts-1998}: anti-additive contexts license strong NPIs.
+/-- [zwarts-1998]: anti-additive contexts license strong NPIs.
     `LeftAntiAdditive q` means the restrictor of `q` is anti-additive,
     licensing strong NPIs like "lift a finger" and "in years".
 

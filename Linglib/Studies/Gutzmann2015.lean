@@ -5,7 +5,7 @@ import Linglib.Features.ClauseForm
 
 /-!
 # Gutzmann (2015): Sentence Mood as Use-Conditional Meaning
-@cite{gutzmann-2015}
+[gutzmann-2015]
 
 Use-Conditional Meaning: Studies in Multidimensional Semantics.
 Oxford University Press.

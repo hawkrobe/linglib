@@ -7,10 +7,10 @@ import Linglib.Phonology.ItemSpecificity.RepresentationStrength
 # Separation theorems for item-specificity theories
 
 The four sibling files in `Phonology/ItemSpecificity/` —
-`IndexedConstraints` (@cite{pater-2010}), `ScaledWeights`
-(@cite{coetzee-pater-2008}), `UseListed` (@cite{zuraw-2000}), and
-`RepresentationStrength` (@cite{smolensky-goldrick-2016},
-@cite{pierrehumbert-2001}, @cite{todd-pierrehumbert-hay-2019}) — agree
+`IndexedConstraints` ([pater-2010]), `ScaledWeights`
+([coetzee-pater-2008]), `UseListed` ([zuraw-2000]), and
+`RepresentationStrength` ([smolensky-goldrick-2016],
+[pierrehumbert-2001], [todd-pierrehumbert-hay-2019]) — agree
 that **lexical-item identity conditions phonological alternation**
 (typically through token frequency) but disagree on **the channel
 through which it does so**.

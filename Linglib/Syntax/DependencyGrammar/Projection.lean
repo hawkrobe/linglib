@@ -3,7 +3,7 @@ import Mathlib.Logic.Relation
 import Mathlib.Data.List.Sort
 
 /-!
-@cite{kuhlmann-nivre-2006} @cite{kuhlmann-2013}
+[kuhlmann-nivre-2006] [kuhlmann-2013]
 Projection theory for dependency trees: BFS-based projection computation,
 interval/gap/block analysis, Prop-level Dominance (reflexive-transitive
 closure), and the bridge theorems connecting BFS membership to dominance.
@@ -11,7 +11,7 @@ closure), and the bridge theorems connecting BFS membership to dominance.
 Also contains the `isProjective` / `isWellFormed` predicates, which
 depend on projection infrastructure.
 
-References: @cite{kuhlmann-nivre-2006}, @cite{kuhlmann-2013}.
+References: [kuhlmann-nivre-2006], [kuhlmann-2013].
 -/
 
 namespace DepGrammar
@@ -32,12 +32,12 @@ def parentEdge (deps : List Dependency) (v w : Nat) : Prop :=
 /-- **Projection** π(i): the yield of node i — all nodes it transitively
     dominates, including itself — sorted in ascending order.
 
-    The projection is the central primitive of @cite{kuhlmann-nivre-2006} and
-    @cite{kuhlmann-2013}. Projectivity, gap degree, block-degree, edge degree,
+    The projection is the central primitive of [kuhlmann-nivre-2006] and
+    [kuhlmann-2013]. Projectivity, gap degree, block-degree, edge degree,
     and well-nestedness are all defined in terms of projections.
 
     A dependency graph is **projective** iff every projection is an interval
-    (@cite{kuhlmann-nivre-2006}, Definition 3). -/
+    ([kuhlmann-nivre-2006], Definition 3). -/
 def projection (deps : List Dependency) (root : Nat) : List Nat :=
   let fuel := deps.length * (deps.length + 1) + 2
   let rec go (queue : List Nat) (visited : List Nat) (fuel : Nat) : List Nat :=
@@ -67,7 +67,7 @@ def isInterval (sorted : List Nat) : Bool :=
 
 /-- The **gaps** in a sorted projection: pairs (jₖ, jₖ₊₁) adjacent in the
     projection where jₖ₊₁ − jₖ > 1.
-    (@cite{kuhlmann-nivre-2006}, Definition 6; @cite{kuhlmann-2013}, §7.1) -/
+    ([kuhlmann-nivre-2006], Definition 6; [kuhlmann-2013], §7.1) -/
 def gaps (sorted : List Nat) : List (Nat × Nat) :=
   sorted.zip (sorted.drop 1) |>.filter λ (a, b) => b - a > 1
 
@@ -88,12 +88,12 @@ def blocks : List Nat → List (List Nat)
     else [a] :: blocks (b :: rest)
 
 /-- **Gap degree** of a node: number of gaps in its projection.
-    (@cite{kuhlmann-nivre-2006}, Definition 6) -/
+    ([kuhlmann-nivre-2006], Definition 6) -/
 def gapDegreeAt (deps : List Dependency) (root : Nat) : Nat :=
   (gaps (projection deps root)).length
 
 /-- **Gap degree** of a tree: max gap degree over all nodes.
-    (@cite{kuhlmann-nivre-2006}, Definition 7)
+    ([kuhlmann-nivre-2006], Definition 7)
     Gap degree 0 ⟺ projective. -/
 def DepTree.gapDegree (t : DepTree) : Nat :=
   List.range t.words.length |>.map (gapDegreeAt t.deps) |>.foldl max 0
@@ -106,7 +106,7 @@ def blockDegreeAt (deps : List Dependency) (root : Nat) : Nat :=
 /-- **Block-degree** of a tree: max block-degree over all nodes.
     Block-degree 1 ⟺ projective.
     Bounded block-degree + well-nestedness ⟺ polynomial parsing
-    (@cite{kuhlmann-2013}, Lemma 10). -/
+    ([kuhlmann-2013], Lemma 10). -/
 def DepTree.blockDegree (t : DepTree) : Nat :=
   List.range t.words.length |>.map (blockDegreeAt t.deps) |>.foldl max 0
 
@@ -932,7 +932,7 @@ end FoldlMax
 -- ============================================================================
 
 /-- Check projectivity: every node's projection is an interval.
-    (@cite{kuhlmann-nivre-2006}, Definition 3)
+    ([kuhlmann-nivre-2006], Definition 3)
 
     Equivalent to: no two dependency arcs cross.
     Equivalent to: gap degree = 0.

@@ -12,7 +12,7 @@ import Linglib.Core.Computability.Subregular.Definite
 # Multitier Extensions of Subregular Classes
 
 Generic Boolean closure of tier-projected language families
-@cite{lambert-2022} @cite{lambert-2026}. The construction proceeds in
+[lambert-2022] [lambert-2026]. The construction proceeds in
 two stages:
 
 1. **Tier-projected family** `IsTierBased 𝒞 L`: `L` is the preimage
@@ -27,10 +27,10 @@ yields the six classes Lambert (2026) tabulates:
 * `IsBTSL` — multitier strictly local
 * `IsBTSP` — multitier strictly piecewise
 * `IsBTD`  — multitier definite (e.g. Uyghur backness harmony per
-  @cite{lambert-2026} §4.3, refining @cite{mayer-major-2018})
+  [lambert-2026] §4.3, refining [mayer-major-2018])
 * `IsBTK`  — multitier reverse definite
 * `IsBTLI` — multitier generalized definite (e.g. Karanga Shona tone
-  per @cite{lambert-2026} §5.6, refining @cite{jardine-2020})
+  per [lambert-2026] §5.6, refining [jardine-2020])
 * `IsBTN`  — multitier finite-or-cofinite (e.g. culminativity)
 
 ## Architecture
@@ -184,7 +184,7 @@ def IsBTSP (k : ℕ) : Language α → Prop := IsBTC (IsStrictlyPiecewise k)
 /-- **Multitier definite** (BTD): Boolean closure of tier-projected D_k
 languages. Lambert (2026) §4.3 places Uyghur backness harmony in this
 class — strictly stronger than the multiple-tier-based strictly-local
-class of @cite{de-santo-graf-2019}. -/
+class of [de-santo-graf-2019]. -/
 def IsBTD (k : ℕ) : Language α → Prop := IsBTC (IsDefinite k)
 
 /-- **Multitier reverse definite** (BTK): Boolean closure of tier-projected
@@ -193,7 +193,7 @@ def IsBTK (k : ℕ) : Language α → Prop := IsBTC (IsReverseDefinite k)
 
 /-- **Multitier generalized definite** (BTLI): Boolean closure of
 tier-projected ℒℐ_k languages. Lambert (2026) §5.6 places Karanga Shona
-tone in this class (verb-stem domain) — refining @cite{jardine-2020}. -/
+tone in this class (verb-stem domain) — refining [jardine-2020]. -/
 def IsBTLI (k : ℕ) : Language α → Prop := IsBTC (IsGeneralizedDefinite k)
 
 /-- **Multitier finite-or-cofinite** (BTN): Boolean closure of

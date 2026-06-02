@@ -17,7 +17,7 @@ import Linglib.Phenomena.Questions.Basic
 namespace Phenomena.Questions.PolarAnswers
 
 
-/-- @cite{groenendijk-stokhof-1984}: Yes and No are T⁰ (sentence adverbs, category S/S). @cite{fox-katzir-2011}
+/-- [groenendijk-stokhof-1984]: Yes and No are T⁰ (sentence adverbs, category S/S). [fox-katzir-2011]
     - yes ~ λp.p(a) (affirms the proposition)
     - no ~ λp.¬p(a) (negates the proposition)
 
@@ -58,7 +58,7 @@ def yesNoExamples : List YesNoDatum :=
   [doesJohnWalk_yes, doesJohnWalk_no]
 
 
-/-- @cite{groenendijk-stokhof-1984}, p. 324-326: A conditional answer to a polar question
+/-- [groenendijk-stokhof-1984], p. 324-326: A conditional answer to a polar question
     receives a BICONDITIONAL interpretation via exhaustification.
 
     "Does John walk?" → "If Mary walks"
@@ -106,7 +106,7 @@ def conditionalBiconditionalPrinciple : String :=
   "when answering a question about their consequent."
 
 
-/-- @cite{groenendijk-stokhof-1984}, p. 327: Similar to conditionals, disjunctions in answers
+/-- [groenendijk-stokhof-1984], p. 327: Similar to conditionals, disjunctions in answers
     receive exclusive interpretation via exhaustification.
 -/
 structure DisjunctionAnswerDatum where
@@ -144,14 +144,14 @@ def disjunctionAnswerExamples : List DisjunctionAnswerDatum :=
   [cookiesOrChocolates_exclusive, cookiesOrChocolates_inclusive]
 
 
-/-- @cite{groenendijk-stokhof-1984}, p. 331-334: Negation in interrogatives does NOT contribute
+/-- [groenendijk-stokhof-1984], p. 331-334: Negation in interrogatives does NOT contribute
     to semantic content. Instead, it marks a doxastic attitude:
     the questioner expects a negative answer.
 
     "Doesn't John walk?" asks the SAME question as "Does John walk?"
     but marks that the questioner expects "No" as the answer.
 
-    Note: `sameQuestion` encodes the G&S 1984 analysis. @cite{holmberg-2016}
+    Note: `sameQuestion` encodes the G&S 1984 analysis. [holmberg-2016]
     argues that positive and negative polar questions are NOT the same question:
     the negative question's primary proposition (the one the speaker expects)
     is ¬p, producing different discourse effects and cross-linguistic answer
@@ -163,8 +163,8 @@ structure NegativeInterrogativeDatum where
   /-- The negative form of the question -/
   negativeForm : String
   /-- Do they express the same question semantically?
-      Note: this is the @cite{groenendijk-stokhof-1984} analysis;
-      @cite{holmberg-2016} argues they differ. -/
+      Note: this is the [groenendijk-stokhof-1984] analysis;
+      [holmberg-2016] argues they differ. -/
   sameQuestion : Bool
   /-- What does "No" mean as an answer to the negative form? -/
   noMeaning : String
@@ -271,7 +271,7 @@ def whyNegationIsDoxastic : String :=
   "This opens the possibility to use negation to mark doxastic attitudes."
 
 -- ═══════════════════════════════════════════════════════════════════════
--- Turkish Polar Questions and Modal Answers (@cite{turk-hirsch-2026})
+-- Turkish Polar Questions and Modal Answers ([turk-hirsch-2026])
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! Türk & Hirsch (2026) observe that deontic modal answers are
@@ -283,7 +283,7 @@ def whyNegationIsDoxastic : String :=
 
     This is unexpected under Rooth-style type-theoretic alternative
     computation, where □p has the same type as p and should be an
-    alternative. @cite{fox-katzir-2011} category match explains why:
+    alternative. [fox-katzir-2011] category match explains why:
     *mI* is a particle (PART), modals are auxiliaries (AUX), so
     category match excludes □p from the alternative set. -/
 

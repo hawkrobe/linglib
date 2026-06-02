@@ -2,7 +2,7 @@ import Linglib.Morphology.MorphRule
 
 /-!
 # Morphological Exponence Rules
-@cite{bybee-1985} @cite{kennedy-2007} @cite{lakoff-1970} @cite{link-1983}
+[bybee-1985] [kennedy-2007] [lakoff-1970] [link-1983]
 
 Concrete instantiations of `MorphRule` for functional categories.
 
@@ -149,7 +149,7 @@ namespace Morphology.Number
 /-- Singular rule for nouns: adds atomicity condition.
 
     Semantics: `pred ↦ (λ x => pred x ∧ Atom x)`
-    This implements @cite{link-1983}: singular nouns denote atomic individuals. -/
+    This implements [link-1983]: singular nouns denote atomic individuals. -/
 def singularNounRule {α : Type} (atomPred : α → Bool) :
     MorphRule (α → Bool) :=
   { category := .number

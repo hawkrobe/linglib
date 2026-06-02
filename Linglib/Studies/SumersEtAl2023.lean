@@ -1,5 +1,5 @@
 /-
-# @cite{sumers-etal-2023}: Reconciling Truthfulness and Relevance
+# [sumers-etal-2023]: Reconciling Truthfulness and Relevance
 
 "Reconciling truthfulness and relevance as epistemic and decision-theoretic utility"
 Cognitive Science 47(3), e13252.
@@ -388,7 +388,7 @@ def exampleTrial : ExampleTrial :=
 
 /-!
 ## Signaling Bandits: RSA Model
-@cite{frank-goodman-2012} @cite{sumers-etal-2023}
+[frank-goodman-2012] [sumers-etal-2023]
 
 Unlike Lewis signaling games where world state = correct action,
 signaling bandits separate abstract knowledge (feature values) from

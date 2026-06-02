@@ -7,8 +7,8 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# @cite{tessler-goodman-2019}: The Language of Generalization
-@cite{tessler-goodman-2019} @cite{lassiter-goodman-2017}
+# [tessler-goodman-2019]: The Language of Generalization
+[tessler-goodman-2019] [lassiter-goodman-2017]
 
 Psychological Review, 126(3), 395–436.
 
@@ -105,7 +105,7 @@ open Semantics.Degree (positiveMeaning)
 -- ============================================================================
 
 /-- Discretized prevalence: 0%, 5%, ..., 100% (21 values).
-    Structurally identical to @cite{lassiter-goodman-2017}'s Height. -/
+    Structurally identical to [lassiter-goodman-2017]'s Height. -/
 abbrev Prevalence := Degree 20
 
 instance : NeZero (20 : Nat) := ⟨by omega⟩
@@ -527,15 +527,15 @@ theorem endorsement_iff_exceeds_expected
     constructor <;> intro h <;> nlinarith
 
 -- ============================================================================
--- § 8. Prevalence Asymmetry (@cite{leslie-2008})
+-- § 8. Prevalence Asymmetry ([leslie-2008])
 -- ============================================================================
 
 /-! The classic prevalence asymmetry is EXPLAINED by the endorsement model:
 same prevalence (50%), different prior shapes → different S1 endorsement rates.
 
 "Robins lay eggs" (true, ~50% prevalence) vs "Robins are female" (odd, ~50%
-prevalence). @cite{leslie-2008} documents the empirical observation;
-@cite{tessler-goodman-2019} derives the asymmetry from prior shape differences.
+prevalence). [leslie-2008] documents the empirical observation;
+[tessler-goodman-2019] derives the asymmetry from prior shape differences.
 
 `laysEggs_endorsed` and `isFemale_borderline` (above) derive the predictions. -/
 
@@ -601,7 +601,7 @@ theorem endorsement_tendsto_zero (prior : Prevalence → ℝ) (p : Prevalence)
 /-!
 ## Case Study 2: Habitual Language
 
-@cite{tessler-goodman-2019} (Case Study 2) extend the generic endorsement model
+[tessler-goodman-2019] (Case Study 2) extend the generic endorsement model
 to habituals. The key insight: habituals ("John runs") use the **same** threshold
 semantics as generics ("Birds fly"), with `Prevalence` now interpreted as frequency
 of activity across occasions rather than proportion of a kind with a property.
@@ -692,7 +692,7 @@ theorem habitual_prior_asymmetry :
 /-!
 ## Case Study 3: Causal Language
 
-@cite{tessler-goodman-2019} (Case Study 3, Experiments 3A–3B) extend the model to
+[tessler-goodman-2019] (Case Study 3, Experiments 3A–3B) extend the model to
 causal generics ("Herb X makes cheebas sleepy"). Here `Prevalence` is
 reinterpreted as the causal rate — the proportion of cases where the cause
 produces the effect.
@@ -839,7 +839,7 @@ theorem causal_70pct_pattern :
 /-!
 ## Cue Validity and Endorsement
 
-@cite{tessler-goodman-2019} (pp. 29-30, Appendix A) show that endorsement in
+[tessler-goodman-2019] (pp. 29-30, Appendix A) show that endorsement in
 the infinite-rationality limit reduces to a cue validity comparison:
 
     endorsed ⟺ prevalence(f, k_ref) > E_prior[prevalence]
@@ -847,7 +847,7 @@ the infinite-rationality limit reduces to a cue validity comparison:
 
 where `cue_validity(f, k) = prevalence(f, k) / E[prevalence]`.
 
-This connects the RSA model to the classical notion from @cite{rosch-mervis-1975}:
+This connects the RSA model to the classical notion from [rosch-mervis-1975]:
 a feature is diagnostic of a category exactly when the feature is more prevalent
 in that category than expected across categories — i.e., when cue validity > 1.
 

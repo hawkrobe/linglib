@@ -3,18 +3,18 @@ import Linglib.Syntax.Minimalist.Derivation
 
 /-
 # Amalgamation and the Head Movement Constraint
-@cite{harizanov-gribanova-2019} @cite{embick-noyer-2001}
+[harizanov-gribanova-2019] [embick-noyer-2001]
 
-Per @cite{harizanov-gribanova-2019}, **amalgamation** is a postsyntactic
+Per [harizanov-gribanova-2019], **amalgamation** is a postsyntactic
 (PF-layer) operation that combines adjacent heads into a complex morphological
 word. It is distinct from syntactic Internal Merge: amalgamation obeys the
 Head Movement Constraint (HMC), produces head-adjunction structures (→
 words), is driven by morphological properties of heads, and lacks
 interpretive effects.
 
-Per @cite{marcolli-larson-huijbregts-2025} §4.1, amalgamation "probably
+Per [marcolli-larson-huijbregts-2025] §4.1, amalgamation "probably
 belongs to Externalization" — it is not part of MCB's narrow-syntactic Merge
-(which has only EM and IM). Per @cite{senturia-marcolli-2025} §1, the natural
+(which has only EM and IM). Per [senturia-marcolli-2025] §1, the natural
 algebraic home for postsyntactic morphological operations (fission, fusion,
 obliteration, impoverishment, amalgamation) is the morphology-syntax
 interface layer, where DM-style operations transform morphosyntactic trees.
@@ -64,7 +64,7 @@ def immediatelyCCommands (x y root : SyntacticObject) : Prop :=
 -- § 2: Amalgamation
 -- ============================================================================
 
-/-- An **amalgamation** of two heads at PF (@cite{harizanov-gribanova-2019}).
+/-- An **amalgamation** of two heads at PF ([harizanov-gribanova-2019]).
 
     Amalgamation forms a complex morphological word from two adjacent
     heads via PF affixation. Since affixation requires adjacency,
@@ -75,7 +75,7 @@ def immediatelyCCommands (x y root : SyntacticObject) : Prop :=
     amalgamates with T at PF.
 
     NB: This is NOT MCB-Merge content. Amalgamation lives in the PF
-    layer (per @cite{marcolli-larson-huijbregts-2025} §4.1). It is
+    layer (per [marcolli-larson-huijbregts-2025] §4.1). It is
     distinct from `Step.im`, which is narrow-syntactic Internal Merge
     of a head leaf (e.g., Bulgarian LHM). -/
 structure Amalgamation where
@@ -90,7 +90,7 @@ structure Amalgamation where
   is_local : ∀ root, immediatelyCCommands host target root
 
 /-- Amalgamation cannot skip intervening elements
-    (@cite{harizanov-gribanova-2019} §3.3, p.15: "Amalgamation-based
+    ([harizanov-gribanova-2019] §3.3, p.15: "Amalgamation-based
     displacement obeys the Head Movement Constraint"). Immediate from
     the definition: `is_local` requires no intervener. -/
 theorem amalgamation_no_intervener (a : Amalgamation) (root : SyntacticObject) :
@@ -132,7 +132,7 @@ theorem amalgamation_host_ccommands_target (a : Amalgamation) (root : SyntacticO
 /-- "x underwent syntactic Internal Merge in derivation d" — MCB-aligned
     via `Derivation.movedItems`.
 
-    Per @cite{marcolli-chomsky-berwick-2025} §1.4.3.1, IM is the
+    Per [marcolli-chomsky-berwick-2025] §1.4.3.1, IM is the
     syntactic mechanism that produces surface verb doubling via PF
     copy/trace pronunciation rules: the verb appears once in the
     syntactic tree (with its deeper copy replaced by `mkTrace`), but
@@ -140,9 +140,9 @@ theorem amalgamation_host_ccommands_target (a : Amalgamation) (root : SyntacticO
 
     A construction's verb-doubling is "syntactic" iff the analyst can
     exhibit a `Derivation` where the verb appears as the mover of a
-    `Step.im` step. Russian (@cite{harizanov-gribanova-2019}) and
-    Guébie (@cite{sande-clem-dabkowski-2026}) license positive
-    instances; Hebrew (@cite{landau-2006}) is argued to be PF-driven
+    `Step.im` step. Russian ([harizanov-gribanova-2019]) and
+    Guébie ([sande-clem-dabkowski-2026]) license positive
+    instances; Hebrew ([landau-2006]) is argued to be PF-driven
     instead.
 
     Decidable for any concrete `Derivation`.

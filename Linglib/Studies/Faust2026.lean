@@ -6,8 +6,8 @@ import Linglib.Fragments.Amharic.ConsonantalRoots
 
 /-!
 # Faust (2026) — Intrusion as Template Satisfaction
-@cite{faust-2026} @cite{mccarthy-1981} @cite{broselow-1984}
-@cite{lowenstamm-1996} @cite{lowenstamm-2014} @cite{kramer-2020}
+[faust-2026] [mccarthy-1981] [broselow-1984]
+[lowenstamm-1996] [lowenstamm-2014] [kramer-2020]
 
 Faust, Noam. 2026. *Intrusion as template satisfaction and the
 QaTaT–QaTa problem in Semitic.* Linguistic Inquiry 57(2): 427–441.
@@ -16,33 +16,33 @@ https://doi.org/10.1162/ling_a_00524
 ## Core contribution
 
 A single alignment principle, **\*Misalignment** — "a nonfinal root
-element must not be template-final" (@cite{faust-2026} (2)/(6b)) —
+element must not be template-final" ([faust-2026] (2)/(6b)) —
 jointly resolves three Semitic puzzles:
 
 1. **The QaTaT–QaTa gap** (Modern Hebrew). Triradical [j]-final roots
    like √klj `roast` would be predicted by template satisfaction
-   (@cite{mccarthy-1981}) to fill the [+c]-specified template-final
+   ([mccarthy-1981]) to fill the [+c]-specified template-final
    slot via *spreading* of the medial radical /l/, yielding \*[kalal].
    They surface instead as [kala] with an *unfilled* C-slot
-   (@cite{faust-2026} (3c), (4)). \*Misalignment derives this:
+   ([faust-2026] (3c), (4)). \*Misalignment derives this:
    spreading /l/ to template-final would put a *nonfinal* root
    element in template-final position. The grammar tolerates an
    unfilled C-slot rather than violate \*Misalignment.
 
-2. **Amharic [t]-intrusion** (@cite{broselow-1984}). The [t] in
+2. **Amharic [t]-intrusion** ([broselow-1984]). The [t] in
    Amharic gerund [fädʤto] and INF forms is reanalyzed not as a
    default consonant inserted to satisfy the template
-   (@cite{broselow-1984}), but as the feminine /t/ — the n[+gen]
+   ([broselow-1984]), but as the feminine /t/ — the n[+gen]
    exponent realized as a sister bound root in the sense of
-   @cite{lowenstamm-2014} — which satisfies the template *without*
+   [lowenstamm-2014] — which satisfies the template *without*
    being a nonfinal root segment, hence not violating \*Misalignment.
    The strategy is unavailable for verbal forms because gender
    markers are *inherent* on n, not contextual on Agr
-   (@cite{faust-2026} (11) — connects to @cite{kramer-2020}).
+   ([faust-2026] (11) — connects to [kramer-2020]).
 
 3. **Apparent OCP-violating Amharic biradicals** are reanalyzed.
-   @cite{broselow-1984} concluded that Amharic admits OCP-violating
-   √TT roots like √dd for [wäddäd-ä] `liked`. @cite{faust-2026}
+   [broselow-1984] concluded that Amharic admits OCP-violating
+   √TT roots like √dd for [wäddäd-ä] `liked`. [faust-2026]
    (page 432) shows: once `scorch`-type verbs are reanalyzed as
    triradical (√fdj, not biradical √fd), there is no remaining
    reason to posit OCP-violating roots. The [wäddäd-ä] form is based
@@ -61,7 +61,7 @@ This file consumes and exercises the shared infrastructure:
 - `Phonology.Templates.starMisalign` — the \*Misalignment alignment
   constraint, built via the generic `mkAlign` constructor.
 - `Phonology.Constraints.adjacentIdentical` — drives the root-level
-  OCP, used to verify @cite{faust-2026}'s OCP-related reanalysis.
+  OCP, used to verify [faust-2026]'s OCP-related reanalysis.
 
 Per-derivation `decide` theorems test all four combinations of
 `isMisaligned ∈ {true, false} × allCSlotsFilled ∈ {true, false}`,
@@ -76,44 +76,44 @@ open Morphology
 open Phonology.Templates
 
 -- ============================================================================
--- § 1: Hebrew templates (@cite{faust-2026} (1), (3), (9)–(10))
+-- § 1: Hebrew templates ([faust-2026] (1), (3), (9)–(10))
 -- ============================================================================
 
-/-- The Hebrew PST.3MSG verbal template `CaCaC[+c]` (@cite{faust-2026}
+/-- The Hebrew PST.3MSG verbal template `CaCaC[+c]` ([faust-2026]
     (1), (3a–c), (4)). Five slots; the final C-slot is [+consonantal],
     blocking association from the glide /j/. -/
 def hebrewPst3msg : Template :=
   ⟨[.C, .V, .C, .V, .Cspec]⟩
 
-/-- The Hebrew passive-participle template `CaCuC` (@cite{faust-2026}
+/-- The Hebrew passive-participle template `CaCuC` ([faust-2026]
     (3c) discussion). Five slots; the final C-slot is *not*
     [+c]-specified, so the glide /j/ associates to it freely
     (yielding [kaluj], [tʃamuj]). -/
 def hebrewPassPrtcpl : Template :=
   ⟨[.C, .V, .C, .V, .C]⟩
 
-/-- The Hebrew nominal template `taQTiL[+c]` (@cite{faust-2026} (9)–(10)):
+/-- The Hebrew nominal template `taQTiL[+c]` ([faust-2026] (9)–(10)):
     six slots `C V C C V C[+c]`. The first `C V` (= "ta") is realized
     by the n[+gen]-internal /t/ exponent and template vocalization;
     the medial `C C` hosts the first two root radicals; the final
     `C[+c]` is the slot that hosts the intruding feminine /t/ in the
-    feminine-noun reading (@cite{faust-2026} (10b–c)). -/
+    feminine-noun reading ([faust-2026] (10b–c)). -/
 def hebrewTaQTiL : Template :=
   ⟨[.C, .V, .C, .C, .V, .Cspec]⟩
 
 -- ============================================================================
--- § 2: Amharic templates (@cite{faust-2026} (5), (7)–(8), (12)–(13))
+-- § 2: Amharic templates ([faust-2026] (5), (7)–(8), (12)–(13))
 -- ============================================================================
 
 /-- The Amharic PFV.3MSG verbal template (type-A pattern `CäC.CäC[+c]`,
-    @cite{faust-2026} (5), (7)). Six slots `C V C C V C[+c]`; the
+    [faust-2026] (5), (7)). Six slots `C V C C V C[+c]`; the
     medial geminate `C C` is the position where Amharic spreads its
     second radical, and the final C-slot is [+c]. The verbal -ä
     person-marking suffix attaches outside this template. -/
 def amharicPfv3msg : Template :=
   ⟨[.C, .V, .C, .C, .V, .Cspec]⟩
 
-/-- The Amharic gerund template `CäC.C[+c]-o` (@cite{faust-2026} (8)).
+/-- The Amharic gerund template `CäC.C[+c]-o` ([faust-2026] (8)).
     Five slots: the final `V` hosts the gerund [-o] suffix; the
     penult `C[+c]` is where the [t]-intruder lands when the root is
     [j]-final. -/
@@ -121,12 +121,12 @@ def amharicGrnd : Template :=
   ⟨[.C, .V, .C, .Cspec, .V]⟩
 
 -- ============================================================================
--- § 3: Hebrew QaTaT–QaTa (@cite{faust-2026} (3), (4))
+-- § 3: Hebrew QaTaT–QaTa ([faust-2026] (3), (4))
 -- ============================================================================
 
-/-! ### The three-way QaTaT–QaTa contrast (@cite{faust-2026} (3))
+/-! ### The three-way QaTaT–QaTa contrast ([faust-2026] (3))
 
-@cite{faust-2026} (3) presents three Modern Hebrew verbs sharing the
+[faust-2026] (3) presents three Modern Hebrew verbs sharing the
 same `CaCaC[+c]` template:
 
 - (3a) [kalat] from √klt — full triradical, all radicals surface.
@@ -164,11 +164,11 @@ def hebrewKll_kalal : RootTemplateMatch String :=
        ⟨.root, 1, 2⟩,    -- l → C2
        ⟨.root, 2, 4⟩] }  -- l (final root segment!) → C[+c]4
 
-/-- Candidate (4) of @cite{faust-2026}: the *spreading* derivation of
+/-- Candidate (4) of [faust-2026]: the *spreading* derivation of
     \*[kalal] from √klj + `CaCaC[+c]`. The medial /l/ at root
     index 1 is spread to the [+c] template-final slot (template
     index 4). This is the candidate template satisfaction predicts;
-    @cite{faust-2026} (4) shows it is ruled out by \*Misalignment. -/
+    [faust-2026] (4) shows it is ruled out by \*Misalignment. -/
 def hebrewKlj_kalal : RootTemplateMatch String :=
   { root := Hebrew.klj
     template := hebrewPst3msg
@@ -177,7 +177,7 @@ def hebrewKlj_kalal : RootTemplateMatch String :=
        ⟨.root, 1, 2⟩,    -- l → C2
        ⟨.root, 1, 4⟩] }  -- l → C[+c]4 (spread, NONFINAL → FINAL)
 
-/-- The actual surface form [kala] (@cite{faust-2026} (3c)): only /k/
+/-- The actual surface form [kala] ([faust-2026] (3c)): only /k/
     and /l/ associate; the [+c] template-final slot is left unfilled
     because /j/ cannot satisfy [+c] and spreading /l/ would violate
     \*Misalignment. The grammar tolerates the unfilled C-slot. -/
@@ -186,7 +186,7 @@ def hebrewKlj_kala : RootTemplateMatch String :=
     template := hebrewPst3msg
     associations := [⟨.root, 0, 0⟩, ⟨.root, 1, 2⟩] }
 
-/-- The passive participle [kaluj] (@cite{faust-2026} (3c)): /j/
+/-- The passive participle [kaluj] ([faust-2026] (3c)): /j/
     surfaces because the final C-slot is *not* [+c]-specified, so
     direct association succeeds and no spreading is required —
     \*Misalignment trivially satisfied, all C-slots filled. -/
@@ -196,10 +196,10 @@ def hebrewKlj_kaluj : RootTemplateMatch String :=
     associations := [⟨.root, 0, 0⟩, ⟨.root, 1, 2⟩, ⟨.root, 2, 4⟩] }
 
 -- ============================================================================
--- § 4: Hebrew taQTiL templatic intrusion (@cite{faust-2026} (10))
+-- § 4: Hebrew taQTiL templatic intrusion ([faust-2026] (10))
 -- ============================================================================
 
-/-- The illicit derivation (@cite{faust-2026} (10a)): √dmj associated
+/-- The illicit derivation ([faust-2026] (10a)): √dmj associated
     directly to taQTiL[+c]. The prefix /t/ fills C0 (intruder, since
     it belongs to the template-internal "ta" exponent rather than
     √dmj), the root /d/ and /m/ fill C2 and C3 respectively, and to
@@ -214,7 +214,7 @@ def hebrewDmj_illicit : RootTemplateMatch String :=
        ⟨.root, 1, 3⟩,       -- m → C3
        ⟨.root, 1, 5⟩] }     -- m → C[+c]5 (spread, NONFINAL → FINAL)
 
-/-- The licit [tadmit] derivation (@cite{faust-2026} (10b–c)): the
+/-- The licit [tadmit] derivation ([faust-2026] (10b–c)): the
     feminine n[+gen] exponent /t/ is added as a sister bound root,
     and its /t/ associates from the right to the [+c] final C-slot.
     Both the prefix /t/ at C0 and the suffix /t/ at C5 are *intruder*
@@ -230,11 +230,11 @@ def hebrewDmj_tadmit : RootTemplateMatch String :=
        ⟨.intruder, 1, 5⟩] } -- suffix /t/ from √at[+gen] → C[+c]5
 
 -- ============================================================================
--- § 5: Amharic /j/-final verbal forms (@cite{faust-2026} (5), (7))
+-- § 5: Amharic /j/-final verbal forms ([faust-2026] (5), (7))
 -- ============================================================================
 
 /-- Amharic [fädʤ-ä] PFV.3MSG: √fdj in `CäC.CäC[+c]`. Following
-    @cite{faust-2026} (7a) with truncation: /f/ → C0, /d/ → C2 (and
+    [faust-2026] (7a) with truncation: /f/ → C0, /d/ → C2 (and
     spreads to C3 for gemination), /j/ has *no slot* — its palatality
     merges with the preceding /d/ to yield [dʒ], and the penult V
     plus final C[+c] are truncated in the surface form. The unfilled
@@ -247,7 +247,7 @@ def amharicFdj_pfv : RootTemplateMatch String :=
        ⟨.root, 1, 2⟩,   -- d → C2
        ⟨.root, 1, 3⟩] } -- d → C3 (gemination; /d/ is nonfinal but slot 3 is nonfinal too)
 
-/-- Amharic gerund [fädʤto] (@cite{faust-2026} (8)): the feminine /t/
+/-- Amharic gerund [fädʤto] ([faust-2026] (8)): the feminine /t/
     intruder fills the [+c] penult slot, and the final V slot hosts
     the gerund [-o] suffix. Because /t/ is an intruder (not a root
     segment), \*Misalignment does not block it. -/
@@ -264,7 +264,7 @@ def amharicFdj_grnd : RootTemplateMatch String :=
 -- ============================================================================
 
 /-- Amharic [wäddäd-ä] `liked` PFV.3MSG: √wd is *biradical*
-    (@cite{faust-2026} page 432). /w/ → C0; /d/ → C2 (and spreads to
+    ([faust-2026] page 432). /w/ → C0; /d/ → C2 (and spreads to
     C3 for gemination, and to C[+c]5 to fill the final slot). The
     spread of /d/ to template-final is *licit* under \*Misalignment
     because /d/ is at root index 1, the **final** root segment of
@@ -286,7 +286,7 @@ def amharicWd_pfv : RootTemplateMatch String :=
 -- § 7: Theorems — *Misalignment derives the empirical pattern
 -- ============================================================================
 
-/-! ### Hebrew QaTaT–QaTa (@cite{faust-2026} (3), (4)) -/
+/-! ### Hebrew QaTaT–QaTa ([faust-2026] (3), (4)) -/
 
 /-- (3a) [kalat] from √klt: the full-triradical control case satisfies
     everything — every C-slot filled, no \*Misalignment. -/
@@ -327,7 +327,7 @@ theorem hebrew_kala_unfilled :
 theorem hebrew_kaluj_satisfies :
     hebrewKlj_kaluj.satisfies = true := by decide
 
-/-- The full three-way contrast of @cite{faust-2026} (3): three roots,
+/-- The full three-way contrast of [faust-2026] (3): three roots,
     one template, three different fates determined by \*Misalignment +
     [+c]-specification. The decisive feature is *which root index*
     sits at template-final:
@@ -350,14 +350,14 @@ theorem qataT_qata_three_way_contrast :
     hebrewKlj_kala.isMisaligned = false := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
-/-! ### Hebrew taQTiL intrusion (@cite{faust-2026} (10)) -/
+/-! ### Hebrew taQTiL intrusion ([faust-2026] (10)) -/
 
-/-- The illicit spreading derivation (@cite{faust-2026} (10a)) is
+/-- The illicit spreading derivation ([faust-2026] (10a)) is
     misaligned: nonfinal /m/ landed at the template-final slot. -/
 theorem hebrew_dmj_illicit_misaligned :
     hebrewDmj_illicit.isMisaligned = true := by decide
 
-/-- The licit [tadmit] derivation (@cite{faust-2026} (10b–c)) — feminine
+/-- The licit [tadmit] derivation ([faust-2026] (10b–c)) — feminine
     /t/ intruder at the final [+c] slot — is not misaligned. -/
 theorem hebrew_tadmit_not_misaligned :
     hebrewDmj_tadmit.isMisaligned = false := by decide
@@ -369,7 +369,7 @@ theorem hebrew_tadmit_not_misaligned :
 theorem hebrew_tadmit_satisfies :
     hebrewDmj_tadmit.satisfies = true := by decide
 
-/-! ### Amharic [j]-final verbal vs nominal (@cite{faust-2026} (5), (8)) -/
+/-! ### Amharic [j]-final verbal vs nominal ([faust-2026] (5), (8)) -/
 
 /-- Amharic [fädʤ-ä] PFV is not misaligned (the final [+c] slot is
     truncated/unfilled, so no nonfinal root element is there). -/
@@ -380,12 +380,12 @@ theorem amharic_fdj_pfv_not_misaligned :
 theorem amharic_fdj_grnd_satisfies :
     amharicFdj_grnd.satisfies = true := by decide
 
-/-! ### Faust's biradical reanalysis (@cite{faust-2026} page 432) -/
+/-! ### Faust's biradical reanalysis ([faust-2026] page 432) -/
 
 /-- √wd's biradical [wäddäd-ä] satisfies the template — every C-slot
     filled, no \*Misalignment violation (spreading /d/ to template-final
     is licit because /d/ is the *final* root segment). The OCP-violating
-    √dd analysis @cite{broselow-1984} posited is therefore unnecessary. -/
+    √dd analysis [broselow-1984] posited is therefore unnecessary. -/
 theorem amharic_wd_satisfies :
     amharicWd_pfv.satisfies = true := by decide
 
@@ -393,7 +393,7 @@ theorem amharic_wd_satisfies :
 -- § 8: Cross-derivation theorems — the squib's main claims
 -- ============================================================================
 
-/-- @cite{faust-2026}'s central observation about Hebrew (4): for the
+/-- [faust-2026]'s central observation about Hebrew (4): for the
     same root √klj and template `CaCaC[+c]`, the spreading candidate
     violates \*Misalignment (despite satisfying the template) while
     the empty-slot candidate satisfies \*Misalignment (despite an
@@ -409,7 +409,7 @@ theorem hebrew_klj_misalign_dominates_fill :
     hebrewKlj_kala.isMisaligned = false := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
-/-- @cite{faust-2026}'s analytical move on Hebrew (10): templatic
+/-- [faust-2026]'s analytical move on Hebrew (10): templatic
     intrusion via the feminine /t/ is licit precisely because the
     intruder is not a root segment, so \*Misalignment doesn't apply
     to it — and *because* it's licit, the template can be satisfied
@@ -425,14 +425,14 @@ theorem hebrew_intrusion_strictly_superior_to_spreading :
     hebrewDmj_tadmit.satisfies = true := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
-/-- @cite{faust-2026}'s reanalysis (page 432): biradical vs
+/-- [faust-2026]'s reanalysis (page 432): biradical vs
     triradical roots interact with \*Misalignment differently.
     Spreading the final radical of a *biradical* root to template-final
     is licit (final-of-final), while spreading the medial radical of
     a *triradical* root is not. This is the type-level demonstration
     that the surface contrast between [wäddäd-ä] (OK) and \*[kalal]
     (blocked) reduces to \*Misalignment alone — no OCP-violating
-    biradicals like @cite{broselow-1984}'s √dd are needed. -/
+    biradicals like [broselow-1984]'s √dd are needed. -/
 theorem biradical_spread_ok_triradical_spread_blocked :
     amharicWd_pfv.isMisaligned = false ∧
     hebrewKlj_kalal.isMisaligned = true := by
@@ -459,7 +459,7 @@ theorem misalignment_predicts_all_cases :
 -- § 9: Root-level OCP — Faust's reanalysis vindicates the OCP
 -- ============================================================================
 
-/-! ### Connecting to the OCP infrastructure (@cite{mccarthy-1981})
+/-! ### Connecting to the OCP infrastructure ([mccarthy-1981])
 
 Faust's biradical reanalysis turns on a substantive empirical claim
 about the OCP at the root level: once √fdj is recognized as
@@ -472,13 +472,13 @@ rather than root identity.
 The `Root.satisfiesOCP` predicate (in `Morphology`) makes this
 verifiable rather than asserted. -/
 
-/-- @cite{faust-2026} page 432: √wd has no OCP violation at the root
+/-- [faust-2026] page 432: √wd has no OCP violation at the root
     level — even though [wäddäd-ä] surfaces with adjacent identical
     [d][d], the surface gemination is a template-spreading effect. -/
 theorem amharic_wd_satisfies_root_ocp :
     Root.satisfiesOCP Amharic.wd = true := rfl
 
-/-- @cite{faust-2026}'s reanalysis: √fdj (the triradical analysis) has
+/-- [faust-2026]'s reanalysis: √fdj (the triradical analysis) has
     no OCP violation. -/
 theorem amharic_fdj_satisfies_root_ocp :
     Root.satisfiesOCP Amharic.fdj = true := rfl
@@ -488,17 +488,17 @@ theorem hebrew_klj_satisfies_root_ocp :
     Root.satisfiesOCP Hebrew.klj = true := rfl
 
 /-- Sanity: a hypothetical OCP-violating biradical √dd (which
-    @cite{broselow-1984} would have posited but @cite{faust-2026}
+    [broselow-1984] would have posited but [faust-2026]
     rejects) really does violate the OCP under our predicate. -/
 theorem hypothetical_dd_violates_root_ocp :
     Root.satisfiesOCP (⟨["d", "d"]⟩ : Root String) = false := rfl
 
 -- ============================================================================
--- § 10: Strict CV hollow roots + NCC (@cite{faust-2026} (12)–(13))
+-- § 10: Strict CV hollow roots + NCC ([faust-2026] (12)–(13))
 -- ============================================================================
 
-/-! @cite{faust-2026} (11)'s structural diagnosis — that [t]-intrusion
-is the exponent of `n[+gen]` (cf. @cite{kramer-2020}) and unavailable
+/-! [faust-2026] (11)'s structural diagnosis — that [t]-intrusion
+is the exponent of `n[+gen]` (cf. [kramer-2020]) and unavailable
 for verbs because gender lives on a higher Agr head — is formalized
 cross-paper in §12 below (the verbal/nominal asymmetry). The structural
 Kramer-2015/2020 background itself is verified in
@@ -506,7 +506,7 @@ Kramer-2015/2020 background itself is verified in
 
 /-! ### The medial- vs. final-empty asymmetry
 
-@cite{faust-2026} (13) presents an asymmetry inside the [t]-intrusion
+[faust-2026] (13) presents an asymmetry inside the [t]-intrusion
 paradigm itself. Three Amharic INF forms are derived from roots whose
 "hollow" element (a non-consonantal radical merging with vocalization)
 sits at *different* positions in the root:
@@ -525,9 +525,9 @@ sits at *different* positions in the root:
 - (13c) [mähid] from √hid — same structural configuration as (13b),
   but with /i/ as the non-consonantal medial. Same NCC blocking.
 
-The Strict-CV @cite{lowenstamm-1996} representation makes this
+The Strict-CV [lowenstamm-1996] representation makes this
 asymmetry visible: *which* C-slot is empty matters because the
-No-Crossing Constraint @cite{goldsmith-1976} discriminates by position
+No-Crossing Constraint [goldsmith-1976] discriminates by position
 relative to the rest of the association lines.
 
 The infrastructure for this analysis lives in
@@ -627,7 +627,7 @@ theorem amharic_sam_inf_intrusion_violates_ncc :
 theorem amharic_hid_inf_intrusion_violates_ncc :
     amharicHid_inf_intrusion.violatesNCC = true := by decide
 
-/-- The structural asymmetry behind @cite{faust-2026} (13) in one
+/-- The structural asymmetry behind [faust-2026] (13) in one
     statement: among the three hollow-root INFs, the one where the
     non-consonantal radical is *final* (√sma, leaving the final C-slot
     empty) admits [t]-intrusion without violating NCC, while the two
@@ -647,7 +647,7 @@ theorem hollow_root_intrusion_asymmetry :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
--- § 11: Explicit OT tableau — \*Misalign >> FILL (@cite{faust-2026} (4))
+-- § 11: Explicit OT tableau — \*Misalign >> FILL ([faust-2026] (4))
 -- ============================================================================
 
 /-! ### The QaTaT–QaTa choice as an OT optimization, grounded in §3
@@ -694,7 +694,7 @@ theorem kala_wins_under_misalign_over_fill :
     = {hebrewKlj_kala} := by decide
 
 /-- **Reversed ranking** FILL >> \*Misalign predicts the spreading
-    candidate \*[kalal] — the form @cite{faust-2026} (4) explicitly
+    candidate \*[kalal] — the form [faust-2026] (4) explicitly
     argues against. The reversed-ranking demo shows that \*Misalignment
     dominance is doing the empirical work; without it, template
     satisfaction would force the wrong winner. -/
@@ -704,7 +704,7 @@ theorem kalal_predicted_under_reversed_ranking :
 
 /-- **Factorial typology over {\*Misalign, FILL}**: the two rankings
     yield two distinct optimal sets. This is the OT-typological
-    statement of @cite{faust-2026}'s claim — the constraint set predicts
+    statement of [faust-2026]'s claim — the constraint set predicts
     exactly two languages, the attested Hebrew/Amharic pattern (kala-
     type, with empty C-slots tolerated) and a hypothetical mirror
     (kalal-type, where spreading wins). -/
@@ -763,7 +763,7 @@ theorem taqtilCandidates_ne : taqtilCandidates ≠ [] := by decide
 /-- The intrusion candidate [tadmit] is *strictly better* than both
     alternatives: it has 0 violations on \*Misalign AND 0 violations
     on FILL. So under any ranking of these two constraints, [tadmit]
-    wins. This is @cite{faust-2026}'s core analytical point about (10):
+    wins. This is [faust-2026]'s core analytical point about (10):
     intrusion lets the grammar "have it both ways". -/
 theorem tadmit_wins_under_misalign_over_fill :
     (mkTableau taqtilCandidates [starMisalign, fill]
@@ -780,7 +780,7 @@ theorem tadmit_wins_under_fill_over_misalign :
     intrusion strategy is in the candidate set, both rankings of
     {\*Misalign, FILL} pick the same winner. The OT-typological
     statement that intrusion is "ranking-invariant" — exactly the
-    sense in which @cite{faust-2026} (10b–c) makes intrusion the
+    sense in which [faust-2026] (10b–c) makes intrusion the
     grammar's optimal escape from the misalignment dilemma. -/
 theorem taqtil_factorial_typology_size_one :
     (mkFactorialOptima taqtilCandidates [starMisalign, fill]
@@ -792,11 +792,11 @@ theorem taqtil_factorial_typology_size_one :
 
 /-! ### Cross-paper bridge — `n[+gen]` licenses intrusion, Agr does not
 
-@cite{faust-2026} (11) attributes the *nominal-only* distribution of
+[faust-2026] (11) attributes the *nominal-only* distribution of
 [t]-intrusion to a structural fact: the intruding /t/ is the exponent
-of the n[+gen] head in @cite{kramer-2020}'s sense — gender is realized
+of the n[+gen] head in [kramer-2020]'s sense — gender is realized
 *inherently* on n, exposed as a sister bound root in
-@cite{lowenstamm-2014}'s sense. In verbal forms the corresponding
+[lowenstamm-2014]'s sense. In verbal forms the corresponding
 gender feature lives on a higher Agr head as contextual agreement,
 not as an inherent root-like exponent on v itself; consequently no
 intruder is morphosyntactically available to fill the templatic slot.
@@ -853,7 +853,7 @@ def amharicGrnd_locus : CatHead := CatHead.n_uFem
 
 /-- Amharic infinitive `mä-CVCVC[+c]` is also a deverbal nominal at
     n[+gen] — confirmed by the (13a) [t]-intrusion in [mäsmat].
-    @cite{faust-2026}'s analysis treats Amharic infinitives as
+    [faust-2026]'s analysis treats Amharic infinitives as
     nominalizations whose template is hosted on n. -/
 def amharicInf_locus : CatHead := CatHead.n_uFem
 
@@ -869,9 +869,9 @@ instances of this universal claim. -/
 /-- **The Faust+Kramer integration theorem.** A `RootTemplateMatch`
     passes intrusion-licensing under a `CatHead` iff either the match
     is intruder-free OR the head is a gender-bearing nominal (n[+gen],
-    in @cite{kramer-2020}'s sense).
+    in [kramer-2020]'s sense).
 
-    This is the universal-quantification of @cite{faust-2026} (11):
+    This is the universal-quantification of [faust-2026] (11):
     every per-derivation verdict in §12 reduces to checking which
     disjunct holds for the specific (match, head) pair. -/
 theorem intrusion_wellformed_iff_no_intruder_or_n_with_gen
@@ -975,7 +975,7 @@ theorem sma_inf_licensed_at_n :
 
 /-! #### The verbal-intrusion blocking theorem
 
-The empirical content of @cite{faust-2026} (11) is *negative*: a
+The empirical content of [faust-2026] (11) is *negative*: a
 verbal template cannot host an [t]-intruder, even when a phonological
 analog of intrusion would technically resolve a misalignment problem.
 Construct a hypothetical verbal candidate that *tries* to use
@@ -997,11 +997,11 @@ def hebrewDmj_pst3msg_intrusion : RootTemplateMatch String :=
 
 /-- The hypothetical verbal-intrusion candidate has all C-slots
     filled and is not misaligned: it satisfies the *prosodic*
-    well-formedness conditions @cite{faust-2026} states. -/
+    well-formedness conditions [faust-2026] states. -/
 theorem hebrew_pst3msg_intrusion_prosodically_satisfies :
     hebrewDmj_pst3msg_intrusion.satisfies = true := by decide
 
-/-- But under @cite{faust-2026}'s morphological-licensing predicate,
+/-- But under [faust-2026]'s morphological-licensing predicate,
     it fails: v-locus does not license n[+gen]'s /t/ exponent. -/
 theorem hebrew_pst3msg_intrusion_morphologically_blocked :
     hebrewDmj_pst3msg_intrusion.intrusionLicensed
@@ -1009,8 +1009,8 @@ theorem hebrew_pst3msg_intrusion_morphologically_blocked :
 
 /-! #### The cross-paper integration theorem -/
 
-/-- The verbal/nominal asymmetry of @cite{faust-2026} (11), derived
-    from @cite{kramer-2020}'s `CatHead` taxonomy:
+/-- The verbal/nominal asymmetry of [faust-2026] (11), derived
+    from [kramer-2020]'s `CatHead` taxonomy:
 
     1. **Intrusion is licensed at n[+gen] (here `n_uFem`).** Both
        Hebrew taQTiL [tadmit] and the hypothetical verbal-template

@@ -5,9 +5,9 @@ import Linglib.Semantics.Modality.Typology
 
 /-!
 # Modal Concord Bridge — Register Approach
-@cite{rotter-liu-2025} @cite{van-de-pol-etal-2023} @cite{zeijlstra-2007}
+[rotter-liu-2025] [van-de-pol-etal-2023] [zeijlstra-2007]
 
-Connects the empirical data from @cite{rotter-liu-2025} to
+Connects the empirical data from [rotter-liu-2025] to
 the English modal fragment and modal typology infrastructure.
 
 ## Section A: Semantic equivalence
@@ -130,7 +130,7 @@ formality of stacked modals:
 
 /-- **Register prediction confirmed**: The empirical formality rating
     of *must have to* is strictly between *must* and *have to*.
-    This is the register approach's central prediction (@cite{rotter-liu-2025} §4):
+    This is the register approach's central prediction ([rotter-liu-2025] §4):
     mixing a formal variant with an informal variant yields intermediate
     formality. -/
 theorem register_prediction_confirmed :

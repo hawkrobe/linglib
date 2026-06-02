@@ -5,19 +5,19 @@ import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
 
 /-!
 # Beck (2001): Reciprocals are Definites
-@cite{beck-2001}
+[beck-2001]
 
 *Natural Language Semantics* 9(1): 69–138. doi:10.1023/A:1012203407127.
 
-The @cite{heim-lasnik-may-1991} analysis of reciprocals — *each other*
+The [heim-lasnik-may-1991] analysis of reciprocals — *each other*
 means "the other ones among them" — is recast as a special kind of
 relational plural. Interpretational variability across the six known
 reciprocal readings (Strong Reciprocity, Partitioned Strong Reciprocity,
 Intermediate Reciprocity, Weak Reciprocity, One-way Weak Reciprocity,
 Inclusive Alternative Ordering) is derived not from ambiguity of the
 reciprocal itself but from the standard mechanisms of plural predication:
-the `*` distribution operator (@cite{link-1983}), the `**` cumulation
-operator (@cite{beck-sauerland-2000}), @cite{schwarzschild-1996} covers,
+the `*` distribution operator ([link-1983]), the `**` cumulation
+operator ([beck-sauerland-2000]), [schwarzschild-1996] covers,
 QR, and the addition of contextual information. The reciprocal expression
 is **uniformly** "the other ones among them" — the variability is at the
 plural-predication layer.
@@ -32,7 +32,7 @@ A scope-bounded slice of the paper:
 | §2.6    | Entailment lattice (eq 28)             | Implication theorems       |
 | §3.3    | HLM "the other ones among them" (eq 76) | `otherOnesAmongThem`       |
 | §4.3    | Bare `**(R)(A,A)` coverage forward dir | `weaklyReciprocal_implies_cumulative_R` |
-| §4.3.2  | Beck eq 120 = @cite{sternefeld-1998} eq 26b (bivalent) | `Plurality.Reciprocal.weakReciprocity_iff_cumulative_strict` |
+| §4.3.2  | Beck eq 120 = [sternefeld-1998] eq 26b (bivalent) | `Plurality.Reciprocal.weakReciprocity_iff_cumulative_strict` |
 | §4.3.2  | Distinctness as presupposition         | Bridge to H&D 2020         |
 
 The two readings whose definitions involve unbounded existentials —
@@ -45,7 +45,7 @@ Sections out of scope for a study-file size budget:
 - The full §3 plural-predication machinery (`*`, `**`, covers,
   QR-based LF) — substrate-deferred to `Plurality.{Distributivity,
   Cumulativity, Cover}.lean` and consumed at the predicate level here.
-- §4.2's @cite{sternefeld-1998} critique (negation interaction, distinct
+- §4.2's [sternefeld-1998] critique (negation interaction, distinct
   subgroups effect) — would require formalising Sternefeld 1998 itself.
 - §5 intermediate reciprocity via salient relations.
 - §6 SMH application — synthesised SMH refutation already in
@@ -53,12 +53,12 @@ Sections out of scope for a study-file size budget:
 
 ## Connection to H&D 2020
 
-@cite{haug-dalrymple-2020} formalises reciprocity in PPCDRT (plural
+[haug-dalrymple-2020] formalises reciprocity in PPCDRT (plural
 partial CDRT) — a fundamentally different framework from Beck's HLM +
 plural-predication apparatus. Despite the framework difference, both
 papers **converge on the presuppositional treatment of distinctness**
 (paper §4.3.2 ↔ H&D 2020 eq 41) — both agree against
-@cite{sternefeld-1998}'s asserted treatment.
+[sternefeld-1998]'s asserted treatment.
 
 The two papers diverge on the derivation method:
 - **Beck**: HLM "the other ones among them" + `**` cumulation + covers
@@ -70,12 +70,12 @@ The §6 cross-paper bridge `beck_cumulativity_on_equality_iff_HD_groupIdentity`
 makes the convergence visible at the type level: H&D's group identity is
 Beck-Sauerland `**` applied to *equality* on the sum-dref value-sets, while
 Beck applies `**` to the verb relation. Both consume the same machinery —
-@cite{langendoen-1978}'s reciprocity-as-cumulativity is the shared insight.
+[langendoen-1978]'s reciprocity-as-cumulativity is the shared insight.
 
 Note on imports: this file does **not** import
 `HaugDalrymple2020.lean` directly — per the convention used by
 `DalrympleHaug2024.lean` and `Rakosi2019.lean`, cross-paper references
-are made via `@cite{}` in docstrings while substrate-level theorems
+are made via `[key]` in docstrings while substrate-level theorems
 chain through `PPCDRT/Cumulativity.lean` (which both papers consume).
 -/
 
@@ -143,14 +143,14 @@ theorem otherOnesAmongThem_nonempty (A : Finset α) (x : α)
   unfold otherOnesAmongThem
   exact Finset.mem_erase.mpr ⟨hyx, hy⟩
 
-/-! ### § 4: WR via Cumulation — @cite{sternefeld-1998} eq 26b vs Beck eq 120
+/-! ### § 4: WR via Cumulation — [sternefeld-1998] eq 26b vs Beck eq 120
 
 The substrate-level bridge `WeakReciprocity R A ↔
 Cumulative (fun a b => R a b ∧ a ≠ b) A A` and the forward weakening
 `WeakReciprocity → Cumulative` both live in `Plurality/Reciprocal.lean`
 (`weakReciprocity_iff_cumulative_strict`, `weakReciprocity_imp_cumulative`).
-They formalise the bivalent collapse of @cite{sternefeld-1998} eq 26b
-and @cite{beck-2001} eq 120 (both papers keep the distinctness clause
+They formalise the bivalent collapse of [sternefeld-1998] eq 26b
+and [beck-2001] eq 120 (both papers keep the distinctness clause
 `x ≠ y` inside the `**`'s relation argument; they differ only at the
 trivalent layer, where Sternefeld asserts distinctness and Beck
 presupposes it). The cross-paper trivalent divergence is *only*
@@ -160,12 +160,12 @@ with x = y; Beck returns "undefined" (presupposition failure). See
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5: Cross-framework Bridge to H&D 2020
--- (paper §4.3.2 ↔ @cite{haug-dalrymple-2020} eq 41)
+-- (paper §4.3.2 ↔ [haug-dalrymple-2020] eq 41)
 -- ════════════════════════════════════════════════════════════════
 
-/-! Beck §4.3.2 (paper p. 105, eq 121d) and @cite{haug-dalrymple-2020}
+/-! Beck §4.3.2 (paper p. 105, eq 121d) and [haug-dalrymple-2020]
     eq 41 (PPCDRT paper p. 18) **converge** on the *presuppositional*
-    treatment of reciprocal distinctness. @cite{sternefeld-1998}
+    treatment of reciprocal distinctness. [sternefeld-1998]
     eq 26b also has distinctness inside the `**`'s relation argument
     but treats it as asserted, not presupposed — the Beck/H&D
     refinement is the assertion → presupposition status change.
@@ -188,14 +188,14 @@ with x = y; Beck returns "undefined" (presupposition failure). See
 
 /-- **Beck-shaped cumulativity coverage on equality reduces to H&D 2020
     group identity.** Both Beck (paper §4.3, eq 120) and
-    @cite{haug-dalrymple-2020} (eq 41) invoke `**` (`Cumulative`); they
+    [haug-dalrymple-2020] (eq 41) invoke `**` (`Cumulative`); they
     differ in the relation argument. Beck applies `**` to the verb
     relation `R` (yielding WR coverage); H&D's group identity is what
     you get when you apply `**` to *equality* on the sum-dref value-sets.
     The two analyses therefore consume the same machinery; this theorem
     makes the convergence visible at the type level.
 
-    @cite{langendoen-1978}'s reciprocity-as-cumulativity is the shared
+    [langendoen-1978]'s reciprocity-as-cumulativity is the shared
     insight; this is its first true cross-paper realization in linglib. -/
 theorem beck_cumulativity_on_equality_iff_HD_groupIdentity
     {E : Type} [DecidableEq E]
@@ -211,7 +211,7 @@ theorem beck_cumulativity_on_equality_iff_HD_groupIdentity
     previous-session `True := trivial` placeholder with a real typed
     statement of the cross-paper convergence.
 
-    Both Beck eq 120 and @cite{haug-dalrymple-2020} `reciprocityCond`
+    Both Beck eq 120 and [haug-dalrymple-2020] `reciprocityCond`
     factor reciprocity into a *coverage* component plus a *distinctness*
     component. The coverage components are bridged by
     `groupIdentityCond_iff_cumulative_eq` (chained as
@@ -237,7 +237,7 @@ theorem reciprocity_factors_as_coverage_and_distinctness
   unfold reciprocityCond
   rw [beck_cumulativity_on_equality_iff_HD_groupIdentity uAnaph uAnt S xa xb hxa hxb]
 
-/-! **Divergence with @cite{sternefeld-1998}** is *only* visible in
+/-! **Divergence with [sternefeld-1998]** is *only* visible in
     trivalent semantics. In bivalent encoding, Sternefeld eq 26b and
     Beck eq 120 produce the same predicate — formally witnessed by
     `Sternefeld1998.sternefeldWR_iff_WeakReciprocity` (chained

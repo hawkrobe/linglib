@@ -5,7 +5,7 @@ import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # Finset-typed refinement of the IE substrate
-@cite{fox-2007} @cite{spector-2016}
+[fox-2007] [spector-2016]
 
 `Finset`-typed computable refinement of the canonical Set-side
 definitions in `Operators/Basic.lean`. There is no parallel theory:

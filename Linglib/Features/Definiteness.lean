@@ -1,6 +1,6 @@
 /-!
 # Definiteness: Types and Classifications
-@cite{donnellan-1966} @cite{hawkins-1978} @cite{heim-1982} @cite{patel-grosz-grosz-2017} @cite{schwarz-2009} @cite{schwarz-2013}
+[donnellan-1966] [hawkins-1978] [heim-1982] [patel-grosz-grosz-2017] [schwarz-2009] [schwarz-2013]
 
 Framework-agnostic vocabulary for definiteness phenomena. These types classify
 definite descriptions, article systems, and presupposition types without
@@ -25,7 +25,7 @@ namespace Features.Definiteness
 
 /-- The two presupposition types underlying definite descriptions.
 
-@cite{schwarz-2009}: these correspond to two morphologically distinct articles
+[schwarz-2009]: these correspond to two morphologically distinct articles
 in languages like German, Fering, Lakhota, and Akan. Every classification
 in this module ultimately maps into this binary type. -/
 inductive DefPresupType where
@@ -34,20 +34,20 @@ inductive DefPresupType where
   deriving DecidableEq, Repr
 
 /-- Demonstratives (this/that) project D_deix — the familiarity/strong-article
-layer. @cite{schwarz-2013} §5.5 and @cite{patel-grosz-grosz-2017}. -/
+layer. [schwarz-2013] §5.5 and [patel-grosz-grosz-2017]. -/
 def demonstrativePresupType : DefPresupType := .familiarity
 
 -- ============================================================================
--- §2: Article Types (@cite{schwarz-2009})
+-- §2: Article Types ([schwarz-2009])
 -- ============================================================================
 
-/-- @cite{schwarz-2009}: article type in the D-domain.
+/-- [schwarz-2009]: article type in the D-domain.
 
 Schwarz argues for two structurally distinct definite articles:
 - Weak: situational uniqueness
 - Strong: anaphoric familiarity
 
-@cite{patel-grosz-grosz-2017} build on this: ArticleType predicts D-layer count and
+[patel-grosz-grosz-2017] build on this: ArticleType predicts D-layer count and
 whether DEM pronouns exist. -/
 inductive ArticleType where
   | none_         -- No articles (Japanese, Korean, Czech, etc.)
@@ -60,16 +60,16 @@ language's article system. This tracks overt marking, not semantic
 availability: a language with no articles (`.none_`) morphologically
 distinguishes zero presupposition types, but may still *express* both
 uniqueness and familiarity via covert type-shifting (e.g., Shan bare
-nouns; @cite{moroney-2021}). Semantic availability of presupposition
+nouns; [moroney-2021]). Semantic availability of presupposition
 types is determined by the blocking principle and type-shift hierarchy
-(@cite{dayal-2004}), not by article inventory alone. -/
+([dayal-2004]), not by article inventory alone. -/
 def articleTypeToDistinguishedPresup : ArticleType → List DefPresupType
   | .none_         => []                            -- No articles: no morphological signal
   | .weakOnly      => [.uniqueness]                 -- One form: uniqueness (or ambiguous)
   | .weakAndStrong => [.uniqueness, .familiarity]   -- Two forms: both explicitly marked
 
 /-- Languages with two article forms morphologically distinguish both
-presupposition types. This is @cite{patel-grosz-grosz-2017}'s structural
+presupposition types. This is [patel-grosz-grosz-2017]'s structural
 claim: 2 D-layers = 2 morphologically distinct presupposition signals. -/
 theorem two_forms_two_distinguished :
     (articleTypeToDistinguishedPresup .weakAndStrong).length = 2 := rfl
@@ -80,11 +80,11 @@ theorem one_form_one_distinguished :
     (articleTypeToDistinguishedPresup .weakOnly).length = 1 := rfl
 
 -- ============================================================================
--- §3: Definite Use Types (@cite{hawkins-1978} / @cite{schwarz-2013})
+-- §3: Definite Use Types ([hawkins-1978] / [schwarz-2013])
 -- ============================================================================
 
-/-- @cite{hawkins-1978}'s four use types for definite descriptions.
-@cite{schwarz-2013} shows these map systematically onto weak vs strong articles. -/
+/-- [hawkins-1978]'s four use types for definite descriptions.
+[schwarz-2013] shows these map systematically onto weak vs strong articles. -/
 inductive DefiniteUseType where
   | anaphoric          -- Antecedent in prior discourse (strong article)
   | immediateSituation -- Referent present in utterance situation (weak article)
@@ -92,11 +92,11 @@ inductive DefiniteUseType where
   | bridging           -- Related to antecedent via relation (split: see BridgingSubtype)
   | donkey             -- Donkey anaphora: variable bound by c-commanding quantifier.
                        -- German: strong article (*von dem*); Thai/Mandarin: demonstrative.
-                       -- @cite{schwarz-2009} §3: donkey pronouns pattern with anaphoric
+                       -- [schwarz-2009] §3: donkey pronouns pattern with anaphoric
                        -- uses (familiarity), not uniqueness uses.
   deriving DecidableEq, Repr
 
-/-- Map definite use type to presupposition type (@cite{schwarz-2013} §3.1).
+/-- Map definite use type to presupposition type ([schwarz-2013] §3.1).
 
 Anaphoric uses require the strong article (familiarity); situational uses
 require the weak article (uniqueness). -/
@@ -106,13 +106,13 @@ def useTypeToPresupType : DefiniteUseType → DefPresupType
   | .largerSituation    => .uniqueness    -- Weak article: contextually unique
   | .bridging           => .uniqueness    -- Default weak (relational bridging overrides)
   | .donkey             => .familiarity   -- Strong article: donkey anaphora patterns
-                                          -- with familiarity (@cite{schwarz-2009} §3)
+                                          -- with familiarity ([schwarz-2009] §3)
 
 -- ============================================================================
--- §4: Bridging Subtypes (@cite{schwarz-2013} §3.2)
+-- §4: Bridging Subtypes ([schwarz-2013] §3.2)
 -- ============================================================================
 
-/-- Bridging subtypes (@cite{schwarz-2013} §3.2).
+/-- Bridging subtypes ([schwarz-2013] §3.2).
 German and Fering show that bridging splits across the two article forms:
 - Part-whole bridging → weak article (situational uniqueness)
 - Relational bridging → strong article (anaphoric link)
@@ -124,18 +124,18 @@ inductive BridgingSubtype where
   | relational  -- "the play ... the author" (strong: anaphoric relation)
   deriving DecidableEq, Repr
 
-/-- Map bridging subtype to presupposition type (@cite{schwarz-2013} §3.2). -/
+/-- Map bridging subtype to presupposition type ([schwarz-2013] §3.2). -/
 def bridgingPresupType : BridgingSubtype → DefPresupType
   | .partWhole  => .uniqueness   -- weak: "the village ... the tower"
   | .relational => .familiarity  -- strong: "the play ... the author"
 
 -- ============================================================================
--- §5: Weak Article Strategy (@cite{schwarz-2013} §4)
+-- §5: Weak Article Strategy ([schwarz-2013] §4)
 -- ============================================================================
 
 /-- How a language expresses the weak/strong article contrast.
 
-@cite{schwarz-2013} surveys languages along two dimensions:
+[schwarz-2013] surveys languages along two dimensions:
 - How many overt article forms? (0, 1, or 2)
 - What expresses weak-article definites? (bare nominal, overt article, etc.) -/
 inductive WeakArticleStrategy where
@@ -143,7 +143,7 @@ inductive WeakArticleStrategy where
                    -- Akan also uses this strategy, though Akan bare NPs have
                    -- context-dependent readings: definite for globally unique
                    -- referents (*ewia* 'sun'), indefinite/∃ otherwise.
-                   -- See @cite{owusu-2022}, @cite{philipp-2022}.
+                   -- See [owusu-2022], [philipp-2022].
   | overtArticle   -- Distinct overt weak article (German contracted, Fering A-form)
   | sameAsStrong   -- Single form for both (Haitian Creole `la`)
   deriving DecidableEq, Repr
@@ -159,7 +159,7 @@ inductive WeakArticleStrategy where
 - **Definite** (the): presupposes existence (+ uniqueness or familiarity).
   Retrieves an EXISTING referent.
 
-@cite{heim-1982}: indefinites are novel, definites are familiar.
+[heim-1982]: indefinites are novel, definites are familiar.
 This is the dynamic semantics version of the ∃/ι contrast. -/
 inductive Definiteness where
   | indefinite  -- ∃: introduces new dref, no presupposition
@@ -172,16 +172,16 @@ theorem definite_indefinite_exhaustive :
   intro d; cases d <;> simp
 
 -- ============================================================================
--- §7: Definiteness Marking Typology (@cite{jenks-2018} / @cite{moroney-2021})
+-- §7: Definiteness Marking Typology ([jenks-2018] / [moroney-2021])
 -- ============================================================================
 
 /-- Cross-linguistic strategy for marking definiteness, following
-@cite{jenks-2018}'s typology extended by @cite{moroney-2021} with the
+[jenks-2018]'s typology extended by [moroney-2021] with the
 `.unmarked` category.
 
-The original @cite{jenks-2018} typology had four cells (2×2:
+The original [jenks-2018] typology had four cells (2×2:
 both-marked × same/different + one-marked × unique/anaphoric), but
-"one-marked, unique" was unattested. @cite{moroney-2021} adds a fifth:
+"one-marked, unique" was unattested. [moroney-2021] adds a fifth:
 neither type is obligatorily marked, yet both are expressible via bare
 nouns. This captures Shan, Serbian, and Kannada.
 
@@ -202,7 +202,7 @@ inductive DefMarkingStrategy where
   /-- Neither type is obligatorily marked. Bare nouns can express both
       unique and anaphoric definiteness. Demonstrative-noun phrases are
       optional in anaphoric contexts.
-      Languages: Shan, Serbian, Kannada. NEW in @cite{moroney-2021}. -/
+      Languages: Shan, Serbian, Kannada. NEW in [moroney-2021]. -/
   | unmarked
   deriving DecidableEq, Repr
 

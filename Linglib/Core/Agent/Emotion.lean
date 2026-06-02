@@ -1,9 +1,9 @@
 import Linglib.Core.Agent.BToM
 
 /-!
-# Emotion as Post-Inference Appraisal @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}
+# Emotion as Post-Inference Appraisal [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]
 
-Houlihan, Kleiman-Weiner, @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023} show that emotions
+Houlihan, Kleiman-Weiner, [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023] show that emotions
 are not primitive mental states — they are **computed** from more basic cognitive
 variables via a three-layer architecture:
 
@@ -59,7 +59,7 @@ namespace Core
 -- § 1. Core Types
 -- ════════════════════════════════════════════════════════════════
 
-/-- The four appraisal computation types from @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}.
+/-- The four appraisal computation types from [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023].
 
 Each type is a different way of evaluating an outcome relative
 to the agent's inferred mental states:
@@ -117,8 +117,8 @@ inductive TemporalOrientation where
 -- § 2. Utility Domains (Refined Decomposition)
 -- ════════════════════════════════════════════════════════════════
 
-/-- The three base utility domains from @cite{fehr-schmidt-1999} as used in
-@cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}.
+/-- The three base utility domains from [fehr-schmidt-1999] as used in
+[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023].
 
 The qualitative `AppraisalPerspective.base` collapses these three domains
 into one. For domain-refined analysis, each base appraisal has a sign for
@@ -245,7 +245,7 @@ weighted by the probability the agent would have chosen the alternative.
 
     WCF(a, a', w) = P(a' | ω, a₂) · [U(w, a') − U(w, a)]
 
-@cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023} weight CFa₁ by
+[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023] weight CFa₁ by
 the probability the player would have chosen differently, given the
 inferred preferences and updated beliefs. This connects counterfactual
 *appraisal* (utility comparison) to counterfactual *reasoning* (how
@@ -274,7 +274,7 @@ agent's preferences from the observed action.
 
     E[f(d) | a] = Σ_d P(d | a) · f(d)
 
-This is the second-order computation in @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}:
+This is the second-order computation in [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]:
 the agent anticipates what observers will infer about their desires
 from their action. For the agent, this IS the `desireMarginal` — the
 BToM architecture already computes exactly this. The reputational
@@ -449,7 +449,7 @@ def confusion : EmotionProfile :=
 def excitement : EmotionProfile :=
   ⟨"excitement", ⟨⟨.positive, .irrelevant⟩, ⟨.positive, .positive⟩, O, O⟩, .retrospective⟩
 
-/-- All 20 emotion concepts from @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}. -/
+/-- All 20 emotion concepts from [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]. -/
 def allEmotions : List EmotionProfile :=
   [joy, surprise, pride, gratitude, relief, amusement,
    disappointment, annoyance, fury, embarrassment,
@@ -519,7 +519,7 @@ def RefinedEmotionProfile.toEmotionProfile
 
 -- ════════════════════════════════════════════════════════════════
 -- § 10. Prospective Emotions: BToM Bridge to Emotive Doxastics
--- @cite{anand-hacquard-2013} @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}
+-- [anand-hacquard-2013] [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]
 -- ════════════════════════════════════════════════════════════════
 
 /-!
@@ -531,7 +531,7 @@ result). But emotional attitude verbs like `hope` and `fear` are
 **prospective**: the outcome is *uncertain*, and the emotional state
 concerns how the uncertainty might be resolved.
 
-@cite{anand-hacquard-2013} formalize exactly this: emotive doxastics
+[anand-hacquard-2013] formalize exactly this: emotive doxastics
 (hope, fear) combine:
 1. A **doxastic** component (belief that φ is possible but uncertain)
 2. A **preference** component (preference for φ-verifying resolutions)
@@ -581,7 +581,7 @@ For a BToM model with belief states B and desire states D:
 The prospective AU is a *conditional* expectation — conditioned on φ or
 ¬φ being the resolution — rather than a *marginal* utility of the actual
 outcome. This is the formal content of "preference over how the uncertainty
-gets resolved" from @cite{anand-hacquard-2013} §4.1.
+gets resolved" from [anand-hacquard-2013] §4.1.
 -/
 
 /-- Prospective appraisal: computed over uncertain future outcomes
@@ -612,13 +612,13 @@ def ProspectiveAppraisal.isUncertain {F : Type*} [LinearOrder F] [Zero F] [One F
   decide (a.beliefCredence > 0) && decide (a.beliefCredence < 1)
 
 /-- Hope: uncertain about φ and prefers φ-resolution.
-@cite{anand-hacquard-2013}: emotive doxastic with positive valence. -/
+[anand-hacquard-2013]: emotive doxastic with positive valence. -/
 def ProspectiveAppraisal.isHope {F : Type*} [LinearOrder F] [Zero F] [One F]
     (a : ProspectiveAppraisal F) : Bool :=
   a.isUncertain && decide (a.utilityIfTrue > a.utilityIfFalse)
 
 /-- Fear: uncertain about φ and disprefers φ-resolution.
-@cite{anand-hacquard-2013}: emotive doxastic with negative valence. -/
+[anand-hacquard-2013]: emotive doxastic with negative valence. -/
 def ProspectiveAppraisal.isFear {F : Type*} [LinearOrder F] [Zero F] [One F]
     (a : ProspectiveAppraisal F) : Bool :=
   a.isUncertain && decide (a.utilityIfFalse > a.utilityIfTrue)

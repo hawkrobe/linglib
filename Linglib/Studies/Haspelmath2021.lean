@@ -6,9 +6,9 @@ import Linglib.Studies.Marantz1991
 import Linglib.Typology.Alignment
 
 /-!
-# @cite{haspelmath-2021}: Role-reference associations and the explanation of argument coding splits
+# [haspelmath-2021]: Role-reference associations and the explanation of argument coding splits
 
-@cite{haspelmath-2021}, *Linguistics* 59(1): 123–174.
+[haspelmath-2021], *Linguistics* 59(1): 123–174.
 DOI: 10.1515/ling-2020-0252.
 
 ## Overview
@@ -59,8 +59,8 @@ The paper states the following numbered universals (Figure 1, §11.1):
 ## What This File Formalizes
 
 Universals 1–14, with U4 and U6 re-expressing model predictions from
-@cite{aissen-2003} and @cite{de-hoop-malchukov-2008} respectively, and a
-final §18 contrastive section showing how @cite{marantz-1991}'s dependent
+[aissen-2003] and [de-hoop-malchukov-2008] respectively, and a
+final §18 contrastive section showing how [marantz-1991]'s dependent
 case algorithm partitions the empirical territory of "split case marking"
 with Haspelmath's framework: structural-condition splits (Marantz) vs.
 prominence-condition splits (Haspelmath).
@@ -164,7 +164,7 @@ def scenarioRespectsFormFrequency
 -- § 1: Universal 1 — The Role-Reference Association Universal
 -- ============================================================================
 
-/-! **Universal 1** (@cite{haspelmath-2021}, §2, statement (5), p. 125):
+/-! **Universal 1** ([haspelmath-2021], §2, statement (5), p. 125):
 
     > Deviations from usual associations of role rank and referential
     > prominence tend to be coded by longer grammatical forms if the
@@ -194,7 +194,7 @@ theorem universal1_role_reference_association
 -- § 2: Universal 2 — Usual Role-Reference Associations
 -- ============================================================================
 
-/-! **Universal 2** (@cite{haspelmath-2021}, §2, statement (6), p. 126):
+/-! **Universal 2** ([haspelmath-2021], §2, statement (6), p. 126):
 
     > Arguments with higher-ranked roles tend to be more referentially
     > prominent, and vice versa.
@@ -238,7 +238,7 @@ theorem universal2_role_rank_committed_orderings :
 -- § 3: Universal 3 — Single-Argument Flagging Universal
 -- ============================================================================
 
-/-! **Universal 3** (@cite{haspelmath-2021}, §3, statement (13), p. 131):
+/-! **Universal 3** ([haspelmath-2021], §3, statement (13), p. 131):
 
     > The single-argument flagging universal: If a language has an
     > asymmetric single-argument flagging split depending on some
@@ -270,17 +270,17 @@ theorem universal3_single_argument_flagging (r : ArgumentRole) :
 -- § 4: Universal 4 — Split P Flagging (DOM)
 -- ============================================================================
 
-/-! **Universal 4** (@cite{haspelmath-2021}, §4.1, statement (14), p. 131):
+/-! **Universal 4** ([haspelmath-2021], §4.1, statement (14), p. 131):
 
     > Split P flagging: If a language has an asymmetric split in P
     > flagging depending on some prominence scale, then the special
     > flag is used on the prominent P-argument.
 
-    Re-exported from @cite{aissen-2003}'s OT factorial typology, which
+    Re-exported from [aissen-2003]'s OT factorial typology, which
     *predicts* this universal: the typology generates only monotone DOM
     patterns. -/
 
-/-- @cite{aissen-2003}'s OT factorial typology *predicts* Universal 4:
+/-- [aissen-2003]'s OT factorial typology *predicts* Universal 4:
     every animacy DOM pattern in `animOptima` is monotone (the prominent
     end gets the marker first). Renamed from `universal4_split_P_flagging`
     to clarify that this is a *model prediction* of U4, not the universal
@@ -296,7 +296,7 @@ theorem universal4_aissen_predicts : animOptima.all (λ opts =>
 -- § 5: Universal 5 — Scenario Coding Universal
 -- ============================================================================
 
-/-! **Universal 5** (@cite{haspelmath-2021}, §3, statement (16), p. 132,
+/-! **Universal 5** ([haspelmath-2021], §3, statement (16), p. 132,
     restated §6, p. 144):
 
     > If a language has an asymmetric scenario split, then the coding is
@@ -338,17 +338,17 @@ theorem universal5_frequency_class_monotone :
 -- § 6: Universal 6 — Split A Flagging (DSM)
 -- ============================================================================
 
-/-! **Universal 6** (@cite{haspelmath-2021}, §4.2, statement (21), p. 136):
+/-! **Universal 6** ([haspelmath-2021], §4.2, statement (21), p. 136):
 
     > Split A flagging: If a language has an asymmetric split in A
     > flagging depending on some prominence scale, then the special
     > flag is used on the non-prominent A-argument.
 
-    The mirror image of Universal 4. Re-expressed via @cite{de-hoop-malchukov-2008}'s
+    The mirror image of Universal 4. Re-expressed via [de-hoop-malchukov-2008]'s
     Distinguish constraint, which *predicts* this directionality: weak
     (non-prominent) subjects get overt ergative marking. -/
 
-/-- @cite{de-hoop-malchukov-2008}'s Distinguish-ranking *predicts* Universal 6:
+/-- [de-hoop-malchukov-2008]'s Distinguish-ranking *predicts* Universal 6:
     weak subjects are marked (Fore pattern). Renamed from
     `universal6_split_A_flagging` for the same reason as U4. -/
 theorem universal6_dehoopmalchukov_predicts :
@@ -360,7 +360,7 @@ theorem universal6_dehoopmalchukov_predicts :
 -- § 7: Universals 7–8 — Ditransitive Splits (R and T flagging)
 -- ============================================================================
 
-/-! **Universal 7** (@cite{haspelmath-2021}, §5, statement (26), p. 139):
+/-! **Universal 7** ([haspelmath-2021], §5, statement (26), p. 139):
 
     > Split R flagging: If a language has an asymmetric split in R
     > flagging depending on some prominence scale, then the special
@@ -369,7 +369,7 @@ theorem universal6_dehoopmalchukov_predicts :
     R behaves like A: both are high-rank roles whose differential marking
     targets the non-prominent end.
 
-    **Universal 8** (@cite{haspelmath-2021}, §5, statement (27), p. 139):
+    **Universal 8** ([haspelmath-2021], §5, statement (27), p. 139):
 
     > Split T flagging: If a language has an asymmetric split in T
     > flagging depending on some prominence scale, then the special
@@ -395,7 +395,7 @@ theorem universal8_T_like_P :
 -- § 8: Universals 9a/9b — Ditransitive Person-Role
 -- ============================================================================
 
-/-! **Universal 9a** (@cite{haspelmath-2021}, §7.1, statement (41), p. 147):
+/-! **Universal 9a** ([haspelmath-2021], §7.1, statement (41), p. 147):
 
     > Ditransitive Person-Role Constraint: Combinations of bound person
     > forms (indexes) with the roles R and T are disfavoured if the T
@@ -405,7 +405,7 @@ theorem universal8_T_like_P :
     Haspelmath fn. 19 (p. 147) reformulates this *empirically testable*
     version as 9b in coding-length terms.
 
-    **Universal 9b** (@cite{haspelmath-2021}, §7.1, statement (42), p. 147):
+    **Universal 9b** ([haspelmath-2021], §7.1, statement (42), p. 147):
 
     > Ditransitive person-role universal: If T is locuphoric and R is
     > aliophoric (i.e., if T is higher on the person scale than R), a
@@ -430,7 +430,7 @@ theorem universal9b_unusual_lower_frequency :
 -- § 9: Universal 10 — Relative Scenario Splits
 -- ============================================================================
 
-/-! **Universal 10** (@cite{haspelmath-2021}, §8, statement (54), p. 151):
+/-! **Universal 10** ([haspelmath-2021], §8, statement (54), p. 151):
 
     > The relative scenario universal: If a language has an asymmetric
     > relative scenario split, then the coding tends to be longest for
@@ -450,7 +450,7 @@ theorem universal10_relative_scenario :
 -- § 10: Universal 11 — Inverse
 -- ============================================================================
 
-/-! **Universal 11** (@cite{haspelmath-2021}, §9, statement (57), p. 153):
+/-! **Universal 11** ([haspelmath-2021], §9, statement (57), p. 153):
 
     > The inverse universal: If a language uses different verb forms for
     > downstream and upstream scenarios, i.e., an inverse form and a
@@ -470,7 +470,7 @@ theorem universal11_inverse :
 -- § 11: Universal 12 — Alternation Universal
 -- ============================================================================
 
-/-! **Universal 12** (@cite{haspelmath-2021}, §10.1, statement (61), p. 154):
+/-! **Universal 12** ([haspelmath-2021], §10.1, statement (61), p. 154):
 
     > The alternation universal: In an asymmetric argument coding
     > alternation, the longer alternant tends to be used in situations
@@ -539,7 +539,7 @@ theorem universal12_alternation
 -- § 12: Universal 13 — Passive
 -- ============================================================================
 
-/-! **Universal 13** (@cite{haspelmath-2021}, §10.1, statement (62), p. 155):
+/-! **Universal 13** ([haspelmath-2021], §10.1, statement (62), p. 155):
 
     > The passive universal: If a passive alternation is sensitive to
     > givenness, then the passive alternant tends to be used when the
@@ -565,7 +565,7 @@ abbrev passivePreferredGivenSensitive
 -- § 13: Universal 14 — Dative Alternation
 -- ============================================================================
 
-/-! **Universal 14** (@cite{haspelmath-2021}, §10.1, statement (63), p. 155):
+/-! **Universal 14** ([haspelmath-2021], §10.1, statement (63), p. 155):
 
     > The dative alternation universal: If a dative alternation is
     > sensitive to givenness, then the dative alternant tends to be
@@ -605,15 +605,15 @@ theorem ditransitive_parallels_monotransitive :
     DitransitiveAlignment.secundative.marksR = false := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 15: DOM ↔ Accusative, DSM ↔ Ergative (@cite{de-hoop-malchukov-2008})
+-- § 15: DOM ↔ Accusative, DSM ↔ Ergative ([de-hoop-malchukov-2008])
 -- ============================================================================
 
 /-! The correlation between DOM and accusative alignment, and between DSM
-    and ergative alignment, is independently derived in @cite{de-hoop-malchukov-2008} via the PaIP (Primary Actant Immunity Principle). @cite{haspelmath-2021}
+    and ergative alignment, is independently derived in [de-hoop-malchukov-2008] via the PaIP (Primary Actant Immunity Principle). [haspelmath-2021]
     discusses this as background but does NOT number it as one of his 14
     universals — included here for cross-reference only. -/
 
-/-- Differential marking patterns (@cite{de-hoop-malchukov-2008}, not a
+/-- Differential marking patterns ([de-hoop-malchukov-2008], not a
     numbered Haspelmath universal). -/
 theorem alignment_correlation_deHoopMalchukov :
     markingPattern [identify, economy] = ⟨.overt, .zero⟩ ∧
@@ -625,7 +625,7 @@ theorem alignment_correlation_deHoopMalchukov :
 -- § 16: Universal 68 — Form-Frequency Reduction
 -- ============================================================================
 
-/-! **Universal 68** (@cite{haspelmath-2021}, §11.2, statement (68), p. 158):
+/-! **Universal 68** ([haspelmath-2021], §11.2, statement (68), p. 158):
 
     > The grammatical form-frequency correspondence universal.
 
@@ -672,13 +672,13 @@ theorem universal1_frequency_grounding (role : ArgumentRole)
   frequency_proxy_matches_default role a d
 
 -- ============================================================================
--- § 18: Contrast with @cite{marantz-1991} — Configurational Case
+-- § 18: Contrast with [marantz-1991] — Configurational Case
 -- ============================================================================
 
-/-! @cite{haspelmath-2021}'s reductive claim — that a wide range of
+/-! [haspelmath-2021]'s reductive claim — that a wide range of
     "split case marking" phenomena reduce to form-frequency — competes
-    with the configurational tradition of @cite{marantz-1991} and
-    @cite{baker-2015}, which derives split case from STRUCTURAL parameters
+    with the configurational tradition of [marantz-1991] and
+    [baker-2015], which derives split case from STRUCTURAL parameters
     (aspect, voice, derived-subject status) without reference to
     referential prominence.
 
@@ -701,9 +701,9 @@ theorem universal1_frequency_grounding (role : ArgumentRole)
     parameter not present in the formalization.
 
     This section makes the partition Lean-checkable, following the
-    contrastive-theorem pattern from @cite{bruening-2021}. -/
+    contrastive-theorem pattern from [bruening-2021]. -/
 
-/-- @cite{marantz-1991}: Hindi's aspect-conditioned ERG split is derived
+/-- [marantz-1991]: Hindi's aspect-conditioned ERG split is derived
     structurally — the *same* `[⟨"agent", none⟩, ⟨"theme", none⟩]` NP
     list produces ERG-marking under perfective and NOM-ACC under
     imperfective, driven by the `CaseLanguageType` parameter alone.
@@ -713,7 +713,7 @@ theorem marantz_hindi_split_is_structural :
     Marantz1991.hindiTransitive .imperfective :=
   Marantz1991.hindi_split_is_algorithmic
 
-/-- @cite{marantz-1991}: in ergative mode, the *higher* of two caseless
+/-- [marantz-1991]: in ergative mode, the *higher* of two caseless
     NPs gets ERG, regardless of any "prominence" attribute. The function
     signature `assignCases : CaseLanguageType → List NPInDomain → List CasedNP`
     has no prominence input — `NPInDomain` carries only `label : String`
@@ -725,7 +725,7 @@ theorem marantz_ergative_uniform_on_higher :
         [⟨"agent", none⟩, ⟨"theme", none⟩]) = some .erg := by
   decide
 
-/-- @cite{marantz-1991}: a sole NP in ergative mode gets unmarked case
+/-- [marantz-1991]: a sole NP in ergative mode gets unmarked case
     (no competitor for dependent ERG). This is the "Ergative
     generalization" (Marantz 1991, statement (6), p. 13): no ERG on
     derived subjects. The empirical witness is Hindi unaccusatives

@@ -2,8 +2,8 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 
 /-!
-# @cite{goldberg-shirtz-2025}: PAL Constructions — Empirical Data
-@cite{goldberg-shirtz-2025}
+# [goldberg-shirtz-2025]: PAL Constructions — Empirical Data
+[goldberg-shirtz-2025]
 
 Experimental results from five studies on Phrasal Adjective-Like (PAL)
 constructions, plus cross-linguistic attestation data.

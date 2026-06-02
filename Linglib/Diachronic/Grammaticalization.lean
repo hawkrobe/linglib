@@ -3,8 +3,8 @@ import Linglib.Morphology.MorphRule
 
 /-!
 # Grammaticalization
-@cite{heine-1993} @cite{anderson-2006} @cite{bybee-perkins-pagliuca-1994}
-@cite{lehmann-1985} @cite{heine-kuteva-2002} @cite{hopper-traugott-2003}
+[heine-1993] [anderson-2006] [bybee-perkins-pagliuca-1994]
+[lehmann-1985] [heine-kuteva-2002] [hopper-traugott-2003]
 
 Grammaticalization: the diachronic process by which lexical items become
 grammatical markers. The cline of verbal grammaticalization formalized
@@ -14,14 +14,14 @@ here is the 5-stage variant:
 
 ## Attribution
 
-The verbal cline is anchored on @cite{heine-1993} ch. 3 (the source
-@cite{anderson-2006} cites at p. 5 as `Heine (1993: 48ff.)`).
+The verbal cline is anchored on [heine-1993] ch. 3 (the source
+[anderson-2006] cites at p. 5 as `Heine (1993: 48ff.)`).
 Anderson's own running shorthand at p. 5 collapses to three stages
 (`L[exical] V[erb] >> A[uxiliary] V > AF[fi]X`); the 5-stage form
 here splits Heine's continuum at the canonical clitic/affix/zero
-boundaries also used by @cite{lehmann-1985} and @cite{hopper-traugott-2003}.
+boundaries also used by [lehmann-1985] and [hopper-traugott-2003].
 
-**Caveat (@cite{heine-1993} p. 66, endorsed by @cite{anderson-2006} p. 5):**
+**Caveat ([heine-1993] p. 66, endorsed by [anderson-2006] p. 5):**
 "we are dealing with chains [of grammaticalization] and since chains
 are by definition continuous structures, setting up stages along
 these structures must remain an arbitrary and/or artificial endeavor."
@@ -31,7 +31,7 @@ their own intermediate-state predicates rather than treat the 5
 cases as exhaustive.
 
 This process is cross-linguistically unidirectional: movement is always toward
-greater morphological boundedness (@cite{lehmann-1985}, @cite{hopper-traugott-2003}).
+greater morphological boundedness ([lehmann-1985], [hopper-traugott-2003]).
 
 ## Main definitions
 
@@ -60,15 +60,15 @@ namespace Diachronic.Grammaticalization
 -- ============================================================================
 
 /-- Stage on the grammaticalization cline for verbal elements.
-    Cline anchored on @cite{heine-1993} for the broad path
+    Cline anchored on [heine-1993] for the broad path
     `LV >> AV >> AFFIX`; the specific 5-stage segmentation
     (`fullVerb / auxiliary / clitic / affix / zero`) is a
-    *coarsening* drawn from @cite{lehmann-1985} and
-    @cite{hopper-traugott-2003} ch. 6, NOT a direct rendering of
+    *coarsening* drawn from [lehmann-1985] and
+    [hopper-traugott-2003] ch. 6, NOT a direct rendering of
     Heine's own staging (Heine 1993 §2.4.2 uses a finer 7-stage
     A-G chain: concrete-source → starting-down → budding →
     defective → linguistic-hybrid → firmly-grammaticalized →
-    orphaning). @cite{anderson-2006} p. 5 attributes the
+    orphaning). [anderson-2006] p. 5 attributes the
     `LV >> AV > AFX` path to Heine 1993:48ff. without committing
     to a specific stage count; ch. 7 traces grammaticalization of
     source constructions onto whatever cline the framework adopts.
@@ -134,7 +134,7 @@ theorem affix_more_bound_than_auxiliary :
 -- ============================================================================
 
 /-- Diachronic source construction from which an AVC grammaticalizes.
-    @cite{anderson-2006} §7, @cite{heine-kuteva-2002}. -/
+    [anderson-2006] §7, [heine-kuteva-2002]. -/
 inductive AVCSource where
   /-- Serial verb constructions: two verbs in sequence, one
       grammaticalizes into an auxiliary. Common in West African, SE Asian. -/

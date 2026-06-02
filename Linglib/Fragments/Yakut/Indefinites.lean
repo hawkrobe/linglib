@@ -2,10 +2,10 @@ import Linglib.Typology.Indefinite
 
 /-!
 # Yakut (Sakha) Indefinite Pronouns
-@cite{stachowski-menz-1998} @cite{haspelmath-1997} @cite{wals-2013}
+[stachowski-menz-1998] [haspelmath-1997] [wals-2013]
 
 Yakut indefinites are uniformly built from interrogative pronouns + an
-enclitic particle. Per @cite{stachowski-menz-1998} p. 423, four series:
+enclitic particle. Per [stachowski-menz-1998] p. 423, four series:
 
 | Form         | Gloss                       | Coverage                       |
 |--------------|-----------------------------|--------------------------------|
@@ -18,12 +18,12 @@ enclitic particle. Per @cite{stachowski-menz-1998} p. 423, four series:
 dayanï 'anybody'"); not formalized as a separate entry.
 
 Since all four series use the interrogative `kim` 'who' as their host, the
-paradigm derives to @cite{wals-2013} F46A `.interrogativeBased` —
+paradigm derives to [wals-2013] F46A `.interrogativeBased` —
 matching WALS's classification for `iso = "sah"` (verified in
 `Phenomena/Indefinites/Typology.lean`).
 
 The Degano & Aloni 7-type classification of `ere` and `eme` (types ii and
-iii respectively, after @cite{bubnov-2026} Table 1) is theory-side
+iii respectively, after [bubnov-2026] Table 1) is theory-side
 projection — see `Semantics/Quantification/DeganoAloni2025.lean`.
 The free-choice and polarity-sensitive series (`bayarar`, `da`) fall
 outside D&A's SK/SU/NS subdivision; their D&A surface-classification is
@@ -38,7 +38,7 @@ open Typology.Indefinite
 
 /-- Yakut *kim ere*: enclitic particle for specific indefinites; covers
     both specific-known and specific-unknown functions (ABB syncretism).
-    @cite{stachowski-menz-1998} p. 423; @cite{bubnov-2026} Table 1
+    [stachowski-menz-1998] p. 423; [bubnov-2026] Table 1
     (D&A type ii). -/
 def ereEntry : IndefinitePronoun where
   form := "kim ere"
@@ -48,7 +48,7 @@ def ereEntry : IndefinitePronoun where
 
 /-- Yakut *kim eme*: enclitic particle for irrealis non-specific
     indefinites; `kim eme` 'somebody, anybody'.
-    @cite{stachowski-menz-1998} p. 423; @cite{bubnov-2026} Table 1
+    [stachowski-menz-1998] p. 423; [bubnov-2026] Table 1
     (D&A type iii). -/
 def emeEntry : IndefinitePronoun where
   form := "kim eme"
@@ -59,7 +59,7 @@ def emeEntry : IndefinitePronoun where
 /-- Yakut *kim bayarar*: generalizing/free-choice indefinite,
     `kim bayarar` 'whoever (s)he may be, every'. Outside D&A's SK/SU/NS
     subdivision — its surface D&A classification is `none`.
-    @cite{stachowski-menz-1998} p. 423. -/
+    [stachowski-menz-1998] p. 423. -/
 def bayararEntry : IndefinitePronoun where
   form := "kim bayarar"
   ontology := .person
@@ -68,7 +68,7 @@ def bayararEntry : IndefinitePronoun where
 
 /-- Yakut *kim da* (~ *kim dayanï*): polarity-sensitive indefinite,
     used in both affirmative and negative environments
-    (@cite{stachowski-menz-1998} p. 423: 'anybody'). Covers questions,
+    ([stachowski-menz-1998] p. 423: 'anybody'). Covers questions,
     conditionals, comparatives, and both negation regions. Outside D&A's
     SK/SU/NS subdivision. -/
 def daEntry : IndefinitePronoun where
@@ -92,7 +92,7 @@ theorem yakut_paradigm_is_ABB :
 
 /-- Yakut's paradigm uses a single morphological basis (interrogative
     `kim`) across all four forms, deriving the WALS F46A classification
-    `.interrogativeBased`. The cross-check against @cite{wals-2013}
+    `.interrogativeBased`. The cross-check against [wals-2013]
     F46A.allData lives in `Phenomena/Indefinites/Typology.lean`. -/
 theorem yakut_paradigm_is_interrogativeBased :
     paradigm.toWALS46A = some .interrogativeBased := rfl

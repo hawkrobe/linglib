@@ -12,11 +12,11 @@ import Linglib.Studies.Heine1997
 
 /-!
 # Kampanarou & Alexiadou (2026): Genitive alternation in possessives and beyond
-@cite{kampanarou-alexiadou-2026} @cite{alexiadou-2003}
-@cite{michelioudakis-chatzikyriakidis-spathas-2024} @cite{mertyris-2014}
-@cite{mertyris-2023} @cite{sims-2006} @cite{alexiadou-stavrou-2020}
-@cite{kampanarou-2023} @cite{horrocks-stavrou-1987}
-@cite{holton-mackridge-philippaki-warburton-spyropoulos-2012}
+[kampanarou-alexiadou-2026] [alexiadou-2003]
+[michelioudakis-chatzikyriakidis-spathas-2024] [mertyris-2014]
+[mertyris-2023] [sims-2006] [alexiadou-stavrou-2020]
+[kampanarou-2023] [horrocks-stavrou-1987]
+[holton-mackridge-philippaki-warburton-spyropoulos-2012]
 
 K&A's central claim: in Standard Modern Greek (SMG), the alternation between
 inflectional genitive and *apo*-PP is NOT a morphological alternation but a
@@ -31,7 +31,7 @@ be construable as a SET.
 - §1 Empirical taxonomy of *apo*-PP licensing, factored as
   (relation × possessor-animacy × set-construability), per K&A §5.
 - §2 Paradigm gaps in `-aki` diminutives (K&A §3, citing
-  @cite{sims-2006} and @cite{mertyris-2014}; also @cite{alexiadou-2024}).
+  [sims-2006] and [mertyris-2014]; also [alexiadou-2024]).
 - §4 Scope diagnostic for inalienable vs alienable vs *apo*-PP (K&A §7,
   exx 38–39); reuses `Morphology.DM.PossessionType`.
 - §5 Three syntactic analyses (eq 41 N-selects-PP, eq 43 Pred-SC,
@@ -49,7 +49,7 @@ be construable as a SET.
 
 - Greek noun-class declension table (Ralli 2000 / Mertyris 2014 Tables 1–2):
   no second consumer; defer.
-- Distinctness substrate (@cite{horrocks-stavrou-1987} / Richards 2010): no
+- Distinctness substrate ([horrocks-stavrou-1987] / Richards 2010): no
   current Lean consumer; we use a local predicate with TODO.
 - Diachronic substrate covering inflection-to-adposition trajectories
   (negation theorem in §8 documents the gap).
@@ -148,8 +148,8 @@ theorem ex11b_plural_apo_ok :
 
 -- ============================================================================
 -- §2. Paradigm gaps in -aki diminutives
--- (K&A §3, exx (13)–(15); citing @cite{sims-2006}, @cite{mertyris-2014},
---  @cite{alexiadou-2024})
+-- (K&A §3, exx (13)–(15); citing [sims-2006], [mertyris-2014],
+--  [alexiadou-2024])
 -- ============================================================================
 
 /-- Four-way acceptability marker. K&A use `*` (ungrammatical), `??`
@@ -278,7 +278,7 @@ theorem canAffectGender_iff_licensesSurfaceScope :
 
 /-- The three analyses K&A consider for SMG apo-PPs. Per K&A pp. 30–31,
     all three converge on the empirical predictions; K&A prefer light-p
-    (eq 47, citing @cite{kampanarou-2023}, inspired by Svenonius 2010 and
+    (eq 47, citing [kampanarou-2023], inspired by Svenonius 2010 and
     Kratzer 1996 Voice). -/
 inductive ApoSyntacticAnalysis where
   /-- eq. 41: possessee N₂ selects the apo-PP as its complement directly.
@@ -300,7 +300,7 @@ inductive ApoSyntacticAnalysis where
 def predSC_predCat : SCPredCategory := .P
 
 /-- The substrate primitive for the light-p analysis (eq. 47).
-    @cite{kampanarou-2023} positions the light-p as the nominal counterpart
+    [kampanarou-2023] positions the light-p as the nominal counterpart
     of Kratzer's Voice, with apo as the spell-out of the relator head. The
     closest verbal-domain analog already in linglib is
     `ApplType.lowSource` — the low Appl with `possessionFrom` denotation. -/
@@ -339,11 +339,11 @@ theorem lightP_is_lowSource_in_DP :
 
 -- ============================================================================
 -- §6. Single Argument Restriction + derived nominals
--- (K&A §8, p. 32; §6, pp. 21–24, citing @cite{grimshaw-1990})
+-- (K&A §8, p. 32; §6, pp. 21–24, citing [grimshaw-1990])
 -- ============================================================================
 
 /-- K&A's strengthening of the Single Genitive Restriction (familiar from
-    @cite{horrocks-stavrou-1987} et seq.) into a Single Argument Restriction:
+    [horrocks-stavrou-1987] et seq.) into a Single Argument Restriction:
     Greek DP allows at most ONE genitive-OR-PP argument, since both compete
     for the same single argument-introducing slot (per K&A's three analyses).
     English is a counterexample (allows ʼs-genitive + of-genitive co-occurrence). -/
@@ -390,7 +390,7 @@ theorem result_licenses_theme_apo :
 -- §7. Cross-framework theorems
 -- ============================================================================
 
-/-- **Cross-framework theorem 1** (vs @cite{myler-2016}). K&A §5 explicitly
+/-- **Cross-framework theorem 1** (vs [myler-2016]). K&A §5 explicitly
     rejects a realizational/VI-style account for SMG (apo-PP is NOT an
     alternative spell-out of inflectional genitive). Myler's Icelandic
     `hafa`/`eiga` IS a VI-style alternation (`Myler2016.icelandicHaveVI`
@@ -410,7 +410,7 @@ theorem ka2026_refutes_myler_VI_for_smg :
       = .dependentMarking := by
   refine ⟨rfl, rfl⟩
 
-/-- **Cross-framework theorem 2** (vs @cite{aissen-polian-2025}). Both
+/-- **Cross-framework theorem 2** (vs [aissen-polian-2025]). Both
     papers commit to `NominalSize.nP` as a structural locus for inalienable
     possessors. A&P predict A-extraction is available *only* from
     non-specific (PossP/nP) possessors — `ExtractionAvailable .stranding .nP`
@@ -427,7 +427,7 @@ theorem apo_PP_cannot_extract_per_ka2026 :
     -- a derived theorem from selective opacity vs head-complement opacity.
     True := trivial
 
-/-- **Cross-framework theorem 3** (vs @cite{michelioudakis-chatzikyriakidis-spathas-2024}).
+/-- **Cross-framework theorem 3** (vs [michelioudakis-chatzikyriakidis-spathas-2024]).
     Michelioudakis et al. analyse Grevena Greek (GG) apo-PPs as **reduced
     relative clauses** adjoining within the DP — like Romance *de/di*. K&A §4
     show this analysis CANNOT extend to SMG: SMG apo-PPs cannot stack, cannot
@@ -443,7 +443,7 @@ theorem gg_uses_reduced_relative_smg_does_not :
       = .dependentMarking := by
   refine ⟨rfl, rfl⟩
 
-/-- Stub theorem (vs @cite{alexiadou-stavrou-2020}). A&S 2020 treat *apo* as
+/-- Stub theorem (vs [alexiadou-stavrou-2020]). A&S 2020 treat *apo* as
     a LEXICAL preposition in partitive contexts. K&A §5 reject this for the
     possessive uses (apo is FUNCTIONAL/light-p per their preferred analysis).
     Empirical handle (K&A pp. 20): apo functions as the complement of
@@ -458,7 +458,7 @@ theorem apo_functional_per_kampanarou_alexiadou : True := trivial
     ftn 15) but do not adopt it. -/
 theorem apo_quantifier_select_per_cardinaletti_giusti : True := trivial
 
-/-- Stub theorem (vs @cite{barker-1995} double-genitives). Barker 1998
+/-- Stub theorem (vs [barker-1995] double-genitives). Barker 1998
     (NLLT 16:679–717, cited K&A p. 28 fn 15) treats partitives as a distinct
     nominal type with anti-uniqueness presupposition. K&A §5: possessive
     apo-PPs are coerced THROUGH partitivity, suggesting the K&A-Barker
@@ -468,10 +468,10 @@ theorem apo_via_partitive_per_kampanarou : True := trivial
 
 -- ============================================================================
 -- §8. Diachronic note + Heine-typology gap
--- (K&A §3 p. 3 + §8 conclusions; @cite{mertyris-2023}, @cite{conti-luraghi-2014})
+-- (K&A §3 p. 3 + §8 conclusions; [mertyris-2023], [conti-luraghi-2014])
 -- ============================================================================
 
-/-- Per @cite{mertyris-2023} + K&A §3: the partitive use of inflectional
+/-- Per [mertyris-2023] + K&A §3: the partitive use of inflectional
     genitive was lost early in Greek diachrony, with apo already carrying
     the partitive load by Classical times (ex 1, *oligoi apo pollo:n* 'few of
     many'). The K&A claim is that the *modern* possessive apo-PP traces back
@@ -483,7 +483,7 @@ def diachronicPath : List String :=
   , "Northern Modern Greek (e.g. Grevena): inflectional GEN lost on common nouns; apo-PP serves all GEN functions"
   ]
 
-/-- **Negative theorem against @cite{heine-1997}**: Heine's `PossessionSource`
+/-- **Negative theorem against [heine-1997]**: Heine's `PossessionSource`
     enum (8 schemas) is for grammaticalisation paths to PREDICATIVE
     possession. K&A's case-loss-to-adposition trajectory for ADNOMINAL
     possession has no slot in Heine's typology — `.source` is for
@@ -505,7 +505,7 @@ theorem ka2026_smg_to_gg_not_in_heine_typology :
 -- Local Distinctness predicate (substrate gap; defer promotion)
 -- ============================================================================
 
-/-- Local Distinctness predicate per @cite{horrocks-stavrou-1987} + Richards
+/-- Local Distinctness predicate per [horrocks-stavrou-1987] + Richards
     2010 framing in K&A §8. The Single Argument Restriction follows from
     Distinctness applied to the [+arg] feature within the DP.
     TODO: promote to `Syntax/Minimalist/Distinctness.lean` when a

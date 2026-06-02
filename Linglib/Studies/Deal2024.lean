@@ -2,9 +2,9 @@ import Linglib.Syntax.Minimalist.PConstraint
 import Linglib.Syntax.Minimalist.CyclicAgree
 
 /-!
-# Interaction, Satisfaction, and the PCC @cite{deal-2024}
+# Interaction, Satisfaction, and the PCC [deal-2024]
 
-@cite{deal-2024} unifies the Person Case Constraint (PCC) typology under
+[deal-2024] unifies the Person Case Constraint (PCC) typology under
 a single Agree operation with two independently parameterized conditions:
 
 - **Interaction (INT)**: what features the probe copies from a goal.
@@ -31,12 +31,12 @@ configuration — derive five attested PCC varieties:
 
 ## Bridge Results
 
-This study file connects @cite{deal-2024}'s framework to both:
+This study file connects [deal-2024]'s framework to both:
 
-1. **@cite{pancheva-zubizarreta-2018}** (`PConstraint.lean`): exact match
+1. **[pancheva-zubizarreta-2018]** (`PConstraint.lean`): exact match
    for Strong, Weak, and Me-first (all 9 cells); 7/9 match for Strictly
    Descending vs Ultra-strong (discrepancies on reflexive SAP combinations).
-2. **@cite{bejar-rezac-2009}** (`CyclicAgree.lean`): probe satisfaction
+2. **[bejar-rezac-2009]** (`CyclicAgree.lean`): probe satisfaction
    in Deal's sense corresponds to residue depletion in cyclic Agree —
    a DP satisfies SAT:[PART] iff it depletes the partial probe's residue.
 
@@ -54,7 +54,7 @@ open Minimalist.CyclicAgree (activeResidue personSpec partialProbe)
 -- § 1: Person Features
 -- ============================================================================
 
-/-- Person features in @cite{deal-2024}'s geometry.
+/-- Person features in [deal-2024]'s geometry.
 
         [φ] → [PART] → [SPKR]
                      → [ADDR]
@@ -116,7 +116,7 @@ inductive DynInteraction where
 -- § 4: DealGrammar
 -- ============================================================================
 
-/-- A grammar in @cite{deal-2024}'s framework.
+/-- A grammar in [deal-2024]'s framework.
 
     Two parameters determine the PCC type:
     - `satisfaction`: which feature, if present on DO, halts the probe.
@@ -288,7 +288,7 @@ theorem strong_entails_weak (io do_ : PersonLevel) :
   cases io <;> cases do_ <;> decide
 
 -- ============================================================================
--- § 14: Bridge to PConstraint (@cite{pancheva-zubizarreta-2018})
+-- § 14: Bridge to PConstraint ([pancheva-zubizarreta-2018])
 -- ============================================================================
 
 /-- Deal's Strong PCC matches P&Z's Strong PCC on all 9 cells. -/
@@ -334,11 +334,11 @@ theorem sd_ultra_discrepancy_2_2 :
     ¬ IsLicit ultraStrongGrammar .second .second := ⟨rfl, by decide⟩
 
 -- ============================================================================
--- § 15: Bridge to CyclicAgree (@cite{bejar-rezac-2009})
+-- § 15: Bridge to CyclicAgree ([bejar-rezac-2009])
 -- ============================================================================
 
-/-- Probe satisfaction in @cite{deal-2024}'s sense (SAT:[PART]) corresponds
-    to residue depletion in @cite{bejar-rezac-2009}'s cyclic Agree.
+/-- Probe satisfaction in [deal-2024]'s sense (SAT:[PART]) corresponds
+    to residue depletion in [bejar-rezac-2009]'s cyclic Agree.
 
     A DP fully checks the partial probe [uπ, uParticipant] iff it bears
     [PART]. In Deal's terms, such a DP satisfies a SAT:[PART] probe. In
@@ -379,12 +379,12 @@ theorem sat_part_absorbs_dynint (dyn : DynInteraction) (io do_ : PersonLevel) :
 
 /-- **You-first PCC** (predicted): SAT:[ADDR], no dynamic interaction.
     2P DOs satisfy the probe → ⟨IO, 2P DO⟩ is illicit.
-    Predicted by @cite{deal-2024} §6.1 but not yet robustly attested. -/
+    Predicted by [deal-2024] §6.1 but not yet robustly attested. -/
 def youFirst : DealGrammar := ⟨some .addr, .none_⟩
 
 /-- **A-descending PCC** (predicted): SAT:[ADDR], [PART]↑ dynamic interaction.
     IO must outrank DO on the hierarchy 2 > 1 > 3.
-    @cite{deal-2024} §6.1 notes hints of this pattern in Catalan and
+    [deal-2024] §6.1 notes hints of this pattern in Catalan and
     Italian speaker variation. -/
 def aDescending : DealGrammar := ⟨some .addr, .part⟩
 
@@ -419,7 +419,7 @@ theorem ad_licit_count : licitCount aDescending = 5 := by native_decide
 
 /-- Reverse PCC: the probe encounters IO before DO (IO preference).
 
-    @cite{deal-2024} §6.2: in structures where IO moves to a position
+    [deal-2024] §6.2: in structures where IO moves to a position
     between v and DO, the probe encounters IO first. This reverses the
     PCC restriction — now IO features can satisfy/narrow the probe,
     and DO is the argument that may fail to be licensed.
@@ -490,8 +490,8 @@ theorem strong_entails_sd (io do_ : PersonLevel) :
 /-- `dpBears` is grounded in the shared feature geometry `decomposePerson`
     from PersonGeometry.lean. This makes the connection structural — Deal's
     person features are not independently stipulated but derived from the
-    same privative geometry used by @cite{pancheva-zubizarreta-2018}'s
-    `satisfiesProminence` and @cite{bejar-rezac-2009}'s `personSpec`. -/
+    same privative geometry used by [pancheva-zubizarreta-2018]'s
+    `satisfiesProminence` and [bejar-rezac-2009]'s `personSpec`. -/
 theorem dpBears_grounded_in_decomposePerson (p : PersonLevel) :
     dpBears p .part = (decomposePerson p).hasParticipant ∧
     dpBears p .spkr = (decomposePerson p).hasAuthor := by

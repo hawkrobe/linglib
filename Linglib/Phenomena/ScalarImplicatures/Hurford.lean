@@ -2,7 +2,7 @@ import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
 # RSA Analysis of Hurford's Constraint
-@cite{hurford-1974} @cite{singh-2008} @cite{potts-levy-2015}
+[hurford-1974] [singh-2008] [potts-levy-2015]
 
 Models Hurford's constraint as a consequence of speaker rationality in RSA.
 

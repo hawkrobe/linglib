@@ -2,7 +2,7 @@ import Linglib.Core.Agent.GumbelLuce
 import Linglib.Core.Probability.Gaussian
 
 /-!
-# Signal Detection Theory @cite{luce-1959} @cite{green-swets-1966} @cite{macmillan-creelman-2005}
+# Signal Detection Theory [luce-1959] [green-swets-1966] [macmillan-creelman-2005]
 
 Signal Detection Theory (SDT) models the observer's task of discriminating
 between two hypotheses — "signal present" (sN) and "noise only" (N) — when
@@ -55,13 +55,13 @@ model with `v(signal) / v(noise) = L(x)`. We construct this Luce model as
 binary utilities `(d' · x, 0)` and scale `β = 1`. The signal probability and
 odds-ratio properties are then immediate corollaries of `mcfaddenIntegral_binary`
 and `RationalAction.fromGumbelRUM_policy` — making the SDT/Gumbel-Luce
-equivalence formally exact for binary detection (UNVERIFIED: @cite{luce-1959}
+equivalence formally exact for binary detection (UNVERIFIED: [luce-1959]
 §2.E gives this as the original choice-theoretic framing).
 
 ## Connection to Thurstone
 
 SDT is essentially Thurstone's discriminal-process theory (UNVERIFIED:
-@cite{luce-1959} §2.B–D) applied to the two-alternative detection context.
+[luce-1959] §2.B–D) applied to the two-alternative detection context.
 The formal identity `SDTModel.hitRate = ThurstoneCaseV.choiceProb` under the
 yes/no Thurstone model with `σ = 1/√2` is proved as
 `SDTModel.hitRate_eq_thurstone` in `GaussianChoice.lean`. The 2AFC version is
@@ -72,12 +72,12 @@ logistic choice model — see `GumbelLuce.lean` and
 
 ## References
 
-- @cite{luce-1959} — original choice-theoretic framing.
-- @cite{green-swets-1966} — canonical SDT reference.
-- @cite{macmillan-creelman-2005} — modern textbook treatment of `d'`,
+- [luce-1959] — original choice-theoretic framing.
+- [green-swets-1966] — canonical SDT reference.
+- [macmillan-creelman-2005] — modern textbook treatment of `d'`,
   `z(H) - z(F)`, `c = -(z(H) + z(F))/2`, AUC = `Φ(d'/√2)`, and the
   equal-variance Gaussian model.
-- @cite{mcfadden-1974} — Gumbel-Luce equivalence, used here for the SDT/Luce
+- [mcfadden-1974] — Gumbel-Luce equivalence, used here for the SDT/Luce
   binary identity.
 -/
 
@@ -368,7 +368,7 @@ theorem roc_above_diagonal (m : SDTModel) (hd : 0 < m.dPrime) :
 
 /-! Note: monotonicity of the equal-variance AUC `Φ(d'/√2)` in `d'` lives in
 `GaussianChoice.lean` as `SDTModel.twoAFC_mono`; the AUC integral identity
-`∫₀¹ rocCurve d' f df = Φ(d'/√2)` (Green & Swets 1966 @cite{green-swets-1966})
+`∫₀¹ rocCurve d' f df = Φ(d'/√2)` (Green & Swets 1966 [green-swets-1966])
 is correct but unproved — integrating `rocCurve` requires additional measure-
 theoretic infrastructure not currently developed. -/
 
@@ -553,7 +553,7 @@ theorem SDTModel.posteriorAt_uniform (x : ℝ) :
 
     Under non-uniform prior odds `π_N / π_S`, the optimal threshold is
     `c* = log(π_N / π_S) / d'` (UNVERIFIED: standard SDT result, see
-    @cite{green-swets-1966} and @cite{macmillan-creelman-2005} ch. 1; not
+    [green-swets-1966] and [macmillan-creelman-2005] ch. 1; not
     formalized here — would require continuous Bayesian-decision
     infrastructure). -/
 theorem SDTModel.posterior_gt_half_iff_pos_obs (x : ℝ) (hd : 0 < m.dPrime) :

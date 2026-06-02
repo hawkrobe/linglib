@@ -3,7 +3,7 @@ import Linglib.Semantics.Alternatives.Lexical
 
 /-!
 # Exhaustification Predictions for Semantic Scales
-@cite{spector-2016} @cite{fox-2007} @cite{hurford-1974} @cite{singh-2008}
+[spector-2016] [fox-2007] [hurford-1974] [singh-2008]
 
 Exhaustification predictions for the semantic scales defined in
 `Alternatives.Lexical`: proves that `exhIE(weaker) → ¬stronger` for

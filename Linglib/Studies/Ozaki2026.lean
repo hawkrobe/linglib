@@ -5,10 +5,10 @@ import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Passive
 
 /-!
-# @cite{ozaki-2026} — Japanese Accusative/Ablative Alternation: Data
-@cite{ozaki-2026}
+# [ozaki-2026] — Japanese Accusative/Ablative Alternation: Data
+[ozaki-2026]
 
-Empirical data from @cite{ozaki-2026} on Japanese departure verbs
+Empirical data from [ozaki-2026] on Japanese departure verbs
 that alternate between accusative *-o* and ablative *kara* marking
 on the source argument.
 
@@ -41,7 +41,7 @@ namespace Ozaki2026
 
 /-! Case marking on the source argument of alternation verbs is recorded
 as a `Japanese.Case.CaseMarker` (the authoritative case-marker
-registry per @cite{tsujimura-2014}), not as a parallel local enum. -/
+registry per [tsujimura-2014]), not as a parallel local enum. -/
 
 open Japanese.Case (CaseMarker o kara ga ni)
 open Japanese.Passive (PassiveType)
@@ -140,7 +140,7 @@ def alternationData : List AlternationDatum :=
 
 /-! ### VP ellipsis — source elides as argument (ex. 9–10)
 
-@cite{funakoshi-2016}'s generalization: adjuncts can only be elided if no
+[funakoshi-2016]'s generalization: adjuncts can only be elided if no
 other VP-internal elements are present. The source of *deru* elides
 even with an overt adverb *suguni* 'quickly', confirming argumenthood.
 The continuation (10) is non-contradictory, showing the elided reading
@@ -164,7 +164,7 @@ def deru_ellipsis_abl : ArgumenthoodDatum where
 
 /-! ### Long-distance scrambling — source scrambles freely (ex. 13)
 
-@cite{saito-1985}: arguments can undergo long-distance scrambling, adjuncts
+[saito-1985]: arguments can undergo long-distance scrambling, adjuncts
 cannot. The source of *hanareru* scrambles out of the embedded clause,
 confirming argumenthood regardless of case marking. -/
 
@@ -216,7 +216,7 @@ def hanareru_direct_passive : UnaccusativityDatum where
 
 /-! ### *nani-o* wh-adjunct — blocked with unaccusatives (ex. 26)
 
-@cite{kurafuji-1997}: *nani-o* 'what-ACC' can mean 'why' with unergatives
+[kurafuji-1997]: *nani-o* 'what-ACC' can mean 'why' with unergatives
 and transitives, but not with unaccusatives. Alternation verbs block
 this reading, patterning with unaccusatives. -/
 
@@ -297,7 +297,7 @@ open Syntax.Case
 open Japanese.Predicates
 
 /-- Departure verbs predict no external argument: non-thematic Voice
-    does not assign a θ-role (@cite{kratzer-1996}, @cite{schaefer-2025}). -/
+    does not assign a θ-role ([kratzer-1996], [schaefer-2025]). -/
 theorem departure_no_external :
     ¬ voiceAnticausative.AssignsTheta := by decide
 

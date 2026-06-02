@@ -129,7 +129,7 @@ A strong adjective entails its weak counterpart on the same pole:
 This distinction is orthogonal to scale structure (relative vs absolute)
 and polarity (positive vs negative).
 
-Source: @cite{alexandropoulou-gotzner-2024}, @cite{horn-1972}
+Source: [alexandropoulou-gotzner-2024], [horn-1972]
 -/
 inductive InformationalStrength where
   | weak    -- large, small, clean, dirty
@@ -141,7 +141,7 @@ inductive InformationalStrength where
 -- ════════════════════════════════════════════════════
 
 /-- Spatial configuration type for adjectives in resultative constructions
-    (@cite{levin-2026}). Only adjectives describing spatially instantiated
+    ([levin-2026]). Only adjectives describing spatially instantiated
     states license intr-*push open* resultatives. -/
 inductive SpatialConfigType where
   | barrierConfig   -- open, closed, shut: config relative to frame
@@ -160,7 +160,7 @@ structure GradableAdjEntry where
   antonymRelation : Option AntonymRelation := none
   spatialConfigType : Option SpatialConfigType := none
   /-- Evaluative valence of the adjective, when applicable.
-      Determines intensifier degree class (@cite{nouwen-2024}):
+      Determines intensifier degree class ([nouwen-2024]):
       negative-evaluative bases yield H-degree intensifiers,
       positive-evaluative bases yield M-degree intensifiers. -/
   evaluativeValence : Option Features.EvaluativeValence := none
@@ -171,7 +171,7 @@ structure GradableAdjEntry where
 -- ════════════════════════════════════════════════════
 
 /--
-How a multidimensional adjective binds its dimensions (@cite{sassoon-2013}).
+How a multidimensional adjective binds its dimensions ([sassoon-2013]).
 
 - **conjunctive**: entity must meet standard in ALL dimensions (e.g., *healthy*)
 - **disjunctive**: entity must meet standard in SOME dimension (e.g., *sick*)
@@ -211,7 +211,7 @@ private theorem not_any_eq_all_not_map :
 
 /-- De Morgan: negating conjunctive binding yields disjunctive binding
     over negated dimension predicates.
-    This is the formal core of @cite{sassoon-2013}'s Hypothesis 2 —
+    This is the formal core of [sassoon-2013]'s Hypothesis 2 —
     under a negation theory of antonymy, if the positive form is conjunctive,
     the negative antonym (its negation) is disjunctive. -/
 theorem deMorgan_conjunctive_disjunctive
@@ -237,7 +237,7 @@ def DimensionBindingType.negate : DimensionBindingType → DimensionBindingType
 theorem negate_involutive (b : DimensionBindingType) :
     b.negate.negate = b := by cases b <;> rfl
 
-/-- @cite{sassoon-2013} Hypothesis 3: standard type predicts binding type.
+/-- [sassoon-2013] Hypothesis 3: standard type predicts binding type.
     Total (max standard) → conjunctive, partial (min standard) → disjunctive,
     relative (contextual) → mixed. -/
 def predictedBinding : Semantics.Degree.PositiveStandard → DimensionBindingType
@@ -247,7 +247,7 @@ def predictedBinding : Semantics.Degree.PositiveStandard → DimensionBindingTyp
   | .functional   => .mixed   -- evaluative; context-dependent like contextual
 
 -- ════════════════════════════════════════════════════
--- Marginality Scales Account (@cite{dinis-jacinto-2026})
+-- Marginality Scales Account ([dinis-jacinto-2026])
 -- ════════════════════════════════════════════════════
 
 open Core.Scale

@@ -4,7 +4,7 @@ import Linglib.Studies.Magri2014
 
 /-!
 # Tieu, Križ & Chemla (2019): Children's Acquisition of Homogeneity
-@cite{tieu-kriz-chemla-2019}
+[tieu-kriz-chemla-2019]
 
 Children's acquisition of homogeneity in plural definite descriptions.
 *Frontiers in Psychology* 10, 2329.
@@ -15,7 +15,7 @@ Two experiments testing French-speaking children (ages 4--6) on their
 interpretations of plural definite descriptions in GAP contexts (where
 some but not all individuals satisfy the predicate), alongside scalar
 implicature controls. The experiments test predictions of the scalar
-implicature account of homogeneity (@cite{magri-2014}).
+implicature account of homogeneity ([magri-2014]).
 
 ## Three Interpretive Patterns
 
@@ -31,13 +31,13 @@ in a GAP context (2 of 4 trucks blue) could respond in three ways:
 Three groups of children emerge:
 
 - **EXI/−SI**: Existential interpretation, no scalar implicatures (the
-  literal existential meaning predicted by @cite{magri-2014})
+  literal existential meaning predicted by [magri-2014])
 - **HOM/+SI**: Homogeneous with implicatures (adult-like, consistent
-  with @cite{magri-2014})
+  with [magri-2014])
 - **HOM/−SI**: Homogeneous WITHOUT scalar implicatures (problematic
-  for @cite{magri-2014})
+  for [magri-2014])
 
-The existence of the HOM/−SI group contradicts @cite{magri-2014}'s
+The existence of the HOM/−SI group contradicts [magri-2014]'s
 prediction that homogeneity requires the *not-all* scalar implicature
 as a subcomputation. The data suggest that homogeneity and scalar
 implicatures are independent, with homogeneity acquired earlier.
@@ -151,7 +151,7 @@ def uniPlusSI  : ParticipantGroup := ⟨.universal, true⟩
 -- ============================================================
 
 /--
-The scalar implicature account of homogeneity (@cite{magri-2014})
+The scalar implicature account of homogeneity ([magri-2014])
 makes specific predictions about the developmental trajectory.
 
 Since homogeneity is derived via double exhaustification, and the
@@ -427,7 +427,7 @@ open Magri2014 (Role exh doubleExh someMeaning
   allMeaning exh_some exh_the double_strengthening_yields_universal)
 
 /--
-End-to-end argumentation chain connecting @cite{magri-2014}'s theory
+End-to-end argumentation chain connecting [magri-2014]'s theory
 (formalized in `Magri2014.lean`) to the empirical data in this file.
 
 **The derivation** (examples 10-11 in the paper):
@@ -472,7 +472,7 @@ theorem magri_derivation_requires_si :
 The paper proposes the following developmental trajectory:
 
 Stage 1: Children start with the literal existential meaning of the
-  definite plural (EXI pattern). This is compatible with @cite{magri-2014}'s
+  definite plural (EXI pattern). This is compatible with [magri-2014]'s
   assumption that the plain meaning of THE is existential.
 
 Stage 2: Children acquire homogeneous readings, possibly through a

@@ -8,9 +8,9 @@ import Linglib.Fragments.German.BarePluralWordOrder
 
 /-!
 # Blind Mandatory Scalar Implicatures
-@cite{magri-2009}
+[magri-2009]
 
-@cite{magri-2009}. Natural Language Semantics 17(3): 245–297.
+[magri-2009]. Natural Language Semantics 17(3): 245–297.
 DOI: 10.1007/s11050-009-9042-x.
 
 Three pieces form the substantive core of the paper:
@@ -65,14 +65,14 @@ Key applications: "#Sometimes, John is tall" (§4.1), bare plural subject
 restrictions (§4.2), embedding under universal quantifiers (§4.3), and
 German word order (§4.5). See §5 below for the Q-adverb formalization.
 
-The ILP/SLP distinction is @cite{carlson-1977}'s `PredicateLevel`:
+The ILP/SLP distinction is [carlson-1977]'s `PredicateLevel`:
 individual-level predicates trigger homogeneity (assumption (70)), while
 stage-level predicates do not.
 
 ## Naming note: `BPSWorld`
 
 Section §6 below uses `BPSWorld` for **Bare Plural Subjects**, the
-empirical phenomenon @cite{magri-2009} extends his account to. This is
+empirical phenomenon [magri-2009] extends his account to. This is
 unrelated to the Bassi–Del Pinal–Sauerland 2021 *Presuppositional EXH*
 abbreviation also used in this project (`bpsToImplicature`,
 `.bpsPresuppositional`). Different `BPS`, different file.
@@ -89,13 +89,13 @@ open Semantics.Kinds.SortedOntology (PredicateLevel)
 
 /-- A scenario for blind scalar implicature computation.
 
-@cite{magri-2009}'s mechanism needs only literal meanings, scalar
+[magri-2009]'s mechanism needs only literal meanings, scalar
 alternatives, and common knowledge — no QUD or complexity ordering. -/
 structure BlindScenario (W U : Type) [Fintype W] [DecidableEq W] where
   /-- Literal meaning of each utterance at each world. -/
   meaning : U → W → Bool
   /-- All scalar alternatives for each utterance.
-      @cite{fox-2007}'s innocent exclusion algorithm determines which
+      [fox-2007]'s innocent exclusion algorithm determines which
       alternatives are excludable — weaker alternatives (e.g., "some"
       when the prejacent is "all") are automatically filtered out. -/
   alternatives : U → List U
@@ -109,7 +109,7 @@ variable {W U : Type} [Fintype W] [DecidableEq W] (s : BlindScenario W U)
 /-- CK-compatible worlds. -/
 def cWorlds : Finset W := Finset.univ.filter (fun w => s.context w)
 
-/-- Strengthened meaning via @cite{fox-2007}'s exhaustivity operator.
+/-- Strengthened meaning via [fox-2007]'s exhaustivity operator.
 
 Implements the **Blindness Hypothesis** (BH): EXH computes the
 strengthened meaning using logical entailment over W, not entailment
@@ -163,7 +163,7 @@ implicatures contradict CK (EXH(φ) ∩ W_ck = ∅), while
 `ignoranceContradictsCK` detects when *ignorance* inferences
 contradict CK (alternatives are relevant but CK-settled).
 
-@cite{denic-2023} §6: deviance of "#Each of those three girls is Mary,
+[denic-2023] §6: deviance of "#Each of those three girls is Mary,
 Susan, or Jane" arises because ignorance inferences about singleton-
 denoting predicates contradict CK. -/
 def ignoranceContradictsCK (u : U) : Bool :=
@@ -181,12 +181,12 @@ def ignoranceContradictsCK (u : U) : Bool :=
 end BlindScenario
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §1b  R-Relativized EXH and Mandatoriness (@cite{magri-2009} §3.2.5)
+-- §1b  R-Relativized EXH and Mandatoriness ([magri-2009] §3.2.5)
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! ## R-relativized exhaustification: the mandatoriness mechanism
 
-§3.2.2 (BH+MH above) states the *outcome* of @cite{magri-2009}'s account:
+§3.2.2 (BH+MH above) states the *outcome* of [magri-2009]'s account:
 blind EXH mismatches CK, sentence sounds odd. §3.2.5 is the *mechanism*
 explaining why mismatching SIs are mandatory while standard SIs (e.g.
 the answer to (40c) "John is usually available after dinner") are not.
@@ -216,7 +216,7 @@ laws, and proves that for CK-equivalent (target, alternative) pairs
 the SI is mandatory. -/
 
 /-- Magri's relevance predicate, contextually supplied
-(@cite{magri-2009} §3.2.5). A property `R : Finset W → Bool` of
+([magri-2009] §3.2.5). A property `R : Finset W → Bool` of
 propositions (extensions, as Finsets of CK-compatible-or-not worlds)
 satisfying:
 
@@ -233,10 +233,10 @@ structure RelevantBlindScenario (W U : Type) [Fintype W] [DecidableEq W]
     extends BlindScenario W U where
   /-- R: which propositions (as Finsets of worlds) are contextually relevant. -/
   relevant : Finset W → Bool
-  /-- @cite{magri-2009} eq. (43a): every uttered proposition's denotation
+  /-- [magri-2009] eq. (43a): every uttered proposition's denotation
       is relevant. -/
   uttered_relevant : ∀ u, relevant (predToFinset (toBlindScenario.meaning u)) = true
-  /-- @cite{magri-2009} eq. (43b): R is closed under common-knowledge
+  /-- [magri-2009] eq. (43b): R is closed under common-knowledge
       equivalence. Two propositions agreeing on every CK-compatible world
       have the same R-value. -/
   relevant_ck_closed : ∀ p q : Finset W,
@@ -247,7 +247,7 @@ namespace RelevantBlindScenario
 
 variable {W U : Type} [Fintype W] [DecidableEq W] (s : RelevantBlindScenario W U)
 
-/-- @cite{magri-2009} eq. (42): R-relativized exhaustification.
+/-- [magri-2009] eq. (42): R-relativized exhaustification.
 `EXHᴿ(φ) := φ ∧ ⋀_{ψ ∈ Excl(φ)} (¬ψ ∨ ¬R(ψ))`. A world `w` survives
 iff `w ∈ φ` AND, for every excludable alternative ψ, either `w ∉ ψ`
 or ψ is irrelevant. Equivalently: `w ∈ φ` and every *relevant*
@@ -268,7 +268,7 @@ postulate (43b) lifts the alternative's relevance to match the prejacent's,
 and (43a) forces the prejacent's relevance to 1. So the alternative
 is *mandatorily relevant* — no contextual choice of R can block it.
 
-This is the formal core of @cite{magri-2009}'s argument on p. 263:
+This is the formal core of [magri-2009]'s argument on p. 263:
 mismatching SIs are mandatory because the alternative cannot be
 R-blocked. The contrast with non-mismatching SIs (where φ and ψ are
 *not* CK-equivalent, so R(ψ) is free) explains why standard SIs are
@@ -286,7 +286,7 @@ end RelevantBlindScenario
 -- §2  Italian Warmth Example
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! "# Some Italians come from a warm country" (@cite{magri-2009})
+/-! "# Some Italians come from a warm country" ([magri-2009])
 
 Three worlds are needed because the strengthened meaning "some but not
 all" requires a world where some but not all Italians come from a warm
@@ -364,7 +364,7 @@ But someNotAll is ruled out by CK — no help. -/
 theorem some_strengthened_true_at_nonck :
     italianScenario.strengthened .some_ .someNotAll = true := by decide
 
-/-- @cite{magri-2009} prediction: "some Italians" is odd.
+/-- [magri-2009] prediction: "some Italians" is odd.
 The blind implicature "not all" contradicts CK (Italy is warm). -/
 theorem italian_some_blind_odd :
     italianScenario.blindOdd .some_ = true := by decide
@@ -378,7 +378,7 @@ theorem italian_all_not_odd :
 -- §5  Individual-Level Predicates: Q-Adverbs (§4.1)
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! @cite{magri-2009} ex. (3)/(72b): "# Sometimes, John is tall"
+/-! [magri-2009] ex. (3)/(72b): "# Sometimes, John is tall"
 
 The paper's main contribution derives oddness of Q-adverbs with
 individual-level predicates (ILPs) from BH + MH. The key assumption
@@ -397,7 +397,7 @@ Contrast with the stage-level predicate "Sometimes, John is available":
 since availability can genuinely vary over time, the "sometimes but not
 always" world is CK-compatible → strengthened meaning is satisfiable → OK.
 
-The ILP/SLP distinction is @cite{carlson-1977}'s `PredicateLevel`:
+The ILP/SLP distinction is [carlson-1977]'s `PredicateLevel`:
 individual-level → homogeneity → oddness; stage-level → no homogeneity → fine.
 -/
 
@@ -414,7 +414,7 @@ inductive QAdvUtt where
   deriving DecidableEq, Repr
 
 open TallWorld QAdvUtt in
-/-- @cite{magri-2009} §4.1: Q-adverbs with individual-level predicates.
+/-- [magri-2009] §4.1: Q-adverbs with individual-level predicates.
 
 "Sometimes" and "always" form a ⟨sometimes, always⟩ scale analogous to
 ⟨some, all⟩. Homogeneity (assumption (70)) rules out `sometimesOnly`
@@ -444,7 +444,7 @@ sometimes(neverTall) = false. -/
 theorem tall_sometimes_strengthened_false_never :
     tallScenario.strengthened .sometimes_ .neverTall = false := by decide
 
-/-- @cite{magri-2009} prediction: "# Sometimes, John is tall" is odd.
+/-- [magri-2009] prediction: "# Sometimes, John is tall" is odd.
 The blind implicature "not always" contradicts homogeneity (70). -/
 theorem tall_sometimes_blind_odd :
     tallScenario.blindOdd .sometimes_ = true := by decide
@@ -460,11 +460,11 @@ theorem tall_always_not_odd :
 
 /-- Homogeneity determines which worlds are CK-compatible.
 
-@cite{magri-2009} assumption (70): if an i-predicate holds of an individual
+[magri-2009] assumption (70): if an i-predicate holds of an individual
 at any time in a CK-compatible world, it holds at all times within that
 individual's lifespan. This makes the predicate "homogeneous."
 
-This maps @cite{carlson-1977}'s `PredicateLevel` to a CK context:
+This maps [carlson-1977]'s `PredicateLevel` to a CK context:
 - Individual-level → only homogeneous worlds are CK-compatible
 - Stage-level → all worlds are CK-compatible (the predicate can
   genuinely vary over time) -/
@@ -508,8 +508,8 @@ theorem available_sometimes_not_odd :
 /-- The ILP/SLP distinction determines oddness:
 individual-level + "sometimes" → odd; stage-level + "sometimes" → fine.
 
-This is the structural prediction: @cite{carlson-1977}'s `PredicateLevel`
-feeds into @cite{magri-2009}'s blindness mechanism via homogeneity (70). -/
+This is the structural prediction: [carlson-1977]'s `PredicateLevel`
+feeds into [magri-2009]'s blindness mechanism via homogeneity (70). -/
 theorem predicate_level_determines_oddness :
     tallScenario.blindOdd .sometimes_ = true ∧
     availableScenario.blindOdd .sometimes_ = false := ⟨by decide, by decide⟩
@@ -535,7 +535,7 @@ theorem contexts_differ_at_sometimesOnly :
 
 The two scenarios have identical literal semantics, identical scale
 structure, and identical worlds. The ONLY difference is the CK context,
-which is determined by @cite{carlson-1977}'s `PredicateLevel` via
+which is determined by [carlson-1977]'s `PredicateLevel` via
 `homogeneity`. Yet this single difference flips the oddness prediction:
 
 - Individual-level ("tall"): context rules out `sometimesOnly` →
@@ -543,8 +543,8 @@ which is determined by @cite{carlson-1977}'s `PredicateLevel` via
 - Stage-level ("available"): context admits `sometimesOnly` →
   strengthened meaning satisfiable at CK world → fine
 
-This proves that @cite{carlson-1977}'s predicate-level classification
-is doing genuine explanatory work in @cite{magri-2009}'s system:
+This proves that [carlson-1977]'s predicate-level classification
+is doing genuine explanatory work in [magri-2009]'s system:
 it is the SOLE factor determining oddness for Q-adverb sentences. -/
 theorem homogeneity_necessary_and_sufficient :
     -- Same semantics
@@ -579,7 +579,7 @@ This is because the strengthened meaning "sometimes but not always" is true
 excluded from CK.
 
 This theorem is universally quantified over all possible context functions,
-not just the two tested above. It explains *why* @cite{carlson-1977}'s
+not just the two tested above. It explains *why* [carlson-1977]'s
 predicate-level classification does the right work: individual-level predicates
 produce oddness precisely because homogeneity rules out the mixed world. -/
 
@@ -626,7 +626,7 @@ end ContextCharacterization
 
 /-! ### Bare plural subject restrictions
 
-@cite{magri-2009} §4.2: the BPS *firemen* of the s-predicate *available*
+[magri-2009] §4.2: the BPS *firemen* of the s-predicate *available*
 admits both the existential and generic readings (ex. (84a)):
 - ∃-BPS: "There are firemen who are available"
 - GEN-BPS: "Firemen are generally available"
@@ -635,9 +635,9 @@ But the BPS of the i-predicate *tall* lacks the existential reading (84b):
 - #∃-BPS: "There are firemen who are tall"
 - GEN-BPS: "Firemen are (generally) tall"
 
-@cite{magri-2009}'s key insight: the ∃-BPS reading of an ILP has
+[magri-2009]'s key insight: the ∃-BPS reading of an ILP has
 the SAME abstract structure as "#Sometimes, John is tall" (§4.1). This is
-because existential BPs always take narrowest scope (@cite{carlson-1977}),
+because existential BPs always take narrowest scope ([carlson-1977]),
 making narrow-scope ∃ over times equivalent to "sometimes." The definite
 description alternative plays the role of "always." Homogeneity (70) rules
 out the partial world, so the strengthened meaning contradicts CK.
@@ -649,7 +649,7 @@ section BarePluralSubjects
 
 /-- Worlds for the bare plural ∃-reading of "Firemen are tall."
 
-@cite{magri-2009} §4.2: the truth conditions (91b)/(92b) involve ∃ over
+[magri-2009] §4.2: the truth conditions (91b)/(92b) involve ∃ over
 firemen and time. The three worlds correspond to whether any fireman is
 tall throughout his lifespan within the contextually supplied restrictor. -/
 inductive BPSWorld where
@@ -674,7 +674,7 @@ inductive BPSReading where
   deriving DecidableEq, Repr
 
 open BPSWorld BPSReading in
-/-- @cite{magri-2009} §4.2: bare plural existential reading of an ILP.
+/-- [magri-2009] §4.2: bare plural existential reading of an ILP.
 
 - `existential_` (φ', (92b)): ∃_t[C̄(t)][∃x(fireman(x) ∧ tall(x,t))]
   "for some time t in C̄, there exists a fireman who is tall at t"
@@ -726,7 +726,7 @@ theorem bps_existential_slp_not_odd :
 "∃-BPS at world w" has the same truth value as "sometimes at the
 corresponding Q-adverb world."
 
-This is @cite{magri-2009}'s reduction (p. 275): "the existential reading
+This is [magri-2009]'s reduction (p. 275): "the existential reading
 of the BPS of sentence (84b) can be ruled out in exactly the same way
 as sentence (46a)." -/
 theorem bps_meaning_matches_qadverb :
@@ -758,7 +758,7 @@ end BarePluralSubjects
 
 /-! ### Universal quantifier rescue
 
-@cite{magri-2009} §4.3, building on @cite{fox-1995}: the ∃-BPS reading of
+[magri-2009] §4.3, building on [fox-1995]: the ∃-BPS reading of
 an i-predicate becomes available when the BP is embedded under a universal
 quantifier.
 
@@ -778,7 +778,7 @@ strengthened meaning is not vacuous at CK worlds → not odd.
 The structural insight: the rescue scenario has the SAME context as the
 stage-level scenario (all worlds CK-compatible), despite a different reason.
 For SLPs, variability over time admits the mixed world. For universal
-embedding, distributed witnesses admit the mixed world. @cite{magri-2009}'s
+embedding, distributed witnesses admit the mixed world. [magri-2009]'s
 mechanism produces the correct prediction in both cases: the mixed world
 survives in CK. -/
 
@@ -786,7 +786,7 @@ section UniversalRescue
 
 open TallWorld QAdvUtt
 
-/-- @cite{magri-2009} §4.3: universal quantifier rescue of ∃-BPS reading.
+/-- [magri-2009] §4.3: universal quantifier rescue of ∃-BPS reading.
 
 The meaning table matches the ⟨some, all⟩ pattern:
 - `sometimes_` (φ): "for every Jewish man, ∃ a related Jewish woman"
@@ -864,7 +864,7 @@ end UniversalRescue
 
 /-! ### BH_prs and MH_prs
 
-@cite{magri-2009} extends BH and MH to presuppositions (§3.4, eqs. 64–66):
+[magri-2009] extends BH and MH to presuppositions (§3.4, eqs. 64–66):
 
 1. **BH_prs** (65): The strengthened presupposition EXH_prs(φ) is computed
    using *logical* entailment, not entailment given common knowledge.
@@ -877,7 +877,7 @@ presupposition dimension:
 
     EXH_prs(φ) = φ_prs ∧ ∧_{ψ ∈ Excl_prs(φ)} ¬ψ_prs
 
-where Excl_prs uses @cite{fox-2007}'s innocent exclusion applied to
+where Excl_prs uses [fox-2007]'s innocent exclusion applied to
 presuppositions. This reuses `exhB`/`ieIndices` directly — the same
 algorithm, applied to a different dimension of meaning. -/
 
@@ -885,8 +885,8 @@ section PresuppositionalExtension
 
 /-- A scenario with both meanings and presuppositions for blind SI computation.
 
-@cite{magri-2009} §3.4: presupposition strengthening runs in parallel
-to meaning strengthening, using the same @cite{fox-2007} algorithm. -/
+[magri-2009] §3.4: presupposition strengthening runs in parallel
+to meaning strengthening, using the same [fox-2007] algorithm. -/
 structure BlindPresupScenario (W U : Type) [Fintype W] [DecidableEq W]
     extends BlindScenario W U where
   /-- Presupposition carried by each utterance. -/
@@ -896,7 +896,7 @@ namespace BlindPresupScenario
 
 variable {W U : Type} [Fintype W] [DecidableEq W] (s : BlindPresupScenario W U)
 
-/-- Strengthened presupposition via @cite{fox-2007}'s EXH applied to
+/-- Strengthened presupposition via [fox-2007]'s EXH applied to
 presuppositions.
 
 Implements **BH_prs**: the strengthening uses logical entailment over W,
@@ -925,7 +925,7 @@ end PresuppositionalExtension
 
 /-! ### "#John is always tall" via presuppositional mismatch
 
-@cite{magri-2009} §4.6: *always* and covert GEN are Horn-mates with the
+[magri-2009] §4.6: *always* and covert GEN are Horn-mates with the
 same denotation but different presuppositions. Overt *always* carries
 no homogeneity presupposition; covert GEN carries the **homogeneity
 presupposition** (eq. (137)): either ALL atomic parts of the restrictor
@@ -958,7 +958,7 @@ inductive AlwaysGENUtt where
   deriving DecidableEq, Repr
 
 open AlwaysGENUtt in
-/-- @cite{magri-2009} §4.6: *always* vs covert GEN.
+/-- [magri-2009] §4.6: *always* vs covert GEN.
 
 The two utterances have IDENTICAL denotation (both mean "at all times,
 John is tall") but DIFFERENT presuppositions:
@@ -1005,7 +1005,7 @@ theorem always_strengthened_presup_false_at_ck :
     alwaysGENScenario.strengthenedPresup .always_ .neverTall = false := by
   constructor <;> decide
 
-/-- @cite{magri-2009} §4.6: "#John is always tall" is odd via MH_prs.
+/-- [magri-2009] §4.6: "#John is always tall" is odd via MH_prs.
 
 The blind strengthened presupposition (= ¬homogeneity = mixed worlds
 only) contradicts CK (= homogeneity = no mixed worlds). -/
@@ -1043,10 +1043,10 @@ end OvertAlways
 
 /-! ### Predictions match empirical BPS data
 
-@cite{magri-2009}'s theory predicts that individual-level predicates block
+[magri-2009]'s theory predicts that individual-level predicates block
 the existential reading of bare plural subjects. The data in
 `Phenomena.Generics.BarePlurals` independently records these judgments
-as empirical observations (@cite{cohen-erteschik-shir-2002}).
+as empirical observations ([cohen-erteschik-shir-2002]).
 
 The bridge theorems verify that every ILP datum with
 `existentialOK = false` is correctly predicted by the BH+MH mechanism,
@@ -1058,7 +1058,7 @@ section BarePluralBridge
 open Phenomena.Generics.BarePlurals
 
 /-- All individual-level predicates in the BarePlurals data lack the
-existential reading — matching @cite{magri-2009}'s prediction that the
+existential reading — matching [magri-2009]'s prediction that the
 ∃-BPS of an ILP is odd (BH + MH + homogeneity). -/
 theorem ilp_data_matches_magri_prediction :
     iLevelData.all (λ d =>
@@ -1066,7 +1066,7 @@ theorem ilp_data_matches_magri_prediction :
   native_decide
 
 /-- All stage-level predicates with locative arguments in the BarePlurals
-data HAVE the existential reading — matching @cite{magri-2009}'s prediction
+data HAVE the existential reading — matching [magri-2009]'s prediction
 that the ∃-BPS of an SLP is fine (no homogeneity → no mismatch). -/
 theorem slp_argument_data_matches_magri_prediction :
     sLevelArgumentData.all (λ d =>
@@ -1097,7 +1097,7 @@ end BarePluralBridge
 
 /-! ### German BPS word order matches BH+MH predictions
 
-@cite{magri-2009} §4.5 argues that @cite{diesing-1992}'s German BPS word
+[magri-2009] §4.5 argues that [diesing-1992]'s German BPS word
 order contrast (BPS left vs right of *ja doch*) follows from BH+MH:
 
 - S-predicate BPS both positions OK → BH+MH: no mismatch (SLP)
@@ -1138,7 +1138,7 @@ end GermanBridge
 
 /-! ### "Firemen are always tall" is fine (§4.6.2 Remark)
 
-@cite{magri-2009} §4.6.2: "#John is always tall" is odd (§10 above),
+[magri-2009] §4.6.2: "#John is always tall" is odd (§10 above),
 but "Firemen are always tall" is FINE when the definite *John* is replaced
 by a bare plural.
 
@@ -1169,7 +1169,7 @@ inductive BPAlwaysWorld where
   deriving DecidableEq, Repr, Fintype
 
 open BPAlwaysWorld AlwaysGENUtt in
-/-- @cite{magri-2009} §4.6.2: *always* vs GEN with bare plural subject.
+/-- [magri-2009] §4.6.2: *always* vs GEN with bare plural subject.
 
 Meanings are identical (both: "all firemen are always tall"), but
 presuppositions differ. GEN's homogeneity presupposition says either
@@ -1258,7 +1258,7 @@ strengthening becomes a `Prop`-valued implicature `content` via
 
 ### Why NOT a non-cancellability theorem
 
-The @cite{magri-2009} obligatoriness claim does *not* translate cleanly
+The [magri-2009] obligatoriness claim does *not* translate cleanly
 into `Implicature.IsCancellable` failure, even CK-relativized. For
 "#Some Italians come from a warm country" with CK = {allWarm},
 *"in fact all"* is a consistent continuation at the CK world that
@@ -1277,9 +1277,9 @@ variable {W U : Type} [Fintype W] [DecidableEq W]
 /-- Wrap a `BlindScenario`-derived strengthened meaning as an
 `Implicature W Prop`. The `content` is `s.strengthened u · = true`
 (the EXH'd meaning at each world); the `mechanism` is `.exhIE` —
-@cite{magri-2009} uses Fox's innocent-exclusion operator only
+[magri-2009] uses Fox's innocent-exclusion operator only
 (`innocent.exh` in `Semantics/Exhaustification/Excluder.lean`,
-implementing @cite{fox-2007}'s IE algorithm), not the Bar-Lev–Fox
+implementing [fox-2007]'s IE algorithm), not the Bar-Lev–Fox
 2020 IE+II extension that postdates the paper by 11 years. -/
 def magriToImplicature (s : BlindScenario W U) (u : U) : Implicature W Prop where
   kind      := .scalar
@@ -1288,16 +1288,16 @@ def magriToImplicature (s : BlindScenario W U) (u : U) : Implicature W Prop wher
   mechanism := .exhIE
 
 /-- **Magri's mismatch consequence, restated against the implicature
-spine.** When EXH is applied to φ blind to CK (@cite{magri-2009} §3.2.2
+spine.** When EXH is applied to φ blind to CK ([magri-2009] §3.2.2
 eq. (32), the Blindness Hypothesis), and the resulting strengthened
 meaning has no CK-realizer (eq. (33), the Mismatch Hypothesis), then
 the wrapped implicature's content has no CK-compatible realizer.
 
-The deviance @cite{magri-2009} predicts is **not** Sadock truth-conditional
+The deviance [magri-2009] predicts is **not** Sadock truth-conditional
 non-cancellability — for the "Some Italians" example, the continuation
 "in fact all" IS truth-conditionally consistent with the literal "some"
 and DOES contradict the EXH'd "not all" implicature, so `IsCancellable`
-holds. The load-bearing premise is @cite{magri-2009} §3.2.5 eq. (41)
+holds. The load-bearing premise is [magri-2009] §3.2.5 eq. (41)
 "EXH is mandatory in matrix clauses" combined with the R-postulates
 (43a)/(43b): the speaker is grammatically committed to the SI even
 when uttering a cancellation continuation, and this commitment is what

@@ -3,11 +3,11 @@ import Linglib.Processing.MemorySurprisal.Basic
 
 /-!
 # Informational Fusion
-@cite{rathi-hahn-futrell-2021} @cite{rathi-hahn-futrell-2026}
+[rathi-hahn-futrell-2021] [rathi-hahn-futrell-2026]
 
 Sibling of `MemorySurprisal/Basic.lean`. Defines the **informational fusion**
-measure introduced in @cite{rathi-hahn-futrell-2021} and used as the central
-empirical estimator in @cite{rathi-hahn-futrell-2026}:
+measure introduced in [rathi-hahn-futrell-2021] and used as the central
+empirical estimator in [rathi-hahn-futrell-2026]:
 
     φ(w | σ, ℓ, L_{-σ}) := -log p(w | σ, ℓ, L_{-σ})
 
@@ -18,7 +18,7 @@ of its features — high φ.
 
 ## Pairwise informational fusion
 
-@cite{rathi-hahn-futrell-2026} eq. (12) generalizes φ to **pairs** of features:
+[rathi-hahn-futrell-2026] eq. (12) generalizes φ to **pairs** of features:
 
     φ₂(w | (f₁, f₂), ℓ, L_{-(f₁,f₂)}) := -log p(w | (f₁, f₂), ℓ, L_{-(f₁,f₂)})
 
@@ -29,7 +29,7 @@ informational fusion are close in optimal-ordering rankings.
 ## Learner model abstraction
 
 The substrate is **agnostic** about the learner's implementation:
-@cite{rathi-hahn-futrell-2021} use an LSTM seq2seq model with attention;
+[rathi-hahn-futrell-2021] use an LSTM seq2seq model with attention;
 in principle any learner that produces a probability over candidate forms is
 admissible. `LearnerModel n` carries the prediction function as a field; the
 held-out corpus and target cell are explicit parameters. Specific learners
@@ -94,7 +94,7 @@ open Morphology
 structure LearnerModel (n : Nat) (Form : Type*) where
   predict : ParadigmSystem n Form → Fin n → Form → ℝ
 
-/-- **Informational fusion** (@cite{rathi-hahn-futrell-2026} eq. 4):
+/-- **Informational fusion** ([rathi-hahn-futrell-2026] eq. 4):
     `φ(w | σ, ℓ, L_{-σ}) := -log p(w | σ, ℓ, L_{-σ})`.
 
     The surprisal of form `w` at cell `σ` under the learner `M` trained on
@@ -123,7 +123,7 @@ theorem informationalFusion_nonneg {n : Nat} {Form : Type*}
   rw [neg_nonneg]
   exact Real.log_nonpos h_nonneg h_le_one
 
-/-! ### Pairwise informational fusion (@cite{rathi-hahn-futrell-2026} eq. 12)
+/-! ### Pairwise informational fusion ([rathi-hahn-futrell-2026] eq. 12)
 
 The pairwise generalization of `informationalFusion` differs from the
 single-feature case **only in how the held-out corpus is constructed**:
@@ -169,7 +169,7 @@ at `σ`. Formally:
     `predict corpus σ w = freq(w in corpus.cellDistribution σ) / total(...)`
 
 This is the "memorizer" baseline — it just reads off observed frequencies
-without any generalization. @cite{ackerman-malouf-2013}'s i-complexity
+without any generalization. [ackerman-malouf-2013]'s i-complexity
 implicitly uses this learner: `H(C_i | C_j)` is the conditional entropy
 under empirical distributions. The bridge between A&M's i-complexity and
 Rathi's informational fusion is precisely "average of `informationalFusion

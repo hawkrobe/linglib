@@ -4,7 +4,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# @cite{phillips-brown-2025} — Some-Things-Considered Desire
+# [phillips-brown-2025] — Some-Things-Considered Desire
 
 Question-based semantics for desire ascriptions: ⟦S wants p⟧^c is true
 relative to a contextual question Q_c iff every undominated answer in
@@ -13,8 +13,8 @@ Q_c-Bel_S entails p. The proposal handles conflicting-desire cases —
 
 This study file replicates the Nap, Lobster, Lu/Happy/Rain
 (deck-stacking), and William-III/nuclear-war scenarios of
-@cite{phillips-brown-2025}, plus a §11 cross-paper bridge to
-@cite{condoravdi-lauer-2016} (an effective-preferential alternative
+[phillips-brown-2025], plus a §11 cross-paper bridge to
+[condoravdi-lauer-2016] (an effective-preferential alternative
 that refuses simultaneous `want(p)` and `want(¬p)`).
 
 The substrate is `Semantics/Attitudes/Desire.lean`. All theorems
@@ -40,7 +40,7 @@ delegate to the substrate's general theorems
 
 ## Parallel discovery: Cariani 2013 `isVisible`
 
-PB's `isConsidered` (§3.6) is the same predicate as @cite{cariani-2013}'s
+PB's `isConsidered` (§3.6) is the same predicate as [cariani-2013]'s
 `isVisible` (§4 p.545–546): both require every cell of the
 partition/option-set to settle the prejacent. PB doesn't cite Cariani;
 Cariani doesn't anticipate PB. The identification is exposed in
@@ -223,7 +223,7 @@ theorem vf_no_conflict_nap :
 
 /-! ## §6. Doxastic closure blocking (paper §4.1)
 
-@cite{villalta-2008} identified the doxastic-closure problem for
+[villalta-2008] identified the doxastic-closure problem for
 belief-based semantics: any proposition true at all best belief-worlds
 is predicted wanted, over-generating for coincidental propositions.
 
@@ -391,7 +391,7 @@ whose beliefs rule out nuclear war DOES have belief-sensitive context,
 so the inference goes through.
 
 Strawson upward monotonicity is the closure principle at issue;
-@cite{phillips-brown-2025} §4.2 argues that question-based semantics
+[phillips-brown-2025] §4.2 argues that question-based semantics
 must be Strawson-but-not-naively upward monotonic, with definedness
 gating the inference. The substrate's
 `wantQuestionBased_strawson_upward_monotonic` captures the licit
@@ -446,9 +446,9 @@ def desAvoidWar : List (DecProp W) := [mkDec nap]
 theorem modern_wants_avoidNuclearWar :
     wantQuestionBased belModern desAvoidWar qNuclear avoidNuclearWar := by decide
 
-/-! ## §11. Cross-paper bridge: @cite{condoravdi-lauer-2016}
+/-! ## §11. Cross-paper bridge: [condoravdi-lauer-2016]
 
-@cite{condoravdi-lauer-2016}'s effective-preferential `wantEP` carries
+[condoravdi-lauer-2016]'s effective-preferential `wantEP` carries
 a joint-belief-consistency theorem (`wantEP_jointly_belief_consistent`):
 if both `wantEP EP a φ w` and `wantEP EP a ψ w` hold, then
 `(φ ∩ ψ) ∩ B(a, w) ≠ ∅`. Specialized to `ψ = φᶜ`, the conclusion
@@ -456,7 +456,7 @@ becomes `∅ ∩ B(a, w) ≠ ∅`, which is contradictory. So C&L *forbids*
 simultaneous `want(p)` and `want(¬p)` against a single belief state and
 preference structure.
 
-@cite{phillips-brown-2025} resolves the conflict by varying the
+[phillips-brown-2025] resolves the conflict by varying the
 contextual question Q_c (and the contextually-relevant `belS`) per
 ascription. C&L resolves it by varying the preference structure (per
 reading: `wantPExact` / `wantPSuccess` / `wantPQH`). The two
@@ -487,7 +487,7 @@ theorem condoravdiLauer_blocks_simultaneous_pq_and_negpq
 
 /-! ## §12. Heim foil and parametric no-go
 
-@cite{heim-1992}'s comparative-belief semantics (`wantHeim`) is the
+[heim-1992]'s comparative-belief semantics (`wantHeim`) is the
 *other* canonical belief-based account — formalized at
 `Semantics/Attitudes/Desire.lean` and exercised in
 `Studies/Heim1992Desire.lean`. The substrate's
@@ -524,7 +524,7 @@ theorem heim_no_go_covers_belief_based_family
   Semantics.Attitudes.Desire.wantHeim_no_simultaneous_pq_and_negpq
     belS params w_eval p hAsym h
 
-/-- **@cite{lassiter-2017} also evades the no-go but via numerical
+/-- **[lassiter-2017] also evades the no-go but via numerical
     threshold + graded value rather than question-sensitivity.** The
     Lassiter substrate's `threshold_admits_conflict_witness` exhibits a
     concrete configuration where both `want(p)` and `want(¬p)` fire on
@@ -568,7 +568,7 @@ What's deferred:
   distinct in their underlying worlds. The current encoding is honest
   (`qLobGus := qNapRest`) and adequate for the structural argument.
 
-* @cite{crnic-2014} is referenced in `Desire.lean`'s docstring as the
+* [crnic-2014] is referenced in `Desire.lean`'s docstring as the
   acknowledged precursor; a Crnič-2011 study file is the natural next
   paper.
 

@@ -4,8 +4,8 @@ import Linglib.Studies.ChuangEtAl2026
 
 /-!
 # Lu, Chuang & Baayen (2026): Realization of tones in spontaneous Taiwan Mandarin
-@cite{lu-chuang-baayen-2026} @cite{chuang-bell-tseng-baayen-2026}
-@cite{baayen-2019} @cite{heitmeier-chuang-baayen-2026}
+[lu-chuang-baayen-2026] [chuang-bell-tseng-baayen-2026]
+[baayen-2019] [heitmeier-chuang-baayen-2026]
 
 Lu, Y., Chuang, Y.-Y., & Baayen, R. H. (2026). The realization of tones
 in spontaneous spoken Taiwan Mandarin: a corpus-based survey and
@@ -14,7 +14,7 @@ Linguistic Theory*. DOI 10.1515/cllt-2025-0028.
 
 ## Empirical claims
 
-This study **generalises** @cite{chuang-bell-tseng-baayen-2026} from a
+This study **generalises** [chuang-bell-tseng-baayen-2026] from a
 single tone pattern (T2-T4 rise-fall) to **all 20 disyllabic tone
 patterns** of Taiwan Mandarin, in a 4,283-token / 313-word-type subset
 of the Corpus of Spontaneous Taiwan Mandarin (Fon 2004), restricted to
@@ -28,7 +28,7 @@ the four most frequent tonal contexts (4.4, 3.4, 4.1, 4.0).
    near-total subsumption of `tone_pattern` by `word`.
 2. **Sense > word.** Replacing the `word` factor smooth with a `sense_type`
    factor smooth further reduces AIC (paper §3.4.2, Table 4),
-   replicating @cite{chuang-bell-tseng-baayen-2026} on the broader
+   replicating [chuang-bell-tseng-baayen-2026] on the broader
    20-pattern dataset.
 3. **Form–meaning isomorphism for all 20 tone patterns.** A linear
    meaning→form mapping from CE centroids to fixed-length pitch vectors
@@ -49,7 +49,7 @@ without any explicit phonological tone-sandhi rule**. The architecture
 predicts neutralization where the meaning-space evidence supports it
 (Taiwan Mandarin, complete) and underdetermines it where evidence does
 not (Standard Chinese, where T3-T2 / T3-T3 distinction "is hardly
-visible to the eye" but reportedly incomplete; @cite{lu-chuang-baayen-2026}
+visible to the eye" but reportedly incomplete; [lu-chuang-baayen-2026]
 §5).
 
 ## Substrate
@@ -57,7 +57,7 @@ visible to the eye" but reportedly incomplete; @cite{lu-chuang-baayen-2026}
 The `LinearDiscriminativeLexicon` substrate
 (`Processing/Lexical/Discriminative/Defs.lean`) is **reused
 verbatim** — this is the second paper-anchored study consuming it
-(@cite{chuang-bell-tseng-baayen-2026} is the first). This file
+([chuang-bell-tseng-baayen-2026] is the first). This file
 specialises the substrate to:
 
 - **100-dimensional** pitch vectors (vs. Chuang's 50-dim) — paper §4.1;
@@ -73,7 +73,7 @@ typing of `LinearDiscriminativeLexicon`.
 ## Cross-framework note: vs. autosegmental T3 sandhi
 
 The classical autosegmental account of Mandarin T3 sandhi
-(@cite{chen-2000}, @cite{duanmu-2007}, and the surrounding literature)
+([chen-2000], [duanmu-2007], and the surrounding literature)
 posits a structural rule: an underlying `/T3 T3/` sequence undergoes
 spreading or delinking, surfacing as `[T2 T3]`. Linglib's existing
 discrete-tone substrate (`Phonology/Tone/Constraints.lean`,
@@ -120,7 +120,7 @@ open ChuangEtAl2026
 -- ============================================================================
 
 /-- The paper uses 100 evenly-spaced f0 samples per token (paper §4.1).
-    Distinct from @cite{chuang-bell-tseng-baayen-2026}'s 50; the
+    Distinct from [chuang-bell-tseng-baayen-2026]'s 50; the
     `FormVec` substrate is dimension-polymorphic so both fit. -/
 abbrev LuPitchSampleCount : ℕ := 100
 
@@ -192,7 +192,7 @@ theorem t3_sandhi_via_kernel
     the resulting contour difference by `‖production‖ * ε` whenever
     the centroid difference is within ε.
 
-    The empirical content of @cite{lu-chuang-baayen-2026} §5 is that
+    The empirical content of [lu-chuang-baayen-2026] §5 is that
     for Taiwan Mandarin the trained `‖production‖` and the centroid
     distance are both small enough that the contour bound is
     consistent with the reported "essentially identical" surface
@@ -274,7 +274,7 @@ of `tone_pattern` produces a substantial AIC reduction
 (−16,077.20 at 4.4, −10,541.88 at 3.4, −9,171.19 at 4.1, −7,895.57
 at 4.0; values from Table 4), exceeding the contribution of
 `word` alone. Replicates the headline sense-effect of
-@cite{chuang-bell-tseng-baayen-2026} on the broader 20-pattern dataset.
+[chuang-bell-tseng-baayen-2026] on the broader 20-pattern dataset.
 
 **DLM accuracy across three preprocessing methods** (paper §4.4):
 - Method I (per-token GAMMs): training 2.8% / test 1.4%
@@ -295,7 +295,7 @@ Euclidean distance. Boxplot of the three measures across methods:
 paper Fig. 10.
 
 **Comparison to lab speech** (paper §5, Fig. 11). The DLM-derived
-contours from spontaneous Taiwan Mandarin closely match @cite{xu-1997}'s
+contours from spontaneous Taiwan Mandarin closely match [xu-1997]'s
 lab-speech contours for most tone patterns (T4-T4, T2-T3, T2-T4 nearly
 identical); some patterns (T1-T1, T1-T2) differ visibly, attributed
 to dialect (Beijing vs. Taiwan Mandarin) and register (lab vs.
@@ -306,20 +306,20 @@ spontaneous) effects.
 - **Word-and-paradigm sufficiency** (paper §5): the DLM does not need
   abstract phonological units (syllable, segment, tone) to predict
   pitch realisation — meaning vectors → pitch vectors directly. This
-  aligns with @cite{heitmeier-chuang-baayen-2026}'s W&P framing of
+  aligns with [heitmeier-chuang-baayen-2026]'s W&P framing of
   the DLM and challenges item-and-arrangement architectures that
   presuppose stored sub-word inventories.
 - **Anti-arbitrariness of the sign** (paper §5): the linear meaning→form
   mapping generalises to held-out data, falsifying the axiom that
   the form–meaning relation is fundamentally arbitrary.
-- **Anti-dual-articulation** (paper §5, also @cite{chuang-bell-tseng-baayen-2026}):
+- **Anti-dual-articulation** (paper §5, also [chuang-bell-tseng-baayen-2026]):
   the same DLM architecture exhibits isomorphism between phonetic
   form-space and contextualised meaning-space, undermining the
   assumption that form and meaning are orthogonal grammar modules.
 - **Tone sandhi as kernel-emergence**: see §3 (`t3_sandhi_via_kernel`).
 - **Dialect variation as kernel variation**: see §4 (`dlm_dialect_flexibility`).
 - **Beyond Mandarin**: paper §5 cites preliminary results
-  (@cite{chuang-bell-tseng-baayen-2026} discussion) that English
+  ([chuang-bell-tseng-baayen-2026] discussion) that English
   two-syllable words also exhibit word-specific pitch components,
   suggesting form-meaning isomorphism is not a tone-language quirk. -/
 

@@ -4,7 +4,7 @@ import Linglib.Studies.TieuKrizChemla2019
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{zani-ciardelli-sanfelici-2026} — SDA from Acquisition
+# [zani-ciardelli-sanfelici-2026] — SDA from Acquisition
 
 Simplification of disjunctive antecedents: Insights from acquisition.
 *Semantics and Pragmatics* 19(3).
@@ -14,7 +14,7 @@ Simplification of disjunctive antecedents: Insights from acquisition.
 Experimental study of 148 Italian children (ages 4;1–9;11) and 28 adults
 on disjunctive antecedent conditionals (DACs), testing three readings:
 
-1. **SDA** (Simplification, @cite{mckay-vaninwagen-1977}): "if A or B, C" ≡ "(if A, C) and (if B, C)"
+1. **SDA** (Simplification, [mckay-vaninwagen-1977]): "if A or B, C" ≡ "(if A, C) and (if B, C)"
 2. **DCR** (Disjunctive Conditional Reading): "if A or B, C" ≡ "(if A, C) or (if B, C)"
 3. **AR** (Asymmetric Reading): only the more realistic disjunct matters
 
@@ -24,16 +24,16 @@ on disjunctive antecedent conditionals (DACs), testing three readings:
 2. AR is nearly absent (2.3% of children's responses)
 3. DCR decreases with age while SDA increases — a DCR→SDA developmental
    shift strictly parallel to the existential→universal shift in plural
-   definites (@cite{tieu-kriz-chemla-2019})
+   definites ([tieu-kriz-chemla-2019])
 4. No indicative/counterfactual difference (Mode non-significant, p = 0.869)
-5. SDA does not require equally realistic disjuncts (contra @cite{lewis-1973})
+5. SDA does not require equally realistic disjuncts (contra [lewis-1973])
 
 ## Theoretical Implications
 
 The DCR→SDA trajectory supports homogeneity-based accounts
-(@cite{santorio-2018}, @cite{cariani-goldstein-2020}) over:
-- **@cite{lewis-1973}**: predicts AR when disjuncts differ in realism; AR is absent
-- **@cite{bar-lev-fox-2020}**: predicts AR→SDA shift; observed shift is DCR→SDA
+([santorio-2018], [cariani-goldstein-2020]) over:
+- **[lewis-1973]**: predicts AR when disjuncts differ in realism; AR is absent
+- **[bar-lev-fox-2020]**: predicts AR→SDA shift; observed shift is DCR→SDA
 
 ## Connection to Linglib
 
@@ -41,12 +41,12 @@ The DCR→SDA trajectory supports homogeneity-based accounts
   `Studies/Santorio2018.lean`:
   `homogeneityEval`, `sdaEval`
 - The DCR (Disjunctive Conditional Reading) operator `dcrEval` is
-  defined in this file. **DCR is named here in @cite{zani-ciardelli-sanfelici-2026} (p. 10),
-  not in @cite{santorio-2018}** — Santorio's two readings are SDA (with
+  defined in this file. **DCR is named here in [zani-ciardelli-sanfelici-2026] (p. 10),
+  not in [santorio-2018]** — Santorio's two readings are SDA (with
   the DIST_π operator) and the asymmetric Lewis reading (without DIST_π,
   via default existential closure of the antecedent alternatives).
 - SDA/DCR correspond to conjunctive/disjunctive `ProjectionType`
-- Developmental trajectory parallels @cite{tieu-kriz-chemla-2019}'s
+- Developmental trajectory parallels [tieu-kriz-chemla-2019]'s
   existential→homogeneous shift
 -/
 
@@ -66,9 +66,9 @@ open Santorio2018
     over per-alternative conditionals — "if A or B, C" iff *some*
     simplification (if A, C) ∨ (if B, C) holds.
 
-    Named in @cite{zani-ciardelli-sanfelici-2026} (p. 10): "We will refer
+    Named in [zani-ciardelli-sanfelici-2026] (p. 10): "We will refer
     to this reading of DACs as the *disjunctive conditional reading*."
-    Lives in this file (rather than the @cite{santorio-2018} substrate)
+    Lives in this file (rather than the [santorio-2018] substrate)
     because DCR is not part of Santorio's framework. -/
 def dcrEval {W : Type*} [DecidableEq W] [Fintype W]
     (sim : SimilarityOrdering W)
@@ -114,7 +114,7 @@ theorem ar_entails_dcr : DACReading.ar.strength ≥ DACReading.dcr.strength := b
 /-- SDA = conjunctive projection over alternatives.
     DCR = disjunctive projection over alternatives.
     This is the same duality as quantifier strength in
-    @cite{ramotowska-marty-romoli-santorio-2025}. -/
+    [ramotowska-marty-romoli-santorio-2025]. -/
 def dacProjection : DACReading → ProjectionType
   | .sda => .conjunctive
   | .dcr => .disjunctive
@@ -395,7 +395,7 @@ open TieuKrizChemla2019
   (DefinitePluralReading DevelopmentalStage)
 
 /-- The developmental trajectory for DACs parallels the trajectory for
-    plural definites (@cite{tieu-kriz-chemla-2019}):
+    plural definites ([tieu-kriz-chemla-2019]):
 
     | Plural definites | DACs | Resolution |
     |------------------|------|------------|
@@ -479,18 +479,18 @@ theorem homogeneity_fits_trajectory :
 **Q1: At what age does SDA arise?**
 Already at age 4–5, SDA is the most frequent non-deviant reading.
 This parallels the early emergence of free-choice inferences
-(@cite{tieu-etal-2016}).
+([tieu-etal-2016]).
 
 **Q2: Do children shift from AR to SDA?**
 No. AR is nearly absent (2.3%). The two participants who consistently
 showed AR were aged 8;0 and 9;7 — not young children with
 undeveloped pragmatic skills. This is unexpected on
-@cite{bar-lev-fox-2020}'s account.
+[bar-lev-fox-2020]'s account.
 
 **Q3: Do children shift from DCR to SDA?**
 Yes. DCR is higher in younger children (~25% at ages 4–7) and decreases
 with age, while SDA increases. This DCR→SDA shift parallels the
-EXI→HOM shift in plural definites (@cite{tieu-kriz-chemla-2019}).
+EXI→HOM shift in plural definites ([tieu-kriz-chemla-2019]).
 
 **Q4: Does SDA arise earlier for indicatives than counterfactuals?**
 No. Mode has no significant effect (p = 0.869). Children show the
@@ -517,9 +517,9 @@ predicted **pre-SDA stage** as a stipulation. The two SDA-deriving
 mature accounts (homogeneity / exhaustification) themselves coincide on
 the SDA inference proper — verifiable at the Lean substrate level via:
 
-- @cite{santorio-2018}'s `Santorio2018.sdaEval` (per-alternative
+- [santorio-2018]'s `Santorio2018.sdaEval` (per-alternative
   homogeneity, `Studies/Santorio2018.lean`)
-- @cite{bar-lev-fox-2020}'s `BarLevFox2020.bar_lev_fox_sda` (Innocent
+- [bar-lev-fox-2020]'s `BarLevFox2020.bar_lev_fox_sda` (Innocent
   Inclusion derivation, `Studies/BarLevFox2020.lean`)
 
 The cross-mechanism agreement

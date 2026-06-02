@@ -5,8 +5,8 @@ import Linglib.Semantics.Tense.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
-# @cite{wurmbrand-2014}: Tense and aspect in English infinitives
-@cite{wurmbrand-2014}
+# [wurmbrand-2014]: Tense and aspect in English infinitives
+[wurmbrand-2014]
 
 Wurmbrand (Linguistic Inquiry 45(3), 2014) classifies English infinitival
 complements into three types based on tense-aspect behavior:

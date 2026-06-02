@@ -43,7 +43,7 @@ open Features.ChangeOfState (CoSType)
 
 /-- Mandarin phase complements: a closed class of grammaticalized V2
     morphemes that fix the change-of-state semantics of the result.
-    @cite{tay-2024} discusses these as a typologically distinctive
+    [tay-2024] discusses these as a typologically distinctive
     Mandarin device. -/
 inductive PhaseComplement where
   | dao
@@ -62,7 +62,7 @@ inductive PhaseComplement where
     closest fit in the current taxonomy.
 
     `dao → inception` and `hao → inception` are both blunt fits:
-    @cite{sybesma-2017} distinguishes -dao 到 (telos-attainment, "reach
+    [sybesma-2017] distinguishes -dao 到 (telos-attainment, "reach
     a goal") from -hao 好 (norm-attainment, "achieve a satisfactory
     state") and from -diao 掉 (patient-removal). All three are kinds
     of *completion* / event-endpoint, not *inception*; the taxonomy
@@ -82,7 +82,7 @@ inductive PhaseComplement where
 
     -- UNVERIFIED: Tay 2024's exact taxonomy of wan; the cessation
     classification is the project's best fit, not a literal citation.
-    -- UNVERIFIED: dao/hao both → .inception; per @cite{sybesma-2017}
+    -- UNVERIFIED: dao/hao both → .inception; per [sybesma-2017]
     these are completion/attainment, not inception. -/
 def PhaseComplement.cosType : PhaseComplement → CoSType
   | .dao  => .inception

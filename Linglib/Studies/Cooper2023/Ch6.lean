@@ -3,10 +3,10 @@ import Linglib.Semantics.Modality.Kratzer.Operators
 
 /-!
 # Cooper (2023) Ch. 6 — Modality and Intensionality without Possible Worlds
-@cite{cooper-2023}
-@cite{austin-1961} @cite{barwise-1989} @cite{kratzer-1991}
+[cooper-2023]
+[austin-1961] [barwise-1989] [kratzer-1991]
 
-@cite{cooper-2023} Chapter 6 extends the modal type system framework from Ch1
+[cooper-2023] Chapter 6 extends the modal type system framework from Ch1
 with Prop-valued modal systems, topoi (replacing accessibility relations),
 Box/Diamond type constructors, Austinian/Russellian propositions,
 believe/know via long-term memory, points of view, and intensional
@@ -614,14 +614,14 @@ Propositions as types (not as sets of possible worlds). Two notions:
 - **Austinian proposition**: a pair ⟨s, T⟩ where s is a situation and T is a type;
   true iff s : T
 
-§6.5, following @cite{austin-1961} and @cite{barwise-1989}. -/
+§6.5, following [austin-1961] and [barwise-1989]. -/
 
 /-- A Russellian proposition: identified with its type.
 True iff the type is inhabited. §6.5. -/
 abbrev RussellianProp := Type
 
 /-- An Austinian proposition: a situation paired with a classifying type.
-§6.5, following @cite{barwise-perry-1983} and @cite{austin-1961}.
+§6.5, following [barwise-perry-1983] and [austin-1961].
 
 True iff the situation is of the type. The situation and type are
 independent — the proposition *claims* that `sit` is of the situation

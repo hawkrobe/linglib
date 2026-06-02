@@ -4,10 +4,10 @@ import Linglib.Fragments.English.Binominals
 
 /-!
 # ten Wolde (2023): The English Binominal Noun Phrase
-@cite{ten-wolde-2023}
+[ten-wolde-2023]
 
 End-to-end study file connecting the core taxonomy, semantic theory,
-and English fragment data to the empirical claims in @cite{ten-wolde-2023}.
+and English fragment data to the empirical claims in [ten-wolde-2023].
 
 ## Key claims formalized
 
@@ -155,7 +155,7 @@ theorem inanimate_class_predicts :
 
 /-! ### The main grammaticalization path
 
-@cite{ten-wolde-2023} Ch. 8: the main evaluative path is
+[ten-wolde-2023] Ch. 8: the main evaluative path is
 N+PP → Head-Classifier → EBNP → EM → BI, skipping pseudo-partitive.
 Animate and abstract nouns follow this path; inanimate nouns may
 develop pseudo-partitive as an intermediate stage. -/

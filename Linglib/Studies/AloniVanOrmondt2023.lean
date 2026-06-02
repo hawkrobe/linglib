@@ -4,9 +4,9 @@ import Linglib.Phenomena.FreeChoice.Atoms
 import Linglib.Phenomena.FreeChoice.Worlds
 
 /-!
-# @cite{aloni-vanormondt-2023}: QBSML applied to modified numerals + split disjunction
+# [aloni-vanormondt-2023]: QBSML applied to modified numerals + split disjunction
 
-@cite{aloni-vanormondt-2023} @cite{aloni-2022}
+[aloni-vanormondt-2023] [aloni-2022]
 
 Aloni & van Ormondt 2023 introduces QBSML, the first-order extension of
 Aloni 2022's BSML, and applies it to a battery of inferences arising from
@@ -23,7 +23,7 @@ The framework's central facts (paper §5):
 | 6   | `[∀x(Px ∨ Qx)]⁺ ⊨_epi ∃x◇Px ∧ ∃x◇Qx` (distribution° on epistemic models) |
 | 7   | `[□(Pa ∨ Pb)]⁺ ⊨ ◇Pa ∧ ◇Pb` (□-free choice) |
 | 8   | `[◇(Pa ∨ Pb)]⁺ ⊨ ◇Pa ∧ ◇Pb` (◇-free choice; ≡ Aloni 2022 NS FC at first-order) |
-| 9   | `[∀x◇(Px ∨ Qx)]⁺ ⊨ ∀x◇Px ∧ ∀x◇Qx` (universal FC; @cite{chemla-2009}) |
+| 9   | `[∀x◇(Px ∨ Qx)]⁺ ⊨ ∀x◇Px ∧ ∀x◇Qx` (universal FC; [chemla-2009]) |
 | 10  | `[¬(Pa ∨ Pb)]⁺ ⊨ ¬Pa ∧ ¬Pb` (negation behaviour; ignorance disappears) |
 
 ## What this file proves

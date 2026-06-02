@@ -3,7 +3,7 @@ import Linglib.Semantics.Quantification.Lexicon
 
 /-!
 # French Determiners and Quantifiers
-@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}
+[jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
 
 A small lexicon of French determiners and quantifiers, structured to
 parallel `English.Determiners` so that the two can be
@@ -25,7 +25,7 @@ namespace French.Determiners
 open Semantics.Quantification.Lexicon
   (QuantifierEntry QForce Monotonicity Strength)
 
-/-- *tous* — universal, plural. The French universal of @cite{chemla-2007}'s
+/-- *tous* — universal, plural. The French universal of [chemla-2007]'s
 puzzle: anti-dual despite the lack of any French *both*. The paper's
 analysis: anti-duality is implicated via competition with the indirect
 alternative *les deux* (`les_deux`). -/

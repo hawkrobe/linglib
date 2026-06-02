@@ -2,7 +2,7 @@ import Linglib.Semantics.Exhaustification.InnocentExclusion
 import Mathlib.Tactic.DeriveFintype
 /-!
 # Chow & Erlewine 2022: Restrictions on the Position of *exh*
-@cite{chow-erlewine-2022}
+[chow-erlewine-2022]
 
 Keng Ji Chow & Michael Yoshitaka Erlewine.
 Restrictions on the position of *exh*. Proceedings of SALT 32: 522--542.
@@ -18,7 +18,7 @@ Restrictions on the position of *exh*. Proceedings of SALT 32: 522--542.
    *exh* must adjoin to the lowest position where it is not vacuous.
 
 3. **Three-way lexical classification** of SI triggers by `[uexh]` feature
-   (§3.3, (30)), following @cite{chierchia-2013}'s feature-checking approach:
+   (§3.3, (30)), following [chierchia-2013]'s feature-checking approach:
    - `[uexh*]` (strong): *or*, bare numerals, *sm*, *and*, *all*
    - `[uexh]` (weak): stressed *SOME*
    - `[—]` (none): scalar adjectives
@@ -31,7 +31,7 @@ Restrictions on the position of *exh*. Proceedings of SALT 32: 522--542.
 
 Adjunction sites are derived from tree structure via `OpTree.inScopeOf`,
 not stipulated as an enum. The tree determines whether *exh* must be below
-a presupposition trigger (like *also*), and @cite{fox-2007}'s `innocent`
+a presupposition trigger (like *also*), and [fox-2007]'s `innocent`
 excluder verifies the resulting semantic predictions on finite models.
 -/
 
@@ -73,7 +73,7 @@ def OpTree.inScopeOf : OpTree → (opLabel target : String) → Bool
 -- § 2. ExhFeature: Three-Way Classification of SI Triggers
 -- ============================================================================
 
-/-- Syntactic feature governing *exh* placement (@cite{chow-erlewine-2022} §3.3).
+/-- Syntactic feature governing *exh* placement ([chow-erlewine-2022] §3.3).
 
 SI triggers bear one of three features constraining where their associated
 *exh* may adjoin. This is orthogonal to `SITrigger` (which governs *when*

@@ -3,7 +3,7 @@ import Linglib.Typology.Negation
 
 /-!
 # Japanese Negation Fragment
-@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
+[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
 
 Japanese expresses standard negation with the suffix *-nai* on the verb
 stem. This is **asymmetric** negation of type A/Fin+A/Cat: the negative

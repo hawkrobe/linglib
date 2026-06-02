@@ -10,8 +10,8 @@ import Mathlib.Data.List.Infix
 /-!
 # Subregular Languages — Boundaries and `k`-Factors
 
-Common infrastructure for the subregular hierarchy @cite{lambert-2022}
-@cite{heinz-rogers-2010} @cite{rogers-pullum-2011}: boundary augmentation
+Common infrastructure for the subregular hierarchy [lambert-2022]
+[heinz-rogers-2010] [rogers-pullum-2011]: boundary augmentation
 of strings, contiguous `k`-factors with boundary padding, and the
 factor-membership predicate that all of `StrictlyLocal`, `LocallyTestable`,
 and their tier-relativized variants build on.

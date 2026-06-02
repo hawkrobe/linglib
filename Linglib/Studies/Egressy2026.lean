@@ -7,10 +7,10 @@ import Linglib.Fragments.Hungarian.FunctionWords
 import Linglib.Fragments.Hungarian.TemporalDeictic
 
 /-!
-# @cite{egressy-2026}: Size-Sensitive Sequence of Tense in Hungarian
-@cite{egressy-2026}
+# [egressy-2026]: Size-Sensitive Sequence of Tense in Hungarian
+[egressy-2026]
 
-Empirical data from @cite{egressy-2026}, who shows that Hungarian is a
+Empirical data from [egressy-2026], who shows that Hungarian is a
 partial SOT language: the simultaneous reading of past-under-past is
 available in structurally small complements (TP, without *hogy* 'that')
 but blocked in full CP complements (with *hogy*).
@@ -32,7 +32,7 @@ but blocked in full CP complements (with *hogy*).
 ## Data Organization
 
 Theory-neutral empirical judgments, followed by bridge theorems connecting
-these to @cite{zeijlstra-2012}'s Agree-based SOT theory: fragment grounding,
+these to [zeijlstra-2012]'s Agree-based SOT theory: fragment grounding,
 complement-size mapping, per-datum predictions, Williams Cycle classification,
 and temporal adverb diagnostics.
 
@@ -104,7 +104,7 @@ structure SOTJudgment where
 
 /-! ### CP complements (with *hogy*): shifted only -/
 
-/-- @cite{egressy-2026}, ex. (9): *Ági tud-t-a, hogy Mari beteg vol-t.*
+/-- [egressy-2026], ex. (9): *Ági tud-t-a, hogy Mari beteg vol-t.*
     'Ági know-PST-3SG that Mari sick be-PST'
     → Shifted only: Mari was sick before Ági's knowing -/
 def pastUnderPast_hogyCP_tudta : SOTJudgment where
@@ -116,7 +116,7 @@ def pastUnderPast_hogyCP_tudta : SOTJudgment where
   simultaneousGloss := none
   simultaneousAvailable := false
 
-/-- @cite{egressy-2026}, ex. (11a): *Ági mond-t-a, hogy Mari beteg vol-t.*
+/-- [egressy-2026], ex. (11a): *Ági mond-t-a, hogy Mari beteg vol-t.*
     'Ági say-PST-3SG that Mari sick be-PST'
     → Shifted only in full CP -/
 def pastUnderPast_hogyCP_mondta : SOTJudgment where
@@ -128,7 +128,7 @@ def pastUnderPast_hogyCP_mondta : SOTJudgment where
   simultaneousGloss := none
   simultaneousAvailable := false
 
-/-- @cite{egressy-2026}, ex. (11b): *Ági hit-t-e, hogy Mari beteg vol-t.*
+/-- [egressy-2026], ex. (11b): *Ági hit-t-e, hogy Mari beteg vol-t.*
     'Ági believe-PST-3SG that Mari sick be-PST'
     → Shifted only in full CP -/
 def pastUnderPast_hogyCP_hitte : SOTJudgment where
@@ -142,7 +142,7 @@ def pastUnderPast_hogyCP_hitte : SOTJudgment where
 
 /-! ### Bare TP complements (without *hogy*): both readings -/
 
-/-- @cite{egressy-2026}, ex. (10): *Ági tud-t-a Mari-t beteg-nek.*
+/-- [egressy-2026], ex. (10): *Ági tud-t-a Mari-t beteg-nek.*
     'Ági know-PST-3SG Mari-ACC sick-DAT'
     → Both readings: shifted and simultaneous -/
 def pastUnderPast_bareTP_tudta : SOTJudgment where
@@ -226,7 +226,7 @@ open Hungarian.Predicates
 open Hungarian.FunctionWords
 open Hungarian.TemporalDeictic
 
-/-! ### Size-sensitive SOT predictions (@cite{egressy-2026})
+/-! ### Size-sensitive SOT predictions ([egressy-2026])
 
 The available readings factor into two parts: **which complement boundaries a
 language leaves transparent** to upward tense Agree (`stageTransparent` — the
@@ -237,7 +237,7 @@ the back-shifted reading). The binary `SOTParameter` is the `noSOT`/`fullSOT`
 special case (`readingsByStage_ofSOTParameter`); `partialSOT` is the genuinely
 size-sensitive Hungarian profile.
 
-Note: @cite{zeijlstra-2012} (§5.3) takes SOT to cross a CP freely — unlike
+Note: [zeijlstra-2012] (§5.3) takes SOT to cross a CP freely — unlike
 Negative Concord — because the embedding C bears `[uT]`. Egressy's CP-opacity is
 therefore a *departure* from Zeijlstra's upward-Agree system, not a consequence
 of it. The "Williams Cycle" framing (`WilliamsCycleStage`, §E) is Egressy's; its
@@ -246,7 +246,7 @@ diachronic interpretation is **UNVERIFIED** against the paper text here. -/
 /-- Which complement sizes a stage leaves transparent to upward tense Agree —
     the only language-varying piece, and the content `WilliamsCycleStage`
     classifies. `noSOT` (Japanese): nothing transparent; `fullSOT` (English):
-    everything, including CP (SOT crosses CP, @cite{zeijlstra-2012} §5.3);
+    everything, including CP (SOT crosses CP, [zeijlstra-2012] §5.3);
     `partialSOT` (Hungarian): only sub-CP, read off `transparentToTenseAgree`. -/
 def stageTransparent : WilliamsCycleStage → ComplementSize → Bool
   | .noSOT, _ => false
@@ -457,7 +457,7 @@ theorem akkor_shifts :
 -- § G. Definite Conjugation as Clause-Size Diagnostic
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{egressy-2026} uses the definite/indefinite conjugation split
+/-! [egressy-2026] uses the definite/indefinite conjugation split
     as independent evidence for complement size. *hogy*-CP triggers
     definite conjugation; bare complements may allow indefinite.
 

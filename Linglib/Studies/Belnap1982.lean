@@ -2,10 +2,10 @@ import Linglib.Semantics.Questions.Partition.Constructors
 import Linglib.Studies.GroenendijkStokhof1984
 
 /-!
-# @cite{belnap-1982}: Approaches to the semantics of questions in natural language
+# [belnap-1982]: Approaches to the semantics of questions in natural language
 
 Single-paper formalisation of the answerhood theorems from
-@cite{belnap-1982} ("Approaches to the semantics of questions in
+[belnap-1982] ("Approaches to the semantics of questions in
 natural language", in *Issues in the Logic of Questions*), formulated
 over the `GSQuestion W` substrate.
 
@@ -13,7 +13,7 @@ over the `GSQuestion W` substrate.
 
 * **Unique Answer Fallacy** (§2.3): each question does **not** have a
   unique complete true answer — `ANS(Q, w)` varies with the index `w`.
-  Direct restatement of @cite{groenendijk-stokhof-1984}'s
+  Direct restatement of [groenendijk-stokhof-1984]'s
   `ans_situation_dependent` under Belnap's diagnostic name.
 * **Distributivity Principle** (§2.4): knowing the answer to a
   wh-question is equivalent to knowing each atomic fact (for each
@@ -31,7 +31,7 @@ open GroenendijkStokhof1984
 
 /-! ### Unique Answer Fallacy (§2.3) -/
 
-/-- @cite{belnap-1982}'s **Unique Answer Fallacy**: it is a fallacy to
+/-- [belnap-1982]'s **Unique Answer Fallacy**: it is a fallacy to
     assume that each question has a unique complete true answer. In
     the G&S framework, `ans q w` varies with the index `w` — the same
     question Q yields different complete true answers at different
@@ -43,7 +43,7 @@ theorem unique_answer_fallacy {W : Type*} (q : GSQuestion W) (w v : W)
 
 /-! ### Distributivity Principle (§2.4) -/
 
-/-- @cite{belnap-1982}'s **Distributivity Principle**: knowing the
+/-- [belnap-1982]'s **Distributivity Principle**: knowing the
     answer to a wh-question is equivalent to knowing, for each
     individual, whether the predicate holds.
 
@@ -78,7 +78,7 @@ def isPartialAnswer {W : Type*} [DecidableEq W] (p : W → Bool) (q : GSQuestion
     worlds.any λ w => p w && decide (w ∈ cell)
   compatible.length > 1 && compatible.length < cells.length
 
-/-- @cite{belnap-1982}'s **Distributivity Test** (§2.4, p. 177): a
+/-- [belnap-1982]'s **Distributivity Test** (§2.4, p. 177): a
     negative criterion for ruling out candidate answers. For any
     proposition `P` and indirect question `IQ`, if the following is
     consistent:
@@ -115,7 +115,7 @@ theorem passes_test_implies_answer {W : Type*} (p : W → Bool) (q : GSQuestion 
 
 /-- Concrete demonstration of the Distributivity Test.
 
-    @cite{belnap-1982} §2.4, p. 177: "Peter knows that the person who
+    [belnap-1982] §2.4, p. 177: "Peter knows that the person who
     kicked Sam is John, but Peter doesn't know who kicked Sam." This
     is inconsistent — so *the person who kicked Sam is John* IS an
     answer to *who kicked Sam*.

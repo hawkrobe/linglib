@@ -2,7 +2,7 @@ import Linglib.Morphology.MorphProfile
 
 /-!
 # Swahili Morphological Profile
-@cite{wals-2013} @cite{bickel-nichols-2001}
+[wals-2013] [bickel-nichols-2001]
 
 WALS-derived profile for Swahili (ISO `swh`). B&N 2001 places Swahili in the
 "agglutinating" cell (concatenative + nonflexive + separative); Swahili is

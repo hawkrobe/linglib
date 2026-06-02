@@ -4,7 +4,7 @@ import Mathlib.Tactic.NormNum
 
 /-!
 # Probability Distributions
-@cite{goodman-stuhlmuller-2013} @cite{herbstritt-franke-2019}
+[goodman-stuhlmuller-2013] [herbstritt-franke-2019]
 
 General-purpose discrete probability distributions used across RSA models.
 
@@ -18,8 +18,8 @@ a finite population. It is the observation model in urn-based RSA scenarios:
 where N = population size, K = success states, n = draws, k = observed successes.
 
 Used by:
-- @cite{goodman-stuhlmuller-2013}: speaker observation of 3 objects (N=3)
-- @cite{herbstritt-franke-2019}: urn-based probability expressions (N=10)
+- [goodman-stuhlmuller-2013]: speaker observation of 3 objects (N=3)
+- [herbstritt-franke-2019]: urn-based probability expressions (N=10)
 
 The general formula replaces paper-specific match tables (e.g., `obsPriorTable`
 in `GoodmanStuhlmuller2013PMF.lean`), enabling reuse across RSA models with
@@ -61,7 +61,7 @@ theorem hypergeometric_nonneg (N K n k : ℕ) :
 -- ============================================================================
 
 /-- Drawing 1 success from 3 with 2 successes in 1 draw: C(2,1)·C(1,0)/C(3,1) = 2/3.
-    Matches `obsPriorTable .a1 .s2 .o1a1` in @cite{goodman-stuhlmuller-2013}. -/
+    Matches `obsPriorTable .a1 .s2 .o1a1` in [goodman-stuhlmuller-2013]. -/
 example : hypergeometric 3 2 1 1 = 2/3 := by unfold hypergeometric; simp [Nat.choose]
 
 /-- Drawing 0 successes from 3 with 1 success in 2 draws: C(1,0)·C(2,2)/C(3,2) = 1/3.

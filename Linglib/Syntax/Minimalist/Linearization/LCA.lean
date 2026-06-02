@@ -3,9 +3,9 @@ import Linglib.Syntax.Minimalist.HeadFunction
 
 /-!
 # Linear Correspondence Axiom
-@cite{chomsky-1995} @cite{kayne-1994}
+[chomsky-1995] [kayne-1994]
 
-Formalizes the core of @cite{kayne-1994}'s *The Antisymmetry of Syntax*: the
+Formalizes the core of [kayne-1994]'s *The Antisymmetry of Syntax*: the
 Linear Correspondence Axiom (LCA), which derives linear (temporal)
 precedence of terminal elements from asymmetric c-command in the
 hierarchical structure.

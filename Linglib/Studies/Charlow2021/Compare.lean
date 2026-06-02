@@ -6,7 +6,7 @@ import Linglib.Studies.Charlow2021.Data
 
 /-!
 # Three-Way Comparison: Cumulative Readings
-@cite{charlow-2021}
+[charlow-2021]
 
 Compares three approaches to deriving cumulative readings of modified numerals:
 

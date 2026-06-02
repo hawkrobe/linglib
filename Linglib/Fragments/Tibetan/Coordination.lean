@@ -2,11 +2,11 @@ import Linglib.Features.Coordination
 
 /-!
 # Classical Tibetan Coordination Morphemes
-@cite{beyer-1992} @cite{haspelmath-2007}
+[beyer-1992] [haspelmath-2007]
 
 Classical Tibetan uses *-daŋ* postpositively on the first coordinand
 (monosyndetic A-co B), with diachronic source from the comitative marker
-'with'. @cite{haspelmath-2007} (21) cites @cite{beyer-1992}:240.
+'with'. [haspelmath-2007] (21) cites [beyer-1992]:240.
 
 - *-daŋ* — J, bound, postpositive on first coordinand
 

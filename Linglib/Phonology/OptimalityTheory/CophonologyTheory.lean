@@ -3,7 +3,7 @@ import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # Cophonology Theory
-@cite{inkelas-zoll-2007} @cite{sande-jenks-2017} @cite{rolle-2018}
+[inkelas-zoll-2007] [sande-jenks-2017] [rolle-2018]
 
 Cophonology Theory (CPT) proposes that individual morphemes can trigger
 morpheme-specific constraint rankings — **cophonologies** — that override
@@ -13,9 +13,9 @@ default ranking.
 
 ## Triggers: VIs, not constructions
 
-In classic CPT (@cite{inkelas-zoll-2007}), cophonologies are properties
-of **constructions** (e.g., compounding, reduplication). @cite{sande-jenks-2017}
-and @cite{rolle-2018} argue that the trigger should instead be the individual
+In classic CPT ([inkelas-zoll-2007]), cophonologies are properties
+of **constructions** (e.g., compounding, reduplication). [sande-jenks-2017]
+and [rolle-2018] argue that the trigger should instead be the individual
 **Vocabulary Item** inserted at a terminal node: the R component of a VI
 specifies a constraint subranking that applies when that VI wins insertion.
 
@@ -35,7 +35,7 @@ vocabulary insertion (`Morphology.DM.VI`) to OT constraint evaluation
 
 ## Phasal extension: see `CophonologyByPhrase.lean`
 
-@cite{sande-jenks-inkelas-2020} extend the trigger from individual
+[sande-jenks-inkelas-2020] extend the trigger from individual
 Vocabulary Items to spell-out *phases* — the cophonology can be
 associated with a vP, CP, or DP phase head, activating over the entire
 phase complement at spell-out. The substrate for that extension lives
@@ -57,7 +57,7 @@ open Core.Constraint.Evaluation (Tableau)
 -- ============================================================================
 
 /-- A Vocabulary Item enriched with a morpheme-specific constraint
-    subranking (the **R component** of @cite{rolle-2018} Ch 4).
+    subranking (the **R component** of [rolle-2018] Ch 4).
 
     Extends `VocabItem` with all its fields (exponent, contextMatch,
     rootMatch, specificity) plus:
@@ -138,7 +138,7 @@ theorem mergeRanking_preserves_default {C : Type}
     trigger, for instance, has a subranking that promotes a faithfulness
     constraint (basemap correspondence) above default markedness
     constraints, forcing the output to match the basemap rather than
-    preserving the target's underlying tones (@cite{rolle-2018} Ch 5). -/
+    preserving the target's underlying tones ([rolle-2018] Ch 5). -/
 def cophonologicalEval {C : Type} [DecidableEq C]
     (defaultRanking : List (NamedConstraint C))
     (subranking : List (NamedConstraint C))
@@ -165,7 +165,7 @@ theorem cophonologicalEval_empty_sub {C : Type} [DecidableEq C]
     imposes morpheme-specific constraint effects on the phonological
     evaluation.
 
-    In @cite{rolle-2018}'s analysis of grammatical tone, dominant GT
+    In [rolle-2018]'s analysis of grammatical tone, dominant GT
     triggers have a subranking that promotes basemap faithfulness,
     while non-dominant triggers have an empty subranking (relying on
     the default ranking). -/

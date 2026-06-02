@@ -4,7 +4,7 @@ import Linglib.Features.PropertyDomain
 /-!
 # Search Efficiency in Reference Production
 
-@cite{giles-etal-2026}
+[giles-etal-2026]
 
 
 The search efficiency view of overinformativeness: speakers produce
@@ -20,7 +20,7 @@ Search efficiency depends on three perceptual properties of the display:
 1. **Discriminability**: How easy is it to tell the target's attribute
    value apart from distractors' values? High discriminability → easy
    search along that attribute. Operationalised via psychophysical
-   staircases in @cite{giles-etal-2026}.
+   staircases in [giles-etal-2026].
 
 2. **Contextual distinctiveness**: What fraction of items in the display
    share the target's attribute value? When the target is unique on an
@@ -32,7 +32,7 @@ Search efficiency depends on three perceptual properties of the display:
 
 ## Connection to RSA
 
-In the cs-RSA framework (@cite{degen-etal-2020}), search efficiency
+In the cs-RSA framework ([degen-etal-2020]), search efficiency
 enters through the noise parameters. High discriminability corresponds
 to a large noise gap (match − mismatch), which makes the redundant
 modifier informative to L0 even when it doesn't change the Boolean
@@ -55,7 +55,7 @@ namespace Phenomena.Reference.SearchEfficiency
     These three factors jointly determine the listener's search cost and
     the potential benefit of a redundant modifier.
 
-    @cite{giles-etal-2026} Exp 1 manipulates discriminability ×
+    [giles-etal-2026] Exp 1 manipulates discriminability ×
     sufficiency; Exp 2 compares attribute types (colour vs orientation)
     across display density and contextual distinctiveness levels. -/
 structure SearchContext where
@@ -89,7 +89,7 @@ inductive Sufficiency where
   | redundant
   deriving Repr, DecidableEq
 
-/-- The experimental conditions from @cite{giles-etal-2026} Exp 1,
+/-- The experimental conditions from [giles-etal-2026] Exp 1,
     defined by the sufficiency × discriminability interaction. -/
 inductive DisplayType where
   /-- Sufficient attribute: high discriminability,

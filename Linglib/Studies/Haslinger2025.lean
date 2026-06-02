@@ -1,11 +1,11 @@
 import Linglib.Core.Scales.Roundness
 
 /-!
-# @cite{haslinger-2025-diss}: Imprecision and homogeneity
+# [haslinger-2025-diss]: Imprecision and homogeneity
 
 Empirical data from Nina Haslinger (2025), "Pragmatic constraints on imprecision
 and homogeneity," Doctoral Dissertation, Georg-August-Universität Göttingen
-(doi:10.53846/goediss-11395). The Sinn und Bedeutung 28 paper @cite{haslinger-2024}
+(doi:10.53846/goediss-11395). The Sinn und Bedeutung 28 paper [haslinger-2024]
 is the published version of dissertation chapters 3 and 5.
 
 ## Two constraints
@@ -64,7 +64,7 @@ structure NumeralImprecisionDatum where
   deriving Repr
 
 /--
-The cars scenario from @cite{haslinger-2025-diss} Ch 2.1.2 ex. (19) `CARS(EXACT)`
+The cars scenario from [haslinger-2025-diss] Ch 2.1.2 ex. (19) `CARS(EXACT)`
 and ex. (20) `CARS(INEXACT)`, pp. 71-72.
 -/
 def carsExact : NumeralImprecisionDatum :=
@@ -133,7 +133,7 @@ The game show scenario tests for homogeneity gaps.
 Context makes both exact and inexact readings relevant.
 If numerals had gaps like plurals, neither sentence should be clearly true.
 
-Source: @cite{haslinger-2025-diss} Ch 2.4.1 ex. (164), p. 72.
+Source: [haslinger-2025-diss] Ch 2.4.1 ex. (164), p. 72.
 -/
 structure GameShowDatum where
   /-- The sentence -/
@@ -178,7 +178,7 @@ def gameShowNegative : GameShowDatum :=
 /--
 "Exactly" removes imprecision, parallel to "all" for plurals.
 
-Source: @cite{haslinger-2025-diss} Ch 4.2.1 ex. (4) and (9), pp. 174-176.
+Source: [haslinger-2025-diss] Ch 4.2.1 ex. (4) and (9), pp. 174-176.
 -/
 structure ExactlyModifierDatum where
   /-- Bare numeral sentence -/
@@ -210,7 +210,7 @@ def exactlyRemovesImprecision : ExactlyModifierDatum :=
 `100` has both exact and inexact readings; `approximately 100` has only
 inexact, so the set of available construals shrinks.
 
-Source: @cite{haslinger-2025-diss} §4.2.1 ex. (4) and (10), p. 174-176;
+Source: [haslinger-2025-diss] §4.2.1 ex. (4) and (10), p. 174-176;
 non-round case developed in §4.2.2 ex. (25)-(26).
 -/
 structure ApproximatelyDatum where
@@ -322,7 +322,7 @@ Plural definites: "the doors" vs "all the doors". The German parallel
 (`die Türen` / `alle Türen`) holds, and §3.2.2 (Table 3.1) surveys 12+
 language families showing the absence of the inverse pattern.
 
-Source: @cite{haslinger-2025-diss} Ch 3.1.1 ex. (3), p. 86; gap-removal
+Source: [haslinger-2025-diss] Ch 3.1.1 ex. (3), p. 86; gap-removal
 contrast ex. (4).
 -/
 def doorsAllDoors : ComplexityPrecisionPair :=
@@ -338,7 +338,7 @@ def doorsAllDoors : ComplexityPrecisionPair :=
 /--
 Conjunctions: "Ann and Bert" vs "both Ann and Bert"
 
-Source: @cite{haslinger-2025-diss} Ch 3.3 ex. (48), p. 104; further developed
+Source: [haslinger-2025-diss] Ch 3.3 ex. (48), p. 104; further developed
 in §3.5.1 (p. 126).
 -/
 def andBoth : ComplexityPrecisionPair :=
@@ -354,7 +354,7 @@ def andBoth : ComplexityPrecisionPair :=
 /--
 Numerals: "100 cars" vs "exactly 100 cars"
 
-Source: @cite{haslinger-2025-diss} Ch 4.2 ex. (4), p. 174 + ex. (9), p. 176
+Source: [haslinger-2025-diss] Ch 4.2 ex. (4), p. 174 + ex. (9), p. 176
 (`CARS(EXACT)` scenario).
 -/
 def numeralExactly : ComplexityPrecisionPair :=
@@ -370,7 +370,7 @@ def numeralExactly : ComplexityPrecisionPair :=
 /--
 Summative predicates: "blue" vs "completely blue"
 
-Source: @cite{haslinger-2025-diss} on summative predicates.
+Source: [haslinger-2025-diss] on summative predicates.
 -/
 def blueCompletely : ComplexityPrecisionPair :=
   { lessComplexExpr := "The flag is blue."
@@ -410,7 +410,7 @@ The alternatives of a numeral n include nearby numerals.
 If n contradicts m on precise reading, imprecise construal can't
 be compatible with m.
 
-Source: @cite{haslinger-2025-diss} Chapter 6, @cite{sauerland-stateva-2007}
+Source: [haslinger-2025-diss] Chapter 6, [sauerland-stateva-2007]
 -/
 structure NumeralBlockingDatum where
   /-- The numeral -/
@@ -455,7 +455,7 @@ The asymmetry depends on conventionalized alternative sets.
 Round numbers have "coarse" alternative sets.
 Non-round numbers have "fine" alternative sets that include round neighbors.
 
-Source: @cite{haslinger-2025-diss} Chapter 6
+Source: [haslinger-2025-diss] Chapter 6
 -/
 structure AlternativeSetAsymmetry where
   /-- Round numeral -/
@@ -486,7 +486,7 @@ Conjunctions have conjuncts as alternatives.
 "A and B are P" entails "A is P" and "B is P".
 Non-maximal reading would fail to preserve these entailments.
 
-Source: @cite{haslinger-2025-diss} Chapter 7
+Source: [haslinger-2025-diss] Chapter 7
 -/
 structure ConjunctionBlockingDatum where
   /-- The conjunction sentence -/
@@ -532,7 +532,7 @@ Numeral-modified definites: "the four doors"
 These have homogeneity gaps but resist non-maximality.
 The structural alternative is the numeral *indefinite* (not sub-numerals).
 
-Source: @cite{haslinger-2025-diss} §7.2.3, eq. (11)-(16), p. 305; ftn. 7 p. 309
+Source: [haslinger-2025-diss] §7.2.3, eq. (11)-(16), p. 305; ftn. 7 p. 309
 on the numeral indefinite's lack of homogeneity gap.
 -/
 structure NumeralDefiniteBlockingDatum where
@@ -569,7 +569,7 @@ even with conjunctions.
 
 This is an exception that inference preservation needs to handle.
 
-Source: @cite{haslinger-2025-diss} Chapter 7
+Source: [haslinger-2025-diss] Chapter 7
 -/
 structure CollectiveCumulativeException where
   /-- The sentence -/

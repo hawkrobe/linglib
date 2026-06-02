@@ -3,7 +3,7 @@ import Mathlib.Tactic.Order
 
 /-!
 # Allen's Interval Relations
-@cite{allen-1983}
+[allen-1983]
 
 The thirteen jointly-exhaustive, pairwise-disjoint relations that can hold
 between two intervals on a linear order. Originally introduced by James F.
@@ -31,7 +31,7 @@ thirteen atomic relations.
 For any two intervals on a linear order, at least one atomic relation
 holds (`holds_exists`). When both intervals are non-degenerate
 (`start < finish`), **exactly** one holds (`holds_unique`). The
-non-degeneracy hypothesis matches @cite{allen-1983}'s original setup: on
+non-degeneracy hypothesis matches [allen-1983]'s original setup: on
 point intervals at the same location, `meets`, `metBy`, and `equal` all
 hold simultaneously, so uniqueness genuinely fails on degenerate inputs.
 Both proofs use mathlib's `order` decision procedure for `LinearOrder`.
@@ -58,7 +58,7 @@ namespace Core.Time
 -- ════════════════════════════════════════════════════
 
 /-- The thirteen atomic Allen relations between two intervals on a linear
-    order (@cite{allen-1983}). Naming follows Allen 1983; each atom has an
+    order ([allen-1983]). Naming follows Allen 1983; each atom has an
     inverse obtained by swapping the two interval arguments — see
     `AllenRelation.inverse`. -/
 inductive AllenRelation where
@@ -138,7 +138,7 @@ namespace AllenRelation
 
 /-- `r.holds i j` is true iff atomic Allen relation `r` is the one that
     holds between intervals `i` and `j`. The defining inequalities follow
-    @cite{allen-1983}. -/
+    [allen-1983]. -/
 def holds : AllenRelation → Interval Time → Interval Time → Prop
   | .precedes,     i, j => i.finish < j.start
   | .meets,        i, j => i.finish = j.start
@@ -162,7 +162,7 @@ theorem holds_inverse (r : AllenRelation) (i j : Interval Time) :
 
 /-- **Exhaustiveness** (constructive witness): every interval pair satisfies
     at least one atomic Allen relation, computably. The case-split mirrors
-    @cite{allen-1983}'s exhaustive enumeration: trichotomy on
+    [allen-1983]'s exhaustive enumeration: trichotomy on
     `i.finish vs j.start`, then `i.start vs j.finish`, then refinement on
     `i.start vs j.start` and `i.finish vs j.finish`. Used to derive the
     constructive `Interval.allenRel` projection. -/
@@ -288,7 +288,7 @@ theorem signature_of_holds (r : AllenRelation) (i j : Interval Time)
     The non-degeneracy hypothesis is essential: at a single time point
     `t`, taking `i = j = ⟨t, t, le_refl t⟩` makes `meets` (`t = t`),
     `metBy` (`t = t`), and `equal` (`t = t ∧ t = t`) all hold
-    simultaneously. @cite{allen-1983} sidesteps this by assuming strict
+    simultaneously. [allen-1983] sidesteps this by assuming strict
     intervals throughout.
 
     Proof: factor through the 4-tuple `signature`. Both `r₁` and `r₂`

@@ -4,7 +4,7 @@ import Linglib.Features.AnsweringSystem
 
 /-!
 # Swedish Answer Particles
-@cite{holmberg-2016}
+[holmberg-2016]
 
 Swedish has a three-way answer particle system:
 - *ja* — affirmative ("yes")
@@ -37,14 +37,14 @@ structure AnswerParticle where
   /-- Is this a polarity-reversing particle? -/
   isPolarityReversal : Bool := requiresNegativeContext
   /-- Is this particle blocked (ungrammatical) in negative contexts?
-      @cite{holmberg-2016} p165: Swedish *ja* is ungrammatical (not just
+      [holmberg-2016] p165: Swedish *ja* is ungrammatical (not just
       infelicitous) as a response to negative questions. -/
   blockedInNegativeContext : Bool := false
   deriving Repr
 
 /-- *ja* — standard affirmative. Assigns [+Pol].
     Blocked in negative contexts: "Dricker han inte?" → *"Ja" is
-    ungrammatical (@cite{holmberg-2016}, p165). Swedish uses *jo* instead. -/
+    ungrammatical ([holmberg-2016], p165). Swedish uses *jo* instead. -/
 def ja : AnswerParticle :=
   { form := "ja"
   , polarity := .positive
@@ -98,7 +98,7 @@ theorem ja_jo_complementary :
     Assigns [+Pol] while contradicting a negative context.
     Clause-initial or standalone response; not sentence-internal.
     Correction-only: requires a negative context to reverse.
-    @cite{holmberg-2016}: paradigm example of polarity-reversing particle,
+    [holmberg-2016]: paradigm example of polarity-reversing particle,
     same class as German *doch* and French *si*. -/
 abbrev joMarking : Entry where
   label := "jo"

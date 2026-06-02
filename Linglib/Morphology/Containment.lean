@@ -1,6 +1,6 @@
 /-!
 # Generic Containment and the *ABA Pattern
-@cite{bobaljik-2012} @cite{caha-2009}
+[bobaljik-2012] [caha-2009]
 
 ## Overview
 
@@ -21,9 +21,9 @@ computable `Bool` decision procedure and a `Prop` wrapper carrying a
 - Degree morphology (`Morphology/DegreeContainment.lean`)
 
 What *explains* the gap is theory-laden and contested. The DM
-tradition (`@cite{bobaljik-2012}`) derives it from post-syntactic
+tradition (`[bobaljik-2012]`) derives it from post-syntactic
 Vocabulary Insertion + Elsewhere ordering on a containment hierarchy.
-The Nanosyntax tradition (`@cite{caha-2009}`, `@cite{starke-2009}`)
+The Nanosyntax tradition (`[caha-2009]`, `[starke-2009]`)
 derives it from phrasal spellout + the Superset Principle on the same
 containment hierarchy interpreted as syntactic structure. The two
 disagree on whether the locus of explanation is morphology or syntax;

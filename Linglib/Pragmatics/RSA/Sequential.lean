@@ -5,7 +5,7 @@ import Mathlib.Algebra.Order.Field.Rat
 /-!
 # Sequential RSA: prefix-meaning composition
 
-@cite{cohn-gordon-goodman-potts-2019} @cite{degen-etal-2020} @cite{waldon-degen-2021} @cite{schlotterbeck-wang-2023}
+[cohn-gordon-goodman-potts-2019] [degen-etal-2020] [waldon-degen-2021] [schlotterbeck-wang-2023]
 
 The Product-of-Experts (PoE) prefix meaning underlying noisy / incremental
 RSA models: a per-word lex function `lex : U → W → R` is composed
@@ -13,7 +13,7 @@ multiplicatively over a list of tokens. Higher layers (`Noisy.lean`,
 `Incremental.lean`) bundle this with `RSAConfig` builders.
 
 The substrate exists because two distinct study files
-(@cite{waldon-degen-2021}, @cite{schlotterbeck-wang-2023}) independently
+([waldon-degen-2021], [schlotterbeck-wang-2023]) independently
 restipulated `lexContinuousQ`, `prefixMeaningQ`, and the order-independence
 swap lemmas. With this file, both reduce to corollaries of
 `List.Perm.prod_eq` from mathlib.

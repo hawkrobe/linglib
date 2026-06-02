@@ -3,9 +3,9 @@ import Linglib.Semantics.Reference.PronounDenotation
 
 /-!
 # Büring 2012 — pronouns as φ-presupposing variables
-@cite{buring-2012}
+[buring-2012]
 
-@cite{buring-2012}'s handbook survey of pronoun semantics makes several claims
+[buring-2012]'s handbook survey of pronoun semantics makes several claims
 this file states as theorems about the *unified* pronoun denotation
 (`PersonalPronoun.denote` / `PersonalPronoun.phiPresup`) applied to the English
 Fragment's lexical entries (`English.Pronouns`) — not about a local
@@ -22,7 +22,7 @@ theorems are about.
   supplied externally by an assignment update, not by a distinct lexical entry
   (Büring's §3 thesis; the continuation rendering is `Semantics.Reference.Binding`).
 
-A fourth theorem records the @cite{arnold-2026} contrast that motivates the
+A fourth theorem records the [arnold-2026] contrast that motivates the
 English `epicene` paradigm: *they* carries no gender presupposition, so it is
 defined of a referent of any gender — exactly where *she* is undefined.
 
@@ -72,7 +72,7 @@ theorem she_bound_reading (b : F.Entity) :
       = some b := by
   simp only [PersonalPronoun.denote, interpPronoun, Assignment.update_at]
 
-/-- Epicene *they* (@cite{arnold-2026}) carries no gender presupposition: its
+/-- Epicene *they* ([arnold-2026]) carries no gender presupposition: its
 denotation is defined of a referent regardless of gender — the structural
 correlate of *they*'s gender-neutrality, and the direct contrast with
 `she_undefined_of_non_female`. -/

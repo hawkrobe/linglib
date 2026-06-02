@@ -3,7 +3,7 @@ import Linglib.Typology.Gender
 
 /-!
 # German Derivational Gender: *-schaft* and related suffixes
-@cite{kramer-2020} @cite{kramer-2015}
+[kramer-2020] [kramer-2015]
 
 German is a 3-gender language (masculine, feminine, neuter) where certain
 derivational suffixes deterministically assign gender:
@@ -20,7 +20,7 @@ The Fragment carries one empirical field per suffix: `assignedGender`,
 the deterministic gender output. No `isNaturalGender` field —
 derivational suffixes always assign arbitrary gender (the suffix is the
 locus of the gender feature, not the root's semantic content). The
-@cite{kramer-2015} structural analysis (each suffix IS a categorizing
+[kramer-2015] structural analysis (each suffix IS a categorizing
 head *n* with a fixed gender feature: *-schaft* = n u[+FEM], *-chen* =
 plain n) is a projection that lives in `Studies/`.
 
@@ -143,7 +143,7 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "deu" ∧ genderTypology.name = "German" :=
   ⟨rfl, rfl⟩
 
-/-- German is in @cite{corbett-1991}'s "canonical" cell. -/
+/-- German is in [corbett-1991]'s "canonical" cell. -/
 example : genderTypology.IsCanonicalGender := by decide
 
 end German.Gender

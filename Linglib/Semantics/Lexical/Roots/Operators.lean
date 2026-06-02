@@ -3,7 +3,7 @@ import Linglib.Semantics.Lexical.Roots.Basic
 /-!
 # Derivational Operators
 
-@cite{beavers-koontz-garboden-2020} @cite{rappaport-hovav-levin-1998}
+[beavers-koontz-garboden-2020] [rappaport-hovav-levin-1998]
 
 A **derivational operator** is a language-specific morphological process
 that applies to a root subject to a structural condition on the root's

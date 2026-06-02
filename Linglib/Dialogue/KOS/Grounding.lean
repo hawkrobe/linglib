@@ -2,7 +2,7 @@ import Linglib.Dialogue.KOS.Defs
 
 /-!
 # KOS: LocProp Grounding & CRification
-@cite{ginzburg-2012} Ch. 6 §6.5–6.7
+[ginzburg-2012] Ch. 6 §6.5–6.7
 
 The Pending → Facts vs Pending → CR-on-QUD branching for utterance
 integration. When a `LocProp` enters the Pending field, the addressee
@@ -28,7 +28,7 @@ Ginzburg2012 §9 grounding-protocol section consumes.
 
 ## CCURs (Clarification Context Update Rules)
 
-@cite{ginzburg-2012} Ch. 6 footnote 30 p. 167 introduces "CCURs" as
+[ginzburg-2012] Ch. 6 footnote 30 p. 167 introduces "CCURs" as
 the renamed and reformulated successors to the 2004 *coercion operations*.
 The book posits TWO canonical CCURs (p. 167; full treatments at
 ex. 73-79 pp. 192-195 and ex. 80-86 pp. 196-198):
@@ -135,7 +135,7 @@ theorem no_coercion_fallback {Cont : Type} {QContent : Type*}
 /-- The addressee's belief base: a partial assignment from cparam indices
 to string witnesses.
 
-@cite{ginzburg-2012} eq. 48 (p. 178): contextual instantiation tries to
+[ginzburg-2012] eq. 48 (p. 178): contextual instantiation tries to
 discharge dgb-params by binding each index to a witness from the
 addressee's beliefs. -/
 abbrev BeliefBase := List (String × String)
@@ -147,7 +147,7 @@ def CParam.instantiate (cp : CParam) (beliefs : BeliefBase) : Option String :=
 /-- The result of contextual instantiation: either every cparam was
 witnessed, or some remained unresolved.
 
-@cite{ginzburg-2012} eq. 48 (p. 178). -/
+[ginzburg-2012] eq. 48 (p. 178). -/
 inductive ContextualInstantiationResult where
   /-- All cparams instantiated; the resolved bindings carry the witnesses. -/
   | fullyInstantiated (witnesses : List (String × String))
@@ -156,7 +156,7 @@ inductive ContextualInstantiationResult where
   deriving Repr
 
 /-- Attempt to instantiate every cparam of a LocProp from a belief base.
-@cite{ginzburg-2012} eq. 48 (p. 178). -/
+[ginzburg-2012] eq. 48 (p. 178). -/
 def contextualInstantiate {Cont : Type} (lp : LocProp Cont) (beliefs : BeliefBase) :
     ContextualInstantiationResult :=
   let resolved : List (String × String) :=
@@ -182,7 +182,7 @@ theorem contextualInstantiate_empty {Cont : Type} (lp : LocProp Cont)
 -- § 5. CCURs — Clarification Context Update Rules
 -- ════════════════════════════════════════════════════
 
-/-- The Clarification Context Update Rules of @cite{ginzburg-2012}
+/-- The Clarification Context Update Rules of [ginzburg-2012]
 §6.6 (canonical pair) and §6.8 (debated third).
 
 Each CCUR fires when contextual instantiation fails and produces a
@@ -198,7 +198,7 @@ specific kind of CR question:
 - `repetitionCR` (Ginzburg §6.8): a debated CCUR-analog handling
   phonetic repetition requests; included for completeness
 
-These replace the three coercion operations of @cite{ginzburg-cooper-2004}
+These replace the three coercion operations of [ginzburg-cooper-2004]
 (`parameterFocussing`, `parameterIdentification`, `existentialGeneralization`),
 which now live as paper-specific apparatus in
 `Studies/GinzburgCooper2004.lean §0`. The 2004→2012
@@ -231,7 +231,7 @@ def CCUR.crQuestion {Cont : Type} {QContent : Type*} :
 -- § 6. Multi-stage Integration with CCURs
 -- ════════════════════════════════════════════════════
 
-/-- The faithful @cite{ginzburg-2012} §6.6 integration pipeline.
+/-- The faithful [ginzburg-2012] §6.6 integration pipeline.
 
 Stages:
 1. The LocProp `lp` enters Pending (caller's responsibility).

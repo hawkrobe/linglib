@@ -3,11 +3,11 @@ import Linglib.Core.Logic.Modal.QBSML.Defs
 /-!
 # Pragmatic enrichment for QBSML
 
-@cite{aloni-vanormondt-2023} @cite{aloni-2022}
+[aloni-vanormondt-2023] [aloni-2022]
 
 The first-order extension of BSML's pragmatic enrichment function `[·]⁺`
-(@cite{aloni-2022} Definition 6), adding quantifier cases. Per
-@cite{aloni-vanormondt-2023} Definition 4.13, `[·]⁺` recursively inserts
+([aloni-2022] Definition 6), adding quantifier cases. Per
+[aloni-vanormondt-2023] Definition 4.13, `[·]⁺` recursively inserts
 `NE` conjuncts into every clause of an NE-free formula:
 
     [Pt₁...tₙ]⁺  =  Pt₁...tₙ ∧ NE
@@ -20,7 +20,7 @@ The first-order extension of BSML's pragmatic enrichment function `[·]⁺`
 
 (`□` is derived as `¬◇¬`, so it carries no separate enrichment clause here.)
 
-The intuition (@cite{aloni-2022}'s "neglect-zero" hypothesis): conversational
+The intuition ([aloni-2022]'s "neglect-zero" hypothesis): conversational
 participants systematically ignore empty configurations when interpreting,
 so each clause must witness a non-empty state. Combined with split
 disjunction, this derives ignorance, distribution, free choice, and the
@@ -54,7 +54,7 @@ variable {Var Pred : Type*}
 
 /-! ### The enrichment function -/
 
-/-- Pragmatic enrichment `[·]⁺` for QBSML formulas (@cite{aloni-vanormondt-2023}
+/-- Pragmatic enrichment `[·]⁺` for QBSML formulas ([aloni-vanormondt-2023]
     Definition 4.13). Recursively conjoins `NE` to every clause. -/
 def QBSMLFormula.enrich : QBSMLFormula Var Pred → QBSMLFormula Var Pred
   | .pred P x   => .conj (.pred P x) .ne

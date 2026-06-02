@@ -2,26 +2,26 @@ import Linglib.Morphology.DM.Categorizer
 import Linglib.Semantics.ArgumentStructure.Relational
 
 /-!
-# Categorizer Semantics @cite{adamson-2024} @cite{barker-2011}
+# Categorizer Semantics [adamson-2024] [barker-2011]
 
 Semantic denotations for categorizing heads (n) in Distributed Morphology,
 bridging the morphosyntactic structure of DM categorizers to compositional
-semantics via @cite{barker-2011}'s type-shifting framework.
+semantics via [barker-2011]'s type-shifting framework.
 
-@cite{adamson-2024} proposes three denotation types for n heads in Teop:
+[adamson-2024] proposes three denotation types for n heads in Teop:
 
 - **n_{body-part{D}}** (36): λy.λx. ROOT(x) ∧ body-part-of(x,y)
   Introduces a body-part-of relation, yielding a relational predicate
-  (type ⟨e,⟨e,t⟩⟩). Equivalent to @cite{barker-2011}'s π (relationalizer).
+  (type ⟨e,⟨e,t⟩⟩). Equivalent to [barker-2011]'s π (relationalizer).
 
 - **n_{sortal}** (37): λx. ROOT(x)
-  Bare sortal predicate (type ⟨e,t⟩). Equivalent to @cite{barker-2011}'s
+  Bare sortal predicate (type ⟨e,t⟩). Equivalent to [barker-2011]'s
   bare semantics.
 
 - **n_{alienator}** (43): λQ.λx. ∃y. Q(y)(x)
   Existentially closes the possessor argument of a relational noun,
   yielding a property (type ⟨e,t⟩). Structurally parallel to
-  @cite{barker-2011}'s Ex (existential closure).
+  [barker-2011]'s Ex (existential closure).
 
 ## Key structural correspondence
 
@@ -45,7 +45,7 @@ open Semantics.ArgumentStructure.Relational
 
 /-- The semantic type contributed by a categorizing head n.
     This determines how the root's content is composed into the noun's
-    denotation (@cite{adamson-2024} §3.1). -/
+    denotation ([adamson-2024] §3.1). -/
 inductive NSemanticType where
   /-- Relational: n introduces a relation (body-part-of, part-of, etc.).
       Result type: ⟨e,⟨e,t⟩⟩ = `Pred2`. -/
@@ -71,9 +71,9 @@ def catHeadSemanticType (ch : CatHead) (mediatesAPossession : Bool := false)
 /-- Denotation of n_{body-part{D}}: combines a root predicate with a
     body-part-of relation to yield a relational noun.
 
-    @cite{adamson-2024} (36): ⟦nP⟧ = λy.λx. ROOT(x) ∧ body-part-of(x,y)
+    [adamson-2024] (36): ⟦nP⟧ = λy.λx. ROOT(x) ∧ body-part-of(x,y)
 
-    This is @cite{barker-2011}'s π (relationalizer):
+    This is [barker-2011]'s π (relationalizer):
     π(P, R) = λx.λy. P(y) ∧ R(x,y)
 
     In π's convention: first arg = possessor, second arg = possessee. -/
@@ -83,14 +83,14 @@ def nBodyPartDenot {E S : Type}
 
 /-- Denotation of n_{sortal}: the root predicate, unchanged.
 
-    @cite{adamson-2024} (37): ⟦nP⟧ = λx. ROOT(x) -/
+    [adamson-2024] (37): ⟦nP⟧ = λx. ROOT(x) -/
 def nSortalDenot {E S : Type} (rootPred : Pred1 E S) : Pred1 E S :=
   bareSemantics rootPred
 
 /-- Denotation of n_{alienator}: existentially closes the possessor
     argument of a relational noun.
 
-    @cite{adamson-2024} (43): ⟦n_{alienator}⟧ = λQ.λx. ∃y. Q(y)(x)
+    [adamson-2024] (43): ⟦n_{alienator}⟧ = λQ.λx. ∃y. Q(y)(x)
 
     The first argument of the input relation (the possessor) is
     existentially closed, yielding a one-place property of the
@@ -135,7 +135,7 @@ theorem selectsD_iff_relational (ch : CatHead) :
   cases ch.selectsD <;> simp
 
 -- ============================================================================
--- § 4: Composition Examples (@cite{adamson-2024} §3.1)
+-- § 4: Composition Examples ([adamson-2024] §3.1)
 -- ============================================================================
 
 section TeopExample

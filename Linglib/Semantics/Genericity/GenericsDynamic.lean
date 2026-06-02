@@ -1,6 +1,6 @@
 /-!
 # Generics: Dynamic Semantics with Horizon Expansion
-@cite{kirkpatrick-2024}
+[kirkpatrick-2024]
 
 James Ravi Kirkpatrick, "The Dynamics of Generics."
 *Journal of Semantics* 40(4), 2024. 523–548.
@@ -479,10 +479,10 @@ theorem disjoint_pair_consistent
 
 -- ═══ Commutativity Impossibility (Appendix A) ═══
 
-/-! ### Appendix A: Why @cite{veltman-1996} cannot model the asymmetry
+/-! ### Appendix A: Why [veltman-1996] cannot model the asymmetry
 
-@cite{kirkpatrick-2024} Appendix A (pp. 544–548) shows that
-@cite{veltman-1996}'s update semantics predicts both generic Sobel
+[kirkpatrick-2024] Appendix A (pp. 544–548) shows that
+[veltman-1996]'s update semantics predicts both generic Sobel
 sequences and their reverses are consistent, because Veltman's
 `normallyUpdate` is commutative (`normallyUpdate_comm` in
 `UpdateSemantics/Default.lean`): the final expectation state σ₁ = σ₂
@@ -534,8 +534,8 @@ theorem sobel_asymmetry_rules_out_commutativity
 
 /-! ### Horizon expansion as presupposition-triggered accommodation
 
-@cite{kirkpatrick-2024} §4.2 (fn. 23) credits @cite{von-fintel-2001}
-and @cite{gillies-2007}: the expansion mechanism adapts their dynamic
+[kirkpatrick-2024] §4.2 (fn. 23) credits [von-fintel-2001]
+and [gillies-2007]: the expansion mechanism adapts their dynamic
 semantics for counterfactuals. Both use presupposition failure to
 trigger context adjustment, but in opposite directions:
 
@@ -591,7 +591,7 @@ constructors below derive it from different theoretical primitives:
 
 - **`fromOrder`** — normality ordering (`NormalityOrder` style).
   Normal instances = optimal restrictor-satisfying entities under the ordering.
-  Bridges to @cite{kirkpatrick-2024} Definition 21's N_n functors.
+  Bridges to [kirkpatrick-2024] Definition 21's N_n functors.
 
 **Why no `fromThreshold`?** Threshold semantics (Cohen's prevalence > θ)
 measures the *proportion* of restrictor-satisfying cases where scope holds.
@@ -641,7 +641,7 @@ theorem fromPredicate_static
     **optimal** restrictor-satisfying entities: those not strictly
     dominated by any other restrictor-satisfying entity in the domain.
 
-    This is the computable realization of @cite{kirkpatrick-2024}
+    This is the computable realization of [kirkpatrick-2024]
     Definition 21's N_n functors:
     `N(P)(w) = { a ∈ P(w) | ∀ b ∈ P(w), b ≤ a → a ≤ b }`. -/
 def GenericSentence.fromOrder

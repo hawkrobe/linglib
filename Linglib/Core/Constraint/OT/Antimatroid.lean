@@ -8,13 +8,13 @@ import Mathlib.Tactic.Linarith
 # OT — Antimatroids and the ERC–Antimatroid Isomorphism
 
 Antimatroids are combinatorial structures that generalize the notion of
-a partial order. They were first described by @cite{dilworth-1940} in
+a partial order. They were first described by [dilworth-1940] in
 the context of lattice theory and have been rediscovered many times
-under different names (see @cite{korte-lovasz-schrader-1991} for a
+under different names (see [korte-lovasz-schrader-1991] for a
 comprehensive survey).
 
 For Optimality Theory, antimatroids are significant because
-@cite{merchant-riggle-2016} prove that consistent ERC sets over `n`
+[merchant-riggle-2016] prove that consistent ERC sets over `n`
 constraints are isomorphic to antimatroids on `Fin n`. The two maps
 `Antimat` (ERCs → antimatroids) and `RCErc` (antimatroids → ERCs) are
 mutually inverse homomorphisms preserving entailment/containment. Any
@@ -23,7 +23,7 @@ algorithms, typological classification, complexity bounds.
 
 ## Definitions (general antimatroid theory)
 
-Following @cite{merchant-riggle-2016} Definitions 2–5:
+Following [merchant-riggle-2016] Definitions 2–5:
 
 - `SetSystem` — a ground set `G` with a collection `F` of feasible subsets
 - `AccessibleSetSystem` — augmentation + removal properties
@@ -52,9 +52,9 @@ The design follows mathlib's `Matroid` pattern: bundled structure with
 
 ## References
 
-@cite{dilworth-1940} — Lattices with unique irreducible decompositions
-@cite{korte-lovasz-schrader-1991} — Greedoids
-@cite{merchant-riggle-2016} — OT grammars, beyond partial orders:
+[dilworth-1940] — Lattices with unique irreducible decompositions
+[korte-lovasz-schrader-1991] — Greedoids
+[merchant-riggle-2016] — OT grammars, beyond partial orders:
 ERC sets and antimatroids
 -/
 
@@ -96,7 +96,7 @@ structure SetSystem (α : Type*) where
     the ground set are reachable from any feasible set via single-element
     additions or removals.
 
-    @cite{merchant-riggle-2016} Definition 3. -/
+    [merchant-riggle-2016] Definition 3. -/
 structure AccessibleSetSystem (α : Type*) extends SetSystem α where
   /-- The ground set is feasible. -/
   ground_feasible : IsFeasible E
@@ -117,7 +117,7 @@ structure AccessibleSetSystem (α : Type*) extends SetSystem α where
 /-- An **antimatroid** is an accessible set system that is closed under
     union: the union of any two feasible sets is also feasible.
 
-    This is the structure that @cite{merchant-riggle-2016} prove is
+    This is the structure that [merchant-riggle-2016] prove is
     isomorphic to consistent ERC sets. The three defining properties —
     accessibility (augmentation + removal) and union closure — correspond
     exactly to the combinatorial structure of OT ranking spaces.
@@ -125,7 +125,7 @@ structure AccessibleSetSystem (α : Type*) extends SetSystem α where
     The design follows mathlib's `Matroid`: bundled structure (not a
     typeclass), `Set α` ground set, `Prop` axioms.
 
-    @cite{merchant-riggle-2016} Definition 5. -/
+    [merchant-riggle-2016] Definition 5. -/
 structure Antimatroid (α : Type*) extends AccessibleSetSystem α where
   /-- **Union closure**: the union of any two feasible sets is feasible.
 
@@ -191,7 +191,7 @@ theorem Antimatroid.exists_singleton_feasible (A : Antimatroid α)
 
     This corresponds to the OT system with no ranking requirements
     (the empty ERC set) — all `n!` rankings are consistent.
-    @cite{merchant-riggle-2016} Definition 8. -/
+    [merchant-riggle-2016] Definition 8. -/
 def Antimatroid.free (E : Set α) : Antimatroid α where
   E := E
   IsFeasible := fun S => S ⊆ E
@@ -230,7 +230,7 @@ theorem Antimatroid.free_isFeasible (E : Set α) (S : Set α) :
     Traces capture the ordering relations that the original antimatroid
     places on the constraints in `S`.
 
-    @cite{merchant-riggle-2016} Definition 7. -/
+    [merchant-riggle-2016] Definition 7. -/
 def Antimatroid.trace (A : Antimatroid α) (S : Set α) (_hS : S ⊆ A.E) :
     SetSystem α where
   E := S
@@ -253,7 +253,7 @@ def Antimatroid.trace (A : Antimatroid α) (S : Set α) (_hS : S ⊆ A.E) :
     The **root** of the circuit is the unique element `r ∈ S` such that
     `{r}` is not feasible in `A : S`.
 
-    @cite{merchant-riggle-2016} Definition 9. -/
+    [merchant-riggle-2016] Definition 9. -/
 structure Antimatroid.RootedCircuit (A : Antimatroid α) where
   /-- The set defining the circuit. -/
   carrier : Set α
@@ -308,7 +308,7 @@ theorem maximalChain_last {n : Nat} (r : Ranking n) :
     satisfies all ERCs in `E` and a position `k` such that `S` is the
     set of the top-`k` constraints under `r`.
 
-    @cite{merchant-riggle-2016} Definition 1. -/
+    [merchant-riggle-2016] Definition 1. -/
 def MChain {n : Nat} (E : List (ERC n)) : Set (Fin n) → Prop :=
   fun S => ∃ r : Ranking n, ERCSet.satisfiedBy r E ∧
     ∃ k : Fin (n + 1), maximalChain r k = S
@@ -413,7 +413,7 @@ set_option maxHeartbeats 1600000 in
     ranking that governs `l`'s block is in the same or earlier block,
     so `f w < f l`.
 
-    @cite{merchant-riggle-2016} Lemma 3. -/
+    [merchant-riggle-2016] Lemma 3. -/
 theorem MChain.union_closed {n : Nat} (E : List (ERC n))
     (_hcons : ERCSet.consistent E) (S T : Set (Fin n))
     (_hS : MChain E S) (_hT : MChain E T) : MChain E (S ∪ T) := by
@@ -556,7 +556,7 @@ theorem MChain.union_closed {n : Nat} (E : List (ERC n))
     the feasible sets are `MChain(E)` — the subsets that appear in
     maximal chains consistent with `E`.
 
-    @cite{merchant-riggle-2016} Definition 6, Lemma 4. -/
+    [merchant-riggle-2016] Definition 6, Lemma 4. -/
 def Antimat {n : Nat} (E : List (ERC n)) (hcons : ERCSet.consistent E) :
     Antimatroid (Fin n) where
   E := Set.univ
@@ -628,7 +628,7 @@ open Classical in
     - `L(α) = {r}` (the root)
     - `e(α) = G \ S` (constraints not in the carrier)
 
-    @cite{merchant-riggle-2016} Definition 10. -/
+    [merchant-riggle-2016] Definition 10. -/
 noncomputable def RCErc_single {n : Nat} (A : Antimatroid (Fin n))
     (rc : Antimatroid.RootedCircuit A) : ERC n :=
   fun k =>
@@ -640,7 +640,7 @@ noncomputable def RCErc_single {n : Nat} (A : Antimatroid (Fin n))
 -- § 14: Isomorphism Theorems
 -- ============================================================================
 
-/-- **Theorem 1** (@cite{merchant-riggle-2016}): `MChain` is the
+/-- **Theorem 1** ([merchant-riggle-2016]): `MChain` is the
     inverse of `RCErc`.
 
     For any antimatroid `A`, `Antimat(RCErc(A)) = A`. That is, if we
@@ -651,7 +651,7 @@ theorem Antimat_RCErc_inv {n : Nat} (_A : Antimatroid (Fin n))
     -- not just single rooted circuits
     : True := trivial
 
-/-- **Theorem 2** (@cite{merchant-riggle-2016}): `RCErc` is the
+/-- **Theorem 2** ([merchant-riggle-2016]): `RCErc` is the
     inverse of `Antimat`.
 
     For any consistent ERC set `E`, `RCErc(Antimat(E)) = E`. -/
@@ -660,7 +660,7 @@ theorem RCErc_Antimat_inv {n : Nat} (_E : List (ERC n))
     -- TODO: requires full RCErc definition
     : True := trivial
 
-/-- **Theorem 3** (@cite{merchant-riggle-2016}): `Antimat` preserves
+/-- **Theorem 3** ([merchant-riggle-2016]): `Antimat` preserves
     entailment.
 
     If ERC set `E` entails `F` (every ranking satisfying `E` also
@@ -673,7 +673,7 @@ theorem Antimat_entailment {n : Nat} (E F : List (ERC n))
   intro S ⟨r, hr, k, hk⟩
   exact ⟨r, h r hr, k, hk⟩
 
-/-- **Theorem 4** (@cite{merchant-riggle-2016}): `RCErc` preserves
+/-- **Theorem 4** ([merchant-riggle-2016]): `RCErc` preserves
     containment.
 
     If antimatroid `A ⊆ B` (every feasible set of `A` is feasible in

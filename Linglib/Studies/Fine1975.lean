@@ -6,8 +6,8 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# Fine (1975): Vagueness, Truth and Logic @cite{fine-1975}
-@cite{kamp-1975}
+# Fine (1975): Vagueness, Truth and Logic [fine-1975]
+[kamp-1975]
 
 Supervaluationism applied to gradable predicates: a vague sentence is
 true iff true on ALL admissible precisifications, false iff false on
@@ -31,7 +31,7 @@ gradable adjectives, and proves results specific to degree semantics:
 
 ## Connection to Kamp (1975)
 
-@cite{fine-1975} and @cite{kamp-1975} appeared in the same volume.
+[fine-1975] and [kamp-1975] appeared in the same volume.
 Kamp's dilemma (truth-functional three-valued logic cannot distinguish
 P ∧ P from P ∧ ¬P) is resolved by supervaluation — see
 `Supervaluation.Basic.conjunction_self` and
@@ -39,7 +39,7 @@ P ∧ P from P ∧ ¬P) is resolved by supervaluation — see
 
 ## Connection to Klein (1980)
 
-@cite{klein-1980}'s comparative — "∃ C where tall(a,C) ∧ ¬tall(b,C)" —
+[klein-1980]'s comparative — "∃ C where tall(a,C) ∧ ¬tall(b,C)" —
 is the existential dual of supervaluation. See
 `Semantics/Comparison/Delineation.lean`.
 -/

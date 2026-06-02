@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # Norwegian V2 Profiles
-@cite{westergaard-2009}
+[westergaard-2009]
 
 V2 micro-parameter profiles for Norwegian varieties (Table 3.1).
 -/

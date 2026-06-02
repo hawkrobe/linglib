@@ -3,7 +3,7 @@ import Linglib.Semantics.Aspect.Basic
 
 /-!
 # Actuality Entailments: Position × Aspect
-  @cite{hacquard-2006} @cite{hacquard-2009} @cite{bhatt-1999}
+  [hacquard-2006] [hacquard-2009] [bhatt-1999]
 
 Derives **actuality entailments** from the relative scope of aspect and
 modal, building on **event-relative modality** (`EventRelativity.lean`).
@@ -11,13 +11,13 @@ modal, building on **event-relative modality** (`EventRelativity.lean`).
 ## The Puzzle
 
 The same modal verb shows different entailment patterns depending on
-interpretation (@cite{bhatt-1999}, @cite{hacquard-2006} Ch.1):
+interpretation ([bhatt-1999], [hacquard-2006] Ch.1):
 
 - Root (ability) + PFV: "Jane **a pu** prendre le train" → she took it
 - Root (ability) + IMPF: "Jane **pouvait** prendre le train" → maybe not
 - Epistemic + PFV: "Jane **a pu** prendre le train" → maybe not
 
-## @cite{hacquard-2006}'s Solution
+## [hacquard-2006]'s Solution
 
 The relative position of the modal determines which event binder
 captures it:
@@ -43,7 +43,7 @@ aspect scope, without stipulation.
 The earlier `CausalFrame`-bridge §4 (showing `actualityWithAspect .perfective`
 matches `sufficientAt ∧ actualizedAt`) was deleted in Phase D-H along with
 the `CausalFrame`/`ComplementEntailing` substrate; the qualitative bridge to
-@cite{nadathur-2023}'s causal account now lives at the V2 SEM level in
+[nadathur-2023]'s causal account now lives at the V2 SEM level in
 study files and `Semantics/Causation/`.
 -/
 
@@ -54,7 +54,7 @@ open Semantics.Aspect (ViewpointAspectB)
 
 
 -- ════════════════════════════════════════════════════
--- § 1. Aspect Scope (@cite{hacquard-2006}, Ch.1)
+-- § 1. Aspect Scope ([hacquard-2006], Ch.1)
 -- ════════════════════════════════════════════════════
 
 /-- The relative scope of aspect and the modal in the clause structure.
@@ -164,7 +164,7 @@ theorem same_modal_different_entailments :
 The chain: content licensing → position → scope → (no) AE. -/
 
 /-- The full explanatory chain from content licensing to actuality
-entailments, linking EventRelativity §§8–9 to @cite{hacquard-2006} Ch.1. -/
+entailments, linking EventRelativity §§8–9 to [hacquard-2006] Ch.1. -/
 theorem content_licensing_to_actuality :
     -- Step 1: VP events lack content → can't project epistemic
     EventBinder.vpEvent.hasContent = false ∧

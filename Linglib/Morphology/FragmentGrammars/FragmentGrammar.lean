@@ -3,9 +3,9 @@ import Linglib.Morphology.FragmentGrammars.AdaptorGrammar
 /-!
 # Fragment grammars (FG) — the central proposal
 
-@cite{odonnell-2015}
+[odonnell-2015]
 
-The "inference-based" model of @cite{odonnell-2015} §2.4.4 / §3.1.8,
+The "inference-based" model of [odonnell-2015] §2.4.4 / §3.1.8,
 and the central theoretical proposal of the book. A `FragmentGrammar`
 extends an `AdaptorGrammar` by adding a *per-rule-RHS-position
 beta-binomial halt prior*: at each nonterminal slot in each rule's
@@ -21,7 +21,7 @@ arbitrary partial trees with selective open NT slots — the
 distinguishing feature of the book's account of productivity-and-
 reuse.
 
-Per @cite{odonnell-2015} §3.1.8 the corpus probability factorizes as
+Per [odonnell-2015] §3.1.8 the corpus probability factorizes as
 
 ```
 fg(X, Y, Z; F) = ∏_{A ∈ V} [DMPCFG-factor on X^A] · [PYP-factor on Y^A]
@@ -40,7 +40,7 @@ a dependency on `Mathlib.Probability.Distributions.Beta`).
 `Z` is latent — the recurse/halt assignment per fragment is part of
 the MAP analysis, not the observed corpus. Same situation as `Y` in
 `AdaptorGrammar`. Marginalizing over `(Y, Z)` is the MH inference
-target distribution of @cite{odonnell-2015} §3.2 — out of scope
+target distribution of [odonnell-2015] §3.2 — out of scope
 per the Processing-scope rule.
 
 ## What we inherit from `AdaptorGrammar`
@@ -66,15 +66,15 @@ the beta-binomial halt prior and the per-(rule, position) factor.
 ## §2.3.7 vs §3.1.8 — sampler vs distribution
 
 This file is the **distribution** side: `corpusProbGivenStorage` is the
-density `fg(F; F)` of @cite{odonnell-2015} §3.1.8 (p. 94). The
+density `fg(F; F)` of [odonnell-2015] §3.1.8 (p. 94). The
 **sampler** that draws from this density is in the sibling file
-`FragmentLambda.lean`, scaffolding @cite{odonnell-2015} §2.3.7's
+`FragmentLambda.lean`, scaffolding [odonnell-2015] §2.3.7's
 Church macro `(fragment-lambda args body)` (Figure 2.21, p. 71). The
 two are linked by the soundness contract
 `fragmentLambdaDepth_marginalises_to_fg`, which equates the sampler's
 output marginal with the §3.1.8 density.
 
-Per @cite{odonnell-2015} §3.1.8 (p. 92) the substrate here implements
+Per [odonnell-2015] §3.1.8 (p. 92) the substrate here implements
 the actual model used in the rest of the book — biased halt coin
 `BINOMIAL(ν)` with `ν` itself drawn from a Beta prior — not the
 fair-coin presentation of §2.3.6. The §2.3.7 fair-coin macro is
@@ -83,7 +83,7 @@ recovered as the `haltPriorRecurse = haltPriorHalt = 1` special case
 
 ## References
 
-- @cite{odonnell-2015} §2.4.4, §3.1.8.
+- [odonnell-2015] §2.4.4, §3.1.8.
 -/
 
 namespace Morphology.FragmentGrammars
@@ -99,7 +99,7 @@ recursing-vs-halting is Beta-distributed with pseudo-counts
 
 Allowing per-slot halt decisions (rather than per-nonterminal as in
 MAG) lets fragments be arbitrary partial trees — the central
-theoretical commitment of @cite{odonnell-2015}.
+theoretical commitment of [odonnell-2015].
 -/
 @[ext]
 structure FragmentGrammar {T : Type} [DecidableEq T] (G : ContextFreeGrammar T)
@@ -121,7 +121,7 @@ variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT
 A *halt-count assignment* gives, for each rule `r` and each
 RHS-position `i`, the corpus-aggregate counts of "recurse" and
 "halt" decisions at that slot. This is the latent variable `Z` in
-@cite{odonnell-2015} §3.1.8.
+[odonnell-2015] §3.1.8.
 
 Consistency between `Z`, `Y` (table assignment), and the observed
 corpus `D` is the responsibility of the caller (or of the MAP
@@ -158,7 +158,7 @@ noncomputable def fgFactor (r : ContextFreeRule T G.NT) (i : ℕ)
 
 /--
 FG corpus probability conditional on a table assignment `Y` and a
-halt-count assignment `Z`. Per @cite{odonnell-2015} §3.1.8:
+halt-count assignment `Z`. Per [odonnell-2015] §3.1.8:
 
 ```
 fg(X, Y, Z; F) = ag(X, Y; A) · ∏_r ∏_i fgFactor r i (Z r i)

@@ -3,7 +3,7 @@ import Linglib.Semantics.Conditionals.Marker
 
 /-!
 # Mandarin Conditional Markers
-@cite{mizuno-2024}
+[mizuno-2024]
 
 Conditional morphemes in Mandarin and their properties.
 
@@ -12,7 +12,7 @@ Conditional morphemes in Mandarin and their properties.
 - **ruguo** (如果): General-purpose conditional marker. Can mark both HC
   and PC. The O-marking/X-marking distinction in Mandarin conditionals is
   not carried by the conditional marker itself but by the presence or
-  absence of perfective *le* (了) in the consequent (@cite{mizuno-2024},
+  absence of perfective *le* (了) in the consequent ([mizuno-2024],
   ex. 11–13).
 -/
 
@@ -23,7 +23,7 @@ open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
 /-- Mandarin ruguo (如果): general-purpose conditional marker.
 
     Can mark both hypothetical and premise conditionals. In
-    @cite{mizuno-2024}'s Anderson conditional examples (ex. 13a), the
+    [mizuno-2024]'s Anderson conditional examples (ex. 13a), the
     conditional marker is `ruguo` regardless of whether the consequent
     is O-marked (no final *le*) or X-marked (with #*le*). -/
 def ruguo : ConditionalMarker where

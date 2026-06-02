@@ -3,10 +3,10 @@ import Linglib.Semantics.Conditionals.Counterfactual.Lumping
 /-!
 # Kratzer 2012 Premise-Semantic Counterfactuals
 
-@cite{kratzer-2012}
+[kratzer-2012]
 
 Truth conditions for "would"- and "might"-counterfactuals from
-@cite{kratzer-2012} §5.4.4 ("The formal definitions", p. 132–133),
+[kratzer-2012] §5.4.4 ("The formal definitions", p. 132–133),
 built on top of the lumping API in `Core.Logic.Intensional.Lumping`.
 
 ## §5.4.4 in brief
@@ -32,7 +32,7 @@ The truth conditions are then:
 
 - **`p □→ q`** is true at `w` iff for every `A ∈ F_{w,p}` there is
   a superset `A' ∈ F_{w,p}` such that `A'` logically implies `q`
-  (i.e., `Follows A' q` in the @cite{kratzer-2012} §5.3.3 sense).
+  (i.e., `Follows A' q` in the [kratzer-2012] §5.3.3 sense).
 - **`p ◇→ q`** is true at `w` iff there is an `A ∈ F_{w,p}` such
   that `q` is compatible with all its supersets in `F_{w,p}`.
 
@@ -57,16 +57,16 @@ three, the lumping CF does NOT use `SimilarityOrdering` /
 
 - **Admissibility checks for Base Sets** (§5.4.4 conditions (ii)–(v))
   are not formalized. Cognitive Viability in particular is, per
-  @cite{kratzer-2012} p. 133, "the big unknown" — a question for
+  [kratzer-2012] p. 133, "the big unknown" — a question for
   empirical cognitive science, not formal semantics.
-- **Testing on the @cite{ciardelli-zhang-champollion-2018} switches
+- **Testing on the [ciardelli-zhang-champollion-2018] switches
   scenario**: a worlds-only switches model is too coarse for
   non-trivial lumping behaviour; the operator is genuinely tested in
   partial-situation models where lumping closure has bite (see the
-  Paula apple-buying instantiation under @cite{kratzer-2012} §5.4.3,
+  Paula apple-buying instantiation under [kratzer-2012] §5.4.3,
   formalized in a sibling `Studies/` file).
 - **Predicting the falsified `¬(A ∧ B) > OFF` judgment** of
-  @cite{ciardelli-zhang-champollion-2018} from this operator: open
+  [ciardelli-zhang-champollion-2018] from this operator: open
   question raised by that paper. The result that drops out of a
   worlds-only switches lift (lumping CF predicts `¬(A ∧ B) > OFF`
   false, but also predicts `aDn > OFF` false — a failure mode disjoint
@@ -81,7 +81,7 @@ open Semantics.Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Foll
 variable {F : SituationFrame}
 
 /-- **Predicate version of the Crucial Set membership condition**
-    (@cite{kratzer-2012} §5.4.4, p. 133): a subset `A` of `Fw ∪ {p}`
+    ([kratzer-2012] §5.4.4, p. 133): a subset `A` of `Fw ∪ {p}`
     counts as a Crucial Set member at world `w` iff it contains the
     antecedent, is consistent, and is closed under lumping in `w`.
 
@@ -100,7 +100,7 @@ structure IsCrucialSet (Fw : Set (Set F.Index)) (w : F.Index)
       lumped at `w` by something already in `A` must be in `A`. -/
   lumping_closed : ∀ q ∈ A, ∀ r ∈ Fw, Lumps q r w → r ∈ A
 
-/-- **Crucial Set** (@cite{kratzer-2012} §5.4.4, p. 133): for any world
+/-- **Crucial Set** ([kratzer-2012] §5.4.4, p. 133): for any world
     `w`, Base Set `Fw`, and antecedent `p`, the set of subsets of
     `Fw ∪ {p}` that contain `p`, are consistent, and are closed under
     lumping at `w`. -/
@@ -112,7 +112,7 @@ def CrucialSet (Fw : Set (Set F.Index)) (w : F.Index) (p : Set F.Index) :
     {p : Set F.Index} {A : Set (Set F.Index)} :
     A ∈ CrucialSet Fw w p ↔ IsCrucialSet Fw w p A := Iff.rfl
 
-/-- **"Would"-counterfactual** (@cite{kratzer-2012} §5.4.4, p. 133):
+/-- **"Would"-counterfactual** ([kratzer-2012] §5.4.4, p. 133):
     given world `w` and admissible Base Set `Fw`, `p □→ q` is true at
     `w` iff for every `A` in the Crucial Set `F_{w,p}`, there exists a
     superset `A' ∈ F_{w,p}` such that `A'` logically implies `q`.
@@ -122,14 +122,14 @@ def CrucialSet (Fw : Set (Set F.Index)) (w : F.Index) (p : Set F.Index) :
 
     Note the quantifier alternation `∀ A ∈ F_{w,p}, ∃ A' ⊇ A`: this is
     *not* the maximization-of-consistency pattern that
-    @cite{ciardelli-zhang-champollion-2018} §1.2 falsifies for ordering
+    [ciardelli-zhang-champollion-2018] §1.2 falsifies for ordering
     semantics — whether the lumping CF inherits the falsification on
     the switches scenario is open. -/
 def wouldCF (Fw : Set (Set F.Index)) (w : F.Index) (p q : Set F.Index) :
     Prop :=
   ∀ A ∈ CrucialSet Fw w p, ∃ A' ∈ CrucialSet Fw w p, A ⊆ A' ∧ Follows A' q
 
-/-- **"Might"-counterfactual** (@cite{kratzer-2012} §5.4.4, p. 133):
+/-- **"Might"-counterfactual** ([kratzer-2012] §5.4.4, p. 133):
     `p ◇→ q` is true at `w` iff there is an `A` in `F_{w,p}` such that
     `q` is compatible with every superset of `A` in `F_{w,p}`. -/
 def mightCF (Fw : Set (Set F.Index)) (w : F.Index) (p q : Set F.Index) :
@@ -156,7 +156,7 @@ theorem not_mightCF_of_crucialSet_empty {Fw : Set (Set F.Index)}
   rintro ⟨A, hA, _⟩
   exact (Set.mem_empty_iff_false A).mp (h ▸ hA)
 
-/-- **Might/would duality** (@cite{kratzer-2012} p. 125):
+/-- **Might/would duality** ([kratzer-2012] p. 125):
     "'Might'-counterfactuals are interpreted as duals of the
     corresponding 'would'-counterfactuals." Whether
     `mightCF Fw w p q ↔ ¬ wouldCF Fw w p qᶜ` follows from our §5.4.4

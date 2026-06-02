@@ -7,20 +7,20 @@ import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 /-! # Deal (2026): Clausal complementation as relativization, revisited
 
-@cite{deal-2026}
+[deal-2026]
 
 ## Paper's central claims
 
 In Nez Perce, some but not all notional complement clauses show the
-characteristic morphology of relativization. @cite{deal-2026} argues that the
+characteristic morphology of relativization. [deal-2026] argues that the
 relative-like notional complement clauses ("relative embeddings", REs) are
 *CPs* — not DPs/PPs — containing an internal Ā-dependency from a *high
 functional projection above TP*. Three primary conclusions:
 
-1. Not all clausal complementation is relativization (refuting @cite{kayne-2008},
-   @cite{kayne-2014}, @cite{arsenijevic-2009}).
+1. Not all clausal complementation is relativization (refuting [kayne-2008],
+   [kayne-2014], [arsenijevic-2009]).
 2. Relative-like notional complement clauses vary across languages in nominal
-   superstructure (@cite{deal-2026} Table 79: V CP / V D N CP / V P D CP) and in
+   superstructure ([deal-2026] Table 79: V CP / V D N CP / V P D CP) and in
    factive inferences (Tables 80–81).
 3. Factivity, RE-syntax, and nominalization are *three orthogonal axes* — no
    one entails another.
@@ -34,7 +34,7 @@ functional projection above TP*. Three primary conclusions:
   Fragment-level Noonan/factivity data plus the Deal-analytical Ā-dep
   presence flag.
 - *ke*-agreement as `Minimalist.SatisfactionCond.disjunctive`
-  (@cite{deal-2015a-nels}, @cite{deal-2024} framework; bridge to
+  ([deal-2015a-nels], [deal-2024] framework; bridge to
   `Syntax/Minimalist/Agree.lean` §14).
 - Cross-classification theorems: factivity ⊥ RE-structure; factivity ⊥
   nominalization.
@@ -44,7 +44,7 @@ functional projection above TP*. Three primary conclusions:
 ## What this file does NOT contribute
 
 - §6 indexical-shift / sequence-of-tense formal predictions: deferred pending
-  a Kaplanian-context-shifting substrate (`@cite{deal-2020}` book is the
+  a Kaplanian-context-shifting substrate (`[deal-2020]` book is the
   reference theory). Existing `deal-2020` bib entry but no implementation
   module.
 - A full HPSG-side bridge theorem: documented as silent divergence;
@@ -57,20 +57,20 @@ functional projection above TP*. Three primary conclusions:
 
 ## Disagreements documented but not formalised
 
-@cite{kayne-2008}, @cite{kayne-2014}, @cite{arsenijevic-2009}: universalist
+[kayne-2008], [kayne-2014], [arsenijevic-2009]: universalist
 position (all complementation = relativization). Deal 2026 §7 refutes by
 exhibiting `barePropositionalCP` cells.
 
-@cite{decuba-2017}: opposing position — complement clauses are *never*
+[decuba-2017]: opposing position — complement clauses are *never*
 relatives. Compatible with Deal 2026 for English simplex; incompatible
 with Deal for Adyghe/Bulgarian/Nez Perce REs.
 
-@cite{hanink-bochnak-2017}, @cite{bochnak-hanink-2021}: Washo factive
+[hanink-bochnak-2017], [bochnak-hanink-2021]: Washo factive
 complementation as nominalization (V D CP). Deal 2026 §7 accepts this for
 Washo but refutes the universal extension to all factives — Nez Perce REs
 are factive without nominal superstructure.
 
-@cite{moulton-2015}: CPs are predicates (type ⟨e, t⟩), not propositions
+[moulton-2015]: CPs are predicates (type ⟨e, t⟩), not propositions
 (type t), composing with attitude verbs via predicate modification. This
 analysis is *orthogonal* to Deal 2026's typology — it concerns the semantic
 type of the embedded CP, not its external syntactic shell. The two analyses
@@ -97,7 +97,7 @@ open Minimalist (Cat SatisfactionCond AbarDep keineĀProbe ClauseSpine
     rather than in substrate to keep the per-axis primitives reusable
     (`ClauseSpine`, `CPShellInventory`, `AbarDep`) for non-Deal accounts.
 
-    The three axes are independent in @cite{deal-2026} Table 79: each cell
+    The three axes are independent in [deal-2026] Table 79: each cell
     in the 4×2 cross-classification (CP-superstructure × ±Ā) is filled or
     explicitly noted as predicted-but-unattested. -/
 structure NotionalComplementShape where
@@ -109,31 +109,31 @@ structure NotionalComplementShape where
   hasInternalAbar : Bool
   deriving Repr
 
-/-- The two Nez Perce shapes from @cite{deal-2026} §3 vs §6. -/
+/-- The two Nez Perce shapes from [deal-2026] §3 vs §6. -/
 def nezPerceREShape : NotionalComplementShape :=
   ⟨ClauseSpine.cP, bareCP, true⟩
 
 def nezPerceSimplexShape : NotionalComplementShape :=
   ⟨ClauseSpine.cP, bareCP, false⟩
 
-/-- The Adyghe RE shape from @cite{caponigro-polinsky-2011}, exhibited at
-    @cite{deal-2026} §4 (43): V D N CP with internal Ā. -/
+/-- The Adyghe RE shape from [caponigro-polinsky-2011], exhibited at
+    [deal-2026] §4 (43): V D N CP with internal Ā. -/
 def adygheREShape : NotionalComplementShape :=
   ⟨ClauseSpine.cP, dnCP, true⟩
 
-/-- The Bulgarian RE shape from @cite{krapova-2010}, exhibited at
-    @cite{deal-2026} §4 (49): V P D CP with internal Ā. -/
+/-- The Bulgarian RE shape from [krapova-2010], exhibited at
+    [deal-2026] §4 (49): V P D CP with internal Ā. -/
 def bulgarianREShape : NotionalComplementShape :=
   ⟨ClauseSpine.cP, pdCP, true⟩
 
-/-- The Ndebele simplex shape from @cite{pietraszko-2019}, exhibited at
-    @cite{deal-2026} §7 (78): V P D CP with no Ā-dependency. -/
+/-- The Ndebele simplex shape from [pietraszko-2019], exhibited at
+    [deal-2026] §7 (78): V P D CP with no Ā-dependency. -/
 def ndebeleShape : NotionalComplementShape :=
   ⟨ClauseSpine.cP, pdCP, false⟩
 
-/-- The Washo factive shape from @cite{bochnak-hanink-2021},
-    @cite{hanink-bochnak-2017}: V D CP (D wraps CP, no intervening N).
-    @cite{deal-2026} footnote 33 explicitly notes this cell as attested
+/-- The Washo factive shape from [bochnak-hanink-2021],
+    [hanink-bochnak-2017]: V D CP (D wraps CP, no intervening N).
+    [deal-2026] footnote 33 explicitly notes this cell as attested
     "for example, for Washo (Bochnak & Hanink 2021)" but absent from
     the main Table 79 because no example language combines V D CP with
     an internal Ā-dependency. We include the no-Ā version. -/
@@ -144,7 +144,7 @@ def washoShape : NotionalComplementShape :=
 -- §2. Table 79 — Cross-Linguistic Sample
 -- ============================================================================
 
-/-- An entry in @cite{deal-2026} Table 79: a language × construction with its
+/-- An entry in [deal-2026] Table 79: a language × construction with its
     NotionalComplementShape. -/
 structure Table79Cell where
   language : String
@@ -153,7 +153,7 @@ structure Table79Cell where
   deriving Repr
 
 /-- The seven attested Table-79 cells (Deal 2026 main Table 79 + Washo cell
-    from footnote 33 per @cite{bochnak-hanink-2021}). -/
+    from footnote 33 per [bochnak-hanink-2021]). -/
 def table79 : List Table79Cell := [
   ⟨"Nez Perce", "RE",                nezPerceREShape⟩,
   ⟨"Nez Perce", "simplex",           nezPerceSimplexShape⟩,
@@ -234,20 +234,20 @@ theorem table79_three_surface_patterns_attested :
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
--- §2.5. Greek extension (cross-reference to @cite{angelopoulos-2026})
+-- §2.5. Greek extension (cross-reference to [angelopoulos-2026])
 -- ============================================================================
 --
--- Deal's main Table 79 doesn't include Greek. @cite{angelopoulos-2026}
+-- Deal's main Table 79 doesn't include Greek. [angelopoulos-2026]
 -- (NLLT 44:26) argues that Greek *pu*-complement clauses are bare CPs
 -- (no nominalization shell) where the [n]-feature on C is checked by a
 -- light noun in Spec,CP that incorporates into the matrix v_State head.
 -- Critically, *pu* additionally surfaces as an adjunct, relative
 -- pronoun, and interrogative pronoun *where* — uses where the
 -- stativity restriction (paper §2.3) vanishes. The adjunct case is the
--- one Angelopoulos uses to refute the @cite{bochnak-hanink-2021}
+-- one Angelopoulos uses to refute the [bochnak-hanink-2021]
 -- "selection limited to argument clauses" thesis: a *pu*-adjunct
--- selects its host (per @cite{bruening-2013}, @cite{hewett-2023},
--- @cite{hunter-2015}, @cite{neeleman-philip-tanaka-vandekoot-2023})
+-- selects its host (per [bruening-2013], [hewett-2023],
+-- [hunter-2015], [neeleman-philip-tanaka-vandekoot-2023])
 -- and so selection is bidirectional, not restricted to argument
 -- positions. The refutation theorem itself lives in
 -- `Studies/Angelopoulos2026.lean`
@@ -255,7 +255,7 @@ theorem table79_three_surface_patterns_attested :
 -- exposes the Greek *pu*-complement shape as a `barePropositionalCP`
 -- entry to make the typology connection explicit.
 
-/-- Greek *pu*-complement shape per @cite{angelopoulos-2026}: bare CP
+/-- Greek *pu*-complement shape per [angelopoulos-2026]: bare CP
     with no internal Ā-dependency — projects as `barePropositionalCP`,
     not `nominalization` (Greek lacks a silent situation noun, so
     *pu* cannot nominalize per paper §5). The categorial [n]-feature
@@ -281,13 +281,13 @@ in either direction.
 
 * Factive + RE-structure: Nez Perce REs (e.g. *liloy* 'be happy').
 * Factive + simplex: Nez Perce *cuukwe* 'know'.
-* Non-factive + RE-structure: Adyghe REs (per @cite{caponigro-polinsky-2011}).
+* Non-factive + RE-structure: Adyghe REs (per [caponigro-polinsky-2011]).
 * Non-factive + simplex: Nez Perce *neki/hi*; English *think*. -/
 
 /-- All four cells are attested: factivity neither necessitates nor precludes
-    RE-syntax. The `factive` flag is per @cite{deal-2026} §3 projection-test
+    RE-syntax. The `factive` flag is per [deal-2026] §3 projection-test
     diagnoses. The Adyghe non-factive RE judgement is attributed to
-    @cite{caponigro-polinsky-2011} via @cite{deal-2026} §7 Table 80. -/
+    [caponigro-polinsky-2011] via [deal-2026] §7 Table 80. -/
 theorem factivity_perp_re_structure :
     -- Factive + RE: Nez Perce REs (e.g. liloy)
     liloy.factive = true ∧ nezPerceREShape.hasInternalAbar = true ∧
@@ -299,8 +299,8 @@ theorem factivity_perp_re_structure :
 
 /-! ### The fourth cell (non-factive + RE)
 
-Documented by @cite{deal-2026} §7 (Table 80) as instantiated by Adyghe per
-@cite{caponigro-polinsky-2011}. Absent a formalised Adyghe Fragment, this is
+Documented by [deal-2026] §7 (Table 80) as instantiated by Adyghe per
+[caponigro-polinsky-2011]. Absent a formalised Adyghe Fragment, this is
 recorded as an unproven Lean claim: in linglib Adyghe is not yet present at
 Fragment level.
 
@@ -313,10 +313,10 @@ replace this prose with a theorem `adyghe_re_nonfactive`. -/
 
 /-! ### Deal 2026 Table 81
 
-* Factive + nominalization: Washo *forget* (per @cite{hanink-bochnak-2017}).
+* Factive + nominalization: Washo *forget* (per [hanink-bochnak-2017]).
 * Factive + no nominalization: Nez Perce REs (the headline Deal-2026 finding,
-  refuting the @cite{hanink-bochnak-2017} universal extension).
-* Non-factive + nominalization: Turkish *düşün-* 'think' (per @cite{deal-2026}
+  refuting the [hanink-bochnak-2017] universal extension).
+* Non-factive + nominalization: Turkish *düşün-* 'think' (per [deal-2026]
   §7 citing Özyıldız 2017).
 * Non-factive + no nominalization: Washo, Nez Perce 'think'. -/
 
@@ -338,7 +338,7 @@ theorem bareCP_no_d_no_n :
 /-! ### Observable-driven derivation (Pattern B architecture)
 
 The Fragment carries a single morphological observable
-(`requiresYoxKeEdge : Bool`) per @cite{deal-2026} §3 (28). Deal's two
+(`requiresYoxKeEdge : Bool`) per [deal-2026] §3 (28). Deal's two
 analytical commitments — the embedding-strategy classification and the
 selectional-feature stack — are *derived* from this observable, not
 stipulated alongside it. The derivation is the theory; the observable
@@ -350,7 +350,7 @@ divergence theorems expressible (currently only Deal's derivation is
 supplied; an Adyghe-style or Krapova-style derivation would be a
 straightforward sibling Studies file). -/
 
-/-- The two embedding strategies @cite{deal-2026} distinguishes. -/
+/-- The two embedding strategies [deal-2026] distinguishes. -/
 inductive EmbeddingStrategy where
   | re       -- relative embedding (yox̂ + ke + Ā-dep above TP)
   | simplex  -- bare CP, no Ā-dep
@@ -441,7 +441,7 @@ theorem reCanonical_strategy :
 -- §5b. Tonhauser projective-content classification
 -- ============================================================================
 
-/-! ### Bridge to @cite{tonhauser-beaver-roberts-simons-2013} taxonomy
+/-! ### Bridge to [tonhauser-beaver-roberts-simons-2013] taxonomy
 
 The Tonhauser et al. classes are formalised in
 `Phenomena/Presupposition/ProjectiveContent.lean` (`ProjectiveClass.classA`–
@@ -459,7 +459,7 @@ def derivedProjectiveClass (v : NezPerceEmbedder) : Option ProjectiveClass :=
 
 /-- All RE-canonical predicates project as Tonhauser Class C. This bridges
     Deal's empirical Nez Perce data to the typed
-    @cite{tonhauser-beaver-roberts-simons-2013} taxonomy. -/
+    [tonhauser-beaver-roberts-simons-2013] taxonomy. -/
 theorem reCanonical_projects_classC :
     reCanonical.all (λ v => derivedProjectiveClass v = some .classC) = true := by
   decide
@@ -542,7 +542,7 @@ theorem table79_bipartite :
 /-- The four-cell cross-classification of Tables 80–81 is exhaustively
     populated: every combination of (factive, hasInternalAbar) is attested
     by at least one (verb, shape) pair. The fourth cell (non-factive + Ā)
-    is documented from @cite{caponigro-polinsky-2011}'s Adyghe REs as
+    is documented from [caponigro-polinsky-2011]'s Adyghe REs as
     cited by Deal — Adyghe REs combine `adygheREShape` (hasInternalAbar=true)
     with predicates that are not factive in Caponigro & Polinsky's analysis
     (Deal §7 p. 53). -/
@@ -585,17 +585,17 @@ theorem strategy_distinguishes_cuukwe_liloy :
 -- §6. ke-agreement via SatisfactionCond
 -- ============================================================================
 
-/-! ### *ke* as a φ-probe on C (@cite{deal-2015a-nels})
+/-! ### *ke* as a φ-probe on C ([deal-2015a-nels])
 
-@cite{deal-2026} §2 argues *ke* is a C-head with a φ-probe rather than a
+[deal-2026] §2 argues *ke* is a C-head with a φ-probe rather than a
 relative pronoun. The argument: *ke*'s φ-features track the embedded
 *subject* (sometimes plus object), starting from the highest argument and
-proceeding down — exactly the @cite{deal-2015a-nels} interaction-satisfaction
+proceeding down — exactly the [deal-2015a-nels] interaction-satisfaction
 algorithm probing into c-command domain.
 
 The C-probe is satisfied either by feature-match (yielding overt person
 agreement) or by encountering the TP boundary (yielding null surface
-agreement). We model this with @cite{deal-2024}'s `SatisfactionCond.disjunctive`.
+agreement). We model this with [deal-2024]'s `SatisfactionCond.disjunctive`.
 
 Caveat: the existing `Agree.lean` `featuresMatch` uses `sameType` matching
 (see `Agree.lean:234`), which collapses 1st/2nd/3rd person into a single
@@ -634,7 +634,7 @@ theorem ke_head_encounter_no_copy :
 -- §7. Internal-Ā-dependency profile
 -- ============================================================================
 
-/-! ### REs contain a high Ā-dependency (@cite{deal-2026} §5)
+/-! ### REs contain a high Ā-dependency ([deal-2026] §5)
 
 Deal §5 argues the relative operator originates *above TP* — a high
 functional projection — based on absence of low-position cyclic effects
@@ -661,7 +661,7 @@ theorem reInternalAbar_isHigh : reInternalAbar.isHigh = true :=
 /-! ### Silent divergence with HPSG
 
 `Syntax/HPSG/RelativeClauses.lean:87-93` hard-codes RC =
-modifier (`isMod = true`, theorem `relClause_is_modifier`). @cite{deal-2026}'s
+modifier (`isMod = true`, theorem `relClause_is_modifier`). [deal-2026]'s
 analysis of Nez Perce REs as *complement* CPs (not modifier RCs) sits
 incompatibly with this Minimalist-only framing: HPSG would either need to
 recognise REs as a third structural type (not modifier, not bare
@@ -676,14 +676,14 @@ work — promoted from "implicit assumption" to a substrate question.
 establishes that Tigrinya distinguishes *kemzi* (factive complementizer)
 from *zi* (relativizer/general subordinator) without syncretism. This is a
 language-internal counterargument to the universalist
-"complementation = relativization" claim, parallel to @cite{deal-2026}'s
+"complementation = relativization" claim, parallel to [deal-2026]'s
 Nez Perce-internal contrast between simplex (no *yox̂ ke*) and RE (with
 *yox̂ ke*) embeddings. The two papers reinforce each other across distinct
 language families.
 
 ### Convergence with Caponigro & Polinsky 2011
 
-@cite{caponigro-polinsky-2011}'s Adyghe analysis shares Deal's "high Ā
+[caponigro-polinsky-2011]'s Adyghe analysis shares Deal's "high Ā
 origin" claim while diverging on the V D N CP shell shape. Deal 2026 §5
 explicitly cites Caponigro & Polinsky as theoretical kin. -/
 
@@ -693,10 +693,10 @@ explicitly cites Caponigro & Polinsky as theoretical kin. -/
 
 /-! ### §6 indexical shift / SoT formalisation deferred
 
-@cite{deal-2026} §6 establishes that REs block shifty pronouns and require
+[deal-2026] §6 establishes that REs block shifty pronouns and require
 matching tense (vs. simplex embeddings where shift and relative-tense are
 both available). The semantic substrate for these claims is
-@cite{deal-2020}'s `A Theory of Indexical Shift` book; that substrate is
+[deal-2020]'s `A Theory of Indexical Shift` book; that substrate is
 not yet implemented in linglib (no `Semantics/IndexicalShift/`
 directory exists; existing `Semantics/Reference/{ShiftedIndexicals,
 Monsters,Kaplan}.lean` cover Kaplanian framing but not Deal's Σ-monsters

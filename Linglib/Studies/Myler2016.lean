@@ -5,10 +5,10 @@ import Linglib.Semantics.ArgumentStructure.Relational
 
 /-!
 # Myler 2016: Building and Interpreting Possession Sentences
-@cite{myler-2016}
+[myler-2016]
 
 This study file connects the copula theory (Copula.lean) to empirical
-predictions and cross-linguistic data from @cite{myler-2016}.
+predictions and cross-linguistic data from [myler-2016].
 
 ## Contents
 
@@ -17,7 +17,7 @@ predictions and cross-linguistic data from @cite{myler-2016}.
 - **The two puzzles**: injectivity of `haveReading` (too-many-meanings)
   and `vi_characterization` (too-many-structures)
 - **Cross-module bridges**: connections to possession typology
-  (@cite{stassen-2009}), Barker's π (@cite{barker-2011}), and
+  ([stassen-2009]), Barker's π ([barker-2011]), and
   nominal structure (inalienable/alienable)
 -/
 
@@ -32,7 +32,7 @@ open Minimalist
 /-- Icelandic has two HAVE verbs (*hafa* and *eiga*) that carve up the
     possession domain based on the DP-internal structure of the complement.
 
-    @cite{myler-2016} §4.3 / Myler, Sigurðsson & Wood 2014:
+    [myler-2016] §4.3 / Myler, Sigurðsson & Wood 2014:
     - v ⇔ *hafa* / ___Voice_{D},φ ___Pred (complement contains PredP)
     - v ⇔ *eiga* / ___Voice_{D},φ       (elsewhere in transitive context)
 
@@ -119,7 +119,7 @@ theorem icelandicVI_agrees_vocabItem (dp : IcelandicPossDP) :
 /-- The "too-many-meanings" puzzle: how can one construction (*have*)
     have so many different meanings?
 
-    @cite{myler-2016} (81): possession constructions can mean so many
+    [myler-2016] (81): possession constructions can mean so many
     things because they involve sentencifying a meaning that comes from
     inside DP. The meanings are a *syntactic* natural class (all introduced
     by heads inside DP), not a *semantic* one. Since v = λx.x, ALL the
@@ -135,7 +135,7 @@ theorem too_many_meanings_solution :
 /-- The "too-many-structures" puzzle: how can the same possessive meanings
     be realized in so many syntactically different ways across languages?
 
-    @cite{myler-2016} (93): possession relations originate inside DP
+    [myler-2016] (93): possession relations originate inside DP
     (root-introduced or Poss-head-introduced). Since v is meaningless
     and makes no semantic demands, syntax alone decides where the
     possessor is first-merged. Combined with parametric variation in
@@ -155,9 +155,9 @@ theorem too_many_structures_solution (v : VoiceHead) :
 
 -- ─── Bridge to Possession Typology ───
 
-/-- @cite{myler-2016}'s HAVE = BE + Voice_{D},φ provides the syntactic
+/-- [myler-2016]'s HAVE = BE + Voice_{D},φ provides the syntactic
     analysis underlying the have-verb predicative possession strategy
-    from @cite{stassen-2009}.
+    from [stassen-2009].
 
     A language uses the have-verb strategy iff its possession construction
     has transitive Voice — exactly the `copulaVI` condition.
@@ -184,9 +184,9 @@ open Semantics.ArgumentStructure.Relational in
 
 /-- The relational HAVE reading requires the complement DP to have a
     Pred2 interpretation (either lexically relational or via π-shift).
-    This is exactly `NominalInterpType.pred2` from @cite{barker-2011}.
+    This is exactly `NominalInterpType.pred2` from [barker-2011].
 
-    @cite{myler-2016}: "The meanings [of HAVE] are a syntactic natural
+    [myler-2016]: "The meanings [of HAVE] are a syntactic natural
     class: all introduced by heads inside DP." For relational HAVE, the
     DP must supply a possessor slot — which is what Pred2 provides.
 

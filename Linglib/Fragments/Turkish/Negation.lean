@@ -2,7 +2,7 @@ import Linglib.Typology.Negation
 
 /-!
 # Turkish Negation Fragment
-@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
+[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
 
 Turkish expresses standard negation with the verbal suffix *-mA-*
 (/-ma-/ or /-me-/ depending on vowel harmony). The suffix is inserted

@@ -4,7 +4,7 @@ import Linglib.Data.Examples.Schema
 import Mathlib.Tactic.FinCases
 
 /-!
-# @cite{condoravdi-lauer-2016} — Anankastic conditionals are just conditionals
+# [condoravdi-lauer-2016] — Anankastic conditionals are just conditionals
 
 C&L's central claim: anankastics (eq. 1, the Harlem sentence) need no
 special compositional treatment, provided (i) `want` is given the
@@ -65,7 +65,7 @@ universe u
 
 /-! ### § 6.1 Double-modal compositional schema (eq. 77) -/
 
-/-- @cite{condoravdi-lauer-2016} eq. (77): `If ψ, MODAL[φ]` parses as
+/-- [condoravdi-lauer-2016] eq. (77): `If ψ, MODAL[φ]` parses as
 `NEC[ψ][MODAL[φ]]` when the consequent contains an overt modal claim.
 Composed from `conditionalNecessity` (the outer NEC restriction by
 antecedent, from `Semantics/Conditionals/Restrictor.lean`) and
@@ -82,7 +82,7 @@ def doubleModalLF {W : Type u} (fOuter : ModalBase W) (gOuter : OrderingSource W
 
 /-! ### § 7.1 The Harlem LF (eq. 87b / 88) -/
 
-/-- @cite{condoravdi-lauer-2016} eq. (88) at the operator level: the
+/-- [condoravdi-lauer-2016] eq. (88) at the operator level: the
 Harlem-sentence LF parameterised over its four contextual backgrounds.
 `NEC_{fBelS, gNorm}[wantEP(Ad, Harlem)] [MUST_{fHist, gInner}[ATrain]]`.
 

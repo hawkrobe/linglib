@@ -2,13 +2,13 @@ import Linglib.Data.WALS.Features.F55A
 
 /-!
 # Typology.ClassifierSystem
-@cite{aikhenvald-2000} @cite{chierchia-1998} @cite{dixon-1982}
-@cite{downing-1996} @cite{allan-1977} @cite{little-moroney-royer-2022}
-@cite{krifka-1995} @cite{bale-coon-2014} @cite{jenks-2011}
-@cite{nomoto-2013} @cite{sudo-2016}
+[aikhenvald-2000] [chierchia-1998] [dixon-1982]
+[downing-1996] [allan-1977] [little-moroney-royer-2022]
+[krifka-1995] [bale-coon-2014] [jenks-2011]
+[nomoto-2013] [sudo-2016]
 
 Cross-linguistic typology of noun categorization devices, following
-@cite{aikhenvald-2000} *Classifiers: A Typology of Noun Categorization
+[aikhenvald-2000] *Classifiers: A Typology of Noun Categorization
 Devices*.
 
 ## Provenance
@@ -47,7 +47,7 @@ embedded as metadata.
 
 ## Out of scope
 
-@cite{corbett-1991} on gender systems is the obvious adjacent reference
+[corbett-1991] on gender systems is the obvious adjacent reference
 for the `nounClass` constructor; not currently consumed by this file
 but should be cited if a per-language gender-system substrate gets
 formalised here. The `nounClass` cell here collapses what Corbett
@@ -58,12 +58,12 @@ classifier).
 namespace Typology
 
 -- ════════════════════════════════════════════════════
--- § 1. Classifier Types (@cite{aikhenvald-2000})
+-- § 1. Classifier Types ([aikhenvald-2000])
 -- ════════════════════════════════════════════════════
 
 /-- The 9 focal classifier types on the noun-categorization continuum.
 
-    @cite{aikhenvald-2000} establishes these as "focal points" distinguished
+    [aikhenvald-2000] establishes these as "focal points" distinguished
     by morphosyntactic locus, scope, and grammatical function.
     Real systems are gradient — a language's system may sit between types.
 
@@ -103,12 +103,12 @@ inductive ClassifierType where
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 2. Semantic Parameters (@cite{aikhenvald-2000})
+-- § 2. Semantic Parameters ([aikhenvald-2000])
 -- ════════════════════════════════════════════════════
 
 /-- Universal semantic parameters employed in noun categorization.
 
-    @cite{aikhenvald-2000} identifies three large classes: animacy,
+    [aikhenvald-2000] identifies three large classes: animacy,
     physical properties, and function. These parameters are found across
     ALL types of noun categorization device, though different types show
     different preferences. -/
@@ -138,7 +138,7 @@ inductive SemanticParameter where
 
 /-- Dimensionality sub-classification for shape-based classifiers.
 
-    @cite{downing-1996} and @cite{allan-1977} show that shape-based
+    [downing-1996] and [allan-1977] show that shape-based
     classifiers decompose along a dimensionality axis:
     - 1D: long, slender, elongated (e.g., Japanese 本 hon, Mandarin 条 tiáo)
     - 2D: flat, thin, planar (e.g., Japanese 枚 mai, Mandarin 张 zhāng)
@@ -204,7 +204,7 @@ structure ClassifierEntry where
   isDefault : Bool := false
   /-- Sortal (inherent properties) vs. mensural (configuration/measure) -/
   isMensural : Bool := false
-  /-- Shape dimensionality sub-classification (@cite{downing-1996}).
+  /-- Shape dimensionality sub-classification ([downing-1996]).
       Only meaningful when `semantics` includes `.shape`. -/
   shapeDimension : Option ShapeDimension := none
   deriving Repr, BEq
@@ -220,29 +220,29 @@ def collectSemantics (cls : List ClassifierEntry) : List SemanticParameter :=
   all.eraseDups
 
 -- ════════════════════════════════════════════════════
--- § 5. Classifier Strategy (@cite{little-moroney-royer-2022})
+-- § 5. Classifier Strategy ([little-moroney-royer-2022])
 -- ════════════════════════════════════════════════════
 
 /-- The semantic strategy a theoretical framework attributes to classifier
     constructions. Three competing positions are represented:
 
-    - **forNumeral** (CLF-for-NUM): @cite{krifka-1995}, @cite{bale-coon-2014},
-      @cite{little-moroney-royer-2022}. The classifier is a measure function
+    - **forNumeral** (CLF-for-NUM): [krifka-1995], [bale-coon-2014],
+      [little-moroney-royer-2022]. The classifier is a measure function
       required by the numeral. The numeral takes the classifier as its first
       argument: ⟦TWO⟧ = λm⟨e,n⟩λPλx.[P(x) ∧ m(x) = 2]. Predicts: numeral
       idiosyncrasies in CLF requirement, CLF obligatory even without a noun
       (counting contexts), CLF + plural marking can co-occur.
-    - **forNoun** (CLF-for-N): @cite{chierchia-1998}, @cite{jenks-2011},
-      @cite{nomoto-2013}, @cite{little-moroney-royer-2022}. The classifier
+    - **forNoun** (CLF-for-N): [chierchia-1998], [jenks-2011],
+      [nomoto-2013], [little-moroney-royer-2022]. The classifier
       atomizes the noun denotation so the numeral can count.
       ⟦CLF⟧ = λPλx.[P(x) ∧ ¬∃y[P(y) ∧ y < x]]. Predicts: noun idiosyncrasies
       in CLF requirement, CLF appears beyond numerals (with quantifiers,
       demonstratives, relative clauses), CLF + plural marking in complementary
       distribution.
-    - **sudoBlocking**: @cite{sudo-2016}. Classifier semantics live with
+    - **sudoBlocking**: [sudo-2016]. Classifier semantics live with
       *numerals*, not nouns. Numerals are universally type-n singular terms;
       a phonologically silent ∪-operator type-shifts them to predicates in
-      languages without classifiers, but is *blocked* (per @cite{chierchia-1998}'s
+      languages without classifiers, but is *blocked* (per [chierchia-1998]'s
       Blocking Principle) in languages whose lexicon contains overt classifiers.
       Predicts: no numeral or noun idiosyncrasies, CLF appears *with* numerals
       not beyond them, CLF appears in counting contexts (via the ∩-operator).
@@ -264,7 +264,7 @@ inductive ClassifierStrategy where
 
 /-- A noun categorization system in a language.
 
-    Captures @cite{aikhenvald-2000}'s 7 definitional properties (A–G):
+    Captures [aikhenvald-2000]'s 7 definitional properties (A–G):
     (A) morphosyntactic locus → `scopes`
     (B) scope/domain → `classifierType` + `scopes`
     (C) assignment principles → `assignment`
@@ -303,9 +303,9 @@ structure NounCategorizationSystem where
       User-facing predicate: `HasObligatoryNumber : Prop`. -/
   hasObligatoryNumber : Bool := false
   /-- Can classifiers and plural marking co-occur? Predicted by CLF-for-NUM
-      (@cite{little-moroney-royer-2022}: CLF and PL are in different
+      ([little-moroney-royer-2022]: CLF and PL are in different
       projections) but not by CLF-for-N (same projection, complementary
-      distribution per @cite{borer-2005}). User-facing predicate:
+      distribution per [borer-2005]). User-facing predicate:
       `PluralClfCooccur : Prop`. -/
   pluralClfCooccur : Bool := false
   /-- Citation backing the hand-coded values. -/
@@ -343,7 +343,7 @@ abbrev HasObligatoryNumber (s : NounCategorizationSystem) : Prop :=
 abbrev PluralClfCooccur (s : NounCategorizationSystem) : Prop :=
   s.pluralClfCooccur = true
 
-/-- @cite{dixon-1982}'s noun-class vs. classifier divide.
+/-- [dixon-1982]'s noun-class vs. classifier divide.
     Noun classes: small, closed, grammaticalized, agreement.
     Classifiers: large, open, lexical, no agreement. -/
 def isNounClassType (t : ClassifierType) : Bool :=
@@ -360,13 +360,13 @@ end NounCategorizationSystem
 -- ════════════════════════════════════════════════════
 
 /-- Grammatical categories that interact with classifier types
-    (@cite{aikhenvald-2000}). -/
+    ([aikhenvald-2000]). -/
 inductive GrammaticalCategory where
   | definiteness | number | case_ | tenseAspect | possession
   deriving DecidableEq, Repr
 
 /-- Whether a classifier type typically interacts with a grammatical category
-    (@cite{aikhenvald-2000}). -/
+    ([aikhenvald-2000]). -/
 def interacts : ClassifierType → GrammaticalCategory → Bool
   | .nounClass, .definiteness => true
   | .nounClass, .number => true
@@ -388,7 +388,7 @@ def interacts : ClassifierType → GrammaticalCategory → Bool
 -- § 9. WALS Chapter 55 — Numeral Classifiers
 -- ════════════════════════════════════════════════════
 
-/-- Whether a language uses numeral classifiers (@cite{wals-2013} Ch 55). -/
+/-- Whether a language uses numeral classifiers ([wals-2013] Ch 55). -/
 inductive ClassifierStatus where
   /-- No numeral classifiers (e.g., English, Spanish, Arabic). -/
   | absent

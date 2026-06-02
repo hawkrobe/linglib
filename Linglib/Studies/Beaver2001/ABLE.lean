@@ -2,9 +2,9 @@ import Linglib.Semantics.Dynamic.Connectives.CCP
 
 /-!
 # ABLE: A Bit Like English
-@cite{beaver-2001}
+[beaver-2001]
 
-ABLE is the fragment language of @cite{beaver-2001}'s *Presupposition and
+ABLE is the fragment language of [beaver-2001]'s *Presupposition and
 Assertion in Dynamic Semantics*. It serves as the formal object language
 for Presuppositional Update Logic (PUL), mapping English-like formulas to
 context change potentials.
@@ -20,7 +20,7 @@ subformula's presupposition be satisfied at its local context.
 
 ## Formal Definitions
 
-The formalization captures the propositional core of PUL (@cite{beaver-2001}
+The formalization captures the propositional core of PUL ([beaver-2001]
 Ch. 6) and ABLE (Ch. 7), without discourse markers or extended sequences.
 Connectives follow D52 (Ch. 7 §7.4), modals follow D60 (Ch. 8 §8.3),
 and the presupposition operator is D59 (Ch. 7 §7.6).
@@ -64,7 +64,7 @@ variable {P : Type*}
 -- § 1. ABLE Formulas
 -- ════════════════════════════════════════════════════════════════
 
-/-- ABLE formula type. @cite{beaver-2001} Ch. 7.
+/-- ABLE formula type. [beaver-2001] Ch. 7.
 
 The five constructors correspond to the five basic ABLE operations.
 Connectives (NOT, AND) are D52 (§7.4), epistemic modality (MIGHT) is
@@ -98,7 +98,7 @@ def disj (φ ψ : Formula P) : Formula P := .not (.and (.not φ) (.not ψ))
 -- § 2. PUL Evaluation
 -- ════════════════════════════════════════════════════════════════
 
-/-- Evaluate an ABLE formula as a CCP. @cite{beaver-2001} D52, D59, D60.
+/-- Evaluate an ABLE formula as a CCP. [beaver-2001] D52, D59, D60.
 
 Each constructor maps to its PUL update:
 - `pred`: filter by satisfaction (`updateFromSat`) — D48
@@ -121,7 +121,7 @@ noncomputable def eval : Formula P → CCP P
 /-- Structural admittance: a formula's presuppositions are satisfied
 at every local context encountered during evaluation.
 
-This captures @cite{beaver-2001} D30 (Admittance) recursively over
+This captures [beaver-2001] D30 (Admittance) recursively over
 formula structure — the key to presupposition projection.
 A state σ *admits* φ iff:
 - For `pred`: always admitted (no presuppositions)
@@ -142,7 +142,7 @@ noncomputable def pulAdmits : Formula P → InfoStateOf P → Prop
 -- ════════════════════════════════════════════════════════════════
 
 /-- ∂ is a test: it either passes (returns input) or fails (returns ∅).
-@cite{beaver-2001} D59, D61 (Tests). -/
+[beaver-2001] D59, D61 (Tests). -/
 theorem presup_isTest (φ : Formula P) : IsTest φ.presup.eval := by
   intro s; simp only [eval]; split <;> simp
 
@@ -300,13 +300,13 @@ theorem eval_eliminative (φ : Formula P) : IsEliminative φ.eval := by
 -- ════════════════════════════════════════════════════════════════
 
 /-- A state σ **satisfies** φ iff σ[φ] = σ (updating adds no information).
-@cite{beaver-2001} D29 / MP4 (closure-based; we use the set-based equivalent:
+[beaver-2001] D29 / MP4 (closure-based; we use the set-based equivalent:
 φ is satisfied when the update is a fixed point). -/
 noncomputable def satisfies (φ : Formula P) (σ : InfoStateOf P) : Prop :=
   φ.eval σ = σ
 
 /-- A formula φ **presupposes** ψ iff every state that admits φ
-also satisfies ψ. @cite{beaver-2001} D46, MP6. -/
+also satisfies ψ. [beaver-2001] D46, MP6. -/
 def presupposes (φ ψ : Formula P) : Prop :=
   ∀ σ : InfoStateOf P, φ.pulAdmits σ → ψ.satisfies σ
 
@@ -317,7 +317,7 @@ def presupposes (φ ψ : Formula P) : Prop :=
 /-- **Lemma 8.6**: Satisfaction ↔ inconsistency with NOT.
 
 σ satisfies φ iff σ is not consistent with NOT φ.
-@cite{beaver-2001} Ch. 8 §8.3.
+[beaver-2001] Ch. 8 §8.3.
 
 The proof uses eliminativity: since φ.eval σ ⊆ σ (all ABLE formulas
 are eliminative), the fixed-point condition φ.eval σ = σ reduces to
@@ -332,7 +332,7 @@ theorem lemma_8_6 (φ : Formula P) (σ : InfoStateOf P) :
     · intro hp; by_contra hne; exact h ⟨p, hp, hne⟩
 
 /-- **Fact 8.7 (1)**: MUST is a test.
-@cite{beaver-2001} Ch. 8 §8.3. -/
+[beaver-2001] Ch. 8 §8.3. -/
 theorem must_isTest (φ : Formula P) : IsTest (Formula.must φ).eval := by
   intro σ; simp only [Formula.must, eval]
   by_cases h : (σ \ φ.eval σ).Nonempty
@@ -349,7 +349,7 @@ theorem must_eliminative (φ : Formula P) : IsEliminative (Formula.must φ).eval
 
 The proof chains through Lemma 8.6: satisfaction ↔ ¬consistent-with-NOT
 ↔ MIGHT(NOT φ) fails ↔ NOT(MIGHT(NOT φ)) passes.
-@cite{beaver-2001} Ch. 8 §8.3. -/
+[beaver-2001] Ch. 8 §8.3. -/
 theorem fact_8_7 (φ : Formula P) (σ : InfoStateOf P) :
     (Formula.must φ).satisfies σ ↔ φ.satisfies σ := by
   constructor
@@ -373,7 +373,7 @@ theorem fact_8_7 (φ : Formula P) (σ : InfoStateOf P) :
 -- ════════════════════════════════════════════════════════════════
 
 /-- **Fact 8.1**: If φ presupposes ψ, then NOT φ, φ AND χ, and
-φ IMPLIES χ all presuppose ψ. @cite{beaver-2001} Ch. 8 §8.2.1.
+φ IMPLIES χ all presuppose ψ. [beaver-2001] Ch. 8 §8.2.1.
 
 The key insight: the set of contexts admitting NOT φ (or φ AND χ, etc.)
 is a SUBSET of those admitting φ. So if every context admitting φ
@@ -392,7 +392,7 @@ theorem fact_8_1_impl (φ ψ χ : Formula P) (h : φ.presupposes ψ) :
 
 /-- **Fact 8.2**: Transitivity of presupposition.
 If φ presupposes ψ, and ψ presupposes χ, then φ presupposes χ.
-@cite{beaver-2001} Ch. 8 §8.2.1.
+[beaver-2001] Ch. 8 §8.2.1.
 
 This follows because admitting φ implies satisfying ψ (= ψ.eval σ = σ),
 which means σ trivially admits ψ (since ψ.eval σ = σ makes every
@@ -405,7 +405,7 @@ theorem fact_8_2 (φ ψ χ : Formula P)
 
 /-- **Fact 8.3**: Conditional presupposition.
 If φ presupposes ψ, then χ AND φ presupposes χ IMPLIES ψ.
-@cite{beaver-2001} Ch. 8 §8.2.1.
+[beaver-2001] Ch. 8 §8.2.1.
 
 The second conjunct's presupposition becomes conditional on the first
 conjunct. This is the hallmark of CCP-based projection. -/
@@ -428,7 +428,7 @@ theorem fact_8_3_and (φ ψ χ : Formula P) (h : φ.presupposes ψ) :
 
 /-- **Fact 8.8**: Presupposition projects through MIGHT and MUST.
 If φ presupposes ψ, then MIGHT φ and MUST φ also presuppose ψ.
-@cite{beaver-2001} Ch. 8 §8.3. -/
+[beaver-2001] Ch. 8 §8.3. -/
 theorem fact_8_8_might (φ ψ : Formula P) (h : φ.presupposes ψ) :
     (Formula.might φ).presupposes ψ :=
   λ σ hadmit => h σ ((admits_might φ σ).mp hadmit)
@@ -448,7 +448,7 @@ theorem eval_empty (φ : Formula P) : φ.eval ∅ = ∅ :=
 /-- **Entailment in ABLE (D45)**: φ entails ψ iff every state resulting
 from updating with φ satisfies ψ.
 
-@cite{beaver-2001} Ch. 7 §7.2, Meaning Postulate MP5:
+[beaver-2001] Ch. 7 §7.2, Meaning Postulate MP5:
 `entails = λF λF' [∀I∀J, I{F}J → J satisfies F']`
 
 In our set-based formulation (without discourse markers), this reduces
@@ -460,7 +460,7 @@ noncomputable def entails (φ ψ : Formula P) : Prop :=
 
 The nonemptiness guard in `CCP.entails` is redundant for ABLE formulas
 because all ABLE formulas are eliminative: ψ.eval ∅ = ∅.
-@cite{beaver-2001} D45 = `CCP.entails` modulo this vacuous case. -/
+[beaver-2001] D45 = `CCP.entails` modulo this vacuous case. -/
 theorem entails_iff_ccp_entails (φ ψ : Formula P) :
     φ.entails ψ ↔ CCP.entails φ.eval ψ.eval := by
   constructor

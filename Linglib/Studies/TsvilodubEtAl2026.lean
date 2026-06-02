@@ -4,7 +4,7 @@ import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Tsvilodub, Mulligan, Snider, Hawkins & Franke (2026)
-@cite{tsvilodub-etal-2026}
+[tsvilodub-etal-2026]
 
 Act or Clarify? Modeling Sensitivity to Uncertainty and Cost in Communication.
 
@@ -14,7 +14,7 @@ When should an agent ask a clarification question (CQ) vs. act under
 uncertainty? This paper predicts and confirms that the decision depends on
 both **uncertainty** (ε) about the interlocutor's goals and the **cost** (δ)
 of available actions. The interaction is captured by **expected regret**
-(= EVPI, @cite{raiffa-schlaifer-1961}).
+(= EVPI, [raiffa-schlaifer-1961]).
 
 ## Two-layer model
 
@@ -24,11 +24,11 @@ The paper's model is a direct softmax over expected utility (NOT RSA):
 2. **Behavioral policy**: `π(r) = SoftMax(α · EU(r))` — what to say
 
 We reinterpret the behavioral policy through RSA, connecting it to
-@cite{hawkins-etal-2025}'s action-utility scoring.
+[hawkins-etal-2025]'s action-utility scoring.
 
-## Connection to @cite{hawkins-etal-2025}
+## Connection to [hawkins-etal-2025]
 
-The behavioral policy π corresponds to @cite{hawkins-etal-2025}'s
+The behavioral policy π corresponds to [hawkins-etal-2025]'s
 respondent R₁ at β = 1, w_c = 0: **pure action utility**. R₁ scores
 responses by:
 
@@ -40,7 +40,7 @@ mention-some, 0 for mismatching, 1−δ for exhaustive.
 
 The L0 gate (`if L0 = 0 then 0`) ensures truth-conditional consistency:
 S1 never recommends a response that doesn't apply to the goal. This is
-structurally identical to @cite{hawkins-etal-2025}'s `responseTruth` gate.
+structurally identical to [hawkins-etal-2025]'s `responseTruth` gate.
 
 ## Action utility and δ-sensitivity
 
@@ -89,7 +89,7 @@ instance : Fintype Response where
 -- ============================================================================
 
 /-- Boolean applicability: does response r address goal g?
-    Parallel to @cite{hawkins-etal-2025}'s `responseTruth`. -/
+    Parallel to [hawkins-etal-2025]'s `responseTruth`. -/
 def respApplies : Response → Goal → Bool
   | .ms1, .g₁ => true
   | .ms2, .g₂ => true
@@ -110,7 +110,7 @@ open RSA Real in
       if L0(g|r) = 0 then 0
       else exp(α · U(g, r))
 
-    This is @cite{hawkins-etal-2025}'s `priorPQScore` at β = 1, w_c = 0:
+    This is [hawkins-etal-2025]'s `priorPQScore` at β = 1, w_c = 0:
     pure action utility. The L0 gate ensures truth-conditional consistency.
 
     Note: the paper's α has prior N(5, 1); we use α = 1 here. The

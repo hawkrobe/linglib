@@ -5,11 +5,11 @@ import Linglib.Semantics.Reference.ShiftedIndexicals
 
 /-!
 # Context Quantification
-@cite{schlenker-2003} @cite{hintikka-1962}
+[schlenker-2003] [hintikka-1962]
 
 Bridges world quantification (`Doxastic.lean`) and context shifting (`Shifts.lean`).
 
-@cite{schlenker-2003}'s key insight: attitude verbs quantify over *contexts*, not
+[schlenker-2003]'s key insight: attitude verbs quantify over *contexts*, not
 just worlds. Standard Hintikka semantics (∀w'. R(x,w,w') → p(w')) is a special
 case where only the world coordinate of the accessible context matters. In
 languages with shifted indexicals (Amharic, Zazaki), the agent coordinate of
@@ -120,7 +120,7 @@ theorem sayM_reduces_to_box
 
     ⟦x V φ⟧(t, w) = ∀w' ∈ worlds. R(x,w,w') → φ(ctxFromShift t x w')
 
-    This is @cite{schlenker-2003}'s primitive: attitude verbs quantify
+    This is [schlenker-2003]'s primitive: attitude verbs quantify
     over contexts ⟨holder, w', t, p⟩, not just worlds w'. -/
 def ctxBox (R : AccessRel W E) (holder : E)
     (φ : KContext W E P T → Prop)
@@ -136,7 +136,7 @@ instance ctxBox_decidable (R : AccessRel W E) [∀ a w w', Decidable (R a w w')]
 /-- When φ depends only on the world coordinate, context quantification
     reduces to standard Hintikka world quantification (`boxAt`).
 
-    This is the formal content of @cite{schlenker-2003}'s observation:
+    This is the formal content of [schlenker-2003]'s observation:
     Hintikka semantics is a SPECIAL CASE of context quantification —
     the case where the embedded clause has no shifted indexicals, no
     perspective-dependent expressions, nothing that reads from the
@@ -189,20 +189,20 @@ theorem doxastic_is_ctxBox_world_only
   simp only [Doxastic.DoxasticPredicate.holdsAt, ctxBox_world_only]
 
 -- ════════════════════════════════════════════════════════════════
--- § Fixity Thesis (@cite{schlenker-2003}, Claim 2)
+-- § Fixity Thesis ([schlenker-2003], Claim 2)
 -- ════════════════════════════════════════════════════════════════
 
-/-- The Fixity Thesis (@cite{schlenker-2003}, Appendix):
+/-- The Fixity Thesis ([schlenker-2003], Appendix):
     a tower-parameterized meaning satisfies Fixity iff its
     truth value is the same regardless of the tower configuration.
 
-    In @cite{schlenker-2003}'s formulation: ⟦φ⟧^{c,i} is independent
+    In [schlenker-2003]'s formulation: ⟦φ⟧^{c,i} is independent
     of c. In the tower analysis: the meaning function ignores the
     tower parameter entirely.
 
     The thesis holds in standard (non-monstrous) formal semantics where
     sentences have world-dependent but context-independent denotations.
-    It fails in @cite{schlenker-2003}'s MEL (Monstrous Egli Language),
+    It fails in [schlenker-2003]'s MEL (Monstrous Egli Language),
     where attitude operators bind context variables that shift indexical
     reference. -/
 def SatisfiesFixity (φ : ContextTower (KContext W E P T) → W → Prop) : Prop :=

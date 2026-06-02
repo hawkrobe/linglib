@@ -3,7 +3,7 @@ import Linglib.Core.Probability.Entropy
 
 /-!
 # Channel Capacity and Capacity-Achieving Priors
-@cite{cover-thomas-2006} @cite{zaslavsky-etal-2019}
+[cover-thomas-2006] [zaslavsky-etal-2019]
 
 The maximum mutual information `C* = sup_{p(c)} I(W;C)` for a `CommChannel`,
 plus the capacity-achieving prior (CAP) condition `p(c) ∝ exp(-S(c))` and
@@ -40,14 +40,14 @@ variable {C W : Type} [Fintype C] [Fintype W]
 
 /-- A prior is capacity-achieving iff `p(c) ∝ exp(-S(c))`.
     Necessary and sufficient for `p(c)` to maximize `I(W;C)` over all
-    priors on `C`. From @cite{zaslavsky-etal-2019}; derived from the
-    Blahut-Arimoto algorithm (@cite{cover-thomas-2006}). -/
+    priors on `C`. From [zaslavsky-etal-2019]; derived from the
+    Blahut-Arimoto algorithm ([cover-thomas-2006]). -/
 def IsCAP (nc : CommChannel C W) (prior : C → ℝ) : Prop :=
   ∃ Z > 0, ∀ c, prior c > 0 →
     prior c = exp (-commPrecision nc prior c) / Z
 
 /-- The CAP linear relation: at a capacity-achieving prior,
-    `-log p(c) = S(c) + log Z`. From @cite{zaslavsky-etal-2019}. -/
+    `-log p(c) = S(c) + log Z`. From [zaslavsky-etal-2019]. -/
 theorem cap_linear (nc : CommChannel C W) (prior : C → ℝ)
     {Z : ℝ} (hZ : Z > 0)
     (hCAP : ∀ c, prior c > 0 → prior c = exp (-commPrecision nc prior c) / Z)
@@ -199,7 +199,7 @@ theorem mutualInfo_le_log_card (nc : CommChannel C W) (prior : C → ℝ)
       (marginalWord_sum_one nc prior hprior_sum))
 
 /-- Channel capacity: the supremum of mutual information over all valid
-    priors. `C* = sup_{p(c)} I(W;C)` (eq. 3 of @cite{zaslavsky-etal-2019}). -/
+    priors. `C* = sup_{p(c)} I(W;C)` (eq. 3 of [zaslavsky-etal-2019]). -/
 noncomputable def channelCapacity (nc : CommChannel C W) : ℝ :=
   sSup {I | ∃ prior : C → ℝ,
     (∀ c, 0 ≤ prior c) ∧ ∑ c, prior c = 1 ∧ mutualInfo nc prior = I}

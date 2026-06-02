@@ -4,10 +4,10 @@ import Linglib.Syntax.Case.CaseFilter
 
 /-!
 # Hybrid Licensing
-@cite{kalin-2018} @cite{coon-keine-2021} @cite{marantz-1991} @cite{baker-2015}
+[kalin-2018] [coon-keine-2021] [marantz-1991] [baker-2015]
 
 A theory of nominal licensing that decouples *which* nominals need
-licensing from *where* the licensers live. Following @cite{kalin-2018}'s
+licensing from *where* the licensers live. Following [kalin-2018]'s
 analysis of differential object marking (DOM) in the Neo-Aramaic
 language Senaya, every clause carries
 
@@ -26,9 +26,9 @@ licensers being activated.
 
 ## Feature-Theoretic Implementation
 
-@cite{kalin-2018} cashes "needs licensing" as carrying an
+[kalin-2018] cashes "needs licensing" as carrying an
 *uninterpretable, unvalued* [Case] feature in the
-@cite{pesetsky-torrego-2007} framework: licensing is feature
+[pesetsky-torrego-2007] framework: licensing is feature
 *valuation* via Agree with an active licenser. Nominals without the
 unvalued feature are not active for licensing — they are interpretable
 in situ. The `needsLicensing` flag on `LicensedNP` is the Boolean
@@ -42,9 +42,9 @@ The architecture is hybrid in two senses:
 
 - **Licensers**: primary (obligatory) + secondary (last-resort) coexist
   in the same clause. This contrasts with Agree-based theories
-  (@cite{marantz-1991} as a foil; classical Minimalism) in which case is
+  ([marantz-1991] as a foil; classical Minimalism) in which case is
   assigned by a fixed set of functional heads, and with dependent case
-  (`Dependent.lean`, @cite{baker-2015}) in which configuration alone
+  (`Dependent.lean`, [baker-2015]) in which configuration alone
   determines case without a head-based licensing requirement.
 - **Marked vs. unmarked objects**: under hybrid licensing, marked
   objects are not structurally distinguished from unmarked ones in the
@@ -69,7 +69,7 @@ licensers always activate uniformly.
 
 ## Relation to Other Case Theories
 
-- **Dependent case** (`Dependent.lean`, @cite{baker-2015}): configural,
+- **Dependent case** (`Dependent.lean`, [baker-2015]): configural,
   no head-based licensing requirement. Hybrid licensing is largely
   orthogonal — the two can in principle coexist in a single language,
   with dependent case assigning the morphological exponent and licensing
@@ -80,9 +80,9 @@ licensers always activate uniformly.
   designated functional heads as case assigners; whether secondary
   licensers in a particular language are best identified with Voice
   flavors is a language-specific question this file does not adjudicate.
-- **Feature gluttony** (@cite{coon-keine-2021}): an alternative to
+- **Feature gluttony** ([coon-keine-2021]): an alternative to
   licensing-based accounts of hierarchy effects (PCC, dative-nominative
-  configurations). @cite{coon-keine-2021} argue that hierarchy effects
+  configurations). [coon-keine-2021] argue that hierarchy effects
   are *not* due to failures of nominal licensing but to a probe
   participating in too many Agree dependencies. Hybrid licensing
   applies to DOM patterns that feature gluttony does not target;
@@ -112,7 +112,7 @@ open Minimalist (DPFeatures satisfiesCaseFilter)
 
 /-- A licenser merges either obligatorily (primary) or as a last-resort
     response to convergence requirements (secondary). Following
-    @cite{kalin-2018}: every clause has exactly one primary licenser
+    [kalin-2018]: every clause has exactly one primary licenser
     (e.g., T) and any number of secondary licensers (e.g., dedicated
     AGRO heads, prepositional case-assigners hosting DOM markers). -/
 inductive LicenserKind where
@@ -144,7 +144,7 @@ structure Licenser where
 
     `needsLicensing = true` is the Boolean abstraction of carrying an
     *uninterpretable, unvalued* [Case] feature in the
-    @cite{pesetsky-torrego-2007} sense: the NP cannot be interpreted
+    [pesetsky-torrego-2007] sense: the NP cannot be interpreted
     without being valued by an active licenser. `needsLicensing = false`
     means the NP lacks this feature (the [-specific] / [-definite] /
     [-animate] cell of a DOM language) and is interpretable in situ.
@@ -186,7 +186,7 @@ theorem LicensedNP.caseFeature_none_iff_active (np : LicensedNP) :
 
 /-- A clause's licensing potential: its primary licenser plus the
     secondary licensers available for last-resort activation.
-    @cite{kalin-2018}: every clause has exactly one primary licenser;
+    [kalin-2018]: every clause has exactly one primary licenser;
     secondaries are language-specific and may be empty. -/
 structure ClauseLicensers where
   primary : Licenser
@@ -261,7 +261,7 @@ private def licenseSecondaries :
     licenser handles the first NP; subsequent NPs draw from the
     secondary queue in order.
 
-    @cite{kalin-2018}'s economy condition on secondary licensers — that
+    [kalin-2018]'s economy condition on secondary licensers — that
     a secondary is "active" iff its inactivity would leave some nominal
     unlicensed — is implemented here by greedily consuming secondaries
     only when active NPs remain. -/

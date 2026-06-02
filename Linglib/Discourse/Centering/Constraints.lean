@@ -1,7 +1,7 @@
 import Linglib.Discourse.Centering.Basic
 /-!
 # Centering Theory — Constraint 1
-@cite{poesio-stevenson-eugenio-hitzeman-2004} @cite{grosz-joshi-weinstein-1995}
+[poesio-stevenson-eugenio-hitzeman-2004] [grosz-joshi-weinstein-1995]
 PSDH §5.3.2's decomposition of GJW's Constraint 1 into CB Uniqueness
 (at most one CB) and Entity Continuity (at least one CB). Strong C1 =
 their conjunction (exactly one CB).

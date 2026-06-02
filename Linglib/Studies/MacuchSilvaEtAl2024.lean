@@ -4,8 +4,8 @@ import Linglib.Semantics.Alternatives.Lexical
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{macuch-silva-etal-2024}: Strategic Use of English Quantifiers
-@cite{macuch-silva-etal-2024} @cite{cummins-franke-2021}
+# [macuch-silva-etal-2024]: Strategic Use of English Quantifiers
+[macuch-silva-etal-2024] [cummins-franke-2021]
 
 Formalizes Macuch Silva, Lorson, Franke, Cummins & Winter (2024) "Strategic use
 of English quantifiers in the reporting of quantitative information",
@@ -41,7 +41,7 @@ The *argumentative difficulty* metric captures how hard it is to frame a
 quantitative result in a given direction. When difficulty is high (e.g.,
 framing bad results positively), speakers use informationally weaker
 quantifiers that are truthful over broader ranges of outcomes.
-This extends @cite{cummins-franke-2021}'s argumentative strength framework
+This extends [cummins-franke-2021]'s argumentative strength framework
 from speaker-oriented argStr to a situation-oriented difficulty measure.
 
 -/

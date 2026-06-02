@@ -44,7 +44,7 @@ Equivalently: ⟦m⟧ = fo(m) × fl(m) (Cartesian closure).
 Alternative formulation: a modal m satisfies IFF just in case ⟦m⟧ = fo(m) × fl(m),
 where × is the Cartesian product.
 
-@cite{steinert-threlkeld-imel-guo-2023}. -/
+[steinert-threlkeld-imel-guo-2023]. -/
 def satisfiesIFF (m : List ForceFlavor) : Bool :=
   m.all fun ⟨fo₁, _⟩ =>
     m.all fun ⟨_, fl₂⟩ =>
@@ -58,7 +58,7 @@ share the same flavor.
 
 [Alternative formulation: |fo(m)| = 1 or |fl(m)| = 1.]
 
-@cite{nauze-2008}. -/
+[nauze-2008]. -/
 def satisfiesSAV (m : List ForceFlavor) : Bool :=
   m.all (fun ff₁ => m.all (fun ff₂ => ff₁.force == ff₂.force)) ||
   m.all (fun ff₁ => m.all (fun ff₂ => ff₁.flavor == ff₂.flavor))
@@ -118,7 +118,7 @@ theorem mem_cartesianProduct (ff : ForceFlavor) (fos : List ModalForce)
 
 /-- Any Cartesian product of forces and flavors satisfies IFF.
 
-    This is the formal content of @cite{kratzer-1981}'s insight that force
+    This is the formal content of [kratzer-1981]'s insight that force
     (quantificational) and flavor (contextual) are **independent** parameters
     in the semantics of modals. -/
 theorem cartesianProduct_satisfies_iff
@@ -183,13 +183,13 @@ theorem empty_satisfies_iff : satisfiesIFF [] = true := by
 /-! ## Convexity Characterization
 
 IFF is equivalent to convexity in the grid betweenness relation on the
-force-flavor space (@cite{steinert-threlkeld-imel-guo-2023} §4.2).
+force-flavor space ([steinert-threlkeld-imel-guo-2023] §4.2).
 
 Betweenness on a 2D grid: (fo_b, fl_b) lies between (fo_a, fl_a) and
 (fo_c, fl_c) iff one can reach (fo_b, fl_b) by first changing force,
 then flavor (or vice versa) on the path from a to c.
 
-Following @cite{chemla-buccola-dautriche-2019}: a set S is convex iff
+Following [chemla-buccola-dautriche-2019]: a set S is convex iff
 for any a, c ∈ S, every point between a and c is also in S. -/
 
 /-- Grid betweenness: `b` lies between `a` and `c` iff each coordinate
@@ -214,7 +214,7 @@ def isConvex (S : List ForceFlavor) : Bool :=
     coincide because the points between (fo₁, fl₁) and (fo₂, fl₂) are
     exactly {fo₁, fo₂} × {fl₁, fl₂}.
 
-    @cite{steinert-threlkeld-imel-guo-2023} §4.2. -/
+    [steinert-threlkeld-imel-guo-2023] §4.2. -/
 private theorem bool_ite_true (b x : Bool) :
     (if b then x else true) = true ↔ (b = true → x = true) := by
   cases b <;> simp
@@ -288,7 +288,7 @@ theorem iff_eq_convex (m : List ForceFlavor) :
     with "or" — if (fo₁, fl₁) and (fo₂, fl₂) ∈ S, then (fo₁, fl₂)
     or (fo₂, fl₁) ∈ S.
 
-    Strictly weaker than IFF. @cite{steinert-threlkeld-imel-guo-2023} §4.2,
+    Strictly weaker than IFF. [steinert-threlkeld-imel-guo-2023] §4.2,
     footnote 17. -/
 def satisfiesPathConnected (m : List ForceFlavor) : Bool :=
   m.all fun ⟨fo₁, fl₁⟩ =>
@@ -309,7 +309,7 @@ theorem iff_implies_pathConnected (m : List ForceFlavor)
   exact Or.inl (h ⟨fo₁, fl₁⟩ h₁ ⟨fo₂, fl₂⟩ h₂)
 
 /-- Path-connectedness does NOT imply IFF.
-    Table 1(b) in @cite{steinert-threlkeld-imel-guo-2023}:
+    Table 1(b) in [steinert-threlkeld-imel-guo-2023]:
     {(◇,e),(◇,d),(◇,c),(□,d),(□,c)} is path-connected but not IFF
     (missing (□,e)). -/
 theorem pathConnected_not_implies_iff :
@@ -570,7 +570,7 @@ the Core structural classifier (`ModalItem.decomposition`) and the typological
 universal (`satisfiesIFF`). The following corollaries make this transfer explicit. -/
 
 /-- Any Kratzer modal — whose meaning is a Cartesian product of forces and
-    flavors — is decomposable. Follows from @cite{kratzer-1981}'s independent
+    flavors — is decomposable. Follows from [kratzer-1981]'s independent
     parameterization: `cartesianProduct_satisfies_iff` + bridge. -/
 theorem cartesianProduct_decomposable
     (form : String) (fos : List ModalForce) (fls : List ModalFlavor) :

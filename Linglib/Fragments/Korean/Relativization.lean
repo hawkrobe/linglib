@@ -3,7 +3,7 @@ import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Korean Relativization Fragment
-@cite{keenan-comrie-1977}
+[keenan-comrie-1977]
 
 Two relative clause markers:
 - Adnominal verb suffix *-(n)ɨn, -n, -l* with gap (-case, covers SU–OBL)
@@ -13,7 +13,7 @@ Korean has no relative pronouns or complementizers. RCs are prenominal
 with the verb in adnominal form. NP_rel and its case marker are
 obligatorily deleted.
 
-Data from @cite{keenan-comrie-1977} Table 1.
+Data from [keenan-comrie-1977] Table 1.
 -/
 
 namespace Korean

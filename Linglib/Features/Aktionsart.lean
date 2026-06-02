@@ -2,7 +2,7 @@ import Linglib.Core.Scales.Scale
 
 /-!
 # Features.Aktionsart
-@cite{vendler-1957} @cite{smith-1997}
+[vendler-1957] [smith-1997]
 
 Per-verb-entry feature taxonomy for lexical aspect: three orthogonal
 binary features (telicity, duration, dynamicity), the five-way Vendler
@@ -15,7 +15,7 @@ labelled verb's denotation behaves live in `Theories/` (consequence
 theorems) or framework-specific `Studies/` files.
 
 The 5-way classification follows the Vendler taxonomy as extended by
-Smith 1991 / @cite{smith-1997} (binary feature decomposition + 5-cell map
+Smith 1991 / [smith-1997] (binary feature decomposition + 5-cell map
 including semelfactives — both first appear in the 1991 1st ed., not the
 1997 2nd ed. cited here). The semelfactive category itself comes from
 Slavic aspectology (Comrie 1976 *Aspect*, not in `references.bib`).
@@ -27,11 +27,11 @@ The CUM/QUA/DIV algebra over event predicates lives in
 `Telicity` here is the Smith-flavored derived label.
 
 Sibling formalizations of competitor lexical-aspect frameworks:
-@cite{bach-1986}; the event-token sort is this `Dynamicity` feature (`Event.sort`);
-@cite{krifka-1989}/@cite{krifka-1998} CUM/QUA/DIV in
-`Semantics/Events/CEM.lean`; @cite{dowty-1979} SIP in
+[bach-1986]; the event-token sort is this `Dynamicity` feature (`Event.sort`);
+[krifka-1989]/[krifka-1998] CUM/QUA/DIV in
+`Semantics/Events/CEM.lean`; [dowty-1979] SIP in
 `Semantics/Tense/Aspect/SubintervalProperty.lean`;
-@cite{filip-2012} three-way refutation of binary telicity in
+[filip-2012] three-way refutation of binary telicity in
 `Studies/Filip2012.lean`.
 -/
 
@@ -75,10 +75,10 @@ end Telicity
 -- § 2. Vendler Class (five-way projection)
 -- ════════════════════════════════════════════════════
 
-/-- Five-way situation type classification (@cite{smith-1997}).
+/-- Five-way situation type classification ([smith-1997]).
     Three binary features [±dynamic, ±durative, ±telic] yield five classes.
-    The name `VendlerClass` is retained for compatibility; @cite{vendler-1957}
-    identified the first four, @cite{smith-1997} added semelfactives. -/
+    The name `VendlerClass` is retained for compatibility; [vendler-1957]
+    identified the first four, [smith-1997] added semelfactives. -/
 inductive VendlerClass where
   | state         -- [-dynamic, +durative]  know, love
   | activity      -- [+dynamic, +durative, -telic]  run, swim

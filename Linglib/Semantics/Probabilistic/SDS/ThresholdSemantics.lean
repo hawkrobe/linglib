@@ -27,7 +27,7 @@ Where:
 
 ## The Bigness/Smallness Asymmetry
 
-@cite{morzycki-2009} shows why "big idiot" works but "small idiot" doesn't:
+[morzycki-2009] shows why "big idiot" works but "small idiot" doesn't:
 - For BIG: min{d : big(d)} = some positive threshold → substantive requirement
 - For SMALL: min{d : small(d)} = d₀ (scale minimum) → vacuous!
 
@@ -56,11 +56,11 @@ def ThresholdPredicate.holds {E D : Type} [LE D] [DecidableRel (α := D) (· ≤
     (p : ThresholdPredicate E D) (x : E) : Bool :=
   p.threshold ≤ p.measure x
 
--- Domain 1: Gradable Adjectives (@cite{lassiter-goodman-2017})
+-- Domain 1: Gradable Adjectives ([lassiter-goodman-2017])
 
 /-!
 ## Gradable Adjectives
-@cite{lassiter-goodman-2017} @cite{tessler-goodman-2019}
+[lassiter-goodman-2017] [tessler-goodman-2019]
 
 ⟦tall⟧(x, θ) = 1 iff height(x) > θ
 
@@ -84,7 +84,7 @@ def GradableAdjective.meansAt {E : Type} (adj : GradableAdjective E) (θ : ℚ) 
 def GradableAdjective.softMeaning {E : Type} (adj : GradableAdjective E) (x : E) : ℚ :=
   adj.measure x  -- P(random θ < measure(x)) = measure(x) for uniform θ on [0,1]
 
--- Domain 2: Generics (@cite{tessler-goodman-2019})
+-- Domain 2: Generics ([tessler-goodman-2019])
 
 /-!
 ## Generics
@@ -114,7 +114,7 @@ def GenericPredicate.trueAt (gen : GenericPredicate) (θ : ℚ) : Bool :=
 def GenericPredicate.softTruth (gen : GenericPredicate) : ℚ :=
   gen.prevalence
 
--- Domain 3: Gradable Nouns (@cite{morzycki-2009})
+-- Domain 3: Gradable Nouns ([morzycki-2009])
 
 /-!
 ## Gradable Nouns
@@ -244,9 +244,9 @@ theorem min_negative (θ : ℚ) (hθ : 0 ≤ θ) :
 
 | Paper | Domain | measure(x) | threshold | How θ determined |
 |-------|--------|------------|-----------|------------------|
-| @cite{lassiter-goodman-2017} | Adjectives | height, cost, etc. | θ_adj | Pragmatic inference (RSA) |
-| @cite{tessler-goodman-2019} | Generics | prevalence(F,K) | θ_gen | Pragmatic inference (RSA) |
-| @cite{morzycki-2009} | Gradable nouns | noun-degree(x) | min{d:big(d)} | Size adjective scale structure |
+| [lassiter-goodman-2017] | Adjectives | height, cost, etc. | θ_adj | Pragmatic inference (RSA) |
+| [tessler-goodman-2019] | Generics | prevalence(F,K) | θ_gen | Pragmatic inference (RSA) |
+| [morzycki-2009] | Gradable nouns | noun-degree(x) | min{d:big(d)} | Size adjective scale structure |
 
 ## Shared Properties
 

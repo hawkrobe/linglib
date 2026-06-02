@@ -1,6 +1,6 @@
 /-
 # Bilateral Update Semantics
-@cite{elliott-2023} @cite{elliott-sudo-2025}
+[elliott-2023] [elliott-sudo-2025]
 
 Dynamic semantics with two update dimensions (positive and negative) that validates DNE and handles cross-disjunct anaphora.
 
@@ -78,7 +78,7 @@ Epistemic possibility: ◇φ as a bilateral denotation.
 - s[◇φ]⁺ = s if s[φ]⁺ is consistent, else ∅
 - s[◇φ]⁻ = s if s subsists in s[φ]⁻, else ∅
 
-Equation (73) of @cite{elliott-sudo-2025}.
+Equation (73) of [elliott-sudo-2025].
 -/
 def diamond (φ : BUSDen W E) : BUSDen W E :=
   { positive := λ s => if (φ.positive s).consistent then s else ∅

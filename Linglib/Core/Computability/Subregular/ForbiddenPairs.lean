@@ -8,14 +8,14 @@ import Linglib.Core.Computability.Subregular.Tier
 /-!
 # Forbidden-Pair TSL_2 Grammars
 
-A reusable schema @cite{heinz-rawal-tanner-2011} for tier-based strictly
+A reusable schema [heinz-rawal-tanner-2011] for tier-based strictly
 2-local languages defined by a *forbidden-pair* relation
 `R : α → α → Prop`. The TSL_2 grammar `TSLGrammar.ofForbiddenPairs R p`
 rules out any string whose tier projection contains an adjacent pair
 `(a, b)` with `R a b`.
 
 The canonical instance is `R := (· = ·)`: no two adjacent identicals on
-the tier projection. This is the OCP @cite{mccarthy-1986}
+the tier projection. This is the OCP [mccarthy-1986]
 (`Phonology.Subregular.OCP`). The schema is general enough to capture
 OCP-Feature variants (`R := share-feature-X`) and any single-tier
 2-factor markedness constraint over a fixed subset projection.
@@ -329,7 +329,7 @@ theorem lang_p_not_antitone :
 /-! ### Design boundary (empirical)
 
 The substantive empirical force of the non-monotonicity result is the
-gradient similarity-based OCP of @cite{frisch-pierrehumbert-broe-2004}:
+gradient similarity-based OCP of [frisch-pierrehumbert-broe-2004]:
 Arabic co-occurrence restrictions decay with featural distance rather
 than following a clean tier cut, so the same `R` paired with different
 `p` yields incomparable predictions about which root pairs are licit.

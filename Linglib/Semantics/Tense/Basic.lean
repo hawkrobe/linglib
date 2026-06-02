@@ -3,7 +3,7 @@ import Linglib.Core.Time.Reichenbach
 
 /-!
 # Tense Theory Infrastructure: Shared Types
-@cite{abusch-1997} @cite{deal-2020} @cite{heim-kratzer-1998} @cite{klecha-2016} @cite{kratzer-1998} @cite{ogihara-1996} @cite{sharvit-2003} @cite{von-stechow-2009} @cite{wurmbrand-2014} @cite{zeijlstra-2012} @cite{banfield-1982} @cite{comrie-1985} @cite{egressy-2026} @cite{ogihara-sharvit-2012} @cite{schlenker-2003}
+[abusch-1997] [deal-2020] [heim-kratzer-1998] [klecha-2016] [kratzer-1998] [ogihara-1996] [sharvit-2003] [von-stechow-2009] [wurmbrand-2014] [zeijlstra-2012] [banfield-1982] [comrie-1985] [egressy-2026] [ogihara-sharvit-2012] [schlenker-2003]
 
 Shared types and infrastructure for the tense theories formalized in
 `Semantics.Intensional/Tense/` and
@@ -45,8 +45,8 @@ open Core.Time.Reichenbach
 
     The first 11 are the core comparison set. The next 7 are eventual
     targets documented with data frames. The final 6 are added for
-    @cite{zeijlstra-2012}, @cite{wurmbrand-2014}, @cite{sharvit-2003}, and
-    @cite{tsilia-zhao-2026} coverage. -/
+    [zeijlstra-2012], [wurmbrand-2014], [sharvit-2003], and
+    [tsilia-zhao-2026] coverage. -/
 inductive TensePhenomenon where
   -- Core comparison set (11)
   /-- "John said Mary was sick" — shifted reading (sick before saying) -/
@@ -93,15 +93,15 @@ inductive TensePhenomenon where
       with future saying time -/
   | embeddedPresentPuzzle
   /-- "Aristotle was a philosopher" — past tense ↔ subject no longer
-      exists implication (@cite{musan-1995}/1997) -/
+      exists implication ([musan-1995]/1997) -/
   | lifetimeEffects
   /-- "If John were taller..." — past morphology, non-past semantics
-      (@cite{iatridou-2000}, beyond Deal's counterfactual tense) -/
+      ([iatridou-2000], beyond Deal's counterfactual tense) -/
   | fakePast
   /-- Hebrew-type optional SOT: "John said Mary {was/is} sick" —
       both possible with different readings -/
   | optionalSOT
-  /-- @cite{wurmbrand-2014}: three-way classification of infinitival tense
+  /-- [wurmbrand-2014]: three-way classification of infinitival tense
       (future irrealis / propositional / restructuring) -/
   | dependentVsIndependentTense
   /-- Temporal "then" is incompatible with shifted present but compatible
@@ -239,7 +239,7 @@ def embeddedFrame {Time : Type*} (matrixFrame : ReichenbachFrame Time)
     - **shifted**: the embedded event occurred BEFORE the matrix event
       (R' < P' = E_matrix)
     - **simultaneous**: the embedded event occurred AT the matrix event time
-      (R' = P' = E_matrix), via SOT deletion (@cite{ogihara-1989}, §11.2 (83)) -/
+      (R' = P' = E_matrix), via SOT deletion ([ogihara-1989], §11.2 (83)) -/
 inductive EmbeddedTenseReading where
   | shifted       -- embedded event BEFORE matrix event (back-shifted)
   | simultaneous  -- embedded event AT matrix event time (SOT deletion)
@@ -371,20 +371,20 @@ theorem nonSOT_no_simultaneous :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Upper Limit Constraint (@cite{abusch-1997})
+-- § Upper Limit Constraint ([abusch-1997])
 -- ════════════════════════════════════════════════════════════════
 
 /-!
-### @cite{abusch-1997}'s Upper Limit Constraint
+### [abusch-1997]'s Upper Limit Constraint
 
-The Upper Limit Constraint is stated by @cite{abusch-1997} §7
+The Upper Limit Constraint is stated by [abusch-1997] §7
 (p. 25): "the now of an epistemic alternative is an upper limit for
 the denotation of tenses". The motivation is branching futures: at
 the now of an intensional context, future branches diverge across
 epistemic alternatives, so forward reference past the now is
 unsupported. The presuppositional construal — ULC as a constraint on
 definedness of semantic values, projecting via Karttunen-Heim — is
-due to @cite{heim-1994-comments}; @cite{abusch-1997} fn 20 endorses
+due to [heim-1994-comments]; [abusch-1997] fn 20 endorses
 this construal.
 
 ULC: embedded R' ≤ matrix E (= embedded P).
@@ -393,15 +393,15 @@ ULC: embedded R' ≤ matrix E (= embedded P).
 strips the modal-alternative quantification Abusch's formulation
 carries (the "now of an epistemic alternative" quantifies over
 doxastic alternatives). A modal-layer formulation (over `HistoricalAlternatives
-W Time`, à la @cite{klecha-2016}'s `actualHistoryBase`) would be more
+W Time`, à la [klecha-2016]'s `actualHistoryBase`) would be more
 faithful to the original; deferred future work.
 -/
 
 /-- The Upper Limit Constraint.
 
-    Stated by @cite{abusch-1997} §7 ("the now of an epistemic
+    Stated by [abusch-1997] §7 ("the now of an epistemic
     alternative is an upper limit for the denotation of tenses");
-    presuppositional construal due to @cite{heim-1994-comments},
+    presuppositional construal due to [heim-1994-comments],
     endorsed by Abusch 1997 fn 20. The current value-level reduction is
     `embeddedR ≤ matrixE` against bare `[LE Time]`. -/
 abbrev upperLimitConstraint {Time : Type*} [LE Time]
@@ -503,7 +503,7 @@ theorem bound_tense_simultaneous {Time : Type*} [LinearOrder Time]
 
 /-- A "then"-type temporal adverb.
     Cross-linguistically, "then" shifts the perspective time P away
-    from the speech time S (@cite{zhao-2025}, @cite{tsilia-zhao-2026}). -/
+    from the speech time S ([zhao-2025], [tsilia-zhao-2026]). -/
 structure ThenAdverb where
   /-- Language name -/
   language : String

@@ -8,12 +8,12 @@ import Linglib.Semantics.Degree.Comparative
 import Linglib.Studies.Bresnan1973
 
 /-!
-# @cite{wellwood-2015}: On the Semantics of Comparison Across Categories
+# [wellwood-2015]: On the Semantics of Comparison Across Categories
 
-@cite{wellwood-2015}
+[wellwood-2015]
 
 Data, compositional derivation, and verification theorems from
-@cite{wellwood-2015}. All comparative sentences — nominal, verbal, and
+[wellwood-2015]. All comparative sentences — nominal, verbal, and
 adjectival — share a uniform DegP pipeline in which `much` introduces a
 monotonic measure function μ. The cross-categorial parallel
 (mass/atelic/GA vs count/telic/non-GA) follows from mereological status,
@@ -25,7 +25,7 @@ domain is linearly ordered.
 - §2.1: Nominal comparatives (mass vs count nouns)
 - §2.2: Verbal comparatives (atelic vs telic VPs)
 - §3.1–3.2: Adjectival comparatives (gradable vs non-gradable adjectives)
-- §3.3: Morphosyntactic evidence (`more` = `much` + `-er`, @cite{bresnan-1973})
+- §3.3: Morphosyntactic evidence (`more` = `much` + `-er`, [bresnan-1973])
 - §3.4: Dimensional restriction patterns
 - §5: Number morphology and measurement (grammar shifts measurement)
 - §6.3: `very` distribution and covert `much`
@@ -50,8 +50,8 @@ The result for all three domains (eqs. 42, 48, 65):
         max{d | ∃α'. role(b, α') ∧ P(α') ∧ μ(extract(α')) ≥ d}
 
 Under unique-event assumptions, this reduces to `μ(extract(α_a)) > μ(extract(α_b))`,
-bridging to `comparativeSem` (@cite{schwarzschild-2008}) and
-`statesComparativeSem` (@cite{cariani-santorio-wellwood-2024}).
+bridging to `comparativeSem` ([schwarzschild-2008]) and
+`statesComparativeSem` ([cariani-santorio-wellwood-2024]).
 
 -/
 
@@ -153,7 +153,7 @@ def runShift : GrammarShiftDatum :=
 -- non-GAs with QUA — is derived by `lexCatToStatus` in § 17 below,
 -- not stipulated as data.
 
--- The `much`/`many` distribution (§3.3, @cite{bresnan-1973}) — `much` with
+-- The `much`/`many` distribution (§3.3, [bresnan-1973]) — `much` with
 -- CUM predicates, `many` as suppletive for QUA — follows from the
 -- `statusPredictsFelicitous` bridge in § 14.
 
@@ -298,7 +298,7 @@ def Deg' {α : Type*} (μ : α → ℚ) (d : ℚ) (a : α) : Prop :=
     Used in the than-clause to create a set of degrees from a
     measure function. The weak inequality (≥) in ABS contrasts
     with the strict inequality (>) in Deg': the matrix uses >,
-    the standard uses ≥, following @cite{von-stechow-1984}.
+    the standard uses ≥, following [von-stechow-1984].
 
     (§2.1 eq. 38.ii) -/
 def ABS {α : Type*} (μ : α → ℚ) (d : ℚ) (a : α) : Prop :=
@@ -307,7 +307,7 @@ def ABS {α : Type*} (μ : α → ℚ) (d : ℚ) (a : α) : Prop :=
 /-- ⟦than⟧ = λD. max(D): a degree δ is the maximum of a degree set
     iff it belongs to the set and no element exceeds it.
 
-    (§2.1 eq. 38.i; @cite{von-stechow-1984}, @cite{heim-2001}) -/
+    (§2.1 eq. 38.i; [von-stechow-1984], [heim-2001]) -/
 def IsMaxDeg (S : Set ℚ) (δ : ℚ) : Prop :=
   δ ∈ S ∧ ∀ d ∈ S, d ≤ δ
 
@@ -394,12 +394,12 @@ def thanDegreesHetero {Ent α Measured : Type*}
 
 /-- The paper's compositional comparative truth condition, generalized
     to allow distinct matrix and than-clause predicates (`Pmatrix`,
-    `Pthan`). The original homogeneous form (eqs. 42, 48, 65 of @cite{wellwood-2015}
+    `Pthan`). The original homogeneous form (eqs. 42, 48, 65 of [wellwood-2015]
     where matrix and than-clause use the same `P`) is the special case
     where `Pmatrix = Pthan`; see `comparativeTruth` below.
 
     The heterogeneous form is needed for intensity comparatives
-    (@cite{pasternak-2019} (53)) where matrix and than-clause have
+    ([pasternak-2019] (53)) where matrix and than-clause have
     different themes, e.g., `Ann hates Bill more than Matt hates Jeff`. -/
 def comparativeTruthHetero {Ent α Measured : Type*}
     (role : Ent → α → Prop) (Pmatrix Pthan : α → Prop)
@@ -418,7 +418,7 @@ def comparativeTruthHetero {Ent α Measured : Type*}
     ea satisfying P, and a degree δ that is the max of the than-clause
     degree set, such that μ(extract(ea)) > δ.
 
-    Compositional derivation (eqs. 42, 48, 65 of @cite{wellwood-2015}):
+    Compositional derivation (eqs. 42, 48, 65 of [wellwood-2015]):
     (1) `much_μ` introduces the measure function A(μ)
     (2) `-er` introduces strict comparison (>) against the standard δ
     (3) The than-clause provides δ = max{d | ∃eb. role(b,eb) ∧ P(eb) ∧ μ(extract(eb)) ≥ d}
@@ -783,10 +783,10 @@ theorem very_ga_is_cum :
 -- § 16. Krifka 1998 Bridge: CUM/QUA Propagation
 -- ════════════════════════════════════════════════════
 
-/-! ### Connection to @cite{krifka-1998}'s CUM/QUA propagation
+/-! ### Connection to [krifka-1998]'s CUM/QUA propagation
 
-@cite{wellwood-2015}'s cross-categorial parallel — mass nouns pattern with atelic
-VPs, count nouns with telic VPs — is *explained* by @cite{krifka-1998}'s
+[wellwood-2015]'s cross-categorial parallel — mass nouns pattern with atelic
+VPs, count nouns with telic VPs — is *explained* by [krifka-1998]'s
 telicity-through-quantization theory. Krifka shows that the VP inherits
 its mereological status from the NP via the incremental theme role:
 
@@ -812,7 +812,7 @@ open Semantics.Aspect.Cumulativity (VP cum_propagation qua_propagation)
 
 /-- CUM(VP) → VP is measurable by `much` (cumulative status).
 
-    If @cite{krifka-1998}'s CUM propagation gives us CUM(VP θ OBJ), the VP's
+    If [krifka-1998]'s CUM propagation gives us CUM(VP θ OBJ), the VP's
     mereological status is `.cumulative`, predicting felicity with
     `much` and availability of multiple measurement dimensions
     (DURATION, DISTANCE, etc.). -/
@@ -825,7 +825,7 @@ theorem cum_vp_measurable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β
 
 /-- QUA(VP) → VP is NOT measurable by `much` (quantized status).
 
-    If @cite{krifka-1998}'s QUA propagation gives us QUA(VP θ OBJ), the VP's
+    If [krifka-1998]'s QUA propagation gives us QUA(VP θ OBJ), the VP's
     mereological status is `.quantized`, predicting infelicity with
     `much`. Only NUMBER remains as a measurement dimension. -/
 theorem qua_vp_not_measurable {α β : Type*}
@@ -838,10 +838,10 @@ theorem qua_vp_not_measurable {α β : Type*}
 
 /-- Grammar shifts measurement (§5): telicization of a CUM VP yields a QUA VP.
 
-    @cite{wellwood-2015} ex. 105: "ran in the park more" (atelic, CUM, extensive
+    [wellwood-2015] ex. 105: "ran in the park more" (atelic, CUM, extensive
     dimensions) vs "ran to the park more" (telic, QUA, NUMBER only).
 
-    @cite{krifka-1998}'s theory explains *why*: the directional PP introduces a
+    [krifka-1998]'s theory explains *why*: the directional PP introduces a
     quantized path argument, and QUA propagation through SINC transmits
     QUA to the VP, blocking extensive measurement.
 
@@ -861,7 +861,7 @@ theorem grammar_shifts_via_krifka {α β : Type*}
 
 /-- A cross-categorial comparison construction template:
     the same DegP shell applies across syntactic categories.
-    @cite{wellwood-2015} §2, @cite{bresnan-1973} -/
+    [wellwood-2015] §2, [bresnan-1973] -/
 structure CrossCategorialDatum where
   /-- Syntactic domain (nominal, verbal, adjectival) -/
   domain : String
@@ -896,7 +896,7 @@ def crossCategorialExamples : List CrossCategorialDatum :=
 -- § 18. Bresnan's Decomposition (Morphosyntax)
 -- ════════════════════════════════════════════════════
 
-/-- @cite{bresnan-1973} decomposition: `more` = `-er` + `much`.
+/-- [bresnan-1973] decomposition: `more` = `-er` + `much`.
 
     Wellwood's cross-categorial claim: the SAME QP underlies `more`
     across nominal ("more coffee"), verbal ("ran more"), and adverbial

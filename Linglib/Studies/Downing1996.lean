@@ -5,8 +5,8 @@ import Linglib.Studies.Aikhenvald2000
 import Linglib.Semantics.Kinds.NominalMappingParameter
 
 /-!
-# @cite{downing-1996} — Numeral Classifier Systems: The Case of Japanese
-@cite{downing-1996} @cite{aikhenvald-2000} @cite{chierchia-1998}
+# [downing-1996] — Numeral Classifier Systems: The Case of Japanese
+[downing-1996] [aikhenvald-2000] [chierchia-1998]
 
 Formalizes core contributions from Downing's monograph on Japanese numeral
 classifiers (Studies in Discourse and Grammar, vol. 4).
@@ -23,17 +23,17 @@ categorization *independent of* and *additional to* the common noun system.
 
 UNVERIFIED: chapter/section/table location references throughout this file
 were inherited from earlier formalization work and have not been
-cross-checked against the @cite{downing-1996} monograph. Specific cell
+cross-checked against the [downing-1996] monograph. Specific cell
 counts in the frequency tables below should be treated as illustrative
 of the qualitative shape of the data, not as verbatim transcriptions.
 
 ## Individuation Function
 
-@cite{downing-1996} treats classifier phrases and plural markers as
-individuators. @cite{chierchia-1998}'s later Nominal Mapping Parameter provides
+[downing-1996] treats classifier phrases and plural markers as
+individuators. [chierchia-1998]'s later Nominal Mapping Parameter provides
 a formal framework for this insight: in [+arg, -pred] languages, bare nouns
 denote kinds, and classifiers supply individuation for enumeration. The bridge
-to @cite{chierchia-1998} is a linglib contribution, not one Downing herself
+to [chierchia-1998] is a linglib contribution, not one Downing herself
 makes (Chierchia 1998 postdates this monograph). The strict NMP correlation
 has been challenged (e.g., Turkish has bare arguments without classifiers;
 Li 2013 argues Chinese nouns are not uniformly mass), but the core insight —
@@ -52,7 +52,7 @@ striking distance is intermediate between pronouns and full NPs.
 ## Shape Dimensionality
 
 Shape-based classifiers decompose along a 1D/2D/3D dimensionality axis
-per @cite{allan-1977}, formalized via `Japanese.Classifier.shapeDim`.
+per [allan-1977], formalized via `Japanese.Classifier.shapeDim`.
 
 ## Core Inventory
 
@@ -188,7 +188,7 @@ theorem one_absent_from_anaphoric :
 -- ============================================================================
 
 /--  (UNVERIFIED location: Ch. 7) discusses classifier phrases as individuators.
-    @cite{chierchia-1998}'s later linking hypothesis formalizes this:
+    [chierchia-1998]'s later linking hypothesis formalizes this:
     [+arg, -pred] languages have kind-denoting bare nouns and need classifiers
     for individuation. The strict correlation is contested (see module docstring),
     but the co-occurrence is robustly attested.
@@ -199,7 +199,7 @@ theorem argOnly_has_classifiers :
     Aikhenvald2000.japanese.classifierType = .numeralClassifier := by
   exact ⟨rfl, rfl⟩
 
-/-- In @cite{chierchia-1998}'s framework, [+arg, -pred] languages have no
+/-- In [chierchia-1998]'s framework, [+arg, -pred] languages have no
     type-shift blocking (no articles), so bare nouns freely occur as arguments.
     Classifiers rather than articles provide individuation. -/
 theorem no_blocking_needs_classifiers :

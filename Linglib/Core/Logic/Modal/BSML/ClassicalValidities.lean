@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Modal.BSML.Defs
 /-!
 # BSML Classical Validities
 
-Aloni's bilateral state-based modal logic (@cite{aloni-2022}) preserves several
+Aloni's bilateral state-based modal logic ([aloni-2022]) preserves several
 classical validities despite its non-classical bilateral semantics, and exhibits
 one non-classical defect: replacement under negation can fail. This module
 proves the key equivalences and the replacement-failure counterexample.
@@ -34,13 +34,13 @@ the content is in `Defs.lean`, where the design of `eval` enforces these.
 
 The negation-incompatibility result is one-directional only: support of `¬φ`
 implies incompatibility with every supporter of `φ`, but the converse fails
-in BSML (@cite{aloni-2022} gives a counterexample using `¬((p ∧ NE) ∨ q)`).
+in BSML ([aloni-2022] gives a counterexample using `¬((p ∧ NE) ∨ q)`).
 The framing "negation as incompatibility" should not be read as a definitional
 identification.
 
 ## Todo
 
-* Engage with @cite{aloni-anttila-yang-2024}, which axiomatizes BSML and
+* Engage with [aloni-anttila-yang-2024], which axiomatizes BSML and
   proves the soundness/completeness results these validities sit underneath.
 * Extract the bilateral validities to a `Core.Logic.Bilateral.Validities`
   module — they depend only on the `IsBilateral` polarity-flip structure
@@ -159,7 +159,7 @@ theorem disjoint_support_antiSupport (M : BSMLModel W Atom)
 /-- Negation and incompatibility: if `s` supports `¬φ` and `t` supports `φ`,
     then `s` and `t` are disjoint as finsets.
 
-    One-directional only — the converse fails in BSML; see @cite{aloni-2022}. -/
+    One-directional only — the converse fails in BSML; see [aloni-2022]. -/
 theorem negation_incompatibility (M : BSMLModel W Atom)
     (φ : BSMLFormula Atom) {s t : Finset W}
     (hs : support M (.neg φ) s) (ht : support M φ t) : Disjoint s t :=
@@ -169,7 +169,7 @@ theorem negation_incompatibility (M : BSMLModel W Atom)
 
 /-- Failure of replacement under negation: `φ ≡ ψ ⇏ ¬φ ≡ ¬ψ`.
 
-    Counterexample (@cite{aloni-2022}): `⊥₁ = p ∧ ¬p` and `⊥₂ = ¬NE` are
+    Counterexample ([aloni-2022]): `⊥₁ = p ∧ ¬p` and `⊥₂ = ¬NE` are
     bilaterally equivalent (both supported only by `∅`), but `¬⊥₁` and `¬⊥₂`
     diverge: `¬(p ∧ ¬p)` is supported by every team (including `∅`) via the
     trivial split `∅ ∪ ∅`, while `¬¬NE = NE` requires a non-empty team. -/

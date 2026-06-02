@@ -2,8 +2,8 @@ import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.FreeChoice.Basic
 
 /-!
-# @cite{meyer-feiman-2021} — Composing Alternatives
-@cite{bar-lev-fox-2017} @cite{chierchia-2004} @cite{fox-2007}
+# [meyer-feiman-2021] — Composing Alternatives
+[bar-lev-fox-2017] [chierchia-2004] [fox-2007]
 
 Structural priming evidence that scalar and free choice implicatures
 decompose into independently parameterizable sub-computations.
@@ -45,7 +45,7 @@ processing one facilitates processing the other.
 
 The pattern falsifies any uniform account: shared ALT-NEG between *some*
 and numerals, but FC uses an entirely different mechanism (assertion-based
-per @cite{bar-lev-fox-2017}, not negation-based).
+per [bar-lev-fox-2017], not negation-based).
 
 -/
 
@@ -221,7 +221,7 @@ def exp6 : PrimingExperiment :=
   , nParticipants := 100
   , effectDescription := "FC 'or' computation does not facilitate 'three→exactly three'" }
 
-/-- All experiments from @cite{meyer-feiman-2021}. -/
+/-- All experiments from [meyer-feiman-2021]. -/
 def allExperiments : List PrimingExperiment :=
   [exp1_2, exp3_4, exp5, exp6]
 

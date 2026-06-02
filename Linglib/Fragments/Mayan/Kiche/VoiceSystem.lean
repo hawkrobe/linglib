@@ -2,10 +2,10 @@ import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 import Linglib.Fragments.Mayan.Kiche.Agreement
 
 /-!
-# K'iche' Voice System Fragment @cite{mondloch-2017}
+# K'iche' Voice System Fragment [mondloch-2017]
 
 The five transitive voice alternations of K'iche', following
-@cite{mondloch-2017} Lessons 15–22, 26–30.
+[mondloch-2017] Lessons 15–22, 26–30.
 
 ## Voice Inventory
 
@@ -210,7 +210,7 @@ instance : DecidablePred KicheVoice.RealizesPatient := fun v => by
 /-- Is the verb in this voice conjugated like an intransitive
     (only Set B agreement, no Set A)?
     Passives and antipassives both conjugate intransitively.
-    @cite{mondloch-2017} Lesson 19 (passive = "like intransitive"),
+    [mondloch-2017] Lesson 19 (passive = "like intransitive"),
     Lesson 21 (antipassive = "exactly as Simple Intransitive Verbs"). -/
 def KicheVoice.ConjugatesIntransitively : KicheVoice → Prop
   | .active     => False  -- Set A + Set B
@@ -228,7 +228,7 @@ instance : DecidablePred KicheVoice.ConjugatesIntransitively := fun v => by
     When 'who' questions target the agent, the verb appears in Agent
     Focus, not Active Voice. This is why *wi* is not licensed for
     subject extraction — Agent Focus morphology is used instead.
-   , Lesson 22; @cite{mendes-ranero-2021}, §2. -/
+   , Lesson 22; [mendes-ranero-2021], §2. -/
 def subjectExtractionVoice : KicheVoice := .agentFocus
 
 /-- Agent Focus Antipassive shares the same marker as Absolutive

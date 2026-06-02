@@ -3,7 +3,7 @@ import Linglib.Processing.Lexical.Discriminative.Normed
 
 /-!
 # Chuang, Bell, Tseng & Baayen (2026): Word-specific tonal realizations in Mandarin
-@cite{chuang-bell-tseng-baayen-2026} @cite{baayen-2019} @cite{heitmeier-chuang-baayen-2026}
+[chuang-bell-tseng-baayen-2026] [baayen-2019] [heitmeier-chuang-baayen-2026]
 
 Chuang, Y.-Y., Bell, M. J., Tseng, Y.-H., & Baayen, R. H. (2026).
 Word-specific tonal realizations in Mandarin. *Language*, in press.
@@ -47,7 +47,7 @@ The DLM substrate (`LinearDiscriminativeLexicon`, `FormVec`, `MeaningVec`,
 `broadcastFirstCoord`, `linear_dlm_distinguishes_meanings`,
 `dlm_neutralizes_meanings_in_kernel`, `linear_dlm_admits_meaning_specific_contours`)
 lives in `Processing/Lexical/Discriminative/Defs.lean`
-@cite{baayen-2019} @cite{heitmeier-chuang-baayen-2026}. This file
+[baayen-2019] [heitmeier-chuang-baayen-2026]. This file
 imports it and supplies the paper-specific instantiation: 50-dim pitch
 contours, 768-dim CKIP GPT-2 contextualised embeddings, the 51 RF
 disyllabic word types of the corpus.
@@ -66,12 +66,12 @@ The DLM is the latest in a lineage of usage-based, gradient-weight
 theories. Adjacent linglib substrate:
 
 - `Phonology/ItemSpecificity/` — four phonological theories
-  parameterised by lexical frequency (`UseListed.lean` @cite{zuraw-2000},
-  `IndexedConstraints.lean` @cite{pater-2010},
-  `RepresentationStrength.lean` @cite{moore-cantwell-2021},
-  `ScaledWeights.lean` @cite{coetzee-pater-2008}). All four presuppose
+  parameterised by lexical frequency (`UseListed.lean` [zuraw-2000],
+  `IndexedConstraints.lean` [pater-2010],
+  `RepresentationStrength.lean` [moore-cantwell-2021],
+  `ScaledWeights.lean` [coetzee-pater-2008]). All four presuppose
   a stored lexicon to which frequency attaches.
-- `Morphology/UsageBased/Network.lean` (@cite{bybee-1985}):
+- `Morphology/UsageBased/Network.lean` ([bybee-1985]):
   Bybee's dynamic network — typed `LexicalEntry`s with `tokenFreq`
   strength + connection edges. Stores entries.
 
@@ -89,10 +89,10 @@ its own object".
 ## Architectural note: tones as emergent vs stored
 
 The discrete-tone substrate in `Phonology/Tone/Constraints.lean`,
-`Studies/Hyman2006.lean` (@cite{hyman-2006}),
-`Studies/Lionnet2025.lean` (@cite{lionnet-2025}), and
+`Studies/Hyman2006.lean` ([hyman-2006]),
+`Studies/Lionnet2025.lean` ([lionnet-2025]), and
 `Studies/AkinboFwangwar2026.lean`
-(@cite{akinbo-fwangwar-2026}) treats tonal categories (H/M/L; T1–T4)
+([akinbo-fwangwar-2026]) treats tonal categories (H/M/L; T1–T4)
 as primitive featural objects with faithfulness/markedness violations
 defined over them. The present study adopts the **opposite** stance:
 tonal categories are statistical generalisations across token-level
@@ -108,7 +108,7 @@ paper interrogates.
 
 ## Cross-framework note: vs. Storme 2026 *HOMOPHONY
 
-`Storme2026.starHomophony` (@cite{storme-2026},
+`Storme2026.starHomophony` ([storme-2026],
 `Studies/Storme2026.lean`) formalises a **systemic**
 constraint that penalises output tuples in which distinct inputs
 produce identical surface forms. It operates on **segmental** form and

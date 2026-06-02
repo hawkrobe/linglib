@@ -5,7 +5,7 @@ import Linglib.Core.Computability.Subregular.ForbiddenPairs
 
 /-!
 # Shared Phonological Constraint Library
-@cite{prince-smolensky-1993} @cite{mccarthy-prince-1995}
+[prince-smolensky-1993] [mccarthy-prince-1995]
 
 Reusable constraint constructors for Optimality Theory and Harmonic Grammar.
 Every phonological study in linglib defines constraints as `NamedConstraint C`
@@ -17,8 +17,8 @@ studies with different candidate types:
 - **IDENT**: penalizes featural unfaithfulness
 - **\*STRUC**: penalizes structural complexity (markedness)
 - **ALIGN**: penalizes edge mismatches between morphological and prosodic
-  constituents (@cite{mccarthy-prince-1993} Generalized Alignment, used
-  by @cite{faust-2026} as \*Misalignment)
+  constituents ([mccarthy-prince-1993] Generalized Alignment, used
+  by [faust-2026] as \*Misalignment)
 
 This module provides generic constructors so that study files can write:
 
@@ -31,7 +31,7 @@ constructors enforce the correct `ConstraintFamily` classification.
 
 ## Contextual faithfulness
 
-Following @cite{coetzee-pater-2011}, contextual faithfulness constraints
+Following [coetzee-pater-2011], contextual faithfulness constraints
 (e.g. MAX-PRE-V, MAX-FINAL) are standard MAX/DEP constraints with an
 additional context predicate. `mkMaxCtx` and `mkDepCtx` take a context
 guard: the constraint is violated only when the context guard is true.
@@ -63,7 +63,7 @@ def mkMax {C : Type} (name : String) (P : C → Prop) [DecidablePred P] :
 
 /-- Build a contextual MAX constraint.
     Violated only when both deletion occurs AND the context holds.
-    Models positional faithfulness (@cite{coetzee-pater-2011} §3.2). -/
+    Models positional faithfulness ([coetzee-pater-2011] §3.2). -/
 def mkMaxCtx {C : Type} (name : String)
     (Deleted : C → Prop) [DecidablePred Deleted]
     (Context : C → Prop) [DecidablePred Context] :
@@ -89,15 +89,15 @@ def mkIdent {C : Type} (name : String) (P : C → Prop) [DecidablePred P] :
     eval := fun c => if P c then 1 else 0 }
 
 -- ============================================================================
--- § 1b: Morpheme-Specific Constraint Constructors (@cite{finley-2009})
+-- § 1b: Morpheme-Specific Constraint Constructors ([finley-2009])
 -- ============================================================================
 
 /-- Build a LEFT-ANCHOR constraint: the morpheme's tonal specification must
     be in correspondence with the left edge of the host.
     `P c` holds when the left anchor is not satisfied.
 
-    Following @cite{finley-2009}: morpheme-specific versions of
-    @cite{mccarthy-prince-1995}'s ANCHOR constraints. -/
+    Following [finley-2009]: morpheme-specific versions of
+    [mccarthy-prince-1995]'s ANCHOR constraints. -/
 def mkAnchorLeft {C : Type} (name : String) (P : C → Prop) [DecidablePred P] :
     NamedConstraint C :=
   { name := name
@@ -201,7 +201,7 @@ def adjacentIdentical {α : Type} [DecidableEq α] : List α → Nat :=
 
     The OCP is parametrically polymorphic over the feature type `α` — it
     operates on identity vs. non-identity of adjacent elements, regardless
-    of what kind of features they are. Following @cite{berent-2026}, this
+    of what kind of features they are. Following [berent-2026], this
     polymorphism captures the algebraic nature of phonological constraints:
     they generalize to novel feature values by construction. -/
 def mkOCP {C α : Type} [DecidableEq α] (name : String) (project : C → List α) :
@@ -215,13 +215,13 @@ def mkOCP {C α : Type} [DecidableEq α] (name : String) (project : C → List �
 
     This is the constraint-algebra adapter for the unified `Tier` interface:
     autosegmental tonal-tier OCP, sibilant-harmony OCP, and learned-tier
-    OCP (à la @cite{belth-2026}) all factor through this constructor.
+    OCP (à la [belth-2026]) all factor through this constructor.
 
     Defined as the `R := (· = ·)` specialization of `mkForbidPairsOnTier`,
     mirroring `mkAgreeOnTier`'s `R := (· ≠ ·)` specialization. The two
     sit in the same constraint algebra and the equivalence is `rfl`.
 
-    @cite{goldsmith-1976} @cite{berent-2026} -/
+    [goldsmith-1976] [berent-2026] -/
 def mkOCPOnTier {C α β : Type} [DecidableEq β]
     (name : String) (T : Core.Tier α β) (extract : C → List α) :
     NamedConstraint C :=
@@ -243,18 +243,18 @@ def mkAgreeOnTier {C α β : Type} [DecidableEq β]
   mkForbidPairsOnTier name (· ≠ ·) T extract
 
 -- ============================================================================
--- § 2c: Alignment (@cite{mccarthy-prince-1993} Generalized Alignment)
+-- § 2c: Alignment ([mccarthy-prince-1993] Generalized Alignment)
 -- ============================================================================
 
 /-- Build a binary ALIGN constraint (markedness): violated when the candidate's
     edge configuration is wrong. The Generalized Alignment schema
-    `Align(Cat₁, Edge₁, Cat₂, Edge₂)` (@cite{mccarthy-prince-1993}) is given
+    `Align(Cat₁, Edge₁, Cat₂, Edge₂)` ([mccarthy-prince-1993]) is given
     here in its predicate-based form: the user supplies the predicate `P c`
     that holds when the edge configuration is misaligned.
 
     Specific alignment instances include left/right edge alignment of
     morphological constituents to prosodic constituents and the
-    \*Misalignment principle of @cite{faust-2026} (root nonfinal element
+    \*Misalignment principle of [faust-2026] (root nonfinal element
     must not be template-final). -/
 def mkAlign {C : Type} (name : String) (P : C → Prop) [DecidablePred P] :
     NamedConstraint C :=
@@ -262,7 +262,7 @@ def mkAlign {C : Type} (name : String) (P : C → Prop) [DecidablePred P] :
     family := .markedness
     eval := fun c => if P c then 1 else 0 }
 
-/-- Gradient ALIGN: counts edge-mismatch violations (@cite{mccarthy-prince-1993}). -/
+/-- Gradient ALIGN: counts edge-mismatch violations ([mccarthy-prince-1993]). -/
 def mkAlignGrad {C : Type} (name : String) (violations : C → Nat) :
     NamedConstraint C :=
   { name := name
@@ -322,7 +322,7 @@ theorem mkOCPOnTier_is_markedness {C α β : Type} [DecidableEq β] (name : Stri
     (mkOCPOnTier name T extract).family = .markedness := rfl
 
 /-- ALIGN constraints are markedness constraints
-    (@cite{mccarthy-prince-1993}). -/
+    ([mccarthy-prince-1993]). -/
 theorem mkAlign_is_markedness {C : Type} (name : String)
     (P : C → Prop) [DecidablePred P] :
     (mkAlign name P).family = .markedness := rfl

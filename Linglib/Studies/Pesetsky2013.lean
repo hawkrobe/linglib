@@ -6,7 +6,7 @@ import Linglib.Morphology.DM.Categorizer
 import Linglib.Syntax.Minimalist.Basic
 
 /-!
-# @cite{pesetsky-2013} — Russian Case Morphology and the Syntactic Categories
+# [pesetsky-2013] — Russian Case Morphology and the Syntactic Categories
 
 Pesetsky's central thesis: **morphological case is the realization of a
 syntactic part-of-speech category**. The four major cases line up with
@@ -31,7 +31,7 @@ picks DAT.
 ## Architecture: layered grounding on Minimalism
 
 This is a **Minimalist study**. Its tree is `SyntacticObject`
-(@cite{marcolli-chomsky-berwick-2025}, formalized in
+([marcolli-chomsky-berwick-2025], formalized in
 `Syntax/Minimalist/Basic.lean`); its structure-building
 operation is `merge`; its categories are members of `Cat`. Per-leaf
 case stacks are a **derived structural property** of the
@@ -51,7 +51,7 @@ The genuinely paper-specific apparatus is small:
    the tree corresponds to a Merge; if `head.outerCat` is a POSCat
    and the queried leaf is in `body`, the head's category is
    prepended to the leaf's stack. This is FA "version 3 of 6"
-   (@cite{pesetsky-2013} eq. (76), book p. 65) made implicit:
+   ([pesetsky-2013] eq. (76), book p. 65) made implicit:
    complementation-requirements gating is not modeled (treated as
    always satisfied), and "designated as feature assigner for β" is
    exactly the `POSCat.ofCat? head.outerCat` test (only N/D/V/P heads
@@ -61,7 +61,7 @@ The genuinely paper-specific apparatus is small:
    Encoded by `surfaceCase = (caseStackAt ...).head?.map ...`.
 4. **Primeval Genitive Conjecture** (eq. (6), p. 9) — NGEN
    categorizes a Russian root as a noun in the lexicon, in the spirit
-   of @cite{marantz-1997}'s root + categorizer. **Automatic from the
+   of [marantz-1997]'s root + categorizer. **Automatic from the
    recursion**: a leaf with `outerCat = .N` carries `[POSCat.N]` in
    its base case, so any noun-categorized LIToken has primeval N
    without explicit initialization. The structural bridge to DM
@@ -93,7 +93,7 @@ categories as restriction of `Cat`; the basic NOM/ACC/GEN/OBL bridge;
 `noDeletionSpellOut` as the limiting "no deletion" case (Lardil
 itself has *partial* deletion per Ch 3 §3.2 — modeled here as the
 limit, with the actual Lardil pattern deferred); cross-framework
-agreement bridge with @cite{caha-2009}.
+agreement bridge with [caha-2009].
 
 **Out of scope (deferred to follow-on study files or commits):**
 - The complete VACC restriction (eq. 77 p. 66 — `[+FEM,+SG] ∨ [+ANIM]
@@ -125,7 +125,7 @@ agreement bridge with @cite{caha-2009}.
   derivation-step infrastructure in
   `Syntax/Minimalist/Derivation.lean` is the natural next
   layer once FA gating is modeled.
-- `Morphology/DM/Categorizer.lean` (@cite{harley-2014}) —
+- `Morphology/DM/Categorizer.lean` ([harley-2014]) —
   the structural bridge `primevalN_via_dm_categorizer` connects
   `POSCat.N` to DM `Categorizer.n` via `Cat.N`.
 - `Features.Case` (Blake) gives the cross-linguistic case inventory; we
@@ -195,7 +195,7 @@ theorem toCat_injective : Function.Injective toCat := by
 /-- The cases each POSCat realizes as in `Features.Case`. N/D/V each map
     to a singleton; P maps to the Russian productive oblique series
     (DAT/INS/LOC, matching `Russian.Case.caseInventory`)
-    since @cite{pesetsky-2013} (p. 7) explicitly does *not* refine
+    since [pesetsky-2013] (p. 7) explicitly does *not* refine
     the obliques by POS. -/
 def cases : POSCat → Finset Features.Case
   | .N => {.gen}
@@ -289,7 +289,7 @@ where
         | none => bodyStack
       else []
 
-/-- Russian One-Suffix Rule (@cite{pesetsky-2013} Ch 3): the outermost
+/-- Russian One-Suffix Rule ([pesetsky-2013] Ch 3): the outermost
     stratum (head of the stack) is realized as morphology; inner
     strata are deleted. Returns `none` for empty stacks (no overt
     case marker). Phase 1.0 noncomputable: depends on `caseStackAt`. -/
@@ -304,8 +304,8 @@ noncomputable def surfaceCase (so : SyntacticObject) (tok : LIToken) : Option Fe
     overtly. The "rule" is the identity on stacks.
 
     This is the **limiting case** of "no deletion at all", not a
-    faithful description of Lardil itself. Per @cite{richards-2013}
-    and @cite{pesetsky-2013} Ch 3 §3.2, Lardil has *partial* deletion
+    faithful description of Lardil itself. Per [richards-2013]
+    and [pesetsky-2013] Ch 3 §3.2, Lardil has *partial* deletion
     (e.g., FUT only stacks outside GEN, not outside ACC); a faithful
     Lardil model requires modeling the partial-deletion pattern, left
     for a follow-on `Studies/Richards2013.lean`. -/
@@ -326,13 +326,13 @@ theorem noDeletion_russian_divergence (a b : POSCat) (rest : List POSCat) :
 -- § 4: The Primeval Genitive
 -- ============================================================================
 
-/-- The **Primeval Genitive Conjecture** (@cite{pesetsky-2013} eq. (6),
+/-- The **Primeval Genitive Conjecture** ([pesetsky-2013] eq. (6),
     book p. 9): "NGEN categorizes a Russian root as a noun (in the
     lexicon)." A bare noun, before any further FA application, has an
     N-stratum case feature.
 
     This is a categorizing-head property in the spirit of
-    @cite{marantz-1997}'s root + categorizer architecture — the
+    [marantz-1997]'s root + categorizer architecture — the
     structural bridge to DM's `Categorizer.n` is recorded in
     `primevalN_via_dm_categorizer` below. In this file, **Primeval
     Genitive is automatic from the recursion**: a leaf with
@@ -356,7 +356,7 @@ theorem primeval_noun_surface_gen (w : String) (id : Nat) :
 
 /-- Structural bridge: the N-stratum that `caseStackAt` produces for
     an N-categorized leaf agrees with the syntactic category produced
-    by DM's `n` categorizer (@cite{harley-2014}, @cite{marantz-1997}).
+    by DM's `n` categorizer ([harley-2014], [marantz-1997]).
     The Primeval Genitive Conjecture is the case-bearing reflection
     of root-level n-categorization — both produce `Cat.N` as the
     syntactic category. -/
@@ -375,7 +375,7 @@ theorem posCatV_via_dm_categorizer :
 -- § 5: Russian Numerals — Structural Roles, Not Case Assigners
 -- ============================================================================
 
-/-- Three numeral classes in Russian (@cite{pesetsky-2013} Ch 4–6).
+/-- Three numeral classes in Russian ([pesetsky-2013] Ch 4–6).
     The classes differ in *where they merge* and *whether they raise
     to D*, not in case-assignment behavior — none of them is itself an
     FA case assigner in Pesetsky's framework:
@@ -553,13 +553,13 @@ theorem canonicalExemplar_image_in_russian_inventory (p : POSCat) :
   cases p <;> decide
 
 /-- The three productive Russian obliques are all in `pesetskyCore`,
-    contributed by the P category per @cite{pesetsky-2013} p. 7. -/
+    contributed by the P category per [pesetsky-2013] p. 7. -/
 theorem russian_obliques_in_pesetsky_core :
     (.dat : Features.Case) ∈ pesetskyCore ∧
     (.inst : Features.Case) ∈ pesetskyCore ∧
     (.loc : Features.Case) ∈ pesetskyCore := by decide
 
-/-- **Cross-framework agreement with @cite{caha-2009}**: Pesetsky's
+/-- **Cross-framework agreement with [caha-2009]**: Pesetsky's
     POS-as-case image, restricted to the cases that have a
     `containmentRank` in Caha's hierarchy
     (NOM⊂ACC⊂GEN⊂DAT⊂LOC⊂...), coincides with the standard

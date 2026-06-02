@@ -2,14 +2,14 @@ import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Bulgarian Evidentiality
-@cite{de-haan-2013} @cite{aikhenvald-2004}
+[de-haan-2013] [aikhenvald-2004]
 
 Two-choice direct vs indirect via the aorist (direct) vs l-form (indirect)
 contrast, fused with TAM. The best-known European language with grammatical
 evidentials. Balkan Sprachbund. WALS and Aikhenvald agree.
 
 Sister to `Fragments/Slavic/Bulgarian/Evidentials.lean` which holds the
-@cite{cumming-2026} tense-evidential paradigm data.
+[cumming-2026] tense-evidential paradigm data.
 -/
 
 namespace Bulgarian.Evidentiality

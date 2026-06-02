@@ -5,9 +5,9 @@ import Mathlib.Data.Finset.Powerset
 
 /-!
 # Referential Transparency Theory
-@cite{lucking-ginzburg-2022} @cite{barwise-cooper-1981} @cite{cooper-2023}
+[lucking-ginzburg-2022] [barwise-cooper-1981] [cooper-2023]
 
-@cite{lucking-ginzburg-2022} propose *Referential Transparency Theory* (RTT),
+[lucking-ginzburg-2022] propose *Referential Transparency Theory* (RTT),
 replacing GQT's set-of-sets denotations for quantified noun phrases (QNPs)
 with **sets of ordered set bipartitions**. A bipartition ⟨refset, compset⟩
 partitions the head noun's extension into a reference set and complement set;
@@ -98,7 +98,7 @@ theorem allBP_refset_sub (S : Finset α) (b : BP α) (h : b ∈ allBP S) :
 /-! ### §2. Descriptive quantifier conditions
 
 A q-cond is a relation on |refset| and |compset|. Since RTT q-conds depend
-only on cardinalities (@cite{lucking-ginzburg-2022} §4.2), this is
+only on cardinalities ([lucking-ginzburg-2022] §4.2), this is
 `ℕ → ℕ → Bool` — quantity invariance by construction. -/
 
 /-- A descriptive quantifier condition: a decidable relation on
@@ -195,7 +195,7 @@ from the bipartition denotation via q-persp, not stipulated per quantifier.
 This section proves per-quantifier q-persp derivations on a concrete domain
 and shows that the few/a few contrast follows structurally.
 
-Note: the full @cite{cooper-2023} Ch. 7 anaphora table also depends on
+Note: the full [cooper-2023] Ch. 7 anaphora table also depends on
 referentiality (refset in dgb-params vs q-params) and plurality — distinctions
 orthogonal to RTT's q-persp mechanism. RTT's novel prediction is specifically
 about **compset accessibility**, which we derive here. -/
@@ -271,7 +271,7 @@ theorem aFew_compset_not_available :
     (deriveQPersp (refindFilter (sieve few_qcond (allBP dogs)))).compsetAvailable
       = false := by decide
 
-/-- This matches @cite{cooper-2023} Ch. 7: `.compset ∈ anaphoraAvailable .few`
+/-- This matches [cooper-2023] Ch. 7: `.compset ∈ anaphoraAvailable .few`
     but `.compset ∉ anaphoraAvailable .aFew`. -/
 theorem few_aFew_matches_cooper :
     (AnaphoraRef.compset ∈ anaphoraAvailable .few) ∧
@@ -284,13 +284,13 @@ theorem few_aFew_matches_cooper :
 
 /-! ### §5. RTT refsets are Cooper witness sets
 
-@cite{cooper-2023} Ch. 7 defines `WitnessSet P X` as X ⊆ extension of P.
+[cooper-2023] Ch. 7 defines `WitnessSet P X` as X ⊆ extension of P.
 RTT's refsets satisfy this by construction: every bipartition in `allBP S`
 has `refset ⊆ S`. When S = fullExtFinset P, this is exactly `WitnessSet P`. -/
 
 /-- Every RTT bipartition's refset is a Cooper witness set.
     Bridges RTT's bipartition denotations to the witness-set framework
-    of @cite{cooper-2023} Ch. 7. -/
+    of [cooper-2023] Ch. 7. -/
 theorem bp_refset_is_witnessSet [Fintype α] (P : α → Prop) [DecidablePred P]
     (b : BP α) (h : b ∈ allBP (fullExtFinset P)) :
     WitnessSet P b.refset :=
@@ -320,7 +320,7 @@ def qcondToGQ (qc : QCond) [Fintype α] (N : α → Prop) [DecidablePred N]
 /-- Conservativity holds for any QCond by construction.
     Every `a ∈ b.refset` satisfies N (since `b.refset ⊆ filter N`),
     so replacing Q with `N ∧ Q` doesn't change truth.
-    @cite{lucking-ginzburg-2022} §1.3 @cite{barwise-cooper-1981} -/
+    [lucking-ginzburg-2022] §1.3 [barwise-cooper-1981] -/
 theorem qcond_conservative [Fintype α] (qc : QCond) (N Q : α → Prop)
     [DecidablePred N] :
     qcondToGQ qc N Q ↔ qcondToGQ qc N (fun x => N x ∧ Q x) := by
@@ -344,7 +344,7 @@ def rttQuantifierCount (k : ℕ) : ℕ := 2 ^ (k + 1) - 1
 #guard rttQuantifierCount 3 == 15
 
 /-- RTT's quantifier space is strictly smaller than GQT's conservative
-    count (@cite{van-benthem-1984}).
+    count ([van-benthem-1984]).
     For n=2: RTT gives 7 vs GQT's 64. -/
 theorem rtt_fewer_than_conservative_2 :
     rttQuantifierCount 2 < conservativeQuantifierCount 2 := by decide

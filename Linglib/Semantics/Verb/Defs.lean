@@ -36,7 +36,7 @@ primitive fields in `Semantics/Verb/Basic.lean`, not stipulated as an enum.
   `Verb.Attitude`, `Verb.Root` — the field facets
 
 ## Design
-@cite{bale-schwarz-2026} @cite{dayal-2025} @cite{heim-1992} @cite{icard-2012} @cite{kennedy-2007} @cite{maier-2015} @cite{qing-uegaki-2025} @cite{rappaport-hovav-levin-2024} @cite{solstad-bott-2024} @cite{rappaport-hovav-levin-1998}
+[bale-schwarz-2026] [dayal-2025] [heim-1992] [icard-2012] [kennedy-2007] [maier-2015] [qing-uegaki-2025] [rappaport-hovav-levin-2024] [solstad-bott-2024] [rappaport-hovav-levin-1998]
 -/
 
 open Semantics.Presupposition
@@ -62,14 +62,14 @@ open Features.LevinClassProfiles
     - `agentive`: External argument introduced (transitive/unergative)
     - `nonThematic`: No external argument (unaccusative/anticausative)
     - `expletive`: No specifier, no semantics (middle voice)
-    - `reflexive`: Agent that binds internal argument (@cite{wood-2015})
-    - `experiencer`: Experiencer external argument (@cite{wood-2015}) -/
+    - `reflexive`: Agent that binds internal argument ([wood-2015])
+    - `experiencer`: Experiencer external argument ([wood-2015]) -/
 inductive VoiceType where
   | agentive     -- External argument introduced
   | nonThematic  -- No external argument (unaccusative)
   | expletive    -- No specifier, no semantics (middle)
-  | reflexive    -- Agent binds internal argument (@cite{wood-2015})
-  | experiencer  -- Experiencer external argument (@cite{wood-2015})
+  | reflexive    -- Agent binds internal argument ([wood-2015])
+  | experiencer  -- Experiencer external argument ([wood-2015])
   deriving DecidableEq, Repr
 
 /-- Does this voice type introduce an external argument? -/
@@ -78,7 +78,7 @@ def VoiceType.assignsTheta : VoiceType → Bool
   | .nonThematic | .expletive => false
 
 /--
-Presupposition trigger type (@cite{tonhauser-beaver-roberts-simons-2013} classification).
+Presupposition trigger type ([tonhauser-beaver-roberts-simons-2013] classification).
 
 - Hard triggers: Always project (too, again, also)
 - Soft triggers: Context-sensitive projection (stop, know)
@@ -86,7 +86,7 @@ Presupposition trigger type (@cite{tonhauser-beaver-roberts-simons-2013} classif
 inductive PresupTriggerType where
   | hardTrigger        -- Projective in all contexts
   | softTrigger        -- Factive: complement truth presupposed, locally accommodatable
-  | prerequisiteSoft   -- Prerequisite: causal prerequisite presupposed (@cite{nadathur-2024})
+  | prerequisiteSoft   -- Prerequisite: causal prerequisite presupposed ([nadathur-2024])
   deriving DecidableEq, Repr
 
 /-- Is this trigger locally accommodatable (soft)?
@@ -97,7 +97,7 @@ def PresupTriggerType.isSoft : PresupTriggerType → Bool
   | .prerequisiteSoft => true
 
 /--
-Complement presupposition projection behavior (@cite{karttunen-1973}).
+Complement presupposition projection behavior ([karttunen-1973]).
 
 Orthogonal to `PresupTriggerType` (whether the verb *triggers* presuppositions):
 this classifies what the verb does with presuppositions *of its complement*.
@@ -129,7 +129,7 @@ inductive SenseTag where
   | rogative      -- Question-embedding sense
   | causative     -- Causative use of otherwise non-causative verb
   | instrumental  -- Instrument-specific sense
-  | occasion      -- Occasion verb sense (@cite{solstad-bott-2024}): agent-evocator subject
+  | occasion      -- Occasion verb sense ([solstad-bott-2024]): agent-evocator subject
   | stative       -- Stative reading of a polysemous verb (e.g., *suivre* 'follow' positional)
   deriving DecidableEq, Repr
 
@@ -168,7 +168,7 @@ def ComplementType.isFinite : ComplementType → Bool
     Nominal complements project DP: the verb selects a noun phrase
     in object position. Relevant to c-selection in coordination:
     a verb that only selects nominal complements cannot independently
-    license a CP conjunct (@cite{schwarzer-2026}). -/
+    license a CP conjunct ([schwarzer-2026]). -/
 def ComplementType.isNominal : ComplementType → Bool
   | .np | .np_np | .np_pp => true
   | _ => false
@@ -197,7 +197,7 @@ inductive ControlType where
     Cross-linguistic: applies to any argument position where the verb allows
     the argument to be absent. The distinction captures whether the missing
     referent must be pragmatically recoverable (definite) or can be
-    unspecified (indefinite). @cite{bruening-2021}, @cite{fillmore-1986}. -/
+    unspecified (indefinite). [bruening-2021], [fillmore-1986]. -/
 inductive ImplicitInterp where
   | indef   -- Existentially bound: unspecified "someone/something"
   | def     -- Pragmatically recoverable definite
@@ -229,7 +229,7 @@ structure ArgStructure where
   complementType : ComplementType
   /-- Proto-role entailment profile for the subject (external argument).
       The authoritative representation of argument semantics
-      (@cite{dowty-1991}, @cite{grimm-2011}, @cite{levin-2019}).
+      ([dowty-1991], [grimm-2011], [levin-2019]).
       Convenience role labels can be derived via `EntailmentProfile.toRole`. -/
   subjectEntailments : Option EntailmentProfile := none
   /-- Proto-role entailment profile for the first object (internal argument). -/
@@ -245,7 +245,7 @@ structure ArgStructure where
   altControlType : ControlType := .none
   /-- Is the verb unaccusative? (subject is underlying object)
       When `voiceType` is present, prefer `derivedUnaccusative` which
-      derives this from Voice selection (@cite{kratzer-1996}). -/
+      derives this from Voice selection ([kratzer-1996]). -/
   unaccusative : Bool := false
   /-- Framework-neutral voice type: determines whether an external argument
       is introduced. When set, `derivedUnaccusative` derives unaccusativity
@@ -255,7 +255,7 @@ structure ArgStructure where
   passivizable : Bool := true
   /-- Can the direct object (theme/patient) be left unexpressed?
       Applies to monotransitives (*eat* vs *devour*) and the theme of
-      ditransitives. `none` = object always required. @cite{bruening-2021} -/
+      ditransitives. `none` = object always required. [bruening-2021] -/
   implicitObj : Option ImplicitInterp := none
   /-- Can the goal/recipient argument be left unexpressed?
       Applies to the IO of double object constructions and the PP
@@ -266,7 +266,7 @@ structure ArgStructure where
 /-- Aspectual class: Vendler class, degree-achievement scale, incrementality,
     and change-of-state type. -/
 structure Aspect where
-  /-- @cite{vendler-1957} aspectual class of the verb's base VP.
+  /-- [vendler-1957] aspectual class of the verb's base VP.
       For verbs whose class depends on the object NP (eat apples = activity,
       eat two apples = accomplishment), record the class with a quantized
       (bounded) object. `none` for verbs where Vendler class is inapplicable
@@ -276,7 +276,7 @@ structure Aspect where
       which default vendlerClass is derived. When present, vendlerClass should
       agree with degreeAchievementScale.defaultVendlerClass. -/
   degreeAchievementScale : Option DegreeAchievementScale := none
-  /-- @cite{krifka-1998} incrementality class of the object/theme role.
+  /-- [krifka-1998] incrementality class of the object/theme role.
       `.sinc` = strictly incremental (eat, build); `.inc` = incremental
       with backups (read); `.cumOnly` = cumulative only (push, carry).
       `none` for intransitives and clause-embedding verbs. -/
@@ -290,7 +290,7 @@ structure Presupposition where
   /-- Is the verb a presupposition trigger? -/
   presupType : Option PresupTriggerType := none
   /-- How does the verb treat presuppositions of its complement?
-      Orthogonal to `presupType`. @cite{karttunen-1973} -/
+      Orthogonal to `presupType`. [karttunen-1973] -/
   projectionBehavior : Option ProjectionBehavior := none
   deriving Repr, BEq
 
@@ -301,7 +301,7 @@ structure Causation where
   implicative : Option Implicative := none
   /-- For causative verbs: force-dynamic mechanism (links to compositional semantics). -/
   causative : Option Causative := none
-  /-- Source of causation for psych causatives (@cite{kim-2024} UPH).
+  /-- Source of causation for psych causatives ([kim-2024] UPH).
       `.external` = mind-external percept, `.internal` = mind-internal representation. -/
   causalSource : Option CausalSource := none
   deriving Repr, BEq
@@ -320,14 +320,14 @@ structure Attitude where
       Classifies this verb's monotonicity w.r.t. its clausal complement.
       `.mono` = upward monotone (believe, know); `.mult` = multiplicative only
       (be surprised). Used to derive conjunction distribution and neg-raising.
-      See @cite{bondarenko-elliott-2026}. -/
+      See [bondarenko-elliott-2026]. -/
   complementSig : Option EntailmentSig := none
   deriving Repr, BEq
 
 /-- Root content: Levin class and root-specific quality profile
-    (@cite{levin-1993}; @cite{spalek-mcnally-2026}). -/
+    ([levin-1993]; [spalek-mcnally-2026]). -/
 structure Root where
-  /-- @cite{levin-1993} verb class (§§ 9–57). -/
+  /-- [levin-1993] verb class (§§ 9–57). -/
   levinClass : Option LevinClass := none
   /-- Root-specific quality dimensions (within-class variation). -/
   rootProfile : Option RootProfile := none

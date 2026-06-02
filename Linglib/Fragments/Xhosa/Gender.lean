@@ -2,7 +2,7 @@ import Linglib.Typology.Gender
 
 /-!
 # Xhosa Gender
-@cite{corbett-1991} @cite{corbett-2013}
+[corbett-1991] [corbett-2013]
 
 Bantu noun-class system. Carstens 2026 cites 5 active gender classes for
 the agreement-side analysis; the morphological inventory is larger.

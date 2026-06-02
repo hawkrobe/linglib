@@ -3,10 +3,10 @@ import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Questions.Exhaustivity
 
 /-!
-# @cite{heim-1994}: Interrogative Semantics and Karttunen's Semantics for know
-@cite{karttunen-1977} @cite{groenendijk-stokhof-1984}
+# [heim-1994]: Interrogative Semantics and Karttunen's Semantics for know
+[karttunen-1977] [groenendijk-stokhof-1984]
 
-Single-paper formalisation of @cite{heim-1994} (IATL 1, pp. 128–144),
+Single-paper formalisation of [heim-1994] (IATL 1, pp. 128–144),
 "Interrogative Semantics and Karttunen's Semantics for know". The paper
 asks how Karttunen-style and G&S-style answer notions compare under
 question-embedding by `know`, and what minimal modification to
@@ -14,7 +14,7 @@ Karttunen's semantics yields G&S-equivalent predictions.
 
 ## Substrate identification
 
-@cite{heim-1994} introduces two answer notions:
+[heim-1994] introduces two answer notions:
 
 * **ans₁(α, w)** (eq 15) — "answer-in-the-first-sense":
   the *intersection* `∩⟦α⟧K(w)` of all true Karttunen alternatives at `w`.
@@ -73,7 +73,7 @@ variable {W : Type*}
 
 /-! ### Heim's two answer notions (§6 eq 15-16) -/
 
-/-- @cite{heim-1994} (15): the **answer-in-the-first-sense** is the
+/-- [heim-1994] (15): the **answer-in-the-first-sense** is the
     Karttunen intersection `∩⟦α⟧K(w)`. Identified with the substrate's
     `weakAnswer`. -/
 def heimAns1 (Q : Question W) (w : W) : Set W :=
@@ -82,7 +82,7 @@ def heimAns1 (Q : Question W) (w : W) : Set W :=
 @[simp] theorem heimAns1_eq_weakAnswer (Q : Question W) (w : W) :
     heimAns1 Q w = weakAnswer Q w := rfl
 
-/-- @cite{heim-1994} (16): the **answer-in-the-second-sense** is the
+/-- [heim-1994] (16): the **answer-in-the-second-sense** is the
     set of worlds whose ans₁-image equals `w`'s. The reflective
     formulation of strong exhaustivity. -/
 def heimAns2 (Q : Question W) (w : W) : Set W :=
@@ -136,7 +136,7 @@ contained in `weakAnswer Q w`". The doxastic predicate itself lives
 in `Semantics/Attitudes/Doxastic.lean`; here we expose the
 content as `weakAnswer`. -/
 
-/-- @cite{heim-1994} §1 (4): the *simplified* Karttunen content of
+/-- [heim-1994] §1 (4): the *simplified* Karttunen content of
     `know Q w` is `weakAnswer Q w` — what the agent must believe. -/
 def simplifiedKarttunenContent (Q : Question W) (w : W) : Set W :=
   weakAnswer Q w
@@ -147,11 +147,11 @@ def simplifiedKarttunenContent (Q : Question W) (w : W) : Set W :=
 
 /-! ### §5: G&S strong answer
 
-@cite{groenendijk-stokhof-1984} `whether` denotes `λw'. R(w') ↔ R(w)`,
+[groenendijk-stokhof-1984] `whether` denotes `λw'. R(w') ↔ R(w)`,
 which is `strongAnswer (polar R) w`. The substrate already provides
 this; we re-export under the paper's vocabulary for cross-reference. -/
 
-/-- @cite{heim-1994} §5 / @cite{groenendijk-stokhof-1984}: the G&S
+/-- [heim-1994] §5 / [groenendijk-stokhof-1984]: the G&S
     answer is the substrate's `strongAnswer`. -/
 def gsAnswer (Q : Question W) (w : W) : Set W :=
   strongAnswer Q w
@@ -159,7 +159,7 @@ def gsAnswer (Q : Question W) (w : W) : Set W :=
 @[simp] theorem gsAnswer_eq_strongAnswer (Q : Question W) (w : W) :
     gsAnswer Q w = strongAnswer Q w := rfl
 
-/-- @cite{heim-1994} §6: G&S answer is contained in Heim's ans₂. -/
+/-- [heim-1994] §6: G&S answer is contained in Heim's ans₂. -/
 theorem gsAnswer_subset_heimAns2 (Q : Question W) (w : W) :
     gsAnswer Q w ⊆ heimAns2 Q w :=
   strongAnswer_subset_heimAns2 Q w

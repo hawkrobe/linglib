@@ -3,7 +3,7 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # RSA Conditional Antecedent Embedding
-@cite{chierchia-2004} @cite{geurts-2010} @cite{von-fintel-1999}
+[chierchia-2004] [geurts-2010] [von-fintel-1999]
 
 Models scalar implicatures embedded in conditional antecedents.
 

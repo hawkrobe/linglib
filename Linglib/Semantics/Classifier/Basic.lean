@@ -4,7 +4,7 @@ import Linglib.Semantics.Plurality.Algebra
 
 /-!
 # Classifier Semantics
-@cite{chierchia-1998} @cite{little-moroney-royer-2022} @cite{moroney-2021}
+[chierchia-1998] [little-moroney-royer-2022] [moroney-2021]
 
 Unified compositional semantics for classifier constructions, connecting
 the typological vocabulary in `Typology` to the mereological
@@ -14,15 +14,15 @@ in `Semantics.Plurality.Algebra`.
 ## Two Semantic Strategies
 
 Numeral classifiers form a heterogeneous class
-(@cite{little-moroney-royer-2022}). Two families of theories are BOTH
+([little-moroney-royer-2022]). Two families of theories are BOTH
 correct, for different languages:
 
-- **CLF-for-N** (@cite{chierchia-1998}; @cite{jenks-2011};
-  @cite{nomoto-2013}): the classifier atomizes the noun denotation.
+- **CLF-for-N** ([chierchia-1998]; [jenks-2011];
+  [nomoto-2013]): the classifier atomizes the noun denotation.
   `⟦CLF⟧ = λPλx.[P(x) ∧ Atom(x)]`. This is `Mereology.atomize`.
   Languages: Shan, Mandarin, Japanese.
 
-- **CLF-for-NUM** (@cite{krifka-1995}; @cite{bale-coon-2014}): the
+- **CLF-for-NUM** ([krifka-1995]; [bale-coon-2014]): the
   classifier is a measure function required by the numeral.
   `⟦TWO⟧ = λmλPλx.[P(x) ∧ m(x) = 2]`. This is `Mereology.QMOD`.
   Languages: Ch'ol.
@@ -54,7 +54,7 @@ open _root_.Mereology
 open Typology (ClassifierStrategy)
 
 -- ============================================================================
--- §1: CLF-for-N — Atomization (@cite{chierchia-1998})
+-- §1: CLF-for-N — Atomization ([chierchia-1998])
 -- ============================================================================
 
 /-- CLF-for-N denotation: the classifier atomizes the noun denotation.
@@ -62,7 +62,7 @@ open Typology (ClassifierStrategy)
 
     This IS `Mereology.atomize`. The wrapper aliases it under the
     classifier namespace for discoverability and adds the
-    @cite{little-moroney-royer-2022} citation. -/
+    [little-moroney-royer-2022] citation. -/
 abbrev clfForNoun {α : Type*} [PartialOrder α] (P : α → Prop) : α → Prop :=
   atomize P
 
@@ -79,7 +79,7 @@ theorem clfForNoun_sub {α : Type*} [PartialOrder α]
   atomize_sub h
 
 -- ============================================================================
--- §2: CLF-for-NUM — Measure Modification (@cite{krifka-1995})
+-- §2: CLF-for-NUM — Measure Modification ([krifka-1995])
 -- ============================================================================
 
 /-- CLF-for-NUM denotation: the classifier is a measure function, and
@@ -103,7 +103,7 @@ theorem clfForNum_qua {α : Type*} [SemilatticeSup α]
     exact absurd this (lt_irrefl _)
 
 -- ============================================================================
--- §3: Group Classifier — Materialization (@cite{moroney-2021} Ch. 3)
+-- §3: Group Classifier — Materialization ([moroney-2021] Ch. 3)
 -- ============================================================================
 
 /-- Group classifier denotation using Link's materialization homomorphism.
@@ -115,7 +115,7 @@ theorem clfForNum_qua {α : Type*} [SemilatticeSup α]
     that of some P-entity y. This is how "a group of dogs" can denote
     a single atomic group-entity made of the same "stuff" as the dogs.
 
-    @cite{moroney-2021} §3.3.2: ⟦phŭŋ_CLF⟧ = λP.λx.∃y[P(y) ∧
+    [moroney-2021] §3.3.2: ⟦phŭŋ_CLF⟧ = λP.λx.∃y[P(y) ∧
     μ_GROUP.A(x) = 1 ∧ h(y) = h(x)].
 
     We use `Atom x` instead of `μ(x) = 1` since atomicity is the

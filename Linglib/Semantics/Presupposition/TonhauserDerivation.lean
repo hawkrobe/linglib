@@ -1,9 +1,9 @@
 /-
-# Deriving @cite{tonhauser-beaver-roberts-simons-2013} from Local Contexts
-@cite{heim-1983} @cite{lewis-1979}
+# Deriving [tonhauser-beaver-roberts-simons-2013] from Local Contexts
+[heim-1983] [lewis-1979]
 
 This module states and proves the main theorems showing that Schlenker's
-local context theory derives the four-class taxonomy of @cite{tonhauser-beaver-roberts-simons-2013}.
+local context theory derives the four-class taxonomy of [tonhauser-beaver-roberts-simons-2013].
 
 ## The Main Result
 
@@ -28,9 +28,9 @@ Given Schlenker's theory of local contexts, we can characterize:
 
 ## The Tonhauser Critique and How We Address It
 
-@cite{tonhauser-beaver-roberts-simons-2013} raise an important objection to Schlenker's approach:
+[tonhauser-beaver-roberts-simons-2013] raise an important objection to Schlenker's approach:
 
-> "In theories like those of @cite{schlenker-2009}, where it is assumed that a
+> "In theories like those of [schlenker-2009], where it is assumed that a
 > presupposition is satisfied in its local context if it is entailed by it.
 > Since, in general, the relevant local context is the context set ('which
 > encodes what the speech act participants take for granted'), presuppositions

@@ -2,7 +2,7 @@ import Linglib.Pragmatics.Expressives.Basic
 
 /-!
 # Maier 2014a: Mixed quotation as syntactic chameleonism
-@cite{maier-2014a}
+[maier-2014a]
 
 Maier, E. (2014). Mixed quotation: The grammar of apparently transparent
 opacity. *Semantics & Pragmatics* 7:7, 1–67.

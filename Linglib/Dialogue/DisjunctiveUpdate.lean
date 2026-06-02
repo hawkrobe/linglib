@@ -3,18 +3,18 @@ import Linglib.Semantics.Dynamic.ParameterizedUpdate
 
 /-!
 # Disjunctive Context Updating
-@cite{caie-2023}
+[caie-2023]
 
 Michael Caie. Context Dynamics. Semantics and Pragmatics 16, Article 3: 1–37.
 
 ## The Problem
 
-Standard accounts of conversational updating (@cite{stalnaker-1978}) assume
+Standard accounts of conversational updating ([stalnaker-1978]) assume
 that, at each world w in the context set, there is a unique compositional
 context c_w interpreting an assertion of φ. The context set is updated by
 diagonalization: eliminate w iff ⟦φ⟧^{c_w} is false at w.
 
-@cite{caie-2023} argues this uniqueness assumption fails for context-sensitive
+[caie-2023] argues this uniqueness assumption fails for context-sensitive
 expressions like configurational predicates ("pair of socks"), where multiple
 compositional contexts may be available at a single world. Standard Updating
 combined with Minimal Symmetry and Preservation incorrectly predicts the
@@ -85,7 +85,7 @@ structure ContextFragment (C W : Type*) where
 /-- An interpretation assignment maps worlds to predicates on compositional
     contexts. `I w c` holds iff c is available to interpret an assertion at w.
 
-    @cite{caie-2023}: "for each world w in the relevant context set, a
+    [caie-2023]: "for each world w in the relevant context set, a
     non-empty set of compositional contexts that interpret that assertion
     of φ at w: I^φ_w."
 
@@ -107,7 +107,7 @@ abbrev InterpAssignment.toFragmentSet (I : InterpAssignment C W) :
 -- ════════════════════════════════════════════════════════════════
 
 /-- Standard Updating with explicit diagonalization
-    (@cite{stalnaker-1978}, formulated following @cite{caie-2023} §1).
+    ([stalnaker-1978], formulated following [caie-2023] §1).
 
     At each world w, a unique compositional context c_w determines the
     proposition expressed. The diagonal proposition is
@@ -125,7 +125,7 @@ def standardUpdate (cs : Set W) (c_w : W → C) (sem : C → W → Prop) : Set W
 -- § 3. Disjunctive Multi-Context Updating
 -- ════════════════════════════════════════════════════════════════
 
-/-- Disjunctive Multi-Context Updating (@cite{caie-2023} §3).
+/-- Disjunctive Multi-Context Updating ([caie-2023] §3).
 
     A world w survives iff there exists some compositional context c in the
     interpretation set I_w such that ⟦φ⟧^c is true at w. When I_w is a
@@ -134,7 +134,7 @@ def standardUpdate (cs : Set W) (c_w : W → C) (sem : C → W → Prop) : Set W
     Defined as `existentialUpdate` from `ParameterizedUpdate` with the
     interpretation assignment as the fragment set (argument order swapped).
 
-    @cite{caie-2023}: "The result of updating the context given the assertion
+    [caie-2023]: "The result of updating the context given the assertion
     is C^φ = {w ∈ C_φ : w ∈ ⟦φ⟧^c, for some c ∈ I^φ_w}." -/
 abbrev disjunctiveUpdate (cs : Set W) (I : InterpAssignment C W)
     (sem : C → W → Prop) : Set W :=
@@ -145,7 +145,7 @@ abbrev disjunctiveUpdate (cs : Set W) (I : InterpAssignment C W)
 -- § 4. Contextual Pruning
 -- ════════════════════════════════════════════════════════════════
 
-/-- Contextual Pruning (@cite{caie-2023} §3): restrict interpretation sets
+/-- Contextual Pruning ([caie-2023] §3): restrict interpretation sets
     to truth-making contexts.
 
     If β immediately follows α in a discourse at world w, the compositional
@@ -154,7 +154,7 @@ abbrev disjunctiveUpdate (cs : Set W) (I : InterpAssignment C W)
     Defined as `fiberwiseFilter` from `ParameterizedUpdate` (argument order
     swapped).
 
-    @cite{caie-2023}: "if {c : c ∈ I^α_w and w ∈ ⟦α⟧^c} ≠ ∅, then
+    [caie-2023]: "if {c : c ∈ I^α_w and w ∈ ⟦α⟧^c} ≠ ∅, then
     I^β_w = {c : c ∈ I^α_w and w ∈ ⟦α⟧^c}."
 
     Note: the paper's definition includes a non-emptiness precondition —
@@ -174,7 +174,7 @@ abbrev prune (I : InterpAssignment C W) (sem : C → W → Prop) :
 /-- The fragmentation of a context set: all ⟨c, w⟩ pairs where w is in
     the context set and c is an available interpretation at w.
 
-    @cite{caie-2023}: "Call a context fragment an ordered pair of a
+    [caie-2023]: "Call a context fragment an ordered pair of a
     compositional context and a world, and call the fragmentation of C_φ
     the set of context fragments ⟨c, w⟩ such that w ∈ C_φ and c interprets
     φ in w." -/
@@ -263,11 +263,11 @@ theorem disjunctiveUpdate_eq_contextSet_update (cs : Set W) (c₀ : C)
 -- § 8. Generalized Preservation
 -- ════════════════════════════════════════════════════════════════
 
-/-- Generalized Preservation (@cite{caie-2023} §3): if there is a unique
+/-- Generalized Preservation ([caie-2023] §3): if there is a unique
     compositional context interpreting α at w, and it makes α true, then
     it persists as the unique context for subsequent assertions.
 
-    @cite{caie-2023}: "for each w ∈ C_α if there is a unique compositional
+    [caie-2023]: "for each w ∈ C_α if there is a unique compositional
     context c that interprets an assertion of α in w, then if w ∈ C^α, then
     c uniquely interprets the subsequent assertion of β in w."
 
@@ -307,7 +307,7 @@ theorem discourseStep_restricts (cs : Set W) (I : InterpAssignment C W)
     asserting α then β (with pruned parameters) = single ∃-update checking
     both α and β under the same parameter.
 
-    This is @cite{caie-2023}'s central mechanism, obtained for free from
+    This is [caie-2023]'s central mechanism, obtained for free from
     `sequential_existentialUpdate` in `ParameterizedUpdate.lean`. -/
 theorem contextual_pruning_sequential (cs : Set W)
     (I : InterpAssignment C W) (sem₁ sem₂ : C → W → Prop) :
@@ -323,7 +323,7 @@ theorem contextual_pruning_sequential (cs : Set W)
 -- § 10. Sarah's Socks — Worked Example
 -- ════════════════════════════════════════════════════════════════
 
-/-! ## Sarah's Socks (@cite{caie-2023} §2.1)
+/-! ## Sarah's Socks ([caie-2023] §2.1)
 
 Tim has strong preferences about socks. Two discourses communicate
 that Tim likes matching socks and dislikes mixed ones:
@@ -341,7 +341,7 @@ that Tim likes matching socks and dislikes mixed ones:
 - **Initial interpretation set**: both intensions at every world.
 - **4 context fragments**: {matching, mixed} × {likesMatching, likesMixed}.
 
-### Verification Table (from @cite{caie-2023})
+### Verification Table (from [caie-2023])
 
 For Tim Likes Matching:
 
@@ -497,7 +497,7 @@ theorem safe_info_ii_tdm (w : TimPref) :
 
 -- ──── Negative results: why Standard Updating fails ────
 
-/-- @cite{caie-2023} §2.2, first Claim: Standard Updating + Preservation +
+/-- [caie-2023] §2.2, first Claim: Standard Updating + Preservation +
     Minimal Symmetry → ¬Safe Information.
 
     Under Minimal Symmetry, the same dressing intension c interprets
@@ -513,7 +513,7 @@ theorem standard_update_incompatible (c : DressInt) (w : TimPref) :
     ¬(likes c w ∧ dislikes c w) := by
   rintro ⟨hl, hd⟩; exact hd hl
 
-/-- @cite{caie-2023} §2.2, second Claim: Standard Updating + Uniform Charity
+/-- [caie-2023] §2.2, second Claim: Standard Updating + Uniform Charity
     → ¬Safe Information (condition i).
 
     Under Uniform Charity (prefer truth-making interpretations), each

@@ -8,7 +8,7 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Algebra.Order.Field.Basic
 
 /-!
-# @cite{solt-2018-proportional}
+# [solt-2018-proportional]
 
 Stephanie Solt (2018). Proportional comparatives and relative scales.
 *Proceedings of Sinn und Bedeutung 21*, 1123–1140.
@@ -53,10 +53,10 @@ Solt's eq. (21) is exactly an instance of `spatialNormalizedScore` in
 `Semantics/Degree/Aggregation.lean §2`: the numerator is a
 weighted sum (with `weights = [1]` and one measure function) and the
 denominator is `μ_DIM(totality)`. Solt 2018 (this paper) and
-@cite{tham-2025} are the two consumers of `spatialNormalizedScore` —
+[tham-2025] are the two consumers of `spatialNormalizedScore` —
 this file establishes the substrate's second-consumer status.
 
-## Relation to @cite{solt-2018} (the multidimensionality chapter)
+## Relation to [solt-2018] (the multidimensionality chapter)
 
 Solt's other 2018 paper — the Springer chapter "Multidimensionality,
 subjectivity and scales: experimental evidence" — develops the
@@ -130,7 +130,7 @@ theorem cardinal_reading_ithaca_lt_nyc :
 -- § 2. Two accounts
 -- ════════════════════════════════════════════════════
 
-/-! ### §2.1 Ambiguity account (@cite{partee-1989}, @cite{romero-2015})
+/-! ### §2.1 Ambiguity account ([partee-1989], [romero-2015])
 
   Solt eq. (7): *many* is two lexical entries.
 
@@ -168,9 +168,9 @@ def manyProp (threshold : ℚ) (pAndQ : ℚ) (p : ℚ) : Bool :=
 
   All three satisfy the **monotonicity constraint** (eq. 18):
   `∀ x, y. x ⊑ y → μ_DIM(x) ≺ μ_DIM(y)` — measure functions are
-  monotonic on the part-whole relation @cite{schwarzschild-2006}. -/
+  monotonic on the part-whole relation [schwarzschild-2006]. -/
 
-/-- A scale @cite{solt-2018-proportional} eq. (15) (= @cite{solt-2018}
+/-- A scale [solt-2018-proportional] eq. (15) (= [solt-2018]
     eq. 33). Solt writes `S = ⟨D, ≻, DIM⟩` with `D` a set of degrees,
     `≻` an ordering on D, and `DIM` a dimension of measurement. The
     Lean structure is named `SoltScale` to avoid shadowing mathlib's
@@ -287,7 +287,7 @@ theorem cardinal_proportional_divergence :
 /-! Solt §4 (p. 1135) argues that the AMBIGUITY account (entries
     `many_CARD` and `many_PROP` separately) overgenerates: in
     combination with individual-level predicates
-    (@cite{milsark-1977}, @cite{partee-1989}, @cite{carlson-1977}),
+    ([milsark-1977], [partee-1989], [carlson-1977]),
     *many*/*few* allow ONLY the proportional reading.
 
     Eqs. (35)–(36):
@@ -345,7 +345,7 @@ theorem stage_individual_distribution_gap :
 -- § 5. Cross-paper engagement
 -- ════════════════════════════════════════════════════
 
-/-! ### §5.1 Substrate sharing with @cite{tham-2025}
+/-! ### §5.1 Substrate sharing with [tham-2025]
 
   Tham 2025's eq. (47b) for *cracked* uses the same substrate
   (`spatialNormalizedScore`) with:
@@ -375,7 +375,7 @@ theorem solt_proportional_is_single_dim_spatial_normalized
     proportion of `y` in `tot` is strictly less than the proportion of
     `z` in `tot`. The general eq. (18) constraint
     (`∀ x, y. x ⊑ y ⇒ μ^c_DIM(x) ≺ μ^c_DIM(y)`) is the
-    @cite{schwarzschild-2006} part-whole monotonicity condition; this
+    [schwarzschild-2006] part-whole monotonicity condition; this
     theorem shows it is preserved by the eq. (21) proportional
     construction whenever `μ_DIM(tot) > 0`. -/
 theorem proportionalMeasure_monotonic {α : Type}
@@ -477,7 +477,7 @@ theorem proportionalMeasure_scale_invariant {α : Type}
       proportionalMeasure_eq _ tot y htot]
   rw [mul_div_mul_left _ _ hk]
 
-/-! ### §5.2 Connection to @cite{solt-2018} (the multidim chapter)
+/-! ### §5.2 Connection to [solt-2018] (the multidim chapter)
 
   Solt's other 2018 paper develops the experimental subjectivity
   typology (RelNum / AbsTot / AbsPart / RelNo / Eval; multidim chapter

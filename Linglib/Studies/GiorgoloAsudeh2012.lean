@@ -4,7 +4,7 @@ import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 /-!
 # Giorgolo & Asudeh 2012: Monads for Conventional Implicatures
-@cite{giorgolo-asudeh-2012}
+[giorgolo-asudeh-2012]
 
 ## Core Claim
 
@@ -12,7 +12,7 @@ Conventional implicatures are modeled as Writer monad side-effects.
 CI-contributing expressions (appositives, expressives) *log* propositions
 to a side-issue dimension via `write`, while presupposition triggers
 log conditions via `check`. The monadic type structure enforces
-@cite{potts-2005}'s flow restriction by construction: `bind`'s function
+[potts-2005]'s flow restriction by construction: `bind`'s function
 argument receives only the at-issue value, never the CI log.
 
 ## Two-Stage Architecture
@@ -41,10 +41,10 @@ The presupposition is satisfied by the CI content: john likes cats,
 and cats ≠ dogs. This satisfaction happens post-compositionally,
 after both Writer logs are exposed.
 
-## Relation to @cite{shan-2001}
+## Relation to [shan-2001]
 
-@cite{shan-2001} showed monads capture deep structure in NL semantics
-(focus, scope, questions, binding). @cite{giorgolo-asudeh-2012} apply
+[shan-2001] showed monads capture deep structure in NL semantics
+(focus, scope, questions, binding). [giorgolo-asudeh-2012] apply
 the *Writer* monad specifically to CIs, arguing it is preferable to
 the continuation-based approach: each monad isolates one kind of
 side-effect, and monad transformers compose them modularly.
@@ -298,7 +298,7 @@ theorem flow_restriction : sentence.val = sentence_alt_nrrc.val := rfl
 
 /-! CI-contributing expressions modeled by the Writer monad —
     expressives, appositives, NRRCs — are exactly Class B in
-    @cite{tonhauser-beaver-roberts-simons-2013}'s taxonomy:
+    [tonhauser-beaver-roberts-simons-2013]'s taxonomy:
     SCF=no (CI content can be informative), OLE=no (attributed
     to speaker, not attitude holder). The Writer's log threading
     captures this: content projects past all operators without
@@ -320,7 +320,7 @@ theorem classB_properties :
 -- ════════════════════════════════════════════════════
 
 /-! For intensional models where values and log entries are world-indexed
-    propositions, the CI channel maps directly to @cite{potts-2005}'s
+    propositions, the CI channel maps directly to [potts-2005]'s
     `TwoDimProp`. The presupposition channel is orthogonal. -/
 
 open Pragmatics.Expressives (TwoDimProp)
@@ -343,12 +343,12 @@ end Bridge
 
 /-! ### Structural correspondence to PostSupp
 
-`PostSupp S A` (@cite{charlow-2021}) is structurally identical to a single
+`PostSupp S A` ([charlow-2021]) is structurally identical to a single
 Writer monad: a value paired with accumulated side-effect content, composed
 via `pure`/`bind` with log sequencing via `dseq`. The Writer monad for CIs
 and Charlow's `PostSupp` for modified numerals are the same pattern applied
 to different side-effects (CI propositions vs cardinality tests), confirming
-@cite{shan-2001}'s insight that monads capture recurring compositional
+[shan-2001]'s insight that monads capture recurring compositional
 structure in natural language. -/
 
 end GiorgoloAsudeh2012

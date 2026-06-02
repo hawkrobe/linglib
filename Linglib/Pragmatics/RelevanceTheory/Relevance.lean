@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Relevance — @cite{sperber-wilson-1986}
+# Relevance — [sperber-wilson-1986]
 
 Relevance is a comparative notion defined along two dimensions:
 - **Cognitive effects**: greater effects → more relevant

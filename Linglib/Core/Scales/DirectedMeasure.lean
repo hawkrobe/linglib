@@ -4,7 +4,7 @@ import Linglib.Core.Scales.Comparative
 
 /-!
 # Core/Scales/DirectedMeasure.lean — directed measurement primitive
-@cite{kennedy-2007} @cite{lassiter-goodman-2017} @cite{rouillard-2026} @cite{krantz-1971} @cite{krifka-1989} @cite{zwarts-2005}
+[kennedy-2007] [lassiter-goodman-2017] [rouillard-2026] [krantz-1971] [krifka-1989] [zwarts-2005]
 
 A `DirectedMeasure D E` packages a degree type, entity type, measure function,
 boundedness classification, and direction. The common algebraic core of
@@ -23,7 +23,7 @@ For **theorems about concrete scales** — proving facts about a particular
 type — use Mathlib typeclasses directly:
 
 - **Measurement scale**: `[LinearOrder α]`
-- **Dense measurement scale** (@cite{fox-2007} UDM): `[LinearOrder α] [DenselyOrdered α]`
+- **Dense measurement scale** ([fox-2007] UDM): `[LinearOrder α] [DenselyOrdered α]`
 - **Upper-bounded scale**: `[LinearOrder α] [OrderTop α]`
 - **Lower-bounded scale**: `[LinearOrder α] [OrderBot α]`
 - **Open scale**: `[LinearOrder α] [NoMaxOrder α] [NoMinOrder α]`
@@ -60,7 +60,7 @@ namespace Core.Scale
 
     The degree property (`atLeastDeg` for positive, `atMostDeg` for
     negative) is **derived** from direction, not stored. This captures
-    the insight from @cite{lassiter-goodman-2017} that the binary direction choice
+    the insight from [lassiter-goodman-2017] that the binary direction choice
     (which side of the threshold counts as "satisfying the predicate")
     is the fundamental parameter, and the degree property follows.
 
@@ -84,7 +84,7 @@ variable {D : Type*} [LinearOrder D] {E : Type*}
 
 /-- Licensing: licensed iff the bounded scale admits an optimum.
     See `Boundedness.isLicensed` for the caveat — this checks
-    "any endpoint exists", not @cite{kennedy-2007}'s full
+    "any endpoint exists", not [kennedy-2007]'s full
     modifier-class licensing matrix. -/
 def licensed (dm : DirectedMeasure D E) : Bool := dm.boundedness.isLicensed
 
@@ -96,8 +96,8 @@ end DirectedMeasure
 
 /-! ### The Maximal Informativity Principle as a universal mechanism
 
-@cite{kennedy-2015} proposes a de-Fregean type-shift that maps lower-bound numeral
-meanings to exact meanings for Class B items (closed scales). @cite{rouillard-2026}
+[kennedy-2015] proposes a de-Fregean type-shift that maps lower-bound numeral
+meanings to exact meanings for Class B items (closed scales). [rouillard-2026]
 proposes the MIP as the licensing condition for temporal *in*-adverbials.
 
 These are the SAME mechanism: given a measure function μ and a monotone degree
@@ -124,13 +124,13 @@ namespace DirectedMeasure
 
 variable {α : Type*} [LinearOrder α] {W : Type*}
 
-/-- @cite{kennedy-2015} numeral domain: "at least n" over cardinality.
+/-- [kennedy-2015] numeral domain: "at least n" over cardinality.
     Closed scale (ℕ well-ordered) → always licensed.
     Type-shift to exact = MIP applied to atLeastDeg. -/
 def numeral (μ : W → α) : DirectedMeasure α W :=
   { boundedness := .closed, μ := μ }
 
-/-- @cite{kennedy-2007} gradable adjective domain.
+/-- [kennedy-2007] gradable adjective domain.
     Boundedness varies by adjective class (tall: open, full: closed). -/
 def adjective (μ : W → α) (b : Boundedness) : DirectedMeasure α W :=
   { boundedness := b, μ := μ }

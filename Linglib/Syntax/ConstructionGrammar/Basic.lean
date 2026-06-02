@@ -3,7 +3,7 @@ import Linglib.Discourse.CommonGround
 
 /-!
 # Construction Grammar: Core Types
-@cite{goldberg-1995} @cite{goldberg-2003} @cite{goldberg-2006}
+[goldberg-1995] [goldberg-2003] [goldberg-2006]
 
 Minimal infrastructure for Construction Grammar (CxG), the framework in which
 constructions — learned pairings of form and function — are the basic units
@@ -13,7 +13,7 @@ of grammatical knowledge.
 
 namespace ConstructionGrammar
 
-/-- How specified a construction's form side is (@cite{goldberg-2003}:220, Table 8).
+/-- How specified a construction's form side is ([goldberg-2003]:220, Table 8).
 
 | Specificity | Example |
 |---|---|
@@ -28,24 +28,24 @@ inductive Specificity where
   deriving Repr, DecidableEq
 
 /-- Mode of information transfer in an inheritance link
-(@cite{goldberg-1995} §3.3.1, p. 73–74).
+([goldberg-1995] §3.3.1, p. 73–74).
 
-@cite{goldberg-1995} distinguishes two modes, orthogonal to link type:
+[goldberg-1995] distinguishes two modes, orthogonal to link type:
 - **Normal**: child inherits defaults from parent but may override them.
   Allows subregularities and exceptions. The only mode used in
-  @cite{goldberg-1995}'s system.
+  [goldberg-1995]'s system.
 - **Complete**: all information from dominating nodes is inherited strictly;
   no conflicts allowed. Used in unification-based grammars (HPSG, GPSG)
-  but not exploited in @cite{goldberg-1995}'s constructional analysis. -/
+  but not exploited in [goldberg-1995]'s constructional analysis. -/
 inductive InheritanceMode where
   | normal     -- child inherits defaults, may override
   | complete   -- all properties inherited strictly (not used in Goldberg 1995)
   deriving Repr, DecidableEq
 
 /-- Type of semantic relation in an inheritance link
-(@cite{goldberg-1995} §3.3.2, p. 75).
+([goldberg-1995] §3.3.2, p. 75).
 
-@cite{goldberg-1995} distinguishes four major link types:
+[goldberg-1995] distinguishes four major link types:
 - **I_P (Polysemy)**: relates the central sense of a construction to its
   extensions. Each extension inherits syntax but differs in meaning
   (e.g., the six senses of the ditransitive, pp. 75–77).

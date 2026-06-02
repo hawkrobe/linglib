@@ -6,8 +6,8 @@ import Mathlib.Data.Fintype.Pi
 # Closure of `IsContextFree` under intersection with regular languages
 
 The intersection of a context-free language `L` with a regular language `R` is
-context-free. Headline theorem in @cite{hopcroft-motwani-ullman-2000}
-Theorem 7.27 (p. 286); originally proved in @cite{bar-hillel-perles-shamir-1961}.
+context-free. Headline theorem in [hopcroft-motwani-ullman-2000]
+Theorem 7.27 (p. 286); originally proved in [bar-hillel-perles-shamir-1961].
 
 Two textbook constructions exist for this theorem:
 
@@ -919,7 +919,7 @@ end ContextFreeGrammar
 namespace Language.IsContextFree
 
 /-- **CFL closure under intersection with a regular language**
-    (@cite{bar-hillel-perles-shamir-1961}; @cite{hopcroft-motwani-ullman-2000}
+    ([bar-hillel-perles-shamir-1961]; [hopcroft-motwani-ullman-2000]
     Theorem 7.27): if `L` is context-free and `R` is regular, then `L ∩ R` is
     context-free. -/
 theorem inter_isRegular {α : Type*} {L R : Language α}

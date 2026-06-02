@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 34A: Occurrence of Nominal Plurality
-@cite{haspelmath-2013b}
+[haspelmath-2013b]
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 34A`.

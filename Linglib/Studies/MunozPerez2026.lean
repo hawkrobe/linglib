@@ -8,9 +8,9 @@ import Linglib.Studies.KoontzGarboden2009
 
 /-!
 # Muñoz Pérez (2026) — Stylistic Applicatives in Chilean Spanish
-@cite{munoz-perez-2026}
+[munoz-perez-2026]
 
-Grammaticality judgments from @cite{munoz-perez-2026} "Stylistic applicatives:
+Grammaticality judgments from [munoz-perez-2026] "Stylistic applicatives:
 A lens into the nature of anticausative SE" (*Glossa* 11(1)).
 
 ## Main declarations
@@ -255,7 +255,7 @@ structure FissionOutput where
   deriving Repr, DecidableEq
 
 /-- The stylistic applicative Fission rule for Chilean Spanish
-    (@cite{munoz-perez-2026} rule 55).
+    ([munoz-perez-2026] rule 55).
 
     Instantiates the generic Fission framework
     (`Morphology.DM.Fission`) with Spanish-specific data:
@@ -272,7 +272,7 @@ def spanishFissionRule : FissionRule Category (List VerbHead) FissionOutput wher
     cl2Form := "le"
   }
 
-/-- Muñoz @cite{munoz-perez-2026}: Non-thematic Voice must be overtly
+/-- Muñoz [munoz-perez-2026]: Non-thematic Voice must be overtly
     marked by a reflexive-like element at PF. The Fission rule licenses
     only 1SG/2SG (`me`/`te`); the 1PL form `nos` is correctly excluded
     because Fission does not apply to plurals. -/
@@ -427,7 +427,7 @@ theorem cl2_invariable :
     (applySpanishFission .s1 [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" ∧
     (applySpanishFission .s2 [.vCAUSE, .vGO, .vBE]).map (·.cl2Form) = some "le" := by decide
 
-/-! ### Refutation of @cite{koontz-garboden-2009}
+/-! ### Refutation of [koontz-garboden-2009]
 
 K-G's reflexivization analysis predicts that every alternating verb
 has SE in its anticausative form (cumulation of A and P spelled out as
@@ -435,7 +435,7 @@ SE). The verb-level predicate `KoontzGarboden2009.kgPredictsSEMarked`
 formalises this chain. *mejorar* "improve" alternates while remaining
 unmarked, falsifying the prediction. -/
 
-/-- Refutation of @cite{koontz-garboden-2009}: *mejorar* alternates but
+/-- Refutation of [koontz-garboden-2009]: *mejorar* alternates but
     is unmarked (no SE), against K-G's prediction that reflexivization
     requires SE-spell-out. Closes the bridge from K-G's
     `reflexivization.involvesCumulation = true` to a falsifying
@@ -450,7 +450,7 @@ theorem refutes_koontzgarboden :
 /-! ### Cross-framework comparisons
 
 The paper draws a second comparative argument — narrower than
-@cite{martin-schaefer-kastner-2025}'s two-flavor Voice — that is not
+[martin-schaefer-kastner-2025]'s two-flavor Voice — that is not
 yet stated as a Lean theorem.
 
 ## Todo

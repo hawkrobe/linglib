@@ -2,7 +2,7 @@ import Linglib.Typology.Gender
 
 /-!
 # Swahili Gender
-@cite{corbett-1991} @cite{corbett-2013}
+[corbett-1991] [corbett-2013]
 
 ~15 noun classes (singular/plural pairings + locatives). Bantu noun-class
 system: semantic + formal assignment via prefixes. Full agreement across
@@ -31,7 +31,7 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "swh" ∧ genderTypology.name = "Swahili" :=
   ⟨rfl, rfl⟩
 
-/-- Swahili is a noun-class system (5+ classes per @cite{corbett-1991}). -/
+/-- Swahili is a noun-class system (5+ classes per [corbett-1991]). -/
 example : genderTypology.IsNounClassSystem := by decide
 
 end Swahili.Gender

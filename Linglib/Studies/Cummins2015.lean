@@ -7,12 +7,12 @@ import Linglib.Fragments.English.NumeralModifiers
 import Linglib.Semantics.Numerals.Precision
 
 /-!
-# @cite{cummins-2015}: OT Constraints, k-ness, NSAL, and RSA Cost
-@cite{cummins-2015} @cite{kao-etal-2014-hyperbole} @cite{lasersohn-1999} @cite{woodin-etal-2023}
+# [cummins-2015]: OT Constraints, k-ness, NSAL, and RSA Cost
+[cummins-2015] [kao-etal-2014-hyperbole] [lasersohn-1999] [woodin-etal-2023]
 
-Self-contained study of @cite{cummins-2015}: an Optimality-Theoretic
+Self-contained study of [cummins-2015]: an Optimality-Theoretic
 constraint system for numeral production plus the bridges to graded
-roundness, RSA cost, and the @cite{kao-etal-2014-hyperbole} `PrecisionMode`
+roundness, RSA cost, and the [kao-etal-2014-hyperbole] `PrecisionMode`
 switch.
 
 ## OT Constraints
@@ -54,8 +54,8 @@ connecting monotone map. The legacy criterion-based view via
    non-round are expensive.
 2. **k-ness as `PrecisionMode` threshold** — `roundnessScore ≥ 2` triggers
    `.approximate` mode, grounding the binary switch used by
-   @cite{kao-etal-2014-hyperbole}. The pragmatic halo width
-   (@cite{lasersohn-1999}, @cite{krifka-2007}) is also wider for round
+   [kao-etal-2014-hyperbole]. The pragmatic halo width
+   ([lasersohn-1999], [krifka-2007]) is also wider for round
    numerals.
 
 The lexical bridge to `English.NumeralModifiers` documents the
@@ -221,7 +221,7 @@ def constraintSatisfied (v : ViolationProfile) : NumeralConstraint → Bool
   | .nsal        => v 3 == 0
 
 /-- A `SatisfactionOrdering` over violation profiles using the four
-    @cite{cummins-2015} constraints. Coarsens the OT system: a candidate
+    [cummins-2015] constraints. Coarsens the OT system: a candidate
     "satisfies" a constraint iff it incurs 0 violations. The resulting
     ordering is weaker than lex-OT (which discriminates by violation
     degree) but captures the structural backbone: a candidate that
@@ -304,7 +304,7 @@ theorem multipleOf10_implies_approximate (n : Nat) (hr : n % 10 = 0) :
 -- ============================================================================
 
 /-- Pragmatic halo width is strictly wider for round numerals (100) than
-    for non-round (7) — the quantitative content of @cite{lasersohn-1999}'s
+    for non-round (7) — the quantitative content of [lasersohn-1999]'s
     halo intuition under the k-ness operationalisation. -/
 theorem round_wider_halo :
     haloWidth 100 > haloWidth 7 := by
@@ -319,7 +319,7 @@ theorem round_wider_halo :
 -- ============================================================================
 
 /-- The lexical entry for "approximately" carries `requiresRound = false`.
-    @cite{cummins-2015} predicts that combinations with low-k anchors are
+    [cummins-2015] predicts that combinations with low-k anchors are
     *grammatical but marked* — naturalness correlates with k-ness rather than
     being a hard constraint. -/
 theorem approximately_tolerates_nonround :

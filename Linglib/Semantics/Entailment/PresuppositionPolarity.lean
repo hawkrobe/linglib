@@ -1,6 +1,6 @@
 /-
 # Presupposition Projection and Polarity
-@cite{schlenker-2009}
+[schlenker-2009]
 
 Connects presupposition projection to the existing polarity infrastructure.
 
@@ -127,7 +127,7 @@ def negationPresupContext : PresupContext W :=
 /--
 Presupposition projection behavior varies by quantifier.
 
-Following @cite{heim-1983}:
+Following [heim-1983]:
 - Universal: "Every F is G" presupposes every F satisfies G's presup
 - Existential: "Some F is G" presupposes some F satisfies G's presup (or: at least one F exists)
 

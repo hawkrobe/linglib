@@ -3,9 +3,9 @@ import Linglib.Phenomena.Anaphora.CrossSentential
 
 /-!
 # Heim (1982): File Change Semantics and Anaphora
-@cite{heim-1982}
+[heim-1982]
 
-Formal analysis of cross-sentential anaphora using @cite{heim-1982}'s
+Formal analysis of cross-sentential anaphora using [heim-1982]'s
 File Change Semantics. This study file connects the FCS theory
 (`Semantics/Dynamic/FileChange/Basic.lean`) to the empirical
 data in `Phenomena/Anaphora/CrossSentential.lean`.
@@ -26,7 +26,7 @@ data in `Phenomena/Anaphora/CrossSentential.lean`.
    presupposition failure (undefinedness), not falsehood.
 
 5. **Truth criterion (C)**: φ is true w.r.t. F iff Sat(F + φ) is
-   nonempty (@cite{heim-1982}, Ch III §3.2). This builds existential
+   nonempty ([heim-1982], Ch III §3.2). This builds existential
    quantification into the notion of truth.
 
 ## Connection to Empirical Data
@@ -94,7 +94,7 @@ theorem indef_defined_when_novel (x : Nat) (F : HeimFile W E)
 preserves domain membership.
 
 This is the formal content of "indefinites introduce discourse
-referents" — the defining claim of @cite{heim-1982}. -/
+referents" — the defining claim of [heim-1982]. -/
 theorem indef_adds_to_dom (x : Nat) (body : FCP W E)
     (F F' : HeimFile W E) (hnovel : F.novel x)
     (hres : FCP.indef x body F = some F')
@@ -135,7 +135,7 @@ theorem neg_blocks_dref (x : Nat) (φ : FCP W E)
 -- § 4. Novelty-Familiarity Condition
 -- ════════════════════════════════════════════════════
 
-/-! The Novelty-Familiarity Condition is @cite{heim-1982}'s
+/-! The Novelty-Familiarity Condition is [heim-1982]'s
 formalization of the indefinite/definite contrast (Ch III §2.2,
 p. 202):
 - Indefinites REQUIRE novelty (x ∉ Dom(F))
@@ -180,7 +180,7 @@ theorem indef_then_def_defined (x : Nat)
 -- § 5. Truth Criterion (C)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{heim-1982}'s truth definition (Ch III §3.2, p. 214):
+/-! [heim-1982]'s truth definition (Ch III §3.2, p. 214):
 
 > (C) A formula φ is true w.r.t. a file F if F + φ is true,
 >     and false w.r.t. F if F + φ is false.
@@ -215,7 +215,7 @@ theorem support_double_update (F : HeimFile W E) (φ : FCP W E)
 -- § 6. Eliminativity (Principle A)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{heim-1982}'s Principle (A): file change only eliminates
+/-! [heim-1982]'s Principle (A): file change only eliminates
 possibilities, never adds them. This holds for atomic updates,
 negation, and their compositions. -/
 

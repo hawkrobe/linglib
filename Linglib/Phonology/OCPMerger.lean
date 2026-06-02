@@ -8,18 +8,18 @@ import Mathlib.Data.List.Chain
 
 /-!
 # OCP-as-Merger — the canonical normal form
-@cite{goldsmith-1976} @cite{mccarthy-1981} @cite{burzio-1998}
-@cite{mccarthy-1995}
+[goldsmith-1976] [mccarthy-1981] [burzio-1998]
+[mccarthy-1995]
 
 Two readings of the OCP coexist in the autosegmental and computational
 traditions:
 
-* **Prohibition** (@cite{mccarthy-1986}): adjacent identical autosegments
+* **Prohibition** ([mccarthy-1986]): adjacent identical autosegments
   are *rejected* — a constraint on output well-formedness. Formalised
   in `Linglib/Phonology/Subregular/OCP.lean` as
   `TSLGrammar.ocp p`.
-* **Merger / repair** (@cite{goldsmith-1976}, @cite{burzio-1998}'s
-  Multiple Correspondence, @cite{mccarthy-1995}): adjacent identical
+* **Merger / repair** ([goldsmith-1976], [burzio-1998]'s
+  Multiple Correspondence, [mccarthy-1995]): adjacent identical
   autosegments are *collapsed* into a single multiply-linked
   autosegment — a transformation on representations.
 
@@ -31,7 +31,7 @@ canonical-form output is OCP-clean.
 ## Why this is shared substrate
 
 Both `Phonology.Autosegmental.RegisterTier.mergeTRN` (Lionnet 2022 Laal
-tones) and the |A|+|A| fusion of @cite{faust-lampitelli-2026}
+tones) and the |A|+|A| fusion of [faust-lampitelli-2026]
 (Tigrinya/Tigre guttural synseresis) are instances of the same
 operation on different feature spaces. The bundle-level
 `FeatureBundle.merge` (in `Featural/Bundle.lean`) is an OR-of-Option
@@ -111,7 +111,7 @@ private theorem ocpCollapseAux_cons_ne [DecidableEq α] (combine : α → α →
 
 /-- A list is **OCP-clean** iff no adjacent pair is identical — the
     universal-tier instance of the OCP. Implemented as the
-    @cite{mccarthy-1986} prohibition condition over the entire string,
+    [mccarthy-1986] prohibition condition over the entire string,
     via mathlib's `List.IsChain` predicate at `R := (· ≠ ·)`. -/
 def IsOCPClean [DecidableEq α] (xs : List α) : Prop :=
   List.IsChain (· ≠ ·) xs

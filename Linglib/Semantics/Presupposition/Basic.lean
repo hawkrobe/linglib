@@ -5,9 +5,9 @@ import Mathlib.Data.Finset.Basic
 # Partial Propositions
 
 Partial propositions — propositions that may be undefined at some evaluation
-points. References: @cite{heim-1983}, @cite{schlenker-2009}, @cite{von-fintel-1999},
-@cite{geurts-2005}, @cite{belnap-1970}, @cite{karttunen-1973},
-@cite{karttunen-peters-1979}, @cite{bochvar-1937}.
+points. References: [heim-1983], [schlenker-2009], [von-fintel-1999],
+[geurts-2005], [belnap-1970], [karttunen-1973],
+[karttunen-peters-1979], [bochvar-1937].
 
 ## Main declarations
 
@@ -25,7 +25,7 @@ points. References: @cite{heim-1983}, @cite{schlenker-2009}, @cite{von-fintel-19
 * `belnapLift` — unifier showing Belnap = flexible accommodation for any
   binary `Prop` operator with an identity.
 * `strawsonEntails`, `strongEntails` — entailment relations: the
-  canonical @cite{von-fintel-1999} form (presup-as-premise) and the
+  canonical [von-fintel-1999] form (presup-as-premise) and the
   stronger variant that additionally requires `q`'s presupposition to
   project from `p`'s satisfaction.
 * `liveness`, `genuineness` — Yagi 2025 disjunction-update conditions.
@@ -71,7 +71,7 @@ presupposition is `W → Prop`, and the at-issue content is any type — a
 truth value (`Bool`), a degree (`ℚ`), a measure, etc.
 
 Linguistic motivation: many presupposition triggers return non-boolean
-values. The revised *per* entry (@cite{bale-schwarz-2022}, eq. 43)
+values. The revised *per* entry ([bale-schwarz-2022], eq. 43)
 returns a presupposed pure number (`ℚ`). Definite descriptions return
 presupposed entities. `PrValue` handles all of these uniformly. -/
 structure PrValue (W : Type*) (α : Type*) where
@@ -143,7 +143,7 @@ def toPrValue (p : PrProp W) : PrValue W Prop where
 /-- Belnap's conditional assertion (A/B): assert B on condition A.
 
     Assertive_w iff A is true at w; what is asserted = B.
-    @cite{belnap-1970}, (3): "(A/B) is assertive_w just in case
+    [belnap-1970], (3): "(A/B) is assertive_w just in case
     A is true_w. (A/B)_w = B_w." -/
 def condAssert (A B : W → Prop) : PrProp W where
   presup := A
@@ -199,9 +199,9 @@ def neg (p : PrProp W) : PrProp W where
   presup := p.presup
   assertion := fun w => ¬p.assertion w
 
-/-- Bochvar's truth operator `t`: a plug-as-affirmation (@cite{bochvar-1937}).
+/-- Bochvar's truth operator `t`: a plug-as-affirmation ([bochvar-1937]).
     Always defined; maps presupposition failure to `False`.
-    @cite{karttunen-1973} §10 fn 18: `t(A)` has truth-table
+    [karttunen-1973] §10 fn 18: `t(A)` has truth-table
     `T → T`, `F → F`, `# → F`. Composing classical negation with `t`
     yields external negation: `negExt p = neg (truthOp p)`. -/
 def truthOp (p : PrProp W) : PrProp W where
@@ -210,7 +210,7 @@ def truthOp (p : PrProp W) : PrProp W where
 
 /-- Bochvar external (exclusion) negation: a plug.
     Always defined; true when `p` is false or undefined, false only when
-    `p` is true. Equals `neg (truthOp p)` per @cite{karttunen-1973} §10
+    `p` is true. Equals `neg (truthOp p)` per [karttunen-1973] §10
     fn 18: `⌜¬A⌝ ≡ ⌜~t(A)⌝`. -/
 def negExt (p : PrProp W) : PrProp W := neg (truthOp p)
 
@@ -234,7 +234,7 @@ def imp (p q : PrProp W) : PrProp W where
     Under Strong Kleene, `Truth3.xor` propagates undefinedness
     unconditionally (`xor_indet_iff`), so exclusive disjunction never
     filters presupposition failure from either disjunct.
-    @cite{wang-davidson-2026} -/
+    [wang-davidson-2026] -/
 def xor (p q : PrProp W) : PrProp W where
   presup := fun w => p.presup w ∧ q.presup w
   assertion := fun w => (p.assertion w ∧ ¬q.assertion w) ∨ (¬p.assertion w ∧ q.assertion w)
@@ -267,16 +267,16 @@ scoped infixl:60 " \\/' " => orFilter
 /-! ### K&P two-dimensional disjunction -/
 
 /-- Symmetric two-dimensional disjunction in the K&P
-    (@cite{karttunen-peters-1979}) tradition:
+    ([karttunen-peters-1979]) tradition:
 
     Π(φ ∨ ψ) = (A(ψ) ∨ Π(φ)) ∧ (A(φ) ∨ Π(ψ))
     A(φ ∨ ψ) = A(φ) ∨ A(ψ)
 
     The name carries the `Symmetric` suffix because the literal K&P 1979
     formulation was *asymmetric* (it would project the first disjunct's
-    presupposition unconditionally; @cite{yagi-2025} fn 2). This is the
+    presupposition unconditionally; [yagi-2025] fn 2). This is the
     symmetrized variant standard in post-2021 literature, matching
-    @cite{yagi-2025} Definition 2 (cf. @cite{kalomoiros-schwarz-2021} for
+    [yagi-2025] Definition 2 (cf. [kalomoiros-schwarz-2021] for
     experimental support of symmetry). -/
 def orKPSymmetric (p q : PrProp W) : PrProp W where
   presup := fun w => (q.assertion w ∨ p.presup w) ∧ (p.assertion w ∨ q.presup w)
@@ -287,7 +287,7 @@ def orKPSymmetric (p q : PrProp W) : PrProp W where
 /-- Weak Kleene disjunction: undefined iff either operand undefined.
     Both disjuncts must be defined for the disjunction to be defined.
 
-    @cite{kleene-1952}: indet is absorbing for both ∧ and ∨. -/
+    [kleene-1952]: indet is absorbing for both ∧ and ∨. -/
 def orWeak (p q : PrProp W) : PrProp W where
   presup := fun w => p.presup w ∧ q.presup w
   assertion := fun w => p.assertion w ∨ q.assertion w
@@ -308,7 +308,7 @@ standard disjunction and filtering disjunction both fail for this case,
 but flexible accommodation correctly predicts presupposition p ∨ q and
 allows the disjunction to be false.
 
-Formally, this is the static counterpart of @cite{yagi-2025}'s dynamic update.
+Formally, this is the static counterpart of [yagi-2025]'s dynamic update.
 -/
 def orFlex (p q : PrProp W) : PrProp W where
   presup := fun w => p.presup w ∨ q.presup w
@@ -323,7 +323,7 @@ def andFlex (p q : PrProp W) : PrProp W where
   presup := fun w => p.presup w ∨ q.presup w
   assertion := fun w => (p.presup w → p.assertion w) ∧ (q.presup w → q.assertion w)
 
-/-! ### Belnap conditional assertion (@cite{belnap-1970})
+/-! ### Belnap conditional assertion ([belnap-1970])
 
 Under the Belnap reading, `presup` is the **assertive** field — whether the
 proposition asserts something at `w` (vs being nonassertive / silent). -/
@@ -331,7 +331,7 @@ proposition asserts something at `w` (vs being nonassertive / silent). -/
 /-- Belnap conjunction: assertive iff at least one conjunct is assertive.
     What it asserts = conjunction of assertive conjuncts' content.
 
-    @cite{belnap-1970}, (8). Contrast with classical `PrProp.and` (both
+    [belnap-1970], (8). Contrast with classical `PrProp.and` (both
     must be defined) and filtering `PrProp.andFilter` (left-to-right). -/
 def andBelnap (p q : PrProp W) : PrProp W where
   presup := fun w => p.presup w ∨ q.presup w
@@ -341,7 +341,7 @@ def andBelnap (p q : PrProp W) : PrProp W where
 /-- Belnap disjunction: assertive iff at least one disjunct is assertive.
     What it asserts = disjunction of assertive disjuncts' content.
 
-    @cite{belnap-1970}, (9). -/
+    [belnap-1970], (9). -/
 def orBelnap (p q : PrProp W) : PrProp W where
   presup := fun w => p.presup w ∨ q.presup w
   assertion := fun w =>
@@ -355,7 +355,7 @@ def orBelnap (p q : PrProp W) : PrProp W where
     - Assertion applies `f` to each operand's content, substituting `unit`
       for undefined operands (making them "silent")
 
-    @cite{belnap-1970}: undefined operands contribute the identity element.
+    [belnap-1970]: undefined operands contribute the identity element.
     Noncomputable because it uses classical `if` on Props.
 
     Defined instances:
@@ -370,7 +370,7 @@ noncomputable def belnapLift (f : Prop → Prop → Prop) (unit : Prop)
 
 /-! ### Entailment relations -/
 
-/-- Strawson entailment (@cite{von-fintel-1999}): `p` entails `q` at every
+/-- Strawson entailment ([von-fintel-1999]): `p` entails `q` at every
     world where both presuppositions hold. The conclusion `q`'s
     presupposition is a *premise* added to the entailment, not something
     the entailment delivers. Matches `Semantics.Dynamic.Bilateral.BUS`'s
@@ -391,12 +391,12 @@ def strongEntails (p q : PrProp W) : Prop :=
 def strawsonEquiv (p q : PrProp W) : Prop :=
   strawsonEntails p q ∧ strawsonEntails q p
 
-/-! ### Genuineness / liveness (@cite{zimmermann-2000}, @cite{geurts-2005}, @cite{katzir-singh-2012}) -/
+/-! ### Genuineness / liveness ([zimmermann-2000], [geurts-2005], [katzir-singh-2012]) -/
 
 /-- **Liveness** for disjunction: each disjunct is satisfied (presupposition
     AND assertion hold) at some world of the state.
 
-    This is the singleton-survival side of @cite{yagi-2025} Definition 8:
+    This is the singleton-survival side of [yagi-2025] Definition 8:
     `{w}[φ] = {w}` for some `w ∈ s`. The disjunction-update side
     (`w ∈ s[φ ∨ ψ]`) is the additional constraint expressed by
     `genuineness` below. -/
@@ -404,8 +404,8 @@ def liveness (p q : PrProp W) (s : Finset W) : Prop :=
   (∃ w ∈ s, p.holds w) ∧
   (∃ w ∈ s, q.holds w)
 
-/-- **Genuineness** for disjunction (@cite{yagi-2025} Definition 8, after
-    @cite{zimmermann-2000}). A disjunction `p ∨ q`, with disjunction-update
+/-- **Genuineness** for disjunction ([yagi-2025] Definition 8, after
+    [zimmermann-2000]). A disjunction `p ∨ q`, with disjunction-update
     realised by the connective `disj`, follows genuineness in a state `s` iff
     there are worlds `w, w' ∈ s` such that:
 
@@ -417,7 +417,7 @@ def liveness (p q : PrProp W) (s : Finset W) : Prop :=
     The disjunction-update side rules out witnesses that survive the local
     presupposition+assertion update but are eliminated by the joint update —
     a vacuous addition under `orFlex`/`orBelnap` (`liveness_implies_genuineness_orFlex`),
-    but the substantive constraint @cite{yagi-2025} §3.2 invokes for dynamic
+    but the substantive constraint [yagi-2025] §3.2 invokes for dynamic
     negation: genuineness must hold even within the scope of negation, where
     "we end up negating both disjuncts".
 
@@ -474,7 +474,7 @@ theorem neg_neg_assertion (p : PrProp W) (w : W) :
 
 /-- Internal and external negation agree on assertion when the presupposition
     holds. They diverge only at presupposition failure: `neg p` is undefined,
-    `negExt p` is true. @cite{karttunen-1973} §10 fn 18. -/
+    `negExt p` is true. [karttunen-1973] §10 fn 18. -/
 theorem neg_assertion_iff_negExt_assertion_when_defined (p : PrProp W) (w : W)
     (h : p.presup w) :
     (neg p).assertion w ↔ (negExt p).assertion w := by
@@ -509,7 +509,7 @@ theorem impFilter_trivializes_presup (p q : PrProp W)
   impFilter_eliminates_presup p q (fun _ ha => h ▸ ha)
 
 /-- The filtering presupposition of `impFilter` and `andFilter` are identical.
-    This is the formal content of @cite{karttunen-1973} §8: the filtering
+    This is the formal content of [karttunen-1973] §8: the filtering
     rules for *if A then B* and *A and B* coincide because both reduce to
     `p.presup ∧ (p.assertion → q.presup)`. -/
 theorem impFilter_presup_eq_andFilter_presup (p q : PrProp W) :
@@ -578,7 +578,7 @@ theorem eval_xor (p q : PrProp W) (w : W)
     simp [ha, hb, Truth3.xor, not_not]
 
 /-- Exclusive disjunction never filters: when either presupposition fails,
-    the result is undefined. @cite{wang-davidson-2026} -/
+    the result is undefined. [wang-davidson-2026] -/
 theorem eval_xor_no_filter (p q : PrProp W) (w : W)
     (hq : ¬q.presup w) :
     (xor p q).eval w = .indet := by
@@ -589,7 +589,7 @@ theorem eval_xor_no_filter (p q : PrProp W) (w : W)
 
 /-- When presuppositions conflict at w, the symmetric K&P presupposition
     entails the assertion: defined → true, so the disjunction can never be
-    both defined and false. @cite{yagi-2025} §2.2 -/
+    both defined and false. [yagi-2025] §2.2 -/
 theorem orKPSymmetric_presup_entails_when_conflicting (p q : PrProp W) (w : W)
     (h_conflict : ¬(p.presup w ∧ q.presup w))
     (h_presup : (orKPSymmetric p q).presup w) :
@@ -605,11 +605,11 @@ theorem orKPSymmetric_presup_entails_when_conflicting (p q : PrProp W) (w : W)
 
 /-- Flexible accommodation disjunction and Belnap disjunction agree
     pointwise on truth conditions. They are developed in different
-    traditions (@cite{belnap-1970} on conditional-assertion for restricted
-    quantification, @cite{geurts-2005}/@cite{aloni-2022} on pragmatic
+    traditions ([belnap-1970] on conditional-assertion for restricted
+    quantification, [geurts-2005]/[aloni-2022] on pragmatic
     accommodation with default tautology) and differ in the *accommodation
     theory* that surrounds them (default ⊤ vs unconditional assertive),
-    but the binary operator's truth table is identical — see @cite{yagi-2025}
+    but the binary operator's truth table is identical — see [yagi-2025]
     §3.2 for the distinction between truth-conditional collapse and
     accommodation-theoretic divergence. -/
 theorem orFlex_eq_orBelnap (p q : PrProp W) : orFlex p q = orBelnap p q := rfl
@@ -812,7 +812,7 @@ theorem genuineness_comm (p q : PrProp W) (s : Finset W) (disj : PrProp W) :
     genuineness p q s disj ↔ genuineness q p s disj := by
   simp only [genuineness, and_comm]
 
-/-! ### Embedding combinators (@cite{heim-1992}, @cite{karttunen-1973}, @cite{delpinal-bassi-sauerland-2024}) -/
+/-! ### Embedding combinators ([heim-1992], [karttunen-1973], [delpinal-bassi-sauerland-2024]) -/
 
 /-- Asymmetric filtering disjunction: plain proposition ∨ PrProp.
 
@@ -821,7 +821,7 @@ theorem genuineness_comm (p q : PrProp W) (s : Finset W) (disj : PrProp W) :
     The assertion is A ∨ B.
 
     This is the standard projection rule for presuppositions in the second
-    disjunct of a disjunction. @cite{karttunen-1973}, @cite{heim-1983} -/
+    disjunct of a disjunction. [karttunen-1973], [heim-1983] -/
 def disjFilterLeft (firstDisjunct : W → Prop) (second : PrProp W) :
     PrProp W where
   assertion := fun w => firstDisjunct w ∨ second.assertion w
@@ -832,10 +832,10 @@ def disjFilterLeft (firstDisjunct : W → Prop) (second : PrProp W) :
     "x is unaware that p" presupposes p and asserts ¬Bel_x(p).
 
     The choice of `complement.holds` (presupposition AND assertion) for the
-    factive's presupposition is the @cite{delpinal-bassi-sauerland-2024}
+    factive's presupposition is the [delpinal-bassi-sauerland-2024]
     treatment, where projection-through-factive requires both the trigger's
     presupposition and the at-issue complement to be carried. The
-    @cite{heim-1992} standard for atomic complements is `complement.assertion`
+    [heim-1992] standard for atomic complements is `complement.assertion`
     alone; the two coincide when `complement` itself carries no presupposition
     but diverge when the complement contains its own embedded presupposition
     trigger (the case Del Pinal-Bassi-Sauerland use to handle presupposed
@@ -856,7 +856,7 @@ theorem disjFilterLeft_recovers (firstDisjunct : W → Prop) (sp : PrProp W)
 
 /-- When `¬A` entails `q`'s presupposition pointwise, `disjFilterLeft A q`
     is presuppositionless (the filtering condition is satisfied at every
-    world). The substrate-side fact behind @cite{karttunen-1973}'s
+    world). The substrate-side fact behind [karttunen-1973]'s
     asymmetric disjunction filtering rule (24b), p. 181: "A or B" carries
     no residual presupposition from B when ¬A entails it. -/
 theorem disjFilterLeft_eliminates_presup_when_neg_entails
@@ -879,7 +879,7 @@ theorem negFactive_presup_eq (complement : PrProp W)
     - asserts: ∀x ∈ S, assertion(φ(x))
     - presupposes: ∀x ∈ S, presup(φ(x))
 
-    @cite{chemla-2009a}, @cite{fox-2013}, @cite{mayr-sauerland-2015}:
+    [chemla-2009a], [fox-2013], [mayr-sauerland-2015]:
     presuppositions triggered in the scope of a universal quantifier
     tend to project universally. -/
 def forallPr {α : Type*} (S : α → Prop) (φ : α → PrProp W) : PrProp W where
@@ -891,8 +891,8 @@ def forallPr {α : Type*} (S : α → Prop) (φ : α → PrProp W) : PrProp W wh
 
     For ∃x ∈ S, φ(x): presuppositions project *universally*, but the
     assertion is existential. This is the projection choice supported
-    experimentally by @cite{chemla-2009a}; whether it is the right
-    default is empirically contested — see @cite{spector-sudo-2017} for
+    experimentally by [chemla-2009a]; whether it is the right
+    default is empirically contested — see [spector-sudo-2017] for
     conditions under which a non-universal (existential) reading is
     preferred. Consumers committing to a projection theory should pick
     `existsPrUniv` or `existsPrExist` explicitly. -/
@@ -902,7 +902,7 @@ def existsPrUniv {α : Type*} (S : α → Prop) (φ : α → PrProp W) : PrProp 
 
 /-- Existential presupposition projection — existential presup, existential
     assert. The non-universal alternative to `existsPrUniv`; see
-    @cite{spector-sudo-2017} for the empirical debate. -/
+    [spector-sudo-2017] for the empirical debate. -/
 def existsPrExist {α : Type*} (S : α → Prop) (φ : α → PrProp W) : PrProp W where
   presup := fun w => ∃ x, S x ∧ (φ x).presup w
   assertion := fun w => ∃ x, S x ∧ (φ x).assertion w

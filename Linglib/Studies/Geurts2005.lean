@@ -7,11 +7,11 @@ import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Geurts 2005: Disjunctions as Modals
-@cite{geurts-2005}
+[geurts-2005]
 
 Single-paper study of Bart Geurts, *Entertaining Alternatives: Disjunctions
 as Modals* (Natural Language Semantics 13:383–410). Following
-@cite{zimmermann-2000}, disjunctions are conjunctions of modal propositions:
+[zimmermann-2000], disjunctions are conjunctions of modal propositions:
 "S₁ or … or Sₙ" has logical form A₁M₁B₁ ∧ … ∧ AₙMₙBₙ, where
 
 * Aᵢ is a **modal domain** (subset of background C, context-dependent),
@@ -47,15 +47,15 @@ as Modals* (Natural Language Semantics 13:383–410). Following
 * `fromPrProp`, `fromPrProp_*_iff_orFlex`, `fromPrProp_*_iff_orBelnap` —
   specialisation to presuppositional propositions: when domain = presup and
   content = assertion, the Geurts disjunction coincides pointwise with
-  `PrProp.orFlex` = `PrProp.orBelnap` (@cite{belnap-1970}).
+  `PrProp.orFlex` = `PrProp.orBelnap` ([belnap-1970]).
 * `exhaustivity_implies_uninformative` — used by
   `Studies/Yagi2025.lean` as the formal residue of
-  @cite{schlenker-2009}'s local-context-failure observation.
+  [schlenker-2009]'s local-context-failure observation.
 
 ## Implementation notes
 
 * Force is the project-canonical `Semantics.Modality.ModalForce` (necessity |
-  weakNecessity | possibility, @cite{von-fintel-iatridou-2008}). Geurts
+  weakNecessity | possibility, [von-fintel-iatridou-2008]). Geurts
   treats only ∃/∀; we route `weakNecessity` to the universal branch (every
   weak-necessity claim still quantifies universally over its refined
   best-worlds set).
@@ -77,9 +77,9 @@ substantive move is the LF reanalysis (p.391), not a structural inference.
   and attitude-embedded disjunctions as cases his modal analysis "runs into
   trouble" with; the speaker's-content / factual-content two-level patch in
   the §6 closing paragraphs is not formalised here.
-* @cite{ciardelli-guerrini-2026} argue "You may A or may B" gets free
+* [ciardelli-guerrini-2026] argue "You may A or may B" gets free
   choice from the narrow-scope LF ◇(A ∨ B) via modal concord
-  (@cite{zeijlstra-2007}), not from wide-scope ◇A ∧ ◇B. Truth-conditionally
+  ([zeijlstra-2007]), not from wide-scope ◇A ∧ ◇B. Truth-conditionally
   the two analyses agree; cross-framework comparison is left to
   `Phenomena/FreeChoice/Divergences.lean`.
 * Geurts §5 (pp.402–404) ultimately suggests Disjointness is itself a
@@ -242,7 +242,7 @@ theorem fromPrProp_cell_iff_orFlex (p q : PrProp W) (w : W) :
   rfl
 
 /-- Transitivity via `orFlex_eq_orBelnap`: Geurts presupposition = orBelnap
-presupposition (@cite{belnap-1970} conditional assertion). -/
+presupposition ([belnap-1970] conditional assertion). -/
 theorem fromPrProp_presup_iff_orBelnap (p q : PrProp W) (w : W) :
     (∃ d ∈ fromPrProp p q, d.domain w) ↔ (PrProp.orBelnap p q).presup w := by
   rw [fromPrProp_presup_iff_orFlex, ← PrProp.orFlex_eq_orBelnap]
@@ -255,7 +255,7 @@ theorem fromPrProp_cell_iff_orBelnap (p q : PrProp W) (w : W) :
 /-- If Geurts's exhaustivity holds for C, the disjunction (orFlex/orBelnap)
 is already true throughout C — the disjunction is uninformative.
 
-The formal residue of @cite{schlenker-2009}'s local-context-failure
+The formal residue of [schlenker-2009]'s local-context-failure
 discussion: pragmatic conditions on local contexts force s₀ to contain only
 worlds where some disjunct is true, making the disjunction trivially
 satisfied. Geurts's Exhaustivity is the explicit form of that constraint.

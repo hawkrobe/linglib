@@ -1,17 +1,17 @@
 import Linglib.Core.Constraint.NoisyHG
 
 /-!
-# Separable Harmonies and HZ's Generalization @cite{magri-2025}
+# Separable Harmonies and HZ's Generalization [magri-2025]
 
-@cite{magri-2025} "Constraint Interaction in Probabilistic Phonology:
+[magri-2025] "Constraint Interaction in Probabilistic Phonology:
 Deducing Maximum Entropy Grammars from Hayes and Zuraw's Shifted Sigmoids
 Generalization" (Linguistic Inquiry, Early Access).
 
 ## Overview
 
-Hayes and Zuraw (@cite{zuraw-hayes-2017}; @cite{hayes-2022}) observe that
+Hayes and Zuraw ([zuraw-hayes-2017]; [hayes-2022]) observe that
 the rates of application of variable phonological processes governed by
-independent factors can be fit onto shifted sigmoids at shared abscissas. @cite{magri-2025} reformulates this
+independent factors can be fit onto shifted sigmoids at shared abscissas. [magri-2025] reformulates this
 as a **constant logit-rate difference** condition and proves a
 biconditional: within harmony-based probabilistic phonology, a harmony
 function predicts HZ's generalization **if and only if** it is *separable*
@@ -39,7 +39,7 @@ a single constraint.
 
 The forward direction leverages `logit_uniformity` (in `NoisyHG.lean`)
 and `maxent_logit_harmony`, which already prove that MaxEnt log-odds
-equal harmony score differences. @cite{magri-2025}'s contribution is
+equal harmony score differences. [magri-2025]'s contribution is
 showing this is *the only* mode of constraint interaction with this
 property (the backward direction).
 
@@ -499,7 +499,7 @@ theorem maxent_logit_as_finsum {C : Type*} [Fintype C] [Nonempty C]
     the product of same-column differences is positive.
 
     This is the mathematical core of why HG produces sigmoid families
-    (@cite{zuraw-hayes-2017} §2.5): any strictly monotone probability
+    ([zuraw-hayes-2017] §2.5): any strictly monotone probability
     transform (MaxEnt's softmax, NHG's normal CDF, Normal MaxEnt's
     probit) applied to scores with constant logit-rate differences
     preserves the "across-the-board" ordering pattern. Differences

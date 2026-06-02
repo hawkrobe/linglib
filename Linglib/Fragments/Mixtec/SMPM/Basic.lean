@@ -4,7 +4,7 @@ import Linglib.Syntax.Pronoun.Basic
 
 /-!
 # San Martín Peras Mixtec (SMPM) Fragment
-@cite{ostrove-2026}
+[ostrove-2026]
 
 Language data for San Martín Peras Mixtec (ISO: jmx), an Oto-Manguean
 language spoken by about 12,000 people in Oaxaca, Mexico. SMPM is
@@ -81,7 +81,7 @@ def Gender.toSurfaceGender : Gender → Features.SurfaceGender
 /-- A pronoun form: clitic and (optional) nonclitic variant.
 
     SMPM distinguishes clitic and nonclitic pronouns
-    (@cite{cardinaletti-starke-1999}). Clitics cannot be coordinated,
+    ([cardinaletti-starke-1999]). Clitics cannot be coordinated,
     cannot occur on their own, and may have impersonal readings.
     Nonclitic forms can bear focus (e.g., with *íntàà* 'only'). The two
     variants instantiate two of Cardinaletti–Starke's deficiency classes,

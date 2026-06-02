@@ -4,16 +4,16 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Linglib.Phenomena.FreeChoice.Basic
 
 /-!
-# @cite{champollion-alsop-grosu-2019} — Free Choice Disjunction as RSA
+# [champollion-alsop-grosu-2019] — Free Choice Disjunction as RSA
 
-@cite{champollion-alsop-grosu-2019} @cite{bergen-levy-goodman-2016} @cite{fox-2007} @cite{franke-2011}"Free choice disjunction as a rational speech act"
+[champollion-alsop-grosu-2019] [bergen-levy-goodman-2016] [fox-2007] [franke-2011]"Free choice disjunction as a rational speech act"
 Proceedings of SALT 29: 238-257.
 
 ## The Model
 
 Domain: "You may take an apple or a pear" with 2 items {A, B}. 5 states
 based on permission structure. 4 utterances. 2 interpretation functions
-(I₁ literal vs I₂ exhaustified), following @cite{bergen-levy-goodman-2016}.
+(I₁ literal vs I₂ exhaustified), following [bergen-levy-goodman-2016].
 
 - **L0**: L0(w|u,I) ∝ I(u,w) (meaning under interpretation I)
 - **S1**: S1(u|w,I) ∝ L0(w|u,I)^α (rpow belief-based)
@@ -103,7 +103,7 @@ instance : Fintype Utterance where
 /-- Two interpretation functions representing optional exhaustification. -/
 inductive Interp where
   | literal     -- I₁: standard modal logic meanings
-  | exhaustified -- I₂: strengthened via covert Exh (@cite{fox-2007})
+  | exhaustified -- I₂: strengthened via covert Exh ([fox-2007])
   deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype Interp where
@@ -198,7 +198,7 @@ theorem I2_a_singleton : ∀ w, I2 .a w = true ↔ w = .onlyA := by
 -- §5. RSAConfig
 -- ============================================================================
 
-/-- @cite{champollion-alsop-grosu-2019} RSA model with semantic uncertainty.
+/-- [champollion-alsop-grosu-2019] RSA model with semantic uncertainty.
     Two interpretation functions serve as latent variables.
     S1 score is rpow(L0, α) — standard belief-based RSA. -/
 noncomputable def cfg (worldPr : FCState → ℝ) (hp : ∀ w, 0 ≤ worldPr w) :
@@ -260,7 +260,7 @@ theorem ei_prior_sensitive :
 -- §7. Verification
 -- ============================================================================
 
-/-- The 4 qualitative findings from @cite{champollion-alsop-grosu-2019}. -/
+/-- The 4 qualitative findings from [champollion-alsop-grosu-2019]. -/
 inductive Finding where
   | fci_derived
   | fci_robust_to_prior
@@ -283,7 +283,7 @@ noncomputable def formalize : Finding → Prop
       ¬(biasedCfg.L1_marginal .or_ HasEI >
         biasedCfg.L1_marginal .or_ (fun w => ¬ HasEI w))
 
-/-- The RSA model accounts for all 4 findings from @cite{champollion-alsop-grosu-2019}. -/
+/-- The RSA model accounts for all 4 findings from [champollion-alsop-grosu-2019]. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
   intro f; cases f
   · exact fci_derived
@@ -360,9 +360,9 @@ end RSA.FreeChoice
 
 /-!
 # Bridge: RSA Free Choice Disjunction → Phenomena Data
-@cite{champollion-alsop-grosu-2019}
+[champollion-alsop-grosu-2019]
 
-Connects the RSA free choice model from @cite{champollion-alsop-grosu-2019}
+Connects the RSA free choice model from [champollion-alsop-grosu-2019]
 to empirical data in `Phenomena.FreeChoice`.
 
 ## Bridge Theorems

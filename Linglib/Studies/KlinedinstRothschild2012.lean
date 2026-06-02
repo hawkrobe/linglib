@@ -1,7 +1,7 @@
 /-!
-# @cite{klinedinst-rothschild-2012}: Disjunctive Syllogism Failure for Epistemic Modals
+# [klinedinst-rothschild-2012]: Disjunctive Syllogism Failure for Epistemic Modals
 
-@cite{klinedinst-rothschild-2012}
+[klinedinst-rothschild-2012]
 
 Klinedinst & Rothschild (2012) "Connectives without truth tables"
 (*Natural Language Semantics* 20(2):137-175) argue that the standard
@@ -55,7 +55,7 @@ structure DisjSyllIntuition where
     intuitively invalid for epistemic modals.
 
     K&R credit Yalcin (2007); the example reappears in
-    @cite{holliday-mandelkern-2024} §2.3 as a centerpiece of the case for
+    [holliday-mandelkern-2024] §2.3 as a centerpiece of the case for
     a non-classical logic. -/
 def disjSyllFailure : DisjSyllIntuition :=
   { premise1 := "Either the dog is inside or it must be outside"

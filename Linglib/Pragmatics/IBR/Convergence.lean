@@ -3,7 +3,7 @@ import Linglib.Pragmatics.IBR.Basic
 /-!
 # IBR Convergence
 
-General convergence proof for Iterated Best Response (@cite{franke-2011} Appendix B.1).
+General convergence proof for Iterated Best Response ([franke-2011] Appendix B.1).
 
 Expected gain (EG) is monotone non-decreasing along the IBR sequence (Lemma 3),
 and the strategy space is finite (pigeonhole), so IBR must reach a fixed point

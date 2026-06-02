@@ -3,7 +3,7 @@ import Linglib.Phonology.Autosegmental.GrammaticalTone
 /-!
 # CoP-scope: cophonological domain scope hierarchy
 
-The **CoP-scope hierarchy** is @cite{rolle-2018}'s solution to the
+The **CoP-scope hierarchy** is [rolle-2018]'s solution to the
 **scope problem** for grammatical tone: what determines the domain over
 which a GT operation applies?
 
@@ -47,7 +47,7 @@ This rules out outward dominance from complements.
 
 ## References
 
-* @cite{rolle-2018} — CoP-scope hierarchy and dominant GT asymmetry
+* [rolle-2018] — CoP-scope hierarchy and dominant GT asymmetry
 -/
 
 namespace Phonology.Autosegmental.CoPScope
@@ -60,7 +60,7 @@ open Phonology.Autosegmental.GrammaticalTone
     by scope. The ordering Spec > Head > Complement determines which
     VI's cophonology takes precedence within the domain.
 
-    @cite{rolle-2018} Ch 6 §6.2: each VI has cophonology-scope over
+    [rolle-2018] Ch 6 §6.2: each VI has cophonology-scope over
     all inwardly located morphemes, and cophonologies apply cyclically
     up the tree, producing layered grammatical tone effects. -/
 inductive CoPPosition where
@@ -136,7 +136,7 @@ theorem complement_is_dependent : CoPPosition.isDependent .complement = true := 
 
     Dependency status is **derived from position** via
     `CoPPosition.isDependent`, not independently stipulated. After
-    hierarchy exchange (@cite{rolle-2018} Ch 4), syntactic structure
+    hierarchy exchange ([rolle-2018] Ch 4), syntactic structure
     maps to a CoP tree where scope ordering determines evaluation order:
     outer-scoping VIs' cophonologies apply after (and thus override)
     inner-scoping ones. -/
@@ -159,7 +159,7 @@ def CoPNode.isDependent (n : CoPNode) : Bool := n.position.isDependent
     sorted by scope rank (highest first), so outer-scoping cophonologies
     are evaluated last — their effects take precedence.
 
-    @cite{rolle-2018} Ch 4: hierarchy exchange preserves the inside-out
+    [rolle-2018] Ch 4: hierarchy exchange preserves the inside-out
     derivational history of the syntactic module by referencing
     asymmetrical c-command, mediated through the CoP-scope ordering. -/
 def hierarchyExchange (nodes : List CoPNode) : List CoPNode :=

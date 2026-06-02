@@ -3,7 +3,7 @@ import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Fragments.Farsi.Determiners
 
 /-!
-# Indefinites in Negated Intensional Contexts @cite{mirrazi-2024}
+# Indefinites in Negated Intensional Contexts [mirrazi-2024]
 
 Semantics & Pragmatics 17, Article 7: 1–44.
 
@@ -23,8 +23,8 @@ This is paradoxical: there is no syntactic position that is simultaneously
 above negation and below *think*. Under movement-based approaches, the
 indefinite would have to move above negation, but any such landing site
 unavoidably outscopes the intensional operator — yielding a de re (not
-de dicto) construal. This is the "fourth reading" problem (@cite{percus-2000},
-@cite{von-fintel-heim-2011}, @cite{keshet-schwarz-2019}).
+de dicto) construal. This is the "fourth reading" problem ([percus-2000],
+[von-fintel-heim-2011], [keshet-schwarz-2019]).
 
 ## Choice Functions Solve It
 
@@ -35,7 +35,7 @@ bound by the intensional operator, keeps the restrictor de dicto.
 
 ## World-Skolemized Choice Functions
 
-Standard intensional CFs (@cite{heim-1994}, @cite{winter-1997}) run into
+Standard intensional CFs ([heim-1994], [winter-1997]) run into
 the **fixed-set problem**: when the NP extension is rigid across worlds,
 `f(⟨s, ⟨e,t⟩⟩)` returns the same individual everywhere. World-skolemized
 CFs `f(w', NP(w'))` solve this: the CF takes a world argument, so it can
@@ -44,7 +44,7 @@ pick different individuals in different worlds even from the same set.
 ## Cross-Linguistic Variation
 
 Wide pseudo-scope de dicto is available in Farsi and Japanese, marginal in
-English, and absent in German and French. @cite{schwarz-2012} proposes that
+English, and absent in German and French. [schwarz-2012] proposes that
 determiners vary in whether they carry an independent world variable. Farsi
 indefinites (*ye*, *čand-ta*, *do-ta*) carry one; German/French do not.
 
@@ -93,7 +93,7 @@ inductive ScopeTakerKind where
 
 /-- Under neg-raising, ¬THINK(p) is strengthened to THINK(¬p).
 
-    @cite{mirrazi-2024} §1.2 ex. (5)–(6): if neg-raising applies to (1),
+    [mirrazi-2024] §1.2 ex. (5)–(6): if neg-raising applies to (1),
     the resulting interpretation is THINK(¬[Carl read some of the books]).
     This puts the indefinite UNDER negation (inside the think-complement),
     giving think ≫ ¬ ≫ INDEF — NOT the attested think ≫ INDEF ≫ ¬.
@@ -111,7 +111,7 @@ structure NegRaisingCounterargument where
 /-- The neg-raising hypothesis yields the wrong scope configuration.
     Under neg-raising: ¬think(p) → think(¬p), and the indefinite stays
     inside ¬p, giving narrow scope — the opposite of what's attested.
-    @cite{mirrazi-2024} §1.2 exx. (5)–(10). -/
+    [mirrazi-2024] §1.2 exx. (5)–(10). -/
 def negRaisingFails : NegRaisingCounterargument where
   negRaising_wrong_scope := .narrow  -- think ≫ ¬ ≫ INDEF, not think ≫ INDEF ≫ ¬
   nonNegRaiser_also_works := true    -- necessary, can also yield the reading
@@ -146,7 +146,7 @@ variable (W : Type*) (E : Type*)
 /-- The truth conditions for the wide pseudo-scope de dicto reading,
     derived from CF semantics.
 
-    @cite{mirrazi-2024} ex. (44):
+    [mirrazi-2024] ex. (44):
     ∀w'' ∈ Beliefs(Rodica,w₀): ¬read_{w''}(Carl, f(w'', book(w'')))
 
     The ∃f sits above negation (wide scope), while f's world argument
@@ -163,7 +163,7 @@ def widePseudoDeDictoTC
 
 /-- The truth conditions for the genuine wide scope de re reading.
 
-    @cite{mirrazi-2024} ex. (41):
+    [mirrazi-2024] ex. (41):
     ∀w'' ∈ Beliefs(Rodica,w₀): ¬read_{w''}(Carl, f(book_{w₀}))
 
     The CF's world variable is free (evaluated at w₀):
@@ -208,8 +208,8 @@ end TruthConditions
 /-- Under movement-based accounts, a DP that moves above an intensional
     operator is necessarily interpreted de re (at its landing site).
 
-    @cite{mirrazi-2024} §2.2, citing @cite{percus-2000},
-    @cite{von-fintel-heim-2011}, @cite{keshet-schwarz-2019}:
+    [mirrazi-2024] §2.2, citing [percus-2000],
+    [von-fintel-heim-2011], [keshet-schwarz-2019]:
 
     "According to all of these theories, a DP can only get a *de dicto*
     reading when it is under the scope of an intensional operator. If a
@@ -239,7 +239,7 @@ theorem movement_above_neg_forces_deRe
 /-- The fixed-set problem: when the NP extension is rigid across worlds,
     a non-world-skolemized CF returns the same individual everywhere.
 
-    @cite{mirrazi-2024} §3: Consider a course on Covid-19 with exactly 5
+    [mirrazi-2024] §3: Consider a course on Covid-19 with exactly 5
     books {A,B,C,D,E}. The extension of "book Carl has to read" is the same
     set in every belief world. A plain intensional CF `f(⟨s,⟨e,t⟩⟩)` applied
     to this rigid intension always returns the same book. -/
@@ -252,7 +252,7 @@ theorem fixedSet_no_variation {W E : Type*}
 /-- World-skolemization solves the fixed-set problem: `f(w', P)` can pick
     different individuals at different worlds because `f` varies with `w'`.
 
-    @cite{mirrazi-2024} ex. (45): f(w₁, {A,B,C,D,E}) = A,
+    [mirrazi-2024] ex. (45): f(w₁, {A,B,C,D,E}) = A,
     f(w₂, {A,B,C,D,E}) = C, f(w₃, {A,B,C,D,E}) = E. -/
 theorem worldSkolem_allows_variation {W E : Type*}
     (f : SkolemCF W E) (P : E → Prop) (w₁ w₂ : W)
@@ -266,7 +266,7 @@ theorem worldSkolem_allows_variation {W E : Type*}
 
 /-! Wide pseudo-scope de dicto requires CF semantics + world variable.
 
-@cite{mirrazi-2024} §1.3: universal quantifiers (*hame* "all") under
+[mirrazi-2024] §1.3: universal quantifiers (*hame* "all") under
 the same negated intensional operators do NOT get wide pseudo-scope
 de dicto readings. This follows because universals are genuine GQs
 — they cannot separate quantificational force from their descriptive content.
@@ -291,7 +291,7 @@ theorem existential_never_pseudo (b : Bool) :
     available depends on whether the language's indefinite determiners
     carry a world variable AND use CF semantics.
 
-    @cite{mirrazi-2024} §3.1, @cite{schwarz-2012}:
+    [mirrazi-2024] §3.1, [schwarz-2012]:
 
     | Language | CF | World var | canPseudoDeDicto |
     |----------|-----------|-----------|-----------------|

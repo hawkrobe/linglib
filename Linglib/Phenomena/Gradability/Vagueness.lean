@@ -23,11 +23,11 @@ Vagueness arises from degree semantics + threshold uncertainty:
 
 ## Key References
 
-- @cite{fine-1975}
-- @cite{williamson-1994}
-- @cite{edgington-1997}
-- @cite{keefe-2000}
-- @cite{lassiter-goodman-2017}
+- [fine-1975]
+- [williamson-1994]
+- [edgington-1997]
+- [keefe-2000]
+- [lassiter-goodman-2017]
 -/
 
 namespace Phenomena.Gradability.Vagueness
@@ -41,7 +41,7 @@ For individuals near the inferred threshold:
 - Judgments show high variance across informants
 - Neither "A" nor "not A" feels fully appropriate
 
-Source: @cite{lassiter-goodman-2017} Section 1, @cite{kennedy-2007}
+Source: [lassiter-goodman-2017] Section 1, [kennedy-2007]
 -/
 structure BorderlineDatum where
   /-- The adjective -/
@@ -104,7 +104,7 @@ Empirical observations:
 - People reject the conclusion (the absurd case)
 - People show gradient acceptance as cases approach the threshold
 
-Source: @cite{edgington-1997}, @cite{lassiter-goodman-2017} Section 5
+Source: [edgington-1997], [lassiter-goodman-2017] Section 5
 -/
 structure SoritesDatum where
   adjective : String
@@ -179,7 +179,7 @@ Is there a sharp boundary between "borderline tall" and "clearly tall"?
 
 This threatens any theory that posits sharp boundaries anywhere.
 
-Source: @cite{fine-1975}, @cite{williamson-1994},
+Source: [fine-1975], [williamson-1994],
 -/
 structure HigherOrderVaguenessData where
   basePredicate : String
@@ -213,7 +213,7 @@ If "Definitely tall" means "clearly tall" (not borderline), then:
 
 Iterating: "definitely definitely tall", etc.
 
-Source: @cite{fine-1975}, @cite{williamson-1994}
+Source: [fine-1975], [williamson-1994]
 -/
 structure DefinitelyOperatorData where
   predicate : String
@@ -245,7 +245,7 @@ These are "penumbral truths" - true in the borderline region.
 Supervaluationism: true iff true on ALL precisifications.
 Degree theories: must explain why these have degree 1.
 
-Source: @cite{fine-1975}, @cite{keefe-2000}
+Source: [fine-1975], [keefe-2000]
 -/
 structure PenumbralConnectionData where
   connectionName : String
@@ -309,7 +309,7 @@ This seems true for vague predicates:
 
 But iterated application leads to absurdity (the sorites).
 
-Source: @cite{wright-1976}, @cite{fara-2000}
+Source: [wright-1976], [fara-2000]
 -/
 structure TolerancePrincipleData where
   predicate : String
@@ -355,7 +355,7 @@ For N = 762 (mm from 7'4\" to 4'10\"):
 The paradox dissolves: the argument is valid but unsound.
 Each premise is probably true, but the conjunction is probably false.
 
-Source: @cite{edgington-1997}, @cite{lassiter-goodman-2017} Section 5
+Source: [edgington-1997], [lassiter-goodman-2017] Section 5
 -/
 structure ProbabilisticSoritesData where
   predicate : String
@@ -444,7 +444,7 @@ The extension of a vague gradable adjective can change when an agent's
 This is evidence that the degrees of vague quantities incorporate
 information about interests, not just objective measurements.
 
-Source: @cite{fara-2000}, @cite{dinis-jacinto-2026} §5.3
+Source: [fara-2000], [dinis-jacinto-2026] §5.3
 -/
 structure InterestRelativityDatum where
   adjective : String
@@ -500,7 +500,7 @@ like significant jumps — even though the precise difference is identical.
 This is evidence that the *vague* difference between adjacent elements
 is not a simple function of the *precise* difference.
 
-Source: @cite{fara-2000} on salient similarity, @cite{dinis-jacinto-2026} §6.1
+Source: [fara-2000] on salient similarity, [dinis-jacinto-2026] §6.1
 -/
 structure ToleranceStepDatum where
   adjective : String
@@ -551,11 +551,11 @@ This is evidence against both classical logic (which rejects all
 contradictions) and standard supervaluationism (which makes
 contradictions super-false even for borderline cases).
 
-The data is compatible with the TCS framework (@cite{cobreros-etal-2012}),
+The data is compatible with the TCS framework ([cobreros-etal-2012]),
 which predicts that borderline cases tolerantly satisfy P ∧ ¬P.
 
-Source: @cite{alxatib-pelletier-2011}, @cite{ripley-2011},
-@cite{serchuk-hargreaves-zach-2011}
+Source: [alxatib-pelletier-2011], [ripley-2011],
+[serchuk-hargreaves-zach-2011]
 -/
 structure BorderlineContradictionDatum where
   /-- Study identifier -/
@@ -574,7 +574,7 @@ structure BorderlineContradictionDatum where
   borderlinePeaks : Bool
   deriving Repr
 
-/-- @cite{alxatib-pelletier-2011}: 5 men of different heights (visual).
+/-- [alxatib-pelletier-2011]: 5 men of different heights (visual).
     Man #2 (5'11", median size) shows peak contradiction/gap acceptance. -/
 def alxatibPelletier2011Tall : BorderlineContradictionDatum :=
   { study := "Alxatib & Pelletier 2011"
@@ -586,7 +586,7 @@ def alxatibPelletier2011Tall : BorderlineContradictionDatum :=
   , borderlinePeaks := true  -- significantly higher than for extreme cases
   }
 
-/-- @cite{ripley-2011}: 7 pairs (A-G) of decreasing nearness (visual).
+/-- [ripley-2011]: 7 pairs (A-G) of decreasing nearness (visual).
     Pair C (median distance) shows peak contradiction acceptance. -/
 def ripley2011Near : BorderlineContradictionDatum :=
   { study := "Ripley 2011"
@@ -598,7 +598,7 @@ def ripley2011Near : BorderlineContradictionDatum :=
   , borderlinePeaks := true  -- agreement peaks at intermediate pairs
   }
 
-/-- @cite{serchuk-hargreaves-zach-2011}: scenario-based (Susan's wealth).
+/-- [serchuk-hargreaves-zach-2011]: scenario-based (Susan's wealth).
     Forced-choice with 6 options including "Both", "Neither", "Partially True". -/
 def serchukEtAl2011Rich : BorderlineContradictionDatum :=
   { study := "Serchuk, Hargreaves & Zach 2011"

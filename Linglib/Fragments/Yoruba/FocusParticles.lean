@@ -1,8 +1,8 @@
 import Linglib.Core.Word
 
 /-!
-# Yorùbá Focus Particles @cite{aremu-2026}
-@cite{biberauer-roberts-2014}
+# Yorùbá Focus Particles [aremu-2026]
+[biberauer-roberts-2014]
 
 Focus-marking morphemes across Yorùbá dialects. Standard Yorùbá uses
 clause-initial *ni* for ex-situ focus; south-eastern dialects (Ìkálẹ̀,
@@ -87,7 +87,7 @@ def ni : FocusParticleEntry :=
 
 /-- Ìkálẹ̀ *ín* — clause-final focus marker.
     "Olú ó rà ìwé ín" = "It is Olú that bought a book."
-    @cite{aremu-2026} ex. (5): head-final Foc⁰. -/
+    [aremu-2026] ex. (5): head-final Foc⁰. -/
 def in_ : FocusParticleEntry :=
   { form := "ín"
   , dialects := [.ikale, .ondo, .okitipupa]

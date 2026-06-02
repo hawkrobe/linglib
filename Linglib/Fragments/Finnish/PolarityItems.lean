@@ -2,7 +2,7 @@ import Linglib.Typology.PolarityItem
 
 /-!
 # Finnish Polarity-Sensitive Items
-@cite{haspelmath-1997}, @cite{karlsson-2017}
+[haspelmath-1997], [karlsson-2017]
 
 Finnish indefinite pronoun polarity items, typed by the categories from
 `Typology.PolarityItem`.
@@ -11,9 +11,9 @@ Unlike Russian *nikto*, Italian *nessuno*, German *niemand*, or Hungarian
 *senki* — all single-word negative quantifiers ("n-words") that have their own
 sister-Fragment entries typed `.npiWeak` with `.negation, .nobody` licensing —
 Finnish realizes "nobody" compositionally. *Kukaan* is the polarity-sensitive
-indefinite (in @cite{haspelmath-1997}'s terms, the *-kAArI*-series); *ei* is a
+indefinite (in [haspelmath-1997]'s terms, the *-kAArI*-series); *ei* is a
 fully-conjugated negative auxiliary verb (en/et/ei/emme/ette/eivät) that takes
-the connegative form of the lexical verb (@cite{karlsson-2017} §19.5). The
+the connegative form of the lexical verb ([karlsson-2017] §19.5). The
 direct-negation reading 'nobody came' is *ei kukaan tullut*, a syntactic
 combination, not a single lexical entry.
 
@@ -31,8 +31,8 @@ open Typology.PolarityItem
 
 /-- *kukaan* — Polarity-sensitive indefinite.
     Decomposes morphologically as *kuka* 'who' + *-kAAn* concessive clitic
-    (@cite{karlsson-2017} §25.6 on the *-kin* / *-kAAn* clitic pair); the
-    *-kAAn*-series is @cite{haspelmath-1997}'s A.27.1 Finnish series (i),
+    ([karlsson-2017] §25.6 on the *-kin* / *-kAAn* clitic pair); the
+    *-kAAn*-series is [haspelmath-1997]'s A.27.1 Finnish series (i),
     parallel to Hindi *koii bhii* and Korean wh+*-do* / wh+*-na* — hence
     `morphology := .indefPlusEven`. In direct negation, co-occurs with the
     appropriate person/number form of the negation verb *ei*: 'ei kukaan
@@ -55,9 +55,9 @@ def kukaan : PolarityItemEntry :=
     'Whoever / anyone at all'. One cell of a productive *X tahansa* paradigm
     over wh-words (also *mikä tahansa* 'whatever', *milloin tahansa* 'whenever',
     *missä tahansa* 'wherever'), with a literary *X hyvänsä* alternant.
-    @cite{haspelmath-1997} A.27 lists this as the *-hyvänsä*-series, used
+    [haspelmath-1997] A.27 lists this as the *-hyvänsä*-series, used
     mainly in the free-choice function and predicted by his implicational map
-    to extend to comparative. Not covered in @cite{karlsson-2017}. -/
+    to extend to comparative. Not covered in [karlsson-2017]. -/
 def kukaTahansa : PolarityItemEntry :=
   { form := "kuka tahansa"
   , polarityType := .fci

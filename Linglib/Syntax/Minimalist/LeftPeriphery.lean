@@ -32,7 +32,7 @@ open Semantics.Questions
 
 /-- The ±WH feature on C, determining declarative vs interrogative clause type.
     `alphaWH` is underspecified — used for Hindi-Urdu simplex polar questions
-    where clause-typing is not forced at CP (@cite{dayal-2025}: §4.4). -/
+    where clause-typing is not forced at CP ([dayal-2025]: §4.4). -/
 inductive WHFeature where
   | plusWH   -- Interrogative: ⟨⟨s,t⟩,t⟩
   | minusWH  -- Declarative: ⟨s,t⟩
@@ -87,7 +87,7 @@ def effectiveKnowledge (cls : SelectionClass) (negated questioned : Bool) : Bool
 
     Note: Consistency is necessary but not sufficient for quasi-subordination.
     The full account also requires "potentially active" (de se interest),
-    which is why *forget* doesn't freely quasi-subordinate (@cite{dayal-2025}: §3.3). -/
+    which is why *forget* doesn't freely quasi-subordinate ([dayal-2025]: §3.3). -/
 def perspPConsistent (cls : SelectionClass) (negated questioned : Bool) : Bool :=
   !effectiveKnowledge cls negated questioned
 
@@ -258,7 +258,7 @@ open Semantics.Questions
 /-- Whether x possibly doesn't know Ans(Q) at world w:
     ◇¬know(x, Ans(Q)) = ∃w' ∈ R(x,w). ¬(Ans(Q,w) holds at w')
 
-    This is PerspP's not-at-issue presupposition (@cite{dayal-2025}: §2.3).
+    This is PerspP's not-at-issue presupposition ([dayal-2025]: §2.3).
     Uses `diaAt` from Doxastic.lean and `QUD.ans` from
     Semantics/Questions/Partition/Cells.lean. -/
 def possibleIgnorance {W E : Type*} (R : AccessRel W E) (center : E)
@@ -556,11 +556,11 @@ theorem veridical_model_blocks_perspP {W E : Type*}
 -- J. Connection to Dayal's answerhood theory
 -- ============================================================================
 
-/-! ### Connection to @cite{dayal-1996}'s answerhood theory
+/-! ### Connection to [dayal-1996]'s answerhood theory
 
 The `Ans(Q)` referenced throughout this module — in PerspP's
 `◇¬know(x, Ans(Q))` and SAP's obligation to assert `Ans(Q)` — corresponds to
-@cite{dayal-1996}'s strongest true answer when the question's Exhaustivity
+[dayal-1996]'s strongest true answer when the question's Exhaustivity
 Presupposition (EP) is satisfied. See
 `Semantics/Questions/Exhaustivity.lean` for the topical Prop/Set
 operators (`dayalAns`, `IsExhaustivelyResolvable`, `relExh`).
@@ -568,6 +568,6 @@ operators (`dayalAns`, `IsExhaustivelyResolvable`, `relExh`).
 When EP fails (e.g., ability-*can* questions under first-order scope), there
 is no unique strongest answer, and the question licenses mention-some
 readings; in such cases `Ans(Q)` is not well-defined in Dayal's sense,
-though @cite{xiang-2022}'s Relativized Exhaustivity may still hold. -/
+though [xiang-2022]'s Relativized Exhaustivity may still hold. -/
 
 end Syntax.Minimalist.LeftPeriphery

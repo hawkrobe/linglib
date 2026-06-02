@@ -4,7 +4,7 @@ import Linglib.Syntax.DependencyGrammar.Formal.Catena
 # Finite-VP divergence: catena ⊋ constituent
 
 The finite VP (verb + complements, excluding subject) is the textbook
-demonstration of @cite{osborne-2019}'s thesis that constituency and
+demonstration of [osborne-2019]'s thesis that constituency and
 connectedness come apart in dependency grammar: in a flat DG analysis, the
 finite VP is a **catena** (connected in the dependency graph) but not a
 **constituent** (the verb's complete subtree includes the subject). The
@@ -41,7 +41,7 @@ namespace DepGrammar.VPDivergence
 
 open DepGrammar DepGrammar.Catena
 
-/-! ### Example trees from @cite{osborne-2019} -/
+/-! ### Example trees from [osborne-2019] -/
 
 /-- DG tree for "Bill plays chess" (Ch. 2, ex. 24):
     `plays(0)` heads `Bill(1)` (nsubj) and `chess(2)` (obj). -/

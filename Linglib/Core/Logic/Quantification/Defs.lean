@@ -7,7 +7,7 @@ import Linglib.Tactics.OntSort
 
 /-!
 # Generalized Quantifier Definitions
-@cite{barwise-cooper-1981} @cite{keenan-stavi-1986} @cite{peters-westerstahl-2006} @cite{van-benthem-1984}
+[barwise-cooper-1981] [keenan-stavi-1986] [peters-westerstahl-2006] [van-benthem-1984]
 
 Model-agnostic property definitions, operations, and type shifts for
 generalized quantifier denotations.
@@ -43,7 +43,7 @@ variable {α : Type*}
 
 /-! ### Property Definitions -/
 
-/-! #### @cite{barwise-cooper-1981} -/
+/-! #### [barwise-cooper-1981] -/
 
 /--
 Conservativity: `Q(A, B) ↔ Q(A, A ∩ B)`.
@@ -101,11 +101,11 @@ def PositiveStrong (q : GQ α) : Prop :=
 def NegativeStrong (q : GQ α) : Prop :=
   ∀ (R : α → Prop), ¬ q R R
 
-/-! #### @cite{peters-westerstahl-2006} -/
+/-! #### [peters-westerstahl-2006] -/
 
 /-! Extension (EXT) — `Q(A,B)` depends only on `A` and `B`, not on the ambient
 universe `M` — holds trivially for `GQ α` since the representation is
-universe-free. See @cite{peters-westerstahl-2006} Ch.4 Def 4.1. The
+universe-free. See [peters-westerstahl-2006] Ch.4 Def 4.1. The
 EXT-conditional form of van Benthem's Cons ↔ LivesOn theorem collapses to
 `conservative_iff_livesOn` below. -/
 
@@ -118,7 +118,7 @@ def CONS2 (q : GQ α) : Prop :=
 def Existential (q : GQ α) : Prop :=
   ∀ (R S : α → Prop), q R S ↔ q (fun x => R x ∧ S x) (fun _ => True)
 
-/-- ↑_SE Mon (@cite{peters-westerstahl-2006} §5.5): Q(A,B) & A⊆A' & A\B=A'\B → Q(A',B).
+/-- ↑_SE Mon ([peters-westerstahl-2006] §5.5): Q(A,B) & A⊆A' & A\B=A'\B → Q(A',B).
     On the number triangle: if Q(k,m) then Q(k',m) for k' ≥ k.
     Enlarging A by adding elements of B preserves Q. -/
 def UpSEMon (q : GQ α) : Prop :=
@@ -127,7 +127,7 @@ def UpSEMon (q : GQ α) : Prop :=
     (∀ x, R' x → ¬ S x → R x) →
     q R S → q R' S
 
-/-- ↑_SW Mon (@cite{peters-westerstahl-2006} §5.5): Q(A,B) & A⊆A' & A∩B=A'∩B → Q(A',B).
+/-- ↑_SW Mon ([peters-westerstahl-2006] §5.5): Q(A,B) & A⊆A' & A∩B=A'∩B → Q(A',B).
     On the number triangle: if Q(k,m) then Q(k,m') for m' ≥ m.
     Enlarging A by adding elements outside B preserves Q.
     This is property (p) from P&W §5.2: half of the EXT condition. -/
@@ -137,7 +137,7 @@ def UpSWMon (q : GQ α) : Prop :=
     (∀ x, R' x → S x → R x) →
     q R S → q R' S
 
-/-- ↓_NW Mon (@cite{peters-westerstahl-2006} §5.5): Q(A,B) & A'⊆A & A\B=A'\B → Q(A',B).
+/-- ↓_NW Mon ([peters-westerstahl-2006] §5.5): Q(A,B) & A'⊆A & A\B=A'\B → Q(A',B).
     On the number triangle: if Q(k,m) then Q(k',m) for k' ≤ k.
     Shrinking A by removing elements of B preserves Q. -/
 def DownNWMon (q : GQ α) : Prop :=
@@ -146,7 +146,7 @@ def DownNWMon (q : GQ α) : Prop :=
     (∀ x, R x → ¬ S x → R' x) →
     q R S → q R' S
 
-/-- ↓_NE Mon (@cite{peters-westerstahl-2006} §5.5): Q(A,B) & A'⊆A & A∩B=A'∩B → Q(A',B).
+/-- ↓_NE Mon ([peters-westerstahl-2006] §5.5): Q(A,B) & A'⊆A & A∩B=A'∩B → Q(A',B).
     On the number triangle: if Q(k,m) then Q(k,m') for m' ≤ m.
     Shrinking A by removing elements outside B preserves Q. -/
 def DownNEMon (q : GQ α) : Prop :=
@@ -155,14 +155,14 @@ def DownNEMon (q : GQ α) : Prop :=
     (∀ x, R x → S x → R' x) →
     q R S → q R' S
 
-/-- Smooth (@cite{peters-westerstahl-2006} §5.6): Q is ↓_NE Mon and ↑_SE Mon.
+/-- Smooth ([peters-westerstahl-2006] §5.6): Q is ↓_NE Mon and ↑_SE Mon.
     Smooth quantifiers are Mon↑ (Prop 9). Under ISOM, smooth quantifiers
     have smooth monotonicity functions f where f(n) ≤ f(n+1) ≤ f(n)+1 (Prop 10).
     Most natural language Mon↑ determiners are smooth: all proportional
     quantifiers, "some", "all", "most", etc. -/
 def Smooth (q : GQ α) : Prop := DownNEMon q ∧ UpSEMon q
 
-/-- Co-smooth (@cite{peters-westerstahl-2006} §5.6): Q's inner negation is smooth.
+/-- Co-smooth ([peters-westerstahl-2006] §5.6): Q's inner negation is smooth.
     Equivalently, ↓_NW Mon and ↑_SW Mon. "no" and "fewer than half" are co-smooth. -/
 def CoSmooth (q : GQ α) : Prop := DownNWMon q ∧ UpSWMon q
 
@@ -176,59 +176,59 @@ def RightAntiAdditive (q : GQ α) : Prop :=
   ∀ (R S S' : α → Prop),
     q R (fun x => S x ∨ S' x) ↔ (q R S ∧ q R S')
 
-/-! #### @cite{van-benthem-1984}: Relational properties -/
+/-! #### [van-benthem-1984]: Relational properties -/
 
-/-- Transitive: Q(A,B) ∧ Q(B,C) → Q(A,C). @cite{van-benthem-1984} §3.1.
+/-- Transitive: Q(A,B) ∧ Q(B,C) → Q(A,C). [van-benthem-1984] §3.1.
     "all" is the prime transitive quantifier (inclusion is transitive). -/
 def QTransitive (q : GQ α) : Prop :=
   ∀ (A B C : α → Prop), q A B → q B C → q A C
 
 /-- Antisymmetric: Q(A,B) ∧ Q(B,A) → A = B (extensionally).
-    @cite{van-benthem-1984} §3.1: "all" (inclusion) is antisymmetric. -/
+    [van-benthem-1984] §3.1: "all" (inclusion) is antisymmetric. -/
 def QAntisymmetric (q : GQ α) : Prop :=
   ∀ (A B : α → Prop), q A B → q B A → A = B
 
 /-- Linear (connected): Q(A,B) ∨ Q(B,A) for all A, B.
-    @cite{van-benthem-1984} §3.1: "not all" (non-inclusion) is linear. -/
+    [van-benthem-1984] §3.1: "not all" (non-inclusion) is linear. -/
 def QLinear (q : GQ α) : Prop :=
   ∀ (A B : α → Prop), q A B ∨ q B A
 
-/-- Quasi-reflexive: Q(A,B) → Q(A,A). @cite{van-benthem-1984} §3.1.
+/-- Quasi-reflexive: Q(A,B) → Q(A,A). [van-benthem-1984] §3.1.
     "some" is quasi-reflexive: overlap implies non-emptiness. -/
 def QuasiReflexive (q : GQ α) : Prop :=
   ∀ (A B : α → Prop), q A B → q A A
 
-/-- Quasi-universal: Q(A,A) → Q(A,B) for all B. @cite{van-benthem-1984} §3.1.
+/-- Quasi-universal: Q(A,A) → Q(A,B) for all B. [van-benthem-1984] §3.1.
     "no" is quasi-universal: if A∩A = ∅ then A∩B = ∅ for all B. -/
 def QuasiUniversal (q : GQ α) : Prop :=
   ∀ (A B : α → Prop), q A A → q A B
 
 /-- Almost-connected: Q(A,B) → Q(A,C) ∨ Q(C,B) for all C.
-    @cite{van-benthem-1984} §3.1: equivalent to transitivity of ¬Q.
+    [van-benthem-1984] §3.1: equivalent to transitivity of ¬Q.
     "not all" is almost-connected. -/
 def AlmostConnected (q : GQ α) : Prop :=
   ∀ (A B C : α → Prop), q A B → q A C ∨ q C B
 
-/-- Asymmetric: Q(A,B) → ¬Q(B,A). @cite{peters-westerstahl-2006} Ch 6.4.
+/-- Asymmetric: Q(A,B) → ¬Q(B,A). [peters-westerstahl-2006] Ch 6.4.
     Strictly stronger than antisymmetric: antisymmetry allows Q(A,B) ∧ Q(B,A)
     when A = B; asymmetry forbids it entirely. Under CONSERV + ISOM, no
     non-trivial quantifier is asymmetric (P&W Ch 6.4). -/
 def QAsymmetric (q : GQ α) : Prop :=
   ∀ (A B : α → Prop), q A B → ¬ q B A
 
-/-- Circular: Q(A,B) ∧ Q(B,C) → Q(C,A). @cite{peters-westerstahl-2006} Ch 6.4.
+/-- Circular: Q(A,B) ∧ Q(B,C) → Q(C,A). [peters-westerstahl-2006] Ch 6.4.
     No natural language quantifier is non-trivially circular (under CONSERV + ISOM).
     Together with transitivity, circularity forces quasi-reflexivity. -/
 def QCircular (q : GQ α) : Prop :=
   ∀ (A B C : α → Prop), q A B → q B C → q C A
 
 /-- VAR (Variety): Q is non-trivial — it both accepts and rejects some pair.
-    @cite{van-benthem-1984} §2: rules out degenerate quantifiers like "at least 2"
+    [van-benthem-1984] §2: rules out degenerate quantifiers like "at least 2"
     on singleton domains. Used as hypothesis in most uniqueness theorems. -/
 def Variety (q : GQ α) : Prop :=
   (∃ A B, q A B) ∧ (∃ A B, ¬ q A B)
 
-/-- Double monotonicity type (@cite{van-benthem-1984} §4.2).
+/-- Double monotonicity type ([van-benthem-1984] §4.2).
     The logical Square of Opposition maps to four double-monotonicity types:
     all = ↓MON↑, some = ↑MON↑, no = ↓MON↓, not all = ↑MON↓. -/
 inductive DoubleMono where
@@ -239,7 +239,7 @@ inductive DoubleMono where
   deriving DecidableEq, Repr
 
 /-- Restrictor monotonicity determines projection type for embedded
-    trivalent content (@cite{ramotowska-marty-romoli-santorio-2025}).
+    trivalent content ([ramotowska-marty-romoli-santorio-2025]).
 
     Restrictor-↓ (every, no) = conjunctive/strong = fragile under gaps.
     Restrictor-↑ (some, not-every) = disjunctive/weak = robust under gaps.
@@ -252,7 +252,7 @@ def DoubleMono.toProjectionType : DoubleMono → Core.Duality.ProjectionType
   | .upUp   | .upDown   => .disjunctive
 
 /-- Right continuity (CONT): if Q(A,B₁) and Q(A,B₂) hold and B₁ ⊆ B ⊆ B₂,
-    then Q(A,B). @cite{van-benthem-1984} §4.3: all right-monotone quantifiers are
+    then Q(A,B). [van-benthem-1984] §4.3: all right-monotone quantifiers are
     continuous. "precisely one" is continuous but non-monotone. -/
 def RightContinuous (q : GQ α) : Prop :=
   ∀ (A B B₁ B₂ : α → Prop),
@@ -261,47 +261,47 @@ def RightContinuous (q : GQ α) : Prop :=
     q A B₁ → q A B₂ → q A B
 
 /-- Filtrating: Q(A,B) ∧ Q(A,C) → Q(A, B∩C).
-    @cite{van-benthem-1984} Thm 4.4.2: "all" is the only filtrating quantifier
+    [van-benthem-1984] Thm 4.4.2: "all" is the only filtrating quantifier
     (under VAR*). This is because filtrating ↔ filter (closure under ∩),
     and only the principal filter at A (= inclusion) satisfies CONSERV. -/
 def Filtrating (q : GQ α) : Prop :=
   ∀ (A B C : α → Prop),
     q A B → q A C → q A (fun x => B x ∧ C x)
 
-/-! #### Monotonicity Universals (@cite{peters-westerstahl-2006} Ch 5.8) -/
+/-! #### Monotonicity Universals ([peters-westerstahl-2006] Ch 5.8) -/
 
 /-- MU1: All simple (lexicalized) determiners are monotone in scope.
-    @cite{peters-westerstahl-2006} §5.8 Universal 1. -/
+    [peters-westerstahl-2006] §5.8 Universal 1. -/
 def MU1 (q : GQ α) : Prop := ScopeUpwardMono q ∨ ScopeDownwardMono q
 
 /-- MU2: All simple determiners are monotone in at least one restrictor direction.
-    @cite{peters-westerstahl-2006} §5.8 Universal 2. -/
+    [peters-westerstahl-2006] §5.8 Universal 2. -/
 def MU2 (q : GQ α) : Prop := RestrictorUpwardMono q ∨ RestrictorDownwardMono q
 
 /-- MU3: All simple Mon↑ determiners are smooth.
-    @cite{peters-westerstahl-2006} §5.8 Universal 3. -/
+    [peters-westerstahl-2006] §5.8 Universal 3. -/
 def MU3 (q : GQ α) : Prop := ScopeUpwardMono q → Smooth q
 
 /-- MU4: All simple Mon↓ determiners are co-smooth.
-    @cite{peters-westerstahl-2006} §5.8 Universal 4. -/
+    [peters-westerstahl-2006] §5.8 Universal 4. -/
 def MU4 (q : GQ α) : Prop := ScopeDownwardMono q → CoSmooth q
 
-/-! #### @cite{mostowski-1957} -/
+/-! #### [mostowski-1957] -/
 
 /-- QUANT (Isomorphism closure): Q is invariant under permutations of the
     domain. Model-agnostic version: Q(A,B) depends only on the pointwise
     pattern, not on which specific elements satisfy A and B.
 
-    This is the type ⟨1,1⟩ (binary) generalization of @cite{mostowski-1957}'s
+    This is the type ⟨1,1⟩ (binary) generalization of [mostowski-1957]'s
     permutation invariance. Mostowski's original condition applies to type ⟨1⟩
     (unary) quantifiers; the extension to binary determiners is due to
-    @cite{van-benthem-1984} (building on Lindström 1966).
+    [van-benthem-1984] (building on Lindström 1966).
 
     The model-specific version in `Semantics.Quantification.Quantifier.Quantity`
     uses cardinalities directly, which requires `FiniteModel`. This version
     captures the same intuition without model infrastructure.
 
-    @cite{van-benthem-1984} §2: CONSERV + QUANT together reduce Q's behavior to
+    [van-benthem-1984] §2: CONSERV + QUANT together reduce Q's behavior to
     pairs (a, b) where a = |A \ B| and b = |A ∩ B|. -/
 def QuantityInvariant (q : GQ α) : Prop :=
   ∀ (A B A' B' : α → Prop) (f : α → α),

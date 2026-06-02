@@ -3,7 +3,7 @@ import Mathlib.Data.Set.Basic
 /-!
 # Intensional Logic: Frames and Types
 
-@cite{dowty-wall-peters-1981} @cite{gallin-1975}
+[dowty-wall-peters-1981] [gallin-1975]
 
 Foundations for intensional logic following DWP Ch. 6. A **Frame** provides
 the entity domain and index set; **Ty** is the recursive grammar of semantic
@@ -50,7 +50,7 @@ abbrev Ty.prop : Ty := .intens .t
 /-- ⟨s,e⟩ — individual concepts (index-dependent individuals). -/
 abbrev Ty.indConcept : Ty := .intens .e
 
-/-- A type is conjoinable if it "ends in `t`" (@cite{partee-rooth-1983} Definition 4).
+/-- A type is conjoinable if it "ends in `t`" ([partee-rooth-1983] Definition 4).
     Intension types `⟨s,a⟩` are conjoinable iff the base type is —
     conjunction is pointwise over indices. -/
 def Ty.isConjoinable : Ty → Bool

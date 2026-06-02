@@ -10,7 +10,7 @@ import Linglib.Studies.Deal2024
 
 /-!
 # Adamson & Zompì (2025): Polite Pronouns and the PCC
-@cite{adamson-zompi-2025}
+[adamson-zompi-2025]
 
 Polite Pronouns and the PCC. *Linguistic Inquiry*, Early Access.
 
@@ -38,10 +38,10 @@ Three independent lines of evidence converge:
 3. **Resolved agreement** (§4.3, (30)): LEI in coordination triggers 2PL
    resolved agreement, unlike imposters which trigger 3PL ((31)-(32))
 
-This falsifies morphosyntactic accounts (@cite{deal-2024},
-@cite{coon-keine-2021}, @cite{bejar-rezac-2009}), which predict LEI
+This falsifies morphosyntactic accounts ([deal-2024],
+[coon-keine-2021], [bejar-rezac-2009]), which predict LEI
 should behave like 3rd person for PCC purposes. The data supports a
-syntacticosemantic account such as @cite{pancheva-zubizarreta-2018},
+syntacticosemantic account such as [pancheva-zubizarreta-2018],
 where the PCC reads *interpretable* person features.
 
 The same pattern obtains cross-linguistically: Spanish USTED (§6.1) and
@@ -64,8 +64,8 @@ open Minimalist.PConstraint (PCCGrammar IsLicit weakGrammar strongGrammar
 
 /-- A nominal's person features split into two layers.
 
-    @cite{adamson-zompi-2025} argue that polite pronouns carry two distinct
-    sets of φ-features (following @cite{smith-2017}, @cite{anagnostopoulou-2017a},
+    [adamson-zompi-2025] argue that polite pronouns carry two distinct
+    sets of φ-features (following [smith-2017], [anagnostopoulou-2017a],
     among others):
 
     - **`agreementPerson`** (uninterpretable): governs verbal agreement,
@@ -231,15 +231,15 @@ def italianData : List CliticJudgment :=
 
 /-- Morphosyntactic prediction: the PCC reads **agreement** person.
 
-    Under morphosyntactic accounts (@cite{deal-2024}, @cite{coon-keine-2021},
-    @cite{bejar-rezac-2009}), LEI's agreement features (3rd person) determine
+    Under morphosyntactic accounts ([deal-2024], [coon-keine-2021],
+    [bejar-rezac-2009]), LEI's agreement features (3rd person) determine
     PCC behavior. Since 3>3 is licit, `3.DAT > LEI.ACC` should be licit. -/
 def morphosyntacticPrediction (d : DualPersonFeatures) : Bool :=
   weakPCC .third d.agreementPerson
 
 /-- Syntacticosemantic prediction: the PCC reads **interpretable** person.
 
-    Under a syntacticosemantic account (@cite{pancheva-zubizarreta-2018}),
+    Under a syntacticosemantic account ([pancheva-zubizarreta-2018]),
     LEI's interpretable features (2nd person) determine PCC behavior.
     Since 3>2 is illicit, `3.DAT > LEI.ACC` should be illicit. -/
 def syntacticosemanticPrediction (d : DualPersonFeatures) : Bool :=
@@ -277,7 +277,7 @@ theorem ordinary_accounts_agree (p : PersonLevel) :
 -- § 6: Fancy Constraint — Independent Evidence (§4.2)
 -- ============================================================================
 
-/-- The Fancy Constraint (@cite{postal-1989}): in analytic causative
+/-- The Fancy Constraint ([postal-1989]): in analytic causative
     constructions (*faire infinitif*), a person hierarchy effect obtains
     between the accusative clitic causee and 1st/2nd person arguments.
 
@@ -380,7 +380,7 @@ theorem three_lines_converge :
 -- ============================================================================
 
 /-- The PCC's sensitivity to interpretable person is equivalent to
-    sensitivity to [+participant] in @cite{preminger-2014}'s decomposition.
+    sensitivity to [+participant] in [preminger-2014]'s decomposition.
 
     The Weak PCC bans 3rd person IO with [+participant] DO. LEI has
     interpretable [+participant] (2nd person = [+participant, −author]). -/
@@ -407,7 +407,7 @@ theorem pcc_participant_equivalence (io do_ : PersonLevel) :
 -- § 9: Integration with P&Z's P-Constraint
 -- ============================================================================
 
-/-- The P-Constraint (@cite{pancheva-zubizarreta-2018}) derives PCC effects
+/-- The P-Constraint ([pancheva-zubizarreta-2018]) derives PCC effects
     from point-of-view encoding. `IsLicit` from `PConstraint.lean` evaluates
     the constraint over interpretable person values.
 
@@ -446,12 +446,12 @@ theorem pconstraint_allows_imposter :
 
    All such accounts evaluate the **agreement** features of the goals:
 
-   - @cite{deal-2024} Interaction/Satisfaction: a probe with satisfaction
+   - [deal-2024] Interaction/Satisfaction: a probe with satisfaction
      condition [PART(ICIPANT)] is satisfied by the DO's [+participant],
      then bleeds Agree with the IO.
-   - @cite{coon-keine-2021} Feature Gluttony: an articulated probe copies
+   - [coon-keine-2021] Feature Gluttony: an articulated probe copies
      features from both goals; crash if the feature sets conflict.
-   - @cite{bejar-rezac-2009} Person Licensing: a π-probe seeks [participant]
+   - [bejar-rezac-2009] Person Licensing: a π-probe seeks [participant]
      on the DO, licensing it. Blocked by the closer IO.
 
    For LEI, agreement person is 3rd = [−participant]. So all three accounts
@@ -495,7 +495,7 @@ theorem syntacticosemantic_finds_participant :
 -- ============================================================================
 
 open Deal2024 (isLicit) in
-/-- @cite{deal-2024}'s `isLicit` directly demonstrates the morphosyntactic
+/-- [deal-2024]'s `isLicit` directly demonstrates the morphosyntactic
     failure. Under the Weak PCC (Italian), the probe reads agreement person:
 
     - `isLicit weak .third lei.agreementPerson` = `isLicit weak 3 3` = **true**
@@ -503,7 +503,7 @@ open Deal2024 (isLicit) in
     - `isLicit weak .third lei.interpretablePerson` = `isLicit weak 3 2` = **false**
       (correctly predicts illicit)
 
-    This is a formal, end-to-end test: @cite{deal-2024}'s own licitness
+    This is a formal, end-to-end test: [deal-2024]'s own licitness
     function, applied to LEI's agreement features, gives the wrong answer. -/
 theorem deal_weak_wrong_for_lei :
     isLicit Deal2024.weak .third lei.agreementPerson = true ∧
@@ -565,7 +565,7 @@ theorem all_data_match_syntacticosemantic :
 /-- Spanish USTED: agreement 3rd, interpretable 2nd.
 
     Like Italian LEI, USTED triggers 3sg verbal agreement but refers to
-    an addressee. @cite{rezac-2011} observes PCC effects with USTED:
+    an addressee. [rezac-2011] observes PCC effects with USTED:
     the accusative clitic `la` is grammatical in a 3>3 configuration
     if its referent is 3rd person, but ungrammatical if interpreted as
     polite USTED (§6.1, (43)). The paper's own consultants confirm the

@@ -2,7 +2,7 @@
 # Combinatory Categorial Grammar (CCG)
 
 A lexicalized grammar in which categories encode argument structure and a small fixed
-set of combinatory rules (`>`, `<`, `B`, `T`, `S`) derive phrases (@cite{steedman-2000}).
+set of combinatory rules (`>`, `<`, `B`, `T`, `S`) derive phrases ([steedman-2000]).
 
 ## Main definitions
 

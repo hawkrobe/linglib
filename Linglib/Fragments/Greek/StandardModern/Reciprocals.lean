@@ -2,7 +2,7 @@ import Linglib.Morphology.MorphRule
 
 /-!
 # Modern Greek Reciprocal Fragment
-@cite{nordlinger-2023} @cite{siloni-2008}
+[nordlinger-2023] [siloni-2008]
 
 Modern Greek marks reciprocity with nonactive voice morphology (verbal
 affix strategy, monovalent). The same morphology is used for reflexives,
@@ -10,9 +10,9 @@ passives, and middles — WALS Ch 106 classifies Greek as "mixed."
 
 CAN form discontinuous reciprocals with "me" ('with'):
 "O Giannis filithike me ti Maria" ('John kissed with Maria')
-@cite{nordlinger-2023} ex. 27b, 36.
+[nordlinger-2023] ex. 27b, 36.
 
-Greek allows discontinuous reciprocals (@cite{nordlinger-2023} ex. 27b),
+Greek allows discontinuous reciprocals ([nordlinger-2023] ex. 27b),
 which per Siloni's analysis implies lexical formation (Dimitriadis 2004, 2008).
 -/
 

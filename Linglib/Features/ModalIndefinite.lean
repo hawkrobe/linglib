@@ -2,7 +2,7 @@ import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # Modal Indefinite Types
-@cite{alonso-ovalle-menendez-benito-2010} @cite{alonso-ovalle-royer-2024}
+[alonso-ovalle-menendez-benito-2010] [alonso-ovalle-royer-2024]
 
 Framework-agnostic types for recording cross-linguistic properties of modal
 indefinites — indefinite determiners/DPs that conventionally encode a modal
@@ -15,7 +15,7 @@ dimensions (status × content × upper-boundedness).
 
 ## Three Dimensions of Variation
 
-Following @cite{alonso-ovalle-royer-2024}:
+Following [alonso-ovalle-royer-2024]:
 
 1. **Status**: Is the modal component at-issue or not-at-issue?
 2. **Content**: Which modal flavors does the component support?
@@ -49,8 +49,8 @@ inductive ModalComponentStatus where
   /-- Modal component is not part of assertive content: presupposed,
       conventionally implicated, or conversationally implicated.
       Projects or persists under embedding operators.
-      Ex: Sp. *algún* (conv. implicature per @cite{alonso-ovalle-menendez-benito-2010}),
-      Ger. *irgendein* (domain widening per @cite{kratzer-shimoyama-2002}). -/
+      Ex: Sp. *algún* (conv. implicature per [alonso-ovalle-menendez-benito-2010]),
+      Ger. *irgendein* (domain widening per [kratzer-shimoyama-2002]). -/
   | notAtIssue
   deriving DecidableEq, Repr
 
@@ -60,7 +60,7 @@ inductive ModalComponentStatus where
 -- ════════════════════════════════════════════════════
 
 /-- Whether the anchoring function f has a definedness condition.
-    @cite{alonso-ovalle-royer-2024} §4.1–4.2.
+    [alonso-ovalle-royer-2024] §4.1–4.2.
 
     Modal indefinites whose modal component is at-issue project their
     modal domain from an event argument via an anchoring function f.
@@ -78,7 +78,7 @@ inductive AnchorConstraint where
       an epistemic background from contentful events; for *n'importe
       quel* and *un qualsiasi*, f always yields a circumstantial/
       indiscriminacy background regardless of the event's content
-      (@cite{alonso-ovalle-royer-2024}, §6.2: "different functions
+      ([alonso-ovalle-royer-2024], §6.2: "different functions
       projecting modal domains from those anchors").
       Ex: Chuj *yalnhej*, French *n'importe quel*, Italian *un qualsiasi*. -/
   | unrestricted
@@ -96,7 +96,7 @@ inductive AnchorConstraint where
 -- ════════════════════════════════════════════════════
 
 /-- A cross-linguistic modal indefinite entry parameterized along
-@cite{alonso-ovalle-royer-2024} three dimensions of variation. -/
+[alonso-ovalle-royer-2024] three dimensions of variation. -/
 structure ModalIndefiniteEntry where
   /-- Language name -/
   language : String
@@ -113,14 +113,14 @@ structure ModalIndefiniteEntry where
   /-- Is the available flavor sensitive to syntactic position? -/
   positionSensitive : Bool := false
   /-- Does the item have a plain/unremarkable (non-modal) reading in
-      addition to its modal reading? (A-@cite{alonso-ovalle-royer-2024}, §5) -/
+      addition to its modal reading? (A-[alonso-ovalle-royer-2024], §5) -/
   hasUnremarkableReading : Bool := false
   /-- Can the item appear in predicative position?
-      Correlates with unremarkable readings per A-@cite{alonso-ovalle-royer-2024}. -/
+      Correlates with unremarkable readings per A-[alonso-ovalle-royer-2024]. -/
   canBePredicate : Bool := false
   /-- Anchor constraint on the anchoring function f.
       Only applicable to at-issue modal indefinites analyzed via
-      event-relative anchoring (@cite{alonso-ovalle-royer-2024}).
+      event-relative anchoring ([alonso-ovalle-royer-2024]).
       `none` for items with non-at-issue modal components
       (e.g., *algún*, *irgendein*) where the mechanism is
       conversational implicature or domain widening. -/

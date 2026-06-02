@@ -13,11 +13,11 @@ infinitive and locative classes.
 Noun class is the fundamental organizing principle of Swahili morphosyntax:
 it conditions subject/object agreement on the verb, possessive agreement,
 demonstrative agreement, and — crucially for relativization —
-the form of resumptive pronouns (@cite{scott-2021}).
+the form of resumptive pronouns ([scott-2021]).
 
 ## Noun Class and Gender
 
-Following @cite{carstens-1991} and @cite{kramer-2015}, noun class in Bantu
+Following [carstens-1991] and [kramer-2015], noun class in Bantu
 expresses the combination of number and gender. Classes come in singular/plural
 pairs that define a "gender" (e.g., gender A = cl1/cl2 = human sg/pl).
 -/
@@ -93,8 +93,8 @@ def NounClass.subjPrefix : NounClass → String
 -- ============================================================================
 
 /-- Bantu genders: singular/plural noun class pairings.
-    @cite{carstens-1991}: different number/gender combinations constitute
-    different noun classes. @cite{scott-2021} Table 3. -/
+    [carstens-1991]: different number/gender combinations constitute
+    different noun classes. [scott-2021] Table 3. -/
 inductive Gender where
   | genderA   -- cl1/cl2 (human)
   | genderB   -- cl3/cl4
@@ -127,7 +127,7 @@ def Gender.pluralClass : Gender → NounClass
 
     Swahili's General Animate Concords (GAC) — class 1/2 agreement for all
     animate nouns regardless of class — suggests [animate] may be grammaticalized
-    as a feature (@cite{carstens-2026} §8, (109)–(110)). The core assignments
+    as a feature ([carstens-2026] §8, (109)–(110)). The core assignments
     below follow the pattern established for Xhosa and Shona, with gender E
     (9/10) bearing [animal] given the predominance of animal terms in this
     class. Genders B–D lack salient entity-class associations. -/

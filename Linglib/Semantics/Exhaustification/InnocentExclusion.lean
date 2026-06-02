@@ -3,7 +3,7 @@ import Linglib.Semantics.Exhaustification.Operators.Decidable
 
 /-!
 # Innocent Exclusion (Fox 2007) — concrete `Excluder` instance
-@cite{fox-2007} @cite{spector-2016}
+[fox-2007] [spector-2016]
 
 Wraps Fox 2007's innocent-exclusion algorithm as an `Excluder`.
 

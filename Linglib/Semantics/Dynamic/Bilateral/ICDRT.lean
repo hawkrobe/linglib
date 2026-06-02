@@ -5,10 +5,10 @@ import Linglib.Core.Logic.Bilateral.Defs
 # Bilateral Denotations for ICDRT Contexts
 
 Bilateral (positive/negative) update semantics instantiated for
-ICDRT contexts (@cite{krahmer-muskens-1995}). This captures the
+ICDRT contexts ([krahmer-muskens-1995]). This captures the
 DN-DRT / BUS mechanism applied to ICDRT's `IContext` type.
 
-This bilateral structure is NOT the same as @cite{hofmann-2025}'s full
+This bilateral structure is NOT the same as [hofmann-2025]'s full
 ICDRT analysis, which derives accessibility from veridicality + discourse
 consistency rather than bilateral negation (§5.1.1). The bilateral approach
 cannot handle disagreement or modal subordination contexts.
@@ -24,7 +24,7 @@ extensions; they are competitors.
 | Approach | Mechanism | Solves | Doesn't solve |
 |----------|-----------|--------|---------------|
 | Bilateral (this file) | Two update channels; negation = swap | DNE, bathroom sentence | Disagreement, modal subordination, speaker-vs-hearer commitment |
-| Full ICDRT (@cite{hofmann-2025}) | Propositional drefs + per-speaker DiscContext + veridicality classification | All of the above + three-way veridical/hypothetical/counterfactual | Pays in intensional machinery |
+| Full ICDRT ([hofmann-2025]) | Propositional drefs + per-speaker DiscContext + veridicality classification | All of the above + three-way veridical/hypothetical/counterfactual | Pays in intensional machinery |
 
 The bilateral approach is the lighter formalism — a single information
 state with two update polarities. The full ICDRT machinery (per-speaker
@@ -51,7 +51,7 @@ open Core
 /--
 Bilateral ICDRT denotation: positive and negative updates.
 
-Following @cite{krahmer-muskens-1995}'s bilateral negation: formulas have
+Following [krahmer-muskens-1995]'s bilateral negation: formulas have
 both positive and negative interpretations, and negation swaps them.
 This gives double negation elimination (DNE), which Hofmann uses but
 does not require — ICDRT's flat update with propositional drefs handles

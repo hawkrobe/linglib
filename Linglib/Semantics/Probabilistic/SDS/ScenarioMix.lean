@@ -5,7 +5,7 @@ import Linglib.Core.Probability.Finite
 # Scenario-mix marginal for SDS
 
 The scenario-mix node at the top of the SDS graphical model
-(@cite{erk-herbelot-2024} §5.1, Figure 5 node (1)) has *as its value* an
+([erk-herbelot-2024] §5.1, Figure 5 node (1)) has *as its value* an
 element of the simplex `Δ(Scenario)` — a distribution over scenarios.
 Per-concept scenario nodes (Figure 5 nodes (2), (3), (4)) then draw
 their value from this sampled distribution. The simplex-valued node is

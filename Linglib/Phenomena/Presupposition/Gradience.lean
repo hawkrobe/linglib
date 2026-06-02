@@ -2,8 +2,8 @@ import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Gradient Projection in Inference Judgments
-@cite{degen-tonhauser-2021} @cite{degen-tonhauser-2022}
-@cite{tonhauser-beaver-roberts-simons-2018}
+[degen-tonhauser-2021] [degen-tonhauser-2022]
+[tonhauser-beaver-roberts-simons-2018]
 
 Theory-neutral empirical observations about gradient patterns in
 presupposition projection and inference judgments.
@@ -16,16 +16,16 @@ presupposition projection and inference judgments.
 
 2. **Prior beliefs modulate projection.** Higher prior probability of the
    complement content leads to stronger projection, at both the group level
-   and the individual participant level (@cite{degen-tonhauser-2021}).
+   and the individual participant level ([degen-tonhauser-2021]).
 
 3. **The gradient pattern is robust.** The by-predicate ranking of projection
    strength replicates across experiments with Spearman's r = .991
-   (@cite{degen-tonhauser-2021}, Exp 1 vs Tonhauser & Degen 2020).
+   ([degen-tonhauser-2021], Exp 1 vs Tonhauser & Degen 2020).
 
 4. **Optionally factive predicates overlap with canonically factive ones.**
    Some "optionally factive" predicates (e.g., *inform*) project more strongly
    than some "canonically factive" predicates (e.g., *reveal*)
-   (@cite{degen-tonhauser-2022}).
+   ([degen-tonhauser-2022]).
 
 ## Sources of Gradience
 
@@ -55,7 +55,7 @@ inductive GradienceSource where
   deriving DecidableEq, Repr
 
 /-- A specific application of `GradienceSource` to factivity. The
-    @cite{grove-white-2025} paper frames the choice between the discrete
+    [grove-white-2025] paper frames the choice between the discrete
     (FDH) and gradient (FGH) hypotheses as a binary choice of source for
     the gradient projection observations.
 
@@ -63,19 +63,19 @@ inductive GradienceSource where
     explicit (mathlib convention). -/
 @[reducible] def FactivityHypothesis : Type := GradienceSource
 
-/-- The Fundamental Discreteness Hypothesis (@cite{grove-white-2025}):
+/-- The Fundamental Discreteness Hypothesis ([grove-white-2025]):
     factivity is a discrete property of an expression on each occasion
     of use. Observed gradience arises from resolved indeterminacy. -/
 def FactivityHypothesis.FDH : FactivityHypothesis := .resolved
 
-/-- The Fundamental Gradience Hypothesis (@cite{grove-white-2025}):
+/-- The Fundamental Gradience Hypothesis ([grove-white-2025]):
     there is no property distinguishing factive from non-factive
     occurrences. Gradient distinctions reflect gradient inference
     contributions. -/
 def FactivityHypothesis.FGH : FactivityHypothesis := .unresolved
 
 /-- Mechanisms by which resolved indeterminacy may be cashed out.
-    Catalogue from @cite{grove-white-2025} (Sect. 6, p. 10). The FDH
+    Catalogue from [grove-white-2025] (Sect. 6, p. 10). The FDH
     is neutral among them. -/
 inductive ResolvedMechanism where
   /-- Polysemy: a predicate has multiple senses, at least one factive and
@@ -113,7 +113,7 @@ def ProjectionProfile.priorEffect (p : ProjectionProfile) : Float :=
 
 /-- Prior beliefs modulate projection: the effect is positive for
     every predicate studied. This is the core finding of
-    @cite{degen-tonhauser-2021}. -/
+    [degen-tonhauser-2021]. -/
 def priorBeliefModulatesProjection (profile : ProjectionProfile) : Prop :=
   profile.highPrior > profile.lowPrior
 
@@ -140,7 +140,7 @@ structure NoCategoricalGap where
   canonFactiveRating : Float
   overlap : optFactiveRating > canonFactiveRating
 
-/-- Witnessed by inform (0.81) > reveal (0.70) in @cite{degen-tonhauser-2022}
+/-- Witnessed by inform (0.81) > reveal (0.70) in [degen-tonhauser-2022]
     Experiment 1a (sliding scale, collapsing over facts). -/
 def noCategoricalGap_witness : NoCategoricalGap :=
   { optFactivePred := "inform"

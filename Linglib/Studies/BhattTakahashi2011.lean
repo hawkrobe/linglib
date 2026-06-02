@@ -4,9 +4,9 @@ import Linglib.Syntax.Minimalist.DegreeMovement
 
 /-!
 # Bhatt & Takahashi 2011: Reduced and Unreduced Phrasal Comparatives
-@cite{bhatt-takahashi-2011} @cite{bhatt-pancheva-2004} @cite{bresnan-1973}
-@cite{lechner-2001} @cite{lechner-2004} @cite{merchant-2009}
-@cite{takahashi-hulsey-2009} @cite{heim-2006}
+[bhatt-takahashi-2011] [bhatt-pancheva-2004] [bresnan-1973]
+[lechner-2001] [lechner-2004] [merchant-2009]
+[takahashi-hulsey-2009] [heim-2006]
 
 Rajesh Bhatt and Shoichi Takahashi. Reduced and Unreduced Phrasal
 Comparatives. *Natural Language & Linguistic Theory* 29(3): 581–620.
@@ -14,7 +14,7 @@ Comparatives. *Natural Language & Linguistic Theory* 29(3): 581–620.
 ## What this file is
 
 A paper-faithful study of B&T 2011, the successor paper to
-@cite{bhatt-pancheva-2004} that reverses B&P's central typological
+[bhatt-pancheva-2004] that reverses B&P's central typological
 claim about English phrasal comparatives. It also delivers the
 diagnostic battery that the B&P 2004 file's closing prose flagged as
 needed for a syntactic-structure verdict.
@@ -23,7 +23,7 @@ The diagnostic schema (`BindingDatum`, `RAPredictsCoref`,
 `DAPredictsCoref`, `realizesReduction`, `realizesDirect`,
 `HeadAvailability`, `headAvailabilityFromBinding`) lives in
 `Lechner2004.lean` — B&T fn. 4 explicitly attributes (11)–(13) to
-@cite{lechner-2004}'s disjoint-reference battery. This file imports
+[lechner-2004]'s disjoint-reference battery. This file imports
 that schema and instantiates it on B&T's English and Hindi-Urdu data.
 
 ## B&T's two-analyses framework (§1)
@@ -41,7 +41,7 @@ Phrasal "John is taller than Bill" admits two competing analyses:
 
 ## The walked-back B&P 2004 claim
 
-@cite{bhatt-pancheva-2004} §1.1.1 fn. 4 rejected @cite{bresnan-1973}'s
+[bhatt-pancheva-2004] §1.1.1 fn. 4 rejected [bresnan-1973]'s
 reduction analysis of English phrasal comparatives. B&T 2011 §2's
 binding diagnostic establishes the opposite for English: the standard
 is c-commanded by everything that c-commands the associate, which is
@@ -201,7 +201,7 @@ theorem hindi_urdu_data_rules_out_reduction :
     is available. -/
 def englishAnalysisPerBhattTakahashi2011 : PhrasalAnalysis := .reduction
 
-/-- @cite{bhatt-pancheva-2004} §1.1.1 fn. 4's verdict for English,
+/-- [bhatt-pancheva-2004] §1.1.1 fn. 4's verdict for English,
     restated in B&T's vocabulary: phrasal "than NP" is genuinely
     phrasal (DA), not a reduction of clausal "than [NP is Adj]". -/
 def englishAnalysisPerBhattPancheva2004 : PhrasalAnalysis := .direct
@@ -315,9 +315,9 @@ def isReductionStyleBresnan : BresnanThanClauseAnalysis → Bool
   | .maximalDeletion => true
 
 /-- Cross-tradition bridge: B&T 2011's verdict for English (RA)
-    re-vindicates @cite{bresnan-1973}'s analysis of English phrasal
+    re-vindicates [bresnan-1973]'s analysis of English phrasal
     comparatives (`maximalDeletion`) against
-    @cite{bhatt-pancheva-2004}'s direct analysis. The agreement is at
+    [bhatt-pancheva-2004]'s direct analysis. The agreement is at
     the level of analytic style — both posit a clausal source for
     surface phrasal "than NP", differing only in vocabulary. -/
 theorem bt2011_agrees_with_bresnan_against_bp2004 :

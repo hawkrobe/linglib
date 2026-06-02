@@ -4,7 +4,7 @@ import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # Harmony–OT Bridge
-@cite{prince-smolensky-1993} @cite{rose-walker-2011}
+[prince-smolensky-1993] [rose-walker-2011]
 
 Derives OT constraints from a `HarmonySystem`, connecting the direct
 computation in `Harmony.Defs` to the OT evaluation framework in
@@ -19,7 +19,7 @@ Given a `HarmonySystem sys`:
 - **IDENT-[F]**: faithfulness — penalizes input→output changes on the
   harmony feature. Defined as `Corr.identViol` on the `(input, output)`
   edge of a binary parallel-pair correspondence between feature-projected
-  tiers, i.e., IDENT-IO of @cite{mccarthy-prince-1995} specialized to
+  tiers, i.e., IDENT-IO of [mccarthy-prince-1995] specialized to
   the harmony feature.
 
 ## Key result
@@ -66,7 +66,7 @@ def spreadViolations (sys : HarmonySystem) (triggerVal : Bool)
     binary parallel-pair correspondence between the feature-projected
     tiers `input.map (·.spec sys.feature)` and
     `output.map (·.spec sys.feature)`. This structurally identifies
-    IDENT-[F] as IDENT-IO of @cite{mccarthy-prince-1995} restricted to
+    IDENT-[F] as IDENT-IO of [mccarthy-prince-1995] restricted to
     the harmony feature. -/
 def identViolations (sys : HarmonySystem)
     (input output : List Segment) : Nat :=

@@ -19,9 +19,9 @@ import Linglib.Fragments.Yoruba.Coordination
 
 /-!
 # Haspelmath (2007): Coordination — structural typology
-@cite{haspelmath-2007} @cite{stassen-2000} @cite{noonan-1992} @cite{schwartz-1989}
-@cite{rowlands-1969} @cite{sridhar-1990} @cite{dench-1995} @cite{beyer-1992}
-@cite{kornfilt-1997}
+[haspelmath-2007] [stassen-2000] [noonan-1992] [schwartz-1989]
+[rowlands-1969] [sridhar-1990] [dench-1995] [beyer-1992]
+[kornfilt-1997]
 
 Martin Haspelmath. "Coordination." In *Language Typology and Syntactic
 Description, Vol. II*, ed. T. Shopen, 2007.
@@ -45,7 +45,7 @@ language sample below to formalise the J-μ predictions; the `iso` and
   `MitrovicSauerland2016.lean`.
 * `coAB_unattested` — Haspelmath's structural generalisation that the
   monosyndetic pattern `co-A B` (prepositive on first coordinand only) is
-  typologically absent (cf. @cite{stassen-2000}, n=260).
+  typologically absent (cf. [stassen-2000], n=260).
 * `comitative_source_monosyndetic`, `focus_particle_source_bisyndetic` —
   the two diachronic-source / syndesis correlations Haspelmath proposes
   in §5.1.
@@ -59,7 +59,7 @@ language sample below to formalise the J-μ predictions; the `iso` and
   directory and creating one for a single morpheme is overkill.
 * Pattern data follow the cited primary sources, *not* the M&S analyses
   layered on top — e.g., Turkish *de* is monosyndetic postpositive per
-  @cite{haspelmath-2007} (23), not bisyndetic.
+  [haspelmath-2007] (23), not bisyndetic.
 -/
 
 namespace Haspelmath2007
@@ -104,7 +104,7 @@ def japanese : ConjunctionSystem :=
 /-- Hungarian: "és" (J, free, prepositive), "is" (MU, free, postpositive).
     "is" is also the additive focus particle ("also").
     One of the languages in the M&S 2016 sample exhibiting triadic exponency
-    (all three of two μ heads + J head) — see @cite{mitrovic-sauerland-2016}
+    (all three of two μ heads + J head) — see [mitrovic-sauerland-2016]
     (28). -/
 def hungarian : ConjunctionSystem :=
   { language := "Hungarian"
@@ -118,7 +118,7 @@ def hungarian : ConjunctionSystem :=
 
 /-- Georgian: "da" (J, free), "-c" (MU, bound clitic).
     "-c" is also the additive/focus particle. Classified as exhibiting all
-    three M&S strategies per @cite{mitrovic-2021}; @cite{mitrovic-sauerland-2016}
+    three M&S strategies per [mitrovic-2021]; [mitrovic-sauerland-2016]
     itself uses SE Macedonian, Hungarian, and Avar as the triadic-exponency
     languages — Georgian's inclusion here is from the later literature. -/
 def georgian : ConjunctionSystem :=
@@ -145,8 +145,8 @@ def latin : ConjunctionSystem :=
   , iso := "lat" }
 
 /-- Korean: "-(i)rang" (J, bound, postpositive) and "-to" (MU, bound, additive).
-    Not discussed in @cite{haspelmath-2007}; classification follows
-    @cite{mitrovic-2021}. -/
+    Not discussed in [haspelmath-2007]; classification follows
+    [mitrovic-2021]. -/
 def korean : ConjunctionSystem :=
   { language := "Korean"
   , morphemes :=
@@ -170,7 +170,7 @@ def slovenian : ConjunctionSystem :=
 
 /-- Lango (Nilotic, Uganda): "kèdè" is a comitative marker that also serves
     as coordinator. Classic AND-language with comitative source giving
-    monosyndetic A co-B (@cite{noonan-1992}:163, @cite{haspelmath-2007} (20)). -/
+    monosyndetic A co-B ([noonan-1992]:163, [haspelmath-2007] (20)). -/
 def lango : ConjunctionSystem :=
   { language := "Lango"
   , morphemes :=
@@ -181,7 +181,7 @@ def lango : ConjunctionSystem :=
   , iso := "laj" }
 
 /-- Hausa (Chadic, Nigeria): "da" means both "with" (comitative) and "and"
-    (conjunction) (@cite{schwartz-1989}:32,36; @cite{haspelmath-2007} (12)). -/
+    (conjunction) ([schwartz-1989]:32,36; [haspelmath-2007] (12)). -/
 def hausa : ConjunctionSystem :=
   { language := "Hausa"
   , morphemes :=
@@ -192,7 +192,7 @@ def hausa : ConjunctionSystem :=
   , iso := "hau" }
 
 /-- Yoruba (Kwa, Nigeria): "àtí" in "àtí A àtí B" — canonical prepositive
-    bisyndetic coordination (@cite{rowlands-1969}:201ff, @cite{haspelmath-2007} (25)). -/
+    bisyndetic coordination ([rowlands-1969]:201ff, [haspelmath-2007] (25)). -/
 def yoruba : ConjunctionSystem :=
   { language := "Yoruba"
   , morphemes := [ { entry := Yoruba.Coordination.ati } ]
@@ -201,7 +201,7 @@ def yoruba : ConjunctionSystem :=
   , iso := "yor" }
 
 /-- Kannada (Dravidian): postpositive "-u" on each coordinand gives A-co B-co
-    (@cite{sridhar-1990}:106, @cite{haspelmath-2007} (5)). "-u" is also the
+    ([sridhar-1990]:106, [haspelmath-2007] (5)). "-u" is also the
     Dravidian additive/focus particle. -/
 def kannada : ConjunctionSystem :=
   { language := "Kannada"
@@ -213,7 +213,7 @@ def kannada : ConjunctionSystem :=
   , iso := "kan" }
 
 /-- Martuthunira (Pama-Nyungan, W. Australia): "-thurti" on each coordinand
-    gives A-co B-co (@cite{dench-1995}:98, @cite{haspelmath-2007} (26)). -/
+    gives A-co B-co ([dench-1995]:98, [haspelmath-2007] (26)). -/
 def martuthunira : ConjunctionSystem :=
   { language := "Martuthunira"
   , morphemes :=
@@ -223,7 +223,7 @@ def martuthunira : ConjunctionSystem :=
   , iso := "vma" }
 
 /-- Classical Tibetan: "-daŋ" is postpositive on first coordinand, giving A-co B.
-    Derives from comitative source (@cite{beyer-1992}:240, @cite{haspelmath-2007} (21)). -/
+    Derives from comitative source ([beyer-1992]:240, [haspelmath-2007] (21)). -/
 def classicalTibetan : ConjunctionSystem :=
   { language := "Classical Tibetan"
   , morphemes :=
@@ -247,7 +247,7 @@ def hindiUrdu : ConjunctionSystem :=
 
 /-- Turkish: "ve" (J, free, prepositive) and "de" (MU, bound enclitic,
     postpositive on first word of second coordinand).
-    Per @cite{haspelmath-2007} (23) citing @cite{kornfilt-1997}:120, *de* is
+    Per [haspelmath-2007] (23) citing [kornfilt-1997]:120, *de* is
     monosyndetic postpositive (A B-co); *de…de* bisyndetic also exists as a
     marked emphatic variant. -/
 def turkish : ConjunctionSystem :=
@@ -307,9 +307,9 @@ def msLanguages : List ConjunctionSystem :=
 
 /-! ### Structural / diachronic generalisations -/
 
-/-- @cite{haspelmath-2007}'s key structural generalisation: the monosyndetic
+/-- [haspelmath-2007]'s key structural generalisation: the monosyndetic
     pattern `co-A B` (prepositive on first coordinand only) is unattested for
-    conjunction, per @cite{stassen-2000}'s 260-language sample. Verified over
+    conjunction, per [stassen-2000]'s 260-language sample. Verified over
     the 19-language sample via `List.contains`, which uses the `BEq` instance
     to sidestep `∈`'s `LawfulBEq` requirement. -/
 theorem coAB_unattested :

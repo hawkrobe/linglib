@@ -2,13 +2,13 @@ import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Content Layers
-@cite{van-der-sandt-maier-2003}
+[van-der-sandt-maier-2003]
 
 Semantic content is stratified into layers that determine its discourse
 behavior: how it projects, what denial can target, and whether it
 addresses the QUD.
 
-@cite{van-der-sandt-maier-2003} propose Layered DRT (LDRT), where every DRS
+[van-der-sandt-maier-2003] propose Layered DRT (LDRT), where every DRS
 condition carries a label — `pr` (presupposition), `fr` (at-issue), or
 `imp` (implicature) — that determines how it behaves in denial. This
 module extracts the layer system as a standalone type that unifies several
@@ -49,7 +49,7 @@ conditions is defined in `Studies/VanDerSandtMaier2003.lean` as
 
 `Semantics/Composition/Layered.lean` defines a 2-layer Prop-valued
 sibling `BiLayered W` (atIssue / notAtIssue, both `W → Prop`) with
-@cite{martinez-vera-2026}'s composition rules I/II/III. Use `LayeredProp`
+[martinez-vera-2026]'s composition rules I/II/III. Use `LayeredProp`
 when LDRT's offensive-layer machinery is needed; use `BiLayered` when
 the analysis only distinguishes at-issue from not-at-issue and operates
 over `Set W` (verum, evidential illocution, biased polar questions). A
@@ -62,7 +62,7 @@ namespace Semantics.ContentLayer
 
 /-- The layer of a semantic contribution, determining its discourse behavior.
 
-    @cite{van-der-sandt-maier-2003} introduce this three-way distinction in
+    [van-der-sandt-maier-2003] introduce this three-way distinction in
     Layered DRT, but the classification is framework-independent: it captures
     a difference in how content projects, how it can be challenged, and what
     denial can target. -/
@@ -152,7 +152,7 @@ theorem LayeredProp.roundtrip_prprop {W : Type*} (p : PrProp W) :
 /-- Layer `l` of `φ` is offensive with respect to a correction when no world
     satisfies both the layer's content and the correction.
 
-    Off(φ, K) from @cite{van-der-sandt-maier-2003}: the offensive layers are
+    Off(φ, K) from [van-der-sandt-maier-2003]: the offensive layers are
     those whose content is inconsistent with the correction context. In
     propositional denial, only `fr` is offensive; in presuppositional denial,
     `pr` (and `fr`) are offensive; in implicature denial, `imp` is offensive. -/

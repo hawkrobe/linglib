@@ -4,7 +4,7 @@ import Linglib.Core.Scales.Scale
 
 /-!
 # Gradability Typology Bridge
-@cite{kennedy-2007}
+[kennedy-2007]
 
 Per-entry verification that the string-based typology data in `Data.lean`
 matches the Fragment entries in `Fragments/English/Predicates/Adjectival.lean`

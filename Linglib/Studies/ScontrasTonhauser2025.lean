@@ -6,7 +6,7 @@ import Linglib.Studies.DegenTonhauser2021
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# @cite{scontras-tonhauser-2025}
+# [scontras-tonhauser-2025]
 
 Projection emerges from RSA over speaker's private assumptions, not lexical
 presupposition. L1 jointly infers world state and speaker's belief state.
@@ -22,7 +22,7 @@ Domain: 6 utterances × 4 worlds × 15 belief states × 2 QUDs. α = 10.
 ## Section 3 Parameters (fn. 12)
 
 - **Belief states A**: all 15 non-empty subsets of W
-  (following @cite{qing-goodman-lassiter-2016})
+  (following [qing-goodman-lassiter-2016])
 - **Prior over A**: uniform
 - **α = 10**
 - **P(C)**: 2/3 (higher) or 1/3 (lower); P(BEL|C) = 1/2
@@ -59,10 +59,10 @@ effect (β = 0.16, p < .001). The QUD manipulation was not significant
 p < .001) and (2c) QUD effect (β = 0.14, p < .001) with a stronger QUD
 manipulation. Exp 2 did not manipulate prior probability.
 
-## Connection to @cite{degen-tonhauser-2021}
+## Connection to [degen-tonhauser-2021]
 
 The prior effect (prediction 2b) replicates the core finding of
-@cite{degen-tonhauser-2021}: higher prior probability of complement content
+[degen-tonhauser-2021]: higher prior probability of complement content
 leads to stronger projection. D&T 2021 demonstrate this across 20 predicates
 with β = 0.14 (categorical) / β = 0.28 (individual-level). S&T 2025's RSA
 model provides the theoretical explanation: L1's Bayesian inference naturally
@@ -138,7 +138,7 @@ def literalMeaning : Utterance → WorldState → Bool
 -- ============================================================================
 
 /-- Speaker's private assumptions: all 15 non-empty subsets of W.
-    Section 3 follows @cite{qing-goodman-lassiter-2016}: A ranges over all
+    Section 3 follows [qing-goodman-lassiter-2016]: A ranges over all
     non-empty subsets of the world space. -/
 inductive BeliefState where
   -- Singletons (4)
@@ -695,11 +695,11 @@ theorem model_predicts_effects :
    by native_decide, by native_decide⟩
 
 -- ============================================================================
--- §12. Connection to @cite{degen-tonhauser-2021}
+-- §12. Connection to [degen-tonhauser-2021]
 -- ============================================================================
 
 /-- The prior effect found by S&T 2025 (β = 0.16) replicates the prior effect
-    found by @cite{degen-tonhauser-2021} (β = 0.14 categorical, β = 0.28
+    found by [degen-tonhauser-2021] (β = 0.14 categorical, β = 0.28
     individual). Both find that higher prior probability of the complement
     content leads to stronger projection. The RSA model's `prediction_2b`
     provides the theoretical explanation for this empirical finding. -/

@@ -8,11 +8,11 @@ import Linglib.Fragments.Latin.Adjectives
 
 /-!
 # Bobaljik (2012): Universals in Comparative Morphology
-@cite{bobaljik-2012}
+[bobaljik-2012]
 
 ## Overview
 
-@cite{bobaljik-2012} surveys comparative and superlative morphology
+[bobaljik-2012] surveys comparative and superlative morphology
 across languages and derives several cross-linguistic generalizations
 from the **containment hypothesis**: the superlative structurally
 contains the comparative (`[[[ADJ] CMPR] SPRL]`).
@@ -55,7 +55,7 @@ alternative infrastructure (`Semantics/Alternatives/HornScale.lean`),
 enabling automatic generation of the alternatives needed for scalar
 implicature computation. Was previously in `Morphology/Core/
 ScaleFromParadigm.lean`; relocated 0.230.455 (sole consumer is this study
-file). @cite{horn-1972} @cite{kennedy-2007} -/
+file). [horn-1972] [kennedy-2007] -/
 
 namespace Morphology.ScaleFromParadigm
 
@@ -159,7 +159,7 @@ theorem english_all_attested :
 -- § 4: SSG (Synthetic Superlative Generalization)
 -- ============================================================================
 
-/-- **SSG** (@cite{bobaljik-2012}): If an entry has a synthetic
+/-- **SSG** ([bobaljik-2012]): If an entry has a synthetic
     superlative form, it also has a synthetic comparative form.
     No English adjective has `-est` without `-er`. -/
 theorem english_ssg :
@@ -177,7 +177,7 @@ def isSyntheticComp (e : AdjModifierEntry) : Bool :=
   | some f => !(f.toList.any (· == ' '))
   | none => false
 
-/-- **RSG** (@cite{bobaljik-2012}): Root suppletion is limited to
+/-- **RSG** ([bobaljik-2012]): Root suppletion is limited to
     synthetic comparatives. If an entry has a suppletive root (CMPR
     differs from POS), then its comparative form is synthetic (not
     periphrastic).
@@ -196,7 +196,7 @@ theorem english_rsg :
 -- § 6: Lesslessness
 -- ============================================================================
 
-/-! **Lesslessness** (@cite{bobaljik-2012}): No synthetic comparative
+/-! **Lesslessness** ([bobaljik-2012]): No synthetic comparative
 of inferiority exists in any language. English expresses inferiority
 periphrastically ("less tall"), never synthetically.
 

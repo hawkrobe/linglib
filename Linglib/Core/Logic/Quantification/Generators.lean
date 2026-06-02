@@ -2,7 +2,7 @@ import Linglib.Core.Logic.Quantification.Defs
 
 /-!
 # GQ Generators: Meets and Joins of Individual Quantifiers
-@cite{xiang-2016} @cite{elliott-nicolae-sauerland-2022}
+[xiang-2016] [elliott-nicolae-sauerland-2022]
 
 Conjunction and disjunction GQs as iterated meet/join of Montagovian
 individual quantifiers in the NPQ Boolean algebra.
@@ -56,7 +56,7 @@ variable {α : Type*}
     X = {a, b}, this is `individual a ⊓ individual b`: the unique GQ that
     holds of P iff both a and b have P.
 
-    @cite{xiang-2016}: conjunction GQs range over non-empty subsets of an
+    [xiang-2016]: conjunction GQs range over non-empty subsets of an
     entity domain, generating the "conjunctive" answers to questions. -/
 def conjGQ (X : List α) : NPQ α :=
   X.foldr (fun a acc => individual a ⊓ acc) ⊤
@@ -65,7 +65,7 @@ def conjGQ (X : List α) : NPQ α :=
 
     ⊔(X) = ⨆_{x ∈ X} individual(x)
 
-    @cite{xiang-2016}: disjunction GQs generate "disjunctive" answers. -/
+    [xiang-2016]: disjunction GQs generate "disjunctive" answers. -/
 def disjGQ (X : List α) : NPQ α :=
   X.foldr (fun a acc => individual a ⊔ acc) ⊥
 

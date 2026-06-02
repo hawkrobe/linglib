@@ -2,7 +2,7 @@ import Linglib.Features.ModalIndefinite
 
 /-!
 # French Modal Indefinite Fragment
-@cite{jayez-tovena-2006}
+[jayez-tovena-2006]
 
 Lexical entry for French modal indefinite *n'importe quel*.
 
@@ -21,7 +21,7 @@ open Features.ModalIndefinite
 
 /-- *n'importe quel*: at-issue, random choice only, not upper-bounded.
     Literally "no matter which"; conveys indiscriminacy
-    (@cite{jayez-tovena-2006}). -/
+    ([jayez-tovena-2006]). -/
 def nimporteQuelEntry : ModalIndefiniteEntry where
   language := "French"
   form := "n'importe quel"

@@ -4,9 +4,9 @@ import Linglib.Features.Acceptability
 
 /-!
 # L-Analyticity in Natural Language
-@cite{barwise-cooper-1981} @cite{gajewski-2002} @cite{von-fintel-1993}
+[barwise-cooper-1981] [gajewski-2002] [von-fintel-1993]
 
-Formalization of @cite{gajewski-2002}. A sentence is L-analytic iff its logical
+Formalization of [gajewski-2002]. A sentence is L-analytic iff its logical
 skeleton (obtained by replacing non-logical items with variables) is true
 or false under all variable assignments. L-analytic sentences are ungrammatical.
 
@@ -199,7 +199,7 @@ theorem everyXisY_not_LAnalytic [Inhabited Entity] :
 
 /-- Von Fintel's but-exceptive semantics.
     The first conjunct is the presupposition that the exception set C is
-    nonempty (@cite{von-fintel-1993}: "but X" presupposes X is non-vacuous). -/
+    nonempty ([von-fintel-1993]: "but X" presupposes X is non-vacuous). -/
 def butExceptive (D : (Entity → Prop) → (Entity → Prop) → Prop)
     (A C P : Entity → Prop) : Prop :=
   (∃ x, C x) ∧

@@ -3,7 +3,7 @@ import Linglib.Syntax.HPSG.Basic
 
 /-!
 # A worked HPSG signature, the Head Feature Principle, and a computational bridge
-@cite{richter-2000}, @cite{richter-2024}, @cite{pollard-sag-1994}
+[richter-2000], [richter-2024], [pollard-sag-1994]
 
 A minimal HPSG signature fragment over the RSRL substrate, the **Head Feature Principle** as a
 description, two worked head-complement models (one satisfying, one violating the HFP) showing
@@ -11,7 +11,7 @@ the principle genuinely filters, and a deliberately partial bridge from the proj
 *computational* HPSG core (`HPSG.HeadCompRule.hfp`) to a sort-agreement description.
 
 The HFP here works at **CAT** granularity (what `HeadCompRule.hfp` exposes), a valence-free
-stand-in for the canonical **HEAD**-value sharing (@cite{pollard-sag-1994}). The bridge is
+stand-in for the canonical **HEAD**-value sharing ([pollard-sag-1994]). The bridge is
 partial: `HeadCompRule.hfp` is value equality, the grammar's `pathEq` HFP is token identity —
 genuinely different notions, so the bridge proves only sort-agreement (see that theorem). Only
 `hpsgSig` is `@[reducible]`; the models are plain `def`s with explicit carrier instances.
@@ -79,7 +79,7 @@ instance (I : Interpretation hpsgSig) : ∀ ρ, DecidablePred (I.R ρ) := fun ρ
 
 /-! ### The Head Feature Principle -/
 
-/-- The **Head Feature Principle** (@cite{pollard-sag-1994}; @cite{richter-2024}, Ch. 3, (3a)),
+/-- The **Head Feature Principle** ([pollard-sag-1994]; [richter-2024], Ch. 3, (3a)),
 at CAT granularity: a headed phrase shares its category (path `CAT`) with its head daughter
 (path `HD CAT`), as token identity (`pathEq`). The mother is the described entity `:`; `CAT`
 and `HD CAT` are `:`-rooted paths (`Term.path`). -/

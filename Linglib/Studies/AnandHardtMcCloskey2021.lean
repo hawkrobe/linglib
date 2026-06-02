@@ -4,9 +4,9 @@ import Linglib.Syntax.Minimalist.Ellipsis.FormalMatching
 import Linglib.Syntax.Minimalist.Ellipsis.DeletionDomain
 
 /-!
-# @cite{anand-hardt-mccloskey-2021} — Corpus Data
+# [anand-hardt-mccloskey-2021] — Corpus Data
 
-@cite{anand-hardt-mccloskey-2021}
+[anand-hardt-mccloskey-2021]
 
 Distributional findings from the Santa Cruz Sluicing Corpus (SCSS),
 a 4,700-example annotated data set of naturally occurring English sluices.
@@ -195,10 +195,10 @@ theorem attested_iff_nonzero (d : MismatchDimension) :
 -- ============================================================================
 -- § 7: Sluicing — Minimalist Bridge Theorems
 -- ============================================================================
--- @cite{anand-hardt-mccloskey-2021} @cite{anand-hardt-mccloskey-2025}
+-- [anand-hardt-mccloskey-2021] [anand-hardt-mccloskey-2025]
 -- Connects empirical sluicing data — both the individual examples in
 -- `Phenomena.Ellipsis.Sluicing` and the corpus findings from
--- @cite{anand-hardt-mccloskey-2021} — to the Syntactic Isomorphism Condition
+-- [anand-hardt-mccloskey-2021] — to the Syntactic Isomorphism Condition
 -- (SIC) formalized in
 -- `Minimalist.Ellipsis.FormalMatching`.
 
@@ -290,7 +290,7 @@ theorem sic_predicts_germanCaseMatch :
 /-- SIC correctly predicts `germanCaseMismatch` is ungrammatical:
     accusative wh-phrase does not match dative correlate. The SIC
     blocks sluicing because dative ≠ accusative within the argument
-    domain (@cite{merchant-2001}: German *wem*/*wen* data). -/
+    domain ([merchant-2001]: German *wem*/*wen* data). -/
 theorem sic_predicts_germanCaseMismatch :
     germanCaseMismatch.grammatical = false ∧
     ¬ structurallyIdentical dativeVP accusativeVP :=
@@ -339,10 +339,10 @@ theorem sic_partition_confirmed :
   ⟨rfl, rfl, by decide, by decide⟩
 
 -- ============================================================================
--- § 7.3: Voice Mismatch Resolution (@cite{anand-hardt-mccloskey-2021})
+-- § 7.3: Voice Mismatch Resolution ([anand-hardt-mccloskey-2021])
 -- ============================================================================
 
--- @cite{anand-hardt-mccloskey-2021} resolves the voice puzzle: voice mismatches are correctly
+-- [anand-hardt-mccloskey-2021] resolves the voice puzzle: voice mismatches are correctly
 -- blocked by the SIC because active v[agentive] ≠ passive v[nonThematic]
 -- within the argument domain (v is F1, inside vP). The 0 corpus count
 -- is predicted, not puzzling.
@@ -353,7 +353,7 @@ theorem sic_partition_confirmed :
 
     This resolves the voice puzzle from the earlier analysis. The puzzle
     arose from treating voice as outside the argument domain (like T/Mod),
-    but @cite{anand-hardt-mccloskey-2021} shows that voice flavor is encoded on v, which IS inside
+    but [anand-hardt-mccloskey-2021] shows that voice flavor is encoded on v, which IS inside
     the argument domain. Uses `activeVP`/`passiveVP` from FormalMatching. -/
 theorem voice_correctly_blocked :
     ¬ structurallyIdentical activeVP passiveVP ∧
@@ -378,7 +378,7 @@ theorem why_dominates :
     scss.whyCount > scss.totalSluices / 2 := by decide
 
 -- ============================================================================
--- § 8: Merchant's Deletion Domain Predictions (@cite{merchant-2013})
+-- § 8: Merchant's Deletion Domain Predictions ([merchant-2013])
 -- ============================================================================
 
 -- Merchant's [E]-feature theory provides a complementary explanation for

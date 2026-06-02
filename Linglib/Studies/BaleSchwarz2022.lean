@@ -5,14 +5,14 @@ import Linglib.Semantics.Measurement.Basic
 import Linglib.Fragments.English.MeasurePhrases
 
 /-!
-# @cite{bale-schwarz-2022} — Measurements from *per* without complex dimensions
-@cite{bale-schwarz-2022} @cite{coppock-2021}
+# [bale-schwarz-2022] — Measurements from *per* without complex dimensions
+[bale-schwarz-2022] [coppock-2021]
 
 Proceedings of SALT 32: 543--560.
 
 ## Key Claims
 
-1. **Against the division theory**: @cite{coppock-2021}'s lexical entry
+1. **Against the division theory**: [coppock-2021]'s lexical entry
    ⟦per⟧ = λr. λq. q/r (eq. 1) forms quotient quantities (e.g., 0.9 g/mL).
    This theory both **undergenerates** (fails for measurement verbs, §3)
    and **overgenerates** (predicts unit insensitivity in pseudo-partitives, §6).
@@ -35,7 +35,7 @@ Proceedings of SALT 32: 543--560.
 6. **Copular puzzle** (§8): An acknowledged open problem where the anaphoric
    theory assigns density copular sentences a dimension mismatch.
 
-## Connection to @cite{bale-schwarz-2026}
+## Connection to [bale-schwarz-2026]
 
 This SALT paper is the precursor to the L&P paper. The anaphoric theory
 of *per* originates here. The 2026 paper extends it with:
@@ -59,13 +59,13 @@ open Features (Acceptability)
 -- § 1. The Two Theories of *per*
 -- ============================================================================
 
-/-- **Division theory** (@cite{coppock-2021}, eq. 1): ⟦per⟧ = λr. λq. q/r.
+/-- **Division theory** ([coppock-2021], eq. 1): ⟦per⟧ = λr. λq. q/r.
 
 Takes a denominator quantity r and a numerator quantity q, outputs their
 ratio — a quotient quantity in a complex dimension (e.g., g/mL in WT/VOL). -/
 def perDivision (r q : ℚ) : ℚ := q / r
 
-/-- **Anaphoric theory** (@cite{bale-schwarz-2022}, eq. 16):
+/-- **Anaphoric theory** ([bale-schwarz-2022], eq. 16):
 ⟦per⟧ = λq. λx. μ_{dim(q)}(x) / q.
 
 Takes a unit quantity q and an entity x, returns a pure number:
@@ -240,7 +240,7 @@ theorem verb_dimension_matches_fragment :
 
 /-! ### MUCH: a covert measure term
 
-@cite{bale-schwarz-2022} adopt @cite{nakanishi-2007}'s analysis where a covert
+[bale-schwarz-2022] adopt [nakanishi-2007]'s analysis where a covert
 element MUCH mediates pseudo-partitives (eq. 24). MUCH's denotation (eq. 25):
 
     ⟦MUCH⟧ = λq. λx. μ(x) = q
@@ -495,7 +495,7 @@ a weight quantity — a dimension mismatch.
 Under the division theory, (46) is straightforward: the MP denotes 0.9 g/mL,
 a quotient quantity matching the density dimension.
 
-@cite{bale-schwarz-2022} note that *for every* paraphrases (ex. 48: "0.9 grams
+[bale-schwarz-2022] note that *for every* paraphrases (ex. 48: "0.9 grams
 for every cubic centimeter") and naturally occurring density expressions
 (ex. 49: "968 people for every km²") suggest that density copular sentences
 may not require quantity division. This remains an open question. -/
@@ -807,7 +807,7 @@ theorem pseudoPartitive_specializes_to_measureVerb (μ_wt μ_vol : MeasureFn E)
 end Derivation
 
 -- ============================================================================
--- § 13. Cross-reference to @cite{bale-schwarz-2026}
+-- § 13. Cross-reference to [bale-schwarz-2026]
 -- ============================================================================
 
 /-! ### Connection to the 2026 L&P paper

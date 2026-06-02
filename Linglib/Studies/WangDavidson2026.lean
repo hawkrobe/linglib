@@ -6,7 +6,7 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Wang & Davidson (2026): Presupposition Filtering in Disjunction
-@cite{wang-davidson-2026}
+[wang-davidson-2026]
 
 Yiqian Wang and Kathryn Davidson, "Presupposition filtering in
 disjunction: The role of exclusive interpretation."
@@ -48,7 +48,7 @@ computed early enough to be visible to the projection computation.
 Without this, bivalent EXH + SK would not predict Type A because
 the projection computation would see only the original inclusive
 truth conditions. This assumption is architecturally non-trivial —
-see @cite{wang-davidson-2026} §5.
+see [wang-davidson-2026] §5.
 
 ## Empirical Contribution (§4)
 
@@ -101,7 +101,7 @@ theorem sk_exclusive_no_filter : Truth3.xor .true .indet = .indet := rfl
 /-- The filtering contrast is symmetric: both `join` and `xor` are
     commutative, so the direction doesn't matter for SK.
 
-    This is what @cite{kalomoiros-schwarz-2024} call "symmetric
+    This is what [kalomoiros-schwarz-2024] call "symmetric
     projection" — filtering is equally (un)available in both
     directions. -/
 theorem sk_filtering_symmetric :
@@ -154,8 +154,8 @@ inductive TheoryClass where
   | typeB
   deriving DecidableEq, Repr
 
-/-- Exhaustification strategy: bivalent (@cite{fox-2007}) or trivalent
-    (@cite{spector-sudo-2017}). -/
+/-- Exhaustification strategy: bivalent ([fox-2007]) or trivalent
+    ([spector-sudo-2017]). -/
 inductive ExhStrategy where
   | bivalent   -- Fox 2007
   | exh1       -- Spector & Sudo 2017, weak negation
@@ -305,7 +305,7 @@ theorem excl_undef_at_pOnly : exclDisj .pOnly = .indet := by rfl
 
 /-- Alternative set for the bathroom disjunction: {p∨q, p, q, p∧q}.
     The conjunction alternative `p ∧ q` is the only IE alternative
-    (by @cite{fox-2007}). -/
+    (by [fox-2007]). -/
 def bathAlts : List (BathWorld → Truth3) :=
   [ inclDisj, pT3, qT3
   , fun w => pT3 w ⊓ qT3 w ]

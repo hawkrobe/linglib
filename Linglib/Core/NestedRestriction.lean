@@ -12,14 +12,14 @@ contains everything.
 
 This structure unifies three independently-developed formalizations:
 
-1. **Domain restriction** (@cite{ritchie-schiller-2024}): spatial regions induce nested
+1. **Domain restriction** ([ritchie-schiller-2024]): spatial regions induce nested
    candidate domain restrictors for quantifiers. `S = SpatialScale`, `D = Entity`.
 
-2. **Comparison class inference** (@cite{tessler-goodman-2022}): comparison classes
+2. **Comparison class inference** ([tessler-goodman-2022]): comparison classes
    (subordinate vs. superordinate) induce nested reference populations for adjective
    thresholds. `S = ComparisonClass`, `D = Person`.
 
-3. **ASL height** (@cite{davidson-gagne-2022}): vertical height in signing space
+3. **ASL height** ([davidson-gagne-2022]): vertical height in signing space
    overtly marks quantifier domain size. `S = VerticalHeight`, `D = Entity`.
    Higher signing maps to mereologically larger domains via pronominal elements.
 

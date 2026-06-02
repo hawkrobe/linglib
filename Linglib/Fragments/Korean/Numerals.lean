@@ -2,12 +2,12 @@ import Linglib.Typology.Numeral.WALS
 
 /-!
 # Korean numeral profile (WALS Chs 53–56, 131)
-@cite{wals-2013}
+[wals-2013]
 -/
 
 namespace Korean
 
-/-- Korean. Coded after @cite{wals-2013}: WALS 53A codes Korean
+/-- Korean. Coded after [wals-2013]: WALS 53A codes Korean
     "one-th, two-th, three-th" (Sino-Korean *je-* + cardinal, fully regular) →
     `allFromCardinals`; the native paradigm's *cheot-jjae* 'first' suppletion is
     a secondary system not picked up by the WALS coding. WALS 55A codes numeral

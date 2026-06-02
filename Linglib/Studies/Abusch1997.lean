@@ -4,11 +4,11 @@ import Linglib.Semantics.Dynamic.PLA.Belief
 import Linglib.Data.Examples.Schema
 
 /-!
-# @cite{abusch-1997}: Sequence of Tense and Temporal de re
-@cite{abusch-1997} @cite{sharvit-2003} @cite{heim-1994-comments}
-@cite{lewis-1979-attitudes} @cite{cresswell-vonstechow-1982}
+# [abusch-1997]: Sequence of Tense and Temporal de re
+[abusch-1997] [sharvit-2003] [heim-1994-comments]
+[lewis-1979-attitudes] [cresswell-vonstechow-1982]
 
-@cite{abusch-1997}'s theory: tense morphemes are temporal pronouns
+[abusch-1997]'s theory: tense morphemes are temporal pronouns
 (variables with presupposed constraints and binding modes). The key
 innovation is **temporal de re**: tense can take wide scope over
 attitude operators via res movement, just as DPs can scope out of
@@ -26,8 +26,8 @@ Two derivation styles coexist in this file:
    `Semantics.Tense.DeRe.TemporalDeReReading`): `Intension (KContext)
    Time` time-concept + holder-context base anchor + modal-alternative
    quantification over a `Set (WorldTimeIndex W Time)`. The Abusch §3 +
-   def. 13 architecture, faithful to the @cite{lewis-1979-attitudes} /
-   @cite{cresswell-vonstechow-1982} centered-world reduction of de re.
+   def. 13 architecture, faithful to the [lewis-1979-attitudes] /
+   [cresswell-vonstechow-1982] centered-world reduction of de re.
    The two styles are bridged by
    `Semantics.Tense.DeRe.TemporalDeReReading.isFelicitousWith_iff_tensePronoun_fullPresupposition`.
 
@@ -42,15 +42,15 @@ constructors). See `Tense/DeRe.lean` docstring for what's deferred
 
 1. **Tense as pronoun**: `TensePronoun` (in `Core.Time.Tense`) with
    variable index, constraint, and binding mode.
-2. **Upper Limit Constraint (ULC)**: stated by @cite{abusch-1997} §7
+2. **Upper Limit Constraint (ULC)**: stated by [abusch-1997] §7
    ("the now of an epistemic alternative is an upper limit for the
    denotation of tenses"); presuppositional construal due to
-   @cite{heim-1994-comments}, endorsed by Abusch 1997 fn 20. Lives in
+   [heim-1994-comments], endorsed by Abusch 1997 fn 20. Lives in
    `Semantics/Tense/Basic.lean` as `upperLimitConstraint`,
    formalized at the value level as `embeddedR ≤ matrixE`. **Note:**
    this value-level reduction strips the modal-alternative
    quantification the original formulation carries; making the modal
-   layer explicit (over `HistoricalAlternatives W Time` à la @cite{klecha-2016})
+   layer explicit (over `HistoricalAlternatives W Time` à la [klecha-2016])
    is deferred.
 3. **Temporal de re**: tense variable in the res position of an
    attitude. The value-level shadow uses `TensePronoun.fullPresupposition`:
@@ -75,13 +75,13 @@ constructors). See `Tense/DeRe.lean` docstring for what's deferred
 
 ## Limitations
 
-- Relative clause tense: @cite{sharvit-2003}'s challenge (the mechanism
+- Relative clause tense: [sharvit-2003]'s challenge (the mechanism
   doesn't extend straightforwardly to relative clauses where the tense
   takes the perspective of a participant)
-- Modal-tense interaction: not addressed in @cite{abusch-1997}'s
-  framework (see @cite{klecha-2016} for a successor)
+- Modal-tense interaction: not addressed in [abusch-1997]'s
+  framework (see [klecha-2016] for a successor)
 - Counterfactual tense: not addressed
-- Counterpart-relation isomorphism @cite{abusch-1997} §12 invokes for
+- Counterpart-relation isomorphism [abusch-1997] §12 invokes for
   the double-access reading derivation (the constraint that actual
   and belief worlds be temporally isomorphic, eliminating most of the
   4 cells in the DAR diagram on p. 43): not formalized
@@ -186,7 +186,7 @@ end Examples
 -- § Derivation Theorems
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{abusch-1997} derives the shifted reading: a free past
+/-- [abusch-1997] derives the shifted reading: a free past
     variable with presupposition checked against the (shifted) eval
     time. The past constraint gives R < evalTime = matrixE.
 
@@ -205,7 +205,7 @@ theorem abusch_derives_shifted {Time : Type*} [LinearOrder Time]
   simp only [embeddedFrame, ReichenbachFrame.isPast]
   exact hPresup
 
-/-- @cite{abusch-1997} derives the simultaneous reading: a bound
+/-- [abusch-1997] derives the simultaneous reading: a bound
     variable receives the matrix event time via lambda abstraction. -/
 theorem abusch_derives_simultaneous {Time : Type*}
     (tp : TensePronoun) (g : TemporalAssignment Time)
@@ -214,7 +214,7 @@ theorem abusch_derives_simultaneous {Time : Type*}
     (embeddedFrame matrixFrame (tp.resolve g) (tp.resolve g)).isPresent := by
   simp only [embeddedFrame, ReichenbachFrame.isPresent, hBind]
 
-/-- @cite{abusch-1997} derives the simultaneous reading via the bound
+/-- [abusch-1997] derives the simultaneous reading via the bound
     variable mechanism: updating the temporal assignment so the tense
     variable receives matrix E. -/
 theorem abusch_derives_simultaneous_via_binding {Time : Type*}
@@ -224,7 +224,7 @@ theorem abusch_derives_simultaneous_via_binding {Time : Type*}
     matrixFrame.eventTime :=
   tp.bound_resolve_eq_binder g matrixFrame.eventTime
 
-/-- @cite{abusch-1997}'s double-access *placeholder*: indexical present
+/-- [abusch-1997]'s double-access *placeholder*: indexical present
     requires truth at BOTH speech time (indexical rigidity) AND matrix
     event time (attitude accessibility). The full Abusch derivation
     involves doxastic alternatives + acquaintance relations + the
@@ -236,7 +236,7 @@ theorem abusch_derives_double_access {Time : Type*}
     doubleAccess p speechTime matrixEventTime :=
   ⟨h_speech, h_matrix⟩
 
-/-- @cite{abusch-1997} derives temporal de re: the tense variable in
+/-- [abusch-1997] derives temporal de re: the tense variable in
     res position is evaluated in the matrix context, giving wide-scope
     temporal reference. When the resolved referent satisfies the past
     constraint against the (matrix-shifted) eval time, the de re reading
@@ -259,7 +259,7 @@ theorem abusch_derives_temporal_de_re {Time : Type*} [LinearOrder Time]
 -- § Centered-World Substrate Derivations
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{abusch-1997}'s temporal de re via the centered-world substrate
+/-- [abusch-1997]'s temporal de re via the centered-world substrate
     (`Semantics/Tense/DeRe.lean`): any `TemporalDeReReading`
     whose actual res-time precedes the holder's now satisfies the past
     constraint. Value-level felicity reduces to the actualRes ordering;
@@ -271,7 +271,7 @@ theorem abusch_derives_temporal_de_re_via_acquaintance
     (hBefore : dr.actualRes < dr.holderContext.time) :
     dr.isFelicitousWith .past := hBefore
 
-/-- @cite{abusch-1997}'s temporal de re with **modal-alternative
+/-- [abusch-1997]'s temporal de re with **modal-alternative
     quantification** (substrate-level lift of the §3 p. 9 base-world
     condition): the time-concept identifies the same time across an
     `alternatives : Set (WorldTimeIndex W Time)`. The substrate is
@@ -318,7 +318,7 @@ theorem abusch_derives_temporal_de_re_full_metaphysical
     The *content* of the theorem is structural — it shows the de re
     reading PLA proves about *individuals* and the de re reading
     `TemporalDeReReading` exposes for *times* are instantiations of
-    the same acquaintance substrate, making true @cite{abusch-1997}'s
+    the same acquaintance substrate, making true [abusch-1997]'s
     p. 6 prose claim ("To apply the same machinery to de re belief,
     a further constraint is required") via the `Acquaintance`
     polymorphism. -/

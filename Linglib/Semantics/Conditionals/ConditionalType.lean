@@ -41,7 +41,7 @@ open Discourse.Commitment.Table
 /--
 The two fundamental conditional interpretation types.
 
-Following @cite{cao-white-lassiter-2025} and building on @cite{iatridou-1991}, @cite{haegeman-2003}:
+Following [cao-white-lassiter-2025] and building on [iatridou-1991], [haegeman-2003]:
 - **Hypothetical (HC)**: Antecedent is supposed; speaker uncertain about its truth
 - **Premise (PC)**: Antecedent echoes prior discourse; no uncertainty implication
 
@@ -241,7 +241,7 @@ theorem pc_licenses_ppi :
 **PCs do NOT license NPIs in the antecedent.**
 
 Despite being semantically DE, PCs lack the hypothetical epistemic status
-required for NPI licensing. This is the key insight from @cite{cao-white-lassiter-2025}.
+required for NPI licensing. This is the key insight from [cao-white-lassiter-2025].
 -/
 theorem pc_blocks_npi :
     (ConditionalPolarityContext.fromConditionalType .premise).licensesNPI = false := by

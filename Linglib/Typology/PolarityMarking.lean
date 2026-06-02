@@ -3,8 +3,8 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Typology.PolarityMarking
-@cite{turco-braun-dimroth-2014} @cite{bluhdorn-lohnstein-2012} @cite{sudhoff-2012}
-@cite{hohle-1992} @cite{holmberg-2016}
+[turco-braun-dimroth-2014] [bluhdorn-lohnstein-2012] [sudhoff-2012]
+[hohle-1992] [holmberg-2016]
 
 Per-language typological substrate for polarity-marking strategies
 (neg → affirm switches): the form-class taxonomy + per-marker
@@ -28,17 +28,17 @@ the substrate's load-bearing self-aware note):
 
 This taxonomy treats polarity-marking strategies as form-class properties
 (a particle either *is* or *is not* `polarityReversal`), aligned with the
-@cite{bluhdorn-lohnstein-2012} / @cite{sudhoff-2012} / @cite{turco-braun-dimroth-2014}
+[bluhdorn-lohnstein-2012] / [sudhoff-2012] / [turco-braun-dimroth-2014]
 tradition that pairs polarity contrast with specific lexical or prosodic
 devices. See `Studies/TurcoBraunDimroth2014.lean` for
 the canonical consumer.
 
-**This framework is contested.** @cite{matic-nikolaeva-2018} (in
-@cite{dimroth-sudhoff-2018}) explicitly reject the form-class encoding,
+**This framework is contested.** [matic-nikolaeva-2018] (in
+[dimroth-sudhoff-2018]) explicitly reject the form-class encoding,
 arguing that "polarity focus" is not a fixed form-meaning association
 but a pragmatic interpretation arising from context — they propose
 *salient polarity* as the correct construct.
-@cite{garassino-jacob-2018} (same volume, fn 13) endorse the M&N view:
+[garassino-jacob-2018] (same volume, fn 13) endorse the M&N view:
 "PF (or salient polarity as they prefer to name this specific type of
 emphasis) is not directly encoded by certain linguistic forms in a
 given language but can be pragmatically conveyed by different
@@ -51,11 +51,11 @@ salient-polarity property is stated as a Lean theorem in
 `Studies/MaticNikolaeva2018.lean`. The substrate
 keeps the form-class enum because (a) it has 8 cross-language
 consumers via TBD2014, (b) M&N's framework is one alternative among
-several — alongside @cite{hohle-1992}'s verum-as-illocutionary-operator
+several — alongside [hohle-1992]'s verum-as-illocutionary-operator
 (`Studies/Hohle1992.lean`),
-@cite{romero-han-2004}'s epistemic-CONJ FOR-SURE-CommonGround
+[romero-han-2004]'s epistemic-CONJ FOR-SURE-CommonGround
 (`Studies/RomeroHan2004.lean`), and
-@cite{gutzmann-2015}'s use-conditional sentence-mood operators
+[gutzmann-2015]'s use-conditional sentence-mood operators
 (`Semantics/Mood/Gutzmann.lean` +
 `Studies/Gutzmann2015.lean`, where verum
 composes via DEONT/EPIS/HKNOW dimensions orthogonal to truth-
@@ -71,14 +71,14 @@ namespace Typology.PolarityMarking
 inductive Strategy where
   /-- Sentence-internal affirmative particle (e.g., Dutch *wel*) -/
   | particle
-  /-- Pitch accent on the finite verb (@cite{hohle-1992} Verum focus) -/
+  /-- Pitch accent on the finite verb ([hohle-1992] Verum focus) -/
   | verumFocus
   /-- Polarity-reversing particle: affirms [+Pol] while contradicting a
       negative context (e.g., German *doch*, Swedish *jo*, French *si*;
-      @cite{holmberg-2016}). The cross-linguistic lumping under this
+      [holmberg-2016]). The cross-linguistic lumping under this
       constructor records a shared functional role only — the surface
       categories vary (response particle vs. clause-initial construction
-      vs. discourse particle); see @cite{garassino-jacob-2018} fn 11. -/
+      vs. discourse particle); see [garassino-jacob-2018] fn 11. -/
   | polarityReversal
   /-- Other strategy (e.g., pre-utterance particle, intonation pattern) -/
   | other
@@ -110,7 +110,7 @@ inductive Env where
 
     See module docstring for the framework-commitment note: this schema
     records form-class properties in the Blühdorn/Sudhoff/TBD2014
-    tradition, an encoding contested by @cite{matic-nikolaeva-2018}
+    tradition, an encoding contested by [matic-nikolaeva-2018]
     (formalized in `Studies/MaticNikolaeva2018.lean`).
     The schema is intentionally thin — syntactic position
     (clause-initial construction vs. response particle vs.

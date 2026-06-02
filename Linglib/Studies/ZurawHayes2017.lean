@@ -2,10 +2,10 @@ import Linglib.Core.Constraint.Separability
 import Linglib.Studies.Zuraw2010
 
 /-!
-# @cite{zuraw-hayes-2017}: Intersecting Constraint Families
-@cite{zuraw-hayes-2017}
+# [zuraw-hayes-2017]: Intersecting Constraint Families
+[zuraw-hayes-2017]
 
-@cite{zuraw-hayes-2017} "Intersecting Constraint Families: An Argument
+[zuraw-hayes-2017] "Intersecting Constraint Families: An Argument
 for Harmonic Grammar" (Language 93(3): 497–546).
 
 ## Main claims
@@ -126,13 +126,13 @@ def NasalSubCandidate.project (c : NasalSubCandidate) : Zuraw2010.NSCand :=
 The 4 shared constraints come from Zuraw 2010 via `comap` along the
 projection. The 2 prefix-indexed UNIFORMITY constraints are local. -/
 
-/-- C₁ = NasSub (markedness): per @cite{zuraw-hayes-2017} ex. (3),
+/-- C₁ = NasSub (markedness): per [zuraw-hayes-2017] ex. (3),
     "Assess one violation for any nasal + obstruent sequence, where + is
     a morpheme boundary within a word." Lifted from `Zuraw2010.nasSub`. -/
 def nasSub : NamedConstraint NasalSubCandidate :=
   Zuraw2010.nasSub.comap NasalSubCandidate.project
 
-/-- C₂ = \*NC: per @cite{zuraw-2010} ex. (17), "A [+nasal] segment must
+/-- C₂ = \*NC: per [zuraw-2010] ex. (17), "A [+nasal] segment must
     not be immediately followed by a [-voice, -sonorant] segment". Lifted
     from `Zuraw2010.starNC`. Violated by NO only for voiceless stems (k). -/
 def starNC : NamedConstraint NasalSubCandidate :=
@@ -227,9 +227,9 @@ theorem violDiff_independence :
 
 /-! ## § 5: Empirical Rates (2×2 square) -/
 
-/-- Empirical rates of nasal substitution from @cite{zuraw-2010}'s
+/-- Empirical rates of nasal substitution from [zuraw-2010]'s
     Tagalog dictionary type frequencies, arranged per the
-    @cite{zuraw-hayes-2017} 2×2 sub-square. The four cells correspond
+    [zuraw-hayes-2017] 2×2 sub-square. The four cells correspond
     to the two extreme prefixes (maŋ-other = highest rate,
     paŋ-res = lowest) crossed with /b/ (voiced) and /k/ (voiceless).
 
@@ -392,7 +392,7 @@ theorem hz_identity_concrete (w : Fin 6 → ℚ) :
 
 /-! ## § 11: NHG Produces Consistent Ordering -/
 
-/-- **NHG produces consistent ordering** (@cite{zuraw-hayes-2017}):
+/-- **NHG produces consistent ordering** ([zuraw-hayes-2017]):
     when the harmony scores satisfy `ConstantLogitDiff`, NHG
     probabilities `Φ(d(x)/σ)` exhibit across-the-board consistency.
 

@@ -6,7 +6,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
-# Probability-Ordering Bridge — @cite{kratzer-2012}
+# Probability-Ordering Bridge — [kratzer-2012]
 
 Connects probability assignments to Kratzer ordering sources.
 

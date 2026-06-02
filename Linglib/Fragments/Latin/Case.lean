@@ -5,9 +5,9 @@ import Linglib.Morphology.Case.Allomorphy
 open Morphology.Case.Allomorphy
 
 /-!
-# Latin Case Inventory @cite{blake-1994}
+# Latin Case Inventory [blake-1994]
 
-Latin has **6 cases** in the standard description (@cite{blake-1994}, passim):
+Latin has **6 cases** in the standard description ([blake-1994], passim):
 NOM, ACC, GEN, DAT, ABL, VOC. Latin is Blake's primary example language
 throughout *Case* — its paradigms illustrate syncretism patterns (Ch. 2,
 pp. 19–24), the core/peripheral distinction, and the ABL's wide functional
@@ -54,7 +54,7 @@ def inventoryWithLocative : Finset Features.Case :=
 example : Features.Case.IsValidInventory inventoryWithLocative := by decide
 
 -- ============================================================================
--- § 2: Syncretism Patterns (@cite{blake-1994}, pp. 19–24)
+-- § 2: Syncretism Patterns ([blake-1994], pp. 19–24)
 -- ============================================================================
 
 /-- NOM/ACC syncretism in neuter nouns (2nd, 3rd, 4th declension).
@@ -79,13 +79,13 @@ theorem dat_abl_inventory_adjacent :
     InventoryAdjacent coreInventory .dat .abl := by decide
 
 -- ============================================================================
--- § 3: Case Extension (@cite{heine-2009}, Table 29.6)
+-- § 3: Case Extension ([heine-2009], Table 29.6)
 -- ============================================================================
 
 /-- Latin ABL is the textbook case of case extension: a single
     morphological form covers source (ablativus separativus), instrumental
     (ablativus instrumenti), and causal (ablativus causae) functions.
-    These are exactly the ablative extension targets in @cite{heine-2009}
+    These are exactly the ablative extension targets in [heine-2009]
     Table 29.6, formalized in `Features.Case.Extends`. -/
 theorem abl_extends_to_inst :
     Features.Case.Extends .abl .inst := by decide

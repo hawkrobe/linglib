@@ -3,13 +3,13 @@ import Linglib.Semantics.Modality.BiasedPQ
 
 /-!
 # Romero (2024): Biased Polar Questions
-@cite{romero-2024}
+[romero-2024]
 
 ## Cross-construction unification: the bias predicate is shared
 
-@cite{romero-2024}'s HiNQ ("Isn't Jane coming?") *mandatorily* conveys
+[romero-2024]'s HiNQ ("Isn't Jane coming?") *mandatorily* conveys
 the speaker's prior bias for p — the same `contradictsPriorBelief`
-condition @cite{napoli-nespor-1976} identified for Italian *non₂*
+condition [napoli-nespor-1976] identified for Italian *non₂*
 comparatives. The licensing *predicate* is shared even though the two
 constructions differ in illocutionary force (declarative vs interrogative);
 the bridge is at the condition-level, not at the form-level.
@@ -34,7 +34,7 @@ open Semantics.Modality.BiasedPQ
 
 /-- HiNQ's original-bias filter requires speaker bias for p. The
     licensed bias profile's `contradictsPriorBelief` axis is the
-    @cite{napoli-nespor-1976} analogue of exactly that bias condition. -/
+    [napoli-nespor-1976] analogue of exactly that bias condition. -/
 theorem licensed_contradictsPriorBelief_matches_hiNQ_bias :
     licensedProfile.licenses → originalBiasOK .HiNQ .forP = true := by
   intro _

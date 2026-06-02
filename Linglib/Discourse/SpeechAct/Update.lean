@@ -2,7 +2,7 @@ import Linglib.Discourse.CommonGround
 
 /-!
 # Speech-Act Update: Stalnakerian narrowing as a typeclass
-@cite{stalnaker-1978} @cite{krifka-2015} @cite{anderson-2021}
+[stalnaker-1978] [krifka-2015] [anderson-2021]
 
 A unifying typeclass over discourse-state types that admit a one-step
 "speaker asserts φ" operation whose effect on the projected context
@@ -10,7 +10,7 @@ set is to narrow it by φ (Stalnaker's classical assertion semantics,
 lifted to be framework-generic).
 
 Frameworks whose assertion semantics differ structurally from
-Stalnaker's one-step narrowing — notably @cite{farkas-bruce-2010},
+Stalnaker's one-step narrowing — notably [farkas-bruce-2010],
 where assertion proposes via `dcS` and `table` without touching
 `cg` — do **not** instantiate this typeclass. That's an
 informationally important non-instance, not a gap.

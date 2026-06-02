@@ -7,9 +7,9 @@ import Mathlib.Data.Fintype.Basic
 /-!
 # Abney & Keshet (2025): PIP Compositional Operations
 
-@cite{abney-keshet-2025} @cite{keshet-abney-2024}
+[abney-keshet-2025] [keshet-abney-2024]
 
-The Glossa companion paper to @cite{keshet-abney-2024} enriches PIP with
+The Glossa companion paper to [keshet-abney-2024] enriches PIP with
 explicit set-based compositional operations: sigma evaluation (Σxφ),
 set-based generalized quantifiers (EVERY/SOME as set inclusion/intersection),
 three-argument modals with modal bases, and the FX type-lifting operation

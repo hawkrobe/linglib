@@ -4,7 +4,7 @@ import Mathlib.Order.Defs.PartialOrder
 /-!
 # Tree Orders
 
-@cite{barker-pullum-1990}'s framework-agnostic notion of a syntactic tree:
+[barker-pullum-1990]'s framework-agnostic notion of a syntactic tree:
 a set of nodes equipped with a dominance partial order. This is the carrier
 on which command relations (`Core.Order.commandRelation`) are defined.
 
@@ -35,7 +35,7 @@ namespace Core.Order
 open Set
 
 /-- Tree-shaped subset of a partially-ordered `Node` type
-    (@cite{barker-pullum-1990} Definition 1).
+    ([barker-pullum-1990] Definition 1).
 
     The dominance order is `(· ≤ ·)` from `[PartialOrder Node]`; this
     structure adds tree-specific data: a designated root, the `nodes`
@@ -66,7 +66,7 @@ def TreeOrder.properDom {Node : Type} [PartialOrder Node]
   a ≤ b ∧ a ≠ b
 
 /-- **Upper bounds** of a node with respect to property `P`
-    (@cite{barker-pullum-1990} Definition 2).
+    ([barker-pullum-1990] Definition 2).
 
     `UB(a, P) = {b | b properly dominates a ∧ b ∈ P}`. -/
 def upperBounds {Node : Type} [PartialOrder Node]

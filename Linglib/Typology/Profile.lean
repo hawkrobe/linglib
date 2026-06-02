@@ -13,7 +13,7 @@ natural surface notation for fragment files.
 
 ## Examples
 
-* V2 micro-parameters indexed by @cite{westergaard-2009}'s `ForceHead`
+* V2 micro-parameters indexed by [westergaard-2009]'s `ForceHead`
   (`Syntax/Minimalism/Formal/ExtendedProjection/Basic.lean`).
 * Future: NPI licensing environments per language; WALS feature
   presence; Greenbergian universal antecedents.

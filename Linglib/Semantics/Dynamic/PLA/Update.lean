@@ -1,11 +1,11 @@
 /-
 # PLA Dynamic Update Semantics
 
-@cite{dekker-2012} Chapter 3: Information Update and Support.
+[dekker-2012] Chapter 3: Information Update and Support.
 
 ## Three Equivalent Views
 
-@cite{dekker-2012} shows three equivalent perspectives on dynamic meaning:
+[dekker-2012] shows three equivalent perspectives on dynamic meaning:
 
 1. Contents: sets of world-assignment pairs (what information is conveyed)
 2. Updates: functions from input states to output states (how information changes)
@@ -156,7 +156,7 @@ theorem Formula.mem_update {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
 
 
 /--
-Observation 16 (Proper Update, @cite{dekker-2012} §3.2, p.60).
+Observation 16 (Proper Update, [dekker-2012] §3.2, p.60).
 
 The update of φ is intersection with the content of φ:
 
@@ -209,7 +209,7 @@ theorem InfoState.supports_conj {E : Type*} [Nonempty E] (s : InfoState E) (M : 
 
 
 /--
-Observation 17 (Proper Support, @cite{dekker-2012} §3.2, p.61).
+Observation 17 (Proper Support, [dekker-2012] §3.2, p.61).
 
 A state supports φ iff updating with φ leaves it unchanged:
 
@@ -237,7 +237,7 @@ Dynamic conjunction: sequential update, φ then ψ.
 
 Non-commutative: "A man came. He sat down." ≠ "He sat down. A man came."
 Non-idempotent: ∃x.φ; ∃x.φ ≠ ∃x.φ (may introduce different witnesses).
-(Non-commutativity and non-idempotence are Observation 9, @cite{dekker-2012} §2.2, p.32.)
+(Non-commutativity and non-idempotence are Observation 9, [dekker-2012] §2.2, p.32.)
 -/
 def Formula.dynConj {E : Type*} [Nonempty E] (M : Model E) (φ ψ : Formula) : Update E :=
   φ.update M ;; ψ.update M
@@ -267,7 +267,7 @@ theorem dynConj_static {E : Type*} [Nonempty E] (M : Model E)
 
 
 /--
-Existentials are not idempotent (@cite{dekker-2012} Observation 9, §2.2, p.32).
+Existentials are not idempotent ([dekker-2012] Observation 9, §2.2, p.32).
 
 "A man came. A man sat down." - may be different men.
 Each ∃x.φ independently chooses a witness.
@@ -278,7 +278,7 @@ theorem exists_domain_idempotent (x : VarIdx) (φ : Formula) :
   simp only [Formula.domain, Finset.union_self]
 
 /--
-DNE failure for dref-introducing formulas (discussed in @cite{dekker-2012} §2.2, around Observation 9).
+DNE failure for dref-introducing formulas (discussed in [dekker-2012] §2.2, around Observation 9).
 
 "It's not the case that no man came. He sat down." - "He" is problematic.
 Negation "traps" drefs: ∃x.P(x) exports x, but ¬¬∃x.P(x) only tests existence.
@@ -530,7 +530,7 @@ theorem dynamicEntails_weakening {E : Type*} [Nonempty E] (M : Model E)
 
 
 /--
-Observation 10 (@cite{dekker-2012} §2.3, p.33): Conservative Entailment.
+Observation 10 ([dekker-2012] §2.3, p.33): Conservative Entailment.
 
 Dynamic entailment coincides with classical pointwise entailment:
 φ ⊨_dyn ψ iff for all g, ê, M,g,ê ⊨ φ implies M,g,ê ⊨ ψ.
@@ -553,7 +553,7 @@ theorem obs10_dynamic_eq_classical_entailment {E : Type*} [Nonempty E] (M : Mode
     exact hclass p.1 p.2 hp.2
 
 /--
-Observation 11 (@cite{dekker-2012} §2.3, p.34): Deduction Theorem.
+Observation 11 ([dekker-2012] §2.3, p.34): Deduction Theorem.
 
 φ ∧ χ ⊨_dyn ψ  ↔  φ ⊨_dyn χ → ψ
 

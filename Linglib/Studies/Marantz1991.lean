@@ -3,8 +3,8 @@ import Linglib.Syntax.Minimalist.Voice
 import Linglib.Fragments.Georgian.Agreement
 
 /-!
-# @cite{marantz-1991} — Case and Licensing
-@cite{marantz-1991}
+# [marantz-1991] — Case and Licensing
+[marantz-1991]
 
 Two central claims:
 
@@ -24,12 +24,12 @@ Morphological case obeys a disjunctive hierarchy:
     lexically governed > dependent (ACC/ERG) > unmarked > default
 
 This is formalized in `DependentCase.lean` as `CaseSource`
-(lexical > dependent > unmarked). @cite{marantz-1991}'s fourth level,
+(lexical > dependent > unmarked). [marantz-1991]'s fourth level,
 **default** case (absolute last resort when no other principle applies),
 is not modeled separately; it is conceptually distinct from unmarked
 (which is environment-sensitive — e.g., GEN inside NPs, NOM inside IPs)
 but our current grammar never needs to distinguish them.
-@cite{baker-2015} later developed the hierarchy into a full
+[baker-2015] later developed the hierarchy into a full
 cross-linguistic algorithm.
 
 ## Dependent Case
@@ -67,15 +67,15 @@ together), abstract ABS → morphological NOM (unmarked surface form).
 
 The case realization hierarchy (lexical > dependent > unmarked) parallels
 the Moravcsik agreement accessibility hierarchy (formalized below as
-`Minimalist.CaseAccessibility` from @cite{preminger-2014}). Both rank
+`Minimalist.CaseAccessibility` from [preminger-2014]). Both rank
 case types identically; the former determines case *assignment* priority,
 the latter determines agreement *visibility*. The bridge
 `sourceToAccessibility` connects the two.
 
 ## Case-Discrimination Apparatus (relocated from `Minimalism/CaseDiscrimination.lean`)
 
-The Moravcsik-hierarchy primitives below come from @cite{preminger-2014}
-(with @cite{bobaljik-2008}, @cite{scott-2023}). They are paper-specific
+The Moravcsik-hierarchy primitives below come from [preminger-2014]
+(with [bobaljik-2008], [scott-2023]). They are paper-specific
 to the case-discrimination tradition that this study is in conversation
 with, and are not consumed elsewhere in the library, so they live here
 under `namespace Minimalist` for symmetry with other Minimalist apparatus.
@@ -171,7 +171,7 @@ def thresholds : List CaseAccessibility :=
     unmarked = NOM). Therefore, the pattern S=P≠A (ergative-absolutive
     agreement) is impossible: you cannot target S without also targeting A.
 
-    This is @cite{bobaljik-2008}'s typological gap: NOM-ACC case + ERG-ABS
+    This is [bobaljik-2008]'s typological gap: NOM-ACC case + ERG-ABS
     agreement is unattested. -/
 theorem nomAcc_a_equals_s (threshold : CaseAccessibility) :
     (agreementFromThreshold nomAcc threshold).aAgrees =
@@ -315,7 +315,7 @@ theorem aorist_is_ergative : georgianLangType .aorist = .ergative := rfl
     - Class 1 (transitive): 2 NPs (subject + object), both structural
     - Class 2 (unaccusative): 1 NP (sole argument, raised to Spec-TP)
     - Class 3 (unergative): 2 *positions* — subject + empty object.
-      @cite{marantz-1991}: Georgian counts an unfilled object position as
+      [marantz-1991]: Georgian counts an unfilled object position as
       a distinct position for dependent case, explaining why unergatives
       get ERG despite being intransitive.
     - Class 4 (psych): 2 NPs — DAT subject (lexical/quirky) + NOM object -/
@@ -345,12 +345,12 @@ private def getCase! (label : String) (results : List CasedNP) : Features.Case :
 
 /-- Georgian-specific mapping from abstract case (algorithm output) to
     surface morphological case. This is the language-specific spell-out
-    at Morphological Structure — the locus of @cite{marantz-1991}'s
+    at Morphological Structure — the locus of [marantz-1991]'s
     abstract/morphological case distinction.
 
     - Abstract ACC → morphological DAT (dative and accusative
       morphological case have fallen together in Georgian into what
-      is called "the dative case" — @cite{marantz-1991} p. 12)
+      is called "the dative case" — [marantz-1991] p. 12)
     - Abstract ABS → morphological NOM (unmarked surface form)
     - Abstract ERG → morphological ERG -/
 def georgianSpellout : Features.Case → Features.Case
@@ -391,7 +391,7 @@ theorem object_derivation_matches :
 -- § 6: The Ergative Generalization
 -- ============================================================================
 
-/-! @cite{marantz-1991}'s Ergative generalization: ergative case may appear
+/-! [marantz-1991]'s Ergative generalization: ergative case may appear
     on the subject of an intransitive clause, but not on a derived subject.
 
     Under dependent case, this follows from the NP count: ERG requires
@@ -434,7 +434,7 @@ theorem ergative_requires_competitor :
 -- § 7: Burzio's Generalization Decomposed
 -- ============================================================================
 
-/-! @cite{marantz-1991}'s key insight: Burzio's generalization
+/-! [marantz-1991]'s key insight: Burzio's generalization
     ("non-thematic subject → no accusative object") splits into:
 
     1. **EPP**: sentences require subjects (projection + EPP suffice)
@@ -487,7 +487,7 @@ theorem anticausative_one_np : npCount voiceAnticausative 1 = 1 := rfl
     The dependent case algorithm derives both patterns from the same
     mechanism with different `CaseLanguageType` settings.
 
-    @cite{marantz-1991}: Hindi ERG is prohibited on unaccusative subjects
+    [marantz-1991]: Hindi ERG is prohibited on unaccusative subjects
     (*siitta (\*ne) aayii* 'Sita arrived'), optional on unergatives, and
     obligatory on transitives. The unaccusative prohibition follows from
     dependent case: a sole argument has no competitor. -/
@@ -556,7 +556,7 @@ theorem phantom_np_parameter :
 -- § 9: All Three Levels of the Hierarchy in One Language
 -- ============================================================================
 
-/-! Georgian demonstrates all three levels of @cite{marantz-1991}'s
+/-! Georgian demonstrates all three levels of [marantz-1991]'s
     case realization hierarchy within a single language:
 
     | Level     | `CaseSource` | Georgian example |
@@ -582,9 +582,9 @@ theorem lexical_bleeds_dependent_georgian :
 -- § 10: Case Hierarchy ↔ Agreement Hierarchy Bridge
 -- ============================================================================
 
-/-! @cite{marantz-1991}'s case realization hierarchy (lexical > dependent >
+/-! [marantz-1991]'s case realization hierarchy (lexical > dependent >
     unmarked) parallels the Moravcsik agreement accessibility hierarchy
-    (@cite{preminger-2014}, formalized in `CaseDiscrimination.lean`). Both
+    ([preminger-2014], formalized in `CaseDiscrimination.lean`). Both
     rank case types identically — the same hierarchy governs which case
     "wins" in realization and which DPs are visible to agreement probes.
 
@@ -592,7 +592,7 @@ theorem lexical_bleeds_dependent_georgian :
 
 /-- Map case assignment source to agreement accessibility level.
     The hierarchies are isomorphic: lexical→lexical, dependent→dependent,
-    unmarked→unmarked. Agree-based case (@cite{baker-vinokurova-2010})
+    unmarked→unmarked. Agree-based case ([baker-vinokurova-2010])
     behaves like unmarked for accessibility — once T values NOM, the NP
     is fully visible to higher probes, just like an unmarked-NOM NP. -/
 def sourceToAccessibility : CaseSource → CaseAccessibility
@@ -641,7 +641,7 @@ theorem class2_unmarked_highest_accessibility :
     external argument (1 internal only), so no case competitor exists and
     the sole NP gets unmarked case.
 
-    This is @cite{marantz-1991}'s decomposition of Burzio made explicit:
+    This is [marantz-1991]'s decomposition of Burzio made explicit:
     the "Burzio effect" (no ACC without a thematic subject) follows from
     Voice's argument structure, not from Case theory. -/
 
@@ -676,7 +676,7 @@ theorem burzio_from_voice :
 -- § 12: Agreement–Case Independence (§7 Core Insight)
 -- ============================================================================
 
-/-! @cite{marantz-1991}'s central insight about Georgian split ergativity:
+/-! [marantz-1991]'s central insight about Georgian split ergativity:
     case direction changes by tense series, but agreement does NOT.
 
     Case: present = accusative (ACC downward), aorist = ergative (ERG upward).

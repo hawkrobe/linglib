@@ -5,11 +5,11 @@ import Linglib.Semantics.Gradability.Basic
 import Linglib.Studies.Rett2015
 
 /-!
-# @cite{rett-2015} — Neo-Gricean Account of Evaluativity
-@cite{rett-2015} @cite{horn-1984} @cite{bierwisch-1989} @cite{kennedy-2007}
-@cite{lassiter-goodman-2017}
+# [rett-2015] — Neo-Gricean Account of Evaluativity
+[rett-2015] [horn-1984] [bierwisch-1989] [kennedy-2007]
+[lassiter-goodman-2017]
 
-Self-contained study of @cite{rett-2015} "The Semantics of Evaluativity"
+Self-contained study of [rett-2015] "The Semantics of Evaluativity"
 Chapters 3–5: theoretical analysis (Q-implicature, Marked Meaning Principle,
 markedness machinery) plus prediction-matching against the empirical data
 from `Rett2015.lean`.
@@ -68,7 +68,7 @@ open Semantics.Gradability
 /--
 Polarity of an adjective: positive (unmarked) vs negative (marked).
 
-From @cite{bierwisch-1989}, @cite{kennedy-2007}:
+From [bierwisch-1989], [kennedy-2007]:
 - **Positive-polar** (tall, happy, expensive): unmarked, default
 - **Negative-polar** (short, unhappy, cheap): marked, requires more justification
 
@@ -97,7 +97,7 @@ instance : DecidablePred Polarity.IsMarked :=
 Production cost associated with polarity.
 
 Marked forms cost more to produce, licensing manner implicatures.
-This follows @cite{horn-1984}'s Division of Pragmatic Labor.
+This follows [horn-1984]'s Division of Pragmatic Labor.
 -/
 def Polarity.cost : Polarity → ℚ
   | .positive => 1  -- baseline
@@ -119,7 +119,7 @@ def mannerImplicatureApplies : AdjectivalConstruction → Bool
 /--
 Types of implicature that can derive evaluativity.
 
-Following @cite{rett-2015} Chapter 4-5:
+Following [rett-2015] Chapter 4-5:
 - **Quantity (Q)**: Avoid uninformative utterances → strengthen to evaluative
 - **Manner (R)**: Use of costly form signals marked meaning → evaluativity
 
@@ -140,7 +140,7 @@ inductive EvaluativityImplicature where
 /--
 Which implicature type derives evaluativity for this construction + polarity?
 
-From @cite{rett-2015} Chapter 5:
+From [rett-2015] Chapter 5:
 
 | Construction   | Positive-polar | Negative-polar |
 |----------------|----------------|----------------|
@@ -411,7 +411,7 @@ def deriveRImplicature (c : AdjectivalConstruction) (p : Polarity) : RImplicatur
 /--
 The Marked Meaning Principle (MMP) derivation record.
 
-From @cite{rett-2015} Chapter 5, following @cite{horn-1984}:
+From [rett-2015] Chapter 5, following [horn-1984]:
 
 The MMP states that using a marked form when an unmarked equivalent
 exists signals that the speaker intends the marked meaning.
@@ -558,7 +558,7 @@ def deriveEvaluativityWithLexicon
 /--
 Degree tautology analysis for positive constructions.
 
-Following @cite{rett-2015} Chapter 3:
+Following [rett-2015] Chapter 3:
 
 Without evaluativity, "John is tall" is a degree tautology:
 - It asserts that John has SOME degree of height

@@ -4,7 +4,7 @@ import Linglib.Semantics.Attitudes.Doxastic
 
 /-!
 # Situation-Dependent Attitude Semantics
-@cite{heim-kratzer-1998} @cite{kratzer-1998} @cite{lewis-1979-attitudes} @cite{von-stechow-2009} @cite{ogihara-1989}
+[heim-kratzer-1998] [kratzer-1998] [lewis-1979-attitudes] [von-stechow-2009] [ogihara-1989]
 
 Attitude operators with temporal parameters: `believe`'s complement type shifts
 from `st` (propositions = W → Bool) to `s(it)` (situation-dependent propositions =
@@ -17,8 +17,8 @@ Standard attitude semantics evaluates embedded clauses relative to worlds only:
   ⟦x believes p⟧(w) = ∀w' ∈ Dox_x(w). p(w')
 
 This blocks sequence-of-tense (SOT) analysis, where embedded tense receives
-a shifted interpretation relative to the matrix event time. @cite{von-stechow-2009}
-synthesizes @cite{lewis-1979-attitudes}, @cite{heim-kratzer-1998}, and @cite{ogihara-1989}: `believe`'s
+a shifted interpretation relative to the matrix event time. [von-stechow-2009]
+synthesizes [lewis-1979-attitudes], [heim-kratzer-1998], and [ogihara-1989]: `believe`'s
 complement type shifts to s(it), and doxastic alternatives become situation pairs.
 
 ## Design
@@ -178,7 +178,7 @@ theorem sitVeridicalityHolds_lift {W Time : Type*} (v : Veridicality)
     Generalizes `DoxasticPredicate` to use situation-dependent accessibility:
     `Dox_y(w,t) = {(w',t') |...}` instead of `Dox_y(w) = {w' |...}`.
 
-    This is @cite{von-stechow-2009}'s enriched attitude semantics:
+    This is [von-stechow-2009]'s enriched attitude semantics:
     ⟦x believes p⟧(w,t) = ∀(w',t') ∈ Dox_x(w,t). p(w')(t') -/
 structure SitDoxasticPredicate (W Time E : Type*) where
   /-- Name of the predicate -/

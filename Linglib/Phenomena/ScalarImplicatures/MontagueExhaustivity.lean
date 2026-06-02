@@ -204,7 +204,7 @@ theorem w3_both : somePassed_Prop w3_montague ∧ allPassed_Prop w3_montague :=
 
 This proves the scalar implicature "some but not all" using:
 1. Montague compositional semantics
-2. @cite{spector-2016} exhaustivity operator
+2. [spector-2016] exhaustivity operator
 -/
 theorem exhMW_somePassed_at_w1 :
     exhMW someAllALT_Montague somePassed_Prop w1_montague := by

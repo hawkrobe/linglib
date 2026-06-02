@@ -2,7 +2,7 @@ import Linglib.Morphology.Nanosyntax.Basic
 
 /-!
 # Nanosyntax: Tree-Based Spellout
-@cite{taraldsen-et-al-2018} @cite{caha-2009} @cite{starke-2009}
+[taraldsen-et-al-2018] [caha-2009] [starke-2009]
 
 Extension of rank-based nanosyntax (`Core.lean`) to tree-structured
 spellout. Implements the Superset Principle (SP) for trees:
@@ -10,8 +10,8 @@ a lexical entry M ↔ S' can spell out syntactic target S if S'
 structurally contains S. Among matching entries, the Elsewhere
 Condition selects the smallest (by tree size).
 
-The SP on trees is a consequence of @cite{starke-2009}'s Matching
-relation (formalized in @cite{taraldsen-et-al-2018} as (35)):
+The SP on trees is a consequence of [starke-2009]'s Matching
+relation (formalized in [taraldsen-et-al-2018] as (35)):
 M matches S iff there exists a node N in M's stored tree such that
 S and N have the same root label and mutually matching daughters.
 For the right-branching single-daughter trees used in Bantu class
@@ -19,7 +19,7 @@ prefix analysis, structural containment (`NanoTree.contains`) and
 bidirectional Matching coincide. The implementation uses containment
 as the simpler equivalent formulation.
 
-This generalization is needed for @cite{taraldsen-et-al-2018}'s
+This generalization is needed for [taraldsen-et-al-2018]'s
 analysis of Bantu class prefixes, where lexical entries store
 phrasal trees [# Nx] rather than scalar ranks on a case fseq.
 
@@ -106,12 +106,12 @@ where
 
 /-- Does `self` contain `target` as a sub-constituent?
     Implements the tree-generalized Superset Principle
-    (@cite{caha-2009} §2.2, @cite{taraldsen-et-al-2018} (36)):
+    ([caha-2009] §2.2, [taraldsen-et-al-2018] (36)):
     entry M matches target S if M's stored tree contains S.
 
     For right-branching single-daughter trees (all Bantu class
     prefix structures), this is equivalent to the bidirectional
-    Matching relation (@cite{taraldsen-et-al-2018} (35)).
+    Matching relation ([taraldsen-et-al-2018] (35)).
 
     For 1D chains: a chain of depth n contains all chains of
     depth k <= n, matching `LexEntry.matches`. -/
@@ -191,7 +191,7 @@ def treeSpellout {F : Type} [BEq F]
 -- §8: Foot Condition
 -- ============================================================================
 
-/-- The Foot Condition (@cite{taraldsen-et-al-2018}): the foot
+/-- The Foot Condition ([taraldsen-et-al-2018]): the foot
     of a lexical entry's stored tree must be present as a feature
     in the syntactic structure being spelled out.
 

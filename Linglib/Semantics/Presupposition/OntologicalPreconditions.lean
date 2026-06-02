@@ -1,9 +1,9 @@
 /-
-# Ontological Preconditions and Projection @cite{roberts-simons-2024}
+# Ontological Preconditions and Projection [roberts-simons-2024]
 
 Presupposition projection based on event structure and ontological dependence.
 
-## Core Claim (@cite{roberts-simons-2024} §2)
+## Core Claim ([roberts-simons-2024] §2)
 
 The projective contents of three verb classes — CoS predicates, factives, and
 predicates with selectional restrictions — are NOT semantically encoded
@@ -28,7 +28,7 @@ Not all entailments are preconditions. Three relations obtain:
 
 ## Diagnostics
 
-Two tests from @cite{roberts-simons-2024} §2.1:
+Two tests from [roberts-simons-2024] §2.1:
 - "ψ, which is part of what allows/allowed for φ" — true iff ψ is precondition
 - "If not-ψ, it would not have been possible for [agent] to VP" — counterfactual
 
@@ -115,7 +115,7 @@ theorem continue_consequence_is_assertion (P : W → Prop) :
 /-
 ## The Aboutness Mechanism
 
-Why do preconditions project through negation? @cite{roberts-simons-2024} argue:
+Why do preconditions project through negation? [roberts-simons-2024] argue:
 
 1. Sentences refer to event types (not just assert propositions)
 2. Event types have inherent preconditions (ontological requirements)
@@ -364,7 +364,7 @@ The precondition/consequence asymmetry under negation.
 Under negation, precondition content survives (via presupposition) but
 consequence content is denied (via assertion). This is the structural
 basis for why preconditions are the default accommodation target
-(@cite{roberts-simons-2024} p. 721): accommodating preconditions is
+([roberts-simons-2024] p. 721): accommodating preconditions is
 consistent with both affirming and denying the event, while
 accommodating consequences is only consistent with affirmation.
 -/
@@ -469,7 +469,7 @@ theorem cos_vendler_telicity_correct (t : CoSType) :
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-- Classification of entailment relations between a sentence and its
-    implied content (@cite{roberts-simons-2024} §2.1). -/
+    implied content ([roberts-simons-2024] §2.1). -/
 inductive EntailmentRelation where
   /-- Temporally prior, enables the event. Projects by pragmatic default. -/
   | precondition
@@ -493,7 +493,7 @@ def EntailmentRelation.projects : EntailmentRelation → Bool
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-
-## Factive Verbs as Event Phases (@cite{roberts-simons-2024} §2, §3.2.2)
+## Factive Verbs as Event Phases ([roberts-simons-2024] §2, §3.2.2)
 
 R&S extend event phase analysis beyond CoS verbs to factives.
 The complement truth of a factive verb is an ontological precondition
@@ -521,7 +521,7 @@ def discoverAsEventPhase (IGNORANT C : W → Prop) : EventPhase W where
     Precondition: agent believes p (the emotion ontologically
     depends on the belief, not on truth directly).
 
-    @cite{roberts-simons-2024} (p. 731): regret's factivity arises from
+    [roberts-simons-2024] (p. 731): regret's factivity arises from
     a *pragmatic default to veridicality* — in the absence of an explicit
     claim that the agent is mistaken, emotive attitudes are taken to be
     veridical. The ontological precondition is belief, not truth. -/
@@ -554,13 +554,13 @@ theorem factive_precondition_entails_complement (IGNORANT C : W → Prop) (w : W
     This extra precondition (ignorance of C) explains why discover
     has weaker projection than know in conditional antecedents:
     in "If I discover p", the speaker's ignorance of p is salient,
-    suppressing projection of C (@cite{roberts-simons-2024} §3.2.2). -/
+    suppressing projection of C ([roberts-simons-2024] §3.2.2). -/
 theorem discover_precondition_requires_ignorance (IGNORANT C : W → Prop) (w : W) :
     (discoverAsEventPhase IGNORANT C).precondition w → IGNORANT w := by
   intro h; exact h.2
 
 /-- Continue has a precondition (prior activity) but involves NO state change.
-    @cite{roberts-simons-2024} (p. 734): "continue V-ing is atelic, without a
+    [roberts-simons-2024] (p. 734): "continue V-ing is atelic, without a
     pre-state" in the CoS sense. The `CoSType.continuation` classification is
     a convenience; the key structural fact is `isAtelic`. -/
 theorem continue_has_precondition_without_state_change (P : W → Prop) :
@@ -575,7 +575,7 @@ theorem continue_has_precondition_without_state_change (P : W → Prop) :
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-
-## Selectional Restrictions (@cite{roberts-simons-2024} §2.1)
+## Selectional Restrictions ([roberts-simons-2024] §2.1)
 
 Selectional restrictions are ontological preconditions of the same kind
 as factive and CoS projections. "The robot kicked the tree" implies
@@ -614,7 +614,7 @@ theorem selectional_projects (requirement event : W → Prop) :
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-
-## Suppression Conditions (@cite{roberts-simons-2024} §3.2.1)
+## Suppression Conditions ([roberts-simons-2024] §3.2.1)
 
 Projection of preconditions is a pragmatic *default*, not an invariant.
 Three contexts suppress projection — in each, pragmatic reasoning makes
@@ -627,17 +627,17 @@ it implausible that the speaker presumes the precondition true.
 inductive SuppressionCondition where
   /-- Interlocutors know or believe the precondition is false or controversial.
       Example: discussing politics with someone who denies the premise.
-      (@cite{roberts-simons-2024} ex. 23) -/
+      ([roberts-simons-2024] ex. 23) -/
   | preconditionKnownFalse
   /-- Evidence that the speaker does not believe the precondition.
       Example: "I doubt that. Mary would divorce him if she discovered
       he was drinking." — speaker explicitly doubts the drinking.
-      (@cite{roberts-simons-2024} ex. 24) -/
+      ([roberts-simons-2024] ex. 24) -/
   | speakerNonCommitment
   /-- The precondition is at-issue (currently under discussion).
       Example: "Is there a decision on Jane's tenure case?" "She isn't
       aware that there's been a decision." — decision existence is QUD.
-      (@cite{roberts-simons-2024} ex. 25) -/
+      ([roberts-simons-2024] ex. 25) -/
   | preconditionAtIssue
   deriving DecidableEq, Repr
 

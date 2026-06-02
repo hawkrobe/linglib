@@ -5,9 +5,9 @@ import Linglib.Core.Causal.SEM.Counterfactual
 
 /-!
 # A Communication-First Account of Explanation
-@cite{halpern-pearl-2005} @cite{harding-gerstenberg-icard-2025} @cite{sumers-etal-2023} @cite{frank-goodman-2012}
+[halpern-pearl-2005] [harding-gerstenberg-icard-2025] [sumers-etal-2023] [frank-goodman-2012]
 
-Formalization of @cite{harding-gerstenberg-icard-2025} §3:
+Formalization of [harding-gerstenberg-icard-2025] §3:
 "why FACT?" / "FACT because X = x" modeled as an RSA communication
 game where the literal listener interprets via Halpern-Pearl actual
 causation, the speaker reasons about a downstream decision problem

@@ -2,7 +2,7 @@ import Linglib.Morphology.MorphProfile
 
 /-!
 # Thai Morphological Profile
-@cite{wals-2013}
+[wals-2013]
 
 WALS-derived profile for Thai (ISO `tha`). WALS F20A codes Thai as
 `isolatingConcatenative`, a mixed type the local 3-way `Fusion` enum cannot

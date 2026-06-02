@@ -4,7 +4,7 @@ import Linglib.Semantics.Degree.Basic
 # Minding the Politeness Gap
 
 Cross-cultural RSA model for intensifier/hedging interpretation, extending
-@cite{yoon-etal-2020} with culture-specific literal semantics and pragmatic weights.
+[yoon-etal-2020] with culture-specific literal semantics and pragmatic weights.
 
 ## Key Contribution
 
@@ -23,7 +23,7 @@ varies cross-culturally:
 
 ## Model
 
-Extended @cite{yoon-etal-2020} RSA with:
+Extended [yoon-etal-2020] RSA with:
 - Culture-specific literal semantics (θ + δ vs θ - δ threshold shifts)
 - Social utility weight (ω_social) varies by culture
 - Information utility weight (ω_info) varies by culture

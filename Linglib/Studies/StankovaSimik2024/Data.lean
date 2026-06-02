@@ -2,7 +2,7 @@ import Linglib.Studies.Stakov2026Typology
 
 /-!
 # Staňková & Šimík (2024): Negation in Czech Polar Questions
-@cite{stankova-2025} @cite{gartner-gyuris-2017} @cite{simik-2024}
+[stankova-2025] [gartner-gyuris-2017] [simik-2024]
 
 Experimental data from three naturalness judgment experiments on negation
 in Czech polar questions (Staňková & Šimík, FASL 32 / JSL 33).
@@ -170,7 +170,7 @@ theorem nonV1_nci_preferred :
 /-- The key asymmetry: V1 is CONTEXT-insensitive (FALSUM = epistemic bias),
 nonV1 is CONTEXT-sensitive (inner neg = evidential bias).
 
-This matches @cite{stankova-2025}'s claim that inner negation requires
+This matches [stankova-2025]'s claim that inner negation requires
 contextual evidence while outer negation (FALSUM) does not, and
 confirms the VerbPosition.requiresContextualEvidence classification. -/
 theorem context_asymmetry :
@@ -229,7 +229,7 @@ theorem positive_evidence_natural :
 
 /-- Czech FALSUM compatible with all three evidence types
 (positive, negative, neutral). This matches the broad distribution
-of InterNPQ in @cite{simik-2024}'s bias profile table. -/
+of InterNPQ in [simik-2024]'s bias profile table. -/
 theorem falsum_evidence_compatible :
     positiveEvidence.medianBiased ≥ 5 ∧  -- positive evidence: natural
     v1_context.significant = false :=     -- neg vs neutral: no difference
@@ -318,7 +318,7 @@ theorem copak_requires_evidential_bias :
 
 This confirms they express different types of bias:
 náhodou → epistemic bias; copak → evidential bias.
-(@cite{stankova-2025} §6) -/
+([stankova-2025] §6) -/
 theorem nahodou_copak_contrast :
     v1_context.significant = false ∧     -- náhodou's licenser (FALSUM) is context-insensitive
     copak_context.significant = true :=   -- copak requires evidential bias

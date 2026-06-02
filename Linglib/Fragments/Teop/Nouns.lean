@@ -3,10 +3,10 @@ import Linglib.Morphology.DM.NominalStructure
 import Linglib.Morphology.DM.Categorizer
 
 /-!
-# Teop Noun Inventory @cite{adamson-2024}
+# Teop Noun Inventory [adamson-2024]
 
 Gender I and gender II nouns in Teop (Austronesian, Oceanic), drawn from
-@cite{adamson-2024} Table 1 (sampled from Mosel & Spriggs 2000:336–40).
+[adamson-2024] Table 1 (sampled from Mosel & Spriggs 2000:336–40).
 
 Teop has two genders distinguished by article form:
 - **Gender I** (article *a*): animates — encoded via [±ANIM] on n
@@ -41,7 +41,7 @@ structure Noun where
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- § 2: Gender I Nouns (@cite{adamson-2024} Table 1, left column)
+-- § 2: Gender I Nouns ([adamson-2024] Table 1, left column)
 -- ============================================================================
 
 def moon     : Noun := ⟨"moon",      "woman",                   .gI, false⟩
@@ -58,7 +58,7 @@ def huan     : Noun := ⟨"huan",      "rain",                    .gI, false⟩
 def uruuru   : Noun := ⟨"uruuru",    "love",                    .gI, false⟩
 
 -- ============================================================================
--- § 3: Gender II Nouns (@cite{adamson-2024} Table 1, right column)
+-- § 3: Gender II Nouns ([adamson-2024] Table 1, right column)
 -- ============================================================================
 
 def paka     : Noun := ⟨"paka",      "leaf",                    .gII, false⟩
@@ -100,7 +100,7 @@ def iPossessedGender (n : Noun) : Gender :=
 
 /-- Teop articles, conditioned by gender and number.
     Gender Ie (proprial *e*) is treated as gender I with a proprial
-    feature, following @cite{adamson-2024} §3.1. -/
+    feature, following [adamson-2024] §3.1. -/
 structure ArticleCtx where
   gender : Gender
   plural : Bool
@@ -156,7 +156,7 @@ def Gender.toSurfaceGender : Gender → Features.SurfaceGender
   | .gII => .inanimate
 
 -- ============================================================================
--- § 8: Bridge to DM Categorizer (@cite{kramer-2015} Ch 5)
+-- § 8: Bridge to DM Categorizer ([kramer-2015] Ch 5)
 -- ============================================================================
 
 open Morphology.DM in
@@ -178,7 +178,7 @@ theorem gII_no_gender :
 
 open Morphology.DM in
 /-- Body-part nouns when iPossessed switch to n with u[+ANIM]
-    (@cite{adamson-2024} §3.1). -/
+    ([adamson-2024] §3.1). -/
 def iPossessedCatHead (n : Noun) : CatHead :=
   if n.isBodyPart then CatHead.n_uAnim else n.gender.toCatHead
 

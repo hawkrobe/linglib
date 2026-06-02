@@ -3,11 +3,11 @@ import Linglib.Features.Aktionsart
 import Linglib.Morphology.MorphRule
 
 /-!
-# Finnish Case System @cite{karlsson-2017}
-@cite{krifka-1989}
+# Finnish Case System [karlsson-2017]
+[krifka-1989]
 
 The Finnish partitive case is the primary formal link between case marking
-and aspectual interpretation in the language (@cite{karlsson-2017}, Chs. 9, 12–13).
+and aspectual interpretation in the language ([karlsson-2017], Chs. 9, 12–13).
 The case of the direct object determines — or reflects — the telicity of
 the VP:
 

@@ -5,7 +5,7 @@ import Mathlib.Data.Fintype.Pi
 /-!
 # Partitions induced by logical fragments
 
-Per @cite{demey-smessaert-2018} §3.1. The partition of a finite fragment
+Per [demey-smessaert-2018] §3.1. The partition of a finite fragment
 `φ : ι → W → Bool` is its set of consistent *anchor formulas* — complete
 conjunctions of literals `±φ i`. The anchors are mutually exclusive and jointly
 exhaustive (Lemma 3), and their count is the bitstring length.

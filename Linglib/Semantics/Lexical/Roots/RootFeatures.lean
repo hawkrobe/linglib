@@ -1,9 +1,9 @@
 /-!
 # Root Quality Dimensions and Structural Entailments
-@cite{talmy-1988} @cite{talmy-2000} @cite{dowty-1991} @cite{beavers-koontz-garboden-2020} @cite{majid-boster-bowerman-2008}
+[talmy-1988] [talmy-2000] [dowty-1991] [beavers-koontz-garboden-2020] [majid-boster-bowerman-2008]
 
 Per-root content typology: ranges over root quality dimensions, the
-@cite{beavers-koontz-garboden-2020} (B&KG) binary entailment tetrad,
+[beavers-koontz-garboden-2020] (B&KG) binary entailment tetrad,
 and Marantz-style root structural position.
 
 ## Provenance
@@ -13,17 +13,17 @@ dissolved `Core/Lexical/`. The file's original docstring claimed
 "framework-agnostic infrastructure" but its load-bearing content
 (B&KG's binary [state, manner, result, cause] tetrad in §3, Marantz's
 complement-vs-adjunct merge position in §4) is framework-specific:
-B&KG's tetrad is the thesis of @cite{beavers-koontz-garboden-2020},
+B&KG's tetrad is the thesis of [beavers-koontz-garboden-2020],
 explicitly opposed to Rappaport Hovav & Levin's template-based
-account (@cite{rappaport-hovav-levin-2010}) and to Embick's
+account ([rappaport-hovav-levin-2010]) and to Embick's
 contextual-allosemy framework. Promoting these features to a named
 Theories file (sibling of `Roots/Basic.lean`, `Roots/Typology.lean`,
 `Roots/Template.lean`) makes the framework commitment legible.
 
 **Sibling slots intentionally unfilled.** `Semantics/Lexical/Roots/RappaportHovavLevin.lean`
 is the natural home for the template-based competitor account
-(@cite{rappaport-hovav-levin-2010}, @cite{rappaport-hovav-levin-2024}).
-@cite{rappaport-hovav-levin-2010} reject the very feature setup
+([rappaport-hovav-levin-2010], [rappaport-hovav-levin-2024]).
+[rappaport-hovav-levin-2010] reject the very feature setup
 encoded here; their position is that manner/result are
 *event-structural templates*, not root features. The slot is empty
 in this restructure; future work formalizing RH&L's framework
@@ -42,7 +42,7 @@ where B&KG and RH&L disagree on attested verbs.
 
 - B&KG page references (e.g., "Table 12, p. 228", "p. 229") are flagged
   `UNVERIFIED:` per CLAUDE.md ("Never cite specific page ranges from
-  memory"). Verify against the published @cite{beavers-koontz-garboden-2020}
+  memory"). Verify against the published [beavers-koontz-garboden-2020]
   monograph before treating as authoritative.
 - Inline `Marantz (2009a;b, 2013)` references in the original file
   lacked bib entries. The substantive claim — that roots merge as
@@ -96,8 +96,8 @@ end Range
 
 /-- Magnitude of force involved in the event.
 
-    @cite{talmy-1988} identifies force magnitude as a core parameter of
-    force-dynamic schemas. @cite{spalek-mcnally-2026}: *tear* implies considerable
+    [talmy-1988] identifies force magnitude as a core parameter of
+    force-dynamic schemas. [spalek-mcnally-2026]: *tear* implies considerable
     force; *rasgar* implies less (enough to damage something flimsy). -/
 inductive ForceLevel where
   | none      -- no force component (states)
@@ -108,8 +108,8 @@ inductive ForceLevel where
 
 /-- Spatial pattern of force application.
 
-    @cite{talmy-2000}: force vectors have directional parameters.
-    @cite{spalek-mcnally-2026}: *tear* implies contrary-direction force (pulling
+    [talmy-2000]: force vectors have directional parameters.
+    [spalek-mcnally-2026]: *tear* implies contrary-direction force (pulling
     apart); *rasgar* implies unidirectional force (gash-like). -/
 inductive ForceDirection where
   | none             -- no directional force component
@@ -120,7 +120,7 @@ inductive ForceDirection where
 
 /-- Material substantiality of the affected entity (patient).
 
-    @cite{spalek-mcnally-2026}: the primary dimension distinguishing
+    [spalek-mcnally-2026]: the primary dimension distinguishing
     *tear* (unrestricted) from *rasgar* (flimsy patients only). -/
 inductive Robustness where
   | insubstantial  -- states, abstractions (silence, darkness)
@@ -131,12 +131,12 @@ inductive Robustness where
 
 /-- Nature of the physical change produced by the event.
 
-    Grounded in @cite{levin-1993}'s class descriptions and @cite{hale-keyser-1987} notion of "separation in material integrity":
+    Grounded in [levin-1993]'s class descriptions and [hale-keyser-1987] notion of "separation in material integrity":
     - 45.1 Break: loss of material integrity (break, crack, shatter, tear)
     - 45.2 Bend: change in shape without loss of integrity
     - 44 Destroy: total destruction (no specific resulting state)
     - 21 Cut: separation via instrument contact
-    Refined by @cite{beavers-koontz-garboden-2020} on CoS root types.
+    Refined by [beavers-koontz-garboden-2020] on CoS root types.
     UNVERIFIED: Levin chapter numbers cited from memory. -/
 inductive ResultType where
   | separation      -- loss of integrity via pulling apart (tear)
@@ -149,12 +149,12 @@ inductive ResultType where
 
 /-- Type of instrument used in the event.
 
-    @cite{majid-boster-bowerman-2008}: instrument type interacts with object
+    [majid-boster-bowerman-2008]: instrument type interacts with object
     properties to determine the predictability of separation locus (their
     Dimension 1). Sharp instruments yield predictable separations; blunt
     instruments and hands yield unpredictable separations.
 
-    @cite{levin-1993}: *cut* verbs specify their instrument
+    [levin-1993]: *cut* verbs specify their instrument
     (`instrumentSpec = true`); *break* verbs do not.
     UNVERIFIED: Levin chapter (§21 vs §45.1) cited from memory. -/
 inductive InstrumentType where
@@ -166,7 +166,7 @@ inductive InstrumentType where
 
 /-- Dimensionality of the affected object (patient).
 
-    @cite{majid-boster-bowerman-2008}: object dimensionality interacts
+    [majid-boster-bowerman-2008]: object dimensionality interacts
     with instrument type and manner of action to determine event
     categorization cross-linguistically. 1D objects (rope, stick) can
     be snapped; 2D objects (cloth, paper) can be torn; 3D objects
@@ -179,11 +179,11 @@ inductive ObjectDimensionality where
 
 /-- Whether the agent acts with volitional intent.
 
-    @cite{dowty-1991}: Proto-Agent entailment P1 = "volitional involvement
-    in the event or state." @cite{ausensi-yu-smith-2021}: killing verb roots impose
+    [dowty-1991]: Proto-Agent entailment P1 = "volitional involvement
+    in the event or state." [ausensi-yu-smith-2021]: killing verb roots impose
     specific intentionality requirements on the agent (*murder* requires
     intentional agent; *kill* does not).
-    @cite{levin-1993}: some *break* verbs "allow unintentional, action
+    [levin-1993]: some *break* verbs "allow unintentional, action
     interpretations with body-part objects." -/
 inductive Volitionality where
   | nonvolitional  -- unintentional / accidental
@@ -193,9 +193,9 @@ inductive Volitionality where
 
 /-- Whether the action can be performed with care and control.
 
-    @cite{dowty-1991}: Proto-Agent entailment P2 = "sentience
+    [dowty-1991]: Proto-Agent entailment P2 = "sentience
     (and/or perception)," enabling controlled action.
-    @cite{spalek-mcnally-2026}: *tear* is compatible with careful action
+    [spalek-mcnally-2026]: *tear* is compatible with careful action
     ("carefully tore the tin foil"); *rasgar* is not
     ("??rasgaron con cuidado el papel"). -/
 inductive AgentControl where
@@ -219,34 +219,34 @@ inductive AgentControl where
     characterization of a verb's semantic content:
     1. Class-defining meaning components (binary, from alternations)
     2. Class membership (Levin taxonomy)
-    3. Root structural entailments (@cite{beavers-koontz-garboden-2020})
+    3. Root structural entailments ([beavers-koontz-garboden-2020])
     4. Root-specific quality features (ranges, from detailed lexical analysis) -/
 structure RootProfile where
-  /-- Force magnitude: @cite{talmy-1988}. -/
+  /-- Force magnitude: [talmy-1988]. -/
   forceMag : Range ForceLevel := none
-  /-- Force directionality: @cite{talmy-2000}, @cite{spalek-mcnally-2026}. -/
+  /-- Force directionality: [talmy-2000], [spalek-mcnally-2026]. -/
   forceDir : Range ForceDirection := none
-  /-- Patient material robustness: @cite{spalek-mcnally-2026}. -/
+  /-- Patient material robustness: [spalek-mcnally-2026]. -/
   patientRob : Range Robustness := none
-  /-- Type of physical change: @cite{levin-1993}, @cite{beavers-koontz-garboden-2020}. -/
+  /-- Type of physical change: [levin-1993], [beavers-koontz-garboden-2020]. -/
   resultType : Range ResultType := none
-  /-- Agent volitionality: @cite{dowty-1991} P1, @cite{ausensi-yu-smith-2021}. -/
+  /-- Agent volitionality: [dowty-1991] P1, [ausensi-yu-smith-2021]. -/
   agentVolition : Range Volitionality := none
-  /-- Agent control: @cite{dowty-1991} P2, @cite{spalek-mcnally-2026}. -/
+  /-- Agent control: [dowty-1991] P2, [spalek-mcnally-2026]. -/
   agentControl : Range AgentControl := none
-  /-- Instrument type the root selects for: @cite{majid-boster-bowerman-2008}.
+  /-- Instrument type the root selects for: [majid-boster-bowerman-2008].
       *cut* selects for sharp blades; *break* is unspecified. -/
   instrumentType : Range InstrumentType := none
-  /-- Patient dimensionality: @cite{majid-boster-bowerman-2008}.
+  /-- Patient dimensionality: [majid-boster-bowerman-2008].
       *tear* selects for 2D objects (cloth, paper); *snap* for 1D (stick, twig). -/
   patientDim : Range ObjectDimensionality := none
   deriving BEq, Repr, Inhabited
 
 -- ════════════════════════════════════════════════════
--- § 3. Root Structural Entailments (@cite{beavers-koontz-garboden-2020})
+-- § 3. Root Structural Entailments ([beavers-koontz-garboden-2020])
 -- ════════════════════════════════════════════════════
 
-/-- Root-level structural entailments from @cite{beavers-koontz-garboden-2020}.
+/-- Root-level structural entailments from [beavers-koontz-garboden-2020].
 
     B&KG argue against Bifurcation (roots only contribute idiosyncratic
     content) and Manner/Result Complementarity (no root encodes both).
@@ -261,7 +261,7 @@ structure RootProfile where
 
     Constraints: `result → state` and `cause → result` (see `WellFormed`).
 
-    @cite{rappaport-hovav-levin-2010} reject this entailment-feature
+    [rappaport-hovav-levin-2010] reject this entailment-feature
     framing; for them manner/result are event-structural template
     properties, not root features. The competitor analysis would live
     in `Semantics/Lexical/Roots/RappaportHovavLevin.lean` (planned).
@@ -277,7 +277,7 @@ structure RootEntailments where
 namespace RootEntailments
 
 /-- If a root entails change (result), it entails a state that changes.
-    @cite{beavers-koontz-garboden-2020}: result entailments presuppose state entailments. -/
+    [beavers-koontz-garboden-2020]: result entailments presuppose state entailments. -/
 def ResultImpliesState (r : RootEntailments) : Prop :=
   r.result = true → r.state = true
 
@@ -285,7 +285,7 @@ instance (r : RootEntailments) : Decidable r.ResultImpliesState := by
   unfold ResultImpliesState; infer_instance
 
 /-- If a root entails causation, it entails what is caused (a result).
-    @cite{beavers-koontz-garboden-2020}: cause entailments presuppose result entailments. -/
+    [beavers-koontz-garboden-2020]: cause entailments presuppose result entailments. -/
 def CauseImpliesResult (r : RootEntailments) : Prop :=
   r.cause = true → r.result = true
 
@@ -301,7 +301,7 @@ instance (r : RootEntailments) : Decidable r.WellFormed := by
 
 /-! ### Canonical root types
 
-UNVERIFIED: Specific row references to @cite{beavers-koontz-garboden-2020}
+UNVERIFIED: Specific row references to [beavers-koontz-garboden-2020]
 Table 12 are cited from memory. The 7 canonical types below cover
 B&KG's typology; verify row numbers against the published monograph
 before treating as definitive. -/
@@ -319,7 +319,7 @@ def pureResult : RootEntailments := ⟨true, false, true, false⟩
 /-- +S −M +R +C: externally caused result roots (√CRACK, √BREAK).
     Root entails a state, change, AND causation — the root inherently
     implies an external cause. Complement position.
-    @cite{beavers-koontz-garboden-2020}: these "lexicalize crosslinguistically as basic
+    [beavers-koontz-garboden-2020]: these "lexicalize crosslinguistically as basic
     causatives" unlike √BLOSSOM-type roots. -/
 def causativeResult : RootEntailments := ⟨true, false, true, true⟩
 
@@ -335,7 +335,7 @@ def pureManner : RootEntailments := ⟨false, true, false, false⟩
 def mannerResult : RootEntailments := ⟨true, true, true, false⟩
 
 /-- +S +M +R +C: fully specified roots (√HAND, √DROWN, √CUT).
-    @cite{beavers-koontz-garboden-2020} Ch. 3–4: manner + caused change. These are the attested MRC
+    [beavers-koontz-garboden-2020] Ch. 3–4: manner + caused change. These are the attested MRC
     violators. √HAND sits in adjoined position, √DROWN in complement
     position; this structural difference is not captured here. -/
 def fullSpec : RootEntailments := ⟨true, true, true, true⟩
@@ -359,8 +359,8 @@ theorem minimal_wf : minimal.WellFormed := by decide
 /-! ### MRC violation detection -/
 
 /-- Does this root violate Manner/Result Complementarity?
-    @cite{beavers-koontz-garboden-2020} Ch. 4: some roots encode both manner and result.
-    @cite{rappaport-hovav-levin-2010} dispute this; the framing
+    [beavers-koontz-garboden-2020] Ch. 4: some roots encode both manner and result.
+    [rappaport-hovav-levin-2010] dispute this; the framing
     "violates MRC" presupposes MRC as a baseline norm — itself a
     framework commitment. -/
 def ViolatesMRC (r : RootEntailments) : Prop :=
@@ -383,7 +383,7 @@ end RootEntailments
 
 /-- Structural attachment position of a verb root. Following the
     Distributed-Morphology tradition (Marantz; systematized by
-    @cite{beavers-koontz-garboden-2020}):
+    [beavers-koontz-garboden-2020]):
 
     - **Complement**: root merges as complement of v (inside VP).
       Fills the result-state slot. Change-of-state roots: √FLAT,
@@ -393,9 +393,9 @@ end RootEntailments
       √TOSS, √HAND.
 
     This distinction is structurally significant beyond root typology:
-    it determines vVPE eligibility (@cite{kalyakin-2026}), scope of
+    it determines vVPE eligibility ([kalyakin-2026]), scope of
     result-state modifiers, and the restitutive/repetitive *again*
-    ambiguity (@cite{beavers-koontz-garboden-2020}, @cite{merchant-2013}).
+    ambiguity ([beavers-koontz-garboden-2020], [merchant-2013]).
 
     UNVERIFIED: The Marantz publications usually cited in this
     context (DM "Phases and words" handout, "No Escape from Syntax",

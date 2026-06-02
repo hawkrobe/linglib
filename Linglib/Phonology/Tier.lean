@@ -4,7 +4,7 @@ import Linglib.Phonology.Autosegmental.GrammaticalTone
 /-!
 # Phonological Tiers
 
-@cite{goldsmith-1976}
+[goldsmith-1976]
 
 Phonology-specific tier constructors built on `Core.Tier`. The generic
 operations (`apply`, `id`, `byClass`, `total`, monoid-hom laws) live in
@@ -14,7 +14,7 @@ projections that downstream phonology files need.
 
 namespace Phonology.Tier
 
-/-- The canonical tonal tier (@cite{goldsmith-1976}): every TBU projects
+/-- The canonical tonal tier ([goldsmith-1976]): every TBU projects
     to its tone. Length-preserving (no erasure) — built via `Tier.total`. -/
 def tonal {S : Type} :
     Core.Tier (Phonology.Autosegmental.GrammaticalTone.TBU S)

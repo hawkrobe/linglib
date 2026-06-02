@@ -2,7 +2,7 @@ import Linglib.Features.Coordination
 
 /-!
 # Georgian Coordination Morphemes
-@cite{haspelmath-2007} @cite{bill-etal-2025}
+[haspelmath-2007] [bill-etal-2025]
 
 Georgian is one of two languages in our sample (with Hungarian) that attests
 all three M&S conjunction strategies: J-only, MU-only, and J-MU.
@@ -13,7 +13,7 @@ all three M&S conjunction strategies: J-only, MU-only, and J-MU.
 
 The MU particle *-c* is also Georgian's additive/focus particle, confirming
 the M&S prediction. Crucially, *-c* is a **bound clitic**, unlike Hungarian
-*is* (free). @cite{bill-etal-2025} speculate this morphological difference may
+*is* (free). [bill-etal-2025] speculate this morphological difference may
 explain why Georgian children found MU-involving strategies harder.
 
 Connection to Typology.lean: `Haspelmath2007.georgian`

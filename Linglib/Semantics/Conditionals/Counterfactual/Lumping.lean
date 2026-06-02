@@ -4,7 +4,7 @@ import Linglib.Core.Logic.Intensional.Situations
 /-!
 # Lumping
 
-@cite{kratzer-1989}, @cite{kratzer-2012}
+[kratzer-1989], [kratzer-2012]
 
 Kratzer's situation-semantic notion of *lumping*: a proposition `p` lumps
 a proposition `q` in a world `w` when truth of `p` at every part of `w`
@@ -14,7 +14,7 @@ antecedent is added to a Base Set, every proposition lumped by the
 antecedent in the evaluation world comes along, blocking the spurious
 counterfactuals that arise when independent true propositions are added
 freely (the Paula-paints-a-still-life and zebra-escapes examples in
-@cite{kratzer-2012}, §5.4.1).
+[kratzer-2012], §5.4.1).
 
 This module sits on top of `Core/Logic/Intensional/Situations.lean`, which
 provides the `SituationFrame` carrier — a `Frame` whose `Index` carries
@@ -24,7 +24,7 @@ aliased as `Persistent` in `Situations.lean`).
 
 ## Scope
 
-This file covers @cite{kratzer-2012} §5.3.3 (p. 118): the worlds-only
+This file covers [kratzer-2012] §5.3.3 (p. 118): the worlds-only
 logical relations (validity, consistency, compatibility, logical
 consequence, logical equivalence) and the official lumping definition
 that closes the section. The counterfactual machinery of §5.4 — base
@@ -53,9 +53,9 @@ namespace Semantics.Conditionals.Counterfactual
 open Set
 open Core.Logic.Intensional
 
-/-! ## Lumping (@cite{kratzer-2012} §5.3.3, p. 118)
+/-! ## Lumping ([kratzer-2012] §5.3.3, p. 118)
 
-The official text of @cite{kratzer-2012}, p. 118:
+The official text of [kratzer-2012], p. 118:
 > For all propositions `p, q ∈ P(S)` and all `w ∈ W`:
 > `p` lumps `q` in `w` iff (i) `w ∈ p`. (ii) For all `s ∈ S`,
 > if `s ≤ w` and `s ∈ p`, then `s ∈ q`.
@@ -72,15 +72,15 @@ variable {S : Type*} [Preorder S]
     (ii) every part of `w` at which `p` is true is also a part at which
     `q` is true.
 
-    Generalized from @cite{kratzer-2012}'s situation-frame setting to
+    Generalized from [kratzer-2012]'s situation-frame setting to
     any preordered carrier `S`; the parthood preorder is the only piece
     of structure the definition uses. -/
 structure Lumps (p q : Set S) (w : S) : Prop where
-  /-- `p` is true at `w` (@cite{kratzer-2012}, p. 118, condition (i)). -/
+  /-- `p` is true at `w` ([kratzer-2012], p. 118, condition (i)). -/
   holds : w ∈ p
   /-- Every part of `w` at which `p` is true also has `q` true
-      (@cite{kratzer-2012}, p. 118, condition (ii); = Yablo's "local
-      implication", noted in footnote 4 of @cite{kratzer-2012}, p. 114). -/
+      ([kratzer-2012], p. 118, condition (ii); = Yablo's "local
+      implication", noted in footnote 4 of [kratzer-2012], p. 114). -/
   localImpl : ∀ ⦃s⦄, s ≤ w → s ∈ p → s ∈ q
 
 namespace Lumps
@@ -126,7 +126,7 @@ end Lumps
 
 end LumpingCore
 
-/-! ## Logical relations (@cite{kratzer-2012} §5.3.3, p. 118)
+/-! ## Logical relations ([kratzer-2012] §5.3.3, p. 118)
 
 These quantify only over `F.Worlds` (maximal situations) and so remain
 "classical" — equivalent to their possible-worlds counterparts on the
@@ -137,27 +137,27 @@ section LogicalRelations
 
 variable {F : SituationFrame}
 
-/-- **Validity** (@cite{kratzer-2012}, p. 118): every world satisfies `p`.
+/-- **Validity** ([kratzer-2012], p. 118): every world satisfies `p`.
     Kratzer writes this as `p ∩ W = W`; equivalently `F.Worlds ⊆ p`. -/
 def IsValid (p : Set F.Index) : Prop := F.Worlds ⊆ p
 
-/-- **Logical consequence** (@cite{kratzer-2012}, p. 118): every world
+/-- **Logical consequence** ([kratzer-2012], p. 118): every world
     that satisfies all of `A` also satisfies `q`. Kratzer's text: "for
     all `w ∈ W`: if `w ∈ ⋂A`, then `w ∈ q`." -/
 def Follows (A : Set (Set F.Index)) (q : Set F.Index) : Prop :=
   F.Worlds ∩ ⋂₀ A ⊆ q
 
-/-- **Consistency** (@cite{kratzer-2012}, p. 118): some world satisfies
+/-- **Consistency** ([kratzer-2012], p. 118): some world satisfies
     every member of `A`. -/
 def IsConsistent (A : Set (Set F.Index)) : Prop :=
   (F.Worlds ∩ ⋂₀ A).Nonempty
 
-/-- **Compatibility** (@cite{kratzer-2012}, p. 118): `p` is compatible
+/-- **Compatibility** ([kratzer-2012], p. 118): `p` is compatible
     with `A` iff `A ∪ {p}` is consistent. -/
 def IsCompatible (p : Set F.Index) (A : Set (Set F.Index)) : Prop :=
   IsConsistent (insert p A)
 
-/-- **Logical equivalence** (@cite{kratzer-2012}, p. 118): `p` and `q`
+/-- **Logical equivalence** ([kratzer-2012], p. 118): `p` and `q`
     agree on the worlds part. Kratzer writes `p ∩ W = q ∩ W`.
 
     Renamed from Kratzer's "logical equivalence" to `LogEquiv` to avoid

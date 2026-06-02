@@ -1,7 +1,7 @@
 import Linglib.Fragments.Finnish.Case
 
 /-!
-# Finnish Infinitive System @cite{karlsson-2017}
+# Finnish Infinitive System [karlsson-2017]
 
 Finnish has **four productive infinitive forms**,
 each built from the verb stem plus a characteristic marker and case suffix:

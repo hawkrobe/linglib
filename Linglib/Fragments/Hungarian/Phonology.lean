@@ -2,7 +2,7 @@ import Linglib.Data.PHOIBLE.Inventories.Hungarian
 
 /-!
 # Hungarian phonological inventory
-@cite{moran-mccloy-2019}
+[moran-mccloy-2019]
 
 Canonical PHOIBLE 2.0 phoneme inventory for Hungarian (ISO `hun`). Pure
 pass-through to the auto-generated PHOIBLE doculect data in

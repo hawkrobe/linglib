@@ -7,14 +7,14 @@ import Mathlib.Algebra.Order.Field.Basic
 
 /-!
 # Linguistic Areas (Sprachbünde)
-@cite{haspelmath-2001}
+[haspelmath-2001]
 
 A framework-neutral schema for typological *linguistic areas*
 (Sprachbünde) — groups of geographically contiguous, often genealogically
 heterogeneous languages that share structural features attributable to
 contact rather than inheritance.
 
-The schema follows the methodology of @cite{haspelmath-2001} but is
+The schema follows the methodology of [haspelmath-2001] but is
 **gradient-first**, in the spirit of his §4 cluster maps: the primary
 data per feature is an `ArealProfile` (a 4-tuple of densities — in-area,
 in-cofamilial, in-adjacent, in-world). Binary judgments are derived from
@@ -27,7 +27,7 @@ to the qualitative `1/2` cut.
   computational concept — four densities per feature, ranging in `[0, 1]`.
   No threshold yet.
 * **Thresholds** (`ArealThresholds`): a configurable cutoff parameter,
-  with `default := ⟨1/2, 1/2⟩` matching @cite{haspelmath-2001}'s
+  with `default := ⟨1/2, 1/2⟩` matching [haspelmath-2001]'s
   qualitative readings of "the great majority" / "lack". Stricter or
   paper-specific cutoffs (Heine-Kuteva, Grambank conventions) instantiate
   this without disturbing the schema.
@@ -38,7 +38,7 @@ to the qualitative `1/2` cut.
   expectation that *all* of an area's diagnostic features pass.
 * **Linguistic areas** (`LinguisticArea L F`): bundles a reference frame,
   a feature set, and an isogloss assignment. No per-feature areality
-  proof is bundled — @cite{haspelmath-2001}'s actual methodology is
+  proof is bundled — [haspelmath-2001]'s actual methodology is
   cluster-map analysis, recovered via `clusterScore` / `isopleth` /
   `nucleus`. Studies prove `IsArealAt` separately for whichever
   features pass the threshold of interest.
@@ -49,7 +49,7 @@ to the qualitative `1/2` cut.
 and `Finset` gives us computable density without `Classical`. Set algebra
 (`∩`, `∪`, `⊆`, `\`) is inherited via mathlib's `Finset` lattice.
 
-Reference samples carry `Finset.Nonempty` proofs. @cite{haspelmath-2001}
+Reference samples carry `Finset.Nonempty` proofs. [haspelmath-2001]
 evaluates his criteria against actual evidence — there is no
 "vacuous absence" in the paper — so requiring non-emptiness eliminates
 the degenerate `0/0 = 0` density and lets the rational and Nat
@@ -63,7 +63,7 @@ predicate.
 
 ## Relation to contemporary typology
 
-The discrete-criterion framing is faithful to @cite{haspelmath-2001} but
+The discrete-criterion framing is faithful to [haspelmath-2001] but
 is now widely seen as a first approximation. Subsequent work has
 questioned whether any principled threshold separates Sprachbund from
 non-Sprachbund, and large databases (Grambank, AUTOTYP) support
@@ -158,9 +158,9 @@ end Isogloss
 -- ============================================================================
 
 /-- The four reference samples needed to evaluate whether a feature is areal,
-following @cite{haspelmath-2001} §1's criteria (i)–(iv).
+following [haspelmath-2001] §1's criteria (i)–(iv).
 
-Non-emptiness is required by construction: @cite{haspelmath-2001}'s
+Non-emptiness is required by construction: [haspelmath-2001]'s
 methodology presupposes positive evidence on each sample, and an empty
 sample provides no information about the criterion it is meant to address.
 
@@ -195,7 +195,7 @@ structure ArealReference (L : Type u) where
 -- ============================================================================
 
 /-- The **areal profile** of an isogloss against a reference: the four
-densities that @cite{haspelmath-2001}'s methodology compares. This is the
+densities that [haspelmath-2001]'s methodology compares. This is the
 gradient datum from which both threshold-based binary judgments
 (`IsArealAt`) and §4-style cluster maps are derived.
 
@@ -237,9 +237,9 @@ def ArealProfile.contrastScore (p : ArealProfile) : ℚ :=
 -- §4. Thresholds
 -- ============================================================================
 
-/-- Numerical thresholds for @cite{haspelmath-2001}'s qualitative criteria.
+/-- Numerical thresholds for [haspelmath-2001]'s qualitative criteria.
 
-@cite{haspelmath-2001} reads "the great majority" and "lack"
+[haspelmath-2001] reads "the great majority" and "lack"
 qualitatively; this structure exposes the cutoffs so that:
 
 * the default `⟨1/2, 1/2⟩` is the natural first approximation,
@@ -263,7 +263,7 @@ instance : Inhabited ArealThresholds := ⟨{}⟩
 
 /-- The four-part Haspelmath criterion at a chosen `ArealThresholds`.
 
-Each field captures one of @cite{haspelmath-2001} §1 criteria (i)–(iv),
+Each field captures one of [haspelmath-2001] §1 criteria (i)–(iv),
 parameterized by the threshold `T`. With `T = default` this is the
 plain "majority in / minority out" reading. -/
 structure IsArealAt {L : Type u} [DecidableEq L]
@@ -295,14 +295,14 @@ and a feature index type `F`.
 
 An area bundles the three pieces of data needed for cluster-map analysis:
 a reference frame, a finite set of diagnostic features, and an isogloss
-assignment. The cluster-map methodology of @cite{haspelmath-2001} §4 is
+assignment. The cluster-map methodology of [haspelmath-2001] §4 is
 recovered from this data via `featureProfile` (per-feature gradient),
 `clusterScore` (per-language count), and `isopleth` / `nucleus` (cluster
 bands and core).
 
 `LinguisticArea` deliberately does **not** require every diagnostic
 feature to satisfy `IsArealAt` at any particular threshold. Real
-Sprachbund analyses (including @cite{haspelmath-2001}'s own SAE) propose
+Sprachbund analyses (including [haspelmath-2001]'s own SAE) propose
 feature inventories where strong, weak, and tendency-only features
 coexist; the binary `IsArealAt` predicate is applied à la carte by
 downstream studies for whichever subset passes the threshold of
@@ -331,7 +331,7 @@ def featureScore (A : LinguisticArea L F) (f : F) : ℚ :=
   (A.featureProfile f).contrastScore
 
 /-- The **cluster score** of a language: how many of the area's features it
-exhibits. This recovers @cite{haspelmath-2001} §4's cluster-map gradient
+exhibits. This recovers [haspelmath-2001] §4's cluster-map gradient
 membership from the discrete feature-by-feature data. -/
 def clusterScore (A : LinguisticArea L F) (l : L) : ℕ :=
   (A.features.filter fun f => l ∈ A.isogloss f).card
@@ -354,7 +354,7 @@ lemma isopleth_anti (A : LinguisticArea L F) {j k : ℕ} (h : j ≤ k) :
   fun _ hl => Nat.le_trans h hl
 
 /-- The **nucleus**: languages exhibiting all but at most one of the area's
-features. For SAE, @cite{haspelmath-2001} §4 identifies French and German
+features. For SAE, [haspelmath-2001] §4 identifies French and German
 as the nuclear members — the *Charlemagne Sprachbund*.
 
 `Nat` subtraction truncates at zero, so `features.card = 0` gives the

@@ -5,7 +5,7 @@ import Mathlib.Order.Closure
 
 /-!
 # Compatibility Frames (Possibility Semantics for Orthologic)
-@cite{holliday-mandelkern-2024}
+[holliday-mandelkern-2024]
 
 Possibility semantics generalizes possible-worlds semantics by replacing
 maximal possible worlds with partial *possibilities* ordered by refinement.
@@ -59,7 +59,7 @@ namespace Orthologic
 /-- A compatibility frame: a set of possibilities with a reflexive,
     symmetric compatibility relation. Two possibilities are compatible
     if neither settles as true anything the other settles as false.
-    @cite{holliday-mandelkern-2024} Definition 4.1.
+    [holliday-mandelkern-2024] Definition 4.1.
 
     Decidability of `compat` is *not* bundled — provide a `DecidableRel`
     instance separately for each concrete frame. -/
@@ -75,7 +75,7 @@ structure CompatFrame (S : Type*) where
 /-- Orthocomplement negation. `¬A = {x | ∀y compatible with x, y ∉ A}`.
     A possibility x makes ¬A true iff no compatible possibility makes A
     true — i.e., x's information *settles* ¬A.
-    @cite{holliday-mandelkern-2024} Proposition 4.8, eq. (1). -/
+    [holliday-mandelkern-2024] Proposition 4.8, eq. (1). -/
 def orthoNeg {S : Type*} (F : CompatFrame S) (A : Set S) : Set S :=
   { x | ∀ y : S, F.compat x y → y ∉ A }
 
@@ -106,7 +106,7 @@ abbrev conj {S : Type*} (A B : Set S) : Set S := A ∩ B
     Strictly weaker than set-theoretic union: a possibility x makes A ∨ B
     true iff every y compatible with x is itself compatible with some z
     that makes A or B true (the unpacked form, paper eq. (2)).
-    @cite{holliday-mandelkern-2024} Proposition 4.8, eq. (2). -/
+    [holliday-mandelkern-2024] Proposition 4.8, eq. (2). -/
 def disj {S : Type*} (F : CompatFrame S) (A B : Set S) : Set S :=
   orthoNeg F (orthoNeg F A ∩ orthoNeg F B)
 
@@ -136,7 +136,7 @@ instance conj_apply_decidable {S : Type*} (A B : Set S)
     with x such that all z compatible with y are also not in A.
     Regularity = "indeterminacy implies compatibility with falsity."
     Only regular sets count as propositions.
-    @cite{holliday-mandelkern-2024} Definition 4.3. -/
+    [holliday-mandelkern-2024] Definition 4.3. -/
 def isRegular {S : Type*} (F : CompatFrame S) (A : Set S) : Prop :=
   ∀ x : S, x ∈ A ∨ ∃ y : S, F.compat x y ∧ ∀ z : S, F.compat y z → z ∉ A
 
@@ -158,7 +158,7 @@ instance isRegular_apply_decidable {S : Type*} [Fintype S] (F : CompatFrame S)
 
 /-- Refinement: y ⊑ x iff every possibility compatible with y is also
     compatible with x. A refinement carries at least as much information.
-    @cite{holliday-mandelkern-2024} Lemma 4.4, condition 2. -/
+    [holliday-mandelkern-2024] Lemma 4.4, condition 2. -/
 def refines {S : Type*} (F : CompatFrame S) (y x : S) : Prop :=
   ∀ z : S, F.compat y z → F.compat x z
 
@@ -168,7 +168,7 @@ instance {S : Type*} [Fintype S] (F : CompatFrame S) [DecidableRel F.compat]
 
 /-- A world is a possibility that refines everything it is compatible
     with — the most informative kind of possibility.
-    @cite{holliday-mandelkern-2024} Definition 4.6. -/
+    [holliday-mandelkern-2024] Definition 4.6. -/
 def isWorld {S : Type*} (F : CompatFrame S) (w : S) : Prop :=
   ∀ x : S, F.compat w x → refines F w x
 
@@ -184,7 +184,7 @@ instance {S : Type*} [Fintype S] (F : CompatFrame S) [DecidableRel F.compat]
     orthocomplement reduces to Boolean negation and the ortholattice is
     Boolean. This is the sense in which possible-world semantics is a
     special case of possibility semantics.
-    @cite{holliday-mandelkern-2024} Remark 4.9 characterizes Boolean
+    [holliday-mandelkern-2024] Remark 4.9 characterizes Boolean
     collapse as compatibility-implies-compossibility; the identity frame
     below is the simplest instance of that condition. -/
 theorem orthoNeg_classical {S : Type*}
@@ -225,7 +225,7 @@ theorem identityFrame_classical {S : Type*} [DecidableEq S]
     `regularClosure F` are precisely the ◇-regular sets — making
     `RegularProp F = (regularClosure F).fixedPoints` a mathlib-typed
     closure-operator-based construction.
-    @cite{holliday-mandelkern-2024} footnote 19 (page 858 of the
+    [holliday-mandelkern-2024] footnote 19 (page 858 of the
     published JPL version). -/
 def regularClosure {S : Type*} (F : CompatFrame S) : ClosureOperator (Set S) where
   toFun A := { x | ∀ y, F.compat x y → ∃ z, F.compat y z ∧ z ∈ A }

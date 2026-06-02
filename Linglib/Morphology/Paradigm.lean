@@ -4,7 +4,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Morphological Paradigm Substrate
-@cite{ackerman-malouf-2013} @cite{rathi-hahn-futrell-2026}
+[ackerman-malouf-2013] [rathi-hahn-futrell-2026]
 
 Cross-paper substrate for paradigm-cell-level analyses: inflection classes,
 paradigm systems, cell distributions, and entropy-based measures over them.
@@ -17,7 +17,7 @@ cell** of a paradigm with its features and form; `ParadigmSystem` here is the
 
 `InflectionClass n Form` and `ParadigmSystem n Form` are parameterized over
 the surface-form type. Most consumers use `Form := String` (the natural
-representation for actual morphological forms in @cite{ackerman-malouf-2013}'s
+representation for actual morphological forms in [ackerman-malouf-2013]'s
 A&M language sample). The Rathi 2026 toy paradigms use a small `[Fintype]`
 form alphabet so that PMF-based entropy operators (`Entropy.lean`) apply
 to cell distributions; that integration lives in a sibling
@@ -95,7 +95,7 @@ def ParadigmSystem.jointCellDistribution {n : Nat} {Form : Type} [BEq Form]
     List ((Form × Form) × ℚ) :=
   groupBySum (ps.entries.map λ (ic, f) => ((ic.realize ci, ic.realize cj), f))
 
-/-- E-complexity (@cite{ackerman-malouf-2013}): the number of inflection
+/-- E-complexity ([ackerman-malouf-2013]): the number of inflection
     classes in the paradigm system. -/
 def ParadigmSystem.eComplexity {n : Nat} {Form : Type*}
     (ps : ParadigmSystem n Form) : Nat :=
@@ -108,7 +108,7 @@ noncomputable def ParadigmSystem.cellEntropy {n : Nat} {Form : Type} [BEq Form]
   entropy support prob
 
 /-- Conditional entropy `H(C_i | C_j)` of cell `ci` given cell `cj` (in nats).
-    The integrand of @cite{ackerman-malouf-2013}'s i-complexity. -/
+    The integrand of [ackerman-malouf-2013]'s i-complexity. -/
 noncomputable def ParadigmSystem.conditionalCellEntropy {n : Nat} {Form : Type}
     [BEq Form] [DecidableEq Form]
     (ps : ParadigmSystem n Form) (ci cj : Fin n) : ℝ :=

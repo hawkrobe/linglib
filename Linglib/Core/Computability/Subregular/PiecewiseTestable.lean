@@ -9,8 +9,8 @@ import Linglib.Core.Computability.Subregular.StrictlyPiecewise
 # Piecewise Testable Languages (PT_k)
 
 A language `L` is **piecewise `k`-testable** when membership depends only
-on which length-`k` *subsequences* the input contains @cite{simon-1975}
-@cite{rogers-pullum-2011} @cite{lambert-2022}. PT is to SP what LT is to
+on which length-`k` *subsequences* the input contains [simon-1975]
+[rogers-pullum-2011] [lambert-2022]. PT is to SP what LT is to
 SL: the Boolean closure of the strictly variant.
 
 Both are *property-based* (extensional) classifications — there is no
@@ -23,7 +23,7 @@ is closed under `~_PT`.
 The multitier closure of PT (which Lambert classifies as 𝒥) covers a
 large fraction of attested phonotactic constraints — including the
 piecewise-testable analyses of unbounded stress patterns surveyed in
-@cite{lambert-2026} §3 and the Karanga Shona tone analysis (which is
+[lambert-2026] §3 and the Karanga Shona tone analysis (which is
 piecewise testable but not multitier generalised definite). The
 substrate sits adjacent to `Multitier.lean` and is composed via
 `IsBTC IsPiecewiseTestable`.
@@ -47,11 +47,11 @@ variable {α : Type*}
 indistinguishability relation `w₁ ~_PT w₂` is equality of
 `subseqSet k w₁` and `subseqSet k w₂`.
 
-The "up to `k`" semantics matches @cite{simon-1975} and the Heinz/Lambert
-literature (@cite{lambert-2026} Def 11; @cite{heinz-2018}). The "exactly
+The "up to `k`" semantics matches [simon-1975] and the Heinz/Lambert
+literature ([lambert-2026] Def 11; [heinz-2018]). The "exactly
 `k`" alternative would mis-classify languages that distinguish strings
 of length less than `k` (e.g. Luganda high-tone plateauing
-@cite{lambert-2026} (37) distinguishes `[h]` from `[ℓ]` while their
+[lambert-2026] (37) distinguishes `[h]` from `[ℓ]` while their
 length-3 subsequence sets are both empty). Unlike `factorSet`, no
 boundary augmentation: SP/PT are insensitive to position. -/
 def subseqSet (k : ℕ) (w : List α) : Set (List α) :=

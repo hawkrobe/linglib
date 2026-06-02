@@ -5,7 +5,7 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # DLM training: Endstate Learning vs Frequency-Informed Learning
-@cite{baayen-2019} @cite{gahl-baayen-2024} @cite{heitmeier-chuang-baayen-2026}
+[baayen-2019] [gahl-baayen-2024] [heitmeier-chuang-baayen-2026]
 
 Sibling to `Defs.lean`, `Normed.lean`, `Measures.lean`. Hosts the
 substrate for **what counts as a learned production map** — the
@@ -15,7 +15,7 @@ Frequency-Informed Learning (FIL).
 ## Paper-faithful representation: `FrequencyVector` (= paper's `Q`)
 
 `FrequencyVector m` is the type-faithful representation of paper
-@cite{gahl-baayen-2024}'s diagonal frequency matrix `Q` (appendix §A1.3):
+[gahl-baayen-2024]'s diagonal frequency matrix `Q` (appendix §A1.3):
 one nonneg weight per usage event. We do *not* normalise to a
 probability distribution; the paper works with raw counts. The PMF
 view is a derived bridge — call `PMF.ofRealWeightFn` from
@@ -36,7 +36,7 @@ theories of learning correspond to different choices of `q`; the
 substrate captures the architecture in which those theories diverge:
 
 - `weightedLoss data q G` — the per-event squared-error loss
-  weighted by `q`. Paper appendix §A1.3 of @cite{gahl-baayen-2024}.
+  weighted by `q`. Paper appendix §A1.3 of [gahl-baayen-2024].
 - `IsERMSolution data q G` — `G` minimises the weighted loss. The
   cognitive theory choice IS the choice of `q`; the optimization
   procedure is fixed.
@@ -59,7 +59,7 @@ This is **not** generic regression formalization. The substrate
 captures:
 
 1. The **loss function** `weightedLoss` as the cognitive commitment
-   (paper §3 of @cite{gahl-baayen-2024}: minimising squared error
+   (paper §3 of [gahl-baayen-2024]: minimising squared error
    per usage event is what the learner does).
 2. The **frequency-weight parameterisation** as the cross-theory
    axis (paper §3.1 distinguishes EL from FIL only via `q`).
@@ -73,7 +73,7 @@ We do *not* formalise:
   is invertible") — but that's regression formalization in the
   service of showing equivalence to the optimization picture.
 - The **iterative Widrow-Hoff** convergence to `IsFILSolution`
-  (paper appendix §A5.1; @cite{heitmeier-chuang-baayen-2026}
+  (paper appendix §A5.1; [heitmeier-chuang-baayen-2026]
   Heitmeier 2024 argument). Defer until a 2nd consumer needs it.
 - The **PMF / ERM-theoretic** reformulation. Mathematically
   equivalent in finite case, but interpretively additive — the
@@ -108,7 +108,7 @@ structure TrainingExperience (numEvents formDim meaningDim : ℕ) where
   forms    : Fin numEvents → FormVec formDim
 
 /-- A **frequency vector** — paper notation `Q` (the diagonal entries
-    of the weight matrix in @cite{gahl-baayen-2024} appendix §A1.3).
+    of the weight matrix in [gahl-baayen-2024] appendix §A1.3).
     One nonneg weight per usage event.
 
     We use `Fin m → ℝ` (rather than `Fin m → NNReal`) for proof
@@ -200,7 +200,7 @@ def IsERMSolution
 
 /-- An **endstate-learning solution** for the experience: an ERM
     solution under type-uniform weights. Paper appendix §A1.1 of
-    @cite{gahl-baayen-2024}. -/
+    [gahl-baayen-2024]. -/
 abbrev IsELSolution
     (data : TrainingExperience m n d)
     (G : MeaningVec d →ₗ[ℝ] FormVec n) : Prop :=
@@ -212,7 +212,7 @@ abbrev IsELSolution
     `q` the consumer passes; the substrate is agnostic about which
     `q` is empirically correct.
 
-    Paper appendix §A1.3 of @cite{gahl-baayen-2024} introduces FIL
+    Paper appendix §A1.3 of [gahl-baayen-2024] introduces FIL
     with `q` = corpus token frequencies; future cognitive theories
     may motivate other `q` choices. -/
 abbrev IsFILSolution
@@ -300,7 +300,7 @@ theorem weightedLoss_zero_event_drops
 
 /-- **Definitional equivalence**: an `IsELSolution` is exactly an ERM
     solution under uniform weights. Paper-canonical: paper §3.1 of
-    @cite{gahl-baayen-2024} introduces EL as the special case of FIL
+    [gahl-baayen-2024] introduces EL as the special case of FIL
     with `Q = I`. Here `uniformFrequency = fun _ => 1` is the discrete
     analogue. -/
 theorem isELSolution_eq_isERM_uniform

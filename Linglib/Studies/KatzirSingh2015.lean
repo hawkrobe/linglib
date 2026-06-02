@@ -8,9 +8,9 @@ import Linglib.Semantics.Questions.Partition.Constructors
 
 /-!
 # Economy of Structure and Information
-@cite{heim-1991} @cite{hurford-1974} @cite{katzir-2007} @cite{katzir-singh-2015} @cite{magri-2009} @cite{spector-2014}
+[heim-1991] [hurford-1974] [katzir-2007] [katzir-singh-2015] [magri-2009] [spector-2014]
 
-@cite{katzir-singh-2015}. Proceedings of Sinn und Bedeutung 19, pp. 322–339.
+[katzir-singh-2015]. Proceedings of Sinn und Bedeutung 19, pp. 322–339.
 
 Two felicity conditions on assertions:
 
@@ -21,8 +21,8 @@ Two felicity conditions on assertions:
    to any alternative — where inferiority combines structural complexity with semantic strength.
 
 These two conditions unify:
-- @cite{magri-2009} oddness (# Some Italians come from a warm country)
-- @cite{spector-2014} oddness (# All Italians...; # John has one wife)
+- [magri-2009] oddness (# Some Italians come from a warm country)
+- [spector-2014] oddness (# All Italians...; # John has one wife)
 - Hurford's constraint (# John visited France or Paris)
 - Maximize Presupposition! (# A sun is shining)
 - DE reversal of oddness patterns
@@ -139,32 +139,32 @@ def Scenario.mk' {W U : Type*} (m : SemanticModel W U) (d : DiscourseContext W) 
   worlds     := m.worlds
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §2  @cite{spector-2014} Triviality (for comparison / bridge)
+-- §2  [spector-2014] Triviality (for comparison / bridge)
 -- ═══════════════════════════════════════════════════════════════════════
 
 section Triviality
 
 variable {W : Type*} (worlds : List W) (C : W → Bool)
 
-/-- C-contradiction: incompatible with context. (@cite{spector-2014}, def 4a) -/
+/-- C-contradiction: incompatible with context. ([spector-2014], def 4a) -/
 def isCContradiction (φ' : W → Bool) : Bool :=
   worlds.all λ w => !C w || !φ' w
 
-/-- C-tautology: entailed by context. (@cite{spector-2014}, def 4b) -/
+/-- C-tautology: entailed by context. ([spector-2014], def 4b) -/
 def isCTautology (φ' : W → Bool) : Bool :=
   worlds.all λ w => !C w || φ' w
 
-/-- C-equivalent to φ: same truth value in context. (@cite{spector-2014}, def 4c) -/
+/-- C-equivalent to φ: same truth value in context. ([spector-2014], def 4c) -/
 def isCEquivalent (φ φ' : W → Bool) : Bool :=
   worlds.all λ w => !C w || (φ w == φ' w)
 
-/-- Trivial in C given φ. (@cite{spector-2014}, def 4) -/
+/-- Trivial in C given φ. ([spector-2014], def 4) -/
 def isTrivialInC (φ φ' : W → Bool) : Bool :=
   isCContradiction worlds C φ' ||
   isCTautology worlds C φ' ||
   isCEquivalent worlds C φ φ'
 
-/-- No Trivial Alternatives violation (@cite{spector-2014}, def 5):
+/-- No Trivial Alternatives violation ([spector-2014], def 5):
 ALL alternatives are trivial in C given φ. -/
 def allAlternativesTrivial (φ : W → Bool) (alts : List (W → Bool)) : Bool :=
   alts.all λ φ' => isTrivialInC worlds C φ φ'
@@ -177,7 +177,7 @@ end Triviality
 
 /-! K&S ex. (1)–(2): "# Some/All Italians come from a warm country"
 
-The example is due to @cite{magri-2009}, who explains the oddness via
+The example is due to [magri-2009], who explains the oddness via
 blind mandatory scalar implicatures (see `Magri2009.lean`). K&S offer
 an alternative explanation: the QUD is trivially settled by CK.
 
@@ -185,7 +185,7 @@ CK: Italy is a warm country. Since all Italians come from Italy,
 the QUD "Do [some/all] Italians come from a warm country?" is
 trivially settled → Question Condition violation.
 
-Both K&S and @cite{spector-2014} predict oddness here (§1.2). -/
+Both K&S and [spector-2014] predict oddness here (§1.2). -/
 
 section ItalianWarmth
 
@@ -228,7 +228,7 @@ theorem italianWarmth_some_odd :
 theorem italianWarmth_all_odd :
     italianWarmthScenario.isOdd .all_ = true := by native_decide
 
-/-- Bridge: @cite{spector-2014} makes the same prediction (all alternatives trivial). -/
+/-- Bridge: [spector-2014] makes the same prediction (all alternatives trivial). -/
 theorem spector_agrees_italianWarmth :
     allAlternativesTrivial [ItalyWorld.allWarm, .noneWarm]
       (λ w => w == .allWarm)
@@ -641,7 +641,7 @@ regardless of whether CK settles it. Oddness then depends solely on
 the Answer Condition. Since "one wife" is not needlessly inferior
 (all alternatives are CK-incompatible), the sentence is felicitous.
 
-This is a genuine prediction difference with @cite{spector-2014}:
+This is a genuine prediction difference with [spector-2014]:
 Spector predicts oddness persists because the triviality of alternatives
 is unchanged by the explicit question (K&S §2.2, p. 327). -/
 
@@ -708,7 +708,7 @@ which is `false`. -/
 theorem wife_rescue_answer_condition :
     wifeScenario.needlesslyInferior .one = false := by native_decide
 
-/-- @cite{spector-2014} disagrees: "John has one wife" remains odd even
+/-- [spector-2014] disagrees: "John has one wife" remains odd even
 with the explicit question. All alternatives are trivial in CK:
 - "two wives" is a C-contradiction (incompatible with CK)
 - "zero wives" is a C-contradiction (incompatible with CK)
@@ -798,11 +798,11 @@ theorem hurford_rescued_match_data :
 | All Italians…             | ok         | ODD      | ODD          |
 
 All three agree on "some". The disagreement on "all" reveals:
-- **@cite{magri-2009}** is the most targeted: only oddness when a blind
+- **[magri-2009]** is the most targeted: only oddness when a blind
   implicature contradicts CK. "All" generates no implicature, so it's fine.
 - **K&S** casts the widest net via the Question Condition: ANY utterance
   addressing a trivially settled QUD is odd.
-- **@cite{spector-2014}** predicts oddness via triviality: "all" is a
+- **[spector-2014]** predicts oddness via triviality: "all" is a
   C-tautology (entailed by CK), so the only alternative is trivial → odd. -/
 
 section ThreeWayComparison

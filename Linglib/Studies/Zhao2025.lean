@@ -3,13 +3,13 @@ import Linglib.Fragments.Mandarin.AspectComparison
 
 /-!
 # Cross-Domain Bridge: VendlerClass ↔ Mandarin Particles
-@cite{zhao-2025}
+[zhao-2025]
 
 Lexical facts about three Mandarin particles' anti-AtomDist
 requirements (from `Fragments/Mandarin/AspectComparison.lean`).
 Composed with Aktionsart's `dynamicity` projection — which assigns
 `.stative` to exactly the `.state` VendlerClass — these yield the
-licensing pattern of @cite{zhao-2025}: `le` and `meiyou` are
+licensing pattern of [zhao-2025]: `le` and `meiyou` are
 licensed by the dynamic classes (activity / achievement /
 accomplishment / semelfactive); `guo` is licensed by every class
 including state.
@@ -21,7 +21,7 @@ dynamicity projection in Aktionsart), not a single theorem.
 ## Substrate connection
 
 `le.requiresAntiAtomDist = true` is the Fragment-level encoding of
-@cite{zhao-2025} Def. 5.36 (p. 165) ATOM-DIST_t at the verb-quantifier
+[zhao-2025] Def. 5.36 (p. 165) ATOM-DIST_t at the verb-quantifier
 level. The substrate-side treatment lives in `Core/Time/AtomDist.lean`
 (`AtomDist τ V`, with `EvQuant.ofPred` bridging from event predicates
 to event quantifiers); for the witness-universal subinterval form on

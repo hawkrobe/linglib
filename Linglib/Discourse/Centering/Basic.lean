@@ -4,7 +4,7 @@ import Mathlib.Data.List.MinMax
 import Mathlib.Data.List.Dedup
 /-!
 # Centering Theory — Cb, Cf, Cp
-@cite{grosz-joshi-weinstein-1995}
+[grosz-joshi-weinstein-1995]
 Forward- and backward-looking center operations, parameterized by
 role ranker (`[CfRankerOf E R]`) and realizes-semantics (`[Realizes U E]`).
 GJW's "unique Cb" claim is enforced by `cb`'s `Option E` return type.
@@ -116,7 +116,7 @@ end Utterance
 def cb [DecidableEq E] [CfRankerOf E R] {U : Type*} [Realizes U E]
     (prev : Utterance E R) (cur : U) : Option E :=
   prev.cf.find? (fun e => decide (realizes cur e))
-/-- Locality of Cb (@cite{grosz-joshi-weinstein-1995}): `cb prev cur`
+/-- Locality of Cb ([grosz-joshi-weinstein-1995]): `cb prev cur`
     is always drawn from `prev.cf`, never further back. -/
 theorem cb_mem_prev_cf [DecidableEq E] [CfRankerOf E R] {U : Type*} [Realizes U E]
     {prev : Utterance E R} {cur : U} {e : E} (h : cb prev cur = some e) :

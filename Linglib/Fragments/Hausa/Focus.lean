@@ -4,9 +4,9 @@ import Linglib.Features.Gender
 
 /-!
 # Hausa Focus and the Stabilizer *nē/cē* — mathlib-style
-@cite{newman-2000} @cite{jaggar-green-2003} @cite{hartmann-zimmermann-2007}
+[newman-2000] [jaggar-green-2003] [hartmann-zimmermann-2007]
 
-Hausa expresses focus by two principal strategies (@cite{newman-2000}
+Hausa expresses focus by two principal strategies ([newman-2000]
 ch. 28, ch. 66):
 
 1. **In-situ focus**: the focused constituent stays in its canonical
@@ -16,13 +16,13 @@ ch. 28, ch. 66):
    position. Two morphosyntactic reflexes are diagnostic:
    - the **stabilizer** *nē* (M / non-feminine-singular) or *cē*
      (F.SG) optionally surfaces after the focused phrase, agreeing in
-     gender and number with the focus (@cite{newman-2000} §66.1).
+     gender and number with the focus ([newman-2000] §66.1).
    - the clause's TAM shifts to the **Relative form** (in completive
      and continuous; cf. `Hausa/TAM.lean` §1).
 
 The Relative-form requirement is the main empirical hook: it ties
 ex-situ focus to the broader morphological General/Relative split shared
-with relative clauses and *wh*-questions (@cite{jaggar-green-2003}
+with relative clauses and *wh*-questions ([jaggar-green-2003]
 argue this is movement to a single CP-internal position, but we stay
 theory-neutral here and just record the licensing condition).
 
@@ -53,13 +53,13 @@ inductive Strategy where
   deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
--- § 2: Stabilizer (@cite{newman-2000} §66)
+-- § 2: Stabilizer ([newman-2000] §66)
 -- ============================================================================
 
 /-- The stabilizer surfaces with two allomorphs in agreement with the
     focused constituent: *cē* with feminine-singular focus, *nē*
     elsewhere (masculine singular and all plurals). The plural agrees
-    with *nē* regardless of gender (@cite{newman-2000} §66.1). -/
+    with *nē* regardless of gender ([newman-2000] §66.1). -/
 inductive Stabilizer where
   | nee   -- nē
   | cee   -- cē
@@ -104,7 +104,7 @@ def FocusConfig.stab? (c : FocusConfig) : Option Stabilizer :=
   if c.hasStab then some (stabilizerFor c.focusG c.focusSG) else none
 
 -- ============================================================================
--- § 4: Licensing Condition (@cite{newman-2000} §65, §66)
+-- § 4: Licensing Condition ([newman-2000] §65, §66)
 -- ============================================================================
 
 /-- A FocusConfig is **licensed** iff:
@@ -209,7 +209,7 @@ theorem exSitu_fem_picks_cee :
 /-- Surface tone of the stabilizer after a host whose final TBU has the
     given tone. The stabilizer *nē/cē* is **polar-toned**: it surfaces
     with the *opposite* tone of the immediately preceding syllable
-    (@cite{newman-2000} §66.1). -/
+    ([newman-2000] §66.1). -/
 def Stabilizer.toneAfter (_ : Stabilizer) (host : TRN) : TRN :=
   polarOf host
 

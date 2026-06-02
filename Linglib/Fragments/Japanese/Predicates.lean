@@ -3,9 +3,9 @@ import Linglib.Semantics.Verb.Basic
 
 /-!
 # Japanese Predicate Lexicon Fragment
-@cite{qing-uegaki-2025} @cite{ozaki-2026}
+[qing-uegaki-2025] [ozaki-2026]
 
-Japanese predicates relevant to @cite{qing-uegaki-2025}. Properties like
+Japanese predicates relevant to [qing-uegaki-2025]. Properties like
 C-distributivity and NVP class are DERIVED from the `attitude` field.
 -/
 
@@ -77,7 +77,7 @@ def shinpai : JapaneseVerbEntry where
 
 /-! ## Causative predicates
 
-Japanese morphological causative suffix *-(s)ase* (@cite{song-1996}: COMPACT type).
+Japanese morphological causative suffix *-(s)ase* ([song-1996]: COMPACT type).
 Case marking on the causee distinguishes coercion from permission:
 - ACC *o* = less causee control → `.make` (coercive reading)
 - DAT *ni* = more causee control → `.enable` (permissive reading)
@@ -120,7 +120,7 @@ These are dyadic unaccusatives: two internal arguments, no thematic Voice.
 /-- 離れる "hanareru" — leave (dyadic unaccusative, ACC/ABL alternation).
     Leaver = theme (raised to subject), Source = source of departure.
     `voiceType := .nonThematic` — unaccusativity is derived from Voice
-    selection, not stipulated (@cite{kratzer-1996}, @cite{ozaki-2026}). -/
+    selection, not stipulated ([kratzer-1996], [ozaki-2026]). -/
 def hanareru : JapaneseVerbEntry where
   form := "hanareru"
   form3sg := "hanareru"
@@ -135,7 +135,7 @@ def hanareru : JapaneseVerbEntry where
 /-- 出る "deru" — exit (dyadic unaccusative, ACC/ABL alternation).
     Leaver = theme (raised to subject), Source = source of departure.
     `voiceType := .nonThematic` — unaccusativity is derived from Voice
-    selection, not stipulated (@cite{kratzer-1996}, @cite{ozaki-2026}). -/
+    selection, not stipulated ([kratzer-1996], [ozaki-2026]). -/
 def deru : JapaneseVerbEntry where
   form := "deru"
   form3sg := "deru"

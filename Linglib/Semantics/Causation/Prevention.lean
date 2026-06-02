@@ -2,7 +2,7 @@ import Linglib.Core.Causal.SEM.Counterfactual
 
 /-!
 # Prevention Semantics
-@cite{sloman-barbey-hotaling-2009}
+[sloman-barbey-hotaling-2009]
 
 `preventSem` formalizes the SEM semantics of "prevent": the preventer
 blocks an effect that would otherwise occur. Behavioral, not structural:

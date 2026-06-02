@@ -39,7 +39,7 @@ namespace Morphology
     "agglutinating" and "fusional" conflate fusion with *flexivity*
     (see `Flexivity` below). Both `concatenative + nonflexive` (Turkish)
     and `concatenative + flexive` (Russian) map to `.concatenative` here.
-    @cite{bickel-nichols-2001} -/
+    [bickel-nichols-2001] -/
 inductive Fusion where
   | isolating
   | concatenative
@@ -48,7 +48,7 @@ inductive Fusion where
 
 /-- Whether inflectional formatives show item-based allomorphic variation.
 
-    @cite{bickel-nichols-2001} argue this is the crucial parameter that
+    [bickel-nichols-2001] argue this is the crucial parameter that
     the traditional typology conflates with fusion:
     - **nonflexive** ("agglutinating"): formatives have invariant or
       rule-governed shape (Turkish *-ler* ~ *-lar* is vowel-harmony,
@@ -71,7 +71,7 @@ inductive Flexivity where
 
     Distinct from `ExponenceScope` (B&N's broader cumulative/separative
     parameter which applies to all morphological categories, not just case).
-    @cite{bickel-nichols-2001} -/
+    [bickel-nichols-2001] -/
 inductive Exponence where
   | monoexponential
   | polyexponential
@@ -82,7 +82,7 @@ inductive Exponence where
     simultaneously (cumulative) or each formative expresses exactly one
     category (separative).
 
-    @cite{bickel-nichols-2001}: this is a general morphological parameter
+    [bickel-nichols-2001]: this is a general morphological parameter
     applying across all category pairs, not limited to case+number (cf.
     WALS Ch 21 `Exponence`). Latin *-ō* (1sg.pres.act.ind) is cumulative;
     Turkish verb suffixes are separative (each suffix = one category). -/
@@ -99,7 +99,7 @@ inductive VerbSynthesis where
   deriving DecidableEq, Repr
 
 /-- Locus of marking: where grammatical relations are marked.
-    Derived from WALS Ch 25A @cite{nichols-bickel-2013a}. -/
+    Derived from WALS Ch 25A [nichols-bickel-2013a]. -/
 inductive LocusOfMarking where
   | headMarking
   | dependentMarking
@@ -126,7 +126,7 @@ inductive Reduplication where
   deriving DecidableEq, Repr
 
 /-- WALS Ch 23: Where grammatical relations are marked in clausal syntax.
-    @cite{nichols-bickel-2013b} -/
+    [nichols-bickel-2013b] -/
 inductive LocusClause where
   | headMarking
   | dependentMarking
@@ -136,7 +136,7 @@ inductive LocusClause where
   deriving DecidableEq, Repr
 
 /-- WALS Ch 24: Where grammatical relations are marked in possessive NPs.
-    @cite{nichols-bickel-2013c} -/
+    [nichols-bickel-2013c] -/
 inductive LocusPossessive where
   | headMarking
   | dependentMarking
@@ -146,7 +146,7 @@ inductive LocusPossessive where
   deriving DecidableEq, Repr
 
 /-- WALS Ch 25A: Whole-language locus-of-marking classification.
-    @cite{nichols-bickel-2013a} -/
+    [nichols-bickel-2013a] -/
 inductive WholeLanguageMarking where
   | headMarking
   | dependentMarking
@@ -156,7 +156,7 @@ inductive WholeLanguageMarking where
   deriving DecidableEq, Repr
 
 /-- WALS Ch 25B: Whether A and P arguments are zero-marked.
-    @cite{nichols-bickel-2013d} -/
+    [nichols-bickel-2013d] -/
 inductive ZeroMarkingAP where
   | zeroMarking
   | nonZeroMarking
@@ -270,11 +270,11 @@ structure MorphProfile where
   suppletionImperative : Option SuppletionImperative := none
   /-- Ch 80A: Verbal number and suppletion (optional) -/
   verbalNumber : Option VerbalNumber := none
-  /-- @cite{bickel-nichols-2001}: Flexivity — whether inflectional formatives
+  /-- [bickel-nichols-2001]: Flexivity — whether inflectional formatives
       show item-based allomorphic variation (flexive) or are phonologically
       invariant (nonflexive). Orthogonal to `fusion`. Not derivable from WALS. -/
   flexivity : Option Flexivity := none
-  /-- @cite{bickel-nichols-2001}: Exponence scope — whether single formatives
+  /-- [bickel-nichols-2001]: Exponence scope — whether single formatives
       bundle multiple categories (cumulative) or each expresses one (separative).
       Broader than WALS Ch 21 `exponence` (which is case-specific). -/
   bnExponence : Option ExponenceScope := none
@@ -497,7 +497,7 @@ def walsVerbalNumber (iso : String) : Option VerbalNumber :=
 
     The B&N 2001 parameters `flexivity` and `bnExponence` are NOT derivable
     from any WALS chapter — they are paper-stipulated per
-    @cite{bickel-nichols-2001} and must be passed explicitly when known. -/
+    [bickel-nichols-2001] and must be passed explicitly when known. -/
 def MorphProfile.fromWALS
     (language iso : String)
     (fusionFb : Fusion)
@@ -634,7 +634,7 @@ instance : DecidablePred IsSeparative :=
   fun p => decidable_of_iff _ (isSeparative_iff p).symm
 
 /-- Traditional "agglutinating" = concatenative + nonflexive + separative.
-    @cite{bickel-nichols-2001} decomposition of the traditional typology. -/
+    [bickel-nichols-2001] decomposition of the traditional typology. -/
 def IsAgglutinating (p : MorphProfile) : Prop :=
   p.IsConcatenative ∧ p.IsNonflexive ∧ p.IsSeparative
 @[simp] theorem isAgglutinating_iff (p : MorphProfile) :
@@ -644,7 +644,7 @@ instance : DecidablePred IsAgglutinating :=
   fun p => decidable_of_iff _ (isAgglutinating_iff p).symm
 
 /-- Traditional "fusional" = concatenative + flexive + cumulative.
-    @cite{bickel-nichols-2001} decomposition of the traditional typology. -/
+    [bickel-nichols-2001] decomposition of the traditional typology. -/
 def IsFusional (p : MorphProfile) : Prop :=
   p.IsConcatenative ∧ p.IsFlexive ∧ p.IsCumulative
 @[simp] theorem isFusional_iff (p : MorphProfile) :

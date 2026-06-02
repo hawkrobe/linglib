@@ -3,9 +3,9 @@ import Linglib.Semantics.Lexical.Roots.Template
 /-!
 # B&K-G Typology, Bifurcation, and Manner/Result Complementarity
 
-@cite{beavers-koontz-garboden-2020} @cite{rappaport-hovav-levin-2010}
+[beavers-koontz-garboden-2020] [rappaport-hovav-levin-2010]
 
-The four-feature typology of @cite{beavers-koontz-garboden-2020}
+The four-feature typology of [beavers-koontz-garboden-2020]
 (±state, ±manner, ±result, ±cause) classifies roots by which kinds of
 atomic entailments they carry. Crucially, this classification is
 *derived* from `Root.entailments` — not stipulated as a separate enum.
@@ -17,10 +17,10 @@ allowed:
   entailments (state, manner). Eventive structure (result, cause) is
   contributed by templatic heads, never by roots.
 - **Manner/Result Complementarity**
-  (@cite{rappaport-hovav-levin-2010}): a single root entails manner
+  ([rappaport-hovav-levin-2010]): a single root entails manner
   *or* result, never both.
 
-@cite{beavers-koontz-garboden-2020} argue both fail. Here we encode them
+[beavers-koontz-garboden-2020] argue both fail. Here we encode them
 as Boolean predicates on roots and provide witnesses (in
 `BeaversKoontzGarboden2020.lean`) that falsify the universal closures.
 -/
@@ -32,7 +32,7 @@ namespace Semantics.Lexical.Roots
 -- ════════════════════════════════════════════════════
 
 /-- The four-feature classification of a root
-    (@cite{beavers-koontz-garboden-2020} table 13). All four features
+    ([beavers-koontz-garboden-2020] table 13). All four features
     are *derived* from `Root.entailments`, so the 16-cell typology
     falls out of which kinds of atoms a root carries. -/
 structure FeatureSignature where
@@ -60,7 +60,7 @@ end Root
 
 /-- A root *violates* Bifurcation iff it carries both an ontological
     entailment (state or manner) and an eventive one (result or cause).
-    The Bifurcation Thesis (@cite{beavers-koontz-garboden-2020}) is the
+    The Bifurcation Thesis ([beavers-koontz-garboden-2020]) is the
     universal claim that no root violates this. -/
 def Root.ViolatesBifurcation (r : Root) : Prop :=
   (r.hasState = true ∨ r.hasManner = true) ∧
@@ -82,7 +82,7 @@ instance (r : Root) : Decidable r.RespectsBifurcation := by
 -- ════════════════════════════════════════════════════
 
 /-- A root has both manner and result entailments — the Manner/Result
-    Complementarity thesis (@cite{rappaport-hovav-levin-2010}) is the
+    Complementarity thesis ([rappaport-hovav-levin-2010]) is the
     universal claim that no root does. -/
 def Root.HasMannerAndResult (r : Root) : Prop :=
   r.hasManner = true ∧ r.hasResult = true

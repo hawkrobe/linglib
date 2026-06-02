@@ -1,6 +1,6 @@
 /-!
 # Plunkett & Sundell 2013: Disagreement without incompatible contents
-@cite{plunkett-sundell-2013}
+[plunkett-sundell-2013]
 
 Plunkett, D. & Sundell, T. (2013). Disagreement and the semantics of
 normative and evaluative terms. *Philosophers' Imprint* 13(23), 1–37.

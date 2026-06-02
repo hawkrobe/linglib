@@ -2,7 +2,7 @@ import Linglib.Semantics.Questions.Basic
 
 /-!
 # Question — granularity and the width relation
-@cite{deo-thomas-2025}
+[deo-thomas-2025]
 
 The Deo–Thomas 2025 *width* relation between inquisitive contents:
 two issues with the same informational content can still differ in
@@ -30,7 +30,7 @@ namespace Question
 universe u
 variable {W : Type u}
 
-/-- The **width relation** between issues (@cite{deo-thomas-2025} (32)).
+/-- The **width relation** between issues ([deo-thomas-2025] (32)).
 
     `P.widerThan Q` holds when:
     - (a) Same informational content: `P.info = Q.info`.
@@ -40,7 +40,7 @@ variable {W : Type u}
     A wider question makes finer distinctions — its answers are
     individually more specific. Weaker than question entailment because
     granularity-based construals generally cannot be ordered by
-    entailment strength (@cite{deo-thomas-2025} fn. 20). -/
+    entailment strength ([deo-thomas-2025] fn. 20). -/
 def widerThan (P Q : Question W) : Prop :=
   P.info = Q.info ∧
   (∀ p₂ ∈ alt Q, ∀ p₁ ∈ alt P, ¬ (p₂ ⊂ p₁)) ∧

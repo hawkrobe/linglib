@@ -2,7 +2,7 @@ import Linglib.Typology.Gender
 
 /-!
 # Finnish Gender
-@cite{corbett-1991} @cite{corbett-2013}
+[corbett-1991] [corbett-2013]
 
 No grammatical gender. WALS Ch 30/31/32 = none.
 -/

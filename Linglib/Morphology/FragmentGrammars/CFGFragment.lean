@@ -3,12 +3,12 @@ import Linglib.Core.Computability.ContextFreeGrammar.Tree
 /-!
 # Partial derivation trees (fragments) for context-free grammars
 
-@cite{odonnell-2015}
+[odonnell-2015]
 
 A *fragment* of a context-free grammar `g` is a partial derivation
 tree some of whose leaves are nonterminal "open slots" rather than
 terminal symbols. Fragments are the units of storage in fragment
-grammars (@cite{odonnell-2015} §2.3.6) and adaptor grammars
+grammars ([odonnell-2015] §2.3.6) and adaptor grammars
 (§2.3.4): a fragment-grammar analysis of an utterance partitions the
 full derivation tree into fragments stored in memoized Pitman–Yor
 tables.
@@ -39,7 +39,7 @@ them.
 
 ## References
 
-- @cite{odonnell-2015} §2.3.6 (fragment grammars), §3.1.5 (DOP
+- [odonnell-2015] §2.3.6 (fragment grammars), §3.1.5 (DOP
   prefix function).
 - `Mathlib.Computability.ContextFreeGrammar` for the `Symbol T N`
   sum type used at leaves.

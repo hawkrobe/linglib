@@ -4,7 +4,7 @@ import Linglib.Semantics.Aspect.Incremental
 import Linglib.Semantics.Aspect.Cumulativity
 
 /-!
-# @cite{filip-2012}: "Lexical Aspect"
+# [filip-2012]: "Lexical Aspect"
 
 Filip's handbook chapter (Binnick ed., OUP) identifies a **three-way
 classification** of verb predicates beyond K89/K98's binary CUM/QUA:
@@ -39,10 +39,10 @@ The third class's compositional behavior:
 
 ## References
 
-* @cite{filip-2012} (primary)
-* @cite{krifka-1998} §3.3 (CUM/QUA propagation machinery the gap rests on)
-* @cite{krifka-1989} (the binary CUM/QUA antecedent Filip critiques)
-* @cite{moon-2026} (canonical instance: mixed-drink nouns as concrete
+* [filip-2012] (primary)
+* [krifka-1998] §3.3 (CUM/QUA propagation machinery the gap rests on)
+* [krifka-1989] (the binary CUM/QUA antecedent Filip critiques)
+* [moon-2026] (canonical instance: mixed-drink nouns as concrete
   witness of the topological-source ¬CUM ∧ ¬QUA middle ground)
 -/
 
@@ -74,7 +74,7 @@ theorem three_way_exhaustive {α : Type*} [SemilatticeSup α]
 /-! When OBJ is neither CUM nor QUA, neither `cum_propagation` nor
     `qua_propagation` fires. Under SINC + UP + CumTheta verbs the
     middle ground is **stable** — it lifts from OBJ to VP. The concrete
-    witness instance is @cite{moon-2026}'s mixed drink nouns. -/
+    witness instance is [moon-2026]'s mixed drink nouns. -/
 
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
@@ -133,7 +133,7 @@ theorem not_cum_vp_of_witnesses {θ : α → β → Prop} [IsSincVerb θ]
 
 /-- **Middle-ground gap lifts** (canonical typeclass form).
     `[IsSincVerb θ]` bundles SINC + UP + CumTheta directly. The
-    recommended public API for the @cite{filip-2012} propositional
+    recommended public API for the [filip-2012] propositional
     gap-propagation result. -/
 theorem middle_ground_stable {θ : α → β → Prop} [IsSincVerb θ]
     {OBJ : α → Prop}

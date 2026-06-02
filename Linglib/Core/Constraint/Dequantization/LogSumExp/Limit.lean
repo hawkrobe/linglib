@@ -5,7 +5,7 @@ import Mathlib.Analysis.SpecialFunctions.Exp
 
 /-!
 # Maslov Dequantization: `lse α → max` as `α → ∞`
-@cite{litvinov-2005} @cite{maslov-1992}
+[litvinov-2005] [maslov-1992]
 
 The defining limit of the warped (log-sum-exp) semiring: as the
 inverse temperature `α → ∞`, log-sum-exp deforms to max-plus.
@@ -14,7 +14,7 @@ inverse temperature `α → ∞`, log-sum-exp deforms to max-plus.
   lse α a b  =  (1/α) · log(exp(α·a) + exp(α·b))  ──α → ∞──→  max a b
 ```
 
-This is **Maslov dequantization** (@cite{litvinov-2005}): a one-parameter
+This is **Maslov dequantization** ([litvinov-2005]): a one-parameter
 family of commutative semirings on ℝ — the Maslov / "warped" semirings —
 that deforms continuously to the max-plus (tropical) semiring as the
 temperature parameter sweeps to its limit. The name "dequantization"

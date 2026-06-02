@@ -3,7 +3,7 @@ import Linglib.Features.Case
 
 /-!
 # Typology.Comparison
-@cite{stassen-2013} @cite{wals-2013} @cite{beck-2009} @cite{haspelmath-2001}
+[stassen-2013] [wals-2013] [beck-2009] [haspelmath-2001]
 
 Per-language typological substrate for comparative-construction typology
 (Stassen's WALS Ch 121 framework + Beck-Crisma-Krasikova degree-word
@@ -14,7 +14,7 @@ typology + superlative strategies). Fragment-importable; mirrors the
 
 - `ComparativeType` (5-way Stassen 2013 / WALS Ch 121A:
   `locational | exceed | conjoined | particle | mixed`).
-- `DegreeWordType` (@cite{beck-2009} 3-way:
+- `DegreeWordType` ([beck-2009] 3-way:
   `hasDegreeWord | morphological | noDegreeMarking`).
 - `SuperlativeStrategy` (6-way: morphological, definiteComparative, elative,
   exceedAll, comparativeUniversal, none).
@@ -81,7 +81,7 @@ inductive ComparativeType where
   | mixed
   deriving DecidableEq, BEq, Repr
 
-/-- @cite{beck-2009}: presence of degree words in comparison constructions. -/
+/-- [beck-2009]: presence of degree words in comparison constructions. -/
 inductive DegreeWordType where
   /-- Free degree word (English `more`, French `plus`, Mandarin `geng`). -/
   | hasDegreeWord
@@ -229,7 +229,7 @@ theorem locational_and_particle_dominant :
     let par := (ch121.filter (·.value == .particle)).length
     loc + par > ch121.length / 2 := by native_decide
 
-/-! ### Stassen 1985 — Comparative Entry @cite{stassen-1985}
+/-! ### Stassen 1985 — Comparative Entry [stassen-1985]
 
 A typed record for the parameters of a comparative construction in a
 particular language: standard case, how that case is assigned, optional
@@ -238,7 +238,7 @@ whether the construction has dedicated degree morphology. -/
 
 open Features (Case CaseAssignment FixedCaseEncoding)
 
-/-- A language's comparative construction entry (@cite{stassen-1985}). -/
+/-- A language's comparative construction entry ([stassen-1985]). -/
 structure ComparativeEntry where
   standardCase : Case
   caseAssignment : CaseAssignment

@@ -2,7 +2,7 @@ import Linglib.Core.Logic.Quantification.Defs
 
 /-!
 # Polyadic Quantifiers
-@cite{peters-westerstahl-2006} @cite{hintikka-1996}
+[peters-westerstahl-2006] [hintikka-1996]
 
 Three mechanisms for building polyadic (multi-sorted) quantifiers from
 monadic (type ⟨1,1⟩) ones:
@@ -31,7 +31,7 @@ variable {α : Type*}
     iterate(every, student, some, book)(read)
     = every(student, λx. some(book, λy. read(x,y)))
 
-    @cite{peters-westerstahl-2006} Ch 10. -/
+    [peters-westerstahl-2006] Ch 10. -/
 def iterate (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Prop :=
   Q₁ A (λ x => Q₂ B (λ y => R x y))
 
@@ -42,7 +42,7 @@ def iterate (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : P
     = most(student, λx. like(x,x))
 
     Resumption only accesses the diagonal of R.
-    @cite{peters-westerstahl-2006} Ch 10. -/
+    [peters-westerstahl-2006] Ch 10. -/
 def resume (Q : GQ α) (A : α → Prop) (R : α → α → Prop) : Prop :=
   Q A (λ x => R x x)
 
@@ -58,7 +58,7 @@ def resume (Q : GQ α) (A : α → Prop) (R : α → α → Prop) : Prop :=
     Simplified Barwise (1979) version:
     branch(Q₁, A, Q₂, B)(R) ↔ ∃f g. Q₁(A, λx. R(x, f(x))) ∧ Q₂(B, λy. R(g(y), y))
 
-    @cite{hintikka-1996} @cite{peters-westerstahl-2006} Ch 10. -/
+    [hintikka-1996] [peters-westerstahl-2006] Ch 10. -/
 def branch (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Prop :=
   ∃ (f g : α → α),
     Q₁ A (λ x => B (f x) ∧ R x (f x)) ∧
@@ -69,7 +69,7 @@ def branch (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Pr
 /-- Surface scope = iterate(Q₁, A, Q₂, B)(R).
     Inverse scope = iterate(Q₂, B, Q₁, A)(flip R).
     These are the two "linear" readings of a two-quantifier sentence.
-    @cite{peters-westerstahl-2006} Ch 10. -/
+    [peters-westerstahl-2006] Ch 10. -/
 def surfaceScope (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Prop :=
   iterate Q₁ Q₂ A B R
 
@@ -80,7 +80,7 @@ def inverseScope (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop
 
 /-- Iteration preserves scope monotonicity: if both Q₁ and Q₂ are Mon↑,
     then iterate(Q₁, A, Q₂, B) is monotone in R (pointwise).
-    @cite{peters-westerstahl-2006} Ch 10. -/
+    [peters-westerstahl-2006] Ch 10. -/
 theorem iterate_mono_in_R (Q₁ Q₂ : GQ α) (A B : α → Prop)
     (R R' : α → α → Prop)
     (h₁ : ScopeUpwardMono Q₁) (h₂ : ScopeUpwardMono Q₂)

@@ -3,10 +3,10 @@ import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 
 /-!
 # Icelandic Temporal Connectives Fragment
-@cite{giannakidou-2002} @cite{karttunen-1974}
+[giannakidou-2002] [karttunen-1974]
 
 Icelandic lexicalizes the two-*until* distinction despite lacking overt
-verbal aspect marking (@cite{giannakidou-2002}, ex. 43–46, from Gunnar
+verbal aspect marking ([giannakidou-2002], ex. 43–46, from Gunnar
 Hansson p.c.):
 
 - **flanga til** / **til** ('until'): durative endpoint type, combines only
@@ -16,7 +16,7 @@ Hansson p.c.):
 - **fyrr en** ('earlier than', lit. 'before-than'): eventive NPI type,
   requires negation (*ekki*). Morphologically distinct from *til* and
   transparently built on *before* — paralleling Finnish *ennenkuin*
-  ('before-than') and confirming @cite{karttunen-1974}'s identity
+  ('before-than') and confirming [karttunen-1974]'s identity
   NPI-*until* = ¬*before*.
 
 This shows that the aspect parameter is not decisive for whether a language
@@ -52,7 +52,7 @@ def flangaTil : TemporalExprEntry :=
 /-- Icelandic *fyrr en* ('earlier than'): eventive NPI type.
     Requires negation (*ekki*). Morphologically *fyrr* ('earlier/before')
     + *en* ('than') — transparently *before*-based, confirming
-    @cite{karttunen-1974}'s NPI-*until* = ¬*before*.
+    [karttunen-1974]'s NPI-*until* = ¬*before*.
     "Prinsessan kom *(ekki) fyrr en klukkan fimm."
     ('The princess arrived *(not) until five o'clock.') -/
 def fyrrEn : TemporalExprEntry :=

@@ -4,11 +4,11 @@ import Linglib.Fragments.Spanish.PolarityMarking
 import Linglib.Fragments.French.PolarityMarking
 
 /-!
-# Garassino & Jacob (2018) @cite{garassino-jacob-2018}
+# Garassino & Jacob (2018) [garassino-jacob-2018]
 
 *Polarity focus and non-canonical syntax in Italian, French and Spanish:
 Clitic left dislocation and sì che / sí que-constructions.*
-In @cite{dimroth-sudhoff-2018}, pp. 227–254. DOI 10.1075/la.249.08gar.
+In [dimroth-sudhoff-2018], pp. 227–254. DOI 10.1075/la.249.08gar.
 
 This study file anchors three Fragment entries —
 `Italian.PolarityMarking.siChe`,
@@ -32,7 +32,7 @@ as Romance polarity-focus (PF) realization strategies.
    Spanish uses *sí que* (61 occurrences); the two strategies are
    essentially non-overlapping — see §2 below.
 
-3. **An explicit theoretical commitment to @cite{matic-nikolaeva-2018}'s
+3. **An explicit theoretical commitment to [matic-nikolaeva-2018]'s
    "salient polarity" framework** (footnote 13, p. 236), against the form-
    class encoding that the substrate's `Strategy` records.
    See §4 below; the formal statement of the non-equivalence lives in
@@ -75,7 +75,7 @@ is finer-grained and cuts on syntactic structure rather than discourse
 function. Both encodings are kept; the divergence is the point. -/
 inductive GJStrategy where
   /-- Lexical adverbs of truth/certainty/fact: It. *davvero*,
-      Fr. *vraiment*, Sp. *de veras*, *de hecho* — @cite{garassino-jacob-2018}
+      Fr. *vraiment*, Sp. *de veras*, *de hecho* — [garassino-jacob-2018]
       §2.1 ¶1, p. 230. -/
   | lexicalAdverb
   /-- Bare affirmative polarity particle: It. *sì*, Sp. *sí*, Fr. *bien*,
@@ -110,7 +110,7 @@ structure GJStrategyDatum where
   /-- Representative Italian / French / Spanish example surface form. -/
   exampleForm : String
   /-- Whether this G&J strategy is *available* in Italian, French, Spanish
-      per @cite{garassino-jacob-2018} §2 prose — ordered (it, fr, sp). -/
+      per [garassino-jacob-2018] §2 prose — ordered (it, fr, sp). -/
   availability : Bool × Bool × Bool
 
 def davveroDatum : GJStrategyDatum where
@@ -194,7 +194,7 @@ Distribution of polar CDs (clitic left-dislocations with PF reading) and
 *sì che* / *sí que* constructions in *Direct Europarl*. Italian sample
 2.3M words, French 2.5M, Spanish 2.8M. Verified from the PDF. -/
 
-/-- One row of @cite{garassino-jacob-2018} Table 1. `siQueCount = none`
+/-- One row of [garassino-jacob-2018] Table 1. `siQueCount = none`
     encodes the chapter's "NA" entry for French. -/
 structure GJCorpusDatum where
   language : String  -- "Italian", "French", "Spanish"
@@ -223,7 +223,7 @@ def spanishRow : GJCorpusDatum where
 
 def gjTable1 : List GJCorpusDatum := [italianRow, frenchRow, spanishRow]
 
-/-- The central corpus claim of @cite{garassino-jacob-2018} (§3 Conclusions,
+/-- The central corpus claim of [garassino-jacob-2018] (§3 Conclusions,
     p. 250): Italian and Spanish exhibit **complementary distribution** for
     the two PF-marking strategies — Italian uses LDs (6 / 0), Spanish uses
     *sí que* (0 / 61). -/
@@ -240,9 +240,9 @@ theorem italian_spanish_complementary_distribution :
 
 /-! ## §3 Cognacy at the substrate-encoding level
 
-@cite{garassino-jacob-2018} §2.3 (p. 234) and the broader Romance
-literature (@cite{bernini-1995}, @cite{batllori-hernanz-2013},
-@cite{poletto-zanuttini-2013}) treat *sì che* and *sí que* as cognate
+[garassino-jacob-2018] §2.3 (p. 234) and the broader Romance
+literature ([bernini-1995], [batllori-hernanz-2013],
+[poletto-zanuttini-2013]) treat *sì che* and *sí que* as cognate
 constructions: an affirmative-polarity particle followed by a
 complementizer introducing an embedded clause carrying the asserted
 proposition.
@@ -265,7 +265,7 @@ theorem siChe_siQue_cognates_at_encoding_level :
 
 /-! ## §4 G&J's framework position (footnote 13, p. 236)
 
-G&J explicitly endorse @cite{matic-nikolaeva-2018}'s rejection of the
+G&J explicitly endorse [matic-nikolaeva-2018]'s rejection of the
 form-class encoding of polarity focus. Footnote 13 reads, verbatim:
 
 > This view is similar to the one presented by Matić & Nikolaeva (this

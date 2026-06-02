@@ -9,7 +9,7 @@ import Linglib.Semantics.Questions.Relevance
 
 /-!
 # Core Decision Theory
-@cite{van-rooy-2003} @cite{blackwell-1953}
+[van-rooy-2003] [blackwell-1953]
 
 Theory-neutral decision-theoretic infrastructure: decision problems, expected
 utility, maximin, and mention-some/mention-all classification.
@@ -26,8 +26,8 @@ Functions that operate over action sets or world subsets use `Finset`.
 Ordering-sensitive operations (`questionMaximin`, `isMentionSome`,
 `resolvingAnswers`, …) take a `List (Finset W)` of cells.
 
-- @cite{van-rooy-2003}. Questioning to Resolve Decision Problems. L&P 26.
-- @cite{blackwell-1953}. Equivalent Comparisons of Experiments.
+- [van-rooy-2003]. Questioning to Resolve Decision Problems. L&P 26.
+- [blackwell-1953]. Equivalent Comparisons of Experiments.
 -/
 
 namespace Core.DecisionTheory
@@ -121,13 +121,13 @@ def maximinUtilityValue {W A : Type*} [DecidableEq W]
 
 /-! ### Resolution
 
-@cite{van-rooy-2003} p. 736 resolution definition: information `c`
+[van-rooy-2003] p. 736 resolution definition: information `c`
 **resolves** decision problem `(dp, acts)` iff some action in `acts`
 weakly dominates every other action on every world in `c`. -/
 
 /-- `c` **resolves** decision problem `(dp, acts)`: some action in `acts`
     weakly dominates every other action on every world in `c`.
-    @cite{van-rooy-2003} p. 736. -/
+    [van-rooy-2003] p. 736. -/
 def IsResolved {W A : Type*} (dp : DecisionProblem W A)
     (acts : Set A) (c : Set W) : Prop :=
   ∃ a ∈ acts, ∀ b ∈ acts, ∀ w ∈ c, dp.utility w a ≥ dp.utility w b
@@ -178,7 +178,7 @@ learning proposition C, where a⁰ is the current optimal action.
 
 Unlike UV(C) = V(D|C) - V(D), VSI is always non-negative: learning C
 before choosing can never hurt relative to the current best action
-applied within C. @cite{van-rooy-2003}, p. 742. -/
+applied within C. [van-rooy-2003], p. 742. -/
 noncomputable def valueSampleInfo {W A : Type*} [Fintype W] [DecidableEq W]
     (dp : DecisionProblem W A) (actions : Finset A) (cell : Finset W) : ℚ :=
   let bestAction := optimalAction dp actions
@@ -188,7 +188,7 @@ noncomputable def valueSampleInfo {W A : Type*} [Fintype W] [DecidableEq W]
   valueAfterLearning dp actions cell - currentActionEU
 
 /-- EVSI(Q) = Σ P(C) · VSI(C): the expected value of sample information
-from asking question Q. @cite{van-rooy-2003}, p. 742. -/
+from asking question Q. [van-rooy-2003], p. 742. -/
 noncomputable def expectedVSI {W A : Type*} [Fintype W] [DecidableEq W]
     (dp : DecisionProblem W A) (actions : Finset A)
     (cells : Finset (Finset W)) : ℚ :=
@@ -213,7 +213,7 @@ private lemma optimalAction_eu_eq_dpValue {W A : Type*} [Fintype W] [DecidableEq
 /-- EUV(Q) = EVSI(Q): the expected utility value of a question equals
 its expected value of sample information.
 
-@cite{van-rooy-2003}, p. 742: "The expected utility value of a question
+[van-rooy-2003], p. 742: "The expected utility value of a question
 is equal to its expected value of sample information."
 
 The two hypotheses are the **law of total expectation** (`Σ P(C)·EU(a|C) = EU(a)`
@@ -381,7 +381,7 @@ def mentionSomeDP {W : Type*} (satisfies : W -> Bool) : DecisionProblem W Bool w
 For a binary partition [P, ¬P], the probability-weighted sum of conditional
 DP values equals Van Rooy's question utility plus the baseline DP value.
 This is the structural identity connecting "the value of asking a yes/no
-question" to the decision-theoretic question framework of @cite{van-rooy-2003}. -/
+question" to the decision-theoretic question framework of [van-rooy-2003]. -/
 
 /-- Cell probabilities of a binary partition [P, ¬P] sum to 1
     when the prior is a proper distribution. -/
@@ -448,7 +448,7 @@ theorem binary_question_value_decomposition
 
 /-! ### Answer and Question Orderings
 
-@cite{van-rooy-2003}'s relevance-based orderings on answers and questions. -/
+[van-rooy-2003]'s relevance-based orderings on answers and questions. -/
 
 /-- C >_Q D: answer C is strictly more relevant than D given question Q. -/
 def moreRelevantAnswer {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]

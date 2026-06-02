@@ -21,9 +21,9 @@ import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
 
 /-!
 # Miestamo (2005): Standard Negation
-@cite{miestamo-2005}
+[miestamo-2005]
 
-@cite{miestamo-2005} refines the WALS symmetric/asymmetric classification
+[miestamo-2005] refines the WALS symmetric/asymmetric classification
 (Ch 113-114) with two orthogonal theoretical distinctions:
 
 ## 1. Constructional vs Paradigmatic Asymmetry
@@ -79,7 +79,7 @@ open Typology.Negation
 -- § 1.5: Miestamo's two asymmetry dimensions (beyond WALS)
 -- ============================================================================
 
-/-- @cite{miestamo-2005}'s two dimensions of asymmetry. WALS Ch 113 collapses
+/-- [miestamo-2005]'s two dimensions of asymmetry. WALS Ch 113 collapses
     these into a single symmetric/asymmetric distinction; Miestamo decomposes
     asymmetry into two independent dimensions. Local to this study file
     because the dimensions are framework-distinctive. -/
@@ -95,7 +95,7 @@ inductive AsymmetryDimension where
   deriving DecidableEq, BEq, Repr
 
 /-- Whether the asymmetry is derived from the negation marker type
-    or independent of it (@cite{miestamo-2005}). -/
+    or independent of it ([miestamo-2005]). -/
 inductive AsymmetrySource where
   /-- The asymmetry follows structurally from the negation marker's
       properties. A negative verb necessarily creates A/Fin. -/
@@ -253,7 +253,7 @@ def spanish : MiestamoDatum :=
     *méi(yǒu)*: the existential verb *yǒu* is introduced as the finite
     element (FE), the lexical verb loses finite status (A/Fin/Neg-FE).
     When *méi* occurs without *yǒu*, it functions as a negative existential
-    verb (A/Fin/NegVerb). @cite{miestamo-2005} pp. 90–91, example 51.
+    verb (A/Fin/NegVerb). [miestamo-2005] pp. 90–91, example 51.
     Forms derived from `Mandarin.Negation`. -/
 def mandarin : MiestamoDatum :=
   { language := "Mandarin Chinese"
@@ -348,7 +348,7 @@ def hixkaryana : MiestamoDatum :=
 /-- Imbabura Quechua: SymAsy with paradigmatic A/NonReal, independent.
     Particle *mana*; validator enclitic *-chu* obligatory in some negative
     constructions. *-chu* also appears in polar interrogatives — it is a
-    general "validator" expressing assertion authority (@cite{miestamo-2005}
+    general "validator" expressing assertion authority ([miestamo-2005]
     p. 158). Some constructions symmetric, others require *-chu*.
     Form derived from `Quechua.Negation.mana.form`. -/
 def imbaburaQuechua : MiestamoDatum :=
@@ -891,7 +891,7 @@ theorem independent_count :
 -- § 9: Miestamo's 179-Language Survey Distribution (Table 3)
 -- ============================================================================
 
-/-- Distribution from @cite{miestamo-2005}'s 179-language representative
+/-- Distribution from [miestamo-2005]'s 179-language representative
     sample (RS). These are the headline empirical results of Ch 4's
     typological survey. Note: the WALS Ch 113 sample (also by Miestamo)
     covers 297 languages with different numbers; those are captured
@@ -905,7 +905,7 @@ structure SurveyDistribution where
   complete : symmetricOnly + asymmetricOnly + symAsy = totalLanguages
   deriving Repr
 
-/-- The 179-language RS distribution from @cite{miestamo-2005} Table 3
+/-- The 179-language RS distribution from [miestamo-2005] Table 3
     (p. 171). Sym = 72 (40%), SymAsy = 76 (42%), Asy = 31 (17%). -/
 def miestamo179 : SurveyDistribution :=
   { totalLanguages := 179
@@ -915,14 +915,14 @@ def miestamo179 : SurveyDistribution :=
   , complete := by omega }
 
 /-- SymAsy is the most common type in the RS (76 > 72 > 31).
-    @cite{miestamo-2005} Table 3 (p. 171). -/
+    [miestamo-2005] Table 3 (p. 171). -/
 theorem symasy_plurality :
     miestamo179.symAsy > miestamo179.symmetricOnly ∧
     miestamo179.symAsy > miestamo179.asymmetricOnly := by
   exact ⟨by native_decide, by native_decide⟩
 
 /-- Purely asymmetric negation (type Asy) is the least common type.
-    @cite{miestamo-2005} p. 171: "symmetric negation is more common in
+    [miestamo-2005] p. 171: "symmetric negation is more common in
     the world's languages than asymmetric negation." -/
 theorem asymmetric_minority :
     miestamo179.asymmetricOnly < miestamo179.symmetricOnly ∧
@@ -935,7 +935,7 @@ theorem symmetric_constructions_common :
     miestamo179.symmetricOnly + miestamo179.symAsy > miestamo179.asymmetricOnly := by
   native_decide
 
-/-- Asymmetry subtype frequencies from @cite{miestamo-2005} Table 5
+/-- Asymmetry subtype frequencies from [miestamo-2005] Table 5
     (p. 173). A/Cat is most common, A/Emph least common.
     Frequency order: A/Cat (59) > A/Fin (45) > A/NonReal (23) > A/Emph (4). -/
 structure SubtypeDistribution where
@@ -976,7 +976,7 @@ theorem anonreal_implies_paradigmatic :
 
 /-- A/NonReal asymmetry in our sample is never constructional.
     Note: this is a sample limitation (we have only 1 A/NonReal language).
-    @cite{miestamo-2005} (p. 96) reports that "both constructional and
+    [miestamo-2005] (p. 96) reports that "both constructional and
     paradigmatic asymmetry is commonly found in type A/NonReal", with 8 of
     23 A/NonReal languages showing constructional asymmetry (Table 5). -/
 theorem anonreal_never_constructional :

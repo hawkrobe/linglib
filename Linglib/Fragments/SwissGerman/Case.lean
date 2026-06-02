@@ -1,9 +1,9 @@
 import Linglib.Features.Case
 /-!
-# Swiss German Case and Verb Subcategorization @cite{shieber-1985}
+# Swiss German Case and Verb Subcategorization [shieber-1985]
 
 Swiss German uses the same four-case inventory as Standard German (NOM, ACC,
-GEN, DAT). The critical fact for @cite{shieber-1985}'s argument is that
+GEN, DAT). The critical fact for [shieber-1985]'s argument is that
 different verbs in cross-serial constructions subcategorize for different
 cases on their NP objects:
 
@@ -23,7 +23,7 @@ def caseInventory : Finset Features.Case := {.nom, .acc, .gen, .dat}
 
 /-- Verbs that participate in cross-serial subordinate clause constructions.
 
-    These are the verbs from @cite{shieber-1985}'s Swiss German data. Each
+    These are the verbs from [shieber-1985]'s Swiss German data. Each
     subcategorizes for a specific case on its NP object. -/
 inductive CrossSerialVerb where
   /-- *hälfe* "help" — requires dative NP object -/
@@ -36,7 +36,7 @@ inductive CrossSerialVerb where
 
 /-- Case required by each verb on its NP object.
 
-    This is the empirical fact that drives @cite{shieber-1985}'s proof:
+    This is the empirical fact that drives [shieber-1985]'s proof:
     verbs sort into dative-subcategorizing and accusative-subcategorizing
     classes, and in the cross-serial construction the case on each NP must
     match the requirement of its corresponding verb. -/

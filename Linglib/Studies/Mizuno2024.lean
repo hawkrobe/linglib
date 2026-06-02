@@ -4,8 +4,8 @@ import Linglib.Fragments.Mandarin.Conditionals
 import Linglib.Studies.Iatridou2000
 
 /-!
-# @cite{mizuno-2024} — Anderson Conditionals Crosslinguistically
-@cite{anderson-1951} @cite{condoravdi-2002} @cite{schlenker-2004} @cite{von-fintel-iatridou-2023}
+# [mizuno-2024] — Anderson Conditionals Crosslinguistically
+[anderson-1951] [condoravdi-2002] [schlenker-2004] [von-fintel-iatridou-2023]
 
 Teruyuki Mizuno (2024). "Strategies for Anderson Conditionals: Their
 Implications for the Typology of O-Marking and X-Marking."
@@ -51,7 +51,7 @@ for the Anderson reading. -/
 structure AndersonDatum where
   /-- Language name -/
   language : String
-  /-- Example number in @cite{mizuno-2024} -/
+  /-- Example number in [mizuno-2024] -/
   exampleNumber : String
   /-- Morphological form of the antecedent -/
   antecedentForm : String
@@ -82,9 +82,9 @@ structure FLVAvailabilityDatum where
 -- § English Data
 -- ════════════════════════════════════════════════════════════════
 
-/-- English Anderson conditional with X-marking (@cite{mizuno-2024}, ex. 1a).
+/-- English Anderson conditional with X-marking ([mizuno-2024], ex. 1a).
 
-    @cite{anderson-1951}: "If Jones had taken arsenic, he would show
+    [anderson-1951]: "If Jones had taken arsenic, he would show
     exactly those symptoms which he does in fact show."
 
     X-marking in antecedent (past perfect). The consequent describes
@@ -100,12 +100,12 @@ def english_xMarking : AndersonDatum where
   gloss := "If Jones had taken arsenic last night, he would show those symptoms which he is now showing."
   translation := "If Jones had taken arsenic last night, he would show those symptoms which he is now showing."
 
-/-- English Anderson conditional with O-marking (@cite{mizuno-2024}, ex. 2).
+/-- English Anderson conditional with O-marking ([mizuno-2024], ex. 2).
 
     O-marking (present tense) renders the conditional trivially true:
     the domain is not expanded, so the consequent (an observed fact)
     holds in all accessible worlds. Infelicitous for Anderson reading
-    (@cite{stalnaker-1975}, @cite{von-fintel-1999-subjunctive}). -/
+    ([stalnaker-1975], [von-fintel-1999-subjunctive]). -/
 def english_oMarking : AndersonDatum where
   language := "English"
   exampleNumber := "2"
@@ -120,10 +120,10 @@ def english_oMarking : AndersonDatum where
 -- § Japanese Data
 -- ════════════════════════════════════════════════════════════════
 
-/-- Japanese Anderson conditional with O-marking (@cite{mizuno-2024}, ex. 4a, -ru variant).
+/-- Japanese Anderson conditional with O-marking ([mizuno-2024], ex. 4a, -ru variant).
     Non-Past -ru in the consequent triggers Historical Present: the
     evaluation time shifts backward, expanding the domain under branching
-    time (@cite{schlenker-2004}, @cite{condoravdi-2002}). Felicitous
+    time ([schlenker-2004], [condoravdi-2002]). Felicitous
     for Anderson reading.
 
     Tasikani, Jones-si-ga sakuya hiso-o nom-eba, kare-ga ima mise-tei-ru
@@ -140,7 +140,7 @@ def japanese_oMarking : AndersonDatum where
   gloss := "Tasikani, Jones-si-ga sakuya hiso-o nom-eba, ... syoozyoo-o ima mise-ru hazuda."
   translation := "If Jones took arsenic last night, he would show exactly the same symptoms as he is now showing."
 
-/-- Japanese Anderson conditional with X-marking (@cite{mizuno-2024}, ex. 4a, #ta variant).
+/-- Japanese Anderson conditional with X-marking ([mizuno-2024], ex. 4a, #ta variant).
     Past -ta in the consequent gives a counterfactual reading that
     implies the falsity of the antecedent, contradicting the Anderson
     follow-up (4b). The entire sequence is infelicitous.
@@ -158,12 +158,12 @@ def japanese_xMarking : AndersonDatum where
   gloss := "Tasikani, Jones-si-ga sakuya hiso-o nom-eba, ... syoozyoo-o ima mise-#ta hazuda."
   translation := "If Jones took arsenic last night, he would show exactly the same symptoms. (#Anderson, counterfactual reading only)"
 
-/-- Japanese radical HP case (@cite{mizuno-2024}, ex. 7a).
+/-- Japanese radical HP case ([mizuno-2024], ex. 7a).
     The consequent event clearly lies in the past, forced by the temporal
     adverbial *kinoo* 'yesterday'. Non-Past is still required — Past
     makes the sentence counterfactual. Temporal indexicals *ototoi*
     'two days ago' and *kinoo* 'yesterday' evaluate against the utterance
-    time (θ = origin), paralleling @cite{schlenker-2004}'s HP analysis. -/
+    time (θ = origin), paralleling [schlenker-2004]'s HP analysis. -/
 def japanese_radicalHP : AndersonDatum where
   language := "Japanese"
   exampleNumber := "7a"
@@ -178,7 +178,7 @@ def japanese_radicalHP : AndersonDatum where
 -- § Mandarin Data
 -- ════════════════════════════════════════════════════════════════
 
-/-- Mandarin Anderson conditional with O-marking (@cite{mizuno-2024}, ex. 13a, no final *le*).
+/-- Mandarin Anderson conditional with O-marking ([mizuno-2024], ex. 13a, no final *le*).
     No perfective *le* in the consequent → Anderson reading available.
 
     Ruguo Jones zuotian he le pishuang, jiu hui chuxian ta xianzai
@@ -195,7 +195,7 @@ def mandarin_oMarking : AndersonDatum where
   gloss := "Ruguo Jones zuotian he le pishuang, jiu hui chuxian ta xianzai shiji chuxian de zheyangde zhengzhuang."
   translation := "If Jones had drunk arsenic yesterday, he would show exactly the symptoms he is actually showing."
 
-/-- Mandarin Anderson conditional with X-marking (@cite{mizuno-2024}, ex. 13a, #*le*).
+/-- Mandarin Anderson conditional with X-marking ([mizuno-2024], ex. 13a, #*le*).
     Perfective *le* in the consequent blocks the Anderson reading.
     Like Japanese Past -ta, Mandarin *le* induces strong counterfactuality,
     contradicting the Anderson follow-up.
@@ -217,14 +217,14 @@ def mandarin_xMarking : AndersonDatum where
 -- § FLV Availability Data
 -- ════════════════════════════════════════════════════════════════
 
-/-- English: X-marking available for FLV (@cite{mizuno-2024}, ex. 8a).
+/-- English: X-marking available for FLV ([mizuno-2024], ex. 8a).
     "If John came tomorrow, the party would be fun, ...
      but he probably won't come tomorrow, I think." -/
 def english_flv : FLVAvailabilityDatum where
   language := "English"
   xMarkingAvailable := true
 
-/-- Japanese: X-marking NOT available for FLV (@cite{mizuno-2024}, ex. 9–10).
+/-- Japanese: X-marking NOT available for FLV ([mizuno-2024], ex. 9–10).
     Past -ta in FLV induces strong counterfactuality (10a),
     contradicting the follow-up (10b). O-marking (Non-Past -u) is
     required (9a). -/
@@ -232,7 +232,7 @@ def japanese_flv : FLVAvailabilityDatum where
   language := "Japanese"
   xMarkingAvailable := false
 
-/-- Mandarin: X-marking NOT available for FLV (@cite{mizuno-2024}, ex. 11–12).
+/-- Mandarin: X-marking NOT available for FLV ([mizuno-2024], ex. 11–12).
     Perfective *le* in FLV blocks the unlikeliness follow-up (12b).
     O-marking (no *le*) is required (11a). -/
 def mandarin_flv : FLVAvailabilityDatum where
@@ -352,12 +352,12 @@ def mandarin_profile : LanguageProfile where
   andersonStrategy := .oMarking
   flvXMarkingAvailable := false
 
-/-- @cite{mizuno-2024} §4.2: X-marking for Anderson conditionals and
+/-- [mizuno-2024] §4.2: X-marking for Anderson conditionals and
     X-marking for FLV conditionals stand or fall together.
 
     This is an empirical generalization over English, Japanese, and Mandarin —
     not a logical necessity. The correlation could be explained by a Blocking
-    Principle (@cite{chierchia-1998}): covert HP expansion is blocked when
+    Principle ([chierchia-1998]): covert HP expansion is blocked when
     overt X-marking is available, but further research is needed. -/
 theorem flv_anderson_correlation :
     english_profile.flvXMarkingAvailable = english_profile.andersonStrategy.hasXMarking ∧
@@ -400,16 +400,16 @@ open Iatridou2000 (CounterfactualType)
 /-- English X-marking for Anderson conditionals uses the same number of
     past layers as Iatridou's FLV type: 1 layer = 1 modal ExclF.
 
-    @cite{mizuno-2024} §4.2 predicts this correlation: X-marking availability
+    [mizuno-2024] §4.2 predicts this correlation: X-marking availability
     for Anderson conditionals and for FLV stand or fall together (English
-    has both). @cite{iatridou-2000} provides the independent morphological
+    has both). [iatridou-2000] provides the independent morphological
     count. -/
 theorem english_xMarking_layers_match_flv :
     Iatridou2000.english_flv.pastLayers =
     CounterfactualType.flv.exclFCount := rfl
 
 /-- English X-marking strategy maps to modal ExclDimension, consistent
-    with @cite{iatridou-2000}'s analysis of counterfactual past as
+    with [iatridou-2000]'s analysis of counterfactual past as
     modal exclusion. -/
 theorem english_strategy_is_modal_excl :
     english_strategy.exclDimension = some .modal := rfl

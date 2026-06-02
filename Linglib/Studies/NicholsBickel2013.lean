@@ -23,7 +23,7 @@ import Linglib.Fragments.Mayan.Tseltal.Possession
 
 /-!
 # Nichols & Bickel (2013): WALS chapters on possession (57A, 58A, 58B, 59A)
-@cite{nichols-bickel-2013} @cite{wals-2013}
+[nichols-bickel-2013] [wals-2013]
 
 The four WALS chapters by Nichols & Bickel (2013):
 

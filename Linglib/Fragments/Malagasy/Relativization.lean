@@ -3,7 +3,7 @@ import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Malagasy Relativization Fragment
-@cite{keenan-comrie-1977}
+[keenan-comrie-1977]
 
 One relative clause marker:
 - Gap construction (-case, postnominal, covers SU only)
@@ -13,7 +13,7 @@ pivot (subject/topic) can be directly relativized. Non-subjects require
 voice alternation to promote the target to pivot position before
 relativization.
 
-Data from @cite{keenan-comrie-1977} Table 1.
+Data from [keenan-comrie-1977] Table 1.
 -/
 
 namespace Malagasy

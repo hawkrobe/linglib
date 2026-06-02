@@ -2,7 +2,7 @@ import Linglib.Dialogue.KOS.Basic
 
 /-!
 # KOS: Genre Relevance & Outcome Fulfillment
-@cite{ginzburg-2012} §4.6 (pp. 101–110)
+[ginzburg-2012] §4.6 (pp. 101–110)
 
 The `genreRelevant` predicate (eq. 90 p. 105) constraining which
 initiating moves are felicitous given a conversational genre, plus
@@ -59,7 +59,7 @@ namespace Dialogue.KOS
 /-- A DGB fulfills the genre's outcome when its QUD's projected questions
 are all anticipated (i.e., in `genre.qnud`).
 
-@cite{ginzburg-2012} ex. 89 (p. 105): the outcome of a dialogue is
+[ginzburg-2012] ex. 89 (p. 105): the outcome of a dialogue is
 fulfilled when its trajectory is consistent with the genre's anticipated
 question stack. The full version also requires move sequence to be
 consistent with `anticipatedMoves`; we model the QUD half here. -/
@@ -79,7 +79,7 @@ instance {P Fact QContent : Type*} {Cont : Type} [DecidableEq QContent]
 
 /-- A move is genre-relevant via the explicit `qudConstraint` predicate.
 
-@cite{ginzburg-2012} ex. 90 (p. 105): "m0 is relevant to G0 in dgb0 for A
+[ginzburg-2012] ex. 90 (p. 105): "m0 is relevant to G0 in dgb0 for A
 iff A believes that outcome(dgb0 ⊕moves m0, G0) will be fulfilled."
 
 This thin variant uses the genre's `qudConstraint` field (a procedural

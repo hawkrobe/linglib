@@ -4,7 +4,7 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # RSA Attitude Verb Embedding
-@cite{chierchia-fox-spector-2012} @cite{geurts-2010} @cite{sauerland-2004}
+[chierchia-fox-spector-2012] [geurts-2010] [sauerland-2004]
 
 Models scalar implicatures embedded under attitude verbs like "believe".
 

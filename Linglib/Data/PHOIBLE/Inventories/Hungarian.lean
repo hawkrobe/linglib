@@ -2,7 +2,7 @@ import Linglib.Data.PHOIBLE.Schema
 
 /-!
 # PHOIBLE inventory: Hungarian (hun, ID 183)
-@cite{moran-mccloy-2019}
+[moran-mccloy-2019]
 
 Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_phoible.py hun`.

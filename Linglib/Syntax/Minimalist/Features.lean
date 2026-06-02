@@ -4,7 +4,7 @@ import Linglib.Features.Prominence
 
 /-!
 # Feature Infrastructure for Minimalist Agree
-@cite{adger-2003} @cite{chomsky-1995} @cite{chomsky-2000} @cite{chomsky-2001} @cite{alok-2020} @cite{alok-bhalla-2026} @cite{lobeck-1995} @cite{panagiotidis-2015} @cite{pollock-1989}
+[adger-2003] [chomsky-1995] [chomsky-2000] [chomsky-2001] [alok-2020] [alok-bhalla-2026] [lobeck-1995] [panagiotidis-2015] [pollock-1989]
 
 Phi-features, case values, and feature bundles — the shared infrastructure
 underlying all Agree-based operations. Extracted from `Agree.lean` to
@@ -12,7 +12,7 @@ separate the feature *types* (what can be checked) from the Agree
 *operation* (how checking works) and the *failure model* (what happens
 when checking fails; see `ObligatoryOperations.lean`).
 
-## ±Interpretable Features (@cite{chomsky-1995} Ch 4 §4.5)
+## ±Interpretable Features ([chomsky-1995] Ch 4 §4.5)
 
 The ±Interpretable distinction is orthogonal to valued/unvalued:
 
@@ -33,9 +33,9 @@ meaningless person values (e.g., `person 47`) and grounds the feature
 inventory in the same canonical type used across the library:
 
 - `Features.Prominence.PersonLevel` — framework-agnostic person hierarchy
-- `PersonGeometry.DecomposedPerson` — @cite{preminger-2014}'s [±participant,
+- `PersonGeometry.DecomposedPerson` — [preminger-2014]'s [±participant,
   ±author] decomposition, now mapping from `PersonLevel`
-- `DifferentialIndexing.IndexingPersonLevel` — @cite{just-2024}'s SAP/3rd
+- `DifferentialIndexing.IndexingPersonLevel` — [just-2024]'s SAP/3rd
   binary split, bridged to `PersonLevel`
 
 For unvalued (probe) features, the value is irrelevant —
@@ -86,26 +86,26 @@ inductive FeatureVal where
   | q : Bool → FeatureVal            -- [±Q] (question)
   | epp : Bool → FeatureVal          -- EPP (needs specifier)
   | tense : Bool → FeatureVal        -- [±tense]
-  | hon : HonLevel → FeatureVal      -- [iHON] (@cite{alok-bhalla-2026})
-  | finite : Bool → FeatureVal       -- [±finite] (Fin head, @cite{rizzi-1997})
+  | hon : HonLevel → FeatureVal      -- [iHON] ([alok-bhalla-2026])
+  | finite : Bool → FeatureVal       -- [±finite] (Fin head, [rizzi-1997])
   | factive : Bool → FeatureVal      -- [±factive] (clause-typing)
-  | neg : Bool → FeatureVal          -- [±neg] (NegP, @cite{pollock-1989})
-  | rel : Bool → FeatureVal          -- [±rel] (relative clause typing, @cite{rizzi-1997})
-  | oblique : Bool → FeatureVal     -- [±oblique] (extraction tracking, @cite{elkins-torrence-brown-2026})
-  | ellipsis : Bool → FeatureVal   -- [E] feature licensing NP-ellipsis (@cite{lobeck-1995}, @cite{saab-2026})
-  | catN : Bool → FeatureVal       -- [N] referentiality (@cite{panagiotidis-2015})
-  | catV : Bool → FeatureVal       -- [V] temporal predication (@cite{panagiotidis-2015})
-  | foc : Bool → FeatureVal       -- [±FOC] information structure (@cite{westergaard-2009})
-  | pol : Bool → FeatureVal       -- [±Pol] polarity (@cite{laka-1990}; @cite{holmberg-2016})
-  | pov : Bool → FeatureVal      -- [±d] point-of-view (@cite{chou-2012}; @cite{chan-shen-2026})
+  | neg : Bool → FeatureVal          -- [±neg] (NegP, [pollock-1989])
+  | rel : Bool → FeatureVal          -- [±rel] (relative clause typing, [rizzi-1997])
+  | oblique : Bool → FeatureVal     -- [±oblique] (extraction tracking, [elkins-torrence-brown-2026])
+  | ellipsis : Bool → FeatureVal   -- [E] feature licensing NP-ellipsis ([lobeck-1995], [saab-2026])
+  | catN : Bool → FeatureVal       -- [N] referentiality ([panagiotidis-2015])
+  | catV : Bool → FeatureVal       -- [V] temporal predication ([panagiotidis-2015])
+  | foc : Bool → FeatureVal       -- [±FOC] information structure ([westergaard-2009])
+  | pol : Bool → FeatureVal       -- [±Pol] polarity ([laka-1990]; [holmberg-2016])
+  | pov : Bool → FeatureVal      -- [±d] point-of-view ([chou-2012]; [chan-shen-2026])
   -- Harbour decompositional features for person/number; distinct from the
   -- `phi` constructors above so postsyntactic rules can target them
   -- individually without colliding with existing person/number/gender
   -- pattern-matching elsewhere in the library.
-  | atomic : Bool → FeatureVal     -- [±atomic] number lattice (@cite{harbour-2014})
-  | minimal : Bool → FeatureVal    -- [±minimal] number lattice (@cite{harbour-2014})
-  | participant : Bool → FeatureVal -- [±participant] person lattice (@cite{harbour-2016})
-  | author : Bool → FeatureVal     -- [±author] person lattice (@cite{harbour-2016})
+  | atomic : Bool → FeatureVal     -- [±atomic] number lattice ([harbour-2014])
+  | minimal : Bool → FeatureVal    -- [±minimal] number lattice ([harbour-2014])
+  | participant : Bool → FeatureVal -- [±participant] person lattice ([harbour-2016])
+  | author : Bool → FeatureVal     -- [±author] person lattice ([harbour-2016])
   deriving Repr, DecidableEq
 
 /-- Do two feature values have the same type, ignoring specific values?
@@ -217,7 +217,7 @@ def getValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Option GramFeat
 /-- Whether a feature is interpretable (contributes to LF) or
     uninterpretable (must be checked and deleted before LF).
 
-    This is the central distinction of @cite{chomsky-1995} Ch 4 §4.5.
+    This is the central distinction of [chomsky-1995] Ch 4 §4.5.
     It is orthogonal to valued/unvalued: a feature can be interpretable
     but unvalued (rare), or uninterpretable but valued (never, in the
     standard theory). The typical pairings are:

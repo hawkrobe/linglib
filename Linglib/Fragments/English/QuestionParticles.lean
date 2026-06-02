@@ -1,6 +1,6 @@
 /-!
 # English Question Particles
-@cite{dayal-2025} @cite{bhatt-dayal-2020}
+[dayal-2025] [bhatt-dayal-2020]
 
 Lexical entries for English MQP-like adverbs that participate in the
 left-peripheral typology of Q-particles. The fragment commits only to
@@ -19,7 +19,7 @@ syntactic inversion + *whether* for embedded polar questions). What it
 does have is a small set of MQP-like adverbs (*quick*, *quickly*) that
 attach to matrix questions and signal urgency / addressee-directed
 information request, but are ungrammatical in any embedded position
-(@cite{dayal-2025} ex. (19)).
+([dayal-2025] ex. (19)).
 -/
 
 namespace English.QuestionParticles
@@ -42,7 +42,7 @@ structure QParticleEntry where
 
     Signals urgency in a request for information. Ungrammatical in
     subordinated, quasi-subordinated, or quotation contexts
-    (@cite{dayal-2025} ex. (19)). -/
+    ([dayal-2025] ex. (19)). -/
 def quick : QParticleEntry where
   form := "quick"
   gloss := "MQP-adv (matrix-only urgency adverb)"

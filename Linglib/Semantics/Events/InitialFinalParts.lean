@@ -2,7 +2,7 @@ import Mathlib.Order.Basic
 
 /-!
 # Initial and Final Parts (via Precedence)
-@cite{krifka-1998} @cite{krifka-1989}
+[krifka-1998] [krifka-1989]
 
 A part `e'` of a whole `e` is INITIAL iff no other part precedes `e'`,
 FINAL iff no other part follows `e'`. Generic over a partial order

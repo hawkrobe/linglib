@@ -3,10 +3,10 @@ import Linglib.Semantics.Causation.CauserSort
 /-!
 # Colloquial Sinhala verb fragment
 
-@cite{beavers-zubair-2013} @cite{gair-paolillo-1997} @cite{inman-1993}
+[beavers-zubair-2013] [gair-paolillo-1997] [inman-1993]
 
 A minimal fragment of the Sinhala (Sinhalese) verb system as
-formalized in @cite{beavers-zubair-2013}. The data here is the
+formalized in [beavers-zubair-2013]. The data here is the
 verb inventory needed to drive the empirical predictions of B&Z
 2013 about anticausativization, the volitive/involitive stem
 contrast, and the typology of causer sorts.
@@ -26,7 +26,7 @@ sortal restriction).
 ## Causer-sort typology
 
 Verbs are classified by the sort their causer must satisfy
-(@cite{beavers-zubair-2013} ex. (81), p. 40):
+([beavers-zubair-2013] ex. (81), p. 40):
 
 - *kadann* / *kædenn* 'break': causer ∈ U (any) — anticausativizes
 - *minimarann* 'murder': causer ∈ U_E (event) — does not anticausativize
@@ -55,7 +55,7 @@ structure SinhalaVerb where
   deriving Repr, BEq
 
 /-- *kadann* (vol) / *kædenn* (invol) 'break'.
-    @cite{beavers-zubair-2013} ex. (76): `[[kada-]] = λyλv∈U λe[...]`. -/
+    [beavers-zubair-2013] ex. (76): `[[kada-]] = λyλv∈U λe[...]`. -/
 def kadann : SinhalaVerb :=
   { gloss := "break",
     volitiveForm := "kadann",
@@ -78,7 +78,7 @@ def gilann : SinhalaVerb :=
     axis; it is included here by analogy with the other alternating
     roots. Cross-linguistically *kill* often patterns with U_V
     (effector OK, individual subject pragmatically marked) — see
-    @cite{levin-hovav-1995} ch. 3 on *kill* vs. *murder*. -/
+    [levin-hovav-1995] ch. 3 on *kill* vs. *murder*. -/
 def marann : SinhalaVerb :=
   { gloss := "kill",
     volitiveForm := "marann",
@@ -86,7 +86,7 @@ def marann : SinhalaVerb :=
     causerSort := .any }
 
 /-- *minimarann* 'murder' — no involitive form.
-    @cite{beavers-zubair-2013} ex. (65b): `[[minimara-]] = λyλv∈U_E λe[...]`.
+    [beavers-zubair-2013] ex. (65b): `[[minimara-]] = λyλv∈U_E λe[...]`.
     The U_E sortal restriction is incompatible with U_I, blocking
     both involitive inflection and anticausativization. -/
 def minimarann : SinhalaVerb :=
@@ -106,7 +106,7 @@ def kapann : SinhalaVerb :=
 
 /-- *vinaash-karann* (vol) / *vinaash-kerenn* (invol) 'destroy'.
 
-    **Cross-linguistic note** (@cite{beavers-zubair-2013} §7.4, p. 40):
+    **Cross-linguistic note** ([beavers-zubair-2013] §7.4, p. 40):
     the *destroy*-class is the wedge B&Z use to motivate the U_V
     constructor in their lattice — but the wedge is typological, not
     Sinhala-internal. B&Z 2013 explicitly note that "[the] equivalent

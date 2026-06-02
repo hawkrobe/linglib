@@ -2,7 +2,7 @@ import Linglib.Pragmatics.Expressives.OutlookMarker
 
 /-!
 # Japanese Particles
-@cite{dayal-2025} @cite{kubota-2026} @cite{sauerland-yatsushiro-2017}
+[dayal-2025] [kubota-2026] [sauerland-yatsushiro-2017]
 
 ## Part 1: Interrogative Particles
 
@@ -19,7 +19,7 @@ left-peripheral layer assignment lives in
 ## Part 2: Outlook Markers
 
 Adverbs and focus particles that express subjective evaluation and manage
-discourse stances, following @cite{kubota-2026}.
+discourse stances, following [kubota-2026].
 
 -/
 
@@ -50,7 +50,7 @@ def no_ : ParticleEntry :=
 
 /-- *koto* — complementizer for declarative clauses. Contrast with *ka*:
     having *ka* in the embedded clause suffices for interrogative interpretation,
-    while *koto* marks a declarative (@cite{dayal-2025}: (15)). -/
+    while *koto* marks a declarative ([dayal-2025]: (15)). -/
 def koto : ParticleEntry :=
   { form := "こと", romaji := "koto"
   , inSubordinated := true, inQuasiSub := false, inMatrix := false }
@@ -66,7 +66,7 @@ def kke : ParticleEntry :=
     With declarative complement: "x thinks p" (⟦daroo⟧({p})(x) = INQ_x ⊆ {p}↓).
     With interrogative complement: "x wonders Q" (⟦daroo⟧(Q)(x) = INQ_x ⊆ Q).
     The dual reading arises from the absence of an ignorance component,
-    unlike wonder (@cite{roelofsen-uegaki-2020}, @cite{uegaki-roelofsen-2018}).
+    unlike wonder ([roelofsen-uegaki-2020], [uegaki-roelofsen-2018]).
     Appears in matrix and quasi-subordinated contexts but not in subordinated
     interrogatives (which use *ka*). -/
 def daroo : ParticleEntry :=

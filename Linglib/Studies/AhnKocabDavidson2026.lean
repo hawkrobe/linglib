@@ -3,7 +3,7 @@ import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Pragmatics.Expressives.Basic
 
 /-!
-# @cite{ahn-kocab-davidson-2026}
+# [ahn-kocab-davidson-2026]
 
 Pragmatics of spatial descriptions: Sign language loci. Language (2026), 1–40.
 
@@ -30,7 +30,7 @@ differential object marking.
 - `LocusRelationType` — the deictic-to-abstract continuum for R (eqs. 38–40)
 - `VerbLocusType` — selectional properties replacing Padden's trichotomy
 - `incorporateSubj/Obj/Both` — verbal incorporation as `predMod` on argument positions
-- Bridge theorems to `TwoDimProp` (@cite{potts-2005}), `SemClass`, Ariel accessibility,
+- Bridge theorems to `TwoDimProp` ([potts-2005]), `SemClass`, Ariel accessibility,
   Gricean maxims
 
 ## Theoretical Contributions
@@ -40,7 +40,7 @@ differential object marking.
    locational) can be incorporated
 2. Derives optionality of loci from Be Brief (M3): loci are costlier
    referential forms, dispreferred when a simpler form suffices
-3. Parallels DOM (@cite{aissen-2003}): both involve overt marking conditioned
+3. Parallels DOM ([aissen-2003]): both involve overt marking conditioned
    by disambiguation need along prominence scales
 -/
 
@@ -67,7 +67,7 @@ private theorem predMod_true_left {E : Type*} (p : E → Bool) : predMod truePre
   funext x; simp only [predMod, truePred, Bool.true_and]
 
 /-- Basic semantic classes for NP entities (inlined from substrate;
-    @cite{resnik-1996} / @cite{erk-2007} style selectional classes).
+    [resnik-1996] / [erk-2007] style selectional classes).
     Used by this paper specifically for `VerbLocusType` → SemClass
     mapping (personal → animate, locational → location). -/
 inductive SemClass where
@@ -143,19 +143,19 @@ inductive Entity where
     point. Takes a location variable `o` and returns a predicate over
     entities. This is the spatial predicate that all uses of loci share.
 
-    Eq. 22a of @cite{ahn-kocab-davidson-2026}. -/
+    Eq. 22a of [ahn-kocab-davidson-2026]. -/
 def ixLoc (R : Entity → Locus → Bool) : Locus → Entity → Bool :=
   fun o x => R x o
 
 /-- `⟦IX_A⟧ = λx. R(x, a)` — IX pointing at a specific locus A.
     This is `ixLoc R` partially applied to a concrete locus.
 
-    Analogous to a Kaplan demonstration (@cite{kaplan-1989}): IX_A requires
+    Analogous to a Kaplan demonstration ([kaplan-1989]): IX_A requires
     a contextual element (the R relation) to determine reference, and when
     R is functional, picks out a unique entity — like a pointing gesture
     that presents an individual in context (see `ixA_unique_when_functional`).
 
-    Eq. 22b of @cite{ahn-kocab-davidson-2026}. -/
+    Eq. 22b of [ahn-kocab-davidson-2026]. -/
 def ixA (R : Entity → Locus → Bool) (loc : Locus) : Entity → Bool :=
   ixLoc R loc
 
@@ -226,7 +226,7 @@ theorem ixA_unique_when_functional (R : Entity → Locus → Bool)
     - `locational` → "spatial" verbs (MOVE, PUT, CARRY)
     - `unspecified` → "plain" verbs (MEMORIZE, LOVE, THINK, WONDER)
 
-    The key insight of @cite{ahn-kocab-davidson-2026} §3.5 is that all
+    The key insight of [ahn-kocab-davidson-2026] §3.5 is that all
     three classes can incorporate IX_LOC; they differ only in what entity
     type the spatial predicate selects for. -/
 inductive VerbLocusType where
@@ -403,7 +403,7 @@ theorem incorporate_order_independent
 
 /-- Disambiguation context: the discourse factors that determine whether
     locus marking is pragmatically needed. These correspond to the three
-    experimental conditions in §4 of @cite{ahn-kocab-davidson-2026}. -/
+    experimental conditions in §4 of [ahn-kocab-davidson-2026]. -/
 structure PragmaticContext where
   /-- Number of potential referents for the target predicate. -/
   numReferents : Fin 3  -- 0 = none (degenerate), 1 = one, 2 = two
@@ -585,7 +585,7 @@ theorem accessibility_predicts_locus_use :
 -- ════════════════════════════════════════════════════════════════
 
 /-!
-### Parallel to Differential Object Marking (@cite{aissen-2003})
+### Parallel to Differential Object Marking ([aissen-2003])
 
 Both locus marking in sign languages and DOM in spoken languages involve
 **optional overt marking** conditioned by disambiguation need:
@@ -597,7 +597,7 @@ Both locus marking in sign languages and DOM in spoken languages involve
 The shared principle: "Mark when disambiguation is needed; omit marking
 when the default interpretation suffices."
 
-@cite{aissen-2003} formalizes DOM as harmonic alignment of prominence scales
+[aissen-2003] formalizes DOM as harmonic alignment of prominence scales
 with grammatical relations. The locus parallel suggests the same mechanism
 extends to the visual-spatial modality.
 
@@ -663,14 +663,14 @@ theorem aHelpB_correct :
   ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 10. Two-Dimensional Meaning (@cite{potts-2005})
+-- § 10. Two-Dimensional Meaning ([potts-2005])
 -- ════════════════════════════════════════════════════════════════
 
 /-- Introducing use of IX_LOC: the locus association is use-conditional
     (CI) content, not at-issue. The sentence's truth conditions come from
     the predicate; the spatial association projects as a CI.
 
-    Uses `TwoDimProp` from @cite{potts-2005} directly — the introducing
+    Uses `TwoDimProp` from [potts-2005] directly — the introducing
     use of IX_LOC is structurally parallel to how expressives like "bastard"
     contribute CI content that projects through all operators. -/
 def introducingUse (predicate : Entity → Bool) (R : Entity → Locus → Bool)

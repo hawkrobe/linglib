@@ -2,12 +2,12 @@ import Linglib.Core.Assignment
 
 /-!
 # Mandelkern (2022) — Witnesses: the bounded theory of (in)definites
-@cite{mandelkern-2022}
-@cite{heim-1982} @cite{groenendijk-stokhof-1991} @cite{krahmer-muskens-1995}
-@cite{karttunen-1976} @cite{schlenker-2009} @cite{stalnaker-1974} @cite{stalnaker-1978}
-@cite{dekker-1994} @cite{rothschild-2017}
+[mandelkern-2022]
+[heim-1982] [groenendijk-stokhof-1991] [krahmer-muskens-1995]
+[karttunen-1976] [schlenker-2009] [stalnaker-1974] [stalnaker-1978]
+[dekker-1994] [rothschild-2017]
 
-@cite{mandelkern-2022} (Linguistics & Philosophy 45(5):1091-1117) develops the
+[mandelkern-2022] (Linguistics & Philosophy 45(5):1091-1117) develops the
 **bounded theory** of (in)definites: meanings have *two dimensions* — classical
 truth-conditions plus a projective second dimension Mandelkern calls **bounds**.
 Indefinites `ɜx(p,q)` carry a **witness bound** (if true, then `g(x)` must be
@@ -25,7 +25,7 @@ dimension via Schlenker/Karttunen-style local-context projection.
 Self-contained study file at the bounded theory's own level of generality.
 **Deliberately disconnected** from `Charlow2025.LawfulDNELift` per the
 session's design decision: the two formalisations should mature independently
-before any unifying typeclass is extracted. Per @cite{charlow-2025-staged-updates}
+before any unifying typeclass is extracted. Per [charlow-2025-staged-updates]
 §5 the two have higher-typed-bound vs. per-conjunct-bound differences that
 make a premature unification likely to be wrong.
 
@@ -54,7 +54,7 @@ Formalised here:
 ## Connection to existing linglib infrastructure
 
 * `Core.Assignment.PartialAssign D := Nat → Option D` — used here, matching
-  @cite{spector-2025} which formalises a *different* (trivalent-Transparency)
+  [spector-2025] which formalises a *different* (trivalent-Transparency)
   competitor to Mandelkern's bounded theory. Both files share the
   partial-assignment substrate but diverge in their treatment of bounds vs.
   presupposition.
@@ -295,7 +295,7 @@ theorem update_eq_localCtx {Atom : Type u} {W E : Type v} (av : AtomEval Atom W 
 
 /-- **Bound entailment** (paper p. 1108): `p ⊨_B q` iff for any context+index
 where both `p` and `q` are satt and `p` is true, `q` is also true.
-Generalises @cite{von-fintel-1999}'s Strawson entailment from
+Generalises [von-fintel-1999]'s Strawson entailment from
 presuppositions to bounds. -/
 def boundEntails {Atom : Type u} {W E : Type v} (av : AtomEval Atom W E)
     (p q : BoundedForm Atom) : Prop :=

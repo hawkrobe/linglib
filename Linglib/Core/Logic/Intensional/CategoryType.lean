@@ -3,8 +3,8 @@ import Linglib.Core.Logic.Intensional.Frame
 /-!
 # PTQ Syntactic Categories and the Category-to-Type Correspondence
 
-@cite{dowty-wall-peters-1981} Ch. 7, Definitions 7-1 through 7-3
-@cite{montague-1973}
+[dowty-wall-peters-1981] Ch. 7, Definitions 7-1 through 7-3
+[montague-1973]
 
 Montague's PTQ fragment defines an infinite set of syntactic categories
 recursively, then establishes a uniform correspondence between categories
@@ -38,7 +38,7 @@ open Core.Logic.Intensional
 -- § Syntactic Categories (DWP Def 7-1)
 -- ════════════════════════════════════════════════════════════════
 
-/-- PTQ syntactic categories (@cite{dowty-wall-peters-1981} Def 7-1).
+/-- PTQ syntactic categories ([dowty-wall-peters-1981] Def 7-1).
 
     1. `t` and `e` are syntactic categories.
     2. If `A` and `B` are syntactic categories, then `A/B` and `A//B`
@@ -96,7 +96,7 @@ end PtqCat
 -- § Category-to-Type Correspondence (DWP Def 7-3, Bennett)
 -- ════════════════════════════════════════════════════════════════
 
-/-- The category-to-type function `f` (@cite{dowty-wall-peters-1981} Def 7-3).
+/-- The category-to-type function `f` ([dowty-wall-peters-1981] Def 7-3).
 
     Bennett's simplified system, adopted by DWP for the remainder of the book:
 

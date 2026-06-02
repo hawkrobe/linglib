@@ -5,7 +5,7 @@ open Paradigms.AcceptabilityJudgment
 
 /-!
 # Drubea Prosodic Fragment
-@cite{lionnet-2025}
+[lionnet-2025]
 
 Lexical register specifications for Drubea [ŋaa ⁺ⁿɖuᵐbea] (Glottocode: dumb1241),
 an Oceanic language of New Caledonia spoken by approximately 1,000 people in Unya
@@ -15,8 +15,8 @@ The word-prosodic system consists of an underlying binary contrast between
 registerless and downstepped register-bearing units (RBUs), with the mora as the
 RBU. There are no tone features.
 
-Data from @cite{lionnet-2025}, building on @cite{rivierre-1973} and
-@cite{shintani-paita-1990b}.
+Data from [lionnet-2025], building on [rivierre-1973] and
+[shintani-paita-1990b].
 -/
 
 namespace Drubea.Prosody
@@ -28,7 +28,7 @@ open Phonology.Autosegmental.RegisterTier
 -- ============================================================================
 
 /-- The three native stem-level register patterns in Drubea
-    (@cite{lionnet-2025}: Table 2, §4.2).
+    ([lionnet-2025]: Table 2, §4.2).
 
     The contrast is between downstepped and registerless RBUs. Each stem
     contains at most one `l` feature (culminativity). The `l` feature
@@ -70,7 +70,7 @@ def StemEntry.specs (e : StemEntry) : List TRN :=
   e.pattern.toSpecs e.nMorae
 
 /-- Monosyllabic CV minimal pairs: segmentally identical stems
-    contrasting only in register (@cite{lionnet-2025}: ex. 4).
+    contrasting only in register ([lionnet-2025]: ex. 4).
 
     Each pair shares the same segmental form; the prosodic contrast is
     purely a matter of the presence vs. absence of a downstep feature. -/
@@ -92,7 +92,7 @@ def monoMinimalPairs : List (StemEntry × StemEntry) :=
   ]
 
 /-- CV⁺V minimal triplets: three-way contrast on bimoraic monosyllables
-    (@cite{lionnet-2025}: ex. 45).
+    ([lionnet-2025]: ex. 45).
 
     These triplets demonstrate that the RBU is the **mora**, not the
     syllable: within a single bimoraic syllable CVV, the downstep can
@@ -113,7 +113,7 @@ def cvPlusVTriplets : List (StemEntry × StemEntry × StemEntry) :=
   ]
 
 /-- Disyllabic CV.CV stems illustrating all three register types
-    (@cite{lionnet-2025}: ex. 34). -/
+    ([lionnet-2025]: ex. 34). -/
 def disyllableExamples : List StemEntry :=
   [ ⟨"kuɾe", "forest",   .registerless,   2⟩  -- Type 1: σ σ
   , ⟨"kuɾe", "end",      .σ1_downstepped, 2⟩  -- Type 2: ⁺σ σ
@@ -141,7 +141,7 @@ theorem mono_pairs_same_form :
 -- ============================================================================
 
 /-- Boundary register features for utterance-final prosody
-    (@cite{lionnet-2025} §4.8).
+    ([lionnet-2025] §4.8).
 
     - `h%`: utterance-final raising (Drubea)
     - `l%`: utterance-final lowering (Numèè) -/
@@ -155,7 +155,7 @@ inductive BoundaryFeature where
     Simplified model: replaces the last registerless RBU with the
     boundary feature. Does not model spreading of h%, the mora-weight
     restriction on l%, or the preceding-context condition (Numèè l%
-    only applies after registerless syllables; @cite{lionnet-2025}
+    only applies after registerless syllables; [lionnet-2025]
     §§3.3–3.4, §4.8). -/
 def applyBoundary (specs : List TRN)
     (boundary : BoundaryFeature) : List TRN :=
@@ -172,10 +172,10 @@ def applyBoundary (specs : List TRN)
 -- § 5: Language Properties
 -- ============================================================================
 
-/-- Drubea is a register-based tone system (@cite{lionnet-2025} §6.2). -/
+/-- Drubea is a register-based tone system ([lionnet-2025] §6.2). -/
 def wordProsodicType : WordProsodicType := .registerBased
 
-/-- The register-bearing unit in Drubea is the mora (@cite{lionnet-2025} §4.2). -/
+/-- The register-bearing unit in Drubea is the mora ([lionnet-2025] §4.2). -/
 def tbuKind : TBUKind := .mora
 
 /-- Drubea uses utterance-final raising (h%). -/

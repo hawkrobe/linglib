@@ -5,12 +5,12 @@ import Linglib.Data.Examples.Schema
 
 /-!
 # Partee (2010): Privative Adjectives: Subsective plus Coercion
-@cite{partee-2010}
+[partee-2010]
 
-@cite{partee-2010} argues no adjectives are genuinely
-@cite{kamp-1975}-privative: apparent privatives are subsective after
-NVP-driven noun-coercion (@cite{kamp-partee-1995} formulae 18, 20).
-Polish NP-splitting data from @cite{nowak-2000} is the empirical wedge.
+[partee-2010] argues no adjectives are genuinely
+[kamp-1975]-privative: apparent privatives are subsective after
+NVP-driven noun-coercion ([kamp-partee-1995] formulae 18, 20).
+Polish NP-splitting data from [nowak-2000] is the empirical wedge.
 
 ## Main results
 

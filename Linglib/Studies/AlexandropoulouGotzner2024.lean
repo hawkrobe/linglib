@@ -2,16 +2,16 @@ import Linglib.Semantics.Gradability.Basic
 import Linglib.Semantics.Gradability.Antonymy
 import Linglib.Fragments.English.Predicates.Adjectival
 /-!
-# @cite{alexandropoulou-gotzner-2024} — Gradable Adjective Interpretation Under Negation: The Role of Competition
-@cite{alexandropoulou-gotzner-2024}
+# [alexandropoulou-gotzner-2024] — Gradable Adjective Interpretation Under Negation: The Role of Competition
+[alexandropoulou-gotzner-2024]
 
 In: *Glossa: a journal of general linguistics* 9(1), pp. 1–33.
 
 ## Thesis
 
-@cite{alexandropoulou-gotzner-2024} (Glossa) tests whether the asymmetric vs.
+[alexandropoulou-gotzner-2024] (Glossa) tests whether the asymmetric vs.
 symmetric interpretation patterns of negated relative vs. absolute gradable
-adjectives — established in their @cite{alexandropoulou-gotzner-2024-jos}
+adjectives — established in their [alexandropoulou-gotzner-2024-jos]
 companion paper — depend on overt *contextual competition* between alternative
 expressions. The Glossa paper finds that contextual competition is necessary
 to surface the polarity asymmetry of relative adjectives but does not
@@ -23,7 +23,7 @@ the absence of a gap for contradictory antonyms (single threshold, complementary
 partition). The competition mechanism the Glossa paper isolates operates on
 top of this structural distinction.
 
-The paper situates its findings in the @cite{horn-1989} vs. @cite{krifka-2007b}
+The paper situates its findings in the [horn-1989] vs. [krifka-2007b]
 controversy over the source of negative strengthening; that controversy is
 the central topic of the companion JoS paper, formalised in
 `AlexandropoulouGotzner2024JoS.lean`. The Krifka-2007 hidden-agreement bridge
@@ -52,7 +52,7 @@ refer to the Lean file's own structure, not to the paper.
 ## Out of scope (deferred to JoS file)
 
 The three-case typology (weak relative / weak absolute / strong gradable),
-the @cite{horn-1989} vs. @cite{krifka-2007b} prediction signatures, the
+the [horn-1989] vs. [krifka-2007b] prediction signatures, the
 strong-adjective challenge to Horn, and the Krifka 2007 hidden-agreement
 bridge theorem all live in `AlexandropoulouGotzner2024JoS.lean`.
 -/
@@ -292,7 +292,7 @@ theorem absolute_symmetric (d : Deg5) :
     operational specification for *which* precision parameter applies in
     *which* discourse context; the mechanism is sketched, not formalised.
 
-    @cite{haslinger-2025}'s *potential p-equivalence* substrate addresses
+    [haslinger-2025]'s *potential p-equivalence* substrate addresses
     related precision-shift phenomena via a different competition formalism;
     bridging the two accounts is out of scope here. -/
 

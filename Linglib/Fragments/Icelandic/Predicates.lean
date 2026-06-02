@@ -1,13 +1,13 @@
 /-!
 # Icelandic Verbs (Predicates fragment)
-@cite{wood-2015}
+[wood-2015]
 
 Consensus lexical data for Icelandic verbs participating in the
-*-st* / *-na* alternations made famous by @cite{wood-2015}. Each
+*-st* / *-na* alternations made famous by [wood-2015]. Each
 entry carries only the surface forms and a Boolean for whether an
 active variant exists — every other piece of information about each
 verb (the *-st* classification, the anticausative-marking morpheme,
-the @cite{cuervo-2003}-style root decomposition, the
+the [cuervo-2003]-style root decomposition, the
 possessive-dative diagnostic) is paper-specific apparatus and lives
 in `Wood2015`, where it can
 participate in further analysis without polluting the Fragment
@@ -19,7 +19,7 @@ analyses on the Studies side.
 
 Note on classification: the morphological reflex *-st* (historically
 *sik* → *-sk* → *-st*) realizes Voice across at least six descriptive
-categories that @cite{wood-2015} identifies — anticausative, middle,
+categories that [wood-2015] identifies — anticausative, middle,
 reflexive, inherent, subject-experiencer, reciprocal — plus *-na*-marked
 anticausatives like *brotna*. The *-st* / *-na* contrast and the
 parameters that distinguish these categories are formalized in the

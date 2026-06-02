@@ -2,11 +2,11 @@ import Linglib.Core.Nominal.Determiner
 
 /-!
 # Haitian Creole Definiteness Fragment
-@cite{schwarz-2013}
+[schwarz-2013]
 
 Haitian Creole (French-lexified creole, ISO `ht`). A single post-nominal
 definite determiner *la* serves **both** anaphoric and uniqueness uses — no
-weak/strong split. This is @cite{schwarz-2013}'s §4.3 exception to the
+weak/strong split. This is [schwarz-2013]'s §4.3 exception to the
 crosslinguistic two-article pattern: one syncretic article → the
 `.generallyMarked` Moroney cell.
 -/

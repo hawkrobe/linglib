@@ -3,11 +3,11 @@ import Linglib.Syntax.Minimalist.Applicative
 
 /-!
 # Spanish Verb Entries for the Causative Alternation
-@cite{cuervo-2003} @cite{munoz-perez-2026} @cite{koontz-garboden-2009}
+[cuervo-2003] [munoz-perez-2026] [koontz-garboden-2009]
 
-Verbs from Muñoz @cite{munoz-perez-2026} classified by anticausative marking (SE)
+Verbs from Muñoz [munoz-perez-2026] classified by anticausative marking (SE)
 and event-structural decomposition, extended with causer specification
-from @cite{koontz-garboden-2009}.
+from [koontz-garboden-2009].
 
 ## Anticausative Marking Types
 
@@ -15,7 +15,7 @@ from @cite{koontz-garboden-2009}.
 - **Unmarked**: No SE in anticausative (*mejorar* → *mejorar*)
 - **Optional**: SE is marginal (*hervir* → *?hervirse*)
 
-## Causer Specification (@cite{koontz-garboden-2009} §§3.1–3.2)
+## Causer Specification ([koontz-garboden-2009] §§3.1–3.2)
 
 The thematic specification of the causing participant determines
 whether a verb can anticausativize:
@@ -44,9 +44,9 @@ inductive AnticausativeMarking where
   deriving DecidableEq, Repr
 
 /-- Thematic specification of the participant in the causing subevent
-    (@cite{koontz-garboden-2009} §§2.1, 3.1–3.2).
+    ([koontz-garboden-2009] §§2.1, 3.1–3.2).
 
-    The critical distinction: EFFECTOR (@cite{van-valin-wilkins-1996})
+    The critical distinction: EFFECTOR ([van-valin-wilkins-1996])
     is thematically underspecified — the causer can be an agent, instrument,
     natural force, or event. AGENT is thematically specified — the causer
     must be agentive (volitional, sentient).
@@ -80,17 +80,17 @@ structure SpanishVerbEntry extends Verb where
   /-- Empirical: does this verb license stylistic LE? -/
   licensesStylLE : Bool
   /-- Thematic specification of the causing participant
-      (@cite{koontz-garboden-2009}). `none` for non-causative verbs. -/
+      ([koontz-garboden-2009]). `none` for non-causative verbs. -/
   causerSpec : Option CauserSpec := none
   deriving Repr, BEq
 
 -- ============================================================================
--- § 3: Verb Data (Muñoz @cite{munoz-perez-2026})
+-- § 3: Verb Data (Muñoz [munoz-perez-2026])
 -- ============================================================================
 
 /-- *abrir* "open" — marked anticausative, licenses stylistic LE.
     EFFECTOR causer: admits agents, instruments, natural forces
-    (@cite{koontz-garboden-2009} exx. 47–49). -/
+    ([koontz-garboden-2009] exx. 47–49). -/
 def abrir : SpanishVerbEntry :=
   { form := "abrir", complementType := .np,
     anticausativeMarking := .marked,
@@ -101,7 +101,7 @@ def abrir : SpanishVerbEntry :=
 
 /-- *romper* "break" — marked anticausative, licenses stylistic LE.
     EFFECTOR causer: agents, instruments, natural forces, events
-    (@cite{koontz-garboden-2009} exx. 13–17). -/
+    ([koontz-garboden-2009] exx. 13–17). -/
 def romper : SpanishVerbEntry :=
   { form := "romper", complementType := .np,
     anticausativeMarking := .marked,
@@ -111,7 +111,7 @@ def romper : SpanishVerbEntry :=
                                  false, false, false, false, false⟩ }
 
 /-- *hundir* "sink" — marked anticausative, licenses stylistic LE.
-    EFFECTOR causer (@cite{koontz-garboden-2009} ex. 46). -/
+    EFFECTOR causer ([koontz-garboden-2009] ex. 46). -/
 def hundir : SpanishVerbEntry :=
   { form := "hundir", complementType := .np,
     anticausativeMarking := .marked,
@@ -139,7 +139,7 @@ def morir : SpanishVerbEntry :=
     licensesStylLE := true }
 
 /-- *cerrar* "close" — marked anticausative; vehicle for the person-paradigm
-    in @cite{munoz-perez-2026} exx. 15–19 (*me/te le cerró la ventana* OK,
+    in [munoz-perez-2026] exx. 15–19 (*me/te le cerró la ventana* OK,
     *le/nos/les le cerró la ventana* unacceptable). -/
 def cerrar : SpanishVerbEntry :=
   { form := "cerrar", complementType := .np,
@@ -191,7 +191,7 @@ def mejorar : SpanishVerbEntry :=
 /-- *rasgar* "tear (gash-like)" — Levin 45.1 equivalent; marked anticausative.
     Unlike English *tear*, *rasgar* requires flimsy/insubstantial patients and
     implies unidirectional (linear, gash-like) separation. Incompatible with
-    careful controlled action. @cite{spalek-mcnally-2026} (§3.2). -/
+    careful controlled action. [spalek-mcnally-2026] (§3.2). -/
 def rasgar : SpanishVerbEntry :=
   { form := "rasgar", complementType := .np,
     causative := some .make,
@@ -209,7 +209,7 @@ def rasgar : SpanishVerbEntry :=
 
 /-- *asesinar* "assassinate" — AGENT causer required. No anticausative.
     Reflexivization yields reflexive reading only (*El senador se asesinó*
-    = 'The senator killed himself'). @cite{koontz-garboden-2009} exx. 24–29. -/
+    = 'The senator killed himself'). [koontz-garboden-2009] exx. 24–29. -/
 def asesinar : SpanishVerbEntry :=
   { form := "asesinar", complementType := .np,
     anticausativeMarking := .marked,
@@ -218,7 +218,7 @@ def asesinar : SpanishVerbEntry :=
     subjectEntailments := some accomplishmentSubjectProfile }
 
 /-- *cortar* "cut" — AGENT causer required. No anticausative.
-    @cite{koontz-garboden-2009} ex. 26. -/
+    [koontz-garboden-2009] ex. 26. -/
 def cortar : SpanishVerbEntry :=
   { form := "cortar", complementType := .np,
     anticausativeMarking := .marked,
@@ -228,7 +228,7 @@ def cortar : SpanishVerbEntry :=
 
 /-- *ahogar* "drown" — EFFECTOR causer, but animate theme undergoers
     are typical. Alternates: *ahogarse* is a derived inchoative.
-    @cite{koontz-garboden-2009} exx. 50–52. -/
+    [koontz-garboden-2009] exx. 50–52. -/
 def ahogar : SpanishVerbEntry :=
   { form := "ahogar", complementType := .np,
     anticausativeMarking := .marked,
@@ -238,7 +238,7 @@ def ahogar : SpanishVerbEntry :=
                                  false, false, false, false, false⟩ }
 
 /-- *empeorar* "worsen" — internally caused COS verb. No CAUSE in LSR.
-    Rejects *por sí solo*. @cite{koontz-garboden-2009} ex. 65a. -/
+    Rejects *por sí solo*. [koontz-garboden-2009] ex. 65a. -/
 def empeorar : SpanishVerbEntry :=
   { form := "empeorar", complementType := .np,
     anticausativeMarking := .unmarked,
@@ -246,7 +246,7 @@ def empeorar : SpanishVerbEntry :=
     licensesStylLE := false }
 
 /-- *crecer* "grow" — internally caused COS verb. No CAUSE in LSR.
-    Rejects *por sí solo*. @cite{koontz-garboden-2009} ex. 65c. -/
+    Rejects *por sí solo*. [koontz-garboden-2009] ex. 65c. -/
 def crecer : SpanishVerbEntry :=
   { form := "crecer", complementType := .none,
     unaccusative := true,
@@ -254,11 +254,11 @@ def crecer : SpanishVerbEntry :=
     causativeAlternation := false, verbHead := [.vGO, .vBE],
     licensesStylLE := false }
 
-/-- Verbs from @cite{munoz-perez-2026} — tested for stylistic LE. -/
+/-- Verbs from [munoz-perez-2026] — tested for stylistic LE. -/
 def munozVerbs : List SpanishVerbEntry :=
   [abrir, romper, hundir, caer, morir, cerrar, quebrar, hervir, olvidar, ocurrir, mejorar, rasgar]
 
-/-- Verbs from @cite{koontz-garboden-2009} — causer specification data,
+/-- Verbs from [koontz-garboden-2009] — causer specification data,
     not tested for stylistic LE. -/
 def kgVerbs : List SpanishVerbEntry :=
   [asesinar, cortar, ahogar, empeorar, crecer]
@@ -287,7 +287,7 @@ theorem mejorar_blocks_stylLE : mejorar.licensesStylLE = false := rfl
 -- ============================================================================
 
 /-- EFFECTOR verbs anticausativize; AGENT verbs do not.
-    @cite{koontz-garboden-2009} §§3.1–3.2. -/
+    [koontz-garboden-2009] §§3.1–3.2. -/
 theorem effector_verbs_alternate :
     (allVerbs.filter (fun v => v.causerSpec == some .effector)).all
       (·.causativeAlternation) = true := by native_decide

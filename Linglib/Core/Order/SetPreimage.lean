@@ -11,7 +11,7 @@ set-preimage operators.
 
 The proof probes the operator at the singleton `{f y}` to extract
 `g y = f y` pointwise — the same atom-decomposition technique that
-underlies @cite{hoeksema-1983} Fact 1 (uniqueness of NP-comparative GQ
+underlies [hoeksema-1983] Fact 1 (uniqueness of NP-comparative GQ
 homomorphisms from their threshold functions).
 
 Candidate for upstreaming to mathlib.

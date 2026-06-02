@@ -2,7 +2,7 @@ import Linglib.Core.Logic.Quantification.Defs
 
 /-!
 # Generalized Quantifier Properties — Theorems
-@cite{barwise-cooper-1981} @cite{keenan-stavi-1986} @cite{peters-westerstahl-2006} @cite{van-benthem-1984} @cite{van-benthem-1986} @cite{icard-2012}
+[barwise-cooper-1981] [keenan-stavi-1986] [peters-westerstahl-2006] [van-benthem-1984] [van-benthem-1986] [icard-2012]
 
 Theorems about GQ properties: duality, conservativity/symmetry/strength,
 left monotonicity and smoothness, Boolean closure, type ⟨1⟩ theorems,
@@ -169,7 +169,7 @@ theorem conservative_iff_livesOn (q : GQ α) :
   unfold Conservative LivesOn restrict
   exact ⟨fun h A B => h A B, fun h R S => h R S⟩
 
-/-! ### Basic Left Monotonicity and Smoothness (@cite{peters-westerstahl-2006} §5.5-5.6) -/
+/-! ### Basic Left Monotonicity and Smoothness ([peters-westerstahl-2006] §5.5-5.6) -/
 
 /-- Persistence → ↑_SE Mon. -/
 theorem restrictorUpMono_to_upSE (q : GQ α)
@@ -181,7 +181,7 @@ theorem restrictorUpMono_to_upSW (q : GQ α)
     (h : RestrictorUpwardMono q) : UpSWMon q :=
   fun R S R' hSub _ hQ => h R R' S hSub hQ
 
-/-- ↑_SW Mon ∧ ↑_SE Mon → Persistence (@cite{peters-westerstahl-2006} Prop 6). -/
+/-- ↑_SW Mon ∧ ↑_SE Mon → Persistence ([peters-westerstahl-2006] Prop 6). -/
 theorem upSW_upSE_to_restrictorUpMono (q : GQ α)
     (hSW : UpSWMon q) (hSE : UpSEMon q) : RestrictorUpwardMono q := by
   intro R R' S hSub hQ
@@ -199,7 +199,7 @@ theorem upSW_upSE_to_restrictorUpMono (q : GQ α)
     · exact h.1
   · exact Or.inr ⟨hR'x, hNS⟩
 
-/-- Persistence ↔ ↑_SW Mon ∧ ↑_SE Mon (@cite{peters-westerstahl-2006} Prop 6). -/
+/-- Persistence ↔ ↑_SW Mon ∧ ↑_SE Mon ([peters-westerstahl-2006] Prop 6). -/
 theorem persistent_iff_upSW_and_upSE (q : GQ α) :
     RestrictorUpwardMono q ↔ UpSWMon q ∧ UpSEMon q :=
   ⟨fun h => ⟨restrictorUpMono_to_upSW q h, restrictorUpMono_to_upSE q h⟩,
@@ -241,7 +241,7 @@ theorem anti_persistent_iff_downNW_and_downNE (q : GQ α) :
 
 -- Prop 8: Negation rotates basic monotonicities
 
-/-- Outer negation reverses ↑_SE to ↓_NW (@cite{peters-westerstahl-2006} Prop 8a). -/
+/-- Outer negation reverses ↑_SE to ↓_NW ([peters-westerstahl-2006] Prop 8a). -/
 theorem outerNeg_upSE_to_downNW (q : GQ α)
     (h : UpSEMon q) : DownNWMon (outerNeg q) := by
   intro R S R' hSub hDiff hNQ hQR'
@@ -265,7 +265,7 @@ theorem outerNeg_downNE_to_upSW (q : GQ α)
   intro R S R' hSub hDiff hNQ hQR'
   exact hNQ (h R' S R hSub hDiff hQR')
 
-/-- Inner negation switches ↓_NE ↔ ↓_NW (@cite{peters-westerstahl-2006} Prop 8b). -/
+/-- Inner negation switches ↓_NE ↔ ↓_NW ([peters-westerstahl-2006] Prop 8b). -/
 theorem innerNeg_downNE_to_downNW (q : GQ α)
     (h : DownNEMon q) : DownNWMon (innerNeg q) := by
   intro R S R' hSub hDiff hQ
@@ -293,7 +293,7 @@ theorem innerNeg_upSW_to_upSE (q : GQ α)
   exact h R (fun x => ¬ S x) R' hSub
     (fun x hR'x hNS => hDiff x hR'x (fun hSx => hNS hSx)) hQ
 
-/-- Smooth ↔ outer negation is co-smooth (@cite{peters-westerstahl-2006} Prop 8a). -/
+/-- Smooth ↔ outer negation is co-smooth ([peters-westerstahl-2006] Prop 8a). -/
 theorem smooth_iff_outerNeg_coSmooth (q : GQ α) :
     Smooth q ↔ CoSmooth (outerNeg q) :=
   ⟨fun ⟨hNE, hSE⟩ => ⟨outerNeg_upSE_to_downNW q hSE, outerNeg_downNE_to_upSW q hNE⟩,
@@ -301,7 +301,7 @@ theorem smooth_iff_outerNeg_coSmooth (q : GQ α) :
     rw [show q = outerNeg (outerNeg q) from (outerNeg_involution q).symm]
     exact ⟨outerNeg_upSW_to_downNE _ hSW, outerNeg_downNW_to_upSE _ hNW⟩⟩
 
-/-- Smooth ↔ inner negation is co-smooth (@cite{peters-westerstahl-2006} Prop 8b). -/
+/-- Smooth ↔ inner negation is co-smooth ([peters-westerstahl-2006] Prop 8b). -/
 theorem smooth_iff_innerNeg_coSmooth (q : GQ α) :
     Smooth q ↔ CoSmooth (innerNeg q) :=
   ⟨fun ⟨hNE, hSE⟩ => ⟨innerNeg_downNE_to_downNW q hNE, innerNeg_upSE_to_upSW q hSE⟩,
@@ -311,7 +311,7 @@ theorem smooth_iff_innerNeg_coSmooth (q : GQ α) :
 
 -- Prop 9: Smooth → Mon↑
 
-/-- CONSERV ∧ Smooth → Mon↑ (@cite{peters-westerstahl-2006} Prop 9). -/
+/-- CONSERV ∧ Smooth → Mon↑ ([peters-westerstahl-2006] Prop 9). -/
 theorem smooth_conservative_scopeUpMono (q : GQ α)
     (hCons : Conservative q) (hSmooth : Smooth q) : ScopeUpwardMono q := by
   obtain ⟨hNE, hSE⟩ := hSmooth
@@ -340,7 +340,7 @@ theorem smooth_conservative_scopeUpMono (q : GQ α)
 
 -- Prop 7: Symmetry ↔ ↑_SW + ↓_NE (under CONSERV)
 
-/-- CONSERV ∧ QSymmetric → ↑_SW Mon ∧ ↓_NE Mon (@cite{peters-westerstahl-2006} Prop 7). -/
+/-- CONSERV ∧ QSymmetric → ↑_SW Mon ∧ ↓_NE Mon ([peters-westerstahl-2006] Prop 7). -/
 theorem symmetric_to_upSW_downNE (q : GQ α)
     (hCons : Conservative q) (hSym : QSymmetric q) :
     UpSWMon q ∧ DownNEMon q := by
@@ -409,14 +409,14 @@ theorem upSW_downNE_to_symmetric (q : GQ α)
     rw [hCommSwap]
     exact hAint
 
-/-- @cite{peters-westerstahl-2006} Prop 7: a CONSERV type ⟨1,1⟩ quantifier
+/-- [peters-westerstahl-2006] Prop 7: a CONSERV type ⟨1,1⟩ quantifier
     is symmetric iff it satisfies ↑_SW Mon and ↓_NE Mon. -/
 theorem symmetric_iff_upSW_downNE (q : GQ α) (hCons : Conservative q) :
     QSymmetric q ↔ (UpSWMon q ∧ DownNEMon q) :=
   ⟨symmetric_to_upSW_downNE q hCons,
    fun ⟨h1, h2⟩ => upSW_downNE_to_symmetric q hCons h1 h2⟩
 
-/-! ### Boolean Closure (@cite{keenan-stavi-1986}) -/
+/-! ### Boolean Closure ([keenan-stavi-1986]) -/
 
 /-- Conservativity is closed under complement. -/
 theorem conservative_outerNeg (q : GQ α) (h : Conservative q) :
@@ -505,9 +505,9 @@ theorem individual_meet_closed (a : α) (P Q : α → Prop) :
     individual a P → individual a Q →
     individual a (fun x => P x ∧ Q x) := fun hP hQ => ⟨hP, hQ⟩
 
-/-! ### @cite{van-benthem-1984} Characterization -/
+/-! ### [van-benthem-1984] Characterization -/
 
-/-- @cite{van-benthem-1984} Theorem 3.1.1: Under conservativity, inclusion (⊆)
+/-- [van-benthem-1984] Theorem 3.1.1: Under conservativity, inclusion (⊆)
     is the only reflexive antisymmetric quantifier. -/
 theorem vanBenthem_refl_antisym_is_inclusion (q : GQ α)
     (hCons : Conservative q) (hRefl : PositiveStrong q)
@@ -533,7 +533,7 @@ theorem vanBenthem_refl_antisym_is_inclusion (q : GQ α)
       exact ⟨fun h => h.1, fun hAx => ⟨hAx, hSub x hAx⟩⟩
     rw [hEq]; exact hRefl A
 
-/-- @cite{van-benthem-1984} Thm 4.1.1 (Zwarts): reflexive + transitive → MON↑. -/
+/-- [van-benthem-1984] Thm 4.1.1 (Zwarts): reflexive + transitive → MON↑. -/
 theorem zwarts_refl_trans_scopeUp (q : GQ α)
     (hCons : Conservative q) (hRefl : PositiveStrong q)
     (hTrans : QTransitive q) : ScopeUpwardMono q := by
@@ -545,7 +545,7 @@ theorem zwarts_refl_trans_scopeUp (q : GQ α)
     rw [this]; exact hRefl S
   exact hTrans R S S' hQRS hQSS'
 
-/-- @cite{van-benthem-1984} Thm 4.1.1 (Zwarts): reflexive + transitive → ↓MON. -/
+/-- [van-benthem-1984] Thm 4.1.1 (Zwarts): reflexive + transitive → ↓MON. -/
 theorem zwarts_refl_trans_restrictorDown (q : GQ α)
     (hCons : Conservative q) (hRefl : PositiveStrong q)
     (hTrans : QTransitive q) : RestrictorDownwardMono q := by
@@ -557,7 +557,7 @@ theorem zwarts_refl_trans_restrictorDown (q : GQ α)
     rw [this]; exact hRefl R
   exact hTrans R R' S hQRR' hQR'S
 
-/-- @cite{van-benthem-1984} Thm 4.1.3 (Zwarts): for symmetric quantifiers,
+/-- [van-benthem-1984] Thm 4.1.3 (Zwarts): for symmetric quantifiers,
     scope-↑ implies quasi-reflexive, under CONSERV. -/
 theorem zwarts_sym_scopeUp_quasiRefl (q : GQ α)
     (hCons : Conservative q) (_hSym : QSymmetric q)
@@ -566,7 +566,7 @@ theorem zwarts_sym_scopeUp_quasiRefl (q : GQ α)
   have h1 : q A (fun x => A x ∧ B x) := (hCons A B).mp hQAB
   exact hUp A (fun x => A x ∧ B x) A (fun x hx => hx.1) h1
 
-/-- @cite{van-benthem-1984} Thm 4.1.3 (Zwarts): for symmetric quantifiers,
+/-- [van-benthem-1984] Thm 4.1.3 (Zwarts): for symmetric quantifiers,
     scope-↓ implies quasi-universal, under CONSERV. -/
 theorem zwarts_sym_scopeDown_quasiUniv (q : GQ α)
     (hCons : Conservative q) (_hSym : QSymmetric q)
@@ -581,7 +581,7 @@ theorem scopeUpMono_rightContinuous (q : GQ α)
   intro A B B₁ _ hB₁B _ hQ1 _
   exact h A B₁ B hB₁B hQ1
 
-/-- @cite{van-benthem-1984} Thm 4.1.2: irreflexive + almost-connected → MON↓. -/
+/-- [van-benthem-1984] Thm 4.1.2: irreflexive + almost-connected → MON↓. -/
 theorem irrefl_almostConn_scopeDown (q : GQ α)
     (hCons : Conservative q)
     (hIrrefl : NegativeStrong q)
@@ -598,7 +598,7 @@ theorem irrefl_almostConn_scopeDown (q : GQ α)
   rw [← outerNeg_involution q]
   exact outerNeg_up_to_down (outerNeg q) hUp
 
-/-- @cite{van-benthem-1984} Thm 4.1.2: irreflexive + almost-connected → ↑MON. -/
+/-- [van-benthem-1984] Thm 4.1.2: irreflexive + almost-connected → ↑MON. -/
 theorem irrefl_almostConn_restrictorUp (q : GQ α)
     (hCons : Conservative q)
     (hIrrefl : NegativeStrong q)
@@ -618,7 +618,7 @@ theorem irrefl_almostConn_restrictorUp (q : GQ α)
 
 /-! ### Asymmetry and circularity
 
-@cite{peters-westerstahl-2006} Ch 6.4 -/
+[peters-westerstahl-2006] Ch 6.4 -/
 
 /-- Asymmetric quantifiers are negative-strong (irreflexive). -/
 theorem asymmetric_negativeStrong (q : GQ α) (hAsym : QAsymmetric q) :
@@ -735,7 +735,7 @@ private theorem swapDiff_preserves_AB [Fintype α] [DecidableEq α]
            fun ⟨hAx, _⟩ => absurd hAx hA⟩
   · exact ⟨fun ⟨hBx, _⟩ => absurd hBx hB, fun ⟨hAx, _⟩ => absurd hAx hA⟩
 
-/-- @cite{peters-westerstahl-2006} Prop 6.59 (fixed-domain version):
+/-- [peters-westerstahl-2006] Prop 6.59 (fixed-domain version):
     Under CONSERV + ISOM + asymmetry, ¬Q(A,B) whenever |A \ B| = |B \ A|. -/
 theorem isom_asymmetric_eq_diff [Fintype α] [DecidableEq α] (q : GQ α)
     (hCons : Conservative q) (hIsom : QuantityInvariant q)
@@ -760,9 +760,9 @@ theorem isom_asymmetric_eq_diff [Fintype α] [DecidableEq α] (q : GQ α)
 
 /-! ### "Aristotle reversed": square from inferential conditions
 
-@cite{van-benthem-1984} §3.3 -/
+[van-benthem-1984] §3.3 -/
 
-/-- @cite{van-benthem-1984} Cor 3.3.2: Under conservativity, the ONLY
+/-- [van-benthem-1984] Cor 3.3.2: Under conservativity, the ONLY
     symmetric quasi-reflexive quantifier is overlap (= "some"). -/
 theorem vanBenthem_symm_quasiRefl_is_overlap [Fintype α] [DecidableEq α] (q : GQ α)
     (hCons : Conservative q) (hSym : QSymmetric q)
@@ -824,7 +824,7 @@ theorem vanBenthem_symm_quasiRefl_is_overlap [Fintype α] [DecidableEq α] (q : 
     · intro y hy; subst hy; exact ⟨hAa, hBa⟩
     · exact h_single
 
-/-- @cite{van-benthem-1984} Cor 3.3.3: Under conservativity, the ONLY
+/-- [van-benthem-1984] Cor 3.3.3: Under conservativity, the ONLY
     symmetric quasi-universal quantifier is disjointness (= "no"). -/
 theorem vanBenthem_symm_quasiUniv_is_disjointness [Fintype α] [DecidableEq α] (q : GQ α)
     (hCons : Conservative q) (hSym : QSymmetric q)
@@ -887,13 +887,13 @@ theorem vanBenthem_symm_quasiUniv_is_disjointness [Fintype α] [DecidableEq α] 
     rw [hEmpty]
     exact empty_true
 
-/-! ### Entailment Signature Bridge (@cite{icard-2012}) -/
+/-! ### Entailment Signature Bridge ([icard-2012]) -/
 
 open Core.NaturalLogic (EntailmentSig ContextPolarity)
 
 /--
 Map a pair of entailment signatures (restrictor, scope) to `DoubleMono`,
-the @cite{van-benthem-1984} double monotonicity classification.
+the [van-benthem-1984] double monotonicity classification.
 
 Returns `none` for signature pairs that don't correspond to a standard
 generalized quantifier pattern.

@@ -5,9 +5,9 @@ import Linglib.Core.Logic.Intensional.Rigidity
 
 /-!
 # Tenses and Pronouns: Partee's Structural Analogy
-@cite{abusch-1997} @cite{elbourne-2013} @cite{heim-kratzer-1998} @cite{kaplan-1989} @cite{kratzer-1998} @cite{partee-1973} @cite{klecha-2016}
+[abusch-1997] [elbourne-2013] [heim-kratzer-1998] [kaplan-1989] [kratzer-1998] [partee-1973] [klecha-2016]
 
-Formalizes @cite{partee-1973}: tenses in English exhibit the same three-way
+Formalizes [partee-1973]: tenses in English exhibit the same three-way
 interpretive ambiguity as pronouns — indexical, anaphoric, and bound-variable
 — and share the same formal mechanisms (assignment functions, variable
 lookup, lambda abstraction).
@@ -39,7 +39,7 @@ don't quantify.
 
 ## Structural Parallel to Variables.lean
 
-The definitions here are the temporal counterparts of @cite{heim-kratzer-1998} entity
+The definitions here are the temporal counterparts of [heim-kratzer-1998] entity
 variable infrastructure in `Semantics.Montague.Variables`. Both are
 instantiations of the generic `Core.Assignment` infrastructure:
 
@@ -88,7 +88,7 @@ theorem indexical_tense_matches_opNow {W T : Type*}
 -- § 4. Partee → Elbourne: TenseInterpretation → SitVarStatus
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{elbourne-2013} generalizes Partee from times to situations (world–time
+/-! [elbourne-2013] generalizes Partee from times to situations (world–time
 pairs). His `SitVarStatus` (free/bound) collapses Partee's three-way
 distinction: indexical and anaphoric tenses both have FREE variables,
 differing only in how the free variable is pragmatically resolved
@@ -122,11 +122,11 @@ theorem toSitVarStatus_not_injective :
 
 /-! The codebase contains both perspectives on tense:
 
-**@cite{prior-1967}**: `PAST P s s' := s.time < s'.time ∧ P s`. Tense is an
+**[prior-1967]**: `PAST P s s' := s.time < s'.time ∧ P s`. Tense is an
 operator that constrains temporal relations — existential quantification
 over past times.
 
-**@cite{partee-1973}**: `interpTense n g = g n`. Tense is a variable that
+**[partee-1973]**: `interpTense n g = g n`. Tense is a variable that
 refers to a specific contextual time.
 
 Partee's argument: "I didn't turn off the stove" under Prior's analysis
@@ -162,12 +162,12 @@ def narrativeAnaphora {Time : Type*} (P Q : Time → Bool)
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 7. Referential ↔ Priorean Bridge (@cite{ogihara-1989})
+-- § 7. Referential ↔ Priorean Bridge ([ogihara-1989])
 -- ════════════════════════════════════════════════════════════════
 
 /-! The Priorean operators `PAST`/`PRES`/`FUT` in `Tense/Basic.lean` and the
 referential analysis (`interpTense`, `temporalLambdaAbs`) are not competitors
-but complementary layers. @cite{ogihara-1989} §2.3: tense is a variable (picks a
+but complementary layers. [ogihara-1989] §2.3: tense is a variable (picks a
 time) that must satisfy a temporal presupposition (the picked time is
 past/present/future). The following theorems make this reconciliation formal. -/
 
@@ -179,7 +179,7 @@ past/present/future). The following theorems make this reconciliation formal. -/
     the TIME; the operator analysis (Prior) imposes the CONSTRAINT. They are
     not competitors but complementary layers.
 
-    @cite{ogihara-1989} §2.3: tense is a variable (picks a time) that must satisfy
+    [ogihara-1989] §2.3: tense is a variable (picks a time) that must satisfy
     a temporal presupposition (the picked time is past/present/future). -/
 theorem referential_past_decomposition {W Time : Type*} [LT Time]
     (P : SitProp W Time) (g : TemporalAssignment Time) (n : ℕ)
@@ -201,7 +201,7 @@ theorem bound_tense_receives_attitude_time {Time α : Type*}
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 8. Zero Forms and Locality (@cite{heim-kratzer-1998})
+-- § 8. Zero Forms and Locality ([heim-kratzer-1998])
 -- ════════════════════════════════════════════════════════════════
 
 /-! Kratzer (1998 §3) extends the Partee analogy to a FOURTH parallel:
@@ -262,7 +262,7 @@ theorem zero_tense_parallels_reflexive (n : ℕ) :
 
 /-- The Partee analogy extended from three to four dimensions:
 
-    | Dimension | Origin@cite{partee-1973} | + @cite{heim-kratzer-1998} |
+    | Dimension | Origin[partee-1973] | + [heim-kratzer-1998] |
     |-----------|----------------------|------------------|
     | Domain    | Entity ↔ Time         | + Situation       |
     | Mode      | Indexical/Anaphoric/Bound | (same)       |

@@ -4,10 +4,10 @@ import Linglib.Core.Constraint.System
 import Linglib.Core.Agent.GumbelLuce
 
 /-!
-# @cite{flemming-2021}: Comparing MaxEnt and Noisy Harmonic Grammar
-@cite{flemming-2021}
+# [flemming-2021]: Comparing MaxEnt and Noisy Harmonic Grammar
+[flemming-2021]
 
-@cite{flemming-2021} compares three stochastic Harmonic Grammar variants —
+[flemming-2021] compares three stochastic Harmonic Grammar variants —
 MaxEnt, Noisy HG (NHG), and Normal MaxEnt — identifying **logit uniformity**
 as the diagnostic that distinguishes them.
 
@@ -59,7 +59,7 @@ open Core.Constraint Core Real
 -- § 1: MaxEnt as Gumbel RUM (McFadden)
 -- ============================================================================
 
-/-- **MaxEnt = Gumbel RUM** (@cite{flemming-2021} §4/§10): MaxEnt probability
+/-- **MaxEnt = Gumbel RUM** ([flemming-2021] §4/§10): MaxEnt probability
     is exactly the McFadden integral with Gumbel scale β = 1.
 
     This formalizes the RUM connection: MaxEnt adds i.i.d. Gumbel noise to
@@ -96,7 +96,7 @@ theorem iia {C : Type} [Fintype C] [Nonempty C]
     exp (harmonyScoreR constraints a - harmonyScoreR constraints b) :=
   maxent_iia constraints a b
 
-/-- **MaxEnt binary logistic** (@cite{flemming-2021} eq (9)/(11)):
+/-- **MaxEnt binary logistic** ([flemming-2021] eq (9)/(11)):
     with two candidates, MaxEnt probability is the logistic function
     of the harmony difference.
 
@@ -118,7 +118,7 @@ theorem eq9_maxent_binary_logistic
 /-- Violation difference matrix: ə candidate minus ∅ candidate.
     Rows = 8 contexts, columns = 6 constraints.
     Constraint order: 0=NoSchwa, 1=\*CCC, 2=\*Clash, 3=Max, 4=Dep, 5=\*Cluster.
-    Table (35) from @cite{flemming-2021}, data from @cite{smith-pater-2020}. -/
+    Table (35) from [flemming-2021], data from [smith-pater-2020]. -/
 def schwaDiff (ctx : Fin 8) (con : Fin 6) : Int :=
   match ctx.val, con.val with
   -- /∅/, C, _σσ́
@@ -163,7 +163,7 @@ theorem clash_diff_is_one (pair : Fin 4) :
     schwaDiff (clashPairs pair).2 2 - schwaDiff (clashPairs pair).1 2 = 1 := by
   fin_cases pair <;> simp [clashPairs, schwaDiff]
 
-/-- **Logit uniformity for \*Clash** (@cite{flemming-2021} §7.1):
+/-- **Logit uniformity for \*Clash** ([flemming-2021] §7.1):
     the \*Clash contribution to the harmony difference is the same
     across all four paired contexts.
 
@@ -194,7 +194,7 @@ theorem logit_uniformity_clash (w : Fin 6 → ℚ) (pair : Fin 4) :
 -- ============================================================================
 
 /-- Observed probability of schwa realization across 8 contexts.
-    Data from @cite{smith-pater-2020} (Table 2 of @cite{flemming-2021}).
+    Data from [smith-pater-2020] (Table 2 of [flemming-2021]).
 
     Values are approximate proportions (hundredths). The key pattern:
     within each \*Clash pair, the +\*Clash context always has higher P(schwa),
@@ -231,7 +231,7 @@ def schwaSqSum (ctx : Fin 8) : Nat :=
     the squared violation sum is 3; with \*Clash, it is 4.
     The same \*Clash violation change produces different σ_d values
     in different tableaux — σ_d = √3 vs σ_d = 2 (Table 3 of
-    @cite{flemming-2021}). -/
+    [flemming-2021]). -/
 theorem nhg_sigmaD_sq_varies :
     schwaSqSum 0 = 3 ∧ schwaSqSum 1 = 4 ∧
     schwaSqSum 2 = 3 ∧ schwaSqSum 3 = 4 ∧
@@ -246,7 +246,7 @@ theorem nhg_sigmaD_sq_varies :
 noncomputable def nhgProbitChange (h_init Δh σ_d σ_d' : ℝ) : ℝ :=
   (h_init + Δh) / σ_d' - h_init / σ_d
 
-/-- **Probit non-uniformity** (@cite{flemming-2021} §7.2): when σ_d ≠ σ_d',
+/-- **Probit non-uniformity** ([flemming-2021] §7.2): when σ_d ≠ σ_d',
     the NHG probit change depends on the initial harmony difference `h_init`.
 
     Two contexts with different initial harmonies `h₁ ≠ h₂` but the same
@@ -254,7 +254,7 @@ noncomputable def nhgProbitChange (h_init Δh σ_d σ_d' : ℝ) : ℝ :=
     the denominator shift (σ_d → σ_d') rescales the existing harmony
     difference differently depending on its magnitude.
 
-    Concretely, for French schwa with σ = 1 (@cite{flemming-2021} §7.2):
+    Concretely, for French schwa with σ = 1 ([flemming-2021] §7.2):
     adding a \*Clash violation changes σ_d from √3 to 2 in all pairs,
     but the initial harmony difference h_ə − h_∅ differs between pairs
     (e.g., −2.2 for pair (0,1) vs 0.01 for pair (4,5)), so the probit
@@ -281,7 +281,7 @@ theorem nhg_probit_change_depends_on_h_init
     exact sub_ne_zero.mpr hσ
   exact hh (mul_right_cancel₀ h_ne h_eq)
 
-/-- **Probit change decomposition** (@cite{flemming-2021} eq (38b)):
+/-- **Probit change decomposition** ([flemming-2021] eq (38b)):
     the NHG probit change decomposes into a context-dependent term
     (proportional to initial harmony difference) and a uniform term.
 
@@ -343,7 +343,7 @@ theorem table45_maxent_equal_prob :
 
 /-- NHG noise covariance value: `Cov(ε_b−ε_a, ε_c−ε_a) = 3σ²`.
 
-    The paper (@cite{flemming-2021} §9, p. 37) computes `Cov(ε_a−ε_b, ε_c−ε_b) = 2σ²`
+    The paper ([flemming-2021] §9, p. 37) computes `Cov(ε_a−ε_b, ε_c−ε_b) = 2σ²`
     using candidate b as reference. Our formalization uses candidate a as
     reference, giving 3σ² — a different but equally valid demonstration
     that the covariance matrix is non-diagonal. -/
@@ -353,7 +353,7 @@ theorem table45_nhg_covariance_value :
 /-- NHG noise covariance is non-zero: Cov(ε_b−ε_a, ε_c−ε_a) ≠ 0.
     The multivariate normal over score differences has a non-diagonal
     covariance matrix, so binary comparisons don't determine the joint
-    distribution — NHG violates IIA (@cite{flemming-2021} §9). -/
+    distribution — NHG violates IIA ([flemming-2021] §9). -/
 theorem table45_nhg_covariance_nonzero :
     nhgCovarianceQ table45C .a .b .c ≠ 0 := by native_decide
 

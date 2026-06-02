@@ -4,18 +4,18 @@ import Linglib.Phonology.Autosegmental.Floating
 
 /-!
 # Poko Phonological Fragment — Tonal
-@cite{mcpherson-dryer-2021} @cite{mcpherson-2022} @cite{mcpherson-lamont-2026}
+[mcpherson-dryer-2021] [mcpherson-2022] [mcpherson-lamont-2026]
 
 Poko (also Poko-Rawo, ISO 639-3: not assigned, Glottocode: poko1259) is
 a Skou language spoken in Sandaun Province, Papua New Guinea, near the
-border with West Papua. ~100 speakers as of @cite{mcpherson-dryer-2021}.
+border with West Papua. ~100 speakers as of [mcpherson-dryer-2021].
 
 ## Tone system
 
 Three contrastive tone levels — high (H), mid (M), low (L) — plus
 toneless syllables and floating tones. Lexical melodies range from `Ø`
 (toneless) through `M`, `MH`, `LM`, `LH`, `M^H` (M with floating H);
-@cite{mcpherson-2022} argues the lexical inventory excludes simple `L`
+[mcpherson-2022] argues the lexical inventory excludes simple `L`
 and `H` melodies as a response to OCP markedness pressures.
 
 The TBU is the syllable; stems are mono- or disyllabic with vowel-final
@@ -31,7 +31,7 @@ delete (paper, §3.2).
 
 ## Stems represented here
 
-Just enough syllables for the @cite{mcpherson-lamont-2026} fig. 3
+Just enough syllables for the [mcpherson-lamont-2026] fig. 3
 demonstration: `kāk` (3sg.m possessive), `rī` (pig stem with `/M^H/`
 melody), `dō` (get verb with `/M^H/` melody). Promote to a fuller
 fragment when a second Poko paper arrives.
@@ -53,7 +53,7 @@ open Phonology.Autosegmental.RegisterTier (TRN)
 -- § 1: Syllables
 -- ============================================================================
 
-/-- Poko syllables represented for the @cite{mcpherson-lamont-2026}
+/-- Poko syllables represented for the [mcpherson-lamont-2026]
     tableaux: fig. 3 (`kak`, `ri`, `do`); eq. (24) (`nan`, `ri`, `na`);
     eq. (27) (`kak`, `ka`); eq. (30) (`kak`, `ili`). Promote to a
     fuller stem inventory when a second Poko paper arrives. -/

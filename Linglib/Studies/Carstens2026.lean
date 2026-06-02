@@ -13,7 +13,7 @@ import Linglib.Studies.AdamsonAnagnostopoulou2025
 /-!
 # Carstens 2026: The Grammar of Gender
 
-@cite{carstens-2026}
+[carstens-2026]
 
 Carstens, Vicki. 2026. "The grammar of gender: Insights from Bantu
 asymmetries of AGR with conjoined subjects." *Natural Language &
@@ -31,7 +31,7 @@ Linguistic Theory* 44:20.
    respectively. Genders B (3/4) and C (5/6) are uninterpretable.
 
 3. **Resolution via percolation + intersection**: Following
-   @cite{adamson-anagnostopoulou-2025}, agreement with conjoined singulars
+   [adamson-anagnostopoulou-2025], agreement with conjoined singulars
    works by percolating conjuncts' i-features to &P and intersecting them.
    u-features are excluded. Non-empty intersection → gender-matching plural
    agreement; empty intersection → default agreement.
@@ -49,7 +49,7 @@ Linguistic Theory* 44:20.
 Resolution uses `GenderResolution.resolve` — the single compositional
 endpoint — via `statusToBundle` which bridges Bantu `GenderStatus` to
 `FeatureBundle SemanticCore`. Study-level theorems verify the mechanism's
-predictions against @cite{carstens-2026}'s empirical data.
+predictions against [carstens-2026]'s empirical data.
 -/
 
 namespace Carstens2026
@@ -105,7 +105,7 @@ theorem mismatched_cores_empty (c1 c2 : SemanticCore) (h : c1 ≠ c2) :
     = none := by
   cases c1 <;> cases c2 <;> simp_all (config := { decide := true })
 
-/-- **The central claim** (@cite{carstens-2026}): for ANY Bantu gender,
+/-- **The central claim** ([carstens-2026]): for ANY Bantu gender,
     matching agreement with uniform conjoined singulars succeeds iff
     the gender is interpretable. This holds at the parameter type level,
     not just for specific Xhosa/Shona inventories.
@@ -125,21 +125,21 @@ theorem bantu_matching_iff_interpretable (s : GenderStatus) :
 /-! ### Matching agreement available (interpretable genders) -/
 
 /-- [1&1] human conjuncts: intersection = [human] → matching cl 2 available.
-    @cite{carstens-2026} Table 13: 100% ba- (matching = default for [human]). -/
+    [carstens-2026] Table 13: 100% ba- (matching = default for [human]). -/
 theorem xhosa_1and1_matching :
     resolve (statusToBundle (Xhosa.Gender.genderA).status)
            (statusToBundle (Xhosa.Gender.genderA).status)
     = some [.human] := by native_decide
 
 /-- [7&7] inanimate conjuncts: intersection = [inanimate] → matching cl 8.
-    @cite{carstens-2026} Table 13: 100% zi- for non-human [7&7]. -/
+    [carstens-2026] Table 13: 100% zi- for non-human [7&7]. -/
 theorem xhosa_7and7_matching :
     resolve (statusToBundle (Xhosa.Gender.genderD).status)
            (statusToBundle (Xhosa.Gender.genderD).status)
     = some [.inanimate] := by native_decide
 
 /-- [9&9] animal conjuncts: intersection = [animal] → matching cl 10.
-    @cite{carstens-2026} Table 13: 50% zi- matching + 40% ba- default
+    [carstens-2026] Table 13: 50% zi- matching + 40% ba- default
     for human [9&9]; 100% zi- for non-human [9&9]. -/
 theorem xhosa_9and9_matching :
     resolve (statusToBundle (Xhosa.Gender.genderE).status)
@@ -149,7 +149,7 @@ theorem xhosa_9and9_matching :
 /-! ### Matching agreement unavailable (uninterpretable genders) -/
 
 /-- [3&3] conjuncts: intersection = ∅ → default agreement only.
-    @cite{carstens-2026} Table 13: 0% matching for human (100% ba-);
+    [carstens-2026] Table 13: 0% matching for human (100% ba-);
     2.2% matching for non-human (73.3% zi- default). -/
 theorem xhosa_3and3_no_matching :
     resolve (statusToBundle (Xhosa.Gender.genderB).status)
@@ -157,7 +157,7 @@ theorem xhosa_3and3_no_matching :
     = none := rfl
 
 /-- [5&5] conjuncts: intersection = ∅ → default agreement only.
-    @cite{carstens-2026} Table 13: 0% matching; 63.33% ba- for human,
+    [carstens-2026] Table 13: 0% matching; 63.33% ba- for human,
     73.33% zi- for non-human. -/
 theorem xhosa_5and5_no_matching :
     resolve (statusToBundle (Xhosa.Gender.genderC).status)
@@ -178,7 +178,7 @@ theorem xhosa_matching_iff_interpretable (g : Xhosa.Gender) :
 
 /-- Mismatched [human] conjuncts (e.g. [3&5] gangster + policeman):
     both have [human] core from stacking → intersection = [human].
-    @cite{carstens-2026} (85)a, (86)a: class 2 ba- agreement. -/
+    [carstens-2026] (85)a, (86)a: class 2 ba- agreement. -/
 theorem xhosa_mismatched_human :
     resolve (statusToBundle (.interpretable .human))
            (statusToBundle (.interpretable .human))
@@ -186,7 +186,7 @@ theorem xhosa_mismatched_human :
 
 /-- Mismatched [inanimate] conjuncts (e.g. [3&5] carrot + egg):
     both have [inanimate] core from stacking → intersection = [inanimate].
-    @cite{carstens-2026} (85)b, (86)b: class 8 zi- agreement. -/
+    [carstens-2026] (85)b, (86)b: class 8 zi- agreement. -/
 theorem xhosa_mismatched_inanimate :
     resolve (statusToBundle (.interpretable .inanimate))
            (statusToBundle (.interpretable .inanimate))
@@ -194,7 +194,7 @@ theorem xhosa_mismatched_inanimate :
 
 /-- Human + inanimate (e.g. [9&1a] girl + train):
     [human] ∩ [inanimate] = ∅ → ineffable.
-    @cite{carstens-2026} (91)–(92): agreement with conjoined humans
+    [carstens-2026] (91)–(92): agreement with conjoined humans
     and inanimates is generally ineffable. -/
 theorem xhosa_human_inanimate_ineffable :
     resolve (statusToBundle (.interpretable .human))
@@ -205,16 +205,16 @@ theorem xhosa_human_inanimate_ineffable :
 -- § 4: Default Agreement Classes
 -- ============================================================================
 
-/-- Default for [human]: class 2 ba- (@cite{carstens-2026} (52c)). -/
+/-- Default for [human]: class 2 ba- ([carstens-2026] (52c)). -/
 theorem default_human_is_class2 :
     SemanticCore.defaultPluralClass .human = 2 := rfl
 
-/-- Default for [inanimate]: class 8 zi- (@cite{carstens-2026} (52c)). -/
+/-- Default for [inanimate]: class 8 zi- ([carstens-2026] (52c)). -/
 theorem default_inanimate_is_class8 :
     SemanticCore.defaultPluralClass .inanimate = 8 := rfl
 
 /-- Default for [animal]: class 8 zi- (class 10 = syncretic with 8 for
-    default purposes; @cite{carstens-2026} §3.4). -/
+    default purposes; [carstens-2026] §3.4). -/
 theorem default_animal_is_class8 :
     SemanticCore.defaultPluralClass .animal = 8 := rfl
 
@@ -223,28 +223,28 @@ theorem default_animal_is_class8 :
 -- ============================================================================
 
 /-- Shona [1&1]: class 2 va- (human matching/default).
-    @cite{carstens-2026} (58): va- for conjoined [1&1] (consistent across speakers). -/
+    [carstens-2026] (58): va- for conjoined [1&1] (consistent across speakers). -/
 theorem shona_1and1_matching :
     resolve (statusToBundle (Shona.Gender.genderA).status)
            (statusToBundle (Shona.Gender.genderA).status)
     = some [.human] := by native_decide
 
 /-- Shona [7&7]: class 8 zvi- (non-human matching/default).
-    @cite{carstens-2026} (62): zvi- for non-human [7&7] (consistent across speakers). -/
+    [carstens-2026] (62): zvi- for non-human [7&7] (consistent across speakers). -/
 theorem shona_7and7_matching :
     resolve (statusToBundle (Shona.Gender.genderD).status)
            (statusToBundle (Shona.Gender.genderD).status)
     = some [.nonhuman] := by native_decide
 
 /-- Shona [3&3]: no matching → default only.
-    @cite{carstens-2026} (59): zvi- (class 8 default) for non-human. -/
+    [carstens-2026] (59): zvi- (class 8 default) for non-human. -/
 theorem shona_3and3_no_matching :
     resolve (statusToBundle (Shona.Gender.genderB).status)
            (statusToBundle (Shona.Gender.genderB).status)
     = none := rfl
 
 /-- Shona [5&5]: no matching → default only.
-    @cite{carstens-2026} (60)–(61). -/
+    [carstens-2026] (60)–(61). -/
 theorem shona_5and5_no_matching :
     resolve (statusToBundle (Shona.Gender.genderC).status)
            (statusToBundle (Shona.Gender.genderC).status)
@@ -252,28 +252,28 @@ theorem shona_5and5_no_matching :
 
 /-- Shona [9&9]: no matching → default only.
     Unlike Xhosa [9&9], Shona's [animal] core has bleached from 9/10.
-    @cite{carstens-2026} §5.2, (64)b–d: va- for human, zvi- for non-human. -/
+    [carstens-2026] §5.2, (64)b–d: va- for human, zvi- for non-human. -/
 theorem shona_9and9_no_matching :
     resolve (statusToBundle (Shona.Gender.genderE).status)
            (statusToBundle (Shona.Gender.genderE).status)
     = none := rfl
 
 /-- Shona [11&11]: no matching → default only.
-    @cite{carstens-2026} (65): zvi- (class 8 default). -/
+    [carstens-2026] (65): zvi- (class 8 default). -/
 theorem shona_11and11_no_matching :
     resolve (statusToBundle (Shona.Gender.genderF).status)
            (statusToBundle (Shona.Gender.genderF).status)
     = none := rfl
 
 /-- Shona [14&14]: no matching → default only (abstract nouns).
-    @cite{carstens-2026}: genderG (14/6) is uninterpretable. -/
+    [carstens-2026]: genderG (14/6) is uninterpretable. -/
 theorem shona_14and14_no_matching :
     resolve (statusToBundle (Shona.Gender.genderG).status)
            (statusToBundle (Shona.Gender.genderG).status)
     = none := rfl
 
 /-- Shona [12&12]: no matching → default only (diminutives).
-    @cite{carstens-2026}: conjoined diminutives take class 8 zvi-. -/
+    [carstens-2026]: conjoined diminutives take class 8 zvi-. -/
 theorem shona_12and12_no_matching :
     resolve (statusToBundle (Shona.Gender.genderH).status)
            (statusToBundle (Shona.Gender.genderH).status)
@@ -300,7 +300,7 @@ theorem shona_interpretable_count :
      .genderE, .genderF, .genderG, .genderH].filter
       (λ g => g.status.isInterpretable)).length = 2 := rfl
 
-/-- Core insight (@cite{carstens-2026} §3.5, §5.2): in Shona, genders in which
+/-- Core insight ([carstens-2026] §3.5, §5.2): in Shona, genders in which
     matching agreement succeeds are outnumbered by those where it fails by 6:2,
     confirming that matching is the exception. -/
 theorem shona_matching_is_minority :
@@ -333,13 +333,13 @@ theorem stacking_preserves_core :
   ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 8: Bridge to DM Categorizer (@cite{kramer-2015})
+-- § 8: Bridge to DM Categorizer ([kramer-2015])
 -- ============================================================================
 
 /-- Bantu `SemanticCore` → DM `Interpretability` bridge.
     Interpretable genders bear `Interpretability.i` (natural gender);
     uninterpretable genders bear `Interpretability.u` (arbitrary gender).
-    @cite{carstens-2026} directly extends @cite{kramer-2015}'s i/u distinction. -/
+    [carstens-2026] directly extends [kramer-2015]'s i/u distinction. -/
 def toDMInterpretability : GenderStatus → Morphology.DM.Interpretability
   | .interpretable _ => .i
   | .uninterpretable => .u
@@ -350,7 +350,7 @@ theorem dm_bridge_faithful (s : GenderStatus) :
   cases s <;> rfl
 
 /-- Bantu `SemanticCore` → typological `SemanticBasis` bridge.
-    @cite{carstens-2026}'s cores map to @cite{kramer-2020}'s
+    [carstens-2026]'s cores map to [kramer-2020]'s
     core semantic bases. All are `isCore = true`.
 
     The [non-human] core (Shona 7/8) maps to `.humanness` because
@@ -372,7 +372,7 @@ theorem bantu_cores_are_kramer_cores (c : SemanticCore) :
 -- ============================================================================
 
 /-- Xhosa gender profile drawn from `Fragments/Xhosa/Gender.lean`.
-    @cite{carstens-2026} §2.2: semantic cores for some genders, formal
+    [carstens-2026] §2.2: semantic cores for some genders, formal
     (class prefix) assignment for others. -/
 abbrev xhosaGenderProfile := Xhosa.Gender.genderTypology
 
@@ -380,7 +380,7 @@ abbrev xhosaGenderProfile := Xhosa.Gender.genderTypology
 abbrev shonaGenderProfile := Shona.Gender.genderTypology
 
 /-- Both profiles satisfy the Semantic Core Generalization
-    (@cite{kramer-2020} ex. 2/28). -/
+    ([kramer-2020] ex. 2/28). -/
 theorem xhosa_satisfies_semantic_core :
     xhosaGenderProfile.satisfiesSemanticCore = true := rfl
 
@@ -394,13 +394,13 @@ theorem shona_satisfies_semantic_core :
 /-- Resolution with nP stacking: agreement is determined by the stack's
     semantic core, not the visible class. Two nouns in different visible
     classes but the same core gender resolve to that core.
-    @cite{carstens-2026} (85)–(88): mismatched [3&5] humans → ba-,
+    [carstens-2026] (85)–(88): mismatched [3&5] humans → ba-,
     mismatched [3&5] inanimates → zi-. -/
 def resolveStacks (s1 s2 : NPStack) : Option (List SemanticCore) :=
   resolve (statusToBundle s1.status) (statusToBundle s2.status)
 
 /-- Criminal (cl3) + policeman (cl5): both [human] core → class 2 ba-.
-    @cite{carstens-2026} (85)a, (86)a. -/
+    [carstens-2026] (85)a, (86)a. -/
 theorem mismatched_3and5_human :
     resolveStacks
       ⟨3, 1, .interpretable .human⟩
@@ -408,7 +408,7 @@ theorem mismatched_3and5_human :
     = some [.human] := by native_decide
 
 /-- Carrot (cl3) + egg (cl5): both [inanimate] core → class 8 zi-.
-    @cite{carstens-2026} (85)b, (86)b. -/
+    [carstens-2026] (85)b, (86)b. -/
 theorem mismatched_3and5_inanimate :
     resolveStacks
       ⟨3, 7, .interpretable .inanimate⟩
@@ -418,7 +418,7 @@ theorem mismatched_3and5_inanimate :
 /-- Medium (cl7, human) + girl (cl9, human): both have [human] core
     from nP stacking → [human] ∩ [human] = {[human]} → class 2 ba-.
     Visible genders differ (7 vs 9) but cores agree.
-    @cite{carstens-2026} (87)a, (88)a. -/
+    [carstens-2026] (87)a, (88)a. -/
 theorem mismatched_7and9_both_human :
     resolveStacks
       ⟨7, 1, .interpretable .human⟩
@@ -427,7 +427,7 @@ theorem mismatched_7and9_both_human :
 
 /-- Backpack (cl1a, inanimate) + book (cl9, inanimate): both have
     [inanimate] core → [inanimate] ∩ [inanimate] = {[inanimate]} → class 8 zi-.
-    @cite{carstens-2026} (87)b, (88)b. -/
+    [carstens-2026] (87)b, (88)b. -/
 theorem mismatched_1aand9_both_inanimate :
     resolveStacks
       ⟨1, 7, .interpretable .inanimate⟩
@@ -439,7 +439,7 @@ theorem mismatched_1aand9_both_inanimate :
 -- ============================================================================
 
 /-- Swahili's 5 genders also instantiate the Bantu semantic core system.
-    @cite{carstens-2026} §8 discusses Swahili's GAC (General Animate Concords)
+    [carstens-2026] §8 discusses Swahili's GAC (General Animate Concords)
     as evidence for a [+animate] feature. -/
 theorem swahili_genderA_interpretable :
     Swahili.Gender.genderA.status.isInterpretable = true := rfl
@@ -467,46 +467,46 @@ theorem three_languages_agree_on_human :
     4. **Agreement**: matching (non-empty) or default (empty)
 
     Each theorem below traces this chain for a concrete example from
-    @cite{carstens-2026} §5. -/
+    [carstens-2026] §5. -/
 
 /-- Feature bundle: citizen (class 1, canonical human — no stacking).
     Structure: [n₁/₂ √CITIZEN].
-    @cite{carstens-2026} (6)a, (72)a. -/
+    [carstens-2026] (6)a, (72)a. -/
 def citizenBundle := nP .human
 
 /-- Feature bundle: gangster (class 3, human core via stacking).
     Structure: [n₃/₄ [n₁/₂ √GULUKUDU]].
     Outer n₃/₄ is u → excluded. Inner n₁/₂ is i[human] → percolates.
-    @cite{carstens-2026} (28)d, (85)a, (86)a; structure type per (72)b. -/
+    [carstens-2026] (28)d, (85)a, (86)a; structure type per (72)b. -/
 def gangsterBundle := nPStack nP_u (nP .human)
 
 /-- Feature bundle: policeman (class 5, human core via stacking).
     Structure: [n₅/₆ [n₁/₂ √POLISA]].
-    @cite{carstens-2026} (85)a; structure type per (72)c. -/
+    [carstens-2026] (85)a; structure type per (72)c. -/
 def policemanBundle := nPStack nP_u (nP .human)
 
 /-- Feature bundle: hat (class 3, no stacking — arbitrary inanimate in u-gender).
     Structure: [n₃/₄ √HAT]. No inner layer.
-    @cite{carstens-2026} (38)a, (77)a. -/
+    [carstens-2026] (38)a, (77)a. -/
 def hatBundle := nP_u
 
 /-- Feature bundle: carrot (class 3, inanimate core via stacking).
     Structure: [n₃/₄ [n₇/₈ √CARROT]].
-    @cite{carstens-2026} (86)b. -/
+    [carstens-2026] (86)b. -/
 def carrotBundle := nPStack nP_u (nP .inanimate)
 
 /-- Feature bundle: egg (class 5, inanimate core via stacking).
     Structure: [n₅/₆ [n₇/₈ √EGG]].
-    @cite{carstens-2026} (86)b. -/
+    [carstens-2026] (86)b. -/
 def eggBundle := nPStack nP_u (nP .inanimate)
 
 /-- Feature bundle: elephant (class 9, canonical animal — no stacking).
     Structure: [n₉/₁₀ √ELEPHANT].
-    @cite{carstens-2026} (49)b, (73)a. -/
+    [carstens-2026] (49)b, (73)a. -/
 def elephantBundle := nP .animal
 
 /-- End-to-end derivation: citizen.1 & president.1 → matching [human].
-    @cite{carstens-2026} (6)a: class 2 ba- agreement.
+    [carstens-2026] (6)a: class 2 ba- agreement.
 
     Chain: canonical class 1 → i[human] percolates → {human} ∩ {human}
     = {human} → matching → class 2 ba-. -/
@@ -514,7 +514,7 @@ theorem derivation_1and1_human :
     resolve citizenBundle citizenBundle = some [.human] := by native_decide
 
 /-- End-to-end derivation: gangster.3 & policeman.5 → matching [human].
-    @cite{carstens-2026} (86)a: class 2 ba- agreement.
+    [carstens-2026] (86)a: class 2 ba- agreement.
 
     Chain: nP stacking gives u-outer + i[human]-inner →
     u excluded, {human} percolates from each →
@@ -523,7 +523,7 @@ theorem derivation_3and5_human :
     resolve gangsterBundle policemanBundle = some [.human] := by native_decide
 
 /-- End-to-end derivation: carrot.3 & egg.5 → matching [inanimate].
-    @cite{carstens-2026} (86)b: class 8 zi- agreement.
+    [carstens-2026] (86)b: class 8 zi- agreement.
 
     Chain: u-outer + i[inanimate]-inner →
     {inanimate} ∩ {inanimate} = {inanimate} → matching → class 8 zi-. -/
@@ -531,7 +531,7 @@ theorem derivation_3and5_inanimate :
     resolve carrotBundle eggBundle = some [.inanimate] := by native_decide
 
 /-- End-to-end derivation: hat.3 & gun.3 → default.
-    @cite{carstens-2026} (77)a, (38)a: class 8 zi- (default for non-human).
+    [carstens-2026] (77)a, (38)a: class 8 zi- (default for non-human).
 
     Chain: u-gender, no stacking → no i-features to percolate →
     {} ∩ {} = {} → default → class 8 zi-. -/
@@ -539,7 +539,7 @@ theorem derivation_3and3_default :
     resolve hatBundle hatBundle = none := rfl
 
 /-- End-to-end derivation: elephant.9 & leopard.9 → matching [animal].
-    @cite{carstens-2026} (49)b, (82)a: class 10 zi- agreement.
+    [carstens-2026] (49)b, (82)a: class 10 zi- agreement.
 
     Chain: canonical class 9 → i[animal] percolates →
     {animal} ∩ {animal} = {animal} → matching → class 10 zi-. -/
@@ -547,7 +547,7 @@ theorem derivation_9and9_animal :
     resolve elephantBundle elephantBundle = some [.animal] := by native_decide
 
 /-- End-to-end derivation: human + inanimate → default (generally ineffable).
-    @cite{carstens-2026} (91)–(92): *girl.9 & train.1a → no agreement.
+    [carstens-2026] (91)–(92): *girl.9 & train.1a → no agreement.
 
     Chain: i[human] vs i[inanimate] →
     {human} ∩ {inanimate} = {} → default.
@@ -560,7 +560,7 @@ theorem derivation_human_inanimate_default :
 -- § 13: Two Grammars — Highest Wins vs Best Semantic Match
 -- ============================================================================
 
-/-! @cite{carstens-2026} §5.1, (78)–(81): when arbitrary members of
+/-! [carstens-2026] §5.1, (78)–(81): when arbitrary members of
     interpretable genders stack in non-canonical classes, both the outer
     (arbitrary) and inner (core) i-features percolate to &P. The intersection
     then contains multiple features, and two grammars determine which one
@@ -571,7 +571,7 @@ theorem derivation_human_inanimate_default :
     (determining BSM specificity). -/
 
 /-- Feature with core/arbitrary distinction for the two-grammars analysis.
-    @cite{carstens-2026} (71): n₁ = i[entity] i[core]; n₂ = i[entity]
+    [carstens-2026] (71): n₁ = i[entity] i[core]; n₂ = i[entity]
     (for arbitrary members). Core features are more specific. -/
 structure TwoGrammarFeature where
   classNum : Nat
@@ -585,31 +585,31 @@ def TwoGrammarFeature.specificity (f : TwoGrammarFeature) : Nat :=
 /-- Feature bundle for train.1a: [n₁ₐ(arbitrary) [n₇(core inanimate) √TRAIN]].
     Outer: class 1, arbitrary i[entity] from gender A.
     Inner: class 7, core i[inanimate] from gender D.
-    @cite{carstens-2026} (78)a, (79)a, (80)a. -/
+    [carstens-2026] (78)a, (79)a, (80)a. -/
 def trainFeatures : FeatureBundle TwoGrammarFeature :=
   [⟨⟨1, false⟩, .interpretable⟩, ⟨⟨7, true⟩, .interpretable⟩]
 
 /-- Feature bundle for diviner.7: [n₇(arbitrary) [n₁(core human) √DIVINER]].
     Outer: class 7, arbitrary i[entity] from gender D.
     Inner: class 1, core i[human] from gender A.
-    @cite{carstens-2026} (78)b, (79)b, (80)b. -/
+    [carstens-2026] (78)b, (79)b, (80)b. -/
 def divinerFeatures : FeatureBundle TwoGrammarFeature :=
   [⟨⟨7, false⟩, .interpretable⟩, ⟨⟨1, true⟩, .interpretable⟩]
 
 /-- Intersection for train.1a & machine.1a: both layers survive.
-    @cite{carstens-2026} (79)a: &P {1, {7}} ∩ {1, {7}} = {1, {7}}. -/
+    [carstens-2026] (79)a: &P {1, {7}} ∩ {1, {7}} = {1, {7}}. -/
 theorem train_intersection :
     resolve trainFeatures trainFeatures
     = some [⟨1, false⟩, ⟨7, true⟩] := by native_decide
 
 /-- Intersection for diviner.7 & scholar.7: both layers survive.
-    @cite{carstens-2026} (79)b: &P {7, {1}} ∩ {7, {1}} = {7, {1}}. -/
+    [carstens-2026] (79)b: &P {7, {1}} ∩ {7, {1}} = {7, {1}}. -/
 theorem diviner_intersection :
     resolve divinerFeatures divinerFeatures
     = some [⟨7, false⟩, ⟨1, true⟩] := by native_decide
 
 /-- Highest Wins for train.1a & machine.1a: outermost = class 1 → cl 2 ba-.
-    @cite{carstens-2026} (79)a. -/
+    [carstens-2026] (79)a. -/
 theorem train_highest_wins :
     selectFeature .highestWins
       TwoGrammarFeature.specificity
@@ -617,7 +617,7 @@ theorem train_highest_wins :
     = some ⟨1, false⟩ := rfl
 
 /-- BSM for train.1a & machine.1a: core class 7 (inanimate) → cl 8 zi-.
-    @cite{carstens-2026} (80)a. -/
+    [carstens-2026] (80)a. -/
 theorem train_best_semantic_match :
     selectFeature .bestSemanticMatch
       TwoGrammarFeature.specificity
@@ -625,7 +625,7 @@ theorem train_best_semantic_match :
     = some ⟨7, true⟩ := rfl
 
 /-- Highest Wins for diviner.7 & scholar.7: outermost = class 7 → cl 8 zi-.
-    @cite{carstens-2026} (79)b. -/
+    [carstens-2026] (79)b. -/
 theorem diviner_highest_wins :
     selectFeature .highestWins
       TwoGrammarFeature.specificity
@@ -633,7 +633,7 @@ theorem diviner_highest_wins :
     = some ⟨7, false⟩ := rfl
 
 /-- BSM for diviner.7 & scholar.7: core class 1 (human) → cl 2 ba-.
-    @cite{carstens-2026} (80)b: 'The fool and the scholar are studying'
+    [carstens-2026] (80)b: 'The fool and the scholar are studying'
     with ba- agreement. -/
 theorem diviner_best_semantic_match :
     selectFeature .bestSemanticMatch
@@ -644,7 +644,7 @@ theorem diviner_best_semantic_match :
 /-- The two grammars give DIFFERENT predictions for stacked nPs:
     for train.1a & machine.1a, HW picks class 1 (ba-) while BSM
     picks class 7 (zi-). Both are attested by Xhosa speakers.
-    @cite{carstens-2026} (81)a: zi- for [L & M] = BSM;
+    [carstens-2026] (81)a: zi- for [L & M] = BSM;
     (45)a: ba- for [L & M] = HW. -/
 theorem two_grammars_differ_train :
     selectFeature .highestWins TwoGrammarFeature.specificity
@@ -734,7 +734,7 @@ theorem xhosa_uninterpretable_coordinate :
 
 /-! ### Shared mechanism
 
-    @cite{carstens-2026} explicitly adopts @cite{adamson-anagnostopoulou-2025}'s
+    [carstens-2026] explicitly adopts [adamson-anagnostopoulou-2025]'s
     percolation-and-intersection mechanism. Both studies use the same
     `GenderResolution.resolve` function, instantiated with different
     feature types:
@@ -768,7 +768,7 @@ theorem bantu_aa_self_matching_consistent :
 
 /-! ### MRH failure in Bantu
 
-    Unlike Greek/Icelandic (@cite{adamson-anagnostopoulou-2025}), Bantu
+    Unlike Greek/Icelandic ([adamson-anagnostopoulou-2025]), Bantu
     does NOT satisfy MRH: uninterpretable genders produce empty
     intersections, requiring default agreement. This is the structural
     reason why default agreement is needed in Bantu but not in Greek. -/

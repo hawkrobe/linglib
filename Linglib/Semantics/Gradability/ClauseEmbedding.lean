@@ -6,7 +6,7 @@ import Linglib.Semantics.Verb.Basic
 Cross-linguistic type for adjectives that take propositional complements:
 "annoyed (that p)", "sorry (that p)", "aware (that p)", "certain (that p)".
 
-These are distinct from gradable adjectives (@cite{kennedy-2007}), which
+These are distinct from gradable adjectives ([kennedy-2007]), which
 denote scalar properties of individuals. Clause-embedding adjectives
 denote attitudes or evaluations toward propositions.
 

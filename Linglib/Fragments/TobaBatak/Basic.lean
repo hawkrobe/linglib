@@ -2,7 +2,7 @@ import Linglib.Typology.Extraction
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 
 /-!
-# Toba Batak Fragment @cite{erlewine-2018}
+# Toba Batak Fragment [erlewine-2018]
 
 Morphosyntactic data for Toba Batak (Austronesian, Sumatra) relevant
 to the extraction restriction and pivot system.
@@ -82,7 +82,7 @@ def ExtractionDatum.extractsPivot (d : ExtractionDatum) : Bool :=
   | .adjunct => false
 
 -- ============================================================================
--- § 4: Monoclausal Data (@cite{erlewine-2018}, §2)
+-- § 4: Monoclausal Data ([erlewine-2018], §2)
 -- ============================================================================
 
 /-- AV + agent extraction: grammatical (agent is pivot in AV). -/
@@ -146,7 +146,7 @@ def tbExtractionProfile : Typology.ExtractionProfile :=
              "role occupies the pivot, but the extractable structural " ++
              "position is always subject. Restriction derived from " ++
              "predicate fronting + nominal licensing: non-pivot DPs " ++
-             "in Spec,CP lack a Case licensor (@cite{erlewine-2018}, §4)" }
+             "in Spec,CP lack a Case licensor ([erlewine-2018], §4)" }
 
 -- ============================================================================
 -- § 6: Voice System Profile
@@ -162,7 +162,7 @@ def tbVoiceSystem : Interfaces.VoiceSystemProfile :=
   { language := "Toba Batak"
     voices := [ ⟨"Actor Voice", .agent⟩, ⟨"Object Voice", .patient⟩ ]
     symmetry := .symmetrical
-    notes := "Two-way symmetrical system (@cite{erlewine-2018})" }
+    notes := "Two-way symmetrical system ([erlewine-2018])" }
 
 theorem tb_voice_system_symmetrical :
     tbVoiceSystem.symmetry = .symmetrical := rfl

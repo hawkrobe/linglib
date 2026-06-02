@@ -5,7 +5,7 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 set_option autoImplicit false
 
-/-! # RSA L1 at α → ∞ recovers Fox's exh @cite{fox-2007}
+/-! # RSA L1 at α → ∞ recovers Fox's exh [fox-2007]
 
 This file proves the concrete connection between RSA pragmatic inference and
 Neo-Gricean exhaustification for the simplest non-trivial case: the Horn scale
@@ -39,7 +39,7 @@ message as α → ∞ for *any* `InterpGame`. This file instantiates that
 general result for the specific Horn scale ⟨some, all⟩.
 
 Combined with `ibr_equals_exhMW` (`ScalarGames.lean`) and
-@cite{denic-2023}'s `entailment_invariant_across_domain_size`
+[denic-2023]'s `entailment_invariant_across_domain_size`
 (`Denic2023.lean`), the chain shows that RSA cannot escape domain-size
 blindness in the high-rationality limit — probabilistic mechanisms
 (like informativeness-based pruning) are the only way out.

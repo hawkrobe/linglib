@@ -4,7 +4,7 @@ import Linglib.Discourse.SpeechAct.Update
 /-!
 # Stalnaker's Common Ground Model of Assertion
 
-@cite{stalnaker-1978} @cite{stalnaker-2002}Assertion as context set update: to assert p is to propose eliminating
+[stalnaker-1978] [stalnaker-2002]Assertion as context set update: to assert p is to propose eliminating
 ¬p-worlds from the common ground. This is the simplest assertion theory
 and the baseline against which richer theories are compared.
 
@@ -18,7 +18,7 @@ and the baseline against which richer theories are compared.
 
 ## Stalnaker's Norm
 
-@cite{stalnaker-1978} identifies three norms on assertion:
+[stalnaker-1978] identifies three norms on assertion:
 1. The proposition expressed is true (sincerity)
 2. The speaker believes the proposition (knowledge)
 3. The proposition is not already in the common ground (informativity)

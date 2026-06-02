@@ -3,12 +3,12 @@ import Linglib.Features.OntologicalCategory
 
 /-!
 # Questions: Basic Types and Shared Infrastructure
-@cite{dayal-2016} @cite{groenendijk-stokhof-1984} @cite{anand-hardt-mccloskey-2021}
+[dayal-2016] [groenendijk-stokhof-1984] [anand-hardt-mccloskey-2021]
 
 Theory-neutral types for question-answer phenomena. The semantic type of a wh-phrase
 (*who*/*what*/*where*/…) is the shared `Features.OntologicalCategory` axis — its
 wh-side distribution is empirically motivated by the Santa Cruz Sluicing Corpus
-(@cite{anand-hardt-mccloskey-2021}), where these categories show radically different
+([anand-hardt-mccloskey-2021]), where these categories show radically different
 frequencies.
 
 -/
@@ -78,10 +78,10 @@ structure QAPair where
   source : String := ""
   deriving Repr
 
--- Term Types (@cite{groenendijk-stokhof-1984})
+-- Term Types ([groenendijk-stokhof-1984])
 
 /-- Term types determine exhaustive interpretation.
-    Source: @cite{groenendijk-stokhof-1984}, Chapter IV.
+    Source: [groenendijk-stokhof-1984], Chapter IV.
 -/
 inductive TermType where
   | singular        -- "the student who left"

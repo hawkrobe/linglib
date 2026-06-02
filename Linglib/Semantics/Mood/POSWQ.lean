@@ -3,9 +3,9 @@ import Linglib.Semantics.Mood.POSW
 
 /-!
 # POSW with Inquiry Partition (POSWQ)
-@cite{portner-2018} @cite{groenendijk-stokhof-1984} @cite{roberts-2012}
+[portner-2018] [groenendijk-stokhof-1984] [roberts-2012]
 
-This file is **our extension** of @cite{portner-2018}'s POSW substrate
+This file is **our extension** of [portner-2018]'s POSW substrate
 to interrogative force, by way of a third component recording the open
 question. It is not the extension Portner himself works out.
 Portner's interrogative variant — **PPOSW** — replaces `cs` with a
@@ -17,8 +17,8 @@ lets the inquiry partition compose orthogonally with `cs`-refinement
 and `≤`-refinement.
 
 The third-component idea is grounded in the dynamic-question tradition:
-@cite{groenendijk-stokhof-1984}'s partition theory takes the meaning of
-a question to be an equivalence relation on worlds; @cite{roberts-2012}
+[groenendijk-stokhof-1984]'s partition theory takes the meaning of
+a question to be an equivalence relation on worlds; [roberts-2012]
 maintains a QUD stack alongside the common ground; inquisitive
 semantics (Ciardelli et al. 2013) folds it into a single
 informative/inquisitive content. The Setoid representation makes the
@@ -37,7 +37,7 @@ The columns are the three POSW components (`cs`, `le`, `inquiry`); the
 rows are the operations on each component (refining update,
 quantification). Refinement of the inquiry partition (`?`-update),
 the modal `boxAns`, and the third column entries are this library's
-extensions; they do not appear in @cite{portner-2018}.
+extensions; they do not appear in [portner-2018].
 
 ## Mathlib alignment
 
@@ -68,11 +68,11 @@ in §7 is a one-liner via `inf_assoc + inf_idem`).
 
 We commit `inquiry : Setoid W` (partition-based questions). The
 state-of-the-art generalization is the algebraic / inquisitive-
-semantics frame of @cite{puncochar-2016} (lattice-of-logics
+semantics frame of [puncochar-2016] (lattice-of-logics
 characterization, with inquisitive logic as the strongest "G-logic"),
-@cite{puncochar-2019} (information models on substructural bases;
+[puncochar-2019] (information models on substructural bases;
 declarative propositions as principal ideals), and
-@cite{ciardelli-groenendijk-roelofsen-2018} (the textbook), in which
+[ciardelli-groenendijk-roelofsen-2018] (the textbook), in which
 inquiry would be a downward-closed nonempty set of information states
 rather than a partition. That generalization handles non-partition
 inquiry — mention-some, intermediate-exhaustive, and conditional
@@ -82,10 +82,10 @@ question phenomena — that `Setoid W` provably cannot represent
 We do not lift to `InquisitiveContent W` here. Following mathlib
 discipline, the lift should be triggered by a forcing phenomenon
 study, not built speculatively. The clearest forcing candidate is
-@cite{theiler-etal-2018}'s uniform semantics for declarative and
+[theiler-etal-2018]'s uniform semantics for declarative and
 interrogative complements, which derives mention-some and
 intermediate-exhaustive readings as theorems and shows that
-@cite{groenendijk-stokhof-1984}'s partition theory provably cannot.
+[groenendijk-stokhof-1984]'s partition theory provably cannot.
 When that study is formalized in `Studies/`, the
 `InquisitiveContent W` type becomes load-bearing; until then, every
 existing POSWQ use case is partition-based and `Setoid W` is the
@@ -101,11 +101,11 @@ namespace Semantics.Mood
 
 universe u
 
-/-- A **POSW with an inquiry partition** (POSWQ): the @cite{portner-2018}
+/-- A **POSW with an inquiry partition** (POSWQ): the [portner-2018]
     POSW substrate enriched with a third component recording the open
     question. The `inquiry : Setoid W` partitions worlds into
     "answers"; its `⊤` element is "no question". This three-coordinate
-    extension is ours and is distinct from @cite{portner-2018}'s own
+    extension is ours and is distinct from [portner-2018]'s own
     PPOSW (which replaces `cs` with a partition rather than adding a
     third field). -/
 structure POSWQ (W : Type u) extends POSW W where
@@ -155,7 +155,7 @@ def polarSetoid (q : W → Prop) : Setoid W where
 
 /-! ## §2. The third update: `?` (inquiry refinement) -/
 
-/-- **`?`-update** (our extension; not in @cite{portner-2018}): refine
+/-- **`?`-update** (our extension; not in [portner-2018]): refine
     the inquiry partition by meet with `q`. The partition-side
     analogue of `+`-update on `cs` and `⋆`-update on `le`: it
     constrains the third POSW component without touching the other
@@ -190,9 +190,9 @@ theorem inquire_inquiry (c : POSWQ W) (q : Setoid W) :
 /-- **Informational answerhood** (our extension): `p` is *settled by the
     question* at `c` iff `p` has a constant truth value within every
     cell of `c.inquiry` (restricted to the context set). The
-    answerhood counterpart of @cite{portner-2018}'s `boxCs` (truth
+    answerhood counterpart of [portner-2018]'s `boxCs` (truth
     throughout `cs`) and `boxLe` (truth at every best world); the
-    formulation is closest in spirit to @cite{groenendijk-stokhof-1984}
+    formulation is closest in spirit to [groenendijk-stokhof-1984]
     answerhood.
 
     Unlike `boxCs` and `boxLe`, `boxAns` is *not* upward-monotone in

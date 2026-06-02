@@ -2,15 +2,15 @@ import Linglib.Semantics.Verb.Basic
 
 /-!
 # Buryat Complementizers and Clause-Embedding Verbs
-@cite{bondarenko-2022} @cite{bondarenko-2020} @cite{bondarenko-2017}
+[bondarenko-2022] [bondarenko-2020] [bondarenko-2017]
 
 Modern Barguzin Buryat (Mongolic; Russian Federation) — clause-typing
 morphology and the matrix verbs that select bare vs. nominalized
-embedded clauses (@cite{bondarenko-2022} §4.3.1).
+embedded clauses ([bondarenko-2022] §4.3.1).
 
 ## Three clause-typing morphemes
 
-- **gɔ** 'say' — verbal source; @cite{bondarenko-2022} §4.3.1 analyses
+- **gɔ** 'say' — verbal source; [bondarenko-2022] §4.3.1 analyses
   it as the overt exponent of ContP (the projection introducing the
   CONT function at the left periphery of Cont-CPs). When *gɔ* is
   present, the embedded clause is a Cont-CP.
@@ -62,7 +62,7 @@ namespace Buryat.Complementizers
     Comp head. -/
 inductive BuryatComplementizer where
   /-- *gɔ* — verbal "say"-source; overt exponent of ContP per
-      @cite{bondarenko-2022} §4.3.1. ASCII identifier `gO` for kernel-
+      [bondarenko-2022] §4.3.1. ASCII identifier `gO` for kernel-
       reducer compatibility; the form string preserves the unicode. -/
   | gO
   /-- *-Aːša* — participial nominaliser (imperfective/non-future).
@@ -89,7 +89,7 @@ def BuryatComplementizer.isVerbal : BuryatComplementizer → Bool
 
 /-- Whether the morpheme is a participial nominaliser. The split into
     *Aːša* / *žA* by the participial allomorphy follows
-    @cite{bondarenko-2022} §4.3.1. -/
+    [bondarenko-2022] §4.3.1. -/
 def BuryatComplementizer.isParticipial : BuryatComplementizer → Bool
   | .aSha => true
   | .zhA   => true
@@ -105,7 +105,7 @@ theorem verbal_xor_participial (c : BuryatComplementizer) :
 
 /-- *xanaxa* — 'think / remember'. Bondarenko's anchor verb for the
     bare-vs-nominalized argument-structure alternation
-    (@cite{bondarenko-2022} §4.4.3). With bare complement → thinking
+    ([bondarenko-2022] §4.4.3). With bare complement → thinking
     (Cont reading); with nominalized complement → remembering
     (DP-argument reading + about-presupposition).
 
@@ -136,7 +136,7 @@ def medexe : Verb where
   vendlerClass := some .state
 
 /-- *xelexe* — 'say'. Speech-act verb; selects bare *gɔ*-marked
-    complement per @cite{bondarenko-2022} §4.3.1. -/
+    complement per [bondarenko-2022] §4.3.1. -/
 def xelexe : Verb where
   form := "xelexe"
   complementType := .finiteClause

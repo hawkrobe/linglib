@@ -4,17 +4,17 @@ import Linglib.Semantics.Composition.TypeShifting
 
 /-!
 # The Set Monad: Indeterminacy and Scope
-@cite{charlow-2020}
+[charlow-2020]
 
 Alternative-denoting expressions (indefinites, *wh*-words, focused elements)
-interact with their semantic context by **taking scope**. @cite{charlow-2020}
+interact with their semantic context by **taking scope**. [charlow-2020]
 shows that this can be accomplished by decomposing Partee's LIFT into two
 freely-applying type-shifters — `η` (unit, = IDENT generalized) and `⫝̸`
 (bind, = a polymorphic scope-taker) — that together form a **monad** over
 sets.
 
 The set monad `(S, η, ⫝̸)` is the "indeterminacy" effect from
-@cite{bumford-charlow-2024}'s effect taxonomy. Its key property is
+[bumford-charlow-2024]'s effect taxonomy. Its key property is
 **ASSOCIATIVITY**: because `⫝̸` is
 associative (monad law), indefinites can iteratively take scope out of
 nested islands via scopal pied-piping, without any island-violating

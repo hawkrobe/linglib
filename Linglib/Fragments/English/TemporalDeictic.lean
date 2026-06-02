@@ -2,7 +2,7 @@ import Linglib.Semantics.Tense.Basic
 
 /-!
 # English Temporal Deictic Adverbs
-@cite{zhao-2025}
+[zhao-2025]
 
 Lexical entry for English temporal "then", typed by `ThenAdverb`.
 

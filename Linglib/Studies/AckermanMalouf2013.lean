@@ -3,8 +3,8 @@ import Linglib.Morphology.Paradigm
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{ackerman-malouf-2013}: The Low Conditional Entropy Conjecture
-@cite{ackerman-malouf-2013} @cite{carstairs-mccarthy-2010}
+# [ackerman-malouf-2013]: The Low Conditional Entropy Conjecture
+[ackerman-malouf-2013] [carstairs-mccarthy-2010]
 
 ## E-complexity vs. I-complexity
 
@@ -31,7 +31,7 @@ H(Cᵢ | Cⱼ) is the conditional entropy of cell i given cell j.
 - §0: i-Complexity (paper-specific aggregation; substrate types
   `InflectionClass`/`ParadigmSystem`/`cellEntropy`/`conditionalCellEntropy`
   live in `Morphology/Paradigm.lean`, hoisted there 0.230.X for shared
-  use with @cite{rathi-hahn-futrell-2026}'s informational fusion)
+  use with [rathi-hahn-futrell-2026]'s informational fusion)
 - §1: Per-language LCEC verification (all 10 languages)
 - §2: E-complexity / I-complexity dissociation
 - §3: Mazatec case study (observed vs. random baseline)
@@ -45,7 +45,7 @@ namespace Morphology.WP
 
 open Morphology
 
-/-- @cite{ackerman-malouf-2013}'s **integrative complexity**: average
+/-- [ackerman-malouf-2013]'s **integrative complexity**: average
     conditional cell entropy across all off-diagonal cell pairs.
 
     `iComplexity(L) = (1 / n(n-1)) · Σᵢ≠ⱼ H(Cᵢ | Cⱼ)`
@@ -93,13 +93,13 @@ end Morphology.WP
 namespace AckermanMalouf2013
 
 -- ============================================================================
--- LanguageData Sample (Tables 2--3 of @cite{ackerman-malouf-2013})
+-- LanguageData Sample (Tables 2--3 of [ackerman-malouf-2013])
 -- ============================================================================
 
 /-- Summary statistics for a language's morphological paradigm system,
     as reported in published studies.
 
-    Fields correspond to Tables 2--3 of @cite{ackerman-malouf-2013}. -/
+    Fields correspond to Tables 2--3 of [ackerman-malouf-2013]. -/
 structure LanguageData where
   /-- Language name -/
   name : String
@@ -207,7 +207,7 @@ def spanish : LanguageData where
   avgCondEntropy := 3 / 1000  -- 0.003
   maxCellEntropy := 1522 / 1000  -- 1.522
 
-/-- All 10 languages in the @cite{ackerman-malouf-2013} sample (Table 3). -/
+/-- All 10 languages in the [ackerman-malouf-2013] sample (Table 3). -/
 def ackermanMalouf2013 : List LanguageData :=
   [fur, ngiti, nuer, kwerba, chinantec, mazatec, finnish, german, russian, spanish]
 
@@ -337,7 +337,7 @@ theorem mazatec_ratio_to_random :
     mazatec.avgCondEntropy * 7 < mazatecRandomBaseline := by
   unfold mazatec mazatecRandomBaseline; norm_num
 
-/-- Mazatec has nonzero I-complexity: it violates @cite{carstairs-mccarthy-2010}'s synonymy avoidance but satisfies the LCEC. This witnesses
+/-- Mazatec has nonzero I-complexity: it violates [carstairs-mccarthy-2010]'s synonymy avoidance but satisfies the LCEC. This witnesses
     that the LCEC is strictly weaker than synonymy avoidance. -/
 theorem mazatec_violates_synonymyAvoidance :
     mazatec.avgCondEntropy > 0 := by

@@ -3,9 +3,9 @@ import Linglib.Semantics.Reference.Kaplan
 
 /-!
 # Kaplan's Anti-Monster Thesis (Tower Formulation)
-@cite{anand-nevins-2004} @cite{kaplan-1989} @cite{schlenker-2003}
+[anand-nevins-2004] [kaplan-1989] [schlenker-2003]
 
-@cite{kaplan-1989} "Demonstratives" VIII: the claim that natural language
+[kaplan-1989] "Demonstratives" VIII: the claim that natural language
 operators are *content operators* (shifting circumstances of evaluation)
 rather than *context operators* (shifting contexts of utterance).
 

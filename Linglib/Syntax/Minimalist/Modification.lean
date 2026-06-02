@@ -3,7 +3,7 @@ import Linglib.Morphology.MorphRule
 
 /-!
 # Syntactic Modification via Feature Composition
-@cite{alexeyenko-zeijlstra-2025}
+[alexeyenko-zeijlstra-2025]
 
 Nominal modification as a species of complementation: adjectives and nouns
 cannot directly merge because neither c-selects the other. Resolution comes
@@ -29,7 +29,7 @@ conversion.
 3. **Attr status determines linearization** (§5.2): the morphophonological
    realization of Attr (affix / clitic / free word / null) determines
    whether it must be linearly adjacent to its host, via the Input
-   Correspondence Principle (@cite{ackema-neeleman-2004}).
+   Correspondence Principle ([ackema-neeleman-2004]).
 
 ## Types Exported
 

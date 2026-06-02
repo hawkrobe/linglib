@@ -8,7 +8,7 @@ import Linglib.Fragments.Kannada.Indefinites
 
 /-!
 # Dekier (2021): Morphosyntax of specific and non-specific indefinite markers
-@cite{dekier-2021}
+[dekier-2021]
 
 *Glossa: a journal of general linguistics* 6(1), 1–33.
 
@@ -19,12 +19,12 @@ functions correspond to three layers of a universal syntactic hierarchy
 
     F₁P (non-specific) ⊂ F₂P (specific unknown) ⊂ F₃P (specific known)
 
-Using data from 45 languages, @cite{dekier-2021} shows:
+Using data from 45 languages, [dekier-2021] shows:
 
 1. **Four attested syncretism patterns**: AAA (English), ABB (Yakut),
    AAB (Latin), ABC (Russian). The *ABA pattern is unattested.
 
-2. **The *ABA generalization** (@cite{bobaljik-2012}) holds for
+2. **The *ABA generalization** ([bobaljik-2012]) holds for
    indefinites: the Superset and Elsewhere Principles of Nanosyntax
    guarantee that a single lexical entry cannot match two non-contiguous
    phrasal nodes.
@@ -39,10 +39,10 @@ Using data from 45 languages, @cite{dekier-2021} shows:
 
 ## Connection to linglib
 
-This is the paper critiqued by @cite{bubnov-2026}. While Dekier
+This is the paper critiqued by [bubnov-2026]. While Dekier
 argues that nanosyntax explains the indefinite typology via structural
 containment, Bubnov argues that the semantic account of
-@cite{degano-aloni-2025} (based on team-semantic `variation` and
+[degano-aloni-2025] (based on team-semantic `variation` and
 `constancy`) provides a better explanation — one that also predicts
 which type is unattested (type vi) and accounts for bidirectional
 diachronic change.
@@ -204,7 +204,7 @@ theorem russian_spellout :
     spellout russianLex skRank = some "koe-" := by decide
 
 /-- Lithuanian ABC: three entries at ranks 0, 1, 2.
-    @cite{dekier-2021} Table 7. -/
+    [dekier-2021] Table 7. -/
 def lithuanianLex : List LexEntry :=
   [⟨0, "-nors"⟩, ⟨1, "kaž-"⟩, ⟨2, "kai-"⟩]
 
@@ -245,7 +245,7 @@ theorem lithuanian_is_abc :
 -- §5. *ABA Impossibility
 -- ============================================================================
 
-/-! The Elsewhere Principle (@cite{dekier-2021}): "If several
+/-! The Elsewhere Principle ([dekier-2021]): "If several
     lexical items match a syntactic node, insert the entry with the
     fewest features unspecified for that node."
 
@@ -265,7 +265,7 @@ theorem no_aba_in_sample :
   decide
 
 /-- The ABA pattern itself is unattested cross-linguistically.
-    This aligns with the *ABA generalization of @cite{bobaljik-2012}. -/
+    This aligns with the *ABA generalization of [bobaljik-2012]. -/
 theorem aba_unattested_pattern :
     ¬ (classifyTriple "A" "B" "A").IsAttested := by decide
 
@@ -273,7 +273,7 @@ theorem aba_unattested_pattern :
 -- §6. Paradigm Gaps
 -- ============================================================================
 
-/-! @cite{dekier-2021} Table 8: paradigm gaps follow a
+/-! [dekier-2021] Table 8: paradigm gaps follow a
     monotonic pattern. Gaps always start from the TOP of the hierarchy
     (SK first, then SU). No language has a gap for NS while having
     a form for SU or SK.
@@ -332,7 +332,7 @@ theorem no_su_implies_no_sk (lex : List LexEntry)
 -- §7. Prefix/Suffix Predictions
 -- ============================================================================
 
-/-! @cite{dekier-2021}: the nanosyntactic derivation
+/-! [dekier-2021]: the nanosyntactic derivation
     predicts a structural difference between prefixes and suffixes:
 
     - **Suffix**: formed via spellout-driven movement (roll-up).
@@ -354,7 +354,7 @@ theorem no_su_implies_no_sk (lex : List LexEntry)
 -/
 
 /-- Russian indefinite markers with their morphological types.
-    @cite{dekier-2021}. -/
+    [dekier-2021]. -/
 structure MarkerMorphology where
   form : String
   rank : Nat
@@ -377,7 +377,7 @@ theorem russian_suffix_prefix_split :
 -- §8. The Hierarchy Direction
 -- ============================================================================
 
-/-! @cite{dekier-2021}: the ordering NS < SU < SK is preferred over
+/-! [dekier-2021]: the ordering NS < SU < SK is preferred over
     SK < SU < NS based on **functional complexity**:
 
     - NS markers only introduce an indefinite entity (simplest)
@@ -401,7 +401,7 @@ theorem hierarchy_ordering : nsRank < suRank ∧ suRank < skRank :=
 
 /-! Connect the nanosyntactic spellout results to the typed indefinite
     entries in the fragment files. The fragment entries use the
-    @cite{haspelmath-1997} function-coverage substrate; the D&A typology
+    [haspelmath-1997] function-coverage substrate; the D&A typology
     is a projection living in `Semantics/Quantification/DeganoAloni2025.lean`.
     Dekier's syntactic hierarchy is the candidate counterpart on the
     morphological side; the bridge here pairs each Fragment entry's
@@ -505,7 +505,7 @@ theorem pChinese_matches_spellout :
 -- §11. The 45-Language Sample
 -- ============================================================================
 
-/-! @cite{dekier-2021} analyzed 45 languages total: Basque,
+/-! [dekier-2021] analyzed 45 languages total: Basque,
     Bulgarian, Catalan, Czech, Dutch, English, Filipino, Finnish,
     French, Georgian, German, Greek, Hausa, Hebrew, Hindi, Hungarian,
     Icelandic, Irish, Italian, Japanese, Kannada, Kazakh, Korean,

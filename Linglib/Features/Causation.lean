@@ -1,6 +1,6 @@
 /-!
 # Features.Causation
-@cite{talmy-1988} @cite{wolff-2003} @cite{karttunen-1971} @cite{nadathur-2024}
+[talmy-1988] [wolff-2003] [karttunen-1971] [nadathur-2024]
 
 Per-verb-entry feature taxonomies for causal verb classifications:
 the `Causative` enum (force-dynamic mechanism) and the `Implicative`
@@ -19,22 +19,22 @@ neutral substrate:
 
 - **Causative** (`Causative`): the 5-way `cause/make/force/enable/prevent`
   split is **linglib's extension** of the 3-way force-dynamic taxonomy
-  of @cite{wolff-2003} (CAUSE / ENABLE / PREVENT). The substrate
+  of [wolff-2003] (CAUSE / ENABLE / PREVENT). The substrate
   subdivides Wolff's CAUSE category into `{cause, make, force}` to
   carry the counterfactual-dependence (`cause`) vs direct-sufficient-
   guarantee (`make`) vs coercive-sufficiency (`force`) distinctions
-  that @cite{talmy-1988} discusses but does not crystallize as named
+  that [talmy-1988] discusses but does not crystallize as named
   primitives. The `assertsSufficiency`/`assertsNecessity`/`isCoercive`/
-  `isPermissive` derivations match the @cite{nadathur-lauer-2020}
+  `isPermissive` derivations match the [nadathur-lauer-2020]
   sufficiency/necessity decomposition.
 
   Major non-force-dynamic frameworks for causation:
-  - @cite{comrie-1989} typological scale (lexical / morphological /
+  - [comrie-1989] typological scale (lexical / morphological /
     syntactic causatives, with implications for productivity).
   - Shibatani 1976 / Shibatani & Pardeshi 2002 directness typology
     (direct vs indirect causation correlating with morphological vs
     analytic encoding); not currently in `references.bib`.
-  - @cite{pylkkanen-2008} Voice/Cause-head theory (where the cause
+  - [pylkkanen-2008] Voice/Cause-head theory (where the cause
     head is a separately licensed functional element).
   None of these carve verbs into exactly the 5 cases here.
 
@@ -43,7 +43,7 @@ neutral substrate:
   in sibling Theories files.
 
 - **Implicative** (`Implicative`): the binary positive/negative split
-  is the @cite{karttunen-1971} bipartition. Finer-grained alternatives:
+  is the [karttunen-1971] bipartition. Finer-grained alternatives:
   Karttunen 2012 / Nairn et al. 2006 9-way matrix (`++`/`+-`/`-+`/
   `--`/`+o`/`o+`/`-o`/`o-`/`oo`) capturing both one-direction and
   two-direction implications, and update-semantics revisions that
@@ -143,7 +143,7 @@ end Causative
     on success.
 
     Note: `Implicative` and `Causative` are structurally different
-    (@cite{nadathur-2024}): causatives directly predicate causation (make/cause →
+    ([nadathur-2024]): causatives directly predicate causation (make/cause →
     sufficiency/necessity), while implicatives predicate a prerequisite whose
     causal relationship to the complement is only presupposed. -/
 inductive Implicative where

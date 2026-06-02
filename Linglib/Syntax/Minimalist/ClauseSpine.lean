@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # Clause Spine: Fine-Grained Clause Size
-@cite{elkins-torrence-brown-2026} @cite{grimshaw-2005} @cite{wurmbrand-2014}
+[elkins-torrence-brown-2026] [grimshaw-2005] [wurmbrand-2014]
 
 `ComplementSize` (ExtendedProjection/Basic.lean) classifies clausal complements
 by their highest functional head, which works well for tense-Agree transparency
@@ -95,14 +95,14 @@ def ClauseSpine.cP : ClauseSpine :=
   ⟨[.V, .Appl, .v, .Voice, .T, .C], by decide⟩
 
 /-- NmlzP-sized clause: [V, Appl, v, Voice, T, Nmlz]. Hindi nominalized clause.
-    @cite{keine-2020} ch. 2: NmlzP is a distinct clause type from CP — their
+    [keine-2020] ch. 2: NmlzP is a distinct clause type from CP — their
     transparency profiles are incomparable (NmlzP blocks Ā but not wh;
     CP blocks wh but not Ā in Hindi). -/
 def ClauseSpine.nmlzP : ClauseSpine :=
   ⟨[.V, .Appl, .v, .Voice, .T, .Nmlz], by decide⟩
 
 /-- ForceP-sized clause: [V, Appl, v, Voice, T, C, Force]. German V2 clause.
-    @cite{keine-2020} ch. 4: V2 clauses in German are structurally larger
+    [keine-2020] ch. 4: V2 clauses in German are structurally larger
     than V-final (CP) clauses — they project ForceP above CP. -/
 def ClauseSpine.forceP : ClauseSpine :=
   ⟨[.V, .Appl, .v, .Voice, .T, .C, .Force], by decide⟩
@@ -160,7 +160,7 @@ theorem voiceP_applP_same_fLevel :
 /-- The F-level of a clause spine: the `fValue` of its highest projected
     head. This bridges `ClauseSpine` (concrete head list) to
     `ExtendedProjection`'s F-value hierarchy, enabling
-    @cite{keine-2019}'s transparency calculations.
+    [keine-2019]'s transparency calculations.
 
     Example: `ClauseSpine.cP.fLevel = 6` (C is F6),
     `ClauseSpine.tP.fLevel = 2` (T is F2). -/

@@ -1,15 +1,15 @@
 /-!
 # Discourse Coherence Relations
-@cite{hobbs-1979} @cite{kehler-2002} @cite{umbach-2004}
+[hobbs-1979] [kehler-2002] [umbach-2004]
 Coherence relations classifying how adjacent discourse segments
 connect (resemblance / cause–effect / contiguity), with directionality
 and projections to coherence class. Kehler 2002's tripartition,
 extended with SDRT additions (`background`, `consequence`,
 `alternation`); CONTRAST / CORRECTION distinguished per
-@cite{umbach-2004}.
+[umbach-2004].
 -/
 namespace Discourse.Coherence
-/-! ### Coherence Classes (@cite{kehler-2002}) -/
+/-! ### Coherence Classes ([kehler-2002]) -/
 /-- Kehler's three coherence classes, corresponding to Hume's three
     associative connections between ideas. -/
 inductive CoherenceClass where
@@ -20,7 +20,7 @@ inductive CoherenceClass where
 /-! ### Coherence Relations -/
 /-- Discourse coherence relations: Kehler's tripartition plus SDRT
     additions. CONTRAST and CORRECTION are distinguished per
-    @cite{umbach-2004} (additional vs substitutive exclusion). -/
+    [umbach-2004] (additional vs substitutive exclusion). -/
 inductive CoherenceRelation where
   | explanation   -- "because": effect → cause (backward causal)
   | result        -- "so": cause → effect (forward causal)
@@ -29,9 +29,9 @@ inductive CoherenceRelation where
   | parallel      -- structural similarity between segments
   | contrast      -- "but"/"although": similarity + dissimilarity + exclusion of additional alternative
   | correction    -- "but" (corrective) / German *sondern*: exclusion by substitution
-  | background    -- @cite{asher-lascarides-2003}: scene-setting; β provides setting for α
-  | consequence   -- @cite{asher-lascarides-2003}: discourse-level conditional
-  | alternation   -- @cite{asher-lascarides-2003}: discourse-level disjunction
+  | background    -- [asher-lascarides-2003]: scene-setting; β provides setting for α
+  | consequence   -- [asher-lascarides-2003]: discourse-level conditional
+  | alternation   -- [asher-lascarides-2003]: discourse-level disjunction
   deriving DecidableEq, Repr
 /-! ### Properties -/
 /-- Classify each relation into its coherence class. -/
@@ -76,7 +76,7 @@ instance (r : CoherenceRelation) : Decidable r.selectsEffect := by
   unfold CoherenceRelation.selectsEffect; infer_instance
 /-! ### Connective–Relation Mapping -/
 /-- German/English connective forms used as experimental stimuli
-    (@cite{solstad-bott-2022}, Exps 1–4). -/
+    ([solstad-bott-2022], Exps 1–4). -/
 inductive Connective where
   | because     -- "weil" / "because" → I-Caus
   | andSo       -- "sodass" / "and so" → I-Cons
@@ -115,12 +115,12 @@ theorem contiguity_relations_same_class :
     CoherenceRelation.occasion.toClass =
     CoherenceRelation.elaboration.toClass := rfl
 /-- CONTRAST and CORRECTION are both resemblance relations
-    (@cite{umbach-2004}, @cite{kehler-2002}). -/
+    ([umbach-2004], [kehler-2002]). -/
 theorem contrast_correction_same_class :
     CoherenceRelation.contrast.toClass =
     CoherenceRelation.correction.toClass := rfl
 /-- CONTRAST and CORRECTION are distinct despite sharing a class
-    (@cite{umbach-2004}). -/
+    ([umbach-2004]). -/
 theorem contrast_ne_correction :
     CoherenceRelation.contrast ≠ CoherenceRelation.correction := by decide
 end Discourse.Coherence

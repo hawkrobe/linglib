@@ -2,7 +2,7 @@ import Linglib.Studies.Santorio2018
 
 /-!
 # Alonso-Ovalle 2009 — "Counterfactuals, correlatives, and disjunction"
-@cite{alonso-ovalle-2009}
+[alonso-ovalle-2009]
 
 *Linguistics and Philosophy* 32(2): 207–244.
 
@@ -10,8 +10,8 @@ import Linglib.Studies.Santorio2018
 
 The natural interpretation of disjunctive counterfactuals — "if A or B,
 would C" — selects from each disjunct's closest worlds, NOT from the
-union's closest worlds. @cite{alonso-ovalle-2009} (p. 207) refutes
-@cite{lewis-1973}'s standard minimal-change semantics on this reading
+union's closest worlds. [alonso-ovalle-2009] (p. 207) refutes
+[lewis-1973]'s standard minimal-change semantics on this reading
 without abandoning minimal change. Two refinements:
 
 1. **Disjunctions introduce propositional alternatives** in the
@@ -30,24 +30,24 @@ without abandoning minimal change. Two refinements:
    ⟦if A, would C⟧ = `λw. ∀p ∈ Alt(A): f_{≤,w}(p) ⊆ ⟦C⟧`
 
 Equivalently: every disjunct alternative's closest worlds satisfy the
-consequent. **This is structurally @cite{santorio-2018}'s `sdaEval`** —
+consequent. **This is structurally [santorio-2018]'s `sdaEval`** —
 universal-over-per-alternative-conditionals (Simplification reading).
 
 ## Connection to linglib substrate
 
-`aoConditional` IS @cite{santorio-2018}'s `sdaEval`
+`aoConditional` IS [santorio-2018]'s `sdaEval`
 (`Studies/Santorio2018.lean`); the bridge is
 `rfl`. The frameworks DIFFER in their treatment of the **alternative
 set**, not the per-alternative evaluation:
 
-- @cite{alonso-ovalle-2009} (Hamblin Or Rule, eqn 13 p. 213): alts =
+- [alonso-ovalle-2009] (Hamblin Or Rule, eqn 13 p. 213): alts =
   `{⟦disjunct₁⟧, ⟦disjunct₂⟧, ...}` — only the disjuncts themselves.
-- @cite{santorio-2018} (Katzir-generated ALT_S + stability algorithm):
+- [santorio-2018] (Katzir-generated ALT_S + stability algorithm):
   alts include the disjuncts + their conjunction + their disjunction;
   truthmakers are minimal-stable subsets, which can include "mixed"
-  truthmakers @cite{alonso-ovalle-2009} cannot generate.
+  truthmakers [alonso-ovalle-2009] cannot generate.
 
-The differential prediction lives in @cite{santorio-2018} §IV.3
+The differential prediction lives in [santorio-2018] §IV.3
 (Karenina/W&P 8-alternative example) and is proved as
 `santorio_finds_mixed_truthmaker_ao_misses_it` in that file.
 -/
@@ -61,7 +61,7 @@ open Santorio2018 (DecAlt sdaEval sdaEval_iff_forall)
 
 /-! ## §1 The bumper crop scenario (p. 208)
 
-Same scenario as @cite{mckay-vaninwagen-1977} (a variation of Nute
+Same scenario as [mckay-vaninwagen-1977] (a variation of Nute
 1975): "If we had had good weather this summer or the sun had grown
 cold, we would have had a bumper crop." Standard minimal-change with
 Boolean `or` predicts TRUE; intuition says FALSE. Worlds and
@@ -72,11 +72,11 @@ substrate. -/
 
 /-! ## §2.1–2.2 The analysis -/
 
-/-- @cite{alonso-ovalle-2009} **conditional verdict** for a disjunctive
+/-- [alonso-ovalle-2009] **conditional verdict** for a disjunctive
     antecedent (eqn 25–26 p. 217): every disjunct alternative's
     closest worlds satisfy the consequent.
 
-    Definitionally equal to @cite{santorio-2018}'s `sdaEval` — the
+    Definitionally equal to [santorio-2018]'s `sdaEval` — the
     Simplification reading. The two accounts diverge in how the
     alternative SET is generated (see module docstring), not in this
     per-alternative evaluation rule. -/
@@ -88,7 +88,7 @@ def aoConditional {W : Type*} [DecidableEq W] [Fintype W]
 /-- **Bridge: AO = Santorio's `sdaEval`.** Definitionally equal; the
     two formalisations of the per-alternative-conditional reading
     coincide. The substantive difference between
-    @cite{alonso-ovalle-2009} and @cite{santorio-2018} is the
+    [alonso-ovalle-2009] and [santorio-2018] is the
     alternative-set construction, not this evaluation rule. -/
 theorem aoConditional_eq_sdaEval {W : Type*} [DecidableEq W] [Fintype W]
     (sim : SimilarityOrdering W) (alts : List (DecAlt W))
@@ -97,11 +97,11 @@ theorem aoConditional_eq_sdaEval {W : Type*} [DecidableEq W] [Fintype W]
 
 /-- **Disjunct-only alternative set construction** (Hamblin Or Rule,
     eqn 13 p. 213). For a disjunctive antecedent `A or B`,
-    @cite{alonso-ovalle-2009}'s alternative set is exactly
+    [alonso-ovalle-2009]'s alternative set is exactly
     `[⟨A, _⟩, ⟨B, _⟩]` — the two disjunct denotations bundled with
     decidability. No conjunction, no disjunctive closure, no
     Katzir-generated structural alternatives. This is the locality
-    @cite{santorio-2018} §III argues against. -/
+    [santorio-2018] §III argues against. -/
 def aoAlternatives {W : Type*}
     (A B : W → Prop) [DecidablePred A] [DecidablePred B] :
     List (DecAlt W) :=
@@ -113,11 +113,11 @@ def aoAlternatives {W : Type*}
 The two-component analysis — alternative-generating `or` plus
 correlative-style universal quantification — entails the conjunction
 inference (27a) ⊨ (27b) ∧ (27c). The Lean witness below uses
-`sdaEval_iff_forall` from the @cite{santorio-2018} substrate. -/
+`sdaEval_iff_forall` from the [santorio-2018] substrate. -/
 
 /-- **Conjunction inference** (eqn 27 p. 218): a disjunctive `would`-
     counterfactual entails each per-disjunct counterfactual. This is
-    the SDA validity that @cite{alonso-ovalle-2009}'s analysis
+    the SDA validity that [alonso-ovalle-2009]'s analysis
     derives from universal force over alternatives. Consequence of
     `sdaEval_iff_forall`. -/
 theorem ao_conjunction_inference {W : Type*} [DecidableEq W] [Fintype W]

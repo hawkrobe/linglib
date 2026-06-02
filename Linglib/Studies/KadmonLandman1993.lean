@@ -12,7 +12,7 @@ import Mathlib.Data.Set.Basic
 /-!
 # Kadmon & Landman (1993): Any
 
-@cite{kadmon-landman-1993}
+[kadmon-landman-1993]
 
 Kadmon, N. & Landman, F. (1993). Any. *Linguistics and Philosophy* 16: 353–422.
 
@@ -34,7 +34,7 @@ The analysis has four components:
 
 ## Unification with Entailment Signatures
 
-K&L's strengthening condition subsumes @cite{ladusaw-1979}'s DE condition:
+K&L's strengthening condition subsumes [ladusaw-1979]'s DE condition:
 widening an existential strengthens the embedding statement *exactly when*
 the context is DE. But K&L's formulation is deeper — it explains *why*
 DE contexts license and relates the distribution to the meaning of *any*
@@ -152,7 +152,7 @@ is on the DE side, not because they appear on an enumerated list.
     strengthening is not the explanation.
 
     This mapping unifies the surface inventory with the algebraic
-    hierarchy from @cite{icard-2012}. -/
+    hierarchy from [icard-2012]. -/
 abbrev contextEntailmentSig (c : LicensingContext) : EntailmentSig :=
   (Semantics.Polarity.Licensing.contextProperties c).signature
 
@@ -202,7 +202,7 @@ theorem strengthening_implies_de (ctx : LicensingContext)
 /-!
 ## Compatibility with Ladusaw (1979)
 
-K&L's classification refines @cite{ladusaw-1979}'s: every context that
+K&L's classification refines [ladusaw-1979]'s: every context that
 Ladusaw classifies as DE is also classified as `byStrengthening` by K&L.
 But K&L additionally explains adversative predicates and conditionals
 with implicit restrictions — cases where Ladusaw's DE condition is
@@ -344,7 +344,7 @@ adversative analysis: both involve "DE on a constant parameter."
 - *Conditionals*: if_R(A, C) is DE in A when implicit restriction R is
   held constant
 
-Under Kratzer's restrictor analysis (@cite{kratzer-1986}), "if A, must C"
+Under Kratzer's restrictor analysis ([kratzer-1986]), "if A, must C"
 = necessity over the A-restricted modal base. The antecedent position is
 classically DE — strengthening the antecedent shrinks the domain, making
 the universal check easier to satisfy. Widening the antecedent domain
@@ -404,7 +404,7 @@ non-DE licensing mechanism in the paper. The key empirical facts:
 - (109)  Extended text where *because*-clause negation is natural
         (Linebarger 1987)
 
-K&L argue, contra @cite{linebarger-1987}:
+K&L argue, contra [linebarger-1987]:
 
 1. `not because [S___]` is NOT DE. K&L show that `because [S___]`
    is not upward-entailing (unlike `because of [NP___]`), so negating
@@ -525,11 +525,11 @@ def interpretationOf : LicensingContext → AnyInterpretation
   | .beforeClause   => .episodic
   | .onlyFocus      => .episodic
   | .tooTo          => .episodic
-  | .comparativeNP   => .episodic   -- not a true NPI environment per @cite{hoeksema-1983};
+  | .comparativeNP   => .episodic   -- not a true NPI environment per [hoeksema-1983];
                                      -- routed here only for case exhaustivity (no genuine
                                      -- *any* interpretation) — surface NPIs in "than NP"
                                      -- arise from a covert clausal source via
-                                     -- @cite{bhatt-pancheva-2004} interval reduction
+                                     -- [bhatt-pancheva-2004] interval reduction
   | .comparativeS    => .episodic   -- the genuine NPI-licensing comparative
   | .adversative     => .episodic
   | .sinceTemporal  => .episodic

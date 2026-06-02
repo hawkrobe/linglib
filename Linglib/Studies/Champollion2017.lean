@@ -5,7 +5,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.Diagnostics
 
 /-!
-# @cite{champollion-2017}: Distributivity as a bridge between aspect and measurement
+# [champollion-2017]: Distributivity as a bridge between aspect and measurement
 
 Paper-anchored study for *Parts of a Whole*. The book unifies four
 ostensibly disjoint phenomena — predicative distributivity (Ch 4),
@@ -38,7 +38,7 @@ empirical data the book argues over.
   from linglib's Fragment Vendler tags to expected `SSR` behaviour;
   the underlying Champollion prediction is the cover/granularity-
   theoretic SR test.
-* **Lexical cumulativity is assumed throughout.** Per @cite{champollion-2017}
+* **Lexical cumulativity is assumed throughout.** Per [champollion-2017]
   §2.7.2, every verb's denotation is cumulative (`*[[V]] = [[V]]`).
   This is why `SSR_univ → CUM` does not hold and the Krifka-CUM contrast
   cannot be recast as an SR-vs-CUM contrast — see
@@ -88,7 +88,7 @@ empirical data the book argues over.
 
 * **Cover / SR equivalence (Ch 5 §5.4)** — substrate-bridge theorem
   `*λy[C(y)] x ↔ ∃C' ⊆ C [Cov(C', x)]`. Connects Champollion's SR to
-  @cite{schwarzschild-1996} cover semantics. Lives in
+  [schwarzschild-1996] cover semantics. Lives in
   `Aspect/Stratified.lean` as a property of `AlgClosure`; consumed
   here only if needed for Ch 6 push-carts proof. Substrate ~40 LOC.
 
@@ -120,14 +120,14 @@ empirical data the book argues over.
 
 ## References
 
-* @cite{champollion-2017} (primary; SR machinery + Ch 4–7 empirical
+* [champollion-2017] (primary; SR machinery + Ch 4–7 empirical
   cases + §2.7.2 lexical cumulativity stance + Ch 6 vs-Krifka argument)
-* @cite{krifka-1998} (the divisive-reference target Champollion argues
+* [krifka-1998] (the divisive-reference target Champollion argues
   against in Ch 6; sister: `Studies/Krifka1998.lean`)
-* @cite{schwarzschild-2006} (the monotonic-measure-function predicate
+* [schwarzschild-2006] (the monotonic-measure-function predicate
   Champollion's `SMR` translates and weakens, Ch 7 §7.3)
-* @cite{link-1983} (the algebraic-closure `*` operator SR builds on)
-* @cite{dowty-1979} (the subinterval property SR generalizes, Ch 5)
+* [link-1983] (the algebraic-closure `*` operator SR builds on)
+* [dowty-1979] (the subinterval property SR generalizes, Ch 5)
 -/
 
 namespace Champollion2017

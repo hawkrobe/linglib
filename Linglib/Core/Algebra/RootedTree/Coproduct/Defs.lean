@@ -6,7 +6,7 @@ set_option autoImplicit false
 
 /-!
 # Generalized cut-summand enumeration on `RootedTree.Planar α`
-@cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
+[marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 The **admissible-cut enumeration** parameterized by an extraction policy
 `extract : Planar α → Option (List (Planar α))`. A cut at a child
@@ -36,7 +36,7 @@ combinatorial bookkeeping.
 
 ## MCB anchor
 
-@cite{marcolli-chomsky-berwick-2025} Definition 1.2.8 (book p. 33),
+[marcolli-chomsky-berwick-2025] Definition 1.2.8 (book p. 33),
 formula (1.2.8) defines Δ^ω(T) := T ⊗ 1 + 1 ⊗ T + Σ F_v ⊗ T/^ω F_v
 for ω ∈ {c, d, ρ}. The three remainder semantics differ in T/^ω F_v
 but the cut enumeration F_v is the same. This file factors the cut

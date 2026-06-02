@@ -2,10 +2,10 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Implicature: Cross-Mechanism Spine
-@cite{grice-1975} @cite{horn-1972} @cite{gazdar-1979} @cite{sauerland-2004}
-@cite{chierchia-fox-spector-2012} @cite{bar-lev-fox-2020}
-@cite{frank-goodman-2012} @cite{goodman-stuhlmuller-2013}
-@cite{delpinal-bassi-sauerland-2024}
+[grice-1975] [horn-1972] [gazdar-1979] [sauerland-2004]
+[chierchia-fox-spector-2012] [bar-lev-fox-2020]
+[frank-goodman-2012] [goodman-stuhlmuller-2013]
+[delpinal-bassi-sauerland-2024]
 
 Defines the central `Implicature W S` type — the cross-mechanism
 representation of a pragmatic inference, parameterized by a **world type
@@ -15,12 +15,12 @@ representation of a pragmatic inference, parameterized by a **world type
 
 The ontology of "what an implicature is" is contested in the literature:
 
-- The **discrete / grammaticalist tradition** (@cite{sauerland-2004},
-  @cite{chierchia-2004}, @cite{fox-2007}, @cite{bar-lev-fox-2020})
+- The **discrete / grammaticalist tradition** ([sauerland-2004],
+  [chierchia-2004], [fox-2007], [bar-lev-fox-2020])
   treats an implicature as a discrete proposition — instantiated by
   `S := Prop`.
-- The **graded / Bayesian tradition** (@cite{frank-goodman-2012},
-  @cite{goodman-stuhlmuller-2013}, @cite{bergen-levy-goodman-2016})
+- The **graded / Bayesian tradition** ([frank-goodman-2012],
+  [goodman-stuhlmuller-2013], [bergen-levy-goodman-2016])
   treats interpretation as a posterior shift; "the implicature" is a
   change in degrees of belief, not a discrete proposition. Instantiated
   by `S := ℝ≥0` or similar graded type.
@@ -67,19 +67,19 @@ Taxonomic classification of pragmatic inferences.
 The post-Grice consensus distinguishes:
 
 - **scalar** — derived from a Horn scale; canonical *some* ⇝ *not all*
-  (@cite{horn-1972}, @cite{sauerland-2004})
+  ([horn-1972], [sauerland-2004])
 - **freeChoice** — distributive inference from disjunction under a
-  modal: ◇(A ∨ B) ⇝ ◇A ∧ ◇B (@cite{kamp-1973}, @cite{zimmermann-2000},
-  @cite{fox-2007})
+  modal: ◇(A ∨ B) ⇝ ◇A ∧ ◇B ([kamp-1973], [zimmermann-2000],
+  [fox-2007])
 - **ignorance** — speaker-uncertainty inference; "the primary
-  implicature" of @cite{sauerland-2004}, going back to
-  @cite{gazdar-1979} epistemic implicature
-- **clausal** — ¬K(p) ∧ ¬K(q) from "p or q" (@cite{gazdar-1979})
+  implicature" of [sauerland-2004], going back to
+  [gazdar-1979] epistemic implicature
+- **clausal** — ¬K(p) ∧ ¬K(q) from "p or q" ([gazdar-1979])
 - **manner** — marked-form-implicates-marked-meaning, the
-  R-principle / M-principle (@cite{horn-1984}, @cite{levinson-2000}
+  R-principle / M-principle ([horn-1984], [levinson-2000]
   ch. 2)
 - **conventional** — lexically encoded non-at-issue content; *but*,
-  *therefore*, expressives (@cite{grice-1975}, @cite{potts-2005})
+  *therefore*, expressives ([grice-1975], [potts-2005])
 -/
 inductive ImplicatureKind where
   | scalar
@@ -127,20 +127,20 @@ strength types (the `S` parameter of `Implicature`):
 The mechanism field tracks provenance regardless of strength type.
 
 Citations:
-- **neoGricean** — Standard Recipe (@cite{geurts-2010},
-  @cite{sauerland-2004})
-- **exhIE** — Innocent Exclusion (@cite{fox-2007})
-- **exhII** — Innocent Inclusion (@cite{bar-lev-fox-2020})
+- **neoGricean** — Standard Recipe ([geurts-2010],
+  [sauerland-2004])
+- **exhIE** — Innocent Exclusion ([fox-2007])
+- **exhII** — Innocent Inclusion ([bar-lev-fox-2020])
 - **exhIEII** — combined IE+II, the canonical post-2020 EXH
-  (@cite{bar-lev-fox-2020})
+  ([bar-lev-fox-2020])
 - **rsa** — Bayesian listener-speaker recursion
-  (@cite{frank-goodman-2012}, @cite{goodman-stuhlmuller-2013})
-- **ibr** — Iterated Best Response (@cite{franke-2011})
+  ([frank-goodman-2012], [goodman-stuhlmuller-2013])
+- **ibr** — Iterated Best Response ([franke-2011])
 - **bpsPresuppositional** — Presuppositional EXH (pex), the
   assertion/presupposition split that makes the inferred content
-  project like a presupposition (@cite{bassi-delpinal-sauerland-2021},
-  @cite{delpinal-bassi-sauerland-2024})
-- **lexical** — encoded in lexical entries (@cite{potts-2005})
+  project like a presupposition ([bassi-delpinal-sauerland-2021],
+  [delpinal-bassi-sauerland-2024])
+- **lexical** — encoded in lexical entries ([potts-2005])
 -/
 inductive ImplicatureMechanism where
   | neoGricean
@@ -206,8 +206,8 @@ For `S = ℝ`, it's literal numeric equality of the per-world scores.
 Bridge theorems state cross-mechanism agreement in this form. Two
 implicatures with different `mechanism` fields can `Agree` (the
 canonical Sauerland ≡ exhIE result for non-FC cases per
-@cite{chierchia-fox-spector-2012} §3) or characteristically *fail* to
-agree (the FC non-equivalence per @cite{bar-lev-fox-2020}).
+[chierchia-fox-spector-2012] §3) or characteristically *fail* to
+agree (the FC non-equivalence per [bar-lev-fox-2020]).
 -/
 def Agree (i j : Implicature W S) : Prop :=
   ∀ w, i.content w = j.content w

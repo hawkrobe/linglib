@@ -15,7 +15,7 @@ import Mathlib.Data.Finset.Lattice.Basic
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# @cite{krifka-1998} *The Origins of Telicity*
+# [krifka-1998] *The Origins of Telicity*
 
 K98's two distinctive contributions, formalized end-to-end:
 
@@ -87,10 +87,10 @@ Part II (§4 movement):
 
 ## References
 
-* @cite{krifka-1998} (primary, both §3 and §4 covered)
-* @cite{krifka-1989} (sister paper: `Studies/Krifka1989.lean`)
-* @cite{vendler-1957} (Vendler classes used in Part I § 6)
-* @cite{filip-2012} (downstream critique: `Studies/Filip2012.lean`)
+* [krifka-1998] (primary, both §3 and §4 covered)
+* [krifka-1989] (sister paper: `Studies/Krifka1989.lean`)
+* [vendler-1957] (Vendler classes used in Part I § 6)
+* [filip-2012] (downstream critique: `Studies/Filip2012.lean`)
 -/
 
 namespace Krifka1998

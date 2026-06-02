@@ -1,10 +1,10 @@
 import Linglib.Core.Causal.SEM.Counterfactual
 
 /-!
-# @cite{bar-asher-siegal-2026}: Causation and Causal Relations
-@cite{bar-asher-siegal-2026} @cite{baglini-bar-asher-siegal-2025} @cite{baglini-bar-asher-siegal-2020}
+# [bar-asher-siegal-2026]: Causation and Causal Relations
+[bar-asher-siegal-2026] [baglini-bar-asher-siegal-2025] [baglini-bar-asher-siegal-2020]
 
-Formalization of the door-opening scenario from @cite{bar-asher-siegal-2026}
+Formalization of the door-opening scenario from [bar-asher-siegal-2026]
 Figure 1: a structural equation model with two alternative sufficient sets
 for a single effect (the door opening).
 
@@ -29,7 +29,7 @@ plus `circuit := button` for the automatic pathway. Two sufficient sets:
 The model demonstrates CC-selection at work — completion mode (CoS verbs
 like *open*) succeeds when handle alone is the active pathway, but FAILS
 under overdetermination (both pathways active simultaneously). This
-captures @cite{bar-asher-siegal-2026}'s point that *open* is infelicitous
+captures [bar-asher-siegal-2026]'s point that *open* is infelicitous
 when an alternative explanation exists.
 
 Member-mode (Def 10b causally-necessary) divergence between *open* and
@@ -133,7 +133,7 @@ def unlocked : Valuation (fun _ : V => Bool) :=
 open BoolSEM (causallySufficientOn completesForEffectOn)
 
 /-- **Manual-only model**: handle completes the sufficient set for
-    doorOpens (full *open* and *cause* felicity, per @cite{bar-asher-siegal-2026}).
+    doorOpens (full *open* and *cause* felicity, per [bar-asher-siegal-2026]).
     Both completion and member modes succeed because there's no
     alternative pathway. -/
 theorem handle_completes_manual :
@@ -155,7 +155,7 @@ theorem handle_completes_full :
     independently activated (button=true, electricity=true alongside
     handle=true), removing handle still leaves doorOpens true via the
     automatic pathway — completion CC-selection FAILS for handle.
-    This captures @cite{bar-asher-siegal-2026}'s point that *open* is
+    This captures [bar-asher-siegal-2026]'s point that *open* is
     infelicitous under overdetermination. -/
 theorem handle_no_completion_overdetermined :
     ¬ completesForEffectOn fullModel varList

@@ -3,8 +3,8 @@ import Linglib.Studies.SedivyEtAl1999
 import Linglib.Studies.DaleReiter1995
 
 /-!
-# @cite{engelhardt-etal-2006}
-@cite{sedivy-etal-1999} @cite{grice-1975} @cite{dale-reiter-1995}
+# [engelhardt-etal-2006]
+[sedivy-etal-1999] [grice-1975] [dale-reiter-1995]
 
 Do Speakers and Listeners Observe the Gricean Maxim of Quantity?
 *Journal of Memory and Language* 54(4), 554–573.
@@ -33,7 +33,7 @@ sensitive to them.
 ## Connection to Contrastive Inference
 
 The eye-tracking processing cost for unnecessary modifiers is the
-complement of @cite{sedivy-etal-1999}'s contrastive inference benefit
+complement of [sedivy-etal-1999]'s contrastive inference benefit
 from necessary modifiers. Both effects confirm that the comprehension
 system is sensitive to modifier presence and its pragmatic licensing.
 
@@ -221,10 +221,10 @@ theorem speakers_distinguish_necessity :
 -- § Bridge: Connection to Contrastive Inference
 -- ============================================================================
 
-/-- Both this study and @cite{sedivy-etal-1999} show that adjective
+/-- Both this study and [sedivy-etal-1999] show that adjective
     modifiers affect eye-movement patterns, but in complementary ways:
 
-    - @cite{sedivy-etal-1999}: *necessary* modifiers trigger contrastive
+    - [sedivy-etal-1999]: *necessary* modifiers trigger contrastive
       inferences, speeding target identification (competitor fixation).
     - This study: *unnecessary* modifiers impose a processing cost,
       slowing head-noun reading and increasing regressions.
@@ -269,7 +269,7 @@ theorem moderately_gricean :
 -- § Bridge: Support for No-Brevity (Dale & Reiter 1995)
 -- ============================================================================
 
-/-- @cite{dale-reiter-1995} argue that Q2 should be interpreted as
+/-- [dale-reiter-1995] argue that Q2 should be interpreted as
     "No Brevity" — speakers use a fixed preference order and include
     any discriminating attribute without optimizing for brevity.
     This study provides direct empirical support:

@@ -8,7 +8,7 @@ import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 
 /-!
 # Thick vs Thin Causative Verb Data
-@cite{martin-rose-nichols-2025} @cite{embick-2009}
+[martin-rose-nichols-2025] [embick-2009]
 
 Corpus survey data from Table 3: 37 English causative verbs classified by
 four binary properties:
@@ -64,7 +64,7 @@ end V
 
 /-- A single verb entry from Table 3, extending a Fragment VerbEntry.
     The Levin class, verb form, root profile, etc. are all inherited from
-    the Fragment entry — only the @cite{martin-rose-nichols-2025} annotations are new. -/
+    the Fragment entry — only the [martin-rose-nichols-2025] annotations are new. -/
 structure ThickThinEntry extends VerbEntry where
   /-- Participates in causative/anticausative alternation -/
   alternating : Bool
@@ -206,7 +206,7 @@ theorem bury_asr_theory :
 theorem kill_asr_theory :
     kill.thickThinClass.strongASRCompatible = false := rfl
 
-/-! ## Bridge to @cite{levin-1993} classes
+/-! ## Bridge to [levin-1993] classes
 
 The thick/thin distinction cross-cuts Levin classes: verbs in the same
 general domain (change of state, causation) can be thick or thin. The
@@ -258,7 +258,7 @@ end MartinRoseNichols2025.ThickThin
 
 -- ════════════════════════════════════════════════════
 -- Cross-Theory Bridge: Causative Alternation
--- @cite{cuervo-2003} @cite{kratzer-1996} @cite{schaefer-2008}
+-- [cuervo-2003] [kratzer-1996] [schaefer-2008]
 -- ════════════════════════════════════════════════════
 
 namespace MartinRoseNichols2025.Compare
@@ -276,7 +276,7 @@ open MartinRoseNichols2025.ThickThin
 theorem causative_has_agentive_voice :
     -- Semantic: accomplishment has external causer
     Template.HasExternalCauser .accomplishment ∧
-    -- Syntactic: causative heads (vDO + vCAUSE + vGO + vBE) per @cite{cuervo-2003}
+    -- Syntactic: causative heads (vDO + vCAUSE + vGO + vBE) per [cuervo-2003]
     isCausative [VerbHead.vDO, .vCAUSE, .vGO, .vBE] = true ∧
     -- Voice: agentive Voice assigns θ-role
     voiceAgent.AssignsTheta := ⟨by decide, by decide, by decide⟩
@@ -284,7 +284,7 @@ theorem causative_has_agentive_voice :
 /-- Anticausative structure (intransitive alternant of a change-of-state
     verb) drops the external argument while keeping CAUSE. The head-list
     `[vCAUSE, vGO, vBE]` is what `VerbalDecomposition` calls inchoative,
-    contra @cite{martin-rose-nichols-2025}'s prose framing of "achievements". -/
+    contra [martin-rose-nichols-2025]'s prose framing of "achievements". -/
 theorem anticausative_has_nonthematic_voice :
     -- Semantic: achievement (here: anticausative use) lacks external causer
     ¬ Template.HasExternalCauser .achievement ∧

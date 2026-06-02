@@ -8,7 +8,7 @@ import Linglib.Fragments.English.PolarityItems
 import Linglib.Typology.PolarityItem
 
 /-!
-# @cite{gajewski-2011} — Licensing strong NPIs
+# [gajewski-2011] — Licensing strong NPIs
 
   Gajewski, J. R. (2011). Licensing strong NPIs. Natural Language
   Semantics 19(2), 109–148.
@@ -16,9 +16,9 @@ import Linglib.Typology.PolarityItem
 The paper's central puzzle: the standard Zwarts/Ladusaw picture says
 strong NPIs (`either`, `in weeks`, punctual `until`) require an
 **anti-additive** licenser, whereas weak NPIs (`any`, `ever`) need only
-**downward entailment**. Once @cite{von-fintel-1999} weakens DE to
+**downward entailment**. Once [von-fintel-1999] weakens DE to
 Strawson-DE, the natural extension is to weaken AA to Strawson-AA
-(SAA). But @cite{rullmann-2003} and @cite{gajewski-2011} observe that
+(SAA). But [rullmann-2003] and [gajewski-2011] observe that
 SAA is *too weak*: vF's recalcitrants (`only`, conditionals, emotive
 factives) are all SAA (Appendix 1) yet do *not* license strong NPIs.
 
@@ -83,7 +83,7 @@ with "DE + scalar endpoint" (Conjecture 48).
 - Strong Functional Application (eq. 52) and Scalar Enrichment (eq. 53)
   as compositional rules — Conditions 1, 2 currently take alts as a
   free parameter rather than as the output of compositional rules.
-- @cite{crnic-2014} "Non-monotonicity in NPI licensing": direct
+- [crnic-2014] "Non-monotonicity in NPI licensing": direct
   challenge to the Strawson-DE picture, the natural sequel paper.
 -/
 
@@ -109,8 +109,8 @@ The paper's §2 establishes:
 
 /-! ## §3.3 The puzzle — Strawson-AA is too weak
 
-@cite{gajewski-2011} (following @cite{rullmann-2003} and
-@cite{gajewski-2005}) observes that *all* of vF's Strawson-DE
+[gajewski-2011] (following [rullmann-2003] and
+[gajewski-2005]) observes that *all* of vF's Strawson-DE
 recalcitrants are also
 **Strawson-AA**. The Appendix 1 proofs are formalized in
 `StrawsonEntailment.lean`; we cite them here as paper-anchored theorems.
@@ -202,7 +202,7 @@ For readers unconvinced by the §4 implicature-based account, Gajewski
 offers an alternative: **DE + Intolerant** as an intermediate category
 between DE and AA. The conjecture (eq. 84): `AA ⊂ DE + Intolerant ⊂ DE`.
 
-Intolerance comes from @cite{horn-1989}: a function is intolerant if it
+Intolerance comes from [horn-1989]: a function is intolerant if it
 does not map both `x` and `xᶜ` to truth — i.e., it "locates" itself on
 one side of the midpoint of its scale.
 
@@ -225,7 +225,7 @@ theorem gaj2011_appendix2_AA_implies_intolerant {α : Type*}
 
 /-! ## §4.1 Conjecture (eq. 48): DE scalar item is AA iff endpoint of scale
 
-@cite{gajewski-2011} (p. 123): "A DE scalar item is AA iff it is the
+[gajewski-2011] (p. 123): "A DE scalar item is AA iff it is the
 endpoint of its scale."
 
 This is the load-bearing conjecture that lets Gajewski reduce strong-NPI
@@ -245,20 +245,20 @@ context-dependent truncation à la Chierchia 2004 axiom (i)). Deferred.
 
 /-! ## Cross-framework relationships
 
-- @cite{von-fintel-1999}: provides the Strawson-DE substrate. Gajewski's
+- [von-fintel-1999]: provides the Strawson-DE substrate. Gajewski's
   Appendix 1 SAA proofs use exactly the operators vF defined; see
   `Studies/VonFintel1999.lean`.
-- @cite{kadmon-landman-1993}: K&L's widening + strengthening account of
+- [kadmon-landman-1993]: K&L's widening + strengthening account of
   `any` precedes the Strawson framework; Gajewski's intolerance comes
-  from @cite{horn-1989}, not from K&L. K&L's `LicensingMechanism`
+  from [horn-1989], not from K&L. K&L's `LicensingMechanism`
   (`byStrengthening`/`byGenericIndefinite`/`byOtherMechanism`) is too
   coarse to predict the SAA-but-not-AA pattern.
-- @cite{chierchia-2013} ch. 3 takes Gajewski's analysis as input and
+- [chierchia-2013] ch. 3 takes Gajewski's analysis as input and
   reconstructs strong-NPI licensing within the broader exhaustification
   framework.
-- @cite{crnic-2014} challenges Strawson-based analyses with a
+- [crnic-2014] challenges Strawson-based analyses with a
   non-monotonicity reanalysis; engages directly with this paper.
-- @cite{hoeksema-1983} S-comparative is anti-additive (per
+- [hoeksema-1983] S-comparative is anti-additive (per
   `bridge_hoeksema_sComparative_strawsonDE` in VonFintel1999) — hence,
   per the Zwarts-classical theory, predicted to license strong NPIs.
   Empirically borne out (Hoeksema's data).
@@ -266,7 +266,7 @@ context-dependent truncation à la Chierchia 2004 axiom (i)). Deferred.
 
 /-! ## §4.4 Karttunen-Peters Conditions 3, 4 applied to `only`
 
-@cite{gajewski-2011} eqs. 93-94 (p. 134) state two licensing conditions
+[gajewski-2011] eqs. 93-94 (p. 134) state two licensing conditions
 in the K&P two-dimensional ⟨truth, presup⟩ framework:
 
 - **Condition 3** (weak NPIs): the truth-conditional content alone must
@@ -328,7 +328,7 @@ theorem only_violates_condition4 :
   obtain ⟨_, _, hp_w0⟩ := hfull_p.2
   exact hp_w0
 
-/-- @cite{gajewski-2011} headline (K&P/presupposition side): `only` is
+/-- [gajewski-2011] headline (K&P/presupposition side): `only` is
     the canonical case of "Condition 3 ✓ but Condition 4 ✗" — licenses
     weak NPIs (`any`, `ever`) but blocks strong NPIs (`either`,
     `in weeks`, `until`), because its existence presupposition is UE
@@ -354,9 +354,9 @@ parallel to its satisfaction of Condition 3.
 
 The full Gajewski analysis under Conditions 1, 2 requires non-trivial
 ALT-1 sets (Chierchia's "highest-scopal-item only", eq. 55). The
-@cite{chierchia-2006} (file
+[chierchia-2006] (file
 `Studies/Chierchia2006.lean`) and
-@cite{chierchia-2013} formalizations would supply concrete ALT-1
+[chierchia-2013] formalizations would supply concrete ALT-1
 generators. Concrete `only` proofs under Conditions 1, 2 with
 non-trivial ALTs are deferred until that infrastructure is wired in.
 -/
@@ -390,7 +390,7 @@ theorem only_satisfies_condition2_no_alts (x : World → Prop) :
 
 /-! ## Hoeksema S-comparative — the positive test case
 
-@cite{hoeksema-1983}'s S-comparative is *classically* anti-additive
+[hoeksema-1983]'s S-comparative is *classically* anti-additive
 (`Semantics/Degree/Comparative.lean::sComparative_isAntiAdditive`),
 hence by `antiAdditive_implies_strawsonAA` it is also Strawson-AA.
 This is the **positive test** for Gajewski's framework: an AA operator
@@ -428,7 +428,7 @@ open Semantics.Polarity.Licensing (contextProperties)
 open English.PolarityItems
   (liftAFinger budgeAnInch inYears until_ either_npi)
 
-/-- @cite{gajewski-2011} headline made registry-checkable: no strong
+/-- [gajewski-2011] headline made registry-checkable: no strong
     NPI in the English Fragment is licensed in any Strawson-only
     context. The four enumerated strong NPIs all restrict their
     licensing to classical-AA contexts (`.negation`, `.nobody`,

@@ -4,10 +4,10 @@ import Linglib.Fragments.Bantu.Params
 /-!
 # Xhosa: Basic Types
 
-@cite{carstens-2026} @cite{taraldsen-et-al-2018}
+[carstens-2026] [taraldsen-et-al-2018]
 
 The Xhosa noun class system with five singular/plural pairings (genders A–E)
-and semantic core associations following @cite{carstens-2026}.
+and semantic core associations following [carstens-2026].
 
 Xhosa has ten active noun classes (1–10) plus class 15 (infinitives/gerunds),
 organized into five genders. Three genders have interpretable semantic cores:
@@ -18,7 +18,7 @@ arbitrary.
 ## Agreement with conjoined singulars
 
 The interpretability split directly predicts agreement patterns with
-uniform conjoined singulars (@cite{carstens-2026} §3, Tables 13–14):
+uniform conjoined singulars ([carstens-2026] §3, Tables 13–14):
 
 - [1&1], [7&7], [9&9]: gender-matching plural agreement available
 - [3&3], [5&5]: gender-matching plural agreement unavailable; default only
@@ -64,7 +64,7 @@ def NounClass.isSingular : NounClass → Bool
 -- ============================================================================
 
 /-- Subject marker prefix for each class on the verb.
-    From @cite{carstens-2026} and @cite{taraldsen-et-al-2018}. -/
+    From [carstens-2026] and [taraldsen-et-al-2018]. -/
 def NounClass.subjPrefix : NounClass → String
   | .cl1  => "u"
   | .cl2  => "ba"
@@ -83,7 +83,7 @@ def NounClass.subjPrefix : NounClass → String
 -- ============================================================================
 
 /-- Xhosa genders: singular/plural noun class pairings.
-    @cite{carstens-1991} (17): five genders A–E for classes 1–10. -/
+    [carstens-1991] (17): five genders A–E for classes 1–10. -/
 inductive Gender where
   | genderA   -- cl1/cl2 (human)
   | genderB   -- cl3/cl4
@@ -107,12 +107,12 @@ def Gender.pluralClass : Gender → NounClass
   | .genderE => .cl10
 
 -- ============================================================================
--- § 4: Semantic Core Assignments (@cite{carstens-2026} (71))
+-- § 4: Semantic Core Assignments ([carstens-2026] (71))
 -- ============================================================================
 
 /-- Semantic core status for each Xhosa gender.
 
-    @cite{carstens-2026} (71):
+    [carstens-2026] (71):
     - Gender A (1/2): nₐ₁ = i[entity] i[human], nₐ₂ = i[entity] (arbitrary)
     - Gender B (3/4): nB = uninterpretable for all members
     - Gender C (5/6): nC = uninterpretable for all members
@@ -126,7 +126,7 @@ def Gender.status : Gender → GenderStatus
   | .genderE => .interpretable .animal
 
 -- ============================================================================
--- § 5: nP Stacking Structures (@cite{carstens-2026} (72)–(73))
+-- § 5: nP Stacking Structures ([carstens-2026] (72)–(73))
 -- ============================================================================
 
 /-- Sample nP structure for a [human] noun in its canonical class 1/2.

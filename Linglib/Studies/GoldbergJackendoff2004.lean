@@ -2,10 +2,10 @@ import Linglib.Syntax.ConstructionGrammar.Resultatives
 import Linglib.Features.Acceptability
 
 /-!
-# @cite{goldberg-jackendoff-2004}: The English Resultative as a Family of Constructions
-@cite{goldberg-jackendoff-2004}
+# [goldberg-jackendoff-2004]: The English Resultative as a Family of Constructions
+[goldberg-jackendoff-2004]
 
-Paper data and per-datum verifications for @cite{goldberg-jackendoff-2004}.
+Paper data and per-datum verifications for [goldberg-jackendoff-2004].
 The construction-theoretic primitives (`ResultativeSubconstruction`,
 `SubeventDesc`, the fusion machinery, the universal-quantifier theorems)
 live in `Syntax/ConstructionGrammar/Resultatives.lean`, which
@@ -201,7 +201,7 @@ theorem all_have_become :
 /-! ## Per-entry verb class participation
 
 The construction-verb interaction across the four canonical Levin classes
-that @cite{goldberg-jackendoff-2004} discuss: manner verbs (hit = hammer/kick),
+that [goldberg-jackendoff-2004] discuss: manner verbs (hit = hammer/kick),
 change-of-state verbs (otherCoS = freeze), motion verbs (mannerOfMotion =
 roll/swing), and removing verbs (wipe). -/
 
@@ -288,7 +288,7 @@ open Features (Acceptability)
 /-- What type of resultative is exemplified.
 
 Extends the paper's 2×2 matrix (§2) with fake reflexives (§5) and
-anticausative property resultatives (@cite{levin-2026}). -/
+anticausative property resultatives ([levin-2026]). -/
 inductive ResultativeType where
   | causativeProperty
   | causativePath
@@ -296,7 +296,7 @@ inductive ResultativeType where
   | noncausativePath
   | fakeReflexive
   /-- Anticausative: verb doesn't alternate alone; construction licenses it
-      (@cite{levin-2026}). Distinct from `noncausativeProperty` (e.g., *freeze
+      ([levin-2026]). Distinct from `noncausativeProperty` (e.g., *freeze
       solid*) where the verb independently shows the causative alternation. -/
   | anticausativeProperty
   deriving Repr, DecidableEq

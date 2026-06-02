@@ -4,7 +4,7 @@ import Linglib.Syntax.DependencyGrammar.Projection
 # Long-distance dependencies in UD enhanced graphs
 
 Implements the gap-filling step of Universal Dependencies' enhanced dependency
-graphs (@cite{de-marneffe-nivre-2019}): the basic tree obeys a unique-heads
+graphs ([de-marneffe-nivre-2019]): the basic tree obeys a unique-heads
 constraint that loses the predicate–argument relation across a filler–gap
 configuration, and the enhanced graph recovers it by adding an explicit edge
 from the gap-host word to the filler.
@@ -32,8 +32,8 @@ from the gap-host word to the filler.
   direct head is `nmod` or `conj`. It does *not* recognise CNPC, CSC, adjunct,
   or subject islands. Richer island handling lives in
   `Syntax/DependencyGrammar/Formal/Islands.lean`.
-* Word Grammar (@cite{hudson-2010}) handles the same data with a structurally
-  analogous *hopping* mechanism; GPSG (@cite{gazdar-1981}) uses SLASH-feature
+* Word Grammar ([hudson-2010]) handles the same data with a structurally
+  analogous *hopping* mechanism; GPSG ([gazdar-1981]) uses SLASH-feature
   percolation. Neither is implemented here.
 
 ## Todo

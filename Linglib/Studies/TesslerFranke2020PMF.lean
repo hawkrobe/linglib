@@ -5,8 +5,8 @@ import Linglib.Phenomena.Negation.FlexibleNegation
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
-# @cite{tessler-franke-2019} on mathlib `PMF` (Shape B + cost-factor migration)
-@cite{tessler-franke-2019}
+# [tessler-franke-2019] on mathlib `PMF` (Shape B + cost-factor migration)
+[tessler-franke-2019]
 
 PMF-shaped formalisation of the paper's 6 findings. The **first PMF
 migration with a cost factor in the S1 score**:

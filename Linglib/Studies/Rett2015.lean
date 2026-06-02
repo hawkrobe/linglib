@@ -3,7 +3,7 @@ import Linglib.Semantics.Gradability.Basic
 
 /-!
 # Evaluativity: Empirical Patterns
-@cite{rett-2015} @cite{lassiter-goodman-2017} @cite{tessler-franke-2019}
+[rett-2015] [lassiter-goodman-2017] [tessler-franke-2019]
 
 Evaluativity distribution across adjectival constructions. Positive constructions
 are evaluative, comparatives are not, equatives show asymmetry.
@@ -115,7 +115,7 @@ Equatives show an ASYMMETRY based on adjective polarity:
 This asymmetry is evidence for a marked/unmarked distinction,
 but the effect emerges from pragmatic competition, not lexical stipulation.
 
-Source: @cite{rett-2015}, @cite{bierwisch-1989}
+Source: [rett-2015], [bierwisch-1989]
 -/
 
 def equative_tall : EvaluativityDatum :=
@@ -150,7 +150,7 @@ However, measure phrases are RESTRICTED to positive-polar adjectives:
 - "Adam is 6ft tall" ✓
 - *"Adam is 4ft short" ✗
 
-Source: @cite{schwarzschild-2005}, @cite{kennedy-mcnally-2005}
+Source: [schwarzschild-2005], [kennedy-mcnally-2005]
 -/
 
 def mp_tall : EvaluativityDatum :=
@@ -185,7 +185,7 @@ Degree questions show a similar asymmetry to equatives:
 The unmarked form is used for neutral information-seeking.
 The marked form presupposes the property holds.
 
-Source: @cite{rett-2015}
+Source: [rett-2015]
 -/
 
 def question_tall : EvaluativityDatum :=
@@ -264,7 +264,7 @@ A theory of evaluativity should derive:
    - Using marked form implicates evaluativity
 
 4. **MP restriction to positive adjectives**
-   - @cite{schwarzschild-2005}: MPs measure "gaps" (bounded intervals)
+   - [schwarzschild-2005]: MPs measure "gaps" (bounded intervals)
    - Negative adjectives have unbounded intervals
    - *"4ft short" would measure an infinite interval
 

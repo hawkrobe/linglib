@@ -36,9 +36,9 @@ import Linglib.Core.Word
 
 /-!
 ## Connection to RSA Theory
-@cite{bergen-goodman-2015} @cite{rooth-1992}
+[bergen-goodman-2015] [rooth-1992]
 
-This phenomenon is modeled by @cite{bergen-goodman-2015}'s noisy channel RSA.
+This phenomenon is modeled by [bergen-goodman-2015]'s noisy channel RSA.
 See `BergenGoodman2015` for the model and proofs.
 
 The key insight: prosodic stress reduces noise rate on stressed words.
@@ -218,7 +218,7 @@ See `BergenGoodman2015` for proofs.
 - Exhaustivity via exhaustification operator (Exh)
 - Stress marks what's "at issue"
 
-### Question-Answer Congruence (@cite{groenendijk-stokhof-1984})
+### Question-Answer Congruence ([groenendijk-stokhof-1984])
 
 - Stressed material must match question's "wh" position
 - Exhaustivity from partition semantics of questions

@@ -7,7 +7,7 @@ set_option autoImplicit false
 
 /-!
 # `HopfAlgebra R (ConnesKreimer R (Nonplanar α))` — Foissy Connes-Kreimer Hopf algebra
-@cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
+[marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 Completes Phase A.7 by upgrading the `Bialgebra` instance from
 `CoproductNonplanar.lean` to a full `HopfAlgebra` instance via the recursive

@@ -6,21 +6,21 @@ import Linglib.Semantics.Composition.Scope
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# @cite{scontras-pearl-2021}: Quantifier Scope Ambiguity @cite{musolino-lidz-2003}
+# [scontras-pearl-2021]: Quantifier Scope Ambiguity [musolino-lidz-2003]
 
 "When pragmatics matters more for truth-value judgments:
 An investigation of quantifier scope ambiguity"
 *Glossa* 6(1): 110.
 
 S&P is a modeling paper — it explains endorsement patterns from
-@cite{musolino-lidz-2003} and others via RSA, rather than reporting
+[musolino-lidz-2003] and others via RSA, rather than reporting
 new experiments.
 
 ## Part I: Truth Conditions & Shared Types
 
 - §1. Every-not (n=2): `JumpOutcome`, `ScopeReading`, `scopeTruth`
 - §2. Two-not (n=4): `JumpOutcome4`, `NumeralReading`, `twoNotTruth`
-- Scope entailment asymmetry, @cite{musolino-lidz-2003} data, and
+- Scope entailment asymmetry, [musolino-lidz-2003] data, and
   numeral semantics grounding via the named meaning functions from `Semantics.Numerals`.
 
 ## Part II: Every-Not RSA Model (§3, `EveryNot` namespace)
@@ -157,8 +157,8 @@ def JumpOutcome4.toNat : JumpOutcome4 → Nat
 
 /-- Numeral reading: does "two" mean exactly 2 or at least 2? -/
 inductive NumeralReading where
-  | exact    -- "two" = exactly 2 (@cite{kennedy-2015})
-  | atLeast  -- "two" = at least 2 (@cite{horn-1972})
+  | exact    -- "two" = exactly 2 ([kennedy-2015])
+  | atLeast  -- "two" = at least 2 ([horn-1972])
   deriving DecidableEq, Repr, Inhabited
 
 instance : Fintype NumeralReading where
@@ -214,7 +214,7 @@ theorem exact_atleast_diverge_2of4 :
     twoNotTruth .atLeast .inverse .w4 = false := ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- §3. Scope Entailment Asymmetry (@cite{musolino-lidz-2003})
+-- §3. Scope Entailment Asymmetry ([musolino-lidz-2003])
 -- ============================================================================
 
 /-- For universals, surface scope (∀>¬: none jumped) ENTAILS inverse scope
@@ -264,8 +264,8 @@ The truth conditions in the data file are grounded in the named meanings:
 - At-least surface: "≥2 didn't jump" = `atLeastMeaning 2 (4 - w)`
 - At-least inverse: "¬(≥2 jumped)" = `!(atLeastMeaning 2 w)`
 
-Convergent evidence for exact semantics from @cite{kennedy-2015}
-(de-Fregean semantics where bare numerals mean =n) and @cite{musolino-2004}
+Convergent evidence for exact semantics from [kennedy-2015]
+(de-Fregean semantics where bare numerals mean =n) and [musolino-2004]
 (acquisition data — children reject "two" at w=3).
 -/
 
@@ -309,7 +309,7 @@ theorem lowerBound_preserves_negation_scope :
     ¬ ((¬ atLeastMeaning 3 4) ↔ (4 ≠ 3)) := by
   decide
 
-/-- @cite{kennedy-2015}'s resolution: exact meaning is basic, lower-bound is derived
+/-- [kennedy-2015]'s resolution: exact meaning is basic, lower-bound is derived
     via type-shift. Both meanings are grammatically available. -/
 theorem typeshift_resolves_tension :
     Core.Scale.typeLower bareMeaning 2 2 ↔
@@ -543,7 +543,7 @@ theorem qudProjectInline_nonneg {q : QUD} {f : JumpOutcome → ℝ} {w : JumpOut
 
 -- RSAConfig
 
-/-- @cite{scontras-pearl-2021} RSA model, parametric in three priors.
+/-- [scontras-pearl-2021] RSA model, parametric in three priors.
     S1 uses QUD-projected rpow with α = 1 (§3.2).
     L0 does not incorporate the world prior (footnote 6). -/
 noncomputable def cfg
@@ -597,7 +597,7 @@ noncomputable abbrev highBaseCfg :=
 
 /-- Supportive context: b_suc = 0.9 + all?-biased QUD (1:18:1 ≈ 0.05:0.9:0.05).
     Models S&P's supportive-context prediction (§3.3, Figure 3), motivated by
-    @cite{gualmini-etal-2008}'s finding that QUD manipulation increases endorsement.
+    [gualmini-etal-2008]'s finding that QUD manipulation increases endorsement.
     When both pragmatic factors are supportive, scope access has negligible
     impact on endorsement (paper: 0.91 at P(inv)=0.1 vs 0.91 at P(inv)=0.9). -/
 noncomputable abbrev supportiveCfg :=

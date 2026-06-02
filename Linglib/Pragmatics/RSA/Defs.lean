@@ -2,7 +2,7 @@ import Linglib.Core.Agent.RationalAction
 
 /-!
 # RSAConfig — Type Definition
-@cite{degen-2023} @cite{frank-goodman-2012} @cite{bergen-levy-goodman-2016} @cite{kao-etal-2014-hyperbole} @cite{qing-franke-2013}
+[degen-2023] [frank-goodman-2012] [bergen-levy-goodman-2016] [kao-etal-2014-hyperbole] [qing-franke-2013]
 
 The `RSAConfig` structure: the unified type for RSA models. All operations,
 theorems, and the BToM grounding live in `Basic.lean`. This file contains
@@ -34,13 +34,13 @@ e.g., belief-based utility uses `rpow(L0, α)` which correctly zeros out
 false utterances (rpow(0, α) = 0 for α > 0).
 
 The `s1Score` field takes a `Latent` parameter so that latent variables
-can enter at the S1 level (e.g., QUD projection in @cite{kao-etal-2014-hyperbole})
+can enter at the S1 level (e.g., QUD projection in [kao-etal-2014-hyperbole])
 rather than being forced into `meaning`.
 
 ## Sequential RSA
 
-For incremental/sequential models (@cite{cohn-gordon-goodman-potts-2019},
-@cite{waldon-degen-2021}), set `Ctx` to a context type (e.g., `List LexItem`),
+For incremental/sequential models ([cohn-gordon-goodman-potts-2019],
+[waldon-degen-2021]), set `Ctx` to a context type (e.g., `List LexItem`),
 provide `transition` and `initial`, and make `meaning` depend on context.
 One-shot RSA is the special case `Ctx = Unit` with trivial transition.
 
@@ -86,7 +86,7 @@ structure RSAConfig (U W : Type*) [Fintype U] [Fintype W] where
       Default: uniform (ignores world). World-dependent priors support models
       where the latent variable's distribution depends on the world state
       (e.g., observation probability conditioned on true state in
-      @cite{goodman-stuhlmuller-2013}). -/
+      [goodman-stuhlmuller-2013]). -/
   latentPrior : W → Latent → ℝ := fun _ _ => 1
   /-- Latent prior is non-negative. -/
   latentPrior_nonneg : ∀ w l, 0 ≤ latentPrior w l

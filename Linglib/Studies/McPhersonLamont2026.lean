@@ -7,16 +7,16 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # Poko postlexical tone requires serial, directional evaluation
-@cite{mcpherson-lamont-2026}
+[mcpherson-lamont-2026]
 
 McPherson, L. & Lamont, A. (2026). *Phonology* 43, e1.
 
 Poko (Skou; Sandaun Province, Papua New Guinea) has three contrastive
 tone levels (L, M, H) plus toneless syllables and floating tones.
-@cite{mcpherson-lamont-2026} argue that the postlexical tone system
+[mcpherson-lamont-2026] argue that the postlexical tone system
 cannot be modelled by classical parallel Optimality Theory or weighted
 Harmonic Grammar, but **does** yield to directional Harmonic Serialism
-(@cite{lamont-2022b}). The argument has two halves:
+([lamont-2022b]). The argument has two halves:
 
 1. **Negative**: parallel OT/HG is empirically inadequate. Four
    faithfulness constraints needed to derive both `/nān + rī^H + nā/`
@@ -32,7 +32,7 @@ Harmonic Grammar, but **does** yield to directional Harmonic Serialism
    selects the leftmost-floating-H deletion at each derivational step
    and converges on the attested form. Right-to-left evaluation yields
    the wrong `*[kāk rī dó]` (paper, fig. 3); standard HS produces a
-   divergent tie (@cite{pruitt-2009} sense — the term is from Pruitt's
+   divergent tie ([pruitt-2009] sense — the term is from Pruitt's
    2009 manuscript, cited at fig. 3 caption).
 
 The eq. 59 support uses only four of the ~20 constraints in the paper's
@@ -67,7 +67,7 @@ open Core.Constraint.Evaluation
 
 /-- Four candidates for the parallel-OT ranking-paradox argument: two
     attested-winner / unattested-loser pairs from
-    @cite{mcpherson-lamont-2026} eqs. 57 and 58. -/
+    [mcpherson-lamont-2026] eqs. 57 and 58. -/
 inductive Cand
   /-- (57c) Attested winner of `/nān + rī^H + nā/` ('I ate a pig').
       The floating H from `/rī^H/` docks rightward onto `nā`,
@@ -126,7 +126,7 @@ def maxLinkM : NamedConstraint Cand :=
     | .kakWinner => 0
     | .kakLoser  => 1
 
-/-- The four-constraint ranking from @cite{mcpherson-lamont-2026} eq. 59,
+/-- The four-constraint ranking from [mcpherson-lamont-2026] eq. 59,
     in column order. `*FLOAT` is factored out per the paper because the
     relevant comparisons restrict to `*FLOAT`-satisfying candidates. -/
 def ranking : List (NamedConstraint Cand) := [maxH, depLinkH, maxM, maxLinkM]
@@ -147,7 +147,7 @@ abbrev maxLinkMIdx   : Fin numConstraints := 3
 
 /-- Derived ERC for a winner/loser candidate pair under the eq. 59
     `ranking`, via `ercOfProfiles` (the canonical `ViolationProfile → ERC`
-    bridge from @cite{prince-2002}). -/
+    bridge from [prince-2002]). -/
 private def ercFor (winner loser : Cand) : ERC numConstraints :=
   ercOfProfiles (mkProfile ranking winner) (mkProfile ranking loser)
 
@@ -177,7 +177,7 @@ example : ercB maxHIdx = .L ∧ ercB depLinkHIdx = .W ∧
 -- ============================================================================
 
 /-- **Parallel OT cannot model Poko (ranking paradox).**
-    @cite{mcpherson-lamont-2026} eq. 59. The support of the four
+    [mcpherson-lamont-2026] eq. 59. The support of the four
     faithfulness constraints is ERC-inconsistent: no ranking simultaneously
     satisfies both ERCs. `ercA` requires `MAX(H) ≫ {DEP(link)/H, MAX(M),
     MAX(link)/M}`; `ercB` requires `{DEP(link)/H, MAX(M), MAX(link)/M}
@@ -230,7 +230,7 @@ theorem parallel_OT_inadequate : ¬ ERCSet.consistent pokoSupport := by
 -- § 5: Weighted Harmonic Grammar Inadequacy
 -- ============================================================================
 
-/-- **Weighted HG cannot model Poko either.** @cite{mcpherson-lamont-2026}
+/-- **Weighted HG cannot model Poko either.** [mcpherson-lamont-2026]
     page 32 makes the inequality contradiction explicit: deriving
     `/nān + rī^H + nā/` requires the weight of `MAX(H)` to exceed the sum
     of the other three faithfulness weights; deriving `/kāk^H + rī^H/`
@@ -459,7 +459,7 @@ theorem fig3_RL_converged : derivationRL.Converged starredForm := by decide
     (3, 2)).
 
     Combined with the per-step witnesses (§ 6.4), this is the deepest
-    version of @cite{mcpherson-lamont-2026}'s fig. 3 claim:
+    version of [mcpherson-lamont-2026]'s fig. 3 claim:
     directional EVAL must be left-to-right (LR) to derive the attested
     Poko surface form; right-to-left (RL) yields a different surface
     form. -/
@@ -471,7 +471,7 @@ theorem fig3_attested_neq_starred : attestedForm ≠ starredForm := by
 -- § 6.6: Regular HS Counter-Example — Divergent Ties
 -- ============================================================================
 
-/-! Paper, eq. (62) p. 35. The third leg of the @cite{mcpherson-lamont-2026}
+/-! Paper, eq. (62) p. 35. The third leg of the [mcpherson-lamont-2026]
     trifecta: parallel OT can't (ranking paradox §§1-5), weighted HG
     can't (§5), and **regular HS** (serial GEN with non-directional
     *FLOAT counting) can't either, because at step 1 from
@@ -480,7 +480,7 @@ theorem fig3_attested_neq_starred : attestedForm ≠ starredForm := by
     tone). MAX(H) and lower constraints don't disambiguate either —
     each candidate has identical violation profile. The optimum is a
     3-element set, so HS produces a "divergent tie"
-    (@cite{pruitt-2009}): subsequent steps depend on which candidate
+    ([pruitt-2009]): subsequent steps depend on which candidate
     is picked, and only the leftmost-deletion path reaches the
     attested form.
 
@@ -543,7 +543,7 @@ theorem directional_LR_optimum_card_one :
     negative-half theorems (§§1-5: parallel OT and weighted HG cannot
     model both `/nãn rī^H + nā/` and `/kāk^H + rī^H/`) and the
     positive-half theorem (§6 fig.3: directional LR converges to the
-    attested form), this completes @cite{mcpherson-lamont-2026}'s
+    attested form), this completes [mcpherson-lamont-2026]'s
     trifecta argument: only directional Harmonic Serialism succeeds. -/
 theorem only_directional_disambiguates_fig3 :
     (derivationLR.stepOptimum fig3Input).card <

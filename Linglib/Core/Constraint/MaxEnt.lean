@@ -4,7 +4,7 @@ import Linglib.Core.Constraint.System
 import Linglib.Core.Agent.CoupledEvaluation
 
 /-!
-# MaxEnt Constraint Systems @cite{storme-2026}
+# MaxEnt Constraint Systems [storme-2026]
 
 MaxEnt grammars assign probabilities to input→output mappings using the
 softmax function over weighted constraint violations — the probabilistic
@@ -12,7 +12,7 @@ generalization of OT (where α → ∞ recovers categorical optimization;
 see `softmax_argmax_limit`).
 
 This module extends the basic MaxEnt setup with **systemic constraints**
-(@cite{storme-2026}): constraints that evaluate *tuples* of mappings jointly
+([storme-2026]): constraints that evaluate *tuples* of mappings jointly
 (e.g., \*HOMOPHONY penalizes distinct inputs that map to the same output).
 Systemic constraints require evaluating a joint distribution over the product
 space of all input→output mappings, then marginalizing to recover individual

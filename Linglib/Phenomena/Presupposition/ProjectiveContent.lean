@@ -1,7 +1,7 @@
 /-
 # Projective Content Taxonomy
 
-Formalizes the taxonomy of projective contents from Tonhauser, @cite{tonhauser-beaver-roberts-simons-2013} "Toward a Taxonomy of Projective Content", Language 89(1).
+Formalizes the taxonomy of projective contents from Tonhauser, [tonhauser-beaver-roberts-simons-2013] "Toward a Taxonomy of Projective Content", Language 89(1).
 
 ## Insight
 
@@ -94,7 +94,7 @@ inductive ObligatoryLocalEffect where
 
 
 /--
-The four classes of projective content from @cite{tonhauser-beaver-roberts-simons-2013}.
+The four classes of projective content from [tonhauser-beaver-roberts-simons-2013].
 
 Each class is defined by a combination of SCF and OLE values.
 -/
@@ -149,7 +149,7 @@ theorem class_properties_roundtrip (c : ProjectiveClass) :
 
 
 /--
-Types of projective content triggers, following @cite{tonhauser-beaver-roberts-simons-2013}.
+Types of projective content triggers, following [tonhauser-beaver-roberts-simons-2013].
 
 Each trigger type is associated with a projective class and a description
 of the content it triggers.
@@ -183,7 +183,7 @@ inductive ProjectiveTrigger where
   /-- Definite descriptions: existence and uniqueness -/
   | definite_description
   /-- Occasion verbs: prior occasioning eventuality
-      (@cite{solstad-bott-2024}, S&P 17:11). "Punish" presupposes a prior
+      ([solstad-bott-2024], S&P 17:11). "Punish" presupposes a prior
       offense; "manage" presupposes a prior difficulty. SCF=no (can be
       informative), OLE=yes (attributed to attitude holder). -/
   | occasion_verb
@@ -291,10 +291,10 @@ def defaultProjection : ProjectionBehavior :=
 /--
 At-issueness status of content (binary classification).
 
-Following @cite{roberts-2012}, at-issue content addresses the Question Under
+Following [roberts-2012], at-issue content addresses the Question Under
 Discussion (QUD), while not-at-issue content is backgrounded.
 
-**Note:** @cite{tonhauser-beaver-degen-2018} show that at-issueness is
+**Note:** [tonhauser-beaver-degen-2018] show that at-issueness is
 *gradient*, not binary. For the gradient version, see
 `Discourse.AtIssueness.AtIssuenessDegree`. This binary enum is
 recoverable from a degree + threshold via `AtIssueness.ofDegree`.
@@ -408,7 +408,7 @@ The occasion verb "punish" has:
 - Projective content: Peter did something wrong (the occasioning eventuality)
 - Class C: SCF=no (can be informative), OLE=yes (attributed to attitude holder)
 
-Established in @cite{solstad-bott-2024}, Experiments 1–2.
+Established in [solstad-bott-2024], Experiments 1–2.
 -/
 example : ProjectiveTrigger.occasion_verb.toClass = .classC := rfl
 

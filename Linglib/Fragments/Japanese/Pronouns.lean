@@ -26,12 +26,12 @@ def watashi : PersonalPronoun :=
   { form := "watashi", script := some "私", person := some .first, number := some .sg, register := .formal }
 
 /-- 僕 *boku* — 1sg informal, masculine-associated via register
-    (no inherent gender feature; cf. @cite{ochs-1992}). -/
+    (no inherent gender feature; cf. [ochs-1992]). -/
 def boku : PersonalPronoun :=
   { form := "boku", script := some "僕", person := some .first, number := some .sg, register := .informal }
 
 /-- 俺 *ore* — 1sg male very informal. Strongly indexes masculine identity
-    through assertive/coarse interactional stance (@cite{ochs-1992}). -/
+    through assertive/coarse interactional stance ([ochs-1992]). -/
 def ore : PersonalPronoun :=
   { form := "ore", script := some "俺", person := some .first, number := some .sg, register := .informal }
 

@@ -1,6 +1,6 @@
 /-!
 # Dutch Adjective Lexicon Fragment
-@cite{mcnally-deswart-2011} @cite{broekhuis-keizer-2011}
+[mcnally-deswart-2011] [broekhuis-keizer-2011]
 
 Dutch adjective entries with morphological alternation: each adjective
 typically has three lexical forms — uninflected (`rood`), inflected with
@@ -40,7 +40,7 @@ namespace Dutch.Adjectives
 /-- Semantic domain of a Dutch adjective entry. The distinction between
     abstract and concrete domains tracks the differential availability of
     the inflected nominalisation construction discussed in
-    @cite{mcnally-deswart-2011} §1: abstract adjectives (`vreemd`,
+    [mcnally-deswart-2011] §1: abstract adjectives (`vreemd`,
     `gezond`, `leuk`) admit it freely, concrete adjectives (`dicht`)
     rarely or not at all. -/
 inductive Domain where
@@ -60,7 +60,7 @@ inductive Domain where
     `inflectionAlternation` flag distinguishes the productive alternation
     pattern (most adjectives) from the small exceptional class that does
     not show the alternation (forms in /ə/, -a, -en per
-    @cite{mcnally-deswart-2011} §1). -/
+    [mcnally-deswart-2011] §1). -/
 structure AdjEntry where
   /-- Uninflected form (lemma; also predicative + indef-neuter use). -/
   form : String
@@ -76,7 +76,7 @@ structure AdjEntry where
 
 /-! ## Color terms
 
-Examples drawn from @cite{mcnally-deswart-2011} (3), (6), (7) and standard
+Examples drawn from [mcnally-deswart-2011] (3), (6), (7) and standard
 Dutch dictionaries. -/
 
 /-- `rood` 'red' (paper §1, §3.1; ex (3)). -/
@@ -111,7 +111,7 @@ def zwart : AdjEntry :=
 
 /-! ### Color exceptions to the inflection alternation
 
-Per @cite{mcnally-deswart-2011} §1: forms ending in /ə/ (`roze`, `mauve`),
+Per [mcnally-deswart-2011] §1: forms ending in /ə/ (`roze`, `mauve`),
 `-a` (`lila`), or `-en` (`gouden`) do not show the +e alternation. -/
 
 /-- `roze` 'pink' — exception to inflection alternation (final schwa). -/
@@ -132,7 +132,7 @@ def gouden : AdjEntry :=
 
 /-! ## Taste terms
 
-Examples from @cite{mcnally-deswart-2011} (4), (7c). -/
+Examples from [mcnally-deswart-2011] (4), (7c). -/
 
 /-- `bitter` 'bitter' (paper §1, §3.1; ex (4)). -/
 def bitter : AdjEntry :=
@@ -157,7 +157,7 @@ def zout : AdjEntry :=
 
 /-! ## Abstract and concrete contrasts
 
-@cite{mcnally-deswart-2011} §1 notes the inflected-nominalised use is
+[mcnally-deswart-2011] §1 notes the inflected-nominalised use is
 frequent with abstract adjectives but rare with concrete ones. -/
 
 /-- `vreemd` 'strange' — abstract; freely takes inflected nominalisation. -/
@@ -200,7 +200,7 @@ def colorAdjectivesAlternating : List AdjEntry :=
 def tasteAdjectives : List AdjEntry :=
   [bitter, zoet, zuur, zout]
 
-/-- Abstract adjectives illustrated in @cite{mcnally-deswart-2011}. -/
+/-- Abstract adjectives illustrated in [mcnally-deswart-2011]. -/
 def abstractAdjectives : List AdjEntry :=
   [vreemd, gezond, leuk, bijzonder]
 

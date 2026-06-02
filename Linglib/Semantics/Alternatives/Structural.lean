@@ -5,7 +5,7 @@ import Linglib.Semantics.Alternatives.Source
 
 /-!
 # Structurally-Defined Alternatives
-@cite{katzir-2007}
+[katzir-2007]
 
 Katzir, R. (2007). Structurally-defined alternatives.
 Linguistics and Philosophy, 30(6), 669–690.
@@ -52,7 +52,7 @@ parameterized over the category type `C`, so they work with UD-grounded
   is a special case of structural alternatives (§8)
 - **Fills truthmaker gap**: `Studies/Santorio2018.lean`'s
   `IsTruthmaker` requires ALT_S computed via structural alternative generation
-- **Economy connection**: @cite{katzir-singh-2015}'s complexity ordering
+- **Economy connection**: [katzir-singh-2015]'s complexity ordering
   in `KatzirSingh2015.lean` is based on structural complexity (def 19)
 -/
 
@@ -763,9 +763,9 @@ Scalar inferences arise from comparing a sentence φ with formal alternatives
 φ' that are more informative along some content dimension. The same reasoning
 applies to three dimensions:
 
-- **At-issue content** → Scalar Implicatures (Conversational Principle, @cite{katzir-2007})
-- **Presuppositional content** → Antipresuppositions (Maximize Presupposition, @cite{schlenker-2012})
-- **CI content** → Anti-Conventional Implicatures (MCIs!, @cite{lo-guercio-2025})
+- **At-issue content** → Scalar Implicatures (Conversational Principle, [katzir-2007])
+- **Presuppositional content** → Antipresuppositions (Maximize Presupposition, [schlenker-2012])
+- **CI content** → Anti-Conventional Implicatures (MCIs!, [lo-guercio-2025])
 
 All three are instances of: do not use φ if there is a formal alternative
 φ' ∈ F(φ) such that (a) φ' is strictly more informative along the relevant
@@ -781,7 +781,7 @@ flow from a Pottsian compositional interpretation into the operator.
 The competitor set is supplied as an `AlternativeSource` parameter so
 that the same operator works for Katzir alternatives
 (`katzirSource lex`), indirect alternatives
-(`Indirect.indirectFromKatzir`, @cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}),
+(`Indirect.indirectFromKatzir`, [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]),
 or any other source. -/
 def violatesMaximize {C W : Type} {World : Type*}
     (src : Alternatives.AlternativeSource (Tree C W))
@@ -794,7 +794,7 @@ def violatesMaximize {C W : Type} {World : Type*}
     weaklyAssertable φ'
 
 /-- The neo-Gricean conversational principle: `violatesMaximize` applied
-to at-issue (truth-conditional) content. @cite{katzir-2007} def 21. -/
+to at-issue (truth-conditional) content. [katzir-2007] def 21. -/
 abbrev violatesConversationalPrinciple {C W : Type} {World : Type*}
     (src : Alternatives.AlternativeSource (Tree C W))
     (meaning : Tree C W → World → Prop)
@@ -802,14 +802,14 @@ abbrev violatesConversationalPrinciple {C W : Type} {World : Type*}
     (weaklyAssertable : Tree C W → Prop) : Prop :=
   violatesMaximize src meaning φ weaklyAssertable
 
-/-- Maximize Presupposition (@cite{schlenker-2012}): `violatesMaximize`
+/-- Maximize Presupposition ([schlenker-2012]): `violatesMaximize`
 applied to presuppositional content. Do not use φ if there is a
 competitor φ' (from `src`) with the same assertive content but stronger
 presupposition.
 
 Pass `katzirSource lex` for Katzir alternatives;
 `Indirect.indirectFromKatzir lex pron` for indirect alternatives
-(@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}). -/
+([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]). -/
 def violatesMP {C W : Type} {World : Type*}
     (src : Alternatives.AlternativeSource (Tree C W))
     (presupFn : Tree C W → World → Prop)
@@ -822,12 +822,12 @@ def violatesMP {C W : Type} {World : Type*}
     (∃ w, presupFn φ w ∧ ¬ presupFn φ' w) ∧
     weaklyAssertable φ'
 
-/-- Maximize Conventional Implicatures (@cite{lo-guercio-2025} def 15):
+/-- Maximize Conventional Implicatures ([lo-guercio-2025] def 15):
 `violatesMaximize` applied to CI content. Unlike MP!, does NOT require
 the same assertive content — CI content is independent of truth conditions.
 
 Do not use φ if there is a formal alternative φ' ∈ F(φ) such that:
-a. ⟦φ'⟧ᵘ ⊂ ⟦φ⟧ᵘ (CI-stronger, in @cite{gutzmann-2015}/@cite{kaplan-1999}
+a. ⟦φ'⟧ᵘ ⊂ ⟦φ⟧ᵘ (CI-stronger, in [gutzmann-2015]/[kaplan-1999]
    felicity-set semantics: the set of contexts where φ' is felicitously
    usable is a strict subset of those where φ is)
 b. φ' ∈ C (contextually relevant)
@@ -844,7 +844,7 @@ abbrev violatesMCIs {C W : Type} {World : Type*}
 `violatesMP` differs from `violatesMaximize` on the same `presupFn` only
 by the additional same-assertion clause. The two theorems below make the
 relationship Lean-checkable, discharging the diagnostic prose in
-@cite{lo-guercio-2025} §4 that "ACIs do not require same assertive content,
+[lo-guercio-2025] §4 that "ACIs do not require same assertive content,
 unlike antipresuppositions." -/
 
 /-- Every `violatesMP` violation is also a `violatesMaximize` violation
@@ -871,14 +871,14 @@ theorem violatesMP_of_violatesMaximize_sameAssertion {C W : Type} {World : Type*
   exact ⟨φ', hφ', h_assert φ' hφ', himp, hstrict, hwa⟩
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §10  Bridge to Economy of Structure (@cite{katzir-singh-2015})
+-- §10  Bridge to Economy of Structure ([katzir-singh-2015])
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-- At-least-as-good-as relation (def 23, p. 680):
 φ ≲ ψ iff φ ≲_struct ψ ∧ ⟦φ⟧ ⊆ ⟦ψ⟧.
 
 This combines structural complexity (from def 19) with semantic
-entailment. It is the relation that @cite{katzir-singh-2015} use as
+entailment. It is the relation that [katzir-singh-2015] use as
 the basis for the Answer Condition in `KatzirSingh2015.lean`, where
 it appears as `Scenario.atLeastAsGood`.
 

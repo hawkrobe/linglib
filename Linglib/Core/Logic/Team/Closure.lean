@@ -33,7 +33,7 @@ infrastructure to consumers of `IsFlat`.
   the carriers of order-ideals of `Finset α`.
 * `Core.Logic.Team.isLowerSet_iff_ordConnected_of_empty` — given the
   empty-team property, downward closure coincides with **convexity**
-  (`Set.OrdConnected`). Convexity (@cite{anttila-2025}) is the closure
+  (`Set.OrdConnected`). Convexity ([anttila-2025]) is the closure
   invariant that survives in the NE-bearing setting where the empty-team
   property fails. We reuse mathlib's `Set.OrdConnected` rather than a
   bespoke predicate, mirroring the `IsFlat ↔ Order.IsIdeal` bridge.
@@ -138,7 +138,7 @@ theorem isFlat_iff_isIdeal (T : Set (Finset α)) :
 /-! ### Convexity
 
 Convexity — `Set.OrdConnected` on `(Finset α, ⊆)`, i.e. `s ⊆ t ⊆ u` with
-`s, u ∈ T` forces `t ∈ T` — is @cite{anttila-2025}'s generalization of
+`s, u ∈ T` forces `t ∈ T` — is [anttila-2025]'s generalization of
 downward closure to the NE-bearing setting where the empty-team property
 may fail. Mathlib's `Set.OrdConnected` is exactly this predicate
 (`Set.Icc s u ⊆ T`), so we reuse it rather than introduce a bespoke
@@ -159,7 +159,7 @@ theorem isLowerSet_of_ordConnected_empty {T : Set (Finset α)}
 
 omit [DecidableEq α] in
 /-- **Given the empty-team property, downward closure and convexity coincide**
-    (@cite{anttila-2025}). For NE-bearing team-sets — which break the
+    ([anttila-2025]). For NE-bearing team-sets — which break the
     empty-team property — convexity is the invariant that survives where
     downward closure does not. -/
 theorem isLowerSet_iff_ordConnected_of_empty {T : Set (Finset α)}

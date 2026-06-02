@@ -3,7 +3,7 @@ import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Syntax.Case.Dependent
 
 /-!
-# @cite{aissen-2003}: Differential Object Marking @cite{aissen-2003}
+# [aissen-2003]: Differential Object Marking [aissen-2003]
 
 Differential Object Marking: Iconicity vs. Economy.
 Natural Language & Linguistic Theory 21(3): 435–483.
@@ -67,7 +67,7 @@ open Core.Constraint.Evaluation (Finset.checkAll Finset.checkAny)
     and definiteness level `d` obligatorily receives an overt DOM marker
     (e.g., Spanish `a`, Turkish `-(y)I`, Hindi `-ko`).
 
-    DOM is the P-flagging instance of @cite{just-2024}'s general differential
+    DOM is the P-flagging instance of [just-2024]'s general differential
     marking framework. Monotonicity (`isMonotone`), `isAnimacyOnly`, and
     `isDefinitenessOnly` are all inherited from `DifferentialMarkingProfile`. -/
 abbrev DOMProfile := DifferentialMarkingProfile

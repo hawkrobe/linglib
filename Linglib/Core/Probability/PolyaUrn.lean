@@ -5,7 +5,7 @@ import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 /-!
 # Pólya urn (per-sequence likelihood)
 
-@cite{odonnell-2015}
+[odonnell-2015]
 
 A *Pólya urn* over an alphabet `α` is a sequential sampling
 scheme governed by strictly-positive pseudo-counts
@@ -22,7 +22,7 @@ the same exchangeable sequence law (the de Finetti representation
 theorem guarantees that *some* mixing measure exists; identifying it
 as Dirichlet is conjugacy + integration). The probability of any
 specific draw sequence with counts `x_1, …, x_K` has the closed form
-of @cite{odonnell-2015} eq 3.7 (-- UNVERIFIED: section/equation
+of [odonnell-2015] eq 3.7 (-- UNVERIFIED: section/equation
 number from memory; verify against PDF):
 
 ```
@@ -71,11 +71,11 @@ type for such a bridge) is also deferred.
 - `PolyaUrn α` — pseudo-counts on `α` (the Dirichlet hyperparameters).
 - `PolyaUrn.total` — the sum `Σ π_i`.
 - `PolyaUrn.seqProb` — closed-form per-sequence likelihood
-  (eq 3.7 of @cite{odonnell-2015}, depending only on counts).
+  (eq 3.7 of [odonnell-2015], depending only on counts).
 
 ## References
 
-- @cite{odonnell-2015} — Pólya-urn closed form for DMPCFG (-- UNVERIFIED:
+- [odonnell-2015] — Pólya-urn closed form for DMPCFG (-- UNVERIFIED:
   §3.1.3 eq 3.7 from memory; verify against PDF).
 - Blackwell, D. & MacQueen, J. B. (1973). "Ferguson distributions via
   Pólya urn schemes". *The Annals of Statistics* 1(2): 353–355.

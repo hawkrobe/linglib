@@ -2,11 +2,11 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Syntax.Minimalist.ClauseSpine
 
 /-!
-# Probe Profiles (@cite{keine-2019}, @cite{keine-2020})
+# Probe Profiles ([keine-2019], [keine-2020])
 
 A probe's locality behavior is determined by two properties: where it sits
 in the functional sequence (`probeHead`) and what terminates its search
-(`horizon`). @cite{keine-2020} shows that selective opacity — where
+(`horizon`). [keine-2020] shows that selective opacity — where
 the same domain is opaque to some operations but transparent to others —
 is a property of probes, not of domains.
 
@@ -15,19 +15,19 @@ is a property of probes, not of domains.
 This file provides two transparency models:
 
 1. **Bilateral labeling** (`transparentToLabel`): the proper model from
-   @cite{keine-2020} chapter 3. A probe's search terminates when it
+   [keine-2020] chapter 3. A probe's search terminates when it
    encounters a domain whose *bilateral label* (= projected heads)
    contains the horizon category. This correctly handles partially
    ordered clause types (NmlzP vs CP in Hindi).
 
 2. **F-value approximation** (`transparentTo`): the simplified model
-   from @cite{keine-2019}. Uses `fValue clauseHead < fValue probeHead`
+   from [keine-2019]. Uses `fValue clauseHead < fValue probeHead`
    as an approximation. Valid when all clause types are linearly ordered
    within a single extended projection, but fails for NmlzP/CP.
 
 ## Language Parameterization
 
-@cite{keine-2020} shows that probe horizons are *language-specific*:
+[keine-2020] shows that probe horizons are *language-specific*:
 Hindi, English, and German each have different probe–horizon pairings.
 `LanguageProbeConfig` bundles per-language settings.
 
@@ -48,14 +48,14 @@ namespace Minimalist
 /-- A probe's identity: where it sits in the functional sequence and
     what terminates its search.
 
-    @cite{keine-2020} argues that selective opacity arises because
+    [keine-2020] argues that selective opacity arises because
     probes differ in their *horizons* — the category that terminates
     their search. A probe on T⁰ with horizon T cannot search past TP,
     while a probe on C⁰ with no horizon can search into any clause.
 
     The A/Ā distinction is correlated with probe height but not
     strictly derived from it: probes on the same head can have
-    different horizons (@cite{keine-2020} §3.6). -/
+    different horizons ([keine-2020] §3.6). -/
 structure ProbeProfile where
   /-- The head that hosts this probe (T⁰, C⁰, etc.) -/
   probeHead : Cat
@@ -65,22 +65,22 @@ structure ProbeProfile where
   deriving DecidableEq, Repr
 
 /-- Is this an A-probe? A-probes sit at or below T (fValue ≤ 2).
-    @cite{keine-2020} §3: A-movement lands in Spec,TP (fValue 2). -/
+    [keine-2020] §3: A-movement lands in Spec,TP (fValue 2). -/
 def ProbeProfile.isAProbe (p : ProbeProfile) : Bool :=
   fValue p.probeHead ≤ 2
 
 /-- Is this an Ā-probe? Ā-probes sit at or above C (fValue ≥ 6).
-    @cite{keine-2020} §3: Ā-movement lands in Spec,CP (fValue 6). -/
+    [keine-2020] §3: Ā-movement lands in Spec,CP (fValue 6). -/
 def ProbeProfile.isĀProbe (p : ProbeProfile) : Bool :=
   fValue p.probeHead ≥ 6
 
 -- ============================================================================
--- § 2: Bilateral Labeling Transparency (@cite{keine-2020} ch. 3)
+-- § 2: Bilateral Labeling Transparency ([keine-2020] ch. 3)
 -- ============================================================================
 
 /-- Is a domain with the given bilateral label transparent to this probe?
 
-    @cite{keine-2020} §3.3.2: under bilateral labeling, both head and
+    [keine-2020] §3.3.2: under bilateral labeling, both head and
     complement project labels. A CP's label is `[C, T, v, V]` — the set
     of all projected heads. A probe's search terminates when it encounters
     a domain whose bilateral label CONTAINS the horizon category.
@@ -99,12 +99,12 @@ def ProbeProfile.transparentToLabel (p : ProbeProfile) (label : List Cat) : Bool
   | some h => !(label.any (· == h))
 
 -- ============================================================================
--- § 3: F-Value Transparency (Simplified Model, @cite{keine-2019})
+-- § 3: F-Value Transparency (Simplified Model, [keine-2019])
 -- ============================================================================
 
 /-- Is a clause with highest head `clauseHead` transparent to this probe?
 
-    **Simplified (F-value) model** from @cite{keine-2019}: uses
+    **Simplified (F-value) model** from [keine-2019]: uses
     `fValue clauseHead < fValue probeHead` as an approximation of
     bilateral labeling. Valid when all clause types are linearly ordered
     within a single EP branch, but produces incorrect results for
@@ -121,7 +121,7 @@ def ProbeProfile.transparentTo (p : ProbeProfile) (clauseHead : Cat) : Bool :=
   if p.horizon.isSome then fValue clauseHead < fValue p.probeHead else true
 
 -- ============================================================================
--- § 4: The Four Article Probes (@cite{keine-2019} Table (58))
+-- § 4: The Four Article Probes ([keine-2019] Table (58))
 -- ============================================================================
 
 /-! These four probes are from the 2019 LI article, which used a simplified
@@ -131,8 +131,8 @@ def ProbeProfile.transparentTo (p : ProbeProfile) (clauseHead : Cat) : Bool :=
 
 /-- φ-agreement probe: sits on T⁰, horizon is C.
     Can search into vP but not TP or CP clauses.
-    Note: this is the @cite{keine-2019} article setting; the book
-    refines Hindi φ to have horizon T (@cite{keine-2020} (219)). -/
+    Note: this is the [keine-2019] article setting; the book
+    refines Hindi φ to have horizon T ([keine-2020] (219)). -/
 def keinePhiProbe : ProbeProfile := ⟨.T, some .C⟩
 
 /-- A-movement probe (EPP on T⁰): sits on T⁰, horizon is C.
@@ -143,9 +143,9 @@ def keineAProbe : ProbeProfile := ⟨.T, some .C⟩
     Can search into vP and TP but not CP clauses. -/
 def keineWhLicensing : ProbeProfile := ⟨.C, some .C⟩
 
-/-- Ā-movement probe from @cite{keine-2019}: sits on C⁰, no horizon.
+/-- Ā-movement probe from [keine-2019]: sits on C⁰, no horizon.
     The 2019 article treated Ā as having no horizon.
-    @cite{keine-2020} (219) refines this: Hindi Ā has horizon Nmlz,
+    [keine-2020] (219) refines this: Hindi Ā has horizon Nmlz,
     English Ā has horizon C, German topicalization has no horizon. -/
 def keineĀProbe : ProbeProfile := ⟨.C, none⟩
 
@@ -159,12 +159,12 @@ theorem wh_is_Ā : keineWhLicensing.isĀProbe = true := by decide
 theorem ābar_is_Ā : keineĀProbe.isĀProbe = true := by decide
 
 -- ============================================================================
--- § 4b: Ā-Dependency Subtype (@cite{deal-2026})
+-- § 4b: Ā-Dependency Subtype ([deal-2026])
 -- ============================================================================
 
 /-! ### Ā-dependency as Probe-subtype
 
-@cite{deal-2026} argues that Nez Perce relative-embedding (RE) clauses contain
+[deal-2026] argues that Nez Perce relative-embedding (RE) clauses contain
 an internal Ā-dependency *from a high functional projection above TP*. The
 unification target — Deal's "Ā-dependency" — is realised here as a subtype
 of `ProbeProfile` rather than as a parallel new structure: any Probe with
@@ -178,7 +178,7 @@ remain unchanged, and `AbarDep` is a thin wrapper providing only the predicate
 /-- An Ā-probe: a `ProbeProfile` carrying a proof that it is Ā-positioned
     (probeHead at or above C, fValue ≥ 6).
 
-    @cite{deal-2026} consumes this to express the Nez Perce RE structure:
+    [deal-2026] consumes this to express the Nez Perce RE structure:
     each RE-taker selects a CP whose internal probe is an `AbarDep`. By
     contrast, simplex-embedding verbs (Nez Perce *neki* 'think', *hi* 'say',
     *cuukwe* 'know') select bare CPs with no internal `AbarDep`. -/
@@ -194,7 +194,7 @@ def keineĀDep : AbarDep := ⟨keineĀProbe, ābar_is_Ā⟩
 def keineWhDep : AbarDep := ⟨keineWhLicensing, wh_is_Ā⟩
 
 /-- An Ā-dependency originates "above TP" iff its probe head's fValue exceeds
-    that of T. This is @cite{deal-2026} §5's "high functional projection"
+    that of T. This is [deal-2026] §5's "high functional projection"
     structural diagnostic. -/
 def AbarDep.isHigh (a : AbarDep) : Bool :=
   fValue a.val.probeHead > fValue .T
@@ -206,12 +206,12 @@ theorem keineĀDep_isHigh : keineĀDep.isHigh = true := by decide
 theorem keineWhDep_isHigh : keineWhDep.isHigh = true := by decide
 
 -- ============================================================================
--- § 5: Language-Parameterized Probe Configs (@cite{keine-2020})
+-- § 5: Language-Parameterized Probe Configs ([keine-2020])
 -- ============================================================================
 
 /-- A language's probe configuration: the set of probes and their horizons.
 
-    @cite{keine-2020} shows that probe horizons vary across languages.
+    [keine-2020] shows that probe horizons vary across languages.
     The same syntactic operation (e.g., Ā-movement) may have different
     horizons in Hindi (⊣ Nmlz), English (⊣ C), and German (⊣ ∅).
 
@@ -228,7 +228,7 @@ structure LanguageProbeConfig where
   ābar : ProbeProfile
   deriving Repr
 
-/-- Hindi probe settings (@cite{keine-2020} (219)).
+/-- Hindi probe settings ([keine-2020] (219)).
 
     | Probe  | Head | Horizon |
     |--------|------|---------|
@@ -242,7 +242,7 @@ def LanguageProbeConfig.hindi : LanguageProbeConfig :=
     wh   := ⟨.C, some .C⟩
     ābar := ⟨.C, some .Nmlz⟩ }
 
-/-- English probe settings (@cite{keine-2020} (241)).
+/-- English probe settings ([keine-2020] (241)).
 
     | Probe    | Head | Horizon |
     |----------|------|---------|
@@ -262,14 +262,14 @@ def LanguageProbeConfig.english : LanguageProbeConfig :=
     wh   := ⟨.C, none⟩
     ābar := ⟨.C, none⟩ }
 
-/-- English extraposition probe (@cite{keine-2020} (241c)):
+/-- English extraposition probe ([keine-2020] (241c)):
     [*extr*] on T⁰ with horizon T.
 
     Extraposition is more local than A-movement: it cannot cross
     even TP boundaries. This is the default horizon for T⁰. -/
 def english_extr : ProbeProfile := ⟨.T, some .T⟩
 
-/-- German probe settings (@cite{keine-2020} (367)).
+/-- German probe settings ([keine-2020] (367)).
 
     | Probe          | Head    | Horizon |
     |----------------|---------|---------|
@@ -287,15 +287,15 @@ def LanguageProbeConfig.german : LanguageProbeConfig :=
     wh   := ⟨.C, some .Force⟩
     ābar := ⟨.Force, none⟩ }
 
-/-- Itelmen probe settings (@cite{keine-2020} §3.4.5, (269), via
-    @cite{bobaljik-wurmbrand-2005}).
+/-- Itelmen probe settings ([keine-2020] §3.4.5, (269), via
+    [bobaljik-wurmbrand-2005]).
 
     Itelmen allows optional LDA (φ-agreement) into nonfinite clauses,
     but A-movement out of them forces obligatory high scope. Crucially,
     there are locality constraints on agreement that do not apply to
     A-movement: A-movement is *more permissive* than φ-agreement.
 
-    @cite{keine-2020} (269):
+    [keine-2020] (269):
     - [*φ*] ⊣ T (φ-agreement more local than movement)
     - [*μ*] ⊣ ∅ (movement has no horizon)
 
@@ -308,15 +308,15 @@ def LanguageProbeConfig.itelmen : LanguageProbeConfig :=
     wh   := ⟨.C, some .C⟩
     ābar := ⟨.C, none⟩ }
 
-/-- Tsez probe settings (@cite{keine-2020} §3.4.5, (271), via
-    @cite{polinsky-potsdam-2001}).
+/-- Tsez probe settings ([keine-2020] §3.4.5, (271), via
+    [polinsky-potsdam-2001]).
 
     Tsez allows LDA (φ-agreement) into an embedded clause, but
     disallows crossclausal movement. This is the *inverse* of Itelmen:
     A-movement is more permissive than φ-agreement in Itelmen, while
     φ-agreement is more permissive than A-movement in Tsez.
 
-    @cite{keine-2020} (271):
+    [keine-2020] (271):
     - [*φ*] ⊣ Force (φ-agreement is less local)
     - [*μ*] ⊣ Top (movement more local than φ)
 
@@ -352,12 +352,12 @@ theorem itelmen_movement_agreement_mismatch :
     LanguageProbeConfig.tsez.aMove.transparentTo .T = false := by decide
 
 -- ============================================================================
--- § 5b: Crosslinguistic A-Movement Typology (@cite{keine-2020} (300))
+-- § 5b: Crosslinguistic A-Movement Typology ([keine-2020] (300))
 -- ============================================================================
 
-/-! ### Three attested A-movement horizons (@cite{keine-2020} §3.6, (300))
+/-! ### Three attested A-movement horizons ([keine-2020] §3.6, (300))
 
-@cite{keine-2020} identifies three crosslinguistically attested settings
+[keine-2020] identifies three crosslinguistically attested settings
 for the A-movement probe, forming an entailment chain from most permissive
 to most restrictive:
 
@@ -371,7 +371,7 @@ These correspond to three points on the locality profile entailment
 chain (305). -/
 
 /-- Lubukusu A-probe: no horizon — hyperraising out of finite clauses.
-    @cite{keine-2020} (300a). -/
+    [keine-2020] (300a). -/
 def lubukusuAProbe : ProbeProfile := ⟨.T, none⟩
 
 /-- The three A-movement settings form an entailment chain:
@@ -396,12 +396,12 @@ theorem a_movement_typology :
       ClauseSpine.tP.projectedHeads = false := by decide
 
 -- ============================================================================
--- § 6: Default Horizon (@cite{keine-2020} (307))
+-- § 6: Default Horizon ([keine-2020] (307))
 -- ============================================================================
 
 /-- The default horizon for a probe: the probe's own head category.
 
-    @cite{keine-2020} (307): for any probe [*F*] on head X⁰, the default
+    [keine-2020] (307): for any probe [*F*] on head X⁰, the default
     horizon is X itself. This is the maximally restrictive setting that
     is not vacuous — the probe can search into domains smaller than its
     own projection but not into domains of the same size or larger. -/
@@ -417,12 +417,12 @@ theorem default_horizon_restrictive (head c : Cat)
   omega
 
 -- ============================================================================
--- § 6b: Locality Profile Entailment (@cite{keine-2020} (305))
+-- § 6b: Locality Profile Entailment ([keine-2020] (305))
 -- ============================================================================
 
 /-! ### Locality profiles form an entailment chain
 
-@cite{keine-2020} §3.7, (305): different horizon choices yield locality
+[keine-2020] §3.7, (305): different horizon choices yield locality
 profiles in a strict entailment relationship. A lower horizon produces a
 strictly more restrictive profile:
 
@@ -461,10 +461,10 @@ theorem locality_profile_entailment_T :
     (onT none).transparentToLabel ClauseSpine.cP.projectedHeads = true := by decide
 
 -- ============================================================================
--- § 7: Upward Entailment (@cite{keine-2020} (40))
+-- § 7: Upward Entailment ([keine-2020] (40))
 -- ============================================================================
 
-/-- **Upward Entailment** (@cite{keine-2020} ch. 3):
+/-- **Upward Entailment** ([keine-2020] ch. 3):
     If a clause of size Π is opaque to probe π, every larger clause
     (higher `fValue` for its highest head) is also opaque.
 
@@ -499,10 +499,10 @@ theorem upward_entailment_label (p : ProbeProfile)
     exact ⟨x, h_sub x hx_mem, hx_eq⟩
 
 -- ============================================================================
--- § 8: Height-Locality Connection (@cite{keine-2020} (20)/(33))
+-- § 8: Height-Locality Connection ([keine-2020] (20)/(33))
 -- ============================================================================
 
-/-- **Height-Locality Connection (HLC)** (@cite{keine-2020} (20)/(33)):
+/-- **Height-Locality Connection (HLC)** ([keine-2020] (20)/(33)):
     The higher the structural position of a probe, the more kinds of
     structures it can search into.
 
@@ -515,7 +515,7 @@ theorem upward_entailment_label (p : ProbeProfile)
     it from bilateral labeling + vacuity (see `height_locality_theorem`).
 
     Note: the HLC is a "connection" not an isomorphism — probes on the
-    same head can differ in locality (@cite{keine-2020} §3.6). -/
+    same head can differ in locality ([keine-2020] §3.6). -/
 theorem height_locality_connection (p₁ p₂ : ProbeProfile) (c : Cat)
     (h_higher : fValue p₁.probeHead ≤ fValue p₂.probeHead)
     (h_horizon : p₁.horizon = none → p₂.horizon = none)
@@ -553,7 +553,7 @@ theorem horizon_category_relevant_label :
     āProbe.transparentToLabel nmlzLabel = false := by decide
 
 -- ============================================================================
--- § 10: Vacuous Probes (@cite{keine-2020} §3.5, (274)–(278))
+-- § 10: Vacuous Probes ([keine-2020] §3.5, (274)–(278))
 -- ============================================================================
 
 /-- Is this probe vacuous *relative to a specific sister label*?
@@ -562,7 +562,7 @@ theorem horizon_category_relevant_label :
     contains the probe's horizon category — the probe's search
     terminates at its sister, leaving no searchable domain.
 
-    @cite{keine-2020} §3.5, (274)–(278): a probe on C⁰ with
+    [keine-2020] §3.5, (274)–(278): a probe on C⁰ with
     horizon T is vacuous because its sister TP's bilateral label
     `[T, v, V]` contains T.
 
@@ -575,7 +575,7 @@ def ProbeProfile.isVacuousFor (p : ProbeProfile) (sisterLabel : List Cat) : Bool
 
 /-- Is this probe vacuous in the standard verbal spine?
 
-    @cite{keine-2020} §3.5, (274)–(278): a probe is vacuous when
+    [keine-2020] §3.5, (274)–(278): a probe is vacuous when
     its sister's bilateral label (in the standard verbal spine)
     contains its horizon category. The sister of a head is
     determined by the standard clause spine:
@@ -640,7 +640,7 @@ theorem default_horizon_not_vacuous_T :
 theorem default_horizon_not_vacuous_C :
     (ProbeProfile.defaultHorizon .C).isVacuous = false := by decide
 
-/-- Example vacuous probes from @cite{keine-2020} (278):
+/-- Example vacuous probes from [keine-2020] (278):
     a probe on C⁰ with horizon T, v, or V is vacuous — the sister
     TP's bilateral label contains all three. -/
 theorem vacuous_examples :
@@ -662,7 +662,7 @@ theorem vacuousFor_means_opaque (p : ProbeProfile) (label : List Cat)
   cases hHz : p.horizon <;> simp_all
 
 -- ============================================================================
--- § 11: Three Distinct Locality Types (@cite{keine-2019} p. 45)
+-- § 11: Three Distinct Locality Types ([keine-2019] p. 45)
 -- ============================================================================
 
 /-- The transparency profile of a probe: which of the three standard
@@ -699,7 +699,7 @@ theorem three_locality_types :
     `ProbeProfile.transparentTo` on the complement's highest head.
 
     This unifies the phase-based (`transparentToTenseAgree`) and
-    horizon-based (@cite{keine-2019}) transparency models into a
+    horizon-based ([keine-2019]) transparency models into a
     single parameterized function. -/
 def ComplementSize.transparentTo (cs : ComplementSize) (p : ProbeProfile) : Bool :=
   p.transparentTo cs.highestHead
@@ -708,7 +708,7 @@ def ComplementSize.transparentTo (cs : ComplementSize) (p : ProbeProfile) : Bool
     Same profile as `keineWhLicensing` — both check whether the
     complement's highest head is below C in the fseq.
 
-    This is the probe implicit in @cite{egressy-2026}'s phase-based
+    This is the probe implicit in [egressy-2026]'s phase-based
     `transparentToTenseAgree`: any complement smaller than CP is
     transparent. -/
 def tenseAgreeProbe : ProbeProfile := ⟨.C, some .C⟩
@@ -762,10 +762,10 @@ theorem cP_opaque_to_wh :
     ComplementSize.cP.transparentTo keineWhLicensing = false := by decide
 
 -- ============================================================================
--- § 13: Height-Locality Theorem (@cite{keine-2020} (279))
+-- § 13: Height-Locality Theorem ([keine-2020] (279))
 -- ============================================================================
 
-/-! ### Height-Locality Theorem (HLT) (@cite{keine-2020} (279))
+/-! ### Height-Locality Theorem (HLT) ([keine-2020] (279))
 
 The HLT is an emergent property of horizons + bilateral labeling.
 Probes whose (location, horizon) pairing violates (279) are vacuous
@@ -818,12 +818,12 @@ theorem hlt_derives_hlc (p₁ p₂ : ProbeProfile) (c : Cat)
   height_locality_connection p₁ p₂ c h_higher h_horizon h_transparent
 
 -- ============================================================================
--- § 14: Ban on Improper Movement (@cite{keine-2020} §3.4.1–3.4.2)
+-- § 14: Ban on Improper Movement ([keine-2020] §3.4.1–3.4.2)
 -- ============================================================================
 
 /-- **Ban on Improper Movement** (derived from horizons).
 
-    @cite{keine-2020} §3.4.1–3.4.2: Ā-movement cannot feed A-movement.
+    [keine-2020] §3.4.1–3.4.2: Ā-movement cannot feed A-movement.
     Under the horizon account, this is an emergent property:
 
     1. Ā-movement out of a clause places the DP in [Spec,CP], creating
@@ -857,10 +857,10 @@ theorem a_can_feed_ābar :
       ClauseSpine.cP.projectedHeads = true := by decide
 
 -- ============================================================================
--- § 15: A-movement–Agreement Generalization (@cite{keine-2020} (231))
+-- § 15: A-movement–Agreement Generalization ([keine-2020] (231))
 -- ============================================================================
 
-/-- **A-movement–Agreement Generalization** (@cite{keine-2020} (231)):
+/-- **A-movement–Agreement Generalization** ([keine-2020] (231)):
     If A-movement of any element out of an embedded clause has taken
     place, that clause is obligatorily transparent for LDA (long-distance
     agreement). Agreement is hence obligatory and default agreement is

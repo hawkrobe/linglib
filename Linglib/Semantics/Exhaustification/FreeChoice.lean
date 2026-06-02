@@ -1,8 +1,8 @@
 import Linglib.Semantics.Exhaustification.Operators.Basic
 
 /-!
-# Core Theorems from @cite{chierchia-2013} *Logic in Grammar*
-@cite{chierchia-2013} @cite{fox-2007} @cite{spector-2016}
+# Core Theorems from [chierchia-2013] *Logic in Grammar*
+[chierchia-2013] [fox-2007] [spector-2016]
 
 Deep integration of Chierchia's central results connecting polarity,
 scalar implicatures, free choice, and intervention — all with real proofs.
@@ -112,7 +112,7 @@ end FCAltSet
 
 /-- **Theorem 1 (Free Choice via Double Exhaustification).**
 
-@cite{chierchia-2013} Ch. 2, 5; @cite{fox-2007}:
+[chierchia-2013] Ch. 2, 5; [fox-2007]:
 
   Exh(Exh(◇(p ∨ q))) → ◇p ∧ ◇q
 
@@ -179,7 +179,7 @@ end FreeChoice
 /-!
 ## The SI–NPI Generalization
 
-@cite{chierchia-2013} Ch. 1–2, building on @cite{chierchia-2004}:
+[chierchia-2013] Ch. 1–2, building on [chierchia-2004]:
 
 Scalar implicatures are blocked in exactly the environments that
 license NPIs — namely, Downward Entailing environments.
@@ -241,7 +241,7 @@ end SINPIGeneralization
 /-!
 ## Domain Widening and Informativity
 
-@cite{chierchia-2013} Ch. 1, 3, building on @cite{kadmon-landman-1993}:
+[chierchia-2013] Ch. 1, 3, building on [kadmon-landman-1993]:
 
 NPIs like "any" are indefinites with obligatory domain widening.
 - In UE contexts, widening the domain is *weakening* (less informative) → bad
@@ -301,7 +301,7 @@ end DomainWidening
 /-!
 ## Intervention Effects
 
-@cite{chierchia-2013} Ch. 7:
+[chierchia-2013] Ch. 7:
 
 Scalar triggers embedded between an NPI licensor and the NPI can
 disrupt licensing. This is because exhaustification (EXH) applied
@@ -364,7 +364,7 @@ end Intervention
 /-!
 ## Scalar Reversal in DE Contexts
 
-@cite{chierchia-2013} Ch. 1:
+[chierchia-2013] Ch. 1:
 
 The same Horn scale produces opposite effects depending on polarity:
 - In UE: "some" implicates "not all" (negate stronger alternative)
@@ -411,9 +411,9 @@ end ScalarReversal
 /-!
 ## Diamond distributes over union
 
-@cite{chierchia-2013} Ch. 5–6 motivates the FC derivation as uniform
+[chierchia-2013] Ch. 5–6 motivates the FC derivation as uniform
 across modal forces; this section provides the basic distribution
-lemma `◇(A ∪ B) ↔ ◇A ∨ ◇B` consumed by @cite{ciardelli-guerrini-2026}'s
+lemma `◇(A ∪ B) ↔ ◇A ∨ ◇B` consumed by [ciardelli-guerrini-2026]'s
 reductionist thesis.
 -/
 
@@ -438,7 +438,7 @@ theorem diamond_collects (p q : Set World) :
   | inr hq => obtain ⟨w, hw⟩ := hq; exact ⟨w, Or.inr hw⟩
 
 /-- **◇(A ∨ B) ↔ ◇A ∨ ◇B**: the scope distinction is truth-conditionally
-    vacuous in standard modal logic. Central to @cite{ciardelli-guerrini-2026}'s
+    vacuous in standard modal logic. Central to [ciardelli-guerrini-2026]'s
     reductionist thesis: the difference between narrow-scope ◇(A ∨ B) and
     wide-scope ◇A ∨ ◇B matters only for pragmatic enrichment. -/
 theorem diamond_distributes_iff (p q : Set World) :
@@ -454,7 +454,7 @@ end FCDuality
 /-!
 ## Maximize Strength as Exhaustification
 
-@cite{chierchia-2013} Ch. 1 §1.1.4:
+[chierchia-2013] Ch. 1 §1.1.4:
 
 Maximize Strength says: among alternative parses, prefer the one that
 generates the strongest (most informative) proposition. This is

@@ -1,9 +1,9 @@
 import Linglib.Semantics.Conditionals.PremiseSemantic
 
 /-!
-# @cite{kratzer-2012} §5.4.3 — Lumping blocks spurious counterfactuals
+# [kratzer-2012] §5.4.3 — Lumping blocks spurious counterfactuals
 
-Minimal formalization of @cite{kratzer-2012}'s apple-buying
+Minimal formalization of [kratzer-2012]'s apple-buying
 counterfactual example (Ch. 5, §5.4.1–§5.4.3, pp. 127–129)
 demonstrating that the Crucial Set's lumping-closure clause prevents
 the spurious counterfactual prediction that the naive
@@ -30,7 +30,7 @@ currently a `sorry`-marked TODO).
 Three worlds (and one partial situation):
 
 - `actual` — Paula is buying apples; Atlantic is fine; moon is fine.
-  This is `w₀` in @cite{kratzer-2012} §5.4.1.
+  This is `w₀` in [kratzer-2012] §5.4.1.
 - `noApplesQuiet` — Paula is not buying apples; Atlantic is fine;
   moon is fine. (A "boring counterfactual" world; the witness that
   forces `wouldCF` to come out false.)
@@ -41,9 +41,9 @@ Three worlds (and one partial situation):
 
 ## Propositions
 
-- `pa` (= @cite{kratzer-2012} (9a)): "Paula is buying apples"
+- `pa` (= [kratzer-2012] (9a)): "Paula is buying apples"
 - `ad` ("Atlantic is drying", contradicting (9b))
-- `paOrAd` (= @cite{kratzer-2012} (9d)): `pa ∨ ad` (the disjunction)
+- `paOrAd` (= [kratzer-2012] (9d)): `pa ∨ ad` (the disjunction)
 
 ## The lumping fact (§5.4.3, p. 129, verbatim claim)
 
@@ -73,7 +73,7 @@ exact equality `crucialSet_notPa_eq_singleton`
 
 ## Caveat: the Base Set is technically inadmissible
 
-`Fw₀ = {pa, paOrAd}` violates @cite{kratzer-2012}'s **Non-Redundancy**
+`Fw₀ = {pa, paOrAd}` violates [kratzer-2012]'s **Non-Redundancy**
 admissibility clause (p. 132): "A set of propositions is redundant if
 it contains propositions p and q such that p ≠ q and `p ∩ W ⊆ q ∩ W`."
 Here `pa ⊆ paOrAd` everywhere, so `Fw₀` is redundant. A more careful
@@ -86,7 +86,7 @@ Base Set.
 Other admissibility conditions we do not check:
 - (ii) Persistence: holds trivially here (each proposition is
   parthood-upward-closed by construction)
-- (iii) Cognitive Viability: per @cite{kratzer-2012} p. 133, "the big
+- (iii) Cognitive Viability: per [kratzer-2012] p. 133, "the big
   unknown" — out of scope for formal semantics
 - (v) Completeness: `⋂ Fw₀ = pa = {sA, actual}` does not contain
   "all and only worlds indistinguishable from `actual`," so this
@@ -114,7 +114,7 @@ operator separately and prove it predicts `ad` on this scenario.
 That's out of scope here.
 
 The discriminating power of lumping vs. closest-worlds semantics shows
-up not on Paula but on @cite{ciardelli-zhang-champollion-2018}'s
+up not on Paula but on [ciardelli-zhang-champollion-2018]'s
 two-switches scenario (where the closest-worlds account is
 empirically falsified) — see cross-references below.
 
@@ -206,7 +206,7 @@ def pa : Set paulaSituationFrame.Index := {.sA, .actual}
 def ad : Set paulaSituationFrame.Index := {.atlantic}
 
 /-- "Paula is buying apples or the Atlantic is drying" — the
-    disjunction (= @cite{kratzer-2012} (9d)). -/
+    disjunction (= [kratzer-2012] (9d)). -/
 def paOrAd : Set paulaSituationFrame.Index := pa ∪ ad
 
 /-- "Paula is not buying apples" — the antecedent of our
@@ -216,7 +216,7 @@ def notPa : Set paulaSituationFrame.Index := {.noApplesQuiet, .atlantic}
 
 /-! ## The lumping fact -/
 
-/-- **The central lumping claim** (@cite{kratzer-2012}, p. 129):
+/-- **The central lumping claim** ([kratzer-2012], p. 129):
     `paOrAd` lumps `pa` at the actual world. Every part of `actual`
     where the disjunction holds also has `pa` hold, because the `ad`
     disjunct has no truth-makers in any part of `actual`. -/
@@ -356,7 +356,7 @@ theorem follows_notPa_ad_fails :
   -- ad = {atlantic}; noApplesQuiet ≠ atlantic.
   cases h_ad
 
-/-- **Headline theorem**: the @cite{kratzer-2012} §5.4.4 lumping CF
+/-- **Headline theorem**: the [kratzer-2012] §5.4.4 lumping CF
     correctly blocks the spurious prediction "if Paula weren't buying
     apples, the Atlantic would be drying" (`wouldCF` returns false).
 

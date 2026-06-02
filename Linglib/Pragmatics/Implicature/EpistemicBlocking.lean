@@ -4,10 +4,10 @@ import Linglib.Core.Logic.Modal.Defs
 
 /-!
 # Sauerland's Epistemic Implicature Framework
-@cite{sauerland-2004}
+[sauerland-2004]
 
 Categorical primitives for the primary/secondary implicature distinction
-of @cite{sauerland-2004}. Pure pragmatic theory — no RSA, no specific
+of [sauerland-2004]. Pure pragmatic theory — no RSA, no specific
 empirical paper. Consumed by `Phenomena/.../Studies/` files (e.g.,
 `Numerals/Studies/Kennedy2015.lean`) that need a categorical implicature
 operator alongside or instead of an RSA derivation.

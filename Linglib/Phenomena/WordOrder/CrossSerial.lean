@@ -2,10 +2,10 @@ import Linglib.Features.VerbCluster
 
 /-!
 # Cross-Serial Dependencies
-@cite{bresnan-etal-1982}
+[bresnan-etal-1982]
 
 Empirical data on cross-serial dependencies in Dutch verb clusters,
-first described in @cite{bresnan-etal-1982}.
+first described in [bresnan-etal-1982].
 
 ## The Phenomenon
 
@@ -22,13 +22,13 @@ The dependencies are cross-serial (not nested):
       └────────────┘
           └────────────┘
 
-Cross-serial word order alone is context-free — @cite{gazdar-pullum-1982}
+Cross-serial word order alone is context-free — [gazdar-pullum-1982]
 exhibit a CF-PSG (grammar 29) generating the correct Dutch strings with
 proper verb subcategorization (formalized in `PullumGazdar1982`).
 What takes this beyond CF power is cross-serial order PLUS case agreement:
 requiring dative NPs to match dative verbs and accusative NPs to match
 accusative verbs across unbounded depth. This was proven for Swiss German
-by @cite{shieber-1985} (formalized in `Shieber1985`).
+by [shieber-1985] (formalized in `Shieber1985`).
 CCG handles the full pattern via generalized composition.
 
 ## Contrast with German
@@ -41,12 +41,12 @@ German has nested dependencies (can be handled by CFG):
 
 ## Note on attribution
 
-The Dutch cross-serial data is from @cite{bresnan-etal-1982}. The formal
+The Dutch cross-serial data is from [bresnan-etal-1982]. The formal
 proof that cross-serial dependencies with case-marking are beyond CFG power
-is @cite{shieber-1985}, formalized in `Shieber1985`.
-The distinction matters: @cite{bresnan-etal-1982}'s argument relied on
-constituency assumptions (refuted by @cite{gazdar-pullum-1982}), whereas
-@cite{shieber-1985}'s string-set argument via Swiss German case-marking
+is [shieber-1985], formalized in `Shieber1985`.
+The distinction matters: [bresnan-etal-1982]'s argument relied on
+constituency assumptions (refuted by [gazdar-pullum-1982]), whereas
+[shieber-1985]'s string-set argument via Swiss German case-marking
 is purely formal and irrefutable.
 
 -/
@@ -55,7 +55,7 @@ namespace Phenomena.WordOrder.CrossSerial
 
 open Features (VerbClusterBinding BindingPattern)
 
--- Dutch Examples (@cite{bresnan-etal-1982}, @cite{steedman-2000})
+-- Dutch Examples ([bresnan-etal-1982], [steedman-2000])
 
 /-- A verb cluster example with NP-verb dependency data.
 

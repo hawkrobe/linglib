@@ -4,14 +4,14 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # Merin–Van Rooy Bridge
-@cite{merin-1999} @cite{van-rooy-2003}
+[merin-1999] [van-rooy-2003]
 
 Formal connection between Merin's Decision-Theoretic Semantics (DTS) and
 Van Rooy's decision-theoretic question framework.
 
 ## The Connection
 
-@cite{van-rooy-2003} (L&P 26, pp. 727–763) defines two measures of
+[van-rooy-2003] (L&P 26, pp. 727–763) defines two measures of
 proposition utility:
 - **VSI(C)** = max_a EU(a,C) − EU(a⁰,C), "can obviously never be negative" (p. 735)
 - **UV(C)** = max_a EU(a,C) − max_a EU(a), "can be negative" (p. 736)
@@ -19,7 +19,7 @@ proposition utility:
 At the question level, EUV(Q) = ∑ P(q)·UV(q) = EVSI(Q) ≥ 0 (p. 742).
 
 Merin's DTS uses a **dichotomic issue** {H, ¬H} with **Bayes factors**
-BF(E) = P(E|H)/P(E|¬H). In §5.4, @cite{van-rooy-2003} connects UV to
+BF(E) = P(E|H)/P(E|¬H). In §5.4, [van-rooy-2003] connects UV to
 Merin's **argumentative value**: when preferences beyond truth-resolution
 are at stake, UV(C) captures the directional relevance of a proposition.
 
@@ -35,7 +35,7 @@ Under this encoding:
   (`irrelevant_implies_zero_uv`)
 
 Note: UV(E) for a **single cell** E can be negative even when BF > 1
-(@cite{van-rooy-2003}, p. 736). The non-negativity result holds for
+([van-rooy-2003], p. 736). The non-negativity result holds for
 **expected** UV across the full partition, not for individual cells.
 
 ## Results
@@ -83,7 +83,7 @@ bridge: Merin's relevance sign determines the direction of the
 posterior shift for the truth decision problem.
 
 Note: this does NOT imply UV(E) ≥ 0 for the single cell E.
-UV of a single cell can be negative (@cite{van-rooy-2003}, p. 736).
+UV of a single cell can be negative ([van-rooy-2003], p. 736).
 The non-negativity result (EVSI ≥ 0) holds for the **expected** UV
 across the full partition {E, ¬E}, not for individual cells (p. 742).
 

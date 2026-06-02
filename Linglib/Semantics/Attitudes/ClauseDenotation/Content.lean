@@ -1,13 +1,13 @@
 import Linglib.Semantics.Attitudes.ContentIndividual
 
 /-!
-# Clause Denotation: Content @cite{moulton-2015}
-@cite{kratzer-2006} @cite{heim-kratzer-1998} @cite{hintikka-1962}
+# Clause Denotation: Content [moulton-2015]
+[kratzer-2006] [heim-kratzer-1998] [hintikka-1962]
 
 CPs as predicates of content individuals, not propositions.
 
 This file is the **content** sibling of `ClauseDenotation/Situation.lean`
-(situation-denoting clauses per @cite{bondarenko-2022} / @cite{moltmann-2021}).
+(situation-denoting clauses per [bondarenko-2022] / [moltmann-2021]).
 The two files share *shape* but range over different licensee sorts:
 content individuals (Kratzer 2006) here vs. situations (Kratzer 1989) there.
 
@@ -19,7 +19,7 @@ Kratzer/Moulton: ⟦that p⟧ = λx_c. CONT(x_c) = p (type ⟨e,st⟩ — a pred
 on content individuals)
 
 The complementizer C identifies a proposition as the content of a content
-individual using @cite{kratzer-2006}'s CONT function. Attitude verbs select for
+individual using [kratzer-2006]'s CONT function. Attitude verbs select for
 content individuals (type e), and the that-clause combines via existential
 closure:
 
@@ -31,8 +31,8 @@ closure:
    individuals — same type as CPs — so they combine by Predicate Modification.
 2. The PM path is compatible with both *modifier* and *argument* CPs;
    the syntactic position of the CP is **orthogonal** to the compositional
-   mode here. @cite{bondarenko-2022} (transparent Syntax-Semantics
-   mapping: PM ⇒ adjunct, FA ⇒ argument) and @cite{angelopoulos-2026}
+   mode here. [bondarenko-2022] (transparent Syntax-Semantics
+   mapping: PM ⇒ adjunct, FA ⇒ argument) and [angelopoulos-2026]
    (autonomy of syntax: same syntactic position can yield either
    composition mode at LF) hold opposing views; this substrate stays
    neutral on the syntax-semantics correspondence.
@@ -60,7 +60,7 @@ open Semantics.Attitudes (ContentIndividual)
 
     ⟦C⟧(p)(x_c) ⟺ CONT(x_c) = p
 
-    This is @cite{moulton-2015} (15). The result is type ⟨e,st⟩ — a predicate
+    This is [moulton-2015] (15). The result is type ⟨e,st⟩ — a predicate
     on content individuals — not a proposition ⟨s,t⟩. -/
 def compC {W : Type*} (p : W → Prop) (xc : ContentIndividual W) : Prop :=
   xc.cont = p
@@ -76,7 +76,7 @@ def compC {W : Type*} (p : W → Prop) (xc : ContentIndividual W) : Prop :=
     ⟨e,st⟩, the same semantic type as CPs. -/
 abbrev ContentNoun (W : Type*) := ContentIndividual W → W → Prop
 
-/-- Predicate Modification for content nouns and CPs (@cite{moulton-2015}, (17)).
+/-- Predicate Modification for content nouns and CPs ([moulton-2015], (17)).
 
     ⟦belief that p⟧ = λx_c.λw. belief(x_c)(w) ∧ CONT(x_c) = p
 
@@ -103,7 +103,7 @@ theorem contentNounCP_determines_content {W : Type*}
     *believe* : λx_c. λx_agent. λw. believe(x_agent, x_c, w) -/
 abbrev AttitudeVerbCI (W E : Type*) := E → ContentIndividual W → W → Prop
 
-/-- Existential closure over content individuals (@cite{moulton-2015}, (21)–(23)).
+/-- Existential closure over content individuals ([moulton-2015], (21)–(23)).
 
     Closes off the content individual variable at the edge of vP:
 

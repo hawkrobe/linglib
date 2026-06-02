@@ -3,7 +3,7 @@ import Linglib.Phenomena.Entailment.Basic
 
 /-!
 # Bridge: Compositional Truth Conditions → Entailment Data
-@cite{montague-1973}
+[montague-1973]
 
 Connects Montague compositional semantics derivations to the empirical
 truth-condition judgments in `Phenomena.Entailment.Basic`.

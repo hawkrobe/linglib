@@ -7,7 +7,7 @@ import Linglib.Studies.CharnavelMateu2015
 
 /-!
 # Pancheva & Zubizarreta (2018): The Person Case Constraint
-@cite{pancheva-zubizarreta-2018} @cite{sells-1987}
+[pancheva-zubizarreta-2018] [sells-1987]
 
 The Person Case Constraint: The Syntactic Encoding of Perspective.
 *Natural Language and Linguistic Theory* 36: 1291–1337.
@@ -29,17 +29,17 @@ PG3) that the four-parameter space generates.
   the conditions under which selecting the IO as point-of-view center
   satisfies the P-Constraint semantically (§6.3, eq. 48).
 - **`pProminence_to_sellsRole`** — P&Z's identification of their P-Prominence
-  values with @cite{sells-1987}'s logophoric roles (§6.2). This mapping is
+  values with [sells-1987]'s logophoric roles (§6.2). This mapping is
   P&Z's specific theoretical claim, not a framework-neutral fact;
-  @cite{charnavel-mateu-2015} (page 10) reject the claim that pivot is the
+  [charnavel-mateu-2015] (page 10) reject the claim that pivot is the
   relevant role for clitic clusters.
 - **`readings_disagree_on_proximate`** and **`mefirst_wedge_with_cm`** —
-  P&Z's rejection (page 1308) of @cite{charnavel-mateu-2015}'s unification
+  P&Z's rejection (page 1308) of [charnavel-mateu-2015]'s unification
   of PCC and CLR (§ 10 below).
 
 ## Forward references
 
-This study is extended by @cite{adamson-zompi-2025} (study file
+This study is extended by [adamson-zompi-2025] (study file
 `AdamsonZompi2025.lean`), who use the dual-feature distinction to argue
 that PCC effects diagnose *interpretable* (not agreement) person.
 -/
@@ -53,10 +53,10 @@ open Minimalist.PConstraint
 
 -- The Sells correspondence (§6.2): a P&Z-specific theoretical reading,
 -- defined here in the study file rather than baked into PConstraint.
--- @cite{charnavel-mateu-2015} (page 10) reject the claim that pivot is
+-- [charnavel-mateu-2015] (page 10) reject the claim that pivot is
 -- the relevant logophoric role for clitic clusters.
 
-/-- P&Z's identification of P-Prominence values with @cite{sells-1987}'s
+/-- P&Z's identification of P-Prominence values with [sells-1987]'s
     logophoric roles (paper §6.2). This is the paper's theoretical claim,
     not a framework-neutral fact. -/
 def pProminence_to_sellsRole : PProminence → LogophoricRole
@@ -209,8 +209,8 @@ theorem super_le_strong : superStrongGrammar ≤ strongGrammar := by decide
 -- ============================================================================
 
 /-- P&Z's claim (§6.2): each P-Prominence setting corresponds to a logophoric
-    role of @cite{sells-1987}. *This is the paper's theoretical reading.*
-    @cite{charnavel-mateu-2015} dispute that pivot is the relevant role for
+    role of [sells-1987]. *This is the paper's theoretical reading.*
+    [charnavel-mateu-2015] dispute that pivot is the relevant role for
     clitic clusters; the bridge file `Anaphora/Antilogophoricity.lean`
     documents this disagreement explicitly. -/
 theorem prominence_logophoric_role :
@@ -279,7 +279,7 @@ open Features.Prominence (PersonLevel)
 private def cliticLevel? (p : UD.Person) : Option PersonLevel :=
   PersonLevel.ofUDPerson p
 
--- ── Italian (Romance, weak ∼ strong PCC variation per @cite{adamson-zompi-2025}) ──
+-- ── Italian (Romance, weak ∼ strong PCC variation per [adamson-zompi-2025]) ──
 
 /-- Italian dative *gli* is 3rd person; accusative *ti* is 2nd. The weak
     PCC prediction ⟨3,2⟩ ⇒ illicit is therefore satisfied at these two
@@ -371,7 +371,7 @@ theorem mefirst_three_three_exempt :
     IsLicit meFirstGrammar .third .third := by decide
 
 -- ============================================================================
--- § 10: P&Z's rejection of @cite{charnavel-mateu-2015}'s unification
+-- § 10: P&Z's rejection of [charnavel-mateu-2015]'s unification
 --
 -- Paper page 1308: "We do not think the CLR and the PCC should be unified
 -- along the lines suggested by Charnavel and Mateu (2015). The two
@@ -386,7 +386,7 @@ theorem mefirst_three_three_exempt :
 open CharnavelMateu2015 (LogoCenter CLRViolated)
 
 /-- P&Z's reading of the dative clitic — as a `pivot` (Sells's broadest
-    role) — is incompatible with @cite{charnavel-mateu-2015}'s reading
+    role) — is incompatible with [charnavel-mateu-2015]'s reading
     (page 10), which assigns the dative clitic to `empathyLocus` and
     rejects pivot as relevant for clitic clusters. The two readings map
     `.proximate` to incompatible places. -/

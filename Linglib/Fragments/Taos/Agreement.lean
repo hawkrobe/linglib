@@ -2,15 +2,15 @@ import Linglib.Syntax.Minimalist.Features
 
 /-!
 # Taos Verbal Agreement Fragment
-@cite{kontak-kunkel-1987} @cite{watkins-1984} @cite{harrington-1916}
-@cite{harbour-2014} @cite{harbour-2016} @cite{middleton-2026}
+[kontak-kunkel-1987] [watkins-1984] [harrington-1916]
+[harbour-2014] [harbour-2016] [middleton-2026]
 
 Taos (Kiowa-Tanoan, Northern Tiwa) verbal agreement prefixes index up
 to three arguments — agent (A), goal (G), object (O) — linearized in
-that order @cite{watkins-1984}. The prefix decomposes into person and
+that order [watkins-1984]. The prefix decomposes into person and
 number morphemes whose exponence and ordering are described by
-@cite{middleton-2026} (building on @cite{harbour-2003},
-@cite{harbour-2008}, @cite{harbour-2011}, @cite{harbour-2014}).
+[middleton-2026] (building on [harbour-2003],
+[harbour-2008], [harbour-2011], [harbour-2014]).
 
 This fragment provides only the *morpheme inventory* and a
 representation of agreement prefixes as `FeatureBundle` lists. The
@@ -21,8 +21,8 @@ surface forms — and the theorems about ordering — live in
 ## Person and Number Features (Harbour)
 
 Number features are `[±atomic]` and `[±minimal]`
-(@cite{harbour-2014}); person features are `[±participant]` and
-`[±author]` (@cite{harbour-2016}). Their denotations on Taos:
+([harbour-2014]); person features are `[±participant]` and
+`[±author]` ([harbour-2016]). Their denotations on Taos:
 
 * singular `s` = `[+atomic +minimal]`
 * dual    `d` = `[−atomic +minimal]`
@@ -31,8 +31,8 @@ Number features are `[±atomic]` and `[±minimal]`
 * 2       = `[+participant −author]`
 * 3       = `[−participant −author]`
 
-(Following @cite{middleton-2026} fn. 4, `[−atomic]` is used in place of
-A&N's `[−singular]` for direct compatibility with @cite{harbour-2014}.)
+(Following [middleton-2026] fn. 4, `[−atomic]` is used in place of
+A&N's `[−singular]` for direct compatibility with [harbour-2014].)
 -/
 
 namespace Taos.Agreement
@@ -44,7 +44,7 @@ open Minimalist
 -- ============================================================================
 
 /-- Argument position in a Taos verbal prefix. The linearization is
-    `A G O` (agent, goal, object) per @cite{watkins-1984}. -/
+    `A G O` (agent, goal, object) per [watkins-1984]. -/
 inductive ArgRole where
   | agent
   | goal
@@ -55,16 +55,16 @@ inductive ArgRole where
 -- § 2: Feature Constructors (Harbour)
 -- ============================================================================
 
-/-- A `[±atomic]` feature (@cite{harbour-2014}). -/
+/-- A `[±atomic]` feature ([harbour-2014]). -/
 abbrev fAtomic (b : Bool) : FeatureVal := .atomic b
 
-/-- A `[±minimal]` feature (@cite{harbour-2014}). -/
+/-- A `[±minimal]` feature ([harbour-2014]). -/
 abbrev fMinimal (b : Bool) : FeatureVal := .minimal b
 
-/-- A `[±participant]` feature (@cite{harbour-2016}). -/
+/-- A `[±participant]` feature ([harbour-2016]). -/
 abbrev fParticipant (b : Bool) : FeatureVal := .participant b
 
-/-- A `[±author]` feature (@cite{harbour-2016}). -/
+/-- A `[±author]` feature ([harbour-2016]). -/
 abbrev fAuthor (b : Bool) : FeatureVal := .author b
 
 -- ============================================================================
@@ -91,7 +91,7 @@ def numPl : List FeatureVal := [fAtomic false, fMinimal false]
 
 /-- An argument bundle = its person features then its number features,
     aligned per the Taos ordering convention `[±part]:[±auth]:[±atom]:[±min]`
-    (@cite{middleton-2026} ex. 4 and 5). -/
+    ([middleton-2026] ex. 4 and 5). -/
 def argBundle (person number : List FeatureVal) : FeatureBundle :=
   (person ++ number).map .valued
 
@@ -119,7 +119,7 @@ def prefix_3s_agent : FeatureBundle :=
 -- § 5: Surface Exponents (vocabulary items)
 -- ============================================================================
 
-/-- The Taos morphemes named in @cite{middleton-2026}. We carry them as
+/-- The Taos morphemes named in [middleton-2026]. We carry them as
     strings; vocabulary insertion is not modeled in this fragment
     (it would require a full DM exponent-competition model). The
     relevant facts are exponence rules (20–22), (31), (33), (34),

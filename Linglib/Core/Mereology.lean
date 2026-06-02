@@ -9,7 +9,7 @@ import Mathlib.Order.Hom.Lattice
 
 /-!
 # Algebraic Mereology
-@cite{champollion-2017} @cite{krifka-1989} @cite{krifka-1998} @cite{link-1983}
+[champollion-2017] [krifka-1989] [krifka-1998] [link-1983]
 
 Framework-agnostic mereological infrastructure formalized over Mathlib's
 `SemilatticeSup` (binary join = mereological sum ⊕) and `PartialOrder`
@@ -23,7 +23,7 @@ with part-whole structure.
 2. Higher-Order Properties: CUM, DIV, QUA, Atom
 3. Key Theorems (CUM/DIV/QUA interactions)
 4. Sum Homomorphism
-5. Overlap and Extensive Measures (@cite{krifka-1998} §2.2)
+5. Overlap and Extensive Measures ([krifka-1998] §2.2)
 6. QMOD: Quantizing Modification
 7. Maximality and Atom Counting
 8. QUA/CUM Pullback (contravariant functoriality)
@@ -42,8 +42,8 @@ namespace Mereology
 
 /-- Algebraic closure of a predicate P under join (⊔):
     *P is the smallest set containing P and closed under ⊔.
-    Originates in @cite{link-1983} (D.32); formulation follows
-    @cite{champollion-2017} Ch. 2. -/
+    Originates in [link-1983] (D.32); formulation follows
+    [champollion-2017] Ch. 2. -/
 inductive AlgClosure {α : Type*} [SemilatticeSup α] (P : α → Prop) : α → Prop where
   /-- Base case: everything in P is in *P. -/
   | base {x : α} : P x → AlgClosure P x
@@ -55,14 +55,14 @@ inductive AlgClosure {α : Type*} [SemilatticeSup α] (P : α → Prop) : α →
 -- ════════════════════════════════════════════════════
 
 /-- Cumulative reference (CUM): P is closed under join.
-    @cite{link-1983} (T.11); @cite{krifka-1989} D 12; @cite{champollion-2017} §2.3.2:
+    [link-1983] (T.11); [krifka-1989] D 12; [champollion-2017] §2.3.2:
     `CUMₛ(P) ⇔ ∀x,y. P(x) ∧ P(y) → P(x ∪ₛ y)`.
     Activities and states are canonically cumulative. -/
 def CUM {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
   ∀ (x y : α), P x → P y → P (x ⊔ y)
 
 /-- Divisive reference (DIV): P is closed downward under ≤.
-    @cite{champollion-2017} §2.3.3: DIV(P) ⇔ ∀x,y. P(x) ∧ y ≤ x → P(y).
+    [champollion-2017] §2.3.3: DIV(P) ⇔ ∀x,y. P(x) ∧ y ≤ x → P(y).
     This is the mereological analog of the subinterval property.
     Only requires `Preorder` since the definition only uses `≤`. -/
 def DIV {α : Type*} [Preorder α] (P : α → Prop) : Prop :=
@@ -70,8 +70,8 @@ def DIV {α : Type*} [Preorder α] (P : α → Prop) : Prop :=
 
 /-- Quantized reference (QUA): no proper part of a P-entity is also P.
 
-    @cite{krifka-1989} D 14: `QUAₛ(P) ⇔ ∀x,y. P(x) ∧ P(y) → ¬ y ⊂ₛ x`.
-    @cite{champollion-2017} §2.3.5 reformulates as `∀x,y. P(x) ∧ y < x → ¬P(y)`,
+    [krifka-1989] D 14: `QUAₛ(P) ⇔ ∀x,y. P(x) ∧ P(y) → ¬ y ⊂ₛ x`.
+    [champollion-2017] §2.3.5 reformulates as `∀x,y. P(x) ∧ y < x → ¬P(y)`,
     which is propositionally equivalent (`(A → B → ¬C) ↔ (A → C → ¬B)`).
     Linglib uses Champollion's form because its introduction pattern fits
     intro-style proofs more cleanly (assume `P x` and `y < x`, derive `¬ P y`).
@@ -80,8 +80,8 @@ def QUA {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
   ∀ (x y : α), P x → y < x → ¬ P y
 
 /-- Mereological atom: x has no proper part.
-    @cite{link-1983} (D.10, D.22 condition 2);
-    @cite{champollion-2017} §2.2: Atom(x) ⇔ ¬∃y. y < x.
+    [link-1983] (D.10, D.22 condition 2);
+    [champollion-2017] §2.2: Atom(x) ⇔ ¬∃y. y < x.
     Defined without OrderBot since many domains lack a natural
     bottom element. -/
 def Atom {α : Type*} [PartialOrder α] (x : α) : Prop :=
@@ -127,7 +127,7 @@ theorem algClosure_of_cum {α : Type*} [SemilatticeSup α]
    fun h => AlgClosure.base h⟩
 
 /-- QUA predicates cannot be cumulative (for predicates with ≥ 2 elements).
-    @cite{champollion-2017} §2.3.5: QUA and CUM are incompatible for non-singletons. -/
+    [champollion-2017] §2.3.5: QUA and CUM are incompatible for non-singletons. -/
 theorem qua_cum_incompatible {α : Type*} [SemilatticeSup α]
     {P : α → Prop} (hQ : QUA P)
     {x y : α} (hx : P x) (hy : P y) (hne : x ≠ y) :
@@ -161,7 +161,7 @@ theorem div_closed_under_le {α : Type*} [PartialOrder α]
 
 /-- CUM and QUA partition event predicates (for non-trivial predicates):
     a predicate with ≥ 2 distinct elements cannot be both CUM and QUA.
-    @cite{champollion-2017} §2.3.5. -/
+    [champollion-2017] §2.3.5. -/
 theorem cum_qua_disjoint {α : Type*} [SemilatticeSup α]
     {P : α → Prop}
     (hne : ∃ (x y : α), P x ∧ P y ∧ x ≠ y) :
@@ -198,7 +198,7 @@ theorem algClosure_idempotent {α : Type*} [SemilatticeSup α]
     The three axioms — extensive, monotone, idempotent — are grounded
     in Mathlib's `ClosureOperator`. (Compare with the causal-SEM
     operator `Core.Causal.SEM.developDet`: that operator is
-    info-extensive but NOT order-monotone, per Schulz @cite{schulz-2011}
+    info-extensive but NOT order-monotone, per Schulz [schulz-2011]
     footnote 7, so it does NOT instantiate `ClosureOperator`. The
     mereological case is genuinely closure-operator-shaped.)
 
@@ -220,7 +220,7 @@ def algClosureOp {α : Type*} [SemilatticeSup α] :
 -- ════════════════════════════════════════════════════
 
 /-- A sum homomorphism preserves the join operation.
-    @cite{champollion-2017} §2.5: thematic roles and τ are sum homomorphisms.
+    [champollion-2017] §2.5: thematic roles and τ are sum homomorphisms.
     f(x ⊕ y) = f(x) ⊕ f(y). -/
 class IsSumHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     (f : α → β) : Prop where
@@ -267,11 +267,11 @@ theorem IsSumHom.cum_preimage {α β : Type*}
   exact hCum _ _ hx hy
 
 -- ════════════════════════════════════════════════════
--- § 5. Overlap and Extensive Measures (@cite{krifka-1998} §2.2)
+-- § 5. Overlap and Extensive Measures ([krifka-1998] §2.2)
 -- ════════════════════════════════════════════════════
 
 /-- Mereological overlap: x and y share a common part.
-    @cite{krifka-1998} eq. (1e): O(x, y) ⇔ ∃z. z ≤ x ∧ z ≤ y. -/
+    [krifka-1998] eq. (1e): O(x, y) ⇔ ∃z. z ≤ x ∧ z ≤ y. -/
 def Overlap {γ : Type*} [PartialOrder γ] (x y : γ) : Prop :=
   ∃ z, z ≤ x ∧ z ≤ y
 
@@ -285,7 +285,7 @@ theorem Overlap.symm {γ : Type*} [PartialOrder γ] {x y : γ}
   let ⟨z, hzx, hzy⟩ := h; ⟨z, hzy, hzx⟩
 
 /-- Extensive measure function: additive over non-overlapping entities.
-    @cite{krifka-1998} §2.2, eq. (7): μ(x ⊕ y) = μ(x) + μ(y) when ¬O(x,y).
+    [krifka-1998] §2.2, eq. (7): μ(x ⊕ y) = μ(x) + μ(y) when ¬O(x,y).
     Examples: weight, volume, number (cardinality). -/
 class ExtMeasure (α : Type*) [SemilatticeSup α]
     (μ : α → ℚ) : Prop where
@@ -301,7 +301,7 @@ class ExtMeasure (α : Type*) [SemilatticeSup α]
 
 /-- Measure phrases create QUA predicates: {x : μ(x) = n} is QUA
     whenever μ is an extensive measure.
-    @cite{krifka-1998} §2.2: "two kilograms of flour" is QUA because
+    [krifka-1998] §2.2: "two kilograms of flour" is QUA because
     no proper part of a 2kg entity also weighs 2kg. -/
 theorem extMeasure_qua {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} [hμ : ExtMeasure α μ] (n : ℚ) (_hn : 0 < n) :
@@ -312,11 +312,11 @@ theorem extMeasure_qua {α : Type*} [SemilatticeSup α]
   exact absurd hsm (lt_irrefl _)
 
 -- ════════════════════════════════════════════════════
--- § 6. QMOD: Quantizing Modification (@cite{krifka-1989})
+-- § 6. QMOD: Quantizing Modification ([krifka-1989])
 -- ════════════════════════════════════════════════════
 
 /-- Quantizing modification: intersect predicate R with a measure constraint.
-    @cite{krifka-1989}: QMOD(R, μ, n) = λx. R(x) ∧ μ(x) = n.
+    [krifka-1989]: QMOD(R, μ, n) = λx. R(x) ∧ μ(x) = n.
     "three kilos of rice" = QMOD(rice, μ_kg, 3).
     This is the operation that turns a CUM mass noun into a QUA measure phrase. -/
 def QMOD {α μTy : Type*} (R : α → Prop) (μ : α → μTy) (n : μTy) : α → Prop :=
@@ -328,15 +328,15 @@ theorem qmod_sub {α μTy : Type*} {R : α → Prop} {μ : α → μTy} {n : μT
   h.1
 
 -- ════════════════════════════════════════════════════
--- § 6b. Atomization (@cite{little-moroney-royer-2022})
+-- § 6b. Atomization ([little-moroney-royer-2022])
 -- ════════════════════════════════════════════════════
 
 /-- Atomize a predicate: restrict P to its atomic members.
-    @cite{little-moroney-royer-2022} eq. (13):
+    [little-moroney-royer-2022] eq. (13):
     ⟦CLF⟧ = λPλx.[P(x) ∧ ¬∃y[P(y) ∧ y < x]]
 
-    In classifier-for-noun theories (@cite{chierchia-1998}; @cite{jenks-2011};
-    @cite{dayal-2012}; @cite{nomoto-2013}), the classifier atomizes the noun
+    In classifier-for-noun theories ([chierchia-1998]; [jenks-2011];
+    [dayal-2012]; [nomoto-2013]), the classifier atomizes the noun
     denotation so the numeral can count individual entities. This is the
     semantic contribution that distinguishes CLF-for-N from CLF-for-NUM. -/
 def atomize {α : Type*} [PartialOrder α] (P : α → Prop) : α → Prop :=
@@ -362,16 +362,16 @@ theorem atomize_of_cum_is_qua {α : Type*} [SemilatticeSup α]
   atomize_qua
 
 -- ════════════════════════════════════════════════════
--- § 7. Maximality and Atom Counting (@cite{charlow-2021})
+-- § 7. Maximality and Atom Counting ([charlow-2021])
 -- ════════════════════════════════════════════════════
 
 /-- Maximal in P under ≤: x is in P and no proper extension of x is in P.
-    Used by @cite{charlow-2021} for the M_v operator (mereological maximization). -/
+    Used by [charlow-2021] for the M_v operator (mereological maximization). -/
 def isMaximal {α : Type*} [PartialOrder α] (P : α → Prop) (x : α) : Prop :=
   P x ∧ ∀ (y : α), P y → x ≤ y → x = y
 
 /-- Count atoms below x, using classical decidability.
-    Used by @cite{charlow-2021} for cardinality tests on plural individuals. -/
+    Used by [charlow-2021] for cardinality tests on plural individuals. -/
 noncomputable def atomCount (α : Type*) [PartialOrder α] [Fintype α]
     (x : α) : Nat :=
   @Finset.card α (Finset.univ.filter (λ a => @decide (Atom a ∧ a ≤ x) (Classical.dec _)))
@@ -552,7 +552,7 @@ theorem IsSumHom.strictMono_of_injective {α β : Type*}
     relational proof (needing UP + MSO) reduces to functional
     `qua_pullback` via `StrictMono`.
 
-    This is the functional special case of @cite{krifka-1998} §3.3:
+    This is the functional special case of [krifka-1998] §3.3:
     SINC(θ) ∧ QUA(OBJ) → QUA(VP θ OBJ), where θ is a function
     rather than a relation, and SINC reduces to IsSumHom + Injective.
 
@@ -582,10 +582,10 @@ theorem cum_qua_dimension_disjoint {α β : Type*}
   cum_qua_disjoint ⟨x, y, hx, hy, hne⟩
 
 -- ════════════════════════════════════════════════════
--- § 13. g-Homogeneity (@cite{deal-2017})
+-- § 13. g-Homogeneity ([deal-2017])
 -- ════════════════════════════════════════════════════
 
-/-- g-homogeneous reference (@cite{deal-2017}): every proper part of a
+/-- g-homogeneous reference ([deal-2017]): every proper part of a
     P-entity has a P-part below it.
 
       DIV → g-homogeneous    (proved: `div_implies_gHomogeneous`)
@@ -595,7 +595,7 @@ theorem cum_qua_dimension_disjoint {α β : Type*}
     proper parts — vacuously g-homogeneous — but `a ⊔ b ∉ P`), and CUM
     without being g-homogeneous (fake mass nouns, see `FakeMass`).
 
-    NOTE: this is a simplified version of @cite{deal-2017}'s full
+    NOTE: this is a simplified version of [deal-2017]'s full
     definition, which involves CUM conjoined with one of four conditions
     about minimal parts (divisive, lacking stable/non-overlapping/
     non-strongly-connected minimal parts). Our formalization captures the
@@ -603,7 +603,7 @@ theorem cum_qua_dimension_disjoint {α β : Type*}
 
     Mass nouns are g-homogeneous: every part of water contains water.
     Fake mass nouns (English "furniture", Shan bare nouns per
-    @cite{moroney-2021}) are CUM but NOT g-homogeneous: a leg of a
+    [moroney-2021]) are CUM but NOT g-homogeneous: a leg of a
     chair is part of the furniture but is not itself furniture. -/
 def gHomogeneous {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
   ∀ (x y : α), P x → y < x → ∃ z, z ≤ y ∧ P z
@@ -629,7 +629,7 @@ theorem atom_gHomogeneous_trivial {α : Type*} [PartialOrder α]
   exact absurd (hAtom y (le_of_lt hlt)) (ne_of_lt hlt)
 
 /-- A predicate that is cumulative but NOT g-homogeneous has "fake mass"
-    behavior (@cite{deal-2017}; @cite{moroney-2021} §2.4): sums of
+    behavior ([deal-2017]; [moroney-2021] §2.4): sums of
     P-entities are P-entities (CUM), but parts of P-entities need not
     contain any P-entity (failure of g-homogeneity). English "furniture"
     and Shan bare nouns exhibit this pattern: the sum of two chairs is
@@ -641,12 +641,12 @@ def FakeMass {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
   CUM P ∧ ¬ gHomogeneous P
 
 -- ════════════════════════════════════════════════════
--- § 14. Convex Closure (@cite{kriz-spector-2021} def. 21)
+-- § 14. Convex Closure ([kriz-spector-2021] def. 21)
 -- ════════════════════════════════════════════════════
 
 /-- Convex closure under a partial order: add all elements "in between"
     existing members. z is in-between x and y if x ≤ z ≤ y.
-    @cite{kriz-spector-2021} def. 21: Conv_⊑(A) is the smallest superset
+    [kriz-spector-2021] def. 21: Conv_⊑(A) is the smallest superset
     of A such that for any x, y ∈ A, every z with x ⊑ z ⊑ y is also in
     Conv_⊑(A). One step suffices because ⊑ is transitive. -/
 def convexClosure {α : Type*} [PartialOrder α] (S : Set α) : Set α :=
@@ -694,7 +694,7 @@ def convexClosureOp {α : Type*} [PartialOrder α] :
   idempotent' := convexClosure_idempotent
 
 -- ════════════════════════════════════════════════════
--- § 15. Conjunctive Parthood (Jago Def 5; @cite{jago-2026})
+-- § 15. Conjunctive Parthood (Jago Def 5; [jago-2026])
 -- ════════════════════════════════════════════════════
 
 /-- **Down clause** of conjunctive parthood: every element of `p` has a
@@ -708,7 +708,7 @@ def IsSubsumedBy {α : Type*} [Preorder α] (q p : α → Prop) : Prop :=
 def Subserves {α : Type*} [Preorder α] (q p : α → Prop) : Prop :=
   ∀ s, q s → ∃ t, p t ∧ s ≤ t
 
-/-- **Conjunctive parthood** (@cite{jago-2026} Def 5):
+/-- **Conjunctive parthood** ([jago-2026] Def 5):
     `q` is a content part of `p` iff both Down (`IsSubsumedBy`) and Up
     (`Subserves`) clauses hold. -/
 def IsContentPart {α : Type*} [Preorder α] (q p : α → Prop) : Prop :=
@@ -764,7 +764,7 @@ end IsContentPart
 
 -- ════════════════════════════════════════════════════
 -- § 16. Strict-Part Reflection and Preservation
---      (paper @cite{bondarenko-elliott-2026} eqs. 53/54)
+--      (paper [bondarenko-elliott-2026] eqs. 53/54)
 -- ════════════════════════════════════════════════════
 
 /-- **Strict-part reflection** for a partial function.
@@ -797,7 +797,7 @@ def StrictPartPreserving {α β : Type*} [Preorder α] [Preorder β]
     `{q}`-element below it; with only `q` available, `q ≤ q'` must hold
     for every `q' ∈ p`.
 
-    Used for paper @cite{bondarenko-elliott-2026} eq. 95 to discriminate
+    Used for paper [bondarenko-elliott-2026] eq. 95 to discriminate
     classical entailment from conjunctive parthood. -/
 theorem not_isContentPart_of_singleton_not_le {α : Type*} [Preorder α]
     {q : α} {p : α → Prop} {q' : α} (hq' : p q') (h : ¬ q ≤ q') :

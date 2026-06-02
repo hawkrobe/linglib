@@ -3,8 +3,8 @@ import Linglib.Syntax.Minimalist.Ellipsis.Nominal
 import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
 
 /-!
-# Minimalist Nominal Spine → NP-Ellipsis @cite{saab-2026}
-@cite{lobeck-1995} @cite{ritter-1991}
+# Minimalist Nominal Spine → NP-Ellipsis [saab-2026]
+[lobeck-1995] [ritter-1991]
 
 Connects the Minimalist nominal extended projection (N → n → Q → Num → D)
 to the NP-ellipsis data in Spanish binominals.

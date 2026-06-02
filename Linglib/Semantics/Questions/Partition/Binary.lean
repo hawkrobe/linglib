@@ -3,7 +3,7 @@ import Linglib.Semantics.Questions.Partition.Lattice
 
 /-!
 # Binary Partitions and P-Preserving Coarsenings
-@cite{merin-1999}
+[merin-1999]
 
 Yes/no partitions induced by Boolean predicates, plus the coarsest
 P-preserving coarsening of a given partition:
@@ -32,13 +32,13 @@ variable {M : Type*}
 
 Binary partitions are the building blocks of coarsening: every proper
 coarsening can be decomposed into steps that merge exactly two cells,
-each corresponding to a binary partition. @cite{merin-1999} characterizes
+each corresponding to a binary partition. [merin-1999] characterizes
 negative attributes entirely in terms of binary partition coarsening. -/
 abbrev binaryPartition (p : M → Bool) : QUD M := ofProject p
 
 /-- Complement predicates induce the same binary partition.
 
-@cite{merin-1999}: a proposition and its negation carry exactly the same
+[merin-1999]: a proposition and its negation carry exactly the same
 information. {P-worlds, ¬P-worlds} = {¬P-worlds, P-worlds} as partitions. -/
 theorem complement_same_partition (p : M → Bool) (w v : M) :
     (binaryPartition p).sameAnswer w v =
@@ -55,7 +55,7 @@ theorem binaryPartition_coarsens (q : QUD M) (p : M → Bool)
   simp only [ofProject_sameAnswer, beq_iff_eq]
   exact h w v hq
 
-/-! ### Coarsest P-Preserving Coarsening (@cite{merin-1999}, Fact 3) -/
+/-! ### Coarsest P-Preserving Coarsening ([merin-1999], Fact 3) -/
 
 /-- The coarsest coarsening of Q that preserves predicate P.
 
@@ -63,7 +63,7 @@ Two elements are equivalent iff they are Q-equivalent AND agree on P.
 This is the meet of Q with the binary partition of P: the finest partition
 that is coarser than both Q and binaryPartition P.
 
-@cite{merin-1999}: for any proposition P and partition Q, this is the unique
+[merin-1999]: for any proposition P and partition Q, this is the unique
 coarsest partition that refines Q while still distinguishing P-worlds
 from ¬P-worlds within each Q-cell. -/
 def coarsestPreserving (q : QUD M) (P : M → Bool) : QUD M :=

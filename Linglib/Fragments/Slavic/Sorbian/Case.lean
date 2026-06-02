@@ -2,9 +2,9 @@ import Linglib.Fragments.Slavic.Case
 
 /-!
 # Sorbian Case Inventory (Upper and Lower)
-@cite{stone-1993-sorbian} @cite{blake-1994}
+[stone-1993-sorbian] [blake-1994]
 
-Per @cite{stone-1993-sorbian} (p. 614): "Upper Sorbian has seven cases
+Per [stone-1993-sorbian] (p. 614): "Upper Sorbian has seven cases
 (nominative, vocative, accusative, genitive, dative, instrumental and
 locative). Lower Sorbian, having lost the vocative, has only six
 cases. All the dialects have at least six cases. ... Even in Upper
@@ -19,8 +19,8 @@ adds a productive masc-sg VOC. The Lower Sorbian vocative is attested
 Stone (p. 614) also documents that "in both Upper and Lower Sorbian
 the independent, prepositionless function of the instrumental has been
 lost" — the marked Slavic INST-prepositional pattern (cf. Slovene per
-@cite{priestly-1993}; contrast with Russian @cite{timberlake-1993} and
-Cassubian @cite{stone-1993-cassubian} where bare predicative INST is
+[priestly-1993]; contrast with Russian [timberlake-1993] and
+Cassubian [stone-1993-cassubian] where bare predicative INST is
 robust).
 -/
 

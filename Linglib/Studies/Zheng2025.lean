@@ -6,7 +6,7 @@ import Linglib.Semantics.Questions.Singleton
 import Linglib.Studies.BhattDayal2020
 
 /-!
-# Zheng (2025): Nandao-Q Felicity @cite{zheng-2025}
+# Zheng (2025): Nandao-Q Felicity [zheng-2025]
 
 Mandarin *nandao*-question felicity. Self-contained study file:
 empirical data, the Mandarin Fragment entry, and bridges to the
@@ -51,7 +51,7 @@ namespace Zheng2025
 
 /-- A nandao-Q felicity datum. -/
 structure NandaoDatum where
-  /-- Example number from @cite{zheng-2025} -/
+  /-- Example number from [zheng-2025] -/
   exampleNum : String
   /-- Context description -/
   context : String
@@ -238,14 +238,14 @@ theorem kernel_requires_evidence (k : Kernel World) (u : Background World) (φ :
   h.1
 
 -- ════════════════════════════════════════════════════════════════════════════
--- §3 — Left-Peripheral Layer Assignments (@cite{dayal-2025} cartography)
+-- §3 — Left-Peripheral Layer Assignments ([dayal-2025] cartography)
 -- ════════════════════════════════════════════════════════════════════════════
 
 open Features (QParticleLayer)
 open Mandarin.QuestionParticles (QuestionParticleEntry ma ba)
 
 /-- Zheng's layer assignments for the three Mandarin Q-particles in the
-    @cite{dayal-2025} cartography `[SAP [PerspP [CP ...]]]`. The `_`
+    [dayal-2025] cartography `[SAP [PerspP [CP ...]]]`. The `_`
     argument is unused: the layer is a theoretical overlay on the
     fragment particle, not a computed property of its lexical fields. -/
 def ma_layer     (_ : QuestionParticleEntry) : QParticleLayer := .cp
@@ -274,11 +274,11 @@ theorem layer_correlates_with_bias :
 -- §4 — Singleton-Alternative Presupposition (parallel to kya:)
 -- ════════════════════════════════════════════════════════════════════════════
 
-/-! @cite{bhatt-dayal-2020} fn. 11 explicitly cites the parallel
+/-! [bhatt-dayal-2020] fn. 11 explicitly cites the parallel
 Mandarin *nandao* analysis as the model for their kya: proposal.
 At the algebraic level, both particles share the same singleton
 presupposition: their sister question must denote a singleton-cell
-issue (@cite{bhatt-dayal-2020} eq. 23). The cross-particle
+issue ([bhatt-dayal-2020] eq. 23). The cross-particle
 generalization is captured by inheriting the same
 `Question.IsSingleton` predicate — both kya: and nandao take a
 `SingletonQuestion W` as well-typed sister content. -/
@@ -299,7 +299,7 @@ theorem nandao_felicitous_declarative (p : Set W) :
 /-- **Cross-particle agreement**: the felicity conditions for kya: and
     nandao on a one-cell polar are *the same theorem* — both reduce to
     `isSingleton_declarative`. The convergence noted in
-    @cite{bhatt-dayal-2020} fn. 11 holds by construction. -/
+    [bhatt-dayal-2020] fn. 11 holds by construction. -/
 theorem nandao_kya_share_felicity (p : Set W) :
     nandao_felicitous_declarative (W := W) p =
       BhattDayal2020.kya_felicitous_declarative
@@ -313,7 +313,7 @@ theorem nandao_kya_share_felicity (p : Set W) :
 
   - **Layer 1** (Question-level, §4): the sister content `Q : Question World`
     is *singleton* — `alt Q = {p}` for some unique witness `p`. This is the
-    @cite{bhatt-dayal-2020} eq. 23 presupposition: nandao requires a
+    [bhatt-dayal-2020] eq. 23 presupposition: nandao requires a
     one-cell sister, not a two-cell Hamblin polar.
   - **Layer 2** (Kernel-level, §2): the Kernel-bias check
     `nandaoFelicitous k u p` holds for the witness — the evidence in `K`
@@ -387,7 +387,7 @@ theorem nandaoFullFelicity_declarative_iff {p : Set World} [DecidablePred p]
 -- §6 — Empirical Closure: §1 datum (biasedUse) ↔ §5 integrated felicity
 -- ════════════════════════════════════════════════════════════════════════════
 
-/-! Apply §5 to the canonical biased-use scenario from @cite{zheng-2025} ex. 2:
+/-! Apply §5 to the canonical biased-use scenario from [zheng-2025] ex. 2:
 
   - K = `[wearingRaincoat]` — direct evidence (B enters with dripping coat)
   - U = `[expectDry]` — A's prior expectation it is not raining
@@ -416,7 +416,7 @@ theorem biasedUse_integrated_felicity :
 /-- **Data ↔ theory bridge**: the §1 datum `biasedUse` is felicitous and
     has both bias profiles set; the §5 integrated felicity holds for the
     matching Kernel scenario. The shared scaffold is the dripping-raincoat
-    setup of @cite{zheng-2025} ex. 2 — empirical observation on the data
+    setup of [zheng-2025] ex. 2 — empirical observation on the data
     side, derived prediction on the theory side. -/
 theorem biasedUse_witnesses_integrated_felicity :
     biasedUse.felicitous = true ∧

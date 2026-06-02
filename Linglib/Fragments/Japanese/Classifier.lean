@@ -6,7 +6,7 @@ import Linglib.Typology.ClassifierSystem
 
 /-!
 # Japanese Numeral Classifier Inventory
-@cite{aikhenvald-2000} @cite{downing-1996} @cite{sudo-2016}
+[aikhenvald-2000] [downing-1996] [sudo-2016]
 
 The closed inventory of Japanese numeral classifiers (josūshi 助数詞) as a
 finite inductive type. Properties (form, gloss, encoded semantic
@@ -24,12 +24,12 @@ every projection function and every consumer that pattern-matches on
 
 ## Inventory provenance
 
-- 27 core entries from @cite{downing-1996} (UNVERIFIED: claimed to be
+- 27 core entries from [downing-1996] (UNVERIFIED: claimed to be
   Table 1.1 by the prior fragment file; cited tables/page numbers not
   cross-checked against the monograph).
-- 6 extended entries from @cite{downing-1996} (UNVERIFIED: claimed to be
+- 6 extended entries from [downing-1996] (UNVERIFIED: claimed to be
   Table 1.2; same caveat).
-- 3 additional entries (`rin`, `kumi`, `daasu`) from @cite{sudo-2016}
+- 3 additional entries (`rin`, `kumi`, `daasu`) from [sudo-2016]
   worked examples (eq. 4 for `-rin`, eq. 9a for `-kumi`, eq. 9b for
   `-daasu` — verified against the PDF).
 
@@ -75,18 +75,18 @@ inductive Classifier where
 
 namespace Classifier
 
-/-- The 27 core classifiers from @cite{downing-1996} (UNVERIFIED: Table 1.1). -/
+/-- The 27 core classifiers from [downing-1996] (UNVERIFIED: Table 1.1). -/
 def core : List Classifier :=
   [.tsu, .nin, .mei, .hiki, .tou,
    .hon, .mai, .ko, .satsu, .tsubu,
    .dai, .kenBuilding, .kenIncident, .ki, .ku, .kyoku, .mon, .mune,
    .seki, .soku, .soo, .ten, .toori, .tsuu, .kabu, .shoku, .teki]
 
-/-- The 6 extended classifiers from @cite{downing-1996} (UNVERIFIED: Table 1.2). -/
+/-- The 6 extended classifiers from [downing-1996] (UNVERIFIED: Table 1.2). -/
 def extended : List Classifier :=
   [.sao, .wa, .furi, .zen, .kyaku, .hai]
 
-/-- The 3 additional classifiers from @cite{sudo-2016}'s worked examples
+/-- The 3 additional classifiers from [sudo-2016]'s worked examples
     (eqs. 4, 9a, 9b): `-rin` (flowers), `-kumi` (pair), `-daasu` (dozen). -/
 def sudoAdditions : List Classifier :=
   [.rin, .kumi, .daasu]
@@ -157,7 +157,7 @@ def gloss : Classifier → String
 /-! ## §2: Semantic parameters and shape -/
 
 /-- The semantic parameters this classifier encodes
-    (@cite{aikhenvald-2000} typological vocabulary).
+    ([aikhenvald-2000] typological vocabulary).
 
     Every constructor has an explicit arm; no fall-through. Adding a
     classifier requires deciding what it encodes — the type checker
@@ -205,8 +205,8 @@ def encodes : Classifier → List SemanticParameter
   -- arrangement
   | .kumi => [.arrangement, .quanta]
 
-/-- Shape dimensionality sub-classification per @cite{allan-1977}'s
-    1D/2D/3D scheme (cf. @cite{downing-1996}). Only meaningful when
+/-- Shape dimensionality sub-classification per [allan-1977]'s
+    1D/2D/3D scheme (cf. [downing-1996]). Only meaningful when
     `encodes` includes `.shape`.
 
     `-rin` 輪 is left as `none`: although it encodes shape, it tracks

@@ -2,7 +2,7 @@ import Linglib.Typology.ClassifierSystem
 
 /-!
 # Italian noun-categorization system
-@cite{aikhenvald-2000} @cite{chierchia-1998}
+[aikhenvald-2000] [chierchia-1998]
 
 Classifier-system data for Italian (ISO `ita`): 2-class gender system
 (masculine/feminine).
@@ -24,6 +24,6 @@ def classifierSystem : Typology.NounCategorizationSystem :=
   , hasUnmarkedDefault := true  -- masculine is unmarked
   , preferredSemantics := [.sex, .animacy]
   , hasObligatoryNumber := true  -- il/i, la/le, un/una
-  , source := "@cite{aikhenvald-2000} §2; @cite{chierchia-1998}" }
+  , source := "[aikhenvald-2000] §2; [chierchia-1998]" }
 
 end Italian

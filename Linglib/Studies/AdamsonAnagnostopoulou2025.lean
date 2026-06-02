@@ -4,7 +4,7 @@ import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Features.Gender
 
 /-!
-# Adamson & Anagnostopoulou 2025 @cite{adamson-anagnostopoulou-2025}
+# Adamson & Anagnostopoulou 2025 [adamson-anagnostopoulou-2025]
 
 Gender Features and Coordination Resolution in Greek and Other
 Three-Gendered Languages: Implications for the Crosslinguistic
@@ -68,7 +68,7 @@ open Minimalist.Agreement.GenderResolution
 
 /-- Privative feature nodes in the gender geometry (§2.2).
 
-    @cite{adamson-anagnostopoulou-2025} modifies @cite{harley-ritter-2002}:
+    [adamson-anagnostopoulou-2025] modifies [harley-ritter-2002]:
     features are organized in language-specific hierarchies where more
     specific features entail broader features. The same labels appear
     across languages, but their geometric arrangement — and hence their
@@ -690,7 +690,7 @@ theorem icelandic_fem_not_entails_masc :
 
     The ad-hoc `greekVI` function above implements the Subset Principle
     procedurally. Here we define the same vocabulary as `FeatureVI` items
-    (@cite{halle-marantz-1993}) and prove that `subsetPrinciple` selects
+    ([halle-marantz-1993]) and prove that `subsetPrinciple` selects
     the same exponents. This connects the gender resolution mechanism to
     the formal DM vocabulary insertion framework. -/
 
@@ -779,7 +779,7 @@ theorem greek_order_cls_not_entails_masc :
 
 /-! ### MRH as a property of geometries
 
-    @cite{adamson-anagnostopoulou-2025}'s Mismatch Resolution Hypothesis:
+    [adamson-anagnostopoulou-2025]'s Mismatch Resolution Hypothesis:
     Greek satisfies MRH because ALL pairwise resolution outcomes produce
     non-empty intersections — no default insertion is ever needed.
 

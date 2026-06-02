@@ -5,7 +5,7 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # Belnap 1970: Conditional Assertion and Restricted Quantification
-@cite{belnap-1970}
+[belnap-1970]
 
 Nuel D. Belnap Jr. Conditional Assertion and Restricted Quantification.
 *Noûs* 4(1): 1–12, 1970.
@@ -39,7 +39,7 @@ black" = "Consider the crows: each one is black."
   equals `every_sem` from generalized quantifier infrastructure
 - `belnap_exists_content_eq_some`: same for restricted ∃
 - `subalternation_a_i` (in `Quantifier.lean`): the non-empty-restrictor
-  condition that Belnap derives is exactly what @cite{strawson-1952}
+  condition that Belnap derives is exactly what [strawson-1952]
   stipulated as a presupposition of universals
 - `content_square_relations`: concrete `SquareRelations` instance from
   `Aristotelian.Square`, connecting to the abstract algebraic framework
@@ -53,13 +53,13 @@ Belnap's derivation is one of three independent routes to restricted
 quantification in linglib:
 
 1. **Conditional assertion** (this file): ∀x(Cx/Bx) = conditional assertion
-   + universal quantification. @cite{belnap-1970}
+   + universal quantification. [belnap-1970]
 2. **Kratzer restrictor**: if-clauses restrict modal bases, deriving
-   restricted quantification from modality. @cite{kratzer-1986}
+   restricted quantification from modality. [kratzer-1986]
    See `Semantics/Conditionals/Restrictor.lean`.
 3. **Domain restriction**: contextual predicates intersect the restrictor,
    deriving restricted quantification from pragmatics.
-   @cite{von-fintel-1994} @cite{stanley-szab-2000}
+   [von-fintel-1994] [stanley-szab-2000]
    See `Semantics/Lexical/Determiner/DomainRestriction.lean`.
 
 The convergence of three independent mechanisms on the same result
@@ -168,7 +168,7 @@ theorem belnap_exists_content_eq_some {m : Frame} [Fintype m.Entity]
     assertiveness condition for ∀x(Cx/Bx) is exactly the existential
     presupposition of universal quantifiers.
 
-    @cite{strawson-1952} argued "All S are P" *presupposes* there are Ss.
+    [strawson-1952] argued "All S are P" *presupposes* there are Ss.
     Belnap *derives* this: ∀x(Cx/Bx) is nonassertive when nothing
     satisfies C. See also `subalternation_a_i` in `Quantifier.lean`,
     which proves the consequence: every(R,S) entails some(R,S)

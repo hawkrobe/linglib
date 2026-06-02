@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Intensional.Rigidity
 
 /-!
 # Context Tower
-@cite{abusch-1997} @cite{anand-nevins-2004} @cite{cumming-2026} @cite{schlenker-2003}
+[abusch-1997] [anand-nevins-2004] [cumming-2026] [schlenker-2003]
 
 A depth-indexed stack of context shifts unifying the codebase's context-manipulation
 mechanisms: Kaplanian indexicals (origin access), shifted indexicals (local access),
@@ -40,7 +40,7 @@ namespace Core.Context
 inductive ShiftLabel where
   | attitude    -- attitude verb embedding (believe, say, want)
   | temporal    -- temporal shift (sequence of tense, historical present)
-  | evidential  -- evidential perspective shift (@cite{cumming-2026})
+  | evidential  -- evidential perspective shift ([cumming-2026])
   | mood        -- mood operator (SUBJ situation introduction)
   | perspective -- full perspective shift (FID: agent + time + world)
   | quotation   -- direct quotation

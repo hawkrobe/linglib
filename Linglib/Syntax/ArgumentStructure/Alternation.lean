@@ -4,18 +4,18 @@ import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 /-!
 # Valency Alternation Typology
 
-@cite{comrie-1989} @cite{dixon-1994} @cite{dixon-aikhenvald-2000} @cite{song-1996}
-@cite{creissels-2025} @cite{levin-1993}
+[comrie-1989] [dixon-1994] [dixon-aikhenvald-2000] [song-1996]
+[creissels-2025] [levin-1993]
 
 A framework-neutral vocabulary for describing valency alternations
 cross-linguistically. The underlying typology of valency-changing operations —
 causative, anticausative/decausative, passive, antipassive, applicative,
 reflexive/reciprocal, and the increase or decrease of core arguments — is the
-cross-framework consensus of @cite{comrie-1989}, @cite{dixon-1994} on
-ergativity and A/S/P, @cite{dixon-aikhenvald-2000}'s *Changing Valency*, and
-@cite{song-1996} on causatives. @cite{creissels-2025} provides the modern
+cross-framework consensus of [comrie-1989], [dixon-1994] on
+ergativity and A/S/P, [dixon-aikhenvald-2000]'s *Changing Valency*, and
+[song-1996] on causatives. [creissels-2025] provides the modern
 synthesis and the nucleativization/denucleativization terminology used here;
-@cite{levin-1993} supplies the English diathesis-alternation inventory bridged
+[levin-1993] supplies the English diathesis-alternation inventory bridged
 in the final section.
 
 This file is substrate: it defines the alternation *types*. Per-paper data and
@@ -24,7 +24,7 @@ cross-linguistic distributions live in the consuming study files (e.g.
 
 ## TR-roles
 
-@cite{creissels-2025} §1.3.3 defines Transitivity-Related roles (A, P, S, X)
+[creissels-2025] §1.3.3 defines Transitivity-Related roles (A, P, S, X)
 as *constructional* properties of nominal terms, not semantic roles. A is
 "the nominal term whose coding matches the agent of a prototypical transitive
 verb" — it's defined by coding (flagging, indexation, order), anchored to
@@ -45,11 +45,11 @@ nucleativized or denucleativized, and what TR-roles they acquire.
 
 ## Unification with Levin alternations
 
-@cite{levin-1993}'s `DiathesisAlternation` captures English-specific
+[levin-1993]'s `DiathesisAlternation` captures English-specific
 alternation patterns. Each maps to a `ValencyAlternation` that specifies
 the structural effect. The key distinction: Levin alternations are often
 *uncoded* (flexivalency — no verbal morphology marks the alternation),
-while @cite{creissels-2025}'s voice alternations are *coded* (marked by
+while [creissels-2025]'s voice alternations are *coded* (marked by
 verbal morphology). The `marking` field captures this.
 -/
 
@@ -149,7 +149,7 @@ def AlternationMarking.isVoice : AlternationMarking → Bool
 
 /-- A valency alternation defined by its structural effect on participants.
 
-    This is the unified type subsuming both @cite{levin-1993}'s English-specific
+    This is the unified type subsuming both [levin-1993]'s English-specific
     diathesis alternations and cross-linguistic voice
     alternation types. Each alternation specifies:
     - What happens to each participant of the initial construction
@@ -518,7 +518,7 @@ theorem portative_increases :
 -- § 11. Bridge: Levin DiathesisAlternation → ValencyAlternation
 -- ════════════════════════════════════════════════════
 
-/-- Map @cite{levin-1993}'s English-specific diathesis alternations to
+/-- Map [levin-1993]'s English-specific diathesis alternations to
     cross-linguistic valency alternation types.
 
     Key insight: most Levin alternations are UNCODED (flexivalency) in

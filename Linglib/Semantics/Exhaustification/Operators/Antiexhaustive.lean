@@ -1,7 +1,7 @@
 import Linglib.Semantics.Exhaustification.Operators.Basic
 
 /-!
-# Antiexhaustive Operator O⁻ @cite{chierchia-2006}
+# Antiexhaustive Operator O⁻ [chierchia-2006]
 
 Chierchia's `O⁻` is distinct from `O` (exhaustification/only) and `E`
 (even-like enrichment). While `O` negates stronger alternatives, `O⁻`
@@ -19,7 +19,7 @@ universal force.
 
 ## Deriving Universal Force from Antiexhaustive Enrichment
 
-@cite{chierchia-2006} §5.1: When `O⁻` is applied to an existential
+[chierchia-2006] §5.1: When `O⁻` is applied to an existential
 `∃x∈D.P(x)` with `D-MIN` alternatives (all subdomains), the enriched
 meaning requires the existential to hold over every subdomain — equivalent
 to universal force. The formal engine behind FCI universal readings.
@@ -32,7 +32,7 @@ variable {World : Type*}
 /-- Antiexhaustive enrichment `O⁻`: assert the prejacent and every
     alternative.
 
-    Simplified from @cite{chierchia-2006} definition (108c) / (62). The
+    Simplified from [chierchia-2006] definition (108c) / (62). The
     paper defines `O⁻_C(p) = p ∧ ∀q,q'∈C [q → q']` where `q'` has domain
     complementary to `q` — i.e., mutual entailment between all
     domain-alternative pairs. We simplify to the equivalent truth

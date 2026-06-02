@@ -4,13 +4,13 @@ import Mathlib.Order.Defs.LinearOrder
 
 /-!
 # Measure Functions, Difference Functions, and Measure of Change
-@cite{kennedy-levin-2008} @cite{hay-kennedy-levin-1999} @cite{kennedy-mcnally-2005}
-@cite{bartsch-vennemann-1972} @cite{kennedy-1999}
+[kennedy-levin-2008] [hay-kennedy-levin-1999] [kennedy-mcnally-2005]
+[bartsch-vennemann-1972] [kennedy-1999]
 
-The substrate for @cite{kennedy-levin-2008}'s "Measure of Change"
+The substrate for [kennedy-levin-2008]'s "Measure of Change"
 analysis of degree achievements (DAs) — the time-indexed measure
 functions that gradable adjectives lexicalise (introduced in
-@cite{hay-kennedy-levin-1999} eq. 11; restated in K&L 2008 §7.3.1
+[hay-kennedy-levin-1999] eq. 11; restated in K&L 2008 §7.3.1
 main text on p. 167), the difference functions derived from them
 (K&L eq. 23), and the measure-of-change function `m_Δ` that powers
 the DA semantics (K&L eq. 25).
@@ -27,7 +27,7 @@ the DA semantics (K&L eq. 25).
 
 K&L 2008 fn 9 is about the *alternative* ⟨d,⟨e,t⟩⟩ analysis (Cresswell,
 von Stechow, Heim, Klein), NOT the time-indexed measure function. The
-time-indexing originates with @cite{hay-kennedy-levin-1999} eq. 11.
+time-indexing originates with [hay-kennedy-levin-1999] eq. 11.
 
 ## Bridge to Beavers' affectedness hierarchy
 
@@ -69,8 +69,8 @@ open Semantics.ArgumentStructure.Affectedness
 
 set_option linter.dupNamespace false in
 /-- A **time-indexed measure function** `m : α → Time → δ`
-    (@cite{hay-kennedy-levin-1999} eq. 11; restated in
-    @cite{kennedy-levin-2008} §7.3.1 main text p. 167): a function
+    ([hay-kennedy-levin-1999] eq. 11; restated in
+    [kennedy-levin-2008] §7.3.1 main text p. 167): a function
     from objects and times to degrees on a scale.
 
     "An object can have different degrees of height, weight, temperature,
@@ -123,7 +123,7 @@ class HasMeasureFunction (α : Type*) (δ : Type*) (Time : Type*) where
 -- § 2. Difference Function (K&L 2008 eq. 23)
 -- ════════════════════════════════════════════════════
 
-/-- @cite{kennedy-levin-2008} eq. (23) **Difference function** `m_d^↑`:
+/-- [kennedy-levin-2008] eq. (23) **Difference function** `m_d^↑`:
     just like measure function `m` except clamped at `d` as the new
     minimum — its range is `{d' ∈ S | d ≤ d'}`, and for any x, t in
     the domain of `m`, if `m(x)(t) ≤ d` then `m_d^↑(x)(t) = d`.
@@ -158,7 +158,7 @@ theorem differenceFunction_eq_measure {α δ Time : Type*} [LinearOrder δ]
 -- § 3. Measure of Change (K&L 2008 eq. 25)
 -- ════════════════════════════════════════════════════
 
-/-- @cite{kennedy-levin-2008} eq. (25) **Measure of change**
+/-- [kennedy-levin-2008] eq. (25) **Measure of change**
     `m_Δ(x)(e) = m_{m(x)(init(e))}^↑(x)(fin(e))`.
 
     The measure of change function takes an object `x` and an event

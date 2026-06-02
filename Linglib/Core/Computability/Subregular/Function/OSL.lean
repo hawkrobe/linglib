@@ -53,10 +53,10 @@ that `(step ow x).2` reduces definitionally for `toSFST_run_eq_apply`.
 
 ## References
 
-* @cite{chandlee-eyraud-heinz-2015}
-* @cite{aksenova-rawski-graf-heinz-2020}
-* @cite{heinz-lai-2013}
-* @cite{meinhardt-mai-bakovic-mccollum-2024}
+* [chandlee-eyraud-heinz-2015]
+* [aksenova-rawski-graf-heinz-2020]
+* [heinz-lai-2013]
+* [meinhardt-mai-bakovic-mccollum-2024]
 -/
 
 namespace Core.Computability.Subregular.Function
@@ -183,7 +183,7 @@ source side because the dependency direction (SFST in
 `Subsequential.lean`; OSL projects into it) forces both construction
 and cast into this file.
 
-The output alphabet `[Fintype β]` constraint matches @cite{mohri-1997}'s
+The output alphabet `[Fintype β]` constraint matches [mohri-1997]'s
 finite-alphabet assumption — the state space (a bounded output window)
 is finite precisely when the output alphabet is. -/
 
@@ -224,7 +224,7 @@ theorem OSLRule.toFinSFST_run_eq_apply {k : ℕ} (r : OSLRule k α β) :
     exact congrArg _ (ih _)
 
 /-- **Left-OSL ⊆ Left-Subsequential** (over a finite output alphabet).
-The `[Fintype β]` matches @cite{mohri-1997}'s finite-alphabet assumption
+The `[Fintype β]` matches [mohri-1997]'s finite-alphabet assumption
 and lets the bounded output window serve as a finite state space. -/
 theorem isLeftOutputStrictlyLocal_left_subsequential {k : ℕ} [Fintype β]
     {f : List α → List β} (h : IsLeftOutputStrictlyLocal k f) :

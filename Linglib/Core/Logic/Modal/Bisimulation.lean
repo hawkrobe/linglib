@@ -4,14 +4,14 @@ import Linglib.Core.Logic.Team.Algebra
 /-!
 # Bisimulation for modal team logics
 
-@cite{aloni-anttila-yang-2024} @cite{anttila-2025} @cite{vaananen-2008}
+[aloni-anttila-yang-2024] [anttila-2025] [vaananen-2008]
 
 Bisimulation is the canonical equivalence relation on Kripke models that
 abstracts away from the choice of world-carrier and identifies models no
 modal formula can distinguish. This file provides the **carrier-level**
 bisimulation substrate shared by every team-semantic modal logic in
 `Core/Logic/Modal/`: bounded-depth world bisimulation (Definition 3.1 of
-@cite{aloni-anttila-yang-2024}), state bisimulation lifted to teams
+[aloni-anttila-yang-2024]), state bisimulation lifted to teams
 (Definition 3.6), and the structural lemmas (Lemma 3.7) that each logic's
 *invariance theorem* (BSML Theorem 3.8, the MDL analogue, …) consumes.
 
@@ -54,7 +54,7 @@ variable {Atom : Type*}
 /-! ### World bisimulation -/
 
 /-- Bounded-depth bisimulation between pointed worlds across two
-    `KripkeModel`s (Definition 3.1 of @cite{aloni-anttila-yang-2024}). At
+    `KripkeModel`s (Definition 3.1 of [aloni-anttila-yang-2024]). At
     depth 0, requires only that atoms match. At depth `k+1`, additionally
     requires the standard back/forth conditions on accessibility relating
     depth-`k` bisimilar successors. -/
@@ -121,7 +121,7 @@ theorem WorldBisim.mono_le {m n : ℕ} (hmn : m ≤ n)
 
 /-! ### State bisimulation -/
 
-/-- State bisimulation (Definition 3.6 of @cite{aloni-anttila-yang-2024}):
+/-- State bisimulation (Definition 3.6 of [aloni-anttila-yang-2024]):
     every world in `s` is `k`-bisimilar to some world in `s'`, and every
     world in `s'` is `k`-bisimilar to some world in `s`. Lifts world
     bisimulation from points to teams. -/
@@ -243,7 +243,7 @@ theorem StateBisim.exists_image_subset {k : ℕ} {M : KripkeModel W Atom}
 
 /-! ### Lemma 3.7: state bisimulation preserves modal step and team splits -/
 
-/-- Lemma 3.7(i) of @cite{aloni-anttila-yang-2024}: at depth `k+1`, state
+/-- Lemma 3.7(i) of [aloni-anttila-yang-2024]: at depth `k+1`, state
     bisim provides for each `w ∈ s` a witness `w' ∈ s'` such that the
     accessibility images `R[w]` and `R'[w']` are state-bisimilar at
     depth `k`. -/
@@ -261,7 +261,7 @@ theorem StateBisim.accessImage {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
     obtain ⟨v, hv, hbv⟩ := hback v' hv'
     exact ⟨v, hv, hbv⟩
 
-/-- Lemma 3.7(ii) of @cite{aloni-anttila-yang-2024}: state bisim preserves
+/-- Lemma 3.7(ii) of [aloni-anttila-yang-2024]: state bisim preserves
     binary team splits. Given `s = t ∪ u` and `s ⇌_k s'`, there exist
     `t', u' ⊆ s'` with `s' = t' ∪ u'`, `t ⇌_k t'`, and `u ⇌_k u'`.
 
@@ -317,7 +317,7 @@ These two lemmas are the Lemma 3.7 analogues for that modality. -/
 
 /-- State bisim at depth `k+1` preserves the **union of accessibility images**
     at depth `k`: `s.biUnion R ⇌_k s'.biUnion R'`. The MDL anti-`◇` clause
-    (@cite{vaananen-2008} (T9)) evaluates the inner formula on this union. -/
+    ([vaananen-2008] (T9)) evaluates the inner formula on this union. -/
 theorem StateBisim.biUnionAccess {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}
     {M' : KripkeModel W' Atom} {s' : Finset W'}
     (h : StateBisim (k + 1) M s M' s') :
@@ -340,7 +340,7 @@ theorem StateBisim.biUnionAccess {k : ℕ} {M : KripkeModel W Atom} {s : Finset 
     `Y ⊆ s.biUnion R` that every world in `s` reaches (`∀ w ∈ s, ∃ y ∈ Y ∩
     R[w]`), there is a corresponding `Y' ⊆ s'.biUnion R'` that every world in
     `s'` reaches, with `Y ⇌_k Y'`. This is the Lemma 3.7 analogue for the MDL
-    `◇`-support clause (@cite{vaananen-2008} (T8)). The `Y ⊆ s.biUnion R`
+    `◇`-support clause ([vaananen-2008] (T8)). The `Y ⊆ s.biUnion R`
     hypothesis is supplied by the caller via downward closure (shrinking a raw
     witness to its reachable part). -/
 theorem StateBisim.possWitness {k : ℕ} {M : KripkeModel W Atom} {s : Finset W}

@@ -3,9 +3,9 @@ import Linglib.Dialogue.KOS.RepriseContent
 
 /-!
 # Purver & Ginzburg (2004): Clarifying Noun Phrase Semantics
-@cite{purver-ginzburg-2004}
+[purver-ginzburg-2004]
 
-@cite{purver-ginzburg-2004} use **fragment-reprise** clarification data to
+[purver-ginzburg-2004] use **fragment-reprise** clarification data to
 constrain admissible NP denotations. The empirical lever is the Reprise
 Content Hypothesis (RCH): a fragment reprise question must query the
 standard semantic content of the fragment being reprised. Anything a theory
@@ -30,7 +30,7 @@ if it queried the standard semantic content, would query at this *functional*
 type — but no observed reprise ever does. The empirical record only shows
 queries at individual or property type.
 
-@cite{purver-ginzburg-2004} resolve this by splitting the sign's contextual
+[purver-ginzburg-2004] resolve this by splitting the sign's contextual
 parameters into two fields:
 
 - **dgb-params**: referential entities, anchored against context
@@ -94,7 +94,7 @@ def aThiefReprise : RepriseEvent String where
 -- § 2. The GQ predictor and its violation
 -- ════════════════════════════════════════════════════
 
-/-- The generalized-quantifier predictor (@cite{purver-ginzburg-2004} target):
+/-- The generalized-quantifier predictor ([purver-ginzburg-2004] target):
 licenses only `.functional`-typed queries, since GQ denotations have type
 `(e → t) → t`. Stated as a predictor for empirical refutation. -/
 def gqPredictor : RchPredictor String :=
@@ -118,7 +118,7 @@ theorem individual_not_in_gqPredictor (ev : RepriseEvent String) :
     QueryType.individual ∉ gqPredictor ev := by
   simp [gqPredictor_licenses_only_functional]
 
-/-- **Type-mismatch theorem** (@cite{purver-ginzburg-2004}, @cite{ginzburg-2012} §8.5.1):
+/-- **Type-mismatch theorem** ([purver-ginzburg-2004], [ginzburg-2012] §8.5.1):
 the GQ predictor fails Weak RCH. Empirically, fragment reprises of indefinite
 NPs query at *individual* (and property) type; the GQ denotation predicts
 queries only at *functional* type. The two sets are disjoint, so even Weak
@@ -137,7 +137,7 @@ theorem gq_reprise_type_mismatch :
 
 /-- The constructive alternative satisfies Weak RCH by construction.
 
-@cite{purver-ginzburg-2004}'s revision routes 'a thief'-style indefinites
+[purver-ginzburg-2004]'s revision routes 'a thief'-style indefinites
 through the `qcparams` channel on the LocProp. The `qParamsPredictor`
 licenses exactly the queries that `reprisedContent` reports — every
 observed query is predicted, so Weak RCH holds. (Inherited from

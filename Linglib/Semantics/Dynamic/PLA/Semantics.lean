@@ -1,6 +1,6 @@
 /-
 # PLA Semantics
-@cite{dekker-2012}
+[dekker-2012]
 
 Satisfaction and truth for Predicate Logic with Anaphora.
 
@@ -82,7 +82,7 @@ theorem Term.eval_pron {E : Type*} (g : Assignment E) (ê : WitnessSeq E) (i : P
 /--
 PLA Satisfaction: M, g, ê ⊨ φ
 
-@cite{dekker-2012} Definition 4, Ch. 2 (PLA Satisfaction and Truth, p.22; adapted to type-theoretic setting).
+[dekker-2012] Definition 4, Ch. 2 (PLA Satisfaction and Truth, p.22; adapted to type-theoretic setting).
 
 - Atomic: check predicate interpretation on evaluated terms
 - Negation: classical negation
@@ -143,7 +143,7 @@ theorem Term.eval_resolve {E : Type*} (g : Assignment E) (ê : WitnessSeq E) (ρ
     exact h i rfl
 
 /--
-Resolution Correctness (@cite{dekker-2012} Observation 7, §2.2, p.30).
+Resolution Correctness ([dekker-2012] Observation 7, §2.2, p.30).
 
 If the witness sequence agrees with the assignment via resolution (ê = g ∘ ρ on pronouns),
 and no pronoun resolves to a bound variable, then satisfaction is preserved:
@@ -235,7 +235,7 @@ theorem Term.eval_witness_irrelevant {E : Type*} (t : Term) (ht : t.pronouns = �
   | pron i => simp [Term.pronouns] at ht
 
 
-/-- Observation 4 (@cite{dekker-2012} §2.2, p.25): PLA and PL equivalence.
+/-- Observation 4 ([dekker-2012] §2.2, p.25): PLA and PL equivalence.
 
 For pronoun-free formulas, satisfaction is independent of the witness sequence.
 This shows PLA conservatively extends PL: standard predicate logic formulas have
@@ -279,7 +279,7 @@ theorem obs4_pla_pl_equivalence {E : Type*} [Nonempty E] (M : Model E)
 
 
 /--
-Observation 5 (@cite{dekker-2012} §2.2): Relevance.
+Observation 5 ([dekker-2012] §2.2): Relevance.
 
 Satisfaction depends only on the values of free variables and pronouns
 that actually occur in the formula. Assignments that agree on freeVars
@@ -339,7 +339,7 @@ theorem obs5_relevance {E : Type*} [Nonempty E] (M : Model E)
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Embedding into Dynamic Ty2 @cite{muskens-1996}
+-- § Embedding into Dynamic Ty2 [muskens-1996]
 -- ════════════════════════════════════════════════════════════════
 
 /-! PLA distinguishes variables (`VarIdx`) from pronouns (`PronIdx`);

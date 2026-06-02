@@ -4,9 +4,9 @@ import Linglib.Phenomena.Verum.Basic
 
 /-!
 # Höhle (1992): *Verum-Fokus im Deutschen*
-@cite{hohle-1992} @cite{romero-han-2004} @cite{rooth-1992}
-@cite{repp-2013} @cite{gutzmann-hartmann-matthewson-2020}
-@cite{martinez-vera-2026}
+[hohle-1992] [romero-han-2004] [rooth-1992]
+[repp-2013] [gutzmann-hartmann-matthewson-2020]
+[martinez-vera-2026]
 
 Höhle's seminal proposal: pitch accent on the finite verb (or negation
 particle) in German is *verum focus* — focus on the assertion operator,
@@ -84,8 +84,8 @@ def verumFocusOp (β : BiLayered W) : BiLayered W :=
     This is the cross-linguistic verum signature: the marker requires
     that ¬p be salient (asserted earlier, contextually inferable, or
     raised by a biased question). Without this, VF is infelicitous
-    out-of-the-blue (Höhle 1992; @cite{romero-han-2004};
-    @cite{gutzmann-hartmann-matthewson-2020}). -/
+    out-of-the-blue (Höhle 1992; [romero-han-2004];
+    [gutzmann-hartmann-matthewson-2020]). -/
 def verumFelicitous (c : HighlightingContext W) (β : BiLayered W) : Prop :=
   Highlighted c {w | ¬ β.atIssue w}
 

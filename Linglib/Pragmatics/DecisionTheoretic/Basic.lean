@@ -15,7 +15,7 @@ import Mathlib.Algebra.Order.Field.Basic
 
 /-!
 # Decision-Theoretic Semantics: Core
-@cite{merin-1999}
+[merin-1999]
 
 Core definitions for Merin's Decision-Theoretic Semantics (DTS). Meaning is
 explicated through *signed relevance* — the Bayes factor P(E|H)/P(E|¬H) —

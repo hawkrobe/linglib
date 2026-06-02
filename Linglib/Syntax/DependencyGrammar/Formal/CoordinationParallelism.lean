@@ -5,7 +5,7 @@ import Linglib.Syntax.DependencyGrammar.Formal.Ellipsis
 /-!
 # Coordination parallelism and sharing
 
-Formalizes @cite{osborne-2019}'s analysis of coordination in dependency
+Formalizes [osborne-2019]'s analysis of coordination in dependency
 grammar: conjuncts have parallel core-argument structure, shared
 dependents form catenae, and the Coordinate Structure Constraint follows
 from requiring symmetric (ATB) extraction.

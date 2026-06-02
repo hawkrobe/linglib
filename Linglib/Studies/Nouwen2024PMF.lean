@@ -4,11 +4,11 @@ import Linglib.Studies.Nouwen2024
 import Linglib.Studies.LassiterGoodman2017PMF
 
 /-!
-# @cite{nouwen-2024} on mathlib `PMF` — chained-RSA structural shell
+# [nouwen-2024] on mathlib `PMF` — chained-RSA structural shell
 
-@cite{nouwen-2024} @cite{lassiter-goodman-2017}
+[nouwen-2024] [lassiter-goodman-2017]
 
-@cite{nouwen-2024} ("The semantics and probabilistic pragmatics of
+[nouwen-2024] ("The semantics and probabilistic pragmatics of
 deadjectival intensifiers", *Semantics & Pragmatics* 17:2, 1-45, 2024)
 gives an intersective semantic analysis of intensified adjectives
 (*horribly warm*, *pleasantly warm*) plus a chained-Bayesian pragmatic
@@ -19,7 +19,7 @@ capture.
 ## Scope (honest reckoning, post-audit)
 
 The file's `priorAfterEvalPos` + `seqAdjL1HorriblyWarm` correctly
-implement the **two-update Bayesian chain** of @cite{nouwen-2024} Eq. 73
+implement the **two-update Bayesian chain** of [nouwen-2024] Eq. 73
 (p. 2:41): first update Π = stage-1 L1 at `.eval_pos`, then second update
 ρ = stage-2 L1 with Π as prior. The L&G "two priors" pattern (Π enters
 both stage-2 L0 via `L0LassiterGoodman` AND stage-2 L1 via `PMF.posterior`)
@@ -74,7 +74,7 @@ of Nouwen's actual contribution:
 
 ## Connection to `LassiterGoodman2017PMF.lean`
 
-@cite{nouwen-2024} §4 explicitly adopts the @cite{lassiter-goodman-2017}
+[nouwen-2024] §4 explicitly adopts the [lassiter-goodman-2017]
 RSA framework and modifies it to sequential two-update inference (vs L&G's
 single-step joint posterior over `(world, threshold)`). The structural
 relationship:
@@ -89,7 +89,7 @@ shape; the headline below uses it.
 
 ## Cross-framework positioning (linglib's "make incompatibilities visible")
 
-@cite{nouwen-2024} §3.1 surveys four contenders for intensifier semantics,
+[nouwen-2024] §3.1 surveys four contenders for intensifier semantics,
 Nouwen's own intersection proposal being the FOURTH:
 
 1. Wheeler 1972 factive: `horrible(λw. μ_warm(t)(w) = μ_warm(t)(@))` (Eq. 32)

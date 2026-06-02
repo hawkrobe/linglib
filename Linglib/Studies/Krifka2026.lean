@@ -2,9 +2,9 @@ import Linglib.Semantics.Kinds.Anaphora
 
 /-!
 # Anaphora for Concepts, Kinds, and Parts
-@cite{krifka-2026}
+[krifka-2026]
 
-Empirical data and verification theorems for @cite{krifka-2026}'s theory
+Empirical data and verification theorems for [krifka-2026]'s theory
 of concept discourse referents. Three types of anaphora are distinguished:
 
 | Type | Pronoun | Picks up | Example |
@@ -53,7 +53,7 @@ inductive KindPronoun where
 
 /-- Select kind-anaphoric pronoun from the count feature.
 
-    @cite{krifka-2026} (17a,b):
+    [krifka-2026] (17a,b):
     - ⟦it⟧  = λP[MASS]  λi.∩P(i)
     - ⟦they⟧ = λP[COUNT] λi.∩⊔P(i) -/
 def selectPronoun : MassCount → KindPronoun
@@ -127,7 +127,7 @@ def dogConcept : ConceptDRef Wld Ent where
   feature := .count
 
 /-- Initial assignment for (44e): g₁=F(John), g₂=F(dog), F(C)(g₂).
-    Following @cite{krifka-2026} (40g)/(44e): John's name presupposes
+    Following [krifka-2026] (40g)/(44e): John's name presupposes
     dref 1 is anchored to John; the head noun *dog*₂ presupposes dref 2
     is anchored to the 'dog' concept with [COUNT] feature. -/
 def g₀ : HAssign Wld Ent := λ n =>
@@ -160,7 +160,7 @@ theorem negation_satisfiable :
 /-- **Main result**: after "John doesn't own a dog", the concept dref
     for 'dog' at index 2 is accessible while the entity dref at index 3
     remains undefined. This is the concrete instantiation of the asymmetry
-    predicted by @cite{krifka-2026} §4. -/
+    predicted by [krifka-2026] §4. -/
 theorem concrete_concept_entity_asymmetry :
     ∀ h : HAssign Wld Ent,
       doesntOwnADog g₀ h →
@@ -179,7 +179,7 @@ end EndToEnd
 
 /-- Anaphoric constructions that pick up concept drefs.
 
-    @cite{krifka-2026} §3 distinguishes concept anaphors (which reuse the
+    [krifka-2026] §3 distinguishes concept anaphors (which reuse the
     property directly) from kind anaphors (which derive kind individuals
     via ∩). Both pick up concept drefs, but they do different things.
 
@@ -202,7 +202,7 @@ def derivesKind : AnaphoricConstruction → Bool
 
 /-- Kind pronouns derive kinds; concept anaphors (*one*, empty NP/PP) don't.
     This distinction explains (19a) vs (19b): "dogs from the animal shelter"
-    doesn't name a kind (cf. @cite{carlson-1977}), so kind anaphora yields the
+    doesn't name a kind (cf. [carlson-1977]), so kind anaphora yields the
     general dog-kind, while concept anaphora preserves the full NP property. -/
 theorem kind_vs_concept_distinction :
     derivesKind .kindPron = true ∧

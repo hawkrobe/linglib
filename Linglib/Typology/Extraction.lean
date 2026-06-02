@@ -1,6 +1,6 @@
 /-!
 # Extraction Morphology
-@cite{elkins-torrence-brown-2026} @cite{erlewine-2018} @cite{erlewine-2016}
+[elkins-torrence-brown-2026] [erlewine-2018] [erlewine-2016]
 
 Theory-neutral types for cross-linguistic extraction morphology ---
 how languages morphologically mark that a constituent has undergone
@@ -51,8 +51,8 @@ inductive ExtractionMarkingStrategy where
 
 /-! The 5 cases above are descriptive surface-typology categories. The
 *analytical* claims that competing accounts give for *why* a language
-has the surface pattern it does — e.g., Erlewine `@cite{erlewine-2016}`
-`@cite{erlewine-2018}` on Kaqchikel/Mayan AF as Spec-to-Spec
+has the surface pattern it does — e.g., Erlewine `[erlewine-2016]`
+`[erlewine-2018]` on Kaqchikel/Mayan AF as Spec-to-Spec
 Anti-Locality repair; Erlewine 2018 on Toba Batak extraction as a
 structural pivot restriction; Aldridge, Coon, Coon & Mateo Pedro &
 Preminger, Coon & Keine, Henderson, etc. with rival analyses — live
@@ -65,7 +65,7 @@ paper. They are not enum cases here. -/
 
 /-- The grammatical position from which extraction occurs.
 
-    This intersects with the @cite{keenan-comrie-1977} Accessibility Hierarchy
+    This intersects with the [keenan-comrie-1977] Accessibility Hierarchy
     (see `Typology/RelativeClause/Basic.lean`), but is defined independently
     because extraction morphology may make finer distinctions than
     relativization. -/

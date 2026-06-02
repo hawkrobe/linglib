@@ -9,19 +9,19 @@ import Mathlib.Algebra.Tropical.Basic
 
 /-!
 # Constraint Evaluation
-@cite{erlewine-2016} @cite{kratzer-1991}
+[erlewine-2016] [kratzer-1991]
 
 Unified framework for constraint-based candidate evaluation, supporting
 two comparison modes:
 
 1. **Lexicographic** (Optimality Theory): constraints are strictly ranked;
    the first constraint where candidates differ determines the winner.
-   Used in phonology (@cite{prince-smolensky-1993}/2004) and syntactic
+   Used in phonology ([prince-smolensky-1993]/2004) and syntactic
    competition.
 
 2. **Subset inclusion** (Satisfaction ordering): a candidate is at least
    as good as another iff it satisfies every criterion the other satisfies.
-   Used in @cite{kratzer-1991}'s modal semantics (see `SatisfactionOrdering.lean`).
+   Used in [kratzer-1991]'s modal semantics (see `SatisfactionOrdering.lean`).
 
 Both select optimal candidates from a set. They differ in comparison:
 `LexLE` yields a total preorder (OT always picks a winner); `SatLE` yields
@@ -37,7 +37,7 @@ study files use `mkTableau` (in `Core.Constraint.OT`) for concrete evaluation.
 
 ## Algebraic Structure — Violation Semiring
 
-Following @cite{riggle-2009}, violation profiles form a **commutative
+Following [riggle-2009], violation profiles form a **commutative
 semiring** (the "violation semiring") with two operations:
 
 - **⊎ (merge)**: componentwise addition of violation counts — combining
@@ -111,7 +111,7 @@ def LexLE : List Nat → List Nat → Prop
     hold). On binary {0,1} profiles it becomes a partial order.
 
     Unlike `LexLE`, `SatLE` is not total — incomparable candidates are
-    possible. This is @cite{kratzer-1991}'s ordering on worlds relative
+    possible. This is [kratzer-1991]'s ordering on worlds relative
     to a premise set. -/
 def SatLE : List Nat → List Nat → Prop
   | [], _ => True
@@ -389,17 +389,17 @@ theorem satLE_not_antisymm :
 
 
 -- ============================================================================
--- § 5: Bidirectional OT — Blocking (@cite{blutner-2000})
+-- § 5: Bidirectional OT — Blocking ([blutner-2000])
 -- ============================================================================
 
-/-! @cite{blutner-2000}'s blocking relation lives at maximum generality in
+/-! [blutner-2000]'s blocking relation lives at maximum generality in
     `Core/Constraint/Superoptimal.lean` as the Set-valued
     `Blocks profile S p` (Prop, decidable on Finset witnesses via
     `Blocks.decidableOnFinset`). The legacy List-based `IsBlocked`/`blocked`
     pair was retired at 0.230.570 in favour of the Set/Finset substrate +
     `superoptimalSet`/`superoptimal` API. -/
 
-/-! @cite{blutner-2000}'s superoptimality (weak BiOT, eq. 14) lives at
+/-! [blutner-2000]'s superoptimality (weak BiOT, eq. 14) lives at
     `Core/Constraint/Superoptimal.lean` as the dual API:
 
     - **`superoptimalSet pairs profile`** — Set-valued, anchored in mathlib's
@@ -557,7 +557,7 @@ instance (n : Nat) : AddCommMonoid (ViolationProfile n) where
 
 /-- `ViolationProfile n` is an ordered additive commutative monoid:
     componentwise addition of violations preserves the lexicographic
-    ordering. This is @cite{riggle-2009}'s violation semiring — the
+    ordering. This is [riggle-2009]'s violation semiring — the
     `AddCommMonoid` is the ⊎ (merge) operation, and `min` from the
     `LinearOrder` is the ⊗ (choose winner) operation. Distributivity
     of ⊗ over ⊎ is exactly `add_le_add_left`.
@@ -688,7 +688,7 @@ def buildViolationProfile {C : Type*} {n : Nat}
   toLex fun i => constraints i c
 
 -- ============================================================================
--- § 12c: Tropical Semiring Derivation (@cite{riggle-2009})
+-- § 12c: Tropical Semiring Derivation ([riggle-2009])
 -- ============================================================================
 
 /-- `WithTop (ViolationProfile n)` is a `LinearOrderedAddCommMonoidWithTop`:

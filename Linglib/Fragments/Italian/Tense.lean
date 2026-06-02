@@ -21,7 +21,7 @@ Italian distinguishes five core indicative tenses:
 
 The passato prossimo / passato remoto distinction is significant:
 both express past time reference, but they differ in morphological type
-(periphrastic vs synthetic) and, following @cite{lakoff-1970}, in whether
+(periphrastic vs synthetic) and, following [lakoff-1970], in whether
 they allow false-tense interpretations.
 
 ## Kratzer Decomposition
@@ -43,7 +43,7 @@ open Morphology.Tense
 -- § 1. TAMEEntry Instances
 -- ════════════════════════════════════════════════════════════════
 
-/-- Italian passato prossimo (present perfect): ho mangiato 'I have eaten'. @cite{lakoff-1970}
+/-- Italian passato prossimo (present perfect): ho mangiato 'I have eaten'. [lakoff-1970]
     EP downstream (T ≤ A), UP past (T < S). -/
 def passatoProssimo : TAMEEntry where
   label := "passato prossimo"
@@ -83,7 +83,7 @@ def allEntries : List TAMEEntry :=
   [passatoProssimo, passatoRemoto, imperfetto, presente, futuroSemplice]
 
 -- ════════════════════════════════════════════════════════════════
--- § 2. TensePerspectiveEntry Instances (@cite{lakoff-1970})
+-- § 2. TensePerspectiveEntry Instances ([lakoff-1970])
 -- ════════════════════════════════════════════════════════════════
 
 /-- A tense paradigm entry enriched with Lakoff's perspective dimensions. -/

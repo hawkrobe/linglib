@@ -2,18 +2,18 @@ import Linglib.Typology.RelativeClause.Basic
 import Linglib.Fragments.Hebrew.Relativization
 
 /-!
-# Landau 2026: Silent Resumption @cite{landau-2026}
+# Landau 2026: Silent Resumption [landau-2026]
 
 A New Test for Ellipsis. *Linguistic Inquiry*, Early Access.
 
 ## The EIR Test
 
 The **Ellipsis-Internal Resumption** (EIR) test: a novel diagnostic for
-distinguishing deep from surface anaphora (@cite{hankamer-sag-1976}).
+distinguishing deep from surface anaphora ([hankamer-sag-1976]).
 
 The argumentation chain:
 
-1. **BVQ** (@cite{chomsky-1982}): at LF, every Ā-operator must bind
+1. **BVQ** ([chomsky-1982]): at LF, every Ā-operator must bind
    some variable.
 2. A resumptive pronoun inside a null constituent serves as a variable.
 3. A resumptive pronoun can only exist inside a constituent with
@@ -56,7 +56,7 @@ open RelativeClause
 -- ═══════════════════════════════════════════════════════════════
 
 /-- Anaphoric depth: whether a null element has internal syntactic
-    structure at LF. @cite{hankamer-sag-1976}
+    structure at LF. [hankamer-sag-1976]
 
     - Deep: no LF-visible structure; content recovered pragmatically
       or deictically. EN, NCA, *pro*, *do so*, *dat doen*, *det*.
@@ -285,7 +285,7 @@ def englishVPE : EIRDatum :=
     resumptive binding into *do so* is ungrammatical.
     Ā-extraction is also impossible, but that is ambiguous between
     deep anaphor and derivational bleeding. EIR resolves the
-    ambiguity: *do so* is deep. @cite{bruening-2019} -/
+    ambiguity: *do so* is deep. [bruening-2019] -/
 def englishDoSo : EIRDatum :=
   { language := "English"
     nullElement := "do so"

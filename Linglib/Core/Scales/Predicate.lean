@@ -6,7 +6,7 @@ import Linglib.Core.Scales.Defs
 
 /-!
 # Core/Scales/Predicate.lean — degree predicates + monotonicity
-@cite{fox-2007} @cite{kennedy-2015} @cite{geurts-nouwen-2007} @cite{nouwen-2010} @cite{partee-1987}
+[fox-2007] [kennedy-2015] [geurts-nouwen-2007] [nouwen-2010] [partee-1987]
 
 Predicate transformers and degree-relative comparison primitives, parameterized
 by a measure function `μ : W → α`:
@@ -112,7 +112,7 @@ theorem closed_isLicensed : Boundedness.closed.isLicensed = true := rfl
 theorem open_notLicensed : Boundedness.open_.isLicensed = false := rfl
 
 -- ════════════════════════════════════════════════════
--- § 6. Degree Properties (@cite{fox-2007} §2)
+-- § 6. Degree Properties ([fox-2007] §2)
 -- ════════════════════════════════════════════════════
 
 /-! ### Degree properties for comparison relations
@@ -130,7 +130,7 @@ question semantics.
 
 The key divergence: on ℕ, `>` collapses to `≥` with successor, so both
 have `HasMaxInf`. On dense scales, `>` yields an open set with no max⊨.
-This is the UDM prediction (@cite{fox-2007} §2). -/
+This is the UDM prediction ([fox-2007] §2). -/
 
 /-- Degree property for "exactly d": the measure at w equals d. -/
 def eqDeg {W : Type*} (μ : W → α) : α → W → Prop :=
@@ -178,12 +178,12 @@ theorem moreThan_eq_atLeast_succ {W : Type*} (μ : W → ℕ) (m : ℕ) (w : W) 
 
 /-! ## Existential lowering: exact → "at least"
 
-@cite{partee-1987}'s BE + iota + existential closure, applied to a degree
+[partee-1987]'s BE + iota + existential closure, applied to a degree
 property: from an exact reading `exact d w` ("the measure equals `d`"),
 existentially close to `∃ d' ≥ d, exact d' w`. On any reflexive linear
 order this collapses to `atLeastDeg μ d w` — witness `d' := μ w`.
 
-This is the formal content of @cite{kennedy-2015}'s "de-Fregean" derivation
+This is the formal content of [kennedy-2015]'s "de-Fregean" derivation
 of the lower-bound numeral reading from the exact reading. The collapse
 generalizes Numeral type-shifting to arbitrary scales. -/
 
@@ -228,12 +228,12 @@ instance typeLower_eqDeg.decidable {W : Type*} (μ : W → α) (d : α) (w : W) 
   decidable_of_iff _ (typeLower_eqDeg_iff μ d w).symm
 
 -- ════════════════════════════════════════════════════
--- § 6d. @cite{kennedy-2015}'s De-Fregean GQ
+-- § 6d. [kennedy-2015]'s De-Fregean GQ
 -- ════════════════════════════════════════════════════
 
 /-! ## A unified GQ denotation parameterized by the comparison relation
 
-@cite{kennedy-2015} proposes a single denotation for modified and
+[kennedy-2015] proposes a single denotation for modified and
 unmodified numerals: `λP. max{d | #P ≥ d} REL m`, where the only parameter
 distinguishing surface forms is the relation `REL ∈ {=, ≥, >, ≤, <}`.
 
@@ -244,7 +244,7 @@ collapses to `rel (μ w) m` — captured here as `relationalGQ rel μ m w`.
 The five existing degree properties (`eqDeg`, `atLeastDeg`, `moreThanDeg`,
 `atMostDeg`, `lessThanDeg`) are definitionally `relationalGQ` instantiated at
 the corresponding relation. The Class A vs Class B distinction
-(@cite{geurts-nouwen-2007}, @cite{nouwen-2010}) collapses to a structural
+([geurts-nouwen-2007], [nouwen-2010]) collapses to a structural
 property of `rel`: Class B ↔ `IsRefl α rel`; Class A ↔ `IsIrrefl α rel`.
 
 This is the canonical comparison primitive of the scale substrate; the reified
@@ -303,7 +303,7 @@ theorem relationalGQ_irrefl_at_boundary {W : Type*} {rel : α → α → Prop}
 
 /-! ## Why exact bare numerals are not part of a Horn scale
 
-@cite{kennedy-2015} argues that bare numerals (under their exact reading) are
+[kennedy-2015] argues that bare numerals (under their exact reading) are
 **not monotone in their numerical argument** — neither upward nor downward —
 so they fail the Horn-scale criterion. The classic Horn scale `⟨1, 2, 3, …⟩`
 presupposes upward monotonicity; the dual scale `⟨…, 3, 2, 1⟩` presupposes

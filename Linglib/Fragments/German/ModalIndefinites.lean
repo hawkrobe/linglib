@@ -2,10 +2,10 @@ import Linglib.Features.ModalIndefinite
 
 /-!
 # German Modal Indefinite Fragment
-@cite{kratzer-shimoyama-2002}
+[kratzer-shimoyama-2002]
 
 Lexical entry for German modal indefinite *irgendein*, the prototypical
-domain-widening indefinite (@cite{kratzer-shimoyama-2002}).
+domain-widening indefinite ([kratzer-shimoyama-2002]).
 
 -/
 
@@ -23,7 +23,7 @@ open Features.ModalIndefinite
 /-- *irgendein*: not-at-issue, epistemic + random choice, not upper-bounded.
     Epistemic in episodic assertions; free choice under deontic modals.
     Domain widening is the core mechanism
-    (@cite{kratzer-shimoyama-2002}). -/
+    ([kratzer-shimoyama-2002]). -/
 def irgendeinEntry : ModalIndefiniteEntry where
   language := "German"
   form := "irgendein"

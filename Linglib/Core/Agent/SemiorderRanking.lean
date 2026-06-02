@@ -2,9 +2,9 @@ import Linglib.Core.Agent.ChoiceApproximations
 import Linglib.Core.Agent.RankOrderings
 
 /-!
-# Semiorder–Ranking Bridge @cite{luce-1959}
+# Semiorder–Ranking Bridge [luce-1959]
 
-Connects the two halves of @cite{luce-1959} that are formalized independently in
+Connects the two halves of [luce-1959] that are formalized independently in
 `ChoiceApproximations.lean` (§1.G) and `RankOrderings.lean` (§2.F):
 
 - **§1.G** defines pairwise choice probabilities `P(x,y) = v(x)/(v(x)+v(y))`,

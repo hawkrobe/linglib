@@ -13,7 +13,7 @@ set_option autoImplicit false
 
 /-!
 # The Oudom-Guin ○ operation on `SymmetricAlgebra R L`
-@cite{oudom-guin-2008}
+[oudom-guin-2008]
 
 For a pre-Lie algebra `L`, this file constructs the canonical extension
 of the pre-Lie product `· : L × L → L` to a bilinear operation
@@ -66,9 +66,9 @@ and consumers (`Q2/Q3/Q4/Q5/Q6` of the pivot) can build against it.
 
 ## References
 
-* @cite{oudom-guin-2008} — original construction, §2.
-* @cite{manchon-2011} — survey, Theorem 1.1 (Manchon route, alternative).
-* @cite{chapoton-livernet-2001} — free pre-Lie algebra = rooted trees.
+* [oudom-guin-2008] — original construction, §2.
+* [manchon-2011] — survey, Theorem 1.1 (Manchon route, alternative).
+* [chapoton-livernet-2001] — free pre-Lie algebra = rooted trees.
 
 ## Convention
 

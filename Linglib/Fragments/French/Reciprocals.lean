@@ -2,13 +2,13 @@ import Linglib.Syntax.Pronoun.Basic
 
 /-!
 # French Reciprocal Fragment
-@cite{nordlinger-2023} @cite{siloni-2008}
+[nordlinger-2023] [siloni-2008]
 
 French has two reciprocal strategies:
 
 1. **"se"** — reflexive clitic, also used for reciprocal (monovalent).
-   Syntactically formed per @cite{siloni-2008}: CANNOT form discontinuous
-   reciprocals (@cite{nordlinger-2023} ex. 39).
+   Syntactically formed per [siloni-2008]: CANNOT form discontinuous
+   reciprocals ([nordlinger-2023] ex. 39).
 
 2. **"l'un l'autre"** — bipartite NP (bivalent, literally 'the one the other').
    Preserves transitivity. Often co-occurs with "se" for disambiguation.

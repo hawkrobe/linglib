@@ -3,8 +3,8 @@ import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
-# @cite{spinoso-di-piano-etal-2025} — (RSA)² on mathlib `PMF`
-@cite{spinoso-di-piano-etal-2025} @cite{kao-goodman-2015}
+# [spinoso-di-piano-etal-2025] — (RSA)² on mathlib `PMF`
+[spinoso-di-piano-etal-2025] [kao-goodman-2015]
 
 (RSA)²: A Rhetorical-Strategy-Aware Rational Speech Act Framework for
 Figurative Language Understanding (ACL 2025).
@@ -21,7 +21,7 @@ We formalise this as `irony_iff_prior_favors_antonym`:
 
   L1(u)(opposite u) > L1(u)(literal u)  ↔  wp(opposite u) > wp(literal u)
 
-This explains WHY (RSA)² agrees with @cite{kao-goodman-2015} (affect-aware
+This explains WHY (RSA)² agrees with [kao-goodman-2015] (affect-aware
 RSA) on cross-context predictions: both reduce to the world-prior
 asymmetry, but (RSA)² achieves this WITHOUT modeling affect dimensions
 or QUD projection. Affect is unnecessary for irony.
@@ -78,7 +78,7 @@ open scoped ENNReal
 /-! ## §0. Domain types -/
 
 /-- Weather scale: 5-point ordered set from terrible to amazing.
-Mirrors @cite{kao-goodman-2015}'s weather scale. -/
+Mirrors [kao-goodman-2015]'s weather scale. -/
 inductive Weather where
   | terrible | bad | ok | good | amazing
   deriving DecidableEq, Repr, Fintype

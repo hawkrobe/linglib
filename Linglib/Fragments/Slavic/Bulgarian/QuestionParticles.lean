@@ -1,6 +1,6 @@
 /-!
 # Bulgarian Question Particles
-@cite{simik-2024}
+[simik-2024]
 
 Lexical entries for Bulgarian interrogative particles. The fragment
 commits only to theory-neutral lexical primitives; the left-peripheral
@@ -35,7 +35,7 @@ structure QParticleEntry where
   requiresEpistemicBias : Bool
   deriving Repr, DecidableEq
 
-/-- ли li — verb-attached neutral PQ particle (@cite{simik-2024} ex. 33).
+/-- ли li — verb-attached neutral PQ particle ([simik-2024] ex. 33).
 Encliticizes onto the focused constituent. -/
 def li : QParticleEntry where
   form := "ли"
@@ -47,7 +47,7 @@ def li : QParticleEntry where
   requiresEvidentialBias := false
   requiresEpistemicBias := false
 
-/-- нима nima — mirative/dubitative particle (RAZVE family, @cite{simik-2024} §4.2.4).
+/-- нима nima — mirative/dubitative particle (RAZVE family, [simik-2024] §4.2.4).
 Expresses incredulity: speaker encounters evidence conflicting with prior
 expectations (Dukova-Zheleva). -/
 def nima : QParticleEntry where

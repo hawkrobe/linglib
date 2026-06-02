@@ -4,11 +4,11 @@ import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Argumentative Strength for Quantity Expressions
-@cite{cummins-franke-2021} @cite{merin-1999} @cite{macuch-silva-etal-2024}
+[cummins-franke-2021] [merin-1999] [macuch-silva-etal-2024]
 
-@cite{merin-1999}'s log-likelihood ratio measure of argumentative strength, as applied
-to numerical quantity expressions in @cite{cummins-franke-2021} and quantifier choice
-in Macuch @cite{macuch-silva-etal-2024}.
+[merin-1999]'s log-likelihood ratio measure of argumentative strength, as applied
+to numerical quantity expressions in [cummins-franke-2021] and quantifier choice
+in Macuch [macuch-silva-etal-2024].
 
 ## Core Idea
 
@@ -37,7 +37,7 @@ open RSA.CombinedUtility
 
 
 -- ============================================================
--- Section 1: Core Definitions (@cite{merin-1999}, @cite{cummins-franke-2021} §3)
+-- Section 1: Core Definitions ([merin-1999], [cummins-franke-2021] §3)
 -- ============================================================
 
 /-- An argumentative goal partitions worlds into G (goal-supporting) vs ¬G. -/
@@ -99,11 +99,11 @@ instance (a b c d : ℚ) : Decidable (argumentativelyStronger a b c d) :=
 
 
 -- ============================================================
--- Section 3: Difficulty Metric (Macuch @cite{macuch-silva-etal-2024})
+-- Section 3: Difficulty Metric (Macuch [macuch-silva-etal-2024])
 -- ============================================================
 
 /-- Argumentative difficulty: proportion of truthful states where the strongest
-available quantifier is weak. From Macuch @cite{macuch-silva-etal-2024}.
+available quantifier is weak. From Macuch [macuch-silva-etal-2024].
 
 For a given direction (positive/negative), difficulty measures how hard it is
 to frame the state in that direction truthfully. High difficulty → speakers

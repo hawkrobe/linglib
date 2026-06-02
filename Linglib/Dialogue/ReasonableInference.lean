@@ -1,7 +1,7 @@
 import Linglib.Discourse.CommonGround
 
 /-!
-# Reasonable Inference @cite{stalnaker-1975}
+# Reasonable Inference [stalnaker-1975]
 
 Stalnaker 1975's Appendix introduces a *pragmatic* notion of inference,
 distinct from semantic entailment. The idea: an inference from a sequence
@@ -60,7 +60,7 @@ def appropriateSeq {W : Type*} (A : Appropriateness W)
   | P :: rest => A P k ∧ appropriateSeq A rest (changeFn P k)
 
 /--
-**Reasonable inference** (@cite{stalnaker-1975} Appendix).
+**Reasonable inference** ([stalnaker-1975] Appendix).
 
 `σ ⊨ᵣ Q` (reasonable-in-`A`) iff in every context `k` in which the premise
 sequence is appropriate, the post-update context entails the conclusion.
@@ -96,13 +96,13 @@ theorem reasonable_nil {W : Type*} (A : Appropriateness W) (Q : Set W) :
   refine ⟨λ h w => h ContextSet.trivial trivial (Set.mem_univ w),
           λ h _ _ _ hw => h _⟩
 
-/-- **Stalnaker's first universal constraint** (@cite{stalnaker-1975}
+/-- **Stalnaker's first universal constraint** ([stalnaker-1975]
     Appendix, postulate 1): one cannot appropriately assert a proposition
     in a context incompatible with it. Any concrete `A` should satisfy this. -/
 def respectsCompatibility {W : Type*} (A : Appropriateness W) : Prop :=
   ∀ P k, A P k → ContextSet.compatible k P
 
-/-- **Stalnaker's second universal constraint** (@cite{stalnaker-1975}
+/-- **Stalnaker's second universal constraint** ([stalnaker-1975]
     Appendix, postulate 2): the change function commutes with the
     interpretation — `g(P, k) = k ∩ ⟦P⟧_k`. This holds by construction
     of `changeFn`. -/

@@ -4,9 +4,9 @@ import Linglib.Semantics.Degree.Comparative
 
 /-!
 # Heim's Degree Operator Approach
-@cite{heim-2001}
+[heim-2001]
 
-@cite{heim-2001} "Degree Operators and Scope": degree morphemes (`-er`,
+[heim-2001] "Degree Operators and Scope": degree morphemes (`-er`,
 `less`, `-est`, `too`) are **generalized quantifiers over degrees** (type
 ⟨dt,t⟩) that take scope by QR, just like DP quantifiers. The key
 theoretical content is twofold:
@@ -34,7 +34,7 @@ and intensional verbs.
 ## Order-Theoretic Foundations
 
 Heim's maximality operator `IsMaxDeg` is Mathlib's `IsGreatest`.
-The matrix predicate `λd. μ(a) ≥ d` and @cite{kennedy-1999}'s
+The matrix predicate `λd. μ(a) ≥ d` and [kennedy-1999]'s
 `posExt μ a` are both the principal downset `Set.Iic (μ a)` — the
 same mathematical object arrived at from different linguistic
 motivations. The scope collapse theorems factor through the degree
@@ -100,7 +100,7 @@ theorem matrixPredicate_mem_iff_Iic {Entity D : Type*} [Preorder D]
     matrixPredicate μ a d ↔ d ∈ Set.Iic (μ a) := Iff.rfl
 
 /-- Matrix predicate membership = `posExt` membership
-    (@cite{kennedy-1999}). -/
+    ([kennedy-1999]). -/
 theorem matrixPredicate_mem_iff_posExt {Entity D : Type*} [Preorder D]
     (μ : Entity → D) (a : Entity) (d : D) :
     matrixPredicate μ a d ↔ d ∈ posExt μ a := Iff.rfl
@@ -122,7 +122,7 @@ theorem isMaxDeg_matrixPredicate {Entity D : Type*} [LinearOrder D]
 /-- An adjective denotation (type ⟨d,et⟩) is **monotone** iff
     tall(x,d) implies tall(x,d') for all d' ≤ d.
 
-    @cite{heim-2001}: a function f of type ⟨d,et⟩ is monotone
+    [heim-2001]: a function f of type ⟨d,et⟩ is monotone
     iff ∀x∀d∀d'[f(d)(x) = 1 & d' < d → f(d')(x) = 1].
 
     Named `IsMonotoneAdj` (not `Monotone`) to avoid shadowing
@@ -293,7 +293,7 @@ def negatedDegreePredicate {Entity D : Type*} [Preorder D]
     (μ : Entity → D) (a : Entity) : DegreePredicate D :=
   fun d => ¬ (μ a ≥ d)
 
-/-- The negated degree set is `negExt` (@cite{kennedy-1999}): the
+/-- The negated degree set is `negExt` ([kennedy-1999]): the
     degrees entity `a` "lacks". The failure of `IsMaxDeg` for this
     predicate corresponds to `negExt` (= `Set.Ioi`) having no
     `IsGreatest` element — it is unbounded above. -/

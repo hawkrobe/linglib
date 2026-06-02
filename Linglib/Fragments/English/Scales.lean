@@ -2,7 +2,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # English Scales
-@cite{horn-1972} @cite{kennedy-2007} @cite{chierchia-2013} @cite{fox-2007} @cite{spector-2016}Horn scales for quantifiers, modals, and degrees.
+[horn-1972] [kennedy-2007] [chierchia-2013] [fox-2007] [spector-2016]Horn scales for quantifiers, modals, and degrees.
 
 ## Main definitions
 
@@ -100,7 +100,7 @@ def likeLove : Scale DegreeExpr :=
 Evaluative adjective expressions for quality judgments.
 
 This scale is used in:
-- @cite{yoon-etal-2020} politeness model
+- [yoon-etal-2020] politeness model
 - Review/feedback contexts
 
 The scale goes from strongly negative to strongly positive:
@@ -182,7 +182,7 @@ def scalarImplicatures {α : Type} [BEq α] [Repr α] (s : Scale α) (x : α) : 
 #guard someAll.weaker QuantExpr.some_ QuantExpr.all
 
 -- ============================================================================
--- Scale Closure Properties (@cite{chierchia-2013}, @cite{spector-2016})
+-- Scale Closure Properties ([chierchia-2013], [spector-2016])
 -- ============================================================================
 
 /-!
@@ -191,12 +191,12 @@ def scalarImplicatures {α : Type} [BEq α] [Repr α] (s : Scale α) (x : α) : 
 A crucial property for exhaustification: whether the alternative set is
 CLOSED UNDER CONJUNCTION.
 
-### @cite{spector-2016} Theorem 9
+### [spector-2016] Theorem 9
 
 When alternatives are closed under ∧, the two exhaustivity operators
 exh_mw and exh_ie are EQUIVALENT.
 
-### @cite{chierchia-2013} EFCI Analysis
+### [chierchia-2013] EFCI Analysis
 
 The puzzle of Free Choice Items depends on alternatives NOT being closed:
 - Standard scalar alternatives ⟨some, all⟩: closed under ∧
@@ -325,7 +325,7 @@ def predictExhEffect (isClosed : Bool) : ClosureEffect :=
 #guard !threeDomain.isClosed
 
 -- ============================================================================
--- Connection to @cite{spector-2016}
+-- Connection to [spector-2016]
 -- ============================================================================
 
 /-!

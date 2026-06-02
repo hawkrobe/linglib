@@ -17,11 +17,11 @@ import Linglib.Studies.Jenks2018
 
 /-!
 # Moroney (2021): Definiteness and Quantification — Evidence from Shan
-@cite{moroney-2021}
+[moroney-2021]
 
 Shan (Southwestern Tai, Kra-Dai) bare nouns can be interpreted as indefinite,
 definite, generic, or kind-denoting. The key finding is that bare nouns in
-Shan express BOTH unique and anaphoric definiteness — contra @cite{jenks-2018}'s
+Shan express BOTH unique and anaphoric definiteness — contra [jenks-2018]'s
 prediction that languages without overt definite articles mark at most one
 type of definiteness.
 
@@ -41,7 +41,7 @@ type of definiteness.
    Predication, `NMP.DPP`), which yields obligatory low scope.
 
 4. **Cross-linguistic definiteness data** (Table 4.4): Shan uses bare nouns
-   in ALL @cite{schwarz-2009} definite use types. Demonstrative-noun phrases
+   in ALL [schwarz-2009] definite use types. Demonstrative-noun phrases
    (N Clf Dem) are optional in anaphoric/relational-bridging/donkey contexts
    where German requires the strong article and Mandarin/Thai require
    demonstratives.
@@ -76,7 +76,7 @@ inductive DefForm where
   deriving DecidableEq, Repr
 
 /-- Cross-linguistic datum: what form does language L use for definite use
-type U? Connects @cite{hawkins-1978}'s use types (already in
+type U? Connects [hawkins-1978]'s use types (already in
 `Features.Definiteness.DefiniteUseType`) to actual morphological expression. -/
 structure DefExpressionDatum where
   language : String
@@ -85,7 +85,7 @@ structure DefExpressionDatum where
   form : DefForm
   deriving Repr, DecidableEq
 
-/-- German data (@cite{schwarz-2009}): weak article for situational uniqueness
+/-- German data ([schwarz-2009]): weak article for situational uniqueness
 and part-whole bridging; strong article for anaphora, producer-product
 bridging, and donkey anaphora. -/
 def germanData : List DefExpressionDatum :=
@@ -104,7 +104,7 @@ def germanData : List DefExpressionDatum :=
   , { language := "German", useType := .donkey
     , form := .strongArticle } ]
 
-/-- Thai data (@cite{jenks-2015}): bare nouns for uniqueness contexts,
+/-- Thai data ([jenks-2015]): bare nouns for uniqueness contexts,
 demonstrative-noun phrases for anaphoric/relational contexts. -/
 def thaiData : List DefExpressionDatum :=
   [ { language := "Thai", useType := .immediateSituation
@@ -122,10 +122,10 @@ def thaiData : List DefExpressionDatum :=
   , { language := "Thai", useType := .donkey
     , form := .dem } ]
 
-/-- Mandarin data (@cite{jenks-2018}): bare nouns for uniqueness contexts,
+/-- Mandarin data ([jenks-2018]): bare nouns for uniqueness contexts,
 demonstrative-noun phrases for anaphoric/relational/donkey contexts.
 Same pattern as Thai — Mandarin is classified as `.markedAnaphoric`
-in @cite{jenks-2018}'s typology. -/
+in [jenks-2018]'s typology. -/
 def mandarinData : List DefExpressionDatum :=
   [ { language := "Mandarin", useType := .immediateSituation
     , form := .bare }
@@ -147,7 +147,7 @@ bare for uniqueness, demonstrative for anaphoric/relational/donkey. -/
 theorem mandarin_thai_same_pattern :
     mandarinData.map (·.form) = thaiData.map (·.form) := by decide
 
-/-- Shan data (@cite{moroney-2021} Table 4.4): bare nouns in ALL contexts.
+/-- Shan data ([moroney-2021] Table 4.4): bare nouns in ALL contexts.
 Demonstratives optional in anaphoric and relational-bridging contexts.
 This is the key empirical finding — Shan bare nouns cover ALL of Schwarz's
 definite use types, unlike Mandarin/Thai (anaphoric requires dem) or
@@ -236,7 +236,7 @@ theorem definite_is_sole_difference :
     ).map (·.interp) = [.definite] := by decide
 
 /-- High scope existential is universally unavailable for bare nouns —
-a consequence of DPP/DKP locality (@cite{chierchia-1998}). The
+a consequence of DPP/DKP locality ([chierchia-1998]). The
 existential introduced by DPP applies at the point of composition
 (vP level), so it cannot scope above negation. -/
 theorem high_existential_universally_blocked :
@@ -258,7 +258,7 @@ Contrast with English (`MeaningPreservation.englishBlocking`): the presence of
 absence of articles means the blocking principle imposes no constraints
 on covert type-shifting. Crucially, both ι AND ι^x are unblocked —
 this is what allows Shan bare nouns to express both unique and anaphoric
-definiteness (@cite{moroney-2021} §4.3).
+definiteness ([moroney-2021] §4.3).
 
 Derived from `Shan.Definiteness.blocking` — the single source
 of truth for Shan's article inventory. -/
@@ -475,7 +475,7 @@ theorem type_shift_referent_agreement :
 /-- DPP yields obligatory low scope existential: the existential
     introduced by DPP applies at the vP level, so it cannot scope above
     negation. This is why `highExistential` is universally unavailable for
-    bare nouns (@cite{chierchia-1998}; @cite{moroney-2021} §2.3).
+    bare nouns ([chierchia-1998]; [moroney-2021] §2.3).
 
     The theorem derives the universal blocking from the data table rather
     than stipulating it. -/
@@ -638,7 +638,7 @@ theorem demonstrative_adds_spatial_info {E : Type}
 -- ============================================================================
 
 /-- Shan is a CLF-for-N language: the classifier atomizes the noun
-    denotation (@cite{little-moroney-royer-2022}; @cite{moroney-2021} Ch. 3).
+    denotation ([little-moroney-royer-2022]; [moroney-2021] Ch. 3).
 
     The classifier semantics module provides `clfForNoun` as a thin wrapper
     around `Mereology.atomize`. This bridge confirms that Shan classifiers
@@ -784,13 +784,13 @@ theorem shan_demonstrative_anaphoric_agreement {F : Frame}
       Core.Nominal.interpret (.anaphoric R d) g gs := rfl
 
 -- ============================================================================
--- §15: Refutation of @cite{jenks-2018}'s Typological Prediction
+-- §15: Refutation of [jenks-2018]'s Typological Prediction
 -- ============================================================================
 
-/-! @cite{jenks-2018} §7 proposed a typology of definiteness marking with
+/-! [jenks-2018] §7 proposed a typology of definiteness marking with
 three attested cells (`.generallyMarked`, `.bipartite`, `.markedAnaphoric`)
 and one unattested cell (a language overtly marking only unique definites).
-The empirical core of @cite{moroney-2021} is the discovery that *Shan*
+The empirical core of [moroney-2021] is the discovery that *Shan*
 instantiates a fourth attested cell — `.unmarked` — that Jenks's
 three-cell space had no slot for: bare nouns express both unique and
 anaphoric definiteness without any obligatory morphological marking.
@@ -802,7 +802,7 @@ new content is the joint statement that Shan instantiates a strategy
 *not in* the Jenks-attested set. -/
 
 /-- Shan's morphologically-derived strategy is not in the
-    @cite{jenks-2018}-attested set (imported from
+    [jenks-2018]-attested set (imported from
     `Jenks2018.jenksAttestedStrategies`). -/
 theorem shan_strategy_not_jenks_attested :
     Determiner.markingStrategy Shan.Definiteness.determiners
@@ -811,9 +811,9 @@ theorem shan_strategy_not_jenks_attested :
   decide
 
 /-- The Moroney refutation in one statement: Shan instantiates a marking
-    strategy that @cite{jenks-2018}'s typology predicted to be unattested.
+    strategy that [jenks-2018]'s typology predicted to be unattested.
     This is the formal content of the prose claim "contra
-    @cite{jenks-2018}'s prediction" in this file's module docstring. -/
+    [jenks-2018]'s prediction" in this file's module docstring. -/
 theorem moroney_shan_refutes_jenks_typology :
     Determiner.markingStrategy Shan.Definiteness.determiners = .unmarked ∧
     .unmarked ∉ Jenks2018.jenksAttestedStrategies :=

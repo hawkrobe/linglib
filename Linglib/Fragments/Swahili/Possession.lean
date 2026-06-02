@@ -3,7 +3,7 @@ import Linglib.Typology.Possession
 
 /-!
 # Swahili Possessive Constructions
-@cite{stassen-2009} @cite{nichols-1986} @cite{heine-1997}
+[stassen-2009] [nichols-1986] [heine-1997]
 
 Swahili (Bantu, Niger-Congo) derives its primary have-construction from the
 **Companion Schema** ("X is with Y" → "X has Y"). The possessive marker
@@ -20,7 +20,7 @@ PossessionProfile bundle for Swahili (ISO `swh`), per the project's
 `Linglib/Typology/Possession.lean`. Heine 1997 prediction verification for
 Swahili lives in `Studies/Heine1997.lean`. The
 `PossessionProfile.adnominalStrategy = .headMarking` here flattens the
-@cite{nichols-1986} categorisation; Swahili's Bantu noun-class concord is
+[nichols-1986] categorisation; Swahili's Bantu noun-class concord is
 strictly head-marking only in the agreement sense, with the associative
 particle `a` carrying class agreement to the possessum.
 
@@ -107,7 +107,7 @@ theorem have_belong_distinct :
 
 /-- Swahili `-na` covers all seven possessive notions — it is not restricted
     to a subset. This is characteristic of highly grammaticalized have-markers
-    (@cite{heine-1997} §2.3). -/
+    ([heine-1997] §2.3). -/
 def expressibleNotions : List PossessiveNotion :=
   [.physical, .temporary, .permanent, .inalienable, .abstract,
    .inanimateInalienable, .inanimateAlienable]
@@ -124,7 +124,7 @@ theorem covers_all_notions :
 
     Adnominal strategy is encoded as `.headMarking` to match Bantu
     noun-class concord (the associative particle `a` agrees with the
-    possessum in class). The strict @cite{nichols-1986} typology would
+    possessum in class). The strict [nichols-1986] typology would
     classify it differently in some descriptions; we follow the WALS
     convention here. -/
 def possession : PossessionProfile :=

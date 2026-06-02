@@ -1,8 +1,8 @@
 /-
 # Dynamic Ty2: Compositional Dynamic Semantics
-@cite{muskens-1996} @cite{brasoveanu-2007}
+[muskens-1996] [brasoveanu-2007]
 
-The compositional layer that @cite{muskens-1996} adds on top of the
+The compositional layer that [muskens-1996] adds on top of the
 core dynamic algebra (defined in `Core.Update`): discourse referents as
 functions from states (`Dref S E = S → E`), the `AssignmentStructure`
 class for random assignment, and atomic condition constructors.
@@ -168,7 +168,7 @@ end ProperNames
 
 /-!
 ## Axioms AX2–AX4: Variable vs Constant Registers
-@cite{muskens-1996} p. 156
+[muskens-1996] p. 156
 
 AX1 is captured by `AssignmentStructure.extend` above. The remaining axioms:
 

@@ -4,7 +4,7 @@ import Linglib.Phonology.OptimalityTheory.Doubling
 import Linglib.Core.Constraint.System
 
 /-!
-# Berent (2026) @cite{berent-2026}
+# Berent (2026) [berent-2026]
 
 Three arguments for abstraction in phonology.
 *Glossa: a journal of general linguistics* 12(1). 1--24.
@@ -46,9 +46,9 @@ already embodies the distinctions Berent draws:
 The doubling theory (types, constraints, L1-parameterized model) is
 factored into `Phonology/Doubling.lean`. The experimental
 data supporting the doubling reversal is in
-@cite{berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016}.
+[berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016].
 
-@cite{berent-2026}
+[berent-2026]
 -/
 
 open Phonology.Syllable (SonorityRank)
@@ -66,7 +66,7 @@ open Core.Constraint.OT
 /-- Onset sonority profile: the relationship between C1 and C2 sonority
     in a two-segment onset.
 
-    The behavioral gradient rise > plateau > fall (@cite{berent-2026},
+    The behavioral gradient rise > plateau > fall ([berent-2026],
     Figure 1A; data from Berent et al. 2007) maps directly to this
     classification on the abstract `SonorityRank` type. -/
 inductive OnsetProfile where
@@ -87,7 +87,7 @@ def onsetProfile (c1 c2 : SonorityRank) : OnsetProfile :=
     profile. Uses `mkMarkGrad` from the shared constraint library.
 
     Rise = 0 violations, plateau = 1, fall = 2. This captures the
-    behavioral gradient (blif > bnif > bdif > lbif; @cite{berent-2026},
+    behavioral gradient (blif > bnif > bdif > lbif; [berent-2026],
     data from Berent et al. 2007). The gradient is determined entirely
     by the abstract `SonorityRank` ordering — the grammar does not inspect
     whether "rise" means "stop-before-liquid" vs. "nasal-before-vowel". -/
@@ -159,11 +159,11 @@ theorem ocp_passes_ab {α : Type} [DecidableEq α] (a b : α) (rest : List α)
     opposite surface preferences depending on whether the morphological
     context licenses reduplication.
 
-    This is the core of @cite{berent-2026}'s third argument: the
+    This is the core of [berent-2026]'s third argument: the
     reversal is amodal (it transfers from speech to sign) and
     L1-dependent (it depends on the speaker's morphological system).
     See `Phonology.Doubling.doubling_reversal` for the proof
-    and @cite{berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016} for
+    and [berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016] for
     the experimental evidence. -/
 theorem amodal_doubling_reversal :
     (mkTableau phonCandidates phonRanking).optimal

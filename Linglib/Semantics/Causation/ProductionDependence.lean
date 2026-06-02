@@ -4,7 +4,7 @@ import Linglib.Semantics.Causation.CCSelection
 
 /-!
 # Burning Facts: Thick and Thin Causatives
-@cite{embick-2009} @cite{martin-rose-nichols-2025} @cite{rose-nichols-2021} @cite{wolff-2003}
+[embick-2009] [martin-rose-nichols-2025] [rose-nichols-2021] [wolff-2003]
 
 Two concepts of CAUSE underlie lexical causative verb semantics:
 
@@ -77,7 +77,7 @@ while thin causatives specify only the result state. -/
     - `thin`: Result-only — silent on manner, compatible with any cause type. -/
 inductive ThickThinClass where
   /-- Thick via event predicate: root is a predicate of the causing event.
-      *break*, *burn*, *melt*, *cut* — @cite{embick-2009} break-class.
+      *break*, *burn*, *melt*, *cut* — [embick-2009] break-class.
       Compatible with strong adjectival resultatives (*burn clean*). -/
   | thickManner
   /-- Thick via state property: result state reveals production process.
@@ -95,7 +95,7 @@ def ThickThinClass.IsThick (c : ThickThinClass) : Prop :=
 instance : DecidablePred ThickThinClass.IsThick :=
   fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
-/-- Is the verb a causative manner verb (@cite{embick-2009} break-class)?
+/-- Is the verb a causative manner verb ([embick-2009] break-class)?
     These are the thick verbs whose root is an event predicate,
     compatible with strong adjectival resultatives. -/
 def ThickThinClass.IsCausativeMannerVerb (c : ThickThinClass) : Prop :=
@@ -187,7 +187,7 @@ the resultative infrastructure in ArgumentStructure/Studies/TheoryComparison.lea
 where the constructional CAUSE uses `Causative.make`. -/
 
 /-- Causative manner verbs (thickManner) are compatible with strong ASR.
-    This is the @cite{embick-2009} generalization formalized as a derived property.
+    This is the [embick-2009] generalization formalized as a derived property.
 
     Thin verbs and thick-state verbs (*bury*) are NOT compatible. -/
 def ThickThinClass.strongASRCompatible : ThickThinClass → Bool

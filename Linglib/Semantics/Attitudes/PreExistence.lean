@@ -2,9 +2,9 @@ import Linglib.Semantics.Verb.Basic
 
 /-!
 # Pre-Existence and Modal Insertion in Factive Complements
-@cite{williams-2026} @cite{white-2014}
+[williams-2026] [white-2014]
 
-@cite{williams-2026} argues that the distribution of the covert modal in
+[williams-2026] argues that the distribution of the covert modal in
 non-finite complements of *forget* is governed by the **pre-existence
 presupposition** (drawing on Bondarenko 2019/2020 on Buryat *hanaxa*).
 
@@ -35,7 +35,7 @@ precede the forgetting.
 
 ## SMINC Generalization
 
-**Selectivity of Modal Insertion in Non-finite Contexts** (@cite{williams-2026}, §3.1.3, (15)): the covert modal Mod heads the complement of
+**Selectivity of Modal Insertion in Non-finite Contexts** ([williams-2026], §3.1.3, (15)): the covert modal Mod heads the complement of
 *forget* just in case the embedded lexical verb is a plain infinitive,
 and is banned elsewhere.
 
@@ -76,7 +76,7 @@ def satisfiesPreExistence : ComplementType → Bool
 /-- Whether a factive verb's complement requires covert modal insertion
     to satisfy the pre-existence presupposition.
 
-    Under @cite{williams-2026}: Mod is inserted iff the complement type does
+    Under [williams-2026]: Mod is inserted iff the complement type does
     not inherently satisfy pre-existence. This is the SMINC generalization
     (Selectivity of Modal Insertion in Non-finite Contexts). -/
 def needsModalInsertion (ct : ComplementType) : Bool :=
@@ -91,7 +91,7 @@ theorem finiteClause_satisfies_preExistence :
     satisfiesPreExistence .finiteClause = true := rfl
 
 /-- Not all non-finite types violate pre-existence: gerunds satisfy it.
-    This is the key prediction that distinguishes @cite{williams-2026} from the
+    This is the key prediction that distinguishes [williams-2026] from the
     Modalized Complement Analysis. -/
 theorem gerund_satisfies_preExistence :
     satisfiesPreExistence .gerund = true := rfl
@@ -111,11 +111,11 @@ theorem sminc_finite_no_modal :
     needsModalInsertion .finiteClause = false := rfl
 
 -- ============================================================================
--- §4. Comparison with Modalized Complement Analysis (@cite{white-2014})
+-- §4. Comparison with Modalized Complement Analysis ([white-2014])
 -- ============================================================================
 
 /-- The MCA predicts modal insertion for ALL non-finite
-    complements. @cite{williams-2026} shows this overgenerates: gerunds
+    complements. [williams-2026] shows this overgenerates: gerunds
     don't get modalized. -/
 def mcaPrediction (ct : ComplementType) : Bool :=
   !ct.isFinite

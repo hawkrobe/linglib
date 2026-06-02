@@ -3,7 +3,7 @@ import Linglib.Features.PrivativePair
 
 /-!
 # Surface Gender
-@cite{corbett-1991} @cite{kramer-2020}
+[corbett-1991] [kramer-2020]
 
 Descriptive (atheoretical) classification of surface gender values attested
 cross-linguistically. This type records the *observable* gender of a noun —
@@ -11,8 +11,8 @@ what agreement class it triggers — without committing to the mechanism of
 gender assignment.
 
 The distinction between **sex-based** systems (masculine/feminine/neuter) and
-**animacy-based** systems (animate/inanimate) follows @cite{corbett-1991}'s
-WALS Chapter 31. @cite{kramer-2020} argues that these surface categories
+**animacy-based** systems (animate/inanimate) follows [corbett-1991]'s
+WALS Chapter 31. [kramer-2020] argues that these surface categories
 arise from a single underlying mechanism (phi-features on the nominalizing
 head *n*), parameterized by feature dimension; that analysis lives in
 `Morphology.DM.Categorizer`.
@@ -72,7 +72,7 @@ theorem SurfaceGender.roundtrip_ud (g : UD.Gender) :
 -- § 2: Gender Features
 -- ============================================================================
 
-/-! ### Gender Features (@cite{sauerland-2003})
+/-! ### Gender Features ([sauerland-2003])
 
 Binary feature decomposition of sex-based gender:
 - **[±feminine]**: whether the referent triggers feminine agreement.
@@ -81,7 +81,7 @@ Binary feature decomposition of sex-based gender:
   Only neuter is [+neuter]; feminine and masculine are [−neuter].
 
 These features form a containment hierarchy: [+neuter] → [+feminine].
-This is a feature-geometric claim from @cite{sauerland-2003} §6,
+This is a feature-geometric claim from [sauerland-2003] §6,
 not a natural-kind claim: neuter is the *most specified* gender
 (like singular for number, 1st for person), and masculine is the
 *least specified* (like plural, 3rd).
@@ -212,16 +212,16 @@ end Gender
     agreement class a noun triggers. `GenderInfo` describes what the
     discourse participants know or assume about a referent's gender.
 
-    Motivated by @cite{arnold-2026}'s observation that singular *they*
+    Motivated by [arnold-2026]'s observation that singular *they*
     is licensed by two inversely correlated pragmatic conditions:
     one requiring an underspecified discourse representation (where gender
     is unknown or irrelevant), the other requiring knowledge that the
     referent's personal pronouns are *they/them* (where gender information
     is highly specific).
 
-    See also @cite{newman-1992} ("nonsolid" antecedents),
-    @cite{newman-1998} (low individuation), and
-    @cite{camilliere-etal-2021} (social distance as a proxy for
+    See also [newman-1992] ("nonsolid" antecedents),
+    [newman-1998] (low individuation), and
+    [camilliere-etal-2021] (social distance as a proxy for
     discourse specificity). -/
 inductive GenderInfo where
   /-- Gender is known to discourse participants and matches a

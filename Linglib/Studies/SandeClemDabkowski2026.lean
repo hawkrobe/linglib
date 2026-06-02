@@ -6,9 +6,9 @@ import Linglib.Syntax.Minimalist.Amalgamation
 
 /-!
 # Sande, Clem & Dąbkowski (2026): Discontinuous vowel harmony in Guébie
-@cite{sande-clem-dabkowski-2026}
+[sande-clem-dabkowski-2026]
 
-@cite{sande-clem-dabkowski-2026} introduce the phenomenon of
+[sande-clem-dabkowski-2026] introduce the phenomenon of
 **discontinuous harmony**: a long-distance ATR-harmony pattern in
 Guébie (a Kru language of Côte d'Ivoire) where the trigger and
 target are separated by intervening *non-transparent*
@@ -34,16 +34,16 @@ vP at the moment of vP-spell-out (when local harmony applied).
 ## The analysis
 
 1. **Predicate fronting is remnant-VP movement** (extending
-   @cite{koopman-1997}'s Vata/Nweh analysis). The particle is the
+   [koopman-1997]'s Vata/Nweh analysis). The particle is the
    only overt element left in the remnant after V has moved through v
    to T and the object has shifted out (where applicable).
 
 2. **vP and CP are spell-out phases**. Following the cyclic
-   spell-out of @cite{newell-2008} / @cite{chomsky-2001}, vP is
+   spell-out of [newell-2008] / [chomsky-2001], vP is
    spelled out upon Merge of C; CP is spelled out at the end.
 
 3. **Local harmony in vP**. ATR harmony is a vP-domain cophonology
-   (per @cite{sande-jenks-inkelas-2020}'s Cophonologies-by-Phrase
+   (per [sande-jenks-inkelas-2020]'s Cophonologies-by-Phrase
    architecture, formalized in `CophonologyByPhrase.lean`):
    when V and Part are both spelled out in vP, harmony applies; when
    only Part is in the vP-spell-out, no trigger is present and Part
@@ -58,8 +58,8 @@ vP at the moment of vP-spell-out (when local harmony applied).
 5. **Strict PIC is rejected**. For step 4 to work, already-spelled-out
    material must remain accessible to later syntactic operations
    (here, A′-movement of the remnant containing the particle). SCD
-   2026 §6.2 rejects both PIC₁ (@cite{chomsky-2000}) and PIC₂
-   (@cite{chomsky-2001}) in favor of a Cyclic-Linearization-bounded
+   2026 §6.2 rejects both PIC₁ ([chomsky-2000]) and PIC₂
+   ([chomsky-2001]) in favor of a Cyclic-Linearization-bounded
    regime — `PICStrength.linearizationBound` in `Phase.lean`.
 
 ## What this study file establishes
@@ -82,11 +82,11 @@ data — Russell, p.c.
 
 ## Verified preliminaries (rejected alternatives)
 
-@cite{sande-clem-dabkowski-2026} §5 argues that purely phonological
+[sande-clem-dabkowski-2026] §5 argues that purely phonological
 theories of harmony predict strict locality and so cannot derive the
 discontinuous pattern. The file does not formally simulate each
-rejected theory (autosegmental @cite{clements-1985}, gestural
-@cite{gafos-1998}, ABC @cite{rose-walker-2004}), but cross-references
+rejected theory (autosegmental [clements-1985], gestural
+[gafos-1998], ABC [rose-walker-2004]), but cross-references
 their formalizations elsewhere in linglib —
 `Studies/RoseWalker2004.lean`,
 `Studies/Hansson2010.lean`,
@@ -99,10 +99,10 @@ empirically violated.
 Substrate consumed (additions landed in this same overhaul):
 
 - `Phonology/OptimalityTheory/CophonologyByPhrase.lean` —
-  @cite{sande-jenks-inkelas-2020}'s phrasal extension of
-  @cite{sande-jenks-2017}'s VI-anchored cophonology.
+  [sande-jenks-inkelas-2020]'s phrasal extension of
+  [sande-jenks-2017]'s VI-anchored cophonology.
 - `Syntax/Minimalist/Movement/Remnant.lean` —
-  @cite{koopman-1997} predicate-cleft remnant-XP movement.
+  [koopman-1997] predicate-cleft remnant-XP movement.
 - `Syntax/Minimalist/Phase.lean` — added
   `PICStrength.linearizationBound` and `admitsExtraction`.
 - `Syntax/Minimalist/Linearization/Cyclic.lean` — added
@@ -129,7 +129,7 @@ open Phonology.CophonologyByPhrase (PhrasalCophonology)
 -- § 1: Guébie vowel inventory and ATR feature
 -- ============================================================================
 
-/-! ### Guébie vowel inventory (@cite{sande-clem-dabkowski-2026} (1))
+/-! ### Guébie vowel inventory ([sande-clem-dabkowski-2026] (1))
 
 ```
 +ATR:  ə  e  i  o  u
@@ -137,8 +137,8 @@ open Phonology.CophonologyByPhrase (PhrasalCophonology)
 ```
 
 Vowels harmonize as a binary +/−ATR feature within a morpheme; affixes
-agree with the root (@cite{sande-2017}, @cite{sande-2019},
-@cite{sande-2022}). Particles in particle-verb constructions inherit
+agree with the root ([sande-2017], [sande-2019],
+[sande-2022]). Particles in particle-verb constructions inherit
 the ATR value of the verb root *when both are inside the same
 spell-out domain* — this is the discontinuous-harmony observation.
 
@@ -150,7 +150,7 @@ result we only need a per-terminal ATR value. -/
 abbrev ATR := Bool
 
 /-- The default ATR value for the particle when no vowel-harmony trigger
-    is present in its spell-out domain. @cite{sande-clem-dabkowski-2026}
+    is present in its spell-out domain. [sande-clem-dabkowski-2026]
     §2.5 — particles surface with their lexical (typically -ATR) value
     when not local to a harmony trigger. -/
 def particleDefaultATR : ATR := false
@@ -160,7 +160,7 @@ def particleDefaultATR : ATR := false
 -- ============================================================================
 
 /-- The four particle-verb word orders that diagnose discontinuous
-    harmony (@cite{sande-clem-dabkowski-2026} (44), §6.1). -/
+    harmony ([sande-clem-dabkowski-2026] (44), §6.1). -/
 inductive WordOrder where
   /-- `S V O Part`: V moves to T; Part stays in vP; clause-final. -/
   | SVOPart
@@ -175,13 +175,13 @@ inductive WordOrder where
   deriving DecidableEq, Repr
 
 /-- The terminals spelled out within vP for each word order
-    (@cite{sande-clem-dabkowski-2026} (45)/(48)). The decisive
+    ([sande-clem-dabkowski-2026] (45)/(48)). The decisive
     difference: `SAuxOPartV` and `PartSAuxOV` keep V inside vP at
     spell-out (V hasn't raised past v), while `SVOPart` and `PartSVO`
     have V already in T at vP-spell-out, leaving only Part inside vP.
 
     The object has independently shifted out of vP in all four
-    derivations (per @cite{koopman-1997}-style remnant-VP analysis,
+    derivations (per [koopman-1997]-style remnant-VP analysis,
     extended in §4 of the paper), so it does not appear here. -/
 def vPSpellOut : WordOrder → List String
   | .SVOPart    => ["Part"]
@@ -288,7 +288,7 @@ theorem PartSAuxOV_atr_persists_through_fronting (vIsPlusATR : ATR) :
 -- § 6: Strict PIC is rejected (SCD 2026 §6.2)
 -- ============================================================================
 
-/-- @cite{sande-clem-dabkowski-2026}'s commitment: the PIC mode for
+/-- [sande-clem-dabkowski-2026]'s commitment: the PIC mode for
     Guébie discontinuous harmony is `linearizationBound` — already
     spelled-out material remains accessible to later syntax. Strict
     PIC₁ or PIC₂ would block the remnant-VP movement of the particle
@@ -307,12 +307,12 @@ theorem guebie_PIC_admits_remnant_movement (phase goal : Minimalist.SyntacticObj
 -- § 7: Verb doubling diagnosed as syntactic (refutes Landau 2006 for Guébie)
 -- ============================================================================
 
-/-! @cite{sande-clem-dabkowski-2026} §3 establishes via island
+/-! [sande-clem-dabkowski-2026] §3 establishes via island
     sensitivity (their (27)–(30)) that Guébie predicate-fronting verb
     doubling is narrow-syntactic, not PF dislocation. This positions
-    Guébie alongside @cite{harizanov-gribanova-2019}'s Russian as a
+    Guébie alongside [harizanov-gribanova-2019]'s Russian as a
     positive instance of `VerbDoublingIsSyntactic` — and against
-    @cite{landau-2006}'s Hebrew analysis (which makes verb doubling
+    [landau-2006]'s Hebrew analysis (which makes verb doubling
     PF-driven).
 
     The previous formulation as a universal axiom was inconsistent
@@ -363,7 +363,7 @@ theorem guebie_properRemnant : properRemnant guebiePredicateDoubling.toRemnantFr
 
 /-! ### Guébie's vP cophonology as a `PhrasalCophonology` instance
 
-The vP-domain ATR-harmony cophonology of @cite{sande-jenks-inkelas-2020}
+The vP-domain ATR-harmony cophonology of [sande-jenks-inkelas-2020]
 applied to Guébie. The phase selector matches `v` heads (per the v*
 phase head of Chomsky 2000); the constraint subranking is left
 abstract here (it would be `[ATRHARM ≫ IDENT-IO(ATR)]` over the
@@ -416,7 +416,7 @@ theorem guebieVPCophonology_applies_to_v :
 
 /-! ### Guébie as a positive instance of `VerbDoublingIsSyntactic`
 
-@cite{sande-clem-dabkowski-2026} §3 provides three independent
+[sande-clem-dabkowski-2026] §3 provides three independent
 diagnostics that the Guébie verb-doubling movement is narrow-syntactic:
 successive cyclicity (their (25)–(26)), island sensitivity ((27)–(28)),
 and creates-island effects ((29)–(30)). On the basis of this evidence,
@@ -455,8 +455,8 @@ theorem guebie_VDIS_positive_instance :
 -- ============================================================================
 
 /-! Wolof shows the same architectural shape as Guébie discontinuous
-    harmony, in a relative-clause construction (@cite{sy-2005},
-    @cite{martinovic-2019}). The head noun starts local to the
+    harmony, in a relative-clause construction ([sy-2005],
+    [martinovic-2019]). The head noun starts local to the
     distal demonstrative inside DP; both spell out together with
     local ATR harmony applying; the head noun then A′-moves to the
     left edge of the relative clause; intervening stative-verb
@@ -481,7 +481,7 @@ def wolofHarmonyApplies (s : WolofRelClauseShape) : Bool :=
 
 /-- Both Wolof shapes have the head and demonstrative spelled out
     together at the DP-phase spell-out — predicting harmony in both,
-    consistent with @cite{sy-2005}'s data. The discontinuous
+    consistent with [sy-2005]'s data. The discontinuous
     appearance in the relative-clause case is post-spell-out
     movement, not a different harmony mechanism. -/
 theorem wolof_harmony_uniform :
@@ -492,7 +492,7 @@ theorem wolof_harmony_uniform :
 -- § 9: Atchan nasal-harmony stub (SCD 2026 §7, Russell p.c.)
 -- ============================================================================
 
-/-! @cite{russell-2023} reports a parallel pattern in Atchan nasal
+/-! [russell-2023] reports a parallel pattern in Atchan nasal
     harmony: a nasal singular subject pronoun triggers nasal harmony
     on auxiliaries and the verb; in verb-doubling focus
     constructions, the higher copy of the verb (in focus position)

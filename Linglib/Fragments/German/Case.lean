@@ -4,7 +4,7 @@ import Linglib.Morphology.Case.Allomorphy
 open Morphology.Case.Allomorphy
 
 /-!
-# German Case Inventory @cite{blake-1994}
+# German Case Inventory [blake-1994]
 
 German has **4 cases**: NOM, ACC, GEN, DAT. This is the largest contiguous
 inventory possible without any peripheral (spatial) cases — exactly the

@@ -3,9 +3,9 @@ import Linglib.Syntax.Case.Dependent
 
 /-!
 # Yakut (Sakha) Case System
-@cite{baker-vinokurova-2010}
+[baker-vinokurova-2010]
 
-Sakha is the Turkic language analyzed by @cite{baker-vinokurova-2010}
+Sakha is the Turkic language analyzed by [baker-vinokurova-2010]
 as the cross-linguistic exemplar of a *two-modality* case grammar:
 ACC and DAT are dependent case (Marantz; cf. `Marantz1991.lean`),
 while NOM is assigned by finite T via Agree and GEN is assigned by
@@ -25,7 +25,7 @@ open Syntax.Case
 -- § 1: Case System Configuration
 -- ============================================================================
 
-/-- The Sakha case system @cite{baker-vinokurova-2010}: accusative
+/-- The Sakha case system [baker-vinokurova-2010]: accusative
     alignment with dependent ACC + DAT and Agree-based NOM + GEN. -/
 def yakutCaseConfig : CaseSystemConfig where
   langType := .accusative

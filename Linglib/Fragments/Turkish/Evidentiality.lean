@@ -2,7 +2,7 @@ import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Turkish Evidentiality
-@cite{de-haan-2013} @cite{aikhenvald-2004}
+[de-haan-2013] [aikhenvald-2004]
 
 Two-choice direct vs indirect. Past-tense paradigm contrasts *-DI*
 (witnessed) with *-mIş* (inferred or reported). The canonical

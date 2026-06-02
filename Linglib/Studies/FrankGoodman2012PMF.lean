@@ -1,8 +1,8 @@
 import Linglib.Pragmatics.RSA.ReferenceGame
 
 /-!
-# @cite{frank-goodman-2012} reference game (concrete instance)
-@cite{frank-goodman-2012}
+# [frank-goodman-2012] reference game (concrete instance)
+[frank-goodman-2012]
 
 "Predicting Pragmatic Reasoning in Language Games", Science 336, 998.
 

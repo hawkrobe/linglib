@@ -2,7 +2,7 @@ import Linglib.Typology.Extraction
 
 /-!
 # K'iche' Extraction Morphology Fragment
-@cite{mendes-ranero-2021} @cite{elkins-torrence-brown-2026} @cite{mondloch-2017}
+[mendes-ranero-2021] [elkins-torrence-brown-2026] [mondloch-2017]
 
 Theory-neutral data on the extraction particle *wi* (the "fronting
 particle") in K'iche' and Kaqchikel (K'ichean Mayan).
@@ -69,7 +69,7 @@ structure KicheExtractionDatum where
 
 /-- Spatial oblique extraction: *wi* licensed.
     "Where did you go yesterday?" — *wi* appears at extraction site.
-    @cite{mondloch-2017} Lesson 14; @cite{mendes-ranero-2021} §2, ex. (9a). -/
+    [mondloch-2017] Lesson 14; [mendes-ranero-2021] §2, ex. (9a). -/
 def spatialOblExtraction : KicheExtractionDatum :=
   { label := "Spatial oblique extraction (wi)"
   , reference := "Mondloch 2017, Lesson 14; Mendes & Ranero 2021, §2, ex. (9a)"
@@ -78,7 +78,7 @@ def spatialOblExtraction : KicheExtractionDatum :=
 
 /-- Instrumental oblique extraction: *wi* licensed.
     "With what did they eat their food?" — *wi* at extraction site.
-    @cite{mendes-ranero-2021} §2, ex. (9b). -/
+    [mendes-ranero-2021] §2, ex. (9b). -/
 def instrumentalOblExtraction : KicheExtractionDatum :=
   { label := "Instrumental oblique extraction (wi)"
   , reference := "Mendes & Ranero 2021, §2, ex. (9b)"
@@ -88,7 +88,7 @@ def instrumentalOblExtraction : KicheExtractionDatum :=
 /-- Temporal oblique extraction: *wi* NOT licensed.
     "When did you eat beans?" — no *wi*. Parallel to Mam: temporal
     obliques are exempt in both language groups.
-    @cite{mendes-ranero-2021} §2, ex. (12c). -/
+    [mendes-ranero-2021] §2, ex. (12c). -/
 def temporalOblExtraction : KicheExtractionDatum :=
   { label := "Temporal oblique extraction (no wi)"
   , reference := "Mendes & Ranero 2021, §2, ex. (12c)"
@@ -98,7 +98,7 @@ def temporalOblExtraction : KicheExtractionDatum :=
 /-- Reason oblique extraction: *wi* NOT licensed.
     "Why did Juan work?" — no *wi*. KEY CONTRAST with Mam: SJO
     =(y)a' IS licensed with reason extraction.
-    @cite{mendes-ranero-2021} §2 (adapted from Elkins et al. Table 3). -/
+    [mendes-ranero-2021] §2 (adapted from Elkins et al. Table 3). -/
 def reasonOblExtraction : KicheExtractionDatum :=
   { label := "Reason oblique extraction (no wi)"
   , reference := "Mendes & Ranero 2021, §2; Elkins et al. Table 3"
@@ -107,7 +107,7 @@ def reasonOblExtraction : KicheExtractionDatum :=
 
 /-- Subject extraction: *wi* NOT licensed (Agent Focus instead).
     "Who bought it?" — AF morphology *-Vk* instead of *wi*.
-    @cite{mendes-ranero-2021} §2, item (6c). -/
+    [mendes-ranero-2021] §2, item (6c). -/
 def subjectExtraction : KicheExtractionDatum :=
   { label := "Subject extraction (AF, no wi)"
   , reference := "Mendes & Ranero 2021, §2, item (6c)"
@@ -116,7 +116,7 @@ def subjectExtraction : KicheExtractionDatum :=
 
 /-- Object extraction: *wi* NOT licensed.
     "What did you buy?" — no *wi*.
-    @cite{elkins-torrence-brown-2026}. -/
+    [elkins-torrence-brown-2026]. -/
 def objectExtraction : KicheExtractionDatum :=
   { label := "Object extraction (no wi)"
   , reference := "Elkins et al. 2026"
@@ -139,7 +139,7 @@ def allData : List KicheExtractionDatum :=
 /-- Among the formalized data points, *wi* is licensed exactly for
     spatial and instrumental obliques. The full set of *wi*-triggering
     obliques includes comitatives and indirect objects as well
-    (@cite{mendes-ranero-2021} §2; @cite{elkins-torrence-brown-2026}
+    ([mendes-ranero-2021] §2; [elkins-torrence-brown-2026]
     Table 3), but those are not yet formalized here. -/
 theorem wi_subset_of_obliques :
     allData.all (λ d =>
@@ -158,13 +158,13 @@ theorem temporal_exempt : temporalOblExtraction.wiLicensed = false := rfl
 
 -- ============================================================================
 -- § 4: Embedded Clause Types and the Fronting Particle Generalization
---      (@cite{mendes-ranero-2021}, definition (5); Can Pixabaj 2015)
+--      ([mendes-ranero-2021], definition (5); Can Pixabaj 2015)
 -- ============================================================================
 
 /-- Embedded clause types relevant for long-distance *wi* distribution.
     The crucial distinction is whether the embedded clause has an overt
     complementizer (= CP) or not (= AspP, a structurally reduced clause).
-    @cite{mendes-ranero-2021} §2, exx. (17)–(20), (34)–(37). -/
+    [mendes-ranero-2021] §2, exx. (17)–(20), (34)–(37). -/
 inductive KicheEmbeddedClauseType where
   /-- Full CP with overt complementizer *chi*. -/
   | cp
@@ -189,7 +189,7 @@ structure KicheLongDistanceDatum where
   deriving Repr
 
 /-- LD from embedded CP: *wi* on BOTH matrix and embedded predicates.
-    @cite{mendes-ranero-2021} §3, ex. (34); adapted from Can Pixabaj 2015: 166–167. -/
+    [mendes-ranero-2021] §3, ex. (34); adapted from Can Pixabaj 2015: 166–167. -/
 def ldFromCP : KicheLongDistanceDatum :=
   { label := "LD extraction from embedded CP (wi on both)"
   , reference := "Mendes & Ranero 2021, §3, ex. (34)"
@@ -198,7 +198,7 @@ def ldFromCP : KicheLongDistanceDatum :=
   , wiOnEmbedded := true }
 
 /-- LD from embedded AspP: *wi* only on embedded predicate, NOT matrix.
-    @cite{mendes-ranero-2021} §3, ex. (35); adapted from Can Pixabaj 2015: 163. -/
+    [mendes-ranero-2021] §3, ex. (35); adapted from Can Pixabaj 2015: 163. -/
 def ldFromAspP : KicheLongDistanceDatum :=
   { label := "LD extraction from embedded AspP (wi on embedded only)"
   , reference := "Mendes & Ranero 2021, §3, ex. (35)"
@@ -208,7 +208,7 @@ def ldFromAspP : KicheLongDistanceDatum :=
 
 def ldData : List KicheLongDistanceDatum := [ldFromCP, ldFromAspP]
 
-/-- **The Fronting Particle Generalization** (@cite{mendes-ranero-2021},
+/-- **The Fronting Particle Generalization** ([mendes-ranero-2021],
     definition (5); first discussed by Can Pixabaj 2015):
 
     In long-distance A'-extraction of low adjuncts from a single

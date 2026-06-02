@@ -7,7 +7,7 @@ import Linglib.Core.Agent.RationalAction
 /-!
 # Iterated Best Response: Core Definitions
 
-Game-theoretic pragmatics following @cite{franke-2011} §6-8.
+Game-theoretic pragmatics following [franke-2011] §6-8.
 
 Defines interpretation games (`InterpGame`), speaker/hearer strategies,
 literal listener (L₀), best response operators, IBR iteration (`ibrN`),

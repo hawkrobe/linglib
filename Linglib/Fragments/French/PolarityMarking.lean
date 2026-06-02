@@ -2,7 +2,7 @@ import Linglib.Typology.PolarityMarking
 
 /-!
 # French Polarity-Marking Strategies
-@cite{holmberg-2016}
+[holmberg-2016]
 
 French marks polarity reversal (contradiction of a negative assertion or
 question) with the dedicated particle *si*. Like German *doch* and
@@ -25,7 +25,7 @@ initially or as a standalone response.
 
 ## Cross-linguistic class
 
-@cite{holmberg-2016}: *si*, *jo*, *doch* form a natural class of
+[holmberg-2016]: *si*, *jo*, *doch* form a natural class of
 polarity-reversing particles — they assign [+Pol] in contexts where
 a negative polarity is salient. This class is distinct from plain
 affirmative particles like Dutch *wel* and from Verum focus.

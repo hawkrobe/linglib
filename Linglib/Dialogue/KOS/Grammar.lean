@@ -4,9 +4,9 @@ import Linglib.Syntax.HPSG.HeadFiller
 
 /-!
 # KOS–Grammar Integration
-@cite{ginzburg-2012} Ch. 5, @cite{ginzburg-sag-2000}
+[ginzburg-2012] Ch. 5, [ginzburg-sag-2000]
 
-@cite{ginzburg-2012}'s central thesis: interaction is built into grammar.
+[ginzburg-2012]'s central thesis: interaction is built into grammar.
 The Sign type has `dgb-params` and `q-params` — dialogue features living
 inside syntactic representations (Ch. 5, §5.2).
 
@@ -36,7 +36,7 @@ open HPSG
 
 /-- An HPSG sign extended with dialogue features.
 
-@cite{ginzburg-2012} Ch. 5 §5.2 (Sign schema, p. 122 ex. 12) introduces
+[ginzburg-2012] Ch. 5 §5.2 (Sign schema, p. 122 ex. 12) introduces
 **dgb-params** and **quest-dom** as dialogue-relevant features on Sign:
 - `dgbParams`: contextual parameters that must be resolved for grounding
 - `questDom`: the question domain — what question the sign introduces
@@ -83,7 +83,7 @@ def DialogueSign.toSynsem {Cont : Type} (ds : DialogueSign Cont) : Synsem where
 DGB-PARAMS become `cparams` (block grounding until resolved);
 Q-PARAMS become `qcparams` (travel with the sign, do not block grounding,
 but remain available for fragment-reprise queries per
-@cite{ginzburg-2012} §8.5.1, @cite{purver-ginzburg-2004}). -/
+[ginzburg-2012] §8.5.1, [purver-ginzburg-2004]). -/
 def DialogueSign.toLocProp {Cont : Type} (ds : DialogueSign Cont) :
     LocProp Cont where
   phon := ds.phon
@@ -114,7 +114,7 @@ theorem toLocProp_q_to_qcparams {Cont : Type} (ds : DialogueSign Cont) :
 -- ════════════════════════════════════════════════════
 
 /-- "who" — a wh-word with Q-PARAMS.
-@cite{ginzburg-2012} Ch. 5: wh-words contribute Q-PARAMS that
+[ginzburg-2012] Ch. 5: wh-words contribute Q-PARAMS that
 project to the QUEST-DOM of the clause. -/
 def who : DialogueSign String where
   phon := "who"
@@ -124,7 +124,7 @@ def who : DialogueSign String where
   questDom := some "?x.P(x)"
 
 /-- "Jo" — a proper name with DGB-PARAMS.
-@cite{ginzburg-2012} Ch. 6: referential NPs introduce DGB-PARAMS
+[ginzburg-2012] Ch. 6: referential NPs introduce DGB-PARAMS
 that must be resolved (grounded) for the utterance to be integrated. -/
 def jo : DialogueSign String where
   phon := "Jo"

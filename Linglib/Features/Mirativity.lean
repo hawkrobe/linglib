@@ -1,9 +1,9 @@
 /-!
 # Mirativity
-@cite{delancey-1997} @cite{aikhenvald-2004}
+[delancey-1997] [aikhenvald-2004]
 
 Mirativity is the grammatical category that marks whether the propositional
-content is **expected** or **surprising** to the speaker. @cite{delancey-1997}
+content is **expected** or **surprising** to the speaker. [delancey-1997]
 introduced the term and argued — against earlier evidential-subsumption
 analyses — that mirativity is typologically *independent* of evidentiality:
 the two categories are often conveyed by overlapping morphology (e.g.,

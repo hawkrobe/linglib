@@ -4,7 +4,7 @@ import Linglib.Semantics.Modality.Typology
 # Modern Greek Modal Inventory
 
 Modal expressions from Modern Greek (Indo-European), based on
-@cite{qing-uegaki-2025}.
+[qing-uegaki-2025].
 
 Greek has non-IFF modals: Prepei and Mporei express non-rectangular
 subsets of the meaning space.

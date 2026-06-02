@@ -5,12 +5,12 @@ import Linglib.Core.Computability.Subregular.Function.Subsequential
 
 /-!
 # Tier-Based Alternation Rules
-@cite{belth-2026} @cite{goldsmith-1976}
+[belth-2026] [goldsmith-1976]
 
 The canonical operational schema for SPE-style phonological alternations
 that factor through a tier projection. A rule has the shape
 
-  `Rel(A, F) / C __ ∘ proj(·, T)`        (left-context, eq. 6 of @cite{belth-2026})
+  `Rel(A, F) / C __ ∘ proj(·, T)`        (left-context, eq. 6 of [belth-2026])
   `Rel(A, F) / __ C ∘ proj(·, T)`        (right-context, eq. 8)
 
 where:
@@ -18,13 +18,13 @@ where:
 - `T ⊆ α` is a tier (an erasing string-homomorphism — see `Core.Tier`);
 - `C ⊆ T` is the natural class of the *triggering* tier-adjacent segment;
 - `A ⊆ α` is the natural class of *targets* (here: a single underspecified
-  position identified by index, à la @cite{belth-2026});
+  position identified by index, à la [belth-2026]);
 - `F` is the agreed-or-disagreed feature; and
 - `Rel` is `Agree` (assimilation) or `Disagree` (dissimilation).
 
 This schema covers Belth-style D2L rules (Latin `-alis` / `-aris` liquid
 dissimilation, Turkish vowel harmony, Finnish backness harmony with
-neutral-vowel transparency — see @cite{belth-2026}), Rose-Walker harmony
+neutral-vowel transparency — see [belth-2026]), Rose-Walker harmony
 systems (which structurally **contain** a `TierRule` as their value-prediction
 core — see `Phonology.Harmony.HarmonySystem` in `Harmony/Defs.lean`), and
 any SPE rule whose context is a single tier-adjacent segment.
@@ -61,7 +61,7 @@ open Core
 -- § 1: Schema
 -- ============================================================================
 
-/-- Belth's `Agree`/`Disagree` distinction (@cite{belth-2026} eq. 9). -/
+/-- Belth's `Agree`/`Disagree` distinction ([belth-2026] eq. 9). -/
 inductive Relation where
   | agree     -- target's feature value matches the context's
   | disagree  -- target's feature value is the negation of the context's
@@ -90,7 +90,7 @@ abbrev Side := Core.Direction
 
 /-- A tier-based alternation rule over alphabet `α`.
 
-    - `tier`         : the erasing projection (@cite{goldsmith-1976}) onto
+    - `tier`         : the erasing projection ([goldsmith-1976]) onto
       which the context-class check is performed.
     - `side`         : whether the triggering context precedes (`.left`,
       eq. 6) or follows (`.right`, eq. 8) the unspecified target slot.
@@ -102,7 +102,7 @@ abbrev Side := Core.Direction
     - `featureValue` : the value of `F` extracted from a context segment.
       `none` means the segment is itself underspecified for `F`, in which
       case the rule defers to `default`.
-    - `default`      : the Elsewhere value (@cite{belth-2026} §2.3.3,
+    - `default`      : the Elsewhere value ([belth-2026] §2.3.3,
       Finnish 52b). `none` means *no* default — when no context is found,
       `applyAt` returns `none`. `some v` is the concrete fallback. -/
 structure TierRule (α : Type) where
@@ -161,7 +161,7 @@ def flipRelation (r : TierRule α) : TierRule α :=
 /-- **Strict locality is the trivial-tier special case.** When the tier
     is the identity (every segment projects), `apply` (left-context)
     reduces to scanning the raw input for the context class — i.e., a
-    strictly local rule (@cite{belth-2026} §2.4 example: Turkish voicing
+    strictly local rule ([belth-2026] §2.4 example: Turkish voicing
     assimilation eq. 49b is `Agree([?voice], {voice}) / [*] __` with the
     trivial projection). -/
 theorem id_tier_left_is_strict_local (r : TierRule α)
@@ -204,7 +204,7 @@ end Phonology.Alternation
 The `TierRule.applyToString` reification produces a string-to-string
 function classifiable in the function-level subregular hierarchy
 (`Core/Computability/Subregular/Function/`). The expected classification
-per @cite{aksenova-rawski-graf-heinz-2020}:
+per [aksenova-rawski-graf-heinz-2020]:
 
 * Identity-tier `TierRule`s → **Left-Subsequential** (the trivial-tier
   case lemma `id_tier_left_is_strict_local` above shows the structural

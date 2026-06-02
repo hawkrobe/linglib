@@ -1,7 +1,7 @@
 /-
 # Kaplan's LD Formal System
 
-The model-theoretic semantics from @cite{kaplan-1989} "Demonstratives" §XVIII-XIX:
+The model-theoretic semantics from [kaplan-1989] "Demonstratives" §XVIII-XIX:
 the formal logic LD (Logic of Demonstratives) with its operators, dthat,
 and metatheorems.
 
@@ -33,7 +33,7 @@ open Semantics.Reference.Basic (Context Character Content)
 
 /-! ## LD Structure -/
 
-/-- Full LD model structure (@cite{kaplan-1989} §XVIII).
+/-- Full LD model structure ([kaplan-1989] §XVIII).
 
 An LD structure provides the domains (worlds, entities, positions, times),
 context parameters (agent, world, time, position projections), and the
@@ -51,7 +51,7 @@ structure LDStructure where
   C : Type
   /-- Agent of a context -/
   cAgent : C → U
-  /-- Addressee of a context (@cite{speas-tenny-2003} extension) -/
+  /-- Addressee of a context ([speas-tenny-2003] extension) -/
   cAddressee : C → U
   /-- World of a context -/
   cWorld : C → W
@@ -160,7 +160,7 @@ def opDiamond {W T : Type*} (worlds : List W) (φ : W → T → Prop) : W → T 
 
 /-- ⊨ Exist I: at every (proper) context, the agent exists.
 
-Follows directly from `LDStructure.proper`. @cite{kaplan-1989} §XVIII Remark 3. -/
+Follows directly from `LDStructure.proper`. [kaplan-1989] §XVIII Remark 3. -/
 theorem exist_i_valid (ld : LDStructure) (c : ld.C) :
     ld.exists_ (ld.cAgent c) (ld.cWorld c) :=
   ld.proper c

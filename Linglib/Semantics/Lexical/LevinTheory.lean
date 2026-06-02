@@ -8,7 +8,7 @@ import Linglib.Semantics.Lexical.EventStructure
 
 /-!
 # Levin Verb Class Theory
-@cite{levin-1993} @cite{dowty-1991} @cite{beavers-koontz-garboden-2020}
+[levin-1993] [dowty-1991] [beavers-koontz-garboden-2020]
 
 The `LevinClass` enum and its classification data (`MeaningComponents`,
 `meaningComponents`, `predictsUnaccusative`, `isVerbOfCreation`) are
@@ -18,7 +18,7 @@ This file provides the theoretical content that depends on `RootEntailments`:
 root entailment mapping, root–MC bridge enums, and universal consistency
 theorems.
 
-## § 1. Root entailment mapping (@cite{beavers-koontz-garboden-2020})
+## § 1. Root entailment mapping ([beavers-koontz-garboden-2020])
 
 Root structural entailments, well-formedness verification, and MRC tests.
 
@@ -30,7 +30,7 @@ components, plus universal consistency theorems.
 -/
 
 -- ════════════════════════════════════════════════════
--- § 1. Root Entailment Mapping (@cite{beavers-koontz-garboden-2020})
+-- § 1. Root Entailment Mapping ([beavers-koontz-garboden-2020])
 -- ════════════════════════════════════════════════════
 
 section LevinClassMethods
@@ -40,7 +40,7 @@ namespace Semantics.Lexical
 
 /-- Root structural entailments for each Levin class.
 
-    Assignments marked (B&KG) are directly from @cite{beavers-koontz-garboden-2020} Table 12 and Chapters 2–5. Others are inferred from class
+    Assignments marked (B&KG) are directly from [beavers-koontz-garboden-2020] Table 12 and Chapters 2–5. Others are inferred from class
     semantics following B&KG's framework:
     - Externally caused CoS → `causativeResult` (√CRACK pattern)
     - Internally caused CoS → `pureResult` (√BLOSSOM pattern)
@@ -220,13 +220,13 @@ theorem create_class_causative :
     LevinClass.create.rootEntailments = .causativeResult := rfl
 
 -- ════════════════════════════════════════════════════
--- § 2. Root–MC Bridge (@cite{beavers-koontz-garboden-2020})
+-- § 2. Root–MC Bridge ([beavers-koontz-garboden-2020])
 -- ════════════════════════════════════════════════════
 
 /-! ### Root–MC correspondence (2026 consensus)
 
-The 2026 consensus in lexical semantics (@cite{beavers-koontz-garboden-2020},
-@cite{rappaport-hovav-levin-2024}) treats root entailments as primary:
+The 2026 consensus in lexical semantics ([beavers-koontz-garboden-2020],
+[rappaport-hovav-levin-2024]) treats root entailments as primary:
 verb behavior at the Levin diagnostic level is determined by root content
 plus semantic field membership plus template structure.
 
@@ -245,8 +245,8 @@ frameworks diverge, making the divergences grep-able and testable. -/
 /-- Where a verb class's event-level causation originates.
 
     B&KG's root-level `cause` and Levin's event-level `causation` are
-    distinct concepts (@cite{beavers-koontz-garboden-2020} Ch. 5;
-    @cite{levin-1993} pp. 9–10). -/
+    distinct concepts ([beavers-koontz-garboden-2020] Ch. 5;
+    [levin-1993] pp. 9–10). -/
 inductive CausationSource where
   | rootExternal
   | rootNonDetachable

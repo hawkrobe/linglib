@@ -5,16 +5,16 @@ import Linglib.Semantics.Lexical.LevinTheory
 /-!
 # Levin Class → Entailment Profile Mapping
 
-@cite{levin-1993} @cite{dowty-1991} @cite{beavers-2010}
-@cite{beavers-koontz-garboden-2020} @cite{rappaport-hovav-levin-2024}
+[levin-1993] [dowty-1991] [beavers-2010]
+[beavers-koontz-garboden-2020] [rappaport-hovav-levin-2024]
 
-Maps @cite{levin-1993} verb classes to proto-role entailment profiles
-(@cite{dowty-1991}), encoding the argument-structure generalizations
+Maps [levin-1993] verb classes to proto-role entailment profiles
+([dowty-1991]), encoding the argument-structure generalizations
 that hold at the class level.
 
 The mapping is organized by **argument structure template**: groups of
 Levin classes that share the same subject/object entailment profile.
-This reflects the field consensus (@cite{beavers-koontz-garboden-2020})
+This reflects the field consensus ([beavers-koontz-garboden-2020])
 that root meaning determines which entailments hold:
 
 - **Manner verbs** (hit, touch): agent subject, contacted object (no CoS)
@@ -51,9 +51,9 @@ structure ArgTemplate where
 
 /-- Full agent acting on a contacted but unaffected object.
     Subject: V+S+C+M+IE. Object: CA+St (no CoS).
-    @cite{beavers-2010}: "unspecified" affectedness — the verb's
+    [beavers-2010]: "unspecified" affectedness — the verb's
     truth conditions don't entail a change of state in the object.
-    @cite{beavers-koontz-garboden-2020}: manner verbs lack result
+    [beavers-koontz-garboden-2020]: manner verbs lack result
     entailments. -/
 def mannerContact : ArgTemplate where
   subjectProfile := ⟨true, true, true, true, true,  false, false, false, false, false⟩
@@ -61,16 +61,16 @@ def mannerContact : ArgTemplate where
 
 /-- Full agent causing change of state in the object.
     Subject: V+S+C+M+IE. Object: CoS+CA (causally affected, changed).
-    @cite{beavers-2010}: "quantized" affectedness — the verb entails
+    [beavers-2010]: "quantized" affectedness — the verb entails
     a definite change of state (the object reaches an end state).
-    @cite{beavers-koontz-garboden-2020}: result verbs entail CoS. -/
+    [beavers-koontz-garboden-2020]: result verbs entail CoS. -/
 def resultChange : ArgTemplate where
   subjectProfile := accomplishmentSubjectProfile
   objectProfile  := some accomplishmentObjectProfile
 
 /-- Full agent creating an entity (object comes into existence).
     Subject: V+S+C+M+IE. Object: CoS+IT+CA+DE.
-    @cite{beavers-2010}: quantized affectedness + dependent existence.
+    [beavers-2010]: quantized affectedness + dependent existence.
     The object is an incremental theme whose extent measures the event. -/
 def creation : ArgTemplate where
   subjectProfile := accomplishmentSubjectProfile
@@ -97,7 +97,7 @@ def perception : ArgTemplate where
   subjectProfile := stateSubjectProfile
   objectProfile  := some ⟨false, false, false, false, true, false, false, false, false, false⟩
 
-/-- Stimulus-experiencer (Class II psych, @cite{belletti-rizzi-1988}).
+/-- Stimulus-experiencer (Class II psych, [belletti-rizzi-1988]).
     Subject: C+IE (causal stimulus). Object: S+IE (experiencer). -/
 def psychCausal : ArgTemplate where
   subjectProfile := ⟨false, false, true, false, true,  false, false, false, false, false⟩
@@ -248,7 +248,7 @@ theorem directedMotion_subject_role :
 -- ════════════════════════════════════════════════════
 
 /-! Root entailments determine argument templates — this is the field
-consensus (@cite{beavers-koontz-garboden-2020}, @cite{rappaport-hovav-levin-2024}).
+consensus ([beavers-koontz-garboden-2020], [rappaport-hovav-levin-2024]).
 The derivational direction runs:
 
     RootEntailments → Template → ArgTemplate → ThetaRole labels

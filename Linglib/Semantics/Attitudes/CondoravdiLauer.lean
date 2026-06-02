@@ -4,8 +4,8 @@ import Linglib.Core.Order.PreferenceStructure.MaxInducedOrdering
 
 /-!
 # Condoravdi & Lauer: The Effective Preference Theory of *want*
-@cite{condoravdi-lauer-2012} @cite{lauer-2013} @cite{condoravdi-lauer-2016}
-@cite{condoravdi-lauer-2011} @cite{lauer-condoravdi-2014}
+[condoravdi-lauer-2012] [lauer-2013] [condoravdi-lauer-2016]
+[condoravdi-lauer-2011] [lauer-condoravdi-2014]
 
 The C&L analysis treats `want` as parameterized by a *preferential
 background* — analogous to Kratzer's modal base/ordering source. The
@@ -16,7 +16,7 @@ distinguished background is the agent's effective preference function `EP`
 
 * `PreferentialBackground`, `EffectivePreferentialBackground` — types.
 * `wantP{Exact, Success, QH}` — the three readings from
-  @cite{condoravdi-lauer-2016} eq. 71. Exact-match is canonical
+  [condoravdi-lauer-2016] eq. 71. Exact-match is canonical
   (eq. 69) and implies the other two (`wantPExact_implies_*`).
 * `wantEP` — exact-match against the effective preferential background.
 * `maxOrderingSource` — `Set`-valued `max[EP(Ad, w)]` (eq. 88), the
@@ -24,9 +24,9 @@ distinguished background is the agent's effective preference function `EP`
   anankastic analysis.
 
 Anankastic-conditional analyses live in `Studies/`;
-imperative analyses (C&L 2012, contra @cite{roberts-2023}'s
+imperative analyses (C&L 2012, contra [roberts-2023]'s
 modal-in-LF account) in `Studies/`;
-discourse-particle uses (@cite{deo-2025-bara}) in
+discourse-particle uses ([deo-2025-bara]) in
 `Studies/`.
 -/
 
@@ -45,12 +45,12 @@ abbrev PreferentialBackground (Agent W : Type u) :=
 
 /-- An **effective preferential background** returns, at each world, the
     agent's *effective* preference structure (consistent + realistic).
-    @cite{condoravdi-lauer-2016} (68): `EP(a, w)`. -/
+    [condoravdi-lauer-2016] (68): `EP(a, w)`. -/
 abbrev EffectivePreferentialBackground (Agent W : Type u)
     (B : Agent → W → Set W) :=
   ∀ (a : Agent) (w : W), EffectivePreference W (B a w)
 
-/-! ## The semantics of `want` — three readings (@cite{condoravdi-lauer-2016} (71)) -/
+/-! ## The semantics of `want` — three readings ([condoravdi-lauer-2016] (71)) -/
 
 /-- Exact-match (eq. 71c, the canonical reading; eq. 69):
     `wantP(a, φ)` iff `φ ∈ max[P(a, w)]`. -/
@@ -80,7 +80,7 @@ theorem wantPExact_implies_QH {P : PreferentialBackground Agent W}
     wantPQH P a φ w :=
   ⟨φ, h, subset_rfl⟩
 
-/-! ## Monotonicity in φ (@cite{condoravdi-lauer-2016} p. 31)
+/-! ## Monotonicity in φ ([condoravdi-lauer-2016] p. 31)
 
 The three readings differ in their entailment direction in the
 propositional argument:
@@ -115,7 +115,7 @@ def wantEP {B : Agent → W → Set W}
     (a : Agent) (φ : Set W) (w : W) : Prop :=
   wantPExact (fun a w => (EP a w).toPreferenceStructure) a φ w
 
-/-- **Joint belief-consistency of EP-want** (@cite{condoravdi-lauer-2016}
+/-- **Joint belief-consistency of EP-want** ([condoravdi-lauer-2016]
     p. 30, end of § 5.4): "when `want` targets a preference structure
     `P(a,w)` that must be consistent — in particular, when it targets
     effective preferences — then `wantP(a, φ)` and `wantP(a, ψ)` are
@@ -142,7 +142,7 @@ theorem wantEP_jointly_belief_consistent
 
 /-- The **set-valued ordering source** at addressee `Ad` derived from an
     effective preferential background: at each world, the maximal
-    preferences in `EP(Ad, w)`. @cite{condoravdi-lauer-2016}
+    preferences in `EP(Ad, w)`. [condoravdi-lauer-2016]
     (88): `g_epA(w) = max[EP(Ad, w)]`. -/
 def maxOrderingSource {B : Agent → W → Set W}
     (EP : EffectivePreferentialBackground Agent W B) (Ad : Agent) :

@@ -3,7 +3,7 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # QUD: Equivalence-Relation Partitioning of a Meaning Space
-@cite{roberts-2012}
+[roberts-2012]
 
 A `QUD M` partitions a meaning space `M` via an equivalence relation: two
 meanings are equivalent iff they "answer the question the same way."

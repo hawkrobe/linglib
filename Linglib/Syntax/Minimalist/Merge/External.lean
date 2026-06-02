@@ -4,7 +4,7 @@ import Linglib.Core.Combinatorics.RootedTree.CutAvoiding
 
 /-!
 # External Merge bridge: algebraic ↔ linguistic
-@cite{marcolli-chomsky-berwick-2025}
+[marcolli-chomsky-berwick-2025]
 
 Realizes M-C-B §1.4 Lemma 1.4.1 (External Merge) at the algebraic level
 and bridges to linguistic `Step.emR`/`Step.emL`.
@@ -602,7 +602,7 @@ theorem mergeOp_eps_zero_emL_matches_Step
 
 /-! ## §4: MCB Prop 1.5.1 chain-level (EM-only)
 
-@cite{marcolli-chomsky-berwick-2025} §1.5 rule 5 (book p. 59) defines a
+[marcolli-chomsky-berwick-2025] §1.5 rule 5 (book p. 59) defines a
 derivation φ as a sequence of Merge operations and the total cost as the
 sum of step costs. Bullet 2 + 3 of Prop 1.5.1 (book p. 60-61) operate at
 the chain level: chains containing any Sideward step have weight ε^{c(φ)}

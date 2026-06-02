@@ -9,7 +9,7 @@ import Linglib.Core.Computability.Subregular.Definite
 /-!
 # Equational characterizations of subregular language classes
 
-@cite{lambert-2026} §6.2 (paper p. 22-25, with summary in Table 6 p. 28)
+[lambert-2026] §6.2 (paper p. 22-25, with summary in Table 6 p. 28)
 characterizes each base-class of subregular languages by a system of
 equations on the *syntactic semigroup*: `D = ⟦sx^ω = x^ω⟧`,
 `K = ⟦x^ω y = x^ω⟧`, `LI = ⟦x^ω y x^ω = x^ω⟧`, `N = ⟦x^ω y = x^ω;
@@ -101,13 +101,13 @@ iffs to derive their own iffs.
 
 ## Out of scope (queued for follow-up files)
 
-* `multitier ℬ𝒯C` extensions (@cite{lambert-2026} §6.3, Table 6 right
+* `multitier ℬ𝒯C` extensions ([lambert-2026] §6.3, Table 6 right
   column).
 
 ## References
 
-* @cite{lambert-2026} §6.2, Prop 53 (paper p. 23).
-* @cite{straubing-1985}, @cite{almeida-1995} — the equational-class
+* [lambert-2026] §6.2, Prop 53 (paper p. 23).
+* [straubing-1985], [almeida-1995] — the equational-class
   framework Lambert builds on.
 -/
 
@@ -505,10 +505,10 @@ two copies of `[αs]` absorbs `s`:
 `[αs] · s · [αs] = [αs]`.
 
 Lambert's notation: `ℒℐ_k = ⟦x₁ ⋯ xₖ s x₁ ⋯ xₖ = x₁ ⋯ xₖ⟧`
-(@cite{lambert-2026} Prop 58; @cite{straubing-1985}). The two `αs`
+([lambert-2026] Prop 58; [straubing-1985]). The two `αs`
 instances are bound to the **same** letter sequence; this is the
 "simplified" form of the more general two-variable equation
-`[αs · s · βs] = [αs · βs]` that @cite{lambert-2026} remarks defines
+`[αs · s · βs] = [αs · βs]` that [lambert-2026] remarks defines
 the same class. -/
 def kGeneralizedDefiniteEquation (L : Language α) (k : ℕ) : Prop :=
   ∀ (s : L.syntacticMonoid) (αs : List α), αs.length = k →

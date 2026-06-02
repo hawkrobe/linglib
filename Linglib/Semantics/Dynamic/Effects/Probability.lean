@@ -9,7 +9,7 @@ import Linglib.Semantics.Dynamic.Connectives.CCP
 
 /-!
 # Probability Effect: Probabilistic Dynamic Semantics
-@cite{lassiter-goodman-2017} @cite{grove-white-2025} @cite{grove-white-2025b}
+[lassiter-goodman-2017] [grove-white-2025] [grove-white-2025b]
 
 The probabilistic effect models RSA-style soft assertion, threshold uncertainty,
 and Bayesian update in dynamic semantics.
@@ -38,7 +38,7 @@ namespace Semantics.Dynamic.Probabilistic
 -- ════════════════════════════════════════════════════════════════
 
 /-!
-@cite{lassiter-goodman-2017}
+[lassiter-goodman-2017]
 
 We define `P α` abstractly as a structure with `pure` and `bind` operations
 satisfying the monad laws. This allows us to reason about probabilistic
@@ -355,7 +355,7 @@ out variables other than `v` by mapping `(· v)` over `s w`.
 
 ## SEAM (Seam 2): Joint-state Bayesian deferred
 
-@cite{grove-white-2025b}'s **parameterized dynamic semantics** (PDS) uses
+[grove-white-2025b]'s **parameterized dynamic semantics** (PDS) uses
 a *joint* shape: `Pσ σ σ' α := σ → P(α × σ')`, formalized as `PState` (§2 above).
 The natural Bayesian-as-`HasJointState` instance would refactor `BayesianState`
 to `PMF (W × Assignment E)` and declare `HasJointState PMF`. The `joint` field

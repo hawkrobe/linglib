@@ -8,7 +8,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
 # Majid, Boster & Bowerman (2008)
-@cite{majid-boster-bowerman-2008}
+[majid-boster-bowerman-2008]
 
 The cross-linguistic categorization of everyday events: A study of
 cutting and breaking. Cognition 109(2), 235–250.
@@ -46,9 +46,9 @@ The 4 dimensions project onto existing `RootProfile` features:
 | Dim 4 (poke hole) | specific event type |
 
 Bridge theorems connect to `LevinClass` and `MeaningComponents`:
-- @cite{levin-1993}'s cut/break distinction (±contact, ±instrumentSpec)
+- [levin-1993]'s cut/break distinction (±contact, ±instrumentSpec)
   corresponds to the endpoints of Dimension 1
-- @cite{hale-keyser-1987}'s "separation in material integrity" is the
+- [hale-keyser-1987]'s "separation in material integrity" is the
   shared superordinate category that both cut and break belong to
 
 ## Design
@@ -101,7 +101,7 @@ structure SeparationEvent where
 -- ════════════════════════════════════════════════════
 
 /-! Encodings of representative clips from the appendix. Clip numbers
-    follow @cite{majid-boster-bowerman-2008} Appendix (pp. 248–249).
+    follow [majid-boster-bowerman-2008] Appendix (pp. 248–249).
     We encode a representative subset spanning all 4 dimensions rather
     than all 61 clips. -/
 
@@ -384,7 +384,7 @@ def englishVerb (e : SeparationEvent) : EnglishCBVerb :=
 
 /-- Yélî Dnye (Papuan isolate, Rossel Island) verb categories.
 
-    @cite{majid-boster-bowerman-2008}: Yélî Dnye speakers used only
+    [majid-boster-bowerman-2008]: Yélî Dnye speakers used only
     3 different verbs for the 61 clips, yet their categorization still
     correlates with the 4 cross-linguistic dimensions. Demonstrates
     that even languages with minimal verb inventories respect the

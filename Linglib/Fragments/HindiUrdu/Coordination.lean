@@ -2,7 +2,7 @@ import Linglib.Features.Coordination
 
 /-!
 # Hindi-Urdu Coordination Morphemes
-@cite{haspelmath-2007} @cite{mitrovic-sauerland-2016}
+[haspelmath-2007] [mitrovic-sauerland-2016]
 
 Hindi-Urdu has:
 

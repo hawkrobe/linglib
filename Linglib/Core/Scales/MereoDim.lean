@@ -5,13 +5,13 @@ import Mathlib.Algebra.Order.Field.Rat
 
 /-!
 # Mereology ↔ Scale Bridge
-@cite{champollion-2017} @cite{kennedy-2007} @cite{krifka-1989} @cite{krifka-1998} @cite{rouillard-2026}
+[champollion-2017] [kennedy-2007] [krifka-1989] [krifka-1998] [rouillard-2026]
 
 Cross-pillar connection between `Core/Mereology.lean` (CUM/QUA/ExtMeasure)
 and `Core/Scale.lean` (ComparativeScale/Boundedness/MIP/degree properties).
 
 The two pillars are independently motivated:
-- **Mereology**: algebraic part-whole structure (@cite{krifka-1989}/1998, @cite{champollion-2017})
+- **Mereology**: algebraic part-whole structure ([krifka-1989]/1998, [champollion-2017])
 - **Scale**: comparative/additive scale structure
 
 This file bridges them at four levels:
@@ -23,7 +23,7 @@ This file bridges them at four levels:
 
 ## The lax measure square
 
-The @cite{krifka-1989} linking theory involves two dimension chains:
+The [krifka-1989] linking theory involves two dimension chains:
 
 ```
 Events →θ Entities →μ ℚ (object dimension)
@@ -48,8 +48,8 @@ namespace Mereology
     Krifka: QUA(P) means P-elements have no P-proper-parts, so
     measurement reaches a definite value at each P-element — the scale
     has an inherent endpoint.
-    @cite{kennedy-2007}: closed scales license degree modifiers.
-    @cite{rouillard-2026}: closed scales license temporal *in*-adverbials.
+    [kennedy-2007]: closed scales license degree modifiers.
+    [rouillard-2026]: closed scales license temporal *in*-adverbials.
 
     This is the mereological root of the Kennedy–Rouillard isomorphism:
     QUA → telic → closed → licensed. -/
@@ -59,8 +59,8 @@ def quaBoundedness : Core.Scale.Boundedness := .closed
 
     Krifka: CUM(P) means P is closed under ⊔, so measurement can
     always be extended upward — the scale has no inherent endpoint.
-    @cite{kennedy-2007}: open scales block degree modifiers.
-    @cite{rouillard-2026}: open scales cause information collapse for TIAs.
+    [kennedy-2007]: open scales block degree modifiers.
+    [rouillard-2026]: open scales cause information collapse for TIAs.
 
     This is the mereological root: CUM → atelic → open → blocked. -/
 def cumBoundedness : Core.Scale.Boundedness := .open_
@@ -79,12 +79,12 @@ theorem cum_boundedness_blocked : cumBoundedness.isLicensed = false := rfl
 
     The measure function μ : α → ℚ from `ExtMeasure` becomes the
     measure function of a `DirectedMeasure` (positive direction),
-    with `atLeastDeg` as the derived degree property (@cite{kennedy-2007}/2015:
+    with `atLeastDeg` as the derived degree property ([kennedy-2007]/2015:
     "at least n" with type-shift to exact). The boundedness annotation
     comes from the mereological property of the source predicate:
     QUA → `.closed`, CUM → `.open_`.
 
-    See also `extMeasure_rouillard` for the @cite{rouillard-2026}
+    See also `extMeasure_rouillard` for the [rouillard-2026]
     direction (negative → `atMostDeg`). -/
 def extMeasure_kennedy {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} (_hμ : ExtMeasure α μ) (b : Core.Scale.Boundedness) :
@@ -94,7 +94,7 @@ def extMeasure_kennedy {α : Type*} [SemilatticeSup α]
 /-- An extensive measure induces a Rouillard-style directed measure.
 
     Same measure function, but with negative direction (deriving
-    `atMostDeg` as the degree property). @cite{rouillard-2026}: E-TIA
+    `atMostDeg` as the degree property). [rouillard-2026]: E-TIA
     semantics uses "at most n" for runtime bounds.
     Boundedness again from the mereological source predicate. -/
 def extMeasure_rouillard {α : Type*} [SemilatticeSup α]
@@ -279,7 +279,7 @@ theorem qua_pullback_mereoDim_comp {α β γ : Type*}
 
     This captures the idealized "constant rate" linking two dimensions:
     measuring x is proportional to measuring e whenever R relates them.
-    For instance, in @cite{krifka-1989}'s telicity theory, eating twice as much
+    For instance, in [krifka-1989]'s telicity theory, eating twice as much
     food takes twice as long, so the object measure and event duration are
     proportional on θ-related pairs. -/
 structure MeasureProportional {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]

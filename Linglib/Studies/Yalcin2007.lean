@@ -1,7 +1,7 @@
 /-!
-# @cite{yalcin-2007}: Epistemic Contradictions and the Embedding Diagnostic
+# [yalcin-2007]: Epistemic Contradictions and the Embedding Diagnostic
 
-@cite{yalcin-2007}
+[yalcin-2007]
 
 Yalcin (2007) introduced the term *epistemic contradiction* for sentences of
 the form `p ∧ ◇¬p` and `¬p ∧ ◇p`, and argued — via their behavior under
@@ -12,9 +12,9 @@ The diagnostic battery: Moore sentences become felicitous under embedding
 ("Suppose it's raining and I don't know it" — fine), while epistemic
 contradictions remain infelicitous in the same environments. This is the
 foundational empirical observation grounding the subsequent literature
-(Mandelkern 2019 @cite{mandelkern-2019}; Klinedinst & Rothschild 2012
-@cite{klinedinst-rothschild-2012}; Holliday & Mandelkern 2024
-@cite{holliday-mandelkern-2024}).
+(Mandelkern 2019 [mandelkern-2019]; Klinedinst & Rothschild 2012
+[klinedinst-rothschild-2012]; Holliday & Mandelkern 2024
+[holliday-mandelkern-2024]).
 
 ## Three kinds of (in)felicity
 

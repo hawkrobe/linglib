@@ -6,7 +6,7 @@ import Linglib.Fragments.Italian.Negation
 
 /-!
 # Negative Auxiliaries
-@cite{anderson-2006} @cite{heine-1993} @cite{miestamo-2005}
+[anderson-2006] [heine-1993] [miestamo-2005]
 
 Some languages express sentential negation through a **negative auxiliary verb**
 that hosts inflection (tense, agreement) while the lexical verb appears in a
@@ -59,7 +59,7 @@ def NegStrategy.isVerbal : NegStrategy → Bool
   | _         => false
 
 /-- Project a negation strategy onto its grammaticalization-cline
-    stage (@cite{heine-1993}, @cite{anderson-2006} ch. 7). A negative
+    stage ([heine-1993], [anderson-2006] ch. 7). A negative
     *verb* (Finnish *ei*, Komi *oz*) sits at the auxiliary stage; a
     negative *affix* (bound morpheme) is one stage further along the
     cline. A free negative *particle* (English *not*, Italian *non*)
@@ -67,7 +67,7 @@ def NegStrategy.isVerbal : NegStrategy → Bool
     verbs and don't have a "stage" of grammaticalization in
     Heine's/Anderson's verbal sense. Returning `none` for `.negParticle`
     rather than collapsing it onto `.auxiliary` (an earlier
-    formaliser shorthand) preserves @cite{miestamo-2005}'s
+    formaliser shorthand) preserves [miestamo-2005]'s
     particle-vs-verb morphological distinction; the cross-framework
     equivalence theorem `auxiliary_stage_iff_aux_verb_morpheme` in
     `Studies/Anderson2006.lean` makes the
@@ -98,7 +98,7 @@ def finnish : NegAuxDatum :=
     | none => "ei"
   , gloss := "e-n mene 'NEG-1SG go' (I don't go)" }
 
-/-- Komi *oz* — negative auxiliary verb (@cite{anderson-2006}). -/
+/-- Komi *oz* — negative auxiliary verb ([anderson-2006]). -/
 def komi : NegAuxDatum :=
   { language := "Komi"
   , strategy := .negVerb
@@ -106,14 +106,14 @@ def komi : NegAuxDatum :=
   , gloss := "oz mun 'NEG go'" }
 
 /-- Udihe *e-si* — negative auxiliary verb (past tense on neg aux)
-    (@cite{anderson-2006}). -/
+    ([anderson-2006]). -/
 def udihe : NegAuxDatum :=
   { language := "Udihe"
   , strategy := .negVerb
   , form := "e-si"
   , gloss := "e-si ŋene 'NEG-PST go' (didn't go)" }
 
-/-- Kwerba *or-* — negative affix (prefix on verb) (@cite{anderson-2006}). -/
+/-- Kwerba *or-* — negative affix (prefix on verb) ([anderson-2006]). -/
 def kwerba : NegAuxDatum :=
   { language := "Kwerba"
   , strategy := .negAffix

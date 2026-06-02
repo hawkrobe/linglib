@@ -1,40 +1,40 @@
 /-!
 # Entailment Profiles and the Argument Selection Principle
 
-@cite{dowty-1991} @cite{davis-koenig-2000} @cite{grimm-2011} @cite{levin-2019}
-@cite{beavers-2010}
+[dowty-1991] [davis-koenig-2000] [grimm-2011] [levin-2019]
+[beavers-2010]
 
 Entailment profiles encode the lexical entailments a verb imposes on each of
 its arguments, reflecting the modern consensus on proto-roles
-(@cite{levin-2019}). Proto-Agent and Proto-Patient are **cluster concepts**:
+([levin-2019]). Proto-Agent and Proto-Patient are **cluster concepts**:
 each is a set of entailments, and an argument's "degree of agenthood/patienthood"
 is determined by which entailments it satisfies.
 
 ## Entailment structure
 
-The 10 entailments are not fully independent (@cite{levin-2019} §2.1):
+The 10 entailments are not fully independent ([levin-2019] §2.1):
 
 - **P-Agent pairing**: three P-Agent entailments are paired with P-Patient
   entailments in asymmetric relations (causation↔changeOfState,
   movement↔stationary, independentExistence↔dependentExistence).
 - **P-Agent dependency**: volition presupposes sentience.
 - **P-Agent priority**: causation outranks other P-Agent entailments for
-  subject selection (@cite{davis-koenig-2000}).
+  subject selection ([davis-koenig-2000]).
 - **P-Patient implicational structure**: the affectedness-related entailments
   (changeOfState, incrementalTheme, causallyAffected) form an implicational
-  hierarchy (@cite{beavers-2010}).
+  hierarchy ([beavers-2010]).
 
 These dependencies are exploited by the modern ASP (lattice comparison, §3–4)
 and formalized algebraically in `AgentivityLattice.lean`:
 - **P-Agent** → `AgentivityNode` (4 privative features on a lattice;
-  @cite{grimm-2011})
+  [grimm-2011])
 - **P-Patient** → `PersistenceLevel` (4 persistence dimensions;
-  @cite{grimm-2011}), and `AffectednessDegree` (implicational hierarchy
-  of truth-conditional strength; @cite{beavers-2010})
+  [grimm-2011]), and `AffectednessDegree` (implicational hierarchy
+  of truth-conditional strength; [beavers-2010])
 
 ## Argument Selection Principle (lattice-based)
 
-The ASP uses **lattice comparison** (@cite{grimm-2011}): argument A outranks
+The ASP uses **lattice comparison** ([grimm-2011]): argument A outranks
 argument B for subjecthood iff A's P-Agent feature set dominates (is a superset of)
 B's. When P-Agent features are incomparable, P-Patient features break the tie.
 This naturally handles priority because feature-set inclusion respects the
@@ -43,18 +43,18 @@ entailment dependencies.
 For unaccusativity, the priority-based approach checks whether the sole argument
 has core agentive features (volition/causation) rather than flat-counting.
 
-@cite{dowty-1991}'s original flat-counting ASP is preserved in
+[dowty-1991]'s original flat-counting ASP is preserved in
 `Studies/Dowty1991.lean` for comparison.
 -/
 
 namespace Semantics.ArgumentStructure.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
--- § 1. Entailment Profile (@cite{dowty-1991} pp.572–573)
+-- § 1. Entailment Profile ([dowty-1991] pp.572–573)
 -- ════════════════════════════════════════════════════
 
 /-- The 10 entailments defining Proto-Agent and Proto-Patient
-    (@cite{dowty-1991} pp.572–573).
+    ([dowty-1991] pp.572–573).
 
     Proto-Agent entailments (a)–(e):
     - volition, sentience, causation, movement, independent existence
@@ -105,7 +105,7 @@ def EntailmentProfile.pPatientScore (p : EntailmentProfile) : Nat :=
   p.dependentExistence.toNat
 
 -- ════════════════════════════════════════════════════
--- § 3. Lattice Comparison (@cite{grimm-2011})
+-- § 3. Lattice Comparison ([grimm-2011])
 -- ════════════════════════════════════════════════════
 
 /-- P-Agent feature dominance: `p` has every P-Agent feature that `q` has.
@@ -157,8 +157,8 @@ instance (p q : EntailmentProfile) : Decidable (PPatientStrictlyDominates p q) :
         strictly dominates `subj` on P-Patient (obj is a "better"
         object, hence subj wins by exclusion).
 
-    This replaces @cite{dowty-1991}'s flat counting with lattice
-    comparison (@cite{grimm-2011}, @cite{davis-koenig-2000}). Priority
+    This replaces [dowty-1991]'s flat counting with lattice
+    comparison ([grimm-2011], [davis-koenig-2000]). Priority
     of causation is captured structurally: {causation, IE} ⊃ {IE} but
     {causation, IE} ⊥ {sentience, IE} (incomparable). -/
 def OutranksForSubject (subj obj : EntailmentProfile) : Prop :=
@@ -169,7 +169,7 @@ def OutranksForSubject (subj obj : EntailmentProfile) : Prop :=
 instance (subj obj : EntailmentProfile) : Decidable (OutranksForSubject subj obj) := by
   unfold OutranksForSubject; infer_instance
 
-/-- Corollary 1 (@cite{dowty-1991} p.579): Neither argument outranks
+/-- Corollary 1 ([dowty-1991] p.579): Neither argument outranks
     the other → alternation is possible (buy/sell, like/please). -/
 def AllowsAlternation (arg1 arg2 : EntailmentProfile) : Prop :=
   ¬ OutranksForSubject arg1 arg2 ∧ ¬ OutranksForSubject arg2 arg1
@@ -185,10 +185,10 @@ instance (arg1 arg2 : EntailmentProfile) : Decidable (AllowsAlternation arg1 arg
 
     An intransitive subject is unaccusative iff it lacks core agentive
     features (volition AND causation) and has at least one P-Patient
-    feature. This matches @cite{dowty-1991}'s Table 1 cell 4 and fixes
+    feature. This matches [dowty-1991]'s Table 1 cell 4 and fixes
     the `arrive` anomaly that flat counting gets wrong.
 
-    @cite{davis-koenig-2000}: causation and volition are the priority
+    [davis-koenig-2000]: causation and volition are the priority
     P-Agent entailments. Their absence signals non-agentivity. -/
 def PredictsUnaccusative (p : EntailmentProfile) : Prop :=
   p.volition = false ∧ p.causation = false ∧ p.pPatientScore > 0
@@ -207,20 +207,20 @@ instance (p : EntailmentProfile) : Decidable (PredictsUnergative p) := by
   unfold PredictsUnergative; infer_instance
 
 -- ════════════════════════════════════════════════════
--- § 6. Well-Formedness Constraints (@cite{levin-2019}, @cite{davis-koenig-2000})
+-- § 6. Well-Formedness Constraints ([levin-2019], [davis-koenig-2000])
 -- ════════════════════════════════════════════════════
 
 /-- Intra-profile well-formedness: volition presupposes sentience.
-    Only sentient entities can be volitional (@cite{dowty-1991} p.607,
-    @cite{levin-2019} §2.1). -/
+    Only sentient entities can be volitional ([dowty-1991] p.607,
+    [levin-2019] §2.1). -/
 def EntailmentProfile.WellFormedInternal (p : EntailmentProfile) : Prop :=
   p.volition = true → p.sentience = true
 
 instance (p : EntailmentProfile) : Decidable p.WellFormedInternal := by
   unfold EntailmentProfile.WellFormedInternal; infer_instance
 
-/-- Inter-argument well-formedness (@cite{davis-koenig-2000},
-    @cite{primus-1999}): three P-Agent entailments are paired with
+/-- Inter-argument well-formedness ([davis-koenig-2000],
+    [primus-1999]): three P-Agent entailments are paired with
     P-Patient entailments in asymmetric relations.
 
     - causation (subject) → changeOfState (object)
@@ -235,7 +235,7 @@ instance (subj obj : EntailmentProfile) : Decidable (WellFormedPair subj obj) :=
   unfold WellFormedPair; infer_instance
 
 -- ════════════════════════════════════════════════════
--- § 7. Do-Test (@cite{cruse-1973} via @cite{dowty-1991})
+-- § 7. Do-Test ([cruse-1973] via [dowty-1991])
 -- ════════════════════════════════════════════════════
 
 /-- Source of do-test acceptability. -/
@@ -256,7 +256,7 @@ instance (p : EntailmentProfile) : Decidable (PassesDoTestFromProfile p) := by
 -- § 8. Effector / Force Recipient
 -- ════════════════════════════════════════════════════
 
-/-- An effector (@cite{van-valin-wilkins-1996}) is a self-energetic force
+/-- An effector ([van-valin-wilkins-1996]) is a self-energetic force
     bearer: movement + independent existence. Realized as external argument. -/
 def IsEffector (p : EntailmentProfile) : Prop :=
   p.movement = true ∧ p.independentExistence = true
@@ -343,7 +343,7 @@ def sweepBasicSubjectProfile : EntailmentProfile :=
 def sweepBroomSubjectProfile : EntailmentProfile :=
   ⟨true, true, true, true, true, false, false, false, false, false⟩
 
-/-! ### Template-level proto-role defaults (@cite{rappaport-hovav-levin-1998} + @cite{dowty-1991})
+/-! ### Template-level proto-role defaults ([rappaport-hovav-levin-1998] + [dowty-1991])
 
 Per-template canonical subject/object profiles consumed by
 `Template.subjectProfile` / `Template.objectProfile` in `EventStructure.lean`
@@ -373,7 +373,7 @@ def achievementSubjectProfile : EntailmentProfile :=
     stationary := false, dependentExistence := false }
 
 /-- Accomplishment template subject: V + S + C + M + IE (full proto-agent,
-5 P-Agent entailments per @cite{dowty-1991}). -/
+5 P-Agent entailments per [dowty-1991]). -/
 def accomplishmentSubjectProfile : EntailmentProfile :=
   { volition := true, sentience := true, causation := true, movement := true,
     independentExistence := true,

@@ -3,9 +3,9 @@ import Linglib.Fragments.Turkish.VowelHarmony
 
 /-!
 # Turkish Suffix Template
-@cite{goksel-kerslake-2005}
+[goksel-kerslake-2005]
 
-Turkish is strictly suffixing (@cite{goksel-kerslake-2005} Ch 6). Suffixes
+Turkish is strictly suffixing ([goksel-kerslake-2005] Ch 6). Suffixes
 attach in a fixed order determined by a **positional template**.
 
 ## Verbal template (Ch 6, 8, 13)
@@ -28,7 +28,7 @@ attach in a fixed order determined by a **positional template**.
 namespace Turkish.SuffixTemplate
 
 /-- Verbal suffix slots, ordered innermost to outermost.
-    @cite{goksel-kerslake-2005} Ch 6, 8, 13. -/
+    [goksel-kerslake-2005] Ch 6, 8, 13. -/
 inductive VerbSlot where
   | voice         -- causative -DIr, passive -(I)l, reflexive -(I)n, reciprocal -(I)ş
   | negation      -- -mA
@@ -39,7 +39,7 @@ inductive VerbSlot where
   deriving DecidableEq, Repr
 
 /-- Nominal suffix slots, ordered innermost to outermost.
-    @cite{goksel-kerslake-2005} Ch 6, 8, 14. -/
+    [goksel-kerslake-2005] Ch 6, 8, 14. -/
 inductive NounSlot where
   | derivational  -- denominal/deadjectival suffixes
   | plural        -- -lAr

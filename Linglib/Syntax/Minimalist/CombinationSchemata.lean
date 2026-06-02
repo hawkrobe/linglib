@@ -3,9 +3,9 @@ import Linglib.Core.CombinationKind
 
 /-!
 # Classification of Merge into Three Combination Schemata
-@cite{mueller-2013}
+[mueller-2013]
 
-Explicit classification of Minimalist Merge operations into @cite{mueller-2013}'s three universal combination schemata: Head-Complement, Head-Specifier, Head-Filler.
+Explicit classification of Minimalist Merge operations into [mueller-2013]'s three universal combination schemata: Head-Complement, Head-Specifier, Head-Filler.
 
 The existing `MergeUnification.lean` proves that Internal and External Merge
 are the same operation. This file further classifies Merge by *combination kind*:
@@ -18,14 +18,14 @@ are the same operation. This file further classifies Merge by *combination kind*
 
 ## MCB alignment
 
-Per @cite{marcolli-chomsky-berwick-2025} §1.13.6, head identification is
+Per [marcolli-chomsky-berwick-2025] §1.13.6, head identification is
 parametric over a `HeadFunction`. All head-aware definitions in this
 file take `h : HeadFunction` explicitly; there is no hidden default.
 Callers wanting English-like leftmost-headed semantics pass
 `HeadFunction.leftSpine`; derivation-anchored Studies pass the
 head function tracked through the derivation; etc.
 
-## Connection to @cite{mueller-2013}
+## Connection to [mueller-2013]
 
 - §2.1: External Merge with selection ≈ Head-Complement
 - §2.2: External Merge without selection ≈ Head-Specifier
@@ -131,7 +131,7 @@ reduce in the kernel. The substantive statements they made are:
 (2) V selects D, so V→DP merge is `.headComplement`;
 (3) `label {D, N} = some .D` (head feature principle). -/
 
-/-! ## Monovalent Verb Serialization Problem (@cite{mueller-2013} §2.3)
+/-! ## Monovalent Verb Serialization Problem ([mueller-2013] §2.3)
 
 In Stabler's non-directional MG, a monovalent verb's only argument is
 classified as a complement (Head-Complement, since the verb selects it).

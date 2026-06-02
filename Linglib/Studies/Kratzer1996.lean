@@ -4,7 +4,7 @@ import Linglib.Syntax.Minimalist.Voice
 
 /-!
 # Linking Theory Predictions → Hand-Annotated θ-Roles
-@cite{kratzer-1996} @cite{rappaport-hovav-levin-1998}
+[kratzer-1996] [rappaport-hovav-levin-1998]
 
 Two accounts of argument realization make predictions about external
 argument theta roles. The two predicates live next to the types they
@@ -26,7 +26,7 @@ stimulus. The current Voice typology has only two θ-assigning flavors,
 so it cannot distinguish experiencer from agent or theme from internal-
 arg derivation.
 
-## Account 2: Lexicalist (@cite{levin-1993}, @cite{rappaport-hovav-levin-1998})
+## Account 2: Lexicalist ([levin-1993], [rappaport-hovav-levin-1998])
 
 The verb's lexical semantics — attitude, causalSource, factivePresup,
 levinClass, unaccusative, controlType, and proto-role entailments —
@@ -140,7 +140,7 @@ theorem causative_pair_agent_contrast :
   constructor <;> decide
 
 /-- Voice determines the alternation: agentive assigns θ,
-    non-thematic does not. This is @cite{kratzer-1996}'s severing
+    non-thematic does not. This is [kratzer-1996]'s severing
     verified structurally on the tree derivations. -/
 theorem causative_pair_voice_contrast :
     voiceAgent.AssignsTheta ∧ ¬ voiceAnticausative.AssignsTheta := by decide

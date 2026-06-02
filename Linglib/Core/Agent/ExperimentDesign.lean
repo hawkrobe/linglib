@@ -4,8 +4,8 @@ import Linglib.Core.Agent.BayesianUpdate
 import Mathlib.Analysis.Convex.Jensen
 
 /-!
-# Optimal Experiment Design @cite{lindley-1956}
-@cite{hawkins-etal-2025} @cite{van-rooy-2003}
+# Optimal Experiment Design [lindley-1956]
+[hawkins-etal-2025] [van-rooy-2003]
 
 Domain-general framework for optimal experiment design: selecting experiments
 (questions, stimuli, tests) to maximize expected information gain (EIG).
@@ -22,14 +22,14 @@ most informative? The answer depends on three components:
 
 EIG(e) = E_o[V(posterior(·|o,e))] − V(prior)
 
-This IS the structure of PRIOR-PQ's questioner Q (@cite{hawkins-etal-2025},
+This IS the structure of PRIOR-PQ's questioner Q ([hawkins-etal-2025],
 eq. 2.3): question = experiment, R₀'s response = observation,
 V(D^{r,q}) = expected decision value. Formalizing this connection shows
 that question selection is a special case of optimal experiment design.
 
 ## Relationship to existing infrastructure
 
-The `Core.DecisionTheory` module formalizes @cite{van-rooy-2003}'s EUV for
+The `Core.DecisionTheory` module formalizes [van-rooy-2003]'s EUV for
 **deterministic** observations (partition cells). This module generalizes
 to **stochastic** observations, with a bridge theorem showing that
 EIG with deterministic observations recovers EUV.
@@ -69,7 +69,7 @@ variable {W E O : Type*} [Fintype W] [Fintype O]
     (generalization of Van Rooy's EUV from partitions to stochastic observations).
 
     When V = −H(·) (negative entropy), this is the mutual information I(W;O|e),
-    which equals @cite{lindley-1956}'s expected information gain. -/
+    which equals [lindley-1956]'s expected information gain. -/
 noncomputable def eig (om : ObservationModel W E O) (prior : W → ℝ)
     (valueFn : (W → ℝ) → ℝ) (e : E) : ℝ :=
   (∑ o : O, marginalObs om prior e o * valueFn (posterior om prior e o))

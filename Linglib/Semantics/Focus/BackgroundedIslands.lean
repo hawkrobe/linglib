@@ -48,8 +48,8 @@ other; backgrounded constituents resist wh-extraction.
 
 ## References
 
-* @cite{lu-pan-degen-2025}, @cite{kratzer-selkirk-2020},
-  @cite{roberts-2012}, @cite{goldberg-2006}.
+* [lu-pan-degen-2025], [kratzer-selkirk-2020],
+  [roberts-2012], [goldberg-2006].
 -/
 
 open Features.InformationStructure (FocusMark)
@@ -250,13 +250,13 @@ theorem manner_content_qud_distinct
   ⟨manner_qud_ignores_content e1 e2 h_same_manner, h_diff_content⟩
 
 /-! ## The extraction constraint
-@cite{erteschik-shir-1973} @cite{roberts-1996} @cite{goldberg-2006}
+[erteschik-shir-1973] [roberts-1996] [goldberg-2006]
 
 The backgroundedness constraint on extraction — that backgrounded constituents
 resist wh-extraction — is not stipulated but **derived** from the QUD partition
 via two converging routes.
 
-### Route 1: Question relevance (@cite{roberts-1996})
+### Route 1: Question relevance ([roberts-1996])
 
 Extraction creates a wh-question about the gap:
 
@@ -266,10 +266,10 @@ Under the manner QUD, content variation is invisible (§3): all fillers produce
 events in the same QUD cell. The extraction question cannot be answered
 informatively — it is QUD-irrelevant, hence infelicitous.
 
-### Route 2: Information-structural clash (@cite{erteschik-shir-1973})
+### Route 2: Information-structural clash ([erteschik-shir-1973])
 
 Wh-extraction creates a **content QUD**: "What₁ did John whisper t₁?"
-partitions events by the filler's value. By @cite{rooth-1992}'s Q-A
+partitions events by the filler's value. By [rooth-1992]'s Q-A
 congruence constraint (26d) — formalized as `qaCongruentWeak` in
 `Focus/Interpretation.lean` — the question's Hamblin denotation (the set
 of propositions obtained by varying the filler) must be ⊆ the answer's
@@ -295,7 +295,7 @@ content (prosodic amelioration). -/
 -- ── Route 1: Question relevance ─────────────────────────────────────
 
 /-- Whether a wh-question about the content of a communication event is
-**relevant** to a given QUD (@cite{roberts-1996}): different content values
+**relevant** to a given QUD ([roberts-1996]): different content values
 must produce events in different QUD cells. If not, the extraction question
 is vacuous — every filler gives the same QUD-level answer. -/
 def contentQuestionRelevant (qud : QUD (CommEvent Manner Content)) : Prop :=
@@ -321,7 +321,7 @@ theorem content_question_relevant_under_content
 
 /-- The QUD established by wh-extraction from a communication verb's
 complement. "What₁ did John whisper t₁?" partitions events by the filler
-(= content dimension). (@cite{roberts-2012}: wh-questions establish QUDs.) -/
+(= content dimension). ([roberts-2012]: wh-questions establish QUDs.) -/
 def extractionQUD : QUD (CommEvent Manner Content) := contentQUD
 
 omit [DecidableEq Manner] in
@@ -330,7 +330,7 @@ different QUD cells. This is what makes the filler the focused element —
 it is the variable that distinguishes alternatives.
 
 Combined with `qaCongruentWeak` from `Focus/Interpretation.lean`
-(@cite{rooth-1992} (26d): [ψ]° ⊆ [α]^f), this **derives** that extracted
+([rooth-1992] (26d): [ψ]° ⊆ [α]^f), this **derives** that extracted
 elements are [FoC]-marked: the question's alternatives (varying the filler)
 must be focus alternatives of the answer (varying the focused position),
 so filler position = focused position. -/
@@ -341,7 +341,7 @@ theorem extraction_filler_varies
 
 open Semantics.Focus.Interpretation in
 omit [DecidableEq Manner] [DecidableEq Content] in
-/-- **Q-A congruence applied to extraction** (@cite{rooth-1992} (26d)):
+/-- **Q-A congruence applied to extraction** ([rooth-1992] (26d)):
 if Q-A congruence holds between the extraction question and the answer's
 focus value, then every filler produces a focus alternative of the answer.
 
@@ -371,13 +371,13 @@ theorem extraction_filler_is_focus_alternative
 /-- The discourse status of the extracted filler: **focused**.
 
 **Derived** from QUD structure + Q-A congruence, not stipulated:
-1. Wh-extraction creates a content-QUD (`extractionQUD`, @cite{roberts-2012})
+1. Wh-extraction creates a content-QUD (`extractionQUD`, [roberts-2012])
 2. The filler distinguishes the extraction QUD's cells (`extraction_filler_varies`)
 3. `extraction_filler_is_focus_alternative` (above) uses `qaCongruentWeak`
-   (@cite{rooth-1992} (26d)) to show: if the extraction question's alternatives
+   ([rooth-1992] (26d)) to show: if the extraction question's alternatives
    ⊆ the answer's focus value, then every filler is a focus alternative.
    Focus alternatives are generated at the focused position, so filler = focused.
-4. Foreground = [FoC] in @cite{kratzer-selkirk-2020}'s two-feature system -/
+4. Foreground = [FoC] in [kratzer-selkirk-2020]'s two-feature system -/
 def extractedFillerStatus : FocusMark := .focused
 
 /-- **Extraction from a backgrounded clause creates an IS clash**:
@@ -385,7 +385,7 @@ the extracted filler is [FoC] (derived from `extractedFillerStatus`) but
 the clause is [G] (derived from the verb's default QUD).
 
 Uses `extractionISClash` from `Core/InformationStructure.lean`, which
-unifies @cite{abeille-et-al-2020}'s FBC with @cite{erteschik-shir-1973}'s
+unifies [abeille-et-al-2020]'s FBC with [erteschik-shir-1973]'s
 Dominance Condition. -/
 theorem backgrounded_extraction_clashes :
     extractionISClash extractedFillerStatus .given := ⟨rfl, rfl⟩
@@ -401,7 +401,7 @@ MoS verbs, due to their manner component, activate manner alternatives and
 make the manner QUD salient by default. Bridge verbs like *say*, lacking a
 manner component, default to the content QUD.
 
-This follows from @cite{roberts-1996}: the QUD is determined by what
+This follows from [roberts-1996]: the QUD is determined by what
 alternatives are salient, and manner components activate manner alternatives.
 -/
 
@@ -674,7 +674,7 @@ def accountPredictions : MoSAccount → Prediction
       frequencyCorrelation := false    -- backgroundedness, not frequency, is causal
     }
 
-/-- Empirical results from @cite{lu-pan-degen-2025}. -/
+/-- Empirical results from [lu-pan-degen-2025]. -/
 def empiricalResults : Prediction := {
   focusSensitive := true             -- Experiments 1, 2a, 3b: all significant
   sayAdverbCreatesIsland := true     -- Experiment 3a: p < 0.001
@@ -742,7 +742,7 @@ theorem foregrounding_iff_qud_content
 /-- **QUD complementarity**: Under manner QUD, manner is foregrounded ([FoC])
 and content is backgrounded ([G]). Under content QUD, vice versa.
 
-This connects to @cite{kratzer-selkirk-2020}'s insight that [FoC] and [G] are
+This connects to [kratzer-selkirk-2020]'s insight that [FoC] and [G] are
 mutually exclusive features — you can't foreground and background the same
 dimension simultaneously. Extended here to cross-dimensional complementarity:
 foregrounding one dimension of a communication event necessarily backgrounds
@@ -766,7 +766,7 @@ theorem foregrounding_is_focused :
 
 /-! ## Gradient manner weight: lexical vs. compositional
 
-@cite{lu-pan-degen-2025} Experiment 2a shows a residual difference between MoS
+[lu-pan-degen-2025] Experiment 2a shows a residual difference between MoS
 verbs and *say* even under identical prosodic manipulation: MoS verb complements
 are more opaque to extraction than *say* complements (β = −0.08, p < 0.001),
 and this holds even when both are prosodically foregrounded.
@@ -830,9 +830,9 @@ theorem manner_weight_source_consistent (v : VerbDecomp) :
 
 /-! ## Backgroundedness/projectivity dissociation
 
-@cite{tonhauser-beaver-degen-2018} show that projectivity and at-issueness are
+[tonhauser-beaver-degen-2018] show that projectivity and at-issueness are
 anti-correlated (r = .85–.99): content that is not at-issue tends to project.
-Backgroundedness, in the sense of @cite{lu-pan-degen-2025}, implies low
+Backgroundedness, in the sense of [lu-pan-degen-2025], implies low
 at-issueness and therefore predicts projectivity.
 
 But the converse fails: **projectivity does not imply backgroundedness.**
@@ -859,7 +859,7 @@ structure ExtractionProfile where
 
 Backgroundedness is derived from the formal model (§6 `mos_island_effect`).
 Projectivity follows from the anti-correlation with at-issueness
-(@cite{tonhauser-beaver-degen-2018}): backgrounded content is not at-issue,
+([tonhauser-beaver-degen-2018]): backgrounded content is not at-issue,
 and not-at-issue content projects. Extraction resistance follows from
 backgroundedness (§6 `DiscourseStatus.rank_injective`). -/
 def mosComplementProfile : ExtractionProfile := ⟨true, true, true⟩
@@ -869,7 +869,7 @@ backgrounded → does NOT resist extraction.
 
 This is the key dissociation: *notice* and *annoy* have similar projectivity
 levels but very different backgroundedness levels
-(@cite{tonhauser-beaver-degen-2018}): *annoy* complements are backgrounded,
+([tonhauser-beaver-degen-2018]): *annoy* complements are backgrounded,
 *notice* complements are not. Backgroundedness, not projectivity,
 determines extraction resistance. -/
 def factiveComplementProfile : ExtractionProfile := ⟨false, true, false⟩
@@ -901,8 +901,8 @@ theorem bridge_backgrounded_iff_resists :
 
 /-! ## Negation test as a backgroundedness diagnostic
 
-The negation test (@cite{erteschik-shir-1973}, @cite{ambridge-goldberg-2008},
-@cite{lu-pan-degen-2025} p. 630):
+The negation test ([erteschik-shir-1973], [ambridge-goldberg-2008],
+[lu-pan-degen-2025] p. 630):
 backgrounded content is unaffected by matrix sentential negation.
 
   (7a) John didn't whisper that Mary was in the courtyard.
@@ -954,7 +954,7 @@ MoS verbs require an overt complementizer *that*; bridge verbs allow null *that*
     (22a) John said (that) Mary is in the courtyard.       ✓
     (22b) John whispered *(that) Mary is in the courtyard.  ✗
 
-@cite{lu-pan-degen-2025} (§5) explicitly note that the backgroundedness
+[lu-pan-degen-2025] (§5) explicitly note that the backgroundedness
 account **does not explain** this contrast: "the backgroundedness account
 does not make any prediction about the overtness of the complementizer."
 
@@ -966,10 +966,10 @@ This remains an open problem and a genuine empirical advantage of the
 structural account that the discourse account does not currently capture. -/
 
 /-! ## Gradient at-issueness
-@cite{tonhauser-beaver-degen-2018} @cite{lu-pan-degen-2025}
+[tonhauser-beaver-degen-2018] [lu-pan-degen-2025]
 
 The binary model (§5) treats backgroundedness as all-or-nothing: complement
-status is either `.given` or `.new`. But @cite{lu-pan-degen-2025} Experiment 2a
+status is either `.given` or `.new`. But [lu-pan-degen-2025] Experiment 2a
 shows a residual difference: MoS verbs (50–58) are more degraded than
 say+adverb (53), which is more degraded than say (73–80), even under identical
 prosodic conditions. The binary model predicts MoS = say+adverb (both `.given`)
@@ -981,7 +981,7 @@ whether the complement is backgrounded, but *how* backgrounded. Lexical manner
 (inherent to verb root) produces stronger backgroundedness than compositional
 manner (from adverb modification).
 
-This connects to @cite{tonhauser-beaver-degen-2018}'s Gradient Projection
+This connects to [tonhauser-beaver-degen-2018]'s Gradient Projection
 Principle: at-issueness and projectivity are anti-correlated (r = .85–.99)
 and both are gradient, not binary. The three-way ordering derived here
 (lexical < compositional < none in at-issueness) is a strictly finer

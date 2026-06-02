@@ -1,15 +1,15 @@
 import Linglib.Features.Prominence
 
 /-!
-# Differential Indexing Typology @cite{just-2024}
-@cite{aissen-2003} @cite{haspelmath-2019} @cite{siewierska-2004} @cite{harris-1981} @cite{laka-1996} @cite{haspelmath-2021}
+# Differential Indexing Typology [just-2024]
+[aissen-2003] [haspelmath-2019] [siewierska-2004] [harris-1981] [laka-1996] [haspelmath-2021]
 
 Formalizes the typological survey from:
 
 - Just, E. (2024). A structural and functional comparison of differential A
   and P indexing. Linguistics 62(2): 295–321.
 
-## Key Distinction: Flagging vs. Indexing (@cite{haspelmath-2019}, Just §2)
+## Key Distinction: Flagging vs. Indexing ([haspelmath-2019], Just §2)
 
 **Flagging** = case morphology on the NP (e.g., accusative suffix).
 **Indexing** = verbal agreement / cross-referencing (e.g., Bantu object markers).
@@ -50,7 +50,7 @@ open Features.Prominence
 
     The person scale for indexing is a **binary** split between speech act
     participants (SAP: 1st/2nd person) and non-participants (3rd person).
-    This mirrors @cite{preminger-2014}'s [±participant] feature decomposition.
+    This mirrors [preminger-2014]'s [±participant] feature decomposition.
 
     This is coarser than `Features.Prominence.PersonLevel` (1st > 2nd > 3rd),
     which is needed for scenario splits. The binary split suffices for
@@ -163,13 +163,13 @@ def IndexingFragment.aPolarityCorrect (f : IndexingFragment) : Bool :=
 def IndexingFragment.polarityCorrect (f : IndexingFragment) : Bool :=
   match f.role with
   | .P => f.pPolarityCorrect
-  | .T => f.pPolarityCorrect  -- T indexes like P (@cite{haspelmath-2021})
+  | .T => f.pPolarityCorrect  -- T indexes like P ([haspelmath-2021])
   | .A => f.aPolarityCorrect
-  | .R => f.aPolarityCorrect  -- R indexes like A (@cite{haspelmath-2021})
+  | .R => f.aPolarityCorrect  -- R indexes like A ([haspelmath-2021])
   | .S => true                -- S is the reference point
 
 -- ============================================================================
--- § 5: Differential P Indexing Fragments (@cite{just-2024}, Table 1)
+-- § 5: Differential P Indexing Fragments ([just-2024], Table 1)
 -- ============================================================================
 
 /-! Languages where the P argument is differentially indexed. Prominent Ps
@@ -180,7 +180,7 @@ def IndexingFragment.polarityCorrect (f : IndexingFragment) : Bool :=
     indexed). For conditioning scales, the predicate marks the prominent
     end as `true` and the non-prominent end as `false`.
 
-    Source references are from @cite{just-2024}. -/
+    Source references are from [just-2024]. -/
 
 section PIndexing
 
@@ -309,14 +309,14 @@ def spokenArabic : IndexingFragment := .mk'
 end PIndexing
 
 -- ============================================================================
--- § 6: Differential A Indexing Fragments (@cite{just-2024}, Table 2)
+-- § 6: Differential A Indexing Fragments ([just-2024], Table 2)
 -- ============================================================================
 
 /-! Languages where the A argument is differentially indexed. Non-prominent
     As (3rd person, inanimate, indefinite) are MORE likely to be indexed.
     The polarity is REVERSED relative to P indexing.
 
-    Source references from @cite{just-2024}. -/
+    Source references from [just-2024]. -/
 
 section AIndexing
 
@@ -429,7 +429,7 @@ def aPersonConditioned : List IndexingFragment :=
   aIndexingLanguages.filter (·.personConditioned)
 
 -- ============================================================================
--- § 10: @cite{just-2024} — Person Is the Dominant Conditioning Factor
+-- § 10: [just-2024] — Person Is the Dominant Conditioning Factor
 -- ============================================================================
 
 /-! "The very same referential properties condition both differential P
@@ -457,7 +457,7 @@ theorem person_dominates_A :
   native_decide
 
 -- ============================================================================
--- § 11: @cite{just-2024} — Same Scales Condition Both P and A
+-- § 11: [just-2024] — Same Scales Condition Both P and A
 -- ============================================================================
 
 /-! "The very same referential properties condition both differential P
@@ -479,7 +479,7 @@ theorem definiteness_conditions_both :
     aIndexingLanguages.any (·.definitenessConditioned) = true := by native_decide
 
 -- ============================================================================
--- § 12: @cite{just-2024} — Mirror Image / Opposite Polarity
+-- § 12: [just-2024] — Mirror Image / Opposite Polarity
 -- ============================================================================
 
 /-! "The directions in which these scales operate form a mirror image:
@@ -529,7 +529,7 @@ theorem hungarian_definiteness_only : hungarian.isDefinitenessOnly = true := by 
 theorem easternMansi_definiteness_only : easternMansi.isDefinitenessOnly = true := by native_decide
 
 -- ============================================================================
--- § 14: Family Clustering (@cite{just-2024}, §2.2, §3.1)
+-- § 14: Family Clustering ([just-2024], §2.2, §3.1)
 -- ============================================================================
 
 /-- Bantu languages in the sample all show P indexing. -/
@@ -548,7 +548,7 @@ theorem family_diversity :
     (allIndexingLanguages.map (·.family)).eraseDups.length ≥ 10 := by native_decide
 
 -- ============================================================================
--- § 15: @cite{just-2024} — Unified Principle
+-- § 15: [just-2024] — Unified Principle
 -- ============================================================================
 
 /-! "Prominent arguments, be it A or P (or probably any other role), tend

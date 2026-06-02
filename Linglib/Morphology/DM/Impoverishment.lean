@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Features
 
 /-!
 # Impoverishment (Distributed Morphology)
-@cite{halle-marantz-1993} @cite{bonet-1991}
+[halle-marantz-1993] [bonet-1991]
 
 Impoverishment is a postsyntactic operation that deletes features from
 a terminal node before Vocabulary Insertion. It is the DM mechanism for
@@ -23,7 +23,7 @@ syntagmatic claims can be discharged by proof rather than annotation.
 
 ## Connection to Mam
 
-@cite{scott-2023} (ch. 4) analyzes pronoun reduction in SJA Mam as
+[scott-2023] (ch. 4) analyzes pronoun reduction in SJA Mam as
 deletion of the pronominal base morpheme when its features are
 redundantly expressed by agreement. This is structurally parallel to
 Impoverishment: features on the pronoun node are deleted (at PF) when
@@ -89,7 +89,7 @@ instance (rule : ImpoverishmentRule) (n : Neighborhood) :
 /-- A rule is **paradigmatic** iff its condition factors through the
     focus bundle: any two neighborhoods with the same focus agree on
     the condition. This is the structural counterpart of
-    @cite{arregi-nevins-2012}'s "rule conditioned by the features of
+    [arregi-nevins-2012]'s "rule conditioned by the features of
     only one node."
 
     Crucially, this is a **theorem about a rule**, not a flag. Smart
@@ -196,7 +196,7 @@ def ImpoverishmentRule.applyToBundle (rule : ImpoverishmentRule)
 
 /-- A feature is redundant when it is recoverable from another source
     (e.g., agreement morphology on the verb). This is the mechanism
-    underlying pronoun reduction in Mam (@cite{scott-2023}, ch. 4):
+    underlying pronoun reduction in Mam ([scott-2023], ch. 4):
     when all features of the pronominal base are also expressed by
     agreement, the base is deleted at PF. -/
 def allRecoverable (recoverable pronFeatures : List FeatureVal) : Bool :=

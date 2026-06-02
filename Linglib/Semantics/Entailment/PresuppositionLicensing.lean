@@ -4,17 +4,17 @@ import Linglib.Semantics.Exhaustification.Operators.Basic
 
 /-!
 # Presupposition-aware NPI licensing — Karttunen-Peters Conditions
-@cite{karttunen-peters-1979} @cite{gajewski-2011}
+[karttunen-peters-1979] [gajewski-2011]
 
 This file formalizes the Karttunen-Peters two-dimensional ⟨truth, presup⟩
-framework as it bears on NPI licensing, following @cite{gajewski-2011} §4.4
+framework as it bears on NPI licensing, following [gajewski-2011] §4.4
 (eqs. 92-94, p. 134). The substrate concept is a **K&P operator**: a
 function from arguments to presuppositional propositions, recording both
 truth-conditional and presuppositional content separately.
 
 ## Conditions 3 and 4
 
-Per @cite{gajewski-2011} eqs. 93-94: NPI licensing conditions assess
+Per [gajewski-2011] eqs. 93-94: NPI licensing conditions assess
 DE-ness on different conjunctions of the K&P content:
 
 - **Condition 3** (weak NPIs): the assertion alone is DE in the argument
@@ -25,7 +25,7 @@ DE-ness on different conjunctions of the K&P content:
 The asymmetry is empirically substantive: an operator that satisfies
 Condition 3 but not Condition 4 — i.e., one whose presupposition is
 *not* DE in the argument — licenses weak NPIs but blocks strong NPIs.
-@cite{gajewski-2011}'s canonical case is `only`: its assertion (`no
+[gajewski-2011]'s canonical case is `only`: its assertion (`no
 y ≠ x has scope`) is classically DE in scope, but its presupposition
 (`some y has x and scope`) is upward entailing in scope, so the
 conjunction is not DE.
@@ -56,7 +56,7 @@ def KPOperator.opPresup {W : Type*} (op : KPOperator W) : Set W → W → Prop :
 def KPOperator.full {W : Type*} (op : KPOperator W) : Set W → Set W :=
   fun arg w => (op arg).assertion w ∧ (op arg).presup w
 
-/-- @cite{gajewski-2011} eq. 93: **Condition 3** (weak NPI licensing).
+/-- [gajewski-2011] eq. 93: **Condition 3** (weak NPI licensing).
 
     A K&P operator licenses weak NPIs in its argument position iff its
     truth-conditional projection is DE (Antitone) in the argument. The
@@ -65,7 +65,7 @@ def KPOperator.full {W : Type*} (op : KPOperator W) : Set W → Set W :=
 def Condition3 {W : Type*} (op : KPOperator W) : Prop :=
   Antitone op.truth
 
-/-- @cite{gajewski-2011} eq. 94: **Condition 4** (strong NPI licensing).
+/-- [gajewski-2011] eq. 94: **Condition 4** (strong NPI licensing).
 
     A K&P operator licenses strong NPIs in its argument position iff
     `assertion ∧ operator-presupposition` is DE in the argument. The
@@ -102,7 +102,7 @@ theorem condition3_iff_condition4_of_trivial_presup {W : Type*}
 
 Whereas Conditions 3, 4 (above) handle presuppositions via the K&P
 framework, Conditions 1, 2 (Gajewski eqs. 59, 66) handle scalar
-implicatures via @cite{chierchia-2004}'s O-operator and
+implicatures via [chierchia-2004]'s O-operator and
 alternative-set machinery. The two frameworks make parallel
 predictions for `only`: weak NPIs licensed (Condition 1 / Condition 3)
 but strong NPIs blocked (Condition 2 / Condition 4) — once the
@@ -120,7 +120,7 @@ two parameters to Condition 2: the standard alternative set ALT and
 the restricted ALT-1 (Chierchia's "highest-scopal-item only").
 -/
 
-/-- @cite{gajewski-2011} eq. 59: **Condition 1** (weak NPI licensing).
+/-- [gajewski-2011] eq. 59: **Condition 1** (weak NPI licensing).
 
     Operator `op` licenses weak NPIs in its argument position iff
     `O(op(γ), op(ALT(γ)))` is DE in γ, where `alts γ` generates the
@@ -131,7 +131,7 @@ def Condition1 {W : Type*} (op : Set W → Set W)
     (alts : Set W → Set (Set W)) : Prop :=
   Antitone (fun γ => Exhaustification.exhMW (alts γ) (op γ))
 
-/-- @cite{gajewski-2011} eq. 66: **Condition 2** (strong NPI licensing).
+/-- [gajewski-2011] eq. 66: **Condition 2** (strong NPI licensing).
 
     Adds a parallel DE check against ALT-1 — the restricted alternative
     set (Chierchia's "highest-scopal-item only", eq. 55). Strong NPIs

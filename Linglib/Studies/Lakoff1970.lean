@@ -3,10 +3,10 @@ import Linglib.Fragments.English.Tense
 import Linglib.Semantics.Tense.ParticipantPerspective
 
 /-!
-# @cite{lakoff-1970} Grammaticality Judgments
-@cite{lakoff-1970}
+# [lakoff-1970] Grammaticality Judgments
+[lakoff-1970]
 
-Pure empirical data from @cite{lakoff-1970} "Tense and Its Relation to Participants."
+Pure empirical data from [lakoff-1970] "Tense and Its Relation to Participants."
 No theoretical commitments — just the paper's acceptability judgments organized
 by phenomenon.
 
@@ -41,7 +41,7 @@ inductive TenseUseType where
   | falseTense
   deriving DecidableEq, Repr
 
-/-- A grammaticality judgment from @cite{lakoff-1970}. -/
+/-- A grammaticality judgment from [lakoff-1970]. -/
 structure TenseJudgment where
   /-- Example number in the paper (e.g., "4a", "8a") -/
   exNumber : String

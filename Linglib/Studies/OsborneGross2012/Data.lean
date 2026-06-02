@@ -34,7 +34,7 @@ open DepGrammar
 -- §1: Construction Type Classification
 -- ============================================================================
 
-/-- The five construction types analyzed in @cite{osborne-gross-2012}. -/
+/-- The five construction types analyzed in [osborne-gross-2012]. -/
 inductive ConstructionType where
   | idiom                    -- "spill the beans", "kick the bucket"
   | lightVerbConstruction    -- "take a bath", "give a yell"
@@ -217,7 +217,7 @@ end OsborneGross2012
 
 /-!
 # Bridge: Osborne & Groß (2012) DG Catenae → CxG Constructions
-@cite{fillmore-kay-oconnor-1988} @cite{osborne-gross-2012}
+[fillmore-kay-oconnor-1988] [osborne-gross-2012]
 
 Connects the dependency trees from `Studies/OsborneGross2012/Data.lean`
 to the catena theory from `Catena.lean` and the CxG types from

@@ -26,8 +26,8 @@ This file lands the basic substrate:
   `omegaPow_mul_omegaPow`.
 
 `omegaPow` is the substrate for the algebraic characterization of
-subregular language classes (@cite{pin-mfa}; @cite{eilenberg-1976};
-@cite{lambert-2026} §6.2): definite languages are exactly those whose
+subregular language classes ([pin-mfa]; [eilenberg-1976];
+[lambert-2026] §6.2): definite languages are exactly those whose
 syntactic monoid satisfies `s · x^ω = x^ω`, reverse-definite by
 `x^ω · y = x^ω`, and so on. Until this file is in place, the algebraic
 characterizations are stuck at finite-`k` forms that don't generalize

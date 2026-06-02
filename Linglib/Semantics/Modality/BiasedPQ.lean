@@ -7,9 +7,9 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Biased Polar Questions
-@cite{bring-gunlogson-2000} @cite{ladd-1981} @cite{repp-2013} @cite{romero-2019} @cite{romero-2024} @cite{romero-han-2004} @cite{simik-2024} @cite{stankova-2025}
+[bring-gunlogson-2000] [ladd-1981] [repp-2013] [romero-2019] [romero-2024] [romero-han-2004] [simik-2024] [stankova-2025]
 
-Cross-linguistic framework for polar question bias, following @cite{romero-2024}.
+Cross-linguistic framework for polar question bias, following [romero-2024].
 Polar questions come in three forms — PosQ, LoNQ, HiNQ — which differ in
 sensitivity to two independent bias dimensions: original speaker bias and
 contextual evidence bias.
@@ -23,7 +23,7 @@ contextual evidence bias.
 
 ## Three Theoretical Lines for High Negation
 
-@cite{romero-2020} clusters analyses into three lines:
+[romero-2020] clusters analyses into three lines:
 - **Line a**: Σ_neg at the expressed proposition level
 - **Line b**: VERUM/FALSUM
 - **Line c**: ¬ASSERT at the speech act level
@@ -42,10 +42,10 @@ open CommonGround
 variable {W : Type*}
 
 -- ============================================================================
--- §1: PQ Form Typology (@cite{romero-2024} §1)
+-- §1: PQ Form Typology ([romero-2024] §1)
 -- ============================================================================
 
-/-- The three polar question forms (@cite{romero-2024} §1, exx. 1–3).
+/-- The three polar question forms ([romero-2024] §1, exx. 1–3).
 
 These forms are cross-linguistically attested and constitute the fundamental
 typology for polar question bias research. -/
@@ -60,7 +60,7 @@ inductive PQForm where
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- §2: Bias Typology (@cite{romero-2024} §2)
+-- §2: Bias Typology ([romero-2024] §2)
 -- ============================================================================
 
 /-- Original speaker bias.
@@ -76,7 +76,7 @@ inductive OriginalBias where
   | againstP
   deriving DecidableEq, Repr
 
-/-- Contextual evidence bias (@cite{bring-gunlogson-2000}): expectation
+/-- Contextual evidence bias ([bring-gunlogson-2000]): expectation
     about `p` induced by evidence available in the current discourse
     situation. A felicity condition on rising declaratives and a bias
     dimension for polar questions. -/
@@ -90,10 +90,10 @@ inductive ContextualEvidence where
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- §3: Romero's Table 1 — Original Speaker Bias (@cite{ladd-1981}, @cite{romero-han-2004})
+-- §3: Romero's Table 1 — Original Speaker Bias ([ladd-1981], [romero-han-2004])
 -- ============================================================================
 
-/-- Original speaker bias conditions on PQ forms (@cite{romero-2024} Table 1).
+/-- Original speaker bias conditions on PQ forms ([romero-2024] Table 1).
 
 Only HiNQ *mandatorily* conveys original speaker bias for p. LoNQ can convey
 bias for p but can also be neutral. PosQ is compatible with bias for ¬p or
@@ -109,7 +109,7 @@ def originalBiasOK : PQForm → OriginalBias → Bool
   | .HiNQ, .neutral   => false -- HiNQ is infelicitous without bias
   | .HiNQ, .againstP  => false
 
-/-- HiNQs mandatorily convey original speaker bias for p (@cite{ladd-1981}, @cite{romero-han-2004}). -/
+/-- HiNQs mandatorily convey original speaker bias for p ([ladd-1981], [romero-han-2004]). -/
 theorem hiNQ_requires_bias_for_p :
     originalBiasOK .HiNQ .neutral = false ∧
     originalBiasOK .HiNQ .againstP = false ∧
@@ -122,11 +122,11 @@ theorem posQ_neutral_ok : originalBiasOK .PosQ .neutral = true := rfl
 theorem loNQ_neutral_ok : originalBiasOK .LoNQ .neutral = true := rfl
 
 -- ============================================================================
--- §4: Romero's Table 2 — Contextual Evidence Bias (@cite{bring-gunlogson-2000})
+-- §4: Romero's Table 2 — Contextual Evidence Bias ([bring-gunlogson-2000])
 -- ============================================================================
 
-/-- Contextual evidence bias conditions on PQ forms (@cite{romero-2024} Table 2,
-@cite{bring-gunlogson-2000}).
+/-- Contextual evidence bias conditions on PQ forms ([romero-2024] Table 2,
+[bring-gunlogson-2000]).
 
 PosQ requires evidence for p (or neutral). LoNQ requires evidence against p.
 Outer-HiNQ is felicitous with neutral or against-p evidence. -/
@@ -141,7 +141,7 @@ def evidenceBiasOK : PQForm → ContextualEvidence → Bool
   | .HiNQ, .neutral    => true
   | .HiNQ, .againstP   => true
 
-/-- LoNQs require contextual evidence against p (@cite{bring-gunlogson-2000}). -/
+/-- LoNQs require contextual evidence against p ([bring-gunlogson-2000]). -/
 theorem loNQ_requires_evidence_against_p :
     evidenceBiasOK .LoNQ .forP = false ∧
     evidenceBiasOK .LoNQ .neutral = false ∧
@@ -156,10 +156,10 @@ theorem hiNQ_evidence_neutral_ok :
     evidenceBiasOK .HiNQ .neutral = true := rfl
 
 -- ============================================================================
--- §5: VERUM (@cite{romero-han-2004}, @cite{romero-2024} def. 30)
+-- §5: VERUM ([romero-han-2004], [romero-2024] def. 30)
 -- ============================================================================
 
-/-- VERUM operator (@cite{romero-han-2004}, line b).
+/-- VERUM operator ([romero-han-2004], line b).
 
 ⟦VERUM_x⟧ = λp. λw. ∀w' ∈ Epi_x(w). ∀w'' ∈ Conv_x(w'). [p ∈ CommonGround]
 
@@ -173,7 +173,7 @@ def verum (epistemic : ModalBase W) (conversational : OrderingSource W)
   -- For all best epistemic worlds w': in the CommonGround induced at w', p holds
   ∀ w' ∈ bestWorlds epistemic conversational w, cg w' ∧ p w'
 
-/-- FALSUM operator (@cite{repp-2013}, @cite{romero-2019}, @cite{romero-2024} def. 33).
+/-- FALSUM operator ([repp-2013], [romero-2019], [romero-2024] def. 33).
 
 At-issue content: ¬p
 CommonGround-management content: ∀w' ∈ Epi(w). ∀w'' ∈ Conv(w'). [p ∉ CommonGround]
@@ -207,10 +207,10 @@ theorem falsum_atIssue_is_negation (ep : ModalBase W) (cv : OrderingSource W)
     (mkFalsum ep cv cg p).atIssue w ↔ ¬ p w := Iff.rfl
 
 -- ============================================================================
--- §5b: FALSUM^CZ (@cite{simik-2024} §5, eq. 44)
+-- §5b: FALSUM^CZ ([simik-2024] §5, eq. 44)
 -- ============================================================================
 
-/-- Czech FALSUM (@cite{simik-2024} eq. 44), weaker than standard FALSUM.
+/-- Czech FALSUM ([simik-2024] eq. 44), weaker than standard FALSUM.
 
 ⟦FALSUM_1^CZ⟧^g(p) = λw : ∃w' ∈ EPI_{g(1)}(w)[p(w') = 1]. p ∉ CG_w
 
@@ -235,7 +235,7 @@ structure FalsumCZ (W : Type*) where
   /-- CommonGround-management: p is not part of the common ground at w. -/
   cgContent : Set W
 
-/-- Construct @cite{simik-2024}'s FALSUM^CZ for a proposition p.
+/-- Construct [simik-2024]'s FALSUM^CZ for a proposition p.
 
 The attitude holder's epistemic state is modeled via the modal base
 (their epistemic alternatives). -/
@@ -264,13 +264,13 @@ theorem standard_falsum_entails_CZ_definedness
   hStd
 
 -- ============================================================================
--- §5c: Náhodou as Ordering Source Modifier (@cite{simik-2024} §5.1)
+-- §5c: Náhodou as Ordering Source Modifier ([simik-2024] §5.1)
 -- ============================================================================
 
 /-- *Náhodou* 'by chance' loosens the stereotypical ordering source of
 FALSUM^CZ to include more remote (less stereotypical) possibilities.
 
-@cite{simik-2024} §5.1: "its function is to 'loosen' the default stereotypical
+[simik-2024] §5.1: "its function is to 'loosen' the default stereotypical
 ordering source of the epistemic modal contributed by FALSUM so as to
 include more remote (less likely) possibilities in the quantification domain
 of the modal."
@@ -370,7 +370,7 @@ theorem inner_entails_medial (f : EvidentialBiasFlavor W) (p : Set W) (w : W)
   exact hInner w' hw' (hAll w' hw')
 
 -- ============================================================================
--- §8: Focus Requirement on FALSUM (@cite{romero-2024} §3.2, Staňková 2026 §4)
+-- §8: Focus Requirement on FALSUM ([romero-2024] §3.2, Staňková 2026 §4)
 -- ============================================================================
 
 /-! Outer negation (FALSUM) is obligatorily focused (Staňková 2026 §3.2, §4).

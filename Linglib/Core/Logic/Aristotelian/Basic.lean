@@ -3,10 +3,10 @@ import Mathlib.Order.BooleanAlgebra.Basic
 import Mathlib.Order.Hom.Basic
 
 /-!
-# The four Aristotelian relations @cite{demey-smessaert-2018}
+# The four Aristotelian relations [demey-smessaert-2018]
 
 Two elements φ, ψ of a Boolean algebra stand in one of four *Aristotelian
-relations* (@cite{demey-smessaert-2024}, Definition 1):
+relations* ([demey-smessaert-2024], Definition 1):
 
 | Relation       | Condition                   | mathlib                    |
 |----------------|-----------------------------|----------------------------|
@@ -16,10 +16,10 @@ relations* (@cite{demey-smessaert-2024}, Definition 1):
 | Subalternation | `φ < ψ`                     | `(· < ·)`                  |
 
 The collection `{CD, C, SC, SA}` is the *Aristotelian geometry*; elements
-standing in none of the four are *unconnected* (@cite{smessaert-demey-2014}).
+standing in none of the four are *unconnected* ([smessaert-demey-2014]).
 
 The relations are defined over an arbitrary `[BooleanAlgebra α]` — the abstract
-"template" of @cite{demey-smessaert-2024}. Concrete instances follow by plugging
+"template" of [demey-smessaert-2024]. Concrete instances follow by plugging
 in a Boolean algebra: the powerset `Set W`, predicate spaces `W → Prop` /
 `W → Bool`, bitvectors `Fin n → Bool`, or a Lindenbaum–Tarski algebra. The
 relations *are* mathlib's `IsCompl` / `Disjoint` / `Codisjoint` / `<`, so they
@@ -33,7 +33,7 @@ inherit that API.
   `IsUnconnected` — the relations over `[BooleanAlgebra α]`.
 * `isContradictory_apply_orderIso` and siblings — a Boolean isomorphism
   (`OrderIso`) is an *Aristotelian isomorphism*: it preserves and reflects all
-  four relations (@cite{deklerck-vignero-demey-2024}).
+  four relations ([deklerck-vignero-demey-2024]).
 * `isContradictory_iff_forall` and siblings — the pointwise `∀ w`
   characterization at the `W → Bool` instance.
 
@@ -45,7 +45,7 @@ subcontrariety are `Disjoint` / `Codisjoint` combinations, so symmetry and the
 
 The relations are computed relative to a fixed Boolean algebra (equivalently a
 single logic `S`). The same pair can stand in different relations under different
-background logics; this *logic-sensitivity* (@cite{demey-frijters-2023}) is the
+background logics; this *logic-sensitivity* ([demey-frijters-2023]) is the
 natural next layer.
 
 This is the base of a three-layer development: `Diagram.lean` adds labeled-poset
@@ -58,7 +58,7 @@ bitstring representation. The probabilistic generalization lives in
 * Prove that `IsUnconnected` coincides with "no Aristotelian relation" under an
   explicit contingency hypothesis.
 * A first-class `AristotelianMorphism` / category of diagrams
-  (@cite{deklerck-vignero-demey-2024}); the `OrderIso` transfer lemmas are the
+  ([deklerck-vignero-demey-2024]); the `OrderIso` transfer lemmas are the
   immediately-useful slice.
 -/
 
@@ -100,7 +100,7 @@ abbrev IsSubcontrary (φ ψ : α) : Prop := ¬ Disjoint φ ψ ∧ Codisjoint φ 
 abbrev IsSubaltern (φ ψ : α) : Prop := φ < ψ
 
 /-- BA-generic unconnectedness: `φ` and `ψ` stand in none of the four
-    Aristotelian relations. Per @cite{demey-smessaert-2024}. -/
+    Aristotelian relations. Per [demey-smessaert-2024]. -/
 abbrev IsUnconnected (φ ψ : α) : Prop :=
   ¬ Disjoint φ ψ ∧ ¬ Codisjoint φ ψ ∧ ¬ φ ≤ ψ ∧ ¬ ψ ≤ φ
 
@@ -119,8 +119,8 @@ theorem IsSubcontrary.symm {φ ψ : α} (h : IsSubcontrary φ ψ) :
 
 A Boolean isomorphism — an `OrderIso` of Boolean algebras — is an *Aristotelian
 isomorphism*: it preserves and reflects all four relations
-(@cite{deklerck-vignero-demey-2024}, @cite{demey-smessaert-2024}; the abstract
-content of @cite{demey-smessaert-2018}'s bitstring transfer). Each lemma is a
+([deklerck-vignero-demey-2024], [demey-smessaert-2024]; the abstract
+content of [demey-smessaert-2018]'s bitstring transfer). Each lemma is a
 direct consequence of mathlib's `OrderIso` order-preservation API. -/
 
 variable {β : Type*} [BooleanAlgebra β]

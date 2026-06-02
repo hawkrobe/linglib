@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Intensional.Premise
 /-!
 # Conversational Backgrounds
 
-@cite{kratzer-1981} @cite{kratzer-2012}
+[kratzer-1981] [kratzer-2012]
 
 A conversational background maps worlds to sets of propositions. Two roles:
 
@@ -33,7 +33,7 @@ abbrev OrderingSource (W : Type*) := ConvBackground W
 /-- A conversational background is **realistic** iff for all w: w ∈ ⋂f(w).
     The actual world satisfies all propositions in the background.
 
-    @cite{kratzer-1981}: realistic conversational backgrounds make every fact
+    [kratzer-1981]: realistic conversational backgrounds make every fact
     about `w` part of `⋂f(w)`. UNVERIFIED page reference. -/
 def isRealistic (f : ConvBackground W) : Prop :=
   ∀ w : W, ∀ p ∈ f w, p w

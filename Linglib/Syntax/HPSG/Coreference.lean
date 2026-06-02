@@ -5,7 +5,7 @@ import Linglib.Syntax.Binding.Basic
 # HPSG Coreference (Binding)
 
 Binding via **ARG-ST outranking** (obliqueness order), following
-@cite{sag-wasow-bender-2003} Ch. 7 and @cite{pollard-sag-1994}. The c-command
+[sag-wasow-bender-2003] Ch. 7 and [pollard-sag-1994]. The c-command
 analogue in HPSG is *outranking* on the ARG-ST list: a less-oblique argument
 (the subject, at position 0) outranks a more-oblique one (the object, at
 position 1).
@@ -36,7 +36,7 @@ open Binding (SimpleClause Pos CommandRelation)
 private def wordToSynsem (w : Word) : HPSG.Synsem := { cat := w.cat }
 
 /-- Build the ARG-ST for a clause from its arguments: `[subject, object]`,
-    ordered by obliqueness (@cite{sag-wasow-bender-2003}). -/
+    ordered by obliqueness ([sag-wasow-bender-2003]). -/
 def toArgSt (clause : SimpleClause) : HPSG.ArgSt :=
   match clause.object with
   | none => { args := [wordToSynsem clause.subject] }
@@ -71,7 +71,7 @@ instance (c : SimpleClause) (i j : Pos) : Decidable (sameDomain c i j) :=
   inferInstanceAs (Decidable (sameArgSt c = true))
 
 /-- The HPSG instance of the abstract command relation
-    (@cite{barker-pullum-1990}): ARG-ST outranking. The engine supplies the
+    ([barker-pullum-1990]): ARG-ST outranking. The engine supplies the
     binding principles; a study applies them with this instance and a language
     classifier. -/
 instance : CommandRelation where

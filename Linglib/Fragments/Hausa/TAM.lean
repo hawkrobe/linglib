@@ -3,7 +3,7 @@ import Linglib.Features.Gender
 
 /-!
 # Hausa TAM and the Person-Aspect-Complex (PAC) — mathlib-style
-@cite{newman-2000} @cite{jaggar-2001}
+[newman-2000] [jaggar-2001]
 
 Hausa inflection is concentrated in a portmanteau preverbal element
 called the **PAC** (person-aspect-complex), which fuses:
@@ -12,7 +12,7 @@ called the **PAC** (person-aspect-complex), which fuses:
 - the **TAM** of the clause (completive, continuous, future,
   subjunctive, habitual, …).
 
-(@cite{newman-2000} ch. 70.) Because the PAC is the only inflectional
+([newman-2000] ch. 70.) Because the PAC is the only inflectional
 locus, the verb stem itself is unmarked for tense or person agreement —
 all of that information lives in the PAC.
 
@@ -20,7 +20,7 @@ all of that information lives in the PAC.
 
 A second axis cross-cuts the TAM dimension: a **General** (matrix
 declarative) vs **Relative** form. The Relative forms surface in three
-syntactic environments (@cite{newman-2000} ch. 64–65):
+syntactic environments ([newman-2000] ch. 64–65):
 
 1. relative clauses headed by *dà*;
 2. *wh*-questions (in-situ or *ex*-situ); and
@@ -49,7 +49,7 @@ open Features.Person
 open Features (SurfaceGender)
 
 -- ============================================================================
--- § 1: TAM Inventory (@cite{newman-2000} ch. 70)
+-- § 1: TAM Inventory ([newman-2000] ch. 70)
 -- ============================================================================
 
 /-- The seven core TAM categories of the PAC. We follow Newman's labels;
@@ -73,7 +73,7 @@ def all : List TAM :=
    .habitual, .rhetorical, .potential]
 
 /-- The General/Relative split surfaces morphologically only for the
-    completive and continuous TAMs (@cite{newman-2000} §64.2, Table 32).
+    completive and continuous TAMs ([newman-2000] §64.2, Table 32).
     `HasRelativeForm` is the propositional predicate; downstream
     constructors take it as a proof obligation. -/
 def HasRelativeForm : TAM → Prop
@@ -145,7 +145,7 @@ theorem gender_contrast_only_in_singular :
     invariant (relative mode requires a TAM that admits the relative
     form) is enforced at construction time by `mkRelativePAC`; PACs
     built via `mkGeneralPAC` are well-formed unconditionally.
-    The full paradigm is in @cite{newman-2000} §70 Table 38. -/
+    The full paradigm is in [newman-2000] §70 Table 38. -/
 structure PAC where
   subj : Subject
   tam  : TAM
@@ -180,7 +180,7 @@ theorem mkRelativePAC_wellFormed (s : Subject) (t : TAM) (f : String)
     (mkRelativePAC s t f h).WellFormed := fun _ => h
 
 -- ============================================================================
--- § 4: Representative PACs (@cite{newman-2000} §70.2, §64 Table 32)
+-- § 4: Representative PACs ([newman-2000] §70.2, §64 Table 32)
 -- ============================================================================
 
 /-- 3sg.M completive, General form *yā* (high tone). -/
@@ -192,8 +192,8 @@ def cmp_3sm_G : PAC :=
 def cmp_3sm_R : PAC :=
   mkRelativePAC ⟨.s3, some .masculine⟩ .completive "yà" trivial
 
-/-- 3sg.F completive, Relative form *ta* (@cite{newman-2000} §70.2,
-    @cite{hartmann-zimmermann-2007} eq. 24). -/
+/-- 3sg.F completive, Relative form *ta* ([newman-2000] §70.2,
+    [hartmann-zimmermann-2007] eq. 24). -/
 def cmp_3sf_R : PAC :=
   mkRelativePAC ⟨.s3, some .feminine⟩ .completive "ta" trivial
 
@@ -202,26 +202,26 @@ def cont_3sm_G : PAC :=
   mkGeneralPAC ⟨.s3, some .masculine⟩ .continuous "yanā"
 
 /-- 3sg.M continuous, Relative form *yake* — a stem alternation, not
-    just a tone change (@cite{newman-2000} §70.2). -/
+    just a tone change ([newman-2000] §70.2). -/
 def cont_3sm_R : PAC :=
   mkRelativePAC ⟨.s3, some .masculine⟩ .continuous "yake" trivial
 
 /-- 3sg.F continuous, Relative form *takèe*
-    (@cite{hartmann-zimmermann-2007} eq. 22). -/
+    ([hartmann-zimmermann-2007] eq. 22). -/
 def cont_3sf_R : PAC :=
   mkRelativePAC ⟨.s3, some .feminine⟩ .continuous "takèe" trivial
 
 /-- 1sg completive, General form *naa*
-    (@cite{hartmann-zimmermann-2007} eq. 23). -/
+    ([hartmann-zimmermann-2007] eq. 23). -/
 def cmp_1sg_G : PAC :=
   mkGeneralPAC ⟨.s1, none⟩ .completive "naa"
 
 /-- 1sg continuous, Relative form *nakèe*
-    (@cite{hartmann-zimmermann-2007} eq. 29). -/
+    ([hartmann-zimmermann-2007] eq. 29). -/
 def cont_1sg_R : PAC :=
   mkRelativePAC ⟨.s1, none⟩ .continuous "nakèe" trivial
 
-/-- 1sg future *zân* (@cite{hartmann-zimmermann-2007} eqs. 25, 30).
+/-- 1sg future *zân* ([hartmann-zimmermann-2007] eqs. 25, 30).
     No General/Relative contrast in the future TAM. -/
 def fut_1sg : PAC :=
   mkGeneralPAC ⟨.s1, none⟩ .future "zân"

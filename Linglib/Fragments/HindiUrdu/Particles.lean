@@ -1,9 +1,9 @@
 /-!
 # Hindi-Urdu Interrogative Particles
-@cite{bhatt-dayal-2014} @cite{bhatt-dayal-2020} @cite{dayal-2025}
+[bhatt-dayal-2014] [bhatt-dayal-2020] [dayal-2025]
 
 Particles related to question formation in Hindi-Urdu, following
-@cite{bhatt-dayal-2014} and @cite{dayal-2025}.
+[bhatt-dayal-2014] and [dayal-2025].
 
 Hindi-Urdu lacks a dedicated *wh*-complementizer for polar questions (unlike
 English *whether* or Italian *se*). Instead, it uses:

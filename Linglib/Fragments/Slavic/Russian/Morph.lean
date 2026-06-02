@@ -2,7 +2,7 @@ import Linglib.Morphology.MorphProfile
 
 /-!
 # Russian Morphological Profile
-@cite{wals-2013} @cite{bickel-nichols-2001}
+[wals-2013] [bickel-nichols-2001]
 
 WALS-derived profile for Russian (ISO `rus`). B&N 2001 places Russian in the
 canonical "fusional" cell (concatenative + flexive + cumulative); the genitive

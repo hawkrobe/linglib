@@ -4,9 +4,9 @@ import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Questions.Exhaustivity
 
 /-!
-# @cite{karttunen-1977}: Syntax and Semantics of Questions
+# [karttunen-1977]: Syntax and Semantics of Questions
 
-Single-paper formalisation of @cite{karttunen-1977}, "Syntax and
+Single-paper formalisation of [karttunen-1977], "Syntax and
 Semantics of Questions", *Linguistics and Philosophy* 1(1):3–44.
 The paper introduces the **set-of-true-alternatives** denotation for
 questions: a question denotes the set of propositions that are true
@@ -14,7 +14,7 @@ and constitute an answer.
 
 ## Substrate identification
 
-@cite{karttunen-1977}'s denotation is exactly
+[karttunen-1977]'s denotation is exactly
 `Exhaustivity.trueAlternatives Q w` — the set of `Q`-alternatives
 true at `w`. The "complete answer" Karttunen ascribes via the
 meaning postulate (§2.4 fn 11) for `know` is exactly
@@ -36,7 +36,7 @@ prove Karttunen's stated observations directly.
 * **§2.4 know-meaning postulate**: a state σ supports every true alt
   iff σ ⊆ karttunenCompleteAnswer Q w.
 * **§2.5 footnote 13**: the existential presupposition for wh-questions
-  is *not* derived in this paper (deferred to @cite{dayal-1996}).
+  is *not* derived in this paper (deferred to [dayal-1996]).
 
 ## What this file does NOT replicate
 
@@ -62,7 +62,7 @@ variable {W : Type*}
 
 /-! ### Karttunen's denotation (§2.1, §2.5) -/
 
-/-- @cite{karttunen-1977} §2.1: the **Karttunen denotation** of
+/-- [karttunen-1977] §2.1: the **Karttunen denotation** of
     question `Q` at world `w` is the set of true alternatives.
     Definitionally equal to `Exhaustivity.trueAlternatives`. -/
 def karttunenDenotation (Q : Question W) (w : W) : Set (Set W) :=
@@ -74,7 +74,7 @@ def karttunenDenotation (Q : Question W) (w : W) : Set (Set W) :=
 
 /-! ### The complete-answer view (§2.4 footnote 11) -/
 
-/-- @cite{karttunen-1977} §2.4 fn 11: the **complete answer** to `Q`
+/-- [karttunen-1977] §2.4 fn 11: the **complete answer** to `Q`
     at `w` — the proposition the agent must believe to count as
     knowing `Q`. Equal to `weakAnswer Q w`. -/
 def karttunenCompleteAnswer (Q : Question W) (w : W) : Set W :=
@@ -104,7 +104,7 @@ theorem karttunenCompleteAnswer_eq_sInter (Q : Question W) (w : W) :
 `{[Mary doesn't cook]}`. Falls out of the substrate
 `trueAlternatives_polar_iff_of_nontrivial` joint. -/
 
-/-- @cite{karttunen-1977} §2.3: at a `p`-true world, the polar
+/-- [karttunen-1977] §2.3: at a `p`-true world, the polar
     question denotes `{p}`. -/
 theorem karttunen_polar_pos (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
     (w : W) (hwp : w ∈ p) :
@@ -114,7 +114,7 @@ theorem karttunen_polar_pos (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
       trueAlternatives_polar_iff_of_nontrivial p hne hnu]
   simp [hwp]
 
-/-- @cite{karttunen-1977} §2.3: at a `p`-false world, the polar
+/-- [karttunen-1977] §2.3: at a `p`-false world, the polar
     question denotes `{pᶜ}`. -/
 theorem karttunen_polar_neg (p : Set W) (hne : p ≠ ∅) (hnu : p ≠ Set.univ)
     (w : W) (hwp : w ∉ p) :
@@ -140,7 +140,7 @@ theorem karttunenCompleteAnswer_polar_neg {p : Set W}
 
 /-! ### §2.4 know-meaning postulate
 
-@cite{karttunen-1977} §2.4 footnote 11 provides
+[karttunen-1977] §2.4 footnote 11 provides
 
     know'_{IV/Q}(x, P) ↔ ∀p [P(p) → know'_t(x, p)]
 
@@ -161,7 +161,7 @@ theorem subset_karttunenCompleteAnswer_iff (σ : Set W) (Q : Question W) (w : W)
 
 When no `e ∈ D` satisfies `P e` at `w`, every Karttunen alternative is
 empty (paper p. 20 fn 13). The existential presupposition is *not*
-captured at this stage; @cite{dayal-1996} adds it. -/
+captured at this stage; [dayal-1996] adds it. -/
 
 theorem karttunen_which_no_witness {E : Type*} (D : Set E) (P : E → Set W) (w : W)
     (h : ∀ e ∈ D, w ∉ P e) :

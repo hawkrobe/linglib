@@ -8,7 +8,7 @@ import Mathlib.Order.BoundedOrder.Basic
 /-!
 # Modal logic: axioms, the lattice of normal logics, and the modal square
 
-@cite{dowty-wall-peters-1981} @cite{kratzer-1981} @cite{kripke-1963}
+[dowty-wall-peters-1981] [kratzer-1981] [kripke-1963]
 
 Builds on the polymorphic Kripke foundation in `Defs.lean`. This file adds:
 
@@ -26,14 +26,14 @@ Builds on the polymorphic Kripke foundation in `Defs.lean`. This file adds:
 4. **Logic lattice**: `Axiom`, `Logic`, named logics (K, T, D, S4, S5, KD45),
    lattice instances, `frameConditions` predicate.
 
-5. **Gallin hierarchy** (@cite{gallin-1975}): `PropOp` (general propositional
+5. **Gallin hierarchy** ([gallin-1975]): `PropOp` (general propositional
    operators), `indicialNec`/`indicialPoss` (Kripke-type), `s5Nec`/`s5Poss`
    (universal-accessibility = classical IL S5). The architectural anchor
    showing that classical IL S5 = the universal-accessibility special case
    of the polymorphic theory, and that non-Kripke operators (tense,
    progressive) live outside `IsIndicial`.
 
-6. **Modal square of opposition** (`modalSquare`, @cite{carnielli-pizzi-2008}):
+6. **Modal square of opposition** (`modalSquare`, [carnielli-pizzi-2008]):
    under seriality the `box`/`diamond` corners satisfy all six Aristotelian
    relations — `subalternAI` is the D axiom, `contradEI` the box–diamond duality.
 
@@ -97,7 +97,7 @@ theorem box_five (R : AccessRel W) [hE : IsEuclidean R] (p : W → Prop) (w : W)
 /-- **Moore reductio for KD4**: no world satisfies `□_R (p ∧ ¬□_R p)` when
     `R` is serial and transitive. The content `p ∧ ¬□_R p` is itself
     satisfiable; what fails is *boxing* it. Specialise to belief
-    (@cite{hintikka-1962}), knowledge, or any other KD4 modality. -/
+    ([hintikka-1962]), knowledge, or any other KD4 modality. -/
 theorem box_not_moore (R : AccessRel W) [hS : IsSerial R] [IsTrans W R]
     (p : W → Prop) (w : W) :
     ¬ box R (fun v => p v ∧ ¬ box R p v) w := by
@@ -109,7 +109,7 @@ theorem box_not_moore (R : AccessRel W) [hS : IsSerial R] [IsTrans W R]
 
 /-! ### Modal square of opposition
 
-@cite{carnielli-pizzi-2008}. The `□`/`◇` pair forms an Aristotelian square
+[carnielli-pizzi-2008]. The `□`/`◇` pair forms an Aristotelian square
 (`A = □p`, `E = □¬p`, `I = ◇p`, `O = ¬□p`). Under seriality — the modal D axiom
 (`box_D`) — it satisfies all six relations of the square of opposition, so every
 serial modality (epistemic, deontic, temporal, doxastic) inherits the square. -/
@@ -137,7 +137,7 @@ theorem diamond_eq_compl_box_compl (R : AccessRel W) (p : W → Prop) :
     exact h (fun v hv hpv => hne ⟨v, hv, hpv⟩)
 
 /-- The **modal square of opposition** over an accessibility relation `R`
-(@cite{carnielli-pizzi-2008}): `A = □p`, `E = □¬p`, `I = ◇p`, `O = ¬□p`. -/
+([carnielli-pizzi-2008]): `A = □p`, `E = □¬p`, `I = ◇p`, `O = ¬□p`. -/
 def modalSquare (R : AccessRel W) (p : W → Prop) : Aristotelian.Square (W → Prop) where
   A := box R p
   E := box R pᶜ
@@ -254,7 +254,7 @@ theorem diamond_eq_exists (R : AccessRel W) (p : W → Prop) (w : W) :
 -- § 6. Gallin's Hierarchy of Propositional Operators
 -- ════════════════════════════════════════════════════════════════════════
 
-/-! ## The Gallin hierarchy (@cite{gallin-1975})
+/-! ## The Gallin hierarchy ([gallin-1975])
 
 In IL/ML_p, propositional operators form a three-level hierarchy:
 

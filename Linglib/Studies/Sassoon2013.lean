@@ -4,7 +4,7 @@ import Linglib.Semantics.Degree.Kennedy
 import Linglib.Core.Scales.Scale
 
 /-!
-# @cite{sassoon-2013}
+# [sassoon-2013]
 
 Galit W. Sassoon (2013). A Typology of Multidimensional Adjectives.
 *Journal of Semantics* 30: 335–380.
@@ -38,7 +38,7 @@ The dimension-binding operations and De Morgan theorems are in
 
 ## Scale type note
 
-Scale types here use @cite{kennedy-mcnally-2005} `Boundedness` values, which
+Scale types here use [kennedy-mcnally-2005] `Boundedness` values, which
 match the Fragment lexicon. Sassoon's own modifier-distribution analysis
 (Section 2.3, Table 4) reclassifies several adjectives: *good* and *dissimilar*
 as total, *bad* and *similar* as partial. These reclassifications are noted in
@@ -80,7 +80,7 @@ structure MultidimAdj where
       Distinct from scale-endpoint polarity (`AdjModifierEntry.isLowerEndpoint`):
       *empty* is lower-endpoint but evaluatively positive. -/
   isPositive : Bool
-  /-- Scale structure classification (@cite{kennedy-mcnally-2005}). -/
+  /-- Scale structure classification ([kennedy-mcnally-2005]). -/
   scaleType : Boundedness
   /-- Observed default binding type from exception-phrase corpus data (36a–c). -/
   binding : DimensionBindingType
@@ -266,7 +266,7 @@ theorem worse_diverges : worse_.binding ≠ bad_.binding := by decide
 -- § 5. Hypothesis 2: Polarity predicts binding type
 -- ════════════════════════════════════════════════════
 
-/-! Under a negation theory of antonymy (@cite{heim-2006}, @cite{buring-2007}),
+/-! Under a negation theory of antonymy ([heim-2006], [buring-2007]),
     if a positive adjective P is conjunctive (∀Q∈DIM: Q(x)), then its
     negative antonym ¬P is disjunctive (∃Q∈DIM: ¬Q(x)), by De Morgan's laws.
     The proof is in Theory.lean as `deMorgan_conjunctive_disjunctive`. -/

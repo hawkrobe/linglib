@@ -3,14 +3,14 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # Cumulative Predication
-@cite{krifka-1989} @cite{sternefeld-1998} @cite{beck-sauerland-2000}
+[krifka-1989] [sternefeld-1998] [beck-sauerland-2000]
 
 Formalises the cumulative operator `**` in the bidirectional-coverage
-form. The operator originates with @cite{krifka-1989} §3 (the SUM
-property `D.29` for binary relations); @cite{sternefeld-1998} §3.1
+form. The operator originates with [krifka-1989] §3 (the SUM
+property `D.29` for binary relations); [sternefeld-1998] §3.1
 generalises to an n-ary closure operation (`***`); the
 bidirectional-coverage reformulation `(∀a∈x. ∃b∈y. R(a,b)) ∧
-(∀b∈y. ∃a∈x. R(a,b))` used here is from @cite{beck-sauerland-2000}.
+(∀b∈y. ∃a∈x. R(a,b))` used here is from [beck-sauerland-2000].
 The two formulations are equivalent on Quine-innovation domains;
 `Studies/Sternefeld1998.lean::sternefeldStarStar_implies_cumulative`
 proves the forward direction.
@@ -49,7 +49,7 @@ variable {A B : Type*}
 /-! ### Bidirectional-coverage `**` -/
 
 /--
-The cumulative operator `**` in @cite{beck-sauerland-2000}'s
+The cumulative operator `**` in [beck-sauerland-2000]'s
 bidirectional-coverage form.
 
 Given a two-place predicate R and two pluralities x : Finset A, y : Finset B:
@@ -105,7 +105,7 @@ theorem cumulative_right_universal (R : A → B → Prop) (x : Finset A) (y : Fi
     When the right plurality has exactly one element y, left coverage
     becomes: ∀a ∈ x. R(a, y).
 
-    This is one half of @cite{johnston-2023}'s "number effect": with a
+    This is one half of [johnston-2023]'s "number effect": with a
     singular object DP, the cumulative reading collapses to universal
     distribution, eliminating the pairing uncertainty that motivates
     over-informative elaboration. -/

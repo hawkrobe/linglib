@@ -2,8 +2,8 @@ import Linglib.Processing.Lexical.Discriminative.Defs
 
 /-!
 # DLM-derived semantic-support measures
-@cite{baayen-2019} @cite{gahl-baayen-2024} @cite{saito-tomaschek-baayen-2025}
-@cite{heitmeier-chuang-baayen-2026}
+[baayen-2019] [gahl-baayen-2024] [saito-tomaschek-baayen-2025]
+[heitmeier-chuang-baayen-2026]
 
 Sibling to `Defs.lean` and `Normed.lean`. Hosts the family of *semantic
 support* measures derived from a trained `LinearDiscriminativeLexicon` —
@@ -18,8 +18,8 @@ the per-coordinate, per-word, and per-region projections of
 - `semSupWord D s js` — sum of `semSup` over a list of form coordinates.
   The natural "how strongly does the meaning predict this word's
   combination of form units" measure (paper §3.1 of
-  @cite{saito-tomaschek-baayen-2025}; paper §3.4 of
-  @cite{gahl-baayen-2024}).
+  [saito-tomaschek-baayen-2025]; paper §3.4 of
+  [gahl-baayen-2024]).
 - `semSup_add` / `semSup_smul` / `semSup_zero` — `@[simp]` linearity
   lemmas in the meaning argument; derived from `LinearMap.map_add` /
   `map_smul` / `map_zero` on `D.production`.
@@ -38,7 +38,7 @@ similarities directly.
 These measures lived inline in `Studies/Saito2025.lean`
 as the only consumer at first landing (CHANGELOG 0.231.17). Per
 `CLAUDE.md`'s ≥-2-consumers graduation rule, they lifted to substrate
-when @cite{gahl-baayen-2024} landed as the second paper-anchored
+when [gahl-baayen-2024] landed as the second paper-anchored
 consumer (CHANGELOG 0.231.18). The cross-paper concept of
 "semantic support for form" is general DLM theory, not paper-specific.
 -/
@@ -58,8 +58,8 @@ variable {n d : ℕ}
 
     The substrate's `D.production s j` already provides this directly;
     the named binding makes the cross-paper concept (paper §3.1 eq. 1
-    of @cite{saito-tomaschek-baayen-2025}; the per-triphone support
-    of @cite{gahl-baayen-2024} §3.4) grep-able. -/
+    of [saito-tomaschek-baayen-2025]; the per-triphone support
+    of [gahl-baayen-2024] §3.4) grep-able. -/
 def semSup (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
     (s : MeaningVec d) (j : Fin n) : ℝ :=
   D.production s j
@@ -67,9 +67,9 @@ def semSup (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
 /-- **Word-level semantic support** — the sum of `semSup` over a word's
     component form coordinates. In the consumer studies' triphone-
     based form representation, this is the sum over the word's
-    component triphones (paper §3.4 of @cite{gahl-baayen-2024} terms
+    component triphones (paper §3.4 of [gahl-baayen-2024] terms
     this `Semantic Support for Form`; paper §3.1 eq. 2 of
-    @cite{saito-tomaschek-baayen-2025} terms it `SemSupWord`). -/
+    [saito-tomaschek-baayen-2025] terms it `SemSupWord`). -/
 def semSupWord (D : LinearDiscriminativeLexicon ℝ (FormVec n) (MeaningVec d))
     (s : MeaningVec d) (js : List (Fin n)) : ℝ :=
   (js.map (semSup D s)).sum

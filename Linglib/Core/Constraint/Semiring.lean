@@ -9,7 +9,7 @@ When the noise kernel is `dirac` (no noise), score aggregation in a
 constraint system is itself an algebraic operation: the *additive*
 operation in a tropical or max-plus semiring. This is the bridge from
 the RUM/decoder picture to the parsing-theoretic semiring picture
-(@cite{goodman-1999}; @cite{eisner-2002}; @cite{mohri-2002}).
+([goodman-1999]; [eisner-2002]; [mohri-2002]).
 
 | Decoder            | Underlying algebraic structure                    |
 |--------------------|---------------------------------------------------|

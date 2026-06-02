@@ -5,16 +5,16 @@ import Linglib.Core.Mereology
 
 /-!
 # Schwarzschild Covers and Partitions
-@cite{schwarzschild-1996} @cite{champollion-2017}
+[schwarzschild-1996] [champollion-2017]
 
 A *cover* of a plural entity `x` is a set of parts of `x` whose least
-upper bound is `x` itself. @cite{schwarzschild-1996} introduces covers
+upper bound is `x` itself. [schwarzschild-1996] introduces covers
 (building on Gillon 1987 — bib entry pending) to model nonatomic
 distributivity:
 when "the shoes cost fifty dollars" distributes over pairs of shoes
 (not individual shoes), the distributivity operator is anaphoric on a
 contextually-salient cover of *the shoes* by pairs.
-@cite{champollion-2017} adopts this strategy and extends it to the
+[champollion-2017] adopts this strategy and extends it to the
 temporal domain via stratified reference.
 
 ## Main declarations
@@ -39,7 +39,7 @@ many orders.
 
 ## Todo
 
-* Bridge to @cite{brisson-1998}'s ill-fitting covers (non-maximality
+* Bridge to [brisson-1998]'s ill-fitting covers (non-maximality
   via cover-cells with exceptions).
 * Bridge to `CandidateInterpretation.fullCandidateSet` — a candidate
   is morally a cell of *some* cover, but the substrate-level
@@ -52,7 +52,7 @@ open _root_.Mereology
 
 /-! ### Cover -/
 
-/-- @cite{schwarzschild-1996} *cover*: a set of parts whose least upper
+/-- [schwarzschild-1996] *cover*: a set of parts whose least upper
     bound is the whole. Parts may overlap.
 
     Mathematically equivalent to mathlib's `IsLUB parts whole`; the
@@ -84,9 +84,9 @@ theorem isCover_pair {α : Type*} [SemilatticeSup α] (x y : α) :
 
 /-! ### Partition -/
 
-/-- @cite{schwarzschild-1996} *partition*: a cover whose parts are
+/-- [schwarzschild-1996] *partition*: a cover whose parts are
     pairwise disjoint. Used by atomic distributivity (the special
-    atomic case of @cite{schwarzschild-1996}) where each plural element
+    atomic case of [schwarzschild-1996]) where each plural element
     distributes to a unique cell of the partition.
 
     "Disjoint" here is meet-bottom; requires the carrier to have a

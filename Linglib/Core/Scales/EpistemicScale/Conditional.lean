@@ -3,7 +3,7 @@ import Linglib.Core.Scales.EpistemicScale.Defs
 /-!
 # Conditional Plausibility and Probabilistic Update
 
-@cite{halpern-2003} @cite{jeffrey-1965}@cite{halpern-2003} axiomatizes conditional plausibility measures,
+[halpern-2003] [jeffrey-1965][halpern-2003] axiomatizes conditional plausibility measures,
 generalizing Bayesian conditioning, Popper spaces, Jeffrey's rule,
 and imaging under a single algebraic framework (Cond1–Cond4).
 
@@ -48,7 +48,7 @@ inductive ConditioningMode where
   | eliminative
   | bayesian
   | jeffrey
-  | ranking   -- @cite{spohn-1988}: κ_φ(w) = κ(w) - κ(φ) for φ-worlds
+  | ranking   -- [spohn-1988]: κ_φ(w) = κ(w) - κ(φ) for φ-worlds
   deriving DecidableEq, Repr
 
 -- ══════════════════════════════════════════════════════════════════════
@@ -58,7 +58,7 @@ inductive ConditioningMode where
 /-- A conditional probability measure: P(A | B) axiomatized directly.
 
     Extends `FinAddMeasure` with a conditional component satisfying
-    Popper's axioms (@cite{halpern-2003}, Ch. 3, Cond1–Cond4). A set B is
+    Popper's axioms ([halpern-2003], Ch. 3, Cond1–Cond4). A set B is
     **normal** if P(B|B) ≠ 0; for normal B, P(B|B) = 1. The only
     abnormal set (for finite W with positive singletons) is ∅. -/
 structure CondMeasure (W : Type*) extends FinAddMeasure W where
@@ -107,7 +107,7 @@ end CondMeasure
 
 /-- Construct conditional probability via the ratio P(A|B) = μ(A ∩ B)/μ(B).
 
-    @cite{halpern-2003}, Theorem 3.3.1: every finitely additive measure extends
+    [halpern-2003], Theorem 3.3.1: every finitely additive measure extends
     to a conditional measure satisfying P1–P4 via this construction.
     When μ(B) = 0, P(A|B) = 0 (B is "abnormal" in Popper's sense).
 
@@ -176,7 +176,7 @@ structure EvidencePartition (W : Type*) where
     This generalizes Bayesian conditioning: standard conditioning on E
     is the special case where qₑ = 1 and all other qᵢ = 0.
 
-    @cite{jeffrey-1965}, The Logic of Decision; @cite{halpern-2003} §3.4. -/
+    [jeffrey-1965], The Logic of Decision; [halpern-2003] §3.4. -/
 def jeffreyUpdate {W : Type*} (m : CondMeasure W)
     (ev : EvidencePartition W) : Set W → ℚ :=
   fun A =>

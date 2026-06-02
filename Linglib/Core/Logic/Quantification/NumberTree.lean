@@ -2,7 +2,7 @@ import Linglib.Core.Logic.Quantification.Defs
 
 /-!
 # Number-Tree Quantifiers
-@cite{van-benthem-1984} @cite{van-benthem-1986}
+[van-benthem-1984] [van-benthem-1986]
 
 The number-tree representation of conservative, quantity-invariant GQs.
 Under CONSERV + QUANT, a quantifier's truth value depends only on
@@ -316,7 +316,7 @@ structure SixPostulates (q : NumberTreeGQ) : Prop where
   plus    : q.Plus
   uniform : q.Uniform
 
-/-- @cite{van-benthem-1986} Thm 7.1: On the finite sets, the only
+/-- [van-benthem-1986] Thm 7.1: On the finite sets, the only
     CONSERV+QUANT quantifiers satisfying VAR, CONT, PLUS, and UNIF are
     precisely the four corners of the logical Square of Opposition:
     **all**, **some**, **no**, and **not all**.

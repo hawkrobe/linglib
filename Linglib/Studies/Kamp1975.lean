@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Truth3
 import Mathlib.Data.Set.Basic
 
 /-!
-# Kamp (1975): Two Theories about Adjectives @cite{kamp-1975}
+# Kamp (1975): Two Theories about Adjectives [kamp-1975]
 
 In E. Keenan (ed.), *Formal Semantics of Natural Languages*, 123–155.
 Cambridge University Press.
@@ -21,7 +21,7 @@ intersective, subsective, privative, extensional — is formalized in
 models* `⟨M, S, F, p⟩` (partial model + completions + σ-field +
 probability measure) and derives the comparative from quantification
 over completions. This framework is the common ancestor of both
-@cite{fine-1975}'s supervaluationism and @cite{klein-1980}'s delineation
+[fine-1975]'s supervaluationism and [klein-1980]'s delineation
 approach. Theory 2 is not formalized here; § 2 captures only the
 motivating argument (why truth-functional many-valued logic fails)
 and § 3 formalizes the comparative definitions that descend from it.
@@ -87,7 +87,7 @@ end Bridge
 
 /-! ### Many-Valued Logic Failure -/
 
-/-! @cite{kamp-1975} (p. 233) argues that truth-functional many-valued
+/-! [kamp-1975] (p. 233) argues that truth-functional many-valued
     logic cannot adequately handle vague connectives. The key
     observation:
 
@@ -125,12 +125,12 @@ theorem kleene_dilemma :
 
 /-! ### Kamp → Klein Lineage -/
 
-/-! @cite{kamp-1975}'s definition (12) for the comparative:
+/-! [kamp-1975]'s definition (12) for the comparative:
 
     u₁ is at least as A as u₂ iff for every completion M' ∈ S where
     u₂ is in the extension of A, u₁ is also in the extension.
 
-    @cite{klein-1980} rephrases this with comparison classes: u₁ is
+    [klein-1980] rephrases this with comparison classes: u₁ is
     more A than u₂ iff there exists a comparison class C where u₁ is
     A-in-C but u₂ is not.
 
@@ -171,7 +171,7 @@ These are the formal counterparts of the informal entailment judgments
 from the literature (e.g., "gray cat entails cat" ↔ `isSubsective`,
 "skillful surgeon + violinist ⊬ skillful violinist" ↔ `¬isExtensional`).
 
-@cite{partee-2010} argues that the privative class should be eliminated
+[partee-2010] argues that the privative class should be eliminated
 in favor of subsective + noun coercion. The witness `fakeAdj` below
 models the traditional analysis; see `Partee2010.lean` for the
 coercion reanalysis. -/
@@ -188,7 +188,7 @@ inductive E3 | a | b | c
     `{x | gray(x)} ∩ {x | N(w)(x)}` — a fixed property independent of
     the noun.
 
-    Models @cite{kamp-1975} definition (4). Entailment pattern:
+    Models [kamp-1975] definition (4). Entailment pattern:
     "gray cat" entails both "gray" and "cat"; "gray" + "cat" entails
     "gray cat". -/
 def grayAdj : AdjMeaning W2 E3 := fun N w x =>
@@ -205,10 +205,10 @@ example : isSubsective grayAdj := intersective_implies_subsective gray_intersect
 /-- **"fake"**: a privative adjective (traditional analysis). "Fake N"
     entities are never N.
 
-    Models @cite{kamp-1975} definition (5). Entailment pattern:
+    Models [kamp-1975] definition (5). Entailment pattern:
     "fake gun" entails "not a gun".
 
-    @cite{partee-2010} argues this class should be reanalyzed as
+    [partee-2010] argues this class should be reanalyzed as
     subsective with noun coercion — see `Partee2010.lean`. -/
 def fakeAdj : AdjMeaning W2 E3 := fun N w x =>
   (match x with | .b => True | _ => False) ∧ ¬ N w x
@@ -221,7 +221,7 @@ theorem fake_privative : isPrivative fakeAdj := by
     Being a "skillful N" depends on N's intension — what counts as an N
     across worlds — not just who the N's are in this world.
 
-    Models @cite{kamp-1975} definition (6) without definition (7).
+    Models [kamp-1975] definition (6) without definition (7).
     Entailment pattern: "skillful surgeon" entails "surgeon" (subsective),
     but "skillful surgeon" + "violinist" does not entail "skillful
     violinist" (not intersective, because not extensional). -/

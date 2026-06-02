@@ -1,8 +1,8 @@
 /-!
 # Nominal Phrase Structure (Distributed Morphology)
 
-@cite{alexiadou-2003} @cite{adamson-2024} @cite{myler-2016} @cite{kramer-2015}
-@cite{kampanarou-alexiadou-2026}
+[alexiadou-2003] [adamson-2024] [myler-2016] [kramer-2015]
+[kampanarou-alexiadou-2026]
 
 Structural positions within the extended nominal projection, the
 **Gender Locality Hypothesis** (GLH), and the possession-type distinction.
@@ -15,24 +15,24 @@ independent of any particular language:
 - Inalienable vs alienable possession: nP-internal vs PossP-external
 
 The inalienable/alienable structural distinction is canonically
-@cite{alexiadou-2003} (with earlier proposals in Guéron 1985, Vergnaud &
-Zubizarreta 1992); subsequent treatments include @cite{myler-2016} and the
-DM refinement of @cite{adamson-2024}, which adds the GLH. Recent uptake of
+[alexiadou-2003] (with earlier proposals in Guéron 1985, Vergnaud &
+Zubizarreta 1992); subsequent treatments include [myler-2016] and the
+DM refinement of [adamson-2024], which adds the GLH. Recent uptake of
 the same distinction (recoverable from Greek genitive alternation):
-@cite{kampanarou-alexiadou-2026}.
+[kampanarou-alexiadou-2026].
 
 **Caveat on `PossessionType.possessorPosition .inalienable = .specN`.**
-The original Alexiadou 2003 / @cite{kampanarou-alexiadou-2026} eq. 37a
+The original Alexiadou 2003 / [kampanarou-alexiadou-2026] eq. 37a
 analysis represents the inalienable possessor as the *complement of NP*
 (sister of the possessee under a higher NP node), not as Spec,nP. The
 substrate's `.specN` is a contemporary DM gloss on this — close enough
 that downstream consumers (Tseltalan possessor extraction in
-@cite{aissen-polian-2025}, Icelandic *hafa*/*eiga* in @cite{myler-2016})
+[aissen-polian-2025], Icelandic *hafa*/*eiga* in [myler-2016])
 recover the right empirical predictions, but readers should be aware that
 not every formulation in the literature carves up the alienable/inalienable
 contrast at exactly Spec,nP vs Spec,PossP. **Field divergence**:
 Michelioudakis et al. 2024 explicitly collapses both possessor types into
-Spec,nP (cf. @cite{kampanarou-alexiadou-2026} p. 24), which the substrate
+Spec,nP (cf. [kampanarou-alexiadou-2026] p. 24), which the substrate
 does not currently represent.
 -/
 
@@ -44,7 +44,7 @@ namespace Morphology.DM
 
 /-- Structural positions within and around the nominal phrase.
 
-    @cite{adamson-2024} distinguishes positions by their locality to n,
+    [adamson-2024] distinguishes positions by their locality to n,
     the locus of gender features:
 
     ```
@@ -76,13 +76,13 @@ def NominalPosition.isWithinNP : NominalPosition → Bool
   | .d        => false
 
 -- ============================================================================
--- § 2: Gender Locality Hypothesis (@cite{adamson-2024} (15))
+-- § 2: Gender Locality Hypothesis ([adamson-2024] (15))
 -- ============================================================================
 
 /-- **Gender Locality Hypothesis** (GLH):
 
     "Gender features on n must be valued only within nP."
-    (@cite{adamson-2024} (15))
+    ([adamson-2024] (15))
 
     A position can influence gender assignment iff it is nP-internal.
     Elements introduced at Poss, Num, D, or higher cannot condition
@@ -107,11 +107,11 @@ theorem glh_root_and_n_local :
     genderLocalityHypothesis .nHead = true := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 3: Possession Types (@cite{myler-2016})
+-- § 3: Possession Types ([myler-2016])
 -- ============================================================================
 
 /-- Two types of possession, distinguished by structural position
-    (@cite{adamson-2024}, following @cite{myler-2016}).
+    ([adamson-2024], following [myler-2016]).
 
     - **Inalienable** (iPossession): possessor introduced in Spec,nP.
       The n head bears a selectional feature {D} (`CatHead.selectsD`).
@@ -140,10 +140,10 @@ theorem alienable_cannot_affect_gender :
     PossessionType.alienable.canAffectGender = false := rfl
 
 -- ============================================================================
--- § 4: Number Feature Position (@cite{adamson-2024} §5.1)
+-- § 4: Number Feature Position ([adamson-2024] §5.1)
 -- ============================================================================
 
-/-- Number features can appear in two positions (@cite{adamson-2024} §5.1):
+/-- Number features can appear in two positions ([adamson-2024] §5.1):
 
     - **Low number** (on n): derivational, can interact with gender.
       Evidence: Standard Italian *-a* plurals (masc.sg → fem.pl),
@@ -165,11 +165,11 @@ theorem high_number_cannot_affect_gender :
     genderLocalityHypothesis (NumberPosition.onNum.toNominalPosition) = false := rfl
 
 -- ============================================================================
--- § 5: External Features (@cite{adamson-2024} §5.2)
+-- § 5: External Features ([adamson-2024] §5.2)
 -- ============================================================================
 
 /-- Functional heads outside nP whose features cannot affect gender
-    assignment under the GLH (@cite{adamson-2024} §5.2). -/
+    assignment under the GLH ([adamson-2024] §5.2). -/
 inductive ExternalFeature where
   | case          -- on K or D
   | definiteness  -- on D
@@ -193,11 +193,11 @@ theorem external_features_irrelevant (f : ExternalFeature) :
   cases f <;> rfl
 
 -- ============================================================================
--- § 6: Possession–Gender Mechanisms (@cite{adamson-2024} §§2.3, 3–4)
+-- § 6: Possession–Gender Mechanisms ([adamson-2024] §§2.3, 3–4)
 -- ============================================================================
 
 /-- Two mechanisms by which iPossession can affect gender
-    (@cite{adamson-2024} §§2.3, 3–4):
+    ([adamson-2024] §§2.3, 3–4):
 
     1. **Possessee gender**: the noun's gender is determined by WHETHER
        it has an iPossessor. The n head that introduces an iPossessor

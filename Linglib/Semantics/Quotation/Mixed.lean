@@ -3,7 +3,7 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Mixed Quotation
-@cite{kirk-giannini-2024}
+[kirk-giannini-2024]
 
 Formal apparatus for overt and covert mixed quotation, following
 Kirk-Giannini 2024 "Covert mixed quotation" (Semantics & Pragmatics 17).
@@ -29,12 +29,12 @@ constructions.
 
 ## Connection to Existing Infrastructure
 
-The `TwoDimProp` type from @cite{potts-2005} provides the at-issue ×
+The `TwoDimProp` type from [potts-2005] provides the at-issue ×
 peripheral carrier. `pureQuote` (added to `TwoDimProp`) blocks CI
 projection under quotation. The operators here compose over `TwoDimProp`.
 
 The quotative interpretation function ⟨*⟩ — implemented as `QuotInterp`
-below — is from @cite{shan-2010}. K-G writes (paper p.12, p.15):
+below — is from [shan-2010]. K-G writes (paper p.12, p.15):
 "Drawing on Shan, I implement this proposal about the at-issue
 contribution of mixed-quoted items using a purpose-built quotative
 interpretation function ⟨*⟩." `(∗)` is therefore Shan's; K-G's
@@ -153,7 +153,7 @@ def MQContext.applyMQ {W Expr Speaker Utt : Type} (ctx : MQContext W Expr Speake
     After shunting, the at-issue content becomes `p.atIssue ∧ p.ci`
     and peripheral content becomes trivial.
 
-    This operator is independently motivated (@cite{potts-2007},
+    This operator is independently motivated ([potts-2007],
     McCready 2010) and is what allows peripheral content from mixed
     quotation to interact with higher at-issue operators like negation
     and conditionals. In the Writer monad architecture for CI effects

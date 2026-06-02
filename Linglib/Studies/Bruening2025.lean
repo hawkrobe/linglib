@@ -1,7 +1,7 @@
 import Linglib.Studies.BrueningAlKhalaf2020
 
 /-!
-# @cite{bruening-2025} — Selectional Violations in Coordination: A Response
+# [bruening-2025] — Selectional Violations in Coordination: A Response
 
 Bruening, Benjamin. 2025. Selectional violations in coordination:
 A response to Patejuk and Przepiórkowski 2023. *Linguistic Inquiry*
@@ -60,7 +60,7 @@ structure ExpCondition where
 
 /-- Experiment 1a: 65 AMT masters participants.
     Tests prenominal coordination [Adj and Adv] N.
-    Data from Table 2 of @cite{bruening-2025}. -/
+    Data from Table 2 of [bruening-2025]. -/
 def exp1a_nParticipants : Nat := 65
 
 def exp1a_control : ExpCondition :=
@@ -82,7 +82,7 @@ theorem exp1a_adj_better_than_adv :
 /-- Adverb coordination is rated between grammatical and ungrammatical:
     not fully acceptable, but not as bad as outright ungrammaticality.
     This is consistent with adverb-as-adjective being a permitted but
-    degraded selection violation (@cite{bruening-alkhalaf-2020} §3.2). -/
+    degraded selection violation ([bruening-alkhalaf-2020] §3.2). -/
 theorem exp1a_adv_intermediate :
     exp1a_adv.meanZ > exp1a_ungram.meanZ ∧
     exp1a_adv.meanZ < exp1a_control.meanZ :=
@@ -98,7 +98,7 @@ def exp1a_df : Int := 8350      -- df × 1000
 
 /-- Experiment 1b: same 65 participants as Exp 1a.
     Tests CP in DP-selecting position: coordination vs simple.
-    Data from Table 6 of @cite{bruening-2025}. -/
+    Data from Table 6 of [bruening-2025]. -/
 def exp1b_nParticipants : Nat := 65
 
 def exp1b_control : ExpCondition :=
@@ -139,7 +139,7 @@ def exp1b_df : Int := 7984
 
 /-- Experiment 2: 77 AMT masters participants.
     Tests one-replacement in [Adj and Adv] coordination.
-    Data from Table 4 of @cite{bruening-2025}. -/
+    Data from Table 4 of [bruening-2025]. -/
 def exp2_nParticipants : Nat := 77
 
 def exp2_filler_gram : ExpCondition :=
@@ -197,7 +197,7 @@ property state) but different c-selectional profiles (§4.1):
 
 Since s-selection is identical (all select for a property state), the
 variation must be c-selectional. This proves c-selection is irreducible
-to s-selection, contra @cite{przepiorkowski-2024} who argue that
+to s-selection, contra [przepiorkowski-2024] who argue that
 category mismatches in coordination reflect semantic rather than
 syntactic selection.
 -/

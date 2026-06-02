@@ -2,7 +2,7 @@ import Linglib.Core.Constraint.Dequantization.OTLimit
 
 /-!
 # The Cumulativity Gap: HG ⊋ OT
-@cite{pater-2009} @cite{coetzee-pater-2011} @cite{prince-2002}
+[pater-2009] [coetzee-pater-2011] [prince-2002]
 
 Harmonic Grammar with non-negative weights is strictly more expressive than
 Optimality Theory: every OT-realizable input→output mapping is HG-realizable
@@ -38,8 +38,8 @@ shared global ranking/weighting.
   Lyman's Law instance (3 inputs, 2 outputs each, 3 constraints) is
   HG-realizable but no OT ranking realizes it.
 
-The Lyman's Law witness comes from @cite{coetzee-pater-2011} §4.2-4.3
-(eq 18-19), originally @cite{ito-mester-1986} on Japanese loanword
+The Lyman's Law witness comes from [coetzee-pater-2011] §4.2-4.3
+(eq 18-19), originally [ito-mester-1986] on Japanese loanword
 voicing. It is the smallest known witness of the cumulativity gap.
 
 ## Where this is used
@@ -100,8 +100,8 @@ def HGRealizes (P : SystemicProblem Input Output n) (w : Fin n → ℚ) : Prop :
     weightedViolations w (P.vp i o)
 
 /-- A problem is **HG-realizable** if some non-negative weighting realizes
-    the target. Restricting to non-negative weights matches @cite{pater-2009}'s
-    standard HG framework; @cite{coetzee-pater-2011} §4.4 discusses the
+    the target. Restricting to non-negative weights matches [pater-2009]'s
+    standard HG framework; [coetzee-pater-2011] §4.4 discusses the
     consequences of admitting negative weights (e.g., Tejano' realizability). -/
 def IsHGRealizable (P : SystemicProblem Input Output n) : Prop :=
   ∃ w : Fin n → ℚ, (∀ k, 0 ≤ w k) ∧ P.HGRealizes w

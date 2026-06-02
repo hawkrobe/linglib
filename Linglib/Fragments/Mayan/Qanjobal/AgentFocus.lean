@@ -5,7 +5,7 @@ import Linglib.Fragments.Mayan.Params
 
 /-!
 # Q'anjob'al Agent Focus and Extraction Fragment
-@cite{coon-mateo-pedro-preminger-2014}
+[coon-mateo-pedro-preminger-2014]
 
 Morphological data on Q'anjob'al (Q'anjob'alan, Mayan) related to
 extraction asymmetries, Agent Focus, and the Crazy Antipassive.
@@ -175,7 +175,7 @@ theorem crazy_ap_is_af_form :
 
 /-- In Q'anjob'al, AF is restricted to clauses with **3rd person** agents.
     1st and 2nd person agents use the regular transitive form even when
-    focused or extracted. Compare (72a-b) of @cite{coon-mateo-pedro-preminger-2014}:
+    focused or extracted. Compare (72a-b) of [coon-mateo-pedro-preminger-2014]:
 
     - 3rd person: `A Juan max maq'-on[-i] no tx'i'.` (AF required)
     - 1st person: `Ay-in max hin-maq'[-a'] no tx'i'.` (regular transitive)

@@ -3,7 +3,7 @@ import Linglib.Syntax.DependencyGrammar.Formal.Catena
 /-!
 # Ellipsis as catena-targeting
 
-@cite{osborne-2019}'s central thesis: VP ellipsis, gapping, pseudogapping,
+[osborne-2019]'s central thesis: VP ellipsis, gapping, pseudogapping,
 sluicing, stripping, and fragment answers all elide a **catena** (connected
 in the dependency graph) that is not in general a **constituent** (the
 projection of any single node). The structural reason is that in a flat DG
@@ -36,7 +36,7 @@ open DepGrammar Catena
 
 /-! ### Ellipsis type taxonomy -/
 
-/-- Ellipsis types in English (@cite{osborne-2019}, Ch. 12–13). -/
+/-- Ellipsis types in English ([osborne-2019], Ch. 12–13). -/
 inductive EllipsisType where
   | vpEllipsis
   | gapping

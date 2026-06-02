@@ -2,14 +2,14 @@ import Linglib.Core.Nominal.Determiner
 
 /-!
 # Cantonese Definiteness Fragment
-@cite{cheng-sybesma-1999} @cite{jenks-2018}
+[cheng-sybesma-1999] [jenks-2018]
 
-Cantonese (ISO `yue`, Sinitic). @cite{jenks-2018} (§6) analyzes the bare
+Cantonese (ISO `yue`, Sinitic). [jenks-2018] (§6) analyzes the bare
 classifier phrase [Clf-N] as an ambiguous definite, used in both unique and
 anaphoric environments like English *the* — the [Clf-N]-as-definite observation
-is @cite{cheng-sybesma-1999}'s. Indefinites are [jat-Clf-N] (numeral +
+is [cheng-sybesma-1999]'s. Indefinites are [jat-Clf-N] (numeral +
 classifier); demonstratives are a separate paradigm. The declared determiner
-set derives the @cite{moroney-2021} `.generallyMarked` cell, contrasting with
+set derives the [moroney-2021] `.generallyMarked` cell, contrasting with
 Mandarin's `.markedAnaphoric` (theoremed in `Studies/Jenks2018.lean`).
 -/
 
@@ -27,7 +27,7 @@ def determiners : List Determiner.Entry :=
     .demonstrative { form := "nei", deictic := .proximal } ]
 
 /-- Cantonese's determiner set derives the `.generallyMarked` strategy
-    (@cite{jenks-2018} Table 2): one definite form (the classifier phrase)
+    ([jenks-2018] Table 2): one definite form (the classifier phrase)
     covers both presupposition types. -/
 theorem marking : Determiner.markingStrategy determiners = .generallyMarked := by
   decide

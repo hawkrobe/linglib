@@ -5,7 +5,7 @@ import Mathlib.Order.OrderDual
 
 /-!
 # Minimal Yield (MCB Definition 1.6.1)
-@cite{marcolli-chomsky-berwick-2025} §1.6.1, book p. 63
+[marcolli-chomsky-berwick-2025] §1.6.1, book p. 63
 
 Realises M-C-B's **Minimal Yield principle** (Def 1.6.1) as a predicate on
 forest transformations, plus the per-merge counting characterization of

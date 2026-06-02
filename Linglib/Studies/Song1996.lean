@@ -4,9 +4,9 @@ import Linglib.Semantics.Causation.Morphological
 
 /-!
 # Song 1996: Causative Construction Typology
-@cite{song-1996}
+[song-1996]
 
-@cite{song-1996}'s typology of causative constructions, classifying how
+[song-1996]'s typology of causative constructions, classifying how
 causative meaning is **expressed** (morphosyntactic packaging). Three
 types: COMPACT (English *kill*, Turkish *-dür*), AND (Vata *le*),
 PURP (Korean *-ke ha-*).
@@ -30,17 +30,17 @@ and renamed here.
 Song's COMPACT/AND/PURP three-way is **defensible but coarse**, and
 the file-level typology should be read against:
 
-- @cite{dixon-2000-causatives}: nine semantic parameters × three formal types
+- [dixon-2000-causatives]: nine semantic parameters × three formal types
   (lexical/morphological/periphrastic). Dixon's parameters cut across Song's
   COMPACT (e.g., directness, naturalness, volition) and arguably reduce
   Song's three-way to a special case of his finer parameter space.
-- @cite{shibatani-pardeshi-2002}: a **causative continuum** (direct → sociative
+- [shibatani-pardeshi-2002]: a **causative continuum** (direct → sociative
   → indirect) where the SOCIATIVE middle category (joint-action causation:
   Japanese *-(s)ase* in its assistive reading; Marathi sociative; dedicated
   Bantu/Korean/Tamil sociative morphology) is missing from Song's tripartite
   partition. Song collapses sociative into PURP or COMPACT depending on
   language, losing a robust typological generalization.
-- @cite{wood-marantz-2017}, @cite{cuervo-2014}: generative-side updates of
+- [wood-marantz-2017], [cuervo-2014]: generative-side updates of
   Pylkkänen 2008's Voice-bundling × selection typology — see
   `Pylkkanen2008.lean` §13.
 
@@ -393,7 +393,7 @@ theorem morphological_dominates :
 
 open Semantics.Causation.Morphological (CausativeComplexity)
 
-/-- Song's construction types map to @cite{comrie-1989}'s complexity scale.
+/-- Song's construction types map to [comrie-1989]'s complexity scale.
 
     The mapping is many-to-one and **lossy** at the COMPACT/freeMorpheme
     boundary: French *faire-V* is `compact + freeMorpheme` in Song's
@@ -401,7 +401,7 @@ open Semantics.Causation.Morphological (CausativeComplexity)
     collapse this disagreement by mapping COMPACT → morphological
     uniformly; the cost is invisibility for the *faire* case.
 
-    See @cite{folli-harley-2005} for the syntactic-structure dispute
+    See [folli-harley-2005] for the syntactic-structure dispute
     over French *faire-infinitive* vs *faire-par* that this collapse
     obscures. -/
 def CausativeConstructionType.toComplexity :

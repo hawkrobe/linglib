@@ -6,8 +6,8 @@ import Mathlib.Data.Finset.Card
 /-!
 # Cooper (2023) Ch. 7 — Witness-based quantification
 
-@cite{cooper-2023}
-@cite{barwise-cooper-1981} @cite{van-benthem-1984}
+[cooper-2023]
+[barwise-cooper-1981] [van-benthem-1984]
 
 Cooper's *From Perception to Communication* Ch. 7 replaces classical
 set-theoretic GQ denotations (cf. `Core.Quantification.GQ`) with *witness

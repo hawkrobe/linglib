@@ -7,7 +7,7 @@ import Linglib.Semantics.Quantification.Lexicon
 
 /-!
 # Generalized quantifiers: Frame bridge and toy-model examples
-@cite{barwise-cooper-1981} @cite{keenan-stavi-1986} @cite{peters-westerstahl-2006}
+[barwise-cooper-1981] [keenan-stavi-1986] [peters-westerstahl-2006]
 
 The GQ substrate (concrete denotations like `every_sem`, `most_sem`, …
 plus their properties: conservativity, monotonicity, smoothness, quantity,

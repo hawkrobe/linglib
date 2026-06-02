@@ -8,7 +8,7 @@ import Linglib.Fragments.English.Determiners
 
 /-!
 # The Semantics of Definiteness
-@cite{donnellan-1966} @cite{heim-1982} @cite{kamp-1981} @cite{moroney-2021} @cite{partee-1987} @cite{russell-1905} @cite{schwarz-2009} @cite{barwise-cooper-1981}
+[donnellan-1966] [heim-1982] [kamp-1981] [moroney-2021] [partee-1987] [russell-1905] [schwarz-2009] [barwise-cooper-1981]
 
 Connective tissue between definite-description denotations and the rest of
 the library. The denotational layer itself lives in two canonical pieces:
@@ -27,15 +27,15 @@ a file-local convenience definition where one is used repeatedly.
 
 This module retains:
 
-- `DiscourseContext` — the file-card record from @cite{heim-1982}
+- `DiscourseContext` — the file-card record from [heim-1982]
 - `qforceToPresupType` / `qforceToDefiniteness` — bridges from the English
   Determiner fragment to the definiteness type vocabulary
 - `the_is_every_on_singletons` — the classical observation that ⟦the⟧
   agrees with ⟦every⟧ on singleton restrictors
 - `modifierNecessary` — abstract predicate capturing referential necessity
   of a modifier, shared between contrastive inference
-  (@cite{sedivy-etal-1999}) and context-sensitive attachment
-  (@cite{paape-vasishth-2026})
+  ([sedivy-etal-1999]) and context-sensitive attachment
+  ([paape-vasishth-2026])
 
 -/
 
@@ -54,7 +54,7 @@ open Features.Definiteness (DefPresupType Definiteness)
 
 /-- A discourse context tracking salient/familiar entities.
 
-@cite{heim-1982}: the context is a set of "file cards" — entities that have
+[heim-1982]: the context is a set of "file cards" — entities that have
 been introduced into the discourse and are available for anaphoric reference.
 Familiarity-based definites (Schwarz's strong article) are evaluated by
 running the canonical Russellian-iota selector
@@ -141,9 +141,9 @@ def qforceToDefiniteness : QForce → Definiteness
     (intersected) restrictor succeeds.
 
     This captures the shared mechanism underlying:
-    - **Contrastive inference** (@cite{sedivy-etal-1999}): a scalar adjective
+    - **Contrastive inference** ([sedivy-etal-1999]): a scalar adjective
       is informative when a same-category competitor is present
-    - **Context-sensitive attachment** (@cite{paape-vasishth-2026}): an RC
+    - **Context-sensitive attachment** ([paape-vasishth-2026]): an RC
       modifier is pragmatically licensed when multiple potential referents
       make the bare definite ambiguous
 

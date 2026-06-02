@@ -2,11 +2,11 @@ import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Tariana Evidentiality
-@cite{aikhenvald-2004} @cite{de-haan-2013}
+[aikhenvald-2004] [de-haan-2013]
 
 Five-term system in the Vaupés multilingual area: visual, nonvisual,
-inferred, assumed, reported. WALS @cite{de-haan-2013} F77A codes Tariana as
-`directAndIndirect`; @cite{aikhenvald-2004}'s richer typology distinguishes
+inferred, assumed, reported. WALS [de-haan-2013] F77A codes Tariana as
+`directAndIndirect`; [aikhenvald-2004]'s richer typology distinguishes
 the 5-way system. Studies-side override.
 -/
 
@@ -14,7 +14,7 @@ namespace Tariana.Evidentiality
 
 /-! ### Typed evidential inventory
 
-Tariana's classic D1 5-term Vaupés system per @cite{aikhenvald-2004}:
+Tariana's classic D1 5-term Vaupés system per [aikhenvald-2004]:
 visual, non-visual sensory, inferred (from result), assumed (from
 reasoning), reported. -/
 

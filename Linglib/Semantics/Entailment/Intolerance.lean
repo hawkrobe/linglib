@@ -3,13 +3,13 @@ import Linglib.Semantics.Entailment.AntiAdditivity
 
 /-!
 # Intolerance — Horn 1989 / Gajewski 2011
-@cite{horn-1989} @cite{gajewski-2011}
+[horn-1989] [gajewski-2011]
 
 A generalized-quantifier-typed function `f : Set α → Prop` is
 **Intolerant** iff it cannot map both a set `x` and its complement `xᶜ`
 to truth — equivalently, it sits "above the midpoint" of its scale.
 
-@cite{gajewski-2011} (eq. 80, p. 131) introduces this in the form
+[gajewski-2011] (eq. 80, p. 131) introduces this in the form
 "f is Intolerant iff if f is not trivial, then for all x: ¬f x ∨ ¬f xᶜ"
 to make Appendix 2's hierarchy `AA ⊆ DE + Intolerant ⊆ DE` work cleanly:
 the trivial case is included by stipulation so that the AA inclusion is
@@ -38,11 +38,11 @@ namespace Semantics.Entailment.Intolerance
 def IsTrivial {α : Type*} (f : Set α → Prop) : Prop :=
   (∀ x : Set α, f x) ∨ (∀ x : Set α, ¬ f x)
 
-/-- @cite{gajewski-2011} eq. 80: a function `f : Set α → Prop` is
+/-- [gajewski-2011] eq. 80: a function `f : Set α → Prop` is
     **Intolerant** iff it is trivial, OR for every `x`, at most one of
     `f x` and `f xᶜ` holds.
 
-    @cite{horn-1989}: Intolerant functions are "above the midpoint of
+    [horn-1989]: Intolerant functions are "above the midpoint of
     their scale" — they cannot accept both a property and its
     complement. -/
 def IsIntolerant {α : Type*} (f : Set α → Prop) : Prop :=
@@ -70,7 +70,7 @@ theorem isAntiAdditiveGQ_implies_isDEGQ {α : Type*} (f : Set α → Prop)
   have : f (p ∪ q) := by rw [hUnion]; exact hfq
   exact ((hAA p q).mp this).1
 
-/-- @cite{gajewski-2011} Appendix 2 (p. 143): AA implies Intolerant.
+/-- [gajewski-2011] Appendix 2 (p. 143): AA implies Intolerant.
 
     Proof sketch (Gajewski's): suppose `f` is AA and not trivial. For
     arbitrary `a`, suppose `f a = True` and `f aᶜ = True`. Then

@@ -6,7 +6,7 @@ import Linglib.Core.Scales.EpistemicScale.Cancellation88
 /-!
 # Epistemic Comparative Likelihood — Main Theorems
 
-@cite{holliday-icard-2013} @cite{halpern-2003} @cite{kraft-pratt-seidenberg-1959} @cite{van-der-hoek-1996}
+[holliday-icard-2013] [halpern-2003] [kraft-pratt-seidenberg-1959] [van-der-hoek-1996]
 
 Re-exports `EpistemicScale.Defs` (axioms, structures, semantics),
 `EpistemicScale.Representability` (KPS counterexample, Fin 0–3 proofs),
@@ -16,7 +16,7 @@ then states the top-level KPS theorems (8a, 8b) and completeness results.
 
 namespace Core.Scale
 
--- ── Theorem 8 (Kraft, @cite{kraft-pratt-seidenberg-1959}) ───
+-- ── Theorem 8 (Kraft, [kraft-pratt-seidenberg-1959]) ───
 
 set_option maxHeartbeats 1600000 in
 /-- **Theorem 8a**: for |W| < 5,
@@ -117,7 +117,7 @@ private theorem ge_div_iff {a b d : ℚ} (hd : 0 < d) :
     a / d ≥ b / d ↔ a ≥ b := by
   rw [ge_iff_le, ge_iff_le, div_le_div_iff_of_pos_right hd]
 
-/-- **Theorem 6 completeness** (@cite{holliday-icard-2013}, Theorem 6; @cite{van-der-hoek-1996}):
+/-- **Theorem 6 completeness** ([holliday-icard-2013], Theorem 6; [van-der-hoek-1996]):
     every EpistemicSystemFA is representable by a **qualitatively additive** measure.
 
     Construction: define μ(A) = |{S : Finset W | ge A S}| / 2^|W|.
@@ -178,7 +178,7 @@ private lemma ge_of_forall_singleton {W : Type*} [Fintype W]
     exact hJ A _ _ (hsub _ (Finset.mem_insert_self _ _))
       (ih (fun c hc => hsub c (Finset.mem_insert_of_mem hc)))
 
-/-- **Theorem 2** (@cite{halpern-2003}, Thm. 7.5.1a; @cite{holliday-icard-2013}):
+/-- **Theorem 2** ([halpern-2003], Thm. 7.5.1a; [holliday-icard-2013]):
     an epistemic system satisfying R, T, Tran, J (right-union),
     and DS (determination by singletons) is representable by Lewis's l-lifting
     from a reflexive preorder on worlds.

@@ -2,7 +2,7 @@ import Linglib.Typology.Extraction
 import Linglib.Core.Word
 
 /-!
-# Mam Extraction Morphology Fragment @cite{elkins-torrence-brown-2026}
+# Mam Extraction Morphology Fragment [elkins-torrence-brown-2026]
 
 Theory-neutral data on extraction morphology in San Juan Ostuncalco (SJO) Mam,
 a Mayan language spoken in the Western Highlands of Guatemala.
@@ -31,7 +31,7 @@ head along the successive-cyclic movement path (Table 4, §6.2).
 
 ## Data Sources
 
-All data from @cite{elkins-torrence-brown-2026}, "Wh-movement paths and oblique
+All data from [elkins-torrence-brown-2026], "Wh-movement paths and oblique
 extraction in Mam (Mayan)". Examples cited by section/example number.
 
 -/
@@ -44,7 +44,7 @@ namespace Mam
 
 /-- The three clause sizes relevant for =(y)a' distribution in Mam.
     These correspond to different structural sizes of the verbal domain
-    (@cite{elkins-torrence-brown-2026} §6.1, following @cite{coon-2019} and @cite{elkins-torrence-brown-2026}):
+    ([elkins-torrence-brown-2026] §6.1, following [coon-2019] and [elkins-torrence-brown-2026]):
 
     - `fullCP`: Full finite clause with aspect — projects Voice
     - `aspectless`: VoiceP-sized complement (no aspect) — projects Voice
@@ -55,7 +55,7 @@ inductive MamClauseType where
   | fullCP
   /-- VoiceP-sized complement: lacks aspect but projects Voice.
       =(y)a' licensed on oblique extraction (Elkins et al. §6.1,
-      following @cite{elkins-torrence-brown-2026}). -/
+      following [elkins-torrence-brown-2026]). -/
   | aspectless
   /-- VP-sized infinitival complement: no Voice projected.
       =(y)a' impossible — no Voice⁰ to host [oblique] (Elkins et al. §6.1). -/
@@ -93,7 +93,7 @@ inductive MamExtractionJudgment where
 structure MamExtractionDatum where
   /-- Descriptive label -/
   label : String
-  /-- Section/example reference in @cite{elkins-torrence-brown-2026} -/
+  /-- Section/example reference in [elkins-torrence-brown-2026] -/
   reference : String
   /-- Type of clause -/
   clauseType : MamClauseType
@@ -302,8 +302,8 @@ theorem temporal_is_oblique_but_exempt :
     2. Movement is phase-bounded (from PIC)
 
     References:
-    - @cite{chomsky-2000} on PIC
-    - @cite{elkins-torrence-brown-2026} §7.1 on =(y)a' island sensitivity -/
+    - [chomsky-2000] on PIC
+    - [elkins-torrence-brown-2026] §7.1 on =(y)a' island sensitivity -/
 structure MovementReflex where
   /-- The morpheme is a spellout of features valued via Agree with
       a constituent that has undergone Ā-movement through the probe's

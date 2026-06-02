@@ -5,11 +5,11 @@ import Linglib.Fragments.Japanese.Particles
 import Linglib.Fragments.English.QuestionParticles
 
 /-!
-# Bhatt & Dayal (2020): PQP analysis of Hindi-Urdu *kya:* @cite{bhatt-dayal-2020}
+# Bhatt & Dayal (2020): PQP analysis of Hindi-Urdu *kya:* [bhatt-dayal-2020]
 
 Polar Question Particle analysis: Hindi-Urdu *kya:* sits at PerspP, not CP.
-Combined with @cite{dayal-2025}'s three-layer cartography
-`[SAP [PerspP [CP ...]]]` and @cite{sauerland-yatsushiro-2017}'s analysis
+Combined with [dayal-2025]'s three-layer cartography
+`[SAP [PerspP [CP ...]]]` and [sauerland-yatsushiro-2017]'s analysis
 of Japanese *kke* as a meta question particle (MQP).
 
 This study file is the canonical home for the layer assignments of
@@ -44,15 +44,15 @@ open English.QuestionParticles (quick)
 def hindi_urdu_kya_layer (_ : HindiUrdu.Particles.ParticleEntry) :
     QParticleLayer := .perspP
 
-/-- @cite{dayal-2025}: Japanese *ka* is the canonical CP-layer Q-morpheme. -/
+/-- [dayal-2025]: Japanese *ka* is the canonical CP-layer Q-morpheme. -/
 def japanese_ka_layer (_ : Japanese.Particles.ParticleEntry) :
     QParticleLayer := .cp
 
-/-- @cite{sauerland-yatsushiro-2017}: Japanese *kke* is an MQP at SAP. -/
+/-- [sauerland-yatsushiro-2017]: Japanese *kke* is an MQP at SAP. -/
 def japanese_kke_layer (_ : Japanese.Particles.ParticleEntry) :
     QParticleLayer := .sap
 
-/-- @cite{dayal-2025} ex. (19): English *quick/quickly* is an MQP-adverb at SAP. -/
+/-- [dayal-2025] ex. (19): English *quick/quickly* is an MQP-adverb at SAP. -/
 def english_quick_layer (_ : English.QuestionParticles.QParticleEntry) :
     QParticleLayer := .sap
 
@@ -106,7 +106,7 @@ def japanese_kke : QParticleDatum where
   inMatrix := kke.inMatrix
   inSubordinated := kke.inSubordinated
   inQuasiSub := kke.inQuasiSub
-  -- @cite{sauerland-yatsushiro-2017}: kke is licensed in quotation as well as matrix.
+  -- [sauerland-yatsushiro-2017]: kke is licensed in quotation as well as matrix.
   inQuotation := true
 
 /-- English *quick/quickly* — MQP-like adverb (SAP). -/
@@ -163,7 +163,7 @@ theorem sap_particles_not_in_quasi_sub :
 -- §4 — Singleton-Alternative Presupposition (eq. 23)
 -- ============================================================================
 
-/-! @cite{bhatt-dayal-2020} eq. 23:
+/-! [bhatt-dayal-2020] eq. 23:
 `⟦kya:⟧ = λp[∃q ∈ Q[∀q′[q′ ∈ Q → q′ = q]].Q`
 i.e. *kya:* is interpreted only when its sister question `Q` has a
 singleton alternative set, in which case the particle is the identity
@@ -171,10 +171,10 @@ on `Q`. The presupposition is exactly `Question.IsSingleton`; the
 well-typed analogue of "felicitous sister content" is the subtype
 `SingletonQuestion W` (a question paired with a proof that its
 alternative set is a singleton). The "highlighted" terminology of
-@cite{roelofsen-farkas-2015} corresponds to `declarative p` in this
+[roelofsen-farkas-2015] corresponds to `declarative p` in this
 setting (one-cell denotation, in contrast to the two-cell `polar p`).
 
-@cite{bhatt-dayal-2020} fn. 11 cites the parallel Mandarin *nandao*
+[bhatt-dayal-2020] fn. 11 cites the parallel Mandarin *nandao*
 analysis as the model for kya:; the shared `IsSingleton` predicate
 captures that convergence by construction. See
 `Zheng2025` for the nandao binding. -/

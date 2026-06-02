@@ -1,15 +1,15 @@
 import Linglib.Semantics.Verb.Basic
 
 /-!
-# Portuguese Mood-Choice Verb Entries @cite{grano-2024}
+# Portuguese Mood-Choice Verb Entries [grano-2024]
 
 Minimal verb entries for Portuguese attitude and causative predicates
-relevant to cross-linguistic mood choice (@cite{grano-2024}, Table 1).
+relevant to cross-linguistic mood choice ([grano-2024], Table 1).
 
 Portuguese 'want' robustly takes SBJV; 'hope' allows both IND and SBJV;
 'intend' takes SBJV. Causatives reject indicative.
 
-## Key examples (from @cite{grano-2024})
+## Key examples (from [grano-2024])
 
 - (3a) João quer que a Maria **esteja**/\*está feliz. (SBJV/\*IND)
 - (11) João espera que a Maria **esteja**/está feliz. (SBJV/IND)
@@ -22,7 +22,7 @@ namespace Portuguese.MoodChoice
 open Semantics.Lexical
 
 /-- *querer* 'want' — robustly subjunctive-selecting.
-    @cite{grano-2024}, (3a): SBJV required. -/
+    [grano-2024], (3a): SBJV required. -/
 def querer : Verb where
   form := "querer"
   complementType := .finiteClause
@@ -34,7 +34,7 @@ def querer : Verb where
   levinClass := some .want
 
 /-- *esperar* 'hope' — cross-linguistically variable (IND/SBJV).
-    @cite{grano-2024}, (11): both IND and SBJV accepted. -/
+    [grano-2024], (11): both IND and SBJV accepted. -/
 def esperar : Verb where
   form := "esperar"
   complementType := .finiteClause
@@ -45,7 +45,7 @@ def esperar : Verb where
   attitude := some (.preferential (.degreeComparison .positive))
 
 /-- *pretender* 'intend' — robustly rejects indicative.
-    @cite{grano-2024}, (26): SBJV required, IND rejected. -/
+    [grano-2024], (26): SBJV required, IND rejected. -/
 def pretender : Verb where
   form := "pretender"
   complementType := .infinitival
@@ -56,7 +56,7 @@ def pretender : Verb where
   levinClass := some .want
 
 /-- *fazer* 'make' — causative, rejects indicative.
-    @cite{grano-2024}, (41): SBJV required via *com que*, IND rejected. -/
+    [grano-2024], (41): SBJV required via *com que*, IND rejected. -/
 def fazer : Verb where
   form := "fazer"
   complementType := .infinitival

@@ -4,9 +4,9 @@ set_option autoImplicit false
 
 /-!
 # Mereological Syntax
-@cite{adger-2025}
+[adger-2025]
 
-Core formalization of mereological syntax (@cite{adger-2025}), where
+Core formalization of mereological syntax ([adger-2025]), where
 syntactic structures are built by subjoin (establishing parthood) rather
 than merge (creating sets). Each syntactic object is an independent
 entity with a label; no projection or labeling algorithm is needed.
@@ -32,7 +32,7 @@ entity with a label; no projection or labeling algorithm is needed.
 
 ## Extended Projection Bridge
 
-Label sequences along the 1-part chain correspond to @cite{grimshaw-2005}'s
+Label sequences along the 1-part chain correspond to [grimshaw-2005]'s
 Extended Projection. `MLabel.toCat?` maps mereological labels to
 `Minimalist.Cat` where possible, and the EP bridge theorems (§ 8) verify
 that standard 1-part chains are category-consistent and F-monotone.
@@ -54,7 +54,7 @@ namespace MereologicalSyntax
 /-- Category labels for syntactic objects in mereological syntax.
 
     Labels that overlap with `Minimalist.Cat` (N, V, D, Q, etc.) are
-    bridged via `MLabel.toCat?`. Labels specific to @cite{adger-2025}'s
+    bridged via `MLabel.toCat?`. Labels specific to [adger-2025]'s
     analysis (Cl, Deg, Adv, O, Pred) have no `Cat` equivalent. -/
 inductive MLabel where
   | N     -- noun
@@ -105,7 +105,7 @@ def MLabel.toCat? : MLabel → Option Cat
 /-- A syntactic object in mereological syntax.
 
     Each object has a label and at most two subparts, enforcing
-    Dimensionality (@cite{adger-2025}):
+    Dimensionality ([adger-2025]):
 
     - **`leaf l`**: bare object, no parts (0 dimensions)
     - **`sub₁ l x`**: `x` is 1-part of `l` (complement, dim 1)
@@ -163,7 +163,7 @@ def subjoin (x y : SynObj) : Option SynObj :=
 
 /-- The complementation line (1-part chain): labels reachable by iterating
     the 1-part relation. Objects in this line can collectively spell out
-    at the topmost node (marked by @ in @cite{wang-sun-2026}). -/
+    at the topmost node (marked by @ in [wang-sun-2026]). -/
 def SynObj.compLine : SynObj → List MLabel
   | .leaf l => [l]
   | .sub₁ l one => l :: one.compLine
@@ -174,7 +174,7 @@ def SynObj.compLine : SynObj → List MLabel
     Captures within-dimension-1 transitivity: if A <₁ B <₁ C, then
     A is reachable from C. Crucially, 2-parts of objects in the chain
     are NOT traversed — this restricted transitivity prevents
-    cross-dimensional visibility (@cite{adger-2025}). -/
+    cross-dimensional visibility ([adger-2025]). -/
 def labelInOnePartChain (l : MLabel) : SynObj → Bool
   | .leaf _ => false
   | .sub₁ _ one => one.label == l || labelInOnePartChain l one
@@ -204,7 +204,7 @@ def labelInTwoPartChain (l : MLabel) : SynObj → Bool
 
     True when `l` is reachable by following ONLY 1-part edges or ONLY
     2-part edges from `root`, never crossing dimensions
-    (@cite{adger-2025}). This is the parthood relation
+    ([adger-2025]). This is the parthood relation
     relevant to Angular Locality. -/
 def labelWithinDimPartOf (l : MLabel) (root : SynObj) : Bool :=
   labelInOnePartChain l root || labelInTwoPartChain l root
@@ -220,7 +220,7 @@ def SynObj.onePartChainObjs : SynObj → List SynObj
   | .sub₁ _ one => one :: one.onePartChainObjs
   | .sub₁₂ _ one _ => one :: one.onePartChainObjs
 
-/-- Angular Locality (@cite{adger-2025}, definition 29):
+/-- Angular Locality ([adger-2025], definition 29):
 
     γ can subjoin to β only if there is an α such that γ is a
     within-dimension transitive n-part of α AND α is a transitive
@@ -245,7 +245,7 @@ open Minimalist in
 
     The classifier label Cl is filtered out (no Cat equivalent). This
     does not affect EP validity — Cl spells out at Q and is not a
-    separate EP layer in @cite{grimshaw-2005}'s system. -/
+    separate EP layer in [grimshaw-2005]'s system. -/
 theorem nominal_ep_valid :
     let cats := [MLabel.N, .Q, .D].filterMap MLabel.toCat?
     allCategoryConsistent cats = true ∧

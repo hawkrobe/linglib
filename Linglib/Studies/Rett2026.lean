@@ -9,10 +9,10 @@ import Linglib.Studies.Tsiakmakis2025
 
 /-!
 # Expletive Negation: Typology and Licensing
-@cite{greco-2018} @cite{jin-koenig-2021} @cite{kennedy-mcnally-2005} @cite{napoli-nespor-1976} @cite{rett-2026} @cite{cepeda-2018}
+[greco-2018] [jin-koenig-2021] [kennedy-mcnally-2005] [napoli-nespor-1976] [rett-2026] [cepeda-2018]
 
 Expletive negation (EN) is truth-conditionally vacuous negation that appears
-in specific grammatical environments cross-linguistically. @cite{rett-2026} unifies
+in specific grammatical environments cross-linguistically. [rett-2026] unifies
 the licensing conditions: EN is licensed exactly in **ambidirectional**
 constructions — those where negating an argument doesn't change truth
 conditions because MAX picks the same informative bound from both B and ¬B.
@@ -21,14 +21,14 @@ conditions because MAX picks the same informative bound from both B and ¬B.
 
 | Construction  | Ambidirectional? | Licenses EN? | Source               |
 |---------------|-----------------|--------------|----------------------|
-| *before*      | ✓               | ✓ (50 langs) | @cite{jin-koenig-2021}    |
-| *after*       | ✗               | ✗            | @cite{rett-2026}            |
-| *while*       | ✗               | ✗            | @cite{rett-2026}            |
-| *until*       | ✓               | ✓            | @cite{rett-2026} §5         |
-| comparative   | ✓               | ✓ (6+ langs) | @cite{jin-koenig-2021}    |
-| *fear/worry*  | ✓               | ✓ (39 langs) | @cite{jin-koenig-2021}    |
+| *before*      | ✓               | ✓ (50 langs) | [jin-koenig-2021]    |
+| *after*       | ✗               | ✗            | [rett-2026]            |
+| *while*       | ✗               | ✗            | [rett-2026]            |
+| *until*       | ✓               | ✓            | [rett-2026] §5         |
+| comparative   | ✓               | ✓ (6+ langs) | [jin-koenig-2021]    |
+| *fear/worry*  | ✓               | ✓ (39 langs) | [jin-koenig-2021]    |
 
-## High vs Low EN @cite{greco-2020}
+## High vs Low EN [greco-2020]
 
 Two types of EN with different syntactic positions and licensing:
 - **High EN**: targets non-truth-conditional content (exclamatives, surprise);
@@ -93,7 +93,7 @@ structure ENDatum where
       NPIs (*pur*) but block others (*affatto*) for orthogonal semantic
       reasons (the precision requirement on *affatto* is incompatible
       with bias-conditioned negation's imprecise condition;
-      @cite{napoli-nespor-1976} §3.22 fn 6, and the Italian Fragment's
+      [napoli-nespor-1976] §3.22 fn 6, and the Italian Fragment's
       `affatto.licensingContexts` registry, which excludes
       `.comparative`). -/
   licensedNPIForms : List String
@@ -116,7 +116,7 @@ def ENDatum.licensesAnyNPI (d : ENDatum) : Prop :=
 instance (d : ENDatum) : Decidable d.licensesAnyNPI :=
   inferInstanceAs (Decidable (d.licensedNPIForms ≠ []))
 
-/-! ### @cite{jin-koenig-2021} survey data
+/-! ### [jin-koenig-2021] survey data
 
 Cross-linguistic distribution from a 722-language survey (EN attested
 in 74 languages across 37 genera):
@@ -154,11 +154,11 @@ def spanishComparative : ENDatum :=
     `NapoliNespor1976`:
 
     - `isOptional = true`: optionality is *contextually conditioned* on
-      a contradicted-prior-belief presupposition (@cite{napoli-nespor-1976}
+      a contradicted-prior-belief presupposition ([napoli-nespor-1976]
       §2). The Bool here is the satisfiability of the licensing profile
       across contexts, not free choice in any single context.
     - `licensedNPIForms = [pur.form]`: the weak NPI *pur* is licensed
-      under *non₂*-comparatives (@cite{napoli-nespor-1976} §3.11 ex.
+      under *non₂*-comparatives ([napoli-nespor-1976] §3.11 ex.
       46–48), but *affatto* is blocked for orthogonal semantic reasons
       (precision requirement incompatible with the imprecise/inferred
       presupposition, §3.22 fn 6). The list encodes the asymmetry that
@@ -177,7 +177,7 @@ def frenchFear : ENDatum :=
   , negMarker := "ne", enType := .low, isOptional := true
   , licensedNPIForms := [] }
 
-/-- @cite{greco-2018}: Italian *until*-clauses license both EN and standard
+/-- [greco-2018]: Italian *until*-clauses license both EN and standard
     weak NPIs (*mai*, *alcuno*). -/
 def italianUntil : ENDatum :=
   { language := "Italian", construction := "finché"
@@ -196,7 +196,7 @@ def italianExclamative : ENDatum :=
   , enType := .high, isOptional := false
   , licensedNPIForms := [] }
 
-/-- Italian surprise negation (@cite{greco-2020}, §2–4): *non* merges in the CP
+/-- Italian surprise negation ([greco-2020], §2–4): *non* merges in the CP
     layer (above FinP) rather than in the TP-internal NegP. High EN —
     obligatory, non-truth-conditional, does not license weak NPIs.
     Classified under `.fear` as the closest abstract construction class
@@ -256,7 +256,7 @@ theorem italianComparative_licensesAny :
 
 /-! ### The ambidirectionality–EN correspondence
 
-@cite{rett-2026} proposes that low EN is licensed **iff** the embedding
+[rett-2026] proposes that low EN is licensed **iff** the embedding
 construction is ambidirectional. The `ENConstruction` enum is declared
 above (§1); `hasEN` is *derived* from `allENData` (§2) by predicating
 "some attested datum is classified under this construction"; and
@@ -271,7 +271,7 @@ The ambidirectionality classification is anchored in:
   Core/Scales/Scale.lean)
 For *until* the classification follows from the same closed-interval
 MAX template as *before*. The `.fear` case is empirical
-(@cite{jin-koenig-2021} survey + @cite{villalta-2008} valence). -/
+([jin-koenig-2021] survey + [villalta-2008] valence). -/
 
 /-- Empirically observed: does the construction license EN
     cross-linguistically? Derived from `allENData` — a construction
@@ -280,7 +280,7 @@ MAX template as *before*. The `.fear` case is empirical
     *after*-clause EN) automatically updates this prediction without
     a parallel table edit.
 
-    Based on @cite{jin-koenig-2021} 722-language survey (EN attested
+    Based on [jin-koenig-2021] 722-language survey (EN attested
     in 74 languages across 37 genera). -/
 def ENConstruction.hasEN (c : ENConstruction) : Bool :=
   allENData.any (·.constructionType == c)
@@ -306,8 +306,8 @@ def ENConstruction.hasEN (c : ENConstruction) : Bool :=
       (Comparative.lean) and `maxOnScale_ge_atMost`/`maxOnScale_atLeast_singleton`
       (Core/Scales/Scale.lean) — degree-relative MAX picks the singleton
       `{μ w}` from the "at least" set.
-    - `.fear`: empirical (@cite{jin-koenig-2021} §6.1.1). Negative-valence
-      attitudes (@cite{villalta-2008}) entail both p (content of attitude)
+    - `.fear`: empirical ([jin-koenig-2021] §6.1.1). Negative-valence
+      attitudes ([villalta-2008]) entail both p (content of attitude)
       and ¬p (content of desire); the link between
       `Preferential.fear.valence = .negative` and the dual-inference
       condition is at the docstring level rather than formalized
@@ -361,10 +361,10 @@ theorem comparative_isAmbidirectional_witness :
     `hasEN` and the structural ambidirectionality table
     `isAmbidirectional` agree on every EN-relevant construction.
 
-    This is the central empirical claim of @cite{rett-2026}: the
+    This is the central empirical claim of [rett-2026]: the
     ambidirectionality classification (derived from the semantics of
     MAX on closed intervals) perfectly predicts the cross-linguistic
-    distribution of EN (observed in @cite{jin-koenig-2021}).
+    distribution of EN (observed in [jin-koenig-2021]).
 
     Why this isn't trivial. The two tables stipulate *different* facts
     drawn from *different* sources: `hasEN` records survey results
@@ -386,11 +386,11 @@ theorem rett_generalization (c : ENConstruction) :
 
 /-! ### Fear belongs to the propositional-attitude licensing class
 
-@cite{jin-koenig-2021} §6.1.1 argues that FEAR triggers entail both
+[jin-koenig-2021] §6.1.1 argues that FEAR triggers entail both
 Operator₁(p) (content of X's attitude) and Operator₂(¬p) (content of
-X's desires) — making them "ambidirectional" in the @cite{rett-2026}
+X's desires) — making them "ambidirectional" in the [rett-2026]
 sense. The shared underlying property is *negative valence* in the
-@cite{villalta-2008} sense.
+[villalta-2008] sense.
 
 The conceptual chain — `Preferential.fear.valence = .negative` →
 `negativeValenceEntailsDual` → `ENConstruction.isAmbidirectional .fear`
@@ -413,7 +413,7 @@ theorem fear_licensing_condition :
 
 /-! ### Connecting Fragment entries to EN predictions
 
-@cite{rett-2026} predicts that EN in
+[rett-2026] predicts that EN in
 comparatives is sensitive to scale type. The mechanism:
 - The *than*-clause denotes a degree set with a boundary at μ(b).
 - Ambidirectionality requires that this boundary is **shared** between
@@ -441,7 +441,7 @@ adjective fragment. -/
     other, so negation genuinely shifts the boundary and ambidirectionality
     fails.
 
-    Connection to @cite{kennedy-mcnally-2005}'s relative/absolute typology:
+    Connection to [kennedy-mcnally-2005]'s relative/absolute typology:
     relative adjectives (tall, expensive — open scales) license EN; absolute
     adjectives that are closed in the relevant interval (full, dead) block
     it. The single-endpoint cases (lowerBounded, upperBounded) cover
@@ -477,7 +477,7 @@ theorem licensesComparativeEN_iff_some_endpoint_open (b : Boundedness) :
 
 /-- The closed-scale exclusion: a fully closed scale never licenses
     comparative EN. Dual of `licensesComparativeEN_iff_some_endpoint_open`,
-    stated in the form @cite{kennedy-mcnally-2005} would recognize
+    stated in the form [kennedy-mcnally-2005] would recognize
     (absolute adjectives = closed scales = no EN). -/
 theorem closed_blocks_comparativeEN (b : Boundedness)
     (h : (b.hasMax && b.hasMin) = true) : licensesComparativeEN b = false := by
@@ -496,10 +496,10 @@ vacuous but pragmatically meaningful. The use of the marked negated form
 (see `MannerEffect` in `Adjective.Comparative`):
 
 1. **French *avant que... ne***: "before ¬B" → "well before B" (temporal
-   distance reading; @cite{cepeda-2018}, @cite{krifka-2010b}).
+   distance reading; [cepeda-2018], [krifka-2010b]).
 
 2. **Italian comparative + *non***: "più alto di quanto non sia" →
-   "much taller than" (evaluative reading; @cite{napoli-nespor-1976}).
+   "much taller than" (evaluative reading; [napoli-nespor-1976]).
 
 3. **Negative verbs (doubt, fear, worry)**: These are "ambidirectional"
    embedding verbs — *fear that p* and *fear that ¬p*
@@ -562,7 +562,7 @@ theorem evaluative_manner_data :
 
 /-! ### Connecting EN constructions to negator types
 
-@cite{tsiakmakis-2025} classifies EN hosts as NEG₁ (standard negation
+[tsiakmakis-2025] classifies EN hosts as NEG₁ (standard negation
 masked) or NEG₂ (modal, intrinsically non-negative). The EN constructions
 formalized here map onto Tsiakmakis's host categories:
 

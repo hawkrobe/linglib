@@ -2,7 +2,7 @@ import Linglib.Typology.PolarityItem
 
 /-!
 # Turkish Polarity-Sensitive Items
-@cite{haspelmath-1997}
+[haspelmath-1997]
 
 Turkish indefinite pronoun polarity items, typed by the categories from
 `Typology.PolarityItem`.

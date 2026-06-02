@@ -1,13 +1,13 @@
 /-!
 # Voice Typology: Argument Realization and Suppression
-@cite{kemmer-1993} @cite{kemmer-1994} @cite{beavers-udayana-2022}
+[kemmer-1993] [kemmer-1994] [beavers-udayana-2022]
 
 Cross-linguistic substrate for voice alternations — the family of
 constructions (active / passive / antipassive / middle / reflexive /
 anticausative) that systematically vary which argument surfaces as
 subject and how event participants map to surface arguments.
 
-The umbrella framing follows @cite{kemmer-1993}'s monograph *The Middle
+The umbrella framing follows [kemmer-1993]'s monograph *The Middle
 Voice*, which establishes middles as a coherent voice category
 distinct from passive/reflexive while sharing surface affinities with
 both. This file specifically formalizes Beavers-Udayana 2022's 2×2
@@ -67,7 +67,7 @@ structure MiddleType where
     - No incorporation: patient surfaces (agent is suppressed)
 
     This connects the `MiddleType` typology to the voice system's
-    `PivotTarget` (@cite{beavers-udayana-2022}, (32d)). -/
+    `PivotTarget` ([beavers-udayana-2022], (32d)). -/
 def MiddleType.agentSurfaces (m : MiddleType) : Prop :=
   m.objRealization = .incorporation
 

@@ -10,17 +10,17 @@ import Linglib.Studies.RomeroHan2004
 
 /-!
 # Martínez Vera (2026): Verum, contrast, and evidentiality in Saraguro Kichwa
-@cite{martinez-vera-2026} @cite{martinez-vera-2024}
-@cite{martinez-vera-camacho-2025} @cite{faller-2002} @cite{faller-2019a}
-@cite{murray-2014} @cite{murray-2017} @cite{tellings-2014}
-@cite{grzech-2020} @cite{bendezu-2023} @cite{sanchez-2010}
-@cite{hintz-hintz-2017} @cite{cole-1982} @cite{roelofsen-vangool-2010}
-@cite{roelofsen-farkas-2015} @cite{simons-tonhauser-beaver-roberts-2010}
-@cite{krifka-2014} @cite{rooth-1985} @cite{rooth-1992} @cite{hirsch-2017}
-@cite{hohle-1992} @cite{romero-han-2004} @cite{kiss-1998}
-@cite{matthewson-2021} @cite{matthewson-2004} @cite{bochnak-matthewson-2015}
-@cite{gutzmann-hartmann-matthewson-2020} @cite{goodhue-2022a}
-@cite{rochemont-2018}
+[martinez-vera-2026] [martinez-vera-2024]
+[martinez-vera-camacho-2025] [faller-2002] [faller-2019a]
+[murray-2014] [murray-2017] [tellings-2014]
+[grzech-2020] [bendezu-2023] [sanchez-2010]
+[hintz-hintz-2017] [cole-1982] [roelofsen-vangool-2010]
+[roelofsen-farkas-2015] [simons-tonhauser-beaver-roberts-2010]
+[krifka-2014] [rooth-1985] [rooth-1992] [hirsch-2017]
+[hohle-1992] [romero-han-2004] [kiss-1998]
+[matthewson-2021] [matthewson-2004] [bochnak-matthewson-2015]
+[gutzmann-hartmann-matthewson-2020] [goodhue-2022a]
+[rochemont-2018]
 
 Saraguro Kichwa (`qvj`) marker `=mi` is analysed as a *focus marker*
 whose felicity presupposes a highlighted, strengthened alternative that
@@ -33,8 +33,8 @@ Three empirical signatures:
 2. `=mi` is licensed in matrix declaratives following a reportative
    evidential `-shka`, but NOT following a direct evidential `-rka`.
 3. `=mi` surfaces in contrastive (corrective) uses, sister to focus
-   strategies like English `only` (@cite{rochemont-2018},
-   @cite{hirsch-2017}).
+   strategies like English `only` ([rochemont-2018],
+   [hirsch-2017]).
 
 ## What this study formalises
 
@@ -74,7 +74,7 @@ Three empirical signatures:
 ## Methodological note
 
 The paper's data is original fieldwork with six Saraguro speakers,
-following @cite{matthewson-2004}, @cite{bochnak-matthewson-2015}.
+following [matthewson-2004], [bochnak-matthewson-2015].
 Per CLAUDE.md (per-language paper-specific data lives in Studies, not
 Fragments), the felicity-judgment apparatus stays in this file; the
 neutral consensus typology — that Saraguro Kichwa has a 3-way
@@ -95,9 +95,9 @@ variable {W : Type*}
 
 Substrate previously hosted at `Discourse/EvidentialIllocution.lean`,
 inlined here per anchoring rule (sole consumer is this study file).
-The `assert`/`present` distinction is @cite{faller-2002} /
-@cite{murray-2014}; the `raisedPropositions` projection drives
-@cite{martinez-vera-2026}'s salience updates downstream. -/
+The `assert`/`present` distinction is [faller-2002] /
+[murray-2014]; the `raisedPropositions` projection drives
+[martinez-vera-2026]'s salience updates downstream. -/
 
 /-- Result of applying an illocutionary operator: speaker, addressee,
     scope proposition, evidential (not-at-issue) proposition, and
@@ -109,7 +109,7 @@ structure EvidentialAct (W : Type*) where
   evidentialContent : Set W
   commitsToScope : Bool
 
-/-- @cite{faller-2002}/@cite{faller-2019a}: `assert(⟨A, N⟩)` commits the
+/-- [faller-2002]/[faller-2019a]: `assert(⟨A, N⟩)` commits the
     speaker to both A and N. Used with direct evidentials. -/
 def assert (s a : DiscourseRole) (β : BiLayered W) : EvidentialAct W :=
   { speaker := s
@@ -118,7 +118,7 @@ def assert (s a : DiscourseRole) (β : BiLayered W) : EvidentialAct W :=
   , evidentialContent := { w | β.notAtIssue w }
   , commitsToScope := true }
 
-/-- @cite{murray-2014}/@cite{faller-2019a}: `present(⟨A, N⟩)` brings A
+/-- [murray-2014]/[faller-2019a]: `present(⟨A, N⟩)` brings A
     to attention but does NOT commit to A; commits only to N. Used with
     reportative/inferential evidentials. -/
 def present (s a : DiscourseRole) (β : BiLayered W) : EvidentialAct W :=
@@ -369,7 +369,7 @@ For the polar alternative-set case `{β.atIssue, β.atIssueᶜ}`, MV's
 `miFelicitous` reduces to Höhle's `verumFelicitous`: both demand that
 `¬β.atIssue` be highlighted in the context. This makes the agreement
 between the focus-on-polarity (Höhle) and focus-marker (MV) accounts
-explicit at the type level. The disagreement with @cite{romero-han-2004}'s
+explicit at the type level. The disagreement with [romero-han-2004]'s
 CommonGround-modal verum surfaces as the partition divergence in §6 below.
 -/
 
@@ -519,19 +519,19 @@ paper's typological-divergence claim.
     variety. Each is a label awaiting a future per-paper study. -/
 inductive MiAnalysis where
   /-- Verum + focus marker requiring discourse sensitivity to the QUD
-      (Saraguro Kichwa per @cite{martinez-vera-2026}). -/
+      (Saraguro Kichwa per [martinez-vera-2026]). -/
   | verumPlusFocus
   /-- Verum + corrective contrast (Conchucos Quechua per
-      @cite{bendezu-2023}). -/
+      [bendezu-2023]). -/
   | verumPlusContrast
   /-- Pure (best-possible-grounds) direct evidential
-      (Cuzco Quechua per @cite{faller-2002}, @cite{sanchez-2010}). -/
+      (Cuzco Quechua per [faller-2002], [sanchez-2010]). -/
   | directEvidentialOnly
   /-- Pure evidential, no focus role (Imbabura Kichwa per
-      @cite{tellings-2014}). -/
+      [tellings-2014]). -/
   | pureEvidentialNoFocus
   /-- Epistemic-authority marker (Upper Napo Kichwa per
-      @cite{grzech-2020}). -/
+      [grzech-2020]). -/
   | epistemicAuthority
   deriving DecidableEq, Repr, Inhabited
 

@@ -2,9 +2,9 @@ import Linglib.Semantics.Modality.Selectional
 
 /-!
 # Selectional `will`-Conditionals
-@cite{cariani-santorio-2018}
+[cariani-santorio-2018]
 
-@cite{cariani-santorio-2018} §5.3.1 (eq. 20) lifts the selectional
+[cariani-santorio-2018] §5.3.1 (eq. 20) lifts the selectional
 analysis of *will* to conditionals via Kratzerian restriction: an
 *if*-clause restricts the modal parameter `f` to its intersection with
 the antecedent's truth set.
@@ -40,7 +40,7 @@ open Semantics.Modality.Selectional
 
 variable {W : Type*}
 
-/-- **Selectional `will`-conditional** @cite{cariani-santorio-2018}
+/-- **Selectional `will`-conditional** [cariani-santorio-2018]
     §5.3.1 (eq. 20): the if-clause `A` Kratzer-restricts the modal
     parameter `f` to `f ∩ ‖A‖` before evaluating the *will*-prejacent
     `B`. (Eq. 22 in the paper is the informal English gloss of this
@@ -53,7 +53,7 @@ def willConditional (s : SelectionFunction W) (A B : W → Prop)
     (f : Set W) (w : W) :
     willConditional s A B f w ↔ B (s.sel w (f ∩ {w' | A w'})) := Iff.rfl
 
-/-- **Compositional CEM** @cite{cariani-santorio-2018} §7: for the
+/-- **Compositional CEM** [cariani-santorio-2018] §7: for the
     selectional `will`-conditional, the disjunction `(if A, will B) ∨
     (if A, will ¬B)` holds at every point.
 
@@ -76,7 +76,7 @@ theorem valid2_compositional_CEM (A B : W → Prop) :
       willConditional s A (fun w' => ¬ B w') f w :=
   fun s f w => compositional_CEM s A B f w
 
-/-- **Narrow Negation Swap in Conditionals** @cite{cariani-santorio-2018}
+/-- **Narrow Negation Swap in Conditionals** [cariani-santorio-2018]
     §7: under the *narrow* reading where negation scopes under the
     if-clause, `¬ (if A, will B) ↔ (if A, will ¬B)`. Derived from
     `Semantics.Conditionals.SelectionFunction.sel_neg_swap` at the restricted parameter
@@ -95,7 +95,7 @@ theorem valid2_narrow_negation_swap (A B : W → Prop) :
       ¬ willConditional s A B f w :=
   fun s f w => narrow_negation_swap s A B f w
 
-/-- **Wide Negation Swap in Conditionals** @cite{cariani-santorio-2018}
+/-- **Wide Negation Swap in Conditionals** [cariani-santorio-2018]
     §7: under the *wide* reading where negation scopes over the entire
     conditional, `¬ (if A, will B) ↔ (if A, will ¬B)`. Definitionally
     equal to the narrow biconditional in the selectional setting, since
@@ -117,7 +117,7 @@ theorem valid2_wide_negation_swap (A B : W → Prop) :
       willConditional s A (fun w' => ¬ B w') f w :=
   fun s f w => wide_negation_swap s A B f w
 
-/-- **Postsemantic CEM for will-conditionals** @cite{cariani-santorio-2018}
+/-- **Postsemantic CEM for will-conditionals** [cariani-santorio-2018]
     §7: Compositional CEM specialized to the context of utterance —
     `(if A, will B) ∨ (if A, will ¬B)` holds at the contextually-fixed
     `⟨sCtx, fCtx, wCtx⟩`. Under a single selection function the
@@ -158,14 +158,14 @@ theorem willConditional_redundant (s : SelectionFunction W) (A B : W → Prop)
 
 /-! ## *Would*-conditionals — the past-tense morphological derivative
 
-@cite{cariani-santorio-2018} §5.3.2 identifies *would* with the past
+[cariani-santorio-2018] §5.3.2 identifies *would* with the past
 tense form of *will*. The conditional analogue follows: a *would*-
 conditional is just the selectional restrictor applied to *would*,
 which by `wouldSem_eq_willSem` is identical to a *will*-conditional.
 The morphology shifts the modal parameter; the semantic clause is
 unchanged. -/
 
-/-- **Selectional `would`-conditional** @cite{cariani-santorio-2018}
+/-- **Selectional `would`-conditional** [cariani-santorio-2018]
     §5.3.2 + §5.3.1: the *would*-conditional is the selectional
     restrictor applied to *would*, which by the morphological identity
     `wouldSem = willSem` collapses to `willConditional`. -/
@@ -186,7 +186,7 @@ theorem wouldConditional_eq_willConditional (s : SelectionFunction W)
 
 /-! ## Modal subordination
 
-@cite{cariani-santorio-2018} §5.3.1: "If A, will B. Will C." reads with
+[cariani-santorio-2018] §5.3.1: "If A, will B. Will C." reads with
 modal subordination — the second sentence's *will* inherits the first
 sentence's restricted parameter `f ∩ ‖A‖` rather than starting fresh
 from `f`. The selectional analysis predicts this for free: a discourse
@@ -198,7 +198,7 @@ because `s.sel w (f ∩ ‖A‖)` is single-valued. This is the discourse
 analogue of `compositional_CEM` and `narrow_negation_swap`: structural
 single-valuedness, not propositional content, drives the prediction. -/
 
-/-- **Modally-subordinated will-discourse** @cite{cariani-santorio-2018}
+/-- **Modally-subordinated will-discourse** [cariani-santorio-2018]
     §5.3.1: a two-sentence discourse "If A, will B. Will C." where the
     second *will* inherits the if-clause's restricted parameter
     `f ∩ ‖A‖`. The discourse holds iff both prejacents hold at the

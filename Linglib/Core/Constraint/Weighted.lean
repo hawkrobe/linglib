@@ -7,10 +7,10 @@ import Mathlib.Data.Rat.Cast.Order
 
 The shared foundation for any constraint framework that assigns numerical
 **weights** to constraints and aggregates them into a single scalar score:
-- Harmonic Grammar @cite{smolensky-legendre-2006}
-- MaxEnt @cite{goldwater-johnson-2003}
-- Noisy HG @cite{boersma-pater-2016}
-- Normal MaxEnt @cite{flemming-2021}
+- Harmonic Grammar [smolensky-legendre-2006]
+- MaxEnt [goldwater-johnson-2003]
+- Noisy HG [boersma-pater-2016]
+- Normal MaxEnt [flemming-2021]
 
 A `WeightedConstraint C` extends `NamedConstraint C` (from `Core.Constraint.OT`)
 with a rational `weight`. The `harmonyScore` of a candidate is the negated

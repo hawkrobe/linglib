@@ -5,7 +5,7 @@ import Linglib.Semantics.Focus.Comparability
 
 /-!
 # Cartner, Kogan, Webster, Wagers & Sichel (2026)
-@cite{cartner-et-al-2026}
+[cartner-et-al-2026]
 
 Subject islands do not reduce to construction-specific discourse function.
 *Cognition* 271, 106467.
@@ -14,25 +14,25 @@ Subject islands do not reduce to construction-specific discourse function.
 
 Three acceptability judgment experiments test whether subject islands arise
 from an information-structural clash (the Focus Background Constraint of
-@cite{abeille-et-al-2020}) or from an abstract syntactic constraint on
-movement. Using a super-additive factorial design (@cite{sprouse-2007},
-@cite{sprouse-et-al-2012}), the paper isolates subject island effects across
+[abeille-et-al-2020]) or from an abstract syntactic constraint on
+movement. Using a super-additive factorial design ([sprouse-2007],
+[sprouse-et-al-2012]), the paper isolates subject island effects across
 wh-questions, relative clauses, and topicalization — three constructions
 that share the filler-gap mechanism but differ in the IS profile of the
 filler.
 
 **Finding**: Subject island effects are present in all three constructions,
 with remarkably invariant magnitude. This falsifies the FBC (and its
-revised formulation in @cite{winckel-et-al-2025}), which predict island
+revised formulation in [winckel-et-al-2025]), which predict island
 effects only for wh-questions. The paper explicitly notes (§8) that the
 results do NOT falsify direct backgroundedness approaches
-(@cite{cuneo-goldberg-2023}), only the constructional IS profile account.
+([cuneo-goldberg-2023]), only the constructional IS profile account.
 
 ## Formalization
 
 1. IS profiles per construction, with structural uniformity/variance theorems
-2. Original FBC (@cite{abeille-et-al-2020}) and revised FBC
-   (@cite{winckel-et-al-2025}) as predicates over IS profiles
+2. Original FBC ([abeille-et-al-2020]) and revised FBC
+   ([winckel-et-al-2025]) as predicates over IS profiles
 3. Both FBCs' predictions derived, then falsified by experimental DD scores
 4. Explicit distinction from direct backgroundedness (BCI), which is NOT
    falsified (connecting to `BackgroundedIslands.lean`)
@@ -43,11 +43,11 @@ results do NOT falsify direct backgroundedness approaches
 
 /-- The three canonical filler-gap dependency constructions in English.
 Each shares the abstract mechanism of movement (a filler displaced from a gap)
-but differs in information-structural profile (@cite{abeille-et-al-2020}).
+but differs in information-structural profile ([abeille-et-al-2020]).
 
 The distinction matters for testing whether island effects are
-construction-specific (as @cite{abeille-et-al-2020} claim) or
-construction-general (as @cite{cartner-et-al-2026} argue). -/
+construction-specific (as [abeille-et-al-2020] claim) or
+construction-general (as [cartner-et-al-2026] argue). -/
 inductive FGDConstruction where
   | whQuestion
   | relativeClause
@@ -56,7 +56,7 @@ inductive FGDConstruction where
 
 /-- Extraction position within the embedded clause.
 The subject/object asymmetry is the core empirical target of subject island
-research (@cite{ross-1967}, @cite{chomsky-1973}). -/
+research ([ross-1967], [chomsky-1973]). -/
 inductive ExtractionPosition where
   | subject
   | object
@@ -86,7 +86,7 @@ Pre-Krifka versions of this file collapsed both into one
 `.focused` case for the domain. -/
 
 /-- Focus marking of the filler in each construction.
-@cite{abeille-et-al-2020}, §2; @cite{winckel-et-al-2025}. -/
+[abeille-et-al-2020], §2; [winckel-et-al-2025]. -/
 def fillerFocus : FGDConstruction → FocusMark
   | .whQuestion     => .focused      -- wh-phrase is focused (at-issue)
   | .relativeClause => .nonFocused   -- RC head is given/presupposed
@@ -118,16 +118,16 @@ theorem fillerFocus_varies :
   constructor <;> simp [fillerFocus]
 
 -- ============================================================================
--- §2. The Focus Background Constraint (@cite{abeille-et-al-2020})
+-- §2. The Focus Background Constraint ([abeille-et-al-2020])
 -- ============================================================================
 
-/-- The FBC (constraint (8) of @cite{abeille-et-al-2020}):
+/-- The FBC (constraint (8) of [abeille-et-al-2020]):
 
     "A focused element should not be part of a backgrounded constituent."
 
 A violation occurs when a focused filler is extracted from a backgrounded
 domain. This is exactly `extractionISClash` from `Core/InformationStructure.lean`,
-which unifies this constraint with @cite{erteschik-shir-1973}'s Dominance
+which unifies this constraint with [erteschik-shir-1973]'s Dominance
 Condition on Extraction. -/
 def fbcPredictsIsland (c : FGDConstruction) : Prop :=
   extractionISClash (fillerFocus c) (subjectGivenness c)
@@ -136,11 +136,11 @@ instance (c : FGDConstruction) : Decidable (fbcPredictsIsland c) :=
   inferInstanceAs (Decidable (extractionISClash _ _))
 
 -- ============================================================================
--- §2b. Revised FBC (@cite{winckel-et-al-2025})
+-- §2b. Revised FBC ([winckel-et-al-2025])
 -- ============================================================================
 
 /-- Focus marking of the subject (governor) in each construction.
-Across all three constructions in @cite{cartner-et-al-2026}'s
+Across all three constructions in [cartner-et-al-2026]'s
 materials, subjects are non-focused — the experimental design holds
 the governor's focus marking constant while varying the filler's. -/
 def subjectFocus : FGDConstruction → FocusMark
@@ -148,13 +148,13 @@ def subjectFocus : FGDConstruction → FocusMark
   | .relativeClause => .nonFocused
   | .topicalization => .nonFocused
 
-/-- The revised FBC (formulation (11) of @cite{winckel-et-al-2025}):
+/-- The revised FBC (formulation (11) of [winckel-et-al-2025]):
 
     "An extracted element should not be more focused than its (non-local)
     governor."
 
-@cite{winckel-et-al-2025} state this as gradient (greater focus
-difference → more degraded dependency), but in @cite{cartner-et-al-2026}'s
+[winckel-et-al-2025] state this as gradient (greater focus
+difference → more degraded dependency), but in [cartner-et-al-2026]'s
 materials both filler and governor are coded as binary focus marks
 (`FocusMark`), so the gradient version reduces to: filler is focused
 AND governor is not. Modelling the gradient case requires a richer
@@ -206,7 +206,7 @@ theorem fbc_predicts_construction_dependence :
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
--- §4. Super-Additive Experimental Design (@cite{sprouse-2007}, @cite{sprouse-et-al-2012})
+-- §4. Super-Additive Experimental Design ([sprouse-2007], [sprouse-et-al-2012])
 -- ============================================================================
 
 /-- A super-additive DD (Differences-in-Differences) score.
@@ -310,7 +310,7 @@ theorem fbc_falsified_for_top :
     ¬ fbcPredictsIsland .topicalization ∧
     islandEffect .topicalization > 0 := ⟨by decide, by native_decide⟩
 
-/-- The revised FBC (@cite{winckel-et-al-2025}) is equally falsified. -/
+/-- The revised FBC ([winckel-et-al-2025]) is equally falsified. -/
 theorem fbc_revised_falsified_for_rc :
     ¬ fbcRevisedPredictsIsland .relativeClause ∧
     islandEffect .relativeClause > 0 := ⟨by decide, by native_decide⟩
@@ -330,7 +330,7 @@ theorem fbc_revised_falsified_for_top :
 
 The **constructional IS profile** account (FBC) attributes islands to the
 interaction of the construction's IS profile with the filler's IS status.
-The **direct backgroundedness** account (BCI, @cite{cuneo-goldberg-2023})
+The **direct backgroundedness** account (BCI, [cuneo-goldberg-2023])
 attributes islands to the degree of backgroundedness of the extraction
 domain itself, independent of the filler's IS profile.
 
@@ -349,11 +349,11 @@ prediction: the construction's IS profile (FBC) or the extraction domain's
 backgroundedness (BCI). -/
 inductive DiscourseIslandTheory where
   /-- Island status depends on IS profile of the *construction* (filler
-  status interacts with domain status). @cite{abeille-et-al-2020}. -/
+  status interacts with domain status). [abeille-et-al-2020]. -/
   | constructionalISProfile
   /-- Island status depends on the *degree of backgroundedness* of the
   extraction domain, independent of construction type.
-  @cite{cuneo-goldberg-2023}. -/
+  [cuneo-goldberg-2023]. -/
   | directBackgroundedness
   deriving DecidableEq, Repr
 
@@ -515,7 +515,7 @@ theorem argument_chain :
   · native_decide
 
 -- ============================================================================
--- §X. Cross-framework convergence with @cite{adger-2025}
+-- §X. Cross-framework convergence with [adger-2025]
 -- ============================================================================
 
 /-! Cartner et al.'s super-additive design (cross-constructional invariance
@@ -536,7 +536,7 @@ incompatible (graph-theoretic parthood across dimensions vs construction-
 invariance over filler-gap dependencies); the convergent verdict is what
 makes the agreement informative. -/
 
-/-- **Convergence with @cite{adger-2025}**: both Cartner et al. (cross-
+/-- **Convergence with [adger-2025]**: both Cartner et al. (cross-
     constructional invariance) and Adger AL (cross-dimensional path
     failure) classify subject-island sources as syntactic. -/
 theorem subject_island_source_converges_with_adger :

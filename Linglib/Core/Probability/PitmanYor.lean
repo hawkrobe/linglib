@@ -14,42 +14,42 @@ import Mathlib.Tactic.Positivity
 /-!
 # Pitman–Yor process
 
-@cite{pitman-2006} @cite{odonnell-2015}
+[pitman-2006] [odonnell-2015]
 
 The Pitman–Yor process (PYP) is a two-parameter Bayesian non-parametric
 distribution on partitions of `[n]`, generalising the Chinese Restaurant
 Process (the one-parameter Dirichlet process). The mathematical reference
-is @cite{pitman-2006} §3.2 (Saint-Flour lectures); the linguistic
-application that motivates this file is @cite{odonnell-2015} §3.1.6
+is [pitman-2006] §3.2 (Saint-Flour lectures); the linguistic
+application that motivates this file is [odonnell-2015] §3.1.6
 (memoization distribution for adaptor and fragment grammars in
 `Morphology/FragmentGrammars/`).
 
 ## Naming convention
 
-@cite{pitman-2006} writes parameters as `(α, θ)` with `α` = discount and
-`θ` = concentration; @cite{odonnell-2015} writes `(a, b)` for the same
+[pitman-2006] writes parameters as `(α, θ)` with `α` = discount and
+`θ` = concentration; [odonnell-2015] writes `(a, b)` for the same
 two. We use `(discount, concentration)` to match neither convention's
 single letters but to be self-documenting.
 
 ## Main definitions
 
 * `stepPochhammer x s m` — generalised step product
-  `∏_{k=0}^{m-1} (x + k·s)` (@cite{pitman-2006} eq 3.7,
-  @cite{odonnell-2015} eq 3.13). Specialises to the rising factorial
+  `∏_{k=0}^{m-1} (x + k·s)` ([pitman-2006] eq 3.7,
+  [odonnell-2015] eq 3.13). Specialises to the rising factorial
   `(ascPochhammer R m).eval x` at `s = 1` and to the geometric power
   `x^m` at `s = 0`.
 * `PitmanYor` — the two-parameter family `(discount, concentration)`
   with `0 ≤ discount ≤ 1` and `concentration ≥ -discount`
-  (@cite{pitman-2006} eq 3.5, second case).
+  ([pitman-2006] eq 3.5, second case).
 * `PitmanYor.partitionProb` — the *exchangeable partition probability
-  function* (EPPF) of @cite{pitman-2006} Theorem 3.2 (eq 3.6) /
-  @cite{odonnell-2015} eq 3.14.
+  function* (EPPF) of [pitman-2006] Theorem 3.2 (eq 3.6) /
+  [odonnell-2015] eq 3.14.
 
 ## What `partitionProb` actually computes
 
 `partitionProb q` evaluates Pitman's EPPF formula
-(@cite{pitman-2006} eq 3.6) at the multiset of block sizes `q.parts`.
-The EPPF is, per @cite{pitman-2006} p. 39, the probability that the
+([pitman-2006] eq 3.6) at the multiset of block sizes `q.parts`.
+The EPPF is, per [pitman-2006] p. 39, the probability that the
 random partition `Π_n` equals **any specific (set) partition of `[n]`**
 whose blocks have sizes `(n_1, …, n_k)`. By the EPPF's symmetry, the
 value depends only on the multiset of sizes — which is what makes the
@@ -64,7 +64,7 @@ mult(q) = n! / (∏_{m ∈ q.parts} m! · ∏_{j} (q.parts.count j)!)
 ```
 
 i.e. the number of set partitions of `[n]` whose block sizes are
-`q.parts` (@cite{pitman-2006} eq 2.2 / `Nat.Partition.numSetPartitions`).
+`q.parts` ([pitman-2006] eq 2.2 / `Nat.Partition.numSetPartitions`).
 
 ## Sum-to-1 identities
 
@@ -72,11 +72,11 @@ Pitman 2006 gives several equivalent normalisations of the EPPF:
 
 ```
 (a) ∑_{Π : set partition of [n]} EPPF(block sizes of Π) = 1
-                                                          @cite{pitman-2006} Thm 3.2
+                                                          [pitman-2006] Thm 3.2
 (b) ∑_{q : Nat.Partition n} mult(q) · partitionProb q = 1
-                                                          @cite{pitman-2006} eq 2.2
+                                                          [pitman-2006] eq 2.2
 (c) ∑_{compositions (n_1,…,n_k) of n} (n choose n_1,…,n_k)·1/k! · EPPF(n_1,…,n_k) = 1
-                                                          @cite{pitman-2006} p. 42
+                                                          [pitman-2006] p. 42
 ```
 
 We formalise (a) as `sum_partitionProb_set_eq_one`, summing over
@@ -97,15 +97,15 @@ at `α = 0, θ = 1, n = 3` the bare sum is `2/3`.
   ℝ-valued kernel (table assignments are latent, not marginalised),
   so the bare-ℝ form is what the consumer wants.
 * The normalisation theorem `sum_partitionProb_set_eq_one`
-  (@cite{pitman-2006} Thm 3.2) is stated as `sorry` below. The
+  ([pitman-2006] Thm 3.2) is stated as `sorry` below. The
   construction-style proof (build the EPPF as the marginal of the
-  consistent Chinese Restaurant seating plan @cite{pitman-2006} §3.2)
+  consistent Chinese Restaurant seating plan [pitman-2006] §3.2)
   needs Markov-kernel infrastructure linglib does not yet have; the
   closed-form proof needs Vandermonde-style identities not yet in
   mathlib. Recorded as `sorry` per CLAUDE.md "prefer sorry over
   weakening."
 * Reduction theorems (`discount = 0` ⇒ Chinese Restaurant Process /
-  Dirichlet process @cite{pitman-2006} §3.2 case `(α=0, θ>0)`,
+  Dirichlet process [pitman-2006] §3.2 case `(α=0, θ>0)`,
   `discount = 1` ⇒ all-singletons partition) require a CRP file
   (linglib has none) and are deferred.
 -/
@@ -115,7 +115,7 @@ namespace Nat.Partition
 /--
 The number of distinct set partitions of `Fin n` whose multiset of
 block cardinalities equals `q.parts`. By the standard combinatorial
-formula (@cite{pitman-2006} eq 2.3 in implicit form):
+formula ([pitman-2006] eq 2.3 in implicit form):
 
 ```
 mult(q) = n! / (∏_{m ∈ q.parts} m! · ∏_{j ∈ q.parts.toFinset} (q.parts.count j)!)
@@ -136,7 +136,7 @@ def numSetPartitions {n : ℕ} (q : Nat.Partition n) : ℕ :=
 /-- Extend a partition of `n` by a new singleton block of size 1,
     yielding a partition of `n + 1`. The combinatorial counterpart of
     "the next customer sits at a new (singleton) table" in the PYP
-    seating plan (@cite{pitman-2006} §3.2). -/
+    seating plan ([pitman-2006] §3.2). -/
 def consOne {n : ℕ} (q : Nat.Partition n) : Nat.Partition (n + 1) where
   parts := q.parts.cons 1
   parts_pos := by
@@ -158,7 +158,7 @@ def consOne {n : ℕ} (q : Nat.Partition n) : Nat.Partition (n + 1) where
 /-- Replace one occurrence of `m` (a block of size `m`) with `m + 1`,
     yielding a partition of `n + 1`. The combinatorial counterpart of
     "the next customer joins an existing table of size `m`" in the
-    PYP seating plan (@cite{pitman-2006} §3.2). -/
+    PYP seating plan ([pitman-2006] §3.2). -/
 def replaceMem {n : ℕ} (q : Nat.Partition n) (m : ℕ) (hm : m ∈ q.parts) :
     Nat.Partition (n + 1) where
   parts := (q.parts.erase m).cons (m + 1)
@@ -368,8 +368,8 @@ namespace ProbabilityTheory
 
 /--
 The *step Pochhammer* product
-`[x]_{m, s} := ∏_{k=0}^{m-1} (x + k · s)` of @cite{pitman-2006} eq 3.7
-(written there as `(x)_{m↑s}`) and @cite{odonnell-2015} eq 3.13.
+`[x]_{m, s} := ∏_{k=0}^{m-1} (x + k · s)` of [pitman-2006] eq 3.7
+(written there as `(x)_{m↑s}`) and [odonnell-2015] eq 3.13.
 
 Generalises the standard rising factorial in the step `s`:
 
@@ -425,20 +425,20 @@ theorem stepPochhammer_nonneg [CommSemiring R] [PartialOrder R]
   Finset.prod_nonneg fun i _ => h i
 
 /--
-A *Pitman–Yor process* @cite{pitman-2006} §3.2 / @cite{odonnell-2015}
+A *Pitman–Yor process* [pitman-2006] §3.2 / [odonnell-2015]
 §3.1.6 with discount `α ∈ [0, 1]` and concentration `θ > -α`
-(@cite{pitman-2006} eq 3.5, second case; the first case `α = -κ < 0,
+([pitman-2006] eq 3.5, second case; the first case `α = -κ < 0,
 θ = mκ` for integer `m` is excluded — irrelevant for the linguistic
 application here).
 
-Sequential interpretation (@cite{pitman-2006} §3.2 `(α, θ)` seating
+Sequential interpretation ([pitman-2006] §3.2 `(α, θ)` seating
 plan): the first customer sits at table 1; the `(N + 1)`-th customer
 sits at occupied table `i` (current size `n_i`) with probability
 `(n_i - α) / (N + θ)`, or at a new table with probability
 `(K · α + θ) / (N + θ)`, where `K` is the current number of occupied
 tables. Higher discount `α` favours new tables.
 
-The constraint `θ > -α` is **strict** (matching @cite{pitman-2006}
+The constraint `θ > -α` is **strict** (matching [pitman-2006]
 eq 3.5). The boundary `θ = -α` is degenerate: the closed-form formula
 has `0/0` ratios that Lean's `x/0 = 0` convention resolves to `0`,
 giving `partitionProb = 0` for partitions with `K ≥ 2` blocks but
@@ -458,7 +458,7 @@ Boundary cases (well-defined under the strict constraint):
 structure PitmanYor where
   /-- Discount parameter `α ∈ [0, 1]`. Higher values favour new tables. -/
   discount : ℝ
-  /-- Concentration parameter `θ > -α` (strict, per @cite{pitman-2006} eq 3.5). -/
+  /-- Concentration parameter `θ > -α` (strict, per [pitman-2006] eq 3.5). -/
   concentration : ℝ
   /-- `0 ≤ discount`. -/
   discount_nonneg : 0 ≤ discount
@@ -473,7 +473,7 @@ variable (p : PitmanYor)
 
 /--
 The Pitman–Yor *exchangeable partition probability function* (EPPF)
-of @cite{pitman-2006} Theorem 3.2 (eq 3.6) / @cite{odonnell-2015}
+of [pitman-2006] Theorem 3.2 (eq 3.6) / [odonnell-2015]
 eq 3.14, evaluated at the multiset of block sizes `q.parts`:
 
 ```
@@ -484,7 +484,7 @@ EPPF(n_1, ..., n_K | α, θ) = [θ + α]_{K-1, α} · ∏_{i=1}^K [1 - α]_{n_i 
 where `K = q.parts.card` is the number of blocks and `N = n` is the
 total number of elements.
 
-**Semantics**: by @cite{pitman-2006} p. 39, this is the probability
+**Semantics**: by [pitman-2006] p. 39, this is the probability
 that the random partition `Π_n` equals **any specific (set) partition
 of `[n]`** with the given multiset of block sizes — NOT the
 probability of the multiset itself. The two differ by the multiplicity
@@ -509,7 +509,7 @@ noncomputable def partitionProb {n : ℕ} (q : Nat.Partition n) : ℝ :=
     (q.parts.map (fun y => stepPochhammer (1 - p.discount) 1 (y - 1))).prod
 
 /-- Pitman–Yor partition probabilities are nonnegative. Each step
-    factor in @cite{pitman-2006} eq 3.6 is nonnegative under the PYP
+    factor in [pitman-2006] eq 3.6 is nonnegative under the PYP
     constraints (`0 ≤ α ≤ 1`, `θ ≥ -α`), and the overall quotient and
     product preserve nonnegativity. Used downstream by
     `AdaptorGrammar.corpusProbGivenTables_nonneg`. -/
@@ -534,7 +534,7 @@ theorem partitionProb_eq_of_parts_eq {n : ℕ} (q q' : Nat.Partition n)
   unfold partitionProb; rw [h]
 
 /-- **Cross-multiplied form of the seating-plan transition** for a new
-    singleton block (@cite{pitman-2006} §3.2 (α, θ) seating plan,
+    singleton block ([pitman-2006] §3.2 (α, θ) seating plan,
     "new table" branch). The seating-plan probability of the (n+1)-th
     customer creating a new table is `(K · α + θ) / (n + θ)`, where K
     is the current number of blocks; this is the multiplicative
@@ -587,7 +587,7 @@ theorem partitionProb_consOne_mul {n : ℕ} (q : Nat.Partition n) :
       ring
 
 /-- **Cross-multiplied form of the seating-plan transition** for joining
-    an existing block of size `m` (@cite{pitman-2006} §3.2 (α, θ) seating
+    an existing block of size `m` ([pitman-2006] §3.2 (α, θ) seating
     plan, "join occupied table" branch). The seating-plan probability of
     the (n+1)-th customer joining an existing table of size `m` is
     `(m - α) / (n + θ)`; this is the multiplicative counterpart.
@@ -646,7 +646,7 @@ theorem _root_.OrderedFinpartition.sum_partSize_eq {n : ℕ} (c : OrderedFinpart
   convert h1 using 1
   simp [Fintype.card_fin]
 
-/-- **The Pitman-Yor seating-plan addition rule** (@cite{pitman-2006} eq 2.9
+/-- **The Pitman-Yor seating-plan addition rule** ([pitman-2006] eq 2.9
     for the (α, θ) EPPF). Summing the partition probabilities over all
     "ways to seat the (n+1)-th customer" recovers the partition probability
     of the predecessor. Proved via Lemmas A (`partitionProb_consOne_mul`)

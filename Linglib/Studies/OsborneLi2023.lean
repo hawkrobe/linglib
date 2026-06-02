@@ -5,10 +5,10 @@ import Linglib.Syntax.DependencyGrammar.Coordination
 
 /-!
 # CRDC: Conjunct Referential Dependency Constraint
-@cite{osborne-li-2023}
+[osborne-li-2023]
 
 The Conjunct Referential Dependency Constraint (CRDC), formulated by
-@cite{osborne-li-2023} in *Folia Linguistica* 57(3): 629–659, is a
+[osborne-li-2023] in *Folia Linguistica* 57(3): 629–659, is a
 dependency-grammar constraint on co-valuation in sentences that involve
 coordinate structures.
 
@@ -59,9 +59,9 @@ project's 5-level enum.
 ## Cross-framework relationship
 
 The standard binding theories formalized elsewhere in linglib —
-@cite{chomsky-1981} (`Studies/Chomsky1981.lean`),
-@cite{hudson-1990} (`Studies/Hudson1990.lean`),
-@cite{pollard-sag-1994} / @cite{sag-wasow-bender-2003}
+[chomsky-1981] (`Studies/Chomsky1981.lean`),
+[hudson-1990] (`Studies/Hudson1990.lean`),
+[pollard-sag-1994] / [sag-wasow-bender-2003]
 (`Syntax/HPSG/Coreference.lean`,
 `Studies/SagWasowBender2003.lean`) — make *categorical*
 predictions via `Bool`-valued `grammaticalForCoreference`. The CRDC

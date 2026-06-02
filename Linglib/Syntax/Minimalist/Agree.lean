@@ -6,7 +6,7 @@ import Linglib.Syntax.Minimalist.Probe
 # Agree (Minimalist Feature Checking)
 
 
-Formalization of Agree following @cite{chomsky-2000} and @cite{adger-2003}.
+Formalization of Agree following [chomsky-2000] and [adger-2003].
 
 ## The Agree Operation
 
@@ -27,7 +27,7 @@ For the *failure model* (what happens when Agree fails), see
 ## Satisfaction Conditions
 
 Standard Agree assumes a probe is satisfied by finding a matching valued
-feature. @cite{deal-2024} and @cite{keine-2019} argue for richer conditions:
+feature. [deal-2024] and [keine-2019] argue for richer conditions:
 - **Feature match**: the standard case
 - **Head encounter**: probe is satisfied by encountering a head of a
   particular category (e.g., Infl's probe stopped by transitive Voice)
@@ -181,7 +181,7 @@ def closestGoalB (root probe goal : SyntacticObject)
     Multiset.decidableExistsMultiset)
 
 -- ============================================================================
--- § 3c: Horizons (@cite{keine-2019})
+-- § 3c: Horizons ([keine-2019])
 -- ============================================================================
 
 /-- Per-vertex horizon predicate: leaf with category = horizonCat. -/
@@ -205,11 +205,11 @@ instance (horizonCat : Cat) (n : SyntacticObject) :
     1. `probe` c-commands `n` (n is in probe's search domain)
     2. `n` c-commands `target` (target is in n's opaque domain)
 
-    This captures @cite{keine-2019}'s horizon mechanism: the probe
+    This captures [keine-2019]'s horizon mechanism: the probe
     cannot see past a head of the horizon category. Elements that
     are c-commanded by the horizon head are invisible to the probe.
 
-    Example: N° is a horizon for wh-probes (@cite{aissen-polian-2025}).
+    Example: N° is a horizon for wh-probes ([aissen-polian-2025]).
     In `[DP D° [PossP Psr N°]]`, N° c-commands Psr (they are sisters),
     so wh-probes on C° cannot reach Psr. But D° is a sister of PossP,
     NOT c-commanded by N°, so the whole DP remains visible for
@@ -325,7 +325,7 @@ theorem matrix_triggers_t_to_c : tToCTriggered matrixCFeatures = true := rfl
 theorem embedded_no_t_to_c : tToCTriggered embeddedCFeatures = false := rfl
 
 -- ============================================================================
--- § 8: Activity Condition (@cite{chomsky-2000}, 2001)
+-- § 8: Activity Condition ([chomsky-2000], 2001)
 -- ============================================================================
 
 /-- Is a feature bundle active? (has at least one unvalued feature)
@@ -401,7 +401,7 @@ def validAgreeWithActivity (a : AgreeRelation) (root : SyntacticObject) : Prop :
   isActive a.goalFeatures = true
 
 -- ============================================================================
--- § 10: Multiple Agree (@cite{hiraiwa-2001}, 2005)
+-- § 10: Multiple Agree ([hiraiwa-2001], 2005)
 -- ============================================================================
 
 /-- Multiple Agree: a probe agreeing with a list of goals -/
@@ -436,7 +436,7 @@ def applyMultipleAgree (ma : MultipleAgree) : Option FeatureBundle :=
         else f)
 
 -- ============================================================================
--- § 11: Defective Intervention (@cite{chomsky-2000})
+-- § 11: Defective Intervention ([chomsky-2000])
 -- ============================================================================
 
 /-- A defective element: has some matching features but incomplete set -/
@@ -528,17 +528,17 @@ theorem rel_features_match :
     featuresMatch (.unvalued (.rel true)) (.valued (.rel false)) = true := rfl
 
 -- ============================================================================
--- § 14: Satisfaction Conditions (@cite{deal-2024}; @cite{keine-2019})
+-- § 14: Satisfaction Conditions ([deal-2024]; [keine-2019])
 -- ============================================================================
 
 /-- How a probe's search can be terminated.
 
     Standard Agree assumes a probe is satisfied only by finding a matching
-    valued feature (simple feature match). @cite{deal-2024} argues for richer
+    valued feature (simple feature match). [deal-2024] argues for richer
     conditions to capture e.g. Mam's Infl probe, which is satisfied by
     EITHER matching φ-features OR encountering transitive Voice:
 
-    **Mam example** (@cite{scott-2023}, via @cite{deal-2024}):
+    **Mam example** ([scott-2023], via [deal-2024]):
     - Infl carries [uφ] with satisfaction [SAT: φ or Voice_TR]
     - Intransitive: probe passes through (no Voice_TR) → finds S → real φ-agreement
     - Transitive: probe encounters Voice_TR → satisfied without copying φ → default "∅"
@@ -553,7 +553,7 @@ inductive SatisfactionCond where
   /-- Standard: probe is satisfied by finding a matching valued feature. -/
   | featureMatch : FeatureVal → SatisfactionCond
   /-- Disjunctive: probe is satisfied by ANY of these conditions.
-      Models @cite{deal-2024}'s interaction-based probes. -/
+      Models [deal-2024]'s interaction-based probes. -/
   | disjunctive : List SatisfactionCond → SatisfactionCond
   /-- Head encounter: probe is satisfied by encountering a head of this
       category, even without feature matching. The probe stops but copies

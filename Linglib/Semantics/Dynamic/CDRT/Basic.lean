@@ -1,6 +1,6 @@
 /-
 # Compositional DRT
-@cite{muskens-1996}
+[muskens-1996]
 
 Stub for Compositional DRT, which combines DRT with Montague grammar
 for fully compositional dynamic semantics.
@@ -112,7 +112,7 @@ Dynamic disjunction: φ or ψ.
 ⟦φ or ψ⟧(i, o) iff i = o ∧ (∃k. ⟦φ⟧(i, k) ∨ ⟦ψ⟧(i, k))
 
 Disjunction is a test: it checks whether either disjunct is satisfiable
-without changing state. Corresponds to SEM2 (@cite{muskens-1996}, p. 148).
+without changing state. Corresponds to SEM2 ([muskens-1996], p. 148).
 -/
 def DProp.ddisj {E : Type*} (φ ψ : DProp E) : DProp E :=
   λ i o => i = o ∧ (∃ k, φ i k ∨ ψ i k)
@@ -181,7 +181,7 @@ theorem DProp.ofStatic_true_at {E : Type*} (p : SProp E) (i : Register E) :
 
 /-! ## CDRT-as-Dynamic-Ty2
 
-CDRT's `Register E = Nat → E` is the same type as @cite{muskens-1996}'s
+CDRT's `Register E = Nat → E` is the same type as [muskens-1996]'s
 state space `S` in Dynamic Ty2 with discourse referents `Dref S E = S → E`.
 Drefs in CDRT are register-lookups; `DProp E` and `Update (Register E)` are
 *the same type*, so the embedding is a pair of identity functions.

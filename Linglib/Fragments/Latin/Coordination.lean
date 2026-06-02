@@ -2,10 +2,10 @@ import Linglib.Features.Coordination
 
 /-!
 # Latin Coordination Morphemes
-@cite{haspelmath-2007}
+[haspelmath-2007]
 
 Latin has a rich coordination system with both free and bound forms.
-The J/MU decomposition (@cite{mitrovic-sauerland-2014}, @cite{mitrovic-sauerland-2016}) maps cleanly:
+The J/MU decomposition ([mitrovic-sauerland-2014], [mitrovic-sauerland-2016]) maps cleanly:
 
 - *et* — J, free, prepositive: "A et B"
 - *-que* — MU, bound enclitic, postpositive: "A B-que" (= "A and B")

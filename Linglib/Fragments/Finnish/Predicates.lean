@@ -3,7 +3,7 @@ import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 import Linglib.Semantics.Causation.Implicative
 
 /-!
-# Finnish Verb Entries @cite{karlsson-2017}
+# Finnish Verb Entries [karlsson-2017]
 
 Finnish verbs illustrate two phenomena that exercise linglib's infrastructure:
 
@@ -146,7 +146,7 @@ theorem verb_types_distinct :
     Finnish lacks a true passive — what is traditionally called the
     passive is an impersonal construction where the agent is demoted
     to an implicit generic human referent, not promoted to a by-phrase
-    (@cite{karlsson-2017} Ch. 11). Active is the basic form. -/
+    ([karlsson-2017] Ch. 11). Active is the basic form. -/
 def finnishVoiceSystem : Interfaces.VoiceSystemProfile :=
   { language := "Finnish"
     voices := [ ⟨"Active", .agent⟩, ⟨"Impersonal", .patient⟩ ]
@@ -163,7 +163,7 @@ theorem finnish_is_active_passive :
     finnishVoiceSystem.isActivePassive := by decide
 
 -- ============================================================================
--- § 6: Finnish Implicative Verbs (@cite{nadathur-2024})
+-- § 6: Finnish Implicative Verbs ([nadathur-2024])
 -- ============================================================================
 
 /-! Finnish is the ideal testing ground for implicative verb semantics because
@@ -178,7 +178,7 @@ open Features (Implicative)
 open Semantics.Causation.Implicative (Directionality Prerequisite ImplicativeClass)
 
 /-- A Finnish implicative verb entry, extending the base verb with
-    implicative classification from @cite{nadathur-2024}. -/
+    implicative classification from [nadathur-2024]. -/
 structure FinnishImplicativeVerb extends FinnishVerb where
   /-- Positive (entails complement) or negative (entails ¬complement) -/
   implicative : Implicative
@@ -195,7 +195,7 @@ structure FinnishImplicativeVerb extends FinnishVerb where
 /-- *onnistua* 'succeed, manage' — two-way positive, unspecified prerequisite.
     "Eman onnistui pakenema-an" → 'Eman fled.'
     "Eman ei onnistunut pakenema-an" → 'Eman did not flee.'
-    (@cite{nadathur-2024} ex. 2) -/
+    ([nadathur-2024] ex. 2) -/
 def onnistua : FinnishImplicativeVerb :=
   { infinitive := "onnistua"
     gloss := "to succeed, to manage"
@@ -210,7 +210,7 @@ def onnistua : FinnishImplicativeVerb :=
 /-- *uskaltaa* 'dare' — two-way positive, prerequisite = courage.
     "Juno uskaltaa avata oven" → 'Juno opens the door.'
     "Juno ei uskaltanut avata ovea" → 'Juno did not open the door.'
-    (@cite{nadathur-2024} ex. 4) -/
+    ([nadathur-2024] ex. 4) -/
 def uskaltaa : FinnishImplicativeVerb :=
   { infinitive := "uskaltaa"
     gloss := "to dare"
@@ -223,7 +223,7 @@ def uskaltaa : FinnishImplicativeVerb :=
     neg3sgAct := "uskalla" }
 
 /-- *viitsiä* 'bother' — two-way positive, prerequisite = engagement.
-    (@cite{nadathur-2024} ex. 10) -/
+    ([nadathur-2024] ex. 10) -/
 def viitsia : FinnishImplicativeVerb :=
   { infinitive := "viitsiä"
     gloss := "to bother"
@@ -238,7 +238,7 @@ def viitsia : FinnishImplicativeVerb :=
 /-- *malttaa* 'have the patience' — two-way positive, prerequisite = patience.
     "Marja malttoi odottaa" → 'Marja waited.'
     "Marja ei malttanut odottaa" → 'Marja did not wait.'
-    (@cite{nadathur-2024} ex. 11) -/
+    ([nadathur-2024] ex. 11) -/
 def malttaa : FinnishImplicativeVerb :=
   { infinitive := "malttaa"
     gloss := "to have the patience"
@@ -251,7 +251,7 @@ def malttaa : FinnishImplicativeVerb :=
     neg3sgAct := "maltta" }
 
 /-- *hennoa* 'have the heart' — two-way positive, prerequisite = hard-heartedness.
-    (@cite{nadathur-2024} ex. 27) -/
+    ([nadathur-2024] ex. 27) -/
 def hennoa : FinnishImplicativeVerb :=
   { infinitive := "hennoa"
     gloss := "to have the heart"
@@ -264,7 +264,7 @@ def hennoa : FinnishImplicativeVerb :=
     neg3sgAct := "hennoa" }  -- negation: ei hennoa (no consonant gradation)
 
 /-- *kehdata* 'act without shame, be unembarrassed' — two-way positive.
-    (@cite{nadathur-2024} ex. 40) -/
+    ([nadathur-2024] ex. 40) -/
 def kehdata : FinnishImplicativeVerb :=
   { infinitive := "kehdata"
     gloss := "to act without shame"
@@ -277,7 +277,7 @@ def kehdata : FinnishImplicativeVerb :=
     neg3sgAct := "kehtaa" }
 
 /-- *ehtiä* 'find/make time' — two-way positive, prerequisite = time.
-    (@cite{nadathur-2024} ex. 39) -/
+    ([nadathur-2024] ex. 39) -/
 def ehtia : FinnishImplicativeVerb :=
   { infinitive := "ehtiä"
     gloss := "to find time, to make time"
@@ -294,7 +294,7 @@ def ehtia : FinnishImplicativeVerb :=
 /-- *jaksaa* 'have the strength' — one-way positive, prerequisite = strength.
     Positive: "Sampo jaksoi nousta" ↛ 'Sampo rose.' (only implicature)
     Negative: "Sampo ei jaksanut nousta" → 'Sampo did not rise.'
-    (@cite{nadathur-2024} ex. 5) -/
+    ([nadathur-2024] ex. 5) -/
 def jaksaa : FinnishImplicativeVerb :=
   { infinitive := "jaksaa"
     gloss := "to have the strength"
@@ -309,7 +309,7 @@ def jaksaa : FinnishImplicativeVerb :=
 /-- *mahtua* 'fit, be small enough' — one-way positive, prerequisite = fitness.
     "Freija mahtui kulkemaan oven" ↛ 'Freija went through the door.'
     "Freija ei mahtunut kulkemaan oven" → 'Freija did not go through the door.'
-    (@cite{nadathur-2024} ex. 30) -/
+    ([nadathur-2024] ex. 30) -/
 def mahtua : FinnishImplicativeVerb :=
   { infinitive := "mahtua"
     gloss := "to fit"
@@ -324,7 +324,7 @@ def mahtua : FinnishImplicativeVerb :=
 /-- *pystyä* 'be able' — one-way positive (the Finnish counterpart of *be able*).
     "Maarit pystyi tappelema-an" ↛ 'Maarit fought.'
     "Maarit ei pystynyt tappelema-an" → 'Maarit did not fight.'
-    (@cite{nadathur-2024} ex. 29) -/
+    ([nadathur-2024] ex. 29) -/
 def pystya : FinnishImplicativeVerb :=
   { infinitive := "pystyä"
     gloss := "to be able"
@@ -341,7 +341,7 @@ def pystya : FinnishImplicativeVerb :=
 /-- *laiminlyödä* 'neglect' — polarity-reversing two-way.
     "Hän laiminlöi korjata virheen" → 'He did not correct the error.'
     "Hän ei laiminlyönyt korjata virhettä" → 'He corrected the error.'
-    (@cite{nadathur-2024} ex. 44) -/
+    ([nadathur-2024] ex. 44) -/
 def laiminlyoda : FinnishImplicativeVerb :=
   { infinitive := "laiminlyödä"
     gloss := "to neglect"
@@ -356,7 +356,7 @@ def laiminlyoda : FinnishImplicativeVerb :=
 /-- *epäröidä* 'hesitate' — polarity-reversing one-way.
     "Juno epäröi ottaa osaa kilpailuun" ↛ 'Juno did not take part.'
     "Juno ei epäröinyt ottaa osaa kilpailuun" → 'Juno took part.'
-    (@cite{nadathur-2024} §6.4, ex. 46) -/
+    ([nadathur-2024] §6.4, ex. 46) -/
 def eparoida : FinnishImplicativeVerb :=
   { infinitive := "epäröidä"
     gloss := "to hesitate"

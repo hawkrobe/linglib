@@ -3,29 +3,29 @@ import Linglib.Features.Case
 import Linglib.Features.Prominence
 
 /-!
-# Shawi Agreement Fragment @cite{clem-deal-2024}
+# Shawi Agreement Fragment [clem-deal-2024]
 
 Shawi (Chayahuita; ISO 639-3: cbt; Glottocode: chay1248) is a Kawapanan
 language spoken in Peru. The data formalized here are based on
-@cite{clem-deal-2024}, drawing on the corpus and descriptive work of
+[clem-deal-2024], drawing on the corpus and descriptive work of
 Bourdeau (2015), Barraza de García (2005), Hart (1988), and Ulloa (in
 preparation).
 
 ## What this fragment captures (theory-neutral)
 
 - **Subject and object agreement paradigms** as suffix tables
-  (@cite{clem-deal-2024} Tables 1–2). Number is "minimal/augmented",
+  ([clem-deal-2024] Tables 1–2). Number is "minimal/augmented",
   following Ulloa's treatment of the system; we abbreviate as `min`
   and `aug` (≈ singular/plural for non-inclusive persons).
 - **Ergative case marker** `-ri`, attaching to some transitive subjects
-  (@cite{clem-deal-2024} (4)).
+  ([clem-deal-2024] (4)).
 - **"Object agreement on subject" (OAgr-on-S) morpheme**, the suffix
   doubling object φ-features on the subject right after `-ri`
-  (@cite{clem-deal-2024} (12), (32)). It uses the same forms as
+  ([clem-deal-2024] (12), (32)). It uses the same forms as
   ordinary object agreement, hence reuses `objectMarkers`.
 - **3rd-person object syntactic position** (high vs low) as a binary
   parameter that any analysis of the optional `-ri` with 3rd-person
-  objects must consume (@cite{clem-deal-2024} §3.2 around (30)).
+  objects must consume ([clem-deal-2024] §3.2 around (30)).
 - **External object syntax** (overt-postverbal vs. fronted vs.
   *pro*-dropped). Paper (9), (21): when `-ri` surfaces, the object
   cannot remain overt-postverbal — it must be either fronted (OSV)
@@ -46,7 +46,7 @@ open Features.Prominence (PersonLevel)
 
 /-- Shawi uses a minimal/augmented number system rather than singular/plural;
     1INCL "minimal" picks out the speaker+hearer dyad, etc.
-    (@cite{clem-deal-2024} fn. 4, after Corbett 2000). For non-inclusive
+    ([clem-deal-2024] fn. 4, after Corbett 2000). For non-inclusive
     persons `min`/`aug` correspond closely to singular/plural. -/
 inductive Number where
   | min   -- minimal (≈ singular for 1EXCL/2/3; speaker+hearer for 1INCL)
@@ -73,7 +73,7 @@ structure Phi where
 -- § 2: Subject agreement (Table 1, indicative)
 -- ============================================================================
 
-/-- Subject agreement suffixes, indicative mood (@cite{clem-deal-2024}
+/-- Subject agreement suffixes, indicative mood ([clem-deal-2024]
     Table 1, after Hart 1988, Barraza de García 2005, Ulloa to appear).
     Glottal stop is written `'`; optional `(a)` reflects source variation. -/
 def subjectMarkers : List (PersonLevel × Clusivity × Number × Option String) :=
@@ -90,7 +90,7 @@ def subjectMarkers : List (PersonLevel × Clusivity × Number × Option String) 
 -- § 3: Object agreement (Table 2)
 -- ============================================================================
 
-/-- Object agreement suffixes (@cite{clem-deal-2024} Table 2). 3rd person
+/-- Object agreement suffixes ([clem-deal-2024] Table 2). 3rd person
     objects show no overt agreement (`∅`); we encode this directly with
     `none` rather than an empty-string sentinel. -/
 def objectMarkers : List (PersonLevel × Clusivity × Number × Option String) :=
@@ -118,14 +118,14 @@ def objectMarker  (φ : Phi) : Option String := lookupMarker objectMarkers  φ
 -- § 4: Ergative and OAgr-on-S
 -- ============================================================================
 
-/-- The ergative case suffix (@cite{clem-deal-2024} (4)). Attaches to some
+/-- The ergative case suffix ([clem-deal-2024] (4)). Attaches to some
     transitive subjects; the `-(*ri)` notation in the paper indicates that
     the form is `-ri` when present and ungrammatical when absent in the
     relevant configurations. -/
 def ergativeMarker : String := "-ri"
 
 /-- "Object agreement on subject" exponent, doubling the object's φ on the
-    subject immediately after `-ri` (@cite{clem-deal-2024} (12), (32)).
+    subject immediately after `-ri` ([clem-deal-2024] (12), (32)).
     Reuses the object-agreement paradigm. -/
 def oagrOnSMarker (objectPhi : Phi) : Option String := objectMarker objectPhi
 
@@ -133,7 +133,7 @@ def oagrOnSMarker (objectPhi : Phi) : Option String := objectMarker objectPhi
 -- § 5: Structural position of the object
 -- ============================================================================
 
-/-- Position of an object inside the vP (@cite{clem-deal-2024} §3.2, (30)).
+/-- Position of an object inside the vP ([clem-deal-2024] §3.2, (30)).
     `low` = inside the inner v_cat phase, invisible to the v probe;
     `high` = outside the inner phase (Spec,v_cat or higher), visible. -/
 inductive ObjectPosition where
@@ -142,7 +142,7 @@ inductive ObjectPosition where
   deriving DecidableEq, Repr
 
 /-- Local-person (1/2) objects obligatorily move to the high position
-    (@cite{clem-deal-2024} §3.2). 3rd-person objects may but need not. -/
+    ([clem-deal-2024] §3.2). 3rd-person objects may but need not. -/
 def mustBeHigh : PersonLevel → Bool
   | .first  => true
   | .second => true
@@ -155,7 +155,7 @@ def mustBeHigh : PersonLevel → Bool
 /-- External-syntax options for an object in a transitive clause. The
     surface order is determined by which option is realized:
     overt-postverbal corresponds to canonical SVO; fronted to OSV;
-    `pro`-dropped to subject-only surface form (@cite{clem-deal-2024}
+    `pro`-dropped to subject-only surface form ([clem-deal-2024]
     (9), (20)–(21), (26)). -/
 inductive ObjectSyntax where
   | overtPostverbal
@@ -165,7 +165,7 @@ inductive ObjectSyntax where
 
 /-- When the subject bears `-ri`, the object cannot remain
     overt-postverbal: it must be either fronted (OSV) or
-    *pro*-dropped (@cite{clem-deal-2024} (9), (21)). When the subject
+    *pro*-dropped ([clem-deal-2024] (9), (21)). When the subject
     does not bear `-ri`, all three options are available. -/
 def objectSyntaxLicit (subjBearsErg : Bool) : ObjectSyntax → Bool
   | .overtPostverbal => !subjBearsErg

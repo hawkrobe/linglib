@@ -3,7 +3,7 @@ import Mathlib.Data.Fintype.Powerset
 
 /-!
 # Roberts (2012) QUD relevance — Prop predicates on `Question`
-@cite{roberts-2012} @cite{groenendijk-stokhof-1984}
+[roberts-2012] [groenendijk-stokhof-1984]
 
 Mathlib-style Prop predicates with `Decidable` instances. Successor of an
 earlier Bool/List `partiallyAnswers`/`questionEntails`/`isSubquestion`/
@@ -40,13 +40,13 @@ variable {W : Type u}
 
 /-- `σ` partially answers `P`: settles at least one alternative either
     positively (`σ ⊆ p`) or negatively (`σ ⊆ pᶜ`).
-    @cite{roberts-2012} Def. 3a. -/
+    [roberts-2012] Def. 3a. -/
 def partiallyAnswers (P : Question W) (σ : Set W) : Prop :=
   ∃ p ∈ alt P, σ ⊆ p ∨ σ ⊆ pᶜ
 
 /-- Question entailment: every alternative of `P` entails some alternative
-    of `Q`. @cite{roberts-2012} Def. 8 (after
-    @cite{groenendijk-stokhof-1984}). At the partition level this is
+    of `Q`. [roberts-2012] Def. 8 (after
+    [groenendijk-stokhof-1984]). At the partition level this is
     `QUD.refines`: `P` refines `Q` iff knowing `P`'s answer determines
     `Q`'s answer. -/
 def questionEntails (P Q : Question W) : Prop :=
@@ -58,8 +58,8 @@ def isSubquestion (q parent : Question W) : Prop :=
 
 /-- A discourse move `den` is **relevant** to the QUD if some alternative
     partially answers the QUD or any of the subquestions. The
-    QUD-relevance idea traces to @cite{roberts-2012}; the present
-    formulation is the one @cite{ippolito-kiss-williams-2025} ex. (16)
+    QUD-relevance idea traces to [roberts-2012]; the present
+    formulation is the one [ippolito-kiss-williams-2025] ex. (16)
     assumption iii uses for discourse *only*'s definedness condition. -/
 def moveRelevant (den qud : Question W) (subquestions : List (Question W)) : Prop :=
   ∃ a ∈ alt den,

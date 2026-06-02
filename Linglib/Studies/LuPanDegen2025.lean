@@ -12,7 +12,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
 # Bridge: Backgrounded Islands → Island Classification
-@cite{lu-pan-degen-2025}
+[lu-pan-degen-2025]
 
 Connects the formal backgroundedness model (Semantics/Focus) to the
 shared island infrastructure in `Phenomena/FillerGap/Islands/Data.lean` and
@@ -56,14 +56,14 @@ open Phenomena.Islands.MannerOfSpeaking (mosIslandSources)
 subject) are syntactically sourced. This is the baseline consensus against
 which the paper shows MoS islands are categorically different.
 
-Note: @cite{hofmeister-sag-2010} argue that some of these (CNPC, wh-islands)
+Note: [hofmeister-sag-2010] argue that some of these (CNPC, wh-islands)
 have processing sources. That alternative classification is formalized in
 their study file, not here. -/
 def traditionalIslandSource : IslandSource := .syntactic
 
 /-! ## §2. Levin Class → Manner Weight Bridge
 
-@cite{levin-1993} §37 classifies communication verbs into three subclasses:
+[levin-1993] §37 classifies communication verbs into three subclasses:
 - §37.7 *say* verbs (say, report, announce): `mannerSpec = false`
 - §37.2 *tell* verbs (tell, inform, notify): `mannerSpec = false`
 - §37.3 manner-of-speaking verbs (whisper, shout, mumble): `mannerSpec = true`
@@ -198,7 +198,7 @@ theorem differential_amelioration :
 
 /-! ## §5. Per-Verb Backgroundedness–Acceptability Correlation
 
-@cite{lu-pan-degen-2025} Experiment 2b (Figure 13) shows a negative
+[lu-pan-degen-2025] Experiment 2b (Figure 13) shows a negative
 correlation between per-verb backgroundedness proportion and extraction
 acceptability across the 13 verbs (12 MoS + *say*; β = −0.44, p = 0.014;
 MoS-only: β = −0.38, p = 0.076, marginally significant).
@@ -251,7 +251,7 @@ def fragmentPredictsIsland (v : VerbEntry) : Bool :=
 
 These 15 verbs have `levinClass := some .mannerOfSpeaking` in the Fragment.
 The per-verb theorems cover both the 12 experimental stimuli from
-@cite{lu-pan-degen-2025} (whisper, murmur, shout, scream, mumble, mutter,
+[lu-pan-degen-2025] (whisper, murmur, shout, scream, mumble, mutter,
 shriek, yell, groan — 9 of 12 overlap with Fragment inventory) and 6
 additional MoS verbs in the Fragment (cry, grumble, hiss, sigh, whimper, snap).
 
@@ -344,13 +344,13 @@ theorem adverb_replicates_model :
 
 /-! ## §8. Cross-Theory Comparison Across Manipulations
 
-This section integrates @cite{lu-pan-degen-2025}'s findings with
-@cite{hofmeister-sag-2010}'s processing manipulations and
-@cite{sag-2010}'s grammar-based island typology, comparing how three
+This section integrates [lu-pan-degen-2025]'s findings with
+[hofmeister-sag-2010]'s processing manipulations and
+[sag-2010]'s grammar-based island typology, comparing how three
 account types (competence, processing, discourse) score against the
 empirical data.
 
-The key empirical claim of @cite{lu-pan-degen-2025}: discourse and
+The key empirical claim of [lu-pan-degen-2025]: discourse and
 processing accounts cover *disjoint* sets of manipulations. Together
 they explain the full range; neither suffices alone. -/
 
@@ -369,7 +369,7 @@ structure IslandManipulation where
   differenceObserved : Bool
   deriving Repr
 
-/-! ### @cite{hofmeister-sag-2010} manipulations -/
+/-! ### [hofmeister-sag-2010] manipulations -/
 
 /-- Filler complexity in CNPC (which-N vs bare wh — same island structure). -/
 def fillerComplexityCNPC : IslandManipulation :=
@@ -403,7 +403,7 @@ def fillerComplexityAdjunct : IslandManipulation :=
     discoursePredictsDifference := false
     differenceObserved := true }
 
-/-! ### @cite{lu-pan-degen-2025} MoS manipulations -/
+/-! ### [lu-pan-degen-2025] MoS manipulations -/
 
 /-- Prosodic focus on embedded object in MoS islands. Focus changes
 information structure without changing syntax or processing load. -/
@@ -481,25 +481,25 @@ theorem complementary_accounts :
     allManipulations.all
       (fun m => processingCorrect m != discourseCorrect m) = true := by decide
 
-/-! ## §9. Connection to @cite{sag-2010}'s Construction-Based Islands
+/-! ## §9. Connection to [sag-2010]'s Construction-Based Islands
 
-@cite{sag-2010}'s F-G typology classifies which constructions are
+[sag-2010]'s F-G typology classifies which constructions are
 grammar-based islands (those with `[GAP ⟨⟩]` on the mother).
-@cite{hofmeister-sag-2010}'s findings explain *within-island* gradient
-effects. @cite{lu-pan-degen-2025}'s MoS islands are a third mechanism.
+[hofmeister-sag-2010]'s findings explain *within-island* gradient
+effects. [lu-pan-degen-2025]'s MoS islands are a third mechanism.
 Together the three accounts cover disjoint islands. -/
 
 open Sag2010 (FGClauseType fgParams islandConstructions)
 
-/-- @cite{sag-2010}'s two island constructions are a proper subset of all
+/-- [sag-2010]'s two island constructions are a proper subset of all
 F-G types. The non-island types (interrogative, relative, the-clause)
 freely permit extraction. -/
 theorem sag_island_subset :
     islandConstructions.length < 5 := by decide
 
-/-- @cite{sag-2010}'s grammar-based islands (topicalization, exclamatives)
-are disjoint from @cite{hofmeister-sag-2010}'s processing-based islands
-(CNPC, wh-islands, adjuncts) and from @cite{lu-pan-degen-2025}'s
+/-- [sag-2010]'s grammar-based islands (topicalization, exclamatives)
+are disjoint from [hofmeister-sag-2010]'s processing-based islands
+(CNPC, wh-islands, adjuncts) and from [lu-pan-degen-2025]'s
 discourse-based islands (MoS). The three accounts cover different cases
 under different mechanisms. -/
 theorem complementary_coverage :

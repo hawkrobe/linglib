@@ -2,14 +2,14 @@ import Linglib.Fragments.Akan.Determiners
 import Linglib.Semantics.Quantification.ChoiceFunction
 
 /-!
-# @cite{owusu-2022}: Cross-Categorial Definiteness/Familiarity
+# [owusu-2022]: Cross-Categorial Definiteness/Familiarity
 
 Selected formalization from Augustina Owusu's doctoral dissertation
 (Rutgers, 2022), focused here on the indefinite *bí* in Akan (Kwa,
 Niger-Congo). The dissertation's analysis of the definite *nó* and
 the clausal/cross-categorial uses is left for future Studies files,
-where it will sit alongside the rival analyses in @cite{bombi-2018},
-@cite{schwarz-2013}, and @cite{arkoh-matthewson-2013}.
+where it will sit alongside the rival analyses in [bombi-2018],
+[schwarz-2013], and [arkoh-matthewson-2013].
 
 ## Main declarations
 
@@ -26,30 +26,30 @@ where it will sit alongside the rival analyses in @cite{bombi-2018},
 
 ## Implementation notes
 
-Per @cite{owusu-2022} Ch 3, *bí* is "an unambiguous choice function
+Per [owusu-2022] Ch 3, *bí* is "an unambiguous choice function
 with an implicit skolemworld/situation variable" (Abstract p. iii),
 "always skolemized to the situation of its argument". The substrate
 type is `SkolemCF S E := S → CF E` (`ChoiceFunction.lean`); a
 *bí*-DP's denotation at evaluation situation s₀ is `f.apply s₀ N`
 for some correct skolem CF `f` and NP-property `N`. The wide-scope-
-under-negation prediction (Owusu §3.2.2; cf. @cite{zimmermann-2026}
+under-negation prediction (Owusu §3.2.2; cf. [zimmermann-2026]
 §3.3 ex. 15) follows because negation is non-intensional and so
 cannot shift the situation argument; the skolem CF's output is fixed
 before negation applies. The narrow-scope readings within islands
-and opaque readings within intensional verbs that @cite{owusu-2022}
+and opaque readings within intensional verbs that [owusu-2022]
 also documents (Abstract p. iii) require local situation-binding
 machinery beyond the present scope.
 
 ## References
 
-* @cite{owusu-2022} Ch 3 — the *bí* choice-function analysis.
-* @cite{zimmermann-2026} §3.3 — the Hausa *wani* / Akan *bí* contrast.
+* [owusu-2022] Ch 3 — the *bí* choice-function analysis.
+* [zimmermann-2026] §3.3 — the Hausa *wani* / Akan *bí* contrast.
 
 ## Todo
 
 * Owusu's *nó* analysis (familiarity + non-uniqueness presuppositions,
-  Ch 2) — alongside @cite{bombi-2018}, @cite{schwarz-2013},
-  @cite{arkoh-matthewson-2013}.
+  Ch 2) — alongside [bombi-2018], [schwarz-2013],
+  [arkoh-matthewson-2013].
 * The clausal-determiner *nó* (Ch 4): definite propositions, NegP
   attachment, CPS/CG dual update.
 * Narrow-scope readings of *bí* within islands and opaque readings
@@ -63,7 +63,7 @@ open Semantics.Quantification.ChoiceFunction
 
 namespace Akan.Determiners.Indefinite
 
-/-- @cite{owusu-2022}'s wide-scope-under-negation prediction for the
+/-- [owusu-2022]'s wide-scope-under-negation prediction for the
 *bí* entry. Given a `SkolemCF` evaluated at situation `s₀` and a
 non-empty restrictor whose members all satisfy `VP`, the CF's output
 at `s₀` also satisfies `VP` — yielding the ∃ > ¬ reading. The

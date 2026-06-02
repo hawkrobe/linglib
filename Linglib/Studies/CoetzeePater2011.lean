@@ -6,20 +6,20 @@ import Linglib.Phonology.OptimalityTheory.Constraints
 
 /-!
 # Coetzee & Pater (2011): The Place of Variation in Phonological Theory
-@cite{coetzee-pater-2011}
+[coetzee-pater-2011]
 
 Handbook of Phonological Theory chapter comparing three frameworks for
 modeling phonological variation, illustrated with English t/d-deletion.
 
 ## Models formalized
 
-1. **Partially Ordered Constraints (POC)** (@cite{anttila-1997},
-   @cite{kiparsky-1993b}): grammar is a partial order on OT constraints.
+1. **Partially Ordered Constraints (POC)** ([anttila-1997],
+   [kiparsky-1993b]): grammar is a partial order on OT constraints.
    Each evaluation randomly samples a total order consistent with the
    partial order. Probability of an output = fraction of total orders
    that select it as optimal.
 
-2. **MaxEnt Harmonic Grammar** (@cite{goldwater-johnson-2003}): constraints
+2. **MaxEnt Harmonic Grammar** ([goldwater-johnson-2003]): constraints
    have numerical weights; candidate probability ∝ exp(harmony score).
    More expressive than POC — can encode arbitrary probability distributions
    over outputs.
@@ -32,7 +32,7 @@ modeling phonological variation, illustrated with English t/d-deletion.
 ## Key results
 
 - **POC deletion counts**: 4! = 24 total rankings; pre-V deletion in 8,
-  pre-pause in 8, pre-C in 12, matching @cite{coetzee-pater-2011} §3.2.
+  pre-pause in 8, pre-C in 12, matching [coetzee-pater-2011] §3.2.
 
 - **Factorial typology**: exactly 5 distinct language types across all
   24 rankings, matching the 5 crucial ranking classes in table (12).
@@ -56,14 +56,14 @@ open Phonology.Constraints
 /-! ### Empirical data (tables 7 and 10) -/
 
 /-- External phonological context following the word-final cluster.
-    @cite{coetzee-pater-2011} table (10), p. 410. -/
+    [coetzee-pater-2011] table (10), p. 410. -/
 inductive Context where
   | preV   -- pre-vocalic (*west end*)
   | pause  -- pre-pausal (*west*)
   | preC   -- pre-consonantal (*west side*)
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- English dialects with t/d-deletion data, per @cite{coetzee-pater-2011}
+/-- English dialects with t/d-deletion data, per [coetzee-pater-2011]
     footnote 3: AAVE (Fasold 1972), Chicano (Santa Ana 1992), Jamaican
     (Patrick 1992), Trinidad (Kang 1994), Tejano (Bayley 1995). -/
 inductive Dialect where
@@ -75,7 +75,7 @@ inductive Dialect where
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Observed deletion rate as a percentage (integer).
-    From @cite{coetzee-pater-2011} table (10), p. 410. -/
+    From [coetzee-pater-2011] table (10), p. 410. -/
 def deletionRate : Dialect → Context → Nat
   | .aave,    .preV => 29 | .aave,    .pause => 73 | .aave,    .preC => 76
   | .chicano, .preV => 45 | .chicano, .pause => 37 | .chicano, .preC => 62
@@ -107,7 +107,7 @@ theorem pause_ge_preV_non_chicano (d : Dialect) (h : d ≠ .chicano) :
 /-! ### Morphological conditioning (table 7) -/
 
 /-- Morphological status of the word-final t/d.
-    @cite{coetzee-pater-2011} table (7), p. 407. -/
+    [coetzee-pater-2011] table (7), p. 407. -/
 inductive MorphStatus where
   | regularPast   -- *missed* (past tense suffix)
   | semiWeakPast  -- *kept* (semi-weak past)
@@ -124,7 +124,7 @@ inductive MorphDialect where
   deriving DecidableEq, Repr, Fintype
 
 /-- Deletion rate by morphological status and dialect (percentages).
-    From @cite{coetzee-pater-2011} table (7). -/
+    From [coetzee-pater-2011] table (7). -/
 def morphDeletionRate : MorphDialect → MorphStatus → Nat
   | .philadelphia, .regularPast => 17 | .philadelphia, .semiWeakPast => 34
   | .philadelphia, .monomorpheme => 38
@@ -174,25 +174,25 @@ def candidatesFor (ctx : Context) : List TDCandidate :=
 
 /-- *CT (markedness): penalizes word-final consonant clusters ending in a
     coronal stop. Violated by the faithful (retaining) candidate.
-    @cite{coetzee-pater-2011} example (11). -/
+    [coetzee-pater-2011] example (11). -/
 def starCT : NamedConstraint TDCandidate :=
   mkMark "*CT" fun c => c.output == .retain
 
 /-- MAX (faithfulness): penalizes deletion of an input consonant.
     Violated by the deleting candidate in all contexts.
-    @cite{coetzee-pater-2011} example (11). -/
+    [coetzee-pater-2011] example (11). -/
 def maxC : NamedConstraint TDCandidate :=
   mkMax "MAX" fun c => c.output == .delete
 
 /-- MAX-PRE-V (contextual faithfulness): penalizes deletion specifically
     in pre-vocalic position, where perceptual cues for t/d are maximal.
-    @cite{coetzee-pater-2011} example (11). -/
+    [coetzee-pater-2011] example (11). -/
 def maxPreV : NamedConstraint TDCandidate :=
   mkMaxCtx "MAX-PRE-V" (fun c => c.output == .delete) (fun c => c.context == .preV)
 
 /-- MAX-FINAL (contextual faithfulness): penalizes deletion in
     phrase-final position, where consonantal release provides cues.
-    @cite{coetzee-pater-2011} example (11). -/
+    [coetzee-pater-2011] example (11). -/
 def maxFinal : NamedConstraint TDCandidate :=
   mkMaxCtx "MAX-FINAL" (fun c => c.output == .delete) (fun c => c.context == .pause)
 
@@ -271,7 +271,7 @@ def tdVp : Context → TDOutput → Fin 4 → ℕ
 
 /-! ### POC model — substrate-derived -/
 
-/-! @cite{coetzee-pater-2011} §3.2 explicitly adopts the POC framework:
+/-! [coetzee-pater-2011] §3.2 explicitly adopts the POC framework:
     "the grammar states a partial, rather than a total, order on the constraint
     set. Each time the grammar is used to evaluate a candidate set, one of the
     total orders consistent with the partial order is randomly chosen."
@@ -470,7 +470,7 @@ theorem maxent_aave_ordering :
     violates only {MAX}, so H(del|preC) - H(del|preV) = wMaxPreV ≥ 0.
 
     Banning negative weights thus makes MaxEnt respect the same
-    typological restriction as POC (@cite{coetzee-pater-2011} §4.4). -/
+    typological restriction as POC ([coetzee-pater-2011] §4.4). -/
 theorem nonneg_weights_preserve_ordering
     (wCT wMax wMaxPreV wMaxFin : ℚ) (hPreV : wMaxPreV ≥ 0) :
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin) ⟨.preC, .delete⟩ ≥
@@ -512,7 +512,7 @@ theorem nonneg_weights_preserve_ordering_pause
 /-- Tejano' is a hypothetical dialect with reversed pre-C/pre-V rates:
     lowest deletion in pre-consonantal position.
     Created by swapping Tejano's pre-V (25%) and pre-C (62%) rates.
-    @cite{coetzee-pater-2011} §4.4. -/
+    [coetzee-pater-2011] §4.4. -/
 def tejanoPrime : Context → Nat
   | .preV  => 62
   | .pause => 46
@@ -533,7 +533,7 @@ theorem poc_cannot_generate_tejanoPrime :
     when MAX-PRE-V has a negative weight, violating it *helps* the
     candidate, rewarding deletion in pre-vocalic position.
 
-    Witness from @cite{coetzee-pater-2011} table (23) Tejano' ME-HG row:
+    Witness from [coetzee-pater-2011] table (23) Tejano' ME-HG row:
     \*CT = 99.4, MAX = 100.6, MAX-PRE-V = −1.6, MAX-FINAL = −0.8.
     These are the weights the paper's MaxEnt fitting procedure learned
     on Tejano' frequencies.
@@ -544,7 +544,7 @@ theorem poc_cannot_generate_tejanoPrime :
     - Pre-C delete: H = −(100.6·1) = −100.6
     - Pre-C retain: H = −(99.4·1) = −99.4 → retain > delete ✓ (REVERSED)
 
-    @cite{coetzee-pater-2011} §4.4, table (23) -/
+    [coetzee-pater-2011] §4.4, table (23) -/
 theorem maxent_can_generate_tejanoPrime :
     ∃ wCT wMax wMaxPreV wMaxFin : ℚ,
     harmonyScore (mkWeightedConstraints wCT wMax wMaxPreV wMaxFin)

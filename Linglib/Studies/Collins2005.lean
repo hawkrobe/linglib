@@ -5,7 +5,7 @@ import Linglib.Syntax.Minimalist.Movement.InverseVoice
 
 /-!
 # A Smuggling Approach to the Passive in English
-@cite{collins-2005} @cite{chomsky-2001} @cite{legate-2003} @cite{rizzi-1990}
+[collins-2005] [chomsky-2001] [legate-2003] [rizzi-1990]
 
 Connects the empirical passive data in `Phenomena.ArgumentStructure.Passive`
 to the smuggling theory in `Syntax.Minimalist.Movement.Smuggling`
@@ -13,9 +13,9 @@ and the Voice/phase infrastructure in `Syntax.Minimalist.Voice`.
 
 ## Collins's central claims
 
-@cite{collins-2005} argues for a smuggling derivation of the passive that
+[collins-2005] argues for a smuggling derivation of the passive that
 combines aspects of the principles-and-parameters approach (no specific
-rules, no downward movement) with @cite{chomsky-1957}'s *Syntactic Structures*
+rules, no downward movement) with [chomsky-1957]'s *Syntactic Structures*
 analysis (the arguments are generated in the same positions in active and
 passive, satisfying UTAH).
 
@@ -52,23 +52,23 @@ The four core properties of `voicePassive`: it does not assign an external
 Case dissociation), it is not a phase head (which is what permits smuggling
 per §5), and it has a D-feature (it is a Voice head, not an expletive). -/
 
-/-- @cite{collins-2005} §2: passive Voice does *not* assign external θ.
+/-- [collins-2005] §2: passive Voice does *not* assign external θ.
     The external θ-role stays on v in both active and passive. -/
 theorem passive_voice_does_not_assign_theta :
     ¬ voicePassive.AssignsTheta := by decide
 
-/-- @cite{collins-2005} §4: passive Voice checks accusative Case. The
+/-- [collins-2005] §4: passive Voice checks accusative Case. The
     Case feature dissociates from v and projects on the Voice head
     (whose lexical realization is *by*). -/
 theorem passive_voice_checks_case :
     voicePassive.ChecksCase := by decide
 
-/-- @cite{collins-2005} §5: passive Voice is not a phase head, which is
+/-- [collins-2005] §5: passive Voice is not a phase head, which is
     what permits PartP to smuggle past the external argument in Spec,vP. -/
 theorem passive_voice_not_phase :
     ¬ voicePassive.IsPhasal := by decide
 
-/-- @cite{collins-2005} §5: passive Voice permits smuggling. -/
+/-- [collins-2005] §5: passive Voice permits smuggling. -/
 theorem passive_permits_smuggling :
     voicePassive.permitsSmuggling = true := rfl
 
@@ -82,7 +82,7 @@ dissociates from v and is added to the numeration as part of the Voice
 head. The two heads are then in complementary distribution on
 (θ-assigning, Case-checking). -/
 
-/-- @cite{collins-2005} §4 eq. 31: active and passive have the same
+/-- [collins-2005] §4 eq. 31: active and passive have the same
     θ-assignment but distribute the Case-checking feature differently. -/
 theorem active_passive_dissociation :
     -- Active: v assigns θ AND checks Case (Voice does not check Case)
@@ -106,7 +106,7 @@ fall out from the assumption that the constituent moved is PartP, not
 just the verb. The data live in `Passive.particleData` and are derived
 here from the smuggling configuration. -/
 
-/-- @cite{collins-2005} §3 (15–16): in passive with a particle verb,
+/-- [collins-2005] §3 (15–16): in passive with a particle verb,
     the only grammatical order is `V Prt EA` (`summed up by the coach`),
     not `V EA Prt` (*`summed by the coach up`). This follows from the
     smuggling configuration: PartP = [Part V DP] moves *as a constituent*
@@ -115,7 +115,7 @@ theorem particle_stranding_requires_xp_movement :
     licensesPassiveSmuggling voicePassive true = true := by
   simp only [licensesPassiveSmuggling, passive_permits_smuggling, Bool.true_and]
 
-/-- @cite{collins-2005} §3 (18–19): pseudo-passives (`John was spoken to
+/-- [collins-2005] §3 (18–19): pseudo-passives (`John was spoken to
     by Mary`) require the preposition to be inside the smuggled PartP
     (P stays adjacent to V, not stranded after EA). Same XP-movement
     diagnostic as particles. -/
@@ -133,7 +133,7 @@ theorem no_partP_no_passive :
 
 /-! ## §5. Short passives (§6 of paper)
 
-@cite{collins-2005} §6 (45–47): even when the external argument is not
+[collins-2005] §6 (45–47): even when the external argument is not
 phonologically realized (`The book was written`), it is structurally
 present as an empty pronominal in Spec,vP. Evidence: implicit arguments
 bind reflexives (42a `Such privileges should be kept to oneself`), license
@@ -160,7 +160,7 @@ theorem short_and_long_passive_share_voice :
 
 /-! ## §6. *By-DP* as a VoiceP constituent (§8 of paper)
 
-@cite{collins-2005} §8 (63–64) defends *by-DP* as a constituent on the
+[collins-2005] §8 (63–64) defends *by-DP* as a constituent on the
 basis of coordination: `The book was written by John and by Bill` is
 grammatical — coordination of two `by-DP` strings. Under Collins's
 analysis there is no `[PP by DP]` constituent (since *by* heads VoiceP,
@@ -188,7 +188,7 @@ theorem by_dp_coordination_requires_voiceP :
 /-! ## §7. Inverse-voice family membership
 
 The smuggling derivation Collins develops for the passive is the same
-mechanism @cite{storment-2026} extends to QI and LI. The shared
+mechanism [storment-2026] extends to QI and LI. The shared
 structural invariant — non-phase Voice permits VP/PartP smuggling —
 is captured by `Minimalist.InverseVoiceConstruction` in the Theories
 layer. Collins's passive instance is `Minimalist.passiveCanonical`. -/

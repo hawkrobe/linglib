@@ -3,17 +3,17 @@ import Linglib.Semantics.Modality.Typology
 /-!
 # Nez Perce Modal Inventory
 
-@cite{deal-2011} @cite{matthewson-2016}
+[deal-2011] [matthewson-2016]
 
 Nez Perce (Sahaptian, ISO 639-3 `nez`) circumstantial modal system.
 Nez Perce is a key example of a language with **modals without duals**
-(@cite{matthewson-2016} §18.3.2): the circumstantial modal *o'qa* is
+([matthewson-2016] §18.3.2): the circumstantial modal *o'qa* is
 a possibility modal that appears to have both possibility and necessity
-readings, but @cite{deal-2011} argues it is semantically a pure
+readings, but [deal-2011] argues it is semantically a pure
 possibility modal whose apparent necessity readings arise from the
 absence of a contrasting necessity modal.
 
-## Key data (@cite{deal-2011} pp. 574)
+## Key data ([deal-2011] pp. 574)
 
 (39) *hi-wqii-cix-∅ 'iléxni hipt ke yox hi-pá-ap-o'qa*
      'They are throwing away a lot of food that they could eat.'
@@ -33,7 +33,7 @@ downward-entailing operators.
 
 ## Analysis
 
-@cite{deal-2011}: *o'qa* is a possibility modal acceptable in
+[deal-2011]: *o'qa* is a possibility modal acceptable in
 non-downward-entailing necessity contexts because there is no
 contrasting necessity modal to induce a scalar implicature.
 The system parallels what English nominal quantification would look
@@ -51,7 +51,7 @@ private abbrev pc := ForceFlavor.mk .possibility .circumstantial
 
 /-- Circumstantial possibility modal, pragmatically strengthened in
     non-downward-entailing contexts due to absence of a necessity dual.
-    @cite{deal-2011}: pure possibility semantics (∃-quantifier over
+    [deal-2011]: pure possibility semantics (∃-quantifier over
     circumstantially accessible worlds). Apparent necessity readings
     are scalar: no ∀-competitor triggers the 'not all' implicature. -/
 def oqa : ModalExpression := ⟨"o'qa", [pc]⟩
@@ -63,7 +63,7 @@ def allExpressions : List ModalExpression := [oqa]
 /-- Force analysis: o'qa is a strengthened possibility modal — base
     semantics is ◇, but absence of a dual ∀-modal allows pragmatic
     necessity readings in non-downward-entailing contexts.
-    @cite{matthewson-2016} §18.3.2. -/
+    [matthewson-2016] §18.3.2. -/
 def forceAnalysis : ModalExpression → ForceAnalysis
   | ⟨"o'qa", _⟩ => .strengthened .possibility
   | _ => .strengthened .possibility

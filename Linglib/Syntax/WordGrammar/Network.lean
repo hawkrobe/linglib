@@ -8,17 +8,17 @@ import Linglib.Syntax.DependencyGrammar.Basic
 
 Connects `Core.Inheritance` (Hudson's isA/prop network model) to the
 dependency grammar module so that word classes and their argument structures
-live in a single WG network. @cite{hudson-2010}
+live in a single WG network. [hudson-2010]
 
 Argument structures are inherited via default inheritance: a transitive verb
 inherits from verb, but a passive can override locally (the most specific
-value wins — what @cite{hudson-2010} calls the "Best Fit Principle").
+value wins — what [hudson-2010] calls the "Best Fit Principle").
 
 Subject-auxiliary inversion is modeled as subtype inheritance: the
 inverted auxiliary (Hudson uses both "inverted" and "interrogative" for
 the same word-class subtype, viewed from form vs. semantic side — see
 §11.6.1, p. 308) is a subtype of auxiliary that locally overrides the
-subject's direction from left to right, following @cite{hudson-2010}'s
+subject's direction from left to right, following [hudson-2010]'s
 treatment of inversion as a word-class subtype rather than a movement rule.
 -/
 
@@ -42,7 +42,7 @@ inductive WGNode where
   deriving Repr, DecidableEq
 
 /-- Relation labels for property links in a WG network.
-In @cite{hudson-2010}'s terms, these are the named relations that connect
+In [hudson-2010]'s terms, these are the named relations that connect
 word-class nodes to their syntactic properties. -/
 inductive WGRel where
   | argSlot (idx : Nat)     -- the idx-th argument slot (target = depRel)
@@ -104,7 +104,7 @@ def resolveArgStr (net : WGNetwork) (wc : String)
 -- ============================================================================
 
 /-- A WG network encoding the English auxiliary word-class hierarchy,
-following @cite{hudson-2010}:
+following [hudson-2010]:
 
 - `verb` has slot 0 = nsubj/left (subject precedes verb by default)
 - `transitive` isA `verb`, adds slot 1 = obj/right
@@ -189,7 +189,7 @@ theorem network_argStr_matches_manual :
 /-- The interrogative/inverted auxiliary inherits nsubj from `verb` (via `auxiliary`)
 but its locally specified direction (right) overrides the inherited
 direction (left). This is Hudson's subtype analysis of inversion
-(@cite{hudson-2010} §11.6.1, Fig 11.13): the inverted auxiliary is not
+([hudson-2010] §11.6.1, Fig 11.13): the inverted auxiliary is not
 a separate lexical rule — it's a word-class subtype. -/
 theorem inversion_by_subtype :
     -- Non-inverted: auxiliary gets nsubj/left (inherited from verb)

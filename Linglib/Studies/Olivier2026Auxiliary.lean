@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.PersonGeometry
 import Linglib.Syntax.Minimalist.Phase
 
 /-!
-# @cite{olivier-2026} — Auxiliary Switch in Romance restructuring
+# [olivier-2026] — Auxiliary Switch in Romance restructuring
 
 Olivier (2026) analyses **Auxiliary Switch (AS)** in Romance
 restructuring clauses: in `[Modal + BE-selecting-Infinitive]`
@@ -28,7 +28,7 @@ that stays low does not trigger AS. With unaccusative embedded verbs,
 no overt clitic is needed: AS is licensed by the embedded verb's
 ID-feature alone.
 
-## Refinement of @cite{harley-ritter-2002}
+## Refinement of [harley-ritter-2002]
 
 Olivier extends the person-feature geometry with an
 **ID-subfeature** (a referential-identity index). Two pronouns can
@@ -59,10 +59,10 @@ file commits only to the per-clause prediction.
 
 ## Analytic commitments and empirical caveats
 
-### DM elsewhere inversion (vs @cite{amato-2025})
+### DM elsewhere inversion (vs [amato-2025])
 
 Olivier (rule 55) takes HAVE as the more specific allomorph and
-BE as elsewhere. @cite{amato-2025} (rule 48) takes the opposite
+BE as elsewhere. [amato-2025] (rule 48) takes the opposite
 convention: HAVE is `vAux[Pers:α]` and BE is the elsewhere
 allomorph. This inversion is load-bearing for Olivier's account of
 how Modern French acquirers default to a non-AS grammar
@@ -100,7 +100,7 @@ open Phenomena.AuxiliaryVerbs.Selection
 /-! ## Matrix-verb taxonomy and clitic position -/
 
 /-- The matrix verb's restructuring type. Only `.modal` matrix verbs
-    can host Auxiliary Switch (@cite{olivier-2026}). Control and
+    can host Auxiliary Switch ([olivier-2026]). Control and
     raising matrices are not restructuring heads in the relevant
     sense; `.none` is for non-restructuring contexts. -/
 inductive RestructuringMatrix where
@@ -111,7 +111,7 @@ inductive RestructuringMatrix where
   deriving DecidableEq, Repr
 
 /-- Whether this matrix is a modal restructuring head — the only
-    case that licenses AS (@cite{olivier-2026}). -/
+    case that licenses AS ([olivier-2026]). -/
 def RestructuringMatrix.isModal : RestructuringMatrix → Bool
   | .modal => true
   | _      => false
@@ -130,7 +130,7 @@ inductive RefCliticPosition where
 /-! ## Restructuring clauses -/
 
 /-- A `[Modal + Infinitive]` restructuring clause as
-    @cite{olivier-2026} models it. The four fields are exactly the
+    [olivier-2026] models it. The four fields are exactly the
     structural diagnostics the AS rule consults. -/
 structure RestructuringClause where
   /-- Is the matrix a modal restructuring head? -/
@@ -147,7 +147,7 @@ structure RestructuringClause where
 
 /-- Does this restructuring clause exhibit Auxiliary Switch?
 
-    Per @cite{olivier-2026}, AS occurs iff:
+    Per [olivier-2026], AS occurs iff:
     (1) the matrix is modal, AND
     (2) the matrix is in a compound tense, AND
     (3) the embedded verb is BE-selecting (unaccusative or reflexive),
@@ -335,7 +335,7 @@ example : predictedMatrixAux beWantReflexiveClimbed = .be := by decide
 /-! ### Universally-quantified predictions -/
 
 /-- For *any* modal-compound-reflexive clause with a climbed clitic,
-    @cite{olivier-2026} predicts AS. Generalizes the one-witness smoke
+    [olivier-2026] predicts AS. Generalizes the one-witness smoke
     test above. -/
 theorem reflexive_climbing_triggers_as
     (c : RestructuringClause)
@@ -350,7 +350,7 @@ theorem reflexive_climbing_triggers_as
 
 /-- For *any* modal-compound-reflexive clause whose clitic stays low,
     AS does NOT trigger — climbing is the load-bearing trigger condition
-    (one of @cite{olivier-2026}'s central empirical claims). -/
+    (one of [olivier-2026]'s central empirical claims). -/
 theorem reflexive_low_no_as
     (c : RestructuringClause)
     (hRefl : c.embeddedClass = .reflexive)

@@ -3,10 +3,10 @@ import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!
 # English Auxiliary Diagnostics: NICE Properties
-@cite{huddleston-1976} @cite{palmer-2001}
+[huddleston-1976] [palmer-2001]
 
-@cite{huddleston-1976} coined the NICE acronym for four properties of English
-auxiliaries identified by @cite{palmer-2001}: Negation, Inversion, Code,
+[huddleston-1976] coined the NICE acronym for four properties of English
+auxiliaries identified by [palmer-2001]: Negation, Inversion, Code,
 Emphasis.
 
 | Property | Test                              | Example          |
@@ -73,7 +73,7 @@ def NICEProfile.isLexical (p : NICEProfile) : Bool := p.count == 0
 
 /-! ## Huddleston classification
 
-@cite{huddleston-1976} groups English auxiliaries into three NICE classes:
+[huddleston-1976] groups English auxiliaries into three NICE classes:
 - **Full**: modals + do/be/have — all four properties.
 - **Semi (N+I)**: *dare*, *need* — Negation and Inversion only.
 - **Semi (N+E)**: *ought* — Negation and Emphasis only (Inversion is
@@ -110,7 +110,7 @@ def lexicalVerbNICE : NICEProfile := ⟨false, false, false, false⟩
 
 /-! ## Contracted negation (Fragment-derived)
 
-@cite{huddleston-1976} notes that NICE Negation concerns direct *not*-
+[huddleston-1976] notes that NICE Negation concerns direct *not*-
 negation; contracted negation (*-n't*) is a stronger sub-property with
 paradigm gaps at *may* and *am*. The `negForm : Option String` field in
 `AuxEntry` records each entry's contracted form (or absence). -/

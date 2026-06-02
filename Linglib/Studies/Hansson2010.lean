@@ -8,16 +8,16 @@ import Linglib.Core.Computability.Subregular.StrictlyPiecewise
 import Linglib.Core.Computability.Subregular.Multitier
 
 /-!
-# Hansson (2010) @cite{hansson-2010}
+# Hansson (2010) [hansson-2010]
 
 Consonant Harmony: Long-Distance Interaction in Phonology. *University
 of California Publications in Linguistics* 145.
 
-@cite{hansson-2010} surveys ~175 cases of long-distance consonant
+[hansson-2010] surveys ~175 cases of long-distance consonant
 agreement across >130 languages, organized by harmonizing property
 (coronal/sibilant, dorsal, labial, secondary-articulation, nasal,
 liquid, stricture, laryngeal). The formal analysis is a modified
-Agreement-by-Correspondence model after @cite{rose-walker-2004}, with
+Agreement-by-Correspondence model after [rose-walker-2004], with
 two theoretical refinements: (a) C-C correspondence is construed as
 directionally asymmetric (strictly anticipatory), and (b) the relevant
 agreement constraints are formulated as *targeted* constraints in the
@@ -30,9 +30,9 @@ targeted-constraint architecture, or his speech-error / palatal-bias
 arguments — those live in the OT layer and the speech-planning
 literature. What we formalize here is the *surface stringset* of one
 of the leading case studies — Navajo sibilant harmony, prominently
-featured in @cite{hansson-2010}'s introduction (§1.1) and discussed
+featured in [hansson-2010]'s introduction (§1.1) and discussed
 in detail in §2.4.1.1 — as a tier-based strictly 2-local language,
-following the subregular tradition (@cite{mcmullin-2016}).
+following the subregular tradition ([mcmullin-2016]).
 
 The framing is the same as in `RoseWalker2004.lean`: the ABC-style
 analysis *derives* the surface generalization; the TSL_2 description
@@ -44,14 +44,14 @@ Sibilant harmony is a *symmetric* dissimilation-style phonotactic — the
 forbidden pair is "tier-adjacent and *unequal*" — so this study is the
 canonical instance of the AGREE specialization in
 `Phonology/Subregular/Agree.lean`, the non-identity dual of the
-OCP (@cite{goldsmith-1976}, @cite{mccarthy-1986}). The Kikongo case in
+OCP ([goldsmith-1976], [mccarthy-1986]). The Kikongo case in
 `RoseWalker2004.lean` is *asymmetric* and instantiates the generic
 forbidden-pair constructor directly rather than via AGREE.
 
 ## Design boundary
 
 Things this formalization is silent on, by design:
-1. **Directionality**: @cite{hansson-2010} argues consonant harmony is
+1. **Directionality**: [hansson-2010] argues consonant harmony is
    strictly anticipatory (right-to-left). The TSL_2 description with
    symmetric forbidden pairs licenses the surface stringset regardless
    of which segment "triggered" the harmony — the directional
@@ -61,15 +61,15 @@ Things this formalization is silent on, by design:
    Single-tier TSL with a fixed predicate has no notion of source vs
    target.
 3. **Similarity scaling**: in ABC, the CORR-C↔C constraint family is
-   scaled by featural similarity and distance (@cite{hansson-2010}
+   scaled by featural similarity and distance ([hansson-2010]
    §4.2.1.1) — only sufficiently similar consonants enter into
    correspondence. The TSL_2 stringset is sharp.
-4. **Speech-error parallels (palatal bias)**: @cite{hansson-2010}'s
+4. **Speech-error parallels (palatal bias)**: [hansson-2010]'s
    chapter 6 argues that consonant harmony has its roots in
    speech-planning errors, with the palatal bias as the central
    diagnostic. This is an extragrammatical claim outside any synchronic
    surface description.
-5. **Similarity-graded transparency vs opacity**: @cite{hansson-2010}'s
+5. **Similarity-graded transparency vs opacity**: [hansson-2010]'s
    chapter 3 reviews cases where intervening segments behave
    differently depending on how similar they are to the harmonizing
    pair. Single-tier TSL with a fixed tier predicate cannot express
@@ -77,11 +77,11 @@ Things this formalization is silent on, by design:
    non-monotonicity in `ForbiddenPairs.lean`, and the load-bearing
    gradient-OCP instance in
    `Studies/FrischPierrehumbertBroe2004.lean`,
-   which formalises @cite{frisch-pierrehumbert-broe-2004}'s
+   which formalises [frisch-pierrehumbert-broe-2004]'s
    natural-classes similarity metric (eq. 7) and proves no
    similarity-threshold TSL_2 grammar can match three Table IV bins.
    Closely related: the autosegmental/feature-geometry tradition
-   (@cite{sagey-1986}) treats the harmonizing feature itself as a
+   ([sagey-1986]) treats the harmonizing feature itself as a
    tier-resident object; that representational layer is upstream of
    the surface stringset characterized here.
 
@@ -93,7 +93,7 @@ sibilant harmony — the language that the harmony filter accepts. The
 admits a separate subregular classification per
 `Core/Computability/Subregular/Function/`: long-distance consonant
 agreement is generally **Tier-Subsequential** (not ISL or OSL — those
-require a *contiguous* k-window), and per @cite{hansson-2010}'s
+require a *contiguous* k-window), and per [hansson-2010]'s
 strictly-anticipatory directionality argument it is specifically
 **Right-Tier-Subsequential**. We do not encode the function-level
 classification here; the language-level TSL_2 statement is the cleaner
@@ -102,7 +102,7 @@ direction-symmetric.
 
 ## Navajo sibilant harmony — the leading case
 
-Navajo (Athapaskan; @cite{hansson-2010} §1.1, §2.4.1.1) has two
+Navajo (Athapaskan; [hansson-2010] §1.1, §2.4.1.1) has two
 contrasting sibilant series: an alveolar series {s, z, ts, tsʼ, dz}
 and a postalveolar series {ʃ, ʒ, tʃ, tʃʼ, dʒ}. A sibilant in the
 verb root determines the realization of all sibilants in preceding
@@ -145,7 +145,7 @@ inductive NSeg where
 
 /-- The harmonizing-class tier predicate: only sibilants project. Non-
 sibilant consonants and vowels are transparent (off-tier). This
-corresponds to the long-distance reading of @cite{hansson-2010}'s
+corresponds to the long-distance reading of [hansson-2010]'s
 typology — only the segments participating in the agreement form the
 relevant locality domain. The tier choice is the substantive theoretical
 commitment (cf. the design-boundary docstring on `tierProject`
@@ -213,7 +213,7 @@ theorem navajoSibilantHarmony_lang_isTSL2 :
 /-- **BTSL_2 corollary** (via the PR-4 bridge `IsTierStrictlyLocal.toIsBTSL`
 in `Core.Computability.Subregular.Multitier`): the Navajo sibilant
 harmony stringset is in the multitier closure of strictly local
-languages. Hands the @cite{lambert-2026} BTC framework a Hansson-data
+languages. Hands the [lambert-2026] BTC framework a Hansson-data
 consumer without re-proving anything. -/
 theorem navajoSibilantHarmony_lang_isBTSL2 :
     Core.Computability.Subregular.IsBTSL 2 navajoSibilantHarmony.lang :=
@@ -270,7 +270,7 @@ theorem navajoAgree_zero_iff_in_TSL (c : List NSeg) :
   mkAgreeOnTier_zero_iff_in_agree_lang "AGREE-[ant]/CC" NSeg.onTier id c
 
 -- ============================================================================
--- § 6: SP_2 vs TSL_2 — cross-framework comparison (after @cite{mcmullin-2016})
+-- § 6: SP_2 vs TSL_2 — cross-framework comparison (after [mcmullin-2016])
 -- ============================================================================
 
 /-! ### § 6.1 The SP_2 formalisation of Navajo
@@ -283,7 +283,7 @@ projection. The SP_2 grammar forbids the length-2 subsequences
 invisible by construction (subsequences ignore position). This
 naturally captures *transparent* harmony — exactly Navajo's profile.
 
-@cite{mcmullin-2016} argues that consonant harmony in general requires
+[mcmullin-2016] argues that consonant harmony in general requires
 TSL_2, not SP_2: SP cannot model **blocker-style opacity** (where a
 specific intervening consonant breaks long-distance harmony). For
 Navajo's transparent harmony, the two classifications coincide on the
@@ -301,7 +301,7 @@ def navajoSibilantHarmonySP : SPGrammar 2 NSeg where
   permitted s := s ≠ [.antSib, .postSib] ∧ s ≠ [.postSib, .antSib]
 
 /-- **Navajo sibilant harmony stringset is SP_2** under the alternative
-@cite{mcmullin-2016} characterisation. Explicit `IsStrictlyPiecewise 2`
+[mcmullin-2016] characterisation. Explicit `IsStrictlyPiecewise 2`
 typing of the SP_2 grammar's implicit complexity claim. -/
 theorem navajoSibilantHarmonySP_lang_isSP2 :
     Core.Computability.Subregular.IsStrictlyPiecewise 2
@@ -376,7 +376,7 @@ tier and disagrees with both sibilant series. With the blocker on the
 TSL tier, TSL_2 rejects the input `[antSib, blocker, antSib]` (the
 tier-adjacent (antSib, blocker) pair disagrees), while SP_2 accepts it
 (no mixed-place sibilant subsequence is present). This is the
-typological force of @cite{mcmullin-2016}: SP_2 cannot express
+typological force of [mcmullin-2016]: SP_2 cannot express
 blocker-style opacity at all, regardless of the choice of forbidden
 subsequence — a point that, for Navajo specifically, is moot but for
 the broader class of consonant-harmony systems is decisive. -/
@@ -425,7 +425,7 @@ theorem opaqueSP_lang_of_one_sibilant_class_absent {w : List NSegB}
   · exact hAnt (_pair_mem_of_sublist hsub).2
   · exact hPost (_pair_mem_of_sublist hsub).1
 
-/-- **Cross-framework divergence** (after @cite{mcmullin-2016}): on the
+/-- **Cross-framework divergence** (after [mcmullin-2016]): on the
 input `[antSib, blocker, antSib]` (an opaque-blocker configuration with
 two same-place sibilants), the TSL_2 grammar with the blocker on the
 sibilant tier *rejects*, while the SP_2 grammar *accepts*. SP cannot

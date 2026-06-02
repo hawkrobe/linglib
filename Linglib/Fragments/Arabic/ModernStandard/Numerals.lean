@@ -2,7 +2,7 @@ import Linglib.Typology.Numeral.WALS
 
 /-!
 # Modern Standard Arabic Numeral Profile (WALS Chs 53–56, 131)
-@cite{wals-2013} @cite{ryding-2005}
+[wals-2013] [ryding-2005]
 
 WALS-style typological summary for MSA cardinal and ordinal numerals
 per Ryding ch 15 (pp. 329–365).

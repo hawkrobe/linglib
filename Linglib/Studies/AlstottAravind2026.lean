@@ -10,12 +10,12 @@ open Features (Acceptability)
 open Paradigms.SelfPacedReading (Region)
 
 /-!
-# @cite{alstott-aravind-2026}: On aspectual coercion in *before*- and *after*-clauses
-@cite{alstott-aravind-2026} @cite{rett-2020}
+# [alstott-aravind-2026]: On aspectual coercion in *before*- and *after*-clauses
+[alstott-aravind-2026] [rett-2020]
 
-Self-paced reading data from 4 experiments testing @cite{rett-2020}'s prediction
+Self-paced reading data from 4 experiments testing [rett-2020]'s prediction
 that aspectual coercion (INCHOAT, COMPLET) incurs measurable processing cost.
-Under-specification theories (e.g. @cite{anscombe-1964}) do not predict such costs.
+Under-specification theories (e.g. [anscombe-1964]) do not predict such costs.
 
 ## Results Summary
 

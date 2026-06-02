@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Modal.QBSML.Enrichment
 /-!
 # QBSML free-choice theorems — Aloni & van Ormondt 2023 §5
 
-@cite{aloni-vanormondt-2023} @cite{aloni-2022}
+[aloni-vanormondt-2023] [aloni-2022]
 
 The first-order analogues of `BSML/FreeChoice.lean`'s theorems. Pragmatic
 enrichment (Aloni & van Ormondt 2023 Definition 4.13) combined with split
@@ -55,7 +55,7 @@ variable [DecidableEq Var] [Fintype Var] [DecidableEq Domain] [Fintype Domain]
 -- §1 Enrichment strengthens (joint bilateral induction)
 -- ============================================================================
 
-/-- Both directions of "enrichment strengthens" (Fact 1 of @cite{aloni-2022}
+/-- Both directions of "enrichment strengthens" (Fact 1 of [aloni-2022]
     extended to QBSML). For NE-free `φ`:
     - `support M (enrich φ) s → support M φ s`
     - `antiSupport M (enrich φ) s → antiSupport M φ s`
@@ -244,7 +244,7 @@ private lemma image_fst_subset_of_subset_modalLift
 -- §3 Negation behaviour (Fact 10)
 -- ============================================================================
 
-/-- **Fact 10 (negation behaviour)** of @cite{aloni-vanormondt-2023}:
+/-- **Fact 10 (negation behaviour)** of [aloni-vanormondt-2023]:
 
     `[¬(α ∨ β)]⁺ ⊨ ¬α ∧ ¬β` for NE-free `α`, `β`.
 
@@ -276,8 +276,8 @@ theorem negationStrip_Q (M : QBSMLModel W Domain Pred)
 -- §4 Narrow-scope free choice (Fact 8)
 -- ============================================================================
 
-/-- **Fact 8 (◇-free choice / narrow-scope FC)** of @cite{aloni-vanormondt-2023}
-    (the first-order analogue of @cite{aloni-2022} Fact 4):
+/-- **Fact 8 (◇-free choice / narrow-scope FC)** of [aloni-vanormondt-2023]
+    (the first-order analogue of [aloni-2022] Fact 4):
 
     `[◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β` for NE-free `α`, `β`.
 

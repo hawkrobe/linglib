@@ -3,7 +3,7 @@ import Linglib.Discourse.Roles
 
 /-!
 # Discourse Commitments
-@cite{krifka-2015} @cite{brandom-1994} @cite{gunlogson-2001}
+[krifka-2015] [brandom-1994] [gunlogson-2001]
 
 Commitment slates, source × force tagging, and the speaker-indexed
 `S⊢φ` constructor.
@@ -15,8 +15,8 @@ namespace Commitment
 
 /-! ### Commitment Slates -/
 
-/-- An agent's public discourse commitments (@cite{krifka-2015},
-    @cite{brandom-1994}): a list of propositions the agent has
+/-- An agent's public discourse commitments ([krifka-2015],
+    [brandom-1994]): a list of propositions the agent has
     publicly committed to. -/
 structure CommitmentSlate (W : Type*) where
   /-- The propositions the agent is publicly committed to. -/
@@ -68,15 +68,15 @@ inductive CommitmentSource where
   deriving DecidableEq, Repr, Inhabited
 
 /-- The modal force of a commitment: doxastic (act-as-if-believe) or
-    preferential (act-as-if-effectively-prefer, @cite{condoravdi-lauer-2012},
-    @cite{lauer-2013}). -/
+    preferential (act-as-if-effectively-prefer, [condoravdi-lauer-2012],
+    [lauer-2013]). -/
 inductive CommitmentForce where
   | doxastic
   | preferential
   deriving DecidableEq, Repr, Inhabited
 
 /-- A commitment tagged with epistemic source and modal force.
-    `source × force` is @cite{deo-2025-bara}'s 2×2 cross. -/
+    `source × force` is [deo-2025-bara]'s 2×2 cross. -/
 structure TaggedCommitment (W : Type*) where
   content : W → Prop
   source : CommitmentSource
@@ -111,7 +111,7 @@ def doxasticContents (s : TaggedSlate W) : List (W → Prop) :=
   s.commitments.filter (·.commitmentForce == .doxastic) |>.map (·.content)
 
 /-- Preferential commitments (any source). The input to a joint-preferences
-    set when intersected across agents (@cite{deo-2025-bara}). -/
+    set when intersected across agents ([deo-2025-bara]). -/
 def preferentialContents (s : TaggedSlate W) : List (W → Prop) :=
   s.commitments.filter (·.commitmentForce == .preferential) |>.map (·.content)
 

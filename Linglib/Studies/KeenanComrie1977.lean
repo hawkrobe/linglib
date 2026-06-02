@@ -10,12 +10,12 @@ import Linglib.Fragments.Malagasy.Relativization
 import Linglib.Fragments.Yoruba.Relativization
 
 /-!
-# Keenan & Comrie (1977) @cite{keenan-comrie-1977}
+# Keenan & Comrie (1977) [keenan-comrie-1977]
 
 Noun Phrase Accessibility and Universal Grammar. Linguistic Inquiry 8(1): 63–99.
 
 Formalizes the three **Hierarchy Constraints** (HCs) and the derived
-**Primary Relativization Constraint** (PRC) from @cite{keenan-comrie-1977},
+**Primary Relativization Constraint** (PRC) from [keenan-comrie-1977],
 verified against a subset of the paper's Table 1 data (pp. 76-79).
 
 ## Architecture
@@ -28,7 +28,7 @@ predicates and aggregations are stated over `List Marker`
 directly, projecting through `Marker.{positions,
 bearsCaseMarking, rcPosition}` as needed.
 
-The Fragment files cite @cite{keenan-comrie-1979} (the per-language
+The Fragment files cite [keenan-comrie-1979] (the per-language
 exemplification appendix originally intended for publication with K&C
 1977 — Language 55(2): 333–351) inline where its sentence-level examples
 back the descriptive marker data.
@@ -121,13 +121,13 @@ def lowestCovered (markers : List Marker) : AHPosition :=
 
 /-! Per-language abbrevs over Fragment marker lists. The original
 8-language sample from the paper plus Yoruba (added later via
-@cite{awobuluyi-1978} + @cite{keenan-comrie-1979}). -/
+[awobuluyi-1978] + [keenan-comrie-1979]). -/
 
 abbrev english   := English.relMarkers
 abbrev welsh     := Welsh.relMarkers
-/- The two MSA markers @cite{keenan-comrie-1977} Table 1 records: the
+/- The two MSA markers [keenan-comrie-1977] Table 1 records: the
    definite-headed pair (`relAlladhi` + `relResumptive`). MSA additionally
-   has indefinite-headed asyndetic markers per @cite{ryding-2005} §14.3,
+   has indefinite-headed asyndetic markers per [ryding-2005] §14.3,
    §14.4.2, exposed in the Fragment as `relAsyndeticGap` and
    `relAsyndeticResumptive` — but K&C 1977 does not record them, so this
    study works with the K&C-documented subset. -/
@@ -186,18 +186,18 @@ theorem every_language_has_primary :
     **REFUTED by Yoruba** — see `yoruba_refutes_minus_case_covers_subjects`
     below: Yoruba has gap markers for DO and OBL that do not cover SU
     because subject relativization independently uses pronoun retention
-    (`ó`, per @cite{awobuluyi-1978} §6.19). -/
+    (`ó`, per [awobuluyi-1978] §6.19). -/
 theorem minus_case_covers_subjects_in_original_sample :
     ∀ markers ∈ originalSample,
       ∀ m ∈ markers, m.bearsCaseMarking = false → m.Covers .subject := by
   decide
 
-/-- @cite{keenan-comrie-1979} effectively documents Yoruba as a refutation
+/-- [keenan-comrie-1979] effectively documents Yoruba as a refutation
     of the gap-implies-subject correlation. Yoruba's IO/OBL relativization
     is mediated by serial-verb DO recasting (K&C 1979 p. 349), producing
     -case markers that do not cover SU. SU relativization independently
     uses pronoun retention (`ó`, K&C 1979 p. 350 analyzes as verb
-    agreement; descriptive surface form per @cite{awobuluyi-1978} §6.19). -/
+    agreement; descriptive surface form per [awobuluyi-1978] §6.19). -/
 theorem yoruba_refutes_minus_case_covers_subjects :
     ∃ m ∈ yoruba, m.bearsCaseMarking = false ∧ ¬ m.Covers .subject := by
   decide
@@ -357,7 +357,7 @@ AH") is a paper-anchored claim. The contiguity machinery (`contiguousOnAH`,
 `AHPosition.rank`) lives in `Typology/RelativeClause/Basic.lean` because it
 mirrors `Core/Case/Hierarchy.lean::validInventory` and is genuinely
 framework-agnostic. The specific contiguous-segment witnesses below
-exemplify HC₂ on the AH and are part of @cite{keenan-comrie-1977}'s core
+exemplify HC₂ on the AH and are part of [keenan-comrie-1977]'s core
 argumentation. -/
 
 /-- The full hierarchy [SU, DO, IO, OBL, GEN, OCOMP] is contiguous. -/
@@ -448,7 +448,7 @@ private theorem contiguous_intermediate
 
     This proves that the PRC is a logical consequence of HC₂ + being primary,
     not an independent constraint — the paper's core derivation
-    (@cite{keenan-comrie-1977} p. 68: "PRC₂ follows directly from HC₂
+    ([keenan-comrie-1977] p. 68: "PRC₂ follows directly from HC₂
     and the definition of primary"). -/
 theorem prc_from_hc2 (positions : List AHPosition)
     (h_contig : contiguousOnAH positions = true)

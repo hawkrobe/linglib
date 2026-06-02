@@ -51,7 +51,7 @@ def thresholdRange : List ℚ :=
 
 /-!
 ## Gradable Adjectives as SDS
-@cite{lassiter-goodman-2017} @cite{tessler-goodman-2019}
+[lassiter-goodman-2017] [tessler-goodman-2019]
 
 For a gradable adjective like "tall":
 - **Param**: threshold values θ ∈ [0,1]
@@ -175,7 +175,7 @@ def gnHoldsSDS {E : Type} (gn : GradableNounWithSize E) (x : E) : Bool :=
 /-!
 ## The Bigness Generalization
 
-@cite{morzycki-2009} shows why "big idiot" works but "small idiot" doesn't.
+[morzycki-2009] shows why "big idiot" works but "small idiot" doesn't.
 This follows from scale structure:
 
 - **Positive adjectives** (big): min{d : big(d)} = θ_big > 0 (substantive)

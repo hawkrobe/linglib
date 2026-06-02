@@ -7,12 +7,12 @@ import Linglib.Morphology.ConsonantalRoot
 
 /-!
 # Tigrinya Phonological Inventory and Verbal Roots
-@cite{leslau-1941} @cite{berhane-1991} @cite{buckley-1994}
-@cite{buckley-1997-vowel-length} @cite{denais-1990}
-@cite{lowenstamm-prunet-1985} @cite{faust-lampitelli-2026}
+[leslau-1941] [berhane-1991] [buckley-1994]
+[buckley-1997-vowel-length] [denais-1990]
+[lowenstamm-prunet-1985] [faust-lampitelli-2026]
 
 Theory-neutral IPA inventory and the verbal roots used in the
-@cite{faust-lampitelli-2026} guttural-synersis analysis.
+[faust-lampitelli-2026] guttural-synersis analysis.
 
 Per fragment-schema discipline (CLAUDE.md), this file carries only
 *consensus typological metadata* — IPA strings, the consonantal-root
@@ -25,11 +25,11 @@ projection, not in this fragment.
 
 ## Vowel inventory
 
-Following @cite{leslau-1941}, @cite{berhane-1991}, @cite{denais-1990},
+Following [leslau-1941], [berhane-1991], [denais-1990],
 and the paper's §2.1: Tigrinya has **six full vowel qualities**
 [a, ʌ, i, u, e, o] plus a **weak vowel [ɨ]**. The weak vowel is
-considered epenthetic by @cite{buckley-1994}, @cite{denais-1990},
-@cite{berhane-1991} and the paper, occurring only where its absence
+considered epenthetic by [buckley-1994], [denais-1990],
+[berhane-1991] and the paper, occurring only where its absence
 would yield a phonotactic violation.
 
 ## Guttural inventory
@@ -43,7 +43,7 @@ This file lists only the four attested gutturals.
 
 ## Cross-reference: PHOIBLE 2.0
 
-@cite{moran-mccloy-2019} inventory ID 1350 (`tigr1271`, Tigrinya,
+[moran-mccloy-2019] inventory ID 1350 (`tigr1271`, Tigrinya,
 source `ph`) confirms both the 7-vowel inventory `{a, e, i, o, u, ɨ,
 ʌ}` and the 4-guttural inventory `{ʔ, h, ʕ, ħ}` exactly as
 described above. The paper's footnote-14 claim that the uvulars
@@ -62,7 +62,7 @@ recorded in the body and explained in the docstring.
 
 ## Verbal roots
 
-Tigrinya verbs are templatic (@cite{faust-lampitelli-2023}): a triradical
+Tigrinya verbs are templatic ([faust-lampitelli-2023]): a triradical
 (or biradical/quadriradical) consonantal root combines with a vocalic
 template. The paper uses a small inventory exemplifying the four
 scenarios its analysis treats:
@@ -86,8 +86,8 @@ open Morphology
 -- ============================================================================
 
 /-- The Tigrinya vowel inventory: six full qualities + weak [ɨ].
-    Following @cite{berhane-1991}, @cite{denais-1990},
-    @cite{leslau-1941}.
+    Following [berhane-1991], [denais-1990],
+    [leslau-1941].
 
     Constructor naming: ASCII names (since Lean identifiers cannot
     contain the IPA characters ʌ, ɨ); the IPA form is given in each
@@ -109,8 +109,8 @@ inductive Vowel where
   /-- IPA [o] — mid back rounded vowel. -/
   | o
   /-- IPA [ɨ] — weak (epenthetic) vowel. Phonetic realization of an
-      empty nucleus per paper eq. (22) + @cite{buckley-1994},
-      @cite{faust-2024}. -/
+      empty nucleus per paper eq. (22) + [buckley-1994],
+      [faust-2024]. -/
   | weak
   deriving DecidableEq, Repr
 
@@ -161,7 +161,7 @@ end Vowel
 -- § 2: Guttural inventory
 -- ============================================================================
 
-/-- The four gutturals attested in Tigrinya per @cite{faust-lampitelli-2026}
+/-- The four gutturals attested in Tigrinya per [faust-lampitelli-2026]
     §2.1: two glottals [ʔ, h] and two pharyngeals [ʕ, ħ]. The uvulars
     [χ, ʁ] from the extended ET inventory (paper eq. 20) are
     unattested in Tigrinya/Tigre (paper n. 14). -/

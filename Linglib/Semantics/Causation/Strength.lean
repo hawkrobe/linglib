@@ -4,14 +4,14 @@ import Mathlib.Tactic.NormNum
 
 /-!
 # Causal Strength Models
-@cite{icard-et-al-2017}
+[icard-et-al-2017]
 
 Theory-layer definitions for **causal strength**: computational models
 that rank candidate causes by importance, given a causal model.
 
 Two models are formalized:
 
-1. **Necessity-Sufficiency Model** (NSM, @cite{icard-et-al-2017}):
+1. **Necessity-Sufficiency Model** (NSM, [icard-et-al-2017]):
    `NSM(C) = P(C) · Suf(C) + (1 − P(C)) · Nec(C)`
 
 2. **Sampling propensity** (shared by NSM and CESM):

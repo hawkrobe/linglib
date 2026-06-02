@@ -2,7 +2,7 @@ import Linglib.Typology.PolarityItem
 
 /-!
 # Italian Polarity-Sensitive Items
-@cite{chierchia-2006} @cite{chierchia-2013}
+[chierchia-2006] [chierchia-2013]
 
 Lexical entries for Italian PSIs, typed by the theory-neutral categories
 from `Typology.PolarityItem`.
@@ -58,7 +58,7 @@ def mai : PolarityItemEntry :=
   , notes := "Pure NPI; 'Non l'ho mai visto'; no FC use" }
 
 /-- *alcuno* — Pure NPI (formal register).
-    Listed in @cite{chierchia-2006} table (76)/(94) alongside *mai* and *ever*.
+    Listed in [chierchia-2006] table (76)/(94) alongside *mai* and *ever*.
     Restricted distribution: negation + formal contexts. -/
 def alcuno : PolarityItemEntry :=
   { form := "alcuno"
@@ -81,7 +81,7 @@ def neanche : PolarityItemEntry :=
 /-- *mica* — Emphatic negation reinforcer / colloquial NPI.
     Co-occurs with *non* postverbally to add emphasis: *Non mi piace mica*
     "I don't like it AT ALL". The load-bearing diagnostic in
-    @cite{cinque-1999}'s adverb hierarchy and Zanuttini's NegP cartography:
+    [cinque-1999]'s adverb hierarchy and Zanuttini's NegP cartography:
     *mica* sits in a dedicated functional projection above the lexical-VP
     negation slot. Morphologically a frozen noun ("crumb"), grammaticalized
     into a focus particle in northern Italian especially. Distinct from
@@ -95,14 +95,14 @@ def mica : PolarityItemEntry :=
   , scalarDirection := .strengthening
   , notes :=
       "Emphatic negation reinforcer; postverbal with non; northern Italian " ++
-      "colloquial; @cite{cinque-1999} adverb hierarchy" }
+      "colloquial; [cinque-1999] adverb hierarchy" }
 
 /-- *pur* (in *con tutta la fantasia che pur si possa avere*, "with all the
     fantasy in the world that one could have") — weak NPI licensed in
     DE/comparative environments where the speaker presupposes a contradicted
     prior belief.
 
-    @cite{napoli-nespor-1976} §3.11 ex. 46–48: licensed under comparative
+    [napoli-nespor-1976] §3.11 ex. 46–48: licensed under comparative
     *non₂* alongside subjunctive co-occurrence and *neanche*-conjunction.
     Treated by N&N as a diagnostic for underlying negation in the comparative
     clause: where *pur* surfaces, *non₂* is licensed too. -/
@@ -113,15 +113,15 @@ def pur : PolarityItemEntry :=
   , licensingContexts := [.negation, .comparativeS]
   , scalarDirection := .strengthening
   , notes :=
-      "Weak NPI in clausal comparatives + bias-licensed contexts; @cite{napoli-nespor-1976} §3.11. " ++
+      "Weak NPI in clausal comparatives + bias-licensed contexts; [napoli-nespor-1976] §3.11. " ++
       "Licensed via .comparativeS (the clausal-comparative source); .comparativeNP does not " ++
-      "license per @cite{hoeksema-1983} §3.6." }
+      "license per [hoeksema-1983] §3.6." }
 
 /-- *affatto* ("at all", "completely") — weak NPI requiring *precise*
     knowledge of the listener's belief; blocked in N&N's comparative *non₂*
     on independent precision grounds.
 
-    @cite{napoli-nespor-1976} §3.22 fn (i): *affatto* is *not* licensed by
+    [napoli-nespor-1976] §3.22 fn (i): *affatto* is *not* licensed by
     bias-conditioned negation, even though it is a weak NPI elsewhere. The
     block is semantic — *affatto* requires the listener's belief to be
     explicit, which fails N&N's "imprecise/inferred" Condition 4. The
@@ -136,7 +136,7 @@ def affatto : PolarityItemEntry :=
   , scalarDirection := .strengthening
   , notes :=
       "Weak NPI but requires precise prior belief; blocked under bias-conditioned " ++
-      "negation by the imprecise condition; @cite{napoli-nespor-1976} §3.22 fn 6" }
+      "negation by the imprecise condition; [napoli-nespor-1976] §3.22 fn 6" }
 
 /-- N&N's central diagnostic: *pur* is licensed in comparative-clause
     contexts (which encode bias-conditioned negation in Italian), *affatto*
@@ -146,7 +146,7 @@ def affatto : PolarityItemEntry :=
     contrast that motivated the *non₂* analysis.
 
     `.comparativeS` (clausal-comparative) is the relevant slot:
-    @cite{hoeksema-1983} establishes that surface NP-comparatives are
+    [hoeksema-1983] establishes that surface NP-comparatives are
     Boolean homomorphisms (monotone) and not NPI environments —
     `.comparativeNP` therefore licenses nothing. -/
 theorem pur_licensed_in_comparative :

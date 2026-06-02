@@ -7,8 +7,8 @@ import Linglib.Phonology.Featural.Bundle
 
 /-!
 # Element Theory — vowels, glides, and gutturals as elemental bundles
-@cite{kaye-lowenstamm-vergnaud-1985} @cite{backley-2011}
-@cite{kaye-lowenstamm-1984} @cite{backley-nasukawa-2010}
+[kaye-lowenstamm-vergnaud-1985] [backley-2011]
+[kaye-lowenstamm-1984] [backley-nasukawa-2010]
 
 Element Theory (ET) builds segments from a small inventory of
 **privative** primes called *elements*. Three **resonance elements**
@@ -19,13 +19,13 @@ suffice for the vowel/glide system:
 * **|U|** — labiality (rounding); surfaces as [u] in a nucleus, as
   [w] elsewhere.
 * **|A|** — aperture (lowness/openness); surfaces as [a]/[ʌ] in a
-  nucleus, and — per @cite{angoujard-1995} and @cite{faust-lampitelli-2026}
+  nucleus, and — per [angoujard-1995] and [faust-lampitelli-2026]
   — as the resonance element of *gutturals* when associated to a
   C-slot. Two further elements, **|ʔ|** (occlusion, glottal closure)
   and **|h|** (noise, frication), specify the consonantal "stop" or
   "fricative" character of laryngeals/pharyngeals/uvulars.
 
-Following @cite{backley-2011} ch. 2, each element in a segment may be
+Following [backley-2011] ch. 2, each element in a segment may be
 the **head** (most prominent contributor) or an **operator** (modifier).
 The contrast between [ʌ] and [a] in the paper (eq. 21) is precisely a
 headedness contrast: [ʌ] = bare |A|, [a] = headed |A|. The contrast
@@ -67,8 +67,8 @@ not in fragment files.
 
 The full Backley 2011 inventory adds tonal elements |H| and |L|
 (omitted here — they belong with `Phonology.Autosegmental.RegisterTier`'s
-TRN substrate when needed). Charm (@cite{kaye-lowenstamm-vergnaud-1985})
-is omitted following @cite{backley-2011}'s textbook synthesis, which
+TRN substrate when needed). Charm ([kaye-lowenstamm-vergnaud-1985])
+is omitted following [backley-2011]'s textbook synthesis, which
 abandoned charm in favour of headedness as the prominence-encoding
 device.
 -/
@@ -82,8 +82,8 @@ open Phonology.Featural
 -- ============================================================================
 
 /-- The five primes of Element Theory needed for the
-    vowel/glide/guttural system @cite{kaye-lowenstamm-vergnaud-1985}
-    @cite{backley-2011}. Tonal elements (H, L) are omitted; they
+    vowel/glide/guttural system [kaye-lowenstamm-vergnaud-1985]
+    [backley-2011]. Tonal elements (H, L) are omitted; they
     belong with `Autosegmental.RegisterTier`'s TRN substrate. -/
 inductive Element where
   /-- Palatality / front quality. Vowel realization [i], glide [j]. -/
@@ -101,10 +101,10 @@ inductive Element where
   | noise
   deriving DecidableEq, Repr, Hashable
 
-/-- Headedness @cite{backley-2011} ch. 2: each element in a segment
+/-- Headedness [backley-2011] ch. 2: each element in a segment
     can be the *head* (most prominent) or an *operator* (modifier).
 
-    In the @cite{faust-lampitelli-2026} analysis (eq. 21), the contrast
+    In the [faust-lampitelli-2026] analysis (eq. 21), the contrast
     between [ʌ] (bare |A|) and [a] (headed |A|) is the headedness
     contrast. Eq. (20) extends the same contrast to gutturals:
     pharyngeals [ħ, ʕ] are headed by |A|, laryngeals [ʔ, h] and uvulars
@@ -135,7 +135,7 @@ namespace ETBundle
 
 /-- The empty ET bundle: no elements. The phonetic realization of an
     empty bundle in a vocalic position is the language's epenthetic
-    vowel — [ɨ] in Tigrinya/Tigre per @cite{faust-lampitelli-2026}
+    vowel — [ɨ] in Tigrinya/Tigre per [faust-lampitelli-2026]
     eq. (22). -/
 def empty : ETBundle := FeatureBundle.empty
 
@@ -175,7 +175,7 @@ end ETBundle
 -- ============================================================================
 
 /-- Following the textual paper (paper §3.3.2 + eq. 34) and
-    @cite{angoujard-1995}: in ET, the |A| element is on a different
+    [angoujard-1995]: in ET, the |A| element is on a different
     tier from |I, U|. The A-tier registers only |A|-presence (with
     headedness); the I/U-tier registers |I|/|U| presence.
 
@@ -184,7 +184,7 @@ end ETBundle
     tones, instantiated for ET. -/
 def aTier (b : ETBundle) : Option Headedness := b .A
 
-/-- The I/U-tier @cite{kaye-lowenstamm-vergnaud-1985}: a pair
+/-- The I/U-tier [kaye-lowenstamm-vergnaud-1985]: a pair
     `(Option Headedness, Option Headedness)` for whether |I| and |U|
     are specified, and how. Most segments specify at most one of the
     two (front vs back); the type-level pair allows for the rare
@@ -216,7 +216,7 @@ def projectIU (b : ETBundle) : ETBundle :=
     elements: the head wins. Used as the `combine` argument to
     `Phonology.Tier.ocpCollapse` when collapsing element-tier runs.
 
-    For the @cite{faust-lampitelli-2026} guttural-synersis case the
+    For the [faust-lampitelli-2026] guttural-synersis case the
     inputs are bundle-identical (two |A|s of the same headedness
     flanking a guttural), so the choice of `combine` is irrelevant —
     the default `fun a _ => a` of `ocpCollapse` suffices. The

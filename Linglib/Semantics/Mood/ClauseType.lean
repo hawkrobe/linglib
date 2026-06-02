@@ -5,13 +5,13 @@ import Linglib.Core.UD
 
 /-!
 # Clause Type: Force × Mood
-@cite{holmberg-2016} @cite{rizzi-1997}
+[holmberg-2016] [rizzi-1997]
 
 A clause type is a pair of independent dimensions:
 - **Force** (`IllocutionaryMood`): declarative, interrogative, imperative, ...
 - **Mood** (`GramMood`): indicative, subjunctive
 
-These are orthogonal — @cite{holmberg-2016}'s analysis requires both:
+These are orthogonal — [holmberg-2016]'s analysis requires both:
 a polar question is [interrogative, indicative], while a deliberative
 subjunctive question is [interrogative, subjunctive].
 

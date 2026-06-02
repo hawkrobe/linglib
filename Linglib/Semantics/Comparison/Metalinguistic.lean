@@ -4,7 +4,7 @@ import Linglib.Core.Logic.Intensional.Rigidity
 
 /-!
 # Metalinguistic Gradability
-@cite{rudolph-kocurek-2024}
+[rudolph-kocurek-2024]
 
 Semantic expressivist framework for metalinguistic comparatives ("Ann is more
 a linguist than a philosopher"), metalinguistic equatives, degree modifiers
@@ -49,7 +49,7 @@ Two notions:
 
 ⊩ is nonclassical: `A ⊩ A ≻ ¬A` and `¬A ⊩ ¬A ≻ A`, but
 `A ∨ ¬A ⊮ (A ≻ ¬A) ∨ (¬A ≻ A)`. This parallels informational
-entailment for epistemic modals (@cite{yalcin-2007}).
+entailment for epistemic modals ([yalcin-2007]).
 -/
 
 namespace Semantics.Comparison.Metalinguistic
@@ -324,7 +324,7 @@ def evalSorta {I W Pred Entity : Type} [Fintype I]
     (i : I) (w : W) : Bool :=
   !evalVery interpFn (.neg φ) ord d i w
 
-/-- mostly A (eq. 97 of @cite{rudolph-kocurek-2024}).
+/-- mostly A (eq. 97 of [rudolph-kocurek-2024]).
 True iff there is a reasonably high level (strictly below the top,
 within the distance threshold) where A is uniformly true, and all
 A-false levels below the current interpretation are ranked below it.
@@ -347,7 +347,7 @@ def evalMostly {I W Pred Entity : Type} [Fintype I]
         bAll I (λ j => !(ord.equivB j i'') || !(eval interpFn φ ord j w))) ||
       ord.ltB i'' i')
 
-/-- No Reversal constraint (van Benthem 1990; §7 of @cite{rudolph-kocurek-2024}).
+/-- No Reversal constraint (van Benthem 1990; §7 of [rudolph-kocurek-2024]).
 
 If entity e₁ is in the extension of P and e₂ is not at interpretation i,
 then for all i' ≤ i where e₂ enters the extension, e₁ must also be in
@@ -357,7 +357,7 @@ When NR holds for gradable adjectives, the MC `Fa ≻ Gb` simplifies to
 the **delineation comparative**: ∃ i' ≤ i with Fa∧¬Gb — the second clause
 of the MC semantics (about dominating all (B∧¬A)-witnesses) becomes
 redundant. This connects metalinguistic comparatives to
-@cite{klein-1980} and @cite{kamp-1975}. See
+[klein-1980] and [kamp-1975]. See
 `Semantics/Comparison/Delineation.lean` for the delineation
 framework. -/
 def noReversal {I W Pred Entity : Type}
@@ -377,7 +377,7 @@ def noReversal {I W Pred Entity : Type}
 -- ════════════════════════════════════════════════════════════════
 
 /-- Evaluate a formula under the revised MC semantics (Supplement §B of
-@cite{rudolph-kocurek-2024}).
+[rudolph-kocurek-2024]).
 
 The basic semantics (`eval`) fails ME transitivity: `A ≈ B, B ≈ C ⊭ A ≈ C`.
 The revised semantics strengthens the MC: the (A∧¬B)-witness must dominate
@@ -464,7 +464,7 @@ def restrictLE {I W Pred Entity : Type} [Fintype I]
     (le : I → I → Bool) (w : W) : I → I → Bool :=
   λ i j => le i j && evalGen interpFn A le i w && evalGen interpFn A le j w
 
-/-- Metalinguistic conditional (eq. 120 of @cite{rudolph-kocurek-2024}).
+/-- Metalinguistic conditional (eq. 120 of [rudolph-kocurek-2024]).
 
 ⟦A → B⟧^{≤,i,w} = 1 iff ∀ i' ≤ i : ⟦A⟧^{≤,i',w} = 1 → ⟦B⟧^{≤_A,i',w} = 1
 

@@ -7,10 +7,10 @@ import Linglib.Semantics.Conditionals.Restrictor
 /-!
 # Left-Nested Conditionals (LNCs)
 
-@cite{cao-white-lassiter-2025}
+[cao-white-lassiter-2025]
 
 Formalizes the analysis of left-nested conditionals following
-@cite{cao-white-lassiter-2025} "Sorting out left-nested conditionals."
+[cao-white-lassiter-2025] "Sorting out left-nested conditionals."
 
 ## Overview
 
@@ -23,7 +23,7 @@ Example:
 
 ## Key Claim
 
-@cite{cao-white-lassiter-2025} argues that bare LNCs are preferentially
+[cao-white-lassiter-2025] argues that bare LNCs are preferentially
 interpreted as **premise conditionals** (PCs), not hypothetical
 conditionals (HCs).
 
@@ -142,7 +142,7 @@ end InnerConditionalContent
 /--
 Interpret an LNC given discourse context and content type.
 
-The main result of @cite{cao-white-lassiter-2025}: bare LNCs default to PC interpretation.
+The main result of [cao-white-lassiter-2025]: bare LNCs default to PC interpretation.
 -/
 noncomputable def interpretLNC {W : Type*} (ds : State W) (lnc : LNC W)
     (content : InnerConditionalContent) (worlds : List W) : ConditionalType :=
@@ -256,8 +256,8 @@ end AnnotatedLNC
 -- Polarity Patterns in LNCs
 
 /-!
-## Polarity Patterns (@cite{cao-white-lassiter-2025}, Section 4)
-@cite{gibbard-1981}
+## Polarity Patterns ([cao-white-lassiter-2025], Section 4)
+[gibbard-1981]
 
 The PC analysis of LNCs predicts specific polarity patterns:
 
@@ -277,7 +277,7 @@ The embedded consequent patterns are diagnostic because:
 /--
 Polarity licensing in the embedded consequent position.
 
-Following @cite{cao-white-lassiter-2025}: the embedded consequent of an LNC (the B position
+Following [cao-white-lassiter-2025]: the embedded consequent of an LNC (the B position
 in "if (B if A), C") shows polarity patterns consistent with PC reading.
 -/
 structure EmbeddedConsequentPolarity where

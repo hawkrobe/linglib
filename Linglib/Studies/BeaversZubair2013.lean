@@ -4,7 +4,7 @@ import Linglib.Features.Case
 import Linglib.Fragments.Sinhala.Verbs
 
 /-!
-# @cite{beavers-zubair-2013} Anticausatives in Sinhala
+# [beavers-zubair-2013] Anticausatives in Sinhala
 
 Beavers, John and Cala Zubair. 2013. Anticausatives in Sinhala:
 involitivity and causer suppression. *Natural Language and Linguistic
@@ -59,7 +59,7 @@ that anticausativized roots are always involitive.
 
 ## Engagement with sibling analyses
 
-B&Z 2013 §6 explicitly rejects @cite{koontz-garboden-2009}'s
+B&Z 2013 §6 explicitly rejects [koontz-garboden-2009]'s
 reflexivization analysis on the grounds that it predicts the
 inchoative is true only when the causer is identified with the
 patient — but Sinhala's accusative-subject anticausative entails an
@@ -70,15 +70,15 @@ is captured by the `causerSuppress` operator (in `VoiceSemantics`)
 plus the U_I sortal restriction and the binding-mode disjunction in
 `Reading` below.
 
-B&Z 2013 also rejects deletion analyses (@cite{krejci-2012},
-@cite{bohnemeyer-2004}, Grimshaw 1982) on Monotonicity-Hypothesis
+B&Z 2013 also rejects deletion analyses ([krejci-2012],
+[bohnemeyer-2004], Grimshaw 1982) on Monotonicity-Hypothesis
 grounds: causer suppression preserves CAUSE in the LSR (the *ibeem*
 'by-itself' diagnostic licenses anticausatives, requiring CAUSE),
 while deletion does not. The `causerSuppress_eq_suppressArg`
 factor-through theorem in `VoiceSemantics` makes the
 truth-conditional content of the operator explicit.
 
-The natural next engagement target is @cite{alexiadou-schaefer-2015}'s
+The natural next engagement target is [alexiadou-schaefer-2015]'s
 featural Voice typology, which B&Z 2013 contrast against (their fn
 around (71)).
 -/

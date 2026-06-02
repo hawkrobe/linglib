@@ -2,9 +2,9 @@ import Linglib.Semantics.Verb.Basic
 
 /-!
 # Williams 2026: The Presuppositions of *forget*
-@cite{williams-2026} @cite{kiparsky-kiparsky-1970} @cite{white-2014}
+[williams-2026] [kiparsky-kiparsky-1970] [white-2014]
 
-Empirical data and classification from @cite{williams-2026}, who argues
+Empirical data and classification from [williams-2026], who argues
 that *forget* is **canonically factive, independent of complement type**,
 but the **content** of the factive presupposition varies by frame:
 
@@ -24,7 +24,7 @@ data points.
 
 Williams' opening contrast (his (1)/(2)) is that *forgot to V* both fails
 to presuppose the lower event AND is implicatively-negative
-(*forgot to V* → ¬V; @cite{karttunen-1971}, Karttunen 1971a, Horn 1972,
+(*forgot to V* → ¬V; [karttunen-1971], Karttunen 1971a, Horn 1972,
 Jackendoff 1985). Williams (fn 1) brackets the implicative-negative entailment
 to focus on presupposition; he does not refute it. The
 `implicativeNegative` field below records it for cross-paper consistency
@@ -54,7 +54,7 @@ namespace Williams2026
 
 /-- Whether a factive presupposition has modal content.
 
-    Following @cite{williams-2026}: with finite CPs and gerunds, the
+    Following [williams-2026]: with finite CPs and gerunds, the
     presupposition is *non-modal* (event truth); with plain infinitives,
     it is *modal* (Williams' (5a): "John was supposed to V"). -/
 inductive PresupContent where
@@ -83,7 +83,7 @@ structure ForgetJudgment where
   content : PresupContent
   /-- Negative implicative entailment (*forgot to V* → ¬V; Karttunen 1971a).
       Williams (fn 1) brackets this; recorded here for cross-paper
-      consistency with @cite{karttunen-1971}. -/
+      consistency with [karttunen-1971]. -/
   implicativeNegative : Bool
   deriving DecidableEq, Repr
 
@@ -91,7 +91,7 @@ structure ForgetJudgment where
 
 Williams (1)/(4): "John forgot that he stopped by the flower shop"
 presupposes that John stopped. This is the canonical factive reading
-recognized since @cite{kiparsky-kiparsky-1970}.
+recognized since [kiparsky-kiparsky-1970].
 -/
 
 def forget_finiteCP : ForgetJudgment where

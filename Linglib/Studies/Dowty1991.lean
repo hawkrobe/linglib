@@ -5,16 +5,16 @@ import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
-# @cite{dowty-1991} Thematic Proto-Roles and Argument Selection
+# [dowty-1991] Thematic Proto-Roles and Argument Selection
 
 Study file connecting the proto-role theory (`Semantics/Events/ProtoRoles.lean`)
 to argument selection phenomena.
 
 ## Dowty's original flat-counting ASP
 
-@cite{dowty-1991}'s Argument Selection Principle uses flat counting: the argument
+[dowty-1991]'s Argument Selection Principle uses flat counting: the argument
 with the greatest number of Proto-Agent entailments is subject. The library's
-default ASP uses lattice comparison (@cite{grimm-2011}, @cite{davis-koenig-2000}),
+default ASP uses lattice comparison ([grimm-2011], [davis-koenig-2000]),
 which handles priority and fixes anomalies like `arrive`. This study file
 preserves Dowty's original counting-based predictions to document where they
 succeed and where they diverge from the modern approach.
@@ -35,10 +35,10 @@ open Phenomena.ArgumentStructure.DiathesisAlternations.Data
 open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════
--- § 0. Dowty's Original Flat-Counting ASP (@cite{dowty-1991} p.576)
+-- § 0. Dowty's Original Flat-Counting ASP ([dowty-1991] p.576)
 -- ════════════════════════════════════════════════════
 
-/-- @cite{dowty-1991}'s original single-argument ASP (flat counting):
+/-- [dowty-1991]'s original single-argument ASP (flat counting):
     an argument selects for subjecthood iff its P-Agent count exceeds
     its P-Patient count. Superseded by lattice-based `OutranksForSubject`
     in `EntailmentProfile.lean`. -/
@@ -48,7 +48,7 @@ def flatSelectsSubject (p : EntailmentProfile) : Bool :=
 def flatSelectsObject (p : EntailmentProfile) : Bool :=
   p.pPatientScore > p.pAgentScore
 
-/-- @cite{dowty-1991}'s between-argument comparison (flat counting):
+/-- [dowty-1991]'s between-argument comparison (flat counting):
     arg1 outranks arg2 for subjecthood iff arg1 has strictly more
     P-Agent entailments, OR they tie on P-Agent but arg2 has
     strictly more P-Patient entailments. -/
@@ -61,7 +61,7 @@ def flatOutranksForSubject (arg1 arg2 : EntailmentProfile) : Bool :=
 def flatAllowsAlternation (arg1 arg2 : EntailmentProfile) : Bool :=
   !flatOutranksForSubject arg1 arg2 && !flatOutranksForSubject arg2 arg1
 
-/-- @cite{dowty-1991} Corollary 2 (flat counting): unaccusative iff pPatient > pAgent. -/
+/-- [dowty-1991] Corollary 2 (flat counting): unaccusative iff pPatient > pAgent. -/
 def flatPredictsUnaccusative (p : EntailmentProfile) : Bool :=
   p.pPatientScore > p.pAgentScore
 
@@ -136,7 +136,7 @@ theorem psych_inchoative_stimulus_is_subject :
 -- § 3. Three Verb Classes (§9.3, pp.587–597)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{dowty-1991} identifies three classes based on CoS distribution
+/-! [dowty-1991] identifies three classes based on CoS distribution
     across non-subject arguments. When CoS is symmetric (both or neither),
     alternation is possible. When asymmetric, the CoS argument is fixed as DO. -/
 
@@ -204,7 +204,7 @@ theorem hit_alternation_data :
 -- § 4. Table 1: Agentivity × Telicity → Unaccusativity (§12, p.607)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{dowty-1991} Table 1: the interaction of agentivity (most salient
+/-! [dowty-1991] Table 1: the interaction of agentivity (most salient
     P-Agent property) and telicity (most salient P-Patient property) predicts
     the unergative/unaccusative split. Only the two "pure" cells are stable;
     the mixed cells are where cross-linguistic variation occurs. -/
@@ -238,7 +238,7 @@ theorem die_cell4 :
 -- § 5. Flat Counting vs Modern ASP: The Arrive Anomaly
 -- ════════════════════════════════════════════════════
 
-/-! The key divergence between @cite{dowty-1991}'s flat counting and the
+/-! The key divergence between [dowty-1991]'s flat counting and the
     modern priority-based ASP. Flat counting gets arrive wrong because it
     counts movement + IE (2 P-Agent) > changeOfState (1 P-Patient), predicting
     unergative. The modern ASP correctly identifies arrive as unaccusative
@@ -260,7 +260,7 @@ theorem arrive_table1_correct :
 
 /-- Agreement: Table 1 and the modern ASP converge on arrive being
     unaccusative. Flat counting diverges — this is the anomaly that
-    motivated @cite{davis-koenig-2000}'s priority refinement. -/
+    motivated [davis-koenig-2000]'s priority refinement. -/
 theorem arrive_anomaly_summary :
     -- Table 1: unaccusative (correct)
     table1 arriveSubjectProfile.volition arriveSubjectProfile.changeOfState
@@ -338,10 +338,10 @@ theorem run_prediction_matches_fragment :
     English.Predicates.Verbal.run.unaccusative := by decide
 
 -- ════════════════════════════════════════════════════
--- § 8. Cross-Theory: @cite{grimm-2011} Lattice Predictions
+-- § 8. Cross-Theory: [grimm-2011] Lattice Predictions
 -- ════════════════════════════════════════════════════
 
-/-! @cite{grimm-2011}'s agentivity lattice reformulates Dowty's proto-roles
+/-! [grimm-2011]'s agentivity lattice reformulates Dowty's proto-roles
     with lattice structure and connects them to case assignment. Here we
     verify that Grimm's lattice predictions are consistent with the ASP
     predictions above, and that it also resolves the arrive anomaly. -/
@@ -356,7 +356,7 @@ theorem arrive_grimm_not_nom :
   decide
 
 /-- Full cross-theory convergence on arrive: Table 1, modern ASP, and
-    @cite{grimm-2011}'s lattice all predict unaccusative/non-agent.
+    [grimm-2011]'s lattice all predict unaccusative/non-agent.
     Only flat counting diverges. -/
 theorem arrive_cross_theory :
     table1 arriveSubjectProfile.volition arriveSubjectProfile.changeOfState
@@ -367,7 +367,7 @@ theorem arrive_cross_theory :
     arrive.unaccusative = true :=
   ⟨by decide, by decide, by decide, by decide, rfl⟩
 
-/-- Kick: ASP outranking and @cite{grimm-2011}'s case regions converge.
+/-- Kick: ASP outranking and [grimm-2011]'s case regions converge.
     Subject → NOM, object → ACC in an accusative system. -/
 theorem kick_asp_grimm_consistent :
     OutranksForSubject kickSubjectProfile kickObjectProfile ∧
@@ -377,7 +377,7 @@ theorem kick_asp_grimm_consistent :
       = .acc :=
   ⟨by decide, by decide, by decide⟩
 
-/-- Die: ASP, flat counting, and @cite{grimm-2011} all agree on unaccusative.
+/-- Die: ASP, flat counting, and [grimm-2011] all agree on unaccusative.
     Grimm's lattice maps the sole argument to ACC/ABS (patient region). -/
 theorem die_asp_grimm_consistent :
     PredictsUnaccusative dieSubjectProfile ∧

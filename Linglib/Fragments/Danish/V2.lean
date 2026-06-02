@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # Danish V2 Profile
-@cite{westergaard-2009}
+[westergaard-2009]
 
 V2 micro-parameter profile for Danish (Table 3.1).
 -/

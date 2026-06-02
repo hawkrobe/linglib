@@ -3,7 +3,7 @@ import Linglib.Fragments.Mayan.Params
 
 /-!
 # Super-Extended Ergativity in SJA Mam
-@cite{scott-2023} @cite{england-2017}
+[scott-2023] [england-2017]
 
 Theory-neutral data on split ergativity in San Juan Atitán (SJA) Mam.
 
@@ -16,7 +16,7 @@ In matrix clauses, Mam shows a tripartite agreement pattern:
 
 In certain dependent clauses — purpose clauses headed by *tu'n*, reason
 clauses, *taj* 'when' clauses — the alignment shifts to what
-@cite{england-2017} calls **super-extended ergativity**: Set A marking
+[england-2017] calls **super-extended ergativity**: Set A marking
 extends to ALL arguments (S, A, and O). The system becomes "neutral"
 with all arguments receiving the same marker set.
 
@@ -33,7 +33,7 @@ The trigger is clause type, not aspect or person features:
 3. Transitive O in SEE clauses: Set A on directional (not default Set B/
    independent pronoun as in matrix). Only default 2/3SG Set A (t-) is
    allowed — agreeing Set A markers for the object are ungrammatical
-   (@cite{scott-2023}, §2.6.3, ex. 196).
+   ([scott-2023], §2.6.3, ex. 196).
 
 ## Why Not `SplitErgativity`?
 

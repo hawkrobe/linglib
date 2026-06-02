@@ -14,8 +14,8 @@ The general (polymorphic) monotonicity theorems live in
 `some_scope_up`, `no_scope_down`, `every_restrictor_down`). This file
 provides only the finite-world fixture.
 
-Reference: @cite{van-benthem-1986}, @cite{ladusaw-1980},
-@cite{barwise-cooper-1981}.
+Reference: [van-benthem-1986], [ladusaw-1980],
+[barwise-cooper-1981].
 -/
 
 namespace Semantics.Entailment

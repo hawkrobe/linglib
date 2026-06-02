@@ -2,11 +2,11 @@ import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Semantics.Dynamic.UpdateSemantics.Frames
 
 /-!
-# @cite{veltman-1996} — Full Study
+# [veltman-1996] — Full Study
 
-@cite{veltman-1996}
+[veltman-1996]
 
-Regression tests for @cite{veltman-1996}'s update semantics with defaults.
+Regression tests for [veltman-1996]'s update semantics with defaults.
 
 ## §3 Examples (Examples 3.10)
 
@@ -92,7 +92,7 @@ theorem ex310_i_exception :
 
 /-- After "normally p", the globally optimal worlds are exactly the
     p-worlds. So "normally ¬p" is unacceptable: no optimal world
-    satisfies ¬p. This is @cite{veltman-1996}'s coherence check
+    satisfies ¬p. This is [veltman-1996]'s coherence check
     (Definition 3.9). -/
 theorem ex310_i_conflict :
     ¬∃ w ∈ (normallyUpdate atomP σ₀).order.optimal Set.univ, ¬atomP w := by
@@ -109,7 +109,7 @@ theorem ex310_i_conflict :
     The optimal worlds in {w | ¬p w} are all ¬p-worlds (mutually
     equivalent under the p-biased ordering).
 
-    @cite{veltman-1996}, Examples 3.10(ii): normally p, ¬p ⊬ presumably p. -/
+    [veltman-1996], Examples 3.10(ii): normally p, ¬p ⊬ presumably p. -/
 theorem ex310_ii_defeat :
     ¬∀ w ∈ (assertUpdate (fun w => ¬atomP w) (normallyUpdate atomP σ₀)).optimal,
       atomP w := by
@@ -122,7 +122,7 @@ theorem ex310_ii_defeat :
 
 /-- But exceptions don't destroy the rule: "normally p" still holds.
 
-    @cite{veltman-1996}, Examples 3.10(ii): normally p, ¬p ⊩ normally p. -/
+    [veltman-1996], Examples 3.10(ii): normally p, ¬p ⊩ normally p. -/
 theorem ex310_ii_rule_persists :
     (assertUpdate (fun w => ¬atomP w) (normallyUpdate atomP σ₀)).order.respects atomP :=
   persistence_assert (normallyUpdate atomP σ₀) atomP _ (normally_creates_respect σ₀ atomP)
@@ -132,7 +132,7 @@ theorem ex310_ii_rule_persists :
 /-- Irrelevant information doesn't block presumptions: after
     "normally p" and learning q, "presumably p" still succeeds.
 
-    @cite{veltman-1996}, Examples 3.10(iii): normally p, q ⊩ presumably p. -/
+    [veltman-1996], Examples 3.10(iii): normally p, q ⊩ presumably p. -/
 theorem ex310_iii_irrelevant :
     ∀ w ∈ (assertUpdate atomQ (normallyUpdate atomP σ₀)).optimal, atomP w := by
   intro w ⟨⟨_, hqw⟩, hopt⟩
@@ -148,7 +148,7 @@ theorem ex310_iii_irrelevant :
 
 /-- One default being defeated doesn't affect unrelated defaults.
 
-    @cite{veltman-1996}, Examples 3.10(iv):
+    [veltman-1996], Examples 3.10(iv):
     normally p, normally q, ¬p ⊩ presumably q. -/
 theorem ex310_iv_independence :
     ∀ w ∈ (assertUpdate (fun w => ¬atomP w)
@@ -169,7 +169,7 @@ theorem ex310_iv_independence :
 /-- When two defaults conflict with the facts, neither presumption
     goes through. w₂ (¬p, q) is optimal but ¬p, so "presumably p" fails.
 
-    @cite{veltman-1996}, Examples 3.10(v):
+    [veltman-1996], Examples 3.10(v):
     normally p, normally q, ¬(p ∧ q) ⊬ presumably p. -/
 theorem ex310_v_ambiguity_p :
     ¬∀ w ∈ (assertUpdate (fun w => ¬(atomP w ∧ atomQ w))
@@ -188,7 +188,7 @@ theorem ex310_v_ambiguity_p :
 
 /-- Symmetric: w₁ (p, ¬q) is optimal but ¬q, so "presumably q" fails.
 
-    @cite{veltman-1996}, Examples 3.10(v):
+    [veltman-1996], Examples 3.10(v):
     normally p, normally q, ¬(p ∧ q) ⊬ presumably q. -/
 theorem ex310_v_ambiguity_q :
     ¬∀ w ∈ (assertUpdate (fun w => ¬(atomP w ∧ atomQ w))
@@ -390,7 +390,7 @@ variable {W : Type*}
     This is the mathematical core of CC: sequential refinement by ψ
     and χ produces an ordering that promotes (ψ ∧ χ)-worlds.
 
-    @cite{veltman-1996}, §5 (p.256): CC is valid. -/
+    [veltman-1996], §5 (p.256): CC is valid. -/
 theorem conjConsequents_respects (no : NormalityOrder W)
     (ψ χ : W → Prop) :
     ((no.refine ψ).refine χ).respects (fun w => ψ w ∧ χ w) := by
@@ -418,7 +418,7 @@ theorem conjConsequents_frame (π : ExpFrame W) (d : Set W)
     If contraposition held, all normal ¬q-worlds would satisfy ¬p.
     But w₁ is a normal ¬q-world that satisfies p.
 
-    @cite{veltman-1996}, §5 (p.255). -/
+    [veltman-1996], §5 (p.255). -/
 theorem contraposition_fails :
     let d_p := { w : PQWorld | atomP w }
     let d_nq := { w : PQWorld | ¬atomQ w }
@@ -439,7 +439,7 @@ theorem contraposition_fails :
 /-- **Strengthening the Antecedent fails**: after "if p then normally q",
     the frame at d_{p∧q} is untouched (since d_{p∧q} ≠ d_p).
 
-    @cite{veltman-1996}, §5 (p.256). -/
+    [veltman-1996], §5 (p.256). -/
 theorem strengtheningAntecedent_fails :
     -- The domains are different: w₁ ∈ d_p but w₁ ∉ d_pq
     ({ w : PQWorld | atomP w } : Set PQWorld) ≠ { w | atomP w ∧ atomQ w } := by
@@ -483,7 +483,7 @@ section GenericsBridge
 
 variable {W : Type*}
 
-/-- **Generics as defaults** (@cite{veltman-1996}, §5–6).
+/-- **Generics as defaults** ([veltman-1996], §5–6).
 
     The truth conditions of the GEN operator ("P's are normally Q"):
         ∀w ∈ optimal(d). scope(w)

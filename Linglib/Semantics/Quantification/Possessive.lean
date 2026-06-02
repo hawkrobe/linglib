@@ -2,7 +2,7 @@ import Linglib.Core.Logic.Quantification
 
 /-!
 # Possessive Quantifiers
-@cite{peters-westerstahl-2006} @cite{barker-2011}
+[peters-westerstahl-2006] [barker-2011]
 
 The higher-order possessive operator `Poss(Q₁, C, Q₂, R)` composes:
 - Q₁: the possessor quantifier ("every student's", "John's")
@@ -18,7 +18,7 @@ The higher-order possessive operator `Poss(Q₁, C, Q₂, R)` composes:
 
 `dom_A(R) = {a : ∃b ∈ A, R(a,b)}` — the set of possessors who possess
 at least one A-thing. Used to narrow Q₁'s restrictor to relevant possessors.
-@cite{peters-westerstahl-2006} Ch 7, p235, (7.101).
+[peters-westerstahl-2006] Ch 7, p235, (7.101).
 
 ## Variants
 
@@ -28,7 +28,7 @@ at least one A-thing. Used to narrow Q₁'s restrictor to relevant possessors.
 ## Key Results
 
 - Monotonicity inheritance: if Q₂ is Mon↑ and Q₁ is Mon↑, then PossW is Mon↑
-- Connection to @cite{barker-2011}'s π operator
+- Connection to [barker-2011]'s π operator
 - Possessive GQs are NOT isomorphism-invariant
 
 Cross-reference: `Barker2011.possessiveAsNPQ` for type ⟨1⟩ possessives.
@@ -46,7 +46,7 @@ variable {α : Type*}
     The set of individuals who stand in relation R to some member of A.
     Used to narrow the possessor restrictor to those who actually possess
     an A-thing.
-    @cite{peters-westerstahl-2006} Ch 7, p235, (7.101). -/
+    [peters-westerstahl-2006] Ch 7, p235, (7.101). -/
 def domR (A : α → Prop) (R : α → α → Prop) : α → Prop :=
   λ a => ∃ b, A b ∧ R a b
 
@@ -59,7 +59,7 @@ def domR (A : α → Prop) (R : α → α → Prop) : α → Prop :=
     where `R_x(y) = R(x,y)`. Simpler variant; does not restrict the
     possessor domain to those who actually possess A-things.
 
-    @cite{peters-westerstahl-2006} Ch 7, Poss^w. -/
+    [peters-westerstahl-2006] Ch 7, Poss^w. -/
 def PossW (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α → Prop) : GQ α :=
   λ A B => Q₁ C (λ x => Q₂ (λ y => R x y ∧ A y) B)
 
@@ -71,7 +71,7 @@ def PossW (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α → Prop) : GQ α
     actually possess some A-thing, ensuring the possessor domain is
     contextually appropriate.
 
-    @cite{peters-westerstahl-2006} Ch 7 Def 1. -/
+    [peters-westerstahl-2006] Ch 7 Def 1. -/
 def Poss (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α → Prop) : GQ α :=
   λ A B => Q₁ (λ x => C x ∧ domR A R x) (λ x => Q₂ (λ y => A y ∧ R x y) B)
 
@@ -84,7 +84,7 @@ def Poss (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α → Prop) : GQ α 
     so λx.Q₂(A∩R_x, B) ⊆ λx.Q₂(A∩R_x, B') pointwise,
     and Q₁ Mon↑ in scope gives the result.
 
-    @cite{peters-westerstahl-2006} Ch 7. -/
+    [peters-westerstahl-2006] Ch 7. -/
 theorem possW_scopeUpMono (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α → Prop)
     (h₁ : ScopeUpwardMono Q₁) (h₂ : ScopeUpwardMono Q₂) :
     ScopeUpwardMono (PossW Q₁ Q₂ C R) := by
@@ -101,7 +101,7 @@ theorem possW_scopeUpMono (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α �
     so {x : Q₂(A∩R_x,B)} ⊇ {x : Q₂(A∩R_x,B')} pointwise.
     Then Q₁ scope-↑ gives Q₁(C, inner_B') → Q₁(C, inner_B).
 
-    @cite{peters-westerstahl-2006} Ch 7. -/
+    [peters-westerstahl-2006] Ch 7. -/
 theorem possW_scopeDownMono (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α → Prop)
     (h₁ : ScopeUpwardMono Q₁) (h₂ : ScopeDownwardMono Q₂) :
     ScopeDownwardMono (PossW Q₁ Q₂ C R) := by
@@ -115,7 +115,7 @@ theorem possW_scopeDownMono (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α
     restrictor `A ∩ R_x`. This means PossW inherits Q₂'s conservativity
     at the inner level, though PossW itself is not CONSERV as a GQ
     (it has a complex restrictor-scope interaction).
-    @cite{peters-westerstahl-2006} Ch 7. -/
+    [peters-westerstahl-2006] Ch 7. -/
 theorem possW_inner_conservative (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α → Prop)
     (hCons₂ : Conservative Q₂) (A B : α → Prop) :
     PossW Q₁ Q₂ C R A B ↔

@@ -1,5 +1,5 @@
 /-
-# @cite{haslinger-etal-2025}: Distributivity ≠ Maximality
+# [haslinger-etal-2025]: Distributivity ≠ Maximality
 
 Empirical data from "On the relation between distributivity and maximality"
 (Semantics & Pragmatics 18, Article 1, doi:10.3765/sp.18.1).
@@ -23,7 +23,7 @@ tolerance to weaken.
 
 ## Connection to Imprecision
 
-@cite{haslinger-2025-diss} argues that non-maximality (= imprecision in the plural
+[haslinger-2025-diss] argues that non-maximality (= imprecision in the plural
 domain) is an "unmarked default" that functional items like `all`/`each` can remove.
 The tolerance relation ≤ is the formal locus: predicates introduce it by default,
 `all` binds it universally, `each` renders it vacuous on atoms, and `jeweils`

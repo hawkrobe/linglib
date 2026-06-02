@@ -2,13 +2,13 @@ import Linglib.Typology.PolarityMarking
 
 /-!
 # English Polarity-Marking Strategies
-@cite{wilder-2013}
+[wilder-2013]
 
 English marks polarity reversal (contradiction of a negative assertion)
 with emphatic *do* — auxiliary *do* bearing a pitch accent in an
 affirmative sentence that contradicts a prior negative claim.
 
-@cite{wilder-2013} distinguishes two uses of emphatic *do*:
+[wilder-2013] distinguishes two uses of emphatic *do*:
 
 1. **Verum-focus *do*** — polarity focus on the truth value of the
    proposition. Contradicts a prior negative assertion.
@@ -41,7 +41,7 @@ open Typology.PolarityMarking (Entry Strategy Env)
     Pitch accent on auxiliary *do* in an affirmative sentence contradicting
     a negative context. Sentence-internal (auxiliary in I°).
     Available in both contrast and correction contexts.
-    @cite{wilder-2013}: VF-*do* targets the assertion operator,
+    [wilder-2013]: VF-*do* targets the assertion operator,
     like German Verum focus. -/
 abbrev emphaticDo : Entry where
   label := "emphatic do"

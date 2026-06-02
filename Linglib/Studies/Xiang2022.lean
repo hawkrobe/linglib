@@ -3,10 +3,10 @@ import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Questions.Exhaustivity
 
 /-!
-# @cite{xiang-2022}: Relativized Exhaustivity: Mention-Some and Uniqueness
-@cite{dayal-1996} @cite{fox-2018} @cite{spector-2008} @cite{chierchia-caponigro-2013}
+# [xiang-2022]: Relativized Exhaustivity: Mention-Some and Uniqueness
+[dayal-1996] [fox-2018] [spector-2008] [chierchia-caponigro-2013]
 
-Single-paper formalisation of @cite{xiang-2022}, "Relativized
+Single-paper formalisation of [xiang-2022], "Relativized
 Exhaustivity: Mention-Some and Uniqueness" (Natural Language
 Semantics 30:311–362). Xiang argues that **mention-some (MS)** is a
 grammatical phenomenon licensed by existential modals, and proposes
@@ -17,7 +17,7 @@ local-uniqueness in modalised singular *wh*-questions.
 
 ## Substrate identifications
 
-| @cite{xiang-2022}                              | substrate                                |
+| [xiang-2022]                              | substrate                                |
 |------------------------------------------------|------------------------------------------|
 | `Ans_Fox` (eq 20, after Fox 2013) — max-informative true answer | `IsStrongestTrueAnswer Q w p` (without iota uniqueness) |
 | `MaxI(α, w, M, [Q])` (eq 96)                   | substrate-relative `IsStrongestRelTrueAnswer` |
@@ -73,7 +73,7 @@ variable {W : Type*}
 
 /-! ### §4.1.2 Substrate identifications -/
 
-/-- @cite{xiang-2022} eq (20) (after @cite{fox-2018} eq 20):
+/-- [xiang-2022] eq (20) (after [fox-2018] eq 20):
     *max-informative true answer*. An alternative `p` is max-info at
     `w` iff `p` is true at `w` and not asymmetrically entailed by any
     other true alternative. Identified with the substrate's
@@ -82,18 +82,18 @@ variable {W : Type*}
 abbrev MaxI (Q : Question W) (w : W) (p : Set W) : Prop :=
   IsStrongestTrueAnswer Q w p
 
-/-- @cite{xiang-2022} eq (96) modal-base-relative max-informativity.
+/-- [xiang-2022] eq (96) modal-base-relative max-informativity.
     Identified with the substrate's `IsStrongestRelTrueAnswer`. -/
 abbrev MaxIRel (Q : Question W) (w : W) (M : Set W) (p : Set W) : Prop :=
   IsStrongestRelTrueAnswer Q w M p
 
 /-! ### §6.1 Dayal's EP relativised + RelExh (eq 90, 91)
 
-@cite{xiang-2022} (eq 90) `Dayal's EP relativised`: `Q` is defined in
+[xiang-2022] (eq 90) `Dayal's EP relativised`: `Q` is defined in
 `w` (relative to modal base `M`) iff some max-info true answer
 exists. (Substrate: `IsRelativelyExhaustivelyResolvable`.)
 
-@cite{xiang-2022} (eq 91) **RelExh**: `Q` is defined in `w` iff for
+[xiang-2022] (eq 91) **RelExh**: `Q` is defined in `w` iff for
 *every* singleton sub-modal-base `M' ⊆ M` that verifies some true
 answer to `Q` (relative to the original `M`), the relativised
 Dayal-EP holds at `M'`. The key idea: instead of demanding a
@@ -101,7 +101,7 @@ single max-informative answer at the evaluation world, RelExh
 demands a max-informative answer at *every accessible world*
 (individually, treating each as its own singleton modal base). -/
 
-/-- @cite{xiang-2022} eq (90): Dayal's EP relativised to modal base
+/-- [xiang-2022] eq (90): Dayal's EP relativised to modal base
     `M`. Substrate identification: `relExh` from `Exhaustivity.lean`. -/
 def IsRelativelyExhaustivelyResolvable
     (Q : Question W) (w : W) (M : Set W) : Prop :=
@@ -111,7 +111,7 @@ def IsRelativelyExhaustivelyResolvable
     (Q : Question W) (w : W) (M : Set W) :
     IsRelativelyExhaustivelyResolvable Q w M ↔ relExh Q w M := Iff.rfl
 
-/-- @cite{xiang-2022} eq (91): **Relativized Exhaustivity (RelExh)**.
+/-- [xiang-2022] eq (91): **Relativized Exhaustivity (RelExh)**.
 
     `Q` is defined in `w` (relative to modal base `M`) iff for every
     singleton `M' ⊆ M` (i.e., `M' = {w'}` for some `w' ∈ M`) that
@@ -137,7 +137,7 @@ unique exhaustively-true answer relative to that world's perspective. -/
 
 /-- When every accessible world satisfies Dayal's EP, the RelExh
     presupposition is trivially satisfied — the `permits MS` half
-    of @cite{xiang-2022} §6.2.1. -/
+    of [xiang-2022] §6.2.1. -/
 theorem relExhPresupposition_of_pointwise_EP
     (Q : Question W) (w : W) (M : Set W)
     (hEP : ∀ w' ∈ M, IsExhaustivelyResolvable Q w') :
@@ -147,11 +147,11 @@ theorem relExhPresupposition_of_pointwise_EP
 
 /-! ### §5 Dilemma: Dayal-EP and MS conflict on the same question
 
-@cite{xiang-2022} §5: Dayal's EP requires a unique max-info true
+[xiang-2022] §5: Dayal's EP requires a unique max-info true
 answer; MS rejects this for `can`-questions. The substrate-level
 shadow: a question can fail Dayal's EP at `w` while having
 `Resolves σ Q` succeed for some non-maximal witness — same
-phenomenon as in @cite{fox-2018} §2.1 (already formalised in
+phenomenon as in [fox-2018] §2.1 (already formalised in
 `Fox2018.resolves_can_succeed_when_EP_fails`). RelExh resolves the
 dilemma by relativising the EP to a per-accessible-world basis. -/
 
@@ -174,7 +174,7 @@ theorem relExh_resolves_dilemma_example
 
 /-! ### Bridge to Dayal: RelExh under a singleton modal base ≡ Dayal's EP -/
 
-/-- @cite{xiang-2022} (90)/(91) collapse: when the modal base is the
+/-- [xiang-2022] (90)/(91) collapse: when the modal base is the
     singleton `{w}`, RelExh reduces to Dayal's standard EP at `w`. -/
 theorem relExhPresupposition_singleton_iff
     (Q : Question W) (w : W) (hSelf : ∃ p ∈ alt Q, w ∈ p) :

@@ -3,9 +3,9 @@ import Linglib.Core.Logic.Intensional.Variables
 
 /-!
 # Predicate Abstraction
-@cite{heim-kratzer-1998}
+[heim-kratzer-1998]
 
-Predicate Abstraction (@cite{heim-kratzer-1998} Ch. 7) is the composition rule
+Predicate Abstraction ([heim-kratzer-1998] Ch. 7) is the composition rule
 that λ-binds a variable index, turning a proposition (type `t`) into a property
 (type `e ⇒ t`):
 
@@ -14,7 +14,7 @@ that λ-binds a variable index, turning a proposition (type `t`) into a property
 where `YP` contains a variable (a trace or pronoun) at index `n`. It is the
 sibling of Predicate Modification (`Modifier.intersective`, in
 `Semantics/Modification/Basic.lean`) — the two non-FA composition rules of
-@cite{heim-kratzer-1998} — and is
+[heim-kratzer-1998] — and is
 framework-neutral: any analysis that abstracts over a gap (a Minimalist trace, an
 HPSG `SLASH` discharge, a CCG type-raised argument) realizes this rule.
 
@@ -32,7 +32,7 @@ namespace Semantics.Composition.Abstraction
 open Core.Logic.Intensional Core.Logic.Intensional.Variables
 
 /--
-Predicate Abstraction (@cite{heim-kratzer-1998} Ch. 7): λ-bind at index `n`,
+Predicate Abstraction ([heim-kratzer-1998] Ch. 7): λ-bind at index `n`,
 turning a proposition into a property by abstracting over the variable left at `n`.
 
   `⟦[XP Op_n YP]⟧^g = λx. ⟦YP⟧^{g[n ↦ x]}`

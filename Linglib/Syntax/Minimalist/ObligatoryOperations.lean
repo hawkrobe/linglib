@@ -1,10 +1,10 @@
 import Linglib.Syntax.Minimalist.Agree
 
 /-!
-# Obligatory Operations @cite{preminger-2014}
-@cite{chomsky-2001}
+# Obligatory Operations [preminger-2014]
+[chomsky-2001]
 
-@cite{preminger-2014} argues that φ-agreement is an **obligatory
+[preminger-2014] argues that φ-agreement is an **obligatory
 operation** that can **fail without crashing** the derivation. This
 contrasts with the standard Minimalist view where
 unvalued features at the interfaces cause the derivation to crash.

@@ -41,8 +41,8 @@ two distinct elements cannot be identical to the same time point.
 
 ## References
 
-* @cite{goldsmith-1976} — autosegmental phonology, original NCC.
-* @cite{sagey-1986} — temporal derivation of NCC and the negative
+* [goldsmith-1976] — autosegmental phonology, original NCC.
+* [sagey-1986] — temporal derivation of NCC and the negative
   argument against simultaneity.
 -/
 
@@ -195,7 +195,7 @@ theorem spread_delink_not_present (r : AutosegRep) (pos : Nat) (n : GeomNode)
 
 /-! ### Temporal derivation of the No-Crossing Constraint
 
-@cite{sagey-1986} §5.3 derives the ban on crossing association lines from
+[sagey-1986] §5.3 derives the ban on crossing association lines from
 temporal precedence rather than stipulating it as a well-formedness condition.
 
 The key move is choosing the right temporal relation for association lines.
@@ -239,7 +239,7 @@ structure Association (T : Type*) [LinearOrder T] where
 def validAssociation (a : Association T) : Prop :=
   a.timing.interval.overlaps a.melody.interval
 
-/-- **Simultaneity contradicts contours** (@cite{sagey-1986} §5.2.2):
+/-- **Simultaneity contradicts contours** ([sagey-1986] §5.2.2):
     if association required temporal identity (simultaneity), contour
     segments — two distinct melody elements F ≠ G associated to the same
     timing position x — would be impossible, since F = x and G = x
@@ -256,7 +256,7 @@ def crosses (a₁ a₂ : Association T) : Prop :=
   a₁.timing.interval.precedes a₂.timing.interval ∧
   a₂.melody.interval.precedes a₁.melody.interval
 
-/-- **No-Crossing Constraint** (@cite{sagey-1986} §5.3, @cite{goldsmith-1976}):
+/-- **No-Crossing Constraint** ([sagey-1986] §5.3, [goldsmith-1976]):
     Two valid associations cannot cross.
 
     If timing₁ ≺ timing₂, then timing₁.finish < timing₂.start.

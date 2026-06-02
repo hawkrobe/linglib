@@ -4,13 +4,13 @@ import Linglib.Semantics.Mood.Basic
 
 /-!
 # Anderson Conditionals and Domain Expansion
-@cite{condoravdi-2002} @cite{mizuno-2024} @cite{schlenker-2004}
+[condoravdi-2002] [mizuno-2024] [schlenker-2004]
 
 Formalizes the connection between backward temporal shifts and domain expansion
-in conditionals. @cite{mizuno-2024} argues that Japanese Anderson conditionals
-use the Historical Present (@cite{schlenker-2004}) to achieve domain expansion
+in conditionals. [mizuno-2024] argues that Japanese Anderson conditionals
+use the Historical Present ([schlenker-2004]) to achieve domain expansion
 without X-marking: Non-Past morphology shifts the evaluation time backward,
-and under branching time (@cite{condoravdi-2002}), earlier times have more
+and under branching time ([condoravdi-2002]), earlier times have more
 historical alternatives, so the domain expands.
 
 ## Key Results
@@ -25,7 +25,7 @@ historical alternatives, so the domain expands.
 
 The HP shift in an Anderson conditional is modeled as a tower push of an
 `hpShift`: a context shift that moves time backward and expands the domain.
-In @cite{schlenker-2004}'s terms, the push shifts the Context of Utterance v
+In [schlenker-2004]'s terms, the push shifts the Context of Utterance v
 while preserving the Context of Thought θ (= `tower.origin`).
 
 -/
@@ -86,7 +86,7 @@ section Expansion
 
 variable {W : Type*} {T : Type*} [Preorder T]
 
-/-- @cite{mizuno-2024}'s argument: backward time + domain monotonicity yields
+/-- [mizuno-2024]'s argument: backward time + domain monotonicity yields
     expansion.
 
     If the world history is backwards-closed (worlds that agree up to `t`
@@ -107,7 +107,7 @@ theorem hp_achieves_expansion
     later time. This lifts `hp_achieves_expansion` (element-level) to
     `Set.Subset` (set-level), connecting it to `DomainExpanding`.
 
-    This is the formal core of @cite{mizuno-2024}'s argument: HP shifts the
+    This is the formal core of [mizuno-2024]'s argument: HP shifts the
     evaluation time backward, and backward time yields more historical
     alternatives, i.e., domain expansion. -/
 theorem history_monotone_set
@@ -145,7 +145,7 @@ variable {W : Type*}
 
       ∀ w ∈ D, antecedent(w) → consequent(w)
 
-    @cite{kratzer-1986}: if-clauses restrict the modal domain rather than
+    [kratzer-1986]: if-clauses restrict the modal domain rather than
     functioning as binary connectives. This is the Prop-level counterpart
     of `Semantics.Conditionals.Restrictor.conditionalNecessity` (which
     operates over finite `(World → Bool)` for computation).
@@ -160,7 +160,7 @@ def domainRestrictedConditional
     the consequent. The antecedent restriction does no work — the
     conditional is vacuously true regardless of what the antecedent says.
 
-    @cite{condoravdi-2002}: indicative conditionals with small domains can be
+    [condoravdi-2002]: indicative conditionals with small domains can be
     trivial because every accessible world already satisfies the consequent.
     Domain expansion (via HP/X-marking) resolves this by adding worlds
     where the consequent may fail. -/

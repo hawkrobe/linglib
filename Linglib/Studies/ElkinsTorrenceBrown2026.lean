@@ -9,7 +9,7 @@ import Linglib.Studies.Scott2023Agreement
 
 /-!
 # Oblique Extraction in Mayan
-@cite{elkins-torrence-brown-2026} @cite{mendes-ranero-2021} @cite{imanishi-2020}
+[elkins-torrence-brown-2026] [mendes-ranero-2021] [imanishi-2020]
 
 ## Part I: Cross-Linguistic Comparison
 
@@ -137,8 +137,8 @@ This subsection houses the Minimalist `VoiceHead`, `ClauseSpine`, and
 `Linglib/Fragments/Mayan/Mam/VoiceSystem.lean`. Per CLAUDE.md
 "Per-language paper-specific apparatus lives in Studies, not
 Fragments," these belong with the paper that anchors them
-(@cite{elkins-torrence-brown-2026} for the =(y)a' analysis;
-@cite{scott-2023} for the antipassive). The Fragment file retains only
+([elkins-torrence-brown-2026] for the =(y)a' analysis;
+[scott-2023] for the antipassive). The Fragment file retains only
 the theory-neutral `mamVoiceSystem : VoiceSystemProfile`.
 
 `Studies/Scott2023Agreement.lean` consumes `mamVoice` and
@@ -200,14 +200,14 @@ def eqYaVocab : VocabEntry :=
 def mamVoiceVocab : Vocabulary := [eqYaVocab]
 
 /-- Mam passive Voice head: carries [uOblique] just like agentive Voice.
-    @cite{elkins-torrence-brown-2026} §7.2: =(y)a' co-occurs with
+    [elkins-torrence-brown-2026] §7.2: =(y)a' co-occurs with
     passive *-njtz*. -/
 def mamPassiveVoice : VoiceHead :=
   { flavor := .nonThematic
   , hasD := false
   , features := [.unvalued (.oblique false)] }
 
-/-- Mam antipassive Voice head (@cite{scott-2023} §2.5.4.1).
+/-- Mam antipassive Voice head ([scott-2023] §2.5.4.1).
     Subject gets ABS not ERG; not a phase head. -/
 def mamAntipassiveVoice : VoiceHead :=
   { flavor := .antipassive
@@ -485,16 +485,16 @@ end Derivation
 
 -- ============================================================================
 -- § 13: Unified Agree — Ā-agreement and φ-agreement as One Operation
--- (back-reference to @cite{scott-2023}; this lives in ETB 2026 because
+-- (back-reference to [scott-2023]; this lives in ETB 2026 because
 --  the cross-paper bridge runs from later → earlier per CLAUDE.md
 --  chronological-dependency rule.)
 -- ============================================================================
 
 /-! Voice⁰ in Mam carries two independent probes:
 
-1. **φ-probe** [uPerson, uNumber] (analyzed by @cite{scott-2023}):
+1. **φ-probe** [uPerson, uNumber] (analyzed by [scott-2023]):
    Agrees with agent in Spec,VoiceP, yielding Set A morphology.
-2. **Oblique probe** [uOblique] (analyzed by @cite{elkins-torrence-brown-2026},
+2. **Oblique probe** [uOblique] (analyzed by [elkins-torrence-brown-2026],
    this file): Agrees with a passing Ā-moved oblique, yielding =(y)a'
    on Voice⁰.
 

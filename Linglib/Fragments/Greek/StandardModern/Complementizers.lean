@@ -1,8 +1,8 @@
 import Linglib.Semantics.Verb.Basic
 
 /-!
-# Modern Greek Complementizers @cite{christidis-1982} @cite{roussou-2010}
-@cite{roussou-2019} @cite{angelopoulos-2026}
+# Modern Greek Complementizers [christidis-1982] [roussou-2010]
+[roussou-2019] [angelopoulos-2026]
 
 The three Modern Greek complementizers and a small inventory of
 matrix verbs that select them. Consensus-only metadata: form, mood
@@ -13,7 +13,7 @@ the stativity / attitude classification of the matrix verbs.
 
 This file exposes ONLY consensus typological metadata. The
 content/situation typing of the matrix-verb selection that
-@cite{angelopoulos-2026} introduces (following @cite{bondarenko-2022})
+[angelopoulos-2026] introduces (following [bondarenko-2022])
 is paper-specific apparatus and lives in
 `Studies/Angelopoulos2026.lean` as a
 projection over these `Verb` entries — it does not pollute the
@@ -21,15 +21,15 @@ fragment schema.
 
 ## Three complementizers
 
-- *oti* — indicative declarative (@cite{christidis-1982},
-  @cite{roussou-2010}). Combines with verbs of saying / belief /
+- *oti* — indicative declarative ([christidis-1982],
+  [roussou-2010]). Combines with verbs of saying / belief /
   knowledge. Bears an uninterpretable [n]-feature checked by a
-  light noun in its specifier per @cite{angelopoulos-2026} §3.1.
-- *pu* — factive declarative (@cite{christidis-1982},
-  @cite{roussou-2019}). Combines with emotive factives and
+  light noun in its specifier per [angelopoulos-2026] §3.1.
+- *pu* — factive declarative ([christidis-1982],
+  [roussou-2019]). Combines with emotive factives and
   doubles as adverbial / relative / interrogative pronoun *where*.
   Bears the same [n]-feature as *oti*.
-- *na* — subjunctive (@cite{grano-2024}). Already covered in
+- *na* — subjunctive ([grano-2024]). Already covered in
   `Greek.StandardModern.MoodChoice`; referenced here
   for completeness, not redefined.
 -/
@@ -57,15 +57,15 @@ def GreekComplementizer.form : GreekComplementizer → String
   | .na  => "na"
 
 /-- Bears an uninterpretable [n]-feature checked by a light noun
-    in Spec,CP per @cite{angelopoulos-2026} §3.1.  *na* does not
-    bear [n]; its checking machinery is mood-driven (@cite{grano-2024}). -/
+    in Spec,CP per [angelopoulos-2026] §3.1.  *na* does not
+    bear [n]; its checking machinery is mood-driven ([grano-2024]). -/
 def GreekComplementizer.bearsN : GreekComplementizer → Bool
   | .oti => true
   | .pu  => true
   | .na  => false
 
-/-- Factive presupposition (consensus across @cite{christidis-1982},
-    @cite{roussou-2010}, @cite{roussou-2019}, @cite{angelopoulos-2026}). -/
+/-- Factive presupposition (consensus across [christidis-1982],
+    [roussou-2010], [roussou-2019], [angelopoulos-2026]). -/
 def GreekComplementizer.isFactive : GreekComplementizer → Bool
   | .pu => true
   | _   => false
@@ -85,9 +85,9 @@ theorem n_bearing_complementizers :
 -- ════════════════════════════════════════════════════════════════
 --
 -- Verbs of saying / belief / knowledge / understanding. All take
--- *oti*-complements per @cite{angelopoulos-2026} ex. 1a, 3, 36, etc.
+-- *oti*-complements per [angelopoulos-2026] ex. 1a, 3, 36, etc.
 
-/-- *léo* (λέω) 'say' — past tense *ípe* in @cite{angelopoulos-2026}
+/-- *léo* (λέω) 'say' — past tense *ípe* in [angelopoulos-2026]
     ex. 1a. Speech-act verb, eventive (activity). -/
 def leo : Verb where
   form := "léo"
@@ -105,7 +105,7 @@ def pistevo : Verb where
   opaqueContext := true
 
 /-- *kséro* (ξέρω) 'know' (alongside *gnorízo*) — factive doxastic,
-    stative. Rejects manner adverbs (@cite{angelopoulos-2026} ex. 21a). -/
+    stative. Rejects manner adverbs ([angelopoulos-2026] ex. 21a). -/
 def ksero : Verb where
   form := "kséro"
   complementType := .finiteClause
@@ -114,7 +114,7 @@ def ksero : Verb where
   opaqueContext := false  -- factive ⇒ no opacity
 
 /-- *katalavéno* (καταλαβαίνω) 'understand' — eventive (allows
-    manner adverbs in @cite{angelopoulos-2026} ex. 21b, 22a),
+    manner adverbs in [angelopoulos-2026] ex. 21b, 22a),
     factive doxastic. -/
 def katalaveno : Verb where
   form := "katalavéno"
@@ -123,7 +123,7 @@ def katalaveno : Verb where
   vendlerClass := some .achievement
 
 /-- *sinidhitopió* (συνειδητοποιώ) 'realize' — eventive (achievement),
-    factive doxastic (@cite{angelopoulos-2026} ex. 21b). -/
+    factive doxastic ([angelopoulos-2026] ex. 21b). -/
 def sinidhitopio : Verb where
   form := "sinidhitopió"
   complementType := .finiteClause
@@ -131,7 +131,7 @@ def sinidhitopio : Verb where
   vendlerClass := some .achievement
 
 /-- *eksigó* (εξηγώ) 'explain' — accomplishment, takes *oti*
-    yielding *explanans* reading (@cite{angelopoulos-2026} ex. 4a). -/
+    yielding *explanans* reading ([angelopoulos-2026] ex. 4a). -/
 def eksigo : Verb where
   form := "eksigó"
   complementType := .finiteClause
@@ -142,10 +142,10 @@ def eksigo : Verb where
 -- ════════════════════════════════════════════════════════════════
 --
 -- Emotive-factive predicates. Stative when taking *pu*-complements
--- (@cite{angelopoulos-2026} §2.3 stativity restriction).
+-- ([angelopoulos-2026] §2.3 stativity restriction).
 
 /-- *metanióno* (μετανιώνω) 'regret' — preferential (negative
-    valence), stative. @cite{angelopoulos-2026} ex. 1b, 20. -/
+    valence), stative. [angelopoulos-2026] ex. 1b, 20. -/
 def metaniono : Verb where
   form := "metanióno"
   complementType := .finiteClause
@@ -153,7 +153,7 @@ def metaniono : Verb where
   vendlerClass := some .state
 
 /-- *aréso* (αρέσω) 'appeal to / be liked by' — Class III experiencer,
-    stative (@cite{angelopoulos-2026} ex. 13, 14; @cite{landau-2009}). -/
+    stative ([angelopoulos-2026] ex. 13, 14; [landau-2009]). -/
 def areso : Verb where
   form := "aréso"
   complementType := .finiteClause
@@ -175,7 +175,7 @@ def xerome : Verb where
 --
 -- Verbs whose stativity matters: with *oti* they are eventive,
 -- with *pu* they shift to stative interpretation
--- (@cite{angelopoulos-2026} ex. 22, fn 16). Polysemy handled via
+-- ([angelopoulos-2026] ex. 22, fn 16). Polysemy handled via
 -- sense tags rather than separate entries — the eventive sense is
 -- the citation form here; the stative/perception sense is left
 -- to be tracked in the consuming Studies file.
@@ -183,7 +183,7 @@ def xerome : Verb where
 /-- *thimáme* (θυμάμαι) 'remember' — ambiguous between direct-
     perception (eventive, with *oti*) and stative recollection
     (with *pu*). Citation form is the eventive one;
-    @cite{angelopoulos-2026} ex. 22 contrasts the two. -/
+    [angelopoulos-2026] ex. 22 contrasts the two. -/
 def thimame : Verb where
   form := "thimáme"
   complementType := .finiteClause
@@ -192,7 +192,7 @@ def thimame : Verb where
   vendlerClass := some .achievement  -- eventive (perception) sense
 
 /-- *thimóno* (θυμώνω) 'get/be angry' — eventive (achievement)
-    normally; stative when taking *pu* (@cite{angelopoulos-2026}
+    normally; stative when taking *pu* ([angelopoulos-2026]
     ex. 19, 23). -/
 def thimono : Verb where
   form := "thimóno"
@@ -206,8 +206,8 @@ def thimono : Verb where
 -- ════════════════════════════════════════════════════════════════
 
 /-- The *pu*-only verbs are all stative. This is the consensus
-    pattern (@cite{angelopoulos-2026} §2.3, restating the diagnostic
-    from @cite{roussou-2019}). -/
+    pattern ([angelopoulos-2026] §2.3, restating the diagnostic
+    from [roussou-2019]). -/
 theorem pu_only_verbs_stative :
     metaniono.vendlerClass = some .state ∧
     areso.vendlerClass     = some .state ∧

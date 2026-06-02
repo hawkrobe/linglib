@@ -3,7 +3,7 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Bach, Brown & Marslen-Wilson (1986)
-@cite{bach-brown-marslen-wilson-1986}
+[bach-brown-marslen-wilson-1986]
 
 Crossed and Nested Dependencies in German and Dutch: A Psycholinguistic Study.
 *Language and Cognitive Processes*, 1(4), 249–262.
@@ -15,7 +15,7 @@ process than German nested dependencies (NP₁ NP₂ NP₃ V₃ V₂ V₁) at tw
 levels of embedding, in both comprehensibility ratings and comprehension accuracy.
 At one level of embedding (Level 2), German/Participle does not differ from Dutch,
 though German/Infinitive shows a significant baseline disadvantage across all
-levels. This confirms @cite{evers-1975}'s
+levels. This confirms [evers-1975]'s
 intuition that crossed dependencies are easier, with the first controlled
 experimental evidence.
 
@@ -49,10 +49,10 @@ distance.
 ## Formal–Processing Dissociation
 
 Crossed dependencies require mildly context-sensitive power
-(@cite{shieber-1985}, @cite{bresnan-etal-1982}) while nested dependencies are
+([shieber-1985], [bresnan-etal-1982]) while nested dependencies are
 context-free, yet crossed is psycholinguistically easier. This refutes models
 where parsing difficulty tracks the Chomsky hierarchy and provides evidence
-against push-down-store models of human parsing (@cite{evers-1975}).
+against push-down-store models of human parsing ([evers-1975]).
 -/
 
 namespace BachBrownMarslenWilson1986
@@ -304,7 +304,7 @@ theorem dutch_np3_advantage :
 /-- A push-down automaton (PDA) parsing model predicts that difficulty
     should track the Chomsky hierarchy: context-free patterns (nested) should
     be easier than mildly-context-sensitive patterns (crossed), because PDAs
-    can parse the former but not the latter (@cite{evers-1975}).
+    can parse the former but not the latter ([evers-1975]).
 
     The data refutes this: crossed is empirically easier at n ≥ 3.
     This is the paper's central argument against stack-based parsing. -/

@@ -3,14 +3,14 @@ import Linglib.Features.Acceptability
 
 /-!
 # Denial in Discourse
-@cite{van-der-sandt-maier-2003}
+[van-der-sandt-maier-2003]
 
 Theory-neutral empirical data on denial: how correction sequences
 selectively retract different content layers of the denied sentence.
 
 ## Central Claim: Denial ≠ Negation
 
-@cite{van-der-sandt-maier-2003} argue that denial and negation are
+[van-der-sandt-maier-2003] argue that denial and negation are
 **orthogonal** concepts:
 
 - **Negation** is a semantic operator (a logical connective on propositions)

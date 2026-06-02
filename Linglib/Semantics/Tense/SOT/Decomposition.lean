@@ -2,10 +2,10 @@ import Linglib.Semantics.Tense.Basic
 import Linglib.Semantics.Tense.TenseAspectComposition
 
 /-!
-# @cite{kratzer-1998}: More Structural Analogies Between Pronouns and Tenses
-@cite{kratzer-1998} @cite{klein-1994} @cite{partee-1973}
+# [kratzer-1998]: More Structural Analogies Between Pronouns and Tenses
+[kratzer-1998] [klein-1994] [partee-1973]
 
-@cite{kratzer-1998} extends @cite{partee-1973}'s tense–pronoun analogy in three
+[kratzer-1998] extends [partee-1973]'s tense–pronoun analogy in three
 directions beyond the shared indexical/anaphoric/bound classification:
 
 ## Core Contributions
@@ -115,7 +115,7 @@ theorem kratzer_deletion_yields_simultaneous {Time : Type*}
 -- ════════════════════════════════════════════════════════════════
 
 /-- Kratzer's decomposition of surface tense morphology into
-    underlying tense head + optional aspect head (@cite{heim-kratzer-1998} §4).
+    underlying tense head + optional aspect head ([heim-kratzer-1998] §4).
 
     The key insight: surface morphology can fuse tense and aspect,
     hiding the underlying tense head. English "simple past" fuses

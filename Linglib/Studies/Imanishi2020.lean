@@ -9,7 +9,7 @@ import Linglib.Fragments.Mayan.Qanjobal.Agreement
 
 /-!
 # Imanishi (2020): Parameterizing Split Ergativity in Mayan
-@cite{imanishi-2020}
+[imanishi-2020]
 
 Explains the alignment puzzle in the accusative (non-perfective) side of
 Mayan split-ergative systems.
@@ -31,7 +31,7 @@ Two parameters explain the contrast:
    Kaqchikel obligatorily selects a vP lacking an external argument.
    In Chol and Q'anjob'al, *n* does not impose this restriction.
 
-2. **Mayan Absolutive Parameter** (@cite{coon-mateo-pedro-preminger-2014}):
+2. **Mayan Absolutive Parameter** ([coon-mateo-pedro-preminger-2014]):
    High absolutive languages (Kaqchikel, Q'anjob'al) have Infl as the
    locus of absolutive Case; low absolutive languages (Chol) have Voice.
 
@@ -315,7 +315,7 @@ theorem mayan_imperfective_acc :
 theorem mayan_hindi_same_split : mayanSplit = Typology.Alignment.hindiSplit := rfl
 
 -- ============================================================================
--- § 11: Cross-Study Bridge (@cite{coon-mateo-pedro-preminger-2014})
+-- § 11: Cross-Study Bridge ([coon-mateo-pedro-preminger-2014])
 -- ============================================================================
 
 open CoonMateoPedroPreminger2014 (hasSyntacticErgativity)

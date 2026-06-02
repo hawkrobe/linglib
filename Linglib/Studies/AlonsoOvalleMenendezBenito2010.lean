@@ -3,7 +3,7 @@ import Linglib.Fragments.Spanish.ModalIndefinites
 
 /-!
 # Alonso-Ovalle & Menéndez-Benito (2010): Modal Indefinites
-@cite{alonso-ovalle-menendez-benito-2010}
+[alonso-ovalle-menendez-benito-2010]
 
 Formalization of the core analysis: *algún* imposes an **anti-singleton
 constraint** on its domain of quantification, and the Modal Variation
@@ -13,7 +13,7 @@ via scalar competition with singleton-domain alternatives.
 ## Subset Selection Functions (§4.1)
 
 Indefinite determiners take a subset selection function `f` as argument
-(@cite{alonso-ovalle-menendez-benito-2010}, building on von Fintel 1999a).
+([alonso-ovalle-menendez-benito-2010], building on von Fintel 1999a).
 The function `f` maps a predicate `P` to a contextually relevant subset
 `f(P)`:
 
@@ -39,7 +39,7 @@ Both paths derive the same Modal Variation effect.
 ## Modal Variation vs Free Choice (§§2, 4.4)
 
 The anti-singleton constraint derives a WEAKER modal effect than the
-domain widening of *irgendein* (@cite{kratzer-shimoyama-2002}):
+domain widening of *irgendein* ([kratzer-shimoyama-2002]):
 
 - **Modal Variation** (*algún*): at least two domain members are
   epistemic possibilities — competitors are singleton subdomains only.
@@ -72,7 +72,7 @@ open Spanish.ModalIndefinites
 
 /-- A subset selection function maps predicates to predicates ((50)).
 
-    In @cite{alonso-ovalle-menendez-benito-2010}'s analysis, `f` models
+    In [alonso-ovalle-menendez-benito-2010]'s analysis, `f` models
     contextual domain restriction: `f(P)` selects the subset of `P` that
     the determiner quantifies over. Following von Fintel (1999a), different
     indefinite determiners impose different constraints on `f`. -/
@@ -227,7 +227,7 @@ theorem algún_accepts_antisingleton :
     ⟦ASSERT⟧ᶜ = λp.λw. ∀w' ∈ Epistemicₛₚₑₐₖₑᵣ(w)[p(w')]
 
     Ranges over the speaker's epistemic alternatives. Following
-    @cite{kratzer-shimoyama-2002}, unembedded *algún* sentences are
+    [kratzer-shimoyama-2002], unembedded *algún* sentences are
     in the scope of this operator, unifying the modal and non-modal cases. -/
 def assertOp (epist : List HideWorld) (p : HideWorld → Bool) : Bool :=
   epist.all p
@@ -450,7 +450,7 @@ theorem fc_strictly_stronger :
 
 /-- The two domain constraint strategies for modal indefinites.
 
-    @cite{alonso-ovalle-menendez-benito-2010} §4.4 argues that the
+    [alonso-ovalle-menendez-benito-2010] §4.4 argues that the
     contrast between *irgendein* and *algún* reduces to different
     constraints on the selection function:
     - Widening: f(P) = P (maximal domain; competitors = all subdomains)

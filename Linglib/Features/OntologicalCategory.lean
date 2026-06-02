@@ -3,9 +3,9 @@ import Linglib.Features.Prominence
 
 /-!
 # Features.OntologicalCategory
-@cite{haspelmath-1997}
+[haspelmath-1997]
 
-The ontological-category axis of pro-forms: the categories @cite{haspelmath-1997}'s
+The ontological-category axis of pro-forms: the categories [haspelmath-1997]'s
 "correlative pronoun" paradigm (his §3.1.3 Table 3.1) ranges over. The same axis is
 shared by interrogative, demonstrative, relative, and indefinite pronoun types and by
 their pronominal-adverb members (*where* / *when* / *how*), so it lives in `Features/`
@@ -15,7 +15,7 @@ as substrate that both `Typology/` and `Phenomena/` can type their data by.
 
 Promoted from the former `Phenomena.Questions.WhSemanticType` (a Phenomena-layer enum,
 hence unusable as substrate by `Typology/`). The wh-side `entity` case is split into
-`person` / `thing` — the distinction @cite{haspelmath-1997} notes is made "practically
+`person` / `thing` — the distinction [haspelmath-1997] notes is made "practically
 everywhere" (*who* vs *what*), and the one indefinite and negative pronouns turn on
 (*nobody* vs *nothing*). Renamings: `degree → amount`, `classificatory → property`,
 `locative → place`, `temporal → time`; `reason` (*why*) is retained from the wh side.
@@ -25,12 +25,12 @@ everywhere" (*who* vs *what*), and the one indefinite and negative pronouns turn
 * `OntologicalCategory` — person/thing/property/place/time/manner/amount/reason.
 * `OntologicalCategory.upos` — the part of speech a category realizes as
   (PRON / ADV / DET): the bridge deciding pronoun vs pronominal-adverb vs determiner.
-* `OntologicalCategory.animacy` — projection to the @cite{aissen-2003} `AnimacyLevel`.
+* `OntologicalCategory.animacy` — projection to the [aissen-2003] `AnimacyLevel`.
 -/
 
 namespace Features
 
-/-- The ontological category a pro-form ranges over (@cite{haspelmath-1997} Table 3.1),
+/-- The ontological category a pro-form ranges over ([haspelmath-1997] Table 3.1),
     shared by interrogative / demonstrative / relative / indefinite pronoun types. -/
 inductive OntologicalCategory where
   | person     -- who, somebody, nobody — individuals (animate)
@@ -51,7 +51,7 @@ def OntologicalCategory.upos : OntologicalCategory → UD.UPOS
   | .place | .time | .manner | .reason => .ADV
   | .property | .amount => .DET
 
-/-- Animacy of the category on the @cite{aissen-2003} `AnimacyLevel` scale: only
+/-- Animacy of the category on the [aissen-2003] `AnimacyLevel` scale: only
     `person` is human; the remaining categories are inanimate. -/
 def OntologicalCategory.animacy : OntologicalCategory → Prominence.AnimacyLevel
   | .person => .human

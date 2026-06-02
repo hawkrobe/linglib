@@ -5,7 +5,7 @@ import Linglib.Typology.Voice
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 
 /-!
-# @cite{beavers-udayana-2022} Middle voice as generalized argument suppression
+# [beavers-udayana-2022] Middle voice as generalized argument suppression
 
 Beavers, John and I Nyoman Udayana. 2022. Middle voice as generalized
 argument suppression: The case from Indonesian. *Natural Language &
@@ -38,7 +38,7 @@ binds z with a contextual constraint function f:
 The authors note "we see no particular reason to assume (43) over
 (47), but maintain the former for consistency with Beavers and Zubair
 (2013)" (the paper's §4.2). The "consistency" is notational
-(open-variable form): @cite{beavers-zubair-2013}'s final operator
+(open-variable form): [beavers-zubair-2013]'s final operator
 (their ex. (77)) likewise uses an open variable, but adds a sortal
 restriction `x ∈ U_I` that does the predictive work for Sinhala
 anticausatives (blocks *murder*-type verbs). The 2022 generalization
@@ -389,11 +389,11 @@ theorem men_incompatible_with_di :
     possible with verbs that describe change-of-state or at least
     some degree of affectedness."
 
-    We formalize this by connecting @cite{beavers-2010}'s
+    We formalize this by connecting [beavers-2010]'s
     affectedness hierarchy to the middle typology: verbs licensing
     dispositional middles must have affectedness degree ≥ nonquantized.
 
-    This independently connects to @cite{levin-1993}'s prediction
+    This independently connects to [levin-1993]'s prediction
     that the middle alternation requires `changeOfState` (see
     `predictedAlternation` in Core/RootDimensions.lean) — the same
     verb class restriction viewed through different theoretical lenses. -/

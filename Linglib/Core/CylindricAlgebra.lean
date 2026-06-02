@@ -3,10 +3,10 @@ import Mathlib.Order.BooleanAlgebra.Defs
 
 /-!
 # Cylindric Algebras: Algebraic Foundation for Variable-Binding Semantics
-@cite{henkin-monk-tarski-1971}
+[henkin-monk-tarski-1971]
 
 Cylindric algebras, introduced by Tarski and systematically developed
-in @cite{henkin-monk-tarski-1971}, provide the algebraic foundation for
+in [henkin-monk-tarski-1971], provide the algebraic foundation for
 first-order predicate logic with equality. A cylindric algebra of
 dimension α is a Boolean algebra enriched with *cylindrification*
 operators `cκ` (existential quantification over coordinate κ) and
@@ -30,12 +30,12 @@ The bridge modules in `Core/CylindricAlgebra/` prove algebraic identities
 
 | Framework | Operation | = Cylindric | Bridge |
 |---|---|---|---|
-| CDRT (@cite{muskens-1996}) | `closure (new n ;; φ)` | `cylindrify n (closure φ)` | `DynamicSemantics.lean` |
+| CDRT ([muskens-1996]) | `closure (new n ;; φ)` | `cylindrify n (closure φ)` | `DynamicSemantics.lean` |
 | CDRT | `eq' (dref n) (dref m)` | `diagonal n m` | `DynamicSemantics.lean` |
-| Charlow (@cite{charlow-2019}) | `staticExists x body` | `cylindrify x body` | `DynamicSemantics.lean` |
+| Charlow ([charlow-2019]) | `staticExists x body` | `cylindrify x body` | `DynamicSemantics.lean` |
 | Charlow | `dynamicExists x body` | `cylindrify x body` | `DynamicSemantics.lean` |
 | Update/Accessibility | `closure (introReg n ;; D)` | `cylindrify n (closure D)` | `Accessibility.lean` |
-| DPL (@cite{groenendijk-stokhof-1991}) | `closure (DPLRel.exists_ x φ)` | `cylindrify x (closure φ)` | `DynamicSemantics.lean` |
+| DPL ([groenendijk-stokhof-1991]) | `closure (DPLRel.exists_ x φ)` | `cylindrify x (closure φ)` | `DynamicSemantics.lean` |
 | DPL | `closure (atom (g(x) = g(y)))` | `diagonal x y` | `DynamicSemantics.lean` |
 
 ### Unproved connections (same algebra, bridges not yet formalized)
@@ -46,14 +46,14 @@ same argument — the bridge theorems just haven't been written yet.
 
 | Framework | Its existential | Cylindric reading |
 |---|---|---|
-| ~~DPL (@cite{groenendijk-stokhof-1991})~~ | moved to Proved bridges | see `DynamicSemantics.lean` |
-| PLA (@cite{dekker-2012}) | `exists_ i φ` | `cylindrify i (⟦φ⟧)` |
-| DynamicGQ (@cite{chierchia-1995}) | `{p \| ∃ x, P x ∧ p.2 = q.2.update v x}` | `cylindrify v P` |
-| Bilateral Update (@cite{aloni-2022}) | `exists_ x domain φ` | `cylindrify x (domain ∩ φ)` |
-| PIP (@cite{keshet-abney-2024}) | `exists_ v domain body` | `cylindrify v (domain ∩ body)` |
-| File Change (@cite{heim-1982}) | indefinite extends Dom, widens Sat | `cylindrify n (⟦φ⟧)` |
-| Kamp & Reyle Update (@cite{kamp-reyle-1993}) | `box [n] [conds]` | `cylindrify n (interp conds)` |
-| IntensionalCDRT (@cite{hofmann-2025}) | intensional `new n ;; φ` | `cylindrify n (closure φ)` |
+| ~~DPL ([groenendijk-stokhof-1991])~~ | moved to Proved bridges | see `DynamicSemantics.lean` |
+| PLA ([dekker-2012]) | `exists_ i φ` | `cylindrify i (⟦φ⟧)` |
+| DynamicGQ ([chierchia-1995]) | `{p \| ∃ x, P x ∧ p.2 = q.2.update v x}` | `cylindrify v P` |
+| Bilateral Update ([aloni-2022]) | `exists_ x domain φ` | `cylindrify x (domain ∩ φ)` |
+| PIP ([keshet-abney-2024]) | `exists_ v domain body` | `cylindrify v (domain ∩ body)` |
+| File Change ([heim-1982]) | indefinite extends Dom, widens Sat | `cylindrify n (⟦φ⟧)` |
+| Kamp & Reyle Update ([kamp-reyle-1993]) | `box [n] [conds]` | `cylindrify n (interp conds)` |
+| IntensionalCDRT ([hofmann-2025]) | intensional `new n ;; φ` | `cylindrify n (closure φ)` |
 
 ### Same algebra, different base type
 
@@ -62,10 +62,10 @@ The cylindric axioms (C1–C7) hold for any `D`; only the base type differs.
 
 | Framework | Domain `D` | Its binder | Cylindric reading |
 |---|---|---|---|
-| @cite{partee-1973} tense | `Time` | `λt. φ(g[n↦t])` | `cylindrify n φ` over temporal assignments |
-| @cite{percus-2000} situations | `Situation` | `λs. φ(g[n↦s])` | `cylindrify n φ` over situation assignments |
-| @cite{heim-kratzer-1998} | `Entity` | `λx. φ(g[n↦x])` | `cylindrify n φ` over entity assignments |
-| @cite{abusch-1997} tense | `Time` | temporal `Assignment.update` | `cylindrify n φ` over temporal assignments |
+| [partee-1973] tense | `Time` | `λt. φ(g[n↦t])` | `cylindrify n φ` over temporal assignments |
+| [percus-2000] situations | `Situation` | `λs. φ(g[n↦s])` | `cylindrify n φ` over situation assignments |
+| [heim-kratzer-1998] | `Entity` | `λx. φ(g[n↦x])` | `cylindrify n φ` over entity assignments |
+| [abusch-1997] tense | `Time` | temporal `Assignment.update` | `cylindrify n φ` over temporal assignments |
 
 ### Structural parallels (not assignment-based)
 
@@ -76,7 +76,7 @@ over a different carrier.
 | Framework | Analogue of cylindrify | Notes |
 |---|---|---|
 | Team Semantics | `{s[x↦d] \| s ∈ T, d ∈ D}` | Powerset lifting of cylindrify |
-| Update Semantics (@cite{veltman-1996}) | state elimination | Weaker — no diagonal |
+| Update Semantics ([veltman-1996]) | state elimination | Weaker — no diagonal |
 | Continuation semantics | `shift`/`reset` scope | Different algebraic structure |
 
 ## Structure
@@ -98,7 +98,7 @@ open Core (Assignment)
 -- § 1. Abstract Cylindric Algebra (HMT Def 1.1.1)
 -- ════════════════════════════════════════════════════════════════
 
-/-- A cylindric algebra of dimension α (@cite{henkin-monk-tarski-1971},
+/-- A cylindric algebra of dimension α ([henkin-monk-tarski-1971],
 Def 1.1.1).
 
 An algebraic structure `𝔄 = ⟨A, +, ·, -, 0, 1, cκ, dκl⟩` where
@@ -175,7 +175,7 @@ theorem invariantOn_nil_iff {p : Assignment E → Prop} :
 -- ════════════════════════════════════════════════════════════════
 
 /-! We verify that `cylindrify` on `Assignment E → Prop` satisfies the
-cylindric set algebra axioms (@cite{henkin-monk-tarski-1971}, §1.1).
+cylindric set algebra axioms ([henkin-monk-tarski-1971], §1.1).
 Together with the Boolean algebra structure on `Assignment E → Prop`,
 this establishes that predicates on assignments form an
 `ω`-dimensional cylindric set algebra with base `E`. -/
@@ -291,7 +291,7 @@ theorem cyl_diag_compl (κ l : Nat) (p : Assignment E → Prop) (hκl : κ ≠ l
 
 /-- Algebraic substitution: replace coordinate κ with the value at l.
 
-`σ^κ_l(x) = cκ(dκl · x)` (@cite{henkin-monk-tarski-1971}, §1.5).
+`σ^κ_l(x) = cκ(dκl · x)` ([henkin-monk-tarski-1971], §1.5).
 The substitution first constrains register κ to equal register l
 (via the diagonal `dκl`), then existentially abstracts over the old
 value at κ (via cylindrification `cκ`).

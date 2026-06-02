@@ -14,7 +14,7 @@ import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 /-!
 # Rational action
 
-@cite{luce-1959} @cite{cover-thomas-2006} @cite{zaslavsky-hu-levy-2020} @cite{adams-messick-1958}
+[luce-1959] [cover-thomas-2006] [zaslavsky-hu-levy-2020] [adams-messick-1958]
 
 The mathematical foundation for all soft-rational agents: RSA speakers and
 listeners, BToM agents, and decision-theoretic actors. A `RationalAction` agent
@@ -247,7 +247,7 @@ theorem RationalAction.finset_sum_policy_lt_of_sum_score_lt
 
 /-! ### Luce's choice axiom (IIA)
 
-@cite{luce-1959} showed that the ratio rule `P(a|s) = v(a)/Σv(b)` is
+[luce-1959] showed that the ratio rule `P(a|s) = v(a)/Σv(b)` is
 characterized by the **independence of irrelevant alternatives** (IIA): the
 relative probability of two actions depends only on their scores, not on what
 other actions are available.
@@ -405,7 +405,7 @@ end LuceChoiceAxiom
 
 The softmax function `σ(s, α)ᵢ = exp(α · sᵢ) / Σⱼ exp(α · sⱼ)` is the
 exponential parameterization of the Luce choice rule; its elementary properties
-are surveyed in @cite{franke-degen-2023}.
+are surveyed in [franke-degen-2023].
 -/
 
 /-- The softmax function: `softmax(s)ᵢ = exp(sᵢ) / Σⱼ exp(sⱼ)`. The
@@ -598,7 +598,7 @@ end SoftmaxBasic
 
 The exponential parameterization `score = exp(α · utility)` is not a design
 choice — it is the **unique** transformation connecting Luce's ratio scale to
-a utility (interval) scale (@cite{adams-messick-1958}).
+a utility (interval) scale ([adams-messick-1958]).
 
 **Ratio vs interval scales.** Luce's Axiom 1 (IIA) yields a **ratio scale**
 `v`: only ratios `v(a)/v(b)` are meaningful. Fechner's
@@ -730,7 +730,7 @@ theorem cauchy_mul_exp (g : ℝ → ℝ)
   simp only [h] at this
   rw [← exp_log (hg_pos s), this, mul_comm]
 
-/-- **Fechnerian uniqueness** (@cite{adams-messick-1958}): if a ratio scale `v`
+/-- **Fechnerian uniqueness** ([adams-messick-1958]): if a ratio scale `v`
     and interval scale `u` represent the same ordering via
     `v(x)/v(y) = g(u(x) - u(y))` for a strictly monotone multiplicative `g`, then
     `v` is the exponential of `u`. -/
@@ -766,7 +766,7 @@ theorem RationalAction.fromSoftmax_policy_eq [Nonempty A]
 
 The softmax distribution uniquely maximizes entropy plus expected score on the
 probability simplex — the mathematical foundation for RSA convergence
-(@cite{zaslavsky-hu-levy-2020}).
+([zaslavsky-hu-levy-2020]).
 
 The KL machinery used here — `klFinite`, `kl_eq_sum_klFun`, `kl_nonneg` — is
 inlined as private `ι → ℝ` helpers, since mathlib provides only the `PMF` form
@@ -1496,7 +1496,7 @@ end UniquenessCharacterization
 
 /-! ### Alternative forms of the choice axiom
 
-@cite{luce-1959} proves three equivalent formulations of the choice axiom:
+[luce-1959] proves three equivalent formulations of the choice axiom:
 
 **(a) Ratio form**: There exists a positive function `v` such that
 `P(x, T) = v(x) / Σ_{y∈T} v(y)` for all `x ∈ T`.
@@ -1515,7 +1515,7 @@ section Appendix1
 
 variable {A : Type*} [DecidableEq A]
 
-/-- A choice function on finite subsets — the canonical @cite{luce-1959} form.
+/-- A choice function on finite subsets — the canonical [luce-1959] form.
     For each non-empty subset `T ⊆ A`, `prob T : A → ℝ` is a probability
     distribution: non-negative, vanishing outside `T`, summing to 1 inside. The
     Luce-axiom forms (`hasRatioScale`, `hasProductRule`, `hasPairwiseIIA`) are
@@ -1527,7 +1527,7 @@ structure ChoiceFn (A : Type*) [DecidableEq A] where
   prob_nonneg : ∀ (T : Finset A) (a : A), 0 ≤ prob T a
   /-- Zero probability outside the choice set -/
   prob_zero_outside : ∀ (T : Finset A) (a : A), a ∉ T → prob T a = 0
-  /-- Probabilities sum to 1 within the choice set (@cite{luce-1959}) -/
+  /-- Probabilities sum to 1 within the choice set ([luce-1959]) -/
   prob_sum_eq_one : ∀ (T : Finset A), T.Nonempty → ∑ a ∈ T, prob T a = 1
 
 namespace ChoiceFn

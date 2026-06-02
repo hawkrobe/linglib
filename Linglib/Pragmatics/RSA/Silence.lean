@@ -4,20 +4,20 @@ set_option autoImplicit false
 
 /-!
 # Silence as a low-prior alternative
-@cite{bergen-levy-goodman-2016}
+[bergen-levy-goodman-2016]
 
 `WithSilence U := Option U` is the standard wrapper that adds a "silence"
 element to any utterance type. `none` represents silence; `some u` represents
 a paper-utterance.
 
-Following @cite{bergen-levy-goodman-2016}, silence has universal extension
+Following [bergen-levy-goodman-2016], silence has universal extension
 (`liftMeaning` makes it true at every world), giving it the smallest lex
 value (`1/card W`) under the standard `extensionOf`-based literal listener.
 This disfavors silence at the softmax when stronger utterances are honest.
 At observations where no non-silent utterance is honest, silence absorbs
 all probability — dissolving the "no `qOk` witness" defect that would
 otherwise make `(access, word) ∉ {sensible}` cases vacuous in PMF
-formalizations of @cite{goodman-stuhlmuller-2013}-style models.
+formalizations of [goodman-stuhlmuller-2013]-style models.
 
 ## Main definitions
 

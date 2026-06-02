@@ -4,7 +4,7 @@ import Linglib.Core.Logic.Aristotelian.Probabilistic
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
-# @cite{tessler-tenenbaum-goodman-2022} — Logic, Probability, and Pragmatics in Syllogistic Reasoning
+# [tessler-tenenbaum-goodman-2022] — Logic, Probability, and Pragmatics in Syllogistic Reasoning
 
 Topics in Cognitive Science 14: 574–601.
 
@@ -38,7 +38,7 @@ This file consumes the syllogistic substrate at `Semantics/Quantification/`:
 - `state_A_AC`/`state_AB_BC`/`state_ABC` witness states
 - Validity (`barbara_valid`) + invalidity (`allAB_allCB_invalid`) theorems
 
-Per footnote 2 of @cite{tessler-tenenbaum-goodman-2022}, this paper takes the
+Per footnote 2 of [tessler-tenenbaum-goodman-2022], this paper takes the
 **Aristotelian** stance on the All form: "All As are Bs is false if there are no As."
 The substrate is modern (FOL); existential import is added here as a paper-local
 wrapper `tesslerAll`. Other Aristotelian forms (E, I, O) take the modern reading
@@ -64,7 +64,7 @@ in this paper, so the asymmetric stance is encoded honestly.
   the broader Demey–Smessaert opposition-diagram tradition.
 
 The paper engages the mental-models tradition (Khemlani & Johnson-Laird) and
-the Probability Heuristics Model @cite{chater-oaksford-1999}, fits parameters
+the Probability Heuristics Model [chater-oaksford-1999], fits parameters
 on the Ragni et al. 2019 dataset; bib entries for the latter two are deferred
 pending verified DOI/page metadata.
 -/

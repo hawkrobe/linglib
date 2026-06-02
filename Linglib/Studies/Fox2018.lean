@@ -3,10 +3,10 @@ import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Questions.Exhaustivity
 
 /-!
-# @cite{fox-2018}: Partition by Exhaustification: Comments on Dayal 1996
-@cite{dayal-1996} @cite{heim-1994} @cite{groenendijk-stokhof-1984} @cite{spector-2008}
+# [fox-2018]: Partition by Exhaustification: Comments on Dayal 1996
+[dayal-1996] [heim-1994] [groenendijk-stokhof-1984] [spector-2008]
 
-Single-paper formalisation of @cite{fox-2018}, "Partition by
+Single-paper formalisation of [fox-2018], "Partition by
 Exhaustification: Comments on Dayal 1996" (ZAS Papers in Linguistics
 60 / Sinn und Bedeutung 22). Fox derives Dayal's maximality
 presupposition from the demand that question denotations *partition*
@@ -19,7 +19,7 @@ Fox's central operator is the `Exh`-derived **cell identifier**: the
 set of worlds where a given proposition `p` is the maximally
 informative true Hamblin alternative.
 
-| @cite{fox-2018}                        | substrate                         |
+| [fox-2018]                        | substrate                         |
 |----------------------------------------|-----------------------------------|
 | `Exh(Q,p) = λw. w∈p ∧ ∀q∈Q[w∈q → p⊆q]` (eq 11) | `{w | IsStrongestTrueAnswer Q w p}` |
 | `Max_inf(Q,w)` (eq 9b)                 | the unique `p` with `IsStrongestTrueAnswer Q w p` (when EP holds) |
@@ -79,19 +79,19 @@ see `Semantics/Questions/Exhaustivity.lean::exhCell` and
 paper-faithfulness, and define the paper-specific contextual variant
 locally. -/
 
-/-- @cite{fox-2018} (11): the **Exh-cell** of proposition `p` in
+/-- [fox-2018] (11): the **Exh-cell** of proposition `p` in
     question `Q`. Substrate primitive `exhCell` re-exported under
     Fox's notation. -/
 abbrev Exh (Q : Question W) (p : Set W) : Set W := exhCell Q p
 
 /-! ### §1.1 Logical and contextual partitions (eq 3, eq 10) -/
 
-/-- @cite{fox-2018} (3): the **Logical Partition** of `Q`. Substrate
+/-- [fox-2018] (3): the **Logical Partition** of `Q`. Substrate
     primitive `exhaustifiedPartition` re-exported under Fox's notation. -/
 abbrev LogicalPartition (Q : Question W) : Set (Set W) :=
   exhaustifiedPartition Q
 
-/-- @cite{fox-2018} (10): the **Contextual Partition** of `Q` over
+/-- [fox-2018] (10): the **Contextual Partition** of `Q` over
     context-set `A` — the Logical Partition cells intersected with `A`.
     Paper-specific variant; the substrate primitive `exhaustifiedPartition`
     is the unrestricted form. -/
@@ -104,18 +104,18 @@ theorem mem_ContextualPartition (Q : Question W) (A : Set W) (C : Set W) :
 
 /-! ### §1.4 Cell Identification, Non-Vacuity, QPM (eq 19, eq 20) -/
 
-/-- @cite{fox-2018} (19): **Cell Identification (CI)** — every cell
+/-- [fox-2018] (19): **Cell Identification (CI)** — every cell
     in `Partition_C(Q, A)` is identifiable by some `Exh(Q, p)`
     intersected with `A`. -/
 def CellIdentification (Q : Question W) (A : Set W) : Prop :=
   ∀ C ∈ ContextualPartition Q A, ∃ p ∈ alt Q, C = Exh Q p ∩ A
 
-/-- @cite{fox-2018} (20b): **Non-Vacuity (NV)** — every alternative
+/-- [fox-2018] (20b): **Non-Vacuity (NV)** — every alternative
     `p ∈ alt Q` identifies *some* cell of `Partition_C(Q, A)`. -/
 def NonVacuity (Q : Question W) (A : Set W) : Prop :=
   ∀ p ∈ alt Q, Exh Q p ∩ A ≠ ∅ → ∃ C ∈ ContextualPartition Q A, C = Exh Q p ∩ A
 
-/-- @cite{fox-2018} (20): **Question Partition Matching (QPM)** —
+/-- [fox-2018] (20): **Question Partition Matching (QPM)** —
     `Q` and the context-set `A` jointly satisfy CI and NV. -/
 def QPM (Q : Question W) (A : Set W) : Prop :=
   CellIdentification Q A ∧ NonVacuity Q A
@@ -128,7 +128,7 @@ answer), the contextual partition is exactly the image of `Exh`.
 The substrate-level form of this connection: `IsExhaustivelyResolvable
 Q w` for every `w ∈ A` implies `CellIdentification Q A`. -/
 
-/-- @cite{fox-2018} eq (11)→(12): if every world in the context-set
+/-- [fox-2018] eq (11)→(12): if every world in the context-set
     has a maximally informative true answer, every cell of the
     contextual partition is `Exh`-identifiable. The substrate
     counterpart of the Dayal-EP-implies-CI direction. -/
@@ -170,7 +170,7 @@ theorem cellIdentification_of_isExhaustivelyResolvable
 
 /-! ### §2.1 Mention-some challenge
 
-@cite{fox-2018} §2.1 (21): "Mary knows where we can get gas in
+[fox-2018] §2.1 (21): "Mary knows where we can get gas in
 Cambridge" has an MS reading not derivable from `Ans_D` (which
 demands the maximally informative answer). The substrate mirror:
 some questions have `¬ IsExhaustivelyResolvable Q w` at the

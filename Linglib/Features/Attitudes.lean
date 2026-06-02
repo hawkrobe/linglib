@@ -1,7 +1,7 @@
 /-!
 # Features.Attitudes
-@cite{karttunen-1971} @cite{villalta-2008} @cite{anand-hacquard-2013}
-@cite{klecha-2016}
+[karttunen-1971] [villalta-2008] [anand-hacquard-2013]
+[klecha-2016]
 
 Per-verb-entry feature taxonomies for attitude verbs: veridicality
 (Karttunen lineage), evaluative valence (positive vs negative
@@ -25,9 +25,9 @@ pan-framework consensus:
 - **Veridicality** (`Veridicality`): Karttunen lineage on factive vs
   non-factive complement-taking verbs (the Hooper 1975 *On Assertive
   Predicates* paper extends this to assertive predicates; not currently
-  in `references.bib`). @cite{giannakidou-1998} critiques this binary
+  in `references.bib`). [giannakidou-1998] critiques this binary
   as too coarse and proposes a 3-way veridical / nonveridical /
-  antiveridical taxonomy; Schlenker (e.g., @cite{schlenker-2003}) on
+  antiveridical taxonomy; Schlenker (e.g., [schlenker-2003]) on
   attitude-verb projection draws yet different cuts. The binary
   veridical/non-veridical carve-up here is the classical-DRT default,
   not a neutral substrate.
@@ -35,16 +35,16 @@ pan-framework consensus:
 - **AttitudeValence** (`AttitudeValence`): positive/negative split
   underlies the TSP distribution literature (positive attitudes have
   TSP, negative don't) and "V whether" interpretive asymmetries.
-  @cite{stalnaker-1984}-style "directedness" frameworks would
+  [stalnaker-1984]-style "directedness" frameworks would
   parameterize this differently.
 
 - **Preferential** (`Preferential`): three-way split between
-  degree-comparison (@cite{villalta-2008}), uncertainty-based
-  (@cite{anand-hacquard-2013} *worry*-class), and relevance-based.
+  degree-comparison ([villalta-2008]), uncertainty-based
+  ([anand-hacquard-2013] *worry*-class), and relevance-based.
   **Note**: "relevance-based" is **linglib's coinage** for *qidai*-type
   attitudes resisting both Villalta degree-comparison and A&H
-  uncertainty analyses; not a published category. @cite{heim-1992}
-  gradable-attitude analysis and @cite{lassiter-2017} expected-utility
+  uncertainty analyses; not a published category. [heim-1992]
+  gradable-attitude analysis and [lassiter-2017] expected-utility
   account carve the space differently. The C-distributivity and
   NVP-class derivations downstream depend on this specific 3-way split.
 
@@ -57,7 +57,7 @@ pan-framework consensus:
 
 The current `Attitude` type covers doxastic and preferential cases.
 Bouletic verbs (*want*, *wish*) are typically slotted under
-`preferential .degreeComparison .positive` per the @cite{heim-1992}
+`preferential .degreeComparison .positive` per the [heim-1992]
 gradable-attitude analysis. Speech-act predicates (*promise*,
 *demand*, *order*) are not covered by this feature taxonomy and
 would need a parallel `SpeechActPredicate` type in
@@ -179,7 +179,7 @@ def valence : Attitude → Option AttitudeValence
   | .preferential b => some b.valence
 
 /-- Can this attitude verb take a circumstantial modal base?
-    @cite{klecha-2016}: doxastic attitudes (think, believe) take only DOX;
+    [klecha-2016]: doxastic attitudes (think, believe) take only DOX;
     preferential attitudes (hope, want, pray) can also take CIR, which
     permits future temporal orientation. This is the source of the
     Upper Limit Constraint: DOX-only verbs block future readings. -/

@@ -5,7 +5,7 @@ import Linglib.Semantics.Composition.Abstraction
 
 /-!
 # Trace Interpretation
-@cite{heim-kratzer-1998}
+[heim-kratzer-1998]
 
 Traces left by movement are interpreted as variables bound by
 λ-abstraction at the landing site (H&K Ch. 5, 7).

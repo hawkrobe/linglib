@@ -3,7 +3,7 @@ import Linglib.Semantics.TypeTheoretic.Basic
 
 /-!
 # KOS: Type Definitions
-@cite{ginzburg-2012}
+[ginzburg-2012]
 
 Pure type definitions for the KOS framework. No operations beyond the
 trivial constructors / accessors required for type families to compose.
@@ -12,7 +12,7 @@ Operations live in sibling files (`Basic`, `InquiryCycle`, `Grounding`,
 
 ## TTR-residence
 
-KOS is built on TTR (@cite{cooper-2023}). `LocProp` is a structural
+KOS is built on TTR ([cooper-2023]). `LocProp` is a structural
 refinement of `TTRSign String Cont` (Cooper §2.5 ex 70): same
 `phon : String` + `cont : Cont` fields, plus dialogue-grade additions
 (`cat`, `cparams`, `qcparams`, `constits`). The `Coe` instance and
@@ -81,7 +81,7 @@ open Semantics.TypeTheoretic (TTRSign)
 
 /-- An illocutionary move in dialogue.
 
-@cite{ginzburg-2012} Ch. 4: moves are illocutionary propositions — speech
+[ginzburg-2012] Ch. 4: moves are illocutionary propositions — speech
 events classified by their illocutionary force. We abstract over the
 content: assertions carry propositional content, queries carry
 question content.
@@ -127,8 +127,8 @@ def IllocMove.questionContent {Fact QContent : Type*} : IllocMove Fact QContent 
 
 Each C-PARAM has an index variable (e.g., "b" for the referent of "Bo")
 and a restriction characterizing what values are acceptable (e.g.,
-"named(Bo)(b)"). @cite{ginzburg-cooper-2004} ex. 28; surviving in
-@cite{ginzburg-2012} as the `dgb-params` primitive.
+"named(Bo)(b)"). [ginzburg-cooper-2004] ex. 28; surviving in
+[ginzburg-2012] as the `dgb-params` primitive.
 
 This type is shared between 2004-paper-anchored studies (resolves/coercion
 operations live in the 2004 study file) and 2012-paper-anchored substrate
@@ -156,7 +156,7 @@ abbrev CParamSet := List CParam
 
 Every sub-utterance encodes PHON, CAT, and CONT — this **fractal
 heterogeneity** is what makes clarification of any constituent possible.
-@cite{ginzburg-cooper-2004} §2; surviving in @cite{ginzburg-2012} Ch. 6
+[ginzburg-cooper-2004] §2; surviving in [ginzburg-2012] Ch. 6
 as the `constits` field on LocProps. -/
 structure SubUtterance where
   phon : String
@@ -170,7 +170,7 @@ structure SubUtterance where
 
 /-- A locutionary proposition: a speech event with both form and content.
 
-@cite{ginzburg-2012} Ch. 6, Appendix A (ex. 8d): LocProp replaces IllocProp
+[ginzburg-2012] Ch. 6, Appendix A (ex. 8d): LocProp replaces IllocProp
 in MOVES and Pending. A LocProp records the phonological form, syntactic
 category, and contextual parameters of the utterance — not just its
 illocutionary content. This is crucial for CRification: clarification
@@ -179,13 +179,13 @@ requests target the *form* of the utterance, not just its content.
 Parameterized over the content type `Cont` for grammar-neutrality.
 When `Cont = String`, this subsumes the 2004 `UttSkeleton` representation.
 
-The two parameter fields reflect @cite{ginzburg-2012}'s sign architecture:
+The two parameter fields reflect [ginzburg-2012]'s sign architecture:
 `cparams` carries dgb-params (referential, requiring contextual anchoring);
 `qcparams` carries q-params (existentially closed at proposition level).
 The asymmetry: only `cparams` triggers CRification under
 `integrateLocProp`; q-params travel with the sign but do not block
 grounding. This is the structural prerequisite for the Reprise Content
-Hypothesis (@cite{purver-ginzburg-2004}, @cite{ginzburg-2012} §8.5.1):
+Hypothesis ([purver-ginzburg-2004], [ginzburg-2012] §8.5.1):
 fragment reprises query the q-params record, not the dgb-params one. -/
 structure LocProp (Cont : Type) where
   /-- Phonological form of the utterance — same field name as `TTRSign.phon`. -/
@@ -198,12 +198,12 @@ structure LocProp (Cont : Type) where
       Empty = fully grounded; non-empty = CRification may be needed. -/
   cparams : CParamSet := []
   /-- Q-PARAMS: parameters whose index is existentially closed at the
-      sentential level (@cite{ginzburg-2012} §8.5.1, ex. 101–103, p. 325–326).
+      sentential level ([ginzburg-2012] §8.5.1, ex. 101–103, p. 325–326).
       Travel with the sign but do *not* trigger CRification — they
       contribute the descriptive content of non-referential NPs. -/
   qcparams : CParamSet := []
   /-- Sub-constituents accessible for clarification.
-      @cite{ginzburg-2012} Ch. 6: any sub-utterance can be targeted by a CR. -/
+      [ginzburg-2012] Ch. 6: any sub-utterance can be targeted by a CR. -/
   constits : List SubUtterance := []
   deriving Repr, DecidableEq
 
@@ -233,7 +233,7 @@ instance {Cont : Type} : Coe (LocProp Cont) (TTRSign String Cont) where
 /-- An information structure: a question paired with its focus-establishing
 constituents (FECs).
 
-@cite{ginzburg-2012} Ch. 7, Appendix B (ex. 2): QUD entries are not bare
+[ginzburg-2012] Ch. 7, Appendix B (ex. 2): QUD entries are not bare
 questions but InfoStructs. The FEC records which sub-utterance(s)
 established the question — this is what enables NSU resolution.
 
@@ -265,7 +265,7 @@ def InfoStruc.withFEC {QContent : Type*} {Cont : Type}
 
 /-- The Dialogue Gameboard.
 
-@cite{ginzburg-2012} ex. 100 (p. 111) and final version ex. 43 (p. 175).
+[ginzburg-2012] ex. 100 (p. 111) and final version ex. 43 (p. 175).
 
 Each conversational participant maintains their own DGB — distinct but
 coupled gameboards, NOT a single shared context. The DGB tracks the
@@ -285,11 +285,11 @@ This shape matches Ginzburg's Ch. 6 final DGB (ex. 43 p. 175):
   final form uses LocProps; converting incurs no fidelity cost since
   IllocMove constructors carry information LocProps would have to recover) -/
 structure DGB (Participant Fact QContent : Type*) (Cont : Type) where
-  /-- Current speaker (@cite{ginzburg-2012} ex. 100) -/
+  /-- Current speaker ([ginzburg-2012] ex. 100) -/
   spkr : Option Participant := none
-  /-- Current addressee (@cite{ginzburg-2012} ex. 100) -/
+  /-- Current addressee ([ginzburg-2012] ex. 100) -/
   addr : Option Participant := none
-  /-- Shared commitments. @cite{ginzburg-2012}: "Facts : Set(Prop)" -/
+  /-- Shared commitments. [ginzburg-2012]: "Facts : Set(Prop)" -/
   facts : List Fact := []
   /-- History of illocutionary moves (Ch. 4 ex. 100; cf. Ch. 6 ex. 43 LocProp form) -/
   moves : List (IllocMove Fact QContent) := []
@@ -298,7 +298,7 @@ structure DGB (Participant Fact QContent : Type*) (Cont : Type) where
       (`integrateLocProp` in `KOS/Grounding.lean`) checks for resolution. -/
   pending : List (LocProp Cont) := []
   /-- Partially ordered set of questions under discussion.
-      @cite{ginzburg-2012} §6.3 / §7.6 (location verified against Ch. 6/7 narrative; specific ex. number not directly cited) final shape: QUD entries are
+      [ginzburg-2012] §6.3 / §7.6 (location verified against Ch. 6/7 narrative; specific ex. number not directly cited) final shape: QUD entries are
       `InfoStruc`s (questions with focus-establishing constituents),
       not bare questions. We use a list (most recent = front) following
       QUD-maximality. -/
@@ -319,7 +319,7 @@ def DGB.initial {Participant Fact QContent : Type*} {Cont : Type} :
 
 /-- A conversational genre type.
 
-@cite{ginzburg-2012} §4.6 (pp. 101–110, ex. 88 p. 104): genres are TTR
+[ginzburg-2012] §4.6 (pp. 101–110, ex. 88 p. 104): genres are TTR
 record types that classify conversations by their characteristic
 conversational structures. Example genres from the book: CasualChat
 (ex. 88a), PetrolMarket (ex. 88b), BakeryChat (ex. 88c).
@@ -354,7 +354,7 @@ structure GenreType (Fact QContent : Type*) where
   qudConstraint : Option (List QContent → Bool) := none
 
 /-- The generic DGBType — the supertype of all genre types.
-@cite{ginzburg-2012} ex. 86 (p. 103): `DGBTypefin GenreType`. -/
+[ginzburg-2012] ex. 86 (p. 103): `DGBTypefin GenreType`. -/
 def GenreType.generic {Fact QContent : Type*} : GenreType Fact QContent where
   name := "generic"
 
@@ -364,7 +364,7 @@ def GenreType.generic {Fact QContent : Type*} : GenreType Fact QContent where
 
 /-! ### MaxPending = head of Pending (no separate field)
 
-Per @cite{ginzburg-2012} §6.3 (footnote 31 p. 168) and §8.2: **MaxPending
+Per [ginzburg-2012] §6.3 (footnote 31 p. 168) and §8.2: **MaxPending
 is the maximal element of the `dgb.pending` field**, not a separately-
 stored struct. Pending stores `LocProp Cont`s in last-in-first-out order;
 MaxPending is `pending.head?`. The previous formaliser struct
@@ -378,7 +378,7 @@ extended, no separate "phonSoFar" field needed. -/
 
 /-- The private component of an information state.
 
-@cite{ginzburg-2012} ex. 93 (p. 107): PRType has genre, beliefs, and agenda.
+[ginzburg-2012] ex. 93 (p. 107): PRType has genre, beliefs, and agenda.
 Agenda is a list of illocutionary propositions that the participant plans
 to realize. Beliefs are private (non-public) propositional attitudes. -/
 structure PrivateState (Fact QContent : Type*) where
@@ -389,7 +389,7 @@ structure PrivateState (Fact QContent : Type*) where
 
 /-- Total Information State (TIS).
 
-@cite{ginzburg-2012} ex. 93 (p. 107): the TIS consists of the public DGB
+[ginzburg-2012] ex. 93 (p. 107): the TIS consists of the public DGB
 and a private component (genre, beliefs, agenda). The `Cont` parameter
 threads through to the DGB's pending and qud fields. -/
 structure TIS (Participant Fact QContent : Type*) (Cont : Type) where

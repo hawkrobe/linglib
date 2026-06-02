@@ -3,7 +3,7 @@ import Linglib.Core.Logic.RankingFunction
 /-!
 # System Z: Constructing Rankings from Default Rules
 
-@cite{goldszmidt-pearl-1996}
+[goldszmidt-pearl-1996]
 
 System Z constructs the unique minimal ranking function from a knowledge
 base of default rules. Given defaults like "birds fly" and "penguins
@@ -52,7 +52,7 @@ open Core.Logic.Ranking (RankingFunction)
 /-- A default rule "if φ then normally ψ", where φ and ψ are decidable
     predicates on worlds.
 
-    @cite{goldszmidt-pearl-1996}: rules are the basic unit of defeasible
+    [goldszmidt-pearl-1996]: rules are the basic unit of defeasible
     knowledge. The rule φ → ψ expresses that ψ is normally the case
     in the domain φ, admitting exceptions. -/
 structure DefaultRule (W : Type*) where
@@ -90,7 +90,7 @@ instance (r : DefaultRule W) (w : W) : Decidable (r.falsified w) := by
 -- § 2. Tolerance and Admissibility
 -- ══════════════════════════════════════════════════════════════════════
 
-/-- @cite{goldszmidt-pearl-1996}, Definition 3 (Eq. 8). A rule α → β
+/-- [goldszmidt-pearl-1996], Definition 3 (Eq. 8). A rule α → β
     is **tolerated** by a knowledge base Δ iff there exists a world ω
     satisfying α ∧ β and the material counterpart of every rule in Δ.
 
@@ -103,7 +103,7 @@ instance [Fintype W] (r : DefaultRule W) (Δ : KnowledgeBase W) :
     Decidable (tolerated r Δ) := by
   unfold tolerated; infer_instance
 
-/-- @cite{goldszmidt-pearl-1996}, Definition 2 (Eq. 7). A ranking κ is
+/-- [goldszmidt-pearl-1996], Definition 2 (Eq. 7). A ranking κ is
     **admissible** relative to Δ iff for each rule φᵢ → ψᵢ, every world
     falsifying the rule is outranked by some world satisfying it.
 
@@ -120,7 +120,7 @@ def admissible (κ : RankingFunction W) (Δ : KnowledgeBase W) : Prop :=
 
 /-- The κ^z value at a world, given Z-prioritized rules.
 
-    @cite{goldszmidt-pearl-1996}, Definition 12 (Eq. 10):
+    [goldszmidt-pearl-1996], Definition 12 (Eq. 10):
     - κ^z(ω) = 0 if ω does not falsify any rule in Δ
     - κ^z(ω) = max{Z(rᵢ) | ω falsifies rᵢ} + 1 otherwise
 
@@ -154,7 +154,7 @@ def zRanking (rules : List (DefaultRule W × ℕ))
 -- § 4. Consequence Relations
 -- ══════════════════════════════════════════════════════════════════════
 
-/-- @cite{goldszmidt-pearl-1996}, Definition 7 (Eq. 9). The consequence
+/-- [goldszmidt-pearl-1996], Definition 7 (Eq. 9). The consequence
     relation induced by a ranking κ: φ ⊨_κ σ iff the most normal
     world satisfying φ ∧ σ has strictly lower rank than the most normal
     world satisfying φ ∧ ¬σ.
@@ -165,7 +165,7 @@ def rankEntails (κ : RankingFunction W) (φ σ : W → Prop) : Prop :=
   ∀ w : W, φ w → ¬ σ w →
     ∃ v : W, φ v ∧ σ v ∧ κ.rank v < κ.rank w
 
-/-- @cite{goldszmidt-pearl-1996}, Definition 8 (p. 66). σ is
+/-- [goldszmidt-pearl-1996], Definition 8 (p. 66). σ is
     **p-entailed** by φ given Δ iff φ ⊨_κ σ holds in every consequence
     relation ⊨_κ induced by an admissible ranking κ.
 
@@ -212,7 +212,7 @@ def zPriorities [Fintype W] (Δ : KnowledgeBase W) :
 -- ══════════════════════════════════════════════════════════════════════
 
 /-- A default rule with strength parameter δ.
-    @cite{goldszmidt-pearl-1996}, Definition 18: higher δ demands a wider
+    [goldszmidt-pearl-1996], Definition 18: higher δ demands a wider
     gap between verifying and falsifying worlds. -/
 structure StrengthRule (W : Type*) extends DefaultRule W where
   /-- Strength parameter (δ ≥ 0) -/
@@ -225,7 +225,7 @@ abbrev StrengthKB (W : Type*) := List (StrengthRule W)
 def StrengthKB.flat {W : Type*} (Δ : StrengthKB W) : KnowledgeBase W :=
   Δ.map (·.toDefaultRule)
 
-/-- @cite{goldszmidt-pearl-1996}, Definition 18 (corrected).
+/-- [goldszmidt-pearl-1996], Definition 18 (corrected).
     A ranking κ is **δ-admissible** relative to strength rules iff
     for each rule (φᵢ → ψᵢ, δᵢ), every falsifying world is outranked
     by at least δᵢ + 1 by some verifying world:
@@ -249,7 +249,7 @@ private theorem strength_le_foldr_max (Δ : StrengthKB W)
     · exact le_max_left _ _
     · exact le_trans (ih htl) (le_max_right _ _)
 
-/-- @cite{goldszmidt-pearl-1996}, Theorem 19: a strength knowledge base
+/-- [goldszmidt-pearl-1996], Theorem 19: a strength knowledge base
     is δ-consistent (admits a δ-admissible ranking) iff its flat
     projection (ignoring strengths) is consistent (admits an ordinary
     admissible ranking).

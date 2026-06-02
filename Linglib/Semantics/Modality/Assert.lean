@@ -5,9 +5,9 @@ import Linglib.Discourse.Commitment.Basic
 
 /-!
 # The ASSERT Operator and Speech Act Phrase
-  @cite{hacquard-2006}
+  [hacquard-2006]
 
-Formalizes the Speech Act Phrase (SAP) from @cite{hacquard-2006}. Every matrix clause is
+Formalizes the Speech Act Phrase (SAP) from [hacquard-2006]. Every matrix clause is
 headed by a SAP that introduces a speech event e* with propositional
 CONTENT. The type of speech act determines the content:
 
@@ -48,7 +48,7 @@ open Semantics.Mood (IllocutionaryMood)
 
 /-- The type of speech act heading the Speech Act Phrase.
 
-@cite{hacquard-2006}: "The content of the speech event
+[hacquard-2006]: "The content of the speech event
 is different depending on the type of speech act."
 
 Now unified with `IllocutionaryMood` from `Discourse`. The five
@@ -90,7 +90,7 @@ def primaryFlavor : SpeechActType → ModalFlavor
 
 This is what the Speech Act Phrase introduces at the top of every
 matrix clause. The `content` field is the conversational background
-that modals in the clause can bind to (@cite{hacquard-2006}, (219)–(222)). -/
+that modals in the clause can bind to ([hacquard-2006], (219)–(222)). -/
 structure SpeechActEvent (W : Type*) where
   /-- The type of speech act -/
   actType : SpeechActType

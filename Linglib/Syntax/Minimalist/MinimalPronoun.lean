@@ -3,7 +3,7 @@ import Linglib.Phenomena.NullSubject.Universals
 
 /-!
 # Minimal Pronoun Theory
-@cite{kratzer-1998} @cite{kratzer-2009} @cite{safir-2014} @cite{landau-2015}
+[kratzer-1998] [kratzer-2009] [safir-2014] [landau-2015]
 
 All instances of bound variable anaphora — reflexives, PRO, bound variable
 pronouns — are syntactically identical: bare D heads with unvalued φ-features
@@ -11,7 +11,7 @@ pronouns — are syntactically identical: bare D heads with unvalued φ-features
 (null, reflexive, pronoun) reduces entirely to variation in **vocabulary items**,
 language-specific contextual allomorphs applied postsyntactically.
 
-Definition (28) of @cite{landau-2015}: X is a minimal pronoun iff X = [D,uφ].
+Definition (28) of [landau-2015]: X is a minimal pronoun iff X = [D,uφ].
 Within different derivations, X can become a reflexive, a bound lexical pronoun,
 a resumptive pronoun, a *pro* element, a relative pronoun, or controlled PRO.
 The choice is determined by the syntactic context and the language's vocabulary
@@ -23,7 +23,7 @@ item inventory.
 - `VocabItem`: A context-sensitive realization rule (D[uφ] → Form / context)
 - `MinPronInventory`: A language's vocabulary item inventory + elsewhere default
 - `PronForm`: Standard surface form categories (null, pronoun, reflexive)
-- `OCSignature`: @cite{landau-2013}'s Obligatory Control diagnostic package
+- `OCSignature`: [landau-2013]'s Obligatory Control diagnostic package
 
 ## Core Claims
 
@@ -34,9 +34,9 @@ item inventory.
 4. The **Elsewhere Condition** (DM; Halle & Marantz 1993): if no
    context-specific item matches, the default (pronoun) applies
 5. Cross-linguistic variation in anaphoric form is morphological, not
-   syntactic (@cite{safir-2014}: "all anaphoric diversity is morphological").
-   The DM vocabulary-item implementation used here follows @cite{landau-2015}
-   and @cite{ostrove-2026}; Safir's own mechanism is morphological shape
+   syntactic ([safir-2014]: "all anaphoric diversity is morphological").
+   The DM vocabulary-item implementation used here follows [landau-2015]
+   and [ostrove-2026]; Safir's own mechanism is morphological shape
    conditions at Spell-Out, not Vocabulary Insertion per se.
 
 Landau-specific theory (the Two-Tiered Theory of Control, predicate
@@ -93,13 +93,13 @@ structure VocabItem (Form : Type) where
     The `items` list is ordered by specificity (most specific first).
     The `elsewhere` form applies when no context-specific item matches.
 
-    @cite{safir-2014}: "from this single element, all anaphoric diversity
+    [safir-2014]: "from this single element, all anaphoric diversity
     is morphological" -/
 structure MinPronInventory (Form : Type) where
   /-- Context-specific vocabulary items, ordered by specificity -/
   items : List (VocabItem Form)
   /-- Default exponence: applies when no specific item matches.
-      Crosslinguistically, this is the pronoun form (@cite{safir-2014}). -/
+      Crosslinguistically, this is the pronoun form ([safir-2014]). -/
   elsewhere : Form
 
 /-- The Elsewhere Condition: find the first vocabulary item whose context
@@ -138,7 +138,7 @@ inductive PronForm where
     controlled-subject context with an overt form. This is the
     Minimalism-side bridge to `Phenomena.NullSubject.ProDropProfile.hasOvertPRO`.
     The typological criterion is non-nullness, not specifically `.pronoun`:
-    @cite{ostrove-2026}'s universal is about overt-vs-null PRO, so an
+    [ostrove-2026]'s universal is about overt-vs-null PRO, so an
     inventory whose controlled-subject form is `.reflexive` would also
     count as overt PRO. -/
 def MinPronInventory.hasOvertPRO (inv : MinPronInventory PronForm) : Prop :=
@@ -194,7 +194,7 @@ theorem MinPronInventory.subjectAssignment_overtPRO_iff
 -- § 4: Obligatory Control Signature
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{landau-2013}'s Obligatory Control signature (simplified).
+/-- [landau-2013]'s Obligatory Control signature (simplified).
 
     A clause S exhibits OC iff its subject satisfies two core conditions:
     (a) the controller(s) must be codependent(s) of S
@@ -206,7 +206,7 @@ theorem MinPronInventory.subjectAssignment_overtPRO_iff
     - Local c-commanding antecedent required (from (a): codependency
       excludes arbitrary, long-distance, and non-c-commanding control)
 
-    Note: partial control IS a subspecies of OC per @cite{landau-2013} —
+    Note: partial control IS a subspecies of OC per [landau-2013] —
     (74b) says "PRO (or part of it)", explicitly accommodating it. -/
 structure OCSignature where
   /-- (a): Controller must be argument of the matrix predicate -/

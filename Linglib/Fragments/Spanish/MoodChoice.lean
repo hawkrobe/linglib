@@ -1,15 +1,15 @@
 import Linglib.Semantics.Verb.Basic
 
 /-!
-# Spanish Mood-Choice Verb Entries @cite{grano-2024}
+# Spanish Mood-Choice Verb Entries [grano-2024]
 
 Minimal verb entries for Spanish attitude and causative predicates
-relevant to cross-linguistic mood choice (@cite{grano-2024}, Table 1).
+relevant to cross-linguistic mood choice ([grano-2024], Table 1).
 
 Spanish robustly rejects indicative under 'want', 'hope', 'intend',
 and 'make' — all four take subjunctive or nonfinite complements.
 
-## Key examples (from @cite{grano-2024})
+## Key examples (from [grano-2024])
 
 - (1a) Victoria quiere que Marcela **venga**/\*viene al picnic. (SBJV/\*IND)
 - (9) Espero que mi hermano **viniera**/\*vino ayer. (SBJV/\*IND)
@@ -22,7 +22,7 @@ namespace Spanish.MoodChoice
 open Semantics.Lexical
 
 /-- *querer* 'want' — robustly subjunctive-selecting.
-    @cite{grano-2024}, (1a): SBJV required, IND rejected. -/
+    [grano-2024], (1a): SBJV required, IND rejected. -/
 def querer : Verb where
   form := "querer"
   complementType := .finiteClause
@@ -34,7 +34,7 @@ def querer : Verb where
   levinClass := some .want
 
 /-- *esperar* 'hope' — subjunctive in Spanish (unlike Portuguese/French).
-    @cite{grano-2024}, (9): SBJV required, IND rejected. -/
+    [grano-2024], (9): SBJV required, IND rejected. -/
 def esperar : Verb where
   form := "esperar"
   complementType := .finiteClause
@@ -45,7 +45,7 @@ def esperar : Verb where
   attitude := some (.preferential (.degreeComparison .positive))
 
 /-- *tener la intención (de)* 'intend' — robustly rejects indicative.
-    @cite{grano-2024}, (25): SBJV required in non-control complements.
+    [grano-2024], (25): SBJV required in non-control complements.
     Periphrastic form (nominal predicate). -/
 def tener_la_intencion : Verb where
   form := "tener la intención"
@@ -57,7 +57,7 @@ def tener_la_intencion : Verb where
   levinClass := some .want
 
 /-- *hacer* 'make' — causative, robustly subjunctive-selecting.
-    @cite{grano-2024}, (40): SBJV required, IND rejected.
+    [grano-2024], (40): SBJV required, IND rejected.
     Infinitival complements with object control. -/
 def hacer : Verb where
   form := "hacer"

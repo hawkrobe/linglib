@@ -5,7 +5,7 @@ import Linglib.Semantics.Questions.Resolution
 
 /-!
 # Decision-Theoretic Question Semantics
-@cite{van-rooy-2003} @cite{van-rooy-safarova-2003} @cite{blackwell-1953} @cite{chierchia-2013}
+[van-rooy-2003] [van-rooy-safarova-2003] [blackwell-1953] [chierchia-2013]
 
 Topical home for question semantics extended with utility / cost
 structure. The "value of a question" is defined relative to a
@@ -14,13 +14,13 @@ are all derived notions over the inquisitive substrate.
 
 ## Layout
 
-* **Utility-based relevance** (`@cite{van-rooy-2003}` Op(P)).
+* **Utility-based relevance** (`[van-rooy-2003]` Op(P)).
   `IsDecisionRelevant Q σ dp` holds when resolving `Q` from state
   `σ` strictly changes the optimal action in `dp`.
-* **Polar utility profiles** (`@cite{van-rooy-safarova-2003}`).
+* **Polar utility profiles** (`[van-rooy-safarova-2003]`).
   `IsPPQ`, `IsNPQ`, `IsAltQ` classify a polar question's
   utility-asymmetry pattern.
-* **Blackwell dominance** (`@cite{blackwell-1953}`). The inquisitive
+* **Blackwell dominance** (`[blackwell-1953]`). The inquisitive
   setting splits the partition notion of "refinement" into two
   independent directions, both in `Question.Relevance`:
   - `questionEntails P Q` — every P-alt ⊆ some Q-alt (P-alts are
@@ -30,12 +30,12 @@ are all derived notions over the inquisitive substrate.
   For partition questions the two coincide. Decision-relevance
   preservation requires the dual; the
   `CoversAltsOf.preserves_decisionRelevant` theorem (proven below)
-  is the @cite{van-rooy-2003} bridge.
-* **Question entropy / NPI strength** (`@cite{chierchia-2013}`).
+  is the [van-rooy-2003] bridge.
+* **Question entropy / NPI strength** (`[chierchia-2013]`).
   An NPI-licensing context is one whose alternatives carry high
   Shannon entropy. The information-theoretic NPI account is
-  @cite{chierchia-2013} (and earlier @cite{israel-1996} for the
-  scalar-strengthening variant); @cite{krifka-1995a} *Linguistic
+  [chierchia-2013] (and earlier [israel-1996] for the
+  scalar-strengthening variant); [krifka-1995a] *Linguistic
   Analysis* is the foundational lexical-semantic NPI paper but does
   not invoke entropy directly.
 
@@ -55,11 +55,11 @@ open Question Semantics.Questions.Resolution
 
 variable {W A : Type*}
 
-/-! ### Decision-relevance (@cite{van-rooy-2003} Op(P))
+/-! ### Decision-relevance ([van-rooy-2003] Op(P))
 
 A question is *decision-relevant* if learning its answer can change
 which action maximises expected utility. The notion specialises
-@cite{van-rooy-2003}'s Op(P) to the inquisitive substrate: rather
+[van-rooy-2003]'s Op(P) to the inquisitive substrate: rather
 than computing `EU(after Q) − EU(before Q)` numerically, we ask
 whether *some* alternative of `Q` would shift the optimal action. -/
 
@@ -68,7 +68,7 @@ whether *some* alternative of `Q` would shift the optimal action. -/
     that `a` strictly dominates `a'` on `p` while `a'` strictly
     dominates `a` on `p'`. Then learning *which* alternative obtains
     shifts the optimal choice — the operational content of
-    @cite{van-rooy-2003} Op(P) > 0.
+    [van-rooy-2003] Op(P) > 0.
 
     The non-emptiness clauses rule out the degenerate case where
     `Q = ⊥` (only `∅` in `alt`): with empty witness propositions
@@ -85,7 +85,7 @@ def IsDecisionRelevant
 
 /-! ### Bridge to `Core.DecisionTheory.IsResolved` -/
 
-/-- @cite{van-rooy-2003} §3.1 connection: a `IsDecisionRelevant`
+/-- [van-rooy-2003] §3.1 connection: a `IsDecisionRelevant`
     witness `(p, p', a, a')` exhibits two `Q`-alts whose two-action
     restriction is `IsResolved` to *different* witnesses. On `p`,
     action `a` resolves the restricted DP `(dp, {a, a'})`; on `p'`,
@@ -136,7 +136,7 @@ theorem IsDecisionRelevant.singleton_alt_false
   obtain ⟨w, hw⟩ := hpne
   exact absurd (hpa w hw) (not_lt_of_gt (hpa' w hw))
 
-/-! ### Polar utility profiles (@cite{van-rooy-safarova-2003})
+/-! ### Polar utility profiles ([van-rooy-safarova-2003])
 
 A polar question `Q? = {p, ¬p}` has a *utility profile* determined by
 the asymmetry of action-payoffs between the `p`-cell and the `¬p`-cell.
@@ -152,7 +152,7 @@ the asymmetry of action-payoffs between the `p`-cell and the `¬p`-cell.
 /-- `Q` is a **PPQ** for action set `acts` and polar split `(p, ¬p)`:
     one specific alternative `p ∈ alt Q` strictly dominates every
     other alternative across every action. The "positive" cell is
-    where the speaker's preferred outcome lies. @cite{van-rooy-safarova-2003}. -/
+    where the speaker's preferred outcome lies. [van-rooy-safarova-2003]. -/
 def IsPPQ (Q : Question W) (dp : Core.DecisionTheory.DecisionProblem W A)
     (acts : Set A) (p : Set W) : Prop :=
   p ∈ alt Q ∧
@@ -161,7 +161,7 @@ def IsPPQ (Q : Question W) (dp : Core.DecisionTheory.DecisionProblem W A)
 
 /-- `Q` is an **NPQ** for action set `acts` and polar split `(p, ¬p)`:
     a strictly *non*-`p` alternative is the utility-preferred one.
-    @cite{van-rooy-safarova-2003}. -/
+    [van-rooy-safarova-2003]. -/
 def IsNPQ (Q : Question W) (dp : Core.DecisionTheory.DecisionProblem W A)
     (acts : Set A) (p : Set W) : Prop :=
   p ∈ alt Q ∧
@@ -169,7 +169,7 @@ def IsNPQ (Q : Question W) (dp : Core.DecisionTheory.DecisionProblem W A)
 
 /-- `Q` is an **alternative-utility question** for action set `acts`:
     no single alternative strictly dominates. The utility-balanced
-    case. @cite{van-rooy-safarova-2003}. -/
+    case. [van-rooy-safarova-2003]. -/
 def IsAltQ (Q : Question W) (dp : Core.DecisionTheory.DecisionProblem W A)
     (acts : Set A) : Prop :=
   ∀ p ∈ alt Q, ¬ IsPPQ Q dp acts p
@@ -182,7 +182,7 @@ theorem IsPPQ.not_isAltQ {Q : Question W}
   exact hAlt p h.1 h
 
 
-/-! ### Blackwell informativeness (@cite{blackwell-1953})
+/-! ### Blackwell informativeness ([blackwell-1953])
 
 The Blackwell informativeness order on questions is
 `Question.Relevance.questionEntails P Q`: every alternative of
@@ -199,15 +199,15 @@ of this file, *outside* the topic namespace, under
 `Question.CoversAltsOf` so dot notation works at consumer
 sites. -/
 
-/-! ### Question entropy and NPI strength (@cite{chierchia-2013})
+/-! ### Question entropy and NPI strength ([chierchia-2013])
 
-@cite{chierchia-2013} relates NPI distribution to the
+[chierchia-2013] relates NPI distribution to the
 *informativeness* of the alternative set raised by a sentence (the
-information-theoretic strand earlier traced through @cite{israel-1996}
+information-theoretic strand earlier traced through [israel-1996]
 on lexical-semantic polarity sensitivity). A question whose
 alternatives are equiprobable under the prior carries maximal
 Shannon entropy; NPIs prefer such high-entropy contexts. The earlier
-@cite{krifka-1995a} *Linguistic Analysis* polarity-items paper is the
+[krifka-1995a] *Linguistic Analysis* polarity-items paper is the
 foundational lexical-semantic NPI account but does not formulate
 licensing in entropy terms — the Chierchia/Israel synthesis is the
 right citation here.
@@ -222,7 +222,7 @@ NPI-licensing notion. -/
 /-- `Q` has multiple substantive alternatives: some pair of distinct
     alternatives are both nonempty. Necessary for any NPI-licensing
     formulation (a single-alt question carries no informational
-    asymmetry). @cite{chierchia-2013} prerequisite. -/
+    asymmetry). [chierchia-2013] prerequisite. -/
 def HasMultipleSubstantiveAlternatives (Q : Question W) : Prop :=
   ∃ p ∈ alt Q, ∃ q ∈ alt Q, p ≠ q ∧ p.Nonempty ∧ q.Nonempty
 
@@ -230,7 +230,7 @@ def HasMultipleSubstantiveAlternatives (Q : Question W) : Prop :=
     (nonempty, distinct) alternatives. The substrate-level
     contrapositive of `IsDecisionRelevant.singleton_alt_false`:
     decision-relevance requires informational asymmetry, which is
-    @cite{chierchia-2013}'s prerequisite for NPI licensing. So any
+    [chierchia-2013]'s prerequisite for NPI licensing. So any
     decision-relevant question is a candidate NPI-licensing context. -/
 theorem IsDecisionRelevant.imp_HasMultipleSubstantiveAlternatives
     {Q : Question W} {dp : Core.DecisionTheory.DecisionProblem W A}
@@ -260,7 +260,7 @@ open Question Semantics.Questions.DecisionTheoretic
 
 variable {W A : Type*}
 
-/-- @cite{blackwell-1953} ↔ @cite{van-rooy-2003}: when every nonempty
+/-- [blackwell-1953] ↔ [van-rooy-2003]: when every nonempty
     alt of `Q` is covered by a nonempty alt of `P`, decision-relevance
     is preserved from `Q` to `P`. -/
 theorem preserves_decisionRelevant

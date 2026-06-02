@@ -3,7 +3,7 @@ import Linglib.Semantics.Questions.Resolution
 
 /-!
 # Exhaustivity — the weak / strong / Dayal / Xiang ladder
-@cite{karttunen-1977} @cite{heim-1994} @cite{groenendijk-stokhof-1984} @cite{dayal-1996} @cite{george-2011} @cite{klinedinst-rothschild-2011} @cite{xiang-2022} @cite{fox-2018} @cite{theiler-etal-2018}
+[karttunen-1977] [heim-1994] [groenendijk-stokhof-1984] [dayal-1996] [george-2011] [klinedinst-rothschild-2011] [xiang-2022] [fox-2018] [theiler-etal-2018]
 
 The canonical exhaustivity operators on `Question W`. Different
 authors over the past 50 years have proposed sibling operators that
@@ -15,29 +15,29 @@ profiles. This file states them in one place, in mathlib-style
 
 Given `Q : Question W` and a world `w : W`:
 
-- **weakAnswer(Q, w)** (@cite{heim-1994}, @cite{karttunen-1977}): the
+- **weakAnswer(Q, w)** ([heim-1994], [karttunen-1977]): the
   intersection of all true alternatives at w. The natural "what σ must
   entail to count as truly answering Q."
 
-- **strongAnswer(Q, w)** (@cite{groenendijk-stokhof-1984},
-  @cite{heim-1994}): the set of worlds that agree with w on every
+- **strongAnswer(Q, w)** ([groenendijk-stokhof-1984],
+  [heim-1994]): the set of worlds that agree with w on every
   alternative. Equivalent to `MentionAll` evaluated at w on partition
   questions.
 
-- **dayalAns(Q, w)** (@cite{dayal-1996}): when defined, the unique
+- **dayalAns(Q, w)** ([dayal-1996]): when defined, the unique
   strongest true alternative — the proposition `p ∈ alt Q` such that
   `w ∈ p` and `p ⊆ q` for every other true alternative `q`. Returns
   `Option (Set W)`; existence is **Dayal's Exhaustivity Presupposition**
   (`IsExhaustivelyResolvable`).
 
-- **relExh(Q, w, M)** (@cite{xiang-2022} Def 91): exhaustivity
+- **relExh(Q, w, M)** ([xiang-2022] Def 91): exhaustivity
   relativized to a modal base `M : Set W`. The strongest true answer
   computed against the M-restricted alternatives.
 
-- **intermediateExh** (@cite{george-2011}, @cite{klinedinst-rothschild-2011}):
+- **intermediateExh** ([george-2011], [klinedinst-rothschild-2011]):
   weak exhaustivity plus a no-false-positives clause. Stub.
 
-- **foxExhaustifiedAnswer(Q, w)** (@cite{fox-2018}): the answer derived
+- **foxExhaustifiedAnswer(Q, w)** ([fox-2018]): the answer derived
   by applying the exhaustification operator Exh to alternatives. Stub.
 -/
 
@@ -69,7 +69,7 @@ def strongAnswer (Q : Question W) (w : W) : Set W :=
 def IsStronglyExhaustiveAnswer (σ : Set W) (Q : Question W) (w : W) : Prop :=
   σ = strongAnswer Q w
 
-/-! ### Dayal's strongest-true answer (@cite{dayal-1996}) -/
+/-! ### Dayal's strongest-true answer ([dayal-1996]) -/
 
 /-- True alternatives at `w`: alternatives of `Q` that contain `w`. -/
 def trueAlternatives (Q : Question W) (w : W) : Set (Set W) :=
@@ -77,11 +77,11 @@ def trueAlternatives (Q : Question W) (w : W) : Set (Set W) :=
 
 /-- A proposition `p` is the **strongest true answer** to `Q` at `w`
     iff `p ∈ alt Q`, `w ∈ p`, and `p ⊆ q` for every other true
-    alternative `q`. (@cite{dayal-1996} Ans(Q) when defined.) -/
+    alternative `q`. ([dayal-1996] Ans(Q) when defined.) -/
 def IsStrongestTrueAnswer (Q : Question W) (w : W) (p : Set W) : Prop :=
   p ∈ alt Q ∧ w ∈ p ∧ ∀ q ∈ alt Q, w ∈ q → p ⊆ q
 
-/-- **Dayal's Exhaustivity Presupposition** (@cite{dayal-1996}):
+/-- **Dayal's Exhaustivity Presupposition** ([dayal-1996]):
     a strongest true answer exists at `w`. -/
 def IsExhaustivelyResolvable (Q : Question W) (w : W) : Prop :=
   ∃ p, IsStrongestTrueAnswer Q w p
@@ -100,7 +100,7 @@ theorem dayalAns_isSome_iff_EP (Q : Question W) (w : W) :
   · case _ h => simp [Option.isSome, h]
   · case _ h => simp [Option.isSome, h]
 
-/-! ### Xiang's relativized exhaustivity (@cite{xiang-2022} Def 91) -/
+/-! ### Xiang's relativized exhaustivity ([xiang-2022] Def 91) -/
 
 /-- True alternatives **restricted to a modal base** `M`: alternatives
     of `Q` that contain `w` AND have non-empty intersection with `M`. -/
@@ -116,7 +116,7 @@ def IsStrongestRelTrueAnswer
   ∀ q ∈ alt Q, w ∈ q → (∃ v ∈ M, v ∈ q) → p ∩ M ⊆ q ∩ M
 
 /-- **Xiang's relExh**: relativized exhaustivity at `w` against modal
-    base `M` (@cite{xiang-2022} Def 91). -/
+    base `M` ([xiang-2022] Def 91). -/
 def relExh (Q : Question W) (w : W) (M : Set W) : Prop :=
   ∃ p, IsStrongestRelTrueAnswer Q w M p
 
@@ -156,18 +156,18 @@ theorem dayalAns_spec (Q : Question W) (w : W) (p : Set W)
 /-- The strong-exhaustive answer is contained in the weak-exhaustive
     answer: any state deciding every alternative the same way as `w`
     automatically lies inside every alternative true at `w`.
-    @cite{heim-1994} §4 / @cite{george-2011} §2.6 substrate fact. -/
+    [heim-1994] §4 / [george-2011] §2.6 substrate fact. -/
 theorem strongAnswer_subset_weakAnswer (Q : Question W) (w : W) :
     strongAnswer Q w ⊆ weakAnswer Q w := by
   intro v hv p hp hwp
   exact (hv p hp).mp hwp
 
-/-! ### `strongAnswer` partition properties (@cite{fox-2018} §1.1)
+/-! ### `strongAnswer` partition properties ([fox-2018] §1.1)
 
 `strongAnswer Q : W → Set W` partitions `W` into equivalence classes:
 `v ∈ strongAnswer Q w` is the equivalence relation "agrees with `w`
 on every alternative of `Q`". The image `Set.range (strongAnswer Q)`
-is what @cite{fox-2018} eq (3) calls the **Logical Partition** of `Q`. -/
+is what [fox-2018] eq (3) calls the **Logical Partition** of `Q`. -/
 
 /-- Reflexivity: `w` decides every alternative the same way as itself. -/
 @[simp] theorem strongAnswer_self_mem (Q : Question W) (w : W) :
@@ -234,9 +234,9 @@ theorem mem_range_strongAnswer_iff (Q : Question W) (C : Set W) :
   · rintro ⟨w, _, rfl⟩
     exact ⟨w, rfl⟩
 
-/-! ### Fox's exhaustification primitives (@cite{fox-2018})
+/-! ### Fox's exhaustification primitives ([fox-2018])
 
-@cite{fox-2018} derives Dayal's exhaustivity presupposition from the
+[fox-2018] derives Dayal's exhaustivity presupposition from the
 demand that question denotations partition the Stalnakerian context-set
 via point-wise exhaustification of Hamblin alternatives. Two
 substrate-level primitives:
@@ -250,7 +250,7 @@ The paper-specific apparatus (Cell Identification, Non-Vacuity, QPM)
 lives in `Studies/Fox2018.lean`; here we expose
 only the substrate primitives the paper consumes. -/
 
-/-- @cite{fox-2018} (eq 11): the **Exh-cell** of proposition `p` in
+/-- [fox-2018] (eq 11): the **Exh-cell** of proposition `p` in
     question `Q` — the set of worlds where `p` is the maximally
     informative true Hamblin alternative. Identifies a cell of the
     logical partition by the alt that "Exh-strengthens to it".
@@ -266,7 +266,7 @@ theorem exhCell_subset (Q : Question W) (p : Set W) :
     exhCell Q p ⊆ p :=
   fun _ h => h.2.1
 
-/-- @cite{fox-2018} (eq 3): the **Logical Partition** of `Q` — the image
+/-- [fox-2018] (eq 3): the **Logical Partition** of `Q` — the image
     of `strongAnswer`. Substrate-level: equivalence classes of `W` under
     "agreement on every alternative". A partition by
     `strongAnswer_eq_or_disjoint` and `iUnion_strongAnswer`. -/
@@ -474,7 +474,7 @@ theorem isStrongestTrueAnswer_polar_of_neg {p : Set W}
 For nontrivial polar questions, `IsExhaustivelyResolvable` is **always
 true** (`isExhaustivelyResolvable_polar_of_nontrivial`), so the
 `Decidable` instance is `isTrue`. This is the substrate fact that
-underlies @cite{dayal-1996}'s observation that polar EP is
+underlies [dayal-1996]'s observation that polar EP is
 unproblematic — the EP only becomes contentful for wh-questions. -/
 
 instance IsExhaustivelyResolvable.decidable_polar {p : Set W}

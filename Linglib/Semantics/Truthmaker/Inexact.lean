@@ -1,6 +1,6 @@
 import Linglib.Semantics.Truthmaker.Basic
 
-/-! # Inexact Truthmaking and Entailment @cite{jago-2026}
+/-! # Inexact Truthmaking and Entailment [jago-2026]
 
 Jago Def 3: A state `s` *inexactly* makes `A` true iff some part of `s`
 exactly verifies `A`. Inexact truthmaking obeys the standard extensional
@@ -18,11 +18,11 @@ This file:
 
 The exact-vs-inexact distinction is what lets truthmaker semantics
 distinguish the logic of *content* from the logic of *consequence*
-(@cite{jago-2026}): exact entailment characterizes hyperintensional
+([jago-2026]): exact entailment characterizes hyperintensional
 content (e.g., AC analytic entailment), while inexact entailment is
 the truthmaker analogue of familiar consequence relations.
 
-NOTE: @cite{vanfraassen-1969}'s FDE is the canonical historical
+NOTE: [vanfraassen-1969]'s FDE is the canonical historical
 target — Jago notes that on basic models inexact consequence
 coincides with FDE. We do *not* formalize FDE here, so the
 correspondence is documented as an external claim, not verified
@@ -40,7 +40,7 @@ namespace Semantics.Truthmaker
 section Inexact
 variable {S : Type*} [Preorder S]
 
-/-- Inexact verification (@cite{jago-2026} Def 3): `s ▷ p` iff some part
+/-- Inexact verification ([jago-2026] Def 3): `s ▷ p` iff some part
     of `s` exactly verifies `p`. -/
 def inexactVer (p : TMProp S) (s : S) : Prop :=
   ∃ u, u ≤ s ∧ p u

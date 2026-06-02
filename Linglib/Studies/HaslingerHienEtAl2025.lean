@@ -5,8 +5,8 @@ import Linglib.Semantics.Plurality.Trivalent
 import Linglib.Fragments.German.Distributives
 
 /-!
-# @cite{haslinger-etal-2025-nllt}: A Unified Semantics for Universal Quantifiers
-@cite{haslinger-etal-2025-nllt}
+# [haslinger-etal-2025-nllt]: A Unified Semantics for Universal Quantifiers
+[haslinger-etal-2025-nllt]
 
 Empirical data and theoretical verification for "A unified semantics for
 distributive and non-distributive universal quantifiers across languages"
@@ -26,7 +26,7 @@ below Q_∀ that restricts the complement via presupposition:
 
 One-form languages (Dagara, Moore, Wolof, Arabic) use bare Q_∀.
 
-## Relation to @cite{haslinger-etal-2025} (S&P)
+## Relation to [haslinger-etal-2025] (S&P)
 
 The S&P paper (existing `HaslingerEtAl2025.lean`) shows distributivity ≠
 maximality via tolerance. This NLLT paper shows distributivity ≠ number
@@ -283,7 +283,7 @@ theorem german_dng_explained :
 
 /-- English each's DistMaxClass: +dist (ONE_AT forces atom complement),
     +max. The classification is local to this study because it lifts
-    fragment lexical-class metadata into the @cite{haslinger-etal-2025-nllt}
+    fragment lexical-class metadata into the [haslinger-etal-2025-nllt]
     DistMaxClass typology, which is paper-specific. -/
 def each_distMaxClass : DistMaxClass := .distMax
 

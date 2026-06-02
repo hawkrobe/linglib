@@ -3,15 +3,15 @@ import Linglib.Fragments.Slavic.Params
 
 /-!
 # Russian Verbal Prefixes
-@cite{svenonius-2004} @cite{dendikken-1995}
+[svenonius-2004] [dendikken-1995]
 
 Lexical entries for Russian verbal prefixes encoding the
-**lexical / superlexical** distinction of @cite{svenonius-2004}: lexical
+**lexical / superlexical** distinction of [svenonius-2004]: lexical
 prefixes are R-heads inside VP (resultative, particle-like); superlexical
 prefixes are Asp-heads outside VP (aspectual operators). The same
 prefix string can realise either class — paper §1 ex. 1a/1c uses *za-*
 both ways. Diagnostic 56c (paper §4.1): superlexicals select imperfective
-stems. Connects to @cite{dendikken-1995}'s "affixal particle" thesis
+stems. Connects to [dendikken-1995]'s "affixal particle" thesis
 (book §5.2.5 fn. 10), which the lex class instantiates and the superlex
 class doesn't subdivide.
 
@@ -48,7 +48,7 @@ structure RussianPrefixedVerbEntry where
   morpheme      : String
   /-- The prefixed perfective infinitive. -/
   prefixedForm  : String
-  /-- @cite{svenonius-2004} class. -/
+  /-- [svenonius-2004] class. -/
   prefixClass   : PrefixClass
   /-- Gloss of the bare stem. -/
   baseGloss     : String
@@ -58,7 +58,7 @@ structure RussianPrefixedVerbEntry where
 /-! ### Lexical entries -/
 
 /-- *za-brosit'* 'kick into / throw into' — lexical *za-*
-    (@cite{svenonius-2004} §1 ex. 1a, transparently resultative
+    ([svenonius-2004] §1 ex. 1a, transparently resultative
     spatial). Built on the perfective stem *brosit'*. -/
 def zabrosit : RussianPrefixedVerbEntry where
   bareStem      := "brosit'"
@@ -70,7 +70,7 @@ def zabrosit : RussianPrefixedVerbEntry where
   prefixedGloss := "throw into, kick into"
 
 /-- *vy-brosit'* 'throw out' — lexical *vy-* (English *out* analogue;
-    @cite{svenonius-2004} ex. 4a uses the secondary imperfective
+    [svenonius-2004] ex. 4a uses the secondary imperfective
     *vy-brasyvatj*). Built on the perfective stem *brosit'*. -/
 def vybrosit : RussianPrefixedVerbEntry where
   bareStem      := "brosit'"
@@ -83,7 +83,7 @@ def vybrosit : RussianPrefixedVerbEntry where
 
 /-- *pri-nesti* 'bring (carry to)' — lexical *pri-* (allative). The
     lex classification of *pri-* is from broader Slavicist literature
-    (Romanova 2004; Babko-Malaya 2003) — @cite{svenonius-2004}
+    (Romanova 2004; Babko-Malaya 2003) — [svenonius-2004]
     §1-§5 does not work *pri-* as an example. Built on the
     imperfective determinate-motion stem *nesti*. -/
 def prinesti : RussianPrefixedVerbEntry where
@@ -98,7 +98,7 @@ def prinesti : RussianPrefixedVerbEntry where
 /-! ### Superlexical entries -/
 
 /-- *za-brosat'* 'start throwing' — superlexical *za-* INCP
-    (@cite{svenonius-2004} §1 ex. 1c). Minimal pair with `zabrosit`
+    ([svenonius-2004] §1 ex. 1c). Minimal pair with `zabrosit`
     on the same morpheme but different `prefixClass`. Built on the
     imperfective stem *brosat'* (per Svenonius's diagnostic 56c). -/
 def zabrosatInceptive : RussianPrefixedVerbEntry where
@@ -123,7 +123,7 @@ def posidet : RussianPrefixedVerbEntry where
 
 /-- *do-pisat'* 'finish writing' — superlexical *do-* CMPL. Note:
     *do-* is the standard Russian completive in broader Slavicist
-    literature; @cite{svenonius-2004} §3 takes Bulgarian *iz-* as the
+    literature; [svenonius-2004] §3 takes Bulgarian *iz-* as the
     canonical completive instead. Built on the imperfective stem *pisat'*. -/
 def dopisat : RussianPrefixedVerbEntry where
   bareStem      := "pisat'"
@@ -158,7 +158,7 @@ theorem inventory_transparent_concat
     IsTransparentConcat e := by
   fin_cases he <;> rfl
 
-/-- @cite{svenonius-2004}'s diagnostic 56c (paper §4.1): a superlexical
+/-- [svenonius-2004]'s diagnostic 56c (paper §4.1): a superlexical
     entry has an imperfective bare stem. Lexical entries are
     unconstrained. -/
 theorem stemAspect_imperfective_of_isSuperlexical

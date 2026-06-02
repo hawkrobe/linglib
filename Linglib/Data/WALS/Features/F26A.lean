@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 26A: Prefixing vs. Suffixing in Inflectional Morphology
-@cite{dryer-2013-wals}
+[dryer-2013-wals]
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 26A`.

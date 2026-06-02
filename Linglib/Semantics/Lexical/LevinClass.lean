@@ -3,9 +3,9 @@ import Linglib.Semantics.Spatial.Path
 
 /-!
 # Semantics.Lexical.LevinClass
-@cite{levin-1993}
+[levin-1993]
 
-The 49-class verb taxonomy from @cite{levin-1993} Part II, with
+The 49-class verb taxonomy from [levin-1993] Part II, with
 per-class meaning-component profiles, unaccusativity prediction, and
 verb-of-creation flag.
 
@@ -19,7 +19,7 @@ features) — Levin's framework, not consensus substrate.
 
 ## Framework commitment
 
-@cite{levin-1993}'s 49 classes are the most widely-cited reference for
+[levin-1993]'s 49 classes are the most widely-cited reference for
 English verb classification, but they are **not** the only such taxonomy.
 Sibling theory-named slots are intentionally unfilled in this restructure:
 
@@ -43,12 +43,12 @@ on attested verbs.
   `LevinClass.levinSection` are flagged `UNVERIFIED:` per CLAUDE.md ("Never
   cite specific equation, table, or section numbers from memory").
   They are preserved as comments since they're useful for navigation
-  but should be cross-checked against the published @cite{levin-1993}.
-- The `meaningComponents` per-class assignments in @cite{levin-1993}'s
+  but should be cross-checked against the published [levin-1993].
+- The `meaningComponents` per-class assignments in [levin-1993]'s
   Part II text are similarly UNVERIFIED in detail; the canonical
   *break*/*cut*/*hit*/*touch* assignments from the Introduction are
   the most reliably-cited.
-- `isVerbOfCreation .cooking := true` is debatable per @cite{dowty-1979}
+- `isVerbOfCreation .cooking := true` is debatable per [dowty-1979]
   *bake*-polysemy: *bake a cake* (creation) vs *bake the potato* (CoS).
   Levin §45.3 cooking verbs exhibit causative-inchoative alternation
   grouping them with CoS verbs; the substrate's classification reflects
@@ -60,20 +60,20 @@ on attested verbs.
 The Levin-style alternation-diagnosed classification competes with
 other lexical-semantic frameworks that may be worth formalizing as
 sibling theories:
-- **Generative Lexicon** (@cite{pustejovsky-1995}): qualia structure
+- **Generative Lexicon** ([pustejovsky-1995]): qualia structure
   (formal/constitutive/telic/agentive) as the primitive decomposition,
   with verbs deriving meaning from interaction with NP qualia.
-- **Frame semantics** (@cite{fillmore-1982}, @cite{fillmore-kay-oconnor-1988}):
+- **Frame semantics** ([fillmore-1982], [fillmore-kay-oconnor-1988]):
   semantic frames as the primitive, alternations as surface reflexes.
-- **Configurational lexical semantics** (@cite{hale-keyser-1987}):
+- **Configurational lexical semantics** ([hale-keyser-1987]):
   verb meaning derives from syntactic configuration, not feature decomposition.
-- **Lexical Conceptual Structure** (@cite{jackendoff-1996}): primitive
+- **Lexical Conceptual Structure** ([jackendoff-1996]): primitive
   predicates GO/STAY/CAUSE compose into LCS templates.
 -/
 
 namespace Semantics.Lexical
 
-/-- Verb class taxonomy from @cite{levin-1993} Part II.
+/-- Verb class taxonomy from [levin-1993] Part II.
 
     Section numbers follow the book. Class names are Levin's labels.
     49 top-level classes covering the English verb lexicon.
@@ -229,7 +229,7 @@ inductive LevinClass where
 
 namespace LevinClass
 
-/-- Section number in @cite{levin-1993} for each class. The bare name
+/-- Section number in [levin-1993] for each class. The bare name
     `section` would clash with Lean's reserved keyword; we use
     `levinSection` as the canonical accessor.
 
@@ -280,7 +280,7 @@ def levinSection : LevinClass → String
 
 /-- Meaning components associated with each Levin class.
 
-    Profiles are assigned using the diagnostic criteria from @cite{levin-1993}:
+    Profiles are assigned using the diagnostic criteria from [levin-1993]:
     - `changeOfState`: middle alternation
     - `contact`: body-part possessor ascension
     - `motion`: conative alternation requires motion + contact
@@ -389,7 +389,7 @@ def meaningComponents : LevinClass → MeaningComponents
 
 /-- Predicted unaccusativity from Levin class membership.
 
-    Based on @cite{levin-hovav-1995}: unaccusativity correlates with internally
+    Based on [levin-hovav-1995]: unaccusativity correlates with internally
     caused change of state or directed change, while unergativity correlates
     with agentive activity. -/
 def PredictsUnaccusative : LevinClass → Prop
@@ -411,7 +411,7 @@ instance : DecidablePred LevinClass.PredictsUnaccusative := fun c => by
   cases c <;> unfold LevinClass.PredictsUnaccusative <;> infer_instance
 
 /-- Whether a Levin class denotes creation of the object referent.
-    @cite{davies-dubinsky-2003}: VOCs produce their direct object
+    [davies-dubinsky-2003]: VOCs produce their direct object
     as a result of the event. -/
 def isVerbOfCreation : LevinClass → Bool
   | .imageCreation => true
@@ -427,7 +427,7 @@ def isVerbOfCreation : LevinClass → Bool
     Inherently directed motion verbs (Levin 51.1: arrive, come, go)
     lexicalize a bounded path. Manner-of-motion verbs (51.3: run, walk)
     are path-neutral — the path comes from a PP complement.
-    @cite{talmy-2000}: verb-framed vs. satellite-framed distinction. -/
+    [talmy-2000]: verb-framed vs. satellite-framed distinction. -/
 def pathSpec : LevinClass → Option Semantics.Spatial.Path.PathShape
   | .inherentlyDirectedMotion => some .bounded
   | .leave => some .source

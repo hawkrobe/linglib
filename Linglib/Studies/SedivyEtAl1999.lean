@@ -6,7 +6,7 @@ import Linglib.Features.PropertyDomain
 import Linglib.Paradigms.VisualWorld
 
 /-!
-# @cite{sedivy-etal-1999}
+# [sedivy-etal-1999]
 
 Achieving incremental semantic interpretation through contextual representation.
 *Cognition* 71(2), 109–147.
@@ -19,7 +19,7 @@ short glass identify the target faster — and consider an unrelated tall
 pitcher less — than in a display lacking the same-category contrast pair.
 
 The paper reports three experiments. Experiment 1 (subexperiments 1A and 1B,
-intersective adjectives, N = 12) replicates @cite{eberhard-etal-1995}'s
+intersective adjectives, N = 12) replicates [eberhard-etal-1995]'s
 incremental processing finding and shows contrastive interpretation of
 color/material/shape adjectives. Experiments 2 (N = 24) and 3 (N = 22)
 probe the mechanism for vague scalar adjectives such as "tall" that lack a
@@ -28,7 +28,7 @@ indefinite-NP verification task.
 
 ## Paradigm
 
-Built on `Paradigms.VisualWorld` (@cite{huettig-rommers-meyer-2011}). The
+Built on `Paradigms.VisualWorld` ([huettig-rommers-meyer-2011]). The
 display contains four objects (`ObjectRole`):
 
 - `target`: the intended referent (e.g. tall glass).
@@ -65,10 +65,10 @@ operationally defines the typicality manipulation.
 The paper's central theoretical contrast pits two accounts of the contrast
 effect:
 
-1. **Referential / presupposition account** (@cite{altmann-steedman-1988}):
+1. **Referential / presupposition account** ([altmann-steedman-1988]):
    the contrast effect derives from definiteness presuppositions on the
    modified NP.
-2. **Lexical comparison-class account** (@cite{bierwisch-1989}): scalar
+2. **Lexical comparison-class account** ([bierwisch-1989]): scalar
    adjectives carry a free comparison-class variable in their lexical entry,
    bound by the contextually salient set.
 
@@ -133,7 +133,7 @@ def adjDomain : Features.PropertyDomain := .size
 
 /-- The size domain requires comparison-class binding, which is the
     structural prerequisite for Bierwisch's lexical account of the
-    contrast effect (§5 of @cite{sedivy-etal-1999}). This is not a
+    contrast effect (§5 of [sedivy-etal-1999]). This is not a
     stipulation: it follows from `Features.PropertyDomain.requiresComparisonClass`
     by reduction. -/
 theorem adjDomain_requires_comparison_class :
@@ -143,7 +143,7 @@ theorem adjDomain_requires_comparison_class :
 -- §2. Norming Data (Table 5)
 -- ============================================================================
 
-/-! Table 5 of @cite{sedivy-etal-1999} reports a rating study used to
+/-! Table 5 of [sedivy-etal-1999] reports a rating study used to
 classify objects as good/poor tokens or contrasting objects. Subjects chose
 which of {target adjective, no adjective, opposite adjective, other}
 described each object best. Percentages reproduced here as exact rationals.
@@ -286,8 +286,8 @@ theorem trivial_satisfies_pattern :
 -- §5. Connection to Comparison-Class Semantics
 -- ============================================================================
 
-/-! The lexical-semantic account of the contrast effect (@cite{bierwisch-1989},
-adopted in §5 of @cite{sedivy-etal-1999}) places a free comparison-class
+/-! The lexical-semantic account of the contrast effect ([bierwisch-1989],
+adopted in §5 of [sedivy-etal-1999]) places a free comparison-class
 variable in the lexical entry of every scalar adjective. The
 `Features.PropertyDomain` infrastructure flags this with
 `requiresComparisonClass`; the connection is made formal by

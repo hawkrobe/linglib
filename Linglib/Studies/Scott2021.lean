@@ -6,7 +6,7 @@ import Linglib.Syntax.Minimalist.Features
 
 /-!
 # Scott 2021: Two Types of Resumptive Pronouns in Swahili
-@cite{scott-2021}
+[scott-2021]
 
 Two Types of Resumptive Pronouns in Swahili. *Linguistic Inquiry*
 52(4): 812–833.
@@ -27,7 +27,7 @@ Swahili distinguishes two types of resumptive pronouns:
 
 ## Analysis: Chain Reduction + MaxElide
 
-Following @cite{landau-2006} and @cite{van-urk-2018}:
+Following [landau-2006] and [van-urk-2018]:
 
 - Movement leaves full copies of the pronoun (including PersP)
 - Chain reduction at PF deletes copies except the highest
@@ -66,11 +66,11 @@ open Features.Prominence (PersonLevel)
 
 /-- Categories for DP-internal structure. Grounded in Minimalism
     categories but restricted to the four projections relevant to
-    Bantu pronoun structure (@cite{scott-2021}). -/
+    Bantu pronoun structure ([scott-2021]). -/
 inductive DPCat where
   | D     -- determiner (outermost; null in Swahili)
   | Num   -- number (hosts sg/pl; portmanteau with n)
-  | n     -- categorizer (hosts gender/animacy; @cite{kramer-2015})
+  | n     -- categorizer (hosts gender/animacy; [kramer-2015])
   | Pers  -- person (innermost; only in pronouns, not lexical DPs)
   deriving DecidableEq, Repr
 
@@ -83,7 +83,7 @@ instance : Inhabited DPCat := ⟨.D⟩
 open Core.Tree (Tree)
 
 /-- 1SG pronoun *mi*: [DP D [NumP Num:sg [nP n_anim [PersP 1]]]]
-    @cite{scott-2021}. -/
+    [scott-2021]. -/
 def pronTree1sg : Tree DPCat String :=
   .node .D [
     .terminal .D "",
@@ -104,7 +104,7 @@ def pronTree2sg : Tree DPCat String :=
         .node .Pers [.terminal .Pers "2"]]]]
 
 /-- Noun class 1 pronoun *ye* (no person): [DP D [NumP Num:sg [nP n_anim]]]
-    @cite{scott-2021}. This is also the structure AFTER chain reduction
+    [scott-2021]. This is also the structure AFTER chain reduction
     deletes PersP from a 1SG/2SG pronoun. -/
 def pronTreeCl1 : Tree DPCat String :=
   .node .D [
@@ -246,7 +246,7 @@ def isAnim (fb : FeatureBundle) : Bool :=
     | _ => false
 
 /-- Swahili resumptive VI rules using the DM `VocabItem` type.
-    @cite{scott-2021}. Person-specified rules have specificity 3
+    [scott-2021]. Person-specified rules have specificity 3
     (checking 3 features); personless defaults have specificity 2.
     The Elsewhere Condition in `vocabularyInsertSimple` picks the most
     specific matching rule. -/
@@ -369,7 +369,7 @@ theorem end_to_end :
 
 /-- Parasitic gap judgments per speaker. Each field encodes whether the
     combination (true-gap-form ... parasitic-gap-form) is accepted.
-    @cite{scott-2021} Table 4. -/
+    [scott-2021] Table 4. -/
 structure ParasiticGapJudgments where
   moveMove : Bool       -- Row 1: ye_t ... ye_p
   pronounMove : Bool    -- Row 2: mi_t ... ye_p
@@ -509,7 +509,7 @@ theorem marker_classification :
 -- ============================================================================
 
 /-- "If the copied pronouns match in person, they also match in number"
-    (@cite{scott-2021} §6). This follows from the DP structure: Num
+    ([scott-2021] §6). This follows from the DP structure: Num
     dominates PersP, so deleting PersP cannot affect Num. Conversely,
     if person survives (not deleted), then Num — being structurally
     higher — necessarily also survived. -/

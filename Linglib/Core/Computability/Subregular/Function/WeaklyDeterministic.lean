@@ -11,8 +11,8 @@ import Linglib.Core.Computability.Subregular.Function.Subsequential
 The **Weakly Deterministic** function class sits between Subsequential
 and the full Non-Deterministic regular relations in the function-level
 subregular hierarchy (`Function/{ISL,OSL,Subsequential}.lean`;
-@cite{aksenova-rawski-graf-heinz-2020} Fig. 1;
-@cite{meinhardt-mai-bakovic-mccollum-2024} Fig. 1):
+[aksenova-rawski-graf-heinz-2020] Fig. 1;
+[meinhardt-mai-bakovic-mccollum-2024] Fig. 1):
 
 ```
 Non-Deterministic (regular relations)
@@ -30,9 +30,9 @@ Finite
 
 WD captures bidirectional iterative phonological maps — a left-to-right
 pass plus a right-to-left pass — and was introduced by
-@cite{heinz-lai-2013} to delimit attested patterns (Maasai/Turkana ATR
+[heinz-lai-2013] to delimit attested patterns (Maasai/Turkana ATR
 harmony) from unattested ones (sour-grapes-style spreading;
-@cite{wilson-2003}, @cite{wilson-2006}).
+[wilson-2003], [wilson-2006]).
 
 ## Substrate scope: structural decomposition only
 
@@ -43,7 +43,7 @@ directions, **without alphabet enrichment** (the intermediate alphabet
 equals the input/output alphabet).
 
 The "no alphabet enrichment" condition (`β = α` in the type signature
-of the inner subsequential) is the @cite{heinz-lai-2013} no-markup
+of the inner subsequential) is the [heinz-lai-2013] no-markup
 framing made structural. Under this signature, no separate non-
 interaction predicate is needed for the basic class membership: any
 decomposition into two contradirectional subseq passes that share the
@@ -51,7 +51,7 @@ input/output alphabet IS WD by the no-markup criterion.
 
 ## Open conjecture: HL2013 vs MMBM2024
 
-@cite{meinhardt-mai-bakovic-mccollum-2024} argue that the structural
+[meinhardt-mai-bakovic-mccollum-2024] argue that the structural
 "no-markup" criterion above is **too permissive**: some patterns
 satisfy it but still require unbounded bilateral information at output
 time (paper §§4.3, 5). Their patched definition (Def. 6, p. 1219)
@@ -68,17 +68,17 @@ WD-by-both-definitions; the unattested counterexamples that
 distinguish them are sour-grapes-style functions.
 
 Formalising this distinction in Lean requires bimachine substrate
-(Schützenberger's sequential bimachines; see @cite{mohri-1997} §6 for
+(Schützenberger's sequential bimachines; see [mohri-1997] §6 for
 the canonical reference), which is non-trivial new substrate. Land in
 a follow-up `Function/Bimachine.lean` once a Studies file needs the
 distinction; the current file's structural `IsWeaklyDeterministic`
 suffices for both:
 
-* **Maasai/Turkana classification** (@cite{meinhardt-mai-bakovic-mccollum-2024}
+* **Maasai/Turkana classification** ([meinhardt-mai-bakovic-mccollum-2024]
   §§3-4): WD by both HL2013 and MMBM2024 definitions, so the
   structural predicate suffices.
-* **Sour-grapes refutations** (@cite{wilson-2003};
-  @cite{wilson-2006}): claimed non-WD by MMBM2024; under HL2013 the
+* **Sour-grapes refutations** ([wilson-2003];
+  [wilson-2006]): claimed non-WD by MMBM2024; under HL2013 the
   status depends on the markup criterion. Formal refutation is
   deferred until bimachine substrate.
 
@@ -99,7 +99,7 @@ variable {α : Type*}
 List α` is WD iff it decomposes as the composition of two
 subsequential functions reading from opposite directions, with no
 alphabet enrichment (intermediate alphabet equals input/output
-alphabet — the structural form of @cite{heinz-lai-2013}'s no-markup
+alphabet — the structural form of [heinz-lai-2013]'s no-markup
 condition).
 
 Per the file docstring, this is the structural backbone shared by both

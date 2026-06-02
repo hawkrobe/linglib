@@ -5,7 +5,7 @@ import Linglib.Fragments.Mandarin.Resultatives
 
 /-!
 # Tay (2024): Resultative Expressions in Mandarin Chinese
-@cite{tay-2024}
+[tay-2024]
 
 UCL PhD dissertation on why Mandarin V-V resultatives are more flexible in
 argument realisation than English resultatives and Mandarin V-*de* resultatives.
@@ -102,7 +102,7 @@ theorem english_subject_result_requires_reflexive :
 
 /-! ## V-V compounds are syntactically opaque; V-*de* is transparent
 
-@cite{tay-2024}'s central structural prediction (Ch. 2 §2.1): because V-V
+[tay-2024]'s central structural prediction (Ch. 2 §2.1): because V-V
 compounds are built in morphology, their components are inaccessible to
 syntactic operations like independent modification.  V-*de* resultatives,
 built in syntax, allow V1 and V2 to be independently modified.
@@ -188,7 +188,7 @@ theorem opacity_tracks_construction :
 -- § 3. The Onset Condition
 -- ════════════════════════════════════════════════════
 
-/-! ## The Onset Condition (@cite{tay-2024}, Ch. 3)
+/-! ## The Onset Condition ([tay-2024], Ch. 3)
 
 The external argument (CCF) of a transitive V-V resultative must be
 interpreted as a **participant** in the event denoted by V1: an agent, a
@@ -304,7 +304,7 @@ theorem onset_nonparticipant_implies_ungrammatical :
 
 /-! ## Morphological structure: V1-∅-V2
 
-@cite{tay-2024} proposes that V-V compounds have the morphological structure
+[tay-2024] proposes that V-V compounds have the morphological structure
 V1-∅-V2: the null affix ∅ inherits all of V2's arguments but none of V1's.
 We capture the binary V1-V2 compound using `MorphWord.compound` from
 `WordStructure.lean`.
@@ -313,7 +313,7 @@ V-V resultatives are **synthetic** compounds: their components stand in a
 predictable CAUSE relation. This contrasts with root compounds like
 *cài-dāo* "vegetable-knife" (= "a knife for cutting vegetables") whose
 semantic relation is idiosyncratic and must be listed in the lexicon
-(@cite{tay-2024}, Ch. 3 §3.1). -/
+([tay-2024], Ch. 3 §3.1). -/
 
 /-- Morphological structure of dǎ-sǐ "hit-die". -/
 def dasi_morph : MorphWord :=
@@ -344,7 +344,7 @@ theorem kulei_surface : kulei_morph.surface = "kulei" := rfl
 Each V-V compound maps to a 2-vertex BoolSEM where V1 directly causes V2.
 Direct causation = single edge, no intermediate with an independent
 energy source. This is the same tightness constraint identified for
-English resultatives by @cite{levin-2019} — formalized via the canonical
+English resultatives by [levin-2019] — formalized via the canonical
 `completesForEffectOn` predicate from `Core.Causal.SEM.Counterfactual`. -/
 
 open Core.Causal Core.Causal.Mechanism Core.Causal.SEM

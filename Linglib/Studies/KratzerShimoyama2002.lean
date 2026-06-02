@@ -6,7 +6,7 @@ import Linglib.Fragments.Latvian.IndeterminatePronouns
 
 /-!
 # Kratzer & Shimoyama (2002): Indeterminate Pronouns
-@cite{kratzer-shimoyama-2002}
+[kratzer-shimoyama-2002]
 
 "Indeterminate Pronouns: The View from Japanese." In C. Lee et al. (eds.),
 *Contrastiveness in Information Structure, Alternatives and Scalar
@@ -26,7 +26,7 @@ movement.
 1. **Hamblin operators** (§2): The four sentential operators over
    propositional alternative sets.
 2. **Pointwise FA = Set applicative** (§3): K&S's Hamblin FA is exactly
-   the set applicative from @cite{charlow-2020}, already formalized in
+   the set applicative from [charlow-2020], already formalized in
    `Applicative.lean`.
 3. **GQ as special case** (§2): Determiner quantification falls out
    when alternatives are individuals — `[∃]({P(x) : x ∈ A}) ↔ ∃x∈A, P(x)`.
@@ -71,7 +71,7 @@ sets of individuals. Composition is pointwise functional application.
 -/
 
 /-- A Hamblin denotation is a set of alternatives of type α.
-    This is exactly the carrier of @cite{charlow-2020}'s set monad. -/
+    This is exactly the carrier of [charlow-2020]'s set monad. -/
 abbrev HamblinDen (α : Type) := α → Prop
 
 /-- Hamblin Functional Application (§3): pointwise application of a set
@@ -461,7 +461,7 @@ theorem fc_end_to_end_possibility (R : HamblinAccessRel W) (p q : W → Prop)
     | inr h => exact Or.inr ⟨w', hw', h ▸ hrw⟩
   exact fc_possibility _ _ h_disj h_implic
 
-/-- **Bridge to @cite{chierchia-2013}.**
+/-- **Bridge to [chierchia-2013].**
     K&S's pragmatic derivation (Gricean reasoning) and Chierchia's
     grammatical derivation (double exhaustification) both yield
     ◇A ∧ ◇B. Different mechanisms, same empirical prediction. -/
@@ -613,7 +613,7 @@ theorem irgendein_existential_only :
 /-!
 ## §1: Indeterminate Pronoun Paradigms Cross-Linguistically
 
-@cite{haspelmath-1997} (p. 277, diacritics omitted). The Latvian
+[haspelmath-1997] (p. 277, diacritics omitted). The Latvian
 paradigm illustrates a selective system: each operator association is
 morphologically marked by a distinct prefix (kaut- existential,
 ne- under direct negation, jeb- indirect negation/comparatives/FC).

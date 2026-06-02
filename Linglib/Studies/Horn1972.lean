@@ -3,7 +3,7 @@ import Linglib.Semantics.Alternatives.Lexical
 
 /-!
 # Horn Scales
-@cite{horn-1972}
+[horn-1972]
 
 Connects the string-based `HornScaleDatumPair` records in
 `Phenomena/ScalarImplicatures/Basic.lean` to the typed Horn scale algebra

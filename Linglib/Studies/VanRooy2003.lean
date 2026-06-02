@@ -4,10 +4,10 @@ import Linglib.Core.Agent.DecisionTheory
 import Linglib.Semantics.Questions.DecisionTheoretic
 
 /-!
-# @cite{van-rooy-2003}: Questioning to Resolve Decision Problems
-@cite{groenendijk-stokhof-1984} @cite{karttunen-1977} @cite{ginzburg-1995} @cite{merin-1999}
+# [van-rooy-2003]: Questioning to Resolve Decision Problems
+[groenendijk-stokhof-1984] [karttunen-1977] [ginzburg-1995] [merin-1999]
 
-Single-paper formalisation of @cite{van-rooy-2003}, "Questioning to
+Single-paper formalisation of [van-rooy-2003], "Questioning to
 Resolve Decision Problems", *Linguistics and Philosophy* 26.6:
 727–763. The paper grounds question semantics in Bayesian decision
 theory: questions are evaluated by how their answers affect the
@@ -19,7 +19,7 @@ The decision-theoretic machinery — `EU`, `UV`, `VSI`, `DecisionProblem`
 — is already in `Core/Agent/DecisionTheory.lean`. Van Rooy's notation
 maps to the substrate as:
 
-| @cite{van-rooy-2003}                             | substrate                                  |
+| [van-rooy-2003]                             | substrate                                  |
 |--------------------------------------------------|--------------------------------------------|
 | `EU(a) = ∑_w P(w) · U(a, w)`                     | `Core.DecisionTheory.expectedUtility`      |
 | `UV(Choose now) = max_a EU(a)`                   | `Core.DecisionTheory.dpValue`              |
@@ -43,7 +43,7 @@ maps to the substrate as:
 * **§4.1 Decision-relevance preservation**: under the *strong*
   Blackwell condition (`CoversAltsOf` from substrate), preservation
   holds. The substrate's `CoversAltsOf.preserves_decisionRelevant`
-  IS the @cite{van-rooy-2003} theorem.
+  IS the [van-rooy-2003] theorem.
 
 ## What this file does NOT replicate
 
@@ -66,7 +66,7 @@ variable {W A : Type*}
 
 /-! ### §3.1 Action-induced partition `A*` (p. 736-737)
 
-@cite{van-rooy-2003} p. 736: "Notice that not only a question, but
+[van-rooy-2003] p. 736: "Notice that not only a question, but
 also the set of alternative actions, A, gives rise to a set of
 propositions. We can relate each action a ∈ A to the set of worlds
 in which there is no other action b in A that is strictly better.
@@ -74,12 +74,12 @@ We will denote the proposition corresponding with a by a*". -/
 
 /-- The **optimality cell** of action `a` (van Rooy's `a*`): the set
     of worlds where `a` strictly dominates every other action in
-    `acts`. @cite{van-rooy-2003} p. 736. -/
+    `acts`. [van-rooy-2003] p. 736. -/
 def optimalityCell (dp : DecisionProblem W A) (acts : Set A) (a : A) : Set W :=
   {w | ∀ b ∈ acts, b ≠ a → dp.utility w a > dp.utility w b}
 
 /-- The **action-induced partition** `A*`: the set of optimality
-    cells. @cite{van-rooy-2003} p. 736-737. -/
+    cells. [van-rooy-2003] p. 736-737. -/
 def actionPartition (dp : DecisionProblem W A) (acts : Set A) : Set (Set W) :=
   optimalityCell dp acts '' acts
 
@@ -111,8 +111,8 @@ substrate predicate directly. -/
 
 /-! ### §4.1 Question ordering (p. 741)
 
-@cite{van-rooy-2003} p. 741: "Q is a *better* question than Q' [...]
-in terms of @cite{groenendijk-stokhof-1984} partition semantics this
+[van-rooy-2003] p. 741: "Q is a *better* question than Q' [...]
+in terms of [groenendijk-stokhof-1984] partition semantics this
 comes down to the natural requirement that for every element of Q
 there must be an element of Q' such that the former entails the
 latter, i.e., `Q ⊑ Q'`:
@@ -127,7 +127,7 @@ and transitive (`questionEntails_trans`). -/
 
 /-! ### §4.1 Decision-relevance preservation
 
-@cite{van-rooy-2003} §4.1 asserts that a finer (more informative)
+[van-rooy-2003] §4.1 asserts that a finer (more informative)
 question is at least as decision-useful as a coarser one. The
 substrate-level claim: under the strong Blackwell condition
 `CoversAltsOf` (every nonempty Q'-alt is covered by a nonempty
@@ -138,10 +138,10 @@ must be supplied separately.
 
 For *partition* questions (where every alternative is non-empty and
 the alternatives jointly cover the state space), `questionEntails`
-and `CoversAltsOf` coincide, recovering @cite{van-rooy-2003}'s
+and `CoversAltsOf` coincide, recovering [van-rooy-2003]'s
 partition-based theorem. -/
 
-/-- @cite{van-rooy-2003} §4.1 **decision-relevance preservation
+/-- [van-rooy-2003] §4.1 **decision-relevance preservation
     under the strong Blackwell condition**: when `Q` covers `Q'`'s
     alternatives, decision-relevance lifts. Direct re-export of the
     substrate's `CoversAltsOf.preserves_decisionRelevant`. -/
@@ -154,11 +154,11 @@ theorem decisionRelevance_preserved_under_cover
 
 /-! ### Substrate gap note
 
-The bare @cite{van-rooy-2003} `Q ⊑ Q'` ordering does **not** suffice
+The bare [van-rooy-2003] `Q ⊑ Q'` ordering does **not** suffice
 for decision-relevance preservation on the inquisitive substrate:
 `questionEntails` says only that `Q`-alts ⊆ `Q'`-alts, not the dual
 "every `Q'`-alt is covered by a `Q`-alt". On a partition `Question W`
-the two directions coincide and @cite{van-rooy-2003}'s informal
+the two directions coincide and [van-rooy-2003]'s informal
 argument goes through; on a general inquisitive `Question W` they
 split. The substrate exposes the dual as `CoversAltsOf` and proves
 preservation against that direction. See the docstring of

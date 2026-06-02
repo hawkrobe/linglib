@@ -5,7 +5,7 @@ import Linglib.Core.Agent.Emotion
 
 /-!
 # Anand & Hacquard (2013): Epistemics and Attitudes
-@cite{anand-hacquard-2013}
+[anand-hacquard-2013]
 
 *Semantics & Pragmatics* 6, Article 8: 1–59.
 
@@ -27,11 +27,11 @@ The central finding:
 
 Two proposals are combined:
 
-**About epistemics** (@cite{yalcin-2007}, @cite{hacquard-2006}): Epistemics
+**About epistemics** ([yalcin-2007], [hacquard-2006]): Epistemics
 quantify over an information state parameter S, obtained by anaphora
 to the embedding attitude.
 
-**About attitudes** (@cite{bolinger-1968}, @cite{villalta-2008}):
+**About attitudes** ([bolinger-1968], [villalta-2008]):
 - Representational attitudes (believe, say, know) provide an information
   state S = DOX(x,w) — epistemics are licensed.
 - Non-representational attitudes (want, demand) use comparative
@@ -43,13 +43,13 @@ to the embedding attitude.
 ## Connection to BToM
 
 The hybrid structure of emotive doxastics maps directly onto BToM
-inference (@cite{baker-jara-ettinger-saxe-tenenbaum-2017}):
+inference ([baker-jara-ettinger-saxe-tenenbaum-2017]):
 - Doxastic component = belief marginal P(b | a)
 - Preference component = desire marginal P(d | a)
 - Uncertainty condition = non-extreme credence
 
-This bridges @cite{anand-hacquard-2013}'s attitude semantics with
-@cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}'s emotion
+This bridges [anand-hacquard-2013]'s attitude semantics with
+[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]'s emotion
 appraisal architecture: emotive doxastics ARE prospective emotions
 computed from BToM marginals.
 -/
@@ -141,7 +141,7 @@ theorem theory_matches_data :
 /-!
 ## Epistemic Modals as Information-State Quantifiers
 
-Following @cite{yalcin-2007} and @cite{veltman-1996}, epistemic modals
+Following [yalcin-2007] and [veltman-1996], epistemic modals
 quantify over an information state parameter S:
 
     ⟦might φ⟧^{c,w,S,g} = 1 iff ∃w' ∈ S: ⟦φ⟧^{c,w',S,g} = 1
@@ -179,7 +179,7 @@ instance {S : InfoState W} {φ : W → Prop} [DecidablePred φ] :
     Decidable (mustS S φ) := by
   unfold mustS; infer_instance
 
-/-- Non-triviality presupposition (@cite{geurts-2005}):
+/-- Non-triviality presupposition ([geurts-2005]):
     epistemics presuppose their modal base is non-trivial. -/
 def nonTrivial (S : InfoState W) : Prop := S ≠ []
 
@@ -337,9 +337,9 @@ theorem john_uncertain :
 /-!
 ## The BToM–Emotive Doxastic Bridge
 
-@cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}'s emotion model
+[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]'s emotion model
 computes retrospective appraisals from BToM marginals. We show that
-@cite{anand-hacquard-2013}'s emotive doxastic semantics gives the
+[anand-hacquard-2013]'s emotive doxastic semantics gives the
 formal content of *prospective* emotions computed from the same marginals.
 
 The mapping:

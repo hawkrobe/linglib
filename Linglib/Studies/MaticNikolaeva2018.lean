@@ -3,10 +3,10 @@ import Linglib.Fragments.English.PolarityMarking
 import Linglib.Fragments.German.PolarityMarking
 
 /-!
-# Matić & Nikolaeva (2018) @cite{matic-nikolaeva-2018}
+# Matić & Nikolaeva (2018) [matic-nikolaeva-2018]
 
 *From polarity focus to salient polarity: From things to processes.*
-In @cite{dimroth-sudhoff-2018}, pp. 9–53. DOI 10.1075/la.249.01mat.
+In [dimroth-sudhoff-2018], pp. 9–53. DOI 10.1075/la.249.01mat.
 
 The chapter argues that "polarity focus" is **not** a fixed form-meaning
 association of the kind a Lean enum can encode, and proposes the term
@@ -18,7 +18,7 @@ the literature has tried to denotationally pin down.
 > pairing between a linguistic form and a denotation, but is rather
 > to be conceived of as a fuzzy set of family resemblances unified
 > by shared communicative intentions.
-> — @cite{matic-nikolaeva-2018}, p. 12
+> — [matic-nikolaeva-2018], p. 12
 
 This file does **not** formalize "salient polarity" as a predicate or
 function. Doing so would be the very stipulation move M&N reject — a
@@ -33,7 +33,7 @@ M&N's interpretational notion.
 ## Why this is not a "bridge file"
 
 Per CLAUDE.md anchoring discipline, the file is anchored on a single
-paper (`@cite{matic-nikolaeva-2018}`); the cross-framework critique is
+paper (`[matic-nikolaeva-2018]`); the cross-framework critique is
 M&N's own claim, not a synthesis the formaliser invented. It lives in
 `Studies/` exactly like every other `Studies/AuthorYear.lean`.
 The contradiction with the substrate is recorded at the substrate's
@@ -61,7 +61,7 @@ open German.PolarityMarking (verumFocus dochPreUtterance)
 
 /-! ## §1 Attested salient-polarity structures (M&N examples 2–4)
 
-Per @cite{matic-nikolaeva-2018} pp. 13–14, the literature has ascribed
+Per [matic-nikolaeva-2018] pp. 13–14, the literature has ascribed
 salient polarity to a heterogeneous set of structures across German,
 English, and Serbian. The list below abridges the chapter's enumeration
 (M&N's own (2), (3), (4)). M&N flag this list as **open-ended** ("the
@@ -69,7 +69,7 @@ list seems to be open" — p. 15); the constructors below are a finite
 proxy for argumentative purposes only. -/
 inductive MNAttestedStructure where
   /-- German: accent on auxiliary, modal, or complementizer (M&N 2a;
-      cf. @cite{hohle-1992}, Lohnstein 2016) -/
+      cf. [hohle-1992], Lohnstein 2016) -/
   | germanAccentOnAuxiliary
   /-- German: accent on lexical finite verb (M&N 2b) -/
   | germanAccentOnLexicalVerb
@@ -252,7 +252,7 @@ theorem mn_attested_list_strictly_grows : mnOpenEndedWitnesses ≠ [] := by deci
 
 /-! ## §5 Garassino & Jacob (2018, fn 13) endorsement
 
-The same-volume @cite{garassino-jacob-2018} explicitly adopt M&N's
+The same-volume [garassino-jacob-2018] explicitly adopt M&N's
 salient-polarity view (their fn 13, p. 236; verbatim quote in
 `Studies/GarassinoJacob2018.lean::§4`). This is a
 documented framework alignment within the volume itself, not the
@@ -265,13 +265,13 @@ M&N §2 explicitly target three sibling frameworks beyond the substrate's
 form-class encoding. Two of them are formalized in linglib:
 
 - `Studies/RomeroHan2004.lean` formalizes
-  @cite{romero-han-2004}'s **FOR-SURE-CommonGround** epistemic-conjunction
+  [romero-han-2004]'s **FOR-SURE-CommonGround** epistemic-conjunction
   operator. M&N call this "Lexical Operator Theory" (LOT) and
   reject it on the same form-meaning grounds (M&N §2 "epistemic
   account").
 - `Semantics/Mood/Gutzmann.lean` /
   `Studies/Gutzmann2015.lean` formalize
-  @cite{gutzmann-2015}'s use-conditional sentence-mood operators
+  [gutzmann-2015]'s use-conditional sentence-mood operators
   (DEONT/EPIS/HKNOW). The verum-specific Gutzmann work M&N cite
   (Gutzmann & Castroviejo Miró 2011) is *not* formalized in
   linglib — the existing Gutzmann file is the broader 2015
@@ -289,7 +289,7 @@ profile stays visible at the def-site. -/
 /-- Romero & Han's framework offers exactly one analytic option for
     salient polarity: the FOR-SURE-CommonGround operator. M&N call this LOT. -/
 inductive RHAnalysis where
-  /-- @cite{romero-han-2004}'s `forSureCG` operator analyzes the
+  /-- [romero-han-2004]'s `forSureCG` operator analyzes the
       structure as expressing speaker certainty about CommonGround-addition. -/
   | epistemicVerum
   deriving DecidableEq, Repr

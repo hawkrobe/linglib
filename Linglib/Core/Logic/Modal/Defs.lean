@@ -4,7 +4,7 @@ import Mathlib.Order.Defs.Unbundled
 /-!
 # Polymorphic Kripke Foundation
 
-@cite{kripke-1963}
+[kripke-1963]
 
 The bare foundation for accessibility-restricted modal logic, parameterised by
 `{W : Type*}` — no Frame, no Entity, no type system: accessibility relations,
@@ -79,7 +79,7 @@ class IsKD45Frame {W : Type*} (R : AccessRel W) : Prop
   extends IsSerial R, IsTrans W R, IsEuclidean R
 
 /-- K4-Eucl frame: transitive + euclidean, NOT serial. The frame condition
-    for commitment in @cite{stalnaker-1984}-style discourse models, where
+    for commitment in [stalnaker-1984]-style discourse models, where
     commitment violations (no accessible compliance world) must be
     expressible. -/
 class IsK4EuclFrame {W : Type*} (R : AccessRel W) : Prop
@@ -89,7 +89,7 @@ class IsK4EuclFrame {W : Type*} (R : AccessRel W) : Prop
 class IsKTFrame {W : Type*} (R : AccessRel W) : Prop extends Std.Refl R
 
 /-- KTB frame: reflexive + symmetric. The natural setting for tolerance
-    semantics (@cite{cobreros-etal-2012}) where each predicate's
+    semantics ([cobreros-etal-2012]) where each predicate's
     similarity relation is reflexive and symmetric but possibly
     non-transitive. -/
 class IsKTBFrame {W : Type*} (R : AccessRel W) : Prop

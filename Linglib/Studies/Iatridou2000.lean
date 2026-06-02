@@ -7,10 +7,10 @@ import Linglib.Semantics.Lexical.MeaningComponents
 import Linglib.Data.Examples.Schema
 
 /-!
-# @cite{iatridou-2000} — Morphological Data @cite{iatridou-2000}
+# [iatridou-2000] — Morphological Data [iatridou-2000]
 
 Theory-neutral cross-linguistic data on counterfactual morphology from
-@cite{iatridou-2000} "The Grammatical Ingredients of Counterfactuality",
+[iatridou-2000] "The Grammatical Ingredients of Counterfactuality",
 *Linguistic Inquiry* 31(2): 231–270.
 
 ## Key Empirical Generalizations
@@ -26,7 +26,7 @@ Theory-neutral cross-linguistic data on counterfactual morphology from
 
 ## Data Sources
 
-- Tables 1–2 of @cite{iatridou-2000}
+- Tables 1–2 of [iatridou-2000]
 - Example sentences from §2
 
 ## See also
@@ -130,10 +130,10 @@ end Examples
 -- END GENERATED EXAMPLES
 
 -- ════════════════════════════════════════════════════════════════
--- § @cite{iatridou-2000}'s counterfactual typology
+-- § [iatridou-2000]'s counterfactual typology
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{iatridou-2000}'s predicate classification for counterfactual
+/-- [iatridou-2000]'s predicate classification for counterfactual
 gating.
 
 The distinction between FLV and PresCF (both with 1 modal ExclF)
@@ -149,7 +149,7 @@ inductive IatridouPredType where
   | telic
   deriving DecidableEq, Repr
 
-/-- Map Vendler classes to @cite{iatridou-2000}'s predicate
+/-- Map Vendler classes to [iatridou-2000]'s predicate
 classification.
 
 States and activities map to stative; achievements and accomplishments
@@ -158,7 +158,7 @@ def VendlerClass.toIatridou : VendlerClass → IatridouPredType
   | .state | .activity | .semelfactive => .stative
   | .achievement | .accomplishment => .telic
 
-/-- @cite{iatridou-2000}'s three counterfactual conditional types,
+/-- [iatridou-2000]'s three counterfactual conditional types,
 distinguished by the number of ExclFs and predicate type. -/
 inductive CounterfactualType where
   /-- Future Less Vivid: 1 ExclF modal + telic predicate -/
@@ -208,7 +208,7 @@ theorem no_modal_not_cf (temporalExcl : Bool) (pred : IatridouPredType) :
     classifyCounterfactual false temporalExcl pred = none := by
   cases temporalExcl <;> rfl
 
-/-- @cite{iatridou-2000}'s subjunctive generalization (42): "A CF can
+/-- [iatridou-2000]'s subjunctive generalization (42): "A CF can
 contain a subjunctive morpheme only if that subjunctive morpheme has a
 past tense form".
 
@@ -226,7 +226,7 @@ def CounterfactualType.toSubjunctiveType (_ : CounterfactualType) :
     Semantics.Mood.SubjunctiveType :=
   .counterfactual
 
-/-- Every @cite{iatridou-2000} counterfactual type maps to
+/-- Every [iatridou-2000] counterfactual type maps to
 `.counterfactual`. -/
 theorem all_counterfactuals_are_counterfactual (t : CounterfactualType) :
     t.toSubjunctiveType = .counterfactual := by cases t <;> rfl
@@ -332,7 +332,7 @@ def english_pastCF : CFMorphologyDatum where
 
 /-- Greek FLV: "An + past + impf, tha + past + impf"
 
-Based on @cite{iatridou-2000}, example (6). Greek FLV and PresCF have
+Based on [iatridou-2000], example (6). Greek FLV and PresCF have
 identical morphological form; the FLV/PresCF distinction is made by
 predicate type and temporal adverbials, not by morphology. -/
 def greek_flv : CFMorphologyDatum where
@@ -348,7 +348,7 @@ def greek_flv : CFMorphologyDatum where
 
 /-- Greek PresCF: "An + past + impf, tha + past + impf"
 
-Based on @cite{iatridou-2000}, example (6). Morphologically identical
+Based on [iatridou-2000], example (6). Morphologically identical
 to FLV in Greek; the counterfactual reading arises from the stative
 predicate. -/
 def greek_presCF : CFMorphologyDatum where
@@ -364,7 +364,7 @@ def greek_presCF : CFMorphologyDatum where
 
 /-- Greek PastCF: "An + past + past + impf, tha + past + past + impf"
 
-Based on @cite{iatridou-2000}, example (6c). The additional past
+Based on [iatridou-2000], example (6c). The additional past
 layer (the pluperfect ixe + participle) distinguishes PastCF from
 PresCF/FLV. -/
 def greek_pastCF : CFMorphologyDatum where

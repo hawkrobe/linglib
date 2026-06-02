@@ -7,7 +7,7 @@ import Linglib.Core.Logic.Bilateral.Defs
 /-!
 # Quantified Bilateral State-based Modal Logic (QBSML) — Core Definitions
 
-@cite{aloni-vanormondt-2023} @cite{aloni-2022} @cite{anttila-2021}
+[aloni-vanormondt-2023] [aloni-2022] [anttila-2021]
 
 QBSML is the first-order extension of Aloni's BSML, presented in Aloni & van
 Ormondt 2023 (J Logic Lang Inf 32:539-567) "Modified Numerals and Split
@@ -58,7 +58,7 @@ study files under `Studies/`).
   `[Fintype Domain]` for the universal extension. Polymorphic + finite.
 - **Predicate interpretation is per-world**: `pInterp : Pred → W → Finset Domain`
   — at world w, predicate p picks out a Finset of Domain elements. This is the
-  world-dependent (non-rigid) interpretation of @cite{aloni-vanormondt-2023}
+  world-dependent (non-rigid) interpretation of [aloni-vanormondt-2023]
   Definition 4.2 (`I(w)(Pⁿ) ⊆ Dⁿ`), specialised to monadic `P` and with the
   constant-interpretation half of the paper's `I` dropped (no constants here).
 -/
@@ -261,7 +261,7 @@ inductive QBSMLFormula (Var : Type*) (Pred : Type*) where
 variable {Var Pred : Type*}
 
 /-- □φ := ¬◇¬φ — necessity as an abbreviation, mirroring BSML.
-    @cite{aloni-vanormondt-2023} takes `□` primitive and `◇ := ¬□¬` derived; we
+    [aloni-vanormondt-2023] takes `□` primitive and `◇ := ¬□¬` derived; we
     invert this (`poss` primitive), so our `poss` clauses match the paper's
     *derived* `◇`-clauses (Definition 4.9) and `nec` here matches its primitive `□`. -/
 def QBSMLFormula.nec (φ : QBSMLFormula Var Pred) : QBSMLFormula Var Pred :=

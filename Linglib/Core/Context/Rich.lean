@@ -4,13 +4,13 @@ import Linglib.Features.Evidentiality
 
 /-!
 # Rich Context
-@cite{aikhenvald-2004} @cite{condoravdi-2002} @cite{cumming-2026} @cite{iatridou-2000}
+[aikhenvald-2004] [condoravdi-2002] [cumming-2026] [iatridou-2000]
 
 `RichContext` extends `KContext` with a domain of accessible worlds and an
 evidential source. This supports two phenomena that plain `KContext` cannot
 express:
 
-1. **Domain expansion** (@cite{condoravdi-2002}, Mizuno): backward temporal shifts
+1. **Domain expansion** ([condoravdi-2002], Mizuno): backward temporal shifts
    expand the set of historical alternatives because more futures branch from
    earlier times.
 
@@ -45,7 +45,7 @@ open Features.Evidentiality
     in time expands this set (more futures branch from earlier times).
 
     The `evidence` field tracks the evidential source for the assertion,
-    connecting to @cite{cumming-2026}'s tense-evidential constraints. -/
+    connecting to [cumming-2026]'s tense-evidential constraints. -/
 structure RichContext (W : Type*) (E : Type*) (P : Type*) (T : Type*) where
   /-- The underlying Kaplanian context -/
   base : KContext W E P T
@@ -107,7 +107,7 @@ theorem KContext.toRich_base (c : KContext W E P T) :
 /-- A context shift is domain-expanding if it can only enlarge the
     accessible-world set, never shrink it.
 
-    This captures @cite{condoravdi-2002}'s observation: backward temporal
+    This captures [condoravdi-2002]'s observation: backward temporal
     shifts expand the historical alternatives because more futures
     branch from earlier times. -/
 def DomainExpanding (σ : ContextShift (RichContext W E P T)) : Prop :=
@@ -152,7 +152,7 @@ theorem hpShift_expanding (newTime : T) (expandedDomain : Set W)
     ((hpShift (E := E) (P := P) newTime expandedDomain).apply rc).time = newTime := rfl
 
 -- ════════════════════════════════════════════════════════════════
--- § X-Marking Shift (@cite{iatridou-2000})
+-- § X-Marking Shift ([iatridou-2000])
 -- ════════════════════════════════════════════════════════════════
 
 /-- X-marking shift: the morphological "fake past" on

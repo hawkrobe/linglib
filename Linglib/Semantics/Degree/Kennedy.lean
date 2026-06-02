@@ -5,7 +5,7 @@ import Linglib.Semantics.Degree.Defs
 
 Kennedy's classification of gradable adjectives by scale structure, and
 the derivation of comparison-class sensitivity from scale boundedness
-@cite{kennedy-2007} @cite{kennedy-mcnally-2005}. The key principle
+[kennedy-2007] [kennedy-mcnally-2005]. The key principle
 (Interpretive Economy) says: when a scale has an endpoint, use it as the
 standard — more informative than a contextual norm.
 

@@ -4,7 +4,7 @@ set_option autoImplicit false
 
 /-!
 # Arity-restricted subtypes of `RootedTree.Planar`
-@cite{marcolli-chomsky-berwick-2025}
+[marcolli-chomsky-berwick-2025]
 
 Predicates and subtypes for the arity restrictions MCB uses:
 

@@ -2,7 +2,7 @@ import Linglib.Semantics.Tense.Basic
 
 /-!
 # Russian Temporal Deictic Adverbs
-@cite{tsilia-zhao-2026}
+[tsilia-zhao-2026]
 
 Lexical entry for Russian тогда "togda" (then), typed by `ThenAdverb`.
 Cross-linguistic evidence for the then-present incompatibility.

@@ -4,11 +4,11 @@ import Linglib.Studies.AnandHardtMcCloskey2021
 import Linglib.Phenomena.Ellipsis.Sluicing
 
 /-!
-# @cite{anand-hardt-mccloskey-2025} — The Domain of Formal Matching in Sluicing
+# [anand-hardt-mccloskey-2025] — The Domain of Formal Matching in Sluicing
 
-@cite{anand-hardt-mccloskey-2025}
+[anand-hardt-mccloskey-2025]
 
-Anand, Hardt & McCloskey (2025) extend @cite{rudin-2019}'s proposal that
+Anand, Hardt & McCloskey (2025) extend [rudin-2019]'s proposal that
 syntactic isomorphism in sluicing applies only to the **argument domain**
 (the most inclusive ⟨e,t⟩ projection in the EP), not the entire elided clause.
 
@@ -49,7 +49,7 @@ open Phenomena.Ellipsis.Sluicing
 
 /-- Antecedent types that license small clause sluicing.
 
-    @cite{anand-hardt-mccloskey-2025} §2: the antecedent need not be
+    [anand-hardt-mccloskey-2025] §2: the antecedent need not be
     a full clause — a small clause suffices. The embedding predicate
     (perception verb, causative, *with*) and its external argument are
     NOT part of the argument domain. -/
@@ -301,7 +301,7 @@ def failedSluiceEx15a : SluicingDatum where
 /-- A copular pseudosluice: the antecedent is a nominal, and the elided
     clause is a copular clause whose argument domain is a small clause.
 
-    @cite{anand-hardt-mccloskey-2025} §5: These are NOT anomalous.
+    [anand-hardt-mccloskey-2025] §5: These are NOT anomalous.
     The antecedent nominal provides the SC subject; the elided clause
     is [TP T be [SC subject predicate]], whose argument domain is
     just the SC. The SC in the antecedent context (the bare nominal)
@@ -351,7 +351,7 @@ theorem copular_pseudosluice_argdomain :
 /-- The copula in a pseudosluice spells out as BE (not HAVE): the
     implicit clause has expletive/middle Voice (no external argument
     introducing transitive Voice), triggering the elsewhere VI rule.
-    This connects to @cite{myler-2016}'s copula theory. -/
+    This connects to [myler-2016]'s copula theory. -/
 theorem pseudosluice_copula_is_be :
     copulaVI voiceMiddle = .be := rfl
 
@@ -368,7 +368,7 @@ theorem copular_pseudosluice_sic :
 -- § 6: Anti-PredP Argument (paper §5, ex. 22–24)
 -- ============================================================================
 
-/-- @cite{matushansky-2019} argues that small clauses lack a functional
+/-- [matushansky-2019] argues that small clauses lack a functional
     Pred head — the subject occupies the specifier of the predicate itself.
     The paper provides an indirect argument from ellipsis: if PredP existed,
     the SC node would be inside the argument domain, requiring a match in
@@ -376,7 +376,7 @@ theorem copular_pseudosluice_sic :
     with nominal antecedents that have no SC node, either PredP does not
     exist (Matushansky) or the SIC checks only heads, not phrasal nodes.
 
-    @cite{anand-hardt-mccloskey-2025} Def 6 resolves this by requiring
+    [anand-hardt-mccloskey-2025] Def 6 resolves this by requiring
     identity only for **heads** in ℋ, not for all nodes. The SC node
     itself is excluded from the matching calculation. -/
 theorem sic_checks_heads_not_nodes :
@@ -389,7 +389,7 @@ theorem sic_checks_heads_not_nodes :
 -- § 7: Consistency with 2021 Corpus Data
 -- ============================================================================
 
--- The revised SIC in @cite{anand-hardt-mccloskey-2025} makes the same
+-- The revised SIC in [anand-hardt-mccloskey-2025] makes the same
 -- predictions as the original SIC for all full-clause sluicing. The new
 -- contributions concern SC antecedents, stranded PPs, and copular
 -- pseudosluices — cases that the original framework did not address.
@@ -398,7 +398,7 @@ theorem sic_checks_heads_not_nodes :
     every dimension inside the argument domain has 0 corpus attestations
     of mismatches; every dimension outside has nonzero attestations.
     This imports and extends the bridge theorems from
-    @cite{anand-hardt-mccloskey-2021}. -/
+    [anand-hardt-mccloskey-2021]. -/
 theorem consistent_with_2021_corpus :
     isInArgumentDomain .v .C = true ∧
     AnandHardtMcCloskey2021.MismatchDimension.corpusCount .argumentStructure = 0 ∧
@@ -409,7 +409,7 @@ theorem consistent_with_2021_corpus :
   ⟨by decide, rfl, by decide, by decide, by decide, by decide⟩
 
 /-- The 2021 corpus found 17 cases of stranded prepositions with no
-    antecedent source. @cite{anand-hardt-mccloskey-2025} §4 predicts this:
+    antecedent source. [anand-hardt-mccloskey-2025] §4 predicts this:
     nonargument PPs are outside the argument domain (P is at F0 but
     nonargument PPs merge above vP), so the SIC does not require matching.
     The prediction: filtering out nonargument PPs from both sides should

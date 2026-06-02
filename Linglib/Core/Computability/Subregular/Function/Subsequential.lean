@@ -12,13 +12,13 @@ import Linglib.Core.Computability.Subregular.Function.Direction
 
 A function `f : List α → List β` is **subsequential** when it is computed
 by a deterministic finite-state transducer with state-based final output
-@cite{mohri-1997}. Subsequential functions form a proper subclass of the
+[mohri-1997]. Subsequential functions form a proper subclass of the
 regular relations (= rational functions) and a proper superclass of the
-Output Strictly Local class @cite{aksenova-rawski-graf-heinz-2020}.
+Output Strictly Local class [aksenova-rawski-graf-heinz-2020].
 
 The class comes in **left** and **right** variants depending on whether
 the FST consumes input left-to-right or right-to-left
-@cite{meinhardt-mai-bakovic-mccollum-2024}. The right-subsequential
+[meinhardt-mai-bakovic-mccollum-2024]. The right-subsequential
 class equals the image of the left-subsequential class under input/output
 reversal: `f ∈ R-Subseq ↔ (List.reverse ∘ f ∘ List.reverse) ∈ L-Subseq`.
 
@@ -64,7 +64,7 @@ input alphabet `α`, output alphabet `β`. The scan is total deterministic
 — `step` always returns a next state and an output block — and the FST
 emits `finalOutput` on terminating in any state.
 
-This is the standard subsequential model of @cite{mohri-1997}: a
+This is the standard subsequential model of [mohri-1997]: a
 deterministic FST with state-final outputs, computing partial functions
 extended to total functions on `List α`. We model totality by requiring
 `step` to be total; partial subsequential functions can be encoded by
@@ -284,7 +284,7 @@ The witness-style predicates below follow mathlib's `Language.IsRegular`
 shape: the state space `σ` is existentially quantified at `Type` with a
 `Fintype σ` instance, while the alphabets `α β` are universe-polymorphic
 at `Type*`. The `Fintype` constraint matches the source literature
-(@cite{mohri-1997} §3; @cite{heinz-lai-2013}; @cite{chandlee-2014}),
+([mohri-1997] §3; [heinz-lai-2013]; [chandlee-2014]),
 where every SFST has finitely many states by definition, and also lets
 the universe parameter for state collapse cleanly without `universe`
 declarations or `ULift` coercions.
@@ -299,7 +299,7 @@ witness the predicate (`Function/{ISL,OSL}.lean`). -/
 /-- A function `f : List α → List β` is **left-subsequential** iff some
 SFST with a finite state space computes it via left-to-right scan. The
 `Fintype σ` constraint matches the source literature
-(@cite{mohri-1997}; @cite{chandlee-2014}). -/
+([mohri-1997]; [chandlee-2014]). -/
 def IsLeftSubsequential {α β : Type*} (f : List α → List β) : Prop :=
   ∃ σ : Type, ∃ _ : Fintype σ, ∃ T : SFST σ α β, T.run = f
 

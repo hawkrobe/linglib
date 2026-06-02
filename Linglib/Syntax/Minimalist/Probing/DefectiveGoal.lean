@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Features
 
 /-!
 # Defective Goal
-@cite{roberts-2010} @cite{storment-2025} @cite{storment-2026}
+[roberts-2010] [storment-2025] [storment-2026]
 
 Roberts's notion of a *defective goal*: a goal whose formal features are
 a proper subset of those of its probe. Defective goals trigger default
@@ -24,7 +24,7 @@ open Minimalist
 /-- A goal `G` is **defective** with respect to a probe `P` iff `G`'s
     formal features are a proper subset of `P`'s. The probe needs more
     features than the goal has to offer, so checking is incomplete.
-    @cite{roberts-2010}, ch. 2; cited as eq. (49) in @cite{storment-2026}. -/
+    [roberts-2010], ch. 2; cited as eq. (49) in [storment-2026]. -/
 def DefectiveGoal (probe goal : FeatureBundle) : Prop :=
   goal ⊆ probe ∧ ∃ f ∈ probe, f ∉ goal
 

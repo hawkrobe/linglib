@@ -11,7 +11,7 @@ determiners — a surface `form`; each specialization adds its own structure.
 
 A language's determiner inventory is a `List Determiner.Entry` (a heterogeneous
 collection of the four kinds) declared in its Fragment — there is no per-language
-wrapper record. The @cite{moroney-2021} definiteness-marking typology
+wrapper record. The [moroney-2021] definiteness-marking typology
 (`DefMarkingStrategy`) is *derived* from that list by `markingStrategy`, not
 stipulated: a language's Moroney cell is a theorem about its declared
 determiners, checked by `decide`.
@@ -28,12 +28,12 @@ localized to a single declaration.
 * `Article`, `Demonstrative`, `Quantifier`, `Possessive` — the four
   specializations.
 * `Determiner.Entry` — a determiner occurrence in a language's inventory.
-* `Determiner.markingStrategy` — derives the @cite{moroney-2021} 4-cell typology
+* `Determiner.markingStrategy` — derives the [moroney-2021] 4-cell typology
   from a declared `List Determiner.Entry`.
 
 ## Implementation notes
 
-An `Article`'s admissible @cite{schwarz-2009} strengths are `Article.presupTypes`
+An `Article`'s admissible [schwarz-2009] strengths are `Article.presupTypes`
 (Frame-free, read off `uses`); its denotation is `Article.toDescriptions`
 (`Core/Nominal/DeterminerLicensing.lean`, Frame-aware) — the set of `Description`s
 those strengths admit via `Description.ofPresupType`, so a syncretic article like
@@ -148,7 +148,7 @@ def IsSyncretic (ds : List Entry) : Prop :=
 instance (ds : List Entry) : Decidable (IsSyncretic ds) := by
   unfold IsSyncretic; infer_instance
 
-/-- Derive the @cite{moroney-2021} four-cell definiteness-marking typology from a
+/-- Derive the [moroney-2021] four-cell definiteness-marking typology from a
 declared determiner set. Stored nowhere — a language's cell is a theorem about
 its `List Determiner.Entry`. Reproduces the decision table of the former
 boolean article inventory:
@@ -244,13 +244,13 @@ end Determiner
 
 /-! ### Admissible article strengths
 
-The @cite{schwarz-2009} presupposition types an article *can* express — its
+The [schwarz-2009] presupposition types an article *can* express — its
 admissible readings, read off `uses`. A syncretic article (English *the*) admits
 both; a weak- or strong-only article admits one. The image of these under
 `Description.ofPresupType` is the article's set of possible denotations
 (`Article.toDescriptions`, in `DeterminerLicensing.lean`). -/
 
-/-- The @cite{schwarz-2009} strengths an article admits, read off its `uses` (as a
+/-- The [schwarz-2009] strengths an article admits, read off its `uses` (as a
 list — `DefPresupType` is binary, so its content is the membership-closure). -/
 def Article.presupTypes (a : Article) : List DefPresupType :=
   a.uses.map useTypeToPresupType

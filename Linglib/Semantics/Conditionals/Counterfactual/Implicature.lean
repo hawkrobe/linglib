@@ -3,9 +3,9 @@ import Linglib.Semantics.Conditionals.Counterfactual.QuantifierEmbedding
 /-!
 # Counterfactuals via implicature (Bassi & Bar-Lev)
 
-@cite{bassi-bar-lev-2018}
+[bassi-bar-lev-2018]
 
-@cite{bassi-bar-lev-2018} propose an alternative to the selectional
+[bassi-bar-lev-2018] propose an alternative to the selectional
 theory: counterfactuals have a basic EXISTENTIAL meaning (true if
 some closest A-world satisfies B), strengthened to universal by an
 exhaustivity operator (EXH). In mixed scenarios, EXH strengthening
@@ -26,7 +26,7 @@ closest world:
 - every(true) = true, some(true) = true, no(true) = false,
   not-every(true) = false
 
-But @cite{ramotowska-marty-romoli-santorio-2025} observe:
+But [ramotowska-marty-romoli-santorio-2025] observe:
 - every = LOW (~1), some = HIGH (~97), no = LOW (~1),
   not-every = HIGH (~86)
 
@@ -37,7 +37,7 @@ The implicature theory gets "every" and "not-every" WRONG:
 
 This file makes those wrong predictions formal as Lean theorems
 that can be cited (in the contrastive direction) by the
-@cite{ramotowska-marty-romoli-santorio-2025} study file.
+[ramotowska-marty-romoli-santorio-2025] study file.
 -/
 
 namespace Semantics.Conditionals.Counterfactual
@@ -50,7 +50,7 @@ open Core.Duality (Truth3)
     individual CFs are all existentially true, and conjunctive
     projection of all-true = true.
 
-    This contradicts @cite{ramotowska-marty-romoli-santorio-2025}: the
+    This contradicts [ramotowska-marty-romoli-santorio-2025]: the
     selectional theory correctly predicts "every" = FALSE via
     conjunctive projection over mixed (not uniformly true) individual
     results. -/

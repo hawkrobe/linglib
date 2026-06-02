@@ -1,6 +1,6 @@
 /-
 # Bridging Anaphora: Empirical Data
-@cite{prince-1981}
+[prince-1981]
 
 Theory-neutral data on bridging anaphora (associative anaphora, indirect anaphora).
 
@@ -187,7 +187,7 @@ def mandarinRelationalNa : BridgingDatum :=
   , notes := "na+CL as relationalizing operator (Ahn & Zhu analysis)"
   , source := "Ahn & Zhu 2025" }
 
--- @cite{ahn-zhu-2025} Experimental Items
+-- [ahn-zhu-2025] Experimental Items
 
 /-- Ahn & Zhu Experiment 1: Part-whole condition -/
 def ahnZhuExp1PartWhole : BridgingDatum :=

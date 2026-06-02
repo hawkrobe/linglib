@@ -2,18 +2,18 @@ import Linglib.Typology.Indefinite
 
 /-!
 # Kannada Indefinite Pronouns
-@cite{haspelmath-1997} @cite{degano-aloni-2025} @cite{bubnov-2026} @cite{wals-2013}
+[haspelmath-1997] [degano-aloni-2025] [bubnov-2026] [wals-2013]
 
 Kannada indefinites are formed by suffixing particles to interrogative
 pronouns: *yāru-oo* 'someone (specific unknown)', *yāru-aadaruu* 'anyone
-(non-specific)', etc. Per @cite{wals-2013} F46A, Kannada is classified
+(non-specific)', etc. Per [wals-2013] F46A, Kannada is classified
 `.interrogativeBased`.
 
 *-oo* is the canonical example of D&A type vii specific-unknown
 (`dep(v,x) ∧ var(∅,x)`): a conjunctive requirement making the referent
 constant within each epistemic world but varying across worlds — "specific
 but unknown." This conjunctive type is cross-linguistically rare
-(@cite{bubnov-2026} §6, @cite{degano-aloni-2025}).
+([bubnov-2026] §6, [degano-aloni-2025]).
 -/
 
 set_option autoImplicit false
@@ -24,7 +24,7 @@ open Typology.Indefinite
 
 /-- Kannada *-oo*: specific-unknown indefinite suffix on interrogative
     bases (e.g., *yāru-oo* 'someone'). D&A type vii: `dep(v,x) ∧ var(∅,x)`.
-    @cite{haspelmath-1997}, @cite{degano-aloni-2025}. -/
+    [haspelmath-1997], [degano-aloni-2025]. -/
 def ooEntry : IndefinitePronoun where
   form := "yāru-oo"
   ontology := .person

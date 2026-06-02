@@ -4,20 +4,20 @@ import Linglib.Core.Context.Shifts
 import Linglib.Data.Examples.Schema
 
 /-!
-# @cite{schlenker-2004-sot}: Sequence phenomena and double access readings generalized
-@cite{schlenker-2004-sot} @cite{schlenker-2003} @cite{kaplan-1989} @cite{von-stechow-2009}
+# [schlenker-2004-sot]: Sequence phenomena and double access readings generalized
+[schlenker-2004-sot] [schlenker-2003] [kaplan-1989] [von-stechow-2009]
 
 Context-tower formalization of embedded tense in the
-@cite{schlenker-2004-sot} chapter (*The Syntax of Time*, Lecarme &
+[schlenker-2004-sot] chapter (*The Syntax of Time*, Lecarme &
 Guéron eds., MIT Press) — the tense-specific application of the
-monster-context framework introduced in @cite{schlenker-2003}'s *A Plea
+monster-context framework introduced in [schlenker-2003]'s *A Plea
 for Monsters*. The core insight: embedded tense is modeled as a
 `temporalShift` on a `ContextTower`, and the embedded clause's
 perspective time is read from the shifted (innermost) context.
-Indexical-rigid expressions read from `.origin` (@cite{kaplan-1989}'s
+Indexical-rigid expressions read from `.origin` ([kaplan-1989]'s
 thesis); shifted expressions read from `.local`.
 
-@cite{klecha-2016} cites the @cite{schlenker-2004-sot} chapter
+[klecha-2016] cites the [schlenker-2004-sot] chapter
 (not the 2003 *L&P* paper) as the variant of this analysis that "does
 not depend on morphosyntactic labels" (PDF p. 33).
 
@@ -31,13 +31,13 @@ shifted into the past so present-tense forms locate the event at the
 narrative now; adverbials anchored to the Context of Utterance
 ("fifty eight years ago to this day") produce the characteristic
 "I was there" effect. Sociolinguistic / discourse-analytic accounts
-of HP — @cite{wolfson-1979}, @cite{schiffrin-1981} — describe when
+of HP — [wolfson-1979], [schiffrin-1981] — describe when
 speakers shift into Conversational Historical Present in oral
 narrative and what discourse functions the shift serves; Schlenker's
 2004 contribution is the formal-semantic mechanism that makes the
 form-meaning mismatch derivable.
 
-The general-indexicals content of @cite{schlenker-2003} lives at
+The general-indexicals content of [schlenker-2003] lives at
 `Studies/Schlenker2003.lean`.
 
 ## Derivation Chain
@@ -152,7 +152,7 @@ theorem root_depth_zero : rootTower.depth = 0 := rfl
 /-- "John said..." pushes a temporal shift: the matrix event time (-2)
     becomes the embedded clause's perspective time.
 
-    This models @cite{von-stechow-2009}: the attitude verb transmits its event
+    This models [von-stechow-2009]: the attitude verb transmits its event
     time to the embedded clause. -/
 def sotTower : ContextTower TenseCtx :=
   rootTower.push (temporalShift (-2))
@@ -268,9 +268,9 @@ theorem nested_double_access :
 -- § F3. Phase F bridge: Schlenker (origin reading) ↔ Abusch (double access)
 -- ============================================================================
 
-/-! @cite{abusch-1997}'s `doubleAccess p speechTime matrixEventTime`
+/-! [abusch-1997]'s `doubleAccess p speechTime matrixEventTime`
 predicate (`p speechTime ∧ p matrixEventTime`, formalized in
-`Studies/Abusch1997.lean`) and @cite{schlenker-2004-sot}'s
+`Studies/Abusch1997.lean`) and [schlenker-2004-sot]'s
 `presentAccess.depth = .origin` mechanism agree on the speech-time
 component of the Double Access Reading: both make embedded present
 require truth at speech time.
@@ -283,7 +283,7 @@ makes the agreement on the speech-time conjunct kernel-checked. -/
 open Abusch1997 in
 /-- Phase F bridge — Schlenker-Abusch on the speech-time component of
     Double Access: Schlenker's `.origin` reading discharges the first
-    conjunct of @cite{abusch-1997}'s `doubleAccess`. -/
+    conjunct of [abusch-1997]'s `doubleAccess`. -/
 theorem schlenker_origin_supports_abusch_double_access
     (p : ℤ → Prop) (h_speech : p (presentAccess.resolve sotTower))
     (h_matrix : p matrixSaid.eventTime) :
@@ -296,29 +296,29 @@ theorem schlenker_origin_supports_abusch_double_access
 -- § Substrate Bridge: Schlenker tower-shifts ↔ Abusch `TimeConcept`s
 -- ============================================================================
 
-/-! Substrate-level bridge from @cite{schlenker-2004-sot}'s tower-shift
-    framework to @cite{abusch-1997}'s `TimeConcept` substrate
+/-! Substrate-level bridge from [schlenker-2004-sot]'s tower-shift
+    framework to [abusch-1997]'s `TimeConcept` substrate
     (`Semantics/Tense/DeRe.lean`). Both formalisms resolve
     against the same `KContext` substrate (= `TenseCtx`); the
     substrate's `Intension.IsRigid` predicate distinguishes
     Kaplan-stable readings (Schlenker's `presentAccess`, origin depth)
     from shifted readings (`shiftedAccess`, local depth).
 
-    @cite{schlenker-2004-sot} (§0, p. 5) explicitly positions the
+    [schlenker-2004-sot] (§0, p. 5) explicitly positions the
     SOT chapter as "developing a somewhat generalized version of the
     theory of Abusch 1997, and especially of her Upper Limit
     Constraint." This bridge makes that relationship substrate-level
     structural: both frameworks discriminate Kaplan-stable from
     shifted via `Intension.IsRigid`, and `IsRigid.map` lifts
     the discrimination uniformly across `Res` types — so the
-    parallel with @cite{anand-nevins-2004}'s Kaplan-compliant vs
+    parallel with [anand-nevins-2004]'s Kaplan-compliant vs
     shifted indexicals at `Res = Agent`
     (`Studies/AnandNevins2004.lean`) is
     substrate-level visible.
 
     **Caveat on the underlying formalization**: the tower-depth
     framework above is a substantial simplification of
-    @cite{schlenker-2004-sot}'s actual SOT mechanism. Per §1.3
+    [schlenker-2004-sot]'s actual SOT mechanism. Per §1.3
     (def. 22), Schlenker's mechanism uses *morphological-agreement
     rules* whose features can be semantically invisible — the
     embedded tense's `<he, past, ind>` triple is transmitted
@@ -335,7 +335,7 @@ theorem schlenker_origin_supports_abusch_double_access
 
 open Semantics.Tense.DeRe (TimeConcept TemporalDeReReading)
 
-/-- @cite{schlenker-2004-sot}'s **`presentAccess` (origin reading)
+/-- [schlenker-2004-sot]'s **`presentAccess` (origin reading)
     as a rigid `TimeConcept`**: the Kaplan-stable origin reading IS
     the constant intension at speech time. Both formalisms encode
     Kaplan's thesis at the substrate level — Schlenker via tower
@@ -343,11 +343,11 @@ open Semantics.Tense.DeRe (TimeConcept TemporalDeReReading)
 def schlenkerPresent : TimeConcept Unit Unit Unit ℤ :=
   Core.Intension.rigid 0
 
-/-- @cite{schlenker-2004-sot}'s **`shiftedAccess` (local reading)
+/-- [schlenker-2004-sot]'s **`shiftedAccess` (local reading)
     as a non-rigid `TimeConcept`**: the local-context reading IS the
     time-projection function `(·.time)` — non-rigid because it varies
     with whatever context is plugged in. Substrate-level analog of
-    @cite{anand-nevins-2004}'s `shiftedI = (·.agent)`, transposed
+    [anand-nevins-2004]'s `shiftedI = (·.agent)`, transposed
     from `Res = Agent` to `Res = ℤ`. -/
 def schlenkerShifted : TimeConcept Unit Unit Unit ℤ :=
   fun c => c.time
@@ -388,8 +388,8 @@ theorem schlenkerShifted_not_isRigid : ¬ Core.Intension.IsRigid schlenkerShifte
 
 open Abusch1997 in
 /-- **Cross-framework value-coincidence on the simultaneous SOT value**:
-    @cite{schlenker-2004-sot}'s `shiftedAccess.resolve sotTower` and
-    @cite{abusch-1997}'s `abusch_derives_simultaneous_via_binding`
+    [schlenker-2004-sot]'s `shiftedAccess.resolve sotTower` and
+    [abusch-1997]'s `abusch_derives_simultaneous_via_binding`
     (applied with `matrixSaid` as the matrix frame) yield the SAME
     value (= `matrixSaid.eventTime = -2`).
 
@@ -404,7 +404,7 @@ open Abusch1997 in
     theorem comparing the *paths* through each mechanism would be
     substantively different from this output-coincidence theorem.
 
-    Per @cite{schlenker-2004-sot} §0 p. 5, the value-coincidence on
+    Per [schlenker-2004-sot] §0 p. 5, the value-coincidence on
     basic SOT cases is by design: Schlenker explicitly proposes
     "a somewhat generalized version of the theory of Abusch 1997".
     Genuine divergence between the two would show up in cases (DAR,
@@ -434,9 +434,9 @@ theorem schlenker_abusch_agree_on_simultaneous_value
 
     | Framework                  | Kaplan-stable      | Shifted          |
     |----------------------------|--------------------|------------------|
-    | @cite{schlenker-2004-sot}  | `schlenkerPresent` | `schlenkerShifted` |
-    | @cite{abusch-1997}         | rigid `TimeConcept`| bound `TimeConcept`|
-    | @cite{anand-nevins-2004}   | `kaplanI` (Agent)  | `shiftedI` (Agent) |
+    | [schlenker-2004-sot]  | `schlenkerPresent` | `schlenkerShifted` |
+    | [abusch-1997]         | rigid `TimeConcept`| bound `TimeConcept`|
+    | [anand-nevins-2004]   | `kaplanI` (Agent)  | `shiftedI` (Agent) |
 
     All three rows discriminate via `Intension.IsRigid`. By
     `Intension.IsRigid.map`, rigidity transfers across `Res` types
@@ -461,7 +461,7 @@ theorem schlenker_substrate_aligned_with_isRigid :
     `schlenkerPresent` transfers across `Res` types via any
     function `g : ℤ → α`, by `Intension.IsRigid.map`. So
     Schlenker's Kaplan-stability is preserved by the substrate's
-    functoriality just as @cite{anand-nevins-2004}'s `kaplanI` is —
+    functoriality just as [anand-nevins-2004]'s `kaplanI` is —
     both are instances of the same architectural pattern. -/
 theorem schlenkerPresent_lifts_rigidly {α : Type*} (g : ℤ → α) :
     Core.Intension.IsRigid (fun c : TenseCtx => g (schlenkerPresent c)) :=

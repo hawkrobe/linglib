@@ -4,10 +4,10 @@ import Linglib.Studies.FutrellEtAl2020
 
 /-!
 # Gradient Word-Order Measures
-@cite{levshina-stoynova-2023}
+[levshina-stoynova-2023]
 
 Levshina, Namboodiripad, Allassonnière-Tang, Kramer, Talamo, Verkerk, Wilmoth,
-Garrido Rodriguez, Gupton, Kidd, Liu, Naccarato, Nordlinger, @cite{levshina-stoynova-2023} "Why we need a gradient approach to word order" (*Linguistics*
+Garrido Rodriguez, Gupton, Kidd, Liu, Naccarato, Nordlinger, [levshina-stoynova-2023] "Why we need a gradient approach to word order" (*Linguistics*
 61(4):825–883) argues that word-order typology should use continuous measures
 (proportions, Shannon entropy, mutual information) rather than categorical labels
 (SVO, SOV, "rigid", "flexible").
@@ -80,7 +80,7 @@ theorem categorical_consistent_with_gradient :
 -- §2: Gradient Language Profile (OSF Dataset1.txt + Dataset3.txt)
 -- ============================================================================
 
-/-- Per-language gradient word-order data from Levshina, @cite{levshina-stoynova-2023} OSF datasets. SO proportion from Dataset1.txt, entropy and case MI
+/-- Per-language gradient word-order data from Levshina, [levshina-stoynova-2023] OSF datasets. SO proportion from Dataset1.txt, entropy and case MI
     from Dataset3.txt. All values × 1000, rounded to nearest integer. -/
 structure GradientWOProfile where
   name : String

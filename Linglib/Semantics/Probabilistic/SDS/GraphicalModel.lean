@@ -4,7 +4,7 @@ import Linglib.Semantics.Probabilistic.SDS.ScenarioMix
 /-!
 # SDS graphical model: multi-node assembly
 
-The directed graphical model of @cite{erk-herbelot-2024} §5.1, Figure 5
+The directed graphical model of [erk-herbelot-2024] §5.1, Figure 5
 (bat-in-player) and Figure 6 (astronomer-married-star). An utterance with
 multiple concept-nodes is modelled by:
 

@@ -1,7 +1,7 @@
 /-
 How monotonicity affects scalar implicatures: in UE contexts scales are
 preserved; in DE contexts scales reverse, blocking "some -> not all".
-Reference: @cite{van-benthem-1986}, @cite{ladusaw-1980}, @cite{barwise-cooper-1981}.
+Reference: [van-benthem-1986], [ladusaw-1980], [barwise-cooper-1981].
 -/
 
 import Linglib.Semantics.Entailment.Basic

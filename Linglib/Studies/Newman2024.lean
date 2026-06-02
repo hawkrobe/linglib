@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.ObligatoryOperations
 
 /-!
-# Newman (2024) — When Arguments Merge @cite{newman-2024}
+# Newman (2024) — When Arguments Merge [newman-2024]
 
 Elise Newman (2024). *When Arguments Merge*. MIT Press (Linguistic
 Inquiry Monographs 88). ISBN 9780262379960.
@@ -15,7 +15,7 @@ category V share the same Merge features, with only three
 argument-introducing features: `[·D·]` (DP-specific), `[·X·]`
 (category-unspecified), and `[·V·]` (VP-merge, v only). Combined with
 Feature Maximality, Weak Economy, and Generalized Tucking In
-(@cite{paille-2020}), the CMH derives:
+([paille-2020]), the CMH derives:
 
 1. **Non-DP First**: XPs merge before DPs when V bears both features
 2. **VP-as-specifier**: When v bears `[·X·]`, VP is forced to be a
@@ -38,7 +38,7 @@ passive accessibility, and anti-redundancy for agreement.
 ## CMH Apparatus (relocated from `Minimalism/CMH.lean`)
 
 The Categorial Merge Hypothesis primitives below are paper-specific to
-@cite{newman-2024} (with @cite{paille-2020} for Generalized Tucking In)
+[newman-2024] (with [paille-2020] for Generalized Tucking In)
 and not consumed elsewhere in the library, so they live here under
 `namespace Minimalist.CMH` for symmetry with other Minimalist apparatus
 and to support qualified lookup if a future paper picks them up.
@@ -188,7 +188,7 @@ def maximalVerb : VPProfile := vpProfile (mkVHead true true) (mkVLittleHead true
 
 -- The full space is a 4×4 matrix: V has {∅, [·D·], [·X·], [·D·][·X·]},
 -- v has {[·V·], [·D·][·V·], [·X·][·V·], [·D·][·X·][·V·]}, producing
--- 16 theoretically possible verb types (Table 141 in @cite{newman-2024}).
+-- 16 theoretically possible verb types (Table 141 in [newman-2024]).
 
 -- Basic sanity checks
 example : weatherVerb.totalArgs = 0 := rfl
@@ -286,7 +286,7 @@ def mutuallyBleeding (op1 op2 : PendingOp) (i j : Nat) : Bool :=
   op1.bleeds.contains j || op2.bleeds.contains i
 
 -- ============================================================================
--- § 7: Generalized Tucking In (@cite{paille-2020})
+-- § 7: Generalized Tucking In ([paille-2020])
 -- ============================================================================
 
 /-- Specifier position in a tree with multiple specifiers.
@@ -680,7 +680,7 @@ theorem voice_hasD_ne_assignsTheta :
 -- § 9: Feature Failure (Assumption 19c)
 -- ============================================================================
 
--- Newman adopts @cite{preminger-2014}'s obligatory-no-crash model for
+-- Newman adopts [preminger-2014]'s obligatory-no-crash model for
 -- Merge features: [·D·], [·X·], [·V·] can go unchecked without
 -- crashing the derivation. This extends Preminger's insight from
 -- φ-agreement to structure-building.
@@ -693,7 +693,7 @@ theorem voice_hasD_ne_assignsTheta :
 --   failure, yielding default (expletive or pro) rather than crash
 
 /-- The CMH adopts the obligatory-no-crash model for Merge features.
-    This is @cite{newman-2024}'s Assumption 19c: features can go
+    This is [newman-2024]'s Assumption 19c: features can go
     unchecked without crashing. -/
 def cmhFeatureModel : AgreementModel := .obligatoryNocrash
 

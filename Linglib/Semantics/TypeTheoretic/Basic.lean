@@ -6,7 +6,7 @@ import Linglib.Core.UD
 
 /-!
 # Type Theory with Records — Core Foundations
-@cite{barwise-perry-1983} @cite{cooper-2023} @cite{martin-lf-1984} @cite{montague-1973}
+[barwise-perry-1983] [cooper-2023] [martin-lf-1984] [montague-1973]
 
 Type-theoretic foundations for TTR, organized by conceptual role:
 
@@ -200,7 +200,7 @@ the type with MORE constraints has FEWER witnesses. -/
 
 Subtyping `T₁ ⊑ T₂` (§1.4.3.5, Def 55) is Lean's `Coe T₁ T₂` — a
 coercive subtyping mechanism with implicit elaboration insertion.
-This matches @cite{chatzikyriakidis-luo-2020}'s preferred coercive
+This matches [chatzikyriakidis-luo-2020]'s preferred coercive
 subtyping (paper §2.4, p. 39: subsumptive subtyping "cannot be
 employed for an MTT"; coercive subtyping is the suitable mechanism).
 Composition through Coe chains via Lean's `CoeHTCT`; no explicit
@@ -233,7 +233,7 @@ The central semantic thesis of TTR: types play the role of propositions.
 - A type is **false** when it is empty (has no witness).
 - `hug(a,b)` is true iff there exists a situation of that type.
 
-This connects to @cite{martin-lf-1984}'s propositions-as-types and to
+This connects to [martin-lf-1984]'s propositions-as-types and to
 constructive mathematics' proof-by-witness. -/
 
 /-- A TTR type is "true" (inhabited). §1.5. -/
@@ -832,7 +832,7 @@ theorem existPQ_eq_exists {E : Type} (P Q : E → Prop) :
 
 /-! ## Proposition granularity: Set W vs TTR types
 
-@cite{chatzikyriakidis-etal-2025} §2 argue that the choice of proposition
+[chatzikyriakidis-etal-2025] §2 argue that the choice of proposition
 type determines what distinctions a semantic theory can make. We formalize
 the granularity hierarchy:
 

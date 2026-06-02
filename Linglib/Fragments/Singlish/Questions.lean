@@ -4,12 +4,12 @@ import Linglib.Typology.ExpressiveModifier
 
 /-!
 # Singlish Question Formation Strategies
-@cite{sato-2013} @cite{sato-ngui-2017} @cite{chan-shen-2026}
+[sato-2013] [sato-ngui-2017] [chan-shen-2026]
 
 Colloquial Singapore English (Singlish) is a contact variety with an English
 lexifier and Malay/southern Chinese substrate influence. It has three
 interchangeable question-formation strategies for content questions
-(@cite{sato-2013}):
+([sato-2013]):
 
 1. **Full wh-movement**: "What you think Natalie is baking at 3am ah?"
 2. **Partial wh-movement**: "You think what Natalie is baking at 3am ah?"
@@ -18,9 +18,9 @@ interchangeable question-formation strategies for content questions
 All three express the same meaning ('What do you think Natalie is baking
 at 3am?') and are used interchangeably. Do-support is optional in Singlish,
 and *ah* is a sentence-final particle that marks wh-in-situ questions as
-non-echo (@cite{sato-ngui-2017}).
+non-echo ([sato-ngui-2017]).
 
-## Derivational Analyses (@cite{sato-ngui-2017})
+## Derivational Analyses ([sato-ngui-2017])
 
 - **Full movement**: successive cyclic overt movement to matrix Spec-CP
   (same derivation as English, minus obligatory do-support)
@@ -33,7 +33,7 @@ non-echo (@cite{sato-ngui-2017}).
   movement (overt or covert)
 
 The covert step in partial movement is evidenced by island sensitivity:
-partial movement out of complex NPs is unacceptable (@cite{sato-ngui-2017}),
+partial movement out of complex NPs is unacceptable ([sato-ngui-2017]),
 while wh-in-situ inside complex NPs is fine (as expected if no movement
 crosses the island boundary).
 -/
@@ -109,12 +109,12 @@ theorem whInSitu_does_not_reach : ¬ whInSitu.ReachesMatrixSpecCP := id
 -- ============================================================================
 
 /-- In-situ wh-phrases are island-insensitive (unselective binding).
-    @cite{sato-ngui-2017}: (11b) vs (11a). -/
+    [sato-ngui-2017]: (11b) vs (11a). -/
 theorem inSitu_island_insensitive :
     ¬ whInSitu.mechanism.IslandSensitive := id
 
 /-- Partially moved wh-phrases are island-sensitive — the covert second
-    step crosses the boundary at LF. @cite{sato-ngui-2017}: (15). -/
+    step crosses the boundary at LF. [sato-ngui-2017]: (15). -/
 theorem partial_island_sensitive :
     partialMovement.mechanism.IslandSensitive := True.intro
 
@@ -133,7 +133,7 @@ theorem full_no_covert_step :
 
 end Singlish.Questions
 
-/-- Map a `WhInterpMechanism` to @cite{shen-huang-2026}'s coarser
+/-- Map a `WhInterpMechanism` to [shen-huang-2026]'s coarser
     `WhDependencyType`. Overt, covert, and partial movement all map to
     `.movement`; unselective binding maps to `.binding`. -/
 def Typology.Question.WhInterpMechanism.toDependencyType :
@@ -168,7 +168,7 @@ theorem singlish_partial_is_movement :
 
 /-- *ah* is a sentence-final particle that blocks echo readings in
     wh-in-situ questions, ensuring they are interpreted as genuine
-    information-seeking questions. @cite{sato-ngui-2017}: footnote 1. -/
+    information-seeking questions. [sato-ngui-2017]: footnote 1. -/
 structure SentenceFinalParticle where
   form : String
   blocksEchoReading : Bool
@@ -200,9 +200,9 @@ def theHell : Typology.ExpressiveModifier.ExpressiveWhModifier :=
 
 /-- Singlish question profile. Not in WALS (contact variety). Wh-movement
     classified as `.mixed` because all three strategies (full movement,
-    partial movement, in-situ) are interchangeable (@cite{sato-2013}).
+    partial movement, in-situ) are interchangeable ([sato-2013]).
     Polar questions use sentence-final particles (*ah*, *meh*)
-    (@cite{sato-ngui-2017}). -/
+    ([sato-ngui-2017]). -/
 def question : Typology.Question.QuestionProfile :=
   { language := "Singlish"
   , walsCode := "cse"

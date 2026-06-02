@@ -3,7 +3,7 @@ import Linglib.Semantics.Modality.Assert
 /-!
 # French Modal Auxiliaries and Modal Constructions
 
-@cite{kaufmann-2012} @cite{ruytenbeek-etal-2017} @cite{kratzer-1991}
+[kaufmann-2012] [ruytenbeek-etal-2017] [kratzer-1991]
 
 French modal verbs *pouvoir* ('can') and *devoir* ('must'), plus the
 impersonal construction *il est possible de* ('it is possible to').
@@ -15,7 +15,7 @@ and *potere* (see `Italian.Modals`). Like their Italian
 cognates, both are polysemous across epistemic, deontic, and
 circumstantial readings.
 
-Key asymmetry relevant to @cite{ruytenbeek-etal-2017}:
+Key asymmetry relevant to [ruytenbeek-etal-2017]:
 
 - *Devoir* (necessity) in 2nd person declaratives (*Vous devez VP*)
   receives directive force as readily as imperatives — same RT, same
@@ -24,7 +24,7 @@ Key asymmetry relevant to @cite{ruytenbeek-etal-2017}:
   receives directive interpretations less readily (~30%).
 - *Il est possible de VP* patterns with *pouvoir*, not *devoir*.
 
-@cite{kaufmann-2012}: imperatives have the semantics of deontic necessity
+[kaufmann-2012]: imperatives have the semantics of deontic necessity
 modals. The *devoir* data confirms the reverse: deontic necessity modals
 in declaratives receive directive force because they share the semantic
 feature (deontic necessity) with imperatives.
@@ -34,7 +34,7 @@ feature (deontic necessity) with imperatives.
 French and Italian modal systems are cognate (Latin *debēre* → Fr.
 *devoir*, It. *dovere*; Latin *posse/potēre* → Fr. *pouvoir*, It.
 *potere*). Both show the epistemic/root ambiguity and both participate
-in position-sensitive flavor selection (@cite{hacquard-2006}).
+in position-sensitive flavor selection ([hacquard-2006]).
 
 -/
 
@@ -89,7 +89,7 @@ def pouvoir : FrenchModalEntry where
     Deontic: *Vous devez partir* ('You must leave')
     Epistemic: *Il doit être chez lui* ('He must be at home')
 
-    @cite{kaufmann-2012}: in 2nd person declaratives, *devoir* receives
+    [kaufmann-2012]: in 2nd person declaratives, *devoir* receives
     directive force as readily as imperatives because both express
     deontic necessity. -/
 def devoir : FrenchModalEntry where
@@ -103,9 +103,9 @@ def devoir : FrenchModalEntry where
 
     Not restricted to a particular modal base — can express epistemic,
     deontic, or circumstantial possibility depending on context
-    (@cite{kratzer-1991}).
+    ([kratzer-1991]).
 
-    @cite{ruytenbeek-etal-2017}: in the Frantext corpus, this construction
+    [ruytenbeek-etal-2017]: in the Frantext corpus, this construction
     is used as a direct question 70% of the time, vs only 16% as a
     directive. Much less conventionalized as an indirect request than
     *Pouvez-vous VP?* (71% directive). -/
@@ -129,12 +129,12 @@ def falloir : FrenchModalEntry where
 
 /-- *Devrais* ('should'): weak necessity = *devoir* + counterfactual morphology.
 
-    @cite{agha-jeretic-2022} §5.2: the CF morpheme picks out a witness set
+    [agha-jeretic-2022] §5.2: the CF morpheme picks out a witness set
     from the strong necessity quantifier, yielding a definite plurality
     of worlds (= weak necessity). Unlike Javanese NE, CF does not require
     a unique witness, so it also applies to possibility (*pourrais*).
 
-    @cite{von-fintel-iatridou-2008}: counterfactual morphology is the
+    [von-fintel-iatridou-2008]: counterfactual morphology is the
     cross-linguistically productive strategy for deriving weak necessity
     (also seen in Spanish *debería*, Hungarian *kell*+CF, etc.). -/
 def devrais : FrenchModalEntry where

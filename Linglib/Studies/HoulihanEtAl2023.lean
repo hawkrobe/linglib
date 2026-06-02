@@ -6,7 +6,7 @@ import Linglib.Pragmatics.RSA.Speaker.CombinedUtility
 import Linglib.Semantics.Gradability.Classification
 
 /-!
-# @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023} — Emotion Prediction as
+# [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023] — Emotion Prediction as
   Computation over a Generative Theory of Mind
 
 Houlihan, Kleiman-Weiner, Hewitt, Tenenbaum & Saxe. *Phil. Trans. R. Soc. A* 381: 20220047.
@@ -59,7 +59,7 @@ open Core Pragmatics.GameTheory Core
 -- ════════════════════════════════════════════════════════════════
 
 /-! Domain-refined profiles abstracted from Fig. 4 of
-@cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}.
+[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023].
 Each profile specifies signs for monetary (M), affiliation/AIA (A),
 and social equity/DIA (E) base domains, plus reputational (R).
 
@@ -302,7 +302,7 @@ theorem dc_produces_ai_for_guilt (pot : ℚ) (hpot : 0 < pot) :
 -- §5. Lesion Model Structure
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023} validate
+/-! [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023] validate
 the model via systematic lesion experiments:
 
 1. **SOCIALLESION**: Remove social preferences (ω_AIA = ω_DIA = 0).
@@ -439,14 +439,14 @@ theorem fehrSchmidt_eq_combined3 (vSelf vOther α β : ℚ) :
 -- §8. Evaluative Adjective Semantics (Grounded)
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023} show that
+/-! [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023] show that
 observers infer agents' social value weights from actions. These inferred
 weights ground evaluative adjectives as intersective modifiers in the sense
-of @cite{kamp-1975}:
+of [kamp-1975]:
 
     ⟦generous person⟧ = ⟦person⟧ ∩ {x | ω_AIA(x) > θ}
 
-The threshold θ makes them gradable (@cite{kennedy-2007}): "more generous"
+The threshold θ makes them gradable ([kennedy-2007]): "more generous"
 = higher inferred ω_AIA. -/
 
 /-- "Generous" as an intersective adjective meaning:

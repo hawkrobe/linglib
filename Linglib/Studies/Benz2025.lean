@@ -4,14 +4,14 @@ import Linglib.Fragments.German.Predicates
 
 /-!
 # Benz (2025): Structure and Interpretation Across Categories
-@cite{benz-2025}
+[benz-2025]
 
 *Structure and Interpretation Across Categories*.
 PhD dissertation, University of Pennsylvania.
 
 ## Overview
 
-This file formalizes three interconnected contributions from @cite{benz-2025}:
+This file formalizes three interconnected contributions from [benz-2025]:
 
 1. **Content nominalizations** (Ch. 3): German *-ung* nominalizations are
    systematically three-ways ambiguous (event/result/content), derived from

@@ -1,5 +1,5 @@
 /-
-@cite{kratzer-1981} Modal Operators — IL Foundation
+[kratzer-1981] Modal Operators — IL Foundation
 
 Kratzer-style necessity and possibility, defined as `box`/`diamond` from
 `Core.Logic.Intensional` over conversational-background-derived accessibility

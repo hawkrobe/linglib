@@ -3,7 +3,7 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # RSRL descriptions
-@cite{richter-2000}, @cite{richter-2024}
+[richter-2000], [richter-2024]
 
 The **description language** of RSRL — the formulae stating an HPSG grammar's principles (Def.
 54; satisfaction Def. 58). Includes relational formulae and **component quantification** (∃/∀
@@ -19,7 +19,7 @@ namespace HPSG.RSRL
 
 universe u
 
-/-- RSRL descriptions over `Term`s (@cite{richter-2000}, Def. 54): atomic sort-assignments and
+/-- RSRL descriptions over `Term`s ([richter-2000], Def. 54): atomic sort-assignments and
 path-equations, relational formulae, the classical connectives, and component quantification. -/
 inductive Desc {Srt : Type u} [PartialOrder Srt] (Sig : Signature Srt) where
   /-- Sort assignment `τ ~ σ`: the entity at `t` has a sort at least as specific as `σ`. -/
@@ -45,7 +45,7 @@ namespace Interpretation
 
 variable {Srt : Type u} [PartialOrder Srt] {Sig : Signature Srt}
 
-/-- Satisfaction under a variable assignment (@cite{richter-2000}, Def. 58). `ex`/`all`
+/-- Satisfaction under a variable assignment ([richter-2000], Def. 58). `ex`/`all`
 quantify over the **components** of `u` (`IsComponentOf`), RSRL's bounded quantification. An
 undefined term makes an atomic description false. -/
 def satisfies (I : Interpretation Sig) (ass : Nat → I.U) (u : I.U) : Desc Sig → Prop
@@ -95,7 +95,7 @@ instance decSatisfies (I : Interpretation Sig) [Fintype I.U] [DecidableEq I.U] [
 end Interpretation
 
 /-- A **grammar** is a signature together with a set (here `List`) of descriptions, its
-principles (@cite{richter-2000}). -/
+principles ([richter-2000]). -/
 abbrev Grammar {Srt : Type u} [PartialOrder Srt] (Sig : Signature Srt) := List (Desc Sig)
 
 namespace Interpretation
@@ -103,7 +103,7 @@ namespace Interpretation
 variable {Srt : Type u} [PartialOrder Srt] {Sig : Signature Srt}
 
 /-- An interpretation is a **model** of a grammar iff every principle holds of every entity in
-all its components (@cite{richter-2000}). Principles are variable-free, so they are evaluated
+all its components ([richter-2000]). Principles are variable-free, so they are evaluated
 under any assignment (here `fun _ => u`). -/
 def Models (I : Interpretation Sig) (G : Grammar Sig) : Prop :=
   ∀ u : I.U, ∀ d ∈ G, I.satisfies (fun _ => u) u d

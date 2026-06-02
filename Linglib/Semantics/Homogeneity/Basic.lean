@@ -4,13 +4,13 @@ import Linglib.Semantics.Supervaluation.Basic
 
 /-!
 # Semantics.Homogeneity — Substrate for Trivalent Predication and Pragmatic Usability
-@cite{kriz-2015} @cite{kriz-2016} @cite{fine-1975} @cite{beaver-krahmer-2001}
+[kriz-2015] [kriz-2016] [fine-1975] [beaver-krahmer-2001]
 
 Domain-independent substrate for theories of homogeneity and non-maximality.
-The framework is anchored on @cite{kriz-2015} (Križ's dissertation); the
-published @cite{kriz-2016} is the first detailed application to plural
-definites and `all`. Both rely on Fine's supervaluation (@cite{fine-1975})
-and Beaver-Krahmer's assertion operator (@cite{beaver-krahmer-2001}, encoded
+The framework is anchored on [kriz-2015] (Križ's dissertation); the
+published [kriz-2016] is the first detailed application to plural
+definites and `all`. Both rely on Fine's supervaluation ([fine-1975])
+and Beaver-Krahmer's assertion operator ([beaver-krahmer-2001], encoded
 here as `Truth3.metaAssert`).
 
 ## Layered structure
@@ -177,7 +177,7 @@ theorem supervaluationTV_gap_iff {Spec W : Type*} (eval : W → Spec → Prop)
     Semantically, removal collapses the gap into the negative extension:
     gap-worlds become false-worlds, preserving the positive extension. The
     pointwise operator is exactly the assertion operator 𝒜 of
-    @cite{beaver-krahmer-2001}, available as `Truth3.metaAssert`. -/
+    [beaver-krahmer-2001], available as `Truth3.metaAssert`. -/
 
 /-- Remove homogeneity: collapse gap into negative extension.
     Defined as `Truth3.metaAssert` lifted pointwise — see `Truth3.lean`
@@ -269,7 +269,7 @@ to a QUD when it is constant on each cell of the partition. For bivalent
 sentences this is equivalent to `addressesIssue` (bridge:
 `bivalent_addressing_iff_stronglyRelevant` in `Studies/KrizSpector2021.lean`).
 
-Originates with @cite{kriz-spector-2021} §3; consolidated here as substrate
+Originates with [kriz-spector-2021] §3; consolidated here as substrate
 since it is a generic property of partition-respecting predicates, not
 specific to plural predication. -/
 
@@ -345,7 +345,7 @@ theorem bivalent_communicated_eq_posExt (q : QUD W) (S : SentenceTV W)
     (bigger cells) communicate more content. If q' refines q (q' is finer),
     then everything communicated under q' is also communicated under q.
 
-    This is @cite{kriz-2016}'s key prediction: coarser QUDs enable more
+    This is [kriz-2016]'s key prediction: coarser QUDs enable more
     non-maximal use. The finite model in `Kriz2016`
     demonstrates this: `coarseQ` communicates `smithNeutral` but `fineQ`
     does not. -/
@@ -364,7 +364,7 @@ def bivalentPred (S : SentenceTV W) : W → Bool :=
 -- § 6. Conditional Homogeneity (CEM)
 -- ════════════════════════════════════════════════════════════════════════════
 
-/-! @cite{kriz-2016} §6.4: Conditionals are the modal analogue of plural
+/-! [kriz-2016] §6.4: Conditionals are the modal analogue of plural
     definites. "If P, Q" universally quantifies over closest P-worlds, just as
     "the Xs are Q" universally quantifies over atoms. The conditional excluded
     middle (CEM) — the observation that "if P, Q" seems neither true nor false
@@ -377,7 +377,7 @@ def bivalentPred (S : SentenceTV W) : W → Bool :=
     | bare plural   | bare conditional    |
     | gap (some)    | CEM (some worlds)   |
 
-    @cite{stalnaker-1981} @cite{von-fintel-1999} -/
+    [stalnaker-1981] [von-fintel-1999] -/
 
 section ConditionalHomogeneity
 
@@ -451,7 +451,7 @@ end ConditionalHomogeneity
 -- § 7. Generalised Homogeneity for Collective Predicates
 -- ════════════════════════════════════════════════════════════════════════════
 
-/-! @cite{kriz-2016} §5.1: Homogeneity for collective predicates is defined
+/-! [kriz-2016] §5.1: Homogeneity for collective predicates is defined
     via **mereological overlap**, not individual atoms. A predicate P is
     undefined of plurality a if a is not in P's positive extension but
     *overlaps* with some plurality that is.
@@ -548,7 +548,7 @@ end GeneralisedHomogeneity
 -- § 8. Cross-Domain Unification
 -- ════════════════════════════════════════════════════════════════════════════
 
-/-! The central insight of @cite{kriz-2016}: all homogeneity phenomena share
+/-! The central insight of [kriz-2016]: all homogeneity phenomena share
     the same pragmatic mechanism. Once a domain has been identified as
     exhibiting homogeneity (via any of the sources above), the SAME
     `sufficientlyTrue` + `addressesIssue` mechanism derives non-maximal

@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.HeadFunction
 
 /-!
-# Minimalist Labeling (@cite{marcolli-chomsky-berwick-2025} §1.15)
+# Minimalist Labeling ([marcolli-chomsky-berwick-2025] §1.15)
 
 The MCB §1.15 Labeling Algorithm: assign categorial labels to non-leaf
 vertices of a `SyntacticObject` via an externally-supplied
@@ -13,7 +13,7 @@ This file is the **single source of truth** for Minimalist labeling.
 The pre-MCB selection-driven algorithm (`getCategory`, `label`,
 `labelCat`, `selects`, `sameLabel`, `projectsIn`, `isMaximalIn`,
 `isHeadIn`, `isPhraseIn`, etc.) was deleted at 0.230.798 — it predated
-both linglib's MCB substrate and the @cite{marcolli-chomsky-berwick-2025}
+both linglib's MCB substrate and the [marcolli-chomsky-berwick-2025]
 formalisation, and bridged-via-`HeadFunction.selectionBased`
 preservation was rejected as perpetuating the legacy mindset (selection
 determines projection) that MCB explicitly relaxes.
@@ -57,7 +57,7 @@ open Minimalist (HeadFunction Cat SyntacticObject LIToken)
     their own `LIToken`'s category directly, not a "label" in the
     head-function sense) and when `T ∉ Dom(h)`.
 
-    Implements @cite{marcolli-chomsky-berwick-2025} §1.15 Labeling
+    Implements [marcolli-chomsky-berwick-2025] §1.15 Labeling
     Algorithm in its default case: the projecting head's outer
     category. UNVERIFIED: the precise case structure (1-4 vs (i)-(iv)
     vs Chomsky 2013-style cases) needs to be checked against MCB
@@ -114,7 +114,7 @@ theorem labelVertex_not_in_dom (h : HeadFunction) (T v : SyntacticObject)
 /-- A vertex is **labelable** by the algorithm iff `labelVertex` returns
     `some _`. Non-labelable vertices correspond to objects filtered
     out by the Externalization quotient map `Π_L` per
-    @cite{marcolli-chomsky-berwick-2025} §1.15. -/
+    [marcolli-chomsky-berwick-2025] §1.15. -/
 def isLabelable (h : HeadFunction) (T v : SyntacticObject) : Prop :=
   (labelVertex h T v).isSome
 
@@ -168,7 +168,7 @@ noncomputable instance (h : HeadFunction) (T x : SyntacticObject) :
 /-- `x` is **+max(imal)** in `T` under `h`: `x ⊆ T` and no strict
     ancestor of `x` in `T` carries the same label. A linglib-formulated
     "maximal projection" predicate; not yet proved equivalent to
-    @cite{marcolli-chomsky-berwick-2025} Lemma 1.14.1's terminus of a
+    [marcolli-chomsky-berwick-2025] Lemma 1.14.1's terminus of a
     γ_ℓ projection path (which would require the §1.14 algebraic
     substrate).
 

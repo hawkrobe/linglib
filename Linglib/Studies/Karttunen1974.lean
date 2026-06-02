@@ -1,8 +1,8 @@
 import Linglib.Studies.Anscombe1964
 
 /-!
-# @cite{karttunen-1974}: *Until*, *When*, and the Two-*Until* Hypothesis
-@cite{karttunen-1974} @cite{heinamaki-1974} @cite{dowty-1979}Karttunen argues that English has **two** *until*s:
+# [karttunen-1974]: *Until*, *When*, and the Two-*Until* Hypothesis
+[karttunen-1974] [heinamaki-1974] [dowty-1979]Karttunen argues that English has **two** *until*s:
 
 - **Durative *until***: "John slept until 3pm." The main clause is durative
   (stative/activity), and *until* marks the minimum extent of the main event.
@@ -60,7 +60,7 @@ def Karttunen.when_ (A B : SentDenotation Time) : Prop :=
     "A while B" holds when every time in A is also a time in B.
     Stronger than *when* (which requires only one shared point).
 
-    This matches the implicit definition in @cite{rett-2026}
+    This matches the implicit definition in [rett-2026]
     used to prove *while* is not ambidirectional. -/
 def Karttunen.while_ (A B : SentDenotation Time) : Prop :=
   ∀ t ∈ timeTrace A, t ∈ timeTrace B
@@ -101,7 +101,7 @@ def Karttunen.since (A B : SentDenotation Time) : Prop :=
 def Karttunen.by_ (A B : SentDenotation Time) : Prop :=
   ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t ≤ t'
 
-/-- Punctual *until* = ¬(*before*) (@cite{karttunen-1974}, eq. 33).
+/-- Punctual *until* = ¬(*before*) ([karttunen-1974], eq. 33).
     "The princess didn't wake up until the prince kissed her"
     = NOT(the princess woke up BEFORE the prince kissed her).
 
@@ -365,7 +365,7 @@ theorem by_not_implies_before :
   omega
 
 -- ============================================================================
--- § 11: *Whenever* — Universal Temporal Overlap (@cite{heinamaki-1974})
+-- § 11: *Whenever* — Universal Temporal Overlap ([heinamaki-1974])
 -- ============================================================================
 
 /-- *Whenever*: universally quantified temporal overlap.
@@ -375,7 +375,7 @@ theorem by_not_implies_before :
     "Whenever it rains, I carry an umbrella" = every rain-time is an
     umbrella-time. Implies habitual/generic interpretation.
 
-    @cite{heinamaki-1974} treats *whenever* as a universal quantifier over
+    [heinamaki-1974] treats *whenever* as a universal quantifier over
     temporal overlap events, distinguishing it from the existential
     *when* (∃-overlap). -/
 def Karttunen.whenever (A B : SentDenotation Time) : Prop :=

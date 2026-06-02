@@ -3,23 +3,23 @@ import Linglib.Phonology.Autosegmental.GrammaticalTone
 
 /-!
 # Mwaghavul Phonological Fragment
-@cite{akinbo-fwangwar-2026} @cite{fwangwar-2018}
+[akinbo-fwangwar-2026] [fwangwar-2018]
 
 Mwaghavul (ISO 639-3: sur, Glottocode: mwag1236) is an A3 West Chadic
 (Afro-Asiatic) language spoken by more than 700,000 people in Plateau State,
-Nigeria (@cite{crozier-blench-1992}).
+Nigeria ([crozier-blench-1992]).
 
 ## Tone system
 
 Mwaghavul contrasts three level tones — high (H), mid (M), and low (L) —
 plus an LH rising contour. The tone-bearing unit (TBU) is the syllable.
 All tonal co-occurrences on bisyllabic roots are attested except M-LH
-(@cite{akinbo-fwangwar-2026} Table 3).
+([akinbo-fwangwar-2026] Table 3).
 
 ## Ideophones
 
 Mwaghavul has a rich inventory of ideophones — "an open class of marked words
-that depict sensory imagery" (@cite{dingemanse-2019}:16). Ideophones share the
+that depict sensory imagery" ([dingemanse-2019]:16). Ideophones share the
 same grammatical classes as nonideophonic words (nouns, verbs, adjectives,
 adverbs) and occur in comparable morphosyntactic environments.
 
@@ -33,8 +33,8 @@ determined tonal alternations triggered by segmentally null verbalisers:
 2. **M-H verbaliser** (VBZ₂): overwrites nonfinal TBUs with M, final with H
 
 The M-H melody is attested only in derived verbs — no underived verb has
-this pattern. Data from @cite{akinbo-fwangwar-2026} and
-@cite{fwangwar-2018}.
+this pattern. Data from [akinbo-fwangwar-2026] and
+[fwangwar-2018].
 -/
 
 namespace Mwaghavul
@@ -56,7 +56,7 @@ def tbuKind : TBUKind := .syllable
 -- ============================================================================
 
 /-- The two lexically specific suppletive allomorphs of the verbaliser
-    morpheme (@cite{akinbo-fwangwar-2026} (17)). -/
+    morpheme ([akinbo-fwangwar-2026] (17)). -/
 inductive VerbalizerChoice where
   | m   -- VBZ₁: M melody (targets unreduplicated ideophones only)
   | mh  -- VBZ₂: M-H melody (targets both unreduplicated and reduplicated)
@@ -86,7 +86,7 @@ def verbMH : Spec :=
 
     Whether an ideophone undergoes M or M-H alternation is lexically
     determined and not predictable from syllable structure or tone
-    (@cite{akinbo-fwangwar-2026} §3.1). -/
+    ([akinbo-fwangwar-2026] §3.1). -/
 structure Ideophone where
   form     : String
   gloss    : String
@@ -169,7 +169,7 @@ theorem kitiif_verb : deriveVerb kitiif = [.M, .H] := by native_decide
 theorem jalpat_verb : deriveVerb jalpat = [.M, .H] := by native_decide
 
 -- ============================================================================
--- S 5: Empirical Generalizations (@cite{akinbo-fwangwar-2026} (13))
+-- S 5: Empirical Generalizations ([akinbo-fwangwar-2026] (13))
 -- ============================================================================
 
 /-- All M-tone derived verbs produce uniform M across all TBUs (13a). -/

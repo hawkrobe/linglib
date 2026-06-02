@@ -7,7 +7,7 @@ import Linglib.Features.ClauseForm
 /-!
 # Acceptability Judgment Paradigm
 
-@cite{sprouse-2007} @cite{sprouse-et-al-2012}
+[sprouse-2007] [sprouse-et-al-2012]
 
 Shared vocabulary for the **acceptability judgment** experimental
 paradigm — formal-syntax / experimental-syntax studies that elicit
@@ -30,8 +30,8 @@ shape of output a theory must produce*.
    Generic over the factor types so that any pair (`Bool × WhStrategy`,
    `Person × Number`, `Animacy × Definiteness`, …) plugs in.
 2. **`DDResult`**: a difference-in-differences score (Maxwell & Delaney
-   2003 method, used by @cite{sprouse-et-al-2012} for island effects and
-   by @cite{chan-shen-2026} for *wh-the-hell* licensing). Stored as ℚ
+   2003 method, used by [sprouse-et-al-2012] for island effects and
+   by [chan-shen-2026] for *wh-the-hell* licensing). Stored as ℚ
    for exact arithmetic, with a Boolean `interactionSignificant` flag
    for the linear-mixed-effects model's interaction p-value.
 3. **`AccountPredictions`**: an n-cell prediction tuple from a theoretical
@@ -76,8 +76,8 @@ inductive Judgment where
 -- §1. Factorial conditions
 -- ============================================================================
 
-/-- A typed cell in a 2-factor factorial design (@cite{sprouse-2007}: §2;
-    @cite{sprouse-et-al-2012}: §2.1).
+/-- A typed cell in a 2-factor factorial design ([sprouse-2007]: §2;
+    [sprouse-et-al-2012]: §2.1).
 
     Generic over the two factor types so that the same machinery
     accepts any 2×2/2×3/3×3 design. The `sentence` field carries the
@@ -104,8 +104,8 @@ structure FactorialCondition (F1 F2 : Type) where
     a **superadditive interaction** — a penalty above and beyond the sum
     of the two main effects.
 
-    Used by @cite{sprouse-et-al-2012} as the standard test of island
-    effects in experimental syntax, and by @cite{chan-shen-2026} for
+    Used by [sprouse-et-al-2012] as the standard test of island
+    effects in experimental syntax, and by [chan-shen-2026] for
     *wh-the-hell* licensing.
 
     Stored as ℚ rather than `Float` to respect linglib's exact-arithmetic
@@ -225,7 +225,7 @@ end AccountPredictions
     judgments. The judgment fields default to the traditional binary
     (`lhs` = `.acceptable`, `rhs` = `.ungrammatical`) so most data sites
     only need to provide `lhs` and `rhs`; studies of graded phenomena
-    (e.g. CRDC marginality, @cite{osborne-li-2023}) override the
+    (e.g. CRDC marginality, [osborne-li-2023]) override the
     judgments with the appropriate `Judgment` constructor. -/
 structure MinimalPair where
   lhs : List Word

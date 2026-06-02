@@ -5,20 +5,20 @@ import Linglib.Features.Case
 
 /-!
 # Typology.Alignment
-@cite{comrie-1978} @cite{comrie-2013} @cite{dixon-1994} @cite{dixon-1972}
-@cite{dryer-haspelmath-2013} @cite{haspelmath-2005} @cite{haspelmath-2021}
-@cite{wals-2013}
+[comrie-1978] [comrie-2013] [dixon-1994] [dixon-1972]
+[dryer-haspelmath-2013] [haspelmath-2005] [haspelmath-2021]
+[wals-2013]
 
 Per-language typological substrate for morphosyntactic alignment, covering
 how languages mark the core grammatical relations S (sole argument of
 intransitive), A (agent of transitive), and P (patient of transitive).
-Three WALS chapters by @cite{comrie-2013}:
+Three WALS chapters by [comrie-2013]:
 
 - **Ch 98**: alignment of case marking of full noun phrases.
 - **Ch 99**: alignment of case marking of pronouns.
 - **Ch 100**: alignment of verbal person marking.
 
-Plus ditransitive alignment from @cite{haspelmath-2005}.
+Plus ditransitive alignment from [haspelmath-2005].
 
 Mirrors the `Linglib/Typology/{Possession,Negation,Comparison,Coordination,
 Modality,Gender}` substrate-extension pattern. Fragment-importable.
@@ -51,7 +51,7 @@ Modality,Gender}` substrate-extension pattern. Fragment-importable.
 The 22-language sample, cross-linguistic generalisations (Dixon,
 Silverstein), ditransitive sample, and Fragment-bridge theorems live in
 `Studies/Dixon1994.lean`.
-@cite{comrie-1989}'s typology generalisations are in
+[comrie-1989]'s typology generalisations are in
 `Studies/Comrie1989.lean`.
 -/
 
@@ -135,7 +135,7 @@ def AlignmentProfile.caseUniform (p : AlignmentProfile) : Bool :=
   p.npAlignment == p.pronAlignment
 
 /-- Whether the language shows the classic NP-ergative / pronoun-accusative
-    split (@cite{dixon-1994}'s generalization). -/
+    split ([dixon-1994]'s generalization). -/
 def AlignmentProfile.dixonSplit (p : AlignmentProfile) : Bool :=
   p.npAlignment == .ergative && p.pronAlignment == .accusative
 
@@ -158,7 +158,7 @@ def AlignmentProfile.accusativeCase (p : AlignmentProfile) : Bool :=
 -- ============================================================================
 
 /-- Ditransitive alignment classifies how R (recipient) and T (theme) are
-    coded relative to monotransitive P (@cite{haspelmath-2005}). -/
+    coded relative to monotransitive P ([haspelmath-2005]). -/
 inductive DitransitiveAlignment where
   /-- R = T = P: no distinction among non-agent arguments. -/
   | neutral
@@ -273,7 +273,7 @@ theorem ch99_tripartite_rare :
     (ch99.filter (·.value == .tripartite)).length * 30 < ch99.length := by
   native_decide
 
-/-! ### Split Ergativity @cite{blake-1994} @cite{dixon-1994}
+/-! ### Split Ergativity [blake-1994] [dixon-1994]
 
 A `SplitErgativity Factor` is parameterised by the conditioning factor
 (aspect, person, animacy, …); `alignment` projects to either the ergative
@@ -282,7 +282,7 @@ ergative; imperfective ⇒ accusative) is the canonical worked example. -/
 
 open Features (Case AlignmentFamily)
 
-/-- A split-ergative system (@cite{blake-1994}, @cite{dixon-1994}):
+/-- A split-ergative system ([blake-1994], [dixon-1994]):
     alignment varies by some conditioning factor. -/
 structure SplitErgativity (Factor : Type) where
   ergCondition : Factor → Bool

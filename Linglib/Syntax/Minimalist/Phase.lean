@@ -4,8 +4,8 @@ import Linglib.Syntax.Minimalist.Features
 /-!
 # Phase Theory
 
-Formalization of derivational phases following @cite{chomsky-2000},
-@cite{abels-2012}, and @cite{citko-2014}.
+Formalization of derivational phases following [chomsky-2000],
+[abels-2012], and [citko-2014].
 
 ## Key Ideas
 
@@ -35,7 +35,7 @@ namespace Minimalist
 
 /-- Generic phase-head test: is the head of `so` (under `leftSpine`)
     exactly `c`? Uses `SyntacticObject.outerCat = leftmostLeaf.outerCat`,
-    which @cite{marcolli-chomsky-berwick-2025} §1.13 frames as the
+    which [marcolli-chomsky-berwick-2025] §1.13 frames as the
     `leftSpine` head function applied to `so`. For non-leftmost-headed
     analyses, use `Minimalist.Labeling.labelRoot h so == some c` with
     the study's chosen `h : HeadFunction`. -/
@@ -44,7 +44,7 @@ noncomputable def isPhaseHeadOf (c : Cat) (so : SyntacticObject) : Bool :=
 
 /-! ### Phase-head selectors
 
-Only C is a phase head by default. @cite{keine-2020} (ch. 5) argues that vP
+Only C is a phase head by default. [keine-2020] (ch. 5) argues that vP
 is NOT a phase: φ-Agree and wh-licensing can cross unboundedly many vPs but
 not CPs, selective opacity creates intractable problems for vP phases, and
 previous arguments for vP phases (reconstruction, Dinka successive cyclicity,
@@ -52,14 +52,14 @@ Indonesian meN-deletion) can be reanalyzed.
 
 For commonly-checked phase categories, call `isPhaseHeadOf` directly:
 
-- C as phase head: `isPhaseHeadOf .C so` (linglib default per @cite{keine-2020}).
+- C as phase head: `isPhaseHeadOf .C so` (linglib default per [keine-2020]).
   The classical Chomsky-2000/2001 extension to v as a phase head is
   `isPhaseHeadOf .C so || isPhaseHeadOf .v so`.
 
-- D as phase head (@cite{citko-2014} §2.5, @cite{svenonius-2004}):
+- D as phase head ([citko-2014] §2.5, [svenonius-2004]):
   `isPhaseHeadOf .D so`. Several analyses treat definite DPs as phases:
-  extraction barriers (@cite{chomsky-2000}, @cite{davies-dubinsky-2003},
-  @cite{shen-huang-2026} — definite island effect; VOCs neutralize via
+  extraction barriers ([chomsky-2000], [davies-dubinsky-2003],
+  [shen-huang-2026] — definite island effect; VOCs neutralize via
   N/D-incorporation), scope barriers (QR cannot escape DP), spell-out
   domains (definite D triggers Transfer of its complement).
 
@@ -73,21 +73,21 @@ is tracked by `VoiceHead.IsPhasal` in
 `Syntax/Minimalist/Voice.lean`, with the per-construction
 override semantics described in that file's "Voice/Phase Bridge"
 section. The two convergent recent clients of clause-internal Voice
-phasehood are @cite{erlewine-sommerlot-2025} (Malayic, A′-extraction)
-and @cite{pietraszko-2026} (Ndebele, A-movement & φ-agreement). -/
+phasehood are [erlewine-sommerlot-2025] (Malayic, A′-extraction)
+and [pietraszko-2026] (Ndebele, A-movement & φ-agreement). -/
 
 -- ============================================================================
--- Part 2: PIC Strength (@cite{citko-2014} §2.4)
+-- Part 2: PIC Strength ([citko-2014] §2.4)
 -- ============================================================================
 
 /-- The strength of the Phase Impenetrability Condition.
 
-    - `strong` (PIC₁, @cite{chomsky-2000}): Only the edge (specifier) of the
+    - `strong` (PIC₁, [chomsky-2000]): Only the edge (specifier) of the
       immediately lower phase is accessible. The complement is frozen
       as soon as the phase head is merged.
-    - `weak` (PIC₂, @cite{chomsky-2001}): The complement of a phase is accessible
+    - `weak` (PIC₂, [chomsky-2001]): The complement of a phase is accessible
       until the next higher phase head is merged.
-    - `linearizationBound` (no PIC, @cite{fox-pesetsky-2005}, @cite{sande-clem-dabkowski-2026}):
+    - `linearizationBound` (no PIC, [fox-pesetsky-2005], [sande-clem-dabkowski-2026]):
       No structural opacity at all — the only constraints on movement
       out of an already-spelled-out phase are the ordering statements
       emitted at that phase's spell-out (Cyclic Linearization). Material
@@ -97,11 +97,11 @@ and @cite{pietraszko-2026} (Ndebele, A-movement & φ-agreement). -/
       Guébie discontinuous harmony requires that the particle, after
       being spelled out inside the lower vP phase, remains accessible
       to A′-fronting in the higher CP phase. Adopted independently by
-      @cite{branan-davis-2019}, @cite{halpert-2019}, @cite{lee-yip-2024}
+      [branan-davis-2019], [halpert-2019], [lee-yip-2024]
       among others. See `Syntax/Minimalist/Linearization/Cyclic.lean`
       for the ordering-only locality machinery this mode delegates to.
 
-    Modular variants (e.g., the @cite{d-alessandro-scheer-2015} "Modular PIC"
+    Modular variants (e.g., the [d-alessandro-scheer-2015] "Modular PIC"
     proposal that PIC strength is parametrized per interface module) are
     not yet operationalized in this enum.
 
@@ -218,7 +218,7 @@ noncomputable instance (strength : PICStrength) (phase goal : SyntacticObject) :
 /-- Under `linearizationBound`, every phase admits extraction at the
     phasehood layer. Concrete crashes come from the linearization
     table (see `Minimalist.Linearization.SpelloutAndCheck`). This is the
-    formal content of @cite{sande-clem-dabkowski-2026}'s rejection of
+    formal content of [sande-clem-dabkowski-2026]'s rejection of
     strict PIC. -/
 theorem linearizationBound_admits_all (phase goal : SyntacticObject) :
     admitsExtraction .linearizationBound phase goal := trivial
@@ -263,30 +263,30 @@ def Transfer.fromPhase (ph : Phase) : Transfer :=
     lf_is_complement := rfl }
 
 -- ============================================================================
--- Part 6: Feature Inheritance / Transfer (@cite{chomsky-2008}, @cite{ouali-2008},
---                                         @cite{olivier-2026})
+-- Part 6: Feature Inheritance / Transfer ([chomsky-2008], [ouali-2008],
+--                                         [olivier-2026])
 -- ============================================================================
 
 /-! ### Feature Inheritance and KEEP/SHARE/DONATE
 
-@cite{chomsky-2008}'s feature inheritance has phase heads passing
+[chomsky-2008]'s feature inheritance has phase heads passing
 operational features to their complements: C → T (tense/agreement),
 v* → V (case/agreement). The phase head retains its edge features
 while the inheritor takes over the agreement-driving features.
 
-@cite{ouali-2008} observes that "inheritance" is only one of three
+[ouali-2008] observes that "inheritance" is only one of three
 possible feature operations on adjacent functional heads, and that the
 choice is parametric (Berber agreement/anti-agreement is the empirical
 diagnostic):
 
 - **KEEP**: φ stays at the source head; the target lacks φ.
 - **SHARE**: φ surfaces at both source and target. This explains
-  clitic reduplication and is the operation @cite{olivier-2026}
+  clitic reduplication and is the operation [olivier-2026]
   argues for in Romance restructuring (Voice* → vMOD share).
 - **DONATE**: φ moves source → target; the source loses φ. This is
-  the classical @cite{chomsky-2008} C → T / v* → V inheritance.
+  the classical [chomsky-2008] C → T / v* → V inheritance.
 
-@cite{olivier-2026} extends this typology to Voice* → vMOD feature
+[olivier-2026] extends this typology to Voice* → vMOD feature
 transfer in Romance restructuring clauses: under SHARE, φ-features
 are present at vMOD as well as Voice*, which is what enables clitic
 climbing (the climbing clitic enters Agree with the higher copy).
@@ -295,15 +295,15 @@ across constructions; we model it via a `style` field on
 `FeatureInheritance`. -/
 
 /-- Style of φ-feature transfer between two adjacent functional heads
-    (@cite{ouali-2008}).
+    ([ouali-2008]).
 
     - `keep`: φ stays at source — target lacks φ.
     - `share`: φ surfaces at both source and target. Explains clitic
       reduplication and licenses clitic climbing in
-      @cite{olivier-2026}'s Voice* → vMOD analysis of Romance
+      [olivier-2026]'s Voice* → vMOD analysis of Romance
       restructuring.
     - `donate`: φ moves source → target. The classical
-      @cite{chomsky-2008} C → T / v* → V inheritance. -/
+      [chomsky-2008] C → T / v* → V inheritance. -/
 inductive TransferStyle where
   | keep    -- φ stays at source
   | share   -- φ at source AND target
@@ -312,9 +312,9 @@ inductive TransferStyle where
 
 /-- Feature inheritance / sharing between two adjacent heads.
 
-    Generalizes @cite{chomsky-2008}'s C → T and v* → V inheritance
-    (the `.donate` style) to cover @cite{ouali-2008}'s
-    KEEP/SHARE/DONATE typology and @cite{olivier-2026}'s extension to
+    Generalizes [chomsky-2008]'s C → T and v* → V inheritance
+    (the `.donate` style) to cover [ouali-2008]'s
+    KEEP/SHARE/DONATE typology and [olivier-2026]'s extension to
     Voice* → vMOD feature transfer in Romance restructuring clauses
     (the `.share` style). -/
 structure FeatureInheritance where
@@ -325,7 +325,7 @@ structure FeatureInheritance where
   /-- Source must immediately contain target. -/
   locality : immediatelyContains source target
   /-- Which transfer operation applies (default: classical
-      @cite{chomsky-2008} donate). -/
+      [chomsky-2008] donate). -/
   style : TransferStyle := .donate
   /-- The features transferred (default: none specified at this layer). -/
   transferred : FeatureBundle := []
@@ -343,7 +343,7 @@ def isPhaseBounded (mover target : SyntacticObject)
   ¬∃ ph ∈ phases, phaseImpenetrable ph.head mover ∧
     contains target ph.head
 
--- Phase-bounded locality subsumes Relativized Minimality (@cite{rizzi-1990})
+-- Phase-bounded locality subsumes Relativized Minimality ([rizzi-1990])
 -- for Agree: if a goal is inside a phase complement, no probe outside can
 -- reach it. The actual blocking-of-Agree statement lives downstream of the
 -- Agree relation (see `Agree.validAgreeWithPIC`); a standalone theorem here
@@ -353,21 +353,21 @@ def isPhaseBounded (mover target : SyntacticObject)
 -- Part 8: N/D-Incorporation and Phase Deactivation
 -- ============================================================================
 
-/-! ### N/D-Incorporation (@cite{davies-dubinsky-2003}, @cite{shen-huang-2026})
+/-! ### N/D-Incorporation ([davies-dubinsky-2003], [shen-huang-2026])
 
-@cite{davies-dubinsky-2003} propose that verbs of creation (VOCs) trigger
+[davies-dubinsky-2003] propose that verbs of creation (VOCs) trigger
 LF noun incorporation: the head noun of the object DP incorporates into
 the verb. This has the effect of neutralizing the DP's phasehood — the
 D head is no longer a blocking category, and extraction from the DP
 becomes possible.
 
-@cite{shen-huang-2026} adapt this analysis: it is the *determiner* that
-undergoes covert head movement to the verb (following @cite{boskovic-2015}
+[shen-huang-2026] adapt this analysis: it is the *determiner* that
+undergoes covert head movement to the verb (following [boskovic-2015]
 on phase collapse). The incorporation neutralizes the PIC, explaining why
 VOCs ameliorate (but do not eliminate) definite island effects — the
 Specificity Condition still applies independently.
 
-Three conditions for incorporation (@cite{davies-dubinsky-2003}:28–29):
+Three conditions for incorporation ([davies-dubinsky-2003]:28–29):
 1. The noun is a result nominal
 2. The object is complement of a causative verb semantically related
    to the denoted result (e.g., *write-book*)
@@ -380,8 +380,8 @@ verb via head movement. The DP is no longer a phase boundary —
 `isPhaseHeadOf .D` is irrelevant because the D head is no longer
 projecting independently.
 
-This models the effect described by @cite{davies-dubinsky-2003} and
-@cite{shen-huang-2026}: VOCs neutralize the PIC for definite DPs.
+This models the effect described by [davies-dubinsky-2003] and
+[shen-huang-2026]: VOCs neutralize the PIC for definite DPs.
 
 Note: the `wasPhase` default `isPhaseHeadOf .D dHead` from the prior
 planar substrate is Phase-1.0 unavailable as a default (since

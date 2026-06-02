@@ -8,7 +8,7 @@ import Linglib.Semantics.Composition.ToyDomain
 # CCG Syntax-Semantics Interface
 
 Syntactic categories directly encode semantic types and the combinatory rules
-correspond to function application and composition (@cite{steedman-2000}), so a
+correspond to function application and composition ([steedman-2000]), so a
 derivation's meaning is read off compositionally from its structure.
 
 ## Main definitions
@@ -398,8 +398,8 @@ def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyModel)
 
   | .coord d1 d2 => do
       -- Coordination: X and X → X
-      -- Semantic rule: generalized conjunction (@cite{partee-rooth-1983})
-      -- Uses genConj for uniform type-driven coordination (@cite{partee-rooth-1983})
+      -- Semantic rule: generalized conjunction ([partee-rooth-1983])
+      -- Uses genConj for uniform type-driven coordination ([partee-rooth-1983])
       let ⟨c1, m1⟩ ← d1.interp lex
       let ⟨c2, m2⟩ ← d2.interp lex
       if h : c1 = c2 then

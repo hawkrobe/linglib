@@ -2,7 +2,7 @@ import Linglib.Typology.PolarityMarking
 
 /-!
 # Dutch Polarity Particles
-@cite{turco-braun-dimroth-2014}
+[turco-braun-dimroth-2014]
 
 Lexical entries for Dutch sentence-internal polarity particles.
 
@@ -19,7 +19,7 @@ open Typology.PolarityMarking (Entry Strategy Env)
 
 /-- *wel* — Dutch affirmative polarity particle.
     Sentence-internal, accented, available in both contrast and correction.
-    @cite{turco-braun-dimroth-2014}: dominant strategy in Dutch for neg→affirm switches. -/
+    [turco-braun-dimroth-2014]: dominant strategy in Dutch for neg→affirm switches. -/
 abbrev wel : Entry where
   label := "wel"
   form := some "wel"

@@ -5,8 +5,8 @@ import Linglib.Phonology.Autosegmental.Defs
 import Linglib.Phonology.Process.Harmony.Defs
 
 /-!
-# Finnish Vowel Harmony @cite{karlsson-2017}
-@cite{goldsmith-1976} @cite{rose-walker-2011}
+# Finnish Vowel Harmony [karlsson-2017]
+[goldsmith-1976] [rose-walker-2011]
 
 Finnish has **palatal vowel harmony**: the [±back] feature of root vowels
 propagates rightward through all suffixes. This is
@@ -27,7 +27,7 @@ Most suffixes contain an **archiphonemic** vowel /A/ that surfaces as
 - Partitive: kirja-**a** ('book') vs. käsi-**ä** ('hand')
 - Inessive: talo-**ssa** ('in the house') vs. metsä-**ssä** ('in the forest')
 
-## Formalization (@cite{rose-walker-2011})
+## Formalization ([rose-walker-2011])
 
 Finnish VH is a single `HarmonySystem` with [back] as the spreading feature.
 Neutral vowels /e/ and /i/ are transparent: they satisfy `isTransparent` and

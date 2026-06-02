@@ -23,13 +23,13 @@ import Linglib.Fragments.Swahili.PolarityItems
 
 /-!
 # Haspelmath (1997): Polarity-Side Indefinite Typology
-@cite{haspelmath-1997} @cite{haspelmath-2013} @cite{kadmon-landman-1993}
-@cite{ladusaw-1979} @cite{wals-2013}
+[haspelmath-1997] [haspelmath-2013] [kadmon-landman-1993]
+[ladusaw-1979] [wals-2013]
 
 Haspelmath, Martin (1997). *Indefinite Pronouns*. Oxford Studies in
 Typology and Linguistic Theory. Oxford University Press.
 
-Polarity-side projection of @cite{haspelmath-1997}'s 9-function
+Polarity-side projection of [haspelmath-1997]'s 9-function
 implicational map for indefinite pronouns. Where the sibling file
 `Studies/Haspelmath1997.lean` formalises the
 indefinite-typology angle (Fragment-derived `IndefiniteParadigm`s for a
@@ -83,7 +83,7 @@ Audit history (see `project_indefinite_substrate_contested.md` memory note):
   file); other consumers (D&A, Bubnov, Dekier, Chierchia, Modal Indefinites)
   are READ-only, parallel substrate, or no contact.
 - A second-pass check against the most recent canonical paper
-  (@cite{degano-aloni-2025}, *How to be (non-)specific*, L&P 2025) verified
+  ([degano-aloni-2025], *How to be (non-)specific*, L&P 2025) verified
   that D&A 2025 explicitly works within Haspelmath's 9-function map
   unchanged — they do NOT split irrealis into specific/nonspecific
   sub-functions. So substrate-level function-inventory refinement would
@@ -184,7 +184,7 @@ def english : IndefiniteParadigm :=
 
 /-- Russian (Slavic): 6 series, interrogative-based. Textbook map example.
 
-    Per @cite{degano-aloni-2025} Table 2 (the most recent canonical
+    Per [degano-aloni-2025] Table 2 (the most recent canonical
     classification): кое- = Specific Known {SK}, -то = Epistemic
     {SU, NS}, -нибудь = Non-specific {NS}. Note that -то AND -нибудь
     BOTH cover NS — D&A 2025 explicitly observe (p. 960) that "Russian
@@ -195,7 +195,7 @@ def english : IndefiniteParadigm :=
     norm to be explained, not a violation).
 
     `Fragments/Slavic/Russian/Indefinites.lean` encodes -то more narrowly
-    as {SU} only, following @cite{bubnov-2026}'s subsequent argument that
+    as {SU} only, following [bubnov-2026]'s subsequent argument that
     paradigmatic competition with -нибудь narrows -то's actual distribution.
     The Fragment-vs-Studies divergence here is **two published analyses**,
     not a bug: D&A 2025 (this file's encoding) vs Bubnov 2026 (Fragment's
@@ -560,7 +560,7 @@ theorem sample_size : allLanguages.length = 17 := by decide
 -- §5. Contiguity verification
 -- ============================================================================
 
-/-- @cite{haspelmath-1997}'s key constraint: every form covers a contiguous
+/-- [haspelmath-1997]'s key constraint: every form covers a contiguous
     region on the implicational map. -/
 theorem all_languages_contiguous :
     ∀ p ∈ allLanguages, p.AllContiguous := by decide
@@ -575,7 +575,7 @@ theorem all_languages_cover_all_functions :
 
 /-- 16 of 17 languages in the sample have disjoint forms (no function
     appears in two different forms). Russian is the exception: per
-    @cite{degano-aloni-2025} Table 2, both -то (Epistemic, {SU, NS}) and
+    [degano-aloni-2025] Table 2, both -то (Epistemic, {SU, NS}) and
     -нибудь (Non-specific, {NS}) cover NS. D&A treat overlapping forms as
     a real empirical phenomenon to be explained — see the Russian paragraph
     on p. 960 — not a violation. `FormsDisjoint` is a Prop predicate on
@@ -621,7 +621,7 @@ theorem specificKnown_directNeg_disjoint :
 
 /-- Mandarin (2 forms) has fewer forms than Russian (6 forms), but its
     total coverage is at most Russian's. (Equality held when Russian had 5
-    disjoint forms and total coverage 9 = Mandarin's; per @cite{degano-aloni-2025}
+    disjoint forms and total coverage 9 = Mandarin's; per [degano-aloni-2025]
     Russian -то now covers {SU, NS} not {SU}, so total coverage rises to
     10 > Mandarin's 9 — the relation weakens to ≤.) -/
 theorem fewer_forms_broader_coverage :

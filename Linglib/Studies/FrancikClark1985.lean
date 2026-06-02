@@ -4,16 +4,16 @@ import Linglib.Discourse.Commitment.Basic
 import Linglib.Semantics.Modality.ModalTypes
 
 /-!
-# @cite{francik-clark-1985} — How to Make Requests That Overcome
+# [francik-clark-1985] — How to Make Requests That Overcome
   Obstacles to Compliance
-@cite{clark-1979} @cite{searle-1969}
+[clark-1979] [searle-1969]
 
 Journal of Memory and Language 24 (1985) 560–568.
 
 ## Overview
 
 Speakers design requests to overcome the greatest potential obstacle to
-compliance. Obstacle types correspond to @cite{searle-1969}'s preparatory
+compliance. Obstacle types correspond to [searle-1969]'s preparatory
 conditions for requests — ability (including knowledge, memory, perception)
 and willingness — plus speaker memory. Three experiments show:
 

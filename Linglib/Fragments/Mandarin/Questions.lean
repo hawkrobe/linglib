@@ -3,20 +3,20 @@ import Linglib.Typology.ExpressiveModifier
 
 /-!
 # Mandarin Wh-Question Formation
-@cite{chou-2012} @cite{huang-1982a} @cite{chan-shen-2026}
+[chou-2012] [huang-1982a] [chan-shen-2026]
 
 Mandarin is a wh-in-situ language (WALS 93A: `notInitialInterrogativePhrase`).
 Content questions are formed with the wh-phrase remaining in its base-generated
 position, interpreted via unselective binding by a Q operator in C
-(@cite{huang-1982a}).
+([huang-1982a]).
 
 ## ANDL modifier: *到底 daodi*
 
 Mandarin *daodi* ('on earth') is the functional equivalent of English
 *the-hell* — both are aggressively non-D-linked (ANDL) modifiers
-(@cite{chou-2012}).
+([chou-2012]).
 
-The cross-linguistic difference (@cite{chan-shen-2026}, isolated as the
+The cross-linguistic difference ([chan-shen-2026], isolated as the
 single typological parameter):
 
 - *The-hell* (English/Singlish) is **parasitic**: must adjoin to the
@@ -84,7 +84,7 @@ theorem mandarin_wh_island_free :
 
 /-- Mandarin question profile (WALS-grounded).
     Wh-in-situ, sentence-final question particle 吗 *ma*, polar via particle.
-    @cite{chan-shen-2026} -/
+    [chan-shen-2026] -/
 def question : Typology.Question.QuestionProfile :=
   { language := "Mandarin"
   , walsCode := "mnd"

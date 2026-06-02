@@ -19,12 +19,12 @@ softmax of its per-item score.
 
 ## Instances
 
-- **MaxEnt systemic constraints** (@cite{storme-2026}): items = input→output
+- **MaxEnt systemic constraints** ([storme-2026]): items = input→output
   mappings, coupling = \*HOMOPHONY or other systemic constraints.
   `componentScore i v = harmonyScore(classicalConstraints, (inputs i, v))`,
   `couplingScore f = -Σₖ wₖ · Sₖ(f)`.
 
-- **RSA lexical uncertainty** (@cite{bergen-levy-goodman-2016}): the analog
+- **RSA lexical uncertainty** ([bergen-levy-goodman-2016]): the analog
   is a mixture model rather than a coupled exponential — the listener
   marginalizes over lexicons: `L1(u,w) ∝ prior(w) · Σ_l prior(l) · S1(l,w,u)`.
   The algebraic form differs (mixture vs coupled exponential), but the
@@ -153,8 +153,8 @@ private lemma sum_ite_div {κ : Type*} [Fintype κ] {P : κ → Prop} [Decidable
     the marginal probability equals the independent per-item softmax.
 
     This is the shared mathematical core of:
-    - @cite{storme-2026}: systemic weight = 0 ⟹ marginal = classical MaxEnt
-    - @cite{bergen-levy-goodman-2016}: single lexicon ⟹ L1 = standard posterior
+    - [storme-2026]: systemic weight = 0 ⟹ marginal = classical MaxEnt
+    - [bergen-levy-goodman-2016]: single lexicon ⟹ L1 = standard posterior
     - BToM: delta-function latent prior ⟹ marginal = direct inference
 
     ### Proof

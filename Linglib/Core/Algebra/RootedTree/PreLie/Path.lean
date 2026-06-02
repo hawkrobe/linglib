@@ -9,8 +9,8 @@ set_option autoImplicit false
 
 /-!
 # Path-based vertex addressing for `Planar α`
-@cite{foissy-typed-decorated-rooted-trees-2018}
-@cite{chapoton-livernet-2001}
+[foissy-typed-decorated-rooted-trees-2018]
+[chapoton-livernet-2001]
 
 Path-based replacement for the indexed-inductive `Vertex T` / `VertexList cs`
 machinery in `Vertex.lean`. A vertex is addressed by a `Path = List ℕ` of

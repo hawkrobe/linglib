@@ -2,7 +2,7 @@ import Linglib.Fragments.ASL.Height
 import Linglib.Semantics.Quantification.DomainRestriction
 
 /-!
-# @cite{davidson-gagne-2022}
+# [davidson-gagne-2022]
 
 Davidson, K. & Gagné, D. (2022). "More is up" for domain restriction in ASL.
 *Semantics & Pragmatics* 15, Article 1: 1–52.
@@ -39,7 +39,7 @@ structure.
    (overt or incorporated).
 
 5. **Structural parallel to cognitive DDRPs** (§5): ASL height (overt,
-   modality-specific) and @cite{ritchie-schiller-2024}'s spatial heuristics
+   modality-specific) and [ritchie-schiller-2024]'s spatial heuristics
    (covert, modality-general) are both instances of `NestedRestriction` — the
    same abstract nesting structure produces the same formal predictions.
 
@@ -56,11 +56,11 @@ theorems derive from `DDRP.every_nesting` / `DDRP.some_nesting` /
 - **Directional verbs** (§3): verb height marking analyzed as pronominal
   incorporation. The semantic contribution is the same height-indexed domain
   restriction; the morphological incorporation mechanism is left to
-  @cite{ahn-kocab-davidson-2026} (which postdates this paper and CAN
+  [ahn-kocab-davidson-2026] (which postdates this paper and CAN
   reference it).
-- **Comparison with *irgendein*** (§5.4): @cite{davidson-gagne-2022} argue
+- **Comparison with *irgendein*** (§5.4): [davidson-gagne-2022] argue
   that ASL height-based domain widening is structurally different from
-  German *irgend-* (@cite{kratzer-shimoyama-2002}): height is on pronouns
+  German *irgend-* ([kratzer-shimoyama-2002]): height is on pronouns
   (not determiners), gradient (not binary), and restricted to pronominal
   structures. Documented here but not formalized as a cross-fragment theorem.
 - **Cross-linguistic parallels** (§6.2): JSL (ex. 54: chest→cheek→forehead
@@ -82,7 +82,7 @@ open ASL.Height
 -- §1. Domain Types: Vampire Scenario
 -- ============================================================================
 
-/-! The running example from @cite{davidson-gagne-2022} §1:
+/-! The running example from [davidson-gagne-2022] §1:
 
     Context: "Last night I watched a movie with my friends about vampires.
     Afterwards I went to bed and I dreamt that..."
@@ -188,7 +188,7 @@ theorem some_high_friendsOnly : someBecomeVampire .high .friendsOnly := by
 -- §5b. Negative Quantifier: "NONE BECOME VAMPIRE"
 -- ============================================================================
 
-/-! @cite{davidson-gagne-2022} §4 (ex. 33–35) discuss NONEsym, showing the
+/-! [davidson-gagne-2022] §4 (ex. 33–35) discuss NONEsym, showing the
     same height-domain pattern. NONEsym-neutral = "none of my immediate
     family", NONEsym-high = "none of my entire family including ancestors,
     distant relations, etc." NONE is ↓MON in the restrictor, like ALL. -/
@@ -254,7 +254,7 @@ theorem monotonicity_contrast :
 -- §7. Height ≠ Intensification
 -- ============================================================================
 
-/-! @cite{davidson-gagne-2022} §4 (after ex. 36) argue that height is not
+/-! [davidson-gagne-2022] §4 (after ex. 36) argue that height is not
     merely emphatic strengthening. The critical evidence comes from existential
     quantifiers: if height strengthened the utterance, higher SOME should impose
     *stronger* truth conditions (harder to satisfy). But higher SOME is *easier*
@@ -277,7 +277,7 @@ theorem some_height_widens (R S : Entity → Prop) :
 -- §8. Bare Nouns Cannot Be Height-Marked
 -- ============================================================================
 
-/-! @cite{davidson-gagne-2022} §3.3 (ex. 27): bare nouns like DOG cannot be
+/-! [davidson-gagne-2022] §3.3 (ex. 27): bare nouns like DOG cannot be
     signed higher to convey domain widening. This is predicted by the
     pronominal analysis: height modifies IX-arc (a pronoun), not the
     noun directly. Nouns lack an unsaturated pronominal argument position.
@@ -304,8 +304,8 @@ def heightRestrictedAll (ddrp : HeightDDRP Entity) (h : VerticalHeight)
 -- §9. Bridge: Height ≅ Spatial Scale (NestedRestriction Unification)
 -- ============================================================================
 
-/-! Both @cite{davidson-gagne-2022}'s height-based domain restriction and
-    @cite{ritchie-schiller-2024}'s cognitive DDRP framework instantiate
+/-! Both [davidson-gagne-2022]'s height-based domain restriction and
+    [ritchie-schiller-2024]'s cognitive DDRP framework instantiate
     `Core.NestedRestriction`: a monotone family of predicates indexed by
     an ordered scale. The scale source differs — physical signing height
     (ASL, overt) vs. cognitive spatial proximity (spoken language, covert) —
@@ -351,7 +351,7 @@ theorem uniform_nesting
 -- §10. Cross-Linguistic Support
 -- ============================================================================
 
-/-! @cite{davidson-gagne-2022} §6.2 reports parallel height-domain mappings
+/-! [davidson-gagne-2022] §6.2 reports parallel height-domain mappings
     in other sign languages:
 
     **JSL** (ex. 54): "There is/was nobody from a deaf family in my {class /
@@ -370,7 +370,7 @@ theorem uniform_nesting
 -- §11. Partitive Composition: Grounding Truth Tables (§5.3, eqs. 50–51)
 -- ============================================================================
 
-/-! @cite{davidson-gagne-2022} §5.3 derives quantifier truth conditions
+/-! [davidson-gagne-2022] §5.3 derives quantifier truth conditions
     through the partitive type function ⟦of⟧ = λxλy. y ≤ x:
 
     1. IX-arc-h denotes discourse referent z with height presuppositions

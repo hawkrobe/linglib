@@ -2,14 +2,14 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Greek Temporal Connectives Fragment
-@cite{giannakidou-2002} @cite{giannakidou-1998}
+[giannakidou-2002] [giannakidou-1998]
 
 Greek lexicalizes the two-*until* distinction and the veridicality asymmetry
 through mood selection:
 
 - **πριν / prin** ('before'): requires subjunctive (in modern Greek),
   patterns with English *before*. Non-veridical complement, licenses NPIs.
-  Differs from NPI-*until* on actualization (@cite{giannakidou-2002}, §6).
+  Differs from NPI-*until* on actualization ([giannakidou-2002], §6).
 
 - **μέχρι / mexri** ('until'): requires indicative, patterns with English
   durative *until*. Veridical complement, requires imperfective/stative
@@ -24,7 +24,7 @@ diagnoses the veridicality distinction: subjunctive signals non-veridicality
 (the complement event is presented as unrealized), while indicative signals
 veridicality (the complement event is presented as factual). This parallels
 Japanese tense marking (*mae* non-past / *ato* past) diagnosed in the
-@cite{ogihara-steinert-threlkeld-2024} data.
+[ogihara-steinert-threlkeld-2024] data.
 
 -/
 
@@ -104,7 +104,7 @@ def otan : TemporalExprEntry :=
     Requires anti-veridical trigger (negation, 'without'). Scalar: introduces
     a scale of contextually relevant times. Forces punctual/eventive reading.
 
-    @cite{giannakidou-2002}, §3.2, ex. (39): the event P occurs at the boundary
+    [giannakidou-2002], §3.2, ex. (39): the event P occurs at the boundary
     time Q, and no earlier event of type P occurred. Actualization is an
     entailment, not an implicature — cancellation yields contradiction
     (ex. 38: '#The princess didn't arrive until midnight. She didn't even

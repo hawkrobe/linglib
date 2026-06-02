@@ -4,8 +4,8 @@ import Mathlib.Analysis.Normed.Operator.Basic
 
 /-!
 # DLM in normed carriers — Lipschitz continuity and approximate isomorphism
-@cite{baayen-2019} @cite{chuang-bell-tseng-baayen-2026} @cite{lu-chuang-baayen-2026}
-@cite{heitmeier-chuang-baayen-2026}
+[baayen-2019] [chuang-bell-tseng-baayen-2026] [lu-chuang-baayen-2026]
+[heitmeier-chuang-baayen-2026]
 
 Sibling to `Defs.lean`. Introduces the **normed-carrier** layer of the
 DLM substrate: when the form and meaning carriers are finite-dimensional
@@ -21,8 +21,8 @@ DLMs *can* distinguish meanings (via `linear_dlm_distinguishes_meanings`)
 and DLMs *can* neutralize them (via `dlm_neutralizes_meanings_in_kernel`).
 Both theorems are about **exact** equality / inequality of form vectors.
 
-The headline empirical claim of @cite{chuang-bell-tseng-baayen-2026}
-(predictions iii / iv) and @cite{lu-chuang-baayen-2026} (paper §4 form-
+The headline empirical claim of [chuang-bell-tseng-baayen-2026]
+(predictions iii / iv) and [lu-chuang-baayen-2026] (paper §4 form-
 meaning isomorphism) is **quantitative**: that the form space and
 meaning space exhibit *measurable* isomorphism — cosine similarity 0.93,
 Pearson correlation 0.98 between GAMM-derived gold-standard contours
@@ -116,8 +116,8 @@ variable {F M : Type*}
   [NormedSpace ℝ F] [NormedSpace ℝ M]
 
 /-- **Neighbor centroids → neighbor contours.** Quantitative form of
-    the empirical observation in @cite{chuang-bell-tseng-baayen-2026}
-    Fig. 18 and @cite{lu-chuang-baayen-2026} Fig. 9 that the DLM-
+    the empirical observation in [chuang-bell-tseng-baayen-2026]
+    Fig. 18 and [lu-chuang-baayen-2026] Fig. 9 that the DLM-
     predicted pitch contour from a tone-pattern centroid CE matches
     the GAMM-derived gold-standard contour for that pattern.
 
@@ -154,7 +154,7 @@ variable {F M : Type*}
     meaning vector, the round-trip `comprehension ∘ production`
     returns within ε of the input.
 
-    The empirical content of @cite{chuang-bell-tseng-baayen-2026}
+    The empirical content of [chuang-bell-tseng-baayen-2026]
     predictions (iii) and (iv) — that the trained DLM predicts meaning
     from pitch above chance and pitch from meaning above chance — is
     the existence of a small ε for which the trained DLM satisfies

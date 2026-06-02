@@ -3,7 +3,7 @@ import Linglib.Diachronic.Lexicalization
 
 /-!
 # Word Reuse and Combination Support Efficient Communication
-@cite{xu-etal-2024}
+[xu-etal-2024]
 
 Xu, A., Kemp, C., Frermann, L., & Xu, Y. (2024). Word reuse and combination
 support efficient communication of emerging concepts. *PNAS* 121(46),

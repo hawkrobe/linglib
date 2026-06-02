@@ -7,7 +7,7 @@ import Linglib.Phenomena.Politeness.Honorifics
 
 /-!
 # Wang (Ruoan) 2023: Honorifics without [HON]
-@cite{wang-r-2023}
+[wang-r-2023]
 
 Wang, R. (2023). Honorifics without [HON].
 *Natural Language & Linguistic Theory*, 41(4), 1287--1347.
@@ -16,13 +16,13 @@ Wang, R. (2023). Honorifics without [HON].
 
 The cross-linguistic pattern of honorific pronoun recruitment — only
 PL, 3rd, INDEF are recruited; never SG, 1st/2nd, DEF — falls out from
-the interaction of phi-feature presuppositions (@cite{sauerland-2003},
-@cite{harbour-2016}) with a pragmatic maxim called the **Taboo of
+the interaction of phi-feature presuppositions ([sauerland-2003],
+[harbour-2016]) with a pragmatic maxim called the **Taboo of
 Directness** (ToD).
 
 ## Key Result
 
-ToD reverses Maximize Presupposition (@cite{heim-1991}): where MP!
+ToD reverses Maximize Presupposition ([heim-1991]): where MP!
 prefers the strongest available presupposition (= most marked form),
 ToD prefers the weakest (= least marked = semantically unmarked). The
 semantically unmarked values — plural, 3rd person, indefinite — are
@@ -47,7 +47,7 @@ This file connects three layers:
 2. ToD and MP! as OT constraints (derived from `presupStrength`)
 3. Binary case: ToD >> MP! derives unmarked recruitment
 4. Ternary case: Strong/Weak ToD for articulated number systems
-5. [iHON] eliminability — bridge to @cite{alok-bhalla-2026}
+5. [iHON] eliminability — bridge to [alok-bhalla-2026]
 6. Bridges to `Honorifics.lean` and phi-feature denotations
 7. General structural theorem: ToD >> MP! selects unmarked for ANY candidate set
 8. HonLevel ↔ PrivativePair bridge — `PhiFeatures HonLevel` instance
@@ -81,7 +81,7 @@ recruits the **semantically unmarked** value of a phi-feature domain:
 | Definiteness| Indefinite       | INDEF (specLevel 0)| Ainu (DP strategy)     |
 
 No language recruits a semantically **marked** value (SG, 1st/2nd, DEF)
-for honorification. @cite{wang-r-2023} derives this from the ToD.
+for honorification. [wang-r-2023] derives this from the ToD.
 -/
 
 /-- The three attested honorific recruitment strategies. Each targets
@@ -149,7 +149,7 @@ Violation count = max presupStrength − `presupStrength`.
 
 ToD and MP! are **antagonistic**: for any two distinct well-formed
 cells, they prefer opposite directions. This is the structural heart
-of @cite{wang-r-2023}'s analysis.
+of [wang-r-2023]'s analysis.
 
 The constraints are defined in terms of `presupStrength` from
 `Semantics.Presupposition.PhiFeatures`, not reimplemented —
@@ -250,7 +250,7 @@ private theorem binaryCandidates_ne : binaryCandidates ≠ [] := by
     (`all_strategies_use_minimal`) is DERIVED, not stipulated.
     It follows from the interaction of two independently motivated
     constraints (ToD from politeness, MP! from presupposition theory)
-    evaluated over the `PrivativePair` structure from @cite{harbour-2016}. -/
+    evaluated over the `PrivativePair` structure from [harbour-2016]. -/
 theorem tod_mp_selects_minimal :
     (mkTableau binaryCandidates [todConstraint, mpConstraint]
       binaryCandidates_ne).optimal = {PrivativePair.minimal} := by
@@ -258,7 +258,7 @@ theorem tod_mp_selects_minimal :
 
 /-- Converse: MP! >> ToD selects the maximal (marked) cell.
     Non-respect speech uses the strongest presupposition.
-    This is the standard Maximize Presupposition from @cite{heim-1991}. -/
+    This is the standard Maximize Presupposition from [heim-1991]. -/
 theorem mp_tod_selects_maximal :
     (mkTableau binaryCandidates [mpConstraint, todConstraint]
       binaryCandidates_ne).optimal = {PrivativePair.maximal} := by
@@ -375,8 +375,8 @@ theorem no_unattested_ternary_pattern :
 /-!
 ## §5: [iHON] is Redundant
 
-@cite{alok-bhalla-2026} posits a dedicated [iHON] feature in the syntax
-(formalized in `Minimalist.Features.HonLevel`). @cite{wang-r-2023}
+[alok-bhalla-2026] posits a dedicated [iHON] feature in the syntax
+(formalized in `Minimalist.Features.HonLevel`). [wang-r-2023]
 argues this is unnecessary: the honorific recruitment pattern falls out
 from `phiPresup` + ToD, without any feature beyond standard phi-features.
 
@@ -385,7 +385,7 @@ phi-values are recruited (always the unmarked one). ToD + phi-feature
 presuppositions *derive* this — the unmarked value wins because it has
 the weakest presupposition, and ToD selects the weakest.
 
-Note: @cite{alok-bhalla-2026}'s analysis of allocutive Agree (probe
+Note: [alok-bhalla-2026]'s analysis of allocutive Agree (probe
 locus, embeddability) is orthogonal — [iHON] may play a role in the
 *agreement mechanism* even if it is unnecessary for *recruitment*.
 -/
@@ -490,7 +490,7 @@ a fixed 2-element candidate set. Here we prove the **general** result: for
 ANY non-empty set of well-formed `PrivativePair` candidates that includes
 `.minimal`, ToD >> MP! selects `.minimal` as the unique winner.
 
-This is the structural backbone of @cite{wang-r-2023}'s analysis: the
+This is the structural backbone of [wang-r-2023]'s analysis: the
 recruitment of unmarked values is not an accident of the binary case —
 it holds for arbitrary candidate sets. The proof is purely algebraic:
 
@@ -567,7 +567,7 @@ theorem tod_mp_minimal_is_optimal (candidates : List PrivativePair)
 
 /-- **General ToD >> MP! Theorem**: for any set of well-formed candidates
     containing `.minimal`, the optimal set under ToD >> MP! is exactly
-    `{.minimal}`. This is the strongest formulation of @cite{wang-r-2023}'s
+    `{.minimal}`. This is the strongest formulation of [wang-r-2023]'s
     core result — the recruitment of semantically unmarked values is a
     necessary consequence of presuppositional competition under ToD
     dominance, regardless of candidate set size or composition. -/
@@ -591,7 +591,7 @@ end GeneralTheorem
 /-!
 ## §8: HonLevel ↔ PrivativePair Bridge
 
-@cite{alok-bhalla-2026}'s `HonLevel` (nh/h/hh) is isomorphic to
+[alok-bhalla-2026]'s `HonLevel` (nh/h/hh) is isomorphic to
 `PrivativePair` (minimal/intermediate/maximal). This `PhiFeatures`
 instance makes the correspondence structural: `HonLevel` inherits
 `specLevel`, `wellFormed`, `no_four_way`, and all presuppositional

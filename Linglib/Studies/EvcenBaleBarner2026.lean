@@ -8,11 +8,11 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# @cite{evcen-bale-barner-2026} — Conditional Perfection
-@cite{von-fintel-2001} @cite{horn-2000} @cite{cornulier-1983}
+# [evcen-bale-barner-2026] — Conditional Perfection
+[von-fintel-2001] [horn-2000] [cornulier-1983]
 
 Empirical data from three experiments on conditional perfection (CP)
-by @cite{evcen-bale-barner-2026}, plus the bridge connecting these findings to the
+by [evcen-bale-barner-2026], plus the bridge connecting these findings to the
 answer-level exhaustification theory of conditional perfection.
 
 ## Paradigm
@@ -45,8 +45,8 @@ among "Yes", "No" (= perfected), and "Can't tell" (= not perfected).
    (full knowledge, M=0.72) yield far more "No" responses than speakers who tested
    only two buttons (partial knowledge, M=0.21).
 
-All findings support @cite{von-fintel-2001}'s exhaustivity account over
-@cite{horn-2000}: perfection tracks the availability of alternatives (made
+All findings support [von-fintel-2001]'s exhaustivity account over
+[horn-2000]: perfection tracks the availability of alternatives (made
 salient by QUD) and the license to exclude them (from speaker competence).
 
 Reported values are estimated marginal means from logistic mixed-effects
@@ -295,7 +295,7 @@ The paper's argument proceeds in four steps:
    entail the biconditional (established in `Conditionals.Basic`).
 
 2. **Pragmatic mechanism**: Conditional perfection arises from answer-level
-   exhaustification (@cite{von-fintel-2001}, following @cite{cornulier-1983}).
+   exhaustification ([von-fintel-2001], following [cornulier-1983]).
    The QUD "which trigger causes C?" makes alternative triggers salient;
    exhaustifying the answer "A causes C" against these alternatives yields
    "only A causes C"; combined with coverage, this entails ¬A → ¬C.
@@ -307,7 +307,7 @@ The paper's argument proceeds in four steps:
      the alternative triggers, licensing exclusion of unmentioned alternatives.
    Without either, perfection fails.
 
-4. **Against @cite{horn-2000}**: Horn proposes the alternative to "if A then C"
+4. **Against [horn-2000]**: Horn proposes the alternative to "if A then C"
    is the unconditional "C regardless." This yields only an existential
    inference (some circumstance where ¬C), not the per-trigger universal
    that participants produce. The data support von Fintel's per-trigger
@@ -482,13 +482,13 @@ theorem three_button_perfection :
 -- Section D: Horn's Alternative — Why It's Too Weak
 -- ============================================================================
 
-/-- What @cite{von-fintel-2001}'s account predicts about non-asserted triggers:
+/-- What [von-fintel-2001]'s account predicts about non-asserted triggers:
 each specific alternative trigger is excluded (universal, per-trigger). -/
 def vonFintelPrediction {ι W : Type*}
     (causes : ι → Set W) (triggers : Set ι) (t : ι) (w : W) : Prop :=
   ∀ t' ∈ triggers, t' ≠ t → ¬causes t' w
 
-/-- What @cite{horn-2000}'s account predicts: some non-asserted trigger is
+/-- What [horn-2000]'s account predicts: some non-asserted trigger is
 excluded, but we don't know which (existential, unspecified). -/
 def hornPrediction {ι W : Type*}
     (causes : ι → Set W) (triggers : Set ι) (t : ι) (w : W) : Prop :=
@@ -716,7 +716,7 @@ theorem cp_is_pragmatic :
 
 The competence assumption in conditional perfection is the same mechanism
 formalized in `Implicature.Competence` and tested experimentally by
-@cite{bale-etal-2025} for scalar implicatures. Both paradigms:
+[bale-etal-2025] for scalar implicatures. Both paradigms:
 - Map full speaker knowledge to `BeliefState.disbelief` (speaker knows ¬ψ)
 - Map partial knowledge to `BeliefState.noOpinion` (speaker is agnostic)
 - Derive strong inference only when competence holds
@@ -767,8 +767,8 @@ theorem pk_processAlternative_weak :
 
 /-- Cross-domain unity: CP and SI use the same competence-gated exhaustification.
 
-Both @cite{evcen-bale-barner-2026} (conditional perfection) and
-@cite{bale-etal-2025} (scalar implicatures) map full knowledge to strong
+Both [evcen-bale-barner-2026] (conditional perfection) and
+[bale-etal-2025] (scalar implicatures) map full knowledge to strong
 inference and partial knowledge to weak-only, via the identical
 `processAlternative` machinery from `Implicature.Competence`. -/
 theorem cp_si_competence_unity :
@@ -786,7 +786,7 @@ theorem cp_si_competence_unity :
 
 /-! ## ALT Constraint
 
-Footnote 7 of @cite{evcen-bale-barner-2026} states the alternatives constraint:
+Footnote 7 of [evcen-bale-barner-2026] states the alternatives constraint:
 
 > ALT(p) ⊆ ANS(QUD) ∩ {q : Ks(q) ∨ Ks(¬q)}
 

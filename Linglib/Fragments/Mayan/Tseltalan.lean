@@ -3,14 +3,14 @@ import Linglib.Features.Prominence
 
 /-!
 # Shared Tseltalan Infrastructure
-@cite{aissen-polian-2025} @cite{polian-2013}
+[aissen-polian-2025] [polian-2013]
 
 Descriptive types shared across the Tseltalan subgroup (Tsotsil, Tseltal).
 Both languages share agreement paradigm assignment and grammatical function
 classification. They differ in agreement exponents and Set B marker
 position (Tsotsil: prefixal/suffixal; Tseltal: consistently suffixal).
 
-## Agreement System (Table 1 of @cite{aissen-polian-2025})
+## Agreement System (Table 1 of [aissen-polian-2025])
 
 | Form   | Function | Tseltal  | Tsotsil          |
 |--------|----------|----------|------------------|
@@ -30,7 +30,7 @@ open Mayan (MarkerSet)
     marker set cross-references each argument.
 
     These are traditional Mayanist descriptive categories
-    (footnote 9 of @cite{aissen-polian-2025}).
+    (footnote 9 of [aissen-polian-2025]).
 
     | Function                           | Marker Set |
     |------------------------------------|------------|
@@ -51,7 +51,7 @@ inductive GramFunction where
 
 /-- The marker set that cross-references each grammatical function.
     Set A = ergative/genitive; Set B = absolutive.
-    Shared across Tseltalan (@cite{aissen-polian-2025}, @cite{polian-2013}). -/
+    Shared across Tseltalan ([aissen-polian-2025], [polian-2013]). -/
 def GramFunction.markerSet : GramFunction → MarkerSet
   | .A   => .setA
   | .S_A => .setB
@@ -87,7 +87,7 @@ theorem abs_uniform :
     subgroup-level constant. The LOW-ABS classification refers to the
     structural position of the licensing head, not the linear position
     of every Set B exponent (which varies by language and context).
-    @cite{aissen-polian-2025} p. 97; @cite{polian-2013}. -/
+    [aissen-polian-2025] p. 97; [polian-2013]. -/
 def absPosition : Mayan.ABSPosition := .low
 
 -- ============================================================================

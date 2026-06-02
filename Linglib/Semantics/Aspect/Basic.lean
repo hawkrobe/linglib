@@ -1,9 +1,9 @@
 /-
 # Viewpoint Aspect Operators
 
-@cite{klein-1994} viewpoint aspect formalized as interval relations between
+[klein-1994] viewpoint aspect formalized as interval relations between
 Topic Time (TT) and Situation Time (TSit), with compositional operators
-following @cite{knick-sharf-2026}.
+following [knick-sharf-2026].
 
 ## Klein's Aspect Definitions (Chapter 6, p. 108)
 
@@ -20,7 +20,7 @@ following @cite{knick-sharf-2026}.
 Event Time → Prop ──[IMPF/PRFV]──▷ IntervalPred ──[PERF]──▷ PointPred ──[TENSE]──▷ Prop
 ```
 
-Equations (verified against the @cite{knick-sharf-2026} proceedings PDF):
+Equations (verified against the [knick-sharf-2026] proceedings PDF):
 
 - (25) ⟦IMPF⟧^g = λP.λt.∃e[t ⊂ τ(e) ∧ P(e)]
 - (28) ⟦PRFV⟧^g = λP.λt.∃e[τ(e) ⊆ t ∧ P(e)]
@@ -84,8 +84,8 @@ abbrev PointPred (W Time : Type*) := WorldTimeIndex W Time → Prop
 -- § Klein's Viewpoint Classification
 -- ════════════════════════════════════════════════════
 
-/-- Viewpoint aspect types. @cite{klein-1994} identified imperfective,
-    perfective, perfect, and prospective. @cite{smith-1997} added the
+/-- Viewpoint aspect types. [klein-1994] identified imperfective,
+    perfective, perfect, and prospective. [smith-1997] added the
     neutral viewpoint (default in the absence of overt aspect morphology). -/
 inductive ViewpointType where
   | imperfective  -- TT INCL TSit
@@ -122,7 +122,7 @@ def ViewpointAspectB.toKleinViewpoint : ViewpointAspectB → ViewpointType
 theorem toBoolAspect_toKleinViewpoint (a : ViewpointAspectB) :
     a.toKleinViewpoint.toBoolAspect = some a := by cases a <;> rfl
 
-/-- The TT↔TSit interval relation for each viewpoint (@cite{klein-1994}: 108). -/
+/-- The TT↔TSit interval relation for each viewpoint ([klein-1994]: 108). -/
 def ViewpointType.ttTSitRelation {Time : Type*} [LinearOrder Time]
     (v : ViewpointType) (tt tsit : Interval Time) : Prop :=
   match v with
@@ -139,27 +139,27 @@ def ViewpointType.ttTSitRelation {Time : Type*} [LinearOrder Time]
 variable {Time : Type*} [LinearOrder Time] {W : Type*}
 
 /-- **IMPERFECTIVE**: reference time properly contained in event runtime.
-    @cite{klein-1994}: TT INCL TSit. @cite{knick-sharf-2026} eq. 25. -/
+    [klein-1994]: TT INCL TSit. [knick-sharf-2026] eq. 25. -/
 def IMPF (P : W → Event Time → Prop) : IntervalPred W Time :=
   λ w t => ∃ e : Event Time, t.properSubinterval e.τ ∧ P w e
 
 /-- **PERFECTIVE**: event runtime contained in reference time.
-    @cite{klein-1994}: TT AT TSit (simplified to TSit ⊆ TT, following @cite{smith-1997}).
-    @cite{knick-sharf-2026} eq. 28. -/
+    [klein-1994]: TT AT TSit (simplified to TSit ⊆ TT, following [smith-1997]).
+    [knick-sharf-2026] eq. 28. -/
 def PRFV (P : W → Event Time → Prop) : IntervalPred W Time :=
   λ w t => ∃ e : Event Time, e.τ.subinterval t ∧ P w e
 
 /-- **PROSPECTIVE**: reference time before situation time.
-    @cite{klein-1994}: TT BEFORE TSit. -/
+    [klein-1994]: TT BEFORE TSit. -/
 def PROSP (P : W → Event Time → Prop) : IntervalPred W Time :=
   λ w t => ∃ e : Event Time, t.isBefore e.τ ∧ P w e
 
 /-- **INIT_OVERLAP**: initial overlap between reference time and event runtime.
-    @cite{pancheva-2003} eq. 7b: ⟦NEUTRAL⟧ = λP.λi.∃e[i ∂τ(e) & P(e)]
+    [pancheva-2003] eq. 7b: ⟦NEUTRAL⟧ = λP.λi.∃e[i ∂τ(e) & P(e)]
     The beginning of the eventuality is in the reference interval,
     but the end may extend beyond. Derives experiential perfect readings.
 
-    Renamed from `NEUTRAL` to avoid collision with @cite{smith-1997}'s
+    Renamed from `NEUTRAL` to avoid collision with [smith-1997]'s
     neutral viewpoint (`ViewpointType.neutral`), which is a different concept.
     Pancheva's operator is an inner Asp₂ head; Smith's neutral viewpoint is
     a default viewpoint type. -/
@@ -178,7 +178,7 @@ def RB (pts : Interval Time) (t : Time) : Prop := pts.finish = t
 def LB (tLB : Time) (pts : Interval Time) : Prop := pts.start = tLB
 
 /-- **PERFECT**: introduces Perfect Time Span.
-    @cite{knick-sharf-2026} eq. 22b — the standard XN-theoretic entry
+    [knick-sharf-2026] eq. 22b — the standard XN-theoretic entry
     that K&S start from. Verified against the proceedings PDF.
 
     K&S notation: `λp_it.λt.∃t_PTS.[RB(t_PTS, t) ∧ p(t)]`. The `p(t)` is
@@ -191,7 +191,7 @@ def PERF (p : IntervalPred W Time) : PointPred W Time :=
   λ s => ∃ pts : Interval Time, RB pts s.time ∧ p s.world pts
 
 /-- **PERFECT with Extended Now** (K&S's revision: domain-restricted left
-    boundary). @cite{knick-sharf-2026} eq. 23b. Verified against the
+    boundary). [knick-sharf-2026] eq. 23b. Verified against the
     proceedings PDF.
 
     K&S notation: `λp_it.λt.∃t_PTS.∃t_LB ⊆ tᵣ. [LB(t_LB, t_PTS) ∧
@@ -320,23 +320,23 @@ theorem impf_prfv_opposite_containment (P : W → Event Time → Prop) (w : W) (
    λ ⟨e, hSub, hP⟩ => ⟨e, hP, hSub⟩⟩
 
 -- ════════════════════════════════════════════════════
--- § @cite{pancheva-2003}: Higher Aspect and Perfect Types
+-- § [pancheva-2003]: Higher Aspect and Perfect Types
 -- ════════════════════════════════════════════════════
 
-/-! @cite{pancheva-2003} decomposes perfect participles into two aspect heads:
+/-! [pancheva-2003] decomposes perfect participles into two aspect heads:
     [T [Asp₁=PERFECT [Asp₂=VIEWPOINT [vP]]]]. The inner Asp₂ (UNBOUNDED,
     INIT_OVERLAP, or BOUNDED) determines the perfect type (universal, experiential,
     or resultative). The outer Asp₁ = PERFECT introduces the PTS via a
     **final subinterval** relation rather than a point-based right boundary. -/
 
 /-- Pancheva's UNBOUNDED (Asp₂): non-strict ⊆ variant of IMPF.
-    ⟦UNBOUNDED⟧ = λP.λi.∃e[i ⊆ τ(e) & P(e)] (@cite{pancheva-2003}: 282, eq. 7b).
+    ⟦UNBOUNDED⟧ = λP.λi.∃e[i ⊆ τ(e) & P(e)] ([pancheva-2003]: 282, eq. 7b).
     Differs from IMPF in using non-strict ⊆ rather than strict ⊂. -/
 def UNBOUNDED (P : W → Event Time → Prop) : IntervalPred W Time :=
   λ w t => ∃ e : Event Time, t.subinterval e.τ ∧ P w e
 
 /-- Pancheva's BOUNDED (Asp₂): strict ⊂ variant of PRFV.
-    ⟦BOUNDED⟧ = λP.λi.∃e[τ(e) ⊂ i & P(e)] (@cite{pancheva-2003}: 282, eq. 7b).
+    ⟦BOUNDED⟧ = λP.λi.∃e[τ(e) ⊂ i & P(e)] ([pancheva-2003]: 282, eq. 7b).
     Differs from PRFV in using strict ⊂ rather than non-strict ⊆. -/
 def BOUNDED (P : W → Event Time → Prop) : IntervalPred W Time :=
   λ w t => ∃ e : Event Time, e.τ.properSubinterval t ∧ P w e
@@ -352,7 +352,7 @@ theorem bounded_entails_prfv (P : W → Event Time → Prop) (w : W) (t : Interv
   λ ⟨e, hSub, hP⟩ => ⟨e, hSub.1, hP⟩
 
 /-- Pancheva-style interval-level PERFECT (Asp₁).
-    ⟦PERFECT⟧ = λp.λi.∃i'[PTS(i', i) & p(i')] (@cite{pancheva-2003}: 284, eq. 9b).
+    ⟦PERFECT⟧ = λp.λi.∃i'[PTS(i', i) & p(i')] ([pancheva-2003]: 284, eq. 9b).
     PTS(i', i) iff i is a final subinterval of i': i ⊆ i' ∧ i.finish = i'.finish. -/
 def PERF_P (p : IntervalPred W Time) : IntervalPred W Time :=
   λ w i => ∃ pts : Interval Time, i.finalSubinterval pts ∧ p w pts
@@ -373,7 +373,7 @@ theorem perf_p_monotone (p q : IntervalPred W Time)
     PERF_P p w i → PERF_P q w i :=
   λ ⟨pts, hFin, hp⟩ => ⟨pts, hFin, h w pts hp⟩
 
-/-- @cite{pancheva-2003} perfect type classification.
+/-- [pancheva-2003] perfect type classification.
     The embedded Asp₂ determines the perfect reading:
     - universal = PERFECT(UNBOUNDED): event ongoing throughout PTS
     - experiential = PERFECT(NEUTRAL): event began within PTS
@@ -388,19 +388,19 @@ inductive PerfectType where
 
 /-- Universal perfect: PERF_P(UNBOUNDED(V)).
     "has been running" — event ongoing throughout PTS.
-    @cite{pancheva-2003}: explains why universal reading requires imperfective. -/
+    [pancheva-2003]: explains why universal reading requires imperfective. -/
 abbrev universalPerfect (P : W → Event Time → Prop) : IntervalPred W Time :=
   PERF_P (UNBOUNDED P)
 
 /-- Experiential perfect: PERF_P(INIT_OVERLAP(V)).
     "has visited Paris" — event began within PTS.
-    @cite{pancheva-2003}: initial-overlap aspect allows event to extend beyond PTS. -/
+    [pancheva-2003]: initial-overlap aspect allows event to extend beyond PTS. -/
 abbrev experientialPerfect (P : W → Event Time → Prop) : IntervalPred W Time :=
   PERF_P (INIT_OVERLAP P)
 
 /-- Resultative perfect: PERF_P(BOUNDED(V)).
     "has broken the vase" — event completed within PTS.
-    Simplified: properly involves result state (@cite{pancheva-2003}: 288). -/
+    Simplified: properly involves result state ([pancheva-2003]: 288). -/
 abbrev resultativePerfect (P : W → Event Time → Prop) : IntervalPred W Time :=
   PERF_P (BOUNDED P)
 

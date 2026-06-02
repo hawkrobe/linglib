@@ -13,7 +13,7 @@ actually engages with:
 - **Finiteness** — non-finite control vs finite matrix subject.
 - **ClauseRole** — matrix vs embedded-finite vs control-subject locus.
 - **ABarStatus** — anti-agreement effect (Tarifit, Fiorentino, Wolof:
-  null subjects only available under Ā-extraction; @cite{baier-2018}).
+  null subjects only available under Ā-extraction; [baier-2018]).
 
 A `SubjectContext` is a 4-tuple (one cell of the cross-classification)
 and a `SubjectAssignment : SubjectContext → Exponent` (defined in
@@ -40,7 +40,7 @@ abbrev Person := UD.Person
 def thematicPersons : List Person := [.first, .second, .third]
 
 /-- Finiteness of the clause hosting the subject locus. Coarser than
-    @cite{landau-2004}'s scale — that finer-grained version belongs in
+    [landau-2004]'s scale — that finer-grained version belongs in
     a syntactic theory file, not here. -/
 inductive Finiteness where
   /-- Finite clause (independent T, agreement morphology). -/
@@ -64,7 +64,7 @@ inductive ClauseRole where
 
 /-- Whether the subject is in situ or has undergone Ā-extraction.
     Distinguished here because anti-agreement effects (Tarifit,
-    Fiorentino, Wolof; @cite{baier-2018}) license null subjects
+    Fiorentino, Wolof; [baier-2018]) license null subjects
     *only* under Ā-extraction. -/
 inductive ABarStatus where
   /-- Subject in situ (no Ā-extraction). -/
@@ -118,7 +118,7 @@ def controlled (p : Person) : SubjectContext :=
     aBarStatus := .insitu }
 
 /-- Ā-extracted matrix finite subject of person `p`. The canonical
-    locus for the anti-agreement effect (@cite{baier-2018}). -/
+    locus for the anti-agreement effect ([baier-2018]). -/
 def matrixExtracted (p : Person) : SubjectContext :=
   { person := p, finiteness := .finite, clauseRole := .matrix,
     aBarStatus := .aBarExtracted }

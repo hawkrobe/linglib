@@ -11,10 +11,10 @@ import Linglib.Fragments.Farsi.Determiners
 
 /-!
 # Chierchia 2006: Domain Widening and the PSI Typology
-@cite{chierchia-2006} @cite{chierchia-2013} @cite{fox-2007} @cite{bar-lev-fox-2020}
-@cite{haspelmath-1997} @cite{kadmon-landman-1993} @cite{alonso-ovalle-moghiseh-2025}
+[chierchia-2006] [chierchia-2013] [fox-2007] [bar-lev-fox-2020]
+[haspelmath-1997] [kadmon-landman-1993] [alonso-ovalle-moghiseh-2025]
 
-Formalizes the lasting contributions of @cite{chierchia-2006} "Broaden Your Views:
+Formalizes the lasting contributions of [chierchia-2006] "Broaden Your Views:
 Implicatures of Domain Widening and the 'Logicality' of Language."
 
 ## What survived to 2026 consensus
@@ -28,7 +28,7 @@ polarity-sensitive items (PSIs) along two dimensions:
    *proper* strengthening (result strictly stronger than plain meaning)
 
 The specific operators (O/E/O⁻, σ/σ̃) have been superseded by Innocent
-Exclusion + Innocent Inclusion (@cite{fox-2007}, @cite{bar-lev-fox-2020}),
+Exclusion + Innocent Inclusion ([fox-2007], [bar-lev-fox-2020]),
 but the parametric space endures as the standard cross-linguistic PSI
 classification.
 
@@ -42,14 +42,14 @@ classification.
 
 ## Key result
 
-Each PSI class maps to a **contiguous region** on @cite{haspelmath-1997}'s
+Each PSI class maps to a **contiguous region** on [haspelmath-1997]'s
 implicational map, explaining *why* indefinite pronoun series cover
 contiguous function ranges cross-linguistically.
 
 ## Theoretical engine
 
 The mechanism behind PSI licensing is **domain widening reversal**
-(@cite{kadmon-landman-1993}, proved in `Exhaustification.FreeChoice`):
+([kadmon-landman-1993], proved in `Exhaustification.FreeChoice`):
 widening strengthens in DE but weakens in UE. The PSI parameter space
 refines this into D-MAX (even-like) vs D-MIN (antiexhaustive) enrichment.
 -/
@@ -67,7 +67,7 @@ open Farsi.Determiners (EFCIRescue)
 
 /-- Domain alternative grain size.
 
-    @cite{chierchia-2006} table (76)/(94):
+    [chierchia-2006] table (76)/(94):
     - `max`: Only large subdomains. Triggers even-like enrichment (E):
       the speaker chose the strongest alternative she has evidence for.
       Pure NPIs (*alcuno*, *mai*, *ever*).
@@ -81,11 +81,11 @@ inductive DomainAltGrain where
   deriving DecidableEq, Repr
 
 /-- The PSI profile: the 2026-consensus distillation of
-    @cite{chierchia-2006}'s parametric PSI typology.
+    [chierchia-2006]'s parametric PSI typology.
 
     The original paper used σ (weak) vs σ̃ (presuppositional) for
     implicature freezing, and O/E/O⁻ for enrichment. These specific
-    operators have been superseded by IE+II (@cite{bar-lev-fox-2020}),
+    operators have been superseded by IE+II ([bar-lev-fox-2020]),
     but the *parameters* they encode remain the standard way to
     classify PSIs cross-linguistically. -/
 structure PSIProfile where
@@ -94,7 +94,7 @@ structure PSIProfile where
   /-- Whether domain alternatives are obligatorily active -/
   obligatoryDomainAlts : Bool
   /-- Whether exhaustification must yield proper strengthening
-      (corresponds to @cite{chierchia-2006}'s presuppositional σ̃) -/
+      (corresponds to [chierchia-2006]'s presuppositional σ̃) -/
   requiresProperStrengthening : Bool
   /-- Whether scalar alternatives are also activated -/
   hasScalarAlts : Bool
@@ -154,7 +154,7 @@ def efciPureFci : PSIProfile :=
 /-!
 ## Connecting PSI Theory to Distributional Typology
 
-Each PSI class predicts an **eligible region** on @cite{haspelmath-1997}'s
+Each PSI class predicts an **eligible region** on [haspelmath-1997]'s
 implicational map — the set of functions where items of that class can
 appear. The eligible region is **derived** from the PSI parameters and the
 monotonicity classification of Haspelmath functions (`isDE`, `isFC`),
@@ -202,8 +202,8 @@ def PSIProfile.predictedFunctions (p : PSIProfile) : List HaspelmathFunction :=
 /-!
 ## Each PSI class maps to a contiguous Haspelmath region
 
-This is the central bridge between @cite{chierchia-2006}'s exhaustification
-theory and @cite{haspelmath-1997}'s typological generalization. It explains
+This is the central bridge between [chierchia-2006]'s exhaustification
+theory and [haspelmath-1997]'s typological generalization. It explains
 *why* indefinite pronoun series cover contiguous function ranges: each
 PSI class's eligible region is contiguous, and surface forms cover
 contiguous subsets of their class's region.
@@ -251,7 +251,7 @@ theorem dMax_presuppositional_empty :
 ## Matching cross-linguistic data to PSI predictions
 
 Each surface form's actual Haspelmath functions (from
-@cite{haspelmath-1997}'s typological data in `Typology.lean`) should be
+[haspelmath-1997]'s typological data in `Typology.lean`) should be
 a subset of its PSI class's predicted (eligible) region.
 
 **All function lists are derived from `Typology.lean` profiles** — not
@@ -315,7 +315,7 @@ theorem mandarin_shei_matches :
 /-!
 ## Deriving the core empirical contrast
 
-@cite{chierchia-2006}'s most striking prediction: Italian *qualsiasi*
+[chierchia-2006]'s most striking prediction: Italian *qualsiasi*
 and English *any* differ under negation.
 
 - "I didn't see any student" — grammatical (NPI reading)
@@ -373,7 +373,7 @@ theorem dMin_sigma_determines_de :
 -- ============================================================================
 
 /-!
-## Connection to @cite{alonso-ovalle-moghiseh-2025}
+## Connection to [alonso-ovalle-moghiseh-2025]
 
 PSI profiles predict which EFCI rescue mechanism is available:
 - Items with `hasScalarAlts = true` activate both scalar and domain
@@ -482,7 +482,7 @@ theorem irgendein_profile_consistent :
 /-!
 ## Exercising the Exhaustification theory layer
 
-This section connects @cite{chierchia-2006}'s PSI typology to the formal
+This section connects [chierchia-2006]'s PSI typology to the formal
 results in `Exhaustification.FreeChoice` and `Exhaustification.Operators`.
 
 ### σ̃: Presuppositional implicature freezing (§3.3, §5.3)
@@ -511,7 +511,7 @@ open Exhaustification.FreeChoice (entailment_reversal_in_de si_vacuous_in_de)
 open Exhaustification (oMinus antiexh_yields_universal)
 
 /-- σ̃'s presupposition: the enriched meaning is **strictly stronger**
-    than the plain meaning. @cite{chierchia-2006} definition (72).
+    than the plain meaning. [chierchia-2006] definition (72).
 
     This must hold for σ̃ to be defined (felicitous). Items selecting σ̃
     (*qualsiasi*, *qualunque*) require proper strengthening; items selecting
@@ -521,7 +521,7 @@ def sigmaBoldDefined (plain enriched : World → Prop) : Prop :=
 
 /-- **σ̃'s presupposition fails in DE contexts.**
 
-    @cite{chierchia-2006} §5.3: This is the formal content of the
+    [chierchia-2006] §5.3: This is the formal content of the
     *qualsiasi*/*any* contrast. If enrichment properly strengthens at the
     base level (enriched ⊂ plain), then embedding in a DE context
     *reverses* the entailment: C(plain) ⊆ C(enriched), making the
@@ -541,7 +541,7 @@ theorem sigma_bold_fails_in_de
 
 /-- **SI vacuity in DE blocks D-MAX enrichment in UE.**
 
-    @cite{chierchia-2006} §4.1: D-MAX items (pure NPIs) trigger
+    [chierchia-2006] §4.1: D-MAX items (pure NPIs) trigger
     even-like (E) enrichment, which is an SI. SIs are vacuous in DE
     (`si_vacuous_in_de`), so E enrichment is informative only in
     non-DE contexts — but D-MAX items *require* DE. This is why
@@ -577,7 +577,7 @@ end SigmaOperators
 -- ============================================================================
 
 /-!
-## Italian FCI judgment data from @cite{chierchia-2006} §2
+## Italian FCI judgment data from [chierchia-2006] §2
 
 These observations are the core empirical motivations:
 
@@ -620,7 +620,7 @@ inductive FCIContext where
   | negation_subtrigged -- under negation + relative clause (73b)
   deriving DecidableEq, Repr
 
-/-- An Italian FCI observation from @cite{chierchia-2006} §2. -/
+/-- An Italian FCI observation from [chierchia-2006] §2. -/
 structure FCIObservation where
   /-- The sentence (schematic) -/
   sentence : String

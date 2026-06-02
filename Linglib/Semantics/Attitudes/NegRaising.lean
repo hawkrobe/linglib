@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Aristotelian.Square
 
 /-!
 # Neg-Raising as O→E Pragmatic Strengthening
-@cite{gajewski-2007} @cite{horn-2001}
+[gajewski-2007] [horn-2001]
 
 Neg-raising is the phenomenon where the negation of an attitude verb is
 interpreted as the attitude applied to the negated complement:

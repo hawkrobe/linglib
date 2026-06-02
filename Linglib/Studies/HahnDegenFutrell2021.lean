@@ -5,7 +5,7 @@ import Linglib.Data.WALS.Languages
 
 /-!
 # Study 2: 54-Language Word-Order Efficiency
-@cite{hahn-degen-futrell-2021}
+[hahn-degen-futrell-2021]
 
 Tests the **Efficient Trade-off Hypothesis**: the ordering regularities
 of natural language optimize the memory-surprisal trade-off, serving the
@@ -353,12 +353,12 @@ theorem most_efficient_fully_optimized :
     (efficientLanguages.filter (·.gMean1000 = 1000)).length = 42 := by native_decide
 
 -- ============================================================================
--- Crosslinguistic Bridge to @cite{futrell-gibson-2020}
+-- Crosslinguistic Bridge to [futrell-gibson-2020]
 -- ============================================================================
 
 open Phenomena.WordOrder.DependencyLength.FutrellEtAl2020
 
-/-- ISO codes appearing in @cite{futrell-gibson-2020}'s 32-language dataset. -/
+/-- ISO codes appearing in [futrell-gibson-2020]'s 32-language dataset. -/
 def futrellIsoCodes : List String :=
   Phenomena.WordOrder.DependencyLength.FutrellEtAl2020.languages.map (·.isoCode)
 
@@ -392,7 +392,7 @@ theorem polish_only_shared_exception :
 
 /-! ### Negative correlation between word-order freedom and optimization
 
-Figure 13 of @cite{hahn-degen-futrell-2021} shows that branching direction
+Figure 13 of [hahn-degen-futrell-2021] shows that branching direction
 entropy (x-axis) is negatively correlated with the surprisal difference
 between real and baseline orders (y-axis). Spearman ρ ≈ −.58, p < .0001.
 
@@ -443,7 +443,7 @@ theorem low_entropy_higher_mean_g :
 
 /-! ### Information locality generalizes dependency locality
 
-@cite{hahn-degen-futrell-2021} argue (§"Other Kinds of Memory Bottlenecks"
+[hahn-degen-futrell-2021] argue (§"Other Kinds of Memory Bottlenecks"
 and Discussion) that information locality generalizes dependency length
 minimization: DLM minimizes *structural* distance between related words,
 while information locality minimizes the *information-theoretic* distance
@@ -474,7 +474,7 @@ theorem dlm_to_efficiency_chain :
   exact ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
--- Bridge to WALS (@cite{dryer-haspelmath-2013})
+-- Bridge to WALS ([dryer-haspelmath-2013])
 -- ============================================================================
 
 /-! ### WALS Language Validation

@@ -2,22 +2,22 @@ import Linglib.Typology.Plurals
 
 /-!
 # Tagalog plurality profile (WALS Chs 33–36)
-@cite{wals-2013} @cite{himmelmann-2005-tagalog} @cite{schachter-otanes-1972}
+[wals-2013] [himmelmann-2005-tagalog] [schachter-otanes-1972]
 
 The four WALS values committed below match the WALS v2020.4 entry for
 Tagalog (`tgl`).
 
 ## Coding (Ch 33): plural word *mga*
 
-WALS Ch 33 codes Tagalog as "plural word." @cite{schachter-otanes-1972}
+WALS Ch 33 codes Tagalog as "plural word." [schachter-otanes-1972]
 §3.9 (p. 111) calls *mga* (phonemic /maŋah/, orthographic per
-@cite{himmelmann-2005-tagalog} p. 353) a **PROCLITIC** — not an article,
+[himmelmann-2005-tagalog] p. 353) a **PROCLITIC** — not an article,
 not a free word. It has two readings: plural ('the children') and
-approximative with cardinals ('about ten'). @cite{kroeger-1991-thesis}
+approximative with cardinals ('about ten'). [kroeger-1991-thesis]
 treats it as enclitic on the preceding case marker (cf. p. 22 ex. 2:
 *ang=mga=bata?* `NOM=PL=child`), without arguing the analysis.
 
-Distribution restrictions (@cite{schachter-otanes-1972} p. 112): *mga*
+Distribution restrictions ([schachter-otanes-1972] p. 112): *mga*
 does NOT occur with cardinal numbers (*sampung anak* 'ten children', not
 \\**sampung mga anak*; *mga sampu* yields the approximative reading
 'about ten'); does NOT occur after the personal-noun markers *si/ni/kay*;
@@ -31,7 +31,7 @@ For the associative reading ('X and associates'), Tagalog uses *sina X*
 (personal-name plural marker + name); the *mga X* construction with a
 proper-name complement carries a different meaning ('two or more people
 with the same name', e.g. *ang mga Santos* 'the Santoses'). The contrast
-is drawn explicitly in @cite{schachter-otanes-1972} p. 113: "*mga*
+is drawn explicitly in [schachter-otanes-1972] p. 113: "*mga*
 construction is used to designate two or more people with the same name,
 while the plural-marker construction is used to designate the person
 named plus other people. Thus *ang mga Santos* is 'the Santoses', while
@@ -39,10 +39,10 @@ named plus other people. Thus *ang mga Santos* is 'the Santoses', while
 Santos)'."
 
 The personal-name marker paradigm *si/ni/kay* (sg) ↔ *sina/nina/kina* (pl)
-is given as a single table by @cite{schachter-otanes-1972} §3.9 (p. 113);
+is given as a single table by [schachter-otanes-1972] §3.9 (p. 113);
 S&O analyse the plurals as **derived by suffixation of *-na*** (with a
 vowel change for *kay → kina*), not as a suppletive paradigm.
-@cite{kroeger-1991-thesis} (p. 14 ex. 12) and @cite{himmelmann-2005-tagalog}
+[kroeger-1991-thesis] (p. 14 ex. 12) and [himmelmann-2005-tagalog]
 (Table 12.2, p. 358) tabulate only the singular set; the plural set
 surfaces in Kroeger's glosses (e.g. p. 25 ex. 7 *sina=Ben* 'Ben and the
 others'; p. 124 ex. 33) but is not analytically discussed.
@@ -56,14 +56,14 @@ covering any 1+2+others grouping per S&O p. 89 — not specifically 1+2+3),
 and *kami* (1+3 exclusive) instantiate Cysouw's *minimal-augmented* type
 (see `Tagalog.clusivitySystem` in
 `Fragments/Tagalog/Pronouns.lean`). The full Table 12.2 paradigm from
-@cite{himmelmann-2005-tagalog} is also documented there.
+[himmelmann-2005-tagalog] is also documented there.
 -/
 
 set_option autoImplicit false
 
 namespace Tagalog
 
-/-- Tagalog plurality profile across @cite{wals-2013} Chs 33-36.
+/-- Tagalog plurality profile across [wals-2013] Chs 33-36.
 
 Coding (Ch 33): plural word *mga*. Occurrence (Ch 34): all nouns, always
 optional. Pronoun plurality (Ch 35): person-number stem (refined to
@@ -87,7 +87,7 @@ def pluralityProfile : Typology.PluralityProfile :=
 -- second language attests the same structural pattern.
 
 /-- Distributional facts about the *mga* proclitic per
-    @cite{schachter-otanes-1972} §3.9 (pp. 111–112). -/
+    [schachter-otanes-1972] §3.9 (pp. 111–112). -/
 structure MgaDistribution where
   /-- *mga* may co-occur with cardinal numerals. False per S&O p. 112:
       *sampung anak* 'ten children', not \\**sampung mga anak*; with
@@ -99,7 +99,7 @@ structure MgaDistribution where
       occupies that slot (see `personalNameMarkers`). -/
   withPersonalNameMarkers : Bool
   /-- *mga* with mass nouns is restricted: "mass nouns... normally do
-      not occur freely with *mga*" (@cite{schachter-otanes-1972} p. 112).
+      not occur freely with *mga*" ([schachter-otanes-1972] p. 112).
       The marker IS attested with mass nouns under two specific readings:
       "several masses" (*mga balita* 'news.PL') or with an implied
       deleted count noun (*mga tubig* = *mga baso ng tubig* 'glasses of
@@ -118,7 +118,7 @@ structure MgaDistribution where
   optional : Bool
   deriving Repr
 
-/-- The Tagalog *mga* distribution per @cite{schachter-otanes-1972} pp. 111–112. -/
+/-- The Tagalog *mga* distribution per [schachter-otanes-1972] pp. 111–112. -/
 def mgaDistribution : MgaDistribution :=
   { withCardinals := false
   , withPersonalNameMarkers := false
@@ -127,7 +127,7 @@ def mgaDistribution : MgaDistribution :=
   , approximativeWithCardinals := true
   , optional := true }
 
-/-- The Tagalog personal-name marker paradigm per @cite{schachter-otanes-1972}
+/-- The Tagalog personal-name marker paradigm per [schachter-otanes-1972]
     §3.9 (pp. 93, 113). Three cases × two numbers; the plurals are
     derived by *-na* suffixation, with a vowel change for *kay → kina*. -/
 structure PersonalNameMarkers where
@@ -139,14 +139,14 @@ structure PersonalNameMarkers where
   datPl : String
   deriving Repr
 
-/-- Tagalog personal-name markers per @cite{schachter-otanes-1972} p. 113. -/
+/-- Tagalog personal-name markers per [schachter-otanes-1972] p. 113. -/
 def personalNameMarkers : PersonalNameMarkers :=
   { nomSg := "si",  nomPl := "sina"
   , genSg := "ni",  genPl := "nina"
   , datSg := "kay", datPl := "kina" }
 
 /-- The NOM and GEN plural personal-name markers are formed by suffixing
-    *-na* to the singular, per @cite{schachter-otanes-1972} p. 113. -/
+    *-na* to the singular, per [schachter-otanes-1972] p. 113. -/
 theorem personalNameMarkers_na_suffixation_regular :
     personalNameMarkers.nomPl = personalNameMarkers.nomSg ++ "na" ∧
     personalNameMarkers.genPl = personalNameMarkers.genSg ++ "na" :=

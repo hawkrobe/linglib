@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Ellipsis.DeletionDomain
 
 /-!
 # Benz & Salzmann (2025): Evidence from German for N-stranding NP-ellipsis
-@cite{benz-salzmann-2025}
+[benz-salzmann-2025]
 
 Evidence from German for N-stranding NP-ellipsis.
 Proceedings of the Chicago Linguistic Society 60.
@@ -17,7 +17,7 @@ evacuated.
 
 ## Key Claims
 
-1. **X-stranding diagnostic** (@cite{liptak-saab-2014}): if a language has
+1. **X-stranding diagnostic** ([liptak-saab-2014]): if a language has
    both X-movement out of XP and XP-ellipsis, X-stranding XP-ellipsis
    should exist. German has N-to-n movement and NP-ellipsis → N-stranding
    NP-ellipsis exists.
@@ -122,7 +122,7 @@ def ex6a : DPEllipsisDatum :=
 -- § 1.3: N-stranding blocked without contrastive N (§1.2, §2.1)
 
 /-- ex. (5): Non-contrastive noun blocks N-stranding (Spanish;
-    @cite{liptak-saab-2014}) — only the numeral contrasts (*tres* vs
+    [liptak-saab-2014]) — only the numeral contrasts (*tres* vs
     *dos*), not the noun *estudiantes*. Since N is not contrastive, n[E]
     is unavailable. [E] must be on Num or higher, deleting N and its
     PP dependent. The PP *de física* cannot be recovered. -/
@@ -252,7 +252,7 @@ theorem nonContrastive_noun_deleted :
 -- § 3: Predictions — Prenominal vs. Postnominal Asymmetry
 -- ════════════════════════════════════════════════════════════════
 
-/-- The central asymmetry (@cite{benz-salzmann-2025} §2.3):
+/-- The central asymmetry ([benz-salzmann-2025] §2.3):
     - Prenominal modifiers (adjectives, numerals, prenominal genitives)
       CANNOT be individually deleted → they are above n
     - Postnominal modifiers (PPs, relative clauses, postnominal genitives)
@@ -372,7 +372,7 @@ theorem german_more_survivors_than_spanish :
     - nP-ellipsis (Num[E]): n is internal → gender mismatches blocked
     - Sluicing (C[E]): Voice is internal → voice mismatches blocked
 
-    @cite{benz-salzmann-2025} p.62-63: "while gender mismatches are
+    [benz-salzmann-2025] p.62-63: "while gender mismatches are
     normally not possible in nominal ellipsis [...], such mismatches
     do become possible in our N-stranding NP-ellipsis data." -/
 theorem gender_voice_parallel :

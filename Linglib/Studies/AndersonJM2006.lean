@@ -9,9 +9,9 @@ import Linglib.Semantics.ArgumentStructure.Linking
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
-# Anderson (2006): Modern Grammars of Case @cite{anderson-jm-2006}
+# Anderson (2006): Modern Grammars of Case [anderson-jm-2006]
 
-@cite{anderson-jm-2006} "Modern Grammars of Case: A Retrospective" (OUP)
+[anderson-jm-2006] "Modern Grammars of Case: A Retrospective" (OUP)
 develops localist case grammar (LCG), where all semantic relations decompose
 into combinations of three first-order case features: absolutive (abs),
 source/ergative (src), and locative (loc).
@@ -333,7 +333,7 @@ def toScenario (v : Verb) : Scenario :=
 -- § 4: Anderson as LinkingTheory
 -- ============================================================================
 
-/-- Anderson's case grammar as a `LinkingTheory` (@cite{anderson-jm-2006}).
+/-- Anderson's case grammar as a `LinkingTheory` ([anderson-jm-2006]).
     The verb type is `Scenario`, the context is `Unit` (lexicalist: linking
     is derived entirely from case-relation rank, no structural input). -/
 def andersonLinking : LinkingTheory Scenario Unit where
@@ -394,7 +394,7 @@ agent. The remaining collapses are:
 
 -- § 7a: {abs} collapses patient and theme
 
-/-- Patient and theme both map to {abs}, but @cite{dowty-1991} distinguishes
+/-- Patient and theme both map to {abs}, but [dowty-1991] distinguishes
     them: patient has 3 P-Patient entailments, theme has only 1. -/
 theorem patient_theme_collapse :
     thetaToCaseRelation .patient = thetaToCaseRelation .theme ∧

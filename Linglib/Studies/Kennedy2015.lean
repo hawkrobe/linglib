@@ -6,11 +6,11 @@ import Linglib.Semantics.Entailment.AsymStronger
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{kennedy-2015}: De-Fregean numerals — neo-Gricean derivation
-@cite{kennedy-2015} @cite{sauerland-2004} @cite{nouwen-2010}
-@cite{geurts-nouwen-2007} @cite{frank-goodman-2012} @cite{franke-2011}
+# [kennedy-2015]: De-Fregean numerals — neo-Gricean derivation
+[kennedy-2015] [sauerland-2004] [nouwen-2010]
+[geurts-nouwen-2007] [frank-goodman-2012] [franke-2011]
 
-@cite{kennedy-2015} replaces the Horn scale `⟨1, 2, 3, …⟩` with a single
+[kennedy-2015] replaces the Horn scale `⟨1, 2, 3, …⟩` with a single
 **lexically-grouped alternative set** containing the bare numeral together
 with all of its surface modifications:
 
@@ -19,14 +19,14 @@ with all of its surface modifications:
 ```
 
 The point is **anti-Horn-scale**: there is no fixed scale direction. The
-asymmetric-entailment filter of @cite{sauerland-2004}'s primary-implicature
+asymmetric-entailment filter of [sauerland-2004]'s primary-implicature
 operator does the work that a pre-categorized "lower" or "upper" scale
 would otherwise do. Asserting "at least n" makes only the lower-direction
 alternatives (bare n, more than n) asymmetrically stronger; the
 upper-direction alternatives (fewer than n, at most n) are not — they're
 disjoint or overlapping but not subsets — so they don't trigger primary
 implicatures. The Class A / Class B distinction (labels from
-@cite{nouwen-2010}, which @cite{kennedy-2015} *contests* by replacing
+[nouwen-2010], which [kennedy-2015] *contests* by replacing
 Nouwen's lexical bifurcation with one denotation + asymmetric entailment)
 falls out as a structural property of the modifier's relation:
 
@@ -44,8 +44,8 @@ We formalize both routes:
 - §3 derives the same direction probabilistically through RSA L1.
 
 §3 is our own integration contribution, not Kennedy's — Kennedy's paper
-discusses @cite{franke-2011}'s IBR as the probabilistic counterpart, not
-@cite{frank-goodman-2012}-style RSA. The two routes are theoretically
+discusses [franke-2011]'s IBR as the probabilistic counterpart, not
+[frank-goodman-2012]-style RSA. The two routes are theoretically
 distinct: §2 follows Kennedy directly; §3 shows the same qualitative
 predictions emerge from a soft-max listener over the same alternative set
 and bare-numeral semantics.
@@ -99,7 +99,7 @@ noncomputable instance (u : KUtt) : DecidablePred (kMean u) :=
   fun w => inferInstanceAs (Decidable (u.entry.denoteUnder bareMeaning w.val))
 
 -- ============================================================================
--- §2: Symbolic neo-Gricean derivation (@cite{sauerland-2004} on Kennedy's alts)
+-- §2: Symbolic neo-Gricean derivation ([sauerland-2004] on Kennedy's alts)
 -- ============================================================================
 
 /-! Sauerland's primary-implicature schema applied to Kennedy's single
@@ -172,7 +172,7 @@ theorem classA_fewerThan3_no_primary :
 -- §3: RSA L1 implementation of the same neo-Gricean predictions
 -- ============================================================================
 
-/-! Our own integration contribution (Kennedy uses @cite{franke-2011}'s
+/-! Our own integration contribution (Kennedy uses [franke-2011]'s
 IBR, not RSA). A rational L1 listener — assuming the speaker chose the
 most informative true alternative — shifts probability mass *away* from
 worlds where a stronger alternative would have been chosen. Class B's

@@ -4,7 +4,7 @@ import Linglib.Semantics.Gradability.AntonymQuadruplet
 /-!
 # Antonym Prediction — Two Extensional Denotations + Prediction Skeleton
 
-@cite{cruse-1986} @cite{horn-1989} @cite{krifka-2007b}
+[cruse-1986] [horn-1989] [krifka-2007b]
 
 For the four-form quadruplet of a negated antonymic adjective pair (see
 `AntonymQuadruplet.lean`), the literature contests two extensional
@@ -49,7 +49,7 @@ open Semantics.Degree (positiveMeaning negativeMeaning antonymMeaning)
 /-- **Contradictory denotation** of an antonym form on a single threshold `θ`.
     Both poles share `θ`; the four forms collapse to two distinct truth
     values (positive/notNegative ≡ `d > θ`; notPositive/negative ≡ `d ≤ θ`).
-    This is the literal-semantic position @cite{krifka-2007b} attributes to
+    This is the literal-semantic position [krifka-2007b] attributes to
     antonyms before pragmatic strengthening. -/
 abbrev AntonymForm.contradictoryDenot {max : Nat} (θ : Threshold max)
     (q : AntonymForm) (d : Degree max) : Prop :=
@@ -79,7 +79,7 @@ abbrev AntonymForm.strengthenedDenot {max : Nat} (tp : ThresholdPair max)
 
 /-- Under the contradictory denotation, the `negative`-`notPositive` and
     `notNegative`-`positive` form pairs are extensionally identical. This is
-    the formal puzzle @cite{krifka-2007b} solves pragmatically: literal
+    the formal puzzle [krifka-2007b] solves pragmatically: literal
     contradictory semantics predicts *not unhappy* ≡ *happy*. -/
 theorem contradictoryDenot_synonymy {max : Nat}
     (θ : Threshold max) (d : Degree max) :

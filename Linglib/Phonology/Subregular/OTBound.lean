@@ -29,7 +29,7 @@ The argument for non-regularity uses mathlib's
 `Language.IsRegular.finite_range_leftQuotient`: distinct prefixes `aⁿ`
 give distinct left quotients of `{ aⁿ bⁿ }`, so the range of
 `leftQuotient` is infinite, contradicting regularity. This is the
-classical Myhill–Nerode argument @cite{nerode-1958} @cite{myhill-1957}.
+classical Myhill–Nerode argument [nerode-1958] [myhill-1957].
 
 Phonologically the takeaway is *negative*: `NamedConstraint`s are too
 expressive to be classified by subregular complexity alone. Phonologists

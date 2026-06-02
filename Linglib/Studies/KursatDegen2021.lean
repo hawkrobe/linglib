@@ -5,8 +5,8 @@ import Linglib.Studies.WaldonDegen2021
 import Linglib.Studies.EngelhardtEtAl2006
 
 /-!
-# @cite{kursat-degen-2021}
-@cite{degen-etal-2020} @cite{waldon-degen-2021} @cite{engelhardt-etal-2006}
+# [kursat-degen-2021]
+[degen-etal-2020] [waldon-degen-2021] [engelhardt-etal-2006]
 
 Perceptual difficulty differences predict asymmetry in redundant
 modification with color and material adjectives. *Proceedings of the
@@ -18,7 +18,7 @@ Material adjectives are harder to perceive than color adjectives
 (Exps 1, 3), and color adjectives are used redundantly more often than
 material adjectives (Exp 2). This anti-correlation between perceptual
 difficulty and redundant-use rate supports a noise-based RSA account
-(@cite{waldon-degen-2021}) where the noise parameter reflects perceptual
+([waldon-degen-2021]) where the noise parameter reflects perceptual
 difficulty of property verification.
 
 ## Experiments
@@ -41,7 +41,7 @@ All regression coefficients verified against paper text (§2.3, §3.3,
 
 ## Derivational Chain
 
-The cs-RSA model (@cite{degen-etal-2020}) explains redundant modification
+The cs-RSA model ([degen-etal-2020]) explains redundant modification
 via noisy perception. The derivation proceeds in four steps:
 
 1. **Model structure**: The cs-RSA meaning function φ decomposes into
@@ -67,7 +67,7 @@ Note: the material noise parameters in `RSA.Noise` (0.70/0.30) are
 hypothetical, not derived from this paper. This paper establishes the
 *ordering* (color easier than material), not the specific channel
 parameters. The full S1 redundancy prediction requires the incremental
-model of @cite{waldon-degen-2021}.
+model of [waldon-degen-2021].
 -/
 
 namespace KursatDegen2021
@@ -190,7 +190,7 @@ theorem difficulty_predicts_redundancy :
 -- § Step 1: cs-RSA φ decomposes into noise channels
 -- ============================================================================
 
-/-! The cs-RSA model's meaning function φ (@cite{degen-etal-2020}) is a
+/-! The cs-RSA model's meaning function φ ([degen-etal-2020]) is a
 product of independent per-feature noise channels (proven in
 `DegenEtAl2020.φ_product_of_experts`). The φ function uses `RSA.Noise`
 parameter values by construction — this is structural, not coincidental
@@ -272,7 +272,7 @@ theorem noise_predicts_redundancy :
 -- ============================================================================
 
 /-! The full redundancy prediction requires the incremental CI-RSA model
-(@cite{waldon-degen-2021}), which processes utterances word-by-word. The
+([waldon-degen-2021]), which processes utterances word-by-word. The
 incremental model's three predictions are verified as theorems in
 `WaldonDegen2021.lean` — here we re-export the key result showing that
 redundant color > redundant size in English, which is the color/size
@@ -290,11 +290,11 @@ theorem incremental_model_predicts_color_asymmetry :
   WaldonDegen2021.prediction1_english_asymmetry
 
 -- ============================================================================
--- § Connection to @cite{engelhardt-etal-2006}
+-- § Connection to [engelhardt-etal-2006]
 -- ============================================================================
 
-/-- Both this study and @cite{engelhardt-etal-2006} show that speakers
-    produce unnecessary modifiers. @cite{engelhardt-etal-2006} Exp 1
+/-- Both this study and [engelhardt-etal-2006] show that speakers
+    produce unnecessary modifiers. [engelhardt-etal-2006] Exp 1
     finds a 31% overall over-description rate; this study's Exp 2
     further shows the rate varies by property type (β = 2.32: color >
     material). The noise model explains this variation: high-discrimination
@@ -310,10 +310,10 @@ theorem converging_production_with_engelhardt :
   refine ⟨?_, rfl, ?_, ?_⟩ <;> native_decide
 
 -- ============================================================================
--- § Connection to @cite{dale-reiter-1995}
+-- § Connection to [dale-reiter-1995]
 -- ============================================================================
 
-/-- @cite{dale-reiter-1995}'s Incremental Algorithm uses a fixed
+/-- [dale-reiter-1995]'s Incremental Algorithm uses a fixed
     `PreferredAttributes` list. This study's Exp 2 data — colour used
     redundantly more than material (β = 2.32) — suggests the preference
     ordering should track discrimination: higher-discrimination

@@ -3,7 +3,7 @@ import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Semantics.Alternatives.Lexical
 
 /-!
-# Tieu, Bill, Romoli & Crain (2020) @cite{tieu-etal-2020}
+# Tieu, Bill, Romoli & Crain (2020) [tieu-etal-2020]
 
 Testing theories of plural meanings. *Cognition* 205, 104307.
 

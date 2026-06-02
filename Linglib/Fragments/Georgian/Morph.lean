@@ -2,7 +2,7 @@ import Linglib.Morphology.MorphProfile
 
 /-!
 # Georgian Morphological Profile
-@cite{wals-2013} @cite{bickel-nichols-2001}
+[wals-2013] [bickel-nichols-2001]
 
 WALS-derived profile for Georgian (ISO `kat`). B&N 2001 places Georgian
 in the "fusional" cell (concatenative + flexive + cumulative).

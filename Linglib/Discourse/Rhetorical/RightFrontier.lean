@@ -1,7 +1,7 @@
 import Linglib.Discourse.Rhetorical.Defs
 /-!
 # Right Frontier Constraint
-@cite{asher-lascarides-2003}
+[asher-lascarides-2003]
 Available-attachment-points constraint restricting where new
 discourse units attach in an SDRS. `α = LAST` is always available;
 labels `γ` that outscope `α` structurally or are connected via a

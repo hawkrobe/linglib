@@ -3,8 +3,8 @@ import Linglib.Syntax.Pronoun.Basic
 import Linglib.Features.Givenness
 
 /-!
-# @cite{ariel-2001}
-@cite{gundel-hedberg-zacharski-1993} @cite{cardinaletti-starke-1999}
+# [ariel-2001]
+[gundel-hedberg-zacharski-1993] [cardinaletti-starke-1999]
 
 Accessibility Theory: An Overview. In Sanders, Schilperoord & Spooren (eds.),
 *Text Representation: Linguistic and Psycholinguistic Aspects*, 29–87.
@@ -45,7 +45,7 @@ prominent on Aissen's scale (names outrank definites for DOM).
 
 ## Competing Theories
 
-Ariel argues accessibility theory subsumes @cite{gundel-hedberg-zacharski-1993}'s
+Ariel argues accessibility theory subsumes [gundel-hedberg-zacharski-1993]'s
 Givenness Hierarchy (a 6-level coarsening with weaker predictions) and is
 more comprehensive than Centering Theory (which handles only the pronoun/full-NP
 distinction, not the full range of referring expressions).
@@ -60,7 +60,7 @@ namespace Features
 /-- Informativity: approximate lexical content, encoded as an ordinal
     ranking (0–4). Anti-correlated with accessibility (more informative
     → lower rank). Values are illustrative, encoding the relative ordering
-    described in @cite{ariel-2001} (p. 32), not exact content-word counts. -/
+    described in [ariel-2001] (p. 32), not exact content-word counts. -/
 def AccessibilityLevel.informativity : AccessibilityLevel → Nat
   | .fullNameMod                              => 4
   | .fullName | .longDefDescription           => 3
@@ -92,7 +92,7 @@ def AccessibilityLevel.rigidity : AccessibilityLevel → Nat
 
 /-- Attenuation: degree of phonological reduction.
     Positively correlated with accessibility. 0 = full, 5 = zero.
-    Cliticized pronouns are shortened free pronouns (@cite{ariel-2001} note 6);
+    Cliticized pronouns are shortened free pronouns ([ariel-2001] note 6);
     verbal agreement inflections are bound morphemes, more reduced
     still; zero has no phonological material. -/
 def AccessibilityLevel.attenuation : AccessibilityLevel → Nat
@@ -208,7 +208,7 @@ theorem coarsening_not_monotone :
 
 open Pronoun (Strength)
 
-/-- @cite{cardinaletti-starke-1999}'s three-way pronoun strength maps to
+/-- [cardinaletti-starke-1999]'s three-way pronoun strength maps to
     positions on the accessibility scale.
     strong → stressedPron, weak → unstressedPron, clitic → cliticizedPron. -/
 def strengthToAccessibility : Strength → AccessibilityLevel
@@ -234,7 +234,7 @@ theorem strength_coarsening_agrees :
   ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 5. Givenness Hierarchy (@cite{gundel-hedberg-zacharski-1993})
+-- § 5. Givenness Hierarchy ([gundel-hedberg-zacharski-1993])
 -- ════════════════════════════════════════════════════
 
 -- `GivennessStatus` and `GivennessStatus.rank` were promoted to
@@ -257,7 +257,7 @@ namespace Features
     **indefinite** expressions, which do not appear on Ariel's
     accessibility marking scale (which covers Given/definite
     referential forms). The mapping for these two is by approximate
-    accessibility degree, not by form identity. @cite{ariel-2001}
+    accessibility degree, not by form identity. [ariel-2001]
     (p. 63) notes that the Givenness Hierarchy's coverage is
     "suspiciously compatible with the distribution of just those
     referring expressions linguists have tended to focus on." -/
@@ -325,7 +325,7 @@ theorem proximate_more_accessible_than_distal :
 /-- The `NextMentionBias` prediction directly uses accessibility levels:
     high bias → unstressed pronoun (high accessibility),
     low bias → full name (low accessibility). This is the core of
-    @cite{ariel-2001}'s theory: more accessible → more reduced form.
+    [ariel-2001]'s theory: more accessible → more reduced form.
 
     The predicted forms are the RIGHT forms, not a coarsened approximation
     through `DefinitenessLevel`. -/

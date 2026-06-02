@@ -2,7 +2,7 @@ import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Quechua (Cuzco) Evidentiality
-@cite{aikhenvald-2004}
+[aikhenvald-2004]
 
 Three-or-more system: direct *-mi*, reportative *-si*, conjectural *-chá*.
 Obligatory enclitics on finite clauses. Canonical Andean evidential system.

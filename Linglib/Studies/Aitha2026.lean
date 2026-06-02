@@ -11,7 +11,7 @@ import Linglib.Phonology.Prosodic.Moraic.CompensatoryLengthening
 open Morphology.Case.Allomorphy
 
 /-!
-# The Nouns that Say *-ni* @cite{aitha-2026}
+# The Nouns that Say *-ni* [aitha-2026]
 
 Aitha, A. (2026). The nouns that say *-ni*: Morpheme-specific phonology
 in Telugu. *Natural Language & Linguistic Theory* 44:16.
@@ -22,7 +22,7 @@ Telugu nouns exhibit two stem alternation patterns:
 
 1. **Strong alternation**: NOM *il-lu* vs oblique *in-ṭi* ('house').
    Genuine case-conditioned contextual allomorphy, analyzed via DM
-   Vocabulary Insertion with @cite{mcfadden-2018}'s case containment
+   Vocabulary Insertion with [mcfadden-2018]'s case containment
    hierarchy. The NOM-vs-oblique split follows from the Elsewhere
    Condition: a rule conditioned on [ACC] is more specific than an
    unconditioned default.
@@ -30,12 +30,12 @@ Telugu nouns exhibit two stem alternation patterns:
 2. **Weak alternation**: NOM *samudr-am* vs ACC *samudr-āni* ('ocean').
    Surface pattern looks like case-conditioned allomorphy but is
    phonological. Three diagnostics show it cannot be case allomorphy:
-   (a) the ABAB paradigm shape violates @cite{caha-2009}'s *ABA
+   (a) the ABAB paradigm shape violates [caha-2009]'s *ABA
    constraint; (b) noncase agreement suffixes trigger the alternation;
    (c) the conditioning requires strict linear adjacency (phonological,
    not structural locality).
 
-   The alternation is derived in Stratal OT (@cite{kiparsky-2000}):
+   The alternation is derived in Stratal OT ([kiparsky-2000]):
    both surface forms derive from a single underlying *-am-ni*, where
    *-ni* is a singular suffix with prespecified stress. The interaction
    of stress faithfulness with foot binarity constraints across three
@@ -80,7 +80,7 @@ def TeluguCase.toCore : TeluguCase → Features.Case
 
 /-- Is this Telugu case nonnominative? Derived from
     `Syntax.Case.IsNonnominative`, which is `(.acc : Case) ≤ c` under the
-    @cite{caha-2009}/@cite{mcfadden-2018} containment ordering. The full
+    [caha-2009]/[mcfadden-2018] containment ordering. The full
     containment hierarchy lives at `Syntax.Case.Order` (`containmentRank`,
     `cahaLE`); Aitha's *n*-head VI rules condition on this binary
     projection of the hierarchy down to a NOM-vs-oblique contrast at
@@ -97,7 +97,7 @@ instance (c : TeluguCase) : Decidable (TeluguCase.IsNonnom c) :=
 -- ────────────────────────────────────────────────────────────────────
 
 /-- Root class for strongly suppletive nouns.
-    @cite{aitha-2026} lists 7 subclasses, all sharing the NOM-vs-oblique
+    [aitha-2026] lists 7 subclasses, all sharing the NOM-vs-oblique
     split. Multiple NOM subclasses share a single OBL form (-ṭi for all
     but the -u∼-i class), a prediction of the Elsewhere Condition:
     the more specific (OBL) rule can generalize across root sets.
@@ -140,7 +140,7 @@ inductive WeakStemForm where
   deriving DecidableEq, Repr
 
 /-- The weak noun paradigm for *samudram* 'ocean'.
-    Data from @cite{krishnamurti-gwynn-1985}. -/
+    Data from [krishnamurti-gwynn-1985]. -/
 def weakParadigm : TeluguCase → WeakStemForm
   | .nom => .short   -- samudr-am-∅
   | .acc => .long    -- samudr-āni-ni
@@ -246,7 +246,7 @@ def weakAllomorphyPattern : AllomorphyPattern :=
   , gen := 0   -- short (-am)
   , dat := 1 } -- long (-āni)
 
-/-- The weak alternation violates @cite{caha-2009}'s *ABA constraint.
+/-- The weak alternation violates [caha-2009]'s *ABA constraint.
     The ABAB pattern contains the subsequence A–B–A at NOM–ACC–GEN:
     NOM and GEN share the short form, but intervening ACC has the long
     form. Since GEN's representation contains ACC's on the containment
@@ -295,7 +295,7 @@ theorem weak_pattern_from_paradigm :
     prosodic word — regardless of whether that syllable realizes a case
     suffix or an agreement suffix.
 
-    Data from @cite{aitha-2026}'s full(er) paradigm including agreement:
+    Data from [aitha-2026]'s full(er) paradigm including agreement:
     - ACC *-ni*: light σ within PrWd → long (*samudr-āni-ni*)
     - DAT *-ki*: light σ within PrWd → long (*samudr-āni-ki*)
     - 1SG *-ni*: light σ within PrWd → long (*samudr-āni-ni*)
@@ -343,7 +343,7 @@ theorem separate_prwd_triggers_short :
 
 /-- Telugu nominal predicative agreement suffixes.
     Only 1SG and 2SG are overt; 3SG and all plurals are null.
-    Data from @cite{aitha-2026}. -/
+    Data from [aitha-2026]. -/
 inductive AgrSuffix where
   | sg1   -- -ni (overt, light σ)
   | sg2   -- -vi (overt, light σ)
@@ -382,7 +382,7 @@ theorem case_agr_identity :
 -- ────────────────────────────────────────────────────────────────────
 
 /-- The underlying representation of the weak noun stem.
-    @cite{aitha-2026} argues (§4.2) that the surface alternants *-am* and
+    [aitha-2026] argues (§4.2) that the surface alternants *-am* and
     *-āni* derive from a single underlying form: the concatenation of
     *-am* (exponent of *n*) + *-ni* (singular suffix, exponent of Num).
 
@@ -407,7 +407,7 @@ def weakUnderlying : WeakUnderlying := ⟨"am", "ni"⟩
 -- ────────────────────────────────────────────────────────────────────
 
 /-- The two alternations differ in their sensitivity to locality.
-    @cite{aitha-2026} (§4.1) shows this via Q-postposing constructions:
+    [aitha-2026] (§4.1) shows this via Q-postposing constructions:
     - Strong: oblique can be triggered *across* an intervening quantifier
       (structural locality — the case head c-commands *n*)
     - Weak: the alternation is determined by the *linearly adjacent*
@@ -501,7 +501,7 @@ open Phonology.Stratal
 open Phonology.ProsodicWord
 
 -- ────────────────────────────────────────────────────────────────────
--- Rich phonological exponent substrate (@cite{alderete-1999})
+-- Rich phonological exponent substrate ([alderete-1999])
 -- ────────────────────────────────────────────────────────────────────
 
 /-- Prosodic prespecification for a morphological exponent.
@@ -513,8 +513,8 @@ structure ProsodicPrespec where
 
 /-- A rich exponent: segmental content plus optional prosodic
     prespecification. Used here for Telugu singular *-ni*'s lexically
-    prespecified stress (@cite{aitha-2026} §5; precedent
-    @cite{alderete-1999} on English stress-shifting suffixes). -/
+    prespecified stress ([aitha-2026] §5; precedent
+    [alderete-1999] on English stress-shifting suffixes). -/
 structure RichExponent where
   segments : String
   prosody : ProsodicPrespec := {}
@@ -945,7 +945,7 @@ theorem weak_is_outward_sensitive :
 -- ============================================================================
 
 -- The Telugu 5-case inventory is contiguous on Blake's typological
--- hierarchy (@cite{blake-1994}).
+-- hierarchy ([blake-1994]).
 example : Features.Case.IsValidInventory ({.nom, .acc, .gen, .dat, .loc} : Finset Features.Case) := by
   decide
 
@@ -977,7 +977,7 @@ theorem central_argument :
   exact ⟨by decide, by decide, rfl⟩
 
 -- ============================================================================
--- § 9: Connection to Moraic CL Theory (@cite{hayes-1989})
+-- § 9: Connection to Moraic CL Theory ([hayes-1989])
 -- ============================================================================
 
 section MoraicCLConnection
@@ -992,7 +992,7 @@ open Phonology.Moraic.CL (deleteMoraic spreadToFill)
 def teluguMoraicParams : MoraicParams := { wbp := true }
 
 /-- In a WBP language like Telugu, deleting a coda consonant strands one
-    mora — this is @cite{hayes-1989}'s **classical CL** (§5.1.1).
+    mora — this is [hayes-1989]'s **classical CL** (§5.1.1).
 
     This grounds the DAT `compLengthen` candidate: /m/ deletion from
     /dram/ strands a mora, which spreads left to yield /drā/.
@@ -1001,7 +1001,7 @@ def teluguMoraicParams : MoraicParams := { wbp := true }
 theorem telugu_coda_deletion_strands_mora (o n c : Segment) :
     (deleteMoraic (syllableToMoraic teluguMoraicParams ⟨[o], [n], [c]⟩) 1).2 = 1 := rfl
 
-/-- Moraic conservation (Rule (64), @cite{hayes-1989}): the mora stranded
+/-- Moraic conservation (Rule (64), [hayes-1989]): the mora stranded
     by /m/ deletion is absorbed by leftward spreading to /a/, yielding /ā/
     (2μ). Total mora count is unchanged. -/
 theorem telugu_cl_conservation (o n c : Segment) :

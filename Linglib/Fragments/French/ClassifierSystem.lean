@@ -2,10 +2,10 @@ import Linglib.Typology.ClassifierSystem
 
 /-!
 # French noun-categorization system
-@cite{aikhenvald-2000}
+[aikhenvald-2000]
 
 Classifier-system data for French (ISO `fra`): masculine/feminine
-noun-class system per @cite{aikhenvald-2000} §2.
+noun-class system per [aikhenvald-2000] §2.
 -/
 
 namespace French
@@ -24,6 +24,6 @@ def classifierSystem : Typology.NounCategorizationSystem :=
   , hasUnmarkedDefault := true  -- masculine is unmarked
   , preferredSemantics := [.sex, .animacy]
   , hasObligatoryNumber := true  -- le/les, un/des
-  , source := "@cite{aikhenvald-2000} §2" }
+  , source := "[aikhenvald-2000] §2" }
 
 end French

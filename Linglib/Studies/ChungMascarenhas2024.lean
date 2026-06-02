@@ -3,7 +3,7 @@ import Linglib.Semantics.Conditionals.Probabilistic
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
-# @cite{chung-mascarenhas-2024} — Modality, expected utility, and hypothesis testing
+# [chung-mascarenhas-2024] — Modality, expected utility, and hypothesis testing
 
 A single lexical entry for `must`, parameterized by a set `R` of
 "relevant propositions". For deontics, `R = R_D` (rules/ideals);
@@ -22,7 +22,7 @@ Headline operator (C&M (6)):
 * `mustCM`, `oughtCM`, `mustCMWithPlausibility` — the operator, the
   Sloman-style weak-necessity variant, and C&M §5's plausibility patch
   as a separate `def` (so the patch stays reviewable).
-* `Miners` — the @cite{kolodny-macfarlane-2010} deontic scenario as a
+* `Miners` — the [kolodny-macfarlane-2010] deontic scenario as a
   six-world PMF setup with `idealsRD` (paper notation `R_D`).
 * `ModalLinda` — C&M's modal-conjunction-fallacy numerical claims as ℚ
   values with the headline inequality `explanatoryValueTeller <
@@ -42,7 +42,7 @@ choices not in the paper.
 ## Cross-references
 
 * `Studies/VonFintelIatridou2005.lean` §6 —
-  C&M's exhaustification realises @cite{sloman-1970}'s "only
+  C&M's exhaustification realises [sloman-1970]'s "only
   candidate" / vF&I's *have-to* vs *ought-to* distinction.
 * `Studies/Lassiter2017.lean` — Lassiter's `want`
   on the same EV substrate (`PMF.condExpect`); C&M's `must` differs
@@ -59,20 +59,20 @@ open BigOperators
 
 /-! ### The operator -/
 
-/-- @cite{chung-mascarenhas-2024} (6): `must φ` iff `E_w[μ_R ∣ φ]`
+/-- [chung-mascarenhas-2024] (6): `must φ` iff `E_w[μ_R ∣ φ]`
 exceeds the contextual threshold `θ` AND no alternative does. -/
 def mustCM {W : Type*} [Fintype W] (p : PMF W) (R : Finset (Set W))
     (φ : Set W) (alts : Finset (Set W)) (θ : ℝ≥0∞) : Prop :=
   sumLikelihoods p R φ > θ ∧ ∀ ψ ∈ alts, sumLikelihoods p R ψ ≤ θ
 
-/-- The @cite{sloman-1970}-flavored *ought*: drop the exhaustification
-clause. @cite{vonfintel-iatridou-2005} §6 identifies this with the
+/-- The [sloman-1970]-flavored *ought*: drop the exhaustification
+clause. [vonfintel-iatridou-2005] §6 identifies this with the
 weak-necessity modal across teleological and deontic flavors. -/
 def oughtCM {W : Type*} [Fintype W] (p : PMF W) (R : Finset (Set W))
     (φ : Set W) (θ : ℝ≥0∞) : Prop :=
   sumLikelihoods p R φ > θ
 
-/-- @cite{chung-mascarenhas-2024} §5: `mustCM` with the additional
+/-- [chung-mascarenhas-2024] §5: `mustCM` with the additional
 plausibility requirement `P(φ) ≥ θplaus`. Kept as a separate `def`
 rather than baked into `mustCM`, so the §5 patch (which C&M concede
 is not derived from the core) stays reviewable. -/
@@ -81,7 +81,7 @@ def mustCMWithPlausibility {W : Type*} [Fintype W] (p : PMF W)
     (θ θplaus : ℝ≥0∞) : Prop :=
   mustCM p R φ alts θ ∧ p.probOfSet φ ≥ θplaus
 
-/-! ### Miners scenario @cite{kolodny-macfarlane-2010}
+/-! ### Miners scenario [kolodny-macfarlane-2010]
 
 Six worlds = (block-action) × (miners-location):
 * `w0` = block-A, miners-in-A: 10 saved
@@ -95,7 +95,7 @@ Uniform prior over the 6 worlds — equivalent (under independence of
 action and location) to a uniform prior on miners-location with
 action a free choice. `idealsRD` (paper notation `R_D`) is
 `{1 saved, 2 saved, ..., 10 saved}`, following
-@cite{cariani-kaufmann-kaufmann-2013}. -/
+[cariani-kaufmann-kaufmann-2013]. -/
 
 namespace Miners
 
@@ -137,7 +137,7 @@ noncomputable def idealsRD : Finset (Set World) :=
 
 end Miners
 
-/-! ### Modal Linda @cite{tversky-kahneman-1983}
+/-! ### Modal Linda [tversky-kahneman-1983]
 
 C&M §3.2 + (30)/(31): the salient evidence from the Linda description
 projects to two propositions about Linda — concern with social
@@ -189,7 +189,7 @@ theorem feministTeller_strictly_higher :
 
 end ModalLinda
 
-/-! ### Modal Lawyers and Engineers @cite{kahneman-tversky-1973}
+/-! ### Modal Lawyers and Engineers [kahneman-tversky-1973]
 
 C&M §3.3 + (37)/(38): two evidence pieces from the Jack description —
 absence of interest in political/social issues (`notPoliticalSocial`)
@@ -249,7 +249,7 @@ transparent compositional form of English *must*:
 
 The composition (their (48)) yields `mustCM` exactly. -/
 
-/-- @cite{chung-mascarenhas-2024} (48): adding the `-(e)ya`
+/-- [chung-mascarenhas-2024] (48): adding the `-(e)ya`
 exhaustifier to `Θ(⟦if φ, EVAL⟧^w)` yields `mustCM φ`. Trivial by
 definition: the exhaustifier IS the second conjunct of `mustCM`. The
 named theorem documents the compositional claim for cross-references. -/

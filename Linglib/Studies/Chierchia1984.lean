@@ -7,7 +7,7 @@ import Mathlib.Data.Fin.Basic
 
 /-!
 # Chierchia (1984): Topics in the Syntax and Semantics of Infinitives and Gerunds
-@cite{chierchia-1984}
+[chierchia-1984]
 
 UMass Amherst dissertation (advisor: Barbara Hall Partee).
 
@@ -55,11 +55,11 @@ Control predicates involve modal qualification (Ch IV §2.2):
 - force(P)(x)(y) ↔ □_{force,y} P(x) — in all situations compatible with
   what y imposes on x, x has property P
 
-Chierchia adopts @cite{kratzer-1981}'s theory of conversational backgrounds
+Chierchia adopts [kratzer-1981]'s theory of conversational backgrounds
 to formalize this. Each control verb selects a conversational background
 type (deontic for force, buletic for try) and a modal relation (necessity
 or possibility). The formalization below uses the later two-parameter
-framework (modal base + ordering source) from @cite{kratzer-1991}, which
+framework (modal base + ordering source) from [kratzer-1991], which
 refines Kratzer (1981)'s single-parameter approach.
 
 ## Visser's and Bach's Generalizations (derived)
@@ -76,8 +76,8 @@ the meaning postulate.
 
 ## Connections
 
-- The VP=Property hypothesis is the direct ancestor of @cite{chierchia-1998}'s
-  ∩/∪ operators (which generalize to kinds) and of @cite{grano-2024}'s
+- The VP=Property hypothesis is the direct ancestor of [chierchia-1998]'s
+  ∩/∪ operators (which generalize to kinds) and of [grano-2024]'s
   eventuality abstraction approach.
 - The modal qualification of control connects to Kratzer's conversational
   backgrounds (already formalized in `Semantics.Modality.Kratzer`).
@@ -200,11 +200,11 @@ abbrev ObjControlVerb := ControlVerb E (E × E)
 
 /-! ## Modal Qualification
 
-@cite{chierchia-1984} Ch IV §2.2: control predicates involve modal
+[chierchia-1984] Ch IV §2.2: control predicates involve modal
 qualification. The verb's meaning is not simply "x does P" but "in all
 situations compatible with certain conditions, x does P."
 
-Chierchia adopts @cite{kratzer-1981}'s theory of conversational
+Chierchia adopts [kratzer-1981]'s theory of conversational
 backgrounds: each control verb selects a conversational background type
 and a modal relation (necessity or possibility).
 
@@ -218,7 +218,7 @@ and a modal relation (necessity or possibility).
   imposes on x where x does P.
 
 The formalization below uses the later two-parameter framework
-(modal base + ordering source) from @cite{kratzer-1991}, which
+(modal base + ordering source) from [kratzer-1991], which
 refines Kratzer (1981)'s single-parameter approach. The `ModalBase`
 corresponds roughly to the circumstantial facts, and the
 `OrderingSource` to the conversational background type (bouletic,
@@ -312,7 +312,7 @@ end ControlPrinciple
 -- § 5. Three Control Classes
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{chierchia-1984}'s three control classes (Ch IV §1), distinguished
+/-- [chierchia-1984]'s three control classes (Ch IV §1), distinguished
     by their closure properties under argument-structure operations.
 
     - `obligatory`: all six OC properties hold (locality, no arbitrary
@@ -365,7 +365,7 @@ theorem prominence_no_cp : ChierchiaControlClass.prominence.hasCP = false := rfl
 
 /-! ## Per-Verb Classification
 
-Derive @cite{chierchia-1984}'s control class from Verb fields.
+Derive [chierchia-1984]'s control class from Verb fields.
 
 In Chierchia's taxonomy, ALL control verbs with a fixed, lexically
 determined controller are obligatory — regardless of whether they are
@@ -414,7 +414,7 @@ derivation from `Syntax.ArgumentStructure.Alternation.passivization` and `Contro
 
 open Syntax.ArgumentStructure.Alternation
 
-/-- Which TR-role serves as the controller, per @cite{chierchia-1984}'s CP.
+/-- Which TR-role serves as the controller, per [chierchia-1984]'s CP.
 
     Subject control: A is the controller (the subject has property P).
     Object control: P is the controller (the object has property P).
@@ -556,7 +556,7 @@ end VerbVerification
 
 /-! ## Bridge to Landau (2015)
 
-@cite{chierchia-1984} and @cite{landau-2015} cut the control verb
+[chierchia-1984] and [landau-2015] cut the control verb
 space differently:
 
 - **Chierchia**: ALL verbs with the CP are obligatory control, regardless

@@ -2,9 +2,9 @@
 # Temporal Adverbials and the Perfect
 
 Temporal adverbials constrain the Perfect Time Span (PTS), connecting to the
-Extended Now (PERF_XN) framework from @cite{knick-sharf-2026}.
+Extended Now (PERF_XN) framework from [knick-sharf-2026].
 
-## @cite{iatridou-anagnostopoulou-izvorski-2001} Classification
+## [iatridou-anagnostopoulou-izvorski-2001] Classification
 
 | Type       | Example           | LB constraint     |
 |------------|-------------------|--------------------|
@@ -45,7 +45,7 @@ variable {W Time : Type*} [LinearOrder Time]
     Adverbials restrict which PTS intervals are admissible. -/
 abbrev PTSConstraint (Time : Type*) [LinearOrder Time] := Interval Time → Prop
 
-/-- @cite{iatridou-anagnostopoulou-izvorski-2001} adverbial type classification.
+/-- [iatridou-anagnostopoulou-izvorski-2001] adverbial type classification.
     - `durative`: specifies the left boundary (e.g., "since Monday")
     - `inclusive`: does not specify the left boundary (e.g., "before Monday") -/
 inductive AdverbialType where

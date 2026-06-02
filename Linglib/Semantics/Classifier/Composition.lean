@@ -4,7 +4,7 @@ import Linglib.Semantics.Classifier.TypeN
 
 /-!
 # Composition Rules for Sudo (2016)
-@cite{sudo-2016} @cite{chierchia-1998}
+[sudo-2016] [chierchia-1998]
 
 The compositional apparatus that allows numerals (type `⟨s,n⟩`) and
 classifier-modified numeral phrases (type `⟨s,⟨e,t⟩⟩` after classifier

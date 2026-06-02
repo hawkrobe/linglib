@@ -6,11 +6,11 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # Noncooperative Communication: Unified Argumentative RSA
-@cite{barnett-griffiths-hawkins-2022} @cite{cummins-2025} @cite{cummins-franke-2021} @cite{merin-1999} @cite{sperber-2010} @cite{goodman-stuhlmuller-2013} @cite{yoon-etal-2020}
+[barnett-griffiths-hawkins-2022] [cummins-2025] [cummins-franke-2021] [merin-1999] [sperber-2010] [goodman-stuhlmuller-2013] [yoon-etal-2020]
 
-Unifies @cite{cummins-franke-2021}'s argumentative strength framework and
-@cite{barnett-griffiths-hawkins-2022}'s persuasive RSA into a single parameterized model,
-following @cite{cummins-2025}'s analysis of noncooperative communication.
+Unifies [cummins-franke-2021]'s argumentative strength framework and
+[barnett-griffiths-hawkins-2022]'s persuasive RSA into a single parameterized model,
+following [cummins-2025]'s analysis of noncooperative communication.
 
 ## Core Unification
 
@@ -31,7 +31,7 @@ The parameter β controls the cooperativity spectrum:
 
 ## Epistemic Vigilance
 
-Following @cite{sperber-2010}, the hearer's interpretation is a
+Following [sperber-2010], the hearer's interpretation is a
 trust-weighted mixture of pragmatic and literal posteriors:
 
   P_vigilant(w∣u) = τ · P_L1(w∣u) + (1−τ) · P_L0(w∣u)
@@ -40,7 +40,7 @@ where τ ∈ [0,1] is the hearer's trust in speaker cooperativity.
 
 ## Meaning-Level Taxonomy
 
-@cite{cummins-2025} identifies four levels at which falsehood can occur:
+[cummins-2025] identifies four levels at which falsehood can occur:
 assertion, implicature, presupposition, and typicality departure.
 Both C&F and Barnett involve misleading at the typicality/implicature
 level while maintaining truthful assertions — the argumentative speaker
@@ -55,14 +55,14 @@ open RSA.CombinedUtility
 
 
 -- ============================================================
--- Section 1: Cooperativity Spectrum (@cite{cummins-2025} §§1–4)
+-- Section 1: Cooperativity Spectrum ([cummins-2025] §§1–4)
 -- ============================================================
 
 /-- Speaker orientation on the cooperativity spectrum.
 
 - cooperative: β=0, speaker maximizes hearer's accurate belief (standard RSA)
 - argumentative: β>0, speaker has a goal G and balances informativity
-  and persuasion (@cite{cummins-franke-2021}, @cite{barnett-griffiths-hawkins-2022}, Macuch @cite{macuch-silva-etal-2024})
+  and persuasion ([cummins-franke-2021], [barnett-griffiths-hawkins-2022], Macuch [macuch-silva-etal-2024])
 
 The distinction is continuous: β parameterizes the spectrum. -/
 inductive SpeakerOrientation where
@@ -81,7 +81,7 @@ def orientationOf (goalWeight : ℚ) : SpeakerOrientation :=
 
 
 -- ============================================================
--- Section 3: Bridge — @cite{barnett-griffiths-hawkins-2022}
+-- Section 3: Bridge — [barnett-griffiths-hawkins-2022]
 -- ============================================================
 
 /-- goalOrientedUtility and combinedWeighted are literally the same function
@@ -100,7 +100,7 @@ theorem all_cooperative_at_zero (uEpi uGoal : ℚ) :
 
 
 -- ============================================================
--- Section 4: Bridge — @cite{cummins-franke-2021} Argumentative Strength
+-- Section 4: Bridge — [cummins-franke-2021] Argumentative Strength
 -- ============================================================
 
 -- C&F's argStr(u, G) = log₂(P(u|G)/P(u|¬G)) measures how much evidence
@@ -159,12 +159,12 @@ theorem positive_argStr_iff_posterior_above_prior
 
 
 -- ============================================================
--- Section 5: Meaning-Level Taxonomy (@cite{cummins-2025} §§3–5)
+-- Section 5: Meaning-Level Taxonomy ([cummins-2025] §§3–5)
 -- ============================================================
 
 /-- Level of meaning at which falsehood can occur.
 
-@cite{cummins-2025} identifies four levels, ordered by speaker blameworthiness: assertion > implicature > presupposition > typicality.
+[cummins-2025] identifies four levels, ordered by speaker blameworthiness: assertion > implicature > presupposition > typicality.
 
 Both C&F and Barnett involve misleading at the typicality/implicature level
 while maintaining truthful assertions — the argumentative speaker exploits
@@ -197,12 +197,12 @@ theorem typicality_least_blameworthy :
 
 
 -- ============================================================
--- Section 6: Epistemic Vigilance (@cite{sperber-2010})
+-- Section 6: Epistemic Vigilance ([sperber-2010])
 -- ============================================================
 
 /-- Epistemic vigilance: the hearer's trust in speaker cooperativity.
 
-Following @cite{sperber-2010} as discussed in Cummins (2025 §4):
+Following [sperber-2010] as discussed in Cummins (2025 §4):
 1. Hearer first interprets as if speaker is cooperative (stance of trust)
 2. Then weighs the pragmatic interpretation by trust level τ
 3. Falls back toward literal interpretation as trust decreases
@@ -269,7 +269,7 @@ Both sides use `combined` (convex interpolation), making the symmetry explicit:
 - Hearer: `combined τ l0Post l1Post` (via vigilantPosterior)
 
 Standard RSA is the special case goalWeight=0, τ=1.
-@cite{barnett-griffiths-hawkins-2022} is goalWeight=226/326 (≈ 0.693, from β=2.26), τ=1.
+[barnett-griffiths-hawkins-2022] is goalWeight=226/326 (≈ 0.693, from β=2.26), τ=1.
 A suspicious hearer facing an argumentative speaker would have high goalWeight, low τ. -/
 structure NoncooperativeRSAParams where
   /-- Speaker's goal-orientation weight ∈ [0,1] -/
@@ -286,7 +286,7 @@ structure NoncooperativeRSAParams where
 def standardRSA : NoncooperativeRSAParams :=
   { goalWeight := 0, τ := 1 }
 
-/-- @cite{barnett-griffiths-hawkins-2022} fitted model: goalWeight = β/(1+β) = 226/326 ≈ 0.693,
+/-- [barnett-griffiths-hawkins-2022] fitted model: goalWeight = β/(1+β) = 226/326 ≈ 0.693,
 pragmatic group with full trust.
 
 Original paper parameterization: β̂ = 2.26 (additive form).
@@ -340,7 +340,7 @@ theorem barnett_goalOrientedUtility_via_combined (uEpi uGoal β : ℚ) (hβ : 0 
 
 
 -- ============================================================
--- Section 8: Pragmatic Vulnerability (@cite{cummins-2025} §4)
+-- Section 8: Pragmatic Vulnerability ([cummins-2025] §4)
 -- ============================================================
 
 /-- The vigilant posterior is monotone in trust: more trust pulls the
@@ -366,7 +366,7 @@ theorem vigilant_mono_trust_sym (l1Post l0Post : ℚ)
   rw [vigilant_is_combined ev1, vigilant_is_combined ev2]
   exact lower_lambda_when_A_dominates ev1.trustLevel ev2.trustLevel hord l0Post l1Post hne
 
-/-- **Pragmatic vulnerability** (@cite{cummins-2025} §4): pragmatic inference is
+/-- **Pragmatic vulnerability** ([cummins-2025] §4): pragmatic inference is
 exploitable *precisely because* it is rational.
 
 When L1 diverges from L0 (l0 < l1), the fully-pragmatic listener (τ=1) is
@@ -377,7 +377,7 @@ pulls the posterior back toward the immune L0:
 - τ = 0: posterior = L0 (immune) — `vigilant_at_zero_trust`
 - 0 < τ < 1: **L0 < posterior < L1** (partially protected) — THIS THEOREM
 
-The weak evidence effect (@cite{barnett-griffiths-hawkins-2022}, `weak_evidence_effect_s4`) is
+The weak evidence effect ([barnett-griffiths-hawkins-2022], `weak_evidence_effect_s4`) is
 a concrete instance: L0 correctly identifies stick 4 as evidence for "longer",
 but L1 at β=2 overshoots in the wrong direction. Reducing τ from 1 would pull
 the posterior back toward L0's correct assessment.

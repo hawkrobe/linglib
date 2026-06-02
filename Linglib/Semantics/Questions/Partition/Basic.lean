@@ -5,8 +5,8 @@ import Linglib.Semantics.Questions.Partition.QUD
 
 /-!
 # Question — partition predicate, Setoid bridge, QUD bridge
-@cite{groenendijk-stokhof-1984} @cite{roberts-2012}
-@cite{ciardelli-groenendijk-roelofsen-2018}
+[groenendijk-stokhof-1984] [roberts-2012]
+[ciardelli-groenendijk-roelofsen-2018]
 
 Bridge from `Question W` (downward-closed nonempty families of information
 states) to **partition-style inquiry** in mathlib's `Setoid.IsPartition`

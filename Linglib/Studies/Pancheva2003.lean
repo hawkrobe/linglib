@@ -3,8 +3,8 @@ import Linglib.Semantics.Aspect.Basic
 import Linglib.Studies.Kiparsky2002
 
 /-!
-# @cite{pancheva-2003}: The aspectual makeup of Perfect participles and the interpretations of the Perfect
-@cite{pancheva-2003} @cite{kiparsky-2002} @cite{iatridou-anagnostopoulou-izvorski-2001}
+# [pancheva-2003]: The aspectual makeup of Perfect participles and the interpretations of the Perfect
+[pancheva-2003] [kiparsky-2002] [iatridou-anagnostopoulou-izvorski-2001]
 
 Pancheva (in *Perfect Explorations*, Alexiadou-Rathert-von Stechow
 eds., 2003) argues that the three perfect interpretations
@@ -164,7 +164,7 @@ end Examples
 -- § Pancheva → Kiparsky bridge (moved from Studies/Kiparsky2002.lean)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Map @cite{pancheva-2003}'s perfect types to Kiparsky's readings.
+/-- Map [pancheva-2003]'s perfect types to Kiparsky's readings.
     - experiential → existential (Pancheva's EXP and Kiparsky's
       existential both denote ∃-event-in-PTS without a result-state
       requirement)

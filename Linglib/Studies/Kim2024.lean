@@ -4,17 +4,17 @@ import Linglib.Semantics.Modality.EventRelativity
 /-!
 # Psych Verb Contentfulness ↔ Modal Content Licensing
 
-@cite{kim-2024} @cite{hacquard-2010} @cite{hacquard-2006}Connects @cite{kim-2024}'s causal source distinction for psych verbs to
-@cite{hacquard-2006}'s content licensing principle for modal flavor
+[kim-2024] [hacquard-2010] [hacquard-2006]Connects [kim-2024]'s causal source distinction for psych verbs to
+[hacquard-2006]'s content licensing principle for modal flavor
 availability.
 
 ## The Connection
 
-@cite{kim-2024}: stative Class II psych verbs have **internal** causal source —
+[kim-2024]: stative Class II psych verbs have **internal** causal source —
 the stimulus is a mind-internal representation with propositional content.
 The experiencer REPRESENTS the stimulus to themselves (intensional subject).
 
-@cite{hacquard-2010}: epistemic modal bases require a **contentful** event — one
+[hacquard-2010]: epistemic modal bases require a **contentful** event — one
 with propositional content CON(e). Speech acts and attitude events have
 content; VP events do not.
 
@@ -53,7 +53,7 @@ open Semantics.Modality (ModalFlavor)
 -- ════════════════════════════════════════════════════
 
 /-- Whether a psych verb's event has propositional content, derived from
-the causal source (@cite{kim-2024} UPH).
+the causal source ([kim-2024] UPH).
 
 Internal causal source → the experiencer's mental state involves
 propositional content (they REPRESENT the stimulus to themselves).

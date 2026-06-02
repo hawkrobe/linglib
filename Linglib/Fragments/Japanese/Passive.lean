@@ -1,6 +1,6 @@
 /-!
 # Japanese Passive Types
-@cite{jo-seo-2023} @cite{ozaki-2026}
+[jo-seo-2023] [ozaki-2026]
 
 Japanese has two structurally distinct passive constructions that look
 superficially similar (both use *-(r)are-*):
@@ -12,7 +12,7 @@ superficially similar (both use *-(r)are-*):
 
 The *niyotte* substitution test distinguishes them: direct passives allow the
 dative agent marker *ni* to be replaced with *niyotte*; indirect passives
-do not (@cite{jo-seo-2023}).
+do not ([jo-seo-2023]).
 -/
 
 namespace Japanese.Passive

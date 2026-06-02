@@ -2,11 +2,11 @@ import Linglib.Core.Nominal.Determiner
 
 /-!
 # Akan Definiteness Fragment
-@cite{schwarz-2013}
+[schwarz-2013]
 
 Akan (Kwa, ISO `ak`). A single overt **strong** definite article *nó*
 (familiarity/anaphoric); uniqueness definites are expressed by bare nominals
-(no weak article). Indefinites use *bí*. Under @cite{schwarz-2013} §4.1 this is
+(no weak article). Indefinites use *bí*. Under [schwarz-2013] §4.1 this is
 a strong-article-only language → the `.markedAnaphoric` Moroney cell.
 -/
 

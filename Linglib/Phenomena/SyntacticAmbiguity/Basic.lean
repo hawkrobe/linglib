@@ -13,7 +13,7 @@ often visible as longer reading times and/or regressive eye movements.
 ## CC/RC Ambiguity
 
 The best-studied case is the complement clause (CC) vs. relative clause (RC)
-ambiguity in English (@cite{altmann-garnham-dennis-1992}):
+ambiguity in English ([altmann-garnham-dennis-1992]):
 
 - *He told the woman that he'd risked his life for **many people** ...* (CC)
 - *He told the woman that he'd risked his life for **to install** ...* (RC)
@@ -23,7 +23,7 @@ ambiguous between a CC complement of *told* and an RC modifying *the woman*.
 
 ## Theoretical Hypotheses
 
-Two hypotheses frame the debate (@cite{paape-vasishth-2026}):
+Two hypotheses frame the debate ([paape-vasishth-2026]):
 
 - **Context-sensitive attachment**: Discourse context modulates first-pass
   parsing choices. A mismatch between context and disambiguation (e.g.,
@@ -35,7 +35,7 @@ Two hypotheses frame the debate (@cite{paape-vasishth-2026}):
   first-pass processing. Context may only affect later reanalysis stages.
   Predicts a disambiguation *main effect* with *no interaction*.
 
-@cite{paape-vasishth-2026} shows the answer is a graded compromise:
+[paape-vasishth-2026] shows the answer is a graded compromise:
 first-pass parsing is partially context-sensitive, and context also
 affects reanalysis — "the answer is both."
 

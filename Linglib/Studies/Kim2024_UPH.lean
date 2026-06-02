@@ -9,10 +9,10 @@ import Linglib.Studies.SolstadBott2022
 /-!
 # Uniform Projection Hypothesis for Psych Verbs
 
-@cite{kim-2024} @cite{belletti-rizzi-1988} @cite{pesetsky-1995}
+[kim-2024] [belletti-rizzi-1988] [pesetsky-1995]
 
-@cite{kim-2024}'s Uniform Projection Hypothesis (UPH) applied to the
-@cite{belletti-rizzi-1988} classification of psych verbs. All Class II
+[kim-2024]'s Uniform Projection Hypothesis (UPH) applied to the
+[belletti-rizzi-1988] classification of psych verbs. All Class II
 (object-experiencer) psych verbs uniformly project Cause + Experiencer;
 the eventive/stative split comes from the causal source (external percept
 vs internal representation).
@@ -26,7 +26,7 @@ The fragment entries in `Verbal.lean` set independent fields:
   `EntailmentProfile.toRole`)
 - `opaqueContext` (true vs false)
 
-@cite{kim-2024}'s theory predicts these fields must covary:
+[kim-2024]'s theory predicts these fields must covary:
 - All Class II verbs share the same proto-role profile (UPH)
 - `opaqueContext` is determined by `subjectIntensional` applied to `causalSource`
 - `causalSource` determines temporal and event-structural behavior
@@ -37,15 +37,15 @@ verified per-verb (§ 2), and then used to DERIVE consequences (§§ 3–7).
 ## Key results
 
 1. **Consistency**: each Class II entry satisfies `classII_consistent`,
-   connecting 4 independently-set fields through @cite{kim-2024}'s theory
+   connecting 4 independently-set fields through [kim-2024]'s theory
 2. **UPH derivation**: theta-grid uniformity FOLLOWS from consistency
 3. **Opacity derivation**: `opaqueContext` FOLLOWS from `causalSource`
 4. **Temporal prediction**: temporal behavior FOLLOWS from `causalSource`
 5. **T/SM restriction**: derived from the Onset Condition on causal chains
 6. **Class I/II theta reversal**: derived from the consistency predicates
 7. **Proto-role bridge**: theta roles map to canonical Dowty profiles
-8. **Cascade bridge** (§ 9): @cite{pesetsky-1995}'s syntactic HMC account
-   and @cite{kim-2024}'s semantic Onset Condition account both predict
+8. **Cascade bridge** (§ 9): [pesetsky-1995]'s syntactic HMC account
+   and [kim-2024]'s semantic Onset Condition account both predict
    Cause+SM incompatibility but diverge on Cause+Target
 -/
 
@@ -66,7 +66,7 @@ open Semantics.ArgumentStructure.EntailmentProfile
 -- ════════════════════════════════════════════════════
 
 /-- A Class II (object-experiencer) psych verb entry is internally consistent
-    when its independently-set fields agree with @cite{kim-2024}'s predictions:
+    when its independently-set fields agree with [kim-2024]'s predictions:
 
     (a) It has a causal source (external or internal)
     (b) Opacity agrees with `subjectIntensional` applied to the causal source
@@ -80,7 +80,7 @@ def classII_consistent (v : VerbEntry) : Prop :=
     v.opaqueContext = subjectIntensional cs
 
 /-- A Class I (experiencer-subject) psych verb entry is consistent with
-    @cite{belletti-rizzi-1988}'s *temere* pattern: no causal source
+    [belletti-rizzi-1988]'s *temere* pattern: no causal source
     (the internal/external distinction is Class-II-specific). -/
 def classI_consistent (v : VerbEntry) : Prop :=
   v.causalSource = none
@@ -292,7 +292,7 @@ theorem tsm_onset_conflict :
 -- ════════════════════════════════════════════════════
 
 /-- Class II theta roles map to the canonical Dowty proto-role profiles
-    (bridging @cite{kim-2024} UPH to @cite{solstad-bott-2024} proto-role infrastructure).
+    (bridging [kim-2024] UPH to [solstad-bott-2024] proto-role infrastructure).
     stimulus → causation + independent existence (P-Agent = 2),
     experiencer → sentience + independent existence (P-Agent = 2). -/
 theorem classII_theta_matches_proto_roles :
@@ -324,7 +324,7 @@ theorem external_implies_extensional :
     subjectIntensional CausalSource.external = false := rfl
 
 -- ════════════════════════════════════════════════════
--- § 8. Derived Stimulus Type (T/SM, @cite{pesetsky-1995})
+-- § 8. Derived Stimulus Type (T/SM, [pesetsky-1995])
 -- ════════════════════════════════════════════════════
 
 /-! For Class II verbs, stimulus subtype is DERIVED from causal source
@@ -403,7 +403,7 @@ theorem internal_derives_sm (v : VerbEntry)
 -- § 9. Cascade Bridge: Pesetsky ↔ Kim on T/SM
 -- ════════════════════════════════════════════════════
 
-/-! @cite{pesetsky-1995} and @cite{kim-2024} both predict the T/SM
+/-! [pesetsky-1995] and [kim-2024] both predict the T/SM
     restriction (Cause + SM = ill-formed) but via different mechanisms:
 
     **Pesetsky (syntactic, symmetric)**: CAUS must incorporate into V

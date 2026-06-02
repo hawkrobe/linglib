@@ -6,7 +6,7 @@ import Mathlib.RingTheory.TensorProduct.Maps
 
 /-!
 # Merge Operator on the Bialgebra of Decorated Forests
-@cite{marcolli-chomsky-berwick-2025}
+[marcolli-chomsky-berwick-2025]
 
 Per M-C-B 2025 §1.3 (Definitions 1.3.1, 1.3.2, 1.3.4), the linguistic
 **Merge operator** `M_{S,S'}` for a pair `(S, S') : TraceTree α Unit`
@@ -319,7 +319,7 @@ theorem mergePost_right_one_tmul (S S' : TraceTree α Unit)
 
 /-! ## §6: M_{β, 1} substrate (single-element matching, no grafting)
 
-Per @cite{marcolli-chomsky-berwick-2025} §1.4.3.1 (book p. 50), the operator
+Per [marcolli-chomsky-berwick-2025] §1.4.3.1 (book p. 50), the operator
 `M_{β, 1}` is the "first half" of Internal Merge per Prop 1.4.2:
 
   IM = M_{T/β, β} ∘ M_{β, 1}
@@ -379,7 +379,7 @@ noncomputable def mergePostUnit (β : TraceTree α Unit) :
   hcMulLin (R := R) (α := α) ∘ₗ deltaMatchSingle (R := R) β
 
 /-- The "Merge-with-unit" operator `M_{β, 1}` per
-    @cite{marcolli-chomsky-berwick-2025} Prop 1.4.2 (book p. 50). The first
+    [marcolli-chomsky-berwick-2025] Prop 1.4.2 (book p. 50). The first
     half of Internal Merge. Factors as `mergePostUnit β ∘ comulDelAlgHom`.
 
     NOT a Merge operation in its own right: book p. 52 emphasizes "the

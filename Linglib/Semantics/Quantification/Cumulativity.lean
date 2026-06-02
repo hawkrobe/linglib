@@ -5,8 +5,8 @@ import Linglib.Studies.Charlow2021.HigherOrder
 /-!
 # Cross-framework synthesis: cumulative readings of modified numerals
 
-@cite{charlow-2021} @cite{beck-sauerland-2000} @cite{champollion-2017}
-@cite{schein-1993}
+[charlow-2021] [beck-sauerland-2000] [champollion-2017]
+[schein-1993]
 
 ## Why this file exists
 

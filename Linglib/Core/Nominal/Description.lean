@@ -4,9 +4,9 @@ import Linglib.Features.Definiteness
 
 /-!
 # Nominal Descriptions: Unified Sum Type
-@cite{coppock-beaver-2015} @cite{patel-grosz-grosz-2017} @cite{hanink-2021}
-@cite{moroney-2021} @cite{schwarz-2009} @cite{schwarz-2013}
-@cite{sharvy-1980} @cite{kriz-2015}
+[coppock-beaver-2015] [patel-grosz-grosz-2017] [hanink-2021]
+[moroney-2021] [schwarz-2009] [schwarz-2013]
+[sharvy-1980] [kriz-2015]
 
 A single sum type `Description F` covering the principal flavors of nominal
 description that the syntax–semantics interface needs to distinguish:
@@ -25,25 +25,25 @@ unified `F.Denot` machinery rather than ad-hoc `E → Bool` predicates.
 ## Design notes
 
 - **Restrictors are `DenotGS F .et`.** Both entity assignments and situation
-  assignments are first-class. This is the @cite{hanink-2021} position: a noun's
+  assignments are first-class. This is the [hanink-2021] position: a noun's
   resource situation is a *bound variable* in the structure, not a free
   contextual parameter.
 
 - **`unique` carries a situation-pronoun index.** Weak-article
-  (@cite{coppock-beaver-2015} uniqueness) definites are evaluated at a
+  ([coppock-beaver-2015] uniqueness) definites are evaluated at a
   structurally-bound situation, the `situationIdx`-th situation pronoun
   retrievable via `interpSitPronoun situationIdx gs`.
 
-- **`anaphoric` carries a discourse index.** @cite{schwarz-2009}
-  strong-article and @cite{hanink-2021} anaphoric definites point to a
+- **`anaphoric` carries a discourse index.** [schwarz-2009]
+  strong-article and [hanink-2021] anaphoric definites point to a
   discourse referent, the `discourseIdx`-th entity slot. This is the entity
   assignment's role.
 
 - **`demonstrative` is a separate constructor** for *genuinely deictic*
-  demonstratives (this/that; @cite{moroney-2021} Shan *nâj*/*nân*): it carries
+  demonstratives (this/that; [moroney-2021] Shan *nâj*/*nân*): it carries
   **both** a discourse/pointing index *and* a deictic feature
   (`Features.Deixis.Feature`), checked at a situation pronoun. This is **distinct**
-  from the @cite{schwarz-2009} strong article (`anaphoric`): @cite{patel-grosz-grosz-2017}
+  from the [schwarz-2009] strong article (`anaphoric`): [patel-grosz-grosz-2017]
   analyze German *der* as the strong article (`anaphoric`), not as a deictic
   demonstrative — their footnote 1 doubts *der* is truly demonstrative at all.
 
@@ -77,7 +77,7 @@ open Core.Logic.Intensional.Variables
 inductive Description (F : Frame) where
   /-- Bare noun (no overt determiner). The actual reading — kind, indefinite,
       unique, or anaphoric — is selected by the language's covert type-shift
-      hierarchy (@cite{chierchia-1998}, @cite{dayal-2004}). -/
+      hierarchy ([chierchia-1998], [dayal-2004]). -/
   | bare (restrictor : DenotGS F .et)
   /-- Indefinite (∃). Introduces a new discourse referent and presupposes
       nothing about prior discourse. Heim (1982)/Kamp novelty. -/
@@ -90,9 +90,9 @@ inductive Description (F : Frame) where
       `discourseIdx`-th entity-assignment slot is the antecedent. -/
   | anaphoric (restrictor : DenotGS F .et) (discourseIdx : Nat)
   /-- Demonstrative (genuinely deictic this/that). Carries a deictic feature
-      (@cite{moroney-2021} Shan *nâj*/*nân*) and a discourse/pointing index; the
+      ([moroney-2021] Shan *nâj*/*nân*) and a discourse/pointing index; the
       restrictor is checked at the resource situation `situationIdx`. Distinct from
-      the @cite{schwarz-2009} strong article `anaphoric` (PG&G's German *der*). -/
+      the [schwarz-2009] strong article `anaphoric` (PG&G's German *der*). -/
   | demonstrative
       (restrictor : DenotGS F .et)
       (deictic : Features.Deixis.Feature)
@@ -145,7 +145,7 @@ def usesSituationPronoun : Description F → Bool
   | .demonstrative ..    => true
   | _                    => false
 
-/-- Map each `Description` flavor to the @cite{schwarz-2009}–@cite{schwarz-2013}
+/-- Map each `Description` flavor to the [schwarz-2009]–[schwarz-2013]
     presupposition type it expresses, where applicable. Bare and indefinite
     return `none` because they are not (in themselves) definites. -/
 def expectedPresupType :
@@ -170,11 +170,11 @@ theorem isAnaphoric_implies_familiarity (n : Description F)
   cases n <;> simp [isAnaphoric] at h
   all_goals rfl
 
-/-- The definite description for a @cite{schwarz-2009} presupposition type: the
+/-- The definite description for a [schwarz-2009] presupposition type: the
     **weak** article (uniqueness) is `unique`, the **strong** article (familiarity)
     is `anaphoric`. A section of `expectedPresupType` over the two article
     strengths, so any item carrying a `DefPresupType` — a determiner, a definite,
-    or (per @cite{patel-grosz-grosz-2017}) a personal/demonstrative pronoun —
+    or (per [patel-grosz-grosz-2017]) a personal/demonstrative pronoun —
     denotes by `ofPresupType` and recovers its strength via `expectedPresupType`.
 
     `idx` is the strong article's anaphoric/discourse index; for the weak article

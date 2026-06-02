@@ -30,7 +30,7 @@ This closes the universal property TODO in
 
 ## References
 
-* @cite{oudom-guin-2008} §2 (Lemma 2.5) — symmetric multilinear lift on
+* [oudom-guin-2008] §2 (Lemma 2.5) — symmetric multilinear lift on
   rank-n symmetric power.
 
 ## `[UPSTREAM]` status

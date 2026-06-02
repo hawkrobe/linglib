@@ -3,11 +3,11 @@ import Linglib.Semantics.Entailment.Polarity
 
 /-!
 # Presupposition Trigger Typology
-@cite{wang-2025}
+[wang-2025]
 
 Cross-linguistic typology of presupposition triggers, classifying triggers
 by what non-presuppositional alternative they have. The classification
-follows @cite{wang-2025} Table 4.1 and is consumed by:
+follows [wang-2025] Table 4.1 and is consumed by:
 
 - `Studies/Wang2025.lean` — IC ≫ FP ≫ MP
   constraint-based competition analysis
@@ -117,11 +117,11 @@ structure ExhWithPresup (W : Type*) where
 
 
 -- ============================================================================
--- @cite{wang-2025} Table 4.1: Alternative-structure typology
+-- [wang-2025] Table 4.1: Alternative-structure typology
 -- ============================================================================
 
 /--
-@cite{wang-2025} Table 4.1: How a presupposition trigger relates to its
+[wang-2025] Table 4.1: How a presupposition trigger relates to its
 non-presuppositional alternative.
 -/
 inductive AltStructure where
@@ -136,7 +136,7 @@ inductive AltStructure where
 /--
 Obligatoriness pattern predicted by the alternative-structure typology.
 
-@cite{wang-2025} derives three patterns from the interaction of trigger
+[wang-2025] derives three patterns from the interaction of trigger
 type, alternative structure, and constraint ranking:
 1. Obligatory: trigger must be used when CommonGround supports presupposition
 2. Optional: trigger may or may not be used
@@ -152,7 +152,7 @@ inductive Obligatoriness where
   deriving DecidableEq, Repr
 
 /--
-A presupposition trigger entry with @cite{wang-2025} alternative structure.
+A presupposition trigger entry with [wang-2025] alternative structure.
 
 Extends the basic trigger type with information about what non-presuppositional
 alternative exists, enabling the constraint-based competition analysis.

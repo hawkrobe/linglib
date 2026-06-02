@@ -1,6 +1,6 @@
 /-!
 # Semantics.Quantification.Binominal — Defs
-@cite{saab-2026} @cite{ten-wolde-2023}
+[saab-2026] [ten-wolde-2023]
 
 Cross-linguistic types for binominal (N₁-of-N₂) constructions: the
 3-way `BinominalType` (Saab 2026, Romance-cross-linguistic) and the
@@ -22,11 +22,11 @@ the sibling `Binominal.lean` holds the semantic composition rules.
 
 The 6-way `OfBinominalType` taxonomy and the grammaticalization cline
 (`clinePosition`, `bleaching_monotone`, `plural_loss_monotone`,
-`agreement_loosens_monotone`, etc.) follow @cite{ten-wolde-2023}'s
+`agreement_loosens_monotone`, etc.) follow [ten-wolde-2023]'s
 specific framework. This is one carve-up among several active
 frameworks for binominal noun phrase structure:
 
-- @cite{ten-wolde-2023}: 6-way grammaticalization cline (formalized here).
+- [ten-wolde-2023]: 6-way grammaticalization cline (formalized here).
 - Aarts 1998 *Binominal noun phrases in English*: different headedness
   diagnostics, no commitment to a single linear cline.
   Not currently in `references.bib`.
@@ -54,7 +54,7 @@ namespace Semantics.Quantification.Binominal
 
 /-! ### : Three-Way Classification (Spanish, cross-linguistic) -/
 
-/-- The three-way binominal classification (@cite{saab-2026}).
+/-- The three-way binominal classification ([saab-2026]).
 
 This coarser-grained taxonomy covers the structural types attested
 across Romance binominals. The finer-grained English subtypes are
@@ -66,7 +66,7 @@ inductive BinominalType where
   deriving DecidableEq, Repr
 
 /-- Does this binominal type license NP-ellipsis?
-    @cite{saab-2026}: pseudo-partitive and quantificational yes;
+    [saab-2026]: pseudo-partitive and quantificational yes;
     qualitative no. -/
 def BinominalType.licensesNPE : BinominalType → Bool
   | .pseudoPartitive  => true
@@ -74,7 +74,7 @@ def BinominalType.licensesNPE : BinominalType → Bool
   | .qualitative      => false
 
 /-- Does the Num head in this structure carry [E]?
-    @cite{saab-2026}: Num[E] is present iff the complement of Num
+    [saab-2026]: Num[E] is present iff the complement of Num
     is a standard nP (not an EquP with an indexical empty noun). -/
 def BinominalType.hasNumE : BinominalType → Bool
   | .pseudoPartitive  => true
@@ -94,7 +94,7 @@ inductive BNPHead where
   | n₂   -- N₂ denotes the referent (pseudo-partitive, evaluative, EM, BI)
   deriving Repr, DecidableEq
 
-/-- The six types of *of*-binominal construction (@cite{ten-wolde-2023}).
+/-- The six types of *of*-binominal construction ([ten-wolde-2023]).
 
 The ordering reflects the grammaticalization cline:
 N+PP → Head-Classifier → Pseudo-partitive / Evaluative → EM → BI.
@@ -126,7 +126,7 @@ inductive OfBinominalType where
 /-- Which noun is the semantic head of each construction type.
 
     For evaluative BNPs, N₂ is the semantic and discourse head, though
-    syntactic evidence for headedness is inconclusive (@cite{ten-wolde-2023}).
+    syntactic evidence for headedness is inconclusive ([ten-wolde-2023]).
     For EM and BI, N₂ is semantic, syntactic, and discourse head. -/
 def OfBinominalType.head : OfBinominalType → BNPHead
   | .nPP                  => .n₁
@@ -279,7 +279,7 @@ def OfBinominalType.ofObligatory : OfBinominalType → Bool
 
 /-- Position on the grammaticalization cline (0 = most lexical, 5 = most grammatical).
 
-Supported by diachronic corpus evidence (@cite{ten-wolde-2023}):
+Supported by diachronic corpus evidence ([ten-wolde-2023]):
 constructions appear in English in this order historically, and N₁ nouns
 progress through these stages with increasing semantic bleaching. -/
 def OfBinominalType.clinePosition : OfBinominalType → Nat

@@ -2,16 +2,16 @@ import Linglib.Typology.Indefinite
 
 /-!
 # English Indefinite Pronouns
-@cite{haspelmath-1997} @cite{wals-2013}
+[haspelmath-1997] [wals-2013]
 
 English forms its indefinite pronouns by prefixing `some-` to the
 generic-noun stems `-one`, `-body`, `-thing`, `-where` — yielding
 *someone*, *somebody*, *something*, *somewhere* (and parallel `any-`,
-`no-`, `every-` series). Per @cite{wals-2013} F46A, English is classified
+`no-`, `every-` series). Per [wals-2013] F46A, English is classified
 `.genericNounBased` on this basis.
 
 The single `some-` series covers all three SK/SU/NS functions on
-@cite{haspelmath-1997}'s map, yielding the AAA syncretism (D&A type i
+[haspelmath-1997]'s map, yielding the AAA syncretism (D&A type i
 unmarked).
 -/
 

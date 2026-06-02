@@ -1,7 +1,7 @@
 /-
 # Kripke's Modal Argument and the Scope-Rigidity Equivalence
 
-@cite{kripke-1980} *Naming and Necessity*, Lecture I.
+[kripke-1980] *Naming and Necessity*, Lecture I.
 
 The central formalization: rigidity is equivalent to scope-invariance.
 A designator is rigid if and only if de re (wide scope) and de dicto
@@ -206,7 +206,7 @@ theorem rigidification_not_synonymy {W E : Type*}
 exists. Numbers are strongly rigid (2 exists at every world); people are
 not (Nixon might not have existed).
 
-@cite{kripke-1980}: a strongly rigid designator designates an object
+[kripke-1980]: a strongly rigid designator designates an object
 that exists in every possible world. -/
 def IsStronglyRigid {W E : Type*} (exists_ : E → W → Prop)
     (f : Intension W E) : Prop :=

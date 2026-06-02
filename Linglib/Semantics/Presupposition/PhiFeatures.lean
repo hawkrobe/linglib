@@ -7,7 +7,7 @@ import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Presuppositional Semantics of Phi-Features
-@cite{sauerland-2003} @cite{sauerland-2008b} @cite{harbour-2016} @cite{heim-1991} @cite{wang-r-2023}
+[sauerland-2003] [sauerland-2008b] [harbour-2016] [heim-1991] [wang-r-2023]
 
 Phi-features (number, person, definiteness) are **presuppositional partial
 identity functions** on the entity domain, ordered by presuppositional
@@ -29,7 +29,7 @@ stronger presupposition = smaller domain.
 | Gender      | isInanimate      | isFemale                      | neuter      | feminine          | masculine   |
 | Definiteness| familiar/unique  | —                             | definite    | —                 | indefinite  |
 
-## Semantic Markedness (@cite{wang-r-2023})
+## Semantic Markedness ([wang-r-2023])
 
 The semantically **unmarked** values (plural, 3rd person, indefinite) are
 precisely those at the minimal cell (specLevel 0) with vacuous
@@ -227,7 +227,7 @@ theorem person_nesting_from_phi (speaker addressee : E)
   phiPresup_nesting (fun _ h => Or.inl h) hw₁ hw₂ hSpec x h
 
 /-- Person and number have the same `specLevel` ordering — this is the
-    semantic content of @cite{harbour-2016}'s phi kernel isomorphism.
+    semantic content of [harbour-2016]'s phi kernel isomorphism.
     Both are `phiPresup` instances over the same `PrivativePair` cells,
     so `phiPresup_nesting` applies to both: the nesting is structural,
     not a per-domain coincidence. -/
@@ -247,7 +247,7 @@ end PersonPresuppositions
 -- ============================================================================
 
 /-!
-## §3b: Gender Presuppositions (@cite{sauerland-2003} §6)
+## §3b: Gender Presuppositions ([sauerland-2003] §6)
 
 Gender features [±feminine, ±neuter] form a third `PrivativePair` instance,
 with containment [+neuter] → [+feminine] (see `Features.Gender.Features`).
@@ -257,7 +257,7 @@ The presuppositional semantics mirrors number and person:
 - **feminine** (intermediate, specLevel 1): presupposes female
 - **masculine** (minimal, specLevel 0): vacuous (default/unmarked)
 
-@cite{wang-r-2023}: masculine, as the semantically unmarked gender,
+[wang-r-2023]: masculine, as the semantically unmarked gender,
 is available for honorific use cross-linguistically — paralleling the
 use of plural (unmarked number) and 3rd person (unmarked person) for
 politeness.
@@ -358,12 +358,12 @@ end GenderPresuppositions
 
 Definiteness exhibits the same presuppositional asymmetry as number and
 person: definites carry a familiarity/uniqueness presupposition
-(@cite{heim-1991}, @cite{strawson-1950}), while indefinites carry no
+([heim-1991], [strawson-1950]), while indefinites carry no
 presupposition. Unlike number and person, definiteness is a binary
 contrast (no intermediate cell), so we instantiate `phiPresup` at the
 maximal and minimal cells only.
 
-@cite{wang-r-2023} relies on this: indefinites are semantically unmarked
+[wang-r-2023] relies on this: indefinites are semantically unmarked
 (vacuous presupposition), so they are recruited for honorification in
 languages like Ainu.
 -/
@@ -415,7 +415,7 @@ end DefinitePresuppositions
 -- ============================================================================
 
 /-!
-## §5: Semantic Markedness (@cite{wang-r-2023})
+## §5: Semantic Markedness ([wang-r-2023])
 
 A phi-feature value is **semantically unmarked** iff its presupposition is
 vacuous — i.e., it is at the minimal `PrivativePair` cell (specLevel 0).
@@ -503,13 +503,13 @@ theorem maximal_strongest (c : PrivativePair) (hw : c.wellFormed = true)
               PrivativePair.wellFormed, PrivativePair.maximal]
 
 -- ============================================================================
--- §7  Conceivability Presuppositions (@cite{enguehard-2024})
+-- §7  Conceivability Presuppositions ([enguehard-2024])
 -- ============================================================================
 
 /-!
 ## §7: Conceivability Lifting of Phi-Feature Presuppositions
 
-@cite{enguehard-2024} argues that number marking on indefinites triggers a
+[enguehard-2024] argues that number marking on indefinites triggers a
 **conceivability presupposition**: a singular indefinite presupposes it is
 conceivable the witness set has exactly one member; a plural indefinite
 presupposes it is conceivable the witness set has more than one member.
@@ -629,12 +629,12 @@ def cardConceivable (witnessCard : W → Nat) (conceivable : W → Prop)
   ∃ w, conceivable w ∧ cardPred (witnessCard w)
 
 /-- Sg indefinite conceivability: ∃ conceivable situation with
-    exactly one witness (@cite{enguehard-2024} generalization 7). -/
+    exactly one witness ([enguehard-2024] generalization 7). -/
 def sgCardConceivable (witnessCard : W → Nat) (conceivable : W → Prop) : Prop :=
   cardConceivable witnessCard conceivable (· = 1)
 
 /-- Pl indefinite conceivability: ∃ conceivable situation with
-    ≥ 2 witnesses (@cite{enguehard-2024} generalization 7). -/
+    ≥ 2 witnesses ([enguehard-2024] generalization 7). -/
 def plCardConceivable (witnessCard : W → Nat) (conceivable : W → Prop) : Prop :=
   cardConceivable witnessCard conceivable (· ≥ 2)
 
@@ -679,7 +679,7 @@ theorem pl_only_when_never_unique (witnessCard : W → Nat) (conceivable : W →
     entails pl's nor vice versa. This means standard Maximize
     Presupposition (which requires a strength ordering) cannot select
     between them — a structural gap that gradient probabilistic effects
-    fill (@cite{enguehard-2024} §4.1). -/
+    fill ([enguehard-2024] §4.1). -/
 theorem conceivability_presups_incomparable :
     -- ∃ model where sg conceivable but not pl
     (∃ (witnessCard : Unit → Nat) (conceivable : Unit → Prop),

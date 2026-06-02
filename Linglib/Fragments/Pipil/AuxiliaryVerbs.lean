@@ -2,17 +2,17 @@ import Linglib.Morphology.MorphRule
 
 /-!
 # Pipil Auxiliary Verb Fragment
-@cite{anderson-2006}
+[anderson-2006]
 
 Pipil (Uto-Aztecan; El Salvador) has two distinct AVC constructions
-in @cite{anderson-2006}, with **different auxiliaries**:
+in [anderson-2006], with **different auxiliaries**:
 
 - **LEX-headed CAPABILITY AVC** (Campbell 1985: 139). Capability
   auxiliary *weli* uninflected; LV carries subject agreement.
 - **SPLIT/DOUBLED PROGRESSIVE AVC** (Ch 5 §5.2.2, ex. 133a-c, p. 224).
   Progressive auxiliary *yu* (← 'go'); subjects doubly marked on AUX
   and LV; objects only on LV. AUX root *yu* encodes prospective TAM
-  lexically. Source: Campbell 1985: 137-138, cited in @cite{anderson-2006}.
+  lexically. Source: Campbell 1985: 137-138, cited in [anderson-2006].
 
 The 0.230.576 meta-audit caught an earlier docstring overreading of
 Anderson p. 220-221 fn. 6: that footnote contrasts two variants of the
@@ -43,7 +43,7 @@ def location : String := "El Salvador"
     *weli ni-nehnemi wehka*
     'CAP 1-walk far'
     'I can walk far'
-    (Campbell 1985: 139, cited in @cite{anderson-2006}). -/
+    (Campbell 1985: 139, cited in [anderson-2006]). -/
 def lexHeadedForm : String := "weli ni-nehnemi wehka"
 
 def lexHeadedGloss : String := "CAP 1-walk far 'I can walk far'"
@@ -58,7 +58,7 @@ def lexHeadedDistribution : InflDistribution :=
     *n-yu ni-mitsin-ilwitia*
     '1-AUX 1-2PL-show'
     'I'm going to show you'
-    (Campbell 1985: 137, cited in @cite{anderson-2006}).
+    (Campbell 1985: 137, cited in [anderson-2006]).
     Subject `1` (1sg) is doubly marked: as `n-` on AUX and as `ni-`
     on LV. Object `-mitsin-` (2pl) appears only on the LV. The AUX
     root *yu* (a grammaticalized form of the motion verb 'go')

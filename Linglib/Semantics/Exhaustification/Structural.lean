@@ -4,7 +4,7 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Structural-pattern theorems for IE and tolerant exhaustification
-@cite{fox-2007} @cite{chierchia-2013} @cite{alonso-ovalle-moghiseh-2025}
+[fox-2007] [chierchia-2013] [alonso-ovalle-moghiseh-2025]
 
 The algorithmic characterizations of innocent exclusion (Fox 2007) and
 tolerant exhaustification (Chierchia 2013) live in
@@ -21,7 +21,7 @@ this specific value." That bridging layer is what this file provides.
 * `tolerant_exh_eq_empty_iff` — `tolerant.exh ALT φ = ∅` iff every
   φ-world belongs to some non-entailed alternative. This is the
   algorithm-level characterization of "contradictory tolerant
-  exhaustification" used in @cite{alonso-ovalle-moghiseh-2025}'s
+  exhaustification" used in [alonso-ovalle-moghiseh-2025]'s
   eq. 92 / root_full_tolerant_contradiction.
 
 * `innocent_exh_pairwise_disjoint_partial` — when `(φ \ ALT.sup id)`
@@ -29,13 +29,13 @@ this specific value." That bridging layer is what this file provides.
   innocently excludable and `innocent.exh ALT φ = φ \ ALT.sup id`.
   The partial-cover witness suffices for joint
   full-exclusion-consistency across all `α ∈ ALT` simultaneously.
-  Drives @cite{alonso-ovalle-moghiseh-2025}'s root domain-only
+  Drives [alonso-ovalle-moghiseh-2025]'s root domain-only
   result (eq. 93b) and the deontic split-exh results (eq. 119, 120).
 
 * `innocent_exh_singleton_proper` — corollary of the above for
   `|ALT| = 1`: when `α ⊊ φ`, `innocent.exh {α} φ = φ \ α`. Drives
   yek-i's root uniqueness reading
-  (@cite{alonso-ovalle-moghiseh-2025} eq. 93a).
+  ([alonso-ovalle-moghiseh-2025] eq. 93a).
 
 * `tolerant_exh_subset_innocent_exh` — Chierchia's tolerant operator
   is always ⊆ Fox's innocent operator. Concrete form of the
@@ -66,7 +66,7 @@ framework-agnostic; this file is the Excluder-API specialization.
 * `innocent_exh_pairwise_disjoint_cover` — when ALT's members are
   pairwise disjoint and their union *covers* φ (the complementary case
   to `_partial`), IE = ∅. This is the Spector closure-failure case
-  driving @cite{alonso-ovalle-moghiseh-2025} eq. 101's missing third
+  driving [alonso-ovalle-moghiseh-2025] eq. 101's missing third
   MCE. Currently consumers reach this case via
   `innocent_exh_eq_phi_of_innocentlyExcludable_empty` + a `decide` on
   `IE = ∅`; a structural lemma would expose the *reason* for the
@@ -85,7 +85,7 @@ variable {W : Type*} [Fintype W] [DecidableEq W]
 
 /-- **Tolerant vacuity (forward)**: if every φ-world belongs to some
 non-entailed alternative, then `tolerant.exh ALT φ = ∅`. The "tolerant
-contradiction" case driving @cite{alonso-ovalle-moghiseh-2025} eq. 92. -/
+contradiction" case driving [alonso-ovalle-moghiseh-2025] eq. 92. -/
 theorem tolerant_exh_eq_empty_of_covered
     {ALT : Finset (Finset W)} {φ : Finset W}
     (h : ∀ w ∈ φ, ∃ α ∈ ALT, ¬ φ ⊆ α ∧ w ∈ α) :
@@ -203,7 +203,7 @@ theorem innocent_exh_pairwise_disjoint_partial
 
 /-- **Singleton excludable alt**: when `ALT = {α}` and `α ⊊ φ`,
 exhaustification returns `φ \ α`. This is yek-i's partial-scalar
-exhaustification result (@cite{alonso-ovalle-moghiseh-2025} eq. 93a):
+exhaustification result ([alonso-ovalle-moghiseh-2025] eq. 93a):
 with a single innocently-excludable alternative, IE returns it exactly,
 giving "exactly one" semantics.
 

@@ -5,13 +5,13 @@ import Linglib.Features.ClauseForm
 
 /-!
 # Type Theory with Records — Discourse State & Pragmatics
-@cite{cooper-2023} @cite{partee-1973}
+[cooper-2023] [partee-1973]
 
-Discourse-level infrastructure for TTR (@cite{cooper-2023}, Chapters 2, 4, 5):
+Discourse-level infrastructure for TTR ([cooper-2023], Chapters 2, 4, 5):
 
 **Signs & Illocutionary Force**: TTRSign, ForcedSign (§2.5–2.6) — the
 illocutionary force component reuses `Semantics.Mood.IllocutionaryMood` rather
-than @cite{cooper-2023}'s parallel four-way `IllocForce` enum (the surface
+than [cooper-2023]'s parallel four-way `IllocForce` enum (the surface
 distinction `assertion | query | command | acknowledgement` is the
 declarative/interrogative/imperative slice plus a backchannel constructor;
 true backchannels live in `Pragmatics/Dialogue/KOS/`).
@@ -44,7 +44,7 @@ open Features
 
 /-! ## § 2.6 Illocutionary force (Cooper ex 91)
 
-Signs may carry illocutionary force. @cite{cooper-2023}'s ex (91)
+Signs may carry illocutionary force. [cooper-2023]'s ex (91)
 introduces a four-way TTR-internal enum `assertion | query | command |
 acknowledgement`. We collapse `assertion/query/command` into
 `Semantics.Mood.IllocutionaryMood`'s `declarative/interrogative/imperative`
@@ -55,7 +55,7 @@ rather than re-stipulating it. -/
 
 open Semantics.Mood (IllocutionaryMood)
 
-/-- A sign with illocutionary force. @cite{cooper-2023} ex (91), with
+/-- A sign with illocutionary force. [cooper-2023] ex (91), with
     `IllocForce` replaced by `Semantics.Mood.IllocutionaryMood`. -/
 structure ForcedSign (Phon Cont : Type) extends TTRSign Phon Cont where
   illoc : IllocutionaryMood
@@ -821,7 +821,7 @@ end FramePhenomena
 -- ============================================================================
 
 /-! ## Questions as Dependent Types
-@cite{ginzburg-2012}
+[ginzburg-2012]
 
 In TTR, a question is a function from a record type to a type — essentially
 a dependent function `(x : R) → T(x)`. A *polar* question is a proposition
@@ -837,7 +837,7 @@ it provides a witness. -/
 
 /-- A TTR question: a dependent type over a domain.
 
-@cite{ginzburg-2012} Ch. 4: "A question is a function from a (possibly
+[ginzburg-2012] Ch. 4: "A question is a function from a (possibly
 empty) record type to a type." Polar questions have `R = Unit`;
 wh-questions have `R` = the domain of quantification. -/
 structure TTRQuestion (R : Type) where
@@ -886,7 +886,7 @@ def Parametric.toTTRQuestion (p : Parametric Type) : TTRQuestion p.Bg where
 -- ============================================================================
 
 /-! ## Austinian Propositions for Discourse
-@cite{ginzburg-2012} @cite{barwise-perry-1983}
+[ginzburg-2012] [barwise-perry-1983]
 
 §6.5 defines `TrueAustinianProp` as a situation–type pair
 that carries its own witness (always true by construction). This suffices
@@ -894,7 +894,7 @@ for truth-conditional semantics but not for discourse: when A asserts
 "Bo is here", the content enters FACTS as a *checkable* claim that can
 be true or false.
 
-@cite{ginzburg-2012} Ch. 4 uses Austinian propositions as the content type
+[ginzburg-2012] Ch. 4 uses Austinian propositions as the content type
 for DGB FACTS. The key difference: the situation and type are *independent*
 — the proposition is true iff the situation satisfies the type, but this
 need not hold.
@@ -910,8 +910,8 @@ enabling:
 Unlike `TrueAustinianProp` (which carries its own witness), a `CheckableAustinian`
 separates the situation from the predicate, so it can be false.
 
-@cite{ginzburg-2012} Ch. 4: `[sit = s, sit-type = T]` where truth requires
-`s : T`. @cite{barwise-perry-1983}: situation supports a type. -/
+[ginzburg-2012] Ch. 4: `[sit = s, sit-type = T]` where truth requires
+`s : T`. [barwise-perry-1983]: situation supports a type. -/
 structure CheckableAustinian (S : Type) where
   /-- The situation being classified -/
   sit : S

@@ -4,8 +4,8 @@ import Linglib.Semantics.Presupposition.Basic
 /-!
 # Presuppositional Conditionals: K/P vs K/P*
 
-@cite{sharvit-2025} @cite{heim-1992} @cite{rooth-partee-1982}
-@cite{karttunen-peters-1979}
+[sharvit-2025] [heim-1992] [rooth-partee-1982]
+[karttunen-peters-1979]
 
 Formalizes the contrast between Karttunen/Peters (K/P) and Sharvit's K/P*
 conditionals from "Rooth-Partee Conditionals" (Linguistics & Philosophy, 2025).
@@ -52,7 +52,7 @@ variable {W : Type*}
 -- § CLOS: Closest-worlds selector
 -- ════════════════════════════════════════════════════════════════
 
-/-- Computable CLOS (@cite{sharvit-2025}, (120)).
+/-- Computable CLOS ([sharvit-2025], (120)).
 
 Selects worlds in `antecedent ∩ restriction` that are not dominated
 under the similarity ordering. Same formula as `Counterfactual.closestWorlds`. -/
@@ -69,10 +69,10 @@ presupposition is global (all p-worlds) vs local (evaluation world). -/
 def trivialCloser : W → W → W → Bool := fun _ _ _ => true
 
 -- ════════════════════════════════════════════════════════════════
--- § K/P* conditional (@cite{sharvit-2025}, (119))
+-- § K/P* conditional ([sharvit-2025], (119))
 -- ════════════════════════════════════════════════════════════════
 
-/-- K/P* presuppositional conditional (@cite{sharvit-2025}, (119)).
+/-- K/P* presuppositional conditional ([sharvit-2025], (119)).
 
 - **Outer presupposition**: p must be defined at w
 - **Inner presupposition (CLOS)**: q must be defined at all CLOS-closest
@@ -95,10 +95,10 @@ def ifPresup [DecidableEq W] (closer : W → W → W → Bool)
     ∀ w' ∈ closest, q.assertion w'
 
 -- ════════════════════════════════════════════════════════════════
--- § K/P conditional (@cite{sharvit-2025}, (100)) — for comparison
+-- § K/P conditional ([sharvit-2025], (100)) — for comparison
 -- ════════════════════════════════════════════════════════════════
 
-/-- K/P presuppositional conditional (@cite{sharvit-2025}, (100)).
+/-- K/P presuppositional conditional ([sharvit-2025], (100)).
 
 - **Outer presupposition**: p must be defined at w (same as K/P*)
 - **Inner presupposition (LOCAL)**: if p is true at w, q must be defined
@@ -139,7 +139,7 @@ def orProperties {E : Type*} [DecidableEq (E → Bool)]
   fun z => (z == q₁) || (z == q₂)
 
 -- ════════════════════════════════════════════════════════════════
--- § K/P* conjunction and disjunction (@cite{sharvit-2025}, (127)-(128))
+-- § K/P* conjunction and disjunction ([sharvit-2025], (127)-(128))
 -- ════════════════════════════════════════════════════════════════
 
 /-- Worlds where p is defined and its assertion is false.
@@ -149,7 +149,7 @@ closest worlds where the OTHER disjunct is defined-and-false. -/
 def definedFalse (p : PrProp W) : Set W :=
   fun w => p.presup w ∧ ¬p.assertion w
 
-/-- K/P* presuppositional conjunction (@cite{sharvit-2025}, (127)).
+/-- K/P* presuppositional conjunction ([sharvit-2025], (127)).
 
 - **Presupposition**: P₁ defined at w, P₂ defined at w, and P₂ defined
   at all CLOS-closest P₁-assertion-worlds.
@@ -170,7 +170,7 @@ def andPresup [DecidableEq W] (closer : W → W → W → Bool)
   assertion := fun w =>
     p.assertion w ∧ q.assertion w
 
-/-- K/P* presuppositional disjunction (@cite{sharvit-2025}, (128)).
+/-- K/P* presuppositional disjunction ([sharvit-2025], (128)).
 
 - **Presupposition**: (and^{K/P\*}(P₁)(P₂) defined OR and^{K/P\*}(P₂)(P₁)
   defined), AND and^{K/P\*}(¬P₁)(P₂) defined, AND and^{K/P\*}(¬P₂)(P₁)
@@ -217,7 +217,7 @@ def orPresup [DecidableEq W] (closer : W → W → W → Bool)
 -- § Set-based CLOS (non-computable)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Set-based CLOS (@cite{sharvit-2025}, (120)).
+/-- Set-based CLOS ([sharvit-2025], (120)).
 
 Definitionally identical to `Counterfactual.closestWorlds` with reordered
 parameters: `clos closer R A w = closestWorlds sim R w A` when

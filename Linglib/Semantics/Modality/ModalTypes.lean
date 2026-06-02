@@ -8,7 +8,7 @@ Theory-neutral vocabulary for cross-linguistic modal typology: `ModalForce`,
 
 These types classify modal meanings along two independent dimensions — force
 (quantificational strength) and flavor (contextual source) — following
-@cite{kratzer-1981} and @cite{imel-guo-steinert-threlkeld-2026}.
+[kratzer-1981] and [imel-guo-steinert-threlkeld-2026].
 
 **Separated from `Core.Logic.Intensional`** because Kripke frames and frame
 correspondence are pure mathematical logic, while force/flavor classification
@@ -33,18 +33,18 @@ namespace Semantics.Modality
 -- ============================================================================
 
 /-- Modal force: necessity (□), weak necessity (□w), or possibility (◇).
-    @cite{von-fintel-iatridou-2008}, @cite{agha-jeretic-2026}.
+    [von-fintel-iatridou-2008], [agha-jeretic-2026].
 
     Weak necessity ("ought", "should") sits between □ and ◇ in strength:
     □φ → □wφ → ◇φ. The nature of this intermediate force is debated:
 
-    - @cite{von-fintel-iatridou-2008}: same ∀ quantifier as strong necessity
+    - [von-fintel-iatridou-2008]: same ∀ quantifier as strong necessity
       but over a refined (smaller) set of best worlds (domain restriction).
     - Rubinstein (2014): fundamentally comparative meaning.
-    - @cite{agha-jeretic-2022}: non-quantificational (plural predication).
+    - [agha-jeretic-2022]: non-quantificational (plural predication).
 
     Weak necessity has no clean dual in this 3-point space: domain refinement
-    weakens ∀ but strengthens ∃ (@cite{agha-jeretic-2026}; UNVERIFIED §2.4). -/
+    weakens ∀ but strengthens ∃ ([agha-jeretic-2026]; UNVERIFIED §2.4). -/
 inductive ModalForce where
   | necessity
   | weakNecessity
@@ -63,7 +63,7 @@ instance : ToString ModalForce where
     2017, Carr 2024, and arguably von Fintel & Iatridou 2008 themselves
     discuss candidate weak-necessity duals ("might-as-easily-not", "could",
     priority *might*). The "no clean dual" claim attributed to
-    @cite{agha-jeretic-2026} (UNVERIFIED §2.4 quote) should be read as
+    [agha-jeretic-2026] (UNVERIFIED §2.4 quote) should be read as
     "no consensus dual", not as a structural impossibility. -/
 def ModalForce.dual : ModalForce → ModalForce
   | .necessity => .possibility
@@ -78,7 +78,7 @@ def ModalForce.all : List ModalForce := [.necessity, .weakNecessity, .possibilit
 
 /-- Strength ordering on modal force: □ ≥ □w ≥ ◇.
     `f₁.atLeastAsStrong f₂` iff an f₁-claim is at least as strong as an f₂-claim.
-    @cite{von-fintel-iatridou-2008}: must φ → ought φ → can φ. -/
+    [von-fintel-iatridou-2008]: must φ → ought φ → can φ. -/
 def ModalForce.atLeastAsStrong : ModalForce → ModalForce → Bool
   | .necessity, _ => true
   | .weakNecessity, .weakNecessity | .weakNecessity, .possibility => true
@@ -107,7 +107,7 @@ theorem ModalForce.possibility_weakest (f : ModalForce) :
     Theory-neutral: avoids commitment to how flavor is semantically encoded.
     Teleological is subsumed under circumstantial (both concern facts/abilities).
     Bouletic (desires/wishes) is distinguished from deontic (norms/rules),
-    following @cite{kratzer-1981}'s four-way classification. -/
+    following [kratzer-1981]'s four-way classification. -/
 inductive ModalFlavor where
   | epistemic       -- Evidence/knowledge
   | deontic         -- Norms/rules
@@ -132,11 +132,11 @@ def ModalFlavor.all : List ModalFlavor := [.epistemic, .deontic, .bouletic, .cir
 /-- A force-flavor pair: one point in the modal semantic space P.
     |P| = |Force| × |Flavor| = 3 × 4 = 12.
 
-    Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}: modal meanings are subsets of P.
+    Imel, Guo, & [imel-guo-steinert-threlkeld-2026]: modal meanings are subsets of P.
     Their original database uses a 2×3 space (necessity/possibility × 3 flavors);
     we extend to 3×4 by adding weak necessity as a distinct force value
-    (following @cite{agha-jeretic-2026}) and bouletic as a distinct flavor
-    (following @cite{kratzer-1981}). -/
+    (following [agha-jeretic-2026]) and bouletic as a distinct flavor
+    (following [kratzer-1981]). -/
 structure ForceFlavor where
   force : ModalForce
   flavor : ModalFlavor
@@ -215,7 +215,7 @@ def ModalItem.sharesConcordForce (a b : ModalItem) : Bool :=
 -- §6. Modal Features (Zeijlstra 2007)
 -- ============================================================================
 
-/-- Interpretability of a modal feature (@cite{zeijlstra-2007}).
+/-- Interpretability of a modal feature ([zeijlstra-2007]).
 
     Modal elements carry features specifying modal force (∃/∀).
     Features are either **interpretable** (semantically active — the element
@@ -223,7 +223,7 @@ def ModalItem.sharesConcordForce (a b : ModalItem) : Bool :=
     vacuous — the element is checked by a c-commanding interpretable feature
     and does not contribute its own operator).
 
-    @cite{ciardelli-guerrini-2026} use this distinction to derive narrow-scope
+    [ciardelli-guerrini-2026] use this distinction to derive narrow-scope
     readings for "MOD A COORD MOD B" sentences: when both auxiliaries carry
     uninterpretable features, a single silent interpretable operator scopes
     over the coordination, yielding Δ(A ∘ B) rather than ΔA ∘ ΔB. -/
@@ -234,7 +234,7 @@ inductive ModalInterpretability where
 
 /-- A modal feature: force (∃/∀) paired with interpretability (i/u).
 
-    @cite{zeijlstra-2007}: every modal element carries a feature from this
+    [zeijlstra-2007]: every modal element carries a feature from this
     four-cell space: [i∃-MOD], [u∃-MOD], [i∀-MOD], [u∀-MOD]. -/
 structure ModalFeature where
   force : ModalForce
@@ -244,7 +244,7 @@ structure ModalFeature where
 /-- Feature checking: an interpretable feature checks a c-commanded
     uninterpretable feature of matching concord class.
 
-    @cite{zeijlstra-2007}: u-features must be c-commanded by a matching
+    [zeijlstra-2007]: u-features must be c-commanded by a matching
     i-feature to be licensed. The match is by concord class (necessity and
     weak necessity both count as ∀-type). -/
 def ModalFeature.checks (checker checked : ModalFeature) : Bool :=
@@ -254,7 +254,7 @@ def ModalFeature.checks (checker checked : ModalFeature) : Bool :=
 
 /-- Negation flips the relevant modal force for concord purposes.
 
-    @cite{ciardelli-guerrini-2026} (UNVERIFIED §4.2): modal concord across negation
+    [ciardelli-guerrini-2026] (UNVERIFIED §4.2): modal concord across negation
     requires opposite forces — ALLOW[i∃](¬NEED[u∀]) is well-formed because
     ¬∀ = ∃, but *DEMAND[i∀](¬NEED[u∀]) is ill-formed (same force).
 
@@ -280,7 +280,7 @@ def ModalFeature.checksAcrossNegation (checker checked : ModalFeature) : Bool :=
 /-- Whether a modal meaning decomposes into independent force and flavor
     dimensions or is a unitary, non-decomposable operator.
 
-    @cite{werner-2006}, @cite{condoravdi-2002}: some modals resist the standard
+    [werner-2006], [condoravdi-2002]: some modals resist the standard
     force × flavor decomposition. "Will" and other temporal-modal elements
     do not factor cleanly into a modal force and a conversational background
     flavor. -/
@@ -322,7 +322,7 @@ theorem cross_cutting_is_unitary :
 -- ============================================================================
 
 /-- Mode of projecting conversational backgrounds.
-    @cite{kratzer-2012} replaces the traditional epistemic/circumstantial
+    [kratzer-2012] replaces the traditional epistemic/circumstantial
     dichotomy with a distinction between **factual** and **content** modes:
 
     - **Factual**: the modal quantifies over worlds containing a counterpart
@@ -333,7 +333,7 @@ theorem cross_cutting_is_unitary :
       sensory evidence). The actual world need not be accessible — the
       speaker can disbelieve the content.
 
-    @cite{matthewson-2016} (UNVERIFIED Table 18.2 reference).
+    [matthewson-2016] (UNVERIFIED Table 18.2 reference).
 
     The old circumstantial class is entirely factual. The old epistemic
     class splits: factual epistemics (inferential, based on situation
@@ -348,7 +348,7 @@ instance : ToString ProjectionMode where
   toString | .factual => "factual" | .content => "content"
 
 /-- Three-way classification of conversational backgrounds.
-    @cite{matthewson-2016} (UNVERIFIED Table 18.3 reference). Refines the traditional
+    [matthewson-2016] (UNVERIFIED Table 18.3 reference). Refines the traditional
     epistemic/circumstantial binary into a three-way split based on
     projection mode and whether information source is encoded.
 
@@ -429,10 +429,10 @@ theorem content_epistemic_allows_disbelief :
       English *must* (necessity), *can* (possibility).
     - **variableForce**: The modal is semantically compatible with both
       necessity and possibility contexts without being ambiguous.
-      Gitksan *ima('a)*, *gat* (@cite{matthewson-2013}).
+      Gitksan *ima('a)*, *gat* ([matthewson-2013]).
     - **strengthened**: The modal has a fixed base force (typically
       possibility) but can receive strengthened readings in the absence
-      of a contrasting dual. Nez Perce *o'qa* (@cite{deal-2011}):
+      of a contrasting dual. Nez Perce *o'qa* ([deal-2011]):
       a possibility modal acceptable in necessity contexts because no
       contrasting necessity modal triggers scalar implicature. -/
 inductive ForceAnalysis where
@@ -456,7 +456,7 @@ instance : DecidablePred ForceAnalysis.AdmitsPossibility :=
   fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Whether the modal has a lexical dual (contrasting force partner).
-    @cite{matthewson-2016} (UNVERIFIED §18.3.2): modals without duals do not come
+    [matthewson-2016] (UNVERIFIED §18.3.2): modals without duals do not come
     in necessity–possibility pairs. -/
 def ForceAnalysis.HasDual : ForceAnalysis → Prop
   | .fixed _ => True        -- presumes a dual exists in the language

@@ -2,7 +2,7 @@ import Linglib.Core.Mereology
 
 /-!
 # Link 1983: The Logical Analysis of Plurals and Mass Terms
-@cite{link-1983} @cite{krifka-1989}
+[link-1983] [krifka-1989]
 
 Link's model structure for the ontology of plurals and mass terms:
 a complete (complementary) join semi-lattice without bottom element
@@ -13,9 +13,9 @@ two-level structure separates *individual part* (the lattice ordering
 on `E`) from *material part* (induced by `h`).
 
 (The "complete atomic Boolean algebra" framing common in subsequent
-literature — e.g. @cite{landman-2000}, @cite{champollion-2017} — is a
+literature — e.g. [landman-2000], [champollion-2017] — is a
 later simplification, not Link 1983's actual ontology; see
-@cite{krifka-1989} pp.77, 91 for the original reading.)
+[krifka-1989] pp.77, 91 for the original reading.)
 
 ## Main declarations
 
@@ -86,7 +86,7 @@ def IsDistr (P : E → Prop) : Prop :=
 def Inv {M : Type*} [Preorder M] (h : E → M) (P : E → Prop) : Prop :=
   ∀ x y, h x = h y → (P x ↔ P y)
 
-/-- `ᴰP`: Link's **D operator** (@cite{link-1987} eq. 48, p. 171):
+/-- `ᴰP`: Link's **D operator** ([link-1987] eq. 48, p. 171):
     converts a (possibly non-distributive) predicate `P` into the
     distributive predicate that holds of `x` iff every atomic part of
     `x` satisfies `P`. Link's formulation `ᴰVP := λx∀y[y*Πx → VP(y)]`
@@ -95,7 +95,7 @@ def Inv {M : Type*} [Preorder M] (h : E → M) (P : E → Prop) : Prop :=
 
     Companion to `star`: where `star P = AlgClosure P` extends a
     predicate UPWARD (closure under join), `D P` extends it DOWNWARD
-    to atomic parts. @cite{champollion-2019} eq. (12) recapitulates
+    to atomic parts. [champollion-2019] eq. (12) recapitulates
     this definition and uses it as the canonical VP-level
     distributivity operator. -/
 def D (P : E → Prop) (x : E) : Prop :=
@@ -112,7 +112,7 @@ theorem D_self_of_atom {P : E → Prop} {x : E} (hAtom : Atom x) (hP : P x) :
 theorem D_mono {P Q : E → Prop} (h : ∀ x, P x → Q x) {x : E} (hD : D P x) :
     D Q x := fun y hle hAtom => h y (hD y hle hAtom)
 
-/-- `ᴰᴶᴿVP`: Link's **DJR operator** (@cite{link-1987} eq. 56, p. 173):
+/-- `ᴰᴶᴿVP`: Link's **DJR operator** ([link-1987] eq. 56, p. 173):
     the *each-other* operator. Converts a binary predicate `VP` (the
     verb relation) into a unary predicate that holds of `x` iff every
     distinct pair of atomic parts of `x` stands in `VP`. Link's
@@ -151,7 +151,7 @@ variable {M : Type*} [SemilatticeSup M]
     from individuals to their material constitution. Defined as an
     abbreviation for mathlib's `SupHom E M` to inherit the bundled
     sup-preserving function API; the alias preserves the paper-faithful
-    name used throughout @cite{link-1983}. -/
+    name used throughout [link-1983]. -/
 abbrev Materialization (E M : Type*) [SemilatticeSup E] [SemilatticeSup M] :=
   SupHom E M
 

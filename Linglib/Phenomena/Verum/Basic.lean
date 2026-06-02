@@ -3,21 +3,21 @@ import Linglib.Semantics.Highlighting
 
 /-!
 # Verum: theory-neutral substrate
-@cite{hohle-1992} @cite{romero-han-2004} @cite{repp-2013}
-@cite{gutzmann-hartmann-matthewson-2020} @cite{goodhue-2022a}
-@cite{goodhue-2022b} @cite{matthewson-2021} @cite{bendezu-2023}
-@cite{martinez-vera-2026}
+[hohle-1992] [romero-han-2004] [repp-2013]
+[gutzmann-hartmann-matthewson-2020] [goodhue-2022a]
+[goodhue-2022b] [matthewson-2021] [bendezu-2023]
+[martinez-vera-2026]
 
 Cross-linguistic verum strategies. A "verum marker" is any morphological,
 prosodic, or syntactic device whose felicitous use requires that the
 truth of its scope proposition be at issue in a way that excludes (or
 strongly contrasts with) its negation. The class is open and contested:
 some accounts treat verum as polarity focus
-(@cite{hohle-1992}, @cite{repp-2013}, @cite{goodhue-2022a}); others treat
+([hohle-1992], [repp-2013], [goodhue-2022a]); others treat
 it as a dedicated semantic operator on the common ground
-(@cite{romero-han-2004}, @cite{gutzmann-hartmann-matthewson-2020}); still
+([romero-han-2004], [gutzmann-hartmann-matthewson-2020]); still
 others treat it as a discourse-management device
-(@cite{matthewson-2021}, @cite{martinez-vera-2026}).
+([matthewson-2021], [martinez-vera-2026]).
 
 This file provides the **shared substrate**: the `VerumStrategy`
 typology and the `VerumOperator` shared abstraction that both
@@ -44,10 +44,10 @@ A device counts as a verum strategy when it satisfies (at least) the
 following felicity profile:
 
 1. **Anti-discourse-initial**: infelicitous out-of-the-blue
-   (@cite{hohle-1992}, @cite{martinez-vera-2026}).
+   ([hohle-1992], [martinez-vera-2026]).
 2. **Anti-unbiased-question response**: infelicitous when answering an
-   unbiased polar question (@cite{romero-han-2004},
-   @cite{gutzmann-hartmann-matthewson-2020}).
+   unbiased polar question ([romero-han-2004],
+   [gutzmann-hartmann-matthewson-2020]).
 3. **Felicitous in the presence of contextual ¬p salience**: the
    negation of the scope proposition must be available in the prior
    discourse (assertion of ¬p, biased question towards ¬p, or — for
@@ -66,7 +66,7 @@ open Semantics.Composition.Layered (BiLayered)
 open Semantics.Highlighting (HighlightingContext)
 
 /-- Cross-linguistic strategy types for verum marking
-    (@cite{gutzmann-hartmann-matthewson-2020} typology).
+    ([gutzmann-hartmann-matthewson-2020] typology).
 
     Note the partial overlap with `Typology.PolarityMarking.Strategy`,
     which has a single `verumFocus` cell that this enum's `prosodic`

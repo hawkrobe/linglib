@@ -2,7 +2,7 @@ import Linglib.Typology.Gender
 
 /-!
 # Shona Gender
-@cite{corbett-1991} @cite{corbett-2013}
+[corbett-1991] [corbett-2013]
 
 Bantu noun-class system. Carstens 2026 cites 8 active gender classes.
 -/
@@ -25,7 +25,7 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "sna" ∧ genderTypology.name = "Shona" :=
   ⟨rfl, rfl⟩
 
-/-- Shona is a noun-class system (Bantu, 8 classes per @cite{carstens-2026}). -/
+/-- Shona is a noun-class system (Bantu, 8 classes per [carstens-2026]). -/
 example : genderTypology.IsNounClassSystem := by decide
 
 end Shona.Gender

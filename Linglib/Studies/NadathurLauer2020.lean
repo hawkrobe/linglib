@@ -2,9 +2,9 @@ import Linglib.Semantics.Causation.Necessity
 import Linglib.Semantics.Causation.Sufficiency
 
 /-!
-# @cite{nadathur-lauer-2020}: Causal Necessity, Causal Sufficiency, and the Implications of Causative Verbs
+# [nadathur-lauer-2020]: Causal Necessity, Causal Sufficiency, and the Implications of Causative Verbs
 
-@cite{nadathur-lauer-2020} @cite{pearl-2000}
+[nadathur-lauer-2020] [pearl-2000]
 
 Nadathur & Lauer 2020. *Glossa* 5(1): 49.
 
@@ -25,7 +25,7 @@ plus the volitional-action constraint (§4.1, Def 43) that distinguishes
 ## Project-canonical definitions
 
 The substrate's `Necessity.causeSem` (in `Semantics/Causation/`)
-implements @cite{nadathur-2024} **Definition 10b** rather than this paper's
+implements [nadathur-2024] **Definition 10b** rather than this paper's
 literal Def 24. The paper itself anticipates this in fn 18: "the semantics
 of necessity causatives may well be better explicated in terms of one of
 the definitions of *actual cause*, rather than the version of causal
@@ -55,7 +55,7 @@ with the development-equals-effect clause).
 ## Excluded
 
 The Suzy/Billy preemption scenario (the centerpiece of Lewis 1973,
-@cite{lewis-1973-causation}) is **not formalized here** — N&L footnote 8
+[lewis-1973-causation]) is **not formalized here** — N&L footnote 8
 explicitly says "we will not discuss the specifics of pre-emption in this
 paper." The scenario lives at `Lewis1973.Overdetermination` (the
 chronologically-canonical owner). See `ProductionDependence.lean`'s
@@ -236,7 +236,7 @@ end Bus
 -- ════════════════════════════════════════════════════
 
 /-! Per-vertex temporal index and the temporal-location constraint
-    (@cite{nadathur-lauer-2020} Def 28). Local to this study file —
+    ([nadathur-lauer-2020] Def 28). Local to this study file —
     promote to substrate (`Core/Causal/SEM/Temporal.lean`) if a second
     consumer emerges. -/
 
@@ -278,7 +278,7 @@ noncomputable instance : SEM.IsDeterministic lighthouseSEM where
 def lighthouseTimes : V → Nat
   | .Q => 1 | .S => 2 | .L => 3
 
-/-- **Temporal location constraint** (@cite{nadathur-lauer-2020} Def 28):
+/-- **Temporal location constraint** ([nadathur-lauer-2020] Def 28):
     a background situation `s` is valid for a causative claim with
     evaluation time `t` iff every vertex `s` fixes has time ≤ t.
 
@@ -375,7 +375,7 @@ namespace Volitional
     `none` means the effect is not volitional. -/
 def IntentionMap (V : Type*) := V → Option V
 
-/-- **Constraint on volitional action** (@cite{nadathur-lauer-2020} Def 43):
+/-- **Constraint on volitional action** ([nadathur-lauer-2020] Def 43):
     in the evaluation of a make-causative with cause `C` and effect `E`,
     no intention vertex `W_E` paired with `E` may be such that BOTH
     (i) `W_E := false` is sufficient for `E := false` relative to

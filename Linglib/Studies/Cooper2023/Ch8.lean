@@ -5,9 +5,9 @@ import Linglib.Syntax.Binding.Semantics
 /-!
 # Cooper (2023) Ch. 8 — Type-Based Underspecification
 
-@cite{cooper-2023}
-@cite{chomsky-1981} @cite{kanazawa-1994} @cite{scontras-pearl-2021}
-@cite{kamp-1981} @cite{chierchia-1995}
+[cooper-2023]
+[chomsky-1981] [kanazawa-1994] [scontras-pearl-2021]
+[kamp-1981] [chierchia-1995]
 
 Cooper's *From Perception to Communication* Chapter 8 introduces *content
 types* that replace specific contents with types whose witnesses are fully
@@ -40,7 +40,7 @@ to the empirical data in `Phenomena/Anaphora/`.
 
 * `tagged_roundtrip` — bijection between `TwoQuantScope.𝔖` witnesses and
   `Semantics.Scope.ScopeConfig` tags. Engineering interface for downstream
-  RSA-style scope listeners (@cite{scontras-pearl-2021}); Cooper himself
+  RSA-style scope listeners ([scontras-pearl-2021]); Cooper himself
   does not draw this connection.
 * `reflexivize₈_agrees_with_simple` — record-typed `reflexivize₈` collapses
   to the simplified `reflexivize` when the context is initial.
@@ -224,7 +224,7 @@ def TwoQuantScope.inverseToUnderspec (s : TwoQuantScope E)
   Sum.inr w
 
 /-- Select a scope reading by ScopeConfig.
-    Ch8 → @cite{scontras-pearl-2021} bridge:
+    Ch8 → [scontras-pearl-2021] bridge:
     retrieval order corresponds to ScopeConfig.surface /.inverse. -/
 def TwoQuantScope.readingAt (s : TwoQuantScope E)
     (sc : Semantics.Scope.ScopeConfig) : Type :=
@@ -235,7 +235,7 @@ def TwoQuantScope.readingAt (s : TwoQuantScope E)
 /-! ### Bridge to `ScopeConfig`
 
 The witnesses of `𝔖(content)` are in bijection with the
-`Semantics.Scope.ScopeConfig` tags used by @cite{scontras-pearl-2021}'s
+`Semantics.Scope.ScopeConfig` tags used by [scontras-pearl-2021]'s
 RSA scope listener: each `ScopeConfig` selects one reading, and every
 witness of `𝔖` comes from exactly one reading. The bridge is a linglib
 engineering interface; Cooper himself does not draw this connection. -/
@@ -859,7 +859,7 @@ section AnaphorFreeAndFullReflexivize
 variable {E : Type}
 
 /-- Anaphor-free filter `𝔄(T)`: requires the `𝔯`-field to be empty.
-"Principle A" in Cooper's evocation of @cite{chomsky-1981}'s binding theory. -/
+"Principle A" in Cooper's evocation of [chomsky-1981]'s binding theory. -/
 def anaphorFree₈ (P : Cntxt₈ E → Type) : Cntxt₈ E → Type :=
   λ c => propT (∀ i, c.𝔯 i = none) × P c
 

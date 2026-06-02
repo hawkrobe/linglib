@@ -8,12 +8,12 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Rouillard 2026: Temporal *in*-Adverbials and the Maximal Informativity Principle
-@cite{rouillard-2026} @cite{fox-hackl-2006} @cite{fox-2007}
-@cite{beck-rullmann-1999} @cite{krifka-1989} @cite{krifka-1998}
-@cite{vendler-1957} @cite{ladusaw-1979} @cite{iatridou-zeijlstra-2021}
-@cite{hoeksema-2006} @cite{gajewski-2011} @cite{von-fintel-iatridou-2019}
+[rouillard-2026] [fox-hackl-2006] [fox-2007]
+[beck-rullmann-1999] [krifka-1989] [krifka-1998]
+[vendler-1957] [ladusaw-1979] [iatridou-zeijlstra-2021]
+[hoeksema-2006] [gajewski-2011] [von-fintel-iatridou-2019]
 
-@cite{rouillard-2026} "Maximal informativity accounts for the distribution
+[rouillard-2026] "Maximal informativity accounts for the distribution
 of temporal *in*-adverbials" (*Linguistics and Philosophy* 49:1–56).
 
 ## Core contribution
@@ -106,7 +106,7 @@ variable {W Time : Type*} [LinearOrder Time]
     function is now a bare typeclass parameter so projections like
     `μ i ≤ m` need no `μ.μ` double-dotting.
 
-    @cite{rouillard-2026} §2.2.2: temporal measure units (days, hours)
+    [rouillard-2026] §2.2.2: temporal measure units (days, hours)
     are additive, hence any interval can be padded or trimmed to any
     target measure within a one-sided bound.
 
@@ -135,7 +135,7 @@ class TimeMeasure (Time : Type*) [LinearOrder Time]
     measure `n`. Lifted to `GInterval` so open-vs-closed boundary tags
     are carried structurally — the prior file's `pts` operated on plain
     `Interval` and the open-PTS revision was enforced only in prose.
-    @cite{rouillard-2026} eq. (50). -/
+    [rouillard-2026] eq. (50). -/
 def pts (n : ℕ) (μ : Interval Time → ℕ) [TimeMeasure Time μ] (s : Time)
     (gi : GInterval Time) : Prop :=
   gi.right = s ∧ μ gi.toInterval = n
@@ -146,13 +146,13 @@ def pts (n : ℕ) (μ : Interval Time → ℕ) [TimeMeasure Time μ] (s : Time)
 
 /-- The preposition *in* as an event-level adverbial (E-TIA reading).
     The event's runtime is included in the measure-phrase's bound.
-    @cite{rouillard-2026} eq. (62) instantiated at M = τ. -/
+    [rouillard-2026] eq. (62) instantiated at M = τ. -/
 def inETIA (e : Event Time) (bound : Interval Time) : Prop :=
   e.τ.subinterval bound
 
 /-- E-TIA derived property: at world `w`, value `n` is true iff there is
     a P-event whose runtime is included in some `n`-unit time, and that
-    `n`-unit time falls within `g1`. @cite{rouillard-2026} eq. (77). -/
+    `n`-unit time falls within `g1`. [rouillard-2026] eq. (77). -/
 def eTIAProperty (P : W → Event Time → Prop) (μ : Interval Time → ℕ)
     [TimeMeasure Time μ] (g1 : Interval Time) : ℕ → W → Prop :=
   fun n w => ∃ t : Interval Time, μ t = n ∧
@@ -170,7 +170,7 @@ def eTIAProperty (P : W → Event Time → Prop) (μ : Interval Time → ℕ)
     rather than admitted vacuously in prose (the prior file's `PERF_open`
     explicitly noted "the openness constraint is enforced at the level of
     the G-TIA semantics rather than structurally" — i.e., not at all).
-    @cite{rouillard-2026} eq. (94) revised with eq. (101). -/
+    [rouillard-2026] eq. (94) revised with eq. (101). -/
 def gTIAPropertyOpen (P : W → Event Time → Prop) (μ : Interval Time → ℕ)
     [TimeMeasure Time μ] (s : Time) : ℕ → W → Prop :=
   fun n w => ∃ ptsGI : GInterval Time,
@@ -206,7 +206,7 @@ def gTIAPropertyOpenNeg (P : W → Event Time → Prop) (μ : Interval Time → 
 /-- **E-TIA information collapse for atelic VPs**. When a VP has the
     subinterval property, the E-TIA derived property is constant: every
     numeral yields a true proposition at any world where any does, so no
-    numeral is more informative than another. @cite{rouillard-2026} §4.1.1. -/
+    numeral is more informative than another. [rouillard-2026] §4.1.1. -/
 theorem eTIA_atelic_collapse {μ : Interval Time → ℕ} [TimeMeasure Time μ]
     (P : W → Event Time → Prop) (g1 : Interval Time)
     (hSub : HasSubintervalProp P) :
@@ -242,7 +242,7 @@ theorem eTIA_atelic_not_licensed {μ : Interval Time → ℕ} [TimeMeasure Time 
 -- ════════════════════════════════════════════════════
 
 /-- **Quantized predicates yield upward-monotone E-TIA properties**.
-    @cite{rouillard-2026} §4.1.1: when P is telic, the derived E-TIA
+    [rouillard-2026] §4.1.1: when P is telic, the derived E-TIA
     property is upward monotone — the same event witnesses larger
     measures via `TimeMeasure.extensible`. -/
 theorem eTIA_telic_upwardMonotone {μ : Interval Time → ℕ} [TimeMeasure Time μ]
@@ -272,7 +272,7 @@ theorem upwardMonotone_hasIsLeast_of_witness {W : Type*}
 -- ════════════════════════════════════════════════════
 
 /-- **No smallest open PTS includes a closed runtime** (geometric witness).
-    @cite{rouillard-2026} §4.2.2: under density on `Time`, given a closed
+    [rouillard-2026] §4.2.2: under density on `Time`, given a closed
     event runtime contained in an open PTS, there is always a *strictly
     smaller* (in the proper-subinterval sense) open PTS still containing
     the runtime. Construction: pick a moment between the open boundary
@@ -370,7 +370,7 @@ inductive TIAType where
 
 /-- Rouillard's syntactic position for the *in*-adverbial.
     E-TIAs are VP-adjacent (event-level); G-TIAs are AspP-adjacent
-    (perfect-level). @cite{rouillard-2026} §3.2, schemata (57)/(61). -/
+    (perfect-level). [rouillard-2026] §3.2, schemata (57)/(61). -/
 inductive AdverbialPosition where
   | eventLevel
   | perfectLevel
@@ -482,7 +482,7 @@ def datum_48 : GTIADatum :=
 def gTIAData : List GTIADatum := [datum_2a, datum_2b, datum_48]
 
 /-- G-TIA acceptability matches the polarity ∧ perfect prediction.
-    @cite{rouillard-2026} Table 1: only NEG + PFV with G-TIA reading
+    [rouillard-2026] Table 1: only NEG + PFV with G-TIA reading
     survives MIP filtering. The structural derivation through MIP
     requires either rational-valued measure or threshold-rich worlds
     (see § 9 docstring); the prediction is stated here at the surface
@@ -499,7 +499,7 @@ theorem gTIA_all_predicted : ∀ d ∈ gTIAData, gTIA_predicted d := by decide
 -- § 15. Table 1 (eq. 112): 8 cells with derived blocking
 -- ════════════════════════════════════════════════════
 
-/-- @cite{rouillard-2026} Table 1: readings for "*Mary has been sick in
+/-- [rouillard-2026] Table 1: readings for "*Mary has been sick in
     three days*" and its negation crossed with TIA type and aspect.
 
     Polarity, TIA type, and aspect are enums (not Bool flags), so the
@@ -535,7 +535,7 @@ def table1 : List Table1Cell := do
   let asp ← [Table1Aspect.pfv, .impv]
   pure ⟨pol, ty, asp⟩
 
-/-- @cite{rouillard-2026} Table 1: exactly one cell survives — NEG + G-TIA + PFV. -/
+/-- [rouillard-2026] Table 1: exactly one cell survives — NEG + G-TIA + PFV. -/
 theorem surviving_is_neg_gtia_pfv :
     table1.filter (fun c => decide (table1Survives c)) =
     [⟨.negative, .gTIA, .pfv⟩] := by decide
@@ -544,7 +544,7 @@ theorem surviving_is_neg_gtia_pfv :
 -- § 16. Stacking constraint (§3.2, ex. 60)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{rouillard-2026} §3.2, ex. (60). When two TIAs stack, the inner
+/-! [rouillard-2026] §3.2, ex. (60). When two TIAs stack, the inner
     (VP-adjacent) one must be E-TIA and the outer must be G-TIA. The
     reverse order is ungrammatical. The position constraint follows from
     `AdverbialPosition`: E-TIA = eventLevel (VP-adjacent), G-TIA =
@@ -581,7 +581,7 @@ def stacking_60b : StackingDatum :=
 def stackingData : List StackingDatum := [stacking_60a, stacking_60b]
 
 /-- Stacking is acceptable iff inner is event-level and outer is
-    perfect-level. @cite{rouillard-2026} §3.2 schemata (57), (61). -/
+    perfect-level. [rouillard-2026] §3.2 schemata (57), (61). -/
 def stacking_predicted (d : StackingDatum) : Prop :=
   (d.innerPosition = .eventLevel ∧ d.outerPosition = .perfectLevel) ↔ d.acceptable
 
@@ -595,7 +595,7 @@ theorem stacking_all_predicted : ∀ d ∈ stackingData, stacking_predicted d :=
 -- § 17. Since-when questions (§5.2, ex. 131)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{rouillard-2026} §5.2, ex. (131): "Since when has Mary been sick?"
+/-! [rouillard-2026] §5.2, ex. (131): "Since when has Mary been sick?"
     lacks the E-perfect/U-perfect ambiguity of the corresponding
     declarative. Rouillard derives this from MIP applied to the Hamblin
     set (eq. 135 ANS): the E-perfect Hamblin set has no maximally
@@ -603,9 +603,9 @@ theorem stacking_all_predicted : ∀ d ∈ stackingData, stacking_predicted d :=
     Hamblin set does.
 
     The since-when observation itself is originally
-    @cite{von-fintel-iatridou-2019}'s "Since *since*"; the explanatory
+    [von-fintel-iatridou-2019]'s "Since *since*"; the explanatory
     mechanism (open-PTS density on dense time) is from
-    @cite{fox-hackl-2006}'s Universal Density of Measurement. -/
+    [fox-hackl-2006]'s Universal Density of Measurement. -/
 
 /-- Since-when question datum: which perfect readings are available? -/
 structure SinceWhenDatum where
@@ -624,7 +624,7 @@ def sinceWhen_131 : SinceWhenDatum :=
     ePerfect := False }
 
 /-- Since-when questions block the E-perfect reading.
-    @cite{fox-hackl-2006} density argument applied to Rouillard's
+    [fox-hackl-2006] density argument applied to Rouillard's
     eq. (137) E-perfect Hamblin set: no maximally informative true
     answer survives MIP filtering. -/
 theorem sinceWhen_blocks_ePerfect : ¬ sinceWhen_131.ePerfect := by

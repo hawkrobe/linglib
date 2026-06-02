@@ -5,7 +5,7 @@ import Linglib.Semantics.Degree.Differential
 
 /-!
 # Bresnan 1973: Syntax of the Comparative Clause Construction in English
-@cite{bresnan-1973} @cite{bhatt-pancheva-2004} @cite{bhatt-takahashi-2011}
+[bresnan-1973] [bhatt-pancheva-2004] [bhatt-takahashi-2011]
 
 Joan W. Bresnan. Syntax of the Comparative Clause Construction in English.
 *Linguistic Inquiry* 4(3): 275–343.
@@ -28,8 +28,8 @@ Joan W. Bresnan. Syntax of the Comparative Clause Construction in English.
 
 4. **All than-clauses are underlyingly clausal**: "Phrasal" comparatives like
    `taller than Bill` derive from full clauses via maximal deletion.
-   @cite{bhatt-pancheva-2004} reject this view, arguing phrasal
-   comparatives are genuinely phrasal (DA). @cite{bhatt-takahashi-2011}
+   [bhatt-pancheva-2004] reject this view, arguing phrasal
+   comparatives are genuinely phrasal (DA). [bhatt-takahashi-2011]
    reverses B&P on the basis of Lechner-style binding diagnostics and
    re-vindicates Bresnan's clausal-source analysis for English (the
    3-place '-er' is needed for *Hindi-Urdu*, not English). See
@@ -50,8 +50,8 @@ Joan W. Bresnan. Syntax of the Comparative Clause Construction in English.
 modern Deg°), the `more` = `-er` + `much` decomposition, the measure phrase
 restriction with negative adjectives, subdeletion commensurability.
 
-**Modified but descended**: QP → DegP (@cite{kennedy-1999}); comparative
-deletion → degree operator movement (@cite{heim-2001}); QP-AP parallelism
+**Modified but descended**: QP → DegP ([kennedy-1999]); comparative
+deletion → degree operator movement ([heim-2001]); QP-AP parallelism
 → X-bar theory → Minimalist bare phrase structure.
 
 **Historical**: The construction-specific transformations (AP Shift, QP
@@ -60,7 +60,7 @@ clausal" claim, the `so → such` transformation.
 
 ## Connection to Kennedy 1999
 
-The existing `Kennedy1999.lean` cites @cite{bresnan-1973} for morphological
+The existing `Kennedy1999.lean` cites [bresnan-1973] for morphological
 distribution data and phrasal/clausal examples. This file formalizes
 Bresnan's own proposals: the QP structure, the derivation rules, and the
 four introductory puzzles that motivated the analysis. Bridge theorems
@@ -308,7 +308,7 @@ def puzzleC : List PuzzleDatum :=
 
 /-- Puzzle (D): "*Mary is more than five feet short" vs "Mary is shorter than five feet."
 
-    @cite{kennedy-1999} explains this via positive/negative extent boundedness.
+    [kennedy-1999] explains this via positive/negative extent boundedness.
     Bresnan's syntactic explanation: `short` rejects definite measure phrase
     modifiers (`*How short is he? — five feet short`), so the QP identity
     condition in the clause cannot be satisfied.
@@ -347,7 +347,7 @@ def puzzleD : List PuzzleDatum :=
     syntactic category) from the head.
 
     This is the 1973 precursor to modern identity conditions in ellipsis
-    (e-GIVENness in @cite{merchant-2001}; SIC in Anand, Hardt & McCloskey 2021). -/
+    (e-GIVENness in [merchant-2001]; SIC in Anand, Hardt & McCloskey 2021). -/
 inductive DeletionTarget where
   | qp   -- QP deleted (measure phrase comparison / subdeletion)
   | ap   -- AP deleted (simple adjectival comparison)
@@ -387,8 +387,8 @@ theorem np_qp_identity_fails :
     clausal. What appears as a "phrasal" comparative ("taller than Bill")
     is derived from a full clause by maximal deletion.
 
-    @cite{bhatt-pancheva-2004} rejected this view in favor of a "genuinely
-    phrasal" Direct Analysis. @cite{bhatt-takahashi-2011} subsequently
+    [bhatt-pancheva-2004] rejected this view in favor of a "genuinely
+    phrasal" Direct Analysis. [bhatt-takahashi-2011] subsequently
     reversed B&P on the basis of binding diagnostics and re-vindicates
     Bresnan's clausal-source analysis for English (cross-tradition
     bridge: `BhattTakahashi2011.bt2011_agrees_with_bresnan_against_bp2004`).
@@ -417,7 +417,7 @@ def bresnanAnalysisOf : ThanClauseType → BresnanThanClauseAnalysis
 /-- Whether an adjective admits definite measure phrase modification
     ("five feet tall" ✓ vs "*five feet short" ✗).
 
-    Bresnan observes this as a syntactic fact; @cite{kennedy-1999}
+    Bresnan observes this as a syntactic fact; [kennedy-1999]
     derives it from extent boundedness (positive extents are bounded,
     negative extents are not). Both predict the same distribution. -/
 def admitsDefiniteMeasure (polarity : ScalePolarity) : Bool :=

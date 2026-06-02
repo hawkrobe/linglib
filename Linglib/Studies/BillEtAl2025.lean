@@ -6,14 +6,14 @@ import Linglib.Studies.Haspelmath2007
 import Linglib.Studies.MitrovicSauerland2016
 
 /-!
-# @cite{bill-etal-2025} — DP Conjunction Complexity
+# [bill-etal-2025] — DP Conjunction Complexity
 
 "Is DP conjunction always complex? The view from child Georgian and Hungarian"
 Semantics & Pragmatics 18, Article 5, 1-20.
 
 ## Main Question
 
-@cite{mitrovic-sauerland-2014} claim DP conjunction universally decomposes
+[mitrovic-sauerland-2014] claim DP conjunction universally decomposes
 into J (set intersection) + MU (subset) + ☉ (type-shifter). Combined with the
 Transparency Principle — children prefer 1-to-1 form-meaning
 mappings — this predicts J-MU expressions (where all pieces are overt) should
@@ -99,7 +99,7 @@ def hungarianStrategies : List ConjunctionStrategy := [.jOnly, .muOnly, .jMu]
 Key morphological difference: Georgian MU (-c) is a bound clitic,
 Hungarian MU (is) is a free morpheme.
 This may be relevant to the cross-linguistic difference in results
-(@cite{clark-2017}: free morphemes may be acquired more readily than bound).
+([clark-2017]: free morphemes may be acquired more readily than bound).
 -/
 theorem georgian_mu_bound : georgian_c.boundMorpheme = true := rfl
 theorem hungarian_mu_free : hungarian_is.boundMorpheme = false := rfl
@@ -356,7 +356,7 @@ def hungarianSentencePlayedLRT : List LRTResult :=
 /--
 Georgian children replayed J-MU sentences significantly more than J sentences.
 
-This is the OPPOSITE of what @cite{mitrovic-sauerland-2016} + Transparency Principle predicts.
+This is the OPPOSITE of what [mitrovic-sauerland-2016] + Transparency Principle predicts.
 The prediction was that J-MU (most transparent) should be EASIEST.
 
 Negative estimate means J < J-MU in replay count (J-MU harder).
@@ -395,7 +395,7 @@ def transparencyPredicts (s1 s2 : ConjunctionStrategy) : Bool :=
   s1.overtMorphemeCount > s2.overtMorphemeCount
 
 /--
-@cite{mitrovic-sauerland-2016} + Transparency Principle predicts J-MU is more transparent
+[mitrovic-sauerland-2016] + Transparency Principle predicts J-MU is more transparent
 than both J-only and MU-only.
 -/
 theorem jmu_predicted_most_transparent :
@@ -460,7 +460,7 @@ under a single morpheme.
 -- ============================================================================
 
 /-!
-## Semantic Decomposition (@cite{mitrovic-sauerland-2016})
+## Semantic Decomposition ([mitrovic-sauerland-2016])
 
 The M&S decomposition maps onto operations in Montague/Conjunction.lean:
 

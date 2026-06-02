@@ -5,9 +5,9 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Prod
 
 /-!
-# @cite{bumford-rett-2021} — Rationalizing Evaluativity
-@cite{bumford-rett-2021} @cite{lassiter-goodman-2017} @cite{bergen-levy-goodman-2016}
-@cite{rett-2015} @cite{barker-2002-vagueness}
+# [bumford-rett-2021] — Rationalizing Evaluativity
+[bumford-rett-2021] [lassiter-goodman-2017] [bergen-levy-goodman-2016]
+[rett-2015] [barker-2002-vagueness]
 
 Proceedings of Sinn und Bedeutung 25, pp. 187–204.
 
@@ -19,12 +19,12 @@ Proceedings of Sinn und Bedeutung 25, pp. 187–204.
 
 2. **Comparison-class uncertainty**: Worlds are two-dimensional — subject height ×
    comparison class center. The listener jointly infers height and CC statistics,
-   extending @cite{lassiter-goodman-2017}'s threshold RSA with
-   @cite{barker-2002-vagueness}'s insight that CC uncertainty is informative.
+   extending [lassiter-goodman-2017]'s threshold RSA with
+   [barker-2002-vagueness]'s insight that CC uncertainty is informative.
 
 3. **Lexical uncertainty for markedness**: Antonym-sensitive evaluativity
    (marked equatives like "as short as" are evaluative; unmarked "as tall as"
-   are not) emerges from @cite{bergen-levy-goodman-2016}'s lexical uncertainty,
+   are not) emerges from [bergen-levy-goodman-2016]'s lexical uncertainty,
    where marked forms have higher production cost.
 
 4. **Evaluativity metric**: E[ht − μ] — the expected deviation of the subject's
@@ -56,9 +56,9 @@ preserving the qualitative predictions with a 45-world grid
    marked is NOT, confirming that partial antonymic competition (not just cost)
    drives evaluativity
 
-## Connection to @cite{rett-2015}
+## Connection to [rett-2015]
 
-@cite{rett-2015} derives evaluativity categorically via Q/R-implicature
+[rett-2015] derives evaluativity categorically via Q/R-implicature
 (formalized in `Pragmatics/Implicature/Evaluativity.lean`).
 This RSA model derives the same predictions *gradiently*: evaluativity
 strength varies continuously across constructions. Both accounts agree
@@ -120,7 +120,7 @@ def worldPrior (w : EvalWorld) : ℚ :=
     For the positive construction: unmarked = "tall", marked = "short".
     For the exact equative: unmarked = "as tall as K", marked = "as short as K".
     Cost asymmetry (marked = 2, unmarked = 1) drives antonym-sensitive
-    evaluativity via @cite{bergen-levy-goodman-2016}'s lexical uncertainty. -/
+    evaluativity via [bergen-levy-goodman-2016]'s lexical uncertainty. -/
 inductive Utterance where
   | unmarked  -- positive-polar form
   | marked    -- negative-polar form (costlier)
@@ -271,7 +271,7 @@ Keisha's height is atypically low. The paper reports E[k − μ] = −1.06
 at L₁.
 
 The mechanism: the speaker paid extra cost (C = 2) for the marked form.
-By @cite{bergen-levy-goodman-2016}'s logic, L₁ infers the speaker must have
+By [bergen-levy-goodman-2016]'s logic, L₁ infers the speaker must have
 had a strong reason — the marked form is distinctively informative in worlds
 where k is atypically low. -/
 
@@ -287,7 +287,7 @@ above the CC center (μ < k). The paper reports E[k − μ] = 0.84 at L₁,
 much weaker than the marked form's −1.06.
 
 This asymmetry — marked evaluative, unmarked weakly/not evaluative — is
-the antonym-sensitive pattern that @cite{rett-2015} identifies categorically
+the antonym-sensitive pattern that [rett-2015] identifies categorically
 and this model derives gradiently. -/
 
 theorem eq_unmarked_weakly_evaluative :
@@ -427,12 +427,12 @@ constructions:
 - `comp_marked_weak` / `comp_unmarked_counter_evaluative` : comparative ✗✗ -/
 
 -- ============================================================================
--- § 12. Bridge to Neo-Gricean Evaluativity (@cite{rett-2015})
+-- § 12. Bridge to Neo-Gricean Evaluativity ([rett-2015])
 -- ============================================================================
 
 /-! ### RSA ↔ Neo-Gricean Agreement
 
-@cite{rett-2015}'s Neo-Gricean account (formalized in
+[rett-2015]'s Neo-Gricean account (formalized in
 `Pragmatics/Implicature/Evaluativity.lean`) classifies
 constructions categorically using `AdjectivalConstruction` and `Polarity`:
 - **Positive** (`.positive`): evaluative for both polarities (Q-implicature)
@@ -461,7 +461,7 @@ abbrev compConstruction : AdjectivalConstruction := .comparative
 
 open Rett2015Implicature (deriveEvaluativity)
 
-/-- Cross-theory agreement: the RSA model and @cite{rett-2015}'s Neo-Gricean
+/-- Cross-theory agreement: the RSA model and [rett-2015]'s Neo-Gricean
     account agree on the full evaluativity paradigm.
 
     - **Positive**: Neo-Gricean says evaluative for both polarities (Q-implicature).
@@ -497,7 +497,7 @@ theorem rsa_neo_gricean_agreement :
 -- § 13. Cross-References
 -- ============================================================================
 
-/-! ### Relationship to @cite{lassiter-goodman-2017}
+/-! ### Relationship to [lassiter-goodman-2017]
 
 `LassiterGoodman2017PMF.lean` formalizes the threshold RSA model for the
 positive construction only (1D world = height, latent = threshold).

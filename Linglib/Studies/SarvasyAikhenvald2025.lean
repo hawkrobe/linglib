@@ -8,7 +8,7 @@ import Linglib.Core.Context.Shifts
 
 /-!
 # Clause Chaining
-@cite{sarvasy-aikhenvald-2025} @cite{foley-r-d-van-valin-1984}
+[sarvasy-aikhenvald-2025] [foley-r-d-van-valin-1984]
 
 ## Part I: Fragment Verification
 
@@ -53,11 +53,11 @@ open _root_.Typology.ClauseChaining
 
 -- ============================================================================
 -- Language data (was `Phenomena/ClauseChaining/Data.lean`; inlined per the
--- provenance-tracking policy). @cite{sarvasy-aikhenvald-2025} is the natural
+-- provenance-tracking policy). [sarvasy-aikhenvald-2025] is the natural
 -- owner — the parameter sample comes from this paper.
 -- ============================================================================
 
-/-- Nungon (Trans-New Guinea, Finisterre-Huon; @cite{sarvasy-2017}, 2025 Ch. 7).
+/-- Nungon (Trans-New Guinea, Finisterre-Huon; [sarvasy-2017], 2025 Ch. 7).
 
     The best-described clause chaining language. Obligatory SR with
     temporal encoding: four distinct medial forms (SS-SEQ, SS-SIM,
@@ -82,7 +82,7 @@ def nungon : ClauseChainingParams where
   hasSummaryLinkage   := false
   medialCanStandAlone := true
 
-/-- Manambu (Ndu family, East Sepik; @cite{aikhenvald-2008}, 2025 Ch. 6). -/
+/-- Manambu (Ndu family, East Sepik; [aikhenvald-2008], 2025 Ch. 6). -/
 def manambu : ClauseChainingParams where
   direction           := .medialFinal
   srSystem            := .ssDs
@@ -101,7 +101,7 @@ def manambu : ClauseChainingParams where
   hasSummaryLinkage   := true
   medialCanStandAlone := true
 
-/-- Ku Waru (Trans-New Guinea, Chimbu-Wahgi; @cite{merlan-rumsey-1991}). -/
+/-- Ku Waru (Trans-New Guinea, Chimbu-Wahgi; [merlan-rumsey-1991]). -/
 def kuWaru : ClauseChainingParams where
   direction           := .medialFinal
   srSystem            := .ssDs
@@ -120,7 +120,7 @@ def kuWaru : ClauseChainingParams where
   hasSummaryLinkage   := true
   medialCanStandAlone := false
 
-/-- Korean (Koreanic; @cite{sohn-1999}). -/
+/-- Korean (Koreanic; [sohn-1999]). -/
 def korean : ClauseChainingParams where
   direction           := .medialFinal
   srSystem            := .none
@@ -141,7 +141,7 @@ def korean : ClauseChainingParams where
   hasSummaryLinkage   := false
   medialCanStandAlone := true
 
-/-- Turkish (Turkic; @cite{goksel-kerslake-2005}). -/
+/-- Turkish (Turkic; [goksel-kerslake-2005]). -/
 def turkish : ClauseChainingParams where
   direction           := .medialFinal
   srSystem            := .none
@@ -161,7 +161,7 @@ def turkish : ClauseChainingParams where
   hasSummaryLinkage   := false
   medialCanStandAlone := false
 
-/-- Korowai (Trans-New Guinea, Greater Awyu; @cite{de-vries-2025} Ch. 5). -/
+/-- Korowai (Trans-New Guinea, Greater Awyu; [de-vries-2025] Ch. 5). -/
 def korowai : ClauseChainingParams where
   direction           := .medialFinal
   srSystem            := .multiTrack

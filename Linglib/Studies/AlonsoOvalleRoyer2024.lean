@@ -9,13 +9,13 @@ import Linglib.Fragments.Italian.ModalIndefinites
 
 /-!
 # Modal Indefinites: Cross-Linguistic Typology & Event-Relative Anchoring
-@cite{alonso-ovalle-royer-2024} @cite{alonso-ovalle-menendez-benito-2010}
-@cite{alonso-ovalle-menendez-benito-2018} @cite{coon-2019} @cite{hacquard-2006}
-@cite{alonso-ovalle-royer-2021}
-@cite{chierchia-2013} @cite{jayez-tovena-2006} @cite{kratzer-shimoyama-2002}
+[alonso-ovalle-royer-2024] [alonso-ovalle-menendez-benito-2010]
+[alonso-ovalle-menendez-benito-2018] [coon-2019] [hacquard-2006]
+[alonso-ovalle-royer-2021]
+[chierchia-2013] [jayez-tovena-2006] [kratzer-shimoyama-2002]
 
 Cross-linguistic typology of modal indefinites and bridge theorems connecting
-the event-relative modality theory (@cite{hacquard-2006}, formalized in
+the event-relative modality theory ([hacquard-2006], formalized in
 `Semantics/Modality/EventRelativity`) to empirical observations.
 
 Lexical entries are defined in Fragment files (single source of truth):
@@ -27,7 +27,7 @@ Lexical entries are defined in Fragment files (single source of truth):
 
 ## Architecture
 
-The key contribution of @cite{alonso-ovalle-royer-2024} is DERIVING the
+The key contribution of [alonso-ovalle-royer-2024] is DERIVING the
 position-sensitive flavor distribution of Chuj *yalnhej* from structural
 properties of event binding, rather than stipulating it lexically:
 
@@ -53,7 +53,7 @@ anchor; content licensing independently determines the resulting flavor.
 
 ## Anchor Freedom (§4.1, footnote 17)
 
-A-O&R depart from @cite{hacquard-2006} in one key respect: the event
+A-O&R depart from [hacquard-2006] in one key respect: the event
 argument of *yalnhej*'s anchoring function can be "left free" — bound
 by the existential closure of the speech act event rather than by the
 closest event binder. In Hacquard's system, modals are always bound by
@@ -76,10 +76,10 @@ open Italian.ModalIndefinites
 
 
 -- ════════════════════════════════════════════════════════════════
--- Part 0: Modal Indefinite Denotation (A-@cite{alonso-ovalle-royer-2024}, (59))
+-- Part 0: Modal Indefinite Denotation (A-[alonso-ovalle-royer-2024], (59))
 -- ════════════════════════════════════════════════════════════════
 
-/-- The modal component of a modal indefinite (A-@cite{alonso-ovalle-royer-2024}, (59)):
+/-- The modal component of a modal indefinite (A-[alonso-ovalle-royer-2024], (59)):
 
     `∀y[P(y)(w) → ◇_{f(e₁)}(Q(y)(w'))]`
 
@@ -100,7 +100,7 @@ instance {Event W Entity : Type*}
     Decidable (modalComponent f e allW domain P Q w) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-/-- Full modal indefinite denotation (A-@cite{alonso-ovalle-royer-2024}, (59)):
+/-- Full modal indefinite denotation (A-[alonso-ovalle-royer-2024], (59)):
 
     `⟦MI⟧^{f,e₁} = λP.λQ.λw. ∃x[P(x)(w) ∧ Q(x)(w)] ∧ ∀y[P(y)(w) → ◇_{f(e₁)}(Q(y)(w'))]`
 
@@ -195,7 +195,7 @@ theorem upper_bounded_items :
 
 /-- *Yalnhej* is the only item that is both at-issue AND has both
 epistemic and random choice flavors. This is the core empirical
-contribution of @cite{alonso-ovalle-royer-2024}. -/
+contribution of [alonso-ovalle-royer-2024]. -/
 theorem yalnhej_unique_profile :
     (allEntries.filter (λ e =>
       e.status == .atIssue && decide (e.hasFlavor .epistemic) && decide (e.hasFlavor .circumstantial))).length = 1 := rfl
@@ -324,7 +324,7 @@ RC requires TWO conditions:
 (a) VP event is structurally accessible (internal or adjunct position)
 (b) verb is volitional (decision subevent provides the anchoring point)
 
-This captures @cite{alonso-ovalle-royer-2024}'s core structural explanation:
+This captures [alonso-ovalle-royer-2024]'s core structural explanation:
 the RC flavor comes from the VP event, but only volitional events
 contain a decision subevent that can serve as the anchor. -/
 def rcAvailable (pos : ChujArgPosition) (volitional : Bool) : Bool :=
@@ -345,7 +345,7 @@ def predictedMIFlavors (pos : ChujArgPosition) (volitional : Bool) : List ModalF
 -- ════════════════════════════════════════════════════
 
 /-- Table 5 DERIVED from structural position + volitionality + EventBinder.
-The full five-cell pattern of @cite{alonso-ovalle-royer-2024} falls
+The full five-cell pattern of [alonso-ovalle-royer-2024] falls
 out from three orthogonal components:
 (1) `accessibleBinders` (structural position)
 (2) `miAnchorFlavor` (EventBinder → ModalFlavor, from EventRelativity)
@@ -478,7 +478,7 @@ theorem yalnhej_nonmaximal :
 -- ════════════════════════════════════════════════════
 
 /-- Multi-flavor items: can express BOTH epistemic and RC.
-@cite{alonso-ovalle-royer-2024}, §6.2: *yalnhej* and *irgendein*
+[alonso-ovalle-royer-2024], §6.2: *yalnhej* and *irgendein*
 tolerate more than one modal flavour. -/
 theorem multi_flavor_items :
     (allEntries.filter (λ e =>
@@ -525,7 +525,7 @@ theorem predicativity_correlates_unremarkable :
       e.canBePredicate == e.hasUnremarkableReading) = true := rfl
 
 /-- Number-neutral items lack upper-boundedness. (Footnote 18 of
-@cite{alonso-ovalle-royer-2024}, p.32, attributed to Louise McNally:
+[alonso-ovalle-royer-2024], p.32, attributed to Louise McNally:
 wh-phrase origin → number neutrality → incompatible with anti-singleton
 inference, since anti-singleton presupposes a singleton alternative.) -/
 theorem numberNeutral_implies_not_ub :
@@ -667,7 +667,7 @@ theorem yalnhej_not_upper_bounded_abc :
 
 
 -- ════════════════════════════════════════════════════
--- § 14. Non-Maximality (A-@cite{alonso-ovalle-royer-2024}, §3.2.4)
+-- § 14. Non-Maximality (A-[alonso-ovalle-royer-2024], §3.2.4)
 -- ════════════════════════════════════════════════════
 
 /-! Yalnhej is compatible with partial-domain scenarios: the speaker
@@ -709,7 +709,7 @@ theorem yalnhej_three_way_contrast :
 
 
 -- ════════════════════════════════════════════════════
--- § 15. Card Scenario: Harmonic Interpretations (A-@cite{alonso-ovalle-royer-2024}, §4.3)
+-- § 15. Card Scenario: Harmonic Interpretations (A-[alonso-ovalle-royer-2024], §4.3)
 -- ════════════════════════════════════════════════════
 
 /-! When a modal indefinite occurs under an external modal (imperative,

@@ -1,10 +1,10 @@
 import Linglib.Studies.ZurawHayes2017
 
 /-!
-# @cite{magri-2025}: Constraint Interaction in Probabilistic Phonology
-@cite{magri-2025}
+# [magri-2025]: Constraint Interaction in Probabilistic Phonology
+[magri-2025]
 
-Replication of @cite{magri-2025} "Constraint Interaction in Probabilistic
+Replication of [magri-2025] "Constraint Interaction in Probabilistic
 Phonology: Deducing Maximum Entropy Grammars from Hayes and Zuraw's Shifted
 Sigmoids Generalization" (Linguistic Inquiry, Early Access).
 
@@ -12,7 +12,7 @@ Sigmoids Generalization" (Linguistic Inquiry, Early Access).
 
 Within harmony-based probabilistic phonology, an n-ary harmony function
 predicts the shifted-sigmoids generalization of Hayes and Zuraw
-(@cite{zuraw-hayes-2017}; @cite{hayes-2022}) **if and only
+([zuraw-hayes-2017]; [hayes-2022]) **if and only
 if** the harmony is *separable* — it decomposes as `∏ₖ hₖ(Cₖ)^{wₖ}`.
 Since MaxEnt harmony is separable (each `hₖ = exp(−·)`), ME predicts HZ
 as a corollary. And since any separable harmony can be construed as ME
@@ -21,7 +21,7 @@ is complete.
 
 ## Formalization
 
-This study file instantiates @cite{magri-2025}'s theory with the Tagalog
+This study file instantiates [magri-2025]'s theory with the Tagalog
 nasal substitution case study from the paper, verifying:
 
 1. The six constraints satisfy `ConstraintIndependence`
@@ -49,14 +49,14 @@ raw constraint is insensitive to at least one dimension.
 
 /-- C₁ = NasSub is insensitive to the prefix (row dimension):
     the violation is 1 for NO and 0 for YES regardless of prefix.
-    Per @cite{zuraw-hayes-2017} ex. (3) (NasSub is the markedness driver
+    Per [zuraw-hayes-2017] ex. (3) (NasSub is the markedness driver
     against nasal+obstruent sequences). -/
 theorem nasSub_insensitive_to_row (o : NasalSubOutput) :
     nasSub.eval (.mang_b, o) = nasSub.eval (.pang_b, o) ∧
     nasSub.eval (.mang_k, o) = nasSub.eval (.pang_k, o) := by
   cases o <;> decide
 
-/-- C₂ = \*NC is insensitive to the prefix. Per @cite{zuraw-2010} ex. (17):
+/-- C₂ = \*NC is insensitive to the prefix. Per [zuraw-2010] ex. (17):
     "\*NC: A [+nasal] segment must not be immediately followed by a
     [-voice, -sonorant] segment". -/
 theorem starNC_insensitive_to_row (o : NasalSubOutput) :

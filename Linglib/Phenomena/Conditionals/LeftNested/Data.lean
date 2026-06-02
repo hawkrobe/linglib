@@ -2,10 +2,10 @@ import Linglib.Features.Acceptability
 
 /-!
 # Left-Nested Conditionals: Empirical Data
-@cite{gibbard-1981} @cite{haegeman-2003} @cite{iatridou-1991} @cite{lassiter-2025}
+[gibbard-1981] [haegeman-2003] [iatridou-1991] [lassiter-2025]
 
 Theory-neutral empirical observations about left-nested conditionals (LNCs)
-from @cite{cao-white-lassiter-2025} "Sorting out left-nested conditionals."
+from [cao-white-lassiter-2025] "Sorting out left-nested conditionals."
 
 ## Overview
 
@@ -53,7 +53,7 @@ structure LNCDatum where
 -- Gibbard's Example
 
 /-!
-## Gibbard's Example @cite{gibbard-1981}
+## Gibbard's Example [gibbard-1981]
 
 The classic example of a left-nested conditional, discussed extensively
 in the philosophical literature on conditionals.
@@ -299,7 +299,7 @@ def ex32_npiAnyone : LNCDatum :=
 /-!
 ## Coordination Constraints
 
-@cite{haegeman-2003}: Premise conditionals resist coordination with other
+[haegeman-2003]: Premise conditionals resist coordination with other
 conditional clauses. This extends to LNCs.
 -/
 
@@ -344,7 +344,7 @@ def ex35_coordinationDiagnostic : LNCDatum :=
 /-!
 ## *Only* + Inversion
 
-Another diagnostic from @cite{haegeman-2003}: PCs block *only* + subject-aux
+Another diagnostic from [haegeman-2003]: PCs block *only* + subject-aux
 inversion, while HCs allow it.
 -/
 

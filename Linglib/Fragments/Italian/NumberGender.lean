@@ -2,13 +2,13 @@ import Linglib.Morphology.DM.NominalStructure
 import Linglib.Fragments.Italian.Nouns
 
 /-!
-# Italian Number–Gender Interaction @cite{adamson-2024}
+# Italian Number–Gender Interaction [adamson-2024]
 
 Standard Italian has a small class of nouns — mostly body parts — whose
 plural form changes gender from masculine to feminine. These are the
 **-a plurals**: *braccio* (m.sg) → *braccia* (f.pl) 'arm/arms'.
 
-@cite{adamson-2024} §5.1 analyzes this as evidence for the GLH's prediction
+[adamson-2024] §5.1 analyzes this as evidence for the GLH's prediction
 about number position: the -a plural involves **low number** (number on n,
 within nP), which can interact with gender. Regular -i plurals involve
 **high number** (number on Num, outside nP), which cannot.

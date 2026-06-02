@@ -6,7 +6,7 @@ import Mathlib.Order.Defs.PartialOrder
 
 A prototype attaches a typicality grade (`ℚ`) to each member of a category.
 Higher values are more prototypical. Used wherever graded membership is
-needed (e.g. color-term typicality @cite{westerbeek-koolen-maes-2015}).
+needed (e.g. color-term typicality [westerbeek-koolen-maes-2015]).
 
 The `TypicalityOrder` wrapper carries the `Preorder` instance derived from
 typicality: `(a : TypicalityOrder p) ≤ b ↔ p.typicality a ≤ p.typicality b`.

@@ -3,14 +3,14 @@ import Linglib.Studies.Kriz2016
 
 /-!
 # Križ & Spector (2021): Interpreting Plural Predication
-@cite{kriz-spector-2021}
+[kriz-spector-2021]
 
 Interpreting Plural Predication: Homogeneity and Non-Maximality.
 Linguistics and Philosophy, 44, 1131-1178.
 
 ## Core Contribution
 
-Križ & Spector 2021 refine @cite{kriz-2016}'s pragmatic mechanism for
+Križ & Spector 2021 refine [kriz-2016]'s pragmatic mechanism for
 non-maximality. Where Križ 2016 used "Addressing an Question" (no QUD cell
 straddles the true/false boundary), K&S replace this with **strong relevance
 filtering**: a candidate interpretation is relevant only if its truth
@@ -102,7 +102,7 @@ address the issue, so `all` cannot be used non-maximally. -/
 
 This bridges Križ 2016's pragmatic mechanism (Addressing) to K&S 2021's
 filtering mechanism (strong relevance) for the specific case of universal
-quantification over pluralities. After the @cite{kriz-2016} §3.1 refactor
+quantification over pluralities. After the [kriz-2016] §3.1 refactor
 that derives `allPluralTV` from `removeGap`, the bridge becomes a
 pointwise-equivalence result via `bivalentPred_allPluralTV_eq_allSatisfy`. -/
 theorem all_addressing_iff_relevant (q : QUD W) (P : Atom → W → Prop)
@@ -132,7 +132,7 @@ candidates matter. -/
 
 /-- The candidate conjunction matches `pluralTruthValue` when all candidates
     are included (before relevance filtering). This is the central
-    correspondence of @cite{kriz-spector-2021} §3: the simple trivalent
+    correspondence of [kriz-spector-2021] §3: the simple trivalent
     semantics IS truth-on-all-readings applied to the full candidate set.
 
     This is a restatement of `pluralTruthValue_eq_candidateSemantics` in
@@ -179,7 +179,7 @@ theorem removeGap_iff_forallH [Fintype Atom] (P : Atom → W → Prop)
 -- Section 5: Non-Monotonic Context Finite Model
 -- ============================================================================
 
-/-! @cite{kriz-spector-2021} §2.2.3, §3.1: The enriched candidate set
+/-! [kriz-spector-2021] §2.2.3, §3.1: The enriched candidate set
 correctly handles plural definites in non-monotonic contexts like
 "Exactly one student read the books." Unlike the two-candidate approach
 (Krifka 1996), the full candidate set ensures that the conjunction of
@@ -291,7 +291,7 @@ end NonMonotonicModel
 -- Section 6: Upward Homogeneity Bridge
 -- ============================================================================
 
-/-! @cite{kriz-spector-2021} §3.3, Appendix: Upward homogeneity arises when
+/-! [kriz-spector-2021] §3.3, Appendix: Upward homogeneity arises when
 a predicate is true of a super-plurality containing x but not of x itself.
 For example, "The soldiers of my brigade didn't surround the castle" is
 false if the brigade *together with other soldiers* surrounded the castle.
@@ -306,7 +306,7 @@ open Semantics.Homogeneity (generalisedTV generalisedTV_true_of_holds)
     super-plurality in the domain, then the generalised truth value is GAP,
     not FALSE. The predicate's truth "leaks upward" through overlap.
 
-    This captures @cite{kriz-spector-2021} §3.3: "The soldiers of my brigade
+    This captures [kriz-spector-2021] §3.3: "The soldiers of my brigade
     didn't surround the castle" is undefined (not false) when the brigade
     participated with other soldiers in surrounding the castle. -/
 theorem upward_homogeneity_gap

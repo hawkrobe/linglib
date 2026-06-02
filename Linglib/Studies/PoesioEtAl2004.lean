@@ -10,7 +10,7 @@ import Linglib.Studies.Sidner1983
 import Linglib.Studies.Beaver2004
 
 /-!
-# @cite{poesio-stevenson-eugenio-hitzeman-2004}: Centering as a Parametric Theory
+# [poesio-stevenson-eugenio-hitzeman-2004]: Centering as a Parametric Theory
 
 Poesio, Stevenson, Di Eugenio & Hitzeman (2004), "Centering: A
 Parametric Theory and Its Instantiations." *Computational Linguistics*
@@ -20,7 +20,7 @@ PSDH's headline contribution: **Centering is not a single theory; it
 is a parameter family.** The variants of CB definition, utterance
 unit, "previous utterance," realization, CF filter, ranking, "pronoun"
 filter, and segmentation that have been proposed in the literature
-since @cite{grosz-joshi-weinstein-1995} are *parameters* of the
+since [grosz-joshi-weinstein-1995] are *parameters* of the
 framework. Different parameter settings make different empirical
 claims true.
 
@@ -59,7 +59,7 @@ type-changing axes, not the bookkeeping ones" recommendation.
 2. **`Sidner1983` partial-GF witness** (not a structural bridge —
    per audit) — PSDH §5.3.4 (p. 358) say two-CB-under-partial-GF
    configurations are "reminiscent of" the examples that led
-   @cite{sidner-1979} to argue for two foci. Our witness theorem
+   [sidner-1979] to argue for two foci. Our witness theorem
    (`psdh_two_cb_witnesses_sidner_two_foci`) establishes that the
    PSDH (10) configuration AND a constructed Sidner-side encoding
    both exhibit "two-ness" — two CBs vs two distinct foci. The
@@ -127,7 +127,7 @@ abbrev Utt : Type := Utterance String GrammaticalRole
 -- § 1. Example (10): partial GF ranking → two CBs
 -- ════════════════════════════════════════════════════
 
-/-! @cite{poesio-stevenson-eugenio-hitzeman-2004} §4.1.1 (p. 329)
+/-! [poesio-stevenson-eugenio-hitzeman-2004] §4.1.1 (p. 329)
     cite their corpus example (10) where partial grammatical-function
     ranking yields *two* CBs. The XML annotation in the paper has
     `the corner cupboard` (np-compl) and `Branicki` (gen) tied at
@@ -198,10 +198,10 @@ theorem u227_to_u229_violates_strong_c1 :
 -- § 2. Bridge to Sidner1983: the two-CB case is two-focus territory
 -- ════════════════════════════════════════════════════
 
-/-! @cite{poesio-stevenson-eugenio-hitzeman-2004} §5.3.4 (p. 358):
+/-! [poesio-stevenson-eugenio-hitzeman-2004] §5.3.4 (p. 358):
 
     > [These] examples are reminiscent of the examples that led
-    > @cite{sidner-1979} to argue for two foci — sentences with one
+    > [sidner-1979] to argue for two foci — sentences with one
     > animate entity (typically in agent position) and an inanimate
     > one (typically in theme position), like *Mortimer sold the book
     > for 10 cents* or *Mary took a nickel from her toy bank yesterday*.
@@ -285,7 +285,7 @@ theorem psdh_two_cb_witnesses_sidner_two_foci :
 -- § 3. PSDH §5.2.2: entity-coherence dissociability — Example (23)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{poesio-stevenson-eugenio-hitzeman-2004} §5.2.2 (p. 353-354):
+/-! [poesio-stevenson-eugenio-hitzeman-2004] §5.2.2 (p. 353-354):
 
     > One clear conclusion suggested by our results is that
     > entity-based accounts of coherence need to be supplemented by
@@ -411,8 +411,8 @@ theorem is_ranker_picks_hearerOld_as_cp :
 -- § 5. Beaver 2004 OT bridge → see Beaver2004.lean
 -- ════════════════════════════════════════════════════
 
-/-! @cite{poesio-stevenson-eugenio-hitzeman-2004} §3.1 fn 12 cite
-    @cite{beaver-2004} ("The Optimization of Discourse Anaphora,"
+/-! [poesio-stevenson-eugenio-hitzeman-2004] §3.1 fn 12 cite
+    [beaver-2004] ("The Optimization of Discourse Anaphora,"
     *Linguistics and Philosophy* 27(1):3-56) as the canonical
     optimality-theoretic reformulation of Centering. The full bridge
     formalization — six ranked OT constraints (AGREE > DISJOINT >
@@ -436,7 +436,7 @@ theorem is_ranker_picks_hearerOld_as_cp :
     Hahn**. They return to the issue at §5.3.4, considering whether
     to keep CB uniqueness (via a totalizer like Strube-Hahn's) or
     abandon it (Givón 1983, Gundel 1998). The §3.1 fn 12 endorsement
-    of @cite{beaver-2004} is for a *different* problem — Beaver's COT
+    of [beaver-2004] is for a *different* problem — Beaver's COT
     fixes BFP 87's hard-vs-soft confusion of Rule 1, not the
     partial-ranking → multi-CB tie. So PSDH effectively pose two
     totalizers in different sections of the same paper:
@@ -683,7 +683,7 @@ theorem beaver_cohere_invariant_under_cb_equiv_candidates
 
 /-! ### Centering ↔ Coherence bridge
 
-PSDH's parametric framework includes the @cite{kehler-2002} coherence-
+PSDH's parametric framework includes the [kehler-2002] coherence-
 relation axis. The mapping below was previously hosted in
 `Discourse/Centering/Coherence.lean` and `Rule2Coherence.lean`; per
 the audit's anchoring rule, that bridge content belongs in this study

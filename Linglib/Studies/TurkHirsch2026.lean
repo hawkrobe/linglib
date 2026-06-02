@@ -10,18 +10,18 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Türk & Hirsch (2026) — Category Match constrains polar question alternatives
-@cite{turk-hirsch-2026} @cite{atlamaz-2023} @cite{fox-katzir-2011} @cite{rooth-1992}
+[turk-hirsch-2026] [atlamaz-2023] [fox-katzir-2011] [rooth-1992]
 
 Connects the empirical judgments in `PolarAnswers.lean` (modal answers
 are infelicitous to Turkish polar questions) to the formal explanation
-@cite{turk-hirsch-2026} propose: @cite{fox-katzir-2011} category match
+[turk-hirsch-2026] propose: [fox-katzir-2011] category match
 over UPOS tags applied to the focus alternatives evoked by the polarity
 head Σ_F that hosts Turkish *mI*.
 
 ## The puzzle
 
-Following @cite{atlamaz-2023}'s bidimensional analysis, Turkish *mI* heads
-PolP and bears focus (Σ_F). Under @cite{rooth-1992}-style type-theoretic
+Following [atlamaz-2023]'s bidimensional analysis, Turkish *mI* heads
+PolP and bears focus (Σ_F). Under [rooth-1992]-style type-theoretic
 alternative computation, any operator of the same semantic type counts as
 an alternative — including deontic modals. This yields {p, ¬p, □p}, wrongly
 predicting □p is a felicitous answer.
@@ -66,7 +66,7 @@ def p : Set PolarWorld := {sleeps_must, sleeps_free}
 /-- ¬p = "Ali doesn't sleep". Set complement of `p`. -/
 def notP : Set PolarWorld := pᶜ
 
-/-! Deontic must, grounded in @cite{kratzer-1977}'s premise-set semantics.
+/-! Deontic must, grounded in [kratzer-1977]'s premise-set semantics.
 
     The deontic source maps each world to the propositions encoding the
     deontic obligations in force at that world. In the *_must worlds the
@@ -86,7 +86,7 @@ def deonticBase : PolarWorld → List (PolarWorld → Prop)
   | sleeps_free  => []
   | nosleep_free => []
 
-/-- Kratzer-grounded deontic must: `□p` as @cite{kratzer-1977} Def 5
+/-- Kratzer-grounded deontic must: `□p` as [kratzer-1977] Def 5
     (`mustInView`) over the deontic premise set. -/
 def mustGrounded (w : PolarWorld) : Prop :=
   Core.Logic.Intensional.Premise.mustInView deonticBase pProp w
@@ -129,7 +129,7 @@ theorem mustP_iff_mustGrounded (w : PolarWorld) :
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-- A denotation tagged with its UD UPOS category. Study-internal
-    utility used to model @cite{turk-hirsch-2026}'s claim that *mI*'s
+    utility used to model [turk-hirsch-2026]'s claim that *mI*'s
     PART tag licenses only PART-tagged alternatives. -/
 structure TaggedDen (α : Type) where
   cat : UD.UPOS
@@ -146,7 +146,7 @@ def opLexicon : List (TaggedDen (Set PolarWorld)) :=
 -- §3  Alternative sets
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-- Type-theoretic alternatives (@cite{rooth-1985} D_τ): all operators
+/-- Type-theoretic alternatives ([rooth-1985] D_τ): all operators
     regardless of UPOS → {p, ¬p, □p}. Over-generates. -/
 def typeTheoAlternatives : List (Set PolarWorld) :=
   opLexicon.map (·.den)
@@ -176,7 +176,7 @@ def polarQ : PropFocusValue PolarWorld := {p, notP}
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-- Category-matched question = standard polar question.
-    @cite{fox-katzir-2011}'s category match yields the correct {p, ¬p} partition.
+    [fox-katzir-2011]'s category match yields the correct {p, ¬p} partition.
     `catMatchAlternatives` filters opLexicon to `[p, notP]`, and the
     resulting set-of-alternatives equals the polar `{p, notP}` literal. -/
 theorem catMatch_eq_polar : catMatchQ = polarQ := by
@@ -184,7 +184,7 @@ theorem catMatch_eq_polar : catMatchQ = polarQ := by
   simp [catMatchQ, polarQ, catMatchAlternatives, opLexicon]
 
 /-- The spurious prediction: □p is an answer to the type-theoretic question.
-    Under @cite{rooth-1992}-style D_τ, "Ali must sleep" is predicted to be a
+    Under [rooth-1992]-style D_τ, "Ali must sleep" is predicted to be a
     felicitous answer to "Does Ali sleep?" — which is empirically wrong. -/
 theorem typeTheo_admits_modal : mustP ∈ typeTheoQ := by
   simp [typeTheoQ, typeTheoAlternatives, opLexicon]
@@ -243,12 +243,12 @@ theorem theory_overgen_without_catmatch : mustP ∈ typeTheoQ :=
 -- §7  Bridge: A-value computation
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! Following @cite{rooth-1992}, the A-value of a [FoC]-marked
+/-! Following [rooth-1992], the A-value of a [FoC]-marked
     constituent is the set of alternatives of the same semantic type — i.e.,
     exactly the type-theoretic D_τ computation.
 
-    @cite{turk-hirsch-2026}'s contribution is showing that this over-generates
-    for Turkish polar questions, and that category match (@cite{fox-katzir-2011})
+    [turk-hirsch-2026]'s contribution is showing that this over-generates
+    for Turkish polar questions, and that category match ([fox-katzir-2011])
     is the correct constraint on alternative computation when the focus host
     is Σ_F. -/
 
@@ -288,9 +288,9 @@ theorem categoryMatch_fixes_applyFoC :
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! The fragment exposes only theory-neutral lexical primitives. Here we
-    add the theory-specific tagging that @cite{turk-hirsch-2026}'s analysis
-    requires: a UPOS label (for @cite{fox-katzir-2011} category match) and
-    a `Head` label (for @cite{laka-1990}-style PolP). These commitments
+    add the theory-specific tagging that [turk-hirsch-2026]'s analysis
+    requires: a UPOS label (for [fox-katzir-2011] category match) and
+    a `Head` label (for [laka-1990]-style PolP). These commitments
     live in the study file, not the fragment, so the fragment stays
     reusable across syntactic theories. -/
 
@@ -315,12 +315,12 @@ def Head.toOp : Head → ((PolarWorld → Prop) → (PolarWorld → Prop))
 
 /-- This study's commitments about Turkish *mI*. -/
 structure MiAnalysis where
-  /-- Which polarity head *mI* spells out (Σ in @cite{atlamaz-2023}). -/
+  /-- Which polarity head *mI* spells out (Σ in [atlamaz-2023]). -/
   head : Head
-  /-- UPOS tag used by @cite{fox-katzir-2011} category match. -/
+  /-- UPOS tag used by [fox-katzir-2011] category match. -/
   upos : UD.UPOS
 
-/-- The @cite{turk-hirsch-2026} / @cite{atlamaz-2023} analysis: *mI* is Σ
+/-- The [turk-hirsch-2026] / [atlamaz-2023] analysis: *mI* is Σ
     and tagged `PART`. -/
 def miAnalysis : MiAnalysis :=
   { head := Head.affirm, upos := UD.UPOS.PART }

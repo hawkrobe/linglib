@@ -3,11 +3,11 @@ import Linglib.Dialogue.KOS.Defs
 /-!
 # The Reprise Content Hypothesis (RCH)
 
-@cite{purver-ginzburg-2004}, @cite{ginzburg-2012}
+[purver-ginzburg-2004], [ginzburg-2012]
 
 The Reprise Content Hypothesis is a methodological criterion linking
 fragment-reprise data to denotational adequacy. It comes in two strengths
-(@cite{ginzburg-2012} ex. 98):
+([ginzburg-2012] ex. 98):
 
 - **Weak RCH**: a fragment reprise question queries *a part of* the standard
   semantic content of the fragment being reprised.
@@ -16,7 +16,7 @@ fragment-reprise data to denotational adequacy. It comes in two strengths
 
 RCH operates per **reading type** — fragment reprises admit multiple readings
 (Clausal Confirmation, Intended Content, Repetition, Correction;
-@cite{ginzburg-2012} Ch. 6 §6.2.1, Table 6.1). A `reprisedContent` operation
+[ginzburg-2012] Ch. 6 §6.2.1, Table 6.1). A `reprisedContent` operation
 returns the *type* at which each licensed query operates, parameterized by
 reading.
 
@@ -47,12 +47,12 @@ file.
 namespace Dialogue.KOS
 
 -- ════════════════════════════════════════════════════
--- § 1. Reprise readings (@cite{ginzburg-2012} Ch. 6 §6.2.1, Table 6.1)
+-- § 1. Reprise readings ([ginzburg-2012] Ch. 6 §6.2.1, Table 6.1)
 -- ════════════════════════════════════════════════════
 
 /-- The four reading types for a fragment reprise.
 
-@cite{ginzburg-2012} Ch. 6 §6.2.1: empirical CR-corpus work establishes
+[ginzburg-2012] Ch. 6 §6.2.1: empirical CR-corpus work establishes
 that any single reprise fragment admits up to four readings, distinguished
 by what they query.
 
@@ -76,7 +76,7 @@ inductive RFReading where
 
 /-- The semantic type at which a fragment-reprise query operates.
 
-@cite{ginzburg-2012} §8.5.1's argument against generalized-quantifier
+[ginzburg-2012] §8.5.1's argument against generalized-quantifier
 denotations turns on a *type-mismatch*: GQ denotations predict reprise
 queries at functional type `(e → t) → t`, while the empirical record shows
 reprises operating only at individual / property type. We reify the relevant
@@ -101,7 +101,7 @@ inductive QueryType where
 
 /-- Query types observed for a reprise of `sub` in host LocProp under `reading`.
 
-@cite{ginzburg-2012} Ch. 6 §6.2.1, Table 6.1 + §8.5.1:
+[ginzburg-2012] Ch. 6 §6.2.1, Table 6.1 + §8.5.1:
 
 - `repetition` queries the phonological form (always `.repetition`).
 - `intendedContent` queries the *q-params record* of the sub-utterance —
@@ -138,7 +138,7 @@ structure RepriseEvent (Cont : Type) where
 split, HOU, ...) yield different predictors; RCH judges them. -/
 abbrev RchPredictor (Cont : Type) := RepriseEvent Cont → List QueryType
 
-/-- The q-params/dgb-params predictor (@cite{ginzburg-2012} §8.5.1).
+/-- The q-params/dgb-params predictor ([ginzburg-2012] §8.5.1).
 
 For each reprise event, this predictor licenses exactly the query types that
 the q-params record on the host's LocProp would expose — namely
@@ -147,7 +147,7 @@ reading-specific queries (`.repetition` for phonological echoes). -/
 def qParamsPredictor {Cont : Type} : RchPredictor Cont :=
   fun ev => reprisedContent ev.host ev.sub ev.reading
 
-/-- **Weak RCH** (@cite{ginzburg-2012} ex. 98a, p. 323):
+/-- **Weak RCH** ([ginzburg-2012] ex. 98a, p. 323):
 every observed reprise query type is *predicted* by the denotation theory.
 
 Read as: the theory does not under-generate. It may predict more than is
@@ -156,7 +156,7 @@ def WeakRCH {Cont : Type} (predict : RchPredictor Cont) : Prop :=
   ∀ ev : RepriseEvent Cont, ∀ qt ∈ reprisedContent ev.host ev.sub ev.reading,
     qt ∈ predict ev
 
-/-- **Strong RCH** (@cite{ginzburg-2012} ex. 98b, p. 323):
+/-- **Strong RCH** ([ginzburg-2012] ex. 98b, p. 323):
 predicted and observed query type sets coincide.
 
 Read as: the theory neither under- nor over-generates. Strong RCH is *too

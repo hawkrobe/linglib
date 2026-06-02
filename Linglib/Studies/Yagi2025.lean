@@ -7,32 +7,32 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Conflicting Presuppositions in Disjunction
-@cite{yagi-2025}
+[yagi-2025]
 
-Squib-replication of @cite{yagi-2025} (S&P 18:7) on disjunctions
+Squib-replication of [yagi-2025] (S&P 18:7) on disjunctions
 `φ_p ∨ ψ_q` with `p ∧ q = ⊥`. Yagi argues:
 
   (2a) the disjunction presupposes `p ∨ q`;
   (2b) it can be false (when both disjuncts are false).
 
 §2 surveys four projection theories — Strong Kleene, two-dimensional
-@cite{karttunen-peters-1979}, dynamic update (@cite{heim-1982},
-@cite{veltman-1996}, @cite{beaver-2001}), and @cite{schlenker-2009}'s
+[karttunen-peters-1979], dynamic update ([heim-1982],
+[veltman-1996], [beaver-2001]), and [schlenker-2009]'s
 local contexts — each failing (2b). §3 considers two reactions:
-@cite{beaver-krahmer-2001}'s 𝒜-operator (loses presupposition),
-and @cite{geurts-2005}'s flexible accommodation (captures (2a–b) at the
+[beaver-krahmer-2001]'s 𝒜-operator (loses presupposition),
+and [geurts-2005]'s flexible accommodation (captures (2a–b) at the
 cost of an underspecified accommodation mechanism that interacts oddly
 with negation, and at the cost of overgenerating non-projection in
 non-conflicting cases like (18)).
 
-@cite{aloni-2022}'s bilateral state semantics is a substantively
+[aloni-2022]'s bilateral state semantics is a substantively
 different account that also delivers a "split" disjunction; we mention
 it here because Yagi cites it alongside Geurts as a flexible-accommodation
 co-developer, but it is formalised separately at
 `Studies/Aloni2022.lean` and not engaged here.
 
 Yagi's example (8) — "Either baldness is not hereditary, or all of Bill's
-children are bald" (@cite{karttunen-1974}) — appears in §2.2 as a
+children are bald" ([karttunen-1974]) — appears in §2.2 as a
 counterexample to the K&P modification `Π(φ ∨ ψ) := Π(φ) ∨ Π(ψ)` (eq. 7).
 This formula is exactly what `PrProp.orFlex.presup` computes. The
 flexible-accommodation framework Yagi defends in §3.2 evades the eq. (7)
@@ -51,12 +51,12 @@ definition with disjunction-update survival.
 - `Truth3.join` (Strong Kleene): never false (`strong_kleene_never_false`)
 - `PrProp.or` (classical): never defined (`classical_never_defined`)
 - `PrProp.orFilter` (symmetric, positive-antecedent filtering of
-  @cite{kalomoiros-schwarz-2021}): wrong presupposition
+  [kalomoiros-schwarz-2021]): wrong presupposition
   (`filter_wrong_at_kingOpens`)
 - `PrProp.orKPSymmetric` (symmetric, negative-antecedent K&P of Yagi Def 2):
   presupposition entails assertion (`kp_presup_entails_assertion`)
 - `Geurts2005.exhaustivity_implies_uninformative`:
-  the *consequence* (not the derivation) of @cite{schlenker-2009} §2.4
+  the *consequence* (not the derivation) of [schlenker-2009] §2.4
   via the Geurts-modal-disjunction substrate
   (`truthset_uninformative_geurts_route`)
 - `Prop3.metaAssert`: allows falsity, no presupposition
@@ -81,7 +81,7 @@ open Semantics.Presupposition
 
 /-! ## World type
 
-@cite{yagi-2025} ex. (1c), after @cite{beaver-2001}: "Either the King
+[yagi-2025] ex. (1c), after [beaver-2001]: "Either the King
 of Buganda is now opening parliament or the President of Buganda is
 conducting the ceremony." A nation has either a king or a president
 (presuppositions conflict), and the head of state may or may not be
@@ -132,7 +132,7 @@ def presConductsCeremony : PrProp W where
 
 /-! ## Empirical observations
 
-@cite{yagi-2025} (2a–b). Note that (2a) is non-trivial here — the
+[yagi-2025] (2a–b). Note that (2a) is non-trivial here — the
 discriminating world `noHeadOfState` falsifies `expectedPresup`. -/
 
 /-- The expected presupposition: the nation has some head of state. -/
@@ -160,7 +160,7 @@ theorem can_be_false :
    show W.kingDoesnt ≠ W.presidentConducts by decide⟩
 
 
-/-! ## Failure 1: Strong Kleene (@cite{yagi-2025} §2.1, Definition 1) -/
+/-! ## Failure 1: Strong Kleene ([yagi-2025] §2.1, Definition 1) -/
 
 /-- Strong Kleene disjunction of the two presuppositional propositions. -/
 noncomputable def skDisj : Prop3 W :=
@@ -176,10 +176,10 @@ theorem strong_kleene_never_false : ∀ w, skDisj w ≠ .false := by
       hasKing, hasPresident] <;> try decide)
 
 
-/-! ## Failure 2: Two-dimensional semantics (@cite{yagi-2025} §2.2)
+/-! ## Failure 2: Two-dimensional semantics ([yagi-2025] §2.2)
 
-@cite{karttunen-peters-1979}, with @cite{yagi-2025}'s symmetric Definition 2
-(per fn 2, citing @cite{kalomoiros-schwarz-2021} for empirical support of
+[karttunen-peters-1979], with [yagi-2025]'s symmetric Definition 2
+(per fn 2, citing [kalomoiros-schwarz-2021] for empirical support of
 symmetry). The substrate `PrProp.orKPSymmetric` matches Yagi's Def 2 directly:
 
   Π(φ ∨ ψ) = (¬A(ψ) → Π(φ)) ∧ (¬A(φ) → Π(ψ))
@@ -189,7 +189,7 @@ conditionals plus an extra `Π(φ) ∨ Π(ψ)` disjunct, which is **strictly
 stronger** than `orKPSymmetric` (worked counterexample: at a world with `A(φ)=⊤`,
 `A(ψ)=⊥`, `Π(φ)=⊤`, `Π(ψ)=⊥`, `orKPSymmetric` is defined, `orFilter` is not).
 The two are not predictionally equivalent, and neither is the asymmetric
-@cite{karttunen-1973} rule (24b) used as `PrProp.disjFilterLeft` —
+[karttunen-1973] rule (24b) used as `PrProp.disjFilterLeft` —
 see `Studies/Karttunen1973.lean`. -/
 
 /-- Classical disjunction requires both presuppositions: presup = `p ∧ q`. -/
@@ -203,7 +203,7 @@ theorem classical_never_defined : ∀ w, ¬classicalDisj.presup w := fun w h =>
 (`PrProp.orFilter`). Encodes
 `(A(φ) → Π(ψ)) ∧ (A(ψ) → Π(φ)) ∧ (Π(φ) ∨ Π(ψ))` — strictly stronger
 than `orKPSymmetric`. The conjunct `Π(φ) ∨ Π(ψ)` matches the eq. (7) modification
-discussed by @cite{yagi-2025} §2.2 (after Def 3) as a candidate fix. -/
+discussed by [yagi-2025] §2.2 (after Def 3) as a candidate fix. -/
 def filterDisj : PrProp W := PrProp.orFilter kingOpensParl presConductsCeremony
 
 /-- `orFilter` predicts presupposition failure at `kingOpens`, where the
@@ -224,17 +224,17 @@ def kpDisj : PrProp W := PrProp.orKPSymmetric kingOpensParl presConductsCeremony
 
 /-- K&P's presupposition entails the assertion when presuppositions conflict:
 whenever Π = 1, A = 1. Derived from the substrate
-`PrProp.orKPSymmetric_presup_entails_when_conflicting`. @cite{yagi-2025} §2.2 (5)–(6). -/
+`PrProp.orKPSymmetric_presup_entails_when_conflicting`. [yagi-2025] §2.2 (5)–(6). -/
 theorem kp_presup_entails_assertion :
     ∀ w, kpDisj.presup w → kpDisj.assertion w := by
   intro w h
   exact PrProp.orKPSymmetric_presup_entails_when_conflicting _ _ w (presups_conflict w) h
 
 
-/-! ## Failure 3: Update semantics (@cite{yagi-2025} §2.3)
+/-! ## Failure 3: Update semantics ([yagi-2025] §2.3)
 
 Bridges to `Semantics.Dynamic.UpdateSemantics.Basic`, which
-collapses the @cite{heim-1982}/@cite{veltman-1996}/@cite{beaver-2001}
+collapses the [heim-1982]/[veltman-1996]/[beaver-2001]
 treatments of presuppositional disjunction into a single `PUpdate.disjPresup`
 operator. -/
 
@@ -266,7 +266,7 @@ theorem hasPresident_not_supported :
   exact hmem.2
 
 /-- The presuppositional disjunction update yields `∗` (none) on
-`bugandaState`. @cite{yagi-2025} §2.3: the update `s[φ_p ∨ ψ_q]` results
+`bugandaState`. [yagi-2025] §2.3: the update `s[φ_p ∨ ψ_q]` results
 in undefinedness because the presupposition check for the first disjunct
 (`s[p] = s`) fails. -/
 theorem update_yields_undefined :
@@ -285,8 +285,8 @@ theorem neither_presup_supported :
 end UpdateSemantics
 
 
-/-! ## Failure 4: @cite{schlenker-2009}'s incremental evaluation
-(@cite{yagi-2025} §2.4)
+/-! ## Failure 4: [schlenker-2009]'s incremental evaluation
+([yagi-2025] §2.4)
 
 Yagi's §2.4 derivation: Schlenker's pragmatic condition on local contexts
 admits a context-world `w` only if `w` survives the local-context update
@@ -351,13 +351,13 @@ theorem truthset_uninformative_geurts_route :
     truthSet_exhausted w hw
 
 
-/-! ## Reaction 1: Meta-assertion (@cite{yagi-2025} §3.1, @cite{beaver-krahmer-2001})
+/-! ## Reaction 1: Meta-assertion ([yagi-2025] §3.1, [beaver-krahmer-2001])
 
 Yagi §3.1 has two prongs: (i) the truth-functional behavior of `𝒜` (we
 formalize this), and (ii) the *licensing constraint* on when `𝒜` may be
 inserted (Beaver & Krahmer's condition: insert iff the formula would be
 undefined OR a part is replaceable by `⊥`/`⊤` without semantic effect).
-Yagi argues this constraint licenses the @cite{beaver-krahmer-2001}
+Yagi argues this constraint licenses the [beaver-krahmer-2001]
 analysis (10) `𝒜φ_p ∨_w 𝒜ψ_q` but does NOT license the Strong-Kleene
 counterpart (11) `φ_p ∨_s 𝒜ψ_q`, leaving Yagi's verdict on §3.1 partly
 negative ("I cannot offer a constraint now").
@@ -397,8 +397,8 @@ theorem metaAssert_no_gap : ∀ w, metaAssertDisj w ≠ .indet := by
       hasKing, hasPresident]
 
 
-/-! ## Reaction 2: Flexible accommodation (@cite{yagi-2025} §3.2,
-@cite{geurts-2005}, @cite{aloni-2022})
+/-! ## Reaction 2: Flexible accommodation ([yagi-2025] §3.2,
+[geurts-2005], [aloni-2022])
 
 Uses the substrate `PrProp.orFlex`, with the discriminating world
 `noHeadOfState` ensuring the (2a) test is non-trivial. -/
@@ -448,7 +448,7 @@ theorem flex_can_be_false : flexDisj.eval W.kingDoesnt = .false := flex_truth_ta
 
 /-! ### Genuineness
 
-@cite{yagi-2025} Definition 8 (after @cite{zimmermann-2000}): each
+[yagi-2025] Definition 8 (after [zimmermann-2000]): each
 disjunct must contribute a "live possibility" — there is `w ∈ s` with
 `{w}[φ] = {w}` AND `w ∈ s[φ ∨ ψ]`. The substrate
 `PrProp.genuineness p q s disj` parameterises on the disjunction
@@ -470,11 +470,11 @@ theorem flex_genuineness :
 
 /-! ### Substrate observation: orFlex = orBelnap
 
-NOT a Yagi claim — @cite{belnap-1970} is not in his references.
+NOT a Yagi claim — [belnap-1970] is not in his references.
 This is an observation `Semantics/Presupposition/Basic.lean` already
 makes (`orFlex_eq_orBelnap`) and that
 `Studies/Geurts2005.lean` extends to a three-way
-identity with @cite{geurts-2005}'s modal-disjunction view. We instantiate
+identity with [geurts-2005]'s modal-disjunction view. We instantiate
 the substrate identity at the Buganda case for clarity. -/
 
 /-- Substrate identity at the Buganda case: `flexDisj = orBelnap`. -/
@@ -483,7 +483,7 @@ theorem flexDisj_eq_orBelnap :
   PrProp.orFlex_eq_orBelnap _ _
 
 
-/-! ### Negation interaction (@cite{yagi-2025} §3.2 final paragraphs)
+/-! ### Negation interaction ([yagi-2025] §3.2 final paragraphs)
 
 Yagi's *static* negation works fine — preserves presupposition, flips
 assertion. His *dynamic* negation `s[¬(φ_p ∨ ψ_q)] = s/(s[χ][φ_p] ∪ s[χ][ψ_q])`
@@ -520,12 +520,12 @@ theorem neg_flex_truth_table :
       kingOpensParl, presConductsCeremony, hasKing, hasPresident]
 
 
-/-! ## @cite{yagi-2025} example (8) Karttunen 1974: eq. (7) is too weak
+/-! ## [yagi-2025] example (8) Karttunen 1974: eq. (7) is too weak
 
-@cite{yagi-2025} §2.2 (between Def 3 and §2.3) considers a modification
+[yagi-2025] §2.2 (between Def 3 and §2.3) considers a modification
 to K&P, `Π(φ ∨ ψ) := Π(φ) ∨ Π(ψ)` (eq. (7)). This formula IS what
 `PrProp.orFlex.presup` computes. Yagi shows it correctly predicts (1c)
-Buganda but is "too weak" for (8) @cite{karttunen-1974}: "Either baldness
+Buganda but is "too weak" for (8) [karttunen-1974]: "Either baldness
 is not hereditary, or all of Bill's children are bald." Eq. (7) predicts
 the tautological presupposition `⊤ ∨ Π(ψ) = ⊤`, but the empirical
 intuition is that (8) presupposes Bill has children.
@@ -581,7 +581,7 @@ theorem ex7_presup_trivial_for_ex8 : ∀ w, ex8FlexDisj.presup w :=
 /-- The empirical presupposition is non-trivial: it fails at `noChild`. -/
 theorem expected_presup_fails_at_noChild : ¬ex8ExpectedPresup W8.noChild := id
 
-/-- @cite{yagi-2025}'s eq. (7) critique made formal: the eq. (7) formula
+/-- [yagi-2025]'s eq. (7) critique made formal: the eq. (7) formula
 (= `orFlex.presup`) does NOT match the empirical presupposition. Witness:
 at `noChild`, eq. (7) says `True` (presup satisfied), but the empirical
 intuition says `False` (presup failure — "Bill has children" doesn't hold).
@@ -591,17 +591,17 @@ theorem eq7_too_weak_for_ex8 :
   expected_presup_fails_at_noChild (h ▸ ex7_presup_trivial_for_ex8 _)
 
 
-/-! ## @cite{yagi-2025} example (18) Beaver 2001:115: the unprincipled success
+/-! ## [yagi-2025] example (18) Beaver 2001:115: the unprincipled success
 
 "Either John didn't solve the problem or Mary realized that the problem
 is solved." The factive presupposition of "realize" does NOT project.
-@cite{yagi-2025} §3.2 final paragraphs: standard update semantics
+[yagi-2025] §3.2 final paragraphs: standard update semantics
 correctly predicts non-projection here, while flexible accommodation may
 predict it correctly *but for the wrong reason* — the incompatibility
 that motivates accommodation in (1c) and (15) is absent in (18), so
 genuineness should not even fire. The success is unprincipled.
 
-Linglib's @cite{karttunen-1973} formalisation
+Linglib's [karttunen-1973] formalisation
 (`Studies/Karttunen1973.lean`) handles (18) via
 the **asymmetric** `disjFilterLeft` rule (24b): when `¬A` entails `Π(B)`,
 the presupposition is filtered. This is the principled alternative
@@ -653,7 +653,7 @@ theorem ex18_orFlex_no_projection_via_vacuous_left :
 it is universally satisfied — independently of `maryRealized.presup`. -/
 theorem ex18_left_presup_vacuous : ∀ w, johnDidntSolve.presup w := fun _ => trivial
 
-/-- @cite{yagi-2025} §3.2's "unprincipled success" diagnosis made
+/-- [yagi-2025] §3.2's "unprincipled success" diagnosis made
 structural: at `notSolved`, the right disjunct's presupposition `solved`
 *fails*, so `(orFlex _ maryRealized).presup` would have NO support if
 the left disjunct also had a presupposition. The success at (18) rides
@@ -669,7 +669,7 @@ theorem ex18_unprincipled_in_right_presup_failure :
     (∀ w, johnDidntSolve.presup w) :=
   ⟨id, ex18_orFlex_no_projection_via_vacuous_left, ex18_left_presup_vacuous⟩
 
-/-- @cite{karttunen-1973}'s asymmetric rule (24b) — formalised in
+/-- [karttunen-1973]'s asymmetric rule (24b) — formalised in
 `Studies/Karttunen1973.lean` as
 `PrProp.disjFilterLeft` — gives a *principled* derivation: `¬(¬solved) =
 solved` entails the factive presupposition, so it is filtered. We invoke

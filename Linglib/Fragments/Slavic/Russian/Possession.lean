@@ -2,7 +2,7 @@ import Linglib.Typology.Possession
 
 /-!
 # Russian Possessive Constructions
-@cite{stassen-2009} @cite{nichols-1986} @cite{heine-1997}
+[stassen-2009] [nichols-1986] [heine-1997]
 
 Russian derives its primary have-construction from the **Location Schema**
 ("Y is located at X" → "X has Y"). The construction consists of:
@@ -12,7 +12,7 @@ Russian derives its primary have-construction from the **Location Schema**
 3. Copula `est'` 'is' (often omitted in present tense)
 
 The possessor is an oblique locative adjunct; the possessee is the
-grammatical subject. This matches @cite{heine-1997}'s prediction: Location
+grammatical subject. This matches [heine-1997]'s prediction: Location
 Schema encodes the possessee as subject.
 
 Russian also has a secondary, less common Action Schema construction
@@ -81,7 +81,7 @@ def primaryConstruction : RuPossessive := {}
 def secondarySchema : PossessionSource := .action
 
 /-- `imet'` is transitive: possessor = subject, possessee = object.
-    This matches @cite{heine-1997}'s prediction for the Action Schema. -/
+    This matches [heine-1997]'s prediction for the Action Schema. -/
 def imetPossessorIsSubject : Bool := true
 
 -- ============================================================================

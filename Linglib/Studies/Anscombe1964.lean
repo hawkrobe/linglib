@@ -1,8 +1,8 @@
 import Linglib.Semantics.Tense.TemporalConnectives.EventBridge
 
 /-!
-# @cite{anscombe-1964} / @cite{krifka-2010b}: Under-specification Semantics
-@cite{anscombe-1964} @cite{krifka-2010b} @cite{ladusaw-1980} @cite{beaver-condoravdi-2003}
+# [anscombe-1964] / [krifka-2010b]: Under-specification Semantics
+[anscombe-1964] [krifka-2010b] [ladusaw-1980] [beaver-condoravdi-2003]
 
 Single lexical entry per connective. Both *before* and *after* are predicates
 on time points; multiple readings arise from which point of B is relevant,
@@ -31,14 +31,14 @@ variable {Time : Type*} [LinearOrder Time]
 -- § Anscombe's Truth Conditions
 -- ============================================================================
 
-/-- Anscombe's *before B* as a predicate on times (@cite{krifka-2010b}, eq. 13a):
+/-- Anscombe's *before B* as a predicate on times ([krifka-2010b], eq. 13a):
     λt. ∀t' ∈ times(B), t < t'. All times at which B holds follow t.
 
     "A before B" then holds when some time in A satisfies this predicate. -/
 def Anscombe.before (A B : SentDenotation Time) : Prop :=
   ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t < t'
 
-/-- Anscombe's *after B* as a predicate on times (@cite{krifka-2010b}, eq. 13b):
+/-- Anscombe's *after B* as a predicate on times ([krifka-2010b], eq. 13b):
     λt. ∃t' ∈ times(B), t' < t. Some time at which B holds precedes t.
 
     "A after B" then holds when some time in A satisfies this predicate. -/
@@ -46,16 +46,16 @@ def Anscombe.after (A B : SentDenotation Time) : Prop :=
   ∃ t ∈ timeTrace A, ∃ t' ∈ timeTrace B, t' < t
 
 -- ============================================================================
--- § @cite{heinamaki-1974}: Reference Interval Semantics
+-- § [heinamaki-1974]: Reference Interval Semantics
 -- ============================================================================
 
 /-! ### Heinämäki's analysis and equivalence with Anscombe
 
-@cite{heinamaki-1974}'s analysis uses a reference interval I(B) — the temporal
+[heinamaki-1974]'s analysis uses a reference interval I(B) — the temporal
 interval associated with B — and defines *before*/*after* by comparison
 with that interval's boundary. This is the most standard textbook analysis.
 
-@cite{beaver-condoravdi-2003}: Under two conditions — **left-boundedness** (B has
+[beaver-condoravdi-2003]: Under two conditions — **left-boundedness** (B has
 a leftmost point) and **instantiation** (B is nonempty) — Anscombe and
 Heinämäki are truth-conditionally equivalent.
 
@@ -115,7 +115,7 @@ theorem anscombe_heinamaki_equiv_after
     exact ⟨a, ha, lb, hlb.1, hlt⟩
 
 -- ============================================================================
--- § Logical Properties (@cite{beaver-condoravdi-2003}, §6)
+-- § Logical Properties ([beaver-condoravdi-2003], §6)
 -- ============================================================================
 
 /-! ### *Before* is a strict order (antisymmetric and transitive)
@@ -189,7 +189,7 @@ theorem Anscombe.after_not_transitive :
     omega
 
 -- ============================================================================
--- § Complement Monotonicity and NPI Licensing (@cite{beaver-condoravdi-2003}, §5)
+-- § Complement Monotonicity and NPI Licensing ([beaver-condoravdi-2003], §5)
 -- ============================================================================
 
 /-! ### *Before* is DE; *after* is UE in the complement position
@@ -200,7 +200,7 @@ its monotonicity, which in turn determines NPI licensing:
 - *before* (∃∀): the ∀ over B reverses subset inclusion → DE → licenses NPIs
 - *after* (∃∃): the ∃ over B preserves subset inclusion → UE → blocks NPIs
 
-This is the same insight @cite{beaver-condoravdi-2003} express through `earliest`: the
+This is the same insight [beaver-condoravdi-2003] express through `earliest`: the
 universal force of `earliest` (selecting the minimum, which R-dominates
 all other elements) creates a downward-entailing environment. -/
 
@@ -237,9 +237,9 @@ end Semantics.Tense.TemporalConnectives
 
 /-!
 # Event-Level Temporal Connectives
-@cite{anscombe-1964} @cite{krifka-2010b}
+[anscombe-1964] [krifka-2010b]
 
-@cite{anscombe-1964}'s point-level semantics and @cite{krifka-2010b}'s
+[anscombe-1964]'s point-level semantics and [krifka-2010b]'s
 under-specification analysis lifted to **Level 3** (event predicates),
 with direct quantification over events and their runtime intervals.
 
@@ -256,7 +256,7 @@ with direct quantification over events and their runtime intervals.
 This asymmetry derives the **veridicality contrast**: *after* entails its
 complement (`e` asserts Q happened); *before* doesn't (`e` is vacuously
 true when no Q-event exists). The same ` /` pattern present in
-@cite{anscombe-1964} at Level 1 is preserved here at Level 3.
+[anscombe-1964] at Level 1 is preserved here at Level 3.
 
 ## Level
 
@@ -288,7 +288,7 @@ variable {Time : Type*} [LinearOrder Time]
     event must exist, and the subordinate event's runtime entirely precedes
     the main event's runtime.
 
-    This is @cite{anscombe-1964}'s `` lifted from points to event runtimes. -/
+    This is [anscombe-1964]'s `` lifted from points to event runtimes. -/
 def AnscombeEvent.after (P Q : Event Time → Prop) : Prop :=
   ∃ e₁ e₂ : Event Time, P e₁ ∧ Q e₂ ∧ e₂.τ.precedes e₁.τ
 
@@ -299,7 +299,7 @@ def AnscombeEvent.after (P Q : Event Time → Prop) : Prop :=
     When no Q-events exist, the universal is vacuously true ` making *before*
     non-veridical.
 
-    This is @cite{anscombe-1964}'s `` lifted from points to event runtimes. -/
+    This is [anscombe-1964]'s `` lifted from points to event runtimes. -/
 def AnscombeEvent.before (P Q : Event Time → Prop) : Prop :=
   ∃ e₁ : Event Time, P e₁ ∧ ∀ e₂ : Event Time, Q e₂ → e₁.τ.precedes e₂.τ
 
@@ -343,7 +343,7 @@ theorem AnscombeEvent.before_veridical_main (P Q : Event Time → Prop) :
 -- ` 3: Cross-Level Comparison ` Event (Level 3) vs Anscombe (Level 1)
 -- ============================================================================
 
-/-- Event-level *after* implies @cite{anscombe-1964}'s *after* when projected
+/-- Event-level *after* implies [anscombe-1964]'s *after* when projected
     through `eventDenotation`.
 
     Proof: from `e`.`.precedes e`.`  (i.e., `e`.`.finish < e`.`.start`),
@@ -357,7 +357,7 @@ theorem AnscombeEvent.after_implies_anscombe (P Q : Event Time → Prop) :
   · rw [timeTrace_eventDenotation]
     exact ⟨e₂, hq, e₂.τ.valid, le_refl _⟩
 
-/-- Event-level *before* implies @cite{anscombe-1964}'s *before* when projected.
+/-- Event-level *before* implies [anscombe-1964]'s *before* when projected.
 
     Proof: from ``e`, Q(e`) ` e`.`.finish < e`.`.start`, take
     `t = e`.`.finish`. For any `t' ` timeTrace(eventDenotation Q)`,
@@ -378,7 +378,7 @@ theorem AnscombeEvent.before_implies_anscombe (P Q : Event Time → Prop) :
 -- ` 4: Divergence ` Anscombe Does NOT Imply Event-Level
 -- ============================================================================
 
-/-- @cite{anscombe-1964}'s *before* does NOT imply the event-level *before*:
+/-- [anscombe-1964]'s *before* does NOT imply the event-level *before*:
     the converse of `before_implies_anscombe` fails.
 
     Counterexample: P-event at [1,5], Q-event at [3,8].
@@ -408,7 +408,7 @@ theorem anscombe_before_not_implies_event :
   have := hall eQ rfl
   simp [precedes, Event.τ, eP, eQ] at this
 
-/-- @cite{anscombe-1964}'s *after* does NOT imply the event-level *after*:
+/-- [anscombe-1964]'s *after* does NOT imply the event-level *after*:
     Anscombe allows the A-point to be inside B's runtime, while the event-level
     version requires B's runtime to entirely precede A's.
 

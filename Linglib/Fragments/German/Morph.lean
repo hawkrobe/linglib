@@ -2,12 +2,12 @@ import Linglib.Morphology.MorphProfile
 
 /-!
 # German Morphological Profile
-@cite{wals-2013} @cite{bickel-nichols-2001}
+[wals-2013] [bickel-nichols-2001]
 
 WALS-derived profile (Ch 20A–29A, 21B, 62A, 79A/B, 80A) for German (ISO `deu`,
 WALS code `ger`). The B&N 2001 parameters (`flexivity := flexive`,
 `bnExponence := cumulative`) are not derivable from any WALS chapter and are
-paper-stipulated per @cite{bickel-nichols-2001}; together with the WALS-derived
+paper-stipulated per [bickel-nichols-2001]; together with the WALS-derived
 `fusion := concatenative` they place German in the traditional "fusional" cell.
 
 WALS F20A's `exclusivelyConcatenative` verdict samples a small set of formatives

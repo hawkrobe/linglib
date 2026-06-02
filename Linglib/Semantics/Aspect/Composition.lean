@@ -3,10 +3,10 @@ import Linglib.Core.Word
 
 /-!
 # VP-Level Situation Type Composition
-@cite{smith-1997}
+[smith-1997]
 
 Compositional rules for deriving the situation type of a verb constellation
-from its component parts (verb, NP, PP). @cite{smith-1997} Ch. 3 §3.3.
+from its component parts (verb, NP, PP). [smith-1997] Ch. 3 §3.3.
 
 ## Structure
 
@@ -40,7 +40,7 @@ open _root_ (MassCount)
 -- ════════════════════════════════════════════════════
 
 /-- PP directionality feature. Directional PPs contribute telicity;
-    locative PPs do not. @cite{smith-1997} §3.3.1 (50b). -/
+    locative PPs do not. [smith-1997] §3.3.1 (50b). -/
 inductive PPType where
   | directional  -- "to school", "into the room" → [+Telic]
   | locative     -- "in the park", "at home" → no telicity contribution
@@ -52,7 +52,7 @@ inductive PPType where
 
 /-- Telicity contribution of an object NP.
     Count NPs preserve verb telicity; mass NPs atelicize.
-    @cite{smith-1997} §3.3.1 (50a, 51):
+    [smith-1997] §3.3.1 (50a, 51):
     - V[+Telic] + NP[+Count] → VCon[+Telic]  ("builds a house")
     - V[+Telic] + NP[-Count] → VCon[-Telic]   ("builds houses")
     - V[-Telic] + NP[+Count] → VCon[-Telic]   ("walks the dog")
@@ -70,7 +70,7 @@ def composeWithNP (verb : AspectualProfile) (np : MassCount) : AspectualProfile 
 
 /-- Compose a verb's aspectual profile with a directional PP.
     Directional PPs contribute [+Telic]; locative PPs don't change telicity.
-    @cite{smith-1997} §3.3.1 (50b):
+    [smith-1997] §3.3.1 (50b):
     "child walk to school" → V[-Telic] + PP[Direct'l] → VCon[+Telic]. -/
 def composeWithPP (verb : AspectualProfile) (pp : PPType) : AspectualProfile :=
   match pp with
@@ -81,7 +81,7 @@ def composeWithPP (verb : AspectualProfile) (pp : PPType) : AspectualProfile :=
 -- § 3. External Override
 -- ════════════════════════════════════════════════════
 
-/-- **Principle of External Override** (@cite{smith-1997} §3.2.5, rule 53):
+/-- **Principle of External Override** ([smith-1997] §3.2.5, rule 53):
     VCon[a, b, fα] + Adv[fβ] → DVCon[a, b, fβ].
 
     When an external form (adverbial, viewpoint) has a temporal feature
@@ -181,7 +181,7 @@ theorem override_absorbs_composition (v : AspectualProfile) (np : MassCount)
 -- § 6. Semelfactive Coercion Patterns
 -- ════════════════════════════════════════════════════
 
-/-! @cite{smith-1997} §3.2.2, §3.2.5: semelfactives shift to activities
+/-! [smith-1997] §3.2.2, §3.2.5: semelfactives shift to activities
     under duration. This is the same shift captured by `duratize_semelfactive`
     in `Features/Aktionsart.lean`, but here derived compositionally via
     external override of the duration feature. -/
@@ -199,7 +199,7 @@ theorem override_agrees_with_shift :
 
 /-- Achievement + durative adverbial → accomplishment (process reading).
     "John was winning the race" presents preliminary stages.
-    @cite{smith-1997} §3.2.4. -/
+    [smith-1997] §3.2.4. -/
 theorem achievement_durative_is_accomplishment :
     (overrideDuration achievementProfile .durative).toVendlerClass = .accomplishment := rfl
 

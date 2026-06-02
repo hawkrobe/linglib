@@ -3,7 +3,7 @@ import Linglib.Core.Agent.ChoiceApproximations
 import Linglib.Core.Agent.UtilityTheory
 
 /-!
-# Psychophysical Choice Bridge @cite{luce-1959}
+# Psychophysical Choice Bridge [luce-1959]
 
 Connects three independently formalized modules that all operate on
 Luce ratio scales:

@@ -3,16 +3,16 @@ import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # The Maybe Monad: Presupposition as Scope
-@cite{grove-2022}
+[grove-2022]
 
-@cite{grove-2022} argues that presupposition projection is a scope phenomenon.
+[grove-2022] argues that presupposition projection is a scope phenomenon.
 The key insight: presupposition triggers denote values of type `α_#` (= `Option α`),
 and they interact with their semantic context by **taking scope** via monadic bind
-(`Option.bind`), exactly paralleling @cite{charlow-2020}'s treatment of indefinites
+(`Option.bind`), exactly paralleling [charlow-2020]'s treatment of indefinites
 with the set monad.
 
 The Maybe monad `(Option, some, bind)` is the presuppositional analog of
-@cite{charlow-2020}'s set monad `(S, η, ⫝̸)` for alternatives. Where `S` gives
+[charlow-2020]'s set monad `(S, η, ⫝̸)` for alternatives. Where `S` gives
 scope to alternative-denoting expressions, `Option` gives scope to
 presupposition triggers. Both derive exceptional scope from ASSOCIATIVITY.
 
@@ -41,7 +41,7 @@ hold definitionally.
 
 ## Parallel with the Set Monad
 
-| | Alternatives (@cite{charlow-2020}) | Presupposition (@cite{grove-2022}) |
+| | Alternatives ([charlow-2020]) | Presupposition ([grove-2022]) |
 |---|---|---|
 | Monad | `S α = α → Prop` (sets) | `Option α` (maybe) |
 | Unit | `η_S(x) = {x}` | `η_#(v) = some v` |
@@ -174,7 +174,7 @@ standalone `rfl` theorems. Left Identity and Associativity are the
 scope-taking properties: Left Identity gives reconstruction (`η` + `⋆` =
 no scope; Grove fn. 13), and Associativity makes cyclic scope-taking
 (roll-up pied-piping) sound (the presuppositional analog of
-@cite{charlow-2020}'s ASSOCIATIVITY theorem for the set monad). -/
+[charlow-2020]'s ASSOCIATIVITY theorem for the set monad). -/
 
 -- ════════════════════════════════════════════════════════════════
 -- §4 Semantic Operations

@@ -25,11 +25,11 @@ import Linglib.Fragments.Fula.Gender
 
 /-!
 # Corbett (1991): Gender — typology of noun-class systems
-@cite{corbett-1991} @cite{corbett-2013} @cite{dryer-haspelmath-2013}
-@cite{dixon-1972}
+[corbett-1991] [corbett-2013] [dryer-haspelmath-2013]
+[dixon-1972]
 
 Greville Corbett. *Gender*. Cambridge University Press, 1991.
-Plus @cite{corbett-2013}'s WALS Chs 30, 31, 32.
+Plus [corbett-2013]'s WALS Chs 30, 31, 32.
 
 This study file holds Corbett's cross-linguistic generalisations on the
 22-language sample. Per-language profiles live in
@@ -80,7 +80,7 @@ open Agreement (AgreementTarget)
 
     Two languages (Dyirbal, Archi) are record-updated to match Corbett's
     1991 monograph where it diverges from his later WALS chapters
-    @cite{corbett-2013}. The divergences are first-class theorems below —
+    [corbett-2013]. The divergences are first-class theorems below —
     exposing them rather than hiding them inside the Fragment. -/
 
 private abbrev english   := English.Gender.genderTypology
@@ -108,7 +108,7 @@ private abbrev fula      := Fula.Gender.genderTypology
     book disagrees with his 2013 WALS chapters. -/
 
 /-- Corbett 1991: Dyirbal is 4-class non-sex-based (the system's organising
-    criteria cut across biological sex). WALS @cite{corbett-2013} F31A says
+    criteria cut across biological sex). WALS [corbett-2013] F31A says
     sex-based on the narrow "Class I includes males" criterion. Override. -/
 private def dyirbal : GenderProfile :=
   { Dyirbal.Gender.genderTypology with
@@ -116,7 +116,7 @@ private def dyirbal : GenderProfile :=
 
 /-- Corbett 1991: Archi assignment is semantic *and formal* — the monograph
     documents phonological/morphological correlates for the gender III/IV
-    split. WALS @cite{corbett-2013} F32A codes Archi as semantic-only.
+    split. WALS [corbett-2013] F32A codes Archi as semantic-only.
     Override the assignment; count/basis/targets agree with WALS. -/
 private def archi : GenderProfile :=
   { Archi.Gender.genderTypology with
@@ -172,7 +172,7 @@ theorem two_three_gender_all_sex_based :
       p.genderCount = .two ∨ p.genderCount = .three →
         p.basis = .sexBased := by decide
 
-/-- @cite{corbett-1991}'s key finding: no language assigns gender on a purely
+/-- [corbett-1991]'s key finding: no language assigns gender on a purely
     formal basis without any semantic core. In the sample, every gendered
     language has semantic assignment (alone or combined with formal). -/
 theorem no_purely_formal_in_sample :
@@ -190,7 +190,7 @@ theorem gender_implies_agreement :
 
 /-! ### Corbett's Agreement Hierarchy -/
 
-/-! @cite{corbett-1991}'s Agreement Hierarchy has four positions:
+/-! [corbett-1991]'s Agreement Hierarchy has four positions:
     attributive > predicate > relative pronoun > personal pronoun.
     Verbal agreement (the substrate's `.verb` `AgreementTarget`, tested
     below) is subsumed under the predicate position in Corbett's scheme. -/
@@ -211,7 +211,7 @@ theorem no_verb_only_agreement :
 /-- English is the sample's pronominal gender system: it has gender
     (3 genders, *he/she/it*) but gender surfaces only on personal pronouns —
     the canonical case of a system whose agreement sits at the low end of
-    @cite{corbett-1991}'s hierarchy. -/
+    [corbett-1991]'s hierarchy. -/
 theorem english_pronominal_gender :
     english.genderCount ≠ .none ∧
     english.agreementTargets = [.personalPronoun] := by decide

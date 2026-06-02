@@ -6,7 +6,7 @@ import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 /-!
 # Preconditions and Projection: Explaining Non-Anaphoric Presupposition
-@cite{roberts-simons-2024}
+[roberts-simons-2024]
 
 Roberts, C. & Simons, M. (2024). Preconditions and projection: Explaining
 non-anaphoric presupposition. *Linguistics and Philosophy* 47(4):703–748.
@@ -19,7 +19,7 @@ non-anaphoric presupposition. *Linguistics and Philosophy* 47(4):703–748.
 
 2. Projection is a *pragmatic default*: a speaker who raises an event is
    taken to assume its preconditions hold (maximizes informativity, per
-   @cite{qing-goodman-lassiter-2016} and @cite{warstadt-2022}).
+   [qing-goodman-lassiter-2016] and [warstadt-2022]).
 
 3. Differential suppression across verb pairs (know/discover, stop/continue)
    follows from lexical semantic differences (telicity, aspect, CoS status),
@@ -27,7 +27,7 @@ non-anaphoric presupposition. *Linguistics and Philosophy* 47(4):703–748.
 
 4. Filtering in Karttunen environments (conjunction, conditional, disjunction)
    is explained pragmatically without anaphoric constraints. For disjunction,
-   the account predicts *symmetric* filtering (contra @cite{heim-1983}).
+   the account predicts *symmetric* filtering (contra [heim-1983]).
 
 ## Connection to Existing Theory
 
@@ -104,7 +104,7 @@ section VerbContrasts
 variable {W : Type*}
 
 /-
-### Know vs Discover (@cite{roberts-simons-2024} §3.2.2)
+### Know vs Discover ([roberts-simons-2024] §3.2.2)
 
 Both are veridical (factive), but they differ in event structure:
 - **know**: stative, atelic. Reference time overlaps knowing state.
@@ -148,7 +148,7 @@ theorem discover_has_ignorance_precondition (IGNORANT C : W → Prop) (w : W) :
 
 
 /-
-### Stop vs Continue (@cite{roberts-simons-2024} §3.2.2)
+### Stop vs Continue ([roberts-simons-2024] §3.2.2)
 
 Both presuppose prior activity, but differ structurally:
 - **stop**: CoS predicate (cessation), telic. Entails state change P→¬P.
@@ -241,7 +241,7 @@ section Filtering
 variable {W : Type*}
 
 /-
-### Filtering in Karttunen Environments (@cite{roberts-simons-2024} §4)
+### Filtering in Karttunen Environments ([roberts-simons-2024] §4)
 
 R&S account for filtering pragmatically rather than via local context
 satisfaction. Three standard cases:
@@ -281,7 +281,7 @@ theorem conditional_entails_precondition (P : W → Prop) :
     conditionalFiltering P := by
   intro _ hP; exact hP
 
-/-- R&S's distinctive prediction for disjunction (@cite{roberts-simons-2024} §4):
+/-- R&S's distinctive prediction for disjunction ([roberts-simons-2024] §4):
     filtering in disjunction is **symmetric** for non-anaphoric triggers.
 
     "Either Jane never smoked, or she's stopped." (43)
@@ -289,7 +289,7 @@ theorem conditional_entails_precondition (P : W → Prop) :
     The first disjunct (¬P) creates a context in which it is reasonable
     to consider the second disjunct's precondition (P) as locally entailed
     (if ¬P is false, i.e. P is true). Crucially, R&S argue this filtering
-    works identically in both orders — contra @cite{heim-1983}'s asymmetric
+    works identically in both orders — contra [heim-1983]'s asymmetric
     account.
 
     This is a pragmatic consequence of their view: filtering depends on
@@ -354,8 +354,8 @@ carry a pragmatic precondition implication that can be suppressed.
 /-
 ### Connection to RSA accounts
 
-R&S take the RSA accounts of @cite{qing-goodman-lassiter-2016} and
-@cite{warstadt-2022} as providing proof-of-concept for the general pragmatic
+R&S take the RSA accounts of [qing-goodman-lassiter-2016] and
+[warstadt-2022] as providing proof-of-concept for the general pragmatic
 mechanism. Those models show that a Bayesian listener who jointly infers
 the world state and the speaker's assumed context will, under the right QUD,
 derive presupposition projection as a pragmatic inference without any special
@@ -378,7 +378,7 @@ section EndToEnd
 variable {W : Type*}
 
 /-
-### The Complete Argument (@cite{roberts-simons-2024})
+### The Complete Argument ([roberts-simons-2024])
 
 The paper's argument chains together three structural facts:
 

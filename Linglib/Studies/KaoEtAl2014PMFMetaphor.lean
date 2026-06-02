@@ -6,8 +6,8 @@ import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 
 /-!
-# @cite{kao-etal-2014-metaphor} on mathlib `PMF`
-@cite{kao-etal-2014-metaphor}
+# [kao-etal-2014-metaphor] on mathlib `PMF`
+[kao-etal-2014-metaphor]
 
 "Formalizing the Pragmatics of Metaphor Understanding"
 *Proceedings of the Annual Meeting of the Cognitive Science Society* 36, 719-724.
@@ -438,7 +438,7 @@ theorem L1_feature_event_lt_iff_inner_sum_lt
 
 /-! ### §9b. Kao-specific corollaries (paper findings at empirical priors)
 
-The 6 findings from `@cite{kao-etal-2014-metaphor}` §"Model Evaluation"
+The 6 findings from `[kao-etal-2014-metaphor]` §"Model Evaluation"
 expressed as direct outer-measure inequalities at Kao's empirical priors.
 
 Each finding reduces via §9a's architectural theorems to a comparison of
@@ -509,17 +509,17 @@ theorem literal_correct :
 
 /-! ## §10. Cross-paper engagement
 
-@cite{frank-goodman-2012} is the architectural ancestor — basic L0/S1/L1
+[frank-goodman-2012] is the architectural ancestor — basic L0/S1/L1
 without QUD inference. Kao's contribution is the joint inference over
 goals, opening the door to nonliteral interpretations.
 
-@cite{goodman-stuhlmuller-2013} (`Studies/GoodmanStuhlmuller2013PMF.lean`)
+[goodman-stuhlmuller-2013] (`Studies/GoodmanStuhlmuller2013PMF.lean`)
 shares the hypergeometric-kernel architecture with Kao's L0 (both use
 "P(features|category) if categories match"). The architectural difference:
 G&S2013 is one-step Bayesian (no goal inference); Kao's L1 is two-stage
 (joint goal-inference enables metaphorical readings).
 
-@cite{kao-etal-2014-hyperbole} (sister paper, same conference) uses the
+[kao-etal-2014-hyperbole] (sister paper, same conference) uses the
 identical RSA architecture for hyperbole (with `quantity` rather than
 `category` as the literally-false dimension). Migration of the hyperbole
 file would reuse most of this file's substrate.

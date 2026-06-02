@@ -2,7 +2,7 @@ import Linglib.Typology.Color
 
 /-!
 # French color profile (WALS Chs 132–135)
-@cite{wals-2013}
+[wals-2013]
 -/
 
 namespace French

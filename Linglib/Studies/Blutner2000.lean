@@ -4,17 +4,17 @@ import Linglib.Pragmatics.Bidirectional
 import Linglib.Semantics.Presupposition.Accommodation
 
 /-!
-# @cite{blutner-2000} — Presupposition Projection via Bidirectional OT
+# [blutner-2000] — Presupposition Projection via Bidirectional OT
 
-@cite{blutner-2000} @cite{van-der-sandt-1992} @cite{geurts-1995}
+[blutner-2000] [van-der-sandt-1992] [geurts-1995]
 
 Some Aspects of Optimality in Natural Language Interpretation.
 Journal of Semantics 17(3): 189–216.
 
 ## Overview
 
-Section 4 of @cite{blutner-2000} reconstructs @cite{van-der-sandt-1992}'s
-and @cite{geurts-1995}'s presupposition projection mechanism within
+Section 4 of [blutner-2000] reconstructs [van-der-sandt-1992]'s
+and [geurts-1995]'s presupposition projection mechanism within
 bidirectional OT. The I-principle (interpretation optimality) selects the
 preferred accommodation site; the Q-principle (production optimality)
 blocks accommodation when a simpler expression alternative exists.
@@ -23,12 +23,12 @@ blocks accommodation when a simpler expression alternative exists.
 
 - **AvoidA** (Avoid Accommodation): counts the number of discourse markers
   that require accommodation. Binding (resolving against existing context)
-  is preferred over accommodation. This captures @cite{van-der-sandt-1992}'s
-  and @cite{geurts-1995}'s first preference (binding > accommodation).
+  is preferred over accommodation. This captures [van-der-sandt-1992]'s
+  and [geurts-1995]'s first preference (binding > accommodation).
 
 - **BeStrong**: ranks interpretations by logical strength (entailment).
   Stronger (more informative) outcomes are preferred. This captures
-  @cite{geurts-1995}'s second preference (higher accommodation site
+  [geurts-1995]'s second preference (higher accommodation site
   yields stronger interpretation, ceteris paribus).
 
 Ranking: AvoidA >> BeStrong.
@@ -57,7 +57,7 @@ presupposition is bound rather than accommodated.
 
 ### Accommodation blocking (Q-principle)
 
-@cite{blutner-2000} §4, example (25): accommodation of "the car"
+[blutner-2000] §4, example (25): accommodation of "the car"
 is blocked when a simpler expression "a car" achieves the same
 context change without triggering presupposition. This is
 Q-principle blocking: the presuppositional form is more complex
@@ -74,7 +74,7 @@ open Core.Constraint.Evaluation
 -- § 1: Projection Sites
 -- ============================================================================
 
-/-- Presupposition projection sites, following @cite{van-der-sandt-1992}. -/
+/-- Presupposition projection sites, following [van-der-sandt-1992]. -/
 inductive ProjectionSite where
   | local         -- accommodate in the most embedded position
   | intermediate  -- accommodate at an intermediate level (e.g., antecedent)
@@ -88,14 +88,14 @@ inductive ProjectionSite where
 /-- **AvoidA** (Avoid Accommodation): counts accommodated discourse markers.
     0 = bound (no accommodation needed), n = n markers accommodated.
 
-    Captures @cite{van-der-sandt-1992}'s preference for binding over
-    accommodation and @cite{geurts-1995}'s preference (i). -/
+    Captures [van-der-sandt-1992]'s preference for binding over
+    accommodation and [geurts-1995]'s preference (i). -/
 abbrev AvoidA := Nat
 
 /-- **BeStrong**: ranks by logical strength of the resulting interpretation.
     Lower values = stronger interpretation.
 
-    Captures @cite{geurts-1995}'s preference (ii): prefer higher
+    Captures [geurts-1995]'s preference (ii): prefer higher
     accommodation sites (which yield stronger interpretations). -/
 abbrev Strength := Nat
 
@@ -173,7 +173,7 @@ theorem ex19_intermediate_wins :
 -- § 5: Accommodation Blocking (Q-Principle)
 -- ============================================================================
 
-/-! @cite{blutner-2000} example (25): "He had an accident. ??The car hit him."
+/-! [blutner-2000] example (25): "He had an accident. ??The car hit him."
     vs "He had an accident. A car hit him."
 
     "The car" triggers the presupposition that there is a unique salient car.
@@ -241,7 +241,7 @@ theorem indefinite_satisfies_both :
 -- § 6: Connection to Accommodation Infrastructure
 -- ============================================================================
 
-/-! @cite{blutner-2000}'s projection sites correspond to the accommodation
+/-! [blutner-2000]'s projection sites correspond to the accommodation
     levels in `Semantics.Presupposition.Accommodation`. The bridge makes
     explicit that Blutner's OT analysis operates over the same site taxonomy
     as the Heim/Lewis/van der Sandt tradition. -/

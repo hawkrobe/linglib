@@ -11,7 +11,7 @@ import Mathlib.Data.Fintype.Fin
 
 /-!
 # Alonso-Ovalle & Moghiseh 2025: Existential Free Choice Items
-@cite{alonso-ovalle-moghiseh-2025}
+[alonso-ovalle-moghiseh-2025]
 
 Existential free choice items: The case of Farsi *yek-i* DPs.
 *Semantics & Pragmatics* 18, Article 4.
@@ -306,7 +306,7 @@ private def canExOr (w : PermW) : Bool := canExB1 w || canExB2 w  -- ◇(b₁⊻
 /-- Pre-exhaustified domain alternatives under ◇: {◇b₁ ∧ ¬◇b₂, ◇b₂ ∧ ¬◇b₁}.
 
     Computed by exhaustifying each domain alt {◇b₁, ◇b₂} w.r.t. the
-    other domain alts, following @cite{chierchia-2013}'s
+    other domain alts, following [chierchia-2013]'s
     pre-exhaustification of subdomain alternatives. -/
 private def modalPreExhDomAlt1 : PermW → Bool := fun w => canB1 w && !canB2 w
 private def modalPreExhDomAlt2 : PermW → Bool := fun w => canB2 w && !canB1 w
@@ -652,7 +652,7 @@ end DEContext
 /-!
 ### EFCI Typology (Table 2)
 
-@cite{alonso-ovalle-moghiseh-2025} Table 2: EFCIs vary along two
+[alonso-ovalle-moghiseh-2025] Table 2: EFCIs vary along two
 parameters — modal insertion and partial exhaustification.
 
 | Type        | Modal insertion | Partial exh | Lexicon entry |

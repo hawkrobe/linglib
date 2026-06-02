@@ -3,12 +3,12 @@ import Linglib.Core.Assignment
 
 /-!
 # Spector 2025: Trivalence and Transparency
-@cite{spector-2025}
+[spector-2025]
 
 A non-dynamic approach to anaphora combining trivalent semantics
-(Middle Kleene, @cite{peters-1979}, @cite{beaver-krahmer-2001})
-with Schlenker's Transparency Principle (@cite{schlenker-2007},
-@cite{schlenker-2008a}).
+(Middle Kleene, [peters-1979], [beaver-krahmer-2001])
+with Schlenker's Transparency Principle ([schlenker-2007],
+[schlenker-2008a]).
 
 ## Key Results Formalized
 
@@ -45,7 +45,7 @@ in the conjunction column for `0 ∧ #`).
 The trivalent semantics uses partial assignments (`PartialAssign D`)
 and plural assignments (`PluralAssign D`) from `Core.Assignment`.
 Predicate application yields `#` when the variable is unvalued.
-The existential quantifier uses @cite{mandelkern-2022}'s witness
+The existential quantifier uses [mandelkern-2022]'s witness
 condition: `∃xφ` is true at `(w,g)` only if `g(x)` witnesses `φ`,
 undefined if classically true but `g(x)` is not a witness.
 -/
@@ -201,7 +201,7 @@ theorem transparent_of_presup_true (C : Ctx W D) (frame : Frame W D)
 /-- The Novelty Condition: an existential quantifier introducing
     variable x can only occur once in a discourse.
 
-    §4 / @cite{heim-1982}: "If x is a variable, an occurrence of ∃x can
+    §4 / [heim-1982]: "If x is a variable, an occurrence of ∃x can
     only occur once in a whole discourse." This prevents
     ∃xP(x).∃xQ(x) from collapsing to ∃x(P(x) ∧ Q(x)).
 
@@ -621,7 +621,7 @@ Key changes from the simplified system:
 
 -- ════════════════════════════════════════════════════════════════
 -- §6.0: PluralAssign substrate now lives in `Linglib.Core.Assignment`
--- @cite{van-den-berg-1996} @cite{nouwen-2003} @cite{brasoveanu-2008}
+-- [van-den-berg-1996] [nouwen-2003] [brasoveanu-2008]
 -- ════════════════════════════════════════════════════════════════
 
 /-! Plural assignments are imported from `Core.Assignment` (`open Core`
@@ -855,8 +855,8 @@ variable {D : Type*} {W : Type*}
 
 - **Strong Truth**: `S` is strongly true at `w` if ∃G true at `(w,G)`
   AND no `G'` makes `S` false at `(w,G')`. Generates *universal* (strong)
-  readings. Similar to @cite{elliott-2023}'s strengthened reading and
-  @cite{champollion-bumford-henderson-2019}'s homogeneity approach.
+  readings. Similar to [elliott-2023]'s strengthened reading and
+  [champollion-bumford-henderson-2019]'s homogeneity approach.
 
 For simple existentials `∃xP(x)`, weak and strong truth coincide.
 They diverge for donkey sentences.
@@ -976,7 +976,7 @@ section Comparison
 ### Spector's static system vs. Dynamic Predicate Logic
 
 positions the system as a non-dynamic alternative to
-DPL (@cite{groenendijk-stokhof-1991}). Key comparison:
+DPL ([groenendijk-stokhof-1991]). Key comparison:
 
 | Phenomenon | Spector | DPL |
 |---|---|---|
@@ -987,7 +987,7 @@ DPL (@cite{groenendijk-stokhof-1991}). Key comparison:
 
 The systems agree on 3/4 cases. The disagreement on bathroom sentences
 is significant: standard DPL cannot handle them because negation is a
-test that doesn't export assignments (@cite{krahmer-muskens-1995}),
+test that doesn't export assignments ([krahmer-muskens-1995]),
 while Spector's Transparency-based approach handles them naturally via
 Middle Kleene disjunction. The bathroom row is witnessed in Spector's
 favour by `bathroom_transparency` together with

@@ -3,7 +3,7 @@ import Linglib.Discourse.CommonGround
 
 /-!
 # Presupposition–Context Bridge
-@cite{stalnaker-1974} @cite{heim-1983} @cite{lewis-1979}
+[stalnaker-1974] [heim-1983] [lewis-1979]
 
 Canonical operations connecting presuppositions (`PrProp W`) to contexts
 (`ContextSet W`). Before this module, every downstream file that needed
@@ -28,7 +28,7 @@ accommodation, and conceivability are defined once and reused everywhere.
 ## Conceivability
 
 `presupSatisfiable` is the conceivability check needed for
-@cite{enguehard-2024}'s conceivability presupposition: a number feature's
+[enguehard-2024]'s conceivability presupposition: a number feature's
 presupposition is *conceivable* in the common ground iff there exists some
 world in the context set satisfying it.
 -/
@@ -67,7 +67,7 @@ abbrev presupProjects (c : ContextSet W) (p : PrProp W) : Prop :=
 /-- **Accommodate** a presupposition: restrict the context to worlds where
     the presupposition holds.
 
-    @cite{lewis-1979}: "presupposition P comes into existence." -/
+    [lewis-1979]: "presupposition P comes into existence." -/
 abbrev accommodate (c : ContextSet W) (presup : Set W) : ContextSet W := c ∩ presup
 
 /-- Accommodation is **informative** iff the presupposition is not already

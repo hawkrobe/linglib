@@ -2,13 +2,13 @@ import Linglib.Semantics.Spatial.Path
 
 /-!
 # Dutch Adposition Fragment
-@cite{broekhuis-corver-2026} @cite{dendikken-2010}
+[broekhuis-corver-2026] [dendikken-2010]
 
 Lexical entries for Dutch adpositions, encoding their surface distribution
 (preposition, postposition, circumposition, intransitive/particle) and
 core properties (R-pronominalization, complement types).
 
-## Key Empirical Generalizations (@cite{broekhuis-corver-2026})
+## Key Empirical Generalizations ([broekhuis-corver-2026])
 
 1. PostPs are a proper subset of prePs — every postP can also be a preP (§6)
 2. PrePs are locational; postPs are directional (§2.2, ex. 21–23)
@@ -27,7 +27,7 @@ namespace Dutch.Adpositions
 open Semantics.Spatial.Path (PathShape)
 
 /-- Complement types attested for Dutch adpositions.
-    @cite{broekhuis-corver-2026} §2.1: nominal (default), PP, adjectival,
+    [broekhuis-corver-2026] §2.1: nominal (default), PP, adjectival,
     clausal, infinitival, small-clause, none (intransitive). -/
 inductive PComplementType where
   | nominal      -- DP complement (default)
@@ -300,7 +300,7 @@ def dutchAdpositions : List DutchAdposition :=
   , af, heen ]
 
 /-- Every adposition that has postP use also has preP use.
-    @cite{broekhuis-corver-2026} §6: postPs derive from prePs by
+    [broekhuis-corver-2026] §6: postPs derive from prePs by
     complement movement, so postP ⊆ preP. -/
 theorem postP_subset_preP :
     ∀ a ∈ dutchAdpositions, a.postPOk → a.prePOk := by native_decide

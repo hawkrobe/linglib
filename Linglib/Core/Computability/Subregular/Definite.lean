@@ -12,7 +12,7 @@ import Mathlib.Data.Fintype.Order
 # Definite and Reverse-Definite Languages (D_k, RD_k)
 
 A language `L` is **`k`-definite** when membership is determined by the
-last `k` symbols of the input @cite{rogers-pullum-2011} @cite{lambert-2022}:
+last `k` symbols of the input [rogers-pullum-2011] [lambert-2022]:
 any two strings agreeing on their length-`k` suffix are L-equivalent.
 The dual notion, **reverse `k`-definite** (RD_k), checks the length-`k`
 *prefix* instead.
@@ -49,7 +49,7 @@ edges respectively.
 ## Generalised definite and finite-or-cofinite
 
 This file also houses two related affix-based classes from
-@cite{lambert-2026}:
+[lambert-2026]:
 
 * `IsGeneralizedDefinite k` (Lambert's ℒℐ_k): membership is determined by
   the joint length-`k` prefix and length-`k` suffix. Strictly more
@@ -156,7 +156,7 @@ def IsReverseDefinite (k : ℕ) (L : Language α) : Prop :=
 
 /-- A language `L` is **generalized `k`-definite** iff strings agreeing
 on both their length-`k` prefix and length-`k` suffix have the same
-membership in `L` (@cite{lambert-2026} Prop 16). Derived predicate: the
+membership in `L` ([lambert-2026] Prop 16). Derived predicate: the
 class is the conjunction of left-edge and right-edge `k`-definite tests,
 no new structural grammar required. -/
 def IsGeneralizedDefinite (k : ℕ) (L : Language α) : Prop :=
@@ -185,7 +185,7 @@ theorem IsReverseDefinite.toIsGeneralizedDefinite {k : ℕ} {L : Language α}
 /-! ## Finite or cofinite (𝒩) -/
 
 /-- A language `L` is **finite-or-cofinite** iff either `L` itself is
-finite, or its complement `Lᶜ` is finite (@cite{lambert-2026} p. 8 fn 4).
+finite, or its complement `Lᶜ` is finite ([lambert-2026] p. 8 fn 4).
 This is the smallest interesting Boolean-closed subregular class:
 intersection of the definite and reverse-definite classes for
 sufficiently large `k`. -/
@@ -374,7 +374,7 @@ is finite, then `L` is finite-or-cofinite.
 
 The α-finiteness hypothesis is necessary: with infinite α, words of
 bounded length need not form a finite set. The phonology context
-(@cite{lambert-2026}) implicitly assumes finite alphabets.
+([lambert-2026]) implicitly assumes finite alphabets.
 
 Proof sketch: for words of length `≥ k + k'`, membership is constant.
 Bridge argument: any two such words `w₁`, `w₂` are related via

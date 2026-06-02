@@ -4,9 +4,9 @@ import Linglib.Dialogue.CommitmentSpace
 
 /-!
 # Assertion Theories: Cross-Theory Comparison
-@cite{brandom-1994} @cite{cohen-krifka-2014} @cite{farkas-bruce-2010}
-@cite{gunlogson-2001} @cite{krifka-2015} @cite{krifka-2020}
-@cite{lauer-2013} @cite{stalnaker-1978}
+[brandom-1994] [cohen-krifka-2014] [farkas-bruce-2010]
+[gunlogson-2001] [krifka-2015] [krifka-2020]
+[lauer-2013] [stalnaker-1978]
 
 Compares assertion theories along structural dimensions.
 

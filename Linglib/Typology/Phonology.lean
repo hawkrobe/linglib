@@ -21,7 +21,7 @@ import Linglib.Data.WALS.Features.F19A
 
 /-!
 # Phonological typology — WALS substrate (Chapters 1–19)
-@cite{dryer-haspelmath-2013} @cite{maddieson-2013} @cite{hajek-2013} @cite{goedemans-van-der-hulst-2013}
+[dryer-haspelmath-2013] [maddieson-2013] [hajek-2013] [goedemans-van-der-hulst-2013]
 
 Theory-neutral phonological-typology substrate distilled from WALS Chapters
 1–19, in the same `Linglib/Typology/{Domain}.lean` mould as `Case.lean`,
@@ -31,7 +31,7 @@ distributional theorems.
 ## Authorship attribution (NOT one paper)
 
 The 19 chapters are NOT all by Maddieson — the file's previous incarnation
-(`Phenomena/Phonology/Typology.lean`) cited only `@cite{maddieson-2013}`,
+(`Phenomena/Phonology/Typology.lean`) cited only `[maddieson-2013]`,
 which is an attribution error. Correct split:
 
 - **Chs 1–9, 11–13, 18–19**: Maddieson 2013 (segmental inventory + tone)
@@ -78,7 +78,7 @@ to a PHOIBLE inventory. Bridge theorems are deferred to
 
 Maddieson's UPSID-based methodology (~451 inventories) is the 1980s baseline
 WALS Ch 1–11/18–19 inherits. The field-canonical post-2019 successor is
-PHOIBLE 2.0 (@cite{moran-mccloy-2019}; ~3000 inventories with full IPA
+PHOIBLE 2.0 ([moran-mccloy-2019]; ~3000 inventories with full IPA
 transcription + 37-feature decomposition), housed in
 `Linglib/Data/PHOIBLE/`. WALS partitions remain useful for cross-paper
 *classification* references; PHOIBLE provides the underlying inventories.
@@ -116,32 +116,32 @@ private abbrev ch19  := Data.WALS.F19A.allData
 -- §1. Per-chapter enums
 -- ============================================================================
 
-/-- Consonant inventory size (WALS Ch 1, @cite{maddieson-2013}). -/
+/-- Consonant inventory size (WALS Ch 1, [maddieson-2013]). -/
 inductive CInventorySize where
   | small | moderatelySmall | average | moderatelyLarge | large
   deriving DecidableEq, Repr
 
-/-- Vowel quality inventory size (WALS Ch 2, @cite{maddieson-2013}). -/
+/-- Vowel quality inventory size (WALS Ch 2, [maddieson-2013]). -/
 inductive VInventorySize where
   | small | average | large
   deriving DecidableEq, Repr
 
-/-- Consonant-to-vowel ratio (WALS Ch 3, @cite{maddieson-2013}). -/
+/-- Consonant-to-vowel ratio (WALS Ch 3, [maddieson-2013]). -/
 inductive CVRatio where
   | low | moderatelyLow | average | moderatelyHigh | high
   deriving DecidableEq, Repr
 
-/-- Voicing contrast in obstruents (WALS Ch 4, @cite{maddieson-2013}). -/
+/-- Voicing contrast in obstruents (WALS Ch 4, [maddieson-2013]). -/
 inductive VoicingContrast where
   | none | plosivesOnly | fricativesOnly | both
   deriving DecidableEq, Repr
 
-/-- Uvular consonant inventory (WALS Ch 6, @cite{maddieson-2013}). -/
+/-- Uvular consonant inventory (WALS Ch 6, [maddieson-2013]). -/
 inductive UvularPresence where
   | none | stopsOnly | continuantsOnly | stopsAndContinuants
   deriving DecidableEq, Repr
 
-/-- Glottalized consonant types (WALS Ch 7, @cite{maddieson-2013}). Could
+/-- Glottalized consonant types (WALS Ch 7, [maddieson-2013]). Could
     derive from `Phonology/Featural/Features.lean` `[+constricted
     glottis]` applied to a PHOIBLE inventory; bridge in Maddieson2013.lean. -/
 inductive GlottalizedType where
@@ -150,39 +150,39 @@ inductive GlottalizedType where
   | implosivesAndResonants | allThree
   deriving DecidableEq, Repr
 
-/-- Lateral consonant inventory (WALS Ch 8, @cite{maddieson-2013}).
+/-- Lateral consonant inventory (WALS Ch 8, [maddieson-2013]).
     Featural duplicate of `[+lateral]`. -/
 inductive LateralType where
   | noLaterals | lOnly | lateralsNoL | lAndObstruent | obstruentOnly
   deriving DecidableEq, Repr
 
-/-- Velar nasal status (WALS Ch 9, @cite{maddieson-2013}).
+/-- Velar nasal status (WALS Ch 9, [maddieson-2013]).
     Featural duplicate of `[+nasal, +dorsal]`. -/
 inductive VelarNasalStatus where
   | initial | noInitial | absent
   deriving DecidableEq, Repr
 
 /-- Nasal vowel contrast type in West Africa (WALS Ch 10B,
-    @cite{hajek-2013}). Areal sub-feature of Ch 10A. -/
+    [hajek-2013]). Areal sub-feature of Ch 10A. -/
 inductive NasalVowelWA where
   | noContrast
   | twoWayNoSpreading | twoWaySpreading
   | fourWayNoSpreading | fourWaySpreading
   deriving DecidableEq, Repr
 
-/-- Front rounded vowel inventory (WALS Ch 11, @cite{maddieson-2013}).
+/-- Front rounded vowel inventory (WALS Ch 11, [maddieson-2013]).
     Featural duplicate of `[+front, +round]`. -/
 inductive FrontRounded where
   | none | highAndMid | highOnly | midOnly
   deriving DecidableEq, Repr
 
-/-- Syllable structure complexity (WALS Ch 12, @cite{maddieson-2013}).
+/-- Syllable structure complexity (WALS Ch 12, [maddieson-2013]).
     Operationalised as max onset/coda length; commits to syllable-as-unit. -/
 inductive SyllableComplexity where
   | simple | moderatelyComplex | complex
   deriving DecidableEq, Repr
 
-/-- Tone system type (WALS Ch 13, @cite{maddieson-2013}).
+/-- Tone system type (WALS Ch 13, [maddieson-2013]).
     **Theory-laden**: defines tone by level-inventory size, which Hyman
     2006 explicitly challenges (functional definition: "pitch enters
     lexical realisation"). Substrate records WALS as-is; functional-tone
@@ -191,14 +191,14 @@ inductive ToneSystem where
   | none | simple | complex
   deriving DecidableEq, Repr
 
-/-- Fixed stress location (WALS Ch 14, @cite{goedemans-van-der-hulst-2013}).
+/-- Fixed stress location (WALS Ch 14, [goedemans-van-der-hulst-2013]).
     StressTyp framework: presupposes obligatory metrical heads. -/
 inductive StressLocation where
   | noFixed | initial | second | third | antepenultimate | penultimate | ultimate
   deriving DecidableEq, Repr
 
 /-- Weight-sensitive stress pattern (WALS Ch 15A,
-    @cite{goedemans-van-der-hulst-2013}). Sub-feature of Ch 14A. -/
+    [goedemans-van-der-hulst-2013]). Sub-feature of Ch 14A. -/
 inductive WeightStress where
   | leftEdge | leftOriented
   | rightEdge | rightOriented
@@ -207,24 +207,24 @@ inductive WeightStress where
   deriving DecidableEq, Repr
 
 /-- Weight factor in weight-sensitive stress (WALS Ch 16A,
-    @cite{goedemans-van-der-hulst-2013}). Sub-feature of Ch 14A. -/
+    [goedemans-van-der-hulst-2013]). Sub-feature of Ch 14A. -/
 inductive WeightFactor where
   | noWeight | longVowel | codaConsonant | longVowelOrCoda
   | prominence | lexicalStress | combined
   deriving DecidableEq, Repr
 
-/-- Rhythmic type (WALS Ch 17, @cite{goedemans-van-der-hulst-2013}). -/
+/-- Rhythmic type (WALS Ch 17, [goedemans-van-der-hulst-2013]). -/
 inductive RhythmType where
   | trochaic | iambic | dual | undetermined | noRhythm
   deriving DecidableEq, Repr
 
-/-- Missing common consonants (WALS Ch 18, @cite{maddieson-2013}). -/
+/-- Missing common consonants (WALS Ch 18, [maddieson-2013]). -/
 inductive MissingCommon where
   | allPresent | noBilabials | noFricatives | noNasals
   | noBilabialsOrNasals | noFricativesOrNasals
   deriving DecidableEq, Repr
 
-/-- Presence of uncommon consonants (WALS Ch 19, @cite{maddieson-2013}). -/
+/-- Presence of uncommon consonants (WALS Ch 19, [maddieson-2013]). -/
 inductive UncommonPresent where
   | none | clicks | labialVelars | pharyngeals | thSounds
   | clicksPharyngealsAndTh | pharyngealsAndTh

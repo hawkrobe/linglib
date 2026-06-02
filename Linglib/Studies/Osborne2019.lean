@@ -9,8 +9,8 @@ import Linglib.Phenomena.ArgumentStructure.Subcategorization
 import Linglib.Phenomena.ArgumentStructure.Passive
 
 /-!
-# DG Valency Bridge: @cite{osborne-2019}
-@cite{tesniere-1959}
+# DG Valency Bridge: [osborne-2019]
+[tesniere-1959]
 
 Full derivation chain from DG valency theory to argument structure
 phenomena, grounded in the English Fragment lexicon.
@@ -188,7 +188,7 @@ def passive_with_obj : DepTree :=
 
 -- ============================================================================
 -- LEVEL 1: Valency Frame Satisfaction
--- @cite{osborne-2019}: each verb selects a specific argument frame
+-- [osborne-2019]: each verb selects a specific argument frame
 -- ============================================================================
 
 /-- Intransitive tree satisfies intransitive frame (V0). -/
@@ -230,7 +230,7 @@ theorem ditrans_noobj_subcat_fail : checkVerbSubcat ditrans_no_obj = false := rf
 
 -- ============================================================================
 -- LEVEL 3: Passive Lexical Rule Derivation
--- @cite{osborne-2019}: passive changes valency
+-- [osborne-2019]: passive changes valency
 -- ============================================================================
 
 /-- The passive rule applies to transitive "kicked". -/
@@ -262,7 +262,7 @@ theorem long_passive_satisfies_VPassive :
 
 -- ============================================================================
 -- LEVEL 4: Catena vs Constituent Analysis
--- @cite{osborne-2019}: verb + ALL args = constituent;
+-- [osborne-2019]: verb + ALL args = constituent;
 --                        verb + SUBSET = catena (not constituent)
 -- ============================================================================
 

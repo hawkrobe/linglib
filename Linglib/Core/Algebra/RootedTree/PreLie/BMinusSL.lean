@@ -15,7 +15,7 @@ set_option autoImplicit false
 
 /-!
 # B⁻ operator on `SymmetricAlgebra ℤ (InsertionAlgebra α)`
-@cite{oudom-guin-2008}
+[oudom-guin-2008]
 
 The SL-side analog of `bMinusLin` (defined on the CK side in `BMinus.lean`).
 On a single `ι(ofTree t)` basis element of `SL = SymmetricAlgebra ℤ

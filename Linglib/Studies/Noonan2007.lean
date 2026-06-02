@@ -4,7 +4,7 @@ import Linglib.Semantics.Mood.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-! # Noonan (2007): Complementation Typology + Bridge Theorems
-@cite{noonan-2007}
+[noonan-2007]
 
 Noonan's complementation typology (six complement types, twelve CTP classes,
 realis/irrealis split, equi-deletion restriction, indicative implicational
@@ -16,7 +16,7 @@ infrastructure.
 7-language CTPDatum sample (English/Latin/Turkish/Irish/Persian/Hindi-Urdu/
 Japanese) testing four Noonan generalizations:
 
-- G1: Realis/irrealis split (@cite{noonan-2007} Table 2.3)
+- G1: Realis/irrealis split ([noonan-2007] Table 2.3)
 - G2: Equi-deletion restricted to reduced complement types (§2.1)
 - G3: Negative raising restricted to propAttitude/desiderative (gap-filler)
 - G4: Per-language indicative-desiderative implies indicative-propAttitude (§2.4)
@@ -43,7 +43,7 @@ open Semantics.Mood
 -- Part I: Per-language CTP Data
 -- ============================================================================
 
-/-! ### English (@cite{noonan-2007} §1.1) attests all six complement types. -/
+/-! ### English ([noonan-2007] §1.1) attests all six complement types. -/
 
 def english_say : CTPDatum where
   language := "English"
@@ -143,7 +143,7 @@ def english_hope : CTPDatum where
   realityStatus := .irrealis
   hasEquiDeletion := true
   hasRaising := false
-  -- Per @cite{noonan-2007} §2.7, NR is restricted to {propAttitude,
+  -- Per [noonan-2007] §2.7, NR is restricted to {propAttitude,
   -- desiderative, modal}. Hope is desiderative and is in the standard NR
   -- class (Horn 1989).
   hasNegativeRaising := true
@@ -219,7 +219,7 @@ def english_continue : CTPDatum where
   hasNegativeRaising := false
 
 /-! ### Latin uses indicative/subjunctive split along realis/irrealis lines
-    (@cite{noonan-2007} §1.3). -/
+    ([noonan-2007] §1.3). -/
 
 def latin_dicere : CTPDatum where
   language := "Latin"
@@ -262,7 +262,7 @@ def latin_iubere : CTPDatum where
   hasNegativeRaising := false
 
 /-! ### Turkish strongly favors nominalized complements
-    (@cite{noonan-2007} §1.4). -/
+    ([noonan-2007] §1.4). -/
 
 def turkish_sanmak : CTPDatum where
   language := "Turkish"
@@ -295,7 +295,7 @@ def turkish_baslamak : CTPDatum where
   hasNegativeRaising := false
 
 /-! ### Irish: finite/non-finite split with paratactic patterns
-    (@cite{noonan-2007} §1.5). -/
+    ([noonan-2007] §1.5). -/
 
 def irish_abair : CTPDatum where
   language := "Irish"
@@ -318,7 +318,7 @@ def irish_ceap : CTPDatum where
   hasNegativeRaising := false
 
 /-! ### Persian: clear subjunctive/indicative split along CTP lines
-    (@cite{noonan-2007} §2.3). -/
+    ([noonan-2007] §2.3). -/
 
 def persian_goftan : CTPDatum where
   language := "Persian"
@@ -352,7 +352,7 @@ def persian_danestan : CTPDatum where
   hasNegativeRaising := false
 
 /-! ### Hindi-Urdu: subjunctive complement with desideratives
-    (@cite{noonan-2007} §2.3). -/
+    ([noonan-2007] §2.3). -/
 
 def hindi_urdu_sochna : CTPDatum where
   language := "Hindi-Urdu"
@@ -462,7 +462,7 @@ def allCTPData : List CTPDatum :=
   allJapaneseCTPData
 
 -- ============================================================================
--- G1: Realis/irrealis split (@cite{noonan-2007} Table 2.3)
+-- G1: Realis/irrealis split ([noonan-2007] Table 2.3)
 -- ============================================================================
 
 theorem realis_classes :
@@ -486,7 +486,7 @@ theorem reality_status_consistent :
     ∀ d ∈ allCTPData, d.realityStatus = ctpRealityStatus d.ctpClass := by decide
 
 -- ============================================================================
--- G2: Equi-deletion restriction (@cite{noonan-2007} §2.1)
+-- G2: Equi-deletion restriction ([noonan-2007] §2.1)
 -- ============================================================================
 
 /-- Equi-deletion only occurs when some allowed complement type is reduced. -/
@@ -511,7 +511,7 @@ theorem knowledge_no_negative_raising :
       d.ctpClass = .knowledge → d.hasNegativeRaising = false := by decide
 
 -- ============================================================================
--- G4: Per-language indicative implicational hierarchy (@cite{noonan-2007} §2.4)
+-- G4: Per-language indicative implicational hierarchy ([noonan-2007] §2.4)
 -- ============================================================================
 
 /-- Does this language use indicative with desideratives? -/
@@ -526,7 +526,7 @@ def languageHasIndicativePropAttitude (data : List CTPDatum) (lang : String) : B
     d.language == lang && d.ctpClass == .propAttitude &&
     d.allowedCompTypes.any (· == .indicative)
 
-/-- Implicational hierarchy per-language (@cite{noonan-2007} §2.4): if a
+/-- Implicational hierarchy per-language ([noonan-2007] §2.4): if a
     language uses indicative for desiderative CTPs, it also uses indicative
     for propositional-attitude CTPs.
 
@@ -699,8 +699,8 @@ theorem kick_no_ctp :
 /-! ## B1. Map Noonan's CTP classes to Dayal's selection classes
 
 This connects two independent typological systems:
-- @cite{noonan-2007}: CTP semantics → complement type
-- @cite{dayal-2025}: Predicate semantics → left-peripheral selection -/
+- [noonan-2007]: CTP semantics → complement type
+- [dayal-2025]: Predicate semantics → left-peripheral selection -/
 
 /-- Default mapping from CTP class to selection class.
 
@@ -755,7 +755,7 @@ theorem ctp_selection_consistent_ask :
 
 /-! ## C1. Map CTP classes to mood selection
 
-This connects Noonan's semantic CTP classes to @cite{mendes-2025}'s mood semantics.
+This connects Noonan's semantic CTP classes to [mendes-2025]'s mood semantics.
 The realis/irrealis split predicts mood selection. -/
 
 /-- Map CTP class to mood selection.
@@ -833,7 +833,7 @@ it needs both Verbal and Mood/Basic. Follows the `deriveSelectionClass` pattern.
     - Preferential positive + Levin want-class → subjunctive (want, wish)
     - Preferential positive + non-want-class → crossLinguisticallyVariable
       (hope, expect: SBJV in some languages, IND in others;
-      @cite{grano-2024} Table 1)
+      [grano-2024] Table 1)
     - Preferential negative/uncertainty attitude → indicative (fear, worry)
     - Doxastic attitude → indicative (believe, think)
     - Factive → indicative (know: presupposes truth)
@@ -891,7 +891,7 @@ theorem make_selects_subjunctive :
 theorem decide_selects_subjunctive :
     deriveMoodSelector decide_ = .subjunctiveSelecting := by native_decide
 
--- Cross-linguistically variable verbs (@cite{grano-2024}, Table 1:
+-- Cross-linguistically variable verbs ([grano-2024], Table 1:
 -- 'hope' is SBJV in Spanish, IND/%SBJV in French, IND/SBJV in Portuguese,
 -- %IND in Italian, IND/SBJV in Greek/Romanian, IND/for-to in English)
 theorem hope_mood_variable :
@@ -969,12 +969,12 @@ theorem ask_triple_consistency :
     deriveMoodSelector ask = .moodNeutral := by native_decide
 
 -- ============================================================================
--- G. Bridge 5: CTPClass → ComplementSize (@cite{egressy-2026})
+-- G. Bridge 5: CTPClass → ComplementSize ([egressy-2026])
 -- ============================================================================
 
 /-! ## G1. Complement size by CTP class
 
-@cite{egressy-2026} shows that complement size determines SOT availability
+[egressy-2026] shows that complement size determines SOT availability
 in Hungarian. This bridge maps Noonan's CTP classes to their typical
 complement sizes, connecting the complementation typology to the
 clause-size infrastructure.

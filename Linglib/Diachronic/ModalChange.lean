@@ -2,7 +2,7 @@ import Linglib.Semantics.Modality.Narrog
 
 /-!
 # Diachronic Modal Change
-@cite{narrog-2010} @cite{bybee-perkins-pagliuca-1994}
+[narrog-2010] [bybee-perkins-pagliuca-1994]
 
 Cross-linguistic patterns of diachronic change in modal and mood meanings,
 formalized using Narrog's 2D semantic map (`Semantics.Modality.Narrog`).
@@ -21,7 +21,7 @@ general pattern.
 ## Data source
 
 Bybee, Perkins & Pagliuca (1994) *The Evolution of Grammar*, ch. 6,
-tabulated in @cite{narrog-2010} Table 2.
+tabulated in [narrog-2010] Table 2.
 -/
 
 namespace Diachronic.ModalChange
@@ -39,8 +39,8 @@ structure Change where
   deriving Repr
 
 /-- The 8 most common cross-linguistic changes in modal meanings.
-    Source: @cite{bybee-perkins-pagliuca-1994} ch. 6, tabulated in
-    @cite{narrog-2010} Table 2. -/
+    Source: [bybee-perkins-pagliuca-1994] ch. 6, tabulated in
+    [narrog-2010] Table 2. -/
 def commonChanges : List Change :=
   [ -- #1: future/prediction → imperative (13 grams)
     ⟨"future/prediction → imperative",
@@ -75,7 +75,7 @@ def commonChanges : List Change :=
 /-- **Directionality of change**: every attested change increases (or maintains)
     speaker-orientation. This is Narrog's central diachronic claim.
 
-    @cite{narrog-2010} §3.1: "modal meanings always shift in the direction
+    [narrog-2010] §3.1: "modal meanings always shift in the direction
     of increased speaker-orientation." -/
 theorem directionality :
     commonChanges.all (fun c => c.source.orientation ≤ c.target.orientation) = true := by
@@ -99,7 +99,7 @@ theorem volitivity_crossing :
       c.source.orientation == c.target.orientation)).length = 2 := by native_decide
 
 /-- Changes #1, #2, #3 go from non-volitive to volitive: the "unexpected"
-    direction per @cite{narrog-2010} p. 397. These are the three most frequent
+    direction per [narrog-2010] p. 397. These are the three most frequent
     cross-linguistic changes (13, 9, 5 grams respectively). -/
 theorem nonvolitive_to_volitive_changes :
     (commonChanges.filter (fun c =>

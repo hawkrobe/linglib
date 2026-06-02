@@ -4,7 +4,7 @@ import Linglib.Fragments.Mayan.Chol.Agreement
 
 /-!
 # The Mayan Alignment Puzzle
-@cite{imanishi-2020} @cite{coon-2013} @cite{dixon-1994}
+[imanishi-2020] [coon-2013] [dixon-1994]
 
 Theory-neutral observations about the accusative side of Mayan split
 ergativity. In perfective aspect, Mayan languages uniformly show ergative
@@ -89,8 +89,8 @@ structure MayanExtractionDatum where
   hasExtractionAsymmetry : Bool
   deriving DecidableEq, Repr
 
-/-- Tada's Generalization data (table (19) of @cite{coon-mateo-pedro-preminger-2014},
-    extending @cite{tada-1993}).
+/-- Tada's Generalization data (table (19) of [coon-mateo-pedro-preminger-2014],
+    extending [tada-1993]).
 
     The two noted outliers are Yucatec and Ixil (LOW-ABS with extraction
     asymmetries). Yucatec's AF differs significantly from other Mayan AF;

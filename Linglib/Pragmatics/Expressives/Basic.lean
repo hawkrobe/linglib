@@ -1,8 +1,8 @@
 /-
 # Two-Dimensional Semantics for Conventional Implicatures
-@cite{potts-2005} @cite{wang-2025}
+[potts-2005] [wang-2025]
 
-Formalization of @cite{potts-2005} "The Logic of Conventional Implicatures" (LCI).
+Formalization of [potts-2005] "The Logic of Conventional Implicatures" (LCI).
 
 ## Insight
 
@@ -13,8 +13,8 @@ Natural language meanings have TWO dimensions:
 These dimensions are INDEPENDENT:
 - CIs don't affect truth conditions
 - CIs project through truth-functional operators (negation, conditionals, etc.)
-- Exception: quotation blocks CI projection (@cite{kirk-giannini-2024} §3;
-  @cite{potts-2005} also acknowledges this). See `pureQuote`.
+- Exception: quotation blocks CI projection ([kirk-giannini-2024] §3;
+  [potts-2005] also acknowledges this). See `pureQuote`.
 
 ## The LCI Type System
 
@@ -36,7 +36,7 @@ namespace Pragmatics.Expressives
 
 
 /--
-A two-dimensional meaning following @cite{potts-2005}.
+A two-dimensional meaning following [potts-2005].
 
 The key insight: linguistic expressions contribute to TWO independent
 dimensions of meaning that compose by different rules.
@@ -99,7 +99,7 @@ NRRCs) does not project. The quoted material is "frozen" — its peripheral
 content is blocked from passing up the tree.
 
 This operation is the semantic reflex of pure quotation blocking peripheral
-content passage (@cite{kirk-giannini-2024}, Appendix Remark 6).
+content passage ([kirk-giannini-2024], Appendix Remark 6).
 
 Example: In "He said 'that bastard Jones left'", the expressive
 'bastard' is inside pure quotation and does not project to the speaker.
@@ -122,7 +122,7 @@ Pure quotation with strip witness.
 the original CI cannot be recovered from the result alone. `PureQuoted` records
 both the stripped result AND the original, so downstream operators (in
 particular `MQContext.applyMQ` for the strip-then-mix pattern of
-@cite{kirk-giannini-2024} §3) can refer to what was discarded.
+[kirk-giannini-2024] §3) can refer to what was discarded.
 
 This is the substrate K-G's CI-projection-failure theorems need: rather than
 proving `(pureQuote p).ci w := trivial` (which is vacuously true regardless
@@ -286,8 +286,8 @@ end TwoDimProp
 /--
 Properties of secondary (non-at-issue) meaning expressions.
 
-Extends @cite{potts-2007}'s six expressive diagnostics with two additional
-properties needed to distinguish outlook markers (@cite{kubota-2026}) from
+Extends [potts-2007]'s six expressive diagnostics with two additional
+properties needed to distinguish outlook markers ([kubota-2026]) from
 pure expressives and pure presuppositions.
 -/
 structure SecondaryMeaningProperties where
@@ -310,7 +310,7 @@ structure SecondaryMeaningProperties where
   deriving Repr
 
 /--
-Expressives satisfy all six @cite{potts-2007} properties and do NOT typically
+Expressives satisfy all six [potts-2007] properties and do NOT typically
 allow perspective shift or require discourse antecedents.
 -/
 def expressiveProperties : SecondaryMeaningProperties :=
@@ -413,14 +413,14 @@ theorem ciStrongerThan_asymm {W : Type*} (φ ψ : TwoDimProp W)
 
 
 -- ============================================================================
--- CI Bifurcation for De Re Presupposition (@cite{wang-2025})
+-- CI Bifurcation for De Re Presupposition ([wang-2025])
 -- ============================================================================
 
 /-!
 ## CI Lift: Presupposition → Two-Dimensional Meaning
 
-@cite{wang-2025} analyze de re presupposition by bifurcating a @cite{gutzmann-2015}
-presuppositional meaning into two dimensions using @cite{potts-2005}'s CI type system:
+[wang-2025] analyze de re presupposition by bifurcating a [gutzmann-2015]
+presuppositional meaning into two dimensions using [potts-2005]'s CI type system:
 
 - **At-issue**: the assertion component (identity function on the propositional content)
 - **CI**: the presupposition (projects to root, evaluated against CommonGround)
@@ -444,7 +444,7 @@ two-dimensional meaning.
 The presupposition becomes CI content (projects universally), while the
 assertion becomes at-issue content (composes truth-functionally).
 
-This is the ⟦CI⟧ operator from @cite{wang-2025}.
+This is the ⟦CI⟧ operator from [wang-2025].
 -/
 def ciLift {W : Type*} (presup assertion : W → Prop) : TwoDimProp W :=
   { atIssue := assertion

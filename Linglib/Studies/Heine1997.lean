@@ -9,7 +9,7 @@ import Linglib.Fragments.Swahili.Possession
 
 /-!
 # Heine (1997): Possession — Cognitive Sources, Forces, and Grammaticalization
-@cite{heine-1997}
+[heine-1997]
 
 Bernd Heine. *Possession: Cognitive Sources, Forces, and Grammaticalization.*
 Cambridge Studies in Linguistics 83. Cambridge University Press, 1997.
@@ -319,7 +319,7 @@ theorem location_not_permanent :
 
     Possessor-as-subject schemas (Action, Companion) produce transitive
     constructions: the possessive verb takes two core arguments (possessor
-    and possessee), corresponding to @cite{barker-2011}'s Pred2.
+    and possessee), corresponding to [barker-2011]'s Pred2.
 
     Possessee-as-subject schemas produce intransitive/existential
     constructions: the possessee is the sole core argument, and the
@@ -413,7 +413,7 @@ theorem genitive_predictions :
 -- §8. Bridge to WALS F117A (Stassen 2013)
 -- ============================================================================
 
-/-- @cite{stassen-2013b}'s WALS Ch 117 uses five categories for predicative
+/-- [stassen-2013b]'s WALS Ch 117 uses five categories for predicative
     possession that correspond to Heine's schemas:
 
     - WALS `locational` ↔ Heine Location Schema

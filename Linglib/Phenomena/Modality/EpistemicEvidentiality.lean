@@ -5,7 +5,7 @@ open Paradigms.AcceptabilityJudgment
 
 /-!
 # Epistemic Evidentiality — Empirical Data
-@cite{kratzer-1991} @cite{von-fintel-gillies-2010} @cite{von-fintel-gillies-2021}
+[kratzer-1991] [von-fintel-gillies-2010] [von-fintel-gillies-2021]
 
 Theory-neutral empirical observations about the interaction between epistemic
 necessity modals (English *must*, *have to*) and evidential source.
@@ -66,7 +66,7 @@ structure MustMinimalPair where
   mustFelicitous : Bool
   /-- Does must φ entail φ (speaker judgment on inference validity)? -/
   mustEntailsPrejacent : Bool
-  /-- Source example number from @cite{von-fintel-gillies-2010} -/
+  /-- Source example number from [von-fintel-gillies-2010] -/
   exampleNum : String := ""
   /-- Additional notes -/
   notes : String := ""
@@ -200,7 +200,7 @@ structure InferenceDatum where
   sentences : List String
   /-- Is the inference valid / the pattern contradictory? -/
   judgment : String
-  /-- Source example number from @cite{von-fintel-gillies-2010} -/
+  /-- Source example number from [von-fintel-gillies-2010] -/
   exampleNum : String := ""
   /-- What this shows about must's strength -/
   notes : String := ""
@@ -337,10 +337,10 @@ def mustBeHungry : MustMinimalPair where
   notes := "Unusual: signals that the speaker is inferring hunger indirectly (e.g., from irritability, time since last meal) rather than from the usual direct introspective access."
 
 -- ════════════════════════════════════════════════════════════════════════════
--- @cite{von-fintel-gillies-2021}: Can't–Possible Incompatibility (Observation 5)
+-- [von-fintel-gillies-2021]: Can't–Possible Incompatibility (Observation 5)
 -- ════════════════════════════════════════════════════════════════════════════
 
-/-- @cite{von-fintel-gillies-2021} ex. 5a/22: Can't φ is incompatible with "it's possible that φ."
+/-- [von-fintel-gillies-2021] ex. 5a/22: Can't φ is incompatible with "it's possible that φ."
     The flat-footed conjunction is incoherent. -/
 def cantPossibleContradiction : InferenceDatum where
   sentences := [
@@ -351,7 +351,7 @@ def cantPossibleContradiction : InferenceDatum where
   exampleNum := "VF&G 2021 (5), (22)"
   notes := "Observation 5: can't φ excludes 'it's possible that φ'. If can't were weak necessity (¬perhaps), this should be coherent. The Mantra's dilemma."
 
-/-- @cite{von-fintel-gillies-2021} ex. 6/10: Must doesn't combine with *only* — evidence for
+/-- [von-fintel-gillies-2021] ex. 6/10: Must doesn't combine with *only* — evidence for
     top-of-scale status, not weakness. -/
 def mustOnlyIncompatibility : InferenceDatum where
   sentences := [
@@ -363,7 +363,7 @@ def mustOnlyIncompatibility : InferenceDatum where
   exampleNum := "VF&G 2021 (6)/(10)"
   notes := "Observation 3: *only* doesn't rescue must, unlike weaker expressions ('I only said it might be raining' is fine). If must were below the top of the epistemic scale, *only must* should work."
 
-/-- @cite{von-fintel-gillies-2021} ex. 24: Anti-knowledge — Phil cooking dinner.
+/-- [von-fintel-gillies-2021] ex. 24: Anti-knowledge — Phil cooking dinner.
     Direct knowledge makes must infelicitous even without perceptual evidence. -/
 def philCooksDinner : MustMinimalPair where
   bare := "Dinner is ready."
@@ -376,7 +376,7 @@ def philCooksDinner : MustMinimalPair where
   exampleNum := "VF&G 2021 (24)"
   notes := "Anti-knowledge: Phil's complete checking counts as 'direct enough' information, blocking must."
 
-/-- @cite{von-fintel-gillies-2021} ex. 25: Anti-knowledge — Meryl's indirect knowledge.
+/-- [von-fintel-gillies-2021] ex. 25: Anti-knowledge — Meryl's indirect knowledge.
     Meryl hasn't checked everything herself, so must is fine. -/
 def merylCooksDinner : MustMinimalPair where
   bare := "Dinner is ready."

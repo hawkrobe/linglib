@@ -2,11 +2,11 @@ import Linglib.Syntax.Minimalist.Aspect
 
 /-!
 # Cantonese Resultative / Phase Complements
-@cite{matthews-yip-1994} @cite{cheung-2007} @cite{yip-k-f-2025}
-@cite{liu-yip-2026} App. B (127), Table 6
+[matthews-yip-1994] [cheung-2007] [yip-k-f-2025]
+[liu-yip-2026] App. B (127), Table 6
 
 Cantonese inner-aspectual postverbal elements catalogued by
-@cite{yip-k-f-2025} and reproduced in @cite{liu-yip-2026} Appendix B (127).
+[yip-k-f-2025] and reproduced in [liu-yip-2026] Appendix B (127).
 The audit on Liu & Yip 2026's integration flagged that these elements were
 entirely absent from linglib at that point; this file fills the gap with a
 theory-light per-morpheme inventory paralleling Mandarin's
@@ -32,7 +32,7 @@ structure InnerAspMarker where
   notes : String := ""
   deriving Repr
 
-/-! ## Inventory per @cite{liu-yip-2026} Appendix B (127a–m) -/
+/-! ## Inventory per [liu-yip-2026] Appendix B (127a–m) -/
 
 /-- *-dim6* 掂 'all right'. e.g. *gaau2-dim6* 'finished, settled'. -/
 def dim : InnerAspMarker :=
@@ -81,13 +81,13 @@ def lok : InnerAspMarker :=
   , example_ := "zyu2-lok6 (taught way back then)" }
 
 /-- *-ding6* 定 'in advance'. e.g. *zyu2-ding6* 'cooked in advance'.
-    Per @cite{wong-shing-kit-2018}. -/
+    Per [wong-shing-kit-2018]. -/
 def ding : InnerAspMarker :=
   { jyutping := "-ding6", hanzi := "定", gloss := "in advance"
   , example_ := "zyu2-ding6 (cooked in advance)" }
 
 /-- *-can1* 親 'adversative'. e.g. *daa2-can1* 'injure by hitting'.
-    Per @cite{sio-2020}. -/
+    Per [sio-2020]. -/
 def can : InnerAspMarker :=
   { jyutping := "-can1", hanzi := "親", gloss := "adversative"
   , example_ := "daa2-can1 (injure by hitting)" }
@@ -105,7 +105,7 @@ def sat : InnerAspMarker :=
 def all : List InnerAspMarker :=
   [dim, dou, gin, hei, hou, jyun, seng, zoek, lok, ding, can, zyu, sat]
 
-/-- Drift sentry: 13 inner-aspectual elements per @cite{liu-yip-2026}
+/-- Drift sentry: 13 inner-aspectual elements per [liu-yip-2026]
     Appendix B (127a–m). -/
 theorem all_count : all.length = 13 := by decide
 

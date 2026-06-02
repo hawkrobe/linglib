@@ -2,8 +2,8 @@ import Linglib.Pragmatics.GriceanMaxims
 import Linglib.Pragmatics.RSA.Channel
 
 /-!
-# @cite{dale-reiter-1995}
-@cite{grice-1975}
+# [dale-reiter-1995]
+[grice-1975]
 
 Computational Interpretations of the Gricean Maxims in the Generation
 of Referring Expressions. *Cognitive Science* 19(2), 233–263.

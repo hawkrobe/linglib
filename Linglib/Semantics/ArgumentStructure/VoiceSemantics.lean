@@ -5,7 +5,7 @@ import Linglib.Semantics.Causation.CauserSort
 /-!
 # Voice Semantics: Compositional Operations on Argument Structure
 
-@cite{beavers-udayana-2022} @cite{kratzer-1996} @cite{alexiadou-schaefer-2015}
+[beavers-udayana-2022] [kratzer-1996] [alexiadou-schaefer-2015]
 
 Voice heads are type-changing compositional functions: they take a VP
 denotation and return a clause-level meaning with modified argument
@@ -47,7 +47,7 @@ internal argument (patient) was suppressed and the agent remains as the
 surface subject.
 
 One Lean definition, two surface argument structures. The 2×2 typology
-of @cite{beavers-udayana-2022} is a consequence of Montague composition,
+of [beavers-udayana-2022] is a consequence of Montague composition,
 not a stipulated data structure.
 -/
 
@@ -63,7 +63,7 @@ open Core.Logic.Intensional.Variables
 /-- Active voice is the identity on VP meanings: it preserves the full
     argument structure.
 
-    ⟦meN-⟧ = λP[P]    (@cite{beavers-udayana-2022}, (39a))
+    ⟦meN-⟧ = λP[P]    ([beavers-udayana-2022], (39a))
 
     In a type-driven system, "doing nothing" is itself a semantic
     contribution — it commits to projecting ALL arguments as DPs. -/
@@ -110,7 +110,7 @@ theorem berSemG_eq_suppressArg {F : Frame} {τ : Ty} (n : ℕ)
     (vp : DenotG F (.e ⇒ τ)) (g : Core.Assignment F.Entity) :
     berSemG n vp g = suppressArg (g n) (vp g) := rfl
 
-/-- @cite{beavers-zubair-2013}'s sortally-restricted causer suppression
+/-- [beavers-zubair-2013]'s sortally-restricted causer suppression
     operator (their ex. (77), p. 37):
 
       ⟦+∅_CS⟧ = λPλyλe[P(y, x, e) ∧ x ∈ U_I]
@@ -231,7 +231,7 @@ theorem suppression_after_incorporation {F : Frame}
     entirely from the type of the VP input, not from any difference in
     the suppression operation.
 
-    This is the formal content of @cite{beavers-udayana-2022}'s claim
+    This is the formal content of [beavers-udayana-2022]'s claim
     that ber- is ONE operation producing FOUR surface types. -/
 theorem same_operation_different_types {F : Frame}
     (verb : F.Denot (.e ⇒ .e ⇒ .t))

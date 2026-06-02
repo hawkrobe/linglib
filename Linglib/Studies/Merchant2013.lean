@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Ellipsis.DeletionDomain
 import Linglib.Syntax.Minimalist.Voice
 
 /-!
-# @cite{merchant-2013} — Voice and Ellipsis
+# [merchant-2013] — Voice and Ellipsis
 
 Voice mismatches between an elided phrase and its antecedent are tolerated
 under VP-ellipsis but blocked under sluicing, fragment answers, gapping,
@@ -40,7 +40,7 @@ open Minimalist.Ellipsis
 -- ════════════════════════════════════════════════════
 
 /-- Fragment answers: movement to Spec,CP + TP-deletion.
-    Same [E] position as sluicing (@cite{merchant-2004}). -/
+    Same [E] position as sluicing ([merchant-2004]). -/
 def fragmentAnswers : EllipsisType := ⟨.C, "fragment answers"⟩
 
 /-- Gapping: elides material containing VoiceP. [E] at C or higher. -/
@@ -233,7 +233,7 @@ theorem argStructure_data_predicted :
     (sluicing, VPE, fragment answers, gapping, pseudogapping) — because
     v is inside the deletion domain when [E] is at Voice or above.
     Under vVPE ([E] on v), these alternations ARE tolerated
-    (@cite{kalyakin-2026}). -/
+    ([kalyakin-2026]). -/
 theorem v_alternations_blocked_high_ellipsis :
     canMismatch sluicing dativeAlternation = false ∧
     canMismatch sluicing prepAlternation = false ∧
@@ -302,8 +302,8 @@ theorem voice_between_boundaries :
 -- § 7. End-to-End Argumentation Chain
 -- ════════════════════════════════════════════════════
 
-/-- End-to-end chain: Voice severing (@cite{kratzer-1996}) →
-    Merchant's deletion domain theory (@cite{merchant-2013}) →
+/-- End-to-end chain: Voice severing ([kratzer-1996]) →
+    Merchant's deletion domain theory ([merchant-2013]) →
     voice mismatch asymmetry.
 
     Step 1 (Voice.lean): Active and passive are distinct Voice flavors;

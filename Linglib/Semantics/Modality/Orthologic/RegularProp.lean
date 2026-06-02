@@ -4,7 +4,7 @@ import Mathlib.Data.SetLike.Basic
 
 /-!
 # Regular Propositions of a Compatibility Frame
-@cite{holliday-mandelkern-2024}
+[holliday-mandelkern-2024]
 
 The bundled type `RegularProp F` of `◇`-regular subsets of a compatibility
 frame `F`, equipped with its `OrthocomplementedLattice` structure.
@@ -98,7 +98,7 @@ theorem univ_isRegular (F : CompatFrame S) : isRegular F (Set.univ : Set S) :=
   fun _ => Or.inl trivial
 
 /-- The load-bearing involutivity: `orthoNeg² A = A` for regular `A`.
-    @cite{holliday-mandelkern-2024} Proposition 4.8. -/
+    [holliday-mandelkern-2024] Proposition 4.8. -/
 theorem orthoNeg_orthoNeg_of_isRegular (F : CompatFrame S) {A : Set S}
     (hA : isRegular F A) : orthoNeg F (orthoNeg F A) = A := by
   apply Set.eq_of_subset_of_subset

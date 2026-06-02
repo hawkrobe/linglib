@@ -14,7 +14,7 @@ than the old per-tree `CutShape` type.
 ---
 
 # Cut-avoiding trees in the Connes-Kreimer coproduct
-@cite{marcolli-chomsky-berwick-2025} @cite{foissy-2002}
+[marcolli-chomsky-berwick-2025] [foissy-2002]
 
 A pure structural condition on `TraceTree α β`: when does a tree `T` "avoid"
 a target `X`? Answer: `T ≠ X` and no admissible cut on `T` extracts `X` as
@@ -25,7 +25,7 @@ This predicate has nothing to do with any particular linguistic theory; it
 is a relation between trees in the Connes-Kreimer combinatorial substrate.
 Generic over leaf alphabet `α` and trace alphabet `β`. Defined here so that
 any consumer (Minimalism-style algebraic Merge per
-@cite{marcolli-chomsky-berwick-2025}, TAG-via-Hopf, categorial-grammar
+[marcolli-chomsky-berwick-2025], TAG-via-Hopf, categorial-grammar
 combinators, renormalization-style "avoid these counterterms") can reuse it.
 
 ## Contents

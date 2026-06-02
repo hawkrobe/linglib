@@ -3,7 +3,7 @@ import Mathlib.Logic.Function.Basic
 /-!
 # Bilateral logic — paraconsistent polarity-flip substrate
 
-@cite{anttila-2021} @cite{aloni-2022} @cite{groenendijk-roelofsen-2009}
+[anttila-2021] [aloni-2022] [groenendijk-roelofsen-2009]
 
 A **bilateral logic** equips a formula language with two parallel
 interpretations (`positive`/`negative`, also called `support`/`antiSupport`,

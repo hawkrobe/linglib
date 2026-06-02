@@ -8,7 +8,7 @@ import Linglib.Fragments.Mandarin.Predicates
 
 /-!
 # Glass (2025): Attested versus unattested contrafactive belief verbs
-@cite{glass-2025} @cite{glass-2023} @cite{roberts-ozyildiz-2025}
+[glass-2025] [glass-2023] [roberts-ozyildiz-2025]
 
 Semantics and Pragmatics 18, Article 8: 1-17.
 
@@ -20,9 +20,9 @@ Semantics and Pragmatics 18, Article 8: 1-17.
 
 2. **Strong contrafactives are unattested**: No verb presupposes ¬p (requiring
    CommonGround ⊨ ¬p). This follows from the Predicate Lexicalization Constraint
-   (@cite{roberts-ozyildiz-2025}): ¬p cannot causally support B(x)(p).
+   ([roberts-ozyildiz-2025]): ¬p cannot causally support B(x)(p).
 
-3. **Weak contrafactives exist**: Mandarin yǐwéi (@cite{glass-2023}) has a
+3. **Weak contrafactives exist**: Mandarin yǐwéi ([glass-2023]) has a
    postsupposition ◇¬p — after utterance, the CommonGround must be compatible with ¬p.
    This is a definedness condition on the *output* context, not a presupposition
    on the input context.
@@ -81,7 +81,7 @@ private def contrafactiveCtx : List MiniWorld := [.w1]
 
 /-!
 Construct presuppositional denotations for four verb types directly
-from veridicality, matching @cite{glass-2025} Table 1.
+from veridicality, matching [glass-2025] Table 1.
 
 We define the presup fields directly (rather than instantiating full
 `DoxasticPredicate`s) to keep the model minimal. The connection to
@@ -114,11 +114,11 @@ private def yiweiPostsup : Postsupposition MiniWorld :=
   Postsupposition.weakContrafactive
 
 -- ============================================================================
--- §3. Table 1: Context-Set Satisfaction (@cite{glass-2025})
+-- §3. Table 1: Context-Set Satisfaction ([glass-2025])
 -- ============================================================================
 
 /-!
-Table 1 from @cite{glass-2025}: possible states of the Common Ground
+Table 1 from [glass-2025]: possible states of the Common Ground
 *after* updating with each utterance.
 
 |  Utterance   | Projective content | p   | ◇p ∧ ◇¬p | not-p |
@@ -260,21 +260,21 @@ theorem yiwei_veridicality_nonfactive :
 yǐwéi is classified as nonfactive by veridicality (§4), but it has an
 additional postsupposition ◇¬p that is NOT derivable from veridicality.
 Veridicality is a derivable property of the canonical Mandarin entry; the
-postsupposition is @cite{glass-2025}'s paper-specific overlay, recorded here
+postsupposition is [glass-2025]'s paper-specific overlay, recorded here
 in the study rather than as a field on the Fragment entry.
 -/
 
 /-- Postsupposition type: output-context constraint distinct from
-    presuppositions (@cite{glass-2025}). The world-type-independent tag; the
+    presuppositions ([glass-2025]). The world-type-independent tag; the
     concrete construct is `Semantics.Dynamic.Postsupposition`. -/
 inductive PostsupType where
-  /-- Output context must be compatible with ¬p: ◇¬p (@cite{glass-2025}). -/
+  /-- Output context must be compatible with ¬p: ◇¬p ([glass-2025]). -/
   | weakContrafactive
   /-- Output context must entail ¬p: ⊨¬p (hypothetical, UNATTESTED). -/
   | strongContrafactive
   deriving DecidableEq, Repr
 
-/-- @cite{glass-2025} classifies yǐwéi as carrying a weak contrafactive
+/-- [glass-2025] classifies yǐwéi as carrying a weak contrafactive
     postsupposition. This is the paper's analytical claim about the canonical
     Mandarin `yiwei` entry — not a field on that entry. -/
 def yiweiPostsupType : PostsupType := .weakContrafactive
@@ -305,7 +305,7 @@ The contrafactive gap DERIVED from the Predicate Lexicalization Constraint:
 - Contrafactive (contra): presup = ¬p → PLC violated (¬p ↛ B(a)(p)) ✗
 
 This is not a stipulation — it follows from the causal structure of
-belief formation (@cite{roberts-ozyildiz-2025}).
+belief formation ([roberts-ozyildiz-2025]).
 -/
 
 /-- The contrafactive gap: factive and nonfactive are valid;
@@ -362,13 +362,13 @@ theorem yiwei_endtoend :
   ⟨fun _ _ => trivial, rfl⟩
 
 -- ============================================================================
--- §8. Connection to Neg-Raising (@cite{glass-2025} §4.2)
+-- §8. Connection to Neg-Raising ([glass-2025] §4.2)
 -- ============================================================================
 
 /-!
-@cite{glass-2025} §4.2 notes that yǐwéi supports neg-raising, like other
+[glass-2025] §4.2 notes that yǐwéi supports neg-raising, like other
 nonfactive verbs. This follows from `Veridicality`: neg-raising is available
-for non-veridical predicates (@cite{gajewski-2007}, `NegRaising.lean`).
+for non-veridical predicates ([gajewski-2007], `NegRaising.lean`).
 
 Since `PresupClass.nonfactive` verbs are exactly the non-veridical ones,
 the neg-raising gap aligns with the contrafactive gap.

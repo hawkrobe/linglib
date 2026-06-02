@@ -1,8 +1,8 @@
 import Linglib.Studies.DegenTonhauser2021
 
 /-!
-# @cite{degen-tonhauser-2022}: Are There Factive Predicates?
-@cite{heim-1983} @cite{schlenker-2009} @cite{van-der-sandt-1992}
+# [degen-tonhauser-2022]: Are There Factive Predicates?
+[heim-1983] [schlenker-2009] [van-der-sandt-1992]
 
 Empirical data from "Are there factive predicates? An empirical investigation"
 by Judith Degen and Judith Tonhauser (Language 98(3):552–591, 2022).
@@ -16,14 +16,14 @@ The gradient patterns observed in inference judgments do not, on their own,
 settle whether factivity is fundamentally discrete or gradient. As Degen &
 Tonhauser note, "the observed gradience in projection [is] compatible
 with a binary factivity category" under the assumption that predicates are
-ambiguous between factive and nonfactive readings. @cite{grove-white-2025}
+ambiguous between factive and nonfactive readings. [grove-white-2025]
 subsequently show that models implementing discrete factivity fit these data
 better than models implementing gradient factivity.
 
 ## Predicates
 
 This paper reuses the 20 clause-embedding predicates from
-@cite{degen-tonhauser-2021} and adds a four-way traditional classification.
+[degen-tonhauser-2021] and adds a four-way traditional classification.
 
 ## Experiments
 
@@ -49,7 +49,7 @@ This paper reuses the 20 clause-embedding predicates from
    - Unclear which predicates the analyses apply to
    - Need to account for gradient projection
 
-## Connection to @cite{tonhauser-beaver-roberts-simons-2013}
+## Connection to [tonhauser-beaver-roberts-simons-2013]
 
 This paper extends and empirically tests the Tonhauser taxonomy:
 - SCF (Strong Contextual Felicity) relates to whether content must be established

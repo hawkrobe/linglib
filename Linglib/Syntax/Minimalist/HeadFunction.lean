@@ -3,11 +3,11 @@ import Linglib.Syntax.Minimalist.Derivation
 
 /-!
 # Head Functions for Minimalist Syntactic Objects (MCB §1.12-§1.13)
-@cite{marcolli-chomsky-berwick-2025}
+[marcolli-chomsky-berwick-2025]
 
 ## What MCB say
 
-Per @cite{marcolli-chomsky-berwick-2025} §1.12 (book pp. 105-108), Externalization
+Per [marcolli-chomsky-berwick-2025] §1.12 (book pp. 105-108), Externalization
 is modelled as a **section** `σ_L : 𝔗_{SO_0} → 𝔗^{pl}_{SO_0}` of the projection
 `Π : 𝔗^{pl}_{SO_0} → 𝔗_{SO_0}` from planar to nonplanar binary rooted trees.
 The section satisfies `Π ∘ σ_L = id` and is:
@@ -83,7 +83,7 @@ namespace Minimalist
 
 /-! ### Convention direction (MCB Lemma 1.13.5) -/
 
-/-- The harmonic head-side convention. Per @cite{marcolli-chomsky-berwick-2025}
+/-- The harmonic head-side convention. Per [marcolli-chomsky-berwick-2025]
     Lemma 1.13.5 (book p. 127), head functions on T are in bijection with planar
     embeddings of T, under one of two equally valid conventions:
 
@@ -105,7 +105,7 @@ inductive ConventionDir where
 -- § 1: HeadFunction (MCB §1.12.1 + §1.13.5 + Def 1.13.6)
 -- ============================================================================
 
-/-- A **head function** in the @cite{marcolli-chomsky-berwick-2025} sense:
+/-- A **head function** in the [marcolli-chomsky-berwick-2025] sense:
     a planar Externalization (MCB §1.12.1 section σ_L of Π) plus a head-side
     convention (Lemma 1.13.5) plus a partial domain (Def 1.13.6).
 
@@ -293,7 +293,7 @@ def leafTokens (h : HeadFunction) (so : SyntacticObject) : List LIToken :=
   leafTokensPlanar (h.section_.σ so)
 
 /-- Linearize `so` under head function `h`: collect leaf tokens in the
-    left-to-right order of `h.section_.σ so`. Per @cite{marcolli-chomsky-berwick-2025}
+    left-to-right order of `h.section_.σ so`. Per [marcolli-chomsky-berwick-2025]
     book p. 123, "linearization" in linguistics IS planarization (= section
     choice); the term is reserved for the resulting word ordering on leaves. -/
 def linearize (h : HeadFunction) (so : SyntacticObject) : List LIToken :=
@@ -355,7 +355,7 @@ theorem leafTokensPlanar_mul (l r : FreeMagma (LIToken ⊕ Nat)) :
 /-- For a section `σ`, the **local-coherence** property at T: σ respects
     binary nodes structurally on T's subtrees (with possible left/right swap).
 
-    Per @cite{marcolli-chomsky-berwick-2025} §1.12.3 (book p. 116), σ is NOT
+    Per [marcolli-chomsky-berwick-2025] §1.12.3 (book p. 116), σ is NOT
     a magma morphism globally (Lemma 1.13.1), but it can be locally coherent
     at specific subtrees. This is the property that makes MCB Def 1.13.3
     coherence (`headAtVertex_coherent` below) provable.
@@ -479,7 +479,7 @@ theorem σ_leafTokens_disjoint_at_mul (h : HeadFunction) (T : SyntacticObject)
     have ⟨_, _, hdisj⟩ := List.nodup_append'.mp hab_nodup
     exact hdisj hxb hxa
 
-/-- @cite{marcolli-chomsky-berwick-2025} Def 1.13.3 coherence: under a head
+/-- [marcolli-chomsky-berwick-2025] Def 1.13.3 coherence: under a head
     function `h` on a tree T (locally coherent on T, with planar leaves
     `Nodup`), if vertex `v` is contained in vertex `w` (both vertices of T)
     and the head leaf of `w` appears among the leaves of `v`, then the head
@@ -627,7 +627,7 @@ theorem HeadFunction.headAtVertex_coherent (h : HeadFunction) (T : SyntacticObje
 
 namespace HeadFunction
 
-/-- @cite{marcolli-chomsky-berwick-2025} Def 1.15.1, **clause (i)** (the
+/-- [marcolli-chomsky-berwick-2025] Def 1.15.1, **clause (i)** (the
     Dom-closure clause):
 
     For any `T ∈ Dom(h)` and any subtree `v ⊂ T` such that
@@ -649,7 +649,7 @@ def IsRaisingClauseI (h : HeadFunction) : Prop :=
       h.head (SyntacticObject.node v (T.replace v (mkTrace traceId))) =
         h.head (T.replace v (mkTrace traceId))
 
-/-- @cite{marcolli-chomsky-berwick-2025} Def 1.15.1, **clause (ii)** (the
+/-- [marcolli-chomsky-berwick-2025] Def 1.15.1, **clause (ii)** (the
     head-equation clause):
 
     For arbitrary `T` and any subtree `v ⊂ T` such that both
@@ -697,7 +697,7 @@ end HeadFunction
 -- § 8: ComplementedHeadFunction (MCB Def 1.14.2)
 -- ============================================================================
 
-/-- @cite{marcolli-chomsky-berwick-2025} Def 1.14.2 (book p. 134):
+/-- [marcolli-chomsky-berwick-2025] Def 1.14.2 (book p. 134):
     a **complemented (abstract) head function** `h_{T,Z}` extends a head
     function to additionally assign each non-leaf vertex its **complement**:
 
@@ -761,7 +761,7 @@ end ComplementedHeadFunction
 -- § 9: MCB Lemma 1.13.4 counting (deferred — requires V^o(T) primitive)
 -- ============================================================================
 
-/-! @cite{marcolli-chomsky-berwick-2025} Lemma 1.13.4 (book p. 127): there are
+/-! [marcolli-chomsky-berwick-2025] Lemma 1.13.4 (book p. 127): there are
 exactly `2^|V^o(T)|` head functions on T, where `V^o(T)` is the set of
 non-leaf vertices of T.
 

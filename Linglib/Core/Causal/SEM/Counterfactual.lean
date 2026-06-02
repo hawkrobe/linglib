@@ -13,9 +13,9 @@ aliases for legacy SBH-style binary semantics.
 
 - **`causallySufficient M s cause xC effect xE`**: extending `s` with `xC` at
   `cause` then developing produces `xE` at `effect`. Polymorphic generalization
-  of @cite{nadathur-lauer-2020} Definition 23.
+  of [nadathur-lauer-2020] Definition 23.
 
-- **`causallyNecessary M s cause xC effect xE`**: @cite{nadathur-2024}
+- **`causallyNecessary M s cause xC effect xE`**: [nadathur-2024]
   Definition 10b — precondition + achievability + but-for clauses.
   Refactored to use abstract quantification over `Valuation α` (see "Refactor"
   below); the previous `allExtensions`/`freeExtensions` enumeration was
@@ -74,7 +74,7 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
 
 /-- **Causal sufficiency**: forcing `cause` to `xC` makes `effect` developDet to `xE`.
 
-    Polymorphic generalization of @cite{nadathur-lauer-2020} Definition 23.
+    Polymorphic generalization of [nadathur-lauer-2020] Definition 23.
     The Bool case (`BoolSEM.causallySufficient`) recovers the legacy semantics
     "`cause = true` produces `effect = true`". -/
 def causallySufficient (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
@@ -124,14 +124,14 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
 -- ════════════════════════════════════════════════════
 
 /-! Pearl-style counterfactual simulation via Lassiter's RRR heuristic
-    (@cite{lassiter-2017-probabilistic-language} §3): "Rewind to the
+    ([lassiter-2017-probabilistic-language] §3): "Rewind to the
     antecedent's causal layer, Revise the antecedent, selectively
     Regenerate descendants while preserving causally-independent
     observations." Subsumes:
-    - @cite{lewis-1973-causation} / @cite{nadathur-lauer-2020} deterministic
+    - [lewis-1973-causation] / [nadathur-lauer-2020] deterministic
       counterfactuals (Dirac specialization)
-    - @cite{beller-gerstenberg-2025} W/H/S aspects (graded probability)
-    - @cite{lassiter-2017-probabilistic-language} probabilistic counterfactuals
+    - [beller-gerstenberg-2025] W/H/S aspects (graded probability)
+    - [lassiter-2017-probabilistic-language] probabilistic counterfactuals
       with overt probability operators
 
     Key insight: under the high-stability assumption (Lucas & Kemp 2015
@@ -171,12 +171,12 @@ noncomputable def cfSeed [DecidableEq V]
     (see `counterfactualSimulate_eq_pure_of_deterministic` below).
 
     Subsumes (with appropriate derived predicates):
-    - `causallyNecessary` (@cite{nadathur-2024} Def 10b, discrete)
-    - `whetherCause` (@cite{beller-gerstenberg-2025} Eq 1, graded)
-    - `sufficientCause` (@cite{beller-gerstenberg-2025} Eq 3, graded)
+    - `causallyNecessary` ([nadathur-2024] Def 10b, discrete)
+    - `whetherCause` ([beller-gerstenberg-2025] Eq 1, graded)
+    - `sufficientCause` ([beller-gerstenberg-2025] Eq 3, graded)
     - Lassiter probabilistic counterfactuals with overt probability operators
 
-    `probabilisticSuf` (@cite{cao-white-lassiter-2025}) is **not** a special
+    `probabilisticSuf` ([cao-white-lassiter-2025]) is **not** a special
     case — it's interventional probability without observation conditioning;
     lives in `Interventional.lean`. -/
 noncomputable def counterfactualSimulate [Fintype V] [DecidableEq V] [DecidableValuation α]
@@ -189,7 +189,7 @@ noncomputable def counterfactualSimulate [Fintype V] [DecidableEq V] [DecidableV
 -- § Derived graded predicates (B&G 2025 W/H/S, etc.)
 -- ════════════════════════════════════════════════════
 
-/-- **Whether-causation** (@cite{beller-gerstenberg-2025} Eq 1):
+/-- **Whether-causation** ([beller-gerstenberg-2025] Eq 1):
     `W(A → e) = P(e' ≠ e | s, remove(A))`. Probability that the counterfactual
     outcome differs from the actual outcome `xEff_actual` if the antecedent
     were `xAnt_alt` instead of its actual value.
@@ -204,7 +204,7 @@ noncomputable def whetherCause [Fintype V] [DecidableEq V] [DecidableValuation �
                       then 0
                       else (counterfactualSimulate M observed antecedent xAnt_alt) v
 
-/-- **Sufficient-causation** (@cite{beller-gerstenberg-2025} Eq 3):
+/-- **Sufficient-causation** ([beller-gerstenberg-2025] Eq 3):
     `S(A → e) = P(W(A → e') | s, remove(\A))`. Probability that A would
     have been a whether-cause if all alternative causes had been removed.
 
@@ -262,7 +262,7 @@ theorem whetherCause_eq_indicator_of_deterministic
 -- § Nadathur 2024 Def 10b: causallyNecessary (BoolSEM only)
 -- ════════════════════════════════════════════════════
 
-/-! Port of @cite{nadathur-2024} Definition 10b to V2. Specialized to
+/-! Port of [nadathur-2024] Definition 10b to V2. Specialized to
     `BoolSEM` (the binary substrate the original definition was given on);
     polymorphic generalization to multi-valued α can come if a consumer
     needs it. -/
@@ -400,7 +400,7 @@ namespace Core.Causal.SEM
 
 variable {V : Type*} {α : V → Type*}
 
-/-- **Consistent supersituation** check (@cite{nadathur-2024} Def 9b):
+/-- **Consistent supersituation** check ([nadathur-2024] Def 9b):
     `s'` is consistent with `base` under `M` iff every value `s'` fixes
     on a vertex undetermined in `base` agrees with what per-vertex
     development of `base` would produce.
@@ -419,7 +419,7 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
 
 namespace causallyNecessary
 
-/-- **Precondition** (@cite{nadathur-2024} Def 10b): neither
+/-- **Precondition** ([nadathur-2024] Def 10b): neither
     `cause = xC` nor `effect = xE` is already entailed by `s` under `M`.
     Stated directly via `developDetVtx`. -/
 def precondition (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
@@ -431,7 +431,7 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (precondition M s cause xC effect xE) := Classical.dec _
 
-/-- **Achievability** clause (i) of @cite{nadathur-2024} Def 10b.
+/-- **Achievability** clause (i) of [nadathur-2024] Def 10b.
     Abstract quantification over `Valuation α`: there exists a
     supersituation of `s.extend cause xC` (consistent with the per-vertex
     development) under which `effect` develops to `xE`.
@@ -451,7 +451,7 @@ noncomputable instance [DecidableEq V] [DecidableValuation α]
     (s : Valuation α) (cause : V) (xC : α cause) (effect : V) (xE : α effect) :
     Decidable (achievable M s cause xC effect xE) := Classical.dec _
 
-/-- **But-for** clause (ii) of @cite{nadathur-2024} Def 10b. Abstract
+/-- **But-for** clause (ii) of [nadathur-2024] Def 10b. Abstract
     quantification: every consistent supersituation of `s` that doesn't
     fix `cause = xC` must fail to develop `effect = xE`.
 
@@ -472,7 +472,7 @@ noncomputable instance [DecidableValuation α]
 
 end causallyNecessary
 
-/-- **Causal Necessity** (@cite{nadathur-2024} Definition 10b),
+/-- **Causal Necessity** ([nadathur-2024] Definition 10b),
     polymorphic over value types.
 
     ⟨cause, xC⟩ is causally necessary for ⟨effect, xE⟩ relative to `s`
@@ -483,7 +483,7 @@ end causallyNecessary
     - **(ii) But-for**: no consistent supersituation of `s` lacking
       `cause = xC` develops `effect` to `xE`.
 
-    Supersedes the simple but-for test from @cite{nadathur-lauer-2020}
+    Supersedes the simple but-for test from [nadathur-lauer-2020]
     Definition 24. Refactored from the previous `allExtensions`/`freeExtensions`
     enumeration to abstract `Valuation α` quantification — see
     `Counterfactual.lean` module docstring. -/

@@ -3,11 +3,11 @@ import Linglib.Core.Logic.RankingFunction
 /-!
 # Spohn (1988): Ranking Functions for Graded Belief Revision
 
-@cite{spohn-1988}
+[spohn-1988]
 
 This study demonstrates ordinal conditional functions (OCFs) as a model
 of belief revision with graded evidence strength. The firmness parameter
-α from @cite{spohn-1988} Definition 6 distinguishes weak evidence
+α from [spohn-1988] Definition 6 distinguishes weak evidence
 (low α, e.g. hearsay) from strong evidence (high α, e.g. direct
 observation).
 
@@ -137,7 +137,7 @@ theorem strong_separates :
   native_decide
 
 -- ══════════════════════════════════════════════════════════════════════
--- § 3. Commutativity (@cite{spohn-1988}, Theorem 4)
+-- § 3. Commutativity ([spohn-1988], Theorem 4)
 -- ══════════════════════════════════════════════════════════════════════
 
 /-! Process "sunny" (α=2) then "warm" (β=1), and vice versa.
@@ -221,10 +221,10 @@ theorem weak_evidence_revises :
     afterSunnyWeak.rank .rainy_warm ≠ 0 := by decide
 
 -- ══════════════════════════════════════════════════════════════════════
--- § 5. Bridge to Probability (@cite{spohn-1988} §7)
+-- § 5. Bridge to Probability ([spohn-1988] §7)
 -- ══════════════════════════════════════════════════════════════════════
 
-/-! @cite{spohn-1988} §7 observes that ranking functions are the ordinal
+/-! [spohn-1988] §7 observes that ranking functions are the ordinal
     analogue of probability measures. The structural parallel:
 
     | Probability (ℚ, ·, Σ)     | Ranking (ℕ, min, +)          |

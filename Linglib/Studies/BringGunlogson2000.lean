@@ -4,10 +4,10 @@ import Mathlib.Data.Set.Basic
 
 /-!
 Gunlogson Felicity ↔ Contextual Evidence Bias
-@cite{bring-gunlogson-2000} @cite{gunlogson-2001} @cite{romero-2024}
+[bring-gunlogson-2000] [gunlogson-2001] [romero-2024]
 
-Connects @cite{gunlogson-2001}'s felicity condition on rising declaratives
-to the contextual evidence framework of @cite{bring-gunlogson-2000}.
+Connects [gunlogson-2001]'s felicity condition on rising declaratives
+to the contextual evidence framework of [bring-gunlogson-2000].
 
 ## The Paper's Deepest Claim
 

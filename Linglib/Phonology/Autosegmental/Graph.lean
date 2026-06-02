@@ -7,16 +7,16 @@ import Linglib.Phonology.Autosegmental.NoCrossing
 
 /-!
 # Autosegmental graph (the AR object)
-@cite{goldsmith-1976} @cite{pulleyblank-1986} @cite{jardine-heinz-2015}
-@cite{jardine-2017} @cite{leben-2018-autoseg} @cite{coleman-local-1991}
+[goldsmith-1976] [pulleyblank-1986] [jardine-heinz-2015]
+[jardine-2017] [leben-2018-autoseg] [coleman-local-1991]
 
 A `Phonology.Autosegmental.Graph α β` is a finite ordered bipartite
 labeled relation between two tiers: an `upper` sequence of `α`-elements,
 a `lower` sequence of `β`-elements, and a `Finset` of association lines
 between them. It is the standard *autosegmental representation* (AR;
-@cite{goldsmith-1976}) of the contemporary formal/computational
-phonology tradition (@cite{jardine-2017}, @cite{chandlee-jardine-2019},
-@cite{burness-mcmullin-2020}, @cite{bhaskar-jardine-chandlee-oakden-2020}).
+[goldsmith-1976]) of the contemporary formal/computational
+phonology tradition ([jardine-2017], [chandlee-jardine-2019],
+[burness-mcmullin-2020], [bhaskar-jardine-chandlee-oakden-2020]).
 
 ## Naming convention
 
@@ -27,8 +27,8 @@ Mathlib pattern: directory-qualified object name + short category symbol.
   Matches mathlib's `Mathlib.Combinatorics.SimpleGraph` / `SimpleGraph V`
   and `Mathlib.Topology.MetricSpace` / `MetricSpace X` pattern.
 * **Category** (reserved): `Phonology.Autosegmental.AR α β` — the
-  literature-canonical symbol used uniformly in @cite{coleman-local-1991},
-  @cite{jardine-2017}, @cite{chandlee-jardine-2019}, and the entire
+  literature-canonical symbol used uniformly in [coleman-local-1991],
+  [jardine-2017], [chandlee-jardine-2019], and the entire
   Heinz-Jardine-Chandlee tradition. Mirrors mathlib's `Group`/`Grp`,
   `Module`/`ModuleCat` pattern. To be introduced when the first
   `CategoryTheory.Category` instance lands.
@@ -36,22 +36,22 @@ Mathlib pattern: directory-qualified object name + short category symbol.
 Two well-formedness conditions are formalised as separable `Prop`s:
 
 * `IsPlanar` — Goldsmith's **no-crossing constraint**
-  (@cite{goldsmith-1976}; lifted from `Phonology.Autosegmental.IsNoCrossing`
+  ([goldsmith-1976]; lifted from `Phonology.Autosegmental.IsNoCrossing`
   so the existing mathlib `MonovaryOn` lemma library applies directly).
   This is **Pulleyblank**'s reformulated Well-Formedness Condition
-  (@cite{pulleyblank-1986}): the *sole* structural WF requirement,
+  ([pulleyblank-1986]): the *sole* structural WF requirement,
   applying universally to autosegmental representations.
 * `IsSaturatedUpper` / `IsSaturatedLower` — every in-bounds tier
-  position is linked. **Goldsmith** (@cite{goldsmith-1979} p. 27)
-  bundled these into WFC; @cite{pulleyblank-1986} reanalysed them as
+  position is linked. **Goldsmith** ([goldsmith-1979] p. 27)
+  bundled these into WFC; [pulleyblank-1986] reanalysed them as
   the role of *language-particular* association conventions, not
-  structural well-formedness. Floating elements (@cite{bird-1966}
-  Bambara floating tones; @cite{laoide-kemp-2026} floating consonants)
+  structural well-formedness. Floating elements ([bird-1966]
+  Bambara floating tones; [laoide-kemp-2026] floating consonants)
   violate saturation but are well-formed under the post-1986 view.
 
 ## Algebraic structure: monoid under concatenation
 
-@cite{jardine-heinz-2015} show that autosegmental representations form a
+[jardine-heinz-2015] show that autosegmental representations form a
 **free monoid** under concatenation: every valid AR is a concatenation
 of finitely many *graph primitives*, and concatenation preserves both
 NCC (planarity) and OCP given primitives that satisfy them. The set of
@@ -60,7 +60,7 @@ the closure under concatenation; this is the autosegmental analogue of
 the string-as-free-monoid construction.
 
 `(Graph α β, concat, empty)` realizes this monoid:
-- `empty` (no nodes, no links) is the identity (@cite{jardine-heinz-2015}
+- `empty` (no nodes, no links) is the identity ([jardine-heinz-2015]
   Theorem 1).
 - `concat` is associative (Theorem 3).
 - Concatenation preserves planarity (Theorem 4).
@@ -75,8 +75,8 @@ relational composition `{(0,0), (0,1), (1,0), (1,1)}` has the crossing
 ## Bilateral as the substrate primitive
 
 Goldsmith's 1976 dissertation treated autosegmental tiers as
-"conceptually equal" (cf. @cite{leben-2018-autoseg} §1). The modern picture
-(@cite{leben-2018-autoseg} §3, after @cite{clements-1985}) privileges *one
+"conceptually equal" (cf. [leben-2018-autoseg] §1). The modern picture
+([leben-2018-autoseg] §3, after [clements-1985]) privileges *one
 basic tier* connected to multiple branch tiers (feature geometry,
 templatic CV-skeleton with root + vowel branches). A full multi-tier
 representation is then a paper-specific record of multiple `Graph`s
@@ -88,9 +88,9 @@ building block.
 * `Graph (SegSpec S) ToneSpec` — tonal-segmental autosegmental form
   (the structure `FloatingForm` recovers once tier-generalised).
 * `Graph Segment SkeletonSlot` — melodic tier docking onto a
-  CV-skeleton, as in @cite{laoide-kemp-2026} Figs. 1–2.
+  CV-skeleton, as in [laoide-kemp-2026] Figs. 1–2.
 * `Graph (Root α) CVSlot` — McCarthy-style root-template
-  association (@cite{mccarthy-1981}, @cite{yip-1988} Edge-In).
+  association ([mccarthy-1981], [yip-1988] Edge-In).
 
 ## Main definitions
 
@@ -103,7 +103,7 @@ building block.
   predicates and Goldsmith's original (now language-particular) WFC.
 * `insertLink`, `eraseLink` — link operations (naming mirrors
   `Floating.lean`'s `insertLink`/`deleteLink`).
-* `concat` — @cite{jardine-heinz-2015} concatenation (disjoint union
+* `concat` — [jardine-heinz-2015] concatenation (disjoint union
   with index shift). Forms a monoid with `empty` as identity; preserves
   planarity. The label-merging refinement (which derives spreading) is
   paper-specific and not part of this substrate.
@@ -160,7 +160,7 @@ use `isPlanar_insert` to preserve it.
 
 This file does **not** introduce a `Tier` type wrapper; per project
 discipline (`feedback_no_thin_bundled_struct.md`), sequences are
-`List α`. The autosegmental `Tier` of @cite{goldsmith-1976} is the
+`List α`. The autosegmental `Tier` of [goldsmith-1976] is the
 intuitive role of `upper`/`lower`; the type is just a list.
 
 ## What this file does NOT define
@@ -174,14 +174,14 @@ intuitive role of `upper`/`lower`; the type is just a list.
   to multiple upper-indices for contour tones). Operations like
   *spread-rightward* or *delink* are paper-specific applications of
   the atomic `insert`/`erase`.
-* **OCP** (@cite{leben-2018-autoseg} §8). A constraint *within* a tier on
+* **OCP** ([leben-2018-autoseg] §8). A constraint *within* a tier on
   adjacent identical elements; orthogonal to bipartite linking.
   Handled by `Phonology/OCPMerger.lean`.
-* **Feature-geometry hierarchy** (@cite{clements-1985},
-  @cite{sagey-1986}). Tree of class nodes over feature tiers; each
+* **Feature-geometry hierarchy** ([clements-1985],
+  [sagey-1986]). Tree of class nodes over feature tiers; each
   edge of the tree is a `Graph` but the hierarchy is paper-specific
   composition.
-* **Q-theory subsegmental decomposition** (@cite{shih-inkelas-2014}).
+* **Q-theory subsegmental decomposition** ([shih-inkelas-2014]).
   Orthogonal: divides each segment into quanta. Compatible if the
   upper tier is `Quantum`-typed.
 -/
@@ -219,7 +219,7 @@ def ofTiers (upper : List α) (lower : List β) : Graph α β :=
 /-! ### Planarity (no-crossing) -/
 
 /-- The bipartite representation is **planar** (no-crossing) iff its
-    link set satisfies @cite{goldsmith-1976}'s NCC. Lifted from
+    link set satisfies [goldsmith-1976]'s NCC. Lifted from
     `NoCrossing.IsNoCrossing` so mathlib's `MonovaryOn` lemma library
     applies directly. -/
 def IsPlanar (r : Graph α β) : Prop := IsNoCrossing r.links
@@ -263,12 +263,12 @@ instance (r : Graph α β) (j : Nat) : Decidable (r.IsFloatingLower j) :=
 
 /-! ### Saturation and Goldsmith's WFC
 
-@cite{goldsmith-1979} (p. 27) bundled saturation with non-crossing
-into a single Well-Formedness Condition; @cite{pulleyblank-1986}
+[goldsmith-1979] (p. 27) bundled saturation with non-crossing
+into a single Well-Formedness Condition; [pulleyblank-1986]
 weakened WFC to non-crossing alone, with saturation devolved to
 language-particular association conventions. The post-1986 view is
 the modern default — it admits floating elements
-(@cite{bird-1966}, @cite{laoide-kemp-2026}) as structurally
+([bird-1966], [laoide-kemp-2026]) as structurally
 well-formed.
 -/
 
@@ -282,9 +282,9 @@ def IsSaturatedUpper (r : Graph α β) : Prop :=
 def IsSaturatedLower (r : Graph α β) : Prop :=
   ∀ j, j < r.lower.length → r.IsLinkedLower j
 
-/-- @cite{goldsmith-1979}'s original Well-Formedness Condition: both
+/-- [goldsmith-1979]'s original Well-Formedness Condition: both
     tiers fully saturated *and* no association lines cross. Modern
-    usage (post-@cite{pulleyblank-1986}) treats only `IsPlanar` as
+    usage (post-[pulleyblank-1986]) treats only `IsPlanar` as
     structurally required and demotes saturation to language-particular
     association conventions. -/
 def IsGoldsmithWFC (r : Graph α β) : Prop :=
@@ -386,7 +386,7 @@ tiers and the link sets, with B's link indices shifted past A's tier
 lengths. Preserves planarity. Forms a monoid with `empty` as identity.
 
 This is the *disjoint-union* concatenation — no label-based merging.
-The merging variant of @cite{jardine-heinz-2015} (which derives
+The merging variant of [jardine-heinz-2015] (which derives
 spreading by merging adjacent identical melody-tier nodes) is a
 paper-specific quotient on top of this primitive.
 -/
@@ -413,7 +413,7 @@ theorem shiftLink_comp (a₁ a₂ b₁ b₂ : Nat) :
 
 /-! #### Concatenation -/
 
-/-- @cite{jardine-heinz-2015} concatenation: tier-concatenation plus
+/-- [jardine-heinz-2015] concatenation: tier-concatenation plus
     index-shifted link-set union. -/
 def concat (A B : Graph α β) : Graph α β where
   upper := A.upper ++ B.upper
@@ -430,7 +430,7 @@ def concat (A B : Graph α β) : Graph α β where
     (A.concat B).links =
       A.links ∪ B.links.image (shiftLink A.upper.length A.lower.length) := rfl
 
-/-! #### Monoid laws (@cite{jardine-heinz-2015} Theorems 1, 3) -/
+/-! #### Monoid laws ([jardine-heinz-2015] Theorems 1, 3) -/
 
 /-- `empty` is a left identity for `concat`. -/
 theorem empty_concat (A : Graph α β) : empty.concat A = A := by
@@ -456,7 +456,7 @@ theorem concat_assoc (A B C : Graph α β) :
                Finset.image_union, Finset.image_image, shiftLink_comp]
     rw [Finset.union_assoc]
 
-/-! #### Planarity preservation (@cite{jardine-heinz-2015} Theorem 4) -/
+/-! #### Planarity preservation ([jardine-heinz-2015] Theorem 4) -/
 
 /-- Concatenation preserves planarity, given `A` is in-bounds. The
     cross-case (an `A`-link vs a shifted `B`-link) needs `A.InBounds`
@@ -520,11 +520,11 @@ vertex indices; identity is the identity on indices. Together,
 `(Graph α β, Hom, id, comp)` forms a category — the **category of
 autosegmental graphs** for fixed tier-element types.
 
-* **Forbidden subgraphs** (@cite{jardine-2017}): an AR `G` is well-formed
+* **Forbidden subgraphs** ([jardine-2017]): an AR `G` is well-formed
   with respect to a constraint set `{F_i}` iff no `F_i` embeds (via an
   injective `Hom`) into `G`. `Embeds F G` captures this.
 
-* **Tier projections / erasure morphisms** (@cite{burness-mcmullin-2020}):
+* **Tier projections / erasure morphisms** ([burness-mcmullin-2020]):
   tier-based subregular constructions arise as particular morphisms;
   the morphism layer is where the subregular machinery (TSL, MTSL,
   ITSL, OTSL) lives. Encoded as specific `Hom`s in consumer files.
@@ -798,7 +798,7 @@ theorem concatMap_comp {A A' A'' B B' B'' : Graph α β}
 
 end Hom
 
-/-! ### Forbidden-subgraph embedding (@cite{jardine-2017})
+/-! ### Forbidden-subgraph embedding ([jardine-2017])
 
 Two notions of embedding are formalised:
 
@@ -807,14 +807,14 @@ Two notions of embedding are formalised:
   not preserve precedence (list order); F's positions can be mapped to
   any positions of G as long as labels and association lines match.
 * **`SubgraphEmbeds F G`** — the stronger, *autosegmental* notion that
-  @cite{jardine-2017} actually uses: there exist offsets `(δᵤ, δₗ)`
+  [jardine-2017] actually uses: there exist offsets `(δᵤ, δₗ)`
   such that F's upper and lower tiers appear as a *contiguous block*
   of G's tiers at those offsets, and F's links match G's links
   shifted by the offset. Equivalently: the embedding is a *translation*
   that preserves precedence edges (implicit in list order).
 
 For Jardine 2017-style forbidden-subgraph analyses
-(@cite{chandlee-jardine-2019}, @cite{burness-mcmullin-2020}), use
+([chandlee-jardine-2019], [burness-mcmullin-2020]), use
 `SubgraphEmbeds`. The weaker `Embeds` is the underlying category-
 theoretic structure.
 -/
@@ -843,14 +843,14 @@ theorem Embeds.trans {F G H : Graph α β}
 /-! ### Subgraph embedding (precedence-preserving translation)
 
 The autosegmental notion of "F is a connected subgraph of G" used in
-@cite{jardine-2017}: F appears as a contiguous block of G at some
+[jardine-2017]: F appears as a contiguous block of G at some
 offset. Equivalently, the embedding is a translation by `(δᵤ, δₗ)`.
 -/
 
 /-- F's upper tier appears at offset `δᵤ` in G's upper tier, F's
     lower tier appears at offset `δₗ` in G's lower tier, and all of
     F's association lines are present in G at the appropriate offset.
-    The `IsSubgraphAt` formulation of @cite{jardine-2017}'s
+    The `IsSubgraphAt` formulation of [jardine-2017]'s
     connected-subgraph embedding. -/
 def IsSubgraphAt (F G : Graph α β) (δᵤ δₗ : Nat) : Prop :=
   (∀ i, i < F.upper.length → G.upper[i + δᵤ]? = F.upper[i]?) ∧
@@ -863,7 +863,7 @@ instance [DecidableEq α] [DecidableEq β] (F G : Graph α β) (δᵤ δₗ : Na
 
 /-- `F` **subgraph-embeds** into `G` iff there is an offset
     `(δᵤ, δₗ)` placing F as a contiguous block inside G. The
-    autosegmental connected-subgraph embedding of @cite{jardine-2017}. -/
+    autosegmental connected-subgraph embedding of [jardine-2017]. -/
 def SubgraphEmbeds (F G : Graph α β) : Prop :=
   ∃ δᵤ ∈ Finset.range (G.upper.length + 1),
   ∃ δₗ ∈ Finset.range (G.lower.length + 1),

@@ -1,7 +1,7 @@
 import Linglib.Phonology.Featural.Geometry
 
 /-!
-# Complex and Contour Segments @cite{sagey-1986}
+# Complex and Contour Segments [sagey-1986]
 
 Segments with multiple simultaneous or sequential articulations.
 
@@ -16,7 +16,7 @@ simple segments, not complex ones.
 with articulations in sequence (e.g., affricates [ts], [tʃ]; prenasalized
 stops [ⁿd], [ᵐb]).
 
-The distinction was established by @cite{sagey-1986} and is now standard
+The distinction was established by [sagey-1986] and is now standard
 in phonological theory. The feature geometry predicts exactly which
 complex segments are possible: only those combining *distinct* articulator
 nodes. Palatal–velar stops are impossible because both use the dorsal
@@ -31,7 +31,7 @@ namespace Phonology.FeatureGeometry
 /-- Is this a place articulator node? The three place articulators —
     labial (lips), coronal (tongue blade/tip), dorsal (tongue body) —
     are the independent articulators whose combinations give rise to
-    complex segments (@cite{sagey-1986} Ch. 2). The soft palate is an
+    complex segments ([sagey-1986] Ch. 2). The soft palate is an
     articulator in the vocal tract but sits outside the place node
     (as a sibling under supralaryngeal), so it does not participate
     in complex segment formation: a velar nasal [ŋ] is simple despite

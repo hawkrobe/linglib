@@ -2,9 +2,9 @@ import Linglib.Typology.Possession
 
 /-!
 # Grevena Greek possession profile
-@cite{stassen-2009} @cite{nichols-1986} @cite{heine-1997}
-@cite{michelioudakis-chatzikyriakidis-spathas-2024}
-@cite{kampanarou-alexiadou-2026}
+[stassen-2009] [nichols-1986] [heine-1997]
+[michelioudakis-chatzikyriakidis-spathas-2024]
+[kampanarou-alexiadou-2026]
 
 `PossessionProfile` bundle for Grevena Greek (GG; Northern Greek dialect),
 the genitive-loss endpoint within the Modern Greek dialect continuum.
@@ -12,9 +12,9 @@ the genitive-loss endpoint within the Modern Greek dialect continuum.
 ## What makes GG different from SMG
 
 In GG, **inflectional genitive has been entirely lost on common nouns**
-(@cite{michelioudakis-chatzikyriakidis-spathas-2024}); its functions are
+([michelioudakis-chatzikyriakidis-spathas-2024]); its functions are
 served by `apo`-PPs across the board. GG `apo`-PPs differ from SMG
-`apo`-PPs (per @cite{kampanarou-alexiadou-2026} §4, Table 3): they can
+`apo`-PPs (per [kampanarou-alexiadou-2026] §4, Table 3): they can
 stack/iterate, can be fronted, can be sub-extracted, and express the full
 range of pragmatically implied relations — paralleling Romance *de/di*
 genitives. Michelioudakis et al. analyse them as **reduced relative
@@ -45,16 +45,16 @@ open _root_.Typology.Possession
 /-- Heine notions expressible by GG `apo`-PPs. Unlike SMG (where `apoNotions`
     is restricted to inanimate part-whole/source readings), GG `apo`-PPs
     cover the full range that SMG inflectional genitive covers
-    (per @cite{michelioudakis-chatzikyriakidis-spathas-2024} (19), discussed
-    by @cite{kampanarou-alexiadou-2026} §4 ex. 16a). -/
+    (per [michelioudakis-chatzikyriakidis-spathas-2024] (19), discussed
+    by [kampanarou-alexiadou-2026] §4 ex. 16a). -/
 def apoNotions : List PossessiveNotion :=
   [.physical, .temporary, .permanent, .inalienable, .abstract,
    .inanimateInalienable, .inanimateAlienable]
 
 /-- Heine notions still expressible by GG inflectional genitive — only on
     pronominal clitics and proper names (and some kinship terms in some
-    sub-varieties), per @cite{michelioudakis-chatzikyriakidis-spathas-2024}
-    discussed in @cite{kampanarou-alexiadou-2026} §4. The empty common-noun
+    sub-varieties), per [michelioudakis-chatzikyriakidis-spathas-2024]
+    discussed in [kampanarou-alexiadou-2026] §4. The empty common-noun
     coverage is the dialect's defining feature. -/
 def genNotions : List PossessiveNotion := []
 

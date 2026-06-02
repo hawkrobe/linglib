@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 115A: Negative Indefinite Pronouns and Predicate Negation
-@cite{haspelmath-2013}
+[haspelmath-2013]
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 115A`.

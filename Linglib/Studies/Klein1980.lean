@@ -3,7 +3,7 @@ import Linglib.Studies.Kamp1975
 
 /-!
 # Klein (1980): A Semantics for Positive and Comparative Adjectives
-@cite{klein-1980}
+[klein-1980]
 
 *Linguistics and Philosophy* 4(1): 1–45.
 

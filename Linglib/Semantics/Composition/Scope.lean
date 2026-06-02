@@ -125,7 +125,7 @@ def scopeYieldsTrue {F : Frame} [∀ (p : F.Denot .t), Decidable p]
   decide (d.meaningAt s)
 
 -- ============================================================================
--- Scope Entailment (@cite{musolino-lidz-2003})
+-- Scope Entailment ([musolino-lidz-2003])
 -- ============================================================================
 
 /-- Entailment structure between scope readings.

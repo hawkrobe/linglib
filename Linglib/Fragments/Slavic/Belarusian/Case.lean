@@ -2,9 +2,9 @@ import Linglib.Fragments.Slavic.Case
 
 /-!
 # Belarusian Case Inventory
-@cite{mayo-1993} @cite{blake-1994}
+[mayo-1993] [blake-1994]
 
-Per @cite{mayo-1993} (p. 901): "Modern standard Belorussian has two
+Per [mayo-1993] (p. 901): "Modern standard Belorussian has two
 numbers, six cases and three genders. ... The vocative case can no
 longer be regarded as a living category in the standard language,
 which has only the remnants божа/boža from бог/boh 'god', браце/brace

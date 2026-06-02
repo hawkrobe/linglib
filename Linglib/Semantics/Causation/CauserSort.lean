@@ -5,10 +5,10 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # Causer sort lattice
 
-@cite{beavers-zubair-2013} @cite{levin-hovav-1995}
+[beavers-zubair-2013] [levin-hovav-1995]
 
 `CauserSort` is the sortal-type lattice for causers from
-@cite{beavers-zubair-2013} ex. (81). Atoms are `event`, `state`,
+[beavers-zubair-2013] ex. (81). Atoms are `event`, `state`,
 `individual`; named sorts are `event`, `state`, `eventuality` (=
 `event` ⊔ `state`), `individual`, and `any` (top). The order is
 subset-on-atoms.
@@ -37,7 +37,7 @@ inductive CauserSortAtom where
   deriving DecidableEq, Repr, Fintype
 
 /-- Sortal type a verb may select for its causer argument
-    (@cite{beavers-zubair-2013} ex. (81), p. 40).
+    ([beavers-zubair-2013] ex. (81), p. 40).
 
     The Hasse diagram:
 
@@ -68,7 +68,7 @@ inductive CauserSort where
   /-- U_S: the causer must be a state. **Predicted but not lexically
       attested**: B&Z 2013 fn. 40 (p. 40) note they have not discussed
       verbs lexically selecting a stative causer, suggesting *bloom*-type
-      ICOS verbs (cf. @cite{levin-hovav-1995} p. 97) as a possible case
+      ICOS verbs (cf. [levin-hovav-1995] p. 97) as a possible case
       for future work. Kept as a constructor so the lattice retains the
       structure (81) advertises. -/
   | state
@@ -146,7 +146,7 @@ abbrev admitsIndividual (s : CauserSort) : Prop := individual ≤ s
     penultimate argument to be an event. After causer suppression the
     surviving subject is sortally `individual`, so the volitive cannot
     apply — the formal content of "anticausatives are always
-    involitive" (@cite{beavers-zubair-2013} §8). -/
+    involitive" ([beavers-zubair-2013] §8). -/
 abbrev admitsVolitive (s : CauserSort) : Prop := event ≤ s
 
 end CauserSort

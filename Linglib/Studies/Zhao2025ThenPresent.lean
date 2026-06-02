@@ -10,8 +10,8 @@ import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.Hungarian.TemporalDeictic
 
 /-!
-# Then-Present Puzzle (@cite{zhao-2025})
-@cite{zhao-2025} @cite{kiparsky-2002}
+# Then-Present Puzzle ([zhao-2025])
+[zhao-2025] [kiparsky-2002]
 
 Temporal ⌈then⌉ is cross-linguistically incompatible with present tense.
 

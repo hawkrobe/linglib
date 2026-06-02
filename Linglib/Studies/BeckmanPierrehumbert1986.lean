@@ -4,7 +4,7 @@ import Linglib.Syntax.CCG.Intonation
 import Linglib.Studies.KratzerSelkirk2020
 
 /-!
-# Beckman & Pierrehumbert (1986) @cite{beckman-pierrehumbert-1986}
+# Beckman & Pierrehumbert (1986) [beckman-pierrehumbert-1986]
 
 Intonational Structure in Japanese and English. *Phonology Yearbook* 3: 255–309.
 
@@ -25,7 +25,7 @@ introduced three key analytical innovations:
 
 3. **Intermediate phrase**: the domain of catathesis. In Japanese, 1–3 APs,
    bounded by pause or glottalization + L boundary tone. In English,
-   decomposed from @cite{pierrehumbert-1980}'s single "phrase accent" into
+   decomposed from [pierrehumbert-1980]'s single "phrase accent" into
    an ip-terminal tone (phrase accent) distinct from the IP boundary tone.
 
 The paper also demonstrates that Japanese tonal patterns are much sparser
@@ -37,7 +37,7 @@ distribution of tones to tone-bearing units.
 Catathesis is formalized as register-based downstep applied to the
 intonation domain: each bitonal pitch accent within an intermediate
 phrase contributes a register `l` feature, producing cumulative terracing
-via `realizePitch` (@cite{snider-1999}, @cite{lionnet-2025}). The ip
+via `realizePitch` ([snider-1999], [lionnet-2025]). The ip
 boundary resets the register, preventing catathesis from propagating
 across phrases.
 -/
@@ -88,7 +88,7 @@ def AccentualPhrase.isAccented (ap : AccentualPhrase) : Bool :=
 
     Each bitonal accent contributes a register `l` (downstep) feature;
     non-bitonal or null accents contribute no register feature (registerless).
-    This bridges catathesis to @cite{snider-1999}'s RegisterTier: the
+    This bridges catathesis to [snider-1999]'s RegisterTier: the
     descending staircase in catathesis chains (Fig. 11) is the same
     terracing effect produced by cumulative register `l` features. -/
 def catathesisToRegisterSpecs (aps : List AccentualPhrase) : List TRN :=
@@ -122,7 +122,7 @@ theorem no_bitonal_no_catathesis (aps : List AccentualPhrase)
 -- § 3: Catathesis ≠ Downdrift (§3.1)
 -- ============================================================================
 
--- @cite{beckman-pierrehumbert-1986} §3.1: catathesis differs fundamentally
+-- [beckman-pierrehumbert-1986] §3.1: catathesis differs fundamentally
 -- from downdrift in African tone languages. Downdrift is triggered by any
 -- H L H sequence; catathesis is triggered specifically by the HL of the
 -- *accent*. In Japanese, every unaccented AP has a phrasal H + boundary L,
@@ -141,13 +141,13 @@ theorem unaccented_no_catathesis :
 /-- An intermediate phrase: a sequence of accentual phrases terminated
     by a phrase accent.
 
-    @cite{beckman-pierrehumbert-1986} §4.1: in Japanese, the ip is the
+    [beckman-pierrehumbert-1986] §4.1: in Japanese, the ip is the
     domain of catathesis. It can be as short as a single AP and seldom
     contains more than three. Its boundary is marked by pause or
     glottalization, and the phrase-final L tone provides evidence for
     disjuncture.
 
-    §4.3: in English, the ip is reanalyzed from @cite{pierrehumbert-1980}'s
+    §4.3: in English, the ip is reanalyzed from [pierrehumbert-1980]'s
     framework. The phrase accent (H or L) is terminal to the ip, while
     the boundary tone is terminal to the IP. -/
 structure IntermediatePhrase where
@@ -172,8 +172,8 @@ structure IntonationPhrase where
 
 /-- The terminal contour of an IP is composed from the phrase accent
     of its final ip and the IP boundary tone. This is the structural
-    decomposition that @cite{beckman-pierrehumbert-1986} §4.2–4.3
-    establish and that @cite{steedman-2000} uses in the CCG `Tune` type. -/
+    decomposition that [beckman-pierrehumbert-1986] §4.2–4.3
+    establish and that [steedman-2000] uses in the CCG `Tune` type. -/
 def IntonationPhrase.terminalContour (ip : IntonationPhrase) : TerminalContour :=
   let lastIp := ip.ips.getLast ip.ips_nonempty
   ⟨lastIp.phraseAccent, ip.boundaryTone⟩
@@ -199,7 +199,7 @@ def ipRegisterSpecsAcrossIps (ips : List IntermediatePhrase)
 
 /-- Where catathesis takes effect relative to the triggering accent.
 
-    @cite{beckman-pierrehumbert-1986} §3.3: in Japanese, catathesis
+    [beckman-pierrehumbert-1986] §3.3: in Japanese, catathesis
     applies within the accent itself (affecting the trailing L). In
     English, catathesis applies after the second tone of the triggering
     bitonal accent. -/
@@ -210,7 +210,7 @@ inductive CatathesisTiming where
 
 /-- Language-specific intonation system parameters.
 
-    @cite{beckman-pierrehumbert-1986} §6: Japanese and English share the
+    [beckman-pierrehumbert-1986] §6: Japanese and English share the
     same prosodic hierarchy but differ in how accents relate to the lexicon,
     the size of the pitch accent inventory, and whether unaccented phrases
     are possible. -/
@@ -281,7 +281,7 @@ theorem japanese_accents_all_bitonal :
 theorem english_has_monotonal :
     english.accentShapes.all (·.isBitonal) = false := rfl
 
--- @cite{beckman-pierrehumbert-1986} §5: two supra-phrasal processes operate
+-- [beckman-pierrehumbert-1986] §5: two supra-phrasal processes operate
 -- above the ip level. **Final lowering** compresses pitch range near the end
 -- of a declarative utterance; its domain appears to be discourse-controlled
 -- (not a fixed phonological unit). **Declination** is a gradual time-dependent
@@ -351,7 +351,7 @@ theorem catathesis_without_boundary :
     = [3, 2, 2] := by decide
 
 -- ============================================================================
--- § 7: Bridge to CCG Intonation (@cite{steedman-2000})
+-- § 7: Bridge to CCG Intonation ([steedman-2000])
 -- ============================================================================
 
 open CCG.Intonation
@@ -359,12 +359,12 @@ open CCG.Intonation
 /-- Construct a CCG Tune from a B&P IntonationPhrase and a pitch accent.
     The tune's terminal contour is the IP's terminal contour —
     the same phrase accent + boundary tone decomposition that
-    @cite{steedman-2000} uses for prosodic CCG categories. -/
+    [steedman-2000] uses for prosodic CCG categories. -/
 def ipToTune (ip : IntonationPhrase) (accent : PitchAccent) : Tune :=
   ⟨accent, ip.terminalContour⟩
 
 /-- The terminal contour of a CCG Tune constructed from a B&P IP
-    is exactly the B&P terminal contour — @cite{steedman-2000}'s
+    is exactly the B&P terminal contour — [steedman-2000]'s
     Tune decomposition and B&P's IP decomposition produce the same
     `TerminalContour` by construction. -/
 theorem tune_terminal_eq_bp_terminal (ip : IntonationPhrase) (accent : PitchAccent) :
@@ -379,12 +379,12 @@ def continuationIP : IntonationPhrase :=
   { ips := [{ aps := [accentedAP], phraseAccent := .L }], boundaryTone := .H_pct }
 
 /-- A declarative IP has the same terminal contour as
-    @cite{steedman-2000}'s rheme tune (H* L L%). -/
+    [steedman-2000]'s rheme tune (H* L L%). -/
 theorem declarative_ip_matches_rheme_terminal :
     declarativeIP.terminalContour = rhemeTune.terminal := by decide
 
 /-- A continuation-rise IP has the same terminal contour as
-    @cite{steedman-2000}'s theme tune (L+H* L H%). -/
+    [steedman-2000]'s theme tune (L+H* L H%). -/
 theorem continuation_ip_matches_theme_terminal :
     continuationIP.terminalContour = themeTune.terminal := by decide
 
@@ -396,7 +396,7 @@ open KratzerSelkirk2020
 
 /-- The ip/φ domain serves two independent functions:
     1. **Catathesis domain** (B&P §4): register resets at ip boundaries
-    2. **Focus-prosody domain** (@cite{kratzer-selkirk-2020} §7):
+    2. **Focus-prosody domain** ([kratzer-selkirk-2020] §7):
        [FoC] = φ-Level-Head
 
     Whether focus marking triggers catathesis depends on the accent

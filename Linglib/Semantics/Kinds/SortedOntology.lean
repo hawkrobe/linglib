@@ -1,6 +1,6 @@
 /-!
 # A Unified Analysis of the English Bare Plural
-@cite{carlson-1977}
+[carlson-1977]
 
 Linguistics and Philosophy 1(3): 413--457, 1977.
 
@@ -12,7 +12,7 @@ the PREDICATE, not from an ambiguous determiner.
 
 ## Sorted Ontology (§4)
 
-@cite{carlson-1977} partitions entities into three sorts:
+[carlson-1977] partitions entities into three sorts:
 - **Stages**: Spatially AND temporally bounded slices (a dog at a time & place)
 - **Ordinary individuals**: Spatially bounded (one place at a time)
 - **Kinds**: Spatially UNbounded (can be "here and there" simultaneously)
@@ -24,11 +24,11 @@ stages) and is captured formally in `CarlsonModel`.
 
 ## Predicate Level
 
-@cite{milsark-1974} and @cite{siegel-1976} distinguished:
+[milsark-1974] and [siegel-1976] distinguished:
 - **Stage-level** predicates ("states"): hungry, available, in the room
 - **Individual-level** predicates ("properties"): intelligent, tall, a mammal
 
-@cite{carlson-1977} connects this to bare plural interpretation:
+[carlson-1977] connects this to bare plural interpretation:
 - Stage-level predicates → existential reading ("Dogs are in the yard")
 - Individual-level predicates → generic reading ("Dogs are intelligent")
 
@@ -37,7 +37,7 @@ The existential comes from the **predicate** (via R), not from the NP.
 ## Habitual Readings (§4)
 
 For habitual readings like "Dogs run" in simple present tense,
-@cite{carlson-1977} treats the habitual as **direct kind predication**:
+[carlson-1977] treats the habitual as **direct kind predication**:
 
     "Dogs run" → run'(d)
 
@@ -46,16 +46,16 @@ kind, just like `intelligent'`. The progressive turns it stage-level:
 
     "Dogs are running" → ∃x[R(x, d) ∧ run'(x)]
 
-Later work (@cite{krifka-etal-1995} and others) introduced a covert GEN
-operator for habituals, but @cite{carlson-1977} handles them via direct
+Later work ([krifka-etal-1995] and others) introduced a covert GEN
+operator for habituals, but [carlson-1977] handles them via direct
 kind predication without any generic quantifier.
 
 ## Connection to Subsequent Work
 
-- @cite{chierchia-1998}: Formalizes R as the ∪ operator, adds ∩/∪ kind↔property
+- [chierchia-1998]: Formalizes R as the ∪ operator, adds ∩/∪ kind↔property
   mapping
-- @cite{krifka-2004}: Rejects kinds as basic; bare NPs are properties
-- @cite{dayal-2004}: Extends with singular kinds and Meaning Preservation
+- [krifka-2004]: Rejects kinds as basic; bare NPs are properties
+- [dayal-2004]: Extends with singular kinds and Meaning Preservation
 
 See `Phenomena/Generics/Compare.lean` for cross-theory comparison.
 -/
@@ -66,7 +66,7 @@ namespace Semantics.Kinds.SortedOntology
 -- §1  Sorted Ontology
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-- The three ontological sorts in @cite{carlson-1977}'s system (§4).
+/-- The three ontological sorts in [carlson-1977]'s system (§4).
 
 Entities are partitioned into stages, (ordinary) individuals, and kinds.
 This three-way distinction is the foundation: the realization relation R
@@ -104,7 +104,7 @@ abbrev RealizationRel (Entity : Type) := Entity → Entity → Prop
 
 /-- Stage-level vs individual-level predicate classification.
 
-- Stage-level ("states" in @cite{milsark-1974}): hungry, available, in the room
+- Stage-level ("states" in [milsark-1974]): hungry, available, in the room
 - Individual-level ("properties"): intelligent, tall, a mammal
 
 This determines whether bare plurals get existential or generic readings. -/
@@ -140,7 +140,7 @@ def stageLevelPred (R : RealizationRel Entity) (P : Entity → Bool) : Entity �
 
 /-- The progressive turns any predicate into stage-level (§4, p. 450).
 
-@cite{carlson-1977}: the progressive has "the function of predicating a verb
+[carlson-1977]: the progressive has "the function of predicating a verb
 of a stage, but not of an individual."
 
 - "Dogs run" → run'(d) (habitual — individual-level, direct kind predication)
@@ -163,7 +163,7 @@ variable {Entity : Type}
 
 Result: A property is directly attributed to the kind.
 
-This also covers habitual readings in @cite{carlson-1977}'s system:
+This also covers habitual readings in [carlson-1977]'s system:
 "Dogs run" = run'(d), where the habitual is individual/kind-level. -/
 def genericDerivation
     (kind : Entity)
@@ -190,7 +190,7 @@ def existentialDerivation
 -- §5  Bare Plurals as Proper Names
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-- @cite{carlson-1977}'s central claim: the bare plural is never ambiguous.
+/-- [carlson-1977]'s central claim: the bare plural is never ambiguous.
 
 The different "readings" (generic vs existential) arise from:
 1. The predicate's level (individual vs stage)
@@ -327,7 +327,7 @@ theorem differentiated_scope_witnesses_are_stages
 -- §8  Scopelessness: Bare Plurals vs Quantified NPs
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-- @cite{carlson-1977}'s central argument (§4, sentence 134):
+/-- [carlson-1977]'s central argument (§4, sentence 134):
 bare plurals yield ONLY the contradictory reading under conjunction
 with negation.
 
@@ -390,7 +390,7 @@ theorem quantified_np_stage_level_non_contradictory
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-!
-## Key Examples from @cite{carlson-1977}
+## Key Examples from [carlson-1977]
 
 ### Generic readings (individual-level predicates)
 - "Horses are mammals" — mammals'(HORSES) (direct kind predication)

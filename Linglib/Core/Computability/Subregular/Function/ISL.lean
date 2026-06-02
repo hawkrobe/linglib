@@ -49,11 +49,11 @@ truncates the threaded window to length `k - 1`.
 
 ## References
 
-* @cite{chandlee-2014}
-* @cite{chandlee-heinz-2018}
-* @cite{chandlee-eyraud-heinz-2015}
-* @cite{heinz-lai-2013}
-* @cite{jardine-2016}
+* [chandlee-2014]
+* [chandlee-heinz-2018]
+* [chandlee-eyraud-heinz-2015]
+* [heinz-lai-2013]
+* [jardine-2016]
 -/
 
 namespace Core.Computability.Subregular.Function
@@ -83,7 +83,7 @@ lemma lastN_length_le (n : ℕ) (xs : List α) : (lastN n xs).length ≤ n := by
 witness is a surjection from `Σ m : Fin (n + 1), List.Vector α m` (which
 has a `Fintype` instance via `Mathlib.Data.Fintype.{Sigma,Vector}`). Used
 to give ISL/OSL projections into SFST a manifestly-finite state space
-(matching @cite{mohri-1997}'s finite-state assumption). Uses `classical`
+(matching [mohri-1997]'s finite-state assumption). Uses `classical`
 to discharge the `DecidableEq` side condition without imposing it on
 consumers (matches mathlib pattern for finite types over `Fintype α`). -/
 noncomputable instance fintypeListLengthLE {α : Type*} [Fintype α] (n : ℕ) :
@@ -287,7 +287,7 @@ theorem Core.Tier.apply_isLeftInputStrictlyLocal_one (T : Core.Tier α β) :
 `ISLRule.toFinSFST` projects an ISL rule into a finite-state SFST whose
 state space is the bounded input window `{l : List α // l.length ≤ k - 1}`.
 The `[Fintype α]` constraint matches the source literature
-(@cite{mohri-1997}; @cite{chandlee-2014}): every subsequential model has
+([mohri-1997]; [chandlee-2014]): every subsequential model has
 a finite alphabet and finite state by definition. The inclusion theorem
 rides on the run-equality. Co-located on the source side because the
 dependency direction (SFST in `Subsequential.lean`; ISL projects into
@@ -327,7 +327,7 @@ theorem ISLRule.toFinSFST_run_eq_apply {k : ℕ} [Fintype α] (r : ISLRule k α 
     exact congrArg _ (ih _)
 
 /-- **Left-ISL ⊆ Left-Subsequential** (over a finite input alphabet).
-The `[Fintype α]` matches @cite{mohri-1997}'s finite-alphabet assumption
+The `[Fintype α]` matches [mohri-1997]'s finite-alphabet assumption
 and lets the bounded input window serve as a finite state space. -/
 theorem isLeftInputStrictlyLocal_left_subsequential {k : ℕ} [Fintype α]
     {f : List α → List β} (h : IsLeftInputStrictlyLocal k f) :

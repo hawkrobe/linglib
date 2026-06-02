@@ -10,13 +10,13 @@ import Linglib.Core.Logic.Duality
 /-!
 # Counterfactual Conditionals: Three Theories
 
-@cite{ramotowska-marty-romoli-santorio-2025} @cite{lewis-1973}
+[ramotowska-marty-romoli-santorio-2025] [lewis-1973]
 
 Formalization of three competing theories of counterfactual conditionals.
 
 ## The Three Theories
 
-1. Universal Theory (@cite{lewis-1973}/Kratzer): Universal quantification
+1. Universal Theory ([lewis-1973]/Kratzer): Universal quantification
    over closest A-worlds.
    - ⦃A □→ B⦄_w = ∀w' ∈ closest(w, A). B(w')
 
@@ -51,7 +51,7 @@ open Core.Order (SimilarityOrdering)
 
 /-!
 ## Universal Theory
-@cite{ramotowska-marty-romoli-santorio-2025}
+[ramotowska-marty-romoli-santorio-2025]
 
 The standard possible-worlds analysis: counterfactuals universally quantify
 over the closest antecedent-worlds.
@@ -64,7 +64,7 @@ This predicts:
 -/
 
 /--
-Universal counterfactual semantics (@cite{lewis-1973}/Kratzer).
+Universal counterfactual semantics ([lewis-1973]/Kratzer).
 
 True at w iff all closest A-worlds satisfy B.
 -/
@@ -248,14 +248,14 @@ The selection function s(w, A) can be grounded via causal intervention:
 
 s(w, A) = the world that results from intervening to make A true at w
 
-This connects to @cite{nadathur-lauer-2020}: `developDet M (s.extend A true)`
+This connects to [nadathur-lauer-2020]: `developDet M (s.extend A true)`
 gives the counterfactual A-world (or, Pearl-style, `(M.intervene A true).developDet s`).
 Counterfactual dependence (necessity) corresponds to selection-based conditionals.
 
 The intervention-based counterfactual primitive lives in
 `Core/Causal/V2/SEM/Counterfactual.lean` as `causallySufficient` (which
 is exactly "extending with antecedent then developing produces consequent").
-The full formalization of @cite{lewis-1973-causation}'s causal dependence
+The full formalization of [lewis-1973-causation]'s causal dependence
 appears as a paper-replication study under `Studies/Lewis1973.lean`.
 -/
 
@@ -264,7 +264,7 @@ appears as a paper-replication study under `Studies/Lewis1973.lean`.
 -- ════════════════════════════════════════════════════
 
 /-! The selectional counterfactual is literally supervaluation
-    (@cite{fine-1975}) over closest worlds. Each closest world is a
+    ([fine-1975]) over closest worlds. Each closest world is a
     specification point — a legitimate resolution of the selection-function
     tie. When all closest worlds agree on B, the counterfactual is definite;
     when they disagree, it is indefinite.
@@ -332,7 +332,7 @@ theorem selectional_is_global_architecture (bs : List Bool)
 
 /-!
 ## `Might` Counterfactuals
-@cite{stalnaker-1981}
+[stalnaker-1981]
 
 The Lewis–Stalnaker debate turns on the analysis of *might* counterfactuals.
 
@@ -391,7 +391,7 @@ When the closest-worlds set is a singleton (uniqueness holds), Lewis's
 all closest satisfy B = `would`. The uniqueness assumption makes
 ¬∀¬ equivalent to ∀.
 
-This is the problematic consequence that @cite{stalnaker-1981} argues against:
+This is the problematic consequence that [stalnaker-1981] argues against:
 "if A, might B" should be weaker than "if A, would B", but under
 uniqueness they collapse. -/
 theorem lewis_might_eq_would_singleton {W : Type*} [DecidableEq W] [Fintype W]
@@ -408,7 +408,7 @@ theorem lewis_might_eq_would_singleton {W : Type*} [DecidableEq W] [Fintype W]
 
 /-- **CEM implies Lewis's might = would** (the general collapse).
 
-@cite{stalnaker-1981}'s central observation: if CEM holds for the
+[stalnaker-1981]'s central observation: if CEM holds for the
 universal theory at a world (which it does whenever closest worlds
 are a singleton, but also in other cases), then Lewis's definition
 of `might` as ¬(would ¬B) collapses into `would`. -/
@@ -456,7 +456,7 @@ theorem selectional_might_weaker :
 
 /-!
 ## Distribution Principle
-@cite{stalnaker-1981}
+[stalnaker-1981]
 
 On Lewis's analysis, conditional antecedents act like necessity operators,
 quantifying universally over closest A-worlds. The distribution principle
@@ -527,12 +527,12 @@ theorem distribution_fails_universal :
 -- ════════════════════════════════════════════════════
 
 /-! ## Single-Selection-Function Variant
-@cite{stalnaker-1968}
+[stalnaker-1968]
 
 Stalnaker's original counterfactual analysis used a single Stalnakerian
 selection function — picking THE closest A-world — without supervaluation
 over ties. This is the same `Semantics.Conditionals.SelectionFunction` infrastructure that
-@cite{cariani-santorio-2018} reuse for *will* (see
+[cariani-santorio-2018] reuse for *will* (see
 `Semantics/Modality/Selectional.lean`); the mechanism is identical,
 only the temporal/modal target differs.
 
@@ -543,9 +543,9 @@ when the supervaluation's closest-worlds set is the singleton chosen by a
 selection function, the supervaluation analysis (`Truth3`) reduces to the
 single-function analysis (`Bool`) under `Truth3.ofBool`. -/
 
-/-- **Stalnaker's single-selection-function counterfactual** @cite{stalnaker-1968}.
+/-- **Stalnaker's single-selection-function counterfactual** [stalnaker-1968].
     `A □→ B` is true at `w` iff `B` holds at `s(w, ‖A‖)`. This reuses the
-    same `Semantics.Conditionals.SelectionFunction` infrastructure that @cite{cariani-santorio-2018}
+    same `Semantics.Conditionals.SelectionFunction` infrastructure that [cariani-santorio-2018]
     apply to *will* — the mechanism is identical across the two papers. -/
 def stalnakerCounterfactual {W : Type*} (s : Semantics.Conditionals.SelectionFunction W)
     (A B : W → Prop) (w : W) : Prop :=
@@ -588,7 +588,7 @@ theorem stalnaker_eq_selectional_singleton {W : Type*} [DecidableEq W] [Fintype 
 
 /-! ## Bridge: Stalnaker counterfactual = will-conditional over the universe
 
-@cite{cariani-santorio-2018} §5.3.2 + §5.3.1 unify *will*, *would*,
+[cariani-santorio-2018] §5.3.2 + §5.3.1 unify *will*, *would*,
 will-conditionals, and Stalnaker counterfactuals under a single
 `Semantics.Conditionals.SelectionFunction` substrate. Each operator differs only in its
 modal parameter `f`:
@@ -605,7 +605,7 @@ set, recovering Stalnaker's `s(w, ‖A‖)`. -/
 
 /-- **Stalnaker counterfactual = will-conditional over the universe.**
 
-@cite{cariani-santorio-2018} §5.3.2 + §5.3.1: when the modal parameter
+[cariani-santorio-2018] §5.3.2 + §5.3.1: when the modal parameter
 of the will-conditional is taken to be `Set.univ`, the Kratzer
 restriction `Set.univ ∩ ‖A‖ = ‖A‖` recovers Stalnaker's selection
 target. The Bool-valued `stalnakerCounterfactual` and the Prop-valued
@@ -639,7 +639,7 @@ theorem stalnakerCounterfactual_eq_wouldConditional_universe
       s A B Set.univ w :=
   stalnakerCounterfactual_eq_willConditional_universe s A B w
 
-/-- **Truth3 ↔ would-conditional bridge** @cite{cariani-santorio-2018}
+/-- **Truth3 ↔ would-conditional bridge** [cariani-santorio-2018]
     §5.3.1 + §5.3.2: composing `stalnaker_eq_selectional_singleton`
     (Truth3 ↔ Bool stalnakerCounterfactual under singleton-closest) with
     `stalnakerCounterfactual_eq_wouldConditional_universe` (Bool ↔ Prop
@@ -695,7 +695,7 @@ private noncomputable def divergeSel : Semantics.Conditionals.SelectionFunction 
             | 2, hx => exact hx
     centering := by intro w S hw; simp [hw] }
 
-/-- **Stalnaker–Lewis would divergence** @cite{cariani-santorio-2018}
+/-- **Stalnaker–Lewis would divergence** [cariani-santorio-2018]
     §5.3.2 motivation: there exist a world model, a selection function,
     a similarity ordering, an antecedent `A` and a consequent `B` such
     that the *Stalnakerian would* (single-selection-function reading)

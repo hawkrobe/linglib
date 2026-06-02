@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Merge.Internal
 
 /-!
 # No Complexity Loss (NCL) for algebraic Merge
-@cite{marcolli-chomsky-berwick-2025} Proposition 1.6.10, book p. 72.
+[marcolli-chomsky-berwick-2025] Proposition 1.6.10, book p. 72.
 
 Implements M-C-B Definition 1.6.2 (book p. 64) and Proposition 1.6.10
 (book p. 72): a workspace transformation `F → F'` satisfies **No

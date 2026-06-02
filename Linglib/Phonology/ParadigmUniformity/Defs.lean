@@ -12,20 +12,20 @@ that proposed it.
 
 The same two combinators appear in:
 
-- McCarthy's *Optimal Paradigms* (@cite{mccarthy-2005}), where the
+- McCarthy's *Optimal Paradigms* ([mccarthy-2005]), where the
   comparison ranges *symmetrically* over inflectional paradigm members
   and the constraints are output-to-output faithfulness.
-- Steriade's *Lexical Conservatism* (@cite{steriade-2000}), where
+- Steriade's *Lexical Conservatism* ([steriade-2000]), where
   surfacing variants are pulled toward *attested* wordforms of the
   lexeme; anchoring is optional (singletons get zero pressure).
 
-@cite{benua-1997}'s Transderivational Correspondence Theory (TCT) and
+[benua-1997]'s Transderivational Correspondence Theory (TCT) and
 Itô–Mester's correspondence-theoretic OO-faithfulness use a different
 *evaluation discipline* — asymmetric base-priority via recursive
 evaluation, not symmetric pairwise comparison — and therefore live in
 `OptimalityTheory/TCT.lean` (architecture) and
 `ParadigmUniformity/Transderivational.lean` (PU face), not via
-`liftPairwise`. Antifaithfulness (@cite{alderete-2001}) is the
+`liftPairwise`. Antifaithfulness ([alderete-2001]) is the
 polarity-flipped sibling, in `ParadigmUniformity/Antifaithfulness.lean`.
 
 The combinators here capture the *symmetric, anchorless* lift shared by
@@ -40,7 +40,7 @@ one input to a frequency-conditioned grammar (the other being
 `IndexedConstraints`/`ScaledWeights`/`UseListed`/`RepresentationStrength`).
 PU and item-specificity are orthogonal and frequently combined; the
 Breiss-Katsuda-Kawahara compound study
-(@cite{breiss-katsuda-kawahara-2026}) is a test case discriminating
+([breiss-katsuda-kawahara-2026]) is a test case discriminating
 which pairing best fits Japanese velar nasalisation.
 -/
 
@@ -64,7 +64,7 @@ def liftPerMember {Form : Type} (name : String) (family : ConstraintFamily)
     over all ordered pairs in the paradigm. This is the mathematical
     content of paradigm uniformity: every pair is compared, and
     violations accrue. The lift is symmetric in pair order, matching the
-    @cite{mccarthy-2005} violation count.
+    [mccarthy-2005] violation count.
 
     Anchoring is *external*: pass a `compare` function that ranks
     base-anchored, attested-anchored, or symmetric comparisons; the

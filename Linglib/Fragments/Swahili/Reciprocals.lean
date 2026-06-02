@@ -2,7 +2,7 @@ import Linglib.Morphology.MorphRule
 
 /-!
 # Swahili Reciprocal Fragment
-@cite{nordlinger-2023}
+[nordlinger-2023]
 
 Swahili marks reciprocity with the verbal suffix "-an-" (sometimes
 "-ana" in final position). This is a verbal affix strategy (monovalent):
@@ -10,7 +10,7 @@ it reduces valency by removing the object argument. The reciprocal
 participants are encoded as a plural subject.
 
 Example: "pend-" (love) → "pend-an-a" (love each other)
-@cite{nordlinger-2023} ex. 40 (citing Dimitriadis 2004).
+[nordlinger-2023] ex. 40 (citing Dimitriadis 2004).
 
 The reciprocal affix is distinct from the reflexive prefix "ji-".
 -/

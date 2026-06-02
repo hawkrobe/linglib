@@ -3,12 +3,12 @@ import Linglib.Typology.Extraction
 
 /-!
 # Tseltal Agreement Fragment
-@cite{polian-2013} @cite{aissen-polian-2025}
+[polian-2013] [aissen-polian-2025]
 
 Agreement morphology for Tseltal (Tseltalan, Mayan). Tseltal and Tsotsil
 are closely related languages within the Tseltalan subgroup of Western
 Mayan. They share most syntactic properties relevant to possessor
-extraction (@cite{aissen-polian-2025}).
+extraction ([aissen-polian-2025]).
 
 ## The System
 
@@ -29,7 +29,7 @@ Grammatical function classification is shared across Tseltalan — see
 ## Alignment
 
 Tseltalan languages are uniformly **ergative-absolutive** with no
-aspect-conditioned split (in contrast with Cholan; per @cite{polian-2013}).
+aspect-conditioned split (in contrast with Cholan; per [polian-2013]).
 Set A indicates A; Set B indicates S and P alike.
 -/
 
@@ -59,7 +59,7 @@ abbrev ArgPosition.case : ArgPosition → Features.Case :=
   Mayan.caseTseltalan .Perf
 
 /-- Non-perfective case assignment for Tseltal. Identical to perfective
-    (no aspect split per @cite{polian-2013}). Provided for cross-Mayan
+    (no aspect split per [polian-2013]). Provided for cross-Mayan
     shape-uniformity with the other Mayan fragments. -/
 abbrev ArgPosition.accCase : ArgPosition → Features.Case :=
   Mayan.caseTseltalan .Imp
@@ -76,34 +76,34 @@ def absPosition : Mayan.ABSPosition := .low
 -- § 3: Agreement Marker Linearity
 -- ============================================================================
 
-/-- Set A markers in Tseltal are prefixal (per @cite{aissen-polian-2025}
+/-- Set A markers in Tseltal are prefixal (per [aissen-polian-2025]
     Table 1; pan-Mayan invariant). -/
 def setALinearity : MarkerLinearity := .prefixal
 
 /-- Set B markers in Tseltal are consistently suffixal. Contrasts with
     Tsotsil Set B, which is prefixal or suffixal depending on context
-    (@cite{aissen-polian-2025} Table 1, footnote 9). -/
+    ([aissen-polian-2025] Table 1, footnote 9). -/
 def setBLinearity : MarkerLinearity := .suffixal
 
 -- ============================================================================
 -- § 4: Set A/B Exponents (Oxchuc Tseltal)
 -- ============================================================================
 
-/-- Set A (ERG/GEN) exponents for Oxchuc Tseltal (@cite{polian-2013}).
+/-- Set A (ERG/GEN) exponents for Oxchuc Tseltal ([polian-2013]).
     Prefixes on the verb or possessed noun. Forms shown as
     `pre-C/pre-V` allomorph pairs. -/
 def setAExponent : ExponentTable :=
   [(.pn .first .Sing, "k-/j-"), (.pn .second .Sing, "a-/aw-"), (.pn .third .Sing, "s-/y-"),
    (.pn .first .Plur, "k-/j-"), (.pn .second .Plur, "a-/aw-"), (.pn .third .Plur, "s-/y-")]
 
-/-- Set B (ABS) exponents for Oxchuc Tseltal (@cite{polian-2013}).
+/-- Set B (ABS) exponents for Oxchuc Tseltal ([polian-2013]).
     Suffixes on the verb stem. 3rd person singular is null (`-∅`). -/
 def setBExponent : ExponentTable :=
   [(.pn .first .Sing, "-on"), (.pn .second .Sing, "-at"), (.pn .third .Sing, "-∅"),
    (.pn .first .Plur, "-otik"), (.pn .second .Plur, "-ex"), (.pn .third .Plur, "-ik")]
 
 /-- 3rd person absolutive is null — invariant across the standard
-    Mayan branches per @cite{kaufman-norman-1984} Table 8. **Not**
+    Mayan branches per [kaufman-norman-1984] Table 8. **Not**
     pan-Mayan: see Mam exception via `MayanLang.isStandard`. -/
 theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "-∅" := rfl
 

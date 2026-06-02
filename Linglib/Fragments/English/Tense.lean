@@ -3,10 +3,10 @@ import Linglib.Semantics.Tense.ParticipantPerspective
 import Linglib.Semantics.Tense.SOT.Decomposition
 
 /-!
-# English Tense Fragment (@cite{cumming-2026} + @cite{lakoff-1970})
-@cite{cumming-2026} @cite{lakoff-1970} @cite{heim-kratzer-1998}
+# English Tense Fragment ([cumming-2026] + [lakoff-1970])
+[cumming-2026] [lakoff-1970] [heim-kratzer-1998]
 
-Paradigm entries for English tense forms from @cite{cumming-2026}, Tables 20 and 22.
+Paradigm entries for English tense forms from [cumming-2026], Tables 20 and 22.
 Each entry specifies evidential perspective (EP) and utterance perspective (UP)
 constraints via `EPCondition` and `UPCondition` enums.
 
@@ -90,7 +90,7 @@ def nonfutureEntries : List TAMEEntry :=
   allEntries.filter (decide ·.IsNonfuture)
 
 -- ════════════════════════════════════════════════════
--- § 4. Tense Perspective Entries (@cite{lakoff-1970})
+-- § 4. Tense Perspective Entries ([lakoff-1970])
 -- ════════════════════════════════════════════════════
 
 open Semantics.Tense
@@ -157,7 +157,7 @@ theorem usedTo_blocks_false : usedTo.allowsFalseTense = false := rfl
 theorem goingTo_blocks_false : goingTo.allowsFalseTense = false := rfl
 
 -- ════════════════════════════════════════════════════
--- § 6. Kratzer Decomposition (@cite{heim-kratzer-1998})
+-- § 6. Kratzer Decomposition ([heim-kratzer-1998])
 -- ════════════════════════════════════════════════════
 
 open Semantics.Tense.SOT.Decomposition

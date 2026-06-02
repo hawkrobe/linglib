@@ -5,13 +5,13 @@ import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Studies.Wellwood2015
 
 /-!
-# @cite{cariani-santorio-wellwood-2024}: Confidence Reports
+# [cariani-santorio-wellwood-2024]: Confidence Reports
 
-@cite{cariani-santorio-wellwood-2024}
+[cariani-santorio-wellwood-2024]
 
 States-based semantics for nominal and adjectival confidence reports
 (`Ann is/has confident/confidence that p`) and their comparative forms.
-The paper extends Wellwood's @cite{wellwood-2015} cross-categorial
+The paper extends Wellwood's [wellwood-2015] cross-categorial
 comparative analysis to gradable attitude expressions; the central
 contribution is a POS-morpheme-free account of the positive form
 (CSW §3.3) plus a per-holder, non-probabilistic confidence ordering
@@ -178,7 +178,7 @@ def connectednessStance : ConnectednessStance := {}
     a banker" and "John is confident that Linda is a feminist banker"
     to be true together. Confidence orderings are not constrained to
     respect logical conjunction (CSW's central argument against
-    probability-functional accounts; @cite{tversky-kahneman-1983}).
+    probability-functional accounts; [tversky-kahneman-1983]).
 
     Witness imported from `Confidence.conjunction_fallacy_compatible`. -/
 theorem conjunction_fallacy_predicted :
@@ -393,7 +393,7 @@ theorem confidence_adjectives_share_dimension :
 
 /-! ## §8. Compositional Bridge: Wellwood 2015 → CSW
 
-CSW build their analysis on Wellwood's @cite{wellwood-2015}
+CSW build their analysis on Wellwood's [wellwood-2015]
 cross-categorial comparative. The bridge below specializes Wellwood's
 `adjectival_max_reduces` (which proves the comparative reduces to a
 direct degree comparison under unique-eventuality assumptions) to the

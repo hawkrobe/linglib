@@ -11,7 +11,7 @@ set_option autoImplicit false
 
 /-!
 # Phase D: Q5c via pairing nondegeneracy (OG-faithful route)
-@cite{oudom-guin-2008} @cite{foissy-typed-decorated-rooted-trees-2018}
+[oudom-guin-2008] [foissy-typed-decorated-rooted-trees-2018]
 
 This file implements OG paper Prop 3.2's proof strategy on the
 linglib substrate. The goal is:

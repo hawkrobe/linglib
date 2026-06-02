@@ -2,7 +2,7 @@ import Linglib.Semantics.Dynamic.PLA.DeepTheorems
 
 /-!
 # Dekker (2012): Predicate Logic with Anaphora vs Bilateral Update Semantics
-@cite{dekker-2012} @cite{krahmer-muskens-1995}
+[dekker-2012] [krahmer-muskens-1995]
 
 PLA (`Semantics/Dynamic/PLA/`) is the foundational system for
 dynamic semantics with explicit pronoun indices. This study verifies

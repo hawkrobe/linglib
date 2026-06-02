@@ -8,9 +8,9 @@ import Linglib.Typology.PolarityItem
 
 /-!
 # Bhatt & Pancheva 2004: Late Merger of Degree Clauses
-@cite{bhatt-pancheva-2004} @cite{heim-2000} @cite{williams-1974}
-@cite{lebeaux-1988} @cite{takahashi-hulsey-2009} @cite{hoeksema-1983}
-@cite{bresnan-1973}
+[bhatt-pancheva-2004] [heim-2000] [williams-1974]
+[lebeaux-1988] [takahashi-hulsey-2009] [hoeksema-1983]
+[bresnan-1973]
 
 Rajesh Bhatt and Roumyana Pancheva. Late Merger of Degree Clauses.
 *Linguistic Inquiry* 35(1): 1–45.
@@ -39,15 +39,15 @@ the empirical claims of B&P, and bridge to neighbouring studies.
 - **§5.1** Late merger of degree clauses bleeds Condition C. Captured
   by `degree_lm_bleeds_iff_scope_position_above` (§ 1 below).
 - **§5.2** Williams 1974 derived from HKC. We bridge to
-  @cite{heim-2001}'s intensional-verb data via
+  [heim-2001]'s intensional-verb data via
   `bp_hkc_matches_heim_intensional_data` (§ 3 below).
 - **§3.9 (Hoeksema 1983 link)** Reduction theorem demoted to
   corollary: `thanClause_reduces_to_max` is one line of
   order-theoretic plumbing, not the substance of the paper.
-- **§1.1.1 fn. 4** B&P explicitly reject @cite{bresnan-1973}'s view
+- **§1.1.1 fn. 4** B&P explicitly reject [bresnan-1973]'s view
   that phrasal "than NP" reduces to clausal "than NP is Adj". Captured
   as prose only (see closing note); the analytical machinery to encode
-  the disagreement compositionally lives in @cite{bhatt-takahashi-2011}.
+  the disagreement compositionally lives in [bhatt-takahashi-2011].
 
 ## Polarity remarks
 
@@ -130,7 +130,7 @@ def bpHypothesizedBinding (d : IntensionalVerbDatum)
     (degHeight intHeight : Nat) : ScopeBinding :=
   ⟨degHeight, intHeight, intHeight, !d.highDegPAvailable⟩
 
-/-- Non-vacuous bridge to @cite{heim-2001}: under B&P's hypothesis
+/-- Non-vacuous bridge to [heim-2001]: under B&P's hypothesis
     (`bpHypothesizedBinding`) that high-DegP-blocking iff binding-tail,
     the Heim-Kennedy Constraint reproduces Heim's 4-vs-4 pattern
     *exactly* on the DegP-low LF (where the matrix DegP scopes below
@@ -163,7 +163,7 @@ theorem thanClause_reduces_to_max
       sComparative μ ({μ b} : Set D) :=
   sComparative_eq_singleton_of_isGreatest μ (thanClauseMax_isGreatest μ b)
 
-/-- Combining @cite{hoeksema-1983} §3.9 (the principal-ultrafilter /
+/-- Combining [hoeksema-1983] §3.9 (the principal-ultrafilter /
     singleton-degree-set equivalence) with the B&P reduction:
     Hoeksema's NP-comparative GQ on `Q_b` equals the S-comparative on
     the *full* clausal-source than-clause denotation. This is the
@@ -196,7 +196,7 @@ theorem reduction_preserves_polarity_signatures :
 
 /- ## Note on the Bresnan 1973 contrast (B&P §1.1.1 fn. 4)
 
-B&P explicitly reject @cite{bresnan-1973}'s view that surface phrasal
+B&P explicitly reject [bresnan-1973]'s view that surface phrasal
 "than NP" reduces to clausal "than NP is Adj" via AP-deletion + copula
 stranding (Bresnan's `.maximalDeletion`). On B&P's analysis the phrasal
 form is genuinely phrasal — no clausal source.
@@ -205,7 +205,7 @@ The disagreement is at the level of *underlying syntactic structure*,
 and the diagnostic apparatus needed to derive distinguishing predictions
 (binding minimal pairs in the style of Lechner 2004; idiom-chunk tests,
 scope diagnostics, ECM cases) is not encoded here. The disagreement is
-*formalized* in @cite{bhatt-takahashi-2011} (see
+*formalized* in [bhatt-takahashi-2011] (see
 `Studies/BhattTakahashi2011.lean`), which supplies
 the binding battery (`englishBindingPairs` + `realizesReduction`) and
 reaches the conclusion that English in fact patterns with B&T's

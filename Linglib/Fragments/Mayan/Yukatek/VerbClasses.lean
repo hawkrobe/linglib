@@ -7,7 +7,7 @@ import Linglib.Typology.Alignment
 /-!
 # Yukatek Maya Verb Classes and Status System
 
-@cite{bohnemeyer-2004} @cite{lucy-1994}
+[bohnemeyer-2004] [lucy-1994]
 
 Yukatek Maya has a typologically rare split-intransitive pattern of
 argument marking controlled by overt aspect-mood marking. The system
@@ -27,7 +27,7 @@ inflection patterns (allomorphy of aspect-mood suffixes).
 ## Status Categories
 
 Status marking encodes both viewpoint aspect and modal assertiveness
-(@cite{bohnemeyer-2004} Table 2):
+([bohnemeyer-2004] Table 2):
 
 - **completive**: +perfective, +assertive → ergative (S = U)
 - **subjunctive**: +perfective, −assertive → ergative (S = U)
@@ -50,8 +50,8 @@ open Mayan (MarkerSet)
 -- ════════════════════════════════════════════════════
 
 /-- The five verb stem classes of Yukatek Maya, distinguished by
-    status inflection patterns (@cite{bohnemeyer-2004} Table 3;
-    @cite{lucy-1994}). -/
+    status inflection patterns ([bohnemeyer-2004] Table 3;
+    [lucy-1994]). -/
 inductive VerbStemClass where
   | active           -- activity roots: walk, sing, dance, sneeze
   | inactive         -- state-change roots: die, burst, enter, exit
@@ -63,7 +63,7 @@ inductive VerbStemClass where
 /-- Event type encoded by each verb stem class.
     Active stems encode processes; all others encode state changes.
 
-    @cite{bohnemeyer-2004} §5: degree achievement verbs regularly appear
+    [bohnemeyer-2004] §5: degree achievement verbs regularly appear
     in the inactive and inchoative classes despite being atelic. Their
     event structure encodes state change — the process/state-change
     distinction, not telicity, motivates class membership. -/
@@ -84,7 +84,7 @@ def VerbStemClass.isIntransitive : VerbStemClass → Bool
 -- ════════════════════════════════════════════════════
 
 /-- The four status categories of Yukatek Maya, encoding viewpoint
-    aspect and modal assertiveness (@cite{bohnemeyer-2004} Table 2). -/
+    aspect and modal assertiveness ([bohnemeyer-2004] Table 2). -/
 inductive StatusCategory where
   | completive    -- +assertive, +perfective
   | subjunctive   -- −assertive, +perfective
@@ -114,7 +114,7 @@ def StatusCategory.isAssertive : StatusCategory → Bool
 /-- Which marker set cross-references the sole argument (S) of an
     intransitive verb, given the status category.
 
-    @cite{bohnemeyer-2004} Table 2:
+    [bohnemeyer-2004] Table 2:
     - Perfective status (completive/subjunctive): S = U → set-B (ergative)
     - Imperfective status (incompletive): S = A → set-A (accusative)
     - Imperative: not discussed in the split analysis (Table 2 omits it) -/
@@ -170,7 +170,7 @@ def kulTal : YukatekVerb := ⟨"sit down", .positional, .external⟩
 def waalTal : YukatekVerb := ⟨"stand up", .positional, .external⟩
 
 -- Key exception: inactive stem class but internally caused → applicative
--- @cite{bohnemeyer-2004} ex. (9): hàan-t-ik (applicative -t, not causative -s).
+-- [bohnemeyer-2004] ex. (9): hàan-t-ik (applicative -t, not causative -s).
 -- Low-tone `hàan` "eat" — distinct from high-tone `háan` "stop, cease,
 -- heal" in `Roots.haanCease`, which is patient-salient (Lucy's diagnostic).
 def haanEat : YukatekVerb := ⟨"eat", .inactive, .internal⟩
@@ -226,13 +226,13 @@ theorem eventType_consistent (c : VerbStemClass) :
   cases c <;> rfl
 
 -- ════════════════════════════════════════════════════
--- § 5.5. Bridge to @cite{lucy-1994} Salience Classes
+-- § 5.5. Bridge to [lucy-1994] Salience Classes
 -- ════════════════════════════════════════════════════
 
 open Semantics.Lexical.Roots (SalienceClass)
 
-/-- Map @cite{bohnemeyer-2004}'s 5-way Yukatek stem classification to
-    @cite{lucy-1994}'s 4-way salience cut. The 5-way is a refinement:
+/-- Map [bohnemeyer-2004]'s 5-way Yukatek stem classification to
+    [lucy-1994]'s 4-way salience cut. The 5-way is a refinement:
     `inchoative` and `positional` both pattern as Lucy's `positional`
     (both derive via `-tal` from a stative root); `active`/`inactive`/
     `transitiveActive` map straightforwardly to `agent`/`patient`/
@@ -273,7 +273,7 @@ theorem toSalienceClass_surjective :
 
 /-- The fibre of `toSalienceClass` over `.positional` is exactly
     `{.inchoative, .positional}` — these are the two Bohnemeyer classes
-    that collapse under @cite{lucy-1994}'s 4-way cut. The other three
+    that collapse under [lucy-1994]'s 4-way cut. The other three
     fibres are singletons (`active ↦ agent`, `inactive ↦ patient`,
     `transitiveActive ↦ agentPatient`). -/
 theorem toSalienceClass_fiber_positional (s : VerbStemClass) :
@@ -320,7 +320,7 @@ theorem yukatek_incompletive_acc :
     yukatekSplit.alignment .incompletive = .accusative := rfl
 
 /-- Yukatek and Hindi share the same split conditioning: perfective → ergative,
-    imperfective → accusative. This is @cite{bohnemeyer-2004}'s core insight
+    imperfective → accusative. This is [bohnemeyer-2004]'s core insight
     that a single linking-by-viewpoint mechanism underlies both systems. -/
 theorem yukatek_hindi_same_split :
     yukatekSplit.alignment .completive = Typology.Alignment.hindiSplit.alignment .perfective ∧

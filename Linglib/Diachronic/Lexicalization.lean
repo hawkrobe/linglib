@@ -3,10 +3,10 @@ import Linglib.Pragmatics.AsymmetricCommunication
 
 /-!
 # Lexicalization: Efficient Encoding of Emerging Concepts
-@cite{xu-etal-2024}
+[xu-etal-2024]
 
 Substrate for the information-theoretic account of lexicalization in
-@cite{xu-etal-2024}: novel concepts enter the lexicon either by *reuse*
+[xu-etal-2024]: novel concepts enter the lexicon either by *reuse*
 (an existing word picks up a new sense — *mouse* → computer peripheral)
 or by *compounding* (concatenation of existing words — *spreadsheet*).
 Both strategies are shaped by the same tradeoff between speaker effort
@@ -15,9 +15,9 @@ Both strategies are shaped by the same tradeoff between speaker effort
 ## Diachronic framing
 
 This is a model of **innovation spread under variation**, not a synchronic
-optimization of a static lexicon. @cite{xu-etal-2024} §1–§2 ground in the
-variation-theory tradition (@cite{weinreich-labov-herzog-1968},
-@cite{milroy-milroy-1985}, @cite{labov-2011}): there is a spread interval
+optimization of a static lexicon. [xu-etal-2024] §1–§2 ground in the
+variation-theory tradition ([weinreich-labov-herzog-1968],
+[milroy-milroy-1985], [labov-2011]): there is a spread interval
 `[t₁, t₂]` during which only some members of the speech community have
 acquired the new encoding `E*`. The speaker's production policy is
 conditioned on the expanded lexicon `L'` (= `L ∪ E*`); the listener's
@@ -40,7 +40,7 @@ open Pragmatics.Efficiency Pragmatics.Communication
 /-! ## Lexicalization strategies -/
 
 /-- Strategy by which a novel concept enters the lexicon
-    (@cite{xu-etal-2024} Table 1: reuse items R vs. compounds C).
+    ([xu-etal-2024] Table 1: reuse items R vs. compounds C).
 
     The paper notes that borrowing (e.g., *tofu*) and coinage (e.g.,
     *quark*) are additional lexicalization strategies excluded from
@@ -55,7 +55,7 @@ inductive Strategy where
   deriving DecidableEq, Repr
 
 /-- Literality of the form–meaning relationship. Literal items tend to
-    be more communicatively efficient (@cite{xu-etal-2024} §3.2).
+    be more communicatively efficient ([xu-etal-2024] §3.2).
 
     This binary distinction is a coarsening of the continuous taxonomic-
     distance measures the paper *also* tests (Wu-Palmer 1994;
@@ -76,7 +76,7 @@ inductive Literality where
 
 /-- A form–concept pair in an emerging encoding (one entry in `E*`).
 
-    The `concept` field is a human-readable label. In @cite{xu-etal-2024}
+    The `concept` field is a human-readable label. In [xu-etal-2024]
     actual use, concepts are WordNet sense IDs embedded via Sentence-BERT
     (paper §5.3); two distinct senses can share a surface label, so
     serious instantiation needs disambiguating IDs. The string here is
@@ -89,7 +89,7 @@ structure FormConceptPair where
   deriving Repr
 
 /-- Orthographic form length, used as the speaker-effort proxy in
-    @cite{xu-etal-2024} (paper eq. 2). -/
+    [xu-etal-2024] (paper eq. 2). -/
 def FormConceptPair.formLength (p : FormConceptPair) : ℕ := p.form.length
 
 /-! ## Communicative costs -/
@@ -98,14 +98,14 @@ def FormConceptPair.formLength (p : FormConceptPair) : ℕ := p.form.length
     non-positive value. The paper's softmax model never produces zero
     listener probability, so this bound is for numeric robustness only.
     Default is 20 nats ≈ 28.8 bits, comfortably above attested typical
-    information loss of ~10–15 bits (@cite{xu-etal-2024} Fig. 2 axes;
+    information loss of ~10–15 bits ([xu-etal-2024] Fig. 2 axes;
     paper uses log₂, this file uses natural log). -/
 def surprisalCap : ℝ := 20
 
 /-- Communicative costs of an encoding under an asymmetric communication
     model. Cost₂ uses `model.comprehend` (the listener-side channel
     conditioned on the existing lexicon `L`), reflecting the diachronic
-    asymmetry @cite{xu-etal-2024} introduces. The speaker-side `produce`
+    asymmetry [xu-etal-2024] introduces. The speaker-side `produce`
     channel is not consumed in the deterministic-policy case (see below)
     but lives in the same `model` so future non-deterministic versions
     can read it.

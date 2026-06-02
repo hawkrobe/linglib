@@ -6,7 +6,7 @@ import Mathlib.Data.Fintype.Basic
 /-!
 # PIP Expression Language (Full Static Formulation)
 
-@cite{keshet-abney-2024}
+[keshet-abney-2024]
 
 PIP is natively a **static, truth-conditional** system: formulas denote
 truth values relative to a model, plural assignment set G, and evaluation

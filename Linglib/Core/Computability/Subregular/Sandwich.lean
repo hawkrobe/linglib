@@ -12,11 +12,11 @@ A *sandwich word* is a list of the form `replicate kL aL ++ mid ++
 replicate kR aR` — `kL` copies of the left bookend `aL`, then a middle,
 then `kR` copies of the right bookend `aR`. Bookends may be asymmetric
 (`aL ≠ aR`, `kL ≠ kR`), accommodating both symmetric phenomena (e.g.
-@cite{lambert-2026} §5.1 Luganda, where `aL = aR = low`) and asymmetric
-ones (e.g. @cite{lambert-2026} §4.2 Tsuut'ina, where `aL = posterior`,
+[lambert-2026] §5.1 Luganda, where `aL = aR = low`) and asymmetric
+ones (e.g. [lambert-2026] §4.2 Tsuut'ina, where `aL = posterior`,
 `aR = anterior`).
 
-This shape is the workhorse of @cite{lambert-2026}'s parameterised
+This shape is the workhorse of [lambert-2026]'s parameterised
 counterexamples to multitier generalised definiteness (`IsBTLI k`):
 given a phonotactic constraint, exhibit two sandwich words sharing the
 same bookends that differ in the target language but match on every

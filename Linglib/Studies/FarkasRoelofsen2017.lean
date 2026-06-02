@@ -6,13 +6,13 @@ import Linglib.Semantics.Highlighting
 /-!
 # Farkas & Roelofsen (2017): Division of Labor in Declaratives and Interrogatives
 
-@cite{farkas-roelofsen-2017}
+[farkas-roelofsen-2017]
 
 A formalization of the sentence-type taxonomy and commitment table
 from "Division of Labor in the Interpretation of Declaratives and
 Interrogatives" (J. Semantics 34(2): 237–289). The paper builds on
-@cite{farkas-bruce-2010}'s commitment-based discourse contexts and
-inquisitive semantics (@cite{ciardelli-groenendijk-roelofsen-2018})
+[farkas-bruce-2010]'s commitment-based discourse contexts and
+inquisitive semantics ([ciardelli-groenendijk-roelofsen-2018])
 to give a uniform account of the six sentence types in (3)–(8):
 
 * (3) Amalia left↓.            [falling declarative]
@@ -60,7 +60,7 @@ to give a uniform account of the six sentence types in (3)–(8):
    earlier "placeholder propositions" caveat. F&R's "highlighted
    alternative" (p. 256) is exactly the substrate's `Highlighted`
    predicate, anchored on the same Roelofsen-Farkas line of work
-   (@cite{roelofsen-farkas-2015}, two years prior to F&R 2017).
+   ([roelofsen-farkas-2015], two years prior to F&R 2017).
 8. **Cross-framework divergences** (§8): formal contrasts with
    `Dialogue/Gunlogson.lean` on rising declaratives (different
    substrate, different state predictions) and Krifka 2015 on tag
@@ -93,9 +93,9 @@ to give a uniform account of the six sentence types in (3)–(8):
 
 The dialogue commitment / rising-intonation literature has continued
 since 2017. Pointers for downstream readers:
-- @cite{rudin-2018}, @cite{rudin-2019} on rising declaratives
-- @cite{goodhue-2022a}, @cite{goodhue-2022b} on bias in polar questions
-- @cite{krifka-2015} (≤ 2017) on tag interrogatives in Commitment Space
+- [rudin-2018], [rudin-2019] on rising declaratives
+- [goodhue-2022a], [goodhue-2022b] on bias in polar questions
+- [krifka-2015] (≤ 2017) on tag interrogatives in Commitment Space
   Semantics — see `Studies/Krifka2015.lean` for the
   formalization
 -/
@@ -107,7 +107,7 @@ namespace FarkasRoelofsen2017
 -- ════════════════════════════════════════════════════════════════
 
 /-- DEC/INT axis: declarative vs interrogative word order
-    (@cite{farkas-roelofsen-2017} §4.1 eq. (26a), p. 257). In
+    ([farkas-roelofsen-2017] §4.1 eq. (26a), p. 257). In
     English root clauses, DEC = declarative word order, INT =
     interrogative word order. -/
 inductive ClauseType where
@@ -116,7 +116,7 @@ inductive ClauseType where
   deriving DecidableEq, Repr, Inhabited
 
 /-- CLOSED/OPEN axis: falling vs rising intonation
-    (@cite{farkas-roelofsen-2017} §4.1 eq. (26b), p. 257).
+    ([farkas-roelofsen-2017] §4.1 eq. (26b), p. 257).
     CLOSED = ↓ (falling); OPEN = ↑ (rising). -/
 inductive Intonation where
   | closed  -- falling ↓
@@ -124,7 +124,7 @@ inductive Intonation where
   deriving DecidableEq, Repr, Inhabited
 
 /-- A `MarkerTriple` is a triple of clause-type marker, intonation
-    marker, and tag-presence flag (@cite{farkas-roelofsen-2017}
+    marker, and tag-presence flag ([farkas-roelofsen-2017]
     §4.1; tags are introduced after eq. (27), p. 258).
 
     The 6 sentence types of (3)–(8):
@@ -175,7 +175,7 @@ end MarkerTriple
 -- § 2. Markedness (§3 eq. (21), p. 250; eq. (47), p. 265)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Markedness predicate (@cite{farkas-roelofsen-2017} §3
+/-- Markedness predicate ([farkas-roelofsen-2017] §3
     eq. (21) "Division of labor principle", p. 250; classification
     eq. (47), p. 265):
 
@@ -215,7 +215,7 @@ instance (mt : MarkerTriple) : Decidable mt.isMarked := by
 -- ════════════════════════════════════════════════════════════════
 
 /-- Three commitment-types from the unnumbered "Type of commitment"
-    table on p. 240 (@cite{farkas-roelofsen-2017}):
+    table on p. 240 ([farkas-roelofsen-2017]):
 
     * `fullCommitment` — the speaker is fully committed to one
       alternative (falling declaratives).
@@ -230,7 +230,7 @@ inductive CommitmentType where
   deriving DecidableEq, Repr, Inhabited
 
 /-- Map each marker triple to its commitment type
-    (@cite{farkas-roelofsen-2017}, p. 240 unnumbered table). -/
+    ([farkas-roelofsen-2017], p. 240 unnumbered table). -/
 def commitmentType : MarkerTriple → CommitmentType
   | ⟨.dec, .closed, false⟩ => .fullCommitment   -- falling declarative
   | ⟨.dec, .rising, false⟩ => .bias             -- rising declarative
@@ -253,7 +253,7 @@ theorem commitment_table :
 -- § 4. Credence intervals (§3.2, p. 256)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Credence levels (@cite{farkas-roelofsen-2017} §3.2 p. 256):
+/-- Credence levels ([farkas-roelofsen-2017] §3.2 p. 256):
     "If the speaker considers the highlighted alternative α to be
     much more likely than ᾱ, we say her credence in α is high; if
     she only considers it to be somewhat more likely than ᾱ, we say
@@ -284,7 +284,7 @@ instance (a b : CredenceLevel) : Decidable (a ≤ b) :=
 
 /-- A credence interval is a pair of lower and upper bounds on a
     speaker's credence in the highlighted alternative
-    (@cite{farkas-roelofsen-2017} §3.2, p. 256: "i is a credence
+    ([farkas-roelofsen-2017] §3.2, p. 256: "i is a credence
     interval, capturing the amount of credence x signals that she
     has in p"). -/
 structure CredenceInterval where
@@ -301,7 +301,7 @@ instance (i : CredenceInterval) (c : CredenceLevel) :
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The credence interval signaled by each marker triple
-    (@cite{farkas-roelofsen-2017} §3.2, p. 256, last paragraph
+    ([farkas-roelofsen-2017] §3.2, p. 256, last paragraph
     before §4: "for rising declaratives the credence interval will
     be [zero, low], for rising tag interrogatives [moderate, high],
     and for falling tag interrogatives just [high]"):
@@ -327,7 +327,7 @@ def signaledCredence : MarkerTriple → CredenceInterval
 /-- A speaker is felicitous in uttering `form` in a context where
     her credence in the highlighted alternative is `c` iff `c` falls
     within the form's signaled credence interval
-    (@cite{farkas-roelofsen-2017} §3.2 prose around examples (24)/(25),
+    ([farkas-roelofsen-2017] §3.2 prose around examples (24)/(25),
     p. 256). -/
 def felicitous (form : MarkerTriple) (speakerCredence : CredenceLevel) : Prop :=
   (signaledCredence form).contains speakerCredence
@@ -336,7 +336,7 @@ instance (form : MarkerTriple) (c : CredenceLevel) :
     Decidable (felicitous form c) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- **Example (24)** (@cite{farkas-roelofsen-2017} p. 256): "Belinda is
+/-- **Example (24)** ([farkas-roelofsen-2017] p. 256): "Belinda is
     going through a pile of job applications. Chris has not seen any
     of them yet. Belinda hands Chris the application that she just
     finished reading, and tells him to have a look at it. Chris to Belinda:
@@ -355,7 +355,7 @@ theorem example_24_tag_infelicitous :
 theorem example_24_tag_infelicitous_falling :
     ¬ felicitous .fallingTagInterrogative .zero := by decide
 
-/-- **Example (25)** (@cite{farkas-roelofsen-2017} p. 256): "Belinda and
+/-- **Example (25)** ([farkas-roelofsen-2017] p. 256): "Belinda and
     Chris are looking at a sunset together. Belinda to Chris:
     a. #It's a beautiful sunset↑?      [rising declarative, # infelicitous]
     b. It's a beautiful sunset, isn't it? [tag, ✓ felicitous]"
@@ -399,7 +399,7 @@ theorem rising_dec_and_rising_tag_disjoint (c : CredenceLevel) :
 /-! F&R 2017's signaled-credence claims are explicitly about
 "the highlighted alternative" (p. 256). The substrate
 `Semantics/Highlighting.lean` (anchored on
-@cite{roelofsen-farkas-2015}, the same author line two years prior
+[roelofsen-farkas-2015], the same author line two years prior
 to F&R 2017) supplies the `HighlightingContext`/`Highlighted`
 predicate. This section threads it through `felicitous`, retiring the
 study's earlier "placeholder propositions" caveat. -/
@@ -411,7 +411,7 @@ variable {W : Type*}
 /-- Felicity of a marker form in a highlighting context: the
     proposition `p` must actually be highlighted in the context, AND
     the speaker's credence in `p` must fall in the form's signaled
-    interval (@cite{farkas-roelofsen-2017} §3.2 p. 256, "the
+    interval ([farkas-roelofsen-2017] §3.2 p. 256, "the
     highlighted alternative" prose). -/
 def felicitousInContext (form : MarkerTriple) (c : HighlightingContext W)
     (p : Set W) (speakerCredence : CredenceLevel) : Prop :=
@@ -769,7 +769,7 @@ section makes two divergences Lean-checkable. -/
 -- § 8a. Rising declarative — F&R + F&B vs Gunlogson 2008
 -- ─────────────────────────────────────────────────────────────────
 
-/-! @cite{gunlogson-2008} (and earlier @cite{gunlogson-2001}, the work
+/-! [gunlogson-2008] (and earlier [gunlogson-2001], the work
 F&R 2017's footnote 13 cites), formalized in `Dialogue/Gunlogson.lean`,
 records rising-declarative information by writing to the **addressee's**
 slate as an other-generated commitment. F&R 2017 (threaded through F&B
@@ -838,7 +838,7 @@ theorem fr_vs_gunlogson_rising_dec_state_shape {W : Type*} (content : Set W) :
 --       conjunction/disjunction
 -- ─────────────────────────────────────────────────────────────────
 
-/-! @cite{krifka-2015} §5 (eqs. 44–45), with substrate in
+/-! [krifka-2015] §5 (eqs. 44–45), with substrate in
 `Dialogue/CommitmentSpace.lean`, argues that tag interrogatives
 are a SINGLE complex speech act — `matchingTag` is a `ComplexSpeechAct.conj`
 of an assertion and a monopolar question (sharing content φ), `reverseTag`

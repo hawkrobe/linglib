@@ -3,7 +3,7 @@ import Linglib.Syntax.Agreement.Controller
 
 /-!
 # Morphological Infrastructure
-@cite{bybee-1985} @cite{champollion-2017} @cite{link-1983} @cite{zwicky-pullum-1983}
+[bybee-1985] [champollion-2017] [link-1983] [zwicky-pullum-1983]
 
 Framework-agnostic types for morphological analysis and compositional
 morphological rules.
@@ -15,7 +15,7 @@ morphological rules.
 - `MorphStatus`: free word / simple clitic / special clitic / affix
 - `ParadigmCell`: one cell in a morphological paradigm (form + features)
 
-## @cite{bybee-1985} Relevance Hierarchy
+## [bybee-1985] Relevance Hierarchy
 
 `MorphCategory` classifies morpheme functional categories ordered by
 semantic relevance to the stem:
@@ -54,7 +54,7 @@ inductive AttachmentSide where
   deriving DecidableEq, Repr
 
 /-- Typological position classification for formatives.
-    @cite{bickel-nichols-2001} Table 2.
+    [bickel-nichols-2001] Table 2.
 
     Superset of `AttachmentSide`: adds simulfixation (process morphology),
     detached formatives (Wackernagel clitics, free auxiliaries), and
@@ -82,7 +82,7 @@ def AttachmentSide.toFormativePosition : AttachmentSide → FormativePosition
 
 /-- How restrictive a morpheme is about what it can attach to.
 
-@cite{zwicky-pullum-1983} criterion A: clitics exhibit low selection
+[zwicky-pullum-1983] criterion A: clitics exhibit low selection
 (attach to virtually any word), while affixes exhibit high selection
 (attach only to specific stems or categories). -/
 inductive SelectionDegree where
@@ -113,14 +113,14 @@ instance : DecidablePred SelectionDegree.IsHighSelection := fun s => by
 
 Classifies forms by their degree of syntactic independence and
 mode of combination. The clitic–affix boundary is the central
-question of @cite{zwicky-pullum-1983}: the criteria A–F serve to
+question of [zwicky-pullum-1983]: the criteria A–F serve to
 locate a given morpheme on this scale. -/
 inductive MorphStatus where
   /-- Syntactically independent word. -/
   | freeWord
   /-- Simple clitic: phonologically bound form that can attach to
       hosts of virtually any syntactic category.
-      @cite{bickel-nichols-2001}: defined primarily by low selectivity
+      [bickel-nichols-2001]: defined primarily by low selectivity
       (categorical freedom) + phonological dependence, not necessarily
       by being a reduced variant of a free word. Many simple clitics
       have no free-word counterpart (Latin *-que*). English contracted
@@ -188,7 +188,7 @@ instance {F : Type} (c : ParadigmCell F) : Decidable c.isIrregular :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 -- ============================================================================
--- §5: @cite{bybee-1985} Relevance Hierarchy
+-- §5: [bybee-1985] Relevance Hierarchy
 -- ============================================================================
 
 /-- Morpheme functional category.
@@ -231,7 +231,7 @@ def MorphCategory.IsAgreement : MorphCategory → Bool
 where **higher = farther from stem = less semantically relevant**.
 
 In Bybee's text, "high relevance" means *more* semantically
-integrated with the stem (`@cite{bybee-1985}` Ch 2 §2.1 p. 13). The
+integrated with the stem (`[bybee-1985]` Ch 2 §2.1 p. 13). The
 substrate uses the *opposite* numerical direction: stem = 0 (most
 relevant), agreement = 8 (least relevant), so that Nat ordering
 mirrors stem-outward linear position in suffixing morphology
@@ -348,7 +348,7 @@ def Stem.allForms (s : Stem σ) (baseMeaning : σ) :
 
 /-- Distribution of inflectional categories between two elements of a
     periphrastic construction (e.g., auxiliary and lexical verb in an AVC).
-    @cite{anderson-2006} @cite{bybee-1985}
+    [anderson-2006] [bybee-1985]
 
     In an aux-headed AVC, `onLex` is minimal (stem only or empty).
     In a lex-headed AVC, `onAux` is empty.

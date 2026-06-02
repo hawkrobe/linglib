@@ -3,9 +3,9 @@ import Linglib.Typology.NegativeConcord
 
 /-!
 # Typology.PolarityItem
-@cite{lahiri-1998} @cite{haspelmath-1997}
-@cite{chierchia-2006} @cite{israel-1996} @cite{israel-2001}
-@cite{israel-2011} @cite{schwab-2022}
+[lahiri-1998] [haspelmath-1997]
+[chierchia-2006] [israel-1996] [israel-2001]
+[israel-2011] [schwab-2022]
 
 (Lee & Horn 1994 MS *any* as indefinite + EVEN cited in §6 below;
 not currently in `references.bib`.)
@@ -32,20 +32,20 @@ the choice between them explicit at the type level:
 
 - **Israel scalar model** (`ScalarValue` × `ScalarDirection` ×
   `LikelihoodEffect` × `Canonicity`): the apparatus of
-  @cite{israel-1996}, @cite{israel-2001}, @cite{israel-2011}.
+  [israel-1996], [israel-2001], [israel-2011].
   Treats polarity-sensitivity as a scalar-rhetorical phenomenon
   (high/low + strengthening/attenuating) orthogonal to monotonicity.
 
 - **Monotonicity-based licensing** (in companion file
   `Semantics/Polarity/Licensing.lean`): the
-  @cite{ladusaw-1979} / @cite{kadmon-landman-1993} / @cite{zwarts-1998}
-  / @cite{chierchia-2006} lineage. Treats polarity-sensitivity as a
+  [ladusaw-1979] / [kadmon-landman-1993] / [zwarts-1998]
+  / [chierchia-2006] lineage. Treats polarity-sensitivity as a
   monotonicity-licensing phenomenon with widening + strengthening as
   the unifying mechanism.
 
 These two lineages give *different predictions* for cases like FCIs in
 modal contexts, NPIs in superlatives, and the "rescued" NPIs of
-@cite{chierchia-2006}. The cross-file gap is acknowledged but NOT
+[chierchia-2006]. The cross-file gap is acknowledged but NOT
 closed by this restructure: the `contextProperties.signature` field
 in the companion file is Ladusaw/Zwarts/P&W canonical (Israel cannot
 project per-context signatures without scale/role parameters from the
@@ -54,7 +54,7 @@ item itself).
 The Israel↔Ladusaw refutation theorem — showing a context where the
 scalar model and the monotonicity model disagree — is **planned** for
 `Studies/Israel2001.lean`. The natural witness is
-Israel's **pecuniary paradox** (@cite{israel-2001}): *a red cent* (NPI,
+Israel's **pecuniary paradox** ([israel-2001]): *a red cent* (NPI,
 resource = impeding role) and *for peanuts* (PPI, reward = facilitating
 role) inhabit the same monetary semantic domain — pure-monotonicity
 accounts treat them uniformly, while Israel's role-likelihood mapping
@@ -66,10 +66,10 @@ genuinely deferred.)
 ## Alternative scalar-tradition frameworks (not formalized in linglib)
 
 The Israel scalar model is one of several scalar-tradition accounts:
-- @cite{lahiri-1998}: even-based scalar analysis grounding *bhii* /
+- [lahiri-1998]: even-based scalar analysis grounding *bhii* /
   *koii bhii* in cardinality vs contextually-salient property
   alternatives. Israel positions himself against this.
-- @cite{chierchia-2006}: exhaustification + D-alternatives subsume
+- [chierchia-2006]: exhaustification + D-alternatives subsume
   Israel's mechanism via implicit EXH; differs from Israel on FCI
   rescue (*any* in non-DE contexts).
 - Krifka 1995 (STA — "Sumarizing the alternatives"): different
@@ -83,7 +83,7 @@ formalising these alternatives would need parallel substrate types.
 ## The Scalar Model of Polarity
 
 Polarity items are characterized by two orthogonal scalar features
-(@cite{israel-1996}, @cite{israel-2001}):
+([israel-1996], [israel-2001]):
 - **ScalarValue** (high/low): where the item sits on its scale
 - **ScalarDirection** (strengthening/attenuating): rhetorical force
 
@@ -97,12 +97,12 @@ namespace Typology.PolarityItem
 open Features (LicensingContext)
 
 -- ════════════════════════════════════════════════════
--- § 1. Scalar Value (@cite{israel-2001})
+-- § 1. Scalar Value ([israel-2001])
 -- ════════════════════════════════════════════════════
 
 /-- Where the polarity item sits on its scale, relative to the scalar norm.
 
-    @cite{israel-2001}: polarity items conventionally encode a fixed position
+    [israel-2001]: polarity items conventionally encode a fixed position
     on a scalar ordering. Emphatic NPIs typically denote LOW values
     (*a wink*, *an inch*), while emphatic PPIs typically denote HIGH values
     (*tons*, *utterly*). Inverted items reverse this pattern. -/
@@ -113,25 +113,25 @@ inductive ScalarValue where
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 2. Scalar Direction (@cite{israel-1996}, @cite{schwab-2022})
+-- § 2. Scalar Direction ([israel-1996], [schwab-2022])
 -- ════════════════════════════════════════════════════
 
 /-- Rhetorical force: does this item strengthen or attenuate the assertion?
     Orthogonal to both PolarityType and ScalarValue.
 
     - **Strengthening** items (ever, any, jemals) make the assertion stronger
-      than its scalar alternatives (@cite{israel-2001}'s "emphatic" items).
+      than its scalar alternatives ([israel-2001]'s "emphatic" items).
     - **Attenuating** items (all that, so recht, long) make the assertion weaker
-      than its scalar alternatives (@cite{israel-2001}'s "understating" items).
+      than its scalar alternatives ([israel-2001]'s "understating" items).
     - **NonScalar** items: editorial slot for items genuinely lacking
       scalar structure. NOTE: *lift a finger* is sometimes used as the
       canonical example, but Israel actually classifies it as scalar
       (extreme low effort = a minimizer). True non-scalar polarity items
       are theoretically contested; if uncertain, prefer `unknown`.
 
-    @cite{israel-1996}. Polarity sensitivity as lexical semantics. L&P 19(6).
-    @cite{israel-2011}. The Grammar of Polarity. CUP.
-    @cite{schwab-2022}. Lexical variation in NPI illusions. -/
+    [israel-1996]. Polarity sensitivity as lexical semantics. L&P 19(6).
+    [israel-2011]. The Grammar of Polarity. CUP.
+    [schwab-2022]. Lexical variation in NPI illusions. -/
 inductive ScalarDirection where
   | strengthening  -- ever, any, jemals: assertion stronger than alternatives
   | attenuating    -- all that, so recht, long: assertion weaker than alternatives
@@ -141,7 +141,7 @@ inductive ScalarDirection where
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 3. Canonicity (@cite{israel-2001})
+-- § 3. Canonicity ([israel-2001])
 -- ════════════════════════════════════════════════════
 
 /-- Whether a polarity item is canonical or inverted.
@@ -155,7 +155,7 @@ inductive ScalarDirection where
     - Inverted emphatic NPIs denote HIGH values (*wild horses*, *all the tea in China*)
     - Inverted emphatic PPIs denote LOW values (*at the drop of a hat*, *for a pittance*)
 
-    @cite{israel-2001} shows inversion tracks propositional role:
+    [israel-2001] shows inversion tracks propositional role:
     canonical items fill impeding roles (patient/theme); inverted items
     fill facilitating roles (stimulus/instrument/reward). -/
 inductive Canonicity where
@@ -165,13 +165,13 @@ inductive Canonicity where
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 4. Likelihood Effect (@cite{israel-2001})
+-- § 4. Likelihood Effect ([israel-2001])
 -- ════════════════════════════════════════════════════
 
 /-- How increasing the scalar value of an item's referent affects the
     likelihood of the proposition being true.
 
-    This is the key to @cite{israel-2001}'s resolution of the
+    This is the key to [israel-2001]'s resolution of the
     maximizer/minimizer puzzle:
 
     - **Facilitating** roles (agent, stimulus, instrument, reward):
@@ -215,11 +215,11 @@ inductive BaseForce where
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 6. Morphological Composition (@cite{lahiri-1998}, Lee & Horn 1994 MS (UNVERIFIED — bib entry missing))
+-- § 6. Morphological Composition ([lahiri-1998], Lee & Horn 1994 MS (UNVERIFIED — bib entry missing))
 -- ════════════════════════════════════════════════════
 
 /-- Morphological composition of a polarity-sensitive item.
-    @cite{lahiri-1998} shows Hindi NPIs are transparently `indefinite + even`.
+    [lahiri-1998] shows Hindi NPIs are transparently `indefinite + even`.
     Lee & Horn 1994 MS *any* as indef + EVEN documents this pattern
     cross-linguistically (UNVERIFIED — bib entry missing).
 
@@ -238,9 +238,9 @@ inductive NPIMorphology where
   deriving DecidableEq, Repr
 
 /-- Type of alternatives introduced by the focused element.
-    @cite{lahiri-1998}: *ek bhii* introduces cardinality alternatives,
+    [lahiri-1998]: *ek bhii* introduces cardinality alternatives,
     *koii bhii* introduces contextually salient property alternatives.
-    @cite{chierchia-2006}: subdomain (D-)alternatives for domain widening. -/
+    [chierchia-2006]: subdomain (D-)alternatives for domain widening. -/
 inductive AlternativeType where
   | cardinality        -- {one, two, three, ...}: entailment-ordered
   | contextualProperty -- {P₁, P₂, ...}: contextually determined
@@ -269,18 +269,18 @@ structure PolarityItemEntry where
   licensingContexts : List LicensingContext
   /-- Scalar direction: strengthening, attenuating, or non-scalar -/
   scalarDirection : ScalarDirection := .unknown
-  /-- Scalar value: high or low on the relevant scale (@cite{israel-2001}) -/
+  /-- Scalar value: high or low on the relevant scale ([israel-2001]) -/
   scalarValue : ScalarValue := .unknown
-  /-- Canonical or inverted (@cite{israel-2001}) -/
+  /-- Canonical or inverted ([israel-2001]) -/
   canonicity : Canonicity := .unknown
-  /-- Propositional role's likelihood effect (@cite{israel-2001}) -/
+  /-- Propositional role's likelihood effect ([israel-2001]) -/
   likelihoodEffect : LikelihoodEffect := .unknown
-  /-- Morphological composition (@cite{lahiri-1998}) -/
+  /-- Morphological composition ([lahiri-1998]) -/
   morphology : NPIMorphology := .plain
   /-- Type of alternatives introduced -/
   alternativeType : AlternativeType := .unspecified
-  /-- Negative-concord / n-word status (@cite{giannakidou-2000},
-      @cite{van-der-auwera-van-alsenoy-2016}). `none` for items outside the
+  /-- Negative-concord / n-word status ([giannakidou-2000],
+      [van-der-auwera-van-alsenoy-2016]). `none` for items outside the
       negative-concord system; strict-NC n-words set `some .nWord` here rather than
       leaning on a strong-NPI `polarityType`. -/
   nWordStatus : Option NegativeConcord.NWordStatus := none

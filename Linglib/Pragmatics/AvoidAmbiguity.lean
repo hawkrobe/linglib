@@ -2,7 +2,7 @@ import Mathlib.Data.List.Basic
 
 /-!
 # Avoid Ambiguity
-@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}
+[jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
 
 The pragmatic principle Jeretič, Bassi, Gonzalez, Yatsushiro, Meyer &
 Sauerland (2025) introduce as eq (37):

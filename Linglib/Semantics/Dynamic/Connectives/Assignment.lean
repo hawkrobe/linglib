@@ -3,7 +3,7 @@ import Linglib.Semantics.Dynamic.Connectives.Defs
 
 /-!
 # Dynamic Quantification over `Assignment E`
-@cite{groenendijk-stokhof-1991} @cite{muskens-1996}
+[groenendijk-stokhof-1991] [muskens-1996]
 
 Substrate operations specialized to the Tarski-style assignment state
 `Assignment E := Nat → E` (from `Core.Assignment`).

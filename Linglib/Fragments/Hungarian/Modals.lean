@@ -4,7 +4,7 @@ import Linglib.Semantics.Modality.Typology
 # Hungarian Modal Inventory
 
 Modal expressions from Hungarian (Uralic), based on
-@cite{qing-uegaki-2025}.
+[qing-uegaki-2025].
 -/
 
 namespace Hungarian.Modals

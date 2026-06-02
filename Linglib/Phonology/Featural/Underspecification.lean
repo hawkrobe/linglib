@@ -3,7 +3,7 @@ import Linglib.Phonology.Featural.Bundle
 
 /-!
 # Underspecification of Features on Segments
-@cite{keating-1988} @cite{inkelas-orgun-1995} @cite{steriade-1995}
+[keating-1988] [inkelas-orgun-1995] [steriade-1995]
 
 A segment is **underspecified** for a feature `f` when its specification
 function returns `none` at `f`. This file lifts the underspecification
@@ -12,13 +12,13 @@ level, and provides the `Prop` predicates and `Decidable` instances that
 consumers work with.
 
 Three-valued (`+ / − / ∅`) feature specifications are standard in
-@cite{keating-1988} (which argues some segments stay unspecified into
+[keating-1988] (which argues some segments stay unspecified into
 phonetic interpretation, surfacing via gradient interpolation rather
-than categorical rule-application), @cite{inkelas-orgun-1995} (Turkish
-voicing as the canonical equipollent case), and @cite{steriade-1995}
+than categorical rule-application), [inkelas-orgun-1995] (Turkish
+voicing as the canonical equipollent case), and [steriade-1995]
 (cross-linguistic survey of when feature values are left blank at
 underlying representation). The Latin coda /l/ analysis in
-@cite{sen-2015} Ch 2 is a worked example: geminate /ll/ is [+high, −back],
+[sen-2015] Ch 2 is a worked example: geminate /ll/ is [+high, −back],
 coda /l/ is [+high, +back], onset /l/ is [+high, Ø back]; on Sen's
 account onset /l/'s surface backness inherits the value of the following
 vowel.
@@ -46,8 +46,8 @@ the operations here are thin segment-level lifts of bundle operations.
 
 `fillFeature` uses the bundle's `merge` (which preserves the
 left-operand's specified values) rather than its `set` (which overrides),
-because default-fill rules in lexical phonology @cite{kiparsky-1982}
-@cite{archangeli-1988} are conditioned on the target being currently
+because default-fill rules in lexical phonology [kiparsky-1982]
+[archangeli-1988] are conditioned on the target being currently
 underspecified. `setFeature` provides the override variant for use by
 SPE-style structural-change rules.
 
@@ -98,7 +98,7 @@ def setFeature (s : Segment) (f : Feature) (v : Bool) : Segment :=
 /-- Fill feature `f` with value `v` only if `s` is currently unspecified
     for `f`; existing specifications are preserved. This implements the
     default-fill semantics of feature-filling rules in lexical phonology
-    @cite{kiparsky-1982} @cite{archangeli-1988}. -/
+    [kiparsky-1982] [archangeli-1988]. -/
 def fillFeature (s : Segment) (f : Feature) (v : Bool) : Segment :=
   ⟨FeatureBundle.merge s.spec (FeatureBundle.single f v)⟩
 
@@ -107,7 +107,7 @@ def fillFeature (s : Segment) (f : Feature) (v : Bool) : Segment :=
     targets and features other than `f` are untouched. When `ctx` is
     itself unspecified for `f`, the target stays unspecified.
 
-    This is a @cite{keating-1988} *context rule* (§1.2, p. 277) — case
+    This is a [keating-1988] *context rule* (§1.2, p. 277) — case
     (b) of her schema (2) p. 287, where the target acquires a categorical
     feature value from its neighbour and that value blocks further
     interactions. It is **distinct from** her case (c) gradient phonetic

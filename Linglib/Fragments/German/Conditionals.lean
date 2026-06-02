@@ -20,7 +20,7 @@ open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
 /-- German falls: HC-only conditional marker.
 
     Implies speaker uncertainty. LNCs with falls are marginal
-    (@cite{cao-white-lassiter-2025}, ex. 21). -/
+    ([cao-white-lassiter-2025], ex. 21). -/
 def falls : ConditionalMarker where
   language := "German"
   marker := "falls"
@@ -31,7 +31,7 @@ def falls : ConditionalMarker where
 /-- German wenn: HC and PC conditional marker.
 
     Can mark either hypothetical or premise conditionals.
-    LNCs with wenn are acceptable (@cite{cao-white-lassiter-2025}, ex. 20). -/
+    LNCs with wenn are acceptable ([cao-white-lassiter-2025], ex. 20). -/
 def wenn : ConditionalMarker where
   language := "German"
   marker := "wenn"

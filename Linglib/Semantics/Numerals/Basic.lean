@@ -5,13 +5,13 @@ import Mathlib.Order.Interval.Set.Basic
 
 /-!
 # Unified Numeral Semantics
-@cite{blok-2015} @cite{chierchia-fox-spector-2012} @cite{fox-2007}
-@cite{goodman-stuhlmuller-2013} @cite{horn-1972} @cite{kennedy-2015}
-@cite{hackl-2000} @cite{link-1983} @cite{partee-1987} @cite{spector-2013}
+[blok-2015] [chierchia-fox-spector-2012] [fox-2007]
+[goodman-stuhlmuller-2013] [horn-1972] [kennedy-2015]
+[hackl-2000] [link-1983] [partee-1987] [spector-2013]
 
 The numeral surface forms ("three", "more than three", "at least three", "at
 most three", "fewer than three") are five `Nat`-instantiations of
-@cite{kennedy-2015}'s unified de-Fregean GQ
+[kennedy-2015]'s unified de-Fregean GQ
 `λP. max{d | #P ≥ d} REL m`, captured in `Core.Scale.relationalGQ`. Each named
 meaning is the corresponding `Core.Scale.{...}Deg id` specialization, and so
 inherits the scale infrastructure (maximal informativity, monotonicity,
@@ -25,8 +25,8 @@ The only theory disagreement is the bare-numeral semantics:
 | Exact       | =3           | `bareMeaning`     |
 
 Modified numerals are theory-independent — everyone agrees "more than 3"
-means `> 3`. The Class A / Class B distinction (@cite{geurts-nouwen-2007},
-@cite{nouwen-2010}) reduces to reflexivity vs irreflexivity of the modifier's
+means `> 3`. The Class A / Class B distinction ([geurts-nouwen-2007],
+[nouwen-2010]) reduces to reflexivity vs irreflexivity of the modifier's
 underlying relation; see `Core.Scale.relationalGQ_refl_at_boundary` and
 `Core.Scale.relationalGQ_irrefl_at_boundary`.
 
@@ -53,17 +53,17 @@ namespace Semantics.Numerals
 -- ============================================================================
 
 /-- Class A (strict `>`, `<`) vs Class B (non-strict `≥`, `≤`) modified
-numerals — a descriptive split due to @cite{nouwen-2010}.
+numerals — a descriptive split due to [nouwen-2010].
 
 Truth-conditionally the split is the reflexive/irreflexive boundary behavior:
 Class A EXCLUDES the bare-numeral world, Class B INCLUDES it (Class B iff the
 underlying relation is reflexive; see `Core.Scale.relationalGQ_refl_at_boundary`
 and `Core.Scale.Comparison.boundary_mem`). The further claim that this predicts
 a *categorical* ignorance-implicature pattern (Class B carries ignorance, Class
-A not) is contested: @cite{schwarz-buccola-hamilton-2012} show *at most* and *up
+A not) is contested: [schwarz-buccola-hamilton-2012] show *at most* and *up
 to* dissociate (so "Class B" is not one class), and
-@cite{cremers-coppock-dotlacil-roelofsen-2022} find the ignorance contrast
-graded and QUD-dependent rather than categorical; @cite{enguehard-2018} derives
+[cremers-coppock-dotlacil-roelofsen-2022] find the ignorance contrast
+graded and QUD-dependent rather than categorical; [enguehard-2018] derives
 comparative-numeral inferences from granularity scales rather than from the
 strict/non-strict relation type. -/
 inductive ModifierClass where
@@ -86,7 +86,7 @@ inductive BoundDirection where
 
 /-! Five named meanings — one per surface form. Each is the `id`-instantiation
 of the corresponding `Core.Scale` degree property. They capture
-@cite{kennedy-2015}'s
+[kennedy-2015]'s
 
   ⟦modifier m⟧ = λP. max{d | #P ≥ d} REL m
 
@@ -189,10 +189,10 @@ theorem _root_.Numeral.Entry.denoteUnder_boundary (e : Numeral.Entry) (bare : Na
       Core.Scale.relationalGQ, Core.Scale.Comparison.rel]
 
 -- ============================================================================
--- Section 4: Alternative Set (@cite{kennedy-2015} §4.1)
+-- Section 4: Alternative Set ([kennedy-2015] §4.1)
 -- ============================================================================
 
-/-- @cite{kennedy-2015}'s single alternative set — the five numeral forms (bare
+/-- [kennedy-2015]'s single alternative set — the five numeral forms (bare
     plus four modifications) as `Core.Scale.Comparison`s. The point is
     **anti-Horn-scale**: there is no fixed scale direction. The Class A / Class B
     split is read off asymmetric entailment (cf. `classA_excludes_bare_world`,
@@ -204,8 +204,8 @@ def kennedyAlternatives : List Core.Scale.Comparison :=
 -- Section 5: Class A/B Corollaries and Anti-Horn-Scale Corollaries
 -- ============================================================================
 
-/-! Class A/B is the central typological generalization (@cite{geurts-nouwen-2007},
-    @cite{nouwen-2010}): strict modifiers (`>`, `<`) exclude the bare-numeral
+/-! Class A/B is the central typological generalization ([geurts-nouwen-2007],
+    [nouwen-2010]): strict modifiers (`>`, `<`) exclude the bare-numeral
     world; non-strict modifiers (`≥`, `≤`) include it. Both theorems below are
     now corollaries of `Core.Scale.Comparison.boundary_mem` (Class A/B = whether the
     comparison's interval is closed at its endpoint) via `meaning_boundary`. -/
@@ -267,7 +267,7 @@ theorem moreThan_disjoint_from_bare (m n : Nat) :
   Core.Scale.moreThanDeg_disjoint_eqDeg id m n
 
 -- ============================================================================
--- Section 6: Type-Shifting (@cite{kennedy-2015} §3.1)
+-- Section 6: Type-Shifting ([kennedy-2015] §3.1)
 -- ============================================================================
 
 /-! ## De-Fregean type-shifting: exact → lower-bound
@@ -287,15 +287,15 @@ theorem typeLower_bareMeaning_iff (m n : Nat) :
   Core.Scale.typeLower_eqDeg_iff id m n
 
 -- ============================================================================
--- Section 7: EXH–Type-Shift Duality (@cite{spector-2013} §6.2 vs @cite{kennedy-2015})
+-- Section 7: EXH–Type-Shift Duality ([spector-2013] §6.2 vs [kennedy-2015])
 -- ============================================================================
 
 /-! ## EXH and type-shifting are inverses
 
-@cite{spector-2013} (§6.2) presents an approach (from
-@cite{chierchia-fox-spector-2012}) where the exact reading of bare numerals
+[spector-2013] (§6.2) presents an approach (from
+[chierchia-fox-spector-2012]) where the exact reading of bare numerals
 arises from a covert exhaustivity operator: `EXH(≥n) = ≥n ∧ ¬(≥n+1) = (=n)`.
-@cite{kennedy-2015} proposes the reverse: the lower-bound reading arises
+[kennedy-2015] proposes the reverse: the lower-bound reading arises
 from type-shifting the exact meaning: `typeShift(=n) = (≥n)`.
 
 Both directions are general theorems on ℕ — the duality is not a
@@ -324,7 +324,7 @@ theorem exhNumeral_iff_bare (m n : Nat) :
   omega
 
 -- ============================================================================
--- Section 8: GQT Bridge (@cite{bylinina-nouwen-2020})
+-- Section 8: GQT Bridge ([bylinina-nouwen-2020])
 -- ============================================================================
 
 /-! The GQT numeral quantifiers in `Quantifier.lean` (`exactly_n_sem`,
@@ -371,7 +371,7 @@ about `relationalGQ` transfers to every numeral entry. `Comparison.rel` lives in
 in Section 3. -/
 
 /-- Denotation of a numeral entry against a measure `μ : E → α` and a magnitude
-    `m`: @cite{kennedy-2015}'s de-Fregean GQ `λx. REL (μ x) m`. The measure and
+    `m`: [kennedy-2015]'s de-Fregean GQ `λx. REL (μ x) m`. The measure and
     magnitude are supplied compositionally; bare cardinals take `μ = id`,
     `α = ℕ`. -/
 def _root_.Numeral.Entry.denote {E α : Type*} [LinearOrder α]

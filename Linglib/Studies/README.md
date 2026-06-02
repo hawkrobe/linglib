@@ -20,7 +20,7 @@ The full set (current): `Beaver2001/`, `Charlow2021/`, `Heim1982/`,
 
 Phenomenon taxonomy is editorial — many papers contribute to multiple
 phenomena, and rename/merge/split decisions would force path churn. The
-`@cite{key}` reverse index in `blog/data/references.bib` already provides
+`[key]` reverse index in `blog/data/references.bib` already provides
 phenomenon-based discovery (and `grep -l "Phenomena.X" Studies/` recovers
 ad-hoc groupings). Flat eliminates the placement debate.
 

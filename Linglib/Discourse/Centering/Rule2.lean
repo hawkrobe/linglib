@@ -2,8 +2,8 @@ import Linglib.Discourse.Centering.Basic
 import Linglib.Discourse.Centering.Transition
 /-!
 # Centering Theory — Rule 2 (Transition Preference)
-@cite{grosz-joshi-weinstein-1995} @cite{brennan-friedman-pollard-1987}
-@cite{strube-1998} @cite{poesio-stevenson-eugenio-hitzeman-2004}
+[grosz-joshi-weinstein-1995] [brennan-friedman-pollard-1987]
+[strube-1998] [poesio-stevenson-eugenio-hitzeman-2004]
 Two Rule 2 variants in this file: GJW 95 sequence ranking (CON-CON >
 RET-RET > SHIFT-SHIFT) via `pairRank`, and Strube 1998's cheap/expensive
 distinction via `isCheap`. The BFP 87 4-way variant lives in
@@ -22,7 +22,7 @@ theorem rule2_retentions_preferred_over_shifts :
 theorem rule2_continuations_preferred_over_shifts :
     pairRank .continuation .continuation > pairRank .shifting .shifting := by decide
 /-! ### Rule 2 (Strube 1998): cheap vs expensive -/
-/-- A transition is *cheap* (@cite{strube-1998}) if `CB(U_n) = CP(U_{n-1})`:
+/-- A transition is *cheap* ([strube-1998]) if `CB(U_n) = CP(U_{n-1})`:
     the previous utterance's preferred center predicts the current CB. -/
 def isCheap [DecidableEq E] [CfRankerOf E R] {U : Type*} [Realizes U E]
     (prev : Utterance E R) (cur : U) (prevCp : Option E) : Prop :=

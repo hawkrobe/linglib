@@ -1,16 +1,16 @@
 /-!
 # Productivity rankings for English derivational suffixes
 
-@cite{odonnell-2015}
+[odonnell-2015]
 
 Theory-neutral observations about three English nominalising
-suffixes — *-ness*, *-ion*, *-ate* — that @cite{odonnell-2015}
+suffixes — *-ness*, *-ion*, *-ate* — that [odonnell-2015]
 Chapter 7 uses as the central empirical contrast for evaluating
 the five FG-family models. The three suffixes are chosen because
 intuitive judgments and earlier literature converge: *-ness*:Adj>N
 is highly productive (e.g. *pine-scentedness*); *-ion*:V>N is
 unproductive despite high token frequency (\**meetion* — see
-@cite{odonnell-2015} p. 261); *-ate*:BND>V is restricted to bound
+[odonnell-2015] p. 261); *-ate*:BND>V is restricted to bound
 stems and so cannot productively attach to novel verbs.
 
 The book's central Chapter 7 empirical claim (Fig 7.3, p. 262;
@@ -41,7 +41,7 @@ numbers belong in prose.
 - `observed` — the spectrum shape attributed to each suffix
 - `Suffix.productivityIndex` — pre-theoretic numeric ranking
 - `moreProductiveThan` — strict ordering on suffixes; theories must
-  reproduce this to match @cite{odonnell-2015} Fig 7.3
+  reproduce this to match [odonnell-2015] Fig 7.3
 
 These data are picked up downstream by Studies files that bridge
 them to predictions of the various probabilistic-grammar models.
@@ -51,14 +51,14 @@ them to predictions of the various probabilistic-grammar models.
 This file contains *no* theoretical interpretation. The terms
 "productive" and "unproductive" used in the docstring above are
 pre-theoretic descriptions consistent with the literature
-@cite{odonnell-2015} reviews; the file commits to nothing about
+[odonnell-2015] reviews; the file commits to nothing about
 *why* one suffix is productive and another is not. Theories that
 account for the observed pattern import this data and produce
 explanations.
 
 The "large number of rare events" classification in
 `SuffixSpectrum.isLNRE` is a distributional property attributed
-in @cite{odonnell-2015} to a broader literature on word-frequency
+in [odonnell-2015] to a broader literature on word-frequency
 distributions; it is not itself a theoretical commitment about the
 mechanism that gives rise to such distributions.
 -/
@@ -66,7 +66,7 @@ mechanism that gives rise to such distributions.
 namespace Phenomena.Morphology.Productivity
 
 /--
-The three English derivational suffixes that @cite{odonnell-2015}
+The three English derivational suffixes that [odonnell-2015]
 Chapter 7 uses as the central productivity contrast.
 
 - *-ness* (Adj>N): highly productive (`tall` → `tallness`,
@@ -114,7 +114,7 @@ formed by some derivational process.
 
 The `isLNRE` flag marks the "large number of rare events"
 classification of word-frequency distributions used in
-@cite{odonnell-2015} as a diagnostic for productive processes: a
+[odonnell-2015] as a diagnostic for productive processes: a
 distribution where most types are singletons or near-singletons and
 the tail extends far is the distributional fingerprint of an active
 word-formation process.
@@ -127,7 +127,7 @@ structure SuffixSpectrum where
   deriving DecidableEq, Repr
 
 /--
-The three spectra shown qualitatively in @cite{odonnell-2015}
+The three spectra shown qualitatively in [odonnell-2015]
 Figure 7.4 (p. 267) and discussed in Chapter 7.
 
 - *-ness*: low-frequency peak, LNRE shape, high type-token ratio
@@ -151,7 +151,7 @@ A pre-theoretic *productivity index* for the three suffixes —
 higher is more productive. Used as the basis for `moreProductiveThan`.
 
 Coding `ness > ion > ate` reproduces the ordering implied by
-@cite{odonnell-2015} Chapter 7 (Fig 7.3, Table 7.1, the §7.3.1.1
+[odonnell-2015] Chapter 7 (Fig 7.3, Table 7.1, the §7.3.1.1
 discussion). The `ion > ate` direction is a tie-break: both are
 unproductive on novel forms, but `ate` is structurally more
 restricted (bound stems only), so we rank it strictly lower.
@@ -164,10 +164,10 @@ def Suffix.productivityIndex : Suffix → Nat
 /--
 The pre-theoretic strict ordering on the three suffixes by
 productivity. Any theory of productivity that purports to account
-for the @cite{odonnell-2015} Chapter 7 data must reproduce this
+for the [odonnell-2015] Chapter 7 data must reproduce this
 ordering; failure to do so falsifies the theory against the data
 (this is exactly the discriminator deployed against DMPCFG / MAG /
-DOP1 / ENDOP in @cite{odonnell-2015} Fig 7.3, all of which place
+DOP1 / ENDOP in [odonnell-2015] Fig 7.3, all of which place
 *-ion* in their top 5).
 
 Defined as `>` on `Suffix.productivityIndex`, which gives

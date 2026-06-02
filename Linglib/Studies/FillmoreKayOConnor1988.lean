@@ -4,8 +4,8 @@ import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Typology.PolarityItem
 
 /-!
-# @cite{fillmore-kay-oconnor-1988}: *Let Alone* — Empirical Data
-@cite{fillmore-kay-oconnor-1988}
+# [fillmore-kay-oconnor-1988]: *Let Alone* — Empirical Data
+[fillmore-kay-oconnor-1988]
 
 Theory-neutral grammaticality judgments and contrasts from "Regularity and
 Idiomaticity in Grammatical Constructions: The Case of *Let Alone*"
@@ -305,7 +305,7 @@ end FillmoreKayOConnor1988
 
 /-!
 # Bridge: FKO1988 CxG Theory → Polarity & Constructions Phenomena
-@cite{fillmore-kay-oconnor-1988}
+[fillmore-kay-oconnor-1988]
 
 Connects the Construction Grammar analysis of *let alone* to:
 

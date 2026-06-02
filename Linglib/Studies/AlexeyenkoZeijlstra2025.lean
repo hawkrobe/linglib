@@ -8,10 +8,10 @@ import Linglib.Fragments.Italian.AdjAgreement
 
 /-!
 # Linearization of Complex Modifiers: (Dis)obeying the Head-Final Filter
-@cite{alexeyenko-zeijlstra-2025}
+[alexeyenko-zeijlstra-2025]
 
 The Head-Final Filter (HFF, Williams 1982) states that prenominal modifiers
-must not contain post-head material. @cite{alexeyenko-zeijlstra-2025} show
+must not contain post-head material. [alexeyenko-zeijlstra-2025] show
 that the HFF both **overgenerates** (Greek and Russian allow A–XP–N) and
 **undergenerates** (Basque and Chácobo display mirror-HFF effects).
 
@@ -28,7 +28,7 @@ The MAG is derived from two independent factors:
 1. **Feature composition** (§5.1): φ/κ-completeness of adjectives determines
    whether an attributivizer is needed for modification
 2. **Morphophonological status of Attr** (§5.2): affixal Attr must be adjacent
-   to its host (ICP, @cite{ackema-neeleman-2004}), while clitic/free-word
+   to its host (ICP, [ackema-neeleman-2004]), while clitic/free-word
    Attr imposes no adjacency
 
 We formalize the MAG as a decision procedure matching the paper's decision
@@ -41,7 +41,7 @@ connect to WALS F87A and Minimalist feature infrastructure.
 -- § 0: Input Correspondence Principle (Ackema-Neeleman 2004)
 -- ============================================================================
 
-/-! @cite{ackema-neeleman-2004}'s ICP — used by AZ 2025 §5.2 as the
+/-! [ackema-neeleman-2004]'s ICP — used by AZ 2025 §5.2 as the
 morphophonological factor of the MAG. Was previously in `Morphology/
 Core/ICP.lean`; relocated 0.230.455 (sole consumer is this study file).
 

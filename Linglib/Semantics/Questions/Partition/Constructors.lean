@@ -3,9 +3,9 @@ import Linglib.Semantics.Questions.Partition.Cells
 
 /-!
 # Partition-Question Constructors
-@cite{groenendijk-stokhof-1984}
+[groenendijk-stokhof-1984]
 
-@cite{groenendijk-stokhof-1984} partition semantics for questions.
+[groenendijk-stokhof-1984] partition semantics for questions.
 
 ## Core Idea
 

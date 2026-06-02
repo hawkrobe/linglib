@@ -1,9 +1,9 @@
 import Linglib.Studies.Yalcin2007
 
 /-!
-# @cite{mandelkern-2019}: Wittgenstein Sentences and Distributivity Failure
+# [mandelkern-2019]: Wittgenstein Sentences and Distributivity Failure
 
-@cite{mandelkern-2019}
+[mandelkern-2019]
 
 Mandelkern (2019) "Bounded Modality" (*Philosophical Review* 128(1):1-61)
 sharpens Yalcin's (2007) program in two ways:
@@ -14,7 +14,7 @@ sharpens Yalcin's (2007) program in two ways:
    focused on the `p ∧ ◇¬p` ordering. Mandelkern argues both orderings are
    equally infelicitous and have the same source — a claim contested by
    dynamic-semantic accounts (Veltman 1996; Groenendijk-Stokhof-Veltman 1996)
-   that make the two inequivalent. See also @cite{holliday-mandelkern-2024}
+   that make the two inequivalent. See also [holliday-mandelkern-2024]
    p. 4 for discussion.
 
 2. **Distributivity-failure argument**: Mandelkern argues that classical
@@ -53,7 +53,7 @@ structure DistribIntuition where
   deriving Repr
 
 /-- The Mandelkern (2019) distributivity-failure example, in the form
-    @cite{holliday-mandelkern-2024} (10a-b) restate it: a sentence about
+    [holliday-mandelkern-2024] (10a-b) restate it: a sentence about
     Sue being the winner that is felicitous as a "might/might-not + tautology"
     but not under classical distribution.
 

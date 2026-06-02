@@ -2,7 +2,7 @@ import Linglib.Core.Logic.Quantification.Defs
 
 /-!
 # Logicality and Invariance Conditions
-@cite{peters-westerstahl-2006} @cite{feferman-1999} @cite{van-benthem-1984}
+[peters-westerstahl-2006] [feferman-1999] [van-benthem-1984]
 
 Invariance conditions that characterize "logical" quantifiers, ordered
 by strength: HOM → INJ → ISOM → EXT.
@@ -10,9 +10,9 @@ by strength: HOM → INJ → ISOM → EXT.
 - **ISOM** (isomorphism invariance) = `QuantityInvariant` in `Defs.lean`
 - **EXT** (extension) = trivial for `GQ α` (universe-free representation)
 - **INJ** (injective-homomorphism invariance)
-- **HOM** (surjective-homomorphism invariance, @cite{feferman-1999})
+- **HOM** (surjective-homomorphism invariance, [feferman-1999])
 
-Key result: INJ ≡ ISOM + EXT (@cite{peters-westerstahl-2006} Ch 9 Prop 3).
+Key result: INJ ≡ ISOM + EXT ([peters-westerstahl-2006] Ch 9 Prop 3).
 Since EXT is trivial for `GQ α`, INJ ↔ ISOM in our setting.
 -/
 
@@ -25,7 +25,7 @@ variable {α β : Type*}
 /-! ### Invariance Hierarchy -/
 
 /-- Homomorphism invariance (HOM): Q is preserved under surjective maps.
-    @cite{feferman-1999}: HOM characterizes "absolutely logical" operations.
+    [feferman-1999]: HOM characterizes "absolutely logical" operations.
     Stronger than ISOM: surjections can collapse elements, so HOM-invariant
     quantifiers cannot distinguish elements that map to the same image.
 
@@ -37,7 +37,7 @@ def HomInvariant (q : GQ α) (q' : GQ β) : Prop :=
 
 /-- Injective homomorphism invariance (INJ): Q is preserved under injections.
     INJ sits between HOM and ISOM: HOM → INJ → ISOM.
-    @cite{peters-westerstahl-2006} Ch 9 §2. -/
+    [peters-westerstahl-2006] Ch 9 §2. -/
 def InjInvariant (q : GQ α) (q' : GQ β) : Prop :=
   ∀ (f : α → β), Function.Injective f →
     ∀ (A B : β → Prop), q (A ∘ f) (B ∘ f) ↔ q' A B
@@ -50,7 +50,7 @@ def InjInvariant (q : GQ α) (q' : GQ β) : Prop :=
     So `HomInvariant` with `f` gives `q (A ∘ f) (B ∘ f) ↔ q A B`,
     i.e., `q A' B' ↔ q A B`.
 
-    @cite{peters-westerstahl-2006} Ch 9. -/
+    [peters-westerstahl-2006] Ch 9. -/
 theorem hom_implies_isom_same_type (q : GQ α)
     (hHom : HomInvariant q q) :
     QuantityInvariant q := by
@@ -63,7 +63,7 @@ theorem hom_implies_isom_same_type (q : GQ α)
 
 /-! ### INJ ≡ ISOM + EXT -/
 
-/-- @cite{peters-westerstahl-2006} Ch 9 Prop 3 (one direction): ISOM → INJ
+/-- [peters-westerstahl-2006] Ch 9 Prop 3 (one direction): ISOM → INJ
     for same-type quantifiers on a finite domain.
 
     On a finite type, every injection is a bijection, so ISOM (bijection

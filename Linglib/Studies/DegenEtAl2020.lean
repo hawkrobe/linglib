@@ -7,9 +7,9 @@ import Linglib.Studies.EngelhardtEtAl2006
 import Linglib.Studies.WesterbeekKoolenMaes2015
 
 /-!
-# @cite{degen-etal-2020}
-@cite{frank-goodman-2012} @cite{dale-reiter-1995} @cite{engelhardt-etal-2006}
-@cite{grice-1975} @cite{kursat-degen-2021} @cite{westerbeek-koolen-maes-2015}
+# [degen-etal-2020]
+[frank-goodman-2012] [dale-reiter-1995] [engelhardt-etal-2006]
+[grice-1975] [kursat-degen-2021] [westerbeek-koolen-maes-2015]
 
 When Redundancy Is Useful: A Bayesian Approach to "Overinformative" Referring
 Expressions. *Psychological Review* 127(4), 591–621.
@@ -19,7 +19,7 @@ Expressions. *Psychological Review* 127(4), 591–621.
 Standard RSA with Boolean semantics (φ ∈ {0,1}) predicts no preference for
 overmodified referring expressions — if "small" alone identifies the target,
 adding "blue" is literally uninformative. But speakers routinely overmodify
-(~31% in @cite{engelhardt-etal-2006}), with color mentioned redundantly
+(~31% in [engelhardt-etal-2006]), with color mentioned redundantly
 more often than size.
 
 cs-RSA replaces Boolean denotations with **continuous semantics**: φ(u, o) ∈ [0,1]
@@ -74,9 +74,9 @@ numerical L0 values differ but the qualitative predictions are the same.
 2. cs-RSA: sufficient "small" > redundant "blue" (size principle)
 3. cs-RSA: full 7-utterance S1 ordering at target
 4. Boolean RSA: no overmodification preference (smallBlue tied with small)
-5. Connection: cost = 0 ↔ @cite{dale-reiter-1995} No-Brevity (strength 0)
+5. Connection: cost = 0 ↔ [dale-reiter-1995] No-Brevity (strength 0)
 6. Connection: noise discrimination ordering grounds the asymmetry
-7. Connection: explains @cite{engelhardt-etal-2006}'s ~31% over-description
+7. Connection: explains [engelhardt-etal-2006]'s ~31% over-description
 8. Exp 2: typicality predicts color modifier production (β = −4.17, p < .0001)
 9. Exp 3: informativeness hierarchy predicts nominal choice (β = 2.11, p < .0001)
 10. Exp 3: typicality predicts subordinate use (β = 4.82, p < .001)
@@ -180,7 +180,7 @@ theorem color_not_sufficient :
     | small blue   | sMM·cM (0.198)  | sMM·cMM (0.002) | sM·cM (0.792)    |
 
     The noise parameters are the §2 demonstration values from
-    @cite{degen-etal-2020}, imported from `RSA.Noise`. -/
+    [degen-etal-2020], imported from `RSA.Noise`. -/
 def φ : Utterance → World → ℚ
   -- single size adjectives
   | .big, .bigBlue => RSA.Noise.sizeMatch
@@ -226,7 +226,7 @@ theorem φ_grounded_in_noise :
 -- ============================================================================
 
 /-- Complex utterances decompose as products of per-feature channel values —
-    the concrete Product of Experts model from @cite{degen-etal-2020} §2.
+    the concrete Product of Experts model from [degen-etal-2020] §2.
     Each feature dimension contributes an independent noisy channel;
     the combined φ is their product. -/
 theorem φ_product_of_experts :
@@ -249,7 +249,7 @@ open RSA Real in
 
     The continuous meaning function is the key innovation: redundant modifiers
     carry non-zero information because noise channels are imperfect. The S1
-    scoring pattern is the same as @cite{frank-goodman-2012} — only the
+    scoring pattern is the same as [frank-goodman-2012] — only the
     meaning function changes from Boolean to continuous. -/
 noncomputable def cfg : RSAConfig Utterance World where
   meaning _ _ u w := ↑(φ u w)
@@ -325,7 +325,7 @@ theorem csrsa_overmod_preferred :
     "small" gives L0(target) = 2/3; "blue" gives L0(target) = 99/199 ≈ 0.497.
     Size uniquely identifies the target, while color does not.
 
-    This is the **size principle** (@cite{frank-goodman-2012}): utterances
+    This is the **size principle** ([frank-goodman-2012]): utterances
     with smaller extensions are more informative. "small" applies to 1 object
     (under Boolean denotation) while "blue" applies to 2. -/
 theorem csrsa_sufficient_beats_redundant :
@@ -387,7 +387,7 @@ theorem φ_bool_values (u : Utterance) (w : World) :
 open RSA Real in
 /-- Standard RSA with Boolean semantics (φ ∈ {0,1}).
     Same architecture as cs-RSA but with zero noise. This is the
-    @cite{frank-goodman-2012} model applied to the same scene. -/
+    [frank-goodman-2012] model applied to the same scene. -/
 noncomputable def boolCfg : RSAConfig Utterance World where
   meaning _ _ u w := ↑(φ_bool u w)
   meaning_nonneg _ _ u w := by cases u <;> cases w <;> simp [φ_bool]
@@ -419,7 +419,7 @@ theorem bool_no_overmod_preference :
 
     Both models agree that "small" (sufficient, extension size 1) beats
     "blue" (redundant, extension size 2) — that is just the size principle
-    from @cite{frank-goodman-2012}. But they DISAGREE on whether adding
+    from [frank-goodman-2012]. But they DISAGREE on whether adding
     "blue" to "small" helps:
 
     | Prediction              | cs-RSA  | Boolean |
@@ -530,7 +530,7 @@ open Pragmatics.GriceanMaxims
 
 /-- cs-RSA operates in the No-Brevity regime: cost = 0, so there is no
     penalty for longer utterances (empirically confirmed: fitted β_c ≈ 0).
-    This matches @cite{dale-reiter-1995}'s No Brevity interpretation
+    This matches [dale-reiter-1995]'s No Brevity interpretation
     (the weakest Q2, strength = 0).
 
     The insight: No-Brevity is not just computationally convenient — it
@@ -577,7 +577,7 @@ theorem noise_grounds_asymmetry :
 -- §15. Bridge: Explains Engelhardt et al. (2006)
 -- ============================================================================
 
-/-- cs-RSA explains the puzzle from @cite{engelhardt-etal-2006}: speakers
+/-- cs-RSA explains the puzzle from [engelhardt-etal-2006]: speakers
     over-describe ~31% of the time, listeners don't penalize it (Q2
     violations tolerated), yet listeners implicitly detect the redundancy
     (processing cost).
@@ -601,12 +601,12 @@ theorem explains_engelhardt :
 
 /-- The explanatory chain from Gricean maxims to empirical overmodification:
 
-    1. @cite{grice-1975}: Quantity decomposes into Q1 (informative) + Q2 (brief)
-    2. @cite{dale-reiter-1995}: No-Brevity (Q2 relaxed) matches human production;
+    1. [grice-1975]: Quantity decomposes into Q1 (informative) + Q2 (brief)
+    2. [dale-reiter-1995]: No-Brevity (Q2 relaxed) matches human production;
        IA uses a stipulated preference order (color before size)
-    3. @cite{engelhardt-etal-2006}: speakers over-describe ~31%, Q2 violations
+    3. [engelhardt-etal-2006]: speakers over-describe ~31%, Q2 violations
        tolerated explicitly but detected implicitly
-    4. @cite{frank-goodman-2012}: RSA formalizes Q1 via L0, Q2 via cost;
+    4. [frank-goodman-2012]: RSA formalizes Q1 via L0, Q2 via cost;
        Boolean semantics predicts no overmodification preference
     5. **This paper**: cs-RSA explains WHY No-Brevity is rational — noise
        makes redundant modifiers informative. Noise asymmetry (color > size)
@@ -706,7 +706,7 @@ theorem exp2_typicality_negative :
 -- §18b. Bridge: Westerbeek, Koolen & Maes (2015) Typicality Effect
 -- ============================================================================
 
-/-- @cite{westerbeek-koolen-maes-2015} independently established the
+/-- [westerbeek-koolen-maes-2015] independently established the
     same color typicality → color mention effect with a larger stimulus
     set (42 target objects spanning the full typicality continuum).
     Both findings are in the same direction: more typical color → less

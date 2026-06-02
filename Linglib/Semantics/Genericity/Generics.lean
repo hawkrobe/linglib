@@ -4,7 +4,7 @@ import Linglib.Semantics.Quantification.CovertQuantifier
 /-!
 # Traditional Generic Semantics (GEN Operator)
 
-@cite{tessler-goodman-2019} @cite{chierchia-1995} @cite{krifka-etal-1995}
+[tessler-goodman-2019] [chierchia-1995] [krifka-etal-1995]
 
 This module formalizes the traditional covert GEN operator posited for
 generic sentences like "Dogs bark", "Birds fly", etc.
@@ -34,9 +34,9 @@ The `normal` parameter does all the explanatory work but is (1) not observable
 circular (stipulated to give right results). See `CovertQuantifier.lean` for
 the shared structure and the threshold-based alternative that eliminates it.
 
-## Descriptive vs Definitional (@cite{krifka-2013})
+## Descriptive vs Definitional ([krifka-2013])
 
-@cite{krifka-2013} distinguishes **descriptive** generics ("Dogs bark") from
+[krifka-2013] distinguishes **descriptive** generics ("Dogs bark") from
 **definitional** generics ("A madrigal is polyphonic"). Only descriptive
 generics are eliminable via threshold semantics; definitional generics
 restrict the interpretation index, not the world index. See
@@ -44,7 +44,7 @@ restrict the interpretation index, not the world index. See
 
 ## Comparison with RSA Treatment
 
-@cite{tessler-goodman-2019} and @cite{chierchia-1995} eliminate GEN via threshold semantics:
+[tessler-goodman-2019] and [chierchia-1995] eliminate GEN via threshold semantics:
 - Generic is true iff prevalence exceeds threshold
 - Threshold is uncertain, inferred pragmatically
 - Prior over prevalence varies by property
@@ -158,8 +158,8 @@ theorem gen_formulations_equiv
 Prevalence: the proportion of restrictor-satisfying cases where scope holds.
 
 Polymorphic over the domain type — works for situation-based models
-(@cite{cohen-1999a}, @cite{tessler-goodman-2019}) and entity-based models
-(@cite{nickel-2009}) alike. An alias for `measure` with a domain-specific name.
+([cohen-1999a], [tessler-goodman-2019]) and entity-based models
+([nickel-2009]) alike. An alias for `measure` with a domain-specific name.
 -/
 def prevalence {D : Type}
     (domain : List D)
@@ -169,7 +169,7 @@ def prevalence {D : Type}
   measure domain restrictor scope
 
 /--
-Threshold-based generic (a la @cite{tessler-goodman-2019}).
+Threshold-based generic (a la [tessler-goodman-2019]).
 
 The generic is true iff prevalence exceeds threshold.
 This replaces the hidden "normalcy" with observable prevalence.
@@ -184,13 +184,13 @@ def thresholdGeneric {D : Type}
 
 /-!
 GEN is eliminable via threshold semantics — but only for **descriptive** generics
-(@cite{krifka-2013}). Definitional generics ("A madrigal is polyphonic") restrict
+([krifka-2013]). Definitional generics ("A madrigal is polyphonic") restrict
 the interpretation index, not the world index, and cannot be reduced to a
 prevalence threshold.
 
 The theorem `gen_eliminable` proving eliminability for the descriptive case is in
 `Comparisons/GenericSemantics.lean`, which connects traditional GEN to
-@cite{tessler-goodman-2019} RSA approach.
+[tessler-goodman-2019] RSA approach.
 -/
 
 -- Example: Dogs Bark
@@ -235,7 +235,7 @@ def normalDogSituation : NormalcyPredicate := λ s =>
 
 -- Homogeneity Presupposition
 
-/-- GEN's homogeneity presupposition (@cite{magri-2009} eq. (137)).
+/-- GEN's homogeneity presupposition ([magri-2009] eq. (137)).
 
     The covert generic operator GEN carries a presupposition that the
     nuclear scope either holds of ALL restrictor-satisfying elements or
@@ -247,10 +247,10 @@ def normalDogSituation : NormalcyPredicate := λ s =>
     This presupposition is detectable by negation: "It's false that John
     smokes" conveys "he never smokes," not "he doesn't always smoke."
     The stronger reading follows from the plain meaning + homogeneity
-    presupposition (@cite{von-fintel-1997}).
+    presupposition ([von-fintel-1997]).
 
     Overt *always* does NOT carry this presupposition. This asymmetry
-    is the key to @cite{magri-2009} §4.6: "#John is always tall" is odd
+    is the key to [magri-2009] §4.6: "#John is always tall" is odd
     because the blind strengthened presupposition (asserting that
     homogeneity fails) contradicts common knowledge. -/
 def genHomogeneityPresup

@@ -3,7 +3,7 @@ import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
 # Learning Models
-@cite{luce-1959} @cite{bush-mosteller-1955} @cite{rescorla-wagner-1972}
+[luce-1959] [bush-mosteller-1955] [rescorla-wagner-1972]
 
 Three families of learning model, built on the Luce choice rule
 (`RationalAction`): linear (ratio-scale) and probability-space learning,
@@ -16,7 +16,7 @@ stochastic gradient ascent, and Rescorla-Wagner associative learning.
 * `BetaModel`, `BetaModel.update` — probability-space learning,
   `Pₙ₊₁(a) = (1-β)·Pₙ(a) + β·δ(a, chosen)`.
 * `sgaUpdate`, `glaUpdate` — stochastic gradient ascent and the Gradual Learning
-  Algorithm (@cite{boersma-1998}).
+  Algorithm ([boersma-1998]).
 * `RescorlaWagner`, `RescorlaWagner.update`, `RescorlaWagner.iterateConst` —
   error-driven associative learning, `ΔV_c = α_c · β · (λ − ΣV)`.
 
@@ -43,10 +43,10 @@ The Luce linear model and the Rescorla-Wagner total strength obey the same affin
 recurrence `xₙ₊₁ = r·xₙ + (1-r)·c`; their closed forms and convergence proofs share
 one geometric-series argument.
 
-@cite{rescorla-wagner-1972}'s prediction-error term `(λ − ΣV)` makes learning
+[rescorla-wagner-1972]'s prediction-error term `(λ − ΣV)` makes learning
 competitive across cues, generating *blocking* (a fully predicted outcome teaches a
 co-present cue nothing) and *overshadowing* (a more salient cue captures more
-strength). @cite{ellis-2006} applies both to second-language acquisition:
+strength). [ellis-2006] applies both to second-language acquisition:
 high-salience cues (word order, lexical content) block or overshadow low-salience
 grammatical morphemes (tense inflection, plural marking) that encode the same
 meanings.
@@ -60,7 +60,7 @@ section LinearLearning
 
 /-! ### The linear learner (alpha model) -/
 
-/-- A linear learner for the Luce ratio-scale model (@cite{luce-1959}).
+/-- A linear learner for the Luce ratio-scale model ([luce-1959]).
 
 The learning rule is a positive linear operator on ratio-scale values:
 `v_{n+1}(a) = α · v_n(a) + (1-α) · r(a)` where `α ∈ (0,1)` is the retention
@@ -100,7 +100,7 @@ theorem LinearLearner.complementRate_lt_one (ll : LinearLearner A) :
 
 /-! ### Linear update and choice-axiom preservation -/
 
-/-- One step of linear learning (@cite{luce-1959}, the Alpha Model):
+/-- One step of linear learning ([luce-1959], the Alpha Model):
 `v_{n+1}(s, a) = α · v_n(s, a) + (1 - α) · r(a)`.
 
 The result is a new `RationalAction`, so the Luce choice rule (IIA) holds at
@@ -115,12 +115,12 @@ def LinearLearner.update (ll : LinearLearner A) (ra : RationalAction S A) :
 
 /-- Updated scores are non-negative — a direct consequence of the positivity of α,
 (1-α), the original scores, and the reinforcement values. This is what makes the
-linear learning model a *positive* linear operator (@cite{luce-1959}). -/
+linear learning model a *positive* linear operator ([luce-1959]). -/
 theorem linear_update_nonneg (ll : LinearLearner A) (ra : RationalAction S A)
     (s : S) (a : A) : 0 ≤ (ll.update ra).score s a :=
   (ll.update ra).score_nonneg s a
 
-/-- **Axiom 1 preservation** (@cite{luce-1959}):
+/-- **Axiom 1 preservation** ([luce-1959]):
 
 If the Luce choice rule P(a) = v(a)/Σv(b) holds at trial n, then after a
 positive linear update v' = α·v + (1-α)·r, the updated rule
@@ -136,7 +136,7 @@ theorem linear_learning_preserves_axiom1 (ll : LinearLearner A) (ra : RationalAc
 
 /-! ### The beta model -/
 
-/-- The β-model (@cite{luce-1959}; @cite{bush-mosteller-1955}):
+/-- The β-model ([luce-1959]; [bush-mosteller-1955]):
 
 An alternative learning model operating directly on probabilities rather than
 ratio-scale values:
@@ -153,7 +153,7 @@ structure BetaModel (A : Type*) where
   /-- β is strictly less than 1. -/
   beta_lt_one : beta < 1
 
-/-- One step of β-model update (@cite{luce-1959}):
+/-- One step of β-model update ([luce-1959]):
 `P'(a) = (1-β) · P(a) + β · δ(a, chosen)`.
 
 Takes a probability function and the chosen action, returns updated probabilities. -/
@@ -186,7 +186,7 @@ theorem BetaModel.update_sum_one [DecidableEq A] (bm : BetaModel A) (P : A → �
 
 /-! ### Iterated linear learning -/
 
-/-- `n`-step iteration of linear learning (@cite{luce-1959}): apply the linear
+/-- `n`-step iteration of linear learning ([luce-1959]): apply the linear
 update rule `n` times starting from an initial `RationalAction`. -/
 def LinearLearner.iterate (ll : LinearLearner A) (ra : RationalAction S A) :
     ℕ → RationalAction S A
@@ -199,7 +199,7 @@ theorem LinearLearner.iterate_nonneg (ll : LinearLearner A) (ra : RationalAction
     0 ≤ (ll.iterate ra n).score s a :=
   (ll.iterate ra n).score_nonneg s a
 
-/-- Closed form for iterated linear learning (@cite{luce-1959}): after `n`
+/-- Closed form for iterated linear learning ([luce-1959]): after `n`
 iterations with retention rate `α` and reinforcement `r`,
 `vₙ(s, a) = αⁿ · v₀(s, a) + (1 - αⁿ) · r(a)`, the geometric-series solution to
 the linear recurrence. -/
@@ -217,7 +217,7 @@ theorem LinearLearner.iterate_closed_form (ll : LinearLearner A) (ra : RationalA
 
 /-! ### Asymptotic convergence -/
 
-/-- **Convergence of linear learning** (@cite{luce-1959}): under constant
+/-- **Convergence of linear learning** ([luce-1959]): under constant
 reinforcement, the ratio-scale values converge to the reinforcement values,
 `vₙ(s, a) → r(a)` as `n → ∞`. -/
 theorem linear_convergence (ll : LinearLearner A) (ra : RationalAction S A)
@@ -241,7 +241,7 @@ theorem linear_convergence (ll : LinearLearner A) (ra : RationalAction S A)
 
 /-- A record of a learning trial: what was available, what was chosen, what
 was the reinforcement. Used for analyzing sequences of choices over trials
-(@cite{luce-1959}). -/
+([luce-1959]). -/
 structure TrialRecord (A : Type*) where
   /-- The action chosen on this trial. -/
   chosen : A
@@ -250,7 +250,7 @@ structure TrialRecord (A : Type*) where
 
 /-- An expected choice sequence: the initial agent, a learner, and a history
 of trials. This structure supports analyzing how choice probabilities evolve
-over a sequence of reinforced trials (@cite{luce-1959}). -/
+over a sequence of reinforced trials ([luce-1959]). -/
 structure ExpectedChoiceSequence (S A : Type*) [Fintype A] where
   /-- The learning model governing updates. -/
   learner : LinearLearner A
@@ -293,7 +293,7 @@ single-sample estimates. -/
 def sgaUpdate (r_j η observed_j expected_j : ℝ) : ℝ :=
   r_j + η * (observed_j - expected_j)
 
-/-- The Gradual Learning Algorithm (@cite{boersma-1998}) update for a single
+/-- The Gradual Learning Algorithm ([boersma-1998]) update for a single
 weight: adjust by the signed difference between the observed violation count
 and the violation count of a hypothesis sampled from the current grammar. -/
 def glaUpdate (r_j η : ℝ) (c_j_observed c_j_hypothesis : ℕ) : ℝ :=
@@ -321,7 +321,7 @@ theorem sga_uses_correct_gradient {ι : Type*} [Fintype ι] [Nonempty ι]
 
 section RescorlaWagner
 
-/-- The Rescorla-Wagner learning model (@cite{rescorla-wagner-1972}): on each
+/-- The Rescorla-Wagner learning model ([rescorla-wagner-1972]): on each
 trial every present cue has its associative strength updated by
 
     ΔV_c = α_c · β · (λ − ΣV)
@@ -359,7 +359,7 @@ def RescorlaWagner.predictionError (rw : RescorlaWagner C)
     (present : Finset C) (V : C → ℝ) : ℝ :=
   rw.maxCond - ∑ c ∈ present, V c
 
-/-- One trial of Rescorla-Wagner learning (@cite{rescorla-wagner-1972}).
+/-- One trial of Rescorla-Wagner learning ([rescorla-wagner-1972]).
 
 For each cue c:
 - If c is present: `V'(c) = V(c) + α_c · β · (λ − ΣV)`
@@ -376,7 +376,7 @@ theorem RescorlaWagner.update_absent (rw : RescorlaWagner C)
     rw.update present V c = V c := by
   simp only [update, if_neg hc]
 
-/-- **Blocking theorem** (@cite{rescorla-wagner-1972}; @cite{ellis-2006}):
+/-- **Blocking theorem** ([rescorla-wagner-1972]; [ellis-2006]):
 when cue A already fully predicts the outcome (`V(A) = λ`) and is the only cue
 with nonzero strength among those present, adding a novel cue B to the compound
 produces *zero learning* for B: `V'(B) = V(B)`. -/
@@ -479,7 +479,7 @@ theorem RescorlaWagner.totalStrength_convergence (rw : RescorlaWagner C)
   simp only [zero_mul, sub_zero, one_mul, zero_add] at h3
   exact h3
 
-/-- **Proportional partition** (@cite{rescorla-wagner-1972}): when all cues start
+/-- **Proportional partition** ([rescorla-wagner-1972]): when all cues start
 with zero associative strength and the same cue set is presented on every trial,
 each cue's strength at every step is proportional to its salience — there exists
 `Kₙ` with `Vₙ(c) = α_c · Kₙ` for every present cue `c`. At convergence each cue's
@@ -503,7 +503,7 @@ theorem RescorlaWagner.proportional_partition (rw : RescorlaWagner C)
     rw [hK c hc, hsum]
     ring
 
-/-- **Overshadowing** (@cite{rescorla-wagner-1972}; @cite{ellis-2006}): when two
+/-- **Overshadowing** ([rescorla-wagner-1972]; [ellis-2006]): when two
 cues are both present on every trial, the more salient cue captures more
 associative strength at every step (and hence at equilibrium). Immediate from
 `proportional_partition`: `Vₙ(c) = α_c · K`, so `Vₙ(A) = α_A · K > α_B · K = Vₙ(B)`
@@ -526,7 +526,7 @@ theorem RescorlaWagner.overshadowing (rw : RescorlaWagner C)
     linarith
   exact mul_lt_mul_of_pos_right h_salience hK_pos
 
-/-- **ΔP–R-W correspondence** (@cite{ellis-2006}; @cite{cheng-holyoak-1995}):
+/-- **ΔP–R-W correspondence** ([ellis-2006]; [cheng-holyoak-1995]):
 the blocked direction of a blocking experiment. If one cue already captures all
 the associative strength and the novel cue starts at zero, the novel cue remains
 at zero after compound trials — matching `ΔP = 0` for the blocked cue. -/

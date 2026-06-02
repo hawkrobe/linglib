@@ -2,7 +2,7 @@ import Linglib.Morphology.MorphProfile
 
 /-!
 # Spanish Morphological Profile
-@cite{wals-2013} @cite{bickel-nichols-2001}
+[wals-2013] [bickel-nichols-2001]
 
 WALS-derived profile for Spanish (ISO `spa`). B&N 2001 places Spanish in
 the "fusional" cell (concatenative + flexive + cumulative).

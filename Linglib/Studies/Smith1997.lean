@@ -8,7 +8,7 @@ import Linglib.Fragments.Mandarin.TenseAspect
 
 /-!
 # The Parameter of Aspect (2nd ed.)
-@cite{smith-1997}
+[smith-1997]
 
 Formalizes Smith's two-component theory of aspect:
 aspectual meaning = situation type × viewpoint aspect, independently combined.
@@ -195,7 +195,7 @@ theorem neutral_intermediate :
     ¬ isClosed .neutral := ⟨rfl, rfl, not_false⟩
 
 /-- Whether the viewpoint can focus preliminary stages of an event.
-    @cite{smith-1997} §4.2.2 (p. 75): imperfective viewpoints may focus
+    [smith-1997] §4.2.2 (p. 75): imperfective viewpoints may focus
     preliminary stages of achievements ("The team was reaching the top").
     §4.2.3 (p. 80): neutral viewpoints do NOT focus preliminary stages —
     this is a key discriminator between neutral and imperfective.
@@ -280,7 +280,7 @@ theorem independence_no_duplicates :
     cross-linguistic variation within the universal two-component theory. -/
 
 /-- How the perfective viewpoint interacts with statives.
-    @cite{smith-1997} pp. 69-70 identifies three cross-linguistic patterns:
+    [smith-1997] pp. 69-70 identifies three cross-linguistic patterns:
 
     - **closed**: perfective covers statives with a closed interpretation
       (French: "Marie a vécu à Paris" — asserts the situation is over)
@@ -309,7 +309,7 @@ structure AspectualSystem where
 
 /-- English: perfective + imperfective (progressive); no neutral;
     perfective with statives allows open or closed readings
-    (@cite{smith-1997} p. 70: "Jennifer knew Turkish" — she may still
+    ([smith-1997] p. 70: "Jennifer knew Turkish" — she may still
     know it or may have forgotten). -/
 def english : AspectualSystem :=
   { language := "English"
@@ -319,7 +319,7 @@ def english : AspectualSystem :=
 
 /-- French: perfective + imperfective + neutral (Futur);
     perfective covers statives with closed reading
-    (@cite{smith-1997} p. 70: "Marie a vécu à Paris" — asserts
+    ([smith-1997] p. 70: "Marie a vécu à Paris" — asserts
     the situation is over; # "Marie a vécu à Paris et elle y vit encore"). -/
 def french : AspectualSystem :=
   { language := "French"
@@ -424,7 +424,7 @@ theorem no_paradox_perfective (c : VendlerClass) :
 
 /-- Whether the perfective conveys *completion* (reaching the natural
     endpoint) or merely *termination* (stopping).
-    @cite{smith-1997} pp. 67-68: "The Activity sentence conveys
+    [smith-1997] pp. 67-68: "The Activity sentence conveys
     termination (Lily stopped swimming) whereas the Accomplishment
     conveys completion (Mrs Ramsey finished the letter)."
 
@@ -516,7 +516,7 @@ theorem semelfactive_coercion_three_ways :
     Diagnostics.forXPrediction .semelfactive = .coerced := ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § Bridge to @cite{krifka-1989}'s mereological telicity
+-- § Bridge to [krifka-1989]'s mereological telicity
 -- ════════════════════════════════════════════════════
 
 /-- Smith's `hasNaturalEndpoint` is extensionally equivalent to K89's

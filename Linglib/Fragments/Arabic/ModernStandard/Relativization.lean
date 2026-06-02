@@ -3,10 +3,10 @@ import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Modern Standard Arabic Relativization Fragment
-@cite{keenan-comrie-1977} @cite{ryding-2005}
+[keenan-comrie-1977] [ryding-2005]
 
-Two definite-headed RC markers, anchored on @cite{ryding-2005} ch. 14
-(§14.1–14.4) and cross-checked against @cite{keenan-comrie-1977} Table 1:
+Two definite-headed RC markers, anchored on [ryding-2005] ch. 14
+(§14.1–14.4) and cross-checked against [keenan-comrie-1977] Table 1:
 
 - *alladhī/allatii* + no overt subject (Ryding §14.2; K&C -case strategy):
   the relative pronoun agrees with a definite head in gender, number, and
@@ -21,7 +21,7 @@ headed pair plus indefinite-headed pair from §14.3, §14.4.2 — Ø relative
 pronoun, with resumption when relativizing a non-subject). The free
 relatives *maa* / *man* (Ryding §14.5) are a separate construction
 (no head NP) and are not included. Paper-specific subsets (e.g., the
-two-marker subset @cite{keenan-comrie-1977} Table 1 records) live in
+two-marker subset [keenan-comrie-1977] Table 1 records) live in
 the consuming Studies files, not in this Fragment.
 
 ## Variety
@@ -39,10 +39,10 @@ open RelativeClause
 
 /-- Relative pronoun *alladhī* (masc.sg.) / *allatii* (fem.sg.) — head of a
     nine-form paradigm marked for number/gender (and, in the dual, case);
-    see @cite{ryding-2005} §14.1 Table. Used with definite antecedents
+    see [ryding-2005] §14.1 Table. Used with definite antecedents
     (Ryding §14.2). The relativized subject position carries no overt
     NP — verb agreement on the RC's verb encodes the subject. Per
-    @cite{keenan-comrie-1977} this is the language's -case strategy and
+    [keenan-comrie-1977] this is the language's -case strategy and
     is restricted to subject relativization.
 
     E.g., "hiya llatii ʾarsalat-i l-duktuur-a"
@@ -56,13 +56,13 @@ def relAlladhi : Marker :=
   , headDefiniteness := some .definite
   , notes := "Relative pronoun agrees with definite head in number/gender; "
           ++ "no overt subject in RC (verb agreement only); "
-          ++ "@cite{ryding-2005} §14.2" }
+          ++ "[ryding-2005] §14.2" }
 
 /-- Relative pronoun *alladhī/allatii* with a resumptive personal pronoun
     (the *ʿaaʾid*) in the relativized position. Used with definite
     antecedents when the relativized position is the object of a verb or
-    preposition (@cite{ryding-2005} §14.4 and §14.4.1). The resumptive
-    pronoun bears case, instantiating @cite{keenan-comrie-1977}'s +case
+    preposition ([ryding-2005] §14.4 and §14.4.1). The resumptive
+    pronoun bears case, instantiating [keenan-comrie-1977]'s +case
     strategy. K&C Table 1 records coverage through the full DO–OCOMP
     range.
 
@@ -76,9 +76,9 @@ def relResumptive : Marker :=
   , positions := [.directObject, .indirectObject, .oblique, .genitive, .objComparison]
   , headDefiniteness := some .definite
   , notes := "Resumptive pronoun (ʿaaʾid) in relativized position bears case; "
-          ++ "@cite{ryding-2005} §14.4.1; K&C Table 1 DO–OCOMP" }
+          ++ "[ryding-2005] §14.4.1; K&C Table 1 DO–OCOMP" }
 
-/-- Indefinite-headed RC, subject relativization. Per @cite{ryding-2005}
+/-- Indefinite-headed RC, subject relativization. Per [ryding-2005]
     §14.3, "a relative clause may refer to an indefinite noun or noun
     phrase in the main clause, in which case the relative pronoun is
     omitted." The relativized subject position is unfilled; the RC's verb
@@ -95,9 +95,9 @@ def relAsyndeticGap : Marker :=
   , headDefiniteness := some .indefinite
   , notes := "Indefinite-headed RC; no overt relative pronoun; "
           ++ "subject encoded by RC-verb agreement; "
-          ++ "@cite{ryding-2005} §14.3" }
+          ++ "[ryding-2005] §14.3" }
 
-/-- Indefinite-headed RC, non-subject relativization. Per @cite{ryding-2005}
+/-- Indefinite-headed RC, non-subject relativization. Per [ryding-2005]
     §14.4.2, "indefinite relative clauses do not include relative pronouns,
     but they must include a resumptive pronoun if the clause refers back to
     a noun or noun phrase that is the object of a preposition or a verb."
@@ -105,7 +105,7 @@ def relAsyndeticGap : Marker :=
 
     Ryding's examples cover direct objects directly. The §14.4.2 "object
     of a preposition or a verb" formulation extends to oblique positions
-    by the same principle; @cite{keenan-comrie-1977} Table 1 covers the
+    by the same principle; [keenan-comrie-1977] Table 1 covers the
     full DO–OCOMP range with the resumptive strategy in both definite and
     indefinite contexts, and Ryding gives no contrastive restriction. The
     `positions` list reflects this combined Ryding+K&C reading.
@@ -122,10 +122,10 @@ def relAsyndeticResumptive : Marker :=
   , headDefiniteness := some .indefinite
   , notes := "Indefinite-headed RC; no overt relative pronoun; "
           ++ "resumptive pronoun bears case; "
-          ++ "@cite{ryding-2005} §14.4.2 (DO directly attested; "
+          ++ "[ryding-2005] §14.4.2 (DO directly attested; "
           ++ "non-DO positions per K&C Table 1 + parsimony with definite case)" }
 
-/-- The full MSA RC marker inventory per @cite{ryding-2005} ch. 14:
+/-- The full MSA RC marker inventory per [ryding-2005] ch. 14:
     definite-headed pair (`relAlladhi`, `relResumptive`) plus
     indefinite-headed pair (`relAsyndeticGap`, `relAsyndeticResumptive`).
     The free relatives *maa* / *man* of §14.5 are a separate construction
@@ -154,6 +154,6 @@ def relativization : RelativeClause.Profile :=
   , lowestRelativizable := .oblique
   , notes := "Subject: no overt element in relativized position. "
           ++ "Non-subject (definite head): resumptive pronoun. "
-          ++ "@cite{ryding-2005} §14" }
+          ++ "[ryding-2005] §14" }
 
 end Arabic.ModernStandard

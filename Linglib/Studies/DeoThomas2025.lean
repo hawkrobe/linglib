@@ -1,7 +1,7 @@
 /-
 # Domain Widening: *just* as addressing the widest answerable question
 
-Formalizes @cite{deo-thomas-2025}: *just* signals that the speaker addresses the
+Formalizes [deo-thomas-2025]: *just* signals that the speaker addresses the
 **widest answerable construal** of an underspecified question (UQ). The 9 flavors
 arise from how the widest construal is determined by Quality and Relevance.
 
@@ -88,7 +88,7 @@ def answerable (ctx : DiscourseContext W) (q : Question W) : Bool :=
 -- C. Widest Answerable Question
 -- ============================================================================
 
-/-- OPT_c(Q) (@cite{deo-thomas-2025} (35)): the optimal question in a set
+/-- OPT_c(Q) ([deo-thomas-2025] (35)): the optimal question in a set
     of construals.
 
     `q` is the widest answerable construal: it is answerable, it is in the
@@ -207,7 +207,7 @@ theorem all_flavors_attested :
   refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- E. WXDY bridge (@cite{kay-fillmore-1999})
+-- E. WXDY bridge ([kay-fillmore-1999])
 -- ============================================================================
 
 /-- WXDY's incredulity arises from a normative expectation violation:
@@ -233,7 +233,7 @@ theorem wxdy_incongruity_is_counterexpectational :
 The paper's central formal insight: finer granularity produces wider questions.
 At the partition level, "finer" is `QUD.refines` (every fine cell ⊆ some coarse
 cell), equivalently `q.toSetoid ≤ q'.toSetoid` in mathlib's `Setoid` lattice.
-At the issue level, "wider" is `Question.widerThan` (@cite{deo-thomas-2025}
+At the issue level, "wider" is `Question.widerThan` ([deo-thomas-2025]
 (32): same `info`, no coarse answer ⊊ fine answer, some fine answer ⊊ coarse
 answer). The bridge: `toIssue := Question.fromSetoid ∘ QUD.toSetoid`
 preserves this relationship.
@@ -252,7 +252,7 @@ This replaces a 100-line Bool/List proof that managed indices into
     arises from a `QUD` (mention-some, intermediate-exhaustive, and
     conditional-question alternatives are non-disjoint or non-exhaustive
     and so are not representable as the cells of any equivalence
-    relation — @cite{theiler-etal-2018}). -/
+    relation — [theiler-etal-2018]). -/
 def toIssue {W : Type*} (q : QUD W) : Question W :=
   Question.fromSetoid q.toSetoid
 
@@ -358,7 +358,7 @@ granularity — is the finest one the speaker can answer. -/
 
 open Semantics.Degree.Granularity (granQUD finer_granularity_refines)
 
-/-- The complete granularity–width chain (@cite{deo-thomas-2025} §3.1.2–3.2).
+/-- The complete granularity–width chain ([deo-thomas-2025] §3.1.2–3.2).
 
     If ε₁ divides ε₂ (finer grain) and there exist worlds that share a
     coarse cell but not a fine cell, then the fine-grained question is
@@ -380,7 +380,7 @@ theorem finer_granularity_implies_wider (n ε₁ ε₂ : Nat)
 -- H. Concrete Verification: Figure 1
 -- ============================================================================
 
-/-- The 8-point age scale from Figure 1 (@cite{deo-thomas-2025}). -/
+/-- The 8-point age scale from Figure 1 ([deo-thomas-2025]). -/
 def fig1Worlds : List (Fin 8) := [0, 1, 2, 3, 4, 5, 6, 7]
 
 /-- Coarse granularity: 2 cells of 4 (e.g., "younger half" vs "older half").

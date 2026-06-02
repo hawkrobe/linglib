@@ -1,8 +1,8 @@
 import Linglib.Core.UD
 
 /-!
-# Nungon Medial Verb Morphology @cite{sarvasy-2017}
-@cite{sarvasy-2015} @cite{sarvasy-aikhenvald-2025}
+# Nungon Medial Verb Morphology [sarvasy-2017]
+[sarvasy-2015] [sarvasy-aikhenvald-2025]
 
 Medial verb morphology in Nungon (Trans-New Guinea, Finisterre-Huon family;
 Morobe Province, Papua New Guinea). Nungon has the most extensively described
@@ -27,7 +27,7 @@ SS forms are invariant (no person/number indexing). DS forms obligatorily
 index the person and number of the medial clause's subject argument — the
 participant whose identity *differs* from the following clause's subject.
 
-## DS person/number paradigm (@cite{sarvasy-aikhenvald-2025}: Table 2)
+## DS person/number paradigm ([sarvasy-aikhenvald-2025]: Table 2)
 
 | Person | Singular | Dual | Plural |
 |--------|----------|------|--------|
@@ -65,7 +65,7 @@ def SRCategory.isSequential : SRCategory → Bool
   | .ssSIM | .dsSIM => false
 
 -- ============================================================================
--- § DS person/number paradigm (@cite{sarvasy-aikhenvald-2025}: Table 2)
+-- § DS person/number paradigm ([sarvasy-aikhenvald-2025]: Table 2)
 -- ============================================================================
 
 /-- Person/number combination for DS medial verb agreement. -/

@@ -3,7 +3,7 @@ import Linglib.Features.CoreferenceStatus
 
 /-!
 # Binding principles over a command relation
-@cite{barker-pullum-1990} @cite{chomsky-1981} @cite{pollard-sag-1994}
+[barker-pullum-1990] [chomsky-1981] [pollard-sag-1994]
 
 A framework-neutral binding engine. The binding principles (A/B/C) and the
 coreference-status computation are stated **once**, parameterized by a
@@ -15,7 +15,7 @@ principles unchanged:
 * HPSG — ARG-ST outranking (obliqueness)
 * Dependency grammar — d-command (dependency subgraph)
 
-@cite{barker-pullum-1990} give the general notion of which c-command,
+[barker-pullum-1990] give the general notion of which c-command,
 m-command, and the rest are instances; the linglib frameworks' command notions
 are further instances. Stating the principles over the abstract relation makes
 the cross-framework convergence a theorem rather than a coincidence: any two
@@ -56,7 +56,7 @@ inductive Pos where
 /-- A simple (mono-clausal, transitive-or-intransitive) clause: the
     representation binding principles range over. `semanticPl` records whether
     the subject *denotes* a plurality, which can diverge from morphosyntactic
-    number (@cite{rakosi-2019}); it defaults to the syntactic number. -/
+    number ([rakosi-2019]); it defaults to the syntactic number. -/
 structure SimpleClause where
   subject : Word
   verb : Word
@@ -88,7 +88,7 @@ def parseSimpleClause (ws : List Word) : Option SimpleClause :=
     else none
   | _ => none
 
-/-- A **command relation** (@cite{barker-pullum-1990}): the structural-prominence
+/-- A **command relation** ([barker-pullum-1990]): the structural-prominence
     order binding principles are defined over, together with the locality
     (same-binding-domain) restriction. The frameworks' c-command, ARG-ST
     outranking, and d-command are instances. This is the *only* component a
@@ -138,7 +138,7 @@ instance (c : SimpleClause) : Decidable (reflexiveLicensed classify c) := by
 
 /-- **Principle A** for reciprocals: licensed iff commanded by the subject in
     the local domain and the subject denotes a *plurality* (an LF condition —
-    semantic, not morphosyntactic, plurality; @cite{rakosi-2019}). -/
+    semantic, not morphosyntactic, plurality; [rakosi-2019]). -/
 def reciprocalLicensed (c : SimpleClause) : Prop :=
   match c.object with
   | none => False

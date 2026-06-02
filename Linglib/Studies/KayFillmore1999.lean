@@ -10,8 +10,8 @@ import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.TenseAspect.Diagnostics
 
 /-!
-# @cite{kay-fillmore-1999}: *What's X Doing Y?* — Empirical Data
-@cite{kay-fillmore-1999}
+# [kay-fillmore-1999]: *What's X Doing Y?* — Empirical Data
+[kay-fillmore-1999]
 
 Theory-neutral judgment data from "Grammatical Constructions and Linguistic
 Generalizations: The *What's X doing Y?* Construction" (Language 75(1):1–33).
@@ -264,8 +264,8 @@ end KayFillmore1999
 /-! ## Bridge content (merged from CxG_KayFillmore1999Bridge.lean) -/
 
 /-!
-# @cite{kay-fillmore-1999}: *What's X Doing Y?* Construction
-@cite{kay-fillmore-1999} @cite{dayal-2025} @cite{potts-2005}
+# [kay-fillmore-1999]: *What's X Doing Y?* Construction
+[kay-fillmore-1999] [dayal-2025] [potts-2005]
 
 Formalization of "Grammatical Constructions and Linguistic Generalizations:
 The *What's X doing Y?* Construction" (Language 75(1):1–33).
@@ -428,7 +428,7 @@ open Pragmatics.Expressives
 - At-issue: the embedded proposition (there's a fly in my soup)
 - CI: speaker finds this unexpected/inappropriate
 
-This mirrors @cite{potts-2005}'s analysis of expressives: the expressive
+This mirrors [potts-2005]'s analysis of expressives: the expressive
 content is independent of at-issue truth. -/
 def wxdyTwoDim {W : Type*} (embeddedProp unexpectedness : W → Prop) : TwoDimProp W :=
   TwoDimProp.withCI embeddedProp unexpectedness

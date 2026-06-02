@@ -19,9 +19,9 @@ open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
     noun's conventional behavior in English (does it pluralize? does
     it take "a"?). This is theory-neutral data:
 
-    - **@cite{chierchia-1998}** treats `countable` as a lexical feature
+    - **[chierchia-1998]** treats `countable` as a lexical feature
       on nouns, directly encoding the mass/count distinction.
-    - **@cite{borer-2005}** claims `countable` is *derivable from*
+    - **[borer-2005]** claims `countable` is *derivable from*
       functional structure (presence of Q in the EP spine) and
       should not be a primitive. See `same_root_mass_and_count`.
 
@@ -98,7 +98,7 @@ def withDet (n : NounEntry) (det : String) (num : NPNumber := .sg) : NP :=
   { noun := n, number := num, isBare := false, determiner := some det }
 
 
-/-- English is a [+arg, +pred] language (@cite{chierchia-1998}):
+/-- English is a [+arg, +pred] language ([chierchia-1998]):
     nouns can denote both arguments (kinds) and predicates (properties).
     Bare plurals can be kind-denoting without overt D. -/
 def englishMapping : NominalMapping := .argAndPred
@@ -150,7 +150,7 @@ def beer : NounEntry := { formSg := "beer", formPl := none, countable := .mass }
 def milk : NounEntry := { formSg := "milk", formPl := none, countable := .mass }
 def tea : NounEntry := { formSg := "tea", formPl := none, countable := .mass }
 
-/-- Mixed drink nouns: count despite denoting liquids (@cite{moon-2026}).
+/-- Mixed drink nouns: count despite denoting liquids ([moon-2026]).
     Countability derives from a MEASURED PART (shot of spirit/espresso),
     not from Universal Packager coercion. -/
 def martini : NounEntry := { formSg := "martini", formPl := "martinis" }

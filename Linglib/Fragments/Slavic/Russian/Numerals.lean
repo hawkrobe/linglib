@@ -2,7 +2,7 @@ import Linglib.Typology.Numeral.WALS
 
 /-!
 # Russian numeral profile (WALS Chs 53–56, 131)
-@cite{wals-2013}
+[wals-2013]
 -/
 
 namespace Russian

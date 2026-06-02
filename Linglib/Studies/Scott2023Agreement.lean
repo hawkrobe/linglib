@@ -7,7 +7,7 @@ import Linglib.Morphology.DM.Impoverishment
 /-!
 # Minimalism Agree-Conditioned Pronoun Spellout in Mam
 
-@cite{scott-2023} @cite{chomsky-2000} @cite{deal-2024} @cite{elkins-torrence-brown-2026} @cite{preminger-2014}
+[scott-2023] [chomsky-2000] [deal-2024] [elkins-torrence-brown-2026] [preminger-2014]
 
 Connects the Agree operation (feature valuation) and probe restriction to the empirical distribution of overt vs.
 reduced pronouns in SJA Mam.
@@ -28,13 +28,13 @@ In a Mam transitive clause with a 3SG agent and 3SG patient:
    filled by the Elsewhere form "tz'=" (default 2/3SG).
 
 3. **Object is case-licensed by Voice**: The patient receives structural
-   ACC from Voice (low-abs syntax; @cite{scott-2023}, §3.4). Infl's probe
+   ACC from Voice (low-abs syntax; [scott-2023], §3.4). Infl's probe
    never reaches the object because it was satisfied by Voice_TR.
 
 4. **Pronoun realization follows**: Agreed-with arguments (agent, S)
    undergo pronoun reduction — agreement morphology redundantly
    expresses their φ-features, triggering deletion of the pronominal
-   base (@cite{scott-2023}, ch. 4). The patient, lacking φ-agreement, must
+   base ([scott-2023], ch. 4). The patient, lacking φ-agreement, must
    be a full overt pronoun.
 
 ## Two Paths to Set B "tz'="
@@ -74,14 +74,14 @@ def mamToPhiFeatures (c : Agreement.Cell) : List PhiFeature :=
   [.person c.toPersonLevel, .number (if c.isPlural then .pl else .sg)]
 
 /-- Set A (ERG) vocabulary entries: φ-features on Voice (.v)
-    yield the morphological exponent (@cite{scott-2023} Table 2.8).
+    yield the morphological exponent ([scott-2023] Table 2.8).
     All six cells have specific entries. -/
 def setAVocab : Vocabulary :=
   makePersonVocab Agreement.Cell.pnCells mamToPhiFeatures
     (fun c => (setAExponent.realize c).getD "") (some .v)
 
 /-- Set B (ABS) vocabulary entries: φ-features on Infl (.T)
-    yield the morphological exponent (@cite{scott-2023} Table 3.5).
+    yield the morphological exponent ([scott-2023] Table 3.5).
     Per Scott's DM analysis, only 1SG/1PL/2PL/3PL have specific
     entries; 2SG and 3SG fall through to the Elsewhere entry
     (no features, tz'=) which surfaces when no specific entry
@@ -363,7 +363,7 @@ theorem different_probe_heads :
     agreeProbe .P = none := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 11: Connecting to Obligatory Operations (@cite{preminger-2014}, Ch. 5)
+-- § 11: Connecting to Obligatory Operations ([preminger-2014], Ch. 5)
 -- ============================================================================
 
 /-- The transitive Set B default is an instance of Preminger's probe failure:
@@ -392,7 +392,7 @@ theorem probe_failure_converges_with_elsewhere :
     ProbeOutcome.unvalued.pfRealization = .elsewhere := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 12: Deriving Probe Blocking from SatisfactionCond (@cite{deal-2024})
+-- § 12: Deriving Probe Blocking from SatisfactionCond ([deal-2024])
 -- ============================================================================
 
 /-! The Fragment file (`Agreement.lean`) stipulates `isPhiAgreed := false` for
@@ -445,7 +445,7 @@ theorem satisfaction_matches_fragment :
 -- φ-probe + Set A vocabulary defs).
 
 -- ============================================================================
--- § 14: Impoverishment — Connecting to DM (@cite{scott-2023}, §4.4.3)
+-- § 14: Impoverishment — Connecting to DM ([scott-2023], §4.4.3)
 -- ============================================================================
 
 /-! Scott's impoverishment rule (ex. 84/94):

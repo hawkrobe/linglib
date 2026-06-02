@@ -4,7 +4,7 @@ import Mathlib.Data.Fintype.Basic
 /-!
 # PIP Compositional Operations
 
-@cite{abney-keshet-2025}
+[abney-keshet-2025]
 
 Compositional building blocks for PIP beyond the core formula language `PIPExprF`.
 Where `PIPExprF` gives truth and felicity for formulas (type t), this file defines
@@ -14,7 +14,7 @@ explicit modal bases, the FX type-lifting operation for restricted variables, an
 the simple/summation pronoun distinction.
 
 These operations correspond to the Glossa paper's enrichment of the S&P formulation
-(@cite{keshet-abney-2024}), making PIP's set-based compositional interface explicit.
+([keshet-abney-2024]), making PIP's set-based compositional interface explicit.
 
 ## Key Design Decision
 

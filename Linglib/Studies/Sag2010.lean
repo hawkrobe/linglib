@@ -2,7 +2,7 @@
 # Filler-Gap Construction Typology
 
 Parametric variation across the five types of English filler-gap clauses,
-following @cite{sag-2010}. The core empirical contribution: F-G clauses share
+following [sag-2010]. The core empirical contribution: F-G clauses share
 a common filler–gap structure but differ systematically along 7 parameters.
 
 ## The Five F-G Clause Types
@@ -62,7 +62,7 @@ inductive Finiteness where
   | infinitivalPossible  -- VP[inf] head daughter possible (interrogative, relative)
   deriving Repr, DecidableEq
 
-/-- Semantic type of the clause (§2.1, example 30; follows @cite{ginzburg-sag-2000}). -/
+/-- Semantic type of the clause (§2.1, example 30; follows [ginzburg-sag-2000]). -/
 inductive FGSemanticType where
   | question   -- Set of propositions (wh-interrogative)
   | fact       -- Fact: related to but distinct from proposition (exclamative)
@@ -119,7 +119,7 @@ def whExclamativeParams : FGParameters :=
   { fillerWhType := .exclamative
     headInversion := .prohibited   -- (28b): never inverted
     headFiniteness := .finiteOnly  -- (29a): always finite
-    semanticType := .fact          -- (30c): fact (@cite{ginzburg-sag-2000})
+    semanticType := .fact          -- (30c): fact ([ginzburg-sag-2000])
     isIsland := true               -- (73–74): extraction island
     independence := .either        -- (71a): independent or embedded
     fillerIsNonverbal := true }    -- (76): NP, AP, AdvP, PP; not VP
@@ -220,7 +220,7 @@ theorem relative_requires_embedding :
 
 /-! ### All fillers are nonverbal
 
-@cite{sag-2010}: the filler daughter is always nonverbal across all five
+[sag-2010]: the filler daughter is always nonverbal across all five
 F-G clause types. This is a constraint on the superordinate filler-head
 construction, not construction-specific. -/
 
@@ -235,12 +235,12 @@ theorem all_fillers_nonverbal :
 
 /-! ### Connection to `ConstraintType` in Islands/Data
 
-@cite{sag-2010} argues that island constraints are construction-specific
+[sag-2010] argues that island constraints are construction-specific
 GAP restrictions, not universal Subjacency. The topicalization construction
 has `[GAP ⟨⟩]` on its mother, making it an absolute extraction island. This
 matches the `ConstraintType` classification from Islands/Data. -/
 
-/-- The island constructions in @cite{sag-2010} correspond to specific constraint
+/-- The island constructions in [sag-2010] correspond to specific constraint
 types in the island classification system. The CNPC (complexNP) is the
 island tested empirically; Sag's topicalization and exclamative islands
 are additional construction-specific cases. -/

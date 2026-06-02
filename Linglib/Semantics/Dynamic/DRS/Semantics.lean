@@ -3,7 +3,7 @@ import Mathlib.ModelTheory.Semantics
 
 /-!
 # Model-theoretic semantics of DRSs
-@cite{kamp-reyle-1993}
+[kamp-reyle-1993]
 
 DRS truth via *verifying embeddings* into a mathlib `FirstOrder.Language.Structure`
 — exactly Kamp & Reyle's Def. 1.4.4–1.4.5. An embedding is an assignment
@@ -28,7 +28,7 @@ universe u v w x
 variable {L : Language.{u, v}} {V : Type w} {M : Type x} [L.Structure M]
 
 mutual
-/-- `v` *verifies* `K` (@cite{kamp-reyle-1993}, Def. 1.4.4): every condition of `K`
+/-- `v` *verifies* `K` ([kamp-reyle-1993], Def. 1.4.4): every condition of `K`
 holds under the assignment `v`. -/
 def DRS.Realize (v : V → M) : DRS L V → Prop
   | .mk _ conds => Condition.RealizeAll v conds
@@ -55,7 +55,7 @@ def Condition.RealizeAll (v : V → M) : List (Condition L V) → Prop
   | c :: cs => Condition.Realize v c ∧ Condition.RealizeAll v cs
 end
 
-/-- `K` is *true* in `M` iff some embedding verifies it (@cite{kamp-reyle-1993},
+/-- `K` is *true* in `M` iff some embedding verifies it ([kamp-reyle-1993],
 Def. 1.4.5). -/
 def DRS.trueIn (M : Type x) [L.Structure M] (K : DRS L V) : Prop :=
   ∃ v : V → M, K.Realize v

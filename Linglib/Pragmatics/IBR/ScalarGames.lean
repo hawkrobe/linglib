@@ -20,7 +20,7 @@ This bypasses the general convergence machinery in `Convergence.lean`
 (~680 lines of EG monotonicity) entirely for scalar games.
 
 Key results:
-- `ibr_equals_exhMW`: IBR FP support = exhMW (@cite{franke-2011} Proposition 4)
+- `ibr_equals_exhMW`: IBR FP support = exhMW ([franke-2011] Proposition 4)
 - `ibr_converges_to_exhMW`: IBR stabilizes at level 1 for scalar games
 -/
 
@@ -278,7 +278,7 @@ private theorem fold_max_attained {α : Type*} [DecidableEq α]
     (S(t,m) ∈ {0,1} with at least one S=1), hearerBR gives H(m,s) > 0
     iff S(s,m) = 1.
 
-    This captures @cite{franke-2011}'s eq. (131): with flat priors the
+    This captures [franke-2011]'s eq. (131): with flat priors the
     posterior comparison μ(t₁|m) > μ(t₂|m) reduces to S(t₁,m) > S(t₂,m)
     because the priors cancel. So the argmax hearer picks exactly the
     states where the speaker sends m. -/
@@ -562,7 +562,7 @@ private theorem ibrN_pos_iff_strongestAt (G : InterpGame)
     exact (ibrN_respond_pos_iff_strongest G hPriorPos hFlatPrior hScalar
       hDistinct k m s hTrue).mpr hStr
 
-/-- IBR = exhMW (Main theorem — @cite{franke-2011}, Section 9.3)
+/-- IBR = exhMW (Main theorem — [franke-2011], Section 9.3)
 
 At any IBR level k+1 of a **scalar** interpretation game, the listener's
 positive-probability states for message m are exactly the exhMW-minimal states.
@@ -639,7 +639,7 @@ def levelUniformPrior (G : InterpGame) : Prop :=
     `levelUniformPrior` holds for ANY positive prior (there's only one state
     per level, so the uniformity condition is vacuous).
 
-    @cite{franke-2011}'s Theorem 1 shows that for equivalence class games,
+    [franke-2011]'s Theorem 1 shows that for equivalence class games,
     heavy = light systems — the prior doesn't affect the interpretation. -/
 def isEquivalenceClassGame (G : InterpGame) : Prop :=
   ∀ (m : G.Message), (messageLevel G m).Nonempty →

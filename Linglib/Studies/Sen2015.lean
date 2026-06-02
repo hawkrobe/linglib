@@ -2,17 +2,17 @@ import Linglib.Phonology.Featural.Underspecification
 import Linglib.Fragments.Latin.Phonology
 
 /-!
-# Sen (2015): Latin /l/ Allophony as Positional Underspecification @cite{sen-2015}
+# Sen (2015): Latin /l/ Allophony as Positional Underspecification [sen-2015]
 
 Latin /l/ has clear ([l]) and dark ([ɫ]) realisations whose distribution
-@cite{sen-2015} ch. 2 analyses as positional underspecification of the
+[sen-2015] ch. 2 analyses as positional underspecification of the
 feature [back]. The chosen formal analysis (§2.4, eq. 23) settles on an
 equipollent specification in which all three positional /l/ allophones
 share a tongue-body-displacement feature [+high] while differing on
 [back]: coda /l/ is [+high, +back] (dark), geminate /ll/ is
 [+high, −back] (clear), and onset /l/ is [+high, Ø back] — left
 unspecified for [back] and inheriting a surface value from the following
-vowel by categorical spreading (cf. @cite{keating-1988}, with the
+vowel by categorical spreading (cf. [keating-1988], with the
 categorical-vs-gradient distinction discussed under Implementation notes).
 
 This file derives the three positional /l/ allophones from the Latin
@@ -79,7 +79,7 @@ On p. 41 Sen explicitly rejects synchronic categorical feature spreading
 as the *actuating* mechanism, on the grounds that it would over-predict
 identical effects in identical-feature contexts; the substrate's
 `fillFromContext` is exactly such a categorical operation — Keating's
-schema (2) case (b) (@cite{keating-1988} p. 287), in which the target
+schema (2) case (b) ([keating-1988] p. 287), in which the target
 acquires a feature value from its neighbour, rather than her case (c)
 gradient phonetic interpolation in which the target stays unspecified
 and the phonetics builds a continuous trajectory through it. The
@@ -88,7 +88,7 @@ gradient phonetic implementation, which is what Keating's own term
 *interpolation* picks out, is out of scope.
 
 **Fragment-vs-Sen divergence on /a/.** The Latin Fragment leaves /a/
-unspecified for [back] (following @cite{hayes-2009}'s convention that
+unspecified for [back] (following [hayes-2009]'s convention that
 low vowels carry no primary [back] value), so the categorical
 `fillFromContext` leaves onset /l/ before /a/ at [Ø back]. Sen instead
 groups /a/ with /o u/ as a darkening context for onset /l/ (§2.3.1,
@@ -97,7 +97,7 @@ or modelling Keating's propagation across the underspecified
 intermediate. `surfaceL_before_a` records what the categorical model and
 the Fragment's vowel inventory predict, not Sen's empirical claim.
 
-**Diachronic content out of scope.** @cite{sen-2015} also develops a
+**Diachronic content out of scope.** [sen-2015] also develops a
 diachronic account (the historical loss of geminate /l/, inverse
 compensatory lengthening, the prehistory of clear/dark /l/ split); this
 study formalises only the synchronic underspecification analysis of

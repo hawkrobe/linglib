@@ -13,9 +13,9 @@ import Linglib.Semantics.Composition.LexEntry
 
 /-!
 # Effect-Driven Interpretation
-@cite{bumford-charlow-2024}
+[bumford-charlow-2024]
 
-@cite{bumford-charlow-2024} propose that diverse semantic phenomena — scope,
+[bumford-charlow-2024] propose that diverse semantic phenomena — scope,
 binding, conventional implicatures, indeterminacy — are all instances of
 **algebraic effects** within the Functor → Applicative → Monad hierarchy.
 The grammar's composition rules are built from **meta-combinators** (F̄, F̃,
@@ -522,7 +522,7 @@ variable {W : Type}
 /-- A `TwoDimProp` embeds into a `Writer (W → Prop) (W → Prop)`:
     the at-issue content is the value, the CI is the log.
 
-    This connects @cite{potts-2005}'s two-dimensional semantics to
+    This connects [potts-2005]'s two-dimensional semantics to
     Writer effect (their W constructor
     in Table 2). -/
 def twoDimToWriter (p : TwoDimProp W) : Writer (W → Prop) (W → Prop) :=
@@ -562,7 +562,7 @@ theorem twoDim_neg_val_via_writer (p : TwoDimProp W) :
 /-- Run a CI Writer by conjoining all log entries with the value.
 
     This is the Writer counterpart of shunting (↓ from
-    @cite{kirk-giannini-2024}): peripheral content is folded into
+    [kirk-giannini-2024]): peripheral content is folded into
     the at-issue dimension via conjunction, and the CI dimension
     becomes trivial. The result is a `TwoDimProp` with all information
     in the at-issue dimension.
@@ -600,7 +600,7 @@ theorem runCIWriter_trivial_log {W : Type} (val : W → Prop) (w : W) :
 
 /-- **Single-CI round-trip.** Embedding a `TwoDimProp` into Writer then
     running conjoins the at-issue and CI dimensions — exactly the
-    shunting operation ↓ from @cite{kirk-giannini-2024}.
+    shunting operation ↓ from [kirk-giannini-2024].
 
     This is definitionally equal to `shunt` from
     `Semantics.Quotation.MixedQuotation`. -/
@@ -765,7 +765,7 @@ independent binding mechanisms:
 
 - **C** (co-unit meta-combinator): `C(<) ▷(x) body = W body x`
 - **H&K** (assignment-based): `body (g[n↦x] n) (g[n↦x] n) = W body x`
-- **@cite{charlow-2018}'s Reader join**: `denotGJoin body = W body`
+- **[charlow-2018]'s Reader join**: `denotGJoin body = W body`
   (proven in `Charlow2018.lean:denotGJoin_is_W`)
 
 The derivation follows §5.1: the subject
@@ -803,7 +803,7 @@ theorem john_sees_himself_via_C :
     both compute `sees(g[1↦j](1), g[1↦j](1)) = sees(j, j)`.
 
     This connects adjunction mechanism
-    to @cite{heim-kratzer-1998}'s predicate abstraction. -/
+    to [heim-kratzer-1998]'s predicate abstraction. -/
 theorem binding_C_agrees_with_hk (g : Core.Assignment toyModel.Entity) :
     counitApp ba' (store ToyEntity.john)
       (λ i => ToyLexicon.sees_sem i) =
@@ -901,7 +901,7 @@ theorem cont_scope_triple (q₁ q₂ q₃ : Cont R E) (rel : E → E → E → R
     `lower(pure(f) >>= λg. pure(x) >>= λy. pure(g y)) = f x`
 
     This is the embedding of Reader (the non-scope-taking fragment)
-    into Cont: @cite{charlow-2018}'s `ρ(f) ⊛ ρ(x) = ρ(f x)` is
+    into Cont: [charlow-2018]'s `ρ(f) ⊛ ρ(x) = ρ(f x)` is
     exactly the Cont homomorphism law. -/
 theorem cont_pure_is_fa {A : Type} (f : A → R) (x : A) :
     Cont.lower (Cont.bind (Cont.pure f) (fun g =>
@@ -939,8 +939,8 @@ the same operation `f e e`:
 
 | Source | Operation | Definition | File |
 |--------|-----------|------------|------|
-| @cite{heim-kratzer-1998} | `denotGJoin` (μ) | `λg. f g g` | `Variables.lean` |
-| @cite{barker-shan-2014} | `W` (duplicator) | `W κ x = κ x x` | `Binding.lean` |
+| [heim-kratzer-1998] | `denotGJoin` (μ) | `λg. f g g` | `Variables.lean` |
+| [barker-shan-2014] | `W` (duplicator) | `W κ x = κ x x` | `Binding.lean` |
 | | `adj_ε` (co-unit) | `ε(f e, e) = (f e) e` | `Effects.lean` §4 |
 
 The individual two-way bridges exist:
@@ -989,7 +989,7 @@ end BindingUnification
 /-! ### §9 Indeterminacy effect
 
 The **indeterminacy** effect — labeled `S` in's
-Table 2 — is the set monad `(S, η, ⫝̸)` from @cite{charlow-2020},
+Table 2 — is the set monad `(S, η, ⫝̸)` from [charlow-2020],
 formalized in `SetMonad.lean`.
 
 | Effect | η (pure) | ⫝̸ (bind) | Linguistic use |
@@ -1000,9 +1000,9 @@ formalized in `SetMonad.lean`.
 | **Indeterminacy (S)** | **`{x}`** | **`⋃_{a ∈ m} f(a)`** | **Indefinites, focus, *wh*** |
 
 The set monad's applicative instance is *pointwise composition* — the
-standard mechanism of alternative semantics (@cite{hamblin-1973b},
-@cite{kratzer-shimoyama-2002}). Its monadic bind is *scope-taking* — the
-mechanism @cite{charlow-2020} argues is needed for exceptional scope.
+standard mechanism of alternative semantics ([hamblin-1973b],
+[kratzer-shimoyama-2002]). Its monadic bind is *scope-taking* — the
+mechanism [charlow-2020] argues is needed for exceptional scope.
 
 The applicative is strictly weaker: it cannot derive selectivity (§5.4 of
 the paper) or the Binder Roof Constraint (§6.4). The monad can. -/

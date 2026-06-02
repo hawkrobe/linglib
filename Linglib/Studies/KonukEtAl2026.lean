@@ -9,8 +9,8 @@ import Mathlib.Data.Fintype.Pi
 import Mathlib.Tactic.FinCases
 
 /-!
-# @cite{konuk-et-al-2026}: Plural Causes
-@cite{konuk-et-al-2026}
+# [konuk-et-al-2026]: Plural Causes
+[konuk-et-al-2026]
 
 Formalizes Konuk, Quillien & Mascarenhas (2026) "Plural causes,"
 *Open Mind*.
@@ -20,7 +20,7 @@ Formalizes Konuk, Quillien & Mascarenhas (2026) "Plural causes,"
 1. **Compound causes**: A∧B is treated as a single compound binary variable
    for causal selection, not decomposed into individual contributions.
 2. **Necessity-Sufficiency Model** (NSM): `NSM(C) = P(C)·Suf(C) + (1-P(C))·Nec(C)`
-   from @cite{icard-et-al-2017}, applied to compound causes.
+   from [icard-et-al-2017], applied to compound causes.
 3. **Anti-linearity**: NSM(INT∧HIGH) > NSM(LOW∧INT) even though LOW and HIGH
    have comparable individual causal strength (Experiment 1).
 4. **Homogeneous loss**: Loss judgments follow LOSS_strong = ¬A∧¬B∧¬C∧¬D,
@@ -246,7 +246,7 @@ theorem lossMixed_at_zero (a b c d : Bool) :
     The classical negation ¬(A∧B) ∧ ¬(C∧D) allows worlds where some
     variables are true and others false. The homogeneous negation
     ¬A∧¬B∧¬C∧¬D requires all false. The gap is the truth-value gap from
-    @cite{kriz-spector-2021}. -/
+    [kriz-spector-2021]. -/
 theorem loss_gap_iff_pluralGap :
     ∀ f : Fin 4 → Bool,
     (lossClassical (f 0) (f 1) (f 2) (f 3) = true ∧
@@ -338,7 +338,7 @@ theorem lossStrong_iff_allFalse (f : Fin 4 → Bool) :
     rw [h 0, h 1, h 2, h 3]
     rfl
 
-/-- LOSS_strong is exactly `noneSatisfy` from @cite{kriz-spector-2021}. -/
+/-- LOSS_strong is exactly `noneSatisfy` from [kriz-spector-2021]. -/
 theorem lossStrong_eq_noneSatisfy :
     ∀ f : Fin 4 → Bool,
     lossStrong (f 0) (f 1) (f 2) (f 3) =

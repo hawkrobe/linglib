@@ -3,21 +3,21 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Topic — Aboutness and Contrastive Topics
-@cite{reinhart-1981} @cite{buring-2003} @cite{krifka-2008}
+[reinhart-1981] [buring-2003] [krifka-2008]
 
 Substrate type for the **Topic** axis of information structure, one
 of the four IS notions Krifka 2008 enumerates (focus, givenness,
 topic, delimitation; see `Features/Givenness.lean` for the broader
 discussion of how at-issueness sits orthogonally to Krifka's four).
-@cite{fery-ishihara-2016} (Oxford Handbook of Information Structure)
+[fery-ishihara-2016] (Oxford Handbook of Information Structure)
 follows Krifka in treating topic as a primitive notion, defined per
-@cite{krifka-2008}:
+[krifka-2008]:
 
 > The topic constituent identifies the entity or set of entities
 > under which the information expressed in the comment constituent
 > should be stored in the CommonGround content.
 
-Following @cite{reinhart-1981}'s file-card metaphor: the CommonGround is
+Following [reinhart-1981]'s file-card metaphor: the CommonGround is
 organized like a subject-oriented library catalogue indexed by
 topics; each new proposition is filed under the topic it is about.
 
@@ -42,7 +42,7 @@ This file deliberately does NOT formalize:
   `Semantics/Focus/Buring2003.lean` study or similar.
 - Krifka 2008's frame-setting topics (§5.1.4) and delimitation
   topics — distinct concepts to add when consumers demand them.
-- @cite{fery-ishihara-2016} Ch 4 (Büring) argues for *eliminating*
+- [fery-ishihara-2016] Ch 4 (Büring) argues for *eliminating*
   non-contrastive topics as a coherent linguistic category; this
   remains a live debate. The substrate keeps both `TopicMark`
   (aboutness) and `ContrastiveTopic` available rather than picking
@@ -61,7 +61,7 @@ set_option autoImplicit false
 
 namespace Features
 
-/-- @cite{reinhart-1981} aboutness topic: whether a constituent is
+/-- [reinhart-1981] aboutness topic: whether a constituent is
     the entity under which the proposition is filed in the CommonGround.
     Binary by design — degree-of-topicality theories belong in their
     own files. -/
@@ -72,7 +72,7 @@ inductive TopicMark where
   | nonTopic
   deriving DecidableEq, Repr, Fintype, Inhabited
 
-/-- @cite{buring-2003} contrastive topic: a topic constituent paired
+/-- [buring-2003] contrastive topic: a topic constituent paired
     with a set of alternative topics that could have been chosen.
     Mirrors `Features.InformationStructure.Focus` shape — both
     Roothian-flavored alternative-set primitives.

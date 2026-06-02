@@ -3,7 +3,7 @@ import Linglib.Core.Constraint.OT.DirectionalTableau
 
 /-!
 # Tonal Constraints — Generic Constructors over `FloatingForm`
-@cite{wolf-2007} @cite{cahill-2004} @cite{mcpherson-lamont-2026}
+[wolf-2007] [cahill-2004] [mcpherson-lamont-2026]
 
 OT/HS constraint constructors over the `FloatingForm S TRN` autosegmental
 representation (`Phonology/Autosegmental/Floating.lean`).
@@ -18,8 +18,8 @@ All constraints are `DirectionalConstraint`s:
 ## Constraint inventory (paper, eqs. 5, 7, 15-17, 23)
 
 - `starFloat`           ← paper eq. 16 (`*FLOAT`, directional)
-- `starTautDock`        ← paper eq. 15 (`*TAUTDOCK`, after @cite{wolf-2007})
-- `starCrowd threshold` ← paper eq. 5 (`*CROWD`, after @cite{cahill-2004})
+- `starTautDock`        ← paper eq. 15 (`*TAUTDOCK`, after [wolf-2007])
+- `starCrowd threshold` ← paper eq. 5 (`*CROWD`, after [cahill-2004])
 - `starFall`            ← paper eq. 23 (`*FALL`, falling-contour ban)
 - `maxTone t`           ← paper eq. 7c (`MAX(T)`)
 - `depLinkTone t`       ← paper eq. 7a (`DEP(link)/T`)
@@ -30,7 +30,7 @@ All constraints are `DirectionalConstraint`s:
 
 Faithfulness constraints (`maxTone`, `maxLinkTone`, `depLinkTone`)
 compare surface state to the immutable underlying state stored in
-`FloatingForm`. This is what makes the @cite{mcpherson-lamont-2026}
+`FloatingForm`. This is what makes the [mcpherson-lamont-2026]
 fig. 3 multi-step asymmetry visible: without underlying-form tracking,
 faithfulness can't fire and the LR-vs-RL distinction collapses.
 -/
@@ -90,7 +90,7 @@ def starFloat : DirectionalConstraint (FloatingForm S TRN) where
     vector). The two coincide when there is at most one floating tone
     but diverge as the floating set grows: count-based comparison
     cannot distinguish "delete leftmost" from "delete rightmost" since
-    both reduce the count by 1. This is @cite{mcpherson-lamont-2026}'s
+    both reduce the count by 1. This is [mcpherson-lamont-2026]'s
     eq. (62) "divergent ties" claim — regular HS with `starFloatCount`
     cannot disambiguate `/kāk^H + rī^H + dō^H/` step 1.
 
@@ -110,7 +110,7 @@ def starFloatCount : DirectionalConstraint (FloatingForm S TRN) where
 -- § 3: *TAUTDOCK
 -- ============================================================================
 
-/-- `*TAUTDOCK` (paper, eq. 15, after @cite{wolf-2007}): one violation
+/-- `*TAUTDOCK` (paper, eq. 15, after [wolf-2007]): one violation
     per GEN-inserted tautomorphic surface link. -/
 def starTautDock : DirectionalConstraint (FloatingForm S TRN) where
   name := "*TAUTDOCK"
@@ -147,7 +147,7 @@ def tonesForMorpheme (f : FloatingForm S TRN) (m : Morpheme) : Finset TierIdx :=
   let docked := (f.surfaceLinks.filter fun l => SegInMorpheme f l.snd m).image Prod.fst
   ownAlive ∪ docked
 
-/-- `*CROWD` (paper, eq. 5, after @cite{cahill-2004}): one violation per
+/-- `*CROWD` (paper, eq. 5, after [cahill-2004]): one violation per
     morpheme associated with more than `threshold` tones. Default
     `threshold = 2` matches the paper.
 
@@ -217,7 +217,7 @@ def starFall : DirectionalConstraint (FloatingForm S TRN) where
     deletions skip positions, so adjacency is measured over the alive
     subsequence.
 
-    Motivates @cite{mcpherson-lamont-2026}'s account of why floating
+    Motivates [mcpherson-lamont-2026]'s account of why floating
     H tones can dock leftward tautomorphically before L (eq. 30):
     without `*M<L ≫ *TAUTDOCK`, an underlying /M H L/ sequence would
     prefer H deletion, but that yields a surface ML adjacency which
@@ -273,7 +273,7 @@ def maxLinkTone (t : TRN) : DirectionalConstraint (FloatingForm S TRN) where
   eval := fun f =>
     [(f.links.filter (fun l => IsDeletedLink f l ∧ ToneHasValue f l.fst t)).card]
 
-/-- `INTEGRITY` (paper, @cite{mccarthy-prince-1995}; @cite{akinbo-fwangwar-2026}
+/-- `INTEGRITY` (paper, [mccarthy-prince-1995]; [akinbo-fwangwar-2026]
     eq. 22c): no input tone has multiple output correspondents. In our
     autosegmental encoding, an "output correspondent of an input tone"
     is an alive ulTier entry sharing the input tone's value AND

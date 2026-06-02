@@ -1,12 +1,12 @@
 import Linglib.Syntax.DependencyGrammar.Basic
 
 /-!
-# Lexical Rules for Word Grammar @cite{hudson-2010}
+# Lexical Rules for Word Grammar [hudson-2010]
 
 Lexical rules derive new lexical entries from existing ones, following
-Word Grammar and HPSG @cite{pollard-sag-1994}. The two rules formalised
-here are central to the @cite{hudson-2010} treatment of English auxiliaries
-(also discussed in @cite{gibson-2025}):
+Word Grammar and HPSG [pollard-sag-1994]. The two rules formalised
+here are central to the [hudson-2010] treatment of English auxiliaries
+(also discussed in [gibson-2025]):
 
 1. Auxiliary Inversion: `V+aux → V+aux,+inv` (subject moves from left to
    right — Hudson treats this as a word-class subtype, not a movement rule;

@@ -29,7 +29,7 @@ discipline (e.g., `HasAltList`, `IsBoundaryVacuous`).
 
 A type-frequency analogue (`HasTypeFreq`) would be the natural
 sibling typeclass for productivity / wug-test predictions
-(@cite{albright-hayes-2003}); it is not declared here because no
+([albright-hayes-2003]); it is not declared here because no
 current theory in the directory consumes it. Add it when the first
 such consumer lands.
 
@@ -38,7 +38,7 @@ such consumer lands.
 All frequency channels in this directory are `LogFreq := ℝ`. The
 log-transform is built into the channel because (a) log-frequency is the
 empirically standard predictor and (b) frequency-scaled-weight theories
-(@cite{coetzee-pater-2008}) are linear in log-frequency. Theories that
+([coetzee-pater-2008]) are linear in log-frequency. Theories that
 want raw counts can `Real.exp ∘ tokenLogFreq`.
 -/
 

@@ -7,9 +7,9 @@ import Linglib.Fragments.Jarawara.PossessedNouns
 import Linglib.Fragments.Italian.NumberGender
 
 /-!
-# Adamson 2024: Gender Assignment Is Local @cite{adamson-2024}
+# Adamson 2024: Gender Assignment Is Local [adamson-2024]
 
-@cite{adamson-2024} "Gender Assignment Is Local: On the Relation between
+[adamson-2024] "Gender Assignment Is Local: On the Relation between
 Grammatical Gender and Inalienable Possession." *Language* 100(2): 218–264.
 
 ## Core claim
@@ -50,7 +50,7 @@ cannot affect gender assignment.
 
 This module uses types from `Morphology/DM/NominalStructure.lean`
 (the GLH, `NominalPosition`, `PossessionType`), `CatHead` and `PhiBundle`
-from `Morphology/DM/Categorizer.lean` (@cite{kramer-2015}),
+from `Morphology/DM/Categorizer.lean` ([kramer-2015]),
 `VocabItem` from `Morphology/DM/VocabularyInsertion.lean`,
 and Fragment data from `Fragments/Teop/Nouns.lean` and
 `Fragments/Jarawara/PossessedNouns.lean`.
@@ -74,7 +74,7 @@ theorem selectsD_implies_local_possessor :
     genderLocalityHypothesis .specN = true := ⟨rfl, rfl⟩
 
 /-- Gender features live on the nominal categorizer (n), as established
-    by @cite{kramer-2015} and confirmed by @cite{adamson-2024}. -/
+    by [kramer-2015] and confirmed by [adamson-2024]. -/
 theorem categorizer_has_gender_locus :
     CatHead.n_iFem.phi.gender.isSome = true ∧
     CatHead.n_iMasc.phi.gender.isSome = true ∧
@@ -96,7 +96,7 @@ theorem glh_targets_nominal_categorizer :
 
 
 -- ============================================================================
--- § 2: Teop — Possessee Gender (@cite{adamson-2024} §3.1)
+-- § 2: Teop — Possessee Gender ([adamson-2024] §3.1)
 -- ============================================================================
 
 /-- Teop body-part n: bears u[+ANIM] and selectional feature {D}.
@@ -189,7 +189,7 @@ theorem teop_fragment_bridge :
     teopGenderFromN teopBodyPartN = Teop.iPossessedGender Teop.bina ∧
     teopGenderFromN teopAlienatorN = Teop.bina.gender := ⟨rfl, rfl⟩
 
-/-! ### Five Teop Predictions (@cite{adamson-2024} §3.1)
+/-! ### Five Teop Predictions ([adamson-2024] §3.1)
 
 The two-n analysis generates five testable predictions (p.234–235): -/
 
@@ -225,7 +225,7 @@ theorem teop_prediction_kinship_alienator :
     teopAlienatorN.selectsD = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 3: Jarawara — Possessee Gender (@cite{adamson-2024} §3.2)
+-- § 3: Jarawara — Possessee Gender ([adamson-2024] §3.2)
 -- ============================================================================
 
 /-- Jarawara gender from the n head's feature content. -/
@@ -251,7 +251,7 @@ theorem jarawara_ipossessable_selectsD :
 theorem jarawara_masc_has_feature :
     jarawaraGenderFromN CatHead.n_uMasc = true := rfl
 
-/-! ### Jarawara impoverishment (@cite{adamson-2024} ex. 63)
+/-! ### Jarawara impoverishment ([adamson-2024] ex. 63)
 
 Two separate impoverishment rules delete [MASC] in different contexts:
 - [MASC] → ∅ / [PL]
@@ -301,12 +301,12 @@ theorem jarawara_fragment_total :
   native_decide
 
 -- ============================================================================
--- § 4: Inherited Gender — Yanyuwa & Coastal Marind (@cite{adamson-2024} §4)
+-- § 4: Inherited Gender — Yanyuwa & Coastal Marind ([adamson-2024] §4)
 -- ============================================================================
 
 /-! ### Inherited gender via Probe-Goal agreement
 
-@cite{adamson-2024} §4: in Yanyuwa and Coastal Marind, a small class of
+[adamson-2024] §4: in Yanyuwa and Coastal Marind, a small class of
 iPossessed nouns (*igih* 'name', *nanVh* 'face' in Coastal Marind; body parts
 and 'name' in Yanyuwa) "inherit" the gender of their iPossessor.
 
@@ -329,7 +329,7 @@ structure InheritedGenderNoun where
 /-- The n head for an inherited-gender noun: has {D} and an unvalued
     gender probe. The probe is dimension-agnostic — it has no pre-specified
     dimension or polarity. Its value (including dimension) comes entirely
-    from the iPossessor DP via Probe-Goal Agree (@cite{adamson-2024} (90)).
+    from the iPossessor DP via Probe-Goal Agree ([adamson-2024] (90)).
     We represent this as `phi := {}` (no valued gender on n itself). -/
 def inheritedGenderN : CatHead := .iPoss
 
@@ -385,7 +385,7 @@ theorem inherited_gender_glh_consistent :
 
 /-! ### Bridge: Kramer's n-types and WALS gender counts
 
-@cite{kramer-2015} Ch 3: for a single gender dimension [±VAL], there are
+[kramer-2015] Ch 3: for a single gender dimension [±VAL], there are
 four types of n: i[+VAL], i[−VAL], plain, u[+VAL]. The fourth combination
 u[−VAL] is the unmarked default (plain n).
 
@@ -437,7 +437,7 @@ theorem ipossessable_n_heads_have_selectsD
   rcases h with rfl | rfl | rfl <;> rfl
 
 -- ============================================================================
--- § 7: Morphosyntax → Semantics Bridge (@cite{adamson-2024} §3.1 + @cite{barker-2011})
+-- § 7: Morphosyntax → Semantics Bridge ([adamson-2024] §3.1 + [barker-2011])
 -- ============================================================================
 
 /-! ### Two derivation pipelines from a single n-head
@@ -560,12 +560,12 @@ theorem glh_contrast :
     genderLocalityHypothesis PossessionType.alienable.possessorPosition = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 8: Italian Low-Number Gender Interaction (@cite{adamson-2024} §5.1)
+-- § 8: Italian Low-Number Gender Interaction ([adamson-2024] §5.1)
 -- ============================================================================
 
 /-! ### Beyond possession: number position and gender
 
-@cite{adamson-2024} §5.1 extends the GLH beyond possession: if gender
+[adamson-2024] §5.1 extends the GLH beyond possession: if gender
 features sit on n, then OTHER features on n should also interact with
 gender. Number features on n (low/derivational number) are within nP
 and can interact with gender; number features on Num (high/inflectional)

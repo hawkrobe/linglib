@@ -2,11 +2,11 @@ import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Studies.Baker1985
 
 /-!
-# @cite{halle-marantz-1993}: Distributed Morphology and the Pieces of Inflection
-@cite{halle-marantz-1993}
+# [halle-marantz-1993]: Distributed Morphology and the Pieces of Inflection
+[halle-marantz-1993]
 
 This study file formalizes the core architecture and predictions of
-Distributed Morphology as presented in @cite{halle-marantz-1993},
+Distributed Morphology as presented in [halle-marantz-1993],
 Chapter 3 of *The View from Building 20* (Hale & Keyser, eds.).
 
 ## Structure
@@ -21,13 +21,13 @@ Chapter 3 of *The View from Building 20* (Hale & Keyser, eds.).
 - **§4**: Impoverishment and Syncretism — feature deletion before VI
   derives syncretism (past participle falling together with simple past)
 - **§5**: Baker 1985 Bridge — English Tns/Agr features are outside
-  GF-rule categories in @cite{bybee-1985}'s relevance hierarchy,
-  connecting @cite{baker-1985}, @cite{bybee-1985}, and
-  @cite{halle-marantz-1993}
+  GF-rule categories in [bybee-1985]'s relevance hierarchy,
+  connecting [baker-1985], [bybee-1985], and
+  [halle-marantz-1993]
 
 ## Architecture
 
-@cite{halle-marantz-1993} adopt a Y-model (DS → SS → {LF, MS → PF}).
+[halle-marantz-1993] adopt a Y-model (DS → SS → {LF, MS → PF}).
 Terminal nodes bear morphosyntactic features but no phonological content
 until Vocabulary Insertion at MS — this is **Late Insertion**. The VI
 mechanism (`subsetPrinciple`) IS Late Insertion in action: it maps
@@ -52,7 +52,7 @@ open Morphology (MorphCategory)
 
 /-! ### The Subset Principle and English Tns/Agr
 
-@cite{halle-marantz-1993} give the Vocabulary Items for English verbal
+[halle-marantz-1993] give the Vocabulary Items for English verbal
 inflection. The terminal node for Tns+Agr (after fusion — see §3)
 bears features drawn from {[+past], [+participle], [3sg]}. The
 **Subset Principle** / **Elsewhere Condition** selects the most specific
@@ -73,7 +73,7 @@ Context-free VI entries:
 section EnglishVerb
 
 /-- Features on the English Tns+Agr terminal after fusion.
-    @cite{halle-marantz-1993}. -/
+    [halle-marantz-1993]. -/
 inductive EngInflFeature where
   | past
   | participle
@@ -81,7 +81,7 @@ inductive EngInflFeature where
   deriving DecidableEq, BEq, Repr
 
 /-- Context-free VI entries for English verbal inflection.
-    @cite{halle-marantz-1993}. -/
+    [halle-marantz-1993]. -/
 def englishTnsVI : List (FeatureVI EngInflFeature String) :=
   [⟨[.past, .participle], "-n"⟩,
    ⟨[.past],              "-d"⟩,
@@ -92,33 +92,33 @@ def englishTnsVI : List (FeatureVI EngInflFeature String) :=
 /-- Past participle: [+past, +participle] → `-n`.
     `-n` beats `-d` and `-ing` because its feature set {past,
     participle} is the largest subset of the target.
-    @cite{halle-marantz-1993}. -/
+    [halle-marantz-1993]. -/
 theorem past_participle_gets_n :
     subsetPrinciple englishTnsVI [.past, .participle] = some "-n" := by
   native_decide
 
 /-- Past finite: [+past] → `-d`.
     `-n` does not match because [+participle] ⊄ {past}.
-    @cite{halle-marantz-1993}. -/
+    [halle-marantz-1993]. -/
 theorem past_finite_gets_d :
     subsetPrinciple englishTnsVI [.past] = some "-d" := by
   native_decide
 
 /-- Non-finite participle: [+participle] → `-ing`.
-    @cite{halle-marantz-1993}. -/
+    [halle-marantz-1993]. -/
 theorem nonpast_participle_gets_ing :
     subsetPrinciple englishTnsVI [.participle] = some "-ing" := by
   native_decide
 
 /-- Third singular present: [3sg] → `-z`.
-    @cite{halle-marantz-1993}. -/
+    [halle-marantz-1993]. -/
 theorem sg3_present_gets_z :
     subsetPrinciple englishTnsVI [.sg3] = some "-z" := by
   native_decide
 
 /-- Elsewhere (bare stem): [] → `∅`.
     When no features are present, the elsewhere entry wins.
-    @cite{halle-marantz-1993}. -/
+    [halle-marantz-1993]. -/
 theorem elsewhere_gets_null :
     subsetPrinciple englishTnsVI [] = some "∅" := by
   native_decide
@@ -150,7 +150,7 @@ end EnglishVerb
 /-! ### Root-Specific Past Tense Entries
 
 The default past tense entry `-d` coexists with root-conditioned
-variants (@cite{halle-marantz-1993}):
+variants ([halle-marantz-1993]):
 
 - **`-t`**: dwell → dwelt, buy → bought, send → sent, ...
 - **`∅`**: put → put, beat → beat, hit → hit, ...
@@ -177,7 +177,7 @@ inductive SampleVerb where
 
     All three entries share [+past] context (modeled as `Bool`);
     they differ in root restriction and specificity.
-    @cite{halle-marantz-1993}. -/
+    [halle-marantz-1993]. -/
 def conditionedPastVI : List (VocabItem Bool SampleVerb) :=
   [-- /-t/ for specific roots (specificity 2: context + root)
    { exponent := "-t"
@@ -242,7 +242,7 @@ end ConditionedAllomorphy
 
 /-! ### Fusion of Tns and Agr at MS
 
-@cite{halle-marantz-1993} argue that English Tns and Agr are separate
+[halle-marantz-1993] argue that English Tns and Agr are separate
 syntactic heads. At MS, they undergo **Fusion**: the two adjacent
 terminals merge into a single terminal bearing the union of both
 feature bundles. A single VI entry then spells out the fused node.
@@ -258,13 +258,13 @@ directly into the VI paradigm from §1. -/
 
 section TnsAgrFusion
 
-/-- Fusion (@cite{halle-marantz-1993}): merges two adjacent terminal
+/-- Fusion ([halle-marantz-1993]): merges two adjacent terminal
     nodes into a single terminal before Vocabulary Insertion. The fused
     node bears the union of both terminals' features; a single VI then
     spells out the fused bundle, yielding a portmanteau.
 
     Canonical example: French *du* = Fusion of P[de] and D[le.MASC.SG].
-    @cite{kalin-bjorkman-etal-2026} §4.4. -/
+    [kalin-bjorkman-etal-2026] §4.4. -/
 structure FusionRule (Terminal : Type) where
   /-- First terminal (structurally higher). -/
   terminal1 : Terminal
@@ -345,7 +345,7 @@ end TnsAgrFusion
 
 /-! ### Impoverishment Derives Syncretism
 
-@cite{halle-marantz-1993} introduce **Impoverishment**: deletion of
+[halle-marantz-1993] introduce **Impoverishment**: deletion of
 features from a terminal node before Vocabulary Insertion. When a
 distinguishing feature is deleted, two formerly distinct contexts
 fall together at VI, producing **syncretism** — distinct morphosyntactic
@@ -429,8 +429,8 @@ end ImpoverishmentSyncretism
 
 /-! ### Connecting to the Mirror Principle and Bybee's Hierarchy
 
-@cite{halle-marantz-1993} discuss how DM's post-syntactic architecture
-derives @cite{baker-1985}'s Mirror Principle: GF-rules (passive,
+[halle-marantz-1993] discuss how DM's post-syntactic architecture
+derives [baker-1985]'s Mirror Principle: GF-rules (passive,
 causative, applicative, reflexive/reciprocal) are syntactic head
 movements, and Morphological Structure preserves the derivation order.
 Affix layering necessarily mirrors syntactic structure because MS is
@@ -439,9 +439,9 @@ derived from syntax.
 We formalize two connections:
 
 1. English verb inflection is concatenative, placing it within
-   @cite{baker-1985}'s scope.
+   [baker-1985]'s scope.
 
-2. All English Tns/Agr features map to @cite{bybee-1985} categories
+2. All English Tns/Agr features map to [bybee-1985] categories
    that are OUTSIDE GF-rule categories in the relevance hierarchy.
    This is consistent with DM's clause structure: Tns and Agr sit
    structurally above GF-rule projections, so their exponents are
@@ -449,7 +449,7 @@ We formalize two connections:
 
 section BakerBridge
 
-/-- Map English inflectional features to @cite{bybee-1985}'s
+/-- Map English inflectional features to [bybee-1985]'s
     morphological categories. -/
 def EngInflFeature.toMorphCategory : EngInflFeature → MorphCategory
   | .past => .tense
@@ -457,7 +457,7 @@ def EngInflFeature.toMorphCategory : EngInflFeature → MorphCategory
   | .sg3 => .agreement .subj
 
 /-- All English Tns/Agr features map to categories that are OUTSIDE
-    GF-rule categories in @cite{bybee-1985}'s relevance hierarchy.
+    GF-rule categories in [bybee-1985]'s relevance hierarchy.
 
     GF-rules (passive → voice rank 3, causative/applicative/reciprocal
     → valence rank 2) are always closer to the stem than English
@@ -467,15 +467,15 @@ def EngInflFeature.toMorphCategory : EngInflFeature → MorphCategory
     structurally above GF-rule projections (PassP, CausP, ApplP),
     so after head movement and fusion, the Tns+Agr exponent sits
     outermost. The relevance hierarchy and the syntactic hierarchy
-    converge — connecting @cite{baker-1985}, @cite{bybee-1985},
-    and @cite{halle-marantz-1993}. -/
+    converge — connecting [baker-1985], [bybee-1985],
+    and [halle-marantz-1993]. -/
 theorem tnsAgr_outside_gfRules (f : EngInflFeature) (r : GFRuleType) :
     r.toMorphCategory.peripherality < f.toMorphCategory.peripherality := by
   cases f <;> cases r <;> native_decide
 
 /-- English verb inflection is concatenative: affixes are linearly
     concatenated to the stem. This places it within the scope of
-    @cite{baker-1985}'s Mirror Principle (@cite{baker-1985} restricts
+    [baker-1985]'s Mirror Principle ([baker-1985] restricts
     the principle to concatenative morphology, excluding clitics and
     nonconcatenative processes). -/
 theorem english_inflection_in_scope :

@@ -5,9 +5,9 @@ import Linglib.Semantics.Causation.Interpretation
 import Linglib.Phenomena.TenseAspect.Diagnostics
 
 /-!
-# @cite{cruse-1973} Agentivity Decomposition
+# [cruse-1973] Agentivity Decomposition
 
-@cite{cruse-1973} "Some Thoughts on Agentivity" argues that agentivity is not a
+[cruse-1973] "Some Thoughts on Agentivity" argues that agentivity is not a
 single feature but decomposes into 4 independent sub-features:
 
 | Feature    | Cruse's gloss                         | Example              |
@@ -18,11 +18,11 @@ single feature but decomposes into 4 independent sub-features:
 | agentive   | using own body's internal energy      | John ran             |
 
 The **do-test** ("NP did something") passes iff at least one feature is
-present. @cite{parsons-1990} neo-Davidsonian `agent` role captures specifically
+present. [parsons-1990] neo-Davidsonian `agent` role captures specifically
 the `agentive` sub-feature (own energy + dynamic), which is strictly
 narrower than passing the do-test.
 
-This analysis has been superseded by @cite{grimm-2011}'s agentivity lattice
+This analysis has been superseded by [grimm-2011]'s agentivity lattice
 (formalized in `AgentivityLattice.lean`), which organizes proto-agent
 entailments into a lattice with privative features. The Cruse decomposition
 is preserved here as a historically important precursor.
@@ -52,10 +52,10 @@ open Semantics.Lexical
 open Phenomena.TenseAspect.Diagnostics
 
 -- ════════════════════════════════════════════════════
--- § 1. Agentivity Features (@cite{cruse-1973} pp.17–21)
+-- § 1. Agentivity Features ([cruse-1973] pp.17–21)
 -- ════════════════════════════════════════════════════
 
-/-- The four independent sub-features of agentivity (@cite{cruse-1973} pp.17–21).
+/-- The four independent sub-features of agentivity ([cruse-1973] pp.17–21).
 
     Cruse argues that "agentivity" is not a single binary feature but
     decomposes into at least four independent components, each with
@@ -90,10 +90,10 @@ structure AgentivityProfile (Entity Time : Type*) [LinearOrder Time] where
   hasAgentive : Entity → Event Time → Prop
 
 -- ════════════════════════════════════════════════════
--- § 2. The Do-Test (@cite{cruse-1973} pp.13–14)
+-- § 2. The Do-Test ([cruse-1973] pp.13–14)
 -- ════════════════════════════════════════════════════
 
-/-- The do-test (@cite{cruse-1973} pp.13–14): "NP VP" entails "NP did something"
+/-- The do-test ([cruse-1973] pp.13–14): "NP VP" entails "NP did something"
     iff at least one agentivity sub-feature is present.
 
     This is the disjunction of all four features. -/
@@ -146,7 +146,7 @@ class CruseIndependence (Entity Time : Type*) [LinearOrder Time]
       profile.hasAgentive x e ∧ ¬ profile.hasInitiative x e
 
 -- ════════════════════════════════════════════════════
--- § 4. Bridge to ThematicFrame.agent (@cite{parsons-1990})
+-- § 4. Bridge to ThematicFrame.agent ([parsons-1990])
 -- ════════════════════════════════════════════════════
 
 /-- Link between Parsons' `agent` role and Cruse's `agentive_` sub-feature.
@@ -224,7 +224,7 @@ theorem initiative_toActionType :
 theorem agentive_toActionType :
     AgentivityFeature.agentive_.toActionType = .Ambiguous := rfl
 
-/-- Coercive implication (@cite{nadathur-lauer-2020}) arises exactly when the causee's
+/-- Coercive implication ([nadathur-lauer-2020]) arises exactly when the causee's
     action is volitional — i.e., when the causee has at least the
     volitive sub-feature.
 

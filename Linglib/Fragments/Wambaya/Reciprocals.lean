@@ -2,7 +2,7 @@ import Linglib.Core.Word
 
 /-!
 # Wambaya Reciprocal Fragment
-@cite{nordlinger-2023}
+[nordlinger-2023]
 
 Wambaya (Australian, Mirndi) marks reciprocity with the bound
 morpheme **-ngg-** (glossed RR = reciprocal/reflexive) in the
@@ -10,7 +10,7 @@ auxiliary verb complex. The same morpheme serves both reciprocal
 and reflexive functions. This is a clitic strategy (bivalent):
 the clause retains its transitive structure.
 
-In @cite{nordlinger-2023} ex. 11 (citing Nordlinger 1998, p. 142):
+In [nordlinger-2023] ex. 11 (citing Nordlinger 1998, p. 142):
 "Alag-bulu wurlu-**ngg**-a nyurrunyurru" = 'The two children are
 chasing each other.' Here "wurlu-ngg-a" = 3DU.SBJ-RR-NFUT
 (auxiliary with RR marker) and "nyurrunyurru" = 'chase' (coverb).

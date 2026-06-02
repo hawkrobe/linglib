@@ -2,7 +2,7 @@ import Linglib.Semantics.Plurality.Basic
 
 /-!
 # Plural Distributivity and Non-Maximality
-@cite{kriz-spector-2021} @cite{haslinger-etal-2025}
+[kriz-spector-2021] [haslinger-etal-2025]
 
 Tolerant-distributive operators and the four-cell typology of
 distributivity × maximality. The substrate primitives (`Tolerance`,
@@ -20,7 +20,7 @@ distributivity × maximality. The substrate primitives (`Tolerance`,
 * `distMaximal_singleton`, `distMaximal_pair`, `distTolerant_singleton`,
   `distTolerant_identity_singleton` — atom-vacuity theorems.
 * `DistMaxClass`, `DistMaxClass.{distMax,distNonMax,nonDistMax,nonDistNonMax}`
-  — the four-cell typology from @cite{haslinger-etal-2025}.
+  — the four-cell typology from [haslinger-etal-2025].
 * `distTolerantQuant` — hypothetical DP-internal tolerant quantifier
   (typology-predicted but unattested).
 
@@ -91,7 +91,7 @@ On singletons, `distMaximal` reduces to the predicate itself.
 
 This is WHY `each`/`jeder` forces maximality: when it distributes P to individual
 atoms, the result is just P(a) — there's no plurality for tolerance to weaken.
-@cite{haslinger-etal-2025} §2.3, the argument below the four-way classification.
+[haslinger-etal-2025] §2.3, the argument below the four-way classification.
 -/
 theorem distMaximal_singleton {Atom : Type*} {W : Type*}
     (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] (a : Atom) (w : W) :
@@ -158,7 +158,7 @@ theorem distTolerant_identity_singleton (P : Atom → W → Prop)
 
 /-- Classification by [±distributive] × [±maximal].
 
-    @cite{haslinger-etal-2025} present a four-cell typology in which
+    [haslinger-etal-2025] present a four-cell typology in which
     the two properties are argued to be orthogonal: all four cells are
     attested or predicted.
 
@@ -194,8 +194,8 @@ instance : DecidablePred DistMaxClass.isMaximal
 
 /--
 Hypothetical exception-tolerant DP quantifier.
-@cite{haslinger-etal-2025} flag this as a typology cell predicted
-possible by the Križ & @cite{kriz-spector-2021} framework but not
+[haslinger-etal-2025] flag this as a typology cell predicted
+possible by the Križ & [kriz-spector-2021] framework but not
 attested in any known language. The non-attestation is a typological
 puzzle — the formal tools for non-maximality (tolerance relations)
 don't inherently block DP-internal quantifiers from using them.

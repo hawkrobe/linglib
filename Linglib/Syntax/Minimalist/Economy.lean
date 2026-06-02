@@ -5,8 +5,8 @@ import Mathlib.Data.DFinsupp.WellFounded
 
 /-!
 # Derivational Economy
-@cite{chomsky-1991} @cite{chomsky-1995} @cite{boskovic-1997} @cite{collins-2001}
-@cite{citko-gracanin-yuksek-2025}
+[chomsky-1991] [chomsky-1995] [boskovic-1997] [collins-2001]
+[citko-gracanin-yuksek-2025]
 
 Economy compares competing derivations that converge on the same PF
 string and LF interpretation, selecting the one with fewest operations
@@ -15,12 +15,12 @@ and lexical resources.
 ## Two principles
 
 - **Least Effort**: Pareto-minimize on lexical items / Merge ops / Agree
-  ops / E-feature deletions. Drawn from @cite{chomsky-1991},
-  @cite{chomsky-1995}, @cite{boskovic-1997}; the **global**
-  transderivational variant per @cite{citko-gracanin-yuksek-2025} fn 3.
-  The local-economy alternative (@cite{collins-2001}) is not formalized.
+  ops / E-feature deletions. Drawn from [chomsky-1991],
+  [chomsky-1995], [boskovic-1997]; the **global**
+  transderivational variant per [citko-gracanin-yuksek-2025] fn 3.
+  The local-economy alternative ([collins-2001]) is not formalized.
 
-- **Pronunciation Economy** (@cite{citko-gracanin-yuksek-2025} p. 27): no
+- **Pronunciation Economy** ([citko-gracanin-yuksek-2025] p. 27): no
   PF-affecting operation is vacuous. Checked **per operation**, not on
   whole-derivation PF before/after — see `pronunciationEconomy`'s
   docstring for why a whole-derivation `≠` check under-rejects.
@@ -65,7 +65,7 @@ section DerivationCost
 
 /-- 4-dimensional cost of a syntactic derivation, measured by operation
     and resource counts. The dimensions are exactly those
-    @cite{citko-gracanin-yuksek-2025} (p. 3) compares when arguing
+    [citko-gracanin-yuksek-2025] (p. 3) compares when arguing
     multidominance is more economical than ellipsis: lexical items drawn
     from the numeration, Merge operations, Agree operations, and
     E-feature triggered PF deletions. -/
@@ -110,7 +110,7 @@ end DerivationCost
 
     `lexicalItems`: each `emL`/`emR`/`wlm` step draws one lexical item
     from the numeration. (Wholesale Late Merger
-    @cite{takahashi-hulsey-2009} introduces a restrictor — also a
+    [takahashi-hulsey-2009] introduces a restrictor — also a
     numeration draw.)
     `mergeOps`: total step count.
     `agreeOps`/`ellipsisOps`: not tracked by the step-based model. -/
@@ -136,7 +136,7 @@ section EconomyComparison
     `(totalOps, lexicalItems)` comparison, which lets a derivation with
     `agreeOps=0, mergeOps=100` "beat" one with `agreeOps=10, mergeOps=50`
     purely on the sum (110 vs 60) — a comparison
-    @cite{citko-gracanin-yuksek-2025} (p. 3) explicitly does not endorse:
+    [citko-gracanin-yuksek-2025] (p. 3) explicitly does not endorse:
     they argue MD is more economical than ellipsis on the *each-dimension*
     reading (fewer lexical items AND fewer Merge AND fewer Agree). -/
 def atLeastAsEconomical (c1 c2 : DerivationCost) : Prop :=
@@ -237,8 +237,8 @@ instance : PartialOrder DerivationCost where
     lemma applied to `Nat^n` — through the order embedding
     `DerivationCost.profileEmbedding` via `OrderEmbedding.wellFounded`.
 
-    **Structural significance**: this is what makes the @cite{chomsky-1995}
-    / @cite{citko-gracanin-yuksek-2025} claim that "economy selects an
+    **Structural significance**: this is what makes the [chomsky-1995]
+    / [citko-gracanin-yuksek-2025] claim that "economy selects an
     optimum from the reference set" *coherent*. Without well-foundedness,
     an infinite chain `c₀ > c₁ > c₂ > …` of ever-more-economical
     derivations could exist, and "the economy winner" would be
@@ -263,7 +263,7 @@ instance : WellFoundedLT DerivationCost :=
     `WellFounded.has_min`, with the `<` ↔ `strictlyMoreEconomical`
     translation through `strictlyMoreEconomical_iff_lt`.
 
-    Linguistically: the @cite{citko-gracanin-yuksek-2025} selection
+    Linguistically: the [citko-gracanin-yuksek-2025] selection
     procedure is mathematically well-defined; whatever else economy +
     Pronunciation Economy + MWF do to break ties among winners, the set
     of winners is non-empty for any non-empty reference set. -/
@@ -275,7 +275,7 @@ theorem economy_admits_winner {R : Set DerivationCost} (hR : R.Nonempty) :
 
 /-- **Consumer-friendly form**: in a 2-element reference set `{c, c'}`
     where `c` strictly beats `c'`, `c` is the economy winner. The common
-    pattern in @cite{citko-gracanin-yuksek-2025}-style cost-comparison
+    pattern in [citko-gracanin-yuksek-2025]-style cost-comparison
     arguments: pair MD-cost vs ellipsis-cost, prove MD beats ellipsis,
     conclude MD is the winner.
 
@@ -294,7 +294,7 @@ section PronunciationEconomy
 
 /-- A single PF-affecting operation: PF state immediately before vs
     immediately after the op fires. Used to express
-    @cite{citko-gracanin-yuksek-2025}'s **per-operation** vacuity check
+    [citko-gracanin-yuksek-2025]'s **per-operation** vacuity check
     (paper p. 27 ex (39); §3 PF reduction).
 
     Whole-derivation Pronunciation Economy is the conjunction of per-op
@@ -312,7 +312,7 @@ def PFOperation.isVacuous (op : PFOperation) : Prop := op.pfBefore = op.pfAfter
 instance (op : PFOperation) : Decidable op.isVacuous := by
   unfold PFOperation.isVacuous; infer_instance
 
-/-- **Pronunciation Economy** (@cite{citko-gracanin-yuksek-2025} p. 27,
+/-- **Pronunciation Economy** ([citko-gracanin-yuksek-2025] p. 27,
     ex (39)): no PF-affecting operation in the derivation is vacuous.
 
     Crucially **per-operation**, not on whole-derivation PF before/after.

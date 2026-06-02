@@ -2,7 +2,7 @@ import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Tactic.Positivity
 
 /-!
-# Yang's Tolerance Principle @cite{yang-2016}
+# Yang's Tolerance Principle [yang-2016]
 
 A productivity criterion for rule learning. Given a rule with `n` items in its
 scope and `e` exceptions (items in scope that fail to obey the rule), the rule
@@ -13,18 +13,18 @@ is **tolerated** (treated as productive) iff
 Below this threshold, the cost of memorizing exceptions is outweighed by the
 generality of the rule; above it, the learner abandons the rule and treats the
 items as lexically listed. The threshold `θ_N = N / ln N` is derived in
-@cite{yang-2016} from a sufficiency condition for the Elsewhere Condition under
+[yang-2016] from a sufficiency condition for the Elsewhere Condition under
 serial rule access.
 
 This module defines the threshold and the productivity predicate. It is
 deliberately minimal — actual numerical certificates for specific `(n, e)`
 pairs are deferred to the study files that need them.
 
-@cite{belth-2026} invokes the principle as the productivity gate inside
+[belth-2026] invokes the principle as the productivity gate inside
 the D2L tier-learner; see
 `Studies/Belth2026.lean`. Other potential
 consumers (Yang's morphological productivity, infant rule generalization
-@cite{emond-shi-2021}) are not yet wired in.
+[emond-shi-2021]) are not yet wired in.
 -/
 
 namespace Yang2016

@@ -8,17 +8,17 @@ import Linglib.Core.Logic.Team.Definability
 /-!
 # Modal Dependence Logic (MDL)
 
-@cite{vaananen-2008} @cite{vaananen-2007}
+[vaananen-2008] [vaananen-2007]
 
 MDL is the modal extension of dependence logic introduced in
-@cite{vaananen-2008} ("Modal Dependence Logic", in Apt & van Rooij eds.
+[vaananen-2008] ("Modal Dependence Logic", in Apt & van Rooij eds.
 *New Perspectives on Games and Interaction*, pp. 237-254). It adds a
 *dependence atom* `=(p₁,...,pₙ; q)` to classical modal logic, meaning
 "the value of `q` is functionally determined by the values of
 `p₁,...,pₙ` across the team."
 
 The framework is grounded in Väänänen's foundational
-@cite{vaananen-2007} (the *Dependence Logic* book, Cambridge University
+[vaananen-2007] (the *Dependence Logic* book, Cambridge University
 Press 2007), which develops the first-order team-semantic apparatus
 that MDL adapts to modal logic. Where the book's quantifiers range
 over assignments, MDL's modalities range over Kripke worlds — but the
@@ -26,7 +26,7 @@ team-semantic skeleton (formulas as predicates of teams, downward
 closure, dependence atoms) transfers directly.
 
 MDL is studied for its computational and model-theoretic properties
-(satisfiability complexity in @cite{lohmann-vollmer-2013} and Sevenster's
+(satisfiability complexity in [lohmann-vollmer-2013] and Sevenster's
 earlier expressive-power work; bisimulation invariance), with
 applications in database theory, knowledge representation, and AI
 rather than primarily in linguistic semantics — hence the placement in
@@ -36,14 +36,14 @@ team-semantic primitives (`Core/Logic/Team/`, `Core/Logic/Bilateral/`).
 ## What changes from BSML
 
 MDL and BSML share a bilateral semantics (Player II = support, Player
-I = anti-support, negation flips polarity per @cite{vaananen-2008}
+I = anti-support, negation flips polarity per [vaananen-2008]
 clause (T5)) and the same Kripke-model carrier. The structural
 differences:
 
 * **Atom**: BSML's `NE` becomes MDL's `dep`. `=(x⃗; y)` is supported by
   a team iff any two worlds agreeing on `x⃗` also agree on `y`.
 * **Modal operator clauses**: MDL's ◇-support uses a **single witness**
-  `Y` (@cite{vaananen-2008} clause (T8)) — `∃ Y, (∀ w ∈ s, ∃ y ∈ Y,
+  `Y` ([vaananen-2008] clause (T8)) — `∃ Y, (∀ w ∈ s, ∃ y ∈ Y,
   y ∈ R[w]) ∧ support φ Y` — rather than BSML's per-world witnesses.
   Similarly, ◇-anti-support uses the union of accessibility images
   (T9) rather than per-world checks. The two formulations are
@@ -100,7 +100,7 @@ infrastructure but differ in atom flavor:
 * `Modal/Kripke.lean` — the carrier type, shared.
 * `Modal/Dependence.lean` (this file) — MDL with dependence atoms.
 * `Modal/Inclusion.lean` (future) — modal inclusion logic ML(⊆),
-  introduced by Galliani; axiomatized in @cite{anttila-2025} Ch 5.
+  introduced by Galliani; axiomatized in [anttila-2025] Ch 5.
 * `Modal/Independence.lean` (future) — modal independence logic
   (Grädel and Väänänen).
 * `Modal/Bilateral.lean` (future, after BSML's eventual Core/
@@ -112,7 +112,7 @@ future refactor lifts it to `Core/Logic/Modal/Bisimulation.lean`.
 
 ## Todo
 
-* @cite{lohmann-vollmer-2013} — adds classical disjunction `⓿` (the
+* [lohmann-vollmer-2013] — adds classical disjunction `⓿` (the
   BSML∨ analogue) and complete satisfiability complexity classification.
   Natural second consumer paper, with a Studies file anchored on it.
 * Bisim invariance for MDL — same shape as BSML/BSMLOr/BSMLEmpty
@@ -131,7 +131,7 @@ open Core.Logic.Modal (KripkeModel)
 
 /-! ### Syntax (Definition 1.1) -/
 
-/-- MDL syntax (Definition 1.1 of @cite{vaananen-2008}): classical modal
+/-- MDL syntax (Definition 1.1 of [vaananen-2008]): classical modal
     logic extended with the dependence atom `=(p₁,...,pₙ; q)`.
 
     `□` and binary `∧` are abbreviations (the paper's `□A := ¬◇¬A` and
@@ -156,7 +156,7 @@ inductive Formula (Atom : Type*) where
 
 /-! ### Semantics (Definition 4.1) -/
 
-/-- Bilateral evaluation for MDL (Definition 4.1 of @cite{vaananen-2008}).
+/-- Bilateral evaluation for MDL (Definition 4.1 of [vaananen-2008]).
     `eval M true φ t` is support (Player II); `eval M false φ t` is
     anti-support (Player I). Negation flips polarity (clause (T5)).
 
@@ -332,7 +332,7 @@ private theorem support_and_antiSupport_downward (φ : Formula Atom)
       apply iha (s.biUnion M.access) (t.biUnion M.access) ?_ hsupp
       exact Finset.biUnion_subset_biUnion_of_subset_left M.access hsub
 
-/-- **Lemma 4.2 of @cite{vaananen-2008}**: every MDL formula's support
+/-- **Lemma 4.2 of [vaananen-2008]**: every MDL formula's support
     is downward-closed. The defining closure property of the dependence
     family — what BSML loses when it adds NE. -/
 theorem isLowerSet_support (M : KripkeModel W Atom) (φ : Formula Atom) :
@@ -432,8 +432,8 @@ theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
 open Core.Logic.Team in
 /-- **MDL is sound for its closure cell**: every MDL-definable team property is
     downward-closed and has the empty-team property. The dependence family
-    occupies the downward-closed, empty-team cell (@cite{vaananen-2008};
-    @cite{anttila-2025}) — `dep` breaks union closure (see
+    occupies the downward-closed, empty-team cell ([vaananen-2008];
+    [anttila-2025]) — `dep` breaks union closure (see
     `not_supClosed_dep_of_witness`) but preserves downward closure.
 
     Composes `isLowerSet_support` (Lemma 4.2) and `support_empty` through the
@@ -472,8 +472,8 @@ open Core.Logic.Modal
 
 variable {W' : Type*} [DecidableEq W'] [Fintype W']
 
-/-- **Bisimulation invariance for MDL** (the @cite{aloni-anttila-yang-2024}
-    Theorem 3.8 analogue for @cite{vaananen-2008}'s modal dependence logic):
+/-- **Bisimulation invariance for MDL** (the [aloni-anttila-yang-2024]
+    Theorem 3.8 analogue for [vaananen-2008]'s modal dependence logic):
     if `s ⇌_k s'` and `φ` has modal depth `≤ k`, then `eval M b φ s ↔
     eval M' b φ s'` for both polarities.
 

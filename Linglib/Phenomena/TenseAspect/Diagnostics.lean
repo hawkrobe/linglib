@@ -2,7 +2,7 @@ import Linglib.Features.Aktionsart
 
 /-!
 # Aspectual Diagnostics
-@cite{vendler-1957} @cite{dowty-1979}
+[vendler-1957] [dowty-1979]
 
 Empirical tests for determining aspectual class. The *for*-X and *in*-X
 adverbial, progressive, stop-V-ing, and imperative diagnostics
@@ -23,7 +23,7 @@ rule), not on a specific paper-replication.
 
 ## "For X" vs "In X" Tests
 
-The classic tests from @cite{vendler-1957} and @cite{dowty-1979}:
+The classic tests from [vendler-1957] and [dowty-1979]:
 
 - "for an hour" — compatible with atelic predicates
   - "John ran for an hour" ✓ (activity)

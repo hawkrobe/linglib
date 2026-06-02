@@ -2,11 +2,11 @@ import Linglib.Syntax.Minimalist.Basic
 
 /-!
 # Verbal Decomposition
-@cite{cuervo-2003} @cite{wood-2015} @cite{pylkkanen-2008}
+[cuervo-2003] [wood-2015] [pylkkanen-2008]
 
 Sub-eventive verb heads that decompose verbal structure into
-fine-grained event components. Following @cite{wood-2015} and
-@cite{pylkkanen-2008}, CAUSE is an independent head — separate
+fine-grained event components. Following [wood-2015] and
+[pylkkanen-2008], CAUSE is an independent head — separate
 from both Voice (which introduces the external argument) and the
 root-determined event structure (vGO, vBE).
 
@@ -29,8 +29,8 @@ namespace Minimalist
 -- § 1: Sub-Eventive Verb Heads
 -- ============================================================================
 
-/-- Sub-eventive verb heads from @cite{cuervo-2003}, extended with
-    vCAUSE following @cite{wood-2015} and @cite{pylkkanen-2008}.
+/-- Sub-eventive verb heads from [cuervo-2003], extended with
+    vCAUSE following [wood-2015] and [pylkkanen-2008].
 
     - **vDO**: Dynamic subevent where an agent does something
     - **vCAUSE**: Causal relation between subevents (independent head;
@@ -39,7 +39,7 @@ namespace Minimalist
     - **vBE**: Stative subevent of result state -/
 inductive VerbHead where
   | vDO     -- Dynamic subevent (agent does something)
-  | vCAUSE  -- Causal relation between subevents (@cite{wood-2015}, @cite{pylkkanen-2008})
+  | vCAUSE  -- Causal relation between subevents ([wood-2015], [pylkkanen-2008])
   | vGO     -- Dynamic subevent of change
   | vBE     -- Stative subevent of result
   deriving DecidableEq, Repr
@@ -76,7 +76,7 @@ def hasCause (heads : List VerbHead) : Bool :=
 
 /-- Is this an anticausative (CAUSE present, but no external agent)?
     Anticausatives have the causal structure but lack an agentive vDO.
-    This is the key insight from @cite{wood-2015}: CAUSE is independent
+    This is the key insight from [wood-2015]: CAUSE is independent
     of Voice, so it can appear without an agent. -/
 def isAnticausative (heads : List VerbHead) : Bool :=
   hasCause heads && heads.contains .vGO && !heads.contains .vDO

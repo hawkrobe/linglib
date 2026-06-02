@@ -8,7 +8,7 @@ import Linglib.Semantics.Composition.Tree
 
 /-!
 # Glue Semantics
-@cite{asudeh-2022}
+[asudeh-2022]
 
 Glue Semantics is a composition framework where meanings are assembled
 via proof search in the implicational fragment of linear logic (⊸).
@@ -17,7 +17,7 @@ a linear logic formula. Composition corresponds to ⊸-elimination
 (functional application) and ⊸-introduction (lambda abstraction) via
 the Curry-Howard isomorphism.
 
-## Key properties (@cite{asudeh-2022}, §1)
+## Key properties ([asudeh-2022], §1)
 
 1. **Resource-sensitive composition**: Each premise is used exactly once
    (no weakening, no contraction). This subsumes the Theta Criterion,
@@ -33,7 +33,7 @@ the Curry-Howard isomorphism.
 
 ## Scope ambiguity
 
-"Everybody loves somebody" (@cite{asudeh-2022}, §4.2) yields two
+"Everybody loves somebody" ([asudeh-2022], §4.2) yields two
 scope readings. Each reading corresponds to a different instantiation
 of the second-order ∀ in the quantifier types, producing a different
 premise multiset. Each multiset has exactly one normal-form proof.
@@ -74,7 +74,7 @@ inductive GlueTy where
 infixr:25 " ⊸ " => GlueTy.lolli
 
 /-- A meaning constructor: a meaning term M paired with a Glue type G.
-    Written `M : G` in the Glue literature (@cite{asudeh-2022}, §2). -/
+    Written `M : G` in the Glue literature ([asudeh-2022], §2). -/
 structure MeaningConstructor (α : Type) where
   meaning : α
   glue : GlueTy
@@ -132,12 +132,12 @@ def GlueProof.isResourceCorrect (numPremises : Nat) (p : GlueProof)
   (p.usedPremises numPremises).mergeSort (· ≤ ·) == List.range numPremises
 
 -- ════════════════════════════════════════════════════════════════════
--- § Substructural Logic Hierarchy (@cite{asudeh-2022}, §3)
+-- § Substructural Logic Hierarchy ([asudeh-2022], §3)
 -- ════════════════════════════════════════════════════════════════════
 
 /-! ### The logic landscape
 
-@cite{asudeh-2022} (§3) situates linear logic in a hierarchy of
+[asudeh-2022] (§3) situates linear logic in a hierarchy of
 substructural logics (Figure 1). Logics are characterized by which
 structural rules they admit:
 
@@ -163,7 +163,7 @@ inductive StructuralRule where
   deriving DecidableEq, Repr
 
 /-- Substructural logics, ordered by which structural rules they admit
-    (@cite{asudeh-2022}, §3, Figure 1). -/
+    ([asudeh-2022], §3, Figure 1). -/
 inductive SubstructuralLogic where
   | lambekL        -- No structural rules (noncommutative resource logic)
   | linearLogic    -- + commutativity (commutative resource logic = Glue)
@@ -206,7 +206,7 @@ theorem glue_is_resource_sensitive :
 -- § "Alex likes Blake" — Basic Glue Composition
 -- ════════════════════════════════════════════════════════════════════
 
-/-! ### Simple transitive composition (@cite{asudeh-2022}, §2)
+/-! ### Simple transitive composition ([asudeh-2022], §2)
 
 The simplest Glue derivation: a transitive verb with two arguments.
 Given meaning constructors:
@@ -251,7 +251,7 @@ theorem alex_likes_blake_resource_correct :
     alexLikesBlakeProof.isResourceCorrect 3 = true := by native_decide
 
 /-- Argument reordering: the same proof works regardless of premise order,
-    because the Glue logic is commutative (@cite{asudeh-2022}, §2). -/
+    because the Glue logic is commutative ([asudeh-2022], §2). -/
 def alexLikesBlakeReordered : List GlueTy :=
   [ a_               -- 0: alex (moved first)
   , b_               -- 1: blake
@@ -275,7 +275,7 @@ end AlexLikesBlake
 -- § "Everybody loves somebody" — The Canonical Scope Example
 -- ════════════════════════════════════════════════════════════════════
 
-/-! ### Meaning constructors (@cite{asudeh-2022}, §4.2)
+/-! ### Meaning constructors ([asudeh-2022], §4.2)
 
 Lexical entries (before instantiation):
 ```
@@ -315,7 +315,7 @@ def inversePremises : List GlueTy :=
 
 /-- Surface scope proof: every(some(love)) : l
 
-    Proof structure (cf. @cite{asudeh-2022}, Figure 4):
+    Proof structure (cf. [asudeh-2022], Figure 4):
     1. Apply some(S=e⊸l) to love → e ⊸ l
     2. Apply every(S=l) to result → l -/
 def surfaceProof : GlueProof :=
@@ -323,7 +323,7 @@ def surfaceProof : GlueProof :=
 
 /-- Inverse scope proof: some(every(λv.λu.love(u)(v))) : l
 
-    Proof structure (cf. @cite{asudeh-2022}, Figure 5):
+    Proof structure (cf. [asudeh-2022], Figure 5):
     1. Assume [v:e]³, [u:s]⁴
     2. Apply love to u (s-arg) then to v (e-arg) → l
     3. Abstract over u → s⊸l, then over v → e⊸s⊸l
@@ -472,7 +472,7 @@ def glueReading : ScopeConfig → Prop
 
 /-- Map ScopeConfig to propositions via direct GQ application
     (the same semantics computed by QR tree interpretation,
-    @cite{heim-kratzer-1998} Ch. 5). -/
+    [heim-kratzer-1998] Ch. 5). -/
 def qrReading : ScopeConfig → Prop
   | .surface => every_sem person_sem
       (λ x => some_sem person_sem (λ y => sees_sem y x))
@@ -490,8 +490,8 @@ theorem qr_inverse_agrees :
 /-- Glue and QR yield identical propositions for both scope readings.
 
     Two fundamentally different composition mechanisms — proof search
-    in linear logic (Glue, @cite{asudeh-2022}) vs. covert movement
-    with Predicate Abstraction (QR, @cite{heim-kratzer-1998}) — produce
+    in linear logic (Glue, [asudeh-2022]) vs. covert movement
+    with Predicate Abstraction (QR, [heim-kratzer-1998]) — produce
     the same semantic results. -/
 theorem glue_qr_agree :
     ∀ s : ScopeConfig, qrReading s = glueReading s := by
@@ -501,18 +501,18 @@ theorem glue_qr_agree :
 -- § Resource Sensitivity as a Unifying Principle
 -- ════════════════════════════════════════════════════════════════════
 
-/-! @cite{asudeh-2022} (§3) argues that linear logic resource
+/-! [asudeh-2022] (§3) argues that linear logic resource
     sensitivity subsumes several well-formedness conditions from
     different frameworks. These are all instances of: in a valid
     linear logic proof, each premise is used exactly once. -/
 
 inductive ResourceCondition where
-  | completenessCoherence   -- @cite{kaplan-bresnan-1982}: all and only GFs
-  | thetaCriterion          -- @cite{chomsky-1981}: each arg ↔ one θ-role
-  | projectionPrinciple     -- @cite{chomsky-1981}: lexical requirements projected
+  | completenessCoherence   -- [kaplan-bresnan-1982]: all and only GFs
+  | thetaCriterion          -- [chomsky-1981]: each arg ↔ one θ-role
+  | projectionPrinciple     -- [chomsky-1981]: lexical requirements projected
   | noVacuousQuantification -- every binder binds something
-  | fullInterpretation      -- @cite{chomsky-1982}: every LF element licensed
-  | inclusivenessCondition  -- @cite{chomsky-1995}: no new objects in derivation
+  | fullInterpretation      -- [chomsky-1982]: every LF element licensed
+  | inclusivenessCondition  -- [chomsky-1995]: no new objects in derivation
   deriving DecidableEq, Repr
 
 /-- Resource sensitivity = no weakening + no contraction.
@@ -531,7 +531,7 @@ def ResourceCondition.fromNoContraction : List ResourceCondition :=
 -- § Three Kinds of Composition Theory
 -- ════════════════════════════════════════════════════════════════════
 
-/-! @cite{asudeh-2022} (§4) distinguishes three approaches to the
+/-! [asudeh-2022] (§4) distinguishes three approaches to the
     syntax-semantics interface:
 
     1. **Interpretive** (H&K/QR): Syntax produces LF, which is

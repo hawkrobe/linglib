@@ -8,10 +8,10 @@ import Linglib.Fragments.Hausa.Gender
 
 /-!
 # Kramer 2020: Grammatical Gender — A Close Look at Gender Assignment
-@cite{kramer-2020} @cite{kramer-2015} @cite{corbett-1991} @cite{harris-1991}
+[kramer-2020] [kramer-2015] [corbett-1991] [harris-1991]
 
-Formalizes the core contributions of @cite{kramer-2020}, a review article
-that sharpens and extends @cite{kramer-2015}'s structural approach to gender
+Formalizes the core contributions of [kramer-2020], a review article
+that sharpens and extends [kramer-2015]'s structural approach to gender
 assignment. Three main results:
 
 1. **The Semantic Core Generalization** (ex. 2/28): every language with
@@ -19,7 +19,7 @@ assignment. Three main results:
    based on animacy, humanness, and/or social gender/biological sex.
 
 2. **Lexical vs structural gender assignment** (§3): a comparison of
-   @cite{harris-1991}'s lexical rules with @cite{kramer-2015}'s structural
+   [harris-1991]'s lexical rules with [kramer-2015]'s structural
    *n*-based approach, identifying three phenomena that differentiate them:
    phonological assignment (§3.3.1), hybrid nouns (§3.3.2), and the
    Semantic Core (§3.3.3).
@@ -52,7 +52,7 @@ assignment. Three main results:
 /-! The typological `SemanticBasis` and the DM `GenderDimension` describe the
 same underlying distinction from different perspectives: typology asks *what
 semantic property organizes the system*, while DM asks *what binary feature
-sits on n*. @cite{kramer-2020} makes this connection explicit by analyzing
+sits on n*. [kramer-2020] makes this connection explicit by analyzing
 sex-based systems as [±FEM] or [±MASC], and animacy-based systems as [±ANIM].
 
 The mapping is partial in two ways:
@@ -60,7 +60,7 @@ The mapping is partial in two ways:
 1. `SemanticBasis.shape` and `.rationality` have no standard DM feature
    dimension (no [±SHAPE] or [±RATIONAL] in the literature).
 
-2. `SemanticBasis.humanness` maps to `.anim` because @cite{kramer-2015}
+2. `SemanticBasis.humanness` maps to `.anim` because [kramer-2015]
    does not posit a [±HUMAN] dimension — the closest is [±ANIM]. This is
    a limitation of the current DM feature inventory, not a claim that
    humanness is a subset of animacy (e.g. Akɔɔse distinguishes human vs
@@ -73,7 +73,7 @@ open Morphology.DM
 
 /-- Whether a `SemanticBasis` falls within the semantic core.
 
-    @cite{kramer-2020} ex. 3 identifies three core properties; `shape` and
+    [kramer-2020] ex. 3 identifies three core properties; `shape` and
     `rationality` are *additional* semantic bases (§2.2.1) that go beyond
     the core but never constitute the *only* basis for a gender system. -/
 def SemanticBasis.isCore : SemanticBasis → Bool
@@ -90,9 +90,9 @@ def GenderProfile.satisfiesSemanticCore (p : GenderProfile) : Bool :=
   p.genderCount == .none || p.semanticBases.any SemanticBasis.isCore
 
 /-- Map a typological semantic basis to its corresponding DM gender dimension,
-    when one exists. (@cite{kramer-2020} §3)
+    when one exists. ([kramer-2020] §3)
 
-    The `.humanness` → `.anim` mapping reflects a gap in @cite{kramer-2015}'s
+    The `.humanness` → `.anim` mapping reflects a gap in [kramer-2015]'s
     feature inventory: no [±HUMAN] dimension is posited, so humanness-based
     systems are approximated by [±ANIM]. -/
 def SemanticBasis.toGenderDimension : SemanticBasis → Option GenderDimension
@@ -109,7 +109,7 @@ namespace Morphology.DM
 open Typology.Gender
 
 /-- Inverse direction: map a DM gender dimension to its typological basis.
-    (@cite{kramer-2020} §3) -/
+    ([kramer-2020] §3) -/
 def GenderDimension.toSemanticBasis : GenderDimension → SemanticBasis
   | .fem  => .sex
   | .masc => .sex
@@ -134,10 +134,10 @@ private abbrev spanish := Spanish.Gender.genderTypology
 private abbrev hausa   := Hausa.Gender.genderTypology
 
 -- ============================================================================
--- § 1: The Semantic Core Generalization (@cite{kramer-2020} ex. 2/28)
+-- § 1: The Semantic Core Generalization ([kramer-2020] ex. 2/28)
 -- ============================================================================
 
-/-- **Semantic Core Generalization** (@cite{kramer-2020} ex. 2/28):
+/-- **Semantic Core Generalization** ([kramer-2020] ex. 2/28):
     every language in the sample satisfies the semantic core. -/
 theorem semantic_core_holds :
     allProfiles.all (·.satisfiesSemanticCore) = true := by native_decide
@@ -174,7 +174,7 @@ theorem roundtrip_anim :
 -- ============================================================================
 
 /-- Whether remainder nouns use recycled genders, novel genders, or both.
-    (@cite{kramer-2020} Table 2) -/
+    ([kramer-2020] Table 2) -/
 inductive RemainderGenderSource where
   | recycled  -- gender reused from semantic core (e.g. Dieri: masc, Spanish: masc/fem)
   | novel     -- novel gender not used for semantic core (e.g. Tamil: neuter)
@@ -182,7 +182,7 @@ inductive RemainderGenderSource where
   deriving DecidableEq, Repr
 
 /-- How remainder nouns (those not assigned gender by the semantic core)
-    are distributed across genders (@cite{kramer-2020} Table 2).
+    are distributed across genders ([kramer-2020] Table 2).
 
     Two independent parameters:
     1. Are all remainder nouns in the same gender, or spread across genders?
@@ -195,33 +195,33 @@ structure RemainderPattern where
   deriving DecidableEq, Repr
 
 /-- Dieri (Pama-Nyungan): all remainder nouns are masculine (= same gender
-    used for male humans). Same gender, recycled. (@cite{kramer-2020} Table 2) -/
+    used for male humans). Same gender, recycled. ([kramer-2020] Table 2) -/
 def dieri : RemainderPattern := ⟨true, .recycled⟩
 
 /-- Tamil (Dravidian): remainder nouns go to neuter — a novel gender not
     used for the male/female semantic core. Same gender, novel.
-    (@cite{kramer-2020} Table 2; Asher 1982) -/
+    ([kramer-2020] Table 2; Asher 1982) -/
 def tamil : RemainderPattern := ⟨true, .novel⟩
 
 /-- Spanish: remainder nouns are split arbitrarily across masculine and
     feminine — both recycled genders. Different genders, recycled.
-    (@cite{kramer-2020} Table 1, Table 2; @cite{harris-1991}) -/
+    ([kramer-2020] Table 1, Table 2; [harris-1991]) -/
 def spanishRemainder : RemainderPattern := ⟨false, .recycled⟩
 
 /-- Akɔɔse (Niger-Congo: Bantu): remainder nouns spread across at least
     7 noun classes — novel genders. Different genders, novel.
-    (@cite{kramer-2020} Table 2; Hedinger 2008) -/
+    ([kramer-2020] Table 2; Hedinger 2008) -/
 def akoose : RemainderPattern := ⟨false, .novel⟩
 
 /-- Blackfoot (Algic: Algonquian): inanimate nouns are assigned either a
     novel inanimate gender or a recycled animate gender. Different genders,
-    both recycled and novel. (@cite{kramer-2020} Table 2; Frantz 2017) -/
+    both recycled and novel. ([kramer-2020] Table 2; Frantz 2017) -/
 def blackfoot : RemainderPattern := ⟨false, .both⟩
 
 -- NOTE: Table 2 marks "same gender + both recycled and novel" as
 -- "Not applicable" — if all remainder nouns go to ONE gender, that gender
 -- is either recycled or novel, not both. This is a conceptual constraint,
--- not derivable from our type. (@cite{kramer-2020} Table 2)
+-- not derivable from our type. ([kramer-2020] Table 2)
 
 /-- All five attested cells of Table 2 are distinct patterns. -/
 theorem table2_all_cells :
@@ -231,17 +231,17 @@ theorem table2_all_cells :
     spanishRemainder ≠ blackfoot ∧ akoose ≠ blackfoot := by decide
 
 -- ============================================================================
--- § 4: Lexical vs Structural Gender Assignment (@cite{kramer-2020} §3)
+-- § 4: Lexical vs Structural Gender Assignment ([kramer-2020] §3)
 -- ============================================================================
 
-/-! @cite{kramer-2020} §3.2 contrasts two theoretical approaches:
+/-! [kramer-2020] §3.2 contrasts two theoretical approaches:
 
-**Lexical** (@cite{harris-1991}): gender assigned via lexical rules that
+**Lexical** ([harris-1991]): gender assigned via lexical rules that
 map semantic features (e.g. [FEMALE]) to grammatical gender features
 (e.g. [F]). Each noun is listed with its gender feature in the lexicon.
 Gender is a property of the *lexical entry*.
 
-**Structural** (@cite{kramer-2015}): gender is a phi-feature on the
+**Structural** ([kramer-2015]): gender is a phi-feature on the
 categorizing head *n*. A root combines with an *n* bearing gender features
 via syntactic Merge. Gender is a property of the *syntactic structure*.
 
@@ -252,7 +252,7 @@ Three phenomena differentiate them (§3.3):
 -/
 
 /-- A lexical gender rule: maps a semantic feature to a grammatical gender
-    feature in a specified context. (@cite{harris-1991})
+    feature in a specified context. ([harris-1991])
 
     The `semanticBasis` identifies which semantic property triggers the
     rule; `targetDimension` identifies which DM gender dimension is
@@ -270,7 +270,7 @@ structure LexicalGenderRule where
     [FEMALE] → [F] / __ [HUMAN]
     The semantic feature [FEMALE] triggers assignment of the grammatical
     gender feature [F] (feminine) in the context of [HUMAN] nouns.
-    (@cite{harris-1991}; @cite{kramer-2020} ex. 23) -/
+    ([harris-1991]; [kramer-2020] ex. 23) -/
 def harrisHumanGenderRule : LexicalGenderRule :=
   ⟨.sex, .fem, .humanness⟩
 
@@ -281,7 +281,7 @@ theorem harris_rule_uses_core_bases :
     harrisHumanGenderRule.context.isCore := ⟨rfl, rfl⟩
 
 /-- The status of a diagnostic phenomenon for a theoretical approach.
-    @cite{kramer-2020} §3.3 argues that some phenomena are genuinely
+    [kramer-2020] §3.3 argues that some phenomena are genuinely
     diagnostic while others are inconclusive. -/
 inductive DiagnosticStatus where
   | handled       -- the approach handles this phenomenon
@@ -300,33 +300,33 @@ structure ApproachCapabilities where
   predictsSemanticCore : DiagnosticStatus
   deriving DecidableEq, Repr
 
-/-- The lexical approach (@cite{harris-1991}).
+/-- The lexical approach ([harris-1991]).
 
     - **Phonological assignment**: handled (lexical rules can reference
-      phonology), but @cite{kramer-2020} §3.3.1 argues the phenomenon may
+      phonology), but [kramer-2020] §3.3.1 argues the phenomenon may
       not exist — Hausa -ā is morphophonological realization, not assignment.
     - **Hybrid agreement**: problematic — a lexical entry has one gender
       feature; a single entry cannot be both [M] and [F]
-      (@cite{kramer-2020} §3.3.2)
+      ([kramer-2020] §3.3.2)
     - **Semantic Core**: problematic — nothing prevents a language from
       having only arbitrary gender rules without any semantic connection
-      (@cite{kramer-2020} §3.3.3) -/
+      ([kramer-2020] §3.3.3) -/
 def lexicalApproach : ApproachCapabilities :=
   ⟨.handled, .problematic, .problematic⟩
 
-/-- The structural approach (@cite{kramer-2015}).
+/-- The structural approach ([kramer-2015]).
 
     - **Phonological assignment**: inconclusive — syntax cannot see phonology,
-      but @cite{kramer-2020} §3.3.1 argues the phenomenon is better analyzed
+      but [kramer-2020] §3.3.1 argues the phenomenon is better analyzed
       as morphophonological realization of a gender feature on *n*, so the
       structural approach is not genuinely challenged.
     - **Hybrid agreement**: handled — a root can combine with different *n*
       heads, or a social-gender projection can override morphosyntactic
-      gender (@cite{kramer-2020} §3.3.2)
+      gender ([kramer-2020] §3.3.2)
     - **Semantic Core**: handled — via the Thesis of Radical Interpretability:
       if a language has gender features, at least some must be interpretable,
       which forces semantic assignment for at least some nouns
-      (@cite{kramer-2020} §3.3.3) -/
+      ([kramer-2020] §3.3.3) -/
 def structuralApproach : ApproachCapabilities :=
   ⟨.inconclusive, .handled, .handled⟩
 
@@ -341,7 +341,7 @@ theorem approaches_differ :
     the lexical approach handles 1. Phonological assignment is inconclusive
     for both (the structural approach because syntax can't see phonology;
     the lexical approach because Kramer argues the phenomenon doesn't exist
-    as described). This is the basis for @cite{kramer-2020} §3.4's conclusion
+    as described). This is the basis for [kramer-2020] §3.4's conclusion
     that "structural gender assignment has a slight edge." -/
 theorem structural_edge :
     structuralApproach.hybridAgreement = .handled ∧
@@ -350,7 +350,7 @@ theorem structural_edge :
     lexicalApproach.predictsSemanticCore = .problematic := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 5: Thesis of Radical Interpretability (@cite{kramer-2020} ex. 29)
+-- § 5: Thesis of Radical Interpretability ([kramer-2020] ex. 29)
 -- ============================================================================
 
 /-- Radical Interpretability (Brody 1997; Pesetsky & Torrego 2001, 2007):
@@ -428,7 +428,7 @@ theorem no_purely_arbitrary_under_ri
     if a language has gender features and satisfies Radical Interpretability,
     then it has at least one interpretable gender feature (which, being
     interpretable, forces semantic gender assignment for at least some nouns).
-    (@cite{kramer-2020} §3.3.3) -/
+    ([kramer-2020] §3.3.3) -/
 theorem ri_implies_interpretable_exists
     (features : List GenderFeature)
     (hRI : radicalInterpretability features)
@@ -444,12 +444,12 @@ theorem ri_implies_interpretable_exists
   exact no_purely_arbitrary_under_ri features hRI hNonempty hAllU
 
 -- ============================================================================
--- § 6: Referent-Based Gender Assignment (@cite{kramer-2020} §2.2.3)
+-- § 6: Referent-Based Gender Assignment ([kramer-2020] §2.2.3)
 -- ============================================================================
 
 /-- Same-root nominals: nouns that can be assigned different grammatical
     genders depending on the social gender of their referent.
-    (@cite{kramer-2020} §2.2.3; @cite{kramer-2015}; @cite{corbett-1991})
+    ([kramer-2020] §2.2.3; [kramer-2015]; [corbett-1991])
 
     In the structural approach, the root itself is ungendered; gender
     depends on which *n* head it merges with. Same-root nominals combine
@@ -471,7 +471,7 @@ def SameRootNominal.isSameRoot (n : SameRootNominal) : Bool :=
   n.possibleNHeads.length > 1
 
 /-- Amharic *hakim* 'doctor': combines with either i[+FEM] or i[−FEM]
-    depending on the referent. (@cite{kramer-2020} ex. 13) -/
+    depending on the referent. ([kramer-2020] ex. 13) -/
 def amharicHakim : SameRootNominal :=
   { form := "hakim"
     language := "Amharic"
@@ -490,7 +490,7 @@ theorem hakim_distinct_genders :
     CatHead.n_iFem ≠ CatHead.n_iMasc := by decide
 
 -- ============================================================================
--- § 7: Hybrid Nouns (@cite{kramer-2020} §2.2.3, §3.3.2)
+-- § 7: Hybrid Nouns ([kramer-2020] §2.2.3, §3.3.2)
 -- ============================================================================
 
 /-! Hybrid nouns are distinct from same-root nominals. Where same-root
@@ -498,7 +498,7 @@ nominals alternate gender depending on the referent (Amharic *hakim* is
 EITHER masculine OR feminine), hybrid nouns trigger BOTH genders
 SIMULTANEOUSLY on different agreement targets in the same sentence.
 
-@cite{kramer-2020} ex. 16/27: Russian *vrač* 'doctor'
+[kramer-2020] ex. 16/27: Russian *vrač* 'doctor'
   *očen' xoroš-aja glavn-yj vrač*
    very  good-F    head-M   doctor
   'a very good head doctor'
@@ -506,14 +506,14 @@ SIMULTANEOUSLY on different agreement targets in the same sentence.
 Here *xoroš-aja* shows feminine agreement and *glavn-yj* shows masculine
 agreement with the SAME noun *vrač* in the SAME clause.
 
-@cite{kramer-2020} §3.3.2 argues this is problematic for lexical approaches
+[kramer-2020] §3.3.2 argues this is problematic for lexical approaches
 (a lexical entry has one gender feature) but handled by structural approaches
 (a social-gender projection can coexist with morphosyntactic gender on n).
 -/
 
 /-- A hybrid noun: a single lexical item that triggers different genders
     on different agreement targets simultaneously.
-    (@cite{kramer-2020} §2.2.3, §3.3.2; @cite{corbett-1991}) -/
+    ([kramer-2020] §2.2.3, §3.3.2; [corbett-1991]) -/
 structure HybridNoun where
   /-- The noun form -/
   form : String
@@ -529,7 +529,7 @@ structure HybridNoun where
 
 /-- Russian *vrač* 'doctor': morphologically masculine (from n), but
     can trigger feminine agreement when referring to a female doctor.
-    (@cite{kramer-2020} ex. 15-16/27; @cite{corbett-1991}) -/
+    ([kramer-2020] ex. 15-16/27; [corbett-1991]) -/
 def russianVrac : HybridNoun :=
   { form := "vrač"
     language := "Russian"
@@ -541,17 +541,17 @@ def russianVrac : HybridNoun :=
     can bear only one gender feature, but hybrid nouns need two genders
     simultaneously. The structural approach handles this via separate
     projections for morphosyntactic and social gender.
-    (@cite{kramer-2020} §3.3.2) -/
+    ([kramer-2020] §3.3.2) -/
 theorem hybrid_nouns_favor_structural :
     structuralApproach.hybridAgreement = .handled ∧
     lexicalApproach.hybridAgreement = .problematic := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 8: N Inventory Typology (@cite{kramer-2015} Chs 5-7)
+-- § 8: N Inventory Typology ([kramer-2015] Chs 5-7)
 -- ============================================================================
 
 /-- An inventory of n heads for a language, with the number of surface
-    genders that result from VI (@cite{kramer-2015} Chs 5-7).
+    genders that result from VI ([kramer-2015] Chs 5-7).
 
     The key insight: surface gender count is determined by VI rules, not
     directly by the n inventory. Two languages can have the SAME set of
@@ -572,7 +572,7 @@ def NInventory.hasArbitraryGender (inv : NInventory) : Bool :=
 def NInventory.purelySemanticGender (inv : NInventory) : Bool :=
   !inv.hasArbitraryGender
 
--- 3-n languages: no u-feature (@cite{kramer-2015} Ch 5)
+-- 3-n languages: no u-feature ([kramer-2015] Ch 5)
 
 def dieriNs : NInventory :=
   ⟨"Dieri", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain], 2⟩
@@ -580,7 +580,7 @@ def dieriNs : NInventory :=
 def mangarayiNs : NInventory :=
   ⟨"Mangarayi", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain], 3⟩
 
--- 4-n languages, Set 1: u[+FEM] (@cite{kramer-2015} Ch 6)
+-- 4-n languages, Set 1: u[+FEM] ([kramer-2015] Ch 6)
 
 def amharicNs : NInventory :=
   ⟨"Amharic", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
@@ -594,25 +594,25 @@ def hausaNs : NInventory :=
   ⟨"Hausa", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
              CatHead.n_uFem], 2⟩
 
--- 4-n languages, Set 2: u[−FEM] (@cite{kramer-2015} Ch 6)
+-- 4-n languages, Set 2: u[−FEM] ([kramer-2015] Ch 6)
 
 def maaNs : NInventory :=
   ⟨"Maa", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
            CatHead.n_uNegFem], 2⟩
 
--- 3-n languages with animacy features (@cite{kramer-2015} Ch 5, §5.3)
+-- 3-n languages with animacy features ([kramer-2015] Ch 5, §5.3)
 
 def lealaoNs : NInventory :=
   ⟨"Lealao Chinantec", [CatHead.n_iAnim, CatHead.n_iInanim,
                          CatHead.n_plain], 2⟩
 
--- 4-n languages, animacy dimension (@cite{kramer-2015} Ch 6, §6.4)
+-- 4-n languages, animacy dimension ([kramer-2015] Ch 6, §6.4)
 
 def ojibweNs : NInventory :=
   ⟨"Ojibwe", [CatHead.n_iAnim, CatHead.n_iInanim, CatHead.n_plain,
               CatHead.n_uAnim], 2⟩
 
--- 5-n languages (@cite{kramer-2015} Ch 7)
+-- 5-n languages ([kramer-2015] Ch 7)
 
 def lavukaleveNs : NInventory :=
   ⟨"Lavukaleve", [CatHead.n_iFem, CatHead.n_iMasc, CatHead.n_plain,
@@ -625,15 +625,15 @@ theorem same_ns_different_genders :
     dieriNs.nHeads = mangarayiNs.nHeads ∧
     dieriNs.surfaceGenders ≠ mangarayiNs.surfaceGenders := ⟨rfl, by decide⟩
 
-/-- Set 1 languages share the same n inventory (@cite{kramer-2015} Ch 6).
+/-- Set 1 languages share the same n inventory ([kramer-2015] Ch 6).
     Hausa is included by extrapolation from Kramer's Table 3 (p. 56)
-    grouping (Hausa is not analyzed in @cite{kramer-2015} itself). -/
+    grouping (Hausa is not analyzed in [kramer-2015] itself). -/
 theorem set1_shared :
     amharicNs.nHeads = spanishNs.nHeads ∧
     amharicNs.nHeads = hausaNs.nHeads := ⟨rfl, rfl⟩
 
 /-- 3-n languages have purely semantic gender (no u-features).
-    (@cite{kramer-2015} Ch 5) -/
+    ([kramer-2015] Ch 5) -/
 theorem dieri_purely_semantic :
     dieriNs.purelySemanticGender = true := rfl
 
@@ -642,7 +642,7 @@ theorem lealao_purely_semantic :
     lealaoNs.purelySemanticGender = true := rfl
 
 /-- Ojibwe is a 4-n animacy language with arbitrary animate assignment
-    (u[+ANIM]). (@cite{kramer-2015} Ch 6, §6.4) -/
+    (u[+ANIM]). ([kramer-2015] Ch 6, §6.4) -/
 theorem ojibwe_has_uAnim :
     ojibweNs.hasArbitraryGender = true := rfl
 
@@ -662,7 +662,7 @@ theorem more_ns_same_genders :
     amharicNs.surfaceGenders = dieriNs.surfaceGenders := ⟨by decide, rfl⟩
 
 -- ============================================================================
--- § 9: Spanish Gender Case Study (@cite{kramer-2015} Ch 6)
+-- § 9: Spanish Gender Case Study ([kramer-2015] Ch 6)
 -- ============================================================================
 
 namespace Spanish
@@ -671,7 +671,7 @@ open Spanish.Gender (SpanishNoun SameRootEntry)
 
 /-- DM Set-1 categorizing-head projection from the theory-neutral
     Spanish Fragment fields. Same Set-1 partition as `Hausa.nHead`
-    (Spanish is the canonical Set 1 language per @cite{kramer-2015}
+    (Spanish is the canonical Set 1 language per [kramer-2015]
     Ch. 6, alongside Amharic). The four cells of (attestedGender ×
     isNaturalGender) cover the four Set-1 n-heads. -/
 def nHead (n : SpanishNoun) : CatHead :=
@@ -683,7 +683,7 @@ def nHead (n : SpanishNoun) : CatHead :=
   | _, _              => .n_plain
 
 /-- Same-root nominals project to BOTH possible n-heads (the polymorphic
-    same-root pattern @cite{kramer-2015} §3.4 / @cite{kramer-2020}
+    same-root pattern [kramer-2015] §3.4 / [kramer-2020]
     §2.2.3). The framework decision lives here, not in the Fragment. -/
 def sameRootNHeads (_ : SameRootEntry) : List CatHead :=
   [CatHead.n_iFem, CatHead.n_iMasc]
@@ -698,7 +698,7 @@ open Russian.Gender (RussianNoun)
     Fragment fields. Russian uses 3-gender VI (vs Spanish's Set 1
     binary), so the (attestedGender × isNaturalGender) cells project to
     five n-heads: i[+FEM], i[−FEM], u[+FEM], u[−FEM], plain n.
-    Verified against @cite{kramer-2015} Ch. 7. -/
+    Verified against [kramer-2015] Ch. 7. -/
 def nHead (n : RussianNoun) : CatHead :=
   match n.attestedGender, n.isNaturalGender with
   | .feminine,  true  => .n_iFem
@@ -766,10 +766,10 @@ theorem spanish_fragment_covers_inventory :
   decide
 
 -- ============================================================================
--- § 10: Root Licensing (@cite{kramer-2015} §3.4, Table 6.2)
+-- § 10: Root Licensing ([kramer-2015] §3.4, Table 6.2)
 -- ============================================================================
 
-/-! @cite{kramer-2015} §3.4 identifies four classes of roots, distinguished by
+/-! [kramer-2015] §3.4 identifies four classes of roots, distinguished by
 which n heads they are licensed to combine with:
 
 1. **Female-denoting roots** (√WOMAN, √QUEEN): semantic licensing (List 3)
@@ -785,7 +785,7 @@ which n heads they are licensed to combine with:
 This classification generates the licensing tables found in Tables 3.1
 (Amharic, 3 ns) and 6.2 (Spanish, 4 ns). -/
 
-/-- Root classes from @cite{kramer-2015} §3.4, parameterized by which n head
+/-- Root classes from [kramer-2015] §3.4, parameterized by which n head
     the root is licensed to combine with.
 
     The first four classes are from Tables 3.1/6.2 (3-n and Set 1 4-n systems).
@@ -892,7 +892,7 @@ theorem russian_licensing_vino :
 /-- *persona* is human-denoting but has u[+FEM] (arbitrary feminine), not
     i[+FEM] (natural feminine). This is the key exception to the pattern
     that human-denoting nouns get interpretable gender features.
-    (@cite{kramer-2020} §3.2, p. 59; @cite{kramer-2015} §6.2)
+    ([kramer-2020] §3.2, p. 59; [kramer-2015] §6.2)
 
     In root-class terms: persona's root is licensed as `arbitraryFem`
     despite denoting humans — its root is only licensed to combine with
@@ -906,8 +906,8 @@ theorem persona_exception :
 -- § 11: NInventory ↔ GenderProfile Bridge
 -- ============================================================================
 
-/-! The `NInventory` (from the DM analysis of n heads, @cite{kramer-2015}) and
-the `GenderProfile` (from WALS typology, @cite{corbett-2013}) describe the
+/-! The `NInventory` (from the DM analysis of n heads, [kramer-2015]) and
+the `GenderProfile` (from WALS typology, [corbett-2013]) describe the
 same languages from different theoretical perspectives. The key bridge:
 the `NInventory.surfaceGenders` count should match `GenderProfile.rawGenderCount`
 for the same language. -/
@@ -922,7 +922,7 @@ theorem spanish_surface_genders_consistent :
     Typology.Gender.GenderCount.two.Contains spanishNs.surfaceGenders := rfl
 
 /-- For Spanish, the n-inventory has 4 structural heads mapping to 2 surface
-    genders — a many-to-one mapping mediated by VI (@cite{kramer-2015} Ch 6).
+    genders — a many-to-one mapping mediated by VI ([kramer-2015] Ch 6).
     This is the central insight: structural richness (4 n types) does not
     imply surface richness (only 2 genders). -/
 theorem spanish_structural_vs_surface :
@@ -931,13 +931,13 @@ theorem spanish_structural_vs_surface :
 /-- NInventory ↔ AssignmentSystem bridge: having arbitrary (u) features
     in the n-inventory corresponds to `semanticAndFormal` assignment in
     the WALS typology. 3-n languages with no u-features are `semanticOnly`.
-    (@cite{kramer-2020} §2.3; @cite{corbett-2013} Ch 32) -/
+    ([kramer-2020] §2.3; [corbett-2013] Ch 32) -/
 theorem spanish_assignment_consistent :
     spanishNs.hasArbitraryGender = true ∧
     spanish.assignment = .semanticAndFormal := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 12: Default Gender Derivation (@cite{kramer-2015} §6.2)
+-- § 12: Default Gender Derivation ([kramer-2015] §6.2)
 -- ============================================================================
 
 /-! In Set 1 languages (Spanish, Amharic), masculine is the DEFAULT gender:
@@ -1021,11 +1021,11 @@ theorem fixed_gender_from_n_head :
   ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 13: Russian Gender (@cite{kramer-2020} §2.3.2, §3.3.2)
+-- § 13: Russian Gender ([kramer-2020] §2.3.2, §3.3.2)
 -- ============================================================================
 
 /-! Russian is a 5-n language with 3 surface genders — the same inventory
-as Lavukaleve, supporting @cite{kramer-2015}'s prediction that n-inventory
+as Lavukaleve, supporting [kramer-2015]'s prediction that n-inventory
 size and surface gender count are independent (mediated by VI). -/
 
 def russianNs : NInventory :=
@@ -1111,7 +1111,7 @@ theorem russian_fragment_covers_inventory :
 derive the surface gender count from VI rules applied to each n-head,
 verifying that the computed count matches the stipulated count.
 
-The key VI patterns from @cite{kramer-2015}:
+The key VI patterns from [kramer-2015]:
 - **Set 1** (Spanish, Amharic): [+FEM] → feminine, else → masculine (2)
 - **Set 2** (Maa): [−FEM] → masculine, else → feminine (2)
 - **3-gender** (Russian, Mangarayi, Lavukaleve): [+FEM] → fem,
@@ -1182,34 +1182,34 @@ theorem dieri_mangarayi_vi_contrast :
       mangarayiNs.computeSurfaceGenders viThreeGender := ⟨rfl, by native_decide⟩
 
 -- ============================================================================
--- § 15: Hausa Phonological-Assignment Refutation (@cite{kramer-2020} §3.3.1)
+-- § 15: Hausa Phonological-Assignment Refutation ([kramer-2020] §3.3.1)
 -- ============================================================================
 
-/-! @cite{kramer-2020} §3.3.1 (pp. 60–61) responds to the apparent
+/-! [kramer-2020] §3.3.1 (pp. 60–61) responds to the apparent
 challenge from "phonological gender assignment."
 
 **Empirical pattern** (described in §2.3.2, pp. 54–55, citing
-@cite{newman-2000}): Hausa nonhuman feminines mostly end in *-ā*, but
-@cite{newman-2000} p. 209 documents 250+ ā-final masculines (out of
+[newman-2000]): Hausa nonhuman feminines mostly end in *-ā*, but
+[newman-2000] p. 209 documents 250+ ā-final masculines (out of
 ~3000 masculine nouns), partitioned into native exceptions (kadā
 'crocodile', ùbā 'father', zàkarā 'rooster'), loanwords, and erstwhile
 plurals (gidā 'house', ruwā 'water'). The correlation feminine→-ā is
-*unidirectional* (@cite{kramer-2020} p. 55): "If a noun has feminine
+*unidirectional* ([kramer-2020] p. 55): "If a noun has feminine
 gender, then it likely ends in *-ā*. However, not every noun that ends
 in *-ā* has feminine gender."
 
 **Three framings**:
 
-- @cite{newman-2000} p. 213 ("overt characterization"): synchronically
+- [newman-2000] p. 213 ("overt characterization"): synchronically
   the {-ā} suffix is a morphological feminine marker (not a phonological
   rule). Diachronically, feminine nouns acquired -ā via overt
-  characterization (@cite{newman-1979a}).
+  characterization ([newman-1979a]).
 
-- @cite{corbett-1991} §3.2.2 (pp. 52–53): synchronic *phonological*
+- [corbett-1991] §3.2.2 (pp. 52–53): synchronic *phonological*
   assignment with exceptions ("nouns ending in *-aa* are feminine").
   Diachronic origin in §4.5 (pp. 102–103, citing Newman 1979).
 
-- @cite{kramer-2020} §3.3.1 (pp. 60–61): the *-ā* suffix "is probably
+- [kramer-2020] §3.3.1 (pp. 60–61): the *-ā* suffix "is probably
   best analyzed as the realization of a feminine gender feature" —
   morphophonological *realization* of [+FEM] on n, NOT phonological
   assignment.
@@ -1230,13 +1230,13 @@ open Hausa.Gender (Noun)
 
 /-- DM Set-1 categorizing-head projection from the theory-neutral
     Fragment fields. The four cells of (attestedGender × isNaturalGender)
-    project to the four Set-1 n-heads (@cite{kramer-2015} Ch. 6).
+    project to the four Set-1 n-heads ([kramer-2015] Ch. 6).
     Non-binary surface genders (.neuter, .common, .animate, .inanimate)
     fall through to .n_plain — irrelevant for Hausa.
 
-    UNVERIFIED: Hausa is not classified by @cite{kramer-2015} (it
+    UNVERIFIED: Hausa is not classified by [kramer-2015] (it
     appears only in introductory data examples in Ch. 1). The Set-1
-    placement extrapolates from @cite{kramer-2020} Table 3 (p. 56). -/
+    placement extrapolates from [kramer-2020] Table 3 (p. 56). -/
 def nHead (n : Noun) : CatHead :=
   match n.attestedGender, n.isNaturalGender with
   | .feminine,  true  => .n_iFem
@@ -1248,7 +1248,7 @@ def nHead (n : Noun) : CatHead :=
 namespace Predictors
 
 /-- Naive Corbett-style phonological-assignment rule
-    (@cite{corbett-1991} §3.2.2): nouns ending in *-ā* are feminine,
+    ([corbett-1991] §3.2.2): nouns ending in *-ā* are feminine,
     others are masculine. This is what Kramer's §3.3.1 refutes. -/
 def corbettPhonological (n : Noun) : Features.SurfaceGender :=
   if n.EndsInAa then .feminine else .masculine
@@ -1290,7 +1290,7 @@ theorem hausa_licensing_yaro :
 
 /-- *kāzā* 'hen' projects to natural feminine — Newman lists *kāzā*
     paired with *zàkarā* 'rooster' as a sex-paired entry, satisfying
-    Kramer's "honoris causa" criterion (@cite{kramer-2020} p. 57). -/
+    Kramer's "honoris causa" criterion ([kramer-2020] p. 57). -/
 theorem hausa_licensing_kaza :
     Hausa.nHead Hausa.Gender.kaza =
       RootClass.femaleReferent.licensedNHead := rfl
@@ -1301,20 +1301,20 @@ theorem hausa_licensing_riga :
       RootClass.arbitraryFem.licensedNHead := rfl
 
 /-- *gidā* 'house' projects to default masculine (plain n).
-    @cite{newman-2000} p. 209 erstwhile-plural class (c). -/
+    [newman-2000] p. 209 erstwhile-plural class (c). -/
 theorem hausa_licensing_gida :
     Hausa.nHead Hausa.Gender.gida =
       RootClass.default.licensedNHead := rfl
 
 /-- *kadā̀* 'crocodile' projects to default masculine (plain n).
-    @cite{newman-2000} p. 209 native ā-final masculine class (a). -/
+    [newman-2000] p. 209 native ā-final masculine class (a). -/
 theorem hausa_licensing_kada :
     Hausa.nHead Hausa.Gender.kada =
       RootClass.default.licensedNHead := rfl
 
 /-- *ùbā* 'father' projects to natural masculine (i[−FEM]).
-    @cite{newman-2000} p. 209 native ā-final masculine class (a),
-    cited in @cite{kramer-2015} Ch. 1. -/
+    [newman-2000] p. 209 native ā-final masculine class (a),
+    cited in [kramer-2015] Ch. 1. -/
 theorem hausa_licensing_uba :
     Hausa.nHead Hausa.Gender.uba =
       RootClass.maleReferent.licensedNHead := rfl
@@ -1330,20 +1330,20 @@ theorem hausa_fragment_covers_inventory :
 
 -- § 15.2: §3.3.1 phonological-assignment refutation
 
-/-- **§3.3.1 forward refutation** (@cite{kramer-2020} ex. 22, p. 55):
+/-- **§3.3.1 forward refutation** ([kramer-2020] ex. 22, p. 55):
     the naive phonological rule "ends-in-*-ā* ⇒ feminine" is falsified.
     Witness: *kadā̀* 'crocodile' (Kramer's cited example, attributed to
-    @cite{newman-2000} p. 209): ends in *-ā* but masculine. -/
+    [newman-2000] p. 209): ends in *-ā* but masculine. -/
 theorem exists_aa_masculine_noun :
     ∃ n ∈ Hausa.Gender.allNouns,
       n.EndsInAa ∧ n.attestedGender = .masculine :=
   ⟨Hausa.Gender.kada, by decide, by decide, rfl⟩
 
-/-- **§3.3.1 converse, Newman-anchored** (@cite{newman-2000} p. 208
+/-- **§3.3.1 converse, Newman-anchored** ([newman-2000] p. 208
     footnote [i]): the converse "feminine ⇒ ends-in-*-ā*" is also
     falsified. Witness: *mācè* 'woman' — feminine but ends in *-è*.
     Newman explicitly flags this as the canonical exception. (Not part
-    of Kramer's argument; @cite{kramer-2020} p. 55 only argues the
+    of Kramer's argument; [kramer-2020] p. 55 only argues the
     forward direction. The converse failure is empirically real and
     well-anchored on Newman.) -/
 theorem exists_feminine_non_aa_noun :
@@ -1352,8 +1352,8 @@ theorem exists_feminine_non_aa_noun :
   ⟨Hausa.Gender.mace, by decide, rfl, by decide⟩
 
 /-- *ùbā* 'father' is a second masculine *-ā* witness, beyond Kramer's
-    *kadā̀*. @cite{newman-2000} p. 209 lists ùbā in native masculine
-    class (a); @cite{kramer-2015} Ch. 1 cites it as a Hausa
+    *kadā̀*. [newman-2000] p. 209 lists ùbā in native masculine
+    class (a); [kramer-2015] Ch. 1 cites it as a Hausa
     introductory example. -/
 theorem uba_masculine_aa :
     Hausa.Gender.uba.EndsInAa ∧
@@ -1406,7 +1406,7 @@ theorem corbett_kramer_divergent_entries :
 theorem hausa_spanish_same_inventory : hausaNs.nHeads = spanishNs.nHeads := rfl
 
 /-- Hausa satisfies Radical Interpretability on the same Set-1
-    inventory as Spanish and Amharic (@cite{kramer-2020} §3.3.3). -/
+    inventory as Spanish and Amharic ([kramer-2020] §3.3.3). -/
 theorem hausa_radical_interpretability :
     radicalInterpretability
       [ GenderFeature.mk .i ⟨.fem, .pos⟩,

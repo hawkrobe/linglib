@@ -4,10 +4,10 @@ import Linglib.Semantics.Attitudes.EpistemicThreshold
 /-!
 # Ying et al. (2025) — English-modal bridge to LaBToM threshold semantics
 
-@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
+[ying-zhi-xuan-wong-mansinghka-tenenbaum-2025]
 
 Connects the English modal fragment (`English.FunctionWords`) to
-the epistemic threshold semantics of @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
+the epistemic threshold semantics of [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025]
 ("Understanding Epistemic Language with a Language-Augmented Bayesian
 Theory of Mind", TACL 13:613–637), formalized in
 `Semantics.Attitudes.EpistemicThreshold`.
@@ -70,7 +70,7 @@ def epistemicForce (a : AuxEntry) : Option ModalForce :=
 -- ============================================================================
 
 /-! Per-entry verification: the Fragment's `form` maps to the Theory's
-threshold value from @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
+threshold value from [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025]
 Table 1(b). These check the form→entry→threshold pipeline; they break
 if either the Fragment's form field or the Theory's threshold changes. -/
 
@@ -95,8 +95,8 @@ strictly higher thresholds than possibility-force epistemic modals.
     □ > ◇: should (0.80) > may (0.30)
 
 This connects two independent characterizations of the same items:
-- @cite{kratzer-1981}: force is an algebraic property of the modal operator
-- @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}: threshold is a fitted parameter over credence -/
+- [kratzer-1981]: force is an algebraic property of the modal operator
+- [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025]: threshold is a fitted parameter over credence -/
 
 /-- Every necessity-force epistemic modal has a higher threshold than
     every possibility-force epistemic modal. -/

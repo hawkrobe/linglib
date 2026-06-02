@@ -6,7 +6,7 @@ import Mathlib.Data.List.Perm.Subperm
 
 /-!
 # Partition Cells
-@cite{groenendijk-stokhof-1984} @cite{merin-1999}
+[groenendijk-stokhof-1984] [merin-1999]
 
 Concrete cell enumeration for partitions (`QUD`) over finite domains:
 
@@ -28,7 +28,7 @@ variable {M : Type*}
 /-! ### Cell-membership operator (G&S Ch I)
 
 `ans Q i` returns the characteristic function of the cell of `Q`'s
-partition containing `i` — `(@cite{groenendijk-stokhof-1984}, p. 14-15)`.
+partition containing `i` — `([groenendijk-stokhof-1984], p. 14-15)`.
 This is substrate; paper-specific theorems about answerhood (Karttunen
 completeness, Belnap distributivity, mention-some, exhaustivity ladder)
 live in the topical files under `Semantics/Questions/`. -/

@@ -1,7 +1,7 @@
 /-!
 # Phonological Features
 
-Complete segmental feature inventory following @cite{hayes-2009} *Introductory
+Complete segmental feature inventory following [hayes-2009] *Introductory
 Phonology*, Ch 4. The 26 binary features are organized into manner (root),
 laryngeal, and place (labial, coronal, dorsal) categories.
 
@@ -11,7 +11,7 @@ a syllable-level property (Ch 14), not a segmental feature.
 This module provides the feature inventory consumed by OT, autosegmental,
 and syllable analyses.
 
-@cite{hayes-2009}
+[hayes-2009]
 -/
 
 namespace Phonology
@@ -22,7 +22,7 @@ namespace Phonology
 
 /-- Distinctive phonological features (binary-valued).
 
-    Complete segmental inventory from @cite{hayes-2009}:
+    Complete segmental inventory from [hayes-2009]:
 
     - **Manner (root)**: syllabic, consonantal, sonorant, approximant,
       continuant, delayedRelease, nasal, lateral, strident, tap, trill

@@ -1,14 +1,14 @@
 /-!
 # Past-tense ambiguity (concept-level)
-@cite{ogihara-1996}
+[ogihara-1996]
 
 The structural commitment that past tense morphology in embedded
 contexts is **ambiguous** between a genuine-past reading (temporal
 precedence) and a zero-tense reading (bound variable, no independent
-temporal content). Originally proposed by @cite{ogihara-1996}; rejected
-by @cite{kratzer-1998} (who treats past as never ambiguous, with the
+temporal content). Originally proposed by [ogihara-1996]; rejected
+by [kratzer-1998] (who treats past as never ambiguous, with the
 simultaneous reading deriving from deletion at LF) and finessed by
-@cite{klecha-2016} (who derives the simultaneous reading from
+[klecha-2016] (who derives the simultaneous reading from
 modal-base × tense composition without past-tense ambiguity).
 
 This file carries the *type-level* commitment (the 2-case enum). The

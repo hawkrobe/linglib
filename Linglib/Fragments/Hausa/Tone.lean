@@ -3,12 +3,12 @@ import Linglib.Phonology.Autosegmental.RegisterTier
 
 /-!
 # Hausa Tone — mathlib-style
-@cite{newman-2000} @cite{inkelas-1998}
+[newman-2000] [inkelas-1998]
 
 Hausa is a register tone language with a **two-level lexical contrast**
 (H, L) and a **derived falling contour** (F = HL on a single TBU).
 There is no rising contour: a low followed by a high on adjacent TBUs
-realises as L H, never as a rising tone on one TBU (@cite{newman-2000}
+realises as L H, never as a rising tone on one TBU ([newman-2000]
 ch. 71).
 
 ## Architectural shape
@@ -20,7 +20,7 @@ Hausa, not a parallel hierarchy:
   underlying autosegmental primitive; `HausaTone` is a surface
   inventory whose decomposition is given by `toAutoseg`.
 - `Phonology.Autosegmental.GrammaticalTone.GTSpec` is the GT-trigger
-  type. Hausa uses two of @cite{rolle-2018}'s six dominance cells —
+  type. Hausa uses two of [rolle-2018]'s six dominance cells —
   replacive-dominant and neutral. We expose smart constructors
   `mkReplacive`/`mkNeutral` that fix the other GTSpec fields to the
   Hausa defaults, register the morphemes in `hausaGTs`, and prove the
@@ -38,7 +38,7 @@ open Phonology.Autosegmental.GrammaticalTone
    GTLevel ExponenceType tonalOverwrite TBU)
 
 -- ============================================================================
--- § 1: Surface Tone Inventory (@cite{newman-2000} ch. 71)
+-- § 1: Surface Tone Inventory ([newman-2000] ch. 71)
 -- ============================================================================
 
 /-- Surface tones on a Hausa TBU (= mora). The contour `F` is realised
@@ -69,7 +69,7 @@ end HausaTone
 /-- **No rising contour.** Every surface tone in the Hausa inventory
     begins with H or L on the autosegmental tier. A rising tone would
     have to begin with L and continue to H on the same TBU; the
-    inventory provides no such cell (@cite{newman-2000} §71.1). -/
+    inventory provides no such cell ([newman-2000] §71.1). -/
 theorem no_rising_contour :
     ∀ t ∈ HausaTone.all,
       t.toAutoseg.head? = some .H ∨ t.toAutoseg.head? = some .L := by
@@ -78,13 +78,13 @@ theorem no_rising_contour :
   rcases ht with rfl | rfl | rfl <;> decide
 
 -- ============================================================================
--- § 2: Tonal Polarity (@cite{newman-2000} ch. 71.6)
+-- § 2: Tonal Polarity ([newman-2000] ch. 71.6)
 -- ============================================================================
 
 /-- Tonal polarity: a morpheme surfaces with the *opposite* tone of its
     host. The classic Hausa case is the **linker -n** of the genitive
     construction, which is L after a H-final host and H after a L-final
-    host. Polarity is one of the named operations in @cite{rolle-2018}
+    host. Polarity is one of the named operations in [rolle-2018]
     (`GTOperation.polarization`); we derive its behaviour structurally. -/
 def polarOf : TRN → TRN
   | .H => .L
@@ -134,12 +134,12 @@ def mkNeutral (name : String) (melody : TonalMelody) : GTSpec where
 
 /-- The Hausa plural template *-ōoCíi* imposes an all-H melody on the
     base, regardless of the lexical tone of the singular
-    (@cite{inkelas-1998}, @cite{newman-2000} §56.4). The paradigmatic
+    ([inkelas-1998], [newman-2000] §56.4). The paradigmatic
     case of replacive-dominant GT. -/
 def pluralTemplate : GTSpec := mkReplacive "PL.-ōoCíi" [.H]
 
 /-- The Hausa referential clitic *-ⁿn* attaches a floating L to the host
-    without overwriting lexical tones (@cite{newman-2000} §31.5). The
+    without overwriting lexical tones ([newman-2000] §31.5). The
     paradigmatic case of neutral GT in Hausa. -/
 def referentialClitic : GTSpec := mkNeutral "REF.-ⁿn" [.L]
 
@@ -152,7 +152,7 @@ def hausaGTs : List GTSpec := [pluralTemplate, referentialClitic]
 -- ============================================================================
 
 /-- **Hausa uses only the dominant/neutral cells of the GT typology.**
-    Of @cite{rolle-2018}'s six dominance categories, Hausa morphological
+    Of [rolle-2018]'s six dominance categories, Hausa morphological
     tone occupies exactly two: replacive-dominant (templates) and
     neutral (floating clitics). No subtractive, additive, melodic, or
     recessive GT is attested. -/

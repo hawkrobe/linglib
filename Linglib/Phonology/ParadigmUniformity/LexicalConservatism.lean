@@ -3,11 +3,11 @@ import Linglib.Phonology.OptimalityTheory.Correspondence
 
 /-!
 # Lexical Conservatism — Steriade 2000
-@cite{steriade-2000}
+[steriade-2000]
 
 The paper-specific Lexical Conservatism (LC) anchoring of the generic
 `liftPairwise` combinator from `ParadigmUniformity/Defs.lean`. LC
-differs from OP (@cite{mccarthy-2005}) by **anchoring on attestation**:
+differs from OP ([mccarthy-2005]) by **anchoring on attestation**:
 a candidate surfacing form preferentially aligns with the *attested*
 wordform of the lexeme — and the strength of the alignment scales with
 how well-attested the anchor is.
@@ -17,7 +17,7 @@ stems with no free wordform) impose **no LC pressure**; the candidate
 is free to satisfy markedness alone. Paradigms with a
 **strongly-attested anchor** impose **strong LC pressure** that
 preserves the anchor's segments. The Breiss-Katsuda-Kawahara
-compounds (@cite{breiss-katsuda-kawahara-2026}) instantiate this: in
+compounds ([breiss-katsuda-kawahara-2026]) instantiate this: in
 bound-N2 compounds the velar nasalises categorically; in free-N2
 compounds, nasalisation is suppressed in proportion to the N2's free-
 form attestation strength.

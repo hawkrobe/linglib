@@ -7,13 +7,13 @@ A common abstraction over the many "alternative-generation" mechanisms
 in formal pragmatics. Different theories generate different competitor
 sets for the same expression:
 
-- @cite{katzir-2007} structural alternatives — substitution/deletion/
+- [katzir-2007] structural alternatives — substitution/deletion/
   contraction over a parse tree, using items in the lexicon ∪ subtrees
-- @cite{buccola-kriz-chemla-2018} conceptual alternatives — including
+- [buccola-kriz-chemla-2018] conceptual alternatives — including
   competitors not realizable by linguistic material
-- @cite{sauerland-alexiadou-2020} Meaning First — alternatives drawn
+- [sauerland-alexiadou-2020] Meaning First — alternatives drawn
   at the thought-structure level, prior to compression
-- @cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}
+- [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
   indirect alternatives — pronounceable expressions equivalent in
   meaning to an unpronounceable Katzir alternative
 

@@ -56,10 +56,10 @@ inductive ConstraintType where
   | subject
   /-- Sentential subject blocks dependency. -/
   | sententialSubject
-  /-- MoS verb complement backgrounds content (@cite{lu-pan-degen-2025}). -/
+  /-- MoS verb complement backgrounds content ([lu-pan-degen-2025]). -/
   | mannerOfSpeaking
   /-- Definite/specific DP blocks dependency
-      (@cite{chomsky-1973}, @cite{shen-huang-2026}). -/
+      ([chomsky-1973], [shen-huang-2026]). -/
   | definiteNominal
   deriving Repr, DecidableEq
 
@@ -90,7 +90,7 @@ inductive IslandSource where
   /-- Processing: island is an artifact of memory/retrieval difficulty. -/
   | processing
   /-- Discourse: island arises from information-structural backgroundedness
-      (@cite{goldberg-2006}, @cite{lu-pan-degen-2025}). -/
+      ([goldberg-2006], [lu-pan-degen-2025]). -/
   | discourse
   deriving Repr, DecidableEq
 

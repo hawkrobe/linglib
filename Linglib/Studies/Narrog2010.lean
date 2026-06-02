@@ -3,15 +3,15 @@ import Linglib.Diachronic.ModalChange
 
 /-!
 # Narrog (2010): (Inter)subjectification in Modality and Mood
-@cite{narrog-2010}
+[narrog-2010]
 
-Study file connecting @cite{narrog-2010}'s theoretical claims to the
+Study file connecting [narrog-2010]'s theoretical claims to the
 cross-linguistic data in `Semantics.Modality.DeonticNecessity`. The chapter argues
 that strong obligation markers are cross-linguistically uncommon because
 obligation is inherently face-threatening and socially costly, so languages
 tend not to grammaticalize it — or to do so only indirectly.
 
-@cite{narrog-2012} ch. 2 decomposes the face-threatening potential of obligation
+[narrog-2012] ch. 2 decomposes the face-threatening potential of obligation
 into three independent dimensions — performativity, volitivity, and
 speaker-orientation. Face-threat is derived from this decomposition (see
 `NarrogPosition.isFaceThreatening`), not stipulated per deontic necessity type.
@@ -43,7 +43,7 @@ open Diachronic.ModalChange (commonChanges)
 -- ============================================================================
 
 /-! Survey data on deontic necessity from a genealogically diverse sample of
-200 languages (@cite{narrog-2010} appendix; @cite{narrog-2012} Table 6.6).
+200 languages ([narrog-2010] appendix; [narrog-2012] Table 6.6).
 
 - **Table 3 / Table 6.5**: Area-level counts of NEC (obligation) and POT
   (ability/situational possibility) markers, split by 6 geographic areas.
@@ -53,10 +53,10 @@ open Diachronic.ModalChange (commonChanges)
 
 The Table 4 total (60 + 62 + 22 + 32 = 176) exceeds 131 (languages with
 any NEC marker) because 44 languages have markers of multiple types
-(@cite{narrog-2010} fn. 17). -/
+([narrog-2010] fn. 17). -/
 
 /-- How a language grammaticalizes deontic necessity.
-    From @cite{narrog-2010} Table 4 / @cite{narrog-2012} Table 6.6. -/
+    From [narrog-2010] Table 4 / [narrog-2012] Table 6.6. -/
 inductive DeonticNecessityType where
   | strong          -- grammaticalized strong deontic necessity (*must*-type)
   | weak            -- grammaticalized weak deontic necessity (*should*-type)
@@ -82,7 +82,7 @@ inductive Area where
   deriving DecidableEq, Repr
 
 /-- Per-area counts of obligation (NEC) and ability/possibility (POT) marking.
-    Source: @cite{narrog-2010} Table 3 / @cite{narrog-2012} Table 6.5. -/
+    Source: [narrog-2010] Table 3 / [narrog-2012] Table 6.5. -/
 structure AreaModalPresence where
   area : Area
   bothNecPot : Nat   -- languages with both NEC and POT markers
@@ -136,7 +136,7 @@ theorem neutral_count : countOf .neutral = 22 := by native_decide
 theorem indeterminate_count : countOf .indeterminate = 32 := by native_decide
 
 /-- POT markers are more common than NEC markers cross-linguistically.
-    @cite{narrog-2010} p. 406: 156 vs 131. -/
+    [narrog-2010] p. 406: 156 vs 131. -/
 theorem pot_more_common_than_nec : languagesWithPot > languagesWithNec := by native_decide
 
 -- ============================================================================
@@ -199,7 +199,7 @@ theorem deontic_epistemic_shift_uncommon :
 
 /-- Person distribution for Japanese strong necessity *-(a)nakereba naranai*.
 
-    @cite{narrog-2010} Table 5 (Chiang 2007: 72): of 115 tokens, 0 have a
+    [narrog-2010] Table 5 (Chiang 2007: 72): of 115 tokens, 0 have a
     2nd-person subject. This avoidance reflects the face-threatening nature
     of strong obligation directed at the addressee. -/
 structure PersonDistribution where

@@ -4,7 +4,7 @@ import Linglib.Semantics.Modality.Typology
 # Mandarin Modal Inventory
 
 Modal expressions from Mandarin (Sino-Tibetan), based on
-@cite{qing-uegaki-2025}.
+[qing-uegaki-2025].
 
 Mandarin has many modals, extensive synonymy, but all satisfy IFF.
 -/

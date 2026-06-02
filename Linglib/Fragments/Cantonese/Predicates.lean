@@ -2,7 +2,7 @@ import Linglib.Typology.Complementation
 
 /-!
 # Cantonese Complement-Taking Predicates
-@cite{matthews-yip-1994} @cite{liu-yip-2026}
+[matthews-yip-1994] [liu-yip-2026]
 
 Theory-light inventory of Cantonese complement-taking predicates (CTPs)
 relevant to the Liu & Yip 2026 analysis. Each entry records consensus
@@ -22,7 +22,7 @@ namespace Cantonese.Predicates
 open Typology.Complementation (CTPClass)
 
 /-- The size of the complement clause a Cantonese predicate selects, per
-    @cite{liu-yip-2026} §5–6's classification: vP (Aspect Restructuring,
+    [liu-yip-2026] §5–6's classification: vP (Aspect Restructuring,
     Type III), tP (nonfinite without Aspect Restructuring, Type II), or
     cP (finite, Type I). A predicate may select more than one size. -/
 inductive ComplementSizeLabel where
@@ -37,7 +37,7 @@ structure CTPEntry where
   hanzi : String
   gloss : String
   ctpClass : CTPClass
-  /-- Sizes this predicate is attested to take per @cite{liu-yip-2026}. -/
+  /-- Sizes this predicate is attested to take per [liu-yip-2026]. -/
   selects : List ComplementSizeLabel
   notes : String := ""
   deriving Repr

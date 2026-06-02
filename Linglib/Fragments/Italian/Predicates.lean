@@ -3,10 +3,10 @@ import Linglib.Semantics.Attitudes.RationalAttitude
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
-# Italian Verb Entries @cite{fusco-sgrizzi-2026}
+# Italian Verb Entries [fusco-sgrizzi-2026]
 
 Italian attitude and causative-attitude verbs, with emphasis on the
-*di*/*a* infinitival alternation documented in @cite{fusco-sgrizzi-2026}.
+*di*/*a* infinitival alternation documented in [fusco-sgrizzi-2026].
 
 ## The *di*/*a* Alternation
 
@@ -71,7 +71,7 @@ structure ItalianVerbEntry extends Verb where
 /-- *convincere* 'convince' — causative attitude verb with dual infinitival
     selection. Takes *di*-infinitives (belief) and *a*-infinitives (intention).
 
-    @cite{fusco-sgrizzi-2026}, ex. (4):
+    [fusco-sgrizzi-2026], ex. (4):
     - (4a) Marco ha convinto Gianni di avere un figlio (belief)
     - (4b) Marco ha convinto Gianni a avere un figlio (intention) -/
 def convincere : ItalianVerbEntry :=
@@ -96,12 +96,12 @@ def credere : ItalianVerbEntry :=
     infComplements := [.di] }
 
 -- ════════════════════════════════════════════════════════════════
--- § 3b. Attitude Verb Data (@cite{grano-2024})
+-- § 3b. Attitude Verb Data ([grano-2024])
 -- ════════════════════════════════════════════════════════════════
 
 /-- *volere* 'want' — core desiderative verb, robustly subjunctive-selecting.
 
-    @cite{grano-2024}, Table 1: Italian 'want' takes SBJV (marginally %IND).
+    [grano-2024], Table 1: Italian 'want' takes SBJV (marginally %IND).
     - (4a) Gianni vuole che Maria *sia*/%è contenta. (SBJV preferred)
     - (4b) Gianni vuole essere contento. (INF) -/
 def volere : ItalianVerbEntry :=
@@ -117,7 +117,7 @@ def volere : ItalianVerbEntry :=
 
 /-- *sperare* 'hope' — cross-linguistically variable mood selection.
 
-    @cite{grano-2024}, Table 1: Italian 'hope' takes SBJV, %IND marginal.
+    [grano-2024], Table 1: Italian 'hope' takes SBJV, %IND marginal.
     - (12) Gianni spera che Maria *sia*/%è contenta. (SBJV preferred)
     Unlike *volere*, *sperare* allows indicative marginally in Italian
     and freely in other Romance languages (French *espérer*, Portuguese
@@ -134,7 +134,7 @@ def sperare : ItalianVerbEntry :=
 
 /-- *intendere* 'intend' — intention-reporting verb, robustly rejects indicative.
 
-    @cite{grano-2024}, §2.2: Italian 'intend' primarily uses the periphrastic
+    [grano-2024], §2.2: Italian 'intend' primarily uses the periphrastic
     *avere intenzione di* or the control verb *intendere*. Indicative
     complements are never accepted. The rare literary usage with subjunctive
     (ex. 30, from Treccani) has a 'demand'-like interpretation.
@@ -152,7 +152,7 @@ def intendere : ItalianVerbEntry :=
 
 /-- *fare* 'make' — causative verb, robustly rejects indicative.
 
-    @cite{grano-2024}, §2.4: Italian causatives accept nonfinite and
+    [grano-2024], §2.4: Italian causatives accept nonfinite and
     subjunctive (with *sì che*) but reject indicative complements.
     - (39) Ho fatto andare Giovanni al parco. (INF)
     - (42a) Ho fatto sì che Giovanni *andasse*/*è andato al parco. (SBJV/*IND) -/
@@ -192,7 +192,7 @@ theorem convincere_alternation_is_structural :
   decide
 
 -- ════════════════════════════════════════════════════════════════
--- § 5. Mood Choice Bridge Theorems (@cite{grano-2024})
+-- § 5. Mood Choice Bridge Theorems ([grano-2024])
 -- ════════════════════════════════════════════════════════════════
 
 /-- *volere* has Levin want-class (core desiderative). -/
@@ -209,7 +209,7 @@ theorem intendere_is_want_class :
 
 /-- *volere* and *intendere* share want-class; *sperare* does not.
     This predicts the mood choice asymmetry: *volere*/*intendere* robustly
-    reject indicative, while *sperare* varies (@cite{grano-2024}, Table 1). -/
+    reject indicative, while *sperare* varies ([grano-2024], Table 1). -/
 theorem mood_asymmetry_predicted :
     volere.levinClass = some .want ∧
     intendere.levinClass = some .want ∧

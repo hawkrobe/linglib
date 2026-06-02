@@ -4,7 +4,7 @@ import Linglib.Core.Logic.Modal.Bisimulation
 /-!
 # Bisimulation invariance for BSML
 
-@cite{aloni-anttila-yang-2024} @cite{anttila-2025}
+[aloni-anttila-yang-2024] [anttila-2025]
 
 The carrier-level bisimulation substrate (`WorldBisim`, `StateBisim`, and
 the Lemma 3.7 transport lemmas) lives in `Core/Logic/Modal/Bisimulation.lean`,
@@ -34,7 +34,7 @@ without changing depth; the modal case uses `StateBisim.accessImage`
   `k`-bisimilarity, via Hintikka formulas. Requires a finite atom set
   hypothesis (`[Fintype Atom]`) for the characteristic-formula construction.
   Deferred — Theorem 3.8 alone is enough for the expressive-completeness side
-  of @cite{aloni-anttila-yang-2024} §3.
+  of [aloni-anttila-yang-2024] §3.
 * Bisim invariance for `BSMLOr.eval` and `BSMLEmpty.eval`. Same shape with one
   new case each (`gdisj` is structurally like `support_conj` at the team
   level; `empt` reduces to support of the inner formula or `s = ∅`, both
@@ -55,7 +55,7 @@ variable {Atom : Type*}
 
 /-! ### Modal depth -/
 
-/-- Modal depth of a `BSMLFormula` (page 9 of @cite{aloni-anttila-yang-2024}).
+/-- Modal depth of a `BSMLFormula` (page 9 of [aloni-anttila-yang-2024]).
     Atoms and `NE` are 0; `neg` preserves depth; `conj` and `disj` take
     the max; `poss` increments. -/
 def BSMLFormula.modalDepth : BSMLFormula Atom → ℕ
@@ -68,7 +68,7 @@ def BSMLFormula.modalDepth : BSMLFormula Atom → ℕ
 
 /-! ### Theorem 3.8: bisimulation invariance for BSML -/
 
-/-- **Theorem 3.8** of @cite{aloni-anttila-yang-2024} specialised to BSML:
+/-- **Theorem 3.8** of [aloni-anttila-yang-2024] specialised to BSML:
     if `s ⇌_k s'` and `φ : BSMLFormula Atom` has modal depth `≤ k`, then
     `eval M b φ s ↔ eval M' b φ s'` for both polarities.
 

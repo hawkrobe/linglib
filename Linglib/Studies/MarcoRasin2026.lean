@@ -5,7 +5,7 @@ import Linglib.Core.Constraint.System
 
 /-!
 # Marco & Rasin (2026): Optimal Paradigms — A Challenge from JTA
-@cite{marco-rasin-2026} @cite{mccarthy-2005}
+[marco-rasin-2026] [mccarthy-2005]
 
 Formalizes the argument that Optimal Paradigms (OP) cannot simultaneously
 predict the distribution of schwa in verbs, nouns, and adjectives in
@@ -102,7 +102,7 @@ def sonCon (c2 c3 : Phonology.Syllable.SonorityRank) :
 /-- OP-MAX-V: assign * for each ordered pair of paradigm members with
     different schwa positions. Each positional mismatch = 1 violation.
     For n₁ medial and n₂ initial members: n₁·n₂ + n₂·n₁ = 2·n₁·n₂
-    total violations (matching @cite{mccarthy-2005}'s counting). -/
+    total violations (matching [mccarthy-2005]'s counting). -/
 def opMaxV : NamedConstraint (List JTAForm) :=
   mkOPMaxV fun f1 f2 =>
     if f1.schwa != f2.schwa then 1 else 0
@@ -260,7 +260,7 @@ set_option maxHeartbeats 4000000 in
     paradigm (bare=medial, V-init=initial) always loses because it incurs
     OP-MAX-V and SONCON violations.
 
-    This formalizes @cite{marco-rasin-2026}'s central challenge: OP cannot
+    This formalizes [marco-rasin-2026]'s central challenge: OP cannot
     derive category-distinct phonological behavior when two categories share
     paradigm structure but differ phonologically. -/
 theorem adj_always_initial :
@@ -299,7 +299,7 @@ inductive MorphCat where
 /-- {CCəC}_{Verb, Adj}: template constraint applying to verbs and
     adjectives but not nouns. Penalizes initial (CəCC) forms in verbs
     and adjectives. Directly references morphosyntactic categories,
-    violating the TCNP (@cite{bobaljik-2008}). -/
+    violating the TCNP ([bobaljik-2008]). -/
 def templateMedial (cat : MorphCat) : NamedConstraint (List JTAForm) :=
   liftPerMember "{CCəC}_{V,A}" .markedness fun f =>
     match cat with
@@ -345,7 +345,7 @@ theorem template_correct_adjectives :
 /-! Each unique-winner tableau lifts to a generic `ConstraintSystem` via
 `tableauSystem`. For McCarthy's OP ranking this exposes the correct
 predictions for verbs and nouns, and the *wrong* prediction for adjectives —
-the empirical content of @cite{marco-rasin-2026}'s argument. -/
+the empirical content of [marco-rasin-2026]'s argument. -/
 
 section PredictAPI
 open Core.Constraint
@@ -368,7 +368,7 @@ theorem nounSystem_predict_nI : nounSystem.predict nI = 1 :=
 
 /-- Adjectival paradigm under McCarthy's OP ranking. The probability-1
     prediction here is the *wrong* uniform-initial paradigm — the formal
-    content of @cite{marco-rasin-2026}'s challenge. -/
+    content of [marco-rasin-2026]'s challenge. -/
 noncomputable def adjSystem : ConstraintSystem (List JTAForm) (LexProfile Nat 4) :=
   tableauSystem (mkTableau adjCands mccarthyRanking adjCands_ne)
 

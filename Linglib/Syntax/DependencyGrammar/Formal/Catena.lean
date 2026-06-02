@@ -3,7 +3,7 @@ import Linglib.Syntax.DependencyGrammar.Projection
 /-!
 # Catenae
 
-@cite{osborne-gross-2012}
+[osborne-gross-2012]
 
 Formalizes the catena (Osborne, Putnam & Groß 2012, *Syntax* 15:4, 354–396):
 a connected subgraph of a dependency tree — any word or combination of

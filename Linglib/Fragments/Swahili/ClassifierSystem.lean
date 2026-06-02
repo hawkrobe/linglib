@@ -2,7 +2,7 @@ import Linglib.Typology.ClassifierSystem
 
 /-!
 # Swahili noun-categorization system
-@cite{aikhenvald-2000}
+[aikhenvald-2000]
 
 Classifier-system metadata for Swahili (ISO `swh`): Bantu noun-class
 system with 15 classes and prefix-based concord.
@@ -24,6 +24,6 @@ def classifierSystem : Typology.NounCategorizationSystem :=
   , hasUnmarkedDefault := true
   , preferredSemantics := [.humanness, .animacy]
   , hasObligatoryNumber := true  -- singular/plural class pairs (M/Wa, Ki/Vi, etc.)
-  , source := "@cite{aikhenvald-2000}" }
+  , source := "[aikhenvald-2000]" }
 
 end Swahili

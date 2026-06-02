@@ -7,10 +7,10 @@ import Linglib.Dialogue.CommitmentSpace
 /-!
 # Distributional Common Ground
 
-@cite{anderson-2021}
+[anderson-2021]
 
 A non-negative real-valued weight function over worlds, refining
-@cite{stalnaker-2002}'s sharp set-membership context set with graded
+[stalnaker-2002]'s sharp set-membership context set with graded
 plausibility. The probabilistic counterpart of `CommonGround W`.
 
 ## Substrate role
@@ -52,8 +52,8 @@ open Discourse.Commitment (HasSupport IndexedWeightedCommitment CommitmentForce)
 -- ════════════════════════════════════════════════════
 
 /-- A distributional common ground: a non-negative weight function
-    over worlds (@cite{anderson-2021}). The probabilistic
-    counterpart of @cite{stalnaker-2002}'s context set — instead of
+    over worlds ([anderson-2021]). The probabilistic
+    counterpart of [stalnaker-2002]'s context set — instead of
     a sharp membership predicate (`W → Prop`), the CommonGround assigns graded
     plausibility (`W → ℝ`). -/
 structure DistributionalCG (W : Type*) where
@@ -70,7 +70,7 @@ noncomputable def uniform : DistributionalCG W where
   weight_nonneg _ := le_of_lt one_pos
 
 /-- Bridge to classical context set: a world is "in the context" iff
-    its weight is positive. Recovers @cite{stalnaker-2002}'s
+    its weight is positive. Recovers [stalnaker-2002]'s
     set-membership view from the distributional representation. -/
 def toContextSet (cg : DistributionalCG W) : ContextSet W :=
   λ w => 0 < cg.weight w

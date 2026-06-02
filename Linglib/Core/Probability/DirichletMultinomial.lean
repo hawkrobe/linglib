@@ -8,7 +8,7 @@ import Mathlib.Algebra.Order.Antidiag.Pi
 /-!
 # Dirichlet–multinomial distribution
 
-@cite{odonnell-2015}
+[odonnell-2015]
 
 The count-vector PMF associated with a `PolyaUrn`. Sequentially: the
 distribution of `(x_1, …, x_K)` after drawing `N` times from the

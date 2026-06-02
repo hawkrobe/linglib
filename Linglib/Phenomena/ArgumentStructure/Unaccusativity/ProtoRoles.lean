@@ -3,9 +3,9 @@ import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
 # Proto-roles and unaccusativity
-@cite{dowty-1991} @cite{levin-hovav-1995} @cite{storment-2026}
+[dowty-1991] [levin-hovav-1995] [storment-2026]
 
-How Dowty's proto-role profiles (@cite{dowty-1991}) interact with the
+How Dowty's proto-role profiles ([dowty-1991]) interact with the
 syntactic unaccusativity diagnostics (auxiliary selection,
 there-insertion, quotative inversion). This file is the formalizer's
 synthesis: neither Dowty 1991 (which doesn't run a syntactic
@@ -16,11 +16,11 @@ The interaction is mixed. For canonical unaccusatives ("arrive") and
 canonical unergatives ("speak"), proto-role counting and syntactic
 unaccusativity agree. For manner-of-speaking verbs, they diverge:
 MoS subjects are volitional, sentient, independently existing — a
-clear proto-agent profile — yet @cite{storment-2026}'s quotative-
+clear proto-agent profile — yet [storment-2026]'s quotative-
 inversion diagnostic classifies them as unaccusative.
 
 The divergence is documented in the syntactic literature (going back
-to @cite{levin-hovav-1995}) but isn't ordinarily formalized as a
+to [levin-hovav-1995]) but isn't ordinarily formalized as a
 proto-role/diagnostic mismatch. This file makes the contrast explicit.
 
 ## Files
@@ -85,7 +85,7 @@ theorem whisper_dowty_qi_divergence :
 /-! ## §3. Where the divergence comes from
 
 Dowty's counting is a lexical-semantic algorithm; QI is a syntactic
-diagnostic. @cite{levin-hovav-1995} argued the syntax-semantics
+diagnostic. [levin-hovav-1995] argued the syntax-semantics
 interface is *thematically determined* but has its own logic — verbs
 with the same lexical-semantic profile can pattern differently
 syntactically. The MoS case is one fault line where the two

@@ -4,7 +4,7 @@ import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!
 # Larson (1988): On the Double Object Construction
-@cite{larson-1988} @cite{barss-lasnik-1986}
+[larson-1988] [barss-lasnik-1986]
 
 *Linguistic Inquiry* 19(3): 335–391.
 
@@ -19,7 +19,7 @@ import Linglib.Semantics.ArgumentStructure.Linking
    as Passive — applied within the VP domain rather than the IP domain.
    Both operations are `Step.im` in the `Derivation` infrastructure.
 
-3. **@cite{barss-lasnik-1986} asymmetries**: In the derived DOC, the
+3. **[barss-lasnik-1986] asymmetries**: In the derived DOC, the
    indirect object (NP1) asymmetrically c-commands the direct object
    (NP2), deriving six asymmetries: anaphor binding, quantifier-pronoun
    binding, weak crossover, superiority, *each...the other*, NPI licensing.
@@ -137,7 +137,7 @@ def docDativeShift : Derivation :=
 
 /-- In the DOC, the indirect object (Mary) c-commands the direct object
     (a letter). Mary has been promoted above the DO by Internal Merge.
-    This derives all six @cite{barss-lasnik-1986} asymmetries (§3.2):
+    This derives all six [barss-lasnik-1986] asymmetries (§3.2):
     - Anaphor binding: "I showed Mary herself" vs *"I showed herself Mary"
     - Quantifier binding: "I gave every worker his paycheck"
     - Weak crossover, superiority, *each...the other*, NPI licensing -/
@@ -211,7 +211,7 @@ theorem passive_dativeShift_parallel :
 -- § 6: Barss & Lasnik (1986) Asymmetries — Structured Data
 -- ============================================================================
 
-/-! @cite{barss-lasnik-1986} identify six asymmetries in DOC sentences
+/-! [barss-lasnik-1986] identify six asymmetries in DOC sentences
 of the form V–NP1–NP2, all pointing to the same conclusion: NP1
 c-commands NP2 but not vice versa. These are the empirical facts
 that Larson's Dative Shift analysis derives structurally. -/
@@ -256,7 +256,7 @@ def bl_npi : BLAsymmetry :=
 def blAsymmetries : List BLAsymmetry :=
   [bl_anaphor, bl_quantifier, bl_wco, bl_superiority, bl_each_other, bl_npi]
 
-/-- There are exactly six @cite{barss-lasnik-1986} asymmetries. -/
+/-- There are exactly six [barss-lasnik-1986] asymmetries. -/
 theorem bl_six_asymmetries : blAsymmetries.length = 6 := rfl
 
 /-- All six asymmetries are derived from a single structural fact:
@@ -370,7 +370,7 @@ theorem doc_scope_freezing_structural_basis :
 -- § 9: Indirect Passive (§4 of the paper)
 -- ============================================================================
 
-/-! @cite{larson-1988} §4: "Mary was sent a letter" is an **indirect
+/-! [larson-1988] §4: "Mary was sent a letter" is an **indirect
 passive** — the IO is promoted directly to subject. Under the standard
 two-step analysis, this requires Dative Shift (oblique → DOC) followed
 by Passive (DOC → indirect passive). Larson proposes an alternative

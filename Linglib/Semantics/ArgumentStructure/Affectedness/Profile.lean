@@ -5,10 +5,10 @@ import Linglib.Semantics.ArgumentStructure.Affectedness.Defs
 /-!
 # Affectedness Hierarchy: EntailmentProfile Projection
 
-@cite{beavers-2010} @cite{dowty-1991} @cite{beavers-2011}
-@cite{beavers-koontz-garboden-2020}
+[beavers-2010] [dowty-1991] [beavers-2011]
+[beavers-koontz-garboden-2020]
 
-The **affectedness hierarchy** is a projection of @cite{dowty-1991}'s P-Patient
+The **affectedness hierarchy** is a projection of [dowty-1991]'s P-Patient
 entailments onto a four-level total order measuring the strength of truth
 conditions about change in the affected argument.
 
@@ -33,9 +33,9 @@ irrelevant (`profileToDegree_depends_only_on_patient`).
 
 This is one of three canonical projections of EntailmentProfile:
 
-- `AgentivityNode.fromEntailmentProfile` → agentivity lattice (@cite{grimm-2011})
-- `profileToDegree` → affectedness hierarchy (@cite{beavers-2010})  ← this file
-- `PersistenceLevel.fromPatientProfile` → persistence lattice (@cite{grimm-2011})
+- `AgentivityNode.fromEntailmentProfile` → agentivity lattice ([grimm-2011])
+- `profileToDegree` → affectedness hierarchy ([beavers-2010])  ← this file
+- `PersistenceLevel.fromPatientProfile` → persistence lattice ([grimm-2011])
 
 Each projection preserves different information and serves different
 grammatical predictions:
@@ -63,7 +63,7 @@ representation in the codebase:
 - `MeaningComponents.changeOfState` — the surface diagnostic (in `Core/RootDimensions`)
 - `RootEntailments.result` — whether the root itself entails change (in `Core/RootDimensions`)
 
-These are NOT the same concept. @cite{beavers-koontz-garboden-2020} show
+These are NOT the same concept. [beavers-koontz-garboden-2020] show
 that surface CoS can come from either the root or the template. The
 projection here operates on the proto-role level, which is the final
 composed meaning — not the root-level or surface-diagnostic level.
@@ -105,7 +105,7 @@ end AffectednessDegree
     All 5 P-Agent features and `dependentExistence` are irrelevant
     (`profileToDegree_depends_only_on_patient`).
 
-    @cite{beavers-2010} Table 5:
+    [beavers-2010] Table 5:
     | Dowty P-Patient         | Beavers entailment    |
     |-------------------------|-----------------------|
     | (a) changeOfState       | nonquantized change   |

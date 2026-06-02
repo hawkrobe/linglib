@@ -4,20 +4,20 @@ import Linglib.Features.Givenness
 import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 
 /-!
-# Heaviness vs. Newness in Constituent Ordering @cite{arnold-wasow-losongco-ginstrom-2000}
+# Heaviness vs. Newness in Constituent Ordering [arnold-wasow-losongco-ginstrom-2000]
 
-@cite{arnold-wasow-losongco-ginstrom-2000} use a corpus analysis (the
+[arnold-wasow-losongco-ginstrom-2000] use a corpus analysis (the
 Aligned-Hansard corpus, with verbs *give*, *bring...to*, *take...into
 account*) and an elicitation experiment (with *give*) to disentangle
 two confounded predictors of English postverbal constituent ordering:
 
 1. **Heaviness** — relative word count: heavier constituents come later
-   (Behaghel's *Gesetz der wachsenden Glieder* @cite{behaghel-1909};
-   "end-weight" in @cite{quirk-greenbaum-leech-svartvik-1972}).
+   (Behaghel's *Gesetz der wachsenden Glieder* [behaghel-1909];
+   "end-weight" in [quirk-greenbaum-leech-svartvik-1972]).
 2. **Newness** — discourse status: given material precedes new
-   information. The principle predates @cite{prince-1981}'s
+   information. The principle predates [prince-1981]'s
    given/inferable/new taxonomy that the paper *codes* with;
-   @cite{gundel-hedberg-zacharski-1993} place it in the broader
+   [gundel-hedberg-zacharski-1993] place it in the broader
    accessibility-hierarchy literature.
 
 The paper's central empirical claim is that **both** factors
@@ -30,8 +30,8 @@ greater when competing constraints are weak".
 
 ## Formalization strategy
 
-Following @cite{coetzee-pater-2011}, we model the system as a MaxEnt
-grammar (@cite{goldwater-johnson-2003}) over the binary ordering
+Following [coetzee-pater-2011], we model the system as a MaxEnt
+grammar ([goldwater-johnson-2003]) over the binary ordering
 candidates `{themeLast, goalLast}` with two markedness constraints:
 
 - `*HEAVY-FIRST` — penalize the order whose first constituent is
@@ -72,11 +72,11 @@ contradicting the paper's findings.
   MaxEnt grammar (`maxEntGrammar`), making the softmax probability
   machinery available without redefinition.
 - `Features.BinaryGivenness` — discourse-status partition. The paper
-  collapses @cite{prince-1981}'s three-way given/inferable/new into
+  collapses [prince-1981]'s three-way given/inferable/new into
   two categories (inferable → given). Focus marking is on a separate
   axis (`Features.InformationStructure.Focus`) and not consumed here.
 - `Syntax.DependencyGrammar.Formal.DependencyLength` —
-  Dependency Locality (@cite{futrell-gibson-2020}) provides the
+  Dependency Locality ([futrell-gibson-2020]) provides the
   *positive* derivation of the heaviness signal: §9 below shows
   `heavyDiff` is exactly the sign of the DLM cost difference between
   the two orderings, so `*HEAVY-FIRST` is not a stipulation but a
@@ -84,14 +84,14 @@ contradicting the paper's findings.
   binary postverbal pair. The same module's word-invariance
   (`dlm_word_invariant`) shows DLM cannot, on its own, also derive
   the newness effect — motivating §10's UID derivation.
-- `Processing.MemorySurprisal` — under @cite{futrell-2019}'s
+- `Processing.MemorySurprisal` — under [futrell-2019]'s
   information-locality framework, DLM and UID are reductions of a
   single mutual-information-weighted cost (§11), so the two
   independent constraints `*HEAVY-FIRST` and `*NEW-FIRST` reflect
   variation along orthogonal axes of one underlying processing theory.
 - `Processing.Memory` — `MemorySurprisal`'s information
   locality is itself the *behavioural profile* of a finite-capacity
-  `MemoryProcess` (@cite{futrell-gibson-levy-2020}'s lossy-context
+  `MemoryProcess` ([futrell-gibson-levy-2020]'s lossy-context
   surprisal). §11 below traces the full grounding chain
   `MemoryProcess → MemorySurprisal → {DLM, UID} → {*HEAVY-FIRST, *NEW-FIRST}`,
   so Arnold's two constraints are not just co-justified at the
@@ -109,7 +109,7 @@ open DepGrammar DepGrammar.DependencyLength
 -- ============================================================================
 
 /-- A constituent characterized by the two dimensions
-    @cite{arnold-wasow-losongco-ginstrom-2000} measure: word count
+    [arnold-wasow-losongco-ginstrom-2000] measure: word count
     (heaviness) and discourse status (newness). Concrete syntactic
     structure is abstracted away — these two scalars exhaust what the
     paper's regressions condition on. -/
@@ -144,7 +144,7 @@ abbrev Candidate := Pair × Order
 
 /-- `*HEAVY-FIRST`: violated when the first (verb-adjacent) constituent
     is strictly heavier than the second. The OT-style markedness
-    encoding of @cite{behaghel-1909}'s law of growing constituents:
+    encoding of [behaghel-1909]'s law of growing constituents:
     avoid placing the longer constituent first. -/
 def heavyFirst : NamedConstraint Candidate where
   name := "*HEAVY-FIRST"
@@ -157,7 +157,7 @@ def heavyFirst : NamedConstraint Candidate where
 /-- `*NEW-FIRST`: violated when the first constituent is discourse-new
     while the second is discourse-given. A markedness encoding of the
     given-before-new principle the paper draws from
-    @cite{prince-1981}/@cite{gundel-hedberg-zacharski-1993}. -/
+    [prince-1981]/[gundel-hedberg-zacharski-1993]. -/
 def newFirst : NamedConstraint Candidate where
   name := "*NEW-FIRST"
   family := .markedness
@@ -284,7 +284,7 @@ theorem both_factors_compose {p : Pair} {wH wN : ℚ}
 /-- **Tradeoff theorem.** When heaviness and newness conflict — one
     favors `themeLast`, the other `goalLast` — the prediction depends
     on which side has the larger weighted contribution. This is the
-    constraint-based architecture @cite{arnold-wasow-losongco-ginstrom-2000}
+    constraint-based architecture [arnold-wasow-losongco-ginstrom-2000]
     argue for in §5. -/
 theorem tradeoff_resolved_by_weights {p : Pair} {wH wN : ℚ}
     (h : 0 < wH * heavyDiff p + wN * newDiff p) :
@@ -297,7 +297,7 @@ theorem tradeoff_resolved_by_weights {p : Pair} {wH wN : ℚ}
 -- § 5: Constraint-Strength Interaction (the Paper's §5 Theoretical Claim)
 -- ============================================================================
 
-/-! @cite{arnold-wasow-losongco-ginstrom-2000} §5 observe that "heaviness
+/-! [arnold-wasow-losongco-ginstrom-2000] §5 observe that "heaviness
 had the largest effect on utterances where both constituents were given"
 — and in general, "the strength of a constraint is greater when competing
 constraints are weak". The next two theorems derive this directly from
@@ -379,7 +379,7 @@ def newThemeContrast : Pair :=
     (heaviness differential is zero). Any theory that operationalizes
     only one of the two dimensions must collapse the prediction at one
     contrast to the trivial baseline, contradicting
-    @cite{arnold-wasow-losongco-ginstrom-2000}. -/
+    [arnold-wasow-losongco-ginstrom-2000]. -/
 theorem heaviness_and_newness_genuinely_independent :
     newDiff heavyGoalContrast = 0 ∧ heavyDiff heavyGoalContrast ≠ 0 ∧
     heavyDiff newThemeContrast = 0 ∧ newDiff newThemeContrast ≠ 0 := by
@@ -423,9 +423,9 @@ def maxEntGrammar (wH wN : ℚ) (inputs : List Pair) :
 -- ============================================================================
 
 /-! `totalDepLength` (from `DependencyLength.lean`) is a candidate
-formalization of @cite{behaghel-1909}'s end-weight effect — and
-@cite{arnold-wasow-losongco-ginstrom-2000} discuss
-@cite{hawkins-1990}'s parsing-theoretic version (Early Immediate
+formalization of [behaghel-1909]'s end-weight effect — and
+[arnold-wasow-losongco-ginstrom-2000] discuss
+[hawkins-1990]'s parsing-theoretic version (Early Immediate
 Constituents) as an instance. The next three lemmas show that any such
 purely structural account cannot, on its own, reproduce the newness
 effect: dependency length is a function of the dependency structure
@@ -453,7 +453,7 @@ theorem depLength_ignores_relation (h d : Nat) (r₁ r₂ : UD.DepRel) :
     their NPs are discourse-given or discourse-new receive identical
     DLM cost. So Dependency Locality, as a pure tree-structural cost,
     cannot reproduce the newness effect that
-    @cite{arnold-wasow-losongco-ginstrom-2000} demonstrate. -/
+    [arnold-wasow-losongco-ginstrom-2000] demonstrate. -/
 theorem dlm_discourse_blind
     (deps : List Dependency) (rootIdx : Nat) (givenWords newWords : List Word) :
     totalDepLength { words := givenWords, deps := deps, rootIdx := rootIdx } =
@@ -464,9 +464,9 @@ theorem dlm_discourse_blind
 -- § 9: DLM Derivation of `heavyDiff` — Heaviness Is Not a Stipulation
 -- ============================================================================
 
-/-! @cite{futrell-gibson-2020} establish dependency length minimization (DLM) as
+/-! [futrell-gibson-2020] establish dependency length minimization (DLM) as
 the explanatory principle behind a wide range of word-order universals,
-including @cite{behaghel-1909}'s law of growing constituents (their §2.3).
+including [behaghel-1909]'s law of growing constituents (their §2.3).
 The argument: in a head-initial language, when a head V has multiple
 right-dependents, total dependency length from V is minimized by ordering
 them shortest-first, because the head→dep distance to the second
@@ -496,7 +496,7 @@ def postverbalDLMCost (p : Pair) : Order → Nat
     `*HEAVY-FIRST` constraint signal `heavyDiff` is exactly the sign of
     the DLM cost difference between the two orderings. With this
     bridge, `heavyDiff` is no longer a primitive of the formalization —
-    it is a theorem about which ordering @cite{futrell-gibson-2020}'s
+    it is a theorem about which ordering [futrell-gibson-2020]'s
     dependency-length cost minimizes on a binary postverbal pair. -/
 theorem heavyDiff_eq_dlm_signal (p : Pair) :
     0 < heavyDiff p ↔
@@ -522,7 +522,7 @@ theorem dlm_diff_eq_wordCount_diff (p : Pair) :
 -- ============================================================================
 
 /-! Genzel & Charniak's uniform information density (UID), elaborated in
-@cite{levy-2008}'s expectation-based parsing, predicts that high-surprisal
+[levy-2008]'s expectation-based parsing, predicts that high-surprisal
 material should be placed *late* in an utterance: by then more context has
 been processed, so high-information words can be integrated with greater
 predictability and lower per-step processing load.
@@ -577,7 +577,7 @@ independently-motivated processing cost already formalized in linglib:
 | `*HEAVY-FIRST` | `heavyDiff_eq_dlm_signal` | `Syntax.DependencyGrammar.Formal.DependencyLength` |
 | `*NEW-FIRST`   | `newDiff_pos_implies_uid_prefers_themeLast` | `Processing.MemorySurprisal` (information locality) |
 
-The two costs unify under @cite{futrell-2019}'s **information locality**
+The two costs unify under [futrell-2019]'s **information locality**
 framework (see `Processing.MemorySurprisal.Basic`,
 `MutualInfoProfile.weightedSum`): both DLM and UID are special cases of
 minimizing Σ (memory cost × mutual information) across the utterance.
@@ -589,7 +589,7 @@ minimizing Σ (memory cost × mutual information) across the utterance.
 
 The fact that `*HEAVY-FIRST` and `*NEW-FIRST` are *both* needed in the
 MaxEnt grammar — and neither reduces to the other empirically
-(@cite{arnold-wasow-losongco-ginstrom-2000} §2-3,
+([arnold-wasow-losongco-ginstrom-2000] §2-3,
 `heaviness_and_newness_genuinely_independent`) — reflects that real
 utterances vary along *both* the structural-distance and surprisal
 axes. The MaxEnt weights `wH` / `wN` are then empirical estimates of
@@ -600,7 +600,7 @@ themselves rather than leaving them as stipulated penalties.
 ### Architectural anchor: the lossy-memory predictor
 
 `MutualInfoProfile.weightedSum` is itself a *behavioural profile* of a
-deeper substrate: a `MemoryProcess` (@cite{futrell-gibson-levy-2020},
+deeper substrate: a `MemoryProcess` ([futrell-gibson-levy-2020],
 formalized in `Processing.Memory.Basic`) — a predictor that
 reads from a lossily-encoded summary of the past rather than from the
 raw history. Classical surprisal arises as the lossless special case

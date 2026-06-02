@@ -3,11 +3,11 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # HPSG Binding Theory (Principles A & B) in RSRL
-@cite{pollard-sag-1994}, @cite{richter-2000}, @cite{muller-2024-binding}
+[pollard-sag-1994], [richter-2000], [muller-2024-binding]
 
 The first *relational, quantified* HPSG principles in the RSRL substrate, exercising the
 `rel`/`ex`/`all` machinery of `Description.lean`. Following HPSG Binding Theory
-(@cite{muller-2024-binding}, Ch. 20): **local o-command** ("less oblique, same ARG-ST", the
+([muller-2024-binding], Ch. 20): **local o-command** ("less oblique, same ARG-ST", the
 relation `locO`), **o-bind** (coindexed ∧ o-commands), **Principle A** (a locally o-commanded
 anaphor is locally o-bound), **Principle B** (a pronoun is locally o-free).
 

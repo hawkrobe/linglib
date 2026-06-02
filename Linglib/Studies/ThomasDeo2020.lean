@@ -3,8 +3,8 @@ import Linglib.Semantics.Degree.Basic
 import Linglib.Phenomena.Focus.Exclusives
 
 /-!
-# Granularity Bridge: *Just* + Degree Morphology @cite{thomas-deo-2020}
-@cite{deo-thomas-2025}
+# Granularity Bridge: *Just* + Degree Morphology [thomas-deo-2020]
+[deo-thomas-2025]
 
 Connects the formal semantics of approximative *just* from
 `Semantics.Degree.Granularity` to the *just* flavor data in
@@ -29,7 +29,7 @@ open Phenomena.Focus.Exclusives
 -- ════════════════════════════════════════════════════
 
 /-- Derive *just* flavor from adjectival construction type.
-    @cite{thomas-deo-2020} predict:
+    [thomas-deo-2020] predict:
     - comparative + just → precisifying proximity (barely)
     - equative + just → precisifying equality (exactly) -/
 def justFlavorFromConstruction : AdjectivalConstruction → JustFlavor
@@ -80,7 +80,7 @@ theorem proximity_grounded {D G : Type*} [LinearOrder D]
   just_rules_out p finest g h μ_x hjust
 
 -- ════════════════════════════════════════════════════
--- § 4. Empirical Data (@cite{thomas-deo-2020}: §3)
+-- § 4. Empirical Data ([thomas-deo-2020]: §3)
 -- ════════════════════════════════════════════════════
 
 /-! ### §3 data: *just* with equatives and comparatives

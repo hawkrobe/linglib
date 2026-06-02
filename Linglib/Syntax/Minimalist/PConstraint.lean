@@ -6,13 +6,13 @@ import Linglib.Syntax.Minimalist.PersonGeometry
 
 /-!
 # The P-Constraint
-@cite{pancheva-zubizarreta-2018}
+[pancheva-zubizarreta-2018]
 
 A parametric theory of person-sensitivity in clitic clusters, due to
-@cite{pancheva-zubizarreta-2018}. The P-Constraint is triggered by an
+[pancheva-zubizarreta-2018]. The P-Constraint is triggered by an
 *interpretable* person feature on Appl, which marks the indirect object as a
 **point-of-view center** (a logophoric pivot/self/source in the sense of
-@cite{sells-1987}).
+[sells-1987]).
 
 ## Architecture
 
@@ -56,7 +56,7 @@ open Minimalist (DecomposedPerson decomposePerson)
 /-- P-Prominence settings. The interpretable person feature on Appl requires
     a DP at the phase edge to bear one of these positive specifications.
     The settings are framework-neutral feature specifications;
-    @cite{pancheva-zubizarreta-2018} §6.2 give them a logophoric reading
+    [pancheva-zubizarreta-2018] §6.2 give them a logophoric reading
     (proximate↔pivot, participant↔self, author↔source) that lives in the
     study file. -/
 inductive PProminence : Type where
@@ -70,7 +70,7 @@ inductive PProminence : Type where
 -- ============================================================================
 
 /-- A PCC grammar, parameterized by the four binary settings of the
-    P-Constraint (@cite{pancheva-zubizarreta-2018} (12)).
+    P-Constraint ([pancheva-zubizarreta-2018] (12)).
 
     The 24-element parameter space (3 prominence values × 2³ Bool flags) is
     enumerated by the `Fintype` instance below. -/
@@ -136,7 +136,7 @@ def pg3Grammar : PCCGrammar := { prominence := .author }
 -- § 4: Subpredicate Decomposition (the four clauses of (12))
 -- ============================================================================
 
-/-- A DP is *inherently* [+PROXIMATE] iff it is a SAP (@cite{pancheva-zubizarreta-2018}
+/-- A DP is *inherently* [+PROXIMATE] iff it is a SAP ([pancheva-zubizarreta-2018]
     (11)). Third person can only be [+PROXIMATE] contextually. -/
 def IsInherentlyProximate (p : PersonLevel) : Prop :=
   (decomposePerson p).hasProximate = true
@@ -169,7 +169,7 @@ instance (g : PCCGrammar) (io do_ : PersonLevel) :
 /-- **Clause (12b) — P-Prominence.** The IO satisfies the prominence
     requirement, either inherently or — for `.proximate` only — by
     contextual marking when paired with another non-proximate 3P
-    (@cite{pancheva-zubizarreta-2018} §4.1.4). -/
+    ([pancheva-zubizarreta-2018] §4.1.4). -/
 def IOSatisfiesProminence (g : PCCGrammar) (io do_ : PersonLevel) : Prop :=
   SatisfiesProminence g.prominence io ∨
     (g.prominence = .proximate ∧
@@ -241,7 +241,7 @@ theorem mem_licitFinset (g : PCCGrammar) (p : PersonLevel × PersonLevel) :
 
 /-- Number of parametric departures from the default (strong PCC).
     This is the markedness rank — strong = 0, ultra/weak/super/pg3 = 1,
-    me-first/pg1/pg2 = 2 (@cite{pancheva-zubizarreta-2018} §4.5 (31)). -/
+    me-first/pg1/pg2 = 2 ([pancheva-zubizarreta-2018] §4.5 (31)). -/
 def parameterDepartures (g : PCCGrammar) : ℕ :=
   (if g.prominence = .proximate then 0 else 1) +
   (if g.uniqueness then 0 else 1) +
@@ -281,7 +281,7 @@ theorem le_iff_isLicit_imp (g₁ g₂ : PCCGrammar) :
 
 /-- A minimal model of the Appl phase: the two arguments and the chosen
     point-of-view center. The interpretable person feature on Appl
-    (@cite{pancheva-zubizarreta-2018} (10)) marks one DP as the perspectival
+    ([pancheva-zubizarreta-2018] (10)) marks one DP as the perspectival
     center; in the unmarked case this is the IO at the phase edge. -/
 structure ApplDomain where
   /-- The indirect-object argument introduced by Appl. -/
@@ -292,7 +292,7 @@ structure ApplDomain where
   povCenter : PersonLevel
   deriving DecidableEq, Repr
 
-/-- The IO is the canonical POV-center candidate (@cite{pancheva-zubizarreta-2018}
+/-- The IO is the canonical POV-center candidate ([pancheva-zubizarreta-2018]
     page 1320). -/
 def ApplDomain.povIsIO (a : ApplDomain) : Prop := a.povCenter = a.io
 

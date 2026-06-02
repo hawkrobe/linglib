@@ -6,7 +6,7 @@ import Mathlib.Probability.Distributions.Uniform
 # RSA reference game — parametric substrate
 
 The classic Rational Speech Act reference game from
-@cite{frank-goodman-2012} as a substrate, parametric in the meaning matrix
+[frank-goodman-2012] as a substrate, parametric in the meaning matrix
 and world prior. Every paper using a "speaker normalises inverse-extension-
 size weights" pattern inherits the architectural theorems below.
 
@@ -194,7 +194,7 @@ Architectural reading: a larger partition at a world means more competition
 from informative alternatives, so the speaker is less likely to choose `u`
 at that world; the listener therefore narrows toward the world with fewer
 informative competitors. This is **the** load-bearing structural theorem of
-@cite{frank-goodman-2012} — every paper finding is an instance.
+[frank-goodman-2012] — every paper finding is an instance.
 
 Direct via `PMF.normalize_lt_of_apply_eq_of_sum_lt`: same numerator
 (`L0 u w = L0 u w' = (extension u).card⁻¹`), comparing partitions. -/

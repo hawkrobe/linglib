@@ -16,7 +16,7 @@ This file provides only the derivation logic: given an `EntailmentSig`,
 what follows about conjunction distribution and neg-raising?
 
 ## Key contributions
-@cite{bondarenko-elliott-2026}
+[bondarenko-elliott-2026]
 
 1. **Conjunction distribution derived from EntailmentSig**: An attitude verb
    distributes over conjunction iff its complement signature refines `.mono`.
@@ -90,7 +90,7 @@ def hasEMP (sig : EntailmentSig) : Bool :=
     underpinnings.
 
     Bondarenko & Elliott: monotonicity + EMP → neg-raising
-    @cite{horn-2001}: non-veridicality → neg-raising -/
+    [horn-2001]: non-veridicality → neg-raising -/
 def negRaisingFromMono (sig : EntailmentSig) (v : Veridicality) : Bool :=
   hasEMP sig && v == .nonVeridical
 

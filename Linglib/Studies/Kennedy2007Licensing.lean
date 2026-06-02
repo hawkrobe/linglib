@@ -6,8 +6,8 @@ import Linglib.Features.PropertyDomain
 import Linglib.Features.Antonymy
 
 /-!
-# @cite{kennedy-2007} Adjective Licensing Bridge
-@cite{kennedy-2007} @cite{kennedy-mcnally-2005}
+# [kennedy-2007] Adjective Licensing Bridge
+[kennedy-2007] [kennedy-mcnally-2005]
 
 Connects the abstract `adjMeasure` and `LicensingPipeline` algebra
 (Core/Scale) to concrete Fragment entries (`tall`, `full`, `wet`, `dry`)
@@ -31,7 +31,7 @@ and Phenomena data (`closurePuzzle`, `completelyModifier`).
 namespace Kennedy2007Licensing
 
 -- ════════════════════════════════════════════════════
--- Empirical Data (@cite{kennedy-2007})
+-- Empirical Data ([kennedy-2007])
 -- ════════════════════════════════════════════════════
 
 /--
@@ -45,7 +45,7 @@ Examples:
 - 5'10" is tall for a jockey but not tall for a basketball player
 - $500,000 is expensive for Atlanta but cheap for San Francisco
 
-Source: @cite{kennedy-2007}, @cite{fara-2000}, @cite{lassiter-goodman-2017}
+Source: [kennedy-2007], [fara-2000], [lassiter-goodman-2017]
 -/
 structure ContextShiftDatum where
   /-- The adjective being used -/
@@ -107,7 +107,7 @@ Empirical pattern: Antonym pairs share a scale with reversed polarity.
 directions. This creates the "excluded middle gap" where neither applies
 clearly (the borderline region).
 
-Source: @cite{kennedy-2007}, @cite{lassiter-goodman-2017}
+Source: [kennedy-2007], [lassiter-goodman-2017]
 -/
 structure AntonymDatum where
   /-- The positive adjective -/
@@ -157,7 +157,7 @@ Key diagnostic: behavior with degree modifiers
 - AGA-max: "slightly bent", "completely straight" (natural)
 - AGA-min: "slightly wet", "??completely wet" (asymmetric)
 
-Source: @cite{kennedy-2007} Section 3
+Source: [kennedy-2007] Section 3
 -/
 structure AdjectiveTypologyDatum where
   /-- The adjective -/
@@ -272,7 +272,7 @@ Key modifiers:
 - Intensifiers: "very", "extremely", "incredibly"
 - Diminishers: "slightly", "somewhat", "a bit"
 
-Source: @cite{kennedy-mcnally-2005}, @cite{burnett-2017}
+Source: [kennedy-mcnally-2005], [burnett-2017]
 -/
 inductive DegreeModifierType where
   | proportional    -- half, completely, partially (require bounded scale)
@@ -290,7 +290,7 @@ Answer: Proportional modifiers require a BOUNDED scale (endpoints).
 - "Full" has a maximum → "completely full" works
 - "Tall" has no maximum → "??completely tall" is odd
 
-Source: @cite{kennedy-mcnally-2005}
+Source: [kennedy-mcnally-2005]
 -/
 structure DegreeModifierDatum where
   modifier : String
@@ -356,7 +356,7 @@ This explains:
 - "completely full" ✓ (fullness scale: empty to full)
 - "??completely tall" ✗ (height scale: 0 to... what?)
 
-Source: @cite{kennedy-mcnally-2005}, @cite{rotstein-winter-2004}
+Source: [kennedy-mcnally-2005], [rotstein-winter-2004]
 -/
 structure ScaleClosurePuzzle where
   closedScaleAdj : String
@@ -376,7 +376,7 @@ def closurePuzzle : ScaleClosurePuzzle :=
 
 /-! ### Kennedy 2007 eq (61) modifier-class licensing matrix
 
-@cite{kennedy-2007} eq (61) (= @cite{kennedy-mcnally-2005} eq 15) is
+[kennedy-2007] eq (61) (= [kennedy-mcnally-2005] eq 15) is
 the central typological prediction: which scale-structure types license
 which modifier classes. The matrix is the load-bearing connection
 between the data fields above
@@ -391,7 +391,7 @@ Per the matrix:
 - **Intensifiers** (*very, extremely*) work on all scales (modulo
   pragmatic considerations).
 - **Measure phrases** (*6 feet tall*) work on all dimensional scales
-  (@cite{hay-kennedy-levin-1999} §3.1).
+  ([hay-kennedy-levin-1999] §3.1).
 
 This is the genuine Tier C #3 bridge from the §1 Boundedness audit
 (0.230.420) — supersedes the decorative `closedScale_satEntity_*`
@@ -497,15 +497,15 @@ theorem pipeline_agrees_with_measure {max : Nat} {W : Type*} (μ : W → Degree 
 
 /-! ### Two independent paths to the same prediction
 
-@cite{kennedy-2007}'s scale structure and `PropertyDomain.requiresComparisonClass`
+[kennedy-2007]'s scale structure and `PropertyDomain.requiresComparisonClass`
 are two independent classifications that converge on the same prediction for
 whether an adjective's standard depends on contextual domain information:
 
-- **Scale-structure path** (@cite{kennedy-2007}): `scaleType → interpretiveEconomy
+- **Scale-structure path** ([kennedy-2007]): `scaleType → interpretiveEconomy
   → PositiveStandard → PositiveStandard.requiresComparisonClass`
   Open scale → contextual **s** → requires "the distribution of objects in some
   domain (a comparison class)" (Kennedy 2007, p. 42)
-- **Domain path** (@cite{sedivy-etal-1999}): `dimension.domain →
+- **Domain path** ([sedivy-etal-1999]): `dimension.domain →
   PropertyDomain.requiresComparisonClass`
   Size/evaluative/sensory domains → context-sensitive threshold
 
@@ -549,7 +549,7 @@ theorem dry_no_cc_convergence :
   ⟨id, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 5. MPA Licensing (@cite{beltrama-2025})
+-- § 5. MPA Licensing ([beltrama-2025])
 -- ════════════════════════════════════════════════════
 
 /-- MPAs (lower-bounded scale) are licensed by the pipeline, just like

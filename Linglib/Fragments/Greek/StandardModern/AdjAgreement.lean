@@ -3,7 +3,7 @@ import Linglib.Fragments.Greek.Case
 
 /-!
 # Greek Adjective Agreement
-@cite{alexeyenko-zeijlstra-2025}
+[alexeyenko-zeijlstra-2025]
 
 Modern Greek adjectives are fully inflected for gender, number, and case
 in both predicative and attributive use (37). The agreement paradigm is

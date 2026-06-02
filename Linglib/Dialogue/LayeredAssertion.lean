@@ -3,12 +3,12 @@ import Linglib.Discourse.IllocutionaryForce
 /-!
 # Layered Assertive Clauses
 
-@cite{krifka-2020} @cite{speas-2004} @cite{wiltschko-2014}
+[krifka-2020] [speas-2004] [wiltschko-2014]
 
-Four-layer decomposition of an assertive clause from @cite{krifka-2020}:
+Four-layer decomposition of an assertive clause from [krifka-2020]:
 TP (propositional content), JP (epistemic judgement), ComP (commitment
 strength), ActP (speech act type). JP terminology and the layered idea
-trace to @cite{speas-2004} and @cite{wiltschko-2014}; @cite{krifka-2020}
+trace to [speas-2004] and [wiltschko-2014]; [krifka-2020]
 synthesises them with the commitment-space framework.
 
 | Layer | Contribution | Example Modifier |
@@ -107,7 +107,7 @@ inductive UpdateType where
 
 /-- Informative update: restrict context set to worlds satisfying φ.
 
-    -- UNVERIFIED: @cite{krifka-2020} eq. number for the informative-update
+    -- UNVERIFIED: [krifka-2020] eq. number for the informative-update
     -- definition (the 2020 paper PDF was not available for this audit;
     -- the underlying concept is clearly Krifka's, but the equation tag
     -- needs human verification before promoting to a precise citation). -/

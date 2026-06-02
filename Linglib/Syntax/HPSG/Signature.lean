@@ -3,7 +3,7 @@ import Mathlib.Order.Max
 
 /-!
 # RSRL signatures
-@cite{richter-2000}, @cite{richter-2024}, @cite{pollard-sag-1994}
+[richter-2000], [richter-2024], [pollard-sag-1994]
 
 An RSRL **signature** (Def. 47): a sort hierarchy `[PartialOrder Srt]` (`a ≤ b` = "`a` at least
 as specific as `b`") with appropriateness declarations and relation symbols. The
@@ -26,7 +26,7 @@ on a finite type). Reducible so `≤` unfolds to `leB · · = true` in instance 
   le_trans := le_trans
   le_antisymm := le_antisymm
 
-/-- An RSRL signature (@cite{richter-2000}, Def. 47) over a sort hierarchy `Srt`. -/
+/-- An RSRL signature ([richter-2000], Def. 47) over a sort hierarchy `Srt`. -/
 structure Signature (Srt : Type u) [PartialOrder Srt] where
   /-- Attributes (feature names). -/
   Attr : Type u

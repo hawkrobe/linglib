@@ -3,9 +3,9 @@ import Linglib.Phenomena.FreeChoice.Worlds
 import Linglib.Studies.Aloni2022.FreeChoice
 
 /-!
-# @cite{aloni-2022}: BSML applied to permission disjunction
+# [aloni-2022]: BSML applied to permission disjunction
 
-@cite{aloni-2022}
+[aloni-2022]
 
 Computational instantiation of NS FC, WS FC, Dual Prohibition, Double Negation
 FC, and Modal Disjunction (Facts 3, 4, 5, 11, 12) in BSML+ on a 4-world deontic

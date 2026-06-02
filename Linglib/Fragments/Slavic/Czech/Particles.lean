@@ -2,7 +2,7 @@ import Linglib.Semantics.Negation.CzechNegation
 
 /-!
 # Czech Diagnostic Particles
-@cite{stankova-2025} @cite{stankova-2025} @cite{simik-2024} @cite{romero-2019}
+[stankova-2025] [stankova-2025] [simik-2024] [romero-2019]
 
 Particles and adverbs used as diagnostics for the three-way negation distinction
 in Czech polar questions (Table 1).
@@ -21,7 +21,7 @@ that uniquely identifies each negation position.
 ## Cross-linguistic connections
 
 - *ještě* 'yet' parallels English *yet* (NPI, temporal endpoint)
-- *fakt* 'really' relates to VERUM/FALSUM (@cite{romero-2019}, BiasedPQ.lean)
+- *fakt* 'really' relates to VERUM/FALSUM ([romero-2019], BiasedPQ.lean)
 - *náhodou* 'by chance' modifies the ordering source of FALSUM's
   epistemic possibility component (Staňková §2.2.1)
 
@@ -85,7 +85,7 @@ ordering source of the epistemic possibility component in FALSUM, including
 less stereotypical worlds in the modal base. This is why it's incompatible
 with inner/medial negation: those don't involve FALSUM's modal component.
 
-@cite{stankova-2025} (§2.2.1): "náhodou, which I translate as 'by any chance',
+[stankova-2025] (§2.2.1): "náhodou, which I translate as 'by any chance',
 is only compatible with outer negation." -/
 def nahodou : ParticleEntry :=
   { form := "náhodou"
@@ -102,7 +102,7 @@ eventually hold. Combined with inner negation, it yields "not yet p" = the
 expected state hasn't been reached. This requires propositional negation,
 which only inner negation provides.
 
-@cite{stankova-2025} (§2.2.2): "ještě is only compatible with inner negation." -/
+[stankova-2025] (§2.2.2): "ještě is only compatible with inner negation." -/
 def jeste : ParticleEntry :=
   { form := "ještě"
   , gloss := "yet/still"
@@ -118,7 +118,7 @@ Licensed by inner and medial negation, but blocked by outer negation.
 It's incompatible with outer negation because outer negation is FALSUM —
 combining VERUM emphasis with FALSUM creates a pragmatic contradiction.
 
-@cite{stankova-2025} (§2.2.3): "fakt is compatible with inner and medial negation
+[stankova-2025] (§2.2.3): "fakt is compatible with inner and medial negation
 but incompatible with outer negation." -/
 def fakt : ParticleEntry :=
   { form := "fakt"
@@ -146,8 +146,8 @@ def vubec : ParticleEntry :=
 Rhetorical/adversative particle in PQs and statements. Related to the
 cross-Slavic family of PQ particles including Russian *razve*, Ukrainian
 *xiba*, Belarusian *ci*, Polish *czyż(by)*, Bulgarian *nima*, and
-Czech *copak/cožpak* (@cite{simik-2024} §4.2.4; @cite{nekula-1996};
-@cite{stankova-2023}). Conveys surprise or doubt. -/
+Czech *copak/cožpak* ([simik-2024] §4.2.4; [nekula-1996];
+[stankova-2023]). Conveys surprise or doubt. -/
 def snad : ParticleEntry :=
   { form := "snad"
   , gloss := "perhaps/surely.not"
@@ -157,11 +157,11 @@ def snad : ParticleEntry :=
 /-- *copak* 'what then, RAZVE'
 
 Expresses a conflict between the speaker's prior belief and current
-contextual evidence (@cite{stankova-2025} §6.2;, @cite{nekula-1996},
-@cite{nekula-1996}). Licensed in both positive and negative PQs,
+contextual evidence ([stankova-2025] §6.2;, [nekula-1996],
+[nekula-1996]). Licensed in both positive and negative PQs,
 but requires a biased context (evidential bias).
 
-Key properties (@cite{stankova-2025} §6.2):
+Key properties ([stankova-2025] §6.2):
 - Context-sensitive: requires biased context (z = 9.372, p < .001)
 - In positive PQs: context implies ¬p, speaker believed p → surprise
 - In negative PQs: context implies p, speaker believed ¬p → surprise
@@ -242,7 +242,7 @@ theorem particle_signatures_distinct :
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
--- Context Sensitivity (@cite{stankova-2025} §6)
+-- Context Sensitivity ([stankova-2025] §6)
 -- ============================================================================
 
 /-! Corpus data (NahodouCorpusData, InterNPQUseCategory) and use category
@@ -250,7 +250,7 @@ distributions are in `Phenomena.Negation.CzechThreeWayNeg.Typology` §§20–21,
 where they live alongside the other empirical data for these papers. -/
 
 /-- Whether a particle requires evidential bias (biased context)
-to be felicitous. Based on @cite{stankova-2025} §6:
+to be felicitous. Based on [stankova-2025] §6:
 
 - *náhodou*: no — FALSUM-tied, context-insensitive (§6.1)
 - *copak*: yes — requires conflict between prior belief and evidence (§6.2)
@@ -278,13 +278,13 @@ theorem copak_context_sensitive :
 /-- náhodou and copak have opposite context requirements:
 náhodou is tied to FALSUM (epistemic bias, context-insensitive),
 while copak requires evidential bias (context-sensitive).
-They express different bias dimensions (@cite{stankova-2025} §6). -/
+They express different bias dimensions ([stankova-2025] §6). -/
 theorem nahodou_copak_opposite_context :
     requiresEvidentialBias nahodou ≠ requiresEvidentialBias copak := by decide
 
 /-- copak is not a Table 1 diagnostic — it has no
 direct negation-position licensing constraint. It appears in both
-positive and negative PQs (@cite{stankova-2025} ex. 19a–b). -/
+positive and negative PQs ([stankova-2025] ex. 19a–b). -/
 theorem copak_no_diagnostic : copak.diagnostic = none := rfl
 
 /-- copak's semantics is evidentialConflict, distinct from

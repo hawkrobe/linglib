@@ -8,7 +8,7 @@ import Linglib.Fragments.Niuean.Modals
 /-!
 # Matthewson (2016) — Modality
 
-@cite{matthewson-2016}
+[matthewson-2016]
 
 Lisa Matthewson. "Modality." Chapter 18 in *The Cambridge Handbook of
 Formal Semantics*, ed. Maria Aloni and Paul Dekker. Cambridge University
@@ -24,7 +24,7 @@ St'át'imcets, Nez Perce, Niuean, and other languages.
 1. **Three-way background classification** (Table 18.3):
    factual-circumstantial, factual-evidential, content-evidential.
    Refines the traditional epistemic/circumstantial binary following
-   @cite{kratzer-2012}.
+   [kratzer-2012].
 
 2. **Modals without duals** (§18.3.2): Gitksan ima('a)/gat and Nez Perce
    o'qa are not specialized for necessity or possibility. Different
@@ -231,7 +231,7 @@ theorem all_fragments_iff :
 
 /-- In Gitksan, future temporal orientation of an epistemic modal
     (`imaa`) requires prospective `dim`. The 2016 handbook chapter
-    presents this as the headline pattern; @cite{matthewson-2013} shows
+    presents this as the headline pattern; [matthewson-2013] shows
     it is part of a flavor-keyed asymmetry (circumstantials require
     `dim` for any orientation). -/
 theorem imaa_future_requires_dim :
@@ -248,7 +248,7 @@ theorem imaa_past_present_no_dim :
 /-- English–Gitksan mirror: English obligatorily marks past orientation
     (via *have*), Gitksan obligatorily marks future orientation (via *dim*).
     Both leave the remaining orientations unmarked.
-    @cite{matthewson-2016} §18.4.3. -/
+    [matthewson-2016] §18.4.3. -/
 structure TemporalMarkingMirror where
   /-- Which orientation is obligatorily marked. -/
   obligatoryMarking : Semantics.Modality.TemporalOrientation
@@ -266,7 +266,7 @@ theorem mirror_orientations :
 -- §7. Nauze's (2008) polyfunctionality universal
 -- ============================================================================
 
-/-! @cite{matthewson-2016} §18.5 discusses @cite{nauze-2008}'s proposed
+/-! [matthewson-2016] §18.5 discusses [nauze-2008]'s proposed
     universal: "Modal elements can only have more than one meaning along
     a unique axis of the semantic space: they either vary on the horizontal
     axis [flavour] ... or they vary on the vertical axis [force] ... but
@@ -291,11 +291,11 @@ theorem niuean_all_sav :
 -- §8. Hacquard's content licensing derives the epistemic/circumstantial split
 -- ============================================================================
 
-/-! @cite{hacquard-2006} @cite{hacquard-2010}
+/-! [hacquard-2006] [hacquard-2010]
 
 Matthewson's three-way background classification (Table 18.3) refines the
 traditional epistemic/circumstantial binary. The *coarse* binary itself
-is derived, not stipulated: @cite{hacquard-2006}'s content licensing
+is derived, not stipulated: [hacquard-2006]'s content licensing
 predicts that only contentful events (speech acts, attitudes) can project
 epistemic modal bases. VP events lack content and can only project
 circumstantial bases. This predicts the absolute epistemic/circumstantial
@@ -341,8 +341,8 @@ theorem gitksan_consistent_with_content_licensing :
 -- ============================================================================
 
 /-! These inventories can be compared against the Imel, Guo &
-    @cite{imel-guo-steinert-threlkeld-2026} typological database but are kept
-    here because their data source is @cite{matthewson-2016}, not the
+    [imel-guo-steinert-threlkeld-2026] typological database but are kept
+    here because their data source is [matthewson-2016], not the
     Imel et al. database. -/
 
 open Semantics.Modality.Typology (ModalInventory)

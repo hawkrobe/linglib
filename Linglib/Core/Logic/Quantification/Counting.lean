@@ -5,8 +5,8 @@ import Mathlib.Tactic.NormNum
 
 /-!
 # Counting generalized quantifiers
-@cite{barwise-cooper-1981} @cite{keenan-stavi-1986} @cite{peters-westerstahl-2006}
-@cite{mostowski-1957}
+[barwise-cooper-1981] [keenan-stavi-1986] [peters-westerstahl-2006]
+[mostowski-1957]
 
 `[Fintype α]`-gated specializations: counting quantifiers (`most_sem`,
 `few_sem`, `half_sem`, the `at_*_n_sem` family, the exceptive
@@ -220,7 +220,7 @@ theorem between_n_m_conservative (n k : Nat) :
   intro R S; simp only [between_n_m_sem, gqMeet]
   exact Iff.and (at_least_n_conservative n R S) (at_most_n_conservative k R S)
 
-/-! ### Counting quantifier identities (@cite{peters-westerstahl-2006} §4.3) -/
+/-! ### Counting quantifier identities ([peters-westerstahl-2006] §4.3) -/
 
 /-- `⟦some⟧ = ⟦at least 1⟧`. -/
 theorem some_eq_at_least_1 :
@@ -370,7 +370,7 @@ theorem at_most_n_coSmooth (n : Nat) :
   rw [at_most_eq_outerNeg_at_least_succ]
   exact (smooth_iff_outerNeg_coSmooth _).mp (at_least_n_smooth _)
 
-/-! ### Quantity / isomorphism closure (@cite{mostowski-1957})
+/-! ### Quantity / isomorphism closure ([mostowski-1957])
 
 Cardinality-based, `Fintype`-gated. Bridges to the model-agnostic
 `QuantityInvariant` (in `Defs.lean`) are sorry'd pending a Prop-predicate
@@ -378,8 +378,8 @@ adaptation of the cell-bijection machinery. -/
 
 /-- Quantity / isomorphism closure: `Q(A, B)` depends only on the four
     cardinalities `|A ∩ B|`, `|A \ B|`, `|B \ A|`, `|M \ (A ∪ B)|`.
-    Type-⟨1,1⟩ generalization of @cite{mostowski-1957}'s permutation
-    invariance for type-⟨1⟩ quantifiers, due to @cite{van-benthem-1984}. -/
+    Type-⟨1,1⟩ generalization of [mostowski-1957]'s permutation
+    invariance for type-⟨1⟩ quantifiers, due to [van-benthem-1984]. -/
 def Quantity (q : GQ α) : Prop :=
   ∀ (R₁ S₁ R₂ S₂ : α → Prop),
     count (fun x => R₁ x ∧ S₁ x) =
@@ -504,7 +504,7 @@ theorem at_most_n_satisfiesUniversals (n : Nat) :
     SatisfiesUniversals (at_most_n_sem (α := α) n) :=
   ⟨at_most_n_conservative n, Or.inr (at_most_n_scope_down n)⟩
 
-/-! ### Proportional quantifiers (@cite{peters-westerstahl-2006} §4.3) -/
+/-! ### Proportional quantifiers ([peters-westerstahl-2006] §4.3) -/
 
 /-- Proportional: `q`'s truth value depends only on the ratio `|A∩B|/|A\B|`. -/
 def Proportional (q : GQ α) : Prop :=

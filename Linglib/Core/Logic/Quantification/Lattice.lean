@@ -2,7 +2,7 @@ import Linglib.Core.Logic.Quantification.Properties
 
 /-!
 # Conservative GQ Lattice
-@cite{elliott-2025}
+[elliott-2025]
 
 Conservative GQs form a bounded distributive sublattice of `GQ α`.
 The `DistribLattice` instance is inherited from Mathlib's Pi instances
@@ -15,7 +15,7 @@ namespace Core.Quantification
 
 variable {α : Type*}
 
-/-! ### Conservative GQ Lattice (@cite{elliott-2025}) -/
+/-! ### Conservative GQ Lattice ([elliott-2025]) -/
 
 /-- Conservative GQs form a sublattice of `GQ α`. The `DistribLattice`
     on `GQ α` is inherited from Mathlib's Pi instances (`Prop` is a

@@ -13,28 +13,28 @@ the semantic theories for gradable nouns and quantizing nouns.
 ## Evaluative BNP Semantics (Stage 4)
 
 Evaluative BNPs (*that idiot of a doctor*) compose N₁ as a gradable
-predicate with N₂ as a restricting predicate (@cite{ten-wolde-2023},
-@cite{morzycki-2009}). The denotation is conjunctive: x must satisfy
+predicate with N₂ as a restricting predicate ([ten-wolde-2023],
+[morzycki-2009]). The denotation is conjunctive: x must satisfy
 both N₂ (be a doctor) and POS(N₁) (be d-idiotic for d ≥ θ).
 
 ## Evaluative Modifier Semantics (Stage 5)
 
 EMs (*a hell of a game*) bleach N₁ to an evaluative modifier:
 N₁ no longer contributes its own lexical predicate but applies an
-evaluative measure function (@cite{nouwen-2024}) to a contextually-
+evaluative measure function ([nouwen-2024]) to a contextually-
 determined property of N₂.
 
 ## Binominal Intensifier Semantics (Stage 6)
 
 BIs (*a hell of a good time*) bleach N₁ further to a degree word:
 [N₁ of a] intensifies a following adjective, composing via
-`intensifiedMeaning` from @cite{nouwen-2024}.
+`intensifiedMeaning` from [nouwen-2024].
 
 ## Quantizing ↔ Pseudo-partitive Bridge
 
-All quantizing noun classes (@cite{scontras-2014}) — container nouns,
+All quantizing noun classes ([scontras-2014]) — container nouns,
 atomizers, and measure terms — instantiate pseudo-partitive binominals
-in @cite{ten-wolde-2023}'s taxonomy.
+in [ten-wolde-2023]'s taxonomy.
 -/
 
 namespace Semantics.Quantification.Binominal
@@ -77,8 +77,8 @@ theorem ebnp_requires_n₁_pos {Entity : Type} (n₁ : GradableNoun Entity)
 
 /-- Map a `QuantizingNounClass` to the `OfBinominalType` it instantiates.
 
-All quantizing nouns (@cite{scontras-2014}) are pseudo-partitive
-in @cite{ten-wolde-2023}'s taxonomy: N₁ quantizes, N₂ is the
+All quantizing nouns ([scontras-2014]) are pseudo-partitive
+in [ten-wolde-2023]'s taxonomy: N₁ quantizes, N₂ is the
 semantic head. -/
 def quantizingToOfBinominal : QuantizingNounClass → OfBinominalType
   | .containerNoun => .pseudoPartitive
@@ -145,11 +145,11 @@ theorem george_idiot_independent :
 
 /-! ### Stage 5: Evaluative Modifier
 
-At stage 5 on @cite{ten-wolde-2023}'s grammaticalization cline, N₁ has
+At stage 5 on [ten-wolde-2023]'s grammaticalization cline, N₁ has
 bleached from a full gradable predicate (EBNP) to an evaluative modifier:
 *a hell of a game* ≈ *an extremely good game*. N₁ no longer contributes
 its own lexical predicate — instead, [N₁ of a] applies an evaluative
-measure function (@cite{nouwen-2024}) to a contextually-determined
+measure function ([nouwen-2024]) to a contextually-determined
 property of N₂. -/
 
 section EM
@@ -186,7 +186,7 @@ theorem em_requires_n₂ {Entity : Type} {max : Nat}
 At stage 6, N₁ has fully grammaticalized to a degree word: *a hell of a
 good time* ≈ *a very good time*. The [N₁ of a] unit modifies a following
 adjective rather than N₂ directly. Semantics composes via
-`intensifiedMeaning` from @cite{nouwen-2024}: the adjective's positive
+`intensifiedMeaning` from [nouwen-2024]: the adjective's positive
 form AND N₁'s evaluative threshold must both be exceeded. -/
 
 /-- BI semantics: N₁ as degree intensifier of a following adjective.
@@ -195,7 +195,7 @@ form AND N₁'s evaluative threshold must both be exceeded. -/
 both the adjective threshold (good enough) and the evaluative threshold
 (hell-level) are exceeded.
 
-This directly instantiates @cite{nouwen-2024}'s `intensifiedMeaning`:
+This directly instantiates [nouwen-2024]'s `intensifiedMeaning`:
 the adjective's positive form AND the evaluative measure must both hold. -/
 def biSemantics {Entity : Type} {max : Nat}
     (eval : EvaluativeMeasure max)
@@ -254,7 +254,7 @@ def doctorQuality : GradableNouns.Person → Degree 10
   | .floyd  => deg 3
 
 /-- Evaluative measure for *hell*: peaks at extreme degrees.
-μ_hell(d) = |d − 5| — uses @cite{nouwen-2024}'s extreme-peaking profile.
+μ_hell(d) = |d − 5| — uses [nouwen-2024]'s extreme-peaking profile.
 *hell* is valence-neutral (positive in *a hell of a good time*, negative in
 *the hell of war*); the extreme-peaking shape captures its intensity
 regardless of polarity. -/

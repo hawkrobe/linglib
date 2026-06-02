@@ -1,13 +1,13 @@
 import Linglib.Studies.BarkerPullum1990
 
 /-!
-# Reinhart (1976) @cite{reinhart-1976}
+# Reinhart (1976) [reinhart-1976]
 
 The Syntactic Domain of Anaphora. PhD dissertation, MIT.
 
 ## Key Contributions
 
-1. **C-command** (def. 36, p. 32): replaces @cite{langacker-1969}'s S-node-based
+1. **C-command** (def. 36, p. 32): replaces [langacker-1969]'s S-node-based
    "command" with a **branching-node-based** relation
 2. **C-command domain** (def. 38, p. 33): the subtree dominated by the first
    branching node dominating A — always a constituent
@@ -15,10 +15,10 @@ The Syntactic Domain of Anaphora. PhD dissertation, MIT.
 4. **Claim (49)** (p. 40): c-command ⊆ command (= `kCommand ⊆ sCommand` in B&P)
 5. **The irrelevance of precede** (§1.4): linear order is epiphenomenal for coreference
 
-## Connection to @cite{barker-pullum-1990}
+## Connection to [barker-pullum-1990]
 
 Reinhart's c-command is exactly B&P's **K-command** (parameterized by branching
-nodes). @cite{langacker-1969}'s command is B&P's **S-command** (parameterized by
+nodes). [langacker-1969]'s command is B&P's **S-command** (parameterized by
 S-nodes). Theorem 49 follows from B&P's antitone map: since
 `{S-nodes} ⊆ {branching nodes}`, we get `C_{branching} ⊆ C_{S}`.
 
@@ -176,7 +176,7 @@ theorem command_ignores_precedence {Node : Type} [PartialOrder Node] (T : TreeOr
 
 /-! ### Preposed PP example (§1.5.2)
 
-@cite{reinhart-1976}'s structures (41)/(42) are **ternary branching**
+[reinhart-1976]'s structures (41)/(42) are **ternary branching**
 (S → PP NP₁ VP), but the key half of the argument is tree-shape-independent:
 
 - NP₃ (PP-internal, e.g., "Dan" inside "near Dan") does NOT c-command
@@ -190,7 +190,7 @@ rule incorrectly blocks backward pronominalization in
 S-commanded by "Dan" — while the c-command restriction correctly
 permits it (since "him" does not c-command "Dan").
 
-**Binary tree limitation**: In @cite{reinhart-1976}'s ternary tree (41),
+**Binary tree limitation**: In [reinhart-1976]'s ternary tree (41),
 the subject NP₁ DOES c-command NP₃ (since the first branching node
 above NP₁ is S, which dominates NP₃). Our binary encoding places NP₁
 inside a VP shell, so the subject does NOT c-command into PP. This
@@ -249,7 +249,7 @@ theorem ccommand_asymmetric_example :
     cCommand [Dir.R, Dir.R] [Dir.L] = false := by
   constructor <;> decide
 
-/-- Subject–object asymmetry for coreference (@cite{reinhart-1976}'s key prediction):
+/-- Subject–object asymmetry for coreference ([reinhart-1976]'s key prediction):
     - "She denied that Rosa met the Shah" — *she* c-commands *Rosa*, blocks coref
     - "The man who traveled with her denied that Rosa met the Shah" —
       *her* does NOT c-command *Rosa*, coref permitted
@@ -351,7 +351,7 @@ theorem paradigm_11d_permitted :
 (10a) applies only to pairs consisting of a pronoun and a full NP.
 It says nothing about pairs of two full NPs or two pronouns.
 
-@cite{reinhart-1976} argues (pp. 14-17) that (10b) is strictly superior:
+[reinhart-1976] argues (pp. 14-17) that (10b) is strictly superior:
 (10a) fails to block coreference between two full NPs when one is in
 the domain of the other (the (11a) case). -/
 

@@ -7,7 +7,7 @@ import Linglib.Semantics.Conditionals.Counterfactual.Implicature
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{ramotowska-marty-romoli-santorio-2025} - Counterfactuals and Quantificational Force
+# [ramotowska-marty-romoli-santorio-2025] - Counterfactuals and Quantificational Force
 
 Ramotowska, S., Marty, P., Romoli, J. & Santorio, P. (2025).
 Counterfactuals and quantificational force: Experimental evidence for
@@ -504,7 +504,7 @@ The NonBivalence dichotomy explains this dissociation:
 
 The consequence: when the semantic layer returns `.indet`, the only
 source of variation in judgments is pragmatic resolution — and pragmatic
-resolution is QUD-dependent (@cite{kriz-2016}: `sufficientlyTrue` and
+resolution is QUD-dependent ([kriz-2016]: `sufficientlyTrue` and
 `addressesIssue`). When the semantic layer returns a determinate value,
 there is no gap for pragmatics to exploit — QUD has nothing to modulate.
 
@@ -529,7 +529,7 @@ theorem cf_all_quantifiers_determinate (d : ProjectionType) (bs : List Bool) :
 /-- **The dissociation**: for the same mixed input (n individuals, some
     satisfying the predicate, some not), PDs return `.indet` while CFs
     return a definite value. The gap is what makes PDs QUD-sensitive —
-    pragmatic resolution via `sufficientlyTrue` (@cite{kriz-2016}) depends
+    pragmatic resolution via `sufficientlyTrue` ([kriz-2016]) depends
     on the QUD partition. CFs have no gap to resolve.
 
     This is a direct corollary of the local/global aggregation
@@ -565,7 +565,7 @@ theorem scope_determines_qud_sensitivity (n : Nat) (hn : n > 0)
    before quantifier → QUD-sensitive pragmatic resolution); counterfactuals
    are GLOBAL (Bool before quantifier → no gap to resolve).
 
-3. **Modal Homogeneity** (@cite{agha-jeretic-2022}):
+3. **Modal Homogeneity** ([agha-jeretic-2022]):
    Weak necessity modals (*should*) are to strong necessity (*must*) what
    plural definites are to `all`-sentences. `shouldEval` produces `.indet`
    in mixed domains (local), while `mustEval` produces `ofBool` (global).

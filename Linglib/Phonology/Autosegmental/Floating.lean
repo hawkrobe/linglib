@@ -18,7 +18,7 @@ associate to one backbone position (forming contours); a tier element
 with no associations is **floating**. Generic over both backbone type
 `S` (the lower tier) and tier-value type `T` (the upper tier); tonal use
 instantiates `T := TRN`, while non-tonal autosegmental work
-(@cite{laoide-kemp-2026}'s floating consonants, @cite{lieber-1983}'s
+([laoide-kemp-2026]'s floating consonants, [lieber-1983]'s
 floating features) chooses other `T` values.
 
 ## Main definitions
@@ -47,28 +47,28 @@ link references it.
 
 The refactor over the prior overwrite-semantics encoding
 (`GrammaticalTone.tonalOverwrite`) is required by
-@cite{mcpherson-lamont-2026}: *CROWD penalises backbone positions
+[mcpherson-lamont-2026]: *CROWD penalises backbone positions
 with too many associated tier elements, and *FALL penalises HM/HL/ML
 contours — both of which presuppose multi-element-per-position
 representation.
 
 A surface link `(k, i)` is **tautomorphic** iff
 `upper[k].morpheme = lower[i].morpheme`. *TAUTDOCK (after
-@cite{wolf-2007}) penalises tautomorphic links inserted by GEN.
+[wolf-2007]) penalises tautomorphic links inserted by GEN.
 
 `gen` implements a paper-subset of operations: delete tier element,
 insert link, delete link. Insert-and-associate and shift operations
 are omitted (not needed for the fig. 3 derivation in the source
 paper). The no-crossing filter inside GEN enforces autosegmental
-well-formedness (@cite{goldsmith-1976}).
+well-formedness ([goldsmith-1976]).
 
 ## References
 
-* @cite{goldsmith-1976} — autosegmental phonology, no-crossing constraint
-* @cite{wolf-2007} — *TAUTDOCK
-* @cite{mcpherson-lamont-2026} — grammatical tone with multi-tone TBUs
-* @cite{laoide-kemp-2026} — non-tonal floating segments (Irish ICM)
-* @cite{lieber-1983} — floating features in autosegmental morphology
+* [goldsmith-1976] — autosegmental phonology, no-crossing constraint
+* [wolf-2007] — *TAUTDOCK
+* [mcpherson-lamont-2026] — grammatical tone with multi-tone TBUs
+* [laoide-kemp-2026] — non-tonal floating segments (Irish ICM)
+* [lieber-1983] — floating features in autosegmental morphology
 -/
 
 namespace Phonology.Autosegmental
@@ -92,7 +92,7 @@ abbrev SegIdx := Nat
 abbrev Link := TierIdx × SegIdx
 
 /-- An autosegmental tier element: a value of type `T` plus morpheme
-    membership. Generalises @cite{goldsmith-1976}'s tonal-tier element
+    membership. Generalises [goldsmith-1976]'s tonal-tier element
     to arbitrary tier-value types (tones, segments, features). -/
 structure TierSpec (T : Type*) where
   /-- The tier value (tone, segment, feature, ...). -/
@@ -112,7 +112,7 @@ structure SegSpec (S : Type*) where
 `FloatingForm S T` is an autosegmental form with segmental backbone
 of type `S` and tier-value type `T`. Tonal use chooses `T := TRN`;
 non-tonal autosegmental work chooses other `T` values
-(@cite{laoide-kemp-2026}, @cite{lieber-1983}). The OT-style
+([laoide-kemp-2026], [lieber-1983]). The OT-style
 bookkeeping (`deletedTier`, `surfaceLinks` vs underlying `links`) is
 language-independent.
 -/
@@ -220,7 +220,7 @@ abbrev Crosses (f : FloatingForm S T) (k : TierIdx) (i : SegIdx) : Prop :=
     each alive tone, (c) for each FLOATING tone, inserting a link to
     each TBU that doesn't cross an existing link. Subset of paper
     eq. 6: omits (d) insert-and-associate and (e) shift, which fig. 3
-    doesn't use. The no-crossing filter (@cite{goldsmith-1976})
+    doesn't use. The no-crossing filter ([goldsmith-1976])
     enforces autosegmental well-formedness — without it, a floating H
     could dock across an intervening linked tone, which the paper's
     GEN implicitly forbids. -/

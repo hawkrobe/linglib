@@ -2,14 +2,14 @@ import Linglib.Typology.PolarityItem
 
 /-!
 # Mandarin Polarity-Sensitive Items
-@cite{haspelmath-1997}
+[haspelmath-1997]
 
 Mandarin indefinite pronoun polarity items, typed by the categories from
 `Typology.PolarityItem`.
 
 Mandarin wh-words (*shéi* 谁, *shénme* 什么) double as indefinites in
 non-interrogative uses, covering an exceptionally wide range on
-@cite{haspelmath-1997}'s map (7 of 9 functions):
+[haspelmath-1997]'s map (7 of 9 functions):
 - **shéi** (non-interrogative): NPI/FCI — questions through free choice
 -/
 

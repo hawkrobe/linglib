@@ -3,8 +3,8 @@ import Linglib.Studies.Cooper2023.Ch6
 import Mathlib.Data.Set.Basic
 
 /-!
-# Intentional Identity Bridge @cite{chatzikyriakidis-etal-2025}
-@cite{cooper-2023} @cite{geach-1967}
+# Intentional Identity Bridge [chatzikyriakidis-etal-2025]
+[cooper-2023] [geach-1967]
 
 TTR solution to Geach's intentional identity puzzle.
 
@@ -20,7 +20,7 @@ as the antecedent.
 
 ## The TTR solution
 
-In TTR (@cite{cooper-2023}, @cite{chatzikyriakidis-etal-2025} §2), the solution
+In TTR ([cooper-2023], [chatzikyriakidis-etal-2025] §2), the solution
 uses *types* rather than *entities* as the locus of identity:
 
 1. Hob's belief state contains a type `T_witch` (a predicate type

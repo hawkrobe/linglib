@@ -13,7 +13,7 @@ Unified tree type parameterized by node labels (`C`) and terminal content (`W`).
 N-ary branching with categories on every node. Supports both:
 - **Compositional interpretation** (LF): `interp`/`evalTree`
   in `Composition/Tree.lean` — type-driven, ignores categories
-- **Structural operations** (PF): @cite{katzir-2007} `StructOp` (substitution,
+- **Structural operations** (PF): [katzir-2007] `StructOp` (substitution,
   deletion, contraction) in `Alternatives/Structural.lean` — category-aware
 
 Parameterized by category type `C` (UD tags, CCG categories, feature
@@ -50,7 +50,7 @@ namespace Core.Tree
 open UD
 
 /-- Default syntactic category system grounded in Universal Dependencies
-UPOS (@cite{de-marneffe-zeman-2021}).
+UPOS ([de-marneffe-zeman-2021]).
 
 - `head pos` — word-level (terminal): wraps a UPOS tag directly
 - `proj pos` — maximal X-bar projection of a UPOS head
@@ -423,7 +423,7 @@ theorem nil_validPath (t : Tree C W) : (⟨[]⟩ : TreePath) ∈ t.validPaths :=
 
 /-- **Forgetful map** from a `Tree C W` to its dominance order as a
     `TreeOrder TreePath`. This makes the framework-agnostic command-
-    relation library (@cite{barker-pullum-1990}, B&P) directly applicable
+    relation library ([barker-pullum-1990], B&P) directly applicable
     to any concrete tree, regardless of category or word type. -/
 def toTreeOrder (t : Tree C W) : Core.Order.TreeOrder TreePath where
   nodes := t.validPaths

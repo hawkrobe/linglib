@@ -1,6 +1,6 @@
 /-
 The DE < Anti-Additive < Anti-Morphic hierarchy.
-Reference: @cite{chierchia-2013} section 1.4.3, @cite{ladusaw-1980}.
+Reference: [chierchia-2013] section 1.4.3, [ladusaw-1980].
 -/
 
 import Mathlib.Order.Monotone.Defs
@@ -28,7 +28,7 @@ variable {α β : Type*}
 /-- Anti-additive: `f(A ∪ B) = f(A) ∩ f(B)` (pointwise iff form).
 
 Polymorphic in domain and codomain — this is needed e.g. for
-@cite{hoeksema-1983}'s S-comparative, which is anti-additive as a
+[hoeksema-1983]'s S-comparative, which is anti-additive as a
 function `Set Degree → Set Individual`. -/
 def IsAntiAdditive (f : Set α → Set β) : Prop :=
   ∀ p q : Set α, ∀ x, f (p ∪ q) x ↔ f p x ∧ f q x
@@ -39,7 +39,7 @@ def IsAntiMorphic (f : Set α → Set β) : Prop :=
   (∀ p q : Set α, ∀ x, f (p ∩ q) x ↔ f p x ∨ f q x)
 
 
-/-- Anti-additive implies antitone (@cite{hoeksema-1983} Fact 4: the
+/-- Anti-additive implies antitone ([hoeksema-1983] Fact 4: the
     polarity-environment classification of anti-additive operators as
     downward-entailing). Codomain need not be `Set World`. -/
 theorem IsAntiAdditive.antitone {f : Set α → Set β} (hAA : IsAntiAdditive f) :
@@ -60,7 +60,7 @@ theorem IsAntiMorphic.antitone {f : Set α → Set β} (hAM : IsAntiMorphic f) :
 
 /-- Any function of the form `fun X y => ∀ x ∈ X, P x y` is anti-additive in `X`.
 
-    `npComparative` and `sComparative` (@cite{hoeksema-1983}) instantiate this
+    `npComparative` and `sComparative` ([hoeksema-1983]) instantiate this
     with `P x y := μ x < μ y` and `P d y := d < μ y` respectively. -/
 theorem isAntiAdditive_forall_mem (P : α → β → Prop) :
     IsAntiAdditive (fun (X : Set α) (y : β) => ∀ x ∈ X, P x y) := by
@@ -226,7 +226,7 @@ example : licensesWeakNPI atMost2_student := atMost_isDE_scope
 
 /-!
 ## `DEStrength` ↔ Proof Hierarchy
-@cite{icard-2012}
+[icard-2012]
 
 | `DEStrength` | Proof Predicate | Example Licensor |
 |--------------|-----------------|------------------|
@@ -239,7 +239,7 @@ end Definitions
 
 
 -- ============================================================================
--- Section: Upward Entailing Duals (@cite{icard-2012})
+-- Section: Upward Entailing Duals ([icard-2012])
 -- ============================================================================
 
 section UEDuals

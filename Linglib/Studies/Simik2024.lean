@@ -9,16 +9,16 @@ import Linglib.Fragments.Slavic.Macedonian.QuestionParticles
 
 /-!
 # Šimík (2024): Polar Question Semantics and Bias in Slavic
-@cite{simik-2024} @cite{bhatt-dayal-2020} @cite{dayal-2025}
+[simik-2024] [bhatt-dayal-2020] [dayal-2025]
 
 Šimík's cross-Slavic survey of polar-question particles classifies each
-particle by its left-peripheral layer in the @cite{bhatt-dayal-2020} /
-@cite{dayal-2025} cartography `[SAP [PerspP [CP ...]]]`.
+particle by its left-peripheral layer in the [bhatt-dayal-2020] /
+[dayal-2025] cartography `[SAP [PerspP [CP ...]]]`.
 
 The fragments in `Fragments/{Russian,Bulgarian,Ukrainian,Polish,
 Slovenian,Serbian,Macedonian}/QuestionParticles.lean` carry only theory-
 neutral lexical primitives (form, gloss, bias profile). This study file
-overlays @cite{simik-2024}'s layer assignments and proves the Slavic
+overlays [simik-2024]'s layer assignments and proves the Slavic
 generalization that the *neutral* PQ-particle of each surveyed language
 sits at CP, while the *biased mirative* particles (the cross-Slavic
 RAZVE family) sit at PerspP.
@@ -41,7 +41,7 @@ RAZVE family) sit at PerspP.
 | Macedonian  | dali      | CP      |
 
 The Slavic data is the empirical anchor for the cross-linguistic claim
-that the cartography in @cite{dayal-2025} extends beyond Hindi-Urdu and
+that the cartography in [dayal-2025] extends beyond Hindi-Urdu and
 Japanese to a much wider typological range.
 -/
 

@@ -4,9 +4,9 @@ import Linglib.Semantics.Dynamic.Bilateral.ICDRT
 # Bilateral Connectives (DN-DRT / BUS)
 
 Bilateral connectives enabling cross-disjunct anaphora (bathroom sentences),
-following the DN-DRT / BUS mechanism (@cite{krahmer-muskens-1995}).
+following the DN-DRT / BUS mechanism ([krahmer-muskens-1995]).
 
-This bilateral approach is NOT the same as @cite{hofmann-2025}'s full
+This bilateral approach is NOT the same as [hofmann-2025]'s full
 ICDRT analysis. ICDRT uses static operators over propositional discourse
 referents to derive accessibility from veridicality + discourse consistency,
 covering cases (modal subordination, disagreement) that bilateral accounts

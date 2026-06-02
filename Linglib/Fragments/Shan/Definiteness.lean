@@ -8,7 +8,7 @@ import Linglib.Semantics.Kinds.MeaningPreservation
 
 /-!
 # Shan Definiteness Fragment
-@cite{moroney-2021}
+[moroney-2021]
 
 Language-specific parameters for definiteness in Shan (Southwestern Tai,
 Kra-Dai). Shan has no overt definite or indefinite articles — bare nouns
@@ -19,14 +19,14 @@ type-shifting.
 
 1. **No articles**: `hasUniqueForm = false`, `hasAnaphoricForm = false`
 2. **Unmarked strategy**: `DefMarkingStrategy.unmarked` — bare nouns
-   cover all @cite{schwarz-2009} use types
+   cover all [schwarz-2009] use types
 3. **Unblocked type-shifts**: ι, ι^x, ∩, and ∃ are all available
 4. **Demonstratives**: *nâj* (proximal) and *nân* (distal) are optional
    in anaphoric contexts, required in no context
 
 ## Demonstrative Semantics
 
-@cite{moroney-2021} §2.1.3:
+[moroney-2021] §2.1.3:
 - ⟦nâj⟧ = λP : |P_s| = 1. ιx[P_s(x) ∧ CLOSE.TO.SPEAKER(x)]
 - ⟦nân⟧ = λP : |P_s| = 1. ιx[P_s(x) ∧ FAR.FROM.SPEAKER(x)]
 
@@ -51,7 +51,7 @@ def blocking : NMP.BlockingPrinciple :=
   , existsBlocked := false
   , downBlocked := false }
 
-/-- Shan @cite{moroney-2021}: no overt definite or indefinite article — no
+/-- Shan [moroney-2021]: no overt definite or indefinite article — no
     `.article` entries. Demonstratives *nâj/nân* are *optional* in anaphoric
     contexts (their `definiteUses` are empty: they obligatorily expone nothing),
     so bare nouns can express both unique and anaphoric definiteness. The
@@ -110,7 +110,7 @@ theorem all_shifts_available :
   simp [MeaningPreservation.availableShifts, neutralKindCtx]
 
 -- ============================================================================
--- §3: Demonstrative Semantics (@cite{moroney-2021} §2.1.3)
+-- §3: Demonstrative Semantics ([moroney-2021] §2.1.3)
 -- ============================================================================
 
 /-- Shan demonstrative entry: form, gloss, and deictic content.

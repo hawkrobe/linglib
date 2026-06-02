@@ -4,7 +4,7 @@ import Mathlib.Tactic.Use
 
 /-!
 # Dynamic Propositions: The Semantic Algebra
-@cite{heim-1982} @cite{groenendijk-stokhof-1991} @cite{kamp-reyle-1993}
+[heim-1982] [groenendijk-stokhof-1991] [kamp-reyle-1993]
 
 The relational type `Update S = S → S → Prop` and its core operations
 form the semantic algebra shared by all dynamic semantic systems:
@@ -15,23 +15,23 @@ DRT, DPL, File Change Semantics, PLA, CDRT, BUS, and others.
 Three independent but converging lines of work arrive at essentially
 the same algebraic structure:
 
-- **@cite{heim-1982}**: Sentence meanings are *file change potentials* —
+- **[heim-1982]**: Sentence meanings are *file change potentials* —
   functions from files to files. Her principle (A),
   `SAT(F + φ) = SAT(F) ∩ {a : a SAT φ}`, decomposes update into
   the operations formalized here as `test` (intersection) and `dseq`
   (successive file change).
 
-- **@cite{kamp-reyle-1993}**: Update verification clauses (Def 1.4.4)
+- **[kamp-reyle-1993]**: Update verification clauses (Def 1.4.4)
   define when an embedding can be extended to satisfy each connective.
   These clauses correspond exactly to `test`, `dseq`, `dneg`, `dimpl`,
   and `ddisj`.
 
-- **@cite{groenendijk-stokhof-1991}**: Dynamic Predicate Logic makes
+- **[groenendijk-stokhof-1991]**: Dynamic Predicate Logic makes
   the relational type explicit: meanings ARE binary relations on
   assignments. Their DPL conjunction = relational composition (`dseq`),
   DPL negation = universal non-existence (`dneg`), etc.
 
-@cite{muskens-1996} unified these by parametrizing over the state
+[muskens-1996] unified these by parametrizing over the state
 type `S`, showing all systems embed into this algebra.
 
 ## Operations
@@ -56,9 +56,9 @@ incompatible ways:
 
 | Framework | DNE mechanism | File |
 |-----------|---------------|------|
-| Bilateral (BUS, @cite{krahmer-muskens-1995}, @cite{elliott-sudo-2025}) | Two update channels (positive/negative); negation = swap | `Dynamic/Bilateral/Basic.lean`, `Dynamic/Bilateral/ICDRT.lean` |
-| ICDRT (@cite{hofmann-2025}) | Propositional drefs + complementation under flat update | `Studies/Hofmann2025.lean` |
-| TTR (@cite{cooper-2023}) | Classical metalanguage reduction; negation is static | `Semantics/TypeTheoretic/` |
+| Bilateral (BUS, [krahmer-muskens-1995], [elliott-sudo-2025]) | Two update channels (positive/negative); negation = swap | `Dynamic/Bilateral/Basic.lean`, `Dynamic/Bilateral/ICDRT.lean` |
+| ICDRT ([hofmann-2025]) | Propositional drefs + complementation under flat update | `Studies/Hofmann2025.lean` |
+| TTR ([cooper-2023]) | Classical metalanguage reduction; negation is static | `Semantics/TypeTheoretic/` |
 
 These are not mere notational variants. Bilateral DNE is structural
 (swap is involutive by definition); ICDRT DNE is derived (complementation
@@ -87,9 +87,9 @@ namespace Semantics.Dynamic.Core.DynProp
 /-- Update meaning: type `s(st)` — binary relation on states.
 
 A proposition in dynamic semantics is a relation between an input
-state and an output state. This is the type that @cite{heim-1982}'s
-file change potentials, @cite{kamp-reyle-1993}'s Update verification,
-and @cite{groenendijk-stokhof-1991}'s DPL meanings all instantiate. -/
+state and an output state. This is the type that [heim-1982]'s
+file change potentials, [kamp-reyle-1993]'s Update verification,
+and [groenendijk-stokhof-1991]'s DPL meanings all instantiate. -/
 abbrev Update (S : Type*) := S → S → Prop
 
 /-- Condition: type `st` — property of a single state.
@@ -108,8 +108,8 @@ variable {S : Type*}
 
 /-- Dynamic negation: `¬D` holds at `i` iff no output `k` satisfies `D`.
 
-Corresponds to @cite{kamp-reyle-1993} Def 1.4.4 (negation verification)
-and @cite{groenendijk-stokhof-1991} DPL negation. -/
+Corresponds to [kamp-reyle-1993] Def 1.4.4 (negation verification)
+and [groenendijk-stokhof-1991] DPL negation. -/
 def dneg (D : Update S) : Condition S :=
   λ i => ¬∃ k, D i k
 
@@ -117,7 +117,7 @@ notation "∼" D => dneg D
 
 /-- Test: lift a condition to an Update that checks `C` without changing state.
 
-Corresponds to @cite{heim-1982}'s intersection with the satisfaction
+Corresponds to [heim-1982]'s intersection with the satisfaction
 set: `SAT(F') = SAT(F) ∩ {a : C(a)}`. -/
 def test (C : Condition S) : Update S :=
   λ i j => i = j ∧ C j
@@ -127,9 +127,9 @@ notation "[" C "]" => test C
 /-- Dynamic conjunction (sequencing): `D₁ ; D₂`.
 
 Relational composition: there exists an intermediate state `h`
-witnessing both transitions. This is @cite{heim-1982}'s successive
-file change, @cite{kamp-reyle-1993}'s Update sequencing, and
-@cite{groenendijk-stokhof-1991}'s DPL conjunction. -/
+witnessing both transitions. This is [heim-1982]'s successive
+file change, [kamp-reyle-1993]'s Update sequencing, and
+[groenendijk-stokhof-1991]'s DPL conjunction. -/
 def dseq (D₁ D₂ : Update S) : Update S :=
   λ i j => ∃ h, D₁ i h ∧ D₂ h j
 
@@ -138,7 +138,7 @@ infixl:65 " ⨟ " => dseq
 /-- Dynamic implication: `D₁ → D₂`.
 
 Every way of satisfying the antecedent can be extended to satisfy
-the consequent. Corresponds to @cite{kamp-reyle-1993} Def 1.4.4
+the consequent. Corresponds to [kamp-reyle-1993] Def 1.4.4
 (implication verification): for all `h`, if `D₁ i h` then
 `∃ k, D₂ h k`. -/
 def dimpl (D₁ D₂ : Update S) : Condition S :=
@@ -146,14 +146,14 @@ def dimpl (D₁ D₂ : Update S) : Condition S :=
 
 /-- Dynamic disjunction: `D₁ ∨ D₂`.
 
-Corresponds to @cite{kamp-reyle-1993} Def 1.4.4 (disjunction
+Corresponds to [kamp-reyle-1993] Def 1.4.4 (disjunction
 verification): there exists an output via either disjunct. -/
 def ddisj (D₁ D₂ : Update S) : Condition S :=
   λ i => ∃ k, D₁ i k ∨ D₂ i k
 
 /-- Anaphoric closure: `∃ output state`.
 
-@cite{heim-1982}'s truth definition: a file is true iff its
+[heim-1982]'s truth definition: a file is true iff its
 satisfaction set is non-empty, i.e., some assignment satisfies it. -/
 def closure (D : Update S) : Condition S :=
   λ i => ∃ k, D i k

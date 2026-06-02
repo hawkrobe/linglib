@@ -1,10 +1,10 @@
 import Linglib.Phonology.Featural.Features
 
 /-!
-# Persian (Farsi) Vowel Hiatus Data @cite{storme-2026}
+# Persian (Farsi) Vowel Hiatus Data [storme-2026]
 
 Empirical data for Persian vowel hiatus resolution, the case study in
-@cite{storme-2026}'s MaxEnt systemic constraints analysis.
+[storme-2026]'s MaxEnt systemic constraints analysis.
 
 Persian has three low vowels — /æ/, /ɑ/, and (in some analyses) /ɒ/ — that
 undergo various resolution strategies when they occur in hiatus (V.V across

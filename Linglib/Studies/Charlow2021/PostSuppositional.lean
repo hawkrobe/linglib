@@ -3,9 +3,9 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # Post-Suppositional Dynamic GQs
-@cite{charlow-2021}
+[charlow-2021]
 
-@cite{charlow-2021}'s §5: bi-dimensional meanings using a Writer-like monad.
+[charlow-2021]'s §5: bi-dimensional meanings using a Writer-like monad.
 A `PostSupp S A` carries both a value and accumulated post-suppositional
 content (an Update that constrains but doesn't change the assignment).
 
@@ -32,7 +32,7 @@ structure PostSupp (S : Type*) (A : Type*) where
   postsup : Update S
 
 /-- `PostSupp S` is the Writer monad over the monoid `(Update S, ⨟, test ⊤)`
-    (@cite{charlow-2021} equations 120–121): `pure` carries the trivial
+    ([charlow-2021] equations 120–121): `pure` carries the trivial
     post-supposition (the `True`-test identity) and `bind` sequences
     post-suppositional content via dynamic conjunction (`dseq`). Independent
     composition of post-suppositions is what yields cumulative readings. -/

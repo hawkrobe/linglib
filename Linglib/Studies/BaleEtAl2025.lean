@@ -2,7 +2,7 @@ import Linglib.Pragmatics.Implicature.Basic
 import Linglib.Pragmatics.Implicature.Competence
 
 /-!
-# @cite{bale-etal-2025} — Competence by Default
+# [bale-etal-2025] — Competence by Default
 
 Bale, A. C., Noguchi, H., Rolland, M. & Barner, D. (2025). Competence by
 default: Do listeners assume that speakers are knowledgeable when computing
@@ -11,7 +11,7 @@ conversational inferences? *Journal of Semantics* 42(1–2): 39–55.
 ## Core Contribution
 
 Tests whether the competence assumption in scalar implicature derivation
-(step 5 of @cite{soames-1982} / @cite{horn-1989} / @cite{sauerland-2004}) is a cognitive default
+(step 5 of [soames-1982] / [horn-1989] / [sauerland-2004]) is a cognitive default
 or must be contextually licensed. The 5-step derivation:
 
 1. Speaker said φ (e.g., "some of the marbles are red")

@@ -8,10 +8,10 @@ import Linglib.Fragments.Slavic.Macedonian.QuestionParticles
 
 /-!
 # Cross-Slavic Polar Question Strategies
-@cite{esipova-romero-2023} @cite{simik-2024}
+[esipova-romero-2023] [simik-2024]
 
 Typology of default (unbiased) polar question strategies across Slavic
-languages, based on @cite{simik-2024} §4.1. Slavic languages show rich variation
+languages, based on [simik-2024] §4.1. Slavic languages show rich variation
 in how they form PQs, using word order alternations, clause-initial particles,
 verb-attached particles, and combinations thereof.
 
@@ -264,7 +264,7 @@ theorem razve_both_negations :
     razve.outerNeg = true ∧ razve.innerNeg = true := ⟨rfl, rfl⟩
 
 /-- Czech *náhodou* is restricted to outer negation only, unlike *razve*
-(@cite{stankova-2025}, §5). -/
+([stankova-2025], §5). -/
 theorem nahodou_outer_only :
     nahodou.outerNeg = true ∧ nahodou.innerNeg = false := ⟨rfl, rfl⟩
 

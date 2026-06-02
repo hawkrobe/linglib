@@ -4,8 +4,8 @@ import Linglib.Discourse.Centering.Rule1
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
 
 /-!
-# @cite{kehler-rohde-2013}
-@cite{hobbs-1979} @cite{kehler-2002}
+# [kehler-rohde-2013]
+[hobbs-1979] [kehler-2002]
 
 A Probabilistic Reconciliation of Coherence-Driven and Centering-Driven
 Theories of Pronoun Interpretation. *Theoretical Linguistics* 39(1-2), 1–37.
@@ -13,7 +13,7 @@ Theories of Pronoun Interpretation. *Theoretical Linguistics* 39(1-2), 1–37.
 ## Core Argument
 
 Two theories make seemingly irreconcilable claims about pronoun interpretation.
-@cite{hobbs-1979}: it is a by-product of coherence establishment; grammatical
+[hobbs-1979]: it is a by-product of coherence establishment; grammatical
 form is irrelevant. Centering (Grosz, Joshi & Weinstein 1995): it is driven by
 information structure and grammatical roles; world knowledge is irrelevant.
 
@@ -98,7 +98,7 @@ structure NextMentionModel where
     Passive subjects signal stronger topichood than active subjects:
     using a marked construction to place an entity in subject position
     is a stronger indicator that the speaker treats it as the sentence
-    topic (@cite{davison-1984}). This is the centering-driven "bottom-up"
+    topic ([davison-1984]). This is the centering-driven "bottom-up"
     component of the model.
 
     The P(pronoun | referent) term in eq. (13) tracks this level, not
@@ -580,7 +580,7 @@ theorem contiguity_class_splits :
 
     The key dissociation (KR2013 §8, Table 9): under the standard
     grammatical-role Cf ranking (`SUBJECT > OBJECT > OTHER`,
-    @cite{kameyama-1986}), the CB is **invariant under voice
+    [kameyama-1986]), the CB is **invariant under voice
     manipulation** — both `(Amanda, SUBJ) (Brittany, OBJ)` and
     `(Amanda, SUBJ) (Brittany, OTHER-by-phrase)` make Amanda the
     most-preferred Cf. But KR2013's `topichood` distinguishes the

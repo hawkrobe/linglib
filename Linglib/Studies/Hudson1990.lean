@@ -9,7 +9,7 @@ open Paradigms.AcceptabilityJudgment
 # Dependency Grammar d-command binding → Coreference Phenomena
 
 Connects the Dependency Grammar coreference analysis (d-command based binding,
-from @cite{hudson-1990}) to the empirical coreference data in
+from [hudson-1990]) to the empirical coreference data in
 `Phenomena.Anaphora.Coreference`.
 
 Proves that the DG analysis captures all reflexive coreference patterns,

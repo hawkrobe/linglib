@@ -1,7 +1,7 @@
 /-
-# Parallel Recursive Strengthening: @cite{chierchia-2004}
+# Parallel Recursive Strengthening: [chierchia-2004]
 
-Formalizes the core architecture of @cite{chierchia-2004} "Scalar Implicatures,
+Formalizes the core architecture of [chierchia-2004] "Scalar Implicatures,
 Polarity Phenomena, and the Syntax/Pragmatics Interface" (§3).
 
 Every expression gets both a plain meaning ‖α‖ and a strengthened meaning ‖α‖^S,
@@ -143,7 +143,7 @@ theorem compl_isDE : IsDE (World := World) Compl.compl := by
 
 /-- Strong Application (84): DE-sensitive function application.
 
-    This is the formal heart of @cite{chierchia-2004}.
+    This is the formal heart of [chierchia-2004].
 
     **Non-DE case** (UE contexts): Pass strengthened meanings through.
       ‖[f g]‖^S = f^S(g^S)
@@ -201,7 +201,7 @@ def implicatureSource (fIsDE : Bool) : ImplicatureType :=
 -- G. The SI-NPI Generalization (53)
 -- ============================================================================
 
-/-- The SI-NPI Generalization (@cite{chierchia-2004}, (53)):
+/-- The SI-NPI Generalization ([chierchia-2004], (53)):
 
     Scalar implicatures are systematically SUSPENDED in the same environments
     that LICENSE negative polarity items (NPIs).
@@ -304,7 +304,7 @@ def intervenes (strength : ScalarStrength) : Bool :=
 #guard intervenes .weak == false
 
 -- ============================================================================
--- J. Bridge to exhIE (@cite{fox-2007} / @cite{spector-2016})
+-- J. Bridge to exhIE ([fox-2007] / [spector-2016])
 -- ============================================================================
 
 /-- At a root-level scope site in a UE context, Chierchia's parallel
@@ -343,17 +343,17 @@ theorem root_ue_bridge (φ : Set World) (ALT : Set (Set World))
     exact hnegs (aᶜ) ⟨a, ha_ALT, rfl, ha_str, ha_strict⟩
 
 -- ============================================================================
--- K. Scalar Licensing Parametrized by Direction (@cite{schwab-2022})
+-- K. Scalar Licensing Parametrized by Direction ([schwab-2022])
 -- ============================================================================
 
 /-- Strength relation for scalar licensing.
 
-    @cite{krifka-1995a} and @cite{chierchia-2004} treat all NPIs as STRENGTHENING:
+    [krifka-1995a] and [chierchia-2004] treat all NPIs as STRENGTHENING:
     the NPI makes the assertion stronger than its scalar alternatives,
     so under negation the negated NPI statement is informationally weaker
     (= more conservative), which is the hallmark of DE environments.
 
-    @cite{schwab-2022} observes that ATTENUATING NPIs (like German "so recht")
+    [schwab-2022] observes that ATTENUATING NPIs (like German "so recht")
     work in the opposite direction: they make the assertion WEAKER than
     alternatives. Under negation, the negated attenuating statement is
     actually STRONGER — which means attenuating NPIs should NOT produce

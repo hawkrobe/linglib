@@ -2,9 +2,9 @@ import Linglib.Studies.Charlow2021.Basic
 
 /-!
 # Subtype Polymorphism for Dynamic GQs
-@cite{charlow-2021}
+[charlow-2021]
 
-@cite{charlow-2021}'s §4: a type system that distinguishes "complete" (T) from
+[charlow-2021]'s §4: a type system that distinguishes "complete" (T) from
 "incomplete" (t) dynamic meanings. Modified numerals contribute incomplete
 meanings (the cardinality test hasn't fired yet), and maximization expects
 incomplete input. The subtyping relation t ⊏ T ensures that incomplete

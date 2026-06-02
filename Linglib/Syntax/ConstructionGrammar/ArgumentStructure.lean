@@ -7,12 +7,12 @@ import Linglib.Core.UD
 
 /-!
 # Argument Structure Constructions
-@cite{goldberg-1995} @cite{goldberg-shirtz-2025}
+[goldberg-1995] [goldberg-shirtz-2025]
 
 CxG's argument structure constructions and their decomposition
 into Müller's three universal schemata.
 
-@cite{mueller-2013} argues "both directions right": the three universal schemata
+[mueller-2013] argues "both directions right": the three universal schemata
 capture *fully abstract* constructions (ditransitive, caused-motion, resultative),
 but *partially open* and *lexically specified* constructions are irreducible
 phrasal patterns that only CxG can capture.
@@ -54,12 +54,12 @@ enabling formal analysis of how the construction relates to the three
 universal combination schemata.
 
 The `semanticContribution` field captures which meaning components
-(@cite{levin-1993}) the construction adds independently of the verb
-(@cite{goldberg-1995}). When a verb fuses with a construction, the
+([levin-1993]) the construction adds independently of the verb
+([goldberg-1995]). When a verb fuses with a construction, the
 composed meaning = `verb.meaningComponents.fuse cxn.semanticContribution`.
 This is how constructions can license alternation behavior that verbs
 lack in isolation — e.g., the resultative adds CoS + causation, enabling
-the causative alternation for manner verbs (@cite{levin-2026}). -/
+the causative alternation for manner verbs ([levin-2026]). -/
 structure ArgStructureConstruction where
   /-- The underlying construction -/
   construction : Construction
@@ -92,7 +92,7 @@ def ditransitive : ArgStructureConstruction :=
 /-- Caused-motion construction: [Subj V Obj Obl].
 "X CAUSES Y to MOVE to Z" (e.g., "She sneezed the napkin off the table").
 Contributes motion + causation: verbs that lexicalize neither (like *sneeze*)
-acquire both from the construction (@cite{goldberg-1995} p. 152–179). -/
+acquire both from the construction ([goldberg-1995] p. 152–179). -/
 def causedMotion : ArgStructureConstruction :=
   { construction :=
       { name := "Caused-motion"
@@ -110,8 +110,8 @@ def causedMotion : ArgStructureConstruction :=
 /-- Resultative construction: [Subj V Obj Pred].
 "X CAUSES Y to BECOME Z" (e.g., "She hammered the metal flat").
 Contributes CoS + causation: manner verbs that lexicalize neither
-acquire both from the construction (@cite{rappaport-hovav-levin-1998};
-@cite{levin-2026} §3). This is what enables the causative alternation
+acquire both from the construction ([rappaport-hovav-levin-1998];
+[levin-2026] §3). This is what enables the causative alternation
 for verbs like *push* that lack it in isolation. -/
 def resultative : ArgStructureConstruction :=
   { construction :=
@@ -145,7 +145,7 @@ def intransitiveMotion : ArgStructureConstruction :=
 "X DIRECTS ACTION at Y" (e.g., "Sam kicked at Bill").
 The verb designates the intended result of the directed action;
 the at-PP marks the target without entailing contact
-(@cite{goldberg-1995} p. 3–4, 63–64). -/
+([goldberg-1995] p. 3–4, 63–64). -/
 def conative : ArgStructureConstruction :=
   { construction :=
       { name := "Conative"
@@ -179,7 +179,7 @@ def decompose (asc : ArgStructureConstruction) : List CombinationKind :=
 /-- A construction is fully compositional if it has specificity `fullyAbstract`
 and no construction-specific pragmatic function.
 
-This is a proxy for @cite{mueller-2013}'s structural criterion (whether the
+This is a proxy for [mueller-2013]'s structural criterion (whether the
 construction can be analyzed as a sequence of headed binary combinations).
 The proxy works because fully abstract constructions without pragmatic
 functions have no idiosyncratic form–meaning pairings that would resist
@@ -259,7 +259,7 @@ theorem conative_decomposes :
     decompose conative = [.headSpecifier, .headComplement] := by
   native_decide
 
-/-! ## Polysemy families (@cite{goldberg-1995} §3.3.2, I_P links)
+/-! ## Polysemy families ([goldberg-1995] §3.3.2, I_P links)
 
 A polysemy family groups constructions that share one syntactic frame
 but differ in meaning. The shared form is enforced by construction —
@@ -346,7 +346,7 @@ theorem PolysemyFamily.all_same_decomposition (f : PolysemyFamily)
     decompose f.centralConstruction := by
   simp [decompose, extensionConstruction, centralConstruction]
 
-/-! ## Ditransitive polysemy network (@cite{goldberg-1995} pp. 75–77)
+/-! ## Ditransitive polysemy network ([goldberg-1995] pp. 75–77)
 
 The ditransitive is not a single construction but a family of six related
 senses connected by polysemy links (I_P). Each sense inherits the
@@ -354,7 +354,7 @@ ditransitive's syntactic form [Subj V Obj Obj₂] but differs in the
 semantic relation between the event participants. -/
 
 /-- The ditransitive polysemy family: six senses sharing one argument
-frame (@cite{goldberg-1995} pp. 75–77). -/
+frame ([goldberg-1995] pp. 75–77). -/
 def ditransitiveFamily : PolysemyFamily :=
   { name := "Ditransitive"
   , form := "[Subj V Obj Obj₂]"
@@ -391,7 +391,7 @@ def ditransitivePolysemy : List InheritanceLink :=
   ditransitiveFamily.polysemyLinks
 
 /-- Subpart link (I_S) from caused-motion to intransitive motion
-(@cite{goldberg-1995} p. 78): the intransitive motion construction is a
+([goldberg-1995] p. 78): the intransitive motion construction is a
 proper subpart of the caused-motion construction. -/
 def causedMotionSubpart : InheritanceLink :=
   { parent := "Caused-motion"
@@ -402,7 +402,7 @@ def causedMotionSubpart : InheritanceLink :=
   , overriddenProperties := ["no external causer"] }
 
 /-- Metaphorical extension link (I_M) from caused-motion to resultative
-(@cite{goldberg-1995} pp. 81–84): the resultative is a metaphorical
+([goldberg-1995] pp. 81–84): the resultative is a metaphorical
 extension of caused-motion via the systematic metaphor
 motion → change, location → state. -/
 def causedMotionToResultative : InheritanceLink :=
@@ -439,20 +439,20 @@ theorem all_link_types_instantiated :
   exact ⟨by native_decide, rfl, rfl, trivial⟩
 
 -- ════════════════════════════════════════════════════
--- Constructional fusion (@cite{goldberg-1995})
+-- Constructional fusion ([goldberg-1995])
 -- ════════════════════════════════════════════════════
 
 /-! ## Verb–construction fusion
 
-@cite{goldberg-1995}'s central claim: argument structure constructions are
+[goldberg-1995]'s central claim: argument structure constructions are
 independent form–meaning pairings. When a verb appears in a construction,
 its meaning **fuses** with the construction's meaning. The composed meaning
 can have properties neither has alone.
 
-At the level of @cite{levin-1993} meaning components, fusion is componentwise
+At the level of [levin-1993] meaning components, fusion is componentwise
 OR: if either the verb or the construction contributes a component, the
 composed meaning has it. This simple mechanism derives construction-dependent
-alternation behavior (@cite{levin-2026}):
+alternation behavior ([levin-2026]):
 
 - *push* alone: `{−CoS, +contact, +motion, −causation}` → no causative alternation
 - *push* + resultative: `{+CoS, +contact, +motion, +causation}` → causative alternation predicted
@@ -535,7 +535,7 @@ resultative adds CoS + causation, which unlocks not just causativeInchoative but
 also middle, instrumentSubject, and the resultative alternation itself — all
 from the same mechanism, with no new alternation logic.
 
-This is the formal payoff of Goldbergian fusion (@cite{goldberg-1995}):
+This is the formal payoff of Goldbergian fusion ([goldberg-1995]):
 constructions don't just license one new alternation — they systematically
 augment the verb's meaning component profile, and every alternation whose
 required components are now satisfied becomes available. -/

@@ -4,7 +4,7 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # Log-Sum-Exp: The Warped Semiring Bridging MaxEnt and Max-Plus
-@cite{cohen-smith-zaidan-2008} @cite{eisner-2002}
+[cohen-smith-zaidan-2008] [eisner-2002]
 
 The log-sum-exp operator at temperature `α > 0`,
     `lse α a b := (1/α) · log(exp(α·a) + exp(α·b))`,

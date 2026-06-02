@@ -3,7 +3,7 @@ import Linglib.Dialogue.QuotationFBOntology
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
-# @cite{rudin-2025b}: Embedded Intonation and Quotative Complements
+# [rudin-2025b]: Embedded Intonation and Quotative Complements
 
 Rudin, Deniz (2025/2026). "Embedded Intonation and Quotative Complements
 to Verbs of Speech." Linguistic Inquiry, early access. doi:10.1162/ling.a.554.
@@ -30,7 +30,7 @@ Following mathlib practice, this file has **no** parallel formalizations.
   exists a witness (event + performance/proposition) with the right
   ontological properties.
 - `IsRudinModel M` is a class with 30 fields, one per cell. This is
-  *the* statement of @cite{rudin-2025b}'s empirical claim — any model
+  *the* statement of [rudin-2025b]'s empirical claim — any model
   is tested against it.
 - `rudinModel` is the concrete `SpeechVerbs ℕ Bool (FBPerformance Bool)
   (fbOntology Bool)` instantiation — Farkas-Bruce-grounded, with verb
@@ -54,7 +54,7 @@ open Discourse.Commitment.Table
 -- § 1. Empirical Taxonomy
 -- ════════════════════════════════════════════════════
 
-/-- Verbs of speech examined by @cite{rudin-2025b}. -/
+/-- Verbs of speech examined by [rudin-2025b]. -/
 inductive Verb
   | say | assert | yell | whisper | ask
   deriving DecidableEq, Repr, Inhabited
@@ -121,7 +121,7 @@ def Felicitous {Time SemObj Perf : Type*} [LinearOrder Time] {Ω : PerformanceOn
 -- § 3. IsRudinModel — the empirical claim as a class
 -- ════════════════════════════════════════════════════
 
-/-- A `SpeechVerbs` model satisfies @cite{rudin-2025b}'s empirical
+/-- A `SpeechVerbs` model satisfies [rudin-2025b]'s empirical
     claims about English speech verbs. The 30 fields are exactly the
     cells of the verb × complement felicity matrix.
 
@@ -419,7 +419,7 @@ def rudinModel : SpeechVerbs ℕ Bool (FBPerformance Bool) (fbOntology Bool) whe
 -- § 5. The IsRudinModel instance
 -- ════════════════════════════════════════════════════
 
-/-- All 30 cells of @cite{rudin-2025b}'s empirical matrix are derived
+/-- All 30 cells of [rudin-2025b]'s empirical matrix are derived
     from the FB-grounded model + the SpeechVerbs postulates. -/
 instance : IsRudinModel rudinModel := by
   refine

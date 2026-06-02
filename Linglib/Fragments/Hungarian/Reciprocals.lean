@@ -4,7 +4,7 @@ import Linglib.Semantics.Reference.PluralityLicensing
 
 /-!
 # Hungarian Reciprocal Fragment
-@cite{rakosi-2019} @cite{dalrymple-haug-2024}
+[rakosi-2019] [dalrymple-haug-2024]
 
 Hungarian uses the reciprocal pronoun *egymás* (literally 'one-another').
 This is an NP/argument strategy (bivalent): the reciprocal occupies the
@@ -17,9 +17,9 @@ reflexive *maga/maguk*.
 variation (no person, number, or gender inflection). This contrasts
 with the reflexive *maga*, which has the full paradigm
 (*magam, magad, maga, magunk, magatok, maguk*).
-@cite{rakosi-2019} fn. 1.
+[rakosi-2019] fn. 1.
 
-## Singular Antecedents (@cite{rakosi-2019})
+## Singular Antecedents ([rakosi-2019])
 
 Reciprocals tolerate morphosyntactically singular antecedents in four
 construction types, while reflexives require morphosyntactic plurality
@@ -35,7 +35,7 @@ construction types, while reflexives require morphosyntactic plurality
    license *egymás*.
 4. **Bound variable antecedents (§6)**: Embedded pro-dropped singular
    subject bound by a matrix coordination forces wide-scope
-   (I-)reading. @cite{dalrymple-haug-2024} §2.
+   (I-)reading. [dalrymple-haug-2024] §2.
 -/
 
 namespace Hungarian.Reciprocals
@@ -46,7 +46,7 @@ open Semantics.Reference.PluralityLicensing
 
 /-- *egymás* — reciprocal pronoun 'each other'.
     Morphologically invariable: no φ-feature inflection.
-    @cite{rakosi-2019} fn. 1. -/
+    [rakosi-2019] fn. 1. -/
 def egymas : PersonalPronoun :=
   { form := "egymás", person := some .third, number := none }
 
@@ -61,7 +61,7 @@ def maguk : PersonalPronoun :=
   { form := "maguk", person := some .third, number := some .pl }
 
 -- ════════════════════════════════════════════════════════════════
--- Antecedent Constructions (@cite{rakosi-2019} §§3-6)
+-- Antecedent Constructions ([rakosi-2019] §§3-6)
 -- ════════════════════════════════════════════════════════════════
 
 /-- An antecedent configuration for anaphor licensing.
@@ -113,7 +113,7 @@ def collectiveNoun : AntecedentConfig :=
 /-- §6: Bound variable antecedent. Embedded pro-dropped SG subject
     bound by matrix coordination. Forces wide-scope (I-)reading.
     Ex: "Péter és Éva azt gondolja, hogy (\*ő) szereti egymás-t."
-    @cite{dalrymple-haug-2024} §2. -/
+    [dalrymple-haug-2024] §2. -/
 def boundVariable : AntecedentConfig :=
   { name := "Bound singular pro-drop (coordination in matrix)"
     syntacticPl := false
@@ -128,7 +128,7 @@ def pluralAntecedent : AntecedentConfig :=
     semanticPl := true
     verbAgr := .pl }
 
-/-- All four singular-antecedent constructions from @cite{rakosi-2019}. -/
+/-- All four singular-antecedent constructions from [rakosi-2019]. -/
 def singularConstructions : List AntecedentConfig :=
   [quantifiedNP, singularCoordinate, collectiveNoun, boundVariable]
 
@@ -179,7 +179,7 @@ theorem reflexive_inflects :
 
 /-- When the local antecedent is a singular bound pronoun, only the
     wide-scope (I-)reading is available.
-    @cite{dalrymple-haug-2024} §2. -/
+    [dalrymple-haug-2024] §2. -/
 def singularAntecedentForcesWideScope : Bool := true
 
 end Hungarian.Reciprocals

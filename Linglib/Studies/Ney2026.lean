@@ -3,23 +3,23 @@ import Linglib.Discourse.CommonGround
 
 /-!
 # Ney 2026 — Insinuative reference and the coordination account
-@cite{ney-2026} @cite{king-2013} @cite{king-2014b}
+[ney-2026] [king-2013] [king-2014b]
 
 Insinuative reference is a metasemantic strategy: a speaker uses a
 directly-referential expression (typically a demonstrative or
-"supplementive" in @cite{king-2013}'s sense — `this`, `those`, `it`)
+"supplementive" in [king-2013]'s sense — `this`, `those`, `it`)
 under conditions where the lexical meaning + salient context license
 multiple referents, intends one specific ("unavowed") referent while
 at least one other ("avowable") referent is also licensed, and intends
 to preserve plausible deniability about the unavowed intent.
 
-@cite{ney-2026} introduces the phenomenon, distinguishes it from
-related phenomena (@cite{camp-2018} insinuation, dogwhistles per
-@cite{stanley-2015} @cite{henderson-mccready-2018}
-@cite{henderson-mccready-2024} @cite{khoo-2017} @cite{saul-2018}
-@cite{saul-2024}, pseudo-insinuative speech per
-@cite{tuters-hagen-2020}), shows it poses a *prima facie* challenge
-to @cite{king-2013}'s coordination account (§3, the `<ONE>`-`<FOUR>`
+[ney-2026] introduces the phenomenon, distinguishes it from
+related phenomena ([camp-2018] insinuation, dogwhistles per
+[stanley-2015] [henderson-mccready-2018]
+[henderson-mccready-2024] [khoo-2017] [saul-2018]
+[saul-2024], pseudo-insinuative speech per
+[tuters-hagen-2020]), shows it poses a *prima facie* challenge
+to [king-2013]'s coordination account (§3, the `<ONE>`-`<FOUR>`
 argument), and resolves the challenge by reading the conception of
 reasonableness as the *intersection* of the interlocutors' individual
 belief-sets — equivalently, the *union* of the hearer-profiles each
@@ -27,11 +27,11 @@ agent counts as reasonable (§4 p. 22, revised statement p. 24). The
 union is not CommonGround-accessible because membership in it requires private
 knowledge of either individual conception.
 
-## Encoding choice (relative to @cite{ney-2026} pp. 22, 24)
+## Encoding choice (relative to [ney-2026] pp. 22, 24)
 
 `ConceptionOfReasonableness C W E := Set (HearerProfile C W E)` — the
 set of hearer-profiles each agent counts as *reasonable*. Then the
-verbatim revised statement of @cite{ney-2026} p. 24 — "every competent,
+verbatim revised statement of [ney-2026] p. 24 — "every competent,
 attentive hearer H who is reasonable by the lights of at least one
 among the speaker and the actual hearer" — is `∀ h ∈ RS ∪ RH, h
 recognizes intention`, i.e., `coordination (RS ⊔ RH)`. The union
@@ -60,14 +60,14 @@ phenomenon is the conjunction of the structural pattern and the
 deniability intent; the latter is left for a future extension when
 there is a downstream consumer that needs to discriminate it (e.g.,
 from pseudo-insinuative speech, where the structure is present but
-the intent is absent — @cite{ney-2026} §2 (17), the 4chan
+the intent is absent — [ney-2026] §2 (17), the 4chan
 triple-parentheses case).
 
 The §3 prima-facie challenge is formalized abstractly:
 `prima_facie_challenge` takes `inCG : Prop → Prop` and a CommonGround-transparency
 hypothesis on the conception. Substantive Ney soundness — that the
 resolution holds under a *realistic* CommonGround operator derived from
-`commonBelief` (@cite{stalnaker-2002}) — requires a `CommonGround.toAgentAccess :
+`commonBelief` ([stalnaker-2002]) — requires a `CommonGround.toAgentAccess :
 CommonGround W → AgentAccessRel W E` bridge in `Discourse/CommonGround.lean`
 that does not yet exist. Until that bridge lands, the resolution
 theorems are witnessed by toy operators (a degenerate `inCG := · = True`
@@ -77,19 +77,19 @@ on a small carrier).
 ## Distinguishing the phenomenon (Ney 2026 §2)
 
 Insinuative reference is distinct from:
-- @cite{camp-2018} insinuation: there the unavowed content is conveyed
+- [camp-2018] insinuation: there the unavowed content is conveyed
   by Gricean *implicature*; here it is the expression's *semantic value*.
-- @cite{stanley-2015} / @cite{henderson-mccready-2018,2024} /
-  @cite{khoo-2017} dogwhistles: those depend on conventionalized lexical
+- [stanley-2015] / [henderson-mccready-2018] [henderson-mccready-2024] /
+  [khoo-2017] dogwhistles: those depend on conventionalized lexical
   items. Insinuative reference is a metasemantic strategy applicable
   to any directly-referential expression.
-- @cite{saul-2018} / @cite{saul-2024} intentional overt dogwhistles:
+- [saul-2018] / [saul-2024] intentional overt dogwhistles:
   the closest analogue, but Saul's apparatus depends on a partitioned
   audience; insinuative reference can occur with a single hearer.
-- pseudo-insinuative speech (@cite{tuters-hagen-2020}): structurally
+- pseudo-insinuative speech ([tuters-hagen-2020]): structurally
   similar but lacks genuine intent to preserve deniability.
 
-@cite{ney-2026} §5 proposes reserving "insinuation" for the Camp-style
+[ney-2026] §5 proposes reserving "insinuation" for the Camp-style
 implicature phenomenon and using "insinuative speech" as the broader
 deniability-preserving category encompassing all four. This file's
 namespace is `Ney2026`; a future
@@ -98,15 +98,15 @@ formalizations is the obvious organising principle but is not built
 here.
 
 The paper's methodological framing is *non-ideal philosophy of
-language* per @cite{beaver-stanley-2023}.
+language* per [beaver-stanley-2023].
 
 ## Substrate primitives this file leans on (with citations)
 
-Imports `Reference.Basic` (@cite{kaplan-1989}'s Character/Content +
-@cite{almog-2014}'s ReferentialProfile) and `CommonGround`
-(@cite{stalnaker-2002}'s context set). `SpeakerIntention.intendedRef`
-parallels @cite{donnellan-1966}'s referential-use intended object;
-the broader speaker-intent structure connects to @cite{searle-1983}
+Imports `Reference.Basic` ([kaplan-1989]'s Character/Content +
+[almog-2014]'s ReferentialProfile) and `CommonGround`
+([stalnaker-2002]'s context set). `SpeakerIntention.intendedRef`
+parallels [donnellan-1966]'s referential-use intended object;
+the broader speaker-intent structure connects to [searle-1983]
 intentional states (not unified here).
 
 ## Shape gaps tracked but not fixed here
@@ -126,14 +126,14 @@ intentional states (not unified here).
 
 ## Authority
 
-@cite{ney-2026}, *Linguistics & Philosophy* (2026),
+[ney-2026], *Linguistics & Philosophy* (2026),
 DOI 10.1007/s10988-026-09456-0. Examples (1)–(4) are §1–§2; the
 `<ONE>`-`<FOUR>` argument is §3 (pp. 17–19); the conception-of-
 reasonableness reading and revised coordination statement are §4
 (pp. 22, 24); the anaphora discriminator is §3 ("thirdly", pp. 15–16);
 the §5 conclusion proposes the broader "insinuative speech" terminology.
-@cite{king-2013} is the primary coordination-account source;
-@cite{king-2014b} is its considered restatement.
+[king-2013] is the primary coordination-account source;
+[king-2014b] is its considered restatement.
 -/
 
 namespace Ney2026
@@ -145,7 +145,7 @@ open Semantics.Reference.Basic CommonGround
 /-- A speaker's *referential intention*: a directly-referential
 expression used in a context to refer to a particular intended object.
 
-Following @cite{king-2013}'s setup: a speaker `S` uses a demonstrative
+Following [king-2013]'s setup: a speaker `S` uses a demonstrative
 expression `δ` in context `c` and intends some object `o` to be its
 semantic value. The metasemantic question (formalized by `Account`)
 is what conditions must hold for `o` to actually be `δ`'s semantic
@@ -174,7 +174,7 @@ abbrev HearerProfile (C W E : Type*) :=
 /-- An agent's *conception of reasonableness*: the set of hearer-
 profiles the agent counts as reasonable.
 
-@cite{ney-2026} §4 (p. 22) introduces this as "an agent's (implicit
+[ney-2026] §4 (p. 22) introduces this as "an agent's (implicit
 and explicit) beliefs about which referential intentions every
 reasonable hearer would recognise." Ney explicitly notes (p. 22) that
 a language-user counts as reasonable per the *intersection* of
@@ -190,15 +190,15 @@ abbrev ConceptionOfReasonableness (C W E : Type*) :=
 speaker intention a success Prop.
 
 `Account` is intentionally CommonGround-free (no `CommonGround W` parameter): in
-@cite{ney-2026}'s argument the CommonGround-availability of the success-fact is
+[ney-2026]'s argument the CommonGround-availability of the success-fact is
 the load-bearing modal claim, formalized via the abstract `inCG`
 operator on the `prima_facie_challenge` theorem rather than threaded
 through every account-application. -/
 abbrev Account (C W E : Type*) :=
   SpeakerIntention C W E → Prop
 
-/-- The parametric coordination account, @cite{king-2013} (revised per
-@cite{ney-2026} §4 p. 24): success iff every hearer-profile in the
+/-- The parametric coordination account, [king-2013] (revised per
+[ney-2026] §4 p. 24): success iff every hearer-profile in the
 conception of reasonableness `R` recognizes the speaker's intention.
 
 `abbrev` so that membership facts unfold under `decide` and the proofs
@@ -210,7 +210,7 @@ abbrev coordination {C W E : Type*}
 /-- `coordination` is *anti-monotone* in its conception parameter:
 enlarging the set of required-recognizer hearers makes the success
 condition harder. This is the hearer-profile dual of the formal
-property at @cite{ney-2026} p. 22 ("a language-user counts as
+property at [ney-2026] p. 22 ("a language-user counts as
 reasonable [per the intersection conception] if either the hearer or
 the speaker would consider them reasonable"). -/
 theorem coordination_anti_mono {C W E : Type*}
@@ -220,9 +220,9 @@ theorem coordination_anti_mono {C W E : Type*}
 
 /-! ## §2. King's binary reconstruction vs Ney's revision
 
-@cite{king-2013}'s text (quoted in @cite{ney-2026} §3 p. 17) refers to
+[king-2013]'s text (quoted in [ney-2026] §3 p. 17) refers to
 "a competent, reasonable, attentive hearer", an unspecified single
-conception. @cite{ney-2026} §4 (p. 22) reframes this in interlocutor-
+conception. [ney-2026] §4 (p. 22) reframes this in interlocutor-
 relative terms, then revises (p. 24): "every competent, attentive
 hearer H *who is reasonable by the lights of at least one among the
 speaker and the actual hearer*".
@@ -263,7 +263,7 @@ reference* with respect to a licensing predicate iff the unavowed
 
 This Prop is the *structure* the phenomenon exhibits, not the full
 phenomenon: the speaker's intent to preserve deniability is part of
-the phenomenon (@cite{ney-2026} §2) but is not encoded here. See file
+the phenomenon ([ney-2026] §2) but is not encoded here. See file
 docstring. -/
 def HasInsinuativeStructure {C W E : Type*}
     (licenses : E → Prop) (s : SpeakerIntention C W E) : Prop :=
@@ -308,7 +308,7 @@ end Scenario
 
 /-! ## §4. The §3 prima-facie challenge
 
-@cite{ney-2026} §3's `<ONE>`-`<FOUR>` chain (paper pp. 17–18,
+[ney-2026] §3's `<ONE>`-`<FOUR>` chain (paper pp. 17–18,
 paraphrased):
 
 > ⟨ONE⟩  A reasonable hearer would recognize the speaker's intention
@@ -321,7 +321,7 @@ paraphrased):
 > ⟨FOUR⟩  It is in CommonGround that the unavowed referent is the semantic value
 >         (from ONE + THREE).
 
-@cite{ney-2026} §3 (p. 17) shows two independent empirical claims that
+[ney-2026] §3 (p. 17) shows two independent empirical claims that
 the chain's conclusions contradict:
 
 - **(iia)**: post-utterance, it is NOT in CommonGround that the unavowed referent
@@ -365,7 +365,7 @@ theorem prima_facie_challenge {C W E : Type*}
 
 /-! ## §5. Ney's resolution: intersection is CommonGround-transparent, union is not
 
-@cite{ney-2026}'s §4 resolution (pp. 22–24): the conception of
+[ney-2026]'s §4 resolution (pp. 22–24): the conception of
 reasonableness as the union of agents' hearer-profile-sets is *not*
 CommonGround-accessible — knowing whether a hearer is in `RS ∪ RH` requires
 private knowledge of either RS or RH individually. The intersection,
@@ -379,7 +379,7 @@ and `False` for the non-vacuous union-failure on a hand-built witness.
 
 CAVEAT: This is a toy operator. The substantive Ney claim — that the
 asymmetry holds under a *realistic* CommonGround operator derived from
-`commonBelief` (@cite{stalnaker-2002}) — requires the `CommonGround.toAgentAccess`
+`commonBelief` ([stalnaker-2002]) — requires the `CommonGround.toAgentAccess`
 bridge that does not yet exist. -/
 
 /-- A minimal speaker-intention witness over `Bool`: speaker `false`,
@@ -395,7 +395,7 @@ private def boolWitness : SpeakerIntention Unit Unit Bool where
 private def alwaysRejectsProfile : HearerProfile Unit Unit Bool :=
   fun _ => False
 
-/-- The asymmetry @cite{ney-2026} §4 hinges on: there exists a CommonGround
+/-- The asymmetry [ney-2026] §4 hinges on: there exists a CommonGround
 operator and a pair of conceptions where the intersection-success
 *is* in CommonGround while the union-success *is not*. Witness: `inCG := id`
 (the trivial nonempty operator), `RS = ∅`, `RH = {alwaysRejectsProfile}`.
@@ -419,12 +419,12 @@ Under the right encoding (`Set (HearerProfile)` + anti-monotone
 succeeds (vacuously, on the empty intersection) while Ney's revision
 fails (the union contains a non-recognizing hearer).
 
-CAVEAT: This extensional gap is incidental to @cite{ney-2026}'s
+CAVEAT: This extensional gap is incidental to [ney-2026]'s
 substantive argument — Ney does not appeal to it. Ney's actual
 argument is at the CommonGround-availability level (§5 above), not the truth
 level. The gap witness is included only to demonstrate that the two
 account-shapes differ extensionally; it is *not* a model of any
-@cite{ney-2026} sentence (in his canonical examples both interlocutors
+[ney-2026] sentence (in his canonical examples both interlocutors
 in fact agree, so under the encoding here both intersection and union
 succeed). -/
 
@@ -446,24 +446,24 @@ theorem exists_inter_succeeds_union_fails :
    fun _ hh => hh.1.elim,
    fun hall => hall alwaysRejectsProfile (Or.inr rfl)⟩
 
-/-! ## §7. Anaphora discriminator (@cite{ney-2026} §3, "thirdly")
+/-! ## §7. Anaphora discriminator ([ney-2026] §3, "thirdly")
 
-@cite{ney-2026} §3 ("thirdly", pp. 15–16) argues that anaphora-
+[ney-2026] §3 ("thirdly", pp. 15–16) argues that anaphora-
 availability is positive evidence that the unavowed referent is a
-genuine semantic value, not @cite{camp-2018}-style implicature.
+genuine semantic value, not [camp-2018]-style implicature.
 Sentence (4) "This new workplace policy makes it impossible to act
 like a real man." can be felicitously continued by (4.2) "(Yeah,) it
 must have been thought up by some crazy feminist", where Ney
 specifically identifies the plural anaphor *they* in his subsequent
 gloss — anaphorically picking out the sexual-harassment policies (the
-unavowed referent). Per @cite{buring-2005} (cited by @cite{ney-2026}
+unavowed referent). Per [buring-2005] (cited by [ney-2026]
 §3 for this point), anaphora requires a linguistic-antecedent semantic
 value, so the unavowed referent must be a semantic value of the
 demonstrative.
 
 CAVEAT: The contrast formalized below is between Ney's revision and
 the trivially-failing `noSemanticValueAccount := ⊥`. A genuine
-@cite{camp-2018} formalization with implicature mechanics would also
+[camp-2018] formalization with implicature mechanics would also
 predict no semantic value, so the discriminator stays formally sound
 but is currently unfalsifiable: any always-false account produces the
 same negative side. The principled fix is to lift `Account` to range
@@ -490,9 +490,9 @@ theorem anaphora_discriminator_ney_revision {C W E : Type*}
     ¬ noSemanticValueAccount sc.intention :=
   ⟨h, id⟩
 
-/-! ## §8. The four canonical sentences (@cite{ney-2026} §1, §2)
+/-! ## §8. The four canonical sentences ([ney-2026] §1, §2)
 
-In @cite{ney-2026}'s canonical examples, the speaker uses a
+In [ney-2026]'s canonical examples, the speaker uses a
 demonstrative in a context licensing both an avowable referent and
 an unavowed referent; both interlocutors in fact recognize the
 unavowed intention (the deniability lives at CommonGround-availability, see §5
@@ -510,7 +510,7 @@ def perceptiveHearer (unavowed avowable : E) : HearerProfile Unit Unit E :=
   fun s => s.intendedRef = unavowed ∨ s.intendedRef = avowable
 
 /-- Build a scenario where both interlocutors agree on the conception
-{perceptiveHearer unavowed avowable}. Models @cite{ney-2026}'s
+{perceptiveHearer unavowed avowable}. Models [ney-2026]'s
 canonical case. -/
 def mkBinary
     (speaker unavowed avowable : E) (h_ne : avowable ≠ unavowed) :
@@ -530,7 +530,7 @@ def mkBinary
 end Scenario
 
 /-! ### Sentence (1): "Those people, they are always up to no good."
-@cite{ney-2026} §1 example (1). Avowable: residents of that part of
+[ney-2026] §1 example (1). Avowable: residents of that part of
 the neighbourhood. Unavowed: a particular disreputable family living
 there. -/
 namespace Sentence1
@@ -551,7 +551,7 @@ end Sentence1
 
 /-! ### Sentence (2): "They are crossing the border, bringing drugs,
 disease and crime."
-@cite{ney-2026} §2 example (2). Avowable: gang members and drug
+[ney-2026] §2 example (2). Avowable: gang members and drug
 smugglers. Unavowed: Hispanic immigrants. -/
 namespace Sentence2
 inductive R | hispanicImmigrants | gangAndSmugglers | speaker
@@ -572,7 +572,7 @@ end Sentence2
 /-! ### Sentence (3): "Those people are using their power in the
 international banks to hide the truth from ordinary, Christian
 Americans like us."
-@cite{ney-2026} §2 example (3). Avowable: white-collar criminals who
+[ney-2026] §2 example (3). Avowable: white-collar criminals who
 aren't true Christians. Unavowed: purported Jewish elites. -/
 namespace Sentence3
 inductive R | jewishElites | nonChristianWhiteCollar | speaker
@@ -592,10 +592,10 @@ end Sentence3
 
 /-! ### Sentence (4): "This new workplace policy makes it impossible to
 act like a real man."
-@cite{ney-2026} §2 example (4). Avowable: work-scheduling policy.
+[ney-2026] §2 example (4). Avowable: work-scheduling policy.
 Unavowed: sexual-harassment policy. Continuation (4.2) "(Yeah,) it
 must have been thought up by some crazy feminist" drives the §3
-anaphora-discriminator argument: in @cite{ney-2026}'s own gloss the
+anaphora-discriminator argument: in [ney-2026]'s own gloss the
 anaphor *they* (in subsequent reference) picks out the sexual-
 harassment policies — see §7 above. -/
 namespace Sentence4
@@ -683,14 +683,14 @@ theorem all_four_examples_exhibit_anaphora_discriminator :
 
 /-! ## §10. Sentence (5) — interrogative force
 
-@cite{ney-2026} §2 example (5): "What do you think we should do about
+[ney-2026] §2 example (5): "What do you think we should do about
 those people—you know, those people who cross the border and bring
 disease, drugs and crime?" Same insinuative-reference structure as
 Sentence (2) (avowable: gang members and drug smugglers; unavowed:
 Hispanic immigrants), but with interrogative rather than assertive
 illocutionary force.
 
-@cite{ney-2026} p. 5: "the unavowed content consists of a proposition
+[ney-2026] p. 5: "the unavowed content consists of a proposition
 and an illocutionary force with which it is presented. In (1)–(4) the
 illocutionary force is that of assertion. However, others, such as the
 interrogative force, are possible. We can see this in (5)."
@@ -723,7 +723,7 @@ end Sentence5
 
 /-! ## §11. The §4 first-pass response and the Lennon counterexample
 
-@cite{ney-2026} §4 (pp. 19–20) considers a first-pass response to the
+[ney-2026] §4 (pp. 19–20) considers a first-pass response to the
 prima facie challenge: drop ⟨TWO⟩ from the chain, asserting that "in
 cases of insinuative reference, it is not part of the common ground
 that the hearer is reasonable." This would break ⟨ONE⟩+⟨TWO⟩ ⟹
@@ -774,7 +774,7 @@ def scenario : Scenario Unit Unit R :=
 
 /-- The Lennon scene exhibits the structural pattern of insinuative
 reference (multiple licensed referents with one intended). This is the
-formal hook for @cite{ney-2026} §4's over-generation argument: any
+formal hook for [ney-2026] §4's over-generation argument: any
 account that distinguishes the Lennon scene from genuine insinuative-
 reference cases must look beyond `HasInsinuativeStructure`. -/
 theorem hasInsinuativeStructure :
@@ -783,7 +783,7 @@ theorem hasInsinuativeStructure :
 
 end LennonScene
 
-/-- @cite{ney-2026} §4 over-generation result: the Lennon scene and
+/-- [ney-2026] §4 over-generation result: the Lennon scene and
 Sentence (4) both exhibit the structural pattern of insinuative
 reference. The §4 first-pass response (drop ⟨TWO⟩) cannot distinguish
 them, so it would predict deniability for both — but empirically only
@@ -800,7 +800,7 @@ theorem first_pass_response_overgenerates :
 
 /-! ## §12. §3 firstly: uniqueness vs indirect-speech reduction
 
-@cite{ney-2026} §3 (pp. 14–15) "firstly": insinuative reference cannot
+[ney-2026] §3 (pp. 14–15) "firstly": insinuative reference cannot
 be reduced to indirect speech via the avowable's direct content.
 Argument structure (paper pp. 14–15):
 
@@ -814,7 +814,7 @@ Argument structure (paper pp. 14–15):
 (iii) Therefore insinuative reference is not indirect-speech-via-
      avowable-direct-content.
 
-@cite{ney-2026} acknowledges (p. 15) that an indirect speech act may
+[ney-2026] acknowledges (p. 15) that an indirect speech act may
 depend on the locutionary word choice rather than direct propositional
 content, but argues the only available implicature route would not
 involve the avowable referent at all — making the avowable's "direct"
@@ -830,7 +830,7 @@ its referent-assignments, and they really are extensionally distinct. -/
 /-- Sentence (4)'s avowable and unavowed referents are distinct entities;
 hence any account that conflates them under "direct content" makes a
 truth-conditionally false prediction. This is the bare hook for
-@cite{ney-2026} §3 firstly. The substantive claim — that no Gricean
+[ney-2026] §3 firstly. The substantive claim — that no Gricean
 implicature mechanism reduces insinuative reference to indirect speech
 — requires implicature substrate not yet built. -/
 theorem sentence4_unavowed_distinct_from_avowable :
@@ -840,7 +840,7 @@ theorem sentence4_unavowed_distinct_from_avowable :
 
 /-! ## §13. §3 secondly: de re vs de dicto recognition
 
-@cite{ney-2026} §3 (p. 16) "secondly": a hearer can recognize the
+[ney-2026] §3 (p. 16) "secondly": a hearer can recognize the
 unavowed content de dicto without being de re aware of any particular
 avowable possible referent. Argument structure:
 

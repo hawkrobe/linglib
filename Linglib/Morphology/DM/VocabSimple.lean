@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Agree
 
 /-!
 # VocabSimple: Minimalist-specific Vocabulary Insertion
-@cite{halle-marantz-1993} @cite{kiparsky-1973} @cite{elkins-torrence-brown-2026}
+[halle-marantz-1993] [kiparsky-1973] [elkins-torrence-brown-2026]
 
 A concrete Minimalist specialization of Vocabulary Insertion.
 `VocabEntry` carries `features : FeatureBundle` (the Minimalist

@@ -4,8 +4,8 @@ import Linglib.Processing.Lexical.Discriminative.Normed
 
 /-!
 # Saito, Tomaschek & Baayen (2025): Frequency × inflectional status via DLM
-@cite{saito-tomaschek-baayen-2025} @cite{baayen-2019}
-@cite{heitmeier-chuang-baayen-2026}
+[saito-tomaschek-baayen-2025] [baayen-2019]
+[heitmeier-chuang-baayen-2026]
 
 Saito, M., Tomaschek, F., & Baayen, R. H. (2025). Interaction of
 frequency and inflectional status: An approach from discriminative
@@ -18,7 +18,7 @@ documented frequency effects on phonetic realization:
 
 - **Phonetic reduction**: high-frequency words have shorter durations,
   more centralized formants, more raised tongue positions
-  (@cite{aylett-turk-2004} smooth signal redundancy hypothesis +
+  ([aylett-turk-2004] smooth signal redundancy hypothesis +
   several earlier corpus and ultrasound studies cited in paper §1).
 - **Phonetic enhancement**: high-frequency morphologically *complex*
   words show longer/clearer realizations (paradigmatic enhancement
@@ -39,7 +39,7 @@ Corpus of spontaneous southern German) and finds:
    improves model fit by 142.87 AIC units (paper §3.3, Table 3).
 3. **Architectural challenge to WEAVER++**: the result undermines
    speech production models that posit intermediate symbolic
-   morphological representations (@cite{levelt-roelofs-meyer-1999}
+   morphological representations ([levelt-roelofs-meyer-1999]
    and the Roelofs WEAVER lineage). Form ↔ meaning mappings without
    a morpheme layer suffice.
 
@@ -51,7 +51,7 @@ boundary effect is driven by inflectional semantics**.
 This file is the **third** consumer of the
 `LinearDiscriminativeLexicon` substrate
 (`Processing/Lexical/Discriminative/Defs.lean`), after
-@cite{chuang-bell-tseng-baayen-2026} and @cite{lu-chuang-baayen-2026}.
+[chuang-bell-tseng-baayen-2026] and [lu-chuang-baayen-2026].
 It validates the polymorphic carrier typing across **every** axis of
 variation:
 
@@ -78,7 +78,7 @@ four are paper-headline; the rest are diagnostic.
 
 The general measures (`semSup`, `semSupWord`) plus their linearity
 lemmas live in `Processing/Lexical/Discriminative/Measures.lean`,
-having graduated to substrate when @cite{gahl-baayen-2024} landed as a
+having graduated to substrate when [gahl-baayen-2024] landed as a
 second consumer. The paper-specific positional variants
 (`semSupVowel`, `semSupSuffix`) stay here as `abbrev`s wrapping the
 substrate primitive.
@@ -87,7 +87,7 @@ substrate primitive.
 
 The paper's headline architectural claim — that no intermediate
 morpheme layer is needed between semantics and articulation — directly
-challenges WEAVER++ (@cite{levelt-roelofs-meyer-1999} and the broader
+challenges WEAVER++ ([levelt-roelofs-meyer-1999] and the broader
 WEAVER lineage). linglib does not currently formalize WEAVER++; the
 cross-framework discrimination would require a
 `Processing/Lexical/WEAVER/` sibling that explicitly posits a
@@ -103,7 +103,7 @@ with the **stored-lexicon** assumptions in:
   attach frequency to. Saito's frequency × inflectional-status
   interaction is *the* phenomenon those channels would compete to
   explain; the DLM offers a 5th, no-stored-entries account.
-- `Morphology/UsageBased/Network.lean` (@cite{bybee-1985}):
+- `Morphology/UsageBased/Network.lean` ([bybee-1985]):
   Bybee's `tokenFreq : Nat` is the canonical stored-frequency primitive;
   the DLM's `production` linear map dispenses with it.
 
@@ -255,14 +255,14 @@ effects coexist, modulated by semantic support.
   `SemSupSuffix` reflects how well a word's meaning supports its
   word-final triphone, which is high for inflected words because
   inflectional meanings are tied to the suffix.
-- **Anti-WEAVER++** (paper §4 contra @cite{levelt-roelofs-meyer-1999},
+- **Anti-WEAVER++** (paper §4 contra [levelt-roelofs-meyer-1999],
   Roelofs 1997): production models with intermediate symbolic
   morphological layers are not required; direct meaning ↔ form
   mappings via the DLM suffice.
 - **Reduction-enhancement composite** (paper §4 conclusion): both
   effects can be expressed within the DLM as `h_{ω,k} * Ĉ_{i,s}` —
   informativity (h) modulates the strength of semantic support (Ĉ) on
-  word-final triphones. (See @cite{gahl-baayen-2024} for an analogous
+  word-final triphones. (See [gahl-baayen-2024] for an analogous
   formulation on word duration.)
 - **Cross-modal substrate validation**: the paper's success applying
   DLM to *articulatory* (tongue-tip / tongue-body trajectories)

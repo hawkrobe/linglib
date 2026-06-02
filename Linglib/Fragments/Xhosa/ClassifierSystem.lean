@@ -2,7 +2,7 @@ import Linglib.Typology.ClassifierSystem
 
 /-!
 # Xhosa noun-categorization system
-@cite{carstens-2026} @cite{taraldsen-et-al-2018}
+[carstens-2026] [taraldsen-et-al-2018]
 
 Classifier-system metadata for Xhosa (ISO `xho`): Bantu noun-class
 system with 11 classes and pervasive concord.
@@ -24,6 +24,6 @@ def classifierSystem : Typology.NounCategorizationSystem :=
   , hasUnmarkedDefault := true  -- class 2 ba- / class 8 zi- as defaults
   , preferredSemantics := [.humanness, .animacy]
   , hasObligatoryNumber := true  -- singular/plural class pairs (e.g. cl1/cl2)
-  , source := "@cite{carstens-2026}; @cite{taraldsen-et-al-2018}" }
+  , source := "[carstens-2026]; [taraldsen-et-al-2018]" }
 
 end Xhosa

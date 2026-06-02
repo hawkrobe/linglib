@@ -3,7 +3,7 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # Czech Three-Way Negation: Core Types
-@cite{stankova-2025} @cite{zeijlstra-2004}
+[stankova-2025] [zeijlstra-2004]
 
 Pure type definitions for the three-way negation distinction in Czech polar
 questions (Staňková 2026). Extracted from `Phenomena.Negation.CzechThreeWayNeg`

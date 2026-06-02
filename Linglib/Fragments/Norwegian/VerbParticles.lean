@@ -2,7 +2,7 @@ import Mathlib.Tactic.FinCases
 
 /-!
 # Norwegian Verb-Particle Constructions
-@cite{dendikken-1995}
+[dendikken-1995]
 
 Lexical entries for Norwegian (Bokmål) verb-particle constructions,
 recording the active word-order alternation and the **passive prefix
@@ -11,7 +11,7 @@ clauses the particle alternates freely between inner (V-Prt-NP) and
 outer (V-NP-Prt) positions. In passives, unlike English, the particle
 may surface to the immediate left of the participle as a prefix-like
 incorporation: *Hunden vart utsparka* 'the dog was kicked out'. This
-contrast was the central piece of evidence in @cite{dendikken-1995}
+contrast was the central piece of evidence in [dendikken-1995]
 §2.3.3.5 ("The Norwegian parallel") for treating particle incorporation
 as a cross-linguistically available operation.
 
@@ -50,7 +50,7 @@ structure NorwegianVPCEntry where
       *sparket ut*, *satt ned*. -/
   pastParticipleActive : String
   /-- Whether the particle may prefix the participle in passives —
-      the productive Norwegian pattern (per @cite{dendikken-1995}
+      the productive Norwegian pattern (per [dendikken-1995]
       §2.3.3.5, citing Åfarli 1985). For all entries here, true. -/
   passiveIncorporation : Bool
   /-- Passive incorporated form (particle prefixed to participle):
@@ -69,7 +69,7 @@ instance : DecidablePred AllowsPassiveIncorporation :=
 /-! ### Inventory -/
 
 /-- *sparke ut* 'kick out'. Passive incorporation: *utsparket*
-    (per @cite{dendikken-1995} §2.4.3 ex. 134, citing Åfarli 1985). -/
+    (per [dendikken-1995] §2.4.3 ex. 134, citing Åfarli 1985). -/
 def sparke_ut : NorwegianVPCEntry where
   citationForm         := "sparke ut"
   verb                 := "sparke"

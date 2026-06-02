@@ -5,9 +5,9 @@ import Linglib.Fragments.Mandarin.DiscourseParticles
 
 /-!
 # Discourse *only*: Cross-Linguistic Data
-@cite{ippolito-kiss-williams-2025}
+[ippolito-kiss-williams-2025]
 
-Empirical data from @cite{ippolito-kiss-williams-2025} on discourse
+Empirical data from [ippolito-kiss-williams-2025] on discourse
 *only* — a clausal connective that conjoins two propositions while
 signaling that the second undermines the evidential direction of the
 first. Anchored on a single paper; lives in the Studies subdirectory
@@ -587,7 +587,7 @@ def clauseTypeData : List DiscourseOnlyDatum :=
   , italian_s'_imperative, italian_s'_exclamative
   ]
 
-/-- All discourse *only* data from @cite{ippolito-kiss-williams-2025}. -/
+/-- All discourse *only* data from [ippolito-kiss-williams-2025]. -/
 def allDiscourseOnlyData : List DiscourseOnlyDatum :=
   coreExamples ++ clauseTypeData
 

@@ -3,7 +3,7 @@ import Linglib.Core.Agent.DecisionTheory
 
 /-!
 # Partition-Decision Adjunction
-@cite{blackwell-1953} @cite{merin-1999} @cite{van-rooy-2003}
+[blackwell-1953] [merin-1999] [van-rooy-2003]
 
 Galois connection between QUD partitions and decision problems, formalizing
 the Blackwell/Van Rooy correspondence.

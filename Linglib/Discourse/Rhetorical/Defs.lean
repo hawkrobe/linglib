@@ -2,7 +2,7 @@ import Mathlib.Data.List.Basic
 import Linglib.Discourse.Coherence
 /-!
 # Rhetorical-Structure Substrate (SDRT core)
-@cite{asher-lascarides-2003}
+[asher-lascarides-2003]
 The labelled discourse-structure record + SDRT-specific projections
 (`kind`, `veridicality`) on top of the framework-neutral
 `Discourse.Coherence.CoherenceRelation` enum. The Right Frontier
@@ -56,7 +56,7 @@ inductive Veridicality where
 end Discourse.Rhetorical
 namespace Discourse.Coherence
 /-- Veridicality of each rhetorical relation per SDRT
-    (@cite{asher-lascarides-2003}, preface "What's New" + §4.8). -/
+    ([asher-lascarides-2003], preface "What's New" + §4.8). -/
 def CoherenceRelation.veridicality :
     CoherenceRelation → Discourse.Rhetorical.Veridicality
   | .occasion     => .veridical    -- = SDRT's Narration

@@ -2,7 +2,7 @@ import Linglib.Features.Case
 import Linglib.Features.Case
 /-!
 # Korean Case Inventory
-@cite{blake-1994}
+[blake-1994]
 
 Korean marks case with postpositional particles:
 - -i / -ga (NOM), -eul / -reul (ACC), -ui (GEN), -ege / -hante (DAT)

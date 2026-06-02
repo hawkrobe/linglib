@@ -3,13 +3,13 @@ import Mathlib.Logic.Function.Basic
 
 /-!
 # Featural Bundles
-@cite{lionnet-2022} @cite{pulleyblank-1986} @cite{yip-1980}
-@cite{clements-1985} @cite{reiss-2017}
+[lionnet-2022] [pulleyblank-1986] [yip-1980]
+[clements-1985] [reiss-2017]
 
 A **feature bundle** is a partial assignment over a feature index space.
 This is the most general primitive of autosegmental / featural phonology:
-every concrete feature theory (Snider Register Tier Theory @cite{snider-1999}
-@cite{snider-1990}; Lionnet's subtonal features @cite{lionnet-2022}; vowel
+every concrete feature theory (Snider Register Tier Theory [snider-1999]
+[snider-1990]; Lionnet's subtonal features [lionnet-2022]; vowel
 or consonant harmony; nasal, laryngeal, place tiers) is a specialization
 of `FeatureBundle F V` for some feature index `F` and value type `V`.
 
@@ -26,13 +26,13 @@ The value type `V` is parametric:
 
 - `Bool` recovers classical binary features `[±F]` (Snider, Lionnet 2022,
   most generative phonology).
-- `ℚ` or `ℝ` recovers Gradient Symbolic Computation @cite{smolensky-goldrick-2016}
-  and probabilistic / weighted feature theories @cite{pater-2009}.
+- `ℚ` or `ℝ` recovers Gradient Symbolic Computation [smolensky-goldrick-2016]
+  and probabilistic / weighted feature theories [pater-2009].
 - A finite enum recovers privative / multivalued features.
 
 ## Why this is the right primitive
 
-1. @cite{reiss-2017}'s Substance-Free Phonology argues features are
+1. [reiss-2017]'s Substance-Free Phonology argues features are
    language-particular. Parameterising over `F` is exactly the right move:
    the feature *space* is data, not built into the type.
 
@@ -121,7 +121,7 @@ section AlgebraicOps
     Underspecification on both sides remains underspecified.
 
     Used for OCP merger of adjacent identical features
-    (@cite{lionnet-2022} ex. 53–54) and for default-fill operations. -/
+    ([lionnet-2022] ex. 53–54) and for default-fill operations. -/
 def merge (b₁ b₂ : FeatureBundle F V) : FeatureBundle F V :=
   fun f => (b₁ f).orElse (fun _ => b₂ f)
 
@@ -129,7 +129,7 @@ def merge (b₁ b₂ : FeatureBundle F V) : FeatureBundle F V :=
     `tgt` adopts whatever value `src` specifies for `f` (if any). All other
     features of `tgt` are unchanged.
 
-    This is the building block of M-lowering in Laal (@cite{lionnet-2022}
+    This is the building block of M-lowering in Laal ([lionnet-2022]
     §5.2): a `[-raised]` value spreads from a trigger bundle to a target
     bundle on the `[raised]` feature alone, leaving `[upper]` untouched. -/
 def assimilate [DecidableEq F]

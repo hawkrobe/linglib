@@ -6,9 +6,9 @@ import Linglib.Studies.IatridouEtAl2001
 import Linglib.Studies.Kiparsky2002
 
 /-!
-# @cite{iatridou-zeijlstra-2021}: The complex beauty of boundary adverbials: in years and until
-@cite{iatridou-zeijlstra-2021} @cite{iatridou-anagnostopoulou-izvorski-2001}
-@cite{kiparsky-2002}
+# [iatridou-zeijlstra-2021]: The complex beauty of boundary adverbials: in years and until
+[iatridou-zeijlstra-2021] [iatridou-anagnostopoulou-izvorski-2001]
+[kiparsky-2002]
 
 Iatridou & Zeijlstra (Linguistic Inquiry 52(1), 2021) unify two
 classes of boundary adverbials:
@@ -28,7 +28,7 @@ When they are, they produce two noncancelable inferences:
    than expected
 
 The PTS framework (LB / RB / PTS terminology) is from
-@cite{iatridou-anagnostopoulou-izvorski-2001}; UTS, AI/BEI, and the
+[iatridou-anagnostopoulou-izvorski-2001]; UTS, AI/BEI, and the
 NPI-status analysis of *in years* / *until* are this paper's
 contribution. The substrate below extends IAI 2001's PTS with the IZ
 2021 machinery.
@@ -75,7 +75,7 @@ inductive TimeSpanKind where
 
 /-- The boundary set by Tense (not by the adverbial).
     PTS: Tense sets the RB. UTS: context/Tense sets the LB.
-    Mirror-image relationship (@cite{iatridou-zeijlstra-2021} §8). -/
+    Mirror-image relationship ([iatridou-zeijlstra-2021] §8). -/
 def TimeSpanKind.tenseSetsBoundary : TimeSpanKind → BoundaryKind
   | .pts => .right
   | .uts => .left
@@ -97,7 +97,7 @@ theorem pts_uts_mirror :
 
 /-- NPI strength classification. Strong NPIs require antiadditive
     environments; weak NPIs require only DE environments.
-    @cite{zwarts-1998} @cite{gajewski-2011} -/
+    [zwarts-1998] [gajewski-2011] -/
 inductive NPIStrength where
   | strong  -- requires antiadditive (not, nobody, never)
   | weak    -- requires DE (few, at most, before)
@@ -107,7 +107,7 @@ inductive NPIStrength where
 /-- A boundary adverbial: a temporal expression that sets one boundary
     of a time span (PTS or UTS).
 
-    @cite{iatridou-zeijlstra-2021} §3, §5: *in years* and *until* are
+    [iatridou-zeijlstra-2021] §3, §5: *in years* and *until* are
     both boundary adverbials that share the property of being domain
     wideners (introducing subdomain alternatives). -/
 structure BoundaryAdverbial where
@@ -122,7 +122,7 @@ structure BoundaryAdverbial where
   /-- Is this adverbial a (strong) NPI? -/
   npiStrength : NPIStrength
   /-- Is the adverbial always contrastively focused?
-      @cite{chierchia-2013}: domain widening requires contrastive focus
+      [chierchia-2013]: domain widening requires contrastive focus
       under negation. *In years* is always contrastively focused;
       *until* is contrastively focused only when under negation. -/
   alwaysContrastive : Bool
@@ -140,7 +140,7 @@ structure BoundaryAdverbial where
     Sets the LB of the PTS by stretching backward from the RB.
     Introduces subdomain alternatives. Always contrastively focused.
     Compatible only with E-perfect (not U-perfect).
-    @cite{iatridou-zeijlstra-2021} §3–4 -/
+    [iatridou-zeijlstra-2021] §3–4 -/
 def inYears : BoundaryAdverbial where
   form := "in years"
   timeSpan := .pts
@@ -177,7 +177,7 @@ def since2015 : BoundaryAdverbial where
 /-- *Until (5pm / I left)*: unified RB adverbial.
     Sets the RB of the UTS. Always introduces subdomain alternatives
     (the domain-widening effect surfaces only under contrastive focus).
-    @cite{iatridou-zeijlstra-2021} §7: one *until*, not two. -/
+    [iatridou-zeijlstra-2021] §7: one *until*, not two. -/
 def until_ : BoundaryAdverbial where
   form := "until"
   timeSpan := .uts
@@ -230,7 +230,7 @@ theorem nonNPI_no_domainAlts :
 -- ════════════════════════════════════════════════════
 
 /-- The subdomain alternatives of a time span τ are all subintervals of τ.
-    @cite{chierchia-2013} Ch. 1; @cite{iatridou-zeijlstra-2021} §4:
+    [chierchia-2013] Ch. 1; [iatridou-zeijlstra-2021] §4:
 
     When *in years* is present, the assertion (49a) is:
       ∃e.[meet(e, Joe, Mary) ∧ Run(e) ⊆ τ]
@@ -291,7 +291,7 @@ theorem subdomain_alts_nonweaker (P : W → Event Time → Prop) (w : W)
 -- § 7. Exhaustification and Contradiction
 -- ════════════════════════════════════════════════════
 
-/-- **Positive environment contradiction** (@cite{iatridou-zeijlstra-2021} §4):
+/-- **Positive environment contradiction** ([iatridou-zeijlstra-2021] §4):
     In a positive (non-DE) context, exhaustification of subdomain alternatives
     requires negating all nonweaker alternatives. But ALL subdomain alternatives
     are entailed by the assertion (by `subdomain_alts_nonweaker`). Negating them
@@ -328,7 +328,7 @@ theorem negated_subdomain_weaker (P : W → Event Time → Prop) (w : W)
 -- § 8. The Actuality Inference
 -- ════════════════════════════════════════════════════
 
-/-- **Actuality Inference** (@cite{iatridou-zeijlstra-2021} §4):
+/-- **Actuality Inference** ([iatridou-zeijlstra-2021] §4):
     With *in years*, the LB of the PTS can only be set at the point where
     an event of the relevant sort took place (since *in years* stretches
     backward from the RB until it finds such an event). Therefore, the
@@ -352,7 +352,7 @@ def aiAtBoundary (P : W → Event Time → Prop) (w : W)
 -- § 9. The Beyond Expectation Inference
 -- ════════════════════════════════════════════════════
 
-/-- **Beyond Expectation Inference** (@cite{iatridou-zeijlstra-2021} §2):
+/-- **Beyond Expectation Inference** ([iatridou-zeijlstra-2021] §2):
     *In years* conveys that the PTS is larger than a contextually salient
     alternative. "*He hasn't had a seizure in months*" conveys the PTS is
     larger than a contextually salient number of months.
@@ -374,13 +374,13 @@ structure BeyondExpectationInference where
 -- ════════════════════════════════════════════════════
 
 /-- Perfective contributes ST ⊆ TT: the event is contained in the time span.
-    @cite{iatridou-zeijlstra-2021} §1 (eq. 17a), following @cite{klein-1994}.
+    [iatridou-zeijlstra-2021] §1 (eq. 17a), following [klein-1994].
     Equivalently, the E-perfect: the event is contained in the PTS. -/
 def perfectiveContainment (e : Event Time) (τ : Interval Time) : Prop :=
   e.τ.subinterval τ
 
 /-- Imperfective contributes TT ⊆ ST: the time span is contained in the event.
-    @cite{iatridou-zeijlstra-2021} §1 (eq. 17b).
+    [iatridou-zeijlstra-2021] §1 (eq. 17b).
     With the subinterval property, every subinterval of a P-event is also
     a P-event. This is the key to *until*-d (affirmative imperfective). -/
 def imperfectiveContainment (e : Event Time) (τ : Interval Time) : Prop :=
@@ -390,7 +390,7 @@ def imperfectiveContainment (e : Event Time) (τ : Interval Time) : Prop :=
     assertion are ENTAILED (not merely nonweaker). This means exhaustification
     is vacuous for affirmative imperfectives — explaining why *until*-d
     (affirmative imperfective + *until*) is fine without negation.
-    @cite{iatridou-zeijlstra-2021} §7.2 -/
+    [iatridou-zeijlstra-2021] §7.2 -/
 theorem impf_subdomain_entailed (P : W → Event Time → Prop)
     (hSub : HasSubintervalProp P) (w : W)
     (e : Event Time) (τ : Interval Time)
@@ -408,7 +408,7 @@ theorem impf_subdomain_entailed (P : W → Event Time → Prop)
 -- § 11. Bridge: Constant's Observation
 -- ════════════════════════════════════════════════════
 
-/-- **Constant's Observation** (@cite{iatridou-zeijlstra-2021} §1):
+/-- **Constant's Observation** ([iatridou-zeijlstra-2021] §1):
     The AI of *in years* is noncancelable, unlike the AI of
     *in (the last) 5 years*.
 
@@ -437,7 +437,7 @@ theorem constants_observation :
     a strong NPI (not weak). This is because domain widening operates
     on presupposed content (the PTS/UTS existence), and strong NPIs
     are those whose exhaustifier accesses non-truth-conditional content.
-    @cite{iatridou-zeijlstra-2021} §11 -/
+    [iatridou-zeijlstra-2021] §11 -/
 def isDomainWidener (adv : BoundaryAdverbial) : Bool :=
   adv.introducesDomainAlts
 

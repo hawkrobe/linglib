@@ -3,15 +3,15 @@ import Linglib.Syntax.CCG.Basic
 /-!
 # Classical (rule-restricted) CCG
 
-The *classical* CCG formalism of @cite{vijay-shanker-weir-1994} and @cite{weir-joshi-1988},
+The *classical* CCG formalism of [vijay-shanker-weir-1994] and [weir-joshi-1988],
 in which combinatory rules may be **restricted per grammar**. Following
-@cite{kuhlmann-koller-satta-2015}, the restriction modelled here is a **target
+[kuhlmann-koller-satta-2015], the restriction modelled here is a **target
 restriction**: a rule fires only when the *target* of its primary input category (the
 leftmost atom, after stripping all arguments) is the distinguished atom `S`.
 
 This is the substrate that makes the CCG≡TAG weak-equivalence — and constructions of CCGs
 for non-context-free languages — expressible. It is distinct from the *unrestricted*,
-universal-rule CCG of `Syntax/CCG/Basic` (`CCG.DerivStep`), which @cite{kuhlmann-koller-satta-2015}
+universal-rule CCG of `Syntax/CCG/Basic` (`CCG.DerivStep`), which [kuhlmann-koller-satta-2015]
 show is strictly weaker than TAG.
 
 ## Main definitions
@@ -23,14 +23,14 @@ show is strictly weaker than TAG.
 
 ## Implementation notes
 
-These rules are the fragment of @cite{kuhlmann-koller-satta-2015}'s rule schema exercised
+These rules are the fragment of [kuhlmann-koller-satta-2015]'s rule schema exercised
 by the constructions in `Studies/KuhlmannKollerSatta2015` and `Syntax/CCG/CrossSerial`:
 forward/backward application, forward harmonic composition of degree 1–2, and forward
 crossed composition of degree 1. (The full schema also permits backward composition and
 degree-2 crossed composition; the harmonic/crossed distinction is a consequence of the
 slash directions, not a separate rule class. Those instances are simply not needed here.)
-The target restriction is fixed to `S`, the common case in @cite{kuhlmann-koller-satta-2015}
-Example 2 and in @cite{steedman-2000}; general VW-CCG permits other per-grammar
+The target restriction is fixed to `S`, the common case in [kuhlmann-koller-satta-2015]
+Example 2 and in [steedman-2000]; general VW-CCG permits other per-grammar
 restrictions.
 -/
 
@@ -57,7 +57,7 @@ def targetIsS (c : Cat) : Bool :=
 /-! ### Rule-restricted combinatory rules
 
 Each rule is gated on `target (primary) = S` (the target restriction of
-@cite{kuhlmann-koller-satta-2015}, Example 2). -/
+[kuhlmann-koller-satta-2015], Example 2). -/
 
 /-- Forward application: `(X/Y) Y ⇒ X`, target of the functor `S`. -/
 def fapp : Cat → Cat → Option Cat

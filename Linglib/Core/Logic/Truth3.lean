@@ -5,14 +5,14 @@ import Mathlib.Order.Hom.BoundedLattice
 
 /-!
 # Three-Valued Truth
-@cite{kleene-1952}
+[kleene-1952]
 
 Three-valued truth type for trivalent semantics across linglib.
 Used for:
 - **Plural predication**: homogeneity gaps (all satisfy → true, none → false,
-  some but not all → gap). @cite{kriz-2016}, @cite{kriz-spector-2021}
+  some but not all → gap). [kriz-2016], [kriz-spector-2021]
 - **Conditionals**: indeterminacy under supervaluation when selection functions
-  disagree. @cite{ramotowska-marty-romoli-santorio-2025}
+  disagree. [ramotowska-marty-romoli-santorio-2025]
 - **Presupposition**: undefined when presupposition fails.
 - **Duality**: existential vs universal aggregation over three-valued lists.
 
@@ -26,7 +26,7 @@ Used for:
 namespace Core.Duality
 
 /-- Three-valued truth: the 3-element bounded chain `false < indet < true`.
-    Strong Kleene logic (@cite{kleene-1952}) corresponds to the order-derived
+    Strong Kleene logic ([kleene-1952]) corresponds to the order-derived
     operations: `meet` = `min` = `⊓`, `join` = `max` = `⊔`, `neg` is the
     order-reversing involution. -/
 inductive Truth3 where
@@ -217,7 +217,7 @@ theorem join_assoc (a b c : Truth3) : join (join a b) c = join a (join b c) :=
     settles the result), but `xor .true .indet = .indet` (we need to
     know the other's value to determine XOR).
 
-    @cite{wang-davidson-2026} Figure 2. -/
+    [wang-davidson-2026] Figure 2. -/
 def xor : Truth3 → Truth3 → Truth3
   | .true, .false => .true
   | .false, .true => .true
@@ -248,7 +248,7 @@ theorem xor_ofBool (a b : Bool) : xor (ofBool a) (ofBool b) = ofBool (a ^^ b) :=
 
 /-- **Uniform projection under XOR**: XOR returns undefined iff at
     least one operand is undefined. This is the semantic core of
-    @cite{wang-davidson-2026}'s prediction: exclusive disjunction
+    [wang-davidson-2026]'s prediction: exclusive disjunction
     does not filter presuppositions.
 
     Contrast with inclusive disjunction (`join`), where
@@ -262,12 +262,12 @@ theorem xor_indet_iff (a b : Truth3) :
 -- Weak Kleene Connectives + Meta-Assertion
 -- ════════════════════════════════════════════════════════════════
 
--- Weak Kleene "internal" connectives originate with @cite{bochvar-1937}
+-- Weak Kleene "internal" connectives originate with [bochvar-1937]
 -- (Russian original; English translation by Bergmann 1981); subsequently
--- discussed by @cite{kleene-1952}. The "indet propagates" / "nonsense"
+-- discussed by [kleene-1952]. The "indet propagates" / "nonsense"
 -- semantics matches Bochvar's three-valued treatment of paradox-prone
 -- statements. The `metaAssert` operator is Beaver-Krahmer's 𝒜
--- (assertion operator) — see @cite{beaver-krahmer-2001} §2 — which
+-- (assertion operator) — see [beaver-krahmer-2001] §2 — which
 -- collapses any trivalent value to bivalent by treating `.indet` as
 -- false.
 
@@ -288,7 +288,7 @@ def meetWeak : Truth3 → Truth3 → Truth3
   | _, _ => .indet
 
 /-- Meta-assertion operator: the **𝒜 (assertion) operator** of
-    @cite{beaver-krahmer-2001} §2. Maps `.indet` to `.false`, making
+    [beaver-krahmer-2001] §2. Maps `.indet` to `.false`, making
     any trivalent value bivalent by treating undefinedness as falsity.
     Used for "transplication" / closing trivalent contexts to Bool. -/
 def metaAssert : Truth3 → Truth3
@@ -325,7 +325,7 @@ theorem metaAssert_of_defined (v : Truth3) (h : v.isDefined) : metaAssert v = v 
 
 -- ════════════════════════════════════════════════════════════════
 -- Middle Kleene Connectives
--- @cite{peters-1979} @cite{beaver-krahmer-2001} @cite{spector-2025}
+-- [peters-1979] [beaver-krahmer-2001] [spector-2025]
 -- ════════════════════════════════════════════════════════════════
 
 /-- Middle Kleene conjunction: left-undefined absorbs; left-defined
@@ -333,7 +333,7 @@ theorem metaAssert_of_defined (v : Truth3) (h : v.isDefined) : metaAssert v = v 
     `# ∧ false = #`.
 
     This captures left-to-right evaluation for conjunction
-    (@cite{peters-1979}, @cite{beaver-krahmer-2001}, @cite{spector-2025}):
+    ([peters-1979], [beaver-krahmer-2001], [spector-2025]):
     if the first conjunct is undefined, the result is undefined regardless
     of the second. If the first conjunct is defined, Strong Kleene applies.
 
@@ -351,7 +351,7 @@ def meetMiddle : Truth3 → Truth3 → Truth3
     `# ∨ true = #`.
 
     This captures left-to-right presupposition filtering
-    (@cite{peters-1979}): if the first disjunct is defined, its
+    ([peters-1979]): if the first disjunct is defined, its
     truth value can settle the result even when the second is
     undefined. But if the first is undefined, the whole disjunction
     is undefined regardless of the second.
@@ -422,14 +422,14 @@ theorem joinMiddle_eq_join_of_left_defined (a b : Truth3) (h : a.isDefined) :
 
 -- ════════════════════════════════════════════════════════════════
 -- Belnap Conditional Assertion Connectives
--- @cite{belnap-1970}
+-- [belnap-1970]
 -- ════════════════════════════════════════════════════════════════
 
 /-- Belnap conjunction: undefined operands are skipped.
 
     If one operand is undefined, the result equals the other.
     If both are undefined, the result is undefined.
-    This models @cite{belnap-1970}'s (8): conjunction is assertive iff
+    This models [belnap-1970]'s (8): conjunction is assertive iff
     at least one conjunct is assertive; what it asserts = conjunction
     of assertive conjuncts only. `indet` is the identity element.
 
@@ -448,7 +448,7 @@ def meetBelnap : Truth3 → Truth3 → Truth3
 
 /-- Belnap disjunction: undefined operands are skipped.
 
-    Models @cite{belnap-1970}'s (9): disjunction is assertive iff at
+    Models [belnap-1970]'s (9): disjunction is assertive iff at
     least one disjunct is assertive; what it asserts = disjunction of
     assertive disjuncts only. `indet` is the identity element. -/
 def joinBelnap : Truth3 → Truth3 → Truth3

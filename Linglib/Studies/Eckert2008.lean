@@ -4,11 +4,11 @@ import Linglib.Sociolinguistics.EckertMontague
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# @cite{eckert-2008} — Variation and the Indexical Field
+# [eckert-2008] — Variation and the Indexical Field
 
 ## Overview
 
-@cite{eckert-2008} argues that the meanings of variables are not precise
+[eckert-2008] argues that the meanings of variables are not precise
 or fixed but rather constitute a field of potential meanings — an
 *indexical field*, a constellation of ideologically related meanings, any
 one of which can be activated in the situated use of the variable. The
@@ -24,7 +24,7 @@ field by building on ideological connections.
 2. **Stances vs. qualities**: variables directly index interactional
    *stances* (momentary positions). Habitual stances accrete into
    attributed *qualities* (stable character traits) through *stance
-   accretion* (@cite{eckert-2008} citing Rauniomaa 2003).
+   accretion* ([eckert-2008] citing Rauniomaa 2003).
 3. **Social types as field anchors**: social types (School Teacher, Nerd
    Girl, Gay Diva) anchor regions of the indexical field, providing
    culturally available clusters of traits.
@@ -32,7 +32,7 @@ field by building on ideological connections.
 ## Formalization
 
 The central formal contribution is showing that Eckert's stance
-accretion is the *same composition operation* as @cite{ochs-1992}'s
+accretion is the *same composition operation* as [ochs-1992]'s
 indirect indexicality, both instantiated as `Phenomena.SocialMeaning.IndexicalField.composeIndex`:
 
 - **Ochs**: SFP → Stance → GenderPole (form indexes stance indexes gender)
@@ -47,10 +47,10 @@ exercises this parallel with concrete data from Figures 3 and 4.
 - **Figure 1** (Belten High): ordinal leadership data for 7 NCS
   variables × 4 social groups. The key finding: burnout girls lead ALL
   variables, demonstrating that gender effects are mediated through
-  social orientation — a generalization of @cite{ochs-1992}'s mediation
+  social orientation — a generalization of [ochs-1992]'s mediation
   thesis.
 - **Figure 3** ((ING)): sign-valued indexical field for the velar/apical
-  variants, based on @cite{campbell-kibler-2007}'s experimental data.
+  variants, based on [campbell-kibler-2007]'s experimental data.
 - **Figure 4** (/t/ release): stance accretion chain decomposed via
   `composeIndex`, with social type anchoring in quality space.
 
@@ -64,7 +64,7 @@ exercises this parallel with concrete data from Figures 3 and 4.
   indexicality; Eckert generalizes it to stance accretion
 * `Sociolinguistics.EckertMontague`: the Eckert-Montague
   lift operationalizes the mapping from indexical field to compatible
-  personae, connecting to @cite{burnett-2019}'s social meaning games
+  personae, connecting to [burnett-2019]'s social meaning games
 -/
 
 set_option autoImplicit false
@@ -81,7 +81,7 @@ open Sociolinguistics.SCM
 -- ============================================================================
 
 /-- Whether a trait is a momentary interactional stance or a stable
-    attributed quality. @cite{eckert-2008} emphasizes the fluidity
+    attributed quality. [eckert-2008] emphasizes the fluidity
     of this distinction: "anger and cynicism become part of one's
     identity ... through stance accretion." -/
 inductive TraitKind where
@@ -96,7 +96,7 @@ inductive TraitKind where
 -- ============================================================================
 
 /-- Bipolar social dimensions of (ING) meaning, from
-    @cite{campbell-kibler-2007}'s matched guise experiments.
+    [campbell-kibler-2007]'s matched guise experiments.
     Each dimension has a positive pole (indexed by velar) and a
     negative pole (indexed by apical). -/
 inductive INGDimension where
@@ -111,7 +111,7 @@ instance : Fintype INGDimension where
   complete := by intro x; cases x <;> simp
 
 /-- The (ING) indexical field (Figure 3, based on
-    @cite{campbell-kibler-2007}).
+    [campbell-kibler-2007]).
 
     Sign-valued: +1 means the variant indexes toward the positive pole
     of the dimension, −1 indexes toward the negative pole. The velar
@@ -119,11 +119,11 @@ instance : Fintype INGDimension where
     articulate) on all dimensions; the apical variant indexes the
     negative pole (uneducated, relaxed, easygoing, inarticulate).
 
-    @cite{eckert-2008} notes that context modulates interpretation:
+    [eckert-2008] notes that context modulates interpretation:
     the velar variant can be heard as *articulate* or *pretentious*
     depending on presupposed indexicality. This context-dependent
     activation is operationalized computationally in
-    @cite{burnett-2019}'s RSA model via context-specific priors. -/
+    [burnett-2019]'s RSA model via context-specific priors. -/
 def ingField : IndexicalField INGVariant INGDimension where
   association
     | .velar, _ => 1
@@ -217,11 +217,11 @@ def variantStanceAssoc : TReleaseVariant → TReleaseStance → ℚ
 /-- Level 2: habitual stances accrete into perceived qualities.
 
     Numerical values are modeling choices reflecting qualitative
-    descriptions in @cite{eckert-2008}, not values from the paper.
+    descriptions in [eckert-2008], not values from the paper.
     The emphatic stance is the broadest mediator, contributing to
     articulateness, clarity, education, effort, and weakly to
     formality traits. The exasperated stance mediates prissiness
-    (the Gay Diva pathway in @cite{podesva-2007}). Angry mediates
+    (the Gay Diva pathway in [podesva-2007]). Angry mediates
     perceived effort. Annoyed is too transient to accrete. -/
 def stanceQualityAssoc : TReleaseStance → TReleaseQuality → ℚ
   | .emphatic,    .articulate => 3/4
@@ -239,7 +239,7 @@ def stanceQualityAssoc : TReleaseStance → TReleaseQuality → ℚ
   | _,            _           => 0
 
 /-- The composed variant → quality association via stance accretion.
-    This IS the @cite{ochs-1992} parallel: the same `composeIndex`
+    This IS the [ochs-1992] parallel: the same `composeIndex`
     operation that mediates form → stance → gender in Japanese SFPs
     here mediates form → stance → quality for /t/ release.
 
@@ -252,7 +252,7 @@ def composedQuality (v : TReleaseVariant) (q : TReleaseQuality) : ℚ :=
 -- ============================================================================
 
 /-- All qualities have positive composed association with released /t/.
-    Parallel to @cite{ochs-1992}'s `all_nonexclusive`: indirect
+    Parallel to [ochs-1992]'s `all_nonexclusive`: indirect
     indexicality through non-negative mediators preserves positivity. -/
 theorem all_qualities_positive :
     ∀ q : TReleaseQuality, composedQuality .released q > 0 := by
@@ -316,7 +316,7 @@ instance : Fintype SocialType where
 /-- Which qualities each social type activates in the /t/ release
     field (spatial regions in Figure 4).
 
-    These are *proto-personae* in the sense of @cite{burnett-2019}'s
+    These are *proto-personae* in the sense of [burnett-2019]'s
     social meaning games: quality bundles that the Eckert-Montague
     lift maps to compatible persona sets. Mappings are based on
     spatial proximity in Figure 4 and textual descriptions. -/
@@ -398,7 +398,7 @@ theorem types_cover_all_qualities :
 -- ============================================================================
 
 /-- Social categories at Belten High School, Detroit
-    (@cite{eckert-2008} Figure 1, based on Eckert 1989, 2000).
+    ([eckert-2008] Figure 1, based on Eckert 1989, 2000).
 
     School-oriented *jocks* and urban-oriented *burnouts* define a
     local opposition that cross-cuts gender, creating four social
@@ -451,7 +451,7 @@ instance : Fintype NCSVariable where
     variables — they embed the urban–suburban opposition linguistically,
     demonstrating that the gender effect is mediated through social
     orientation, not a direct gender → language mapping. This is
-    @cite{ochs-1992}'s mediation thesis generalized to the ethnographic
+    [ochs-1992]'s mediation thesis generalized to the ethnographic
     domain. -/
 def beltenLeadership : BeltenGroup → NCSVariable → ℚ
   -- older, fronting: girls lead (burnout girls > jock girls)
@@ -545,10 +545,10 @@ theorem composedField_contrasts_all :
 -- ============================================================================
 
 /-! The (ING) indexical field (§2) lives over `INGDimension` — a
-domain-specific 4-axis space derived from @cite{campbell-kibler-2007}.
+domain-specific 4-axis space derived from [campbell-kibler-2007].
 To connect it to the Eckert-Montague lift (`EckertMontague.emFieldMI`),
 we project it to `SocialDimension` (the 3-axis SCM framework from
-@cite{fiske-cuddy-glick-2007}).
+[fiske-cuddy-glick-2007]).
 
 **Dimension mapping rationale:**
 - `education → competence`: education is a core competence indicator
@@ -558,7 +558,7 @@ we project it to `SocialDimension` (the 3-axis SCM framework from
 - `articulateness → competence`: articulateness is a competence signal
 
 This maps 3 of 4 ING dimensions to competence and 1 to antiSolidarity,
-with warmth = 0. @cite{burnett-2019} makes a different choice: mapping
+with warmth = 0. [burnett-2019] makes a different choice: mapping
 formality to warmth (aloof ≈ cold) rather than antiSolidarity. Both are
 defensible — the present mapping follows BSB2022's PCA loadings where
 "pedantic/uptight" loaded on an independent factor from warmth.
@@ -592,7 +592,7 @@ theorem ingFieldSCM_signs_match_ingField :
 
 /-- The (ING) field grounded in the SCM property space via
     `fromIndexicalField`. This is the same bridge used by
-    @cite{beltrama-schwarz-2024} and @cite{beltrama-solt-burnett-2022}
+    [beltrama-schwarz-2024] and [beltrama-solt-burnett-2022]
     for round/precise number variants. -/
 def ingGroundedField : GroundedField INGVariant scmSpace :=
   fromIndexicalField ingFieldSCM

@@ -32,9 +32,9 @@ is the **architectural mechanism for nonliteral interpretation**.
 
 ## Anchoring
 
-QUD-projection in RSA was introduced by @cite{goodman-stuhlmueller-2013}
-and is used by @cite{kao-bergen-goodman-2014} (metaphor),
-@cite{kao-wu-bergen-goodman-2014} (hyperbole), @cite{kao-goodman-2015}
+QUD-projection in RSA was introduced by [goodman-stuhlmueller-2013]
+and is used by [kao-bergen-goodman-2014] (metaphor),
+[kao-wu-bergen-goodman-2014] (hyperbole), [kao-goodman-2015]
 (irony), and the broader Kao family.
 -/
 

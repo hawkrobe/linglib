@@ -6,8 +6,8 @@ import Mathlib.Data.Rat.Defs
 The `Lexicon` type used by lexical uncertainty models in RSA.
 
 For RSA models with lexical uncertainty, use `RSAConfig` with
-`Latent := YourLexiconType` (see @cite{potts-etal-2016} and
-@cite{potts-levy-2015} for examples). This file provides the
+`Latent := YourLexiconType` (see [potts-etal-2016] and
+[potts-levy-2015] for examples). This file provides the
 shared `Lexicon` type used by:
 - `GrammarDist.lean` (Construction Grammar as distribution over lexica)
 - `SDS/Marginalization.lean` (SDS ↔ LU-RSA bidirectional translation)
@@ -16,7 +16,7 @@ shared `Lexicon` type used by:
 /--
 A lexicon maps each utterance to a truth function over worlds.
 
-In @cite{bergen-levy-goodman-2016} notation:
+In [bergen-levy-goodman-2016] notation:
   L(u, w) = 1 if w ∈ ⟦u⟧_L, else 0
 
 For graded semantics, we allow values in [0,1].

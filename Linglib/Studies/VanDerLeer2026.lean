@@ -3,7 +3,7 @@ import Linglib.Discourse.Commitment.Frame
 
 /-!
 # Van der Leer 2026: Speech-Act Logic (SAL)
-@cite{van-der-leer-2026}
+[van-der-leer-2026]
 
 A propositional dynamic logic of speech acts over commitment-state
 Kripke frames. Speech acts are *actions*
@@ -121,7 +121,7 @@ theorem assert_creates_commitment
   exact hcom.2 ⟨rfl, rfl⟩
 
 /-- **T26** — under Sincerity + Competence, commitment transfers to
-    the addressee's belief. The mediated CommonGround-update of @cite{bary-2025}. -/
+    the addressee's belief. The mediated CommonGround-update of [bary-2025]. -/
 theorem committed_implies_belief_under_sincerity_competence
     {c : CommitmentState W A} (hsin : Sincere c) (hcomp : Competent c)
     (a b : A) (π : Set W) (w : W) :
@@ -129,7 +129,7 @@ theorem committed_implies_belief_under_sincerity_competence
   committed_implies_addressee_believes_of_sincere_competent hsin hcomp a b π w
 
 /-- **T27.1** — under Sincerity, commitment to `p` entails commitment
-    to "I believe `p`". The formal direction of @cite{krifka-2024}'s
+    to "I believe `p`". The formal direction of [krifka-2024]'s
     "buffet is open" puzzle. -/
 theorem commit_implies_commit_believe_of_sincere
     (c : CommitmentState W A) (hsin : Sincere c)

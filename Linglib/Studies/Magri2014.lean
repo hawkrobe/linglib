@@ -8,7 +8,7 @@ import Linglib.Semantics.Plurality.Implicature
 
 /-!
 # Magri (2014): Homogeneity Effects via Double Strengthening
-@cite{magri-2014}
+[magri-2014]
 
 An account for the homogeneity effects triggered by plural definites and
 conjunction based on double strengthening. In *Pragmatics, Semantics and
@@ -19,7 +19,7 @@ the Case of Scalar Implicatures*, ed. S. Pistoia Reda (Palgrave Macmillan),
 
 Plural definites like *the boys* have a **plain existential semantics**,
 equivalent to the indefinite *some boys*. Their universal reading arises
-through *double strengthening* modeled on @cite{spector-2007}:
+through *double strengthening* modeled on [spector-2007]:
 
 1. The indefinite *some boys* triggers the "only-some" scalar implicature
 2. The definite *the boys* triggers the implicature that this "only-some"
@@ -64,7 +64,7 @@ The universal reading arises via two layers of EXH:
 Both derive the same net result: MYSTERY behaves as STRONG in UE,
 MYSTERY behaves as WEAK in DE.
 
-## Relationship to @cite{spector-2007}
+## Relationship to [spector-2007]
 
 Magri extends Spector's exhaustivity-based account of plural morphology
 (PL/SING/TWO) to plural definites (THE/SOME/ALL) and unfocused conjunction
@@ -210,14 +210,14 @@ theorem strong_entails_weak (s : Scenario) (hn : s.total ≥ 1) :
   simp only [allMeaning, someMeaning, beq_iff_eq, decide_eq_true_eq]
   omega
 
-/-! ### Bridge to @cite{bar-lev-2021}'s `existPL`
+/-! ### Bridge to [bar-lev-2021]'s `existPL`
 
 Magri 2014's "plain existential" semantics for plural definites (§3)
 is structurally identical to Bar-Lev 2021's `∃-PL` operator
 (`Plurality.Implicature.existPL`) applied on the full domain. The two
 homogeneity accounts agree on the basic meaning and diverge only in
 the strengthening mechanism: Magri uses *double scalar implicature*
-(§3 of @cite{magri-2014}), Bar-Lev uses `Exh^{IE+II}`. The bridge
+(§3 of [magri-2014]), Bar-Lev uses `Exh^{IE+II}`. The bridge
 below formalises the convergence at the substrate level.
 
 The translation `fromPredicate` abstracts a Bar-Lev-style predicative
@@ -272,7 +272,7 @@ end ImplicatureBridge
 
 /--
 EXH applied to a prejacent: assert the prejacent and negate all
-innerExcludable alternatives (@cite{spector-2007}, definition 18).
+innerExcludable alternatives ([spector-2007], definition 18).
 
   EXH(phi) = phi AND AND{NOT psi : psi innerExcludable w.r.t. phi}
 -/
@@ -346,10 +346,10 @@ theorem outerExcludable_justified :
   ⟨rfl, exh_weak_strictly_stronger.1, exh_weak_strictly_stronger.2⟩
 
 /--
-Iterated EXH (assumption 19 in @cite{magri-2014}, extending
-@cite{spector-2007}): the strengthened meaning is computed through
+Iterated EXH (assumption 19 in [magri-2014], extending
+[spector-2007]): the strengthened meaning is computed through
 double exhaustification with outer-level excludability. The key
-innovation over @cite{spector-2007}'s single EXH is that the
+innovation over [spector-2007]'s single EXH is that the
 *strengthened* meanings of alternatives (not just plain meanings)
 determine excludability at the outer level.
 
@@ -616,7 +616,7 @@ def sloppyPrediction (p : SloppyExistentialPrediction) : Bool :=
   p.indefiniteTriggersSI == p.definiteUniversal
 
 /-- Classroom context: sloppy existential reading.
-    Example attributed to Schlenker (p.c.) in @cite{gajewski-2005}. -/
+    Example attributed to Schlenker (p.c.) in [gajewski-2005]. -/
 def classroomExample : SloppyExistentialPrediction :=
   { context := "Three girls raise their hands. 'Wait, the girls have a question!'"
   , indefiniteTriggersSI := false  -- "some girls" would also be fine here
@@ -719,7 +719,7 @@ theorem dual_matches_conjunction_parallel :
 -- ============================================================
 
 /-!
-## Connection to @cite{fox-2007}'s Computable Algorithm
+## Connection to [fox-2007]'s Computable Algorithm
 
 The abstract three-role computation above uses hand-coded `innerExcludable`
 and `outerExcludable`. Here we verify that Fox's computable innocent
@@ -906,7 +906,7 @@ end DualComputation
 ## Enriched Alternatives for Conjunction (§A.7)
 
 §A.7 adds the atomic conjuncts LEFT and RIGHT to the alternative set
-for unfocused conjunction, using @cite{fox-2007}'s definition of
+for unfocused conjunction, using [fox-2007]'s definition of
 excludable alternatives. The crucial asymmetry (69b): AND_F has OR
 among its alternatives, but AND_unF does NOT. Non-transitive
 Horn-mateness is encoded by giving each prejacent its own alternative list.

@@ -1,6 +1,6 @@
 /-!
 # Swedish Question Particles
-@cite{seeliger-repp-2018}
+[seeliger-repp-2018]
 
 Lexical entries for Swedish modal particles that occur in declarative
 questions. The fragment commits only to theory-neutral lexical primitives;
@@ -28,7 +28,7 @@ Crucially, *väl* is distinct from *jo* (in `AnswerParticles.lean`):
 ## Other Swedish particles
 
 Swedish also has clause-initial *visst* and *nog* which can mark PRQs,
-but these are not formalized here. @cite{seeliger-repp-2018} note that
+but these are not formalized here. [seeliger-repp-2018] note that
 *visst*/*nog* have no overlap in meaning with *väl* in clause-medial
 position, and their clause-initial uses require further investigation.
 
@@ -61,7 +61,7 @@ structure QParticleEntry where
 
 /-- *väl* — question-inducing modal particle.
 
-    @cite{seeliger-repp-2018} SS 5.2: *väl* signals that the speaker is not
+    [seeliger-repp-2018] SS 5.2: *väl* signals that the speaker is not
     certain about the proposition but suspects it to be true. The speaker
     expects a confirmation from the addressee. Declaratives with *väl*
     cannot be assertions — they are declarative questions.

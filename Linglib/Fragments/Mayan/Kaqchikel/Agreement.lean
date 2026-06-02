@@ -5,7 +5,7 @@ import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 
 /-!
-# Kaqchikel Agreement Fragment @cite{preminger-2014}
+# Kaqchikel Agreement Fragment [preminger-2014]
 
 Theory-neutral typological metadata for Kaqchikel (K'ichean, Mayan)
 agreement morphology: paradigm exponents, person-number cells, argument
@@ -37,9 +37,9 @@ Set B (ABS) precedes Set A (ERG).
 
 Unlike Mam, where Infl's φ-probe is blocked in transitives and the
 patient goes unagreed, Kaqchikel cross-references *both* transitive
-arguments (@cite{preminger-2014} Ch. 3 vs. @cite{scott-2023} for Mam).
+arguments ([preminger-2014] Ch. 3 vs. [scott-2023] for Mam).
 
-## Agent Focus Agreement (@cite{preminger-2014} §3.3, table 22)
+## Agent Focus Agreement ([preminger-2014] §3.3, table 22)
 
 In AF constructions (clause-local agent extraction), the normal two-slot
 agreement collapses to a **single marker** drawn from the absolutive
@@ -50,11 +50,11 @@ restriction blocks combinations of two 1st/2nd-person arguments.
 The empirical paradigm data sits here as `afParadigm`. The choice rule
 that predicts it is theory-laden — see
 `Studies/Preminger2014.lean` for the two-probe
-relativized-probing derivation (after @cite{bejar-rezac-2003}, applied
-to Kichean per @cite{preminger-2014} §4.4). Earlier analyses
-(@cite{stiebels-2006} and others) framed the same surface pattern as
+relativized-probing derivation (after [bejar-rezac-2003], applied
+to Kichean per [preminger-2014] §4.4). Earlier analyses
+([stiebels-2006] and others) framed the same surface pattern as
 a salience hierarchy `[+participant] > [+plural] > default`, an account
-@cite{preminger-2014} Ch. 7 explicitly argues against; the fragment
+[preminger-2014] Ch. 7 explicitly argues against; the fragment
 deliberately avoids picking sides on that question.
 
 -/
@@ -87,7 +87,7 @@ def absPosition : Mayan.ABSPosition := .high
 -- ============================================================================
 
 /-- Set A (ERG) markers: prefixes on Voice/v cross-referencing the
-    transitive agent (@cite{preminger-2014} Ch. 3, table (29)).
+    transitive agent ([preminger-2014] Ch. 3, table (29)).
     Parenthesized segments are dropped in certain phonological
     contexts; the grapheme *j* represents a voiceless velar fricative. -/
 def setAExponent : ExponentTable :=
@@ -128,8 +128,8 @@ abbrev ArgPosition.case : ArgPosition → Features.Case :=
     Definitionally equal to `Mayan.accCaseKaqchikel`, derived
     from `Alignment.invertedErgative.assignCase`. The
     construction-specific inverted pattern (S/A → ABS, P → ERG/GEN)
-    documented by @cite{imanishi-2014} §3.3.1 and @cite{imanishi-2020}.
-    Per @cite{imanishi-2014}: the Unaccusative Requirement on
+    documented by [imanishi-2014] §3.3.1 and [imanishi-2020].
+    Per [imanishi-2014]: the Unaccusative Requirement on
     Nominalization passivizes the embedded clause; the object becomes
     the only Case-less DP and receives ERG/GEN from D as phase head;
     the subject is base-generated in matrix Spec-PredP (with `ajin`)
@@ -141,7 +141,7 @@ abbrev ArgPosition.accCase : ArgPosition → Features.Case :=
     In Kaqchikel, ALL core argument positions trigger agreement:
     agent via Set A on Voice/v, patient and intranS via Set B on
     Infl/T. This contrasts with Mam, where the patient is NOT
-    agreed with (Infl's probe is blocked by VoiceP; @cite{scott-2023}).
+    agreed with (Infl's probe is blocked by VoiceP; [scott-2023]).
     Ditransitive R/T default to participating (Kaqchikel ditransitive
     agreement not modeled in this fragment). -/
 def ArgPosition.IsPhiAgreed : ArgPosition → Prop
@@ -155,7 +155,7 @@ instance : DecidablePred ArgPosition.IsPhiAgreed := fun p =>
 def kaqArgPositions : List ArgPosition := [.A, .P, .S]
 
 -- ============================================================================
--- § 5: AF Agreement Paradigm Data (@cite{preminger-2014} table 22)
+-- § 5: AF Agreement Paradigm Data ([preminger-2014] table 22)
 -- ============================================================================
 
 /-- An AF agreement datum: subject φ, object φ, and the resulting
@@ -167,7 +167,7 @@ structure AFAgreementDatum where
   marker : Option String
   deriving Repr
 
-/-- The empirical AF agreement paradigm (@cite{preminger-2014} table (22)).
+/-- The empirical AF agreement paradigm ([preminger-2014] table (22)).
     Each row records the observed agreement marker for a given
     subject-object combination in clause-local agent extraction.
 
@@ -266,7 +266,7 @@ theorem trans_has_ergative :
     VerbForm.transitive.agreementSlots = 2 := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 9: Case Inventory Validation (@cite{blake-1994})
+-- § 9: Case Inventory Validation ([blake-1994])
 -- ============================================================================
 
 /-- Kaqchikel case inventory, derived from argument position case values. -/

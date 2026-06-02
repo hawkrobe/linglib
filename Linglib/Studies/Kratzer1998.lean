@@ -5,11 +5,11 @@ import Linglib.Data.Examples.Schema
 import Linglib.Core.Time.Tense
 
 /-!
-# @cite{kratzer-1998}: More Structural Analogies between Pronouns and Tenses
-@cite{kratzer-1998} @cite{partee-1973} @cite{klein-1994} @cite{abusch-1988}
-@cite{abusch-1997} @cite{ogihara-1989}
+# [kratzer-1998]: More Structural Analogies between Pronouns and Tenses
+[kratzer-1998] [partee-1973] [klein-1994] [abusch-1988]
+[abusch-1997] [ogihara-1989]
 
-@cite{kratzer-1998}'s SALT VIII paper extends @cite{partee-1973}'s
+[kratzer-1998]'s SALT VIII paper extends [partee-1973]'s
 tense–pronoun analogy in three directions: an aspect-based decomposition
 of English simple past, SOT deletion via zero tenses, and zero forms with
 locality constraints. The substrate machinery (deletion mechanism +
@@ -31,7 +31,7 @@ claims and bridge theorems that don't need to be Fragment-visible.
 
 ## Section 7 decomposition (English simple past = perfect + present)
 
-The cornerstone empirical contrast (`@cite{kratzer-1998}` Section 7,
+The cornerstone empirical contrast (`[kratzer-1998]` Section 7,
 ex (40), p. 16) is the English/German out-of-the-blue diagnostic:
 English simple past is acceptable as a deictic past tense (`(40a)`
 "Who built this Church? Borromini built this church."); the German

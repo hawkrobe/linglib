@@ -145,9 +145,9 @@ eliminate the others without losing coverage.
 In chart parsing for CCG, when we build a new constituent, we check if an
 equivalent entry already exists in the chart. If so, we don't add it.
 
-@cite{karttunen-1989} proposes a subsumption strategy: every potential new edge
+[karttunen-1989] proposes a subsumption strategy: every potential new edge
 is tested against existing chart entries spanning the same region.
-@cite{pareschi-steedman-1987} propose a "lazy chart parser" that avoids computing
+[pareschi-steedman-1987] propose a "lazy chart parser" that avoids computing
 equivalent analyses by adopting a reduce-first parsing strategy.
 
 The matching entry test checks:

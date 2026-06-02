@@ -1,6 +1,6 @@
 /-
 # Allocutive Agreement and Honorifics: Crosslinguistic Data
-@cite{portner-pak-zanuttini-2019}
+[portner-pak-zanuttini-2019]
 
 Theory-neutral typological data on allocutive agreement (AA) — where verbs
 encode addressee features — and the morphosyntactic expression of honorifics.
@@ -52,7 +52,7 @@ structure AllocDatum where
   deriving Repr, DecidableEq
 
 -- ============================================================================
--- Crosslinguistic Data (@cite{alok-bhalla-2026}, Table 1)
+-- Crosslinguistic Data ([alok-bhalla-2026], Table 1)
 -- ============================================================================
 
 def basque : AllocDatum :=

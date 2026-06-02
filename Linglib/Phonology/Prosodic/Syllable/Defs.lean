@@ -11,17 +11,17 @@ Sequencing Principle, moraic weight, and OT markedness constraints.
 
 The sonority hierarchy is represented as an abstract ordered type
 (`SonorityRank`) rather than being defined by articulatory features.
-Following @cite{berent-2026}, the synchronic grammar operates on the
+Following [berent-2026], the synchronic grammar operates on the
 ordering alone — the correlation with phonetic features ([±sonorant],
 [±approximant], etc.) is a diachronic/evolutionary fact, not a
 grammatical primitive. The grounding function `sonorityOf` maps
 segments to ranks via their features, but the SSP and markedness
 constraints see only `SonorityRank`.
 
-Source: @cite{goldsmith-2011} "The Syllable" in *The Handbook of Phonological
+Source: [goldsmith-2011] "The Syllable" in *The Handbook of Phonological
 Theory* (Ch 6, pp. 164–196). Cross-referenced with Hayes §4.6 and §15.
 
-@cite{goldsmith-2011} @cite{berent-2026}
+[goldsmith-2011] [berent-2026]
 -/
 
 namespace Phonology.Syllable
@@ -34,7 +34,7 @@ open Phonology (Segment Feature)
 
 /-- The abstract sonority hierarchy: what the synchronic grammar operates on.
 
-    Following @cite{berent-2026}, phonological constraints on syllable
+    Following [berent-2026], phonological constraints on syllable
     structure are *substance-free* — the grammar sees an ordered set of
     sonority categories, not the articulatory features that happen to
     correlate with them. The correlation is diachronic (shaped by cultural
@@ -50,7 +50,7 @@ open Phonology (Segment Feature)
     |  4   | Glide     |
     |  5   | Vowel     |
 
-    The 6 levels follow @cite{clements-1990}'s refinement of the basic
+    The 6 levels follow [clements-1990]'s refinement of the basic
     5-class hierarchy (splitting obstruents by [±continuant]). See
     `NatClass.parkerSonority` for the finer 8-level Parker scale. -/
 inductive SonorityRank where
@@ -85,9 +85,9 @@ end SonorityRank
 /-- Substance-based grounding: classify a segment into the sonority
     hierarchy by its phonetic features.
 
-    Following @cite{hayes-2009}, the hierarchy is decomposed by four
+    Following [hayes-2009], the hierarchy is decomposed by four
     features ([±sonorant] > [±approximant] > [±consonantal] > [±syllabic]),
-    with @cite{clements-1990}'s refinement splitting obstruents by
+    with [clements-1990]'s refinement splitting obstruents by
     [±continuant].
 
     This function bridges phonetic substance and the abstract `SonorityRank`
@@ -95,7 +95,7 @@ end SonorityRank
     directly — they do not inspect articulatory features. -/
 def sonorityOf (s : Segment) : SonorityRank :=
   if s.HasValue .sonorant false then
-    -- Obstruent: stop vs fricative (@cite{clements-1990} refinement)
+    -- Obstruent: stop vs fricative ([clements-1990] refinement)
     if s.HasValue .continuant true then .fricative else .stop
   else if s.HasValue .approximant false then
     -- Nasal ([+sonorant, −approximant])
@@ -201,7 +201,7 @@ abbrev superheavy : SyllWeight := ⟨3⟩
 end SyllWeight
 
 /-- Mora count. `codaMoraic = true` means coda consonants contribute weight
-    (the "Weight-by-Position" parameter of @cite{hayes-1989}). -/
+    (the "Weight-by-Position" parameter of [hayes-1989]). -/
 def Syllable.moraCount (σ : Syllable) (codaMoraic : Bool := true) : Nat :=
   σ.nucleus.length + if codaMoraic then σ.coda.length else 0
 

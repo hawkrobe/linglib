@@ -3,7 +3,7 @@ import Linglib.Typology.Phonology
 
 /-!
 # Hyman 2006: Word-prosodic typology
-@cite{hyman-2006}
+[hyman-2006]
 
 Hyman, L. M. (2006). Word-prosodic typology. *Phonology* 23, 225--257.
 
@@ -36,10 +36,10 @@ Hyman, L. M. (2006). Word-prosodic typology. *Phonology* 23, 225--257.
 7. **OBLHEAD as the deepest cut**: The most significant typological cut is between
    systems satisfying OBLHEAD and those that do not.
 
-## Connection to @cite{lionnet-2025}
+## Connection to [lionnet-2025]
 
 Hyman's tone prototype encompasses all systems where pitch enters lexical
-realization. @cite{lionnet-2025} shows this category splits further into
+realization. [lionnet-2025] shows this category splits further into
 **tone-based** (paradigmatic H/L: Yoruba, Mandarin) and **register-based**
 (syntagmatic downstep: Drubea, Numèè). This enrichment is orthogonal to
 Hyman's SA dimension.
@@ -361,7 +361,7 @@ theorem french_wals_mismatch :
     definition (3): "an indication of pitch enters into the lexical
     realisation of at least some morphemes."
 
-    @cite{lionnet-2025} enriches Hyman's tone prototype by splitting it
+    [lionnet-2025] enriches Hyman's tone prototype by splitting it
     into tone-based (paradigmatic H/L) and register-based (syntagmatic
     h/l). Both sub-types satisfy definition (3). -/
 def isTonalUnderHyman (wpt : WordProsodicType) : Bool :=
@@ -380,7 +380,7 @@ theorem register_based_is_tonal :
 theorem stress_accent_is_not_tonal :
     isTonalUnderHyman .stressAccent = false := rfl
 
-/-- All four `WordProsodicType` values from @cite{lionnet-2025} map
+/-- All four `WordProsodicType` values from [lionnet-2025] map
     consistently to Hyman's binary +/−tone. -/
 theorem all_wpt_classified (wpt : WordProsodicType) :
     isTonalUnderHyman wpt = true ∨ isTonalUnderHyman wpt = false := by
@@ -390,7 +390,7 @@ theorem all_wpt_classified (wpt : WordProsodicType) :
     tone-based vs. register-based distinction. Both Yoruba (tone-based)
     and Drubea (register-based) would be classified as "simple" or
     "complex" in WALS, losing the syntagmatic vs. paradigmatic
-    distinction that @cite{lionnet-2025} identifies. -/
+    distinction that [lionnet-2025] identifies. -/
 theorem wals_coarser_than_lionnet :
     wals13AToHasTone .simple = true ∧
     wals13AToHasTone .complex = true ∧
@@ -403,7 +403,7 @@ theorem wals_coarser_than_lionnet :
 /-- Drubea's word-prosodic profile under Hyman's framework: +T, −SA.
 
     +T: register features (downstep) enter lexical realization — the
-    minimal pairs in @cite{lionnet-2025} ex. 4 demonstrate this directly.
+    minimal pairs in [lionnet-2025] ex. 4 demonstrate this directly.
     −SA: no obligatory metrical head; the prosodic system is purely
     register-based with no stress accent.
 
@@ -429,7 +429,7 @@ theorem drubea_no_stress :
 -- ============================================================================
 
 /-- Hyman's stress culminativity (5b) and Drubea's register culminativity
-    (@cite{lionnet-2025}) share the name but apply to different domains:
+    ([lionnet-2025]) share the name but apply to different domains:
 
     - **Stress culminativity** (Hyman): at most one primary stress per word.
       Definitional for SA systems. Violated in some alleged PA systems
@@ -460,7 +460,7 @@ theorem culminativity_parallel_but_distinct :
     while having both dominant and recessive morphemes. Japanese exemplifies
     this: pitch accent is culminative (one accent per AP), yet deaccenting
     suffixes like *-teki* are dominant while *-si* 'Mr.' is recessive
-    (@cite{kawahara-2015}). -/
+    ([kawahara-2015]). -/
 theorem culminativity_orthogonal_to_dominance :
     CulminativityDomain.stressPerWord ≠ CulminativityDomain.registerPerStem →
     True := λ _ => trivial

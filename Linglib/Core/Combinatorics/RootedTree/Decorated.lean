@@ -23,7 +23,7 @@ is the canonical destination.
 
 ---
 
-# Decorated Binary Rooted Trees @cite{marcolli-chomsky-berwick-2025} @cite{foissy-2002}
+# Decorated Binary Rooted Trees [marcolli-chomsky-berwick-2025] [foissy-2002]
 
 The decorated binary rooted tree carrier of the Connes-Kreimer-style
 Hopf algebra of (binary nonplanar) decorated forests, parameterized
@@ -40,7 +40,7 @@ over a leaf type `α : Type*`.
 Mathematically this is the free term algebra over the signature
 `{leaf : α → 1, trace : 1 → 1, node : 1 × 1 → 1}`. The carrier shape
 is the standard one for *decorated* Connes-Kreimer Hopf algebras
-(cf. @cite{foissy-2002} on planar decorated rooted-tree Hopf algebras
+(cf. [foissy-2002] on planar decorated rooted-tree Hopf algebras
 H^D_{P,R} — generalizing the non-planar Connes-Kreimer H^D_R). Note:
 M-C-B themselves do not cite Foissy directly; they appeal to the
 Connes-Kreimer-Feynman-graph proof for coassociativity (book p. 38
@@ -52,7 +52,7 @@ case. The `Mul (DecoratedTree α)` instance (via `node`) recovers
 
 ## Two faithfulness gaps re. M-C-B Definition 1.1.1
 
-@cite{marcolli-chomsky-berwick-2025} Definition 1.1.1 says the
+[marcolli-chomsky-berwick-2025] Definition 1.1.1 says the
 abstract syntactic-object set is a free non-associative *commutative*
 magma `Magma_{na,c}(SO_0, M)`. mathlib's `FreeMagma α` is the
 non-commutative version. Two distinct gaps relative to mathlib
@@ -83,12 +83,12 @@ the comm-quotient + singleton-collapse are wired in (Stage 4a/4b per
 
 ## Trace constructor and self-reference
 
-Per @cite{marcolli-chomsky-berwick-2025} Definition 1.2.4, the
+Per [marcolli-chomsky-berwick-2025] Definition 1.2.4, the
 contraction quotient T/^c T_v carries a trace label *T_v* that holds
 the contracted subtree as data. The recursive `.trace t` constructor
 here is retained for **CI-side / FormCopy** consumers — operations
 that need to inspect the original moved subtree at the
-Conceptual-Intensional interface. Per @cite{marcolli-skigin-2025}
+Conceptual-Intensional interface. Per [marcolli-skigin-2025]
 §10.1 (which clarifies and disambiguates the brief discussion in
 M-C-B's §1.3), the recursive payload is **not** required for the
 bialgebra structure itself: M-S Lemma 10.4 proves coassociativity of
@@ -220,9 +220,9 @@ end DecoratedTree
 
 The `.trace t` constructor of `DecoratedTree α` carries the contracted
 subtree `t` as metadata, motivated by the linguistic FormCopy operation
-(@cite{marcolli-chomsky-berwick-2025} Definition 1.2.4). However, the
+([marcolli-chomsky-berwick-2025] Definition 1.2.4). However, the
 Hopf algebra coassociativity proof in the M-C-B book Lemma 1.2.10 appeals
-to @cite{connes-kreimer-1998} for the Feynman-graph CK Hopf algebra,
+to [connes-kreimer-1998] for the Feynman-graph CK Hopf algebra,
 where contraction markers carry no recursive payload. Treating `.trace t`
 literally as a data-carrying basis element of `Hc R α` would break
 coassociativity: iterated coproducts produce `.trace _` markers whose
@@ -231,7 +231,7 @@ underlying combinatorial "3-coloring" structures match. (A concrete
 counterexample for `T = .node l (.node a b)` is verified kernel-checked
 in `scratch/SlotThreeMismatch.lean`.)
 
-@cite{marcolli-skigin-2025} §10.1 ("Labels of traces of movement")
+[marcolli-skigin-2025] §10.1 ("Labels of traces of movement")
 explicitly addresses this. M-S frame their §10 as clarifying and
 disambiguating M-C-B's §1.3, observing: the trace label "in fact does
 not have to retain the full structure of T_v as a syntactic object …
@@ -280,7 +280,7 @@ level for linguistic operations (FormCopy, cancellation-of-deeper-copies). -/
     in `β`. Used as the basis-key type of `Hc R α` (with `β = Unit`).
     The polymorphic `β` accommodates richer linguistic-layer projections
     (e.g., `β = α` plus a head function realizes
-    @cite{marcolli-skigin-2025} Definition 10.3, modulo the
+    [marcolli-skigin-2025] Definition 10.3, modulo the
     head-function-transparency requirement on the extractor). -/
 inductive TraceTree (α : Type*) (β : Type*) where
   | leaf  (a : α) : TraceTree α β
@@ -334,7 +334,7 @@ theorem size_pos {α β : Type*} (t : TraceTree α β) : 0 < t.size := by
   cases t <;> simp only [size] <;> omega
 
 /-- Vertex count excluding `.trace` markers. The trace-aware analog of
-    `size`. Used by Δ^c counting because per @cite{marcolli-chomsky-berwick-2025}
+    `size`. Used by Δ^c counting because per [marcolli-chomsky-berwick-2025]
     Lemma 1.6.3 eq. 1.6.8 (book p. 65), trace markers in T/^c T_v are NOT
     counted as accessible terms ("cancellation of the deeper copy"). -/
 def nonTraceSize {α β : Type*} : TraceTree α β → Nat
@@ -360,7 +360,7 @@ theorem nonTraceSize_le_size {α β : Type*} (t : TraceTree α β) :
 
 /-- Leaf count of a `TraceTree`. The Hopf-algebra grading on
     `Hc R α = AddMonoidAlgebra R (TraceForest α Unit)` per
-    @cite{marcolli-chomsky-berwick-2025} Definition 1.6.2 (book p. 64):
+    [marcolli-chomsky-berwick-2025] Definition 1.6.2 (book p. 64):
     `deg(a) = #L(T_a)`. Both `.leaf` and `.trace` count as 1 (a trace marker
     occupies a leaf position in the tree); `.node l r` sums children. Same
     shape as `DecoratedTree.leafCount`. -/
@@ -471,7 +471,7 @@ end DecoratedTree
 
 A forest is a multiset of decorated trees. Disjoint union ⊔
 corresponds to `· + ·` on multisets (commutative, ∅ = 0).
-@cite{marcolli-chomsky-berwick-2025} Definition 1.2.1. -/
+[marcolli-chomsky-berwick-2025] Definition 1.2.1. -/
 
 /-- A decorated forest: a multiset of decorated trees. -/
 abbrev Forest (α : Type*) := Multiset (DecoratedTree α)
@@ -482,7 +482,7 @@ abbrev TraceForest (α : Type*) (β : Type*) := Multiset (TraceTree α β)
 
 /-- The total leaf count of a `TraceForest`: sum of `TraceTree.leafCount`
     over its components. The Hopf-algebra grading on `Hc R α` per
-    @cite{marcolli-chomsky-berwick-2025} Definition 1.6.2 (book p. 64):
+    [marcolli-chomsky-berwick-2025] Definition 1.6.2 (book p. 64):
     `deg(F) = #L(F)`. M-C-B's degree-conservation observation (book p. 64,
     paragraph after Def 1.6.2): `deg(F)` is conserved across any Merge
     operation since no lexical items are removed. -/
@@ -578,7 +578,7 @@ def Forest.anon {α β : Type*} (h : DecoratedTree α → β) (F : Forest α) :
   Multiset.map_cons _ _ _
 
 /-! ## §6: Forest size measures (b₀, α, σ)
-@cite{marcolli-chomsky-berwick-2025} §1.2 + §1.6.1
+[marcolli-chomsky-berwick-2025] §1.2 + §1.6.1
 
 Three counting functions on a `TraceForest α β`, parallel to `degForest`
 and `sizeForest` above:
@@ -701,7 +701,7 @@ theorem TraceForest.sigma_merge_singleton {α β : Type*} (T_v T_w : TraceTree �
   omega
 
 /-! ## §7: Δ^c-aware forest measures (αᶜ, σᶜ)
-@cite{marcolli-chomsky-berwick-2025} §1.6.2
+[marcolli-chomsky-berwick-2025] §1.6.2
 
 Trace-aware analogs of `accCount` and `sigma` for the Δ^c counting (MCB
 Lemma 1.6.3 eq. 1.6.8 and 1.6.10). These count trace markers as zero

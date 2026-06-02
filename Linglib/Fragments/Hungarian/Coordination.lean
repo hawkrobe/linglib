@@ -2,7 +2,7 @@ import Linglib.Features.Coordination
 
 /-!
 # Hungarian Coordination Morphemes
-@cite{szabolcsi-2015} @cite{bill-etal-2025}
+[szabolcsi-2015] [bill-etal-2025]
 
 Hungarian is one of two languages in our sample (with Georgian) that attests
 all three M&S conjunction strategies: J-only, MU-only, and J-MU.
@@ -14,7 +14,7 @@ all three M&S conjunction strategies: J-only, MU-only, and J-MU.
 The MU particle *is* is also Hungarian's additive/focus particle ("also/too"),
 confirming Mitrovic & Sauerland's prediction that MU = additive particle.
 
-@cite{bill-etal-2025} found no significant sentence-type effect on comprehension
+[bill-etal-2025] found no significant sentence-type effect on comprehension
 in Hungarian children (possibly ceiling effects).
 
 Connection to Typology.lean: `Haspelmath2007.hungarian`
@@ -66,7 +66,7 @@ def allEntries : List CoordEntry :=
 
 /-- All Hungarian coordination morphemes are free (no bound clitics).
     This contrasts with Georgian, where MU (-c) is bound.
-    @cite{bill-etal-2025} speculate this difference may explain why
+    [bill-etal-2025] speculate this difference may explain why
     Georgian children found MU harder than Hungarian children did. -/
 theorem all_free :
     allEntries.all (·.boundness == .free) = true := by

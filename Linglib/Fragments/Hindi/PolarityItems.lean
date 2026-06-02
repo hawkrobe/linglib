@@ -2,7 +2,7 @@ import Linglib.Typology.PolarityItem
 
 /-!
 # Hindi Polarity-Sensitive Items
-@cite{haspelmath-1997}
+[haspelmath-1997]
 
 Hindi indefinite pronoun polarity items, typed by the categories from
 `Typology.PolarityItem`.
@@ -38,7 +38,7 @@ def koiiNahiin : PolarityItemEntry :=
 
 /-- *koii bhii* — Free choice item.
     koii + bhii (even/also): 'koii bhii yah kar saktaa hai'
-    (anyone can do this). @cite{lahiri-1998} -/
+    (anyone can do this). [lahiri-1998] -/
 def koiiBhii : PolarityItemEntry :=
   { form := "koii bhii"
   , polarityType := .fci

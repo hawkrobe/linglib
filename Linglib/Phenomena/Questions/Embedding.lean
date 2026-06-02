@@ -3,17 +3,17 @@
 
 
 Empirical data on which predicates embed which types of interrogative clauses,
-following @cite{dayal-2025}. The key contrast is between subordination (standard
+following [dayal-2025]. The key contrast is between subordination (standard
 embedding), quasi-subordination (embedded inversion + matrix intonation), and
 quotation.
 
-## Core observations (@cite{dayal-2025}: §§1–3)
+## Core observations ([dayal-2025]: §§1–3)
 
 1. Rogative predicates (wonder, ask, investigate) embed interrogatives;
    responsive predicates (know) embed both declaratives and interrogatives
 2. Only a subset of rogatives allow embedded inversion (quasi-subordination)
 3. Responsive predicates allow quasi-subordination only when negated or questioned
-   ("shiftiness", @cite{mccloskey-2006})
+   ("shiftiness", [mccloskey-2006])
 
 -/
 
@@ -77,14 +77,14 @@ def know_d : EmbeddingDatum :=
   , quotation := false, embedsDeclarative := true }
 
 /-- Predicate of Relevance: responsive but resists question-to-proposition
-reduction (@cite{elliott-etal-2017}). The reduction-resistance is a separate
+reduction ([elliott-etal-2017]). The reduction-resistance is a separate
 property — see `Elliott2017`. -/
 def care_d : EmbeddingDatum :=
   { verb := "care"
   , subordination := true, quasiSubordination := false
   , quotation := false, embedsDeclarative := true }
 
-/-- Predicate of Relevance (@cite{elliott-etal-2017}). -/
+/-- Predicate of Relevance ([elliott-etal-2017]). -/
 def matter_d : EmbeddingDatum :=
   { verb := "matter"
   , subordination := true, quasiSubordination := false
@@ -104,7 +104,7 @@ def allEmbeddingData : List EmbeddingDatum :=
 -- Key generalizations
 -- ============================================================================
 
-/-- Quasi-subordination implies subordination (@cite{dayal-2025}: (20)). -/
+/-- Quasi-subordination implies subordination ([dayal-2025]: (20)). -/
 theorem quasi_sub_implies_sub :
     ∀ d ∈ allEmbeddingData,
       d.quasiSubordination = true → d.subordination = true := by
@@ -113,7 +113,7 @@ theorem quasi_sub_implies_sub :
   rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
     simp_all [investigate_d, depend_on_d, wonder_d, ask_d, know_d, care_d, matter_d, believe_d]
 
-/-- Quotation implies quasi-subordination (@cite{dayal-2025}: (20)). -/
+/-- Quotation implies quasi-subordination ([dayal-2025]: (20)). -/
 theorem quotation_implies_quasi_sub :
     ∀ d ∈ allEmbeddingData,
       d.quotation = true → d.quasiSubordination = true := by
@@ -123,7 +123,7 @@ theorem quotation_implies_quasi_sub :
     simp_all [investigate_d, depend_on_d, wonder_d, ask_d, know_d, care_d, matter_d, believe_d]
 
 -- ============================================================================
--- Shiftiness data (@cite{mccloskey-2006}, @cite{dayal-2025}: §3.2)
+-- Shiftiness data ([mccloskey-2006], [dayal-2025]: §3.2)
 -- ============================================================================
 
 /-- Context-dependent quasi-subordination judgment. -/

@@ -3,11 +3,11 @@
 
 
 Empirical data on the discourse particle *just* and its contrast with *only*,
-following @cite{deo-thomas-2025}. *Just* has at least 7 distinct interpretive
+following [deo-thomas-2025]. *Just* has at least 7 distinct interpretive
 "flavors" that emerge from context, but only the complement-exclusion and
 rank-order uses are shared with *only*.
 
-## Core observations (@cite{deo-thomas-2025}: §2.8)
+## Core observations ([deo-thomas-2025]: §2.8)
 
 1. **No commonly shared CQ**: *just* does not require the CQ to be shared
    between interlocutors (unlike standard analyses of *only*)
@@ -34,7 +34,7 @@ namespace Phenomena.Focus.Exclusives
 -- Flavors of *just*
 -- ============================================================================
 
-/-- The interpretive flavors of *just* (@cite{deo-thomas-2025}: §2).
+/-- The interpretive flavors of *just* ([deo-thomas-2025]: §2).
     Nine constructors covering the paper's 7 major categories, with
     precisifying split into equality/proximity (§2.3.1-2) and complement
     exclusion separated from rank order (§2.1). -/
@@ -51,7 +51,7 @@ inductive JustFlavor where
   deriving Repr, DecidableEq
 
 /-- Why the widest answerable construal is optimal at context.
-    Corresponds to @cite{deo-thomas-2025}). -/
+    Corresponds to [deo-thomas-2025]). -/
 inductive ContextType where
   | answerable  -- (37a): widest construal is answerable (Quality + Relevance)
   | qualityFail -- (37b): wider construals fail Quality (speaker lacks evidence)

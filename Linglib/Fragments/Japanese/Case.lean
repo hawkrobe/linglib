@@ -1,10 +1,10 @@
 import Linglib.Features.Case
 import Linglib.Features.Case
 /-!
-# Japanese Case Inventory @cite{blake-1994} @cite{tsujimura-2014} @cite{sadakane-koizumi-1995} @cite{kuroda-1972} @cite{kuno-1987}
+# Japanese Case Inventory [blake-1994] [tsujimura-2014] [sadakane-koizumi-1995] [kuroda-1972] [kuno-1987]
 
 Japanese marks grammatical and semantic relations on noun phrases with
-postpositional morphemes. Following @cite{tsujimura-2014} (ch. 4 §§1.5–1.6,
+postpositional morphemes. Following [tsujimura-2014] (ch. 4 §§1.5–1.6,
 pp. 133–137), those morphemes split into two morphosyntactic categories:
 
 - **Case particles** (Tsujimura's narrow class): *-ga* (NOM), *-o* (ACC),
@@ -21,7 +21,7 @@ diagnostic; the two enumerated lists (`caseParticles`, `postpositions`)
 realize Tsujimura's classification, with consistency theorems forcing the
 two encodings to agree. Both classes contribute to the language's
 `Features.Case` inventory under the UD/Blake typological framing this library
-uses (@cite{blake-1994} subsumes the postposition-marked roles
+uses ([blake-1994] subsumes the postposition-marked roles
 LOC/ALL/ABL/COM/TER/INST under the case hierarchy alongside the case-
 particle-marked roles NOM/ACC/DAT/GEN).
 
@@ -30,10 +30,10 @@ substantive properties (Blake-rank coverage, polysemy overlap).
 
 ## Theoretical commitments
 
-This Fragment adopts @cite{tsujimura-2014}'s clean case-particle vs.
+This Fragment adopts [tsujimura-2014]'s clean case-particle vs.
 postposition partition (the diagnostic is omissibility in casual speech;
 see `omissibleInCasual` field below) AND treats each particle as a single
-lexical entry. @cite{sadakane-koizumi-1995} (*Linguistics* 33(1):5–33)
+lexical entry. [sadakane-koizumi-1995] (*Linguistics* 33(1):5–33)
 agree on the binary case-particle/postposition dichotomy at the schema
 level (they explicitly defend Miyagawa 1989 / Kuroda 1965), but argue
 the apparent ambiguity of *-ni* dissolves into HOMOPHONY: there are four
@@ -59,9 +59,9 @@ the four-way refinement knows where to find it.
 ## Scope
 
 This Fragment treats *-ga* as `.nom`, but that framing is a deliberate
-simplification. The Kuroda–Kuno tradition (@cite{kuroda-1972} on
-thetic/categorical judgements; @cite{kuno-1987} on functional syntax;
-discussed by @cite{tsujimura-2014} ch. 6 §4.2.1, *Wa* vs. *Ga*; and
+simplification. The Kuroda–Kuno tradition ([kuroda-1972] on
+thetic/categorical judgements; [kuno-1987] on functional syntax;
+discussed by [tsujimura-2014] ch. 6 §4.2.1, *Wa* vs. *Ga*; and
 successors — Heycock, Tomioka — not yet in the bib) treats *-ga* as
 ambiguous between a neutral-description marker and an exhaustive-
 listing/focus marker, with *-wa* (intentionally excluded from this Fragment
@@ -74,24 +74,24 @@ Other phenomena out of scope at the case-marking layer:
   wakaru* 'Taro understands English'). The flat inventory has both `.nom`
   and `.dat`, but does not predict which verbs license dative subjects.
 - *Ga/no* conversion in relative clauses (*Tarō-no kaita hon* 'the book Taro
-  wrote'); see @cite{tsujimura-2014} ch. 5 §6.1.
+  wrote'); see [tsujimura-2014] ch. 5 §6.1.
 - *O*-causatives vs. *ni*-causatives (the syntactic alternation discussed
-  in @cite{tsujimura-2014} ch. 5 §5.1). The Fragment records *-ni* as `.dat`
+  in [tsujimura-2014] ch. 5 §5.1). The Fragment records *-ni* as `.dat`
   here; the syntax of causative case assignment lives elsewhere.
-- The Double-*o* Constraint (Harada 1973, treated in @cite{tsujimura-2014}
+- The Double-*o* Constraint (Harada 1973, treated in [tsujimura-2014]
   ch. 5 §5.2): a categorical syntactic constraint barring two *-o*-marked
   NPs in a clause. A natural future `Studies/Harada1973.lean`
   study file would import the Fragment to formalize the constraint's
   empirical effects.
 - Case-particle and postposition stacking (*Tarō-ni-no tegami* 'a letter to
   Taro'; *koko-made-ga omoshiroi* 'up to this point is interesting',
-  @cite{tsujimura-2014}, p. 137, ex. 30).
+  [tsujimura-2014], p. 137, ex. 30).
 
 The polysemy of *-ni* (DAT/LOC/ALL/TEM) and *-de* (LOC/INST) is recorded
 in the per-marker `cases` field below — those polysemy claims are
 auditable Lean data, not prose-only assertions, and are stated as theorems
 in §2 (e.g. `ni_de_share_loc`, `ni_e_share_all`). Per-particle citations
-identify which uses are directly grounded in @cite{tsujimura-2014} vs.
+identify which uses are directly grounded in [tsujimura-2014] vs.
 which are standard descriptive consensus from other sources (Shibatani
 1990, *The Languages of Japan*, CUP — not yet in the linglib bib).
 -/
@@ -148,17 +148,17 @@ def no_ : CaseMarker :=
     "primarily associated with verbs of giving, and together with a noun, it
     implies the recipient"). Polysemous along three further axes:
 
-    * **Allative** (motion-toward, `.all`): @cite{tsujimura-2014} p. 374
+    * **Allative** (motion-toward, `.all`): [tsujimura-2014] p. 374
       ex. 209a, *Satoko-ga kooen-ni aruita* 'Satoko walked to the park',
       in the lexicalization-pattern (Talmy) discussion. Overlaps with the
       postposition *-e*.
-    * **Temporal** (`.Tem`): @cite{tsujimura-2014} p. 129 ex. 8a,
+    * **Temporal** (`.Tem`): [tsujimura-2014] p. 129 ex. 8a,
       *maiasa goji-ni oki-te* 'every morning at 5 o'clock get-up'; p. 286
       ex. 164 *2008-nen-ni toosen-sita* '(was) elected in 2008'.
     * **Locative-of-existence** (`.loc`, *Tōkyō-ni iru* 'be in Tokyo'):
       standard descriptive claim (any Japanese reference grammar; not
       foregrounded in Tsujimura's case-particle section). The DAT–LOC–ALL
-      clustering is a cross-linguistically common polysemy; @cite{blake-1994}
+      clustering is a cross-linguistically common polysemy; [blake-1994]
       discusses the ALL → DAT extension as a recurrent grammaticalization
       pathway. -/
 def ni : CaseMarker :=
@@ -208,7 +208,7 @@ def made : CaseMarker :=
 
 /-- *-yori* — literary/formal ablative; in modern colloquial Japanese
     primarily marks the standard of comparison ('than X'; cf.
-    @cite{tsujimura-2014} p. 132, ex. 19d: *Hanako-yori zutto haya-ku*
+    [tsujimura-2014] p. 132, ex. 19d: *Hanako-yori zutto haya-ku*
     "a lot earlier than Hanako"). Only the case-marking ABL function is
     recorded here; the comparative-standard reading is out of scope at the
     case layer. -/

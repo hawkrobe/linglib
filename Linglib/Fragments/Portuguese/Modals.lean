@@ -1,7 +1,7 @@
 import Linglib.Semantics.Modality.ModalTypes
 
 /-!
-# Portuguese Modal Verb Entries @cite{ferreira-2023}
+# Portuguese Modal Verb Entries [ferreira-2023]
 
 Portuguese has a tripartite modal system with lexicalized weak necessity,
 unlike Spanish (where cognate *deber* is strong necessity) or English
@@ -59,7 +59,7 @@ def podia : ModalItem where
 
 /-- *devia* 'ought (counterfactual)' — X-marked weak necessity.
     Signals suspension of evidence against the prejacent
-    (@cite{ferreira-2023}, §3.2). -/
+    ([ferreira-2023], §3.2). -/
 def devia : ModalItem where
   form := "devia"
   meaning := cp [.weakNecessity] allFlavors
@@ -111,7 +111,7 @@ theorem xMarking_preserves_pos_force :
 /-! ## Cross-linguistic contrast: Portuguese vs Spanish -/
 
 /-- Portuguese *deve* is weak necessity; Spanish cognate *deber* is strong.
-    This is the key typological observation of @cite{ferreira-2023} §2:
+    This is the key typological observation of [ferreira-2023] §2:
     despite shared etymology, the languages diverged in modal force. -/
 theorem portuguese_dever_weaker_than_spanish :
     ModalForce.weakNecessity.atLeastAsStrong .necessity = false := rfl

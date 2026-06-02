@@ -3,7 +3,7 @@ import Linglib.Semantics.ContentLayer
 
 /-!
 # Van der Sandt & Maier (2003) — Denials in Discourse
-@cite{van-der-sandt-maier-2003}
+[van-der-sandt-maier-2003]
 
 Denials in Discourse. Michigan Linguistics and Philosophy Workshop, 2003.
 
@@ -59,7 +59,7 @@ open Phenomena.Negation.Denial
 
 /-! ### Layered DRT (LDRT) substrate
 
-@cite{van-der-sandt-maier-2003} extend DRT with content layers: each condition
+[van-der-sandt-maier-2003] extend DRT with content layers: each condition
 carries a label (`pr`, `fr`, `imp`) marking its discourse role. -/
 
 /-- A condition formula. Opaque atoms (`Nat`-indexed predicate over `Nat`-indexed
@@ -133,7 +133,7 @@ theorem denial_nonmonotonic (k : LDRS) (offLayers : List ContentLayer) :
 
 /-! ### Directed reverse anaphora (RA*)
 
-@cite{van-der-sandt-maier-2003}: given the offensive layers (computed by
+[van-der-sandt-maier-2003]: given the offensive layers (computed by
 `offensiveLayers`), RA* partitions the conditions — surviving conditions remain in
 the main DRS, offensive conditions are moved under a single negation. -/
 
@@ -360,7 +360,7 @@ theorem lady_off_agrees_with_datum :
 
 /-! ### §6. Denial ≠ negation (§2.1)
 
-@cite{van-der-sandt-maier-2003} §2.1: denial and negation are orthogonal. Denial
+[van-der-sandt-maier-2003] §2.1: denial and negation are orthogonal. Denial
 is a discourse operation (non-monotonic correction); negation is a semantic
 operator. A denial can use a positive sentence, and a negative sentence can be a
 plain assertion. -/

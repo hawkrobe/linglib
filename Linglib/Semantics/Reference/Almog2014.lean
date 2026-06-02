@@ -6,9 +6,9 @@ import Linglib.Semantics.Reference.Kripke
 import Linglib.Semantics.Attitudes.Doxastic
 
 /-!
-# @cite{almog-2014}: Referential Mechanics — Synthesis
+# [almog-2014]: Referential Mechanics — Synthesis
 
-The central thesis of @cite{almog-2014}: the three mechanisms of direct reference
+The central thesis of [almog-2014]: the three mechanisms of direct reference
 — designation, singular propositions, and referential use — are logically
 independent. An expression can exhibit any subset of the three.
 
@@ -17,7 +17,7 @@ proves pairwise independence of the three dimensions, chains the key
 argumentation from across the Reference module, and bridges the reference
 theory to the rest of Linglib.
 
-## Canonical Profiles (from @cite{almog-2014})
+## Canonical Profiles (from [almog-2014])
 
 | Expression         | Designation | Singular Prop | Referential Use |
 |--------------------|-------------|---------------|-----------------|
@@ -42,7 +42,7 @@ The three dimensions are pairwise independent:
 
 ## End-to-End Argumentation
 
-The central chain from @cite{almog-2014} Ch 1–2:
+The central chain from [almog-2014] Ch 1–2:
 1. dthat is rigid (KaplanLD.dthatW_isRigid)
 2. dthat is scope-inert (Kripke.rigid_iff_scope_invariant, forward direction)
 3. But dthat does NOT produce singular propositions (dthat_not_singular)
@@ -68,8 +68,8 @@ open Core.Intension (rigid IsRigid rigid_isRigid evalAt rigid_section
 
 /-- Proper name: designation + singularity, no referential use.
 
-"Aristotle" rigidly designates an individual (@cite{kripke-1980}) and expresses a
-singular proposition ⟨Aristotle, property⟩ (@cite{kaplan-1989}), but does not require
+"Aristotle" rigidly designates an individual ([kripke-1980]) and expresses a
+singular proposition ⟨Aristotle, property⟩ ([kaplan-1989]), but does not require
 the speaker to have a cognitive fix on any particular occasion. -/
 def nameProfile : ReferentialProfile := ⟨true, true, false⟩
 
@@ -280,7 +280,7 @@ theorem structured_content_distinguishes {W E : Type*} :
 /-- Proper names are directly referential: bridges the `Reference/Basic.lean`
 proper name definition through `IsDeJureRigid` to the broader system.
 
-This is the formal content of @cite{kripke-1980}'s thesis as formalized
+This is the formal content of [kripke-1980]'s thesis as formalized
 via designation mechanism. -/
 theorem properName_deJure {C W E : Type*} (e : E) :
     isDirectlyReferential (properName (C := C) (W := W) e).character :=
@@ -288,7 +288,7 @@ theorem properName_deJure {C W E : Type*} (e : E) :
 
 /-! ## Bridge: PLA and the Frege Puzzle
 
-@cite{dekker-2012}'s cover-relative belief framework (`Semantics.Dynamic.PLA`) gives a
+[dekker-2012]'s cover-relative belief framework (`Semantics.Dynamic.PLA`) gives a
 formal mechanism for Frege puzzles: two concepts can co-refer at the actual
 world but diverge in belief-accessible worlds. This is exactly the scenario
 where proper names have the same referent but different cognitive significance.
@@ -421,7 +421,7 @@ theorem dr_same_proposition {W E : Type*}
 
 /-! ## The Dual Semantic Function of Nominals (Ch 4, §4.1)
 
-extends @cite{donnellan-1966}'s referential/attributive
+extends [donnellan-1966]'s referential/attributive
 distinction beyond definite descriptions to ALL nominals. Every nominal
 — proper name, bare plural, Det+CN phrase — has two potential semantic
 functions: pre-nominal (reference already established) and nominal (the

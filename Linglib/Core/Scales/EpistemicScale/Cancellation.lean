@@ -25,7 +25,7 @@ completeness, no ℝ detour.
 
 ## Cancellation conditions for comparative probability
 
-@cite{kraft-pratt-seidenberg-1959}
+[kraft-pratt-seidenberg-1959]
 
 Scott's cancellation framework for representability of comparative probability orderings
 by finitely additive measures. A comparative probability ordering ≿ is representable

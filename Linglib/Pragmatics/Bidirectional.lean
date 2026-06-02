@@ -4,7 +4,7 @@ import Linglib.Core.Constraint.Superoptimal
 /-!
 # Bidirectional Optimality Theory
 
-@cite{blutner-2000} @cite{horn-1984} @cite{atlas-levinson-1981}
+[blutner-2000] [horn-1984] [atlas-levinson-1981]
 
 Bidirectional OT integrates production and comprehension optimality into
 a single framework. The key insight is that the Gricean maxims decompose
@@ -16,7 +16,7 @@ into two opposing optimization pressures:
   more economically by an alternative form. Corresponds to the first
   part of Grice's Quantity maxim ("be as informative as required") and
   the force of diversification / auditor's economy
-  (@cite{atlas-levinson-1981}, @cite{horn-1984}).
+  ([atlas-levinson-1981], [horn-1984]).
 
 - **I-principle** (comprehension optimality): for a given form A, the
   optimal meaning τ is the one that produces ⟨A, τ⟩ most harmonically.
@@ -24,14 +24,14 @@ into two opposing optimization pressures:
   reading. Corresponds to the second part of Grice's Quantity maxim
   ("do not make your contribution more informative than required"),
   Relation, Manner, and the force of unification / speaker's economy
-  (@cite{atlas-levinson-1981}, @cite{horn-1984}'s R-principle).
+  ([atlas-levinson-1981], [horn-1984]'s R-principle).
 
 These correspond to the speaker/hearer optimization layers in RSA
-(@cite{frank-goodman-2012}) and IBR (@cite{franke-2011}).
+([frank-goodman-2012]) and IBR ([franke-2011]).
 
 ## Strong vs Weak BiOT
 
-@cite{blutner-2000} defines two versions:
+[blutner-2000] defines two versions:
 
 - **Strong** (eq. 9): Q and I are independent — ⟨A, τ⟩ is optimal iff
   it survives BOTH Q and I evaluated against the full candidate set.
@@ -44,13 +44,13 @@ These correspond to the speaker/hearer optimization layers in RSA
   Substrate: `superoptimal` (Finset, computable) + `superoptimalSet`
   (Set-valued, anchored in mathlib's `OrderHom.gfp`).
 
-The weak version derives @cite{horn-1984}'s **division of pragmatic
+The weak version derives [horn-1984]'s **division of pragmatic
 labour**: unmarked forms pair with unmarked (stereotypical) meanings,
 and marked forms pair with marked (marked) meanings. The strong
 version incorrectly predicts that marked forms are blocked in ALL
 their interpretations.
 
-The structural meta-theorem `strong ⊂ weak` (@cite{blutner-2000} p. 12)
+The structural meta-theorem `strong ⊂ weak` ([blutner-2000] p. 12)
 lives in `Core/Constraint/Evaluation/Superoptimal.lean` as
 `isStrongOptimal_imp_mem_superoptimalSet` (Set-valued, coinductive
 proof against `OrderHom.gfp`) and its Finset corollary
@@ -95,7 +95,7 @@ open Core.Constraint.Evaluation
     `¬ Blocks` condition that defines `IsStrongOptimal` and (via the gfp)
     `superoptimalSet`. -/
 
-/-- **Q-principle** (production optimality, @cite{blutner-2000} eq. 9(Q)):
+/-- **Q-principle** (production optimality, [blutner-2000] eq. 9(Q)):
     ⟨A, τ⟩ satisfies Q iff no other pair with the same meaning τ
     but a different form A' is strictly more harmonic.
 
@@ -103,14 +103,14 @@ open Core.Constraint.Evaluation
     to express τ. If a better form A' existed, A would be blocked.
     This is the blocking mechanism — it suppresses interpretations
     that can be triggered more economically by an alternative form
-    (@cite{horn-1984}'s Q-based implicature). -/
+    ([horn-1984]'s Q-based implicature). -/
 def satisfiesQ {F M : Type} [DecidableEq F] [DecidableEq M]
     (gen : List (F × M)) (profile : F × M → List Nat)
     (p : F × M) : Bool :=
   gen.all fun q =>
     decide (q.2 = p.2 → q.1 ≠ p.1 → ¬LexLT (profile q) (profile p))
 
-/-- **I-principle** (comprehension optimality, @cite{blutner-2000} eq. 9(I)):
+/-- **I-principle** (comprehension optimality, [blutner-2000] eq. 9(I)):
     ⟨A, τ⟩ satisfies I iff no other pair with the same form A
     but a different meaning τ' is strictly more harmonic.
 
@@ -118,7 +118,7 @@ def satisfiesQ {F M : Type} [DecidableEq F] [DecidableEq M]
     interpretation of A. If a better meaning τ' existed, τ would
     be dispreferred. This is the interpretation mechanism — it
     selects the most coherent/stereotypical reading
-    (@cite{horn-1984}'s R-based inference). -/
+    ([horn-1984]'s R-based inference). -/
 def satisfiesI {F M : Type} [DecidableEq F] [DecidableEq M]
     (gen : List (F × M)) (profile : F × M → List Nat)
     (p : F × M) : Bool :=
@@ -129,10 +129,10 @@ def satisfiesI {F M : Type} [DecidableEq F] [DecidableEq M]
 -- § 2: Horn's Division of Pragmatic Labour
 -- ============================================================================
 
-/-! @cite{horn-1984}'s division of pragmatic labour: "unmarked forms tend
+/-! [horn-1984]'s division of pragmatic labour: "unmarked forms tend
     to be used for unmarked situations and marked forms for marked
     situations." This emerges naturally from weak BiOT but NOT from
-    strong BiOT. The example below formalizes @cite{blutner-2000}'s
+    strong BiOT. The example below formalizes [blutner-2000]'s
     tableau (15).
 
     Classic examples:
@@ -262,7 +262,7 @@ theorem total_blocking_weak_vs_strong :
 -- ============================================================================
 
 /-! The structural meta-theorem `strongOptimal pairs profile ⊆ superoptimal
-    pairs profile` (@cite{blutner-2000} p. 12) is proved coinductively in the
+    pairs profile` ([blutner-2000] p. 12) is proved coinductively in the
     substrate at `Core/Constraint/Evaluation/Superoptimal.lean` via
     `isStrongOptimal_imp_mem_superoptimalSet` (Set-valued, against mathlib's
     `OrderHom.gfp`) and `strongOptimal_subset_superoptimal` (Finset

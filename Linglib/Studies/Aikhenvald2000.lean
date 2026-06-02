@@ -13,7 +13,7 @@ import Linglib.Fragments.Japanese.Classifier
 
 /-!
 # Aikhenvald (2000): Classifiers — A Typology of Noun Categorization Devices
-@cite{aikhenvald-2000} @cite{greenberg-1972} @cite{dixon-1982}
+[aikhenvald-2000] [greenberg-1972] [dixon-1982]
 
 Aikhenvald, Alexandra Y. (2000). *Classifiers: A Typology of Noun
 Categorization Devices*. Oxford Studies in Typology and Linguistic Theory.
@@ -26,8 +26,8 @@ per-language data in `Fragments/{Lang}/ClassifierSystem.lean`.
 
 This file aggregates the 7 currently-formalized systems
 (French/Italian/Mandarin/Japanese/Xhosa/Shona/Swahili) and verifies
-typological properties from @cite{aikhenvald-2000} (Tables 10.17, 15.1,
-15.2) and @cite{greenberg-1972}'s classifier-number complementarity *over
+typological properties from [aikhenvald-2000] (Tables 10.17, 15.1,
+15.2) and [greenberg-1972]'s classifier-number complementarity *over
 that sample*. None of the theorems below are universals over the abstract
 `NounCategorizationSystem` type — they are sample-restricted empirical
 claims; adding a counterexample language to the sample is the right way to
@@ -108,7 +108,7 @@ theorem classifier_systems_have_default :
 -- §3: Aikhenvald Table 15.1 (sample-restricted)
 -- ============================================================================
 
-/-- @cite{aikhenvald-2000} Table 15.1, sample-restricted: classifier-type
+/-- [aikhenvald-2000] Table 15.1, sample-restricted: classifier-type
     systems lack agreement; noun-class systems have agreement. -/
 theorem sample_classifier_no_agreement_nounclass_agreement :
     (∀ s ∈ allSystems, isClassifierType s.classifierType = true → ¬ s.HasAgreement) ∧
@@ -122,7 +122,7 @@ theorem fr_mandarin_jp_agreement_split :
     ¬ Japanese.classifierSystem.HasAgreement := by decide
 
 /-- Numeral classifier systems have purely semantic assignment; the
-    noun-class system has mixed assignment (@cite{aikhenvald-2000} Table 15.2). -/
+    noun-class system has mixed assignment ([aikhenvald-2000] Table 15.2). -/
 theorem fr_mandarin_jp_assignment_split :
     Mandarin.classifierSystem.assignment = .semantic ∧
     Japanese.classifierSystem.assignment = .semantic ∧
@@ -143,7 +143,7 @@ theorem mandarin_japanese_have_animacy :
   refine ⟨?_, ?_⟩ <;> decide
 
 /-- Mandarin/Japanese classifier inventories exceed French's noun-class
-    inventory. @cite{aikhenvald-2000} Table 15.1 generalization. -/
+    inventory. [aikhenvald-2000] Table 15.1 generalization. -/
 theorem fr_inventory_smaller_than_clf_inventories :
     French.classifierSystem.inventorySize <
       Mandarin.classifierSystem.inventorySize ∧
@@ -172,7 +172,7 @@ theorem french_scope_agreement :
 -- §5: Interaction with grammatical categories (Aikhenvald Table 10.17)
 -- ============================================================================
 
-/-- @cite{aikhenvald-2000} Table 10.17: noun classes interact with more
+/-- [aikhenvald-2000] Table 10.17: noun classes interact with more
     grammatical categories than numeral classifiers. Verified against the
     framework-agnostic `interacts` table in `Typology.NounCategorization`. -/
 theorem noun_class_more_interactions :
@@ -185,10 +185,10 @@ theorem noun_class_more_interactions :
 -- §6: Greenberg's classifier-number complementarity (sample-restricted)
 -- ============================================================================
 
-/-- @cite{greenberg-1972}: numeral classifiers and obligatory number
+/-- [greenberg-1972]: numeral classifiers and obligatory number
     marking are in complementary distribution. Holds in the sample.
     Aikhenvald §15 endorses Greenberg's generalization;
-    @cite{little-moroney-royer-2022} §3.4 refines it (CLF-for-N languages
+    [little-moroney-royer-2022] §3.4 refines it (CLF-for-N languages
     obey it, CLF-for-NUM languages — Ch'ol, Mi'gmaq — falsify it). -/
 theorem sample_greenberg_complementarity :
     (∀ s ∈ allSystems, isClassifierType s.classifierType = true → ¬ s.HasObligatoryNumber) ∧
@@ -235,7 +235,7 @@ theorem xhosa_has_agreement :
     Xhosa.classifierSystem.HasAgreement := by decide
 
 /-- The three sampled Bantu languages have inventories in the
-    @cite{aikhenvald-2000} Table 15.1 noun-class range (≤ 20). -/
+    [aikhenvald-2000] Table 15.1 noun-class range (≤ 20). -/
 theorem sample_bantu_inventory_within_aikhenvald_range :
     Xhosa.classifierSystem.inventorySize ≤ 20 ∧
     Shona.classifierSystem.inventorySize ≤ 20 ∧
@@ -252,7 +252,7 @@ theorem bantu_have_prefix_realization :
 
 /-- Languages with non-obligatory classifier systems (per WALS Ch 55
     `optional`). Western Armenian is the worked example
-    (@cite{bale-khanjian-2014}). Kept *separate* from `allSystems` because
+    ([bale-khanjian-2014]). Kept *separate* from `allSystems` because
     the sample-restricted findings above are over obligatory systems —
     Armenian is precisely the kind of language those generalizations
     don't cover. -/

@@ -7,15 +7,15 @@ import Linglib.Core.NestedRestriction
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# @cite{tessler-goodman-2022}: Warm (for Winter)
-@cite{tessler-goodman-2022} @cite{lassiter-goodman-2017}
+# [tessler-goodman-2022]: Warm (for Winter)
+[tessler-goodman-2022] [lassiter-goodman-2017]
 
 Cognitive Science 46 (2022) e13095.
 
 ## Core Insight
 
 Comparison class inference uses the SAME uncertain threshold mechanism as
-adjective interpretation (@cite{lassiter-goodman-2017}). The listener jointly
+adjective interpretation ([lassiter-goodman-2017]). The listener jointly
 infers the degree x AND the comparison class c (Eq. 1):
 
     L₁(x, c | u, k) ∝ S₁(u | x, c) · P(x | k) · P(c | k)
@@ -23,7 +23,7 @@ infers the degree x AND the comparison class c (Eq. 1):
 The comparison class c determines L0's height prior: subordinate uses the
 kind's distribution (e.g., basketball players), superordinate uses the
 general population (people). The threshold θ is marginalized analytically
-following @cite{lassiter-goodman-2017}'s threshold RSA framework (the height priors are identical — see
+following [lassiter-goodman-2017]'s threshold RSA framework (the height priors are identical — see
 `personWeight_eq_lassiterGoodman` and `basketballWeight_eq_lassiterGoodman`).
 
 ## Main Prediction: Polarity × Expectations Interaction
@@ -43,7 +43,7 @@ comparison is more informative.
 - **α = 1** (the paper fits α₁ ≈ 1.45, α₂ ≈ 5.31; α=1 suffices for
   qualitative predictions since S₁ ∝ L₀^α is monotone in α)
 - **No utterance costs** (Note 3: costs assumed equal for all utterances,
-  so S₁(u | x, c) ∝ L₀(x | u, c)^α; cf. @cite{lassiter-goodman-2017}
+  so S₁(u | x, c) ∝ L₀(x | u, c)^α; cf. [lassiter-goodman-2017]
   which has C(tall)=C(short)=2, C(∅)=0)
 - **Flat comparison class prior** (P(c|k) uniform; the paper's "Flat prior"
   model variant from Table 2; the full model fits basic-level bias +
@@ -212,7 +212,7 @@ open Real (rpow rpow_nonneg)
 
 /-- RSAConfig for comparison class inference, parameterized by kind k.
 
-    Extends @cite{lassiter-goodman-2017}'s threshold RSA: instead of treating
+    Extends [lassiter-goodman-2017]'s threshold RSA: instead of treating
     the threshold θ as a latent (as LG2017 does), θ is marginalized analytically
     into `thresholdCount`, and the comparison class c becomes the latent variable.
 
@@ -361,17 +361,17 @@ theorem jockey_short_not_endorsed_sub :
   rsa_predict
 
 -- ============================================================================
--- § 7. Cross-Study Bridge: @cite{lassiter-goodman-2017}
+-- § 7. Cross-Study Bridge: [lassiter-goodman-2017]
 -- ============================================================================
 
-/-! This model extends @cite{lassiter-goodman-2017}'s threshold RSA.
+/-! This model extends [lassiter-goodman-2017]'s threshold RSA.
 The key structural relationship:
 - LG2017 treats the threshold θ as a `Latent` variable (L1 infers θ)
 - TG2022 marginalizes θ analytically (via `thresholdCount`) and adds
   comparison class c as the `Latent` variable (L1 infers c)
 
 The height priors used here (`personHeightWeight`, `basketballHeightWeight`)
-match @cite{lassiter-goodman-2017}'s general-population and
+match [lassiter-goodman-2017]'s general-population and
 basketball-player priors respectively — same empirical domain, different
 question. The cross-paper compatibility was previously enforced via
 `personWeight_eq_lassiterGoodman` / `basketballWeight_eq_lassiterGoodman`
@@ -459,7 +459,7 @@ theorem polarity_expectations_confirmed :
 
 /-! ### The literal model makes the OPPOSITE predictions
 
-@cite{tessler-goodman-2022} §2 contrasts the pragmatic listener (Eq. 1) with
+[tessler-goodman-2022] §2 contrasts the pragmatic listener (Eq. 1) with
 an alternative literal listener (Eq. 6) that does not reason about a rational
 speaker:
 
@@ -549,7 +549,7 @@ Since the weight functions are identical, the § 8 predictions transfer:
 | summer  | cold  | subordinate   | `basketball_short_infers_sub` |
 
 This connects to `Features.Dimension.temperature`: a `sensory` domain with
-`requiresComparisonClass = true` (@cite{sedivy-etal-1999}). -/
+`requiresComparisonClass = true` ([sedivy-etal-1999]). -/
 
 /-- Temperature is a comparison-class-sensitive dimension. -/
 theorem temperature_requires_cc :
@@ -570,12 +570,12 @@ theorem literal_reversal_transfers_to_temp :
   ⟨literal_jockey_tall_super, jockey_tall_infers_sub⟩
 
 -- ============================================================================
--- § 12. @cite{kennedy-2007} Applicability Chain
+-- § 12. [kennedy-2007] Applicability Chain
 -- ============================================================================
 
 /-! ### Why this model applies to "tall" but not "full"
 
-@cite{kennedy-2007}'s Interpretive Economy (§4.3, p. 36) determines the
+[kennedy-2007]'s Interpretive Economy (§4.3, p. 36) determines the
 standard of comparison from scale structure. For open-scale (relative)
 adjectives like "tall", the standard-fixing function **s** requires
 contextual domain information — "the distribution of objects in some
@@ -584,8 +584,8 @@ adjectives like "full", the standard is the scale endpoint — fixed
 regardless of context.
 
 Crucially, Kennedy argues (§2.3, p. 16) that the comparison class is
-NOT a semantic argument of *pos* (contra @cite{klein-1980}), but rather
-contextual information that feeds into **s**. @cite{tessler-goodman-2022}
+NOT a semantic argument of *pos* (contra [klein-1980]), but rather
+contextual information that feeds into **s**. [tessler-goodman-2022]
 provides the computational mechanism for determining this contextual
 parameter: the comparison class is inferred pragmatically via RSA as a
 latent variable. This is architecturally compatible with Kennedy's view —
@@ -623,12 +623,12 @@ theorem closed_scale_no_cc_inference :
     ¬ (interpretiveEconomy .closed).RequiresComparisonClass := id
 
 -- ============================================================================
--- § 13. Connection to Generic Language (@cite{tessler-goodman-2019})
+-- § 13. Connection to Generic Language ([tessler-goodman-2019])
 -- ============================================================================
 
 /-! Threshold semantics for gradable adjectives generalizes to generic
 language: "Birds fly south in the winter" ≈ P(x flies south | x is a bird) > θ
-(@cite{tessler-goodman-2019}). Both models share:
+([tessler-goodman-2019]). Both models share:
 
 1. A threshold variable θ setting the standard
 2. A prior P(x | c) conditioned on category membership
@@ -647,7 +647,7 @@ subordinate (restricted) ⊆ superordinate (unrestricted). Going from subordinat
 to superordinate widens the reference population.
 
 This connects comparison class inference to the same nesting pattern used
-by @cite{ritchie-schiller-2024}'s domain restriction possibilities. -/
+by [ritchie-schiller-2024]'s domain restriction possibilities. -/
 
 private def ComparisonClass.toFin : ComparisonClass → Fin 2
   | .subordinate => 0

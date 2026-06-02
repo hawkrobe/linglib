@@ -4,9 +4,9 @@ import Linglib.Core.Nominal.Maximality
 
 /-!
 # Hanink (2021): DP Structure and Internally Headed Relatives in Wášiw
-@cite{hanink-2021}
+[hanink-2021]
 
-The architectural claim of @cite{hanink-2021} (developing the framework
+The architectural claim of [hanink-2021] (developing the framework
 of Hanink 2018) is that the resource situation evaluating a definite
 description's restrictor is a *bound variable* in the syntactic
 structure — a "situation pronoun" — rather than a free contextual
@@ -57,7 +57,7 @@ open Core.Nominal
 -- ════════════════════════════════════════════════════════════════
 
 /-- Two tables, one in each room. The "the table" diagnostic in
-    @cite{hanink-2021}'s style: shifting the bound resource situation
+    [hanink-2021]'s style: shifting the bound resource situation
     flips the referent. -/
 inductive Item where
   | tableKitchen
@@ -73,7 +73,7 @@ inductive Room where
 def F : Frame := { Entity := Item, Index := Room }
 
 /-- "Table-in-room": the predicate is true at exactly one item per room.
-    Encodes the @cite{hanink-2021} resource-situation idea — what counts
+    Encodes the [hanink-2021] resource-situation idea — what counts
     as "the table" depends on the situation we evaluate at. -/
 def tableIn : Room → Item → Prop
   | .kitchen, .tableKitchen => True
@@ -85,7 +85,7 @@ def tableIn : Room → Item → Prop
     a `DenotGS` that consults `interpSitPronoun 0` to fetch the resource
     situation, then evaluates `tableIn` at that situation.
 
-    This is the @cite{hanink-2021} situation-pronoun pattern: the
+    This is the [hanink-2021] situation-pronoun pattern: the
     structural index `0` selects which situation in `gs` to use. -/
 def tableAtSit0 : DenotGS F .et :=
   fun _g gs x => tableIn (interpSitPronoun 0 gs) x
@@ -190,7 +190,7 @@ theorem situation_binders_classified
     invariant under the resource-situation assignment — its referent
     is determined by the entity slot `g₀ d`. This is the orthogonality
     of entity-assignment binding and situation-assignment binding in
-    @cite{hanink-2021}'s architecture: the *anaphoric* layer reads from
+    [hanink-2021]'s architecture: the *anaphoric* layer reads from
     `g`, the *unique* layer reads from `gs`. -/
 theorem anaphoric_independent_of_situation
     (R : DenotGS F .et) (d : Nat)

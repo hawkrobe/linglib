@@ -3,16 +3,16 @@ import Linglib.Core.Constraint.Dequantization.OTLimit
 import Linglib.Core.Constraint.MaxEnt
 
 /-!
-# @cite{jaeger-2007}: Maximum Entropy Models and Stochastic Optimality Theory
-@cite{jaeger-2007}
+# [jaeger-2007]: Maximum Entropy Models and Stochastic Optimality Theory
+[jaeger-2007]
 
-@cite{jaeger-2007} demonstrates that @cite{boersma-1998}'s Gradual Learning
+[jaeger-2007] demonstrates that [boersma-1998]'s Gradual Learning
 Algorithm (GLA) for Stochastic OT is mathematically identical to Stochastic
 Gradient Ascent (SGA) for Maximum Entropy models. This unifies two traditions:
 
 - **StOT** (Boersma): adds Gaussian noise to constraint ranks, learns via
   the GLA (online, cognitively plausible)
-- **MaxEnt** (@cite{goldwater-johnson-2003}): log-linear model over
+- **MaxEnt** ([goldwater-johnson-2003]): log-linear model over
   constraint violations, learns via batch gradient ascent or SGA
 
 ## Key contributions formalized here
@@ -25,7 +25,7 @@ Gradient Ascent (SGA) for Maximum Entropy models. This unifies two traditions:
    log-likelihood is `E_emp[cⱼ] − E_r̄[cⱼ]` — observed minus expected
    feature value. This is `hasDerivAt_logConditional` from
    `Core.Agent.RationalAction`, instantiated as `gradient` in
-   @cite{goldwater-johnson-2003}.
+   [goldwater-johnson-2003].
 
 3. **Convergence guarantee** (§4): SGA converges to the global maximum
    because log-likelihood is concave (`logConditional_concaveOn`). StOT's
@@ -48,7 +48,7 @@ open Core Core.Constraint Real
 -- § 1: GLA = SGA (Main Theorem)
 -- ============================================================================
 
-/-- The main theorem of @cite{jaeger-2007}: the Gradual Learning Algorithm
+/-- The main theorem of [jaeger-2007]: the Gradual Learning Algorithm
     is Stochastic Gradient Ascent by definition.
 
     Both update weight j by `η · (c_j(observed) − c_j(hypothesis))`.
@@ -65,12 +65,12 @@ theorem gla_is_sga (r_j η : ℝ) (obs hyp : ℕ) :
 /-- **MaxEnt convergence guarantee**: the per-weight log-likelihood is concave,
     so gradient-based learning converges to the unique global maximum.
 
-    @cite{jaeger-2007} §4: "The log-likelihood has the desirable property
+    [jaeger-2007] §4: "The log-likelihood has the desirable property
     of being convex [sic — concave], which means that it does not have local
     maxima. Gradient Ascent is thus guaranteed to find the global maximum."
 
     StOT's GLA lacks this guarantee — no proof of convergence exists for the
-    general case (@cite{jaeger-2007} §2, fn. 1). -/
+    general case ([jaeger-2007] §2, fn. 1). -/
 theorem maxent_convergence_guarantee {ι : Type*} [Fintype ι] [Nonempty ι]
     (s r : ι → ℝ) (y : ι) :
     ConcaveOn ℝ Set.univ
@@ -85,7 +85,7 @@ theorem maxent_convergence_guarantee {ι : Type*} [Fintype ι] [Nonempty ι]
     override a strong one. Classical OT precludes this when weights are
     exponentially separated (`exponential_separation_precludes_ganging`).
 
-    @cite{jaeger-2007}: "Both StOT and ME diverge from classical OT in
+    [jaeger-2007]: "Both StOT and ME diverge from classical OT in
     admitting ganging-up effects." -/
 theorem ganging_possible_without_separation :
     Ganging (1 : ℚ) 1 (3/2) := by
@@ -95,7 +95,7 @@ theorem ganging_possible_without_separation :
 -- § 4: Dutch Syllable Acquisition Data (§5, Table 1)
 -- ============================================================================
 
-/-- Dutch syllable types from @cite{jaeger-2007} Table 1
+/-- Dutch syllable types from [jaeger-2007] Table 1
     (Boersma & Levelt 2000, data from Joost van de Weijer). -/
 inductive DutchSyllable
   | CV | CVC | VC | V | CVCC | CCVC | CCV | VCC | CCVCC

@@ -2,10 +2,10 @@ import Linglib.Typology.PolarityMarking
 
 /-!
 # Spanish Polarity-Marking Strategies
-@cite{batllori-hernanz-2013} @cite{garassino-jacob-2018}
+[batllori-hernanz-2013] [garassino-jacob-2018]
 
 Spanish marks emphatic polarity affirmation with the particle *sí (que)*,
-which @cite{batllori-hernanz-2013} analyze as an Emphatic Polarity
+which [batllori-hernanz-2013] analyze as an Emphatic Polarity
 Particle of Affirmation (EPPA) merging with ForceP.
 
 ## *sí (que)*
@@ -13,7 +13,7 @@ Particle of Affirmation (EPPA) merging with ForceP.
 - Clause-initial: "Sí que lo sabe" (He DOES know it)
 - Licensed in both *contrast* (positive answer to a yes/no question) and
   *correction* (denying a prior negative assertion) contexts;
-  @cite{batllori-hernanz-2013} ex. 4-5 and @cite{garassino-jacob-2018}
+  [batllori-hernanz-2013] ex. 4-5 and [garassino-jacob-2018]
   ex. 19 show *sí que* in non-contradictory contexts (e.g.,
   "Carrefour le ofrece este fin de semana precios de vértigo… ¡Esto sí
   que es un aniversario!"). The earlier `correction`-only encoding was
@@ -24,7 +24,7 @@ Particle of Affirmation (EPPA) merging with ForceP.
 *Sí (que)* is the Spanish reflex of a *functional* class of
 polarity-reversing markers, but the cross-linguistic lumping with
 French *si*, German *doch*, and Swedish *jo* obscures syntactic
-differences. Per @cite{garassino-jacob-2018} fn 11, French *si* is
+differences. Per [garassino-jacob-2018] fn 11, French *si* is
 restricted to dialogical contexts (response to a preceding negative
 turn) — making it a response particle, not a clause-initial
 construction comparable to *sí que* / *sì che*.
@@ -41,10 +41,10 @@ namespace Spanish.PolarityMarking
 open Typology.PolarityMarking (Entry Strategy Env)
 
 /-- *sí (que)* — Spanish emphatic polarity affirmation particle.
-    Clause-initial EPPA. @cite{batllori-hernanz-2013}: merges with
+    Clause-initial EPPA. [batllori-hernanz-2013]: merges with
     ForceP; *que* is obligatory in embedded contexts. Licensed in
     both contrast and correction environments per Batllori & Hernanz
-    ex. 4-5 + @cite{garassino-jacob-2018} ex. 19. Not sentence-internal. -/
+    ex. 4-5 + [garassino-jacob-2018] ex. 19. Not sentence-internal. -/
 abbrev siQue : Entry where
   label := "sí (que)"
   form := some "sí (que)"

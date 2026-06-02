@@ -5,7 +5,7 @@ import Linglib.Studies.VonStechow1984
 
 /-!
 # Büring 2007: Cross-Polar Nomalies
-@cite{buring-2007}
+[buring-2007]
 
 Daniel Büring. Cross-Polar Nomalies. SALT 17 (2007).
 
@@ -19,10 +19,10 @@ acceptable: "The ladder was shorter than the house was high."
 
 ## Analysis
 
-LITTLE is a degree negation operator (@cite{heim-2006}):
+LITTLE is a degree negation operator ([heim-2006]):
 short = LITTLE long, less = LITTLE -er. Formally, LITTLE complements
 a degree predicate: ⟦LITTLE⟧ = λi.λd. i(d) = 0,
-mapping positive extents to negative extents (@cite{kennedy-1999}).
+mapping positive extents to negative extents ([kennedy-1999]).
 
 Cross-polar nomalies work because MORE LITTLE-A in the main clause
 can be reinterpreted as LITTLE-er A. This reinterpretation is blocked
@@ -52,13 +52,13 @@ disambiguate the two, favoring Analysis 1.
 ## Formal Connections
 
 - **LITTLE as extent complement**: `littlePred` maps `posExt` to `negExt`,
-  connecting to @cite{kennedy-1999}'s extent algebra in `Core.Scale`.
+  connecting to [kennedy-1999]'s extent algebra in `Core.Scale`.
 - **Cross-polar anomaly = algebraic impossibility**: same-dimension
   cross-polar comparison requires `crossExtentInclusion`, which
   `crossExtent_always_false` proves is impossible on any linear order.
 - **Cross-polar nomaly = subcomparative**: different-dimension comparison
-  is `subcomparative` from @cite{schwarzschild-wilkinson-2002}.
-- **Klein limitation bridge**: @cite{von-stechow-1984}'s Klein limitation 3
+  is `subcomparative` from [schwarzschild-wilkinson-2002].
+- **Klein limitation bridge**: [von-stechow-1984]'s Klein limitation 3
   ("Ede is more tall than broad") is exactly a `subcomparative`.
 -/
 
@@ -80,7 +80,7 @@ open Core.Scale (posExt negExt crossExtentInclusion crossExtent_always_false)
 -- This section adds Büring-specific bridges.
 
 /-- LITTLE maps positive intervals to negative intervals
-    (@cite{buring-2007} §4, def. 22): the positive interval [⊥, μ(x)]
+    ([buring-2007] §4, def. 22): the positive interval [⊥, μ(x)]
     becomes the negative interval [μ(x), ⊤]. This is the interval-level
     counterpart of `little_posExt_eq_negExt` (which operates on extent sets).
 
@@ -101,11 +101,11 @@ theorem little_positive_to_negative {Entity D : Type*}
 
     "?*John is shorter than Mary is tall" requires posExt(Mary) ⊆
     negExt(John), but `crossExtent_always_false` from
-    @cite{kennedy-1999}'s extent algebra proves this is impossible on
+    [kennedy-1999]'s extent algebra proves this is impossible on
     any linear order: the boundary degree μ(a) belongs to posExt but
     not negExt, so posExt can never be a subset of negExt.
 
-    Note: @cite{buring-2007}'s explanation is syntactic (MaxElide §3.2),
+    Note: [buring-2007]'s explanation is syntactic (MaxElide §3.2),
     not algebraic. The algebraic impossibility is a stronger claim:
     even if the LF were syntactically available, the semantics would
     be vacuous. Büring's account is compatible — MaxElide blocks
@@ -152,7 +152,7 @@ def crossPolarData : List CrossPolarDatum :=
 -- § 4. Cross-Polar Nomalies = Subcomparatives
 -- ════════════════════════════════════════════════════
 
--- Cross-polar nomalies are subcomparatives (@cite{schwarzschild-wilkinson-2002}):
+-- Cross-polar nomalies are subcomparatives ([schwarzschild-wilkinson-2002]):
 -- comparing two different measure functions on a shared spatial extent
 -- scale (p. 1–2, footnote 2).
 --
@@ -167,7 +167,7 @@ def crossPolarData : List CrossPolarDatum :=
 -- contradiction arises — the comparison reduces to a simple
 -- inequality μ₂(b) > μ₁(a) on the shared spatial extent scale.
 --
--- This is the formal core of @cite{buring-2007}'s analysis:
+-- This is the formal core of [buring-2007]'s analysis:
 -- the "more-to-less metamorphosis" reinterprets a comparison of
 -- negative extents (via LITTLE) across dimensions as a comparison
 -- of positive extents — which is just `subcomparative`.
@@ -207,7 +207,7 @@ end LadderHouse
 -- § 6. Why Anomalies Are Blocked
 -- ════════════════════════════════════════════════════
 
-/-- @cite{buring-2007}'s syntactic explanation for why direct-antonym
+/-- [buring-2007]'s syntactic explanation for why direct-antonym
     cross-polar constructions are anomalous (§3.2): when A⁻ and
     A⁺ ARE direct antonyms (same dimension), comparative deletion
     (ellipsis of the whole A in the than-clause) produces a competing
@@ -241,14 +241,14 @@ def anomalyBlocking : List AnomalyBlockingDatum :=
 -- § 7. Bridge to Von Stechow's Klein Limitation
 -- ════════════════════════════════════════════════════
 
-/-- @cite{von-stechow-1984}'s Klein limitation 3: "Ede is more tall
+/-- [von-stechow-1984]'s Klein limitation 3: "Ede is more tall
     than broad" is a cross-dimensional comparison that Klein's
     degree-free framework cannot express.
 
-    @cite{buring-2007}'s cross-polar nomalies are the same phenomenon:
+    [buring-2007]'s cross-polar nomalies are the same phenomenon:
     "shorter(length) than high(height)" compares different dimensions
     on a shared spatial extent scale. Both require degree ontology
-    (specifically, `subcomparative` from @cite{schwarzschild-wilkinson-2002}).
+    (specifically, `subcomparative` from [schwarzschild-wilkinson-2002]).
 
     Definitionally: comparing two dimensions of the same entity is
     `subcomparative μ₁ μ₂ a a`, which unfolds to `μ₁ a > μ₂ a`. -/
@@ -261,7 +261,7 @@ theorem klein_limitation_is_subcomparative {Entity D : Type*} [LinearOrder D]
 -- § 8. Modal Scope Diagnostic (§6)
 -- ════════════════════════════════════════════════════
 
--- @cite{buring-2007} §6: modals in the than-clause disambiguate the
+-- [buring-2007] §6: modals in the than-clause disambiguate the
 -- two competing analyses. The key test case (p. 11, ex. 29):
 --
 -- "The existing drawbridge is shorter than the new moat has to be wide."
@@ -348,7 +348,7 @@ end ModalDiagnostic
 -- § 9. Existential Modal Variant (§6.2)
 -- ════════════════════════════════════════════════════
 
-/-- @cite{buring-2007} §6.2 (p. 14, ex. 38): existential modals
+/-- [buring-2007] §6.2 (p. 14, ex. 38): existential modals
     produce the same disambiguation.
 
     "The moat is narrower than drawbridges are allowed to be long."

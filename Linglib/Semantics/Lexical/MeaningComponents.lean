@@ -1,8 +1,8 @@
 /-!
 # Semantics.Lexical.MeaningComponents
-@cite{levin-1993} @cite{beavers-koontz-garboden-2020}
+[levin-1993] [beavers-koontz-garboden-2020]
 
-Binary meaning-component features that define @cite{levin-1993} verb classes
+Binary meaning-component features that define [levin-1993] verb classes
 diagnostically (via diathesis alternation participation), with the `fuse`
 operator for componentwise composition.
 
@@ -18,8 +18,8 @@ substrate.
 
 ## Framework commitment
 
-The 4-feature decomposition is @cite{levin-1993}'s diagnostic apparatus.
-@cite{beavers-koontz-garboden-2020} argue these are SURFACE behaviors,
+The 4-feature decomposition is [levin-1993]'s diagnostic apparatus.
+[beavers-koontz-garboden-2020] argue these are SURFACE behaviors,
 not root-level entailments — root-level structural features live in
 `Semantics/Lexical/Roots/RootFeatures.lean::RootEntailments`
 (state/manner/result/cause). The two carve-ups are NOT equivalent:
@@ -33,7 +33,7 @@ core for finer-grained subclass distinctions in Part II.
 
 `fuse a b` is componentwise OR — the formaliser's design choice for
 modeling how a construction augments a verb's inherent semantics.
-Originally attributed to @cite{goldberg-1995} in source comments, but
+Originally attributed to [goldberg-1995] in source comments, but
 Goldberg's actual constructional unification is *not* componentwise
 boolean OR (it involves semantic frame unification with role-fusion
 constraints, far more structured than disjunctive feature OR). The
@@ -44,24 +44,24 @@ as Goldberg's operation directly.
 
 The Levin-style alternation-diagnosed feature decomposition competes
 with other lexical-semantic frameworks worth formalizing as siblings:
-- **Generative Lexicon** (@cite{pustejovsky-1995}): qualia structure
+- **Generative Lexicon** ([pustejovsky-1995]): qualia structure
   (formal/constitutive/telic/agentive) as the primitive decomposition.
-- **Frame semantics** (@cite{fillmore-1982},
-  @cite{fillmore-kay-oconnor-1988}): semantic frames as primitive,
+- **Frame semantics** ([fillmore-1982],
+  [fillmore-kay-oconnor-1988]): semantic frames as primitive,
   alternations as surface reflexes.
-- **Lexical Conceptual Structure** (@cite{jackendoff-1996}): primitive
+- **Lexical Conceptual Structure** ([jackendoff-1996]): primitive
   predicates GO/STAY/CAUSE compose into LCS templates.
-- **Configurational lexical semantics** (@cite{hale-keyser-1987}):
+- **Configurational lexical semantics** ([hale-keyser-1987]):
   verb meaning derives from syntactic configuration, not feature
   decomposition.
 -/
 
 namespace Semantics.Lexical
 
-/-- Binary meaning components that define @cite{levin-1993} verb classes.
+/-- Binary meaning components that define [levin-1993] verb classes.
 
     These describe **surface** verb behavior, not root-level entailments.
-    @cite{beavers-koontz-garboden-2020} argue that surface CoS and causation
+    [beavers-koontz-garboden-2020] argue that surface CoS and causation
     can come from either the template or the root; see `RootEntailments`
     in `Semantics/Lexical/Roots/RootFeatures.lean` for the
     root-level decomposition.

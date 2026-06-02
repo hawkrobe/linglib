@@ -3,8 +3,8 @@ import Linglib.Discourse.Roles
 import Linglib.Semantics.Mood.IllocutionaryMood
 /-!
 # Illocutionary Force: F in F(p)
-@cite{searle-1969} @cite{searle-1979} @cite{searle-1983}
-@cite{francik-clark-1985}
+[searle-1969] [searle-1979] [searle-1983]
+[francik-clark-1985]
 The pragmatic-act side of the Searlean F(p) parallel: `DirectionOfFit`,
 `SearleClass` taxonomy, and `PreparatoryCondition`. The S(r) side
 (psychological mode, sincerity, Intentional state) lives in
@@ -13,9 +13,9 @@ The pragmatic-act side of the Searlean F(p) parallel: `DirectionOfFit`,
 namespace Discourse
 open Core.Context
 open Semantics.Mood (IllocutionaryMood moodAuthority)
-/-! ### Direction of Fit (@cite{searle-1983}) -/
+/-! ### Direction of Fit ([searle-1983]) -/
 /-- Direction of fit: how responsibility for matching the state and
-    the world is distributed (@cite{searle-1983}). -/
+    the world is distributed ([searle-1983]). -/
 inductive DirectionOfFit where
   /-- State must match reality (beliefs, assertions). -/
   | mindToWorld
@@ -26,8 +26,8 @@ inductive DirectionOfFit where
   /-- Both directions simultaneously (declarations). -/
   | double
   deriving DecidableEq, Repr, Inhabited
-/-! ### Illocutionary Taxonomy (@cite{searle-1979}) -/
-/-- @cite{searle-1979}'s five basic categories of illocutionary acts;
+/-! ### Illocutionary Taxonomy ([searle-1979]) -/
+/-- [searle-1979]'s five basic categories of illocutionary acts;
     exhaustive and mutually exclusive. -/
 inductive SearleClass where
   /-- Assertions, statements, descriptions. -/
@@ -64,11 +64,11 @@ def directionOfFit (m : IllocutionaryMood) : DirectionOfFit :=
 end Semantics.Mood.IllocutionaryMood
 namespace Discourse
 open Semantics.Mood (IllocutionaryMood moodAuthority)
-/-! ### Preparatory Conditions (@cite{searle-1969} @cite{francik-clark-1985}) -/
-/-- Preparatory conditions for directive speech acts. @cite{searle-1969}
+/-! ### Preparatory Conditions ([searle-1969] [francik-clark-1985]) -/
+/-- Preparatory conditions for directive speech acts. [searle-1969]
     introduces the notion; the ability/knowledge/memory/perception/permission/
     willingness inventory and the specificity subsumption used below are
-    consolidated in the analysis of @cite{francik-clark-1985} on indirect
+    consolidated in the analysis of [francik-clark-1985] on indirect
     requests. -- UNVERIFIED: the precise subsumption ordering attribution. -/
 inductive PreparatoryCondition where
   | ability

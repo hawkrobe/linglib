@@ -6,8 +6,8 @@ import Linglib.Data.WALS.Features.F59A
 
 /-!
 # Possession typology — substrate
-@cite{stassen-2009} @cite{nichols-1986} @cite{nichols-bickel-2013}
-@cite{heine-1997} @cite{wals-2013}
+[stassen-2009] [nichols-1986] [nichols-bickel-2013]
+[heine-1997] [wals-2013]
 
 Per-language possession-typology substrate for Fragment import. Mirrors the
 `Linglib/Typology/{Domain}.lean` pattern (Case, Phonology, WordOrder).
@@ -16,13 +16,13 @@ Per-language possession-typology substrate for Fragment import. Mirrors the
 
 - `ObligatoryPossession` (WALS Ch 58A)
 - `PossessiveClassification` (WALS Ch 59A)
-- `PredicativePossession` (@cite{stassen-2009}): 5-way strategy typology
-- `AdnominalPossession` (@cite{nichols-1986}): head/dep/double/juxtaposition
+- `PredicativePossession` ([stassen-2009]): 5-way strategy typology
+- `AdnominalPossession` ([nichols-1986]): head/dep/double/juxtaposition
 - `PossessiveAffixPosition` (WALS Ch 57A)
 - `NumberOfPossessiveNouns` (WALS Ch 58B)
-- `PossessiveNotion` (@cite{heine-1997} §2.3): 7-way semantic targets
+- `PossessiveNotion` ([heine-1997] §2.3): 7-way semantic targets
 - `InalienabilityRank`: hierarchy of inalienability candidates
-- `PossessionSource` (@cite{heine-1997} Table 2.1): 8 grammaticalization schemas
+- `PossessionSource` ([heine-1997] Table 2.1): 8 grammaticalization schemas
 - `PossessionProfile`: bundle struct + 6 helper predicates
 
 ## Theory-laden caveats
@@ -93,7 +93,7 @@ inductive PossessiveClassification where
   | threeOrMore
   deriving DecidableEq, Repr
 
-/-- @cite{stassen-2009}: how a language expresses predicative (clausal)
+/-- [stassen-2009]: how a language expresses predicative (clausal)
     possession ("I have X"). The four major strategies correspond to
     different syntactic analyses of the possessor. -/
 inductive PredicativePossession where
@@ -116,7 +116,7 @@ inductive PredicativePossession where
   | comitative
   deriving DecidableEq, Repr
 
-/-- @cite{nichols-1986}: how the possessive relation is marked within the NP
+/-- [nichols-1986]: how the possessive relation is marked within the NP
     ("my book", "John's house"). -/
 inductive AdnominalPossession where
   /-- Head-marking: possessive marker on the possessed noun (head)
@@ -159,7 +159,7 @@ inductive NumberOfPossessiveNouns where
   | fiveOrMore
   deriving DecidableEq, Repr
 
-/-- @cite{heine-1997} §2.3: the semantic *targets* of possessive constructions —
+/-- [heine-1997] §2.3: the semantic *targets* of possessive constructions —
     what kind of possessive relationship is expressed. Distinct from
     `PossessionSource`, which encodes the cognitive source (how the
     construction arose diachronically). Seven notions ordered by increasing
@@ -213,7 +213,7 @@ def InalienabilityRank.toNat : InalienabilityRank → Nat
   | .culturalItem    => 1
   | .generalProperty => 0
 
-/-- @cite{heine-1997} Table 2.1 / @cite{heine-2009} Table 29.5: eight diachronic
+/-- [heine-1997] Table 2.1 / [heine-2009] Table 29.5: eight diachronic
     source schemas from which predicative possession constructions arise via
     grammaticalization. -/
 inductive PossessionSource where
@@ -243,9 +243,9 @@ def predicativeSource : PredicativePossession → PossessionSource
   | .topic          => .topic
   | .comitative     => .companion
 
-/-- A language's possession profile across @cite{wals-2013} chapters 57–59
+/-- A language's possession profile across [wals-2013] chapters 57–59
     and the additional typological dimensions of predicative
-    (@cite{stassen-2009}) and adnominal (@cite{nichols-1986}) possession. -/
+    ([stassen-2009]) and adnominal ([nichols-1986]) possession. -/
 structure PossessionProfile where
   /-- Language name (matches `LanguageProfile.name` when bundled). -/
   language : String

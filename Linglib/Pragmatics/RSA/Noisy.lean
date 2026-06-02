@@ -5,7 +5,7 @@ import Linglib.Pragmatics.RSA.Sequential
 /-!
 # NoisyLex — Noisy lexical semantics bundle
 
-@cite{degen-etal-2020} @cite{waldon-degen-2021} @cite{schlotterbeck-wang-2023}
+[degen-etal-2020] [waldon-degen-2021] [schlotterbeck-wang-2023]
 
 A `NoisyLex U W` packages the per-(token, world) lex function shared by
 RSA models with continuous / Product-of-Experts semantics. From the
@@ -30,13 +30,13 @@ structures rather than typeclass-driven.
 
 The builders here all use **PoE prefix-product** L0 semantics — the
 meaning at a prefix is the product of per-word lex values. Studies
-that use **extension-averaging** L0 instead (e.g. @cite{waldon-degen-2021}'s
+that use **extension-averaging** L0 instead (e.g. [waldon-degen-2021]'s
 `continuousMeaning` averages PoE over scene-filtered completions) need
 their own bespoke `RSAConfig.mk`; the bundle's `lex` and `prefixMeaning`
 are still useful as building blocks (see `WaldonDegen2021.uttContinuousQ_eq_prefixMeaning`).
 
 A complementary bundle for *extension-counting* (Boolean truth, not
-graded) semantics (@cite{cohn-gordon-goodman-potts-2019}) lives in
+graded) semantics ([cohn-gordon-goodman-potts-2019]) lives in
 `Incremental.lean` as `IncrementalSemantics`.
 -/
 
@@ -47,8 +47,8 @@ variable {U W : Type}
 /-- Bundle of noisy lexical semantics: a per-(token, world) ℚ-valued
     score that is non-negative everywhere. The `lex` field is the
     "Product of Experts" per-word factor underlying
-    @cite{degen-etal-2020}, @cite{waldon-degen-2021}, and
-    @cite{schlotterbeck-wang-2023}.
+    [degen-etal-2020], [waldon-degen-2021], and
+    [schlotterbeck-wang-2023].
 
     Currently ℚ-valued for computable studies. PMF / ℝ generalization
     is future work tracked in MEMORY.md (`RSA → mathlib-PMF migration`). -/
@@ -78,7 +78,7 @@ theorem prefixMeaning_perm (s : NoisyLex U W) {pfx pfx' : List U}
 
 /-- Standard noisy-lex construction: pick a "true" reliability `r⁺` and
     a noise floor `r⁻` (typically `1 - r⁺`), and let `lex u w = r⁺` when
-    `applies u w` and `r⁻` otherwise. This is the @cite{degen-etal-2020}
+    `applies u w` and `r⁻` otherwise. This is the [degen-etal-2020]
     Bernoulli-channel form: `lex = noiseChannel r⁺ r⁻ (applies? 1 0)`. -/
 def ofChannel (applies : U → W → Bool) (rPlus rMinus : ℚ)
     (h0 : 0 ≤ rMinus) (h1 : rMinus ≤ rPlus) : NoisyLex U W where
@@ -119,7 +119,7 @@ noncomputable def toRSAConfig (s : NoisyLex U W) : RSAConfig U W where
 /-- Sequential RSAConfig from a NoisyLex bundle, optionally scene-restricted.
     Meaning is the PoE product over `ctx ++ [u]`; off-scene worlds get 0.
     Default scene is the full domain. α = 1, no cost (the
-    @cite{schlotterbeck-wang-2023} "S1^inc with β = 1" configuration). -/
+    [schlotterbeck-wang-2023] "S1^inc with β = 1" configuration). -/
 noncomputable def toRSAConfigSeq (s : NoisyLex U W)
     (scene : W → Bool := fun _ => true) : RSAConfig U W where
   Ctx := List U

@@ -2,11 +2,11 @@ import Linglib.Pragmatics.Expressives.Basic
 
 /-!
 # L_TU: A Logic for Truth-Conditional and Use-Conditional Meaning
-@cite{gutzmann-2015}
+[gutzmann-2015]
 
-The central formal contribution of @cite{gutzmann-2015}'s "Use-Conditional
+The central formal contribution of [gutzmann-2015]'s "Use-Conditional
 Meaning": a three-dimensional compositional semantics that extends
-@cite{potts-2005}'s two-dimensional L_CI.
+[potts-2005]'s two-dimensional L_CI.
 
 ## Key Insight
 
@@ -49,7 +49,7 @@ open Pragmatics.Expressives (TwoDimProp)
 -- § 1. L_TU Type System
 -- ════════════════════════════════════════════════════════════════
 
-/-- The L_TU type system (@cite{gutzmann-2015}, (4.45)).
+/-- The L_TU type system ([gutzmann-2015], (4.45)).
 
 Basic types: `e` (entities), `t` (truth values), `u` (use-conditional
 propositions, opaque). A type is *use-conditional* iff it equals `u`
@@ -84,7 +84,7 @@ theorem func_into_u_is_uc : (UCType.func .e .u).IsUCType := trivial
 -- § 2. UCI Typology
 -- ════════════════════════════════════════════════════════════════
 
-/-- UCI classification by three binary features (@cite{gutzmann-2015}, Ch 2).
+/-- UCI classification by three binary features ([gutzmann-2015], Ch 2).
 
 - `functional`: takes a truth-conditional argument (vs isolated)
 - `twoDimensional`: contributes to both t-dim and s-dim (vs expletive)
@@ -111,7 +111,7 @@ def functionalExpletive : UCIClass :=
   { functional := true, twoDimensional := false, resourceSensitive := false }
 
 /-- Functional shunting: takes an argument that is consumed (not returned).
-Example: @cite{potts-2005}'s comma feature for appositives. -/
+Example: [potts-2005]'s comma feature for appositives. -/
 def functionalShunting : UCIClass :=
   { functional := true, twoDimensional := false, resourceSensitive := true }
 
@@ -126,7 +126,7 @@ def functionalMixed : UCIClass :=
 -- ════════════════════════════════════════════════════════════════
 
 /-- How a use-conditional expression interacts with composition
-(@cite{gutzmann-2015}, §6.5).
+([gutzmann-2015], §6.5).
 
 A UCI is a *use-conditional item*: it contributes u-content by taking
 truth-conditional arguments. A UC-modifier takes another UCI as its
@@ -148,7 +148,7 @@ inductive UCExprKind where
   deriving DecidableEq, Repr
 
 /-- How an expression's mood restriction arises
-(@cite{gutzmann-2015}, §6.5).
+([gutzmann-2015], §6.5).
 
 The two mechanisms are empirically distinguishable: selectional
 restrictions produce type-mismatch infelicity, while use-conditional
@@ -169,7 +169,7 @@ inductive RestrictionKind where
 -- § 4. Three-Dimensional Meanings
 -- ════════════════════════════════════════════════════════════════
 
-/-- A three-dimensional meaning in L_TU (@cite{gutzmann-2015}, (4.46)).
+/-- A three-dimensional meaning in L_TU ([gutzmann-2015], (4.46)).
 
 `C` is the context type (for use-conditional propositions, sets of contexts),
 `W` is the world type (for truth-conditional propositions, sets of worlds).
@@ -187,7 +187,7 @@ structure ThreeDimMeaning (C : Type*) (W : Type*) where
       further truth-conditional composition) -/
   uDim : C → Prop
 
-/-- Multidimensional application (@cite{gutzmann-2015}, (4.46)).
+/-- Multidimensional application ([gutzmann-2015], (4.46)).
 
 The full MA rule applies functions *intradimensionally*: dimension 1
 applies `σ(β₁)`, dimension 2 applies `ρ(β₂)`, and u-dimensions merge
@@ -201,7 +201,7 @@ def multidimApp {C W : Type*}
   sDim := λ w => f.sDim w ∧ a.sDim w
   uDim := λ c => f.uDim c ∧ a.uDim c
 
-/-- Use-conditional elimination (@cite{gutzmann-2015}, (4.54)).
+/-- Use-conditional elimination ([gutzmann-2015], (4.54)).
 
 When the s-dimension reaches type `u` (its content is a completed
 use-conditional proposition), UE:
@@ -253,7 +253,7 @@ and is discarded.
 
 The `evalU` function projects the context-indexed u-dim (`C → Bool`)
 to a world-indexed CI content (`W → Bool`) for the `TwoDimProp.ci`
-field. This corresponds to @cite{gutzmann-2015}'s lowering operator
+field. This corresponds to [gutzmann-2015]'s lowering operator
 `⇓_c` which converts u-propositions to world sets by fixing context
 parameters except the world. -/
 def toTwoDim {C W : Type*}
@@ -330,7 +330,7 @@ def LTUDeriv.stripUC {C W : Type*} : LTUDeriv C W → LTUDeriv C W
   | .app d₁ d₂ => .app d₁.stripUC d₂.stripUC
   | .elim d f => .elim d.stripUC f
 
-/-- **Non-interaction theorem** (@cite{gutzmann-2015}).
+/-- **Non-interaction theorem** ([gutzmann-2015]).
 
 For ANY derivation built from multidimensional application and
 use-conditional elimination, the truth-conditional content of the
@@ -396,7 +396,7 @@ then projecting a composed 3D meaning to 2D is the same as composing
 the individual 2D projections.
 
 This is the formal guarantee that L_TU's 3D composition "collapses"
-correctly into @cite{potts-2005}'s 2D framework. -/
+correctly into [potts-2005]'s 2D framework. -/
 theorem toTwoDim_multidimApp {C W : Type*}
     (f a : ThreeDimMeaning C W) (evalU : (C → Prop) → W → Prop)
     (hConj : ∀ (p q : C → Prop) (w : W),

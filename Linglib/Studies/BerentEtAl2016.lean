@@ -1,7 +1,7 @@
 import Linglib.Phonology.OptimalityTheory.Doubling
 
 /-!
-# Berent, Bat-El, Brentari, Dupuis & Vaknin-Nusbaum (2016) @cite{berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016}
+# Berent, Bat-El, Brentari, Dupuis & Vaknin-Nusbaum (2016) [berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016]
 
 The double identity of linguistic doubling.
 *Proceedings of the National Academy of Sciences* 113(48). 13702--13707.
@@ -45,7 +45,7 @@ The doubling framework (`DoublingParse`, `DoublingGrammar`,
 This file defines L1-specific `DoublingGrammar` instances for English and
 Hebrew and proves the four cells of the dissociation table as OT theorems.
 
-@cite{berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016}
+[berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016]
 -/
 
 open Phonology.Doubling
@@ -175,7 +175,7 @@ theorem hebrew_diminutive_prefers_XX :
     show opposite patterns for plurality vs. diminutive contexts.
 
     This is the central result of
-    @cite{berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016}:
+    [berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016]:
     doubling preferences are not determined by sensorimotor demands
     (the stimuli are identical novel ASL signs) but by the interaction
     of morphological context and L1 morphological knowledge.

@@ -2,8 +2,8 @@ import Linglib.Data.Examples.Schema
 import Linglib.Core.Time.Reichenbach
 
 /-!
-# @cite{arregui-kusumoto-1998}: Tense in Temporal Adjunct Clauses
-@cite{arregui-kusumoto-1998} @cite{ogihara-sharvit-2012}
+# [arregui-kusumoto-1998]: Tense in Temporal Adjunct Clauses
+[arregui-kusumoto-1998] [ogihara-sharvit-2012]
 
 Arregui & Kusumoto (SALT VIII, 1998) argue that tense in temporal
 adjunct clauses (TACs) is **not** semantically in the scope of the

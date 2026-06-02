@@ -1,6 +1,6 @@
 /-
 # Graded Causative Verb Semantics
-@cite{cao-white-lassiter-2025}
+[cao-white-lassiter-2025]
 
 Causative verbs *cause*, *make*, and *force* encode not just sufficiency
 or necessity but a **unique blend of three graded measures**:
@@ -256,7 +256,7 @@ instance (p : ℝ≥0) (h : p ≤ 1) : CausalGraph.IsDAG (model p h).graph :=
   inferInstanceAs (CausalGraph.IsDAG graph)
 
 /-- `probabilisticSuf` accepts this SEM despite it NOT being
-    `IsDeterministic` — exactly the @cite{cao-white-lassiter-2025}
+    `IsDeterministic` — exactly the [cao-white-lassiter-2025]
     requirement that SUF be a real probability. -/
 noncomputable example (p : ℝ≥0) (h : p ≤ 1) : ENNReal :=
   probabilisticSuf (model p h) Valuation.empty .cause true .effect true

@@ -2,8 +2,8 @@ import Linglib.Core.Agent.SocialUtility
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# Strategic Games @cite{fehr-schmidt-1999}
-@cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}
+# Strategic Games [fehr-schmidt-1999]
+[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]
 
 Multi-agent game infrastructure for social cognition.
 
@@ -16,7 +16,7 @@ This module provides:
 
 - `SymmetricGame`: 2-player symmetric game with payoff matrix
 - Base features (Money, AI, DI) as deterministic functions of action pairs
-- Split-or-Steal (@cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}) as a weak Prisoner's Dilemma
+- Split-or-Steal ([houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]) as a weak Prisoner's Dilemma
 
 ## Connection to BToM
 
@@ -27,7 +27,7 @@ expected-utility maximization over those weighted base features.
 
 ## Connection to Pragmatics
 
-Signaling games (@cite{franke-2011}, @cite{lewis-1969}) extend this to
+Signaling games ([franke-2011], [lewis-1969]) extend this to
 games where actions = utterances and payoffs depend on communicated
 information. The current module covers non-communicative games; signaling
 games are in `Pragmatics/SignalingGames.lean`.
@@ -108,7 +108,7 @@ end SymmetricGame
 -- §3. Split or Steal
 -- ============================================================================
 
-/-- The Split-or-Steal game from @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}.
+/-- The Split-or-Steal game from [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023].
 
 A weak Prisoner's Dilemma: CC gives (pot/2, pot/2), CD gives (0, pot),
 DC gives (pot, 0), DD gives (0, 0). Unlike a standard PD, mutual

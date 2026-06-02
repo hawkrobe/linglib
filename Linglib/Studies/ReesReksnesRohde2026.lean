@@ -3,13 +3,13 @@ import Linglib.Pragmatics.RelevanceTheory.CognitiveEffects
 import Linglib.Pragmatics.RelevanceTheory.Ostension
 
 /-!
-# Rees, Reksnes & Rohde (2026) @cite{rees-reksnes-rohde-2026}
+# Rees, Reksnes & Rohde (2026) [rees-reksnes-rohde-2026]
 
 Why are you telling me this? The availability and timing of relevance
 inferences. *Journal of Memory and Language* 148, 104741.
 
-@cite{sperber-wilson-1986} @cite{bergen-grodner-2012}
-@cite{kravtchenko-demberg-2022} @cite{bott-noveck-2004}
+[sperber-wilson-1986] [bergen-grodner-2012]
+[kravtchenko-demberg-2022] [bott-noveck-2004]
 
 ## Key contribution
 
@@ -29,7 +29,7 @@ choose to speak at all?*, not *why did the speaker use a weaker term?*.
 ## Formalization strategy
 
 We model relevance inferences using RT's comprehension procedure
-(@cite{sperber-wilson-1986}). A trivial utterance's literal interpretation
+([sperber-wilson-1986]). A trivial utterance's literal interpretation
 fails the relevance threshold when the speaker is knowledgeable (its
 content is already expected), forcing the comprehension procedure to
 search further. The enriched interpretation ("something has changed")
@@ -43,13 +43,13 @@ the EFFECTS of the enriched interpretation, not the threshold:
 - **Speaker Knowledge** (Exps 1–4): A knowledgeable speaker's trivial
   utterance produces stronger contextual implications for the "changed"
   interpretation, because the inference is warranted (the speaker would
-  notice changes to a familiar location). Cf. @cite{bergen-grodner-2012}:
+  notice changes to a familiar location). Cf. [bergen-grodner-2012]:
   speaker knowledge modulates SI computation in the same direction.
 
 - **Speaker Style** (Exp 2): A quiet speaker's decision to speak amplifies
   the effects of the enriched interpretation — if they bothered to
   mention it, there must be a strong reason. This connects to
-  @cite{burnett-2019}'s persona framework.
+  [burnett-2019]'s persona framework.
 
 Both are instances of **effect strengthening**, the monotonicity property
 of RT's comprehension procedure (`RTScenario.selects_of_strengthened_effects`).
@@ -59,7 +59,7 @@ of RT's comprehension procedure (`RTScenario.selects_of_strengthened_effects`).
 "Hey, guess what" does not significantly increase inference rates. This
 follows from RT's communicative principle: every act of ostensive
 communication already presumes its own optimal relevance
-(@cite{sperber-wilson-1986}, 2nd ed). An explicit emphasis cue is
+([sperber-wilson-1986], 2nd ed). An explicit emphasis cue is
 redundant with the ostensive act of speaking itself.
 
 ### Processing cost (Exps 3–4)
@@ -67,7 +67,7 @@ redundant with the ostensive act of speaking itself.
 Relevance inferences are costly to compute: cross-experiment analysis of
 Exps 3–4 shows inference-endorsing "Yes" responses (Exp 4, where "Yes" =
 inference) are slower than non-inference "Yes" responses (Exp 3, where
-"Yes" = no inference). Cf. @cite{bott-noveck-2004}: scalar implicature
+"Yes" = no inference). Cf. [bott-noveck-2004]: scalar implicature
 computation shows the same response-time cost pattern.
 
 ### Graded predictions
@@ -81,7 +81,7 @@ predictions under any noisy-threshold model.
 
 ### Relation to atypicality inferences
 
-@cite{kravtchenko-demberg-2022} found that informationally redundant
+[kravtchenko-demberg-2022] found that informationally redundant
 utterances (explicitly mentioning a script-typical action like "eating
 at a restaurant") trigger atypicality inferences — listeners infer the
 action was atypical for the character. Rees et al.'s relevance inferences
@@ -125,7 +125,7 @@ open Pragmatics.RelevanceTheory
     The phatic interpretation is maximally costly to access and never
     selected, but its presence in the candidate set reflects that
     phatic communication is always available as a last resort
-    (@cite{crystal-1991}, @cite{zegarac-clark-1999}). -/
+    ([crystal-1991], [zegarac-clark-1999]). -/
 inductive TrivialInterp where
   /-- Transparent acceptance: "The walls are blue" (no enrichment) -/
   | literal
@@ -206,7 +206,7 @@ def unfamiliarScenario : RTScenario TrivialInterp :=
     cognitive effects of the enriched interpretation (effects 4 vs 3).
     The literal reading remains subthreshold (effects 1).
 
-    This connects to @cite{burnett-2019}'s persona framework: "quiet"
+    This connects to [burnett-2019]'s persona framework: "quiet"
     is a stable speaker quality (an attributed characteristic accreted
     from habitual stances) that modulates the listener's expectations
     of the speaker's communicative threshold. -/
@@ -411,7 +411,7 @@ theorem knowledge_gap_quiet :
 /-! ### Why no `emphasisScenario`
 
 Every act of ostensive communication already creates a presumption
-of optimal relevance (@cite{sperber-wilson-1986}, 2nd ed). The emphasis
+of optimal relevance ([sperber-wilson-1986], 2nd ed). The emphasis
 cue "Hey, guess what" is an ostensive stimulus, but so is the act of
 speaking itself. Since the presumption of relevance is already triggered
 by the base utterance, the emphasis cue is redundant — it maps to no
@@ -441,7 +441,7 @@ familiarScenario` would be vacuously true (`rfl`), encoding no content.
     inference-endorsing "Yes" responses (Exp 4) are slower than
     non-inference "Yes" responses (Exp 3).
 
-    Cf. @cite{bott-noveck-2004}: scalar implicature computation shows
+    Cf. [bott-noveck-2004]: scalar implicature computation shows
     the same response-time cost pattern in sentence verification tasks. -/
 theorem changed_has_effort :
     familiarScenario.effort .changed = 1 := rfl
@@ -457,7 +457,7 @@ theorem literal_is_effortless :
 
     A future extension could set effortWeight > 0 to model time-pressure
     contexts where pragmatic enrichment IS blocked by effort — predicting
-    lower inference rates under cognitive load (cf. @cite{bale-etal-2025}
+    lower inference rates under cognitive load (cf. [bale-etal-2025]
     for load effects on competence assumption cancellation). -/
 theorem enriched_not_effort_blocked :
     ¬familiarScenario.blockedByEffort .changed := by
@@ -471,7 +471,7 @@ theorem enriched_not_effort_blocked :
 /-! ### Clause (b): the speaker's choice to speak
 
 The deep mechanism behind relevance inferences is clause (b) of optimal
-relevance (@cite{sperber-wilson-1986}): the ostensive stimulus is the
+relevance ([sperber-wilson-1986]): the ostensive stimulus is the
 most relevant one compatible with the communicator's abilities and
 preferences. The speaker chose to SPEAK rather than remain silent. Since
 silence would have been easier (zero effort, zero risk of irrelevance),
@@ -511,7 +511,7 @@ def changedEffectType : EffectType := .contextualImplication
     selects `.literal`, matching the School > PM pattern replicated
     across all four experiments (p < .001 in each).
 
-    Compare @cite{bergen-grodner-2012}: speaker knowledge modulates
+    Compare [bergen-grodner-2012]: speaker knowledge modulates
     scalar implicature computation in the same direction — listeners are
     less likely to compute SIs when the speaker has "skimmed" rather than
     "read meticulously." Rees et al. extend this to relevance inferences

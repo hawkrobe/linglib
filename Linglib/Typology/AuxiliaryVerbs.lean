@@ -3,10 +3,10 @@ import Linglib.Morphology.MorphRule
 
 /-!
 # Auxiliary Verb Construction Typology — substrate
-@cite{anderson-2006}
+[anderson-2006]
 
 Type-level enums + data structure for auxiliary verb construction (AVC)
-typology following @cite{anderson-2006}. Anderson's core insight: the
+typology following [anderson-2006]. Anderson's core insight: the
 **semantic head is always the lexical verb**, but the **inflectional host**
 varies across 5 macro-patterns.
 
@@ -56,7 +56,7 @@ inductive InflPattern where
       (person/number on AUX, connegative + aspect on LV). -/
   | split
   /-- Some categories on both AUX and LV (doubled), others exclusive
-      to one element (split). @cite{anderson-2006} ch. 5 §5.2 dedicates
+      to one element (split). [anderson-2006] ch. 5 §5.2 dedicates
       ~30 pages to this pattern with 30+ language exemplars across
       §§5.2.1–5.2.3 (Limbu, Manam, Kuot, Doyayo, Mbay, Lamba, Pipil,
       Persian, Swahili, Panyjima, Kemantney, Oshikwanyama, Shambala,

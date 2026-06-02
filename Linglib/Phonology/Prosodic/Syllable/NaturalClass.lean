@@ -3,9 +3,9 @@ import Linglib.Phonology.Prosodic.Syllable.Defs
 
 /-!
 # Natural Classes and the Parker Sonority Scale
-@cite{parker-2002}
+[parker-2002]
 
-The 8-level Parker sonority scale refines @cite{clements-1990}'s 6-level
+The 8-level Parker sonority scale refines [clements-1990]'s 6-level
 hierarchy by splitting obstruents into four classes based on [±continuant]
 and [±voice]:
 
@@ -26,7 +26,7 @@ Parker refinement adds [±voice] only within obstruents.
 
 This finer granularity is needed for sonority-conditioned gradient
 phenomena such as intrusive vowel insertion in Tarifit Berber
-(@cite{afkir-zellou-2025}).
+([afkir-zellou-2025]).
 -/
 
 namespace Phonology.Syllable
@@ -62,7 +62,7 @@ def NatClass.parkerSonority : NatClass → Nat
 
 /-- Classify a segment into the Parker 8-level scale.
     Follows the feature decomposition of `SonorityRank` but additionally
-    splits obstruents by [±voice] (@cite{parker-2002}). -/
+    splits obstruents by [±voice] ([parker-2002]). -/
 def natClassOf (s : Segment) : NatClass :=
   if s.HasValue .sonorant false then
     -- Obstruent: split by [±continuant] then [±voice]

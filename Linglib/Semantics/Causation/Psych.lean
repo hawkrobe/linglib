@@ -1,7 +1,7 @@
 /-!
-# Psych Verb Causation (@cite{kim-2024} UPH)
+# Psych Verb Causation ([kim-2024] UPH)
 
-@cite{kim-2024}
+[kim-2024]
 
 Types for the Uniform Projection Hypothesis: all Class II (object experiencer)
 psych verbs uniformly project Cause + Experiencer. The eventive/stative split
@@ -28,7 +28,7 @@ chain; its incompatibility with an overt Cause follows from the Onset Condition.
 
 namespace Semantics.Causation.Psych
 
-/-- Source of causation for psych causatives (@cite{kim-2024} UPH).
+/-- Source of causation for psych causatives ([kim-2024] UPH).
 
     Class II psych verbs uniformly project Cause + Experiencer.
     The aspectual distinction (eventive vs stative) comes from
@@ -81,10 +81,10 @@ def CausalSource.isEventive : CausalSource → Bool
   | .internal => false
 
 -- ════════════════════════════════════════════════════
--- § Stimulus Subtype (@cite{pesetsky-1995})
+-- § Stimulus Subtype ([pesetsky-1995])
 -- ════════════════════════════════════════════════════
 
-/-- @cite{pesetsky-1995}'s subdivision of the stimulus role.
+/-- [pesetsky-1995]'s subdivision of the stimulus role.
 
     Class II psych verbs take a stimulus/cause argument, but
     Pesetsky shows this role has two semantically distinct subtypes:
@@ -100,7 +100,7 @@ def CausalSource.isEventive : CausalSource → Bool
     predicate (T-predicates are "natural", SM-predicates are
     "arbitrary" in Pesetsky's terms).
 
-    @cite{pesetsky-1995} argues that the T/SM distinction has syntactic
+    [pesetsky-1995] argues that the T/SM distinction has syntactic
     consequences: Target and Subject Matter cannot cooccur with Causer
     in the same predicate (the T/SM restriction, explained via the
     Head Movement Constraint). -/

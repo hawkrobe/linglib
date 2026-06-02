@@ -3,7 +3,7 @@ import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # Indexed Constraints
-@cite{pater-2010}
+[pater-2010]
 
 The conservative frequency-conditioning theory: frequency does not enter
 the grammar at all; instead, lexically-indexed constraints partition the
@@ -54,7 +54,7 @@ abbrev isCore {α : Type} [HasTokenFreq α] (cutoff : ℝ) (a : α) : Prop :=
     `mkCoreOnly cutoff base` returns a constraint that evaluates to
     `base.eval c` when `c` is in the core stratum, `0` otherwise.
 
-    This is the formalization of @cite{pater-2010}'s lexically-indexed
+    This is the formalization of [pater-2010]'s lexically-indexed
     markedness/faithfulness: the same structural penalty applies, but
     only to a sublexicon. -/
 noncomputable def mkCoreOnly {α : Type} [HasTokenFreq α] (cutoff : ℝ)

@@ -3,7 +3,7 @@ import Linglib.Phonology.Prosodic.Syllable.Foot
 
 /-!
 # Accent Assignment and Tone Derivation
-@cite{hayes-1995} @cite{kawahara-2015}
+[hayes-1995] [kawahara-2015]
 
 Language-general accent assignment rules and the accent-to-tone
 derivation for pitch accent systems.
@@ -15,19 +15,19 @@ Two rules that derive default accent position from syllable weight:
 - **Antepenultimate Accent Rule (AAR)**: accent falls on the syllable
   containing the antepenultimate (3rd-from-last) mora. This is the
   traditional characterization of the default accent pattern in Japanese
-  (@cite{mccawley-1968}).
+  ([mccawley-1968]).
 
 - **Latin Stress Rule (LSR)**: accent falls on the penultimate syllable
-  if heavy, otherwise on the antepenultimate. @cite{kubozono-2008}
+  if heavy, otherwise on the antepenultimate. [kubozono-2008]
   argues the LSR better characterizes Japanese loanword accentuation,
   capitalizing on the cross-linguistic parallel with Latin stress
-  (@cite{hayes-1995}).
+  ([hayes-1995]).
 
 ## Accent-to-Tone Derivation
 
 For pitch-accent languages like Japanese, surface tonal patterns are
 fully determined by accent location. The derivation follows
-@cite{kawahara-2015} §1.4:
+[kawahara-2015] §1.4:
 
 1. **Accentual HL**: H on the accented mora, L on the following mora.
 2. **Initial rise**: L on the first mora, H on the second (blocked when
@@ -36,7 +36,7 @@ fully determined by accent location. The derivation follows
 
 ## NonFinality
 
-Two NonFinality constraints from @cite{prince-smolensky-1993}:
+Two NonFinality constraints from [prince-smolensky-1993]:
 
 - **NonFinality(σ)**: penalizes accent on the word-final syllable.
 - **NonFinality(Ft)**: penalizes the head foot in word-final position.
@@ -65,7 +65,7 @@ where
 -- § 2: Antepenultimate Accent Rule (AAR)
 -- ============================================================================
 
-/-- **Antepenultimate Accent Rule** (@cite{mccawley-1968}): accent falls
+/-- **Antepenultimate Accent Rule** ([mccawley-1968]): accent falls
     on the syllable containing the antepenultimate (3rd-from-last) mora.
 
     For words with fewer than 3 morae, accent falls on the initial
@@ -84,13 +84,13 @@ def defaultAccentAAR (weights : List SyllWeight) : Option Nat :=
 -- § 3: Latin Stress Rule (LSR)
 -- ============================================================================
 
-/-- **Latin Stress Rule** (@cite{hayes-1995}): accent the penultimate
+/-- **Latin Stress Rule** ([hayes-1995]): accent the penultimate
     syllable if it is heavy (≥ 2μ), otherwise accent the antepenultimate.
 
     For monosyllables, accent the only syllable. For disyllables, always
     accent the penultimate (= initial) syllable.
 
-    @cite{kubozono-2008} argues this rule better characterizes Japanese
+    [kubozono-2008] argues this rule better characterizes Japanese
     default accentuation than the AAR. -/
 def latinStressRule : List SyllWeight → Option Nat
   | [] => none
@@ -106,7 +106,7 @@ def latinStressRule : List SyllWeight → Option Nat
 -- ============================================================================
 
 /-- Level tone for pitch accent systems. Japanese uses only H and L at
-    the lexical level (@cite{kawahara-2015} §1.3). -/
+    the lexical level ([kawahara-2015] §1.3). -/
 inductive LevelTone where
   | H  -- High
   | L  -- Low
@@ -114,7 +114,7 @@ inductive LevelTone where
 
 /-- Derive surface tones from accent position and mora count.
 
-    Implements the 4-step derivation of @cite{kawahara-2015} §1.4:
+    Implements the 4-step derivation of [kawahara-2015] §1.4:
     1. Accentual HL assignment (H on accented mora, L on next)
     2. Initial rise (L on mora 0, H on mora 1 — blocked by initial accent)
     3. Spreading (unspecified moras copy rightmost specified tone)
@@ -145,17 +145,17 @@ where
 -- § 5: NonFinality Constraints
 -- ============================================================================
 
-/-- **NonFinality(σ)** (@cite{prince-smolensky-1993}): penalizes accent
+/-- **NonFinality(σ)** ([prince-smolensky-1993]): penalizes accent
     on the word-final syllable. Returns 1 if accent is final, 0 otherwise.
 
     Drives the avoidance of final accent observed in Japanese compound
-    formation and loanword adaptation (@cite{kawahara-2015} §4). -/
+    formation and loanword adaptation ([kawahara-2015] §4). -/
 def nonFinalitySigma (accentSyll : Option Nat) (nSyll : Nat) : Nat :=
   match accentSyll with
   | some pos => if pos + 1 == nSyll then 1 else 0
   | none => 0
 
-/-- **NonFinality(Ft)** (@cite{prince-smolensky-1993}): penalizes the
+/-- **NonFinality(Ft)** ([prince-smolensky-1993]): penalizes the
     head foot in word-final position. Returns 1 if the rightmost foot
     in the parse is the head foot (contains the accent), 0 otherwise.
 
@@ -181,7 +181,7 @@ def nonFinalityFoot (parse : MetricalParse) (accentSyll : Option Nat) : Nat :=
     (N2) is short (≤ 2 morae), accent may fall on the last syllable of
     N1 (pre-accenting pattern) or N2 may retain its own accent.
 
-    @cite{kawahara-2015} §4.1: pre-accenting N2s are those that lose
+    [kawahara-2015] §4.1: pre-accenting N2s are those that lose
     their accent to NonFinality(Ft) and receive new accent via a
     compound accent rule analogous to dominant pre-accenting suffixes. -/
 def shortN2CompoundAccent (n1Morae : Nat) (n2Accent : Option Nat)
@@ -197,7 +197,7 @@ def shortN2CompoundAccent (n1Morae : Nat) (n2Accent : Option Nat)
     unaccented or has final accent, accent falls on N2-initial syllable.
     Otherwise, N2 accent is retained.
 
-    @cite{kawahara-2015} §4.2. -/
+    [kawahara-2015] §4.2. -/
 def longN2CompoundAccent (n1Morae : Nat) (n2Accent : Option Nat)
     (n2Morae : Nat) : Option Nat :=
   match n2Accent with

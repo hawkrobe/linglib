@@ -41,7 +41,7 @@ admissible strengths (`Article.presupTypes`) realize through `Description.ofPres
 description, not a single one. -/
 
 /-- An article's possible (definite-description) denotations: the image of its
-admissible @cite{schwarz-2009} strengths under `Description.ofPresupType`. -/
+admissible [schwarz-2009] strengths under `Description.ofPresupType`. -/
 def _root_.Article.toDescriptions {F : Frame} (a : Article)
     (R : DenotGS F .et) (idx : Nat) : List (Description F) :=
   a.presupTypes.map (Description.ofPresupType · R idx)

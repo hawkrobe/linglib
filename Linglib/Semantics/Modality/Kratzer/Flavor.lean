@@ -1,5 +1,5 @@
 /-
-@cite{kratzer-1981} Modal Flavors
+[kratzer-1981] Modal Flavors
 
 Epistemic, deontic, bouletic, and teleological flavors parameterize the
 modal base and ordering source for different types of modality.
@@ -59,7 +59,7 @@ structure TeleologicalFlavor (W : Type*) where
 
 Each flavor structure maps to the theory-neutral `ModalFlavor` enum from
 `Core.Logic.Intensional`, bridging Kratzer's parameterized semantics to the
-typological meaning space (Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}). -/
+typological meaning space (Imel, Guo, & [imel-guo-steinert-threlkeld-2026]). -/
 
 open Semantics.Modality (ModalFlavor)
 
@@ -79,9 +79,9 @@ def TeleologicalFlavor.flavorTag : ModalFlavor := .circumstantial
 /-! ## Background Classification (Kratzer 2012)
 
 Each flavor structure maps to a `BackgroundClass` from
-@cite{kratzer-2012}'s three-way classification, which refines the
+[kratzer-2012]'s three-way classification, which refines the
 traditional epistemic/circumstantial binary based on the **projection
-mode** of the conversational background (@cite{matthewson-2016} Table 18.3). -/
+mode** of the conversational background ([matthewson-2016] Table 18.3). -/
 
 open Semantics.Modality (BackgroundClass ProjectionMode)
 

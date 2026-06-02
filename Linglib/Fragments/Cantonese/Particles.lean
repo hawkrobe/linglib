@@ -2,11 +2,11 @@ import Linglib.Semantics.Presupposition.TriggerTypology
 
 /-!
 # Cantonese Presuppositional Particles
-@cite{matthews-yip-1994} @cite{liu-yip-2026} @cite{lee-yip-to-appear}
+[matthews-yip-1994] [liu-yip-2026] [lee-yip-to-appear]
 
 Lexical entries for Cantonese preverbal *again*-elements *jau* and *zoi*,
 parallel to the Mandarin entries in `Fragments/Mandarin/Particles.lean`.
-Per @cite{liu-yip-2026} §5, these are the Cantonese counterparts of
+Per [liu-yip-2026] §5, these are the Cantonese counterparts of
 Mandarin *you* and *zai* respectively, but unlike Mandarin *you*, the
 preverbal Cantonese *jau* does NOT exhibit the scope-skipping pattern
 (see `Studies/LiuYip2026.lean` for the analytical
@@ -32,7 +32,7 @@ structure PresupParticle where
   deriving Repr
 
 /-- 又 *jau* — preverbal 'again' (iterative). Cantonese counterpart of
-    Mandarin *you*. Per @cite{liu-yip-2026} §5, *jau* lacks the
+    Mandarin *you*. Per [liu-yip-2026] §5, *jau* lacks the
     scope-skipping property of Mandarin *you* (see `LiuYip2026.lean`
     for the analysis). -/
 def jau : PresupParticle :=
@@ -41,7 +41,7 @@ def jau : PresupParticle :=
   , notes := "Mandarin you's counterpart; no scope-skipping per Liu&Yip2026" }
 
 /-- 再 *zoi* — preverbal 'again' (iterative, lower position). Cantonese
-    counterpart of Mandarin *zai*. Per @cite{liu-yip-2026} §5, *zoi* is
+    counterpart of Mandarin *zai*. Per [liu-yip-2026] §5, *zoi* is
     AspP_inner-associated, paralleling Mandarin *zai*. -/
 def zoi : PresupParticle :=
   { hanzi := "再", jyutping := "zoi3", gloss := "again"

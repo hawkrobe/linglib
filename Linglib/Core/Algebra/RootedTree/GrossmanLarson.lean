@@ -20,9 +20,9 @@ set_option autoImplicit false
 
 /-!
 # Grossman-Larson Hopf algebra on forests of nonplanar rooted trees
-@cite{grossman-larson-1989}
-@cite{foissy-typed-decorated-rooted-trees-2018}
-@cite{marcolli-chomsky-berwick-2025}
+[grossman-larson-1989]
+[foissy-typed-decorated-rooted-trees-2018]
+[marcolli-chomsky-berwick-2025]
 
 The **Grossman-Larson product** `⋆` is the associative non-commutative
 product on `ConnesKreimer R (Nonplanar α)`, dual to the disjoint-union

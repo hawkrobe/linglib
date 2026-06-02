@@ -1,10 +1,10 @@
 import Linglib.Core.Logic.NaturalLogic
 
 /-!
-# Disjunction Ignorance @cite{chierchia-2013}
+# Disjunction Ignorance [chierchia-2013]
 
 Empirical patterns for ignorance inferences from disjunction, organized
-around @cite{chierchia-2013}'s positional-asymmetry account.
+around [chierchia-2013]'s positional-asymmetry account.
 
 "Harry is in Antwerp or Brussels" implicates:
 1. Speaker doesn't know Harry is in Antwerp
@@ -29,7 +29,7 @@ Empirical pattern: Disjunction and speaker ignorance.
 1. Speaker doesn't know Harry is in Antwerp
 2. Speaker doesn't know Harry is in Brussels
 
-Source: @cite{gazdar-1979}, @cite{geurts-2010} Ch. 3.3
+Source: [gazdar-1979], [geurts-2010] Ch. 3.3
 -/
 structure DisjunctionIgnoranceDatum where
   /-- The disjunctive statement -/
@@ -46,7 +46,7 @@ structure DisjunctionIgnoranceDatum where
 
 /--
 Classic example: Harry's location.
-Source: @cite{geurts-2010} p.61
+Source: [geurts-2010] p.61
 -/
 def harryLocation : DisjunctionIgnoranceDatum :=
   { disjunction := "Harry is in Antwerp or Brussels"
@@ -138,7 +138,7 @@ For "A or B or C", we get ignorance about each disjunct:
 - Speaker doesn't know B
 - Speaker doesn't know C
 
-Source: @cite{geurts-2010} p.61-64
+Source: [geurts-2010] p.61-64
 -/
 structure LongDisjunctionIgnoranceDatum where
   /-- The disjunctive statement -/
@@ -151,7 +151,7 @@ structure LongDisjunctionIgnoranceDatum where
 
 /--
 Three-way disjunction example.
-Source: @cite{geurts-2010} p.61
+Source: [geurts-2010] p.61
 -/
 def threeWayLocation : LongDisjunctionIgnoranceDatum :=
   { disjunction := "Harry is in Antwerp, Brussels, or Copenhagen"
@@ -279,7 +279,7 @@ def quantifiedIgnoranceExamples : List QuantifiedIgnoranceDatum :=
 /-!
 ## Positional Asymmetry in Disjunction Interpretation
 
-@cite{chierchia-2013} "Logic in Grammar" Ch.1 observes that the same lexical
+[chierchia-2013] "Logic in Grammar" Ch.1 observes that the same lexical
 material yields different preferred readings based on structural position:
 
 | Position | Polarity | Preferred Reading |
@@ -372,7 +372,7 @@ structure ExclusiveInclusiveExample where
   source : String
   deriving Repr
 
--- @cite{chierchia-2013} examples (1a,b)
+-- [chierchia-2013] examples (1a,b)
 def hiring_consequent : ExclusiveInclusiveExample :=
   { sentence := "If everything goes well, we'll hire Mary or Sue"
   , position := .conditional_cons
@@ -511,7 +511,7 @@ def forcedReadingExamples : List ForcedReadingExample :=
 
 Universal FCIs like English "any" and Italian "qualunque" contrast with
 existential FCIs (irgendein, yek-i, vreun) handled in
-@cite{alonso-ovalle-moghiseh-2025}:
+[alonso-ovalle-moghiseh-2025]:
 
 | FCI Type | Base Force | Examples | Morphological Hints |
 |----------|------------|----------|---------------------|
@@ -624,7 +624,7 @@ base meaning but universal surface force due to obligatory exhaustification.
 Existential FCIs (German *irgendein*, Farsi *yek-i*, Romanian *vreun*)
 retain narrow existential force. The flavor is a Chierchia-tradition
 typological dimension consumed by paper-specific studies (e.g.,
-@cite{chierchia-2006}, @cite{alonso-ovalle-moghiseh-2025}).
+[chierchia-2006], [alonso-ovalle-moghiseh-2025]).
 -/
 inductive FCIFlavor where
   /-- Existential FCIs: *irgendein*, *yek-i*, *vreun* -/

@@ -4,7 +4,7 @@ import Linglib.Core.Logic.Modal.BSML.Bisimulation
 /-!
 # Characteristic (Hintikka) formulas for BSML — foundation
 
-@cite{aloni-anttila-yang-2024} @cite{anttila-2025}
+[aloni-anttila-yang-2024] [anttila-2025]
 
 The expressive-completeness converse for BSML (`expressiveCompleteness_converse`
 in `BSML/ExpressiveCompleteness.lean`) needs **characteristic formulas**: for
