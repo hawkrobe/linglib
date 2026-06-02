@@ -1,8 +1,7 @@
-import Linglib.Core.Dependency.Basic
+import Linglib.Syntax.DependencyGrammar.Basic
 
 /-!
 # Coordination in UD enhanced graphs
-@cite{de-marneffe-nivre-2019}
 
 Implements coordination in Universal Dependencies' enhanced-dependency
 graphs (@cite{de-marneffe-nivre-2019}, §4.2 and Figure 9, applied to
@@ -15,16 +14,12 @@ Word Grammar (@cite{hudson-2010}, §7.5.4 "Non-constituent coordination")
 handles the same data via a different device: a contiguous string of
 words may be treated as a single chunk ("word string") and entered into a
 dependency relation as a whole, eliminating the need to propagate shared
-dependents. The UD mechanism implemented here keeps a flat word-by-word
-graph and adds redundant edges for the enhanced layer.
-
-For the historical phrase-structure approach to coordination (Coordinate
-Structure Constraint, ATB extraction as theorems of a complex-symbol
-grammar), see @cite{gazdar-1981}.
+dependents. For the historical phrase-structure approach to coordination
+(Coordinate Structure Constraint, ATB extraction as theorems of a
+complex-symbol grammar), see @cite{gazdar-1981}.
 
 ## Main declarations
 
-* `ConjType` — labels for English conjunctions (`and`, `or`, `but`).
 * `getConjuncts`, `hasConjuncts`, `allConjuncts` — inspect the conjunct
   structure of a head node in a basic dependency tree.
 * `checkCatMatch` — verifies that every `conj` edge connects words of
@@ -36,25 +31,17 @@ grammar), see @cite{gazdar-1981}.
 
 ## Implementation notes
 
-* The `Bool`-valued predicates follow `Core.Dependency.Projection`'s
-  convention of returning `Bool`; migrating to `Prop` + `Decidable` is a
-  substrate-wide refactor not done here.
+* The `Bool`-valued predicates follow `DepGrammar`'s substrate convention;
+  migrating to `Prop` + `Decidable` is a substrate-wide refactor not done
+  here.
 * Paper-replication fixtures and worked theorems for `enhanceSharedDeps`
-  live in `Studies/DeMarneffeNivre2019Coordination.lean`. Downstream
-  substrate consumers (`Formal/EnhancedDependencies.lean`,
+  live in `Studies/DeMarneffeNivre2019.lean`. Downstream substrate
+  consumers (`Formal/EnhancedDependencies.lean`,
   `Formal/CoordinationParallelism.lean`) define their own local minimal
-  fixtures for the same reason.
+  fixtures.
 * `checkArgStrMatch` is a coarse heuristic over `Features.valence`. Real
   coordination-parallelism judgements (gapping, ATB extraction) live in
   `Formal/CoordinationParallelism.lean`.
-
-## Todo
-
-* Tighten `checkArgStrMatch` to handle clausal coordination (`ccomp` /
-  `xcomp` conjuncts) and to be sensitive to subcategorization beyond
-  intransitive/transitive.
-* Track conjunct labels (`ConjType`) per `conj` edge — currently the
-  enum is decorative.
 -/
 
 namespace DepGrammar.Coordination
@@ -62,14 +49,6 @@ namespace DepGrammar.Coordination
 open DepGrammar
 
 /-! ### Coordinate structure -/
-
-/-- Conjunction labels for English. Currently decorative — `conj` edges
-do not carry a `ConjType` field. -/
-inductive ConjType where
-  | and_
-  | or_
-  | but_
-  deriving Repr, DecidableEq
 
 /-- Conjuncts of a head: words linked by `conj` edges from `headIdx`.
 In UD basic-tree convention these are the second-and-later conjuncts;
@@ -101,7 +80,8 @@ def checkCatMatch (t : DepTree) : Bool :=
     else true
 
 /-- For verbal `conj` edges, conjuncts have matching `valence`. Coarse
-heuristic — see Todo. -/
+heuristic — does not handle clausal coordination (`ccomp` / `xcomp`) or
+finer subcategorization. -/
 def checkArgStrMatch (t : DepTree) : Bool :=
   t.deps.all λ d =>
     if d.depType == .conj then

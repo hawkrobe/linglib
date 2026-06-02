@@ -1,4 +1,4 @@
-import Linglib.Core.Dependency.Basic
+import Linglib.Syntax.DependencyGrammar.Basic
 import Mathlib.Logic.Relation
 import Mathlib.Data.List.Sort
 
@@ -52,7 +52,7 @@ def projection (deps : List Dependency) (root : Nat) : List Nat :=
   -- `insertionSort` (not `mergeSort`): the former is structurally recursive on
   -- the input list and reduces under `decide`/`rfl`; mergeSort uses
   -- well-founded recursion and does not reduce in the kernel, which would
-  -- force consumers like `isProjective` into `native_decide`. Downstream
+  -- force consumers like `isProjective` into `decide`. Downstream
   -- helpers that sort `List Nat` (e.g. `Formal/Discontinuity.isContiguous`,
   -- `Formal/CatenalConstruction.CatenalCx.isContiguous`) should follow the
   -- same convention for the same reason.

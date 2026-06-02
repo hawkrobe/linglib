@@ -1,4 +1,4 @@
-import Linglib.Core.Dependency.Projection
+import Linglib.Syntax.DependencyGrammar.Projection
 
 /-!
 Dominance properties under the unique-heads constraint: parent-pointer
