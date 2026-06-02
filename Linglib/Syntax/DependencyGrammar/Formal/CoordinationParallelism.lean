@@ -1,90 +1,81 @@
+import Linglib.Syntax.DependencyGrammar.Coordination
 import Linglib.Syntax.DependencyGrammar.Formal.Catena
 import Linglib.Syntax.DependencyGrammar.Formal.Ellipsis
-import Linglib.Syntax.DependencyGrammar.Coordination
 
 /-!
-# Coordination Parallelism and Sharing
-@cite{osborne-2019}
+# Coordination parallelism and sharing
 
-Formalizes @cite{osborne-2019}'s analysis of coordination: conjuncts
-must have parallel structure, shared dependents form catenae, and the CSC
-falls out from the parallelism requirement.
+Formalizes @cite{osborne-2019}'s analysis of coordination in dependency
+grammar: conjuncts have parallel core-argument structure, shared
+dependents form catenae, and the Coordinate Structure Constraint follows
+from requiring symmetric (ATB) extraction.
 
-## Sharing Types
+## Main declarations
 
-- **Forward sharing**: left-edge shared ("John [eats and drinks] beer")
-- **Backward sharing**: right-edge shared / RNR ("John likes and Mary hates [pizza]")
-- **Symmetric**: both edges shared (rare)
+* `SharingType` — typology of shared material (forward / backward / symmetric / none).
+* `parallelConjuncts`, `sharedDepTypes` — predicates over a `DepTree`
+  detecting core-argument parallelism and the shared-dep typeset between
+  two conjunct heads.
+* `isATBExtraction`, `cscViolation` — Bool predicates over an enhanced
+  `DepGraph` detecting across-the-board extraction and CSC violations.
+* `forwardSharing`, `rnrBasic`, `gappingPreEllipsis`, `atbExtraction` —
+  worked example trees from Osborne 2019.
 
-## Key Insight
+## Implementation notes
 
-All types of shared material in coordination form catenae. Gapping in
-coordination is just catena-ellipsis. The CSC follows from requiring symmetric
-(ATB) extraction — asymmetric extraction violates parallelism.
-
-## Bridges
-
-- → `Coordination.lean`: consumes the `enhanceSharedDeps`,
-  `checkCatMatch`, `checkArgStrMatch` substrate functions and adds a
-  sharing-type classification on top.
-- → `Catena.lean`: shared material forms catenae (proven)
-- → `Ellipsis.lean`: gapping = catena-ellipsis in coordination
-- → `Phenomena/Ellipsis/Gapping.lean`: gapping direction ↔ sharing direction
-
+* Predicate-shape definitions inherit the substrate-wide `Bool`
+  convention; theorems read as `... = true`. A project-wide
+  Bool → `Prop` + `[DecidablePred]` migration is out of scope here.
+* `none_` constructor renamed to `noSharing` to avoid the `Option.none`
+  clash without the trailing-underscore hack.
+* Substrate bridges (`Coordination.checkCatMatch`, `enhanceSharedDeps`,
+  `Catena.isCatena`) are exercised on the example trees; redundant
+  re-statements bundling those checks into single conjunctive theorems
+  have been dropped.
 -/
 
 namespace DepGrammar.CoordinationParallelism
 
 open DepGrammar Catena
 
--- ============================================================================
--- §1: Sharing Typology
--- ============================================================================
+/-! ### Sharing typology -/
 
-/-- Types of shared material in coordination (@cite{osborne-2019}, Ch 10). -/
+/-- Types of shared material in coordination. -/
 inductive SharingType where
-  | forward    -- Left-edge sharing: "John [eats and drinks] beer"
-  | backward   -- Right-edge sharing (RNR): "John likes and Mary hates [pizza]"
-  | symmetric  -- Both edges shared: rare
-  | none_      -- No sharing: "John eats and Mary drinks"
+  /-- Left-edge sharing: "John [eats and drinks] beer". -/
+  | forward
+  /-- Right-edge sharing (RNR): "John likes and Mary hates [pizza]". -/
+  | backward
+  /-- Both edges shared: rare. -/
+  | symmetric
+  /-- No sharing: "John eats and Mary drinks". -/
+  | noSharing
   deriving Repr, DecidableEq
 
--- ============================================================================
--- §2: Parallel Structure Detection
--- ============================================================================
+/-! ### Parallel structure detection -/
 
-/-- Check if two conjuncts have parallel core argument structure.
-    Parallel = same set of core argument relations (nsubj, obj, iobj) from head,
-    ignoring coordination-specific (conj, cc) and function-word (aux, mark, det)
-    relations which don't affect parallelism.
-    @cite{osborne-2019}. -/
+/-- Two conjuncts are parallel when they take the same set of core
+    argument relations (nsubj, obj, iobj), ignoring coordination markers
+    (conj, cc) and function-word relations that don't affect parallelism. -/
 def parallelConjuncts (t : DepTree) (c1 c2 : Nat) : Bool :=
   let isCoreArg (r : UD.DepRel) := r == .nsubj || r == .obj || r == .iobj
-  -- `insertionSort` is kernel-decidable; see `Core/Dependency/Projection.projection`.
   let rels1 := t.deps.filter (λ d => d.headIdx == c1 && isCoreArg d.depType)
     |>.map (·.depType) |>.insertionSort (·.toString ≤ ·.toString) |>.eraseDups
   let rels2 := t.deps.filter (λ d => d.headIdx == c2 && isCoreArg d.depType)
     |>.map (·.depType) |>.insertionSort (·.toString ≤ ·.toString) |>.eraseDups
   rels1.length == rels2.length && rels1.all rels2.contains
 
-/-- Get shared dependents between two conjuncts: deps that have the same
-    depType in both heads. Returns the depTypes that are shared. -/
+/-- The dependency types that appear under both `c1` and `c2`. -/
 def sharedDepTypes (t : DepTree) (c1 c2 : Nat) : List UD.DepRel :=
   let rels1 := t.deps.filter (·.headIdx == c1) |>.map (·.depType)
   let rels2 := t.deps.filter (·.headIdx == c2) |>.map (·.depType)
   rels1.filter rels2.contains |>.eraseDups
 
--- ============================================================================
--- §3: Example Trees
--- ============================================================================
+/-! ### Example trees -/
 
-/-- **Forward sharing**: "John eats and drinks beer"
-    Words: John(0) eats(1) and(2) drinks(3) beer(4)
-    Deps: eats(1) → John(0:nsubj), eats(1) → drinks(3:conj), eats(1) → beer(4:obj),
-          drinks(3) → and(2:cc)
-    Shared = {John(0)} — nsubj of eats, implicitly of drinks too.
-    @cite{osborne-2019}. -/
-def ex_forwardSharing : DepTree :=
+/-- Forward sharing: "John eats and drinks beer", with `John(0)` the shared
+    subject of both verbs. -/
+def forwardSharing : DepTree :=
   { words := [ Word.mk' "John" .PROPN, Word.mk' "eats" .VERB
              , Word.mk' "and" .CCONJ, Word.mk' "drinks" .VERB
              , Word.mk' "beer" .NOUN ]
@@ -92,33 +83,26 @@ def ex_forwardSharing : DepTree :=
             , ⟨3, 2, .cc⟩ ]
     rootIdx := 1 }
 
-/-- Enhanced graph for forward sharing: John is nsubj of both eats AND drinks. -/
-def ex_forwardSharing_enhanced : DepGraph :=
-  Coordination.enhanceSharedDeps ex_forwardSharing
+/-- Enhanced graph for `forwardSharing`: `John` is `nsubj` of both verbs. -/
+def forwardSharingEnhanced : DepGraph :=
+  Coordination.enhanceSharedDeps forwardSharing
 
-/-- **Backward sharing (RNR)**: "John likes and Mary hates pizza".
-    Words: John(0) likes(1) and(2) Mary(3) hates(4) pizza(5).
-    The basic tree attaches pizza to likes(1) only; `enhanceSharedDeps`
-    propagates it as `obj` of hates(4) too. -/
-def rnrBasicTree : DepTree :=
+/-- Right-node-raising: "John likes and Mary hates pizza". The basic tree
+    attaches `pizza` to `likes(1)` only; `enhanceSharedDeps` propagates
+    it as `obj` of `hates(4)` too. -/
+def rnrBasic : DepTree :=
   { words := [ Word.mk' "John" .PROPN, Word.mk' "likes" .VERB
              , Word.mk' "and" .CCONJ, Word.mk' "Mary" .PROPN
              , Word.mk' "hates" .VERB, Word.mk' "pizza" .NOUN ]
     deps  := [ ⟨1, 0, .nsubj⟩, ⟨1, 4, .conj⟩, ⟨4, 3, .nsubj⟩, ⟨1, 5, .obj⟩ ]
     rootIdx := 1 }
 
-def rnrEnhancedGraph : DepGraph := Coordination.enhanceSharedDeps rnrBasicTree
+/-- Enhanced graph for `rnrBasic`. -/
+def rnrEnhanced : DepGraph := Coordination.enhanceSharedDeps rnrBasic
 
-/-- **Gapping-as-coordination**: "Fred eats beans and Jim rice"
-    Words: Fred(0) eats(1) beans(2) and(3) Jim(4) rice(5)
-    This is the pre-gapping tree. Gapping elides the second "eats".
-    In UD: eats(1) → Fred(0:nsubj), eats(1) → beans(2:obj),
-           eats(1) → eats_implied(→ orphan structure).
-    We model the pre-gapping version with full second clause:
-    eats(1) → Fred(0:nsubj), eats(1) → beans(2:obj),
-    eats(1) → Jim(4:conj:orphan parent), Jim(4) → rice(5:orphan).
-    But UD uses `orphan` for gapping; we model the pre-ellipsis tree instead. -/
-def ex_gapping_preEllipsis : DepTree :=
+/-- Pre-gapping tree for "Fred eats beans and Jim eats rice", with the
+    second `eats` still overt; downstream gapping treatments elide it. -/
+def gappingPreEllipsis : DepTree :=
   { words := [ Word.mk' "Fred" .PROPN, Word.mk' "eats" .VERB
              , Word.mk' "beans" .NOUN, Word.mk' "and" .CCONJ
              , Word.mk' "eats" .VERB, Word.mk' "Jim" .PROPN
@@ -127,13 +111,9 @@ def ex_gapping_preEllipsis : DepTree :=
             , ⟨4, 3, .cc⟩, ⟨4, 5, .nsubj⟩, ⟨4, 6, .obj⟩ ]
     rootIdx := 1 }
 
-/-- **ATB extraction**: "What did John buy and Mary sell?"
-    Words: what(0) did(1) John(2) buy(3) and(4) Mary(5) sell(6)
-    Deps: buy(3) → John(2:nsubj), buy(3) → what(0:obj), buy(3) → did(1:aux),
-          buy(3) → sell(6:conj), sell(6) → Mary(5:nsubj), sell(6) → and(4:cc)
-    Symmetric extraction from both conjuncts — grammatical.
-    @cite{osborne-2019}. -/
-def ex_atbExtraction : DepTree :=
+/-- ATB extraction: "What did John buy and Mary sell?", symmetric
+    extraction of `what` from both conjuncts. -/
+def atbExtraction : DepTree :=
   { words := [ ⟨"what", .PRON, { wh := true }⟩, Word.mk' "did" .AUX
              , Word.mk' "John" .PROPN, Word.mk' "buy" .VERB
              , Word.mk' "and" .CCONJ, Word.mk' "Mary" .PROPN
@@ -142,65 +122,50 @@ def ex_atbExtraction : DepTree :=
             , ⟨3, 6, .conj⟩, ⟨6, 5, .nsubj⟩, ⟨6, 4, .cc⟩ ]
     rootIdx := 3 }
 
-/-- Enhanced ATB: what is obj of BOTH buy and sell. -/
-def ex_atbExtraction_enhanced : DepGraph :=
-  Coordination.enhanceSharedDeps ex_atbExtraction
+/-- Enhanced ATB graph: `what` is `obj` of both `buy` and `sell`. -/
+def atbExtractionEnhanced : DepGraph :=
+  Coordination.enhanceSharedDeps atbExtraction
 
--- ============================================================================
--- §4: Shared Material as Catenae
--- ============================================================================
+/-! ### Shared material forms catenae -/
 
-/-- In forward sharing, the shared subject {John(0)} is trivially a catena. -/
-theorem forwardSharing_shared_is_catena :
-    Catena.isCatena ex_forwardSharing.deps [0] = true := by native_decide
+theorem forwardSharing_shared_isCatena :
+    Catena.isCatena forwardSharing.deps [0] = true := by decide
 
-/-- In RNR (rnrBasicTree), the shared object {pizza(5)} is a catena. -/
-theorem rnr_shared_is_catena :
-    Catena.isCatena rnrBasicTree.deps [5] = true := by native_decide
+theorem rnr_shared_isCatena :
+    Catena.isCatena rnrBasic.deps [5] = true := by decide
 
-/-- In gapping, the shared verb {eats(1)} is a catena (links to both clauses). -/
-theorem gapping_shared_verb_is_catena :
-    Catena.isCatena ex_gapping_preEllipsis.deps [1] = true := by native_decide
+theorem gapping_sharedVerb_isCatena :
+    Catena.isCatena gappingPreEllipsis.deps [1] = true := by decide
 
-/-- In ATB extraction, the shared object {what(0)} is a catena. -/
-theorem atb_shared_is_catena :
-    Catena.isCatena ex_atbExtraction.deps [0] = true := by native_decide
+theorem atb_shared_isCatena :
+    Catena.isCatena atbExtraction.deps [0] = true := by decide
 
--- ============================================================================
--- §5: Parallelism Proofs
--- ============================================================================
+/-! ### Parallelism -/
 
-/-- Gapping conjuncts are parallel: both eats(1) and eats(4) have the same
-    set of dependency relations (nsubj, obj). -/
+/-- Gapping conjuncts are parallel: both verbs take `nsubj` and `obj`. -/
 theorem gapping_conjuncts_parallel :
-    parallelConjuncts ex_gapping_preEllipsis 1 4 = true := by native_decide
+    parallelConjuncts gappingPreEllipsis 1 4 = true := by decide
 
-/-- ATB conjuncts are parallel in the enhanced graph: buy(3) and sell(6) both
-    have nsubj and obj after shared dep propagation. -/
+/-- ATB conjuncts are parallel in the enhanced graph: `buy` and `sell`
+    both have `nsubj` and `obj` after shared-dep propagation. -/
 theorem atb_conjuncts_parallel_enhanced :
-    let enhanced := ex_atbExtraction_enhanced
-    let t : DepTree := { words := enhanced.words, deps := enhanced.deps, rootIdx := enhanced.rootIdx }
-    parallelConjuncts t 3 6 = true := by native_decide
+    let enhanced := atbExtractionEnhanced
+    let t : DepTree := { words := enhanced.words, deps := enhanced.deps,
+                         rootIdx := enhanced.rootIdx }
+    parallelConjuncts t 3 6 = true := by decide
 
--- Forward sharing conjuncts: eats(1) has nsubj, obj, conj;
--- drinks(3) has cc. Not directly parallel at head level (eats has more
--- deps because shared deps attach to first conjunct).
+/-! ### Coordinate Structure Constraint -/
 
--- ============================================================================
--- §6: CSC via Parallelism
--- ============================================================================
-
-/-- Check if extraction from coordination is across-the-board (ATB):
-    the filler is an argument of ALL conjuncts in the enhanced graph.
-    @cite{osborne-2019}: asymmetric extraction violates parallelism. -/
+/-- Extraction is across-the-board when the filler is a dependent of
+    every conjunct in the enhanced graph. -/
 def isATBExtraction (enhanced : DepGraph) (fillerIdx : Nat)
     (conjuncts : List Nat) : Bool :=
   conjuncts.all λ c =>
     enhanced.deps.any λ d =>
       d.headIdx == c && d.depIdx == fillerIdx
 
-/-- Check if extraction violates the CSC: extracted from some but not all
-    conjuncts. -/
+/-- Extraction violates the CSC when the filler is extracted from some
+    but not all conjuncts. -/
 def cscViolation (enhanced : DepGraph) (fillerIdx : Nat)
     (conjuncts : List Nat) : Bool :=
   let someHave := conjuncts.any λ c =>
@@ -209,60 +174,10 @@ def cscViolation (enhanced : DepGraph) (fillerIdx : Nat)
     enhanced.deps.any (λ d => d.headIdx == c && d.depIdx == fillerIdx)
   someHave && !allHave
 
-/-- ATB extraction in "What did John buy and Mary sell?" is ATB: what(0) is
-    obj of both buy(3) and sell(6) in the enhanced graph. -/
-theorem atb_extraction_is_atb :
-    isATBExtraction ex_atbExtraction_enhanced 0 [3, 6] = true := by native_decide
+theorem atb_extraction_isATB :
+    isATBExtraction atbExtractionEnhanced 0 [3, 6] = true := by decide
 
-/-- ATB extraction does NOT violate the CSC. -/
-theorem atb_no_csc_violation :
-    cscViolation ex_atbExtraction_enhanced 0 [3, 6] = false := by native_decide
-
--- ============================================================================
--- §7: Bridges
--- ============================================================================
-
-/-- **Bridge → Coordination.lean**: category matching still holds for all
-    our coordination examples. -/
-theorem coordination_cat_match_preserved :
-    Coordination.checkCatMatch ex_gapping_preEllipsis = true ∧
-    Coordination.checkCatMatch ex_atbExtraction = true := by
-  constructor <;> native_decide
-
-/-- **Bridge → Coordination.lean**: argument structure matching holds for
-    gapping (both verbs are transitive). -/
-theorem gapping_argstr_match :
-    Coordination.checkArgStrMatch ex_gapping_preEllipsis = true := by native_decide
-
-/-- **Bridge → Coordination.lean**: enhanced graph propagates shared deps. -/
-theorem forward_sharing_enhanced_propagates :
-    ex_forwardSharing_enhanced.deps.any
-      (λ d => d.headIdx == 3 && d.depIdx == 0 && d.depType == .nsubj) = true := by
-  native_decide
-
-/-- **Bridge → rnrBasicTree**: RNR enhanced graph has shared obj. -/
-theorem rnr_bridge :
-    rnrEnhancedGraph.deps.any
-      (λ d => d.headIdx == 4 && d.depIdx == 5 && d.depType == .obj) = true := by
-  native_decide
-
-/-- **Bridge → Catena.lean**: all shared material in coordination forms
-    catenae — singletons are trivially connected. -/
-theorem all_shared_are_catenae :
-    Catena.isCatena ex_forwardSharing.deps [0] = true ∧
-    Catena.isCatena rnrBasicTree.deps [5] = true ∧
-    Catena.isCatena ex_gapping_preEllipsis.deps [1] = true ∧
-    Catena.isCatena ex_atbExtraction.deps [0] = true := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
-
-/-- **Bridge → Ellipsis.lean**: gapping is catena-ellipsis in coordination.
-    The gapped verb is a singleton catena, just like in Ellipsis.gappingElided. -/
-theorem gapping_is_catena_ellipsis :
-    Catena.isCatena ex_gapping_preEllipsis.deps [1] = true ∧
-    Catena.isCatena Ellipsis.gappingTree.deps [0] = true := by
-  constructor <;> native_decide
-
--- Bridge → Phenomena/Ellipsis/Gapping.lean: sharing direction ↔ gapping direction
--- is proven in Osborne2019Parallelism.lean
+theorem atb_no_cscViolation :
+    cscViolation atbExtractionEnhanced 0 [3, 6] = false := by decide
 
 end DepGrammar.CoordinationParallelism

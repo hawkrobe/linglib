@@ -273,7 +273,7 @@ import Linglib.Core.Computability.Subregular.PiecewiseTestable
 import Linglib.Core.Computability.Subregular.Definite
 import Linglib.Core.Computability.Subregular.Multitier
 import Linglib.Core.Computability.Subregular.ForbiddenPairs
-import Linglib.Core.Direction
+import Linglib.Core.Computability.Subregular.Function.Direction
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential
@@ -351,9 +351,6 @@ import Linglib.Core.Inheritance.Choice
 import Linglib.Core.Inheritance.Default
 import Linglib.Core.Inheritance.Order
 import Linglib.Core.Prototype
-import Linglib.Core.Dependency.Basic
-import Linglib.Core.Dependency.Projection
-import Linglib.Core.Dependency.Dominance
 import Linglib.Morphology.MorphProfile
 import Linglib.Morphology.ConsonantalRoot
 import Linglib.Morphology.Exponence
@@ -1989,7 +1986,10 @@ import Linglib.Phenomena.ScalarImplicatures.ExhaustivityLimit
 import Linglib.Phenomena.ScalarImplicatures.ScopeExpressivity
 import Linglib.Studies.Partee1973
 -- Theories: Dependency Grammar
-import Linglib.Syntax.DependencyGrammar.Core.Nominal
+import Linglib.Syntax.DependencyGrammar.Basic
+import Linglib.Syntax.DependencyGrammar.Projection
+import Linglib.Syntax.DependencyGrammar.Dominance
+import Linglib.Syntax.DependencyGrammar.Nominal
 import Linglib.Syntax.DependencyGrammar.Formal.HeadCriteria
 import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 import Linglib.Syntax.DependencyGrammar.Formal.HarmonicOrder
@@ -2003,6 +2003,9 @@ import Linglib.Syntax.DependencyGrammar.Formal.Ellipsis
 import Linglib.Syntax.DependencyGrammar.Formal.Discontinuity
 import Linglib.Syntax.DependencyGrammar.Formal.Islands
 import Linglib.Syntax.DependencyGrammar.Formal.CoordinationParallelism
+import Linglib.Syntax.DependencyGrammar.Coordination
+import Linglib.Syntax.DependencyGrammar.Coreference
+import Linglib.Syntax.DependencyGrammar.LongDistance
 -- Theories: Word Grammar
 import Linglib.Syntax.WordGrammar.LexicalRules
 import Linglib.Syntax.WordGrammar.Network
@@ -2020,8 +2023,6 @@ import Linglib.Processing.NoisyChannel.Basic
 import Linglib.Processing.NoisyChannel.LossyContext
 import Linglib.Processing.PredictiveUncertainty.Config
 import Linglib.Processing.PredictiveUncertainty.IAS
-import Linglib.Syntax.DependencyGrammar.Coordination
-import Linglib.Syntax.DependencyGrammar.Coreference
 import Linglib.Studies.ArnoldEtAl2000
 import Linglib.Studies.Gibson2025
 import Linglib.Studies.KuhlmannNivre2006
@@ -2038,7 +2039,6 @@ import Linglib.Studies.Shieber1985
 import Linglib.Studies.PullumGazdar1982
 import Linglib.Studies.ArregiPietraszko2021
 import Linglib.Studies.BroekhuisCorver2026
-import Linglib.Syntax.DependencyGrammar.LongDistance
 import Linglib.Studies.DeMarneffeNivre2019
 -- Theories: Discourse — Centering Theory (Grosz, Joshi & Weinstein 1995)
 import Linglib.Discourse.Centering.Defs

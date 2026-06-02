@@ -1,182 +1,142 @@
-import Linglib.Core.Dependency.Basic
-import Linglib.Syntax.DependencyGrammar.Formal.HeadCriteria
+import Linglib.Syntax.DependencyGrammar.Basic
 
 /-!
 # Government in Dependency Grammar
-@cite{osborne-2019}
 
-Formalizes government (@cite{osborne-2019}, Ch 4 §4.8, Ch 5): the mechanism by which
-a head determines the morphosyntactic form of its dependent.
+Formalizes government (@cite{osborne-2019}, Ch. 4 §4.8 and Ch. 5): the
+mechanism by which a head determines the morphosyntactic form of its
+dependent — case on a complement of a preposition, verb form on the
+complement of a control verb, finiteness of a clausal complement.
 
-Government is distinct from:
-- **Selection**: what semantic type the head requires (animate, proposition, etc.)
-- **Subcategorization**: which argument slots the head has
-- **Government**: what morphosyntactic form the head requires (case, verb form)
+Government is orthogonal to valency: "want to go" and "enjoy swimming"
+share an `xcomp` slot but require different forms (`infinitive` vs.
+`gerund`) on the complement.
 
-## Key Insight
+## Main declarations
 
-The same valency frame (transitive verb taking two NP arguments) can have
-different government patterns: "want to go" vs "enjoy swimming" — same slot
-count, different morphological requirements on the complement.
+* `GovernedFeature`, `GovernedValue` — the morphosyntactic dimensions a
+  head can govern, with a typed value space (no `String` tags).
+* `GovRequirement` — one head-cat / dep-rel / feature / required-value
+  4-tuple, with five English instances from @cite{osborne-2019}.
+* `checkGovernment` — Bool checker that verifies every dependency in a
+  `DepTree` honours every requirement that applies to it.
+* `withHim_govOk` / `withHe_govFail` etc. — small fixtures exercising
+  the checker on accusative-vs-nominative preposition complements and
+  infinitive-vs-gerund verb complements.
 
-## Bridges
+## Implementation notes
 
-- → `HeadCriteria.lean`: government is criterion 5 (morphological determination)
-  — the governor is the head
-- → `Core/Basic.lean`: `ArgSlot` has `cat` and `depType`; government adds
-  morphological form constraints
-
+* Bool checker, not Prop predicate: matches the substrate-wide
+  convention in this directory; Prop+Decidable migration is out of
+  scope for the cleanup pass.
+* No bridge theorems to `HeadCriteria`. The audit flagged the previous
+  `government_implies_head` and `argslot_agnostic_to_government` as
+  rfl-on-stipulation tautologies; cross-framework rivalry against
+  HPSG `COMPS|VFORM` or Minimalist selectional features belongs in a
+  paper-anchored Studies file, not the substrate.
 -/
 
 namespace DepGrammar.Government
 
 open DepGrammar
 
--- ============================================================================
--- §1: Government Relation
--- ============================================================================
+/-! ### Government dimensions and values -/
 
-/-- A morphosyntactic feature that a head can govern on its dependent.
+/-- A morphosyntactic feature a head can govern on its dependent.
     @cite{osborne-2019}. -/
 inductive GovernedFeature where
-  | case_      -- Prepositions/verbs govern case (e.g., German accusative)
-  | vform      -- Verbs govern verb form of complement (infinitive, gerund, participle)
-  | mood       -- Complementizers govern mood (subjunctive in Romance)
-  | finiteness -- Verbs govern finiteness of complement clause
+  | Case
+  | VForm
+  | Mood
+  | Finiteness
   deriving Repr, DecidableEq
 
-/-- A government requirement: head requires dependent to have specific feature value.
-    @cite{osborne-2019}. -/
+/-- The typed value space for governed features (replaces stringly-typed
+    requirement tags). @cite{osborne-2019}. -/
+inductive GovernedValue where
+  | acc | nom | gen
+  | infinitive | base | gerund | participle
+  | finite | nonfinite
+  deriving Repr, DecidableEq
+
+/-- A government requirement: a head of category `headCat` requires its
+    dependent on relation `depRel` to have value `requiredValue` of
+    feature `feature`. @cite{osborne-2019}. -/
 structure GovRequirement where
   headCat : UD.UPOS
   depRel : UD.DepRel
   feature : GovernedFeature
-  requiredValue : String  -- e.g., "acc", "infinitive", "gerund"
+  requiredValue : GovernedValue
   deriving Repr, DecidableEq
 
--- ============================================================================
--- §2: English Government Data
--- ============================================================================
+/-! ### English government data -/
 
-/-- Verb + to-infinitive: "want to go" — want governs infinitival form.
-    @cite{osborne-2019}. -/
+/-- "want to go" — `want` governs the infinitival form of its `xcomp`. -/
 def govVerbInfinitive : GovRequirement :=
-  ⟨.VERB, .xcomp, .vform, "infinitive"⟩
+  ⟨.VERB, .xcomp, .VForm, .infinitive⟩
 
-/-- Verb + bare infinitive: "make him go" — make governs base form.
-    @cite{osborne-2019}. -/
+/-- "make him go" — `make` governs the bare form of its `xcomp`. -/
 def govVerbBareInf : GovRequirement :=
-  ⟨.VERB, .xcomp, .vform, "base"⟩
+  ⟨.VERB, .xcomp, .VForm, .base⟩
 
-/-- Verb + gerund: "enjoy swimming" — enjoy governs gerund form.
-    @cite{osborne-2019}. -/
+/-- "enjoy swimming" — `enjoy` governs the gerund form of its `xcomp`. -/
 def govVerbGerund : GovRequirement :=
-  ⟨.VERB, .xcomp, .vform, "gerund"⟩
+  ⟨.VERB, .xcomp, .VForm, .gerund⟩
 
-/-- Verb + finite that-clause: "think that..." — think governs finite complement.
-    @cite{osborne-2019}. -/
+/-- "think that ..." — `think` governs a finite `ccomp`. -/
 def govVerbFinite : GovRequirement :=
-  ⟨.VERB, .ccomp, .finiteness, "finite"⟩
+  ⟨.VERB, .ccomp, .Finiteness, .finite⟩
 
-/-- Preposition + accusative: "with him/*he" — preposition governs accusative case.
-    @cite{osborne-2019}. -/
+/-- "with him / *with he" — preposition governs accusative on its `obj`. -/
 def govPrepAcc : GovRequirement :=
-  ⟨.ADP, .obj, .case_, "acc"⟩
+  ⟨.ADP, .obj, .Case, .acc⟩
 
-/-- All English government requirements from @cite{osborne-2019}. -/
+/-- The English government patterns from @cite{osborne-2019}. -/
 def englishGovRequirements : List GovRequirement :=
   [govVerbInfinitive, govVerbBareInf, govVerbGerund, govVerbFinite, govPrepAcc]
 
--- ============================================================================
--- §3: Government Checking
--- ============================================================================
+/-! ### Government checking -/
 
-/-- Match a governed feature against a word's feature bundle.
-    Returns true if the word has the required value. -/
-def matchGovFeature (w : Word) (feat : GovernedFeature) (reqVal : String) : Bool :=
+/-- Does the word `w` carry the value `reqVal` of feature `feat`?
+    Returns `true` when the relevant feature slot is unspecified
+    (vacuous satisfaction). -/
+def matchGovFeature (w : Word) (feat : GovernedFeature) (reqVal : GovernedValue) : Bool :=
   match feat with
-  | .case_ =>
+  | .Case =>
     match w.features.case_ with
-    | some .Acc => reqVal == "acc"
-    | some .Nom => reqVal == "nom"
-    | some .Gen => reqVal == "gen"
-    | _ => true  -- unspecified = no violation
-  | .vform =>
-    match w.features.vform with
-    | some .Inf => reqVal == "infinitive"
-    | some .Part => reqVal == "gerund" || reqVal == "participle"
-    | some .Fin => reqVal == "finite" || reqVal == "base"
+    | some .Acc => reqVal = .acc
+    | some .Nom => reqVal = .nom
+    | some .Gen => reqVal = .gen
     | _ => true
-  | .finiteness =>
-    match w.features.finite with
-    | true => reqVal == "finite"
-    | false => reqVal == "nonfinite"
-  | .mood => true  -- English lacks overt mood government
+  | .VForm =>
+    match w.features.vform with
+    | some .Inf => reqVal = .infinitive
+    | some .Part => reqVal = .gerund || reqVal = .participle
+    | some .Fin => reqVal = .finite || reqVal = .base
+    | _ => true
+  | .Finiteness =>
+    if w.features.finite then reqVal = .finite else reqVal = .nonfinite
+  | .Mood => true
 
-/-- Check if a dependency edge satisfies its government requirements. -/
+/-- A dependency tree satisfies its government requirements when every
+    matching head-cat / dep-rel pair carries the required value. -/
 def checkGovernment (t : DepTree) (govReqs : List GovRequirement) : Bool :=
   t.deps.all λ d =>
     govReqs.all λ req =>
-      if d.depType == req.depRel then
+      if d.depType = req.depRel then
         match t.words[d.headIdx]?, t.words[d.depIdx]? with
         | some hw, some dw =>
-          if hw.cat == req.headCat then
-            matchGovFeature dw req.feature req.requiredValue
-          else true
+            if hw.cat = req.headCat then
+              matchGovFeature dw req.feature req.requiredValue
+            else true
         | _, _ => true
       else true
 
--- ============================================================================
--- §4: Government vs. Selection vs. Subcategorization
--- ============================================================================
+/-! ### Example trees -/
 
-/-- A government pattern: a verb with its government requirements.
-    Government is distinct from valency: valency captures WHAT dependents
-    appear, while government captures WHAT FORM those dependents must take. -/
-structure GovernmentPattern where
-  verb : String
-  requirements : List GovRequirement
-  deriving Repr
-
-/-- "want" governs infinitival complement: "want to go" -/
-def wantGov : GovernmentPattern :=
-  ⟨"want", [govVerbInfinitive]⟩
-
-/-- "enjoy" governs gerund complement: "enjoy swimming" -/
-def enjoyGov : GovernmentPattern :=
-  ⟨"enjoy", [govVerbGerund]⟩
-
-/-- "think" governs finite complement: "think that..." -/
-def thinkGov : GovernmentPattern :=
-  ⟨"think", [govVerbFinite]⟩
-
-/-- "make" governs bare infinitive: "make him go" -/
-def makeGov : GovernmentPattern :=
-  ⟨"make", [govVerbBareInf]⟩
-
-/-- Government and valency are orthogonal: valency says WHAT dependents,
-    government says WHAT FORM. @cite{osborne-2019}.
-    A verb can have the same valency (transitive, taking xcomp) but different
-    government (infinitive vs gerund complement).
-
-    "want to go" and "enjoy swimming" — both take a VP complement (same
-    valency: verb + xcomp), but want requires infinitive while enjoy requires
-    gerund. -/
-theorem government_orthogonal_to_valency :
-    wantGov.requirements.length == enjoyGov.requirements.length &&
-    wantGov.requirements.head?.map (·.depRel) == enjoyGov.requirements.head?.map (·.depRel) &&
-    wantGov.requirements.head?.map (·.requiredValue) !=
-      enjoyGov.requirements.head?.map (·.requiredValue) := by
-  native_decide
-
--- ============================================================================
--- §5: Example Trees
--- ============================================================================
-
-/-- "She wants to go" — verb governs infinitival complement.
-    Words: she(0) wants(1) to(2) go(3)
-    Deps: wants → she (nsubj), wants → go (xcomp), go → to (mark) -/
-def ex_sheWantsToGo : DepTree :=
+/-- "She wants to go": `wants(1)` heads `she(0)` (nsubj) and `go(3)`
+    (xcomp); `go(3)` heads `to(2)` (mark). -/
+def exSheWantsToGo : DepTree :=
   { words := [ ⟨"she", .PRON, { case_ := some .Nom }⟩
              , ⟨"wants", .VERB, { valence := some .transitive }⟩
              , ⟨"to", .PART, {}⟩
@@ -184,83 +144,41 @@ def ex_sheWantsToGo : DepTree :=
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .xcomp⟩, ⟨3, 2, .mark⟩]
     rootIdx := 1 }
 
-/-- "She enjoys swimming" — verb governs gerund complement.
-    Words: she(0) enjoys(1) swimming(2)
-    Deps: enjoys → she (nsubj), enjoys → swimming (xcomp) -/
-def ex_sheEnjoysSw : DepTree :=
+/-- "She enjoys swimming": `enjoys(1)` heads `she(0)` (nsubj) and
+    `swimming(2)` (xcomp). -/
+def exSheEnjoysSwimming : DepTree :=
   { words := [ ⟨"she", .PRON, { case_ := some .Nom }⟩
              , ⟨"enjoys", .VERB, { valence := some .transitive }⟩
              , ⟨"swimming", .VERB, { vform := some .Part }⟩ ]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .xcomp⟩]
     rootIdx := 1 }
 
-/-- "with him" — preposition governs accusative case.
-    Words: with(0) him(1)
-    Deps: with → him (obj) -/
-def ex_withHim : DepTree :=
+/-- "with him": preposition governs accusative — well-formed. -/
+def exWithHim : DepTree :=
   { words := [ ⟨"with", .ADP, {}⟩
              , ⟨"him", .PRON, { case_ := some .Acc }⟩ ]
     deps := [⟨0, 1, .obj⟩]
     rootIdx := 0 }
 
-/-- "with he" — preposition government violation (nominative instead of accusative). -/
-def ex_withHe : DepTree :=
+/-- "with he": preposition government violation (nominative for accusative). -/
+def exWithHe : DepTree :=
   { words := [ ⟨"with", .ADP, {}⟩
              , ⟨"he", .PRON, { case_ := some .Nom }⟩ ]
     deps := [⟨0, 1, .obj⟩]
     rootIdx := 0 }
 
--- ============================================================================
--- §6: Proofs
--- ============================================================================
+/-! ### Checker behaviour on the fixtures -/
 
-/-- "with him" satisfies case government (accusative). -/
 theorem withHim_govOk :
-    checkGovernment ex_withHim [govPrepAcc] = true := by native_decide
+    checkGovernment exWithHim [govPrepAcc] = true := by decide
 
-/-- "with he" violates case government (nominative instead of accusative). -/
 theorem withHe_govFail :
-    checkGovernment ex_withHe [govPrepAcc] = false := by native_decide
+    checkGovernment exWithHe [govPrepAcc] = false := by decide
 
-/-- "She wants to go" satisfies infinitive government. -/
 theorem wantsToGo_govOk :
-    checkGovernment ex_sheWantsToGo [govVerbInfinitive] = true := by native_decide
+    checkGovernment exSheWantsToGo [govVerbInfinitive] = true := by decide
 
-/-- "She enjoys swimming" satisfies gerund government. -/
 theorem enjoysSwimming_govOk :
-    checkGovernment ex_sheEnjoysSw [govVerbGerund] = true := by native_decide
-
--- ============================================================================
--- §7: Bridges
--- ============================================================================
-
-/-- Government distinguishes what valency does not: "want" and "enjoy" both
-    take an xcomp complement, but require infinitive vs gerund form. -/
-theorem same_valency_different_government :
-    wantGov.requirements.head?.map (·.requiredValue) !=
-      enjoyGov.requirements.head?.map (·.requiredValue) := by
-  decide
-
-/-- **Bridge → HeadCriteria.lean**: Government is one of the six head criteria
-    (criterion 5: morphological determination). The governor is the head.
-    Core arguments satisfy all 6 criteria including government. -/
-theorem government_implies_head :
-    HeadCriteria.classifyRelation .xcomp = HeadCriteria.RelationClass.coreArgument ∧
-    HeadCriteria.expectedCriteriaCount .coreArgument = 6 := by
-  native_decide
-
-/-- **Bridge → Core/Basic.lean**: `ArgSlot` captures what relation and direction
-    a dependent has. Government adds a morphological dimension: the slot for
-    xcomp is the same regardless of whether the governed form is infinitive
-    or gerund. -/
-theorem argslot_agnostic_to_government :
-    let slot : ArgSlot := ⟨.xcomp, .right, true, some .VERB⟩
-    -- Same slot works for both infinitive and gerund complements
-    slot.depType == .xcomp := by
-  native_decide
-
-/-- Government requirements are distinct across all five English patterns. -/
-theorem english_gov_requirements_count :
-    englishGovRequirements.length = 5 := by native_decide
+    checkGovernment exSheEnjoysSwimming [govVerbGerund] = true := by decide
 
 end DepGrammar.Government

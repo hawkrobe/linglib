@@ -1,61 +1,50 @@
-import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
 import Linglib.Syntax.DependencyGrammar.Formal.Catena
+import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
 import Linglib.Syntax.DependencyGrammar.LongDistance
 
 /-!
-# Discontinuities as Risen Catenae
+# Discontinuities as risen catenae
 @cite{osborne-2019} @cite{osborne-gross-2012}
 
-Formalizes @cite{osborne-2019}'s analysis of discontinuities in dependency
-grammar. The central concept is the **risen catena**: a catena that takes on a
-word as its head that is not its governor, producing a non-contiguous yield.
+A **risen catena** (@cite{osborne-2019}, Ch 7 §7.10) is a catena whose string
+yield is not contiguous: the catena is connected in the dependency graph but
+intervening words separate it in linear order. Osborne treats every
+discontinuity (wh-fronting, topicalization, scrambling, extraposition, right
+dislocation) as a risen catena, replacing the movement transformations of
+phrase-structure grammar with a single tree-level predicate.
 
-## Core Concepts
+## Main definitions
 
-A **catena** is a connected subgraph of a dependency tree.
-When a dependent is displaced from its canonical position (e.g., by topicalization,
-wh-fronting, or extraposition), the displaced element and its governor still form
-a catena — they are connected in the tree — but their string yield is no longer
-contiguous: other words intervene. This catena is a **risen catena**.
+* `DiscontinuityType` — Osborne's Ch 8 taxonomy (five constructions).
+* `DisplacementDir` — rising vs. lowering displacement.
+* `isContiguous`, `isRisenCatena` — predicates over node lists.
+* `classifyDisplacement`, `displacementDir` — direction lookups.
+* Example trees `whFrontingTree`, `topicalizationTree`, `scramblingTree`,
+  `extrapositionTree`, `rightDislocationTree`.
 
-The **rising catena** (@cite{osborne-2019}, Ch 9 §9.2) is the minimal catena that
-includes the root of the risen catena and the governor of the risen catena.
-Every discontinuity has a rising catena.
+## Main theorems
 
-**The Rising Principle** (@cite{osborne-2019}, Ch 7 §7.12): The head of the risen
-catena must dominate the governor of the risen catena. This constrains which
-discontinuities are possible.
+* `whFronting_risen_catena`, `topicalization_risen_catena`,
+  `scrambling_risen_catena`, `extraposition_risen_catena`,
+  `rightDislocation_risen_catena` — each example tree carries a risen
+  catena over the indicated node pair.
 
-## Discontinuity Types (Ch 8)
+## Implementation notes
 
-Osborne identifies five types:
-- **Wh-fronting**: "Which song do you like?" — constituent rising
-- **Topicalization**: "That song, you don't like" — constituent rising
-- **NP-internal fronting**: "too difficult (of) a problem" — non-constituent rising
-- **Scrambling**: German "dass uns Maria etwas gebacken hat" — constituent rising
-- **Extraposition**: "The idea arose to try again" — constituent rising
-
-Rising vs. lowering: wh-fronting, topicalization, and scrambling displace
-leftward (rising); extraposition displaces rightward (lowering).
-
-## Bridges
-
-- → `Catena.lean`: risen catenae are catenae with non-contiguous yield
-- → `NonProjective.lean`: arc-crossing non-projectivity is a stricter notion;
-  risen catenae generalize it
-- → `LongDistance.lean`: topicalization and wh-fronting map to `GapType.objGap`
-
+* `isContiguous` and `isRisenCatena` return `Bool` to match the substrate-wide
+  `Catena.isCatena` convention; a project-level `Bool → Prop` migration would
+  refactor `Catena.lean` first.
+* `isContiguous` delegates to `isInterval` after `insertionSort` so kernel
+  `decide` proofs reduce; see `Syntax/DependencyGrammar/Projection.lean`.
 -/
 
 namespace DepGrammar.Discontinuity
 
 open DepGrammar
 
--- ============================================================================
--- §1: Discontinuity Classification
--- ============================================================================
+/-! ### Discontinuity classification -/
 
-/-- Discontinuity types (Ch 8, Table 19). -/
+/-- Discontinuity types (@cite{osborne-2019}, Ch 8 Table 19). -/
 inductive DiscontinuityType where
   | whFronting        -- "Which song do you like?"
   | topicalization    -- "That song, you don't like"
@@ -64,17 +53,16 @@ inductive DiscontinuityType where
   | extraposition     -- "The idea arose to try again"
   deriving Repr, DecidableEq
 
-/-- Direction of displacement relative to canonical position.
-   : wh-fronting, topicalization,
-    NP-internal fronting, and scrambling displace leftward;
+/-- Direction of displacement relative to canonical position. Wh-fronting,
+    topicalization, NP-internal fronting, and scrambling displace leftward;
     extraposition displaces rightward. -/
 inductive DisplacementDir where
   | rising    -- displaced leftward (precedes governor)
   | lowering  -- displaced rightward (follows governor)
   deriving Repr, DecidableEq
 
-/-- Classify a discontinuity type by its displacement direction.
-    Scrambling can go either direction, but the canonical case is leftward. -/
+/-- Classify a discontinuity type by its displacement direction. Scrambling
+    can go either direction; the canonical case is leftward. -/
 def displacementDir : DiscontinuityType → DisplacementDir
   | .whFronting       => .rising
   | .topicalization   => .rising
@@ -82,71 +70,41 @@ def displacementDir : DiscontinuityType → DisplacementDir
   | .scrambling       => .rising
   | .extraposition    => .lowering
 
-/-- Whether a discontinuity type involves constituent or non-constituent rising.
-   : constituent rising = risen catena is a
-    constituent; non-constituent rising = risen catena is not a constituent. -/
-inductive RisingType where
-  | constituent     -- Risen catena is a constituent
-  | nonConstituent  -- Risen catena is not a constituent
-  deriving Repr, DecidableEq
+/-! ### Risen catenae -/
 
--- ============================================================================
--- §2: Risen Catenae
--- ============================================================================
-
-/-- Check if a list of node indices is contiguous (no gaps in the sequence).
-    Delegates to `isInterval` from `Core/Dependency/Projection.lean` after
-    sorting. Uses `insertionSort` (not `mergeSort`) so downstream `decide`
-    proofs reduce in the kernel; see `Core/Dependency/Projection.projection`. -/
+/-- A list of node indices is contiguous iff its sorted form is an interval.
+    Uses `insertionSort` (not `mergeSort`) so downstream `decide` proofs
+    reduce in the kernel. -/
 def isContiguous (nodes : List Nat) : Bool :=
   isInterval (nodes.insertionSort (· ≤ ·))
 
-/-- A **risen catena** (Ch 7 §7.10) is a catena whose string yield
-    is not contiguous — the catena is connected in the dependency tree but its
-    words are separated by intervening material in linear order.
-
-    This is the core formalization of Osborne's "discontinuity": when a
-    dependent is displaced, it and its governor remain a catena, but the
-    catena's yield is no longer contiguous. -/
+/-- A **risen catena** (@cite{osborne-2019}, Ch 7 §7.10) is a catena whose
+    string yield is not contiguous — connected in the dependency tree but
+    separated in linear order by intervening material. -/
 def isRisenCatena (t : DepTree) (nodes : List Nat) : Bool :=
   Catena.isCatena t.deps nodes && !isContiguous nodes
 
-/-- Classify a dependency as rising or lowering based on whether the
-    dependent precedes or follows its head in linear order.
-   . -/
+/-- Classify a dependency as rising or lowering by whether the dependent
+    precedes or follows its head in linear order. -/
 def classifyDisplacement (d : Dependency) : DisplacementDir :=
   if d.depIdx < d.headIdx then .rising else .lowering
 
--- ============================================================================
--- §3: Example Trees — From
--- ============================================================================
+/-! ### Example trees from @cite{osborne-2019} Ch 8 -/
 
-/-- **Wh-fronting**: "What did you eat?" (Ch 8 §8.2)
-    Words: what(0) did(1) you(2) eat(3)
-    Deps: eat(3) → you(2:nsubj), eat(3) → what(0:obj), eat(3) → did(1:aux)
-
-    Risen catena = {what(0)} — displaced to sentence-initial position.
-    Rising catena = {what(0), did(1), you(2), eat(3)} — minimal catena from
-    risen catena root to governor eat(3).
-    The catena {what(0), eat(3)} has non-contiguous yield. -/
+/-- **Wh-fronting**: "What did you eat?". The catena `{what(0), eat(3)}` is
+    risen — connected via `obj` but `did(1), you(2)` intervene. -/
 def whFrontingTree : DepTree :=
   { words := [ ⟨"what", .PRON, { wh := true }⟩, Word.mk' "did" .AUX
              , Word.mk' "you" .PRON, Word.mk' "eat" .VERB ]
     deps := [⟨3, 2, .nsubj⟩, ⟨3, 0, .obj⟩, ⟨3, 1, .aux⟩]
     rootIdx := 3 }
 
-/-- The displaced dependency: eat(3) → what(0). -/
+/-- The displaced dependency in `whFrontingTree`: `eat(3) → what(0)`. -/
 def whFrontingArc : Dependency := ⟨3, 0, .obj⟩
 
-/-- **Topicalization**: "...but those ideas I do accept" (Ch 8 §8.3)
-    Simplified to core: "Those ideas I do accept"
-    Words: those(0) ideas(1) I(2) do(3) accept(4)
-    Deps: accept(4) → I(2:nsubj), accept(4) → do(3:aux),
-          accept(4) → ideas(1:obj), ideas(1) → those(0:det)
-
-    Risen catena = {those(0), ideas(1)} — topicalized NP.
-    Rising catena connects risen catena to governor accept(4).
-    The catena {ideas(1), accept(4)} has non-contiguous yield. -/
+/-- **Topicalization**: "Those ideas I do accept". The catena
+    `{ideas(1), accept(4)}` is risen — connected via `obj` but `I(2), do(3)`
+    intervene. -/
 def topicalizationTree : DepTree :=
   { words := [ Word.mk' "those" .DET, Word.mk' "ideas" .NOUN
              , Word.mk' "I" .PRON, Word.mk' "do" .AUX
@@ -155,19 +113,11 @@ def topicalizationTree : DepTree :=
             , ⟨4, 1, .obj⟩, ⟨1, 0, .det⟩ ]
     rootIdx := 4 }
 
-/-- The displaced dependency: accept(4) → ideas(1). -/
+/-- The displaced dependency in `topicalizationTree`: `accept(4) → ideas(1)`. -/
 def topicalizationArc : Dependency := ⟨4, 1, .obj⟩
 
-/-- **Scrambling** (German): "dass uns Maria etwas gebacken hat"
-    (that us Maria something baked has)
-    Words: dass(0) uns(1) Maria(2) etwas(3) gebacken(4) hat(5)
-    Deps: dass(0) → hat(5:...), hat(5) → gebacken(4:xcomp),
-          gebacken(4) → Maria(2:nsubj), gebacken(4) → etwas(3:obj),
-          gebacken(4) → uns(1:iobj)
-
-    Risen catena = {uns(1)} — scrambled to pre-subject position.
-    The catena {uns(1), gebacken(4)} has non-contiguous yield.
-   . -/
+/-- **Scrambling** (German): "dass uns Maria etwas gebacken hat". The catena
+    `{uns(1), gebacken(4)}` is risen — `uns` is scrambled past the subject. -/
 def scramblingTree : DepTree :=
   { words := [ Word.mk' "dass" .SCONJ, Word.mk' "uns" .PRON
              , Word.mk' "Maria" .PROPN, Word.mk' "etwas" .PRON
@@ -176,14 +126,8 @@ def scramblingTree : DepTree :=
             , ⟨4, 2, .nsubj⟩, ⟨4, 3, .obj⟩, ⟨4, 1, .iobj⟩ ]
     rootIdx := 0 }
 
-/-- **Extraposition**: "The idea arose to try again" (Ch 8 §8.6)
-    Words: the(0) idea(1) arose(2) to(3) try(4) again(5)
-    Deps: arose(2) → idea(1:nsubj), idea(1) → the(0:det),
-          idea(1) → try(4:acl), try(4) → to(3:mark), try(4) → again(5:advmod)
-
-    Risen catena = {to(3), try(4), again(5)} — extraposed infinitival.
-    The catena {idea(1), try(4)} has non-contiguous yield: arose(2), to(3)
-    intervene. Lowering displacement. -/
+/-- **Extraposition**: "The idea arose to try again". The catena
+    `{idea(1), try(4)}` is risen — `arose(2), to(3)` intervene. Lowering. -/
 def extrapositionTree : DepTree :=
   { words := [ Word.mk' "the" .DET, Word.mk' "idea" .NOUN
              , Word.mk' "arose" .VERB, Word.mk' "to" .PART
@@ -192,16 +136,11 @@ def extrapositionTree : DepTree :=
             , ⟨1, 4, .acl⟩, ⟨4, 3, .mark⟩, ⟨4, 5, .advmod⟩ ]
     rootIdx := 2 }
 
-/-- The displaced dependency: idea(1) → try(4). -/
+/-- The displaced dependency in `extrapositionTree`: `idea(1) → try(4)`. -/
 def extrapositionArc : Dependency := ⟨1, 4, .acl⟩
 
-/-- **Right dislocation**: "He's nice, that boy"
-    Words: he(0) is(1) nice(2) that(3) boy(4)
-    Deps: nice(2) → he(0:nsubj), nice(2) → is(1:cop),
-          nice(2) → boy(4:dislocated), boy(4) → that(3:det)
-
-    The catena {nice(2), boy(4)} — the predicate and its dislocated
-    dependent — has non-contiguous yield (that(3) intervenes). -/
+/-- **Right dislocation**: "He's nice, that boy". The catena
+    `{nice(2), boy(4)}` is risen — `that(3)` intervenes. -/
 def rightDislocationTree : DepTree :=
   { words := [ Word.mk' "he" .PRON, Word.mk' "is" .AUX
              , Word.mk' "nice" .ADJ, Word.mk' "that" .DET
@@ -209,100 +148,35 @@ def rightDislocationTree : DepTree :=
     deps := [⟨2, 0, .nsubj⟩, ⟨2, 1, .cop⟩, ⟨2, 4, .dislocated⟩, ⟨4, 3, .det⟩]
     rootIdx := 2 }
 
--- ============================================================================
--- §4: Risen Catena Proofs
--- ============================================================================
+/-! ### Risen-catena theorems
 
--- The CORE results: each example contains a risen catena — a catena whose
--- yield is non-contiguous. This is what Osborne means by "discontinuity".
+Each example tree carries a risen catena over the displaced-element / governor
+pair: connected via the dependency edge but yielding non-contiguously. -/
 
-/-- Wh-fronting: {what(0), eat(3)} is a risen catena — connected via obj
-    but did(1), you(2) intervene in the yield. -/
 theorem whFronting_risen_catena :
-    isRisenCatena whFrontingTree [0, 3] = true := by native_decide
+    isRisenCatena whFrontingTree [0, 3] = true := by decide
 
-/-- Topicalization: {ideas(1), accept(4)} is a risen catena — connected
-    via obj but I(2), do(3) intervene. -/
 theorem topicalization_risen_catena :
-    isRisenCatena topicalizationTree [1, 4] = true := by native_decide
+    isRisenCatena topicalizationTree [1, 4] = true := by decide
 
-/-- Scrambling: {uns(1), gebacken(4)} is a risen catena — connected via
-    iobj but Maria(2), etwas(3) intervene. -/
 theorem scrambling_risen_catena :
-    isRisenCatena scramblingTree [1, 4] = true := by native_decide
+    isRisenCatena scramblingTree [1, 4] = true := by decide
 
-/-- Extraposition: {idea(1), try(4)} is a risen catena — connected via acl
-    but arose(2), to(3) intervene. -/
 theorem extraposition_risen_catena :
-    isRisenCatena extrapositionTree [1, 4] = true := by native_decide
+    isRisenCatena extrapositionTree [1, 4] = true := by decide
 
-/-- Right dislocation: {nice(2), boy(4)} is a risen catena — connected via
-    dislocated dep but that(3) intervenes in the yield. -/
 theorem rightDislocation_risen_catena :
-    isRisenCatena rightDislocationTree [2, 4] = true := by native_decide
+    isRisenCatena rightDislocationTree [2, 4] = true := by decide
 
-/--: all discontinuity types produce risen catenae. -/
-theorem all_discontinuities_are_risen_catenae :
-    isRisenCatena whFrontingTree [0, 3] = true ∧
-    isRisenCatena topicalizationTree [1, 4] = true ∧
-    isRisenCatena scramblingTree [1, 4] = true ∧
-    isRisenCatena extrapositionTree [1, 4] = true ∧
-    isRisenCatena rightDislocationTree [2, 4] = true := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+/-! ### Displacement direction -/
 
--- ============================================================================
--- §5: Displacement Direction
--- ============================================================================
-
-/-- Wh-fronting is rising: what(0) precedes eat(3). -/
 theorem whFronting_is_rising :
-    classifyDisplacement whFrontingArc = .rising := by native_decide
+    classifyDisplacement whFrontingArc = .rising := by decide
 
-/-- Topicalization is rising: ideas(1) precedes accept(4). -/
 theorem topicalization_is_rising :
-    classifyDisplacement topicalizationArc = .rising := by native_decide
+    classifyDisplacement topicalizationArc = .rising := by decide
 
-/-- Extraposition is lowering: try(4) follows idea(1). -/
 theorem extraposition_is_lowering :
-    classifyDisplacement extrapositionArc = .lowering := by native_decide
-
-/-- Rising discontinuities: wh-fronting, topicalization, NP-internal fronting,
-    scrambling. (Ch 8 Table 19). -/
-theorem rising_types :
-    displacementDir .whFronting = .rising ∧
-    displacementDir .topicalization = .rising ∧
-    displacementDir .npInternalFront = .rising ∧
-    displacementDir .scrambling = .rising := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Lowering discontinuity: extraposition. (Ch 8 Table 19). -/
-theorem lowering_types :
-    displacementDir .extraposition = .lowering := rfl
-
--- ============================================================================
--- §6: Bridges
--- ============================================================================
-
-/-- **Bridge → Catena.lean**: all displaced element + governor pairs form catenae.
-    The catena structure is what allows Osborne's analysis — even though the
-    yield is non-contiguous, the syntactic connection remains. -/
-theorem displaced_pairs_are_catenae :
-    Catena.isCatena whFrontingTree.deps [0, 3] = true ∧
-    Catena.isCatena topicalizationTree.deps [1, 4] = true ∧
-    Catena.isCatena scramblingTree.deps [1, 4] = true ∧
-    Catena.isCatena extrapositionTree.deps [1, 4] = true := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
-
-/-- **Bridge → LongDistance.lean**: wh-fronting and topicalization involve
-    object extraction, mapping to `GapType.objGap`. -/
-theorem wh_fronting_is_obj_gap :
-    LongDistance.gapToDepRel .objGap = .obj := rfl
-
-/-- **Bridge → NonProjective.lean**: risen catenae generalize arc-crossing
-    non-projectivity. The `nonProjectiveTree` from NonProjective.lean has arcs
-    0→2 and 1→3 — these genuinely cross AND produce risen catenae. Osborne's
-    single-clause examples produce risen catenae without crossing arcs. -/
-theorem nonProjective_tree_also_risen :
-    isRisenCatena nonProjectiveTree [0, 2] = true := by native_decide
+    classifyDisplacement extrapositionArc = .lowering := by decide
 
 end DepGrammar.Discontinuity

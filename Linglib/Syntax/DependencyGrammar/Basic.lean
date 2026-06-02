@@ -1,16 +1,37 @@
-/-
-Word Grammar (Dependency Grammar): nodes are words, edges are typed dependencies.
-Auxiliaries are heads; lexical rules derive new entries; argument structures specify direction.
-
-Dependency relations use UD.DepRel from Core/UD.lean (Universal Dependencies v2).
-
-References: @cite{hudson-2010}, @cite{gibson-2025} Syntax, MIT Press.
--/
-
 import Mathlib.Data.List.Basic
 import Linglib.Core.Word
 
+/-!
+# Dependency grammar substrate
+
+Core data types for dependency grammar: words connected by typed directed
+edges (`Dependency`), trees built over them (`DepTree`), and enhanced
+graphs allowing multiple incoming arcs (`DepGraph`). Argument structures
+(`ArgStr`) record direction and selectional category for each slot.
+
+Dependency relations use `UD.DepRel` from `Core/UD.lean` (Universal
+Dependencies v2). @cite{hudson-2010}, @cite{gibson-2025}.
+
+## Main declarations
+
+* `Dependency`, `DepTree`, `DepGraph` — the basic graph-shaped data.
+* `ArgStr`, `argStrV0/VN/VNN/VPassive` — argument-structure schemas for the
+  standard intransitive / transitive / ditransitive / passive valences.
+* `hasUniqueHeads`, `isAcyclic`, `isWellFormed` — structural well-formedness
+  predicates (`Bool`-valued; see Implementation notes).
+* `mkSVTree`, `mkSVOTree`, `mkDetNVTree`, `mkDitransTree` — small fixture
+  builders used by Studies and Formal/ test data.
+
+## Implementation notes
+
+* Predicate-shape definitions return `Bool` rather than `Prop` +
+  `[Decidable]`; this is a substrate-wide convention that downstream files
+  inherit, and migrating it is a separate refactor.
+-/
+
 namespace DepGrammar
+
+/-! ### Dependencies and trees -/
 
 section DependenciesAndTrees
 
