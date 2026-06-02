@@ -6,10 +6,10 @@ import Linglib.Typology.Gender
 
 WALS @cite{corbett-2013} classifies English as 3-gender, sex-based,
 semantic-only on the strength of the *he/she/it* pronoun distinction.
-This is the more recent of Corbett's two classifications; his 1991
-monograph applies a stricter controller-marking criterion that excludes
-English from the gender typology. The Corbett 1991 view is a per-Study
-override at `Studies/Corbett1991.lean`.
+This agrees with @cite{corbett-1991}, which treats English as a
+*pronominal gender system*: it has the category of gender (3 genders,
+*he/she/it*), assigned on purely semantic grounds, but gender surfaces
+only in personal, possessive, and reflexive pronouns.
 -/
 
 namespace English.Gender

@@ -5,7 +5,7 @@ import Linglib.Typology.Indefinite
 @cite{degano-aloni-2025} @cite{hodges-1997} @cite{vaananen-2007}
 
 Degano & Aloni 2025's 7-type classification of indefinite pronouns,
-projected from the consensus `Typology.Indefinite.IndefiniteEntry`
+projected from the consensus `Typology.Indefinite.IndefinitePronoun`
 substrate (Haspelmath 1997 function-coverage data).
 
 The team-semantic logic primitives D&A use (Hodges 1997 / Väänänen 2007:
@@ -41,11 +41,11 @@ type table is for reference.
   parameter choices.
 - `DAType.profile`: each type's theoretical coverage on the
   Haspelmath SK/SU/irrealis triangle.
-- `IndefiniteEntry.surfaceDAType`: classify an entry by exact match
+- `IndefinitePronoun.surfaceDAType`: classify an entry by exact match
   of its actual function-coverage to a D&A type's profile. Returns
   `none` when the entry covers a region D&A doesn't subdivide (e.g.,
   free choice, polarity-sensitive forms) or when actual ⊊ profile.
-- `IndefiniteEntry.consistentWith`: weaker relation — actual coverage
+- `IndefinitePronoun.consistentWith`: weaker relation — actual coverage
   is a subset of the theoretical profile. Used for entries where
   paradigmatic competition narrows the actual distribution
   (e.g., Russian *kto-to* ⊊ type-iv epistemic profile).
@@ -223,12 +223,12 @@ theorem DAType.profile_subset_specificityRegion (t : DAType) :
 end DeganoAloni2025
 
 -- ============================================================================
--- §2. IndefiniteEntry projections
+-- §2. IndefinitePronoun projections
 -- ============================================================================
 
-/- Methods on `IndefiniteEntry` live in its own namespace so that
+/- Methods on `IndefinitePronoun` live in its own namespace so that
    dot notation (`entry.surfaceDAType`) resolves them. -/
-namespace Typology.Indefinite.IndefiniteEntry
+namespace Typology.Indefinite.IndefinitePronoun
 
 open DeganoAloni2025
 
@@ -239,7 +239,7 @@ open DeganoAloni2025
     (free choice, polarity-sensitive uses, or any function outside
     SK/SU/NS) or when actual coverage is a proper subset of any type's
     profile (a paradigmatic-competition case — see `consistentWith`). -/
-def surfaceDAType (e : IndefiniteEntry) : Option DAType :=
+def surfaceDAType (e : IndefinitePronoun) : Option DAType :=
   if e.functions = DAType.unmarked.profile then some .unmarked
   else if e.functions = DAType.specific.profile then some .specific
   else if e.functions = DAType.nonSpecific.profile then some .nonSpecific
@@ -254,7 +254,7 @@ def surfaceDAType (e : IndefiniteEntry) : Option DAType :=
     paradigmatic-competition cases such as Russian *kto-to* (type-iv
     epistemic profile permits SU + NS, but *-to* covers only SU because
     *-nibud'* blocks it from NS — see @cite{bubnov-2026} §7). -/
-def consistentWith (e : IndefiniteEntry) (t : DAType) : Bool :=
+def consistentWith (e : IndefinitePronoun) (t : DAType) : Bool :=
   decide (e.functions ⊆ t.profile)
 
-end Typology.Indefinite.IndefiniteEntry
+end Typology.Indefinite.IndefinitePronoun

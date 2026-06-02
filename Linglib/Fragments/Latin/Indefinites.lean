@@ -25,20 +25,18 @@ open Typology.Indefinite
     Interrogative-based: `ali-` + interrogative `quis`. D&A type iv
     epistemic (`var(∅,x)`); distribution matches profile.
     @cite{haspelmath-1997}, @cite{bubnov-2026} Table 1. -/
-def aliEntry : IndefiniteEntry where
-  language := "Latin"
+def aliEntry : IndefinitePronoun where
   form := "aliquis"
-  gloss := "someone (non-specific/unknown)"
+  ontology := .person
   basis := .interrogative
   functions := {.specificUnknown, .irrealis}
 
 /-- Latin *quidam*: specific-known indefinite (interrogative `qui` + `-dam`).
     D&A type v `dep(∅,x)`.
     @cite{haspelmath-1997}, @cite{bubnov-2026} Table 1. -/
-def damEntry : IndefiniteEntry where
-  language := "Latin"
+def damEntry : IndefinitePronoun where
   form := "quidam"
-  gloss := "a certain (one)"
+  ontology := .person
   basis := .interrogative
   functions := {.specificKnown}
 

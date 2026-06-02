@@ -1,6 +1,7 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 import Linglib.Data.WALS.Features.F46A
+import Linglib.Typology.Pronoun.Basic
 
 /-!
 # Indefinite-pronoun typology — consensus substrate
@@ -8,9 +9,10 @@ import Linglib.Data.WALS.Features.F46A
 
 Theory-neutral types for cross-linguistic indefinite-pronoun data, following
 the same `Typology/{Domain}.lean` pattern as `WordOrder.lean`,
-`Adposition.lean`, `MorphProfile.lean`. Plugged into per-language
-`LanguageProfile.indefinites` via `withIndefinites` (see
-`Typology/LanguageProfile.lean`).
+`Adposition.lean`, `MorphProfile.lean`. The lexical object `IndefinitePronoun`
+`extends` the general `Pronoun` (`Typology/Pronoun/Basic.lean`), so an
+indefinite pronoun is a single object that flows through the Pronoun API and
+carries its own implicational-map distribution.
 
 Theory-specific apparatus (Degano & Aloni's 7-type team-semantic typology,
 choice-function denotations, Hamblin alternatives, …) lives as projections
@@ -22,8 +24,9 @@ grammar would record.
 ## Schema
 
 - `HaspelmathFunction`: 9 functions on @cite{haspelmath-1997}'s implicational map
+- `OntologicalCategory`: 7 core categories (+ determiner, reason) of §3.1.3
 - `MorphologicalBasis`: 4 morphological strategies (= 4 of WALS F46A's 5 cells)
-- `IndefiniteEntry`: a form's gloss + basis + function-coverage
+- `IndefinitePronoun`: `extends Pronoun` with ontology + basis + function-coverage
 - `IndefiniteParadigm`: a language's full paradigm + ISO 639-3 code
 
 ## WALS bridge
@@ -31,8 +34,8 @@ grammar would record.
 `MorphologicalBasis.toWALS46A` maps each basis to its WALS F46A cell;
 `IndefiniteParadigm.toWALS46A` derives the paradigm-level F46A classification
 (including the `.mixed` cell when forms use multiple bases) from the per-form
-basis distribution. Cross-linguistic bridge theorems live in
-`Phenomena/Indefinites/Typology.lean`.
+basis distribution. Cross-linguistic bridge theorems anchored on a paper live
+in that paper's `Studies/AuthorYear.lean`.
 -/
 
 set_option autoImplicit false
@@ -135,6 +138,50 @@ def HaspelmathFunction.isContiguous (funcs : List HaspelmathFunction) : Bool :=
   | f :: _ => funcs.all (HaspelmathFunction.bfsReachable funcs f 15).contains
 
 -- ============================================================================
+-- §1b. Ontological categories (@cite{haspelmath-1997} §3.1.3)
+-- ============================================================================
+
+/-- The ontological categories of indefinite pronouns
+    (@cite{haspelmath-1997} §3.1.3, Table 3.1). The seven core categories —
+    person, thing, property, place, time, manner, amount — are the categories
+    "most often expressed by simple means in the languages of the world"; the
+    human/non-human cut (person vs thing, *somebody* vs *something*) is made
+    practically everywhere. `determiner` ('which', distinct from substantival
+    'who'/'what') and `reason` ('why') are common but non-universal (English
+    and German have no indefinite *somewhy*). -/
+inductive OntologicalCategory where
+  /-- Person: *somebody/someone* (interrogative *who?*). -/
+  | person
+  /-- Thing: *something* (interrogative *what?*). -/
+  | thing
+  /-- Property / kind: *some kind of* (interrogative *what kind?*). -/
+  | property
+  /-- Place: *somewhere* (interrogative *where?*). -/
+  | place
+  /-- Time: *sometime* (interrogative *when?*). -/
+  | time
+  /-- Manner: *somehow* (interrogative *how?*). -/
+  | manner
+  /-- Amount: *some amount* (interrogative *how much?*). -/
+  | amount
+  /-- Determiner: *some N* / 'which' — non-universal, distinct from the
+      substantival 'who'/'what'. -/
+  | determiner
+  /-- Reason / cause: 'for some reason' (interrogative *why?*) — non-universal. -/
+  | reason
+  deriving DecidableEq, Repr, BEq
+
+/-- The seven core ontological categories realized "practically everywhere"
+    (@cite{haspelmath-1997} §3.1.3); excludes the non-universal `determiner`
+    and `reason`. -/
+def OntologicalCategory.core : List OntologicalCategory :=
+  [.person, .thing, .property, .place, .time, .manner, .amount]
+
+/-- All nine ontological categories (the seven core plus `determiner`, `reason`). -/
+def OntologicalCategory.all : List OntologicalCategory :=
+  OntologicalCategory.core ++ [.determiner, .reason]
+
+-- ============================================================================
 -- §2. Morphological basis (= WALS F46A categories)
 -- ============================================================================
 
@@ -165,31 +212,36 @@ def MorphologicalBasis.toWALS46A : MorphologicalBasis → F46A.IndefinitePronoun
 -- §3. Entry + paradigm
 -- ============================================================================
 
-/-- A single indefinite-pronoun form: surface form, gloss, morphological
-    basis, and the @cite{haspelmath-1997} functions it covers.
+/-- A single indefinite pronoun — the canonical lexical object, `extends`ing the
+    general `Pronoun` (surface `form` + φ-features) with the indefinite-specific
+    structure: its `ontology`-cal category (@cite{haspelmath-1997} §3.1.3), its
+    morphological `basis`, and the `functions` it covers on the implicational map.
 
-    `functions` is the realized cross-linguistic distribution
-    (textbook-consensus data). Theory-specific predictions about which
-    functions a form *should* cover (Degano & Aloni 7-type team-semantics,
-    choice-function denotation, Hamblin alternatives) are projections of
-    this entry into theory-side types, not fields of the entry. -/
-structure IndefiniteEntry where
-  language : String
-  /-- Surface form including any required host (e.g., "kim ere", "irgend-"). -/
-  form : String
-  gloss : String
+    This is the single source of truth for an indefinite pronoun: it *is* a
+    `Pronoun`, so it flows through the Pronoun API, and it carries its own
+    distribution. `functions` is the realized cross-linguistic distribution
+    (textbook-consensus data); theory-specific predictions about which functions
+    a form *should* cover (Degano & Aloni 7-type team-semantics, choice-function
+    denotation, Hamblin alternatives) are projections into theory-side types,
+    not fields here. -/
+structure IndefinitePronoun extends Pronoun where
+  /-- The @cite{haspelmath-1997} §3.1.3 ontological category (person, thing, …). -/
+  ontology : OntologicalCategory
+  /-- The morphological derivation strategy (interrogative-based, etc.). -/
   basis : MorphologicalBasis
+  /-- The functions on @cite{haspelmath-1997}'s implicational map this form
+      covers (a contiguous region; see `IndefiniteParadigm.AllContiguous`). -/
   functions : Finset HaspelmathFunction
   deriving DecidableEq
 
-/-- Manual `Repr` showing just `language.form` to avoid the `unsafe`
+/-- Manual `Repr` showing just the surface `form` to avoid the `unsafe`
     `Repr (Finset α)` instance from `Mathlib.Data.Finset.Sort`, which
-    would propagate unsafety into every consumer of `IndefiniteEntry`. -/
-instance : Repr IndefiniteEntry where
-  reprPrec e _ := s!"{e.language}.{e.form}"
+    would propagate unsafety into every consumer of `IndefinitePronoun`. -/
+instance : Repr IndefinitePronoun where
+  reprPrec e _ := s!"{e.form}"
 
 /-- Does this entry cover function `f`? -/
-def IndefiniteEntry.covers (e : IndefiniteEntry) (f : HaspelmathFunction) : Bool :=
+def IndefinitePronoun.covers (e : IndefinitePronoun) (f : HaspelmathFunction) : Bool :=
   decide (f ∈ e.functions)
 
 /-- A language's full indefinite-pronoun paradigm. `isoCode` is ISO 639-3,
@@ -197,15 +249,15 @@ def IndefiniteEntry.covers (e : IndefiniteEntry) (f : HaspelmathFunction) : Bool
 structure IndefiniteParadigm where
   language : String
   isoCode : String
-  forms : List IndefiniteEntry
-  deriving DecidableEq, Repr -- inherits manual Repr IndefiniteEntry
+  forms : List IndefinitePronoun
+  deriving DecidableEq, Repr -- inherits manual Repr IndefinitePronoun
 
 namespace IndefiniteParadigm
 
 variable (p : IndefiniteParadigm)
 
 /-- Forms in `p` whose distribution covers function `f`. -/
-def formsFor (f : HaspelmathFunction) : List IndefiniteEntry :=
+def formsFor (f : HaspelmathFunction) : List IndefinitePronoun :=
   p.forms.filter (·.covers f)
 
 /-- The first form (in declaration order) covering `f`, if any. Used to
@@ -268,11 +320,11 @@ end IndefiniteParadigm
 
 /-- For each form, the list of functions it covers, in `HaspelmathFunction.all`
     order. -/
-def IndefiniteEntry.functionList (e : IndefiniteEntry) : List HaspelmathFunction :=
+def IndefinitePronoun.functionList (e : IndefinitePronoun) : List HaspelmathFunction :=
   HaspelmathFunction.all.filter (e.covers ·)
 
 /-- Coverage of a single form: number of functions it spans. -/
-def IndefiniteEntry.coverage (e : IndefiniteEntry) : Nat :=
+def IndefinitePronoun.coverage (e : IndefinitePronoun) : Nat :=
   e.functionList.length
 
 -- ============================================================================
