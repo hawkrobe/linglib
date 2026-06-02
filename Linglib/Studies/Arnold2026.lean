@@ -40,8 +40,7 @@ We model the distinction using three components:
 
 - `DiscourseElaboration`: how developed the referent's discourse
   representation is (underspecified vs. elaborated)
-- `Pronoun.Spec`: what personal pronouns the referent uses
-  (if known)
+- `PronounSet`: what personal pronouns the referent uses (if known)
 - `Features.GenderInfo`: what gender information is available in the discourse
 
 The licensing conditions are predicates over these types, and the central
@@ -63,7 +62,6 @@ set_option autoImplicit false
 namespace Arnold2026
 
 open Features (GenderInfo SurfaceGender)
-open Pronoun (Spec)
 open Features (DiscourseElaboration AccessibilityLevel)
 
 -- ============================================================================
@@ -82,6 +80,18 @@ inductive SingTheyKind where
   /-- Personal singular *they*: the newer form, licensed by knowledge
       that the referent's personal pronouns are *they/them*. -/
   | personal
+  deriving DecidableEq, Repr, BEq
+
+/-- The personal pronouns a referent uses — a social fact about the *referent*
+    (not a property of the pronoun system) that may or may not be in common
+    ground. @cite{arnold-2026}: the pragmatic condition for *personal* singular
+    *they* is knowing that the referent's pronouns are *they/them*. Scoped to the
+    three English sets this paper's licensing turns on (neopronouns and other
+    languages are out of scope here). -/
+inductive PronounSet where
+  | heHim    -- he/him/his
+  | sheHer   -- she/her/hers
+  | theyThem -- they/them/theirs
   deriving DecidableEq, Repr, BEq
 
 -- ============================================================================
@@ -105,13 +115,13 @@ def licensesUnderspecified (de : DiscourseElaboration) : Bool :=
     @cite{arnold-2026} §3: "the pragmatic condition for using personal
     *they* is knowing that the referent's personal pronouns are
     *they/them*." This knowledge must be in common ground. -/
-def licensesPersonal (spec : Option Spec) : Bool :=
+def licensesPersonal (spec : Option PronounSet) : Bool :=
   match spec with
   | some .theyThem => true
   | _ => false
 
 /-- Classify a singular *they* use given the discourse state. -/
-def classifyUse (de : DiscourseElaboration) (spec : Option Spec) :
+def classifyUse (de : DiscourseElaboration) (spec : Option PronounSet) :
     Option SingTheyKind :=
   if licensesPersonal spec then some .personal
   else if licensesUnderspecified de then some .underspecified
@@ -128,7 +138,7 @@ def classifyUse (de : DiscourseElaboration) (spec : Option Spec) :
     an elaborated discourse representation (the typical case for personal
     *they*), underspecified *they* is NOT licensed. -/
 theorem personal_excludes_underspecified
-    (spec : Spec) (hspec : spec = .theyThem)
+    (spec : PronounSet) (hspec : spec = .theyThem)
     (de : DiscourseElaboration) (hde : de = .elaborated) :
     licensesPersonal (some spec) = true ∧
     licensesUnderspecified de = false := by
@@ -140,7 +150,7 @@ theorem personal_excludes_underspecified
     to know their pronouns. -/
 theorem underspecified_excludes_personal
     (de : DiscourseElaboration) (hde : de = .underspecified)
-    (spec : Option Spec) (hspec : spec = none) :
+    (spec : Option PronounSet) (hspec : spec = none) :
     licensesUnderspecified de = true ∧
     licensesPersonal spec = false := by
   subst hde; subst hspec; exact ⟨rfl, rfl⟩
@@ -151,7 +161,7 @@ theorem underspecified_excludes_personal
     discourse model is necessarily elaborated (you know enough about
     them to know their pronouns). -/
 theorem no_simultaneous_licensing
-    (de : DiscourseElaboration) (spec : Option Spec)
+    (de : DiscourseElaboration) (spec : Option PronounSet)
     (_h : licensesPersonal spec = true) :
     -- Personal they fires → elaboration must not be underspecified
     -- (a referent whose pronouns you know has a rich representation)
@@ -241,9 +251,9 @@ theorem personal_has_stronger_precondition :
     licensesUnderspecified DiscourseElaboration.underspecified = true ∧
     -- Personal they: requires specific pronoun knowledge
     licensesPersonal none = false ∧
-    licensesPersonal (some Spec.heHim) = false ∧
-    licensesPersonal (some Spec.sheHer) = false ∧
-    licensesPersonal (some Spec.theyThem) = true := by
+    licensesPersonal (some PronounSet.heHim) = false ∧
+    licensesPersonal (some PronounSet.sheHer) = false ∧
+    licensesPersonal (some PronounSet.theyThem) = true := by
   exact ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================

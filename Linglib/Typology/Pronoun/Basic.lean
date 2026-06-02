@@ -11,8 +11,8 @@ import Linglib.Features.Clusivity
 Lexical core for the pronoun as a grammatical object: the general `Pronoun`
 structure (the morphosyntactic core every pronoun type shares), the
 `PersonalPronoun` schema for personal/referential pronouns (which `extends Pronoun`),
-allocutive markers, the `Spec` referent-preference type, and
-@cite{cardinaletti-starke-1999}'s `Strength` deficiency classification.
+allocutive markers, and @cite{cardinaletti-starke-1999}'s `Strength` deficiency
+classification.
 
 Cross-categorial features a pronoun carries — `Person`, `Number`, `Gender`,
 `Case` — are not redefined here; they live under `Features/` and are composed
@@ -30,8 +30,6 @@ in as fields of the general `Pronoun`.
   @cite{dechaine-wiltschko-2002}'s categorial pro-DP/φP/NP axis; a framework's
   structural account of the order stays in its study file.
 * `Pronoun.AllocutiveEntry` — speaker–addressee (allocutive) markers.
-* `Pronoun.Spec` — which pronouns a referent uses (@cite{arnold-2026}); a social
-  fact about a referent, not a property of the pronoun system.
 -/
 
 set_option autoImplicit false
@@ -151,21 +149,7 @@ def Strength.rank : Strength → Nat
   | .weak   => 1
   | .clitic => 0
 
-/-! ### Lexical entry schemas (@cite{alok-bhalla-2026}, @cite{arnold-2026}) -/
-
-/-- Personal pronoun specification — which pronouns a person uses.
-
-    A social-linguistic fact about a *referent* (not a property of the pronoun
-    system) that may or may not be in common ground. Independent of grammatical
-    gender: a person with known feminine gender may use she/her, they/them, or
-    neopronouns. @cite{arnold-2026}: the pragmatic condition for *personal*
-    singular *they* is knowing that the referent's personal pronouns are
-    *they/them*. -/
-inductive Spec where
-  | heHim      -- he/him/his
-  | sheHer     -- she/her/hers
-  | theyThem   -- they/them/theirs
-  deriving DecidableEq, Repr, BEq
+/-! ### Lexical entry schemas (@cite{alok-bhalla-2026}) -/
 
 /-- Cross-linguistic allocutive marker entry.
 
