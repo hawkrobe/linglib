@@ -22,7 +22,7 @@ semantics `var(∅,x)` — D&A type iv epistemic. Its restriction to the
 specific-unknown function (not also non-specific) is due to paradigmatic
 competition with *-nibud'*. The D&A theoretical profile of type iv
 permits both SU and NS, but *-to*'s actual distribution is SU only —
-captured by `IndefiniteEntry.consistentWith` in
+captured by `IndefinitePronoun.consistentWith` in
 `Semantics/Quantification/DeganoAloni2025.lean`.
 -/
 
@@ -35,10 +35,9 @@ open Typology.Indefinite
 /-- *кто-нибудь* (*kto-nibud'*): non-specific indefinite, interrogative
     `kto` 'who' + suffix `-nibud'`. Imperatives, questions, irrealis.
     "Купи что-нибудь" 'Buy something [I don't care what]'. D&A type iii. -/
-def nibudEntry : IndefiniteEntry where
-  language := "Russian"
+def nibudEntry : IndefinitePronoun where
   form := "kto-nibud'"
-  gloss := "some...or other (non-specific)"
+  ontology := .person
   basis := .interrogative
   functions := {.irrealis}
 
@@ -51,20 +50,18 @@ def nibudEntry : IndefiniteEntry where
     both SU and NS, but *-to*'s actual distribution is SU only because
     *-nibud'* (type iii) blocks it for NS. The narrower-than-profile claim
     is `consistentWith` (subset, not equality). -/
-def toEntry : IndefiniteEntry where
-  language := "Russian"
+def toEntry : IndefinitePronoun where
   form := "kto-to"
-  gloss := "some (particular, unknown)"
+  ontology := .person
   basis := .interrogative
   functions := {.specificUnknown}
 
 /-- *кое-кто* (*koe-kto*): specific-known indefinite, prefix `koe-` +
     interrogative `kto`. Speaker knows the referent's identity.
     "Кое-кто пришёл" 'Someone [I know who] came'. D&A type v `dep(∅,x)`. -/
-def koeEntry : IndefiniteEntry where
-  language := "Russian"
+def koeEntry : IndefinitePronoun where
   form := "koe-kto"
-  gloss := "some (I know which)"
+  ontology := .person
   basis := .interrogative
   functions := {.specificKnown}
 

@@ -25,19 +25,17 @@ open Typology.Indefinite
 /-- Kannada *-oo*: specific-unknown indefinite suffix on interrogative
     bases (e.g., *yāru-oo* 'someone'). D&A type vii: `dep(v,x) ∧ var(∅,x)`.
     @cite{haspelmath-1997}, @cite{degano-aloni-2025}. -/
-def ooEntry : IndefiniteEntry where
-  language := "Kannada"
+def ooEntry : IndefinitePronoun where
   form := "yāru-oo"
-  gloss := "someone (specific unknown)"
+  ontology := .person
   basis := .interrogative
   functions := {.specificUnknown}
 
 /-- Kannada *-aadaruu*: non-specific indefinite suffix on interrogative
     bases (e.g., *yāru-aadaruu* 'anyone'). D&A type iii: `var(v,x)`. -/
-def aadaruuEntry : IndefiniteEntry where
-  language := "Kannada"
+def aadaruuEntry : IndefinitePronoun where
   form := "yāru-aadaruu"
-  gloss := "anyone (non-specific)"
+  ontology := .person
   basis := .interrogative
   functions := {.irrealis}
 
