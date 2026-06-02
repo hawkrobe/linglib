@@ -52,7 +52,7 @@ set_option autoImplicit false
 
 namespace Typology.Gender
 
-open Syntax.Agreement (AgreementTarget)
+open Agreement (AgreementTarget)
 
 private abbrev ch30 := Data.WALS.F30A.allData
 private abbrev ch31 := Data.WALS.F31A.allData
@@ -143,7 +143,7 @@ structure GenderProfile where
   /-- Where gender agreement surfaces. @cite{corbett-1991}'s Agreement
       Hierarchy has four positions (attributive > predicate > relative
       pronoun > personal pronoun); `verb` is a linglib refinement for
-      verbal agreement (see `Syntax.Agreement.AgreementTarget`). -/
+      verbal agreement (see `Agreement.AgreementTarget`). -/
   agreementTargets : List AgreementTarget
   /-- Semantic dimensions organising the system. -/
   semanticBases : List SemanticBasis

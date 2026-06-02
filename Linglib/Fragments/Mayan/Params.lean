@@ -362,11 +362,11 @@ def isPlural : PersonNumber → Bool
 def all : List PersonNumber :=
   [.p1sg, .p2sg, .p3sg, .p1pl, .p2pl, .p3pl]
 
-/-- A Mayan `PersonNumber` as a canonical φ-cell (`Syntax.Agreement.AgrCell` —
+/-- A Mayan `PersonNumber` as a canonical φ-cell (`Agreement.Cell` —
     person × number, the same φ a `Pronoun`/`Word` carries). The bridge that lets
     the per-language Set A / Set B paradigms be keyed by canonical φ, so a
     controller's φ (`Word.agrCell`) indexes them directly (@cite{corbett-1998}). -/
-def toAgrCell : PersonNumber → Syntax.Agreement.AgrCell
+def toAgrCell : PersonNumber → Agreement.Cell
   | .p1sg => .pn .first .Sing  | .p2sg => .pn .second .Sing | .p3sg => .pn .third .Sing
   | .p1pl => .pn .first .Plur  | .p2pl => .pn .second .Plur | .p3pl => .pn .third .Plur
 
@@ -374,7 +374,7 @@ def toAgrCell : PersonNumber → Syntax.Agreement.AgrCell
     descriptive agreement paradigm keyed by canonical φ-cells. The one place the
     `PersonNumber`-table-to-canonical-φ conversion lives; each language's
     `setAParadigm`/`setBParadigm` is just `PersonNumber.paradigm setAExponent`. -/
-def paradigm (exp : PersonNumber → String) : Syntax.Agreement.Paradigm String :=
+def paradigm (exp : PersonNumber → String) : Agreement.Paradigm String :=
   PersonNumber.all.map fun p => (p.toAgrCell, exp p)
 
 /-- Realizing a lifted paradigm at a cell recovers the exponent — for *any*

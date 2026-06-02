@@ -1,7 +1,7 @@
 import Linglib.Features.Prominence
 import Linglib.Features.Case
-import Linglib.Features.Case
 import Linglib.Typology.Alignment
+import Linglib.Syntax.Agreement.Paradigm
 /-!
 # Georgian Agreement Fragment @cite{just-2024}
 @cite{harris-1981}
@@ -42,86 +42,48 @@ is person-conditioned regardless of the case frame.
 namespace Georgian.Agreement
 
 open Features.Prominence
+open _root_.Agreement
 
 -- ============================================================================
--- § 1: Person-Number Values
+-- § 1: Object Agreement (differential P indexing)
 -- ============================================================================
 
-/-- Person-number combinations in the Georgian agreement paradigm. -/
-inductive PersonNumber where
-  | p1sg | p2sg | p3sg | p1pl | p2pl | p3pl
-  deriving DecidableEq, Repr
+/-- Object agreement prefixes, as a descriptive paradigm over canonical φ-cells
+    (`Agreement.Cell` — the same φ a pronoun carries). SAP objects
+    (1st/2nd person) receive an overt prefix; 3rd person objects have no entry
+    (unmarked). A controller's `Word.agrCell` indexes it directly. -/
+def objectAgr : Paradigm String :=
+  [(.pn .first .Sing, "m-"), (.pn .second .Sing, "g-"),
+   (.pn .first .Plur, "gv-"), (.pn .second .Plur, "g-")]
 
-/-- All person-number values. -/
-def allPersonNumbers : List PersonNumber :=
-  [.p1sg, .p2sg, .p3sg, .p1pl, .p2pl, .p3pl]
-
-/-- Person value (1, 2, or 3). -/
-def PersonNumber.person : PersonNumber → Nat
-  | .p1sg | .p1pl => 1
-  | .p2sg | .p2pl => 2
-  | .p3sg | .p3pl => 3
-
-/-- Is this a SAP (speech act participant)? -/
-def PersonNumber.isSAP (pn : PersonNumber) : Bool :=
-  pn.person == 1 || pn.person == 2
-
--- ============================================================================
--- § 2: Object Agreement Markers
--- ============================================================================
-
-/-- Object agreement prefix on the verb.
-    SAP objects receive an overt marker; 3rd person objects receive none. -/
-def objectPrefix : PersonNumber → Option String
-  | .p1sg => some "m-"
-  | .p2sg => some "g-"
-  | .p1pl => some "gv-"
-  | .p2pl => some "g-"
-  | .p3sg => none
-  | .p3pl => none
-
--- ============================================================================
--- § 3: Differential P Indexing
--- ============================================================================
-
-/-- Whether a P/R argument at a given person-number is indexed (triggers
-    an object prefix on the verb).
-
-    Derived from `objectPrefix`: a person-number is indexed iff it has
-    a non-none object prefix. -/
-def pIsIndexed (pn : PersonNumber) : Bool := (objectPrefix pn).isSome
+/-- A P/R argument is indexed iff the object paradigm realizes its φ-cell.
+    Differential: SAP cells are present, 3rd person absent. -/
+def isIndexed (c : Cell) : Bool := (objectAgr.realize c).isSome
 
 /-- Subject agreement is always present (not differential). -/
-def subjectIsIndexed (_ : PersonNumber) : Bool := true
+def subjectIsIndexed (_ : Cell) : Bool := true
 
 -- ============================================================================
--- § 4: Verification
+-- § 2: Verification
 -- ============================================================================
 
 /-- SAP objects are indexed (receive an overt prefix). -/
 theorem sap_objects_indexed :
-    pIsIndexed .p1sg = true ∧ pIsIndexed .p2sg = true ∧
-    pIsIndexed .p1pl = true ∧ pIsIndexed .p2pl = true := ⟨rfl, rfl, rfl, rfl⟩
+    isIndexed (.pn .first .Sing) = true ∧ isIndexed (.pn .second .Sing) = true ∧
+    isIndexed (.pn .first .Plur) = true ∧ isIndexed (.pn .second .Plur) = true := by decide
 
 /-- 3rd person objects are NOT indexed (no prefix). -/
 theorem third_objects_not_indexed :
-    pIsIndexed .p3sg = false ∧ pIsIndexed .p3pl = false := ⟨rfl, rfl⟩
+    isIndexed (.pn .third .Sing) = false ∧ isIndexed (.pn .third .Plur) = false := by decide
 
 /-- P indexing is differential. -/
 theorem p_indexing_differential :
-    allPersonNumbers.any pIsIndexed = true ∧
-    !(allPersonNumbers.all pIsIndexed) = true := ⟨by native_decide, by native_decide⟩
-
-/-- P indexing is grounded in the presence of an object prefix:
-    indexed ↔ has overt prefix. -/
-theorem indexed_iff_has_prefix :
-    allPersonNumbers.all (λ pn =>
-      pIsIndexed pn == (objectPrefix pn).isSome) = true := by native_decide
+    Cell.pnCells.any isIndexed = true ∧
+    !(Cell.pnCells.all isIndexed) = true := by decide
 
 /-- The indexed/not-indexed split aligns with SAP vs 3rd. -/
 theorem indexed_iff_sap :
-    allPersonNumbers.all (λ pn => pIsIndexed pn == pn.isSAP) = true := by
-  native_decide
+    Cell.pnCells.all (fun c => isIndexed c == c.isSAP) = true := by decide
 
 -- ============================================================================
 -- § 5: Tense-Conditioned Split-Ergative Case (@cite{harris-1981})

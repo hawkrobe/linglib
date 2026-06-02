@@ -71,7 +71,7 @@ set_option autoImplicit false
 namespace Corbett1991
 
 open Typology.Gender
-open Syntax.Agreement (AgreementTarget)
+open Agreement (AgreementTarget)
 
 /-! ### The 22-language exemplar sample -/
 

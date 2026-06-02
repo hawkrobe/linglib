@@ -25,41 +25,52 @@ unification — are *theories of* this table and belong in `Studies/`, not here.
 Per @cite{corbett-1998} (§1), agreement in the wider sense *includes* pronouns —
 diachronically, agreement morphology grammaticalizes from pronouns. The three
 indisputable agreement features (§2) are exactly **person, number, gender**
-(case is government, not agreement). So an `AgrCell` is the canonical φ-subspace
+(case is government, not agreement). So an `Cell` is the canonical φ-subspace
 a `Pronoun`/`Word` already carries: `Word.agrCell` projects a word's φ-features
 into a paradigm index, so the *same* feature space drives pronoun reference and
 agreement realization — no parallel person/number enum.
 
 ## Main declarations
 
-* `AgrCell` — an agreement-feature cell (person × number × gender), in the
+* `Cell` — an agreement-feature cell (person × number × gender), in the
   canonical `UD` feature types.
 * `Paradigm Exp` — a descriptive table: agreement cells to exponents.
 * `Paradigm.realize` — look up the exponent for a cell (exact match).
 * `Word.agrCell` / `Paradigm.realizeFor` — index a paradigm by a word's φ.
 -/
 
-namespace Syntax.Agreement
+namespace Agreement
 
 /-- An agreement-feature cell: the canonical φ-features that may be realized by
     agreement (@cite{corbett-1998} §2 — person, number, gender; case excluded as
     government). Uses the same `UD` feature types a `Pronoun`/`Word` carries, so a
     controller's φ projects directly into the index (`Word.agrCell`). A `none`
     field is a feature the paradigm does not distinguish. -/
-structure AgrCell where
+structure Cell where
   person : Option UD.Person := none
   number : Option UD.Number := none
   gender : Option UD.Gender := none
   deriving DecidableEq, Repr, BEq
 
 /-- Build a person–number cell (the common case: no gender agreement). -/
-def AgrCell.pn (p : UD.Person) (n : UD.Number) : AgrCell :=
+def Cell.pn (p : UD.Person) (n : UD.Number) : Cell :=
   { person := some p, number := some n }
+
+/-- Is this a speech-act-participant (1st/2nd person) cell? Drives
+    person-conditioned phenomena like differential indexing (@cite{corbett-1998}). -/
+def Cell.isSAP (c : Cell) : Bool :=
+  c.person == some .first || c.person == some .second
+
+/-- The basic 3-person × {singular, plural} inventory of φ-cells — the cells a
+    person/number agreement paradigm ranges over. -/
+def Cell.pnCells : List Cell :=
+  [.pn .first .Sing, .pn .second .Sing, .pn .third .Sing,
+   .pn .first .Plur, .pn .second .Plur, .pn .third .Plur]
 
 /-- The φ-cell of a word: its person/number/gender features, as an agreement
     index. The bridge that lets a pronoun (or any controller) drive an agreement
     paradigm in the *same* feature space (@cite{corbett-1998} §1). -/
-def _root_.Word.agrCell (w : Word) : AgrCell :=
+def _root_.Word.agrCell (w : Word) : Cell :=
   { person := w.features.person, number := w.features.number,
     gender := w.features.gender }
 
@@ -67,7 +78,7 @@ def _root_.Word.agrCell (w : Word) : AgrCell :=
     `Exp` is the exponent type (a surface string, a structured affix, …).
     A non-injective table records syncretism as a fact; a partial table (a cell
     with no entry) records defectiveness. -/
-abbrev Paradigm (Exp : Type _) := List (AgrCell × Exp)
+abbrev Paradigm (Exp : Type _) := List (Cell × Exp)
 
 namespace Paradigm
 
@@ -75,7 +86,7 @@ variable {Exp : Type _}
 
 /-- The exponent realizing a given cell, by exact match (the first entry whose
     cell equals `c`). `none` if the paradigm has no entry for the cell. -/
-def realize [DecidableEq Exp] (p : Paradigm Exp) (c : AgrCell) : Option Exp :=
+def realize [DecidableEq Exp] (p : Paradigm Exp) (c : Cell) : Option Exp :=
   (p.find? (·.1 == c)).map (·.2)
 
 /-- Realize the exponent agreeing with a controller word, via its `agrCell`. -/
@@ -83,8 +94,8 @@ def realizeFor [DecidableEq Exp] (p : Paradigm Exp) (controller : Word) : Option
   p.realize controller.agrCell
 
 /-- The cells the paradigm distinguishes (in declaration order). -/
-def cells (p : Paradigm Exp) : List AgrCell := p.map (·.1)
+def cells (p : Paradigm Exp) : List Cell := p.map (·.1)
 
 end Paradigm
 
-end Syntax.Agreement
+end Agreement

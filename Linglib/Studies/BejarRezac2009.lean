@@ -41,53 +41,46 @@ namespace BejarRezac2009
 
 open Features.Prominence (PersonLevel)
 open Minimalist.CyclicAgree
+open Agreement
 
 -- ============================================================================
--- § 1: PersonNumber → PersonLevel Bridge
+-- § 1: φ-cell → PersonLevel Bridge
 -- ============================================================================
 
-/-- Extract person level from a Basque person-number value. -/
-def basqueToLevel : Basque.Agreement.PersonNumber → PersonLevel
-  | .p1sg | .p1pl => .first
-  | .p2sg | .p2pl => .second
-  | .p3sg | .p3pl => .third
-
-/-- Extract person level from a Georgian person-number value. -/
-def georgianToLevel : Georgian.Agreement.PersonNumber → PersonLevel
-  | .p1sg | .p1pl => .first
-  | .p2sg | .p2pl => .second
-  | .p3sg | .p3pl => .third
+/-- Person level of a φ-cell (`Agreement.Cell`). Basque and Georgian share the
+    same person→level map. -/
+def toLevel (c : Cell) : PersonLevel :=
+  match c.person with
+  | some .first => .first
+  | some .second => .second
+  | _ => .third
 
 -- ============================================================================
 -- § 2: Basque — pIsIndexed Matches Inverse Context
 -- ============================================================================
 
 /-- Basque `pIsIndexed` agrees with `PersonLevel.isSAP` under the bridge. -/
-theorem basque_indexed_eq_sap (pn : Basque.Agreement.PersonNumber) :
-    Basque.Agreement.pIsIndexed pn = (basqueToLevel pn).isSAP := by
-  cases pn <;> rfl
+theorem basque_indexed_eq_sap : ∀ c ∈ Cell.pnCells,
+    Basque.Agreement.pIsIndexed c = (toLevel c).isSAP := by decide
 
-/-- Per-cell verification: each Basque person-number's indexing status
-    matches the cyclic agree prediction. -/
+/-- Per-cell verification: each Basque φ-cell's indexing status matches the
+    cyclic agree prediction. -/
 theorem basque_p1sg_indexed :
-    Basque.Agreement.pIsIndexed .p1sg = true ∧
+    Basque.Agreement.pIsIndexed (.pn .first .Sing) = true ∧
     basque.isInverse .first .first = true ∧
     basque.isInverse .second .first = true ∧
-    basque.isInverse .third .first = true := by
-  exact ⟨rfl, by decide, by decide, by decide⟩
+    basque.isInverse .third .first = true := by decide
 
 theorem basque_p2sg_indexed :
-    Basque.Agreement.pIsIndexed .p2sg = true ∧
+    Basque.Agreement.pIsIndexed (.pn .second .Sing) = true ∧
     basque.isInverse .first .second = true ∧
     basque.isInverse .second .second = true ∧
-    basque.isInverse .third .second = true := by
-  exact ⟨rfl, by decide, by decide, by decide⟩
+    basque.isInverse .third .second = true := by decide
 
 theorem basque_p3sg_not_indexed :
-    Basque.Agreement.pIsIndexed .p3sg = false ∧
+    Basque.Agreement.pIsIndexed (.pn .third .Sing) = false ∧
     basque.isInverse .first .third = false ∧
-    basque.isInverse .second .third = false := by
-  exact ⟨rfl, by decide, by decide⟩
+    basque.isInverse .second .third = false := by decide
 
 /-- Core bridge theorem (Basque): an object is indexed iff cyclic agree
     puts *every* EA→IA combination into an inverse context.
@@ -99,62 +92,40 @@ theorem basque_p3sg_not_indexed :
     When the object is 3P, the IA only checks [uπ], leaving [uParticipant]
     as active residue. A SAP EA matches this residue on cycle II → EA
     controls → agreement tracks the subject, not the object → not indexed. -/
-theorem basque_indexed_iff_always_inverse
-    (pn : Basque.Agreement.PersonNumber) :
-    Basque.Agreement.pIsIndexed pn = true ↔
-    ∀ ea : PersonLevel, basque.isInverse ea (basqueToLevel pn) = true := by
-  cases pn <;> simp only [Basque.Agreement.pIsIndexed,
-    Basque.Agreement.PersonNumber.isSAP,
-    Basque.Agreement.PersonNumber.person,
-    basqueToLevel] <;> constructor
-  all_goals first
-    | (intro _; exact fun | .first => rfl | .second => rfl | .third => rfl)
-    | (intro _; rfl)
-    | (intro h; exact absurd h Bool.false_ne_true)
-    | (intro h; exact absurd (h .first) Bool.false_ne_true)
+theorem basque_indexed_iff_always_inverse : ∀ c ∈ Cell.pnCells,
+    (Basque.Agreement.pIsIndexed c = true ↔
+     ∀ ea : PersonLevel, basque.isInverse ea (toLevel c) = true) := by decide
 
 -- ============================================================================
--- § 3: Georgian — pIsIndexed Matches Inverse Context
+-- § 3: Georgian — isIndexed Matches Inverse Context
 -- ============================================================================
 
-/-- Georgian `pIsIndexed` agrees with `PersonLevel.isSAP` under the bridge. -/
-theorem georgian_indexed_eq_sap (pn : Georgian.Agreement.PersonNumber) :
-    Georgian.Agreement.pIsIndexed pn = (georgianToLevel pn).isSAP := by
-  cases pn <;> rfl
+/-- Georgian `isIndexed` agrees with `PersonLevel.isSAP` under the bridge. -/
+theorem georgian_indexed_eq_sap : ∀ c ∈ Cell.pnCells,
+    Georgian.Agreement.isIndexed c = (toLevel c).isSAP := by decide
 
 /-- Per-cell verification: Georgian 1sg object prefix *m-* exists iff inverse. -/
 theorem georgian_1sg_prefix_and_inverse :
-    Georgian.Agreement.objectPrefix .p1sg = some "m-" ∧
+    Georgian.Agreement.objectAgr.realize (.pn .first .Sing) = some "m-" ∧
     basque.isInverse .first .first = true ∧
     basque.isInverse .second .first = true ∧
-    basque.isInverse .third .first = true := by
-  exact ⟨rfl, by decide, by decide, by decide⟩
+    basque.isInverse .third .first = true := by decide
 
 /-- Per-cell verification: Georgian 3sg has no object prefix, and
     there exist direct contexts. -/
 theorem georgian_3sg_no_prefix_and_direct :
-    Georgian.Agreement.objectPrefix .p3sg = none ∧
+    Georgian.Agreement.objectAgr.realize (.pn .third .Sing) = none ∧
     isDirectContext .standard partialProbe .first .third = true ∧
-    isDirectContext .standard partialProbe .second .third = true := by
-  exact ⟨rfl, by decide, by decide⟩
+    isDirectContext .standard partialProbe .second .third = true := by decide
 
 /-- Core bridge theorem (Georgian): object is indexed iff always inverse.
 
     Georgian uses the same partial probe [u-3-2] and standard geometry as
     Basque, so the same cyclic agree mechanism derives the same SAP/3P
     split in object agreement. -/
-theorem georgian_indexed_iff_always_inverse
-    (pn : Georgian.Agreement.PersonNumber) :
-    Georgian.Agreement.pIsIndexed pn = true ↔
-    ∀ ea : PersonLevel, basque.isInverse ea (georgianToLevel pn) = true := by
-  -- Georgian pIsIndexed tracks SAP (proved in fragment); SAP ↔ always inverse
-  rw [georgian_indexed_eq_sap]
-  cases pn <;> simp only [georgianToLevel, PersonLevel.isSAP] <;> constructor
-  all_goals first
-    | (intro _; exact fun | .first => rfl | .second => rfl | .third => rfl)
-    | (intro _; trivial)
-    | (intro h; exact absurd h Bool.false_ne_true)
-    | (intro h; exact absurd (h .first) Bool.false_ne_true)
+theorem georgian_indexed_iff_always_inverse : ∀ c ∈ Cell.pnCells,
+    (Georgian.Agreement.isIndexed c = true ↔
+     ∀ ea : PersonLevel, basque.isInverse ea (toLevel c) = true) := by decide
 
 -- ============================================================================
 -- § 4: Georgian Second-Cycle Morphology
@@ -223,14 +194,10 @@ theorem basque_georgian_same_system :
     basque = basque := ⟨rfl, rfl⟩
 
 /-- The differential P indexing pattern is identical for all six
-    person-number values across both languages. -/
+    person-number φ-cells across both languages. -/
 theorem cross_linguistic_uniformity :
-    (∀ pn : Basque.Agreement.PersonNumber,
-      Basque.Agreement.pIsIndexed pn =
-      (basqueToLevel pn).isSAP) ∧
-    (∀ pn : Georgian.Agreement.PersonNumber,
-      Georgian.Agreement.pIsIndexed pn =
-      (georgianToLevel pn).isSAP) :=
+    (∀ c ∈ Cell.pnCells, Basque.Agreement.pIsIndexed c = (toLevel c).isSAP) ∧
+    (∀ c ∈ Cell.pnCells, Georgian.Agreement.isIndexed c = (toLevel c).isSAP) :=
   ⟨basque_indexed_eq_sap, georgian_indexed_eq_sap⟩
 
 end BejarRezac2009
