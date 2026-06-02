@@ -1,5 +1,4 @@
 import Linglib.Features.Gender
-import Linglib.Syntax.Pronoun.Basic
 import Linglib.Discourse.CommonGround
 import Linglib.Features.Accessibility
 import Linglib.Fragments.English.Pronouns
