@@ -2,6 +2,7 @@ import Linglib.Syntax.Minimalist.Coreference
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.NominalClassification
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Paradigms.AcceptabilityJudgment
 
@@ -34,6 +35,13 @@ namespace Chomsky1981
 open Paradigms.AcceptabilityJudgment
 open Minimalist.Coreference
 open Phenomena.Anaphora.Coreference
+
+/-- English binding under Minimalist (c-command): the framework-neutral engine
+    (`Binding.grammaticalForCoreference`) applied with Minimalism's
+    `CommandRelation` instance (in scope via `open Minimalist.Coreference`) and
+    English's binding-class classifier. -/
+private abbrev grammaticalForCoreference (ws : List Word) : Prop :=
+  Binding.grammaticalForCoreference English.NominalClassification.classifyNominal ws
 
 /-- Coverage of a `PhenomenonData` set under Minimalist binding theory.
 

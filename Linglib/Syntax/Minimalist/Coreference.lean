@@ -1,307 +1,108 @@
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.NominalClassification
 import Linglib.Syntax.Minimalist.Basic
-import Linglib.Features.CoreferenceStatus
+import Linglib.Syntax.Binding.Basic
 
 /-!
 # Minimalist Coreference (Binding)
 
-Coreference constraints via c-command and locality following @cite{chomsky-1981}.
+Binding via **c-command** and locality (@cite{chomsky-1981}). The binding
+principles themselves are *not* restated here: this file supplies Minimalism's
+command relation (c-command, read off the phrase-structure tree) as a
+`Syntax.Binding.CommandRelation` instance, and the framework-neutral engine
+(`Syntax/Binding/Basic.lean`) derives Principles A/B/C and the coreference
+predictions from it. The file is language-neutral — it imports no Fragment; a
+study combines this instance with a language's binding-class classifier.
 
 ## Main definitions
 
-- `BindingClass`, `SimpleClause`
-- `reflexiveLicensed`, `pronounLocallyFree`, `grammaticalForCoreference`
-
+- `subjectCCommandsObject` / `objectCCommandsSubject` — c-command from tree
+  geometry.
+- `instance : CommandRelation` — the Minimalist instance of the abstract
+  command relation (c-command); the engine supplies Principles A/B/C over it.
 -/
 
 namespace Minimalist.Coreference
 
-open Features (BindingClass)
-open English.NominalClassification (isNominalCat classifyNominal)
+open Binding (SimpleClause Pos CommandRelation)
 
-/-- Simple clause structure for coreference checking.
-    `semanticPl` tracks whether the subject denotes a plurality,
-    independently of syntactic number. In English, these coincide.
-    In Hungarian, quantified NPs, singular coordinate DPs, and
-    collective nouns are syntactically singular but semantically
-    plural (@cite{rakosi-2019}). Defaults to matching syntactic number. -/
-structure SimpleClause where
-  subject : Word
-  verb : Word
-  object : Option Word
-  /-- Whether the subject denotes a plurality (multiple individuals).
-      Defaults to matching the syntactic number feature. Override for
-      languages where syntactic and semantic number diverge. -/
-  semanticPl : Bool := subject.features.number == some .pl
-  deriving Repr
+/-! ### C-command from tree geometry -/
 
-def parseSimpleClause (ws : List Word) : Option SimpleClause :=
-  match ws with
-  | [subj, v, obj] =>
-    if isNominalCat subj.cat && v.cat == .VERB && isNominalCat obj.cat then
-      some { subject := subj, verb := v, object := some obj }
-    else none
-  | [subj, v] =>
-    if isNominalCat subj.cat && v.cat == .VERB then
-      some { subject := subj, verb := v, object := none }
-    else none
-  | _ => none
-
-/-- Convert a word to a Minimalist syntactic object (leaf with UPOS mapped
-    to Cat and phonological form attached). -/
+/-- Convert a word to a Minimalist syntactic object (leaf with UPOS mapped to
+    Cat and phonological form attached). -/
 private def wordToSO (w : Word) (id : Nat) : SyntacticObject :=
   mkLeafPhon (uposToCat w.cat) [] w.form id
 
-/-- Build a phrase structure tree from a simple clause.
-
-    Transitive: `{subj, {verb, obj}}` — subject is specifier,
-    verb–object is a head-complement pair.
-    Intransitive: `{subj, verb}` — subject and verb are co-daughters.
-
-    C-command follows from the tree geometry:
-    - Subject c-commands object (subject's sister contains object)
-    - Object does NOT c-command subject (object's sister is verb leaf) -/
-def SimpleClause.toSyntacticObject (clause : SimpleClause) : SyntacticObject :=
+/-- Build a phrase-structure tree from a clause: transitive `{subj, {verb, obj}}`
+    (subject specifier, verb–object a head-complement pair), intransitive
+    `{subj, verb}`. C-command follows from the geometry. -/
+def toSyntacticObject (clause : SimpleClause) : SyntacticObject :=
   let subjSO := wordToSO clause.subject 0
   let verbSO := wordToSO clause.verb 1
   match clause.object with
   | none => merge subjSO verbSO
-  | some obj =>
-    let objSO := wordToSO obj 2
-    merge subjSO (merge verbSO objSO)
+  | some obj => merge subjSO (merge verbSO (wordToSO obj 2))
 
-/-- The subject as a syntactic object for tree-relative c-command checks. -/
-private def SimpleClause.subjectSO (clause : SimpleClause) : SyntacticObject :=
+private def subjectSO (clause : SimpleClause) : SyntacticObject :=
   wordToSO clause.subject 0
 
-/-- The object as a syntactic object, if present. -/
-private def SimpleClause.objectSO? (clause : SimpleClause) : Option SyntacticObject :=
+private def objectSO? (clause : SimpleClause) : Option SyntacticObject :=
   clause.object.map fun obj => wordToSO obj 2
 
-/-- Subject c-commands object: derived from the phrase structure tree.
-    In `{subj, {verb, obj}}`, the subject's sister is `{verb, obj}`,
-    which contains the object. -/
+/-- Subject c-commands object: in `{subj, {verb, obj}}`, the subject's sister
+    `{verb, obj}` contains the object. -/
 def subjectCCommandsObject (clause : SimpleClause) : Prop :=
-  match clause.objectSO? with
+  match objectSO? clause with
   | none => False
-  | some objSO => cCommandsIn clause.toSyntacticObject clause.subjectSO objSO
+  | some objSO => cCommandsIn (toSyntacticObject clause) (subjectSO clause) objSO
 
 instance (clause : SimpleClause) : Decidable (subjectCCommandsObject clause) := by
-  unfold subjectCCommandsObject
-  cases clause.objectSO? <;> infer_instance
+  unfold subjectCCommandsObject; cases objectSO? clause <;> infer_instance
 
-/-- Object does not c-command subject: derived from the tree.
-    In `{subj, {verb, obj}}`, the object's sister is `verb`,
-    which does not contain the subject. -/
+/-- Object does not c-command subject: in `{subj, {verb, obj}}`, the object's
+    sister `verb` does not contain the subject. -/
 def objectCCommandsSubject (clause : SimpleClause) : Prop :=
-  match clause.objectSO? with
+  match objectSO? clause with
   | none => False
-  | some objSO => cCommandsIn clause.toSyntacticObject objSO clause.subjectSO
+  | some objSO => cCommandsIn (toSyntacticObject clause) objSO (subjectSO clause)
 
 instance (clause : SimpleClause) : Decidable (objectCCommandsSubject clause) := by
-  unfold objectCCommandsSubject
-  cases clause.objectSO? <;> infer_instance
+  unfold objectCCommandsSubject; cases objectSO? clause <;> infer_instance
 
-/-- Same local domain: both subject and object are subterms of the same
-    clause tree (the minimal domain containing a SUBJECT). -/
+/-- Both positions are in the local clause tree (the minimal domain). -/
 def sameLocalDomain (clause : SimpleClause) : Prop :=
-  let tree := clause.toSyntacticObject
-  match clause.objectSO? with
+  match objectSO? clause with
   | none => True
   | some objSO =>
-    contains tree clause.subjectSO ∧ contains tree objSO
+    contains (toSyntacticObject clause) (subjectSO clause) ∧
+    contains (toSyntacticObject clause) objSO
 
 instance (clause : SimpleClause) : Decidable (sameLocalDomain clause) := by
-  unfold sameLocalDomain
-  cases clause.objectSO? <;> infer_instance
+  unfold sameLocalDomain; cases objectSO? clause <;> infer_instance
 
-/-- Binding domain check: in a simple clause, all positions share a domain. -/
-def inSameBindingDomain (_clause : SimpleClause) (_pos1 _pos2 : String) : Prop :=
-  True
+/-! ### Minimalism as a command relation -/
 
-instance (clause : SimpleClause) (pos1 pos2 : String) :
-    Decidable (inSameBindingDomain clause pos1 pos2) := by
-  unfold inSameBindingDomain; infer_instance
+/-- The Minimalist command relation: c-command read off the tree. -/
+def commands (c : SimpleClause) : Pos → Pos → Prop
+  | .subject, .object => subjectCCommandsObject c
+  | .object, .subject => objectCCommandsSubject c
+  | _, _ => False
 
-/-- Principle A: Reflexives must be bound locally -/
-def reflexiveLicensed (clause : SimpleClause) : Prop :=
-  match clause.object with
-  | none => False
-  | some obj =>
-    match classifyNominal obj with
-    | some .reflexive =>
-      subjectCCommandsObject clause ∧
-      sameLocalDomain clause ∧
-      Word.Agree clause.subject obj
-    | _ => True
+instance (c : SimpleClause) (i j : Pos) : Decidable (commands c i j) := by
+  unfold commands; split <;> infer_instance
 
-instance (clause : SimpleClause) : Decidable (reflexiveLicensed clause) := by
-  unfold reflexiveLicensed
-  split <;> first | infer_instance | (split <;> infer_instance)
+/-- Locality: in a simple clause all positions share the one binding domain. -/
+def sameDomain (c : SimpleClause) (_ _ : Pos) : Prop := sameLocalDomain c
 
-/-- Reciprocals must be locally c-commanded by a semantically plural
-    antecedent. Unlike reflexive licensing (which uses narrow-syntactic
-    φ-agreement, hence requires morphosyntactic plurality), reciprocal
-    licensing is an LF interpretive condition under the Y-model:
-    the antecedent must *denote* a plurality, but need not bear plural
-    morphology or trigger plural verb agreement.
-    @cite{rakosi-2019}: Hungarian *egymás* is licensed by quantified NPs,
-    singular coordinate DPs, and collective nouns — all syntactically
-    singular but semantically plural. -/
-def reciprocalLicensed (clause : SimpleClause) : Prop :=
-  match clause.object with
-  | none => False
-  | some obj =>
-    match classifyNominal obj with
-    | some .reciprocal =>
-      subjectCCommandsObject clause ∧
-      sameLocalDomain clause ∧
-      clause.semanticPl = true  -- LF condition: semantic plurality suffices
-    | _ => True
+instance (c : SimpleClause) (i j : Pos) : Decidable (sameDomain c i j) :=
+  inferInstanceAs (Decidable (sameLocalDomain c))
 
-instance (clause : SimpleClause) : Decidable (reciprocalLicensed clause) := by
-  unfold reciprocalLicensed
-  split <;> first | infer_instance | (split <;> infer_instance)
+/-- Minimalism is an instance of the abstract command relation
+    (@cite{barker-pullum-1990}). The binding principles
+    (`Syntax.Binding.grammaticalForCoreference` etc.) come from the engine;
+    a study applies them with this instance in scope and a language classifier. -/
+instance : CommandRelation where
+  commands := commands
+  sameDomain := sameDomain
+  commandsDec := fun c i j => inferInstance
+  sameDomainDec := fun c i j => inferInstance
 
-/-- Principle B: Pronouns must be free locally -/
-def pronounLocallyFree (clause : SimpleClause) : Prop :=
-  match clause.object with
-  | none => True
-  | some obj =>
-    match classifyNominal obj with
-    | some .pronoun =>
-      ¬ (subjectCCommandsObject clause ∧ sameLocalDomain clause)
-    | _ => True
-
-instance (clause : SimpleClause) : Decidable (pronounLocallyFree clause) := by
-  unfold pronounLocallyFree
-  split <;> first | infer_instance | (split <;> infer_instance)
-
-/-- Principle C: R-expressions must be free everywhere.
-
-    An R-expression is free iff no coreferential pronoun c-commands it.
-    In a simple clause `{subj, {verb, obj}}`, a pronominal subject
-    c-commands the object (via tree-relative `cCommandsIn`), so
-    subject–object coreference with an R-expression object is blocked.
-
-    Note: WLM (@cite{takahashi-hulsey-2009}, @cite{gong-2022}) can
-    bleed Condition C by merging the NP restrictor at a chain position
-    above the binder. This function checks the *surface* tree; the
-    WLM escape is modeled via `wlmAvoidsCondC` in `LateMerger.lean`. -/
-def rExpressionFree (clause : SimpleClause) : Prop :=
-  match classifyNominal clause.subject with
-  | some .pronoun =>
-    match clause.object with
-    | some obj =>
-      match classifyNominal obj with
-      | some .rExpression =>
-        -- Condition C: R-expression object must NOT be c-commanded
-        -- by the coreferential pronominal subject
-        ¬ subjectCCommandsObject clause
-      | _ => True
-    | none => True
-  | _ => True
-
-instance (clause : SimpleClause) : Decidable (rExpressionFree clause) := by
-  unfold rExpressionFree
-  split <;> first
-    | infer_instance
-    | (split <;> first | infer_instance | (split <;> infer_instance))
-
-/-- Grammatical for coreference under Minimalist binding -/
-def grammaticalForCoreference (ws : List Word) : Prop :=
-  match parseSimpleClause ws with
-  | none => False
-  | some clause =>
-    match classifyNominal clause.subject with
-    | some .reflexive => False
-    | some .reciprocal => False
-    | _ =>
-      match clause.object with
-      | none => True
-      | some obj =>
-        match classifyNominal obj with
-        | some .reflexive => reflexiveLicensed clause
-        | some .reciprocal => reciprocalLicensed clause
-        | some .pronoun => False
-        | _ => True
-
-instance (ws : List Word) : Decidable (grammaticalForCoreference ws) := by
-  unfold grammaticalForCoreference
-  split <;> first
-    | infer_instance
-    | (split <;> first
-        | infer_instance
-        | (split <;> first | infer_instance | (split <;> infer_instance)))
-
-def reflexiveLicensedInSentence (ws : List Word) : Prop :=
-  match parseSimpleClause ws with
-  | none => False
-  | some clause => reflexiveLicensed clause
-
-instance (ws : List Word) : Decidable (reflexiveLicensedInSentence ws) := by
-  unfold reflexiveLicensedInSentence
-  cases parseSimpleClause ws <;> infer_instance
-
-def pronounCoreferenceBlocked (ws : List Word) : Prop :=
-  match parseSimpleClause ws with
-  | none => False
-  | some clause => ¬ pronounLocallyFree clause
-
-instance (ws : List Word) : Decidable (pronounCoreferenceBlocked ws) := by
-  unfold pronounCoreferenceBlocked
-  cases parseSimpleClause ws <;> infer_instance
-
-structure MinimalistCoreferenceGrammar where
-  strictLocality : Bool := true
-
-def defaultGrammar : MinimalistCoreferenceGrammar := {}
-
-def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Features.CoreferenceStatus :=
-  if i = 0 ∧ j = 2 then
-    match clause.object with
-    | none => .unspecified
-    | some obj =>
-      match classifyNominal obj with
-      | some .reflexive =>
-        if subjectCCommandsObject clause ∧ sameLocalDomain clause ∧ Word.Agree clause.subject obj
-        then .obligatory
-        else .blocked
-      | some .reciprocal =>
-        if subjectCCommandsObject clause ∧ sameLocalDomain clause ∧
-           clause.semanticPl = true  -- LF: semantic plurality
-        then .obligatory
-        else .blocked
-      | some .pronoun =>
-        if subjectCCommandsObject clause ∧ sameLocalDomain clause
-        then .blocked
-        else .possible
-      | some .rExpression =>
-        -- Condition C: pronoun subject c-commanding R-expression object
-        -- blocks coreference (the R-expression is not free)
-        if subjectCCommandsObject clause
-        then .blocked
-        else .possible
-      | none => .unspecified
-  else if i = 2 ∧ j = 0 then
-    -- Object→subject: does the object c-command the subject?
-    -- Derived from tree: in {subj, {verb, obj}}, object does NOT c-command subject
-    match classifyNominal clause.subject with
-    | some .reflexive =>
-      if objectCCommandsSubject clause ∧ sameLocalDomain clause
-      then .obligatory
-      else .blocked
-    | some .reciprocal =>
-      if objectCCommandsSubject clause ∧ sameLocalDomain clause
-      then .obligatory
-      else .blocked
-    | some .pronoun =>
-      if objectCCommandsSubject clause ∧ sameLocalDomain clause
-      then .blocked
-      else .possible
-    | _ => .possible
-  else
-    .unspecified
 end Minimalist.Coreference

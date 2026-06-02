@@ -1,68 +1,37 @@
 import Linglib.Syntax.DependencyGrammar.Basic
-import Linglib.Syntax.DependencyGrammar.Nominal
-import Linglib.Features.CoreferenceStatus
+import Linglib.Syntax.Binding.Basic
 
 /-!
 # Dependency-grammar coreference (binding)
 
-Reflexives require short dependency paths; locality is defined as the
-subgraph rooted at the verb of the matrix clause. The c-command analogue
-in dependency grammar is *d-command*: a node `x` d-commands `y` iff `y` is
-in the subtree rooted at `x`'s mother. @cite{hudson-1990},
-@cite{gibson-2025}.
+Binding via **d-command** and locality (@cite{hudson-1990}, @cite{gibson-2025}).
+The c-command analogue in dependency grammar is *d-command*: `x` d-commands `y`
+iff both are dependents of the same head and `x` bears the subject relation.
+Locality is the dependency subgraph rooted at the matrix verb.
 
-## Main declarations
+As with the other frameworks, the binding principles are *not* restated here:
+this file supplies dependency grammar's command relation as a
+`Binding.CommandRelation` instance, and the framework-neutral engine
+(`Syntax/Binding/Basic.lean`) derives Principles A/B/C over it. The file is
+language-neutral — it imports no Fragment.
 
-* `SimpleClause` — clause-rooted subgraph for binding-domain bookkeeping.
-* `dCommands`, `sameLocalDomain` — the d-command relation and its locality
-  restriction.
-* `reflexiveLicensed`, `reciprocalLicensed`, `pronounLocallyFree` — the
-  binding-theory licensing predicates over a simple clause.
-* `grammaticalForCoreference` — top-level acceptability check consumed by
-  `Studies/Hudson1990.lean`.
+## Main definitions
 
-## Implementation notes
-
-* Predicate-shape definitions are `Bool`-valued, inheriting the
-  substrate-wide convention from `Basic.lean`. A migration to
-  `Prop` + `[DecidablePred]` is a project-wide refactor target.
+- `toDepTree`, `dCommands`, `subjectDCommandsObject`, `sameLocalDomain` — the
+  d-command relation and its locality restriction, over a `Binding.SimpleClause`.
+- `instance : CommandRelation` — the dependency-grammar instance of the abstract
+  command relation (d-command); the engine supplies Principles A/B/C over it.
 -/
 
 namespace DepGrammar.Coreference
 
-open DepGrammar Nominal
+open Binding (SimpleClause Pos CommandRelation)
 
-/-! ### Clauses and locality -/
+/-! ### D-command from the dependency tree -/
 
-/-- Simple clause structure: a subgraph rooted at the main verb. -/
-structure SimpleClause where
-  subject : Word
-  verb : Word
-  object : Option Word
-  /-- Whether the subject denotes a plurality. Defaults to matching
-      syntactic number. Override for languages where syntactic and
-      semantic number diverge (@cite{rakosi-2019}). -/
-  semanticPl : Bool := subject.features.number == some .pl
-  deriving Repr
-
-/-- Parse a simple transitive sentence into a clause. -/
-def parseSimpleClause (ws : List Word) : Option SimpleClause :=
-  match ws with
-  | [subj, v, obj] =>
-    if isNominalCat subj.cat && v.cat == .VERB && isNominalCat obj.cat then
-      some { subject := subj, verb := v, object := some obj }
-    else none
-  | [subj, v] =>
-    if isNominalCat subj.cat && v.cat == .VERB then
-      some { subject := subj, verb := v, object := none }
-    else none
-  | _ => none
-
-/-- Build a dependency tree from a simple clause.
-
-    Indices: 0 = subject, 1 = verb (root), 2 = object (if present).
-    Dependencies: subject ←nsubj— verb, object ←obj— verb. -/
-def SimpleClause.toDepTree (clause : SimpleClause) : DepTree :=
+/-- Build a dependency tree from a clause. Indices: 0 = subject, 1 = verb
+    (root), 2 = object (if present); subject ←nsubj— verb, object ←obj— verb. -/
+def toDepTree (clause : SimpleClause) : DepTree :=
   let words := match clause.object with
     | none => [clause.subject, clause.verb]
     | some obj => [clause.subject, clause.verb, obj]
@@ -72,91 +41,52 @@ def SimpleClause.toDepTree (clause : SimpleClause) : DepTree :=
     | some _ => [⟨1, 2, .obj⟩]
   { words := words, deps := deps, rootIdx := 1 }
 
-/-- Same local domain: both subject and object are dependents of the
-    same head (the verb), hence in the same dependency subgraph. -/
+/-- D-command: the word at `i` d-commands the word at `j` if both are dependents
+    of the same head and `i` bears the subject relation (nsubj). -/
+def dCommands (tree : DepTree) (i j : Nat) : Bool :=
+  tree.deps.any fun di =>
+    di.depIdx == i && di.depType == .nsubj &&
+    tree.deps.any fun dj => dj.depIdx == j && di.headIdx == dj.headIdx
+
+/-- Subject d-commands object: both dependents of the verb, subject bears nsubj. -/
+def subjectDCommandsObject (clause : SimpleClause) : Bool :=
+  match clause.object with
+  | none => false
+  | some _ => dCommands (toDepTree clause) 0 2
+
+/-- Both positions are dependents of the same head (the verb) — one domain. -/
 def sameLocalDomain (clause : SimpleClause) : Bool :=
   match clause.object with
   | none => true
   | some _ =>
-    let tree := clause.toDepTree
-    (tree.deps.any λ d => d.depIdx == 0 && d.headIdx == tree.rootIdx) &&
-    (tree.deps.any λ d => d.depIdx == 2 && d.headIdx == tree.rootIdx)
+    let tree := toDepTree clause
+    (tree.deps.any fun d => d.depIdx == 0 && d.headIdx == tree.rootIdx) &&
+    (tree.deps.any fun d => d.depIdx == 2 && d.headIdx == tree.rootIdx)
 
-/-! ### D-command -/
+/-! ### Dependency grammar as a command relation -/
 
-/-- D-command: word at index `i` d-commands word at index `j` in a
-    dependency tree if both are dependents of the same head and `i`
-    bears the subject relation (nsubj). -/
-def dCommands (tree : DepTree) (i j : Nat) : Bool :=
-  tree.deps.any λ di =>
-    di.depIdx == i && di.depType == .nsubj &&
-    tree.deps.any λ dj =>
-      dj.depIdx == j && di.headIdx == dj.headIdx
+/-- The dependency-grammar command relation: d-command. Object→subject never
+    holds (only the subject bears nsubj). -/
+def commands (c : SimpleClause) : Pos → Pos → Prop
+  | .subject, .object => subjectDCommandsObject c = true
+  | _, _ => False
 
-/-- Subject d-commands object: derived from the dependency tree.
-    Both are dependents of the verb, and the subject bears nsubj. -/
-def subjectDCommandsObject (clause : SimpleClause) : Bool :=
-  match clause.object with
-  | none => false
-  | some _ => dCommands clause.toDepTree 0 2
+instance (c : SimpleClause) (i j : Pos) : Decidable (commands c i j) := by
+  unfold commands; split <;> infer_instance
 
-/-! ### Binding-theory licensing -/
+/-- Locality: in a simple clause all positions share the one binding domain. -/
+def sameDomain (c : SimpleClause) (_ _ : Pos) : Prop := sameLocalDomain c = true
 
-/-- Reflexive is licensed if d-commanded by an agreeing antecedent in the
-    local domain. -/
-def reflexiveLicensed (clause : SimpleClause) : Bool :=
-  match clause.object with
-  | none => false
-  | some obj =>
-    match classifyNominal obj with
-    | some .reflexive =>
-      subjectDCommandsObject clause &&
-      sameLocalDomain clause &&
-      decide (Word.Agree clause.subject obj)
-    | _ => true
+instance (c : SimpleClause) (i j : Pos) : Decidable (sameDomain c i j) :=
+  inferInstanceAs (Decidable (sameLocalDomain c = true))
 
-/-- Reciprocals must be d-commanded by a semantically plural antecedent.
-    The plurality requirement is semantic, not morphosyntactic
-    (@cite{rakosi-2019}). -/
-def reciprocalLicensed (clause : SimpleClause) : Bool :=
-  match clause.object with
-  | none => false
-  | some obj =>
-    match classifyNominal obj with
-    | some .reciprocal =>
-      subjectDCommandsObject clause &&
-      sameLocalDomain clause &&
-      clause.semanticPl
-    | _ => true
-
-/-- A pronoun must not be d-commanded by a coreferent antecedent locally. -/
-def pronounLocallyFree (clause : SimpleClause) : Bool :=
-  match clause.object with
-  | none => true
-  | some obj =>
-    match classifyNominal obj with
-    | some .pronoun =>
-      !(subjectDCommandsObject clause && sameLocalDomain clause)
-    | _ => true
-
-/-! ### Top-level acceptability -/
-
-/-- Is a sentence grammatical for coreference under dependency binding? -/
-def grammaticalForCoreference (ws : List Word) : Bool :=
-  match parseSimpleClause ws with
-  | none => false
-  | some clause =>
-    match classifyNominal clause.subject with
-    | some .reflexive => false
-    | some .reciprocal => false
-    | _ =>
-      match clause.object with
-      | none => true
-      | some obj =>
-        match classifyNominal obj with
-        | some .reflexive => reflexiveLicensed clause
-        | some .reciprocal => reciprocalLicensed clause
-        | some .pronoun => false
-        | _ => true
+/-- The dependency-grammar instance of the abstract command relation
+    (@cite{barker-pullum-1990}): d-command. The engine supplies Principles
+    A/B/C; a study applies them with this instance and a language classifier. -/
+instance : CommandRelation where
+  commands := commands
+  sameDomain := sameDomain
+  commandsDec := fun c i j => inferInstance
+  sameDomainDec := fun c i j => inferInstance
 
 end DepGrammar.Coreference

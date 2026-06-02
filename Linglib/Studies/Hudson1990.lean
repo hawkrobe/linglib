@@ -1,4 +1,5 @@
 import Linglib.Syntax.DependencyGrammar.Coreference
+import Linglib.Syntax.DependencyGrammar.Nominal
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Paradigms.AcceptabilityJudgment
 
@@ -20,6 +21,13 @@ namespace Hudson1990
 open DepGrammar.Coreference
 open DepGrammar.Nominal
 open Phenomena.Anaphora.Coreference
+
+/-- English binding under dependency grammar (d-command): the framework-neutral
+    engine (`Binding.grammaticalForCoreference`) applied with DG's
+    `CommandRelation` instance (in scope via `open DepGrammar.Coreference`) and
+    English's binding-class classifier. `Bool`-valued for `capturesPhenomenonData`. -/
+private def grammaticalForCoreference (ws : List Word) : Bool :=
+  decide (Binding.grammaticalForCoreference classifyNominal ws)
 
 -- ============================================================================
 -- Capturing the Phenomena Data
