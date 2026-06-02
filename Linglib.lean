@@ -288,6 +288,7 @@ import Linglib.Diachronic.CaseGrammaticalization
 import Linglib.Typology.Comparison
 import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Basic
+import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Morphology.Containment
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.DM.DomainLocality
