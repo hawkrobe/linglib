@@ -597,6 +597,7 @@ import Linglib.Paradigms.WugTest
 import Linglib.Paradigms.AcceptabilityJudgment
 import Linglib.Paradigms.SelfPacedReading
 -- Fragments
+import Linglib.Fragments.Arabic.ModernStandard.Negation
 import Linglib.Fragments.Arabic.ModernStandard.Relativization
 import Linglib.Fragments.Arabic.Egyptian.Morph
 import Linglib.Fragments.Arabic.ModernStandard.Plurals
