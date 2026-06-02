@@ -8,7 +8,7 @@ import Linglib.Semantics.Quantification.Lexicon
 /-!
 # Minimalism: Fragment Lexicon → Syntactic Object Interpretation
 
-Maps Fragment lexical entries (`VerbEntry`, `PronounEntry`, `NounEntry`,
+Maps Fragment lexical entries (`VerbEntry`, `PersonalPronoun`, `NounEntry`,
 `QuantifierEntry`) into Minimalist `SyntacticObject` leaves with the
 appropriate `Cat` and `SelStack` features.
 
@@ -37,7 +37,6 @@ namespace Minimalist.FromFragments
 
 open Minimalist
 open English.Predicates.Verbal (VerbEntry)
-open English.Pronouns (PronounEntry PronounType)
 open English.Nouns (NounEntry)
 open Semantics.Quantification.Lexicon (QuantifierEntry)
 
@@ -70,9 +69,9 @@ section EntryProjections
 def verbToSO (v : VerbEntry) (id : Nat) : SyntacticObject :=
   mkLeafPhon .V (verbToSelStack v) v.form3sg id
 
-/-- Convert a `PronounEntry` to a `SyntacticObject` leaf. Pronouns are D
+/-- Convert a `PersonalPronoun` to a `SyntacticObject` leaf. Pronouns are D
     heads (they project as DPs per Adger ch. 7). -/
-def pronounToSO (p : PronounEntry) (id : Nat) : SyntacticObject :=
+def pronounToSO (p : PersonalPronoun) (id : Nat) : SyntacticObject :=
   mkLeafPhon .D [] p.form id
 
 /-- Convert a `NounEntry` to a `SyntacticObject` leaf. Proper names are

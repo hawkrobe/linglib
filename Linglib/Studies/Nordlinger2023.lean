@@ -2,6 +2,7 @@ import Linglib.Typology.ArgumentStructure
 import Linglib.Studies.Siloni2012
 import Linglib.Data.WALS.Features.F106A
 import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.NominalClassification
 import Linglib.Fragments.Swahili.Reciprocals
 
 /-!
@@ -464,9 +465,9 @@ open English.Pronouns in
 theorem english_profile_grounded :
     rp_english.primaryStrategy = .bipartiteNP ∧
     rp_english.valency = .bivalent ∧
-    eachOther.pronounType = .reciprocal ∧
-    eachOther.pronounType ≠ PronounType.reflexive := by
-  exact ⟨rfl, rfl, rfl, by decide⟩
+    English.NominalClassification.classifyNominal eachOther.toWord = some .reciprocal ∧
+    English.NominalClassification.classifyNominal eachOther.toWord ≠ some .reflexive := by
+  refine ⟨rfl, rfl, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
 -- Cross-Paper Verification: Nordlinger 2023 vs Siloni 2012

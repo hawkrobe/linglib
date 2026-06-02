@@ -40,7 +40,6 @@ much of the linguistics literature) appear in docstrings only.
 -/
 
 import Linglib.Typology.Pronoun.Basic
-import Linglib.Typology.Pronoun.WALS
 
 namespace Korean.Pronouns
 
@@ -205,35 +204,3 @@ theorem gyae_gender_neutral :
     geunyeo.gender = some .feminine := ⟨rfl, rfl, rfl⟩
 
 end Korean.Pronouns
-
-namespace Korean
-
-/-- Korean (Koreanic) WALS pronoun typology profile. No incl/excl; no
-    person marking on verbs; gender in 3rd sg only (geu/geunyeo);
-    pronouns avoided for politeness (elaborate honorific system uses
-    titles/names instead); interrogative-based indefinites (nuguinka
-    from nugu 'who'); intensifier and reflexive identical (caki); no
-    person marking on adpositions. -/
-def pronounProfile : Pronoun.Profile :=
-  { language := "Korean"
-  , family := "Koreanic"
-  , iso := "kor"
-  , inclusiveExclusive := some .noDistinction
-  , inclusiveExclusiveVerbal := some .noPersonMarking
-  , genderInPronouns := some .in3rdPersonSgOnly
-  , politeness := some .pronounsAvoided
-  , indefiniteType := some .interrogativeBased
-  , intensifierReflexive := some .identical
-  , personMarkingAdpositions := some .noPersonMarking }
-
-/-- Korean pronoun phonological shape (WALS Chs 136–137): no M-T; no /m/ in
-    1SG (*na*/*jeo*); no N-M; no /m/ in 2SG. -/
-def pronounShapeProfile : Pronoun.ShapeProfile :=
-  { language := "Korean"
-  , iso := "kor"
-  , mtPronouns := some .absent
-  , mIn1sg := some .absent
-  , nmPronouns := some .absent
-  , mIn2sg := some .absent }
-
-end Korean

@@ -11,7 +11,6 @@ traditional Japanese relies heavily on null reference.
 -/
 
 import Linglib.Typology.Pronoun.Basic
-import Linglib.Typology.Pronoun.WALS
 
 namespace Japanese.Pronouns
 
@@ -148,36 +147,3 @@ theorem verb_register_span :
     iku.register = .informal ∧ ikimasu.register = .formal := ⟨rfl, rfl⟩
 
 end Japanese.Pronouns
-
-namespace Japanese
-
-/-- Japanese (Japonic) WALS pronoun typology profile. No incl/excl in
-    pronouns; no person marking on verbs; gender in 3rd person only
-    including non-singular (kare/kanojo); pronouns avoided for
-    politeness; interrogative-based indefinites (dare-ka 'who-Q' =
-    'someone'); intensifier and reflexive identical (jibun); no person
-    marking on adpositions. -/
-def pronounProfile : Pronoun.Profile :=
-  { language := "Japanese"
-  , family := "Japonic"
-  , iso := "jpn"
-  , inclusiveExclusive := some .noDistinction
-  , inclusiveExclusiveVerbal := some .noPersonMarking
-  , genderInPronouns := some .in3rdPersonIncludingNonSg
-  , politeness := some .pronounsAvoided
-  , indefiniteType := some .interrogativeBased
-  , intensifierReflexive := some .identical
-  , personMarkingAdpositions := some .noPersonMarking }
-
-/-- Japanese pronoun phonological shape (WALS Chs 136–137): no M-T pattern;
-    no /m/ in 1SG (*watashi*/*boku*/*ore*); no N-M; /m/ present in 2SG
-    (*omae*). -/
-def pronounShapeProfile : Pronoun.ShapeProfile :=
-  { language := "Japanese"
-  , iso := "jpn"
-  , mtPronouns := some .absent
-  , mIn1sg := some .absent
-  , nmPronouns := some .absent
-  , mIn2sg := some .present }
-
-end Japanese

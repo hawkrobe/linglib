@@ -14,9 +14,9 @@ the three frameworks classify against one lexicon.
 
 ## Main definitions
 
-* `classifyNominal` — `Word → Option Features.NominalType`, via the pronoun
-  lexicon (`English.Pronouns.lookup`) with a UPOS fallback for
-  R-expressions.
+* `classifyNominal` — `Word → Option Features.NominalType`, via the English
+  pronoun lexicon lists (`reflexives`/`reciprocals`/personal/`whWords`) with a
+  UPOS fallback for R-expressions.
 * `phiAgree` — person/number/gender agreement between two nominals, as a `Prop`
   with a `Decidable` instance.
 -/
@@ -31,19 +31,17 @@ def isNominalCat (c : UD.UPOS) : Bool :=
 
 /-- Classify a word as a binding-theoretic nominal type.
 
-    Derives the classification from `English.Pronouns` rather than a
-    hardcoded form list: a pronoun lexicon hit dispatches on its `pronounType`
-    (wh/relative/demonstrative count as pronominal), and any other nominal
+    Derives the classification from the English pronoun lexicon lists rather
+    than a per-entry tag: a form in `reflexives` or `reciprocals` is an anaphor,
+    a form in the personal or wh lists is a pronoun, and any other nominal
     category is an R-expression. -/
 def classifyNominal (w : Word) : Option NominalType :=
-  match English.Pronouns.lookup w.form with
-  | some entry => match entry.pronounType with
-    | .reflexive  => some .reflexive
-    | .reciprocal => some .reciprocal
-    | _           => some .pronoun
-  | none =>
-    if isNominalCat w.cat then some .rExpression
-    else none
+  if English.Pronouns.reflexives.any (·.form == w.form) then some .reflexive
+  else if English.Pronouns.reciprocals.any (·.form == w.form) then some .reciprocal
+  else if English.pronouns.any (·.form == w.form)
+        || English.Pronouns.whWords.any (·.form == w.form) then some .pronoun
+  else if isNominalCat w.cat then some .rExpression
+  else none
 
 /-- φ-feature agreement (person, number, gender) between two nominals.
     Person and number compare the morphosyntactic features directly; gender
