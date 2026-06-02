@@ -43,7 +43,7 @@ classification), this file owns the polarity-side claims:
   entries (verifies that NPI items the polarity Fragments declare are
   licensed in the contexts the Haspelmath polarity-sensitive forms cover)
 
-The substrate (`HaspelmathFunction`, `IndefiniteEntry`, `IndefiniteParadigm`,
+The substrate (`HaspelmathFunction`, `IndefinitePronoun`, `IndefiniteParadigm`,
 `MorphologicalBasis`, contiguity / coverage / disjointness predicates,
 `wals46A` and converters) lives in `Typology/Indefinite.lean`.
 
@@ -63,7 +63,7 @@ The substrate (`HaspelmathFunction`, `IndefiniteEntry`, `IndefiniteParadigm`,
 
 The 17 paradigms are hand-stipulated here rather than derived from
 `Fragments/{Lang}/Indefinites.lean` because the per-form
-`IndefiniteEntry.functions` field commits to a particular analysis of how
+`IndefinitePronoun.functions` field commits to a particular analysis of how
 forms partition the 9-function map, and the polarity-side analysis
 (Haspelmath 1997's contiguity-driven encoding) genuinely differs from the
 existing Fragment-side analysis (Degano-Aloni 2025 / Bubnov 2026's
@@ -148,8 +148,8 @@ def ch46Counts : List WALSCount :=
       (ch46.filter (·.value == .existentialConstruction)).length⟩ ]
 
 /-! Helpers (`wals46A`, `formCount`, `allFunctions`, `AllContiguous`,
-    `CoversAllFunctions`, `FormsDisjoint`, `IndefiniteEntry.coverage`)
-    are defined on `IndefiniteParadigm` / `IndefiniteEntry` in
+    `CoversAllFunctions`, `FormsDisjoint`, `IndefinitePronoun.coverage`)
+    are defined on `IndefiniteParadigm` / `IndefinitePronoun` in
     `Typology/Indefinite.lean`. The `Prop`-valued predicates have
     `Decidable` instances; theorems use them directly without `= true`
     tails (mathlib idiom). -/
@@ -165,20 +165,20 @@ def english : IndefiniteParadigm :=
   { language := "English"
   , isoCode := "eng"
   , forms :=
-    [ { language := "English", form := "some-",
-        gloss := "somebody, something, somewhere",
+    [ { form := "some-",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.specificKnown, .specificUnknown} }
-    , { language := "English", form := "any- (NPI)",
-        gloss := "anybody, anything in DE/nonveridical",
+    , { form := "any- (NPI)",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.irrealis, .question, .conditional, .indirectNeg} }
-    , { language := "English", form := "no-",
-        gloss := "nobody, nothing, nowhere",
+    , { form := "no-",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.directNeg} }
-    , { language := "English", form := "any- (FC)",
-        gloss := "anybody can do that; taller than anybody",
+    , { form := "any- (FC)",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.comparative, .freeChoice} } ] }
 
@@ -209,28 +209,28 @@ def russian : IndefiniteParadigm :=
   { language := "Russian"
   , isoCode := "rus"
   , forms :=
-    [ { language := "Russian", form := "кое-кто (koe-kto)",
-        gloss := "specific known: speaker knows the referent's identity",
+    [ { form := "кое-кто (koe-kto)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.specificKnown} }
-    , { language := "Russian", form := "кто-то (kto-to)",
-        gloss := "epistemic (D&A 2025 type iv): SU + NS",
+    , { form := "кто-то (kto-to)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.specificUnknown, .irrealis} }
-    , { language := "Russian", form := "кто-нибудь (kto-nibud')",
-        gloss := "non-specific / irrealis: 'anyone, no matter who'",
+    , { form := "кто-нибудь (kto-nibud')",
+        ontology := .person,
         basis := .interrogative,
         functions := {.irrealis} }
-    , { language := "Russian", form := "кто-либо (kto-libo)",
-        gloss := "polarity-sensitive: questions, conditionals, indirect neg",
+    , { form := "кто-либо (kto-libo)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.question, .conditional, .indirectNeg} }
-    , { language := "Russian", form := "никто (nikto)",
-        gloss := "nikto ne prisel 'nobody NEG came' (negative concord)",
+    , { form := "никто (nikto)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.directNeg} }
-    , { language := "Russian", form := "кто угодно (kto ugodno)",
-        gloss := "universal/free choice: anyone at all",
+    , { form := "кто угодно (kto ugodno)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.comparative, .freeChoice} } ] }
 
@@ -240,24 +240,24 @@ def german : IndefiniteParadigm :=
   { language := "German"
   , isoCode := "deu"
   , forms :=
-    [ { language := "German", form := "jemand",
-        gloss := "somebody (specific reference)",
+    [ { form := "jemand",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.specificKnown, .specificUnknown} }
-    , { language := "German", form := "irgendwer",
-        gloss := "irgend- prefix marks non-specificity / ignorance",
+    , { form := "irgendwer",
+        ontology := .person,
         basis := .special,
         functions := {.irrealis, .question} }
-    , { language := "German", form := "wer (conditional)",
-        gloss := "bare wh-word in conditional / indirect neg",
+    , { form := "wer (conditional)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.conditional, .indirectNeg} }
-    , { language := "German", form := "niemand",
-        gloss := "negative indefinite",
+    , { form := "niemand",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.directNeg} }
-    , { language := "German", form := "jeder",
-        gloss := "universal/free choice: anyone/everyone",
+    , { form := "jeder",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.comparative, .freeChoice} } ] }
 
@@ -266,17 +266,17 @@ def japanese : IndefiniteParadigm :=
   { language := "Japanese"
   , isoCode := "jpn"
   , forms :=
-    [ { language := "Japanese", form := "dare-ka",
-        gloss := "wh + ka: existential/non-specific",
+    [ { form := "dare-ka",
+        ontology := .person,
         basis := .interrogative,
         functions := {.specificKnown, .specificUnknown, .irrealis,
                       .question, .conditional} }
-    , { language := "Japanese", form := "dare-mo (neg)",
-        gloss := "wh + mo under negation: nobody",
+    , { form := "dare-mo (neg)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.indirectNeg, .directNeg} }
-    , { language := "Japanese", form := "dare-demo",
-        gloss := "wh + demo: free choice / concessive",
+    , { form := "dare-demo",
+        ontology := .person,
         basis := .interrogative,
         functions := {.comparative, .freeChoice} } ] }
 
@@ -286,12 +286,12 @@ def mandarin : IndefiniteParadigm :=
   { language := "Mandarin Chinese"
   , isoCode := "cmn"
   , forms :=
-    [ { language := "Mandarin", form := "yǒu rén (有人)",
-        gloss := "existential: 'there is someone'",
+    [ { form := "yǒu rén (有人)",
+        ontology := .person,
         basis := .existentialConstruction,
         functions := {.specificKnown, .specificUnknown} }
-    , { language := "Mandarin", form := "shéi (谁, non-interrog.)",
-        gloss := "wh-word in non-interrogative uses; 7 functions",
+    , { form := "shéi (谁, non-interrog.)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.irrealis, .question, .conditional, .indirectNeg,
                       .directNeg, .comparative, .freeChoice} } ] }
@@ -301,24 +301,24 @@ def turkish : IndefiniteParadigm :=
   { language := "Turkish"
   , isoCode := "tur"
   , forms :=
-    [ { language := "Turkish", form := "birisi",
-        gloss := "specific indefinite: 'a certain person'",
+    [ { form := "birisi",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.specificKnown, .specificUnknown} }
-    , { language := "Turkish", form := "biri",
-        gloss := "non-specific in irrealis",
+    , { form := "biri",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.irrealis} }
-    , { language := "Turkish", form := "kimse",
-        gloss := "polarity-sensitive: questions, conditionals",
+    , { form := "kimse",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.question, .conditional, .indirectNeg} }
-    , { language := "Turkish", form := "hiç kimse",
-        gloss := "negative indefinite with hiç intensifier",
+    , { form := "hiç kimse",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.directNeg} }
-    , { language := "Turkish", form := "herhangi biri",
-        gloss := "free choice: any person at all",
+    , { form := "herhangi biri",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.comparative, .freeChoice} } ] }
 
@@ -327,17 +327,17 @@ def hindi : IndefiniteParadigm :=
   { language := "Hindi-Urdu"
   , isoCode := "hin"
   , forms :=
-    [ { language := "Hindi-Urdu", form := "koii",
-        gloss := "general indefinite: someone/anyone",
+    [ { form := "koii",
+        ontology := .person,
         basis := .special,
         functions := {.specificKnown, .specificUnknown, .irrealis,
                       .question, .conditional} }
-    , { language := "Hindi-Urdu", form := "koii nahiiN",
-        gloss := "koii + negation: nobody",
+    , { form := "koii nahiiN",
+        ontology := .person,
         basis := .special,
         functions := {.indirectNeg, .directNeg} }
-    , { language := "Hindi-Urdu", form := "koii bhii",
-        gloss := "koii + bhii (even/also): anyone at all (FC)",
+    , { form := "koii bhii",
+        ontology := .person,
         basis := .special,
         functions := {.comparative, .freeChoice} } ] }
 
@@ -346,16 +346,16 @@ def italian : IndefiniteParadigm :=
   { language := "Italian"
   , isoCode := "ita"
   , forms :=
-    [ { language := "Italian", form := "qualcuno",
-        gloss := "specific/irrealis indefinite",
+    [ { form := "qualcuno",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.specificKnown, .specificUnknown, .irrealis} }
-    , { language := "Italian", form := "nessuno",
-        gloss := "N-word: polarity-sensitive + direct negation",
+    , { form := "nessuno",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.question, .conditional, .indirectNeg, .directNeg} }
-    , { language := "Italian", form := "qualunque/qualsiasi",
-        gloss := "free choice universal",
+    , { form := "qualunque/qualsiasi",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.comparative, .freeChoice} } ] }
 
@@ -364,20 +364,20 @@ def finnish : IndefiniteParadigm :=
   { language := "Finnish"
   , isoCode := "fin"
   , forms :=
-    [ { language := "Finnish", form := "joku",
-        gloss := "specific indefinite",
+    [ { form := "joku",
+        ontology := .person,
         basis := .special,
         functions := {.specificKnown, .specificUnknown} }
-    , { language := "Finnish", form := "joku (irrealis)",
-        gloss := "joku in irrealis / non-specific",
+    , { form := "joku (irrealis)",
+        ontology := .person,
         basis := .special,
         functions := {.irrealis} }
-    , { language := "Finnish", form := "kukaan",
-        gloss := "polarity-sensitive indefinite (direct-negation function realized as ei + connegative-V + kukaan)",
+    , { form := "kukaan",
+        ontology := .person,
         basis := .special,
         functions := {.question, .conditional, .indirectNeg, .directNeg} }
-    , { language := "Finnish", form := "kuka tahansa",
-        gloss := "free choice: whoever / anyone at all",
+    , { form := "kuka tahansa",
+        ontology := .person,
         basis := .special,
         functions := {.comparative, .freeChoice} } ] }
 
@@ -386,20 +386,20 @@ def korean : IndefiniteParadigm :=
   { language := "Korean"
   , isoCode := "kor"
   , forms :=
-    [ { language := "Korean", form := "nwukwu-nka (누군가)",
-        gloss := "wh + nka: specific indefinite",
+    [ { form := "nwukwu-nka (누군가)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.specificKnown, .specificUnknown} }
-    , { language := "Korean", form := "nwukwu (누구)",
-        gloss := "bare wh-word: non-specific indefinite",
+    , { form := "nwukwu (누구)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.irrealis, .question, .conditional} }
-    , { language := "Korean", form := "nwukwu-to (누구도, neg)",
-        gloss := "wh + to under negation: nobody",
+    , { form := "nwukwu-to (누구도, neg)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.indirectNeg, .directNeg} }
-    , { language := "Korean", form := "nwukwu-na (누구나)",
-        gloss := "wh + na: free choice / universal",
+    , { form := "nwukwu-na (누구나)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.comparative, .freeChoice} } ] }
 
@@ -408,20 +408,20 @@ def hungarian : IndefiniteParadigm :=
   { language := "Hungarian"
   , isoCode := "hun"
   , forms :=
-    [ { language := "Hungarian", form := "valaki",
-        gloss := "specific indefinite",
+    [ { form := "valaki",
+        ontology := .person,
         basis := .interrogative,
         functions := {.specificKnown, .specificUnknown} }
-    , { language := "Hungarian", form := "valaki (irrealis)",
-        gloss := "valaki in irrealis and question contexts",
+    , { form := "valaki (irrealis)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.irrealis, .question} }
-    , { language := "Hungarian", form := "senki",
-        gloss := "negative indefinite (with sem in direct neg)",
+    , { form := "senki",
+        ontology := .person,
         basis := .interrogative,
         functions := {.conditional, .indirectNeg, .directNeg} }
-    , { language := "Hungarian", form := "akárki / bárki",
-        gloss := "free choice: anyone at all",
+    , { form := "akárki / bárki",
+        ontology := .person,
         basis := .interrogative,
         functions := {.comparative, .freeChoice} } ] }
 
@@ -430,20 +430,20 @@ def georgian : IndefiniteParadigm :=
   { language := "Georgian"
   , isoCode := "kat"
   , forms :=
-    [ { language := "Georgian", form := "vinme (ვინმე)",
-        gloss := "general indefinite: someone",
+    [ { form := "vinme (ვინმე)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.specificKnown, .specificUnknown, .irrealis} }
-    , { language := "Georgian", form := "vinme (question context)",
-        gloss := "vinme in question/conditional contexts",
+    , { form := "vinme (question context)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.question, .conditional} }
-    , { language := "Georgian", form := "aravin (არავინ)",
-        gloss := "negative indefinite: nobody",
+    , { form := "aravin (არავინ)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.indirectNeg, .directNeg} }
-    , { language := "Georgian", form := "nebismieri (ნებისმიერი)",
-        gloss := "free choice: any/every",
+    , { form := "nebismieri (ნებისმიერი)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.comparative, .freeChoice} } ] }
 
@@ -452,20 +452,20 @@ def quechua : IndefiniteParadigm :=
   { language := "Quechua (Imbabura)"
   , isoCode := "qvi"
   , forms :=
-    [ { language := "Quechua", form := "pi-taj",
-        gloss := "wh-based indefinite: someone",
+    [ { form := "pi-taj",
+        ontology := .person,
         basis := .interrogative,
         functions := {.specificKnown, .specificUnknown, .irrealis, .question} }
-    , { language := "Quechua", form := "pi-pash",
-        gloss := "wh + pash: in conditional/neg scope",
+    , { form := "pi-pash",
+        ontology := .person,
         basis := .interrogative,
         functions := {.conditional, .indirectNeg} }
-    , { language := "Quechua", form := "mana pi-pash",
-        gloss := "negation + wh + pash: nobody",
+    , { form := "mana pi-pash",
+        ontology := .person,
         basis := .interrogative,
         functions := {.directNeg} }
-    , { language := "Quechua", form := "maijan-pash",
-        gloss := "free choice: anyone",
+    , { form := "maijan-pash",
+        ontology := .person,
         basis := .interrogative,
         functions := {.comparative, .freeChoice} } ] }
 
@@ -474,13 +474,13 @@ def yoruba : IndefiniteParadigm :=
   { language := "Yoruba"
   , isoCode := "yor"
   , forms :=
-    [ { language := "Yoruba", form := "ẹnìkan",
-        gloss := "general indefinite: somebody",
+    [ { form := "ẹnìkan",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.specificKnown, .specificUnknown, .irrealis,
                       .question, .conditional} }
-    , { language := "Yoruba", form := "ẹ̀nìkẹ́ni",
-        gloss := "polarity-sensitive + free choice",
+    , { form := "ẹ̀nìkẹ́ni",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.indirectNeg, .directNeg, .comparative, .freeChoice} } ] }
 
@@ -489,17 +489,17 @@ def thai : IndefiniteParadigm :=
   { language := "Thai"
   , isoCode := "tha"
   , forms :=
-    [ { language := "Thai", form := "khraj (ใคร)",
-        gloss := "wh-word as general indefinite",
+    [ { form := "khraj (ใคร)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.specificKnown, .specificUnknown, .irrealis,
                       .question, .conditional} }
-    , { language := "Thai", form := "mâj mii khraj (ไม่มีใคร)",
-        gloss := "NEG + exist + wh: nobody",
+    , { form := "mâj mii khraj (ไม่มีใคร)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.indirectNeg, .directNeg} }
-    , { language := "Thai", form := "khraj kɔ̂ (ใครก็)",
-        gloss := "wh + kɔ̂ particle: free choice",
+    , { form := "khraj kɔ̂ (ใครก็)",
+        ontology := .person,
         basis := .interrogative,
         functions := {.comparative, .freeChoice} } ] }
 
@@ -508,20 +508,20 @@ def tagalog : IndefiniteParadigm :=
   { language := "Tagalog"
   , isoCode := "tgl"
   , forms :=
-    [ { language := "Tagalog", form := "may isa",
-        gloss := "existential + 'one': someone",
+    [ { form := "may isa",
+        ontology := .person,
         basis := .existentialConstruction,
         functions := {.specificKnown, .specificUnknown, .irrealis} }
-    , { language := "Tagalog", form := "sinuman",
-        gloss := "wh-based polarity-sensitive indefinite",
+    , { form := "sinuman",
+        ontology := .person,
         basis := .existentialConstruction,
         functions := {.question, .conditional, .indirectNeg} }
-    , { language := "Tagalog", form := "walang (tao)",
-        gloss := "negative existential: nobody",
+    , { form := "walang (tao)",
+        ontology := .person,
         basis := .existentialConstruction,
         functions := {.directNeg} }
-    , { language := "Tagalog", form := "kahit sino",
-        gloss := "concessive + wh: anyone at all (FC)",
+    , { form := "kahit sino",
+        ontology := .person,
         basis := .existentialConstruction,
         functions := {.comparative, .freeChoice} } ] }
 
@@ -530,17 +530,17 @@ def swahili : IndefiniteParadigm :=
   { language := "Swahili"
   , isoCode := "swh"
   , forms :=
-    [ { language := "Swahili", form := "mtu (fulani)",
-        gloss := "person (+ certain): someone",
+    [ { form := "mtu (fulani)",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.specificKnown, .specificUnknown, .irrealis,
                       .question, .conditional} }
-    , { language := "Swahili", form := "hakuna mtu / mtu … -si-",
-        gloss := "negative existential or negative verb concord",
+    , { form := "hakuna mtu / mtu … -si-",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.indirectNeg, .directNeg} }
-    , { language := "Swahili", form := "mtu ye yote",
-        gloss := "person any whatsoever: free choice",
+    , { form := "mtu ye yote",
+        ontology := .person,
         basis := .genericNoun,
         functions := {.comparative, .freeChoice} } ] }
 

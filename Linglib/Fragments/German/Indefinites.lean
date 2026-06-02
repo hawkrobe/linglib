@@ -30,19 +30,17 @@ open Typology.Indefinite
 /-- German *irgend-*: dedicated indefinite prefix (special basis),
     epistemic indefinite (D&A type iv).
     @cite{aloni-port-2015}; @cite{bubnov-2026} §6, Table 3. -/
-def irgendEntry : IndefiniteEntry where
-  language := "German"
+def irgendEntry : IndefinitePronoun where
   form := "irgend-"
-  gloss := "some (epistemic)"
+  ontology := .person
   basis := .special
   functions := {.specificUnknown, .irrealis}
 
 /-- German *jemand* 'someone' / *etwas* 'something': generic-noun-derived
     (etymologically *je-man[d]* 'ever-person'); used for SK + SU. -/
-def jemandEntry : IndefiniteEntry where
-  language := "German"
+def jemandEntry : IndefinitePronoun where
   form := "jemand/etwas"
-  gloss := "someone/something"
+  ontology := .person
   basis := .genericNoun
   functions := {.specificKnown, .specificUnknown}
 
