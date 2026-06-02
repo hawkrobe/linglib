@@ -329,23 +329,28 @@ inductive AgreementControl where
   | semantic   -- meaning-driven: *committee* denotes a group of individuals
   deriving DecidableEq, Repr
 
-/-- An agreement profile for a controller type records whether semantic
-    agreement is available at each target position. -/
+/-- An agreement profile for a controller type records the targets where
+    semantic (meaning-driven) agreement is available. -/
 structure AgreementProfile where
   /-- Controller description -/
   controller : String
-  /-- Whether semantic (meaning-driven) agreement is possible at each target -/
-  semanticPossible : AgreementTarget → Bool
+  /-- Targets where semantic (meaning-driven) agreement is possible. -/
+  semanticTargets : List AgreementTarget
+
+/-- The four positions of @cite{corbett-1991}'s Agreement Hierarchy (`verb`
+    is not one of them — see `Syntax.Agreement.AgreementTarget`). -/
+private def hierarchyPositions : List AgreementTarget :=
+  [.attributive, .predicate, .relativePronoun, .personalPronoun]
 
 /-- The Agreement Hierarchy monotonicity constraint: once semantic agreement
     becomes possible at a target, it remains possible at all targets further
     right (= lower `Syntax.Agreement.AgreementTarget.rank`) on the hierarchy. -/
-def AgreementProfile.respectsHierarchy (p : AgreementProfile) : Bool :=
-  let targets := [AgreementTarget.attributive, .predicate,
-                   .relativePronoun, .personalPronoun]
-  targets.all λ t1 =>
-    targets.all λ t2 =>
-      t1.rank <= t2.rank || !p.semanticPossible t1 || p.semanticPossible t2
+def AgreementProfile.RespectsHierarchy (p : AgreementProfile) : Prop :=
+  ∀ t1 ∈ hierarchyPositions, ∀ t2 ∈ hierarchyPositions,
+    t1.rank ≤ t2.rank ∨ t1 ∉ p.semanticTargets ∨ t2 ∈ p.semanticTargets
+
+instance (p : AgreementProfile) : Decidable p.RespectsHierarchy := by
+  unfold AgreementProfile.RespectsHierarchy; infer_instance
 
 -- Language data
 
@@ -353,51 +358,42 @@ def AgreementProfile.respectsHierarchy (p : AgreementProfile) : Bool :=
     semantic agreement possible in predicate, relative pronoun, and
     personal pronoun. -/
 def britishCommittee : AgreementProfile :=
+  -- *these committee (no); the committee have decided / who have... / they (yes)
   { controller := "committee (British English)"
-    semanticPossible := λ
-      | .attributive     => false  -- *these committee
-      | .predicate       => true   -- the committee have decided
-      | .relativePronoun => true   -- the committee, who have...
-      | .personalPronoun => true   -- the committee... they
-      | .verb      => true }
+    semanticTargets := [.predicate, .relativePronoun, .personalPronoun, .verb] }
 
 /-- American English *committee*: semantic agreement rare in predicate,
     but available in relative and personal pronoun. -/
 def americanCommittee : AgreementProfile :=
+  -- ?the committee have decided (rare in AmE): no predicate/verb; pronouns yes
   { controller := "committee (American English)"
-    semanticPossible := λ
-      | .attributive     => false
-      | .predicate       => false  -- ?the committee have decided (rare in AmE)
-      | .relativePronoun => true
-      | .personalPronoun => true
-      | .verb      => false }
+    semanticTargets := [.relativePronoun, .personalPronoun] }
 
 /-- Serbo-Croatian *deca* 'children': morphologically feminine singular,
     semantically plural. Semantic agreement available everywhere. -/
 def serboCroatDeca : AgreementProfile :=
   { controller := "deca 'children' (Serbo-Croatian)"
-    semanticPossible := λ _ => true }
+    semanticTargets := [.attributive, .predicate, .relativePronoun, .personalPronoun, .verb] }
 
 def allAgreementProfiles : List AgreementProfile :=
   [britishCommittee, americanCommittee, serboCroatDeca]
 
 /-- The Agreement Hierarchy is respected by all profiled controllers. -/
 theorem agreement_hierarchy_holds :
-    allAgreementProfiles.all (·.respectsHierarchy) = true := by native_decide
+    ∀ p ∈ allAgreementProfiles, p.RespectsHierarchy := by decide
 
 /-- Once semantic agreement reaches the personal pronoun (rightmost),
     it is necessarily available there for all our controllers. -/
 theorem semantic_at_pronoun :
-    allAgreementProfiles.all (·.semanticPossible .personalPronoun) = true := by
-  native_decide
+    ∀ p ∈ allAgreementProfiles, .personalPronoun ∈ p.semanticTargets := by decide
 
 /-- No controller has semantic agreement only at the attributive position
     (the leftmost) without also having it further right — this would violate
     the monotonicity constraint. -/
 theorem no_attributive_only_semantic :
-    allAgreementProfiles.all (λ p =>
-      !p.semanticPossible .attributive ||
-       p.semanticPossible .personalPronoun) = true := by native_decide
+    ∀ p ∈ allAgreementProfiles,
+      .attributive ∈ p.semanticTargets → .personalPronoun ∈ p.semanticTargets := by
+  decide
 
 -- ============================================================================
 -- §5: Controller–Target Mismatch (Ch 6, §6.1)
@@ -925,36 +921,41 @@ theorem japanese_count_mass_uniform :
 
 open Syntax.Agreement (PredicateTarget)
 
-/-- Russian: predicate adjectives agree in gender/number, but past-tense
-    verbs also do — illustrating the Predicate Hierarchy within the
-    agreement target position. -/
+/-- A predicate-hierarchy profile records the sub-positions (verb, participle,
+    adjective, noun) where semantic agreement is possible for a controller —
+    e.g. Russian honorific *vy*. -/
 structure PredicateHierarchyProfile where
   name : String
-  /-- Whether semantic agreement is available at each predicate sub-position -/
-  semanticPossible : PredicateTarget → Bool
+  /-- Predicate sub-positions where semantic agreement is possible. -/
+  semanticTargets : List PredicateTarget
 
-/-- The Predicate Hierarchy monotonicity constraint: once semantic agreement
-    becomes possible at a sub-position, it remains possible at all higher
-    positions. -/
-def PredicateHierarchyProfile.respectsHierarchy (p : PredicateHierarchyProfile) : Bool :=
-  let targets := [PredicateTarget.verb, .participle, .adjective, .noun]
-  targets.all λ t1 =>
-    targets.all λ t2 =>
-      t1.rank >= t2.rank || !p.semanticPossible t1 || p.semanticPossible t2
+/-- The four sub-positions of the Predicate Hierarchy. -/
+private def predicatePositions : List PredicateTarget :=
+  [.verb, .participle, .adjective, .noun]
 
-/-- Russian *deca* ('children'): semantic agreement on predicate adjective
-    and noun, but not on finite verb. Participial agreement follows
-    adjective. -/
-def russianDecaPredHier : PredicateHierarchyProfile :=
-  { name := "Russian deca (Predicate Hierarchy)"
-    semanticPossible := λ
-      | .verb       => false
-      | .participle => true
-      | .adjective  => true
-      | .noun       => true }
+/-- The Predicate Hierarchy (@cite{comrie-1975}) monotonicity constraint:
+    once semantic agreement becomes possible at a sub-position, it remains
+    possible at all higher positions. -/
+def PredicateHierarchyProfile.RespectsHierarchy (p : PredicateHierarchyProfile) : Prop :=
+  ∀ t1 ∈ predicatePositions, ∀ t2 ∈ predicatePositions,
+    t1.rank ≥ t2.rank ∨ t1 ∉ p.semanticTargets ∨ t2 ∈ p.semanticTargets
 
-/-- The Russian Predicate Hierarchy profile respects monotonicity. -/
+instance (p : PredicateHierarchyProfile) : Decidable p.RespectsHierarchy := by
+  unfold PredicateHierarchyProfile.RespectsHierarchy; infer_instance
+
+/-- Russian honorific *vy* 'you' (polite singular): grammatically plural but
+    referring to one person, so semantic agreement = singular. Per
+    @cite{corbett-2000}'s Predicate Hierarchy data, the finite verb and
+    participle keep syntactic (plural) agreement, while the long-form
+    predicate adjective and the predicate noun take singular (semantic)
+    agreement. -/
+def russianHonorificVy : PredicateHierarchyProfile :=
+  { name := "Russian honorific vy (Predicate Hierarchy)"
+    semanticTargets := [.adjective, .noun] }
+
+/-- The Russian honorific-*vy* profile respects Predicate Hierarchy
+    monotonicity. -/
 theorem russian_predicate_hierarchy_holds :
-    russianDecaPredHier.respectsHierarchy = true := by native_decide
+    russianHonorificVy.RespectsHierarchy := by decide
 
 end Corbett2000
