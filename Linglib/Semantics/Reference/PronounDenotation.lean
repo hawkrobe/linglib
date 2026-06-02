@@ -4,6 +4,7 @@ import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Core.Assignment
 import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
+import Linglib.Core.Nominal.Interpret
 
 /-!
 # The denotation of a pronoun
@@ -43,7 +44,7 @@ open Semantics.Presupposition.PhiFeatures
 open Semantics.Reference (NominalDenot)
 open Core (Assignment)
 open Core.Logic.Intensional (Frame)
-open Core.Logic.Intensional.Variables (interpPronoun)
+open Core.Logic.Intensional.Variables (interpPronoun DenotGS SitAssignment)
 
 /-- The conjoined φ-feature presupposition of a pronoun entry, over an entity
 domain `E`. The model supplies the entity-level predicates the cells need
@@ -119,3 +120,38 @@ example {F : Frame} [PartialOrder F.Entity] (g : Assignment F.Entity) (i : ℕ)
     ((ellas.denote i speaker addressee isFemale isInanimate).toPrProp scope g).presup ⟨⟩ := by
   refine ⟨⟨trivial, trivial, hFem⟩, ?_⟩
   rfl
+
+/-! ### Pronouns are definite descriptions (@cite{elbourne-2005}, @cite{patel-grosz-grosz-2017})
+
+A referential pronoun *is* a (null-NP) definite description over its φ-feature
+restrictor — a `NominalKind`. @cite{patel-grosz-grosz-2017}'s proposal is that the
+personal/demonstrative split is the @cite{schwarz-2009} weak/strong-article split:
+PER (*er*) the **weak** article (`NominalKind.ofPresupType .uniqueness` = `.unique`),
+"DEM" (*der*) the **strong** article (`…ofPresupType .familiarity` = `.anaphoric`,
+the weak description plus an anaphoric index). PG&G's "DEM = PER + index" is the
+weak/strong refinement `Core.Nominal.interpret_anaphoric_eq_unique_of_existsUnique`;
+the strength round-trips through `expectedPresupType`. The extra layer is that index,
+**not** spatial deixis (footnote 1) — *der* is a strong *personal* pronoun, not a
+separate type; genuine deictic demonstratives are `NominalKind.demonstrative`.
+
+Caveat on `denote` below: the project's canonical `PersonalPronoun.denote` realizes
+the @cite{buring-2012} assignment lookup `g i` — the *indexed/anaphoric* referent,
+i.e. the **strong** arm — so the bridge proves `denote` = `ofPresupType .familiarity`.
+PG&G's *weak* PER (`ofPresupType .uniqueness`, the uniqueness iota over the
+φ-restrictor) is a distinct denotation `denote` does not compute; the two arms agree
+exactly when `g i` is the unique satisfier. -/
+
+/-- A pronoun's @cite{buring-2012} variable-lookup referent equals its definite
+description whenever the restrictor holds of the indexed referent: the
+**strong-article** (`NominalKind.ofPresupType .familiarity`) reading, since the
+anaphoric index *is* the indexed entity. The **weak** reading coincides too when
+that entity is the unique satisfier (`Core.Nominal.interpret_anaphoric_eq_unique_of_existsUnique`). -/
+theorem PersonalPronoun.denote_selector_eq_ofPresupType {F : Frame} [PartialOrder F.Entity]
+    (e : PersonalPronoun) (i : ℕ) (R : DenotGS F .et)
+    (speaker addressee : F.Entity) (isFemale isInanimate : F.Entity → Prop)
+    (g : Assignment F.Entity) (gs : SitAssignment F) (w : PUnit)
+    (h : R g gs (g i)) :
+    (e.denote i speaker addressee isFemale isInanimate).selector g w
+      = Core.Nominal.interpret (Core.Nominal.NominalKind.ofPresupType .familiarity R i) g gs := by
+  show some (g i) = Core.Nominal.interpret (.anaphoric R i) g gs
+  rw [Core.Nominal.interpret_anaphoric, if_pos h]

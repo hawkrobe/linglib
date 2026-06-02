@@ -1,11 +1,12 @@
 import Linglib.Features.Definiteness
-import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Interpret
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Semantics.Kinds.MeaningPreservation
 import Linglib.Semantics.Classifier.Basic
 import Linglib.Studies.Schwarz2009
+import Linglib.Core.Nominal.Determiner
+import Linglib.Core.Nominal.DeterminerLicensing
 import Linglib.Fragments.Mandarin.Definiteness
 import Linglib.Fragments.Cantonese.Definiteness
 
@@ -24,9 +25,9 @@ selects between them.
 
 The substrate already operationalizes the inventory layer:
 `Core.Nominal.NominalKind.{unique,anaphoric}` are ι and ι^x;
-`Core.Nominal.ArticleInventory.toMarkingStrategy` derives the four-cell
+`Core.Nominal.Determiner.markingStrategy` derives the four-cell
 typology directly named after Jenks 2018 in `Features.Definiteness`.
-The Mandarin Fragment commits `articleInventory_marking := .markedAnaphoric`.
+The Mandarin Fragment commits `marking := .markedAnaphoric`.
 This file focuses on what is distinctly Jenks: the typological
 prediction (§3 + §6), the bare/Dem competition (§5 paper), the
 covarying-readings argument for index binding (§4.3 paper), and the
@@ -41,8 +42,8 @@ open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
 open Core.Nominal
 
-abbrev mandarinInv := Mandarin.Definiteness.articleInventory
-abbrev cantoneseInv := Cantonese.Definiteness.articleInventory
+abbrev mandarinDets := Mandarin.Definiteness.determiners
+abbrev cantoneseDets := Cantonese.Definiteness.determiners
 
 -- ════════════════════════════════════════════════════════════════
 -- §1: The Jenks Four-Cell Typology and Mandarin's Cell
@@ -75,28 +76,28 @@ theorem jenks_attested_distinct :
     DefMarkingStrategy.bipartite ≠ .generallyMarked ∧
     DefMarkingStrategy.markedAnaphoric ≠ .generallyMarked := by decide
 
-/-- Mandarin's article inventory derives `.markedAnaphoric` — its
+/-- Mandarin's determiner set derives `.markedAnaphoric` — its
     Jenks (2018) Table 2 cell. -/
 theorem mandarin_jenks_cell :
-    mandarinInv.toMarkingStrategy = .markedAnaphoric :=
-  Mandarin.Definiteness.articleInventory_marking
+    Determiner.markingStrategy mandarinDets = .markedAnaphoric :=
+  Mandarin.Definiteness.marking
 
 /-- Mandarin's strategy is in the Jenks-attested set. -/
 theorem mandarin_attested :
-    mandarinInv.toMarkingStrategy ∈ jenksAttestedStrategies := by
+    Determiner.markingStrategy mandarinDets ∈ jenksAttestedStrategies := by
   rw [mandarin_jenks_cell]; decide
 
-/-- Cantonese's article inventory derives `.generallyMarked` — paper §6
-    (Table 1, Table 2): [Clf-N] is an ambiguous definite article like
-    English *the*, covering both unique and anaphoric environments. -/
+/-- Cantonese's determiner set derives `.generallyMarked` — paper §6
+    (Table 1, Table 2): [Clf-N] is an ambiguous definite like English *the*,
+    covering both unique and anaphoric environments. -/
 theorem cantonese_jenks_cell :
-    cantoneseInv.toMarkingStrategy = .generallyMarked :=
-  Cantonese.Definiteness.articleInventory_marking
+    Determiner.markingStrategy cantoneseDets = .generallyMarked :=
+  Cantonese.Definiteness.marking
 
 /-- Mandarin and Cantonese instantiate distinct Jenks cells — the
     central typological contrast of paper §6. -/
 theorem mandarin_cantonese_distinct_cells :
-    mandarinInv.toMarkingStrategy ≠ cantoneseInv.toMarkingStrategy := by
+    Determiner.markingStrategy mandarinDets ≠ Determiner.markingStrategy cantoneseDets := by
   rw [mandarin_jenks_cell, cantonese_jenks_cell]; decide
 
 -- ════════════════════════════════════════════════════════════════
@@ -111,23 +112,27 @@ variable {F : Frame}
     `Hufei he-wan-le tang` 'Hufei finished the soup';
     `Gou yao guo malu` 'the dog wants to cross the road'). -/
 theorem bare_licensed (R : DenotGS F .et) :
-    mandarinInv.licensesKind (F := F) (.bare R) := trivial
+    Determiner.licenses (F := F) mandarinDets (.bare R) := trivial
 
 /-- The anaphoric kind (`.anaphoric R d`) is licensed in Mandarin via
     the demonstrative paradigm (paper §3.2: anaphoric definites surface
-    as Dem-Clf-N constructions). The licensing proceeds through the
-    left disjunct of `licensesKind .anaphoric`. -/
+    as Dem-Clf-N constructions). The licensing holds because the
+    demonstrative obligatorily expones a familiarity (anaphoric) use, so
+    `Determiner.MarksPresup mandarinDets .familiarity`. -/
 theorem anaphoric_licensed (R : DenotGS F .et) (d : Nat) :
-    mandarinInv.licensesKind (F := F) (.anaphoric R d) :=
-  Or.inl trivial
+    Determiner.licenses (F := F) mandarinDets (.anaphoric R d) := by
+  show Determiner.MarksPresup mandarinDets .familiarity
+  decide
 
 /-- Mandarin demonstratives are licensed (the *na*/*zhe* paradigm —
     paper fn. 8: speakers prefer *na* 'that' to *zhe* 'this' in most
     simple anaphoric environments). -/
 theorem demonstrative_licensed
     (R : DenotGS F .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
-    mandarinInv.licensesKind (F := F)
-      (.demonstrative R deictic sIdx d) := trivial
+    Determiner.licenses (F := F) mandarinDets
+      (.demonstrative R deictic sIdx d) := by
+  show ∃ e ∈ mandarinDets, Determiner.Entry.IsDemonstrative e
+  decide
 
 /-- A Mandarin bare definite and its `.unique` counterpart over the
     same restrictor pick the same referent — the bare-N route to
