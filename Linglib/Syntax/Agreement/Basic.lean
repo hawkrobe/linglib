@@ -56,11 +56,12 @@ theorem AgreementTarget.rank_injective :
   fun a b h => by cases a <;> cases b <;> simp_all [AgreementTarget.rank]
 
 -- ============================================================================
--- § 2: Predicate Hierarchy (@cite{corbett-2000} Ch 6)
+-- § 2: Predicate Hierarchy (@cite{comrie-1975}; @cite{corbett-2000} Ch 6)
 -- ============================================================================
 
-/-- The Predicate Hierarchy (@cite{corbett-2000}) decomposes the predicate
-    position on the Agreement Hierarchy into a sub-hierarchy:
+/-- The Predicate Hierarchy (@cite{comrie-1975}, systematised by
+    @cite{corbett-2000}) decomposes the predicate position on the Agreement
+    Hierarchy into a sub-hierarchy:
     verb < participle < adjective < noun.
 
     Semantic agreement increases monotonically along this sub-hierarchy:

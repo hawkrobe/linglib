@@ -933,9 +933,9 @@ structure PredicateHierarchyProfile where
 private def predicatePositions : List PredicateTarget :=
   [.verb, .participle, .adjective, .noun]
 
-/-- The Predicate Hierarchy monotonicity constraint: once semantic agreement
-    becomes possible at a sub-position, it remains possible at all higher
-    positions. -/
+/-- The Predicate Hierarchy (@cite{comrie-1975}) monotonicity constraint:
+    once semantic agreement becomes possible at a sub-position, it remains
+    possible at all higher positions. -/
 def PredicateHierarchyProfile.RespectsHierarchy (p : PredicateHierarchyProfile) : Prop :=
   ∀ t1 ∈ predicatePositions, ∀ t2 ∈ predicatePositions,
     t1.rank ≥ t2.rank ∨ t1 ∉ p.semanticTargets ∨ t2 ∈ p.semanticTargets
