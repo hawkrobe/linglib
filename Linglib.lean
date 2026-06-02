@@ -270,7 +270,7 @@ import Linglib.Core.Computability.Subregular.PiecewiseTestable
 import Linglib.Core.Computability.Subregular.Definite
 import Linglib.Core.Computability.Subregular.Multitier
 import Linglib.Core.Computability.Subregular.ForbiddenPairs
-import Linglib.Core.Direction
+import Linglib.Core.Computability.Subregular.Function.Direction
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential

@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Fintype.Prod
-import Linglib.Core.Direction
+import Linglib.Core.Computability.Subregular.Function.Direction
 
 /-!
 # Subsequential Functions and Finite-State Transducers

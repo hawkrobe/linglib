@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Fintype.Sigma
 import Mathlib.Data.Fintype.Vector
-import Linglib.Core.Direction
+import Linglib.Core.Computability.Subregular.Function.Direction
 import Linglib.Core.StringHom
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 

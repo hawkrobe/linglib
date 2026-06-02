@@ -1,6 +1,6 @@
 import Mathlib.Data.Fintype.Option
 import Linglib.Core.StringHom
-import Linglib.Core.Direction
+import Linglib.Core.Computability.Subregular.Function.Direction
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 
 /-!
