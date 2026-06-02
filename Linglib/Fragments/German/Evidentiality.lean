@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # German Evidentiality
@@ -12,14 +12,13 @@ Studies-side override in `Studies/Aikhenvald2004.lean`.
 
 namespace German.Evidentiality
 
-open Typology.Modality
+/-! ### Typed evidential inventory (Aikhenvald-strict view)
 
-/-- German evidentiality typology per WALS @cite{de-haan-2013}. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "German" "deu" "Indo-European"
-    (notes := "sollen/wollen have evidential uses but are modal verbs")
+No grammatical evidentials per @cite{aikhenvald-2004}. WALS divergence
+(modal verbs *sollen*/*wollen*) is documented in `Studies/Aikhenvald2004.lean`. -/
 
-example : evidentialityProfile.iso = "deu" ∧ evidentialityProfile.language = "German" :=
-  ⟨rfl, rfl⟩
+def evidentials : List Semantics.Evidential.Entry := []
+
+example : evidentials.length = 0 := by decide
 
 end German.Evidentiality

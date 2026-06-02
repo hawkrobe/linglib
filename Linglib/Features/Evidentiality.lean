@@ -22,7 +22,7 @@ This module supplies the shared vocabulary that bridges
 namespace Features.Evidentiality
 
 /-- Canonical three-way evidential source classification (@cite{aikhenvald-2004}). -/
-inductive EvidentialSource where
+inductive CoarseSource where
   /-- Direct sensory observation (seeing, hearing the event). -/
   | direct
   /-- Hearsay / reported evidence (told about the event). -/
@@ -84,14 +84,14 @@ instance {α : Type} [HasEvidentialPerspective α] :
     Note: this encodes a typological generalization, not a definitional
     truth. Live quotatives and predictive inference can violate the
     canonical mapping; per-construction classifications should override. -/
-def EvidentialSource.toEvidentialPerspective :
-    EvidentialSource → Option EvidentialPerspective
+def CoarseSource.toEvidentialPerspective :
+    CoarseSource → Option EvidentialPerspective
   | .direct    => some .contemporaneous
   | .hearsay   => some .retrospective
   | .inference => some .retrospective
 
-instance : HasEvidentialPerspective EvidentialSource where
-  toEvidentialPerspective := EvidentialSource.toEvidentialPerspective
+instance : HasEvidentialPerspective CoarseSource where
+  toEvidentialPerspective := CoarseSource.toEvidentialPerspective
 
 /-- The perspective type projects to itself. -/
 instance : HasEvidentialPerspective EvidentialPerspective where
@@ -108,13 +108,48 @@ instance : DecidablePred EvidentialPerspective.IsNonfuture :=
 -- § Simp lemmas
 -- ════════════════════════════════════════════════════════════════
 
-@[simp] theorem EvidentialSource.toEvidentialPerspective_direct :
-    EvidentialSource.toEvidentialPerspective .direct = some .contemporaneous := rfl
+@[simp] theorem CoarseSource.toEvidentialPerspective_direct :
+    CoarseSource.toEvidentialPerspective .direct = some .contemporaneous := rfl
 
-@[simp] theorem EvidentialSource.toEvidentialPerspective_hearsay :
-    EvidentialSource.toEvidentialPerspective .hearsay = some .retrospective := rfl
+@[simp] theorem CoarseSource.toEvidentialPerspective_hearsay :
+    CoarseSource.toEvidentialPerspective .hearsay = some .retrospective := rfl
 
-@[simp] theorem EvidentialSource.toEvidentialPerspective_inference :
-    EvidentialSource.toEvidentialPerspective .inference = some .retrospective := rfl
+@[simp] theorem CoarseSource.toEvidentialPerspective_inference :
+    CoarseSource.toEvidentialPerspective .inference = some .retrospective := rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- § Fine-grained source taxonomies (Aikhenvald 2004)
+-- ════════════════════════════════════════════════════════════════
+
+/-- Sensory channel of a direct (firsthand) evidential. The visual vs
+    non-visual contrast is grammaticalized in many languages
+    (Tuyuca, Tariana, Kashaya); finer distinctions (auditory vs other
+    non-visual sensory) are grammaticalized in some (Kashaya). Languages
+    that don't grammaticalize the contrast use `.unspecified`. -/
+inductive DirectSource where
+  | unspecified
+  | visual
+  | auditory
+  | nonvisualSensory
+  | olfactory
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Source-identity of a reportative evidential. Aikhenvald 2004 distinguishes
+    `hearsay` (original speaker not identified) from `quotative` (specifically
+    named source). -/
+inductive ReportativeSource where
+  | unspecified
+  | unidentified
+  | identified
+  deriving DecidableEq, Repr, Inhabited
+
+/-- Basis of an inferential evidential. Aikhenvald 2004 distinguishes
+    inference `fromResult` (observable consequences) from `fromAssumption`
+    (general knowledge / reasoning). -/
+inductive InferentialBasis where
+  | unspecified
+  | fromResult
+  | fromAssumption
+  deriving DecidableEq, Repr, Inhabited
 
 end Features.Evidentiality

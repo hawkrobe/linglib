@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Korean Evidentiality
@@ -11,15 +11,13 @@ as not classified as grammatical evidential; Studies-side override.
 
 namespace Korean.Evidentiality
 
-open Typology.Modality
+/-! ### Typed evidential inventory (Aikhenvald-strict view)
 
-/-- Korean evidentiality typology per WALS @cite{de-haan-2013}. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "Korean" "kor" "Koreanic"
-    (notes := "-deo- (retrospective) has evidential-like function; classified " ++
-              "differently by WALS vs Aikhenvald")
+No grammatical evidentials per @cite{aikhenvald-2004}. WALS divergence
+(retrospective `-deo-`) is documented in `Studies/Aikhenvald2004.lean`. -/
 
-example : evidentialityProfile.iso = "kor" ∧ evidentialityProfile.language = "Korean" :=
-  ⟨rfl, rfl⟩
+def evidentials : List Semantics.Evidential.Entry := []
+
+example : evidentials.length = 0 := by decide
 
 end Korean.Evidentiality

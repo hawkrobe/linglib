@@ -139,7 +139,7 @@ theorem informational_possibility (w : World) :
 /-! ## Evidence type bridge -/
 
 /-- The weather report is hearsay evidence. -/
-def reportEvidence : EvidentialSource := .hearsay
+def reportEvidence : CoarseSource := .hearsay
 
 /-- Hearsay evidence is retrospective (the event precedes the report). -/
 theorem report_is_retrospective :

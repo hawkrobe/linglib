@@ -20,7 +20,7 @@ express:
 
 ## Key Types
 
-- `RichContext W E P T` — KContext + `domain : Set W` + `evidence : EvidentialSource`
+- `RichContext W E P T` — KContext + `domain : Set W` + `evidence : CoarseSource`
 - `KContext.toRich` — lift with trivial domain (`Set.univ`) and default evidence
 - `DomainExpanding` — property of a shift: it expands the domain
 - `hpShift` — historical present temporal shift (backward time + domain expansion)
@@ -52,7 +52,7 @@ structure RichContext (W : Type*) (E : Type*) (P : Type*) (T : Type*) where
   /-- The set of accessible worlds (modal domain) -/
   domain : Set W
   /-- The evidential source for the current assertion -/
-  evidence : EvidentialSource
+  evidence : CoarseSource
 
 section RichContextOps
 
@@ -207,15 +207,15 @@ theorem xMarkingShift_expanding (pastTime : T) (cfWorld : W) (expandedDomain : S
 
 /-- Shift the evidential source. Used when an embedding operator changes
     the evidence type (e.g., hearsay report changes direct → hearsay). -/
-def evidentialSourceShift (newSource : EvidentialSource) :
+def coarseSourceShift (newSource : CoarseSource) :
     ContextShift (RichContext W E P T) where
   apply := λ rc => { rc with evidence := newSource }
   label := .evidential
 
 /-- Evidential source shift preserves the domain. -/
-theorem evidentialSourceShift_preserves_domain
-    (src : EvidentialSource) (rc : RichContext W E P T) :
-    ((evidentialSourceShift (W := W) (E := E) (P := P) (T := T) src).apply rc).domain =
+theorem coarseSourceShift_preserves_domain
+    (src : CoarseSource) (rc : RichContext W E P T) :
+    ((coarseSourceShift (W := W) (E := E) (P := P) (T := T) src).apply rc).domain =
       rc.domain := rfl
 
 end RichContextOps
