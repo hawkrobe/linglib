@@ -75,16 +75,17 @@ with neutral patterns in dependent clauses (England 1983b;
 
 namespace Mam
 
-open Mayan (PersonNumber MarkerLinearity)
+open Mayan (MarkerLinearity ExponentTable)
+open Agreement
 
 -- ============================================================================
 -- § 1: Person-Number Inventory
 -- ============================================================================
 
--- Person-number values come from the pan-Mayan `Mayan.PersonNumber`
--- enum (six cells: three persons × two numbers). Projections `.person`,
--- `.isPlural`, and the full inventory `PersonNumber.all` live in
--- `Mayan/Params.lean`.
+-- Person-number values are the canonical φ-cells `Agreement.Cell`
+-- (six relevant cells: three persons × two numbers). Build them with
+-- `Agreement.Cell.pn` (e.g. `.pn .first .Sing`); the six-cell inventory
+-- is `Agreement.Cell.pnCells`.
 
 -- ============================================================================
 -- § 2: Agreement Marker Paradigms (theory-neutral)
@@ -94,13 +95,9 @@ open Mayan (PersonNumber MarkerLinearity)
     cross-reference the transitive agent (@cite{scott-2023}, Table 2.8).
     All six cells have distinct exponents (with t- syncretism for 2sg/3sg
     and ky- syncretism for 2pl/3pl). -/
-def setAExponent : PersonNumber → String
-  | .p1sg => "n-/w-"
-  | .p2sg => "t-"
-  | .p3sg => "t-"
-  | .p1pl => "q-"
-  | .p2pl => "ky-"
-  | .p3pl => "ky-"
+def setAExponent : ExponentTable :=
+  [(.pn .first .Sing, "n-/w-"), (.pn .second .Sing, "t-"), (.pn .third .Sing, "t-"),
+   (.pn .first .Plur, "q-"), (.pn .second .Plur, "ky-"), (.pn .third .Plur, "ky-")]
 
 /-- Set B (ABS) markers per cell (@cite{scott-2023}, Table 3.5).
     The 2/3SG form tz'= is the **default** — it appears both for real
@@ -113,19 +110,15 @@ def setAExponent : PersonNumber → String
     should treat them as derived from the Elsewhere entry. See
     `setBSpecificCells` for the cells that have actual specific
     Vocabulary Items in the DM analysis. -/
-def setBExponent : PersonNumber → String
-  | .p1sg => "chin"
-  | .p2sg => "tz'="
-  | .p3sg => "tz'="
-  | .p1pl => "qo"
-  | .p2pl => "chi"
-  | .p3pl => "chi"
+def setBExponent : ExponentTable :=
+  [(.pn .first .Sing, "chin"), (.pn .second .Sing, "tz'="), (.pn .third .Sing, "tz'="),
+   (.pn .first .Plur, "qo"), (.pn .second .Plur, "chi"), (.pn .third .Plur, "chi")]
 
 /-- The four Set B cells that have specific Vocabulary Items (per
     Scott's DM analysis). 2sg and 3sg are NOT included — they fall
     through to the Elsewhere entry. -/
-def setBSpecificCells : List PersonNumber :=
-  [.p1sg, .p1pl, .p2pl, .p3pl]
+def setBSpecificCells : List Cell :=
+  [.pn .first .Sing, .pn .first .Plur, .pn .second .Plur, .pn .third .Plur]
 
 /-- The default (Elsewhere) Set B marker. Surfaces in transitives when
     Infl's probe is blocked, and also for 2/3SG intransitive S. -/
@@ -428,26 +421,25 @@ def extractionProfile : Typology.ExtractionProfile :=
 -- ============================================================================
 
 /-- Set A 1SG marker. -/
-theorem setA_1sg : setAExponent .p1sg = "n-/w-" := rfl
+theorem setA_1sg : setAExponent.realize (.pn .first .Sing) = some "n-/w-" := rfl
 
 /-- Set A 3SG marker is "t-" (the default singular Set A — syncretic with 2SG). -/
-theorem setA_3sg : setAExponent .p3sg = "t-" := rfl
+theorem setA_3sg : setAExponent.realize (.pn .third .Sing) = some "t-" := rfl
 
 /-- Set B 1SG marker is "chin". -/
-theorem setB_1sg : setBExponent .p1sg = "chin" := rfl
+theorem setB_1sg : setBExponent.realize (.pn .first .Sing) = some "chin" := rfl
 
 /-- Set B 3SG marker is the default "tz'=". -/
-theorem setB_3sg : setBExponent .p3sg = defaultSetB := rfl
+theorem setB_3sg : setBExponent.realize (.pn .third .Sing) = some defaultSetB := rfl
 
 /-- A controller's φ-features index the agreement paradigm directly: a 1sg agent
     selects its first-person-singular ergative prefix. The Set A table
-    (`setAExponent`) lifts to canonical φ-cells via `PersonNumber.paradigm`, so a
-    pronoun's `Word.agrCell` drives agreement realization in one shared feature
-    space (@cite{corbett-1998}; @cite{scott-2023} Ch. 2). The realizational
-    account (impoverishment / Elsewhere; @cite{scott-2023} Ch. 4) is theory and
-    stays in the study. -/
+    (`setAExponent`) is keyed by canonical φ-cells, so a pronoun's `Word.agrCell`
+    drives agreement realization in one shared feature space (@cite{corbett-1998};
+    @cite{scott-2023} Ch. 2). The realizational account (impoverishment /
+    Elsewhere; @cite{scott-2023} Ch. 4) is theory and stays in the study. -/
 theorem erg_1sg_from_phi :
-    (PersonNumber.paradigm setAExponent).realizeFor
+    setAExponent.realizeFor
       ⟨"", .PRON, { person := some .first, number := some .sg }⟩ = some "n-/w-" := by
   rfl
 

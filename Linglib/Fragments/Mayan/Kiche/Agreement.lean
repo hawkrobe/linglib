@@ -352,7 +352,8 @@ theorem pronoun_setB_correspondence :
 -- § 12: Cross-Mayan Canonical Wrappers
 -- ============================================================================
 
-open Mayan (PersonNumber MarkerLinearity)
+open Mayan (MarkerLinearity ExponentTable)
+open Agreement
 
 /-- K'iche' is HIGH-ABS: Set B markers appear pre-stem on Infl. -/
 def absPosition : Mayan.ABSPosition := .high
@@ -364,28 +365,29 @@ def setALinearity : MarkerLinearity := .prefixal
 def setBLinearity : MarkerLinearity := .prefixal
 
 /-- Canonical Set A exponent table (pre-consonantal allomorph; informal),
-    keyed on `Mayan.PersonNumber` for cross-Mayan consumption. -/
-def setAExponent : PersonNumber → String
-  | .p1sg => setAPreC (phi .first  .Sing)
-  | .p2sg => setAPreC (phi .second .Sing)
-  | .p3sg => setAPreC (phi .third  .Sing)
-  | .p1pl => setAPreC (phi .first  .Plur)
-  | .p2pl => setAPreC (phi .second .Plur)
-  | .p3pl => setAPreC (phi .third  .Plur)
+    keyed on the canonical φ-cell `Agreement.Cell` for cross-Mayan consumption. -/
+def setAExponent : ExponentTable :=
+  [(.pn .first .Sing, setAPreC (phi .first  .Sing)),
+   (.pn .second .Sing, setAPreC (phi .second .Sing)),
+   (.pn .third .Sing, setAPreC (phi .third  .Sing)),
+   (.pn .first .Plur, setAPreC (phi .first  .Plur)),
+   (.pn .second .Plur, setAPreC (phi .second .Plur)),
+   (.pn .third .Plur, setAPreC (phi .third  .Plur))]
 
-/-- Canonical Set B exponent table (informal) keyed on `Mayan.PersonNumber`. -/
-def setBExponent : PersonNumber → String
-  | .p1sg => setBMarker (phi .first  .Sing)
-  | .p2sg => setBMarker (phi .second .Sing)
-  | .p3sg => setBMarker (phi .third  .Sing)
-  | .p1pl => setBMarker (phi .first  .Plur)
-  | .p2pl => setBMarker (phi .second .Plur)
-  | .p3pl => setBMarker (phi .third  .Plur)
+/-- Canonical Set B exponent table (informal) keyed on the canonical φ-cell
+    `Agreement.Cell`. -/
+def setBExponent : ExponentTable :=
+  [(.pn .first .Sing, setBMarker (phi .first  .Sing)),
+   (.pn .second .Sing, setBMarker (phi .second .Sing)),
+   (.pn .third .Sing, setBMarker (phi .third  .Sing)),
+   (.pn .first .Plur, setBMarker (phi .first  .Plur)),
+   (.pn .second .Plur, setBMarker (phi .second .Plur)),
+   (.pn .third .Plur, setBMarker (phi .third  .Plur))]
 
 /-- 3rd person absolutive is null — invariant across the standard
     Mayan branches per @cite{kaufman-norman-1984} Table 8. **Not**
     pan-Mayan: see Mam exception via `MayanLang.isStandard`. -/
-theorem p3sg_abs_null : setBExponent .p3sg = "∅" := rfl
+theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "∅" := rfl
 
 /-- K'iche''s extraction profile: Agent-Focus Antipassive is productive
     (@cite{mondloch-2017} Lesson 22, with parallel coverage at Lessons

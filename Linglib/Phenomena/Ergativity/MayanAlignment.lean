@@ -44,7 +44,7 @@ empirical literature, not an editorial synthesis.
 
 namespace Phenomena.Ergativity.MayanAlignment
 
-open Mayan (MayanLang PersonNumber MarkerLinearity ABSPosition)
+open Mayan (MayanLang MarkerLinearity ABSPosition)
 
 -- ============================================================================
 -- § 1: Per-Language Dispatchers

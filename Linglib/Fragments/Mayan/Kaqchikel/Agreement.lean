@@ -61,16 +61,17 @@ deliberately avoids picking sides on that question.
 
 namespace Kaqchikel
 
-open Mayan (PersonNumber)
+open Mayan (ExponentTable)
+open Agreement
 
 -- ============================================================================
 -- § 1: Person-Number Inventory
 -- ============================================================================
 
 -- Person-number combinations for Kaqchikel agreement paradigms come from
--- the pan-Mayan `Mayan.PersonNumber` enum (six cells: three
--- persons × two numbers). Projections `.person`, `.isPlural`, and the
--- full inventory `PersonNumber.all` live in `Mayan/Params.lean`.
+-- the canonical φ-cell `Agreement.Cell` (six cells: three persons × two
+-- numbers). Projections `.toPersonLevel`, `.isPlural`, and the inventory
+-- `Agreement.Cell.pnCells` live in `Syntax/Agreement/Paradigm.lean`.
 
 -- ============================================================================
 -- § 1b: ABS Position (LOW-ABS / HIGH-ABS)
@@ -89,13 +90,9 @@ def absPosition : Mayan.ABSPosition := .high
     transitive agent (@cite{preminger-2014} Ch. 3, table (29)).
     Parenthesized segments are dropped in certain phonological
     contexts; the grapheme *j* represents a voiceless velar fricative. -/
-def setAExponent : PersonNumber → String
-  | .p1sg => "n/w-"
-  | .p2sg => "a(w)-"
-  | .p3sg => "r(u)/u-"
-  | .p1pl => "q(a)-"
-  | .p2pl => "i(w)-"
-  | .p3pl => "k(i)-"
+def setAExponent : ExponentTable :=
+  [(.pn .first .Sing, "n/w-"), (.pn .second .Sing, "a(w)-"), (.pn .third .Sing, "r(u)/u-"),
+   (.pn .first .Plur, "q(a)-"), (.pn .second .Plur, "i(w)-"), (.pn .third .Plur, "k(i)-")]
 
 -- ============================================================================
 -- § 3: Set B (ABS) Vocabulary
@@ -105,13 +102,9 @@ def setAExponent : PersonNumber → String
     the absolutive argument. The 3SG form (∅) is
     also the Elsewhere entry — the default when no more specific entry
     matches, as in the failure case of obligatory agreement (Ch. 5). -/
-def setBExponent : PersonNumber → String
-  | .p1sg => "in-"
-  | .p2sg => "at-"
-  | .p3sg => "∅"
-  | .p1pl => "oj-"
-  | .p2pl => "ix-"
-  | .p3pl => "e-"
+def setBExponent : ExponentTable :=
+  [(.pn .first .Sing, "in-"), (.pn .second .Sing, "at-"), (.pn .third .Sing, "∅"),
+   (.pn .first .Plur, "oj-"), (.pn .second .Plur, "ix-"), (.pn .third .Plur, "e-")]
 
 -- ============================================================================
 -- § 4: Argument Positions (alias to canonical SAP type)
@@ -169,8 +162,8 @@ def kaqArgPositions : List ArgPosition := [.A, .P, .S]
     single agreement marker (or `none` for person-restriction
     violations). -/
 structure AFAgreementDatum where
-  subject : PersonNumber
-  object : PersonNumber
+  subject : Cell
+  object : Cell
   marker : Option String
   deriving Repr
 
@@ -184,27 +177,27 @@ structure AFAgreementDatum where
     test person restriction violations ((25)). -/
 def afParadigm : List AFAgreementDatum :=
   [ -- Table (22), rows 1–3: both 3rd person, number determines marker
-    ⟨.p3sg, .p3sg, some "∅"⟩         -- default: 3SG×3SG → ∅
-  , ⟨.p3pl, .p3sg, some "e-"⟩        -- [+plural] outranks default
-  , ⟨.p3pl, .p3pl, some "e-"⟩        -- [+plural] both → 3PL
+    ⟨.pn .third .Sing, .pn .third .Sing, some "∅"⟩         -- default: 3SG×3SG → ∅
+  , ⟨.pn .third .Plur, .pn .third .Sing, some "e-"⟩        -- [+plural] outranks default
+  , ⟨.pn .third .Plur, .pn .third .Plur, some "e-"⟩        -- [+plural] both → 3PL
     -- Table (22), rows 4–7: one [+participant] argument with 3SG
-  , ⟨.p1sg, .p3sg, some "in-"⟩       -- 1SG [+participant]
-  , ⟨.p2sg, .p3sg, some "at-"⟩       -- 2SG [+participant]
-  , ⟨.p1pl, .p3sg, some "oj-"⟩       -- 1PL [+participant]
-  , ⟨.p2pl, .p3sg, some "ix-"⟩       -- 2PL [+participant]
+  , ⟨.pn .first .Sing, .pn .third .Sing, some "in-"⟩       -- 1SG [+participant]
+  , ⟨.pn .second .Sing, .pn .third .Sing, some "at-"⟩      -- 2SG [+participant]
+  , ⟨.pn .first .Plur, .pn .third .Sing, some "oj-"⟩       -- 1PL [+participant]
+  , ⟨.pn .second .Plur, .pn .third .Sing, some "ix-"⟩      -- 2PL [+participant]
     -- Table (22), rows 8–11: [+participant] outranks [+plural]
-  , ⟨.p1sg, .p3pl, some "in-"⟩       -- 1SG participant > 3PL plural
-  , ⟨.p2sg, .p3pl, some "at-"⟩       -- 2SG participant > 3PL plural
-  , ⟨.p1pl, .p3pl, some "oj-"⟩       -- 1PL participant > 3PL plural
-  , ⟨.p2pl, .p3pl, some "ix-"⟩       -- 2PL participant > 3PL plural
+  , ⟨.pn .first .Sing, .pn .third .Plur, some "in-"⟩       -- 1SG participant > 3PL plural
+  , ⟨.pn .second .Sing, .pn .third .Plur, some "at-"⟩      -- 2SG participant > 3PL plural
+  , ⟨.pn .first .Plur, .pn .third .Plur, some "oj-"⟩       -- 1PL participant > 3PL plural
+  , ⟨.pn .second .Plur, .pn .third .Plur, some "ix-"⟩      -- 2PL participant > 3PL plural
     -- Commutativity (§3.2, fn. a): swapping subj/obj → same marker
-  , ⟨.p3sg, .p3pl, some "e-"⟩        -- = {3PL, 3SG} swapped
-  , ⟨.p3sg, .p1sg, some "in-"⟩       -- = {1SG, 3SG} swapped
-  , ⟨.p3sg, .p2sg, some "at-"⟩       -- = {2SG, 3SG} swapped
-  , ⟨.p3pl, .p2sg, some "at-"⟩       -- = {2SG, 3PL} swapped
+  , ⟨.pn .third .Sing, .pn .third .Plur, some "e-"⟩        -- = {3PL, 3SG} swapped
+  , ⟨.pn .third .Sing, .pn .first .Sing, some "in-"⟩       -- = {1SG, 3SG} swapped
+  , ⟨.pn .third .Sing, .pn .second .Sing, some "at-"⟩      -- = {2SG, 3SG} swapped
+  , ⟨.pn .third .Plur, .pn .second .Sing, some "at-"⟩      -- = {2SG, 3PL} swapped
     -- Person restriction violations (25)
-  , ⟨.p1sg, .p2sg, none⟩             -- *two [+participant] args
-  , ⟨.p2sg, .p1sg, none⟩             -- *two [+participant] args
+  , ⟨.pn .first .Sing, .pn .second .Sing, none⟩            -- *two [+participant] args
+  , ⟨.pn .second .Sing, .pn .first .Sing, none⟩            -- *two [+participant] args
   ]
 
 -- ============================================================================

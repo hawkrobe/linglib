@@ -107,9 +107,9 @@ transitives + K'ichee' fragment + Zulu fragment) to formalize.
 
 namespace Preminger2014
 
-open Mayan (PersonNumber)
 open Kaqchikel
 open Minimalist
+open Agreement
 
 -- ============================================================================
 -- § 1: Feature Decomposition (grounded in PersonGeometry.lean)
@@ -117,28 +117,23 @@ open Minimalist
 
 /-- Bears [+participant]? Derived from @cite{harley-ritter-2002}'s
     feature geometry via `decomposePerson` (PersonGeometry.lean). -/
-def IsParticipant (pn : PersonNumber) : Prop :=
-  (decomposePerson pn.person).hasParticipant = true
+def IsParticipant (c : Agreement.Cell) : Prop :=
+  (decomposePerson c.toPersonLevel).hasParticipant = true
 
-instance : DecidablePred IsParticipant := fun pn =>
-  inferInstanceAs (Decidable ((decomposePerson pn.person).hasParticipant = true))
+instance : DecidablePred IsParticipant := fun c =>
+  inferInstanceAs (Decidable ((decomposePerson c.toPersonLevel).hasParticipant = true))
 
 /-- Bears [+author]? -/
-def IsAuthor (pn : PersonNumber) : Prop :=
-  (decomposePerson pn.person).hasAuthor = true
+def IsAuthor (c : Agreement.Cell) : Prop :=
+  (decomposePerson c.toPersonLevel).hasAuthor = true
 
-instance : DecidablePred IsAuthor := fun pn =>
-  inferInstanceAs (Decidable ((decomposePerson pn.person).hasAuthor = true))
+instance : DecidablePred IsAuthor := fun c =>
+  inferInstanceAs (Decidable ((decomposePerson c.toPersonLevel).hasAuthor = true))
 
 /-- Convert a person-number cell to a PhiFeature list for the Agree
     infrastructure. -/
-def toPhiFeatures : PersonNumber → List PhiFeature
-  | .p1sg => [.person .first, .number .sg]
-  | .p2sg => [.person .second, .number .sg]
-  | .p3sg => [.person .third, .number .sg]
-  | .p1pl => [.person .first, .number .pl]
-  | .p2pl => [.person .second, .number .pl]
-  | .p3pl => [.person .third, .number .pl]
+def toPhiFeatures (c : Agreement.Cell) : List PhiFeature :=
+  [.person c.toPersonLevel, .number (if c.isPlural then .pl else .sg)]
 
 -- ============================================================================
 -- § 2: DM Vocabulary Insertion (@cite{halle-marantz-1993})
@@ -147,11 +142,13 @@ def toPhiFeatures : PersonNumber → List PhiFeature
 /-- Set A as DM Vocabulary entries, contextualized to Voice/v.
     Built via the shared `makePersonVocab` helper. -/
 def setAVocab : Vocabulary :=
-  makePersonVocab PersonNumber.all toPhiFeatures setAExponent (some .v)
+  makePersonVocab Agreement.Cell.pnCells toPhiFeatures
+    (fun c => (setAExponent.realize c).getD "") (some .v)
 
 /-- Set B as DM Vocabulary entries, contextualized to Infl/T. -/
 def setBVocab : Vocabulary :=
-  makePersonVocab PersonNumber.all toPhiFeatures setBExponent (some .T)
+  makePersonVocab Agreement.Cell.pnCells toPhiFeatures
+    (fun c => (setBExponent.realize c).getD "") (some .T)
 
 -- ============================================================================
 -- § 3: Two-Probe Relativized Probing (@cite{bejar-rezac-2003}, applied per §4.4)
@@ -161,8 +158,8 @@ def setBVocab : Vocabulary :=
     two-probe (π⁰ ≫ #⁰) system. Computed via `probeResolutionRank`
     on the cell's person + number features. NOT a salience scale —
     see module docstring. -/
-def afRank (pn : PersonNumber) : Nat :=
-  probeResolutionRank pn.person pn.isPlural
+def afRank (c : Agreement.Cell) : Nat :=
+  probeResolutionRank c.toPersonLevel c.isPlural
 
 /-- Person restriction (@cite{preminger-2014} (25)): at most one core
     argument can bear [+participant]. Derives from the Person
@@ -173,17 +170,17 @@ def afRank (pn : PersonNumber) : Nat :=
     only one can be licensed; the derivation crashes if both occur.
     This is the syntactic licensing story, not the morphological
     clitic-slot competition. -/
-def PersonRestrictionOk (subj obj : PersonNumber) : Prop :=
+def PersonRestrictionOk (subj obj : Agreement.Cell) : Prop :=
   ¬(IsParticipant subj ∧ IsParticipant obj)
 
-instance (subj obj : PersonNumber) : Decidable (PersonRestrictionOk subj obj) :=
+instance (subj obj : Agreement.Cell) : Decidable (PersonRestrictionOk subj obj) :=
   inferInstanceAs (Decidable (¬(IsParticipant subj ∧ IsParticipant obj)))
 
 /-- Compute the AF agreement target: the higher-ranked argument under
     the two-probe system. When both have equal rank, the subject is
     chosen (yielding the same marker either way). Returns `none` if
     the person restriction is violated. -/
-def afAgreementTarget (subj obj : PersonNumber) : Option PersonNumber :=
+def afAgreementTarget (subj obj : Agreement.Cell) : Option Agreement.Cell :=
   if PersonRestrictionOk subj obj then
     if afRank subj ≥ afRank obj then some subj else some obj
   else none
@@ -191,8 +188,8 @@ def afAgreementTarget (subj obj : PersonNumber) : Option PersonNumber :=
 /-- The AF agreement marker for a given subject-object combination:
     Set B exponent of the resolved target, or `none` for restriction
     violations. -/
-def afMarker (subj obj : PersonNumber) : Option String :=
-  (afAgreementTarget subj obj).map setBExponent
+def afMarker (subj obj : Agreement.Cell) : Option String :=
+  (afAgreementTarget subj obj).bind setBExponent.realize
 
 -- ============================================================================
 -- § 4: Verification — Grounding in PersonGeometry
@@ -204,15 +201,15 @@ def afMarker (subj obj : PersonNumber) : Option String :=
     theorems (per-cell-rfl-inflation anti-pattern). -/
 theorem feature_decomposition_correct :
     -- IsParticipant matches H&R 2002 + B&R 2003 expectations
-    IsParticipant .p1sg ∧
-    IsParticipant .p2sg ∧
-    ¬IsParticipant .p3sg ∧
-    ¬IsParticipant .p3pl ∧
+    IsParticipant (.pn .first .Sing) ∧
+    IsParticipant (.pn .second .Sing) ∧
+    ¬IsParticipant (.pn .third .Sing) ∧
+    ¬IsParticipant (.pn .third .Plur) ∧
     -- author entails participant (H&R 2002 containment)
-    (∀ pn ∈ PersonNumber.all, IsAuthor pn → IsParticipant pn) ∧
+    (∀ c ∈ Agreement.Cell.pnCells, IsAuthor c → IsParticipant c) ∧
     -- two-probe ranks: [+participant] → 2, [+plural,−participant] → 1, 3SG → 0
-    afRank .p1sg = 2 ∧ afRank .p2sg = 2 ∧
-    afRank .p3pl = 1 ∧ afRank .p3sg = 0 := by
+    afRank (.pn .first .Sing) = 2 ∧ afRank (.pn .second .Sing) = 2 ∧
+    afRank (.pn .third .Plur) = 1 ∧ afRank (.pn .third .Sing) = 0 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, rfl, rfl, rfl, rfl⟩
   all_goals decide
 
@@ -232,7 +229,7 @@ theorem af_paradigm_correct :
     relativized probing — the probes see both arguments
     symmetrically. -/
 theorem af_commutative :
-    PersonNumber.all.all (λ s => PersonNumber.all.all (λ o =>
+    Agreement.Cell.pnCells.all (λ s => Agreement.Cell.pnCells.all (λ o =>
       afMarker s o == afMarker o s)) = true := by
   decide
 
@@ -240,8 +237,8 @@ theorem af_commutative :
     argument is 1st/2nd and the other is 3PL, the marker reflects
     the participant (clitic-doubling output of π⁰), not the plural. -/
 theorem participant_over_plural :
-    afMarker .p1sg .p3pl = some "in-" ∧
-    afMarker .p3pl .p2sg = some "at-" :=
+    afMarker (.pn .first .Sing) (.pn .third .Plur) = some "in-" ∧
+    afMarker (.pn .third .Plur) (.pn .second .Sing) = some "at-" :=
   ⟨rfl, rfl⟩
 
 /-- PLC violation: two [+participant] arguments are blocked. Default
@@ -250,13 +247,13 @@ theorem participant_over_plural :
     signature of obligatory-but-failure-tolerant Agree
     (@cite{preminger-2014} Ch. 5). -/
 theorem restriction_and_default :
-    afMarker .p1sg .p2sg = none ∧
-    afMarker .p2sg .p1sg = none ∧
-    afMarker .p3sg .p3sg = some "∅" :=
+    afMarker (.pn .first .Sing) (.pn .second .Sing) = none ∧
+    afMarker (.pn .second .Sing) (.pn .first .Sing) = none ∧
+    afMarker (.pn .third .Sing) (.pn .third .Sing) = some "∅" :=
   ⟨rfl, rfl, rfl⟩
 
 /-- Person restriction is symmetric on the cells. -/
-theorem person_restriction_symmetric (s o : PersonNumber) :
+theorem person_restriction_symmetric (s o : Agreement.Cell) :
     PersonRestrictionOk s o ↔ PersonRestrictionOk o s := by
   unfold PersonRestrictionOk
   exact ⟨fun h ⟨h₁, h₂⟩ => h ⟨h₂, h₁⟩, fun h ⟨h₁, h₂⟩ => h ⟨h₂, h₁⟩⟩
@@ -276,9 +273,9 @@ theorem person_restriction_symmetric (s o : PersonNumber) :
     competition for 3pl+3pl). -/
 theorem ch7_arg3_participant_vs_plural_asymmetry :
     -- 1+2 is blocked (PLC violation)
-    afMarker .p1sg .p2sg = none ∧
+    afMarker (.pn .first .Sing) (.pn .second .Sing) = none ∧
     -- but 3pl+3pl is fine (no parallel licensing condition for #⁰)
-    afMarker .p3pl .p3pl = some "e-" :=
+    afMarker (.pn .third .Plur) (.pn .third .Plur) = some "e-" :=
   ⟨rfl, rfl⟩
 
 /-- @cite{preminger-2014} Ch 7 arg 4 smoke-check (p. 125–126,
@@ -296,15 +293,15 @@ theorem ch7_arg3_participant_vs_plural_asymmetry :
     awaits extending the fragment with strong pronouns and a
     suffix-stripping bridge function. -/
 theorem ch7_arg4_form_distinctness_smoke_check :
-    setBExponent .p1sg = "in-" ∧
-    setBExponent .p2sg = "at-" ∧
-    setBExponent .p1pl = "oj-" ∧
-    setBExponent .p2pl = "ix-" ∧
-    setBExponent .p3pl = "e-" ∧
-    setBExponent .p1sg ≠ setBExponent .p3pl ∧
-    setBExponent .p2sg ≠ setBExponent .p3pl ∧
-    setBExponent .p1pl ≠ setBExponent .p3pl ∧
-    setBExponent .p2pl ≠ setBExponent .p3pl :=
+    setBExponent.realize (.pn .first .Sing) = some "in-" ∧
+    setBExponent.realize (.pn .second .Sing) = some "at-" ∧
+    setBExponent.realize (.pn .first .Plur) = some "oj-" ∧
+    setBExponent.realize (.pn .second .Plur) = some "ix-" ∧
+    setBExponent.realize (.pn .third .Plur) = some "e-" ∧
+    setBExponent.realize (.pn .first .Sing) ≠ setBExponent.realize (.pn .third .Plur) ∧
+    setBExponent.realize (.pn .second .Sing) ≠ setBExponent.realize (.pn .third .Plur) ∧
+    setBExponent.realize (.pn .first .Plur) ≠ setBExponent.realize (.pn .third .Plur) ∧
+    setBExponent.realize (.pn .second .Plur) ≠ setBExponent.realize (.pn .third .Plur) :=
   ⟨rfl, rfl, rfl, rfl, rfl, by decide, by decide, by decide, by decide⟩
 
 end Preminger2014

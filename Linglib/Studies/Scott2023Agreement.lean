@@ -56,8 +56,8 @@ both paths.
 
 namespace Scott2023
 
-open Mayan (PersonNumber)
 open Minimalist Mam
+open Agreement
 
 -- ============================================================================
 -- § 0: Minimalism-Specific Vocabulary (Set A / Set B as VI entries)
@@ -70,19 +70,15 @@ open Minimalist Mam
     `FeatureBundle` and `Cat` for use with `spellout`. -/
 
 /-- PhiFeature list per Mam person-number cell. -/
-def mamToPhiFeatures : PersonNumber → List PhiFeature
-  | .p1sg => [.person .first, .number .sg]
-  | .p2sg => [.person .second, .number .sg]
-  | .p3sg => [.person .third, .number .sg]
-  | .p1pl => [.person .first, .number .pl]
-  | .p2pl => [.person .second, .number .pl]
-  | .p3pl => [.person .third, .number .pl]
+def mamToPhiFeatures (c : Agreement.Cell) : List PhiFeature :=
+  [.person c.toPersonLevel, .number (if c.isPlural then .pl else .sg)]
 
 /-- Set A (ERG) vocabulary entries: φ-features on Voice (.v)
     yield the morphological exponent (@cite{scott-2023} Table 2.8).
     All six cells have specific entries. -/
 def setAVocab : Vocabulary :=
-  makePersonVocab PersonNumber.all mamToPhiFeatures setAExponent (some .v)
+  makePersonVocab Agreement.Cell.pnCells mamToPhiFeatures
+    (fun c => (setAExponent.realize c).getD "") (some .v)
 
 /-- Set B (ABS) vocabulary entries: φ-features on Infl (.T)
     yield the morphological exponent (@cite{scott-2023} Table 3.5).
@@ -91,7 +87,8 @@ def setAVocab : Vocabulary :=
     (no features, tz'=) which surfaces when no specific entry
     matches — also catching the blocked-Infl-probe case in transitives. -/
 def setBVocab : Vocabulary :=
-  makePersonVocab setBSpecificCells mamToPhiFeatures setBExponent (some .T) ++
+  makePersonVocab setBSpecificCells mamToPhiFeatures
+    (fun c => (setBExponent.realize c).getD "") (some .T) ++
     [{ features := [], exponent := defaultSetB, context := some .T }]
 
 /-- Which Minimalist head φ-Agrees with each argument position.

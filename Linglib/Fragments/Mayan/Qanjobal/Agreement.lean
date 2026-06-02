@@ -70,7 +70,8 @@ language family.
 
 namespace Qanjobal
 
-open Mayan (PersonNumber)
+open Mayan (ExponentTable)
+open Agreement
 
 -- ============================================================================
 -- § 1: Argument Positions (alias to canonical SAP type)
@@ -107,44 +108,33 @@ def absPosition : Mayan.ABSPosition := .high
 
 /-- Set A (ergative/possessive) markers: pre-consonantal allomorphs
     (@cite{coon-mateo-pedro-preminger-2014} table (13)). -/
-def setAExponentPreC : PersonNumber → String
-  | .p1sg => "hin-"
-  | .p2sg => "ha-"
-  | .p3sg => "s-"
-  | .p1pl => "ko-"
-  | .p2pl => "he-"
-  | .p3pl => "s-…heb'"
+def setAExponentPreC : ExponentTable :=
+  [(.pn .first .Sing, "hin-"), (.pn .second .Sing, "ha-"), (.pn .third .Sing, "s-"),
+   (.pn .first .Plur, "ko-"), (.pn .second .Plur, "he-"), (.pn .third .Plur, "s-…heb'")]
 
 /-- Set A (ergative/possessive) markers: pre-vocalic allomorphs
     (@cite{coon-mateo-pedro-preminger-2014} table (13)). -/
-def setAExponentPreV : PersonNumber → String
-  | .p1sg => "w-"
-  | .p2sg => "h-"
-  | .p3sg => "y-"
-  | .p1pl => "j-"
-  | .p2pl => "hey-"
-  | .p3pl => "y-…heb'"
+def setAExponentPreV : ExponentTable :=
+  [(.pn .first .Sing, "w-"), (.pn .second .Sing, "h-"), (.pn .third .Sing, "y-"),
+   (.pn .first .Plur, "j-"), (.pn .second .Plur, "hey-"), (.pn .third .Plur, "y-…heb'")]
 
 /-- Canonical Set A exponent table for cross-Mayan typology. The
     pre-consonantal allomorph is the citation form; per-context
     realization uses `setAExponentPreV` before vowels. -/
-abbrev setAExponent : PersonNumber → String := setAExponentPreC
+abbrev setAExponent : ExponentTable := setAExponentPreC
 
 /-- Set B (absolutive) markers: suffixes
     (@cite{coon-mateo-pedro-preminger-2014} table (13)). -/
-def setBExponent : PersonNumber → String
-  | .p1sg => "-in"
-  | .p2sg => "-ach"
-  | .p3sg => "-∅"
-  | .p1pl => "-on"
-  | .p2pl => "-ex"
-  | .p3pl => "heb'"
+def setBExponent : ExponentTable :=
+  [(.pn .first .Sing, "-in"), (.pn .second .Sing, "-ach"), (.pn .third .Sing, "-∅"),
+   (.pn .first .Plur, "-on"), (.pn .second .Plur, "-ex"), (.pn .third .Plur, "heb'")]
 
 /-- 3rd person absolutive is null (∅). -/
-theorem p3sg_abs_null : setBExponent .p3sg = "-∅" := rfl
+theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "-∅" := rfl
 
 /-- 3rd person ergative (pre-vocalic) is *y-*, pre-consonantal is *s-*. -/
 theorem p3sg_erg_allomorphy :
-    setAExponentPreC .p3sg = "s-" ∧ setAExponentPreV .p3sg = "y-" := ⟨rfl, rfl⟩
+    setAExponentPreC.realize (.pn .third .Sing) = some "s-" ∧
+    setAExponentPreV.realize (.pn .third .Sing) = some "y-" := ⟨rfl, rfl⟩
 
 end Qanjobal

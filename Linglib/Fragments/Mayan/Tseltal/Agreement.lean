@@ -35,7 +35,8 @@ Set A indicates A; Set B indicates S and P alike.
 
 namespace Tseltal
 
-open Mayan (MarkerSet PersonNumber MarkerLinearity)
+open Mayan (MarkerSet MarkerLinearity ExponentTable)
+open Agreement
 
 -- Re-export shared Tseltalan types
 export Mayan.Tseltalan (GramFunction)
@@ -91,28 +92,20 @@ def setBLinearity : MarkerLinearity := .suffixal
 /-- Set A (ERG/GEN) exponents for Oxchuc Tseltal (@cite{polian-2013}).
     Prefixes on the verb or possessed noun. Forms shown as
     `pre-C/pre-V` allomorph pairs. -/
-def setAExponent : PersonNumber → String
-  | .p1sg => "k-/j-"
-  | .p2sg => "a-/aw-"
-  | .p3sg => "s-/y-"
-  | .p1pl => "k-/j-"
-  | .p2pl => "a-/aw-"
-  | .p3pl => "s-/y-"
+def setAExponent : ExponentTable :=
+  [(.pn .first .Sing, "k-/j-"), (.pn .second .Sing, "a-/aw-"), (.pn .third .Sing, "s-/y-"),
+   (.pn .first .Plur, "k-/j-"), (.pn .second .Plur, "a-/aw-"), (.pn .third .Plur, "s-/y-")]
 
 /-- Set B (ABS) exponents for Oxchuc Tseltal (@cite{polian-2013}).
     Suffixes on the verb stem. 3rd person singular is null (`-∅`). -/
-def setBExponent : PersonNumber → String
-  | .p1sg => "-on"
-  | .p2sg => "-at"
-  | .p3sg => "-∅"
-  | .p1pl => "-otik"
-  | .p2pl => "-ex"
-  | .p3pl => "-ik"
+def setBExponent : ExponentTable :=
+  [(.pn .first .Sing, "-on"), (.pn .second .Sing, "-at"), (.pn .third .Sing, "-∅"),
+   (.pn .first .Plur, "-otik"), (.pn .second .Plur, "-ex"), (.pn .third .Plur, "-ik")]
 
 /-- 3rd person absolutive is null — invariant across the standard
     Mayan branches per @cite{kaufman-norman-1984} Table 8. **Not**
     pan-Mayan: see Mam exception via `MayanLang.isStandard`. -/
-theorem p3sg_abs_null : setBExponent .p3sg = "-∅" := rfl
+theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "-∅" := rfl
 
 /-- Tseltal Set B differs from Tsotsil in linearity (suffixal vs
     prefixal-or-suffixal); the marker set assignment is identical. -/

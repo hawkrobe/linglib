@@ -34,7 +34,8 @@ aspect-conditioned split (in contrast with Cholan; per @cite{polian-2013}).
 
 namespace Tsotsil
 
-open Mayan (MarkerSet PersonNumber MarkerLinearity)
+open Mayan (MarkerSet MarkerLinearity ExponentTable)
+open Agreement
 
 -- Re-export shared Tseltalan types
 export Mayan.Tseltalan (GramFunction)
@@ -94,29 +95,21 @@ def setBLinearity : MarkerLinearity := .either
     (@cite{polian-2013}). Prefixes on the verb (for ERG) or the possessed
     noun (for GEN). Forms vary by following segment; shown as
     `pre-C/pre-V` allomorph pairs. -/
-def setAExponent : PersonNumber → String
-  | .p1sg => "k-/j-"
-  | .p2sg => "a-/av-"
-  | .p3sg => "s-/y-"
-  | .p1pl => "k-/j-"
-  | .p2pl => "a-/av-"
-  | .p3pl => "s-/y-"
+def setAExponent : ExponentTable :=
+  [(.pn .first .Sing, "k-/j-"), (.pn .second .Sing, "a-/av-"), (.pn .third .Sing, "s-/y-"),
+   (.pn .first .Plur, "k-/j-"), (.pn .second .Plur, "a-/av-"), (.pn .third .Plur, "s-/y-")]
 
 /-- Set B (ABS) exponents for Zinacantec Tsotsil (@cite{polian-2013}).
     3rd person singular has no overt exponent (`-∅`). Some forms show
     allomorphic alternation depending on suffix harmony. -/
-def setBExponent : PersonNumber → String
-  | .p1sg => "-on/-un"
-  | .p2sg => "-ot/-at"
-  | .p3sg => "-∅"
-  | .p1pl => "-otik/-utik"
-  | .p2pl => "-oxuk"
-  | .p3pl => "-ik"
+def setBExponent : ExponentTable :=
+  [(.pn .first .Sing, "-on/-un"), (.pn .second .Sing, "-ot/-at"), (.pn .third .Sing, "-∅"),
+   (.pn .first .Plur, "-otik/-utik"), (.pn .second .Plur, "-oxuk"), (.pn .third .Plur, "-ik")]
 
 /-- 3rd person absolutive is null — invariant across the standard
     Mayan branches per @cite{kaufman-norman-1984} Table 8. **Not**
     pan-Mayan: see Mam exception via `MayanLang.isStandard`. -/
-theorem p3sg_abs_null : setBExponent .p3sg = "-∅" := rfl
+theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "-∅" := rfl
 
 -- ============================================================================
 -- § 5: Extraction Profile

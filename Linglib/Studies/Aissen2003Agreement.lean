@@ -103,8 +103,9 @@ theorem kaqchikel_A_and_P_indexed :
     distinct: every person-number combination gets a unique marker in
     each set (except 3SG which is ∅ in Set B). -/
 theorem kaqchikel_dual_paradigms :
-    setAExponent .p1sg ≠ setBExponent .p1sg ∧
-    setAExponent .p2sg ≠ setBExponent .p2sg := by decide
+    setAExponent.realize (.pn .first .Sing) ≠ setBExponent.realize (.pn .first .Sing) ∧
+    setAExponent.realize (.pn .second .Sing) ≠ setBExponent.realize (.pn .second .Sing) := by
+  decide
 
 -- ============================================================================
 -- § 4: Kaqchikel Argument Roles ↔ Just's ArgumentRole

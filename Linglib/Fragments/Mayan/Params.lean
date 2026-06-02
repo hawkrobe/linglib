@@ -41,6 +41,8 @@ to intransitive subjects (via Infl⁰).
 
 namespace Mayan
 
+open Agreement
+
 -- ============================================================================
 -- § 1: Mayan Absolutive Parameter (observable)
 -- ============================================================================
@@ -331,61 +333,15 @@ abbrev ergCaseTseltalan : Features.Prominence.ArgumentRole → Features.Case :=
 -- § 5: Person-Number Paradigm
 -- ============================================================================
 
-/-- The pan-Mayan person/number agreement paradigm.
-
-    Six values cover the consensus across Cholan, K'ichean,
-    Q'anjob'alan, and Tseltalan agreement morphology
-    (@cite{kaufman-norman-1984} Tables 7-8 reconstruct this paradigm
-    to proto-Cholan with `-∅` 3sg invariant). Languages with an
-    inclusive/exclusive distinction in 1pl (Chol's `-on lojon` 1plExcl
-    per @cite{kaufman-norman-1984} p. 91) accommodate the refinement
-    at the per-language level. -/
-inductive PersonNumber where
-  | p1sg | p2sg | p3sg
-  | p1pl | p2pl | p3pl
-  deriving DecidableEq, Repr
-
-namespace PersonNumber
-
-/-- Project the person component (independent of number). -/
-def person : PersonNumber → Features.Prominence.PersonLevel
-  | .p1sg | .p1pl => .first
-  | .p2sg | .p2pl => .second
-  | .p3sg | .p3pl => .third
-
-/-- Is this a plural form? -/
-def isPlural : PersonNumber → Bool
-  | .p1sg | .p2sg | .p3sg => false
-  | .p1pl | .p2pl | .p3pl => true
-
-/-- All six values, useful for `decide`-checked drift sentries. -/
-def all : List PersonNumber :=
-  [.p1sg, .p2sg, .p3sg, .p1pl, .p2pl, .p3pl]
-
-/-- A Mayan `PersonNumber` as a canonical φ-cell (`Agreement.Cell` —
-    person × number, the same φ a `Pronoun`/`Word` carries). The bridge that lets
-    the per-language Set A / Set B paradigms be keyed by canonical φ, so a
-    controller's φ (`Word.agrCell`) indexes them directly (@cite{corbett-1998}). -/
-def toAgrCell : PersonNumber → Agreement.Cell
-  | .p1sg => .pn .first .Sing  | .p2sg => .pn .second .Sing | .p3sg => .pn .third .Sing
-  | .p1pl => .pn .first .Plur  | .p2pl => .pn .second .Plur | .p3pl => .pn .third .Plur
-
-/-- Lift a per-cell exponent function (a language's Set A / Set B table) to a
-    descriptive agreement paradigm keyed by canonical φ-cells. The one place the
-    `PersonNumber`-table-to-canonical-φ conversion lives; each language's
-    `setAParadigm`/`setBParadigm` is just `PersonNumber.paradigm setAExponent`. -/
-def paradigm (exp : PersonNumber → String) : Agreement.Paradigm String :=
-  PersonNumber.all.map fun p => (p.toAgrCell, exp p)
-
-/-- Realizing a lifted paradigm at a cell recovers the exponent — for *any*
-    exponent function. Since the cell is canonical φ, a controller's
-    `Word.agrCell` indexes the paradigm directly (this is the unification, proven
-    once rather than per language). -/
-theorem paradigm_realize (exp : PersonNumber → String) (p : PersonNumber) :
-    (paradigm exp).realize p.toAgrCell = some (exp p) := by
-  cases p <;> rfl
-
-end PersonNumber
+/-! The pan-Mayan person/number agreement paradigm is keyed by the canonical
+    φ-cell `Agreement.Cell` (the same φ a `Pronoun`/`Word` carries): the six
+    cells covering the cross-Mayan consensus (Cholan, K'ichean, Q'anjob'alan,
+    Tseltalan; @cite{kaufman-norman-1984} Tables 7-8) are exactly
+    `Agreement.Cell.pnCells`. Per-language Set A / Set B tables are
+    `Agreement.Paradigm String` values constructed over those cells, so a
+    controller's `Word.agrCell` indexes them directly (@cite{corbett-1998}).
+    Languages with a 1pl inclusive/exclusive split (Chol's `-on lojon` 1plExcl,
+    @cite{kaufman-norman-1984} p. 91) refine at the per-language level. -/
 
 -- ============================================================================
 -- § 6: Verb Form (transitive vs Agent Focus)
@@ -411,10 +367,11 @@ def VerbForm.hasSetA : VerbForm → Bool
 -- § 7: Exponent Tables
 -- ============================================================================
 
-/-- An exponent table mapping each person/number value to its surface
-    string realization. Per-language `setAExponent` and `setBExponent`
-    populate this; cross-Mayan typology theorems quantify over it. -/
-abbrev ExponentTable := PersonNumber → String
+/-- An exponent table: a descriptive agreement paradigm over canonical φ-cells
+    (`Agreement.Cell`), mapping each person/number cell to its surface string.
+    Per-language `setAExponent`/`setBExponent` populate this; cross-Mayan
+    typology theorems quantify over it. -/
+abbrev ExponentTable := Agreement.Paradigm String
 
 /-- Decidable predicate: the third-person singular slot is morphologically
     null. An invariant of the **standard** Mayan branches per
@@ -431,7 +388,9 @@ abbrev ExponentTable := PersonNumber → String
     disjunction form is kernel-decidable (unlike a `String.replace`
     normalization, which is opaque to `decide`). -/
 def ExponentTable.IsThirdSgZero (e : ExponentTable) : Prop :=
-  e .p3sg = "-∅" ∨ e .p3sg = "∅" ∨ e .p3sg = "∅-"
+  e.realize (.pn .third .Sing) = some "-∅" ∨
+  e.realize (.pn .third .Sing) = some "∅" ∨
+  e.realize (.pn .third .Sing) = some "∅-"
 
 instance (e : ExponentTable) : Decidable e.IsThirdSgZero := by
   unfold ExponentTable.IsThirdSgZero; exact inferInstance
