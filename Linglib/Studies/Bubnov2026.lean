@@ -45,7 +45,7 @@ test case. Key claims:
   `var(y,x)` and `dep(y,x)`. `type_vi_contradictory` derives the gap.
 - `Nanosyntax.Core`: `spellout` and `abaViolation` demonstrate the negative
   result — nanosyntax predicts containment that indefinites lack.
-- `Typology.Indefinite`: `IndefiniteEntry` (consensus function-coverage
+- `Typology.Indefinite`: `IndefinitePronoun` (consensus function-coverage
   + morphological-basis data) and `classifyTriple` for syncretism patterns.
 - `DeganoAloni2025`: `DAType` and
   `surfaceDAType` / `consistentWith` projections from entries to D&A types.

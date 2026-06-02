@@ -23,7 +23,7 @@ bridge theorems verifying that each Fragment's encoded morphological-basis
 distribution matches the @cite{wals-2013} F46A classification of the same
 language by ISO 639-3 join.
 
-The substrate (`HaspelmathFunction` enum + `IndefiniteEntry`/`IndefiniteParadigm`
+The substrate (`HaspelmathFunction` enum + `IndefinitePronoun`/`IndefiniteParadigm`
 structs + `MorphologicalBasis` + WALS converters) lives in
 `Typology/Indefinite.lean`.
 
