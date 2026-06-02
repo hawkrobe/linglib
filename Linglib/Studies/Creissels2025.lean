@@ -38,9 +38,7 @@ open Semantics.Causation.Morphological
    CausativizabilityData)
 open Interfaces (VoiceSystemProfile VoiceSystemSymmetry VoiceEntry PivotTarget)
 
--- ════════════════════════════════════════════════════
--- § 1. Bridge: Decausativization ↔ IntransitivizationType
--- ════════════════════════════════════════════════════
+/-! ### Bridge: Decausativization ↔ IntransitivizationType -/
 
 /-! §8.3.1.2: "Decausativization suppresses the referent
 of the initial A from participant structure and converts the initial P into
@@ -67,9 +65,7 @@ theorem reflexive_not_decausativization :
     decausativization.involvesCumulation = false :=
   ⟨rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 2. Bridge: Causativization ↔ CausativeConstruction
--- ════════════════════════════════════════════════════
+/-! ### Bridge: Causativization ↔ CausativeConstruction -/
 
 /-! §8.3.1.1 defines causativization as "the
 nucleativization of a participant (the causer) that instigates the event
@@ -108,9 +104,7 @@ theorem complexity_alignment :
     (CausativeComplexity.morphological < CausativeComplexity.periphrastic) :=
   ⟨by decide, by decide⟩
 
--- ════════════════════════════════════════════════════
--- § 3. Bridge: Applicativization ↔ Pylkkänen's ApplType
--- ════════════════════════════════════════════════════
+/-! ### Bridge: Applicativization ↔ Pylkkänen's ApplType -/
 
 /-! §14.1 distinguishes three varieties:
 - P-applicativization (§14.1.1): applied phrase fills P role
@@ -136,9 +130,7 @@ theorem all_applicativizations_nucleativize :
 theorem p_applicativization_valency_increasing :
     pApplicativization.isValencyIncreasing = true := rfl
 
--- ════════════════════════════════════════════════════
--- § 4. Bridge: Symmetrical Voices ↔ VoiceSystemProfile
--- ════════════════════════════════════════════════════
+/-! ### Bridge: Symmetrical Voices ↔ VoiceSystemProfile -/
 
 /-! §8.5: symmetrical voice systems are those in which
 verb morphology marks the selection of a participant as the privileged
@@ -168,9 +160,7 @@ theorem english_is_asymmetrical :
 theorem english_is_active_passive :
     englishVoiceSystem.isActivePassive := by decide
 
--- ════════════════════════════════════════════════════
--- § 5. Passivization vs Decausativization (§8.3.1.2 vs §8.3.2.1)
--- ════════════════════════════════════════════════════
+/-! ### Passivization vs Decausativization (§8.3.1.2 vs §8.3.2.1) -/
 
 /-! §8.3.2.1: "The maintenance of the initial A in
 participant structure is essential to distinguish passivization from
@@ -192,9 +182,7 @@ theorem passive_decausative_distinct :
     passivization.fateOfA ≠ decausativization.fateOfA := by
   simp [passivization, decausativization]
 
--- ════════════════════════════════════════════════════
--- § 6. Bridge: Passivization ↔ Antipassivization structural symmetry
--- ════════════════════════════════════════════════════
+/-! ### Bridge: Passivization ↔ Antipassivization structural symmetry -/
 
 /-! §8.3.2: passivization, antipassivization, and
 S-denucleativization form a natural class — all three denucleativize a core
@@ -222,9 +210,7 @@ theorem denucleativization_paradigm :
     sDenucleativization.fateOfS = .denucleativized :=
   ⟨rfl, rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 7. Bridge: Reflexivization/Reciprocalization ↔ existing data
--- ════════════════════════════════════════════════════
+/-! ### Bridge: Reflexivization/Reciprocalization ↔ existing data -/
 
 /-! §8.3.3: reflexivization and reciprocalization
 cumulate two participant roles (A and P) into a single participant (S).
@@ -246,9 +232,7 @@ theorem refl_recip_same_structure :
     reciprocalization.involvesCumulation = true :=
   ⟨rfl, rfl, rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 8. Voice Marker Stacking (§8.4)
--- ════════════════════════════════════════════════════
+/-! ### Voice Marker Stacking (§8.4) -/
 
 /-! §8.4: voice markers can be stacked compositionally.
 Example from Tswana (§8.4.1, ex. 38):
@@ -270,9 +254,7 @@ def tswana_caus_pass : VoiceStack := [causativization, passivization]
 def tswana_caus_appl_pass : VoiceStack :=
   [causativization, pApplicativization, passivization]
 
--- ════════════════════════════════════════════════════
--- § 9. Portative Derivation (§8.3.7)
--- ════════════════════════════════════════════════════
+/-! ### Portative Derivation (§8.3.7) -/
 
 /-! §8.3.7 identifies portative derivation as a distinct
 voice alternation type that cannot be reduced to either causativization or
@@ -296,9 +278,7 @@ theorem portative_distinct_from_causativization :
     portativeDerivation.newParticipant = some .P :=
   ⟨rfl, rfl, rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 10. Alignment Profiles (§1.3.4)
--- ════════════════════════════════════════════════════
+/-! ### Alignment Profiles (§1.3.4) -/
 
 /-! §1.3.4.2: most languages have a clear preference
 for either A-alignment (S codes like A) or P-alignment (S codes like P).
@@ -323,9 +303,7 @@ def mandinka : ObligatoryCodingProfile :=
   , defaultAlignment := .A_alignment
   , violationsExist := true }
 
--- ════════════════════════════════════════════════════
--- § 11. Russian -sja polysemy (§1.2, ex. 8)
--- ════════════════════════════════════════════════════
+/-! ### Russian -sja polysemy (§1.2, ex. 8) -/
 
 /-! The Russian verbal suffix *-sja / -s'* is a paradigmatic example of voice
 marker polysemy. It marks at least four different voice alternation types:
@@ -345,9 +323,7 @@ def russian_sja : VoiceMarkerProfile :=
 theorem russian_sja_polysemy :
     russian_sja.alternations.length = 4 := rfl
 
--- ════════════════════════════════════════════════════
--- § 12. Tswana -el polysemy (§8.2)
--- ════════════════════════════════════════════════════
+/-! ### Tswana -el polysemy (§8.2) -/
 
 /-! The Tswana voice suffix *-el* (traditionally called "applicative") marks
 both P-nucleativization (applicativization) and A-nucleativization of
@@ -363,9 +339,7 @@ def tswana_el : VoiceMarkerProfile :=
   , marker := "-el"
   , alternations := [pApplicativization, asNucleativizationOfObliques] }
 
--- ════════════════════════════════════════════════════
--- § 13. Causativizability and Voice Alternations
--- ════════════════════════════════════════════════════
+/-! ### Causativizability and Voice Alternations -/
 
 /-! Ch 12 discusses restrictions on causativization.
 @cite{krejci-2012}'s hierarchy (already formalized in
@@ -381,9 +355,7 @@ create an intransitive base first. -/
 def causativization_via_antipassive : VoiceStack :=
   [antipassivization, causativization]
 
--- ════════════════════════════════════════════════════
--- § 14. Cross-linguistic voice distribution (Bahrt 2021)
--- ════════════════════════════════════════════════════
+/-! ### Cross-linguistic voice distribution (Bahrt 2021) -/
 
 /-! §8.3.8 reports @cite{bahrt-2021}'s survey of synthetic voice marking across
 222 languages from all genera. -/
@@ -416,9 +388,7 @@ theorem causativization_most_common :
     (bahrt2021Distribution.head?.map (·.alternation.name)) =
     some "causativization" := rfl
 
--- ════════════════════════════════════════════════════
--- § 15. Compositional denotation of voice stacking (§8.4)
--- ════════════════════════════════════════════════════
+/-! ### Compositional denotation of voice stacking (§8.4) -/
 
 /-! §8.4: voice markers stack, and a combination "operates on its valency
 properties exactly as it could operate on the valency of an underived verb form"
