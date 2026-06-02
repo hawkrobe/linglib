@@ -5,7 +5,6 @@ import Linglib.Data.WALS.Features.F114A
 import Linglib.Data.WALS.Features.F115A
 import Linglib.Data.WALS.Features.F143A
 import Linglib.Data.WALS.Features.F144A
-import Linglib.Data.WALS.Features.F144B
 import Linglib.Typology.NegativeConcord
 
 /-!
@@ -20,7 +19,7 @@ Mirrors the `Linglib/Typology/Possession.lean` (Possession), `Question.lean`
 (Question), and `Case.lean` (Case) substrate-extension pattern: the
 substrate carries (a) per-paradigm-entry schema (`NegMarkerEntry`,
 `NegationSystem`), (b) the WALS-bundled per-language `NegationProfile`,
-(c) WALS converters and aggregate-distribution helpers / theorems.
+(c) WALS converters and sample-counting helpers.
 
 ## What lives here
 
@@ -45,8 +44,10 @@ substrate carries (a) per-paradigm-entry schema (`NegMarkerEntry`,
   `def negationProfile : NegationProfile` alongside `def negationSystem`.
   Sibling pattern (mirrors `Typology/Possession.lean::PossessionProfile`):
   the marker-side joint is independent from the typology-feature joint.
-- `fromWALS112A`/`113A`/`114A`/`115A`/`143A` converters.
-- WALS aggregate distribution theorems for Ch 112-115/143A/144A core.
+- `ofWALS112A`/`fromWALS113A`/`114A`/`115A`/`143A` converters.
+- `countByMorphemeType`/`countBySymmetry` sample-counting helpers (consumed by
+  `Studies/Dryer2013Negation.lean`) and the `NegIndefiniteStrategy.admits`
+  negative-concord bridge.
 
 ## Theory-laden caveats
 
@@ -70,17 +71,7 @@ set_option autoImplicit false
 
 namespace Typology.Negation
 
-private abbrev ch112  := Data.WALS.F112A.allData
-private abbrev ch113  := Data.WALS.F113A.allData
-private abbrev ch114  := Data.WALS.F114A.allData
-private abbrev ch115  := Data.WALS.F115A.allData
-private abbrev ch143A := Data.WALS.F143A.allData
-private abbrev ch144A := Data.WALS.F144A.allData
-private abbrev ch144B := Data.WALS.F144B.allData
-
--- ============================================================================
--- §1. Substrate enums
--- ============================================================================
+/-! ### Substrate enums -/
 
 /-- Type of the standard negation morpheme @cite{dryer-2013-wals}.
 
@@ -198,9 +189,7 @@ inductive NegMorphemePosition where
   | none
   deriving DecidableEq, BEq, Repr
 
--- ============================================================================
--- §2. NegMarkerEntry / NegationSystem (Fragment marker-side joint)
--- ============================================================================
+/-! ### NegMarkerEntry / NegationSystem (Fragment marker-side joint) -/
 
 /-- One language's standard sentential negation marker. -/
 structure NegMarkerEntry where
@@ -245,9 +234,7 @@ structure NegationSystem where
     := none
   deriving Repr
 
--- ============================================================================
--- §3. NegationProfile (Fragment typology-feature joint)
--- ============================================================================
+/-! ### NegationProfile (Fragment typology-feature joint) -/
 
 /-- A language's negation profile across WALS Chapters 112-115, plus
     fields from @cite{greco-2020} (`negIsHead`) and @cite{jin-koenig-2021}
@@ -284,9 +271,7 @@ structure NegationProfile where
   enAttested : Option Bool := none
   deriving Repr
 
--- ============================================================================
--- §4. WALS converters
--- ============================================================================
+/-! ### WALS converters -/
 
 /-- WALS Ch 112A → `NegMorphemeType`. -/
 def ofWALS112A : Data.WALS.F112A.NegativeMorphemeType → NegMorphemeType
@@ -352,9 +337,7 @@ def NegationSystem.ofISO (iso : String) (markers : List NegMarkerEntry) :
   , wals144A := (Data.WALS.F144A.lookupISO iso).map (·.value)
   }
 
--- ============================================================================
--- §5. NegationProfile helpers (Fragment-consumed)
--- ============================================================================
+/-! ### NegationProfile helpers (Fragment-consumed) -/
 
 /-- Does a language use a given morpheme type? -/
 def NegationProfile.hasMorphemeType (p : NegationProfile)
@@ -382,10 +365,7 @@ def countByMorphemeType (langs : List NegationProfile)
 def countBySymmetry (langs : List NegationProfile) (s : NegSymmetry) : Nat :=
   (langs.filter (·.symmetry == s)).length
 
--- ============================================================================
--- §6. Negative concord: bridge WALS 115A strategy ↔ item-level n-word status
---     (@cite{giannakidou-2000}, @cite{van-der-auwera-van-alsenoy-2016})
--- ============================================================================
+/-! ### Negative concord: WALS 115A strategy ↔ item-level n-word status -/
 
 open Typology.NegativeConcord (NWordStatus)
 
@@ -412,68 +392,5 @@ theorem nWord_vs_negQuantifier :
     (NegIndefiniteStrategy.cooccur).admits .nWord = true ∧
     (NegIndefiniteStrategy.preclude).admits .nWord = false ∧
     (NegIndefiniteStrategy.preclude).admits .negQuantifier = true := by decide
-
--- ============================================================================
--- §7. Theory-neutral WALS distribution facts (corpus-only generalisations)
--- ============================================================================
-
-/-- Ch 112: negative particles outnumber negative affixes. -/
-theorem particles_most_common :
-    (ch112.filter (·.value == .negativeParticle)).length >
-    (ch112.filter (·.value == .negativeAffix)).length := by native_decide
-
-/-- Ch 112: negative auxiliary verbs are rare (< 5% of sample). -/
-theorem aux_verbs_rare :
-    (ch112.filter (·.value == .negativeAuxiliaryVerb)).length * 20 <
-    ch112.length := by native_decide
-
-/-- Ch 113: SymAsy (both) is the most common type, followed by Sym, then Asy. -/
-theorem symasy_most_common :
-    let sym := (ch113.filter (·.value == .symmetric)).length
-    let asy := (ch113.filter (·.value == .asymmetric)).length
-    let both := (ch113.filter (·.value == .both)).length
-    both > sym ∧ sym > asy := by
-  exact ⟨by native_decide, by native_decide⟩
-
-/-- Ch 114: A/Cat is the most common single asymmetry subtype, then A/Fin,
-    then A/NonReal. -/
-theorem acat_most_common_subtype :
-    let aCat := (ch114.filter (·.value == .aCat)).length
-    let aFin := (ch114.filter (·.value == .aFin)).length
-    let aNon := (ch114.filter (·.value == .aNonreal)).length
-    aCat > aFin ∧ aFin > aNon := by
-  exact ⟨by native_decide, by native_decide⟩
-
-/-- Ch 115: negative concord (co-occurrence) outnumbers preclusion by 15×. -/
-theorem neg_concord_dominant :
-    let cooccur :=
-      (ch115.filter (·.value == .predicateNegationAlsoPresent)).length
-    let preclude := (ch115.filter (·.value == .noPredicateNegation)).length
-    cooccur > preclude * 15 := by native_decide
-
-/-- Ch 115: preclusion of predicate negation is the rarest strategy. -/
-theorem preclusion_rarest :
-    let preclude := (ch115.filter (·.value == .noPredicateNegation)).length
-    let mixed    := (ch115.filter (·.value == .mixedBehaviour)).length
-    let negEx    :=
-      (ch115.filter (·.value == .negativeExistentialConstruction)).length
-    preclude ≤ mixed ∧ preclude ≤ negEx := by
-  exact ⟨by native_decide, by native_decide⟩
-
-/-- Ch 143A: preverbal negation (particle or affix) dominates postverbal. -/
-theorem ch143A_preverbal_dominates :
-    let preParticle := (ch143A.filter (·.value == .negv)).length
-    let preAffix    := (ch143A.filter (·.value == .negV)).length
-    let postParticle := (ch143A.filter (·.value == .vneg)).length
-    let postAffix    := (ch143A.filter (·.value == .vNeg)).length
-    preParticle + preAffix > postParticle + postAffix := by native_decide
-
-/-- Ch 144B: immediately preverbal is the most common position for
-    negative words. -/
-theorem ch144B_immed_preverbal_dominant :
-    (ch144B.filter (·.value == .immedPreverbal)).length >
-    (ch144B.filter (·.value == .immedPostverbal)).length +
-    (ch144B.filter (·.value == .endNotImmedPostverbal)).length := by
-  native_decide
 
 end Typology.Negation

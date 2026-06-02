@@ -94,30 +94,23 @@ def allExamples : List NegExample :=
 
 /-! ## Verification -/
 
-theorem all_examples_count : allExamples.length = 5 := by native_decide
+theorem all_examples_count : allExamples.length = 5 := by decide
 
 /-- 3 symmetric + 2 asymmetric = SymAsy. -/
 theorem symasy_distribution :
     (allExamples.filter (·.symmetric)).length = 3 ∧
     (allExamples.filter (fun e => !e.symmetric)).length = 2 := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- Asymmetric constructions all involve do-support. -/
 theorem asymmetric_iff_dosupport :
     allExamples.all (fun e => e.symmetric == !e.doSupport) = true := by
-  native_decide
+  decide
 
 /-- Symmetric constructions do not involve do-support. -/
 theorem symmetric_no_dosupport :
     (allExamples.filter (·.symmetric)).all (fun e => !e.doSupport) = true := by
-  native_decide
-
-
--- ============================================================================
--- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
--- Studies/Miestamo2005.lean per the project's "per-language data flows
--- through Fragments" rule)
--- ============================================================================
+  decide
 
 /-- English negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Typology.Negation.NegationProfile :=

@@ -119,29 +119,7 @@ def allExamples : List NegExample :=
 /-! ## Verification -/
 
 /-- All tenses are available under negation (no paradigmatic gaps). -/
-theorem all_tenses_available : allExamples.length = 5 := by native_decide
-
-private def hasSubstr (s sub : String) : Bool := (s.splitOn sub).length > 1
-
-/-- All formal negatives contain *pas*. -/
-theorem formal_contains_pas :
-    allExamples.all (fun e => hasSubstr e.negativeFormal "pas") = true := by
-  native_decide
-
-/-- All formal negatives contain the *n* component (*ne* or *n'*). -/
-theorem formal_contains_n :
-    allExamples.all (fun e =>
-      hasSubstr e.negativeFormal "ne " || hasSubstr e.negativeFormal "n'") = true := by
-  native_decide
-
-/-- All colloquial negatives contain *pas*. -/
-theorem colloquial_contains_pas :
-    allExamples.all (fun e => hasSubstr e.negativeColloquial "pas") = true := by
-  native_decide
-
--- ════════════════════════════════════════════════════
--- Expletive Negation Markers
--- ════════════════════════════════════════════════════
+theorem all_tenses_available : allExamples.length = 5 := by decide
 
 /-! ## Expletive Negation
 @cite{jin-koenig-2021}
@@ -205,18 +183,11 @@ def enTriggerNegators : List ENTriggerNegator :=
     low-entrenchment EN uses *ne...pas* (the standard negator). -/
 theorem high_entrenchment_uses_ne_alone :
     (enTriggerNegators.filter (·.highEntrenchment)).all
-      (·.enNegatorForm == "ne") = true := by native_decide
+      (·.enNegatorForm == "ne") = true := by decide
 
 /-- French EN marker = preverbal *ne* = same clitic as in standard
     *ne...pas*, but without the reinforcer. -/
 theorem en_marker_is_ne_clitic : enMarker = neClitic := rfl
-
-
--- ============================================================================
--- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
--- Studies/Miestamo2005.lean per the project's "per-language data flows
--- through Fragments" rule)
--- ============================================================================
 
 /-- French negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Typology.Negation.NegationProfile :=

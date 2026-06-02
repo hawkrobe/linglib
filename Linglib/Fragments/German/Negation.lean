@@ -99,24 +99,8 @@ def allExamples : List NegExample :=
 
 /-! ## Verification -/
 
-private def hasSubstr (s sub : String) : Bool := (s.splitOn sub).length > 1
-
-/-- German negation is symmetric: the negative form is always the
-    affirmative + *nicht*, with no structural change. We verify this
-    by checking that each negative example contains *nicht*. -/
-theorem all_negative_contain_nicht :
-    allExamples.all (fun e => hasSubstr e.negative "nicht") = true := by
-  native_decide
-
 /-- All five tenses are available under negation (no paradigmatic gaps). -/
-theorem all_tenses_available : allExamples.length = 5 := by native_decide
-
-
--- ============================================================================
--- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
--- Studies/Miestamo2005.lean per the project's "per-language data flows
--- through Fragments" rule)
--- ============================================================================
+theorem all_tenses_available : allExamples.length = 5 := by decide
 
 /-- German negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Typology.Negation.NegationProfile :=

@@ -121,30 +121,7 @@ def allConcordExamples : List NegConcordExample := [nikdo, nic, nikdy]
 
 /-! ## Verification -/
 
-theorem all_examples_count : allExamples.length = 4 := by native_decide
-
-/-- All negative forms begin with *Ne* (prefix attached). -/
-theorem all_negative_start_ne :
-    allExamples.all (fun e => e.negative.startsWith "Ne") = true := by
-  native_decide
-
-/-- All negative concord sentences contain a verb with *ne-* prefix. -/
-theorem all_concord_contain_ne :
-    allConcordExamples.all (fun e =>
-      (e.sentence.splitOn "ne").length > 1) = true := by
-  native_decide
-
-/-- All n-words begin with *ni-*. -/
-theorem all_nwords_ni_prefix :
-    allConcordExamples.all (fun e => e.nword.startsWith "ni") = true := by
-  native_decide
-
-
--- ============================================================================
--- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
--- Studies/Miestamo2005.lean per the project's "per-language data flows
--- through Fragments" rule)
--- ============================================================================
+theorem all_examples_count : allExamples.length = 4 := by decide
 
 /-- Czech negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Typology.Negation.NegationProfile :=

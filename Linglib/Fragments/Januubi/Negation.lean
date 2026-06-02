@@ -45,9 +45,7 @@ namespace Januubi.Negation
 
 open Typology.Negation
 
--- ════════════════════════════════════════════════════
--- § 1. Standard Negation
--- ════════════════════════════════════════════════════
+/-! ### Standard negation -/
 
 /-- *maa* — Januubi Arabic's standard sentential negation particle.
     Same form used as the EN marker across all attested EN-trigger
@@ -68,9 +66,7 @@ def standardNeg : String := maa.form
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "" [maa]
 
--- ════════════════════════════════════════════════════
--- § 2. Expletive Negation Markers
--- ════════════════════════════════════════════════════
+/-! ### Expletive negation markers -/
 
 /-- An expletive negation marker used in a specific trigger context. -/
 structure ENNegator where
@@ -92,9 +88,7 @@ def enNegator : ENNegator where
     standard and expletive negation. -/
 theorem en_negator_is_standard : enNegator.isStandardNeg = true := rfl
 
--- ════════════════════════════════════════════════════
--- § 3. Trigger-Specific Examples
--- ════════════════════════════════════════════════════
+/-! ### Trigger-specific examples -/
 
 /-- A glossed EN example from Januubi. -/
 structure ENExample where
@@ -131,9 +125,7 @@ def barelyExample : ENExample where
 def allExamples : List ENExample :=
   [beforeExample, barelyExample]
 
--- ════════════════════════════════════════════════════
--- § 4. Structural Constraints on EN
--- ════════════════════════════════════════════════════
+/-! ### Structural Constraints on EN -/
 
 open Phenomena.Negation.ExpletiveNegation (ENBlockingReason)
 

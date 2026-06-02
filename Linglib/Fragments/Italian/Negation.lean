@@ -52,13 +52,6 @@ def non : NegMarkerEntry :=
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "ita" [non]
 
-
--- ============================================================================
--- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
--- Studies/Miestamo2005.lean per the project's "per-language data flows
--- through Fragments" rule)
--- ============================================================================
-
 /-- Italian negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Typology.Negation.NegationProfile :=
   { language := "Italian"

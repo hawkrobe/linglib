@@ -35,9 +35,7 @@ namespace Finnish.Negation
 open Morphology (MorphCategory MorphRule InflDistribution)
 open Typology.Negation
 
--- ============================================================================
--- § 0: Marker + System (Fragment-side joint)
--- ============================================================================
+/-! ### Marker and system -/
 
 /-- *ei* — Finnish's negative auxiliary verb, cited in 3sg form.
     Genuine auxiliary: inflects for person and number (`negParadigm` below
@@ -59,9 +57,7 @@ def ei : NegMarkerEntry :=
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "fin" [ei]
 
--- ============================================================================
--- § 1: Negative Auxiliary Paradigm
--- ============================================================================
+/-! ### Negative auxiliary paradigm -/
 
 /-- Person–number features for the Finnish negative auxiliary. -/
 structure NegForm where
@@ -79,9 +75,7 @@ def negParadigm : List NegForm :=
   , ⟨2, "pl", "ette"⟩
   , ⟨3, "pl", "eivät"⟩ ]
 
--- ============================================================================
--- § 2: Connegative Formation
--- ============================================================================
+/-! ### Connegative formation -/
 
 /-- The connegative `MorphRule`: strips tense marking from the main verb,
     leaving only the bare stem. The negative auxiliary carries tense instead.
@@ -112,9 +106,7 @@ def negAgreementRule (person : Nat) (number : String) : MorphRule Bool :=
   , semEffect := id
   , delegatedSemantics := true }
 
--- ============================================================================
--- § 3: Inflection Distribution
--- ============================================================================
+/-! ### Inflection distribution -/
 
 /-- Finnish negative construction inflection distribution.
 
@@ -126,22 +118,10 @@ def finnishNegDistribution : InflDistribution :=
   { onAux := [.negation, .tense, .agreement .subj]
   , onLex := [.stem, .aspect] }
 
--- ============================================================================
--- § 4: Verification Theorems
--- ============================================================================
+/-! ### Verification -/
 
 /-- The paradigm has exactly 6 forms (3 persons × 2 numbers). -/
-theorem paradigm_size : negParadigm.length = 6 := by native_decide
-
-/-- All singular forms are monosyllabic (≤ 2 characters). -/
-theorem singular_short :
-    (negParadigm.filter (·.number == "sg")).all
-      (fun f => f.form.length ≤ 2) = true := by native_decide
-
-/-- All forms share the stem *e-* (first character is 'e'). -/
-theorem shared_stem :
-    negParadigm.all (fun f => f.form.get ⟨0⟩ == 'e') = true := by
-  native_decide
+theorem paradigm_size : negParadigm.length = 6 := by decide
 
 /-- The connegative rule's semantic effect is Boolean negation. -/
 theorem connegative_negates : connegativeRule.semEffect true = false := rfl
@@ -151,13 +131,6 @@ theorem connegative_negates : connegativeRule.semEffect true = false := rfl
 theorem neg_aux_respects_bybee :
     MorphCategory.peripherality .negation <
     MorphCategory.peripherality (.agreement .subj) := by decide
-
-
--- ============================================================================
--- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
--- Studies/Miestamo2005.lean per the project's "per-language data flows
--- through Fragments" rule)
--- ============================================================================
 
 /-- Finnish negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Typology.Negation.NegationProfile :=

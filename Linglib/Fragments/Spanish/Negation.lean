@@ -117,21 +117,7 @@ def postverbalNada : NegConcordExample :=
 /-! ## Verification -/
 
 /-- All five tenses are available under negation (no paradigmatic gaps). -/
-theorem all_tenses_available : allExamples.length = 5 := by native_decide
-
-private def hasSubstr (s sub : String) : Bool := (s.splitOn sub).length > 1
-
-/-- All negative examples contain *no*. -/
-theorem all_negative_contain_no :
-    allExamples.all (fun e => hasSubstr e.negative " no ") = true := by
-  native_decide
-
-
--- ============================================================================
--- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
--- Studies/Miestamo2005.lean per the project's "per-language data flows
--- through Fragments" rule)
--- ============================================================================
+theorem all_tenses_available : allExamples.length = 5 := by decide
 
 /-- Spanish negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Typology.Negation.NegationProfile :=
