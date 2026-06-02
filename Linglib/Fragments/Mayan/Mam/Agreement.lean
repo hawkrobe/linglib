@@ -1,7 +1,7 @@
 import Linglib.Features.Case
-import Linglib.Features.Case
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
+import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Typology.Extraction
 
 /-!
@@ -438,5 +438,45 @@ theorem setB_1sg : setBExponent .p1sg = "chin" := rfl
 
 /-- Set B 3SG marker is the default "tz'=". -/
 theorem setB_3sg : setBExponent .p3sg = defaultSetB := rfl
+
+-- ============================================================================
+-- § Canonical-φ paradigm (descriptive, theory-neutral)
+-- ============================================================================
+
+open Syntax.Agreement
+
+/-! The Set A / Set B tables above are keyed by the Mayan-specific `PersonNumber`
+enum. Re-stated here over the **canonical φ-cell** (`Syntax.Agreement.AgrCell` —
+the same `person × number` a `Pronoun`/`Word` carries, @cite{corbett-1998} §2),
+so a controller's φ (`Word.agrCell`) indexes the agreement paradigm directly:
+pronoun-φ and agreement-φ are one space (@cite{corbett-1998} §1; @cite{scott-2023}
+Ch. 2). Theory-neutral — the table records syncretism (t-, ky-, tz'=, chi) as a
+plain fact; the Distributed-Morphology account of it (impoverishment / Elsewhere;
+@cite{scott-2023} Ch. 4) is theory and lives in the study, not the fragment. -/
+
+/-- A Mayan `PersonNumber` as a canonical φ-cell (person × number). -/
+def pnCell : PersonNumber → AgrCell
+  | .p1sg => .pn .first .Sing  | .p2sg => .pn .second .Sing | .p3sg => .pn .third .Sing
+  | .p1pl => .pn .first .Plur  | .p2pl => .pn .second .Plur | .p3pl => .pn .third .Plur
+
+/-- Set A (ergative) as a descriptive paradigm over canonical φ-cells. -/
+def setAParadigm : Paradigm String :=
+  PersonNumber.all.map fun p => (pnCell p, setAExponent p)
+
+/-- Set B (absolutive) as a descriptive paradigm over canonical φ-cells. -/
+def setBParadigm : Paradigm String :=
+  PersonNumber.all.map fun p => (pnCell p, setBExponent p)
+
+/-- The canonical-φ paradigm agrees with the `PersonNumber`-keyed table. -/
+theorem setAParadigm_consistent (p : PersonNumber) :
+    setAParadigm.realize (pnCell p) = some (setAExponent p) := by
+  cases p <;> rfl
+
+/-- A controller's φ-features index the Set A paradigm directly: a 1sg agent
+    selects its first-person-singular ergative prefix — pronoun-φ driving
+    agreement realization in one shared feature space. -/
+theorem erg_1sg_from_phi :
+    setAParadigm.realizeFor ⟨"", .PRON, { person := some .first, number := some .sg }⟩
+      = some "n-/w-" := by rfl
 
 end Mam
