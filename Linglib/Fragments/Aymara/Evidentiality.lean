@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Aymara Evidentiality
@@ -10,19 +10,22 @@ areal feature shared with Quechua. WALS Ch 77 has no entry; fallback fires.
 
 namespace Aymara.Evidentiality
 
-open Typology.Modality
-open Features.Evidentiality (EvidentialSource)
+/-! ### Typed evidential inventory
 
-/-- Aymara evidentiality: 3-way Andean system, parallel to Quechua. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "Aymara" "aym" "Aymaran"
-    (markers := ["-wa (direct)", "-sa (reportative)", "-pacha (inferential)"])
-    (notes := "Obligatory three-way system; Andean areal feature shared with Quechua")
-    (attestedEvidentials := [.direct, .hearsay, .inference])
-    (systemFb := .threeOrMore)
-    (codingFb := .verbalAffix)
+Aymara's 3-way Andean system: direct `-wa`, reportative `-sa`,
+inferential `-pacha`. Obligatory verbal affixes. -/
 
-example : evidentialityProfile.iso = "aym" ∧ evidentialityProfile.language = "Aymara" :=
-  ⟨rfl, rfl⟩
+open Semantics.Evidential
+
+def evidentials : List Entry :=
+  [ .direct      { form := "-wa",     exponent := .verbalAffix },
+    .reportative { form := "-sa",     exponent := .verbalAffix,
+                   sourceIdentity := .unidentified },
+    .inferential { form := "-pacha",  exponent := .verbalAffix } ]
+
+example : evidentials.length = 3 := by decide
+example : (evidentials.filter Entry.IsDirect).length = 1 := by decide
+example : (evidentials.filter Entry.IsReportative).length = 1 := by decide
+example : (evidentials.filter Entry.IsInferential).length = 1 := by decide
 
 end Aymara.Evidentiality

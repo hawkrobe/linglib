@@ -16,6 +16,7 @@ import Linglib.Features.ClauseForm
 import Linglib.Features.Clusivity
 import Linglib.Typology.Pronoun.Basic
 import Linglib.Typology.Pronoun.WALS
+import Linglib.Typology.Evidentiality
 import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
@@ -93,6 +94,8 @@ import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Presupposition.Context
 import Linglib.Semantics.Dynamic.Postsupposition
 import Linglib.Semantics.ContentLayer
+import Linglib.Semantics.Evidential.Defs
+import Linglib.Semantics.Evidential.Basic
 import Linglib.Semantics.Questions.Denotation
 import Linglib.Semantics.Questions.Partition.Lattice
 import Linglib.Semantics.Questions.Partition.Cells
