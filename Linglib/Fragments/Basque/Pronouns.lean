@@ -8,7 +8,7 @@ plural *zuek* is distinct from formal singular *zu*.
 
 -/
 
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Basic
 
 namespace Basque.Pronouns
 

@@ -39,7 +39,7 @@ much of the linguistics literature) appear in docstrings only.
 
 -/
 
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Basic
 
 namespace Korean.Pronouns
 

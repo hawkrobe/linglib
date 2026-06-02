@@ -10,7 +10,7 @@ traditional Japanese relies heavily on null reference.
 
 -/
 
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Basic
 
 namespace Japanese.Pronouns
 

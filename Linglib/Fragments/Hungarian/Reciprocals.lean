@@ -1,4 +1,4 @@
-import Linglib.Typology.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Basic
 import Linglib.Semantics.Reference.Reciprocals
 import Linglib.Semantics.Reference.PluralityLicensing
 
