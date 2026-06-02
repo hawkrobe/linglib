@@ -3,10 +3,15 @@ import Mathlib.Order.Nat
 /-!
 # Agreement Target Hierarchy @cite{corbett-1991}
 
-The Agreement Hierarchy (@cite{corbett-1991}) ranks morphosyntactic targets
-by likelihood of showing agreement: attributive adjectives are most likely,
-verbs least likely. If a language shows gender/number agreement on a lower
-target, it shows agreement on all higher targets.
+@cite{corbett-1991}'s Agreement Hierarchy has four positions —
+attributive > predicate > relative pronoun > personal pronoun — along which
+the likelihood of *semantic* (rather than syntactic) agreement increases
+monotonically from left to right.
+
+The `AgreementTarget` enum below additionally carries a `verb` target, ranked
+below personal pronoun, for languages with verbal gender/number agreement.
+Corbett subsumes verbal agreement under the predicate position, so `verb` is
+a linglib refinement, not a fifth position of Corbett's hierarchy.
 
 This type is shared by gender typology (`Linglib/Typology/Gender.lean` and
 `Studies/Corbett1991.lean`) and number agreement
@@ -15,11 +20,12 @@ This type is shared by gender typology (`Linglib/Typology/Gender.lean` and
 
 namespace Syntax.Agreement
 
-/-- Morphosyntactic targets where agreement can surface, ordered by the
-    Agreement Hierarchy (@cite{corbett-1991}).
+/-- Morphosyntactic targets where agreement can surface, ranked by
+    @cite{corbett-1991}'s Agreement Hierarchy (with `verb` as a linglib
+    refinement below personal pronoun — see the module docstring).
 
-    Higher rank = more likely to show agreement (closer to controller).
-    Lower rank = less likely (further from controller, more semantic). -/
+    Higher rank = closer to the controller, agreement more syntactic.
+    Lower rank = further from the controller, agreement more semantic. -/
 inductive AgreementTarget where
   | attributive       -- attributive adjective (e.g. French *un bon livre*)
   | predicate         -- predicate adjective/verb (e.g. Russian *kniga interesnaja*)
