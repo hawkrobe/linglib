@@ -921,9 +921,9 @@ theorem japanese_count_mass_uniform :
 
 open Syntax.Agreement (PredicateTarget)
 
-/-- Russian: predicate adjectives agree in gender/number, but past-tense
-    verbs also do — illustrating the Predicate Hierarchy within the
-    agreement target position. -/
+/-- A predicate-hierarchy profile records the sub-positions (verb, participle,
+    adjective, noun) where semantic agreement is possible for a controller —
+    e.g. Russian honorific *vy*. -/
 structure PredicateHierarchyProfile where
   name : String
   /-- Predicate sub-positions where semantic agreement is possible. -/
@@ -943,15 +943,19 @@ def PredicateHierarchyProfile.RespectsHierarchy (p : PredicateHierarchyProfile) 
 instance (p : PredicateHierarchyProfile) : Decidable p.RespectsHierarchy := by
   unfold PredicateHierarchyProfile.RespectsHierarchy; infer_instance
 
-/-- Russian *deca* ('children'): semantic agreement on predicate adjective
-    and noun, but not on finite verb. Participial agreement follows
-    adjective. -/
-def russianDecaPredHier : PredicateHierarchyProfile :=
-  { name := "Russian deca (Predicate Hierarchy)"
-    semanticTargets := [.participle, .adjective, .noun] }
+/-- Russian honorific *vy* 'you' (polite singular): grammatically plural but
+    referring to one person, so semantic agreement = singular. Per
+    @cite{corbett-2000}'s Predicate Hierarchy data, the finite verb and
+    participle keep syntactic (plural) agreement, while the long-form
+    predicate adjective and the predicate noun take singular (semantic)
+    agreement. -/
+def russianHonorificVy : PredicateHierarchyProfile :=
+  { name := "Russian honorific vy (Predicate Hierarchy)"
+    semanticTargets := [.adjective, .noun] }
 
-/-- The Russian Predicate Hierarchy profile respects monotonicity. -/
+/-- The Russian honorific-*vy* profile respects Predicate Hierarchy
+    monotonicity. -/
 theorem russian_predicate_hierarchy_holds :
-    russianDecaPredHier.RespectsHierarchy := by decide
+    russianHonorificVy.RespectsHierarchy := by decide
 
 end Corbett2000
