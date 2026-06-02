@@ -8,7 +8,7 @@ import Linglib.Features.Definiteness
 @cite{moroney-2021} @cite{schwarz-2009} @cite{schwarz-2013}
 @cite{sharvy-1980} @cite{kriz-2015}
 
-A single sum type `NominalKind F` covering the principal flavors of nominal
+A single sum type `Description F` covering the principal flavors of nominal
 description that the syntax–semantics interface needs to distinguish:
 
 - bare noun (number-neutral; covert type-shifts decide the reading)
@@ -50,7 +50,7 @@ unified `F.Denot` machinery rather than ad-hoc `E → Bool` predicates.
 - **`possessive` carries possessor + relation expressions** rather than
   conflating them with the restrictor. The relation has type `e ⇒ e ⇒ t`,
   and the possessor is an `e`-type expression that may itself be derived
-  from a `NominalKind` higher in the structure.
+  from a `Description` higher in the structure.
 
 - **Reuses `Features.Deixis.Feature`** for the deictic content, so
   Shan/English/Latin/German fragments share the same enum.
@@ -69,10 +69,12 @@ open Core.Logic.Intensional.Variables
 -- § The Sum Type
 -- ════════════════════════════════════════════════════════════════
 
-/-- Principal flavors of nominal description. The frame parameter `F` supplies
-    the entity domain and index set so all subexpressions live in the same
-    `F.Denot` universe. -/
-inductive NominalKind (F : Frame) where
+/-- Principal flavors of nominal description — the *definiteness/reference*
+    axis (bare/indefinite vs the definite subtypes), orthogonal to
+    `Features.BindingClass` (binding distribution) and to a pronoun's lexical
+    kind. The frame parameter `F` supplies the entity domain and index set so
+    all subexpressions live in the same `F.Denot` universe. -/
+inductive Description (F : Frame) where
   /-- Bare noun (no overt determiner). The actual reading — kind, indefinite,
       unique, or anaphoric — is selected by the language's covert type-shift
       hierarchy (@cite{chierchia-1998}, @cite{dayal-2004}). -/
@@ -108,13 +110,13 @@ inductive NominalKind (F : Frame) where
 -- § Classification Predicates (derivable, no semantics yet)
 -- ════════════════════════════════════════════════════════════════
 
-namespace NominalKind
+namespace Description
 
 variable {F : Frame}
 
 /-- Is this a definite description (in the broad sense — uniqueness,
     familiarity, demonstrative, or possessive)? -/
-def isDefinite : NominalKind F → Prop
+def isDefinite : Description F → Prop
   | .bare _              => False
   | .indefinite _        => False
   | .unique _ _          => True
@@ -127,7 +129,7 @@ instance : DecidablePred (@isDefinite F) := fun n => by
 
 /-- Does this description require a discourse antecedent? Anaphoric and
     demonstrative do; unique/possessive/bare/indefinite do not. -/
-def isAnaphoric : NominalKind F → Prop
+def isAnaphoric : Description F → Prop
   | .anaphoric _ _       => True
   | .demonstrative ..    => True
   | _                    => False
@@ -138,16 +140,16 @@ instance : DecidablePred (@isAnaphoric F) := fun n => by
 /-- Does this description bind a structural situation pronoun? Coppock–Beaver
     uniqueness and demonstratives do (resource situation for maximality and
     deictic check); the other constructors do not. -/
-def usesSituationPronoun : NominalKind F → Bool
+def usesSituationPronoun : Description F → Bool
   | .unique _ _          => true
   | .demonstrative ..    => true
   | _                    => false
 
-/-- Map each `NominalKind` flavor to the @cite{schwarz-2009}–@cite{schwarz-2013}
+/-- Map each `Description` flavor to the @cite{schwarz-2009}–@cite{schwarz-2013}
     presupposition type it expresses, where applicable. Bare and indefinite
     return `none` because they are not (in themselves) definites. -/
 def expectedPresupType :
-    NominalKind F → Option Features.Definiteness.DefPresupType
+    Description F → Option Features.Definiteness.DefPresupType
   | .bare _              => none
   | .indefinite _        => none
   | .unique _ _          => some .uniqueness
@@ -157,12 +159,12 @@ def expectedPresupType :
 
 /-- Definites are exactly those flavors with a non-`none` expected
     presupposition type. By construction. -/
-theorem isDefinite_iff_expectedPresup_some (n : NominalKind F) :
+theorem isDefinite_iff_expectedPresup_some (n : Description F) :
     n.isDefinite ↔ n.expectedPresupType.isSome = true := by
   cases n <;> simp [isDefinite, expectedPresupType]
 
 /-- Anaphoric flavors all carry the familiarity presupposition type. -/
-theorem isAnaphoric_implies_familiarity (n : NominalKind F)
+theorem isAnaphoric_implies_familiarity (n : Description F)
     (h : n.isAnaphoric) :
     n.expectedPresupType = some .familiarity := by
   cases n <;> simp [isAnaphoric] at h
@@ -179,7 +181,7 @@ theorem isAnaphoric_implies_familiarity (n : NominalKind F)
     it fills the situation-pronoun slot, which `interpret` discards
     (`interpret_unique_index_irrelevant`). -/
 def ofPresupType (p : Features.Definiteness.DefPresupType)
-    (restrictor : DenotGS F .et) (idx : Nat) : NominalKind F :=
+    (restrictor : DenotGS F .et) (idx : Nat) : Description F :=
   match p with
   | .uniqueness  => .unique restrictor idx
   | .familiarity => .anaphoric restrictor idx
@@ -190,6 +192,6 @@ theorem expectedPresupType_ofPresupType
     (ofPresupType p R idx).expectedPresupType = some p := by
   cases p <;> rfl
 
-end NominalKind
+end Description
 
 end Core.Nominal

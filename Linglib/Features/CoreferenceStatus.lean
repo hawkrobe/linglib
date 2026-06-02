@@ -26,8 +26,13 @@ inductive CoreferenceStatus where
     syntactic frameworks (HPSG, Dependency Grammar, Minimalism) so their
     `classifyNominal` functions return the same type. The per-language
     realization (which forms are which) lives in a Fragment helper (e.g.
-    `English.NominalClassification`). -/
-inductive NominalType where
+    `English.NominalClassification`).
+
+    The *binding-distribution* axis (anaphor/pronominal/r-expression, with the
+    anaphor class split into reflexive/reciprocal) — orthogonal to a nominal's
+    `Core.Nominal.Description` (definiteness/reference flavor) and to a
+    pronoun's lexical kind. -/
+inductive BindingClass where
   /-- Reflexive anaphor (*himself*, *herself*, *themselves*). -/
   | reflexive
   /-- Reciprocal anaphor (*each other*, *one another*). -/

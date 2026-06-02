@@ -6,7 +6,7 @@ import Linglib.Core.Nominal.Maximality
 @cite{coppock-beaver-2015} @cite{hanink-2021} @cite{schwarz-2009}
 @cite{patel-grosz-grosz-2017} @cite{sharvy-1980}
 
-Maps `NominalKind F` to a referent in `Option F.Entity`, relative to a
+Maps `Description F` to a referent in `Option F.Entity`, relative to a
 (entity, situation) bi-assignment. `none` represents either presupposition
 failure (no unique satisfier; no satisfying antecedent at the discourse
 index) or inapplicability (indefinites do not denote a single entity at
@@ -41,9 +41,9 @@ variable {F : Frame}
 -- § The Interpretation Function
 -- ════════════════════════════════════════════════════════════════
 
-/-- Denotation of a `NominalKind` at a bi-assignment, as `Option F.Entity`.
+/-- Denotation of a `Description` at a bi-assignment, as `Option F.Entity`.
     `none` is presupposition failure or inapplicability. -/
-noncomputable def interpret (k : NominalKind F)
+noncomputable def interpret (k : Description F)
     (g : Assignment F.Entity) (gs : SitAssignment F) : Option F.Entity :=
   match k with
   | .bare R                     => russellIota (fun x => R g gs x)

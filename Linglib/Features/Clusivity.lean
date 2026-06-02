@@ -87,4 +87,38 @@ def hasMinimalAugmented (s : System) : Bool :=
 
 end System
 
+/-! ### Per-referent clusivity value -/
+
+/-- The clusivity value of a *referent*: whether a non-singular first-person
+    form includes the addressee. This is the framework-neutral per-pronoun
+    feature (the `Pronoun` object carries `Option Value`); it is `none` where
+    clusivity is unmarked (English *we*) or inapplicable (non-first-person).
+    Contrast `System`, which classifies a *language*. -/
+inductive Value where
+  /-- Inclusive: includes the addressee (1+2, optionally +others). -/
+  | inclusive
+  /-- Exclusive: excludes the addressee (1+others). -/
+  | exclusive
+  deriving DecidableEq, Repr, BEq
+
+open Features.Person (Category)
+
+/-- The @cite{cysouw-2009} `Features.Person.Category` a person + number +
+    clusivity triple realizes. Singulars ignore clusivity; clusivity-marked
+    first-person non-singulars split inclusive (`.minIncl` dual / `.augIncl`
+    plural) from `.excl`. A clusivity-*neutral* first-person plural (English
+    *we*) is a syncretism over those cells, so it has no single category
+    (`none`). This is the bridge from the neutral φ-features to the typological
+    inventory. -/
+def categoryOf : UD.Person → UD.Number → Option Value → Option Category
+  | .first,  .Sing, _               => some .s1
+  | .second, .Sing, _               => some .s2
+  | .third,  .Sing, _               => some .s3
+  | .first,  .Dual, some .inclusive => some .minIncl
+  | .first,  .Plur, some .inclusive => some .augIncl
+  | .first,  _,     some .exclusive => some .excl
+  | .second, .Plur, _               => some .secondGrp
+  | .third,  .Plur, _               => some .thirdGrp
+  | _,       _,     _               => none
+
 end Features.Clusivity

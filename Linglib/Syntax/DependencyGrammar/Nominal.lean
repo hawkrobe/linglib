@@ -22,14 +22,14 @@ Fragments providing instances; the test-word lexemes should move to
 
 ## Main declarations
 
-* `NominalType`, `isNominalCat`, `classifyNominal`, `phiAgree` — re-exported.
+* `BindingClass`, `isNominalCat`, `classifyNominal`, `phiAgree` — re-exported.
 * `john`, `mary`, `they`, `sees`, `see`, `himself`, `herself`,
   `themselves`, `him`, `her`, `them`, `eachOther` — English test words.
 -/
 
 namespace DepGrammar.Nominal
 
-export Features (NominalType)
+export Features (BindingClass)
 export English.NominalClassification (isNominalCat classifyNominal phiAgree)
 
 /-! ### Shared English test words

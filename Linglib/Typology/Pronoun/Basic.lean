@@ -3,6 +3,7 @@ import Linglib.Features.Case
 import Linglib.Features.Register
 import Linglib.Features.Prominence
 import Linglib.Features.Gender
+import Linglib.Features.Clusivity
 
 /-!
 # Pronoun
@@ -49,6 +50,13 @@ structure Pronoun where
   person : Option Person := none
   /-- Grammatical number. -/
   number : Option Number := none
+  /-- Clusivity (inclusive/exclusive) of a first-person non-singular form — the
+      inclusive/exclusive split of the 1st-person plural/dual. A φ-feature borne
+      by any such pro-form (personal, possessive, reflexive), like `gender`;
+      `none` where unmarked (English *we*) or inapplicable. Distinguishes
+      Tagalog *tayo* (incl) / *kami* (excl) and *natin* (our.incl) / *namin*
+      (our.excl). @cite{cysouw-2009} -/
+  clusivity : Option Features.Clusivity.Value := none
   /-- Grammatical case. -/
   case_ : Option Features.Case := none
   /-- Grammatical gender. For 3rd-person pronouns in gendered languages
@@ -93,6 +101,30 @@ open Features (SurfaceGender)
 def toWord (p : Pronoun) : Word :=
   { form := p.form, cat := .PRON,
     features := { person := p.person, number := p.number, case_ := p.case_ } }
+
+/-! ### Derived person category and well-formedness (@cite{cysouw-2009}) -/
+
+/-- The @cite{cysouw-2009} `Category` this pronoun's person + number + clusivity
+    realizes, when fully specified — the neutral typological view of its
+    person-reference, *derived* (not stored). `none` when person/number is
+    underspecified, or for a clusivity-unmarked first-person plural (a syncretism
+    over `.minIncl`/`.augIncl`/`.excl`, e.g. English *we*). -/
+def category (p : Pronoun) : Option Features.Person.Category :=
+  match p.person, p.number with
+  | some per, some num => Features.Clusivity.categoryOf per num p.clusivity
+  | _, _ => none
+
+/-- Well-formedness of a pronoun's φ-features: clusivity is borne only by a
+    first-person non-singular (dual/plural) form — the inclusive/exclusive split
+    of the 1st-person plural/dual (@cite{cysouw-2009}). This is the invariant a
+    person-value type tower would have enforced, carried as a *predicate* (the
+    mathlib way) so illegal states are catchable without fragmenting the type. -/
+def WellFormed (p : Pronoun) : Prop :=
+  p.clusivity ≠ none →
+    p.person = some .first ∧ (p.number = some .du ∨ p.number = some .pl)
+
+instance (p : Pronoun) : Decidable p.WellFormed := by
+  unfold WellFormed; infer_instance
 
 /-! ### Structural deficiency (@cite{cardinaletti-starke-1999}) -/
 

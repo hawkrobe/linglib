@@ -34,9 +34,9 @@ localized to a single declaration.
 ## Implementation notes
 
 An `Article`'s admissible @cite{schwarz-2009} strengths are `Article.presupTypes`
-(Frame-free, read off `uses`); its denotation is `Article.toNominalKinds`
-(`Core/Nominal/DeterminerLicensing.lean`, Frame-aware) — the set of `NominalKind`s
-those strengths admit via `NominalKind.ofPresupType`, so a syncretic article like
+(Frame-free, read off `uses`); its denotation is `Article.toDescriptions`
+(`Core/Nominal/DeterminerLicensing.lean`, Frame-aware) — the set of `Description`s
+those strengths admit via `Description.ofPresupType`, so a syncretic article like
 English *the* denotes *both* the weak and the strong description.
 `Demonstrative.denote` (deictic), the `Quantifier` generalized quantifier
 (`Core/Logic/Quantification`), and the `Possessive` possession relation remain
@@ -247,8 +247,8 @@ end Determiner
 The @cite{schwarz-2009} presupposition types an article *can* express — its
 admissible readings, read off `uses`. A syncretic article (English *the*) admits
 both; a weak- or strong-only article admits one. The image of these under
-`NominalKind.ofPresupType` is the article's set of possible denotations
-(`Article.toNominalKinds`, in `DeterminerLicensing.lean`). -/
+`Description.ofPresupType` is the article's set of possible denotations
+(`Article.toDescriptions`, in `DeterminerLicensing.lean`). -/
 
 /-- The @cite{schwarz-2009} strengths an article admits, read off its `uses` (as a
 list — `DefPresupType` is binary, so its content is the membership-closure). -/
