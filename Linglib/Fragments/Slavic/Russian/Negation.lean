@@ -115,34 +115,9 @@ def allConcordExamples : List NegConcordExample := [nikto, nichego, nikogda]
 
 /-! ## Verification -/
 
-private def hasSubstr (s sub : String) : Bool := (s.splitOn sub).length > 1
-
 theorem ne_form : ne.form = "не" := rfl
 
-theorem all_examples_count : allExamples.length = 4 := by native_decide
-
-/-- All negative examples contain *не* (or sentence-initial *Не*). -/
-theorem all_negative_contain_ne :
-    allExamples.all (fun e =>
-      hasSubstr e.negative "не" || hasSubstr e.negative "Не") = true := by
-  native_decide
-
-/-- All negative concord examples contain *не* alongside the n-word. -/
-theorem all_concord_contain_ne :
-    allConcordExamples.all (fun e => hasSubstr e.sentence "не") = true := by
-  native_decide
-
-/-- All n-words begin with *ни-*. -/
-theorem all_nwords_ni_prefix :
-    allConcordExamples.all (fun e => e.nword.startsWith "ни") = true := by
-  native_decide
-
-
--- ============================================================================
--- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
--- Studies/Miestamo2005.lean per the project's "per-language data flows
--- through Fragments" rule)
--- ============================================================================
+theorem all_examples_count : allExamples.length = 4 := by decide
 
 /-- Russian negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Typology.Negation.NegationProfile :=

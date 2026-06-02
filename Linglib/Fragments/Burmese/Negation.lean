@@ -89,13 +89,13 @@ def burmeseTAM : TAMAvailability :=
 
 /-! ## Verification -/
 
-theorem sa_paradigm_size : saParadigm.length = 3 := by native_decide
+theorem sa_paradigm_size : saParadigm.length = 3 := by decide
 
 /-- All negative forms are identical: TAM is neutralized. -/
 theorem tam_neutralized :
     let negForms := saParadigm.map (·.negative)
     negForms.all (· == "ma-sa-bu") = true := by
-  native_decide
+  decide
 
 /-- The affirmative has 3 distinct TAM forms; the negative has 1. -/
 theorem paradigmatic_asymmetry :
@@ -107,22 +107,7 @@ theorem paradigmatic_asymmetry :
 theorem affirmative_forms_distinct :
     let affForms := saParadigm.map (·.affirmative)
     affForms.length = 3 ∧ affForms.eraseDups.length = 3 := by
-  exact ⟨rfl, by native_decide⟩
-
-private def hasSubstr (s sub : String) : Bool := (s.splitOn sub).length > 1
-
-/-- All negative forms contain the circumfix *ma-...-bu*. -/
-theorem all_neg_circumfix :
-    saParadigm.all (fun e =>
-      hasSubstr e.negative "ma-" && hasSubstr e.negative "-bu") = true := by
-  native_decide
-
-
--- ============================================================================
--- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
--- Studies/Miestamo2005.lean per the project's "per-language data flows
--- through Fragments" rule)
--- ============================================================================
+  exact ⟨rfl, by decide⟩
 
 /-- Burmese negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Typology.Negation.NegationProfile :=

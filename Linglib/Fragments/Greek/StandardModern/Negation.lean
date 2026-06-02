@@ -30,9 +30,7 @@ open Semantics.Modality.Kratzer (ModalBase OrderingSource necessity)
 
 abbrev World := Fin 4
 
--- ============================================================================
--- § 1: Negation Marker Entries (Tsiakmakis 2025 paper apparatus)
--- ============================================================================
+/-! ### Negation marker entries -/
 
 /-- A Greek sentential negation marker, augmented with the mood/NCI
     properties from @cite{tsiakmakis-2025}'s NEG₁/NEG₂ analysis.
@@ -76,9 +74,7 @@ def min : MoodMarkerEntry :=
   , isStandardNegation := false
   , licensesNCIs := false }
 
--- ============================================================================
--- § 1b: Cross-linguistic substrate (Typology.Negation)
--- ============================================================================
+/-! ### Cross-linguistic substrate -/
 
 /-- *dhen* in Core substrate form. Cross-linguistic typology face of the
     indicative negator; the paper-specific mood/NCI apparatus lives on
@@ -101,9 +97,7 @@ def minMarker : Typology.Negation.NegMarkerEntry :=
 def negationSystem : Typology.Negation.NegationSystem :=
   Typology.Negation.NegationSystem.ofISO "ell" [dhenMarker, minMarker]
 
--- ============================================================================
--- § 2: Semantics
--- ============================================================================
+/-! ### Semantics -/
 
 /-- Semantics of *dhen*: standard truth-functional negation.
     ⟦dhen⟧ = λp.¬p -/
@@ -126,10 +120,6 @@ def minNegSem (f : ModalBase World) (g : OrderingSource World) (p : World → Pr
 def minExplSem (f : ModalBase World) (g : OrderingSource World) (p : World → Prop)
     (w : World) : Prop :=
   necessity f g p w
-
--- ============================================================================
--- § 3: Structural Properties
--- ============================================================================
 
 /-- Greek has exactly two sentential negation markers. -/
 def allMarkers : List MoodMarkerEntry := [dhen, min]

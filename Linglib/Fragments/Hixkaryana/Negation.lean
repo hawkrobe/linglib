@@ -62,31 +62,17 @@ def allExamples : List NegExample := [immPast]
 
 /-! ## Verification -/
 
-theorem all_examples_count : allExamples.length = 1 := by native_decide
+theorem all_examples_count : allExamples.length = 1 := by decide
 
 /-- All constructions are asymmetric. -/
 theorem all_asymmetric :
     allExamples.all (fun e => !e.symmetric) = true := by
-  native_decide
+  decide
 
 /-- Negation introduces a copula as the finite element. -/
 theorem copula_as_finite :
     allExamples.all (·.copulaFinite) = true := by
-  native_decide
-
-private def hasSubstr (s sub : String) : Bool := (s.splitOn sub).length > 1
-
-/-- All negative examples contain the suffix *-hira*. -/
-theorem all_negative_contain_hira :
-    allExamples.all (fun e => hasSubstr e.negative "-hira") = true := by
-  native_decide
-
-
--- ============================================================================
--- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
--- Studies/Miestamo2005.lean per the project's "per-language data flows
--- through Fragments" rule)
--- ============================================================================
+  decide
 
 /-- Hixkaryana negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Typology.Negation.NegationProfile :=

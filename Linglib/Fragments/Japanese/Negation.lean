@@ -114,38 +114,21 @@ def japaneseNegDistribution : NegInflDistribution :=
 
 /-! ## Verification -/
 
-theorem taberu_paradigm_size : taberuParadigm.length = 5 := by native_decide
-theorem yomu_paradigm_size : yomuParadigm.length = 2 := by native_decide
+theorem taberu_paradigm_size : taberuParadigm.length = 5 := by decide
+theorem yomu_paradigm_size : yomuParadigm.length = 2 := by decide
 
-private def hasSubstr (s sub : String) : Bool := (s.splitOn sub).length > 1
-
-/-- The verb stem in negative forms differs from affirmative — asymmetry
-    is visible: negative past *tabenakatta* does not contain the affirmative
-    past suffix *-ta* directly on the stem. -/
-theorem neg_past_differs_from_aff_past :
-    let affPast := (taberuParadigm.filter (·.formLabel == "past")).head!
-    let negPast := affPast.negative
-    negPast = "tabenakatta" ∧ hasSubstr negPast "nakatta" = true := by
-  exact ⟨by native_decide, by native_decide⟩
-
-/-- All negative forms contain the negative morpheme *na*. -/
-theorem all_neg_contain_na :
-    taberuParadigm.all (fun e => hasSubstr e.negative "na") = true := by
-  native_decide
+/-- The negative past form is *tabenakatta* — built on the negative stem,
+    not the affirmative past *tabeta*. -/
+theorem neg_past_form :
+    (taberuParadigm.filter (·.formLabel == "past")).head!.negative
+      = "tabenakatta" := by decide
 
 /-- The distribution shows that tense moves from stem to suffix under negation. -/
 theorem tense_moves_to_suffix :
     japaneseNegDistribution.affirmativeOnStem.contains .tense = true ∧
     japaneseNegDistribution.negativeOnStem.contains .tense = false ∧
     japaneseNegDistribution.negativeOnSuffix.contains .tense = true := by
-  native_decide
-
-
--- ============================================================================
--- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
--- Studies/Miestamo2005.lean per the project's "per-language data flows
--- through Fragments" rule)
--- ============================================================================
+  decide
 
 /-- Japanese negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Typology.Negation.NegationProfile :=

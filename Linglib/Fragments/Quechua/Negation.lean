@@ -87,25 +87,18 @@ def allExamples : List NegExample :=
 
 /-! ## Verification -/
 
-theorem example_count : allExamples.length = 3 := by native_decide
+theorem example_count : allExamples.length = 3 := by decide
 
 /-- Mixed: some symmetric, some asymmetric = SymAsy. -/
 theorem symasy_distribution :
     (allExamples.filter (·.symmetric)).length = 1 ∧
     (allExamples.filter (fun e => !e.symmetric)).length = 2 := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- Asymmetric constructions are exactly those requiring -chu. -/
 theorem asymmetric_iff_chu :
     allExamples.all (fun e => e.symmetric == !e.requiresChu) = true := by
-  native_decide
-
-
--- ============================================================================
--- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
--- Studies/Miestamo2005.lean per the project's "per-language data flows
--- through Fragments" rule)
--- ============================================================================
+  decide
 
 /-- Quechua (Imbabura) negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Typology.Negation.NegationProfile :=

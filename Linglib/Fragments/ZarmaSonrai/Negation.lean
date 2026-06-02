@@ -42,9 +42,7 @@ namespace ZarmaSonrai.Negation
 
 open Typology.Negation
 
--- ════════════════════════════════════════════════════
--- § 1. Standard Negation
--- ════════════════════════════════════════════════════
+/-! ### Standard negation -/
 
 /-- *si* — imperfective negation marker. Aspect-conditioned alternation
     with perfective *mana*/*batu*. Parallel to Mandarin's bù/méi split. -/
@@ -78,15 +76,13 @@ def ipfvNeg : String := si.form
 def pfvNeg : String := mana.form
 def pfvNeg2 : String := batu.form
 
--- ════════════════════════════════════════════════════
--- § 2. Expletive Negation Markers
--- ════════════════════════════════════════════════════
-
 /-- Aspect governs expletive negation marker choice. -/
 inductive ENAspect where
   | ipfv   -- imperfective complement → si
   | pfv    -- perfective complement → mana/batu
   deriving DecidableEq, Repr
+
+/-! ### Expletive negation markers -/
 
 /-- An expletive negation marker used in a specific trigger context. -/
 structure ENNegator where
@@ -115,9 +111,7 @@ def enPfv : ENNegator where
 theorem en_negators_are_standard :
     enIpfv.isStandardNeg = true ∧ enPfv.isStandardNeg = true := ⟨rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 3. Trigger-Specific Examples
--- ════════════════════════════════════════════════════
+/-! ### Trigger-specific examples -/
 
 /-- A glossed EN example from Zarma-Sonrai. -/
 structure ENExample where
@@ -174,9 +168,7 @@ def hideExample : ENExample where
 def allExamples : List ENExample :=
   [delayExample, cannotWaitExample, hideExample]
 
--- ════════════════════════════════════════════════════
--- § 4. Aspect-Based Negator Selection
--- ════════════════════════════════════════════════════
+/-! ### Aspect-based negator selection -/
 
 /-- The EN negator is determined by the aspectual properties of the
     complement clause, not by the trigger class. This is a general

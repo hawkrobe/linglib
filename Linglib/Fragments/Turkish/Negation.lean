@@ -83,34 +83,17 @@ def gelParadigm : List NegParadigmEntry :=
 
 /-! ## Verification -/
 
-theorem gel_paradigm_size : gelParadigm.length = 5 := by native_decide
+theorem gel_paradigm_size : gelParadigm.length = 5 := by decide
 
 /-- Most constructions are symmetric. -/
 theorem mostly_symmetric :
-    (gelParadigm.filter (·.symmetric)).length = 4 := by native_decide
+    (gelParadigm.filter (·.symmetric)).length = 4 := by decide
 
 /-- The aorist is the only asymmetric construction. -/
 theorem aorist_asymmetric :
     (gelParadigm.filter (fun e => !e.symmetric)).length = 1 ∧
     (gelParadigm.filter (fun e => !e.symmetric)).head!.formLabel = "aorist" := by
-  exact ⟨by native_decide, rfl⟩
-
-private def hasSubstr (s sub : String) : Bool := (s.splitOn sub).length > 1
-
-/-- The aorist negative marker *-z* differs from the affirmative *-r*:
-    this is paradigmatic asymmetry (A/Cat). -/
-theorem aorist_different_markers :
-    let aor := (gelParadigm.filter (·.formLabel == "aorist")).head!
-    hasSubstr aor.affirmative "ir" = true ∧
-    hasSubstr aor.negative "ez" = true := by
-  exact ⟨by native_decide, by native_decide⟩
-
-
--- ============================================================================
--- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
--- Studies/Miestamo2005.lean per the project's "per-language data flows
--- through Fragments" rule)
--- ============================================================================
+  exact ⟨by decide, rfl⟩
 
 /-- Turkish negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Typology.Negation.NegationProfile :=

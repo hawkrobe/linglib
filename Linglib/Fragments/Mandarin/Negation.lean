@@ -124,20 +124,20 @@ def negatorContexts : List NegatorDistribution :=
 
 /-! ## Verification -/
 
-theorem all_examples_count : allExamples.length = 5 := by native_decide
+theorem all_examples_count : allExamples.length = 5 := by decide
 
 /-- The *bù* constructions are symmetric; the *méi* constructions are not. -/
 theorem bu_symmetric_mei_asymmetric :
     (allExamples.filter (·.negator == "bù")).all (·.symmetric) = true ∧
     (allExamples.filter (fun e => e.negator == "méi" || e.negator == "méi-yǒu")).all
       (fun e => !e.symmetric) = true := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- 3 symmetric + 2 asymmetric constructions = SymAsy. -/
 theorem symasy_distribution :
     (allExamples.filter (·.symmetric)).length = 3 ∧
     (allExamples.filter (fun e => !e.symmetric)).length = 2 := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-! ## Bridge to AspectComparison
 
@@ -148,10 +148,6 @@ theorem meiyou_matches_aspect_comparison :
     Mandarin.AspectComparison.meiyou.hanzi = "没有" ∧
     Mandarin.AspectComparison.meiyou.pinyin = "méi-yǒu" :=
   ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- Expletive Negation Markers
--- ════════════════════════════════════════════════════
 
 /-! ## Expletive Negation
 @cite{jin-koenig-2021}
@@ -224,7 +220,7 @@ def enTriggerNegators : List ENTriggerNegator :=
     prohibition (@cite{jin-koenig-2021}, §6.1.1, ex. 14). -/
 theorem fear_uses_imperative_neg :
     (enTriggerNegators.filter (·.triggerClass == "FEAR")).all
-      (·.enNegatorForm == "bié") = true := by native_decide
+      (·.enNegatorForm == "bié") = true := by decide
 
 /-- REGRET/COMPLAIN triggers use the deontic negator *bùgāi* 'shouldn't'.
     This connects to the behavioral-standards semantics: ¬p is consistent
@@ -233,14 +229,7 @@ theorem fear_uses_imperative_neg :
 theorem regret_uses_deontic_neg :
     (enTriggerNegators.filter (fun e =>
       e.triggerClass == "REGRET" || e.triggerClass == "COMPLAIN")).all
-      (·.enNegatorForm == "bùgāi") = true := by native_decide
-
-
--- ============================================================================
--- NegationProfile bundle (consumed by Studies/Dryer2013.lean and
--- Studies/Miestamo2005.lean per the project's "per-language data flows
--- through Fragments" rule)
--- ============================================================================
+      (·.enNegatorForm == "bùgāi") = true := by decide
 
 /-- Mandarin Chinese negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Typology.Negation.NegationProfile :=
