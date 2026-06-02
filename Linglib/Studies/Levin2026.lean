@@ -51,7 +51,7 @@ This study connects four existing layers:
 - `Core.Lexical.LevinClass`: verb classes lack causative alternation (§12, §18)
 - `Semantics.Causation.Resultatives`: construction adds CAUSE;
   PCC maps onto the independent-source/tightness infrastructure
-- `Fragments.English.Predicates`: verb and adjective entries
+- `English.Predicates`: verb and adjective entries
 - `Phenomena.ArgumentStructure.DiathesisAlternations`: existing alternation data
 
 The central theoretical insight — that *constructions* can license
@@ -66,8 +66,8 @@ open Core (WorldTimeIndex)
 
 open Semantics.Lexical
 open LevinClass (pushPull hit wipe)
-open Fragments.English.Predicates.Verbal (push pull kick)
-open Fragments.English.Predicates.Adjectival (open_ closed_ shut free_ loose flat
+open English.Predicates.Verbal (push pull kick)
+open English.Predicates.Adjectival (open_ closed_ shut free_ loose flat
   AdjectivalPredicateEntry)
 open Semantics.Causation.Resultatives (resultativeCausativeBuilder)
 open Features.ChangeOfState (CoSType)
@@ -956,14 +956,14 @@ analysis. -/
 /-- The Mandarin push-open compound is the cross-linguistic cognate:
     same verb meaning (push), same result meaning (open), object-oriented. -/
 theorem mandarin_tui_kai_is_cognate :
-    Fragments.Mandarin.Resultatives.tui_kai.gloss = "push-open" ∧
-    Fragments.Mandarin.Resultatives.tui_kai.orientation = .objectOriented := ⟨rfl, rfl⟩
+    Mandarin.Resultatives.tui_kai.gloss = "push-open" ∧
+    Mandarin.Resultatives.tui_kai.orientation = .objectOriented := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § Fragment–Theory Bridge
 -- ════════════════════════════════════════════════════
 
-open Fragments.English.Predicates.Verbal (make cause)
+open English.Predicates.Verbal (make cause)
 open Semantics.Causation.Resultatives (resultativeCausativeBuilder)
 
 /-- Resultative CAUSE matches the Fragment entry for "make". -/

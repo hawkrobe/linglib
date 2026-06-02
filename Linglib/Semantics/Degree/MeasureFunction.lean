@@ -61,7 +61,6 @@ quantify over the scale's maximum (or its absence).
 
 namespace Semantics.Degree.MeasureFunction
 
-open Semantics.Events
 open Semantics.ArgumentStructure.Affectedness
 
 -- ════════════════════════════════════════════════════

@@ -22,7 +22,7 @@ Three patterns of trigger ↔ alternative relationship:
 
 The alternative-structure axis predicts obligatoriness:
 - Deletion / replacement → trigger can be optional or obligatory
-- No alternative → trigger is mandatorily omitted under partial CG support
+- No alternative → trigger is mandatorily omitted under partial CommonGround support
 
 ## Relation to MP infrastructure
 
@@ -138,12 +138,12 @@ Obligatoriness pattern predicted by the alternative-structure typology.
 
 @cite{wang-2025} derives three patterns from the interaction of trigger
 type, alternative structure, and constraint ranking:
-1. Obligatory: trigger must be used when CG supports presupposition
+1. Obligatory: trigger must be used when CommonGround supports presupposition
 2. Optional: trigger may or may not be used
 3. Blocked: trigger must NOT be used (mandatorily omitted)
 -/
 inductive Obligatoriness where
-  /-- Trigger is obligatory when presupposition is fully entailed by CG -/
+  /-- Trigger is obligatory when presupposition is fully entailed by CommonGround -/
   | obligatory
   /-- Trigger is optional (either form is acceptable) -/
   | optional

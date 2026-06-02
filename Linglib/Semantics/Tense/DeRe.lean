@@ -50,7 +50,7 @@ live in `Studies/Abusch1997.lean`.
   shadow this file connects to (the deleted `TemporalDeRe` triple was a
   shadow of *this* shadow; see the `isFelicitousWith_iff_…` theorem
   below for the bridge).
-- `Semantics.Modality.HistoricalAlternatives.actualHistoryBase` —
+- `HistoricalAlternatives.actualHistoryBase` —
   Klecha 2016 DOX substrate, available as the metaphysical instantiation
   via `metaphysicalAlternatives`.
 
@@ -101,7 +101,7 @@ namespace Semantics.Tense.DeRe
 
 open Core (Intension WorldTimeIndex)
 open Core.Context (KContext)
-open Semantics.Modality.HistoricalAlternatives (WorldHistory actualHistoryBase)
+open HistoricalAlternatives (actualHistoryBase)
 open Core.Time.Tense (TensePronoun GramTense TemporalAssignment)
 
 
@@ -282,9 +282,9 @@ theorem isFelicitousWith_of_isAbuschFelicitous [LinearOrder T]
 /-- **Metaphysical** alternative-set instantiation (@cite{klecha-2016}
     DOX): the worlds sharing the holder's actual world's history up to
     her now, paired with times at-or-before her now. Recovers the
-    legacy `WorldHistory`-based behavior as a special case. -/
+    legacy `HistoricalAlternatives`-based behavior as a special case. -/
 def metaphysicalAlternatives [LE T]
-    (history : WorldHistory W T) (dr : TemporalDeReReading W E P T) :
+    (history : HistoricalAlternatives W T) (dr : TemporalDeReReading W E P T) :
     Set (WorldTimeIndex W T) :=
   actualHistoryBase history dr.holderContext.toSituation
 

@@ -40,7 +40,7 @@ The system parallels what English nominal quantification would look
 like with *some* but no *all* or *every*.
 -/
 
-namespace Fragments.NezPerce.Modals
+namespace NezPerce.Modals
 
 open Semantics.Modality (ForceFlavor ForceAnalysis)
 open Semantics.Modality.Typology (ModalExpression satisfiesIFF satisfiesSAV)
@@ -97,4 +97,4 @@ theorem oqa_satisfies_iff : satisfiesIFF oqa.meaning = true := by decide
     enriched interpretation. -/
 theorem oqa_satisfies_sav : satisfiesSAV oqa.meaning = true := by decide
 
-end Fragments.NezPerce.Modals
+end NezPerce.Modals

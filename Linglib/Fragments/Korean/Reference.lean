@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.Korean
+namespace Korean
 
 /-- Korean (Koreanic): no definite or indefinite articles (topic marker
     *-un*/*-nun* sometimes conveys definiteness pragmatically); three-way
@@ -25,4 +25,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .differentStems
   , pronDemRelation := some .relatedNonRemote }
 
-end Fragments.Korean
+end Korean

@@ -37,7 +37,7 @@ inferential role.
 namespace Dialogue.Brandom
 
 open Discourse.Commitment (CommitmentSlate)
-open Discourse.CommonGround (ContextSet CG)
+open CommonGround (ContextSet)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Normative Status
@@ -220,7 +220,7 @@ theorem scorekeepers_can_disagree :
 -- § 7. HasContextSet instance
 -- ════════════════════════════════════════════════════
 
-open Discourse.CommonGround in
+open CommonGround in
 /-- Brandom states project to a context set via `effectiveContextSet`
     (the lossy Brandom → Stalnaker projection: intersection of all
     self-attributed commitments). The lossy projection is the price of

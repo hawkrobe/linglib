@@ -1,17 +1,17 @@
-import Linglib.Typology.Relativization.Defs
+import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Bambara relativization profile
 
-Typological-summary `RelativizationProfile` for Bambara (ISO `bam`).
+Typological-summary `RelativeClause.Profile` for Bambara (ISO `bam`).
 -/
 
-namespace Fragments.Bambara
+namespace Bambara
 
 /-- Bambara relativization: internally-headed RC; non-reduction
     strategy; relativization limited to subject and direct object on AH;
     obliques not relativizable. -/
-def relativization : Typology.Relativization.RelativizationProfile :=
+def relativization : RelativeClause.Profile :=
   { subjStrategy := .nonReduction
   , oblStrategy := .notRelativizable
   , rcPosition := .internallyHeaded
@@ -19,4 +19,4 @@ def relativization : Typology.Relativization.RelativizationProfile :=
   , notes := "Internally-headed RC; non-reduction strategy; "
           ++ "limited to subject and direct object on AH" }
 
-end Fragments.Bambara
+end Bambara

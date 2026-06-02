@@ -32,7 +32,7 @@ outside D&A's SK/SU/NS subdivision; their D&A surface-classification is
 
 set_option autoImplicit false
 
-namespace Fragments.Yakut.Indefinites
+namespace Yakut.Indefinites
 
 open Typology.Indefinite
 
@@ -40,10 +40,9 @@ open Typology.Indefinite
     both specific-known and specific-unknown functions (ABB syncretism).
     @cite{stachowski-menz-1998} p. 423; @cite{bubnov-2026} Table 1
     (D&A type ii). -/
-def ereEntry : IndefiniteEntry where
-  language := "Yakut"
+def ereEntry : IndefinitePronoun where
   form := "kim ere"
-  gloss := "somebody (specific)"
+  ontology := .person
   basis := .interrogative
   functions := {.specificKnown, .specificUnknown}
 
@@ -51,10 +50,9 @@ def ereEntry : IndefiniteEntry where
     indefinites; `kim eme` 'somebody, anybody'.
     @cite{stachowski-menz-1998} p. 423; @cite{bubnov-2026} Table 1
     (D&A type iii). -/
-def emeEntry : IndefiniteEntry where
-  language := "Yakut"
+def emeEntry : IndefinitePronoun where
   form := "kim eme"
-  gloss := "somebody, anybody (non-specific)"
+  ontology := .person
   basis := .interrogative
   functions := {.irrealis}
 
@@ -62,10 +60,9 @@ def emeEntry : IndefiniteEntry where
     `kim bayarar` 'whoever (s)he may be, every'. Outside D&A's SK/SU/NS
     subdivision — its surface D&A classification is `none`.
     @cite{stachowski-menz-1998} p. 423. -/
-def bayararEntry : IndefiniteEntry where
-  language := "Yakut"
+def bayararEntry : IndefinitePronoun where
   form := "kim bayarar"
-  gloss := "whoever, every (free choice)"
+  ontology := .person
   basis := .interrogative
   functions := {.freeChoice, .conditional}
 
@@ -74,10 +71,9 @@ def bayararEntry : IndefiniteEntry where
     (@cite{stachowski-menz-1998} p. 423: 'anybody'). Covers questions,
     conditionals, comparatives, and both negation regions. Outside D&A's
     SK/SU/NS subdivision. -/
-def daEntry : IndefiniteEntry where
-  language := "Yakut"
+def daEntry : IndefinitePronoun where
   form := "kim da"
-  gloss := "anybody (polarity-sensitive)"
+  ontology := .person
   basis := .interrogative
   functions := {.question, .conditional, .comparative,
                 .indirectNeg, .directNeg}
@@ -101,4 +97,4 @@ theorem yakut_paradigm_is_ABB :
 theorem yakut_paradigm_is_interrogativeBased :
     paradigm.toWALS46A = some .interrogativeBased := rfl
 
-end Fragments.Yakut.Indefinites
+end Yakut.Indefinites

@@ -13,16 +13,16 @@ import Linglib.Semantics.Mood.POSWQ
 @cite{roberts-2023} @cite{roberts-2012} @cite{lewis-1979} @cite{portner-2004}
 
 The scoreboard K for a language game at time t is a tuple
-⟨I, M, ≺, CG, QUD, G⟩ (@cite{roberts-2023}), tracking:
+⟨I, M, ≺, CommonGround, QUD, G⟩ (@cite{roberts-2023}), tracking:
 
 - **I**: the set of interlocutors
 - **M**: illocutionary moves made so far (with subsets A, Q, D, Acc)
 - **≺**: temporal order on moves
-- **CG**: the common ground (propositions treated as mutually believed)
+- **CommonGround**: the common ground (propositions treated as mutually believed)
 - **QUD**: the ordered set of questions under discussion
 - **G**: the interlocutors' publicly evident goals, plans, and priorities
 
-The three central elements — CG, QUD, G — are updated by assertion,
+The three central elements — CommonGround, QUD, G — are updated by assertion,
 interrogation, and direction respectively, via the Illocutionary
 Force Linking Principle (@cite{roberts-2023}).
 
@@ -135,7 +135,7 @@ theorem iflp_roundtrip_imp :
 
 /-! ## The Scoreboard -/
 
-/-- The scoreboard K = ⟨I, M, ≺, CG, QUD, G⟩. The temporal order ≺
+/-- The scoreboard K = ⟨I, M, ≺, CommonGround, QUD, G⟩. The temporal order ≺
     is implicit in list position of `moves`. `qud` is specialised to
     polar-question content (`W → Prop`); the richer `Discourse.QUDStack`
     over `Semantics.Questions.Basic.Question W` is consumed by other
@@ -150,7 +150,7 @@ structure Scoreboard (W : Type*) where
 
 namespace Scoreboard
 
-/-- The context set: worlds compatible with all CG propositions. -/
+/-- The context set: worlds compatible with all CommonGround propositions. -/
 def contextSet (K : Scoreboard W) : W → Prop :=
   λ w => ∀ p ∈ K.cg, p w
 
@@ -158,7 +158,7 @@ def contextSet (K : Scoreboard W) : W → Prop :=
 def agentGoals (K : Scoreboard W) (i : Nat) : GoalSet W :=
   K.goals.getD i GoalSet.empty
 
-/-- Assertion update: accepted assertion of `p` adds `p` to CG. -/
+/-- Assertion update: accepted assertion of `p` adds `p` to CommonGround. -/
 def assertionUpdate (K : Scoreboard W) (p : W → Prop) (agent : Nat) : Scoreboard W :=
   { K with
     cg := p :: K.cg
@@ -196,7 +196,7 @@ def directionUpdate (K : Scoreboard W) (p : W → Prop)
     goals := addGoalAt K.goals target 0 newGoal
     moves := ⟨.imperative, p, speaker, True⟩ :: K.moves }
 
-/-- Assertion update adds to CG. -/
+/-- Assertion update adds to CommonGround. -/
 @[simp] theorem assertion_adds_to_cg (K : Scoreboard W) (p : W → Prop) (a : Nat) :
     (K.assertionUpdate p a).cg = p :: K.cg := rfl
 
@@ -212,7 +212,7 @@ def directionUpdate (K : Scoreboard W) (p : W → Prop)
 @[simp] theorem interrogation_adds_to_qud (K : Scoreboard W) (q : W → Prop) (a : Nat) :
     (K.interrogationUpdate q a).qud = q :: K.qud := rfl
 
-/-- Interrogation update preserves CG. -/
+/-- Interrogation update preserves CommonGround. -/
 @[simp] theorem interrogation_preserves_cg (K : Scoreboard W) (q : W → Prop) (a : Nat) :
     (K.interrogationUpdate q a).cg = K.cg := rfl
 
@@ -220,7 +220,7 @@ def directionUpdate (K : Scoreboard W) (p : W → Prop)
 @[simp] theorem interrogation_preserves_goals (K : Scoreboard W) (q : W → Prop) (a : Nat) :
     (K.interrogationUpdate q a).goals = K.goals := rfl
 
-/-- Direction update preserves CG. -/
+/-- Direction update preserves CommonGround. -/
 @[simp] theorem direction_preserves_cg (K : Scoreboard W) (p : W → Prop) (s t pr : Nat) :
     (K.directionUpdate p s t pr).cg = K.cg := rfl
 
@@ -230,8 +230,8 @@ def directionUpdate (K : Scoreboard W) (p : W → Prop)
 
 /-! ### POSW substrate bridge
 
-The scoreboard's CG and G components project jointly into a
-`Semantics.Mood.POSW`: CG via `contextSet`, G via the goal-induced
+The scoreboard's CommonGround and G components project jointly into a
+`Semantics.Mood.POSW`: CommonGround via `contextSet`, G via the goal-induced
 preference ordering. Assertion ↔ `plus`, direction ↔ `star`. -/
 
 /-- Flat list of goal contents across all agents. -/
@@ -282,7 +282,7 @@ lemma mem_directionUpdate_goalContents (K : Scoreboard W) (p : W → Prop)
   exact mem_addGoalAt_flatMap K.goals t 0 ⟨p, fun _ => True, pr⟩
     (Nat.zero_le _) (by simpa using hin) q
 
-/-- Project the scoreboard into a POSW: `cs` from CG, `le` from
+/-- Project the scoreboard into a POSW: `cs` from CommonGround, `le` from
     goal-induced preference. -/
 def toPOSW (K : Scoreboard W) : Semantics.Mood.POSW W where
   cs := K.contextSet

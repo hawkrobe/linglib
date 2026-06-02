@@ -1,4 +1,5 @@
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Attitudes.Preferential
+import Linglib.Semantics.Verb.Basic
 
 /-!
 # Turkish Predicate Lexicon Fragment
@@ -8,14 +9,14 @@ Turkish predicates relevant to @cite{qing-uegaki-2025}. Properties like
 C-distributivity and NVP class are DERIVED from the `attitude` field.
 -/
 
-namespace Fragments.Turkish.Predicates
+namespace Turkish.Predicates
 
 open Semantics.Lexical
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
 open Features (Causative)
 
-/-- Turkish verb entry: extends VerbCore with Turkish inflectional paradigm. -/
-structure TurkishVerbEntry extends VerbCore where
+/-- Turkish verb entry: extends Verb with Turkish inflectional paradigm. -/
+structure TurkishVerbEntry extends Verb where
   /-- Progressive form (-yor) -/
   formProg : String
   /-- Past form (-dı, -tı) -/
@@ -110,4 +111,4 @@ def allVerbs : List TurkishVerbEntry := [kork, um, merakEt, endiselen, ol_dur, y
 def lookup (form : String) : Option TurkishVerbEntry :=
   allVerbs.find? (·.form == form)
 
-end Fragments.Turkish.Predicates
+end Turkish.Predicates

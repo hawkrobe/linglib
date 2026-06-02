@@ -29,8 +29,8 @@ namespace Features
     gradable-adjective semantics to distinguish licensing patterns of
     the two-threshold model.
 
-    **Cross-reference**: `Core.Opposition.AristotelianRel` (in
-    `Core/Logic/Opposition/Aristotelian.lean`) is a 5-valued enum that
+    **Cross-reference**: `Aristotelian.AristotelianRel` (in
+    `Core/Logic/Aristotelian/Basic.lean`) is a 5-valued enum that
     subsumes both constructors here. A future cleanup could replace
     `NegationType` with `{ r : AristotelianRel // r ∈ {.contradictory, .contrary} }`
     or have consumers take `AristotelianRel` directly. Deferred until

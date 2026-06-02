@@ -1,3 +1,4 @@
+import Linglib.Core.WorldTimeIndex
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Fragments.French.Predicates
 import Linglib.Semantics.ArgumentStructure.Affectedness.Profile
@@ -56,7 +57,7 @@ namespace StapsRooryck2024
 open Core (WorldTimeIndex)
 
 open Semantics.Presupposition
-open Fragments.French.Predicates
+open French.Predicates
 open Semantics.ArgumentStructure.EntailmentProfile
 open Semantics.ArgumentStructure.Affectedness.Profile
 open Features

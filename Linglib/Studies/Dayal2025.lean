@@ -335,37 +335,37 @@ theorem particle_layer_predicts_embedding :
 -- §7. Cross-layer agreement
 -- ============================================================================
 
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 /-- The structurally derived classification matches the manually-assigned
     string-based classification for all verbs in the embedding data. -/
 theorem derived_class_matches_manual :
-    deriveSelectionClass Fragments.English.Predicates.Verbal.know
+    deriveSelectionClass English.Predicates.Verbal.know
       = classifyVerb "know" ∧
-    deriveSelectionClass Fragments.English.Predicates.Verbal.wonder
+    deriveSelectionClass English.Predicates.Verbal.wonder
       = classifyVerb "wonder" ∧
-    deriveSelectionClass Fragments.English.Predicates.Verbal.ask
+    deriveSelectionClass English.Predicates.Verbal.ask
       = classifyVerb "ask" ∧
-    deriveSelectionClass Fragments.English.Predicates.Verbal.investigate
+    deriveSelectionClass English.Predicates.Verbal.investigate
       = classifyVerb "investigate" ∧
-    deriveSelectionClass Fragments.English.Predicates.Verbal.believe
+    deriveSelectionClass English.Predicates.Verbal.believe
       = classifyVerb "believe" := by
   decide
 
 /-- String-based classification matches field-based derivation. -/
 theorem classifyVerb_agrees_with_selectionClass :
     classifyVerb "know"
-      = fieldSelectionClass Fragments.English.Predicates.Verbal.know ∧
+      = fieldSelectionClass English.Predicates.Verbal.know ∧
     classifyVerb "wonder"
-      = fieldSelectionClass Fragments.English.Predicates.Verbal.wonder ∧
+      = fieldSelectionClass English.Predicates.Verbal.wonder ∧
     classifyVerb "ask"
-      = fieldSelectionClass Fragments.English.Predicates.Verbal.ask ∧
+      = fieldSelectionClass English.Predicates.Verbal.ask ∧
     classifyVerb "investigate"
-      = fieldSelectionClass Fragments.English.Predicates.Verbal.investigate ∧
+      = fieldSelectionClass English.Predicates.Verbal.investigate ∧
     classifyVerb "depend on"
-      = fieldSelectionClass Fragments.English.Predicates.Verbal.depend_on ∧
+      = fieldSelectionClass English.Predicates.Verbal.depend_on ∧
     classifyVerb "believe"
-      = fieldSelectionClass Fragments.English.Predicates.Verbal.believe := by
+      = fieldSelectionClass English.Predicates.Verbal.believe := by
   decide
 
 end Dayal2025

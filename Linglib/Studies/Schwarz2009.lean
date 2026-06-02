@@ -1,5 +1,5 @@
 import Linglib.Features.Definiteness
-import Linglib.Core.Nominal.ArticleInventory
+import Linglib.Core.Nominal.Determiner
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Interpret
 import Linglib.Fragments.German.Definiteness
@@ -30,15 +30,15 @@ the distinction at the surface.
 
 The split is operationalized in the Core layer by:
 
-- **`Core.Nominal.NominalKind`** — distinct `.unique` (weak) and
+- **`Core.Nominal.Description`** — distinct `.unique` (weak) and
   `.anaphoric` (strong) constructors, with different argument shapes
   (`.unique` carries a *situation* index for resource-situation binding;
   `.anaphoric` carries a *discourse* index for antecedent lookup).
-- **`Core.Nominal.NominalKind.expectedPresupType`** — projects each kind
+- **`Core.Nominal.Description.expectedPresupType`** — projects each kind
   to the @cite{schwarz-2009} presupposition type it expresses.
-- **`Core.Nominal.ArticleInventory`** — records the morphological
-  inventory; `uniqueAnaphoricSyncretism` is the bool that distinguishes
-  English-style syncretism from German-style bipartition.
+- **`Core.Nominal.Determiner`** — the declared determiner set records the
+  morphological inventory; `Determiner.IsSyncretic` is the predicate that
+  distinguishes English-style syncretism from German-style bipartition.
 
 We verify:
 
@@ -96,19 +96,19 @@ variable {F : Frame}
 /-- The weak article (`.unique` in the Core sum type) projects to the
     uniqueness presupposition. -/
 theorem unique_is_uniqueness (R : DenotGS F .et) (sIdx : Nat) :
-    (NominalKind.unique R sIdx).expectedPresupType = some .uniqueness := rfl
+    (Description.unique R sIdx).expectedPresupType = some .uniqueness := rfl
 
 /-- The strong article (`.anaphoric` in the Core sum type) projects to the
     familiarity presupposition. -/
 theorem anaphoric_is_familiarity (R : DenotGS F .et) (d : Nat) :
-    (NominalKind.anaphoric R d).expectedPresupType = some .familiarity := rfl
+    (Description.anaphoric R d).expectedPresupType = some .familiarity := rfl
 
 /-- The two articles project to distinct presupposition types — the
     central @cite{schwarz-2009} contrast at the type level. -/
 theorem unique_anaphoric_presup_distinct
     (R : DenotGS F .et) (sIdx d : Nat) :
-    (NominalKind.unique R sIdx).expectedPresupType ≠
-      (NominalKind.anaphoric R d).expectedPresupType := by
+    (Description.unique R sIdx).expectedPresupType ≠
+      (Description.anaphoric R d).expectedPresupType := by
   rw [unique_is_uniqueness, anaphoric_is_familiarity]
   intro h
   exact two_presup_types_distinct (Option.some_inj.mp h)
@@ -151,8 +151,8 @@ theorem strong_article_consults_entity_assignment
     claim that uniqueness is *situational* and familiarity is *anaphoric*. -/
 theorem situation_binding_classifies_articles
     (R : DenotGS F .et) (sIdx d : Nat) :
-    (NominalKind.unique R sIdx).usesSituationPronoun = true ∧
-    (NominalKind.anaphoric R d).usesSituationPronoun = false := ⟨rfl, rfl⟩
+    (Description.unique R sIdx).usesSituationPronoun = true ∧
+    (Description.anaphoric R d).usesSituationPronoun = false := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- §4: Morphological correlate — German bipartite vs English syncretic
@@ -160,33 +160,29 @@ theorem situation_binding_classifies_articles
 
 /-! @cite{schwarz-2009} reads the two-article distinction off German
 morphology. English collapses both into *the*; the contrast is masked at
-the surface but recoverable via the inventory's `uniqueAnaphoricSyncretism`
-bool. -/
+the surface but recoverable via `Determiner.IsSyncretic`. -/
 
 /-- German has both articles overtly, with no syncretism — the structural
     @cite{schwarz-2009} contrast is morphologically visible. -/
 theorem german_two_articles :
-    Fragments.German.Definiteness.articleInventory.hasUniqueArticle ∧
-    Fragments.German.Definiteness.articleInventory.hasAnaphoricArticle ∧
-    ¬ Fragments.German.Definiteness.articleInventory.uniqueAnaphoricSyncretism :=
-  ⟨trivial, trivial, id⟩
+    Determiner.MarksPresup German.Definiteness.determiners .uniqueness ∧
+    Determiner.MarksPresup German.Definiteness.determiners .familiarity ∧
+    ¬ Determiner.IsSyncretic German.Definiteness.determiners := by decide
 
 /-- English has both articles, but they are syncretic — *the* covers both.
     The @cite{schwarz-2009} contrast is real but morphologically invisible. -/
 theorem english_syncretic_articles :
-    Fragments.English.Definiteness.articleInventory.hasUniqueArticle ∧
-    Fragments.English.Definiteness.articleInventory.hasAnaphoricArticle ∧
-    Fragments.English.Definiteness.articleInventory.uniqueAnaphoricSyncretism :=
-  ⟨trivial, trivial, trivial⟩
+    Determiner.MarksPresup English.Definiteness.determiners .uniqueness ∧
+    Determiner.MarksPresup English.Definiteness.determiners .familiarity ∧
+    Determiner.IsSyncretic English.Definiteness.determiners := by decide
 
 /-- The morphological discriminator: German is `.bipartite` (two distinct
     forms), English is `.generallyMarked` (one syncretic form). Both
     distinguish the same semantic types — the surface morphology differs. -/
 theorem strategy_split :
-    Fragments.German.Definiteness.articleInventory.toMarkingStrategy
-      = .bipartite ∧
-    Fragments.English.Definiteness.articleInventory.toMarkingStrategy
-      = .generallyMarked := ⟨rfl, rfl⟩
+    Determiner.markingStrategy German.Definiteness.determiners = .bipartite ∧
+    Determiner.markingStrategy English.Definiteness.determiners = .generallyMarked :=
+  ⟨German.Definiteness.marking, English.Definiteness.marking⟩
 
 /-- The number of morphologically distinguished presupposition types
     differs across the two languages, even though the underlying
@@ -197,10 +193,10 @@ theorem strategy_split :
     the article system. -/
 theorem morphological_distinction_count :
     (articleTypeToDistinguishedPresup
-      Fragments.German.Definiteness.articleInventory.toArticleType).length = 2 ∧
+      (Determiner.articleType German.Definiteness.determiners)).length = 2 ∧
     (articleTypeToDistinguishedPresup
-      Fragments.English.Definiteness.articleInventory.toArticleType).length = 1
-  := ⟨rfl, rfl⟩
+      (Determiner.articleType English.Definiteness.determiners)).length = 1
+  := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- §5: Hawkins use types map onto the Schwarz split (§3.1)

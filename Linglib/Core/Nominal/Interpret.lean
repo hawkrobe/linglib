@@ -6,7 +6,7 @@ import Linglib.Core.Nominal.Maximality
 @cite{coppock-beaver-2015} @cite{hanink-2021} @cite{schwarz-2009}
 @cite{patel-grosz-grosz-2017} @cite{sharvy-1980}
 
-Maps `NominalKind F` to a referent in `Option F.Entity`, relative to a
+Maps `Description F` to a referent in `Option F.Entity`, relative to a
 (entity, situation) bi-assignment. `none` represents either presupposition
 failure (no unique satisfier; no satisfying antecedent at the discourse
 index) or inapplicability (indefinites do not denote a single entity at
@@ -41,9 +41,9 @@ variable {F : Frame}
 -- § The Interpretation Function
 -- ════════════════════════════════════════════════════════════════
 
-/-- Denotation of a `NominalKind` at a bi-assignment, as `Option F.Entity`.
+/-- Denotation of a `Description` at a bi-assignment, as `Option F.Entity`.
     `none` is presupposition failure or inapplicability. -/
-noncomputable def interpret (k : NominalKind F)
+noncomputable def interpret (k : Description F)
     (g : Assignment F.Entity) (gs : SitAssignment F) : Option F.Entity :=
   match k with
   | .bare R                     => russellIota (fun x => R g gs x)
@@ -201,5 +201,20 @@ theorem interpret_anaphoric_isSome_iff
   by_cases h : R g gs (g d)
   · simp [h]
   · simp [h]
+
+/-- @cite{patel-grosz-grosz-2017}'s "DEM = PER + index": the **strong** article
+    (`anaphoric` at index `i`) and the **weak** article (`unique`) over a shared
+    restrictor pick the same referent exactly when the indexed entity `g i` is the
+    unique satisfier of `R`. The hypotheses are load-bearing — off this condition
+    the strong (the indexed entity) and weak (the unique satisfier) articles
+    diverge, PG&G's point that the strong article is anaphoric in a way the weak
+    one is not. -/
+theorem interpret_anaphoric_eq_unique_of_existsUnique
+    (R : DenotGS F .et) (sIdx i : Nat)
+    (g : Assignment F.Entity) (gs : SitAssignment F)
+    (hSat : R g gs (g i)) (hUniq : ∀ y, R g gs y → y = g i) :
+    interpret (.anaphoric R i) g gs = interpret (.unique R sIdx) g gs := by
+  rw [interpret_unique_eq_some_of_existsUnique R sIdx g gs (g i) hSat hUniq,
+      interpret_anaphoric, if_pos hSat]
 
 end Core.Nominal

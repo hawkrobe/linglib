@@ -1,5 +1,6 @@
 import Linglib.Core.Word
 import Linglib.Semantics.Quantification.ChoiceFunction
+import Linglib.Semantics.Modality.ModalTypes
 import Mathlib.Data.Rat.Defs
 
 /-! # Farsi Determiner and Indefinite Lexicon
@@ -22,7 +23,7 @@ free choice under deontic, modal variation under epistemic.
 @cite{alonso-ovalle-moghiseh-2025}.
 -/
 
-namespace Fragments.Farsi.Determiners
+namespace Farsi.Determiners
 
 
 /--
@@ -62,7 +63,7 @@ A Farsi indefinite DP entry.
 
 Captures syntactic and semantic properties including EFCI behavior.
 -/
-structure IndefiniteEntry where
+structure IndefiniteDeterminer where
   /-- Surface form (Persian script) -/
   form : String
   /-- Romanization -/
@@ -95,7 +96,7 @@ Key properties:
 - Yields modal variation under epistemic modals
 - Plain existential in DE contexts
 -/
-def yeki : IndefiniteEntry :=
+def yeki : IndefiniteDeterminer :=
   { form := "یکی"
   , romanization := "yek-i"
   , gloss := "one-INDF"
@@ -112,7 +113,7 @@ def yeki : IndefiniteEntry :=
 
 Not an EFCI - just a numeral. Contrast with *yek-i*.
 -/
-def yek : IndefiniteEntry :=
+def yek : IndefiniteDeterminer :=
   { form := "یک"
   , romanization := "yek"
   , gloss := "one"
@@ -126,7 +127,7 @@ Indefinite suffix *-i*: Indefiniteness marker.
 
 Attaches to nouns to create indefinites.
 -/
-def indef_i : IndefiniteEntry :=
+def indef_i : IndefiniteDeterminer :=
   { form := "ـی"
   , romanization := "-i"
   , gloss := "-INDF"
@@ -136,16 +137,13 @@ def indef_i : IndefiniteEntry :=
   }
 
 
-/--
-Modal flavor type for context specification.
--/
-inductive ModalFlavor where
-  | deontic   -- Permission, obligation
-  | epistemic -- Knowledge, belief
-  deriving DecidableEq, Repr
+open Semantics.Modality (ModalFlavor)
 
 /--
-Context for determining EFCI reading.
+Context for determining EFCI reading. Uses the project-canonical
+`Semantics.Modality.ModalFlavor`; @cite{alonso-ovalle-moghiseh-2025} only
+distinguishes deontic (free choice) from epistemic (modal variation), so the
+other canonical flavors are not licensing-relevant here (see `getReading`).
 -/
 structure EFCIContext where
   /-- Is the context downward-entailing? -/
@@ -181,7 +179,7 @@ def deContext : EFCIContext :=
 /--
 Get the reading for an EFCI in a given context.
 -/
-def getReading (entry : IndefiniteEntry) (ctx : EFCIContext) : Option EFCIReading :=
+def getReading (entry : IndefiniteDeterminer) (ctx : EFCIContext) : Option EFCIReading :=
   if !entry.isEFCI then
     -- Non-EFCI: just plain existential everywhere
     some .plainExistential
@@ -191,6 +189,9 @@ def getReading (entry : IndefiniteEntry) (ctx : EFCIContext) : Option EFCIReadin
   else match ctx.modalFlavor with
     | some .deontic => some .freeChoice
     | some .epistemic => some .modalVariation
+    -- @cite{alonso-ovalle-moghiseh-2025} specifies only deontic/epistemic;
+    -- other flavors do not license an EFCI reading.
+    | some .bouletic | some .circumstantial => some .plainExistential
     | none =>
       -- Root context: depends on rescue mechanism
       match entry.efciRescue with
@@ -215,9 +216,9 @@ theorem yeki_de : getReading yeki deContext = some .plainExistential := rfl
 
 
 /-- German *irgendein*: EFCI with modal insertion available.
-Cross-linguistic comparison entry; canonical German entry in `Fragments.German.ModalIndefinites`.
+Cross-linguistic comparison entry; canonical German entry in `German.ModalIndefinites`.
 @cite{kratzer-shimoyama-2002} -/
-def irgendein_de : IndefiniteEntry :=
+def irgendein_de : IndefiniteDeterminer :=
   { form := "irgendein"
   , romanization := "irgendein"
   , gloss := "IRGEND.a"
@@ -230,7 +231,7 @@ def irgendein_de : IndefiniteEntry :=
 
 /-- Romanian *vreun*: EFCI with no rescue mechanism.
 Cross-linguistic comparison entry; see @cite{falaus-2014}. -/
-def vreun_ro : IndefiniteEntry :=
+def vreun_ro : IndefiniteDeterminer :=
   { form := "vreun"
   , romanization := "vreun"
   , gloss := "VREUN"
@@ -257,9 +258,9 @@ theorem vreun_root_ungrammatical : getReading vreun_ro rootContext = none := rfl
 
 open Semantics.Quantification.ChoiceFunction (IndefType SkolemCF)
 
-/-- Farsi plain indefinite entry, extending `IndefiniteEntry` with
+/-- Farsi plain indefinite entry, extending `IndefiniteDeterminer` with
     choice-function properties relevant to @cite{mirrazi-2024}. -/
-structure PlainIndefiniteEntry extends IndefiniteEntry where
+structure PlainIndefiniteEntry extends IndefiniteDeterminer where
   /-- Semantic analysis: choice function or ∃-quantifier. -/
   indefType : IndefType
   /-- Does this determiner carry an independent world/situation variable?
@@ -327,13 +328,13 @@ theorem candTa_has_world_var : candTa.hasWorldVar = true := rfl
 theorem doTa_has_world_var : doTa.hasWorldVar = true := rfl
 
 /-- All Farsi indefinite entries -/
-def allIndefinites : List IndefiniteEntry :=
-  [yeki, yek, indef_i, ye.toIndefiniteEntry, candTa.toIndefiniteEntry,
-   doTa.toIndefiniteEntry]
+def allIndefinites : List IndefiniteDeterminer :=
+  [yeki, yek, indef_i, ye.toIndefiniteDeterminer, candTa.toIndefiniteDeterminer,
+   doTa.toIndefiniteDeterminer]
 
 /-- Lookup by romanization -/
-def lookup (romanization : String) : Option IndefiniteEntry :=
+def lookup (romanization : String) : Option IndefiniteDeterminer :=
   allIndefinites.find? λ e => e.romanization == romanization
 
 
-end Fragments.Farsi.Determiners
+end Farsi.Determiners

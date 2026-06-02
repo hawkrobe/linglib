@@ -32,7 +32,7 @@ strengthening is vacuous.
 - `Magri2009`: BH+MH mechanism
 -/
 
-namespace Fragments.German.BarePluralWordOrder
+namespace German.BarePluralWordOrder
 
 open Semantics.Kinds.SortedOntology (PredicateLevel)
 
@@ -120,4 +120,4 @@ theorem acceptability_pattern :
       d.acceptable == !(d.predicateLevel == .individualLevel &&
                         d.bpsPosition == .rightOfJaDoch)) = true := by native_decide
 
-end Fragments.German.BarePluralWordOrder
+end German.BarePluralWordOrder

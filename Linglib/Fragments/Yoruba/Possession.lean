@@ -14,7 +14,7 @@ consuming this profile live in
 
 set_option autoImplicit false
 
-namespace Fragments.Yoruba.Possession
+namespace Yoruba.Possession
 
 open _root_.Typology.Possession
 
@@ -31,4 +31,4 @@ def possession : PossessionProfile :=
   , examples := ["mo ni iwe", "iwe mi"]
   , notes := "Have-verb ni; juxtaposition for adnominal (possessum-possessor)" }
 
-end Fragments.Yoruba.Possession
+end Yoruba.Possession

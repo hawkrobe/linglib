@@ -66,7 +66,7 @@ paper. They are not enum cases here. -/
 /-- The grammatical position from which extraction occurs.
 
     This intersects with the @cite{keenan-comrie-1977} Accessibility Hierarchy
-    (see `Core/Relativization/Hierarchy.lean`), but is defined independently
+    (see `Typology/RelativeClause/Basic.lean`), but is defined independently
     because extraction morphology may make finer distinctions than
     relativization. -/
 inductive ExtractionTarget where
@@ -127,8 +127,8 @@ inductive Extractee where
     which positions are marked, and whether the marking distinguishes
     between different extracted positions.
 
-    Follows the `RelativizationProfile` pattern from
-    `Typology/Relativization/Defs.lean`. -/
+    Follows the `RelativeClause.Profile` pattern from
+    `Typology/RelativeClause/WALS.lean`. -/
 structure ExtractionProfile where
   /-- Language name -/
   language : String

@@ -140,7 +140,7 @@ def flatIntens : Core.Intension World (Entity → Prop) :=
 
 /-! ## §3: Per-Classifier Denotations
 
-The exhaustive map from `Fragments.Japanese.Classifier` to `ClassifierDenot`.
+The exhaustive map from `Japanese.Classifier` to `ClassifierDenot`.
 Pattern matching on the typed inventory forces every classifier to either
 get a denotation or an explicit `none` for the deferred cases (mensural
 `-hai`/`-shoku`/`-teki`, non-atomic `-kumi`/`-daasu`, function-based
@@ -151,7 +151,7 @@ catches missing cases, replacing the prior floating-`def` style. -/
 /-- Atomic-sortal denotation builder for the six classifiers Sudo formalizes
     over our toy domain. `none` for classifiers we haven't formalized
     (most function-based ones, mensural ones, non-atomic group ones). -/
-def japaneseSudoDenot : Fragments.Japanese.Classifier →
+def japaneseSudoDenot : Japanese.Classifier →
     Option (ClassifierDenot World Entity)
   -- Atomic-sortal classifiers Sudo eqs. 4, 8a, 8b
   | .rin => some <| .ofSortal flowerIntens
@@ -177,8 +177,8 @@ def japaneseSudoDenot : Fragments.Japanese.Classifier →
   | .furi | .zen | .kyaku => none
 
 /-- The classifiers Sudo formalizes (the six atomic-sortal cases). -/
-def sudoFormalized : List Fragments.Japanese.Classifier :=
-  Fragments.Japanese.Classifier.all.filter
+def sudoFormalized : List Japanese.Classifier :=
+  Japanese.Classifier.all.filter
     (fun c => (japaneseSudoDenot c).isSome)
 
 /-- Exactly six classifiers have a Sudo-style denotation in this file. -/
@@ -205,7 +205,7 @@ def four : NumeralIntens World := NumeralIntens.const 4
     from the Japanese fragment's classifier inventory being non-empty.
     Sudo's blocking argument depends on this fragment-level fact. -/
 def japaneseHasOvertClassifiers : Bool :=
-  !Fragments.Japanese.Classifier.all.isEmpty
+  !Japanese.Classifier.all.isEmpty
 
 /-! ## §5: The Blocking Argument (Sudo §3)
 

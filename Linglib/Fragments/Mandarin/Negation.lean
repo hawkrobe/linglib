@@ -27,12 +27,12 @@ WALS classifies Mandarin as **both** symmetric and asymmetric:
 
 ## Connection to AspectComparison
 
-The *méi(yǒu)* entry connects to `Fragments.Mandarin.AspectComparison`,
+The *méi(yǒu)* entry connects to `Mandarin.AspectComparison`,
 where it is formalized as a cross-domain particle (negative perfective /
 not-exceed-threshold).
 -/
 
-namespace Fragments.Mandarin.Negation
+namespace Mandarin.Negation
 
 open Typology.Negation
 
@@ -145,8 +145,8 @@ The *méi-yǒu* entry in `AspectComparison` formalizes the same particle
 as a cross-domain negative perfective. -/
 
 theorem meiyou_matches_aspect_comparison :
-    Fragments.Mandarin.AspectComparison.meiyou.hanzi = "没有" ∧
-    Fragments.Mandarin.AspectComparison.meiyou.pinyin = "méi-yǒu" :=
+    Mandarin.AspectComparison.meiyou.hanzi = "没有" ∧
+    Mandarin.AspectComparison.meiyou.pinyin = "méi-yǒu" :=
   ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
@@ -254,4 +254,4 @@ def negationProfile : Typology.Negation.NegationProfile :=
   , negIsHead := none
   , enAttested := none }
 
-end Fragments.Mandarin.Negation
+end Mandarin.Negation

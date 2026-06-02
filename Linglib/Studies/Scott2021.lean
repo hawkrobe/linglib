@@ -1,4 +1,4 @@
-import Linglib.Core.Relativization.Basic
+import Linglib.Typology.RelativeClause.Basic
 import Linglib.Core.Tree
 import Linglib.Fragments.Swahili.Relativization
 import Linglib.Morphology.DM.VocabularyInsertion
@@ -56,7 +56,7 @@ default matches.
 
 namespace Scott2021
 
-open Core Fragments.Swahili
+open Core Swahili
 open Minimalist (FeatureBundle FeatureVal PhiFeature)
 open Features.Prominence (PersonLevel)
 
@@ -499,9 +499,9 @@ theorem fragment_consistency_1sg :
 
 /-- The movement marker in the Fragment is correctly classified. -/
 theorem marker_classification :
-    ambaMovement.npRel.isMovementCopy = some true ∧
-    ambaBound.npRel.isMovementCopy = some false ∧
-    ambaGap.npRel.isMovementCopy = none := by
+    ambaMovement.npRel.resumptiveKind = some .movementCopy ∧
+    ambaBound.npRel.resumptiveKind = some .bound ∧
+    ambaGap.npRel.resumptiveKind = none := by
   exact ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================

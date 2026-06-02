@@ -1,4 +1,5 @@
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Attitudes.Preferential
+import Linglib.Semantics.Verb.Basic
 
 /-!
 # Japanese Predicate Lexicon Fragment
@@ -8,14 +9,14 @@ Japanese predicates relevant to @cite{qing-uegaki-2025}. Properties like
 C-distributivity and NVP class are DERIVED from the `attitude` field.
 -/
 
-namespace Fragments.Japanese.Predicates
+namespace Japanese.Predicates
 
 open Semantics.Lexical
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
 open Features (Causative)
 
-/-- Japanese verb entry: extends VerbCore with Japanese inflectional paradigm. -/
-structure JapaneseVerbEntry extends VerbCore where
+/-- Japanese verb entry: extends Verb with Japanese inflectional paradigm. -/
+structure JapaneseVerbEntry extends Verb where
   /-- Nonpast finite form -/
   form3sg : String
   /-- Past form (-ta) -/
@@ -152,4 +153,4 @@ def allVerbs : List JapaneseVerbEntry :=
 def lookup (form : String) : Option JapaneseVerbEntry :=
   allVerbs.find? (·.form == form)
 
-end Fragments.Japanese.Predicates
+end Japanese.Predicates

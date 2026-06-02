@@ -1,11 +1,12 @@
 import Linglib.Features.Definiteness
-import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Interpret
 import Linglib.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Semantics.Kinds.MeaningPreservation
 import Linglib.Semantics.Classifier.Basic
 import Linglib.Studies.Schwarz2009
+import Linglib.Core.Nominal.Determiner
+import Linglib.Core.Nominal.DeterminerLicensing
 import Linglib.Fragments.Mandarin.Definiteness
 import Linglib.Fragments.Cantonese.Definiteness
 
@@ -23,10 +24,10 @@ Maximize Presupposition + @cite{schlenker-2012} Gricean reduction)
 selects between them.
 
 The substrate already operationalizes the inventory layer:
-`Core.Nominal.NominalKind.{unique,anaphoric}` are ι and ι^x;
-`Core.Nominal.ArticleInventory.toMarkingStrategy` derives the four-cell
+`Core.Nominal.Description.{unique,anaphoric}` are ι and ι^x;
+`Core.Nominal.Determiner.markingStrategy` derives the four-cell
 typology directly named after Jenks 2018 in `Features.Definiteness`.
-The Mandarin Fragment commits `articleInventory_marking := .markedAnaphoric`.
+The Mandarin Fragment commits `marking := .markedAnaphoric`.
 This file focuses on what is distinctly Jenks: the typological
 prediction (§3 + §6), the bare/Dem competition (§5 paper), the
 covarying-readings argument for index binding (§4.3 paper), and the
@@ -41,8 +42,8 @@ open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
 open Core.Nominal
 
-abbrev mandarinInv := Fragments.Mandarin.Definiteness.articleInventory
-abbrev cantoneseInv := Fragments.Cantonese.Definiteness.articleInventory
+abbrev mandarinDets := Mandarin.Definiteness.determiners
+abbrev cantoneseDets := Cantonese.Definiteness.determiners
 
 -- ════════════════════════════════════════════════════════════════
 -- §1: The Jenks Four-Cell Typology and Mandarin's Cell
@@ -75,28 +76,28 @@ theorem jenks_attested_distinct :
     DefMarkingStrategy.bipartite ≠ .generallyMarked ∧
     DefMarkingStrategy.markedAnaphoric ≠ .generallyMarked := by decide
 
-/-- Mandarin's article inventory derives `.markedAnaphoric` — its
+/-- Mandarin's determiner set derives `.markedAnaphoric` — its
     Jenks (2018) Table 2 cell. -/
 theorem mandarin_jenks_cell :
-    mandarinInv.toMarkingStrategy = .markedAnaphoric :=
-  Fragments.Mandarin.Definiteness.articleInventory_marking
+    Determiner.markingStrategy mandarinDets = .markedAnaphoric :=
+  Mandarin.Definiteness.marking
 
 /-- Mandarin's strategy is in the Jenks-attested set. -/
 theorem mandarin_attested :
-    mandarinInv.toMarkingStrategy ∈ jenksAttestedStrategies := by
+    Determiner.markingStrategy mandarinDets ∈ jenksAttestedStrategies := by
   rw [mandarin_jenks_cell]; decide
 
-/-- Cantonese's article inventory derives `.generallyMarked` — paper §6
-    (Table 1, Table 2): [Clf-N] is an ambiguous definite article like
-    English *the*, covering both unique and anaphoric environments. -/
+/-- Cantonese's determiner set derives `.generallyMarked` — paper §6
+    (Table 1, Table 2): [Clf-N] is an ambiguous definite like English *the*,
+    covering both unique and anaphoric environments. -/
 theorem cantonese_jenks_cell :
-    cantoneseInv.toMarkingStrategy = .generallyMarked :=
-  Fragments.Cantonese.Definiteness.articleInventory_marking
+    Determiner.markingStrategy cantoneseDets = .generallyMarked :=
+  Cantonese.Definiteness.marking
 
 /-- Mandarin and Cantonese instantiate distinct Jenks cells — the
     central typological contrast of paper §6. -/
 theorem mandarin_cantonese_distinct_cells :
-    mandarinInv.toMarkingStrategy ≠ cantoneseInv.toMarkingStrategy := by
+    Determiner.markingStrategy mandarinDets ≠ Determiner.markingStrategy cantoneseDets := by
   rw [mandarin_jenks_cell, cantonese_jenks_cell]; decide
 
 -- ════════════════════════════════════════════════════════════════
@@ -111,28 +112,32 @@ variable {F : Frame}
     `Hufei he-wan-le tang` 'Hufei finished the soup';
     `Gou yao guo malu` 'the dog wants to cross the road'). -/
 theorem bare_licensed (R : DenotGS F .et) :
-    mandarinInv.licensesKind (F := F) (.bare R) := trivial
+    Determiner.licenses (F := F) mandarinDets (.bare R) := trivial
 
 /-- The anaphoric kind (`.anaphoric R d`) is licensed in Mandarin via
     the demonstrative paradigm (paper §3.2: anaphoric definites surface
-    as Dem-Clf-N constructions). The licensing proceeds through the
-    left disjunct of `licensesKind .anaphoric`. -/
+    as Dem-Clf-N constructions). The licensing holds because the
+    demonstrative obligatorily expones a familiarity (anaphoric) use, so
+    `Determiner.MarksPresup mandarinDets .familiarity`. -/
 theorem anaphoric_licensed (R : DenotGS F .et) (d : Nat) :
-    mandarinInv.licensesKind (F := F) (.anaphoric R d) :=
-  Or.inl trivial
+    Determiner.licenses (F := F) mandarinDets (.anaphoric R d) := by
+  show Determiner.MarksPresup mandarinDets .familiarity
+  decide
 
 /-- Mandarin demonstratives are licensed (the *na*/*zhe* paradigm —
     paper fn. 8: speakers prefer *na* 'that' to *zhe* 'this' in most
     simple anaphoric environments). -/
 theorem demonstrative_licensed
     (R : DenotGS F .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
-    mandarinInv.licensesKind (F := F)
-      (.demonstrative R deictic sIdx d) := trivial
+    Determiner.licenses (F := F) mandarinDets
+      (.demonstrative R deictic sIdx d) := by
+  show ∃ e ∈ mandarinDets, Determiner.Entry.IsDemonstrative e
+  decide
 
 /-- A Mandarin bare definite and its `.unique` counterpart over the
     same restrictor pick the same referent — the bare-N route to
     unique definiteness (paper §4.1: ι via Chierchia type-shift) is
-    extensionally the `NominalKind.unique` denotation at the API
+    extensionally the `Description.unique` denotation at the API
     layer. Parallels `Moroney2021.shan_bare_unique_agreement`. -/
 theorem bare_unique_agreement
     (R : DenotGS F .et) (sIdx : Nat)
@@ -257,7 +262,7 @@ theorem clf_is_atomization {α : Type*} [PartialOrder α]
 /-! Jenks (2018, p. 513) is explicit that his anaphoric article ι^x
 takes an index argument of type ⟨e,t⟩ (a property), departing from
 @cite{schwarz-2009}/@cite{schwarz-2013}'s type ⟨e⟩ (an individual).
-The substrate's `NominalKind.anaphoric R d` carries `d : Nat` — a
+The substrate's `Description.anaphoric R d` carries `d : Nat` — a
 discourse-index slot resolved through the entity assignment, which
 matches Schwarz's individual-typed index, not Jenks's property-typed
 one. For Schwarz-style and ordinary demonstrative cases this divergence
@@ -267,7 +272,7 @@ proper names + demonstratives composing as `Pred(Zhangsan) +
 Dem-Clf-N`).
 
 Faithfully formalizing §4.4 requires a property-typed-index variant
-on `NominalKind.anaphoric`. This is recorded as a TODO at the substrate
+on `Description.anaphoric`. This is recorded as a TODO at the substrate
 level (`Core/Nominal/Description.lean`) rather than encoded as a
 placeholder theorem. -/
 
@@ -285,7 +290,7 @@ the natural slot for any MP-instance.
 The `IndexCandidate` carrier below is a minimal 2-bit witness type
 sufficient to demonstrate the principle's qualitative behavior
 (prefer indexed when index is available; neutral otherwise). A
-fuller instantiation would parameterize over `NominalKind F` and the
+fuller instantiation would parameterize over `Description F` and the
 discourse-context predicate licensing the index — that refactor
 belongs in a substrate file (`Semantics/Presupposition/Index.lean`)
 when a second consumer needs it. -/
@@ -351,7 +356,7 @@ Two empirical points the paper makes (p. 524-526):
 The substrate has `Roberts2012` QUD machinery in
 `Phenomena/Discourse/Strategy/QUDStack.lean` (per memory:
 `project_qud_dissolution.md`). A faithful formalization of paper §5.3
-would need a topic predicate over `NominalKind` configurations
+would need a topic predicate over `Description` configurations
 co-occurring with QUD-stack state — substrate the linglib has but
 that this study file does not yet plug into.
 
@@ -439,7 +444,7 @@ properly). -/
     This is one half of paper §4.3's covariation contrast (the
     *strict* half). The other half — bare N covarying via situation
     binding — requires the property-typed index variant on
-    `NominalKind.anaphoric` flagged in §5 to express cleanly, and is
+    `Description.anaphoric` flagged in §5 to express cleanly, and is
     deferred. -/
 theorem demonstrative_strict_under_situation_variation
     (R : DenotGS F .et) (deictic : Features.Deixis.Feature)

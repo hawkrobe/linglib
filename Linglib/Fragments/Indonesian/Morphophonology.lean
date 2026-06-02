@@ -21,7 +21,7 @@ consonant is deleted:
 | l, r, m, n, w, y   | me-     | —         | *me-lihat*, *me-masak*   |
 -/
 
-namespace Fragments.Indonesian.Morphophonology
+namespace Indonesian.Morphophonology
 
 /-- The meN- allomorph prefix selected by the initial segment of the root
     (@cite{sneddon-1996} §1.5). The nasal N undergoes assimilation:
@@ -72,4 +72,4 @@ theorem sonorant_me : meNPrefix 'l' = "me" ∧ meNPrefix 'r' = "me" ∧
 theorem velar_meng : meNPrefix 'g' = "meng" ∧ meNPrefix 'k' = "meng" ∧
     meNPrefix 'h' = "meng" := ⟨rfl, rfl, rfl⟩
 
-end Fragments.Indonesian.Morphophonology
+end Indonesian.Morphophonology

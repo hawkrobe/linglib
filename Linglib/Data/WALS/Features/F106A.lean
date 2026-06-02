@@ -22,7 +22,7 @@ inductive ReciprocalType where
   | mixed
   /-- Identical to reflexive (44 languages). -/
   | identicalToReflexive
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 106A dataset (175 languages). -/
 def allData : List (Datapoint ReciprocalType) :=
@@ -204,9 +204,9 @@ def allData : List (Datapoint ReciprocalType) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint ReciprocalType) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint ReciprocalType) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F106A

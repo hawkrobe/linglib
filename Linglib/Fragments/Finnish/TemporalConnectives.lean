@@ -23,9 +23,9 @@ Finnish also has **kun** ('when') and the standard *before*/*after* pair:
 
 -/
 
-namespace Fragments.Finnish.TemporalConnectives
+namespace Finnish.TemporalConnectives
 
-open Fragments.English.TemporalExpressions (TemporalExprEntry Reading TemporalOrder ComplementType)
+open English.TemporalExpressions (TemporalExprEntry Reading TemporalOrder ComplementType)
 
 -- ============================================================================
 -- § 1: Connective Entries
@@ -189,7 +189,7 @@ theorem kunnes_is_until :
 -- § 3: Cross-Linguistic Agreement
 -- ============================================================================
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Finnish *ennen* and English *before* agree on all semantic properties. -/
 theorem ennen_matches_before :
     ennen.order = before_.order ∧
@@ -199,7 +199,7 @@ theorem ennen_matches_before :
     ennen.complementVeridical = before_.complementVeridical :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Finnish *jälkeen* and English *after* agree on all semantic properties. -/
 theorem jälkeen_matches_after :
     jälkeen.order = after_.order ∧
@@ -209,7 +209,7 @@ theorem jälkeen_matches_after :
     jälkeen.complementVeridical = after_.complementVeridical :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Finnish *kun* and English *when* agree on all semantic properties. -/
 theorem kun_matches_when :
     kun.order = when_conn.order ∧
@@ -218,7 +218,7 @@ theorem kun_matches_when :
     kun.complementVeridical = when_conn.complementVeridical :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Finnish *kunnes* (durative until) and English *until* agree on all
     semantic properties. -/
 theorem kunnes_matches_until :
@@ -237,7 +237,7 @@ theorem veridicality_asymmetry :
 -- § 4: Coverage of *Since*, *By*, *Till*
 -- ============================================================================
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Finnish *kunnes* covers both English *until* and *till* (durative).
     Finnish does not lexically distinguish *until* from *till* because
     *kunnes* already has the single durative-until meaning; the English
@@ -261,7 +261,7 @@ theorem since_by_not_single_lexeme : True := trivial
 -- § 5: Cross-Linguistic Agreement for Additional Connectives
 -- ============================================================================
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Finnish *sillä aikaa kun* and English *while* agree on semantic properties. -/
 theorem sillä_aikaa_kun_matches_while :
     sillä_aikaa_kun.order = while_conn.order ∧
@@ -270,7 +270,7 @@ theorem sillä_aikaa_kun_matches_while :
     sillä_aikaa_kun.complementVeridical = while_conn.complementVeridical :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Finnish *aina kun* and English *whenever* agree on semantic properties. -/
 theorem aina_kun_matches_whenever :
     aina_kun.order = whenever_conn.order ∧
@@ -279,7 +279,7 @@ theorem aina_kun_matches_whenever :
     aina_kun.complementVeridical = whenever_conn.complementVeridical :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Finnish *heti kun* and English *as soon as* agree on semantic properties. -/
 theorem heti_kun_matches_asSoonAs :
     heti_kun.order = asSoonAs.order ∧
@@ -298,4 +298,4 @@ theorem kun_family_veridical :
     heti_kun.complementVeridical = true :=
   ⟨rfl, rfl, rfl⟩
 
-end Fragments.Finnish.TemporalConnectives
+end Finnish.TemporalConnectives

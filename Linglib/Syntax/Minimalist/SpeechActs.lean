@@ -267,29 +267,29 @@ def personToRole : Person → Option PRole
 
 /-- Discourse role of a pronoun entry (theory-side, not baked into fragment).
     Determined entirely by the person feature. -/
-def pronounDiscourseRole (p : Fragments.English.Pronouns.PronounEntry) : Option PRole :=
+def pronounDiscourseRole (p : PersonalPronoun) : Option PRole :=
   p.person.bind personToRole
 
-open Fragments.English.Pronouns in
+open English.Pronouns in
 theorem first_person_are_speakers :
     (pronounDiscourseRole i = some .speaker) ∧
     (pronounDiscourseRole me = some .speaker) ∧
     (pronounDiscourseRole we = some .speaker) ∧
     (pronounDiscourseRole us = some .speaker) := ⟨rfl, rfl, rfl, rfl⟩
 
-open Fragments.English.Pronouns in
+open English.Pronouns in
 theorem second_person_are_hearers :
     (pronounDiscourseRole you = some .hearer) ∧
     (pronounDiscourseRole you_pl = some .hearer) := ⟨rfl, rfl⟩
 
-open Fragments.English.Pronouns in
+open English.Pronouns in
 theorem third_person_no_role :
     (pronounDiscourseRole he = none) ∧
     (pronounDiscourseRole she = none) ∧
     (pronounDiscourseRole it = none) := ⟨rfl, rfl, rfl⟩
 
 /-- Discourse role is determined entirely by person feature. -/
-theorem discourse_role_from_person (p : Fragments.English.Pronouns.PronounEntry)
+theorem discourse_role_from_person (p : PersonalPronoun)
     (per : Person) (hp : p.person = some per) :
     pronounDiscourseRole p = personToRole per := by
   simp [pronounDiscourseRole, hp]
@@ -341,11 +341,11 @@ def evalPSpecifier : SAPMood → PRole := seatOfKnowledge
 /-- The specifier of EvidP hosts the evidence type.
 
     Maps S&T's EVIDENCE argument to the framework-agnostic
-    `EvidentialSource` from `Features/Evidentiality.lean`:
+    `CoarseSource` from `Features/Evidentiality.lean`:
     - direct → sensory observation
     - inference → reasoning from effects
     - hearsay → reported evidence -/
-abbrev EvidPSpecifier := Features.Evidentiality.EvidentialSource
+abbrev EvidPSpecifier := Features.Evidentiality.CoarseSource
 
 /-- Bridge to `Core/Epistemicity.lean`: the Sentience Domain's
     two specifiers (SEAT OF KNOWLEDGE + EVIDENCE) correspond to

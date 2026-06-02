@@ -1113,31 +1113,31 @@ each language's EN markers exist and have the expected properties. -/
 /-- French uses dedicated *ne* (without *pas*) for high-entrenchment EN.
     This is distinct from standard *ne...pas* negation (@cite{jin-koenig-2021}, §4). -/
 theorem french_has_dedicated_en_marker :
-    Fragments.French.Negation.enMarker = Fragments.French.Negation.neClitic := rfl
+    French.Negation.enMarker = French.Negation.neClitic := rfl
 
 /-- Mandarin FEAR triggers use imperative negation (*bié*/*búyào*), not
     the standard *bù*/*méi*. The imperative form lexicalizes the
     prohibition component of the FEAR meaning. -/
 theorem mandarin_fear_en_is_imperative :
-    Fragments.Mandarin.Negation.bieParticle = "bié" ∧
-    Fragments.Mandarin.Negation.buyaoParticle = "búyào" := ⟨rfl, rfl⟩
+    Mandarin.Negation.bieParticle = "bié" ∧
+    Mandarin.Negation.buyaoParticle = "búyào" := ⟨rfl, rfl⟩
 
 /-- Mandarin REGRET/COMPLAIN triggers use the deontic negator *bùgāi*
     'shouldn't', connecting to the behavioral-standards semantics
     (negative inference = ¬p in worlds consistent with X's standards). -/
 theorem mandarin_regret_en_is_deontic :
-    Fragments.Mandarin.Negation.bugaiParticle = "bùgāi" := rfl
+    Mandarin.Negation.bugaiParticle = "bùgāi" := rfl
 
 /-- Januubi uses the standard negator *maa* for all EN contexts —
     no dedicated EN marker or trigger-class covariation. -/
 theorem januubi_en_is_standard :
-    Fragments.Januubi.Negation.enNegator.isStandardNeg = true := rfl
+    Januubi.Negation.enNegator.isStandardNeg = true := rfl
 
 /-- Zarma-Sonrai EN negator choice is determined by aspect (IPFV/PFV),
     not by trigger class. Both markers are standard negation markers. -/
 theorem zarma_en_determined_by_aspect :
-    Fragments.ZarmaSonrai.Negation.enIpfv.isStandardNeg = true ∧
-    Fragments.ZarmaSonrai.Negation.enPfv.isStandardNeg = true := ⟨rfl, rfl⟩
+    ZarmaSonrai.Negation.enIpfv.isStandardNeg = true ∧
+    ZarmaSonrai.Negation.enPfv.isStandardNeg = true := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 13. All Licensing Conditions Grounded
@@ -1265,68 +1265,67 @@ theorem fear_triggers_are_rett_ambidirectional :
 
 /-! ### Connecting English fragment verb entries to EN trigger status
 
-Each of the three branches of `VerbCore.isENTrigger` corresponds to
+Each of the three branches of `Verb.isENTrigger` corresponds to
 one class of JK2021 triggers. The general theorems below show that
 the semantic property (negative valence, negative implicativity,
 causative blocking) is *sufficient* for EN trigger status — the
 conclusion follows from the hypothesis, not by enumerating cases.
 -/
 
-open Semantics.Lexical (VerbCore)
 
 /-- Any verb with negative preferential valence is an EN trigger.
     This captures the FEAR class: negative valence activates both p
     (attitude content) and ¬p (desire content). -/
-theorem negative_valence_is_en_trigger (v : VerbCore)
+theorem negative_valence_is_en_trigger (v : Verb)
     (h : v.preferentialValence = some .negative) :
     v.isENTrigger = true := by
-  simp only [VerbCore.isENTrigger, h, show (some AttitudeValence.negative ==
+  simp only [Verb.isENTrigger, h, show (some AttitudeValence.negative ==
     some AttitudeValence.negative) = true from rfl, Bool.true_or]
 
 /-- Any negative implicative verb is an EN trigger.
     This captures the FORGET class: "X forgot to p" entails ¬p in w₀. -/
-theorem negative_implicative_is_en_trigger (v : VerbCore)
+theorem negative_implicative_is_en_trigger (v : Verb)
     (h : v.implicative = some .negative) :
     v.isENTrigger = true := by
-  simp only [VerbCore.isENTrigger, h, show (some Implicative.negative ==
+  simp only [Verb.isENTrigger, h, show (some Implicative.negative ==
     some Implicative.negative) = true from rfl, Bool.true_or, Bool.or_true]
 
 /-- Any causative-prevent verb is an EN trigger.
     This captures the STOP/PREVENT class: blocking entails ¬p in w₀. -/
-theorem prevent_builder_is_en_trigger (v : VerbCore)
+theorem prevent_builder_is_en_trigger (v : Verb)
     (h : v.causative = some .prevent) :
     v.isENTrigger = true := by
-  simp only [VerbCore.isENTrigger, h, show (some Causative.prevent ==
+  simp only [Verb.isENTrigger, h, show (some Causative.prevent ==
     some Causative.prevent) = true from rfl, Bool.or_true]
 
 -- Instantiations for English fragment verbs: the conclusion follows
 -- from the general theorem applied to the verb's semantic builder.
 
-open Fragments.English.Predicates.Verbal (fear dread worry forget prevent)
+open English.Predicates.Verbal (fear dread worry forget prevent)
 
 /-- "fear" → negative valence → EN trigger. -/
 theorem english_fear_is_en_trigger :
-    fear.toVerbCore.isENTrigger = true :=
+    fear.toVerb.isENTrigger = true :=
   negative_valence_is_en_trigger _ rfl
 
 /-- "dread" → negative valence → EN trigger. -/
 theorem english_dread_is_en_trigger :
-    dread.toVerbCore.isENTrigger = true :=
+    dread.toVerb.isENTrigger = true :=
   negative_valence_is_en_trigger _ rfl
 
 /-- "worry" → negative valence (uncertainty-based) → EN trigger. -/
 theorem english_worry_is_en_trigger :
-    worry.toVerbCore.isENTrigger = true :=
+    worry.toVerb.isENTrigger = true :=
   negative_valence_is_en_trigger _ rfl
 
 /-- "forget" → negative implicative → EN trigger. -/
 theorem english_forget_is_en_trigger :
-    forget.toVerbCore.isENTrigger = true :=
+    forget.toVerb.isENTrigger = true :=
   negative_implicative_is_en_trigger _ rfl
 
 /-- "prevent" → causative blocking → EN trigger. -/
 theorem english_prevent_is_en_trigger :
-    prevent.toVerbCore.isENTrigger = true :=
+    prevent.toVerb.isENTrigger = true :=
   prevent_builder_is_en_trigger _ rfl
 
 -- ════════════════════════════════════════════════════

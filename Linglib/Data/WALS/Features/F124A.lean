@@ -24,7 +24,7 @@ inductive WantComplementSubject where
   | desiderativeVerbalAffix
   /-- Desiderative particle (8 languages). -/
   | desiderativeParticle
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 124A dataset (283 languages). -/
 def allData : List (Datapoint WantComplementSubject) :=
@@ -314,9 +314,9 @@ def allData : List (Datapoint WantComplementSubject) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint WantComplementSubject) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint WantComplementSubject) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F124A

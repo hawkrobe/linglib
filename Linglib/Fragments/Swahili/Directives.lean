@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.Swahili
+namespace Swahili
 
 /-- Swahili: second-and-other-person morphological imperative (2SG bare stem
     *njoo!*, 2PL *njooni!*; subjunctive forms *tu-some* hortative,
@@ -23,4 +23,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "Bare stem 2SG imperative; subjunctive for hortative/jussive; " ++
              "prohibitive uses negative subjunctive (usi-)." }
 
-end Fragments.Swahili
+end Swahili

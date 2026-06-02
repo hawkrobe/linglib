@@ -27,7 +27,7 @@ verbs lack *ge-* entirely (*verstaan* → *verstaan*, not *\*ge-verstaan*).
 
 -/
 
-namespace Fragments.Dutch.VerbParticles
+namespace Dutch.VerbParticles
 
 /-- Dutch affix class: separable particles (*op-*, *aan-*) split off the
     verb under V2 and trigger *ge-* insertion in the past participle;
@@ -163,4 +163,4 @@ theorem inventory_citation_concat
     IsCitationConcat e := by
   fin_cases he <;> rfl
 
-end Fragments.Dutch.VerbParticles
+end Dutch.VerbParticles

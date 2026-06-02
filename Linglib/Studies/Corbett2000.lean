@@ -59,9 +59,7 @@ open Features.Number
 
 abbrev NumberValue := Category
 
--- ============================================================================
--- §2: Number Systems (Ch 2, §2.3)
--- ============================================================================
+/-! ### Number Systems (Ch 2, §2.3) -/
 
 /-- A number system specifies the values available in a language,
     which are obligatory vs facultative, and whether general number exists. -/
@@ -73,14 +71,17 @@ structure NumberSystem where
   hasGeneral : Bool := false
   /-- Values whose use is optional (facultative) -/
   facultative : List NumberValue := []
-  deriving BEq
+  deriving DecidableEq
 
 /-- Number of values in the system. -/
 def NumberSystem.size (ns : NumberSystem) : Nat := ns.values.length
 
 /-- Whether a value is obligatory (present and not facultative). -/
-def NumberSystem.isObligatory (ns : NumberSystem) (v : NumberValue) : Bool :=
-  ns.values.contains v && !(ns.facultative.contains v)
+def NumberSystem.IsObligatory (ns : NumberSystem) (v : NumberValue) : Prop :=
+  v ∈ ns.values ∧ v ∉ ns.facultative
+
+instance (ns : NumberSystem) (v : NumberValue) : Decidable (ns.IsObligatory v) := by
+  unfold NumberSystem.IsObligatory; infer_instance
 
 -- Language number systems
 
@@ -171,71 +172,78 @@ def allNumberSystems : List NumberSystem :=
    winnebagoNS, rembarrnganS, mebengokreNS]
 
 -- Size checks
-theorem english_two : englishNS.size = 2 := by native_decide
-theorem upperSorbian_three : upperSorbianNS.size = 3 := by native_decide
-theorem lihir_five : lihirNS.size = 5 := by native_decide
-theorem piraha_zero : pirahaNS.size = 0 := by native_decide
+theorem english_two : englishNS.size = 2 := by decide
+theorem upperSorbian_three : upperSorbianNS.size = 3 := by decide
+theorem lihir_five : lihirNS.size = 5 := by decide
+theorem piraha_zero : pirahaNS.size = 0 := by decide
 
 -- General number
-theorem bayso_has_general : baysoNS.hasGeneral = true := by native_decide
-theorem japanese_has_general : japaneseNS.hasGeneral = true := by native_decide
+theorem bayso_has_general : baysoNS.hasGeneral = true := by decide
+theorem japanese_has_general : japaneseNS.hasGeneral = true := by decide
 theorem western_armenian_has_general :
-    westernArmenianNS.hasGeneral = true := by native_decide
-theorem english_no_general : englishNS.hasGeneral = false := by native_decide
+    westernArmenianNS.hasGeneral = true := by decide
+theorem english_no_general : englishNS.hasGeneral = false := by decide
 
 -- Facultative number
 theorem slovene_dual_facultative :
-    sloveneNS.facultative.contains .dual = true := by native_decide
+    .dual ∈ sloveneNS.facultative := by decide
 
 theorem larike_both_facultative :
-    larikeNS.facultative.contains .dual = true ∧
-    larikeNS.facultative.contains .trial = true := by native_decide
+    .dual ∈ larikeNS.facultative ∧ .trial ∈ larikeNS.facultative := by decide
 
 -- Implicational universals (@cite{greenberg-1963}, Corbett §2.3.1)
 
 /-- Trial implies dual: no language has trial without dual. -/
-def NumberSystem.trialImpliesDual (ns : NumberSystem) : Bool :=
-  !ns.values.contains .trial || ns.values.contains .dual
+def NumberSystem.TrialImpliesDual (ns : NumberSystem) : Prop :=
+  .trial ∈ ns.values → .dual ∈ ns.values
 
 /-- Dual implies plural. -/
-def NumberSystem.dualImpliesPlural (ns : NumberSystem) : Bool :=
-  !ns.values.contains .dual || ns.values.contains .plural
+def NumberSystem.DualImpliesPlural (ns : NumberSystem) : Prop :=
+  .dual ∈ ns.values → .plural ∈ ns.values
 
 /-- Plural implies singular or minimal (@cite{harbour-2014} Table 1:
     PL → SG/MIN). Plural requires a "base" category — either singular
     (from [±atomic]) or minimal (from [±minimal]). -/
-def NumberSystem.pluralImpliesSingularOrMinimal (ns : NumberSystem) : Bool :=
-  !ns.values.contains .plural ||
-  ns.values.contains .singular || ns.values.contains .minimal ||
-  ns.values.isEmpty
+def NumberSystem.PluralImpliesSingularOrMinimal (ns : NumberSystem) : Prop :=
+  .plural ∈ ns.values →
+    .singular ∈ ns.values ∨ .minimal ∈ ns.values ∨ ns.values = []
 
 /-- Augmented implies minimal (@cite{harbour-2014} Table 1: AUG → MIN). -/
-def NumberSystem.augmentedImpliesMinimal (ns : NumberSystem) : Bool :=
-  !ns.values.contains .augmented || ns.values.contains .minimal
+def NumberSystem.AugmentedImpliesMinimal (ns : NumberSystem) : Prop :=
+  .augmented ∈ ns.values → .minimal ∈ ns.values
 
 /-- Unit augmented implies augmented (@cite{harbour-2014} Table 1:
     U.AUG → AUG). -/
-def NumberSystem.unitAugImpliesAugmented (ns : NumberSystem) : Bool :=
-  !ns.values.contains .unitAugmented || ns.values.contains .augmented
+def NumberSystem.UnitAugImpliesAugmented (ns : NumberSystem) : Prop :=
+  .unitAugmented ∈ ns.values → .augmented ∈ ns.values
+
+instance (ns : NumberSystem) : Decidable ns.TrialImpliesDual := by
+  unfold NumberSystem.TrialImpliesDual; infer_instance
+instance (ns : NumberSystem) : Decidable ns.DualImpliesPlural := by
+  unfold NumberSystem.DualImpliesPlural; infer_instance
+instance (ns : NumberSystem) : Decidable ns.PluralImpliesSingularOrMinimal := by
+  unfold NumberSystem.PluralImpliesSingularOrMinimal; infer_instance
+instance (ns : NumberSystem) : Decidable ns.AugmentedImpliesMinimal := by
+  unfold NumberSystem.AugmentedImpliesMinimal; infer_instance
+instance (ns : NumberSystem) : Decidable ns.UnitAugImpliesAugmented := by
+  unfold NumberSystem.UnitAugImpliesAugmented; infer_instance
 
 theorem all_trial_implies_dual :
-    allNumberSystems.all (·.trialImpliesDual) = true := by native_decide
+    ∀ ns ∈ allNumberSystems, ns.TrialImpliesDual := by decide
 
 theorem all_dual_implies_plural :
-    allNumberSystems.all (·.dualImpliesPlural) = true := by native_decide
+    ∀ ns ∈ allNumberSystems, ns.DualImpliesPlural := by decide
 
 theorem all_plural_implies_singular_or_minimal :
-    allNumberSystems.all (·.pluralImpliesSingularOrMinimal) = true := by native_decide
+    ∀ ns ∈ allNumberSystems, ns.PluralImpliesSingularOrMinimal := by decide
 
 theorem all_augmented_implies_minimal :
-    allNumberSystems.all (·.augmentedImpliesMinimal) = true := by native_decide
+    ∀ ns ∈ allNumberSystems, ns.AugmentedImpliesMinimal := by decide
 
 theorem all_unitAug_implies_augmented :
-    allNumberSystems.all (·.unitAugImpliesAugmented) = true := by native_decide
+    ∀ ns ∈ allNumberSystems, ns.UnitAugImpliesAugmented := by decide
 
--- ============================================================================
--- §3: Animacy Hierarchy and Number Marking (Ch 3)
--- ============================================================================
+/-! ### Animacy Hierarchy and Number Marking (Ch 3) -/
 
 open Features.Prominence (AnimacyRank)
 
@@ -266,17 +274,20 @@ private def allRanks : List AnimacyRank :=
 /-- **Constraint I** (Corbett Ch 3): the sg–pl distinction must affect a
     top segment of the hierarchy. If any position has obligatory marking,
     then the topmost position (speaker) does too. -/
-def AnimacyNumberProfile.respectsConstraintI (p : AnimacyNumberProfile) : Bool :=
-  !allRanks.any (λ r => (p.status r).toNat >= 2) ||
-    (p.status .speaker).toNat >= 2
+def AnimacyNumberProfile.RespectsConstraintI (p : AnimacyNumberProfile) : Prop :=
+  (∃ r ∈ allRanks, (p.status r).toNat ≥ 2) → (p.status .speaker).toNat ≥ 2
 
 /-- **Constraint III** (Corbett Ch 3): as we move rightward along the
     hierarchy, the likelihood of number being distinguished decreases
     monotonically — no intervening increase. -/
-def AnimacyNumberProfile.respectsConstraintIII (p : AnimacyNumberProfile) : Bool :=
-  allRanks.all λ r1 =>
-    allRanks.all λ r2 =>
-      r1.toNat <= r2.toNat || (p.status r1).toNat >= (p.status r2).toNat
+def AnimacyNumberProfile.RespectsConstraintIII (p : AnimacyNumberProfile) : Prop :=
+  ∀ r1 ∈ allRanks, ∀ r2 ∈ allRanks,
+    r1.toNat ≤ r2.toNat ∨ (p.status r1).toNat ≥ (p.status r2).toNat
+
+instance (p : AnimacyNumberProfile) : Decidable p.RespectsConstraintI := by
+  unfold AnimacyNumberProfile.RespectsConstraintI; infer_instance
+instance (p : AnimacyNumberProfile) : Decidable p.RespectsConstraintIII := by
+  unfold AnimacyNumberProfile.RespectsConstraintIII; infer_instance
 
 -- Language profiles
 
@@ -305,14 +316,12 @@ def allAnimacyProfiles : List AnimacyNumberProfile :=
 
 /-- Constraints I and III hold for all profiled languages. -/
 theorem constraint_i_holds :
-    allAnimacyProfiles.all (·.respectsConstraintI) = true := by native_decide
+    ∀ p ∈ allAnimacyProfiles, p.RespectsConstraintI := by decide
 
 theorem constraint_iii_holds :
-    allAnimacyProfiles.all (·.respectsConstraintIII) = true := by native_decide
+    ∀ p ∈ allAnimacyProfiles, p.RespectsConstraintIII := by decide
 
--- ============================================================================
--- §4: The Agreement Hierarchy (Ch 6, §6.2)
--- ============================================================================
+/-! ### The Agreement Hierarchy (Ch 6, §6.2) -/
 
 open Syntax.Agreement (AgreementTarget)
 
@@ -329,23 +338,28 @@ inductive AgreementControl where
   | semantic   -- meaning-driven: *committee* denotes a group of individuals
   deriving DecidableEq, Repr
 
-/-- An agreement profile for a controller type records whether semantic
-    agreement is available at each target position. -/
+/-- An agreement profile for a controller type records the targets where
+    semantic (meaning-driven) agreement is available. -/
 structure AgreementProfile where
   /-- Controller description -/
   controller : String
-  /-- Whether semantic (meaning-driven) agreement is possible at each target -/
-  semanticPossible : AgreementTarget → Bool
+  /-- Targets where semantic (meaning-driven) agreement is possible. -/
+  semanticTargets : List AgreementTarget
+
+/-- The four positions of @cite{corbett-1991}'s Agreement Hierarchy (`verb`
+    is not one of them — see `Syntax.Agreement.AgreementTarget`). -/
+private def hierarchyPositions : List AgreementTarget :=
+  [.attributive, .predicate, .relativePronoun, .personalPronoun]
 
 /-- The Agreement Hierarchy monotonicity constraint: once semantic agreement
     becomes possible at a target, it remains possible at all targets further
     right (= lower `Syntax.Agreement.AgreementTarget.rank`) on the hierarchy. -/
-def AgreementProfile.respectsHierarchy (p : AgreementProfile) : Bool :=
-  let targets := [AgreementTarget.attributive, .predicate,
-                   .relativePronoun, .personalPronoun]
-  targets.all λ t1 =>
-    targets.all λ t2 =>
-      t1.rank <= t2.rank || !p.semanticPossible t1 || p.semanticPossible t2
+def AgreementProfile.RespectsHierarchy (p : AgreementProfile) : Prop :=
+  ∀ t1 ∈ hierarchyPositions, ∀ t2 ∈ hierarchyPositions,
+    t1.rank ≤ t2.rank ∨ t1 ∉ p.semanticTargets ∨ t2 ∈ p.semanticTargets
+
+instance (p : AgreementProfile) : Decidable p.RespectsHierarchy := by
+  unfold AgreementProfile.RespectsHierarchy; infer_instance
 
 -- Language data
 
@@ -353,55 +367,44 @@ def AgreementProfile.respectsHierarchy (p : AgreementProfile) : Bool :=
     semantic agreement possible in predicate, relative pronoun, and
     personal pronoun. -/
 def britishCommittee : AgreementProfile :=
+  -- *these committee (no); the committee have decided / who have... / they (yes)
   { controller := "committee (British English)"
-    semanticPossible := λ
-      | .attributive     => false  -- *these committee
-      | .predicate       => true   -- the committee have decided
-      | .relativePronoun => true   -- the committee, who have...
-      | .personalPronoun => true   -- the committee... they
-      | .verb      => true }
+    semanticTargets := [.predicate, .relativePronoun, .personalPronoun, .verb] }
 
 /-- American English *committee*: semantic agreement rare in predicate,
     but available in relative and personal pronoun. -/
 def americanCommittee : AgreementProfile :=
+  -- ?the committee have decided (rare in AmE): no predicate/verb; pronouns yes
   { controller := "committee (American English)"
-    semanticPossible := λ
-      | .attributive     => false
-      | .predicate       => false  -- ?the committee have decided (rare in AmE)
-      | .relativePronoun => true
-      | .personalPronoun => true
-      | .verb      => false }
+    semanticTargets := [.relativePronoun, .personalPronoun] }
 
 /-- Serbo-Croatian *deca* 'children': morphologically feminine singular,
     semantically plural. Semantic agreement available everywhere. -/
 def serboCroatDeca : AgreementProfile :=
   { controller := "deca 'children' (Serbo-Croatian)"
-    semanticPossible := λ _ => true }
+    semanticTargets := [.attributive, .predicate, .relativePronoun, .personalPronoun, .verb] }
 
 def allAgreementProfiles : List AgreementProfile :=
   [britishCommittee, americanCommittee, serboCroatDeca]
 
 /-- The Agreement Hierarchy is respected by all profiled controllers. -/
 theorem agreement_hierarchy_holds :
-    allAgreementProfiles.all (·.respectsHierarchy) = true := by native_decide
+    ∀ p ∈ allAgreementProfiles, p.RespectsHierarchy := by decide
 
 /-- Once semantic agreement reaches the personal pronoun (rightmost),
     it is necessarily available there for all our controllers. -/
 theorem semantic_at_pronoun :
-    allAgreementProfiles.all (·.semanticPossible .personalPronoun) = true := by
-  native_decide
+    ∀ p ∈ allAgreementProfiles, .personalPronoun ∈ p.semanticTargets := by decide
 
 /-- No controller has semantic agreement only at the attributive position
     (the leftmost) without also having it further right — this would violate
     the monotonicity constraint. -/
 theorem no_attributive_only_semantic :
-    allAgreementProfiles.all (λ p =>
-      !p.semanticPossible .attributive ||
-       p.semanticPossible .personalPronoun) = true := by native_decide
+    ∀ p ∈ allAgreementProfiles,
+      .attributive ∈ p.semanticTargets → .personalPronoun ∈ p.semanticTargets := by
+  decide
 
--- ============================================================================
--- §5: Controller–Target Mismatch (Ch 6, §6.1)
--- ============================================================================
+/-! ### Controller–Target Mismatch (Ch 6, §6.1) -/
 
 /-- Controller and target may operate with different number systems.
     The target system is typically a subset of the controller system. -/
@@ -412,11 +415,14 @@ structure ControllerTargetSystem where
   /-- Number appearing when controller lacks specification (§6.1.2).
       Most languages default to singular; Tsez defaults to plural. -/
   defaultNumber : NumberValue := .singular
-  deriving BEq
+  deriving DecidableEq
 
 /-- Whether controller and target systems differ in size. -/
-def ControllerTargetSystem.hasMismatch (ct : ControllerTargetSystem) : Bool :=
-  ct.controllerValues.length != ct.targetValues.length
+def ControllerTargetSystem.HasMismatch (ct : ControllerTargetSystem) : Prop :=
+  ct.controllerValues.length ≠ ct.targetValues.length
+
+instance (ct : ControllerTargetSystem) : Decidable ct.HasMismatch := by
+  unfold ControllerTargetSystem.HasMismatch; infer_instance
 
 /-- Bayso: 4 controller values (general, singular, paucal, plural),
     but only 3 target agreement forms. General and singular trigger the same
@@ -439,13 +445,11 @@ def englishCT : ControllerTargetSystem :=
     controllerValues := [.singular, .plural]
     targetValues := [.singular, .plural] }
 
-theorem bayso_mismatch : baysoCT.hasMismatch = true := by native_decide
-theorem hebrew_mismatch : hebrewCT.hasMismatch = true := by native_decide
-theorem english_no_mismatch : englishCT.hasMismatch = false := by native_decide
+theorem bayso_mismatch : baysoCT.HasMismatch := by decide
+theorem hebrew_mismatch : hebrewCT.HasMismatch := by decide
+theorem english_no_mismatch : ¬ englishCT.HasMismatch := by decide
 
--- ============================================================================
--- §6: The Individuation Hierarchy (Ch 4)
--- ============================================================================
+/-! ### The Individuation Hierarchy (Ch 4) -/
 
 /-- An individuation profile records which number values are available at each
     position on the animacy hierarchy. Languages may have *split number systems*
@@ -461,20 +465,22 @@ structure IndividuationProfile where
 
 /-- **Constraint II** (Corbett Ch 4): if trial exists at position X, then dual
     exists at X and at all positions higher on the animacy hierarchy. -/
-def IndividuationProfile.respectsConstraintII (p : IndividuationProfile) : Bool :=
-  allRanks.all λ r =>
-    !(p.valuesAt r).contains .trial ||
-    ((p.valuesAt r).contains .dual &&
-     allRanks.all λ r' => r'.toNat <= r.toNat || (p.valuesAt r').contains .dual)
+def IndividuationProfile.RespectsConstraintII (p : IndividuationProfile) : Prop :=
+  ∀ r ∈ allRanks, .trial ∈ p.valuesAt r →
+    .dual ∈ p.valuesAt r ∧
+    ∀ r' ∈ allRanks, r'.toNat ≤ r.toNat ∨ .dual ∈ p.valuesAt r'
 
 /-- **Monotonicity**: number value inventories never grow as we move rightward
     (down) the hierarchy. If a value exists at position X, it exists at all
     higher positions. -/
-def IndividuationProfile.respectsMonotonicity (p : IndividuationProfile) : Bool :=
-  allRanks.all λ r1 =>
-    allRanks.all λ r2 =>
-      r1.toNat <= r2.toNat ||
-      (p.valuesAt r2).all (λ v => (p.valuesAt r1).contains v)
+def IndividuationProfile.RespectsMonotonicity (p : IndividuationProfile) : Prop :=
+  ∀ r1 ∈ allRanks, ∀ r2 ∈ allRanks,
+    r1.toNat ≤ r2.toNat ∨ ∀ v ∈ p.valuesAt r2, v ∈ p.valuesAt r1
+
+instance (p : IndividuationProfile) : Decidable p.RespectsConstraintII := by
+  unfold IndividuationProfile.RespectsConstraintII; infer_instance
+instance (p : IndividuationProfile) : Decidable p.RespectsMonotonicity := by
+  unfold IndividuationProfile.RespectsMonotonicity; infer_instance
 
 /-- Upper Sorbian: sg–dual–pl in pronouns and some nouns, but dual absent in
     lower animacy positions where only sg–pl remains. -/
@@ -505,23 +511,18 @@ def allIndividuationProfiles : List IndividuationProfile :=
   [upperSorbianIndiv, lihirIndiv, englishIndiv]
 
 theorem constraint_ii_holds :
-    allIndividuationProfiles.all (·.respectsConstraintII) = true := by
-  native_decide
+    ∀ p ∈ allIndividuationProfiles, p.RespectsConstraintII := by decide
 
 theorem individuation_monotonicity_holds :
-    allIndividuationProfiles.all (·.respectsMonotonicity) = true := by
-  native_decide
+    ∀ p ∈ allIndividuationProfiles, p.RespectsMonotonicity := by decide
 
 /-- Upper Sorbian pronouns have dual but lower animacy positions do not —
     a genuine split number system. -/
 theorem upperSorbian_split :
-    (upperSorbianIndiv.valuesAt .speaker).contains .dual = true ∧
-    (upperSorbianIndiv.valuesAt .discreteInanimate).contains .dual = false := by
-  native_decide
+    .dual ∈ upperSorbianIndiv.valuesAt .speaker ∧
+    .dual ∉ upperSorbianIndiv.valuesAt .discreteInanimate := by decide
 
--- ============================================================================
--- §7: Resolution Rules for Conjoined Controllers (Ch 6, §6.3)
--- ============================================================================
+/-! ### Resolution Rules for Conjoined Controllers (Ch 6, §6.3) -/
 
 /-- When conjoined NPs disagree in number, the language must resolve which
     number value appears on the agreement target. -/
@@ -563,16 +564,14 @@ theorem sg_du_resolves_tri :
 /-- In languages without trial, sg + du resolves to pl. -/
 theorem sg_du_resolves_pl_without_trial :
     NumberValue.semanticResolveIn englishNS .singular .dual = .plural := by
-  native_decide
+  decide
 
 /-- In Larike (which has trial), sg + du keeps trial. -/
 theorem sg_du_resolves_tri_with_trial :
     NumberValue.semanticResolveIn larikeNS .singular .dual = .trial := by
-  native_decide
+  decide
 
--- ============================================================================
--- §8: Bridges to AnimacyRank, Fragment plurality profiles
--- ============================================================================
+/-! ### Bridges to AnimacyRank, Fragment plurality profiles -/
 
 /-- Bridge: AnimacyRank monotonicity constraint is consistent with the
     animacy hierarchy defined in `Features.Prominence`. The ranking used here
@@ -584,21 +583,21 @@ theorem animacy_rank_ordering_consistent :
   decide
 
 /-- Bridge: English `NumberSystem` matches the English plurality profile in
-    `Fragments.English.Plurals` — both record a 2-value obligatory system. -/
+    `English.Plurals` — both record a 2-value obligatory system. -/
 theorem english_matches_plurals_typology :
     englishNS.size = 2 ∧
     englishNS.hasGeneral = false ∧
-    Fragments.English.pluralityProfile.occurrence =
+    English.pluralityProfile.occurrence =
       .allNounsAlwaysObligatory := by
   decide
 
 /-- Bridge: Japanese general number in Corbett's analysis corresponds to the
-    `noPlural` coding in `Fragments.Japanese.Plurals`. WALS and Corbett
+    `noPlural` coding in `Japanese.Plurals`. WALS and Corbett
     describe the same facts differently: WALS says "no nominal plural,"
     Corbett says "general number exists (form outside the system)." -/
 theorem japanese_general_vs_wals :
     japaneseNS.hasGeneral = true ∧
-    Fragments.Japanese.pluralityProfile.coding = .noPlural := by
+    Japanese.pluralityProfile.coding = .noPlural := by
   decide
 
 /-- Bridge: Bayso's general number explains its "no nominal plural"
@@ -607,11 +606,9 @@ theorem japanese_general_vs_wals :
 theorem bayso_general_with_system :
     baysoNS.hasGeneral = true ∧
     baysoNS.size = 3 := by
-  native_decide
+  decide
 
--- ============================================================================
--- §9: Bridge to Cysouw NumberStage (Features.Number)
--- ============================================================================
+/-! ### Bridge to Cysouw NumberStage (Features.Number) -/
 
 open Features.Number (NumberStage)
 
@@ -628,12 +625,12 @@ def NumberSystem.toNumberStage (ns : NumberSystem) : NumberStage :=
   | 3 => .N3
   | _ => .N4
 
-theorem piraha_N1 : pirahaNS.toNumberStage = .N1 := by native_decide
-theorem english_N2 : englishNS.toNumberStage = .N2 := by native_decide
-theorem russian_N2 : russianNS.toNumberStage = .N2 := by native_decide
-theorem japanese_N2 : japaneseNS.toNumberStage = .N2 := by native_decide
-theorem upperSorbian_N3 : upperSorbianNS.toNumberStage = .N3 := by native_decide
-theorem larike_N4 : larikeNS.toNumberStage = .N4 := by native_decide
+theorem piraha_N1 : pirahaNS.toNumberStage = .N1 := by decide
+theorem english_N2 : englishNS.toNumberStage = .N2 := by decide
+theorem russian_N2 : russianNS.toNumberStage = .N2 := by decide
+theorem japanese_N2 : japaneseNS.toNumberStage = .N2 := by decide
+theorem upperSorbian_N3 : upperSorbianNS.toNumberStage = .N3 := by decide
+theorem larike_N4 : larikeNS.toNumberStage = .N4 := by decide
 
 /-- Corbett's implicational hierarchy (trial → dual → plural → singular) is
     consistent with Cysouw's N-stages: a system at stage Nₖ has exactly k
@@ -643,11 +640,9 @@ theorem numberStage_consistent_with_size :
     englishNS.size = 2 ∧ englishNS.toNumberStage = .N2 ∧
     upperSorbianNS.size = 3 ∧ upperSorbianNS.toNumberStage = .N3 ∧
     larikeNS.size = 4 ∧ larikeNS.toNumberStage = .N4 := by
-  native_decide
+  decide
 
--- ============================================================================
--- §10: Bridge to Chierchia (1998) Nominal Mapping Parameter
--- ============================================================================
+/-! ### Bridge to Chierchia (1998) Nominal Mapping Parameter -/
 
 open Semantics.Kinds.NMP (NominalMapping CanDenoteKind)
 
@@ -667,9 +662,7 @@ theorem general_number_iff_bare_kind :
      ¬ CanDenoteKind .predOnly False) :=
   ⟨⟨rfl, trivial⟩, ⟨rfl, trivial⟩, ⟨rfl, id⟩⟩
 
--- ============================================================================
--- §11: Bridge to Link (1983) — Inclusive vs Exclusive Plural
--- ============================================================================
+/-! ### Bridge to Link (1983) — Inclusive vs Exclusive Plural -/
 
 /-- The inclusive/exclusive ambiguity of plurals (Corbett Ch 7).
 
@@ -689,17 +682,18 @@ inductive PluralInterpretation where
   deriving DecidableEq, Repr
 
 /-- Inclusive plural includes singletons; exclusive does not. -/
-def PluralInterpretation.includesSingleton : PluralInterpretation → Bool
-  | .inclusive => true
-  | .exclusive => false
+def PluralInterpretation.IncludesSingleton : PluralInterpretation → Prop
+  | .inclusive => True
+  | .exclusive => False
+
+instance : DecidablePred PluralInterpretation.IncludesSingleton :=
+  fun p => by cases p <;> unfold PluralInterpretation.IncludesSingleton <;> infer_instance
 
 /-- The compositional (pre-pragmatic) interpretation is always inclusive. -/
 theorem compositional_plural_is_inclusive :
-    PluralInterpretation.inclusive.includesSingleton = true := rfl
+    PluralInterpretation.inclusive.IncludesSingleton := trivial
 
--- ============================================================================
--- §12: Bridge to Unified Coordinate Resolution
--- ============================================================================
+/-! ### Bridge to Unified Coordinate Resolution -/
 
 open Minimalist.Agreement.CoordinateResolution
 
@@ -714,28 +708,27 @@ open Minimalist.Agreement.CoordinateResolution
 theorem numberResolveIn_eq_semanticResolveIn (a b : NumberValue) :
     numberResolveIn englishNS.values a b
     = some (NumberValue.semanticResolveIn englishNS a b) := by
-  cases a <;> cases b <;> native_decide
+  cases a <;> cases b <;> decide
 
--- ============================================================================
--- §13: Minor Number Constraints IV–VII (Ch 4)
--- ============================================================================
+/-! ### Minor Number Constraints IV–VII (Ch 4) -/
 
 /-- **Constraint VII** (@cite{corbett-2000} Ch 4): only dual and paucal can be
     minor numbers. Singular and plural cannot be minor — they are the core
     of any number system. -/
-def IndividuationProfile.respectsConstraintVII (p : IndividuationProfile) : Bool :=
-  p.minorValues.all λ v => v == .dual || v == .paucal
+def IndividuationProfile.RespectsConstraintVII (p : IndividuationProfile) : Prop :=
+  ∀ v ∈ p.minorValues, v = .dual ∨ v = .paucal
 
 /-- **Constraint IV** (@cite{corbett-2000} Ch 4): if a minor number exists
     at some animacy position, it must also exist at all higher positions.
     Minor numbers obey the same monotonicity as full number values. -/
-def IndividuationProfile.respectsConstraintIV (p : IndividuationProfile) : Bool :=
-  p.minorValues.all λ v =>
-    allRanks.all λ r1 =>
-      allRanks.all λ r2 =>
-        r1.toNat <= r2.toNat ||
-        !(p.valuesAt r2).contains v ||
-        (p.valuesAt r1).contains v
+def IndividuationProfile.RespectsConstraintIV (p : IndividuationProfile) : Prop :=
+  ∀ v ∈ p.minorValues, ∀ r1 ∈ allRanks, ∀ r2 ∈ allRanks,
+    r1.toNat ≤ r2.toNat ∨ v ∉ p.valuesAt r2 ∨ v ∈ p.valuesAt r1
+
+instance (p : IndividuationProfile) : Decidable p.RespectsConstraintVII := by
+  unfold IndividuationProfile.RespectsConstraintVII; infer_instance
+instance (p : IndividuationProfile) : Decidable p.RespectsConstraintIV := by
+  unfold IndividuationProfile.RespectsConstraintIV; infer_instance
 
 /-- Modern Hebrew: minor dual restricted to body-part nouns and a few
     lexicalized time expressions. The dual is a closed class (Constraint V),
@@ -763,18 +756,15 @@ def allIndividuationProfilesExtended : List IndividuationProfile :=
 
 /-- Constraint VII holds for all profiles (only dual/paucal are minor). -/
 theorem constraint_vii_holds :
-    allIndividuationProfilesExtended.all (·.respectsConstraintVII) = true := by
-  native_decide
+    ∀ p ∈ allIndividuationProfilesExtended, p.RespectsConstraintVII := by decide
 
 /-- Constraint IV holds for all profiles (minor number monotonicity). -/
 theorem constraint_iv_holds :
-    allIndividuationProfilesExtended.all (·.respectsConstraintIV) = true := by
-  native_decide
+    ∀ p ∈ allIndividuationProfilesExtended, p.RespectsConstraintIV := by decide
 
 /-- Constraint II also holds for the extended profile set. -/
 theorem constraint_ii_extended :
-    allIndividuationProfilesExtended.all (·.respectsConstraintII) = true := by
-  native_decide
+    ∀ p ∈ allIndividuationProfilesExtended, p.RespectsConstraintII := by decide
 
 /-- Hebrew and Maltese duals are minor numbers. -/
 theorem hebrew_minor_dual : hebrewIndiv.minorValues = [.dual] := rfl
@@ -782,14 +772,10 @@ theorem maltese_minor_dual : malteseIndiv.minorValues = [.dual] := rfl
 
 /-- No language in our sample has minor singular or plural. -/
 theorem no_minor_singular_or_plural :
-    allIndividuationProfilesExtended.all
-      (λ p => !(p.minorValues.contains .singular) &&
-              !(p.minorValues.contains .plural)) = true := by
-  native_decide
+    ∀ p ∈ allIndividuationProfilesExtended,
+      .singular ∉ p.minorValues ∧ .plural ∉ p.minorValues := by decide
 
--- ============================================================================
--- §14: Default Number (Ch 6, §6.1.2)
--- ============================================================================
+/-! ### Default Number (Ch 6, §6.1.2) -/
 
 /-- Tsez (Northeast Caucasian): when the controller lacks a number
     specification, the default agreement target form is plural —
@@ -808,13 +794,10 @@ theorem tsez_default_plural : tsezCT.defaultNumber = .plural := rfl
 
 /-- Default number is always in the target system. -/
 theorem default_in_target_system :
-    [englishCT, baysoCT, hebrewCT, tsezCT].all
-      (λ ct => ct.targetValues.contains ct.defaultNumber) = true := by
-  native_decide
+    ∀ ct ∈ [englishCT, baysoCT, hebrewCT, tsezCT],
+      ct.defaultNumber ∈ ct.targetValues := by decide
 
--- ============================================================================
--- §15: Associative Plurals (Ch 5)
--- ============================================================================
+/-! ### Associative Plurals (Ch 5) -/
 
 /-- Associative plural profile: "X and associates" constructions are
     constrained by animacy — they typically require human or animate
@@ -825,7 +808,7 @@ structure AssociativePluralProfile where
   minAnimacy : AnimacyRank
   /-- Whether the associative marker is identical to the additive plural -/
   sameAsAdditive : Bool
-  deriving BEq
+  deriving DecidableEq
 
 /-- Hungarian: associative -ék, dedicated form (not the additive plural),
     restricted to human referents. -/
@@ -847,20 +830,17 @@ def allAssociativeProfiles : List AssociativePluralProfile :=
 
 /-- Associative plurals in our sample all require at least human animacy. -/
 theorem associative_requires_human :
-    allAssociativeProfiles.all
-      (λ p => p.minAnimacy.toNat >= AnimacyRank.human.toNat) = true := by
-  native_decide
+    ∀ p ∈ allAssociativeProfiles,
+      p.minAnimacy.toNat ≥ AnimacyRank.human.toNat := by decide
 
 /-- Bridge: Japanese has both associative plural (here) and general number
     (from the NumberSystem), reflecting the interaction between the two. -/
 theorem japanese_associative_with_general :
     japaneseNS.hasGeneral = true ∧
     japaneseAssoc.sameAsAdditive = false := by
-  native_decide
+  decide
 
--- ============================================================================
--- §16: Count/Mass × Number Interaction (Ch 7)
--- ============================================================================
+/-! ### Count/Mass × Number Interaction (Ch 7) -/
 
 /-- Count/mass interaction with number systems (@cite{corbett-2000} Ch 7).
 
@@ -878,7 +858,7 @@ structure CountMassNumberInteraction where
   countSystem : NumberSystem
   /-- Number system for mass nouns (often smaller or empty) -/
   massSystem : NumberSystem
-  deriving BEq
+  deriving DecidableEq
 
 /-- English: count nouns inflect obligatorily, mass nouns do not
     (*furnitures, *informations). -/
@@ -903,58 +883,60 @@ def allCountMassInteractions : List CountMassNumberInteraction :=
 
 /-- Mass noun systems are never richer than count noun systems. -/
 theorem mass_never_richer_than_count :
-    allCountMassInteractions.all
-      (λ cm => cm.massSystem.size <= cm.countSystem.size) = true := by
-  native_decide
+    ∀ cm ∈ allCountMassInteractions,
+      cm.massSystem.size ≤ cm.countSystem.size := by decide
 
 /-- In English, count nouns inflect but mass nouns do not. -/
 theorem english_count_mass_asymmetry :
     englishCountMass.countNounsInflect = true ∧
     englishCountMass.massNounsInflect = false := by
-  native_decide
+  decide
 
 /-- Bridge to Chierchia (1998): Japanese general number languages treat
     count and mass nouns identically — both get the same number system. -/
 theorem japanese_count_mass_uniform :
-    japaneseCountMass.countSystem == japaneseCountMass.massSystem := by
-  native_decide
+    japaneseCountMass.countSystem = japaneseCountMass.massSystem := by
+  decide
 
--- ============================================================================
--- §17: Predicate Hierarchy Bridge
--- ============================================================================
+/-! ### Predicate Hierarchy Bridge -/
 
 open Syntax.Agreement (PredicateTarget)
 
-/-- Russian: predicate adjectives agree in gender/number, but past-tense
-    verbs also do — illustrating the Predicate Hierarchy within the
-    agreement target position. -/
+/-- A predicate-hierarchy profile records the sub-positions (verb, participle,
+    adjective, noun) where semantic agreement is possible for a controller —
+    e.g. Russian honorific *vy*. -/
 structure PredicateHierarchyProfile where
   name : String
-  /-- Whether semantic agreement is available at each predicate sub-position -/
-  semanticPossible : PredicateTarget → Bool
+  /-- Predicate sub-positions where semantic agreement is possible. -/
+  semanticTargets : List PredicateTarget
 
-/-- The Predicate Hierarchy monotonicity constraint: once semantic agreement
-    becomes possible at a sub-position, it remains possible at all higher
-    positions. -/
-def PredicateHierarchyProfile.respectsHierarchy (p : PredicateHierarchyProfile) : Bool :=
-  let targets := [PredicateTarget.verb, .participle, .adjective, .noun]
-  targets.all λ t1 =>
-    targets.all λ t2 =>
-      t1.rank >= t2.rank || !p.semanticPossible t1 || p.semanticPossible t2
+/-- The four sub-positions of the Predicate Hierarchy. -/
+private def predicatePositions : List PredicateTarget :=
+  [.verb, .participle, .adjective, .noun]
 
-/-- Russian *deca* ('children'): semantic agreement on predicate adjective
-    and noun, but not on finite verb. Participial agreement follows
-    adjective. -/
-def russianDecaPredHier : PredicateHierarchyProfile :=
-  { name := "Russian deca (Predicate Hierarchy)"
-    semanticPossible := λ
-      | .verb       => false
-      | .participle => true
-      | .adjective  => true
-      | .noun       => true }
+/-- The Predicate Hierarchy (@cite{comrie-1975}) monotonicity constraint:
+    once semantic agreement becomes possible at a sub-position, it remains
+    possible at all higher positions. -/
+def PredicateHierarchyProfile.RespectsHierarchy (p : PredicateHierarchyProfile) : Prop :=
+  ∀ t1 ∈ predicatePositions, ∀ t2 ∈ predicatePositions,
+    t1.rank ≥ t2.rank ∨ t1 ∉ p.semanticTargets ∨ t2 ∈ p.semanticTargets
 
-/-- The Russian Predicate Hierarchy profile respects monotonicity. -/
+instance (p : PredicateHierarchyProfile) : Decidable p.RespectsHierarchy := by
+  unfold PredicateHierarchyProfile.RespectsHierarchy; infer_instance
+
+/-- Russian honorific *vy* 'you' (polite singular): grammatically plural but
+    referring to one person, so semantic agreement = singular. Per
+    @cite{corbett-2000}'s Predicate Hierarchy data, the finite verb and
+    participle keep syntactic (plural) agreement, while the long-form
+    predicate adjective and the predicate noun take singular (semantic)
+    agreement. -/
+def russianHonorificVy : PredicateHierarchyProfile :=
+  { name := "Russian honorific vy (Predicate Hierarchy)"
+    semanticTargets := [.adjective, .noun] }
+
+/-- The Russian honorific-*vy* profile respects Predicate Hierarchy
+    monotonicity. -/
 theorem russian_predicate_hierarchy_holds :
-    russianDecaPredHier.respectsHierarchy = true := by native_decide
+    russianHonorificVy.RespectsHierarchy := by decide
 
 end Corbett2000

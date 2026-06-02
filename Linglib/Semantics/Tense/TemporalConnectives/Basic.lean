@@ -16,7 +16,7 @@ a sentence's truth. Two canonical patterns:
 sets (Level 1). This is the lower half of the three-level projection chain:
 
 ```
-Level 3: EvPred Time (event predicates)
+Level 3: Event Time → Prop (event predicates)
     ↓ eventDenotation (see EventBridge.lean)
 Level 2: SentDenotation Time (interval sets — this file)
     ↓ timeTrace

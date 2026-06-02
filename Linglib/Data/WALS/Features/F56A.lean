@@ -20,7 +20,7 @@ inductive ConjunctionsAndUniversalQuantifiers where
   | similarWithoutInterrogative
   /-- Formally similar, with interrogative (43 languages). -/
   | similarWithInterrogative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 56A dataset (116 languages). -/
 def allData : List (Datapoint ConjunctionsAndUniversalQuantifiers) :=
@@ -143,9 +143,9 @@ def allData : List (Datapoint ConjunctionsAndUniversalQuantifiers) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint ConjunctionsAndUniversalQuantifiers) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint ConjunctionsAndUniversalQuantifiers) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F56A

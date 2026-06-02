@@ -554,28 +554,28 @@ theorem stage3_they_from_structure (ctx : ReferentContext) :
 -- § 10: Bridge to English Fragment
 -- ============================================================================
 
-/-- The VI elsewhere exponent *they* corresponds to the Fragment's
-    epicene gender paradigm. This makes explicit the connection that
-    K&C's analysis reveals: epicene is not a positive gender class but
-    the **absence** of a contrastive gender feature — the elsewhere
-    case in VI competition. -/
-theorem elsewhere_is_epicene :
+/-- The VI elsewhere exponent *they* corresponds to the Fragment's *absence* of
+    a gender feature. This makes explicit the connection K&C's analysis reveals:
+    epicene is not a positive gender class but the **absence** of a contrastive
+    gender feature — the elsewhere case in VI competition. The Fragment encodes
+    that absence directly as `they.gender = none`. -/
+theorem elsewhere_is_genderless :
     subsetPrinciple pronounVIs ungenderedBundle = some "they" ∧
-    Fragments.English.Pronouns.genderOf "they" = .epicene :=
+    English.Pronouns.they.gender = none :=
   ⟨by decide, rfl⟩
 
-/-- The VI competition and the Fragment's gender paradigm are
-    consistent across all four pronoun forms: each VI exponent maps
-    to its expected gender paradigm class.
+/-- The VI competition and the lexicon `gender` fields are consistent across all
+    four pronoun forms: each VI exponent maps to its expected surface gender, and
+    *they* — the elsewhere exponent — to the absence of one (`none`).
 
     This is the bridge between the morphosyntactic mechanism (VI) and the
-    descriptive grammar (GenderParadigm): VI *derives* which form is used,
-    and the Fragment's paradigm classification *records* the result. -/
+    Fragment's gender field: VI *derives* which form is used, and the Fragment
+    *records* the gender (or its absence). -/
 theorem vi_fragment_consistency :
-    Fragments.English.Pronouns.genderOf "she" = .feminine ∧
-    Fragments.English.Pronouns.genderOf "he" = .masculine ∧
-    Fragments.English.Pronouns.genderOf "it" = .neuter ∧
-    Fragments.English.Pronouns.genderOf "they" = .epicene :=
+    English.Pronouns.she.gender = some .feminine ∧
+    English.Pronouns.he.gender = some .masculine ∧
+    English.Pronouns.it.gender = some .neuter ∧
+    English.Pronouns.they.gender = none :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================

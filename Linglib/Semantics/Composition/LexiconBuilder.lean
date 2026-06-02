@@ -1,6 +1,6 @@
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Semantics.Composition.LexEntry
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 
 /-!
 # Lexicon Builder
@@ -15,7 +15,7 @@ semantics. Provides:
    list of named entries, replacing the hand-written match-on-strings pattern
    that Studies currently use.
 
-3. **Entry construction** (`VerbCore.mkLexEntry`): given a VerbCore and a
+3. **Entry construction** (`mkLexEntry`): given a Verb and a
    denotation of the appropriate type, produce a `LexEntry F`.
 
 ## Design
@@ -23,7 +23,7 @@ semantics. Provides:
 The dispatch layer does NOT generate denotations from features — that would
 be too theory-laden. It provides the *type* and the *scaffolding*; the Study
 still supplies the denotation. Domain-specific denotation builders
-(`VerbCore.getCoSSemantics`, `VerbCore.veridicality`, etc.) remain in
+(`Verb.getCoSSemantics`, `Verb.veridicality`, etc.) remain in
 `Semantics/Lexical/Verb/VerbEntry.lean`.
 
 ## Usage pattern
@@ -50,8 +50,6 @@ open Semantics.Montague (LexEntry Lexicon)
 
 /-! ## Type Dispatch -/
 
-namespace Semantics.Lexical
-
 open Core.Logic.Intensional (Ty)
 
 /-- Map a verb's complement type to its Montague semantic type.
@@ -77,14 +75,11 @@ def ComplementType.toTy : ComplementType → Ty
   | .question      => (.e ⇒ .t) ⇒ .e ⇒ .t
 
 /-- The semantic type of a verb, determined by its complement type. -/
-def VerbCore.semanticType (v : VerbCore) : Ty :=
+def Verb.semanticType (v : Verb) : Ty :=
   v.complementType.toTy
-
-end Semantics.Lexical
 
 namespace Semantics.Composition.LexiconBuilder
 
-open Semantics.Lexical (ComplementType VerbCore)
 
 /-! ## Lexicon Construction -/
 
@@ -121,7 +116,7 @@ def mergeLexicons {F : Frame} (lex1 lex2 : Lexicon F) : Lexicon F :=
 
     This ensures the entry's type tag matches the verb's argument structure
     by construction. -/
-def VerbCore.mkLexEntry (v : VerbCore) (F : Frame) (denot : F.Denot v.semanticType)
+def mkLexEntry (v : Verb) (F : Frame) (denot : F.Denot v.semanticType)
     : LexEntry F :=
   ⟨v.semanticType, denot⟩
 

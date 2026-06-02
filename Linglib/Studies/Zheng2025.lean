@@ -212,7 +212,7 @@ theorem dataset_size : allData.length = 9 := by native_decide
 -- §2 — Bridges: Fragment ↔ Data, Theory ↔ Data
 -- ════════════════════════════════════════════════════════════════════════════
 
-open Fragments.Mandarin.QuestionParticles (nandao)
+open Mandarin.QuestionParticles (nandao)
 open Semantics.Modality (Kernel Background nandaoFelicitous World)
 
 /-- The nandao Fragment entry's evidential bias requirement matches the
@@ -242,7 +242,7 @@ theorem kernel_requires_evidence (k : Kernel World) (u : Background World) (φ :
 -- ════════════════════════════════════════════════════════════════════════════
 
 open Features (QParticleLayer)
-open Fragments.Mandarin.QuestionParticles (QuestionParticleEntry ma ba)
+open Mandarin.QuestionParticles (QuestionParticleEntry ma ba)
 
 /-- Zheng's layer assignments for the three Mandarin Q-particles in the
     @cite{dayal-2025} cartography `[SAP [PerspP [CP ...]]]`. The `_`

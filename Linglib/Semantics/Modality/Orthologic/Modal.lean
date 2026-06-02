@@ -1,5 +1,5 @@
 import Linglib.Semantics.Modality.Orthologic.Frames
-import Linglib.Core.Logic.Intensional.RestrictedModality
+import Linglib.Core.Logic.Modal.Basic
 import Mathlib.Data.Fintype.Pi
 
 /-!
@@ -38,7 +38,7 @@ Decidability of `access` is *not* bundled — provide a `DecidableRel`
 instance separately (mirrors the `CompatFrame` convention).
 -/
 
-namespace Semantics.Modality.Orthologic
+namespace Orthologic
 
 -- ════════════════════════════════════════════════════
 -- § 1. Epistemic Compatibility Frames
@@ -189,9 +189,9 @@ namespace EpistemicCompatFrame
     `wittgensteinLaw`. -/
 theorem wittgensteinLaw {S : Type*} (F : EpistemicCompatFrame S) (A : Set S) :
     orthoNeg F.toCompatFrame A ∩ diamond F.toModalCompatFrame A = ∅ :=
-  _root_.Semantics.Modality.Orthologic.wittgensteinLaw
+  _root_.Orthologic.wittgensteinLaw
     F.toModalCompatFrame F.knowable A
 
 end EpistemicCompatFrame
 
-end Semantics.Modality.Orthologic
+end Orthologic

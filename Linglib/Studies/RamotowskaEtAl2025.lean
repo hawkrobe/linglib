@@ -71,7 +71,7 @@ inductive Quantifier where
   | notEvery   -- Negated universal (weak/negative)
   deriving Repr, DecidableEq
 
-open Fragments.English.Determiners (Strength)
+open English.Determiners (Strength)
 
 /-- Map local quantifiers to canonical Strength (B&C Table II). -/
 def Quantifier.strength : Quantifier → Strength

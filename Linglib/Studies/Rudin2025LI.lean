@@ -48,8 +48,7 @@ namespace Rudin2025LI
 
 open Semantics.Quotation.Demonstration
 open Dialogue.QuotationFBOntology
-open Dialogue.FarkasBruce
-open Semantics.Events
+open Discourse.Commitment.Table
 
 -- ════════════════════════════════════════════════════
 -- § 1. Empirical Taxonomy
@@ -184,7 +183,7 @@ postulates hold by `rfl`. The discriminator for verb classes is
 witnesses and exclusions. -/
 
 /-- A canonical event for each verb class, indexed by `runtime.start`. -/
-def E (n : ℕ) : Event ℕ := ⟨⟨n, n, le_refl _⟩, .action⟩
+def E (n : ℕ) : Event ℕ := ⟨⟨n, n, le_refl _⟩, .dynamic⟩
 
 /-- The REENACT relation: per verb-class events have different REENACT
     targets, chosen so the postulates' universal quantifiers reduce to
@@ -224,7 +223,7 @@ def rudinWhisper (e : Event ℕ) : Prop :=
 
 /-- A non-LINGMAT RESP performance: a non-linguistic, non-rising
     interrogative (e.g., a wordless interrogative gesture). Its
-    update is `askPolarQuestion`, which pushes an issue without
+    update is `polarQuestion`, which pushes an issue without
     committing. Used to falsify `SAY` for ASK-class events. -/
 def respNonLingmat : FBPerformance Bool :=
   { form := .interrogative, content := fun _ => true,
@@ -263,9 +262,8 @@ theorem committingDecl_lingmat : (fbOntology Bool).LINGMAT committingDecl :=
 
 theorem committingDecl_commits : (fbOntology Bool).Commits committingDecl := by
   show committingDecl.content ∈ (committingDecl.update DiscourseState.empty).dcS
-  simp [FBPerformance.update, DiscourseState.assertDeclarative,
-        DiscourseState.addToDcS, DiscourseState.pushIssue,
-        DiscourseState.empty, committingDecl]
+  simp [FBPerformance.update, committingDecl]
+  exact List.mem_cons_self
 
 /-- A loud committing declarative performance. -/
 def committingLoud : FBPerformance Bool :=
@@ -279,9 +277,8 @@ theorem committingLoud_loud : (fbOntology Bool).Loud committingLoud := rfl
 
 theorem committingLoud_commits : (fbOntology Bool).Commits committingLoud := by
   show committingLoud.content ∈ (committingLoud.update DiscourseState.empty).dcS
-  simp [FBPerformance.update, DiscourseState.assertDeclarative,
-        DiscourseState.addToDcS, DiscourseState.pushIssue,
-        DiscourseState.empty, committingLoud]
+  simp [FBPerformance.update, committingLoud]
+  exact List.mem_cons_self
 
 /-- A whispered committing declarative performance. -/
 def committingWhispered : FBPerformance Bool :=
@@ -298,9 +295,8 @@ theorem committingWhispered_commits :
     (fbOntology Bool).Commits committingWhispered := by
   show committingWhispered.content ∈
        (committingWhispered.update DiscourseState.empty).dcS
-  simp [FBPerformance.update, DiscourseState.assertDeclarative,
-        DiscourseState.addToDcS, DiscourseState.pushIssue,
-        DiscourseState.empty, committingWhispered]
+  simp [FBPerformance.update, committingWhispered]
+  exact List.mem_cons_self
 
 /-- A rising-declarative performance (RESP, not committing). -/
 def risingDecl : FBPerformance Bool :=
@@ -571,7 +567,7 @@ instance : IsRudinModel rudinModel := by
     Reads directly off Fragment fields — `speechActVerb`,
     `takesQuestionBase`, `levinClass`, and surface `form` — so the
     classification stays in sync with Fragment edits. -/
-def fromEnglishVerb (v : Fragments.English.Predicates.Verbal.VerbEntry) :
+def fromEnglishVerb (v : English.Predicates.Verbal.VerbEntry) :
     Option Verb :=
   if !v.speechActVerb then none
   else if v.takesQuestionBase then some .ask
@@ -590,21 +586,21 @@ These `example`s pin individual Fragment verbs to the Rudin taxonomy.
 Renaming or reclassifying any of these verbs in the Fragment will
 break exactly the relevant witness, surfacing the inconsistency. -/
 
-example : fromEnglishVerb Fragments.English.Predicates.Verbal.say     = some .say     := rfl
-example : fromEnglishVerb Fragments.English.Predicates.Verbal.claim   = some .say     := rfl
-example : fromEnglishVerb Fragments.English.Predicates.Verbal.whisper = some .whisper := rfl
-example : fromEnglishVerb Fragments.English.Predicates.Verbal.murmur  = some .whisper := rfl
-example : fromEnglishVerb Fragments.English.Predicates.Verbal.mumble  = some .whisper := rfl
-example : fromEnglishVerb Fragments.English.Predicates.Verbal.mutter  = some .whisper := rfl
-example : fromEnglishVerb Fragments.English.Predicates.Verbal.yell    = some .yell    := rfl
-example : fromEnglishVerb Fragments.English.Predicates.Verbal.shout   = some .yell    := rfl
-example : fromEnglishVerb Fragments.English.Predicates.Verbal.scream  = some .yell    := rfl
-example : fromEnglishVerb Fragments.English.Predicates.Verbal.shriek  = some .yell    := rfl
-example : fromEnglishVerb Fragments.English.Predicates.Verbal.ask     = some .ask     := rfl
+example : fromEnglishVerb English.Predicates.Verbal.say     = some .say     := rfl
+example : fromEnglishVerb English.Predicates.Verbal.claim   = some .say     := rfl
+example : fromEnglishVerb English.Predicates.Verbal.whisper = some .whisper := rfl
+example : fromEnglishVerb English.Predicates.Verbal.murmur  = some .whisper := rfl
+example : fromEnglishVerb English.Predicates.Verbal.mumble  = some .whisper := rfl
+example : fromEnglishVerb English.Predicates.Verbal.mutter  = some .whisper := rfl
+example : fromEnglishVerb English.Predicates.Verbal.yell    = some .yell    := rfl
+example : fromEnglishVerb English.Predicates.Verbal.shout   = some .yell    := rfl
+example : fromEnglishVerb English.Predicates.Verbal.scream  = some .yell    := rfl
+example : fromEnglishVerb English.Predicates.Verbal.shriek  = some .yell    := rfl
+example : fromEnglishVerb English.Predicates.Verbal.ask     = some .ask     := rfl
 
 /-! ### Negative cases — verbs outside the Rudin matrix -/
 
-example : fromEnglishVerb Fragments.English.Predicates.Verbal.tell   = none := rfl
-example : fromEnglishVerb Fragments.English.Predicates.Verbal.wonder = none := rfl
+example : fromEnglishVerb English.Predicates.Verbal.tell   = none := rfl
+example : fromEnglishVerb English.Predicates.Verbal.wonder = none := rfl
 
 end Rudin2025LI

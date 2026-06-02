@@ -13,17 +13,17 @@ The first element "drug" agrees in case with the subject, while "druga"
 takes the case assigned by the verb.
 -/
 
-namespace Fragments.Slavic.Russian.Reciprocals
+namespace Russian.Reciprocals
 
 open Pronoun
 
 /-- друг друга *drug druga* — reciprocal pronoun 'each other'. -/
-def drugDruga : Entry :=
+def drugDruga : PersonalPronoun :=
   { form := "drug druga", script := some "друг друга"
   , person := some .third, number := some .pl }
 
 /-- себя *sebja* — reflexive pronoun (for contrast). -/
-def sebja : Entry :=
+def sebja : PersonalPronoun :=
   { form := "sebja", script := some "себя"
   , person := some .third }
 
@@ -31,4 +31,4 @@ def sebja : Entry :=
 theorem recip_distinct_from_reflexive :
     drugDruga.form ≠ sebja.form := by decide
 
-end Fragments.Slavic.Russian.Reciprocals
+end Russian.Reciprocals

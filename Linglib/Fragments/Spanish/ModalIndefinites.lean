@@ -15,7 +15,7 @@ Lexical entries for Spanish modal indefinites *algún* and *uno cualquiera*.
 
 set_option autoImplicit false
 
-namespace Fragments.Spanish.ModalIndefinites
+namespace Spanish.ModalIndefinites
 
 open Features.ModalIndefinite
 
@@ -73,4 +73,4 @@ theorem algún_unoCualquiera_contrast :
   refine ⟨by decide, by decide, rfl⟩
 
 
-end Fragments.Spanish.ModalIndefinites
+end Spanish.ModalIndefinites

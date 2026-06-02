@@ -17,7 +17,7 @@ This file commits the consensus lexical data only; the analytical claim that
 trigger movement to matrix AspP_outer — lives in the Studies file.
 -/
 
-namespace Fragments.Cantonese.Particles
+namespace Cantonese.Particles
 
 open Semantics.Presupposition.TriggerTypology
   (PresupTrigger AltStructure PresupTriggerEntry)
@@ -63,4 +63,4 @@ theorem both_iterative_deletion :
     zoi.triggerEntry.altStructure = .deletion := by
   refine ⟨rfl, rfl, rfl, rfl⟩
 
-end Fragments.Cantonese.Particles
+end Cantonese.Particles

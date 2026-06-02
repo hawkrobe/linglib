@@ -70,7 +70,7 @@ formal. The formal forms (laal SG, alaq PL) are syntactically
 postverbal and do not participate in the prefix paradigm.
 -/
 
-namespace Fragments.Mayan.Kiche
+namespace Kiche
 
 -- ============================================================================
 -- § 1: Person/Number/Formality Features
@@ -204,10 +204,10 @@ def ArgPosition.agreementSet : ArgPosition → AgreementSet
   | .R | .T => .none
 
 /-- The case associated with each argument position. Definitionally
-    equal to `Fragments.Mayan.ergCaseKiche`, which derives from
+    equal to `Mayan.ergCaseKiche`, which derives from
     `Alignment.ergative.assignCase` in `Syntax/Case/Alignment.lean`. -/
 abbrev ArgPosition.case : ArgPosition → Features.Case :=
-  Fragments.Mayan.ergCaseKiche
+  Mayan.ergCaseKiche
 
 -- ============================================================================
 -- § 6: Alignment Theorems
@@ -352,10 +352,10 @@ theorem pronoun_setB_correspondence :
 -- § 12: Cross-Mayan Canonical Wrappers
 -- ============================================================================
 
-open Fragments.Mayan (PersonNumber MarkerLinearity)
+open Mayan (PersonNumber MarkerLinearity)
 
 /-- K'iche' is HIGH-ABS: Set B markers appear pre-stem on Infl. -/
-def absPosition : Fragments.Mayan.ABSPosition := .high
+def absPosition : Mayan.ABSPosition := .high
 
 /-- Set A linearity: prefixal (per Mondloch Lessons 7-8). -/
 def setALinearity : MarkerLinearity := .prefixal
@@ -402,4 +402,4 @@ def extractionProfile : Typology.ExtractionProfile :=
   , distinguishesPosition := true
   , notes := "AF (-n) for A-extraction; HIGH-ABS K'ichean (Mondloch 2017 Lesson 22)" }
 
-end Fragments.Mayan.Kiche
+end Kiche

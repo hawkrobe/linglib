@@ -125,13 +125,13 @@ def english : AVCDatum :=
     *mi¹ (gi²) kpel¹-ko¹* 'I'm going to pour'. Auxiliary `gi²`
     uninflected (parenthesized in Anderson's gloss); LV carries
     proximate-future TAM. Form derived from
-    `Fragments.Doyayo.AuxiliaryVerbs.lexHeadedForm`. -/
+    `Doyayo.AuxiliaryVerbs.lexHeadedForm`. -/
 def doyayo : AVCDatum :=
   { language := "Doyayo"
-  , form := Fragments.Doyayo.AuxiliaryVerbs.lexHeadedForm
+  , form := Doyayo.AuxiliaryVerbs.lexHeadedForm
   , inflPattern := .lexHeaded
-  , distribution := some Fragments.Doyayo.AuxiliaryVerbs.lexHeadedDistribution
-  , gloss := Fragments.Doyayo.AuxiliaryVerbs.lexHeadedGloss }
+  , distribution := some Doyayo.AuxiliaryVerbs.lexHeadedDistribution
+  , gloss := Doyayo.AuxiliaryVerbs.lexHeadedGloss }
 
 /-- Doyayo split/doubled (Anderson Ch 5 ex. 129, p. 223).
     *hi¹-za¹ hi¹-zaa³ hi¹-lɔ-mɔ* 'they might come bite you'.
@@ -139,28 +139,28 @@ def doyayo : AVCDatum :=
     on LV. Anderson p. 223: "this pattern... is common in Doyayo." -/
 def doyayoSplitDoubled : AVCDatum :=
   { language := "Doyayo"
-  , form := Fragments.Doyayo.AuxiliaryVerbs.splitDoubledForm
+  , form := Doyayo.AuxiliaryVerbs.splitDoubledForm
   , inflPattern := .splitDoubled
-  , distribution := some Fragments.Doyayo.AuxiliaryVerbs.splitDoubledDistribution
-  , gloss := Fragments.Doyayo.AuxiliaryVerbs.splitDoubledGloss }
+  , distribution := some Doyayo.AuxiliaryVerbs.splitDoubledDistribution
+  , gloss := Doyayo.AuxiliaryVerbs.splitDoubledGloss }
 
 /-- Gorum (doubled): subject + TAM on both AUX and LV.
-    Form derived from `Fragments.Gorum.AuxiliaryVerbs`. -/
+    Form derived from `Gorum.AuxiliaryVerbs`. -/
 def gorum : AVCDatum :=
   { language := "Gorum"
-  , form := Fragments.Gorum.AuxiliaryVerbs.form
+  , form := Gorum.AuxiliaryVerbs.form
   , inflPattern := .doubled
-  , distribution := some Fragments.Gorum.AuxiliaryVerbs.inflDistribution
-  , gloss := Fragments.Gorum.AuxiliaryVerbs.gloss }
+  , distribution := some Gorum.AuxiliaryVerbs.inflDistribution
+  , gloss := Gorum.AuxiliaryVerbs.gloss }
 
 /-- Jakaltek (split): absolutive on AUX, ergative on LV.
-    Form derived from `Fragments.Jakaltek.AuxiliaryVerbs`. -/
+    Form derived from `Jakaltek.AuxiliaryVerbs`. -/
 def jakaltek : AVCDatum :=
   { language := "Jakaltek"
-  , form := Fragments.Jakaltek.AuxiliaryVerbs.form
+  , form := Jakaltek.AuxiliaryVerbs.form
   , inflPattern := .split
-  , distribution := some Fragments.Jakaltek.AuxiliaryVerbs.inflDistribution
-  , gloss := Fragments.Jakaltek.AuxiliaryVerbs.gloss }
+  , distribution := some Jakaltek.AuxiliaryVerbs.inflDistribution
+  , gloss := Jakaltek.AuxiliaryVerbs.gloss }
 
 /-- Pipil split/doubled (Anderson Ch 5 ex. 133b, p. 224).
     *n-yu ni-mitsin-ilwitia* 'I'm going to show you'. Subject `1`
@@ -170,10 +170,10 @@ def jakaltek : AVCDatum :=
     occur only on lexical verbs." -/
 def pipilSplitDoubled : AVCDatum :=
   { language := "Pipil"
-  , form := Fragments.Pipil.AuxiliaryVerbs.splitDoubledForm
+  , form := Pipil.AuxiliaryVerbs.splitDoubledForm
   , inflPattern := .splitDoubled
-  , distribution := some Fragments.Pipil.AuxiliaryVerbs.splitDoubledDistribution
-  , gloss := Fragments.Pipil.AuxiliaryVerbs.splitDoubledGloss }
+  , distribution := some Pipil.AuxiliaryVerbs.splitDoubledDistribution
+  , gloss := Pipil.AuxiliaryVerbs.splitDoubledGloss }
 
 /-- Pipil lex-headed (Anderson p. 220-221 fn. 6; Campbell 1985: 139).
     *weli ni-nehnemi wehka* 'I can walk far'. AUX *weli* uninflected;
@@ -182,10 +182,10 @@ def pipilSplitDoubled : AVCDatum :=
     Pipil construction. -/
 def pipilLexHeaded : AVCDatum :=
   { language := "Pipil"
-  , form := Fragments.Pipil.AuxiliaryVerbs.lexHeadedForm
+  , form := Pipil.AuxiliaryVerbs.lexHeadedForm
   , inflPattern := .lexHeaded
-  , distribution := some Fragments.Pipil.AuxiliaryVerbs.lexHeadedDistribution
-  , gloss := Fragments.Pipil.AuxiliaryVerbs.lexHeadedGloss }
+  , distribution := some Pipil.AuxiliaryVerbs.lexHeadedDistribution
+  , gloss := Pipil.AuxiliaryVerbs.lexHeadedGloss }
 
 /-- Finnish negative auxiliary *ei* (split): person/number on aux,
     TAM on lexical verb (connegative form). Anderson §1.7.2 (p. 33-34)
@@ -195,7 +195,7 @@ def pipilLexHeaded : AVCDatum :=
     not classified by Anderson in §1.7.2 with a specific pattern label;
     the split classification here follows @cite{karlsson-2017} §19.5
     where the connegative suffix on the LV is the load-bearing diagnostic.
-    The split nature derives from `Fragments.Finnish.Negation.finnishNegDistribution`:
+    The split nature derives from `Finnish.Negation.finnishNegDistribution`:
     the negative auxiliary hosts negation, tense, and agreement, while
     the lexical verb retains stem and aspect.
     The 1sg neg-aux form derives from `negParadigm`; see the
@@ -204,23 +204,23 @@ def pipilLexHeaded : AVCDatum :=
     convention (`Neg-1 read-conneg`). -/
 def finnish : AVCDatum :=
   { language := "Finnish"
-  , form := match Fragments.Finnish.Negation.negParadigm.find?
+  , form := match Finnish.Negation.negParadigm.find?
       (fun f => f.person == 1 && f.number == "sg") with
     | some f => f.form ++ " lue"
     | none => "en lue"
   , inflPattern := .split
-  , distribution := some Fragments.Finnish.Negation.finnishNegDistribution
+  , distribution := some Finnish.Negation.finnishNegDistribution
   , gloss := "Neg-1 read-conneg" }
 
 /-- Hemba split/doubled: subject doubled on both AUX and LV; tense
     on AUX only; mood on LV only. Form derived from
-    `Fragments.Hemba.AuxiliaryVerbs`. -/
+    `Hemba.AuxiliaryVerbs`. -/
 def hemba : AVCDatum :=
   { language := "Hemba"
-  , form := Fragments.Hemba.AuxiliaryVerbs.form
+  , form := Hemba.AuxiliaryVerbs.form
   , inflPattern := .splitDoubled
-  , distribution := some Fragments.Hemba.AuxiliaryVerbs.inflDistribution
-  , gloss := Fragments.Hemba.AuxiliaryVerbs.gloss }
+  , distribution := some Hemba.AuxiliaryVerbs.inflDistribution
+  , gloss := Hemba.AuxiliaryVerbs.gloss }
 
 /-- All 9 AVC datums (covering all 5 of Anderson's patterns). -/
 def allData : List AVCDatum :=
@@ -247,39 +247,39 @@ theorem hemba_is_splitDoubled : hemba.inflPattern = .splitDoubled := rfl
 /-! ## Per-datum form/distribution Fragment grounding -/
 
 theorem doyayo_form_from_fragment :
-    doyayo.form = Fragments.Doyayo.AuxiliaryVerbs.lexHeadedForm := rfl
+    doyayo.form = Doyayo.AuxiliaryVerbs.lexHeadedForm := rfl
 theorem doyayoSplitDoubled_form_from_fragment :
-    doyayoSplitDoubled.form = Fragments.Doyayo.AuxiliaryVerbs.splitDoubledForm := rfl
+    doyayoSplitDoubled.form = Doyayo.AuxiliaryVerbs.splitDoubledForm := rfl
 theorem gorum_form_from_fragment :
-    gorum.form = Fragments.Gorum.AuxiliaryVerbs.form := rfl
+    gorum.form = Gorum.AuxiliaryVerbs.form := rfl
 theorem jakaltek_form_from_fragment :
-    jakaltek.form = Fragments.Jakaltek.AuxiliaryVerbs.form := rfl
+    jakaltek.form = Jakaltek.AuxiliaryVerbs.form := rfl
 theorem pipilSplitDoubled_form_from_fragment :
-    pipilSplitDoubled.form = Fragments.Pipil.AuxiliaryVerbs.splitDoubledForm := rfl
+    pipilSplitDoubled.form = Pipil.AuxiliaryVerbs.splitDoubledForm := rfl
 theorem pipilLexHeaded_form_from_fragment :
-    pipilLexHeaded.form = Fragments.Pipil.AuxiliaryVerbs.lexHeadedForm := rfl
+    pipilLexHeaded.form = Pipil.AuxiliaryVerbs.lexHeadedForm := rfl
 theorem hemba_form_from_fragment :
-    hemba.form = Fragments.Hemba.AuxiliaryVerbs.form := rfl
+    hemba.form = Hemba.AuxiliaryVerbs.form := rfl
 
 theorem doyayo_dist_from_fragment :
-    doyayo.distribution = some Fragments.Doyayo.AuxiliaryVerbs.lexHeadedDistribution := rfl
+    doyayo.distribution = some Doyayo.AuxiliaryVerbs.lexHeadedDistribution := rfl
 theorem doyayoSplitDoubled_dist_from_fragment :
     doyayoSplitDoubled.distribution =
-      some Fragments.Doyayo.AuxiliaryVerbs.splitDoubledDistribution := rfl
+      some Doyayo.AuxiliaryVerbs.splitDoubledDistribution := rfl
 theorem gorum_dist_from_fragment :
-    gorum.distribution = some Fragments.Gorum.AuxiliaryVerbs.inflDistribution := rfl
+    gorum.distribution = some Gorum.AuxiliaryVerbs.inflDistribution := rfl
 theorem jakaltek_dist_from_fragment :
-    jakaltek.distribution = some Fragments.Jakaltek.AuxiliaryVerbs.inflDistribution := rfl
+    jakaltek.distribution = some Jakaltek.AuxiliaryVerbs.inflDistribution := rfl
 theorem pipilSplitDoubled_dist_from_fragment :
     pipilSplitDoubled.distribution =
-      some Fragments.Pipil.AuxiliaryVerbs.splitDoubledDistribution := rfl
+      some Pipil.AuxiliaryVerbs.splitDoubledDistribution := rfl
 theorem pipilLexHeaded_dist_from_fragment :
     pipilLexHeaded.distribution =
-      some Fragments.Pipil.AuxiliaryVerbs.lexHeadedDistribution := rfl
+      some Pipil.AuxiliaryVerbs.lexHeadedDistribution := rfl
 theorem finnish_dist_from_fragment :
-    finnish.distribution = some Fragments.Finnish.Negation.finnishNegDistribution := rfl
+    finnish.distribution = some Finnish.Negation.finnishNegDistribution := rfl
 theorem hemba_dist_from_fragment :
-    hemba.distribution = some Fragments.Hemba.AuxiliaryVerbs.inflDistribution := rfl
+    hemba.distribution = some Hemba.AuxiliaryVerbs.inflDistribution := rfl
 
 /-! ## Finnish form construction grounding
 
@@ -292,7 +292,7 @@ construction in the actual paradigm content. -/
 
 /-- The Finnish 1sg negative-auxiliary entry exists in `negParadigm`. -/
 theorem finnish_1sg_in_paradigm :
-    (Fragments.Finnish.Negation.negParadigm.find?
+    (Finnish.Negation.negParadigm.find?
       (fun f => f.person == 1 && f.number == "sg")).isSome = true := by
   decide
 
@@ -303,7 +303,7 @@ theorem finnish_1sg_in_paradigm :
     entirely) would break this theorem; the dead-branch `| none =>
     "en lue"` fallback in `finnish.form` cannot mask the change. -/
 theorem finnish_1sg_form_eq :
-    (Fragments.Finnish.Negation.negParadigm.find?
+    (Finnish.Negation.negParadigm.find?
       (fun f => f.person == 1 && f.number == "sg")).map (·.form)
       = some "en" := by
   decide
@@ -318,7 +318,7 @@ theorem finnish_form_from_paradigm : finnish.form = "en lue" := rfl
     auxiliary hosts some inflectional categories and the lexical
     verb hosts others, with neither element hosting all categories. -/
 theorem finnish_split_from_fragment :
-    let dist := Fragments.Finnish.Negation.finnishNegDistribution
+    let dist := Finnish.Negation.finnishNegDistribution
     dist.onAux ≠ [] ∧ dist.onLex ≠ [] := by
   exact ⟨by decide, by decide⟩
 
@@ -342,14 +342,14 @@ theorem five_patterns_attested :
 
 /-- In Gorum's doubled AVC, aux and lex host exactly the same categories. -/
 theorem gorum_doubled_same_categories :
-    let dist := Fragments.Gorum.AuxiliaryVerbs.inflDistribution
+    let dist := Gorum.AuxiliaryVerbs.inflDistribution
     dist.onAux == dist.onLex = true := by decide
 
 /-- In Doyayo's lex-headed AVC, the auxiliary hosts ONLY tonal subject
     agreement (per Anderson p. 120), and the LV carries TAM. -/
 theorem doyayo_lexHeaded_aux_agreement_only :
-    Fragments.Doyayo.AuxiliaryVerbs.lexHeadedDistribution.onAux = [.agreement .subj] ∧
-    Fragments.Doyayo.AuxiliaryVerbs.lexHeadedDistribution.onLex = [.tense] := by
+    Doyayo.AuxiliaryVerbs.lexHeadedDistribution.onAux = [.agreement .subj] ∧
+    Doyayo.AuxiliaryVerbs.lexHeadedDistribution.onLex = [.tense] := by
   exact ⟨rfl, rfl⟩
 
 /-- **Anderson Ch 5 §5.2 payoff (Doyayo)**: subject agreement is
@@ -358,7 +358,7 @@ theorem doyayo_lexHeaded_aux_agreement_only :
     rather than via the fragile list-length encoding the 0.230.578
     workaround used. -/
 theorem doyayo_splitDoubled_subj_doubled_obj_lex_only :
-    let dist := Fragments.Doyayo.AuxiliaryVerbs.splitDoubledDistribution
+    let dist := Doyayo.AuxiliaryVerbs.splitDoubledDistribution
     dist.onAux.contains (.agreement .subj) = true ∧
     dist.onLex.contains (.agreement .subj) = true ∧
     dist.onLex.contains (.agreement .obj) = true ∧
@@ -370,7 +370,7 @@ theorem doyayo_splitDoubled_subj_doubled_obj_lex_only :
     The AUX root *yu* itself encodes TAM lexically (no separate
     `.tense` morpheme on AUX). -/
 theorem pipil_splitDoubled_subj_doubled_obj_lex_only :
-    let dist := Fragments.Pipil.AuxiliaryVerbs.splitDoubledDistribution
+    let dist := Pipil.AuxiliaryVerbs.splitDoubledDistribution
     dist.onAux.contains (.agreement .subj) = true ∧
     dist.onLex.contains (.agreement .subj) = true ∧
     dist.onLex.contains (.agreement .obj) = true ∧
@@ -379,12 +379,12 @@ theorem pipil_splitDoubled_subj_doubled_obj_lex_only :
 
 /-- In Pipil's lex-headed AVC, the auxiliary hosts no inflection. -/
 theorem pipil_lexHeaded_aux_empty :
-    Fragments.Pipil.AuxiliaryVerbs.lexHeadedDistribution.onAux = [] := rfl
+    Pipil.AuxiliaryVerbs.lexHeadedDistribution.onAux = [] := rfl
 
 /-- In Finnish's split AVC, aux and lex host disjoint category types.
     (`.stem` on the lex side is a base, not an inflectional overlap.) -/
 theorem finnish_split_disjoint :
-    let dist := Fragments.Finnish.Negation.finnishNegDistribution
+    let dist := Finnish.Negation.finnishNegDistribution
     dist.onAux.all (fun c => !dist.onLex.contains c) = true := by decide
 
 /-- **Anderson Ch 5 abs/erg payoff (Jakaltek)**: with role-typed
@@ -392,7 +392,7 @@ theorem finnish_split_disjoint :
     a category-level distinction (`.agreement .obj` vs `.agreement .subj`),
     not just a within-category meta-comment. -/
 theorem jakaltek_abs_on_aux_erg_on_lex :
-    let dist := Fragments.Jakaltek.AuxiliaryVerbs.inflDistribution
+    let dist := Jakaltek.AuxiliaryVerbs.inflDistribution
     dist.onAux.contains (.agreement .obj) = true ∧
     dist.onLex.contains (.agreement .subj) = true ∧
     dist.onAux.contains (.agreement .subj) = false ∧
@@ -403,7 +403,7 @@ theorem jakaltek_abs_on_aux_erg_on_lex :
     elements), tense is AUX-only, mood is LV-only. No object agreement
     in this construction. -/
 theorem hemba_splitDoubled_agreement_doubled :
-    let dist := Fragments.Hemba.AuxiliaryVerbs.inflDistribution
+    let dist := Hemba.AuxiliaryVerbs.inflDistribution
     dist.onAux.contains (.agreement .subj) = true ∧
     dist.onLex.contains (.agreement .subj) = true ∧
     dist.onAux.contains .tense = true ∧

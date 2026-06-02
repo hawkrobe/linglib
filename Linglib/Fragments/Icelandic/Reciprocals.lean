@@ -15,22 +15,22 @@ preserving transitivity. Formally distinct from the reflexive "sig".
 @cite{nordlinger-2023} ex. 17 (citing Hurst & Nordlinger 2021).
 -/
 
-namespace Fragments.Icelandic.Reciprocals
+namespace Icelandic.Reciprocals
 
 open Pronoun
 
 /-- hvor...annad — bipartite reciprocal NP 'each other'.
 
     Each part inflects independently for case.  -/
-def hvorAnnad : Entry :=
+def hvorAnnad : PersonalPronoun :=
   { form := "hvor...annad", person := some .third, number := some .pl }
 
 /-- sig — reflexive pronoun (for contrast). -/
-def sig : Entry :=
+def sig : PersonalPronoun :=
   { form := "sig", person := some .third }
 
 /-- Icelandic reciprocal is formally distinct from reflexive. -/
 theorem recip_distinct_from_reflexive :
     hvorAnnad.form ≠ sig.form := by decide
 
-end Fragments.Icelandic.Reciprocals
+end Icelandic.Reciprocals

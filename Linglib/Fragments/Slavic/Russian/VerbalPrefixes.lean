@@ -33,9 +33,9 @@ cluster).
 
 -/
 
-namespace Fragments.Slavic.Russian.VerbalPrefixes
+namespace Russian.VerbalPrefixes
 
-open Fragments.Slavic (Aspect SuperlexicalSubtype PrefixClass)
+open Slavic (Aspect SuperlexicalSubtype PrefixClass)
 
 /-- A Russian prefixed-verb entry. Latin transliteration with `'` for
     the soft-sign infinitive ending. -/
@@ -167,4 +167,4 @@ theorem stemAspect_imperfective_of_isSuperlexical
     e.stemAspect = Aspect.imperfective := by
   fin_cases he <;> first | rfl | exact absurd hs (by decide)
 
-end Fragments.Slavic.Russian.VerbalPrefixes
+end Russian.VerbalPrefixes

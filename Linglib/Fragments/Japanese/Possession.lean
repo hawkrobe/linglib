@@ -14,7 +14,7 @@ consuming this profile live in
 
 set_option autoImplicit false
 
-namespace Fragments.Japanese.Possession
+namespace Japanese.Possession
 
 open _root_.Typology.Possession
 
@@ -31,4 +31,4 @@ def possession : PossessionProfile :=
   , examples := ["watashi-ni-wa hon-ga aru", "Tanaka-no hon"]
   , notes := "Topic-comment: possessor-DAT-TOP possessum-NOM aru/iru; genitive no for adnominal" }
 
-end Fragments.Japanese.Possession
+end Japanese.Possession

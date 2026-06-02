@@ -239,7 +239,7 @@ Fragment entry → .levinClass = some .mannerOfSpeaking
 ```
 -/
 
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 /-- Does a Fragment verb entry predict an island effect?
 Derived from the verb's Levin class via `levinClassToMannerWeight`. -/
 def fragmentPredictsIsland (v : VerbEntry) : Bool :=
@@ -257,7 +257,7 @@ additional MoS verbs in the Fragment (cry, grumble, hiss, sigh, whimper, snap).
 
 Three experimental verbs (stammer, whine, moan) are not yet in the Fragment. -/
 
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 theorem mos_verbs_predict_islands :
     fragmentPredictsIsland whisper = true ∧
     fragmentPredictsIsland murmur = true ∧
@@ -282,7 +282,7 @@ theorem mos_verbs_predict_islands :
 They lack manner specification and therefore do not background their
 complements by default. -/
 
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 theorem bridge_verbs_no_island :
     fragmentPredictsIsland say = false ∧
     fragmentPredictsIsland tell = false := ⟨rfl, rfl⟩

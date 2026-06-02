@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.German
+namespace German
 
 /-- German (Indo-European, Germanic): definite *der*/*die*/*das* distinct from
     demonstratives; indefinite *ein* = numeral 'one' (phonologically reduced in
@@ -25,4 +25,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .differentInflection
   , pronDemRelation := some .unrelated }
 
-end Fragments.German
+end German

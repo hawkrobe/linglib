@@ -21,7 +21,7 @@ This file may be split further as topic-specific Fragment files
 emerge.
 -/
 
-namespace Fragments.English.FunctionWords
+namespace English.FunctionWords
 
 -- ============================================================================
 -- Prepositions
@@ -117,4 +117,4 @@ def never : AdvQuantEntry := { form := "never", force := .negative }
 
 def allAdvQuants : List AdvQuantEntry := [always, usually, sometimes, never]
 
-end Fragments.English.FunctionWords
+end English.FunctionWords

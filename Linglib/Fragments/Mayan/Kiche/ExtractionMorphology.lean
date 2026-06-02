@@ -33,7 +33,7 @@ is substituted by *wi* rather than being deleted.
 
 -/
 
-namespace Fragments.Mayan.Kiche
+namespace Kiche
 
 -- ============================================================================
 -- § 1: Extracted Argument Types
@@ -247,4 +247,4 @@ def kicheanExtractionProfile : Typology.ExtractionProfile :=
 theorem kichean_marks_oblique :
     kicheanExtractionProfile.Marks .oblique := by decide
 
-end Fragments.Mayan.Kiche
+end Kiche

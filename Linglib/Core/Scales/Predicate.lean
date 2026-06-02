@@ -20,9 +20,9 @@ by a measure function `μ : W → α`:
 This file is part of the Phase A decomposition of the legacy
 `Core/Scales/Scale.lean` dumping ground (master plan v4).
 
-Per master plan v4, `relationalGQ` and its lemmas may move to
-`Semantics/Gradability/Kennedy.lean` in Phase B (it's a
-Kennedy-2015-framework operator, not a domain-general primitive).
+`relationalGQ` stays here as the canonical scale-comparison primitive: it is
+domain-general (numerals, measure phrases, and gradable comparatives all reduce
+to it), and the reified `Core.Scale.Comparison` interprets into it.
 -/
 
 namespace Core.Scale
@@ -247,8 +247,8 @@ the corresponding relation. The Class A vs Class B distinction
 (@cite{geurts-nouwen-2007}, @cite{nouwen-2010}) collapses to a structural
 property of `rel`: Class B ↔ `IsRefl α rel`; Class A ↔ `IsIrrefl α rel`.
 
-**Phase B note**: this Kennedy-framework operator is scheduled to move to
-`Semantics/Gradability/Kennedy.lean` per master plan v4. -/
+This is the canonical comparison primitive of the scale substrate; the reified
+`Core.Scale.Comparison` (in `Comparison.lean`) selects which `rel` to use. -/
 
 /-- Kennedy's unified GQ denotation: `(rel) (μ w) d`. The five named degree
     properties are definitionally equal to instantiations of this. -/

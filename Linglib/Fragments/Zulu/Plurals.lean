@@ -5,7 +5,7 @@ import Linglib.Typology.Plurals
 @cite{wals-2013}
 -/
 
-namespace Fragments.Zulu
+namespace Zulu
 
 /-- Zulu (Bantu): prefix plural (class prefixes: *umu-ntu*/*aba-ntu*),
     obligatory on all nouns; person-number stems in pronouns; associative
@@ -18,4 +18,4 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .personNumberStem
   , associativePlural := .sameAsAdditive }
 
-end Fragments.Zulu
+end Zulu

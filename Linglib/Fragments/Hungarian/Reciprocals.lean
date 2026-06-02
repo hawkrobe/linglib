@@ -38,7 +38,7 @@ construction types, while reflexives require morphosyntactic plurality
    (I-)reading. @cite{dalrymple-haug-2024} §2.
 -/
 
-namespace Fragments.Hungarian.Reciprocals
+namespace Hungarian.Reciprocals
 
 open Pronoun
 open Semantics.Reference.Reciprocals
@@ -47,17 +47,17 @@ open Semantics.Reference.PluralityLicensing
 /-- *egymás* — reciprocal pronoun 'each other'.
     Morphologically invariable: no φ-feature inflection.
     @cite{rakosi-2019} fn. 1. -/
-def egymas : Entry :=
+def egymas : PersonalPronoun :=
   { form := "egymás", person := some .third, number := none }
 
 /-- *maga* — reflexive pronoun (3SG form, for contrast).
     Unlike *egymás*, the reflexive inflects for number:
     *magá-t* (SG.ACC) vs. *maguk-at* (PL.ACC). -/
-def maga : Entry :=
+def maga : PersonalPronoun :=
   { form := "maga", person := some .third, number := some .sg }
 
 /-- *maguk* — reflexive pronoun (3PL form). -/
-def maguk : Entry :=
+def maguk : PersonalPronoun :=
   { form := "maguk", person := some .third, number := some .pl }
 
 -- ════════════════════════════════════════════════════════════════
@@ -182,4 +182,4 @@ theorem reflexive_inflects :
     @cite{dalrymple-haug-2024} §2. -/
 def singularAntecedentForcesWideScope : Bool := true
 
-end Fragments.Hungarian.Reciprocals
+end Hungarian.Reciprocals

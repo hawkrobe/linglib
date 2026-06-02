@@ -19,7 +19,7 @@ Empirical observations on Japanese outlook markers from @cite{kubota-2026}.
 
 namespace Phenomena.Modality.OutlookMarkers.Kubota2026
 
-open Fragments.Japanese.OutlookMarkers
+open Japanese.OutlookMarkers
 open Pragmatics.Expressives.OutlookMarker
 
 

@@ -1,17 +1,17 @@
-import Linglib.Typology.Relativization.Defs
+import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Tagalog relativization profile
 
-Typological-summary `RelativizationProfile` for Tagalog (ISO `tgl`).
+Typological-summary `RelativeClause.Profile` for Tagalog (ISO `tgl`).
 -/
 
-namespace Fragments.Tagalog
+namespace Tagalog
 
 /-- Tagalog relativization: gap on subjects (*ang*-phrase only); voice
     alternation required for non-subject relativization; linker *na/ng*;
     obliques not directly relativizable. -/
-def relativization : Typology.Relativization.RelativizationProfile :=
+def relativization : RelativeClause.Profile :=
   { subjStrategy := .gap
   , oblStrategy := .notRelativizable
   , rcPosition := .postNominal
@@ -19,4 +19,4 @@ def relativization : Typology.Relativization.RelativizationProfile :=
   , notes := "Gap on subjects (ang-phrase only); voice alternation for "
           ++ "non-subject relativization; linker na/ng" }
 
-end Fragments.Tagalog
+end Tagalog

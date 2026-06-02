@@ -16,7 +16,7 @@ peripheral" inventory: core cases + genitive.
 
 -/
 
-namespace Fragments.Greek.Case
+namespace Greek.Case
 
 /-- Modern Greek 3-case inventory (excluding VOC). -/
 def caseInventory : Finset Features.Case :=
@@ -31,4 +31,4 @@ def classicalInventory : Finset Features.Case :=
 
 example : Features.Case.IsValidInventory classicalInventory := by decide
 
-end Fragments.Greek.Case
+end Greek.Case

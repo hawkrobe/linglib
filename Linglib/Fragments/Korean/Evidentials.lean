@@ -19,7 +19,7 @@ This EP/UP factorization is verified in `Studies/Cumming2026.lean`.
 
 -/
 
-namespace Fragments.Korean.Evidentials
+namespace Korean.Evidentials
 
 open Semantics.Tense.Evidential
 
@@ -83,4 +83,4 @@ def neyEntries : List TAMEEntry :=
 def allEntries : List TAMEEntry :=
   teEntries ++ neyEntries
 
-end Fragments.Korean.Evidentials
+end Korean.Evidentials

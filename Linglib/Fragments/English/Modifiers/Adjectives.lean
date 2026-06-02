@@ -24,7 +24,7 @@ import Linglib.Morphology.Exponence
 import Linglib.Morphology.DegreeContainment
 import Linglib.Semantics.Gradability.Basic
 
-namespace Fragments.English.Modifiers.Adjectives
+namespace English.Modifiers.Adjectives
 
 open Semantics.Gradability (AntonymRelation)
 open Core.Scale (Boundedness)
@@ -368,4 +368,4 @@ def allEntries : List AdjModifierEntry := [
 def lookup (form : String) : Option AdjModifierEntry :=
   allEntries.find? λ a => a.form == form
 
-end Fragments.English.Modifiers.Adjectives
+end English.Modifiers.Adjectives

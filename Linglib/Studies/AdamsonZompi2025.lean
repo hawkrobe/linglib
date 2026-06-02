@@ -528,24 +528,24 @@ theorem deal_strong_wrong_for_lei :
     that LEI is formally 3sg.f (§3, Table 1). -/
 theorem lei_matches_la_cl_person :
     lei.agreementPerson = .third ∧
-    Fragments.Italian.Pronouns.la_cl.person = .third := ⟨rfl, rfl⟩
+    Italian.Pronouns.la_cl.person = .third := ⟨rfl, rfl⟩
 
 /-- LEI's agreement person (3rd) differs from 2sg clitic `ti` (2nd). -/
 theorem lei_differs_from_ti :
     lei.agreementPerson = .third ∧
-    Fragments.Italian.Pronouns.ti_acc.person = .second := ⟨rfl, rfl⟩
+    Italian.Pronouns.ti_acc.person = .second := ⟨rfl, rfl⟩
 
 /-- LEI binds 3rd person reflexive `si`, not 2nd person `ti` (§3, (9)–(10)). -/
 theorem lei_reflexive_is_3p :
-    Fragments.Italian.Pronouns.si_refl.person = .third ∧
-    Fragments.Italian.Pronouns.ti_refl.person = .second := ⟨rfl, rfl⟩
+    Italian.Pronouns.si_refl.person = .third ∧
+    Italian.Pronouns.ti_refl.person = .second := ⟨rfl, rfl⟩
 
 /-- The fragment's `lei_formal` encodes dual person features:
     `person` = 3rd (agreement), `referentialPerson` = 2nd (interpretable).
     This directly mirrors our `DualPersonFeatures` structure. -/
 theorem fragment_lei_dual_person :
-    Fragments.Italian.Pronouns.lei_formal.person = some .third ∧
-    Fragments.Italian.Pronouns.lei_formal.referentialPerson = some .second := ⟨rfl, rfl⟩
+    Italian.Pronouns.lei_formal.person = some .third ∧
+    Italian.Pronouns.lei_formal.referentialPerson = some .second := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 12: All Data Points Match Syntacticosemantic Predictions
@@ -585,8 +585,8 @@ theorem lei_usted_isomorphic : lei = usted := rfl
 /-- The Spanish fragment's `usted` entry encodes the same dual-person
     structure, grounding the study's USTED in fragment data. -/
 theorem spanish_fragment_usted_dual :
-    Fragments.Spanish.Pronouns.usted.person = some .third ∧
-    Fragments.Spanish.Pronouns.usted.referentialPerson = some .second := ⟨rfl, rfl⟩
+    Spanish.Pronouns.usted.person = some .third ∧
+    Spanish.Pronouns.usted.referentialPerson = some .second := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 14: Cross-Linguistic Extension — German SIE (§6.2)
@@ -606,8 +606,8 @@ theorem sie_pcc : syntacticosemanticPrediction sie = false := rfl
 /-- The German fragment's `sie_polite` entry encodes the same dual-person
     structure, grounding the study's SIE in fragment data. -/
 theorem german_fragment_sie_dual :
-    Fragments.German.Pronouns.sie_polite.person = some .third ∧
-    Fragments.German.Pronouns.sie_polite.referentialPerson = some .second := ⟨rfl, rfl⟩
+    German.Pronouns.sie_polite.person = some .third ∧
+    German.Pronouns.sie_polite.referentialPerson = some .second := ⟨rfl, rfl⟩
 
 /-- German assumed-identity copular constructions (§6.2, (49)–(53)) exhibit
     a DIFFERENT person hierarchy effect — one ameliorated by syncretism of
@@ -672,9 +672,9 @@ theorem all_polite_pronouns_predicted :
 /-- All three fragment entries encode dual person features, and the study's
     DualPersonFeatures values match them. -/
 theorem all_fragments_grounded :
-    Fragments.Italian.Pronouns.lei_formal.referentialPerson = some .second ∧
-    Fragments.Spanish.Pronouns.usted.referentialPerson = some .second ∧
-    Fragments.German.Pronouns.sie_polite.referentialPerson = some .second := ⟨rfl, rfl, rfl⟩
+    Italian.Pronouns.lei_formal.referentialPerson = some .second ∧
+    Spanish.Pronouns.usted.referentialPerson = some .second ∧
+    German.Pronouns.sie_polite.referentialPerson = some .second := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 16: Person Category Bridge — Unifying Person Decompositions
@@ -709,19 +709,19 @@ theorem person_geometry_matches_core_features :
     and why it can address multiple addressees, unlike LEI/USTED. -/
 theorem cross_linguistic_number :
     -- LEI is formally singular (§3, (8): "3sg verbal agreement")
-    Fragments.Italian.Pronouns.lei_formal.number = some .sg ∧
+    Italian.Pronouns.lei_formal.number = some .sg ∧
     -- USTED is formally singular
-    Fragments.Spanish.Pronouns.usted.number = some .sg ∧
+    Spanish.Pronouns.usted.number = some .sg ∧
     -- SIE is formally PLURAL — the typological outlier (§6.2, (45))
-    Fragments.German.Pronouns.sie_polite.number = some .pl := ⟨rfl, rfl, rfl⟩
+    German.Pronouns.sie_polite.number = some .pl := ⟨rfl, rfl, rfl⟩
 
 /-- Despite different agreement numbers, all three polite pronouns trigger
     PCC effects identically — confirming that the PCC reads *person*
     features (specifically interpretable person), not number. -/
 theorem number_irrelevant_to_pcc :
     -- Different numbers...
-    Fragments.Italian.Pronouns.lei_formal.number ≠
-    Fragments.German.Pronouns.sie_polite.number ∧
+    Italian.Pronouns.lei_formal.number ≠
+    German.Pronouns.sie_polite.number ∧
     -- ...same PCC prediction
     syntacticosemanticPrediction lei = syntacticosemanticPrediction sie := by
   exact ⟨by decide, rfl⟩

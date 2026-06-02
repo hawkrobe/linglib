@@ -1,0 +1,377 @@
+import Linglib.Studies.KeshetAbney2024.Expr
+import Mathlib.Data.Fintype.Basic
+
+/-!
+# PIP Compositional Operations
+
+@cite{abney-keshet-2025}
+
+Compositional building blocks for PIP beyond the core formula language `PIPExprF`.
+Where `PIPExprF` gives truth and felicity for formulas (type t), this file defines
+operations whose output is a **set** of individuals (type e): sigma evaluation
+(Σxφ), set-based generalized quantifiers (EVERY/SOME), three-argument modals with
+explicit modal bases, the FX type-lifting operation for restricted variables, and
+the simple/summation pronoun distinction.
+
+These operations correspond to the Glossa paper's enrichment of the S&P formulation
+(@cite{keshet-abney-2024}), making PIP's set-based compositional interface explicit.
+
+## Key Design Decision
+
+Sigma evaluation produces a `Set D`, not a `PIPExprF W D`. This is because Σxφ
+denotes the set of satisfiers of φ (a semantic object of type e), not a truth
+value (type t). It is therefore defined externally from the `PIPExprF` inductive
+type and connected to it via bridge theorems.
+-/
+
+namespace KeshetAbney2024.PIP
+
+open Core.Logic.Modal (AccessRel box diamond)
+
+
+-- ============================================================
+-- §1: Sigma Evaluation (paper's Σ operator and ZF expansion)
+-- ============================================================
+
+section Sigma
+
+variable {W D : Type*}
+
+/--
+Sigma evaluation: Σxφ = {d ∈ D | ⟦φ(d)⟧^w = 1}.
+
+Collects all individuals satisfying a formula body at a given world.
+The output is a `Set D` (type e), not a formula (type t). This is the
+fundamental bridge between PIP's formula language and its set-based
+compositional interface.
+
+This is the *static* analogue of `PIP.Basic.summationFiltered`, which
+performs the same collection on the dynamic `IContext` level. Agreement
+between the two is part of the static↔dynamic correspondence.
+-/
+def sigmaEval (body : D → PIPExprF W D) (w : W) : Set D :=
+  { d | (body d).truth w }
+
+@[simp]
+theorem sigmaEval_mem (body : D → PIPExprF W D) (w : W) (d : D) :
+    d ∈ sigmaEval body w ↔ (body d).truth w :=
+  Iff.rfl
+
+/-- ∃xφ is true iff the sigma set is nonempty. -/
+theorem exists_iff_sigma_nonempty (body : D → PIPExprF W D) (w : W) :
+    (PIPExprF.exists_ body).truth w ↔ (sigmaEval body w).Nonempty :=
+  Iff.rfl
+
+/-- ∀xφ is true iff every individual is in the sigma set. -/
+theorem forall_iff_sigma_univ (body : D → PIPExprF W D) (w : W) :
+    (PIPExprF.forall_ body).truth w ↔ sigmaEval body w = Set.univ := by
+  rw [Set.eq_univ_iff_forall]; rfl
+
+/-- Σx(φ ∧ ψ) = Σxφ ∩ Σxψ. -/
+theorem sigmaEval_conj (φ ψ : D → PIPExprF W D) (w : W) :
+    sigmaEval (λ d => PIPExprF.conj (φ d) (ψ d)) w =
+    sigmaEval φ w ∩ sigmaEval ψ w := by
+  ext d
+  simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_inter_iff, PIPExprF.truth]
+
+/-- Σx(φ ∨ ψ) = Σxφ ∪ Σxψ. -/
+theorem sigmaEval_disj (φ ψ : D → PIPExprF W D) (w : W) :
+    sigmaEval (λ d => PIPExprF.disj (φ d) (ψ d)) w =
+    sigmaEval φ w ∪ sigmaEval ψ w := by
+  ext d
+  simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_union, PIPExprF.truth]
+
+/-- Σx(¬φ) = (Σxφ)ᶜ. -/
+theorem sigmaEval_neg (φ : D → PIPExprF W D) (w : W) :
+    sigmaEval (λ d => PIPExprF.neg (φ d)) w = (sigmaEval φ w)ᶜ := by
+  ext d
+  simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_compl_iff, PIPExprF.truth]
+
+/-- Σx(⊤) = D (everything satisfies a tautology). -/
+theorem sigmaEval_true (w : W) :
+    sigmaEval (D := D) (λ _ => PIPExprF.pred (λ _ => True)) w = Set.univ := by
+  ext d; simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_univ, iff_true, PIPExprF.truth]
+
+/-- Σx(⊥) = ∅ (nothing satisfies a contradiction). -/
+theorem sigmaEval_false (w : W) :
+    sigmaEval (D := D) (λ _ => PIPExprF.pred (λ _ => False)) w = ∅ := by
+  ext d
+  simp only [sigmaEval, Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, PIPExprF.truth,
+    not_false_iff]
+
+/-- Label definitions are truth-transparent for sigma. -/
+theorem sigmaEval_labelDef (α : FLabel) (φ : D → PIPExprF W D) (w : W) :
+    sigmaEval (λ d => PIPExprF.labelDef α (φ d)) w = sigmaEval φ w := rfl
+
+/-- Presuppositions are truth-transparent for sigma. -/
+theorem sigmaEval_presup (φ : D → PIPExprF W D) (ψ : W → Prop) (w : W) :
+    sigmaEval (λ d => PIPExprF.presup (φ d) ψ) w = sigmaEval φ w := rfl
+
+end Sigma
+
+
+-- ============================================================
+-- §2: Set-Based Generalized Quantifiers (paper's EVERY/SOME definitions)
+-- ============================================================
+
+section GQ
+
+variable {α : Type*}
+
+/-- EVERY(R, S) = R ⊆ S. Universal quantification as set inclusion. -/
+def setEvery (R S : Set α) : Prop := R ⊆ S
+
+/-- SOME(R, S) = (R ∩ S).Nonempty. Existential quantification as intersection. -/
+def setSome (R S : Set α) : Prop := (R ∩ S).Nonempty
+
+/-- EVERY is downward monotone in its first argument. -/
+theorem setEvery_antimono_left {R₁ R₂ S : Set α} (h : R₁ ⊆ R₂)
+    (hE : setEvery R₂ S) : setEvery R₁ S :=
+  Set.Subset.trans h hE
+
+/-- EVERY is upward monotone in its second argument. -/
+theorem setEvery_mono_right {R S₁ S₂ : Set α} (h : S₁ ⊆ S₂)
+    (hE : setEvery R S₁) : setEvery R S₂ :=
+  Set.Subset.trans hE h
+
+/-- SOME is upward monotone in its first argument. -/
+theorem setSome_mono_left {R₁ R₂ S : Set α} (h : R₁ ⊆ R₂)
+    (hS : setSome R₁ S) : setSome R₂ S := by
+  obtain ⟨x, hxR, hxS⟩ := hS
+  exact ⟨x, h hxR, hxS⟩
+
+/-- SOME is upward monotone in its second argument. -/
+theorem setSome_mono_right {R S₁ S₂ : Set α} (h : S₁ ⊆ S₂)
+    (hS : setSome R S₁) : setSome R S₂ := by
+  obtain ⟨x, hxR, hxS⟩ := hS
+  exact ⟨x, hxR, h hxS⟩
+
+/-- GQ duality: ¬EVERY(R, S) ↔ SOME(R, Sᶜ). -/
+theorem gq_duality (R S : Set α) :
+    ¬setEvery R S ↔ setSome R Sᶜ := by
+  simp only [setEvery, setSome]
+  constructor
+  · intro h
+    rw [Set.not_subset] at h
+    obtain ⟨x, hxR, hxS⟩ := h
+    exact ⟨x, hxR, hxS⟩
+  · rintro ⟨x, hxR, hxS⟩ h
+    exact hxS (h hxR)
+
+-- Sigma bridge: connecting set-based GQs to PIPExprF quantifiers
+
+variable {W D : Type*}
+
+/-- EVERY over sigma sets ↔ pointwise universal implication. -/
+theorem setEvery_sigma (body_R body_S : D → PIPExprF W D) (w : W) :
+    setEvery (sigmaEval body_R w) (sigmaEval body_S w) ↔
+    ∀ d, (body_R d).truth w → (body_S d).truth w := by
+  simp [setEvery, Set.subset_def, sigmaEval]
+
+/-- SOME over sigma sets ↔ pointwise existential conjunction. -/
+theorem setSome_sigma (body_R body_S : D → PIPExprF W D) (w : W) :
+    setSome (sigmaEval body_R w) (sigmaEval body_S w) ↔
+    ∃ d, (body_R d).truth w ∧ (body_S d).truth w := by
+  simp [setSome, Set.Nonempty, sigmaEval]
+
+end GQ
+
+
+-- ============================================================
+-- §3: Three-Argument Modals (paper's MUST/MIGHT with modal base β)
+-- ============================================================
+
+section ThreeArgModals
+
+variable {W : Type*}
+
+/--
+MUST(β, W₁, W₂) = β ∩ W₁ ⊆ W₂.
+
+Three-argument necessity: the modal base β restricted by W₁ is
+included in W₂. When W₁ = ⊤, reduces to β ⊆ W₂.
+
+The modal base β corresponds to `accessRelToBase R w` for an
+`AccessRel W` from `Core.Logic.Intensional`. `PIP.Connectives.must`
+provides the dynamic implementation; `must_truth_iff_mustBase` below
+bridges the static `PIPExprF.must` to this set-based formulation.
+Cf. `Semantics.Modality.Kratzer.simpleNecessity` for the
+Kratzerian analogue (monomorphic over `World`).
+-/
+def mustBase (β W₁ W₂ : Set W) : Prop := β ∩ W₁ ⊆ W₂
+
+/--
+MIGHT(β, W₁, W₂) = (β ∩ W₁ ∩ W₂).Nonempty.
+
+Three-argument possibility: some world in the modal base satisfying
+W₁ also satisfies W₂.
+-/
+def mightBase (β W₁ W₂ : Set W) : Prop := (β ∩ W₁ ∩ W₂).Nonempty
+
+/-- Tautological restriction: MUST(β, ⊤, W₂) ↔ β ⊆ W₂. -/
+theorem mustBase_taut_restr (β W₂ : Set W) :
+    mustBase β Set.univ W₂ ↔ β ⊆ W₂ := by
+  simp [mustBase]
+
+/-- MUST as a set-based GQ: MUST(β, W₁, W₂) ↔ EVERY(β ∩ W₁, W₂). -/
+theorem mustBase_eq_setEvery (β W₁ W₂ : Set W) :
+    mustBase β W₁ W₂ ↔ setEvery (β ∩ W₁) W₂ := Iff.rfl
+
+/-- MIGHT as a set-based GQ: MIGHT(β, W₁, W₂) ↔ SOME(β ∩ W₁, W₂). -/
+theorem mightBase_eq_setSome (β W₁ W₂ : Set W) :
+    mightBase β W₁ W₂ ↔ setSome (β ∩ W₁) W₂ := by
+  simp [mightBase, setSome, Set.inter_assoc]
+
+/--
+If the actual world is in the modal base and restriction,
+MUST forces the consequent at the actual world.
+-/
+theorem mustBase_realistic (β W₁ W₂ : Set W) (w : W)
+    (hw_β : w ∈ β) (hw_W₁ : w ∈ W₁) (h : mustBase β W₁ W₂) : w ∈ W₂ :=
+  h ⟨hw_β, hw_W₁⟩
+
+/-- Modal duality: ¬MUST(β, W₁, W₂) ↔ MIGHT(β, W₁, W₂ᶜ). -/
+theorem modal_duality (β W₁ W₂ : Set W) :
+    ¬mustBase β W₁ W₂ ↔ mightBase β W₁ W₂ᶜ := by
+  rw [mustBase_eq_setEvery, mightBase_eq_setSome]
+  exact gq_duality (β ∩ W₁) W₂
+
+/-- Convert an accessibility relation to a modal base at world w. -/
+def accessRelToBase (R : AccessRel W) (w : W) : Set W :=
+  { w' | R w w' }
+
+/-- `PIPExprF.must R φ` truth agrees with three-argument `mustBase`.
+    Direct, since `must` truth is `box` and `mustBase` is set inclusion. -/
+theorem must_truth_iff_mustBase {D : Type*}
+    (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+    (PIPExprF.must R φ).truth w ↔
+    mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' } := by
+  simp only [mustBase, accessRelToBase, Set.inter_univ, Set.subset_def, Set.mem_setOf_eq,
+    PIPExprF.truth, box]
+
+/-- `PIPExprF.might R φ` truth agrees with three-argument `mightBase`. -/
+theorem might_truth_iff_mightBase {D : Type*}
+    (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+    (PIPExprF.might R φ).truth w ↔
+    mightBase (accessRelToBase R w) Set.univ { w' | φ.truth w' } := by
+  simp only [mightBase, accessRelToBase, Set.inter_univ, Set.Nonempty,
+    Set.mem_inter_iff, Set.mem_setOf_eq, PIPExprF.truth, diamond]
+
+end ThreeArgModals
+
+
+-- ============================================================
+-- §4: FX Operation — Restricted Variable Lifting (paper's ↑-lifting operator)
+-- ============================================================
+
+section FX
+
+variable {W D : Type*}
+
+/--
+FX (↑f): lift a thematic-role predicate into a formula modifier.
+
+  ↑f = λφλx. f(x) ∧ φ     (base case, when f : ⟨e, t⟩)
+
+Given a predicate `f : D → W → Prop` (e.g., AGENT, PATIENT),
+`fxApply f φ x` conjoins `f(x)` with formula `φ`, producing a
+restricted variable: x is constrained to satisfy both `f` and `φ`.
+
+This implements the base case of the paper's recursive ↑-lifting.
+The recursive case (for multi-argument predicates like ⟨e, ⟨e, t⟩⟩)
+applies ↑ to each curried application. Iterated application via
+`fxApply_twice` captures the effect for two-argument roles.
+
+Cf. `Semantics.ArgumentStructure.ThematicRel` for the
+general Davidsonian role type `Entity → Event → Prop`; FX is PIP's
+mechanism for composing such roles with restricted variables.
+-/
+def fxApply (f : D → W → Prop) (φ : W → Prop) (x : D) : W → Prop :=
+  λ w => f x w ∧ φ w
+
+/-- FX entails the role predicate. -/
+theorem fxApply_entails_role (f : D → W → Prop) (φ : W → Prop) (x : D) (w : W)
+    (h : fxApply f φ x w) : f x w := h.1
+
+/-- FX entails the formula body. -/
+theorem fxApply_entails_body (f : D → W → Prop) (φ : W → Prop) (x : D) (w : W)
+    (h : fxApply f φ x w) : φ w := h.2
+
+/-- Iterated FX accumulates assertions: ↑g(↑f(φ))(x) = g(x) ∧ f(x) ∧ φ. -/
+theorem fxApply_twice (f g : D → W → Prop) (φ : W → Prop) (x : D) (w : W) :
+    fxApply g (fxApply f φ x) x w = (g x w ∧ f x w ∧ φ w) := rfl
+
+/-- FX with tautological formula: ↑f(⊤)(x) ↔ f(x). -/
+theorem fxApply_true (f : D → W → Prop) (x : D) (w : W) :
+    fxApply f (λ _ => True) x w ↔ f x w := by
+  simp [fxApply]
+
+end FX
+
+
+-- ============================================================
+-- §5: Simple vs Summation Pronouns (paper's §4.1 pronoun types)
+-- ============================================================
+
+/-!
+### Summation Pronouns
+
+The paper distinguishes **simple pronouns** (type e: a single variable x
+with presupposition SG(x)) from **summation pronouns** (type e: ΣxX with
+presupposition PL(ΣxX)). The key insight: the *semantic* denotation of a
+summation pronoun IS `sigmaEval` — the exhaustive set of all satisfiers.
+The simple/summation distinction is *structural* (syntactic tree shape)
+and *presuppositional* (SG vs PL), not truth-conditional.
+
+Concretely:
+- Simple pronoun: she_x = x | FEM(x) ∧ SG(x)
+- Summation pronoun: they^X_x = ΣxX | PL(ΣxX)
+
+Both resolve to sigma sets for the pronoun's descriptive content.
+The presuppositional difference (SG for singularity, PL for plurality)
+is handled by `PIP.Bridges.single` and `PIP.Bridges.plural`.
+
+No separate `summPronounDenot` definition is needed: summation pronoun
+denotation = `sigmaEval` by the paper's own analysis.
+-/
+
+
+-- ============================================================
+-- §6: Quantificational Subordination (paper §4.4)
+-- ============================================================
+
+section Subordination
+
+variable {W D : Type*}
+
+/-- Sigma is monotone: stronger body conditions produce smaller sets. -/
+theorem sigma_monotone (φ ψ : D → PIPExprF W D) (w : W)
+    (h : ∀ d, (ψ d).truth w → (φ d).truth w) :
+    sigmaEval ψ w ⊆ sigmaEval φ w :=
+  λ _ hd => h _ hd
+
+/--
+Quantificational subordination: if ψ extends φ with additional conditions,
+then Σx(φ ∧ ψ) ⊆ Σxφ. This is the set-theoretic foundation of cross-sentential
+anaphora through label-subordinated quantification.
+
+When a subordinate quantifier's restriction φ ∧ ψ includes the main
+quantifier's restrictor φ via a label, the subordinate sigma set is
+a subset of the main one.
+-/
+theorem sigma_subordination (φ ψ : D → PIPExprF W D) (w : W) :
+    sigmaEval (λ d => PIPExprF.conj (φ d) (ψ d)) w ⊆ sigmaEval φ w := by
+  rw [sigmaEval_conj]
+  exact Set.inter_subset_left
+
+/-- Label definitions don't affect subordination relationships. -/
+theorem sigmaEval_labelDef_subordination (α : FLabel) (φ ψ : D → PIPExprF W D) (w : W) :
+    sigmaEval (λ d => PIPExprF.labelDef α (PIPExprF.conj (φ d) (ψ d))) w ⊆
+    sigmaEval φ w := by
+  rw [sigmaEval_labelDef]
+  exact sigma_subordination φ ψ w
+
+end Subordination
+
+
+end KeshetAbney2024.PIP

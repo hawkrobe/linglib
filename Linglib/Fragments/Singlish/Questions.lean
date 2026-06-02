@@ -38,7 +38,7 @@ while wh-in-situ inside complex NPs is fine (as expected if no movement
 crosses the island boundary).
 -/
 
-namespace Fragments.Singlish.Questions
+namespace Singlish.Questions
 
 open Typology.Question (WhInterpMechanism WhMovementStrategy)
 open ShenHuang2026 (WhDependencyType)
@@ -131,7 +131,7 @@ theorem full_no_covert_step :
 -- Bridge to ShenHuang2026 WhDependencyType
 -- ============================================================================
 
-end Fragments.Singlish.Questions
+end Singlish.Questions
 
 /-- Map a `WhInterpMechanism` to @cite{shen-huang-2026}'s coarser
     `WhDependencyType`. Overt, covert, and partial movement all map to
@@ -144,7 +144,7 @@ def Typology.Question.WhInterpMechanism.toDependencyType :
   | .partialMovement    => .movement
   | .unselectiveBinding => .binding
 
-namespace Fragments.Singlish.Questions
+namespace Singlish.Questions
 
 /-- Singlish in-situ uses the same dependency type as Mandarin wh-in-situ:
     binding. This connects Chan & Shen's Singlish analysis to Shen &
@@ -210,4 +210,4 @@ def question : Typology.Question.QuestionProfile :=
   , whMovement := some .mixed
   , polarStrategy := some .particle }
 
-end Fragments.Singlish.Questions
+end Singlish.Questions

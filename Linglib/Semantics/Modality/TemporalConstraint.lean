@@ -17,7 +17,7 @@ bridges from `Attitude` / `ModalFlavor` to `ModalBaseKind`.
 
 The framework-neutral interval predicates (`isActualHistory`,
 `isFutureHistory`, etc.) and the situation-base derivation theorems live
-in `Semantics.Modality.HistoricalAlternatives`. This file's role is the
+in `HistoricalAlternatives`. This file's role is the
 Klecha-specific projection: dispatch on `ModalBaseKind` to select between
 the actual-history (RT ≤ EvalT) and future-history (RT > EvalT)
 constraints.
@@ -33,7 +33,7 @@ in the modal base pronoun:
 
 The ULC is **derived** by `.2` projection from `actualHistoryBase`
 membership (see `actualHistoryBase_derives_ulc` in
-`Semantics.Modality.HistoricalAlternatives`); the dispatch theorem
+`HistoricalAlternatives`); the dispatch theorem
 `attitudeTemporalConstraint_derived_doxastic` below makes the
 Klecha-namespace face of that derivation kernel-checked.
 -/
@@ -41,10 +41,9 @@ Klecha-namespace face of that derivation kernel-checked.
 namespace Semantics.Modality.TemporalConstraint
 
 open Semantics.Modality (ModalBaseKind)
-open Semantics.Modality.HistoricalAlternatives
+open HistoricalAlternatives
   (isActualHistory isFutureHistory actualHistoryBase futureHistoryBase
-   actualHistoryBase_time_actual futureHistoryBase_time_future
-   WorldHistory)
+   actualHistoryBase_time_actual futureHistoryBase_time_future)
 
 
 /-! ## Temporal Constraints on Embedded RT -/
@@ -127,7 +126,7 @@ DOX, `futureHistoryBase` for CIR), not stipulated.
 This is the formal contrast with @cite{abusch-1997}'s ULC, which is
 stipulated as a presupposition on T-nodes; here, ULC follows by `.2`
 projection through the situation-base definition. The substrate
-derivation lives in `Semantics.Modality.HistoricalAlternatives` as
+derivation lives in `HistoricalAlternatives` as
 `actualHistoryBase_time_actual` / `futureHistoryBase_time_future`;
 these theorems re-express it in the Klecha-namespace
 `attitudeTemporalConstraint` form. -/
@@ -137,7 +136,7 @@ these theorems re-express it in the Klecha-namespace
     constraint (Upper Limit Constraint) by `.2` projection. -/
 theorem attitudeTemporalConstraint_derived_doxastic
     {W Time : Type*} [LinearOrder Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (s s' : Core.WorldTimeIndex W Time)
     (h : s' ∈ actualHistoryBase history s) :
     attitudeTemporalConstraint .doxastic s.time s'.time :=
@@ -148,7 +147,7 @@ theorem attitudeTemporalConstraint_derived_doxastic
     temporal constraint (future orientation) by `.2` projection. -/
 theorem attitudeTemporalConstraint_derived_circumstantial
     {W Time : Type*} [LinearOrder Time]
-    (history : WorldHistory W Time)
+    (history : HistoricalAlternatives W Time)
     (s s' : Core.WorldTimeIndex W Time)
     (h : s' ∈ futureHistoryBase history s) :
     attitudeTemporalConstraint .circumstantial s.time s'.time :=

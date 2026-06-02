@@ -24,7 +24,7 @@ import Linglib.Features.Valence
 import Linglib.Semantics.Numerals.Basic
 import Mathlib.Data.Rat.Defs
 
-namespace Fragments.English.NumeralModifiers
+namespace English.NumeralModifiers
 
 open Semantics.Numerals
 
@@ -508,4 +508,4 @@ theorem approximators_distinct_from_tolerance :
     toleranceModifiers.all (·.modType == .tolerance) = true := by
   constructor <;> native_decide
 
-end Fragments.English.NumeralModifiers
+end English.NumeralModifiers

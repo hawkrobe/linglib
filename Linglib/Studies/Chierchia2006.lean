@@ -59,7 +59,7 @@ namespace Chierchia2006
 open Haspelmath1997Polarity
 open Typology.Indefinite
 open Chierchia2013 (FCIFlavor)
-open Fragments.Farsi.Determiners (EFCIRescue)
+open Farsi.Determiners (EFCIRescue)
 
 -- ============================================================================
 -- §1. The PSI Parameter Space
@@ -434,10 +434,10 @@ entry's `polarityType` should match its PSI profile's predicted type.
 -/
 
 open Typology.PolarityItem
-open Fragments.English.PolarityItems (any ever)
-open Fragments.Italian.PolarityItems
+open English.PolarityItems (any ever)
+open Italian.PolarityItems
   (mai qualsiasi nessuno qualunque uno_qualsiasi alcuno)
-open Fragments.German.PolarityItems (irgendein)
+open German.PolarityItems (irgendein)
 
 /-- Map a PSI profile to the expected PolarityType. -/
 def PSIProfile.toPolarityType (p : PSIProfile) : PolarityType :=

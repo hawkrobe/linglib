@@ -49,22 +49,13 @@ open Core.Constraint.OT (NamedConstraint ConstraintFamily)
   | .base       => base
   | .derivative => derivative
 
-/-- The general TCT diagram constructor: takes the three forms plus an
-    explicit OO correspondence relation `ooEdge ⊆ Fin base.length × Fin derivative.length`
-    (subject to a well-formedness proof).
-
-    The `(.input, .base)` and `(.input, .derivative)` IO edges are filled
-    in trivially as the parallel-pair correspondence (one-to-one up to
-    `min` length); only the OO edge requires the morphological alignment
-    that a study file specifies.
-
-    This is the **load-bearing constructor** for paradigmatic phonology
-    studies that involve infixation, truncation, reduplication, or any
-    non-identity morphological mapping — the OO edge is *not* generally
-    parallel-pair (the singular [ɲĩãr] base maps to non-adjacent
-    positions in the plural [ɲ-ar-ĩãr]). See
-    `Studies/Benua1997.lean` for the canonical
-    Sundanese example. -/
+/-- The general TCT diagram constructor: the three forms plus an explicit
+    OO correspondence relation `ooEdge` between base and derivative
+    positions (with a well-formedness proof `hOO`). The IO relations
+    (input-base, input-derivative) are the parallel-pair correspondence;
+    only the OO relation carries the morphological alignment a study
+    specifies (e.g. the Sundanese infix — see `Studies/Benua1997.lean`).
+    The reverse directions are recovered by `Corr.edge`. -/
 def diagramWithEdge {α : Type}
     (input base derivative : List α)
     (ooEdge : Finset (ℕ × ℕ))
@@ -73,64 +64,20 @@ def diagramWithEdge {α : Type}
   form := Role.formOf input base derivative
   edge r₁ r₂ :=
     match r₁, r₂ with
-    | .base, .derivative => ooEdge
-    | .derivative, .base => ooEdge.image fun p => (p.2, p.1)
-    | .input, .base       =>
-        (Finset.range (min input.length base.length)).image fun i => (i, i)
-    | .base, .input       =>
-        (Finset.range (min input.length base.length)).image fun i => (i, i)
-    | .input, .derivative =>
-        (Finset.range (min input.length derivative.length)).image fun i => (i, i)
-    | .derivative, .input =>
-        (Finset.range (min input.length derivative.length)).image fun i => (i, i)
+    | .base, .derivative =>
+        -- Lift the ℕ-indexed `ooEdge` into the `Fin`-indexed storage using `hOO`.
+        ooEdge.attach.image fun p => (⟨p.1.1, (hOO p.1 p.2).1⟩, ⟨p.1.2, (hOO p.1 p.2).2⟩)
+    | .input, .base       => Corr.diagDiag input.length base.length
+    | .input, .derivative => Corr.diagDiag input.length derivative.length
     | _, _ => ∅
-  wf := by
-    intro r₁ r₂ p hmem
-    match r₁, r₂, hmem with
-    | .base, .derivative, h => exact hOO p h
-    | .derivative, .base, h =>
-        simp only [Finset.mem_image] at h
-        obtain ⟨q, hq, rfl⟩ := h
-        have ⟨h1, h2⟩ := hOO q hq
-        exact ⟨h2, h1⟩
-    | .input, .base, h =>
-        simp only [Finset.mem_image, Finset.mem_range] at h
-        obtain ⟨i, hi, rfl⟩ := h
-        exact ⟨lt_of_lt_of_le hi (min_le_left _ _),
-               lt_of_lt_of_le hi (min_le_right _ _)⟩
-    | .base, .input, h =>
-        simp only [Finset.mem_image, Finset.mem_range] at h
-        obtain ⟨i, hi, rfl⟩ := h
-        exact ⟨lt_of_lt_of_le hi (min_le_right _ _),
-               lt_of_lt_of_le hi (min_le_left _ _)⟩
-    | .input, .derivative, h =>
-        simp only [Finset.mem_image, Finset.mem_range] at h
-        obtain ⟨i, hi, rfl⟩ := h
-        exact ⟨lt_of_lt_of_le hi (min_le_left _ _),
-               lt_of_lt_of_le hi (min_le_right _ _)⟩
-    | .derivative, .input, h =>
-        simp only [Finset.mem_image, Finset.mem_range] at h
-        obtain ⟨i, hi, rfl⟩ := h
-        exact ⟨lt_of_lt_of_le hi (min_le_right _ _),
-               lt_of_lt_of_le hi (min_le_left _ _)⟩
-    | .input, .input, h => exact absurd h (Finset.notMem_empty _)
-    | .base, .base, h => exact absurd h (Finset.notMem_empty _)
-    | .derivative, .derivative, h => exact absurd h (Finset.notMem_empty _)
 
-/-- The parallel-pair specialization: when the OO edge is the parallel
-    `(i, i)` correspondence up to `min base.length derivative.length`.
-    Convenient for cases where base and derivative have no morphological
-    re-alignment (rare in paradigm phonology — most studies need
-    `diagramWithEdge` with an explicit alignment).
-
-    Defined via `Corr.diagram` with off-diagonal edge predicate. The
-    pre-Stage-2 version reduced to `diagramWithEdge` with a hand-rolled
-    parallel-pair edge + length-bounds proof; `Corr.diagram` makes the
-    pattern direct. -/
+/-- The parallel-pair specialization: the OO edge is the parallel `(i, i)`
+    correspondence up to `min base.length derivative.length`. For
+    morphological re-alignment use `diagramWithEdge`. -/
 def diagram {α : Type} (input base derivative : List α) : Corr Role α :=
   Corr.diagram
     (fun | .input => input | .base => base | .derivative => derivative)
-    (fun r₁ r₂ => decide (r₁ ≠ r₂))
+    (· ≠ ·)
 
 -- ============================================================================
 -- § 2: IDENT-OO and MAX-OO specializations
@@ -182,14 +129,15 @@ def toDepOOConstraint (α : Type) : NamedConstraint (Corr Role α) :=
 theorem identOO_when_equal {α : Type} [DecidableEq α]
     (input shared : List α) :
     identOOViol (diagram input shared shared) = 0 := by
+  have hedge : (diagram input shared shared).edge Role.base Role.derivative =
+      Corr.diagDiag shared.length shared.length := by
+    simp only [diagram]
+    exact Corr.diagram_edge_pos _ _ (by decide)
   unfold identOOViol Corr.identViol
-  show ((((Finset.range (min shared.length shared.length)).image
-            (fun i => (i, i)))).filter
-          (fun p => shared[p.1]? ≠ shared[p.2]?)).card = 0
-  rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+  rw [hedge, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
   intro p hp
-  rw [Finset.mem_image] at hp
-  obtain ⟨i, _, rfl⟩ := hp
-  exact fun h => h rfl
+  have hpq : (p.1 : ℕ) = (p.2 : ℕ) := (Corr.mem_diagDiag p.1 p.2).mp hp
+  simp only [not_not]
+  exact congrArg (fun i : Fin shared.length => shared[i]) (Fin.ext hpq)
 
 end Phonology.ParadigmUniformity.Transderivational

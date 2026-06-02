@@ -52,7 +52,7 @@ both this bridge and `ClassifierEntry` itself can be retired.
   inventory (`-kai` 回, `-bai` 倍, `-ban` 番, `-do` 度, etc.).
 -/
 
-namespace Fragments.Japanese
+namespace Japanese
 
 open Typology (SemanticParameter ShapeDimension ClassifierEntry)
 
@@ -324,4 +324,4 @@ theorem ken_homophony : kenBuilding.romaji = kenIncident.romaji := rfl
 
 end Classifier
 
-end Fragments.Japanese
+end Japanese

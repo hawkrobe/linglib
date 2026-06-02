@@ -5,7 +5,7 @@ import Linglib.Typology.BodyParts
 @cite{wals-2013}
 -/
 
-namespace Fragments.Slavic.Russian
+namespace Russian
 
 /-- Russian: *ruka* covers both 'hand' and 'arm' (identical); distinct
     finger (*palec*) vs hand (*ruka*). -/
@@ -16,4 +16,4 @@ def bodyPartProfile : Typology.BodyPartProfile :=
   , handArm := some .identical
   , fingerHand := some .different }
 
-end Fragments.Slavic.Russian
+end Russian

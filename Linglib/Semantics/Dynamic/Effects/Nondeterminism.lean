@@ -76,11 +76,11 @@ end Semantics.Dynamic.Nondeterminism
 -- ════════════════════════════════════════════════════════════════
 
 /-!
-Connects the pointwise `DRS S := S → S → Prop` type (Dynamic Ty2, @cite{muskens-1996})
+Connects the pointwise `Update S := S → S → Prop` type (Dynamic Ty2, @cite{muskens-1996})
 to the update-theoretic `StateCCP W E := State W E → State W E` type.
 
 The key operations are @cite{charlow-2021}'s ↑ (lift) and ↓ (lower):
-- `liftPW`: promotes a pointwise DRS to a context-level update
+- `liftPW`: promotes a pointwise Update to a context-level update
 - `lowerPW`: extracts a pointwise relation from a context update
 
 The central result: `liftPW D` is always distributive,
@@ -94,23 +94,23 @@ open Semantics.Dynamic.Core
 
 variable {W E : Type*}
 
-/-- Charlow's ↑ (equation 76): lift a pointwise DRS to an update on states.
+/-- Charlow's ↑ (equation 76): lift a pointwise Update to an update on states.
     `liftPW D s = {⟨w, h⟩ | ∃ ⟨w, g⟩ ∈ s, D g h}`
     Each world-assignment pair in the output comes from applying D to some
     input assignment in s, preserving the world. -/
-def liftPW (D : DRS (Assignment E)) : StateCCP W E :=
+def liftPW (D : Update (Assignment E)) : StateCCP W E :=
   λ s => {p | ∃ q ∈ s, p.1 = q.1 ∧ D q.2 p.2}
 
-/-- Charlow's ↓ (equation 77): extract a pointwise DRS from a state update.
+/-- Charlow's ↓ (equation 77): extract a pointwise Update from a state update.
     Evaluates K on a singleton context at an arbitrary world. -/
-def lowerPW (K : StateCCP W E) (w₀ : W) : DRS (Assignment E) :=
+def lowerPW (K : StateCCP W E) (w₀ : W) : Update (Assignment E) :=
   λ g h => (w₀, h) ∈ K {(w₀, g)}
 
-/-- Round-trip identity: lowering a lifted DRS recovers the original.
+/-- Round-trip identity: lowering a lifted Update recovers the original.
 
     `↓(↑D) = D` because the singleton context `{(w₀, g)}` passes through ↑
     with only `(w₀, g)` as witness, leaving exactly the pairs `h` with `D g h`. -/
-theorem lowerPW_liftPW (D : DRS (Assignment E)) (w₀ : W) :
+theorem lowerPW_liftPW (D : Update (Assignment E)) (w₀ : W) :
     lowerPW (liftPW D) w₀ = D := by
   ext g h
   constructor
@@ -129,7 +129,7 @@ theorem lowerPW_liftPW (D : DRS (Assignment E)) (w₀ : W) :
     Follows from the round-trip: `D = ↓(↑D)`, so `↑D₁ = ↑D₂` implies
     `D₁ = ↓(↑D₁) = ↓(↑D₂) = D₂`. Requires `W` to be nonempty for the
     lowering witness world. -/
-theorem liftPW_injective [Nonempty W] (D₁ D₂ : DRS (Assignment E))
+theorem liftPW_injective [Nonempty W] (D₁ D₂ : Update (Assignment E))
     (h : liftPW (W := W) D₁ = liftPW D₂) :
     D₁ = D₂ := by
   have w₀ : W := Classical.arbitrary W
@@ -143,7 +143,7 @@ theorem liftPW_injective [Nonempty W] (D₁ D₂ : DRS (Assignment E))
     at `p` depends only on whether some `q ∈ s` satisfies `D q.2 p.2` with
     matching world `p.1 = q.1`. This is exactly the singleton decomposition
     `(↑D)(s) = ⋃_{i∈s} (↑D)({i})`, which is the definition of distributivity. -/
-theorem liftPW_preserves_distributive (D : DRS (Assignment E)) :
+theorem liftPW_preserves_distributive (D : Update (Assignment E)) :
     IsDistributive (liftPW (W := W) D) := by
   intro s; ext p
   constructor

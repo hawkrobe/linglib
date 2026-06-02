@@ -14,10 +14,10 @@ downstream Studies access the inventory via this Fragment rather than
 naming a PHOIBLE InventoryID directly.
 -/
 
-namespace Fragments.Mandarin.Phonology
+namespace Mandarin.Phonology
 
 /-- Canonical Mandarin phoneme inventory: first PHOIBLE inventory for ISO `cmn`. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.MandarinChinese.cmn
 
-end Fragments.Mandarin.Phonology
+end Mandarin.Phonology

@@ -140,8 +140,10 @@ structure GenderProfile where
   basis : GenderBasis
   /-- Ch 32: assignment system. -/
   assignment : AssignmentSystem
-  /-- Where gender agreement surfaces (@cite{corbett-1991} Agreement
-      Hierarchy: attributive > predicate > relative > pronoun > verb). -/
+  /-- Where gender agreement surfaces. @cite{corbett-1991}'s Agreement
+      Hierarchy has four positions (attributive > predicate > relative
+      pronoun > personal pronoun); `verb` is a linglib refinement for
+      verbal agreement (see `Syntax.Agreement.AgreementTarget`). -/
   agreementTargets : List AgreementTarget
   /-- Semantic dimensions organising the system. -/
   semanticBases : List SemanticBasis

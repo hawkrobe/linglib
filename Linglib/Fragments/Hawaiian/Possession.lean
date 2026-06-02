@@ -14,7 +14,7 @@ consuming this profile live in
 
 set_option autoImplicit false
 
-namespace Fragments.Hawaiian.Possession
+namespace Hawaiian.Possession
 
 open _root_.Typology.Possession
 
@@ -31,4 +31,4 @@ def possession : PossessionProfile :=
   , examples := ["ko'u makuahine (o-class)", "ka'u puke (a-class)"]
   , notes := "Classic Oceanic alienable/inalienable: a-class (alienable) vs o-class (inalienable body parts, kinship, clothing, land)" }
 
-end Fragments.Hawaiian.Possession
+end Hawaiian.Possession

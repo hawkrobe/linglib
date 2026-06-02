@@ -14,10 +14,10 @@ downstream Studies access the inventory via this Fragment rather than
 naming a PHOIBLE InventoryID directly.
 -/
 
-namespace Fragments.HindiUrdu.Phonology
+namespace HindiUrdu.Phonology
 
 /-- Canonical HindiUrdu phoneme inventory: first PHOIBLE inventory for ISO `hin`. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.HindiUrdu.hin
 
-end Fragments.HindiUrdu.Phonology
+end HindiUrdu.Phonology

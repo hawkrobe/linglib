@@ -10,12 +10,12 @@ Two accounts of argument realization make predictions about external
 argument theta roles. The two predicates live next to the types they
 project from: severing in `VoiceFlavor.thetaRole`
 (`Syntax/Minimalist/Voice.lean`) and lexicalist in
-`VerbCore.predictedSubjectTheta`
+`Verb.predictedSubjectTheta`
 (`Semantics/Lexical/VerbEntry.lean`). Both operate over proto-role
 entailment profiles (`subjectEntailments` / `objectEntailments`) rather
 than the legacy `subjectTheta` / `objectTheta` labels (which were
-removed from `VerbCore`). Studies comparing the two accounts apply both
-predicates to the same `VerbCore` and inspect divergence; the
+removed from `Verb`). Studies comparing the two accounts apply both
+predicates to the same `Verb` and inspect divergence; the
 `LinkingTheory` packaging that previously lived in `VoiceTheta.lean`
 was dissolved as having no remaining consumers.
 
@@ -39,7 +39,7 @@ This file retains only the causative-alternation tree derivations
 
 namespace Kratzer1996
 
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════════════════════════
 -- PART III: Tree-Based Derivations — Causative Alternation

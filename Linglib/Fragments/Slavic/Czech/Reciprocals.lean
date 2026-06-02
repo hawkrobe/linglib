@@ -14,15 +14,15 @@ Czech is not in the WALS Ch 106 sample, but "se" is shared between
 reflexive and reciprocal uses, consistent with "identical to reflexive."
 -/
 
-namespace Fragments.Slavic.Czech.Reciprocals
+namespace Czech.Reciprocals
 
 open Pronoun
 
 /-- se — reflexive/reciprocal clitic. -/
-def se : Entry :=
+def se : PersonalPronoun :=
   { form := "se", person := some .third }
 
 /-- The same form serves both reciprocal and reflexive functions. -/
 def isIdenticalToReflexive : Bool := true
 
-end Fragments.Slavic.Czech.Reciprocals
+end Czech.Reciprocals

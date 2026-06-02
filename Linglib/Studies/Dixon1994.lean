@@ -583,21 +583,21 @@ theorem ditrans_indirective_more_common :
 /-- Dargwa: Fragment says A=ERG, S/P=ABS → Typology says ergative NP
     alignment. -/
 theorem dargwa_fragment_bridge :
-    Fragments.Dargwa.Case.agentCase = .erg ∧
-    Fragments.Dargwa.Case.patientCase = .abs ∧
+    Dargwa.Case.agentCase = .erg ∧
+    Dargwa.Case.patientCase = .abs ∧
     dargwa.npAlignment = .ergative := ⟨rfl, rfl, rfl⟩
 
 /-- Dargwa: Fragment alignment family is ergative → Typology profile is
     consistently ergative. -/
 theorem dargwa_alignment_family_bridge :
-    toAlignmentType Fragments.Dargwa.Case.alignment
+    toAlignmentType Dargwa.Case.alignment
     = dargwa.npAlignment := rfl
 
 /-- Japanese: Fragment case inventory contains NOM and ACC → Typology says
     accusative NP alignment. -/
 theorem japanese_fragment_bridge :
-    .nom ∈ Fragments.Japanese.Case.caseInventory ∧
-    .acc ∈ Fragments.Japanese.Case.caseInventory ∧
+    .nom ∈ Japanese.Case.caseInventory ∧
+    .acc ∈ Japanese.Case.caseInventory ∧
     japanese.npAlignment = .accusative := ⟨by decide, by decide, rfl⟩
 
 /-- Hindi: Fragment split-ergative system perfective → ERG matches

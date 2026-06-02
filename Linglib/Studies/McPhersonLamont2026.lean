@@ -258,7 +258,7 @@ theorem weighted_HG_inadequate :
     - `Phonology.Autosegmental.Floating` for `FloatingForm` + GEN
       (autosegmental rep with multi-tone TBUs, no-crossing GEN)
     - `Phonology.Tone.Constraints` for the generic constraint constructors
-    - `Fragments.Poko.Tone` for Poko-specific syllables and morpheme IDs
+    - `Poko.Tone` for Poko-specific syllables and morpheme IDs
 
     This is the **deepest** version of the paper's claim — not the §7
     simplified single-constraint demo. It proves the empirical
@@ -285,7 +285,7 @@ open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
-open Fragments.Poko (Syll seg mTone hTone)
+open Poko (Syll seg mTone hTone)
 
 abbrev PokoForm := FloatingForm Syll TRN
 
@@ -585,7 +585,7 @@ open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
-open Fragments.Poko (Syll seg mTone hTone)
+open Poko (Syll seg mTone hTone)
 
 abbrev PokoForm := FloatingForm Syll TRN
 
@@ -667,7 +667,7 @@ open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
-open Fragments.Poko (Syll seg mTone hTone)
+open Poko (Syll seg mTone hTone)
 
 abbrev PokoForm := FloatingForm Syll TRN
 
@@ -735,7 +735,7 @@ open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
-open Fragments.Poko (Syll seg mTone hTone)
+open Poko (Syll seg mTone hTone)
 
 abbrev PokoForm := FloatingForm Syll TRN
 
@@ -805,7 +805,7 @@ open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone starMlessL)
-open Fragments.Poko (Syll seg mTone hTone lTone)
+open Poko (Syll seg mTone hTone lTone)
 
 abbrev PokoForm := FloatingForm Syll TRN
 
@@ -888,7 +888,7 @@ open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Tone (starFloat starTautDock starCrowd maxTone depLinkTone
                      maxLinkTone starFall haveTone)
-open Fragments.Poko (Syll seg mTone hTone)
+open Poko (Syll seg mTone hTone)
 
 abbrev PokoForm := FloatingForm Syll TRN
 

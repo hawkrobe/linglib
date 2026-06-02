@@ -35,7 +35,7 @@ adjectives admit `-heid` derivation; concrete adjectives (`dicht` 'closed')
 admit it less productively than abstract ones.
 -/
 
-namespace Fragments.Dutch.Adjectives
+namespace Dutch.Adjectives
 
 /-- Semantic domain of a Dutch adjective entry. The distinction between
     abstract and concrete domains tracks the differential availability of
@@ -208,4 +208,4 @@ def abstractAdjectives : List AdjEntry :=
 def all : List AdjEntry :=
   colorAdjectives ++ tasteAdjectives ++ abstractAdjectives ++ [dicht]
 
-end Fragments.Dutch.Adjectives
+end Dutch.Adjectives

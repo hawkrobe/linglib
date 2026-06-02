@@ -1,4 +1,4 @@
-import Linglib.Core.Relativization.Hierarchy
+import Linglib.Typology.RelativeClause.Basic
 import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.Welsh.Relativization
 import Linglib.Fragments.Arabic.ModernStandard.Relativization
@@ -21,11 +21,11 @@ verified against a subset of the paper's Table 1 data (pp. 76-79).
 ## Architecture
 
 This file derives K&C's typological theorems **directly from**
-`Fragments.{Lang}.relMarkers : List RelClauseMarker`, the per-language
+`Fragments.{Lang}.relMarkers : List Marker`, the per-language
 data layer encoding actual linguistic markers (particles, pronouns,
 verbal suffixes). No intermediate `KCProfile`/`StrategyEntry` schema —
-predicates and aggregations are stated over `List RelClauseMarker`
-directly, projecting through `RelClauseMarker.{positions,
+predicates and aggregations are stated over `List Marker`
+directly, projecting through `Marker.{positions,
 bearsCaseMarking, rcPosition}` as needed.
 
 The Fragment files cite @cite{keenan-comrie-1979} (the per-language
@@ -70,24 +70,24 @@ with serial-verb-mediated obliques (Yoruba).
 
 namespace KeenanComrie1977
 
-open Core
+open RelativeClause
 
 -- ============================================================================
--- § 1: Predicates over List RelClauseMarker
+-- § 1: Predicates over List Marker
 -- ============================================================================
 
 /-- HC₁: a language can relativize subjects iff some marker covers SU. -/
-def SatisfiesHC1 (markers : List RelClauseMarker) : Prop :=
+def SatisfiesHC1 (markers : List Marker) : Prop :=
   ∃ m ∈ markers, m.Covers .subject
 
-instance (markers : List RelClauseMarker) : Decidable (SatisfiesHC1 markers) := by
+instance (markers : List Marker) : Decidable (SatisfiesHC1 markers) := by
   unfold SatisfiesHC1; infer_instance
 
 /-- HC₂: every marker covers a contiguous segment of the AH. -/
-def SatisfiesHC2 (markers : List RelClauseMarker) : Prop :=
+def SatisfiesHC2 (markers : List Marker) : Prop :=
   ∀ m ∈ markers, m.IsContinuous
 
-instance (markers : List RelClauseMarker) : Decidable (SatisfiesHC2 markers) := by
+instance (markers : List Marker) : Decidable (SatisfiesHC2 markers) := by
   unfold SatisfiesHC2; infer_instance
 
 /-- PRC: every primary marker is upward-closed on the AH. If marker `m`
@@ -95,19 +95,19 @@ instance (markers : List RelClauseMarker) : Decidable (SatisfiesHC2 markers) := 
     above `pos`. This is the paper's Primary Relativization Constraint
     (p. 68), which follows from HC₂ for primary strategies (see
     `prc_from_hc2` below for the general derivation). -/
-def SatisfiesPRC (markers : List RelClauseMarker) : Prop :=
+def SatisfiesPRC (markers : List Marker) : Prop :=
   ∀ m ∈ markers, m.IsPrimary →
     ∀ pos ∈ AHPosition.all, m.Covers pos →
       ∀ above ∈ AHPosition.all, above.rank > pos.rank → m.Covers above
 
-instance (markers : List RelClauseMarker) : Decidable (SatisfiesPRC markers) := by
+instance (markers : List Marker) : Decidable (SatisfiesPRC markers) := by
   unfold SatisfiesPRC; infer_instance
 
 /-- The lowest AH position covered by any marker in the list (i.e., the
     deepest the language can reach). Returns `.subject` if even SU is
     uncovered (vacuously, since HC₁ would be violated). -/
-def lowestCovered (markers : List RelClauseMarker) : AHPosition :=
-  let coversAny (pos : AHPosition) := markers.any (·.covers pos)
+def lowestCovered (markers : List Marker) : AHPosition :=
+  let coversAny (pos : AHPosition) := markers.any (fun m => decide (m.Covers pos))
   if coversAny .objComparison then .objComparison
   else if coversAny .genitive then .genitive
   else if coversAny .oblique then .oblique
@@ -123,32 +123,32 @@ def lowestCovered (markers : List RelClauseMarker) : AHPosition :=
 8-language sample from the paper plus Yoruba (added later via
 @cite{awobuluyi-1978} + @cite{keenan-comrie-1979}). -/
 
-abbrev english   := Fragments.English.relMarkers
-abbrev welsh     := Fragments.Welsh.relMarkers
+abbrev english   := English.relMarkers
+abbrev welsh     := Welsh.relMarkers
 /- The two MSA markers @cite{keenan-comrie-1977} Table 1 records: the
    definite-headed pair (`relAlladhi` + `relResumptive`). MSA additionally
    has indefinite-headed asyndetic markers per @cite{ryding-2005} §14.3,
    §14.4.2, exposed in the Fragment as `relAsyndeticGap` and
    `relAsyndeticResumptive` — but K&C 1977 does not record them, so this
    study works with the K&C-documented subset. -/
-abbrev arabic    : List Core.RelClauseMarker :=
-  [Fragments.Arabic.ModernStandard.relAlladhi,
-   Fragments.Arabic.ModernStandard.relResumptive]
-abbrev hebrew    := Fragments.Hebrew.relMarkers
-abbrev tobaBatak := Fragments.TobaBatak.relMarkers
-abbrev korean    := Fragments.Korean.relMarkers
-abbrev finnish   := Fragments.Finnish.relMarkers
-abbrev malagasy  := Fragments.Malagasy.relMarkers
-abbrev yoruba    := Fragments.Yoruba.relMarkers
+abbrev arabic    : List Marker :=
+  [Arabic.ModernStandard.relAlladhi,
+   Arabic.ModernStandard.relResumptive]
+abbrev hebrew    := Hebrew.relMarkers
+abbrev tobaBatak := TobaBatak.relMarkers
+abbrev korean    := Korean.relMarkers
+abbrev finnish   := Finnish.relMarkers
+abbrev malagasy  := Malagasy.relMarkers
+abbrev yoruba    := Yoruba.relMarkers
 
 /-- The 8-language sub-sample from the original paper Table 1 (pp. 76-79). -/
-def originalSample : List (List RelClauseMarker) :=
+def originalSample : List (List Marker) :=
   [english, welsh, arabic, hebrew, tobaBatak, korean, finnish, malagasy]
 
 /-- The original 8-language sample plus Yoruba (the only post-1977
     addition; refutes one of the paper's implicit ±case generalizations
     — see `yoruba_refutes_minus_case_covers_subjects` below). -/
-def allSamples : List (List RelClauseMarker) :=
+def allSamples : List (List Marker) :=
   originalSample ++ [yoruba]
 
 theorem sample_size : allSamples.length = 9 := by decide
@@ -170,7 +170,7 @@ theorem hc2_verified :
 theorem prc_verified :
     ∀ markers ∈ allSamples, SatisfiesPRC markers := by decide
 
-/-- Restating HC₁ in terms of `RelClauseMarker.IsPrimary`: every language
+/-- Restating HC₁ in terms of `Marker.IsPrimary`: every language
     has at least one primary marker. -/
 theorem every_language_has_primary :
     ∀ markers ∈ allSamples, ∃ m ∈ markers, m.IsPrimary := by decide
@@ -247,38 +247,38 @@ theorem english_full_coverage :
     covers IO/OBL/GEN/OCOMP. -/
 theorem welsh_strategy_split :
     welsh.length = 2 ∧
-    (welsh.map (·.covers .subject))        = [true, false] ∧
-    (welsh.map (·.covers .directObject))   = [true, false] ∧
-    (welsh.map (·.covers .indirectObject)) = [false, true] ∧
-    (welsh.map (·.covers .objComparison))  = [false, true] := by decide
+    (welsh.map (fun m => decide (m.Covers .subject)))        = [true, false] ∧
+    (welsh.map (fun m => decide (m.Covers .directObject)))   = [true, false] ∧
+    (welsh.map (fun m => decide (m.Covers .indirectObject))) = [false, true] ∧
+    (welsh.map (fun m => decide (m.Covers .objComparison)))  = [false, true] := by decide
 
 /-- Arabic (MSA) (Table 1 p. 76): the relative pronoun *alladhī/allatii*
     used alone (-case strategy) covers SU only; *alladhī/allatii* with a
     resumptive pronoun (+case strategy) covers DO–OCOMP. -/
 theorem arabic_primary_su_only :
-    (arabic.map (·.covers .subject))      = [true, false] ∧
-    (arabic.map (·.covers .directObject)) = [false, true] := by decide
+    (arabic.map (fun m => decide (m.Covers .subject)))      = [true, false] ∧
+    (arabic.map (fun m => decide (m.Covers .directObject))) = [false, true] := by decide
 
 /-- Malagasy (Table 1 p. 78; paper §1.3.1 p. 69-70): single marker, SU only. -/
 theorem malagasy_su_only :
     malagasy.length = 1 ∧
-    (malagasy.map (·.covers .subject))      = [true] ∧
-    (malagasy.map (·.covers .directObject)) = [false] := by decide
+    (malagasy.map (fun m => decide (m.Covers .subject)))      = [true] ∧
+    (malagasy.map (fun m => decide (m.Covers .directObject))) = [false] := by decide
 
 /-- Korean (Table 1 p. 78; paper §1.3.4 p. 74): -case adnominal verb
     suffix covers SU/DO/IO/OBL but not GEN; +case genitive marker covers
     GEN only. -/
 theorem korean_primary_su_to_obl :
-    (korean.map (·.covers .subject))  = [true, false] ∧
-    (korean.map (·.covers .oblique))  = [true, false] ∧
-    (korean.map (·.covers .genitive)) = [false, true] := by decide
+    (korean.map (fun m => decide (m.Covers .subject)))  = [true, false] ∧
+    (korean.map (fun m => decide (m.Covers .oblique)))  = [true, false] ∧
+    (korean.map (fun m => decide (m.Covers .genitive))) = [false, true] := by decide
 
 /-- Finnish (Table 1 p. 76; paper §1.3.2 p. 70-71): the +case marker
     *joka* is the broader/primary one (covers SU–GEN); the -case
     participial marker also covers SU but is narrower (SU/DO only). -/
 theorem finnish_plus_case_is_primary :
     (finnish.map (·.bearsCaseMarking)) = [true, false] ∧
-    (finnish.map (·.isPrimary))        = [true, true] := by decide
+    (finnish.map (fun m => decide m.IsPrimary))        = [true, true] := by decide
 
 /-- Yoruba: 4 per-position markers. relTiSubject (-case, primary, only
     SU); relTiObject (-case, NOT primary, only DO); relTiOblique (-case,
@@ -287,13 +287,13 @@ theorem finnish_plus_case_is_primary :
 theorem yoruba_strategy_breakdown :
     yoruba.length = 4 ∧
     (yoruba.map (·.bearsCaseMarking)) = [false, false, false, true] ∧
-    (yoruba.map (·.isPrimary))        = [true, false, false, false] := by decide
+    (yoruba.map (fun m => decide m.IsPrimary))        = [true, false, false, false] := by decide
 
 -- ============================================================================
--- § 7: Bridge to RelativizationProfile (Typology layer)
+-- § 7: Bridge to RelativeClause.Profile (Typology layer)
 -- ============================================================================
 
-/-! K&C 1977 Table 1's per-position coverage and `RelativizationProfile`'s
+/-! K&C 1977 Table 1's per-position coverage and `RelativeClause.Profile`'s
 WALS-derived `lowestRelativizable` encode complementary views of the same
 data. Bridge theorems below verify agreement on the lowest position
 covered, language by language. K&C's Table 1 is strictly more detailed
@@ -303,49 +303,49 @@ the K&C `lowestCovered` is at least as deep as the WALS
 
 theorem english_kc_matches_wals :
     lowestCovered english = .objComparison ∧
-    Fragments.English.relativization.lowestRelativizable = .objComparison := by decide
+    English.relativization.lowestRelativizable = .objComparison := by decide
 
 theorem welsh_kc_covers_deeper_than_wals :
     lowestCovered welsh = .objComparison ∧
-    Fragments.Welsh.relativization.lowestRelativizable = .oblique ∧
+    Welsh.relativization.lowestRelativizable = .oblique ∧
     AHPosition.moreAccessible .oblique .objComparison := by decide
 
 theorem korean_kc_covers_deeper_than_wals :
     lowestCovered korean = .genitive ∧
-    Fragments.Korean.relativization.lowestRelativizable = .oblique := by decide
+    Korean.relativization.lowestRelativizable = .oblique := by decide
 
 theorem malagasy_kc_matches_wals :
     lowestCovered malagasy = .subject ∧
-    Fragments.Malagasy.relativization.lowestRelativizable = .subject := by decide
+    Malagasy.relativization.lowestRelativizable = .subject := by decide
 
 theorem finnish_kc_matches_wals :
     lowestCovered finnish = .genitive ∧
-    Fragments.Finnish.relativization.lowestRelativizable = .oblique := by decide
+    Finnish.relativization.lowestRelativizable = .oblique := by decide
 
 theorem hebrew_kc_covers_deeper_than_wals :
     lowestCovered hebrew = .objComparison ∧
-    Fragments.Hebrew.relativization.lowestRelativizable = .oblique := by decide
+    Hebrew.relativization.lowestRelativizable = .oblique := by decide
 
 theorem arabic_kc_covers_deeper_than_wals :
     lowestCovered arabic = .objComparison ∧
-    Fragments.Arabic.ModernStandard.relativization.lowestRelativizable = .oblique := by decide
+    Arabic.ModernStandard.relativization.lowestRelativizable = .oblique := by decide
 
 theorem yoruba_kc_matches_wals :
     lowestCovered yoruba = .genitive ∧
-    Fragments.Yoruba.relativization.lowestRelativizable = .genitive := by decide
+    Yoruba.relativization.lowestRelativizable = .genitive := by decide
 
 /-- **Systematic coverage agreement**: K&C is at least as detailed as
     WALS for every sample language. The WALS profile never claims a
     language can relativize a position that K&C Table 1 doesn't cover. -/
 theorem kc_at_least_as_detailed_as_wals :
-    (lowestCovered english).rank   ≤ Fragments.English.relativization.lowestRelativizable.rank ∧
-    (lowestCovered welsh).rank     ≤ Fragments.Welsh.relativization.lowestRelativizable.rank ∧
-    (lowestCovered korean).rank    ≤ Fragments.Korean.relativization.lowestRelativizable.rank ∧
-    (lowestCovered malagasy).rank  ≤ Fragments.Malagasy.relativization.lowestRelativizable.rank ∧
-    (lowestCovered finnish).rank   ≤ Fragments.Finnish.relativization.lowestRelativizable.rank ∧
-    (lowestCovered hebrew).rank    ≤ Fragments.Hebrew.relativization.lowestRelativizable.rank ∧
-    (lowestCovered arabic).rank    ≤ Fragments.Arabic.ModernStandard.relativization.lowestRelativizable.rank ∧
-    (lowestCovered yoruba).rank    ≤ Fragments.Yoruba.relativization.lowestRelativizable.rank :=
+    (lowestCovered english).rank   ≤ English.relativization.lowestRelativizable.rank ∧
+    (lowestCovered welsh).rank     ≤ Welsh.relativization.lowestRelativizable.rank ∧
+    (lowestCovered korean).rank    ≤ Korean.relativization.lowestRelativizable.rank ∧
+    (lowestCovered malagasy).rank  ≤ Malagasy.relativization.lowestRelativizable.rank ∧
+    (lowestCovered finnish).rank   ≤ Finnish.relativization.lowestRelativizable.rank ∧
+    (lowestCovered hebrew).rank    ≤ Hebrew.relativization.lowestRelativizable.rank ∧
+    (lowestCovered arabic).rank    ≤ Arabic.ModernStandard.relativization.lowestRelativizable.rank ∧
+    (lowestCovered yoruba).rank    ≤ Yoruba.relativization.lowestRelativizable.rank :=
   by decide
 
 -- ============================================================================
@@ -354,7 +354,7 @@ theorem kc_at_least_as_detailed_as_wals :
 
 /-! HC₂ ("any RC-forming strategy must apply to a continuous segment of the
 AH") is a paper-anchored claim. The contiguity machinery (`contiguousOnAH`,
-`AHPosition.rank`) lives in `Core/Relativization/Hierarchy.lean` because it
+`AHPosition.rank`) lives in `Typology/RelativeClause/Basic.lean` because it
 mirrors `Core/Case/Hierarchy.lean::validInventory` and is genuinely
 framework-agnostic. The specific contiguous-segment witnesses below
 exemplify HC₂ on the AH and are part of @cite{keenan-comrie-1977}'s core
@@ -386,7 +386,7 @@ theorem su_do_obl_not_contiguous :
 
 /-! The PRC is the paper's main derivation: it follows from HC₁ + HC₂ rather
 than being an independent stipulation. The general proof lives here (paper
-content), not in `Core/Relativization/Hierarchy.lean` (substrate). -/
+content), not in `Typology/RelativeClause/Basic.lean` (substrate). -/
 
 /-- BEq agrees with propositional equality for AH positions. -/
 private theorem ah_beq_iff (a b : AHPosition) :

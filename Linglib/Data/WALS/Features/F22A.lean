@@ -28,7 +28,7 @@ inductive InflectionalSynthesis where
   | categoriesPerWord10_11
   /-- 12-13 categories per word (2 languages). -/
   | categoriesPerWord12_13
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 22A dataset (145 languages). -/
 def allData : List (Datapoint InflectionalSynthesis) :=
@@ -180,9 +180,9 @@ def allData : List (Datapoint InflectionalSynthesis) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint InflectionalSynthesis) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint InflectionalSynthesis) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F22A

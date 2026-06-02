@@ -9,7 +9,7 @@ adjectives and personal pronouns; no predicate adjective agreement (unlike
 Romance).
 -/
 
-namespace Fragments.Irish.Gender
+namespace Irish.Gender
 
 open Typology.Gender
 
@@ -30,4 +30,4 @@ example : genderTypology.iso639 = "gle" ∧ genderTypology.name = "Irish" :=
 /-- Irish is in @cite{corbett-1991}'s "canonical" cell. -/
 example : genderTypology.IsCanonicalGender := by decide
 
-end Fragments.Irish.Gender
+end Irish.Gender

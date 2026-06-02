@@ -2,6 +2,7 @@ import Linglib.Syntax.HPSG.Coreference
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.NominalClassification
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Paradigms.AcceptabilityJudgment
 
@@ -30,6 +31,13 @@ open Paradigms.AcceptabilityJudgment
 open HPSG.Coreference
 open Phenomena.Anaphora.Coreference
 
+/-- English binding under HPSG (ARG-ST outranking): the framework-neutral engine
+    (`Binding.grammaticalForCoreference`) applied with HPSG's `CommandRelation`
+    instance (in scope via `open HPSG.Coreference`) and English's binding-class
+    classifier. `Bool`-valued for `capturesPhenomenonData`. -/
+private def grammaticalForCoreference (ws : List Word) : Bool :=
+  decide (Binding.grammaticalForCoreference English.NominalClassification.classifyNominal ws)
+
 /-- Coverage of a `PhenomenonData` set under HPSG binding. -/
 def capturesCoreferenceData (phenom : PhenomenonData) : Bool :=
   capturesPhenomenonData grammaticalForCoreference phenom
@@ -49,16 +57,16 @@ theorem captures_pronominal_disjoint_reference :
     capturesCoreferenceData pronominalDisjointReferenceData = true := by
   decide
 
-private abbrev john := Fragments.English.Nouns.john.toWordSg
-private abbrev mary := Fragments.English.Nouns.mary.toWordSg
-private abbrev they := Fragments.English.Pronouns.they.toWord
-private abbrev sees := Fragments.English.Predicates.Verbal.see.toWord3sg
-private abbrev see := Fragments.English.Predicates.Verbal.see.toWordPl
-private abbrev himself := Fragments.English.Pronouns.himself.toWord
-private abbrev herself := Fragments.English.Pronouns.herself.toWord
-private abbrev themselves := Fragments.English.Pronouns.themselves.toWord
-private abbrev them := Fragments.English.Pronouns.them.toWord
-private abbrev eachOther := Fragments.English.Pronouns.eachOther.toWord
+private abbrev john := English.Nouns.john.toWordSg
+private abbrev mary := English.Nouns.mary.toWordSg
+private abbrev they := English.Pronouns.they.toWord
+private abbrev sees := English.Predicates.Verbal.see.toWord3sg
+private abbrev see := English.Predicates.Verbal.see.toWordPl
+private abbrev himself := English.Pronouns.himself.toWord
+private abbrev herself := English.Pronouns.herself.toWord
+private abbrev themselves := English.Pronouns.themselves.toWord
+private abbrev them := English.Pronouns.them.toWord
+private abbrev eachOther := English.Pronouns.eachOther.toWord
 
 /-- Per-pair verification of reflexive binding judgments. -/
 theorem reflexive_pairs_captured :

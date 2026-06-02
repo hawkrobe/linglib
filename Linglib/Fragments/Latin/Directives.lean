@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.Latin
+namespace Latin
 
 /-- Latin: full imperative paradigm (2SG *i*, 2PL *ite*, future imperatives;
     subjunctive *eamus* hortative 1PL, *eat* jussive 3SG); Type 4 prohibitive
@@ -23,4 +23,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "Future imperative (2SG -to, 3SG -to); prohibitive uses " ++
              "special ne (not non) + subjunctive (not imperative)." }
 
-end Fragments.Latin
+end Latin

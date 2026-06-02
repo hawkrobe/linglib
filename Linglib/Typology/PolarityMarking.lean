@@ -53,7 +53,7 @@ keeps the form-class enum because (a) it has 8 cross-language
 consumers via TBD2014, (b) M&N's framework is one alternative among
 several — alongside @cite{hohle-1992}'s verum-as-illocutionary-operator
 (`Studies/Hohle1992.lean`),
-@cite{romero-han-2004}'s epistemic-CONJ FOR-SURE-CG
+@cite{romero-han-2004}'s epistemic-CONJ FOR-SURE-CommonGround
 (`Studies/RomeroHan2004.lean`), and
 @cite{gutzmann-2015}'s use-conditional sentence-mood operators
 (`Semantics/Mood/Gutzmann.lean` +

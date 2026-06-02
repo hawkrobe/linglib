@@ -18,7 +18,7 @@ inductive NounPhraseConjunction where
   | andDifferentFromWith
   /-- 'And' identical to 'with' (103 languages). -/
   | andIdenticalToWith
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 63A dataset (234 languages). -/
 def allData : List (Datapoint NounPhraseConjunction) :=
@@ -259,9 +259,9 @@ def allData : List (Datapoint NounPhraseConjunction) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint NounPhraseConjunction) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint NounPhraseConjunction) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F63A

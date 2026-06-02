@@ -44,7 +44,7 @@ using @cite{cuervo-2003}'s notation. See
 `Wood2015` for the Icelandic -st
 apparatus (the Wood-2015 -st classification, root-structure
 projections, and ±D/±λx grid analysis); the lexical fragment
-`Fragments.Icelandic.Predicates` carries only the consensus verb
+`Icelandic.Predicates` carries only the consensus verb
 forms.
 
 -/

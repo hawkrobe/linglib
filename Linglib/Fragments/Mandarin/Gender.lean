@@ -7,7 +7,7 @@ import Linglib.Typology.Gender
 No grammatical gender. WALS Ch 30/31/32 = none.
 -/
 
-namespace Fragments.Mandarin.Gender
+namespace Mandarin.Gender
 
 open Typology.Gender
 
@@ -19,4 +19,4 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "cmn" ∧ genderTypology.name = "Mandarin Chinese" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Mandarin.Gender
+end Mandarin.Gender

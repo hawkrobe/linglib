@@ -1,4 +1,5 @@
 import Linglib.Features.LicensingContext
+import Linglib.Typology.NegativeConcord
 
 /-!
 # Typology.PolarityItem
@@ -278,6 +279,11 @@ structure PolarityItemEntry where
   morphology : NPIMorphology := .plain
   /-- Type of alternatives introduced -/
   alternativeType : AlternativeType := .unspecified
+  /-- Negative-concord / n-word status (@cite{giannakidou-2000},
+      @cite{van-der-auwera-van-alsenoy-2016}). `none` for items outside the
+      negative-concord system; strict-NC n-words set `some .nWord` here rather than
+      leaning on a strong-NPI `polarityType`. -/
+  nWordStatus : Option NegativeConcord.NWordStatus := none
   /-- Notes -/
   notes : String := ""
   deriving Repr

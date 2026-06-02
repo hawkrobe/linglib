@@ -37,7 +37,7 @@ Source determines who can challenge:
 namespace Dialogue.Gunlogson
 
 open Discourse.Commitment
-open Discourse.CommonGround (ContextSet CG)
+open CommonGround (ContextSet)
 open Discourse (DiscourseRole)
 open Semantics.Modality.BiasedPQ (ContextualEvidence)
 
@@ -48,7 +48,7 @@ open Semantics.Modality.BiasedPQ (ContextualEvidence)
 /-- Gunlogson's discourse state: source-tagged commitment slates
     for speaker and addressee.
 
-    Unlike Stalnaker (single CG) or Farkas & Bruce (dcS + dcL + cg),
+    Unlike Stalnaker (single CommonGround) or Farkas & Bruce (dcS + dcL + cg),
     Gunlogson tracks the SOURCE of each commitment, not just which
     participant holds it. -/
 structure GunlogsonState (W : Type*) where
@@ -338,7 +338,7 @@ theorem confirm_still_unstable {W : Type*} (p : Set W) :
 -- HasContextSet instance
 -- ════════════════════════════════════════════════════
 
-open Discourse.CommonGround in
+open CommonGround in
 /-- Gunlogson states project to a context set via `contextSet` —
     the intersection of both participants' commitment contexts
     (regardless of source). -/

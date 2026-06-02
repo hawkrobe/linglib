@@ -39,7 +39,7 @@ can be future-oriented:
 
 ## What this file verifies
 
-- Attitude verb classifications from `Fragments.English` derive the correct
+- Attitude verb classifications from `English` derive the correct
   modal base compatibility
 - *think*/*believe* are DOX-only (block future)
 - *hope*/*pray* permit CIR (allow future)
@@ -56,8 +56,8 @@ namespace Klecha2016
 
 open Features (Attitude Preferential Veridicality)
 open Semantics.Modality (ModalBaseKind)
-open Semantics.Modality.HistoricalAlternatives
-  (WorldHistory actualHistoryBase futureHistoryBase
+open HistoricalAlternatives
+  (actualHistoryBase futureHistoryBase
    upperLimitConstraintModal upperLimitConstraintModal_implies_value)
 open Semantics.Modality.TemporalConstraint (attitudeTemporalConstraint
   doxConstrainsRT cirConstrainsRT Attitude.toModalBaseKind
@@ -67,7 +67,7 @@ open Semantics.Modality.TemporalConstraint (attitudeTemporalConstraint
   non_epistemic_is_cir
   attitudeTemporalConstraint_derived_doxastic
   attitudeTemporalConstraint_derived_circumstantial)
-open Fragments.English.Predicates.Verbal (think believe hope pray)
+open English.Predicates.Verbal (think believe hope pray)
 open Semantics.Tense.Modal.Matrix
   (dox_past_iff dox_npst_iff cir_npst_iff cir_past_iff_false)
 open Semantics.Tense (upperLimitConstraint)
@@ -306,7 +306,7 @@ This is what differentiates Klecha's ULC from @cite{abusch-1997}'s
 stipulated one — the upper limit is a kernel-checked consequence of
 DOX-pronoun's lexical entry, not a separately-asserted presupposition
 on T-nodes. The substrate derivation lives in
-`Semantics.Modality.HistoricalAlternatives` (`actualHistoryBase_time_actual`,
+`HistoricalAlternatives` (`actualHistoryBase_time_actual`,
 `futureHistoryBase_time_future`); the `attitudeTemporalConstraint`
 projection in `Semantics/Modality/TemporalConstraint.lean`
 delegates to it. -/
@@ -316,7 +316,7 @@ delegates to it. -/
     doxastic temporal constraint. The proof is Klecha's eq 35a
     derivation specialized to ℤ. -/
 theorem ulc_via_history_base {W : Type*}
-    (history : WorldHistory W ℤ)
+    (history : HistoricalAlternatives W ℤ)
     (matrix embedded : Core.WorldTimeIndex W ℤ)
     (h : embedded ∈ actualHistoryBase history matrix) :
     attitudeTemporalConstraint .doxastic matrix.time embedded.time :=
@@ -327,7 +327,7 @@ theorem ulc_via_history_base {W : Type*}
     base satisfies the circumstantial temporal constraint. Klecha eq 35b
     specialized to ℤ. -/
 theorem future_via_history_base {W : Type*}
-    (history : WorldHistory W ℤ)
+    (history : HistoricalAlternatives W ℤ)
     (matrix embedded : Core.WorldTimeIndex W ℤ)
     (h : embedded ∈ futureHistoryBase history matrix) :
     attitudeTemporalConstraint .circumstantial matrix.time embedded.time :=
@@ -355,7 +355,7 @@ proposition:
   via `actualHistoryBase_time_actual : s' ∈ actualHistoryBase history s
   → s'.time ≤ s.time`, a `.2`-projection through the situation-base
   definition. The doxastic-alternative quantification is carried by
-  `WorldHistory W Time` membership.
+  `HistoricalAlternatives W Time` membership.
 
 - **Abusch route** (in `Semantics/Tense/Basic.lean`): the
   predicate is stated directly as `abbrev upperLimitConstraint
@@ -367,8 +367,8 @@ proposition:
 
 So the equivalence is strict at the value level. **It is *not* strict
 at the modal-layer level**: Klecha's substrate carries doxastic
-alternatives via `WorldHistory`; Abusch's bare-`≤` form has dropped
-them. A modal-layer `upperLimitConstraint` over `WorldHistory W Time`
+alternatives via `HistoricalAlternatives`; Abusch's bare-`≤` form has dropped
+them. A modal-layer `upperLimitConstraint` over `HistoricalAlternatives W Time`
 matching Abusch's original "now of an epistemic alternative" is
 deferred. -/
 
@@ -552,7 +552,7 @@ not reconciliation: the two analyses return different Bool values for
 the (epistemic, future) cell, and there is no flavor-keyed
 `ProspectiveMarkerPolicy` that would unify them. -/
 
-open Fragments.Gitksan.Modals (imaa requiresDim)
+open Gitksan.Modals (imaa requiresDim)
 
 /-- Klecha's universal applied to imaa: the flavor on every meaning
     cell of imaa is epistemic, so the modal base is DOX, so future
@@ -654,11 +654,11 @@ makes the world-component subset relation kernel-checked. -/
     situation-base + structural unfolding of `metaphysicalBase` /
     `histEquiv`. -/
 theorem klecha_cir_world_in_condoravdi_metaphysical
-    {W : Type*} (history : WorldHistory W ℤ)
+    {W : Type*} (history : HistoricalAlternatives W ℤ)
     (s s' : Core.WorldTimeIndex W ℤ)
     (h : s' ∈ futureHistoryBase history s) :
     s'.world ∈
-      Semantics.Modality.HistoricalAlternatives.metaphysicalBase history s.world s.time :=
+      HistoricalAlternatives.metaphysicalBase history s.world s.time :=
   h.1
 
 /-- Phase F bridge — Klecha-Condoravdi: the world-component of any
@@ -666,11 +666,11 @@ theorem klecha_cir_world_in_condoravdi_metaphysical
     in @cite{condoravdi-2002}'s metaphysical modal base. The proof is
     `.1` projection (same as the CIR case). -/
 theorem klecha_dox_world_in_condoravdi_metaphysical
-    {W : Type*} (history : WorldHistory W ℤ)
+    {W : Type*} (history : HistoricalAlternatives W ℤ)
     (s s' : Core.WorldTimeIndex W ℤ)
     (h : s' ∈ actualHistoryBase history s) :
     s'.world ∈
-      Semantics.Modality.HistoricalAlternatives.metaphysicalBase history s.world s.time :=
+      HistoricalAlternatives.metaphysicalBase history s.world s.time :=
   h.1
 
 
@@ -707,7 +707,7 @@ sides* now carry the modal-alternative quantification (via
     layer, in contrast to §5c's value-level `klecha_dox_iff_abusch_ulc`
     which strips it. -/
 theorem klecha_dox_iff_abusch_ulc_modal {W : Type*}
-    (history : WorldHistory W ℤ)
+    (history : HistoricalAlternatives W ℤ)
     (matrix embedded : Core.WorldTimeIndex W ℤ) :
     embedded ∈ actualHistoryBase history matrix ↔
     upperLimitConstraintModal history matrix embedded :=
@@ -720,7 +720,7 @@ theorem klecha_dox_iff_abusch_ulc_modal {W : Type*}
     components. Composes `upperLimitConstraintModal_implies_value`
     with the substrate's `attitudeTemporalConstraint_derived_doxastic`. -/
 theorem abusch_modal_ulc_implies_klecha_dox {W : Type*}
-    (history : WorldHistory W ℤ)
+    (history : HistoricalAlternatives W ℤ)
     (matrix embedded : Core.WorldTimeIndex W ℤ)
     (h : upperLimitConstraintModal history matrix embedded) :
     attitudeTemporalConstraint .doxastic matrix.time embedded.time :=
@@ -803,7 +803,7 @@ theorem klecha_covers_hope_future_oriented_reading
     Klecha's DOX behavior; this theorem makes the equivalence
     kernel-checked (provable by `rfl`). -/
 theorem klecha_actualHistoryBase_eq_substrate_metaphysicalAlternatives
-    {W : Type*} (history : WorldHistory W ℤ)
+    {W : Type*} (history : HistoricalAlternatives W ℤ)
     (concept : Semantics.Tense.DeRe.TimeConcept W Unit Unit ℤ)
     (matrix : Core.Context.KContext W Unit Unit ℤ) :
     let dr : Semantics.Tense.DeRe.TemporalDeReReading W Unit Unit ℤ :=

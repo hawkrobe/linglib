@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.Hausa
+namespace Hausa
 
 /-- Hausa (Afro-Asiatic, Chadic): no definite or indefinite article;
     four-way person-oriented demonstrative system (one of WALS's key examples
@@ -23,4 +23,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .sameForms
   , pronDemRelation := some .relatedAll }
 
-end Fragments.Hausa
+end Hausa

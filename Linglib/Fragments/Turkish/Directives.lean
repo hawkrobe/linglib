@@ -5,7 +5,7 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 -/
 
-namespace Fragments.Turkish
+namespace Turkish
 
 /-- Turkish: full imperative paradigm (2SG *gel*, 2PL *gelin*, 3SG *gelsin*,
     3PL *gelsinler*, 1PL hortative *gelelim*); Type 1 prohibitive (*gelme!* —
@@ -22,4 +22,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "Full imperative paradigm 2SG/2PL/3SG/3PL + hortative 1PL; " ++
              "optative -sA suffix; prohibitive with regular -mA- negation." }
 
-end Fragments.Turkish
+end Turkish

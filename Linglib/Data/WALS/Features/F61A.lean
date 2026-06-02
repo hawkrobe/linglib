@@ -28,7 +28,7 @@ inductive AdjectivesWithoutNouns where
   | markedByFollowingWord
   /-- Marked by mixed or other strategies (5 languages). -/
   | markedByMixedOrOtherStrategies
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 61A dataset (124 languages). -/
 def allData : List (Datapoint AdjectivesWithoutNouns) :=
@@ -159,9 +159,9 @@ def allData : List (Datapoint AdjectivesWithoutNouns) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint AdjectivesWithoutNouns) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint AdjectivesWithoutNouns) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F61A

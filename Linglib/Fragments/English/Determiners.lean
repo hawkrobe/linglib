@@ -30,7 +30,7 @@ all live elsewhere:
   `Studies/VanTielEtAl2021.lean`.
 -/
 
-namespace Fragments.English.Determiners
+namespace English.Determiners
 
 export Semantics.Quantification.Lexicon
   (QForce Monotonicity Strength QuantifierEntry)
@@ -205,4 +205,4 @@ def allDeterminers : List QuantifierEntry := [
 def lookup (form : String) : Option QuantifierEntry :=
   allDeterminers.find? λ d => d.form == form
 
-end Fragments.English.Determiners
+end English.Determiners

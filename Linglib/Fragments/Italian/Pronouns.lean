@@ -27,7 +27,7 @@ and reflexive cases, while 3sg/3pl are not.
 | 3pl    | li/le  | loro   | si   | NOT syncretic
 -/
 
-namespace Fragments.Italian.Pronouns
+namespace Italian.Pronouns
 
 open Pronoun
 open Features.Register (Level)
@@ -37,11 +37,11 @@ open Features.Register (Level)
 -- ============================================================================
 
 /-- *io* — 1sg. -/
-def io : Entry :=
+def io : PersonalPronoun :=
   { form := "io", person := some .first, number := some .sg }
 
 /-- *tu* — 2sg familiar (T form). -/
-def tu : Entry :=
+def tu : PersonalPronoun :=
   { form := "tu", person := some .second, number := some .sg, register := .informal }
 
 /-- *Lei* — polite 2sg (V form). Formally 3rd person: triggers 3sg verbal
@@ -49,37 +49,37 @@ def tu : Entry :=
     Interpretably 2nd person: triggers PCC effects, Fancy Constraint effects,
     2PL resolved agreement in coordination.
     @cite{adamson-zompi-2025} -/
-def lei_formal : Entry :=
+def lei_formal : PersonalPronoun :=
   { form := "Lei", person := some .third, number := some .sg, register := .formal,
     referentialPerson := some .second }
 
 /-- *lui* — 3sg masculine. -/
-def lui : Entry :=
+def lui : PersonalPronoun :=
   { form := "lui", person := some .third, number := some .sg }
 
 /-- *lei* — 3sg feminine. -/
-def lei : Entry :=
+def lei : PersonalPronoun :=
   { form := "lei", person := some .third, number := some .sg }
 
 /-- *noi* — 1pl. -/
-def noi : Entry :=
+def noi : PersonalPronoun :=
   { form := "noi", person := some .first, number := some .pl }
 
 /-- *voi* — 2pl (familiar; also used as general 2pl in modern Italian). -/
-def voi : Entry :=
+def voi : PersonalPronoun :=
   { form := "voi", person := some .second, number := some .pl, register := .informal }
 
 /-- *Loro* — 2pl formal (archaic, largely replaced by *voi*). -/
-def loro_formal : Entry :=
+def loro_formal : PersonalPronoun :=
   { form := "Loro", person := some .second, number := some .pl, register := .formal }
 
 /-- *loro* — 3pl. -/
-def loro : Entry :=
+def loro : PersonalPronoun :=
   { form := "loro", person := some .third, number := some .pl }
 
-def secondPersonPronouns : List Entry := [tu, lei_formal]
+def secondPersonPronouns : List PersonalPronoun := [tu, lei_formal]
 
-def allPronouns : List Entry :=
+def allPronouns : List PersonalPronoun :=
   [io] ++ secondPersonPronouns ++ [lui, lei, noi, voi, loro_formal, loro]
 
 -- ============================================================================
@@ -219,4 +219,22 @@ theorem has_both_numbers :
     allPronouns.any (·.number == some .sg) = true ∧
     allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
 
-end Fragments.Italian.Pronouns
+-- ============================================================================
+-- § 5: Cardinaletti–Starke deficiency classes
+-- ============================================================================
+
+/-- Italian's two pronoun series instantiate two Cardinaletti–Starke deficiency
+    classes (@cite{cardinaletti-starke-1999}): the strong forms (`allPronouns`)
+    are `.strong`; the object clitics (`paradigm`) are `.clitic`. -/
+def strongStrength : Strength := .strong
+
+/-- The object-clitic series is the maximally deficient `.clitic` class. -/
+def cliticStrength : Strength := .clitic
+
+/-- The clitic series is structurally more deficient than the strong series
+    (lower `Strength.rank`): the deficiency ordering behind their complementary
+    distribution (clitics host-adjacent and unfocusable, strong forms free). -/
+theorem clitics_more_deficient :
+    Strength.rank cliticStrength < Strength.rank strongStrength := by decide
+
+end Italian.Pronouns

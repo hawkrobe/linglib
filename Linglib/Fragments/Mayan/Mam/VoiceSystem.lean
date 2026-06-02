@@ -25,7 +25,7 @@ and SJA Mam (San Juan Atitán, @cite{scott-2023}) are distinct varieties.
 The voice system profile abstracts over the variety distinction.
 -/
 
-namespace Fragments.Mayan.Mam
+namespace Mam
 
 /-- Mam voice system: three-way asymmetrical (agentive / passive / antipassive).
 
@@ -56,4 +56,4 @@ theorem mam_not_simple_active_passive :
 theorem mam_no_oblique_pivots :
     ¬ mamVoiceSystem.distinguishesObliques := by decide
 
-end Fragments.Mayan.Mam
+end Mam

@@ -34,6 +34,20 @@
   role      = {formalized},
   sources   = {Phenomena/Nonliteral/Irony/Studies/SpinosoDiPiano2025.lean}
 }
+@book{carnielli-pizzi-2008,
+  author    = {Carnielli, Walter and Pizzi, Claudio},
+  year      = {2008},
+  title     = {Modalities and Multimodalities},
+  publisher = {Springer},
+  series    = {Logic, Epistemology, and the Unity of Science},
+  volume    = {12},
+  doi       = {10.1007/978-1-4020-8590-1},
+  isbn      = {9781402085901},
+  subfield  = {semantics/modality},
+  role      = {cited},
+  sources   = {Core/Logic/Intensional/RestrictedModality.lean}
+}
+
 @book{cover-thomas-2006,
   author    = {Cover, Thomas M. and Thomas, Joy A.},
   year      = {2006},
@@ -429,7 +443,63 @@
   subfield  = {logic/opposition},
   validated = {true},
   role      = {formalized},
-  sources   = {Core/Logic/Opposition/Aristotelian.lean, Core/Logic/Opposition/Diagram.lean, Core/Logic/Opposition/Probabilistic.lean, Core/Logic/Opposition/Partition.lean, Core/Logic/Opposition/Bitstring.lean}
+  sources   = {Core/Logic/Aristotelian/Basic.lean, Core/Logic/Aristotelian/Diagram.lean, Core/Logic/Aristotelian/Probabilistic.lean, Core/Logic/Aristotelian/Partition.lean, Core/Logic/Aristotelian/Bitstring.lean}
+}
+@article{smessaert-demey-2014,
+  author    = {Smessaert, Hans and Demey, Lorenz},
+  year      = {2014},
+  title     = {Logical Geometries and Information in the Square of Oppositions},
+  journal   = {Journal of Logic, Language and Information},
+  volume    = {23},
+  number    = {4},
+  pages     = {527--565},
+  doi       = {10.1007/s10849-014-9207-y},
+  subfield  = {logic/opposition},
+  validated = {true},
+  role      = {formalized},
+  sources   = {Core/Logic/Aristotelian/Basic.lean}
+}
+@article{demey-frijters-2023,
+  author    = {Demey, Lorenz and Frijters, Stef},
+  year      = {2023},
+  title     = {Logic-Sensitivity and Bitstring Semantics in the Square of Opposition},
+  journal   = {Journal of Philosophical Logic},
+  volume    = {52},
+  number    = {6},
+  pages     = {1703--1721},
+  doi       = {10.1007/s10992-023-09723-6},
+  subfield  = {logic/opposition},
+  validated = {true},
+  role      = {cited},
+  sources   = {Core/Logic/Aristotelian/Basic.lean}
+}
+@article{deklerck-vignero-demey-2024,
+  author    = {De Klerck, Alexander and Vignero, Leander and Demey, Lorenz},
+  year      = {2024},
+  title     = {Morphisms Between Aristotelian Diagrams},
+  journal   = {Logica Universalis},
+  volume    = {18},
+  number    = {1-2},
+  pages     = {49--83},
+  doi       = {10.1007/s11787-023-00340-0},
+  subfield  = {logic/opposition},
+  validated = {true},
+  role      = {cited},
+  sources   = {Core/Logic/Aristotelian/Basic.lean}
+}
+@article{demey-smessaert-2024,
+  author    = {Demey, Lorenz and Smessaert, Hans},
+  year      = {2024},
+  title     = {Aristotelian and {Boolean} Properties of the {Keynes}-{Johnson} Octagon of Opposition},
+  journal   = {Journal of Philosophical Logic},
+  volume    = {53},
+  number    = {5},
+  pages     = {1265--1290},
+  doi       = {10.1007/s10992-024-09765-4},
+  subfield  = {logic/opposition},
+  validated = {true},
+  role      = {cited},
+  sources   = {Core/Logic/Aristotelian/Basic.lean, Core/Logic/Aristotelian/Diagram.lean}
 }
 @inproceedings{scontras-tonhauser-2025,
   author    = {Scontras, Gregory and Tonhauser, Judith},
@@ -1027,6 +1097,53 @@
   validated = {true},
   sources   = {Core/StringHom.lean;Phonology/Tier.lean;Phonology/Constraints.lean;Phenomena/PhonologicalAlternation/Studies/Belth2026.lean}
 }
+@article{potts-pullum-2002,
+  author    = {Potts, Christopher and Pullum, Geoffrey K.},
+  year      = {2002},
+  title     = {Model Theory and the Content of {OT} Constraints},
+  journal   = {Phonology},
+  volume    = {19},
+  number    = {3},
+  pages     = {361--393},
+  doi       = {10.1017/S0952675703004408},
+  subfield  = {phonology},
+  role      = {foundational},
+  validated = {true},
+  sources   = {Phonology/OptimalityTheory/Correspondence.lean}
+}
+@inproceedings{payne-vu-heinz-2017,
+  author    = {Payne, Amanda and Vu, Mai Ha and Heinz, Jeffrey},
+  year      = {2017},
+  title     = {A Formal Analysis of {Correspondence Theory}},
+  booktitle = {Proceedings of the Annual Meeting on Phonology 2016},
+  publisher = {Linguistic Society of America},
+  address   = {Washington, DC},
+  subfield  = {phonology},
+  role      = {foundational},
+  sources   = {Phonology/OptimalityTheory/Correspondence.lean}
+}
+@article{dolatian-heinz-2020,
+  author    = {Dolatian, Hossep and Heinz, Jeffrey},
+  year      = {2020},
+  title     = {Computing and Classifying Reduplication with 2-Way Finite-State Transducers},
+  journal   = {Journal of Language Modelling},
+  volume    = {8},
+  number    = {1},
+  pages     = {179--250},
+  url       = {https://jlm.ipipan.waw.pl/index.php/JLM/article/view/245},
+  subfield  = {phonology},
+  role      = {cited},
+  sources   = {Phonology/OptimalityTheory/Correspondence.lean}
+}
+@phdthesis{dolatian-2020,
+  author    = {Dolatian, Hossep},
+  year      = {2020},
+  title     = {Computational Locality of Cyclic Phonology in {Armenian}},
+  school    = {Stony Brook University},
+  subfield  = {phonology},
+  role      = {foundational},
+  sources   = {Phonology/OptimalityTheory/StratalCorr.lean}
+}
 @incollection{cser-2010,
   author    = {Cser, Andr{\'a}s},
   year      = {2010},
@@ -1480,6 +1597,33 @@
   validated = {true},
   role      = {formalized},
   sources   = {Phenomena/Reference/Studies/GilesEtAl2026.lean;Core/SearchEfficiency.lean;Core/PropertyDomain.lean;Pragmatics/RSA/Core/Noise.lean}
+}
+@incollection{moltmann-2025,
+  author    = {Moltmann, Friederike},
+  year      = {2025},
+  title     = {Events in Contemporary Semantics},
+  booktitle = {21st-Century Philosophy of Events: Beyond the Analytic/Continental Divide},
+  editor    = {Bahoh, James and Cassina, Marta and Genovesi, Sergio},
+  publisher = {Edinburgh University Press},
+  url       = {https://hal.science/hal-05014906},
+  subfield  = {semantics/lexical},
+  validated = {true},
+  role      = {cited},
+  sources   = {Semantics/ArgumentStructure/ArgumentIntroduction.lean;Studies/Pylkkanen2008.lean}
+}
+@article{hopperdietzel-2024,
+  author    = {Hopperdietzel, Jens},
+  year      = {2024},
+  title     = {Manner/result polysemy as contextual allosemy: Evidence from {Daakaka}},
+  journal   = {Natural Language \& Linguistic Theory},
+  volume    = {43},
+  number    = {1},
+  pages     = {273--330},
+  doi       = {10.1007/s11049-024-09616-6},
+  subfield  = {semantics/lexical},
+  validated = {true},
+  role      = {cited},
+  sources   = {Semantics/ArgumentStructure/ArgumentIntroduction.lean}
 }
 @article{regier-etal-2007,
   author    = {Regier, Terry and Kay, Paul and Khetarpal, Naveen},
@@ -2515,6 +2659,20 @@
   role      = {cited},
   sources   = {Phenomena/SentenceMood/Studies/Deo2025.lean}
 }
+@article{goffman-1979,
+  author    = {Goffman, Erving},
+  year      = {1979},
+  title     = {Footing},
+  journal   = {Semiotica},
+  volume    = {25},
+  number    = {1-2},
+  pages     = {1--30},
+  doi       = {10.1515/semi.1979.25.1-2.1},
+  subfield  = {semantics/dynamic},
+  role      = {foundational},
+  sources   = {Studies/Faller2019.lean}
+}
+
 @incollection{gunlogson-2008,
   author    = {Gunlogson, Christine},
   year      = {2008},
@@ -3111,6 +3269,24 @@
   role      = {cited},
   validated = {true},
   sources   = {Phenomena/Comparison/Studies/Buring2007.lean}
+}
+@incollection{buring-2012,
+  author    = {Büring, Daniel},
+  year      = {2012},
+  title     = {Pronouns},
+  booktitle = {Semantics: An International Handbook of Natural Language Meaning},
+  editor    = {Maienborn, Claudia and von Heusinger, Klaus and Portner, Paul},
+  series    = {Handbücher zur Sprach- und Kommunikationswissenschaft [HSK] 33},
+  volume    = {2},
+  chapter   = {40},
+  pages     = {971--996},
+  publisher = {De Gruyter Mouton},
+  address   = {Berlin, Boston},
+  doi       = {10.1515/9783110255072.971},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  validated = {true},
+  sources   = {Semantics/Reference/PronounDenotation.lean;Semantics/Reference/Binding.lean}
 }
 @article{bresnan-1973,
   author    = {Bresnan, Joan W.},
@@ -4025,6 +4201,27 @@
   validated = {true},
   sources   = {Fragments/Jarawara/PossessedNouns.lean}
 }
+@book{dixon-aikhenvald-2000,
+  editor    = {Dixon, R. M. W. and Aikhenvald, Alexandra Y.},
+  year      = {2000},
+  title     = {Changing Valency: Case Studies in Transitivity},
+  publisher = {Cambridge University Press},
+  address   = {Cambridge},
+  subfield  = {typology},
+  role      = {cited},
+  sources   = {Syntax/ArgumentStructure/Alternation.lean}
+}
+@book{bahrt-2021,
+  author    = {Bahrt, Nicklas Norby},
+  year      = {2021},
+  title     = {Voice Syncretism},
+  series    = {Studies in Diversity Linguistics},
+  publisher = {Language Science Press},
+  address   = {Berlin},
+  subfield  = {typology},
+  role      = {cited},
+  sources   = {Studies/Creissels2025.lean}
+}
 @article{bochvar-1937,
   author    = {Bochvar, D. A.},
   year      = {1937},
@@ -4379,6 +4576,36 @@
   validated = {true},
   sources   = {Phenomena/Plurals/Typology.lean;Phenomena/Agreement/Studies/Corbett2000.lean}
 }% REF: Corbett, G. G. (2006). Agreement. Cambridge: Cambridge University Press.
+@article{comrie-1975,
+  author    = {Comrie, Bernard},
+  year      = {1975},
+  title     = {Polite plurals and predicate agreement},
+  journal   = {Language},
+  volume    = {51},
+  number    = {2},
+  pages     = {406--418},
+  doi       = {10.2307/412863},
+  subfield  = {typology/agreement},
+  role      = {cited},
+  validated = {true},
+  sources   = {Syntax/Agreement/Basic.lean;Studies/Corbett2000.lean}
+}
+@incollection{corbett-1998,
+  author    = {Corbett, Greville G.},
+  year      = {1998},
+  title     = {Morphology and Agreement},
+  booktitle = {The Handbook of Morphology},
+  editor    = {Spencer, Andrew and Zwicky, Arnold M.},
+  pages     = {191--205},
+  publisher = {Blackwell},
+  address   = {Oxford},
+  isbn      = {9780631226949},
+  subfield  = {typology/agreement},
+  role      = {cited},
+  validated = {true},
+  sources   = {Syntax/Agreement/Paradigm.lean}
+}
+
 @book{corbett-2006,
   author    = {Corbett, Greville G.},
   year      = {2006},
@@ -4956,6 +5183,66 @@
   role      = {cited},
   sources   = {Phenomena/Morphology/Typology.lean}
 }% REF: Baerman, M. et al. (2005). *The Syntax-Morphology Interface*. CUP.
+@book{berlin-kay-1969,
+  author    = {Berlin, Brent and Kay, Paul},
+  year      = {1969},
+  title     = {Basic Color Terms: Their Universality and Evolution},
+  publisher = {University of California Press},
+  address   = {Berkeley},
+  isbn      = {9780520014428},
+  subfield  = {semantics/lexical},
+  validated = {true},
+  role      = {cited},
+  sources   = {Typology/Color.lean}
+}
+@incollection{kay-maffi-2013,
+  author    = {Kay, Paul and Maffi, Luisa},
+  year      = {2013},
+  title     = {Number of Non-Derived Basic Colour Categories},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  url       = {https://wals.info/chapter/132},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  sources   = {Typology/Color.lean}
+}
+@incollection{kay-maffi-2013a,
+  author    = {Kay, Paul and Maffi, Luisa},
+  year      = {2013},
+  title     = {Number of Basic Colour Categories},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  url       = {https://wals.info/chapter/133},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  sources   = {Typology/Color.lean}
+}
+@incollection{kay-maffi-2013b,
+  author    = {Kay, Paul and Maffi, Luisa},
+  year      = {2013},
+  title     = {Green and Blue},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  url       = {https://wals.info/chapter/134},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  sources   = {Typology/Color.lean}
+}
+@incollection{kay-maffi-2013c,
+  author    = {Kay, Paul and Maffi, Luisa},
+  year      = {2013},
+  title     = {Red and Yellow},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  url       = {https://wals.info/chapter/135},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  sources   = {Typology/Color.lean}
+}
 @article{grimm-2011,
   author    = {Grimm, Scott},
   year      = {2011},
@@ -5594,6 +5881,20 @@
   role      = {cited},
   sources   = {Phenomena/Imperatives/Typology.lean}
 }% REF: Barker, C. & Shan, C. (2014). Continuations and Natural Language. Ch. 16.
+
+@article{van-der-auwera-van-alsenoy-2016,
+  author    = {van der Auwera, Johan and Van Alsenoy, Lauren},
+  year      = {2016},
+  title     = {On the typology of negative concord},
+  journal   = {Studies in Language},
+  volume    = {40},
+  number    = {3},
+  pages     = {473--512},
+  doi       = {10.1075/sl.40.3.01van},
+  subfield  = {comparative},
+  role      = {formalized},
+  sources   = {Typology/NegativeConcord.lean;Typology/Negation.lean}
+}
 @book{barker-shan-2014,
   author    = {Barker, Chris and Shan, Chung-chieh},
   year      = {2014},
@@ -10004,6 +10305,19 @@
   role      = {foundational},
   sources   = {Phenomena/Polarity/NPIs.lean;Phenomena/Polarity/Typology.lean}
 }
+@article{giannakidou-2000,
+  author    = {Giannakidou, Anastasia},
+  year      = {2000},
+  title     = {Negative ... Concord?},
+  journal   = {Natural Language and Linguistic Theory},
+  volume    = {18},
+  number    = {3},
+  pages     = {457--523},
+  doi       = {10.1023/A:1006477315705},
+  subfield  = {semantics/lexical},
+  role      = {formalized},
+  sources   = {Typology/NegativeConcord.lean;Typology/Negation.lean}
+}
 @incollection{heim-2001,
   author    = {Heim, Irene},
   year      = {2001},
@@ -12312,7 +12626,7 @@
   subfield  = {semantics/dynamic},
   validated = {true},
   role      = {formalized},
-  sources   = {Semantics/Dynamic/Systems/PIP/Basic.lean;Semantics/Dynamic/Systems/PIP/Connectives.lean;Semantics/Dynamic/Systems/PIP/Phenomena.lean;Phenomena/Anaphora/Bridge/PIPAnaphora.lean}
+  sources   = {Studies/KeshetAbney2024.lean;Studies/KeshetAbney2024/Basic.lean;Studies/KeshetAbney2024/Expr.lean;Studies/KeshetAbney2024/Felicity.lean;Studies/KeshetAbney2024/Connectives.lean;Studies/KeshetAbney2024/Bridges.lean}
 }
 @article{abney-keshet-2025,
   author    = {Abney, Steven and Keshet, Ezra},
@@ -12326,7 +12640,7 @@
   subfield  = {semantics/dynamic},
   validated = {true},
   role      = {formalized},
-  sources   = {Semantics/PIP/Composition.lean}
+  sources   = {Studies/AbneyKeshet2025.lean;Studies/KeshetAbney2024/Composition.lean}
 }
 @article{lewis-1979,
   author    = {Lewis, David},
@@ -12841,7 +13155,7 @@
   subfield  = {semantics/dynamic},
   role      = {cited},
   validated = {true},
-  sources   = {Phenomena/Anaphora/Studies/ParasiticAttitudes.lean;Semantics/Attitudes/Parasitic.lean}
+  sources   = {Studies/Maier2015.lean}
 }% REF: Patel-Grosz, P. & B. Grosz (2017). Revisiting Pronominal Typology. LI 48(2).
 @article{patel-grosz-grosz-2017,
   author    = {Patel-Grosz, Pritty and Grosz, Patrick G.},
@@ -13590,7 +13904,7 @@
   subfield  = {syntax},
   validated = {true},
   role      = {cited},
-  sources   = {Comparisons/Mueller2013.lean;Core/CombinationKind.lean;Syntax/Minimalist/CombinationSchemata.lean;Syntax/ConstructionGrammar/ArgumentStructure.lean;Syntax/DependencyGrammar/Formal/NonProjective.lean;Syntax/HPSG/Core/HeadFiller.lean;Syntax/HPSG/Core/LexicalRules.lean}
+  sources   = {Comparisons/Mueller2013.lean;Core/CombinationKind.lean;Syntax/Minimalist/CombinationSchemata.lean;Syntax/ConstructionGrammar/ArgumentStructure.lean;Syntax/DependencyGrammar/Formal/NonProjective.lean;Syntax/HPSG/HeadFiller.lean;Syntax/HPSG/LexicalRules.lean}
 }
 @book{baker-2015,
   author    = {Baker, Mark C.},
@@ -14017,7 +14331,52 @@
   isbn      = {9780226674469},
   subfield  = {syntax},
   role      = {foundational},
-  sources   = {Syntax/HPSG/Core/Basic.lean}
+  sources   = {Syntax/HPSG/Basic.lean}
+}
+@phdthesis{richter-2000,
+  author    = {Richter, Frank},
+  year      = {2000},
+  title     = {A Mathematical Formalism for Linguistic Theories with an Application in {Head-Driven Phrase Structure Grammar}},
+  school    = {Universität Tübingen},
+  note      = {Phil. Dissertation; published 2004},
+  url       = {http://hdl.handle.net/10900/46230},
+  subfield  = {syntax},
+  role      = {foundational},
+  sources   = {Syntax/HPSG/Signature.lean;Syntax/HPSG/Interpretation.lean;Syntax/HPSG/Description.lean;Syntax/HPSG/Model.lean}
+}
+@incollection{richter-2024,
+  author    = {Richter, Frank},
+  year      = {2024},
+  title     = {Formal background},
+  booktitle = {Head-Driven Phrase Structure Grammar: The Handbook},
+  edition   = {2},
+  editor    = {Müller, Stefan and Abeillé, Anne and Borsley, Robert D. and Koenig, Jean-Pierre},
+  publisher = {Language Science Press},
+  address   = {Berlin},
+  series    = {Empirically Oriented Theoretical Morphology and Syntax},
+  number    = {9},
+  pages     = {93--131},
+  doi       = {10.5281/zenodo.13645007},
+  subfield  = {syntax},
+  role      = {foundational},
+  sources   = {Syntax/HPSG/Signature.lean;Syntax/HPSG/Interpretation.lean;Syntax/HPSG/Description.lean;Syntax/HPSG/Model.lean}
+}
+@incollection{muller-2024-binding,
+  author    = {Müller, Stefan},
+  year      = {2024},
+  title     = {Anaphoric binding},
+  booktitle = {Head-Driven Phrase Structure Grammar: The Handbook},
+  edition   = {2},
+  editor    = {Müller, Stefan and Abeillé, Anne and Borsley, Robert D. and Koenig, Jean-Pierre},
+  publisher = {Language Science Press},
+  address   = {Berlin},
+  series    = {Empirically Oriented Theoretical Morphology and Syntax},
+  number    = {9},
+  pages     = {951--1009},
+  doi       = {10.5281/zenodo.13645097},
+  subfield  = {syntax},
+  role      = {foundational},
+  sources   = {Syntax/HPSG/Binding.lean}
 }
 @article{pollard-sag-1992,
   author    = {Pollard, Carl and Sag, Ivan A.},
@@ -14672,7 +15031,7 @@
   subfield  = {syntax},
   validated = {true},
   role      = {foundational},
-  sources   = {Phenomena/WordOrder/SubjectAuxInversion.lean;Syntax/HPSG/Inversion.lean;Syntax/HPSG/Core/Basic.lean;Syntax/HPSG/Coreference.lean;Syntax/HPSG/Core/FromFragments.lean}
+  sources   = {Phenomena/WordOrder/SubjectAuxInversion.lean;Syntax/HPSG/Inversion.lean;Syntax/HPSG/Basic.lean;Syntax/HPSG/Coreference.lean;Syntax/HPSG/FromFragments.lean}
 }
 @phdthesis{sailor-2014,
   author    = {Sailor, Craig},
@@ -15149,7 +15508,7 @@
   subfield  = {syntax},
   role      = {cited},
   validated = {true},
-  sources   = {Syntax/HPSG/Core/LexicalRules.lean}
+  sources   = {Syntax/HPSG/LexicalRules.lean}
 }% REF: Dowty (1988) "Type-raising, functional composition, and non-constituent conjunction"
 @incollection{dowty-1988,
   author    = {Dowty, David},
@@ -15230,7 +15589,61 @@
   doi       = {10.4324/9781315808208-11},
   validated = {true},
   sources   = {Syntax/DependencyGrammar/Formal/MemorySurprisal/MorphemeOrder.lean}
-}% REF: Vijay-Shanker & Weir (1994). The equivalence of CCG, TAG, and LIG
+}
+
+@article{vijay-shanker-weir-1994,
+  author    = {Vijay-Shanker, K. and Weir, David J.},
+  year      = {1994},
+  title     = {The Equivalence of Four Extensions of Context-Free Grammars},
+  journal   = {Mathematical Systems Theory},
+  volume    = {27},
+  number    = {6},
+  pages     = {511--546},
+  doi       = {10.1007/BF01191624},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited}
+}
+
+@inproceedings{kuhlmann-koller-satta-2010,
+  author    = {Kuhlmann, Marco and Koller, Alexander and Satta, Giorgio},
+  year      = {2010},
+  title     = {The Importance of Rule Restrictions in {CCG}},
+  booktitle = {Proceedings of the 48th Annual Meeting of the Association for Computational Linguistics},
+  pages     = {534--543},
+  address   = {Uppsala, Sweden},
+  url       = {https://aclanthology.org/P10-1055/},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited}
+}
+
+@article{kuhlmann-koller-satta-2015,
+  author    = {Kuhlmann, Marco and Koller, Alexander and Satta, Giorgio},
+  year      = {2015},
+  title     = {Lexicalization and Generative Power in {CCG}},
+  journal   = {Computational Linguistics},
+  volume    = {41},
+  number    = {2},
+  pages     = {187--219},
+  doi       = {10.1162/COLI_a_00219},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited}
+}
+
+@inproceedings{weir-joshi-1988,
+  author    = {Weir, David J. and Joshi, Aravind K.},
+  year      = {1988},
+  title     = {Combinatory Categorial Grammars: Generative Power and Relationship to Linear Context-Free Rewriting Systems},
+  booktitle = {Proceedings of the 26th Annual Meeting of the Association for Computational Linguistics},
+  pages     = {278--285},
+  address   = {Buffalo, New York},
+  url       = {https://aclanthology.org/P88-1034/},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited}
+}
 @book{aikhenvald-2000,
   author    = {Aikhenvald, Alexandra Y.},
   year      = {2000},
@@ -15365,7 +15778,7 @@
   url       = {https://press.uchicago.edu/ucp/books/book/distributed/I/bo3625102.html},
     subfield  = {syntax},
   role      = {cited},
-  sources   = {Phenomena/FillerGap/Studies/Sag2010.lean;Syntax/HPSG/Core/HeadFiller.lean}
+  sources   = {Phenomena/FillerGap/Studies/Sag2010.lean;Syntax/HPSG/HeadFiller.lean}
 }% REF: Stassen (2000). AND-languages and WITH-languages. Linguistic Typology 4.
 @article{stassen-2000,
   author    = {Stassen, Leon},
@@ -17065,6 +17478,30 @@
   validated = {true},
   sources   = {Fragments/Italian/Modals.lean;Phenomena/Modality/Bridge/EventRelativityRestructuring.lean}
 }% REF: Mac Congáil (2004). Irish Grammar. Cois Life.
+@book{cinque-2020,
+  author    = {Cinque, Guglielmo},
+  year      = {2020},
+  title     = {The Syntax of Relative Clauses: A Unified Analysis},
+  series    = {Cambridge Studies in Linguistics},
+  number    = {166},
+  publisher = {Cambridge University Press},
+  isbn      = {9781108479707},
+  doi       = {10.1017/9781108856195},
+  subfield  = {syntax},
+  role      = {formalized},
+  sources   = {Studies/Cinque2020.lean}
+}
+@incollection{de-vries-2018,
+  author    = {de Vries, Mark},
+  year      = {2018},
+  title     = {Relative Clauses in Syntax},
+  booktitle = {Oxford Research Encyclopedia of Linguistics},
+  publisher = {Oxford University Press},
+  doi       = {10.1093/acrefore/9780199384655.013.56},
+  subfield  = {syntax},
+  role      = {cited},
+  sources   = {Studies/Cinque2020.lean}
+}
 @article{embick-2004,
   author    = {Embick, David},
   year      = {2004},
@@ -18232,8 +18669,125 @@
   editor    = {Dryer, Matthew S. and Haspelmath, Martin},
   publisher = {Max Planck Institute for Evolutionary Anthropology},
   url       = {https://wals.info/},
-  note      = {Chapters 26, 37, 38, 81--90, 112, 116, 143},
+  note      = {Chapters 26, 33, 37, 38, 69, 81--90, 112, 116, 143},
   subfield  = {typology},
+  validated = {true},
+  role      = {cited}
+}
+@incollection{dahl-2013,
+  author    = {Dahl, Östen and Velupillai, Viveka},
+  year      = {2013},
+  title     = {Chapters in {The World Atlas of Language Structures Online}},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  url       = {https://wals.info/},
+  note      = {Chapters 65--68 (Perfective/Imperfective, Past, Future, Perfect)},
+  subfield  = {semantics/tense-aspect},
+  validated = {true},
+  role      = {cited}
+}
+@incollection{comrie-2013b,
+  author    = {Comrie, Bernard},
+  year      = {2013},
+  title     = {Chapters in {The World Atlas of Language Structures Online}},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  url       = {https://wals.info/},
+  note      = {Chapters 98, 99 (Alignment of Case Marking of Full NPs and Pronouns)},
+  subfield  = {typology},
+  validated = {true},
+  role      = {cited}
+}
+@incollection{haspelmath-2013b,
+  author    = {Haspelmath, Martin},
+  year      = {2013},
+  title     = {Occurrence of Nominal Plurality},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  address   = {Leipzig},
+  url       = {https://wals.info/chapter/34},
+  subfield  = {morphology},
+  validated = {true},
+  role      = {cited}
+}
+@incollection{daniel-2013,
+  author    = {Daniel, Michael},
+  year      = {2013},
+  title     = {Plurality in Independent Personal Pronouns},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  address   = {Leipzig},
+  url       = {https://wals.info/chapter/35},
+  subfield  = {morphology},
+  validated = {true},
+  role      = {cited}
+}
+@incollection{koenig-siemund-2013,
+  author    = {König, Ekkehard and Siemund, Peter and Töpper, Stephan},
+  year      = {2013},
+  title     = {Intensifiers and Reflexive Pronouns},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  address   = {Leipzig},
+  url       = {https://wals.info/chapter/47},
+  subfield  = {syntax/binding},
+  validated = {true},
+  role      = {cited}
+}
+@incollection{siewierska-2013b,
+  author    = {Siewierska, Anna},
+  year      = {2013},
+  title     = {Alignment of Verbal Person Marking},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  address   = {Leipzig},
+  url       = {https://wals.info/chapter/100},
+  subfield  = {morphology},
+  validated = {true},
+  role      = {cited}
+}
+@incollection{stassen-2013b,
+  author    = {Stassen, Leon},
+  year      = {2013},
+  title     = {Chapters in {The World Atlas of Language Structures Online}},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  url       = {https://wals.info/},
+  note      = {Chapters 117--120 (Predicative Possession, Predicative Adjectives, Nominal and Locational Predication, Zero Copula)},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited}
+}
+@incollection{vanderauwera-ammann-2013,
+  author    = {van der Auwera, Johan and Ammann, Andreas},
+  year      = {2013},
+  title     = {Chapters in {The World Atlas of Language Structures Online}},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  url       = {https://wals.info/},
+  note      = {Chapters 74--76 (Situational Possibility, Epistemic Possibility, Overlap)},
+  subfield  = {semantics/modality},
+  validated = {true},
+  role      = {cited}
+}
+@incollection{de-haan-2013b,
+  author    = {de Haan, Ferdinand},
+  year      = {2013},
+  title     = {Coding of Evidentiality},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  address   = {Leipzig},
+  url       = {https://wals.info/chapter/78},
+  subfield  = {semantics/modality},
   validated = {true},
   role      = {cited}
 }
@@ -20490,6 +21044,19 @@
   validated = {true},
   role      = {cited},
   sources   = {Morphology/Core/ICP.lean, Phenomena/WordOrder/Studies/AlexeyenkoZeijlstra2025.lean}
+}
+@book{ackema-neeleman-2018,
+  author    = {Ackema, Peter and Neeleman, Ad},
+  year      = {2018},
+  title     = {Features of Person: From the Inventory of Persons to Their Morphological Realization},
+  publisher = {MIT Press},
+  series    = {Linguistic Inquiry Monographs},
+  number    = {78},
+  isbn      = {9780262038195},
+  subfield  = {syntax},
+  validated = {true},
+  role      = {cited},
+  sources   = {Features/Person.lean}
 }
 @inproceedings{giorgolo-asudeh-2012,
   author    = {Giorgolo, Gianluca and Asudeh, Ash},
@@ -26766,13 +27333,45 @@
 @incollection{goedemans-van-der-hulst-2013,
   author    = {Goedemans, Rob and van der Hulst, Harry},
   year      = {2013},
-  title     = {Fixed Stress Locations / Weight-Sensitive Stress / Weight Factors / Rhythm Types},
+  title     = {Stress location, weight-sensitivity, and rhythm (WALS chapters 14–17)},
   editor    = {Dryer, Matthew S. and Haspelmath, Martin},
   booktitle = {The World Atlas of Language Structures Online (v2020.4)},
   publisher = {Max Planck Institute for Evolutionary Anthropology},
   address   = {Leipzig},
   url       = {https://wals.info/chapter/14},
   subfield  = {phonology/stress-typology},
+  role      = {data},
+  validated = {true},
+  sources   = {Linglib/Typology/Phonology.lean}
+}
+
+% WALS phonology chapters by Ian Maddieson (segmental inventory + tone) and
+% John Hajek (vowel nasalization). Anchor: Linglib/Typology/Phonology.lean.
+@incollection{maddieson-2013,
+  author    = {Maddieson, Ian},
+  year      = {2013},
+  title     = {Phonological inventory and tone features (WALS chapters 1–9, 11–13, 18–19)},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  booktitle = {The World Atlas of Language Structures Online (v2020.4)},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  address   = {Leipzig},
+  url       = {https://wals.info/chapter/1},
+  subfield  = {phonology/segmental-typology},
+  role      = {data},
+  validated = {true},
+  sources   = {Linglib/Typology/Phonology.lean}
+}
+
+@incollection{hajek-2013,
+  author    = {Hajek, John},
+  year      = {2013},
+  title     = {Vowel nasalization (WALS chapters 10A, 10B)},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  booktitle = {The World Atlas of Language Structures Online (v2020.4)},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  address   = {Leipzig},
+  url       = {https://wals.info/chapter/10},
+  subfield  = {phonology/nasalization},
   role      = {data},
   validated = {true},
   sources   = {Linglib/Typology/Phonology.lean}
@@ -28221,6 +28820,21 @@
   sources   = {Phenomena/Verum/Studies/MartinezVera2026.lean}
 }
 
+@inproceedings{anderbois-2014,
+  author    = {AnderBois, Scott},
+  year      = {2014},
+  title     = {On the exceptional status of reportative evidentials},
+  booktitle = {Proceedings of Semantics and Linguistic Theory (SALT) 24},
+  volume    = {24},
+  pages     = {234--254},
+  publisher = {Linguistic Society of America},
+  doi       = {10.3765/salt.v24i0.2424},
+  url       = {https://journals.linguisticsociety.org/proceedings/index.php/SALT/article/view/24.234},
+  subfield  = {semantics/dynamic},
+  role      = {cited},
+  sources   = {Studies/Faller2019.lean}
+}
+
 @article{anderbois-brasoveanu-henderson-2015,
   author    = {AnderBois, Scott and Brasoveanu, Adrian and Henderson, Robert},
   year      = {2015},
@@ -28553,6 +29167,20 @@
 
 % REF: Walker (2016). Surface correspondence and discrete harmony triggers.
 % Proceedings of the 2014 Annual Meeting on Phonology.
+@article{walker-1996,
+  author    = {Walker, Marilyn A.},
+  year      = {1996},
+  title     = {Inferring acceptance and rejection in dialog by default rules of inference},
+  journal   = {Language and Speech},
+  volume    = {39},
+  number    = {2-3},
+  pages     = {265--304},
+  doi       = {10.1177/002383099603900306},
+  subfield  = {semantics/dynamic},
+  role      = {foundational},
+  sources   = {Studies/Faller2019.lean}
+}
+
 @inproceedings{walker-2016,
   author    = {Walker, Rachel},
   year      = {2016},
@@ -31434,4 +32062,44 @@
   doi       = {10.1017/CBO9780511486319},
   subfield  = {syntax/argument-structure},
   role      = {cited}
+}
+
+@article{schwarz-buccola-hamilton-2012,
+  author    = {Schwarz, Bernhard and Buccola, Brian and Hamilton, Michael},
+  year      = {2012},
+  title     = {Two types of class B numeral modifiers: A reply to Nouwen 2010},
+  journal   = {Semantics and Pragmatics},
+  doi       = {10.3765/sp.5.1},
+  volume    = {5},
+  number    = {1},
+  pages     = {1--25},
+  subfield  = {semantics/numerals},
+  role      = {cited},
+  sources   = {Semantics/Numerals/Basic.lean}
+}
+
+@article{cremers-coppock-dotlacil-roelofsen-2022,
+  author    = {Cremers, Alexandre and Coppock, Liz and Dotlačil, Jakub and Roelofsen, Floris},
+  year      = {2022},
+  title     = {Ignorance implicatures of modified numerals},
+  journal   = {Linguistics and Philosophy},
+  doi       = {10.1007/s10988-021-09336-9},
+  volume    = {45},
+  number    = {3},
+  pages     = {683--740},
+  subfield  = {semantics/numerals},
+  role      = {cited},
+  sources   = {Semantics/Numerals/Basic.lean}
+}
+
+@inproceedings{enguehard-2018,
+  author    = {Enguehard, Émile},
+  year      = {2018},
+  title     = {Comparative modified numerals revisited: Scalar implicatures, granularity and blindness to context},
+  booktitle = {Proceedings of Semantics and Linguistic Theory (SALT) 28},
+  doi       = {10.3765/salt.v28i0.4403},
+  pages     = {21--39},
+  subfield  = {semantics/numerals},
+  role      = {cited},
+  sources   = {Semantics/Numerals/Basic.lean}
 }

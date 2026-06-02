@@ -24,7 +24,7 @@ inductive ExponenceType where
   | caseTam
   /-- No case (75 languages). -/
   | noCase
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 21A dataset (162 languages). -/
 def allData : List (Datapoint ExponenceType) :=
@@ -193,9 +193,9 @@ def allData : List (Datapoint ExponenceType) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint ExponenceType) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint ExponenceType) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F21A

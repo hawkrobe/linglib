@@ -14,10 +14,10 @@ downstream Studies access the inventory via this Fragment rather than
 naming a PHOIBLE InventoryID directly.
 -/
 
-namespace Fragments.Turkish.Phonology
+namespace Turkish.Phonology
 
 /-- Canonical Turkish phoneme inventory: first PHOIBLE inventory for ISO `tur`. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.Turkish.tur
 
-end Fragments.Turkish.Phonology
+end Turkish.Phonology

@@ -1,4 +1,4 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Modern Standard Arabic Numeral Profile (WALS Chs 53–56, 131)
@@ -9,7 +9,7 @@ per Ryding ch 15 (pp. 329–365).
 
 ## What's encoded vs documented
 
-The substrate `Typology.NumeralProfile` records a small set of
+The substrate `Numeral.Profile` records a small set of
 typological dimensions (ordinal-formation strategy, distributive
 marking, classifier presence, conjunction–quantifier identity, plural
 marking, base). The arithmetically richer phenomena MSA is famous for
@@ -34,7 +34,7 @@ would belong in a separate file (or a future Studies engagement).
   *faaʿil* pattern from the cardinal root.
 -/
 
-namespace Fragments.Arabic.ModernStandard
+namespace Arabic.ModernStandard
 
 /-- MSA: "first" *ʾawwal* fully suppletive (unrelated root w-ḥ-d vs ʾ-w-l);
     "second" *thaanin* and onward are regular *faaʿil*-pattern derivations
@@ -46,15 +46,13 @@ namespace Fragments.Arabic.ModernStandard
     classifiers. *wa-* 'and' and *kull* 'all/every' are morphologically
     distinct. Dual + plural marking on counted nouns is obligatory.
     Decimal base (Ryding §15.1). -/
-def numeralProfile : Typology.NumeralProfile :=
-  { language := "Arabic (Modern Standard)"
-  , iso := "arb"
-  , ordinal := .firstSuppletion
-  , distributive := .markedByReduplication
-  , classifier := .absent
-  , conjQuant := .differentiation
-  , region := .westAsia
-  , pluralMarking := .obligatory
-  , numeralBase := some .decimal }
+def numeralProfile : Numeral.Profile :=
+  -- MSA (iso `arb`) is absent from WALS Chs 53/131; curated values kept for
+  -- those. Ch 54 defaults to `noDistributive`, matching the docstring (the
+  -- reduplication is intensifying, not a productive distributive).
+  { Numeral.Profile.fromWALS "Arabic (Modern Standard)" "arb"
+      (region := .westAsia) (pluralMarking := .obligatory) with
+    ordinal := .firstSuppletion
+    numeralBase := some .decimal }
 
-end Fragments.Arabic.ModernStandard
+end Arabic.ModernStandard

@@ -65,7 +65,6 @@ namespace Arnold2026
 open Features (GenderInfo SurfaceGender)
 open Pronoun (Spec)
 open Features (DiscourseElaboration AccessibilityLevel)
-open Fragments.English.Pronouns (GenderParadigm)
 
 -- ============================================================================
 -- § 2: The Two-Kinds Taxonomy
@@ -199,21 +198,22 @@ theorem table1_all_license_underspecified (a : AntecedentType) :
 -- § 6: Connection to Gender Layer
 -- ============================================================================
 
-/-- Singular *they* (both kinds) maps to the epicene gender paradigm
-    in the English pronoun system. -/
-theorem singThey_is_epicene :
-    Fragments.English.Pronouns.genderOf "they" = .epicene ∧
-    Fragments.English.Pronouns.genderOf "them" = .epicene ∧
-    Fragments.English.Pronouns.genderOf "themself" = .epicene := by
+/-- Singular *they* bears no gender feature — the @cite{konnelly-cowper-2020}
+    Elsewhere case: *they* spells out a φ-bundle with none of
+    `[MASC]`/`[FEM]`/`[INANIM]`, so its `gender` field is `none`, not a positive epicene
+    value. -/
+theorem singThey_genderless :
+    English.Pronouns.they.gender = none ∧
+    English.Pronouns.them.gender = none ∧
+    English.Pronouns.themself.gender = none := by
   exact ⟨rfl, rfl, rfl⟩
 
-/-- The epicene paradigm has no single `SurfaceGender` equivalent —
-    it is a pronoun-system gender class, not a noun-system agreement
-    class. This reflects the asymmetry between pronoun selection
-    (which depends on discourse state) and noun agreement (which
-    depends on morphosyntactic features). -/
-theorem epicene_not_surface :
-    GenderParadigm.epicene.toSurfaceGender = none := rfl
+/-- Singular *they*'s lexical entry carries no surface gender
+    (@cite{konnelly-cowper-2020}): the `gender` field is `none`, the structural
+    correlate of its Elsewhere status — gender-neutrality is the *absence* of a
+    contrastive feature, not a positive value. -/
+theorem they_no_surface_gender :
+    English.Pronouns.they_sg.gender = none := rfl
 
 /-- Underspecified gender info — where gender is unknown — is the
     discourse-level condition that licenses underspecified *they*. -/
@@ -263,10 +263,10 @@ theorem pronoun_implies_elaborated :
 theorem fullName_implies_underspecified :
     AccessibilityLevel.fullName.toElaboration = .underspecified := rfl
 
-/-- Singular and plural *they* share the same gender paradigm — the
-    structural `genderParadigm` field agrees across number. -/
+/-- Singular and plural *they* share the same (empty) gender feature — the
+    structural `gender` field agrees across number. -/
 theorem structural_gender_consistency :
-    Fragments.English.Pronouns.they_sg.genderParadigm =
-    Fragments.English.Pronouns.they.genderParadigm := rfl
+    English.Pronouns.they_sg.gender =
+    English.Pronouns.they.gender := rfl
 
 end Arnold2026

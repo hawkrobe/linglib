@@ -44,7 +44,7 @@ Consumed by *TAUTDOCK and *CROWD via the `SegSpec`/`TierSpec TRN` morpheme
 fields.
 -/
 
-namespace Fragments.Poko
+namespace Poko
 
 open Phonology.Autosegmental
 open Phonology.Autosegmental.RegisterTier (TRN)
@@ -106,4 +106,4 @@ def hTone (s : Syll) : TierSpec TRN :=
 def lTone (s : Syll) : TierSpec TRN :=
   { value := TRN.L, morpheme := s.morphemeId }
 
-end Fragments.Poko
+end Poko

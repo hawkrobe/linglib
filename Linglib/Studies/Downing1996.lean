@@ -52,13 +52,13 @@ striking distance is intermediate between pronouns and full NPs.
 ## Shape Dimensionality
 
 Shape-based classifiers decompose along a 1D/2D/3D dimensionality axis
-per @cite{allan-1977}, formalized via `Fragments.Japanese.Classifier.shapeDim`.
+per @cite{allan-1977}, formalized via `Japanese.Classifier.shapeDim`.
 
 ## Core Inventory
 
 All 27 classifiers from Downing's core inventory (UNVERIFIED: claimed
 to be Table 1.1) are represented in the Japanese fragment
-(`Fragments.Japanese.Classifier.core`), including the homophonous
+(`Japanese.Classifier.core`), including the homophonous
 軒 `kenBuilding` / 件 `kenIncident` pair, the maritime size split
 (隻 seki / 艘 soo), and the two building classifiers (軒 kenBuilding / 棟 mune).
 
@@ -75,7 +75,7 @@ numbers should be regarded as a placeholder until reconfirmed.
 
 namespace Downing1996
 
-open Fragments.Japanese (Classifier)
+open Japanese (Classifier)
 
 -- ============================================================================
 -- § 1. Shape Dimensionality (Downing 1996, UNVERIFIED location)
@@ -195,7 +195,7 @@ theorem one_absent_from_anaphoric :
 
     Witnessed by: Japanese is [+arg, -pred] AND has numeral classifiers. -/
 theorem argOnly_has_classifiers :
-    Fragments.Japanese.Nouns.japaneseMapping = .argOnly ∧
+    Japanese.Nouns.japaneseMapping = .argOnly ∧
     Aikhenvald2000.japanese.classifierType = .numeralClassifier := by
   exact ⟨rfl, rfl⟩
 
@@ -203,8 +203,8 @@ theorem argOnly_has_classifiers :
     type-shift blocking (no articles), so bare nouns freely occur as arguments.
     Classifiers rather than articles provide individuation. -/
 theorem no_blocking_needs_classifiers :
-    Fragments.Japanese.Nouns.japaneseBlocking.iotaBlocked = false ∧
-    Fragments.Japanese.Nouns.japaneseBlocking.existsBlocked = false ∧
+    Japanese.Nouns.japaneseBlocking.iotaBlocked = false ∧
+    Japanese.Nouns.japaneseBlocking.existsBlocked = false ∧
     Aikhenvald2000.japanese.classifierType = .numeralClassifier := by
   exact ⟨rfl, rfl, rfl⟩
 
@@ -212,7 +212,7 @@ theorem no_blocking_needs_classifiers :
     confirming they carry individuation-relevant information beyond
     mere enumeration. The default classifier つ is the only one
     that enumerates without individuating. Delegates to the structural
-    theorem in `Fragments.Japanese.Classifier`. -/
+    theorem in `Japanese.Classifier`. -/
 theorem classifiers_carry_individuation_info :
     ∀ c : Classifier, ¬ Classifier.IsDefault c → ¬ Classifier.IsMensural c →
       c.encodes ≠ [] :=

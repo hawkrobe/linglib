@@ -26,7 +26,7 @@ inductive NumeralBases where
   | extendedBodyPartSystem
   /-- Restricted (20 languages). -/
   | restricted
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 131A dataset (196 languages). -/
 def allData : List (Datapoint NumeralBases) :=
@@ -229,9 +229,9 @@ def allData : List (Datapoint NumeralBases) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint NumeralBases) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint NumeralBases) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F131A

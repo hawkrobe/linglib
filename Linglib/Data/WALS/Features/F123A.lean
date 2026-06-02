@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 123A: Relativization on Obliques
-@cite{comrie-2013}
+@cite{comrie-kuteva-2013b}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 123A`.
@@ -24,7 +24,7 @@ inductive ObliqueRelativization where
   | gap
   /-- Not possible (10 languages). -/
   | notPossible
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 123A dataset (112 languages). -/
 def allData : List (Datapoint ObliqueRelativization) :=
@@ -143,9 +143,9 @@ def allData : List (Datapoint ObliqueRelativization) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint ObliqueRelativization) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint ObliqueRelativization) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F123A

@@ -21,7 +21,7 @@ combination, not a single lexical entry.
 - **kuka tahansa**: Free choice item ('whoever / anyone at all')
 -/
 
-namespace Fragments.Finnish.PolarityItems
+namespace Finnish.PolarityItems
 
 open Typology.PolarityItem
 
@@ -80,4 +80,4 @@ def items : List PolarityItemEntry := [kukaan, kukaTahansa]
 theorem kukaan_kukaTahansa_distinct :
     kukaan.polarityType ≠ kukaTahansa.polarityType := by decide
 
-end Fragments.Finnish.PolarityItems
+end Finnish.PolarityItems

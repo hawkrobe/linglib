@@ -54,7 +54,7 @@ predictions against @cite{carstens-2026}'s empirical data.
 
 namespace Carstens2026
 
-open Fragments.Bantu
+open Bantu
 open Minimalist.Agreement.GenderResolution
 open _root_.Minimalist (Interpretability)
 
@@ -127,23 +127,23 @@ theorem bantu_matching_iff_interpretable (s : GenderStatus) :
 /-- [1&1] human conjuncts: intersection = [human] → matching cl 2 available.
     @cite{carstens-2026} Table 13: 100% ba- (matching = default for [human]). -/
 theorem xhosa_1and1_matching :
-    resolve (statusToBundle (Fragments.Xhosa.Gender.genderA).status)
-           (statusToBundle (Fragments.Xhosa.Gender.genderA).status)
+    resolve (statusToBundle (Xhosa.Gender.genderA).status)
+           (statusToBundle (Xhosa.Gender.genderA).status)
     = some [.human] := by native_decide
 
 /-- [7&7] inanimate conjuncts: intersection = [inanimate] → matching cl 8.
     @cite{carstens-2026} Table 13: 100% zi- for non-human [7&7]. -/
 theorem xhosa_7and7_matching :
-    resolve (statusToBundle (Fragments.Xhosa.Gender.genderD).status)
-           (statusToBundle (Fragments.Xhosa.Gender.genderD).status)
+    resolve (statusToBundle (Xhosa.Gender.genderD).status)
+           (statusToBundle (Xhosa.Gender.genderD).status)
     = some [.inanimate] := by native_decide
 
 /-- [9&9] animal conjuncts: intersection = [animal] → matching cl 10.
     @cite{carstens-2026} Table 13: 50% zi- matching + 40% ba- default
     for human [9&9]; 100% zi- for non-human [9&9]. -/
 theorem xhosa_9and9_matching :
-    resolve (statusToBundle (Fragments.Xhosa.Gender.genderE).status)
-           (statusToBundle (Fragments.Xhosa.Gender.genderE).status)
+    resolve (statusToBundle (Xhosa.Gender.genderE).status)
+           (statusToBundle (Xhosa.Gender.genderE).status)
     = some [.animal] := by native_decide
 
 /-! ### Matching agreement unavailable (uninterpretable genders) -/
@@ -152,22 +152,22 @@ theorem xhosa_9and9_matching :
     @cite{carstens-2026} Table 13: 0% matching for human (100% ba-);
     2.2% matching for non-human (73.3% zi- default). -/
 theorem xhosa_3and3_no_matching :
-    resolve (statusToBundle (Fragments.Xhosa.Gender.genderB).status)
-           (statusToBundle (Fragments.Xhosa.Gender.genderB).status)
+    resolve (statusToBundle (Xhosa.Gender.genderB).status)
+           (statusToBundle (Xhosa.Gender.genderB).status)
     = none := rfl
 
 /-- [5&5] conjuncts: intersection = ∅ → default agreement only.
     @cite{carstens-2026} Table 13: 0% matching; 63.33% ba- for human,
     73.33% zi- for non-human. -/
 theorem xhosa_5and5_no_matching :
-    resolve (statusToBundle (Fragments.Xhosa.Gender.genderC).status)
-           (statusToBundle (Fragments.Xhosa.Gender.genderC).status)
+    resolve (statusToBundle (Xhosa.Gender.genderC).status)
+           (statusToBundle (Xhosa.Gender.genderC).status)
     = none := rfl
 
 /-! ### The core prediction: matching ↔ interpretability -/
 
 /-- Every Xhosa gender: matching agreement is available iff interpretable. -/
-theorem xhosa_matching_iff_interpretable (g : Fragments.Xhosa.Gender) :
+theorem xhosa_matching_iff_interpretable (g : Xhosa.Gender) :
     (resolve (statusToBundle g.status) (statusToBundle g.status)).isSome
     = g.status.isInterpretable := by
   cases g <;> native_decide
@@ -225,62 +225,62 @@ theorem default_animal_is_class8 :
 /-- Shona [1&1]: class 2 va- (human matching/default).
     @cite{carstens-2026} (58): va- for conjoined [1&1] (consistent across speakers). -/
 theorem shona_1and1_matching :
-    resolve (statusToBundle (Fragments.Shona.Gender.genderA).status)
-           (statusToBundle (Fragments.Shona.Gender.genderA).status)
+    resolve (statusToBundle (Shona.Gender.genderA).status)
+           (statusToBundle (Shona.Gender.genderA).status)
     = some [.human] := by native_decide
 
 /-- Shona [7&7]: class 8 zvi- (non-human matching/default).
     @cite{carstens-2026} (62): zvi- for non-human [7&7] (consistent across speakers). -/
 theorem shona_7and7_matching :
-    resolve (statusToBundle (Fragments.Shona.Gender.genderD).status)
-           (statusToBundle (Fragments.Shona.Gender.genderD).status)
+    resolve (statusToBundle (Shona.Gender.genderD).status)
+           (statusToBundle (Shona.Gender.genderD).status)
     = some [.nonhuman] := by native_decide
 
 /-- Shona [3&3]: no matching → default only.
     @cite{carstens-2026} (59): zvi- (class 8 default) for non-human. -/
 theorem shona_3and3_no_matching :
-    resolve (statusToBundle (Fragments.Shona.Gender.genderB).status)
-           (statusToBundle (Fragments.Shona.Gender.genderB).status)
+    resolve (statusToBundle (Shona.Gender.genderB).status)
+           (statusToBundle (Shona.Gender.genderB).status)
     = none := rfl
 
 /-- Shona [5&5]: no matching → default only.
     @cite{carstens-2026} (60)–(61). -/
 theorem shona_5and5_no_matching :
-    resolve (statusToBundle (Fragments.Shona.Gender.genderC).status)
-           (statusToBundle (Fragments.Shona.Gender.genderC).status)
+    resolve (statusToBundle (Shona.Gender.genderC).status)
+           (statusToBundle (Shona.Gender.genderC).status)
     = none := rfl
 
 /-- Shona [9&9]: no matching → default only.
     Unlike Xhosa [9&9], Shona's [animal] core has bleached from 9/10.
     @cite{carstens-2026} §5.2, (64)b–d: va- for human, zvi- for non-human. -/
 theorem shona_9and9_no_matching :
-    resolve (statusToBundle (Fragments.Shona.Gender.genderE).status)
-           (statusToBundle (Fragments.Shona.Gender.genderE).status)
+    resolve (statusToBundle (Shona.Gender.genderE).status)
+           (statusToBundle (Shona.Gender.genderE).status)
     = none := rfl
 
 /-- Shona [11&11]: no matching → default only.
     @cite{carstens-2026} (65): zvi- (class 8 default). -/
 theorem shona_11and11_no_matching :
-    resolve (statusToBundle (Fragments.Shona.Gender.genderF).status)
-           (statusToBundle (Fragments.Shona.Gender.genderF).status)
+    resolve (statusToBundle (Shona.Gender.genderF).status)
+           (statusToBundle (Shona.Gender.genderF).status)
     = none := rfl
 
 /-- Shona [14&14]: no matching → default only (abstract nouns).
     @cite{carstens-2026}: genderG (14/6) is uninterpretable. -/
 theorem shona_14and14_no_matching :
-    resolve (statusToBundle (Fragments.Shona.Gender.genderG).status)
-           (statusToBundle (Fragments.Shona.Gender.genderG).status)
+    resolve (statusToBundle (Shona.Gender.genderG).status)
+           (statusToBundle (Shona.Gender.genderG).status)
     = none := rfl
 
 /-- Shona [12&12]: no matching → default only (diminutives).
     @cite{carstens-2026}: conjoined diminutives take class 8 zvi-. -/
 theorem shona_12and12_no_matching :
-    resolve (statusToBundle (Fragments.Shona.Gender.genderH).status)
-           (statusToBundle (Fragments.Shona.Gender.genderH).status)
+    resolve (statusToBundle (Shona.Gender.genderH).status)
+           (statusToBundle (Shona.Gender.genderH).status)
     = none := rfl
 
 /-- Every Shona gender: matching ↔ interpretable. -/
-theorem shona_matching_iff_interpretable (g : Fragments.Shona.Gender) :
+theorem shona_matching_iff_interpretable (g : Shona.Gender) :
     (resolve (statusToBundle g.status) (statusToBundle g.status)).isSome
     = g.status.isInterpretable := by
   cases g <;> native_decide
@@ -291,12 +291,12 @@ theorem shona_matching_iff_interpretable (g : Fragments.Shona.Gender) :
 
 /-- Xhosa has 3 interpretable genders out of 5 (60%). -/
 theorem xhosa_interpretable_count :
-    ([Fragments.Xhosa.Gender.genderA, .genderB, .genderC, .genderD, .genderE].filter
+    ([Xhosa.Gender.genderA, .genderB, .genderC, .genderD, .genderE].filter
       (λ g => g.status.isInterpretable)).length = 3 := rfl
 
 /-- Shona has 2 interpretable genders out of 8 (25%). -/
 theorem shona_interpretable_count :
-    ([Fragments.Shona.Gender.genderA, .genderB, .genderC, .genderD,
+    ([Shona.Gender.genderA, .genderB, .genderC, .genderD,
      .genderE, .genderF, .genderG, .genderH].filter
       (λ g => g.status.isInterpretable)).length = 2 := rfl
 
@@ -304,7 +304,7 @@ theorem shona_interpretable_count :
     matching agreement succeeds are outnumbered by those where it fails by 6:2,
     confirming that matching is the exception. -/
 theorem shona_matching_is_minority :
-    ([Fragments.Shona.Gender.genderA, .genderB, .genderC, .genderD,
+    ([Shona.Gender.genderA, .genderB, .genderC, .genderD,
      .genderE, .genderF, .genderG, .genderH].filter
       (λ g => !(resolve (statusToBundle g.status) (statusToBundle g.status)).isSome)).length = 6 := by
   native_decide
@@ -315,21 +315,21 @@ theorem shona_matching_is_minority :
 
 /-- Canonical [human] nouns: visible = core (no stacking). -/
 theorem human_canonical_no_stacking :
-    Fragments.Xhosa.humanCanonical.isCanonical = true := rfl
+    Xhosa.humanCanonical.isCanonical = true := rfl
 
 /-- [Human] nouns in class 3: stacked (visible ≠ core). -/
 theorem human_class3_stacked :
-    Fragments.Xhosa.humanInClass3.isCanonical = false := rfl
+    Xhosa.humanInClass3.isCanonical = false := rfl
 
 /-- [Human] nouns in class 5: stacked (visible ≠ core). -/
 theorem human_class5_stacked :
-    Fragments.Xhosa.humanInClass5.isCanonical = false := rfl
+    Xhosa.humanInClass5.isCanonical = false := rfl
 
 /-- Stacked nouns retain the core gender despite different visible class. -/
 theorem stacking_preserves_core :
-    Fragments.Xhosa.humanInClass3.status = .interpretable .human ∧
-    Fragments.Xhosa.humanInClass5.status = .interpretable .human ∧
-    Fragments.Xhosa.animalInClass1.status = .interpretable .animal :=
+    Xhosa.humanInClass3.status = .interpretable .human ∧
+    Xhosa.humanInClass5.status = .interpretable .human ∧
+    Xhosa.animalInClass1.status = .interpretable .animal :=
   ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
@@ -374,10 +374,10 @@ theorem bantu_cores_are_kramer_cores (c : SemanticCore) :
 /-- Xhosa gender profile drawn from `Fragments/Xhosa/Gender.lean`.
     @cite{carstens-2026} §2.2: semantic cores for some genders, formal
     (class prefix) assignment for others. -/
-abbrev xhosaGenderProfile := Fragments.Xhosa.Gender.genderTypology
+abbrev xhosaGenderProfile := Xhosa.Gender.genderTypology
 
 /-- Shona gender profile drawn from `Fragments/Shona/Gender.lean`. -/
-abbrev shonaGenderProfile := Fragments.Shona.Gender.genderTypology
+abbrev shonaGenderProfile := Shona.Gender.genderTypology
 
 /-- Both profiles satisfy the Semantic Core Generalization
     (@cite{kramer-2020} ex. 2/28). -/
@@ -442,16 +442,16 @@ theorem mismatched_1aand9_both_inanimate :
     @cite{carstens-2026} §8 discusses Swahili's GAC (General Animate Concords)
     as evidence for a [+animate] feature. -/
 theorem swahili_genderA_interpretable :
-    Fragments.Swahili.Gender.genderA.status.isInterpretable = true := rfl
+    Swahili.Gender.genderA.status.isInterpretable = true := rfl
 
 theorem swahili_genderE_interpretable :
-    Fragments.Swahili.Gender.genderE.status.isInterpretable = true := rfl
+    Swahili.Gender.genderE.status.isInterpretable = true := rfl
 
 /-- Three Bantu languages, shared diagnostic: A (1/2) = [human] in all. -/
 theorem three_languages_agree_on_human :
-    Fragments.Xhosa.Gender.genderA.status = .interpretable .human ∧
-    Fragments.Shona.Gender.genderA.status = .interpretable .human ∧
-    Fragments.Swahili.Gender.genderA.status = .interpretable .human :=
+    Xhosa.Gender.genderA.status = .interpretable .human ∧
+    Shona.Gender.genderA.status = .interpretable .human ∧
+    Swahili.Gender.genderA.status = .interpretable .human :=
   ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================

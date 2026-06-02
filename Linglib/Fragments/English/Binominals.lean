@@ -29,7 +29,7 @@ a grammaticalization cline:
   via `Semantics.Quantification.Binominal`
 -/
 
-namespace Fragments.English.Binominals
+namespace English.Binominals
 
 open Semantics.Quantification.Binominal
 open Semantics.Quantification.Binominal (ebnpSemantics quantizingToOfBinominal)
@@ -366,4 +366,4 @@ theorem english_pseudopartitive_matches_spanish :
 theorem english_evaluative_matches_spanish :
     BinominalType.qualitative.toOfBinominalType = .evaluative := rfl
 
-end Fragments.English.Binominals
+end English.Binominals

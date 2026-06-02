@@ -39,7 +39,7 @@ confirms the register approach.
 namespace RotterLiu2025Concord
 
 open Phenomena.Modality.ModalConcord
-open Fragments.English.Auxiliaries
+open English.Auxiliaries
 open Semantics.Modality (ModalForce ModalFlavor ForceFlavor)
 open Features.Register (Level areVariants)
 open Semantics.Modality.Typology (satisfiesIFF satisfiesSAV)

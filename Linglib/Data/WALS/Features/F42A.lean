@@ -20,7 +20,7 @@ inductive PronominalAndAdnominalDemonstratives where
   | differentStem
   /-- Different inflection (21 languages). -/
   | differentInflection
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 42A dataset (201 languages). -/
 def allData : List (Datapoint PronominalAndAdnominalDemonstratives) :=
@@ -228,9 +228,9 @@ def allData : List (Datapoint PronominalAndAdnominalDemonstratives) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint PronominalAndAdnominalDemonstratives) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint PronominalAndAdnominalDemonstratives) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F42A

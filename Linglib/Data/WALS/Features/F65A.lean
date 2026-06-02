@@ -18,7 +18,7 @@ inductive PerfectiveImperfective where
   | grammaticalMarking
   /-- No grammatical marking (121 languages). -/
   | noGrammaticalMarking
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 65A dataset (222 languages). -/
 def allData : List (Datapoint PerfectiveImperfective) :=
@@ -247,9 +247,9 @@ def allData : List (Datapoint PerfectiveImperfective) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint PerfectiveImperfective) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint PerfectiveImperfective) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F65A

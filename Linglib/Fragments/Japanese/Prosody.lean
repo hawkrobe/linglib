@@ -31,7 +31,7 @@ affix typology from @cite{kawahara-2015}.
   post-accenting, deaccenting, initial-accenting.
 -/
 
-namespace Fragments.Japanese.Prosody
+namespace Japanese.Prosody
 
 open Features.Prosody
 open Phonology.Accent (defaultAccentAAR latinStressRule accentToTones
@@ -501,4 +501,4 @@ theorem ame_ga_tones :
 theorem kami_god_ga_tones :
     accentToTones kami_god.accentMora 3 = [.H, .L, .L] := rfl
 
-end Fragments.Japanese.Prosody
+end Japanese.Prosody

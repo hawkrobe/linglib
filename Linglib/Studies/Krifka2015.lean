@@ -1,7 +1,7 @@
 import Linglib.Dialogue.CommitmentSpace
 import Linglib.Dialogue.KOS.Defs
 import Linglib.Dialogue.KOS.Basic
-import Linglib.Dialogue.FarkasBruce
+import Linglib.Discourse.Commitment.Table
 import Linglib.Features.Acceptability
 import Linglib.Semantics.Modality.BiasedPQ
 
@@ -33,7 +33,7 @@ uses a 2-world Weather model and verifies a specific paper claim.
          p. 331) cites F&B as the inspiration for his rejection operator ℜ;
          this section makes the structural relationship Lean-checkable.
 - §∞ — Deep structure: the Dialogue Completeness observation —
-       framework-agnostic agreement on observable CG at completed traces.
+       framework-agnostic agreement on observable CommonGround at completed traces.
 
 ## Out of scope (explicit)
 
@@ -115,7 +115,7 @@ theorem assert_by_addressee_root_eq :
 -- § 3. Monopolar vs Bipolar Questions (paper §3, eqs. 23, 27)
 -- ════════════════════════════════════════════════════
 
-/-- Monopolar question preserves the root (CG unchanged) — paper p. 335. -/
+/-- Monopolar question preserves the root (CommonGround unchanged) — paper p. 335. -/
 theorem monopolar_root_unchanged :
     (s₀.monopolarQuestion isRaining).space.root = [] := rfl
 
@@ -397,9 +397,9 @@ Reciprocal entry to `Studies/Ginzburg2012.lean` lines
 
 | Question | Krifka 2015 | Ginzburg 2012 (KOS) |
 |---|---|---|
-| Is CG a single object or per-agent? | Single object, but its entries are speaker-indexed (`IndexedCommitment.commit S₁ φ`) | Per-agent (`DGB.facts`) |
-| When does an assertion narrow CG? | Immediately (assert puts `commit S₁ φ` in root) | Only after Accept (one-sided FACTS) |
-| Are commitments separable from CG? | Yes — root carries indexed commitments + per-agent slates | Only via separate DGBs |
+| Is CommonGround a single object or per-agent? | Single object, but its entries are speaker-indexed (`IndexedCommitment.commit S₁ φ`) | Per-agent (`DGB.facts`) |
+| When does an assertion narrow CommonGround? | Immediately (assert puts `commit S₁ φ` in root) | Only after Accept (one-sided FACTS) |
+| Are commitments separable from CommonGround? | Yes — root carries indexed commitments + per-agent slates | Only via separate DGBs |
 
 The architectures cannot be unified by a Galois connection that preserves
 both Krifka's eager-narrowing root behaviour and KOS's per-DGB asymmetry.
@@ -440,7 +440,7 @@ theorem krifka_indexed_root_vs_kos_split_dgbs (p : Weather → Prop) :
 end vsGinzburg2012
 
 -- ════════════════════════════════════════════════════
--- § N+1. vs Farkas & Bruce 2010 — eager vs lazy CG narrowing
+-- § N+1. vs Farkas & Bruce 2010 — eager vs lazy CommonGround narrowing
 -- ════════════════════════════════════════════════════
 
 /-! ## Krifka commitment-spaces vs Farkas-Bruce discourse-table model
@@ -454,51 +454,51 @@ identical event sequences.
 
 | Question | Krifka 2015 | Farkas-Bruce 2010 |
 |---|---|---|
-| When does an assertion narrow CG? | Immediately (`commit speaker φ` in root) | Only after addressee accept (one-sided dcS until then) |
-| Where does the assertion live pre-acceptance? | Root entry (already in CG, speaker-indexed) | `dcS` slate + `table` issue |
+| When does an assertion narrow CommonGround? | Immediately (`commit speaker φ` in root) | Only after addressee accept (one-sided dcS until then) |
+| Where does the assertion live pre-acceptance? | Root entry (already in CommonGround, speaker-indexed) | `dcS` slate + `table` issue |
 | What does acceptance update? | Adds `commit addressee φ` to root | Pops table issue, adds φ to cg + dcL |
 | What's the "stable" predicate? | `hasNoOpenContinuations` (no pending proposals) | `table.isEmpty` (no items on table) |
 
 The eager/lazy distinction is real and non-collapsible at intermediate
 states. But at the end of a "completed" assertion+acceptance sequence,
-both frameworks agree on the observable CG content modulo Krifka's
+both frameworks agree on the observable CommonGround content modulo Krifka's
 speaker indexing — see the Dialogue Completeness observation below.
 -/
 
 section vsFarkasBruce2010
 
-open Dialogue.FarkasBruce
+open Discourse.Commitment.Table
 
-/-- Divergence at the assert-only intermediate state: Krifka's CG
-    narrows immediately (one indexed entry in `root`); F&B's joint CG
+/-- Divergence at the assert-only intermediate state: Krifka's CommonGround
+    narrows immediately (one indexed entry in `root`); F&B's joint CommonGround
     stays empty because the assertion lives on the table awaiting
-    acceptance. The two frameworks DISAGREE on what's "in CG" mid-trace.
+    acceptance. The two frameworks DISAGREE on what's "in CommonGround" mid-trace.
 
     @cite{krifka-2015} p. 332 eq. (14) puts `S₁⊢φ` directly in the
-    commitment state; @cite{farkas-bruce-2010}'s `assertDeclarative`
+    commitment state; @cite{farkas-bruce-2010}'s `assert`
     only updates `dcS` and pushes a table issue. -/
 theorem krifka_eager_vs_farkasBruce_lazy_intermediate :
     -- Krifka: speaker assert immediately puts speaker-indexed entry in root
     (s₀.assert isRaining).space.root =
       [IndexedCommitment.commit .speaker isRaining] ∧
-    -- F&B: assertDeclarative leaves cg untouched; commitment is on
+    -- F&B: assert leaves cg untouched; commitment is on
     -- speaker's slate + table only
-    (DiscourseState.empty.assertDeclarative isRaining).cg = [] ∧
-    (DiscourseState.empty.assertDeclarative isRaining).dcS = [isRaining] ∧
-    (DiscourseState.empty.assertDeclarative isRaining).table.length = 1 := by
-  refine ⟨rfl, rfl, rfl, rfl⟩
+    (assert (DiscourseState.empty : State Weather) isRaining).cgPropositions = [] ∧
+    (assert (DiscourseState.empty : State Weather) isRaining).dcS = [isRaining] ∧
+    (assert (DiscourseState.empty : State Weather) isRaining).table.length = 1 := by
+  refine ⟨rfl, ?_, ?_, ?_⟩ <;> simp
 
 /-- Bridge at the completed-trace state: after the addressee accepts the
-    assertion, both frameworks have φ in the joint CG (modulo Krifka's
+    assertion, both frameworks have φ in the joint CommonGround (modulo Krifka's
     speaker indexing on the root entries; F&B's `cg` is bare `Set W`).
 
     Krifka's "addressee accepts" pathway is `assert φ .addressee`
     (the `Yes` reaction, paper p. 334 eq. 21). F&B's pathway is
-    `acceptTop` after `assertDeclarative`. Both end with φ in the
+    `acceptTop` after `assert`. Both end with φ in the
     common ground at the propositional level. -/
 theorem krifka_double_assert_eq_farkasBruce_assert_accept :
     let kState  := (s₀.assert isRaining).assert isRaining .addressee
-    let fbState := (DiscourseState.empty.assertDeclarative isRaining).acceptTop
+    let fbState := acceptTop (assert (DiscourseState.empty : State Weather) isRaining)
     -- Krifka: both speakers' commitments visible in their slates
     kState.speakerCS.commitments   = [isRaining] ∧
     kState.addresseeCS.commitments = [isRaining] ∧
@@ -507,15 +507,16 @@ theorem krifka_double_assert_eq_farkasBruce_assert_accept :
       [IndexedCommitment.commit .addressee isRaining,
        IndexedCommitment.commit .speaker isRaining] ∧
     -- F&B: assertion has migrated from table → cg, with dcS/dcL also updated
-    fbState.cg    = [isRaining] ∧
+    fbState.cgPropositions = [isRaining] ∧
     fbState.dcS   = [isRaining] ∧
     fbState.dcL   = [isRaining] ∧
     fbState.table = [] := by
-  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+  refine ⟨rfl, rfl, rfl, ?_, ?_, ?_, ?_⟩ <;> simp
+  rfl
 
 /-- The headline observation: at a completed assertion+acceptance trace,
     the two frameworks agree on the **context-set projection** —
-    Krifka's projected CG content is exactly `isRaining`.
+    Krifka's projected CommonGround content is exactly `isRaining`.
 
     The frameworks disagree on what they STORE at intermediate states
     (root vs table, indexed vs flat) but agree on the observable
@@ -558,7 +559,7 @@ the same world type `W`, equipped with:
   bipolar question, low/high negated question, accept, reject, …);
 - A step function `step_i : Sᵢ → DialogueEvent W → Sᵢ`;
 - A context-set projection `contextSet_i : Sᵢ → Set W` (the observable
-  CG content);
+  CommonGround content);
 - A "completed" predicate `isCompleted_i : Sᵢ → Prop` (no pending
   proposals, no orphan issues),
 
@@ -574,7 +575,7 @@ the conjecture is:
 
 Plain English: **dialogue frameworks differ in the journey through
 intermediate states; they agree on the observable destination.**
-The eager/lazy timing of CG updates, the per-agent commitment slate
+The eager/lazy timing of CommonGround updates, the per-agent commitment slate
 shape, the proposal-tracking apparatus — all of these are
 framework-internal bookkeeping invisible at completed traces. What's
 publicly committed (in the projected context-set sense) at the end of

@@ -1,4 +1,4 @@
-import Linglib.Core.Nominal.ArticleInventory
+import Linglib.Core.Nominal.Determiner
 
 /-!
 # Mandarin Definiteness Fragment
@@ -11,22 +11,16 @@ bare nouns serve unique definites. Possession is via *de*. Under the
 only the anaphoric type has a dedicated form.
 -/
 
-namespace Fragments.Mandarin.Definiteness
+namespace Mandarin.Definiteness
 
-open Core.Nominal (ArticleInventory)
-open Features.Definiteness (DefMarkingStrategy)
-
-/-- Mandarin: no overt indefinite/unique articles; demonstratives carry the
-    anaphoric load (*nà* 'that'); possessives via *de*. -/
-def articleInventory : ArticleInventory :=
-  { hasIndefinite             := False
-    hasUniqueArticle          := False
-    hasAnaphoricArticle       := True
-    hasDemonstrative          := True
-    hasPossessive             := True }
+/-- Mandarin: no overt articles; the demonstrative (*nà* 'that') obligatorily
+    expones anaphoric definites; uniqueness is bare (no determiner);
+    possessives via *de*. -/
+def determiners : List Determiner.Entry :=
+  [ .demonstrative { form := "na", deictic := .distal, definiteUses := [.anaphoric] },
+    .possessive { form := "de" } ]
 
 /-- Mandarin's inventory derives the `.markedAnaphoric` Moroney cell. -/
-theorem articleInventory_marking :
-    articleInventory.toMarkingStrategy = .markedAnaphoric := rfl
+theorem marking : Determiner.markingStrategy determiners = .markedAnaphoric := by decide
 
-end Fragments.Mandarin.Definiteness
+end Mandarin.Definiteness

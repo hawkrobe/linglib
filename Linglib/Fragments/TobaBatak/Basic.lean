@@ -29,7 +29,7 @@ and Case assignment interact with predicate fronting.
 
 -/
 
-namespace Fragments.TobaBatak
+namespace TobaBatak
 
 -- ============================================================================
 -- § 1: Voice
@@ -176,4 +176,4 @@ theorem tb_is_active_passive :
 theorem tb_promotes_agent :
     tbVoiceSystem.promotesRole .agent := by decide
 
-end Fragments.TobaBatak
+end TobaBatak

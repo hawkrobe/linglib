@@ -8,7 +8,7 @@ import Linglib.Typology.Gender
 + number + gender (the clearest Semitic case of verbal gender agreement).
 -/
 
-namespace Fragments.Hebrew.Gender
+namespace Hebrew.Gender
 
 open Typology.Gender
 
@@ -29,4 +29,4 @@ example : genderTypology.iso639 = "heb" ∧ genderTypology.name = "Hebrew" :=
 /-- Hebrew is in @cite{corbett-1991}'s "canonical" cell. -/
 example : genderTypology.IsCanonicalGender := by decide
 
-end Fragments.Hebrew.Gender
+end Hebrew.Gender

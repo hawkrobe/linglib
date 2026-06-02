@@ -1,4 +1,5 @@
 import Linglib.Core.UD
+import Linglib.Core.Valence
 
 /-!
 # Word
@@ -107,17 +108,6 @@ inductive MassCount where
   | count  -- count nouns: *spider*, *pollen grain*, *dog*, *cup*
   deriving Repr, DecidableEq, Hashable
 
-/-- Transitivity / argument structure. No direct UD equivalent. -/
-inductive Valence where
-  | intransitive  -- sleep, arrive
-  | transitive    -- see, eat
-  | ditransitive  -- give, send (double object)
-  | dative        -- give X to Y (prepositional dative)
-  | locative      -- put X on Y
-  | copular       -- be (takes predicate)
-  | clausal       -- manage to VP, believe that S (xcomp/ccomp complement)
-  deriving Repr, DecidableEq, Inhabited
-
 /-- Head direction of a syntactic construction.
     Used for word-order typology and
     constraints like FOFC. -/
@@ -137,6 +127,9 @@ structure Features where
   number : Option Number := none
   person : Option Person := none
   case_ : Option UD.Case := none
+  /-- Grammatical gender (UD.Gender). Carried on the word so φ-agreement is
+      feature-based, not recovered from surface form. -/
+  gender : Option UD.Gender := none
   valence : Option Valence := none
   voice : Option Voice := none
   vform : Option VForm := none
@@ -153,6 +146,26 @@ structure Word where
 
 /-- Convenience constructor for a featureless word (form + category only). -/
 def Word.mk' (form : String) (cat : UD.UPOS) : Word := ⟨form, cat, {}⟩
+
+/-- The φ-feature subset (person, number, gender) of a word, as a
+    `UD.MorphFeatures` bundle. -/
+def Word.phi (w : Word) : UD.MorphFeatures :=
+  { person := w.features.person, number := w.features.number,
+    gender := w.features.gender }
+
+/-- φ-agreement between two words: their person/number/gender features are
+    compatible (an unspecified feature is a wildcard). A reflexive, symmetric
+    *tolerance* relation on `Word` (not transitive), decided by the shared
+    `UD.MorphFeatures.compatible`. This is the feature-based agreement primitive
+    binding and concord consumers share — no surface-form gender lookup. -/
+def Word.Agree (w1 w2 : Word) : Prop := w1.phi.compatible w2.phi
+
+instance (w1 w2 : Word) : Decidable (Word.Agree w1 w2) := by
+  unfold Word.Agree; infer_instance
+
+@[refl] theorem Word.Agree.refl (w : Word) : Word.Agree w w :=
+  UD.MorphFeatures.compatible_self w.phi
+
 
 /-- Derive a passive variant: sets voice to passive, valence to intransitive.
     Used to compose with `VerbEntry.toWordPastPart` for passive constructions. -/

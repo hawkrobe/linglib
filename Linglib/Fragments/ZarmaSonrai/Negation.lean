@@ -38,7 +38,7 @@ the complement clause, not with the trigger class itself.
 - MORE THAN: attested (with *da* 'than'), but EN data limited
 -/
 
-namespace Fragments.ZarmaSonrai.Negation
+namespace ZarmaSonrai.Negation
 
 open Typology.Negation
 
@@ -199,4 +199,4 @@ open Phenomena.Negation.ExpletiveNegation (ENBlockingReason)
 def withoutBlocked : ENBlockingReason := .analyticNegation
 def tooToBlocked : ENBlockingReason := .analyticNegation
 
-end Fragments.ZarmaSonrai.Negation
+end ZarmaSonrai.Negation

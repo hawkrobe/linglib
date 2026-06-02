@@ -411,9 +411,9 @@ def formulaToCondition (M : Model E) : Formula → Condition (MergedAssignment E
   | .conj φ ψ => λ g => formulaToCondition M φ g ∧ formulaToCondition M ψ g
   | .exists_ x φ => λ g => ∃ e : E, formulaToCondition M φ (extend g x e)
 
-/-- Translate a PLA formula to a Dynamic Ty2 DRS. PLA's eliminative
+/-- Translate a PLA formula to a Dynamic Ty2 Update. PLA's eliminative
 updates mean every formula translates to a `test`. -/
-def formulaToDRS (M : Model E) (φ : Formula) : DRS (MergedAssignment E) :=
+def formulaToDRS (M : Model E) (φ : Formula) : Update (MergedAssignment E) :=
   test (formulaToCondition M φ)
 
 theorem formulaToDRS_atom (M : Model E) (name : String) (ts : List Term) :
@@ -481,7 +481,7 @@ theorem formulaToCondition_eq_sat (M : Model E) (φ : Formula) (g : MergedAssign
       rw [extend_fst_eq_update, extend_snd_eq]
       exact he
 
-/-- A merged assignment satisfies the embedded DRS iff the split
+/-- A merged assignment satisfies the embedded Update iff the split
 assignment satisfies the original PLA formula. -/
 theorem formulaToDRS_correct (M : Model E) (φ : Formula) (g h : MergedAssignment E) :
     formulaToDRS M φ g h ↔ (g = h ∧ φ.sat M (splitAssignment g).1 (splitAssignment g).2) := by

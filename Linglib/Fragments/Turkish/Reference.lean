@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.Turkish
+namespace Turkish
 
 /-- Turkish (Turkic): no definite article; indefinite *bir* = numeral 'one'
     (different NP position when used as article vs numeral, per
@@ -24,4 +24,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .differentInflection
   , pronDemRelation := some .relatedRemote }
 
-end Fragments.Turkish
+end Turkish

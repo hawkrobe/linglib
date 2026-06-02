@@ -49,8 +49,8 @@ namespace Karttunen1971
 
 open Semantics.Causation.Implicative
 open Features (Causative)
-open Fragments.English.Predicates.Verbal
-open Fragments.English.Predicates.Copular (beAble)
+open English.Predicates.Verbal
+open English.Predicates.Copular (beAble)
 open Semantics.Lexical
 open Core.Causal
 
@@ -213,61 +213,61 @@ theorem cause_karttunen_class :
 -- ── Positive implicatives ──
 
 theorem manage_positive_implicative :
-    manage.toVerbCore.implicative = some .positive := rfl
+    manage.toVerb.implicative = some .positive := rfl
 
 theorem remember_positive_implicative :
-    remember.toVerbCore.implicative = some .positive := rfl
+    remember.toVerb.implicative = some .positive := rfl
 
 theorem dare_positive_implicative :
-    dare.toVerbCore.implicative = some .positive := rfl
+    dare.toVerb.implicative = some .positive := rfl
 
 theorem bother_positive_implicative :
-    bother.toVerbCore.implicative = some .positive := rfl
+    bother.toVerb.implicative = some .positive := rfl
 
 theorem venture_positive_implicative :
-    venture.toVerbCore.implicative = some .positive := rfl
+    venture.toVerb.implicative = some .positive := rfl
 
 theorem condescend_positive_implicative :
-    condescend.toVerbCore.implicative = some .positive := rfl
+    condescend.toVerb.implicative = some .positive := rfl
 
 theorem happen_positive_implicative :
-    happen.toVerbCore.implicative = some .positive := rfl
+    happen.toVerb.implicative = some .positive := rfl
 
 -- ── Negative implicatives (§10, ex. 38) ──
 
 theorem fail_negative_implicative :
-    fail.toVerbCore.implicative = some .negative := rfl
+    fail.toVerb.implicative = some .negative := rfl
 
 theorem forget_negative_implicative :
-    forget.toVerbCore.implicative = some .negative := rfl
+    forget.toVerb.implicative = some .negative := rfl
 
 theorem neglect_negative_implicative :
-    neglect.toVerbCore.implicative = some .negative := rfl
+    neglect.toVerb.implicative = some .negative := rfl
 
 -- ── Non-implicatives ──
 
 theorem hope_not_implicative :
-    hope.toVerbCore.implicative = none := rfl
+    hope.toVerb.implicative = none := rfl
 
 theorem want_not_implicative :
-    want.toVerbCore.implicative = none := rfl
+    want.toVerb.implicative = none := rfl
 
 theorem try_not_implicative :
-    try_.toVerbCore.implicative = none := rfl
+    try_.toVerb.implicative = none := rfl
 
 theorem believe_not_implicative :
-    believe.toVerbCore.implicative = none := rfl
+    believe.toVerb.implicative = none := rfl
 
 -- ── Derived entailment predictions ──
 
 theorem manage_entails :
-    manage.toVerbCore.entailsComplement = some true := by native_decide
+    manage.toVerb.entailsComplement = some true := by native_decide
 
 theorem fail_entails_not :
-    fail.toVerbCore.entailsComplement = some false := by native_decide
+    fail.toVerb.entailsComplement = some false := by native_decide
 
 theorem hope_no_complement_entailment :
-    hope.toVerbCore.entailsComplement = none := rfl
+    hope.toVerb.entailsComplement = none := rfl
 
 -- ── Raising vs control ──
 
@@ -276,18 +276,18 @@ theorem hope_no_complement_entailment :
     Karttunen (§9) describes *happen*'s presupposition as chance-dependence,
     but does not discuss its syntactic control type. -/
 theorem happen_is_raising :
-    happen.toVerbCore.controlType = .raising := rfl
+    happen.toVerb.controlType = .raising := rfl
 
 /-- *dare* and *bother* have both presupposition (occasion verbs) AND
     implicative entailment: "John dared to speak" presupposes risk AND
     entails "John spoke." These are compatible per Karttunen §9. -/
 theorem dare_presup_and_implicative :
-    dare.toVerbCore.presupType = some .prerequisiteSoft ∧
-    dare.toVerbCore.implicative = some .positive := ⟨rfl, rfl⟩
+    dare.toVerb.presupType = some .prerequisiteSoft ∧
+    dare.toVerb.implicative = some .positive := ⟨rfl, rfl⟩
 
 theorem bother_presup_and_implicative :
-    bother.toVerbCore.presupType = some .prerequisiteSoft ∧
-    bother.toVerbCore.implicative = some .positive := ⟨rfl, rfl⟩
+    bother.toVerb.presupType = some .prerequisiteSoft ∧
+    bother.toVerb.implicative = some .positive := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Factive vs Implicative (§§0–2)
@@ -300,23 +300,23 @@ theorem bother_presup_and_implicative :
     "John didn't manage to solve it" — entails "he didn't solve it." -/
 
 theorem know_factive_not_implicative :
-    know.toVerbCore.presupType = some .softTrigger ∧
-    know.toVerbCore.implicative = none := ⟨rfl, rfl⟩
+    know.toVerb.presupType = some .softTrigger ∧
+    know.toVerb.implicative = none := ⟨rfl, rfl⟩
 
 theorem manage_implicative_not_factive :
-    manage.toVerbCore.implicative = some .positive ∧
-    manage.toVerbCore.presupType = some .prerequisiteSoft := ⟨rfl, rfl⟩
+    manage.toVerb.implicative = some .positive ∧
+    manage.toVerb.presupType = some .prerequisiteSoft := ⟨rfl, rfl⟩
 
 theorem hope_neither :
-    hope.toVerbCore.presupType = none ∧
-    hope.toVerbCore.implicative = none := ⟨rfl, rfl⟩
+    hope.toVerb.presupType = none ∧
+    hope.toVerb.implicative = none := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5. Sufficient-Only Verbs (§11, ex. 56–59)
 -- ════════════════════════════════════════════════════════════════
 
 theorem force_has_causative :
-    force.toVerbCore.causative = some .force := rfl
+    force.toVerb.causative = some .force := rfl
 
 theorem force_asserts_sufficiency :
     Causative.force.assertsSufficiency = true := rfl

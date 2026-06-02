@@ -1,5 +1,6 @@
 import Mathlib.Data.Finset.Basic
 import Linglib.Semantics.Entailment.AsymStronger
+import Linglib.Core.Logic.Modal.Defs
 
 /-!
 # Sauerland's Epistemic Implicature Framework
@@ -44,6 +45,8 @@ categorical side.
 
 namespace Implicature.EpistemicBlocking
 
+open Core.Logic.Modal (AccessRel box diamond IsSerial)
+
 /-- An epistemic state represents what the speaker knows.
 We model this as a finite set of worlds the speaker considers possible. -/
 structure EpistemicState (W : Type*) where
@@ -69,9 +72,30 @@ instance {W : Type*} (e : EpistemicState W) (φ : W → Prop) [DecidablePred φ]
     Decidable (possible e φ) :=
   inferInstanceAs (Decidable (∃ w ∈ e.possible, φ w))
 
-/-- Standard epistemic duality: ¬K¬φ ↔ Pφ. One of five sibling `theorem duality`s
-    (see `Semantics/Modality/Kratzer/Operators.lean::duality` for the
-    unification opportunity via `Core.Logic.Opposition.Square.fromBox`). -/
+/-! ### `K`/`P` as restricted modality
+
+`knows`/`possible` are `box`/`diamond` over the (world-independent) epistemic
+accessibility `accessFrom e`, which is serial because `e.possible` is nonempty.
+The epistemic square of opposition is then `Core.Logic.Modal.modalSquare
+(accessFrom e)` with `modalSquare_relations` discharged by this `IsSerial` instance
+— no bespoke square construction. -/
+
+/-- Epistemic accessibility: from any world, the speaker's live possibilities. -/
+def accessFrom {W : Type*} (e : EpistemicState W) : AccessRel W := fun _ w' => w' ∈ e.possible
+
+instance {W : Type*} (e : EpistemicState W) : IsSerial (accessFrom e) := ⟨fun _ => e.nonempty⟩
+
+/-- `K` is `□` over epistemic accessibility. -/
+theorem knows_eq_box {W : Type*} (e : EpistemicState W) (φ : W → Prop) (w : W) :
+    knows e φ = box (accessFrom e) φ w := rfl
+
+/-- `P` is `◇` over epistemic accessibility. -/
+theorem possible_eq_diamond {W : Type*} (e : EpistemicState W) (φ : W → Prop) (w : W) :
+    possible e φ = diamond (accessFrom e) φ w := rfl
+
+/-- Standard epistemic duality: ¬K¬φ ↔ Pφ. One of five sibling `theorem duality`s —
+    the box–diamond duality underlying the modal square of opposition
+    (`Core.Logic.Modal.modalSquare_relations`). -/
 theorem duality {W : Type*} (e : EpistemicState W) (φ : W → Prop) :
     ¬ knows e (fun w => ¬ φ w) ↔ possible e φ := by
   simp only [knows, possible, not_forall, not_not, exists_prop]

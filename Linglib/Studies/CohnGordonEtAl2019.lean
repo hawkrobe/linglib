@@ -219,7 +219,7 @@ theorem uniform_after_red_for_r2 (w : Word) (hw : w ≠ .red) :
     for R3 (S1(red|[],R3) = 1), so hearing "red" raises R3's probability.
     For R1, the speaker could have said "dress" instead, so "red" is less
     diagnostic. We pick this up below as a structural foreshadowing of
-    @cite{sedivy-etal-1999}'s contrastive-inference findings; CG themselves
+    @cite{sedivy-etal-1999}'s contrastive-inference findings; CommonGround themselves
     cite @cite{sedivy-2007} for the same effect. -/
 theorem listener_anticipation :
     incRSA.L1 .red .redHat > incRSA.L1 .red .redDress := by
@@ -392,11 +392,11 @@ need for "tall" to disambiguate from the only other pitcher: there
 isn't one). The "tall" is therefore diagnostic of the cup with a
 same-category contrast.
 
-The original empirical effect is from @cite{sedivy-etal-1999}; CG cite
+The original empirical effect is from @cite{sedivy-etal-1999}; CommonGround cite
 the @cite{sedivy-2007} review article that summarizes it.
 
 This file formalises both contrast cells. The contrast scene is the
-five-word, four-referent `sedivyBundle` from CG's text. The no-contrast
+five-word, four-referent `sedivyBundle` from CommonGround's text. The no-contrast
 scene is a four-word, three-referent companion bundle
 (`SedivyScene_NoContrast.bundle`) — `.short` is omitted because the
 shortCup referent it would describe is absent from the display, leaving
@@ -454,7 +454,7 @@ from the visual display.
 The companion bundle drops `.short` from `Word` and the `[short, cup]`
 utterance from `completeUtterances`. Justification: with no shortCup
 in the display, a cooperative speaker has no scene-anchored use for
-`.short`, and CG's `IncrementalSemantics` is a *scene-specific*
+`.short`, and CommonGround's `IncrementalSemantics` is a *scene-specific*
 production model rather than a lexicon-wide one. (The listener's
 standing mental lexicon still contains `short`; the bundle here is a
 model of speaker production for *this scene*, not of mental

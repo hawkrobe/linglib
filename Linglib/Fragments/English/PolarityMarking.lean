@@ -33,7 +33,7 @@ German Verum focus.
 - Strategy: `.verumFocus` — targets the assertion level, like German VF
 -/
 
-namespace Fragments.English.PolarityMarking
+namespace English.PolarityMarking
 
 open Typology.PolarityMarking (Entry Strategy Env)
 
@@ -59,4 +59,4 @@ theorem emphaticDo_contrastOk : Env.contrast ∈ emphaticDo.environments := by d
 theorem emphaticDo_correctionOk : Env.correction ∈ emphaticDo.environments := by decide
 theorem emphaticDo_strategy : emphaticDo.strategy = .verumFocus := rfl
 
-end Fragments.English.PolarityMarking
+end English.PolarityMarking

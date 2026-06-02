@@ -45,7 +45,6 @@ the RSAConfig loop as paper-specific extensions (Part V).
 
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
-import Linglib.Semantics.Composition.Modification
 import Mathlib.Data.Rat.Defs
 
 set_option autoImplicit false
@@ -371,12 +370,19 @@ that denotes a characteristic function of type `e → t`:
   - ⟦blue⟧ = λx. color(x) = target.color
   - ⟦checked⟧ = λx. texture(x) = target.texture
 
-This is exactly `Semantics.Composition.Modification.predMod` applied iteratively.
+This is exactly `predMod` (local; the Prop analogue is `Modifier.intersective`)
+applied iteratively.
 -/
 
 namespace MontaguGrounding
 
-open Semantics.Composition.Modification
+/-! Local `Bool`-valued predicate conjunction (transitional: this file's
+    `Bool`/`rsa_predict` computational layer is being retired; the canonical
+    intersective modifier is `Modifier.intersective`, Prop-valued). -/
+
+private def predMod {E : Type*} (p q : E → Bool) : E → Bool := fun x => p x && q x
+
+private def truePred {E : Type*} : E → Bool := fun _ => true
 
 /-- Shape predicate: matches target's shape (only target has shape=0) -/
 def shapePred : VisObj → Bool

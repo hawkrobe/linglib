@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 90C: Postnominal relative clauses
-@cite{wals-2013}
+@cite{dryer-2013-wals}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 90C`.
@@ -22,7 +22,7 @@ inductive PostnominalRelativeClauses where
   | nrelOrInternallyHeaded
   /-- NRel or correlative (2 languages). -/
   | nrelOrCorrelative
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PostnominalRelativeClauses) :=
   [ { walsCode := "xoo", iso := "nmn", value := .nounRelativeClauseDominant }
@@ -654,9 +654,9 @@ private def allData_1 : List (Datapoint PostnominalRelativeClauses) :=
 def allData : List (Datapoint PostnominalRelativeClauses) := allData_0 ++ allData_1
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint PostnominalRelativeClauses) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint PostnominalRelativeClauses) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F90C

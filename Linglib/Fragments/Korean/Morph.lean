@@ -8,7 +8,7 @@ WALS-derived profile for Korean (ISO `kor`). B&N 2001 places Korean
 in the "agglutinating" cell (concatenative + nonflexive + separative).
 -/
 
-namespace Fragments.Korean
+namespace Korean
 
 open Morphology
 
@@ -29,4 +29,4 @@ example : morphProfile.iso = "kor" ∧ morphProfile.language = "Korean" := ⟨rf
 /-- B&N 2001 places Korean in the "agglutinating" cell. -/
 example : morphProfile.IsAgglutinating := by decide
 
-end Fragments.Korean
+end Korean

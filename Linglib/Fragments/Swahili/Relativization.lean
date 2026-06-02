@@ -1,5 +1,5 @@
-import Linglib.Core.Relativization.Basic
-import Linglib.Typology.Relativization.Defs
+import Linglib.Typology.RelativeClause.Basic
+import Linglib.Typology.RelativeClause.WALS
 import Linglib.Fragments.Swahili.Basic
 
 /-!
@@ -51,15 +51,15 @@ do not is in `Studies/Scott2021.lean`.
 Auxiliary types specific to the relativization paradigm carry the
 `Rel` prefix (`RelPerson`, `RelGramNum`, `RelMonosyllabicWord`,
 `RelNonTriggeringWord`) so they can live at top-level
-`Fragments.Swahili` without colliding with morphology-side `Person` or
+`Swahili` without colliding with morphology-side `Person` or
 number features defined in sibling Swahili Fragment files. This follows
 the mathlib convention of prefix-disambiguating small support types
 rather than nesting them under a sub-namespace.
 -/
 
-namespace Fragments.Swahili
+namespace Swahili
 
-open Core
+open RelativeClause
 
 -- ============================================================================
 -- § 1: Amba-RC Markers
@@ -68,7 +68,7 @@ open Core
 /-- The *amba*-complementizer with gap (subject and direct object
     extraction). Subject and object agreement are obligatory on the
     verb; no resumptive pronoun appears. -/
-def ambaGap : RelClauseMarker :=
+def ambaGap : Marker :=
   { form := "amba"
   , npRel := .gap
   , bearsCaseMarking := false
@@ -80,7 +80,7 @@ def ambaGap : RelClauseMarker :=
     (person-matching). Objects of monosyllabic prepositions inside
     adjunct islands obligatorily surface with person features.
     @cite{scott-2021} examples (31)–(33). -/
-def ambaBound : RelClauseMarker :=
+def ambaBound : Marker :=
   { form := "amba + bound RP"
   , npRel := .resumptiveBound
   , bearsCaseMarking := true
@@ -92,7 +92,7 @@ def ambaBound : RelClauseMarker :=
     (personless). Objects of monosyllabic prepositions in parasitic
     gap constructions surface without person features.
     @cite{scott-2021} examples (36)–(37). -/
-def ambaMovement : RelClauseMarker :=
+def ambaMovement : Marker :=
   { form := "amba + movement RP"
   , npRel := .resumptiveMovement
   , bearsCaseMarking := true
@@ -101,10 +101,10 @@ def ambaMovement : RelClauseMarker :=
   , notes := "amba-RC; movement resumptive (personless); in parasitic gaps" }
 
 /-- All Swahili relative clause markers. -/
-def relMarkers : List RelClauseMarker := [ambaGap, ambaBound, ambaMovement]
+def relMarkers : List Marker := [ambaGap, ambaBound, ambaMovement]
 
 /-- Swahili relativization profile (typological summary). -/
-def relativization : Typology.Relativization.RelativizationProfile :=
+def relativization : RelativeClause.Profile :=
   { subjStrategy := .gap
   , oblStrategy := .pronounRetention
   , rcPosition := .postNominal
@@ -118,7 +118,7 @@ def relativization : Typology.Relativization.RelativizationProfile :=
 
 /-- Person feature in the Swahili relativization paradigm
     (@cite{scott-2021} Table 1). Prefixed `Rel` so it can live at
-    top-level `Fragments.Swahili` without colliding with morphology-side
+    top-level `Swahili` without colliding with morphology-side
     person features. -/
 inductive RelPerson where | first | second | third
   deriving DecidableEq, Repr
@@ -217,4 +217,4 @@ def RelMonosyllabicWord.triggersResumption : RelMonosyllabicWord → Bool
 def RelNonTriggeringWord.triggersResumption : RelNonTriggeringWord → Bool
   | _ => false
 
-end Fragments.Swahili
+end Swahili

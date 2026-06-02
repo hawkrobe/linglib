@@ -58,18 +58,18 @@ convention follows `Fragments/Tigrinya/Phonology.lean`: ASCII
 identifiers; IPA forms in docstrings.
 -/
 
-namespace Fragments.Tigre.Phonology
+namespace Tigre.Phonology
 
 open Morphology
 
 /-- Re-export the Tigrinya vowel type for Tigre. The two languages
     share the same seven-vowel inventory per paper §2.1 +
     @cite{lowenstamm-prunet-1988}. -/
-abbrev Vowel := Fragments.Tigrinya.Phonology.Vowel
+abbrev Vowel := Tigrinya.Phonology.Vowel
 
 /-- Re-export the Tigrinya guttural type for Tigre. Both languages
     have the same four attested gutturals (paper §2.1, n. 14). -/
-abbrev Guttural := Fragments.Tigrinya.Phonology.Guttural
+abbrev Guttural := Tigrinya.Phonology.Guttural
 
 -- ============================================================================
 -- § 1: Tigre verbal roots (the F&L 2026 working set)
@@ -119,4 +119,4 @@ def uncoverTigre : Root String := ⟨["s", "h", "k"]⟩
     [ti-sħib] from /tisʌħib/ (eq. 26d). -/
 def pull : Root String := ⟨["s", "ħ", "b"]⟩
 
-end Fragments.Tigre.Phonology
+end Tigre.Phonology

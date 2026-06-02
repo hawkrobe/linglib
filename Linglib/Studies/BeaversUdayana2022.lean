@@ -88,7 +88,7 @@ languages, but language-specific argument realization strategies
 namespace BeaversUdayana2022
 
 open Semantics.Lexical
-open Fragments.Indonesian.VoiceSystem
+open Indonesian.VoiceSystem
 open Minimalist (VoiceParams VoiceFlavor ExternalArgSemantics)
 open Beavers2010
 open Semantics.ArgumentStructure.Affectedness.Profile (AffectednessDegree)

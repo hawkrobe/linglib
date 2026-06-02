@@ -23,10 +23,10 @@ structure Datapoint (V : Type) where
   walsCode : String
   iso : String
   value : V
-  deriving Repr, DecidableEq
+  deriving DecidableEq, Repr
 
 /-- Look up a language by WALS code. -/
-def Datapoint.lookup {V : Type} [BEq V] (data : List (Datapoint V))
+def Datapoint.lookup {V : Type} (data : List (Datapoint V))
     (code : String) : Option (Datapoint V) :=
   data.find? (·.walsCode == code)
 
@@ -35,7 +35,7 @@ def Datapoint.lookup {V : Type} [BEq V] (data : List (Datapoint V))
 Returns `none` for empty queries: WALS marks a handful of languages with an
 empty `iso` field (e.g. WALS code `tbu`, `aze`), and a naive `find?` on `""`
 would return one of those entries arbitrarily. -/
-def Datapoint.lookupISO {V : Type} [BEq V] (data : List (Datapoint V))
+def Datapoint.lookupISO {V : Type} (data : List (Datapoint V))
     (iso : String) : Option (Datapoint V) :=
   if iso.isEmpty then none
   else data.find? (·.iso == iso)

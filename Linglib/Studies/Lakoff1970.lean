@@ -202,7 +202,7 @@ theorem false_periphrastic_ungrammatical :
 -- § Bridge: Fragment and Theory Connections
 -- ════════════════════════════════════════════════════
 
-open Fragments.English.Tense
+open English.Tense
 open Semantics.Tense.ParticipantPerspective
 open Semantics.Tense
 open Morphology.Tense

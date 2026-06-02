@@ -51,7 +51,7 @@ import Linglib.Semantics.Modality.EpistemicLogic
 namespace Semantics.Presupposition.BeliefEmbedding
 
 open Semantics.Presupposition
-open Discourse.CommonGround
+open CommonGround
 open Semantics.Presupposition.Context
 open Semantics.Presupposition.LocalContext
 
@@ -297,7 +297,7 @@ Both represent the same concept (agent-indexed world accessibility). The
 
 section BoolPropBridge
 
-open Core.Logic.Intensional (AgentAccessRel IsBeliefRefinementOf)
+open Core.Logic.Modal (AgentAccessRel IsBeliefRefinementOf)
 
 variable {W E : Type*}
 

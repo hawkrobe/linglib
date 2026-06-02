@@ -164,7 +164,6 @@ discourse-salient temporal antecedent. This explains the striking contrast:
   German: "Ich habe den Herd nicht ausgeschaltet." ✓ (present perfect ok) -/
 
 open Semantics.Tense.TenseAspectComposition
-open Semantics.Events
 open Semantics.Aspect
 
 /-- Kratzer's English simple past = PRESENT tense + PERFECT aspect.
@@ -210,14 +209,14 @@ theorem english_deictic_german_anaphoric (n : ℕ) :
     present perfect have the SAME compositional semantics. They differ
     only in whether the PERF is morphologically fused or transparent. -/
 theorem english_past_eq_presPerfSimple {W Time : Type*} [LinearOrder Time]
-    (V : EventPred W Time) (tc : Time) (w : W) :
+    (V : W → Event Time → Prop) (tc : Time) (w : W) :
     presPerfSimple V tc w ↔
     ∃ pts : Core.Time.Interval Time, RB pts tc ∧ PRFV V w pts := Iff.rfl
 
 /-- German Preterit maps to `simplePast` from the pipeline: genuine
     past tense (existential over past times) + perfective aspect. -/
 theorem german_preterit_eq_simplePast {W Time : Type*} [LinearOrder Time]
-    (V : EventPred W Time) (tc : Time) (w : W) :
+    (V : W → Event Time → Prop) (tc : Time) (w : W) :
     simplePast V tc w ↔
     ∃ t : Time, t < tc ∧ PRFV V w (Core.Time.Interval.point t) := Iff.rfl
 

@@ -14,10 +14,10 @@ D via Agree.
 The clausal-level derivations live in
 `Studies/BakerVinokurova2010.lean`. This fragment
 records the language-level case inventory and the corresponding
-`CaseSystemConfig` instance, parallel to `Fragments.Mongolian.Case`.
+`CaseSystemConfig` instance, parallel to `Mongolian.Case`.
 -/
 
-namespace Fragments.Yakut.Case
+namespace Yakut.Case
 
 open Syntax.Case
 
@@ -57,7 +57,7 @@ def caseInventory : Finset Features.Case :=
 -- § 3: Contrast with Mongolian
 -- ============================================================================
 
-/-- Sakha vs. Mongolian (cf. `Fragments.Mongolian.Case`): the two
+/-- Sakha vs. Mongolian (cf. `Mongolian.Case`): the two
     languages share `langType`, `nomMode`, `accMode`, and `genMode`
     but differ exclusively in `datMode`. Sakha has dependent DAT
     (assigned by the (4a)/(85) DAT rule); Mongolian has nonstructural
@@ -69,4 +69,4 @@ theorem yakut_vs_mongolian_localized :
     yakutCaseConfig.accMode  = .dependent ∧
     yakutCaseConfig.genMode  = .agreeD := ⟨rfl, rfl, rfl, rfl⟩
 
-end Fragments.Yakut.Case
+end Yakut.Case

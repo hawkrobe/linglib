@@ -47,7 +47,7 @@ Adjacent studies the substrate is shared with:
   highlighting + ⟨A, N⟩ machinery applied to Saraguro Kichwa `=mi`.
   Höhle's German VF and Martínez Vera's `=mi` exemplify the same
   paper-(60) prediction about the focus-account of verum.
-* `Studies/RomeroHan2004.lean` — VERUM as a CG
+* `Studies/RomeroHan2004.lean` — VERUM as a CommonGround
   operator (rather than as focus on the assertion operator).
   R&H's `forSureCG` is the alternative-line analysis that Höhle's
   focus-account contrasts with (paper §6's FAT vs. LOT debate).

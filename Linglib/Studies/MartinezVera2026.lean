@@ -59,7 +59,7 @@ Three empirical signatures:
   divergence theorem showing MV's polar partition `{p, pᶜ}` is in
   general distinct from Romero & Han's verum partition
   `{forSureCG p, ¬forSureCG p}`. Makes the line-a (focus) vs line-b
-  (CG-modal verum operator) split visible at the type level.
+  (CommonGround-modal verum operator) split visible at the type level.
 
 ## Substrate consumed
 
@@ -68,7 +68,7 @@ Three empirical signatures:
 | `Semantics/Composition/Layered` | `BiLayered W` ⟨A, N⟩ pair, three composition rules |
 | `Semantics/Highlighting` | `HighlightingContext`, `Highlighted`, `AddressesQUD` |
 | `Discourse/EvidentialIllocution` | `assert`, `present`, `EvidentialAct`, `raisedPropositions` |
-| `Features/Evidentiality` | `EvidentialSource` (`direct`, `hearsay`, `inference`) |
+| `Features/Evidentiality` | `CoarseSource` (`direct`, `hearsay`, `inference`) |
 | `Semantics/Questions/Hamblin` | `Question.polar` for the polar QUD |
 
 ## Methodological note
@@ -86,7 +86,7 @@ namespace MartinezVera2026
 
 open Semantics.Composition.Layered (BiLayered)
 open Semantics.Highlighting (HighlightingContext Highlighted AddressesQUD addSalient)
-open Features.Evidentiality (EvidentialSource)
+open Features.Evidentiality (CoarseSource)
 open Discourse (DiscourseRole)
 
 variable {W : Type*}
@@ -179,22 +179,22 @@ inductive IllocutionaryFlavour where
   | presentFlavour
   deriving DecidableEq, Repr, Inhabited
 
-def IllocutionaryFlavour.ofEvidentialSource :
-    EvidentialSource → IllocutionaryFlavour
+def IllocutionaryFlavour.ofCoarseSource :
+    CoarseSource → IllocutionaryFlavour
   | .direct => .assertFlavour
   | .hearsay => .presentFlavour
   | .inference => .presentFlavour
 
 @[simp] theorem flavour_direct :
-    IllocutionaryFlavour.ofEvidentialSource .direct = .assertFlavour := rfl
+    IllocutionaryFlavour.ofCoarseSource .direct = .assertFlavour := rfl
 @[simp] theorem flavour_hearsay :
-    IllocutionaryFlavour.ofEvidentialSource .hearsay = .presentFlavour := rfl
+    IllocutionaryFlavour.ofCoarseSource .hearsay = .presentFlavour := rfl
 @[simp] theorem flavour_inference :
-    IllocutionaryFlavour.ofEvidentialSource .inference = .presentFlavour := rfl
+    IllocutionaryFlavour.ofCoarseSource .inference = .presentFlavour := rfl
 
-def applyDefault (src : EvidentialSource) (s a : DiscourseRole) (β : BiLayered W) :
+def applyDefault (src : CoarseSource) (s a : DiscourseRole) (β : BiLayered W) :
     EvidentialAct W :=
-  match IllocutionaryFlavour.ofEvidentialSource src with
+  match IllocutionaryFlavour.ofCoarseSource src with
   | .assertFlavour => assert s a β
   | .presentFlavour => present s a β
 
@@ -370,7 +370,7 @@ For the polar alternative-set case `{β.atIssue, β.atIssueᶜ}`, MV's
 `¬β.atIssue` be highlighted in the context. This makes the agreement
 between the focus-on-polarity (Höhle) and focus-marker (MV) accounts
 explicit at the type level. The disagreement with @cite{romero-han-2004}'s
-CG-modal verum surfaces as the partition divergence in §6 below.
+CommonGround-modal verum surfaces as the partition divergence in §6 below.
 -/
 
 /-- For the polar alternative-set case **with contingent scope**, MV's
@@ -434,7 +434,7 @@ theorem mi_eq_hohle_as_verumOperator
 
 /-! ### § 6. Cross-framework divergence: MV's partition vs R&H's verum partition
 
-Romero & Han 2004 analyse verum as a CG-modal operator `forSureCG`
+Romero & Han 2004 analyse verum as a CommonGround-modal operator `forSureCG`
 producing an *unbalanced* polar partition `{forSureCG p, ¬forSureCG p}`
 (line-b account). MV implicitly takes a line-a (focus over polarity)
 position: the partition over which `=mi` operates is the standard polar

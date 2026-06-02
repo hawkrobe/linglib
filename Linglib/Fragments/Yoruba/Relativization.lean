@@ -1,5 +1,5 @@
-import Linglib.Core.Relativization.Basic
-import Linglib.Typology.Relativization.Defs
+import Linglib.Typology.RelativeClause.Basic
+import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Yoruba Relativization Fragment
@@ -34,9 +34,9 @@ Data from @cite{awobuluyi-1978} §6.18–6.24, §3.15 + @cite{keenan-comrie-1979
 ex. 125–128.
 -/
 
-namespace Fragments.Yoruba
+namespace Yoruba
 
-open Core
+open RelativeClause
 
 /-- §6.19: Subject relativization. The relativized subject is replaced by the
     high-tone third-person singular pronoun `ó`.
@@ -44,7 +44,7 @@ open Core
     `bearsCaseMarking := false` per @cite{keenan-comrie-1979}'s analysis of
     `ó` as verb agreement (K&C 1977 Table 1 p. 79 codes Yoruba's SU-strategy
     as -case). -/
-def relTiSubject : RelClauseMarker :=
+def relTiSubject : Marker :=
   { form := "tí + ó"
   , npRel := .resumptive
   , bearsCaseMarking := false
@@ -59,7 +59,7 @@ def relTiSubject : RelClauseMarker :=
 /-- §6.20: Direct object relativization. The relativized object is dropped
     completely (gap strategy).
     E.g. `Ọkùnrin tí mo rí` 'the man I saw'. -/
-def relTiObject : RelClauseMarker :=
+def relTiObject : Marker :=
   { form := "tí + ∅"
   , npRel := .gap
   , bearsCaseMarking := false
@@ -75,10 +75,10 @@ def relTiObject : RelClauseMarker :=
     object completely (gap, §6.21); the preposition `ní` triggers complex
     restructuring (drop + repositioning, with `tí` insertion for place
     nouns and exceptions for `wà`/`gbé`, §6.22). The single-cell
-    `RelClauseMarker.npRel` cannot encode the split, so we record the
+    `Marker.npRel` cannot encode the split, so we record the
     dominant pattern (`gap`) and document the `ní` case in `notes`.
     E.g. `Ọbẹ tí mo fi gé e` 'the knife I cut it with'. -/
-def relTiOblique : RelClauseMarker :=
+def relTiOblique : Marker :=
   { form := "tí + ∅ (5 preps); tí + restructuring (ní)"
   , npRel := .gap
   , bearsCaseMarking := false
@@ -101,7 +101,7 @@ def relTiOblique : RelClauseMarker :=
     +case, GEN=+). The genitive-form pronouns `rẹ̀`/`wọn` are morphologically
     distinct from subject `ó` and object `i`/`un`/`ó`, so per Awobuluyi §2.21's
     polymorphic-noun classification they encode their case role lexically. -/
-def relTiGenitive : RelClauseMarker :=
+def relTiGenitive : Marker :=
   { form := "tí + rẹ̀/wọn"
   , npRel := .resumptive
   , bearsCaseMarking := true
@@ -117,11 +117,11 @@ def relTiGenitive : RelClauseMarker :=
 /-- All Yoruba relative clause markers, anchored to @cite{awobuluyi-1978}
     §6.19–6.23 + @cite{keenan-comrie-1979} ex. 125–128. All four share the
     introducer `tí` (high tone, §6.18). -/
-def relMarkers : List RelClauseMarker :=
+def relMarkers : List Marker :=
   [relTiSubject, relTiObject, relTiOblique, relTiGenitive]
 
 /-- Yoruba relativization profile (typological summary). -/
-def relativization : Typology.Relativization.RelativizationProfile :=
+def relativization : RelativeClause.Profile :=
   { subjStrategy := .pronounRetention
   , oblStrategy := .gap
   , rcPosition := .postNominal
@@ -133,4 +133,4 @@ def relativization : Typology.Relativization.RelativizationProfile :=
           ++ "drop+repositioning (complexity not captured by oblStrategy field); "
           ++ "§6.23 GEN resumption (rẹ̀/wọn). Matches WALS F122A pronounRetention." }
 
-end Fragments.Yoruba
+end Yoruba

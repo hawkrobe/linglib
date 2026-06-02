@@ -31,9 +31,6 @@ specific entries from here and contribute precondition theorems that
 break if the morphological classification changes. Consumers (as of
 the last audit):
 
-- Word-order / inversion: `Studies/{SagWasowBender2003,
-  Adger2003}`, `Syntax/Minimalism/Inversion.lean`,
-  `Syntax/HPSG/Inversion.lean`
 - Modality: `Studies/{Ferreira2023, Rubinstein2014,
   CarianiSantorio2018, AghaJeretic2022, AghaJeretic2026,
   CiardelliGuerrini2026, ImelGuoST2026, LiuRotter2025,
@@ -46,11 +43,11 @@ the last audit):
   side, indirectly)
 
 To find every claim made about a particular entry, grep for
-`Fragments.English.Auxiliaries.<entry>` across `Phenomena/` and
+`English.Auxiliaries.<entry>` across `Phenomena/` and
 `Theories/`.
 -/
 
-namespace Fragments.English.Auxiliaries
+namespace English.Auxiliaries
 
 section Modals
 open Semantics.Modality (ForceFlavor ModalForce ModalFlavor ModalInterpretability ModalFeature)
@@ -332,4 +329,4 @@ end ModalAdverbs
     Used in infinitival complements: "John managed to sleep". -/
 def toInf : Word := Word.mk' "to" .PART
 
-end Fragments.English.Auxiliaries
+end English.Auxiliaries

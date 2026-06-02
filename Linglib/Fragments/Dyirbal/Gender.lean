@@ -13,7 +13,7 @@ biological sex. The Corbett 1991 view is a per-Study override at
 `Studies/Corbett1991.lean`.
 -/
 
-namespace Fragments.Dyirbal.Gender
+namespace Dyirbal.Gender
 
 open Typology.Gender
 
@@ -32,4 +32,4 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "dbl" ∧ genderTypology.name = "Dyirbal" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Dyirbal.Gender
+end Dyirbal.Gender

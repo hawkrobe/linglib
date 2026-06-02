@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Selection
 import Linglib.Syntax.Minimalist.CategorialFeatures
 import Linglib.Semantics.Attitudes.ClauseDenotation.Content
 import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 import Linglib.Studies.Bondarenko2022
 import Linglib.Fragments.Greek.StandardModern.Complementizers
 
@@ -111,7 +111,6 @@ complement *pu* from v_State.
 namespace Angelopoulos2026
 
 open Minimalist
-open Semantics.Lexical (VerbCore)
 open Semantics.Attitudes (ContentIndividual)
 open Semantics.Attitudes.ClauseDenotation.Content (compC ContentNoun)
 open Semantics.Attitudes.ClauseDenotation.Situation
@@ -119,7 +118,7 @@ open Semantics.Attitudes.ClauseDenotation.Situation
 open Bondarenko2022
   (NominalSort transparentSSMapping ClauseStructurePath
    bare_argument_predicted_impossible)
-open Fragments.Greek.StandardModern.Complementizers (GreekComplementizer)
+open Greek.StandardModern.Complementizers (GreekComplementizer)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Studies-local apparatus
@@ -461,7 +460,7 @@ theorem angelopoulos_refutes_selection_argument_only
     However, **content/situation selection is not currently a
     Fragment field** — per integration auditor N3, it is paper-
     specific apparatus that lives in this Studies file rather than
-    in `VerbCore`. Without a Fragment field, the orthogonality
+    in `Verb`. Without a Fragment field, the orthogonality
     theorem can only state a *Vendler-stativity* witness, which is
     a proxy for situation-selection (since *pu*-complements
     require stative matrix predicates per Puzzle 3) but not
@@ -472,10 +471,10 @@ theorem angelopoulos_refutes_selection_argument_only
     selection requires a Fragment-level `selectsClauseSort` field,
     queued for a follow-up substrate refactor. -/
 theorem preferential_stative_verb_exists :
-    ∃ (v : VerbCore),
+    ∃ (v : Verb),
       (∃ p, v.attitude = some (.preferential p)) ∧
       v.vendlerClass = some .state :=
-  ⟨Fragments.Greek.StandardModern.Complementizers.metaniono,
+  ⟨Greek.StandardModern.Complementizers.metaniono,
    ⟨_, rfl⟩, rfl⟩
 
 /-- And a (doxastic, stative) verb — *pistévo* 'believe'. The
@@ -485,10 +484,10 @@ theorem preferential_stative_verb_exists :
     (content), this is the closest we can come to the orthogonality
     claim without a `selectsClauseSort` Fragment field. -/
 theorem doxastic_stative_verb_exists :
-    ∃ (v : VerbCore),
+    ∃ (v : Verb),
       (∃ vd, v.attitude = some (.doxastic vd)) ∧
       v.vendlerClass = some .state :=
-  ⟨Fragments.Greek.StandardModern.Complementizers.pistevo,
+  ⟨Greek.StandardModern.Complementizers.pistevo,
    ⟨_, rfl⟩, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════

@@ -28,7 +28,7 @@ inductive PresenceOfUncommonConsonants where
   | clicksPharyngealsAndTh
   /-- Pharyngeals and "th" (2 languages). -/
   | pharyngealsAndTh
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint PresenceOfUncommonConsonants) :=
   [ { walsCode := "xoo", iso := "nmn", value := .clicks }
@@ -607,9 +607,9 @@ private def allData_1 : List (Datapoint PresenceOfUncommonConsonants) :=
 def allData : List (Datapoint PresenceOfUncommonConsonants) := allData_0 ++ allData_1
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint PresenceOfUncommonConsonants) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint PresenceOfUncommonConsonants) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F19A

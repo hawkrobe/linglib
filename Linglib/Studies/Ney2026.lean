@@ -24,7 +24,7 @@ argument), and resolves the challenge by reading the conception of
 reasonableness as the *intersection* of the interlocutors' individual
 belief-sets — equivalently, the *union* of the hearer-profiles each
 agent counts as reasonable (§4 p. 22, revised statement p. 24). The
-union is not CG-accessible because membership in it requires private
+union is not CommonGround-accessible because membership in it requires private
 knowledge of either individual conception.
 
 ## Encoding choice (relative to @cite{ney-2026} pp. 22, 24)
@@ -49,7 +49,7 @@ closures (∧-intro vs universal lift). We pick the hearer-profile
 encoding because it matches the verbatim revised statement and makes
 Ney's resolution structurally explicit: the *membership* facts for
 `RS ⊔ RH` require private knowledge of either RS or RH individually,
-hence are not CG-transparent, hence the `<ONE>`-`<FOUR>` chain breaks.
+hence are not CommonGround-transparent, hence the `<ONE>`-`<FOUR>` chain breaks.
 
 ## What this file formalizes vs. what it doesn't
 
@@ -64,14 +64,14 @@ the intent is absent — @cite{ney-2026} §2 (17), the 4chan
 triple-parentheses case).
 
 The §3 prima-facie challenge is formalized abstractly:
-`prima_facie_challenge` takes `inCG : Prop → Prop` and a CG-transparency
+`prima_facie_challenge` takes `inCG : Prop → Prop` and a CommonGround-transparency
 hypothesis on the conception. Substantive Ney soundness — that the
-resolution holds under a *realistic* CG operator derived from
-`commonBelief` (@cite{stalnaker-2002}) — requires a `CG.toAgentAccess :
-CG W → AgentAccessRel W E` bridge in `Discourse/CommonGround.lean`
+resolution holds under a *realistic* CommonGround operator derived from
+`commonBelief` (@cite{stalnaker-2002}) — requires a `CommonGround.toAgentAccess :
+CommonGround W → AgentAccessRel W E` bridge in `Discourse/CommonGround.lean`
 that does not yet exist. Until that bridge lands, the resolution
 theorems are witnessed by toy operators (a degenerate `inCG := · = True`
-that distinguishes intersection-CG-transparency from union-CG-transparency
+that distinguishes intersection-CommonGround-transparency from union-CommonGround-transparency
 on a small carrier).
 
 ## Distinguishing the phenomenon (Ney 2026 §2)
@@ -103,7 +103,7 @@ language* per @cite{beaver-stanley-2023}.
 ## Substrate primitives this file leans on (with citations)
 
 Imports `Reference.Basic` (@cite{kaplan-1989}'s Character/Content +
-@cite{almog-2014}'s ReferentialProfile) and `Discourse.CommonGround`
+@cite{almog-2014}'s ReferentialProfile) and `CommonGround`
 (@cite{stalnaker-2002}'s context set). `SpeakerIntention.intendedRef`
 parallels @cite{donnellan-1966}'s referential-use intended object;
 the broader speaker-intent structure connects to @cite{searle-1983}
@@ -120,7 +120,7 @@ intentional states (not unified here).
    `C → E → Prop`.
 2. `inCG : Prop → Prop` (here taken as hypothesis) should connect to
    `commonBelief` in `Semantics/Modality/EpistemicLogic.lean`
-   once a `CG.toAgentAccess` bridge exists.
+   once a `CommonGround.toAgentAccess` bridge exists.
 3. `SpeakerIntention.intendedRef` parallel-stipulates with
    `Donnellan.DefiniteDescription.intendedRef`; not unified.
 
@@ -138,7 +138,7 @@ the §5 conclusion proposes the broader "insinuative speech" terminology.
 
 namespace Ney2026
 
-open Semantics.Reference.Basic Discourse.CommonGround
+open Semantics.Reference.Basic CommonGround
 
 /-! ## §1. Metasemantic apparatus -/
 
@@ -189,8 +189,8 @@ abbrev ConceptionOfReasonableness (C W E : Type*) :=
 /-- A *metasemantics of demonstratives*: a recipe assigning each
 speaker intention a success Prop.
 
-`Account` is intentionally CG-free (no `CG W` parameter): in
-@cite{ney-2026}'s argument the CG-availability of the success-fact is
+`Account` is intentionally CommonGround-free (no `CommonGround W` parameter): in
+@cite{ney-2026}'s argument the CommonGround-availability of the success-fact is
 the load-bearing modal claim, formalized via the abstract `inCG`
 operator on the `prima_facie_challenge` theorem rather than threaded
 through every account-application. -/
@@ -314,45 +314,45 @@ paraphrased):
 > ⟨ONE⟩  A reasonable hearer would recognize the speaker's intention
 >         to make the unavowed referent the semantic value of the
 >         insinuatively-used supplementive (i.e., (B) is satisfied).
-> ⟨TWO⟩  It is in CG that the actual hearer is competent, reasonable,
+> ⟨TWO⟩  It is in CommonGround that the actual hearer is competent, reasonable,
 >         and attentive (assumption).
-> ⟨THREE⟩ It is in CG that the actual hearer recognizes that intention
+> ⟨THREE⟩ It is in CommonGround that the actual hearer recognizes that intention
 >         (from ONE + TWO).
-> ⟨FOUR⟩  It is in CG that the unavowed referent is the semantic value
+> ⟨FOUR⟩  It is in CommonGround that the unavowed referent is the semantic value
 >         (from ONE + THREE).
 
 @cite{ney-2026} §3 (p. 17) shows two independent empirical claims that
 the chain's conclusions contradict:
 
-- **(iia)**: post-utterance, it is NOT in CG that the unavowed referent
+- **(iia)**: post-utterance, it is NOT in CommonGround that the unavowed referent
   IS the semantic value of the insinuatively-used supplementive.
   Witnessed by paper dialogues (2.2)-(2.5) (pp. 16–17): a hearer's
   indication of recognizing the semantic value licenses inferences
   about the hearer that wouldn't be felicitous if the recognition
-  were already CG. ⟨FOUR⟩ contradicts (iia).
+  were already CommonGround. ⟨FOUR⟩ contradicts (iia).
 
-- **(iib)**: post-utterance, it is NOT in CG that the speaker had the
+- **(iib)**: post-utterance, it is NOT in CommonGround that the speaker had the
   unavowed referential intention. Witnessed by paper dialogues
   (2.6)-(2.9): a hearer's indication of recognizing the speaker's
   intention licenses parallel inferences. ⟨THREE⟩ contradicts (iib).
 
 In our encoding, `coordination R s = ∀ h ∈ R, h s` packages "every
-reasonable hearer recognizes" (= ⟨THREE⟩ when in CG, contra (iib))
-together with "success" (= ⟨FOUR⟩ when in CG, contra (iia)) — King's
+reasonable hearer recognizes" (= ⟨THREE⟩ when in CommonGround, contra (iib))
+together with "success" (= ⟨FOUR⟩ when in CommonGround, contra (iia)) — King's
 biconditional makes them definitionally the same Prop. The empirical
 distinction between (iia) and (iib) is therefore documented at this
 level rather than encoded as separate Lean propositions.
 
 The chain only goes through if the universal "every reasonable hearer
 recognizes" claim — i.e., `coordination R s` for the relevant
-conception R — is itself in CG. Under King's "objector" reading
+conception R — is itself in CommonGround. Under King's "objector" reading
 (R = RS ⊓ RH), this is plausible: the intersection of belief-sets is
 publicly knowable. Under Ney's revision (R = RS ⊔ RH), it is *not*:
 membership in `RS ∪ RH` requires private knowledge of either
 individual conception. This is the asymmetry §5 below witnesses. -/
 
 /-- Trivial form: if the universal recognition fact `coordination R s`
-is in CG, then it's in CG. The substantive Ney content is in *which
+is in CommonGround, then it's in CommonGround. The substantive Ney content is in *which
 R* makes this premise plausible — see `prima_facie_inter_witness` and
 `prima_facie_union_failure_witness` in §5. -/
 theorem prima_facie_challenge {C W E : Type*}
@@ -363,23 +363,23 @@ theorem prima_facie_challenge {C W E : Type*}
     inCG (coordination R s) :=
   transparent
 
-/-! ## §5. Ney's resolution: intersection is CG-transparent, union is not
+/-! ## §5. Ney's resolution: intersection is CommonGround-transparent, union is not
 
 @cite{ney-2026}'s §4 resolution (pp. 22–24): the conception of
 reasonableness as the union of agents' hearer-profile-sets is *not*
-CG-accessible — knowing whether a hearer is in `RS ∪ RH` requires
+CommonGround-accessible — knowing whether a hearer is in `RS ∪ RH` requires
 private knowledge of either RS or RH individually. The intersection,
 by contrast, is the publicly-shared part of the conceptions and is
-CG-accessible.
+CommonGround-accessible.
 
 We exhibit this asymmetry as a single concrete model: a degenerate
 `inCG := (· = True)` operator (only logically-true propositions count
-as "in CG") that returns `True` for the vacuous intersection-success
+as "in CommonGround") that returns `True` for the vacuous intersection-success
 and `False` for the non-vacuous union-failure on a hand-built witness.
 
 CAVEAT: This is a toy operator. The substantive Ney claim — that the
-asymmetry holds under a *realistic* CG operator derived from
-`commonBelief` (@cite{stalnaker-2002}) — requires the `CG.toAgentAccess`
+asymmetry holds under a *realistic* CommonGround operator derived from
+`commonBelief` (@cite{stalnaker-2002}) — requires the `CommonGround.toAgentAccess`
 bridge that does not yet exist. -/
 
 /-- A minimal speaker-intention witness over `Bool`: speaker `false`,
@@ -395,12 +395,12 @@ private def boolWitness : SpeakerIntention Unit Unit Bool where
 private def alwaysRejectsProfile : HearerProfile Unit Unit Bool :=
   fun _ => False
 
-/-- The asymmetry @cite{ney-2026} §4 hinges on: there exists a CG
+/-- The asymmetry @cite{ney-2026} §4 hinges on: there exists a CommonGround
 operator and a pair of conceptions where the intersection-success
-*is* in CG while the union-success *is not*. Witness: `inCG := id`
+*is* in CommonGround while the union-success *is not*. Witness: `inCG := id`
 (the trivial nonempty operator), `RS = ∅`, `RH = {alwaysRejectsProfile}`.
 The intersection is empty (success vacuous); the union contains a
-hearer that rejects the intention (success false, not in CG). -/
+hearer that rejects the intention (success false, not in CommonGround). -/
 theorem coordination_inter_in_cg_but_union_not :
     ∃ (inCG : Prop → Prop)
       (RS RH : ConceptionOfReasonableness Unit Unit Bool)
@@ -421,7 +421,7 @@ fails (the union contains a non-recognizing hearer).
 
 CAVEAT: This extensional gap is incidental to @cite{ney-2026}'s
 substantive argument — Ney does not appeal to it. Ney's actual
-argument is at the CG-availability level (§5 above), not the truth
+argument is at the CommonGround-availability level (§5 above), not the truth
 level. The gap witness is included only to demonstrate that the two
 account-shapes differ extensionally; it is *not* a model of any
 @cite{ney-2026} sentence (in his canonical examples both interlocutors
@@ -495,7 +495,7 @@ theorem anaphora_discriminator_ney_revision {C W E : Type*}
 In @cite{ney-2026}'s canonical examples, the speaker uses a
 demonstrative in a context licensing both an avowable referent and
 an unavowed referent; both interlocutors in fact recognize the
-unavowed intention (the deniability lives at CG-availability, see §5
+unavowed intention (the deniability lives at CommonGround-availability, see §5
 above). We model this with a permissive hearer-profile that recognizes
 the unavowed-or-avowable intention, attributed to both RS and RH. -/
 
@@ -636,7 +636,7 @@ theorem all_four_examples_have_insinuative_structure :
 /-- All four canonical sentences are jointly successful under both
 King's objector reconstruction (intersection) and Ney's revision
 (union) — the hearer in fact recognizes the unavowed intention; both
-conceptions cover. The discriminator is at the CG-availability level
+conceptions cover. The discriminator is at the CommonGround-availability level
 — see §4–§5 above. -/
 theorem all_four_examples_are_jointly_successful :
     (coordination (Sentence1.scenario.RS ⊓ Sentence1.scenario.RH)
@@ -750,7 +750,7 @@ disambiguation) but does NOT admit felicitous deniability. The
 first-pass response cannot distinguish them, hence over-generates.
 Ney's positive proposal (§5 above) localizes the asymmetry differently:
 the *conception* of reasonableness — specifically `RS ⊔ RH` — is not
-CG-accessible.
+CommonGround-accessible.
 
 The current encoding cannot fully express the empirical asymmetry
 ("Lennon has the structure but lacks deniability") because the

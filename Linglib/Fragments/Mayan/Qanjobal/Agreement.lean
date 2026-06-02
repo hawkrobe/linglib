@@ -40,7 +40,7 @@ Despite this morphological difference, the alignment behavior is the
 same: split ergativity in any clause without an overt preverbal aspect
 marker (per @cite{mateo-toledo-2008} §1.1.1, citing Mateo 2004a/2007b),
 attributed to nominalization following Larsen & Norman 1979. The shared
-case-assignment table in `Fragments.Mayan.caseExtErg` captures the
+case-assignment table in `Mayan.caseExtErg` captures the
 *alignment* convergence, not the *morpheme-class* convergence.
 
 ## Descriptive vs analytical framing of the non-perfective pattern
@@ -68,9 +68,9 @@ common-inheritance unit), which is why the substrate is named
 language family.
 -/
 
-namespace Fragments.Mayan.Qanjobal
+namespace Qanjobal
 
-open Fragments.Mayan (PersonNumber)
+open Mayan (PersonNumber)
 
 -- ============================================================================
 -- § 1: Argument Positions (alias to canonical SAP type)
@@ -83,14 +83,14 @@ open Fragments.Mayan (PersonNumber)
 abbrev ArgPosition := Features.Prominence.ArgumentRole
 
 /-- Perfective case assignment for Q'anjob'al. Shared with Chol via
-    `Fragments.Mayan.ergCaseQanjobalan` (= `Alignment.ergative.assignCase`). -/
-abbrev ArgPosition.case : ArgPosition → Features.Case := Fragments.Mayan.ergCaseQanjobalan
+    `Mayan.ergCaseQanjobalan` (= `Alignment.ergative.assignCase`). -/
+abbrev ArgPosition.case : ArgPosition → Features.Case := Mayan.ergCaseQanjobalan
 
 /-- Non-perfective case assignment for Q'anjob'al. Shared with Chol via
-    `Fragments.Mayan.accCaseQanjobalan` (= `Alignment.extendedErgative.assignCase`).
+    `Mayan.accCaseQanjobalan` (= `Alignment.extendedErgative.assignCase`).
     The shared substrate makes the Chol/Q'anjob'al accusative-side parallel
     explicit by construction rather than coincidentally true. -/
-abbrev ArgPosition.accCase : ArgPosition → Features.Case := Fragments.Mayan.accCaseQanjobalan
+abbrev ArgPosition.accCase : ArgPosition → Features.Case := Mayan.accCaseQanjobalan
 
 -- ============================================================================
 -- § 2: Absolutive Position (HIGH-ABS)
@@ -99,7 +99,7 @@ abbrev ArgPosition.accCase : ArgPosition → Features.Case := Fragments.Mayan.ac
 /-- Q'anjob'al's absolutive morphemes appear in high position (on the
     aspect marker, pre-stem). Observable from morpheme order:
     ASP-ABS-ERG-ROOT-SUFFIX. -/
-def absPosition : Fragments.Mayan.ABSPosition := .high
+def absPosition : Mayan.ABSPosition := .high
 
 -- ============================================================================
 -- § 3: Person-Number Paradigm (table (13))
@@ -147,4 +147,4 @@ theorem p3sg_abs_null : setBExponent .p3sg = "-∅" := rfl
 theorem p3sg_erg_allomorphy :
     setAExponentPreC .p3sg = "s-" ∧ setAExponentPreV .p3sg = "y-" := ⟨rfl, rfl⟩
 
-end Fragments.Mayan.Qanjobal
+end Qanjobal

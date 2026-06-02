@@ -28,7 +28,7 @@ framework applied to Turkish.
 namespace GokselKerslake2005
 
 open Semantics.Tense.Evidential
-open Fragments.Turkish.TAM
+open Turkish.TAM
 
 -- ============================================================================
 -- § 1: EP/UP assignments for Turkish TAM

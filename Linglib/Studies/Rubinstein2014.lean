@@ -764,46 +764,46 @@ modals by force. We verify that these classifications match Rubinstein's
 force assignments: *should*/*ought* are weak necessity (comparative class),
 *must* is strong necessity (non-comparative). -/
 
-open Fragments.English.Auxiliaries
+open English.Auxiliaries
 
 /-- The English fragment classifies *should* as weak necessity,
     matching its membership in the evaluative comparative class. -/
 theorem fragment_should_weak :
-    Fragments.English.Auxiliaries.should.modalMeaning.any
+    English.Auxiliaries.should.modalMeaning.any
       (·.force == .weakNecessity) = true := by native_decide
 
 /-- The English fragment classifies *ought* as weak necessity. -/
 theorem fragment_ought_weak :
-    Fragments.English.Auxiliaries.ought.modalMeaning.any
+    English.Auxiliaries.ought.modalMeaning.any
       (·.force == .weakNecessity) = true := by native_decide
 
 /-- The English fragment classifies *must* as strong necessity. -/
 theorem fragment_must_strong :
-    Fragments.English.Auxiliaries.must.modalMeaning.any
+    English.Auxiliaries.must.modalMeaning.any
       (·.force == .necessity) = true := by native_decide
 
 /-- *must* is NOT classified as weak necessity — confirming it is
     outside the evaluative comparative natural class. -/
 theorem fragment_must_not_weak :
-    Fragments.English.Auxiliaries.must.modalMeaning.any
+    English.Auxiliaries.must.modalMeaning.any
       (·.force == .weakNecessity) = false := by native_decide
 
 /-- *should* is NOT classified as strong necessity — confirming the
     asymmetry: comparative class members have strictly weaker force. -/
 theorem fragment_should_not_strong :
-    Fragments.English.Auxiliaries.should.modalMeaning.any
+    English.Auxiliaries.should.modalMeaning.any
       (·.force == .necessity) = false := by native_decide
 
 /-- *need* is classified as strong necessity — matching its exclusion
     from the evaluative comparative class (§2.1.2, note 14). -/
 theorem fragment_need_strong :
-    Fragments.English.Auxiliaries.need.modalMeaning.any
+    English.Auxiliaries.need.modalMeaning.any
       (·.force == .necessity) = true := by native_decide
 
 /-- *need* is NOT classified as weak necessity — confirming it fails
     the scalar tests (examples 16, 18–19). -/
 theorem fragment_need_not_weak :
-    Fragments.English.Auxiliaries.need.modalMeaning.any
+    English.Auxiliaries.need.modalMeaning.any
       (·.force == .weakNecessity) = false := by native_decide
 
 end Rubinstein2014

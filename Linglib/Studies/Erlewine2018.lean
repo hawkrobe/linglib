@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.HeadFunction
 import Linglib.Fragments.TobaBatak.Basic
 import Linglib.Fragments.TobaBatak.Relativization
-import Linglib.Typology.Relativization.ExtractionBridge
+import Linglib.Typology.RelativeClause.Basic
 import Linglib.Syntax.Minimalist.Position
 import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Syntax.Minimalist.Movement.Remnant
@@ -73,7 +73,7 @@ Position.lean:
 
 namespace Erlewine2018
 
-open Fragments.TobaBatak
+open TobaBatak
 open ColeHermon2008 (v_mangatuk n_biangi n_dakdanakan vp tobaBatakVOS)
 open Minimalist
 
@@ -171,7 +171,7 @@ theorem tb_distinguishes :
 /-! Connects three independent data sources through the AH bridge:
 1. Individual extraction datums (from @cite{erlewine-2018})
 2. The ExtractionProfile summary (markedPositions)
-3. RelClauseMarkers (from @cite{keenan-comrie-1977})
+3. Relative-clause markers (from @cite{keenan-comrie-1977})
 
 If any link is wrong — e.g., listing `.directObject` as extractable when
 relativization markers don't cover DO — the chain breaks.
@@ -198,8 +198,8 @@ theorem profile_matches_data :
     position that is covered by some Toba Batak relativization marker. -/
 theorem extractable_positions_are_relativizable :
     tbExtractionProfile.markedPositions.all (λ et =>
-      let ahPos := Typology.Relativization.extractionTargetToAH et
-      relMarkers.any (·.covers ahPos)) = true := by
+      let ahPos := RelativeClause.extractionTargetToAH et
+      relMarkers.any (fun m => decide (m.Covers ahPos))) = true := by
   decide
 
 /-- Full chain (all three links as a single conjunction). -/
@@ -213,8 +213,8 @@ theorem extraction_profile_relativization_chain :
     (tbExtractionProfile.Marks .subject) ∧
     -- Link 3: every marked position is relativizable via AH
     (tbExtractionProfile.markedPositions.all (λ et =>
-      let ahPos := Typology.Relativization.extractionTargetToAH et
-      relMarkers.any (·.covers ahPos))) := by
+      let ahPos := RelativeClause.extractionTargetToAH et
+      relMarkers.any (fun m => decide (m.Covers ahPos)))) := by
   decide
 
 -- ============================================================================
@@ -229,7 +229,7 @@ theorem extraction_profile_relativization_chain :
       Spec,TP) before Ā-extraction.
     - Non-DP adjuncts: always grammatical, because adjuncts don't need
       Case licensing. -/
-def predictExtraction (voice : Fragments.TobaBatak.Voice) (extractee : Typology.Extractee) :
+def predictExtraction (voice : TobaBatak.Voice) (extractee : Typology.Extractee) :
     ExtractionJudgment :=
   match extractee with
   | .adjunct => .grammatical
@@ -317,7 +317,7 @@ theorem structural_grounding :
 
 /-- The nominal licensing analysis predicts non-DPs extract freely. -/
 theorem nonDP_unrestricted :
-    ∀ v : Fragments.TobaBatak.Voice,
+    ∀ v : TobaBatak.Voice,
       predictExtraction v .adjunct = .grammatical := by
   intro v; rfl
 

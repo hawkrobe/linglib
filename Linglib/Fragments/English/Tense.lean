@@ -29,7 +29,7 @@ evidential constraints to Lakoff's false-tense diagnostic.
 
 -/
 
-namespace Fragments.English.Tense
+namespace English.Tense
 
 open Semantics.Tense.Evidential
 
@@ -208,4 +208,4 @@ theorem lakoff_kratzer_diverge :
     simplePastPerspective.gramTense = GramTense.past ∧
     kratzerSimplePast.tensePronoun.constraint = GramTense.present := ⟨rfl, rfl⟩
 
-end Fragments.English.Tense
+end English.Tense

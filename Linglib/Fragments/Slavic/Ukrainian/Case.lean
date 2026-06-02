@@ -9,11 +9,11 @@ Per @cite{shevelov-1993} (p. 956), Ukrainian preserves the original
 productive vocative — robust in the singular (батько → батьку,
 син → сину, хлопець → хлопче), eroded in the plural except for
 панове/panove 'gentlemen'. `caseInventory` aliases the shared 6-case
-core; `Fragments.Slavic.Case.sevenCaseInventory` carries the +VOC form.
+core; `Slavic.Case.sevenCaseInventory` carries the +VOC form.
 -/
 
-namespace Fragments.Slavic.Ukrainian.Case
+namespace Ukrainian.Case
 
-abbrev caseInventory : Finset Features.Case := Fragments.Slavic.Case.coreInventory
+abbrev caseInventory : Finset Features.Case := Slavic.Case.coreInventory
 
-end Fragments.Slavic.Ukrainian.Case
+end Ukrainian.Case

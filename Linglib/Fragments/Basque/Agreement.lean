@@ -25,7 +25,7 @@ person objects are not.
 
 -/
 
-namespace Fragments.Basque.Agreement
+namespace Basque.Agreement
 
 open Features.Prominence
 
@@ -121,4 +121,4 @@ def fullCaseInventory : Finset Features.Case :=
 -- all represented).
 example : Features.Case.IsValidInventory fullCaseInventory := by decide
 
-end Fragments.Basque.Agreement
+end Basque.Agreement

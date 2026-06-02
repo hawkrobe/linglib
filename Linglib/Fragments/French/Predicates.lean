@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 
 /-!
 # French Predicate Lexicon Fragment
@@ -14,15 +14,15 @@ despite being separate words.
 
 -/
 
-namespace Fragments.French.Predicates
+namespace French.Predicates
 
 open Semantics.Lexical
 open Features (Causative)
 open Semantics.ArgumentStructure.EntailmentProfile
   (EntailmentProfile kickSubjectProfile seeSubjectProfile runSubjectProfile)
 
-/-- French verb entry: extends VerbCore with French inflectional paradigm. -/
-structure FrenchVerbEntry extends VerbCore where
+/-- French verb entry: extends Verb with French inflectional paradigm. -/
+structure FrenchVerbEntry extends Verb where
   /-- 3sg present -/
   form3sg : String
   /-- Passé simple -/
@@ -374,4 +374,4 @@ def allVerbs : List FrenchVerbEntry :=
 def lookup (form : String) : Option FrenchVerbEntry :=
   allVerbs.find? (·.form == form)
 
-end Fragments.French.Predicates
+end French.Predicates

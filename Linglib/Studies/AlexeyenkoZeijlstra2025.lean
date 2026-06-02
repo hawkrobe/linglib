@@ -436,57 +436,57 @@ def english_enough : AdjMorphProfile :=
 
 /-- Greek: fragment entry confirms pred = attr agreement. -/
 theorem greek_fragment_sameAgreement :
-    Fragments.Greek.StandardModern.AdjAgreement.entry.sameAgreement = true := by native_decide
+    Greek.StandardModern.AdjAgreement.entry.sameAgreement = true := by native_decide
 
 /-- Greek: fragment entry confirms φ/κ-completeness. -/
 theorem greek_fragment_phiKappaComplete :
-    Fragments.Greek.StandardModern.AdjAgreement.entry.phiKappaComplete = true := by native_decide
+    Greek.StandardModern.AdjAgreement.entry.phiKappaComplete = true := by native_decide
 
 /-- Greek profile is consistent with fragment: pred = attr. -/
 theorem greek_profile_consistent_pred :
     greek.predAttrSameAgreement =
-    Fragments.Greek.StandardModern.AdjAgreement.entry.sameAgreement := by native_decide
+    Greek.StandardModern.AdjAgreement.entry.sameAgreement := by native_decide
 
 /-- Greek profile is consistent with fragment: φ/κ-complete. -/
 theorem greek_profile_consistent_phikappa :
     greek.agreementPhiKappaComplete =
-    Fragments.Greek.StandardModern.AdjAgreement.entry.phiKappaComplete := by native_decide
+    Greek.StandardModern.AdjAgreement.entry.phiKappaComplete := by native_decide
 
 /-- German: fragment entry confirms pred ≠ attr. -/
 theorem german_fragment_not_sameAgreement :
-    Fragments.German.AdjAgreement.entry.sameAgreement = false := by native_decide
+    German.AdjAgreement.entry.sameAgreement = false := by native_decide
 
 /-- German profile is consistent with fragment. -/
 theorem german_profile_consistent_pred :
     german.predAttrSameAgreement =
-    Fragments.German.AdjAgreement.entry.sameAgreement := by native_decide
+    German.AdjAgreement.entry.sameAgreement := by native_decide
 
 /-- Russian: fragment confirms pred = attr (long forms identical). -/
 theorem russian_fragment_sameAgreement :
-    Fragments.Slavic.Russian.AdjAgreement.entry.sameAgreement = true := by native_decide
+    Russian.AdjAgreement.entry.sameAgreement = true := by native_decide
 
 /-- Russian profile is consistent with fragment. -/
 theorem russian_profile_consistent_pred :
     russian.predAttrSameAgreement =
-    Fragments.Slavic.Russian.AdjAgreement.entry.sameAgreement := by native_decide
+    Russian.AdjAgreement.entry.sameAgreement := by native_decide
 
 /-- Italian: fragment confirms pred = attr (both carry φ). -/
 theorem italian_fragment_sameAgreement :
-    Fragments.Italian.AdjAgreement.entry.sameAgreement = true := by native_decide
+    Italian.AdjAgreement.entry.sameAgreement = true := by native_decide
 
 /-- Italian: fragment confirms NOT φ/κ-complete (no case). -/
 theorem italian_fragment_not_phiKappaComplete :
-    Fragments.Italian.AdjAgreement.entry.phiKappaComplete = false := by native_decide
+    Italian.AdjAgreement.entry.phiKappaComplete = false := by native_decide
 
 /-- Italian profile is consistent with fragment: pred = attr. -/
 theorem italian_profile_consistent_pred :
     italian.predAttrSameAgreement =
-    Fragments.Italian.AdjAgreement.entry.sameAgreement := by native_decide
+    Italian.AdjAgreement.entry.sameAgreement := by native_decide
 
 /-- Italian profile is consistent with fragment: NOT φ/κ-complete. -/
 theorem italian_profile_consistent_phikappa :
     italian.agreementPhiKappaComplete =
-    Fragments.Italian.AdjAgreement.entry.phiKappaComplete := by native_decide
+    Italian.AdjAgreement.entry.phiKappaComplete := by native_decide
 
 -- ============================================================================
 -- § 10: Bridge to Modification Routes (§5.1)

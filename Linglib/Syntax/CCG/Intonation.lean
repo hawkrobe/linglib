@@ -1,4 +1,4 @@
-import Linglib.Syntax.CCG.Core.Basic
+import Linglib.Syntax.CCG.Basic
 import Linglib.Features.InformationStructure
 import Linglib.Features.Prosody
 
@@ -184,6 +184,19 @@ def prosodicForwardComp : ProsodicCat → ProsodicCat → Option ProsodicCat
   | _, _ => none
 
 /--
+Prosodic backward composition: Y\Z + X\Y → X\Z.
+INFORMATION features must unify and project to result.
+-/
+def prosodicBackwardComp : ProsodicCat → ProsodicCat → Option ProsodicCat
+  | ⟨.lslash y z, i1⟩, ⟨.lslash x y', i2⟩ =>
+    if y == y' then
+      match i1.unify i2 with
+      | some i => some ⟨.lslash x z, i⟩
+      | none => none
+    else none
+  | _, _ => none
+
+/--
 Apply a terminal contour to a prosodic category.
 Converts θ/ρ marking to φ (phrasal).
 -/
@@ -224,7 +237,10 @@ def ProsodicDeriv.prosodicCat : ProsodicDeriv → Option ProsodicCat
     let c1 ← d1.prosodicCat
     let c2 ← d2.prosodicCat
     prosodicForwardComp c1 c2
-  | .bcomp _ _ => none  -- TODO
+  | .bcomp d1 d2 => do
+    let c1 ← d1.prosodicCat
+    let c2 ← d2.prosodicCat
+    prosodicBackwardComp c1 c2
   | .ftr d t => do
     let ⟨x, i⟩ ← d.prosodicCat
     some ⟨forwardTypeRaise x t, i⟩

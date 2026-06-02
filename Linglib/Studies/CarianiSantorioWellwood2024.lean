@@ -354,7 +354,7 @@ independent commitments that nevertheless converges. -/
 /-- Two-way agreement: the Fragment and the threshold theory both
     classify `certain` at the top of an upper-bounded scale. -/
 theorem certain_fragment_and_threshold_agree :
-    Fragments.English.Modifiers.Adjectives.certain.scaleType = .upperBounded ∧
+    English.Modifiers.Adjectives.certain.scaleType = .upperBounded ∧
     Semantics.Attitudes.EpistemicThreshold.EpistemicEntry.certain_.θ = 19/20 :=
   ⟨rfl, rfl⟩
 
@@ -367,13 +367,13 @@ theorem certain_fragment_and_threshold_agree :
     accordingly. -/
 theorem confidence_adjectives_polarity_split :
     -- Positive polarity (upper region)
-    Fragments.English.Modifiers.Adjectives.confident.scaleType = .upperBounded ∧
-    Fragments.English.Modifiers.Adjectives.certain.scaleType   = .upperBounded ∧
-    Fragments.English.Modifiers.Adjectives.sure.scaleType      = .upperBounded ∧
+    English.Modifiers.Adjectives.confident.scaleType = .upperBounded ∧
+    English.Modifiers.Adjectives.certain.scaleType   = .upperBounded ∧
+    English.Modifiers.Adjectives.sure.scaleType      = .upperBounded ∧
     -- Negative polarity (lower region)
-    Fragments.English.Modifiers.Adjectives.doubtful.scaleType  = .lowerBounded ∧
-    Fragments.English.Modifiers.Adjectives.unsure.scaleType    = .lowerBounded ∧
-    Fragments.English.Modifiers.Adjectives.uncertain.scaleType = .lowerBounded :=
+    English.Modifiers.Adjectives.doubtful.scaleType  = .lowerBounded ∧
+    English.Modifiers.Adjectives.unsure.scaleType    = .lowerBounded ∧
+    English.Modifiers.Adjectives.uncertain.scaleType = .lowerBounded :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Dimension agreement across the Fragment's six confidence-scale
@@ -383,12 +383,12 @@ theorem confidence_adjectives_polarity_split :
     dimension agreement together capture CSW's cluster structure:
     one shared background ordering, two regions, six lexical anchors. -/
 theorem confidence_adjectives_share_dimension :
-    Fragments.English.Modifiers.Adjectives.confident.dimension = .confidence ∧
-    Fragments.English.Modifiers.Adjectives.certain.dimension   = .confidence ∧
-    Fragments.English.Modifiers.Adjectives.sure.dimension      = .confidence ∧
-    Fragments.English.Modifiers.Adjectives.doubtful.dimension  = .confidence ∧
-    Fragments.English.Modifiers.Adjectives.unsure.dimension    = .confidence ∧
-    Fragments.English.Modifiers.Adjectives.uncertain.dimension = .confidence :=
+    English.Modifiers.Adjectives.confident.dimension = .confidence ∧
+    English.Modifiers.Adjectives.certain.dimension   = .confidence ∧
+    English.Modifiers.Adjectives.sure.dimension      = .confidence ∧
+    English.Modifiers.Adjectives.doubtful.dimension  = .confidence ∧
+    English.Modifiers.Adjectives.unsure.dimension    = .confidence ∧
+    English.Modifiers.Adjectives.uncertain.dimension = .confidence :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-! ## §8. Compositional Bridge: Wellwood 2015 → CSW
@@ -410,9 +410,9 @@ the others wire through substrate theorems directly. -/
 theorem confidence_comparative_reduces
     {E : Type*} {Time : Type*} [LinearOrder Time]
     {frame : Semantics.ArgumentStructure.ThematicFrame E Time}
-    {P : Semantics.Events.EvPred Time}
-    {μ : Semantics.Events.Event Time → ℚ}
-    {a b : E} {sa sb : Semantics.Events.Event Time}
+    {P : Event Time → Prop}
+    {μ : Event Time → ℚ}
+    {a b : E} {sa sb : Event Time}
     (ha : frame.holder a sa ∧ P sa)
     (ha_unique : ∀ s, frame.holder a s → P s → s = sa)
     (hb : frame.holder b sb ∧ P sb)

@@ -92,7 +92,7 @@ open Semantics.Gradability.Aggregation (weightedScore boolMeasures
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Lexical
 open Semantics.Degree (interpretiveEconomy)
-open Fragments.English.Predicates
+open English.Predicates
 
 -- ════════════════════════════════════════════════════
 -- § 1. Disturbance predicate schema + data
@@ -463,26 +463,26 @@ theorem dead_also_closed : Adjectival.dead.scaleType = .closed := rfl
 
 /-- Verb fragment entries have closed degreeAchievementScale. -/
 theorem crack_verb_closed_scale :
-    (Verbal.crack.toVerbCore.degreeAchievementScale.get!).scaleBoundedness
+    (Verbal.crack.toVerb.degreeAchievementScale.get!).scaleBoundedness
       = .closed := rfl
 theorem dent_verb_closed_scale :
-    (Verbal.dent.toVerbCore.degreeAchievementScale.get!).scaleBoundedness
+    (Verbal.dent.toVerb.degreeAchievementScale.get!).scaleBoundedness
       = .closed := rfl
 theorem scratch_verb_closed_scale :
-    (Verbal.scratch.toVerbCore.degreeAchievementScale.get!).scaleBoundedness
+    (Verbal.scratch.toVerb.degreeAchievementScale.get!).scaleBoundedness
       = .closed := rfl
 
 /-- Adjective-verb scale agreement: each verb inherits the same
     `Boundedness` as its deverbal adjective. -/
 theorem crack_adj_verb_scale_agree :
     Adjectival.cracked.scaleType =
-    (Verbal.crack.toVerbCore.degreeAchievementScale.get!).scaleBoundedness := rfl
+    (Verbal.crack.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
 theorem dent_adj_verb_scale_agree :
     Adjectival.dented.scaleType =
-    (Verbal.dent.toVerbCore.degreeAchievementScale.get!).scaleBoundedness := rfl
+    (Verbal.dent.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
 theorem scratch_adj_verb_scale_agree :
     Adjectival.scratched.scaleType =
-    (Verbal.scratch.toVerbCore.degreeAchievementScale.get!).scaleBoundedness := rfl
+    (Verbal.scratch.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
 
 /-- Disturbance adjectives are licensed for degree modification by the
     Kennedy pipeline, just like *full* and *clean*. -/
@@ -527,27 +527,27 @@ theorem cracked_standard_maxEndpoint :
 /-- The pipeline predicts accomplishment for crack (closed → telic →
     durative). -/
 theorem crack_pipeline_predicts_accomplishment :
-    (Verbal.crack.toVerbCore.degreeAchievementScale.get!).defaultVendlerClass
+    (Verbal.crack.toVerb.degreeAchievementScale.get!).defaultVendlerClass
       = .accomplishment := rfl
 
 /-- The Fragment stipulates achievement (punctual telic), capturing the
     *in X* = "after" reading (Tham (9) "The mirror will crack in five
     minutes"). -/
 theorem crack_stipulated_achievement :
-    Verbal.crack.toVerbCore.vendlerClass = some .achievement := rfl
+    Verbal.crack.toVerb.vendlerClass = some .achievement := rfl
 
 /-- Pipeline and Fragment stipulation diverge for *crack*. The
     divergence is internal to linglib (Fragment vs pipeline default),
     not a claim Tham herself makes — see the docstring above. -/
 theorem crack_pipeline_vendler_diverges :
-    (Verbal.crack.toVerbCore.degreeAchievementScale.get!).defaultVendlerClass ≠
-    Verbal.crack.toVerbCore.vendlerClass.get! := by decide
+    (Verbal.crack.toVerb.degreeAchievementScale.get!).defaultVendlerClass ≠
+    Verbal.crack.toVerb.vendlerClass.get! := by decide
 
 /-- *break* (also Levin 45.1) IS an accomplishment — the standard
     pipeline works for it. So the Fragment-level divergence is specific
     to disturbance predicates within the same Levin class. -/
 theorem break_fits_pipeline :
-    Verbal.break_.toVerbCore.vendlerClass = some .accomplishment := rfl
+    Verbal.break_.toVerb.vendlerClass = some .accomplishment := rfl
 
 /-- *crack* and *break* share LevinClass but differ in VendlerClass.
     Both are Levin 45.1 Break verbs, but *crack* is achievement
@@ -556,15 +556,15 @@ theorem break_fits_pipeline :
     Tham's analysis predicts: disturbance predicates have distinctive
     aspectual behavior. -/
 theorem crack_break_same_levin_different_vendler :
-    Verbal.crack.toVerbCore.levinClass = Verbal.break_.toVerbCore.levinClass ∧
-    Verbal.crack.toVerbCore.vendlerClass ≠ Verbal.break_.toVerbCore.vendlerClass :=
+    Verbal.crack.toVerb.levinClass = Verbal.break_.toVerb.levinClass ∧
+    Verbal.crack.toVerb.vendlerClass ≠ Verbal.break_.toVerb.vendlerClass :=
   ⟨rfl, by decide⟩
 
 /-- *shatter* is also achievement — but unlike crack, shatter ONLY has
     the punctual reading. Same Vendler class, different aspectual
     flexibility. VendlerClass is too coarse for disturbance predicates. -/
 theorem shatter_also_achievement :
-    Verbal.shatter.toVerbCore.vendlerClass = some .achievement := rfl
+    Verbal.shatter.toVerb.vendlerClass = some .achievement := rfl
 
 /-- Boundedness convergence: both pipelines agree crack is `.closed`.
     Achievement and accomplishment are both telic → `.closed`, so the
@@ -578,8 +578,8 @@ theorem shatter_also_achievement :
     `Boundedness` ALSO means convergence at `VendlerClass`. For *crack*,
     only `Boundedness` converges. -/
 theorem crack_boundedness_converges_despite_vendler_divergence :
-    LicensingPipeline.toBoundedness (Verbal.crack.toVerbCore.degreeAchievementScale.get!) =
-    LicensingPipeline.toBoundedness (Verbal.crack.toVerbCore.vendlerClass.get!) := rfl
+    LicensingPipeline.toBoundedness (Verbal.crack.toVerb.degreeAchievementScale.get!) =
+    LicensingPipeline.toBoundedness (Verbal.crack.toVerb.vendlerClass.get!) := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 10. Cross-paper engagement: Hay-Kennedy-Levin matrix
@@ -602,7 +602,7 @@ theorem crack_boundedness_converges_despite_vendler_divergence :
 /-- *crack* refutes the strict HKL matrix: closed scale, but BOTH telic
     and atelic readings attested. -/
 theorem crack_refutes_strict_hkl_matrix :
-    (Verbal.crack.toVerbCore.degreeAchievementScale.get!).scaleBoundedness
+    (Verbal.crack.toVerb.degreeAchievementScale.get!).scaleBoundedness
       = Boundedness.closed ∧
     crack.verbInX = true ∧
     crack.verbForX = true := ⟨rfl, rfl, rfl⟩
@@ -901,7 +901,7 @@ theorem largeVase_score_le_one :
     the adjective applies to surfaces that have not undergone the
     CoS event. The substrate-level contrast: B&KG's *crack* root
     asserts `becomesState` (the verbal entry derived from this root
-    inherits it via `Verbal.crack.toVerbCore.degreeAchievementScale`),
+    inherits it via `Verbal.crack.toVerb.degreeAchievementScale`),
     yet the adjectival side `Tham2025.crack.adjEntailsPrecedingChange`
     is false. -/
 

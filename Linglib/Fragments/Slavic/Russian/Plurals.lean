@@ -5,7 +5,7 @@ import Linglib.Typology.Plurals
 @cite{wals-2013}
 -/
 
-namespace Fragments.Slavic.Russian
+namespace Russian
 
 /-- Russian: suffix plural (*-y*, *-i*, *-a*), obligatory on all nouns;
     person-number stem + nominal plural affix in pronouns (*ja* vs *m-y*);
@@ -18,4 +18,4 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .pnStemNominalAffix
   , associativePlural := .absent }
 
-end Fragments.Slavic.Russian
+end Russian

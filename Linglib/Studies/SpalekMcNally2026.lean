@@ -39,8 +39,8 @@ patient restrictions, separation geometry, and agent control.
 namespace SpalekMcNally2026
 
 open Semantics.Lexical
-open Fragments.English.Predicates.Verbal
-open Fragments.Spanish.Predicates
+open English.Predicates.Verbal
+open Spanish.Predicates
 
 -- ════════════════════════════════════════════════════
 -- § 1. Shared Event Structure (§3.1)

@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Georgian Evidentiality
@@ -9,22 +9,22 @@ analyzes Georgian's evidential perfect ("I screeve") as marking inference
 or report only — `indirectOnly`. Studies-side override.
 -/
 
-namespace Fragments.Georgian.Evidentiality
+namespace Georgian.Evidentiality
 
-open Typology.Modality
-open Features.Evidentiality (EvidentialSource)
+/-! ### Typed evidential inventory
 
-/-- Georgian evidentiality typology per WALS @cite{de-haan-2013}. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "Georgian" "kat" "Kartvelian"
-    (markers := ["evidential perfect (I screeve)"])
-    (notes := "Evidential perfect for inference/report; fused with tense-aspect " ++
-              "screeve system")
-    (attestedEvidentials := [.inference, .hearsay])
-    (systemFb := .indirectOnly)
-    (codingFb := .partOfTAM)
+Georgian's evidential perfect (the I screeve), marking inference or
+report. Per @cite{aikhenvald-2004}, this is indirect-only. Fused
+with TAM (the perfect/screeve system). -/
 
-example : evidentialityProfile.iso = "kat" ∧ evidentialityProfile.language = "Georgian" :=
-  ⟨rfl, rfl⟩
+open Semantics.Evidential
 
-end Fragments.Georgian.Evidentiality
+def evidentials : List Entry :=
+  [ .inferential { form := "evidential perfect (I screeve)",
+                   exponent := .tamFusion } ]
+
+example : evidentials.length = 1 := by decide
+example : (evidentials.filter Entry.IsDirect).length = 0 := by decide
+example : (evidentials.filter Entry.IsInferential).length = 1 := by decide
+
+end Georgian.Evidentiality

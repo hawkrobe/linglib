@@ -77,7 +77,7 @@ Roots are stored as `Morphology.Root String` per the existing
 Hebrew/Amharic pattern.
 -/
 
-namespace Fragments.Tigrinya.Phonology
+namespace Tigrinya.Phonology
 
 open Morphology
 
@@ -291,4 +291,4 @@ def bark : Root String := ⟨["n", "b", "ħ"]⟩
     phonotactic problem (page 12). -/
 def bless : Root String := ⟨["b", "r", "k"]⟩
 
-end Fragments.Tigrinya.Phonology
+end Tigrinya.Phonology

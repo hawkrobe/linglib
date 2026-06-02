@@ -58,11 +58,11 @@ namespace Dekier2021
 
 open Morphology.Nanosyntax
 open Typology.Indefinite
-open Fragments.Slavic.Russian.Indefinites
-open Fragments.English.Indefinites
-open Fragments.Latin.Indefinites
-open Fragments.Yakut.Indefinites
-open Fragments.Kannada.Indefinites
+open Russian.Indefinites
+open English.Indefinites
+open Latin.Indefinites
+open Yakut.Indefinites
+open Kannada.Indefinites
 
 -- ============================================================================
 -- §1. The Indefinite Hierarchy
@@ -236,7 +236,7 @@ theorem latin_is_aab :
 theorem russian_is_abc :
     classifyTriple nibudEntry.form toEntry.form koeEntry.form = .ABC := by decide
 
-/-- Lithuanian forms have no Fragment file yet (no `Fragments.Lithuanian.Indefinites`),
+/-- Lithuanian forms have no Fragment file yet (no `Lithuanian.Indefinites`),
     so the strings stay inline here. -/
 theorem lithuanian_is_abc :
     classifyTriple "-nors" "kaž-" "kai-" = .ABC := by decide

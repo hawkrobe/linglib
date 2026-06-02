@@ -1,5 +1,5 @@
-import Linglib.Core.Relativization.Basic
-import Linglib.Typology.Relativization.Defs
+import Linglib.Typology.RelativeClause.Basic
+import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # English Relativization Fragment
@@ -12,14 +12,14 @@ Two relative clause markers:
 Data from @cite{keenan-comrie-1977} Table 1.
 -/
 
-namespace Fragments.English
+namespace English
 
-open Core
+open RelativeClause
 
 /-- Complementizer *that* or zero (∅). NP_rel is deleted (gap).
     Covers subject and direct object relativization.
     E.g., "the man [that _ left]", "the book [∅ I read _]". -/
-def relThat : RelClauseMarker :=
+def relThat : Marker :=
   { form := "that/∅"
   , npRel := .gap
   , bearsCaseMarking := false
@@ -32,7 +32,7 @@ def relThat : RelClauseMarker :=
     Covers IO–OCOMP via pied-piping.
     E.g., "the man [to whom I gave the book]",
     "the man [whose book I read _]". -/
-def relWhom : RelClauseMarker :=
+def relWhom : Marker :=
   { form := "who/whom/which/whose"
   , npRel := .relPronoun
   , bearsCaseMarking := true
@@ -41,10 +41,10 @@ def relWhom : RelClauseMarker :=
   , notes := "Relative pronoun with case (who/whom/whose); pied-piping" }
 
 /-- All English relative clause markers. -/
-def relMarkers : List RelClauseMarker := [relThat, relWhom]
+def relMarkers : List Marker := [relThat, relWhom]
 
 /-- English relativization profile (typological summary). -/
-def relativization : Typology.Relativization.RelativizationProfile :=
+def relativization : RelativeClause.Profile :=
   { subjStrategy := .mixed
   , oblStrategy := .mixed
   , rcPosition := .postNominal
@@ -52,4 +52,4 @@ def relativization : Typology.Relativization.RelativizationProfile :=
   , notes := "Gap + relative pronoun; P-stranding allows gap on obliques; "
           ++ "can relativize all AH positions" }
 
-end Fragments.English
+end English

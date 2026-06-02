@@ -23,7 +23,7 @@ regular affirmatives/negatives in languages that use verbal echo
 4. **CR function**: huh requests clarification (constituent reading)
 -/
 
-namespace Fragments.English.PropositionalLexemes
+namespace English.PropositionalLexemes
 
 open Dialogue.KOS
 
@@ -131,4 +131,4 @@ theorem yes_no_opposite_polarity :
 theorem huh_unique_cr :
     propLexemes.filter (·.polarity == .cr) = [huh] := by native_decide
 
-end Fragments.English.PropositionalLexemes
+end English.PropositionalLexemes

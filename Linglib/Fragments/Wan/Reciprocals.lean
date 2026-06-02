@@ -31,7 +31,7 @@ The logophoric pronoun in Wan satisfies the `self` role in @cite{sells-1987}'s
 hierarchy: it refers to the individual whose mental state is reported.
 -/
 
-namespace Fragments.Wan.Reciprocals
+namespace Wan.Reciprocals
 
 open Pronoun
 open Features.Logophoricity
@@ -50,17 +50,17 @@ open Features.Logophoricity
     Note: *ē* in the same example is the reflexive marker (REFL), not the
     logophoric pronoun. The reciprocal reading arises from the combination
     of REFL *ē* + RECIP *ɔ̄ŋ*. -/
-def logPl : Entry :=
+def logPl : PersonalPronoun :=
   { form := "mɔ̄", person := some .third, number := some .pl }
 
 /-- Wan reflexive marker *ē* (REFL). Combines with reciprocal marker
     *ɔ̄ŋ* to form the reciprocal construction. -/
-def refl : Entry :=
+def refl : PersonalPronoun :=
   { form := "ē", person := some .third }
 
 /-- Wan reciprocal marker *ɔ̄ŋ* (RECIP). Appears after reflexive *ē*
     to yield the reciprocal reading. -/
-def recip : Entry :=
+def recip : PersonalPronoun :=
   { form := "ɔ̄ŋ", person := some .third, number := some .pl }
 
 /-- Wan 3pl ordinary (non-logophoric) pronoun *à* (low tone).
@@ -72,7 +72,7 @@ def recip : Entry :=
     Note: *tú* in the same example is an adverb 'completely', not a
     pronoun. The 3PL pronoun is *à* (grave accent), tonally distinct
     from copula *á* (acute accent) in (28). -/
-def ordinaryPl : Entry :=
+def ordinaryPl : PersonalPronoun :=
   { form := "à", person := some .third, number := some .pl }
 
 -- ════════════════════════════════════════════════════════════════
@@ -94,4 +94,4 @@ theorem logophoric_forces_narrow_scope :
     LogophoricRole.pivot ≤ logophoricRole := by
   exact ⟨by decide, pivot_le _⟩
 
-end Fragments.Wan.Reciprocals
+end Wan.Reciprocals

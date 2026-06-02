@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Saraguro Kichwa Evidentiality
@@ -33,31 +33,26 @@ Imbabura) and are queued for a separate per-variety restructure; this
 file does not touch them.
 -/
 
-namespace Fragments.Quechua.SaraguroKichwa.Evidentiality
+namespace Quechua.SaraguroKichwa.Evidentiality
 
-open Typology.Modality
-open Features.Evidentiality (EvidentialSource)
+/-! ### Typed evidential inventory
 
-/-- Saraguro Kichwa evidentiality: 3-way Andean system in matrix
-    declaratives.
+Saraguro Kichwa's 3-way matrix-declarative system per
+@cite{martinez-vera-2026}: direct `-rka`, reportative `-shka`,
+inferential `-shi`. The focus-and-verum enclitic `=mi` is intentionally
+excluded (not analyzed as an evidential in this variety). -/
 
-    The `=mi` enclitic is intentionally NOT listed under `markers`: per
-    @cite{martinez-vera-2026}, `=mi` is a focus marker (with verum and
-    contrastive uses) sensitive to the QUD, not an evidential per se.
-    The earlier Faller (2002) tradition treating Cuzco `=mi` as the
-    direct evidential does not extend to Saraguro Kichwa. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "Saraguro Kichwa" "qvj" "Quechuan"
-    (markers := ["-rka (direct)", "-shka (reportative)", "-shi (inferential)"])
-    (notes := "Three-way evidential paradigm in matrix declaratives. " ++
-              "The discourse-sensitive enclitic =mi (focus + verum, " ++
-              "@cite{martinez-vera-2026}) is NOT listed here as it is " ++
-              "not analysed as an evidential in this variety.")
-    (attestedEvidentials := [.direct, .hearsay, .inference])
-    (systemFb := .threeOrMore)
-    (codingFb := .verbalAffix)
+open Semantics.Evidential
 
-example : evidentialityProfile.iso = "qvj" ∧
-    evidentialityProfile.language = "Saraguro Kichwa" := ⟨rfl, rfl⟩
+def evidentials : List Entry :=
+  [ .direct      { form := "-rka",  exponent := .verbalAffix },
+    .reportative { form := "-shka", exponent := .verbalAffix,
+                   sourceIdentity := .unidentified },
+    .inferential { form := "-shi",  exponent := .verbalAffix } ]
 
-end Fragments.Quechua.SaraguroKichwa.Evidentiality
+example : evidentials.length = 3 := by decide
+example : (evidentials.filter Entry.IsDirect).length = 1 := by decide
+example : (evidentials.filter Entry.IsReportative).length = 1 := by decide
+example : (evidentials.filter Entry.IsInferential).length = 1 := by decide
+
+end Quechua.SaraguroKichwa.Evidentiality

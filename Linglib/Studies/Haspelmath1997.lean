@@ -23,7 +23,7 @@ bridge theorems verifying that each Fragment's encoded morphological-basis
 distribution matches the @cite{wals-2013} F46A classification of the same
 language by ISO 639-3 join.
 
-The substrate (`HaspelmathFunction` enum + `IndefiniteEntry`/`IndefiniteParadigm`
+The substrate (`HaspelmathFunction` enum + `IndefinitePronoun`/`IndefiniteParadigm`
 structs + `MorphologicalBasis` + WALS converters) lives in
 `Typology/Indefinite.lean`.
 
@@ -68,21 +68,21 @@ open Data.WALS
     forms (`kim ere/eme/bayarar/da`) use the interrogative `kim` as their
     host → derives `.interrogativeBased`, matching WALS for iso "sah". -/
 theorem yakut_matches_wals_F46A :
-    Fragments.Yakut.Indefinites.paradigm.toWALS46A =
+    Yakut.Indefinites.paradigm.toWALS46A =
       (Datapoint.lookupISO F46A.allData "sah").map (·.value) := by decide
 
 /-- English: paradigm-derived F46A classification matches WALS.
     *some-* prefix on generic-noun stems (-one, -body, -thing) →
     `.genericNounBased`, matching WALS for iso "eng". -/
 theorem english_matches_wals_F46A :
-    Fragments.English.Indefinites.paradigm.toWALS46A =
+    English.Indefinites.paradigm.toWALS46A =
       (Datapoint.lookupISO F46A.allData "eng").map (·.value) := by decide
 
 /-- German: paradigm-derived F46A classification matches WALS.
     Two distinct bases (special *irgend-* + generic-noun *jemand*/*etwas*)
     → `.mixed`, matching WALS for iso "deu". -/
 theorem german_matches_wals_F46A :
-    Fragments.German.Indefinites.paradigm.toWALS46A =
+    German.Indefinites.paradigm.toWALS46A =
       (Datapoint.lookupISO F46A.allData "deu").map (·.value) := by decide
 
 /-- Russian: paradigm-derived F46A classification matches WALS.
@@ -90,19 +90,19 @@ theorem german_matches_wals_F46A :
     `kto-to`, `koe-kto`) → `.interrogativeBased`, matching WALS for
     iso "rus". -/
 theorem russian_matches_wals_F46A :
-    Fragments.Slavic.Russian.Indefinites.paradigm.toWALS46A =
+    Russian.Indefinites.paradigm.toWALS46A =
       (Datapoint.lookupISO F46A.allData "rus").map (·.value) := by decide
 
 /-- Kannada: paradigm-derived F46A classification matches WALS.
     Both forms attach to interrogative `yāru` → `.interrogativeBased`,
     matching WALS for iso "kan". -/
 theorem kannada_matches_wals_F46A :
-    Fragments.Kannada.Indefinites.paradigm.toWALS46A =
+    Kannada.Indefinites.paradigm.toWALS46A =
       (Datapoint.lookupISO F46A.allData "kan").map (·.value) := by decide
 
 -- Latin: not in WALS F46A's 326-language sample, so no bridge theorem.
 -- The paradigm-derived classification is `some .interrogativeBased`
--- (recorded in `Fragments.Latin.Indefinites` for comparison).
+-- (recorded in `Latin.Indefinites` for comparison).
 
 -- ============================================================================
 -- §2. Sample
@@ -111,12 +111,12 @@ theorem kannada_matches_wals_F46A :
 /-- Curated 6-language sample of `IndefiniteParadigm`s for cross-paradigm
     comparison. -/
 def fragmentSample : List IndefiniteParadigm :=
-  [ Fragments.English.Indefinites.paradigm
-  , Fragments.German.Indefinites.paradigm
-  , Fragments.Yakut.Indefinites.paradigm
-  , Fragments.Latin.Indefinites.paradigm
-  , Fragments.Kannada.Indefinites.paradigm
-  , Fragments.Slavic.Russian.Indefinites.paradigm
+  [ English.Indefinites.paradigm
+  , German.Indefinites.paradigm
+  , Yakut.Indefinites.paradigm
+  , Latin.Indefinites.paradigm
+  , Kannada.Indefinites.paradigm
+  , Russian.Indefinites.paradigm
   ]
 
 -- ============================================================================
@@ -128,15 +128,15 @@ def fragmentSample : List IndefiniteParadigm :=
     their `syncretism` returns `none` and is omitted here. -/
 
 theorem english_paradigm_AAA :
-    Fragments.English.Indefinites.paradigm.syncretism = some .AAA := rfl
+    English.Indefinites.paradigm.syncretism = some .AAA := rfl
 
 theorem yakut_paradigm_ABB :
-    Fragments.Yakut.Indefinites.paradigm.syncretism = some .ABB := rfl
+    Yakut.Indefinites.paradigm.syncretism = some .ABB := rfl
 
 theorem latin_paradigm_AAB :
-    Fragments.Latin.Indefinites.paradigm.syncretism = some .AAB := rfl
+    Latin.Indefinites.paradigm.syncretism = some .AAB := rfl
 
 theorem russian_paradigm_ABC :
-    Fragments.Slavic.Russian.Indefinites.paradigm.syncretism = some .ABC := rfl
+    Russian.Indefinites.paradigm.syncretism = some .ABC := rfl
 
 end Haspelmath1997

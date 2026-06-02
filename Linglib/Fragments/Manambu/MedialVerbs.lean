@@ -28,7 +28,7 @@ Manambu has a rich system of medial clause markers that encode:
 
 -/
 
-namespace Fragments.Manambu.MedialVerbs
+namespace Manambu.MedialVerbs
 
 /-- Switch-reference value on a medial clause marker. -/
 inductive SRValue where
@@ -148,4 +148,4 @@ theorem ds_has_subject_marking :
 theorem subject_marking_implies_not_ss :
     markersWithSubjAgreement.all (·.sr != .ss) = true := rfl
 
-end Fragments.Manambu.MedialVerbs
+end Manambu.MedialVerbs

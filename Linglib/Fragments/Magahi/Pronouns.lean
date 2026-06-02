@@ -10,7 +10,7 @@ forms (*i* proximal / *ũ* distal). AA is Fin-based and freely embeddable.
 
 import Linglib.Typology.Pronoun.Basic
 
-namespace Fragments.Magahi.Pronouns
+namespace Magahi.Pronouns
 
 open Pronoun
 
@@ -19,11 +19,11 @@ open Pronoun
 -- ============================================================================
 
 /-- *hum* — 1sg. -/
-def hum : Entry :=
+def hum : PersonalPronoun :=
   { form := "hum", person := some .first, number := some .sg }
 
 /-- *hum sab* — 1pl. -/
-def humSab : Entry :=
+def humSab : PersonalPronoun :=
   { form := "hum sab", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -31,15 +31,15 @@ def humSab : Entry :=
 -- ============================================================================
 
 /-- *tõ* — 2sg non-honorific. -/
-def toN : Entry :=
+def toN : PersonalPronoun :=
   { form := "tõ", person := some .second, number := some .sg, register := .informal }
 
 /-- *tũ* — 2sg honorific. -/
-def tuN : Entry :=
+def tuN : PersonalPronoun :=
   { form := "tũ", person := some .second, number := some .sg, register := .neutral }
 
 /-- *apne* — 2sg high-honorific. -/
-def apne : Entry :=
+def apne : PersonalPronoun :=
   { form := "apne", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
@@ -47,24 +47,24 @@ def apne : Entry :=
 -- ============================================================================
 
 /-- *i* — 3sg proximal. -/
-def i_prox : Entry :=
+def i_prox : PersonalPronoun :=
   { form := "i", person := some .third, number := some .sg }
 
 /-- *ũ* — 3sg distal. -/
-def uN : Entry :=
+def uN : PersonalPronoun :=
   { form := "ũ", person := some .third, number := some .sg }
 
 /-- *ũ sab* — 3pl distal. -/
-def uNSab : Entry :=
+def uNSab : PersonalPronoun :=
   { form := "ũ sab", person := some .third, number := some .pl }
 
 -- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List Entry := [toN, tuN, apne]
+def secondPersonPronouns : List PersonalPronoun := [toN, tuN, apne]
 
-def allPronouns : List Entry :=
+def allPronouns : List PersonalPronoun :=
   [hum, humSab] ++ secondPersonPronouns ++ [i_prox, uN, uNSab]
 
 -- ============================================================================
@@ -112,4 +112,4 @@ theorem three_levels :
 theorem markers_three_levels :
     allAllocMarkers.map (·.register) = [.informal, .neutral, .formal] := rfl
 
-end Fragments.Magahi.Pronouns
+end Magahi.Pronouns

@@ -71,7 +71,7 @@ is derived from it via `AnimacyFeatures.toCoreClass`.
 
 namespace HalpertHammerly2026
 
-open Fragments.Bantu
+open Bantu
 open Features.Person (Features)
 open Features.Prominence (PersonLevel)
 
@@ -174,17 +174,17 @@ theorem core_noun_class_hypothesis :
 /-- The feature decomposition of Xhosa's three interpretable genders
     matches H&H's core noun class features. -/
 theorem xhosa_core_classes :
-    (Fragments.Xhosa.Gender.status .genderA).core.map SemanticCore.toFeatures
+    (Xhosa.Gender.status .genderA).core.map SemanticCore.toFeatures
         = some AnimacyFeatures.human ∧
-    (Fragments.Xhosa.Gender.status .genderD).core.map SemanticCore.toFeatures
+    (Xhosa.Gender.status .genderD).core.map SemanticCore.toFeatures
         = some AnimacyFeatures.inanimate ∧
-    (Fragments.Xhosa.Gender.status .genderE).core.map SemanticCore.toFeatures
+    (Xhosa.Gender.status .genderE).core.map SemanticCore.toFeatures
         = some AnimacyFeatures.animal := ⟨rfl, rfl, rfl⟩
 
 /-- Xhosa's uninterpretable genders have no core feature decomposition. -/
 theorem xhosa_no_core :
-    (Fragments.Xhosa.Gender.status .genderB).core = none ∧
-    (Fragments.Xhosa.Gender.status .genderC).core = none := ⟨rfl, rfl⟩
+    (Xhosa.Gender.status .genderB).core = none ∧
+    (Xhosa.Gender.status .genderC).core = none := ⟨rfl, rfl⟩
 
 /-- The three core noun classes match the three animacy levels used
     throughout the codebase (bridging H&H's features to differential
@@ -276,7 +276,7 @@ def agreementClass (probe : ProbeSensitivity) (stack : NPStack) : Nat :=
 
 /-- Zulu (flat probe): a [human] noun in class 3 gets class 3 agreement. -/
 theorem zulu_flat_class3_human :
-    agreementClass .flat (Fragments.Xhosa.humanInClass3) = 3 := rfl
+    agreementClass .flat (Xhosa.humanInClass3) = 3 := rfl
 
 /-- Swahili (relativized probe): a [human] noun in class 7 gets class 1
     agreement — animacy override. This is NOT separately stipulated;
@@ -354,10 +354,10 @@ theorem xhosa_inanimate_convergence :
     Classes 3, 5 are non-canonical for all cores, so nouns in those
     classes show convergence to the core default instead. -/
 theorem canonical_classes_show_expected :
-    Fragments.Xhosa.humanCanonical.isCanonical = true ∧
-    Fragments.Xhosa.animalCanonical.isCanonical = true ∧
-    Fragments.Xhosa.humanInClass3.isCanonical = false ∧
-    Fragments.Xhosa.humanInClass5.isCanonical = false := by decide
+    Xhosa.humanCanonical.isCanonical = true ∧
+    Xhosa.animalCanonical.isCanonical = true ∧
+    Xhosa.humanInClass3.isCanonical = false ∧
+    Xhosa.humanInClass5.isCanonical = false := by decide
 
 /-- Non-canonical nouns converge to core default, not to their
     visible class's plural. E.g. a [human] noun in class 3 converges
@@ -376,8 +376,8 @@ theorem noncanonical_converges_to_core :
     [±Animate], which Xhosa's convergence is insensitive to
     in this context. -/
 theorem sm8_sm10_syncretism :
-    Fragments.Xhosa.NounClass.subjPrefix .cl8 =
-    Fragments.Xhosa.NounClass.subjPrefix .cl10 := rfl
+    Xhosa.NounClass.subjPrefix .cl8 =
+    Xhosa.NounClass.subjPrefix .cl10 := rfl
 
 -- ============================================================================
 -- § 6: Object Doubling (§3.2, (14))

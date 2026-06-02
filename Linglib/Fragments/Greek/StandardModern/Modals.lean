@@ -10,7 +10,7 @@ Greek has non-IFF modals: Prepei and Mporei express non-rectangular
 subsets of the meaning space.
 -/
 
-namespace Fragments.Greek.StandardModern.Modals
+namespace Greek.StandardModern.Modals
 
 open Semantics.Modality (ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression)
@@ -31,4 +31,4 @@ def isos : ModalExpression := ⟨"Isos", [pe]⟩
 def allExpressions : List ModalExpression :=
   [prepei, mporei, isos]
 
-end Fragments.Greek.StandardModern.Modals
+end Greek.StandardModern.Modals

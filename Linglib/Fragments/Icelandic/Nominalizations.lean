@@ -16,10 +16,10 @@ This fragment provides lexical entries for key Icelandic nominalizations,
 connecting them to the -st verb data in `Predicates.lean`.
 -/
 
-namespace Fragments.Icelandic.Nominalizations
+namespace Icelandic.Nominalizations
 
 open Morphology.DM.Allosemy
-open Fragments.Icelandic.Predicates
+open Icelandic.Predicates
 
 -- ============================================================================
 -- § 1: Nominalizing Suffixes (@cite{wood-2023} Ch. 3)
@@ -222,4 +222,4 @@ theorem pprefixed_have_p :
 theorem pvottur_three_readings :
     pvottur.availableReadings.length = 3 := rfl
 
-end Fragments.Icelandic.Nominalizations
+end Icelandic.Nominalizations

@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 75A: Epistemic Possibility
-@cite{vanbogaert-2013}
+@cite{vanderauwera-ammann-2013}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 75A`.
@@ -20,7 +20,7 @@ inductive EpistemicPossibility where
   | affixesOnVerbs
   /-- Other (91 languages). -/
   | other
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 75A dataset (240 languages). -/
 def allData : List (Datapoint EpistemicPossibility) :=
@@ -267,9 +267,9 @@ def allData : List (Datapoint EpistemicPossibility) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint EpistemicPossibility) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint EpistemicPossibility) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F75A

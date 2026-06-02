@@ -7,7 +7,7 @@ import Linglib.Typology.Gender
 No grammatical gender. WALS Ch 30/31/32 = none.
 -/
 
-namespace Fragments.Turkish.Gender
+namespace Turkish.Gender
 
 open Typology.Gender
 
@@ -19,4 +19,4 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "tur" ∧ genderTypology.name = "Turkish" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Turkish.Gender
+end Turkish.Gender

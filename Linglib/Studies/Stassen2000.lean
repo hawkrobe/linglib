@@ -308,9 +308,9 @@ theorem tensedness_skews_andWith :
     independently records "mo" as the particle in dare-mo (universal).
     Triple identity: MU = additive = ∀. -/
 theorem japanese_mu_quantifier_bridge :
-    Fragments.Japanese.Coordination.mo.alsoQuantifier = true ∧
-    Fragments.Japanese.Coordination.mo.alsoAdditive = true ∧
-    Fragments.Japanese.Determiners.dare_mo.particle = some "mo" := by
+    Japanese.Coordination.mo.alsoQuantifier = true ∧
+    Japanese.Coordination.mo.alsoAdditive = true ∧
+    Japanese.Determiners.dare_mo.particle = some "mo" := by
   exact ⟨rfl, rfl, rfl⟩
 
 end Stassen2000

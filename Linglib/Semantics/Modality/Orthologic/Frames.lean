@@ -50,7 +50,7 @@ two-world lifting) live in
   definitions stay Fintype-free.
 -/
 
-namespace Semantics.Modality.Orthologic
+namespace Orthologic
 
 -- ════════════════════════════════════════════════════
 -- § 1. Compatibility Frames
@@ -279,4 +279,4 @@ def regularClosure {S : Type*} (F : CompatFrame S) : ClosureOperator (Set S) whe
 theorem regularClosure_isClosed_iff_isRegular {S : Type*} (F : CompatFrame S) (A : Set S) :
     (regularClosure F).IsClosed A ↔ isRegular F A := Iff.rfl
 
-end Semantics.Modality.Orthologic
+end Orthologic

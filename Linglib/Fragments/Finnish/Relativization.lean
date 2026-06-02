@@ -1,5 +1,5 @@
-import Linglib.Core.Relativization.Basic
-import Linglib.Typology.Relativization.Defs
+import Linglib.Typology.RelativeClause.Basic
+import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Finnish Relativization Fragment
@@ -16,16 +16,16 @@ grammatical category in Finnish.
 Data from @cite{keenan-comrie-1977} Table 1.
 -/
 
-namespace Fragments.Finnish
+namespace Finnish
 
-open Core
+open RelativeClause
 
 /-- Relative pronoun *joka*. Declines for case (agreeing with the role
     inside the RC). Postnominal RC. Covers SU–GEN.
     OCOMP does not exist as a distinct category in Finnish.
     E.g., "mies [joka lähti]" 'man [who left]',
     "kaupunki [jossa asuin]" 'city [where I-lived]'. -/
-def relJoka : RelClauseMarker :=
+def relJoka : Marker :=
   { form := "joka"
   , npRel := .relPronoun
   , bearsCaseMarking := true
@@ -36,7 +36,7 @@ def relJoka : RelClauseMarker :=
 /-- Participial construction. Prenominal RC formed with a participle.
     NP_rel is a gap. Covers SU and DO only.
     E.g., "[ _ lähtenyt] mies" '[ _ left] man'. -/
-def relParticipial : RelClauseMarker :=
+def relParticipial : Marker :=
   { form := "participle"
   , npRel := .gap
   , bearsCaseMarking := false
@@ -45,14 +45,14 @@ def relParticipial : RelClauseMarker :=
   , notes := "Participial; prenominal; covers SU/DO only" }
 
 /-- All Finnish relative clause markers. -/
-def relMarkers : List RelClauseMarker := [relJoka, relParticipial]
+def relMarkers : List Marker := [relJoka, relParticipial]
 
 /-- Finnish relativization profile (typological summary). -/
-def relativization : Typology.Relativization.RelativizationProfile :=
+def relativization : RelativeClause.Profile :=
   { subjStrategy := .relativePronoun
   , oblStrategy := .relativePronoun
   , rcPosition := .postNominal
   , lowestRelativizable := .oblique
   , notes := "Rel pronoun joka (declines for case); post-nominal RC" }
 
-end Fragments.Finnish
+end Finnish

@@ -17,20 +17,20 @@ The identity of "se" in reflexive and reciprocal uses is captured by
 WALS Ch 106 classifying French as "mixed."
 -/
 
-namespace Fragments.French.Reciprocals
+namespace French.Reciprocals
 
 open Pronoun
 
 /-- se — reflexive/reciprocal clitic (monovalent strategy). -/
-def se : Entry :=
+def se : PersonalPronoun :=
   { form := "se", person := some .third }
 
 /-- l'un l'autre — bipartite reciprocal NP (bivalent strategy). -/
-def lunLautre : Entry :=
+def lunLautre : PersonalPronoun :=
   { form := "l'un l'autre", person := some .third, number := some .pl }
 
 /-- The bipartite NP form is distinct from the clitic. -/
 theorem bipartite_distinct_from_clitic :
     lunLautre.form ≠ se.form := by decide
 
-end Fragments.French.Reciprocals
+end French.Reciprocals

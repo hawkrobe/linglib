@@ -3,13 +3,24 @@ import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 
 /-!
 # Valency Alternation Typology
-@cite{creissels-2025}
 
-A unified framework for describing valency alternations cross-linguistically,
-following @cite{creissels-2025}'s framework for transitivity, valency, and
-voice. This file provides the core vocabulary that subsumes both
-@cite{levin-1993}'s English-specific diathesis alternations and
-@cite{creissels-2025}'s cross-linguistic voice alternation typology.
+@cite{comrie-1989} @cite{dixon-1994} @cite{dixon-aikhenvald-2000} @cite{song-1996}
+@cite{creissels-2025} @cite{levin-1993}
+
+A framework-neutral vocabulary for describing valency alternations
+cross-linguistically. The underlying typology of valency-changing operations —
+causative, anticausative/decausative, passive, antipassive, applicative,
+reflexive/reciprocal, and the increase or decrease of core arguments — is the
+cross-framework consensus of @cite{comrie-1989}, @cite{dixon-1994} on
+ergativity and A/S/P, @cite{dixon-aikhenvald-2000}'s *Changing Valency*, and
+@cite{song-1996} on causatives. @cite{creissels-2025} provides the modern
+synthesis and the nucleativization/denucleativization terminology used here;
+@cite{levin-1993} supplies the English diathesis-alternation inventory bridged
+in the final section.
+
+This file is substrate: it defines the alternation *types*. Per-paper data and
+cross-linguistic distributions live in the consuming study files (e.g.
+`Studies/Creissels2025.lean`).
 
 ## TR-roles
 
@@ -160,6 +171,13 @@ structure ValencyAlternation where
   initialTransitive : Option Bool
   /-- Is the derived construction transitive? -/
   derivedTransitive : Option Bool
+  /-- Morphological coding of the alternation (voice vs. flexivalency).
+      Defaults to `.uncoded`, the morphologically unmarked baseline. Coding is
+      a *per-language* property: the same structural alternation may be coded
+      (voice) in one language and uncoded (flexivalency) in another — e.g.
+      Tswana decausative (synthetic) vs. English *break/break* (uncoded). Set
+      `marking` when instantiating an alternation for a specific language. -/
+  marking : AlternationMarking := .uncoded
   deriving Repr, BEq
 
 -- ════════════════════════════════════════════════════
@@ -410,38 +428,6 @@ structure VoiceMarkerProfile where
   /-- Which alternation types this marker can encode -/
   alternations : List ValencyAlternation
   deriving Repr, BEq
-
--- ════════════════════════════════════════════════════
--- § 8. Voice Alternation Distribution (§8.3.8)
--- ════════════════════════════════════════════════════
-
-/-- Cross-linguistic prevalence of voice alternation types.
-
-    §8.3.8, citing @cite{bahrt-2021}: distribution of
-    synthetic voice marking across 222 languages from all genera. -/
-structure VoiceDistribution where
-  alternation : ValencyAlternation
-  /-- Percentage of languages with synthetic marking for this alternation -/
-  percentage : Float
-  deriving Repr, BEq
-
-/-- @cite{bahrt-2021} distribution data, cited in
-    §8.3.8. Percentages represent languages (out of 222) with synthetic
-    marking for each voice alternation type. -/
-def bahrt2021Distribution : List VoiceDistribution :=
-  [ { alternation := causativization,       percentage := 73.9 }
-  , { alternation := reciprocalization,     percentage := 60.4 }
-  , { alternation := pApplicativization,    percentage := 45.9 }
-  , { alternation := reflexivization,       percentage := 41.9 }
-  , { alternation := decausativization,     percentage := 36.0 }
-  , { alternation := passivization,         percentage := 36.0 }
-  , { alternation := antipassivization,     percentage := 18.5 } ]
-
-/-- Causativization is the most common voice alternation type
-    cross-linguistically (@cite{bahrt-2021}). -/
-theorem causativization_most_common :
-    (bahrt2021Distribution.head?.map (·.alternation.name)) =
-    some "causativization" := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 9. Properties

@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 import Linglib.Syntax.Minimalist.Applicative
 
 /-!
@@ -26,7 +26,7 @@ whether a verb can anticausativize:
 
 -/
 
-namespace Fragments.Spanish.Predicates
+namespace Spanish.Predicates
 
 open Minimalist
 open Semantics.Lexical
@@ -68,9 +68,9 @@ inductive CauserSpec where
 
 /-- A Spanish verb with its causative alternation properties.
 
-    Extends `VerbCore` with Spanish-specific fields for anticausative
+    Extends `Verb` with Spanish-specific fields for anticausative
     marking and event-structural decomposition. -/
-structure SpanishVerbEntry extends VerbCore where
+structure SpanishVerbEntry extends Verb where
   /-- How the anticausative is marked -/
   anticausativeMarking : AnticausativeMarking
   /-- Participates in causative/anticausative alternation -/
@@ -310,4 +310,4 @@ theorem blocking_verb_is_unmarked :
     (munozVerbs.filter (!·.licensesStylLE)).all
       (fun v => v.anticausativeMarking == .unmarked) = true := by native_decide
 
-end Fragments.Spanish.Predicates
+end Spanish.Predicates

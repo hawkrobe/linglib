@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quotation.Demonstration
-import Linglib.Dialogue.FarkasBruce
+import Linglib.Discourse.Commitment.Table
 
 /-!
 # Farkas-Bruce Performance Ontology Bridge
@@ -19,7 +19,7 @@ to compute its discourse effect:
 
 - a non-rising declarative `assert`s its content (adds to dcS, pushes
   issue)
-- an interrogative `askPolarQuestion`s its content (pushes issue, no
+- an interrogative `polarQuestion`s its content (pushes issue, no
   dcS commit)
 - a rising declarative pushes its content as an issue (no dcS commit) —
   the intermediate prosodic case that drives @cite{rudin-2025b}'s
@@ -29,7 +29,7 @@ to compute its discourse effect:
 performance `Commits` iff its update adds its content to dcS; it
 `RaisesIssue` iff its update grows the table. Verb-class meaning
 postulates in `SpeechVerbs` see the same Commits / RaisesIssue that
-the F&B bridge theorems (in `FarkasBruce.lean` § Bridge theorems)
+the F&B bridge theorems (in `Discourse/Commitment/Table.lean`)
 reason about — the connection is true by construction, not provable
 as an equivalence.
 
@@ -56,7 +56,8 @@ simultaneously be both values.
 
 namespace Dialogue.QuotationFBOntology
 
-open Dialogue.FarkasBruce
+open Discourse.Commitment.Table
+open Semantics.Mood (IllocutionaryMood)
 open Semantics.Quotation.Demonstration
 
 -- ════════════════════════════════════════════════════
@@ -75,7 +76,7 @@ inductive Volume where
     update. -/
 structure FBPerformance (W : Type*) where
   /-- Sentence form (declarative / interrogative). -/
-  form : SentenceForm
+  form : IllocutionaryMood
   /-- Propositional content. -/
   content : Set W
   /-- Whether the performance is linguistic material. False allows
@@ -98,16 +99,16 @@ variable {W : Type*}
 
 /-- The F&B-grounded discourse update for the performance.
 
-    - **non-rising declarative**: `assertDeclarative` (commits + pushes issue)
-    - **interrogative**: `askPolarQuestion` (pushes issue, no commit)
+    - **non-rising declarative**: `assert` (commits + pushes issue)
+    - **interrogative**: `polarQuestion` (pushes issue, no commit)
     - **rising declarative**: pushes issue without commit
       (the intermediate prosodic case @cite{rudin-2025b} relies on) -/
-def update (u : FBPerformance W) (s : DiscourseState W) : DiscourseState W :=
+def update (u : FBPerformance W) (s : State W) : State W :=
   match u.rising, u.form with
   | true, _ =>
-      s.pushIssue ⟨.declarative, [u.content], .speaker⟩
-  | false, .declarative => s.assertDeclarative u.content
-  | false, .interrogative => s.askPolarQuestion u.content
+      s.pushItem ⟨.speaker, .addressee, .declarative, [u.content]⟩
+  | false, .declarative => assert s u.content
+  | false, _ => polarQuestion s u.content
 
 -- ════════════════════════════════════════════════════
 -- § 3. Performance properties (F&B-derived where possible)
@@ -130,18 +131,18 @@ def RisingDecl (u : FBPerformance W) : Prop :=
   u.rising = true ∧ u.form = .declarative
 
 /-- **F&B-derived** Commits: the performance's update adds its content
-    to dcS (computed from the empty initial state). The `assertDeclarative`
+    to dcS (computed from the empty initial state). The `assert`
     branch adds, the rising and interrogative branches do not — so this
     matches the structural classification "non-rising declarative". -/
 def Commits (u : FBPerformance W) : Prop :=
-  u.content ∈ (u.update DiscourseState.empty).dcS
+  u.content ∈ (u.update (DiscourseState.empty : State W)).dcS
 
 /-- **F&B-derived** RaisesIssue: the performance's update grows the
     table. All three branches push to the table, so any well-formed
     speech act raises an issue. (RESP's discriminating power comes
     from `¬ Commits`, not from `RaisesIssue`.) -/
 def RaisesIssue (u : FBPerformance W) : Prop :=
-  (u.update DiscourseState.empty).table ≠ []
+  (u.update (DiscourseState.empty : State W)).table ≠ []
 
 -- ════════════════════════════════════════════════════
 -- § 4. PerformanceOntology axiom obligations
@@ -157,21 +158,17 @@ theorem loud_not_whispered (u : FBPerformance W) :
 
 theorem rd_not_commits (u : FBPerformance W) :
     RisingDecl u → ¬ Commits u := by
-  rintro ⟨hr, _⟩ hc
-  unfold Commits update at hc
-  rw [hr] at hc
-  simp only at hc
+  rintro ⟨hr, _⟩
   -- After update with rising=true, dcS = empty.dcS = []
-  exact List.not_mem_nil hc
+  simp [Commits, update, hr]
+  exact List.not_mem_nil
 
 theorem rd_raises_issue (u : FBPerformance W) :
     RisingDecl u → RaisesIssue u := by
   rintro ⟨hr, _⟩
   unfold RaisesIssue update
   rw [hr]
-  simp only [DiscourseState.pushIssue, DiscourseState.empty]
-  intro h
-  cases h
+  simp
 
 theorem rd_is_lingmat (u : FBPerformance W) :
     RisingDecl u → LingMat u := by
@@ -213,52 +210,24 @@ variable {W : Type*}
     update semantics. -/
 theorem commits_iff (u : FBPerformance W) :
     u.Commits ↔ u.rising = false ∧ u.form = .declarative := by
-  unfold Commits update
-  constructor
-  · intro h
-    cases hr : u.rising
-    · cases hf : u.form
-      · exact ⟨rfl, rfl⟩
-      · -- interrogative: askPolarQuestion doesn't add to dcS
-        exfalso
-        rw [hr, hf] at h
-        simp only [DiscourseState.askPolarQuestion, DiscourseState.pushIssue,
-                   DiscourseState.empty] at h
-        exact List.not_mem_nil h
-    · -- rising: pushIssue doesn't add to dcS
-      exfalso
-      rw [hr] at h
-      simp only [DiscourseState.pushIssue, DiscourseState.empty] at h
-      exact List.not_mem_nil h
-  · rintro ⟨hr, hf⟩
-    rw [hr, hf]
-    simp only [DiscourseState.assertDeclarative, DiscourseState.addToDcS,
-               DiscourseState.pushIssue, DiscourseState.empty]
-    exact List.mem_singleton.mpr rfl
+  cases hr : u.rising <;> cases hf : u.form <;>
+    simp [Commits, update, hr, hf] <;>
+    first | exact List.not_mem_nil | exact List.mem_cons_self
 
 /-- Structural characterization of `RaisesIssue`: every performance
     raises an issue (declarative or interrogative; rising or non-rising).
     The discriminating empirical content lives in `Commits`, not here. -/
 theorem raises_issue_always (u : FBPerformance W) : u.RaisesIssue := by
   unfold RaisesIssue update
-  cases u.rising
-  · cases u.form
-    · simp only [DiscourseState.assertDeclarative, DiscourseState.pushIssue,
-                 DiscourseState.addToDcS, DiscourseState.empty]
-      intro h; cases h
-    · simp only [DiscourseState.askPolarQuestion, DiscourseState.pushIssue,
-                 DiscourseState.empty]
-      intro h; cases h
-  · simp only [DiscourseState.pushIssue, DiscourseState.empty]
-    intro h; cases h
+  cases u.rising <;> cases u.form <;> simp [polarQuestion]
 
-/-- Bridge to `FarkasBruce`: when the performance is a non-rising
-    declarative, its update equals `assertDeclarative content`, so
-    `Dialogue.FarkasBruce.assert_adds_to_dcS` applies directly. -/
+/-- Bridge: when the performance is a non-rising declarative, its update
+    equals `assert s content`, so `assert_dc_speaker_doxasticContents`
+    applies directly. -/
 theorem update_decl_eq_assert (u : FBPerformance W)
     (hr : u.rising = false) (hf : u.form = .declarative)
-    (s : DiscourseState W) :
-    u.update s = s.assertDeclarative u.content := by
+    (s : State W) :
+    u.update s = assert s u.content := by
   unfold update
   rw [hr, hf]
 

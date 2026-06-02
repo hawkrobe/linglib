@@ -18,7 +18,7 @@ inductive ZeroCopulaType where
   | impossible
   /-- Possible (175 languages). -/
   | possible
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 120A dataset (386 languages). -/
 def allData : List (Datapoint ZeroCopulaType) :=
@@ -411,9 +411,9 @@ def allData : List (Datapoint ZeroCopulaType) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint ZeroCopulaType) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint ZeroCopulaType) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F120A

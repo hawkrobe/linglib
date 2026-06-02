@@ -17,7 +17,7 @@ partition-based answerhood predicate `PropResolvesQUD`.
 - §1. DGB structural lemmas (initial state)
 - §2. DGB update operations: pushQud, downdateQud, addFact, recordMove, assertFact
 - §3. DGB content mapping: mapFacts, mapQud
-- §4. HasContextSet bridge to Discourse.CommonGround
+- §4. HasContextSet bridge to CommonGround
 - §5. QUD downdate properties + non-resolve-cond well-formedness
 - §6. Partition-based answerhood (`PropResolvesQUD`)
 
@@ -147,20 +147,20 @@ theorem DGB.mapFacts_length {Participant Fact Fact' QContent : Type*} {Cont : Ty
 -- § 4. HasContextSet Bridge
 -- ════════════════════════════════════════════════════
 
-open Discourse.CommonGround in
+open CommonGround in
 /-- DGB with `Set W` facts projects to a context set.
     @cite{ginzburg-2012} Ch. 4: the DGB's FACTS field IS the common ground. -/
 instance {W Participant QContent : Type*} {Cont : Type} :
     HasContextSet (DGB Participant (Set W) QContent Cont) W where
   toContextSet dgb := λ w => ∀ p ∈ dgb.facts, p w
 
-open Discourse.CommonGround in
+open CommonGround in
 /-- TIS with `Set W` facts inherits the DGB's context set. -/
 instance {W Participant QContent : Type*} {Cont : Type} :
     HasContextSet (TIS Participant (Set W) QContent Cont) W where
   toContextSet tis := λ w => ∀ p ∈ tis.dgb.facts, p w
 
-open Discourse.CommonGround in
+open CommonGround in
 /-- TIS context set is extracted from the DGB. -/
 theorem tis_contextSet_eq_dgb {W Participant QContent : Type*} {Cont : Type}
     (tis : TIS Participant (Set W) QContent Cont) :

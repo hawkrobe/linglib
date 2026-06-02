@@ -11,7 +11,7 @@ freely embeddable.
 
 import Linglib.Typology.Pronoun.Basic
 
-namespace Fragments.Hindi.Pronouns
+namespace Hindi.Pronouns
 
 open Pronoun
 
@@ -20,11 +20,11 @@ open Pronoun
 -- ============================================================================
 
 /-- *maiṃ* — 1sg. -/
-def maiN : Entry :=
+def maiN : PersonalPronoun :=
   { form := "maiṃ", person := some .first, number := some .sg }
 
 /-- *ham* — 1pl. -/
-def ham : Entry :=
+def ham : PersonalPronoun :=
   { form := "ham", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -32,15 +32,15 @@ def ham : Entry :=
 -- ============================================================================
 
 /-- *tuu* — 2sg non-honorific (intimate/inferior). -/
-def tuu : Entry :=
+def tuu : PersonalPronoun :=
   { form := "tuu", person := some .second, number := some .sg, register := .informal }
 
 /-- *tum* — 2sg honorific (neutral). -/
-def tum : Entry :=
+def tum : PersonalPronoun :=
   { form := "tum", person := some .second, number := some .sg, register := .neutral }
 
 /-- *aap* — 2sg high-honorific (respectful). -/
-def aap : Entry :=
+def aap : PersonalPronoun :=
   { form := "aap", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
@@ -48,20 +48,20 @@ def aap : Entry :=
 -- ============================================================================
 
 /-- *vah* — 3sg (distal demonstrative, standard pronoun). -/
-def vah : Entry :=
+def vah : PersonalPronoun :=
   { form := "vah", person := some .third, number := some .sg }
 
 /-- *ve* — 3pl (distal demonstrative plural). -/
-def ve : Entry :=
+def ve : PersonalPronoun :=
   { form := "ve", person := some .third, number := some .pl }
 
 -- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List Entry := [tuu, tum, aap]
+def secondPersonPronouns : List PersonalPronoun := [tuu, tum, aap]
 
-def allPronouns : List Entry :=
+def allPronouns : List PersonalPronoun :=
   [maiN, ham] ++ secondPersonPronouns ++ [vah, ve]
 
 -- ============================================================================
@@ -109,4 +109,4 @@ theorem three_levels :
 theorem markers_three_levels :
     allAllocMarkers.map (·.register) = [.informal, .neutral, .formal] := rfl
 
-end Fragments.Hindi.Pronouns
+end Hindi.Pronouns

@@ -36,7 +36,7 @@ of ergative distribution to a particular Agree configuration — lives in
 `Studies/ClemDeal2024.lean`.
 -/
 
-namespace Fragments.Kawapanan.Shawi
+namespace Kawapanan.Shawi
 
 open Features.Prominence (PersonLevel)
 
@@ -215,4 +215,4 @@ example :
     objectSyntaxLicit true .overtFronted = true ∧
     objectSyntaxLicit true .proDropped = true := by decide
 
-end Fragments.Kawapanan.Shawi
+end Kawapanan.Shawi

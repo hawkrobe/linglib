@@ -28,9 +28,9 @@ Japanese tense marking (*mae* non-past / *ato* past) diagnosed in the
 
 -/
 
-namespace Fragments.Greek.StandardModern.TemporalConnectives
+namespace Greek.StandardModern.TemporalConnectives
 
-open Fragments.English.TemporalExpressions (TemporalExprEntry Reading TemporalOrder ComplementType)
+open English.TemporalExpressions (TemporalExprEntry Reading TemporalOrder ComplementType)
 
 -- ============================================================================
 -- § 1: Connective Entries
@@ -179,7 +179,7 @@ theorem npi_pattern :
 -- § 5: Cross-Linguistic Agreement
 -- ============================================================================
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Greek *prin* and English *before* agree on all semantic properties. -/
 theorem prin_matches_before :
     prin.order = before_.order ∧
@@ -189,7 +189,7 @@ theorem prin_matches_before :
     prin.complementVeridical = before_.complementVeridical :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Greek *afou* and English *after* agree on all semantic properties. -/
 theorem afou_matches_after :
     afou.order = after_.order ∧
@@ -199,7 +199,7 @@ theorem afou_matches_after :
     afou.complementVeridical = after_.complementVeridical :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Greek *mexri* and English *until* agree on all semantic properties. -/
 theorem mexri_matches_until :
     mexri.order = until_.order ∧
@@ -208,7 +208,7 @@ theorem mexri_matches_until :
     mexri.complementVeridical = until_.complementVeridical :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-open Fragments.English.TemporalExpressions in
+open English.TemporalExpressions in
 /-- Greek *otan* and English *when* agree on all semantic properties. -/
 theorem otan_matches_when :
     otan.order = when_conn.order ∧
@@ -295,4 +295,4 @@ theorem paraMonon_order :
     paraMonon.order ≠ prin.order := by
   exact ⟨rfl, by decide⟩
 
-end Fragments.Greek.StandardModern.TemporalConnectives
+end Greek.StandardModern.TemporalConnectives

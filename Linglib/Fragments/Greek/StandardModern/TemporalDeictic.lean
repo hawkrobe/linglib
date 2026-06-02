@@ -9,7 +9,7 @@ Cross-linguistic evidence for the then-present incompatibility.
 
 -/
 
-namespace Fragments.Greek.StandardModern.TemporalDeictic
+namespace Greek.StandardModern.TemporalDeictic
 
 open Semantics.Tense
 
@@ -20,4 +20,4 @@ def tote : ThenAdverb where
   gloss := "then"
   shiftsPerspective := true
 
-end Fragments.Greek.StandardModern.TemporalDeictic
+end Greek.StandardModern.TemporalDeictic

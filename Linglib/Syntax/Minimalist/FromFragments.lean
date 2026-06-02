@@ -8,7 +8,7 @@ import Linglib.Semantics.Quantification.Lexicon
 /-!
 # Minimalism: Fragment Lexicon → Syntactic Object Interpretation
 
-Maps Fragment lexical entries (`VerbEntry`, `PronounEntry`, `NounEntry`,
+Maps Fragment lexical entries (`VerbEntry`, `PersonalPronoun`, `NounEntry`,
 `QuantifierEntry`) into Minimalist `SyntacticObject` leaves with the
 appropriate `Cat` and `SelStack` features.
 
@@ -36,9 +36,8 @@ clauses use `.D` rather than a dedicated predicational head).
 namespace Minimalist.FromFragments
 
 open Minimalist
-open Fragments.English.Predicates.Verbal (VerbEntry ComplementType)
-open Fragments.English.Pronouns (PronounEntry PronounType)
-open Fragments.English.Nouns (NounEntry)
+open English.Predicates.Verbal (VerbEntry)
+open English.Nouns (NounEntry)
 open Semantics.Quantification.Lexicon (QuantifierEntry)
 
 section SelectionalEncoding
@@ -70,9 +69,9 @@ section EntryProjections
 def verbToSO (v : VerbEntry) (id : Nat) : SyntacticObject :=
   mkLeafPhon .V (verbToSelStack v) v.form3sg id
 
-/-- Convert a `PronounEntry` to a `SyntacticObject` leaf. Pronouns are D
+/-- Convert a `PersonalPronoun` to a `SyntacticObject` leaf. Pronouns are D
     heads (they project as DPs per Adger ch. 7). -/
-def pronounToSO (p : PronounEntry) (id : Nat) : SyntacticObject :=
+def pronounToSO (p : PersonalPronoun) (id : Nat) : SyntacticObject :=
   mkLeafPhon .D [] p.form id
 
 /-- Convert a `NounEntry` to a `SyntacticObject` leaf. Proper names are
@@ -94,11 +93,11 @@ end EntryProjections
 
 section Sanity
 
-example : verbToSelStack Fragments.English.Predicates.Verbal.sleep = [] := rfl
-example : verbToSelStack Fragments.English.Predicates.Verbal.eat = [.D] := rfl
-example : verbToSelStack Fragments.English.Predicates.Verbal.give = [.D, .D] := rfl
-example : (nounToSO Fragments.English.Nouns.john 1).isLeaf := by decide
-example : (nounToSO Fragments.English.Nouns.cat 1).isLeaf := by decide
+example : verbToSelStack English.Predicates.Verbal.sleep = [] := rfl
+example : verbToSelStack English.Predicates.Verbal.eat = [.D] := rfl
+example : verbToSelStack English.Predicates.Verbal.give = [.D, .D] := rfl
+example : (nounToSO English.Nouns.john 1).isLeaf := by decide
+example : (nounToSO English.Nouns.cat 1).isLeaf := by decide
 
 end Sanity
 

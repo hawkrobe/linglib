@@ -10,7 +10,7 @@ forms (*uh* for both sg and pl). AA is Fin-based with limited embeddability.
 
 import Linglib.Typology.Pronoun.Basic
 
-namespace Fragments.Punjabi.Pronouns
+namespace Punjabi.Pronouns
 
 open Pronoun
 
@@ -19,11 +19,11 @@ open Pronoun
 -- ============================================================================
 
 /-- *maiṃ* — 1sg. -/
-def maiN : Entry :=
+def maiN : PersonalPronoun :=
   { form := "maiṃ", person := some .first, number := some .sg }
 
 /-- *asiiṃ* — 1pl. -/
-def asiiN : Entry :=
+def asiiN : PersonalPronoun :=
   { form := "asiiṃ", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -31,11 +31,11 @@ def asiiN : Entry :=
 -- ============================================================================
 
 /-- *tũ* — 2sg non-honorific. -/
-def tuN : Entry :=
+def tuN : PersonalPronoun :=
   { form := "tũ", person := some .second, number := some .sg, register := .informal }
 
 /-- *tusii* — 2sg honorific (also 2pl). -/
-def tusii : Entry :=
+def tusii : PersonalPronoun :=
   { form := "tusii", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
@@ -43,20 +43,20 @@ def tusii : Entry :=
 -- ============================================================================
 
 /-- *uh* — 3sg (distal demonstrative). -/
-def uh_sg : Entry :=
+def uh_sg : PersonalPronoun :=
   { form := "uh", person := some .third, number := some .sg }
 
 /-- *uh* — 3pl (same form as 3sg in standard Punjabi). -/
-def uh_pl : Entry :=
+def uh_pl : PersonalPronoun :=
   { form := "uh", person := some .third, number := some .pl }
 
 -- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List Entry := [tuN, tusii]
+def secondPersonPronouns : List PersonalPronoun := [tuN, tusii]
 
-def allPronouns : List Entry :=
+def allPronouns : List PersonalPronoun :=
   [maiN, asiiN] ++ secondPersonPronouns ++ [uh_sg, uh_pl]
 
 -- ============================================================================
@@ -105,4 +105,4 @@ theorem markers_match_2p :
 theorem third_person_homophony :
     uh_sg.form = uh_pl.form := rfl
 
-end Fragments.Punjabi.Pronouns
+end Punjabi.Pronouns

@@ -6,7 +6,7 @@ import Mathlib.Tactic.Use
 # Dynamic Propositions: The Semantic Algebra
 @cite{heim-1982} @cite{groenendijk-stokhof-1991} @cite{kamp-reyle-1993}
 
-The relational type `DRS S = S → S → Prop` and its core operations
+The relational type `Update S = S → S → Prop` and its core operations
 form the semantic algebra shared by all dynamic semantic systems:
 DRT, DPL, File Change Semantics, PLA, CDRT, BUS, and others.
 
@@ -21,7 +21,7 @@ the same algebraic structure:
   the operations formalized here as `test` (intersection) and `dseq`
   (successive file change).
 
-- **@cite{kamp-reyle-1993}**: DRS verification clauses (Def 1.4.4)
+- **@cite{kamp-reyle-1993}**: Update verification clauses (Def 1.4.4)
   define when an embedding can be extended to satisfy each connective.
   These clauses correspond exactly to `test`, `dseq`, `dneg`, `dimpl`,
   and `ddisj`.
@@ -38,13 +38,13 @@ type `S`, showing all systems embed into this algebra.
 
 | Operation | Type | Origin |
 |-----------|------|--------|
-| `DRS S` | `S → S → Prop` | G&S 1991, implicit in Heim 1982 |
-| `dseq` | `DRS S → DRS S → DRS S` | relational composition |
-| `test` | `Condition S → DRS S` | identity + check |
-| `dneg` | `DRS S → Condition S` | universal non-existence |
-| `dimpl` | `DRS S → DRS S → Condition S` | K&R verification for ⇒ |
-| `ddisj` | `DRS S → DRS S → Condition S` | K&R verification for ∨ |
-| `closure` | `DRS S → Condition S` | existential closure (Heim's truth) |
+| `Update S` | `S → S → Prop` | G&S 1991, implicit in Heim 1982 |
+| `dseq` | `Update S → Update S → Update S` | relational composition |
+| `test` | `Condition S → Update S` | identity + check |
+| `dneg` | `Update S → Condition S` | universal non-existence |
+| `dimpl` | `Update S → Update S → Condition S` | K&R verification for ⇒ |
+| `ddisj` | `Update S → Update S → Condition S` | K&R verification for ∨ |
+| `closure` | `Update S → Condition S` | existential closure (Heim's truth) |
 
 ## Cross-cutting smell: three incompatible DNE solutions
 
@@ -84,18 +84,18 @@ namespace Semantics.Dynamic.Core.DynProp
 -- § 1. Core Types
 -- ════════════════════════════════════════════════════════════════
 
-/-- DRS meaning: type `s(st)` — binary relation on states.
+/-- Update meaning: type `s(st)` — binary relation on states.
 
 A proposition in dynamic semantics is a relation between an input
 state and an output state. This is the type that @cite{heim-1982}'s
-file change potentials, @cite{kamp-reyle-1993}'s DRS verification,
+file change potentials, @cite{kamp-reyle-1993}'s Update verification,
 and @cite{groenendijk-stokhof-1991}'s DPL meanings all instantiate. -/
-abbrev DRS (S : Type*) := S → S → Prop
+abbrev Update (S : Type*) := S → S → Prop
 
 /-- Condition: type `st` — property of a single state.
 
 Static conditions that do not change the state. Conditions are
-lifted to DRS meanings via `test`. -/
+lifted to Update meanings via `test`. -/
 abbrev Condition (S : Type*) := S → Prop
 
 -- ════════════════════════════════════════════════════════════════
@@ -110,16 +110,16 @@ variable {S : Type*}
 
 Corresponds to @cite{kamp-reyle-1993} Def 1.4.4 (negation verification)
 and @cite{groenendijk-stokhof-1991} DPL negation. -/
-def dneg (D : DRS S) : Condition S :=
+def dneg (D : Update S) : Condition S :=
   λ i => ¬∃ k, D i k
 
 notation "∼" D => dneg D
 
-/-- Test: lift a condition to a DRS that checks `C` without changing state.
+/-- Test: lift a condition to an Update that checks `C` without changing state.
 
 Corresponds to @cite{heim-1982}'s intersection with the satisfaction
 set: `SAT(F') = SAT(F) ∩ {a : C(a)}`. -/
-def test (C : Condition S) : DRS S :=
+def test (C : Condition S) : Update S :=
   λ i j => i = j ∧ C j
 
 notation "[" C "]" => test C
@@ -128,9 +128,9 @@ notation "[" C "]" => test C
 
 Relational composition: there exists an intermediate state `h`
 witnessing both transitions. This is @cite{heim-1982}'s successive
-file change, @cite{kamp-reyle-1993}'s DRS sequencing, and
+file change, @cite{kamp-reyle-1993}'s Update sequencing, and
 @cite{groenendijk-stokhof-1991}'s DPL conjunction. -/
-def dseq (D₁ D₂ : DRS S) : DRS S :=
+def dseq (D₁ D₂ : Update S) : Update S :=
   λ i j => ∃ h, D₁ i h ∧ D₂ h j
 
 infixl:65 " ⨟ " => dseq
@@ -141,21 +141,21 @@ Every way of satisfying the antecedent can be extended to satisfy
 the consequent. Corresponds to @cite{kamp-reyle-1993} Def 1.4.4
 (implication verification): for all `h`, if `D₁ i h` then
 `∃ k, D₂ h k`. -/
-def dimpl (D₁ D₂ : DRS S) : Condition S :=
+def dimpl (D₁ D₂ : Update S) : Condition S :=
   λ i => ∀ h, D₁ i h → ∃ k, D₂ h k
 
 /-- Dynamic disjunction: `D₁ ∨ D₂`.
 
 Corresponds to @cite{kamp-reyle-1993} Def 1.4.4 (disjunction
 verification): there exists an output via either disjunct. -/
-def ddisj (D₁ D₂ : DRS S) : Condition S :=
+def ddisj (D₁ D₂ : Update S) : Condition S :=
   λ i => ∃ k, D₁ i k ∨ D₂ i k
 
 /-- Anaphoric closure: `∃ output state`.
 
 @cite{heim-1982}'s truth definition: a file is true iff its
 satisfaction set is non-empty, i.e., some assignment satisfies it. -/
-def closure (D : DRS S) : Condition S :=
+def closure (D : Update S) : Condition S :=
   λ i => ∃ k, D i k
 
 scoped notation "!" D => closure D
@@ -170,15 +170,15 @@ section Truth
 
 variable {S : Type*}
 
-/-- A DRS `D` is true relative to input `i` iff some output `j` satisfies `D`. -/
-def trueAt (D : DRS S) (i : S) : Prop := ∃ j, D i j
+/-- A Update `D` is true relative to input `i` iff some output `j` satisfies `D`. -/
+def trueAt (D : Update S) (i : S) : Prop := ∃ j, D i j
 
-/-- A DRS `D` is valid iff true at all inputs. -/
-def valid (D : DRS S) : Prop := ∀ i, trueAt D i
+/-- A Update `D` is valid iff true at all inputs. -/
+def valid (D : Update S) : Prop := ∀ i, trueAt D i
 
 /-- Dynamic entailment: `D₁ ⊨ D₂` iff every output of `D₁` can be
 extended by `D₂`. -/
-def entails (D₁ D₂ : DRS S) : Prop :=
+def entails (D₁ D₂ : Update S) : Prop :=
   ∀ i, (∃ j, D₁ i j) → ∀ j, D₁ i j → ∃ k, D₂ j k
 
 notation D₁ " ⊨ " D₂ => entails D₁ D₂
@@ -194,7 +194,7 @@ section Theorems
 variable {S : Type*}
 
 /-- Sequencing is associative. -/
-theorem dseq_assoc (D₁ D₂ D₃ : DRS S) :
+theorem dseq_assoc (D₁ D₂ D₃ : Update S) :
     (D₁ ⨟ D₂) ⨟ D₃ = D₁ ⨟ (D₂ ⨟ D₃) := by
   funext i j
   simp only [dseq, eq_iff_iff]
@@ -205,7 +205,7 @@ theorem dseq_assoc (D₁ D₂ D₃ : DRS S) :
     exact ⟨h, ⟨h', hD₁, hD₂⟩, hD₃⟩
 
 /-- Test is left identity for sequencing (when condition holds everywhere). -/
-theorem test_dseq (C : Condition S) (D : DRS S) (hC : ∀ i, C i) :
+theorem test_dseq (C : Condition S) (D : Update S) (hC : ∀ i, C i) :
     test C ⨟ D = D := by
   funext i j
   simp only [dseq, test, eq_iff_iff]
@@ -215,6 +215,20 @@ theorem test_dseq (C : Condition S) (D : DRS S) (hC : ∀ i, C i) :
     exact hD
   · intro hD
     exact ⟨i, ⟨rfl, hC i⟩, hD⟩
+
+/-- Test is right identity for sequencing (when condition holds everywhere).
+Together with `test_dseq` and `dseq_assoc`, this makes `(Update S, ⨟, test ⊤)`
+a monoid. -/
+theorem dseq_test (D : Update S) (C : Condition S) (hC : ∀ i, C i) :
+    D ⨟ test C = D := by
+  funext i j
+  simp only [dseq, test, eq_iff_iff]
+  constructor
+  · intro ⟨h, hD, hhj, _⟩
+    subst hhj
+    exact hD
+  · intro hD
+    exact ⟨j, hD, rfl, hC j⟩
 
 /-- Double negation for tests. -/
 theorem dneg_dneg_test (C : Condition S) :
@@ -237,7 +251,7 @@ theorem dneg_dneg_test (C : Condition S) :
     exact ⟨hji.symm, hC⟩
 
 /-- Closure is idempotent. -/
-theorem closure_closure (D : DRS S) :
+theorem closure_closure (D : Update S) :
     closure (test (closure D)) = closure D := by
   funext i
   simp only [closure, test, eq_iff_iff]
@@ -249,7 +263,7 @@ theorem closure_closure (D : DRS S) :
     exact ⟨i, rfl, k, hD⟩
 
 /-- Sequencing distributes over closure. -/
-theorem dseq_closure (D₁ D₂ : DRS S) :
+theorem dseq_closure (D₁ D₂ : Update S) :
     closure (D₁ ⨟ D₂) = λ i => ∃ h, D₁ i h ∧ closure D₂ h := by
   funext i
   simp only [closure, dseq, eq_iff_iff]

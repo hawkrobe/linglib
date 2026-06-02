@@ -5,7 +5,7 @@ import Linglib.Typology.TenseAspect
 @cite{wals-2013}
 -/
 
-namespace Fragments.Hindi
+namespace Hindi
 
 /-- Hindi (Indo-European, Indo-Aryan): perfective/imperfective (*-aa*,
     *-taa*); inflectional past; inflectional future (*-egaa*); other perfect;
@@ -15,4 +15,4 @@ def tenseAspectProfile : Typology.TAProfile :=
   , aspect := .grammatical, past := .marked, future := .inflectional
   , perfect := .other, affixPosition := .suffixing }
 
-end Fragments.Hindi
+end Hindi

@@ -52,13 +52,13 @@ L_TU's composition rules, without any special syntactic assumptions:
 | doch     | ✓           | ✗             | ✓          | UCI         | conflict    |
 -/
 
-namespace Fragments.German.ModalParticles
+namespace German.ModalParticles
 
 open Features
 open Semantics.Mood (IllocutionaryMood)
 open Semantics.UseConditional (UCIClass UCExprKind RestrictionKind functionalExpletive)
 open Semantics.Mood.Gutzmann (MoodStructure)
-open Fragments.German.ClauseTypes (GermanClauseType)
+open German.ClauseTypes (GermanClauseType)
 
 
 /-- A German modal particle lexical entry.
@@ -295,4 +295,4 @@ theorem ja_denn_complementary {f : ClauseForm} (ct : GermanClauseType f) :
     ¬(ja.licensedInClause ct = true ∧ denn.licensedInClause ct = true) := by
   intro ⟨hj, hd⟩; cases ct <;> simp_all [ModalParticleEntry.licensedInClause, ja, denn]
 
-end Fragments.German.ModalParticles
+end German.ModalParticles

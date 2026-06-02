@@ -1,6 +1,6 @@
 import Linglib.Morphology.MorphRule
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Core.Logic.Intensional.RestrictedModality
+import Linglib.Core.Logic.Modal.Basic
 import Mathlib.Data.Fin.Basic
 
 -- ============================================================================
@@ -116,7 +116,7 @@ namespace ZwickyPullum1983
 
 open Morphology.Diagnostics
 open Morphology (MorphStatus SelectionDegree)
-open Fragments.English.Auxiliaries (AuxEntry)
+open English.Auxiliaries (AuxEntry)
 
 -- ============================================================================
 -- §1: Diagnostic Profiles
@@ -259,11 +259,11 @@ theorem clitics_unambiguous :
 
 /-! Verify that the paradigm gaps in Table 1 are encoded in the Fragment data. -/
 
-open Fragments.English.Auxiliaries in
+open English.Auxiliaries in
 /-- *may* has no contracted negative form (*mayn't is a paradigm gap). -/
 theorem may_gap : may.negForm = none := rfl
 
-open Fragments.English.Auxiliaries in
+open English.Auxiliaries in
 /-- *am* has no contracted negative form (*amn't is a paradigm gap). -/
 theorem am_gap : am.negForm = none := rfl
 
@@ -273,27 +273,27 @@ theorem am_gap : am.negForm = none := rfl
 
 /-! Verify that the phonologically irregular forms are flagged in Fragment data. -/
 
-open Fragments.English.Auxiliaries in
+open English.Auxiliaries in
 /-- *won't* is phonologically irregular (not *willn't*). -/
 theorem wont_irregular : will.negIrregular = true := rfl
 
-open Fragments.English.Auxiliaries in
+open English.Auxiliaries in
 /-- *can't* is phonologically irregular. -/
 theorem cant_irregular : can.negIrregular = true := rfl
 
-open Fragments.English.Auxiliaries in
+open English.Auxiliaries in
 /-- *don't* is phonologically irregular (not *don't* [dunt]). -/
 theorem dont_irregular : do_.negIrregular = true := rfl
 
-open Fragments.English.Auxiliaries in
+open English.Auxiliaries in
 /-- *shan't* is phonologically irregular (not *shalln't*). -/
 theorem shant_irregular : shall.negIrregular = true := rfl
 
-open Fragments.English.Auxiliaries in
+open English.Auxiliaries in
 /-- *mustn't* shows [t]-deletion: [mʌsnt] not *[mʌstnt]. -/
 theorem mustnt_irregular : must.negIrregular = true := rfl
 
-open Fragments.English.Auxiliaries in
+open English.Auxiliaries in
 /-- Regular forms: *couldn't*, *wouldn't*, *shouldn't* show no irregularity. -/
 theorem regular_negatives :
     could.negIrregular = false ∧
@@ -322,14 +322,14 @@ if *-n't* is an affix, it forms a lexical unit with the auxiliary, and
 lexical items can have idiosyncratic scope properties. If *-n't* were
 a clitic (a reduced form of *not*), its scope should always match *not*.
 
-We formalize this using `boxR`/`diamondR` from
+We formalize this using `box`/`diamond` from
 `Core.Logic.Intensional`: a Kripke countermodel exhibits
 an accessibility relation under which the two scope readings diverge. -/
 
 section ScopeBridge
 
 open Semantics.Modality (ModalForce)
-open Core.Logic.Intensional (AccessRel boxR diamondR)
+open Core.Logic.Modal (AccessRel box diamond)
 
 abbrev World := Fin 4
 
@@ -416,11 +416,11 @@ accesses worlds where P differs, ◇P and ◇¬P are both true, so
 theorem neg_over_poss_ne_poss_over_neg :
     ∃ (R : AccessRel World),
     ¬(∀ (p : World → Prop) (w : World),
-      ¬ diamondR R p w ↔ diamondR R (fun w' => ¬ p w') w) := by
+      ¬ diamond R p w ↔ diamond R (fun w' => ¬ p w') w) := by
   refine ⟨kripkeR, ?_⟩
   intro h
   have := h witnessP (0 : World)
-  simp [diamondR, kripkeR, witnessP] at this
+  simp [diamond, kripkeR, witnessP] at this
 
 /-- NOT(MUST(P)) and MUST(NOT(P)) are not equivalent in general.
 
@@ -430,11 +430,11 @@ necessarily false (□¬P = false when P holds at w1). -/
 theorem neg_over_nec_ne_nec_over_neg :
     ∃ (R : AccessRel World),
     ¬(∀ (p : World → Prop) (w : World),
-      ¬ boxR R p w ↔ boxR R (fun w' => ¬ p w') w) := by
+      ¬ box R p w ↔ box R (fun w' => ¬ p w') w) := by
   refine ⟨kripkeR, ?_⟩
   intro h
   have := h witnessP (0 : World)
-  simp [boxR, kripkeR, witnessP] at this
+  simp [box, kripkeR, witnessP] at this
 
 end ScopeBridge
 
@@ -445,7 +445,7 @@ end ScopeBridge
 /-! *-n't* attaches only to finite auxiliaries. Verify that the host set
 matches the auxiliary inventory from `Fragments/English/FunctionWords`. -/
 
-open Fragments.English.Auxiliaries in
+open English.Auxiliaries in
 /-- Every auxiliary in the inventory is either a modal, do-support, be, or have. -/
 theorem aux_hosts_are_closed_class :
     allAuxiliaries.all (λ a => a.auxType == .modal
@@ -453,22 +453,22 @@ theorem aux_hosts_are_closed_class :
       || a.auxType == .be
       || a.auxType == .have) = true := by native_decide
 
-open Fragments.English.Auxiliaries in
+open English.Auxiliaries in
 /-- The number of auxiliaries with contracted negative forms
     (= the productive range of *-n't*). -/
 def ntHostCount : Nat :=
   allAuxiliaries.filter (λ a => a.negForm.isSome) |>.length
 
-open Fragments.English.Auxiliaries in
+open English.Auxiliaries in
 /-- The number of paradigm gaps (auxiliaries without *-n't*). -/
 def ntGapCount : Nat :=
   allAuxiliaries.filter (λ a => a.negForm.isNone) |>.length
 
-open Fragments.English.Auxiliaries in
+open English.Auxiliaries in
 /-- Most auxiliaries have a contracted negative form, but there are gaps. -/
 theorem nt_has_gaps : ntGapCount > 0 := by native_decide
 
-open Fragments.English.Auxiliaries in
+open English.Auxiliaries in
 /-- At least five auxiliaries show phonological irregularity in their
 contracted negative form (Z&P criterion C). -/
 theorem nt_has_irregulars :

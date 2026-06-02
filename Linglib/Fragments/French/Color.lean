@@ -5,17 +5,12 @@ import Linglib.Typology.Color
 @cite{wals-2013}
 -/
 
-namespace Fragments.French
+namespace French
 
 /-- French: 6 non-derived basic colors, 11 total basic colors; green (*vert*)
-    vs blue (*bleu*) distinct; red vs yellow distinct. -/
+    vs blue (*bleu*) distinct; red vs yellow distinct.
+    Derived from the WALS Chs 132–135 rows for `fra`. -/
 def colorProfile : Typology.ColorProfile :=
-  { language := "French"
-  , iso := "fra"
-  , family := "Indo-European"
-  , nonDerived := some .six
-  , basic := some .v11
-  , greenBlue := some .distinct
-  , redYellow := some .distinct }
+  Typology.ColorProfile.fromWALS "French" "fra" "Indo-European"
 
-end Fragments.French
+end French

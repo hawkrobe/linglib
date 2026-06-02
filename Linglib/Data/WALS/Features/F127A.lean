@@ -20,7 +20,7 @@ inductive ReasonClauseType where
   | balancedDeranked
   /-- Deranked (42 languages). -/
   | deranked
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 127A dataset (169 languages). -/
 def allData : List (Datapoint ReasonClauseType) :=
@@ -196,9 +196,9 @@ def allData : List (Datapoint ReasonClauseType) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint ReasonClauseType) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint ReasonClauseType) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F127A

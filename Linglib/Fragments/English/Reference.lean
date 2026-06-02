@@ -5,7 +5,7 @@ import Linglib.Typology.Reference
 @cite{wals-2013}
 -/
 
-namespace Fragments.English
+namespace English
 
 /-- English (Indo-European, Germanic): definite article *the* distinct from
     demonstratives *this*/*that*; indefinite article *a*/*an* distinct from
@@ -23,4 +23,4 @@ def referenceProfile : Typology.ArticleDemProfile :=
   , demFormType := some .sameForms
   , pronDemRelation := some .unrelated }
 
-end Fragments.English
+end English

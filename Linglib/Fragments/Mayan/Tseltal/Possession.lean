@@ -14,7 +14,7 @@ consuming this profile live in
 
 set_option autoImplicit false
 
-namespace Fragments.Mayan.Tseltal.Possession
+namespace Tseltal.Possession
 
 open _root_.Typology.Possession
 
@@ -31,4 +31,4 @@ def possession : PossessionProfile :=
   , examples := ["ay chenek' ta oxom 'EXIS bean P pot'", "s-be-lal te j-na=e 'A3-road-NCLS DET A1-house=ENC'"]
   , notes := "Existential ay + possessive pivot for predicative; Set A prefixes on possessum for adnominal (head-marking); three noun classes as in Tsotsil (Aissen-Polian 2025)" }
 
-end Fragments.Mayan.Tseltal.Possession
+end Tseltal.Possession

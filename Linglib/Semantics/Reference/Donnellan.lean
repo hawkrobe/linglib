@@ -32,13 +32,15 @@ content (singularProp = false), but is used referentially.
 - `referentialExpression`: A referentially-used description
 - `donnellanDivergence`: The two uses come apart when the description
   fails to apply to the intended referent
-- `definitePrProp`: Attributive semantics with presupposition (bridges
-  to `Semantics.Presupposition.PrProp`)
+- `definiteNominal`: Attributive semantics as a `NominalDenot` (selector =
+  the Russellian iota; `resolve` it for a `PrProp`)
 
 -/
 
 import Linglib.Semantics.Reference.Basic
+import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Presupposition.Basic
+import Linglib.Core.Nominal.Maximality
 
 namespace Semantics.Reference.Donnellan
 
@@ -47,6 +49,7 @@ open Core.Intension (rigid IsRigid rigid_isRigid)
 open Semantics.Presupposition (PrProp)
 open Semantics.Presupposition.PrProp (presupOfReferent)
 open Semantics.Reference.Basic
+open Core.Nominal (russellIotaList)
 
 /-! ## Use Modes -/
 
@@ -83,43 +86,23 @@ structure DefiniteDescription (W : Type*) (E : Type*) where
 /-- Attributive content: at each world, the unique satisfier of the restrictor.
 
 This is the Russellian analysis: "the φ" denotes, at world w, the unique
-entity satisfying φ at w. The referent can vary across worlds. -/
+entity satisfying φ at w — the canonical iota `russellIotaList` applied
+pointwise. The referent can vary across worlds. -/
 def attributiveContent {W E : Type*} (domain : List E) (restrictor : E → W → Bool)
     : W → Option E :=
-  λ w =>
-    match domain.filter (λ e => restrictor e w) with
-    | [e] => some e
-    | _ => none
+  fun w => russellIotaList domain (fun e => restrictor e w)
 
-/-- Attributive semantics wrapped in `PrProp`: existence and uniqueness
-are presupposed, the assertion is the predicate applied to the unique
-satisfier.
+/-- The definite description as a `NominalDenot`: the selector is the
+Russellian iota (`attributiveContent`); there is no intrinsic presupposition
+beyond definedness of that selector.
 
-Factored as `presupOfReferent ∘ attributiveContent`: the referent selector
-is `attributiveContent` (Russellian iota at each world), and the canonical
-`PrProp.presupOfReferent` combinator lifts it to a presupposition+assertion
-bundle. This is the single source of truth for definite descriptions in the
-library; familiarity-based, anaphoric, and discourse-restricted variants all
-use `presupOfReferent` with different referent selectors. -/
-def definitePrProp {W E : Type*} (domain : List E) (restrictor : E → W → Bool)
-    (predicate : E → W → Bool) : PrProp W :=
-  presupOfReferent (attributiveContent domain restrictor)
-    (fun e w => predicate e w = true)
-
-/-- Unfolding lemma: `definitePrProp` is `presupOfReferent` applied to
-    `attributiveContent`. By definition. -/
-theorem definitePrProp_eq_presupOfReferent {W E : Type*} (domain : List E)
-    (restrictor : E → W → Bool) (predicate : E → W → Bool) :
-    definitePrProp domain restrictor predicate =
-    presupOfReferent (attributiveContent domain restrictor)
-      (fun e w => predicate e w = true) := rfl
-
-/-- Direct presupposition characterization: `definitePrProp` presupposes
-    that `attributiveContent` returns `some` referent. -/
-@[simp] theorem definitePrProp_presup {W E : Type*} (domain : List E)
-    (restrictor : E → W → Bool) (predicate : E → W → Bool) (w : W) :
-    (definitePrProp domain restrictor predicate).presup w =
-    (attributiveContent domain restrictor w).isSome := rfl
+This is the single source of truth for definite descriptions in the library;
+familiarity-based, anaphoric, and discourse-restricted variants are
+`NominalDenot`s with different selectors, and pronouns add a φ-feature presup
+(see `PersonalPronoun.denote`). -/
+def definiteNominal {W E : Type*} (domain : List E) (restrictor : E → W → Bool) :
+    NominalDenot Unit W E :=
+  NominalDenot.ofReferent (attributiveContent domain restrictor)
 
 /-! ## Referential Semantics -/
 
@@ -191,18 +174,12 @@ theorem donnellanDivergence {W E : Type*} (d : DonnellanDivergence W E)
 
 /-! ## Bridge to Partee's Type-Shifting Triangle -/
 
-/-- Connection to `TypeShifting.iota`: the attributive semantics of "the φ"
-is Partee's `iota` applied at each world. Both compute the unique satisfier
-of a predicate in a domain.
-
-`TypeShifting.iota domain P` returns the unique `e` with `P e = true`.
-`attributiveContent domain restrictor w` returns the unique `e` with
-`restrictor e w = true`. These coincide when we fix the world parameter. -/
+/-- `attributiveContent` is the canonical Russellian iota `russellIotaList`
+applied pointwise: "the φ" picks, at each world `w`, the unique `e` in the
+domain with `restrictor e w = true`. -/
 theorem attributive_is_pointwise_iota {W E : Type*} (domain : List E)
     (restrictor : E → W → Bool) (w : W) :
     attributiveContent domain restrictor w =
-    (match domain.filter (λ e => restrictor e w) with
-     | [e] => some e
-     | _ => none) := rfl
+    russellIotaList domain (fun e => restrictor e w) := rfl
 
 end Semantics.Reference.Donnellan

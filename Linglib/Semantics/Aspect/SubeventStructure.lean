@@ -21,7 +21,7 @@ temporally simple. This module makes that structure explicit via
 - `TemporalDecomposition`: `.simple` (single runtime) or `.complex` (phased)
 - `hasComplexDecomposition`: telic classes have complex decomposition
 - `DecomposedEv`: event enriched with decomposition
-- `phasePred`: converts an interval (event phase) into an `EventPred` for
+- `phasePred`: converts an interval (event phase) into an event predicate for
   ViewpointAspect operators
 - `MoensSteedmanClass`: five-way event classification
 - `Nucleus`: tripartite event structure (prep process → culmination → cons state)
@@ -29,7 +29,7 @@ temporally simple. This module makes that structure explicit via
 
 ## ViewpointAspect Bridge (§ 6–7)
 
-`phasePred` converts temporal phases into `EventPred Unit Time`, making them
+`phasePred` converts temporal phases into `Unit → Event Time → Prop`, making them
 consumable by IMPF/PRFV/PERF. Key results:
 
 - `impf_phasePred` / `prfv_phasePred`: reduce operator applications to
@@ -47,7 +47,6 @@ namespace Semantics.Aspect.SubeventStructure
 
 open Core.Time
 open Features
-open Semantics.Events
 
 /-! ### Subevent Phases -/
 
@@ -142,14 +141,14 @@ structure DecomposedEv (Time : Type*) [LinearOrder Time] where
   runtime_consistent : decomposition.runtime = event.runtime
 
 /-- Attach a simple decomposition to an event (for states/activities). -/
-def Event.withSimpleDecomposition {Time : Type*} [LinearOrder Time]
+def _root_.Event.withSimpleDecomposition {Time : Type*} [LinearOrder Time]
     (e : Event Time) : DecomposedEv Time where
   event := e
   decomposition := .simple e.runtime
   runtime_consistent := rfl
 
 /-- Attach a complex decomposition to an event (for accomplishments/achievements). -/
-def Event.withComplexDecomposition {Time : Type*} [LinearOrder Time]
+def _root_.Event.withComplexDecomposition {Time : Type*} [LinearOrder Time]
     (e : Event Time) (phases : SubeventPhases Time)
     (h_act : phases.activityTrace.subinterval e.runtime)
     (h_res : phases.resultTrace.subinterval e.runtime) : DecomposedEv Time where
@@ -186,7 +185,6 @@ theorem simple_no_activity {Time : Type*} [LinearOrder Time]
 
 /-! ### Phase Event Predicates -/
 
-open Semantics.Events
 open Semantics.Aspect
 
 /-- Event predicate localized to an interval: holds of eventualities whose
@@ -198,7 +196,7 @@ open Semantics.Aspect
     is world-independent (following the same convention as
     `Giannakidou.lean`). -/
 def phasePred {Time : Type*} [LinearOrder Time]
-    (phase : Interval Time) : EventPred Unit Time :=
+    (phase : Interval Time) : Unit → Event Time → Prop :=
   λ _ ev => ev.runtime = phase
 
 /-- IMPF applied to a phase predicate reduces to the reference time being
@@ -209,7 +207,7 @@ theorem impf_phasePred {Time : Type*} [LinearOrder Time]
   simp only [IMPF, phasePred, Event.τ]
   constructor
   · rintro ⟨e, hSub, rfl⟩; exact hSub
-  · intro h; exact ⟨⟨phase, .action⟩, h, rfl⟩
+  · intro h; exact ⟨⟨phase, .dynamic⟩, h, rfl⟩
 
 /-- PRFV applied to a phase predicate reduces to the phase interval being
     contained in the reference time. -/
@@ -219,7 +217,7 @@ theorem prfv_phasePred {Time : Type*} [LinearOrder Time]
   simp only [PRFV, phasePred, Event.τ]
   constructor
   · rintro ⟨e, hSub, rfl⟩; exact hSub
-  · intro h; exact ⟨⟨phase, .action⟩, h, rfl⟩
+  · intro h; exact ⟨⟨phase, .dynamic⟩, h, rfl⟩
 
 /-! ### ViewpointAspect ↔ Decomposition Bridge -/
 

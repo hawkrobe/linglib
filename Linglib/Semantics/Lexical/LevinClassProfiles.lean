@@ -25,7 +25,7 @@ that root meaning determines which entailments hold:
 - **Psych-causal verbs** (amuse): stimulus subject
 
 Individual verbs can override class-level profiles via explicit
-`subjectEntailments`/`objectEntailments` on `VerbCore`.
+`subjectEntailments`/`objectEntailments` on `Verb`.
 -/
 
 namespace Features.LevinClassProfiles

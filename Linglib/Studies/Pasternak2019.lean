@@ -67,7 +67,7 @@ The first-pass version of this file claimed several substrate gaps that
 do not exist. Corrected:
 
 - §4.2 two-dimensional ontology: a vertical-altitude axis would *extend*
-  `Semantics.Events.Basic.EventMereology` (which already provides the
+  `Event.Mereology` (which already provides the
   `Preorder (Event Time)` instance Pasternak's part-whole relation
   consumes). Not a substrate gap; a refinement.
 - §5 `want`/`wish`/`regret`: `Semantics/Attitudes/Desire.lean`
@@ -86,7 +86,6 @@ namespace Pasternak2019
 
 open Semantics.Gradability.StatesBased
 open Semantics.Attitudes.Confidence
-open Semantics.Events (Event EvPred)
 open Semantics.ArgumentStructure (ThematicFrame)
 
 /-! ## §1. Monotonicity (Pasternak (4))
@@ -152,7 +151,7 @@ not the verb).
     experiencer roles come from a `ThematicFrame` at use sites. -/
 structure MentalStateVerb (Time : Type*) [LinearOrder Time] where
   /-- The verb's lexical predicate on eventualities (e.g., `hate`, `love`) -/
-  predicate : EvPred Time
+  predicate : Event Time → Prop
   /-- Intensity measure function — Pasternak's `μ_int` -/
   μint : Event Time → ℚ
 
@@ -184,7 +183,7 @@ Pasternak's intensity case is one specialization. -/
     Wellwood's `comparativeTruthHetero` for Pasternak's intensity case. -/
 @[simp] def themedPredicate {Entity Time : Type*} [LinearOrder Time]
     (v : MentalStateVerb Time) (frame : ThematicFrame Entity Time)
-    (x : Entity) : EvPred Time :=
+    (x : Entity) : Event Time → Prop :=
   fun e => v.predicate e ∧ frame.theme x e
 
 /-- The intensity comparative `α V x more than β V y` (Pasternak (53)):
@@ -340,10 +339,10 @@ theorem intensityComparative_max {Entity Time : Type*} [LinearOrder Time]
 
 `MentalStateHomogeneity` is `Mereology.DIV` over the ambient `[Preorder Event]`.
 When `Event = Event Time` and the preorder comes from
-`Semantics/Events/Basic.lean::EventMereology`, Pasternak's claim
+`Semantics/Events/Basic.lean::Event.Mereology`, Pasternak's claim
 becomes: vP-predicates respect the event-mereology part-of. We expose
 two substrate consequences below: a downward-closure inheritance lemma
-for sort-determined predicates (using `EventMereology.sort_preserved`),
+for sort-determined predicates (using `Event.Mereology.sort_preserved`),
 and a g-homogeneity bridge to `Core/Mereology.lean::gHomogeneous`
 (triggered when the carrier is a `PartialOrder`).
 
@@ -357,21 +356,20 @@ adjectives like `confident that p`). The substrate-level identification
 (monotonicity = admissibleMeasure) is now in the `admissibleMeasure`
 docstring, not as a redundant per-file Iff.rfl. -/
 
-open Semantics.Events in
 /-- Sort-determined predicates inherit homogeneity from
-    `EventMereology.sort_preserved`: any predicate of the form
+    `Event.Mereology.sort_preserved`: any predicate of the form
     "eventuality has sort `s`" is downward-closed under part-of, so
     `MentalStateHomogeneity` follows for free. Pasternak's mental-state
     predicates are stative (Levin class 31.2; Vendler `state`); to the
     extent they implicate sort, they inherit homogeneity from this
     theorem. -/
 theorem sortDetermined_isHomogeneous
-    {Time : Type*} [LinearOrder Time] [EventMereology Time]
-    (s : EventSort) :
-    letI := eventPreorder Time
+    {Time : Type*} [LinearOrder Time] [Event.Mereology Time]
+    (s : Features.Dynamicity) :
+    letI := Event.preorder Time
     MentalStateHomogeneity (fun e : Event Time => e.sort = s) := by
   intro e e' hPe hle
-  exact (EventMereology.sort_preserved e' e hle).trans hPe
+  exact (Event.Mereology.sort_preserved e' e hle).trans hPe
 
 /-- On a `PartialOrder` carrier, Pasternak's `MentalStateHomogeneity`
     implies `Mereology.gHomogeneous` (every proper part has a P-part —
@@ -399,7 +397,7 @@ these verbs or the Pasternak-side claim that state-class admire-class
 verbs are gradable in intensity will surface as a type error or
 broken proof. -/
 
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 /-- Fragment-substrate agreement: the seven English psych verbs with
     Levin class 31.2 ("admire") share the state-class + admire-class
     profile Pasternak's intensity framework predicts for gradable
@@ -430,7 +428,7 @@ entries with measure-function payloads.
 ### §4.2 Two-dimensional state ontology + DOG (eq. 87)
 
 Pasternak's vertical altitude axis `K` (PDF p.288) extends rather than
-replaces the substrate's `EventMereology Time` preorder. A
+replaces the substrate's `Event.Mereology Time` preorder. A
 `Semantics/Events/VerticalDimension.lean` add-on with
 `κ : Event Time → Set Altitude` plus the DOG fineness lattice (which can
 consume `Core.Order.FeaturePreorder.coarsen_via_monotone`) is a clean

@@ -104,24 +104,24 @@ def onsetGrammar : List (WeightedConstraint Onset) :=
 -- § 2: Harmony Predictions (using harmonyScore from Core.Constraint.Weighted)
 -- ============================================================================
 
-open Fragments.English.Phonology in
+open English.Phonology in
 /-- Attested onset [k]: harmony = 0 (no violations). -/
 theorem k_harmony : harmonyScore onsetGrammar [k] = 0 := by native_decide
 
-open Fragments.English.Phonology in
+open English.Phonology in
 /-- Unattested onset *[ŋ]: harmony = −5.64 (violates *[+son,+dors]). -/
 theorem ŋ_harmony : harmonyScore onsetGrammar [ŋ] = -(564/100) := by native_decide
 
-open Fragments.English.Phonology in
+open English.Phonology in
 /-- Unattested onset *[rk]: harmony = −6.66 (violates *[+son][ ]). -/
 theorem rk_harmony : harmonyScore onsetGrammar [r, k] = -(666/100) := by native_decide
 
-open Fragments.English.Phonology in
+open English.Phonology in
 /-- Attested [k] has higher harmony than unattested *[ŋ]. -/
 theorem attested_higher_harmony_k_ŋ :
     harmonyScore onsetGrammar [ŋ] < harmonyScore onsetGrammar [k] := by native_decide
 
-open Fragments.English.Phonology in
+open English.Phonology in
 /-- Attested [br] has higher harmony than unattested *[rk]. -/
 theorem attested_higher_harmony_br_rk :
     harmonyScore onsetGrammar [r, k] < harmonyScore onsetGrammar [b, r] := by native_decide
@@ -131,7 +131,7 @@ theorem attested_higher_harmony_br_rk :
 -- ============================================================================
 
 section MaxEntProb
-open Fragments.English.Phonology
+open English.Phonology
 
 /-- **MaxEnt probability ordering**: higher harmony ⟹ higher
     `exp(harmonyScore)` ⟹ higher MaxEnt probability.
@@ -172,7 +172,7 @@ This section eats the dog food: rather than comparing
 `ConstraintSystem.predict`. -/
 
 section PredictAPI
-open Fragments.English.Phonology
+open English.Phonology
 
 /-- The four onsets used as MaxEnt candidates: two attested ([k], [b,r])
     and two unattested (*[ŋ], *[r,k]). -/

@@ -1,7 +1,6 @@
 import Linglib.Typology.WordOrder
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Syntax.HPSG.Inversion
 import Linglib.Features.Givenness
 import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.English.V2
@@ -77,10 +76,10 @@ open Minimalist (ForceHead V2Profile WhElementStatus WhBlocksMovementTo)
 open Features (BinaryGivenness)
 
 -- Fragment data (theory-neutral)
-open Fragments.Norwegian (stdNorwegian nordmoreNorwegian)
-open Fragments.English (stdEnglish belfastEnglish)
-open Fragments.German (german)
-open Fragments.Danish (danish)
+open Norwegian (stdNorwegian nordmoreNorwegian)
+open English (stdEnglish belfastEnglish)
+open German (german)
+open Danish (danish)
 
 -- ============================================================================
 -- § 0  V2 Types
@@ -528,49 +527,6 @@ theorem de_emb_no_v2 :
   refine ⟨rfl, ?_⟩; decide
 
 -- ============================================================================
--- § 7b  Bridge to HPSG Inversion (@cite{sag-wasow-bender-2003})
--- ============================================================================
-
-/-! `Syntax/HPSG/Inversion.lean` derives English matrix/embedded
-    question word-order asymmetries from an `[INV ±]` feature on clauses,
-    with `matrixRequiresInvPlus` and `embeddedRequiresInvMinus` constraints.
-    @cite{westergaard-2009}'s English profile commits to +Int° (matrix
-    wh) and +Pol° (matrix y/n), which are the V-to-C steps that surface
-    as inversion. The two frameworks agree on the same surface contrast
-    via different machinery; the bridge theorem makes the agreement
-    visible. -/
-
-/-- Westergaard and @cite{sag-wasow-bender-2003}-style HPSG agree on
-    English matrix question inversion: Westergaard's V-to-C
-    (`.Int`/`.Pol ∈ stdEnglish`) projects the same surface order that
-    HPSG derives from `[INV +]`. Both frameworks could have committed
-    otherwise (Westergaard could have ascribed −Int°; HPSG could have
-    left matrix-question INV unconstrained), so the agreement is
-    non-trivial. -/
-theorem westergaard_hpsg_agree_english_matrix_question :
-    ForceHead.Int ∈ stdEnglish ∧
-    ForceHead.Pol ∈ stdEnglish ∧
-    (∀ inv, HPSG.matrixRequiresInvPlus .matrixQuestion inv → inv = .plus) := by
-  refine ⟨?_, ?_, ?_⟩
-  · decide
-  · decide
-  · intro _ h; exact h rfl
-
-/-- The same agreement on the embedded side: Westergaard records
-    Standard English as −Wh° (no V-to-C in embedded questions); HPSG
-    records `embeddedRequiresInvMinus`. Both frameworks predict
-    subject-first surface order in embedded questions for Standard
-    English; Belfast English breaks this on both sides
-    (`.Wh ∈ belfastEnglish` per Westergaard; @cite{henry-1995}'s
-    "I wonder could he come" per HPSG-style accounts). -/
-theorem westergaard_hpsg_agree_english_embedded_question :
-    ForceHead.Wh ∉ stdEnglish ∧
-    (∀ inv, HPSG.embeddedRequiresInvMinus .embeddedQuestion inv → inv = .minus) := by
-  refine ⟨?_, ?_⟩
-  · decide
-  · intro _ h; exact h rfl
-
--- ============================================================================
 -- § 8  Bridge to GermanicV2.lean
 -- ============================================================================
 
@@ -600,7 +556,7 @@ open Typology.WordOrder in
     with a profile that has BOTH +Decl° (V2 in roots → surface SVO) AND
     +Fin° (V-to-I in embedded → surface SOV). -/
 theorem german_noDominant_explained :
-    Fragments.German.wordOrder.basicOrder = .noDominant ∧
+    German.wordOrder.basicOrder = .noDominant ∧
     ForceHead.Decl ∈ german ∧
     ForceHead.Fin  ∈ german := by
   refine ⟨rfl, ?_, ?_⟩ <;> decide
@@ -610,7 +566,7 @@ open Typology.WordOrder in
     (no verb movement in declaratives → surface SVO with SVO base)
     and −Fin° (no V-to-I in embedded → embedded order also SVO). -/
 theorem english_svo_explained :
-    Fragments.English.wordOrder.basicOrder = .svo ∧
+    English.wordOrder.basicOrder = .svo ∧
     ForceHead.Decl ∉ stdEnglish ∧
     ForceHead.Fin  ∉ stdEnglish := by
   refine ⟨rfl, ?_, ?_⟩ <;> decide

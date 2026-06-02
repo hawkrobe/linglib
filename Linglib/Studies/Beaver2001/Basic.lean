@@ -68,7 +68,7 @@ namespace Beaver2001
 
 open Semantics.Presupposition
 open Core.Duality
-open Discourse.CommonGround
+open CommonGround
 
 variable {W : Type*}
 
@@ -237,7 +237,7 @@ q's presupposition (from q.presup).
 
 @cite{beaver-2001} Ch. 4 discusses @cite{stalnaker-1974}'s common ground
 and @cite{heim-1983}'s File Change Semantics in detail. The `ContextSet W`
-type used here IS the context set from `Discourse.CommonGround`.
+type used here IS the context set from `CommonGround`.
 `ContextSet.update` IS Heim's FCS update: intersect the context set with a
 proposition, keeping only worlds where the proposition holds.
 

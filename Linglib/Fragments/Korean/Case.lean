@@ -13,7 +13,7 @@ maps cleanly onto Blake's hierarchy with no gaps.
 
 -/
 
-namespace Fragments.Korean.Case
+namespace Korean.Case
 
 /-- Korean case inventory. -/
 def caseInventory : Finset Features.Case :=
@@ -22,4 +22,4 @@ def caseInventory : Finset Features.Case :=
 -- Contiguous on Blake's hierarchy (ranks 6 down to 1).
 example : Features.Case.IsValidInventory caseInventory := by decide
 
-end Fragments.Korean.Case
+end Korean.Case

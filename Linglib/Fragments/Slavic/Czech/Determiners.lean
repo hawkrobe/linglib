@@ -25,7 +25,7 @@ on determiners is the primary scope diagnostic for negation position.
 
 -/
 
-namespace Fragments.Slavic.Czech.Determiners
+namespace Czech.Determiners
 
 open Semantics.Negation.CzechNegation
 
@@ -181,4 +181,4 @@ theorem nci_ppi_identifies_inner :
       → pos = .inner := by
   intro pos; cases pos <;> decide
 
-end Fragments.Slavic.Czech.Determiners
+end Czech.Determiners

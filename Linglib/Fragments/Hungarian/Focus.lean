@@ -39,7 +39,7 @@ ill-licensed combinations are constructed directly to demonstrate the
 predicate has bite.
 -/
 
-namespace Fragments.Hungarian.Focus
+namespace Hungarian.Focus
 
 -- ============================================================================
 -- § 1: Structural Position (paper §1, §2)
@@ -226,4 +226,4 @@ theorem someIndef_never_licensed (c : FocusConfig) (h : c.Licensed) :
     rw [hft] at hcompat <;>
     simp [ConstituentClass.compatibleWith] at hcompat
 
-end Fragments.Hungarian.Focus
+end Hungarian.Focus

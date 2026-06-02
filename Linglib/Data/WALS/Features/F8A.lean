@@ -24,7 +24,7 @@ inductive LateralConsonants where
   | lAndLateralObstruent
   /-- No /l/, but lateral obstruents (8 languages). -/
   | noLButLateralObstruents
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint LateralConsonants) :=
   [ { walsCode := "xoo", iso := "nmn", value := .lNoObstruentLaterals }
@@ -603,9 +603,9 @@ private def allData_1 : List (Datapoint LateralConsonants) :=
 def allData : List (Datapoint LateralConsonants) := allData_0 ++ allData_1
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint LateralConsonants) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint LateralConsonants) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F8A

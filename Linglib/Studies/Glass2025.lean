@@ -2,7 +2,7 @@ import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.NegRaising
 import Linglib.Semantics.Presupposition.Context
 import Linglib.Semantics.Dynamic.Postsupposition
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Mandarin.Predicates
 
@@ -15,20 +15,20 @@ Semantics and Pragmatics 18, Article 8: 1-17.
 ## Key Claims
 
 1. **Two ways to negate the factive presupposition**: A contrafactive could
-   *require* ¬p (all CG worlds are ¬p worlds) or require *compatibility*
-   with ¬p (some CG world is a ¬p world).
+   *require* ¬p (all CommonGround worlds are ¬p worlds) or require *compatibility*
+   with ¬p (some CommonGround world is a ¬p world).
 
 2. **Strong contrafactives are unattested**: No verb presupposes ¬p (requiring
-   CG ⊨ ¬p). This follows from the Predicate Lexicalization Constraint
+   CommonGround ⊨ ¬p). This follows from the Predicate Lexicalization Constraint
    (@cite{roberts-ozyildiz-2025}): ¬p cannot causally support B(x)(p).
 
 3. **Weak contrafactives exist**: Mandarin yǐwéi (@cite{glass-2023}) has a
-   postsupposition ◇¬p — after utterance, the CG must be compatible with ¬p.
+   postsupposition ◇¬p — after utterance, the CommonGround must be compatible with ¬p.
    This is a definedness condition on the *output* context, not a presupposition
    on the input context.
 
-4. **Revised question**: "Why are there belief verbs like *know* (CG ⊨ p)
-   and yǐwéi (CG ◇ ¬p), but none like *contra* (CG ⊨ ¬p)?"
+4. **Revised question**: "Why are there belief verbs like *know* (CommonGround ⊨ p)
+   and yǐwéi (CommonGround ◇ ¬p), but none like *contra* (CommonGround ⊨ ¬p)?"
 
 ## Formalization Strategy
 
@@ -45,8 +45,8 @@ open Semantics.Attitudes.Doxastic
 open Semantics.Presupposition
 open Semantics.Dynamic.Postsupposition
 open Semantics.Lexical
-open Fragments.English.Predicates.Verbal
-open Fragments.Mandarin.Predicates
+open English.Predicates.Verbal
+open Mandarin.Predicates
 
 -- ============================================================================
 -- §1. MiniWorld Model
@@ -66,13 +66,13 @@ private def prop : MiniWorld → Bool
   | .w0 => true
   | .w1 => false
 
-/-- Factive context: all worlds satisfy p (CG ⊨ p). -/
+/-- Factive context: all worlds satisfy p (CommonGround ⊨ p). -/
 private def factiveCtx : List MiniWorld := [.w0]
 
-/-- Neutral context: p is open (CG ◇ p ∧ CG ◇ ¬p). -/
+/-- Neutral context: p is open (CommonGround ◇ p ∧ CommonGround ◇ ¬p). -/
 private def neutralCtx : List MiniWorld := [.w0, .w1]
 
-/-- Contrafactive context: no world satisfies p (CG ⊨ ¬p). -/
+/-- Contrafactive context: no world satisfies p (CommonGround ⊨ ¬p). -/
 private def contrafactiveCtx : List MiniWorld := [.w1]
 
 -- ============================================================================
@@ -109,7 +109,7 @@ private def yiweiPresup : PrProp MiniWorld where
   presup := λ _ => True
   assertion := λ _ => True
 
-/-- yǐwéi's postsupposition: CG must be compatible with ¬p. -/
+/-- yǐwéi's postsupposition: CommonGround must be compatible with ¬p. -/
 private def yiweiPostsup : Postsupposition MiniWorld :=
   Postsupposition.weakContrafactive
 
@@ -213,43 +213,43 @@ veridicality in the Fragment entry. These theorems will BREAK if:
 -- Factive verbs → .factive
 
 theorem know_is_factive :
-    know.toVerbCore.veridicality.map classifyVeridicality = some .factive := by
+    know.toVerb.veridicality.map classifyVeridicality = some .factive := by
   native_decide
 
 theorem realize_is_factive :
-    realize.toVerbCore.veridicality.map classifyVeridicality = some .factive := by
+    realize.toVerb.veridicality.map classifyVeridicality = some .factive := by
   native_decide
 
 theorem discover_is_factive :
-    discover.toVerbCore.veridicality.map classifyVeridicality = some .factive := by
+    discover.toVerb.veridicality.map classifyVeridicality = some .factive := by
   native_decide
 
 theorem notice_is_factive :
-    notice.toVerbCore.veridicality.map classifyVeridicality = some .factive := by
+    notice.toVerb.veridicality.map classifyVeridicality = some .factive := by
   native_decide
 
 -- Non-factive verbs → .nonfactive
 
 theorem believe_is_nonfactive :
-    believe.toVerbCore.veridicality.map classifyVeridicality = some .nonfactive := by
+    believe.toVerb.veridicality.map classifyVeridicality = some .nonfactive := by
   native_decide
 
 theorem think_is_nonfactive :
-    think.toVerbCore.veridicality.map classifyVeridicality = some .nonfactive := by
+    think.toVerb.veridicality.map classifyVeridicality = some .nonfactive := by
   native_decide
 
 theorem hope_is_nonfactive :
-    hope.toVerbCore.veridicality.map classifyVeridicality = some .nonfactive := by
+    hope.toVerb.veridicality.map classifyVeridicality = some .nonfactive := by
   native_decide
 
 theorem fear_is_nonfactive :
-    fear.toVerbCore.veridicality.map classifyVeridicality = some .nonfactive := by
+    fear.toVerb.veridicality.map classifyVeridicality = some .nonfactive := by
   native_decide
 
 -- yǐwéi: classified as nonfactive by veridicality alone
 
 theorem yiwei_veridicality_nonfactive :
-    yiwei.toVerbCore.veridicality.map classifyVeridicality = some .nonfactive := by
+    yiwei.toVerb.veridicality.map classifyVeridicality = some .nonfactive := by
   native_decide
 
 -- ============================================================================
@@ -259,24 +259,39 @@ theorem yiwei_veridicality_nonfactive :
 /-!
 yǐwéi is classified as nonfactive by veridicality (§4), but it has an
 additional postsupposition ◇¬p that is NOT derivable from veridicality.
-This postsupposition is flagged in the Fragment layer and interpreted here.
+Veridicality is a derivable property of the canonical Mandarin entry; the
+postsupposition is @cite{glass-2025}'s paper-specific overlay, recorded here
+in the study rather than as a field on the Fragment entry.
 -/
 
-/-- yǐwéi carries a weak contrafactive postsupposition structurally. -/
-theorem yiwei_has_postsupposition :
-    yiwei.toVerbCore.postsupType = some .weakContrafactive := by native_decide
+/-- Postsupposition type: output-context constraint distinct from
+    presuppositions (@cite{glass-2025}). The world-type-independent tag; the
+    concrete construct is `Semantics.Dynamic.Postsupposition`. -/
+inductive PostsupType where
+  /-- Output context must be compatible with ¬p: ◇¬p (@cite{glass-2025}). -/
+  | weakContrafactive
+  /-- Output context must entail ¬p: ⊨¬p (hypothetical, UNATTESTED). -/
+  | strongContrafactive
+  deriving DecidableEq, Repr
+
+/-- @cite{glass-2025} classifies yǐwéi as carrying a weak contrafactive
+    postsupposition. This is the paper's analytical claim about the canonical
+    Mandarin `yiwei` entry — not a field on that entry. -/
+def yiweiPostsupType : PostsupType := .weakContrafactive
 
 /-- yǐwéi's veridicality gives nonfactive — no presupposition. -/
 theorem yiwei_derived_nonfactive :
-    yiwei.toVerbCore.veridicality = some .nonVeridical := by native_decide
+    yiwei.toVerb.veridicality = some .nonVeridical := by native_decide
 
 /-- The postsupposition IS necessary: veridicality alone gives .nonfactive
     (no presupposition), but yǐwéi actually has a weak contrafactive
-    postsupposition. Without `postsupType`, this would be invisible. -/
+    postsupposition. Pairing the canonical entry's derivable veridicality with
+    Glass's postsupposition classification shows the two diverge — veridicality
+    is blind to the postsupposition. -/
 theorem yiwei_postsup_not_from_veridicality :
-    yiwei.toVerbCore.veridicality.map classifyVeridicality = some .nonfactive ∧
-    yiwei.toVerbCore.postsupType = some .weakContrafactive :=
-  ⟨by native_decide, by native_decide⟩
+    yiwei.toVerb.veridicality.map classifyVeridicality = some .nonfactive ∧
+    yiweiPostsupType = .weakContrafactive :=
+  ⟨by native_decide, rfl⟩
 
 -- ============================================================================
 -- §6. The Contrafactive Gap
@@ -305,7 +320,7 @@ theorem contrafactive_gap :
 theorem all_english_attitude_verbs_valid :
     [know, realize, discover, notice, believe, think, want, hope,
      expect, wish, fear, dread, worry].all (fun v =>
-      v.toVerbCore.veridicality.map classifyVeridicality |>.map
+      v.toVerb.veridicality.map classifyVeridicality |>.map
         presupClassIsValid |>.getD true) = true := by
   native_decide
 
@@ -323,12 +338,12 @@ This section exercises the complete pipeline for representative verbs.
 
 /-- End-to-end: "know" is factive, and factive presuppositions are valid. -/
 theorem know_endtoend_valid :
-    (know.toVerbCore.veridicality.map classifyVeridicality).map
+    (know.toVerb.veridicality.map classifyVeridicality).map
       presupClassIsValid = some true := by native_decide
 
 /-- End-to-end: "believe" is nonfactive, and nonfactive is valid. -/
 theorem believe_endtoend_valid :
-    (believe.toVerbCore.veridicality.map classifyVeridicality).map
+    (believe.toVerb.veridicality.map classifyVeridicality).map
       presupClassIsValid = some true := by native_decide
 
 /-- End-to-end: know's presupposition is satisfied in a factive context. -/

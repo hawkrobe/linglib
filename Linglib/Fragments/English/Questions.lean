@@ -16,7 +16,7 @@ English: no polar Q particle (subject-aux inversion + intonation), wh-fronting
 
 set_option autoImplicit false
 
-namespace Fragments.English.Questions
+namespace English.Questions
 
 open _root_.Typology.Question
 
@@ -28,4 +28,4 @@ def question : QuestionProfile :=
   , whMovement := some .initial
   , polarStrategy := some .wordOrder }
 
-end Fragments.English.Questions
+end English.Questions

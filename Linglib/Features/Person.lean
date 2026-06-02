@@ -4,12 +4,16 @@ import Linglib.Features.PrivativePair
 
 /-!
 # Person
+@cite{harbour-2016} @cite{harley-ritter-2002} @cite{ackema-neeleman-2018}
 @cite{cysouw-2009} @cite{siewierska-2004}
 
 Two components of the person API:
 
-**§ 1–4: Person Features** (@cite{cysouw-2009}, @cite{siewierska-2004}).
-Framework-neutral decomposition of person into binary features:
+**§ 1–4: Person Features** (@cite{harbour-2016}, @cite{harley-ritter-2002}; the
+privative-feature decomposition, with @cite{ackema-neeleman-2018}'s
+function-valued alternative). The typological *category* inventory (§5+) is
+@cite{cysouw-2009}'s, *derived* from these features — not their source.
+Decomposition of person into binary privative features:
 - **[±participant]**: whether the referent includes a speech-act participant
   (speaker or addressee). 1st and 2nd person are [+participant]; 3rd person
   is [−participant].

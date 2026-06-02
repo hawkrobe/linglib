@@ -26,9 +26,9 @@ Gender-matching plural agreement is the exception, not the rule
 (@cite{carstens-2026} §3.5, §5.2).
 -/
 
-namespace Fragments.Shona
+namespace Shona
 
-open Fragments.Bantu
+open Bantu
 
 -- ============================================================================
 -- § 1: Noun Classes
@@ -150,4 +150,4 @@ def Gender.toSurfaceGender : Gender → Features.SurfaceGender
   | .genderA => .animate
   | _ => .inanimate
 
-end Fragments.Shona
+end Shona

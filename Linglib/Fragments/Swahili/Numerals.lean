@@ -1,26 +1,18 @@
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.WALS
 
 /-!
 # Swahili numeral profile (WALS Chs 53–56, 131)
 @cite{wals-2013}
 -/
 
-namespace Fragments.Swahili
+namespace Swahili
 
 /-- Swahili: ordinals formed with *-a* prefix + cardinal (*wa-kwanza* 'first'
     has distinct root, *-a-pili* 'second' onward regular). No morphological
     distributive. No numeral classifiers (noun class system serves a different
     function). *Na* (and) differs from *-ote* (all). Obligatory plural via
     noun class prefixes; decimal base. -/
-def numeralProfile : Typology.NumeralProfile :=
-  { language := "Swahili"
-  , iso := "swh"
-  , ordinal := .firstSuppletion
-  , distributive := .noDistributive
-  , classifier := .absent
-  , conjQuant := .differentiation
-  , region := .africa
-  , pluralMarking := .obligatory
-  , numeralBase := some .decimal }
+def numeralProfile : Numeral.Profile :=
+  Numeral.Profile.fromWALS "Swahili" "swh" (region := .africa) (pluralMarking := .obligatory)
 
-end Fragments.Swahili
+end Swahili

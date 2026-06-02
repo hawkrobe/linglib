@@ -8,7 +8,7 @@ import Linglib.Typology.Gender
 and auxiliaries — one of the clearest cases of verb agreement for gender.
 -/
 
-namespace Fragments.Hindi.Gender
+namespace Hindi.Gender
 
 open Typology.Gender
 
@@ -29,4 +29,4 @@ example : genderTypology.iso639 = "hin" ∧ genderTypology.name = "Hindi-Urdu" :
 /-- Hindi-Urdu is in @cite{corbett-1991}'s "canonical" cell. -/
 example : genderTypology.IsCanonicalGender := by decide
 
-end Fragments.Hindi.Gender
+end Hindi.Gender

@@ -98,17 +98,11 @@ def StratalRole.label : StratalRole → String
 /-- Build the parallel-pair edge between two equal-or-shorter forms:
     `(0, 0), (1, 1), …` up to the shorter length. The substrate edge
     type for both within-stratum (IO-correspondence) and cross-stratum
-    (feeding) relations. -/
-def parallelEdge {α : Type*} (s₁ s₂ : List α) : Finset (ℕ × ℕ) :=
-  (Finset.range (min s₁.length s₂.length)).image fun i => (i, i)
-
-theorem parallelEdge_wf {α : Type*} (s₁ s₂ : List α) :
-    ∀ p ∈ parallelEdge s₁ s₂, p.1 < s₁.length ∧ p.2 < s₂.length := by
-  intro p hmem
-  simp only [parallelEdge, Finset.mem_image, Finset.mem_range] at hmem
-  obtain ⟨i, hi, rfl⟩ := hmem
-  exact ⟨lt_of_lt_of_le hi (min_le_left _ _),
-         lt_of_lt_of_le hi (min_le_right _ _)⟩
+    (feeding) relations. The in-range bound is carried by the `Fin`-indexed
+    type (`Corr.diagDiag`), so no separate well-formedness lemma is needed. -/
+def parallelEdge {α : Type*} (s₁ s₂ : List α) :
+    Finset (Fin s₁.length × Fin s₂.length) :=
+  Corr.diagDiag s₁.length s₂.length
 
 -- ============================================================================
 -- § 3: StratalDerivation → Corr StratalRole α
@@ -130,19 +124,19 @@ theorem parallelEdge_wf {α : Type*} (s₁ s₂ : List α) :
     `StratalDerivation S W P` doesn't fit `Corr Role α` directly without
     a uniform encoding. -/
 
-/-- Adjacent strata in a 4-role chain: `.sIn ↔ .sOut`, `.sOut ↔ .wOut`,
+/-- Adjacent strata in the 4-role chain: `.sIn ↔ .sOut`, `.sOut ↔ .wOut`,
     `.wOut ↔ .pOut`. The chain-shape predicate for `Corr.diagram`. -/
-def adjacentStrata : StratalRole → StratalRole → Bool
-  | .sIn,  .sOut | .sOut, .sIn
-  | .sOut, .wOut | .wOut, .sOut
-  | .wOut, .pOut | .pOut, .wOut => true
-  | _, _ => false
+def adjacentStrata (a b : StratalRole) : Prop :=
+  (a = .sIn ∧ b = .sOut) ∨ (a = .sOut ∧ b = .sIn) ∨
+  (a = .sOut ∧ b = .wOut) ∨ (a = .wOut ∧ b = .sOut) ∨
+  (a = .wOut ∧ b = .pOut) ∨ (a = .pOut ∧ b = .wOut)
+
+instance : DecidableRel adjacentStrata := fun a b => by
+  unfold adjacentStrata; infer_instance
 
 /-- A stratal derivation as a 4-role `Corr StratalRole α`, with parallel-pair
-    feeding edges along the adjacent-strata chain. Defined via `Corr.diagram`
-    with the `adjacentStrata` predicate. The pre-Stage-2 hand-rolled version
-    had ~50 LOC of `match` + `wf` boilerplate including 3 redundant
-    swap-image clauses (no-ops since parallel-pair edges are symmetric). -/
+    feeding edges along the adjacent-strata chain (via `Corr.diagram` with
+    the `adjacentStrata` predicate). -/
 def stratalDerivToCorr {α : Type}
     (input stemOut wordOut phraseOut : List α) : Corr StratalRole α :=
   Corr.diagram
@@ -174,7 +168,7 @@ end Phonology.Stratal
 namespace Phonology.StratalToTCT
 
 open Phonology.Correspondence (Corr)
-open Phonology.Stratal (StratalRole stratalDerivToCorr parallelEdge parallelEdge_wf)
+open Phonology.Stratal (StratalRole stratalDerivToCorr parallelEdge)
 open Phonology.TCT (Role)
 
 /-- The canonical projection from stratal roles to TCT roles, encoding
@@ -210,7 +204,7 @@ def project {α : Type}
     (input stemOut wordOut phraseOut : List α) : Corr Role α :=
   Corr.diagram
     (fun | .input => input | .base => stemOut | .derivative => phraseOut)
-    (fun r₁ r₂ => decide (r₁ ≠ r₂))
+    (· ≠ ·)
 
 -- ============================================================================
 -- § 5: Bridge Theorems
@@ -254,7 +248,9 @@ theorem project_preserves_underlying_as_input {α : Type}
 theorem project_oo_edge_eq_parallel {α : Type}
     (input stemOut wordOut phraseOut : List α) :
     (project input stemOut wordOut phraseOut).edge .base .derivative =
-      parallelEdge stemOut phraseOut :=
+      parallelEdge stemOut phraseOut := by
+  simp only [project]
+  rw [Corr.diagram_edge_pos _ _ (by decide)]
   rfl
 
 end Phonology.StratalToTCT

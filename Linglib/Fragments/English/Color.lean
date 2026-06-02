@@ -5,17 +5,12 @@ import Linglib.Typology.Color
 @cite{wals-2013}
 -/
 
-namespace Fragments.English
+namespace English
 
 /-- English: 6 non-derived basic color categories, 11 total basic colors
-    (Berlin-Kay maximum); green vs blue distinct; red vs yellow distinct. -/
+    (Berlin-Kay maximum); green vs blue distinct; red vs yellow distinct.
+    Derived from the WALS Chs 132–135 rows for `eng`. -/
 def colorProfile : Typology.ColorProfile :=
-  { language := "English"
-  , iso := "eng"
-  , family := "Indo-European"
-  , nonDerived := some .six
-  , basic := some .v11
-  , greenBlue := some .distinct
-  , redYellow := some .distinct }
+  Typology.ColorProfile.fromWALS "English" "eng" "Indo-European"
 
-end Fragments.English
+end English

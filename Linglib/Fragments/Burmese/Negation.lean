@@ -26,7 +26,7 @@ The affirmative distinguishes realis (*-deh*), irrealis (*-meh*), and
 future (*-laimeh*), but the negative collapses all three to *ma-...-bu*.
 -/
 
-namespace Fragments.Burmese.Negation
+namespace Burmese.Negation
 
 open Typology.Negation
 
@@ -136,4 +136,4 @@ def negationProfile : Typology.Negation.NegationProfile :=
   , negIsHead := none
   , enAttested := none }
 
-end Fragments.Burmese.Negation
+end Burmese.Negation

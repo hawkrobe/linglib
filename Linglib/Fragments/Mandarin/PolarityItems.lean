@@ -13,7 +13,7 @@ non-interrogative uses, covering an exceptionally wide range on
 - **shéi** (non-interrogative): NPI/FCI — questions through free choice
 -/
 
-namespace Fragments.Mandarin.PolarityItems
+namespace Mandarin.PolarityItems
 
 open Typology.PolarityItem
 
@@ -42,4 +42,4 @@ def shei : PolarityItemEntry :=
 
 theorem shei_is_npi_fci : shei.polarityType = .npiFci := rfl
 
-end Fragments.Mandarin.PolarityItems
+end Mandarin.PolarityItems

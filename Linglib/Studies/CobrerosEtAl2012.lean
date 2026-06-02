@@ -102,7 +102,7 @@ def soritesSimBool : Elt → Elt → Bool
   | _, _ => false
 
 /-- The similarity relation as a `Prop`, for direct integration with
-    the modal-logic substrate's `boxR`/`diamondR`. -/
+    the modal-logic substrate's `box`/`diamond`. -/
 def soritesSim (x y : Elt) : Prop := soritesSimBool x y = true
 
 instance : DecidableRel soritesSim := λ x y =>

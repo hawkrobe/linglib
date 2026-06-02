@@ -12,15 +12,15 @@ all nouns are kind-denoting by default, no number morphology, no articles,
 classifiers required for counting, bare nouns freely occur as arguments.
 
 Classifiers are now typed `ClassifierEntry` values from the classifier
-lexicon (`Fragments.Mandarin.Classifiers`), replacing the previous
+lexicon (`Mandarin.Classifiers`), replacing the previous
 unstructured `Option String` representation. This enables verification
 of Aikhenvald's semantic generalizations about classifier selection.
 -/
 
-namespace Fragments.Mandarin.Nouns
+namespace Mandarin.Nouns
 
 open Typology (ClassifierEntry)
-open Fragments.Mandarin.Classifiers
+open Mandarin.Classifiers
 open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
 
 /-- A lexical entry for a Mandarin noun.
@@ -173,4 +173,4 @@ example : sanBenShu.numeral = some 3 := rfl
 example : gouNP.classifierForm = some "只" := rfl
 example : sanBenShu.classifierForm = some "本" := rfl
 
-end Fragments.Mandarin.Nouns
+end Mandarin.Nouns

@@ -11,7 +11,7 @@ import Mathlib.Data.Rat.Defs
 
 -/
 
-namespace Fragments.English.Scales
+namespace English.Scales
 
 /-- Horn scale: ordered list from weak to strong. -/
 structure Scale (α : Type) where
@@ -381,4 +381,4 @@ def domainClosureSummary : ClosureSummary :=
 def closureSummaries : List ClosureSummary :=
   [scalarClosureSummary, domainClosureSummary]
 
-end Fragments.English.Scales
+end English.Scales

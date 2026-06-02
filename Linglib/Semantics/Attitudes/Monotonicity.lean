@@ -10,7 +10,7 @@ determiners. This makes the parallel between quantifier monotonicity and
 attitude monotonicity explicit: both are instances of the same algebraic
 classification.
 
-Per-verb monotonicity data lives on `VerbCore.complementSig` in the
+Per-verb monotonicity data lives on `Verb.complementSig` in the
 fragment lexicon (`Fragments/English/Predicates/Verbal.lean`), not here.
 This file provides only the derivation logic: given an `EntailmentSig`,
 what follows about conjunction distribution and neg-raising?

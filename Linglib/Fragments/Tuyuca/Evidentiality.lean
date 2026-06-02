@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Tuyuca Evidentiality
@@ -15,24 +15,45 @@ enum's `threeOrMore` value is the per-Aikhenvald override (Studies-side).
 The `markers` field below preserves the full 5-term inventory.
 -/
 
-namespace Fragments.Tuyuca.Evidentiality
+namespace Tuyuca.Evidentiality
 
-open Typology.Modality
-open Features.Evidentiality (EvidentialSource)
+/-! ### Typed evidential inventory
 
-/-- Tuyuca evidentiality typology per WALS @cite{de-haan-2013}: 2-way
-    `directAndIndirect`. The 5-term Aikhenvald analysis is a Studies override. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "Tuyuca" "tue" "Tucanoan"
-    (markers := ["-wi (visual)", "-ti (nonvisual)", "-yi (apparent)",
-                 "-yigi (secondhand)", "-hiyi (assumed)"])
-    (notes := "Five-way evidential system per Barnes (1984); WALS lumps " ++
-              "into directAndIndirect, Aikhenvald 2004 distinguishes")
-    (attestedEvidentials := [.direct, .hearsay, .inference])
-    (systemFb := .directAndIndirect)
-    (codingFb := .verbalAffix)
+Tuyuca's 5-term D1 system per @cite{aikhenvald-2004} Ch 2 §2.4 and
+@cite{barnes-1984}. -/
 
-example : evidentialityProfile.iso = "tue" ∧ evidentialityProfile.language = "Tuyuca" :=
-  ⟨rfl, rfl⟩
+open Semantics.Evidential
 
-end Fragments.Tuyuca.Evidentiality
+/-- Tuyuca evidential inventory in the new typed form. Five entries:
+    two `Direct` (visual/non-visual sensory), two `Inferential`
+    (from-result/from-assumption), one `Reportative` (unidentified). -/
+def evidentials : List Entry :=
+  [ .direct      { form := "-wi",   exponent := .verbalAffix, source := .visual },
+    .direct      { form := "-ti",   exponent := .verbalAffix, source := .nonvisualSensory },
+    .inferential { form := "-yi",   exponent := .verbalAffix, basis  := .fromResult },
+    .reportative { form := "-yigi", exponent := .verbalAffix, sourceIdentity := .unidentified },
+    .inferential { form := "-hiyi", exponent := .verbalAffix, basis  := .fromAssumption } ]
+
+/-! Structural facts about the inventory, decide-checked. -/
+
+example : evidentials.length = 5 := by decide
+example : (evidentials.filter Entry.IsDirect).length = 2 := by decide
+example : (evidentials.filter Entry.IsReportative).length = 1 := by decide
+example : (evidentials.filter Entry.IsInferential).length = 2 := by decide
+
+/-- The visual/non-visual sensory distinction is now typed substrate,
+    not String literals — provable from the declared inventory. -/
+example :
+    evidentials.filterMap (fun e => match e with
+                                    | .direct d => some d.source
+                                    | _ => none) =
+    [.visual, .nonvisualSensory] := by decide
+
+/-- The from-result/from-assumption inferential distinction likewise. -/
+example :
+    evidentials.filterMap (fun e => match e with
+                                    | .inferential e => some e.basis
+                                    | _ => none) =
+    [.fromResult, .fromAssumption] := by decide
+
+end Tuyuca.Evidentiality

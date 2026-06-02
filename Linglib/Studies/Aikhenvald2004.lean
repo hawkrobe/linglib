@@ -1,358 +1,121 @@
 import Linglib.Typology.Modality
-import Linglib.Fragments.English.Evidentiality
+import Linglib.Typology.Evidentiality
+import Linglib.Semantics.Evidential.Basic
 import Linglib.Fragments.French.Evidentiality
-import Linglib.Fragments.German.Evidentiality
-import Linglib.Fragments.Mandarin.Evidentiality
 import Linglib.Fragments.Japanese.Evidentiality
-import Linglib.Fragments.Korean.Evidentiality
 import Linglib.Fragments.Turkish.Evidentiality
 import Linglib.Fragments.Slavic.Bulgarian.Evidentiality
-import Linglib.Fragments.Tibetan.Evidentiality
 import Linglib.Fragments.Georgian.Evidentiality
 import Linglib.Fragments.Quechua.Evidentiality
-import Linglib.Fragments.Aymara.Evidentiality
 import Linglib.Fragments.Tuyuca.Evidentiality
 import Linglib.Fragments.Kashaya.Evidentiality
 import Linglib.Fragments.Tariana.Evidentiality
-import Linglib.Fragments.WestGreenlandic.Evidentiality
 import Linglib.Fragments.Abkhaz.Evidentiality
-import Linglib.Fragments.Finnish.Evidentiality
 
 /-!
 # Aikhenvald (2004): Evidentiality typology
 @cite{aikhenvald-2004} @cite{de-haan-2013} @cite{barnes-1984} @cite{oswalt-1986}
 
-Cross-linguistic typology of grammatical evidentiality, anchored on
-Aikhenvald's *Evidentiality* (Oxford University Press, 2004) and contrasted
-with @cite{de-haan-2013}'s WALS Ch 77/78 chapters.
+This file holds only the **analytical disagreements**: where
+@cite{aikhenvald-2004}'s own paradigm-type letter for a language differs
+from `Typology.Evidentiality.AikhenvaldSystem.fromInventory` applied to the
+Fragment-declared inventory, or where the resulting classification differs
+from @cite{de-haan-2013}'s WALS Ch 77 coding.
 
-This study file holds Aikhenvald's cross-linguistic generalisations on the
-18-language sample. Per-language profiles live in
-`Fragments/{Lang}/Evidentiality.lean` as `evidentialityProfile :
-EvidentialityProfile` — constructed via `EvidentialityProfile.fromWALS` so
-WALS Chs 77/78 are auto-pulled and the editorial fields (markers, notes,
-attestedEvidentials, family) are local per-language commitments.
+Per-language Aikhenvald classifications are *derived* in
+`Typology/Evidentiality.lean`; per-language inventories live in
+`Fragments/{Lang}/Evidentiality.lean`. There are no per-language
+verification examples here — those would be unit tests of the derivation
+algorithm, not theorems about the typology.
 
-## Sample composition
+## Disagreements recorded
 
-18 languages chosen to span:
-- **No-evidentials** (English, Mandarin — 2 languages per Aikhenvald;
-  WALS additionally codes French, German, Japanese, Korean, Finnish as
-  `indirectOnly` on a looser criterion).
-- **Indirect-only** (Georgian, West Greenlandic — per Aikhenvald;
-  WALS codes Georgian as directAndIndirect).
-- **Direct + indirect** (Turkish, Bulgarian, Tibetan, Abkhaz —
-  per Aikhenvald; WALS agrees on Turkish/Bulgarian, codes Abkhaz as
-  indirectOnly).
-- **Three-or-more** (Quechua, Aymara, Tuyuca, Kashaya, Tariana —
-  per Aikhenvald; WALS has no entry for Quechua/Aymara, lumps
-  Tuyuca/Kashaya/Tariana into directAndIndirect).
-
-Aikhenvald's typology distinguishes 4-term and 5-term systems (Tuyuca and
-Tariana have 5 obligatory categories: visual / nonvisual / inferred /
-assumed / reported). The local `EvidentialSystem` enum collapses these into
-`threeOrMore`; the `markers` field records the finer-grained inventory.
-
-## Aikhenvald 2004 vs de Haan 2013 (WALS) divergences
-
-10 of 18 sample languages diverge between Aikhenvald's analysis and de Haan's
-WALS coding. The Studies file record-overrides per Aikhenvald and exposes
-divergences as first-class theorems in §6 — making the cross-author
-disagreement visible per linglib's interconnection-density thesis.
-
-## What this file deliberately omits
-
-Aggregate-count theorems (`sample_system_counts`, `sample_coding_counts`,
-`sample_size`, etc.) trimmed per the no-aggregate-count anti-pattern memory
-note. Substantive structural / implicational claims kept.
+* **§1**: 4 paper-vs-derived disagreements (Turkish, Bulgarian, Abkhaz,
+  Kashaya). Each is an analytical choice about which morphemes count as
+  marked evidentials.
+* **§2**: Aikhenvald-vs-WALS disagreements for languages where the two
+  classifications diverge. Three representative cases.
 -/
 
 set_option autoImplicit false
 
 namespace Aikhenvald2004
 
-open Typology.Modality
+open Semantics.Evidential
+open Typology.Modality (EvidentialSystem walsEvidentialSystem)
+open Typology.Evidentiality (AikhenvaldSystem)
 
--- ============================================================================
--- §1. The 18-language exemplar sample (Aikhenvald 2004)
--- ============================================================================
+/-! ### §1. Paper-vs-derived disagreements
 
-/-! Per-language profiles drawn from `Fragments/{Lang}/Evidentiality.lean`
-    via `EvidentialityProfile.fromWALS`. 10 languages are record-overridden
-    where Aikhenvald 2004 disagrees with de Haan 2013 (WALS); see §6 for
-    first-class divergence theorems. -/
+@cite{aikhenvald-2004}'s own letter assignment for the four sample languages
+where it differs from `AikhenvaldSystem.fromInventory`:
+- Turkish, Bulgarian, Abkhaz: Aikhenvald treats one term as unmarked default
+  (A2 = single marked non-firsthand); Fragment counts both terms (A1).
+- Kashaya: Aikhenvald assigns D1 as closest fit; derivation returns `none`
+  because the auditory cell plus missing nonvisualSensory and assumed cells
+  break D1's structural pattern. -/
 
--- Languages where Fragment WALS values match Aikhenvald: pass through directly.
-private abbrev english := Fragments.English.Evidentiality.evidentialityProfile
-private abbrev mandarin := Fragments.Mandarin.Evidentiality.evidentialityProfile
-private abbrev turkish := Fragments.Turkish.Evidentiality.evidentialityProfile
-private abbrev bulgarian := Fragments.Slavic.Bulgarian.Evidentiality.evidentialityProfile
-private abbrev tibetan := Fragments.Tibetan.Evidentiality.evidentialityProfile
-private abbrev quechua := Fragments.Quechua.Evidentiality.evidentialityProfile
-private abbrev aymara := Fragments.Aymara.Evidentiality.evidentialityProfile
-private abbrev westGreenlandic := Fragments.WestGreenlandic.Evidentiality.evidentialityProfile
+/-- Aikhenvald 2004's own letter for the four divergent languages. `none`
+    for any language whose derivation matches the paper. -/
+def paperType : String → Option AikhenvaldSystem
+  | "tur" => some .A2  -- paper A2; derivation A1 (counts -DI as marked direct)
+  | "bul" => some .A2  -- paper A2; derivation A1 (counts aorist as marked direct)
+  | "abk" => some .A2  -- paper A2; derivation A1 (counts finite verb as marked)
+  | "kju" => some .D1  -- paper D1 closest-fit; derivation `none` (auditory split)
+  | _     => none
 
--- Aikhenvald-overrides: where Aikhenvald disagrees with WALS, record-update.
--- The WALS originals remain accessible at the Fragment paths.
+theorem turkish_paper_vs_derived :
+    AikhenvaldSystem.fromInventory Turkish.Evidentiality.evidentials = some .A1 ∧
+    paperType "tur" = some .A2 := by decide
 
-/-- Aikhenvald 2004: French has no grammatical evidentials. WALS @cite{de-haan-2013}
-    codes the journalistic-conditional reportative as `indirectOnly`. -/
-private def french : EvidentialityProfile :=
-  { Fragments.French.Evidentiality.evidentialityProfile with
-    system := .noGrammatical, coding := .notApplicable }
+theorem bulgarian_paper_vs_derived :
+    AikhenvaldSystem.fromInventory Bulgarian.Evidentiality.evidentials = some .A1 ∧
+    paperType "bul" = some .A2 := by decide
 
-/-- Aikhenvald 2004: German has no grammatical evidentials. WALS counts modal
-    verbs *sollen*/*wollen* as `indirectOnly`. -/
-private def german : EvidentialityProfile :=
-  { Fragments.German.Evidentiality.evidentialityProfile with
-    system := .noGrammatical, coding := .notApplicable }
+theorem abkhaz_paper_vs_derived :
+    AikhenvaldSystem.fromInventory Abkhaz.Evidentiality.evidentials = some .A1 ∧
+    paperType "abk" = some .A2 := by decide
 
-/-- Aikhenvald 2004: Japanese has no grammatical evidentials. WALS counts
-    *soo da* / *rashii* as `indirectOnly` with `verbalAffix` coding. -/
-private def japanese : EvidentialityProfile :=
-  { Fragments.Japanese.Evidentiality.evidentialityProfile with
-    system := .noGrammatical, coding := .notApplicable }
+theorem kashaya_paper_vs_derived :
+    AikhenvaldSystem.fromInventory Kashaya.Evidentiality.evidentials = none ∧
+    paperType "kju" = some .D1 := by decide
 
-/-- Aikhenvald 2004: Korean has no grammatical evidentials. WALS counts
-    *-deo-* retrospective as `indirectOnly`. -/
-private def korean : EvidentialityProfile :=
-  { Fragments.Korean.Evidentiality.evidentialityProfile with
-    system := .noGrammatical, coding := .notApplicable }
+/-! ### §2. Aikhenvald-vs-WALS disagreements
 
-/-- Aikhenvald 2004: Finnish has no grammatical evidentials (modal verbs only).
-    WALS counts these as `indirectOnly`. -/
-private def finnish : EvidentialityProfile :=
-  { Fragments.Finnish.Evidentiality.evidentialityProfile with
-    system := .noGrammatical, coding := .notApplicable }
+Representative cases — same structural pattern repeats across the other
+indirectOnly-via-modal cases (German, Korean, Finnish) and the other
+WALS-lumps-rich-systems cases (Tariana, Kashaya). -/
 
-/-- Aikhenvald 2004: Georgian has indirect-only evidentials (the evidential
-    perfect marks inference/report only). WALS codes as `directAndIndirect`. -/
-private def georgian : EvidentialityProfile :=
-  { Fragments.Georgian.Evidentiality.evidentialityProfile with
-    system := .indirectOnly }
+/-- Empty inventory per Aikhenvald-strict vs WALS `indirectOnly`. French
+    is the canonical case: the journalistic conditional has reportative
+    use that WALS counts but Aikhenvald excludes. Same pattern holds for
+    German, Japanese, Korean, Finnish. -/
+theorem french_wals_divergence :
+    AikhenvaldSystem.fromInventory French.Evidentiality.evidentials = none ∧
+    walsEvidentialSystem "fra" = some .indirectOnly := by decide
 
-/-- Aikhenvald 2004: Abkhaz has 2-way direct/indirect via TAM-fused finite vs
-    nonfinite-plus-copula. WALS codes as `indirectOnly`/`verbalAffix`. -/
-private def abkhaz : EvidentialityProfile :=
-  { Fragments.Abkhaz.Evidentiality.evidentialityProfile with
-    system := .directAndIndirect, coding := .partOfTAM }
+theorem japanese_wals_divergence :
+    AikhenvaldSystem.fromInventory Japanese.Evidentiality.evidentials = none ∧
+    walsEvidentialSystem "jpn" = some .indirectOnly := by decide
 
-/-- Aikhenvald 2004: Tuyuca has 5-term system (visual/nonvisual/apparent/
-    secondhand/assumed) per @cite{barnes-1984}. WALS lumps into `directAndIndirect`
-    with `partOfTAM` coding. -/
-private def tuyuca : EvidentialityProfile :=
-  { Fragments.Tuyuca.Evidentiality.evidentialityProfile with
-    system := .threeOrMore, coding := .verbalAffix }
+/-- The signature divergence: Tuyuca's D1 5-term system per Aikhenvald
+    (projecting to `threeOrMore`) vs WALS's `directAndIndirect` lump. Same
+    paradigm, two classifications, both kernel-verified. -/
+theorem tuyuca_wals_divergence :
+    AikhenvaldSystem.fromInventory Tuyuca.Evidentiality.evidentials = some .D1 ∧
+    AikhenvaldSystem.D1.toWALS = .threeOrMore ∧
+    walsEvidentialSystem "tue" = some .directAndIndirect := by decide
 
-/-- Aikhenvald 2004: Kashaya has 5-term system distinguishing visual from
-    auditory direct evidence per @cite{oswalt-1986}. WALS lumps into
-    `directAndIndirect`. -/
-private def kashaya : EvidentialityProfile :=
-  { Fragments.Kashaya.Evidentiality.evidentialityProfile with
-    system := .threeOrMore }
+/-- Andean B1: Aikhenvald has classification; WALS has no entry. -/
+theorem quechua_no_wals_entry :
+    AikhenvaldSystem.fromInventory Quechua.Evidentiality.evidentials = some .B1 ∧
+    walsEvidentialSystem "quz" = none := by decide
 
-/-- Aikhenvald 2004: Tariana has 5-term system (Vaupés multilingual area).
-    WALS lumps into `directAndIndirect` with `partOfTAM` coding. -/
-private def tariana : EvidentialityProfile :=
-  { Fragments.Tariana.Evidentiality.evidentialityProfile with
-    system := .threeOrMore, coding := .verbalAffix }
-
-/-- 18-language Aikhenvald sample. -/
-def allLanguages : List EvidentialityProfile :=
-  [ english, french, german, mandarin, japanese, korean
-  , turkish, bulgarian, tibetan
-  , georgian, westGreenlandic
-  , quechua, aymara, tuyuca, kashaya, tariana
-  , abkhaz, finnish ]
-
--- ============================================================================
--- §2. Cross-chapter consistency (Aikhenvald)
--- ============================================================================
-
-set_option maxRecDepth 2000 in
-/-- Every language without grammatical evidentials has `notApplicable` coding. -/
-theorem no_evidentials_implies_na_coding :
-    ∀ p ∈ allLanguages, p.system = .noGrammatical → p.coding = .notApplicable := by
-  decide
-
-set_option maxRecDepth 2000 in
-/-- Every language with grammatical evidentials has a non-trivial coding. -/
-theorem evidentials_implies_real_coding :
-    ∀ p ∈ allLanguages, p.HasEvidentials → p.coding ≠ .notApplicable := by decide
-
-set_option maxRecDepth 2000 in
-/-- The system and coding fields are consistent: noGrammatical iff notApplicable. -/
-theorem system_coding_consistency :
-    ∀ p ∈ allLanguages,
-      (p.system = .noGrammatical ↔ p.coding = .notApplicable) := by decide
-
--- ============================================================================
--- §3. Implicational hierarchy
--- ============================================================================
-
-set_option maxRecDepth 2000 in
-/-- Languages with three-or-more evidential choices always include a direct
-    evidence category. Follows from the type definition; verified against
-    the sample. -/
-theorem three_or_more_always_has_direct :
-    ∀ p ∈ allLanguages, p.system = .threeOrMore → p.HasDirect := by decide
-
-set_option maxRecDepth 2000 in
-/-- Every language with direct evidence has either two-choice or three-or-more
-    (never indirect-only or no-evidentials). -/
-theorem direct_implies_at_least_two_choices :
-    ∀ p ∈ allLanguages, p.HasDirect →
-      p.system = .directAndIndirect ∨ p.system = .threeOrMore := by decide
-
-/-- The complexity hierarchy: noGrammatical < indirectOnly < directAndIndirect
-    < threeOrMore. -/
-theorem evidential_complexity_hierarchy :
-    EvidentialSystem.numChoices .threeOrMore >
-    EvidentialSystem.numChoices .directAndIndirect ∧
-    EvidentialSystem.numChoices .directAndIndirect >
-    EvidentialSystem.numChoices .indirectOnly ∧
-    EvidentialSystem.numChoices .indirectOnly >
-    EvidentialSystem.numChoices .noGrammatical := by decide
-
--- ============================================================================
--- §4. Areal generalisations
--- ============================================================================
-
-/-- Western European languages (English, French, German per Aikhenvald) all
-    lack grammatical evidentials. The Balkan Sprachbund is the notable
-    exception (covered by Bulgarian). -/
-theorem western_european_no_evidentials :
-    english.system = .noGrammatical ∧
-    french.system = .noGrammatical ∧
-    german.system = .noGrammatical := by decide
-
-/-- East Asian languages (Mandarin, Japanese, Korean per Aikhenvald) all lack
-    grammatical evidentials. East Asia is an evidential-free zone. -/
-theorem east_asian_no_evidentials :
-    mandarin.system = .noGrammatical ∧
-    japanese.system = .noGrammatical ∧
-    korean.system = .noGrammatical := by decide
-
-/-- Andean evidential cluster: Quechua and Aymara both have three-or-more
-    systems coded as verbal affixes. Well-known areal feature. -/
-theorem andean_evidential_cluster :
-    quechua.system = .threeOrMore ∧ aymara.system = .threeOrMore ∧
-    quechua.coding = .verbalAffix ∧ aymara.coding = .verbalAffix := by decide
-
-/-- Vaupés-Amazonian rich evidential systems: Tuyuca and Tariana, from
-    different families but in contact in the Vaupés, both have
-    three-or-more categories with five distinctions each. -/
-theorem amazonian_rich_systems :
-    tuyuca.system = .threeOrMore ∧ tariana.system = .threeOrMore ∧
-    tuyuca.coding = .verbalAffix ∧ tariana.coding = .verbalAffix := by decide
-
-/-- Americas languages (Quechua, Aymara, Tuyuca, Kashaya, Tariana) all have
-    three-or-more systems via verbal affixes. The Americas have the highest
-    density of complex evidential systems. -/
-theorem americas_all_complex_evidentials :
-    ∀ p ∈ [quechua, aymara, tuyuca, kashaya, tariana],
-      p.system = .threeOrMore ∧ p.coding = .verbalAffix := by decide
-
-/-- TAM-fused evidentiality is characteristic of the Balkans and Caucasus.
-    In the sample: Turkish, Bulgarian, Georgian, Abkhaz. -/
-theorem tam_fusion_in_sample :
-    turkish.coding = .partOfTAM ∧ bulgarian.coding = .partOfTAM ∧
-    georgian.coding = .partOfTAM ∧ abkhaz.coding = .partOfTAM := by decide
-
--- ============================================================================
--- §5. Coding-strategy generalisations
--- ============================================================================
-
-set_option maxRecDepth 2000 in
-/-- All languages with three-or-more systems use verbal affixes. -/
-theorem complex_systems_use_affixes :
-    ∀ p ∈ allLanguages, p.system = .threeOrMore → p.coding = .verbalAffix := by
-  decide
-
--- ============================================================================
--- §6. Aikhenvald 2004 vs de Haan 2013 (WALS) divergence theorems
--- ============================================================================
-
-/-! 10 of 18 sample languages diverge between Aikhenvald's analysis and
-    de Haan's WALS coding. The Aikhenvald values are this Studies file's
-    record-overrides; the WALS values are the Fragment-side
-    `Fragments.{Lang}.Evidentiality.evidentialityProfile` (which goes
-    through `EvidentialityProfile.fromWALS`). Linglib's
-    interconnection-density thesis: incompatibilities visible. -/
-
-/-- Aikhenvald vs de Haan: French. Aikhenvald says no grammatical evidentials;
-    de Haan's WALS Ch 77 codes the journalistic-conditional reportative as
-    `indirectOnly`. -/
-theorem french_aikhenvald_vs_de_haan :
-    french.system = .noGrammatical ∧
-    Fragments.French.Evidentiality.evidentialityProfile.system = .indirectOnly := by
-  decide
-
-/-- Aikhenvald vs de Haan: German. Aikhenvald excludes modal *sollen*/*wollen*
-    from grammatical evidentials; WALS counts them. -/
-theorem german_aikhenvald_vs_de_haan :
-    german.system = .noGrammatical ∧
-    Fragments.German.Evidentiality.evidentialityProfile.system = .indirectOnly := by
-  decide
-
-/-- Aikhenvald vs de Haan: Japanese. Aikhenvald treats *soo da*/*rashii* as
-    modal, not evidential; WALS classifies them as `indirectOnly`. -/
-theorem japanese_aikhenvald_vs_de_haan :
-    japanese.system = .noGrammatical ∧
-    Fragments.Japanese.Evidentiality.evidentialityProfile.system = .indirectOnly := by
-  decide
-
-/-- Aikhenvald vs de Haan: Korean. Aikhenvald excludes *-deo-* from
-    grammatical evidentials. -/
-theorem korean_aikhenvald_vs_de_haan :
-    korean.system = .noGrammatical ∧
-    Fragments.Korean.Evidentiality.evidentialityProfile.system = .indirectOnly := by
-  decide
-
-/-- Aikhenvald vs de Haan: Finnish. Aikhenvald excludes modal verbs from
-    grammatical evidentials. -/
-theorem finnish_aikhenvald_vs_de_haan :
-    finnish.system = .noGrammatical ∧
-    Fragments.Finnish.Evidentiality.evidentialityProfile.system = .indirectOnly := by
-  decide
-
-/-- Aikhenvald vs de Haan: Georgian. Aikhenvald says indirect-only;
-    WALS Ch 77 codes as direct-and-indirect. -/
-theorem georgian_aikhenvald_vs_de_haan :
-    georgian.system = .indirectOnly ∧
-    Fragments.Georgian.Evidentiality.evidentialityProfile.system =
-      .directAndIndirect := by decide
-
-/-- Aikhenvald vs de Haan: Abkhaz. Aikhenvald says direct-and-indirect with
-    TAM-fusion; WALS codes as indirect-only with verbal-affix coding. -/
-theorem abkhaz_aikhenvald_vs_de_haan :
-    abkhaz.system = .directAndIndirect ∧ abkhaz.coding = .partOfTAM ∧
-    Fragments.Abkhaz.Evidentiality.evidentialityProfile.system = .indirectOnly ∧
-    Fragments.Abkhaz.Evidentiality.evidentialityProfile.coding = .verbalAffix := by
-  decide
-
-/-- Aikhenvald vs de Haan: Tuyuca. Aikhenvald distinguishes 5-term system
-    (visual/nonvisual/apparent/secondhand/assumed); WALS Ch 77 lumps into
-    the `directAndIndirect` 2-way bucket and Ch 78 codes as `partOfTAM`. -/
-theorem tuyuca_aikhenvald_vs_de_haan :
-    tuyuca.system = .threeOrMore ∧ tuyuca.coding = .verbalAffix ∧
-    Fragments.Tuyuca.Evidentiality.evidentialityProfile.system = .directAndIndirect ∧
-    Fragments.Tuyuca.Evidentiality.evidentialityProfile.coding = .partOfTAM := by
-  decide
-
-/-- Aikhenvald vs de Haan: Kashaya. Aikhenvald distinguishes 4-or-5-way
-    system; WALS lumps into `directAndIndirect`. -/
-theorem kashaya_aikhenvald_vs_de_haan :
-    kashaya.system = .threeOrMore ∧
-    Fragments.Kashaya.Evidentiality.evidentialityProfile.system =
-      .directAndIndirect := by decide
-
-/-- Aikhenvald vs de Haan: Tariana. Aikhenvald distinguishes 5-term system
-    (Vaupés area); WALS lumps into `directAndIndirect` and codes as `partOfTAM`. -/
-theorem tariana_aikhenvald_vs_de_haan :
-    tariana.system = .threeOrMore ∧ tariana.coding = .verbalAffix ∧
-    Fragments.Tariana.Evidentiality.evidentialityProfile.system = .directAndIndirect ∧
-    Fragments.Tariana.Evidentiality.evidentialityProfile.coding = .partOfTAM := by
-  decide
+/-- Turkish: derivation's A1 happens to project to the same WALS coding
+    (`directAndIndirect`) WALS assigns directly; the Aikhenvald *paper*
+    A2 projects to `indirectOnly`. Triple-comparison divergence. -/
+theorem turkish_wals_divergence :
+    AikhenvaldSystem.A2.toWALS = .indirectOnly ∧
+    walsEvidentialSystem "tur" = some .directAndIndirect := by decide
 
 end Aikhenvald2004

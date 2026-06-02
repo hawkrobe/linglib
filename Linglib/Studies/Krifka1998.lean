@@ -95,7 +95,7 @@ Part II (§4 movement):
 
 namespace Krifka1998
 
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 open Features
 open Semantics.Lexical
 open _root_.Mereology
@@ -116,80 +116,80 @@ open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction DiagnosticR
     `example`s, but as `theorem`s they're discoverable via `#check`. -/
 
 /-- "eat" is strictly incremental (consumption: bijective theme-event map). -/
-theorem eat_sinc : eat.toVerbCore.verbIncClass = some .sinc := rfl
+theorem eat_sinc : eat.toVerb.verbIncClass = some .sinc := rfl
 
 /-- "devour" is strictly incremental (consumption variant of eat). -/
-theorem devour_sinc : devour.toVerbCore.verbIncClass = some .sinc := rfl
+theorem devour_sinc : devour.toVerb.verbIncClass = some .sinc := rfl
 
 /-- "build" is strictly incremental (creation: bijective theme-event map). -/
-theorem build_sinc : build.toVerbCore.verbIncClass = some .sinc := rfl
+theorem build_sinc : build.toVerb.verbIncClass = some .sinc := rfl
 
 /-- "write" is strictly incremental (creation verb). -/
-theorem write_sinc : write.toVerbCore.verbIncClass = some .sinc := rfl
+theorem write_sinc : write.toVerb.verbIncClass = some .sinc := rfl
 
 /-- "read" is incremental but not strictly so (allows re-reading per K98 §3.6). -/
-theorem read_inc : read.toVerbCore.verbIncClass = some .inc := rfl
+theorem read_inc : read.toVerb.verbIncClass = some .inc := rfl
 
 /-- "push" is cumulative only (no incremental theme — the formaliser's
     "cumOnly" is shorthand; K98 calls it CUM-without-MSE/MSO). -/
-theorem push_cumOnly : push.toVerbCore.verbIncClass = some .cumOnly := rfl
+theorem push_cumOnly : push.toVerb.verbIncClass = some .cumOnly := rfl
 
 /-- "pull" is cumulative only. -/
-theorem pull_cumOnly : pull.toVerbCore.verbIncClass = some .cumOnly := rfl
+theorem pull_cumOnly : pull.toVerb.verbIncClass = some .cumOnly := rfl
 
 /-- "carry" is cumulative only. -/
-theorem carry_cumOnly : carry.toVerbCore.verbIncClass = some .cumOnly := rfl
+theorem carry_cumOnly : carry.toVerb.verbIncClass = some .cumOnly := rfl
 
 /-- "drag" is cumulative only. -/
-theorem drag_cumOnly : drag.toVerbCore.verbIncClass = some .cumOnly := rfl
+theorem drag_cumOnly : drag.toVerb.verbIncClass = some .cumOnly := rfl
 
 /-- Intransitives have no incremental theme. -/
-theorem sleep_no_inc : sleep.toVerbCore.verbIncClass = none := rfl
-theorem run_no_inc : run.toVerbCore.verbIncClass = none := rfl
+theorem sleep_no_inc : sleep.toVerb.verbIncClass = none := rfl
+theorem run_no_inc : run.toVerb.verbIncClass = none := rfl
 
 /-- Unaccusatives have no incremental theme. -/
-theorem arrive_no_inc : arrive.toVerbCore.verbIncClass = none := rfl
+theorem arrive_no_inc : arrive.toVerb.verbIncClass = none := rfl
 
 /-- Contact verbs have no incremental theme. -/
-theorem kick_no_inc : kick.toVerbCore.verbIncClass = none := rfl
+theorem kick_no_inc : kick.toVerb.verbIncClass = none := rfl
 
 /-! ### Per-Verb Vendler Class Verification -/
 
 /-- "sleep" is a state. -/
-theorem sleep_state : sleep.toVerbCore.vendlerClass = some .state := rfl
+theorem sleep_state : sleep.toVerb.vendlerClass = some .state := rfl
 
 /-- "run" is an activity. -/
-theorem run_activity : run.toVerbCore.vendlerClass = some .activity := rfl
+theorem run_activity : run.toVerb.vendlerClass = some .activity := rfl
 
 /-- "arrive" is an achievement. -/
-theorem arrive_achievement : arrive.toVerbCore.vendlerClass = some .achievement := rfl
+theorem arrive_achievement : arrive.toVerb.vendlerClass = some .achievement := rfl
 
 /-- "eat" is an accomplishment (with quantized object). -/
-theorem eat_accomplishment : eat.toVerbCore.vendlerClass = some .accomplishment := rfl
+theorem eat_accomplishment : eat.toVerb.vendlerClass = some .accomplishment := rfl
 
 /-- "build" is an accomplishment. -/
-theorem build_accomplishment : build.toVerbCore.vendlerClass = some .accomplishment := rfl
+theorem build_accomplishment : build.toVerb.vendlerClass = some .accomplishment := rfl
 
 /-- "read" is an accomplishment. -/
-theorem read_accomplishment : read.toVerbCore.vendlerClass = some .accomplishment := rfl
+theorem read_accomplishment : read.toVerb.vendlerClass = some .accomplishment := rfl
 
 /-- "write" is an accomplishment. -/
-theorem write_accomplishment : write.toVerbCore.vendlerClass = some .accomplishment := rfl
+theorem write_accomplishment : write.toVerb.vendlerClass = some .accomplishment := rfl
 
 /-- "kick" is an activity (semelfactive/contact). -/
-theorem kick_activity : kick.toVerbCore.vendlerClass = some .activity := rfl
+theorem kick_activity : kick.toVerb.vendlerClass = some .activity := rfl
 
 /-- "see" is a state (perception). -/
-theorem see_state : see.toVerbCore.vendlerClass = some .state := rfl
+theorem see_state : see.toVerb.vendlerClass = some .state := rfl
 
 /-- "leave" is an achievement. -/
-theorem leave_achievement : leave.toVerbCore.vendlerClass = some .achievement := rfl
+theorem leave_achievement : leave.toVerb.vendlerClass = some .achievement := rfl
 
 /-- "push" is an activity. -/
-theorem push_activity : push.toVerbCore.vendlerClass = some .activity := rfl
+theorem push_activity : push.toVerb.vendlerClass = some .activity := rfl
 
 /-- "love" is a state. -/
-theorem love_state : love.toVerbCore.vendlerClass = some .state := rfl
+theorem love_state : love.toVerb.vendlerClass = some .state := rfl
 
 /-! ### VendlerClass → MereoTag Bridge -/
 
@@ -240,37 +240,37 @@ theorem state_is_cum :
     K98 §3.3: CumTheta(θ) ∧ CUM(OBJ) → CUM(VP θ OBJ).
     The verb's incrementality class is sinc, and bare plurals are CUM. -/
 theorem eat_apples_atelic :
-    eat.toVerbCore.verbIncClass = some .sinc ∧
+    eat.toVerb.verbIncClass = some .sinc ∧
     VendlerClass.activity.telicity.toMereoTag = .cum := ⟨rfl, rfl⟩
 
 /-- "eat two apples": sinc verb + QUA NP → QUA VP (telic).
     K98 §3.3: SINC(θ) ∧ QUA(OBJ) → QUA(VP θ OBJ).
     The verb's incrementality class is sinc, and "two apples" is QUA. -/
 theorem eat_two_apples_telic :
-    eat.toVerbCore.verbIncClass = some .sinc ∧
+    eat.toVerb.verbIncClass = some .sinc ∧
     VendlerClass.accomplishment.telicity.toMereoTag = .qua := ⟨rfl, rfl⟩
 
 /-- "build a house": sinc verb + QUA NP → QUA VP (telic). -/
 theorem build_a_house_telic :
-    build.toVerbCore.verbIncClass = some .sinc ∧
+    build.toVerb.verbIncClass = some .sinc ∧
     VendlerClass.accomplishment.telicity.toMereoTag = .qua := ⟨rfl, rfl⟩
 
 /-- "read the book": inc verb + QUA NP → VP is telic
     (INC is weaker than SINC, but still transmits QUA from NP to VP
     when the object is quantized, K98 §3.6). -/
 theorem read_the_book_telic :
-    read.toVerbCore.verbIncClass = some .inc ∧
+    read.toVerb.verbIncClass = some .inc ∧
     VendlerClass.accomplishment.telicity.toMereoTag = .qua := ⟨rfl, rfl⟩
 
 /-- "push the cart": cumOnly verb → no telicity transfer from NP.
     Regardless of the NP's reference property, cumOnly verbs yield
     atelic (CUM) VPs. -/
 theorem push_the_cart_atelic :
-    push.toVerbCore.verbIncClass = some .cumOnly := rfl
+    push.toVerb.verbIncClass = some .cumOnly := rfl
 
 /-- "write a letter": sinc verb + QUA NP → QUA VP (telic). -/
 theorem write_a_letter_telic :
-    write.toVerbCore.verbIncClass = some .sinc ∧
+    write.toVerb.verbIncClass = some .sinc ∧
     VendlerClass.accomplishment.telicity.toMereoTag = .qua := ⟨rfl, rfl⟩
 
 /-! ### §4.5 Propositional propagation invocations (typeclass form)
@@ -338,21 +338,21 @@ theorem durative_atelic_licenses_forX (c : VendlerClass)
 
 /-- All sinc-annotated verbs are accomplishments. -/
 theorem sinc_verbs_are_accomplishments :
-    eat.toVerbCore.vendlerClass = some .accomplishment ∧
-    devour.toVerbCore.vendlerClass = some .accomplishment ∧
-    build.toVerbCore.vendlerClass = some .accomplishment ∧
-    write.toVerbCore.vendlerClass = some .accomplishment := ⟨rfl, rfl, rfl, rfl⟩
+    eat.toVerb.vendlerClass = some .accomplishment ∧
+    devour.toVerb.vendlerClass = some .accomplishment ∧
+    build.toVerb.vendlerClass = some .accomplishment ∧
+    write.toVerb.vendlerClass = some .accomplishment := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- The inc-annotated verb "read" is an accomplishment. -/
 theorem inc_verb_is_accomplishment :
-    read.toVerbCore.vendlerClass = some .accomplishment := rfl
+    read.toVerb.vendlerClass = some .accomplishment := rfl
 
 /-- All cumOnly-annotated verbs are activities. -/
 theorem cumOnly_verbs_are_activities :
-    push.toVerbCore.vendlerClass = some .activity ∧
-    pull.toVerbCore.vendlerClass = some .activity ∧
-    carry.toVerbCore.vendlerClass = some .activity ∧
-    drag.toVerbCore.vendlerClass = some .activity := ⟨rfl, rfl, rfl, rfl⟩
+    push.toVerb.vendlerClass = some .activity ∧
+    pull.toVerb.vendlerClass = some .activity ∧
+    carry.toVerb.vendlerClass = some .activity ∧
+    drag.toVerb.vendlerClass = some .activity := ⟨rfl, rfl, rfl, rfl⟩
 
 /-! ## Gradual Change (GRAD) Predictions -/
 
@@ -396,11 +396,11 @@ def GRADVerb.expectedIncClass : GRADVerb → Option VerbIncClass
     `all_grad_data_matches`; this theorem keeps the literal in sync
     with the fragment. -/
 theorem gradVerb_matches_fragment :
-    GRADVerb.eat.expectedIncClass = eat.toVerbCore.verbIncClass ∧
-    GRADVerb.build.expectedIncClass = build.toVerbCore.verbIncClass ∧
-    GRADVerb.read.expectedIncClass = read.toVerbCore.verbIncClass ∧
-    GRADVerb.push.expectedIncClass = push.toVerbCore.verbIncClass ∧
-    GRADVerb.kick.expectedIncClass = kick.toVerbCore.verbIncClass :=
+    GRADVerb.eat.expectedIncClass = eat.toVerb.verbIncClass ∧
+    GRADVerb.build.expectedIncClass = build.toVerb.verbIncClass ∧
+    GRADVerb.read.expectedIncClass = read.toVerb.verbIncClass ∧
+    GRADVerb.push.expectedIncClass = push.toVerb.verbIncClass ∧
+    GRADVerb.kick.expectedIncClass = kick.toVerb.verbIncClass :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 /-- The dimension along which a verb's GRAD measure operates. -/
@@ -449,15 +449,15 @@ def predictsGRAD : Option VerbIncClass → Bool
 -- Per-verb GRAD verification (fragment-tripwire)
 
 theorem eat_predicts_grad :
-    predictsGRAD eat.toVerbCore.verbIncClass = true := rfl
+    predictsGRAD eat.toVerb.verbIncClass = true := rfl
 theorem build_predicts_grad :
-    predictsGRAD build.toVerbCore.verbIncClass = true := rfl
+    predictsGRAD build.toVerb.verbIncClass = true := rfl
 theorem read_predicts_grad :
-    predictsGRAD read.toVerbCore.verbIncClass = true := rfl
+    predictsGRAD read.toVerb.verbIncClass = true := rfl
 theorem push_no_grad :
-    predictsGRAD push.toVerbCore.verbIncClass = false := rfl
+    predictsGRAD push.toVerb.verbIncClass = false := rfl
 theorem kick_no_grad :
-    predictsGRAD kick.toVerbCore.verbIncClass = false := rfl
+    predictsGRAD kick.toVerb.verbIncClass = false := rfl
 
 /-- All GRAD data matches the K98-expected verb classification. The
     `decide` closure works because `verb.expectedIncClass` is
@@ -549,7 +549,7 @@ theorem k98_eq58_cum_object_accepts_inX :
 theorem eat_refinement_chain :
     Krifka1989.eatAnApple.thematicClass = .gradualConsumedPatient ∧
     Krifka1989.eatAnApple.thematicClass.toVerbIncClass = .sinc ∧
-    eat.toVerbCore.verbIncClass = some .sinc := ⟨rfl, rfl, rfl⟩
+    eat.toVerb.verbIncClass = some .sinc := ⟨rfl, rfl, rfl⟩
 
 /-- K89's *write a letter* (gradual-effected-patient) refines to K98
     sinc, matching *write*'s fragment annotation. K89's distinction
@@ -559,7 +559,7 @@ theorem eat_refinement_chain :
 theorem write_refinement_chain :
     Krifka1989.writeALetter.thematicClass = .gradualEffectedPatient ∧
     Krifka1989.writeALetter.thematicClass.toVerbIncClass = .sinc ∧
-    write.toVerbCore.verbIncClass = some .sinc := ⟨rfl, rfl, rfl⟩
+    write.toVerb.verbIncClass = some .sinc := ⟨rfl, rfl, rfl⟩
 
 /-- K89's *read a letter* (gradual-patient, lacks UNI-E) refines to
     K98 inc — matching *read*'s fragment annotation, which K98 §3.6
@@ -567,7 +567,7 @@ theorem write_refinement_chain :
 theorem read_refinement_chain :
     Krifka1989.readALetter.thematicClass = .gradualPatient ∧
     Krifka1989.readALetter.thematicClass.toVerbIncClass = .inc ∧
-    read.toVerbCore.verbIncClass = some .inc := ⟨rfl, rfl, rfl⟩
+    read.toVerb.verbIncClass = some .inc := ⟨rfl, rfl, rfl⟩
 
 /-! ### Concrete `IsSincVerb` Toy + Applied Propagation -/
 
@@ -722,7 +722,7 @@ end ToyEatInstance
 
 /-- "arrive" is inherently directed motion (K98 §4.7 eq. 78). -/
 theorem arrive_levinClass :
-    arrive.toVerbCore.levinClass = some .inherentlyDirectedMotion := rfl
+    arrive.toVerb.levinClass = some .inherentlyDirectedMotion := rfl
 
 /-- Inherently directed motion → bounded path (K98 §4.5 GOAL specified). -/
 theorem arrive_pathSpec :
@@ -730,7 +730,7 @@ theorem arrive_pathSpec :
 
 /-- "leave" is a leave verb (K98 §4.5 SOURCE-only). -/
 theorem leave_levinClass :
-    leave.toVerbCore.levinClass = some .leave := rfl
+    leave.toVerb.levinClass = some .leave := rfl
 
 /-- Leave verbs → source path. -/
 theorem leave_pathSpec :
@@ -738,7 +738,7 @@ theorem leave_pathSpec :
 
 /-- "run" is manner-of-motion (K98 §4.5 path-neutral; PP supplies path). -/
 theorem run_levinClass :
-    run.toVerbCore.levinClass = some .mannerOfMotion := rfl
+    run.toVerb.levinClass = some .mannerOfMotion := rfl
 
 /-- Manner-of-motion verbs are path-neutral (path comes from PP). -/
 theorem run_pathSpec :
@@ -749,11 +749,11 @@ theorem run_pathSpec :
 
 /-- *arrive* is annotated as an achievement Vendler class. -/
 theorem arrive_vendlerClass_achievement :
-    arrive.toVerbCore.vendlerClass = some .achievement := rfl
+    arrive.toVerb.vendlerClass = some .achievement := rfl
 
 /-- *sleep* is annotated as a state Vendler class. -/
 theorem sleep_vendlerClass_state :
-    sleep.toVerbCore.vendlerClass = some .state := rfl
+    sleep.toVerb.vendlerClass = some .state := rfl
 
 /-! ### PathShape → Telicity → Licensing (K98 §4 MR eq. 71) -/
 
@@ -816,27 +816,27 @@ theorem all_motion_data_correct :
 
 /-- "arrive" (achievement, bounded path) licenses "in X". -/
 theorem arrive_inX :
-    arrive.toVerbCore.vendlerClass = some .achievement ∧
+    arrive.toVerb.vendlerClass = some .achievement ∧
     inXPrediction .achievement = .accept := ⟨rfl, rfl⟩
 
 /-- "leave" (achievement, source path) licenses "in X". -/
 theorem leave_inX :
-    leave.toVerbCore.vendlerClass = some .achievement ∧
+    leave.toVerb.vendlerClass = some .achievement ∧
     inXPrediction .achievement = .accept := ⟨rfl, rfl⟩
 
 /-- "run" (activity, path-neutral) licenses "for X". -/
 theorem run_forX :
-    run.toVerbCore.vendlerClass = some .activity ∧
+    run.toVerb.vendlerClass = some .activity ∧
     forXPrediction .activity = .accept := ⟨rfl, rfl⟩
 
 /-- Motion verb VendlerClass × LevinClass coherence: bounded-path motion
     verbs are achievements, path-neutral ones are activities. -/
 theorem motion_vendler_path_coherence :
-    (arrive.toVerbCore.vendlerClass = some .achievement ∧
+    (arrive.toVerb.vendlerClass = some .achievement ∧
       LevinClass.inherentlyDirectedMotion.pathSpec = some .bounded) ∧
-    (leave.toVerbCore.vendlerClass = some .achievement ∧
+    (leave.toVerb.vendlerClass = some .achievement ∧
       LevinClass.leave.pathSpec = some .source) ∧
-    (run.toVerbCore.vendlerClass = some .activity ∧
+    (run.toVerb.vendlerClass = some .activity ∧
       LevinClass.mannerOfMotion.pathSpec = none) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
@@ -912,7 +912,6 @@ end K98PropositionalSubstrate
 
 section SpatialTracePullback
 
-open Semantics.Events
 open Semantics.Events.CEM
 open Semantics.Spatial.Path
 
@@ -941,7 +940,6 @@ end SpatialTracePullback
 
 section Expansiveness
 
-open Semantics.Events
 open Semantics.Events.CEM
 
 variable {α : Type*} [SemilatticeSup α]
@@ -962,7 +960,6 @@ end Expansiveness
 
 section MovementInstances
 
-open Semantics.Events
 open Semantics.Events.CEM
 open Semantics.Spatial.Path
 

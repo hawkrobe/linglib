@@ -18,7 +18,7 @@ German has extensive syncretism, especially in the definite article:
 
 -/
 
-namespace Fragments.German.Case
+namespace German.Case
 
 /-- German 4-case inventory. -/
 def caseInventory : Finset Features.Case :=
@@ -31,4 +31,4 @@ example : Features.Case.IsValidInventory caseInventory := by decide
     Instantiates the cross-linguistic NOM/ACC pattern from `Morphology.Case.Allomorphy`. -/
 def neuterSyncretism : Syncretism := nomAccSyncretism
 
-end Fragments.German.Case
+end German.Case

@@ -39,7 +39,7 @@ Note: 2du and 3du are syncretic (-uny-a); 2pl and 3pl are syncretic (-u-ya).
 
 -/
 
-namespace Fragments.Nungon.MedialVerbs
+namespace Nungon.MedialVerbs
 
 -- ============================================================================
 -- § SR suffix types
@@ -150,4 +150,4 @@ theorem ssSEQ_is_seq : SRCategory.ssSEQ.isSequential = true := rfl
 /-- SS-SIM is not sequential (it's simultaneous). -/
 theorem ssSIM_not_seq : SRCategory.ssSIM.isSequential = false := rfl
 
-end Fragments.Nungon.MedialVerbs
+end Nungon.MedialVerbs

@@ -12,7 +12,7 @@ Swahili indefinite pronoun polarity items, typed by the categories from
 
 -/
 
-namespace Fragments.Swahili.PolarityItems
+namespace Swahili.PolarityItems
 
 open Typology.PolarityItem
 
@@ -49,4 +49,4 @@ def mtuYeYote : PolarityItemEntry :=
 theorem hakunaMtu_mtuYeYote_distinct :
     hakunaMtu.polarityType ≠ mtuYeYote.polarityType := by decide
 
-end Fragments.Swahili.PolarityItems
+end Swahili.PolarityItems

@@ -229,11 +229,11 @@ this: `causative = some.make`. -/
 
 /-- The Japanese -(s)ase causative entry is causative (derived from causative). -/
 theorem ik_ase_is_causative :
-    Fragments.Japanese.Predicates.ik_ase.causative.isSome = true := rfl
+    Japanese.Predicates.ik_ase.causative.isSome = true := rfl
 
 /-- Japanese -(s)ase uses the.make causative builder (direct causation). -/
 theorem ik_ase_is_make :
-    Fragments.Japanese.Predicates.ik_ase.causative = some .make := rfl
+    Japanese.Predicates.ik_ase.causative = some .make := rfl
 
 /-! ### Bridge: Relevance hierarchy ↔ Information locality
 

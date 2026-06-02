@@ -437,7 +437,7 @@ theorem bare_always_felicitous :
     classification. Direct and elimination map to direct (both involve
     the speaker's own epistemic access); indirect and reported map to
     inference and hearsay respectively. -/
-def EvidenceType.toEvidentialSource : EvidenceType → EvidentialSource
+def EvidenceType.toCoarseSource : EvidenceType → CoarseSource
   | .direct => .direct
   | .indirect => .inference
   | .elimination => .direct
@@ -446,7 +446,7 @@ def EvidenceType.toEvidentialSource : EvidenceType → EvidentialSource
 /-- VF&G evidence types inherit an evidential perspective by composing the
     four-to-three collapse with the canonical Aikhenvald source mapping. -/
 instance : HasEvidentialPerspective EvidenceType where
-  toEvidentialPerspective e := toEvidentialPerspective e.toEvidentialSource
+  toEvidentialPerspective e := toEvidentialPerspective e.toCoarseSource
 
 /-- All VF&G evidence types are nonfuture: their perspective is always
     retrospective or contemporaneous (T ≤ A). -/

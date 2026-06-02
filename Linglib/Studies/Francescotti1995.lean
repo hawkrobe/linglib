@@ -32,7 +32,7 @@ predictions for both.
 namespace Francescotti1995
 
 open Semantics.Focus.Particles (EvenThreshold evenPresupWith)
-open Fragments.English.FocusParticles (even_)
+open English.FocusParticles (even_)
 
 -- ============================================================
 -- Section 1: Equivalence Thesis (from fragment)

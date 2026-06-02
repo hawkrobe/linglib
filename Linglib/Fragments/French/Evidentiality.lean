@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # French Evidentiality
@@ -10,17 +10,15 @@ treats French as having no grammatical evidentials; Studies-side override
 in `Studies/Aikhenvald2004.lean`.
 -/
 
-namespace Fragments.French.Evidentiality
+namespace French.Evidentiality
 
-open Typology.Modality
+/-! ### Typed evidential inventory (Aikhenvald-strict view)
 
-/-- French evidentiality typology per WALS @cite{de-haan-2013}: indirect-only
-    via the journalistic-conditional reportative use. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "French" "fra" "Indo-European"
-    (notes := "Conditional has secondary reportative use in journalistic register")
+No grammatical evidentials per @cite{aikhenvald-2004}. WALS divergence
+(conditional reportative use) is documented in `Studies/Aikhenvald2004.lean`. -/
 
-example : evidentialityProfile.iso = "fra" ∧ evidentialityProfile.language = "French" :=
-  ⟨rfl, rfl⟩
+def evidentials : List Semantics.Evidential.Entry := []
 
-end Fragments.French.Evidentiality
+example : evidentials.length = 0 := by decide
+
+end French.Evidentiality

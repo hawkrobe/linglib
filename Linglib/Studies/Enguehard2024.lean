@@ -664,7 +664,7 @@ categorical judgments in examples (5)–(6).
     world — there is no middle ground. -/
 theorem constant_presup_satisfied_iff_satisfiable
     {W : Type*} (witnessCard : W → Nat) (conceivable : W → Prop)
-    (c : Discourse.CommonGround.ContextSet W)
+    (c : CommonGround.ContextSet W)
     (hne : c.nonEmpty) :
     Semantics.Presupposition.Context.presupSatisfied c
       (sgIndefPresup witnessCard conceivable) ↔

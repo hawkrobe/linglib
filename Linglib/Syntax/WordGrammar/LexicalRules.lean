@@ -1,4 +1,4 @@
-import Linglib.Core.Dependency.Basic
+import Linglib.Syntax.DependencyGrammar.Basic
 
 /-!
 # Lexical Rules for Word Grammar @cite{hudson-2010}

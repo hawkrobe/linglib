@@ -15,7 +15,7 @@ The syntactic analysis (why each construction falls into its class)
 lives in `Greco2020`.
 -/
 
-namespace Fragments.Italian.ExpletiveNegation
+namespace Italian.ExpletiveNegation
 
 open Phenomena.Negation.ExpletiveNegation (ENStrength PolarityLicensing weakENProfile strongENProfile)
 
@@ -84,4 +84,4 @@ theorem strong_rejects_all (e : ENEnvironment)
 /-- Snegs are strong EN: they reject all polarity-sensitive elements. -/
 theorem snegs_are_strong : ENEnvironment.snegs.strength = .strong := rfl
 
-end Fragments.Italian.ExpletiveNegation
+end Italian.ExpletiveNegation

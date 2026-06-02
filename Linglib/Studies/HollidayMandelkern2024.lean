@@ -65,7 +65,7 @@ predictions that depend on them.
 
 namespace HollidayMandelkern2024
 
-open Semantics.Modality.Orthologic
+open Orthologic
 
 -- ════════════════════════════════════════════════════
 -- § 1. The Five-Possibility Path Frame (Example 4.11, Figure 7)

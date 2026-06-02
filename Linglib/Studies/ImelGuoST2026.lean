@@ -59,7 +59,7 @@ def tlingit : ModalInventory where
   language := "Tlingit"
   family := "Athabaskan-Eyak-Tlingit"
   source := "Cable (2017)"
-  expressions := Fragments.Tlingit.Modals.allExpressions
+  expressions := Tlingit.Modals.allExpressions
 
 theorem tlingit_all_iff : tlingit.allIFF = true := by native_decide
 theorem tlingit_size : tlingit.size = 5 := by native_decide
@@ -73,7 +73,7 @@ def javanese : ModalInventory where
   language := "Javanese"
   family := "Austronesian"
   source := "Vander Klok (2013a)"
-  expressions := Fragments.Javanese.Modals.allExpressions
+  expressions := Javanese.Modals.allExpressions
 
 theorem javanese_all_iff : javanese.allIFF = true := by native_decide
 theorem javanese_size : javanese.size = 7 := by native_decide
@@ -89,7 +89,7 @@ def gitksan : ModalInventory where
   language := "Gitksan"
   family := "Tsimshian"
   source := "Matthewson (2013)"
-  expressions := Fragments.Gitksan.Modals.allExpressions
+  expressions := Gitksan.Modals.allExpressions
 
 theorem gitksan_all_iff : gitksan.allIFF = true := by native_decide
 theorem gitksan_size : gitksan.size = 5 := by native_decide
@@ -114,7 +114,7 @@ def korean : ModalInventory where
   language := "Korean"
   family := "Koreanic"
   source := "Uegaki et al. (2025)"
-  expressions := Fragments.Korean.Modals.allExpressions
+  expressions := Korean.Modals.allExpressions
 
 theorem korean_all_iff : korean.allIFF = true := by native_decide
 theorem korean_size : korean.size = 10 := by native_decide
@@ -130,7 +130,7 @@ def greek : ModalInventory where
   language := "Modern Greek"
   family := "Indo-European"
   source := "Uegaki et al. (2025)"
-  expressions := Fragments.Greek.StandardModern.Modals.allExpressions
+  expressions := Greek.StandardModern.Modals.allExpressions
 
 theorem greek_not_all_iff : greek.allIFF = false := by native_decide
 theorem greek_size : greek.size = 3 := by native_decide
@@ -151,7 +151,7 @@ def mandarin : ModalInventory where
   language := "Mandarin"
   family := "Sino-Tibetan"
   source := "Uegaki et al. (2025)"
-  expressions := Fragments.Mandarin.Modals.allExpressions
+  expressions := Mandarin.Modals.allExpressions
 
 theorem mandarin_all_iff : mandarin.allIFF = true := by native_decide
 theorem mandarin_size : mandarin.size = 12 := by native_decide
@@ -167,7 +167,7 @@ def dutch : ModalInventory where
   language := "Dutch"
   family := "Indo-European"
   source := "Uegaki et al. (2025)"
-  expressions := Fragments.Dutch.Modals.allExpressions
+  expressions := Dutch.Modals.allExpressions
 
 theorem dutch_not_all_iff : dutch.allIFF = false := by native_decide
 theorem dutch_size : dutch.size = 10 := by native_decide
@@ -181,7 +181,7 @@ def hungarian : ModalInventory where
   language := "Hungarian"
   family := "Uralic"
   source := "Uegaki et al. (2025)"
-  expressions := Fragments.Hungarian.Modals.allExpressions
+  expressions := Hungarian.Modals.allExpressions
 
 theorem hungarian_all_iff : hungarian.allIFF = true := by native_decide
 theorem hungarian_size : hungarian.size = 8 := by native_decide
@@ -190,7 +190,7 @@ theorem hungarian_size : hungarian.size = 8 := by native_decide
 -- §9: English (Indo-European) — derived from Fragment
 -- ============================================================================
 
-open Fragments.English.Auxiliaries (AuxEntry can could will would shall should may might must)
+open English.Auxiliaries (AuxEntry can could will would shall should may might must)
 
 /-- English modal inventory, derived from the Fragment (single source of truth).
     Uses `ModalInventory.fromAuxEntries` to extract modals from `AuxEntry` data. -/
@@ -215,7 +215,7 @@ def washo : ModalInventory where
   language := "Washo"
   family := "isolate"
   source := "Bochnak (2015a,b)"
-  expressions := Fragments.Washo.Modals.allExpressions
+  expressions := Washo.Modals.allExpressions
 
 theorem washo_all_iff : washo.allIFF = true := by native_decide
 theorem washo_size : washo.size = 1 := by native_decide
@@ -240,7 +240,7 @@ def koryak : ModalInventory where
   language := "Koryak"
   family := "Chukotko-Kamchatkan"
   source := "Močnik & Abramovitz (2019)"
-  expressions := Fragments.Koryak.Modals.allExpressions
+  expressions := Koryak.Modals.allExpressions
 
 theorem koryak_all_iff : koryak.allIFF = true := by native_decide
 theorem koryak_size : koryak.size = 1 := by native_decide

@@ -1,5 +1,5 @@
 import Linglib.Features.Prominence
-import Linglib.Core.Relativization.Hierarchy
+import Linglib.Typology.RelativeClause.Basic
 import Linglib.Phenomena.Subjecthood.SubjectProperties
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Typology.Alignment
@@ -30,7 +30,7 @@ grammatical domains:
   Same `AnimacyLevel` type governs the split threshold.
 - **Relativization** (Ch 7): The @cite{keenan-comrie-1977} Accessibility
   Hierarchy orders grammatical relations by extraction accessibility
-  (`Core.Relativization.Hierarchy`, `FillerGap.Studies.KeenanComrie1977`).
+  (`Typology.RelativeClause.Basic`, `FillerGap.Studies.KeenanComrie1977`).
   The AH positions (Subject > DO > IO > OBL) mirror the GR hierarchy
   that governs causee demotion.
 - **Causatives** (Ch 8): Morphological complexity correlates with semantic
@@ -52,7 +52,7 @@ in accusative languages and diverge under ergativity. Formalized in
 
 Relativization typology is formalized in
 `KeenanComrie1977` and
-`Core.Relativization.Hierarchy`. The AH concerns accessibility to
+`Typology.RelativeClause.Basic`. The AH concerns accessibility to
 extraction — a filler-gap dependency — which is why the study file
 lives under `FillerGap/`. Non-extraction relative clause types
 (correlatives, internally-headed RCs) fall outside the AH's scope:
@@ -280,7 +280,7 @@ theorem intransitive_causee_above_transitive_causee :
 -- § 5: The Accessibility Hierarchy as a GR Hierarchy
 -- ============================================================================
 
-open Core (AHPosition)
+open RelativeClause (AHPosition)
 
 /-- The top of the AH is the subject position — @cite{comrie-1989} Ch 7:
     "A language must be able to relativize subjects" (HC₁). The subject
@@ -316,7 +316,7 @@ accessibility (Ch 7):
     Subject > Direct Object > Indirect Object > Oblique
 
 `CauseeSlot` (in `Semantics.Causation.Morphological`) and
-`AHPosition` (in `Core.Relativization.Hierarchy`) encode overlapping
+`AHPosition` (in `Typology.RelativeClause.Basic`) encode overlapping
 portions of this hierarchy independently. The bridge function
 `causeeToAH` maps causee slots to their corresponding AH positions,
 and the order-preservation theorem proves the mapping is monotone —
@@ -350,7 +350,7 @@ theorem causeeDemotion_maps_to_ah :
 
 Dargwa (Tanti) has a productive causative morpheme *-aq*
 (@cite{sumbatova-2021} §4.5.7). The Dargwa fragment
-(`Fragments.Dargwa.ComplexPredicates`) records:
+(`Dargwa.ComplexPredicates`) records:
 
 - Intransitive base: causee appears in **absolutive** = direct object slot
 - Transitive base: causee appears in **elative** = oblique slot
@@ -361,7 +361,7 @@ This is consistent with monotonicity — the actual slot is at most
 as high as the predicted slot — but represents a language-specific
 choice to use a spatial case rather than a dative/IO. -/
 
-open Fragments.Dargwa.ComplexPredicates (causStandUp causDig CausativeEntry)
+open Dargwa.ComplexPredicates (causStandUp causDig CausativeEntry)
 
 /-- Map Dargwa causee case to CauseeSlot based on base verb transitivity.
     Intransitive base → DO (absolutive in Dargwa);

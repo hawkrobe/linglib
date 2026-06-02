@@ -268,7 +268,7 @@ theorem mpa_resists_strong_intensifiers :
 -- § 6. Fragment Entry Verification
 -- ============================================================================
 
-open Fragments.English.Predicates.Adjectival (decent acceptable adequate good)
+open English.Predicates.Adjectival (decent acceptable adequate good)
 
 /-- All MPA fragment entries use the value dimension. -/
 theorem mpa_entries_value_dimension :

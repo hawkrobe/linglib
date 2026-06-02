@@ -34,7 +34,7 @@ The bridge modules in `Core/CylindricAlgebra/` prove algebraic identities
 | CDRT | `eq' (dref n) (dref m)` | `diagonal n m` | `DynamicSemantics.lean` |
 | Charlow (@cite{charlow-2019}) | `staticExists x body` | `cylindrify x body` | `DynamicSemantics.lean` |
 | Charlow | `dynamicExists x body` | `cylindrify x body` | `DynamicSemantics.lean` |
-| DRS/Accessibility | `closure (introReg n ;; D)` | `cylindrify n (closure D)` | `Accessibility.lean` |
+| Update/Accessibility | `closure (introReg n ;; D)` | `cylindrify n (closure D)` | `Accessibility.lean` |
 | DPL (@cite{groenendijk-stokhof-1991}) | `closure (DPLRel.exists_ x φ)` | `cylindrify x (closure φ)` | `DynamicSemantics.lean` |
 | DPL | `closure (atom (g(x) = g(y)))` | `diagonal x y` | `DynamicSemantics.lean` |
 
@@ -52,7 +52,7 @@ same argument — the bridge theorems just haven't been written yet.
 | Bilateral Update (@cite{aloni-2022}) | `exists_ x domain φ` | `cylindrify x (domain ∩ φ)` |
 | PIP (@cite{keshet-abney-2024}) | `exists_ v domain body` | `cylindrify v (domain ∩ body)` |
 | File Change (@cite{heim-1982}) | indefinite extends Dom, widens Sat | `cylindrify n (⟦φ⟧)` |
-| Kamp & Reyle DRS (@cite{kamp-reyle-1993}) | `box [n] [conds]` | `cylindrify n (interp conds)` |
+| Kamp & Reyle Update (@cite{kamp-reyle-1993}) | `box [n] [conds]` | `cylindrify n (interp conds)` |
 | IntensionalCDRT (@cite{hofmann-2025}) | intensional `new n ;; φ` | `cylindrify n (closure φ)` |
 
 ### Same algebra, different base type

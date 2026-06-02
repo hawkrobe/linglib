@@ -90,7 +90,6 @@ namespace Chierchia1984
 
 open Semantics.Modality.Kratzer
 open Semantics.Composition.TypeShifting (ComplSemLayer)
-open Semantics.Lexical (VerbCore ControlType ComplementType)
 
 abbrev World := Fin 4
 
@@ -361,12 +360,12 @@ def ChierchiaControlClass.hasCP : ChierchiaControlClass → Bool
 theorem prominence_no_cp : ChierchiaControlClass.prominence.hasCP = false := rfl
 
 -- ════════════════════════════════════════════════════════════════
--- § 6. Deriving the Classification from VerbCore
+-- § 6. Deriving the Classification from Verb
 -- ════════════════════════════════════════════════════════════════
 
 /-! ## Per-Verb Classification
 
-Derive @cite{chierchia-1984}'s control class from VerbCore fields.
+Derive @cite{chierchia-1984}'s control class from Verb fields.
 
 In Chierchia's taxonomy, ALL control verbs with a fixed, lexically
 determined controller are obligatory — regardless of whether they are
@@ -376,12 +375,12 @@ distinction are orthogonal to the obligatory/semi-obligatory/prominence
 trichotomy.
 
 The semi-obligatory class (decide, signal, recommend) requires a
-VerbCore field for controller optionality, which does not currently
+Verb field for controller optionality, which does not currently
 exist. The prominence class (bother, be dangerous) requires verbs
 not currently in the English Fragment. Therefore, all current Fragment
 control verbs are classified as obligatory. -/
 
-def derivedChierchiaClass (v : VerbCore) : Option ChierchiaControlClass :=
+def derivedChierchiaClass (v : Verb) : Option ChierchiaControlClass :=
   if v.controlType == .none && v.altControlType == .none then none
   else some .obligatory
 
@@ -473,7 +472,7 @@ theorem subjectControl_allows_detransitivization :
     cpBlocksAlternation .subjectControl antipassivization = false := rfl
 
 section VerbVerification
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 -- ── Per-verb Chierchia class verification ──
 
@@ -482,72 +481,72 @@ open Fragments.English.Predicates.Verbal
     controller and exhibit all six OC properties. -/
 
 theorem try_obligatory :
-    derivedChierchiaClass try_.toVerbCore = some .obligatory := rfl
+    derivedChierchiaClass try_.toVerb = some .obligatory := rfl
 theorem manage_obligatory :
-    derivedChierchiaClass manage.toVerbCore = some .obligatory := rfl
+    derivedChierchiaClass manage.toVerb = some .obligatory := rfl
 theorem begin_obligatory :
-    derivedChierchiaClass begin_.toVerbCore = some .obligatory := rfl
+    derivedChierchiaClass begin_.toVerb = some .obligatory := rfl
 theorem stop_obligatory :
-    derivedChierchiaClass stop.toVerbCore = some .obligatory := rfl
+    derivedChierchiaClass stop.toVerb = some .obligatory := rfl
 theorem continue_obligatory :
-    derivedChierchiaClass continue_.toVerbCore = some .obligatory := rfl
+    derivedChierchiaClass continue_.toVerb = some .obligatory := rfl
 theorem fail_obligatory :
-    derivedChierchiaClass fail.toVerbCore = some .obligatory := rfl
+    derivedChierchiaClass fail.toVerb = some .obligatory := rfl
 
 /-- "persuade" is obligatory control in Chierchia's system — it has
     a fixed controller (the object) and all six OC properties. The
     subject/object distinction does not affect the obligatory class. -/
 theorem persuade_obligatory :
-    derivedChierchiaClass persuade.toVerbCore = some .obligatory := rfl
+    derivedChierchiaClass persuade.toVerb = some .obligatory := rfl
 theorem force_obligatory :
-    derivedChierchiaClass force.toVerbCore = some .obligatory := rfl
+    derivedChierchiaClass force.toVerb = some .obligatory := rfl
 
 /-- "want" is obligatory control in Chierchia's system — the subject
     is the fixed controller. Despite being an attitude verb, it has
     all six OC properties. (Contrast Landau, who classifies "want"
     as logophoric because of its attitude status.) -/
 theorem want_obligatory :
-    derivedChierchiaClass want.toVerbCore = some .obligatory := rfl
+    derivedChierchiaClass want.toVerb = some .obligatory := rfl
 theorem hope_obligatory :
-    derivedChierchiaClass hope.toVerbCore = some .obligatory := rfl
+    derivedChierchiaClass hope.toVerb = some .obligatory := rfl
 theorem promise_obligatory :
-    derivedChierchiaClass promise.toVerbCore = some .obligatory := rfl
+    derivedChierchiaClass promise.toVerb = some .obligatory := rfl
 
 -- ── Passivizability: derived agrees with stipulated ──
 
 /-- "try" (subject control): CP blocks passivization, stipulated not passivizable. -/
 theorem try_passivizability_derived :
-    derivedPassivizable try_.toVerbCore.controlType
-    = try_.toVerbCore.passivizable := rfl
+    derivedPassivizable try_.toVerb.controlType
+    = try_.toVerb.passivizable := rfl
 
 /-- "persuade" (object control): CP allows passivization, stipulated passivizable. -/
 theorem persuade_passivizability_derived :
-    derivedPassivizable persuade.toVerbCore.controlType
-    = persuade.toVerbCore.passivizable := rfl
+    derivedPassivizable persuade.toVerb.controlType
+    = persuade.toVerb.passivizable := rfl
 
 /-- "force" (object control): CP allows passivization, stipulated passivizable. -/
 theorem force_passivizability_derived :
-    derivedPassivizable force.toVerbCore.controlType
-    = force.toVerbCore.passivizable := rfl
+    derivedPassivizable force.toVerb.controlType
+    = force.toVerb.passivizable := rfl
 
 -- ── Complement semantic layer: control verbs take property-denoting complements ──
 
 /-- "try" takes an infinitival complement, which denotes a property. -/
 theorem try_property_denoting :
-    complSemLayer try_.toVerbCore.complementType = some .property := rfl
+    complSemLayer try_.toVerb.complementType = some .property := rfl
 
 /-- "want" takes an infinitival complement, which denotes a property. -/
 theorem want_property_denoting :
-    complSemLayer want.toVerbCore.complementType = some .property := rfl
+    complSemLayer want.toVerb.complementType = some .property := rfl
 
 /-- "believe" takes a finite clause, which denotes a proposition. -/
 theorem believe_proposition_denoting :
-    complSemLayer believe.toVerbCore.complementType = some .proposition := rfl
+    complSemLayer believe.toVerb.complementType = some .proposition := rfl
 
 /-- "believe" is not a control verb — consistent with taking a propositional,
     not property-denoting, complement. -/
 theorem believe_not_control :
-    derivedChierchiaClass believe.toVerbCore = none := rfl
+    derivedChierchiaClass believe.toVerb = none := rfl
 
 end VerbVerification
 
@@ -599,7 +598,7 @@ theorem cp_requires_syntactic_controller (c : ChierchiaControlClass)
 -- ── Per-verb cross-system consistency ──
 
 section CrossSystemVerification
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 /-! ### Non-attitude verbs: Chierchia and Landau agree
 
@@ -607,16 +606,16 @@ For verbs without an attitude builder (try, manage, begin, stop,
 force, fail), both systems classify them as predicative control. -/
 
 theorem try_agrees :
-    (derivedChierchiaClass try_.toVerbCore).map chierchiaToLandauTier
-    = Landau2015.derivedControlTier try_.toVerbCore := rfl
+    (derivedChierchiaClass try_.toVerb).map chierchiaToLandauTier
+    = Landau2015.derivedControlTier try_.toVerb := rfl
 
 theorem manage_agrees :
-    (derivedChierchiaClass manage.toVerbCore).map chierchiaToLandauTier
-    = Landau2015.derivedControlTier manage.toVerbCore := rfl
+    (derivedChierchiaClass manage.toVerb).map chierchiaToLandauTier
+    = Landau2015.derivedControlTier manage.toVerb := rfl
 
 theorem force_agrees :
-    (derivedChierchiaClass force.toVerbCore).map chierchiaToLandauTier
-    = Landau2015.derivedControlTier force.toVerbCore := rfl
+    (derivedChierchiaClass force.toVerb).map chierchiaToLandauTier
+    = Landau2015.derivedControlTier force.toVerb := rfl
 
 /-! ### Attitude verbs: systematic divergence
 
@@ -630,23 +629,23 @@ Landau groups by attitude status (attitude verbs introduce a
 perspectival coordinate that changes the control mechanism). -/
 
 theorem want_diverges :
-    (derivedChierchiaClass want.toVerbCore).map chierchiaToLandauTier = some .predicative
-    ∧ Landau2015.derivedControlTier want.toVerbCore = some .logophoric :=
+    (derivedChierchiaClass want.toVerb).map chierchiaToLandauTier = some .predicative
+    ∧ Landau2015.derivedControlTier want.toVerb = some .logophoric :=
   ⟨rfl, rfl⟩
 
 theorem hope_diverges :
-    (derivedChierchiaClass hope.toVerbCore).map chierchiaToLandauTier = some .predicative
-    ∧ Landau2015.derivedControlTier hope.toVerbCore = some .logophoric :=
+    (derivedChierchiaClass hope.toVerb).map chierchiaToLandauTier = some .predicative
+    ∧ Landau2015.derivedControlTier hope.toVerb = some .logophoric :=
   ⟨rfl, rfl⟩
 
 theorem promise_diverges :
-    (derivedChierchiaClass promise.toVerbCore).map chierchiaToLandauTier = some .predicative
-    ∧ Landau2015.derivedControlTier promise.toVerbCore = some .logophoric :=
+    (derivedChierchiaClass promise.toVerb).map chierchiaToLandauTier = some .predicative
+    ∧ Landau2015.derivedControlTier promise.toVerb = some .logophoric :=
   ⟨rfl, rfl⟩
 
 theorem persuade_diverges :
-    (derivedChierchiaClass persuade.toVerbCore).map chierchiaToLandauTier = some .predicative
-    ∧ Landau2015.derivedControlTier persuade.toVerbCore = some .logophoric :=
+    (derivedChierchiaClass persuade.toVerb).map chierchiaToLandauTier = some .predicative
+    ∧ Landau2015.derivedControlTier persuade.toVerb = some .logophoric :=
   ⟨rfl, rfl⟩
 
 end CrossSystemVerification

@@ -42,7 +42,7 @@ preserving the independence of `Semantics/` and `Discourse/`.
 This module captures the layer taxonomy and the `Off` function (which
 layers are offensive = inconsistent with a correction). The directed
 reverse anaphora (RA*) mechanism that uses `Off` to selectively retract
-conditions is defined in `Semantics.Dynamic.DRT.Basic` as
+conditions is defined in `Studies/VanDerSandtMaier2003.lean` as
 `LDRS.directedRA`.
 
 ## See also: `Semantics/Composition/Layered.BiLayered`

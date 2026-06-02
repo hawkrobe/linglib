@@ -15,8 +15,9 @@ The probabilistic effect models RSA-style soft assertion, threshold uncertainty,
 and Bayesian update in dynamic semantics.
 
 This file consolidates two former modules:
-- Abstract probability-monad infrastructure (`ProbMonad`, `PState`, `CondProbMonad`,
-  `ChoiceProbMonad`, threshold semantics) — was `Dynamic/Probability/Basic.lean`
+- Probability-monad infrastructure (`PState`, `CondProbMonad`, `ChoiceProbMonad`,
+  threshold semantics) built on mathlib's `Monad`/`LawfulMonad` — was
+  `Dynamic/Probability/Basic.lean`
 - The `HasFiberedLookup PMF` instance and Bayesian-Charlow bridge —
   was `Dynamic/Probability/Lookup.lean`
 
@@ -48,60 +49,18 @@ In Grove & White notation:
 - `x ← m; k` is `bind m (λ x => k)`
 -/
 
-/--
-Abstract probability monad interface.
+/-!
+### The probability monad is just a monad
 
-A probability monad provides:
-- `pure`: Lift a value to a trivial distribution
-- `bind`: Sequence probabilistic computations
-- Monad laws as equalities
+A "probability monad" provides `pure`, `>>=`, and the three monad laws — i.e.
+it is exactly mathlib's `Monad` / `LawfulMonad`, so we use those directly
+rather than re-declaring the typeclass. `map`/`seq` and their functor laws are
+mathlib's `Functor.map` / `id_map` / `comp_map`. The probability-*specific*
+structure (conditioning, choice) is added on top by `CondProbMonad` /
+`ChoiceProbMonad` below, which extend `[Monad P]`.
 
-This is the semantic interface; implementations may use PMFs, measures, etc.
-
-Note: We use Type instead of Type* to avoid universe issues. For semantic
-work, this is typically sufficient.
+`PMF` is the canonical instance (`Monad PMF` / `LawfulMonad PMF` in mathlib).
 -/
-class ProbMonad (P : Type → Type) where
-  /-- Trivial distribution concentrated at a value -/
-  pure : {α : Type} → α → P α
-  /-- Sequence: sample from m, then continue with k -/
-  bind : {α β : Type} → P α → (α → P β) → P β
-  /-- Left identity: `pure v >>= k = k v` -/
-  pure_bind : {α β : Type} → ∀ (v : α) (k : α → P β), bind (pure v) k = k v
-  /-- Right identity: `m >>= pure = m` -/
-  bind_pure : {α : Type} → ∀ (m : P α), bind m pure = m
-  /-- Associativity: `(m >>= n) >>= o = m >>= (λx. n x >>= o)` -/
-  bind_assoc : {α β γ : Type} → ∀ (m : P α) (n : α → P β) (o : β → P γ),
-    bind (bind m n) o = bind m (λ x => bind (n x) o)
-
-namespace ProbMonad
-
-variable {P : Type → Type} [ProbMonad P]
-variable {α β γ : Type}
-
-/-- Map a function over a distribution -/
-def map (f : α → β) (m : P α) : P β :=
-  bind m (λ x => pure (f x))
-
-/-- Sequence two distributions, ignoring the first result -/
-def seq (m : P α) (n : P β) : P β :=
-  bind m (λ _ => n)
-
-/-- Map preserves identity -/
-theorem map_id (m : P α) : map (id : α → α) m = m := by
-  simp only [map]
-  exact bind_pure m
-
-/-- Map composes -/
-theorem map_comp (f : α → β) (g : β → γ) (m : P α) :
-    map g (map f m) = map (g ∘ f) m := by
-  simp only [map, Function.comp]
-  rw [bind_assoc]
-  congr 1
-  ext x
-  exact pure_bind (f x) (λ y => pure (g y))
-
-end ProbMonad
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. Parameterized State Monad (Grove & White's `P^σ_σ' α`)
@@ -131,7 +90,7 @@ def PState (P : Type → Type) (σ σ' α : Type) := σ → P (α × σ')
 
 namespace PState
 
-variable {P : Type → Type} [ProbMonad P]
+variable {P : Type → Type} [Monad P]
 variable {σ σ' σ'' σ''' α β γ : Type}
 
 /--
@@ -141,7 +100,7 @@ Returns the value paired with the unchanged state.
 Grove & White: `⌜v⌝^σ = λs. ⌜(v, s)⌝`
 -/
 def pure (v : α) : PState P σ σ α :=
-  λ s => ProbMonad.pure (v, s)
+  λ s => Pure.pure (v, s)
 
 /--
 Bind for the parameterized state monad.
@@ -150,7 +109,7 @@ Sequences stateful-probabilistic computations, threading state through.
 Grove & White: `do { x ← m; k x } = λs. (x, s') ← m(s); k(x)(s')`
 -/
 def bind (m : PState P σ σ' α) (k : α → PState P σ' σ'' β) : PState P σ σ'' β :=
-  λ s => ProbMonad.bind (m s) (λ ⟨x, s'⟩ => k x s')
+  λ s => (m s) >>= (λ ⟨x, s'⟩ => k x s')
 
 /--
 View (get) a component of the state.
@@ -158,7 +117,7 @@ View (get) a component of the state.
 Returns the value of applying `proj` to the current state, without modification.
 -/
 def view (proj : σ → α) : PState P σ σ α :=
-  λ s => ProbMonad.pure (proj s, s)
+  λ s => Pure.pure (proj s, s)
 
 /--
 Set (put) a component of the state.
@@ -166,31 +125,29 @@ Set (put) a component of the state.
 Returns the new state created by `upd`, with a trivial value.
 -/
 def set (upd : σ → σ') : PState P σ σ' Unit :=
-  λ s => ProbMonad.pure ((), upd s)
+  λ s => Pure.pure ((), upd s)
 
 /--
 Modify the state in place.
 -/
 def modify (f : σ → σ) : PState P σ σ Unit :=
-  λ s => ProbMonad.pure ((), f s)
+  λ s => Pure.pure ((), f s)
+
+variable [LawfulMonad P]
 
 /--
 Left identity for PState: `pure v >>= k = k v`
 -/
 theorem pure_bind (v : α) (k : α → PState P σ σ' β) :
     bind (pure v) k = k v := by
-  funext s
-  simp only [bind, pure]
-  exact ProbMonad.pure_bind (v, s) (λ ⟨x, s'⟩ => k x s')
+  funext s; simp [bind, pure]
 
 /--
 Right identity for PState: `m >>= pure = m`
 -/
 theorem bind_pure (m : PState P σ σ' α) :
     bind m pure = m := by
-  funext s
-  simp only [bind, pure]
-  conv_rhs => rw [← ProbMonad.bind_pure (m s)]
+  funext s; simp [bind, pure]
 
 /--
 Associativity for PState.
@@ -198,9 +155,7 @@ Associativity for PState.
 theorem bind_assoc (m : PState P σ σ' α)
     (n : α → PState P σ' σ'' β) (o : β → PState P σ'' σ''' γ) :
     bind (bind m n) o = bind m (λ x => bind (n x) o) := by
-  funext s
-  simp only [bind]
-  rw [ProbMonad.bind_assoc]
+  funext s; simp [bind]
 
 end PState
 
@@ -216,7 +171,7 @@ observe : Bool → P Unit
 observe true continues; observe false blocks
 ```
 
-This is the mechanism for assertion: update the CG by observing the asserted
+This is the mechanism for assertion: update the CommonGround by observing the asserted
 proposition is true.
 -/
 
@@ -225,7 +180,7 @@ Extended probability monad with conditioning.
 
 Adds `observe` for conditioning on boolean observations.
 -/
-class CondProbMonad (P : Type → Type) extends ProbMonad P where
+class CondProbMonad (P : Type → Type) [Monad P] where
   /-- The zero distribution (blocks all continuations) -/
   fail : {α : Type} → P α
   /-- Condition on a boolean: continue if true, block if false -/
@@ -233,23 +188,25 @@ class CondProbMonad (P : Type → Type) extends ProbMonad P where
   /-- Observing true is a no-op -/
   observe_true : observe true = pure ()
   /-- Observing false blocks all continuations -/
-  observe_false_bind : {α : Type} → ∀ (k : Unit → P α), bind (observe false) k = fail
+  observe_false_bind : {α : Type} → ∀ (k : Unit → P α), (observe false >>= k) = fail
   /-- fail is a left zero for bind -/
-  fail_bind : {α β : Type} → ∀ (k : α → P β), bind fail k = fail
+  fail_bind : {α β : Type} → ∀ (k : α → P β), (fail >>= k) = fail
 
 namespace CondProbMonad
 
-variable {P : Type → Type} [CondProbMonad P]
-
-/-- Observe filters: observe true then return is identity -/
-theorem observe_true_pure :
-    ProbMonad.bind (observe true) (λ _ => ProbMonad.pure (P := P) ()) = observe true := by
-  rw [observe_true, ProbMonad.pure_bind]
+variable {P : Type → Type} [Monad P] [CondProbMonad P]
 
 /-- Observe false blocks: any continuation after observe false gives fail -/
 theorem observe_false_pure :
-    ProbMonad.bind (observe false) (λ _ => ProbMonad.pure (P := P) ()) = fail := by
-  exact observe_false_bind _
+    (observe false >>= (λ _ => (pure () : P Unit))) = fail :=
+  observe_false_bind _
+
+variable [LawfulMonad P]
+
+/-- Observe filters: observe true then return is identity -/
+theorem observe_true_pure :
+    (observe true >>= (λ _ => (pure () : P Unit))) = observe true := by
+  rw [observe_true, pure_bind]
 
 end CondProbMonad
 
@@ -276,7 +233,7 @@ Probability monad with choice (for speaker models).
 Adds `choose` for sampling from weighted distributions.
 This is what S1's softmax requires.
 -/
-class ChoiceProbMonad (P : Type → Type) extends CondProbMonad P where
+class ChoiceProbMonad (P : Type → Type) [Monad P] extends CondProbMonad P where
   /-- Sample from a weighted distribution over a finite type -/
   choose : {α : Type} → [Fintype α] → (α → ℚ) → P α
   /-- choose with uniform weights is like a uniform prior -/
@@ -284,12 +241,12 @@ class ChoiceProbMonad (P : Type → Type) extends CondProbMonad P where
     choose (λ _ : α => 1) = choose (λ _ => 1)  -- trivial, but states the interface
   /-- choose then observe is like weighted observe -/
   choose_observe : {α : Type} → [Fintype α] → ∀ (w : α → ℚ) (p : α → Bool),
-    bind (choose w) (λ a => bind (observe (p a)) (λ _ => pure a)) =
+    (choose w >>= (λ a => observe (p a) >>= (λ _ => pure a))) =
     choose (λ a => w a * if p a then 1 else 0)
 
 namespace ChoiceProbMonad
 
-variable {P : Type → Type} [ChoiceProbMonad P]
+variable {P : Type → Type} [Monad P] [ChoiceProbMonad P]
 variable {α : Type} [Fintype α]
 
 /--

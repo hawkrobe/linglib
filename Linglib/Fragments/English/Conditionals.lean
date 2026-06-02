@@ -11,7 +11,7 @@ Conditional connectives in English and their HC/PC restrictions.
 - **if**: Can mark both HC and PC. Context determines reading.
 -/
 
-namespace Fragments.English.Conditionals
+namespace English.Conditionals
 
 open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
 
@@ -26,4 +26,4 @@ def if_ : ConditionalMarker where
   markerType := .both
   notes := "Ambiguous between HC and PC; context determines reading"
 
-end Fragments.English.Conditionals
+end English.Conditionals

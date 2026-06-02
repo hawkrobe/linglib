@@ -13,7 +13,7 @@ encodes the structural pattern (a_co_b only, J-only strategy).
 
 -/
 
-namespace Fragments.Irish.Coordination
+namespace Irish.Coordination
 
 open Features.Coordination
 
@@ -64,4 +64,4 @@ theorem one_conjunction :
     (allEntries.filter (·.role == .j)).length = 1 := by
   native_decide
 
-end Fragments.Irish.Coordination
+end Irish.Coordination

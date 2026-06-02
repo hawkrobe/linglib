@@ -17,7 +17,7 @@ the Fission-specific combination with [±singular].
 
 -/
 
-namespace Fragments.Spanish.PersonFeatures
+namespace Spanish.PersonFeatures
 
 open Features.Person
 
@@ -59,4 +59,4 @@ theorem fission_not_groups :
 theorem fission_count :
     (Category.all.filter (decide <| IsFissionApplicable ·)).length = 2 := by decide
 
-end Fragments.Spanish.PersonFeatures
+end Spanish.PersonFeatures

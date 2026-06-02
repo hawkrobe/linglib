@@ -347,6 +347,12 @@ def MorphFeatures.compatible (f1 f2 : MorphFeatures) : Bool :=
   (f1.person.isNone   || f2.person.isNone   || f1.person == f2.person) &&
   (f1.tense.isNone    || f2.tense.isNone    || f1.tense == f2.tense)
 
+/-- Feature compatibility is reflexive: every bundle is compatible with itself
+    (each feature matches itself). -/
+@[simp] theorem MorphFeatures.compatible_self (f : MorphFeatures) :
+    f.compatible f = true := by
+  simp only [MorphFeatures.compatible, beq_self_eq_true, Bool.or_true, Bool.and_true]
+
 /-- Unify two feature bundles, preferring specified values -/
 def MorphFeatures.unify (f1 f2 : MorphFeatures) : Option MorphFeatures :=
   if f1.compatible f2 then

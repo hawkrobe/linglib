@@ -13,9 +13,9 @@ for a fragment of English in Compositional DRT.
 |--------------|-----------|-------------|
 | `et` | `E → Prop` | Static predicate |
 | `e(et)` | `E → E → Prop` | Static relation |
-| `s(st)` | `DRS S` | Dynamic proposition |
-| `[π]` | `Dref S E → DRS S` | Dynamic predicate |
-| `[[π]]` | `DynPred S E → DRS S` | Dynamic quantifier |
+| `s(st)` | `Update S` | Dynamic proposition |
+| `[π]` | `Dref S E → Update S` | Dynamic predicate |
+| `[[π]]` | `DynPred S E → Update S` | Dynamic quantifier |
 
 ## Composition
 
@@ -26,7 +26,7 @@ need no special formalization — they are just function application,
 
 ## Generalized Coordination (§IV)
 
-`and` = sequencing applied pointwise; `or` = DRS disjunction applied
+`and` = sequencing applied pointwise; `or` = Update disjunction applied
 pointwise. The same schema works at every syntactic category (S, VP, NP).
 -/
 
@@ -41,10 +41,10 @@ variable {S E : Type*}
 -- ════════════════════════════════════════════════════════════════
 
 /-- Dynamic one-place predicate: type `[π]` in @cite{muskens-1996}. -/
-abbrev DynPred (S E : Type*) := Dref S E → DRS S
+abbrev DynPred (S E : Type*) := Dref S E → Update S
 
 /-- Dynamic generalized quantifier: type `[[π]]` in @cite{muskens-1996}. -/
-abbrev DynQuant (S E : Type*) := DynPred S E → DRS S
+abbrev DynQuant (S E : Type*) := DynPred S E → Update S
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. T₀ Basic Translations (p. 165)
@@ -94,29 +94,29 @@ def pro (u : Dref S E) : DynQuant S E :=
   λ P => P u
 
 /-- Conditional: `if ↝ λpq[|p ⇒ q]`.
-    Type: `DRS → DRS → DRS`. -/
-def cond : DRS S → DRS S → DRS S :=
+    Type: `Update → Update → Update`. -/
+def cond : Update S → Update S → Update S :=
   λ p q => test (dimpl p q)
 
 /-- Auxiliary negation: `doesn't ↝ λPλQ[|not Q(P)]` (T₀, p. 165).
-    Type: `[π] → [[π]] → DRS`. Takes VP (P) then subject NP (Q),
+    Type: `[π] → [[π]] → Update`. Takes VP (P) then subject NP (Q),
     matching @cite{muskens-1996}'s argument order. -/
-def auxNeg : DynPred S E → DynQuant S E → DRS S :=
+def auxNeg : DynPred S E → DynQuant S E → Update S :=
   λ P Q => test (dneg (Q P))
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Generalized Coordination (§IV, p. 176–178)
 -- ════════════════════════════════════════════════════════════════
 
-/-! `and` = generalized sequencing; `or` = generalized DRS disjunction.
+/-! `and` = generalized sequencing; `or` = generalized Update disjunction.
 The same schema works at every syntactic category by applying the
-Boolean operation pointwise to the innermost DRS layer. -/
+Boolean operation pointwise to the innermost Update layer. -/
 
 /-- Sentence-level `and`: `K₁ and K₂ = K₁; K₂`. -/
-def andS : DRS S → DRS S → DRS S := dseq
+def andS : Update S → Update S → Update S := dseq
 
 /-- Sentence-level `or`: `K₁ or K₂ = [K₁ or K₂]` (disjunction test). -/
-def orS : DRS S → DRS S → DRS S :=
+def orS : Update S → Update S → Update S :=
   λ D₁ D₂ => test (ddisj D₁ D₂)
 
 /-- VP-level `and`: `λv(P₁(v); P₂(v))`. -/
@@ -154,7 +154,7 @@ Translation (p. 167, derivation tree (39)):
 Truth conditions (formula (24)):
   `∃x₁ x₂ (man(x₁) ∧ woman(x₂) ∧ adores(x₁,x₂) ∧ abhors(x₂,x₁))`
 -/
-def exampleText : DRS S :=
+def exampleText : Update S :=
   -- "A man adores a woman"
   let sentence1 := detA u₁ (cn man) (tv adores (detA u₂ (cn woman)))
   -- "She abhors him" (pronouns pick up u₂, u₁)
@@ -170,7 +170,7 @@ and anaphoric `it₂` picking up the dref from the indefinite.
 Translation: `([u₁]; [farmer u₁]; [u₂]; [donkey u₂]; [u₁ owns u₂]) ⇒ [u₁ beats u₂]`
 -/
 def donkeySentence
-    (farmer donkey_ : E → Prop) (owns beats : E → E → Prop) : DRS S :=
+    (farmer donkey_ : E → Prop) (owns beats : E → E → Prop) : Update S :=
   detEvery u₁
     -- Restrictor: "farmer who owns a donkey"
     (λ v => dseq (cn farmer v) (detA u₂ (cn donkey_) (λ w => test (atom2 owns v w))))
@@ -187,7 +187,7 @@ This works because `andVP` sequences the VP meanings, so the dref
 introduced by the first conjunct is accessible in the second.
 -/
 def vpCoordExample
-    (cat fish : E → Prop) (catches eats : E → E → Prop) : DRS S :=
+    (cat fish : E → Prop) (catches eats : E → E → Prop) : Update S :=
   detA u₂ (cn cat)
     (andVP
       (tv catches (detA u₁ (cn fish)))  -- "catches a¹ fish"

@@ -14,10 +14,10 @@ downstream Studies access the inventory via this Fragment rather than
 naming a PHOIBLE InventoryID directly.
 -/
 
-namespace Fragments.Japanese.Phonology
+namespace Japanese.Phonology
 
 /-- Canonical Japanese phoneme inventory: first PHOIBLE inventory for ISO `jpn`. -/
 def phonemeInventory : Data.PHOIBLE.Inventory :=
   Data.PHOIBLE.Inventories.Japanese.jpn
 
-end Fragments.Japanese.Phonology
+end Japanese.Phonology

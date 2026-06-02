@@ -21,7 +21,7 @@ The IL substrate operationalizes this in two parallel pieces:
 - **`SitAssignment F := Nat → F.Index`** in `Core.Logic.Intensional.Variables`
   is the situation-pronoun assignment, parallel to the entity
   assignment.
-- **`NominalKind.unique R sIdx`** in `Core.Nominal.Description`
+- **`Description.unique R sIdx`** in `Core.Nominal.Description`
   carries a `situationIdx : Nat` recording *which* situation pronoun
   the description is bound to.
 
@@ -167,17 +167,17 @@ theorem unique_index_does_not_alter_referent_directly :
       = interpret (F := F) (.unique tableAtSit0 7) g₀ gsKitchen :=
   interpret_unique_index_irrelevant _ _ _ _ _
 
-/-- Among `NominalKind` constructors, exactly `unique` and
+/-- Among `Description` constructors, exactly `unique` and
     `demonstrative` are flagged as binding a structural situation
     pronoun. Anaphoric definites do not — they consult the entity
     assignment for an antecedent, not the situation assignment. -/
 theorem situation_binders_classified
     (R : DenotGS F .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
-    (NominalKind.unique R sIdx).usesSituationPronoun = true ∧
-    (NominalKind.demonstrative R deictic sIdx d).usesSituationPronoun = true ∧
-    (NominalKind.anaphoric R d).usesSituationPronoun = false ∧
-    (NominalKind.bare R).usesSituationPronoun = false ∧
-    (NominalKind.indefinite R).usesSituationPronoun = false := by
+    (Description.unique R sIdx).usesSituationPronoun = true ∧
+    (Description.demonstrative R deictic sIdx d).usesSituationPronoun = true ∧
+    (Description.anaphoric R d).usesSituationPronoun = false ∧
+    (Description.bare R).usesSituationPronoun = false ∧
+    (Description.indefinite R).usesSituationPronoun = false := by
   refine ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════

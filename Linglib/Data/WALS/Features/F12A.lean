@@ -20,7 +20,7 @@ inductive SyllableStructure where
   | moderatelyComplex
   /-- Complex (151 languages). -/
   | complex
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 12A dataset (486 languages). -/
 def allData : List (Datapoint SyllableStructure) :=
@@ -513,9 +513,9 @@ def allData : List (Datapoint SyllableStructure) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint SyllableStructure) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint SyllableStructure) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F12A

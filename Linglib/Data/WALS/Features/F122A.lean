@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 122A: Relativization on Subjects
-@cite{comrie-2013}
+@cite{comrie-kuteva-2013a}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 122A`.
@@ -22,7 +22,7 @@ inductive SubjectRelativization where
   | pronounRetention
   /-- Gap (125 languages). -/
   | gap
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 122A dataset (166 languages). -/
 def allData : List (Datapoint SubjectRelativization) :=
@@ -195,9 +195,9 @@ def allData : List (Datapoint SubjectRelativization) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint SubjectRelativization) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint SubjectRelativization) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F122A

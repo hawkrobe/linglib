@@ -1,6 +1,7 @@
 import Linglib.Features.Definiteness
 import Linglib.Core.Mereology
-import Linglib.Core.Nominal.ArticleInventory
+import Linglib.Core.Nominal.Determiner
+import Linglib.Core.Nominal.DeterminerLicensing
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Interpret
 import Linglib.Semantics.Kinds.MeaningPreservation
@@ -57,8 +58,9 @@ open Features.Deixis (Feature)
 
 -- `DefMarkingStrategy` and `strategyToArticleType` live in
 -- `Features.Definiteness`. Per-language strategy assignments are derived from
--- `Core.Nominal.ArticleInventory` via `toMarkingStrategy` (see §7 / §14) —
--- the inventory is the single source of truth for definiteness data.
+-- each language's `Determiner.markingStrategy` over its declared
+-- `Fragments.{Lang}.Definiteness.determiners` (see §7 / §14) — the declared
+-- determiner set is the single source of truth for definiteness data.
 
 -- ============================================================================
 -- §2: Cross-Linguistic Definiteness Expression Data (Table 4.4)
@@ -258,10 +260,10 @@ on covert type-shifting. Crucially, both ι AND ι^x are unblocked —
 this is what allows Shan bare nouns to express both unique and anaphoric
 definiteness (@cite{moroney-2021} §4.3).
 
-Derived from `Fragments.Shan.Definiteness.blocking` — the single source
+Derived from `Shan.Definiteness.blocking` — the single source
 of truth for Shan's article inventory. -/
 def shanBlocking : NMP.BlockingPrinciple :=
-  Fragments.Shan.Definiteness.blocking
+  Shan.Definiteness.blocking
 
 /-- When a Shan bare noun is used in a context requiring unique definiteness,
 the preferred type-shift is ι (definite), by Meaning Preservation
@@ -418,29 +420,26 @@ theorem unmarked_distinct_from_existing :
 
 /-- The four Table 4.4 languages classify into the four strategy cells
     when the strategy is *computed* from each language's
-    `Fragments.{Lang}.Definiteness.articleInventory`. The classification is
-    not stipulated — it is derived by `ArticleInventory.toMarkingStrategy`
-    from the morphological inventory bools. -/
+    `Fragments.{Lang}.Definiteness.determiners`. The classification is
+    not stipulated — it is derived by `Determiner.markingStrategy` from the
+    declared determiner set. -/
 theorem derive_all_languages :
-    Fragments.English.Definiteness.articleInventory.toMarkingStrategy =
-      .generallyMarked ∧
-    Fragments.German.Definiteness.articleInventory.toMarkingStrategy =
-      .bipartite ∧
-    Fragments.Thai.Definiteness.articleInventory.toMarkingStrategy =
-      .markedAnaphoric ∧
-    Fragments.Shan.Definiteness.articleInventory.toMarkingStrategy =
-      .unmarked := ⟨rfl, rfl, rfl, rfl⟩
+    Determiner.markingStrategy English.Definiteness.determiners = .generallyMarked ∧
+    Determiner.markingStrategy German.Definiteness.determiners = .bipartite ∧
+    Determiner.markingStrategy Thai.Definiteness.determiners = .markedAnaphoric ∧
+    Determiner.markingStrategy Shan.Definiteness.determiners = .unmarked :=
+  ⟨English.Definiteness.marking, German.Definiteness.marking,
+   Thai.Definiteness.marking, Shan.Definiteness.marking⟩
 
 /-- The inventory-derived `ArticleType` agrees with Schwarz's stipulated
     typology for the four Table 4.4 languages. The classification is
-    derived rather than assigned by fiat — `toArticleType` composes
-    `toMarkingStrategy` with the strategy → articleType collapse. -/
+    derived rather than assigned by fiat — `Determiner.articleType` composes
+    `markingStrategy` with the strategy → articleType collapse. -/
 theorem derive_consistent_with_stipulated :
-    Fragments.English.Definiteness.articleInventory.toArticleType = .weakOnly ∧
-    Fragments.German.Definiteness.articleInventory.toArticleType = .weakAndStrong ∧
-    Fragments.Thai.Definiteness.articleInventory.toArticleType = .weakOnly ∧
-    Fragments.Shan.Definiteness.articleInventory.toArticleType = .none_ :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    Determiner.articleType English.Definiteness.determiners = .weakOnly ∧
+    Determiner.articleType German.Definiteness.determiners = .weakAndStrong ∧
+    Determiner.articleType Thai.Definiteness.determiners = .weakOnly ∧
+    Determiner.articleType Shan.Definiteness.determiners = .none_ := by decide
 
 -- ============================================================================
 -- §8: Bridge to the canonical referent selector
@@ -563,43 +562,41 @@ theorem isDog_not_gHomogeneous : ¬ Mereology.gHomogeneous isDog := by
 -- §11: Blocking ↔ Marking Strategy Correspondence
 -- ============================================================================
 
-/-- The blocking principle connects article inventory to available type-shifts,
-    and `ArticleInventory.toMarkingStrategy` connects inventory to marking
-    strategy. This theorem shows the full correspondence for the four
-    Table 4.4 languages: the same inventory bools that determine the
-    marking strategy also determine which type-shifts are blocked.
+/-- The blocking principle connects the determiner set to available type-shifts,
+    and `Determiner.markingStrategy` connects it to the marking strategy. This
+    theorem shows the full correspondence for the four Table 4.4 languages: the
+    same declared determiners that determine the marking strategy also determine
+    which type-shifts are blocked.
 
-    This is the structural core of Moroney's analysis: article inventory is the
+    This is the structural core of Moroney's analysis: the determiner set is the
     single parameter from which both the typological classification AND the
     available interpretations of bare nouns are derived. -/
 theorem blocking_strategy_correspondence :
-    let englishInv := Fragments.English.Definiteness.articleInventory
-    let germanInv  := Fragments.German.Definiteness.articleInventory
-    let thaiInv    := Fragments.Thai.Definiteness.articleInventory
-    let shanInv    := Fragments.Shan.Definiteness.articleInventory
+    let englishDets := English.Definiteness.determiners
+    let germanDets  := German.Definiteness.determiners
+    let thaiDets    := Thai.Definiteness.determiners
+    let shanDets    := Shan.Definiteness.determiners
     -- English: both forms, syncretic → generallyMarked
-    (englishInv.toMarkingStrategy = .generallyMarked ∧
-     englishInv.hasUniqueArticle ∧
-     englishInv.hasAnaphoricArticle ∧
-     englishInv.uniqueAnaphoricSyncretism) ∧
+    (Determiner.markingStrategy englishDets = .generallyMarked ∧
+     Determiner.MarksPresup englishDets .uniqueness ∧
+     Determiner.MarksPresup englishDets .familiarity ∧
+     Determiner.IsSyncretic englishDets) ∧
     -- German: two different forms → bipartite (weak/strong split)
-    (germanInv.toMarkingStrategy = .bipartite ∧
-     germanInv.hasUniqueArticle ∧
-     germanInv.hasAnaphoricArticle ∧
-     ¬ germanInv.uniqueAnaphoricSyncretism) ∧
+    (Determiner.markingStrategy germanDets = .bipartite ∧
+     Determiner.MarksPresup germanDets .uniqueness ∧
+     Determiner.MarksPresup germanDets .familiarity ∧
+     ¬ Determiner.IsSyncretic germanDets) ∧
     -- Thai: only dem → markedAnaphoric, ι^x blocked (dem), ι unblocked (bare)
-    (thaiInv.toMarkingStrategy = .markedAnaphoric ∧
-     ¬ thaiInv.hasUniqueArticle ∧
-     thaiInv.hasAnaphoricArticle) ∧
+    (Determiner.markingStrategy thaiDets = .markedAnaphoric ∧
+     ¬ Determiner.MarksPresup thaiDets .uniqueness ∧
+     Determiner.MarksPresup thaiDets .familiarity) ∧
     -- Shan: no forms → unmarked, nothing blocked, all shifts available
-    (shanInv.toMarkingStrategy = .unmarked ∧
-     ¬ shanInv.hasUniqueArticle ∧
-     ¬ shanInv.hasAnaphoricArticle ∧
+    (Determiner.markingStrategy shanDets = .unmarked ∧
+     ¬ Determiner.MarksPresup shanDets .uniqueness ∧
+     ¬ Determiner.MarksPresup shanDets .familiarity ∧
      shanBlocking.iotaBlocked = false ∧
      shanBlocking.existsBlocked = false ∧
-     shanBlocking.downBlocked = false) :=
-  ⟨⟨rfl, trivial, trivial, trivial⟩, ⟨rfl, trivial, trivial, id⟩,
-   ⟨rfl, id, trivial⟩, ⟨rfl, id, id, rfl, rfl, rfl⟩⟩
+     shanBlocking.downBlocked = false) := by decide
 
 -- ============================================================================
 -- §12: Demonstrative–Bare Noun Contrast (§2.1.3)
@@ -620,19 +617,19 @@ theorem blocking_strategy_correspondence :
 
     When the bare definite already selects a referent that satisfies the
     demonstrative's spatial predicate, the demonstrative agrees with the
-    bare form (handled by `Fragments.Shan.Definiteness.dem_refines_bare`). -/
+    bare form (handled by `Shan.Definiteness.dem_refines_bare`). -/
 theorem demonstrative_adds_spatial_info {E : Type}
     (domain : List E) (restrictor : E → Bool)
     (spatialPred : Feature → E → Bool) :
-    Fragments.Shan.Definiteness.demDenotation domain
-      Fragments.Shan.Definiteness.naj restrictor spatialPred =
+    Shan.Definiteness.demDenotation domain
+      Shan.Definiteness.naj restrictor spatialPred =
       Core.Nominal.russellIotaList domain
         (fun e => restrictor e && spatialPred .proximal e) ∧
-    Fragments.Shan.Definiteness.demDenotation domain
-      Fragments.Shan.Definiteness.nan restrictor spatialPred =
+    Shan.Definiteness.demDenotation domain
+      Shan.Definiteness.nan restrictor spatialPred =
       Core.Nominal.russellIotaList domain
         (fun e => restrictor e && spatialPred .distal e) ∧
-    Fragments.Shan.Definiteness.bareDefinite domain restrictor =
+    Shan.Definiteness.bareDefinite domain restrictor =
       Core.Nominal.russellIotaList domain restrictor :=
   ⟨rfl, rfl, rfl⟩
 
@@ -659,30 +656,28 @@ theorem shan_clf_is_atomization {α : Type*} [PartialOrder α]
 -- ============================================================================
 
 /-! The §1–§7 derivation works at the level of `DefMarkingParams` (three
-booleans). `Core.Nominal.ArticleInventory` is the upstream object — it
-records the morphological inventory directly (indefinite article, unique
-article, anaphoric article, syncretism flag, demonstrative paradigm,
-possessive paradigm) and *derives* the `DefMarkingParams` reading.
+booleans). The declared `Determiner.Entry` list is the upstream object — it
+records the morphological inventory directly (the `Article`/`Demonstrative`/
+`Possessive` occurrences) and *derives* the `DefMarkingParams` reading.
 
-This section verifies that the inventory-derived classifications agree
+This section verifies that the determiner-derived classifications agree
 with the parameters used in §7 for all four languages, and connects the
-licensing predicate `ArticleInventory.licensesKind` to Moroney's central
-empirical finding: Shan licenses anaphoric definiteness without any
-anaphoric article. -/
+licensing predicate `Determiner.licenses` to Moroney's central empirical
+finding: Shan licenses anaphoric definiteness without any anaphoric article. -/
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
-open Core.Nominal (ArticleInventory NominalKind)
+open Core.Nominal (Description)
 
-/-- Shorthand handles for the four Table 4.4 inventories, each defined in
-    its language fragment (`Fragments.{Lang}.Definiteness.articleInventory`).
+/-- Shorthand handles for the four Table 4.4 determiner sets, each defined in
+    its language fragment (`Fragments.{Lang}.Definiteness.determiners`).
     Centralizing the names here keeps the §14 theorems readable without
     duplicating fragment-level data. -/
-abbrev englishInv  := Fragments.English.Definiteness.articleInventory
-abbrev germanInv   := Fragments.German.Definiteness.articleInventory
-abbrev mandarinInv := Fragments.Mandarin.Definiteness.articleInventory
-abbrev thaiInv     := Fragments.Thai.Definiteness.articleInventory
-abbrev shanInv     := Fragments.Shan.Definiteness.articleInventory
+abbrev englishDets  := English.Definiteness.determiners
+abbrev germanDets   := German.Definiteness.determiners
+abbrev mandarinDets := Mandarin.Definiteness.determiners
+abbrev thaiDets     := Thai.Definiteness.determiners
+abbrev shanDets     := Shan.Definiteness.determiners
 
 /-- Inventory-derived strategies match §7's `derive_all_languages` for the
     four Table 4.4 languages. The inventory subsumes the params layer
@@ -690,71 +685,78 @@ abbrev shanInv     := Fragments.Shan.Definiteness.articleInventory
     the agreement theorem that previously lived here is `rfl`-tautological
     and has been removed). -/
 theorem inventory_derives_all_languages :
-    englishInv.toMarkingStrategy = .generallyMarked ∧
-    germanInv.toMarkingStrategy = .bipartite ∧
-    thaiInv.toMarkingStrategy = .markedAnaphoric ∧
-    shanInv.toMarkingStrategy = .unmarked := ⟨rfl, rfl, rfl, rfl⟩
+    Determiner.markingStrategy englishDets = .generallyMarked ∧
+    Determiner.markingStrategy germanDets = .bipartite ∧
+    Determiner.markingStrategy thaiDets = .markedAnaphoric ∧
+    Determiner.markingStrategy shanDets = .unmarked :=
+  ⟨English.Definiteness.marking, German.Definiteness.marking,
+   Thai.Definiteness.marking, Shan.Definiteness.marking⟩
 
 /-- Mandarin is in `.markedAnaphoric` — same cell as Thai. (Not part of
     Moroney's Table 4.4 but anchors the Jenks 2018 typological backdrop.) -/
 theorem mandarin_in_markedAnaphoric :
-    mandarinInv.toMarkingStrategy = .markedAnaphoric := rfl
+    Determiner.markingStrategy mandarinDets = .markedAnaphoric :=
+  Mandarin.Definiteness.marking
 
-/-- Moroney's central observation, stated against the article inventory:
-    Shan has *no* article that licenses an `.anaphoric` `NominalKind`,
+/-- Moroney's central observation, stated against the determiner set:
+    Shan has *no* determiner that licenses an `.anaphoric` `Description`,
     yet expresses anaphoric definiteness through bare nouns and optional
     demonstratives. The licensing predicate makes this morphologically
-    visible — `.anaphoric` is not licensed by Shan's inventory. -/
+    visible — `.anaphoric` is not licensed (no determiner expones a
+    familiarity use). -/
 theorem shan_anaphoric_not_licensed_via_article {F : Frame}
     (R : DenotGS F .et) (d : Nat) :
-    ¬ shanInv.licensesKind (F := F) (.anaphoric R d) := by
-  rintro (h | ⟨h, _⟩) <;> exact h
+    ¬ Determiner.licenses (F := F) shanDets (.anaphoric R d) := by
+  show ¬ Determiner.MarksPresup shanDets .familiarity
+  decide
 
 /-- Bare nominals are licensed for Shan (and every language) — this is the
     morphological substrate for Moroney's analysis: Shan's anaphoric
     definites surface as bare nouns. -/
 theorem shan_bare_licensed {F : Frame} (R : DenotGS F .et) :
-    shanInv.licensesKind (F := F) (.bare R) := trivial
+    Determiner.licenses (F := F) shanDets (.bare R) := trivial
 
 /-- Demonstratives are licensed in Shan (the *nâj*/*nân* paradigm).
     Combined with `shan_bare_licensed`, this gives the morphological
     inventory of strategies Shan deploys for definite reference. -/
 theorem shan_demonstrative_licensed {F : Frame}
     (R : DenotGS F .et) (deictic : Features.Deixis.Feature) (sIdx d : Nat) :
-    shanInv.licensesKind (F := F)
-      (.demonstrative R deictic sIdx d) := trivial
+    Determiner.licenses (F := F) shanDets
+      (.demonstrative R deictic sIdx d) := by
+  show ∃ e ∈ shanDets, Determiner.Entry.IsDemonstrative e
+  decide
 
-/-- English licenses `.anaphoric` via the syncretic *the* (uniqueArticle ∧
-    syncretism), *without* an independent strong article. Contrasts with
+/-- English licenses `.anaphoric` via the syncretic *the* (which expones a
+    familiarity use), *without* an independent strong article. Contrasts with
     Shan (no licensing form at all) and German (independent strong form). -/
 theorem english_anaphoric_licensed_via_syncretism {F : Frame}
     (R : DenotGS F .et) (d : Nat) :
-    englishInv.licensesKind (F := F) (.anaphoric R d) :=
-  Or.inr ⟨trivial, trivial⟩
+    Determiner.licenses (F := F) englishDets (.anaphoric R d) := by
+  show Determiner.MarksPresup englishDets .familiarity
+  decide
 
 /-- German licenses `.anaphoric` via its independent strong article (no
     syncretism). The unique vs anaphoric distinction is morphologically
     marked. -/
 theorem german_anaphoric_licensed_via_strong_article {F : Frame}
     (R : DenotGS F .et) (d : Nat) :
-    germanInv.licensesKind (F := F) (.anaphoric R d) := Or.inl trivial
+    Determiner.licenses (F := F) germanDets (.anaphoric R d) := by
+  show Determiner.MarksPresup germanDets .familiarity
+  decide
 
-/-- The English and Mandarin inventories both collapse to `ArticleType.weakOnly`,
-    witnessing the lossiness of `ArticleType` relative to `DefMarkingStrategy`:
-    the inventories differ (English has a unique article, Mandarin does not),
-    and the strategies differ (`.generallyMarked` vs `.markedAnaphoric`),
-    yet `toArticleType` collapses both to `.weakOnly`. -/
+/-- The English and Mandarin determiner sets both collapse to
+    `ArticleType.weakOnly`, witnessing the lossiness of `ArticleType` relative
+    to `DefMarkingStrategy`: the inventories differ (English has a definite
+    article, Mandarin does not), and the strategies differ (`.generallyMarked`
+    vs `.markedAnaphoric`), yet `articleType` collapses both to `.weakOnly`. -/
 theorem english_mandarin_articleType_collapse :
-    englishInv.toArticleType = mandarinInv.toArticleType := rfl
+    Determiner.articleType englishDets = Determiner.articleType mandarinDets := by decide
 
-/-- The English and Mandarin inventories themselves are distinct, even
-    though their `ArticleType` classifications collide. They differ on
-    `hasUniqueArticle` (English `True`, Mandarin `False`). -/
+/-- The English and Mandarin determiner sets themselves are distinct, even
+    though their `ArticleType` classifications collide: English has a definite
+    article, Mandarin has none. -/
 theorem english_mandarin_inventory_distinct :
-    englishInv ≠ mandarinInv := by
-  intro h
-  have hEq : True = False := congrArg ArticleInventory.hasUniqueArticle h
-  exact hEq ▸ trivial
+    englishDets ≠ mandarinDets := by decide
 
 /-- Shan-specific consequence of `Core.Nominal.interpret_bare_eq_unique`:
     a bare definite description and a uniqueness definite over the same
@@ -803,10 +805,9 @@ new content is the joint statement that Shan instantiates a strategy
     @cite{jenks-2018}-attested set (imported from
     `Jenks2018.jenksAttestedStrategies`). -/
 theorem shan_strategy_not_jenks_attested :
-    Fragments.Shan.Definiteness.articleInventory.toMarkingStrategy
+    Determiner.markingStrategy Shan.Definiteness.determiners
       ∉ Jenks2018.jenksAttestedStrategies := by
-  rw [show Fragments.Shan.Definiteness.articleInventory.toMarkingStrategy
-        = .unmarked from rfl]
+  rw [Shan.Definiteness.marking]
   decide
 
 /-- The Moroney refutation in one statement: Shan instantiates a marking
@@ -814,9 +815,8 @@ theorem shan_strategy_not_jenks_attested :
     This is the formal content of the prose claim "contra
     @cite{jenks-2018}'s prediction" in this file's module docstring. -/
 theorem moroney_shan_refutes_jenks_typology :
-    Fragments.Shan.Definiteness.articleInventory.toMarkingStrategy
-      = .unmarked ∧
+    Determiner.markingStrategy Shan.Definiteness.determiners = .unmarked ∧
     .unmarked ∉ Jenks2018.jenksAttestedStrategies :=
-  ⟨rfl, by decide⟩
+  ⟨Shan.Definiteness.marking, by decide⟩
 
 end Moroney2021

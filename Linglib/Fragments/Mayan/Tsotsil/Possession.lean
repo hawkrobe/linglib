@@ -14,7 +14,7 @@ consuming this profile live in
 
 set_option autoImplicit false
 
-namespace Fragments.Mayan.Tsotsil.Possession
+namespace Tsotsil.Possession
 
 open _root_.Typology.Possession
 
@@ -31,4 +31,4 @@ def possession : PossessionProfile :=
   , examples := ["oy s-k'ox barko 'EXIS A3-little.boat'", "s-me' Xun 'A3-mother Juan' = 'Juan's mother'", "y-ak'-il li mok=e 'A3-vine-NCLS DET fence=ENC'"]
   , notes := "Existential oy + possessive pivot for predicative; Set A prefixes on possessum for adnominal (head-marking); three noun classes: must/may/cannot be possessed (Aissen-Polian 2025)" }
 
-end Fragments.Mayan.Tsotsil.Possession
+end Tsotsil.Possession

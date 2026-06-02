@@ -167,9 +167,8 @@ while the assertion commits the speaker to p via DECL (72).
 
 open Core.Time
 open Semantics.Presupposition
-open Semantics.Events
 open Semantics.Tense.Evidential
-open Fragments.Slavic.Bulgarian.Evidentials
+open Bulgarian.Evidentials
 
 /-! ### Spatiotemporal distance △ substrate (inlined) -/
 
@@ -346,17 +345,17 @@ def LearningScenario.toEvidentialProp (s : LearningScenario ℤ)
 /-! ### Concrete Scenarios -/
 
 /-- Described event: interval [0, 5]. -/
-def describedEvent : Event ℤ := ⟨⟨0, 5, by omega⟩, .action⟩
+def describedEvent : Event ℤ := ⟨⟨0, 5, by omega⟩, .dynamic⟩
 
 /-- Learning event (indirect): interval [10, 15] — strictly later. -/
-def learningEventIndirect : Event ℤ := ⟨⟨10, 15, by omega⟩, .state⟩
+def learningEventIndirect : Event ℤ := ⟨⟨10, 15, by omega⟩, .stative⟩
 
 /-- Learning event (direct witness): interval [2, 4] — overlaps described. -/
-def learningEventDirect : Event ℤ := ⟨⟨2, 4, by omega⟩, .state⟩
+def learningEventDirect : Event ℤ := ⟨⟨2, 4, by omega⟩, .stative⟩
 
 /-- Learning event (spatial distance): interval [0, 5] — same time,
     different place (smoke from chimney). -/
-def learningEventSpatial : Event ℤ := ⟨⟨0, 5, by omega⟩, .state⟩
+def learningEventSpatial : Event ℤ := ⟨⟨0, 5, by omega⟩, .stative⟩
 
 /-- Indirect evidence scenario: described event [0,5], learning event [10,15]. -/
 def indirectScenario : LearningScenario ℤ where

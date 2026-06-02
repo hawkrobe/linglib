@@ -64,7 +64,7 @@ set_option autoImplicit false
 namespace Semantics.Modality.Selectional
 
 open _root_.Semantics.Conditionals (SelectionFunction)
-open _root_.Semantics.Modality.HistoricalAlternatives
+open HistoricalAlternatives
 open scoped ENNReal
 
 variable {W : Type*}
@@ -286,7 +286,7 @@ Selectional `will` parameterized by the metaphysical modal base of
     the prejacent at the world selected from the metaphysical modal
     base at ⟨w, t⟩. -/
 def willHistorical {Time : Type*} (s : SelectionFunction W)
-    (history : WorldHistory W Time) (A : W → Prop)
+    (history : HistoricalAlternatives W Time) (A : W → Prop)
     (w : W) (t : Time) : Prop :=
   willSem s A (metaphysicalBase history w t) w
 
@@ -294,7 +294,7 @@ def willHistorical {Time : Type*} (s : SelectionFunction W)
     @cite{condoravdi-2002} §4.1 condition (i)), `willHistorical`
     collapses to its prejacent: `will_t A` at `w` reduces to `A w`. -/
 theorem willHistorical_reflexive_collapse {Time : Type*}
-    (s : SelectionFunction W) {history : WorldHistory W Time}
+    (s : SelectionFunction W) {history : HistoricalAlternatives W Time}
     (hRefl : history.reflexive) (A : W → Prop) (w : W) (t : Time) :
     willHistorical s history A w t ↔ A w := by
   unfold willHistorical

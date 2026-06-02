@@ -123,6 +123,52 @@ def toSlate (s : TaggedSlate W) : CommitmentSlate W :=
 def toContextSet (s : TaggedSlate W) : W → Prop :=
   s.toSlate.toContextSet
 
+/-! ### Projection reductions
+
+Simp-normal forms so a consumer reading an agent's plain commitments
+(`doxasticContents`, `selfGenerated`, …) gets `rfl`-grade reductions under
+`add`, instead of unfolding the `filter ∘ map`. -/
+
+@[simp] theorem doxasticContents_empty :
+    (empty : TaggedSlate W).doxasticContents = [] := rfl
+
+@[simp] theorem doxasticContents_add_doxastic (s : TaggedSlate W) (p : W → Prop)
+    (src : CommitmentSource) :
+    (s.add p src .doxastic).doxasticContents = p :: s.doxasticContents := rfl
+
+@[simp] theorem doxasticContents_add_preferential (s : TaggedSlate W) (p : W → Prop)
+    (src : CommitmentSource) :
+    (s.add p src .preferential).doxasticContents = s.doxasticContents := rfl
+
+@[simp] theorem selfGenerated_empty :
+    (empty : TaggedSlate W).selfGenerated = [] := rfl
+
+@[simp] theorem selfGenerated_add_self (s : TaggedSlate W) (p : W → Prop)
+    (force : CommitmentForce) :
+    (s.add p .selfGenerated force).selfGenerated = p :: s.selfGenerated := rfl
+
+@[simp] theorem selfGenerated_add_other (s : TaggedSlate W) (p : W → Prop)
+    (force : CommitmentForce) :
+    (s.add p .otherGenerated force).selfGenerated = s.selfGenerated := rfl
+
+@[simp] theorem otherGenerated_empty :
+    (empty : TaggedSlate W).otherGenerated = [] := rfl
+
+@[simp] theorem otherGenerated_add_other (s : TaggedSlate W) (p : W → Prop)
+    (force : CommitmentForce) :
+    (s.add p .otherGenerated force).otherGenerated = p :: s.otherGenerated := rfl
+
+@[simp] theorem otherGenerated_add_self (s : TaggedSlate W) (p : W → Prop)
+    (force : CommitmentForce) :
+    (s.add p .selfGenerated force).otherGenerated = s.otherGenerated := rfl
+
+@[simp] theorem toSlate_empty :
+    (empty : TaggedSlate W).toSlate = CommitmentSlate.empty := rfl
+
+@[simp] theorem toSlate_add_commitments (s : TaggedSlate W) (p : W → Prop)
+    (src : CommitmentSource) (force : CommitmentForce) :
+    (s.add p src force).toSlate.commitments = p :: s.toSlate.commitments := rfl
+
 end TaggedSlate
 
 /-! ### Grade typeclasses -/
@@ -145,7 +191,7 @@ instance : CommitmentGrade Prop where
   complement := Not
 
 -- No `Bool` instance by default — consumers needing decidable grades
--- declare locally. Anderson 2021's distributional CG provides
+-- declare locally. Anderson 2021's distributional CommonGround provides
 -- `HasSupport ℝ` at its own site.
 
 /-! ### Speaker-Indexed Commitments -/
@@ -246,7 +292,7 @@ end Commitment
 
 /-! ### HasContextSet Instance -/
 
-open Discourse.CommonGround in
+open CommonGround in
 /-- A commitment slate projects to a context set. -/
 instance {W : Type*} : HasContextSet (Commitment.CommitmentSlate W) W where
   toContextSet s := λ w => s.toContextSet w

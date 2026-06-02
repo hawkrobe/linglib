@@ -1,0 +1,277 @@
+import Linglib.Core.Word
+import Linglib.Features.CoreferenceStatus
+
+/-!
+# Binding principles over a command relation
+@cite{barker-pullum-1990} @cite{chomsky-1981} @cite{pollard-sag-1994}
+
+A framework-neutral binding engine. The binding principles (A/B/C) and the
+coreference-status computation are stated **once**, parameterized by a
+`CommandRelation` — the structural-prominence order they range over. The three
+syntactic frameworks formalized in linglib supply that relation and inherit the
+principles unchanged:
+
+* Minimalism — c-command (tree geometry)
+* HPSG — ARG-ST outranking (obliqueness)
+* Dependency grammar — d-command (dependency subgraph)
+
+@cite{barker-pullum-1990} give the general notion of which c-command,
+m-command, and the rest are instances; the linglib frameworks' command notions
+are further instances. Stating the principles over the abstract relation makes
+the cross-framework convergence a theorem rather than a coincidence: any two
+`CommandRelation`s that agree on a clause predict the same binding facts.
+
+## Main declarations
+
+* `Pos` — a binding position in a simple clause (subject / object).
+* `SimpleClause` / `parseSimpleClause` — the clause representation the
+  principles range over, and a surface-list parser.
+* `CommandRelation` — the abstract command relation + locality (the only piece
+  a framework supplies).
+* `reflexiveLicensed` / `reciprocalLicensed` / `pronounLocallyFree` /
+  `rExpressionFree` — Principles A / B / C, derived over `[CommandRelation]`,
+  `Word.Agree`, and a binding-class classifier.
+* `grammaticalForCoreference`, `computeCoreferenceStatus` — top-level
+  predictions, derived once.
+
+## Implementation notes
+
+The binding-class classifier (`Word → Option BindingClass`) is a *language*
+parameter, orthogonal to the *framework* parameter `CommandRelation`; it is
+passed explicitly rather than baked in, so the engine imports no Fragment.
+A language (English, …) supplies the classifier; a framework supplies the
+command relation; a study combines them.
+-/
+
+namespace Binding
+
+open Features (BindingClass CoreferenceStatus)
+
+/-- A binding position in a simple clause. The verb is not a binding position. -/
+inductive Pos where
+  | subject
+  | object
+  deriving DecidableEq, Repr
+
+/-- A simple (mono-clausal, transitive-or-intransitive) clause: the
+    representation binding principles range over. `semanticPl` records whether
+    the subject *denotes* a plurality, which can diverge from morphosyntactic
+    number (@cite{rakosi-2019}); it defaults to the syntactic number. -/
+structure SimpleClause where
+  subject : Word
+  verb : Word
+  object : Option Word
+  semanticPl : Bool := subject.features.number == some .pl
+  deriving Repr
+
+/-- The `Word` at a position, if present. -/
+def SimpleClause.at? (c : SimpleClause) : Pos → Option Word
+  | .subject => some c.subject
+  | .object => c.object
+
+/-- Is this a nominal part-of-speech (proper noun, common noun, or pronoun)? A
+    theory-neutral UPOS check the clause parser uses to recognize arguments. -/
+def isNominalCat (cat : UD.UPOS) : Bool :=
+  cat == .PROPN || cat == .NOUN || cat == .PRON
+
+/-- Parse a surface word list into a simple clause: `[subj, verb, obj]` or
+    `[subj, verb]`, requiring nominal subject/object and a verb. -/
+def parseSimpleClause (ws : List Word) : Option SimpleClause :=
+  match ws with
+  | [subj, v, obj] =>
+    if isNominalCat subj.cat && v.cat == .VERB && isNominalCat obj.cat then
+      some { subject := subj, verb := v, object := some obj }
+    else none
+  | [subj, v] =>
+    if isNominalCat subj.cat && v.cat == .VERB then
+      some { subject := subj, verb := v, object := none }
+    else none
+  | _ => none
+
+/-- A **command relation** (@cite{barker-pullum-1990}): the structural-prominence
+    order binding principles are defined over, together with the locality
+    (same-binding-domain) restriction. The frameworks' c-command, ARG-ST
+    outranking, and d-command are instances. This is the *only* component a
+    syntactic framework must supply to obtain the binding principles. -/
+class CommandRelation where
+  /-- Does the element at position `i` structurally command the element at `j`? -/
+  commands : SimpleClause → Pos → Pos → Prop
+  /-- Are positions `i` and `j` within the same binding (locality) domain? -/
+  sameDomain : SimpleClause → Pos → Pos → Prop
+  /-- `commands` is decidable — frameworks compute it from concrete structure. -/
+  commandsDec : (c : SimpleClause) → (i j : Pos) → Decidable (commands c i j)
+  /-- `sameDomain` is decidable. -/
+  sameDomainDec : (c : SimpleClause) → (i j : Pos) → Decidable (sameDomain c i j)
+
+instance [CommandRelation] (c : SimpleClause) (i j : Pos) :
+    Decidable (CommandRelation.commands c i j) := CommandRelation.commandsDec c i j
+
+instance [CommandRelation] (c : SimpleClause) (i j : Pos) :
+    Decidable (CommandRelation.sameDomain c i j) := CommandRelation.sameDomainDec c i j
+
+variable [CommandRelation]
+
+-- The classifier mapping a word to its binding class is a language parameter
+-- (English supplies one); the engine stays Fragment-free.
+variable (classify : Word → Option BindingClass)
+
+/-! ### Principle A (anaphors) -/
+
+/-- **Principle A.** A reflexive object is licensed iff it is commanded by the
+    subject within the local domain *and* agrees with it in φ-features
+    (`Word.Agree`). Vacuously true when the object is not a reflexive. -/
+def reflexiveLicensed (c : SimpleClause) : Prop :=
+  match c.object with
+  | none => False
+  | some obj =>
+    match classify obj with
+    | some .reflexive =>
+      CommandRelation.commands c .subject .object ∧
+      CommandRelation.sameDomain c .subject .object ∧
+      Word.Agree c.subject obj
+    | _ => True
+
+instance (c : SimpleClause) : Decidable (reflexiveLicensed classify c) := by
+  unfold reflexiveLicensed; split
+  · infer_instance
+  · split <;> infer_instance
+
+/-- **Principle A** for reciprocals: licensed iff commanded by the subject in
+    the local domain and the subject denotes a *plurality* (an LF condition —
+    semantic, not morphosyntactic, plurality; @cite{rakosi-2019}). -/
+def reciprocalLicensed (c : SimpleClause) : Prop :=
+  match c.object with
+  | none => False
+  | some obj =>
+    match classify obj with
+    | some .reciprocal =>
+      CommandRelation.commands c .subject .object ∧
+      CommandRelation.sameDomain c .subject .object ∧
+      c.semanticPl = true
+    | _ => True
+
+instance (c : SimpleClause) : Decidable (reciprocalLicensed classify c) := by
+  unfold reciprocalLicensed; split
+  · infer_instance
+  · split <;> infer_instance
+
+/-! ### Principle B (pronouns) -/
+
+/-- **Principle B.** A pronoun object must be free in its local domain: it must
+    *not* be both commanded by the subject and in the same domain. -/
+def pronounLocallyFree (c : SimpleClause) : Prop :=
+  match c.object with
+  | none => True
+  | some obj =>
+    match classify obj with
+    | some .pronoun =>
+      ¬ (CommandRelation.commands c .subject .object ∧
+         CommandRelation.sameDomain c .subject .object)
+    | _ => True
+
+instance (c : SimpleClause) : Decidable (pronounLocallyFree classify c) := by
+  unfold pronounLocallyFree; split
+  · infer_instance
+  · split <;> infer_instance
+
+/-! ### Principle C (R-expressions) -/
+
+/-- **Principle C.** An R-expression object coindexed with a pronominal subject
+    is blocked when the subject commands it. -/
+def rExpressionFree (c : SimpleClause) : Prop :=
+  match classify c.subject with
+  | some .pronoun =>
+    match c.object with
+    | some obj =>
+      match classify obj with
+      | some .rExpression => ¬ CommandRelation.commands c .subject .object
+      | _ => True
+    | none => True
+  | _ => True
+
+instance (c : SimpleClause) : Decidable (rExpressionFree classify c) := by
+  unfold rExpressionFree
+  split
+  · split
+    · split <;> infer_instance
+    · infer_instance
+  · infer_instance
+
+/-! ### Top-level acceptability -/
+
+/-- Is a surface word list grammatical for coreference? Anaphors cannot be
+    subjects (no commander); a pronoun object locally commanded by the subject
+    violates Principle B; reflexive/reciprocal objects must be licensed. -/
+def grammaticalForCoreference (ws : List Word) : Prop :=
+  match parseSimpleClause ws with
+  | none => False
+  | some c =>
+    match classify c.subject with
+    | some .reflexive => False
+    | some .reciprocal => False
+    | _ =>
+      match c.object with
+      | none => True
+      | some obj =>
+        match classify obj with
+        | some .reflexive => reflexiveLicensed classify c
+        | some .reciprocal => reciprocalLicensed classify c
+        | some .pronoun => False
+        | _ => True
+
+instance (ws : List Word) : Decidable (grammaticalForCoreference classify ws) := by
+  unfold grammaticalForCoreference; split
+  · infer_instance
+  · split
+    · infer_instance
+    · infer_instance
+    · split
+      · infer_instance
+      · split <;> infer_instance
+
+/-- Coreference status of positions `i`, `j` under the command relation:
+    Principle A makes a commanded anaphor obligatorily coreferent; Principle B/C
+    block a commanded pronoun/R-expression; otherwise coreference is possible. -/
+def computeCoreferenceStatus (c : SimpleClause) (i j : Pos) : CoreferenceStatus :=
+  match c.at? j with
+  | none => .unspecified
+  | some tgt =>
+    if CommandRelation.commands c i j ∧ CommandRelation.sameDomain c i j then
+      match classify tgt with
+      | some .reflexive => .obligatory
+      | some .reciprocal => .obligatory
+      | some .pronoun => .blocked
+      | some .rExpression => .blocked
+      | none => .unspecified
+    else
+      match classify tgt with
+      | some .reflexive => .blocked
+      | some .reciprocal => .blocked
+      | some .pronoun => .possible
+      | some .rExpression => .possible
+      | none => .unspecified
+
+/-! ### Cross-framework convergence
+
+Stated over the abstract relation, the principles depend on the framework only
+through `CommandRelation`. Two frameworks that agree on a clause's command and
+locality facts therefore make identical binding predictions — by construction,
+not coincidence. -/
+
+omit [CommandRelation] in
+/-- If two command relations agree on the relevant command and locality facts
+    of a clause, they license a reflexive identically. The cross-framework
+    convergence the prose comparisons assert, made a theorem. -/
+theorem reflexiveLicensed_congr
+    (R₁ R₂ : CommandRelation) (classify : Word → Option BindingClass)
+    (c : SimpleClause)
+    (hc : R₁.commands c .subject .object ↔ R₂.commands c .subject .object)
+    (hd : R₁.sameDomain c .subject .object ↔ R₂.sameDomain c .subject .object) :
+    @reflexiveLicensed R₁ classify c ↔ @reflexiveLicensed R₂ classify c := by
+  rcases hobj : c.object with _ | obj
+  · simp only [reflexiveLicensed, hobj]
+  · rcases hbc : classify obj with _ | bc
+    · simp only [reflexiveLicensed, hobj, hbc]
+    · cases bc <;> simp only [reflexiveLicensed, hobj, hbc, hc, hd]
+
+end Binding

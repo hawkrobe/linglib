@@ -243,8 +243,8 @@ theorem prior_modulates_all (p : Predicate) :
 
 section FragmentBridge
 
-open Fragments.English.Predicates.Verbal
-open Fragments.English.Predicates.Copular
+open English.Predicates.Verbal
+open English.Predicates.Copular
 
 /-- Map each D&T predicate to its Fragment verb entry (18 of 20).
     "be annoyed" and "be right" are copular — use `toPredicateCore` for
@@ -271,31 +271,31 @@ def toVerbEntry : Predicate → Option VerbEntry
   | .beAnnoyed => none
   | .beRight => none
 
-/-- Map each D&T predicate to its `VerbCore` — the semantic spine shared by
+/-- Map each D&T predicate to its `Verb` — the semantic spine shared by
     verbal and copular entries. Covers all 20 predicates.
-    Copular entries go through `ClauseEmbeddingAdj.toVerbCore` (English-specific
+    Copular entries go through `ClauseEmbeddingAdj.toVerb` (English-specific
     realization: copula + adjective). -/
-def toPredicateCore : Predicate → VerbCore
-  | .know => know.toVerbCore
-  | .think => think.toVerbCore
-  | .discover => discover.toVerbCore
-  | .see => see.toVerbCore
-  | .say => say.toVerbCore
-  | .hear => hear.toVerbCore
-  | .reveal => reveal.toVerbCore
-  | .acknowledge => acknowledge.toVerbCore
-  | .admit => admit.toVerbCore
-  | .announce => announce.toVerbCore
-  | .confess => confess.toVerbCore
-  | .inform => inform.toVerbCore
-  | .suggest => suggest.toVerbCore
-  | .pretend => pretend.toVerbCore
-  | .confirm => confirm.toVerbCore
-  | .demonstrate => demonstrate.toVerbCore
-  | .establish => establish.toVerbCore
-  | .prove => prove.toVerbCore
-  | .beAnnoyed => beAnnoyed.toVerbCore
-  | .beRight => beRight.toVerbCore
+def toPredicateCore : Predicate → Verb
+  | .know => know.toVerb
+  | .think => think.toVerb
+  | .discover => discover.toVerb
+  | .see => see.toVerb
+  | .say => say.toVerb
+  | .hear => hear.toVerb
+  | .reveal => reveal.toVerb
+  | .acknowledge => acknowledge.toVerb
+  | .admit => admit.toVerb
+  | .announce => announce.toVerb
+  | .confess => confess.toVerb
+  | .inform => inform.toVerb
+  | .suggest => suggest.toVerb
+  | .pretend => pretend.toVerb
+  | .confirm => confirm.toVerb
+  | .demonstrate => demonstrate.toVerb
+  | .establish => establish.toVerb
+  | .prove => prove.toVerb
+  | .beAnnoyed => beAnnoyed.toVerb
+  | .beRight => beRight.toVerb
 
 /-- All 20 D&T predicates (alphabetical). -/
 def allPredicates : List Predicate :=
@@ -320,7 +320,7 @@ theorem all_predicates_take_clause_complement (p : Predicate) :
     (toPredicateCore p).complementType = .finiteClause ∨
     (toPredicateCore p).altComplementType = some .finiteClause := by
   cases p <;>
-    simp [toPredicateCore, Semantics.Gradability.ClauseEmbeddingAdj.toVerbCore,
+    simp [toPredicateCore, Semantics.Gradability.ClauseEmbeddingAdj.toVerb,
           beAnnoyed, beRight] <;>
     first | left; rfl | right; rfl
 

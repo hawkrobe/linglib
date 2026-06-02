@@ -10,7 +10,7 @@ import Linglib.Dialogue.KOS.Grammar
 import Linglib.Dialogue.KOS.RepriseContent
 import Linglib.Dialogue.KOS.Austinian
 import Linglib.Dialogue.KOS.CooperInfoState
-import Linglib.Dialogue.FarkasBruce
+import Linglib.Discourse.Commitment.Table
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 
 /-!
@@ -48,7 +48,7 @@ Sluice-split-faithful Table 7.4 taxonomy.
 
 @cite{ginzburg-2012} > all references in §12. Cross-framework contrasts
 with later work (@cite{krifka-2015} commitment-spaces; @cite{anderson-2021}
-distributional CG) live inside *those* studies per CLAUDE.md's
+distributional CommonGround) live inside *those* studies per CLAUDE.md's
 "no bridge files" + chronological-dependency rule.
 
 ## What this file does NOT cover
@@ -560,7 +560,7 @@ end EndToEnd
 Per the project's chronological-dependency rule, this study engages
 *pre-2012* siblings here:
 
-- @cite{stalnaker-1978}/@cite{stalnaker-2002} — single shared CG
+- @cite{stalnaker-1978}/@cite{stalnaker-2002} — single shared CommonGround
 - @cite{farkas-bruce-2010} — five-way dcS/dcL/cg/table/ps decomposition
 - @cite{roberts-1996} — partition-based QUD-stack
 - @cite{purver-ginzburg-2004} — q-params/dgb-params split
@@ -584,19 +584,19 @@ def isRaining : Set RainW := fun w => w = .rainy
 
 instance : DecidablePred isRaining := fun w => by unfold isRaining; exact inferInstance
 
-/-! ### vs Stalnaker (single shared CG)
+/-! ### vs Stalnaker (single shared CommonGround)
 
 @cite{stalnaker-1978}: the common ground is *one shared object*. After
-A asserts p, the (single) CG contains p eliminated of ¬p worlds.
+A asserts p, the (single) CommonGround contains p eliminated of ¬p worlds.
 
 @cite{ginzburg-2012}: each participant has their *own* DGB. After A
-asserts p, A's DGB has p in FACTS; B's does not. There is NO shared CG —
+asserts p, A's DGB has p in FACTS; B's does not. There is NO shared CommonGround —
 only coupled DGBs synchronized via Accept.
 
 The contrast as a Lean theorem: KOS predicts that two participants'
 DGBs (after A asserts p, before B accepts) project to *different*
 context sets — Stalnaker's framework cannot represent this divergence
-because it has only one CG. -/
+because it has only one CommonGround. -/
 
 instance : DecidableSupport (Set RainW) String where
   supports _ _ := False
@@ -610,10 +610,10 @@ def kosSpeakerDGB : DGB String (Set RainW) String String :=
 def kosAddresseeDGB : DGB String (Set RainW) String String :=
   DGB.initial
 
-open Discourse.CommonGround in
+open CommonGround in
 /-- KOS-vs-Stalnaker architectural contrast: KOS's two DGBs project to
 *different* `ContextSet`s after one-sided assertion. Stalnaker's
-framework has a single CG that cannot represent this divergence —
+framework has a single CommonGround that cannot represent this divergence —
 the contrast is structural, not a matter of degree.
 
 The inequality holds at `RainW.sunny`: the speaker's CS at sunny
@@ -640,7 +640,7 @@ theorem kos_vs_stalnaker_per_dgb_divergence :
 @cite{farkas-bruce-2010}: discourse state has FIVE components (dcS, dcL,
 cg, table, ps). Assertion adds to *speaker's dcS* (private commitment),
 pushes an issue on the table; only *acceptance* moves content to the
-shared CG.
+shared CommonGround.
 
 @cite{ginzburg-2012}: per-participant DGBs (no separate dcS/dcL/cg
 distinction inside one structure). Assertion goes directly to the
@@ -650,6 +650,7 @@ The architectures are *both* per-participant, but F&B treats it as
 three slates inside one "current discourse state" while KOS treats it
 as one slate per participant. -/
 
+open Discourse.Commitment.Table in
 /-- The same dialogue trace ("A asserts p") in both frameworks: F&B
 puts p in dcS (one of three slates within the shared discourse state);
 KOS puts p in A's DGB.facts (one of two coupled DGBs). The architectural
@@ -657,13 +658,11 @@ shape differs even though predictions about "is p committed by A?"
 agree. -/
 theorem kos_vs_farkasbruce_architecture_differs
     (p : Set RainW) :
-    -- F&B: a single DiscourseState has dcS, dcL, cg as separate fields
-    let fb : Dialogue.FarkasBruce.DiscourseState RainW :=
-      Dialogue.FarkasBruce.DiscourseState.empty.addToDcS p
-    p ∈ fb.dcS ∧ fb.cg = [] ∧ fb.dcL = [] := by
-  refine ⟨by simp [Dialogue.FarkasBruce.DiscourseState.addToDcS], ?_, ?_⟩
-  · rfl
-  · rfl
+    -- F&B: a single discourse state keeps speaker/listener commitments and
+    -- the common ground as separate per-agent slates
+    let fb : State RainW := DiscourseState.empty.addCommit .speaker p
+    p ∈ fb.dcS ∧ fb.cgPropositions = [] ∧ fb.dcL = [] :=
+  ⟨List.mem_cons_self, rfl, rfl⟩
 
 /-- The deeper architectural disagreement: **F&B can model retraction**
 (content moves dcS → cg → dcS, e.g. "I take that back"); **KOS's facts
@@ -679,13 +678,12 @@ theorem kos_facts_monotone_under_addFact
   intro q hq
   simp [DGB.addFact, hq]
 
+open Discourse.Commitment.Table in
 /-- F&B explicitly supports the inverse: `addToCG` then can be reversed
 by re-introducing to dcS. The substrate-level disagreement: KOS's
 type-level commitment to monotonicity. -/
-theorem farkasbruce_cg_can_be_emptied
-    (ds : Dialogue.FarkasBruce.DiscourseState RainW) :
-    (Dialogue.FarkasBruce.DiscourseState.empty
-     : Dialogue.FarkasBruce.DiscourseState RainW).cg = [] := rfl
+theorem farkasbruce_cg_can_be_emptied :
+    (DiscourseState.empty : State RainW).cgPropositions = [] := rfl
 
 /-! ### vs Roberts 1996/2012 (partition-stack QUD)
 

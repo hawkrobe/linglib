@@ -57,7 +57,7 @@ rather than docstring prose.
 namespace HayKennedyLevin1999
 
 open Core.Scale (Boundedness)
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════
 -- § 1. HKL's INCREASE operator (eq 16)
@@ -131,36 +131,36 @@ theorem increase_unique_end {α δ Time : Type*} [Add δ]
 /-- HKL eq 26 (closed-range default): "straighten" — closed scale,
     accomplishment (telic). -/
 theorem straighten_closed_accomplishment :
-    straighten.toVerbCore.degreeAchievementScale.map (·.scaleBoundedness) =
+    straighten.toVerb.degreeAchievementScale.map (·.scaleBoundedness) =
       some Boundedness.closed ∧
-    straighten.toVerbCore.vendlerClass = some .accomplishment := ⟨rfl, rfl⟩
+    straighten.toVerb.vendlerClass = some .accomplishment := ⟨rfl, rfl⟩
 
 /-- HKL eq 27 (open-range default): "lengthen" — open scale, activity
     (atelic). -/
 theorem lengthen_open_activity :
-    lengthen.toVerbCore.degreeAchievementScale.map (·.scaleBoundedness) =
+    lengthen.toVerb.degreeAchievementScale.map (·.scaleBoundedness) =
       some Boundedness.open_ ∧
-    lengthen.toVerbCore.vendlerClass = some .activity := ⟨rfl, rfl⟩
+    lengthen.toVerb.vendlerClass = some .activity := ⟨rfl, rfl⟩
 
 /-- HKL §3.1 default: "widen" — open scale, activity (made telic only by
     overt measure phrase, see §3 below). -/
 theorem widen_open_activity :
-    widen.toVerbCore.degreeAchievementScale.map (·.scaleBoundedness) =
+    widen.toVerb.degreeAchievementScale.map (·.scaleBoundedness) =
       some Boundedness.open_ ∧
-    widen.toVerbCore.vendlerClass = some .activity := ⟨rfl, rfl⟩
+    widen.toVerb.vendlerClass = some .activity := ⟨rfl, rfl⟩
 
 /-- HKL §3.1 default: "cool" — open scale, activity (made telic only by
     overt measure phrase or contextual bound). -/
 theorem cool_open_activity :
-    cool.toVerbCore.degreeAchievementScale.map (·.scaleBoundedness) =
+    cool.toVerb.degreeAchievementScale.map (·.scaleBoundedness) =
       some Boundedness.open_ ∧
-    cool.toVerbCore.vendlerClass = some .activity := ⟨rfl, rfl⟩
+    cool.toVerb.vendlerClass = some .activity := ⟨rfl, rfl⟩
 
 /-- HKL §3.1 default: "warm" — open scale, activity. -/
 theorem warm_open_activity :
-    warm.toVerbCore.degreeAchievementScale.map (·.scaleBoundedness) =
+    warm.toVerb.degreeAchievementScale.map (·.scaleBoundedness) =
       some Boundedness.open_ ∧
-    warm.toVerbCore.vendlerClass = some .activity := ⟨rfl, rfl⟩
+    warm.toVerb.vendlerClass = some .activity := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 3. Specifying the difference value (HKL §3.1)

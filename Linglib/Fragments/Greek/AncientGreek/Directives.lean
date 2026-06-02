@@ -5,12 +5,12 @@ import Linglib.Typology.Directives
 @cite{wals-2013}
 
 Diachronic variant kept distinct from Standard Modern Greek under the
-`Fragments.Greek.AncientGreek` namespace, sibling to
-`Fragments.Greek.StandardModern` and the dialect subdirs `Grevena/`,
+`AncientGreek` namespace, sibling to
+`Greek.StandardModern` and the dialect subdirs `Grevena/`,
 `Smyrna/`.
 -/
 
-namespace Fragments.Greek.AncientGreek.Directives
+namespace AncientGreek.Directives
 
 /-- Ancient Greek: second-and-other-person morphological imperative with
     present and aorist stems; Type 2 prohibitive (*mē graphe!* — normal
@@ -28,4 +28,4 @@ def directiveProfile : Typology.ImperativeProfile :=
   , notes := "Present and aorist imperative stems; special prohibitive " ++
              "mē (not ou); rich optative paradigm with dedicated morphology." }
 
-end Fragments.Greek.AncientGreek.Directives
+end AncientGreek.Directives

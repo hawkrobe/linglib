@@ -7,14 +7,16 @@ and their interfaces. See README.md for documentation links.
 -- Core
 import Linglib.Features.Dimension
 import Linglib.Features.Gender
+import Linglib.Core.Valence
 import Linglib.Core.Word
+import Linglib.Typology.NegativeConcord
 import Linglib.Typology.PolarityItem
 import Linglib.Typology.Negation
 import Linglib.Features.ClauseForm
 import Linglib.Features.Clusivity
-import Linglib.Syntax.Common.Inversion
 import Linglib.Typology.Pronoun.Basic
 import Linglib.Typology.Pronoun.WALS
+import Linglib.Typology.Evidentiality
 import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
@@ -46,13 +48,12 @@ import Linglib.Core.Logic.Quantification.Lattice
 import Linglib.Core.Logic.Quantification.Logicality
 import Linglib.Core.Logic.Quantification.Polyadic
 import Linglib.Core.Logic.Quantification.Exclusive
-import Linglib.Core.Logic.Opposition.Aristotelian
-import Linglib.Core.Logic.Opposition.Atoms
-import Linglib.Core.Logic.Opposition.Bitstring
-import Linglib.Core.Logic.Opposition.Diagram
-import Linglib.Core.Logic.Opposition.Partition
-import Linglib.Core.Logic.Opposition.Probabilistic
-import Linglib.Core.Logic.Opposition.Square
+import Linglib.Core.Logic.Aristotelian.Basic
+import Linglib.Core.Logic.Aristotelian.Bitstring
+import Linglib.Core.Logic.Aristotelian.Diagram
+import Linglib.Core.Logic.Aristotelian.Partition
+import Linglib.Core.Logic.Aristotelian.Probabilistic
+import Linglib.Core.Logic.Aristotelian.Square
 import Linglib.Core.Logic.PolarizedIndividuals
 import Linglib.Core.Scales.Extent
 import Linglib.Semantics.Alternatives.Lexical
@@ -60,15 +61,15 @@ import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Core.Logic.Intensional.Conjunction
-import Linglib.Core.Logic.Intensional.Defs
+import Linglib.Core.Logic.Modal.Defs
 import Linglib.Core.Logic.Intensional.Quantification
 import Linglib.Core.Logic.Intensional.Algebra
 import Linglib.Core.Logic.Intensional.CategoryType
-import Linglib.Core.Logic.Intensional.RestrictedModality
+import Linglib.Core.Logic.Modal.Basic
 import Linglib.Core.Logic.Intensional.Premise
-import Linglib.Core.Logic.Intensional.ConversationalBackground
+import Linglib.Semantics.Modality.Kratzer.ConversationalBackground
 import Linglib.Core.Logic.Intensional.Situations
-import Linglib.Core.Logic.Intensional.Lumping
+import Linglib.Semantics.Conditionals.Counterfactual.Lumping
 import Linglib.Core.Logic.BeliefRevision
 import Linglib.Core.Order.Tree
 import Linglib.Core.Order.Command
@@ -93,6 +94,8 @@ import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Presupposition.Context
 import Linglib.Semantics.Dynamic.Postsupposition
 import Linglib.Semantics.ContentLayer
+import Linglib.Semantics.Evidential.Defs
+import Linglib.Semantics.Evidential.Basic
 import Linglib.Semantics.Questions.Denotation
 import Linglib.Semantics.Questions.Partition.Lattice
 import Linglib.Semantics.Questions.Partition.Cells
@@ -124,8 +127,10 @@ import Linglib.Discourse.Strategy
 import Linglib.Discourse.Scoreboard
 import Linglib.Discourse.AtIssueness
 import Linglib.Features.CoreferenceStatus
+import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
 import Linglib.Core.CombinationKind
+import Linglib.Semantics.Composition.Combinator
 import Linglib.Features.ScopeTypes
 import Linglib.Typology.Extraction
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
@@ -151,7 +156,8 @@ import Linglib.Features.Causation
 import Linglib.Semantics.Lexical.LevinClass
 import Linglib.Semantics.Lexical.MeaningComponents
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Defs
+import Linglib.Semantics.Verb.Basic
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Constraint.Profile
 import Linglib.Core.Constraint.Weighted
@@ -229,7 +235,8 @@ import Linglib.Typology.Directives
 import Linglib.Typology.Indefinite
 import Linglib.Typology.Profile
 import Linglib.Typology.Universal
-import Linglib.Typology.Numerals
+import Linglib.Typology.Numeral.Basic
+import Linglib.Typology.Numeral.WALS
 import Linglib.Typology.Plurals
 import Linglib.Typology.PolarityMarking
 import Linglib.Typology.Possession
@@ -252,9 +259,11 @@ import Linglib.Features.Deixis
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Maximality
 import Linglib.Core.Nominal.Interpret
-import Linglib.Core.Nominal.ArticleInventory
+import Linglib.Core.Nominal.Determiner
+import Linglib.Core.Nominal.DeterminerLicensing
 import Linglib.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Prominence
+import Linglib.Features.OntologicalCategory
 import Linglib.Features.Genericity
 import Linglib.Core.Computability.Subregular.Defs
 import Linglib.Core.Computability.Subregular.StrictlyLocal
@@ -265,7 +274,7 @@ import Linglib.Core.Computability.Subregular.PiecewiseTestable
 import Linglib.Core.Computability.Subregular.Definite
 import Linglib.Core.Computability.Subregular.Multitier
 import Linglib.Core.Computability.Subregular.ForbiddenPairs
-import Linglib.Core.Direction
+import Linglib.Core.Computability.Subregular.Function.Direction
 import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential
@@ -279,16 +288,19 @@ import Linglib.Diachronic.CaseGrammaticalization
 import Linglib.Typology.Comparison
 import Linglib.Syntax.Agreement.Controller
 import Linglib.Syntax.Agreement.Basic
+import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Morphology.Containment
 import Linglib.Morphology.DegreeContainment
 import Linglib.Morphology.DM.DomainLocality
 import Linglib.Morphology.Case.Allomorphy
 import Linglib.Morphology.DM.ContainmentVI
-import Linglib.Core.Relativization.Basic
-import Linglib.Typology.Relativization.ExtractionBridge
-import Linglib.Core.Relativization.Hierarchy
+import Linglib.Typology.RelativeClause.Basic
+import Linglib.Typology.RelativeClause.WALS
 import Linglib.Typology.ClassifierSystem
 import Linglib.Core.Scales.Roundness
+import Linglib.Core.Scales.Predicate
+import Linglib.Core.Scales.Comparison
+import Linglib.Core.Scales.Scale
 import Linglib.Core.Scales.EpistemicScale.Defs
 import Linglib.Core.Scales.EpistemicScale.Entailments
 import Linglib.Core.Scales.EpistemicScale.FinsetBridge
@@ -341,9 +353,6 @@ import Linglib.Core.Inheritance.Choice
 import Linglib.Core.Inheritance.Default
 import Linglib.Core.Inheritance.Order
 import Linglib.Core.Prototype
-import Linglib.Core.Dependency.Basic
-import Linglib.Core.Dependency.Projection
-import Linglib.Core.Dependency.Dominance
 import Linglib.Morphology.MorphProfile
 import Linglib.Morphology.ConsonantalRoot
 import Linglib.Morphology.Exponence
@@ -633,6 +642,7 @@ import Linglib.Fragments.English.Numerals
 import Linglib.Fragments.English.Plurals
 import Linglib.Fragments.English.Reference
 import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.NominalClassification
 import Linglib.Fragments.English.PropositionalLexemes
 import Linglib.Fragments.English.QuestionParticles
 import Linglib.Fragments.English.Scales
@@ -641,7 +651,6 @@ import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.English.Conditionals
 import Linglib.Fragments.English.Phonology
-import Linglib.Fragments.English.TDDeletion
 import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.English.Morph
 import Linglib.Fragments.English.Negation
@@ -676,6 +685,12 @@ import Linglib.Fragments.Farsi.Determiners
 import Linglib.Fragments.Farsi.Phonology
 import Linglib.Fragments.German.Case
 import Linglib.Fragments.German.Definiteness
+import Linglib.Fragments.Fering.Definiteness
+import Linglib.Fragments.Akan.Definiteness
+import Linglib.Fragments.MauritianCreole.Definiteness
+import Linglib.Fragments.Lakhota.Definiteness
+import Linglib.Fragments.Hausa.Definiteness
+import Linglib.Fragments.HaitianCreole.Definiteness
 import Linglib.Fragments.German.Tense
 import Linglib.Fragments.German.TemporalDeictic
 import Linglib.Fragments.German.PolarityMarking
@@ -1119,6 +1134,7 @@ import Linglib.Fragments.Swahili.PolarityItems
 -- Phenomena
 import Linglib.Studies.SlomanBarbeyHotaling2009
 import Linglib.Studies.SpalekMcNally2026
+import Linglib.Studies.AckemaNeeleman2018
 import Linglib.Studies.AlstottAravind2026
 import Linglib.Semantics.Focus.PolarityLevel
 import Linglib.Studies.AlstottAravind2026TemporalConnectives
@@ -1141,6 +1157,7 @@ import Linglib.Studies.SadakaneKoizumi1995
 import Linglib.Studies.Baker2015
 import Linglib.Studies.Aissen2003
 import Linglib.Studies.Grimm2011
+import Linglib.Studies.DechaineWiltschko2002
 import Linglib.Studies.DeHoopMalchukov2008
 import Linglib.Studies.Haspelmath2021
 import Linglib.Studies.Karlsson2017
@@ -1149,6 +1166,7 @@ import Linglib.Studies.Marantz1991
 import Linglib.Studies.Pesetsky2013
 import Linglib.Studies.BakerVinokurova2010
 import Linglib.Studies.Comrie1989
+import Linglib.Studies.Cinque2020
 import Linglib.Typology.ClauseChaining
 import Linglib.Studies.SarvasyAikhenvald2025
 import Linglib.Studies.Partee1987
@@ -1178,7 +1196,6 @@ import Linglib.Studies.Dekker2012
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Phenomena.Anaphora.CrossSentential
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
-import Linglib.Studies.Schwarz2013
 import Linglib.Studies.PatelGroszGrosz2017
 import Linglib.Studies.Spector2025
 import Linglib.Studies.Charlow2018
@@ -1288,6 +1305,7 @@ import Linglib.Studies.Ostrove2026
 import Linglib.Studies.Allotey2021
 import Linglib.Fragments.Tigrinya.ClausePrefixes
 import Linglib.Studies.FaginHalpern1994
+import Linglib.Studies.Faller2019
 import Linglib.Studies.FillmoreKayOConnor1988
 import Linglib.Studies.GoldbergShirtz2025
 import Linglib.Studies.KayFillmore1999
@@ -1333,8 +1351,6 @@ import Linglib.Studies.Merchant2013
 import Linglib.Phenomena.Entailment.Basic
 import Linglib.Phenomena.Entailment.Monotonicity
 import Linglib.Phenomena.WordOrder.CrossSerial
-import Linglib.Typology.Relativization.Defs
-import Linglib.Typology.Relativization.Basic
 import Linglib.Phenomena.Focus.Basic
 import Linglib.Studies.KratzerSelkirk2020
 import Linglib.Studies.Roberts2012
@@ -1390,6 +1406,7 @@ import Linglib.Studies.Wellwood2015
 import Linglib.Studies.FoxHackl2006
 import Linglib.Studies.VonStechow1984
 import Linglib.Studies.Buring2007
+import Linglib.Studies.Buring2012
 import Linglib.Studies.Bobaljik2012
 import Linglib.Studies.BhattPancheva2004
 import Linglib.Studies.Lechner2004
@@ -1420,6 +1437,7 @@ import Linglib.Phenomena.Iconicity.Basic
 import Linglib.Studies.SchlenkerEtAl2026
 import Linglib.Studies.MajidBosterBowerman2008
 import Linglib.Studies.ZaslavskyEtAl2019
+import Linglib.Studies.ZaslavskyKempRegierTishby2018
 import Linglib.Studies.BeaversKoontzGarboden2020
 import Linglib.Studies.Lucy1994
 import Linglib.Phenomena.Islands.MannerOfSpeaking
@@ -1645,6 +1663,7 @@ import Linglib.Studies.HarrisPotts2009
 import Linglib.Studies.LoGuercio2025
 import Linglib.Studies.KirkGiannini2024
 import Linglib.Studies.Maier2014
+import Linglib.Studies.Maier2015
 import Linglib.Studies.Rudin2025LI
 import Linglib.Studies.ScontrasTonhauser2025
 import Linglib.Studies.Wang2025
@@ -1869,10 +1888,9 @@ import Linglib.Studies.McPhersonLamont2026
 import Linglib.Studies.ChuangEtAl2026
 import Linglib.Studies.LuChuangBaayen2026
 -- Theories: CCG
-import Linglib.Syntax.CCG.Core.Basic
-import Linglib.Syntax.CCG.Core.Combinators
+import Linglib.Syntax.CCG.Basic
+import Linglib.Syntax.CCG.Combinators
 import Linglib.Syntax.CCG.Interface
-import Linglib.Syntax.CCG.Homomorphism
 import Linglib.Studies.Cysouw2009
 import Linglib.Studies.Scott2023Agreement
 import Linglib.Phenomena.Agreement.DifferentialIndexing
@@ -1898,11 +1916,12 @@ import Linglib.Studies.Keine2020
 import Linglib.Studies.Preminger2014
 import Linglib.Studies.Pietraszko2026
 import Linglib.Studies.Steedman2000
+import Linglib.Syntax.CCG.Classical
 import Linglib.Syntax.CCG.CrossSerial
 -- CCGDerivations moved to Studies/Steedman2000
 import Linglib.Syntax.CCG.Gapping
 import Linglib.Studies.ScontrasPearl2021
-import Linglib.Syntax.CCG.Formal.Equivalence
+import Linglib.Syntax.CCG.Equivalence
 import Linglib.Core.Computability.ContextFreeGrammar.Tree
 import Linglib.Core.Computability.ContextFreeGrammar.Pumping
 import Linglib.Core.Computability.ContextFreeGrammar.Map
@@ -1952,7 +1971,8 @@ import Linglib.Core.RingTheory.HopfAlgebra.SymmetricAlgebra
 import Linglib.Core.Algebra.PreLie.GuinOudom
 import Linglib.Core.Algebra.PreLie.OudomGuinCirc
 import Linglib.Core.Algebra.PreLie.OudomGuinCircConstruct
-import Linglib.Syntax.CCG.Formal.GenerativeCapacity
+import Linglib.Syntax.CCG.GenerativeCapacity
+import Linglib.Studies.KuhlmannKollerSatta2015
 import Linglib.Syntax.CCG.Scope
 import Linglib.Syntax.CCG.Intonation
 -- Cross-theory comparisons (distributed into theory directories)
@@ -1969,7 +1989,10 @@ import Linglib.Phenomena.ScalarImplicatures.ExhaustivityLimit
 import Linglib.Phenomena.ScalarImplicatures.ScopeExpressivity
 import Linglib.Studies.Partee1973
 -- Theories: Dependency Grammar
-import Linglib.Syntax.DependencyGrammar.Core.Nominal
+import Linglib.Syntax.DependencyGrammar.Basic
+import Linglib.Syntax.DependencyGrammar.Projection
+import Linglib.Syntax.DependencyGrammar.Dominance
+import Linglib.Syntax.DependencyGrammar.Nominal
 import Linglib.Syntax.DependencyGrammar.Formal.HeadCriteria
 import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 import Linglib.Syntax.DependencyGrammar.Formal.HarmonicOrder
@@ -1983,6 +2006,9 @@ import Linglib.Syntax.DependencyGrammar.Formal.Ellipsis
 import Linglib.Syntax.DependencyGrammar.Formal.Discontinuity
 import Linglib.Syntax.DependencyGrammar.Formal.Islands
 import Linglib.Syntax.DependencyGrammar.Formal.CoordinationParallelism
+import Linglib.Syntax.DependencyGrammar.Coordination
+import Linglib.Syntax.DependencyGrammar.Coreference
+import Linglib.Syntax.DependencyGrammar.LongDistance
 -- Theories: Word Grammar
 import Linglib.Syntax.WordGrammar.LexicalRules
 import Linglib.Syntax.WordGrammar.Network
@@ -2000,16 +2026,12 @@ import Linglib.Processing.NoisyChannel.Basic
 import Linglib.Processing.NoisyChannel.LossyContext
 import Linglib.Processing.PredictiveUncertainty.Config
 import Linglib.Processing.PredictiveUncertainty.IAS
-import Linglib.Syntax.DependencyGrammar.Coordination
-import Linglib.Syntax.DependencyGrammar.Coreference
 import Linglib.Studies.ArnoldEtAl2000
 import Linglib.Studies.Gibson2025
 import Linglib.Studies.KuhlmannNivre2006
 import Linglib.Studies.HarizanovGribanova2019
 import Linglib.Studies.Steedman2000WordOrder
 import Linglib.Studies.Chomsky1995
-import Linglib.Studies.SagWasowBender2003Inversion
-import Linglib.Studies.Adger2003Inversion
 import Linglib.Studies.Pollock1989
 import Linglib.Studies.ColeHermon2008
 import Linglib.Studies.Westergaard2009
@@ -2020,7 +2042,6 @@ import Linglib.Studies.Shieber1985
 import Linglib.Studies.PullumGazdar1982
 import Linglib.Studies.ArregiPietraszko2021
 import Linglib.Studies.BroekhuisCorver2026
-import Linglib.Syntax.DependencyGrammar.LongDistance
 import Linglib.Studies.DeMarneffeNivre2019
 -- Theories: Discourse — Centering Theory (Grosz, Joshi & Weinstein 1995)
 import Linglib.Discourse.Centering.Defs
@@ -2034,17 +2055,14 @@ import Linglib.Discourse.Centering.Instances.InformationStatus
 -- Theories: Discourse — SDRT
 import Linglib.Discourse.Rhetorical.Defs
 import Linglib.Discourse.Rhetorical.RightFrontier
--- Theories: Discourse — Faller/Murray illocutionary operators
 -- Theories: Interfaces — Centering ↔ DRT bridge
-import Linglib.Discourse.Centering.DRSExpr
+import Linglib.Discourse.Centering.DRS
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core
 import Linglib.Semantics.Dynamic.Connectives.Assignment
 import Linglib.Semantics.Dynamic.Connectives.CCP
 import Linglib.Semantics.Dynamic.Core.ContextFilter
 import Linglib.Semantics.Dynamic.DiscourseRef
-import Linglib.Semantics.Dynamic.Boxes.Accessibility
-import Linglib.Semantics.Dynamic.Boxes.Syntax
 import Linglib.Semantics.Dynamic.Connectives.Defs
 import Linglib.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
@@ -2060,7 +2078,11 @@ import Linglib.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Semantics.Dynamic.UpdateSemantics.Default
 import Linglib.Semantics.Dynamic.UpdateSemantics.Frames
 import Linglib.Semantics.Dynamic.DPL.Basic
-import Linglib.Semantics.Dynamic.DRT.Basic
+import Linglib.Semantics.Dynamic.DRS.Defs
+import Linglib.Semantics.Dynamic.DRS.Basic
+import Linglib.Semantics.Dynamic.DRS.Semantics
+import Linglib.Semantics.Dynamic.DRS.Reduction
+import Linglib.Semantics.Dynamic.DRS.Dynamics
 import Linglib.Semantics.Dynamic.Effects.Bilateral
 import Linglib.Semantics.Dynamic.Bilateral.BUS
 import Linglib.Semantics.Dynamic.Bilateral.ICDRT
@@ -2078,12 +2100,12 @@ import Linglib.Studies.Charlow2021.UpdateTheoretic
 import Linglib.Studies.Charlow2021.HigherOrder
 import Linglib.Studies.Charlow2021.SubtypePolymorphism
 import Linglib.Studies.Charlow2021.PostSuppositional
-import Linglib.Semantics.PIP.Basic
-import Linglib.Semantics.PIP.Bridges
-import Linglib.Semantics.PIP.Composition
-import Linglib.Semantics.PIP.Connectives
-import Linglib.Semantics.PIP.Expr
-import Linglib.Semantics.PIP.Felicity
+import Linglib.Studies.KeshetAbney2024.Basic
+import Linglib.Studies.KeshetAbney2024.Bridges
+import Linglib.Studies.KeshetAbney2024.Composition
+import Linglib.Studies.KeshetAbney2024.Connectives
+import Linglib.Studies.KeshetAbney2024.Expr
+import Linglib.Studies.KeshetAbney2024.Felicity
 import Linglib.Semantics.Dynamic.PLA.Basic
 import Linglib.Semantics.Dynamic.PLA.Belief
 import Linglib.Semantics.Dynamic.PLA.DeepTheorems
@@ -2125,12 +2147,16 @@ import Linglib.Studies.Dunn2025
 import Linglib.Syntax.ConstructionGrammar.Resultatives
 import Linglib.Studies.GoldbergJackendoff2004
 -- Theories: HPSG
-import Linglib.Syntax.HPSG.Core.Basic
-import Linglib.Syntax.HPSG.Core.HeadFiller
-import Linglib.Syntax.HPSG.Core.LexicalRules
-import Linglib.Syntax.HPSG.Core.RelativeClauses
+import Linglib.Syntax.HPSG.Basic
+import Linglib.Syntax.HPSG.Signature
+import Linglib.Syntax.HPSG.Interpretation
+import Linglib.Syntax.HPSG.Description
+import Linglib.Syntax.HPSG.Model
+import Linglib.Syntax.HPSG.HeadFiller
+import Linglib.Syntax.HPSG.LexicalRules
+import Linglib.Syntax.HPSG.RelativeClauses
 import Linglib.Syntax.HPSG.Coreference
-import Linglib.Syntax.HPSG.Inversion
+import Linglib.Syntax.HPSG.Binding
 -- Theories: Minimalism
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.Checking
@@ -2167,7 +2193,6 @@ import Linglib.Studies.Eckert2008
 import Linglib.Studies.Labov2006
 import Linglib.Studies.Labov2012
 import Linglib.Studies.Ochs1992
-import Linglib.Syntax.Minimalist.Inversion
 import Linglib.Syntax.Minimalist.SpeechActs
 import Linglib.Syntax.Minimalist.Polarity
 import Linglib.Syntax.Minimalist.Questions
@@ -2179,7 +2204,6 @@ import Linglib.Syntax.Minimalist.Modification
 import Linglib.Syntax.Minimalist.Scope
 import Linglib.Syntax.Minimalist.TraceInterpretation
 import Linglib.Syntax.Minimalist.CombinationSchemata
-import Linglib.Syntax.Minimalist.RelativeClauses
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Syntax.Minimalist.HeadFunction
@@ -2319,7 +2343,9 @@ import Linglib.Core.Categorical.ScaleCat
 import Linglib.Semantics.Composition.SyntaxInterface
 import Linglib.Studies.Borer2005
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
-import Linglib.Semantics.Composition.Modification
+import Linglib.Semantics.Composition.Abstraction
+import Linglib.Semantics.Modification.Basic
+import Linglib.Semantics.Modification.RelativeClause
 import Linglib.Semantics.Quantification.CovertQuantifier
 import Linglib.Semantics.Quantification.Binominal
 import Linglib.Semantics.Classifier.Basic
@@ -2337,6 +2363,7 @@ import Linglib.Studies.Krifka2004
 import Linglib.Semantics.Kinds.Subkinds
 import Linglib.Semantics.Homogeneity.Basic
 import Linglib.Semantics.ArgumentStructure.Relational
+import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.Plurality.Basic
 import Linglib.Semantics.Plurality.Cover
@@ -2390,7 +2417,6 @@ import Linglib.Semantics.Aspect.ChangeOfState
 -- Theories: Semantics.Iconic (Iconological Semantics for sign language)
 import Linglib.Semantics.Iconic.Basic
 -- Theories: Semantics.Events (neo-Davidsonian)
-import Linglib.Semantics.Events.Defs
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.ArgumentStructure.Defs
 import Linglib.Semantics.Events.CEM
@@ -2426,7 +2452,6 @@ import Linglib.Semantics.Attitudes.ClauseDenotation.Content
 import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
 import Linglib.Semantics.Attitudes.ContextQuantification
 import Linglib.Semantics.Attitudes.Doxastic
-import Linglib.Semantics.Attitudes.Parasitic
 import Linglib.Semantics.Attitudes.Preferential
 import Linglib.Semantics.Attitudes.SituationDependent
 import Linglib.Semantics.Attitudes.NegRaising
@@ -2498,6 +2523,8 @@ import Linglib.Semantics.Mood.VerbalMood
 import Linglib.Semantics.UseConditional.LTU
 import Linglib.Semantics.Reference.Basic
 import Linglib.Semantics.Reference.Kaplan
+import Linglib.Semantics.Reference.Nominal
+import Linglib.Semantics.Reference.PronounDenotation
 import Linglib.Semantics.Reference.Donnellan
 import Linglib.Semantics.Reference.Almog2014
 import Linglib.Semantics.Reference.Demonstratives
@@ -2671,7 +2698,8 @@ import Linglib.Studies.WaldonDegen2021
 import Linglib.Studies.SchlotterbeckWang2023
 import Linglib.Studies.Elbourne2013
 import Linglib.Studies.Longobardi2005
-import Linglib.Studies.Zimmermann2026
+import Linglib.Studies.Zimmermann2008
+import Linglib.Studies.Owusu2022
 import Linglib.Studies.Bubnov2026
 import Linglib.Studies.Dekier2021
 import Linglib.Studies.AhnKocabDavidson2026
@@ -2681,7 +2709,6 @@ import Linglib.Studies.VanDerLeer2026
 import Linglib.Studies.Hintikka1962
 import Linglib.Dialogue.Stalnaker
 import Linglib.Dialogue.ReasonableInference
-import Linglib.Dialogue.FarkasBruce
 import Linglib.Dialogue.QuotationFBOntology
 import Linglib.Dialogue.CommitmentSpace
 import Linglib.Dialogue.DistributionalCG
@@ -2803,6 +2830,7 @@ import Linglib.Fragments.Hebrew.Gender
 import Linglib.Fragments.Latin.Gender
 import Linglib.Fragments.Romanian.Gender
 import Linglib.Fragments.Dyirbal.Gender
+import Linglib.Fragments.Archi.Gender
 import Linglib.Fragments.Georgian.Gender
 import Linglib.Fragments.Swahili.Gender
 import Linglib.Fragments.Zulu.Gender

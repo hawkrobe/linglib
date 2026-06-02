@@ -30,9 +30,9 @@ Generic infrastructure for dynamic semantics built over `ICDRTAssignment`
 ## Architecture
 
 ```
-ICDRTUpdate W E ──fiberDRS──→ DRS (ICDRTAssignment W E × W) ──lift──→ CCP (... × W)
+ICDRTUpdate W E ──fiberDRS──→ Update (ICDRTAssignment W E × W) ──lift──→ CCP (... × W)
        ‖                              ‖                                    ‖
-   DRS (Assign)              DRS (Assign × World)                 DynProp W E
+   Update (Assign)              Update (Assign × World)                 DynProp W E
        │                              │                                    │
     seq = dseq              dseq (fiber level)                    CCP.seq
 ```
@@ -534,8 +534,8 @@ theorem dec_complement_counterfactual (φ_DC φ_outer φ_inner : PVar)
 
 ICDRT updates operate on assignments only and worlds are inert fibers.
 `fiberDRS` makes this structure explicit at the type level of
-`DRS (ICDRTAssignment W E × W)`. -/
-def fiberDRS (D : ICDRTUpdate W E) : DRS (ICDRTAssignment W E × W) :=
+`Update (ICDRTAssignment W E × W)`. -/
+def fiberDRS (D : ICDRTUpdate W E) : Update (ICDRTAssignment W E × W) :=
   λ ⟨i, w⟩ ⟨j, w'⟩ => w = w' ∧ D i j
 
 /-- `toDynProp = lift ∘ fiberDRS`: the static-to-dynamic bridge factors
@@ -569,7 +569,7 @@ theorem fiberDRS_idUp :
   simp only [fiberDRS, ICDRTUpdate.idUp, eq_iff_iff, Prod.mk.injEq]
   exact ⟨λ ⟨h1, h2⟩ => ⟨h2, h1⟩, λ ⟨h1, h2⟩ => ⟨h2, h1⟩⟩
 
-/-- `fiberDRS` is a monoid homomorphism `(ICDRTUpdate, seq, idUp) → (DRS, dseq, id)`. -/
+/-- `fiberDRS` is a monoid homomorphism `(ICDRTUpdate, seq, idUp) → (Update, dseq, id)`. -/
 theorem fiberDRS_homomorphism :
     (∀ (D₁ D₂ : ICDRTUpdate W E),
       fiberDRS (ICDRTUpdate.seq D₁ D₂) = dseq (fiberDRS D₁) (fiberDRS D₂)) ∧

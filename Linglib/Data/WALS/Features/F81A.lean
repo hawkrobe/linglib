@@ -28,7 +28,7 @@ inductive BasicWordOrder where
   | osv
   /-- No dominant order (189 languages). -/
   | noDominantOrder
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 private def allData_0 : List (Datapoint BasicWordOrder) :=
   [ { walsCode := "xoo", iso := "nmn", value := .svo }
@@ -1419,9 +1419,9 @@ private def allData_2 : List (Datapoint BasicWordOrder) :=
 def allData : List (Datapoint BasicWordOrder) := allData_0 ++ allData_1 ++ allData_2
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint BasicWordOrder) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint BasicWordOrder) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F81A

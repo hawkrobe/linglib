@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 import Linglib.Semantics.Attitudes.RationalAttitude
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
@@ -23,7 +23,7 @@ which determines the rational attitude reading.
 
 -/
 
-namespace Fragments.Italian.Predicates
+namespace Italian.Predicates
 
 open Semantics.Lexical
 open Minimalist (ComplementSize)
@@ -57,9 +57,9 @@ def InfComplementizer.reading : InfComplementizer → Reading :=
 -- § 2. Italian Verb Entry
 -- ════════════════════════════════════════════════════════════════
 
-/-- An Italian verb entry extending `VerbCore` with the infinitival
+/-- An Italian verb entry extending `Verb` with the infinitival
     complementizer alternation. -/
-structure ItalianVerbEntry extends VerbCore where
+structure ItalianVerbEntry extends Verb where
   /-- Which infinitival complementizers the verb selects -/
   infComplements : List InfComplementizer := []
   deriving Repr, BEq
@@ -216,4 +216,4 @@ theorem mood_asymmetry_predicted :
     sperare.levinClass ≠ some .want := by
   exact ⟨rfl, rfl, by decide⟩
 
-end Fragments.Italian.Predicates
+end Italian.Predicates

@@ -30,7 +30,7 @@ because the diminutive suffix *-chen* fixes the gender. This is
 diagnostic for any theory in which suffixes can override semantics.
 -/
 
-namespace Fragments.German.Gender
+namespace German.Gender
 
 open Features (SurfaceGender)
 
@@ -146,4 +146,4 @@ example : genderTypology.iso639 = "deu" ∧ genderTypology.name = "German" :=
 /-- German is in @cite{corbett-1991}'s "canonical" cell. -/
 example : genderTypology.IsCanonicalGender := by decide
 
-end Fragments.German.Gender
+end German.Gender

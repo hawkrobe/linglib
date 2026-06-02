@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 
 /-!
 # Portuguese Mood-Choice Verb Entries @cite{grano-2024}
@@ -17,13 +17,13 @@ Portuguese 'want' robustly takes SBJV; 'hope' allows both IND and SBJV;
 - (41) Eu fiz com que João **fosse**/\*foi ao parque. (SBJV/\*IND)
 -/
 
-namespace Fragments.Portuguese.MoodChoice
+namespace Portuguese.MoodChoice
 
 open Semantics.Lexical
 
 /-- *querer* 'want' — robustly subjunctive-selecting.
     @cite{grano-2024}, (3a): SBJV required. -/
-def querer : VerbCore where
+def querer : Verb where
   form := "querer"
   complementType := .finiteClause
   controlType := .subjectControl
@@ -35,7 +35,7 @@ def querer : VerbCore where
 
 /-- *esperar* 'hope' — cross-linguistically variable (IND/SBJV).
     @cite{grano-2024}, (11): both IND and SBJV accepted. -/
-def esperar : VerbCore where
+def esperar : Verb where
   form := "esperar"
   complementType := .finiteClause
   controlType := .subjectControl
@@ -46,7 +46,7 @@ def esperar : VerbCore where
 
 /-- *pretender* 'intend' — robustly rejects indicative.
     @cite{grano-2024}, (26): SBJV required, IND rejected. -/
-def pretender : VerbCore where
+def pretender : Verb where
   form := "pretender"
   complementType := .infinitival
   controlType := .subjectControl
@@ -57,7 +57,7 @@ def pretender : VerbCore where
 
 /-- *fazer* 'make' — causative, rejects indicative.
     @cite{grano-2024}, (41): SBJV required via *com que*, IND rejected. -/
-def fazer : VerbCore where
+def fazer : Verb where
   form := "fazer"
   complementType := .infinitival
   controlType := .objectControl
@@ -80,4 +80,4 @@ theorem pretender_is_want_class :
 theorem fazer_is_causative :
     fazer.causative.isSome = true := rfl
 
-end Fragments.Portuguese.MoodChoice
+end Portuguese.MoodChoice

@@ -15,7 +15,7 @@ Modern Tibetan dialects diverge; this Fragment encodes the Classical form.
 Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.classicalTibetan`).
 -/
 
-namespace Fragments.Tibetan.Coordination
+namespace Tibetan.Coordination
 
 open Features.Coordination
 
@@ -28,4 +28,4 @@ def dang : CoordEntry :=
 
 def allEntries : List CoordEntry := [dang]
 
-end Fragments.Tibetan.Coordination
+end Tibetan.Coordination

@@ -26,7 +26,7 @@ form with *e...ana* or bare.
 | Past | *I kai ia* | *Kāhore ia i kai* |
 -/
 
-namespace Fragments.Maori.Negation
+namespace Maori.Negation
 
 open Typology.Negation
 
@@ -112,4 +112,4 @@ def negationProfile : Typology.Negation.NegationProfile :=
   , negIsHead := none
   , enAttested := none }
 
-end Fragments.Maori.Negation
+end Maori.Negation

@@ -56,14 +56,14 @@ open Typology.NounCategorizationSystem
 -- §0: Per-language convenience aliases
 -- ============================================================================
 
-abbrev french          := Fragments.French.classifierSystem
-abbrev italian         := Fragments.Italian.classifierSystem
-abbrev mandarin        := Fragments.Mandarin.classifierSystem
-abbrev japanese        := Fragments.Japanese.classifierSystem
-abbrev xhosa           := Fragments.Xhosa.classifierSystem
-abbrev shona           := Fragments.Shona.classifierSystem
-abbrev swahili         := Fragments.Swahili.classifierSystem
-abbrev westernArmenian := Fragments.Armenian.classifierSystem
+abbrev french          := French.classifierSystem
+abbrev italian         := Italian.classifierSystem
+abbrev mandarin        := Mandarin.classifierSystem
+abbrev japanese        := Japanese.classifierSystem
+abbrev xhosa           := Xhosa.classifierSystem
+abbrev shona           := Shona.classifierSystem
+abbrev swahili         := Swahili.classifierSystem
+abbrev westernArmenian := Armenian.classifierSystem
 
 -- ============================================================================
 -- §1: The cross-linguistic sample
@@ -86,23 +86,23 @@ theorem sample_all_have_default :
 -- ============================================================================
 
 theorem french_is_noun_class :
-    isNounClassType Fragments.French.classifierSystem.classifierType = true := rfl
+    isNounClassType French.classifierSystem.classifierType = true := rfl
 
 theorem mandarin_is_classifier :
-    isClassifierType Fragments.Mandarin.classifierSystem.classifierType = true := rfl
+    isClassifierType Mandarin.classifierSystem.classifierType = true := rfl
 
 theorem japanese_is_classifier :
-    isClassifierType Fragments.Japanese.classifierSystem.classifierType = true := rfl
+    isClassifierType Japanese.classifierSystem.classifierType = true := rfl
 
 theorem mandarin_inventory_from_fragment :
-    Fragments.Mandarin.classifierSystem.inventorySize = 15 := by decide
+    Mandarin.classifierSystem.inventorySize = 15 := by decide
 
 theorem japanese_inventory_from_fragment :
-    Fragments.Japanese.classifierSystem.inventorySize = 36 := by decide
+    Japanese.classifierSystem.inventorySize = 36 := by decide
 
 theorem classifier_systems_have_default :
-    Fragments.Mandarin.classifierSystem.HasUnmarkedDefault ∧
-    Fragments.Japanese.classifierSystem.HasUnmarkedDefault := by decide
+    Mandarin.classifierSystem.HasUnmarkedDefault ∧
+    Japanese.classifierSystem.HasUnmarkedDefault := by decide
 
 -- ============================================================================
 -- §3: Aikhenvald Table 15.1 (sample-restricted)
@@ -117,38 +117,38 @@ theorem sample_classifier_no_agreement_nounclass_agreement :
 
 /-- French has agreement; Mandarin and Japanese do not (Table 15.1). -/
 theorem fr_mandarin_jp_agreement_split :
-    Fragments.French.classifierSystem.HasAgreement ∧
-    ¬ Fragments.Mandarin.classifierSystem.HasAgreement ∧
-    ¬ Fragments.Japanese.classifierSystem.HasAgreement := by decide
+    French.classifierSystem.HasAgreement ∧
+    ¬ Mandarin.classifierSystem.HasAgreement ∧
+    ¬ Japanese.classifierSystem.HasAgreement := by decide
 
 /-- Numeral classifier systems have purely semantic assignment; the
     noun-class system has mixed assignment (@cite{aikhenvald-2000} Table 15.2). -/
 theorem fr_mandarin_jp_assignment_split :
-    Fragments.Mandarin.classifierSystem.assignment = .semantic ∧
-    Fragments.Japanese.classifierSystem.assignment = .semantic ∧
-    Fragments.French.classifierSystem.assignment = .mixed :=
+    Mandarin.classifierSystem.assignment = .semantic ∧
+    Japanese.classifierSystem.assignment = .semantic ∧
+    French.classifierSystem.assignment = .mixed :=
   ⟨rfl, rfl, rfl⟩
 
 /-- East Asian classifier systems prefer physical properties (shape) —
     partial witness for Aikhenvald's cross-linguistic generalization. -/
 theorem mandarin_japanese_prefer_shape :
-    Fragments.Mandarin.classifierSystem.preferredSemantics.any (· == .shape) = true ∧
-    Fragments.Japanese.classifierSystem.preferredSemantics.any (· == .shape) = true := by
+    Mandarin.classifierSystem.preferredSemantics.any (· == .shape) = true ∧
+    Japanese.classifierSystem.preferredSemantics.any (· == .shape) = true := by
   refine ⟨?_, ?_⟩ <;> decide
 
 /-- Animacy is attested in both Mandarin and Japanese classifiers. -/
 theorem mandarin_japanese_have_animacy :
-    Fragments.Mandarin.classifierSystem.preferredSemantics.any (· == .animacy) = true ∧
-    Fragments.Japanese.classifierSystem.preferredSemantics.any (· == .animacy) = true := by
+    Mandarin.classifierSystem.preferredSemantics.any (· == .animacy) = true ∧
+    Japanese.classifierSystem.preferredSemantics.any (· == .animacy) = true := by
   refine ⟨?_, ?_⟩ <;> decide
 
 /-- Mandarin/Japanese classifier inventories exceed French's noun-class
     inventory. @cite{aikhenvald-2000} Table 15.1 generalization. -/
 theorem fr_inventory_smaller_than_clf_inventories :
-    Fragments.French.classifierSystem.inventorySize <
-      Fragments.Mandarin.classifierSystem.inventorySize ∧
-    Fragments.French.classifierSystem.inventorySize <
-      Fragments.Japanese.classifierSystem.inventorySize := by
+    French.classifierSystem.inventorySize <
+      Mandarin.classifierSystem.inventorySize ∧
+    French.classifierSystem.inventorySize <
+      Japanese.classifierSystem.inventorySize := by
   refine ⟨?_, ?_⟩ <;> decide
 
 -- ============================================================================
@@ -157,15 +157,15 @@ theorem fr_inventory_smaller_than_clf_inventories :
 
 /-- Numeral classifiers operate inside numeral/quantifier NPs. -/
 theorem mandarin_japanese_scope_numeralNP :
-    Fragments.Mandarin.classifierSystem.scopes.any (· == .numeralNP) = true ∧
-    Fragments.Japanese.classifierSystem.scopes.any (· == .numeralNP) = true := by
+    Mandarin.classifierSystem.scopes.any (· == .numeralNP) = true ∧
+    Japanese.classifierSystem.scopes.any (· == .numeralNP) = true := by
   refine ⟨?_, ?_⟩ <;> decide
 
 /-- French (the noun-class member of the sample) operates in
     head-modifier and predicate-argument scopes. -/
 theorem french_scope_agreement :
-    Fragments.French.classifierSystem.scopes.any (· == .headModifierNP) = true ∧
-    Fragments.French.classifierSystem.scopes.any (· == .predicateArgument) = true := by
+    French.classifierSystem.scopes.any (· == .headModifierNP) = true ∧
+    French.classifierSystem.scopes.any (· == .predicateArgument) = true := by
   refine ⟨?_, ?_⟩ <;> decide
 
 -- ============================================================================
@@ -202,49 +202,49 @@ theorem sample_greenberg_complementarity :
 /-- Mandarin and Japanese both have a semantically bleached default
     classifier (Mandarin 个 ge, Japanese つ tsu). -/
 theorem mandarin_japanese_have_default_clf :
-    Fragments.Mandarin.Classifiers.defaultClassifier.isDefault = true ∧
-    Fragments.Japanese.Classifier.defaultClassifier? = some .tsu :=
-  ⟨rfl, Fragments.Japanese.Classifier.default_eq_tsu⟩
+    Mandarin.Classifiers.defaultClassifier.isDefault = true ∧
+    Japanese.Classifier.defaultClassifier? = some .tsu :=
+  ⟨rfl, Japanese.Classifier.default_eq_tsu⟩
 
 /-- Non-default classifiers always carry at least one semantic parameter. -/
 theorem specific_classifiers_motivated :
-    (Fragments.Mandarin.Classifiers.allClassifiers.filter (!·.isDefault)).all
+    (Mandarin.Classifiers.allClassifiers.filter (!·.isDefault)).all
       (·.semantics.length > 0) = true ∧
-    ∀ c : Fragments.Japanese.Classifier,
-      ¬Fragments.Japanese.Classifier.IsDefault c →
-      ¬Fragments.Japanese.Classifier.IsMensural c →
+    ∀ c : Japanese.Classifier,
+      ¬Japanese.Classifier.IsDefault c →
+      ¬Japanese.Classifier.IsMensural c →
       c.encodes ≠ [] := by
   refine ⟨?_, ?_⟩
   · decide
-  · exact Fragments.Japanese.Classifier.specific_classifiers_have_semantics
+  · exact Japanese.Classifier.specific_classifiers_have_semantics
 
 -- ============================================================================
 -- §8: Bantu noun-class systems (sample = Xhosa, Shona, Swahili)
 -- ============================================================================
 
 theorem xhosa_is_noun_class :
-    isNounClassType Fragments.Xhosa.classifierSystem.classifierType = true := rfl
+    isNounClassType Xhosa.classifierSystem.classifierType = true := rfl
 
 theorem shona_is_noun_class :
-    isNounClassType Fragments.Shona.classifierSystem.classifierType = true := rfl
+    isNounClassType Shona.classifierSystem.classifierType = true := rfl
 
 theorem swahili_is_noun_class :
-    isNounClassType Fragments.Swahili.classifierSystem.classifierType = true := rfl
+    isNounClassType Swahili.classifierSystem.classifierType = true := rfl
 
 theorem xhosa_has_agreement :
-    Fragments.Xhosa.classifierSystem.HasAgreement := by decide
+    Xhosa.classifierSystem.HasAgreement := by decide
 
 /-- The three sampled Bantu languages have inventories in the
     @cite{aikhenvald-2000} Table 15.1 noun-class range (≤ 20). -/
 theorem sample_bantu_inventory_within_aikhenvald_range :
-    Fragments.Xhosa.classifierSystem.inventorySize ≤ 20 ∧
-    Fragments.Shona.classifierSystem.inventorySize ≤ 20 ∧
-    Fragments.Swahili.classifierSystem.inventorySize ≤ 20 := by decide
+    Xhosa.classifierSystem.inventorySize ≤ 20 ∧
+    Shona.classifierSystem.inventorySize ≤ 20 ∧
+    Swahili.classifierSystem.inventorySize ≤ 20 := by decide
 
 theorem bantu_have_prefix_realization :
-    Fragments.Xhosa.classifierSystem.realizations.any (· == .prefix) = true ∧
-    Fragments.Shona.classifierSystem.realizations.any (· == .prefix) = true ∧
-    Fragments.Swahili.classifierSystem.realizations.any (· == .prefix) = true := by decide
+    Xhosa.classifierSystem.realizations.any (· == .prefix) = true ∧
+    Shona.classifierSystem.realizations.any (· == .prefix) = true ∧
+    Swahili.classifierSystem.realizations.any (· == .prefix) = true := by decide
 
 -- ============================================================================
 -- §9: Optional-classifier systems
@@ -257,10 +257,10 @@ theorem bantu_have_prefix_realization :
     Armenian is precisely the kind of language those generalizations
     don't cover. -/
 def optionalClassifierSystems : List NounCategorizationSystem :=
-  [Fragments.Armenian.classifierSystem]
+  [Armenian.classifierSystem]
 
 theorem westernArmenian_not_obligatory :
-    ¬ Fragments.Armenian.classifierSystem.IsObligatory ∧
-    ¬ Fragments.Armenian.classifierSystem.HasUnmarkedDefault := by decide
+    ¬ Armenian.classifierSystem.IsObligatory ∧
+    ¬ Armenian.classifierSystem.HasUnmarkedDefault := by decide
 
 end Aikhenvald2000

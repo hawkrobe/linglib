@@ -1,6 +1,6 @@
 import Linglib.Dialogue.KOS.Defs
 import Linglib.Dialogue.KOS.Grounding
-import Linglib.Syntax.HPSG.Core.HeadFiller
+import Linglib.Syntax.HPSG.HeadFiller
 
 /-!
 # KOS–Grammar Integration
@@ -11,7 +11,7 @@ The Sign type has `dgb-params` and `q-params` — dialogue features living
 inside syntactic representations (Ch. 5, §5.2).
 
 This module provides the integration point between HPSG signs and KOS
-dialogue gameboards. Neither `HPSG/Core/Basic.lean` nor `KOS/Basic.lean`
+dialogue gameboards. Neither `HPSG/Basic.lean` nor `KOS/Basic.lean`
 knows about the other; this module imports both and defines:
 
 1. **DialogueSign** — an HPSG sign extended with DGB-params and Q-params

@@ -14,7 +14,7 @@ consuming this profile live in
 
 set_option autoImplicit false
 
-namespace Fragments.Irish.Possession
+namespace Irish.Possession
 
 open _root_.Typology.Possession
 
@@ -31,4 +31,4 @@ def possession : PossessionProfile :=
   , examples := ["ta leabhar agam", "teach an fhir"]
   , notes := "Celtic at-possession: ta X ag-PRON; genitive case on possessor in adnominal" }
 
-end Fragments.Irish.Possession
+end Irish.Possession

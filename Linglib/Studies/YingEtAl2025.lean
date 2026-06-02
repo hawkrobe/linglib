@@ -6,7 +6,7 @@ import Linglib.Semantics.Attitudes.EpistemicThreshold
 
 @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
 
-Connects the English modal fragment (`Fragments.English.FunctionWords`) to
+Connects the English modal fragment (`English.FunctionWords`) to
 the epistemic threshold semantics of @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
 ("Understanding Epistemic Language with a Language-Augmented Bayesian
 Theory of Mind", TACL 13:613–637), formalized in
@@ -35,7 +35,7 @@ table in `EpistemicThreshold.lean`). The bridge proves:
 
 namespace YingEtAl2025
 
-open Fragments.English.Auxiliaries
+open English.Auxiliaries
 open Semantics.Attitudes.EpistemicThreshold (EpistemicEntry)
 open Semantics.Modality (ModalForce ModalFlavor ForceFlavor)
 

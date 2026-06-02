@@ -35,7 +35,7 @@ Five bridges connecting CTPClass to existing infrastructure:
 namespace Noonan2007
 
 open Typology.Complementation
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 open Syntax.Minimalist.LeftPeriphery
 open Semantics.Mood
 

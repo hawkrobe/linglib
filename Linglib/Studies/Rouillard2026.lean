@@ -87,13 +87,12 @@ namespace Rouillard2026
 
 open Core.Time
 open Core.Time.Interval
-open Semantics.Events
 open Semantics.Aspect
 open Semantics.Aspect.SubintervalProperty
 open Features
 open Core.Scale
 open Semantics.Entailment.Extremum
-open Fragments.English.TemporalExpressions
+open English.TemporalExpressions
 
 variable {W Time : Type*} [LinearOrder Time]
 
@@ -154,7 +153,7 @@ def inETIA (e : Event Time) (bound : Interval Time) : Prop :=
 /-- E-TIA derived property: at world `w`, value `n` is true iff there is
     a P-event whose runtime is included in some `n`-unit time, and that
     `n`-unit time falls within `g1`. @cite{rouillard-2026} eq. (77). -/
-def eTIAProperty (P : EventPred W Time) (μ : Interval Time → ℕ)
+def eTIAProperty (P : W → Event Time → Prop) (μ : Interval Time → ℕ)
     [TimeMeasure Time μ] (g1 : Interval Time) : ℕ → W → Prop :=
   fun n w => ∃ t : Interval Time, μ t = n ∧
     ∃ e : Event Time, P w e ∧ e.τ.subinterval g1 ∧ e.τ.subinterval t
@@ -172,7 +171,7 @@ def eTIAProperty (P : EventPred W Time) (μ : Interval Time → ℕ)
     explicitly noted "the openness constraint is enforced at the level of
     the G-TIA semantics rather than structurally" — i.e., not at all).
     @cite{rouillard-2026} eq. (94) revised with eq. (101). -/
-def gTIAPropertyOpen (P : EventPred W Time) (μ : Interval Time → ℕ)
+def gTIAPropertyOpen (P : W → Event Time → Prop) (μ : Interval Time → ℕ)
     [TimeMeasure Time μ] (s : Time) : ℕ → W → Prop :=
   fun n w => ∃ ptsGI : GInterval Time,
     ptsGI.isOpen ∧
@@ -183,7 +182,7 @@ def gTIAPropertyOpen (P : EventPred W Time) (μ : Interval Time → ℕ)
 /-- The negation of `gTIAPropertyOpen`, used for G-TIAs in negative
     contexts (where the property "no event in the n-unit open PTS" holds
     iff `gTIAPropertyOpen` is false). -/
-def gTIAPropertyOpenNeg (P : EventPred W Time) (μ : Interval Time → ℕ)
+def gTIAPropertyOpenNeg (P : W → Event Time → Prop) (μ : Interval Time → ℕ)
     [TimeMeasure Time μ] (s : Time) : ℕ → W → Prop :=
   fun n w => ¬ gTIAPropertyOpen P μ s n w
 
@@ -209,7 +208,7 @@ def gTIAPropertyOpenNeg (P : EventPred W Time) (μ : Interval Time → ℕ)
     numeral yields a true proposition at any world where any does, so no
     numeral is more informative than another. @cite{rouillard-2026} §4.1.1. -/
 theorem eTIA_atelic_collapse {μ : Interval Time → ℕ} [TimeMeasure Time μ]
-    (P : EventPred W Time) (g1 : Interval Time)
+    (P : W → Event Time → Prop) (g1 : Interval Time)
     (hSub : HasSubintervalProp P) :
     IsConstant (α := ℕ) (eTIAProperty P μ g1) := by
   suffices h : ∀ n m w, eTIAProperty P μ g1 n w → eTIAProperty P μ g1 m w from
@@ -217,7 +216,7 @@ theorem eTIA_atelic_collapse {μ : Interval Time → ℕ} [TimeMeasure Time μ]
   intro n m w ⟨_, _, e, hP, hg1, _⟩
   rcases le_total m (μ e.τ) with hle | hge
   · obtain ⟨j, hj_sub, hj_μ⟩ := TimeMeasure.subdivisible e.τ m hle
-    refine ⟨j, hj_μ, ⟨j, .action⟩, hSub e w hP j hj_sub ⟨j, .action⟩ rfl,
+    refine ⟨j, hj_μ, ⟨j, .dynamic⟩, hSub e w hP j hj_sub ⟨j, .dynamic⟩ rfl,
       ⟨?_, ?_⟩, ⟨le_refl _, le_refl _⟩⟩
     · exact le_trans hg1.1 hj_sub.1
     · exact le_trans hj_sub.2 hg1.2
@@ -226,14 +225,14 @@ theorem eTIA_atelic_collapse {μ : Interval Time → ℕ} [TimeMeasure Time μ]
 
 /-- Atelic E-TIA fails the `AdmitsOptimum` half of MIP licensing. -/
 theorem eTIA_atelic_no_optimum {μ : Interval Time → ℕ} [TimeMeasure Time μ]
-    (P : EventPred W Time) (g1 : Interval Time)
+    (P : W → Event Time → Prop) (g1 : Interval Time)
     (hSub : HasSubintervalProp P) :
     ¬ AdmitsOptimum (eTIAProperty P μ g1) :=
   fun h => h (eTIA_atelic_collapse P g1 hSub)
 
 /-- Atelic E-TIA is not MIP-licensed. -/
 theorem eTIA_atelic_not_licensed {μ : Interval Time → ℕ} [TimeMeasure Time μ]
-    (P : EventPred W Time) (g1 : Interval Time)
+    (P : W → Event Time → Prop) (g1 : Interval Time)
     (hSub : HasSubintervalProp P) :
     ¬ MIP_Licensed (eTIAProperty P μ g1) :=
   fun ⟨hAdm, _⟩ => eTIA_atelic_no_optimum P g1 hSub hAdm
@@ -247,7 +246,7 @@ theorem eTIA_atelic_not_licensed {μ : Interval Time → ℕ} [TimeMeasure Time 
     property is upward monotone — the same event witnesses larger
     measures via `TimeMeasure.extensible`. -/
 theorem eTIA_telic_upwardMonotone {μ : Interval Time → ℕ} [TimeMeasure Time μ]
-    (P : EventPred W Time) (g1 : Interval Time) :
+    (P : W → Event Time → Prop) (g1 : Interval Time) :
     IsUpwardMonotone (eTIAProperty P μ g1) := by
   intro n m hnm w ⟨t, hμ, e, hP, hg1, hsub⟩
   have h_le : μ t ≤ m := by rw [hμ]; exact hnm

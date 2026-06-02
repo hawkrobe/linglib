@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Finnish Evidentiality
@@ -10,17 +10,15 @@ no grammatical evidentials; modality via modal verbs (*voida* 'can',
 *täytyä* 'must', *saattaa* 'may'). Studies-side override.
 -/
 
-namespace Fragments.Finnish.Evidentiality
+namespace Finnish.Evidentiality
 
-open Typology.Modality
+/-! ### Typed evidential inventory (Aikhenvald-strict view)
 
-/-- Finnish evidentiality typology per WALS @cite{de-haan-2013}. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "Finnish" "fin" "Uralic"
-    (notes := "No grammatical evidentials per Aikhenvald; modality via modal " ++
-              "verbs (voida 'can', täytyä 'must', saattaa 'may')")
+No grammatical evidentials per @cite{aikhenvald-2004}. WALS divergence
+(modal verbs) is documented in `Studies/Aikhenvald2004.lean`. -/
 
-example : evidentialityProfile.iso = "fin" ∧ evidentialityProfile.language = "Finnish" :=
-  ⟨rfl, rfl⟩
+def evidentials : List Semantics.Evidential.Entry := []
 
-end Fragments.Finnish.Evidentiality
+example : evidentials.length = 0 := by decide
+
+end Finnish.Evidentiality

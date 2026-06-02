@@ -20,7 +20,7 @@ inductive PeriphrasticCausativeType where
   | purposiveOnly
   /-- Both (15 languages). -/
   | both
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 110A dataset (118 languages). -/
 def allData : List (Datapoint PeriphrasticCausativeType) :=
@@ -145,9 +145,9 @@ def allData : List (Datapoint PeriphrasticCausativeType) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint PeriphrasticCausativeType) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint PeriphrasticCausativeType) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F110A

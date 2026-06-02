@@ -25,7 +25,7 @@ reading in bare TP complements.
 
 -/
 
-namespace Fragments.Hungarian.TemporalDeictic
+namespace Hungarian.TemporalDeictic
 
 open Semantics.Tense
 
@@ -88,4 +88,4 @@ theorem diagnostic_contrast :
     aznap.compatSimultaneous ≠ elozo_nap.compatSimultaneous := by decide
 
 
-end Fragments.Hungarian.TemporalDeictic
+end Hungarian.TemporalDeictic

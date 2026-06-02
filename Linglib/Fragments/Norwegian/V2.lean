@@ -7,7 +7,7 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 V2 micro-parameter profiles for Norwegian varieties (Table 3.1).
 -/
 
-namespace Fragments.Norwegian
+namespace Norwegian
 
 open Minimalist (ForceHead V2Profile)
 
@@ -21,4 +21,4 @@ abbrev stdNorwegian : V2Profile :=
 abbrev nordmoreNorwegian : V2Profile :=
   {.Decl, .Pol}
 
-end Fragments.Norwegian
+end Norwegian

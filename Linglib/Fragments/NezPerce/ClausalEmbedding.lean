@@ -43,7 +43,7 @@ Relative-pronoun paradigm is from @cite{deal-2016a} (Table 22 reproduced in
 - The *ke*-as-φ-probe-on-C analysis (consumes `Minimalist.SatisfactionCond`).
 -/
 
-namespace Fragments.NezPerce.ClausalEmbedding
+namespace NezPerce.ClausalEmbedding
 
 open Typology.Complementation (CTPClass)
 
@@ -317,4 +317,4 @@ theorem paradigm_membership :
 /-- The accusative-plural cell shows idiolectal variation: two attested forms. -/
 theorem acc_pl_variants : rp_acc_pl.forms = ["konmana", "yox̂mene"] := rfl
 
-end Fragments.NezPerce.ClausalEmbedding
+end NezPerce.ClausalEmbedding

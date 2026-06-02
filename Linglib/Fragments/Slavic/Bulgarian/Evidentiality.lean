@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Bulgarian Evidentiality
@@ -12,22 +12,24 @@ Sister to `Fragments/Slavic/Bulgarian/Evidentials.lean` which holds the
 @cite{cumming-2026} tense-evidential paradigm data.
 -/
 
-namespace Fragments.Slavic.Bulgarian.Evidentiality
+namespace Bulgarian.Evidentiality
 
-open Typology.Modality
-open Features.Evidentiality (EvidentialSource)
+/-! ### Typed evidential inventory
 
-/-- Bulgarian evidentiality: 2-way direct/indirect via aorist vs l-form. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "Bulgarian" "bul" "Indo-European"
-    (markers := ["aorist (direct)", "l-form (indirect)"])
-    (notes := "Balkan evidentiality; direct (aorist) vs indirect (l-participle " ++
-              "based forms); fused with tense-aspect")
-    (attestedEvidentials := [.direct, .inference, .hearsay])
-    (systemFb := .directAndIndirect)
-    (codingFb := .partOfTAM)
+Bulgarian's 2-way contrast via aorist (direct) vs l-form (indirect),
+fused with TAM. The l-form covers both inferential and reportative
+meanings — represented here as the inferential kind (the dominant
+inference function); reportative extensions are an Aikhenvald-style
+semantic extension. -/
 
-example : evidentialityProfile.iso = "bul" ∧ evidentialityProfile.language = "Bulgarian" :=
-  ⟨rfl, rfl⟩
+open Semantics.Evidential
 
-end Fragments.Slavic.Bulgarian.Evidentiality
+def evidentials : List Entry :=
+  [ .direct      { form := "aorist", exponent := .tamFusion },
+    .inferential { form := "l-form", exponent := .tamFusion } ]
+
+example : evidentials.length = 2 := by decide
+example : (evidentials.filter Entry.IsDirect).length = 1 := by decide
+example : (evidentials.filter Entry.IsInferential).length = 1 := by decide
+
+end Bulgarian.Evidentiality

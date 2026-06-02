@@ -1,11 +1,11 @@
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 import Linglib.Morphology.RootTypology
 
 /-!
 # German Predicate Lexicon Fragment
 @cite{qing-uegaki-2025} @cite{song-1996} @cite{solstad-bott-2024}
 
-German causative and attitude verb entries, extending `VerbCore` with the
+German causative and attitude verb entries, extending `Verb` with the
 German inflectional paradigm (3sg present, Präteritum, Partizip II).
 
 ## Causative verbs
@@ -24,13 +24,13 @@ German preferential attitudes pattern with other Indo-European languages:
 
 -/
 
-namespace Fragments.German.Predicates
+namespace German.Predicates
 
 open Semantics.Lexical
 open Features (Causative)
 
-/-- German verb entry: extends VerbCore with German inflectional paradigm. -/
-structure GermanVerbEntry extends VerbCore where
+/-- German verb entry: extends Verb with German inflectional paradigm. -/
+structure GermanVerbEntry extends Verb where
   /-- 3sg present (er/sie/es) -/
   form3sg : String
   /-- Past (Präteritum) -/
@@ -673,31 +673,31 @@ theorem sorgen_is_uncertainty :
 /-- Non-CP-selecting verbs cannot take clausal complements.
     Their `complementType` is `.np` with no `altComplementType`. -/
 theorem nonCPSelecting_profile :
-    beenden.toVerbCore.canTakeClausalComplement = false ∧
-    streichen.toVerbCore.canTakeClausalComplement = false ∧
-    uebereilen.toVerbCore.canTakeClausalComplement = false ∧
-    entwickeln.toVerbCore.canTakeClausalComplement = false :=
+    beenden.toVerb.canTakeClausalComplement = false ∧
+    streichen.toVerb.canTakeClausalComplement = false ∧
+    uebereilen.toVerb.canTakeClausalComplement = false ∧
+    entwickeln.toVerb.canTakeClausalComplement = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-- CP-and-DP-selecting verbs can take clausal complements.
     They have `altComplementType := some .finiteClause`. -/
 theorem cpSelecting_profile :
-    veranlassen.toVerbCore.canTakeClausalComplement = true ∧
-    vergessen.toVerbCore.canTakeClausalComplement = true ∧
-    erwarten.toVerbCore.canTakeClausalComplement = true ∧
-    beschliessen.toVerbCore.canTakeClausalComplement = true :=
+    veranlassen.toVerb.canTakeClausalComplement = true ∧
+    vergessen.toVerb.canTakeClausalComplement = true ∧
+    erwarten.toVerb.canTakeClausalComplement = true ∧
+    beschliessen.toVerb.canTakeClausalComplement = true :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-- All 8 experimental verbs can take nominal (DP) complements. -/
 theorem all_experimental_select_dp :
-    beenden.toVerbCore.canTakeNominalComplement = true ∧
-    streichen.toVerbCore.canTakeNominalComplement = true ∧
-    uebereilen.toVerbCore.canTakeNominalComplement = true ∧
-    entwickeln.toVerbCore.canTakeNominalComplement = true ∧
-    veranlassen.toVerbCore.canTakeNominalComplement = true ∧
-    vergessen.toVerbCore.canTakeNominalComplement = true ∧
-    erwarten.toVerbCore.canTakeNominalComplement = true ∧
-    beschliessen.toVerbCore.canTakeNominalComplement = true :=
+    beenden.toVerb.canTakeNominalComplement = true ∧
+    streichen.toVerb.canTakeNominalComplement = true ∧
+    uebereilen.toVerb.canTakeNominalComplement = true ∧
+    entwickeln.toVerb.canTakeNominalComplement = true ∧
+    veranlassen.toVerb.canTakeNominalComplement = true ∧
+    vergessen.toVerb.canTakeNominalComplement = true ∧
+    erwarten.toVerb.canTakeNominalComplement = true ∧
+    beschliessen.toVerb.canTakeNominalComplement = true :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
@@ -719,4 +719,4 @@ theorem sorgen_matches_crosslinguistic :
 theorem lassen_matches_french_laisser :
     lassen.causative = some .enable := rfl
 
-end Fragments.German.Predicates
+end German.Predicates

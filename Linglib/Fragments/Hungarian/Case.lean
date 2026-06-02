@@ -66,7 +66,7 @@ broad case-functions that participate in Blake's hierarchy:
 
 -/
 
-namespace Fragments.Hungarian.Case
+namespace Hungarian.Case
 
 /-- Hungarian case inventory: 9-element sample of `Features.Case`. The
     omission of `.gen` reflects the descriptive-grammar consensus
@@ -77,11 +77,11 @@ def caseInventory : Finset Features.Case :=
 
 /-- Hungarian fails Blake's strict contiguity at rank 5 (GEN), since
     the inventory has DAT (rank 4) without GEN. Parallels Finnish's
-    failure at rank 4 (DAT) — `Fragments.Finnish.Case.inventory_fails_strict`.
+    failure at rank 4 (DAT) — `Finnish.Case.inventory_fails_strict`.
     @cite{caha-2008} §5 (pp. 266–267) cites Hungarian as the textbook
     surface counterexample to Blake, resolved (per Blake fn. 8) by the
     dative-as-possessor syncretism. -/
 theorem inventory_fails_strict :
     ¬ Features.Case.IsValidInventory caseInventory := by decide
 
-end Fragments.Hungarian.Case
+end Hungarian.Case

@@ -10,7 +10,7 @@ Lexical entry for Italian modal indefinite *un qualsiasi*.
 
 set_option autoImplicit false
 
-namespace Fragments.Italian.ModalIndefinites
+namespace Italian.ModalIndefinites
 
 open Features.ModalIndefinite
 
@@ -38,4 +38,4 @@ def unQualsiasiEntry : ModalIndefiniteEntry where
 def paradigm : List ModalIndefiniteEntry := [unQualsiasiEntry]
 
 
-end Fragments.Italian.ModalIndefinites
+end Italian.ModalIndefinites

@@ -81,44 +81,44 @@ def altMonotone (alt : HistAlt W T) : Prop :=
   ∀ w t t', t ≤ t' → alt w t' ⊆ alt w t
 
 -- ============================================================================
--- § 1b: Bridge to BranchingTime.WorldHistory
+-- § 1b: Bridge to BranchingTime.HistoricalAlternatives
 -- ============================================================================
 
-/-- Convert a `WorldHistory` (situation-indexed) to curried `HistAlt` form. -/
-def histAltOfWorldHistory (h : Semantics.Modality.HistoricalAlternatives.WorldHistory W T) :
+/-- Convert a `HistoricalAlternatives` (situation-indexed) to curried `HistAlt` form. -/
+def histAltOfWorldHistory (h : HistoricalAlternatives W T) :
     HistAlt W T :=
   fun w t => h ⟨w, t⟩
 
-/-- Convert curried `HistAlt` to `WorldHistory` (situation-indexed) form. -/
+/-- Convert curried `HistAlt` to `HistoricalAlternatives` (situation-indexed) form. -/
 def worldHistoryOfHistAlt (a : HistAlt W T) :
-    Semantics.Modality.HistoricalAlternatives.WorldHistory W T :=
+    HistoricalAlternatives W T :=
   fun s => a s.world s.time
 
 omit [LinearOrder T] in
-/-- Round-trip: `WorldHistory → HistAlt → WorldHistory` is identity. -/
+/-- Round-trip: `HistoricalAlternatives → HistAlt → HistoricalAlternatives` is identity. -/
 theorem histAlt_worldHistory_roundtrip
-    (h : Semantics.Modality.HistoricalAlternatives.WorldHistory W T) :
+    (h : HistoricalAlternatives W T) :
     worldHistoryOfHistAlt (histAltOfWorldHistory h) = h := rfl
 
 omit [LinearOrder T] in
-/-- Round-trip: `HistAlt → WorldHistory → HistAlt` is identity. -/
+/-- Round-trip: `HistAlt → HistoricalAlternatives → HistAlt` is identity. -/
 theorem worldHistory_histAlt_roundtrip (a : HistAlt W T) :
     histAltOfWorldHistory (worldHistoryOfHistAlt a) = a := rfl
 
 omit [LinearOrder T] in
-/-- `altReflexive` is equivalent to `WorldHistory.reflexive`. -/
+/-- `altReflexive` is equivalent to `HistoricalAlternatives.reflexive`. -/
 theorem altReflexive_iff_reflexive (a : HistAlt W T) :
     altReflexive a ↔ (worldHistoryOfHistAlt a).reflexive := by
-  unfold altReflexive Semantics.Modality.HistoricalAlternatives.WorldHistory.reflexive
+  unfold altReflexive HistoricalAlternatives.reflexive
          worldHistoryOfHistAlt
   constructor
   · intro h s; exact h s.world s.time
   · intro h w t; exact h ⟨w, t⟩
 
-/-- `altMonotone` is equivalent to `WorldHistory.backwardsClosed`. -/
+/-- `altMonotone` is equivalent to `HistoricalAlternatives.backwardsClosed`. -/
 theorem altMonotone_iff_backwardsClosed (a : HistAlt W T) :
     altMonotone a ↔ (worldHistoryOfHistAlt a).backwardsClosed := by
-  unfold altMonotone Semantics.Modality.HistoricalAlternatives.WorldHistory.backwardsClosed
+  unfold altMonotone HistoricalAlternatives.backwardsClosed
          worldHistoryOfHistAlt
   constructor
   · intro h w w' t t' hle hw'
@@ -127,31 +127,31 @@ theorem altMonotone_iff_backwardsClosed (a : HistAlt W T) :
     exact h w w' t' t hle hw'
 
 omit [LinearOrder T] in
-/-- `HistAlt` symmetry is equivalent to `WorldHistory.symmetric`:
+/-- `HistAlt` symmetry is equivalent to `HistoricalAlternatives.symmetric`:
     if w' ∈ alt(w,t) then w ∈ alt(w',t). -/
 theorem altSymmetric_iff_symmetric (a : HistAlt W T) :
     (∀ w t, ∀ w' ∈ a w t, w ∈ a w' t) ↔
     (worldHistoryOfHistAlt a).symmetric := by
-  unfold Semantics.Modality.HistoricalAlternatives.WorldHistory.symmetric worldHistoryOfHistAlt
+  unfold HistoricalAlternatives.symmetric worldHistoryOfHistAlt
   constructor
   · intro h w w' t hw'; exact h w t w' hw'
   · intro h w t w' hw'; exact h w w' t hw'
 
 omit [LinearOrder T] in
-/-- `HistAlt` transitivity is equivalent to `WorldHistory.transitive`:
+/-- `HistAlt` transitivity is equivalent to `HistoricalAlternatives.transitive`:
     if w' ∈ alt(w,t) and w'' ∈ alt(w',t) then w'' ∈ alt(w,t). -/
 theorem altTransitive_iff_transitive (a : HistAlt W T) :
     (∀ w t, ∀ w' ∈ a w t, ∀ w'' ∈ a w' t, w'' ∈ a w t) ↔
     (worldHistoryOfHistAlt a).transitive := by
-  unfold Semantics.Modality.HistoricalAlternatives.WorldHistory.transitive worldHistoryOfHistAlt
+  unfold HistoricalAlternatives.transitive worldHistoryOfHistAlt
   constructor
   · intro h w w' w'' t h₁ h₂; exact h w t w' h₁ w'' h₂
   · intro h w t w' h₁ w'' h₂; exact h w w' w'' t h₁ h₂
 
 /-- B&C's `alt(w,t)` is exactly the `histEquiv` equivalence class:
     `w' ∈ alt(w,t)` iff `histEquiv history t w w'`. -/
-theorem histAlt_eq_histEquiv (h : Semantics.Modality.HistoricalAlternatives.WorldHistory W T) (w : W) (t : T) :
-    histAltOfWorldHistory h w t = { w' | Semantics.Modality.HistoricalAlternatives.histEquiv h t w w' } := rfl
+theorem histAlt_eq_histEquiv (h : HistoricalAlternatives W T) (w : W) (t : T) :
+    histAltOfWorldHistory h w t = { w' | HistoricalAlternatives.histEquiv h t w w' } := rfl
 
 -- ============================================================================
 -- § 2: Earliest Across Alternatives

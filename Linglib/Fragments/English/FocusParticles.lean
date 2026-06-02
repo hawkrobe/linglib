@@ -11,7 +11,7 @@ Lexical entries for English focus-sensitive particles, typed by
 `Semantics.Focus.Particles` theory types.
 -/
 
-namespace Fragments.English.FocusParticles
+namespace English.FocusParticles
 
 open Semantics.Focus.Particles (EvenThreshold)
 open Semantics.ContentLayer (ContentLayer)
@@ -215,4 +215,4 @@ theorem just_even_same_truth_diff_layer :
     just_.contributionLayer ≠ even_.contributionLayer := by
   exact ⟨rfl, by decide⟩
 
-end Fragments.English.FocusParticles
+end English.FocusParticles

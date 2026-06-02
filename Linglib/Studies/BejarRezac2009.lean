@@ -47,13 +47,13 @@ open Minimalist.CyclicAgree
 -- ============================================================================
 
 /-- Extract person level from a Basque person-number value. -/
-def basqueToLevel : Fragments.Basque.Agreement.PersonNumber → PersonLevel
+def basqueToLevel : Basque.Agreement.PersonNumber → PersonLevel
   | .p1sg | .p1pl => .first
   | .p2sg | .p2pl => .second
   | .p3sg | .p3pl => .third
 
 /-- Extract person level from a Georgian person-number value. -/
-def georgianToLevel : Fragments.Georgian.Agreement.PersonNumber → PersonLevel
+def georgianToLevel : Georgian.Agreement.PersonNumber → PersonLevel
   | .p1sg | .p1pl => .first
   | .p2sg | .p2pl => .second
   | .p3sg | .p3pl => .third
@@ -63,28 +63,28 @@ def georgianToLevel : Fragments.Georgian.Agreement.PersonNumber → PersonLevel
 -- ============================================================================
 
 /-- Basque `pIsIndexed` agrees with `PersonLevel.isSAP` under the bridge. -/
-theorem basque_indexed_eq_sap (pn : Fragments.Basque.Agreement.PersonNumber) :
-    Fragments.Basque.Agreement.pIsIndexed pn = (basqueToLevel pn).isSAP := by
+theorem basque_indexed_eq_sap (pn : Basque.Agreement.PersonNumber) :
+    Basque.Agreement.pIsIndexed pn = (basqueToLevel pn).isSAP := by
   cases pn <;> rfl
 
 /-- Per-cell verification: each Basque person-number's indexing status
     matches the cyclic agree prediction. -/
 theorem basque_p1sg_indexed :
-    Fragments.Basque.Agreement.pIsIndexed .p1sg = true ∧
+    Basque.Agreement.pIsIndexed .p1sg = true ∧
     basque.isInverse .first .first = true ∧
     basque.isInverse .second .first = true ∧
     basque.isInverse .third .first = true := by
   exact ⟨rfl, by decide, by decide, by decide⟩
 
 theorem basque_p2sg_indexed :
-    Fragments.Basque.Agreement.pIsIndexed .p2sg = true ∧
+    Basque.Agreement.pIsIndexed .p2sg = true ∧
     basque.isInverse .first .second = true ∧
     basque.isInverse .second .second = true ∧
     basque.isInverse .third .second = true := by
   exact ⟨rfl, by decide, by decide, by decide⟩
 
 theorem basque_p3sg_not_indexed :
-    Fragments.Basque.Agreement.pIsIndexed .p3sg = false ∧
+    Basque.Agreement.pIsIndexed .p3sg = false ∧
     basque.isInverse .first .third = false ∧
     basque.isInverse .second .third = false := by
   exact ⟨rfl, by decide, by decide⟩
@@ -100,12 +100,12 @@ theorem basque_p3sg_not_indexed :
     as active residue. A SAP EA matches this residue on cycle II → EA
     controls → agreement tracks the subject, not the object → not indexed. -/
 theorem basque_indexed_iff_always_inverse
-    (pn : Fragments.Basque.Agreement.PersonNumber) :
-    Fragments.Basque.Agreement.pIsIndexed pn = true ↔
+    (pn : Basque.Agreement.PersonNumber) :
+    Basque.Agreement.pIsIndexed pn = true ↔
     ∀ ea : PersonLevel, basque.isInverse ea (basqueToLevel pn) = true := by
-  cases pn <;> simp only [Fragments.Basque.Agreement.pIsIndexed,
-    Fragments.Basque.Agreement.PersonNumber.isSAP,
-    Fragments.Basque.Agreement.PersonNumber.person,
+  cases pn <;> simp only [Basque.Agreement.pIsIndexed,
+    Basque.Agreement.PersonNumber.isSAP,
+    Basque.Agreement.PersonNumber.person,
     basqueToLevel] <;> constructor
   all_goals first
     | (intro _; exact fun | .first => rfl | .second => rfl | .third => rfl)
@@ -118,13 +118,13 @@ theorem basque_indexed_iff_always_inverse
 -- ============================================================================
 
 /-- Georgian `pIsIndexed` agrees with `PersonLevel.isSAP` under the bridge. -/
-theorem georgian_indexed_eq_sap (pn : Fragments.Georgian.Agreement.PersonNumber) :
-    Fragments.Georgian.Agreement.pIsIndexed pn = (georgianToLevel pn).isSAP := by
+theorem georgian_indexed_eq_sap (pn : Georgian.Agreement.PersonNumber) :
+    Georgian.Agreement.pIsIndexed pn = (georgianToLevel pn).isSAP := by
   cases pn <;> rfl
 
 /-- Per-cell verification: Georgian 1sg object prefix *m-* exists iff inverse. -/
 theorem georgian_1sg_prefix_and_inverse :
-    Fragments.Georgian.Agreement.objectPrefix .p1sg = some "m-" ∧
+    Georgian.Agreement.objectPrefix .p1sg = some "m-" ∧
     basque.isInverse .first .first = true ∧
     basque.isInverse .second .first = true ∧
     basque.isInverse .third .first = true := by
@@ -133,7 +133,7 @@ theorem georgian_1sg_prefix_and_inverse :
 /-- Per-cell verification: Georgian 3sg has no object prefix, and
     there exist direct contexts. -/
 theorem georgian_3sg_no_prefix_and_direct :
-    Fragments.Georgian.Agreement.objectPrefix .p3sg = none ∧
+    Georgian.Agreement.objectPrefix .p3sg = none ∧
     isDirectContext .standard partialProbe .first .third = true ∧
     isDirectContext .standard partialProbe .second .third = true := by
   exact ⟨rfl, by decide, by decide⟩
@@ -144,8 +144,8 @@ theorem georgian_3sg_no_prefix_and_direct :
     Basque, so the same cyclic agree mechanism derives the same SAP/3P
     split in object agreement. -/
 theorem georgian_indexed_iff_always_inverse
-    (pn : Fragments.Georgian.Agreement.PersonNumber) :
-    Fragments.Georgian.Agreement.pIsIndexed pn = true ↔
+    (pn : Georgian.Agreement.PersonNumber) :
+    Georgian.Agreement.pIsIndexed pn = true ↔
     ∀ ea : PersonLevel, basque.isInverse ea (georgianToLevel pn) = true := by
   -- Georgian pIsIndexed tracks SAP (proved in fragment); SAP ↔ always inverse
   rw [georgian_indexed_eq_sap]
@@ -225,11 +225,11 @@ theorem basque_georgian_same_system :
 /-- The differential P indexing pattern is identical for all six
     person-number values across both languages. -/
 theorem cross_linguistic_uniformity :
-    (∀ pn : Fragments.Basque.Agreement.PersonNumber,
-      Fragments.Basque.Agreement.pIsIndexed pn =
+    (∀ pn : Basque.Agreement.PersonNumber,
+      Basque.Agreement.pIsIndexed pn =
       (basqueToLevel pn).isSAP) ∧
-    (∀ pn : Fragments.Georgian.Agreement.PersonNumber,
-      Fragments.Georgian.Agreement.pIsIndexed pn =
+    (∀ pn : Georgian.Agreement.PersonNumber,
+      Georgian.Agreement.pIsIndexed pn =
       (georgianToLevel pn).isSAP) :=
   ⟨basque_indexed_eq_sap, georgian_indexed_eq_sap⟩
 

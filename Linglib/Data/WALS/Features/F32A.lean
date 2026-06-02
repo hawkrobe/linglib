@@ -20,7 +20,7 @@ inductive SystemsOfGenderAssignment where
   | semantic
   /-- Semantic and formal (59 languages). -/
   | semanticAndFormal
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 32A dataset (257 languages). -/
 def allData : List (Datapoint SystemsOfGenderAssignment) :=
@@ -284,9 +284,9 @@ def allData : List (Datapoint SystemsOfGenderAssignment) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint SystemsOfGenderAssignment) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint SystemsOfGenderAssignment) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F32A

@@ -31,9 +31,8 @@ Heim-1992-era hole consensus.
 namespace Karttunen1973
 
 open Semantics.Presupposition
-open Semantics.Lexical (ProjectionBehavior VerbCore)
-open Discourse.CommonGround (ContextSet)
-open Fragments.English.Predicates.Verbal
+open CommonGround (ContextSet)
+open English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Plug / Hole Classification (K1973 §§3–4)
@@ -50,7 +49,7 @@ open Fragments.English.Predicates.Verbal
     the complement."
 
     K1973's lists are **lexical, not structural**: there is no clean
-    `inferProjection : VerbCore → ProjectionBehavior`, because the
+    `inferProjection : Verb → ProjectionBehavior`, because the
     Fragment has e.g. `reveal` as `speechActVerb := true` *and* a factive
     soft-trigger (which would be a hole). So the file consolidates K's
     Fragment-attested classifications as list-quantified theorems
@@ -66,11 +65,11 @@ def k1973PlugVerbs : List VerbEntry := [say, tell, promise]
 def k1973HoleVerbs : List VerbEntry := [know, regret, realize, stop, manage, force]
 
 theorem k1973_plug_classification :
-    ∀ v ∈ k1973PlugVerbs, v.toVerbCore.projectionBehavior = some .plug := by
+    ∀ v ∈ k1973PlugVerbs, v.toVerb.projectionBehavior = some .plug := by
   decide
 
 theorem k1973_hole_classification :
-    ∀ v ∈ k1973HoleVerbs, v.toVerbCore.projectionBehavior = some .hole := by
+    ∀ v ∈ k1973HoleVerbs, v.toVerb.projectionBehavior = some .hole := by
   decide
 
 /-- The classes are disjoint. -/
@@ -84,13 +83,13 @@ theorem k1973_plug_hole_disjoint :
     orthogonal to projection-behavior (passes complement presuppositions
     through?). *know* exhibits both. -/
 theorem know_trigger_and_hole :
-    know.toVerbCore.presupType = some .softTrigger ∧
-    know.toVerbCore.projectionBehavior = some .hole := ⟨rfl, rfl⟩
+    know.toVerb.presupType = some .softTrigger ∧
+    know.toVerb.projectionBehavior = some .hole := ⟨rfl, rfl⟩
 
 /-- *say* is a non-trigger AND a plug. -/
 theorem say_nontrigger_and_plug :
-    say.toVerbCore.presupType = none ∧
-    say.toVerbCore.projectionBehavior = some .plug := ⟨rfl, rfl⟩
+    say.toVerb.presupType = none ∧
+    say.toVerb.projectionBehavior = some .plug := ⟨rfl, rfl⟩
 
 /-- K1973 fn 6 (p. 175 paragraph 4): *tell* is a plug for *that*-clauses
     but a hole for indirect questions ("Bill told John that Harry insulted
@@ -100,14 +99,14 @@ theorem say_nontrigger_and_plug :
     the indirect-question case is a separate analysis K credits to
     Permesly 1973 (Ch. 2). -/
 theorem tell_that_clause_is_plug :
-    tell.toVerbCore.projectionBehavior = some .plug := rfl
+    tell.toVerb.projectionBehavior = some .plug := rfl
 
 /-- K1973 §1 (5)/(6) typological contrast: plugs and holes are *distinct*
     profiles. K's own minimal pair uses *order* vs *force*; *order* lacks
     a Fragment annotation, so we use the closest attested pair (*promise*,
     plug; *force*, hole). -/
 theorem promise_force_minimal_pair :
-    promise.toVerbCore.projectionBehavior ≠ force.toVerbCore.projectionBehavior := by
+    promise.toVerb.projectionBehavior ≠ force.toVerb.projectionBehavior := by
   decide
 
 -- ════════════════════════════════════════════════════════════════
@@ -142,11 +141,11 @@ theorem promise_force_minimal_pair :
 
 /-- The Fragment `believe` annotation diverges from K1973 §11. -/
 theorem believe_fragment_is_hole :
-    believe.toVerbCore.projectionBehavior = some .hole := rfl
+    believe.toVerb.projectionBehavior = some .hole := rfl
 
 /-- *believe* has no presupposition trigger (doxastic, not factive). -/
 theorem believe_nontrigger :
-    believe.toVerbCore.presupType = none := rfl
+    believe.toVerb.presupType = none := rfl
 
 /-! ### Contentful disagreement on a concrete scenario
 
@@ -200,7 +199,7 @@ theorem plug_vs_hole_diverge_at_actual :
 theorem karttunen1973_disagrees_with_modern_consensus :
     -- K1973 §11 verdict (plug) ≠ Fragment annotation (hole)
     (some .plug : Option ProjectionBehavior) ≠
-      believe.toVerbCore.projectionBehavior := by decide
+      believe.toVerb.projectionBehavior := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Filter Rules for the Connectives

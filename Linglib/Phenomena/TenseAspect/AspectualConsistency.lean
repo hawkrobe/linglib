@@ -34,7 +34,7 @@ namespace AspectualConsistency
 
 open Semantics.Lexical
 open Features
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 open Semantics.Aspect.Incremental (VerbIncClass)
 open Core.Scale (LicensingPipeline Boundedness MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
@@ -53,32 +53,32 @@ open Features.DegreeAchievement (DegreeAchievementScale)
 
 /-- "eat": accomplishment + sinc → telic VP with incremental theme. -/
 theorem eat_vendler_inc_consistent :
-    eat.toVerbCore.vendlerClass = some .accomplishment ∧
-    eat.toVerbCore.verbIncClass = some .sinc ∧
+    eat.toVerb.vendlerClass = some .accomplishment ∧
+    eat.toVerb.verbIncClass = some .sinc ∧
     VendlerClass.accomplishment.telicity = .telic := ⟨rfl, rfl, rfl⟩
 
 /-- "build": accomplishment + sinc → telic VP with incremental theme. -/
 theorem build_vendler_inc_consistent :
-    build.toVerbCore.vendlerClass = some .accomplishment ∧
-    build.toVerbCore.verbIncClass = some .sinc ∧
+    build.toVerb.vendlerClass = some .accomplishment ∧
+    build.toVerb.verbIncClass = some .sinc ∧
     VendlerClass.accomplishment.telicity = .telic := ⟨rfl, rfl, rfl⟩
 
 /-- "read": accomplishment + inc → telic VP with incremental (non-strict) theme. -/
 theorem read_vendler_inc_consistent :
-    read.toVerbCore.vendlerClass = some .accomplishment ∧
-    read.toVerbCore.verbIncClass = some .inc ∧
+    read.toVerb.vendlerClass = some .accomplishment ∧
+    read.toVerb.verbIncClass = some .inc ∧
     VendlerClass.accomplishment.telicity = .telic := ⟨rfl, rfl, rfl⟩
 
 /-- "push": activity + cumOnly → atelic VP, no theme-event mapping. -/
 theorem push_vendler_inc_consistent :
-    push.toVerbCore.vendlerClass = some .activity ∧
-    push.toVerbCore.verbIncClass = some .cumOnly ∧
+    push.toVerb.vendlerClass = some .activity ∧
+    push.toVerb.verbIncClass = some .cumOnly ∧
     VendlerClass.activity.telicity = .atelic := ⟨rfl, rfl, rfl⟩
 
 /-- "kick": activity + no verbIncClass → atelic, no incremental theme. -/
 theorem kick_vendler_inc_consistent :
-    kick.toVerbCore.vendlerClass = some .activity ∧
-    kick.toVerbCore.verbIncClass = none ∧
+    kick.toVerb.vendlerClass = some .activity ∧
+    kick.toVerb.verbIncClass = none ∧
     VendlerClass.activity.telicity = .atelic := ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
@@ -92,33 +92,33 @@ theorem kick_vendler_inc_consistent :
 
 /-- "eat": GRAD ✓, SSR ✗ (accomplishment, sinc). -/
 theorem eat_grad_ssr_complementary :
-    predictsGRAD eat.toVerbCore.verbIncClass = true ∧
-    predictsSSR eat.toVerbCore.vendlerClass = false := ⟨rfl, rfl⟩
+    predictsGRAD eat.toVerb.verbIncClass = true ∧
+    predictsSSR eat.toVerb.vendlerClass = false := ⟨rfl, rfl⟩
 
 /-- "build": GRAD ✓, SSR ✗ (accomplishment, sinc). -/
 theorem build_grad_ssr_complementary :
-    predictsGRAD build.toVerbCore.verbIncClass = true ∧
-    predictsSSR build.toVerbCore.vendlerClass = false := ⟨rfl, rfl⟩
+    predictsGRAD build.toVerb.verbIncClass = true ∧
+    predictsSSR build.toVerb.vendlerClass = false := ⟨rfl, rfl⟩
 
 /-- "read": GRAD ✓, SSR ✗ (accomplishment, inc). -/
 theorem read_grad_ssr_complementary :
-    predictsGRAD read.toVerbCore.verbIncClass = true ∧
-    predictsSSR read.toVerbCore.vendlerClass = false := ⟨rfl, rfl⟩
+    predictsGRAD read.toVerb.verbIncClass = true ∧
+    predictsSSR read.toVerb.vendlerClass = false := ⟨rfl, rfl⟩
 
 /-- "push": GRAD ✗, SSR ✓ (activity, cumOnly). -/
 theorem push_grad_ssr_complementary :
-    predictsGRAD push.toVerbCore.verbIncClass = false ∧
-    predictsSSR push.toVerbCore.vendlerClass = true := ⟨rfl, rfl⟩
+    predictsGRAD push.toVerb.verbIncClass = false ∧
+    predictsSSR push.toVerb.vendlerClass = true := ⟨rfl, rfl⟩
 
 /-- "sleep": GRAD ✗, SSR ✓ (state, no incremental theme). -/
 theorem sleep_grad_ssr_complementary :
-    predictsGRAD sleep.toVerbCore.verbIncClass = false ∧
-    predictsSSR sleep.toVerbCore.vendlerClass = true := ⟨rfl, rfl⟩
+    predictsGRAD sleep.toVerb.verbIncClass = false ∧
+    predictsSSR sleep.toVerb.vendlerClass = true := ⟨rfl, rfl⟩
 
 /-- "run": GRAD ✗, SSR ✓ (activity, no incremental theme). -/
 theorem run_grad_ssr_complementary :
-    predictsGRAD run.toVerbCore.verbIncClass = false ∧
-    predictsSSR run.toVerbCore.vendlerClass = true := ⟨rfl, rfl⟩
+    predictsGRAD run.toVerb.verbIncClass = false ∧
+    predictsSSR run.toVerb.vendlerClass = true := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 3. Full Licensing Pipeline Convergence Per Verb
@@ -131,7 +131,7 @@ theorem run_grad_ssr_complementary :
 
 /-- "eat": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem eat_full_pipeline :
-    eat.toVerbCore.vendlerClass = some .accomplishment ∧
+    eat.toVerb.vendlerClass = some .accomplishment ∧
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
@@ -140,7 +140,7 @@ theorem eat_full_pipeline :
 
 /-- "arrive": achievement → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem arrive_full_pipeline :
-    arrive.toVerbCore.vendlerClass = some .achievement ∧
+    arrive.toVerb.vendlerClass = some .achievement ∧
     VendlerClass.achievement.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
@@ -149,7 +149,7 @@ theorem arrive_full_pipeline :
 
 /-- "sleep": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem sleep_full_pipeline :
-    sleep.toVerbCore.vendlerClass = some .state ∧
+    sleep.toVerb.vendlerClass = some .state ∧
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
@@ -158,7 +158,7 @@ theorem sleep_full_pipeline :
 
 /-- "run": activity → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem run_full_pipeline :
-    run.toVerbCore.vendlerClass = some .activity ∧
+    run.toVerb.vendlerClass = some .activity ∧
     VendlerClass.activity.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
@@ -167,7 +167,7 @@ theorem run_full_pipeline :
 
 /-- "see": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem see_full_pipeline :
-    see.toVerbCore.vendlerClass = some .state ∧
+    see.toVerb.vendlerClass = some .state ∧
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
@@ -176,7 +176,7 @@ theorem see_full_pipeline :
 
 /-- "leave": achievement → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem leave_full_pipeline :
-    leave.toVerbCore.vendlerClass = some .achievement ∧
+    leave.toVerb.vendlerClass = some .achievement ∧
     VendlerClass.achievement.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
@@ -185,7 +185,7 @@ theorem leave_full_pipeline :
 
 /-- "kill": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem kill_full_pipeline :
-    kill.toVerbCore.vendlerClass = some .accomplishment ∧
+    kill.toVerb.vendlerClass = some .accomplishment ∧
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
@@ -196,7 +196,7 @@ theorem kill_full_pipeline :
 
 /-- "give": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem give_full_pipeline :
-    give.toVerbCore.vendlerClass = some .accomplishment ∧
+    give.toVerb.vendlerClass = some .accomplishment ∧
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
@@ -205,7 +205,7 @@ theorem give_full_pipeline :
 
 /-- "cover": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem cover_full_pipeline :
-    cover.toVerbCore.vendlerClass = some .accomplishment ∧
+    cover.toVerb.vendlerClass = some .accomplishment ∧
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
@@ -214,7 +214,7 @@ theorem cover_full_pipeline :
 
 /-- "buy": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem buy_full_pipeline :
-    buy.toVerbCore.vendlerClass = some .accomplishment ∧
+    buy.toVerb.vendlerClass = some .accomplishment ∧
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
@@ -223,7 +223,7 @@ theorem buy_full_pipeline :
 
 /-- "sell": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem sell_full_pipeline :
-    sell.toVerbCore.vendlerClass = some .accomplishment ∧
+    sell.toVerb.vendlerClass = some .accomplishment ∧
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
@@ -232,7 +232,7 @@ theorem sell_full_pipeline :
 
 /-- "break": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem break_full_pipeline :
-    break_.toVerbCore.vendlerClass = some .accomplishment ∧
+    break_.toVerb.vendlerClass = some .accomplishment ∧
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
@@ -241,7 +241,7 @@ theorem break_full_pipeline :
 
 /-- "tear": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem tear_full_pipeline :
-    tear_.toVerbCore.vendlerClass = some .accomplishment ∧
+    tear_.toVerb.vendlerClass = some .accomplishment ∧
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
@@ -250,7 +250,7 @@ theorem tear_full_pipeline :
 
 /-- "burn": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem burn_full_pipeline :
-    burn.toVerbCore.vendlerClass = some .accomplishment ∧
+    burn.toVerb.vendlerClass = some .accomplishment ∧
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
@@ -259,7 +259,7 @@ theorem burn_full_pipeline :
 
 /-- "destroy": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem destroy_full_pipeline :
-    destroy.toVerbCore.vendlerClass = some .accomplishment ∧
+    destroy.toVerb.vendlerClass = some .accomplishment ∧
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
@@ -268,7 +268,7 @@ theorem destroy_full_pipeline :
 
 /-- "melt": accomplishment → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem melt_full_pipeline :
-    melt.toVerbCore.vendlerClass = some .accomplishment ∧
+    melt.toVerb.vendlerClass = some .accomplishment ∧
     VendlerClass.accomplishment.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
@@ -279,7 +279,7 @@ theorem melt_full_pipeline :
 
 /-- "put": achievement → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem put_full_pipeline :
-    put.toVerbCore.vendlerClass = some .achievement ∧
+    put.toVerb.vendlerClass = some .achievement ∧
     VendlerClass.achievement.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
@@ -288,7 +288,7 @@ theorem put_full_pipeline :
 
 /-- "meet": achievement → telic → QUA → closed → licensed → "in X" ✓. -/
 theorem meet_full_pipeline :
-    meet.toVerbCore.vendlerClass = some .achievement ∧
+    meet.toVerb.vendlerClass = some .achievement ∧
     VendlerClass.achievement.telicity = .telic ∧
     Telicity.telic.toMereoTag = .qua ∧
     MereoTag.qua.toBoundedness = .closed ∧
@@ -299,7 +299,7 @@ theorem meet_full_pipeline :
 
 /-- "chase": activity → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem chase_full_pipeline :
-    chase.toVerbCore.vendlerClass = some .activity ∧
+    chase.toVerb.vendlerClass = some .activity ∧
     VendlerClass.activity.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
@@ -308,7 +308,7 @@ theorem chase_full_pipeline :
 
 /-- "hit": activity → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem hit_full_pipeline :
-    hit.toVerbCore.vendlerClass = some .activity ∧
+    hit.toVerb.vendlerClass = some .activity ∧
     VendlerClass.activity.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
@@ -319,7 +319,7 @@ theorem hit_full_pipeline :
 
 /-- "weigh": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem weigh_full_pipeline :
-    weigh.toVerbCore.vendlerClass = some .state ∧
+    weigh.toVerb.vendlerClass = some .state ∧
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
@@ -328,7 +328,7 @@ theorem weigh_full_pipeline :
 
 /-- "measure": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem measure_full_pipeline :
-    measure.toVerbCore.vendlerClass = some .state ∧
+    measure.toVerb.vendlerClass = some .state ∧
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
@@ -337,7 +337,7 @@ theorem measure_full_pipeline :
 
 /-- "enjoy": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem enjoy_full_pipeline :
-    enjoy.toVerbCore.vendlerClass = some .state ∧
+    enjoy.toVerb.vendlerClass = some .state ∧
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
@@ -346,7 +346,7 @@ theorem enjoy_full_pipeline :
 
 /-- "like": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem like_full_pipeline :
-    like.toVerbCore.vendlerClass = some .state ∧
+    like.toVerb.vendlerClass = some .state ∧
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
@@ -355,7 +355,7 @@ theorem like_full_pipeline :
 
 /-- "hate": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem hate_full_pipeline :
-    hate.toVerbCore.vendlerClass = some .state ∧
+    hate.toVerb.vendlerClass = some .state ∧
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
@@ -364,7 +364,7 @@ theorem hate_full_pipeline :
 
 /-- "admire": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem admire_full_pipeline :
-    admire.toVerbCore.vendlerClass = some .state ∧
+    admire.toVerb.vendlerClass = some .state ∧
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
@@ -373,7 +373,7 @@ theorem admire_full_pipeline :
 
 /-- "envy": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem envy_full_pipeline :
-    envy.toVerbCore.vendlerClass = some .state ∧
+    envy.toVerb.vendlerClass = some .state ∧
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
@@ -382,7 +382,7 @@ theorem envy_full_pipeline :
 
 /-- "respect": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem respect_full_pipeline :
-    respect.toVerbCore.vendlerClass = some .state ∧
+    respect.toVerb.vendlerClass = some .state ∧
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
@@ -391,7 +391,7 @@ theorem respect_full_pipeline :
 
 /-- "value": state → atelic → CUM → open → blocked → "for X" ✓. -/
 theorem value_full_pipeline :
-    value.toVerbCore.vendlerClass = some .state ∧
+    value.toVerb.vendlerClass = some .state ∧
     VendlerClass.state.telicity = .atelic ∧
     Telicity.atelic.toMereoTag = .cum ∧
     MereoTag.cum.toBoundedness = .open_ ∧
@@ -409,20 +409,20 @@ theorem value_full_pipeline :
 
 /-- "arrive": achievement + inherentlyDirectedMotion + bounded path. -/
 theorem arrive_motion_consistent :
-    arrive.toVerbCore.vendlerClass = some .achievement ∧
-    arrive.toVerbCore.levinClass = some .inherentlyDirectedMotion ∧
+    arrive.toVerb.vendlerClass = some .achievement ∧
+    arrive.toVerb.levinClass = some .inherentlyDirectedMotion ∧
     LevinClass.inherentlyDirectedMotion.pathSpec = some .bounded := ⟨rfl, rfl, rfl⟩
 
 /-- "leave": achievement + leave class + source path. -/
 theorem leave_motion_consistent :
-    leave.toVerbCore.vendlerClass = some .achievement ∧
-    leave.toVerbCore.levinClass = some .leave ∧
+    leave.toVerb.vendlerClass = some .achievement ∧
+    leave.toVerb.levinClass = some .leave ∧
     LevinClass.leave.pathSpec = some .source := ⟨rfl, rfl, rfl⟩
 
 /-- "run": activity + mannerOfMotion + no inherent path. -/
 theorem run_motion_consistent :
-    run.toVerbCore.vendlerClass = some .activity ∧
-    run.toVerbCore.levinClass = some .mannerOfMotion ∧
+    run.toVerb.vendlerClass = some .activity ∧
+    run.toVerb.levinClass = some .mannerOfMotion ∧
     LevinClass.mannerOfMotion.pathSpec = none := ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
@@ -438,7 +438,7 @@ theorem run_motion_consistent :
     produce a licensing prediction that agrees with the for/in diagnostic.
     Returns `true` for verbs without vendlerClass (vacuously OK). -/
 def pipelineOK (v : VerbEntry) : Bool :=
-  match v.toVerbCore.vendlerClass with
+  match v.toVerb.vendlerClass with
   | none => true
   | some vc =>
     let tel := vc.telicity
@@ -458,7 +458,7 @@ theorem all_verbs_pipeline_ok :
     accomplishments (telic), cumOnly verbs must be activities (atelic).
     Returns `true` for verbs without verbIncClass (vacuously OK). -/
 def incClassCoherent (v : VerbEntry) : Bool :=
-  match v.toVerbCore.verbIncClass, v.toVerbCore.vendlerClass with
+  match v.toVerb.verbIncClass, v.toVerb.vendlerClass with
   | some .sinc, some vc => vc.telicity == .telic
   | some .inc, some vc => vc.telicity == .telic
   | some .cumOnly, some vc => vc.telicity == .atelic
@@ -472,8 +472,8 @@ theorem all_verbs_inc_coherent :
     change (sinc/inc) and subinterval reference (state/activity).
     Returns `true` if the verb doesn't predict both. -/
 def gradSSRComplementary (v : VerbEntry) : Bool :=
-  !(predictsGRAD v.toVerbCore.verbIncClass &&
-    predictsSSR v.toVerbCore.vendlerClass)
+  !(predictsGRAD v.toVerb.verbIncClass &&
+    predictsSSR v.toVerb.vendlerClass)
 
 /-- No verb in the fragment predicts both GRAD and SSR. -/
 theorem all_verbs_grad_ssr_complementary :
@@ -482,7 +482,7 @@ theorem all_verbs_grad_ssr_complementary :
 /-- Count of verbs with vendlerClass annotations (for coverage tracking).
     Bump this number when adding new vendlerClass annotations. -/
 theorem vendler_coverage_count :
-    (allVerbs.filter (λ v => v.toVerbCore.vendlerClass.isSome)).length = 237 := by
+    (allVerbs.filter (λ v => v.toVerb.vendlerClass.isSome)).length = 237 := by
   native_decide
 
 -- ════════════════════════════════════════════════════
@@ -497,7 +497,7 @@ theorem vendler_coverage_count :
 /-- For a verb with degreeAchievementScale, check that vendlerClass is
     present and matches the derived value from the scale. -/
 def daVendlerConsistent (v : VerbEntry) : Bool :=
-  match v.toVerbCore.degreeAchievementScale, v.toVerbCore.vendlerClass with
+  match v.toVerb.degreeAchievementScale, v.toVerb.vendlerClass with
   | some das, some vc => das.defaultVendlerClass == vc
   | some _, none => false  -- DA scale present but no vendlerClass
   | none, _ => true        -- No DA scale, vacuously OK
@@ -524,20 +524,20 @@ theorem all_verbs_da_vendler_consistent :
     which matches `eat`'s fragment annotation. -/
 theorem k89_eat_refines_k98_matches_fragment :
     Krifka1989.eatAnApple.thematicClass.toVerbIncClass = .sinc ∧
-    eat.toVerbCore.verbIncClass = some .sinc := ⟨rfl, rfl⟩
+    eat.toVerb.verbIncClass = some .sinc := ⟨rfl, rfl⟩
 
 /-- *write a letter* (K89 §4 gradual-effected-patient) refines to K98 sinc,
     which matches `write`'s fragment annotation. -/
 theorem k89_write_refines_k98_matches_fragment :
     Krifka1989.writeALetter.thematicClass.toVerbIncClass = .sinc ∧
-    write.toVerbCore.verbIncClass = some .sinc := ⟨rfl, rfl⟩
+    write.toVerb.verbIncClass = some .sinc := ⟨rfl, rfl⟩
 
 /-- *read a letter* (K89 §4 gradual-patient, lacks UNI-E) refines to
     K98 inc, which matches `read`'s fragment annotation (allows
     re-reading). -/
 theorem k89_read_refines_k98_matches_fragment :
     Krifka1989.readALetter.thematicClass.toVerbIncClass = .inc ∧
-    read.toVerbCore.verbIncClass = some .inc := ⟨rfl, rfl⟩
+    read.toVerb.verbIncClass = some .inc := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 8. Propositional Propagation Tests (Typeclass Form)

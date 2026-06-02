@@ -28,7 +28,7 @@ Turkish lives in `Studies/Heine1997.lean`.
 
 set_option autoImplicit false
 
-namespace Fragments.Turkish.Possession
+namespace Turkish.Possession
 
 open _root_.Typology.Possession
 
@@ -150,4 +150,4 @@ def possession : PossessionProfile :=
   , notes := "var/yok existential predicate; GEN on possessor + " ++
              "possessive suffix on head (double-marking)" }
 
-end Fragments.Turkish.Possession
+end Turkish.Possession

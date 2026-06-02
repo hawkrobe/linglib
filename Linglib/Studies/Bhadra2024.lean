@@ -230,7 +230,6 @@ theorem pc_roots_allow_restitutive_again :
 
 section CompositionalVRO
 
-open Semantics.Events
 open Core.Time
 
 variable {Entity State Time : Type*} [LinearOrder Time]
@@ -519,12 +518,12 @@ theorem wipe_is_ie :
 -- § 9. End-to-End: Fragment Verb → LevinClass → un-/re- Prediction
 -- ════════════════════════════════════════════════════
 
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 /-- End-to-end chain: the Fragment entry for "kick" (Levin 18.1 hit class)
     derives IE classification and correctly predicts both un- and re- blocking.
     kick.levinClass → .hit → .impingementEffecting → unCompatible=false, reCompatible=false -/
 theorem kick_end_to_end :
-    kick.toVerbCore.levinClass = some .hit ∧
+    kick.toVerb.levinClass = some .hit ∧
     (LevinClass.forceTransmissionClass .hit) = .impingementEffecting ∧
     (LevinClass.forceTransmissionClass .hit).unCompatible = false ∧
     LevinClass.reCompatible .hit = false := ⟨rfl, rfl, rfl, rfl⟩
@@ -533,17 +532,17 @@ theorem kick_end_to_end :
     derives PFC classification and correctly predicts both un- and re- compatibility.
     bend.levinClass → .bend → .potentialForChange → unCompatible=true, reCompatible=true -/
 theorem bend_end_to_end :
-    Fragments.English.Predicates.Verbal.bend.toVerbCore.levinClass = some .bend ∧
+    English.Predicates.Verbal.bend.toVerb.levinClass = some .bend ∧
     (LevinClass.forceTransmissionClass .bend) = .potentialForChange ∧
     (LevinClass.forceTransmissionClass .bend).unCompatible = true ∧
     LevinClass.reCompatible .bend = true := ⟨rfl, rfl, rfl, rfl⟩
 
-open Fragments.English.Predicates.Verbal in
+open English.Predicates.Verbal in
 /-- End-to-end chain: the Fragment entry for "break" (Levin 45.1)
     derives COS classification → un- blocked, re- allowed.
     break.levinClass → .break_ → .integralChange → unCompatible=false, reCompatible=true -/
 theorem break_end_to_end :
-    break_.toVerbCore.levinClass = some .break_ ∧
+    break_.toVerb.levinClass = some .break_ ∧
     (LevinClass.forceTransmissionClass .break_) = .integralChange ∧
     (LevinClass.forceTransmissionClass .break_).unCompatible = false ∧
     LevinClass.reCompatible .break_ = true := ⟨rfl, rfl, rfl, rfl⟩
@@ -554,8 +553,7 @@ theorem break_end_to_end :
 
 section CompositionalExamples
 
-open Semantics.Events Core.Time
-
+open Core.Time
 /-- VRO for "fold": PFC verb with multi-membered outcome set.
     The parchment can end up in any of several states after folding.
     Outcome set = {slightlyCreased, folded, tightlyFolded} (3 members).
@@ -655,17 +653,16 @@ end CompositionalExamples
 
 section StressTests
 
-open Semantics.Events Core.Time
-
+open Core.Time
 /-- Event from t=0 to t=5 (the base event, e.g. folding). -/
 private def ev₁ : Event ℤ where
   runtime := ⟨0, 5, by omega⟩
-  sort := .action
+  sort := .dynamic
 
 /-- Event from t=10 to t=15 (the reversal/restitution event, e.g. unfolding). -/
 private def ev₂ : Event ℤ where
   runtime := ⟨10, 15, by omega⟩
-  sort := .action
+  sort := .dynamic
 
 /-- ev₁ temporally precedes ev₂: τ(ev₁).finish < τ(ev₂).start. -/
 private theorem ev₁_precedes_ev₂ : (Event.τ ev₁).precedes (Event.τ ev₂) := by
@@ -707,7 +704,7 @@ theorem fold_un_satisfiable :
 /-- Event from t=20 to t=25 (the re-event, e.g. re-folding). -/
 private def ev₃ : Event ℤ where
   runtime := ⟨20, 25, by omega⟩
-  sort := .action
+  sort := .dynamic
 
 /-- State function for fold/unfold/refold scenario:
     - t ≤ 0: flat (pre-state of first fold)

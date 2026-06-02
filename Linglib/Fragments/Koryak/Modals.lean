@@ -21,7 +21,7 @@ We encode the 3×3-projected meaning here. The full doxastic/assertive
 distinction requires a finer-grained flavor type than `ModalFlavor`.
 -/
 
-namespace Fragments.Koryak.Modals
+namespace Koryak.Modals
 
 open Semantics.Modality (ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression)
@@ -37,4 +37,4 @@ def modalIvek : ModalExpression := { form := "ivək", meaning := [ne, pe] }
 
 def allExpressions : List ModalExpression := [modalIvek]
 
-end Fragments.Koryak.Modals
+end Koryak.Modals

@@ -24,7 +24,7 @@ inductive VerbalPersonMarking where
   | aOrPArgument
   /-- Both the A and P arguments (193 languages). -/
   | bothTheAAndPArguments
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 102A dataset (378 languages). -/
 def allData : List (Datapoint VerbalPersonMarking) :=
@@ -409,9 +409,9 @@ def allData : List (Datapoint VerbalPersonMarking) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint VerbalPersonMarking) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint VerbalPersonMarking) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F102A

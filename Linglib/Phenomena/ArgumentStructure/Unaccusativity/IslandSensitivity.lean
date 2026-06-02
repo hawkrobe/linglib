@@ -45,7 +45,7 @@ would be predicted to block QI as well — they don't.
 namespace Phenomena.ArgumentStructure.Unaccusativity.IslandSensitivity
 
 open Phenomena.Islands.MannerOfSpeaking (mosIslandSources)
-open Fragments.English.Predicates.Verbal
+open English.Predicates.Verbal
 open Semantics.Lexical
 
 /-! ## §1. The two empirical observations
@@ -69,7 +69,7 @@ theorem mos_islands_discourse_sourced : mosIslandSources = [.discourse] := rfl
 /-- @cite{storment-2026}'s prediction: every MoS unaccusative licenses
     QI. Quantified version of the per-verb theorems. -/
 theorem mos_unaccusatives_license_qi :
-    ∀ v ∈ mosUnaccusatives, v.toVerbCore.derivedQI = true := by
+    ∀ v ∈ mosUnaccusatives, v.toVerb.derivedQI = true := by
   intro v hv; fin_cases hv <;> rfl
 
 /-! ## §2. Compatibility theorem
@@ -81,7 +81,7 @@ sources, both true. -/
 
 theorem mos_extraction_smuggling_asymmetry :
     mosIslandSources = [.discourse] ∧
-    ∀ v ∈ mosUnaccusatives, v.toVerbCore.derivedQI = true :=
+    ∀ v ∈ mosUnaccusatives, v.toVerb.derivedQI = true :=
   ⟨rfl, mos_unaccusatives_license_qi⟩
 
 /-! ## §3. The diagnostic value

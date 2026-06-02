@@ -47,7 +47,6 @@ open Semantics.Quantification.Quantifier (every_sem some_sem Ty.det)
 open Semantics.Composition.TypeShifting (iota lift)
 open Semantics.Presupposition (PrProp)
 open Features.Definiteness (DefPresupType Definiteness)
-open Semantics.Reference.Donnellan (definitePrProp attributiveContent)
 
 -- ============================================================================
 -- §1: Discourse Context
@@ -110,7 +109,7 @@ theorem the_is_every_on_singletons {α : Type*}
 -- §4: Bridge to Fragments/English/Determiners.lean
 -- ============================================================================
 
-open Fragments.English.Determiners (QForce QuantifierEntry)
+open English.Determiners (QForce QuantifierEntry)
 
 /-- English "the" is `QForce.definite` — its denotation is given by
 composing `presupOfReferent` with `russellIotaList domain restrictor`

@@ -32,21 +32,21 @@ that the fragment annotations are consistent with that derivation.
 
 namespace KennedyLevin2008
 
-open Fragments.English.Predicates.Verbal hiding clean cool warm open_
+open English.Predicates.Verbal hiding clean cool warm open_
 open Features.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Lexical
 open Core.Scale (Boundedness LicensingPipeline MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 
 -- Fully qualified aliases for names shared between Verbal and Adjectival
-private def vClean := Fragments.English.Predicates.Verbal.clean
-private def vCool := Fragments.English.Predicates.Verbal.cool
-private def vWarm := Fragments.English.Predicates.Verbal.warm
-private def vOpen := Fragments.English.Predicates.Verbal.open_
-private def aClean := Fragments.English.Predicates.Adjectival.clean
-private def aCool := Fragments.English.Predicates.Adjectival.cool
-private def aWarm := Fragments.English.Predicates.Adjectival.warm
-private def aOpen := Fragments.English.Predicates.Adjectival.open_
+private def vClean := English.Predicates.Verbal.clean
+private def vCool := English.Predicates.Verbal.cool
+private def vWarm := English.Predicates.Verbal.warm
+private def vOpen := English.Predicates.Verbal.open_
+private def aClean := English.Predicates.Adjectival.clean
+private def aCool := English.Predicates.Adjectival.cool
+private def aWarm := English.Predicates.Adjectival.warm
+private def aOpen := English.Predicates.Adjectival.open_
 
 -- ════════════════════════════════════════════════════
 -- § 1. Per-Verb Derived VendlerClass Verification
@@ -57,63 +57,63 @@ private def aOpen := Fragments.English.Predicates.Adjectival.open_
 
 /-- "bend": closed scale → accomplishment (derived = stipulated). -/
 theorem bend_derived_vendler :
-    bend.toVerbCore.degreeAchievementScale.get!.defaultVendlerClass =
-    bend.toVerbCore.vendlerClass.get! := rfl
+    bend.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
+    bend.toVerb.vendlerClass.get! := rfl
 
 /-- "boil": closed scale → accomplishment (derived = stipulated). -/
 theorem boil_derived_vendler :
-    boil.toVerbCore.degreeAchievementScale.get!.defaultVendlerClass =
-    boil.toVerbCore.vendlerClass.get! := rfl
+    boil.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
+    boil.toVerb.vendlerClass.get! := rfl
 
 /-- "rust": open scale → activity (derived = stipulated). -/
 theorem rust_derived_vendler :
-    rust.toVerbCore.degreeAchievementScale.get!.defaultVendlerClass =
-    rust.toVerbCore.vendlerClass.get! := rfl
+    rust.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
+    rust.toVerb.vendlerClass.get! := rfl
 
 /-- "increase": open scale → activity (derived = stipulated). -/
 theorem increase_derived_vendler :
-    increase.toVerbCore.degreeAchievementScale.get!.defaultVendlerClass =
-    increase.toVerbCore.vendlerClass.get! := rfl
+    increase.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
+    increase.toVerb.vendlerClass.get! := rfl
 
 /-- "clean": closed scale → accomplishment (derived = stipulated). -/
 theorem clean_derived_vendler :
-    vClean.toVerbCore.degreeAchievementScale.get!.defaultVendlerClass =
-    vClean.toVerbCore.vendlerClass.get! := rfl
+    vClean.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
+    vClean.toVerb.vendlerClass.get! := rfl
 
 /-- "straighten": closed scale → accomplishment (derived = stipulated). -/
 theorem straighten_derived_vendler :
-    straighten.toVerbCore.degreeAchievementScale.get!.defaultVendlerClass =
-    straighten.toVerbCore.vendlerClass.get! := rfl
+    straighten.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
+    straighten.toVerb.vendlerClass.get! := rfl
 
 /-- "flatten": closed scale → accomplishment (derived = stipulated). -/
 theorem flatten_derived_vendler :
-    flatten.toVerbCore.degreeAchievementScale.get!.defaultVendlerClass =
-    flatten.toVerbCore.vendlerClass.get! := rfl
+    flatten.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
+    flatten.toVerb.vendlerClass.get! := rfl
 
 /-- "open": closed scale → accomplishment (derived = stipulated). -/
 theorem open_derived_vendler :
-    vOpen.toVerbCore.degreeAchievementScale.get!.defaultVendlerClass =
-    vOpen.toVerbCore.vendlerClass.get! := rfl
+    vOpen.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
+    vOpen.toVerb.vendlerClass.get! := rfl
 
 /-- "lengthen": open scale → activity (derived = stipulated). -/
 theorem lengthen_derived_vendler :
-    lengthen.toVerbCore.degreeAchievementScale.get!.defaultVendlerClass =
-    lengthen.toVerbCore.vendlerClass.get! := rfl
+    lengthen.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
+    lengthen.toVerb.vendlerClass.get! := rfl
 
 /-- "widen": open scale → activity (derived = stipulated). -/
 theorem widen_derived_vendler :
-    widen.toVerbCore.degreeAchievementScale.get!.defaultVendlerClass =
-    widen.toVerbCore.vendlerClass.get! := rfl
+    widen.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
+    widen.toVerb.vendlerClass.get! := rfl
 
 /-- "cool": open scale → activity (derived = stipulated). -/
 theorem cool_derived_vendler :
-    vCool.toVerbCore.degreeAchievementScale.get!.defaultVendlerClass =
-    vCool.toVerbCore.vendlerClass.get! := rfl
+    vCool.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
+    vCool.toVerb.vendlerClass.get! := rfl
 
 /-- "warm": open scale → activity (derived = stipulated). -/
 theorem warm_derived_vendler :
-    vWarm.toVerbCore.degreeAchievementScale.get!.defaultVendlerClass =
-    vWarm.toVerbCore.vendlerClass.get! := rfl
+    vWarm.toVerb.degreeAchievementScale.get!.defaultVendlerClass =
+    vWarm.toVerb.vendlerClass.get! := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 2. Adjective-Verb Scale Agreement
@@ -126,50 +126,50 @@ theorem warm_derived_vendler :
 /-- clean (adj, closed) ↔ clean (verb, closed scale). -/
 theorem clean_adj_verb_scale :
     aClean.scaleType =
-    (vClean.toVerbCore.degreeAchievementScale.get!).scaleBoundedness := rfl
+    (vClean.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
 
 /-- straight (adj, closed) ↔ straighten (verb, closed scale). -/
 theorem straight_straighten_scale :
-    Fragments.English.Predicates.Adjectival.straight.scaleType =
-    (straighten.toVerbCore.degreeAchievementScale.get!).scaleBoundedness := rfl
+    English.Predicates.Adjectival.straight.scaleType =
+    (straighten.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
 
 /-- flat (adj, closed) ↔ flatten (verb, closed scale). -/
 theorem flat_flatten_scale :
-    Fragments.English.Predicates.Adjectival.flat.scaleType =
-    (flatten.toVerbCore.degreeAchievementScale.get!).scaleBoundedness := rfl
+    English.Predicates.Adjectival.flat.scaleType =
+    (flatten.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
 
 /-- open (adj, closed) ↔ open (verb, closed scale). -/
 theorem open_adj_verb_scale :
     aOpen.scaleType =
-    (vOpen.toVerbCore.degreeAchievementScale.get!).scaleBoundedness := rfl
+    (vOpen.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
 
 /-- long (adj, open) ↔ lengthen (verb, open scale). -/
 theorem long_lengthen_scale :
-    Fragments.English.Predicates.Adjectival.long.scaleType =
-    (lengthen.toVerbCore.degreeAchievementScale.get!).scaleBoundedness := rfl
+    English.Predicates.Adjectival.long.scaleType =
+    (lengthen.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
 
 /-- wide (adj, open) ↔ widen (verb, open scale). -/
 theorem wide_widen_scale :
-    Fragments.English.Predicates.Adjectival.wide.scaleType =
-    (widen.toVerbCore.degreeAchievementScale.get!).scaleBoundedness := rfl
+    English.Predicates.Adjectival.wide.scaleType =
+    (widen.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
 
 /-- cool (adj, open) ↔ cool (verb, open scale). -/
 theorem cool_adj_verb_scale :
     aCool.scaleType =
-    (vCool.toVerbCore.degreeAchievementScale.get!).scaleBoundedness := rfl
+    (vCool.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
 
 /-- warm (adj, open) ↔ warm (verb, open scale). -/
 theorem warm_adj_verb_scale :
     aWarm.scaleType =
-    (vWarm.toVerbCore.degreeAchievementScale.get!).scaleBoundedness := rfl
+    (vWarm.toVerb.degreeAchievementScale.get!).scaleBoundedness := rfl
 
 /-- hot (adj, open) ↔ boil (verb, closed scale for boiling point).
     Note: boil reaches a closed endpoint (boiling point) even though the
     base adjective "hot" has an open scale. @cite{kennedy-levin-2008} notes that the verb
     selects the relevant portion of the scale. -/
 theorem hot_boil_scale_diverges :
-    Fragments.English.Predicates.Adjectival.hot.scaleType = .open_ ∧
-    (boil.toVerbCore.degreeAchievementScale.get!).scaleBoundedness = .closed := ⟨rfl, rfl⟩
+    English.Predicates.Adjectival.hot.scaleType = .open_ ∧
+    (boil.toVerb.degreeAchievementScale.get!).scaleBoundedness = .closed := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 3. Telicity Diagnostic Predictions
@@ -182,53 +182,53 @@ theorem hot_boil_scale_diverges :
 
 /-- "bent the wire in 5 seconds" — closed-scale DA accepts "in X". -/
 theorem bend_inX :
-    inXPrediction bend.toVerbCore.vendlerClass.get! = .accept := rfl
+    inXPrediction bend.toVerb.vendlerClass.get! = .accept := rfl
 
 /-- "boiled the water in 3 minutes" — closed-scale DA accepts "in X". -/
 theorem boil_inX :
-    inXPrediction boil.toVerbCore.vendlerClass.get! = .accept := rfl
+    inXPrediction boil.toVerb.vendlerClass.get! = .accept := rfl
 
 /-- "cleaned the table in 5 minutes" — closed-scale DA accepts "in X". -/
 theorem clean_inX :
-    inXPrediction vClean.toVerbCore.vendlerClass.get! = .accept := rfl
+    inXPrediction vClean.toVerb.vendlerClass.get! = .accept := rfl
 
 /-- "straightened the wire in 10 seconds" — closed-scale DA accepts "in X". -/
 theorem straighten_inX :
-    inXPrediction straighten.toVerbCore.vendlerClass.get! = .accept := rfl
+    inXPrediction straighten.toVerb.vendlerClass.get! = .accept := rfl
 
 /-- "flattened the dough in 2 minutes" — closed-scale DA accepts "in X". -/
 theorem flatten_inX :
-    inXPrediction flatten.toVerbCore.vendlerClass.get! = .accept := rfl
+    inXPrediction flatten.toVerb.vendlerClass.get! = .accept := rfl
 
 /-- "opened the door in 3 seconds" — closed-scale DA accepts "in X". -/
 theorem open_inX :
-    inXPrediction vOpen.toVerbCore.vendlerClass.get! = .accept := rfl
+    inXPrediction vOpen.toVerb.vendlerClass.get! = .accept := rfl
 
 -- Open-scale: "for X" ✓
 
 /-- "rusted for years" — open-scale DA accepts "for X". -/
 theorem rust_forX :
-    forXPrediction rust.toVerbCore.vendlerClass.get! = .accept := rfl
+    forXPrediction rust.toVerb.vendlerClass.get! = .accept := rfl
 
 /-- "increased for months" — open-scale DA accepts "for X". -/
 theorem increase_forX :
-    forXPrediction increase.toVerbCore.vendlerClass.get! = .accept := rfl
+    forXPrediction increase.toVerb.vendlerClass.get! = .accept := rfl
 
 /-- "lengthened the rope for hours" — open-scale DA accepts "for X". -/
 theorem lengthen_forX :
-    forXPrediction lengthen.toVerbCore.vendlerClass.get! = .accept := rfl
+    forXPrediction lengthen.toVerb.vendlerClass.get! = .accept := rfl
 
 /-- "widened the road for months" — open-scale DA accepts "for X". -/
 theorem widen_forX :
-    forXPrediction widen.toVerbCore.vendlerClass.get! = .accept := rfl
+    forXPrediction widen.toVerb.vendlerClass.get! = .accept := rfl
 
 /-- "cooled for an hour" — open-scale DA accepts "for X". -/
 theorem cool_forX :
-    forXPrediction vCool.toVerbCore.vendlerClass.get! = .accept := rfl
+    forXPrediction vCool.toVerb.vendlerClass.get! = .accept := rfl
 
 /-- "warmed for an hour" — open-scale DA accepts "for X". -/
 theorem warm_forX :
-    forXPrediction vWarm.toVerbCore.vendlerClass.get! = .accept := rfl
+    forXPrediction vWarm.toVerb.vendlerClass.get! = .accept := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 4. Pipeline Convergence
@@ -240,63 +240,63 @@ theorem warm_forX :
 
 /-- "bend": DA pipeline → closed = VendlerClass pipeline → closed. -/
 theorem bend_pipeline_converge :
-    LicensingPipeline.toBoundedness bend.toVerbCore.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness bend.toVerbCore.vendlerClass.get! := rfl
+    LicensingPipeline.toBoundedness bend.toVerb.degreeAchievementScale.get! =
+    LicensingPipeline.toBoundedness bend.toVerb.vendlerClass.get! := rfl
 
 /-- "boil": DA pipeline → closed = VendlerClass pipeline → closed. -/
 theorem boil_pipeline_converge :
-    LicensingPipeline.toBoundedness boil.toVerbCore.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness boil.toVerbCore.vendlerClass.get! := rfl
+    LicensingPipeline.toBoundedness boil.toVerb.degreeAchievementScale.get! =
+    LicensingPipeline.toBoundedness boil.toVerb.vendlerClass.get! := rfl
 
 /-- "rust": DA pipeline → open = VendlerClass pipeline → open. -/
 theorem rust_pipeline_converge :
-    LicensingPipeline.toBoundedness rust.toVerbCore.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness rust.toVerbCore.vendlerClass.get! := rfl
+    LicensingPipeline.toBoundedness rust.toVerb.degreeAchievementScale.get! =
+    LicensingPipeline.toBoundedness rust.toVerb.vendlerClass.get! := rfl
 
 /-- "increase": DA pipeline → open = VendlerClass pipeline → open. -/
 theorem increase_pipeline_converge :
-    LicensingPipeline.toBoundedness increase.toVerbCore.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness increase.toVerbCore.vendlerClass.get! := rfl
+    LicensingPipeline.toBoundedness increase.toVerb.degreeAchievementScale.get! =
+    LicensingPipeline.toBoundedness increase.toVerb.vendlerClass.get! := rfl
 
 /-- "clean": DA pipeline → closed = VendlerClass pipeline → closed. -/
 theorem clean_pipeline_converge :
-    LicensingPipeline.toBoundedness vClean.toVerbCore.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness vClean.toVerbCore.vendlerClass.get! := rfl
+    LicensingPipeline.toBoundedness vClean.toVerb.degreeAchievementScale.get! =
+    LicensingPipeline.toBoundedness vClean.toVerb.vendlerClass.get! := rfl
 
 /-- "straighten": DA pipeline → closed = VendlerClass pipeline → closed. -/
 theorem straighten_pipeline_converge :
-    LicensingPipeline.toBoundedness straighten.toVerbCore.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness straighten.toVerbCore.vendlerClass.get! := rfl
+    LicensingPipeline.toBoundedness straighten.toVerb.degreeAchievementScale.get! =
+    LicensingPipeline.toBoundedness straighten.toVerb.vendlerClass.get! := rfl
 
 /-- "flatten": DA pipeline → closed = VendlerClass pipeline → closed. -/
 theorem flatten_pipeline_converge :
-    LicensingPipeline.toBoundedness flatten.toVerbCore.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness flatten.toVerbCore.vendlerClass.get! := rfl
+    LicensingPipeline.toBoundedness flatten.toVerb.degreeAchievementScale.get! =
+    LicensingPipeline.toBoundedness flatten.toVerb.vendlerClass.get! := rfl
 
 /-- "open": DA pipeline → closed = VendlerClass pipeline → closed. -/
 theorem open_pipeline_converge :
-    LicensingPipeline.toBoundedness vOpen.toVerbCore.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness vOpen.toVerbCore.vendlerClass.get! := rfl
+    LicensingPipeline.toBoundedness vOpen.toVerb.degreeAchievementScale.get! =
+    LicensingPipeline.toBoundedness vOpen.toVerb.vendlerClass.get! := rfl
 
 /-- "lengthen": DA pipeline → open = VendlerClass pipeline → open. -/
 theorem lengthen_pipeline_converge :
-    LicensingPipeline.toBoundedness lengthen.toVerbCore.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness lengthen.toVerbCore.vendlerClass.get! := rfl
+    LicensingPipeline.toBoundedness lengthen.toVerb.degreeAchievementScale.get! =
+    LicensingPipeline.toBoundedness lengthen.toVerb.vendlerClass.get! := rfl
 
 /-- "widen": DA pipeline → open = VendlerClass pipeline → open. -/
 theorem widen_pipeline_converge :
-    LicensingPipeline.toBoundedness widen.toVerbCore.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness widen.toVerbCore.vendlerClass.get! := rfl
+    LicensingPipeline.toBoundedness widen.toVerb.degreeAchievementScale.get! =
+    LicensingPipeline.toBoundedness widen.toVerb.vendlerClass.get! := rfl
 
 /-- "cool": DA pipeline → open = VendlerClass pipeline → open. -/
 theorem cool_pipeline_converge :
-    LicensingPipeline.toBoundedness vCool.toVerbCore.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness vCool.toVerbCore.vendlerClass.get! := rfl
+    LicensingPipeline.toBoundedness vCool.toVerb.degreeAchievementScale.get! =
+    LicensingPipeline.toBoundedness vCool.toVerb.vendlerClass.get! := rfl
 
 /-- "warm": DA pipeline → open = VendlerClass pipeline → open. -/
 theorem warm_pipeline_converge :
-    LicensingPipeline.toBoundedness vWarm.toVerbCore.degreeAchievementScale.get! =
-    LicensingPipeline.toBoundedness vWarm.toVerbCore.vendlerClass.get! := rfl
+    LicensingPipeline.toBoundedness vWarm.toVerb.degreeAchievementScale.get! =
+    LicensingPipeline.toBoundedness vWarm.toVerb.vendlerClass.get! := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 5. Substrate-Level Demonstration: K&L → Beavers
@@ -328,7 +328,6 @@ theorem warm_pipeline_converge :
     self-contained. The fragment-level §1-4 results above are
     independent of this substrate work. -/
 
-open Semantics.Events
 open Semantics.ArgumentStructure.Affectedness
 open Semantics.ArgumentStructure.Affectedness.Hierarchy
 open Semantics.Degree.MeasureFunction

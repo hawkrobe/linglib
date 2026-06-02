@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Mandarin Chinese Evidentiality
@@ -8,16 +8,15 @@ WALS @cite{de-haan-2013} F77A: `noGrammaticalEvidentials`. Lexical
 strategies: *tinshuo* (听说), *juede* (觉得), sentence-final *ba* (吧).
 -/
 
-namespace Fragments.Mandarin.Evidentiality
+namespace Mandarin.Evidentiality
 
-open Typology.Modality
+/-! ### Typed evidential inventory
 
-/-- Mandarin evidentiality typology per WALS: no grammatical evidentials. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "Mandarin" "cmn" "Sino-Tibetan"
-    (notes := "Lexical evidential strategies: tinshuo, juede; no obligatory marking")
+No grammatical evidentials per @cite{aikhenvald-2004}; lexical
+strategies only. -/
 
-example : evidentialityProfile.iso = "cmn" ∧ evidentialityProfile.language = "Mandarin" :=
-  ⟨rfl, rfl⟩
+def evidentials : List Semantics.Evidential.Entry := []
 
-end Fragments.Mandarin.Evidentiality
+example : evidentials.length = 0 := by decide
+
+end Mandarin.Evidentiality

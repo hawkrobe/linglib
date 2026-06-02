@@ -4,6 +4,7 @@ import Linglib.Syntax.Minimalist.ApplicativeDiagnostics
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.VoiceProjection
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
+import Linglib.Semantics.ArgumentStructure.ArgumentIntroduction
 import Linglib.Data.WALS.Features.F109A
 import Linglib.Studies.Larson1988
 
@@ -273,9 +274,11 @@ def venda_appl : LangApplProfile :=
   , classification := .high }
 
 /-- Albanian: high. I vrapova (25a); Agimi i mban Drites çanten time
-    (25b). Albanian "depictives" can also modify implicit external
-    arguments and DPs inside PPs, so they don't qualify as English-style
-    depictives — Test 3 is *inapplicable* (§2.1.3.2.5). -/
+    (25b). Albanian postverbal APs pattern like English ones (modifying
+    internal and external but not implicit external arguments), except
+    that — unlike English depictives — they can also easily modify DPs
+    inside PPs. That extra breadth disqualifies them as English-style
+    depictives, so Test 3 is *inapplicable* (§2.1.3.2.5). -/
 def albanian_appl : LangApplProfile :=
   { language := "Albanian"
   , diagnostics :=
@@ -404,16 +407,30 @@ in §13. -/
 
 Pylkkänen's other major Ch. 3 argument: the causative head Cause
 introduces a *causing event*, not a θ-role on the external argument.
-Evidence: Japanese adversity causatives (eq. 19–25) have causative
+Evidence: Japanese adversity causatives (§3.2.2) have causative
 morphology and meaning but no external argument. The bieventive
 analysis (Cause = relation between two events) is required by such
 data; the θ-role analysis (Cause = relation between a causer and a
 caused event) cannot accommodate them.
 
-Formalizing the bieventive vs. θ-role contrast at the level of
-detail Pylkkänen offers requires event semantics infrastructure
-beyond this study file's scope; the substantive claim is recorded
-here for cross-reference. -/
+The bieventive vs. θ-role contrast is formalized in
+`Semantics/ArgumentStructure/ArgumentIntroduction.lean`:
+`causeBieventive_no_external_arg` shows a causing event with no causer
+participant (the Japanese adversity causative), while
+`causeThetaRole_forces_causer` shows the θ-role denotation entails a causer
+— so only the bieventive analysis accommodates the data, derived from the
+denotations. -/
+
+open Semantics.ArgumentStructure in
+/-- @cite{pylkkanen-2008} §3.2: the Japanese adversity causative — a causing
+    event with no external argument — is admitted by the bieventive Cause
+    denotation, which the θ-role analysis (forcing a causer) cannot model. -/
+theorem cause_bieventive_admits_adversity_causative
+    {Time : Type*} [LinearOrder Time]
+    (cause : Event Time → Event Time → Prop) (caused : Event Time → Prop)
+    (e e' : Event Time) (hc : caused e') (hcause : cause e e') :
+    causeBieventive cause caused e :=
+  causeBieventive_no_external_arg cause caused e e' hc hcause
 
 /-! ## §10. Hebrew possessor datives as low source applicatives
     (@cite{pylkkanen-2008} Ch. 2 §2.2, Table 2.2 p. 60)
@@ -520,8 +537,11 @@ Japanese adversity passives split into *gapped* (low source applicative)
 and *gapless* (high applicative). The gapped/gapless distinction itself
 is Kubo's 1992 work (cited by @cite{pylkkanen-2008}; not yet in linglib bib)'s; @cite{pylkkanen-2008}'s contribution is the
 reanalysis as a low-source vs. high applicative typology. Both share
-the *-rare-* morphology, but only the gapless type carries an obligatory
-adversative entailment (Kubo's 1992 work (cited by @cite{pylkkanen-2008}; not yet in linglib bib)). The diagnostic bundle
+the *-rare-* passive morphology; the distinguishing criterion is the
+possessive/transfer relation to the direct object — the gapped (low
+source) type requires it, the gapless (high malefactive) type bears a
+malefactive relation to the event and no necessary relation to the
+object. The diagnostic bundle
 distinguishing the two types is not formalized here; this section
 records the type-level split for cross-reference. -/
 
@@ -582,9 +602,11 @@ def CuervoLowAppl.isDynamic : CuervoLowAppl → Bool
 theorem static_not_dynamic :
     CuervoLowAppl.staticPossession.isDynamic = false := rfl
 
-/-! ## §13. Causative typology (Pylkkänen Table 3.1, §3.4)
+/-! ## §13. Causative typology (Pylkkänen Table 3.1, Ch. 3 intro p. 87)
 
-Pylkkänen Table 3.1 (§3.4) is a 2 × 3 typology of causative constructions
+Pylkkänen Table 3.1 (Chapter 3 introduction, p. 87 — *not* §3.4, which
+argues the three-way *selection* split and carries the separate Table 3.2)
+is a 2 × 3 typology of causative constructions
 parameterized by Voice-bundling × selection. The inventory
 (`VoiceBundlingChoice`, `CauseSelection`, `MorphologyAccess`,
 `CausativeCell` + 6 canonical instances + 4 prediction theorems) lives
@@ -655,12 +677,14 @@ def CausativeCell.permitsUnaccusativeCausative (c : CausativeCell) : PredictsVer
   | some .independent => .predicts
 
 /-- Table 3.1 prediction (2): can the language causativize unergatives
-    and transitives? Only phase-selecting Cause can. -/
+    and transitives? Verb- and phase-selecting Cause can; only
+    root-selecting Cause cannot. (Table 3.1's prediction (2) is identical
+    across both Voice-bundling columns, so it turns on selection alone.) -/
 def CausativeCell.permitsUnergativeAndTransitiveCausativization
     (c : CausativeCell) : Bool :=
   match c.selection with
-  | .phase => true
-  | .root | .verb => false
+  | .verb | .phase => true
+  | .root => false
 
 /-- Table 3.1 prediction (3): what morphology can intervene between
     root and Cause? -/
@@ -720,7 +744,7 @@ theorem japanese_lexical_predictions :
 
 theorem finnish_tta_predictions :
     finnishTtaCausative.permitsUnaccusativeCausative = .predicts ∧
-    finnishTtaCausative.permitsUnergativeAndTransitiveCausativization = false ∧
+    finnishTtaCausative.permitsUnergativeAndTransitiveCausativization = true ∧
     finnishTtaCausative.morphologyAccess = .categoryDefiningOnly :=
   ⟨rfl, rfl, rfl⟩
 
@@ -759,10 +783,11 @@ theorem pylkkanen_view_partitions_voice_flavors :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 /-! ## §15. Transitivity restriction grounded in EntailmentProfile
-    (@cite{pylkkanen-2008} Diagnostic 1; semantic argument at eq. 103 /
-    p. 55; -- UNVERIFIED: eq. 17 number)
+    (@cite{pylkkanen-2008} Diagnostic 1 = eq. 17, p. 18; semantic
+    argument at eq. 103, p. 55)
 
-Pylkkänen's *predicted* generalization (book Ch. 2 §2.1.1, Diagnostic 1):
+Pylkkänen's *predicted* generalization (book Ch. 2 §2.1.1, Diagnostic 1,
+eq. 17, p. 18):
 "Only high applicative heads should be able to combine with
 unergatives. Since low applicative heads denote a relation between
 the direct object and the indirect object, a low applicative head
@@ -772,18 +797,17 @@ The semantic argument (eq. 103, p. 55): combining low Appl
 (`λx.λy.λf.λe. f(e,x) ∧ theme(e,x) ∧ HAVE(x,y)`) with an unergative
 VP (`λe. agent(e, Mary) ∧ run(e)`) yields `agent(e, x) ∧ theme(e, x)`
 when both arguments bind the same variable — a thematic-uniqueness
-contradiction (Carlson, Parsons).
+contradiction.
 
 **Status of this formalization**: The composition predicate below uses
-`Core.Verbs.EntailmentProfile.pPatientScore` to check whether a verb
+`Semantics.ArgumentStructure.EntailmentProfile.pPatientScore` to check whether a verb
 has theme-like Proto-Patient entailments. An unergative has either no
 object profile (`objectEntailments = none`) or an empty one
-(`pPatientScore = 0`). The composition theorem is structural — it
-does *not* re-derive the type clash from event-semantic λ-calculus
-(that requires the compositional type-driven semantics in
-`Semantics/Composition/`, not yet wired in here). The
-substantive content captured: "low Appl needs a theme; unergative
-provides none; composition fails." -/
+(`pPatientScore = 0`). This `EntailmentProfile`-based predicate is the
+structural surface; the event-semantic *derivation* of the eq. 103 type
+clash is now wired in via `Semantics/ArgumentStructure/ArgumentIntroduction.lean`
+and consumed in §15c below (`low_appl_blocks_unergative_denotational`,
+`low_external_arg_clash`). -/
 
 open Semantics.ArgumentStructure.EntailmentProfile (EntailmentProfile)
 
@@ -868,6 +892,51 @@ theorem low_source_combines_with_transitive :
   unfold applicativeComposition
   right
   exact themeBearingProfile_has_unsaturated_theme
+
+/-! ## §15c. Event-semantic grounding: the transitivity restriction derived
+
+The `applicativeComposition` predicate above captures the empirical content
+structurally (via `ApplType.RequiresThemeInComplement`). The denotational
+*derivation* of @cite{pylkkanen-2008}'s eq. 103 — the type clash that forces
+the transitivity restriction — lives in
+`Semantics/ArgumentStructure/ArgumentIntroduction.lean`. There the high/low
+contrast is `IntroMode.toEvent`/`.toTheme`, the two diagnostics are
+`toTheme_blocks_unergative` (Diagnostic 1, no internal argument) and
+`toTheme_blocks_kimian` (Diagnostic 2, no event argument — Kimian states,
+@cite{moltmann-2025}), and the thematic-uniqueness contradiction is
+`low_external_arg_clash`. We record the correspondence: Pylkkänen's `ApplType`
+projects to an `IntroMode`, and the empirical diagnostics are *instances* of
+the substrate theorems rather than restatements of the `IsLow` predicate. -/
+
+open Semantics.ArgumentStructure
+
+/-- Pylkkänen's high/low `ApplType` as a denotational introduction mode
+    (@cite{wood-marantz-2017}'s contextually-interpreted introducer). -/
+def applIntroMode : ApplType → IntroMode
+  | .high         => .toEvent
+  | .lowRecipient => .toTheme
+  | .lowSource    => .toTheme
+
+/-- The transitivity restriction, derived from the denotations: a low
+    applicative (recipient or source) cannot license an unergative verb,
+    because the low denotation has no event-internal theme to relate to.
+    This is `low_applicative_blocks_unergative` re-grounded in the
+    `ArgumentIntroduction` substrate rather than the `IsLow` alias. -/
+theorem low_appl_blocks_unergative_denotational
+    {Entity Time : Type*} [LinearOrder Time] (a : ApplType) (hLow : a.IsLow)
+    (body : Event Time → Prop) :
+    ¬ (applIntroMode a).Licenses (VerbDenot.unergative (Entity := Entity) body) := by
+  have h : applIntroMode a = .toTheme := by
+    rcases hLow with h | h <;> subst h <;> rfl
+  rw [h]; exact toTheme_blocks_unergative body
+
+/-- High applicatives license unergatives, derived denotationally
+    (Luganda/Venda/Albanian, PDF eq. 23a/24a/25a). -/
+theorem high_appl_licenses_unergative_denotational
+    {Entity Time : Type*} [LinearOrder Time]
+    (body : Event Time → Prop) :
+    (applIntroMode .high).Licenses (VerbDenot.unergative (Entity := Entity) body) :=
+  toEvent_licenses_all _
 
 /-! ## §16. Voice × Appl licensing matrix
     (`Syntax/Minimalism/Applicative.lean.licensedWith`)

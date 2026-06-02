@@ -7,7 +7,7 @@ import Linglib.Typology.Gender
 No grammatical gender. WALS Ch 30/31/32 = none.
 -/
 
-namespace Fragments.Finnish.Gender
+namespace Finnish.Gender
 
 open Typology.Gender
 
@@ -19,4 +19,4 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "fin" ∧ genderTypology.name = "Finnish" :=
   ⟨rfl, rfl⟩
 
-end Fragments.Finnish.Gender
+end Finnish.Gender

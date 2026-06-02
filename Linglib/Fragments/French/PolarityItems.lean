@@ -28,7 +28,7 @@ captured in the `notes` field. A future typed model of bipartite
 licensing would live in the substrate, not per-Fragment.
 -/
 
-namespace Fragments.French.PolarityItems
+namespace French.PolarityItems
 
 open Typology.PolarityItem
 
@@ -104,4 +104,4 @@ theorem all_npis_licensed_by_negation :
     items.all (fun e => e.licensingContexts.contains .negation) = true := by
   native_decide
 
-end Fragments.French.PolarityItems
+end French.PolarityItems

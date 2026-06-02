@@ -12,7 +12,7 @@ Persian has:
 Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.persian`).
 -/
 
-namespace Fragments.Farsi.Coordination
+namespace Farsi.Coordination
 
 open Features.Coordination
 
@@ -30,4 +30,4 @@ def ham : CoordEntry :=
 
 def allEntries : List CoordEntry := [va, ham]
 
-end Fragments.Farsi.Coordination
+end Farsi.Coordination

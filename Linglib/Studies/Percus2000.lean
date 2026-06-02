@@ -188,41 +188,41 @@ theorem temporal_projection_commutes {W Time : Type*}
 -- § Fragment Bridge: Lexical Entries → Percus Situation Binding
 -- ════════════════════════════════════════════════════════════════
 
-def introducesSitBinder (v : Fragments.English.Predicates.Verbal.VerbEntry) : Bool :=
+def introducesSitBinder (v : English.Predicates.Verbal.VerbEntry) : Bool :=
   v.opaqueContext
 
-def isDoxasticUniversal (v : Fragments.English.Predicates.Verbal.VerbEntry) : Bool :=
+def isDoxasticUniversal (v : English.Predicates.Verbal.VerbEntry) : Bool :=
   match v.attitude with
   | some (.doxastic _) => true
   | _ => false
 
 theorem believe_introduces_sit_binder :
-    introducesSitBinder Fragments.English.Predicates.Verbal.believe = true := rfl
+    introducesSitBinder English.Predicates.Verbal.believe = true := rfl
 theorem think_introduces_sit_binder :
-    introducesSitBinder Fragments.English.Predicates.Verbal.think = true := rfl
+    introducesSitBinder English.Predicates.Verbal.think = true := rfl
 
 theorem believe_is_doxastic :
-    isDoxasticUniversal Fragments.English.Predicates.Verbal.believe = true := rfl
+    isDoxasticUniversal English.Predicates.Verbal.believe = true := rfl
 theorem think_is_doxastic :
-    isDoxasticUniversal Fragments.English.Predicates.Verbal.think = true := rfl
+    isDoxasticUniversal English.Predicates.Verbal.think = true := rfl
 
 theorem believe_is_nonveridical :
-    Fragments.English.Predicates.Verbal.believe.attitude =
+    English.Predicates.Verbal.believe.attitude =
     some (.doxastic .nonVeridical) := rfl
 
 theorem always_is_universal :
-    Fragments.English.FunctionWords.always.force = .universal := rfl
+    English.FunctionWords.always.force = .universal := rfl
 
 theorem mary_is_proper :
-    Fragments.English.Nouns.mary.proper = true := rfl
+    English.Nouns.mary.proper = true := rfl
 theorem john_is_proper :
-    Fragments.English.Nouns.john.proper = true := rfl
+    English.Nouns.john.proper = true := rfl
 theorem bill_is_proper :
-    Fragments.English.Nouns.bill.proper = true := rfl
+    English.Nouns.bill.proper = true := rfl
 theorem brother_is_common :
-    Fragments.English.Nouns.brother.proper = false := rfl
+    English.Nouns.brother.proper = false := rfl
 theorem spy_is_common :
-    Fragments.English.Nouns.spy.proper = false := rfl
+    English.Nouns.spy.proper = false := rfl
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -243,18 +243,18 @@ def sit (w : W) : Sit := ⟨w, ()⟩
 def sActual : Sit := sit .actual
 def sBelief : Sit := sit .belief
 
-def entityOf (n : Fragments.English.Nouns.NounEntry) : Person :=
+def entityOf (n : English.Nouns.NounEntry) : Person :=
   if n.formSg == "Mary" then .mary
   else if n.formSg == "John" then .john
   else if n.formSg == "Bill" then .bill
   else .charlie
 
 theorem entityOf_mary :
-    entityOf Fragments.English.Nouns.mary = .mary := rfl
+    entityOf English.Nouns.mary = .mary := rfl
 theorem entityOf_john :
-    entityOf Fragments.English.Nouns.john = .john := rfl
+    entityOf English.Nouns.john = .john := rfl
 theorem entityOf_bill :
-    entityOf Fragments.English.Nouns.bill = .bill := rfl
+    entityOf English.Nouns.bill = .bill := rfl
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -287,9 +287,9 @@ instance instDecidableIsSpyAt (p : Person) (s : Sit) : Decidable (isSpyAt p s) :
   unfold isSpyAt; cases p <;> cases s.world <;> infer_instance
 
 theorem brother_form :
-    Fragments.English.Nouns.brother.formSg = "brother" := rfl
+    English.Nouns.brother.formSg = "brother" := rfl
 theorem spy_form :
-    Fragments.English.Nouns.spy.formSg = "spy" := rfl
+    English.Nouns.spy.formSg = "spy" := rfl
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -311,8 +311,8 @@ private def g₀ : SituationAssignment W Unit := λ _ => sActual
 
 def reading1_deDicto : Prop :=
   believeSit (λ _ => doxMary)
-    (entityOf Fragments.English.Nouns.mary) 2
-    (λ g => isCanadian (entityOf Fragments.English.Nouns.john) (interpSitVar 2 g))
+    (entityOf English.Nouns.mary) 2
+    (λ g => isCanadian (entityOf English.Nouns.john) (interpSitVar 2 g))
     g₀ sActual
 
 instance : Decidable reading1_deDicto := by
@@ -320,8 +320,8 @@ instance : Decidable reading1_deDicto := by
 
 def reading2_deRe : Prop :=
   believeSit (λ _ => doxMary)
-    (entityOf Fragments.English.Nouns.mary) 2
-    (λ g => isCanadian (entityOf Fragments.English.Nouns.john) (interpSitVar 1 g))
+    (entityOf English.Nouns.mary) 2
+    (λ g => isCanadian (entityOf English.Nouns.john) (interpSitVar 1 g))
     (updateSitVar g₀ 1 sActual) sActual
 
 instance : Decidable reading2_deRe := by
@@ -364,7 +364,7 @@ private def theBrother (s : Sit) : Person :=
   else .mary
 
 def readingA_allDeDicto : Prop :=
-  believeSit (λ _ => doxMary) (entityOf Fragments.English.Nouns.mary) 2
+  believeSit (λ _ => doxMary) (entityOf English.Nouns.mary) 2
     (λ g =>
       let s := interpSitVar 2 g
       isSpyAt (theBrother s) s)
@@ -374,7 +374,7 @@ instance : Decidable readingA_allDeDicto := by
   unfold readingA_allDeDicto believeSit; infer_instance
 
 def readingB_npDeRe : Prop :=
-  believeSit (λ _ => doxMary) (entityOf Fragments.English.Nouns.mary) 2
+  believeSit (λ _ => doxMary) (entityOf English.Nouns.mary) 2
     (λ g =>
       let sMatrix := interpSitVar 1 g
       let sEmbed := interpSitVar 2 g
@@ -385,7 +385,7 @@ instance : Decidable readingB_npDeRe := by
   unfold readingB_npDeRe believeSit; infer_instance
 
 def readingC_predDeRe : Prop :=
-  believeSit (λ _ => doxMary) (entityOf Fragments.English.Nouns.mary) 2
+  believeSit (λ _ => doxMary) (entityOf English.Nouns.mary) 2
     (λ g =>
       let sMatrix := interpSitVar 1 g
       let sEmbed := interpSitVar 2 g
@@ -442,22 +442,22 @@ def doxMaryR : RSit → List RSit
 private def g₃ : SituationAssignment W Round := λ _ => rSit .actual .r1
 
 def genY_compliant : Prop :=
-  believeSit (λ _ => doxMaryR) (entityOf Fragments.English.Nouns.mary) 2
+  believeSit (λ _ => doxMaryR) (entityOf English.Nouns.mary) 2
     (λ g =>
       let ssh := interpSitVar 2 g
       alwaysAt gameRounds ssh 3
-        (λ g' => wonGame (entityOf Fragments.English.Nouns.bill) (interpSitVar 3 g')) g)
+        (λ g' => wonGame (entityOf English.Nouns.bill) (interpSitVar 3 g')) g)
     g₃ (rSit .actual .r1)
 
 instance : Decidable genY_compliant := by
   unfold genY_compliant believeSit alwaysAt; infer_instance
 
 def genY_violation : Prop :=
-  believeSit (λ _ => doxMaryR) (entityOf Fragments.English.Nouns.mary) 2
+  believeSit (λ _ => doxMaryR) (entityOf English.Nouns.mary) 2
     (λ g =>
       let ssh := interpSitVar 1 g
       alwaysAt gameRounds ssh 3
-        (λ g' => wonGame (entityOf Fragments.English.Nouns.bill) (interpSitVar 3 g')) g)
+        (λ g' => wonGame (entityOf English.Nouns.bill) (interpSitVar 3 g')) g)
     (updateSitVar g₃ 1 (rSit .actual .r1)) (rSit .actual .r1)
 
 instance : Decidable genY_violation := by

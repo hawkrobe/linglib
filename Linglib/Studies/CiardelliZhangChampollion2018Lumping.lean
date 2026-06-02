@@ -85,7 +85,7 @@ The empty Base Set keeps the proofs direct.
 namespace CiardelliZhangChampollion2018Lumping
 
 open Core.Logic.Intensional
-open Core.Logic.Intensional.Lumping (Lumps IsConsistent IsCompatible Follows)
+open Semantics.Conditionals.Counterfactual (Lumps IsConsistent IsCompatible Follows)
 open Semantics.Conditionals.PremiseSemantic
   (CrucialSet IsCrucialSet wouldCF)
 

@@ -5,7 +5,7 @@ import Linglib.Typology.BodyParts
 @cite{wals-2013}
 -/
 
-namespace Fragments.Finnish
+namespace Finnish
 
 /-- Finnish: distinct *käsi* (hand) vs *käsivarsi* (arm); distinct *sormi*
     (finger) vs *käsi* (hand). -/
@@ -16,4 +16,4 @@ def bodyPartProfile : Typology.BodyPartProfile :=
   , handArm := some .different
   , fingerHand := some .different }
 
-end Fragments.Finnish
+end Finnish

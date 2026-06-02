@@ -34,7 +34,7 @@ split documented in `Core/Lexical/NegMarker.lean`. The
 the n-word system at the sentence level (operator-side typology).
 -/
 
-namespace Fragments.Spanish.Negation
+namespace Spanish.Negation
 
 open Typology.Negation
 
@@ -145,4 +145,4 @@ def negationProfile : Typology.Negation.NegationProfile :=
   , negIsHead := some false
   , enAttested := some true }
 
-end Fragments.Spanish.Negation
+end Spanish.Negation

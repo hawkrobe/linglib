@@ -15,7 +15,7 @@ The attributivizer is affixal (the agreement ending itself is the
 spellout of Attr), so the ICP forces adjacency.
 -/
 
-namespace Fragments.German.AdjAgreement
+namespace German.AdjAgreement
 
 open Minimalist.Modification
 
@@ -39,4 +39,4 @@ def entry : AdjAgreementEntry where
 /-- German pred ≠ attr: predicative is bare. -/
 theorem not_same_agreement : entry.sameAgreement = false := by native_decide
 
-end Fragments.German.AdjAgreement
+end German.AdjAgreement

@@ -22,7 +22,7 @@ party), which the glossary argues is independent of evidential source.
 ## Design
 
 `EpistemicAuthority` fills the egophoricity gap. `EpistemicProfile` bundles it
-with `EvidentialSource` and `MirativityValue` for unified epistemic specification.
+with `CoarseSource` and `MirativityValue` for unified epistemic specification.
 `epistemicAuthority` bridges epistemic authority to `ContextTower` by resolving
 from the origin (speech-act context), since egophoric marking reflects the
 actual speech-act participants, not reported ones.
@@ -59,7 +59,7 @@ inductive EpistemicAuthority where
     - authority: WHO has privileged access (egophoric dimension)
     - mirativity: WHETHER the content is expected (DeLancey's dimension) -/
 structure EpistemicProfile where
-  source     : EvidentialSource
+  source     : CoarseSource
   authority  : EpistemicAuthority
   mirativity : MirativityValue := .neutral
   deriving Repr, BEq
@@ -93,7 +93,7 @@ theorem ego_default_direct : strongAssertion.source = .direct := rfl
 /-- In allocutive contexts, evidential source is typically irrelevant --
     the addressee's authority overrides source distinctions.
     (Tibetan -payin ego vs -pa'dug non-ego; Akhvakh -eri ego vs -ari non-ego) -/
-def allocutiveProfile (s : EvidentialSource) : EpistemicProfile :=
+def allocutiveProfile (s : CoarseSource) : EpistemicProfile :=
   { source := s, authority := .allocutive }
 
 /-- Epistemic authority is invariant under tower push: egophoric marking

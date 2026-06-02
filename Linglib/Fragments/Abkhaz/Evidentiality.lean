@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Abkhaz Evidentiality
@@ -9,21 +9,23 @@ WALS @cite{de-haan-2013} F77A: `indirectOnly` (verbal-affix coding).
 TAM). Studies-side override.
 -/
 
-namespace Fragments.Abkhaz.Evidentiality
+namespace Abkhaz.Evidentiality
 
-open Typology.Modality
-open Features.Evidentiality (EvidentialSource)
+/-! ### Typed evidential inventory
 
-/-- Abkhaz evidentiality typology per WALS @cite{de-haan-2013}. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "Abkhaz" "abk" "Northwest Caucasian"
-    (markers := ["finite verb (direct)", "nonfinite + copula (indirect)"])
-    (notes := "Caucasus areal feature; classified differently by WALS vs Aikhenvald")
-    (attestedEvidentials := [.direct, .inference])
-    (systemFb := .directAndIndirect)
-    (codingFb := .partOfTAM)
+Abkhaz's 2-way direct/indirect contrast per @cite{aikhenvald-2004}: the
+finite-verb form (direct) vs the nonfinite + copula construction
+(indirect, covering inference and report). Fused with TAM. -/
 
-example : evidentialityProfile.iso = "abk" ∧ evidentialityProfile.language = "Abkhaz" :=
-  ⟨rfl, rfl⟩
+open Semantics.Evidential
 
-end Fragments.Abkhaz.Evidentiality
+def evidentials : List Entry :=
+  [ .direct      { form := "finite verb",       exponent := .tamFusion },
+    .inferential { form := "nonfinite + copula", exponent := .tamFusion } ]
+
+example : evidentials.length = 2 := by decide
+example : (evidentials.filter Entry.IsDirect).length = 1 := by decide
+example : (evidentials.filter Entry.IsInferential).length = 1 := by decide
+example : (evidentials.filter Entry.IsReportative).length = 0 := by decide
+
+end Abkhaz.Evidentiality

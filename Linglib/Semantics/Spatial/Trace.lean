@@ -32,7 +32,6 @@ All three use the same QUA/CUM pullback mechanism via `MereoDim`.
   because "towards the store" denotes a CUM set of paths.
 -/
 
-open Semantics.Events
 open Semantics.Events.CEM
 open Semantics.Spatial.Path
 open Features

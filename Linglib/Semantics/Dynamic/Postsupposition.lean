@@ -9,7 +9,7 @@ utterance updates it, as opposed to presuppositions which constrain
 the *input* context.
 
 @cite{glass-2025} argues that Mandarin yǐwéi has a postsupposition
-◇¬p — after accepting "x yǐwéi p", the CG must be compatible with ¬p.
+◇¬p — after accepting "x yǐwéi p", the CommonGround must be compatible with ¬p.
 This is distinct from a presupposition (input-context condition) and
 cannot be derived from veridicality alone.
 -/
@@ -59,7 +59,7 @@ theorem none_always_satisfied (cs : List W) (p : W → Bool) :
     none.satisfied cs p = true := rfl
 
 /-- Strong contrafactivity entails weak contrafactivity (for nonempty contexts):
-    if CG ⊨ ¬p (all worlds have ¬p), then CG ◇ ¬p (some world has ¬p).
+    if CommonGround ⊨ ¬p (all worlds have ¬p), then CommonGround ◇ ¬p (some world has ¬p).
     This captures @cite{glass-2025}'s key observation that yǐwéi's requirement
     is strictly weaker than the hypothetical *contra* verb's. -/
 theorem strong_entails_weak (cs : List W) (p : W → Bool) (hne : cs ≠ []) :

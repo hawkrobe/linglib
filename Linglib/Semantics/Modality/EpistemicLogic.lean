@@ -1,5 +1,5 @@
 import Linglib.Discourse.CommonGround
-import Linglib.Core.Logic.Intensional.RestrictedModality
+import Linglib.Core.Logic.Modal.Basic
 import Linglib.Core.Scales.EpistemicScale.Defs
 
 /-!
@@ -11,7 +11,7 @@ Multi-agent epistemic operators from @cite{halpern-2003}: individual
 knowledge (Kᵢ), everyone knows (E_G), common knowledge (C_G),
 distributed knowledge (D_G), and their doxastic (KD45 belief) counterparts.
 
-Connects to Stalnaker's common ground via `CG.groundedIn`: a common
+Connects to Stalnaker's common ground via `CommonGround.groundedIn`: a common
 ground is grounded when its context set equals what is commonly known.
 
 ## Operators
@@ -28,7 +28,7 @@ ground is grounded when its context set equals what is commonly known.
 This file lives in `Semantics/Modality/` because it makes
 substantive theoretical commitments (S5 for knowledge, KD45 for belief,
 fixed-point characterization of common knowledge). The framework-agnostic
-context management (`ContextSet`, `CG`) lives in
+context management (`ContextSet`, `CommonGround`) lives in
 `Discourse/CommonGround.lean`.
 
 Following mathlib style, all operators are `Prop`-valued; computation
@@ -37,21 +37,20 @@ on finite worlds goes through `Decidable` instances + `decide`.
 
 namespace Semantics.Modality.EpistemicLogic
 
-open Core.Logic.Intensional
-  (AccessRel AgentAccessRel boxR diamondR IsSerial IsEuclidean IsBeliefRefinementOf
-   boxR_T boxR_D boxR_four boxR_B boxR_five)
-open Discourse.CommonGround (CG)
+open Core.Logic.Modal
+  (AccessRel AgentAccessRel box diamond IsSerial IsEuclidean IsBeliefRefinementOf
+   box_T box_D box_four box_B box_five)
 
 /-! ## Individual Knowledge
 
 Agent i knows φ at world w iff φ holds at all worlds accessible to i.
-This re-uses `boxR` from `RestrictedModality.lean` with agent-indexed
+This re-uses `box` from `RestrictedModality.lean` with agent-indexed
 accessibility relations. -/
 
 /-- Agent i knows φ at world w: Kᵢ(φ)(w) = □ᵢ φ(w). -/
 def knows {W E : Type*} (Rs : AgentAccessRel W E) (i : E)
     (φ : W → Prop) (w : W) : Prop :=
-  boxR (Rs i) φ w
+  box (Rs i) φ w
 
 /-! ## Everyone Knows
 
@@ -131,7 +130,7 @@ def groupAccessRel {W E : Type*} (Rs : AgentAccessRel W E)
 /-- Distributed knowledge: D_G(φ)(w) = □_{∩R} φ(w). -/
 def distributedKnowledge {W E : Type*} (Rs : AgentAccessRel W E)
     (group : List E) (φ : W → Prop) (w : W) : Prop :=
-  boxR (groupAccessRel Rs group) φ w
+  box (groupAccessRel Rs group) φ w
 
 /-- Individual knowledge implies distributed knowledge: the intersection
     of accessibility relations is a subset of each component, so every
@@ -166,7 +165,7 @@ accessible worlds), knowledge is harder to achieve than belief. -/
     S5 (reflexive + Euclidean). -/
 def believes {W E : Type*} (Rs : AgentAccessRel W E) (i : E)
     (φ : W → Prop) (w : W) : Prop :=
-  boxR (Rs i) φ w
+  box (Rs i) φ w
 
 /-- Everyone in group G believes φ at w. -/
 def everyoneBelieves {W E : Type*} (Rs : AgentAccessRel W E)
@@ -187,7 +186,7 @@ def commonBelief {W E : Type*} (Rs : AgentAccessRel W E)
 /-- Distributed belief: DB_G(φ)(w) = □_{∩R_B} φ(w). -/
 def distributedBelief {W E : Type*} (Rs : AgentAccessRel W E)
     (group : List E) (φ : W → Prop) (w : W) : Prop :=
-  boxR (groupAccessRel Rs group) φ w
+  box (groupAccessRel Rs group) φ w
 
 /-- Knowledge implies belief: Kᵢ(φ) → Bᵢ(φ), given that every
     belief-accessible world is knowledge-accessible. The
@@ -204,8 +203,8 @@ theorem knows_implies_believes {W E : Type*}
 theorem believes_consistent {W E : Type*}
     {Rs : AgentAccessRel W E} (i : E) [IsSerial (Rs i)]
     (φ : W → Prop) (w : W) (h : believes Rs i φ w) :
-    diamondR (Rs i) φ w :=
-  boxR_D (Rs i) φ w h
+    diamond (Rs i) φ w :=
+  box_D (Rs i) φ w h
 
 /-- Positive introspection: Bᵢ(φ) → Bᵢ(Bᵢ(φ)) (the 4 axiom).
     Follows from transitivity of the belief accessibility relation. -/
@@ -213,15 +212,15 @@ theorem believes_positive_introspection {W E : Type*}
     {Rs : AgentAccessRel W E} (i : E) [IsTrans W (Rs i)]
     (φ : W → Prop) (w : W) (h : believes Rs i φ w) :
     believes Rs i (believes Rs i φ) w :=
-  boxR_four (Rs i) φ w h
+  box_four (Rs i) φ w h
 
 /-- Negative introspection: ◇Bφ → □◇Bφ (the 5 axiom).
     Follows from Euclideanness of the belief accessibility relation. -/
 theorem believes_negative_introspection {W E : Type*}
     {Rs : AgentAccessRel W E} (i : E) [IsEuclidean (Rs i)]
-    (φ : W → Prop) (w : W) (h : diamondR (Rs i) φ w) :
-    boxR (Rs i) (diamondR (Rs i) φ) w :=
-  boxR_five (Rs i) φ w h
+    (φ : W → Prop) (w : W) (h : diamond (Rs i) φ w) :
+    box (Rs i) (diamond (Rs i) φ) w :=
+  box_five (Rs i) φ w h
 
 /-- Belief is not veridical: there exist frames where Bᵢ(φ) ∧ ¬φ.
     Unlike knowledge (which requires reflexivity), belief frames are
@@ -245,8 +244,8 @@ are common knowledge among the discourse participants. -/
 
 /-- A common ground is grounded in common knowledge when its context
     set equals the intersection of what is commonly known. -/
-def _root_.Discourse.CommonGround.CG.groundedIn {W E : Type*}
-    (cg : CG W) (Rs : AgentAccessRel W E) (group : List E)
+def _root_.CommonGround.groundedIn {W E : Type*}
+    (cg : CommonGround W) (Rs : AgentAccessRel W E) (group : List E)
     (bound : ℕ) : Prop :=
   ∀ w, cg.contextSet w ↔
     ∀ p ∈ cg.propositions, commonKnowledge Rs group p bound w

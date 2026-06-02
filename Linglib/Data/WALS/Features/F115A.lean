@@ -22,7 +22,7 @@ inductive NegativeIndefiniteType where
   | mixedBehaviour
   /-- Negative existential construction (12 languages). -/
   | negativeExistentialConstruction
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 115A dataset (206 languages). -/
 def allData : List (Datapoint NegativeIndefiniteType) :=
@@ -235,9 +235,9 @@ def allData : List (Datapoint NegativeIndefiniteType) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint NegativeIndefiniteType) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint NegativeIndefiniteType) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F115A

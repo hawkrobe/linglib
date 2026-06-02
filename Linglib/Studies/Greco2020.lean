@@ -53,7 +53,7 @@ the representation [CP ... [X° non] ... [FocP [TP ...] Foc° ...]]:
 
 - `Core.Negation` — framework-agnostic EN types (ENType, ENStrength, PolarityLicensing)
 - `Minimalist.NegScope` — merge position, scope, classification chain (defined below)
-- `Fragments.Italian.ExpletiveNegation` — Italian Table 1 data
+- `Italian.ExpletiveNegation` — Italian Table 1 data
 - `Typology.Negation.NegationProfile.negIsHead` — head status
 - `Minimalist.fValue` / `isCPArea` — f-value classification
 
@@ -337,15 +337,15 @@ open Minimalist (Cat fValue isCPArea)
 open Minimalist.NegScope (NegMergePosition)
 open Phenomena.Negation.ExpletiveNegation (ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile)
-open Fragments.Italian.ExpletiveNegation (ENEnvironment)
+open Italian.ExpletiveNegation (ENEnvironment)
 open Typology.Negation (NegationProfile)
 
 /-- Italian negation profile (re-exported from Fragments for local use). -/
-private abbrev italian : NegationProfile := Fragments.Italian.Negation.negationProfile
+private abbrev italian : NegationProfile := Italian.Negation.negationProfile
 /-- Spanish negation profile (re-exported from Fragments for local use). -/
-private abbrev spanish : NegationProfile := Fragments.Spanish.Negation.negationProfile
+private abbrev spanish : NegationProfile := Spanish.Negation.negationProfile
 /-- French negation profile (re-exported from Fragments for local use). -/
-private abbrev french : NegationProfile := Fragments.French.Negation.negationProfile
+private abbrev french : NegationProfile := French.Negation.negationProfile
 
 -- ════════════════════════════════════════════════════
 -- § 1. Greco's four factors for surprise negation

@@ -21,9 +21,9 @@ open Minimalist Minimalist.FromFragments
 /-- "John sees Mary" as a Minimalist Merge derivation: *see*'s complement
     is *Mary* (`emR`), then *John* is added as specifier (`emL`). -/
 def john_sees_mary : Derivation :=
-  { initial := verbToSO Fragments.English.Predicates.Verbal.see 31
-    steps   := [.emR (nounToSO Fragments.English.Nouns.mary 11),
-                .emL (nounToSO Fragments.English.Nouns.john 10)] }
+  { initial := verbToSO English.Predicates.Verbal.see 31
+    steps   := [.emR (nounToSO English.Nouns.mary 11),
+                .emL (nounToSO English.Nouns.john 10)] }
 
 /-- The phonological yield of `john_sees_mary` matches one of the
     grammatical SVO sentences in `WordOrder.data`. This connects the

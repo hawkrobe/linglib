@@ -8,7 +8,7 @@ Bantu noun-class system. Carstens 2026 cites 5 active gender classes for
 the agreement-side analysis; the morphological inventory is larger.
 -/
 
-namespace Fragments.Xhosa.Gender
+namespace Xhosa.Gender
 
 open Typology.Gender
 
@@ -29,4 +29,4 @@ example : genderTypology.iso639 = "xho" ∧ genderTypology.name = "Xhosa" :=
 /-- Xhosa is a noun-class system (Bantu, 5+ classes). -/
 example : genderTypology.IsNounClassSystem := by decide
 
-end Fragments.Xhosa.Gender
+end Xhosa.Gender

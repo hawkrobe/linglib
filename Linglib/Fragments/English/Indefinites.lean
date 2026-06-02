@@ -17,17 +17,16 @@ unmarked).
 
 set_option autoImplicit false
 
-namespace Fragments.English.Indefinites
+namespace English.Indefinites
 
 open Typology.Indefinite
 
 /-- English `some-` series (*someone*, *somebody*, *something*, …):
     AAA syncretism, D&A type i unmarked. The form is generic-noun-based
     (the host stems `-one`, `-body`, `-thing` are nouns), per WALS F46A. -/
-def someEntry : IndefiniteEntry where
-  language := "English"
+def someEntry : IndefinitePronoun where
   form := "someone/-body/-thing"
-  gloss := "some(one/body/thing)"
+  ontology := .person
   basis := .genericNoun
   functions := {.specificKnown, .specificUnknown, .irrealis}
 
@@ -48,4 +47,4 @@ theorem english_paradigm_is_AAA : paradigm.syncretism = some .AAA := rfl
 theorem english_paradigm_is_genericNounBased :
     paradigm.toWALS46A = some .genericNounBased := rfl
 
-end Fragments.English.Indefinites
+end English.Indefinites

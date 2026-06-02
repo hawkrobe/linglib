@@ -55,7 +55,7 @@ open Semantics.Reference.Reciprocals
 open Semantics.Reference.PluralityLicensing
 open Semantics.Dynamic.PPCDRT
 open Core
-open Fragments.Hungarian.Reciprocals
+open Hungarian.Reciprocals
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: The Asymmetry — Derived from PluralityRequirement

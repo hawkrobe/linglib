@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 
 /-!
 # Korean Complementizers and Clause-Embedding Verbs
@@ -47,9 +47,8 @@ lives in the `Bondarenko2022` Studies file.
   verb anchoring §4.4.2 theme-arg analysis)
 -/
 
-namespace Fragments.Korean.Complementizers
+namespace Korean.Complementizers
 
-open Semantics.Lexical (VerbCore)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Clause-typing morpheme inventory
@@ -107,14 +106,14 @@ def kes : { form : String // form = "kes" } :=
 
 /-- *yukamsulewehay-ta* — 'regret'. Preferential negative, stative.
     @cite{bondarenko-2022} §4.3.2. -/
-def yukamsulewehayta : VerbCore where
+def yukamsulewehayta : Verb where
   form := "yukamsulewehay-ta"
   complementType := .finiteClause
   attitude := some (.preferential (.degreeComparison .negative))
   vendlerClass := some .state
 
 /-- *mit-ta* — 'believe'. Doxastic non-veridical, stative. -/
-def mitta : VerbCore where
+def mitta : Verb where
   form := "mit-ta"
   complementType := .finiteClause
   attitude := some (.doxastic .nonVeridical)
@@ -123,7 +122,7 @@ def mitta : VerbCore where
   opaqueContext := true
 
 /-- *sayngkakha-ta* — 'think'. Doxastic non-veridical, activity. -/
-def sayngkakhata : VerbCore where
+def sayngkakhata : Verb where
   form := "sayngkakha-ta"
   complementType := .finiteClause
   attitude := some (.doxastic .nonVeridical)
@@ -131,7 +130,7 @@ def sayngkakhata : VerbCore where
   opaqueContext := true
 
 /-- *haysekha-ta* — 'interpret'. -/
-def haysekhata : VerbCore where
+def haysekhata : Verb where
   form := "haysekha-ta"
   complementType := .finiteClause
   vendlerClass := some .activity
@@ -139,7 +138,7 @@ def haysekhata : VerbCore where
 
 /-- *selmyengha-ta* — 'explain'. Accomplishment; central to
     @cite{bondarenko-2022} §4.4.2 theme-argument analysis. -/
-def selmyenghata : VerbCore where
+def selmyenghata : Verb where
   form := "selmyengha-ta"
   complementType := .finiteClause
   vendlerClass := some .accomplishment
@@ -158,4 +157,4 @@ theorem stativity_split :
     selmyenghata.vendlerClass = some .accomplishment :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-end Fragments.Korean.Complementizers
+end Korean.Complementizers

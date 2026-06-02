@@ -17,7 +17,7 @@ projection. The Minimalist-internal `ComplementSize` substrate is consumed
 by the Studies file, not by the Fragment.
 -/
 
-namespace Fragments.Cantonese.Predicates
+namespace Cantonese.Predicates
 
 open Typology.Complementation (CTPClass)
 
@@ -112,4 +112,4 @@ theorem partition_vP_cP :
     (all.filter (·.selects = [.vP])).length = 5 ∧
     (all.filter (·.selects = [.cP])).length = 3 := by decide
 
-end Fragments.Cantonese.Predicates
+end Cantonese.Predicates

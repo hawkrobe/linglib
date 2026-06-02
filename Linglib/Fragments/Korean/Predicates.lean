@@ -1,4 +1,4 @@
-import Linglib.Semantics.Lexical.VerbEntry
+import Linglib.Semantics.Verb.Basic
 
 /-!
 # Korean Predicate Lexicon Fragment
@@ -12,13 +12,13 @@ event is not entailed to have actually occurred.
 
 -/
 
-namespace Fragments.Korean.Predicates
+namespace Korean.Predicates
 
 open Semantics.Lexical
 open Features (Causative)
 
-/-- Korean verb entry: extends VerbCore with Korean inflectional paradigm. -/
-structure KoreanVerbEntry extends VerbCore where
+/-- Korean verb entry: extends Verb with Korean inflectional paradigm. -/
+structure KoreanVerbEntry extends Verb where
   /-- Declarative form (-ta) -/
   formDecl : String
   /-- Past form (-əss-ta) -/
@@ -78,4 +78,4 @@ def allVerbs : List KoreanVerbEntry := [wus_ke_ha, ilk_ke_ha, cwuk_i]
 def lookup (form : String) : Option KoreanVerbEntry :=
   allVerbs.find? (·.form == form)
 
-end Fragments.Korean.Predicates
+end Korean.Predicates

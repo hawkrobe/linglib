@@ -4,7 +4,7 @@ import Linglib.Core.Logic.Intensional.Variables
 # Maximality and Coppock–Beaver Factorization
 @cite{sharvy-1980} @cite{kriz-2015} @cite{coppock-beaver-2015} @cite{russell-1905}
 
-Predicate operators consumed by the `NominalKind` interpretation function in
+Predicate operators consumed by the `Description` interpretation function in
 `Core/Nominal/Interpret.lean`. All operators live over
 `Core.Logic.Intensional.Frame.Denot` so they slot directly into the IL stack.
 
@@ -31,7 +31,7 @@ Predicate operators consumed by the `NominalKind` interpretation function in
 ## Design notes
 
 - **No semantic interpretation here.** This file provides only the operators.
-  `Core/Nominal/Interpret.lean` wires `NominalKind` constructors to them.
+  `Core/Nominal/Interpret.lean` wires `Description` constructors to them.
 
 - **Ord-free vs. order-relative.** `russellIota` uses only `Eq`; `sharvyMax`
   requires `PartialOrder F.Entity`. This is the @cite{sharvy-1980} /

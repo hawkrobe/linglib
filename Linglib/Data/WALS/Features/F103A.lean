@@ -26,7 +26,7 @@ inductive ThirdPersonZeroOfVerbalPersonMarking where
   | zeroInAll3rdPersonForms
   /-- Zero only in 3rd nonsingular (1 languages). -/
   | zeroOnlyIn3rdNonsingular
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 103A dataset (380 languages). -/
 def allData : List (Datapoint ThirdPersonZeroOfVerbalPersonMarking) :=
@@ -413,9 +413,9 @@ def allData : List (Datapoint ThirdPersonZeroOfVerbalPersonMarking) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint ThirdPersonZeroOfVerbalPersonMarking) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint ThirdPersonZeroOfVerbalPersonMarking) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F103A

@@ -32,7 +32,6 @@ import Linglib.Semantics.Tense.TenseAspectComposition
 namespace Semantics.Tense.TemporalAdverbials
 
 open Core.Time
-open Semantics.Events
 open Semantics.Aspect
 open Semantics.Tense.TenseAspectComposition
 
@@ -168,7 +167,7 @@ theorem before_no_lb_constraint (tc : Time) :
 
     When the LB is pinned (durative adverbial), the U-perf reading
     entails the simple present via `u_perf_entails_simple_present`. -/
-theorem durative_licenses_u_perfect (V : EventPred W Time) (t₀ tc : Time) (w : W)
+theorem durative_licenses_u_perfect (V : W → Event Time → Prop) (t₀ tc : Time) (w : W)
     (_h : t₀ ≤ tc) :
     presPerfProgXN V {t₀} tc w → simplePresent V tc w :=
   u_perf_entails_simple_present V {t₀} tc w
@@ -179,7 +178,7 @@ theorem durative_licenses_u_perfect (V : EventPred W Time) (t₀ tc : Time) (w :
     With no LB constraint, the domain is {tLB | tLB ≤ tc}. Under IMPF
     (subinterval property), this is close to Set.univ for the relevant
     range, so U-perf ↔ simple present by `broad_focus_equiv`'s argument. -/
-theorem inclusive_no_u_license (V : EventPred W Time) (tc : Time) (w : W) :
+theorem inclusive_no_u_license (V : W → Event Time → Prop) (tc : Time) (w : W) :
     presPerfProgXN V Set.univ tc w ↔ simplePresent V tc w :=
   broad_focus_equiv V tc w
 

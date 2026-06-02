@@ -32,7 +32,7 @@ ASCII identifiers; IPA orthography lives in `.form` strings.
 See `Fragments/Ga/Basic.lean` for rationale.
 -/
 
-namespace Fragments.Ga
+namespace Ga
 
 open Landau2015 (LandauPredicateClass ControlTier)
 
@@ -162,4 +162,4 @@ theorem kpang_logophoric  : kpang.controlTier  = some .logophoric := rfl
 theorem kenya_logophoric  : kenya.controlTier  = some .logophoric := rfl
 theorem laka_logophoric   : laka.controlTier   = some .logophoric := rfl
 
-end Fragments.Ga
+end Ga

@@ -112,7 +112,7 @@ def teopAlienatorN : CatHead := CatHead.n_plain
 /-- Determine gender from the n head's feature content.
     If n has any [ANIM]-dimension gender feature → gender I;
     otherwise → gender II. -/
-def teopGenderFromN (nh : CatHead) : Fragments.Teop.Gender :=
+def teopGenderFromN (nh : CatHead) : Teop.Gender :=
   match nh.phi.gender with
   | some gf => if gf.val.dim == .anim then .gI else .gII
   | none    => .gII
@@ -140,7 +140,7 @@ theorem teop_uses_anim_dimension :
 /-! ### Teop Vocabulary Insertion -/
 
 /-- Teop article VI rules, ordered by specificity. -/
-def teopArticleRules : List (VocabItem Fragments.Teop.ArticleCtx Unit) :=
+def teopArticleRules : List (VocabItem Teop.ArticleCtx Unit) :=
   [ { exponent := "e"
       contextMatch := λ c => c.gender == .gI && c.proprial
       specificity := 3 }
@@ -186,8 +186,8 @@ theorem teop_end_to_end_unpossessed :
     when iPossessed, gender II when free. -/
 
 theorem teop_fragment_bridge :
-    teopGenderFromN teopBodyPartN = Fragments.Teop.iPossessedGender Fragments.Teop.bina ∧
-    teopGenderFromN teopAlienatorN = Fragments.Teop.bina.gender := ⟨rfl, rfl⟩
+    teopGenderFromN teopBodyPartN = Teop.iPossessedGender Teop.bina ∧
+    teopGenderFromN teopAlienatorN = Teop.bina.gender := ⟨rfl, rfl⟩
 
 /-! ### Five Teop Predictions (@cite{adamson-2024} §3.1)
 
@@ -292,12 +292,12 @@ theorem jarawara_no_impoverishment_when_inactive :
 
 /-! ### Bridge to Fragment Data
 
-    The 175 iPossessable nouns in 12 semantic classes from `Fragments.Jarawara`
+    The 175 iPossessable nouns in 12 semantic classes from `Jarawara`
     are drawn from the upper tiers of the inalienability hierarchy,
     confirming the cross-linguistic prediction. -/
 
 theorem jarawara_fragment_total :
-    (Fragments.Jarawara.allClasses.map (·.memberCount)).foldl (· + ·) 0 = 175 := by
+    (Jarawara.allClasses.map (·.memberCount)).foldl (· + ·) 0 = 175 := by
   native_decide
 
 -- ============================================================================
@@ -506,7 +506,7 @@ theorem pf_semantic_correlation (nh : CatHead)
 
 Jarawara doesn't have articles, but it DOES have a PF pipeline: possessor
 features → impoverishment → MARKED feature check → possessed noun form
-(mano vs mani). This is the `manoForm` function from `Fragments.Jarawara`.
+(mano vs mani). This is the `manoForm` function from `Jarawara`.
 
 The semantic pipeline parallels Teop: the iPossessable n has {D} →
 relational semantic type → can take possessor. The gender is feminine
@@ -515,8 +515,8 @@ because n has no marked gender feature, not because it lacks {D}. -/
 /-- Jarawara PF pipeline: possessor features → impoverishment →
     MARKED feature check → possessed form (mano/mani).
     The possessor's features thread through each stage. -/
-def jarawaraPFDerive (poss : Fragments.Jarawara.Possessor) : Fragments.Jarawara.PossessedForm :=
-  Fragments.Jarawara.manoForm poss
+def jarawaraPFDerive (poss : Jarawara.Possessor) : Jarawara.PossessedForm :=
+  Jarawara.manoForm poss
 
 -- PF pipeline: 1SG possessor → [PARTICIPANT] is MARKED → mano
 theorem jarawara_pf_1sg : jarawaraPFDerive ⟨.first, .sg, none⟩ = .mascForm := rfl
@@ -580,7 +580,7 @@ The same function (`genderLocalityHypothesis`) that predicts possession–gender
 interaction in Teop and Jarawara also predicts number–gender interaction in
 Italian. The GLH is a single principle applied to different feature types. -/
 
-open Fragments.Italian.NumberGender
+open Italian.NumberGender
 
 /-- The Italian data confirms the GLH prediction: gender changes in the
     plural track the number position. Verified over the full noun inventory.

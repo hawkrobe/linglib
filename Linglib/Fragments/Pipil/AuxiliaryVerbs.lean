@@ -29,7 +29,7 @@ the gloss `1-AUX 1-2PL-show` which shows the `1` (subject) prefix
 on BOTH elements. Audit fix: 2026-04-30.
 -/
 
-namespace Fragments.Pipil.AuxiliaryVerbs
+namespace Pipil.AuxiliaryVerbs
 
 open Morphology (InflDistribution MorphCategory)
 
@@ -90,4 +90,4 @@ def form : String := splitDoubledForm
 def gloss : String := splitDoubledGloss
 def inflDistribution : InflDistribution := splitDoubledDistribution
 
-end Fragments.Pipil.AuxiliaryVerbs
+end Pipil.AuxiliaryVerbs

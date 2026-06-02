@@ -5,7 +5,7 @@ import Linglib.Typology.Plurals
 @cite{wals-2013}
 -/
 
-namespace Fragments.Lezgian
+namespace Lezgian
 
 /-- Lezgian (Daghestanian): suffix plural (*-ar*, *-er*), obligatory on all
     nouns (but absent with numerals); person-number stems in pronouns;
@@ -18,4 +18,4 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .personNumberStem
   , associativePlural := .sameAsAdditive }
 
-end Fragments.Lezgian
+end Lezgian

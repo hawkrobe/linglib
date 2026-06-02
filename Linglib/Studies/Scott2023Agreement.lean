@@ -56,8 +56,8 @@ both paths.
 
 namespace Scott2023
 
-open Fragments.Mayan (PersonNumber)
-open Minimalist Fragments.Mayan.Mam
+open Mayan (PersonNumber)
+open Minimalist Mam
 
 -- ============================================================================
 -- § 0: Minimalism-Specific Vocabulary (Set A / Set B as VI entries)

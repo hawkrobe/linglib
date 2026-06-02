@@ -12,7 +12,7 @@ AA is Fin-based and freely embeddable.
 
 import Linglib.Typology.Pronoun.Basic
 
-namespace Fragments.Galician.Pronouns
+namespace Galician.Pronouns
 
 open Pronoun
 open Features.Register (Level)
@@ -22,11 +22,11 @@ open Features.Register (Level)
 -- ============================================================================
 
 /-- *eu* — 1sg. -/
-def eu : Entry :=
+def eu : PersonalPronoun :=
   { form := "eu", person := some .first, number := some .sg }
 
 /-- *nós* — 1pl. -/
-def nos : Entry :=
+def nos : PersonalPronoun :=
   { form := "nós", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -34,19 +34,19 @@ def nos : Entry :=
 -- ============================================================================
 
 /-- *ti* — 2sg familiar (T form). -/
-def ti : Entry :=
+def ti : PersonalPronoun :=
   { form := "ti", person := some .second, number := some .sg, register := .informal }
 
 /-- *vostede* — 2sg formal (V form). -/
-def vostede : Entry :=
+def vostede : PersonalPronoun :=
   { form := "vostede", person := some .second, number := some .sg, register := .formal }
 
 /-- *vós* — 2pl familiar. -/
-def vos_pl : Entry :=
+def vos_pl : PersonalPronoun :=
   { form := "vós", person := some .second, number := some .pl, register := .informal }
 
 /-- *vostedes* — 2pl formal. -/
-def vostedes : Entry :=
+def vostedes : PersonalPronoun :=
   { form := "vostedes", person := some .second, number := some .pl, register := .formal }
 
 -- ============================================================================
@@ -54,28 +54,28 @@ def vostedes : Entry :=
 -- ============================================================================
 
 /-- *el* — 3sg masculine. -/
-def el : Entry :=
+def el : PersonalPronoun :=
   { form := "el", person := some .third, number := some .sg }
 
 /-- *ela* — 3sg feminine. -/
-def ela : Entry :=
+def ela : PersonalPronoun :=
   { form := "ela", person := some .third, number := some .sg }
 
 /-- *eles* — 3pl masculine. -/
-def eles : Entry :=
+def eles : PersonalPronoun :=
   { form := "eles", person := some .third, number := some .pl }
 
 /-- *elas* — 3pl feminine. -/
-def elas : Entry :=
+def elas : PersonalPronoun :=
   { form := "elas", person := some .third, number := some .pl }
 
 -- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List Entry := [ti, vostede]
+def secondPersonPronouns : List PersonalPronoun := [ti, vostede]
 
-def allPronouns : List Entry :=
+def allPronouns : List PersonalPronoun :=
   [eu, nos] ++ secondPersonPronouns ++ [vos_pl, vostedes, el, ela, eles, elas]
 
 -- ============================================================================
@@ -133,4 +133,4 @@ theorem che_is_informal : che.register = .informal := rfl
 theorem plural_tv :
     vos_pl.register = .informal ∧ vostedes.register = .formal := ⟨rfl, rfl⟩
 
-end Fragments.Galician.Pronouns
+end Galician.Pronouns

@@ -107,8 +107,8 @@ transitives + K'ichee' fragment + Zulu fragment) to formalize.
 
 namespace Preminger2014
 
-open Fragments.Mayan (PersonNumber)
-open Fragments.Mayan.Kaqchikel
+open Mayan (PersonNumber)
+open Kaqchikel
 open Minimalist
 
 -- ============================================================================

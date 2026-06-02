@@ -31,7 +31,7 @@ PRESENT tense + PERFECT aspect. The auxiliary *avere*/*essere* makes the
 PERF head morphologically transparent.
 -/
 
-namespace Fragments.Italian.Tense
+namespace Italian.Tense
 
 open Semantics.Tense.Evidential
 open Semantics.Tense.SOT.Decomposition
@@ -189,4 +189,4 @@ theorem italian_passatoProssimo_is_pres_perf :
     kratzerPassatoProssimo.hasPerfect = true :=
   ⟨rfl, rfl⟩
 
-end Fragments.Italian.Tense
+end Italian.Tense

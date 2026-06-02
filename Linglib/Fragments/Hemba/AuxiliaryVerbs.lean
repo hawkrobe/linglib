@@ -28,7 +28,7 @@ This is the canonical split/doubled pattern: agreement is doubled across
 both elements while tense and mood are split between them.
 -/
 
-namespace Fragments.Hemba.AuxiliaryVerbs
+namespace Hemba.AuxiliaryVerbs
 
 open Morphology (MorphCategory InflDistribution)
 
@@ -65,4 +65,4 @@ theorem mood_on_lex_only :
     inflDistribution.onLex.contains .mood = true := by
   exact ⟨by decide, by decide⟩
 
-end Fragments.Hemba.AuxiliaryVerbs
+end Hemba.AuxiliaryVerbs

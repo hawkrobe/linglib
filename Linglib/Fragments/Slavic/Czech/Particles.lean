@@ -15,7 +15,7 @@ in Czech polar questions (Table 1).
 - *vůbec* 'at all' — NPI, requires licensing by negation
 
 These particles, together with the NCI/PPI determiner contrast
-(`Fragments.Slavic.Czech.Determiners`), form the five-column fingerprint
+(`Czech.Determiners`), form the five-column fingerprint
 that uniquely identifies each negation position.
 
 ## Cross-linguistic connections
@@ -27,7 +27,7 @@ that uniquely identifies each negation position.
 
 -/
 
-namespace Fragments.Slavic.Czech.Particles
+namespace Czech.Particles
 
 open Semantics.Negation.CzechNegation
 
@@ -133,7 +133,7 @@ General NPI, requiring DE licensing. Licensed by inner negation (propositional �
 is a DE context). Not one of the five Table 1 diagnostics, but an important
 polarity item in Czech negated PQs.
 
-Cross-linguistic parallel: English *at all* (`Fragments.English.PolarityItems.atAll`). -/
+Cross-linguistic parallel: English *at all* (`English.PolarityItems.atAll`). -/
 def vubec : ParticleEntry :=
   { form := "vůbec"
   , gloss := "at.all"
@@ -292,4 +292,4 @@ náhodou's orderingSourceModifier. -/
 theorem copak_nahodou_different_semantics :
     copak.semantics ≠ nahodou.semantics := by decide
 
-end Fragments.Slavic.Czech.Particles
+end Czech.Particles

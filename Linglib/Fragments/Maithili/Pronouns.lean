@@ -11,7 +11,7 @@ and freely embeddable.
 
 import Linglib.Typology.Pronoun.Basic
 
-namespace Fragments.Maithili.Pronouns
+namespace Maithili.Pronouns
 
 open Pronoun
 
@@ -20,11 +20,11 @@ open Pronoun
 -- ============================================================================
 
 /-- *hum* — 1sg. -/
-def hum : Entry :=
+def hum : PersonalPronoun :=
   { form := "hum", person := some .first, number := some .sg }
 
 /-- *hum sab* — 1pl. -/
-def humSab : Entry :=
+def humSab : PersonalPronoun :=
   { form := "hum sab", person := some .first, number := some .pl }
 
 -- ============================================================================
@@ -32,15 +32,15 @@ def humSab : Entry :=
 -- ============================================================================
 
 /-- *tõ* — 2sg non-honorific. -/
-def toN : Entry :=
+def toN : PersonalPronoun :=
   { form := "tõ", person := some .second, number := some .sg, register := .informal }
 
 /-- *ahã* — 2sg honorific. -/
-def ahaN : Entry :=
+def ahaN : PersonalPronoun :=
   { form := "ahã", person := some .second, number := some .sg, register := .neutral }
 
 /-- *apne* — 2sg high-honorific. -/
-def apne : Entry :=
+def apne : PersonalPronoun :=
   { form := "apne", person := some .second, number := some .sg, register := .formal }
 
 -- ============================================================================
@@ -48,24 +48,24 @@ def apne : Entry :=
 -- ============================================================================
 
 /-- *ũ* — 3sg non-honorific (distal). -/
-def uN : Entry :=
+def uN : PersonalPronoun :=
   { form := "ũ", person := some .third, number := some .sg, register := .informal }
 
 /-- *o* — 3sg honorific. -/
-def o : Entry :=
+def o : PersonalPronoun :=
   { form := "o", person := some .third, number := some .sg, register := .neutral }
 
 /-- *ũ sab* — 3pl. -/
-def uNSab : Entry :=
+def uNSab : PersonalPronoun :=
   { form := "ũ sab", person := some .third, number := some .pl }
 
 -- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
-def secondPersonPronouns : List Entry := [toN, ahaN, apne]
+def secondPersonPronouns : List PersonalPronoun := [toN, ahaN, apne]
 
-def allPronouns : List Entry :=
+def allPronouns : List PersonalPronoun :=
   [hum, humSab] ++ secondPersonPronouns ++ [uN, o, uNSab]
 
 -- ============================================================================
@@ -117,4 +117,4 @@ theorem markers_three_levels :
 theorem third_person_honorific :
     uN.register = .informal ∧ o.register = .neutral := ⟨rfl, rfl⟩
 
-end Fragments.Maithili.Pronouns
+end Maithili.Pronouns

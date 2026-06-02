@@ -342,7 +342,7 @@ theorem forall_isTest {E : Type*} (x : Nat) (φ : DPLRel E) (g h : Nat → E)
 /-! ## DPL-as-Dynamic-Ty2
 
 DPL embeds directly into Dynamic Ty2 with `S = Assignment E = Nat → E`.
-DPL assignments ARE Dynamic Ty2 assignments; DPL relations ARE DRS meanings.
+DPL assignments ARE Dynamic Ty2 assignments; DPL relations ARE Update meanings.
 The cylindric algebra bridges (`closure(∃) = cylindrify`, `closure(=) = diagonal`)
 live in `Core/CylindricAlgebra/DynamicSemantics.lean`.
 -/
@@ -360,14 +360,14 @@ theorem extend_at {E : Type*} (g : Assignment E) (n : Nat) (e : E) :
 theorem extend_other {E : Type*} (g : Assignment E) (n m : Nat) (e : E) (h : n ≠ m) :
     dref m (extend g n e) = dref m g := by simp [dref, extend, h.symm]
 
-/-- DPL relation IS a DRS over `Assignment E`. -/
-def toDRS {E : Type*} (φ : DPLRel E) : DRS (Assignment E) := φ
+/-- DPL relation IS an Update over `Assignment E`. -/
+def toDRS {E : Type*} (φ : DPLRel E) : Update (Assignment E) := φ
 
-/-- DRS IS a DPL relation. -/
-def ofDRS {E : Type*} (D : DRS (Assignment E)) : DPLRel E := D
+/-- Update IS a DPL relation. -/
+def ofDRS {E : Type*} (D : Update (Assignment E)) : DPLRel E := D
 
 @[simp] theorem toDRS_ofDRS {E : Type*} (φ : DPLRel E) : ofDRS (toDRS φ) = φ := rfl
-@[simp] theorem ofDRS_toDRS {E : Type*} (D : DRS (Assignment E)) : toDRS (ofDRS D) = D := rfl
+@[simp] theorem ofDRS_toDRS {E : Type*} (D : Update (Assignment E)) : toDRS (ofDRS D) = D := rfl
 
 theorem atom_eq_test {E : Type*} (p : Assignment E → Prop) :
     toDRS (DPLRel.atom p) = test (λ g => p g) := by

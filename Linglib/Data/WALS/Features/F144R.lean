@@ -30,7 +30,7 @@ inductive SonegvOrder where
   | type1Type2
   /-- No SONegV (238 languages). -/
   | noSonegv
-  deriving DecidableEq, BEq, Repr
+  deriving DecidableEq, Repr
 
 /-- Complete WALS 144R dataset (411 languages). -/
 def allData : List (Datapoint SonegvOrder) :=
@@ -448,9 +448,9 @@ def allData : List (Datapoint SonegvOrder) :=
   ]
 
 /-- Look up a language by WALS code. -/
-def lookup (code : String) := Datapoint.lookup allData code
+def lookup (code : String) : Option (Datapoint SonegvOrder) := Datapoint.lookup allData code
 
 /-- Look up a language by ISO 639-3 code. -/
-def lookupISO (iso : String) := Datapoint.lookupISO allData iso
+def lookupISO (iso : String) : Option (Datapoint SonegvOrder) := Datapoint.lookupISO allData iso
 
 end Data.WALS.F144R

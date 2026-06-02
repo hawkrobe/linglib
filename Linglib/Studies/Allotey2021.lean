@@ -64,7 +64,7 @@ open Minimalist.MinimalPronoun
 open Minimalist.LongDistanceAgree
 open Landau2015
 open Phenomena.NullSubject (ProDropProfile)
-open Fragments.Ga (EmbeddedClauseType clauseProperties clauseComplementizer
+open Ga (EmbeddedClauseType clauseProperties clauseComplementizer
                    complementizer_isFinite_eq_finiteFlag
                    Complementizer Control CTP)
 
@@ -190,7 +190,7 @@ theorem landau_predicts_control (c : EmbeddedClauseType) :
 -- § 5: Per-Verb Control Verification
 -- ════════════════════════════════════════════════════════════════
 
-open Fragments.Ga (tao kpleno kpang hiekpano nye kenya laka dai wa kee)
+open Ga (tao kpleno kpang hiekpano nye kenya laka dai wa kee)
 
 /-- Each subject-control verb selects an `irrealisNi` clause whose
     OC signature is the full one. -/
@@ -278,7 +278,7 @@ theorem ga_has_reflexive :
 
 /-- Gã profile derived from fragment data and inventory. -/
 def gaProfile : ProDropProfile :=
-  { allowsProDrop := Fragments.Ga.allowsProDrop
+  { allowsProDrop := Ga.allowsProDrop
   , hasOvertPRO   := decide gaInventory.hasOvertPRO }
 
 /-- Gã satisfies the implicational universal — overt PRO + non-*pro*-drop

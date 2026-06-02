@@ -18,20 +18,20 @@ WALS Ch 106 classifies German as "mixed" because "sich" is shared
 between reflexive and reciprocal uses.
 -/
 
-namespace Fragments.German.Reciprocals
+namespace German.Reciprocals
 
 open Pronoun
 
 /-- sich — reflexive/reciprocal pronoun (3rd person). -/
-def sich : Entry :=
+def sich : PersonalPronoun :=
   { form := "sich", person := some .third }
 
 /-- einander — dedicated reciprocal pronoun. -/
-def einander : Entry :=
+def einander : PersonalPronoun :=
   { form := "einander", person := some .third, number := some .pl }
 
 /-- The dedicated reciprocal form is distinct from the reflexive. -/
 theorem einander_distinct_from_sich :
     einander.form ≠ sich.form := by decide
 
-end Fragments.German.Reciprocals
+end German.Reciprocals

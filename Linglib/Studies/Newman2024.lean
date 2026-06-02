@@ -314,7 +314,7 @@ def tuckIn (_existingSpecs : Nat) : SpecPosition := .innermost
     - KPs (inherent case → non-DP) cannot A-move (no [·D·] checking)
     - wh-DPs check more features than plain DPs (DOMA)
     - DPs can satisfy both [·D·] and [·X·] probes -/
-inductive NominalType where
+inductive DPType where
   | whDP   -- wh-phrase (who, what)
   | dp     -- full DP (the cat, John)
   | nonDP  -- KP or non-DP phrase (PP, CP, AP)
@@ -325,7 +325,7 @@ inductive NominalType where
     - DP: checks [·D·] and [·X·]
     - non-DP: checks [·X·] only
     No nominal checks [·V·] (only VP can). -/
-def NominalType.checksMerge : NominalType → MergeFeature → Bool
+def DPType.checksMerge : DPType → MergeFeature → Bool
   | .whDP, .D | .whDP, .X => true
   | .dp, .D | .dp, .X => true
   | .nonDP, .X => true
@@ -335,14 +335,14 @@ def NominalType.checksMerge : NominalType → MergeFeature → Bool
     This is NOT a Merge feature on V/v but appears on functional
     heads (C). It is what makes wh-DPs strictly more powerful
     than plain DPs in the feature-checking hierarchy. -/
-def NominalType.checksWh : NominalType → Bool
+def DPType.checksWh : DPType → Bool
   | .whDP => true
   | _ => false
 
 /-- Feature-checking capacity for A-movement (to Spec,TP via [·D·])
     plus Ā-features ([·wh·]). This count drives Weak Economy
     comparisons in DOMA configurations. -/
-def NominalType.aMovementFeatures : NominalType → Nat
+def DPType.aMovementFeatures : DPType → Nat
   | .whDP => 2  -- [·D·] on T + [·wh·] on C
   | .dp => 1    -- [·D·] on T only
   | .nonDP => 0 -- cannot A-move (lacks [·D·])
@@ -350,7 +350,7 @@ def NominalType.aMovementFeatures : NominalType → Nat
 /-- The entailment hierarchy: wh-DP ⊇ DP ⊇ non-DP.
     Each type can check a superset of the features checkable by
     the types below it. -/
-def NominalType.subsumes : NominalType → NominalType → Bool
+def DPType.subsumes : DPType → DPType → Bool
   | .whDP, _ => true
   | .dp, .dp | .dp, .nonDP => true
   | .nonDP, .nonDP => true
@@ -358,7 +358,7 @@ def NominalType.subsumes : NominalType → NominalType → Bool
 
 /-- Can this nominal type undergo A-movement?
     Requires checking [·D·] on T. -/
-def NominalType.canAMove (n : NominalType) : Bool := n.checksMerge .D
+def DPType.canAMove (n : DPType) : Bool := n.checksMerge .D
 
 /-- Test whether a single FreeMagma branch is a K-headed leaf. -/
 private def isKLeaf : FreeMagma (LIToken ⊕ Nat) → Bool
@@ -507,28 +507,28 @@ theorem transitive_forms_complex :
 -- IO passives.
 
 /-- non-DPs (KPs) cannot check [·D·]. -/
-theorem nonDP_cannot_check_D : NominalType.checksMerge .nonDP .D = false := rfl
-theorem nonDP_can_check_X : NominalType.checksMerge .nonDP .X = true := rfl
+theorem nonDP_cannot_check_D : DPType.checksMerge .nonDP .D = false := rfl
+theorem nonDP_can_check_X : DPType.checksMerge .nonDP .X = true := rfl
 
 /-- DPs can check both [·D·] and [·X·]. -/
-theorem dp_checks_D : NominalType.checksMerge .dp .D = true := rfl
-theorem dp_checks_X : NominalType.checksMerge .dp .X = true := rfl
+theorem dp_checks_D : DPType.checksMerge .dp .D = true := rfl
+theorem dp_checks_X : DPType.checksMerge .dp .X = true := rfl
 
 /-- wh-DPs additionally check [·wh·] on C. -/
-theorem whDP_checks_wh : NominalType.checksWh .whDP = true := rfl
-theorem dp_no_wh : NominalType.checksWh .dp = false := rfl
+theorem whDP_checks_wh : DPType.checksWh .whDP = true := rfl
+theorem dp_no_wh : DPType.checksWh .dp = false := rfl
 
 /-- The entailment hierarchy is a total preorder. -/
-theorem whDP_subsumes_dp : NominalType.subsumes .whDP .dp = true := rfl
-theorem dp_subsumes_nonDP : NominalType.subsumes .dp .nonDP = true := rfl
-theorem nonDP_not_subsumes_dp : NominalType.subsumes .nonDP .dp = false := rfl
+theorem whDP_subsumes_dp : DPType.subsumes .whDP .dp = true := rfl
+theorem dp_subsumes_nonDP : DPType.subsumes .dp .nonDP = true := rfl
+theorem nonDP_not_subsumes_dp : DPType.subsumes .nonDP .dp = false := rfl
 
 /-- A-movement accessibility: DPs and wh-DPs can A-move; non-DPs cannot.
     This is the core of the no-IO-passive explanation for languages
     with inherent case on indirect objects. -/
-theorem nonDP_cannot_amove : NominalType.canAMove .nonDP = false := rfl
-theorem dp_can_amove : NominalType.canAMove .dp = true := rfl
-theorem whDP_can_amove : NominalType.canAMove .whDP = true := rfl
+theorem nonDP_cannot_amove : DPType.canAMove .nonDP = false := rfl
+theorem dp_can_amove : DPType.canAMove .dp = true := rfl
+theorem whDP_can_amove : DPType.canAMove .whDP = true := rfl
 
 -- ============================================================================
 -- § 4: Symmetric Passives
@@ -556,20 +556,20 @@ theorem high_io_has_vp_spec :
 -- subject (not DO). Weak Economy explains this: IO-to-subject checks
 -- more features because the IO is a wh-DP (checking [·D·] + [·wh·])
 -- while DO is a plain DP (checking [·D·] only).
--- Feature counts are derived from the NominalType hierarchy.
+-- Feature counts are derived from the DPType hierarchy.
 
 /-- IO-to-subject in wh-passive: IO is a wh-DP.
-    Feature count derived from `NominalType.aMovementFeatures .whDP`.
+    Feature count derived from `DPType.aMovementFeatures .whDP`.
     Unlike Greek CD (§7), DOMA operations are pure alternatives at the
     same derivational step — not in a bleeding relation. -/
 def ioToSubjectWh : PendingOp where
-  featuresChecked := NominalType.aMovementFeatures .whDP
+  featuresChecked := DPType.aMovementFeatures .whDP
   bleeds := []
 
 /-- DO-to-subject in wh-passive: DO is a plain DP.
-    Feature count derived from `NominalType.aMovementFeatures .dp`. -/
+    Feature count derived from `DPType.aMovementFeatures .dp`. -/
 def doToSubjectWh : PendingOp where
-  featuresChecked := NominalType.aMovementFeatures .dp
+  featuresChecked := DPType.aMovementFeatures .dp
   bleeds := []
 
 /-- Weak Economy prefers IO-to-subject (checks more features). -/

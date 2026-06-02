@@ -2,6 +2,7 @@ import Linglib.Features.Case
 import Linglib.Core.UD
 import Linglib.Features.Prominence
 import Linglib.Syntax.Case.Alignment
+import Linglib.Syntax.Agreement.Paradigm
 
 /-!
 # Shared Mayan Fragment Infrastructure
@@ -38,7 +39,7 @@ Both types assign ergative uniformly (via transitive v⁰) and nominative
 to intransitive subjects (via Infl⁰).
 -/
 
-namespace Fragments.Mayan
+namespace Mayan
 
 -- ============================================================================
 -- § 1: Mayan Absolutive Parameter (observable)
@@ -361,6 +362,29 @@ def isPlural : PersonNumber → Bool
 def all : List PersonNumber :=
   [.p1sg, .p2sg, .p3sg, .p1pl, .p2pl, .p3pl]
 
+/-- A Mayan `PersonNumber` as a canonical φ-cell (`Syntax.Agreement.AgrCell` —
+    person × number, the same φ a `Pronoun`/`Word` carries). The bridge that lets
+    the per-language Set A / Set B paradigms be keyed by canonical φ, so a
+    controller's φ (`Word.agrCell`) indexes them directly (@cite{corbett-1998}). -/
+def toAgrCell : PersonNumber → Syntax.Agreement.AgrCell
+  | .p1sg => .pn .first .Sing  | .p2sg => .pn .second .Sing | .p3sg => .pn .third .Sing
+  | .p1pl => .pn .first .Plur  | .p2pl => .pn .second .Plur | .p3pl => .pn .third .Plur
+
+/-- Lift a per-cell exponent function (a language's Set A / Set B table) to a
+    descriptive agreement paradigm keyed by canonical φ-cells. The one place the
+    `PersonNumber`-table-to-canonical-φ conversion lives; each language's
+    `setAParadigm`/`setBParadigm` is just `PersonNumber.paradigm setAExponent`. -/
+def paradigm (exp : PersonNumber → String) : Syntax.Agreement.Paradigm String :=
+  PersonNumber.all.map fun p => (p.toAgrCell, exp p)
+
+/-- Realizing a lifted paradigm at a cell recovers the exponent — for *any*
+    exponent function. Since the cell is canonical φ, a controller's
+    `Word.agrCell` indexes the paradigm directly (this is the unification, proven
+    once rather than per language). -/
+theorem paradigm_realize (exp : PersonNumber → String) (p : PersonNumber) :
+    (paradigm exp).realize p.toAgrCell = some (exp p) := by
+  cases p <;> rfl
+
 end PersonNumber
 
 -- ============================================================================
@@ -480,4 +504,4 @@ def caseAt : MayanLang → UD.Aspect → Features.Prominence.ArgumentRole → Fe
   | .Mam,       asp, r => caseMam asp r
   | .Kiche,     asp, r => caseKiche asp r
 
-end Fragments.Mayan
+end Mayan

@@ -29,7 +29,7 @@ fragment.
 
 -/
 
-namespace Fragments.Slavic
+namespace Slavic
 
 /-- Slavic grammatical aspect — the binary perfective / imperfective
     contrast. -/
@@ -72,4 +72,4 @@ instance : DecidablePred IsSuperlexical
 
 end PrefixClass
 
-end Fragments.Slavic
+end Slavic

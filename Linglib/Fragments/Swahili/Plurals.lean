@@ -5,7 +5,7 @@ import Linglib.Typology.Plurals
 @cite{wals-2013}
 -/
 
-namespace Fragments.Swahili
+namespace Swahili
 
 /-- Swahili: plural marked by noun class prefixes (*wa-*, *vi-*, *mi-*, *ma-*),
     obligatory on all nouns; person-number stems in pronouns (*mimi*/*sisi*);
@@ -18,4 +18,4 @@ def pluralityProfile : Typology.PluralityProfile :=
   , pronounPlurality := .personNumberStem
   , associativePlural := .absent }
 
-end Fragments.Swahili
+end Swahili
