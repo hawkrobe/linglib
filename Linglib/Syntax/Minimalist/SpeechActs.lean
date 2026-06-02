@@ -341,11 +341,11 @@ def evalPSpecifier : SAPMood → PRole := seatOfKnowledge
 /-- The specifier of EvidP hosts the evidence type.
 
     Maps S&T's EVIDENCE argument to the framework-agnostic
-    `EvidentialSource` from `Features/Evidentiality.lean`:
+    `CoarseSource` from `Features/Evidentiality.lean`:
     - direct → sensory observation
     - inference → reasoning from effects
     - hearsay → reported evidence -/
-abbrev EvidPSpecifier := Features.Evidentiality.EvidentialSource
+abbrev EvidPSpecifier := Features.Evidentiality.CoarseSource
 
 /-- Bridge to `Core/Epistemicity.lean`: the Sentience Domain's
     two specifiers (SEAT OF KNOWLEDGE + EVIDENCE) correspond to
