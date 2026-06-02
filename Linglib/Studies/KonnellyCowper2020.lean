@@ -558,13 +558,13 @@ theorem stage3_they_from_structure (ctx : ReferentContext) :
     a gender feature. This makes explicit the connection K&C's analysis reveals:
     epicene is not a positive gender class but the **absence** of a contrastive
     gender feature — the elsewhere case in VI competition. The Fragment encodes
-    that absence directly as `genderOf "they" = none`. -/
+    that absence directly as `they.gender = none`. -/
 theorem elsewhere_is_genderless :
     subsetPrinciple pronounVIs ungenderedBundle = some "they" ∧
-    English.Pronouns.genderOf "they" = none :=
+    English.Pronouns.they.gender = none :=
   ⟨by decide, rfl⟩
 
-/-- The VI competition and the Fragment's `genderOf` are consistent across all
+/-- The VI competition and the lexicon `gender` fields are consistent across all
     four pronoun forms: each VI exponent maps to its expected surface gender, and
     *they* — the elsewhere exponent — to the absence of one (`none`).
 
@@ -572,10 +572,10 @@ theorem elsewhere_is_genderless :
     Fragment's gender field: VI *derives* which form is used, and the Fragment
     *records* the gender (or its absence). -/
 theorem vi_fragment_consistency :
-    English.Pronouns.genderOf "she" = some .feminine ∧
-    English.Pronouns.genderOf "he" = some .masculine ∧
-    English.Pronouns.genderOf "it" = some .neuter ∧
-    English.Pronouns.genderOf "they" = none :=
+    English.Pronouns.she.gender = some .feminine ∧
+    English.Pronouns.he.gender = some .masculine ∧
+    English.Pronouns.it.gender = some .neuter ∧
+    English.Pronouns.they.gender = none :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================

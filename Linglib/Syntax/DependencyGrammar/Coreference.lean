@@ -112,7 +112,7 @@ def reflexiveLicensed (clause : SimpleClause) : Bool :=
     | some .reflexive =>
       subjectDCommandsObject clause &&
       sameLocalDomain clause &&
-      decide (phiAgree clause.subject obj)
+      decide (Word.Agree clause.subject obj)
     | _ => true
 
 /-- Reciprocals must be d-commanded by a semantically plural antecedent.

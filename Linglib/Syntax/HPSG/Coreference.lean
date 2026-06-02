@@ -2,7 +2,7 @@
 HPSG Coreference (Binding).
 
 Binding theory using MODE and ARG-ST outranking,
-per @cite{sag-wasow-bender-2003} Ch. 7 and @cite{pollard-sag-1994} (binding theory).
+per @cite{sag-wasow-bender-2003} and @cite{pollard-sag-1994} (binding theory).
 
 SWB2003 has two binding principles (not three):
 - **Principle A**: [MODE ana] must be outranked by a coindexed element
@@ -38,7 +38,7 @@ private abbrev eachOther := English.Pronouns.eachOther.toWord
 namespace HPSG.Coreference
 
 open Features (BindingClass)
-open English.NominalClassification (isNominalCat classifyNominal phiAgree)
+open English.NominalClassification (isNominalCat classifyNominal)
 
 -- ============================================================================
 -- MODE Classification
@@ -48,7 +48,7 @@ section ModeClassification
 
 /-- Derive MODE feature from a word, via the shared `classifyNominal`.
 
-    Per @cite{sag-wasow-bender-2003} Ch. 7:
+    Per @cite{sag-wasow-bender-2003}:
     - Reflexives and reciprocals → [MODE ana]
     - Personal pronouns and R-expressions → [MODE ref] -/
 def classifyMode (w : Word) : Option HPSG.Mode :=
@@ -117,7 +117,7 @@ private def wordToSynsem (w : Word) : HPSG.Synsem :=
 /-- Build the ARG-ST for a simple clause from its arguments.
 
     ARG-ST = [subject, object] — the verb's argument structure list,
-    ordered by obliqueness (@cite{sag-wasow-bender-2003} Ch. 7). -/
+    ordered by obliqueness (@cite{sag-wasow-bender-2003}). -/
 def SimpleClause.toArgSt (clause : SimpleClause) : HPSG.ArgSt :=
   match clause.object with
   | none => { args := [wordToSynsem clause.subject] }
@@ -140,7 +140,7 @@ def sameArgSt (clause : SimpleClause) : Bool :=
 end ArgStOutranking
 
 -- ============================================================================
--- Anaphoric Agreement Principle
+-- φ-agreement requirement on anaphors
 -- ============================================================================
 
 -- ============================================================================
@@ -152,7 +152,7 @@ section BindingConstraints
 /-- Principle A (SWB2003): An anaphor ([MODE ana]) must be outranked by a
     coindexed element on the same ARG-ST list.
 
-    For reflexives, the coindexed antecedent must also satisfy the AAP. -/
+    For reflexives, the coindexed antecedent must also φ-agree with it. -/
 def reflexiveLicensed (clause : SimpleClause) : Bool :=
   match clause.object with
   | none => false
@@ -161,7 +161,7 @@ def reflexiveLicensed (clause : SimpleClause) : Bool :=
     | some .reflexive =>
       subjectOutranksObject clause &&
       sameArgSt clause &&
-      decide (phiAgree clause.subject obj)
+      decide (Word.Agree clause.subject obj)
     | _ => true
 
 /-- Principle A for reciprocals: a reciprocal ([MODE ana]) must be outranked
@@ -260,7 +260,7 @@ def localCoreferenceBlocked (ws : List Word) : Bool :=
 #guard reflexiveLicensedInSentence [they, see, themselves]   -- ✓
 #guard !grammaticalForCoreference [themselves, see, them]    -- ✗
 
--- AAP violations (agreement mismatches)
+-- φ-agreement violations (mismatches)
 #guard !reflexiveLicensedInSentence [john, sees, herself]    -- ✗ gender mismatch
 #guard !reflexiveLicensedInSentence [they, see, himself]     -- ✗ number mismatch
 
@@ -309,7 +309,7 @@ theorem reflexive_pairs_captured :
     -- Pair 7: reciprocal requires plural antecedent
     (grammaticalForCoreference [they, see, eachOther] = true ∧
      grammaticalForCoreference [john, sees, eachOther] = false) := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- CoreferenceTheory Interface Implementation
@@ -331,7 +331,7 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Features.Core
       match classifyMode obj with
       | some .ana =>
         -- Principle A: anaphor must be outranked — check agreement
-        if subjectOutranksObject clause && sameArgSt clause && decide (phiAgree clause.subject obj)
+        if subjectOutranksObject clause && sameArgSt clause && decide (Word.Agree clause.subject obj)
         then .obligatory
         else .blocked
       | some .ref =>
@@ -413,7 +413,7 @@ tree geometry:
 Both theories make the same predictions for simple cases:
 1. Subject outranks object ↔ Subject c-commands object
 2. Same ARG-ST list ↔ Same binding domain (local clause)
-3. AAP (agreement) ↔ Feature checking
+3. φ-agreement ↔ Feature checking
 
 The difference is in mechanism:
 - Minimalism: structural (tree geometry, c-command via `cCommandsIn`)
