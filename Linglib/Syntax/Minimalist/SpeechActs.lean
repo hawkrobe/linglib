@@ -267,7 +267,7 @@ def personToRole : Person → Option PRole
 
 /-- Discourse role of a pronoun entry (theory-side, not baked into fragment).
     Determined entirely by the person feature. -/
-def pronounDiscourseRole (p : English.Pronouns.PronounEntry) : Option PRole :=
+def pronounDiscourseRole (p : PersonalPronoun) : Option PRole :=
   p.person.bind personToRole
 
 open English.Pronouns in
@@ -289,7 +289,7 @@ theorem third_person_no_role :
     (pronounDiscourseRole it = none) := ⟨rfl, rfl, rfl⟩
 
 /-- Discourse role is determined entirely by person feature. -/
-theorem discourse_role_from_person (p : English.Pronouns.PronounEntry)
+theorem discourse_role_from_person (p : PersonalPronoun)
     (per : Person) (hp : p.person = some per) :
     pronounDiscourseRole p = personToRole per := by
   simp [pronounDiscourseRole, hp]
@@ -341,11 +341,11 @@ def evalPSpecifier : SAPMood → PRole := seatOfKnowledge
 /-- The specifier of EvidP hosts the evidence type.
 
     Maps S&T's EVIDENCE argument to the framework-agnostic
-    `EvidentialSource` from `Features/Evidentiality.lean`:
+    `CoarseSource` from `Features/Evidentiality.lean`:
     - direct → sensory observation
     - inference → reasoning from effects
     - hearsay → reported evidence -/
-abbrev EvidPSpecifier := Features.Evidentiality.EvidentialSource
+abbrev EvidPSpecifier := Features.Evidentiality.CoarseSource
 
 /-- Bridge to `Core/Epistemicity.lean`: the Sentience Domain's
     two specifiers (SEAT OF KNOWLEDGE + EVIDENCE) correspond to

@@ -51,7 +51,7 @@ variable {F : Frame} [PartialOrder F.Entity]
 variable lookup `interpPronoun i`, by construction. Büring's assignment-lookup
 denotation — the same selector for free, anaphoric, and deictic uses. -/
 theorem she_denotes_assignment_value :
-    (she.entry.denote i spk adr isFemale isInanimate).selector g ⟨⟩
+    (she.denote i spk adr isFemale isInanimate).selector g ⟨⟩
       = some (interpPronoun i g) := rfl
 
 /-- φ-features as presupposition: *she* is undefined of a non-female referent.
@@ -60,7 +60,7 @@ it, so the whole denotation lacks a defined value when the referent is not
 female. -/
 theorem she_undefined_of_non_female (scope : F.Entity → PUnit → Prop)
     (h : ¬ isFemale (g i)) :
-    ¬ ((she.entry.denote i spk adr isFemale isInanimate).toPrProp scope g).presup ⟨⟩ :=
+    ¬ ((she.denote i spk adr isFemale isInanimate).toPrProp scope g).presup ⟨⟩ :=
   fun hp => h hp.1.2.2
 
 /-- A bound pronoun has the same denotation as a free one: binding is the
@@ -68,7 +68,7 @@ external assignment update `g.update i b`, and the *unchanged* selector then
 returns the binder `b`. Büring §3 — there is no separate "bound pronoun"
 lexeme; the lexical entry is identical, binding lives in the assignment. -/
 theorem she_bound_reading (b : F.Entity) :
-    (she.entry.denote i spk adr isFemale isInanimate).selector (g.update i b) ⟨⟩
+    (she.denote i spk adr isFemale isInanimate).selector (g.update i b) ⟨⟩
       = some b := by
   simp only [PersonalPronoun.denote, interpPronoun, Assignment.update_at]
 
@@ -77,7 +77,7 @@ denotation is defined of a referent regardless of gender — the structural
 correlate of *they*'s gender-neutrality, and the direct contrast with
 `she_undefined_of_non_female`. -/
 theorem they_defined_regardless_of_gender (scope : F.Entity → PUnit → Prop) :
-    ((they.entry.denote i spk adr isFemale isInanimate).toPrProp scope g).presup ⟨⟩ := by
+    ((they.denote i spk adr isFemale isInanimate).toPrProp scope g).presup ⟨⟩ := by
   refine ⟨⟨trivial, trivial, trivial⟩, ?_⟩
   rfl
 

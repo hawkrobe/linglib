@@ -57,13 +57,12 @@ structure Pronoun where
   gender : Option Features.SurfaceGender := none
   /-- Native script form (hangul, kanji, Devanagari, …). -/
   script : Option String := none
-  deriving Repr, BEq
+  deriving Repr, BEq, DecidableEq
 
 /-- Cross-linguistic *personal/referential* pronoun: the general `Pronoun` object
 (form + φ-features) plus the register and referential-person features specific to
 deictic pronouns. Covers personal pronouns across all Fragment languages;
-language-specific extensions (e.g., English PronounType/wh) remain in their
-respective Fragment files. -/
+any language-specific refinements remain in their respective Fragment files. -/
 structure PersonalPronoun extends Pronoun where
   /-- Register level (formality/honorifics). Binary T/V systems use
       `.informal`/`.formal`; ternary honorific systems (Hindi, Magahi,
@@ -78,12 +77,22 @@ structure PersonalPronoun extends Pronoun where
       referential person coincides with formal person.
       @cite{adamson-zompi-2025} -/
   referentialPerson : Option Features.Prominence.PersonLevel := none
-  deriving Repr, BEq
+  deriving Repr, BEq, DecidableEq
 
 namespace Pronoun
 
 open Features.Register (Level)
 open Features (SurfaceGender)
+
+/-! ### Realization as a `Word` -/
+
+/-- The pronoun realized as a `Word`: a `.PRON`-category lexical item carrying the
+    entry's φ-features (`person`/`number`/`case_`). The cross-linguistic realization
+    every pronoun shares; language-specific refinements (e.g. English wh-words that
+    surface as adverbs) stay in the relevant fragment. -/
+def toWord (p : Pronoun) : Word :=
+  { form := p.form, cat := .PRON,
+    features := { person := p.person, number := p.number, case_ := p.case_ } }
 
 /-! ### Structural deficiency (@cite{cardinaletti-starke-1999}) -/
 

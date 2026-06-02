@@ -409,25 +409,25 @@ theorem english_demonstratives_are_definite :
 
 /-! ### Bridge 3: Pronouns → the_sit + NP-deletion -/
 
+-- These are personal pronouns *by type* (`PersonalPronoun`), so the former
+-- `.pronounType = .personal` conjunct is now true by construction; only the
+-- φ-feature content is stated.
 theorem it_entry_classification :
-    English.Pronouns.it.pronounType = .personal ∧
     English.Pronouns.it.person = some .third ∧
     English.Pronouns.it.number = some .sg :=
-  ⟨rfl, rfl, rfl⟩
+  ⟨rfl, rfl⟩
 
 theorem he_entry_classification :
-    English.Pronouns.he.pronounType = .personal ∧
     English.Pronouns.he.person = some .third ∧
     English.Pronouns.he.number = some .sg ∧
     English.Pronouns.he.case_ = some .nom :=
-  ⟨rfl, rfl, rfl, rfl⟩
+  ⟨rfl, rfl, rfl⟩
 
 theorem she_entry_classification :
-    English.Pronouns.she.pronounType = .personal ∧
     English.Pronouns.she.person = some .third ∧
     English.Pronouns.she.number = some .sg ∧
     English.Pronouns.she.case_ = some .nom :=
-  ⟨rfl, rfl, rfl, rfl⟩
+  ⟨rfl, rfl, rfl⟩
 
 /-! ### Bridge 4: Donnellan → Elbourne -/
 
