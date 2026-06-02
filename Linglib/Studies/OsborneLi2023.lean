@@ -1,4 +1,4 @@
-import Linglib.Core.Dependency.Basic
+import Linglib.Syntax.DependencyGrammar.Basic
 import Linglib.Core.Word
 import Linglib.Data.Examples.Schema
 import Linglib.Syntax.DependencyGrammar.Coordination
