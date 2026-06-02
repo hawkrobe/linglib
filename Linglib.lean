@@ -2828,6 +2828,7 @@ import Linglib.Fragments.Hebrew.Gender
 import Linglib.Fragments.Latin.Gender
 import Linglib.Fragments.Romanian.Gender
 import Linglib.Fragments.Dyirbal.Gender
+import Linglib.Fragments.Archi.Gender
 import Linglib.Fragments.Georgian.Gender
 import Linglib.Fragments.Swahili.Gender
 import Linglib.Fragments.Zulu.Gender
