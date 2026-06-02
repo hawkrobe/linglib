@@ -100,7 +100,8 @@ open Features (SurfaceGender)
     surface as adverbs) stay in the relevant fragment. -/
 def toWord (p : Pronoun) : Word :=
   { form := p.form, cat := .PRON,
-    features := { person := p.person, number := p.number, case_ := p.case_ } }
+    features := { person := p.person, number := p.number, case_ := p.case_,
+                  gender := p.gender.bind (·.toUDGender) } }
 
 /-! ### Derived person category and well-formedness (@cite{cysouw-2009}) -/
 

@@ -19,7 +19,7 @@ Coreference constraints via c-command and locality following @cite{chomsky-1981}
 namespace Minimalist.Coreference
 
 open Features (BindingClass)
-open English.NominalClassification (isNominalCat classifyNominal phiAgree)
+open English.NominalClassification (isNominalCat classifyNominal)
 
 /-- Simple clause structure for coreference checking.
     `semanticPl` tracks whether the subject denotes a plurality,
@@ -134,7 +134,7 @@ def reflexiveLicensed (clause : SimpleClause) : Prop :=
     | some .reflexive =>
       subjectCCommandsObject clause ∧
       sameLocalDomain clause ∧
-      phiAgree clause.subject obj
+      Word.Agree clause.subject obj
     | _ => True
 
 instance (clause : SimpleClause) : Decidable (reflexiveLicensed clause) := by
@@ -266,7 +266,7 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Features.Core
     | some obj =>
       match classifyNominal obj with
       | some .reflexive =>
-        if subjectCCommandsObject clause ∧ sameLocalDomain clause ∧ phiAgree clause.subject obj
+        if subjectCCommandsObject clause ∧ sameLocalDomain clause ∧ Word.Agree clause.subject obj
         then .obligatory
         else .blocked
       | some .reciprocal =>

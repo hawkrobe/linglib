@@ -200,12 +200,12 @@ theorem table1_all_license_underspecified (a : AntecedentType) :
 
 /-- Singular *they* bears no gender feature — the @cite{konnelly-cowper-2020}
     Elsewhere case: *they* spells out a φ-bundle with none of
-    `[MASC]`/`[FEM]`/`[INANIM]`, so `genderOf` is `none`, not a positive epicene
+    `[MASC]`/`[FEM]`/`[INANIM]`, so its `gender` field is `none`, not a positive epicene
     value. -/
 theorem singThey_genderless :
-    English.Pronouns.genderOf "they" = none ∧
-    English.Pronouns.genderOf "them" = none ∧
-    English.Pronouns.genderOf "themself" = none := by
+    English.Pronouns.they.gender = none ∧
+    English.Pronouns.them.gender = none ∧
+    English.Pronouns.themself.gender = none := by
   exact ⟨rfl, rfl, rfl⟩
 
 /-- Singular *they*'s lexical entry carries no surface gender

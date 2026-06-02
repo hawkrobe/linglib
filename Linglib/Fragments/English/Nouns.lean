@@ -1,4 +1,5 @@
 import Linglib.Core.Word
+import Linglib.Features.Gender
 import Linglib.Morphology.Exponence
 import Linglib.Semantics.Kinds.NominalMappingParameter
 
@@ -35,6 +36,9 @@ structure NounEntry where
   countable : MassCount := .count
   /-- Is this a proper name? -/
   proper : Bool := false
+  /-- Lexical gender, where known (proper names, gendered common nouns) — the
+      single source for a name's gender, read into the `Word` by `toWordSg`. -/
+  gender : Option Features.SurfaceGender := none
   deriving Repr, BEq
 
 /-- Number marking on an English NP -/
@@ -160,11 +164,11 @@ def americano : NounEntry := { formSg := "americano", formPl := "americanos" }
 def latte : NounEntry := { formSg := "latte", formPl := "lattes" }
 def macchiato : NounEntry := { formSg := "macchiato", formPl := "macchiatos" }
 
-def john : NounEntry := { formSg := "John", formPl := none, proper := true }
-def mary : NounEntry := { formSg := "Mary", formPl := none, proper := true }
-def bill : NounEntry := { formSg := "Bill", formPl := none, proper := true }
-def sue : NounEntry := { formSg := "Sue", formPl := none, proper := true }
-def fred : NounEntry := { formSg := "Fred", formPl := none, proper := true }
+def john : NounEntry := { formSg := "John", formPl := none, proper := true, gender := some .masculine }
+def mary : NounEntry := { formSg := "Mary", formPl := none, proper := true, gender := some .feminine }
+def bill : NounEntry := { formSg := "Bill", formPl := none, proper := true, gender := some .masculine }
+def sue : NounEntry := { formSg := "Sue", formPl := none, proper := true, gender := some .feminine }
+def fred : NounEntry := { formSg := "Fred", formPl := none, proper := true, gender := some .masculine }
 
 def bean : NounEntry := { formSg := "bean", formPl := some "beans" }
 
@@ -188,6 +192,7 @@ def NounEntry.toWordSg (n : NounEntry) : Word :=
       number := some .sg
     , countable := if n.proper then none else some n.countable
     , person := if n.proper then some .third else none
+    , gender := n.gender.bind (·.toUDGender)
     }
   }
 

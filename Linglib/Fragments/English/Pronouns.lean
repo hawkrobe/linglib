@@ -102,34 +102,6 @@ def reciprocals : List Pronoun := [eachOther, oneAnother]
 /-- Wh-pronouns and wh-adverbs. -/
 def whWords : List Pronoun := [who, whom, what, which, where_, when_, why, how]
 
-/-! ### Gender lookup (@cite{konnelly-cowper-2020}) -/
-
-/-- Surface gender of a pronoun form: *he*/*she*/*it* are
-    `.masculine`/`.feminine`/`.neuter`; *they* (and any form with no gender
-    feature) is `none` — the @cite{konnelly-cowper-2020} Elsewhere case. -/
-def genderOf (form : String) : Option SurfaceGender :=
-  if form ∈ ["he", "him", "himself"] then some .masculine
-  else if form ∈ ["she", "her", "herself"] then some .feminine
-  else if form ∈ ["it", "itself"] then some .neuter
-  else none
-
-/-- Surface gender of a proper name, if known; `none` otherwise. -/
-def nameGender (form : String) : Option SurfaceGender :=
-  if form ∈ ["John", "Bill", "Fred"] then some .masculine
-  else if form ∈ ["Mary", "Sue"] then some .feminine
-  else none
-
-/-- Do two forms agree in gender? A form with no gender feature (`none` —
-    1st/2nd person, singular *they*) agrees with anything, matching the
-    @cite{konnelly-cowper-2020}/Bjorkman subset condition (∅ ⊆ S). -/
-def genderAgrees (form1 form2 : String) : Bool :=
-  let g1 := (nameGender form1).orElse (fun _ => genderOf form1)
-  let g2 := (nameGender form2).orElse (fun _ => genderOf form2)
-  match g1, g2 with
-  | none, _ => true
-  | _, none => true
-  | some a, some b => a == b
-
 end English.Pronouns
 
 namespace English
@@ -142,11 +114,7 @@ def pronouns : List PersonalPronoun :=
    Pronouns.he, Pronouns.him, Pronouns.she, Pronouns.her, Pronouns.it,
    Pronouns.they, Pronouns.them, Pronouns.they_sg, Pronouns.them_sg]
 
-/-! ### Consistency: structural gender field agrees with the `genderOf` function -/
-
-theorem he_gender_consistent : Pronouns.he.gender = Pronouns.genderOf "he" := rfl
-theorem she_gender_consistent : Pronouns.she.gender = Pronouns.genderOf "she" := rfl
-theorem it_gender_consistent : Pronouns.it.gender = Pronouns.genderOf "it" := rfl
+/-! ### Gender feature facts (@cite{konnelly-cowper-2020}, @cite{arnold-2026}) -/
 
 /-- Singular *they* bears no gender feature — the @cite{konnelly-cowper-2020}
     Elsewhere case. -/
