@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Turkish Evidentiality
@@ -12,20 +12,20 @@ Aikhenvald agree.
 
 namespace Turkish.Evidentiality
 
-open Typology.Modality
-open Features.Evidentiality (EvidentialSource)
+/-! ### Typed evidential inventory
 
-/-- Turkish evidentiality: 2-way direct/indirect, fused with past tense. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "Turkish" "tur" "Turkic"
-    (markers := ["-DI (direct)", "-mIş (indirect)"])
-    (notes := "Evidential distinction fused with past tense; -DI = witnessed, " ++
-              "-mIş = inferred/reported")
-    (attestedEvidentials := [.direct, .inference, .hearsay])
-    (systemFb := .directAndIndirect)
-    (codingFb := .partOfTAM)
+Turkish's canonical 2-way contrast: `-DI` (direct/witnessed) vs `-mIş`
+(indirect, covering inference and report). Fused with past tense. The
+`-mIş` is Aikhenvald's classic example of an A2 non-firsthand marker. -/
 
-example : evidentialityProfile.iso = "tur" ∧ evidentialityProfile.language = "Turkish" :=
-  ⟨rfl, rfl⟩
+open Semantics.Evidential
+
+def evidentials : List Entry :=
+  [ .direct      { form := "-DI",  exponent := .tamFusion },
+    .inferential { form := "-mIş", exponent := .tamFusion } ]
+
+example : evidentials.length = 2 := by decide
+example : (evidentials.filter Entry.IsDirect).length = 1 := by decide
+example : (evidentials.filter Entry.IsInferential).length = 1 := by decide
 
 end Turkish.Evidentiality

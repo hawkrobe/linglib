@@ -68,7 +68,7 @@ Three empirical signatures:
 | `Semantics/Composition/Layered` | `BiLayered W` ⟨A, N⟩ pair, three composition rules |
 | `Semantics/Highlighting` | `HighlightingContext`, `Highlighted`, `AddressesQUD` |
 | `Discourse/EvidentialIllocution` | `assert`, `present`, `EvidentialAct`, `raisedPropositions` |
-| `Features/Evidentiality` | `EvidentialSource` (`direct`, `hearsay`, `inference`) |
+| `Features/Evidentiality` | `CoarseSource` (`direct`, `hearsay`, `inference`) |
 | `Semantics/Questions/Hamblin` | `Question.polar` for the polar QUD |
 
 ## Methodological note
@@ -86,7 +86,7 @@ namespace MartinezVera2026
 
 open Semantics.Composition.Layered (BiLayered)
 open Semantics.Highlighting (HighlightingContext Highlighted AddressesQUD addSalient)
-open Features.Evidentiality (EvidentialSource)
+open Features.Evidentiality (CoarseSource)
 open Discourse (DiscourseRole)
 
 variable {W : Type*}
@@ -179,22 +179,22 @@ inductive IllocutionaryFlavour where
   | presentFlavour
   deriving DecidableEq, Repr, Inhabited
 
-def IllocutionaryFlavour.ofEvidentialSource :
-    EvidentialSource → IllocutionaryFlavour
+def IllocutionaryFlavour.ofCoarseSource :
+    CoarseSource → IllocutionaryFlavour
   | .direct => .assertFlavour
   | .hearsay => .presentFlavour
   | .inference => .presentFlavour
 
 @[simp] theorem flavour_direct :
-    IllocutionaryFlavour.ofEvidentialSource .direct = .assertFlavour := rfl
+    IllocutionaryFlavour.ofCoarseSource .direct = .assertFlavour := rfl
 @[simp] theorem flavour_hearsay :
-    IllocutionaryFlavour.ofEvidentialSource .hearsay = .presentFlavour := rfl
+    IllocutionaryFlavour.ofCoarseSource .hearsay = .presentFlavour := rfl
 @[simp] theorem flavour_inference :
-    IllocutionaryFlavour.ofEvidentialSource .inference = .presentFlavour := rfl
+    IllocutionaryFlavour.ofCoarseSource .inference = .presentFlavour := rfl
 
-def applyDefault (src : EvidentialSource) (s a : DiscourseRole) (β : BiLayered W) :
+def applyDefault (src : CoarseSource) (s a : DiscourseRole) (β : BiLayered W) :
     EvidentialAct W :=
-  match IllocutionaryFlavour.ofEvidentialSource src with
+  match IllocutionaryFlavour.ofCoarseSource src with
   | .assertFlavour => assert s a β
   | .presentFlavour => present s a β
 
