@@ -3,7 +3,6 @@ import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Features.Accessibility
 import Linglib.Fragments.English.Pronouns
-import Linglib.Studies.Arnold2026
 
 /-!
 # @cite{konnelly-cowper-2020}
@@ -33,21 +32,12 @@ The key theorem: the VIs are *constant* across stages. At Stage 3,
 @cite{wiltschko-2008}), so their absence is the norm, and the Elsewhere
 Condition yields *they* as the default singular animate pronoun.
 
-## Connection to @cite{arnold-2026}
-
-Arnold's pragmatic account (underspecified vs. personal singular *they*)
-complements K&C's grammatical account. At Stage 1, underspecified *they*
-is licensed only when discourse elaboration is thin (quantified/generic
-antecedents). At Stage 3, *they* is the grammatical default for any
-singular animate referent regardless of discourse elaboration, because
-the grammar itself no longer requires a contrastive gender feature.
-
 ## Formalization
 
 We define the pronoun VI rules using `FeatureVI` from
 `Morphology.DM.VocabularyInsertion`, parameterize the three
 stages via `Contrastivity` from `Morphology.DM.Categorizer`,
-and prove bridge theorems connecting to Arnold's discourse conditions.
+and prove the Elsewhere-Condition predictions across the three stages.
 -/
 
 set_option autoImplicit false
@@ -57,8 +47,6 @@ namespace KonnellyCowper2020
 open Morphology.DM (Contrastivity GenderFeature GenderVal GenderDimension
   Polarity Interpretability CatHead PhiBundle)
 open Morphology.DM.VI (FeatureVI subsetPrinciple)
-open Features (DiscourseElaboration)
-open _root_.Arnold2026 (licensesUnderspecified)
 
 -- ============================================================================
 -- § 1: Morphosyntactic Features for English Pronouns
@@ -339,27 +327,7 @@ theorem stage1_they_restricted :
   ⟨rfl, by decide⟩
 
 -- ============================================================================
--- § 8: Bridge to Arnold 2026
--- ============================================================================
-
-/-- At Stage 1, singular *they* is restricted to contexts where discourse
-    elaboration is underspecified — the grammatical obligation to project
-    [MASC]/[FEM] for known-gender referents means *they* arises only when
-    gender is unknown, which correlates with thin discourse models. -/
-theorem stage1_aligns_with_underspecified_they :
-    licensesUnderspecified .underspecified = true ∧
-    Stage.stage1.genderObligatory = true := ⟨rfl, rfl⟩
-
-/-- At Stage 3, singular *they* is the grammatical default — it does
-    not require underspecified discourse elaboration. Arnold's personal
-    *they* (elaborated discourse, known they/them pronouns) is naturally
-    accommodated: the grammar produces *they* regardless of discourse
-    state. -/
-theorem stage3_independent_of_discourse :
-    Stage.stage3.genderObligatory = false := rfl
-
--- ============================================================================
--- § 9: Bridge to DM Categorizer
+-- § 8: Bridge to DM Categorizer
 -- ============================================================================
 
 /-- Project a DM n-head's phi-features into K&C's flat pronoun VI feature
@@ -551,7 +519,7 @@ theorem stage3_they_from_structure (ctx : ReferentContext) :
   ⟨by cases ctx <;> rfl, by decide⟩
 
 -- ============================================================================
--- § 10: Bridge to English Fragment
+-- § 9: Bridge to English Fragment
 -- ============================================================================
 
 /-- The VI elsewhere exponent *they* corresponds to the Fragment's *absence* of
