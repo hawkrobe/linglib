@@ -2,6 +2,8 @@ import Linglib.Syntax.ArgumentStructure.Alternation
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 import Linglib.Syntax.Minimalist.Applicative
+import Mathlib.Algebra.FreeMonoid.Basic
+import Mathlib.Algebra.Group.TypeTags.Basic
 
 /-!
 # Creissels (2025): Transitivity, Valency, and Voice
@@ -21,12 +23,11 @@ languages. The book proposes a unified framework based on:
   where the same morpheme marks multiple voice alternation types (§8.2)
 
 This study file bridges @cite{creissels-2025}'s framework (formalized in
-`Core/Alternation.lean`) to existing linglib infrastructure:
+`Syntax/ArgumentStructure/Alternation.lean`) to existing linglib infrastructure:
 
-- `MorphologicalCausation.lean`: causativization and decausativization
+- `Semantics/Causation/Morphological.lean`: causativization and decausativization
 - `Phenomena/ArgumentStructure/VoiceSystem.lean`: pivot-based voice system typology
-- `Minimalism/Applicative.lean`: Pylkkänen's high/low applicatives
-- `Core/RootDimensions.lean`: Levin's diathesis alternation diagnostics
+- `Syntax/Minimalist/Applicative.lean`: Pylkkänen's high/low applicatives
 -/
 
 namespace Creissels2025
@@ -37,9 +38,7 @@ open Semantics.Causation.Morphological
    CausativizabilityData)
 open Interfaces (VoiceSystemProfile VoiceSystemSymmetry VoiceEntry PivotTarget)
 
--- ════════════════════════════════════════════════════
--- § 1. Bridge: Decausativization ↔ IntransitivizationType
--- ════════════════════════════════════════════════════
+/-! ### Bridge: Decausativization ↔ IntransitivizationType -/
 
 /-! §8.3.1.2: "Decausativization suppresses the referent
 of the initial A from participant structure and converts the initial P into
@@ -66,9 +65,7 @@ theorem reflexive_not_decausativization :
     decausativization.involvesCumulation = false :=
   ⟨rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 2. Bridge: Causativization ↔ CausativeConstruction
--- ════════════════════════════════════════════════════
+/-! ### Bridge: Causativization ↔ CausativeConstruction -/
 
 /-! §8.3.1.1 defines causativization as "the
 nucleativization of a participant (the causer) that instigates the event
@@ -107,9 +104,7 @@ theorem complexity_alignment :
     (CausativeComplexity.morphological < CausativeComplexity.periphrastic) :=
   ⟨by decide, by decide⟩
 
--- ════════════════════════════════════════════════════
--- § 3. Bridge: Applicativization ↔ Pylkkänen's ApplType
--- ════════════════════════════════════════════════════
+/-! ### Bridge: Applicativization ↔ Pylkkänen's ApplType -/
 
 /-! §14.1 distinguishes three varieties:
 - P-applicativization (§14.1.1): applied phrase fills P role
@@ -135,9 +130,7 @@ theorem all_applicativizations_nucleativize :
 theorem p_applicativization_valency_increasing :
     pApplicativization.isValencyIncreasing = true := rfl
 
--- ════════════════════════════════════════════════════
--- § 4. Bridge: Symmetrical Voices ↔ VoiceSystemProfile
--- ════════════════════════════════════════════════════
+/-! ### Bridge: Symmetrical Voices ↔ VoiceSystemProfile -/
 
 /-! §8.5: symmetrical voice systems are those in which
 verb morphology marks the selection of a participant as the privileged
@@ -167,9 +160,7 @@ theorem english_is_asymmetrical :
 theorem english_is_active_passive :
     englishVoiceSystem.isActivePassive := by decide
 
--- ════════════════════════════════════════════════════
--- § 5. Passivization vs Decausativization (§8.3.1.2 vs §8.3.2.1)
--- ════════════════════════════════════════════════════
+/-! ### Passivization vs Decausativization (§8.3.1.2 vs §8.3.2.1) -/
 
 /-! §8.3.2.1: "The maintenance of the initial A in
 participant structure is essential to distinguish passivization from
@@ -191,9 +182,7 @@ theorem passive_decausative_distinct :
     passivization.fateOfA ≠ decausativization.fateOfA := by
   simp [passivization, decausativization]
 
--- ════════════════════════════════════════════════════
--- § 6. Bridge: Passivization ↔ Antipassivization structural symmetry
--- ════════════════════════════════════════════════════
+/-! ### Bridge: Passivization ↔ Antipassivization structural symmetry -/
 
 /-! §8.3.2: passivization, antipassivization, and
 S-denucleativization form a natural class — all three denucleativize a core
@@ -221,9 +210,7 @@ theorem denucleativization_paradigm :
     sDenucleativization.fateOfS = .denucleativized :=
   ⟨rfl, rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 7. Bridge: Reflexivization/Reciprocalization ↔ existing data
--- ════════════════════════════════════════════════════
+/-! ### Bridge: Reflexivization/Reciprocalization ↔ existing data -/
 
 /-! §8.3.3: reflexivization and reciprocalization
 cumulate two participant roles (A and P) into a single participant (S).
@@ -245,9 +232,7 @@ theorem refl_recip_same_structure :
     reciprocalization.involvesCumulation = true :=
   ⟨rfl, rfl, rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 8. Voice Marker Stacking (§8.4)
--- ════════════════════════════════════════════════════
+/-! ### Voice Marker Stacking (§8.4) -/
 
 /-! §8.4: voice markers can be stacked compositionally.
 Example from Tswana (§8.4.1, ex. 38):
@@ -269,9 +254,7 @@ def tswana_caus_pass : VoiceStack := [causativization, passivization]
 def tswana_caus_appl_pass : VoiceStack :=
   [causativization, pApplicativization, passivization]
 
--- ════════════════════════════════════════════════════
--- § 9. Portative Derivation (§8.3.7)
--- ════════════════════════════════════════════════════
+/-! ### Portative Derivation (§8.3.7) -/
 
 /-! §8.3.7 identifies portative derivation as a distinct
 voice alternation type that cannot be reduced to either causativization or
@@ -295,9 +278,7 @@ theorem portative_distinct_from_causativization :
     portativeDerivation.newParticipant = some .P :=
   ⟨rfl, rfl, rfl, rfl⟩
 
--- ════════════════════════════════════════════════════
--- § 10. Alignment Profiles (§1.3.4)
--- ════════════════════════════════════════════════════
+/-! ### Alignment Profiles (§1.3.4) -/
 
 /-! §1.3.4.2: most languages have a clear preference
 for either A-alignment (S codes like A) or P-alignment (S codes like P).
@@ -322,9 +303,7 @@ def mandinka : ObligatoryCodingProfile :=
   , defaultAlignment := .A_alignment
   , violationsExist := true }
 
--- ════════════════════════════════════════════════════
--- § 11. Russian -sja polysemy (§8.2, ex. 8)
--- ════════════════════════════════════════════════════
+/-! ### Russian -sja polysemy (§1.2, ex. 8) -/
 
 /-! The Russian verbal suffix *-sja / -s'* is a paradigmatic example of voice
 marker polysemy. It marks at least four different voice alternation types:
@@ -344,9 +323,7 @@ def russian_sja : VoiceMarkerProfile :=
 theorem russian_sja_polysemy :
     russian_sja.alternations.length = 4 := rfl
 
--- ════════════════════════════════════════════════════
--- § 12. Tswana -el polysemy (§8.2)
--- ════════════════════════════════════════════════════
+/-! ### Tswana -el polysemy (§8.2) -/
 
 /-! The Tswana voice suffix *-el* (traditionally called "applicative") marks
 both P-nucleativization (applicativization) and A-nucleativization of
@@ -362,9 +339,7 @@ def tswana_el : VoiceMarkerProfile :=
   , marker := "-el"
   , alternations := [pApplicativization, asNucleativizationOfObliques] }
 
--- ════════════════════════════════════════════════════
--- § 13. Causativizability and Voice Alternations
--- ════════════════════════════════════════════════════
+/-! ### Causativizability and Voice Alternations -/
 
 /-! Ch 12 discusses restrictions on causativization.
 @cite{krejci-2012}'s hierarchy (already formalized in
@@ -379,5 +354,290 @@ create an intransitive base first. -/
     compositional voice marker stacking. -/
 def causativization_via_antipassive : VoiceStack :=
   [antipassivization, causativization]
+
+/-! ### Cross-linguistic voice distribution (Bahrt 2021) -/
+
+/-! §8.3.8 reports @cite{bahrt-2021}'s survey of synthetic voice marking across
+222 languages from all genera. -/
+
+/-- Cross-linguistic prevalence of a voice alternation type: the share of
+    languages with synthetic marking for it. -/
+structure VoiceDistribution where
+  alternation : ValencyAlternation
+  /-- Fraction of languages with synthetic marking for this alternation. -/
+  share : ℚ
+  deriving Repr
+
+/-- @cite{bahrt-2021} distribution data, cited in §8.3.8: the fraction of the
+    222 languages (all genera) with synthetic marking for each voice alternation
+    type. Note (§8.3.8): Bahrt's "applicativization" conflates applicativization
+    with non-causative A/S-nucleativization, so that row is broader than
+    Creissels's `pApplicativization`. -/
+def bahrt2021Distribution : List VoiceDistribution :=
+  [ { alternation := causativization,       share := 739/1000 }
+  , { alternation := reciprocalization,     share := 604/1000 }
+  , { alternation := pApplicativization,    share := 459/1000 }  -- Bahrt's broader "applicativization" (see note)
+  , { alternation := reflexivization,       share := 419/1000 }
+  , { alternation := decausativization,     share := 360/1000 }
+  , { alternation := passivization,         share := 360/1000 }
+  , { alternation := antipassivization,     share := 185/1000 } ]
+
+/-- Causativization is the most common voice alternation type
+    cross-linguistically (@cite{bahrt-2021}). -/
+theorem causativization_most_common :
+    (bahrt2021Distribution.head?.map (·.alternation.name)) =
+    some "causativization" := rfl
+
+/-! ### Compositional denotation of voice stacking (§8.4) -/
+
+/-! §8.4: voice markers stack, and a combination "operates on its valency
+properties exactly as it could operate on the valency of an underived verb form"
+— compositional stacking (§8.4.1). We model an alternation as a *word* over
+atomic coding-frame edits (the nucleativization/denucleativization atoms of
+§8.1.3), composition as the free-monoid product, and meaning as a denotation
+into partial transformations of coding frames. Two `MonoidHom`s — `denote` and
+`valencyDelta` — make stacking and the valency grading hold by construction.
+
+End-roles (the S→P of causativization, P→S of passivization) are *derived* by
+`normalizeFrame` from the construction's transitivity, not stipulated — faithful
+to §8.1.3 (whose only atoms are nucleativization/denucleativization; the role
+changes are coding consequences, cf. footnote 5 §8.3.2.1).
+
+This layer currently has a single consumer (this study), so per the project's
+graduation discipline it lives here; the `FrameMap` partial-transformation
+monoid (a Kleisli/`Function.End` analogue) and the `denote`/`valencyDelta`
+apparatus would hoist to `Core/` and `Alternation.lean` once a second study
+consumes them. -/
+
+namespace Stacking
+
+open FreeMonoid (lift of)
+
+/-- A term's coding status in a construction (a *state*; `ParticipantFate` is the
+    *transition*, derived below via `fateOf`). -/
+inductive Coding
+  | core (r : TRRole)
+  | oblique
+  | suppressed
+  deriving DecidableEq
+
+/-- A coding-frame entry: a stable identity (tracked through a derivation) and
+    its current status. -/
+structure CodedTerm where
+  id : Nat
+  coding : Coding
+  deriving DecidableEq
+
+/-- A coding frame (§1.3.3): the participants and their statuses. -/
+abbrev CodingFrame := List CodedTerm
+
+def coreCount (f : CodingFrame) : Nat :=
+  f.countP (fun t => t.coding matches .core _)
+
+/-- Recompute a term's role from transitivity: the sole core term is S; a
+    `core S` alongside other cores becomes P (a transitive clause has A and P,
+    an intransitive clause has S). -/
+def rerole (cc : Nat) : Coding → Coding
+  | .core r => if cc = 1 then .core .S else (match r with | .S => .core .P | _ => .core r)
+  | c => c
+
+/-- Normalize end-roles after an edit — this *derives* the S↔P relabellings a
+    `relabel` atom would otherwise stipulate. -/
+def normalizeFrame (f : CodingFrame) : CodingFrame :=
+  let cc := coreCount f
+  f.map (fun t => ⟨t.id, rerole cc t.coding⟩)
+
+def freshId (f : CodingFrame) : Nat := f.foldl (fun m t => Nat.max m (t.id + 1)) 0
+
+def setFirstCore (r : TRRole) (c : Coding) : CodingFrame → Option CodingFrame
+  | [] => none
+  | t :: ts =>
+    if t.coding = .core r then some (⟨t.id, c⟩ :: ts)
+    else (setFirstCore r c ts).map (t :: ·)
+
+def removeFirstCore (r : TRRole) : CodingFrame → Option CodingFrame
+  | [] => none
+  | t :: ts =>
+    if t.coding = .core r then some ts
+    else (removeFirstCore r ts).map (t :: ·)
+
+/-- Some core term in the frame bears role `r`. -/
+def HasCore (r : TRRole) (f : CodingFrame) : Prop := ∃ t ∈ f, t.coding = .core r
+
+instance (r : TRRole) (f : CodingFrame) : Decidable (HasCore r f) :=
+  inferInstanceAs (Decidable (∃ t ∈ f, t.coding = .core r))
+
+/-- The atomic voice operations: Creissels's nucleativization /
+    denucleativization (§8.1.3) plus cumulation (reflexivization, §8.3.3). -/
+inductive Atom
+  | nucleativize (target : TRRole)  -- a non-core participant becomes core   (+1)
+  | denucleativize (role : TRRole)  -- core role → oblique (kept)             (−1)
+  | suppress (role : TRRole)        -- core role → suppressed (removed)       (−1)
+  | cumulate (r1 r2 : TRRole)       -- merge two cores into one               (−1)
+  deriving DecidableEq
+
+/-- An alternation as a word over atoms; composition = the free-monoid product
+    (= voice-marker stacking, §8.4). -/
+abbrev Word := FreeMonoid Atom
+
+/-- Partial transformations of coding frames under Kleisli composition; `f * g`
+    is "apply `f` then `g`" (the `MulOpposite` of `Function.End`-style order).
+    Kept a `def` (not `abbrev`) so this `Monoid` is keyed on `FrameMap` and does
+    not leak to bare `_ → Option _`. Not `PFun`: `Part ≠ Option`, and the demos
+    below rely on `Option`'s decidability. -/
+def FrameMap := CodingFrame → Option CodingFrame
+
+instance : Monoid FrameMap where
+  mul f g := fun x => (f x).bind g
+  one := fun x => some x
+  mul_assoc f g h := by
+    funext x
+    show ((f x).bind g).bind h = (f x).bind (fun y => (g y).bind h)
+    cases f x <;> rfl
+  one_mul f := by funext x; rfl
+  mul_one f := by
+    funext x
+    show (f x).bind (fun y => some y) = f x
+    cases f x <;> rfl
+
+def atomDenote : Atom → FrameMap
+  | .nucleativize target => fun f => some (normalizeFrame (f ++ [⟨freshId f, .core target⟩]))
+  | .denucleativize role => fun f => (setFirstCore role .oblique f).map normalizeFrame
+  | .suppress role => fun f => (setFirstCore role .suppressed f).map normalizeFrame
+  | .cumulate r1 r2 => fun f =>
+      if HasCore r1 f then (removeFirstCore r2 f).map normalizeFrame else none
+
+def atomDelta : Atom → ℤ
+  | .nucleativize _ => 1
+  | .denucleativize _ => -1
+  | .suppress _ => -1
+  | .cumulate _ _ => -1
+
+/-- Denotation of a word as a partial coding-frame transformation. A `MonoidHom`,
+    so `map_mul` gives compositional stacking (§8.4.1). -/
+def denote : Word →* FrameMap := lift atomDenote
+
+/-- The valency grading: net change in number of core terms. A `MonoidHom` into
+    `Multiplicative ℤ`, so stacking *adds* deltas. -/
+def valencyDelta : Word →* Multiplicative ℤ :=
+  lift (fun a => Multiplicative.ofAdd (atomDelta a))
+
+def netValency (w : Word) : ℤ := Multiplicative.toAdd (valencyDelta w)
+
+@[simp] theorem denote_of (a : Atom) : denote (of a) = atomDenote a := by
+  simp only [denote, FreeMonoid.lift_eval_of]
+
+@[simp] theorem valencyDelta_of (a : Atom) :
+    valencyDelta (of a) = Multiplicative.ofAdd (atomDelta a) := by
+  simp only [valencyDelta, FreeMonoid.lift_eval_of]
+
+theorem netValency_mul (x y : Word) : netValency (x * y) = netValency x + netValency y := by
+  simp only [netValency, map_mul]; rfl
+
+/-- The substrate `ParticipantFate`, derived from a status transition — reusing
+    the comparative-concept enum rather than forking a new one. -/
+def fateOf : Coding → Coding → ParticipantFate
+  | .core _, .core _ => .maintained
+  | .core _, .oblique => .denucleativized
+  | .core _, .suppressed => .suppressed
+  | _, .core t => .nucleativized t
+  | _, _ => .maintained
+
+/-- Id of the participant currently in core role `r` (frame-relative). -/
+def roleHolder (r : TRRole) : CodingFrame → Option Nat
+  | [] => none
+  | t :: ts => if t.coding = .core r then some t.id else roleHolder r ts
+
+/-! ### Named alternations as words (roles fall out of `normalizeFrame`) -/
+
+namespace Word
+def causativization : Word := of (.nucleativize .A)
+def passivization : Word := of (.denucleativize .A)
+def decausativization : Word := of (.suppress .A)
+def antipassivization : Word := of (.denucleativize .P)
+def applicativization : Word := of (.nucleativize .P)
+def reflexivization : Word := of (.cumulate .A .P)
+/-- §12.3.5: causativizing a transitive verb requires antipassivizing first to
+    create an intransitive base. -/
+def causativizationViaAntipassive : Word := antipassivization * causativization
+end Word
+
+/-! ### Forward bridges: the denotation reproduces the comparative-concept records
+
+These prove the word denotations *agree with* the schema-level
+`ValencyAlternation` records (`Alternation.lean`) where both are defined — the
+legitimate direction, not a redefinition of the schema. -/
+
+theorem netValency_causativization : netValency Word.causativization = 1 := by
+  simp only [Word.causativization, netValency, valencyDelta_of, atomDelta]; decide
+
+theorem netValency_passivization : netValency Word.passivization = -1 := by
+  simp only [Word.passivization, netValency, valencyDelta_of, atomDelta]; decide
+
+-- agree with the records' valency direction:
+theorem causativization_record_increases : causativization.isValencyIncreasing = true := rfl
+theorem passivization_record_decreases : passivization.isValencyDecreasing = true := rfl
+
+/-- Passivization obliquifies the initial A (kept in participant structure);
+    P becomes S by normalization. -/
+theorem denote_passivization :
+    denote Word.passivization [⟨0, .core .A⟩, ⟨1, .core .P⟩]
+      = some [⟨0, .oblique⟩, ⟨1, .core .S⟩] := by
+  simp only [Word.passivization, denote_of]; decide
+
+/-- Decausativization suppresses the initial A (removed). Same net valency as
+    passive, different A-fate — the headline §8.3.1.2 / §8.3.2.1 distinction. -/
+theorem denote_decausativization :
+    denote Word.decausativization [⟨0, .core .A⟩, ⟨1, .core .P⟩]
+      = some [⟨0, .suppressed⟩, ⟨1, .core .S⟩] := by
+  simp only [Word.decausativization, denote_of]; decide
+
+-- the derived fates match the records' `fateOfA`:
+theorem fate_passivization_agrees :
+    fateOf (.core .A) .oblique = passivization.fateOfA := rfl
+theorem fate_decausativization_agrees :
+    fateOf (.core .A) .suppressed = decausativization.fateOfA := rfl
+
+/-- Applicativization adds a new core P; on a transitive base this yields a
+    double-P construction (§8.1.8) — no role relabelling required. -/
+theorem denote_applicativization :
+    denote Word.applicativization [⟨0, .core .A⟩, ⟨1, .core .P⟩]
+      = some [⟨0, .core .A⟩, ⟨1, .core .P⟩, ⟨2, .core .P⟩] := by
+  simp only [Word.applicativization, denote_of]; decide
+
+/-- Reflexivization cumulates A and P into a single core term, which normalizes
+    to S (§8.3.3). -/
+theorem denote_reflexivization :
+    denote Word.reflexivization [⟨0, .core .A⟩, ⟨1, .core .P⟩]
+      = some [⟨0, .core .S⟩] := by
+  simp only [Word.reflexivization, denote_of]; decide
+
+/-! ### Real composition for voice stacking (§8.4) -/
+
+/-- Stacking is genuine composition: a word product denotes the Kleisli
+    composite of its parts (§8.4.1). This gives the denotational counterpart of
+    the record-level, semantics-free `causativization_via_antipassive` (§13). -/
+theorem denote_stack (x y : Word) (f : CodingFrame) :
+    denote (x * y) f = (denote x f).bind (denote y) := by
+  rw [map_mul]; rfl
+
+/-- Under stacking, "the A" is frame-relative: after causativization of an
+    intransitive, the participant in role A is the new causer (id 1), not the
+    original (id 0, now P). So a fate must be read off the *current* frame's
+    role-holder, not a frozen "initial A". -/
+theorem caus_A_holder_is_causer :
+    (denote Word.causativization [⟨0, .core .S⟩]).bind (roleHolder .A) = some 1 := by
+  simp only [Word.causativization, denote_of]; decide
+
+/-- §12.3.5: causativization via prior antipassivization is valency-neutral
+    (antipassive −1 then causative +1), composed as one transformation. -/
+theorem netValency_causativizationViaAntipassive :
+    netValency Word.causativizationViaAntipassive = 0 := by
+  show netValency (Word.antipassivization * Word.causativization) = 0
+  rw [netValency_mul]
+  simp only [Word.antipassivization, Word.causativization, netValency, valencyDelta_of, atomDelta]
+  decide
+
+end Stacking
 
 end Creissels2025
