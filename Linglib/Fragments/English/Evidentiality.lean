@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # English Evidentiality
@@ -11,14 +11,13 @@ expressions, never by obligatory verbal morphology.
 
 namespace English.Evidentiality
 
-open Typology.Modality
+/-! ### Typed evidential inventory
 
-/-- English evidentiality typology per WALS: no grammatical evidentials. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "English" "eng" "Indo-European"
-    (notes := "Lexical evidentials only: apparently, reportedly, evidently")
+No grammatical evidentials per @cite{aikhenvald-2004}; lexical
+strategies only. -/
 
-example : evidentialityProfile.iso = "eng" ∧ evidentialityProfile.language = "English" :=
-  ⟨rfl, rfl⟩
+def evidentials : List Semantics.Evidential.Entry := []
+
+example : evidentials.length = 0 := by decide
 
 end English.Evidentiality

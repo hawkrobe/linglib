@@ -1,4 +1,4 @@
-import Linglib.Typology.Modality
+import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Quechua (Cuzco) Evidentiality
@@ -14,20 +14,23 @@ by adding `threeOrMore` precisely to capture this Andean pattern.
 
 namespace Quechua.Evidentiality
 
-open Typology.Modality
-open Features.Evidentiality (EvidentialSource)
+/-! ### Typed evidential inventory
 
-/-- Cuzco Quechua evidentiality: canonical 3-way Andean system. -/
-def evidentialityProfile : EvidentialityProfile :=
-  .fromWALS "Quechua (Cuzco)" "quz" "Quechuan"
-    (markers := ["-mi (direct)", "-si (reportative)", "-chá (conjectural)"])
-    (notes := "Canonical three-way system: direct/reportative/conjectural; " ++
-              "obligatory on finite clauses")
-    (attestedEvidentials := [.direct, .hearsay, .inference])
-    (systemFb := .threeOrMore)
-    (codingFb := .verbalAffix)
+Cuzco Quechua's canonical B1 Andean system: direct `-mi`, reportative
+`-si`, conjectural/inferential `-chá`. Obligatory second-position
+clitics on finite clauses. -/
 
-example : evidentialityProfile.iso = "quz" ∧
-    evidentialityProfile.language = "Quechua (Cuzco)" := ⟨rfl, rfl⟩
+open Semantics.Evidential
+
+def evidentials : List Entry :=
+  [ .direct      { form := "-mi",   exponent := .clitic2P },
+    .reportative { form := "-si",   exponent := .clitic2P,
+                   sourceIdentity := .unidentified },
+    .inferential { form := "-chá",  exponent := .clitic2P } ]
+
+example : evidentials.length = 3 := by decide
+example : (evidentials.filter Entry.IsDirect).length = 1 := by decide
+example : (evidentials.filter Entry.IsReportative).length = 1 := by decide
+example : (evidentials.filter Entry.IsInferential).length = 1 := by decide
 
 end Quechua.Evidentiality
