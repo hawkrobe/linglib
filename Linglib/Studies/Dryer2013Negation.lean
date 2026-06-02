@@ -17,7 +17,7 @@ import Linglib.Fragments.Quechua.Negation
 
 /-!
 # Dryer (2013): WALS chapters on negation morpheme + word-order (112A, 143A, 144A)
-@cite{dryer-2013-wals} @cite{wals-2013}
+[dryer-2013-wals] [wals-2013]
 
 WALS chapters by Matthew S. Dryer covering negation typology:
 

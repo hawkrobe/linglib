@@ -4,7 +4,7 @@ import Linglib.Semantics.Entailment.Polarity
 /-!
 # Spector (2016): Worked examples of exhaustivity operators
 
-@cite{spector-2016} "Comparing Exhaustivity Operators." *Semantics and
+[spector-2016] "Comparing Exhaustivity Operators." *Semantics and
 Pragmatics* 9(11): 1–33.
 
 Concrete derivations of `exhMW`, `exhIE`, and their coincidence (Theorem 9)
@@ -19,7 +19,7 @@ empirical exemplars — small finite worlds, scale-specific alternative
 sets, and the per-scale `exhMW ≡ exhIE` corollaries — kept out of the
 theory file in line with the project's Theory/Phenomena split.
 
-It also collects the @cite{chierchia-2013} Maximize Strength worked
+It also collects the [chierchia-2013] Maximize Strength worked
 examples (matrix-clause SI computed, DE-context SI suppressed) as a small
 table of `MaximizeStrengthExample` records.
 
@@ -361,11 +361,11 @@ theorem exhIE_or_not_wBoth : ¬exhIE orAndALT sangOrDanced wBoth := by
   exact exhMW_or_not_wBoth (orAnd_exhMW_iff_exhIE.symm.subset h)
 
 -- ----------------------------------------------------------------------------
--- 4: MAXIMIZE STRENGTH EXAMPLES (@cite{chierchia-2013})
+-- 4: MAXIMIZE STRENGTH EXAMPLES ([chierchia-2013])
 -- ----------------------------------------------------------------------------
 
 /-!
-A small descriptive table of contexts illustrating @cite{chierchia-2013}'s
+A small descriptive table of contexts illustrating [chierchia-2013]'s
 Maximize Strength predictions. The principle itself (`maximizeStrength`,
 `exh_in_ue_strengthens`, etc.) lives in `Operators.lean`.
 

@@ -2,12 +2,12 @@ import Mathlib.Tactic.FinCases
 
 /-!
 # Dutch Verbal Prefix and Particle Verbs
-@cite{dendikken-1995}
+[dendikken-1995]
 
 Lexical entries for Dutch verbs with prefixes (separable particles
 *scheidbaar samengestelde werkwoorden*; inseparable prefixes
 *onscheidbaar samengestelde werkwoorden*) — the distinction central
-to Germanic VPC syntax and cited extensively by @cite{dendikken-1995}
+to Germanic VPC syntax and cited extensively by [dendikken-1995]
 in the SC analysis. The two classes share concatenated citation form
 but diverge on the diagnostic morphology: separable verbs show *ge-*
 insertion in the past participle (*opbellen* → *op-ge-beld*); inseparable

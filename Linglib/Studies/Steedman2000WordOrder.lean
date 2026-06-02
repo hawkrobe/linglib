@@ -3,7 +3,7 @@ import Linglib.Phenomena.WordOrder.Basic
 
 /-!
 # CCG Derivations of Word Order
-@cite{steedman-2000}
+[steedman-2000]
 
 CCG encodes word order through slash direction:
 

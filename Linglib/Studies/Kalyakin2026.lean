@@ -4,12 +4,12 @@ import Linglib.Fragments.Dargwa.ComplexPredicates
 
 /-!
 # VP Ellipsis and Argument Structure Alternations in Muira Dargwa
-@cite{kalyakin-2026}
+[kalyakin-2026]
 
-@cite{kalyakin-2026} argues that **v-stranding VPE (vVPE)** exists in Muira
+[kalyakin-2026] argues that **v-stranding VPE (vVPE)** exists in Muira
 Dargwa (Nakh-Dagestanian) complex predicates: the light verb (= v) survives
 while its complement (= VP, containing the nominal root) is elided. The
-construction was first identified in Persian (@cite{toosarvandani-2009});
+construction was first identified in Persian ([toosarvandani-2009]);
 Muira Dargwa provides independent evidence and novel argument-structure
 alternation diagnostics.
 
@@ -17,22 +17,22 @@ alternation diagnostics.
 
 1. **Causative alternation under vVPE**: An inchoative antecedent can license
    a causative ellipsis site and vice versa — the *same root* with different
-   Voice flavors. This is blocked in English VPE (@cite{merchant-2013}).
+   Voice flavors. This is blocked in English VPE ([merchant-2013]).
 
 2. **Antipassive blocking**: Antipassive roots are coerced to v-adjunction
    (manner/activity position), placing them *outside* vVPE's deletion
    domain (VP). Antipassive roots therefore cannot be elided.
 
 3. **Again diagnostic**: Under vVPE, BOTH repetitive and restitutive
-   readings of *again* survive (@cite{kalyakin-2026} §4.1, exx. 52a–b).
+   readings of *again* survive ([kalyakin-2026] §4.1, exx. 52a–b).
    This contrasts with English VPE (only repetitive survives) and
    confirms the deletion domain is VP (complement of v), not vP.
-   @cite{toosarvandani-2009} (ex. 90) independently shows both readings
+   [toosarvandani-2009] (ex. 90) independently shows both readings
    available for Persian vVPE.
 
 ## Theoretical Analysis
 
-The analysis extends @cite{merchant-2013}'s [E]-feature theory: placing [E]
+The analysis extends [merchant-2013]'s [E]-feature theory: placing [E]
 on v (rather than Voice) yields a smaller deletion domain (VP rather than
 vP). This correctly predicts:
 - Voice mismatches tolerated (same as English VPE)
@@ -40,7 +40,7 @@ vP). This correctly predicts:
 - Lexical verb mismatches still blocked (V is inside VP)
 
 The causative alternation tolerance follows directly from existing Voice
-decomposition (@cite{kratzer-1996}, @cite{cuervo-2003}): alternating pairs
+decomposition ([kratzer-1996], [cuervo-2003]): alternating pairs
 share the same root [vGO, vBE]; only Voice differs. Since Voice is outside
 vVPE's deletion domain, mismatches in Voice are tolerated.
 -/
@@ -106,7 +106,7 @@ def causativeToInchoative : AlternationDatum :=
     rootStructure := [.vCAUSE, .vGO, .vBE]
     grammatical := true }
 
-/-- Same alternation is blocked in English VPE (@cite{merchant-2013}):
+/-- Same alternation is blocked in English VPE ([merchant-2013]):
     v_trans ≠ v_unacc inside the deletion domain. -/
 def englishAlternationBlocked : AlternationDatum :=
   { description := "Causative alternation blocked under English VPE"
@@ -203,9 +203,9 @@ theorem vVPE_below_englishVPE :
 -- § 6. End-to-End Argumentation Chain
 -- ════════════════════════════════════════════════════
 
-/-- End-to-end chain: Voice severing (@cite{kratzer-1996}) →
-    Merchant's deletion domain (@cite{merchant-2013}) →
-    Kalyakin's empirical finding (@cite{kalyakin-2026}).
+/-- End-to-end chain: Voice severing ([kratzer-1996]) →
+    Merchant's deletion domain ([merchant-2013]) →
+    Kalyakin's empirical finding ([kalyakin-2026]).
 
     Step 1 (Voice.lean): The root `[vCAUSE, vGO, vBE]` yields a causative
     decomposition `[vDO, vCAUSE, vGO, vBE]` under agentive Voice but an
@@ -231,7 +231,7 @@ theorem end_to_end_causative_chain :
 
 /-- Convergent prediction: Merchant's theory correctly predicts that
     sluicing (C[E]) blocks voice mismatches — Voice is inside TP, the
-    deletion domain of sluicing. The SCSS corpus (@cite{anand-hardt-mccloskey-2021},
+    deletion domain of sluicing. The SCSS corpus ([anand-hardt-mccloskey-2021],
     §5.5) independently confirms this: across 4,700 annotated sluices, zero
     antecedent–ellipsis site pairings exhibit active/passive voice mismatches.
     The same theoretical apparatus that Kalyakin extends to vVPE
@@ -247,16 +247,16 @@ theorem sluicing_voice_blocked_convergent :
     This contrasts with English VPE (only repetitive survives) and
     confirms the deletion domain is VP (complement of v), not vP.
 
-    @cite{kalyakin-2026} §4.1 (exx. 52a–b): both repetitive and
+    [kalyakin-2026] §4.1 (exx. 52a–b): both repetitive and
     restitutive ʔibrra 'again' are available under vVPE in Muira Dargwa.
-    @cite{toosarvandani-2009} (ex. 90) independently shows both readings
+    [toosarvandani-2009] (ex. 90) independently shows both readings
     available for Persian vVPE. -/
 theorem vVPE_both_again :
     againSurvives .vP_adjunction vVPE = true ∧
     againSurvives .VP_adjunction vVPE = true := by native_decide
 
 /-- English VPE deletes restitutive *again*: only repetitive survives.
-    (@cite{merchant-2013}, building on Johnson 2004, von Stechow 1996). -/
+    ([merchant-2013], building on Johnson 2004, von Stechow 1996). -/
 theorem englishVPE_only_repetitive :
     againSurvives .vP_adjunction englishVPE = true ∧
     againSurvives .VP_adjunction englishVPE = false := by native_decide
@@ -302,7 +302,7 @@ theorem manner_outside_domain :
 -- ════════════════════════════════════════════════════
 
 /-- Datum for the NV-drop constituency test.
-    @cite{kalyakin-2026} §3.2 distinguishes vVPE from argument ellipsis (AE):
+    [kalyakin-2026] §3.2 distinguishes vVPE from argument ellipsis (AE):
     - vVPE: NV+argument deleted together (constituent = VP)
     - AE: argument alone deleted, NV survives
     - *NV alone deleted, argument survives → ungrammatical

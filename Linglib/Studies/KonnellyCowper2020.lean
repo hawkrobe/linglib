@@ -5,7 +5,7 @@ import Linglib.Features.Accessibility
 import Linglib.Fragments.English.Pronouns
 
 /-!
-# @cite{konnelly-cowper-2020}
+# [konnelly-cowper-2020]
 
 Konnelly, Lex and Elizabeth Cowper. 2020. Gender diversity and
 morphosyntax: An account of singular *they*. *Glossa: a journal
@@ -29,7 +29,7 @@ bundles nouns and names project.
 
 The key theorem: the VIs are *constant* across stages. At Stage 3,
 [MASC]/[FEM] are optional modifiers (non-contrastive in the sense of
-@cite{wiltschko-2008}), so their absence is the norm, and the Elsewhere
+[wiltschko-2008]), so their absence is the norm, and the Elsewhere
 Condition yields *they* as the default singular animate pronoun.
 
 ## Formalization
@@ -56,7 +56,7 @@ open Morphology.DM.VI (FeatureVI subsetPrinciple)
     spellout (K&C §4, (11a--d)).
 
     K&C place [MASC] and [FEM] on the φ head above Number (following
-    @cite{kramer-2009}; @cite{kramer-2015}), [SG] on Num, and [INANIM]
+    [kramer-2009]; [kramer-2015]), [SG] on Num, and [INANIM]
     on n. For VI purposes, only the feature *bundle* at the pronoun
     terminal matters, not where in the tree it originates. -/
 inductive PronFeature where
@@ -333,7 +333,7 @@ theorem stage1_they_restricted :
 /-- Project a DM n-head's phi-features into K&C's flat pronoun VI feature
     system.
 
-    This bridges @cite{kramer-2015}'s structured features on n
+    This bridges [kramer-2015]'s structured features on n
     (GenderFeature with dimension, polarity, interpretability) to K&C's
     flat feature system for VI competition.
 
@@ -343,8 +343,8 @@ theorem stage1_they_restricted :
     - i[−ANIM] on n → [INANIM] (yields "it")
     - no gender on n → ∅ (elsewhere, yields "they")
 
-    Note: K&C adopt @cite{harley-ritter-2002}'s feature geometry with
-    independent [MASC] and [FEM], while @cite{kramer-2015} uses [±FEM]
+    Note: K&C adopt [harley-ritter-2002]'s feature geometry with
+    independent [MASC] and [FEM], while [kramer-2015] uses [±FEM]
     with polarity. For English pronoun VI, these are equivalent: K&C's
     [FEM] = Kramer's [+FEM], K&C's [MASC] = Kramer's [−FEM]. -/
 def catHeadToPronFeatures (ch : CatHead) : List PronFeature :=
@@ -405,11 +405,11 @@ open Minimalist (fValue allCategoryConsistent allFMonotone catFamily)
 
     Features are distributed across heads: [SG] on Num, [MASC]/[FEM] on
     the φ head (which K&C identify with the n domain following
-    @cite{kramer-2009}; @cite{kramer-2015}), and [INANIM] on n.
+    [kramer-2009]; [kramer-2015]), and [INANIM] on n.
 
     The DP is the maximal projection of the nominal extended projection
     n (F1) → Num (F3) → D (F4), a well-formed subsequence of
-    @cite{borer-2005}'s full nominal spine N → n → Q → Num → D. -/
+    [borer-2005]'s full nominal spine N → n → Q → Num → D. -/
 structure PronDP where
   /-- The categorizing head n, bearing gender and animacy features. -/
   nHead : CatHead
@@ -485,7 +485,7 @@ theorem kc14_spine_consistent :
 /-- K&C's (14) spine [n, Num, D] has monotonically increasing F-values:
     n (F1) ≤ Num (F3) ≤ D (F4). The gap between n (F1) and Num (F3)
     reflects K&C's omission of the Q (classifier) layer, which sits
-    at F2 in @cite{borer-2005}'s full nominal spine. -/
+    at F2 in [borer-2005]'s full nominal spine. -/
 theorem kc14_spine_monotone :
     allFMonotone [Minimalist.Cat.n, .Num, .D] = true := by decide
 
@@ -550,7 +550,7 @@ theorem vi_fragment_consistency :
 -- § 11: Comparison with Bjorkman 2017 (K&C §5)
 -- ============================================================================
 
-/-- @cite{bjorkman-2017}'s dynamic discourse condition: a pronoun's
+/-- [bjorkman-2017]'s dynamic discourse condition: a pronoun's
     gender features must be a subset of its antecedent's gender features.
     A pronoun that is "less specified" than its antecedent is acceptable;
     one that adds features the antecedent lacks is not.

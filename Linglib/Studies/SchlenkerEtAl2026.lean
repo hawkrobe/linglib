@@ -6,14 +6,14 @@ import Linglib.Core.Context.Shifts
 
 /-!
 # Schlenker, Lamberton & Lamberton (2026)
-@cite{schlenker-lamberton-lamberton-2026}
+[schlenker-lamberton-lamberton-2026]
 
 Traveling Shots in Language: Towards an Analysis of Dynamic Viewpoints in ASL.
 To appear in *Linguistic Inquiry*.
 
 ## Core Contribution
 
-Extends Iconological Semantics (@cite{schlenker-lamberton-2024}) by showing that
+Extends Iconological Semantics ([schlenker-lamberton-2024]) by showing that
 viewpoint variables may denote **dynamic** (traveling) viewpoints — functions from
 time-world pairs to static viewpoints — not just static observation points.
 

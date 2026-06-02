@@ -1,6 +1,6 @@
 /-!
 # Polish Question Particles
-@cite{simik-2024}
+[simik-2024]
 
 Lexical entries for Polish interrogative particles. The fragment
 commits only to theory-neutral lexical primitives; the left-peripheral
@@ -33,7 +33,7 @@ structure QParticleEntry where
   requiresEpistemicBias : Bool
   deriving Repr, DecidableEq
 
-/-- czy — obligatory clause-initial PQ particle (@cite{simik-2024} ex. 30).
+/-- czy — obligatory clause-initial PQ particle ([simik-2024] ex. 30).
 Verb-initial PQs possible but unacceptable in quiz scenarios. -/
 def czy : QParticleEntry where
   form := "czy"
@@ -44,7 +44,7 @@ def czy : QParticleEntry where
   requiresEvidentialBias := false
   requiresEpistemicBias := false
 
-/-- czyżby — mirative/dubitative particle (RAZVE family, @cite{simik-2024} §4.2.4).
+/-- czyżby — mirative/dubitative particle (RAZVE family, [simik-2024] §4.2.4).
 Polish member of the cross-Slavic razve family. -/
 def czyzby : QParticleEntry where
   form := "czyżby"

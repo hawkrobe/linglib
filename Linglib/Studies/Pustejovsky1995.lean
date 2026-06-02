@@ -1,6 +1,6 @@
 /-!
 # Pustejovsky (1995): Generative Lexicon — qualia-derived complement coercion
-@cite{pustejovsky-1995}
+[pustejovsky-1995]
 
 GL §7.1 introduces *type coercion*: a semantic operation that
 converts an argument to the type expected by a function, "where it
@@ -46,7 +46,7 @@ qualia structure (TELIC, AGENTIVE: paper §6.2).
 
 ## References
 
-* @cite{pustejovsky-1995} §6.2 (qualia structure), §7.1.3
+* [pustejovsky-1995] §6.2 (qualia structure), §7.1.3
   (true complement coercion), p. 86 (book's two coercion readings).
 -/
 

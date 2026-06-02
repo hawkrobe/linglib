@@ -11,8 +11,8 @@ moved to:
 
 - `Studies/ElkinsTorrenceBrown2026.lean` — primary
   anchor for the Minimalist treatment of =(y)a' / oblique extraction
-  (@cite{elkins-torrence-brown-2026}); also houses the antipassive
-  Voice apparatus from @cite{scott-2023} §2.5.4.1.
+  ([elkins-torrence-brown-2026]); also houses the antipassive
+  Voice apparatus from [scott-2023] §2.5.4.1.
 - Cross-Studies consumer:
   `Studies/Scott2023Agreement.lean` imports the Minimalist
   Mam Voice from ETB2026 to compare φ-Agree and oblique-Agree pipelines.
@@ -20,8 +20,8 @@ moved to:
 This Fragment file retains only `mamVoiceSystem : VoiceSystemProfile` —
 a theory-neutral typology profile any framework can consume.
 
-**Variety note**: SJO Mam (San Juan Ostuncalco, @cite{elkins-torrence-brown-2026})
-and SJA Mam (San Juan Atitán, @cite{scott-2023}) are distinct varieties.
+**Variety note**: SJO Mam (San Juan Ostuncalco, [elkins-torrence-brown-2026])
+and SJA Mam (San Juan Atitán, [scott-2023]) are distinct varieties.
 The voice system profile abstracts over the variety distinction.
 -/
 

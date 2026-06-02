@@ -3,8 +3,8 @@ import Linglib.Studies.YoonEtAl2020
 import Mathlib.Probability.ProbabilityMassFunction.Monad
 
 /-!
-# @cite{yoon-etal-2020} on mathlib `PMF` (Phase 2 stress test, S1 submodel)
-@cite{yoon-etal-2020}
+# [yoon-etal-2020] on mathlib `PMF` (Phase 2 stress test, S1 submodel)
+[yoon-etal-2020]
 
 Fifth stress test for the Phase-2 architecture. Yoon's politeness model
 contributes one new ingredient: a **graded literal meaning** (real-valued

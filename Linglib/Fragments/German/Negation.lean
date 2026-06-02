@@ -2,7 +2,7 @@ import Linglib.Typology.Negation
 
 /-!
 # German Negation Fragment
-@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
+[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
 
 German expresses standard negation with the particle *nicht*, which
 appears after the finite verb in main clauses and before the non-finite

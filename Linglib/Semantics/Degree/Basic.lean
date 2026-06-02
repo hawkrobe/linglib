@@ -5,8 +5,8 @@ import Linglib.Semantics.Degree.Defs
 
 Positive-form semantic operations on the types declared in `Defs.lean`,
 plus threshold-comparison predicates on the concrete `Degree max` /
-`Threshold max` carriers @cite{kennedy-2007} @cite{heim-2001}
-@cite{kennedy-mcnally-2005}. Kennedy 2007's interpretive economy lives
+`Threshold max` carriers [kennedy-2007] [heim-2001]
+[kennedy-mcnally-2005]. Kennedy 2007's interpretive economy lives
 in the sibling `Kennedy.lean`.
 
 ## Main definitions

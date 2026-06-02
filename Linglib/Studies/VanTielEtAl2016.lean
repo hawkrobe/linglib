@@ -2,11 +2,11 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Features.Acceptability
 
 /-!
-# @cite{van-tiel-geurts-2016} — Scalar Diversity
-@cite{van-tiel-geurts-2016} @cite{ronai-2024}
+# [van-tiel-geurts-2016] — Scalar Diversity
+[van-tiel-geurts-2016] [ronai-2024]
 
 Theory-neutral empirical data and argumentation chain from
-@cite{van-tiel-geurts-2016}.
+[van-tiel-geurts-2016].
 
 ## Central Question
 
@@ -69,7 +69,7 @@ def GrammaticalClass.isClosedClass : GrammaticalClass → Bool
   | _ => false
 
 /--
-Complete data for each scale tested in @cite{van-tiel-geurts-2016}.
+Complete data for each scale tested in [van-tiel-geurts-2016].
 
 Fields capture all predictors tested in the paper:
 - SI rates from Experiments 1 and 2
@@ -493,7 +493,7 @@ def contentHappy : ScaleDatum :=
 
 end Scales
 
-/-- All 43 scales tested in @cite{van-tiel-geurts-2016} -/
+/-- All 43 scales tested in [van-tiel-geurts-2016] -/
 def allScales : List ScaleDatum := [
   Scales.cheapFree,
   Scales.sometimesAlways,

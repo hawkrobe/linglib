@@ -5,7 +5,7 @@ set_option autoImplicit false
 
 /-!
 # Bridge: SynObj → SynGraph
-@cite{adger-2025}
+[adger-2025]
 
 Embeds tree-based syntactic objects (`SynObj`) into graph-based structures
 (`SynGraph MLabel`), making `SynGraph` the canonical operational type for
@@ -32,7 +32,7 @@ The embedding assigns node indices via pre-order traversal:
 - `compLine` agrees with `onePartChain`
 - `angularLocalityOK` (tree, label-based) agrees with `satisfiesAL`
   (graph, index-based) — verified on the critical cross-dimensional
-  structure from @cite{adger-2025} p. 95
+  structure from [adger-2025] p. 95
 -/
 
 namespace MereologicalSyntax
@@ -172,7 +172,7 @@ theorem rollup_compLine :
     t_rollup.toSynGraph.onePartChain ⟨0, by decide⟩ := by native_decide
 
 -- ────────────────────────────────────────────────────
--- (c) Cross-dimensional (@cite{adger-2025} p. 95)
+-- (c) Cross-dimensional ([adger-2025] p. 95)
 --     C ──1──▶ T ──1──▶ V,  T ──2──▶ v ──1──▶ N,  v ──2──▶ D
 --
 --     D (within dim-2) CAN subjoin to C.

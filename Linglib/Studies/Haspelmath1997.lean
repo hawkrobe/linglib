@@ -9,18 +9,18 @@ import Linglib.Fragments.Slavic.Russian.Indefinites
 
 /-!
 # Haspelmath (1997): Indefinite Pronoun Typology
-@cite{haspelmath-1997} @cite{wals-2013}
+[haspelmath-1997] [wals-2013]
 
 Haspelmath, Martin (1997). *Indefinite Pronouns*. Oxford Studies in
 Typology and Linguistic Theory. Oxford University Press.
 
-Cross-linguistic indefinite-pronoun survey following @cite{haspelmath-1997}'s
+Cross-linguistic indefinite-pronoun survey following [haspelmath-1997]'s
 9-function semantic map (specificKnown / specificUnknown / irrealis / question
 / conditional / comparative / indirectNeg / directNeg / freeChoice). Pulls
 together a six-language sample of `IndefiniteParadigm`s (each anchored to its
 Fragment file's per-form data) and proves cross-cutting universals plus WALS
 bridge theorems verifying that each Fragment's encoded morphological-basis
-distribution matches the @cite{wals-2013} F46A classification of the same
+distribution matches the [wals-2013] F46A classification of the same
 language by ISO 639-3 join.
 
 The substrate (`HaspelmathFunction` enum + `IndefinitePronoun`/`IndefiniteParadigm`
@@ -50,7 +50,7 @@ for cross-linguistic comparison anyway.
    independently agrees with the WALS classification.
 
 2. **Cross-linguistic universals**: every paradigm in the sample has a
-   non-empty form list; @cite{haspelmath-1997}'s ABA-ban holds on every
+   non-empty form list; [haspelmath-1997]'s ABA-ban holds on every
    paradigm whose SK/SU/NS region is fully populated.
 -/
 

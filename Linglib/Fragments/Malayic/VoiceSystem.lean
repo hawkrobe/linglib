@@ -1,9 +1,9 @@
 /-!
 # Malayic Voice System: Voice/v Decomposition
-@cite{erlewine-sommerlot-2025} @cite{nomoto-2015} @cite{nomoto-2021}
+[erlewine-sommerlot-2025] [nomoto-2015] [nomoto-2021]
 
 The verbal extended projection in Malayic languages involves two
-functional heads above VP (@cite{nomoto-2015}, @cite{nomoto-2021}):
+functional heads above VP ([nomoto-2015], [nomoto-2021]):
 
 - **Voice** (higher): the phase head of the verbal domain. Always hosts
   exactly one nominal (DP) specifier. Realizes *me-*, *di-*, or ∅
@@ -16,7 +16,7 @@ functional heads above VP (@cite{nomoto-2015}, @cite{nomoto-2021}):
   - **v_PASS**: licenses its specifier (the external argument).
     Realizes as ∅.
 
-The key insight of @cite{erlewine-sommerlot-2025} is that the active
+The key insight of [erlewine-sommerlot-2025] is that the active
 prefix *meN-* in SI/SM reflects TWO affixes (*me-* on Voice + *N-* on
 *v*), and that the behavior of object extraction constructions (so-called
 "*meN*-deletion") follows from cyclic linearization when Voice is null.
@@ -43,7 +43,7 @@ namespace Malayic.VoiceSystem
 -- ============================================================================
 
 /-- The two flavors of the lower functional head *v*.
-    @cite{erlewine-sommerlot-2025} (32b,c). -/
+    [erlewine-sommerlot-2025] (32b,c). -/
 inductive LittleVFlavor where
   /-- Active: licenses internal argument via c-command.
       Realizes as homorganic nasal *N-*. -/
@@ -54,7 +54,7 @@ inductive LittleVFlavor where
   deriving DecidableEq, Repr
 
 /-- The four clause types in Malayic languages.
-    @cite{erlewine-sommerlot-2025} (28), (29). -/
+    [erlewine-sommerlot-2025] (28), (29). -/
 inductive VoiceConstruction where
   /-- Active: agent = subject, *v* = v_ACT, Voice = *me-*/*N-*. -/
   | active
@@ -97,7 +97,7 @@ structure MalayicVariety where
 -- ============================================================================
 
 /-- Suak Mansi Desa voice system.
-    @cite{erlewine-sommerlot-2025} (31)–(32).
+    [erlewine-sommerlot-2025] (31)–(32).
     Key: *N-* and *meN-* are in free variation in active clauses;
     only *meN-* (= *me-* + *N-*) is blocked in object extraction. -/
 def desa : MalayicVariety :=
@@ -115,7 +115,7 @@ def desa : MalayicVariety :=
   , hasNullVoice := true }
 
 /-- Standard Indonesian / Standard Malay voice system.
-    @cite{erlewine-sommerlot-2025} (48)–(49).
+    [erlewine-sommerlot-2025] (48)–(49).
     Key: active verbs ALWAYS bear full *meN-* (no short *N-* variant).
     In object extraction, both *me-* and *N-* are lost. -/
 def standardSISM : MalayicVariety :=
@@ -133,7 +133,7 @@ def standardSISM : MalayicVariety :=
   , hasNullVoice := true }
 
 /-- Polite-register Madurese.
-    @cite{erlewine-sommerlot-2025} (81)–(82), based on @cite{jeoung-2017}.
+    [erlewine-sommerlot-2025] (81)–(82), based on [jeoung-2017].
     Three voices (like Desa/SI/SM) plus object extraction.
     Voice has a null elsewhere allomorph → bare passive and object
     extraction are available. -/
@@ -148,7 +148,7 @@ def politeMadurese : MalayicVariety :=
   , hasNullVoice := true }
 
 /-- Familiar-register Madurese.
-    @cite{erlewine-sommerlot-2025} (81), (83), based on @cite{jeoung-2017}.
+    [erlewine-sommerlot-2025] (81), (83), based on [jeoung-2017].
     Only two voices (active, *e-* passive). Voice has NO null elsewhere
     allomorph → bare passive and object extraction are unavailable. -/
 def familiarMadurese : MalayicVariety :=
@@ -167,7 +167,7 @@ def familiarMadurese : MalayicVariety :=
 
 /-- Whether a clause type is grammatical in a given variety.
     Bare passives and object extraction require Voice to have a null
-    allomorph. @cite{erlewine-sommerlot-2025} §4.3, §5.3. -/
+    allomorph. [erlewine-sommerlot-2025] §4.3, §5.3. -/
 def MalayicVariety.clauseAvailable (v : MalayicVariety) : VoiceConstruction → Bool
   | .active          => true
   | .diPassive        => true
@@ -203,7 +203,7 @@ theorem familiar_madurese_has_di_passive :
 /-- The Madurese register contrast: the ONLY difference is whether Voice
     has a null allomorph. This single parameter accounts for the presence
     vs absence of bare passives and object extraction.
-    @cite{erlewine-sommerlot-2025} §5.3. -/
+    [erlewine-sommerlot-2025] §5.3. -/
 theorem madurese_register_contrast :
     politeMadurese.hasNullVoice = true ∧
     familiarMadurese.hasNullVoice = false := ⟨rfl, rfl⟩
@@ -211,7 +211,7 @@ theorem madurese_register_contrast :
 /-- In Desa object extraction, *v_ACT* still realizes as *N-*
     (only Voice/*me-* is blocked). In SI/SM, both are lost.
     This is the key Desa vs SI/SM contrast.
-    @cite{erlewine-sommerlot-2025} §2.3, (25) vs (22). -/
+    [erlewine-sommerlot-2025] §2.3, (25) vs (22). -/
 theorem desa_keeps_n_in_extraction :
     desa.vExponent .objectExtraction = some "N-" := rfl
 theorem sism_loses_n_in_extraction :

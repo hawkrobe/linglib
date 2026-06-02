@@ -1,7 +1,7 @@
 /-
 # The Proper Treatment of Quantification in Ordinary English (PTQ)
 
-Formalization of @cite{montague-1973}, the foundational paper establishing
+Formalization of [montague-1973], the foundational paper establishing
 the homomorphism between natural language syntax and model-theoretic semantics.
 
 ## Innovations

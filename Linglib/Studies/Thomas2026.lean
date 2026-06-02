@@ -2,9 +2,9 @@ import Linglib.Semantics.Questions.Probabilistic
 
 /-!
 # Thomas (2026): Probabilistic, question-based additivity
-@cite{thomas-2026} @cite{ciardelli-groenendijk-roelofsen-2018} @cite{frank-goodman-2012}
+[thomas-2026] [ciardelli-groenendijk-roelofsen-2018] [frank-goodman-2012]
 
-Formalisation of @cite{thomas-2026} "A probabilistic, question-based
+Formalisation of [thomas-2026] "A probabilistic, question-based
 approach to additivity" (S&P 19:1). The paper unifies the canonical
 additive use of *too* with a previously unstudied "argument-building
 use" by formalising felicity in terms of Bayesian inquisitive
@@ -31,7 +31,7 @@ question `RQ` and an antecedent fact `ANT` such that:
 
 (i) prevents *too* from being felicitous when the prejacent already
 entails the answer suggested by the conjunction (the
-@cite{beaver-clark-2008} ecstatic case (29a)). (ii) prevents *too*
+[beaver-clark-2008] ecstatic case (29a)). (ii) prevents *too*
 from being felicitous when a weaker prejacent would do (the
 "some-instrument vs cello" case (30)).
 -/
@@ -43,9 +43,9 @@ open Question Semantics.Questions.Probabilistic
 variable {W : Type*} {μ : PMF W}
   {prejacent antecedent : Set W} {rq : Question W} {𝒜 : Set (Set W)}
 
-/-! ### TOO felicity (@cite{thomas-2026} Def 64) -/
+/-! ### TOO felicity ([thomas-2026] Def 64) -/
 
-/-- `TOO(π)` felicity in the sense of @cite{thomas-2026} Def 64. The
+/-- `TOO(π)` felicity in the sense of [thomas-2026] Def 64. The
     five conditions are bundled below as a `structure` so consumers
     can project them by name. -/
 structure IsTooFelicitous (prejacent antecedent : Set W) (rq : Question W)
@@ -88,7 +88,7 @@ theorem IsTooFelicitous.conjunction_probOfSet_pos
   h.conjunction_answers.probOfSet_pos
 
 /-- TOO felicity entails that the conjunction is genuinely stronger
-    evidence than the antecedent alone (the @cite{thomas-2026} §4.4
+    evidence than the antecedent alone (the [thomas-2026] §4.4
     intuition that *too* marks a strict improvement). The witness
     `𝒜` from the conjunction-stronger field exhibits this. -/
 theorem IsTooFelicitous.exists_strict_improvement
@@ -99,7 +99,7 @@ theorem IsTooFelicitous.exists_strict_improvement
   obtain ⟨𝒜, hRes, hMore⟩ := h.conjunction_stronger
   exact ⟨𝒜, hRes, hMore⟩
 
-/-! ### RQ vs CQ — the contextual-relevance layer (@cite{thomas-2026} §5.4.3, §5.5)
+/-! ### RQ vs CQ — the contextual-relevance layer ([thomas-2026] §5.4.3, §5.5)
 
 The RQ in `IsTooFelicitous` need not be a Current Question (CQ) in
 the discourse tree — it only needs to be *relevant* to one (the DQ
@@ -109,7 +109,7 @@ licenses *too* in cases like (45c) [implicit RQ] and (71) [single
 `Probabilistic.IsRelevantTo` (Def 61). -/
 
 /-- TOO licensed by an RQ that is in turn relevant to some discourse
-    question DQ. This is the full felicity condition (@cite{thomas-2026}
+    question DQ. This is the full felicity condition ([thomas-2026]
     Def 64) — `IsTooFelicitous` itself only constrains `rq`, but the
     paper requires `rq` to be Relevant to *some* `dq` in the discourse
     tree. -/
@@ -123,14 +123,14 @@ If the RQ does not satisfy the felicity conditions for any candidate
 in the discourse, *too* is predicted infelicitous. Two characteristic
 infelicity patterns from §5.5: -/
 
-/-- @cite{thomas-2026} §5.5 (ex 72): if no contextually relevant `rq`
+/-- [thomas-2026] §5.5 (ex 72): if no contextually relevant `rq`
     has the prejacent providing additional evidence beyond the
     antecedent, *too* is infelicitous. The infelicity is captured by
     the absence of any felicitous RQ for the given (prejacent, ant). -/
 def IsTooInfelicitous (prejacent antecedent : Set W) (μ : PMF W) : Prop :=
   ∀ rq : Question W, ¬ IsTooFelicitous prejacent antecedent rq μ
 
-/-- @cite{thomas-2026} §5.5.1 (ex 75): if a single *wh*-answer (e.g.,
+/-- [thomas-2026] §5.5.1 (ex 75): if a single *wh*-answer (e.g.,
     "Bailey ate spaghetti") is offered against a multiple-*wh* CQ
     (e.g., "Who ate what?") whose resolutions specify what every
     salient individual ate, no `rq` over alt(CQ) satisfies the

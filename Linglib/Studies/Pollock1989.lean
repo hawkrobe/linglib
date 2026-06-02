@@ -3,7 +3,7 @@ import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!
 # Pollock's Verb Movement Diagnostics
-@cite{pollock-1989}
+[pollock-1989]
 
 Connects the Minimalist verb movement parameter
 (`Syntax/Minimalism/Formal/HeadMovement/VerbMovement.lean`) to the

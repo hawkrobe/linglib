@@ -2,7 +2,7 @@ import Linglib.Semantics.Genericity.Generics
 import Linglib.Features.Genericity
 
 /-!
-# @cite{krifka-2013}: Definitional Generics
+# [krifka-2013]: Definitional Generics
 
 Manfred Krifka, "Definitional Generics", ch. 15 of
 *Genericity* (eds. Mari, Beyssade, Del Prete), Oxford University Press, 2013.
@@ -31,7 +31,7 @@ only universal closure which requires a rule-like interpretation.
 
 - **§15.1**: IS/BP asymmetry, Lawler (1973a), Leslie et al. (2009)
 - **§15.2**: Previous accounts — Burton-Roberts (1976, 1977),
-  @cite{cohen-1999a}, Greenberg (2003, 2007). Rule types: physical,
+  [cohen-1999a], Greenberg (2003, 2007). Rule types: physical,
   moral, legal, linguistic (exx. 5–9)
 - **§15.3.1**: Two-index semantics, DES/DEF update operations,
   descriptive vs definitional readings of "Boys don't cry" (ex. 13),
@@ -49,12 +49,12 @@ only universal closure which requires a rule-like interpretation.
 
 ## Connection to Other Generics Studies
 
-- @cite{cohen-1999a} (`Studies/Cohen1999.lean`): Cohen's rule-based
+- [cohen-1999a] (`Studies/Cohen1999.lean`): Cohen's rule-based
   account of IS generics — Krifka builds on Cohen's insight that IS
   generics express rules (physical, moral, legal, linguistic) but
   reanalyzes "rules" as interpretation restrictions rather than
   ontological entities
-- @cite{asher-pelletier-2012} (`Studies/AsherPelletier2013.lean`):
+- [asher-pelletier-2012] (`Studies/AsherPelletier2013.lean`):
   normality orderings — orthogonal to Krifka's theory, which targets
   the descriptive/definitional distinction rather than default reasoning
 -/
@@ -244,7 +244,7 @@ theorem def_not_world_reducible :
 -- ═══ Rule Types (§15.2, exx. 5–9) ═══
 
 /-- Types of rules that definitional generics can express.
-    Following @cite{cohen-1999a}'s categorization as cited by Krifka §15.2. -/
+    Following [cohen-1999a]'s categorization as cited by Krifka §15.2. -/
 inductive RuleType where
   | physical    -- (5) "An electron has a negative electric charge"
   | moral       -- (6) "A gentleman opens doors for ladies"
@@ -542,7 +542,7 @@ definitional sentences successively fix the meaning of a new word. -/
 -- ═══ Cross-Study Connections ═══
 
 /-- Krifka's definitional generics are orthogonal to the default reasoning
-    framework of @cite{asher-pelletier-2012}: normality orderings target
+    framework of [asher-pelletier-2012]: normality orderings target
     descriptive generics (which worlds are normal), while Krifka's DEF
     targets the interpretation index. The two theories operate on
     different components of the common ground. -/
@@ -551,7 +551,7 @@ theorem orthogonal_to_normality :
     -- worlds are unaffected by definitional updates
     (def_ cg₀ madrigalsPolyphonic).worlds = cg₀.worlds := rfl
 
-/-- @cite{cohen-1999a}'s rule types (physical, moral, legal, linguistic)
+/-- [cohen-1999a]'s rule types (physical, moral, legal, linguistic)
     provide the content classification for what Krifka formalizes as
     interpretation restrictions. Cohen claims IS-generics EXPRESS rules;
     Krifka claims IS-generics are INTERPRETED as universal quantification

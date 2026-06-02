@@ -6,7 +6,7 @@ import Mathlib.Data.Fin.Basic
 
 /-!
 # Neo-Stalnakerian Formalization of Assertion
-@cite{rudin-2025a} @cite{stalnaker-1978} @cite{veltman-1996} @cite{kratzer-1981}
+[rudin-2025a] [stalnaker-1978] [veltman-1996] [kratzer-1981]
 
 Rudin proposes that when a speaker asserts a sentence s, she predicates her
 epistemic state: she presents herself as though she knows s, and proposes
@@ -16,8 +16,8 @@ epistemic states compatible with knowing s.
 
 Applied uniformly to all declaratives, this single mechanism derives:
 1. Standard Stalnakerian intersective update for non-epistemic sentences (§4.1)
-2. @cite{veltman-1996}'s consistency-test semantics for epistemic *might* (§4.2)
-3. A novel ordering-source update for *might* on @cite{kratzer-1981} semantics (§5)
+2. [veltman-1996]'s consistency-test semantics for epistemic *might* (§4.2)
+3. A novel ordering-source update for *might* on [kratzer-1981] semantics (§5)
 
 The key insight: epistemic modals get nonstandard updates not because they
 have special update semantics, but because they are speaker-orientedly
@@ -54,7 +54,7 @@ def liftProp (p : (W → Prop)) : InfoSensDen W := λ _ => p
     ⟦might-p⟧ⁱ(w) = true iff ∃w' ∈ i, p(w') = true.
     Truth is insensitive to the evaluation world w.
 
-    eq. (25); adapted from @cite{yalcin-2007}. -/
+    eq. (25); adapted from [yalcin-2007]. -/
 def mightSimple (p : (W → Prop)) : InfoSensDen W :=
   λ i _ => ∃ w ∈ i, p w
 
@@ -199,13 +199,13 @@ theorem no_p_worlds_not_compatible (p : (W → Prop)) (c : List W)
     - c[might-p] = c if c ∩ p ≠ ∅ (test passes)
     - c[might-p] = ∅ if c ∩ p = ∅ (anomaly)
 
-    This is exactly @cite{veltman-1996}, derived rather than stipulated.
+    This is exactly [veltman-1996], derived rather than stipulated.
     The derivation uses `context_in_MI_might` (compatible case) and
     `no_p_worlds_not_compatible` (incompatible case).
 
     Bridges `nsfUpdateMight` to `Update.might` from UpdateSemantics.
 
-    §4.2; cf. @cite{veltman-1996}, @cite{yalcin-2007}. -/
+    §4.2; cf. [veltman-1996], [yalcin-2007]. -/
 theorem nsfUpdateMight_spec (p : (W → Prop)) [DecidablePred p] (c : List W) :
     nsfUpdateMight p c = (if c.any (fun w => decide (p w)) then c else []) :=
   rfl
@@ -222,7 +222,7 @@ theorem nsfUpdateMust_eq_nonEpistemic (p : (W → Prop)) [DecidablePred p] (c : 
 
     For sentences whose denotation doesn't vary with the information
     parameter, the NSF update is intersection with the proposition —
-    exactly @cite{stalnaker-1978}'s original formalization.
+    exactly [stalnaker-1978]'s original formalization.
 
     Bridges `nsfUpdateNonEpistemic` to `ContextSet.update` from CommonGround:
     both compute c ∩ p (filter c to p-worlds). -/
@@ -258,7 +258,7 @@ theorem rejection_nonEpistemic (p : (W → Prop)) (i : List W) (_ : i ≠ []) :
     *assertor's*. The assertor's might-claim can be true (she has
     p-worlds) while the rejector is licensed to reject (he has none).
 
-    This predicts @cite{khoo-2015}'s finding that might-claims can be
+    This predicts [khoo-2015]'s finding that might-claims can be
     simultaneously not-judged-false and rejected.
 
     §4.2.1. -/
@@ -309,7 +309,7 @@ theorem OrdEpistemicState.mem_bestWorlds_iff (s : OrdEpistemicState) (w : World)
     A world w is strictly dominated by w' iff w' satisfies a proper superset
     of the ordering propositions that w satisfies.
 
-    eq. (44); @cite{kratzer-1981}. -/
+    eq. (44); [kratzer-1981]. -/
 noncomputable def OrdEpistemicState.bestWorlds (s : OrdEpistemicState) : List World :=
   letI : DecidablePred s.notDominated := fun _ => Classical.propDecidable _
   s.base.filter s.notDominated
@@ -791,7 +791,7 @@ theorem nonEpistemic_truth_acceptance_biconditional
     - Rejection depends on the *rejector's* information parameter
     - These are different parameters that can diverge
 
-    This predicts the empirical pattern in @cite{khoo-2015}: participants
+    This predicts the empirical pattern in [khoo-2015]: participants
     reject might-claims (mean Likert rejection ~5.03) without judging
     them false (mean Likert falsity ~2.42).
 

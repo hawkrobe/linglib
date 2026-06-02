@@ -5,7 +5,7 @@ import Linglib.Core.Logic.Quantification
 # Possessives and relational nouns
 
 Type-shifting operators for the analysis of possessive constructions and
-relational nouns, following @cite{barker-2011}.
+relational nouns, following [barker-2011].
 
 The relationalizer `π` takes a sortal predicate `P` and a relation `R` and
 returns the relational predicate `fun x y ↦ P y ∧ R x y`. Its quasi-adjoint
@@ -35,10 +35,10 @@ describe distinct linguistic facts, even though they coincide by construction.
 
 ## References
 
-* @cite{barker-2011}: Possessives and relational nouns
+* [barker-2011]: Possessives and relational nouns
   (§6 of Portner/Heusinger/Maienborn handbook; π and Ex on pp. 184–189,
   Vikner-Jensen taxonomy reproduced in Fig 6.1 p. 185).
-* @cite{vikner-jensen-2002}: Semantic analysis of the English possessive.
+* [vikner-jensen-2002]: Semantic analysis of the English possessive.
 
 ## Tags
 
@@ -162,9 +162,9 @@ instance : DecidablePred CanFillRelatum := λ s => by
 /-! ### Vikner-Jensen possession taxonomy -/
 
 /-- Four-way lexical taxonomy of possession relations from
-@cite{vikner-jensen-2002} §3.1.2, reproduced in Fig 6.1 of
-@cite{barker-2011}. The separate "pragmatic" interpretation
-(@cite{vikner-jensen-2002} §3.1.1) is not lexical and is not one of the
+[vikner-jensen-2002] §3.1.2, reproduced in Fig 6.1 of
+[barker-2011]. The separate "pragmatic" interpretation
+([vikner-jensen-2002] §3.1.1) is not lexical and is not one of the
 four cases below. -/
 inductive PossessionRelationType where
   /-- Inherent relation: lexically argument-structural (the teacher's class). -/

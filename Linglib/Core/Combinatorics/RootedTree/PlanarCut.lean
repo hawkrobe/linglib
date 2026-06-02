@@ -4,7 +4,7 @@ set_option autoImplicit false
 
 /-!
 # Admissible cuts on planar n-ary rooted trees
-@cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
+[marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 An **admissible cut** of a tree T is a subset of edges such that every
 root-to-leaf path of T contains at most one selected edge. After
@@ -34,7 +34,7 @@ uniformly across arities — the binary case inherits as a subtype.
 
 ## MCB anchor
 
-@cite{marcolli-chomsky-berwick-2025} Definition 1.2.6 (book p. 31) for
+[marcolli-chomsky-berwick-2025] Definition 1.2.6 (book p. 31) for
 the admissible cut definition; Lemma 1.2.7 (book p. 32) for the
 equivalence with forest extraction. Definitions 1.2.4 (T/^c, p. 30),
 1.2.5 (T/^d, p. 31), 1.2.6 (T/^p, p. 31) for the three remainder

@@ -1,10 +1,10 @@
 /-!
 # Temporal Connective Typology — substrate
-@cite{giannakidou-2002} @cite{karttunen-1974}
+[giannakidou-2002] [karttunen-1974]
 
 Type-level enums + per-language data record for the cross-linguistic
 typology of the durative/eventive *until* distinction following
-@cite{giannakidou-2002}.
+[giannakidou-2002].
 
 ## The four strategies
 
@@ -30,7 +30,7 @@ theorems + Fragment grounding live in the Giannakidou 2002 study file.
 namespace Typology.TemporalConnectives
 
 /-- How a language handles the durative/eventive *until* distinction
-    (@cite{giannakidou-2002}). -/
+    ([giannakidou-2002]). -/
 inductive UntilStrategy where
   /-- Three distinct lexemes: *before*, durative *until*, eventive NPI-*until*.
       Greek: *prin*, *mexri*, *para monon*. -/
@@ -55,7 +55,7 @@ structure UntilTypologyEntry where
   /-- Surface form for eventive *until* (NPI or PPI). -/
   eventiveForm : String
   /-- Is the eventive form morphologically built on *before*?
-      (@cite{karttunen-1974}'s identity NPI-*until* = ¬*before*.) -/
+      ([karttunen-1974]'s identity NPI-*until* = ¬*before*.) -/
   eventiveMorphBeforeBased : Bool
   /-- Does the language have overt perfective/imperfective marking?
       Orthogonal to the lexicalization choice. -/

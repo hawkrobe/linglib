@@ -1,9 +1,9 @@
 import Mathlib.Order.Nat
 
 /-!
-# Logophoric Roles @cite{sells-1987}
+# Logophoric Roles [sells-1987]
 
-@cite{sells-1987} identifies three logophoric roles that govern the licensing
+[sells-1987] identifies three logophoric roles that govern the licensing
 of logophoric pronouns and long-distance reflexives cross-linguistically:
 
 - **Pivot**: the individual whose point of view the event is described from.
@@ -31,7 +31,7 @@ The same logophoric roles govern:
 - The Clitic Logophoric Restriction (CLR): 3P IO clitic interpreted as
   point-of-view center blocks *de se* reading of accusative clitic
 
-The bridge to Minimalist P-Prominence (@cite{pancheva-zubizarreta-2018}) is
+The bridge to Minimalist P-Prominence ([pancheva-zubizarreta-2018]) is
 in `PanchevaZubizarreta2018`.
 -/
 
@@ -41,7 +41,7 @@ namespace Features.Logophoricity
 -- § 1: Logophoric Roles
 -- ============================================================================
 
-/-- Logophoric roles from @cite{sells-1987}.
+/-- Logophoric roles from [sells-1987].
 
     The roles capture different dimensions of perspectival centering:
     who is the narrator (source), who is thinking/believing (self),
@@ -101,7 +101,7 @@ theorem le_source (r : LogophoricRole) : r ≤ .source := by
 -- § 3: Point-of-View Principle
 -- ============================================================================
 
-/-- The Point-of-View Principle (@cite{pancheva-zubizarreta-2018}, (48)):
+/-- The Point-of-View Principle ([pancheva-zubizarreta-2018], (48)):
 
     Within a logophoric domain marking point of view, if there are
     attitude holders among the event participants, one of them has to

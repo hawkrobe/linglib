@@ -3,8 +3,8 @@ import Linglib.Tactics.RSAPredict
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# @cite{franke-bergen-2020} — GI-RSA for Nested Aristotelians
-@cite{franke-bergen-2020} @cite{fox-2007} @cite{franke-2011}
+# [franke-bergen-2020] — GI-RSA for Nested Aristotelians
+[franke-bergen-2020] [fox-2007] [franke-2011]
 
 "Theory-driven statistical modeling for semantics and pragmatics:
 A case study on grammatically generated implicature readings"
@@ -26,7 +26,7 @@ over parses to recover the world state.
 
 Exhaustification uses compositional enrichment at inner/outer quantifier
 positions: Exh(Q) conjoins Q with the negation of all strictly stronger
-lexical alternatives on the {some, all} scale (@cite{fox-2007}). Only
+lexical alternatives on the {some, all} scale ([fox-2007]). Only
 Exh(some) = "some but not all" is non-vacuous; Exh(all) and Exh(none)
 have no strictly stronger alternative.
 
@@ -65,7 +65,7 @@ differing only in `Latent` type:
 - **Vanilla** (§3.1): `Latent := Unit` — literal semantics only
 - **LU** (§3.2): `Latent := LULex` (2 lexica) — simplified to L1
   (the paper adds an S2/L2 layer, eqs. 14a-14b, following
-  @cite{potts-etal-2016}; our L1-only approximation suffices for
+  [potts-etal-2016]; our L1-only approximation suffices for
   qualitative predictions)
 - **LI** (§3.3): `Latent := LIParse` (4 parses) — speaker chooses parse
 - **GI** (§3.4): `Latent := Parse` (8 parses) — full parse space
@@ -418,7 +418,7 @@ noncomputable def vanillaConfig : RSA.RSAConfig Utterance World where
 
 /-- LU lexicon: literal or OI (inner + outer EXH). Each speaker has a
     fixed lexicon; listeners marginalize over the two lexica to infer
-    the world state. Mirrors the @cite{potts-etal-2016} architecture
+    the world state. Mirrors the [potts-etal-2016] architecture
     (Latent := Lexicon). -/
 inductive LULex where
   | lit | oi
@@ -503,7 +503,7 @@ theorem gi_ss_prefers_wNS :
 /-- LU also gets the key SS prediction right: wNS > wNA. The OI lexicon
     gives ⟦SS⟧^OI = {wNS, wNSA, wSA}, which excludes wNA. The lit lexicon
     includes both, but OI's exclusion of wNA is enough to tip the balance.
-    Same architecture as @cite{potts-etal-2016} (Latent := Lexicon). -/
+    Same architecture as [potts-etal-2016] (Latent := Lexicon). -/
 theorem lu_ss_prefers_wNS :
     luConfig.L1 .ss .wNS > luConfig.L1 .ss .wNA := by
   rsa_predict
@@ -627,16 +627,16 @@ theorem latent_space_hierarchy :
 -- §12. Cross-Study Bridges
 -- ============================================================================
 
-/-! ## Connection to @cite{potts-etal-2016}
+/-! ## Connection to [potts-etal-2016]
 
 The LU model here uses Latent := LULex (2 lexica: lit, OI), the same
-RSAConfig architecture as @cite{potts-etal-2016}'s Latent := Lexicon
+RSAConfig architecture as [potts-etal-2016]'s Latent := Lexicon
 (weak, strong "some"). Both implement Bergen et al.'s lexical uncertainty
 via RSAConfig's latent variable mechanism — no special `LUScenario`
 infrastructure needed. Our LU uses L1 only; the paper adds an S2/L2
 layer (eqs. 14a-14b) for production predictions.
 
-## Connection to @cite{cremers-wilcox-spector-2023}
+## Connection to [cremers-wilcox-spector-2023]
 
 Cremers et al. test 9 model variants, including EXH-LU and RSA-LI, which
 correspond to our `luConfig` and `liConfig`. Their key finding —
@@ -645,15 +645,15 @@ of prior bias — is consistent with our LU and LI predictions: both
 correctly derive exhaustification for SS (`lu_ss_prefers_wNS`,
 `li_ss_outer_exh`), concentrating probability on the exhaustified worlds.
 
-## Connection to @cite{franke-2011}
+## Connection to [franke-2011]
 
 The matrix EXH in `exhMeaning` uses exh_MW: conjoin the sub-matrix meaning
 with the negation of all strictly stronger alternatives' literal meanings.
-@cite{franke-2011} proves that IBR fixed points equal exh_MW for scalar
+[franke-2011] proves that IBR fixed points equal exh_MW for scalar
 games (`Franke2011.r1_eq_exhMW_under_totality`). This grounds the matrix
 position of our GI model in game-theoretic equilibrium semantics.
 
-## Connection to @cite{fox-2007}
+## Connection to [fox-2007]
 
 The exhaustification implementation uses compositional enrichment at
 inner/outer quantifier positions (scale-mate substitution on {some, all})

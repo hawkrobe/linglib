@@ -2,8 +2,8 @@ import Mathlib.Logic.Basic
 
 /-!
 # Composition Rules for Layered ⟨A, N⟩ Propositions
-@cite{potts-2005} @cite{anderbois-brasoveanu-henderson-2015}
-@cite{martinez-vera-2026}
+[potts-2005] [anderbois-brasoveanu-henderson-2015]
+[martinez-vera-2026]
 
 Two-layered propositions ⟨at-issue, not-at-issue⟩ admit three canonical
 composition rules. The at-issue layer addresses the question under
@@ -11,10 +11,10 @@ discussion and is challengeable by direct denial; the not-at-issue layer
 projects past negation and questions, hosting presuppositions,
 conventional implicatures, and evidential meanings.
 
-The three rules formalised here are @cite{martinez-vera-2026}'s
+The three rules formalised here are [martinez-vera-2026]'s
 Composition I/II/III, but the pattern is older — they instantiate the
-percolation discipline implicit in @cite{potts-2005}'s multi-dimensional
-semantics and @cite{anderbois-brasoveanu-henderson-2015}'s at-issue
+percolation discipline implicit in [potts-2005]'s multi-dimensional
+semantics and [anderbois-brasoveanu-henderson-2015]'s at-issue
 proposal/appositive imposition split.
 
 | Rule | When to use | At-issue layer | Not-at-issue layer |
@@ -32,10 +32,10 @@ truth-table.
 
 `Semantics/ContentLayer.lean` defines a 3-layer `LayeredProp W`
 (`presupposition / atIssue / implicature`, all `W → Bool`) anchored on
-@cite{van-der-sandt-maier-2003}'s LDRT, with offensive-layer machinery
+[van-der-sandt-maier-2003]'s LDRT, with offensive-layer machinery
 for the Off-computation. `BiLayered` here is a 2-layer `W → Prop`-valued
 sibling: it collapses presupposition + implicature into an
-undifferentiated `notAtIssue` (matching the @cite{martinez-vera-2026}
+undifferentiated `notAtIssue` (matching the [martinez-vera-2026]
 ⟨A, N⟩ pair shape) and stays in `Prop` to compose cleanly with `Set W`
 consumers.
 
@@ -83,20 +83,20 @@ end BiLayered
 
 variable {W : Type*}
 
-/-- @cite{martinez-vera-2026} Composition rule I: β has empty NAI; α brings
+/-- [martinez-vera-2026] Composition rule I: β has empty NAI; α brings
     NAI. The new at-issue layer is `α.A β.A`; the new NAI is `α.N β.A`. -/
 def composeI (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W) :
     BiLayered W :=
   { atIssue := atFn β.atIssue, notAtIssue := naiFn β.atIssue }
 
-/-- @cite{martinez-vera-2026} Composition rule II: both α and β bring NAI.
+/-- [martinez-vera-2026] Composition rule II: both α and β bring NAI.
     The new NAI accumulates `α.N β.A ∧ β.N`. -/
 def composeII (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W) :
     BiLayered W :=
   { atIssue := atFn β.atIssue
   , notAtIssue := fun w => naiFn β.atIssue w ∧ β.notAtIssue w }
 
-/-- @cite{martinez-vera-2026} Composition rule III: an illocutionary operator
+/-- [martinez-vera-2026] Composition rule III: an illocutionary operator
     takes the full ⟨A, N⟩ pair from β and returns a new pair. This is the
     composition rule used for `assert` and `present` in
     `Discourse/EvidentialIllocution.lean`. -/

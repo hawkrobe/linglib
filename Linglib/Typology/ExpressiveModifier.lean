@@ -1,17 +1,17 @@
 /-!
 # Typology.ExpressiveModifier
 
-@cite{pesetsky-1987} @cite{chou-2012} @cite{merchant-2002}
-@cite{hoeksema-napoli-2008} @cite{jackendoff-audring-2020}
-@cite{chan-shen-2026}
+[pesetsky-1987] [chou-2012] [merchant-2002]
+[hoeksema-napoli-2008] [jackendoff-audring-2020]
+[chan-shen-2026]
 
 Per-language typological substrate for **aggressively non-D-linked**
 (ANDL) wh-modifiers — *the-hell*, *the heck*, *the fuck*, *the devil*,
-*the dickens*, *in the world*, *in God's name* (English; @cite{hoeksema-napoli-2008},
-@cite{jackendoff-audring-2020}); *daodi* 到底 (Mandarin; @cite{chou-2012});
+*the dickens*, *in the world*, *in God's name* (English; [hoeksema-napoli-2008],
+[jackendoff-audring-2020]); *daodi* 到底 (Mandarin; [chou-2012]);
 *ittai* (Japanese); *ttaeyche* (Korean); *zum-Teufel* (German); etc.
 
-The shared empirical generalization (@cite{pesetsky-1987}): ANDL modifiers
+The shared empirical generalization ([pesetsky-1987]): ANDL modifiers
 have a distributional restriction that bare wh-words do not. Different
 languages and different ANDL items vary along a small set of typological
 parameters, formalized here.
@@ -26,7 +26,7 @@ not the framework-agnostic substrate shape `Core/` is for.
 
 **Framework commitment.** The parasitic/independent dichotomy
 (`ANDLMovementType`) is the single typological parameter
-@cite{chan-shen-2026} isolate as distinguishing English/Singlish *the-hell*
+[chan-shen-2026] isolate as distinguishing English/Singlish *the-hell*
 from Mandarin *daodi*. This is one carve-up among several in the ANDL
 literature — alternatives exist that classify these items by
 syntactic category (DP-modifier vs. adverb), by intervention profile,
@@ -54,11 +54,11 @@ namespace Typology.ExpressiveModifier
 
     - `parasitic`: must adjoin to the wh-phrase; rides along with
       wh-movement; cannot move on its own. English/Singlish *the-hell*
-      (@cite{merchant-2002}, @cite{chan-shen-2026}).
+      ([merchant-2002], [chan-shen-2026]).
     - `independent`: can undergo movement on its own (typically covert)
-      to the scope position. Mandarin *daodi* (@cite{chou-2012}).
+      to the scope position. Mandarin *daodi* ([chou-2012]).
 
-    This is the single typological parameter @cite{chan-shen-2026}
+    This is the single typological parameter [chan-shen-2026]
     isolate as distinguishing English/Singlish *the-hell* from Mandarin
     *daodi*. -/
 inductive ANDLMovementType where

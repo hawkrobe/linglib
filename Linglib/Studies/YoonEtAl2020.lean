@@ -4,7 +4,7 @@ import Linglib.Features.Subjectivity
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
-# @cite{yoon-etal-2020} — Polite Speech Emerges From Competing Social Goals
+# [yoon-etal-2020] — Polite Speech Emerges From Competing Social Goals
 
 ## Overview
 
@@ -587,11 +587,11 @@ theorem kind_h0_prefers_negation :
 
     When phi < 1, the speaker trades informativity for social value,
     i.e. the utterance is shaped by attention to the addressee -- the
-    defining characteristic of @cite{traugott-dasher-2002}'s intersubjective
+    defining characteristic of [traugott-dasher-2002]'s intersubjective
     level. The S2 model adds a second layer: the speaker also manages
     how *kind* they appear, which is doubly intersubjective.
 
-    @cite{narrog-2010} §4.2 connects this to modality: strong obligation
+    [narrog-2010] §4.2 connects this to modality: strong obligation
     is face-threatening precisely because it is performative and volitive,
     making the speaker's imposition on the addressee maximally salient. -/
 def socialGoalSubjectivityLevel : Features.Subjectivity.SubjectivityLevel :=

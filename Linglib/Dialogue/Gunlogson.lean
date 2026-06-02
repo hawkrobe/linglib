@@ -5,9 +5,9 @@ import Linglib.Discourse.Commitment.Basic
 import Linglib.Semantics.Modality.BiasedPQ
 
 /-!
-# @cite{gunlogson-2004}: Source-Marked Commitments
+# [gunlogson-2004]: Source-Marked Commitments
 
-@cite{gunlogson-2004} @cite{gunlogson-2001} @cite{gunlogson-2003}Models the distinction between falling and rising declaratives via @cite{bring-gunlogson-2000}
+[gunlogson-2004] [gunlogson-2001] [gunlogson-2003]Models the distinction between falling and rising declaratives via [bring-gunlogson-2000]
 source-marked discourse commitments. The key innovation: commitments
 carry a tag indicating whether they are self-generated (from the
 speaker's own evidence) or other-generated (attributed to the addressee).
@@ -127,7 +127,7 @@ instance (src : CommitmentSource) (role : DiscourseRole) :
 -- § 1b. Contextual Bias Condition (Ch. 4 §4.2)
 -- ════════════════════════════════════════════════════
 
-/-- The Contextual Bias Condition (@cite{gunlogson-2001}, Ch. 4 §4.2).
+/-- The Contextual Bias Condition ([gunlogson-2001], Ch. 4 §4.2).
 
     A rising declarative about p is felicitous only when the addressee's
     existing commitments already entail p. This is NOT a free parameter —

@@ -7,7 +7,7 @@ import Linglib.Semantics.Kinds.NominalMappingParameter
 
 /-!
 # Corbett (2000) — Number
-@cite{corbett-2000}
+[corbett-2000]
 
 Formalizes the core typological framework from:
 
@@ -25,7 +25,7 @@ Formalizes the core typological framework from:
 2. **Number system typology** (§2.3): implicational universals constrain which
    systems are possible — trial → dual → plural → singular.
 
-3. **Animacy Hierarchy constraints** (Ch 3, @cite{smith-stark-1974}): the
+3. **Animacy Hierarchy constraints** (Ch 3, [smith-stark-1974]): the
    likelihood of number being distinguished decreases monotonically from
    speaker toward inanimate. Connects to `AnimacyRank` in `Features.Prominence`.
 
@@ -48,7 +48,7 @@ Formalizes the core typological framework from:
 8. **Semantics of number** (Ch 7): inclusive vs exclusive plural interpretation.
    Link's `*P` gives the inclusive reading (≥ 1); exclusive (≥ 2) is derived by
    scalar implicature. General number semantics connects to
-   @cite{chierchia-1998}'s Nominal Mapping Parameter.
+   [chierchia-1998]'s Nominal Mapping Parameter.
 -/
 
 namespace Corbett2000
@@ -132,7 +132,7 @@ def japaneseNS : NumberSystem :=
 
 /-- Western Armenian (ISO `hyw`): singular–plural within the system, but
     general number exists for *singular indefinites* (bare *dəgha* "boy"
-    can refer to one or more boys). Per @cite{bale-khanjian-2014} eqs. 3
+    can refer to one or more boys). Per [bale-khanjian-2014] eqs. 3
     and 9: ⟦dəgha⟧ contains both singular individuals and groups; only
     plural *dəgha-ner* is strictly ≥2. The general-number reading is
     *blocked* in definite contexts via syntactic-complexity competition
@@ -149,19 +149,19 @@ def pirahaNS : NumberSystem :=
   { name := "Pirahã", values := [] }
 
 /-- Winnebago (Siouan): minimal–augmented, two values. {±minimal} only
-    (@cite{harbour-2014} Table 3). -/
+    ([harbour-2014] Table 3). -/
 def winnebagoNS : NumberSystem :=
   { name := "Winnebago", values := [.minimal, .augmented] }
 
 /-- Rembarrnga (Australian): minimal–unit augmented–augmented, three values.
     {±minimal*} — feature recursion on [±minimal] without [±atomic]
-    (@cite{harbour-2014} Table 3). -/
+    ([harbour-2014] Table 3). -/
 def rembarrnganS : NumberSystem :=
   { name := "Rembarrnga"
     values := [.minimal, .unitAugmented, .augmented] }
 
 /-- Mebengokre (Jê): minimal–paucal–plural, three values.
-    {±additive, ±minimal} (@cite{harbour-2014} Table 3). -/
+    {±additive, ±minimal} ([harbour-2014] Table 3). -/
 def mebengokreNS : NumberSystem :=
   { name := "Mebengokre"
     values := [.minimal, .paucal, .plural] }
@@ -191,7 +191,7 @@ theorem slovene_dual_facultative :
 theorem larike_both_facultative :
     .dual ∈ larikeNS.facultative ∧ .trial ∈ larikeNS.facultative := by decide
 
--- Implicational universals (@cite{greenberg-1963}, Corbett §2.3.1)
+-- Implicational universals ([greenberg-1963], Corbett §2.3.1)
 
 /-- Trial implies dual: no language has trial without dual. -/
 def NumberSystem.TrialImpliesDual (ns : NumberSystem) : Prop :=
@@ -201,18 +201,18 @@ def NumberSystem.TrialImpliesDual (ns : NumberSystem) : Prop :=
 def NumberSystem.DualImpliesPlural (ns : NumberSystem) : Prop :=
   .dual ∈ ns.values → .plural ∈ ns.values
 
-/-- Plural implies singular or minimal (@cite{harbour-2014} Table 1:
+/-- Plural implies singular or minimal ([harbour-2014] Table 1:
     PL → SG/MIN). Plural requires a "base" category — either singular
     (from [±atomic]) or minimal (from [±minimal]). -/
 def NumberSystem.PluralImpliesSingularOrMinimal (ns : NumberSystem) : Prop :=
   .plural ∈ ns.values →
     .singular ∈ ns.values ∨ .minimal ∈ ns.values ∨ ns.values = []
 
-/-- Augmented implies minimal (@cite{harbour-2014} Table 1: AUG → MIN). -/
+/-- Augmented implies minimal ([harbour-2014] Table 1: AUG → MIN). -/
 def NumberSystem.AugmentedImpliesMinimal (ns : NumberSystem) : Prop :=
   .augmented ∈ ns.values → .minimal ∈ ns.values
 
-/-- Unit augmented implies augmented (@cite{harbour-2014} Table 1:
+/-- Unit augmented implies augmented ([harbour-2014] Table 1:
     U.AUG → AUG). -/
 def NumberSystem.UnitAugImpliesAugmented (ns : NumberSystem) : Prop :=
   .unitAugmented ∈ ns.values → .augmented ∈ ns.values
@@ -329,7 +329,7 @@ open Agreement (AgreementTarget)
     or by referential meaning (semantic).
 
     Distinct from `Agreement.AgreementType` (grammatical vs. pronominal,
-    @cite{bickel-nichols-2001}), which is about whether the agreement
+    [bickel-nichols-2001]), which is about whether the agreement
     marker has referential autonomy. This type is about what *controls*
     agreement — the formal features of the controller or its semantic
     content. -/
@@ -346,7 +346,7 @@ structure AgreementProfile where
   /-- Targets where semantic (meaning-driven) agreement is possible. -/
   semanticTargets : List AgreementTarget
 
-/-- The four positions of @cite{corbett-1991}'s Agreement Hierarchy (`verb`
+/-- The four positions of [corbett-1991]'s Agreement Hierarchy (`verb`
     is not one of them — see `Agreement.AgreementTarget`). -/
 private def hierarchyPositions : List AgreementTarget :=
   [.attributive, .predicate, .relativePronoun, .personalPronoun]
@@ -712,13 +712,13 @@ theorem numberResolveIn_eq_semanticResolveIn (a b : NumberValue) :
 
 /-! ### Minor Number Constraints IV–VII (Ch 4) -/
 
-/-- **Constraint VII** (@cite{corbett-2000} Ch 4): only dual and paucal can be
+/-- **Constraint VII** ([corbett-2000] Ch 4): only dual and paucal can be
     minor numbers. Singular and plural cannot be minor — they are the core
     of any number system. -/
 def IndividuationProfile.RespectsConstraintVII (p : IndividuationProfile) : Prop :=
   ∀ v ∈ p.minorValues, v = .dual ∨ v = .paucal
 
-/-- **Constraint IV** (@cite{corbett-2000} Ch 4): if a minor number exists
+/-- **Constraint IV** ([corbett-2000] Ch 4): if a minor number exists
     at some animacy position, it must also exist at all higher positions.
     Minor numbers obey the same monotonicity as full number values. -/
 def IndividuationProfile.RespectsConstraintIV (p : IndividuationProfile) : Prop :=
@@ -801,7 +801,7 @@ theorem default_in_target_system :
 
 /-- Associative plural profile: "X and associates" constructions are
     constrained by animacy — they typically require human or animate
-    controllers (@cite{corbett-2000} Ch 5). -/
+    controllers ([corbett-2000] Ch 5). -/
 structure AssociativePluralProfile where
   name : String
   /-- Minimum animacy rank for associative plural use -/
@@ -842,7 +842,7 @@ theorem japanese_associative_with_general :
 
 /-! ### Count/Mass × Number Interaction (Ch 7) -/
 
-/-- Count/mass interaction with number systems (@cite{corbett-2000} Ch 7).
+/-- Count/mass interaction with number systems ([corbett-2000] Ch 7).
 
     Mass nouns resist plural morphology; count nouns take it freely.
     The count/mass distinction interacts with the animacy hierarchy:
@@ -914,7 +914,7 @@ structure PredicateHierarchyProfile where
 private def predicatePositions : List PredicateTarget :=
   [.verb, .participle, .adjective, .noun]
 
-/-- The Predicate Hierarchy (@cite{comrie-1975}) monotonicity constraint:
+/-- The Predicate Hierarchy ([comrie-1975]) monotonicity constraint:
     once semantic agreement becomes possible at a sub-position, it remains
     possible at all higher positions. -/
 def PredicateHierarchyProfile.RespectsHierarchy (p : PredicateHierarchyProfile) : Prop :=
@@ -926,7 +926,7 @@ instance (p : PredicateHierarchyProfile) : Decidable p.RespectsHierarchy := by
 
 /-- Russian honorific *vy* 'you' (polite singular): grammatically plural but
     referring to one person, so semantic agreement = singular. Per
-    @cite{corbett-2000}'s Predicate Hierarchy data, the finite verb and
+    [corbett-2000]'s Predicate Hierarchy data, the finite verb and
     participle keep syntactic (plural) agreement, while the long-form
     predicate adjective and the predicate noun take singular (semantic)
     agreement. -/

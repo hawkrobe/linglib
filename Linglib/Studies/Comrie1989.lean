@@ -8,27 +8,27 @@ import Linglib.Studies.Aissen2003
 import Linglib.Fragments.Dargwa.ComplexPredicates
 
 /-!
-# Comrie (1989) @cite{comrie-1989}
+# Comrie (1989) [comrie-1989]
 
 Language Universals and Linguistic Typology: Syntax and Morphology.
 2nd ed. University of Chicago Press.
 
 Bridge study file connecting linglib's independently formalized typological
-hierarchies and proving they cohere as @cite{comrie-1989}'s synthesis claims.
+hierarchies and proving they cohere as [comrie-1989]'s synthesis claims.
 
 ## Cross-hierarchy unity (Chs 5–9)
 
-@cite{comrie-1989}'s central methodological point: the **same** prominence
+[comrie-1989]'s central methodological point: the **same** prominence
 hierarchies (animacy, definiteness, person) recur across multiple
 grammatical domains:
 
 - **Case marking** (Ch 6): Differential Object Marking driven by
-  animacy/definiteness (@cite{aissen-2003} in `Case.Studies.Aissen2003`).
+  animacy/definiteness ([aissen-2003] in `Case.Studies.Aissen2003`).
   `Features.Prominence.AnimacyLevel` is the shared type.
 - **Alignment** (Ch 5–6): Split ergativity conditioned by
-  @cite{silverstein-1976}'s hierarchy (`Alignment.Typology`).
+  [silverstein-1976]'s hierarchy (`Alignment.Typology`).
   Same `AnimacyLevel` type governs the split threshold.
-- **Relativization** (Ch 7): The @cite{keenan-comrie-1977} Accessibility
+- **Relativization** (Ch 7): The [keenan-comrie-1977] Accessibility
   Hierarchy orders grammatical relations by extraction accessibility
   (`Typology.RelativeClause.Basic`, `FillerGap.Studies.KeenanComrie1977`).
   The AH positions (Subject > DO > IO > OBL) mirror the GR hierarchy
@@ -43,7 +43,7 @@ hierarchy parallel between the AH and causee demotion is proved below.
 
 ## Subject as a cluster concept (Ch 5)
 
-@cite{comrie-1989} argues that "subject" is not a primitive grammatical
+[comrie-1989] argues that "subject" is not a primitive grammatical
 relation but a **bundle** of coding and behavioral properties that converge
 in accusative languages and diverge under ergativity. Formalized in
 `Phenomena.Subjecthood.SubjectProperties`.
@@ -56,7 +56,7 @@ Relativization typology is formalized in
 extraction — a filler-gap dependency — which is why the study file
 lives under `FillerGap/`. Non-extraction relative clause types
 (correlatives, internally-headed RCs) fall outside the AH's scope:
-@cite{comrie-1989} discusses them but they do not participate in the
+[comrie-1989] discusses them but they do not participate in the
 hierarchy.
 -/
 
@@ -89,7 +89,7 @@ open Phenomena.Subjecthood.SubjectProperties
 
 /-- Accusative alignment implies P is differentially marked (the patient
     receives overt case marking to distinguish it from S). This connects
-    @cite{comrie-1989} Ch 5–6 to the DOM patterns in @cite{aissen-2003}:
+    [comrie-1989] Ch 5–6 to the DOM patterns in [aissen-2003]:
     in an accusative language, it is the **P** role whose marking is
     sensitive to prominence (animate/definite Ps get marked, inanimates
     don't). -/
@@ -123,7 +123,7 @@ theorem marking_polarity_matches_alignment :
 
 /-! ### Alignment predicts subject property convergence
 
-@cite{comrie-1989} Ch 5: alignment type predicts whether subject
+[comrie-1989] Ch 5: alignment type predicts whether subject
 properties converge. In accusative languages, all properties pick S=A.
 In ergative languages, coding properties pick S=P; whether behavioral
 properties also pick S=P (**syntactic** ergativity, rare) or S=A
@@ -163,14 +163,14 @@ theorem syntacticErg_derives_bundle :
 -- ============================================================================
 
 /-- In accusative languages, all subject properties converge on S=A.
-    @cite{comrie-1989} Ch 5: "In accusative languages... the notion
+    [comrie-1989] Ch 5: "In accusative languages... the notion
     of subject is reasonably clear." -/
 theorem accusative_subject_converges :
     accusativeBundle.converges = true := by decide
 
 /-- In morphologically ergative languages, subject properties diverge:
     coding picks S=P (absolutive), behavioral picks S=A.
-    @cite{comrie-1989} Ch 5: "In ergative languages, the various
+    [comrie-1989] Ch 5: "In ergative languages, the various
     properties do not necessarily converge." -/
 theorem morphErg_subject_diverges :
     morphErgativityBundle.converges = false := by decide
@@ -199,7 +199,7 @@ facts for each language:
   `syntacticErg := true` to get a converging bundle.
 
 The `syntacticErg` parameter captures the rare/common ergativity
-distinction that @cite{comrie-1989} Ch 5 identifies as central. -/
+distinction that [comrie-1989] Ch 5 identifies as central. -/
 
 open Dixon1994
   (english dyirbal basque hindiUrdu dargwa japanese)
@@ -236,7 +236,7 @@ theorem hindiUrdu_morphErg_diverges :
 
 /-- Dyirbal: ergative NP alignment → default (morphological) prediction
     diverges. But Dyirbal is one of the rare **syntactically ergative**
-    languages (@cite{dixon-1972}): even behavioral properties
+    languages ([dixon-1972]): even behavioral properties
     (coordination deletion) track S=P. -/
 theorem dyirbal_default_diverges :
     (toSubjectBundle dyirbal.npAlignment).converges = false := by decide
@@ -255,7 +255,7 @@ open Semantics.Causation.Morphological
     (CausativeComplexity CausativeConstruction Mediation comrie_monotone
      CauseeSlot causeeDemotion)
 
-/-- @cite{comrie-1989}'s compact-to-analytic and direct-to-indirect
+/-- [comrie-1989]'s compact-to-analytic and direct-to-indirect
     dimensions are connected: a compact+direct construction and a
     periphrastic+indirect construction satisfy the monotonicity
     predicate. -/
@@ -282,7 +282,7 @@ theorem intransitive_causee_above_transitive_causee :
 
 open RelativeClause (AHPosition)
 
-/-- The top of the AH is the subject position — @cite{comrie-1989} Ch 7:
+/-- The top of the AH is the subject position — [comrie-1989] Ch 7:
     "A language must be able to relativize subjects" (HC₁). The subject
     is the most accessible position on the hierarchy. -/
 theorem subject_is_ah_top :
@@ -309,7 +309,7 @@ theorem ah_mirrors_causee_hierarchy :
 
 /-! ### The GR hierarchy underlying both causee demotion and relativization
 
-@cite{comrie-1989} observes that the **same** grammatical relation
+[comrie-1989] observes that the **same** grammatical relation
 hierarchy governs both causee demotion (Ch 8) and relativization
 accessibility (Ch 7):
 
@@ -349,7 +349,7 @@ theorem causeeDemotion_maps_to_ah :
 /-! ### Dargwa causative system bridges to Comrie's causee hierarchy
 
 Dargwa (Tanti) has a productive causative morpheme *-aq*
-(@cite{sumbatova-2021} §4.5.7). The Dargwa fragment
+([sumbatova-2021] §4.5.7). The Dargwa fragment
 (`Dargwa.ComplexPredicates`) records:
 
 - Intransitive base: causee appears in **absolutive** = direct object slot
@@ -396,9 +396,9 @@ theorem dargwa_causee_on_ah :
 -- § 7: Alignment × Differential Object Marking
 -- ============================================================================
 
-/-! ### The alignment–DOM correlation (@cite{comrie-1989} Ch 6)
+/-! ### The alignment–DOM correlation ([comrie-1989] Ch 6)
 
-@cite{comrie-1989} observes that alignment type determines which argument
+[comrie-1989] observes that alignment type determines which argument
 role undergoes differential marking:
 
 - **Accusative** (S=A vs P): P is the distinctly-marked role → DOM expected
@@ -406,14 +406,14 @@ role undergoes differential marking:
 - **Neutral** (S=A=P): no role distinction → no differential marking
 - **Tripartite** (S≠A≠P): both A and P distinct → both possible
 
-This correlation was later derived formally by @cite{de-hoop-malchukov-2008}
+This correlation was later derived formally by [de-hoop-malchukov-2008]
 via the Primary Actant Immunity Principle: the argument encoded like the
 intransitive S resists differential marking, leaving the non-primary
 argument available for prominence-sensitive marking.
 
 The critical structural point: the **same** prominence hierarchies
 (`AnimacyLevel`, `DefinitenessLevel`) that condition split ergativity
-(@cite{silverstein-1976}) also condition DOM (@cite{aissen-2003}). This
+([silverstein-1976]) also condition DOM ([aissen-2003]). This
 connection is built in by construction — both import `Features.Prominence`. -/
 
 open Features.Prominence (DefinitenessLevel)
@@ -441,7 +441,7 @@ theorem dsm_iff_marks_agent (a : AlignmentType) :
     dsmExpected a = a.marksAgent := rfl
 
 /-- Accusative predicts DOM (not DSM); ergative predicts DSM (not DOM).
-    @cite{comrie-1989} Ch 6 / @cite{de-hoop-malchukov-2008} §4. -/
+    [comrie-1989] Ch 6 / [de-hoop-malchukov-2008] §4. -/
 theorem acc_dom_erg_dsm :
     domExpected .accusative = true ∧ dsmExpected .accusative = false ∧
     domExpected .ergative = false ∧ dsmExpected .ergative = true :=
@@ -545,15 +545,15 @@ theorem dyirbal_split_dom_zones :
 
 The animacy hierarchy operates in two independent grammatical systems:
 
-1. **Split ergativity** (@cite{silverstein-1976}): `AnimacyLevel` determines
+1. **Split ergativity** ([silverstein-1976]): `AnimacyLevel` determines
    which NPs get ergative vs accusative alignment. In Dyirbal,
    `inanimate → ergative`, `human/animate → accusative`.
-2. **DOM** (@cite{aissen-2003}): `AnimacyLevel` determines which objects get
+2. **DOM** ([aissen-2003]): `AnimacyLevel` determines which objects get
    overt marking. In Spanish, `human → marked`, `non-human → unmarked`.
 
 Both are monotone cutoffs on the **same** linearly ordered type. A change
 to `AnimacyLevel` propagates automatically to both systems. This is
-@cite{comrie-1989}'s central methodological point: the same hierarchies
+[comrie-1989]'s central methodological point: the same hierarchies
 recur across grammatical domains. -/
 
 /-- The animacy hierarchy governs both split ergativity and DOM.

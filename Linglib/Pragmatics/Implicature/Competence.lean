@@ -1,8 +1,8 @@
 /-
 # Neo-Gricean Pragmatics: Competence
-@cite{soames-1982}
+[soames-1982]
 
-Detailed competence analysis from @cite{geurts-2010} Chapter 2.3.
+Detailed competence analysis from [geurts-2010] Chapter 2.3.
 
 ## Key Concepts
 

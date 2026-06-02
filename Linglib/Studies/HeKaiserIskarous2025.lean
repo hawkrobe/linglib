@@ -6,7 +6,7 @@ import Mathlib.Data.FinEnum
 
 /-!
 # Sentence Polarity Asymmetries
-@cite{he-kaiser-iskarous-2025}
+[he-kaiser-iskarous-2025]
 
 Empirical data and domain types for modeling sentence polarity asymmetries
 with fuzzy interpretations in a possibly wonky world.

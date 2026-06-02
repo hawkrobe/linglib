@@ -3,9 +3,9 @@ import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Studies.GeurtsPouscoulous2009
 
 /-!
-# Geurts 2010 — *Quantity Implicatures* @cite{geurts-2010}
+# Geurts 2010 — *Quantity Implicatures* [geurts-2010]
 
-The textbook successor to @cite{geurts-pouscoulous-2009}. Geurts 2010
+The textbook successor to [geurts-pouscoulous-2009]. Geurts 2010
 (Cambridge UP) consolidates the Standard-Recipe / competence-based
 neo-Gricean account whose §8 sketch in GP 2009 this file extends. The
 DE-blocking / UE-allowing core pattern documented in
@@ -29,7 +29,7 @@ open GeurtsPouscoulous2009
 
 /-- The empirical DE-blocking / UE-allowing pattern that grounds the
 textbook's neo-Gricean account. The simplified LU model predicts the
-opposite; the full @cite{potts-etal-2016} model derives the correct
+opposite; the full [potts-etal-2016] model derives the correct
 pattern via lexical uncertainty. -/
 theorem empirical_pattern_documented :
     someAllBlocking.implicatureInDE = false ∧

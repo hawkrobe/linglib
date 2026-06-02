@@ -5,7 +5,7 @@ import Linglib.Core.Scales.Defs
 
 /-!
 # Core/Scales/Comparative.lean — ComparativeScale + AdditiveScale
-@cite{krantz-1971} @cite{holliday-icard-2013}
+[krantz-1971] [holliday-icard-2013]
 
 Root algebraic structures for the category of scales.
 
@@ -15,7 +15,7 @@ All scale-based reasoning factors through this structure.
 `AdditiveScale α` — comparative scale enriched with join and finite
 additivity (FA). Two independent linglib instances:
 - Mereological: `ExtMeasure.additive`
-- Epistemic: `EpistemicSystemFA` + `FinAddMeasure` (@cite{holliday-icard-2013})
+- Epistemic: `EpistemicSystemFA` + `FinAddMeasure` ([holliday-icard-2013])
 
 This file is part of the Phase A decomposition of the legacy
 `Core/Scales/Scale.lean` dumping ground (master plan v4).
@@ -35,7 +35,7 @@ namespace Core.Scale
     The ordering comes from the ambient `[Preorder α]` — no redundant
     `le`/`le_refl`/`le_trans` fields. Morphisms are Mathlib's `Monotone`.
 
-    @cite{krantz-1971}: a comparative scale is an ordered set with
+    [krantz-1971]: a comparative scale is an ordered set with
     enough structure to support qualitative comparison. -/
 @[ont_sort] structure ComparativeScale (α : Type*) [Preorder α] where
   /-- Scale boundedness classification -/

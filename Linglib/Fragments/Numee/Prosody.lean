@@ -2,17 +2,17 @@ import Linglib.Phonology.Autosegmental.RegisterTier
 
 /-!
 # Numèè Prosodic Fragment
-@cite{lionnet-2025}
+[lionnet-2025]
 
 Lexical and utterance-level prosody for Numèè (Glottocode: numa1247),
 a Southern Oceanic language of New Caledonia. Data here are drawn from
-the Goro dialect as described and analysed by @cite{lionnet-2025}
+the Goro dialect as described and analysed by [lionnet-2025]
 (which cites earlier descriptive work by Rivierre).
 
 The Numèè register system shares the same underlying inventory as
 Drubea — registerless and downstepped morae as the only contrastive
 units, with no tone features. The two languages diverge at the
-**utterance-final boundary** (@cite{lionnet-2025} §3.3–3.4):
+**utterance-final boundary** ([lionnet-2025] §3.3–3.4):
 
 - **Drubea** (`Fragments/Drubea/Prosody.lean`): utterance-final raising
   `h%` on the final registerless syllable.
@@ -21,7 +21,7 @@ units, with no tone features. The two languages diverge at the
   When the final is itself underlyingly downstepped, the boundary
   inserts an *extra* downstep — a stacked "double downstep" `⁺⁺` —
   preserving the registerless/downstepped contrast utterance-finally
-  (@cite{lionnet-2025} ex. 24 vs 25).
+  ([lionnet-2025] ex. 24 vs 25).
 
 This fragment models syllable structure explicitly (the `Drubea`
 fragment works at the morpheme/spec-list level), because the Numèè
@@ -40,7 +40,7 @@ open Phonology.Autosegmental.RegisterTier
 
 /-- A Numèè syllable: surface form (segmental, no register marks) plus
     one `TRN` per mora. The mora is the register-bearing unit
-    (@cite{lionnet-2025} §4.2), so light CV is monomoraic and CVV is
+    ([lionnet-2025] §4.2), so light CV is monomoraic and CVV is
     bimoraic. A downstep mark `⁺` on the leftmost mora of a syllable
     surfaces as `some .l` at the corresponding `specs` index. -/
 structure Syllable where
@@ -71,11 +71,11 @@ end Syllable
 abbrev Utterance := List Syllable
 
 -- ============================================================================
--- § 2: Boundary Downstep ⁺% (@cite{lionnet-2025} §3.4)
+-- § 2: Boundary Downstep ⁺% ([lionnet-2025] §3.4)
 -- ============================================================================
 
 /-- Realisation outcome for the Numèè utterance-final boundary downstep
-    `⁺%` (@cite{lionnet-2025} §3.4):
+    `⁺%` ([lionnet-2025] §3.4):
 
     - `none`: eligibility conditions not met; the final syllable
       surfaces unchanged (heavy final, or final preceded by a
@@ -84,7 +84,7 @@ abbrev Utterance := List Syllable
       (the canonical Goro pattern).
     - `double`: an already-downstepped final is realised with a stacked
       double downstep `⁺⁺`, lowering pitch *below* what an underlyingly
-      downstepped non-final realisation would (@cite{lionnet-2025} ex. 24
+      downstepped non-final realisation would ([lionnet-2025] ex. 24
       vs 25). This stacking preserves the registerless/downstepped
       contrast in utterance-final position. -/
 inductive BoundaryEffect where
@@ -94,7 +94,7 @@ inductive BoundaryEffect where
   deriving DecidableEq, Repr
 
 /-- The Numèè utterance-final boundary downstep `⁺%`
-    (@cite{lionnet-2025} §3.4).
+    ([lionnet-2025] §3.4).
 
     Eligibility: the final syllable must be **light CV** (monomoraic)
     AND **preceded by a registerless syllable**. When eligible, the
@@ -109,7 +109,7 @@ def numeeBoundaryEffect : Utterance → BoundaryEffect := fun utt =>
   | _ => .none
 
 -- ============================================================================
--- § 3: Lexical Data (@cite{lionnet-2025} §3.4 ex. 22–29)
+-- § 3: Lexical Data ([lionnet-2025] §3.4 ex. 22–29)
 -- ============================================================================
 
 /-- /jaa/ 'juice' — bimoraic CVV, registerless (ex. 24, 25). -/

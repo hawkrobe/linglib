@@ -7,7 +7,7 @@ import Linglib.Data.Examples.Schema
 
 /-!
 # Reference: ContextTower
-@cite{anand-nevins-2004} @cite{banfield-1982} @cite{kaplan-1989} @cite{schlenker-2003}
+[anand-nevins-2004] [banfield-1982] [kaplan-1989] [schlenker-2003]
 
 End-to-end derivation chain connecting the ContextTower infrastructure
 to the direct reference and indexical shift data in
@@ -221,7 +221,7 @@ theorem fid_time_eq_direct :
 -- § Entity-Concept Bridge: Anand-Nevins 2004 in the centered-world substrate
 -- ============================================================================
 
-/-! Bridge from @cite{anand-nevins-2004}'s shifty-operator framework to
+/-! Bridge from [anand-nevins-2004]'s shifty-operator framework to
     `Semantics.Tense.DeRe.EntityConcept` — the substrate's
     individual-side de re intension. The existing FIDProfile-based
     formalization above and the substrate's `EntityConcept`-based
@@ -250,7 +250,7 @@ open Semantics.Tense.DeRe (EntityConcept TimeConcept)
     the **content** at a fixed actual context IS rigid. The substrate
     captures this content rigidity by modeling `kaplanI` as a constant
     intension at the speaker (here `.narrator`); the character-level
-    structure is elided. This matches @cite{anand-nevins-2004}'s
+    structure is elided. This matches [anand-nevins-2004]'s
     framing of English `I` as `AUTH(c*)` (sticky to actual context),
     contrasted with shifty languages where the operator can override
     the context parameter (yielding non-rigid agent-projection — see
@@ -273,7 +273,7 @@ def shiftedI : EntityConcept Unit Agent Unit ℤ :=
 theorem kaplanI_isRigid : Core.Intension.IsRigid kaplanI :=
   Core.Intension.rigid_isRigid _
 
-/-- **@cite{anand-nevins-2004}'s shifted "I" is non-rigid** —
+/-- **[anand-nevins-2004]'s shifted "I" is non-rigid** —
     discriminating witness from contexts with different agents.
     Entity-side analog of Abusch's "descriptive time-concept" being
     the de dicto reading. -/
@@ -325,7 +325,7 @@ example :
     post-composition with ANY function — by the general
     `Intension.IsRigid.map` lemma in `Core/Logic/Intensional/Rigidity.lean`.
 
-    Concretely: @cite{anand-nevins-2004}'s Kaplan-compliant `kaplanI`
+    Concretely: [anand-nevins-2004]'s Kaplan-compliant `kaplanI`
     (rigid at `Res = Agent`) yields, for any `f : Agent → ℤ` (e.g.
     "birth year of the speaker"), a rigid `TimeConcept` `f ∘ kaplanI`
     at `Res = ℤ` — proved by `kaplanI_isRigid.map f`. The parallel
@@ -334,10 +334,10 @@ example :
     `Intension RefCtx` on its target type*: a one-line corollary of
     `Intension.IsRigid.map`, not a list of two facts.
 
-    @cite{abusch-1997}'s prose claim at p. 6 ("To apply the same
+    [abusch-1997]'s prose claim at p. 6 ("To apply the same
     machinery to de re belief, a further constraint is required...
     the same parallel as for tenses") is now functorially true:
-    @cite{lewis-1979-attitudes} + @cite{cresswell-vonstechow-1982}'s
+    [lewis-1979-attitudes] + [cresswell-vonstechow-1982]'s
     centered-world reduction is formalized once and applies uniformly
     across all `Res` types via the same closure lemma. -/
 theorem kaplanI_lifts_rigidly_to_timeConcept (f : Agent → ℤ) :

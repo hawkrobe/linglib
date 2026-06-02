@@ -3,7 +3,7 @@ import Mathlib.Data.Finset.Image
 
 /-!
 # DRS structural API: functorial renaming and merge algebra
-@cite{kamp-reyle-1993}
+[kamp-reyle-1993]
 
 Structural operations and lemmas over the faithful `DRS` core (`DRS/Defs.lean`):
 
@@ -117,7 +117,7 @@ def Condition.BoundAll (b : Finset V) : List (Condition L V) → Prop
 end
 
 /-- A DRS is *proper* iff it has no free discourse referent
-(@cite{kamp-reyle-1993}, Def. 1.4.2–1.4.3): every occurring referent is bound at
+([kamp-reyle-1993], Def. 1.4.2–1.4.3): every occurring referent is bound at
 its position. -/
 def DRS.IsProper (K : DRS L V) : Prop := DRS.Bound ∅ K
 
@@ -151,7 +151,7 @@ end Occ
 
 /-! ### Accessibility (decidable, host-relative)
 
-Accessibility (@cite{kamp-reyle-1993}, Def. 1.4.11) is intrinsically *relative to a
+Accessibility ([kamp-reyle-1993], Def. 1.4.11) is intrinsically *relative to a
 host DRS*: "`u` accessible at box `B`" means `u` lies in the universe of `B` or of
 a box on the path from the host down to `B`. A host-free `∃ D, WeakSubordinate K D
 ∧ u ∈ D.referents` is **vacuous** — a superordinate `D` introducing any referent
@@ -189,7 +189,7 @@ def Condition.accScopeL (s : Finset V) : List (Condition L V) → V → Option (
       | none => Condition.accScopeL s cs x
 end
 
-/-- The referents accessible from `u`'s introduction in `T` (@cite{kamp-reyle-1993},
+/-- The referents accessible from `u`'s introduction in `T` ([kamp-reyle-1993],
 Def. 1.4.11), as a decidable `Finset`; `∅` if `u` is not introduced in `T`. -/
 def DRS.accessibleFrom (T : DRS L V) (u : V) : Finset V := (DRS.accScope ∅ T u).getD ∅
 

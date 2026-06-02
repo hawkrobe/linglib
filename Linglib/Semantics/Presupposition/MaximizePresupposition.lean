@@ -4,7 +4,7 @@ import Linglib.Semantics.Presupposition.PhiFeatures
 
 /-!
 # Maximize Presupposition
-@cite{heim-1991}
+[heim-1991]
 
 Maximize Presupposition (MP) is a pragmatic principle: among competing
 expressions with the same assertive content, use the one with the
@@ -26,7 +26,7 @@ connects it to existing domain-specific implementations:
    `Alternatives.AlternativeSource (Tree C W)`. The classical Katzir
    2007 source is `katzirSource lex`; the indirect-alternative source
    `Alternatives.Indirect.indirectFrom`
-   (@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025})
+   ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025])
    competes with unpronounceable Katzir witnesses (e.g. *les deux NP*
    competes with the silent *tous les NP.dual* via the Indirect
    Alternative construction). Bridge to the OT formulation is
@@ -38,7 +38,7 @@ connects it to existing domain-specific implementations:
    violable constraint ranked below IC (Internal Coherence) and FP
    (Felicity Presupposition). Describes MP's position in the
    constraint hierarchy for presupposition obligatoriness
-   (@cite{wang-2025}). Trigger typology lives in
+   ([wang-2025]). Trigger typology lives in
    `Semantics.Presupposition.TriggerTypology`.
 
 ## Core abstraction
@@ -263,7 +263,7 @@ theorem phi_strength_nesting {E : Type*} {innerP outerP : E → Prop}
     This is the normal-speech pattern: absent any politeness or
     context-sensitivity constraint, MP forces use of the form with the
     strongest presupposition (SG over PL, 1st over 3rd, DEF over INDEF).
-    @cite{sauerland-2003} derives the preference for singular from
+    [sauerland-2003] derives the preference for singular from
     exactly this principle. -/
 theorem phi_mp_selects_maximal (candidates : List PrivativePair)
     (rest : List (NamedConstraint PrivativePair))

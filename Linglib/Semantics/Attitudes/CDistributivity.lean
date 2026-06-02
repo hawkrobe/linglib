@@ -3,7 +3,7 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # C-Distributivity: Derivation from Compositional Semantics
-@cite{uegaki-sudo-2019} @cite{uegaki-2022}
+[uegaki-sudo-2019] [uegaki-2022]
 
 This file derives C-distributivity as a **theorem** rather than stipulating it.
 
@@ -111,9 +111,9 @@ theorem degreeComparison_isCDistributive {W E : Type*}
 
 /-!
 ## Why Worry/Care are NOT C-Distributive
-@cite{elliott-etal-2017} @cite{spector-egr-2015}
+[elliott-etal-2017] [spector-egr-2015]
 
-The key insight from @cite{elliott-etal-2017} is that predicates like "worry"
+The key insight from [elliott-etal-2017] is that predicates like "worry"
 and "care" have question semantics that go beyond existential quantification.
 
 ### Worry Semantics

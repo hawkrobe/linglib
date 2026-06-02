@@ -2,12 +2,12 @@ import Linglib.Syntax.Pronoun.Basic
 
 /-!
 # Déchaine & Wiltschko 2002: Decomposing Pronouns
-@cite{dechaine-wiltschko-2002}
+[dechaine-wiltschko-2002]
 
 "The notion 'pronoun' is not a primitive of linguistic theory." Pronouns
 decompose into three categories by internal constituent **size** —
 `proDP ⊃ prophiP ⊃ proNP` — and that size *determines* distribution, semantics,
-and binding-theoretic status (@cite{dechaine-wiltschko-2002} table (24)):
+and binding-theoretic status ([dechaine-wiltschko-2002] table (24)):
 
 | category | internal syntax | distribution | semantics | binding |
 |----------|-----------------|--------------|-----------|---------|
@@ -16,7 +16,7 @@ and binding-theoretic status (@cite{dechaine-wiltschko-2002} table (24)):
 | pro-NP   | N               | predicate    | constant  | — (inherent semantics) |
 
 This categorial axis **cross-cuts** Cardinaletti & Starke's deficiency
-hierarchy (`Pronoun.Strength`, @cite{cardinaletti-starke-1999}): see
+hierarchy (`Pronoun.Strength`, [cardinaletti-starke-1999]): see
 `strength_category_independent`. It is the structural rival to the deficiency
 view that `Pronoun.Strength`'s docstring flags as orthogonal.
 
@@ -29,7 +29,7 @@ view that `Pronoun.Strength`'s docstring flags as orthogonal.
   Condition-B variable, and a bare NP is binding-unconstrained.
 * `strength_category_independent` — the C&S `Strength` and D&W `Category` axes
   are functionally independent (neither determines the other), with English
-  witnesses from @cite{dechaine-wiltschko-2002} §3.2.
+  witnesses from [dechaine-wiltschko-2002] §3.2.
 
 ## Implementation notes
 
@@ -42,7 +42,7 @@ namespace DechaineWiltschko2002
 
 open Pronoun (Strength)
 
-/-- @cite{dechaine-wiltschko-2002}'s three pronoun categories, by internal
+/-- [dechaine-wiltschko-2002]'s three pronoun categories, by internal
     constituent size: a full DP (`[DP D [φP φ [NP N]]]`), a φP (`[φP φ [NP N]]`),
     or a bare NP (`[NP N]`). -/
 inductive Category where
@@ -64,7 +64,7 @@ def Category.hasPhiLayer : Category → Bool
   | .prophiP => true
   | .proNP => false
 
-/-- Binding-theoretic status (@cite{dechaine-wiltschko-2002} table (24)). -/
+/-- Binding-theoretic status ([dechaine-wiltschko-2002] table (24)). -/
 inductive BindingStatus where
   /-- Subject to Condition C (a referring expression). -/
   | rExpression
@@ -74,14 +74,14 @@ inductive BindingStatus where
   | unconstrained
   deriving DecidableEq, Repr
 
-/-- External distribution (@cite{dechaine-wiltschko-2002} (24)–(25)). -/
+/-- External distribution ([dechaine-wiltschko-2002] (24)–(25)). -/
 inductive Distribution where
   | argument
   | predicate
   | either
   deriving DecidableEq, Repr
 
-/-- Inherent semantics (@cite{dechaine-wiltschko-2002} (24)). -/
+/-- Inherent semantics ([dechaine-wiltschko-2002] (24)). -/
 inductive Sem where
   | definite
   | const
@@ -98,7 +98,7 @@ def Category.bindingStatus (c : Category) : BindingStatus :=
   else .unconstrained
 
 /-- Distribution: DPs are arguments, NPs are predicates, φPs are type-flexible
-    (@cite{dechaine-wiltschko-2002} (25): `DP → Argument`, `NP → Predicate`). -/
+    ([dechaine-wiltschko-2002] (25): `DP → Argument`, `NP → Predicate`). -/
 def Category.distribution : Category → Distribution
   | .proDP => .argument
   | .prophiP => .either
@@ -129,7 +129,7 @@ theorem binding_statuses_distinct :
     Category.prophiP.bindingStatus ≠ Category.proNP.bindingStatus ∧
     Category.proDP.bindingStatus ≠ Category.proNP.bindingStatus := by decide
 
-/-! ### Case studies (@cite{dechaine-wiltschko-2002} table (24))
+/-! ### Case studies ([dechaine-wiltschko-2002] table (24))
 
 Each language's independent/personal proform instantiates a different category:
 Halkomelem independent pronouns = pro-DP (R-expressions, Condition C); Shuswap
@@ -147,10 +147,10 @@ theorem japanese_kare_proNP_unconstrained :
 
 /-! ### Orthogonality to Cardinaletti & Starke deficiency
 
-@cite{dechaine-wiltschko-2002} §3.2 analyses English personal pronouns as
+[dechaine-wiltschko-2002] §3.2 analyses English personal pronouns as
 pro-DP (1st/2nd person — they can be determiners: *we/us linguists*) and pro-φP
 (3rd person — *\*they linguists*), and *one* as pro-NP. Cross-classifying those
-categories with @cite{cardinaletti-starke-1999} deficiency (`Pronoun.Strength`:
+categories with [cardinaletti-starke-1999] deficiency (`Pronoun.Strength`:
 full *we/they* are strong, enclitic *'em* is a clitic) shows the two axes are
 independent — neither determines the other. -/
 
@@ -161,7 +161,7 @@ structure Datum where
   category : Category
   deriving Repr
 
-/-- English inventory (@cite{dechaine-wiltschko-2002} §3), each form tagged with
+/-- English inventory ([dechaine-wiltschko-2002] §3), each form tagged with
     its D&W category and its C&S strength. -/
 def englishInventory : List Datum :=
   [ ⟨"we",   .strong, .proDP⟩    -- 1st person → pro-DP; full → strong

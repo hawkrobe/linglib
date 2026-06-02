@@ -3,10 +3,10 @@ import Linglib.Fragments.Icelandic.Predicates
 
 /-!
 # Icelandic Nominalization Fragment
-@cite{wood-2023} @cite{wood-2015}
+[wood-2023] [wood-2015]
 
 Icelandic deverbal nominalizations built with the suffixes -un, -an,
--ing, -sla, and -naður. @cite{wood-2023} Ch. 3 establishes that -un
+-ing, -sla, and -naður. [wood-2023] Ch. 3 establishes that -un
 is the most productive nominalizer, and that nominalizations can
 receive CEN (Complex Event Nominal), SEN (Simple Event Nominal),
 or RN (Result/Referring Nominal) readings depending on the allosemes
@@ -22,12 +22,12 @@ open Morphology.DM.Allosemy
 open Icelandic.Predicates
 
 -- ============================================================================
--- § 1: Nominalizing Suffixes (@cite{wood-2023} Ch. 3)
+-- § 1: Nominalizing Suffixes ([wood-2023] Ch. 3)
 -- ============================================================================
 
 /-- Icelandic nominalizing suffixes. All spell out n in different
     morphological contexts — they are NOT different functional heads
-    (@cite{wood-2023} Ch. 2 (2.1), Ch. 3).
+    ([wood-2023] Ch. 2 (2.1), Ch. 3).
 
     The book lists: -un, -ing, -sla, -stur, -a, -n, -Ø, -ð, plus
     others (-aður, -ning). This fragment covers the most common ones. -/
@@ -72,10 +72,10 @@ structure IcelandicNom where
   deriving Repr, BEq
 
 -- ============================================================================
--- § 3: Nominalization Data (@cite{wood-2023})
+-- § 3: Nominalization Data ([wood-2023])
 -- ============================================================================
 
-/-- *opnun* 'opening' — from *opna* 'open' (@cite{wood-2023} Ch. 3, Ch. 5).
+/-- *opnun* 'opening' — from *opna* 'open' ([wood-2023] Ch. 3, Ch. 5).
     CEN: *opnun dyranna tók langan tíma* 'the opening of the door took a long time'
     RN: *opnunin var þöng* 'the opening was narrow' -/
 def opnun : IcelandicNom :=
@@ -86,7 +86,7 @@ def opnun : IcelandicNom :=
     availableReadings := [.complexEvent, .simpleEntity]
     stVerb := some opnast }
 
-/-- *söfnun* 'collection' — from *safna* 'collect' (@cite{wood-2023} Ch. 5).
+/-- *söfnun* 'collection' — from *safna* 'collect' ([wood-2023] Ch. 5).
     CEN: *söfnun á sýnum* 'collecting of samples'
     The running example in Ch. 5 for argument structure in CENs. -/
 def sofnun : IcelandicNom :=
@@ -96,7 +96,7 @@ def sofnun : IcelandicNom :=
     suffix := .un
     availableReadings := [.complexEvent, .simpleEntity] }
 
-/-- *þvottur* 'washing' — from *þvo* 'wash' (@cite{wood-2023} Ch. 6).
+/-- *þvottur* 'washing' — from *þvo* 'wash' ([wood-2023] Ch. 6).
     CEN: *þvo-ttur Guðrúnar á fötunum* 'Guðrún's washing of the clothes'
     SEN: *Þvo-ttur-inn tók langan tíma* 'The washing took a long time'
     RN: *Þvo-ttur-inn á að fara í vélina* 'The laundry should go in the machine'
@@ -108,7 +108,7 @@ def pvottur : IcelandicNom :=
     suffix := .stur  -- irregular form -ttur, same n head
     availableReadings := [.complexEvent, .simpleEvent, .simpleEntity] }
 
-/-- *misheyrn* 'mishearing' — from *misheyrast* 'mishear' (@cite{wood-2023} Ch. 5).
+/-- *misheyrn* 'mishearing' — from *misheyrast* 'mishear' ([wood-2023] Ch. 5).
     Subject-experiencer -st verb; nominalization retains experiencer
     semantics via Poss head. -/
 def misheyrn : IcelandicNom :=
@@ -118,7 +118,7 @@ def misheyrn : IcelandicNom :=
     suffix := .un
     availableReadings := [.complexEvent] }
 
-/-- *vöntun* 'need/want' — from *vanta* 'need' (@cite{wood-2023} Ch. 5).
+/-- *vöntun* 'need/want' — from *vanta* 'need' ([wood-2023] Ch. 5).
     Ambiguous between target and experiencer interpretations:
     *vöntun góðs starfsfólks* can mean 'need for good employees' (target)
     or 'the company's need' (experiencer). -/
@@ -129,7 +129,7 @@ def vontun : IcelandicNom :=
     suffix := .un
     availableReadings := [.complexEvent, .simpleEvent] }
 
-/-- *viðvörun* 'warning' — from *viðvara* 'warn' (@cite{wood-2023} Ch. 6).
+/-- *viðvörun* 'warning' — from *viðvara* 'warn' ([wood-2023] Ch. 6).
     CEN: *viðvörun Guðrúnar á hættunni* 'Guðrún's warning of the danger'
     SEN/State: *Viðvörunin stóð í mörg ár* 'The warning stood for many years'
     Simple entity: *Ég snerti viðvörunina* 'I touched the warning' -/
@@ -140,7 +140,7 @@ def vidvorun : IcelandicNom :=
     suffix := .un
     availableReadings := [.complexEvent, .simpleEvent, .simpleState, .simpleEntity] }
 
-/-- *notkun* 'use' — from *nota* 'use' (@cite{wood-2023} Ch. 5).
+/-- *notkun* 'use' — from *nota* 'use' ([wood-2023] Ch. 5).
     CEN reading; the verbalizer -ka appears in the nominal but not
     in the verb (*nota* vs *not-k-un*). -/
 def notkun : IcelandicNom :=
@@ -150,7 +150,7 @@ def notkun : IcelandicNom :=
     suffix := .un
     availableReadings := [.complexEvent] }
 
-/-- *aðdáun* 'admiration' — from *dást að* 'admire' (@cite{wood-2023} Ch. 6).
+/-- *aðdáun* 'admiration' — from *dást að* 'admire' ([wood-2023] Ch. 6).
     P-prefixing: *að* 'to' must be prefixed to the noun.
     CEN: *Aðdáun Guðrúnar á Maríu* 'Guðrún's admiration of María'
     SEN/State: *Aðdáunin stóð í mörg ár* 'The admiration lasted for many years'
@@ -164,7 +164,7 @@ def addaun : IcelandicNom :=
     hasPPrefix := true
     prefixedP := some "að" }
 
-/-- *viðgerð* 'repair' — from *gera við* 'fix/repair' (@cite{wood-2023} Ch. 4).
+/-- *viðgerð* 'repair' — from *gera við* 'fix/repair' ([wood-2023] Ch. 4).
     P-prefixing pattern 2: *við* conditions root meaning and must be
     prefixed, but cannot be doubled as complement. -/
 def vidgerd : IcelandicNom :=
@@ -176,7 +176,7 @@ def vidgerd : IcelandicNom :=
     hasPPrefix := true
     prefixedP := some "við" }
 
-/-- *umönnun* 'taking care of' — from *annast um* (@cite{wood-2023} Ch. 4).
+/-- *umönnun* 'taking care of' — from *annast um* ([wood-2023] Ch. 4).
     P-prefixing pattern 2. -/
 def umonnun : IcelandicNom :=
   { nomForm := "umönnun"

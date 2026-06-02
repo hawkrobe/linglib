@@ -3,16 +3,16 @@ import Linglib.Phenomena.Modality.ComparePosition
 
 /-!
 # Narrog (2012): Modality, Subjectivity, and Semantic Change
-@cite{narrog-2012}
+[narrog-2012]
 
-Study file formalizing the core contributions of @cite{narrog-2012} beyond
+Study file formalizing the core contributions of [narrog-2012] beyond
 what is already captured in `Semantics.Modality.Narrog` (the 2D/3D semantic
 map) and `Diachronic.ModalChange` (Bybee et al. data + directionality).
 
 ## New contributions formalized here
 
 1. **Category hierarchy** (Tables 3.5–3.9): an empirically-derived scope
-   hierarchy from Japanese data, finer-grained than @cite{cinque-1999}'s
+   hierarchy from Japanese data, finer-grained than [cinque-1999]'s
    stipulated universal hierarchy. Categories at the bottom (voice, aspect)
    are event-oriented; categories at the top (mood, illocutionary
    modification) are speech-act-oriented.
@@ -26,7 +26,7 @@ map) and `Diachronic.ModalChange` (Bybee et al. data + directionality).
 
 4. **Bridge: Narrog → Hacquard** (our construction): the event-oriented /
    speech-act-oriented cut in Narrog's hierarchy aligns with
-   @cite{hacquard-2006}'s AspP boundary. Categories below the boundary lack
+   [hacquard-2006]'s AspP boundary. Categories below the boundary lack
    propositional content; categories above it have content. This unifies the
    diachronic (Narrog) and synchronic (Hacquard) perspectives. Narrog does
    not explicitly make this connection; we construct it here.
@@ -46,7 +46,7 @@ open Semantics.Modality.EventRelativity (ModalPosition EventBinder)
 -- ============================================================================
 
 /-- Grammatical categories relevant to the verbal clause, drawn from
-    @cite{narrog-2012} Tables 3.5–3.9 and @cite{narrog-2009a}.
+    [narrog-2012] Tables 3.5–3.9 and [narrog-2009a].
 
     The categories are ordered by empirical scope from Japanese data:
     lower scope (event-oriented) to wider scope (speech-act-oriented).
@@ -72,8 +72,8 @@ inductive GramCategory where
   | illocutionaryMod   -- sentence-final particles, tag questions (widest scope)
   deriving DecidableEq, Repr
 
-/-- Empirical scope level from Japanese data (@cite{narrog-2009a},
-    @cite{narrog-2012} Tables 3.5–3.7, 3.9). Lower number = narrower scope.
+/-- Empirical scope level from Japanese data ([narrog-2009a],
+    [narrog-2012] Tables 3.5–3.7, 3.9). Lower number = narrower scope.
 
     Multiple categories can share a level; the ordering between
     categories at the same level is not empirically established.
@@ -168,7 +168,7 @@ theorem scope_implies_orientation (a b : GramCategory) (h : a < b) :
 
 /-- Role of a grammatical category relative to modality in diachronic change.
 
-    Based on @cite{narrog-2012} Table 3.10 (p. 113), which lists *non-modal*
+    Based on [narrog-2012] Table 3.10 (p. 113), which lists *non-modal*
     source, target, and bidirectional categories. Table 3.10 also includes
     categories not in our scope hierarchy: possession and directionals
     (sources), referent honorification (both), and politeness/addressee
@@ -182,7 +182,7 @@ inductive ChangeRole where
   deriving DecidableEq, Repr
 
 /-- Classification of categories by their diachronic role relative to
-    modality. Extends @cite{narrog-2012} Table 3.10 to cover all
+    modality. Extends [narrog-2012] Table 3.10 to cover all
     `GramCategory` constructors (see `ChangeRole` docstring). -/
 def GramCategory.changeRole : GramCategory → ChangeRole
   | .voice | .benefactive          => .source
@@ -224,9 +224,9 @@ theorem target_is_mood (c : GramCategory) (h : c.changeRole = .target) :
     `aboveAsp`. The AspP boundary is the empirical cut-point that both
     frameworks independently identify.
 
-    **NB**: This bridge is our own construction. @cite{narrog-2012} compares
-    his scope hierarchy to @cite{cinque-1999}'s in §3.2 but does not
-    explicitly connect it to @cite{hacquard-2006}'s content licensing. The
+    **NB**: This bridge is our own construction. [narrog-2012] compares
+    his scope hierarchy to [cinque-1999]'s in §3.2 but does not
+    explicitly connect it to [hacquard-2006]'s content licensing. The
     alignment is natural — both identify a boundary between event-level and
     propositional-level categories — but the formal mapping is ours. -/
 def GramCategory.toHacquardPosition : GramCategory → ModalPosition
@@ -280,7 +280,7 @@ theorem hacquard_narrog_agree_on_epistemic :
 -- ============================================================================
 
 /-- A stage in the diachronic development of English modals.
-    @cite{narrog-2012} Table 3.3, following Langacker (1990; 1998; 1999). -/
+    [narrog-2012] Table 3.3, following Langacker (1990; 1998; 1999). -/
 structure ModalDevelopmentStage where
   stageLabel : String
   semanticChange : String
@@ -288,7 +288,7 @@ structure ModalDevelopmentStage where
   orientation : SpeakerOrientationLevel
   deriving Repr
 
-/-- Langacker's stages for English modal verbs (@cite{narrog-2012} Table 3.3).
+/-- Langacker's stages for English modal verbs ([narrog-2012] Table 3.3).
 
     Stage I>II: Physical → social force (main verb → modal verb).
     Stage I>II: Potency source/target diffuse (main verb → modal verb).
@@ -322,9 +322,9 @@ theorem langacker_stages_monotone :
 /-- All three frameworks agree that epistemic is "higher" than root/dynamic,
     but for different reasons:
 
-    - @cite{cinque-1999}: stipulated functional heads place epistemic above TP.
-    - @cite{hacquard-2006}: content licensing blocks epistemic below AspP.
-    - @cite{narrog-2012}: empirical scope data from Japanese places epistemic
+    - [cinque-1999]: stipulated functional heads place epistemic above TP.
+    - [hacquard-2006]: content licensing blocks epistemic below AspP.
+    - [narrog-2012]: empirical scope data from Japanese places epistemic
       at scope levels 3–5 vs. dynamic at level 1.
 
     This theorem states the common prediction, which each framework derives

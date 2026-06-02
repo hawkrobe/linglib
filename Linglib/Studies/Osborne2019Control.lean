@@ -6,8 +6,8 @@ import Linglib.Typology.Complementation
 import Linglib.Studies.Noonan2007
 
 /-!
-# DG Control/Raising Bridge: @cite{osborne-2019}
-@cite{de-marneffe-nivre-2019} @cite{noonan-2007} @cite{osborne-2019}
+# DG Control/Raising Bridge: [osborne-2019]
+[de-marneffe-nivre-2019] [noonan-2007] [osborne-2019]
 
 Derivation chain from DG enhanced dependency analysis to complementation
 phenomena, grounded in the English Fragment lexicon.
@@ -40,7 +40,7 @@ hasUnrepresentedArg = true ← basic tree loses embedded subject
     ↓
 classifyEnhancement =.controlSubject ← enhanced edge classified
     ↓
-CTPDatum.hasEquiDeletion ← matches @cite{noonan-2007}'s observations
+CTPDatum.hasEquiDeletion ← matches [noonan-2007]'s observations
 ```
 
 -/
@@ -221,7 +221,7 @@ theorem raising_classified :
 
 -- ============================================================================
 -- §7: Control ↔ Raising Structural Identity
--- @cite{osborne-2019}: DG treats control and raising identically at
+-- [osborne-2019]: DG treats control and raising identically at
 -- the syntactic level. Both produce the same tree geometry; the difference
 -- is purely semantic (theta role assignment).
 -- ============================================================================
@@ -244,7 +244,7 @@ open Noonan2007
 open English.Predicates.Verbal (manage persuade want hope stop start continue_ seem)
 
 /-- Control verbs in the Fragment have corresponding CTPDatum entries
-    with hasEquiDeletion = true (@cite{noonan-2007} §2.1).
+    with hasEquiDeletion = true ([noonan-2007] §2.1).
 
     This connects three independently specified data sources:
     1. Fragment controlType / altControlType (lexical annotation)

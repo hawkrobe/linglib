@@ -111,7 +111,7 @@ noncomputable def hgSystem {Cand : Type*}
     but soft-decode with temperature `α`. As `α → ∞`, this converges to
     `hgSystem` (see `softmax_argmax_limit` in `Core.Agent.RationalAction`).
 
-    The default `α = 1` matches @cite{goldwater-johnson-2003}'s
+    The default `α = 1` matches [goldwater-johnson-2003]'s
     standard MaxEnt formulation. -/
 noncomputable def maxEntSystem {Cand : Type*}
     (candidates : Finset Cand) (constraints : List (WeightedConstraint Cand))

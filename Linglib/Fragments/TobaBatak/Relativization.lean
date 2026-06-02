@@ -3,7 +3,7 @@ import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Toba Batak Relativization Fragment
-@cite{keenan-comrie-1977}
+[keenan-comrie-1977]
 
 Two relative clause markers (discussed §1.3.2):
 - Gap construction (-case, covers SU only)
@@ -12,7 +12,7 @@ Two relative clause markers (discussed §1.3.2):
 DO cannot be relativized by either construction — a genuine gap in
 AH coverage, noted explicitly in the paper.
 
-Data from @cite{keenan-comrie-1977} Table 1 and §1.3.2.
+Data from [keenan-comrie-1977] Table 1 and §1.3.2.
 -/
 
 namespace TobaBatak
@@ -55,6 +55,6 @@ def relativization : RelativeClause.Profile :=
   , rcPosition := .postNominal
   , lowestRelativizable := .genitive
   , notes := "Gap on subject; resumptive on IO/OBL/GEN; "
-          ++ "DO genuinely cannot be relativized; @cite{keenan-comrie-1977} §1.3.2" }
+          ++ "DO genuinely cannot be relativized; [keenan-comrie-1977] §1.3.2" }
 
 end TobaBatak

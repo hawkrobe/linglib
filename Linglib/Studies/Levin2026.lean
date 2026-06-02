@@ -10,7 +10,7 @@ import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
 /-!
 # Levin (2026): The door pushed open
-@cite{levin-2026}
+[levin-2026]
 
 *The door pushed open*: an English intransitive resultative construction
 with transitive-only verbs. *Journal of East Asian Linguistics* 35:3.
@@ -41,7 +41,7 @@ isolation.
 5. **Semantic licensing**: subject DP must be capable of autonomous motion
    ("projectile" — entity imbued with force that can act without
    continuous external involvement)
-6. **Proper Containment Condition** (@cite{rappaport-hovav-levin-2012}):
+6. **Proper Containment Condition** ([rappaport-hovav-levin-2012]):
    when the cause is continuously involved, the causative variant is
    required — blocking the intr-*push open* pattern
 
@@ -116,7 +116,7 @@ theorem agrees_with_diathesis_data :
   native_decide
 
 /-- All core classes are pure manner roots
-    (@cite{beavers-koontz-garboden-2020}): they encode no state, no result,
+    ([beavers-koontz-garboden-2020]): they encode no state, no result,
     no causation. The result and causation come from the construction. -/
 theorem all_classes_pure_manner :
     intrPushOpenClasses.all
@@ -125,7 +125,7 @@ theorem all_classes_pure_manner :
 
 /-- All core classes encode contact and motion but NOT change of state
     and NOT causation. This is why they don't show the causative alternation
-    (@cite{fillmore-1970}): no scalar change is lexicalized. -/
+    ([fillmore-1970]): no scalar change is lexicalized. -/
 theorem all_classes_no_cos_no_causation :
     intrPushOpenClasses.all (λ c =>
       let mc := c.meaningComponents
@@ -138,7 +138,7 @@ theorem push_is_pushPull : push.levinClass = some .pushPull := rfl
 theorem pull_is_pushPull : pull.levinClass = some .pushPull := rfl
 theorem kick_is_hit : kick.levinClass = some .hit := rfl
 
-/-! ### Construction-dependent alternation (@cite{goldberg-1995})
+/-! ### Construction-dependent alternation ([goldberg-1995])
 
 The key derivation: these verbs cannot alternate *alone* (shown above),
 but they CAN alternate *inside the resultative construction*. The
@@ -286,7 +286,7 @@ theorem all_attested_adjs_spatial :
   native_decide
 
 /-- All attested adjectives are closed-scale (absolute) in
-    @cite{kennedy-2007}'s terms. Spatially instantiated states have
+    [kennedy-2007]'s terms. Spatially instantiated states have
     crisp endpoints (fully open vs. fully closed). -/
 theorem all_attested_adjs_closed_scale :
     [open_, closed_, shut, free_, loose, flat].all
@@ -514,7 +514,7 @@ theorem freeze_alternates_push_does_not :
 
 /-! ## PCC and the independent-source analysis
 
-The Proper Containment Condition (@cite{rappaport-hovav-levin-2012}):
+The Proper Containment Condition ([rappaport-hovav-levin-2012]):
 "When a change of state is properly contained within a causing act,
 the argument representing that act must be expressed in the same clause
 as the verb describing the change of state."
@@ -551,7 +551,7 @@ formalized in `Causation/Resultatives.lean`:
 
 /-! ## Anticausative discourse conditions
 
-@cite{rappaport-hovav-2014} identifies two discourse situations where
+[rappaport-hovav-2014] identifies two discourse situations where
 the anticausative variant is preferred over the causative:
 
 1. The cause is **recoverable** from the discourse context — it has been
@@ -596,7 +596,7 @@ The subject DP must be capable of **autonomous motion**: it must be
 able to move along the trajectory defined by the result state without
 requiring an external agent's sustained participation (§6).
 
-The attested subjects qualify as "projectiles" (@cite{kearns-2000}):
+The attested subjects qualify as "projectiles" ([kearns-2000]):
 entities that move due to their own kinetic energy and can impart
 this energy to another entity through contact. This includes entities
 that are not machines but are construed as force-imbued (doors after
@@ -793,7 +793,7 @@ prediction) carries the structural content. `FilledResultative` bundles
 the lexical fillers as proof obligations on the type — the filling must
 satisfy the Boolean-level alternation prediction.
 
-This is the formal reflex of @cite{levin-2026}'s analysis: a resultative
+This is the formal reflex of [levin-2026]'s analysis: a resultative
 is a **construction filled with specific lexical material** (verb class,
 adjective).
 
@@ -919,7 +919,7 @@ theorem pushOpen_filled_covers_core :
 
 Intr-*push open* resultatives are `anticausativeProperty` in the
 Goldberg & Jackendoff typology (added to `ResultativeType` for
-@cite{levin-2026}). This closes the loop between the `FilledResultative`
+[levin-2026]). This closes the loop between the `FilledResultative`
 type and the broader resultative classification. -/
 
 /-- Map a `FilledResultative` to its `ResultativeType`.

@@ -3,7 +3,7 @@ import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # Aggregation of `Truth3` Lists by Projection Type
-@cite{barwise-cooper-1981}
+[barwise-cooper-1981]
 
 Universal vs existential aggregation as the `⊓`/`⊔` projections of the
 ∃ ⊣ Δ ⊣ ∀ adjunction, parameterized by `ProjectionType` (declared in
@@ -125,8 +125,8 @@ def forall' {α : Type*} (P : α → Truth3) (l : List α) : Truth3 :=
 
     These two facts are the algebraic basis for the architectural
     distinction in trivalent semantics for quantified counterfactuals
-    (@cite{ramotowska-marty-romoli-santorio-2025}) and deontic modality
-    (@cite{agha-jeretic-2022} §4.2): inputs containing `.indet`
+    ([ramotowska-marty-romoli-santorio-2025]) and deontic modality
+    ([agha-jeretic-2022] §4.2): inputs containing `.indet`
     propagate it through aggregation regardless of duality type, while
     inputs lifted from `Bool` always commit to a definite truth value. -/
 
@@ -259,14 +259,14 @@ theorem aggregate_map_ofBool_mixed (bs : List Bool)
     given a Finset `s` and a Boolean predicate `P`, classify `(s, P)` as
     super-true (`P` holds at every element), super-false (`P` fails at
     every element of nonempty `s`), or indeterminate (mixed). This is the
-    construction introduced by @cite{van-fraassen-1966} (Definition 10,
+    construction introduced by [van-fraassen-1966] (Definition 10,
     p. 487) for free logic with non-denoting names and named "super-truth"
-    by @cite{fine-1975} (§3, p. 273) when applied to vagueness via
+    by [fine-1975] (§3, p. 273) when applied to vagueness via
     specification spaces.
 
-    In linguistic semantics the same operation is @cite{schwarzschild-1996}'s
+    In linguistic semantics the same operation is [schwarzschild-1996]'s
     **DIST** operator for distributive plural predication (the source of
-    the name `dist`); @cite{kriz-2016} and @cite{kriz-spector-2021}
+    the name `dist`); [kriz-2016] and [kriz-spector-2021]
     formalize the modern trivalent-homogeneity treatment.
 
     Reachable cases on a Finset `s : Finset α` and predicate `P : α → Prop`
@@ -412,11 +412,11 @@ theorem dist_eq_indet_iff {α : Type*} (s : Finset α) (P : α → Prop) [Decida
 
     | Theory                 | Index I              | ∃-projection       | ∀-projection    | Mathlib hook                           |
     |------------------------|----------------------|--------------------|-----------------|----------------------------------------|
-    | @cite{klein-1980}      | comparison class C   | comparative (more) | at-least-as     | `measureDelineation_mono_in_class`     |
-    | @cite{fine-1975}       | precisification      | sub-truth          | super-truth     | `Preorder SpecSpace`, stability        |
-    | @cite{caie-2023}       | comp. context        | disjunctive update | —               | `disjunctiveUpdate_mono_interp`        |
-    | @cite{kratzer-1981}    | accessible world     | ◇ (possibility)    | □ (necessity)   | `GaloisConnection` (Proposition.lean)  |
-    | @cite{kamp-1975}       | completion           | strict comparative | at-least-as     | `Antitone` in S (via `kampPreorder`)   |
+    | [klein-1980]      | comparison class C   | comparative (more) | at-least-as     | `measureDelineation_mono_in_class`     |
+    | [fine-1975]       | precisification      | sub-truth          | super-truth     | `Preorder SpecSpace`, stability        |
+    | [caie-2023]       | comp. context        | disjunctive update | —               | `disjunctiveUpdate_mono_interp`        |
+    | [kratzer-1981]    | accessible world     | ◇ (possibility)    | □ (necessity)   | `GaloisConnection` (Proposition.lean)  |
+    | [kamp-1975]       | completion           | strict comparative | at-least-as     | `Antitone` in S (via `kampPreorder`)   |
 
     The projections themselves are just `∃`/`∀`. De Morgan duality uses
     `not_forall` / `not_exists` from Lean core. The deeper Mathlib

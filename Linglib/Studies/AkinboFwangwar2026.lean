@@ -9,7 +9,7 @@ import Linglib.Studies.Hyman2006
 
 /-!
 # Akinbo & Fwangwar (2026): Grammatical tones targeting ideophones
-@cite{akinbo-fwangwar-2026}
+[akinbo-fwangwar-2026]
 
 Akinbo, S. K. & Fwangwar, T. R. (2026). Iconicity and expressiveness of
 grammatical tones targeting ideophones in Mwaghavul. *Natural Language
@@ -23,26 +23,26 @@ grammatical tones targeting ideophones in Mwaghavul. *Natural Language
 
 2. **Anchor + INTEGRITY OT analysis** (paper §4.3, eq. 22). The tonal
    alternations are accounted for by morpheme-specific correspondence
-   constraints (@cite{finley-2009}): LEFT-ANCHOR-Tᵥ, RIGHT-ANCHOR-Tᵥ,
+   constraints ([finley-2009]): LEFT-ANCHOR-Tᵥ, RIGHT-ANCHOR-Tᵥ,
    INTEGRITY-Tᵥ, and MAX-Tone.
 
 3. **Iconic Phonological Disharmony.** In pluractional verbs, the M-H
    verbaliser realises M on every TBU of the reduplicant and H on
    every TBU of the base. This disharmony iconically marks
-   "distinguishable identity" (@cite{dingemanse-thompson-2020}).
+   "distinguishable identity" ([dingemanse-thompson-2020]).
 
 4. **Expressiveness survives integration.** Derived ideophonic verbs
    retain expressive properties (affective meaning,
    nondisplaceability, ineffability) despite full morphosyntactic
-   integration (@cite{potts-2005}-style secondary meanings),
+   integration ([potts-2005]-style secondary meanings),
    challenging the inverse correlation predicted by
-   @cite{dingemanse-akita-2017}.
+   [dingemanse-akita-2017].
 
 ## Substrate
 
 The OT analysis is built on `Phonology.Autosegmental.FloatingForm Syl TRN`
 (Goldsmith-style autosegmental representation; built originally for
-@cite{mcpherson-lamont-2026}). Each `ulTier` entry is one
+[mcpherson-lamont-2026]). Each `ulTier` entry is one
 autosegment; `surfaceLinks` records associations between tier and
 TBUs. This represents spreading (one autosegment, multi-linked) and
 copying (multiple autosegments) as distinct objects — load-bearing
@@ -61,7 +61,7 @@ anchor combinators defined in §2 below.
 - §3 Tableau 24 — M verbaliser + wùlàʃ (INTEGRITY rules out copying)
 - §4 Tableau 25 — M-H verbaliser + háŋláyáp
 - §5 Tableau 26 — pluractional jàlpàt with per-root anchoring
-- §6 Classification under @cite{rolle-2018} — replacive-dominant GT
+- §6 Classification under [rolle-2018] — replacive-dominant GT
 - §7 Empirical generalisations
 - §8 Connection to Distributed Morphology categorisers
 - §9 Expressiveness preservation
@@ -572,10 +572,10 @@ theorem optimal : tableau.optimal = {candD} := by decide
 end Tableau26
 
 -- ============================================================================
--- §6: Classification under @cite{rolle-2018}
+-- §6: Classification under [rolle-2018]
 -- ============================================================================
 
-/-! The Mwaghavul verbalisers are classified under @cite{rolle-2018}'s
+/-! The Mwaghavul verbalisers are classified under [rolle-2018]'s
     grammatical-tone framework as **replacive-dominant** GT (Def 1):
     automatic replacement of the underlying tone within the valuation
     window of the target-host. Verbalisers are word-level + independent
@@ -658,7 +658,7 @@ theorem m_verbs_all_uniform :
 theorem pluractional_uses_mh :
     jalpat.verbType = .mh ∧ hanlayap.verbType = .mh := ⟨rfl, rfl⟩
 
-/-- Mwaghavul satisfies @cite{hyman-2006}'s tonal-language definition
+/-- Mwaghavul satisfies [hyman-2006]'s tonal-language definition
     (3): "an indication of pitch enters into the lexical realisation
     of at least some morphemes." -/
 theorem mwaghavul_is_tonal_hyman :
@@ -670,7 +670,7 @@ theorem mwaghavul_is_tonal_hyman :
 
 /-! The segmentally null verbalisers that trigger the tonal
     alternations are instances of the verbal categoriser **v** in
-    Distributed Morphology (@cite{marantz-1997}, @cite{harley-2014}).
+    Distributed Morphology ([marantz-1997], [harley-2014]).
     The ideophonic base (noun, adjective, or adverb) is recategorised
     as a verb through merger with v, whose sole phonological exponent
     is a tonal melody. -/
@@ -693,14 +693,14 @@ theorem deadjectival_ideophone_verb :
     Recategorization.deadjectival.target = .v := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- §9: Expressiveness Preservation (after @cite{potts-2005})
+-- §9: Expressiveness Preservation (after [potts-2005])
 -- ============================================================================
 
-/-! @cite{akinbo-fwangwar-2026} §4.2 argues that derived ideophonic
-    verbs retain @cite{potts-2005}-style expressive properties despite
+/-! [akinbo-fwangwar-2026] §4.2 argues that derived ideophonic
+    verbs retain [potts-2005]-style expressive properties despite
     morphosyntactic integration: affective meaning, nondisplaceability,
     descriptive ineffability, context-dependence. This challenges
-    @cite{dingemanse-akita-2017}'s prediction of inverse correlation
+    [dingemanse-akita-2017]'s prediction of inverse correlation
     between integration and expressiveness. -/
 
 open Pragmatics.Expressives

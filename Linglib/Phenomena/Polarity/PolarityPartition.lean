@@ -3,10 +3,10 @@ import Linglib.Core.Logic.NaturalLogic
 
 /-!
 # Polarity–Partition Bridge
-@cite{icard-2012} @cite{merin-1999}
+[icard-2012] [merin-1999]
 
 Connects the natural logic algebra (`Core.NaturalLogic`) to partition
-structure (`Core.Partition`), formalizing @cite{merin-1999}'s central insight:
+structure (`Core.Partition`), formalizing [merin-1999]'s central insight:
 **negativity is coarsening**.
 
 ## Key connections
@@ -50,7 +50,7 @@ def AreComplements (p q : M → Bool) : Prop :=
 binary partitions. This grounds the set-theoretic NL relation in
 partition structure: complements carry the same information content.
 
-This is @cite{merin-1999} via the NL relation algebra. -/
+This is [merin-1999] via the NL relation algebra. -/
 theorem complements_same_partition (p q : M → Bool) (h : AreComplements p q)
     (w v : M) :
     (QUD.binaryPartition p).sameAnswer w v =

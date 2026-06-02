@@ -4,7 +4,7 @@ import Linglib.Semantics.ArgumentStructure.Relational
 # Mandarin Demonstrative Semantics
 
 Formalizes Ahn & Zhu's analysis of Mandarin *na* as a relationalizing operator,
-building on @cite{barker-2011}'s type-shifting framework.
+building on [barker-2011]'s type-shifting framework.
 
 **Key Integration**: This module USES Barker's π operator rather than defining
 its own. The bridging licensing results DERIVE from Barker's theory.
@@ -397,7 +397,7 @@ visible and proves bridging licensing as a consequence.
 
 
 /-!
-## Cumulative Integration with @cite{barker-2011}
+## Cumulative Integration with [barker-2011]
 
 This section shows how Ahn & Zhu's analysis DERIVES from Barker's framework.
 Rather than re-proving everything, we show the correspondence.
@@ -434,9 +434,9 @@ theorem bridging_from_barker {E S : Type}
 /--
 **The Derivation Chain**:
 
-1. @cite{barker-2011}: π : Pred1 → Pred2 (type-shifter adds argument)
-2. @cite{barker-2011}: Pred2 has a relatum slot (the extra argument)
-3. @cite{ahn-zhu-2025}: Mandarin *na* applies π
+1. [barker-2011]: π : Pred1 → Pred2 (type-shifter adds argument)
+2. [barker-2011]: Pred2 has a relatum slot (the extra argument)
+3. [ahn-zhu-2025]: Mandarin *na* applies π
 4. THEREFORE: *na* creates a relatum slot
 5. THEREFORE: *na* enables relational bridging
 

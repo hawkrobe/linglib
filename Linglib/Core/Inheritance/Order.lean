@@ -4,7 +4,7 @@ import Mathlib.Order.Defs.PartialOrder
 /-!
 # Inheritance Order — Preorder view of an isA taxonomy
 
-@cite{hudson-2010}'s isA backbone is reflexive and transitive (`IsA.refl`,
+[hudson-2010]'s isA backbone is reflexive and transitive (`IsA.refl`,
 `IsA.trans` in `Core.Inheritance.Basic`), which makes it a `Preorder` on the
 node type. Once the instance is in place, every preorder lemma (`le_trans`,
 `le_refl`, `Antichain`, `LowerSet`, `UpperSet`, `OrderHom`) is available for

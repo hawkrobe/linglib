@@ -12,8 +12,8 @@ set_option autoImplicit false
 
 /-!
 # `InsertionAlgebra α` — pre-Lie algebra on `(Nonplanar α) →₀ ℤ`
-@cite{foissy-typed-decorated-rooted-trees-2018}
-@cite{chapoton-livernet-2001}
+[foissy-typed-decorated-rooted-trees-2018]
+[chapoton-livernet-2001]
 
 The bilinear extension of `Nonplanar.insertSum` to the free
 ℤ-module `(Nonplanar α) →₀ ℤ` gives a `RightPreLieAlgebra ℤ` instance,

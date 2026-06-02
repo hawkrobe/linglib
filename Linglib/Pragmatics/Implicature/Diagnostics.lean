@@ -2,8 +2,8 @@ import Linglib.Pragmatics.Implicature.Defs
 
 /-!
 # Gricean Diagnostics over `Implicature`
-@cite{grice-1975} @cite{sadock-1978} @cite{hirschberg-1985} @cite{horn-1991}
-@cite{geurts-2010} @cite{potts-2005} @cite{delpinal-bassi-sauerland-2024}
+[grice-1975] [sadock-1978] [hirschberg-1985] [horn-1991]
+[geurts-2010] [potts-2005] [delpinal-bassi-sauerland-2024]
 
 Formalizes the standard Gricean diagnostic tests for distinguishing
 implicatures from entailments and presuppositions, stated uniformly
@@ -14,7 +14,7 @@ delivers two non-cancellability theorems for pex outputs: `bps_not_cancellable`
 (structural — assertion = `p.holds` makes content survive trivially)
 and `bps_neg_not_cancellable` (substantive — assertion = `p.neg.holds`
 makes content survive *because `PrProp.neg` projects*; the
-family-of-sentences test in @cite{bassi-delpinal-sauerland-2021}'s
+family-of-sentences test in [bassi-delpinal-sauerland-2021]'s
 sense). The substrate's projecting `PrProp.neg` is what makes the
 projection theorem work; swapping in non-projecting `PrProp.negExt`
 would falsify it.
@@ -28,10 +28,10 @@ would falsify it.
 | Calculability       | The inference is derived (not lexically encoded).              |
 | Non-detachability   | Paraphrases preserve the inference (form-independence).        |
 
-@cite{grice-1975} introduced calculability and non-detachability as
-defining features. @cite{sadock-1978} added cancellability and
-schematized the four-test apparatus. @cite{hirschberg-1985} surveys the
-diagnostics and their interaction; @cite{horn-1991} extends the
+[grice-1975] introduced calculability and non-detachability as
+defining features. [sadock-1978] added cancellability and
+schematized the four-test apparatus. [hirschberg-1985] surveys the
+diagnostics and their interaction; [horn-1991] extends the
 reinforceability discussion via the redundancy diagnostic.
 
 ## Joint vs. mechanism-internal tests
@@ -84,7 +84,7 @@ the presupposition (`(neg p).presup := p.presup`). This is the family-of-
 sentences projection test in formal form. Falsifies for `PrProp.negExt`.
 
 **Not delivered as cancellability failure:** Magri-style obligatory SI
-(@cite{magri-2009}) is not non-cancellable in the Sadock sense, even
+([magri-2009]) is not non-cancellable in the Sadock sense, even
 CK-relativized. For "#Some Italians come from a warm country" with CK
 restricting to all-warm worlds, "in fact all" is a consistent
 continuation at the CK world that contradicts the EXH'd implicature —
@@ -125,7 +125,7 @@ A *kind* is **non-detachable** iff inferences of that kind depend on
 asserted content rather than asserted form. The exception is `manner`,
 whose entire raison d'être is form-relativity.
 
-@cite{horn-1984}, @cite{levinson-2000}.
+[horn-1984], [levinson-2000].
 -/
 def ImplicatureKind.isNonDetachable : ImplicatureKind → Prop
   | .manner => False
@@ -142,7 +142,7 @@ namespace Implicature
 variable {W : Type*}
 
 -- ============================================================
--- Cancellability (@cite{sadock-1978})
+-- Cancellability ([sadock-1978])
 -- ============================================================
 
 /--
@@ -158,7 +158,7 @@ cancels) iff the continuation "all of them did" is consistent with
 the assertion and contradicts "not all."
 
 Negation of `IsCancellable` is the load-bearing diagnostic for the
-@cite{bassi-delpinal-sauerland-2021} *Presuppositional EXH* account:
+[bassi-delpinal-sauerland-2021] *Presuppositional EXH* account:
 when pex outputs are wrapped as `Implicature W Prop` with
 `assertion := PrProp.holds · p` and `content := p.presup`, the
 non-cancellability follows from `holds → presup` via
@@ -193,7 +193,7 @@ theorem IsCancellable.false_of_assertion_implies_content
 
 
 -- ============================================================
--- Reinforceability (@cite{sadock-1978}; @cite{horn-1991})
+-- Reinforceability ([sadock-1978]; [horn-1991])
 -- ============================================================
 
 /--
@@ -210,7 +210,7 @@ Note the equivalence: a reinforceable implicature is exactly one whose
 content is genuinely additional information beyond the assertion. By
 `IsCancellable.of_assertion_compatible_with_negation`, **reinforceable
 inferences are cancellable** (the same witness works), so reinforceability
-implies cancellability. The converse may fail (@cite{hirschberg-1985}).
+implies cancellability. The converse may fail ([hirschberg-1985]).
 -/
 def IsReinforceable (φ : W → Prop) (i : Implicature W Prop) : Prop :=
   ∃ w, φ w ∧ ¬ i.content w
@@ -277,9 +277,9 @@ structure GriceanProfile (φ : W → Prop) (i : Implicature W Prop) : Prop where
 
 /-- The lexical mechanism is by definition not derived from cooperative
 reasoning — the inference is encoded in the lexical entry — so it fails
-calculability. The agreement with @cite{grice-1975}'s original
+calculability. The agreement with [grice-1975]'s original
 conventional/conversational distinction is the contentful theorem here.
-(Conventional implicatures in @cite{potts-2005}'s sense are the
+(Conventional implicatures in [potts-2005]'s sense are the
 canonical instantiation: kind `.conventional` paired with mechanism
 `.lexical`. The kind hypothesis is unnecessary for the proof; the
 mechanism alone suffices.) -/
@@ -289,7 +289,7 @@ theorem lexical_not_calculable {S : Type*}
   simp [IsCalculable, ImplicatureMechanism.isCalculable, hLex]
 
 /-- Manner implicatures are by definition form-relative, so they fail
-non-detachability. The agreement with @cite{horn-1984}'s Division of
+non-detachability. The agreement with [horn-1984]'s Division of
 Pragmatic Labor is the contentful theorem. -/
 theorem manner_is_detachable {S : Type*}
     (i : Implicature W S) (h : i.kind = .manner) : ¬ IsNonDetachable i := by

@@ -1,6 +1,6 @@
 /-!
 # Clarification Ellipsis: Empirical Data
-@cite{ginzburg-cooper-2004}
+[ginzburg-cooper-2004]
 
 Theory-neutral data on clarification ellipsis (CE) — bare fragments
 used to request clarification of a preceding utterance.
@@ -15,7 +15,7 @@ part of it to request clarification:
     (i)  "Are you asking if BO finagled a raise?" (clausal)
     (ii) "Who is Bo? / What does 'finagle' mean?" (constituent)
 
-## Key Properties (@cite{ginzburg-cooper-2004} §1.2)
+## Key Properties ([ginzburg-cooper-2004] §1.2)
 
 1. **Any sub-constituent** can be clarified (NPs, Vs, PPs — not just referential NPs)
 2. **Two readings** typically available: clausal and constituent

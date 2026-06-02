@@ -24,7 +24,7 @@ inequality from which DPI follows.
 
 DPI is the structural foundation for "informativity" claims in RSA-style
 models: as an observation kernel becomes noisier, the listener's posterior
-moves closer to the prior. Specifically, for the @cite{goodman-stuhlmuller-2013}
+moves closer to the prior. Specifically, for the [goodman-stuhlmuller-2013]
 cancellation theorem, DPI says that as speaker access decreases (kernel
 becomes less informative), `KL(L1(a, u) ‖ prior)` decreases — the
 listener gains less information from the utterance.
@@ -124,7 +124,7 @@ is vacuous in a less interesting way) and `q a ≠ 0 → κ a b ≠ 0` for all
 both hypotheses reduce to checking at finitely many `(a, b)` pairs.
 
 This is the core principle that drives:
-- the cancellation theorem in @cite{goodman-stuhlmuller-2013}
+- the cancellation theorem in [goodman-stuhlmuller-2013]
   (less informative speaker access → smaller KL of L1 from prior),
 - post-processing of any kernel-decomposed RSA model. -/
 theorem klDiv_bind_le [MeasurableSpace α] [MeasurableSpace β]

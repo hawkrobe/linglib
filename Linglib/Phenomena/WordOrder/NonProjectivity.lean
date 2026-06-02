@@ -1,24 +1,24 @@
 /-!
 # Treebank Non-Projectivity Data
-@cite{kuhlmann-nivre-2006} @cite{kuhlmann-2013}
+[kuhlmann-nivre-2006] [kuhlmann-2013]
 
 Empirical data on non-projective structures in dependency treebanks.
 
 ## Sources
 
-- @cite{kuhlmann-nivre-2006}. Mildly Non-Projective Dependency Structures.
+- [kuhlmann-nivre-2006]. Mildly Non-Projective Dependency Structures.
   COLING/ACL 2006, Table 1.
-- @cite{kuhlmann-2013}. Mildly Non-Projective Dependency Grammar.
+- [kuhlmann-2013]. Mildly Non-Projective Dependency Grammar.
   Computational Linguistics 39(2), Tables 3-4.
 -/
 
 namespace Phenomena.WordOrder.NonProjectivity
 
 -- ============================================================================
--- §1: Treebank Coverage (@cite{kuhlmann-nivre-2006}, Table 1)
+-- §1: Treebank Coverage ([kuhlmann-nivre-2006], Table 1)
 -- ============================================================================
 
-/-- Treebank coverage data from @cite{kuhlmann-nivre-2006}, Table 1.
+/-- Treebank coverage data from [kuhlmann-nivre-2006], Table 1.
     Percentages scaled x100 for Nat arithmetic. -/
 structure TreebankCoverage where
   name : String
@@ -54,10 +54,10 @@ def ddt : TreebankCoverage :=
   }
 
 -- ============================================================================
--- §2: LCFRS Coverage (@cite{kuhlmann-2013}, Tables 3-4)
+-- §2: LCFRS Coverage ([kuhlmann-2013], Tables 3-4)
 -- ============================================================================
 
-/-- @cite{kuhlmann-2013} Table 3: rule/tree loss under fan-out bounds.
+/-- [kuhlmann-2013] Table 3: rule/tree loss under fan-out bounds.
     Five languages from the CoNLL 2006 shared task. -/
 structure LCFRSCoverage where
   name : String

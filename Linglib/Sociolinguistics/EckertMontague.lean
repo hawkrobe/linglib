@@ -3,10 +3,10 @@ import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Mathlib.Tactic.Linarith
 
 /-!
-# Eckert-Montague Lift (@cite{burnett-2019}, Definition 3.4)
-@cite{burnett-2019}
+# Eckert-Montague Lift ([burnett-2019], Definition 3.4)
+[burnett-2019]
 
-Burnett's set-theoretic reinterpretation of @cite{eckert-2008}'s indexical
+Burnett's set-theoretic reinterpretation of [eckert-2008]'s indexical
 field. A variant's social meaning is formalized as the set of personae
 compatible with the properties it indexes.
 
@@ -147,7 +147,7 @@ def fromIndexicalField {Variant : Type}
     property with `v`'s Eckert field.
 
     This is the Montagovian Individual interpretation from footnote 14 of
-    @cite{burnett-2019}: EM({p₁, p₂}) = {π ∈ PERS | p₁ ∈ π ∨ p₂ ∈ π}.
+    [burnett-2019]: EM({p₁, p₂}) = {π ∈ PERS | p₁ ∈ π ∨ p₂ ∈ π}.
 
     Compare `emField` (§2 above) which uses the *subset* semantics
     (all indexed properties must be in the persona). The intersection

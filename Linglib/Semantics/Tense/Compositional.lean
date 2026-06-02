@@ -10,7 +10,7 @@ Tense operators impose temporal constraints on propositions:
 - **PRES**: Event time equals reference time (τ(s) = τ(s'))
 - **FUT**: Event time follows reference time (τ(s) > τ(s'))
 
-Following @cite{heim-kratzer-1998}, tenses are like pronouns for times:
+Following [heim-kratzer-1998], tenses are like pronouns for times:
 they introduce or retrieve temporal reference points.
 
 ## Two Frameworks
@@ -123,7 +123,7 @@ theorem not_coincides_and_follows {W Time : Type*} [Preorder Time]
     lt_irrefl _ (h₁' ▸ h₂')
 
 /--
-PAST operator (@cite{mendes-2025} style)
+PAST operator ([mendes-2025] style)
 
 ⟦PAST⟧ = λP.λs.λs'. τ(s) < τ(s') ∧ P(s)
 
@@ -138,7 +138,7 @@ def PAST {W Time : Type*} [LT Time] : TenseOp W Time :=
   λ P s s' => precedes s s' ∧ P s
 
 /--
-PRES operator (@cite{mendes-2025} style)
+PRES operator ([mendes-2025] style)
 
 ⟦PRES⟧ = λP.λs.λs'. τ(s) = τ(s') ∧ P(s)
 
@@ -152,7 +152,7 @@ def PRES {W Time : Type*} : TenseOp W Time :=
   λ P s s' => coincides s s' ∧ P s
 
 /--
-FUT operator (@cite{mendes-2025} style)
+FUT operator ([mendes-2025] style)
 
 ⟦FUT⟧ = λP.λs.λs'. τ(s) > τ(s') ∧ P(s)
 
@@ -335,7 +335,7 @@ end Examples
 
 /-!
 ### composeTense Properties
-@cite{kiparsky-2002}
+[kiparsky-2002]
 
 `composeTense` is a stipulative function defining how surface tenses compose
 under embedding. The following theorems establish its algebraic properties.

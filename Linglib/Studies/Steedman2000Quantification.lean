@@ -3,7 +3,7 @@ import Linglib.Studies.Bruening2001
 
 /-!
 # CCG Scope Bridge
-@cite{steedman-2000}
+[steedman-2000]
 
 Connects CCG scope theory (from `Syntax.CCG.Scope`) to
 empirical scope-word-order data (from `Phenomena.Quantification.Bruening2001`).

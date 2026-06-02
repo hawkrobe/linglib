@@ -2,9 +2,9 @@ import Linglib.Studies.Deal2024
 import Linglib.Fragments.Kawapanan.Shawi.Basic
 
 /-!
-# Dependent Case by Agree: Ergative in Shawi @cite{clem-deal-2024}
+# Dependent Case by Agree: Ergative in Shawi [clem-deal-2024]
 
-@cite{clem-deal-2024} argue that ergative case in Shawi (Kawapanan; Peru)
+[clem-deal-2024] argue that ergative case in Shawi (Kawapanan; Peru)
 arises when v Agrees with the *subject after the object*: the subject
 serves as the **second goal** for the v probe, receiving a goal-flag
 bundle that includes the object's φ-features. The ergative suffix `-ri`
@@ -15,7 +15,7 @@ same bundle.
 The distribution of `-ri` in Shawi is a **strictly descending** /
 ultrastrong PCC pattern (1>2>3): ergative appears iff the subject is at
 least as high as the object on the person hierarchy. This is exactly
-@cite{deal-2024}'s `strictlyDescending` grammar (`SAT:[SPKR]`,
+[deal-2024]'s `strictlyDescending` grammar (`SAT:[SPKR]`,
 `DynINT:[PART]↑`), already formalized in `Deal2024.lean`.
 
 This study file does five things:
@@ -23,13 +23,13 @@ This study file does five things:
 1. **Map** the Shawi clause to the Deal-2024 PCC framing: the lower goal
    (DO) is the object, the higher / second goal (IO) is the subject.
 2. **Predict** the distribution of `-ri` over the 7 (subject, object,
-   3rd-person-object-position) cells of @cite{clem-deal-2024} Table 4
+   3rd-person-object-position) cells of [clem-deal-2024] Table 4
    from the existing `strictlyDescending` grammar plus the high/low
    ambiguity for 3rd-person objects (the source of "(✓)" optionality).
 3. **Ground** the predictions in the privative person geometry shared
-   with @cite{deal-2024}'s `dpBears` (and via that, with
-   @cite{pancheva-zubizarreta-2018}'s `satisfiesProminence` and
-   @cite{bejar-rezac-2009}'s `personSpec`).
+   with [deal-2024]'s `dpBears` (and via that, with
+   [pancheva-zubizarreta-2018]'s `satisfiesProminence` and
+   [bejar-rezac-2009]'s `personSpec`).
 4. **Bridge** to the existing person-rank order via
    `Deal2024.sd_off_diagonal_iff_outranks` — the Shawi pattern's
    1>2>3 hierarchy is exactly the one that fell out of Deal-2024.
@@ -58,7 +58,7 @@ open Kawapanan.Shawi (ObjectPosition ObjectSyntax Phi mustBeHigh
 /-- The v probe in Shawi sits between the object (lower) and the subject
     (higher). Cyclic Agree (Béjar & Rezac 2009) makes the object the
     first goal (G1 ≡ DO in Deal-2024 terms) and the subject the second
-    goal (G2 ≡ IO). @cite{clem-deal-2024} (3), (15)–(19). -/
+    goal (G2 ≡ IO). [clem-deal-2024] (3), (15)–(19). -/
 def shawiGrammar : DealGrammar := strictlyDescending
 
 /-- Shawi's surface 1>2>3 pattern is what Deal-2024 calls strictly
@@ -72,7 +72,7 @@ theorem shawi_is_strictly_descending :
 
 /-- Whether v can interact with the object as G1. 3rd-person *low*
     objects sit inside the inner v_cat phase and are invisible to the
-    v probe (@cite{clem-deal-2024} §3.2, (24)). Local-person and
+    v probe ([clem-deal-2024] §3.2, (24)). Local-person and
     high-positioned 3rd-person objects are visible.
 
     Note: `objectVisible .first .low` and `objectVisible .second .low`
@@ -100,7 +100,7 @@ def predictsErgative (subj obj : PersonLevel) (pos : ObjectPosition) : Bool :=
 
 /-- 1P object always satisfies SAT:[SPKR], halting the probe before it
     reaches the subject — ergative is impossible regardless of the
-    subject's features or the object's position. @cite{clem-deal-2024}
+    subject's features or the object's position. [clem-deal-2024]
     (7a–b), (14a–b), §3 derivation in (15). -/
 theorem erg_with_1p_obj_blocked (subj : PersonLevel) (pos : ObjectPosition) :
     predictsErgative subj .first pos = false := by
@@ -109,20 +109,20 @@ theorem erg_with_1p_obj_blocked (subj : PersonLevel) (pos : ObjectPosition) :
 /-- 2P high object: lacks [SPKR] (no SAT halt) but bears [PART],
     triggering dynamic narrowing. The subject is then visible as G2
     only if it bears [PART] — i.e., is itself local-person.
-    @cite{clem-deal-2024} §3.2, (16). -/
+    [clem-deal-2024] §3.2, (16). -/
 theorem erg_with_2p_obj_iff_subj_part (subj : PersonLevel) :
     predictsErgative subj .second .high = dpBears subj .part := by
   cases subj <;> rfl
 
 /-- 3P high object: lacks [SPKR] *and* lacks [PART], so the probe
     neither halts nor narrows. The subject is visible as G2 regardless
-    of its features. @cite{clem-deal-2024} (8), (19). -/
+    of its features. [clem-deal-2024] (8), (19). -/
 theorem erg_with_3p_obj_high_always (subj : PersonLevel) :
     predictsErgative subj .third .high = true := by
   cases subj <;> rfl
 
 /-- 3P low object: invisible to v. The probe finds only the subject as
-    G1; no goal-flag bundle reaches the subject. @cite{clem-deal-2024}
+    G1; no goal-flag bundle reaches the subject. [clem-deal-2024]
     (24). -/
 theorem erg_with_3p_obj_low_blocked (subj : PersonLevel) :
     predictsErgative subj .third .low = false := by
@@ -135,7 +135,7 @@ theorem erg_with_3p_obj_low_blocked (subj : PersonLevel) :
 /-- For non-diagonal (subject ≠ object) configurations with a visible
     object, ergative on the subject coincides with the subject
     *outranking* the object on the 1>2>3 person hierarchy.
-    Inherits @cite{deal-2024}'s `sd_off_diagonal_iff_outranks` —
+    Inherits [deal-2024]'s `sd_off_diagonal_iff_outranks` —
     Shawi's hierarchy effect is exactly the one that fell out of
     Deal-2024 on independent grounds. -/
 theorem erg_off_diagonal_iff_subj_outranks_obj
@@ -150,7 +150,7 @@ theorem erg_off_diagonal_iff_subj_outranks_obj
 -- § 5: Cell-by-cell verification of Table 4
 -- ============================================================================
 
-/-- @cite{clem-deal-2024} Table 4 (p. 19) — full ergative distribution
+/-- [clem-deal-2024] Table 4 (p. 19) — full ergative distribution
     over the 7 (subject, object) combinations × object position.
     All 10 cells reduce by `rfl` from `predictsErgative`. -/
 example : -- row a (1→2): obligatory
@@ -211,7 +211,7 @@ theorem local_object_must_be_high (p : PersonLevel) (h : p ≠ .third) :
 -- ============================================================================
 
 /-- The simple configurational rule for ergative assignment from
-    @cite{baker-2015}, paper (1): "if there are two distinct NPs in
+    [baker-2015], paper (1): "if there are two distinct NPs in
     the same spell-out domain such that NP1 c-commands NP2, then
     value the case feature of NP1 as ergative unless NP2 has already
     been marked for case." Predicts ergative for *every* transitive
@@ -220,12 +220,12 @@ def configurationalRulePredictsErg (_subj _obj : PersonLevel) : Bool := true
 
 /-- The simple rule overgenerates 2→1: it predicts `-ri` on a 2P
     subject with a 1P object, but Shawi disallows it
-    (@cite{clem-deal-2024} (4a), (7a)). -/
+    ([clem-deal-2024] (4a), (7a)). -/
 theorem configurational_rule_overgenerates_2_to_1 :
     configurationalRulePredictsErg .second .first = true ∧
     predictsErgative .second .first .high = false := ⟨rfl, rfl⟩
 
-/-- And 3→1: same pattern (@cite{clem-deal-2024} (7b)). -/
+/-- And 3→1: same pattern ([clem-deal-2024] (7b)). -/
 theorem configurational_rule_overgenerates_3_to_1 :
     configurationalRulePredictsErg .third .first = true ∧
     predictsErgative .third .first .high = false := ⟨rfl, rfl⟩
@@ -234,7 +234,7 @@ theorem configurational_rule_overgenerates_3_to_1 :
     paper (37): "NP1 outranks NP2 on the person hierarchy 1>2>3"
     written into the configurational rule itself. Still overgenerates
     on 3→3 with low object: the rule fires (3 ≥ 3) but Shawi shows
-    no `-ri` (@cite{clem-deal-2024} (23c), (24)). The Agree-based
+    no `-ri` ([clem-deal-2024] (23c), (24)). The Agree-based
     analysis predicts the absence because a low 3P object is invisible
     to the probe, so the subject is G1 rather than G2 — no goal
     flagging, no ergative. -/
@@ -249,7 +249,7 @@ theorem augmented_config_rule_overgenerates_3_3_low :
 -- § 8: Object syntax — overt-postverbal blocked under ergative
 -- ============================================================================
 
-/-- @cite{clem-deal-2024} (9), (21): when the subject bears `-ri`,
+/-- [clem-deal-2024] (9), (21): when the subject bears `-ri`,
     the object cannot remain overt-postverbal. This combines the
     Fragment-level `objectSyntaxLicit` with the predictedness of
     ergative — a high-object subject that outranks the object forces
@@ -271,7 +271,7 @@ theorem fronted_and_prodropped_always_licit
   ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 9: OAgr-on-S correlation (@cite{clem-deal-2024} §4.3, fn. 7)
+-- § 9: OAgr-on-S correlation ([clem-deal-2024] §4.3, fn. 7)
 -- ============================================================================
 
 /-- "Object agreement on subject" can spell out the inner φ-features of
@@ -280,7 +280,7 @@ theorem fronted_and_prodropped_always_licit
     morpheme to attach to.
 
     We define availability by reusing `predictsErgative` directly,
-    matching @cite{clem-deal-2024} §4.3's empirical generalization that
+    matching [clem-deal-2024] §4.3's empirical generalization that
     OAgr-on-S obtains *only if* the subject is ergative. The non-trivial
     asymmetry (ergative *without* OAgr-on-S is grammatical; OAgr-on-S
     *without* ergative is not) is structurally true here only by
@@ -323,7 +323,7 @@ theorem high_object_matches_deal2024 (subj obj : PersonLevel) :
 
 /-! ## Follow-ups
 
-`@cite{clem-deal-2024}`'s analysis crucially depends on three pieces of
+`[clem-deal-2024]`'s analysis crucially depends on three pieces of
 machinery that linglib does not yet have:
 
 1. **Bidirectional Agree (goal flagging)** — the probe-to-goal direction
@@ -332,12 +332,12 @@ machinery that linglib does not yet have:
    structurally. `Syntax/Minimalism/Agree.lean` currently
    models only valuation (goal→probe).
 2. **Distributed Morphology / Vocabulary Insertion** — for the VI rule
-   `ri ↔ φ / ___ [φ,D]` (@cite{clem-deal-2024} (34)) and Kinyalolo's
+   `ri ↔ φ / ___ [φ,D]` ([clem-deal-2024] (34)) and Kinyalolo's
    Constraint impoverishment ((35)). The `Core/Lexical/MorphRule.lean`
    skeleton is Bybee-flavored and does not yet capture context-sensitive
    realization.
 3. **Feature provenance** — distinguishing "native" features on a goal
-   from features deposited there by Agree (@cite{clem-deal-2024} fn. 23).
+   from features deposited there by Agree ([clem-deal-2024] fn. 23).
    Required to state the ergative VI without overgenerating.
 
 Once (1)–(3) are in place, the OAgr-on-S correlation here can be

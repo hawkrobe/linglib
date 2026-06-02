@@ -2,7 +2,7 @@ import Linglib.Pragmatics.Expressives.Basic
 
 /-!
 # Harris & Potts 2009: Orientation variables for CI items
-@cite{harris-potts-2009}
+[harris-potts-2009]
 
 Harris, J. A. & Potts, C. (2009). Perspective-shifting with appositives
 and expressives. *Linguistics and Philosophy* 32(6), 523–552.

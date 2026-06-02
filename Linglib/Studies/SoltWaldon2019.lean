@@ -1,5 +1,5 @@
 /-!
-# @cite{solt-waldon-2019}: Numerals under negation
+# [solt-waldon-2019]: Numerals under negation
 
 Empirical data from Stephanie Solt and Brandon Waldon (2019), "Numerals under
 negation," *Glossa* 4(1).
@@ -25,7 +25,7 @@ namespace SoltWaldon2019
 /--
 A negation-licensing datum for bare numerals.
 
-Source: @cite{solt-waldon-2019}.
+Source: [solt-waldon-2019].
 -/
 structure NegationConstraintDatum where
   /-- Positive sentence -/

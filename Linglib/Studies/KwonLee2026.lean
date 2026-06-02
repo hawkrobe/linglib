@@ -6,11 +6,11 @@ import Linglib.Studies.KehlerRohde2013
 import Linglib.Fragments.Korean.Pronouns
 
 /-!
-# @cite{kwon-lee-2026}: Accessibility Markers in Korean
-@cite{ariel-2001} @cite{carminati-2002} @cite{kweon-2011}
-@cite{contemori-di-domenico-2021} @cite{zhang-kwon-2022} @cite{choe-2021}
+# [kwon-lee-2026]: Accessibility Markers in Korean
+[ariel-2001] [carminati-2002] [kweon-2011]
+[contemori-di-domenico-2021] [zhang-kwon-2022] [choe-2021]
 
-Three experiments test @cite{ariel-2001}'s Accessibility Theory in
+Three experiments test [ariel-2001]'s Accessibility Theory in
 Korean — a discourse-oriented language without verbal/gender agreement —
 using null pronouns, overt *kyay*, and full NPs. The Experiment 3
 antecedent-choice data (71% / 43% / 35% subject bias) instantiates the
@@ -21,8 +21,8 @@ holds cross-linguistically while the spread is language-specific.
 `LinearOrder` lifted from `AccessibilityLevel.rank`, so the central
 claim "subject bias increases in accessibility" appears as one
 `StrictMono` lemma (`subjectBias_strictMono`) rather than per-pair
-inequalities. Bridges to @cite{kehler-rohde-2013} (topichood),
-@cite{carminati-2002} (PAH alternative), and Ariel's
+inequalities. Bridges to [kehler-rohde-2013] (topichood),
+[carminati-2002] (PAH alternative), and Ariel's
 `AccessibilityAssessment` are provided.
 -/
 
@@ -37,7 +37,7 @@ open Features
 -- ════════════════════════════════════════════════════
 
 /-- The three Korean referential forms tested across the experiments.
-    Each instantiates a different point on @cite{ariel-2001}'s Accessibility
+    Each instantiates a different point on [ariel-2001]'s Accessibility
     Marking Scale. -/
 inductive KoreanRefForm where
   /-- Null pronoun (*pro*): no phonological exponent. -/
@@ -49,12 +49,12 @@ inductive KoreanRefForm where
   | fullNP
   deriving DecidableEq, Repr, BEq
 
-/-- Map each Korean form to its position on @cite{ariel-2001}'s 18-level scale.
+/-- Map each Korean form to its position on [ariel-2001]'s 18-level scale.
 
     *kyay* maps to `unstressedPron` rather than `distalDem` because, although
     historically derived from a demonstrative, it functions synchronically
     as a 3rd-person pronoun in spoken Korean and lacks the deictic force
-    of a true demonstrative (@cite{kwon-lee-2026} §5).
+    of a true demonstrative ([kwon-lee-2026] §5).
 
     The full-NP condition uses *demonstrative + noun* rather than a bare
     name or definite description, because Korean lacks definite articles. -/
@@ -78,7 +78,7 @@ def KoreanRefForm.toAccessibility : KoreanRefForm → AccessibilityLevel
 @[simp] def KoreanRefForm.rank (f : KoreanRefForm) : Nat :=
   f.toAccessibility.rank
 
-/-- `KoreanRefForm` inherits a `LinearOrder` from @cite{ariel-2001}'s
+/-- `KoreanRefForm` inherits a `LinearOrder` from [ariel-2001]'s
     accessibility scale via the `rank` pullback. The induced order is
     `fullNP < overt < nullPro` — more accessible forms are larger.
     This lets every monotonicity claim about Korean forms be expressed
@@ -118,7 +118,7 @@ theorem attenuation_strictMono :
   intro a b hab; cases a <;> cases b <;> revert hab <;> decide
 
 /-- Informativity is *anti*tone in accessibility: more accessible forms
-    are less informative (≤, not <, because @cite{ariel-2001}'s scale
+    are less informative (≤, not <, because [ariel-2001]'s scale
     collapses `distalDemNP` and `unstressedPron` at informativity 1). -/
 theorem informativity_antitone :
     Antitone (fun f : KoreanRefForm => f.toAccessibility.informativity) := by
@@ -128,7 +128,7 @@ theorem informativity_antitone :
 -- § 2. Experiment 3: Antecedent Choice (Globally Ambiguous)
 -- ════════════════════════════════════════════════════
 
-/-- Antecedent-choice rates, from Figure 3 of @cite{kwon-lee-2026}.
+/-- Antecedent-choice rates, from Figure 3 of [kwon-lee-2026].
     Globally ambiguous discourse contexts (two same-gender personal names),
     so neither semantic plausibility nor gender cues disambiguate.
     Form alone drives interpretation. -/
@@ -168,7 +168,7 @@ def exp3_fullNP : AntecedentChoice := ⟨.fullNP, 35, 65⟩
 theorem exp3_partitions (f : KoreanRefForm) : subjectBias f + objectBias f = 100 := by
   cases f <;> decide
 
-/-- **Central claim of @cite{kwon-lee-2026}**: subject-antecedent bias is
+/-- **Central claim of [kwon-lee-2026]**: subject-antecedent bias is
     strictly monotone in accessibility — more accessible (higher-rank)
     forms attract subject antecedents more strongly. This single
     `StrictMono` lemma subsumes per-pair claims like
@@ -188,7 +188,7 @@ theorem objectBias_strictAnti : StrictAnti objectBias := by
 /-- **Three-way distinction**: corollary of `subjectBias_strictMono` —
     the three forms have three distinct subject-bias values. Rules out
     the alternative that Korean has only a binary null/non-null contrast
-    (which @cite{kweon-2011} suggested for the older overt pronoun
+    (which [kweon-2011] suggested for the older overt pronoun
     *ku/kunye*). -/
 theorem three_way_split : Function.Injective subjectBias :=
   subjectBias_strictMono.injective
@@ -235,9 +235,9 @@ theorem exp1_null_most_natural :
 /-- **The overt-vs-full-NP boundary is gradient in single-antecedent
     contexts**. The two forms do not differ significantly in Exp 1 — the
     accessibility distinction collapses when only one antecedent is
-    available. @cite{kwon-lee-2026} interpret this as evidence that
+    available. [kwon-lee-2026] interpret this as evidence that
     *adjacent* markers on the scale need not exhibit categorical
-    distinctions across all contexts (consistent with @cite{ariel-2001}).
+    distinctions across all contexts (consistent with [ariel-2001]).
     For the concrete values, full NP is rated slightly higher than overt
     by less than 0.1 Likert points. -/
 theorem exp1_overt_fullNP_close :
@@ -267,7 +267,7 @@ structure ComprehensionAccuracy where
   objectBiasedAccuracy : Nat
   deriving Repr
 
-/-- Figure 1 of @cite{kwon-lee-2026}. -/
+/-- Figure 1 of [kwon-lee-2026]. -/
 def exp2_pro    : ComprehensionAccuracy := ⟨.nullPro, 93, 60⟩  -- 92.9 / 60.3
 def exp2_overt  : ComprehensionAccuracy := ⟨.overt,   81, 78⟩  -- 81.4 / 78.2
 def exp2_fullNP : ComprehensionAccuracy := ⟨.fullNP,  79, 80⟩  -- 79.4 / 79.5
@@ -323,7 +323,7 @@ structure Exp2Naturalness where
   objectBiased : ℚ
   deriving Repr
 
-/-- Figure 2 of @cite{kwon-lee-2026}. -/
+/-- Figure 2 of [kwon-lee-2026]. -/
 def exp2nat_pro    : Exp2Naturalness := ⟨.nullPro, 458/100, 394/100⟩
 def exp2nat_overt  : Exp2Naturalness := ⟨.overt,   462/100, 442/100⟩
 def exp2nat_fullNP : Exp2Naturalness := ⟨.fullNP,  433/100, 456/100⟩
@@ -394,7 +394,7 @@ theorem naturalness_accuracy_gap_substantial :
 -- § 5. Cross-Linguistic Comparison
 -- ════════════════════════════════════════════════════
 
-/-- A language's *calibration* of @cite{ariel-2001}'s accessibility scale:
+/-- A language's *calibration* of [ariel-2001]'s accessibility scale:
     the empirical subject-antecedent bias of each referential form in a
     globally ambiguous two-antecedent context.
 
@@ -412,20 +412,20 @@ structure CrossLingProfile where
   fullNPSubjectPercent : Option Nat
   deriving Repr
 
-/-- Italian, @cite{carminati-2002}: null = 80.72%, overt = 100% − 83.33%
+/-- Italian, [carminati-2002]: null = 80.72%, overt = 100% − 83.33%
     = 16.67%. The cleanest division of labor of any language tested
     (Position of Antecedent Hypothesis). -/
 def italian : CrossLingProfile :=
   { language := "Italian", nullSubjectPercent := 81, overtSubjectPercent := some 17
   , fullNPSubjectPercent := none }
 
-/-- Spanish, @cite{contemori-di-domenico-2021}: null = 62%, overt = 100%
+/-- Spanish, [contemori-di-domenico-2021]: null = 62%, overt = 100%
     − 58% = 42%. Weaker division of labor than Italian. -/
 def spanish : CrossLingProfile :=
   { language := "Spanish", nullSubjectPercent := 62, overtSubjectPercent := some 42
   , fullNPSubjectPercent := none }
 
-/-- Chinese, @cite{zhang-kwon-2022}: null = 84%, overt = 65.3%. Both
+/-- Chinese, [zhang-kwon-2022]: null = 84%, overt = 65.3%. Both
     pronoun types show subject bias; the overt form does *not* flip to
     object bias as in Italian. -/
 def chinese : CrossLingProfile :=
@@ -441,7 +441,7 @@ def korean : CrossLingProfile :=
   , overtSubjectPercent := some exp3_overt.subjectPercent
   , fullNPSubjectPercent := some exp3_fullNP.subjectPercent }
 
-/-- Korean (@cite{kweon-2011}, overt = literary *ku/kunye*). 12-item
+/-- Korean ([kweon-2011], overt = literary *ku/kunye*). 12-item
     questionnaire study; null = 81.1%, overt = 31.4% subject (so 68.6%
     object). Resembles Italian's clean division of labor — Kweon
     interpreted this as supporting Carminati's PAH. -/
@@ -450,7 +450,7 @@ def korean_kweon : CrossLingProfile :=
   , nullSubjectPercent := 81, overtSubjectPercent := some 31
   , fullNPSubjectPercent := none }
 
-/-- Korean (@cite{choe-2021}, overt = literary *ku/kunye*). 40-target /
+/-- Korean ([choe-2021], overt = literary *ku/kunye*). 40-target /
     24-filler study; null = 91%, overt = 73% subject. Both forms
     subject-biased; little division of labor. Diverges sharply from
     Kweon. The paper attributes the discrepancy to methodological
@@ -468,7 +468,7 @@ def koreanProfiles : List CrossLingProfile := [korean, korean_kweon, korean_choe
 
 /-- **Universal ordering preserved**: in every language tested, null
     pronouns are at least as subject-biased as overt pronouns. This is
-    the universal claim of @cite{ariel-2001}: the *relative ordering*
+    the universal claim of [ariel-2001]: the *relative ordering*
     holds even when the magnitudes vary. -/
 theorem null_dominates_overt_universally :
     ∀ p ∈ allProfiles, ∀ o, p.overtSubjectPercent = some o →
@@ -490,7 +490,7 @@ theorem italian_widest_spread :
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-! **Korean is the only language tested with full NPs**: a unique
-    methodological contribution of @cite{kwon-lee-2026}. The full-NP bias
+    methodological contribution of [kwon-lee-2026]. The full-NP bias
     (35% subject ↔ 65% object) extends Accessibility Theory's test set
     to a wider range of forms than prior cross-linguistic work. -/
 
@@ -522,7 +522,7 @@ theorem choe_overt_subject_73 : korean_choe.overtSubjectPercent = some 73 := rfl
 /-- The Kweon-Choe gap exceeds 40 percentage points. -/
 theorem kweon_choe_gap_large : 73 - 31 > 40 := by decide
 
-/-- @cite{kwon-lee-2026}'s Exp 3 finding (43% subject for *kyay*) lies
+/-- [kwon-lee-2026]'s Exp 3 finding (43% subject for *kyay*) lies
     *between* Kweon (31%) and Choe (73%). The paper takes this as
     suggesting Kweon was directionally correct (overt is object-biased
     in Korean) but that the magnitude depends on the form: *kyay* is
@@ -532,7 +532,7 @@ theorem kwonlee_overt_subject_43 : korean.overtSubjectPercent = some 43 := rfl
 
 /-- The relative ordering (null > overt) holds for **every** Korean
     study, despite the disagreement on magnitudes. This is exactly
-    @cite{ariel-2001}'s universal: the *ordering* is invariant; the
+    [ariel-2001]'s universal: the *ordering* is invariant; the
     *spread* is methodologically/contextually labile. -/
 theorem korean_relative_ordering_invariant :
     ∀ p ∈ koreanProfiles, ∀ o, p.overtSubjectPercent = some o →
@@ -542,7 +542,7 @@ theorem korean_relative_ordering_invariant :
 -- § 5c. Accessibility Distance and Non-Uniform Calibration
 -- ════════════════════════════════════════════════════
 
-/-- Distance between two forms on @cite{ariel-2001}'s accessibility scale,
+/-- Distance between two forms on [ariel-2001]'s accessibility scale,
     measured as the absolute difference of their ranks. Larger distance
     = further apart on the universal ordering. -/
 def KoreanRefForm.accessibilityDistance (a b : KoreanRefForm) : Nat :=
@@ -559,7 +559,7 @@ def biasSpread (a b : AntecedentChoice) : Nat :=
 /-- **Triangle-inequality-like prediction**: the extreme pair (null vs
     full NP) has the largest accessibility distance and the largest
     empirical bias spread. This is a *derived* prediction of
-    @cite{ariel-2001}'s ordinal scale — it follows from the rank
+    [ariel-2001]'s ordinal scale — it follows from the rank
     ordering of the three forms, not from any data-fitting. The four
     sub-theorems below state each pairwise comparison separately. -/
 theorem accessibilityDistance_pro_fullNP_max_vs_pro_overt :
@@ -581,7 +581,7 @@ theorem biasSpread_pro_fullNP_max_vs_overt_fullNP :
     is much steeper than the overt↔full-NP step (6 ranks → 8-point
     spread). Korean's accessibility scale has a steep cliff at the
     null/non-null boundary and a shallow slope among non-null forms.
-    Exactly what @cite{ariel-2001} predicts (§4.2) about
+    Exactly what [ariel-2001] predicts (§4.2) about
     language-specific calibration: only the *ordering* is universal,
     not the magnitudes. -/
 
@@ -608,10 +608,10 @@ theorem overt_fullNP_spread_small :
     biasSpread exp3_overt exp3_fullNP < 15 := by decide
 
 -- ════════════════════════════════════════════════════
--- § 6. Bridge to @cite{kehler-rohde-2013}
+-- § 6. Bridge to [kehler-rohde-2013]
 -- ════════════════════════════════════════════════════
 
-/-- @cite{kehler-rohde-2013} decompose pronoun interpretation as:
+/-- [kehler-rohde-2013] decompose pronoun interpretation as:
 
       P(referent | pronoun) ∝ P(pronoun | referent) × P(referent)
 
@@ -627,7 +627,7 @@ def koreanSubjectTopichood : KehlerRohde2013.TopichoodLevel :=
   KehlerRohde2013.topichood .Act true
 
 /-- Korean subjects are the default topichood level (subject of an active
-    clause). Null pronouns mark high accessibility, which @cite{kehler-rohde-2013}
+    clause). Null pronouns mark high accessibility, which [kehler-rohde-2013]
     derive from high topichood. -/
 theorem subject_default_topichood :
     koreanSubjectTopichood = .default_ := rfl
@@ -636,7 +636,7 @@ theorem subject_default_topichood :
 -- § 6b. Alternative Theory: Position of Antecedent Hypothesis
 -- ════════════════════════════════════════════════════
 
-/-- Carminati's Position of Antecedent Hypothesis (@cite{carminati-2002}):
+/-- Carminati's Position of Antecedent Hypothesis ([carminati-2002]):
     null pronouns prefer antecedents in syntactically prominent positions
     (canonically Spec-IP, the preverbal subject position); overt pronouns
     prefer non-prominent positions.
@@ -649,7 +649,7 @@ theorem subject_default_topichood :
     languages where the topic position is structurally distinct from
     Spec-IP.
 
-    @cite{kwon-lee-2026} fn. 1 takes the position that PAH and AT are
+    [kwon-lee-2026] fn. 1 takes the position that PAH and AT are
     compatible — PAH being a structural special case that happens to
     coincide with AT in canonical configurations. -/
 inductive SyntacticPosition where
@@ -678,7 +678,7 @@ def KoreanRefForm.pahPosition : KoreanRefForm → Option SyntacticPosition
 /-- **Convergence theorem**: PAH and AT make the same prediction for
     null pronouns in canonical Korean SVO — both predict the subject
     antecedent (subject = Spec-IP in the experimental stimuli). This is
-    why @cite{kwon-lee-2026}'s Exp 3 data cannot distinguish the two
+    why [kwon-lee-2026]'s Exp 3 data cannot distinguish the two
     theories. -/
 theorem pah_at_converge_for_canonical_korean :
     KoreanRefForm.nullPro.pahPosition = some .specIP := rfl
@@ -692,7 +692,7 @@ theorem pah_at_converge_for_canonical_korean :
     The Korean experiments cannot test this because all stimuli used
     canonical SVO order. Disambiguating PAH from AT requires testing
     topicalization configurations — an empirical extension explicitly
-    flagged by @cite{kwon-lee-2026} (Discussion). -/
+    flagged by [kwon-lee-2026] (Discussion). -/
 theorem pah_at_diverge_in_topic_fronting :
     -- PAH still predicts Spec-IP (the in-situ subject)
     KoreanRefForm.nullPro.pahPosition = some .specIP := rfl
@@ -722,7 +722,7 @@ def exp1_assessment : AccessibilityAssessment := ⟨0, 2, 0, 2⟩
     additional cues (gender in Exp 2) disambiguate, but the
     accessibility-theoretic competition level is identical.
 
-    @cite{ariel-2001}'s `AccessibilityAssessment` does not have a
+    [ariel-2001]'s `AccessibilityAssessment` does not have a
     field for "disambiguating cue", which is the gap that the Exp 2
     naturalness × accuracy correlation (§ 4c) helps fill. -/
 def exp2_3_assessment : AccessibilityAssessment := ⟨0, 2, 1, 2⟩
@@ -772,10 +772,10 @@ theorem form_bias_emerges_under_competition :
   · decide
 
 -- ════════════════════════════════════════════════════
--- § 7. Bridge to @cite{ariel-2001} Form-Function Criteria
+-- § 7. Bridge to [ariel-2001] Form-Function Criteria
 -- ════════════════════════════════════════════════════
 
-/-! @cite{ariel-2001}'s three form-function criteria all line up with
+/-! [ariel-2001]'s three form-function criteria all line up with
     accessibility for the Korean forms. The criteria don't perfectly
     pull apart at every adjacent level (informativity collapses
     `distalDemNP` and `unstressedPron` at 1), but the overall pattern

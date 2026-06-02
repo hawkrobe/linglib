@@ -3,11 +3,11 @@ import Linglib.Syntax.DependencyGrammar.Coordination
 
 /-!
 # de Marneffe & Nivre 2019: UD enhanced dependencies for English LD and coordination
-@cite{de-marneffe-nivre-2019}
+[de-marneffe-nivre-2019]
 
 Worked English examples illustrating Universal Dependencies' basic vs
 enhanced representations (cf. §4.2 and Figure 9 of
-@cite{de-marneffe-nivre-2019}). The substrate — gap-filling
+[de-marneffe-nivre-2019]). The substrate — gap-filling
 (`DepGrammar.LongDistance.fillGap`) and shared-dependent propagation
 (`DepGrammar.Coordination.enhanceSharedDeps`) — lives in the corresponding
 substrate files.
@@ -211,7 +211,7 @@ theorem relclause_enhanced_more_edges :
       exTheBookThatJohnRead.deps.length := by decide
 
 /-- The enhanced relclause graph violates unique-heads (book has edges from
-both `det` and `obj`), per @cite{de-marneffe-nivre-2019} §4.4. -/
+both `det` and `obj`), per [de-marneffe-nivre-2019] §4.4. -/
 theorem relclause_enhanced_not_tree :
     hasUniqueHeads { words := exTheBookThatJohnRead_enhanced.words
                      deps  := exTheBookThatJohnRead_enhanced.deps
@@ -270,7 +270,7 @@ theorem coord_enhanced_more_edges :
       exJohnSeesAndHearsMary.deps.length := by decide
 
 /-- The coord enhanced graph violates unique-heads (`Mary` has incoming `obj`
-from both `sees` and `hears`), per @cite{de-marneffe-nivre-2019} §4.4. -/
+from both `sees` and `hears`), per [de-marneffe-nivre-2019] §4.4. -/
 theorem coord_enhanced_not_tree :
     hasUniqueHeads { words := exJohnSeesAndHearsMary_enhanced.words
                      deps  := exJohnSeesAndHearsMary_enhanced.deps

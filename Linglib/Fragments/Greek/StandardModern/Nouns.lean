@@ -18,7 +18,7 @@ open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
 
 /-- Greek is a [-arg, +pred] language: nouns are predicates,
     bare arguments are not licensed for kind reference.
-    Same as Romance (@cite{chierchia-1998}). -/
+    Same as Romance ([chierchia-1998]). -/
 def greekMapping : NominalMapping := .predOnly
 
 /-- Greek has a rich article system that blocks bare arguments. -/

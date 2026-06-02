@@ -8,32 +8,32 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 /-!
 # Multinomial probabilistic context-free grammar
 
-@cite{odonnell-2015}
+[odonnell-2015]
 
 The baseline stochastic CFG: for each nonterminal `A`, a multinomial
 distribution over `A`'s expansions; the probability of a derivation
 tree factorizes as the product of the rule weights it uses, and the
 probability of a corpus factorizes across derivations.
 
-This construction predates @cite{odonnell-2015} by decades — see
+This construction predates [odonnell-2015] by decades — see
 Booth 1969, Booth & Thompson 1973, Chi & Geman 1998 for the
 canonical literature on PCFG and per-LHS multinomial structure (these
 are not yet in `references.bib`; cite-key additions deferred).
-@cite{odonnell-2015} §3.1.2 gives the didactic treatment we follow
+[odonnell-2015] §3.1.2 gives the didactic treatment we follow
 for notation and as the substrate for the §3.1.4–§3.1.8 family of
 *priors over* multinomial PCFGs (DMPCFG, MAG, FG) that build on this
 baseline.
 
-## Factorization (@cite{odonnell-2015} eq 3.2 + eq 3.5)
+## Factorization ([odonnell-2015] eq 3.2 + eq 3.5)
 
-Per @cite{odonnell-2015} eq 3.2, the per-derivation probability is
+Per [odonnell-2015] eq 3.2, the per-derivation probability is
 the product of the rule weights it uses:
 
 ```
 P(d | G) = ∏_{r ∈ d} θ_r          (eq 3.2)
 ```
 
-Per @cite{odonnell-2015} eq 3.5, the corpus probability collects
+Per [odonnell-2015] eq 3.5, the corpus probability collects
 these into a single product over rules:
 
 ```
@@ -100,7 +100,7 @@ unsatisfiable when the LHS bucket was empty).
 
 ## References
 
-- @cite{odonnell-2015} §3.1.2 (eq 3.2 + eq 3.5).
+- [odonnell-2015] §3.1.2 (eq 3.2 + eq 3.5).
 -/
 
 namespace Morphology.FragmentGrammars
@@ -109,7 +109,7 @@ open scoped ENNReal
 
 /--
 A *multinomial PCFG* over `G`: for each nonterminal `a`, a `PMF` over
-the rules with LHS `a`. Per @cite{odonnell-2015} §3.1.2.
+the rules with LHS `a`. Per [odonnell-2015] §3.1.2.
 
 The structure carries normalization as a *structural* property via
 mathlib's `PMF` (the partition function is bundled into what a `PMF`
@@ -189,7 +189,7 @@ noncomputable def toWeightedCFG (W : MultinomialPCFG G) :
 
 mutual
 /-- Per-derivation probability under a multinomial PCFG
-    (@cite{odonnell-2015} eq 3.2). Recurses on the tree structure:
+    ([odonnell-2015] eq 3.2). Recurses on the tree structure:
     each internal node contributes the weight of the rule it
     instantiates, leaves contribute `1`. Invalid rules (those not in
     `G.rules`) contribute `0` via `ruleProb`'s default. -/
@@ -210,7 +210,7 @@ end
 Corpus probability of a multiset of derivations: the product of their
 individual `derivProb` values. By construction this factorizes
 multiplicatively over disjoint corpora — see `corpusProb_add`. The
-count-form (@cite{odonnell-2015} eq 3.5) is mathematically equivalent
+count-form ([odonnell-2015] eq 3.5) is mathematically equivalent
 but deferred (`corpusProb_eq_prod_pow_count`) until `derivRuleCount`
 is extracted from `DMPCFG` to a shared substrate file.
 -/
@@ -277,10 +277,10 @@ theorem lhsEntropy_nonneg (W : MultinomialPCFG G) (a : G.NT) :
     0 ≤ W.lhsEntropy a :=
   (W.rulePMF a).entropy_nonneg
 
-/-! ## Count-form factorization (@cite{odonnell-2015} eq 3.5) -/
+/-! ## Count-form factorization ([odonnell-2015] eq 3.5) -/
 
 /--
-**The count-form factorization** (@cite{odonnell-2015} eq 3.5).
+**The count-form factorization** ([odonnell-2015] eq 3.5).
 For a corpus `D` of *valid* derivation trees, the corpus probability
 collects rule contributions into a single product over the grammar's
 rules raised to their corpus counts:

@@ -12,7 +12,7 @@ import Linglib.Fragments.Kannada.Indefinites
 
 /-!
 # Bubnov (2026): Not all coexpressions are syncretisms
-@cite{bubnov-2026}
+[bubnov-2026]
 
 Limiting Nanosyntax. *Glossa* 11(1), 1–15.
 
@@ -20,13 +20,13 @@ Argues against the universal applicability of nanosyntactic feature
 decomposition to coexpression phenomena, using indefinite pronouns as a
 test case. Key claims:
 
-1. @cite{dekier-2021}'s nanosyntactic analysis of indefinites (a containment
+1. [dekier-2021]'s nanosyntactic analysis of indefinites (a containment
    hierarchy F₁ ⊂ F₂ ⊂ F₃) fails empirically: no morphological containment
    is attested in indefinite paradigms.
 
-2. The semantic account of @cite{degano-aloni-2025}, based on **variation**
-   and **constancy** from team semantics (@cite{hodges-1997},
-   @cite{vaananen-2007}), provides a better typology: 7 indefinite types
+2. The semantic account of [degano-aloni-2025], based on **variation**
+   and **constancy** from team semantics ([hodges-1997],
+   [vaananen-2007]), provides a better typology: 7 indefinite types
    from Boolean combinations of `var(y,x)` and `dep(y,x)`.
 
 3. The semantic account correctly predicts:
@@ -80,7 +80,7 @@ private def listContainsSub : List Char → List Char → Bool
 
 /-- Conservative substring proxy for morphological containment. If two forms
     don't share substrings, they certainly don't share morphemes — sufficient
-    for @cite{bubnov-2026}'s negative result. Operates on `String.toList` so
+    for [bubnov-2026]'s negative result. Operates on `String.toList` so
     kernel `decide` can reduce it. -/
 private def morphContains (s sub : String) : Bool :=
   listContainsSub s.toList sub.toList
@@ -89,7 +89,7 @@ private def morphContains (s sub : String) : Bool :=
 -- §1. Morphological containment: present in case, absent in indefinites
 -- ============================================================================
 
-/-- @cite{bubnov-2026}'s key objection: nanosyntax predicts the ABC pattern
+/-- [bubnov-2026]'s key objection: nanosyntax predicts the ABC pattern
     should show morphological containment. This is NEVER attested for
     indefinites. The Russian forms are surface-level prefixed/suffixed to
     interrogative bases (`kto-nibud'`, `kto-to`, `koe-kto`); the indefinite
@@ -100,7 +100,7 @@ theorem russian_no_containment :
     morphContains "koe-" "-nibud'" = false := by decide
 
 /-- In case morphology, containment IS attested. In indefinites, NOT.
-    This asymmetry supports @cite{bubnov-2026}'s claim that nanosyntax
+    This asymmetry supports [bubnov-2026]'s claim that nanosyntax
     is the right tool for case but not for indefinites. -/
 theorem case_has_containment_indefinites_dont :
     (.nom : Features.Case) ≤ .acc ∧
@@ -232,7 +232,7 @@ theorem dekier_after_loss_bb :
 theorem nibud_matches_nonSpecific :
     nibudEntry.surfaceDAType = some .nonSpecific := by decide
 
-/-- *kto-to* is classified as epistemic (`var(∅,x)`) per @cite{bubnov-2026} §7,
+/-- *kto-to* is classified as epistemic (`var(∅,x)`) per [bubnov-2026] §7,
     BUT its actual distribution (SU only) is narrower than the epistemic
     profile (SU + NS) because *-nibud'* (type iii) blocks it for NS.
 
@@ -293,8 +293,8 @@ theorem aadaruu_matches_nonSpecific :
     *irgend-* does (domain widening); the team-semantic analysis describes
     its DISTRIBUTIONAL restriction (varying across epistemic alternatives).
 
-    @cite{bubnov-2026} §6: German *irgend-* instantiates the diachronic
-    path (iii) → (iv) (@cite{aloni-port-2015}). -/
+    [bubnov-2026] §6: German *irgend-* instantiates the diachronic
+    path (iii) → (iv) ([aloni-port-2015]). -/
 theorem irgend_compatible_classifications :
     irgendEntry.surfaceDAType = some DAType.epistemic ∧
     irgendeinEntry.status = .notAtIssue ∧
@@ -305,7 +305,7 @@ theorem irgend_compatible_classifications :
 -- §8. The broader claim: coexpression ≠ syncretism
 -- ============================================================================
 
--- @cite{bubnov-2026}'s central theoretical claim: not all coexpression
+-- [bubnov-2026]'s central theoretical claim: not all coexpression
 -- patterns arise from hierarchical feature containment (nanosyntactic
 -- syncretism). Some arise from semantic underspecification.
 --

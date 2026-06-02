@@ -3,7 +3,7 @@ import Linglib.Core.Constraint.OT.EvalMode
 
 /-!
 # Directional Tableau — Position-Vector EVAL
-@cite{eisner-2000} @cite{eisner-2002} @cite{lamont-2022b}
+[eisner-2000] [eisner-2002] [lamont-2022b]
 
 Sibling to `Core/Constraint/OT/Basic.lean`'s parallel `Tableau`. Where
 parallel OT compares candidates by **count** of violations
@@ -14,7 +14,7 @@ comparison procedure is governed by an `EvalMode`.
 
 ## Why a sibling, not an extension
 
-Per @cite{lamont-2022b}: directional EVAL is theoretically
+Per [lamont-2022b]: directional EVAL is theoretically
 incompatible with weighted aggregation (Harmonic Grammar, MaxEnt). A
 parallel constraint's count can be multiplied by a weight; a position
 vector cannot. The existing `NamedConstraint`/`Weighted`/`MaxEnt` stack
@@ -53,7 +53,7 @@ open Core.Constraint.Evaluation
 
     The constraint itself is direction-neutral; the *direction* of
     evaluation is supplied by `EvalMode` at the tableau level (per
-    @cite{lamont-2022b}'s reframing).
+    [lamont-2022b]'s reframing).
 
     Distinct from `NamedConstraint C` which has `eval : C → Nat`
     (count). These cannot interconvert without losing position

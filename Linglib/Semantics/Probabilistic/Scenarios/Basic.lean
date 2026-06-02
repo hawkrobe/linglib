@@ -14,7 +14,7 @@ provide background knowledge that constrains interpretation:
 
 ## Connection to SDS
 
-@cite{erk-herbelot-2024} model scenarios as distributions over concepts:
+[erk-herbelot-2024] model scenarios as distributions over concepts:
 ```
 P(concept | scenario) = topic-word distribution (LDA-style)
 ```
@@ -42,7 +42,7 @@ namespace Semantics.Probabilistic.Scenarios
 
 /-!
 ## Frames as Distributions over Concepts
-@cite{fillmore-1982} @cite{schank-abelson-1977}
+[fillmore-1982] [schank-abelson-1977]
 
 A frame/scenario is a coherent situation type that makes certain
 concepts more or less likely.

@@ -2,7 +2,7 @@ import Linglib.Core.Logic.Truth3
 
 /-!
 # Three-Valued Logics: LP and K3
-@cite{kleene-1952}
+[kleene-1952]
 
 LP (Logic of Paradox) and K3 (Strong Kleene logic) are dual
 three-valued logics built on the same truth tables but with
@@ -29,7 +29,7 @@ truth and falsity, as in paraconsistent logic).
 
 ## Connection to TCS
 
-@cite{cobreros-etal-2012} Theorem 3: in the restricted vocabulary,
+[cobreros-etal-2012] Theorem 3: in the restricted vocabulary,
 t-consequence = LP-consequence and s-consequence = K3-consequence.
 The correspondence is proved in `Semantics/Supervaluation/TCS.lean`.
 -/
@@ -180,7 +180,7 @@ def K3Consequence {Atom : Type*}
 /-- **No K3 tautologies.** In the all-indeterminate model, every
     formula evaluates to `indet`, so no formula is K3-valid.
 
-    Theorem 2 of @cite{cobreros-etal-2012}: no formula in the
+    Theorem 2 of [cobreros-etal-2012]: no formula in the
     restricted vocabulary is s-valid. -/
 theorem mvEval_allIndet {Atom : Type*}
     (φ : PropFormula Atom) :
@@ -200,7 +200,7 @@ theorem k3_no_tautologies {Atom : Type*} [Nonempty Atom]
 /-- **Every formula is LP-satisfiable.** The all-indeterminate model
     LP-satisfies everything (since `indet ≠ false`).
 
-    Theorem 2 of @cite{cobreros-etal-2012}: every formula in the
+    Theorem 2 of [cobreros-etal-2012]: every formula in the
     restricted vocabulary is t-satisfiable. -/
 theorem lp_all_satisfiable {Atom : Type*}
     (φ : PropFormula Atom) :

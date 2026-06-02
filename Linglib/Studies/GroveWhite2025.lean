@@ -6,7 +6,7 @@ import Linglib.Studies.ScontrasTonhauser2025
 import Linglib.Core.Scales.Scale
 
 /-!
-# @cite{grove-white-2025}
+# [grove-white-2025]
 
 Factivity, presupposition projection, and the role of discrete knowledge
 in gradient inference judgments. Natural Language Semantics 34:1–45.
@@ -59,16 +59,16 @@ is the active variable.
 ## Connection to PDS
 
 The paper's formal framework is Probabilistic Dynamic Semantics (PDS),
-developed in @cite{grove-white-2025b}. The model's graded truth is the
+developed in [grove-white-2025b]. The model's graded truth is the
 `PMF.probOfSet` (= `toOuterMeasure`) of the satisfied-readings event
 under the Bernoulli prior: graded inference judgments emerge from
 marginalising over a *discrete* reading parameter, exactly the PDS
 pattern in which a `bind` over a discrete probability node feeds a
 Boolean predicate.
 
-## Connection to @cite{scontras-tonhauser-2025}
+## Connection to [scontras-tonhauser-2025]
 
-@cite{scontras-tonhauser-2025}'s RSA model uses the same `factivePos` /
+[scontras-tonhauser-2025]'s RSA model uses the same `factivePos` /
 `nonFactivePos` foundation from `Semantics.Attitudes.Factivity`
 for `know` / `think`. The bridges
 `clauseEmbedding_factive_eq_st_know` and
@@ -82,7 +82,7 @@ The empirical anchoring is provided by `DegenTonhauser2022`'s aggregate
 projection ratings: under the discrete-factivity model with `τ_know > τ_think`,
 the model predicts the empirically observed `know > think` projection
 ordering (`empirical_ordering_consistent_with_tau`). The prior-belief
-modulation finding from @cite{degen-tonhauser-2021} (replicated in 2b) is
+modulation finding from [degen-tonhauser-2021] (replicated in 2b) is
 the specific empirical regularity the world-knowledge component is fit to.
 -/
 
@@ -129,7 +129,7 @@ variable {W : Type*} [HasBelief W] [HasComplement W]
     the resolved reading. The two readings dispatch directly to
     `Semantics.Attitudes.Factivity` — `factivePos` and
     `nonFactivePos` — so this study shares its foundations with
-    @cite{scontras-tonhauser-2025}'s `know` / `think` denotations. -/
+    [scontras-tonhauser-2025]'s `know` / `think` denotations. -/
 def clauseEmbeddingSem : FactivityReading → W → Bool
   | .factive    => factivePos
   | .nonfactive => nonFactivePos
@@ -325,12 +325,12 @@ theorem best_worst_share_world_knowledge :
 
 end ModelVariants
 
-/-! ## §5. Bridge to @cite{scontras-tonhauser-2025} -/
+/-! ## §5. Bridge to [scontras-tonhauser-2025] -/
 
 section ScontrasTonhauserBridge
 
 /-- The `factive` reading of `clauseEmbeddingSem` is the same Boolean
-    predicate as @cite{scontras-tonhauser-2025}'s `literalMeaning .knowPos`.
+    predicate as [scontras-tonhauser-2025]'s `literalMeaning .knowPos`.
     Both unfold to `factivePos` from `Semantics.Attitudes.Factivity`,
     so the equality is true by construction — a *grounding theorem* in the
     sense of `CLAUDE.md`, witnessing that two paper-specific lexical entries
@@ -339,7 +339,7 @@ theorem clauseEmbedding_factive_eq_st_know :
     clauseEmbeddingSem (W := ScontrasTonhauser2025.WorldState) .factive
       = ScontrasTonhauser2025.literalMeaning .knowPos := rfl
 
-/-- The `nonfactive` reading is @cite{scontras-tonhauser-2025}'s
+/-- The `nonfactive` reading is [scontras-tonhauser-2025]'s
     `literalMeaning .thinkPos` (both unfold to `nonFactivePos`). -/
 theorem clauseEmbedding_nonfactive_eq_st_think :
     clauseEmbeddingSem (W := ScontrasTonhauser2025.WorldState) .nonfactive
@@ -367,14 +367,14 @@ section EmpiricalAnchor
 
 /-- Under the discrete-factivity model with `τ_know > τ_think`, the model
     predicts a `know > think` projection ordering. The empirical ordering
-    from @cite{degen-tonhauser-2022} (Exp 1a, sliding scale) confirms this
+    from [degen-tonhauser-2022] (Exp 1a, sliding scale) confirms this
     direction: aggregate ratings for *know* exceed those for *think*.
     `norm_num` closes the literal comparison since ratings are `ℚ`-valued. -/
 theorem empirical_ordering_consistent_with_tau :
     projectionRating_Exp1a .know > projectionRating_Exp1a .think := by
   simp only [projectionRating_Exp1a]; norm_num
 
-/-- The prior-belief modulation finding from @cite{degen-tonhauser-2021},
+/-- The prior-belief modulation finding from [degen-tonhauser-2021],
     replicated in 2b, is the empirical regularity the world-knowledge
     component of the discrete-factivity model is fit to: higher prior
     probability of the complement → stronger projection. -/

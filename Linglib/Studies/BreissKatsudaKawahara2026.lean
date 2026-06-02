@@ -11,9 +11,9 @@ import Linglib.Paradigms.WugTest
 
 /-!
 # Breiss, Katsuda & Kawahara (2026): Token frequency modulates optional paradigm uniformity in Japanese voiced velar nasalisation
-@cite{breiss-katsuda-kawahara-2026} @cite{mccarthy-2005} @cite{steriade-2000}
-@cite{ito-mester-1996} @cite{ito-mester-2003} @cite{hibiya-1995}
-@cite{coetzee-pater-2008} @cite{paster-2019}
+[breiss-katsuda-kawahara-2026] [mccarthy-2005] [steriade-2000]
+[ito-mester-1996] [ito-mester-2003] [hibiya-1995]
+[coetzee-pater-2008] [paster-2019]
 
 The Japanese velar /g/ → [ŋ] alternation in N1+N2 nominal compounds is
 *optional*: speakers vacillate between [g] and [ŋ] for many compounds,
@@ -39,7 +39,7 @@ only) story in the bound case.
 
 ## Examples from the paper
 
-Taken verbatim from @cite{breiss-katsuda-kawahara-2026}:
+Taken verbatim from [breiss-katsuda-kawahara-2026]:
 
 - (1a) /haigan/ ~ /haiŋan/ "lung cancer" — N2 'cancer' (癌) is free.
 - (1b) /noogeka/ ~ /nooŋeka/ "brain surgery" — N2 'surgery' (外科) is free.
@@ -60,18 +60,18 @@ PU prefers their shared segments to be alike. The PU pressure is
 *modulated* — not just on/off — by the token frequency of the N2.
 This puts the paper at the intersection of:
 
-- @cite{mccarthy-2005} (PU as the symmetric pairwise lift over members;
+- [mccarthy-2005] (PU as the symmetric pairwise lift over members;
   see `ParadigmUniformity/OptimalParadigms.lean`).
-- @cite{steriade-2000} *Lexical Conservatism* (PU pressure is anchored
+- [steriade-2000] *Lexical Conservatism* (PU pressure is anchored
   on attested wordforms; see
   `ParadigmUniformity/LexicalConservatism.lean`).
-- @cite{coetzee-pater-2008} *Frequency-scaled weights* (the modulation
+- [coetzee-pater-2008] *Frequency-scaled weights* (the modulation
   channel — token-frequency drives a continuous weight; see
   `ItemSpecificity/ScaledWeights.lean`).
 
-The previous constraint-based account of @cite{ito-mester-1996} /
-@cite{ito-mester-2003} treats nasalisation as the result of a
-high-ranked markedness constraint; @cite{hibiya-1995}'s sociolinguistic
+The previous constraint-based account of [ito-mester-1996] /
+[ito-mester-2003] treats nasalisation as the result of a
+high-ranked markedness constraint; [hibiya-1995]'s sociolinguistic
 study established the variable, lexically-modulated character of the
 alternation. BKK 2026's contribution is the **sign of the two
 frequency channels** and the **architectural commitment** that the
@@ -80,24 +80,24 @@ two-direction story collapses to one direction in the bound case.
 ## Connection to ItemSpecificity theories
 
 The companion modelling paper (Breiss, Katsuda & Kawahara,
-lingbuzz/009508) fits a MaxEnt grammar with @cite{steriade-2000}'s
+lingbuzz/009508) fits a MaxEnt grammar with [steriade-2000]'s
 Lexical Conservatism. We do not formalise the fitting routine here.
 The discrimination this study makes against the four siblings in
 `Phonology/ItemSpecificity/`:
 
-- **ScaledWeights** (@cite{coetzee-pater-2008}): consistent with the
+- **ScaledWeights** ([coetzee-pater-2008]): consistent with the
   data, with separate slopes per channel (positive on cpd freq,
   negative on N2 freq).
-- **RepresentationStrength** (@cite{moore-cantwell-2021}): consistent —
+- **RepresentationStrength** ([moore-cantwell-2021]): consistent —
   high N2 activation preserves the boundary segment.
-- **UseListed** (@cite{zuraw-2000}): **ruled out** by Experiment 2
+- **UseListed** ([zuraw-2000]): **ruled out** by Experiment 2
   (novel compounds show the same N2-frequency gradient as familiar
   ones) — see `novel_compounds_show_n2_gradient` below.
-- **Indexed constraints** (@cite{pater-2010}): in principle a
+- **Indexed constraints** ([pater-2010]): in principle a
   multi-stratum approximation could fit, but parsimony favours the
   continuous accounts.
 
-@cite{paster-2019}'s critique of "counting" patterns in phonology is
+[paster-2019]'s critique of "counting" patterns in phonology is
 relevant to BKK Experiment 2's finding that **N2 length** (not total
 compound length) matters — undermining a mora-counting analysis and
 favouring a paradigm-anchored account.
@@ -244,7 +244,7 @@ theorem free_zone_freq_independent :
     `Phonology/ParadigmUniformity/LexicalConservatism.lean`,
     making this file a downstream consumer of the LC anchored-paradigm
     primitive. The anchor-presence channel is exactly what
-    @cite{steriade-2000} introduced, and BKK's bound/free split is the
+    [steriade-2000] introduced, and BKK's bound/free split is the
     same architectural channel applied to a new domain. -/
 def n2Paradigm (c : JCompound) : List String :=
   lcParadigm c.form (if c.n2.canStandAlone then some c.n2.form else none)
@@ -264,10 +264,10 @@ def stringMismatch (a b : String) : Nat := if a = b then 0 else 1
 /-- The PU constraint **as a `NamedConstraint`** — derived from
     `mkLCFaith` from
     `Phonology/ParadigmUniformity/LexicalConservatism.lean`.
-    The structural connection to @cite{steriade-2000} is by
+    The structural connection to [steriade-2000] is by
     *construction*: BKK's PU pressure IS LC-FAITH on the
     `lcParadigm`-built paradigm. The architectural difference from
-    @cite{mccarthy-2005} (OP) is that LC's paradigm is anchored on
+    [mccarthy-2005] (OP) is that LC's paradigm is anchored on
     attestation; OP's is symmetric over all members. § 10 below makes
     that contrast explicit. -/
 def puFaith : NamedConstraint (List String) :=
@@ -329,7 +329,7 @@ theorem dokuga_two_puviolations : cpdPuViolations cpd_dokuga = 2 :=
     log-frequency. Higher N2 frequency → stronger weight → stronger
     preservation of [g] → less nasalisation. This is the
     *negative-on-nasalisation* channel (negative regression coefficient
-    on N2 token frequency in @cite{breiss-katsuda-kawahara-2026}). -/
+    on N2 token frequency in [breiss-katsuda-kawahara-2026]). -/
 noncomputable def puPressure (slope : ℝ) (c : JCompound) : ℝ :=
   (cpdPuViolations c : ℝ) * scaledWeight (baseWeight := 0) (slope := slope) c.n2
 
@@ -338,7 +338,7 @@ noncomputable def puPressure (slope : ℝ) (c : JCompound) : ℝ :=
     frequency → stronger drift away from constituent forms → more
     nasalisation. This is the *positive-on-nasalisation* channel
     (positive regression coefficient on compound token frequency in
-    @cite{breiss-katsuda-kawahara-2026}).
+    [breiss-katsuda-kawahara-2026]).
 
     Modelled as a one-parameter linear function of the compound's own
     log-frequency, parallel to `Scaled.scaledWeight` but on the
@@ -362,7 +362,7 @@ noncomputable def nasLogOdds (n2Slope cpdSlope : ℝ) (c : JCompound) : ℝ :=
     negative sign: holding compound markedness fixed, an increase in
     PU pressure strictly decreases the log-odds. This is the formal
     source of the *negative* regression coefficient on N2 token
-    frequency reported in @cite{breiss-katsuda-kawahara-2026}. -/
+    frequency reported in [breiss-katsuda-kawahara-2026]. -/
 theorem nasLogOdds_antitone_in_puPressure (n2Slope cpdSlope : ℝ)
     (c1 c2 : JCompound) (hcpd : c1.compoundLogFreq = c2.compoundLogFreq)
     (hpu : puPressure n2Slope c1 ≤ puPressure n2Slope c2) :
@@ -419,10 +419,10 @@ theorem bound_nasLogOdds_eq_markedness (n2Slope cpdSlope : ℝ) (c : JCompound)
 /-- **Anti-UseListed discriminator.** Even on **novel** compounds (no
     listing entry), the N2-frequency gradient on PU pressure persists,
     because PU pressure depends on the N2's free-form attestation, not
-    the compound's listing status. UseListed (@cite{zuraw-2000})
+    the compound's listing status. UseListed ([zuraw-2000])
     predicts no frequency-dependent modulation on novel items;
     `puPressure` and hence `nasLogOdds` show one. This is the formal
-    content of Experiment 2 of @cite{breiss-katsuda-kawahara-2026}.
+    content of Experiment 2 of [breiss-katsuda-kawahara-2026].
 
     Concretely: two novel free-N2 compounds with the same compound
     log-frequency and matched PU-violation counts have *strictly*
@@ -444,17 +444,17 @@ theorem novel_compounds_show_n2_gradient (slope : ℝ) (hSlope : 0 < slope)
 -- § 8: Wug paradigm cell — BKK as a `Paradigms/WugTest.lean` consumer
 -- ============================================================================
 
-/-! Experiment 2 of @cite{breiss-katsuda-kawahara-2026} is a wug-style
+/-! Experiment 2 of [breiss-katsuda-kawahara-2026] is a wug-style
 study: subjects rate nasalisation on **novel** compounds whose N2 has
 real attestation as a free wordform. The N2-frequency gradient in
 their results is the key evidence against UseListed
-@cite{zuraw-2000}: a novel compound has no listing entry, so any
+[zuraw-2000]: a novel compound has no listing entry, so any
 frequency-driven modulation must come from the *N2's* lexical
 attestation, not the compound's.
 
 This section wires BKK to the methodological contract in
-`Paradigms/WugTest.lean` (anchored on @cite{berko-1958} and
-@cite{albright-hayes-2003}). The cell type carries:
+`Paradigms/WugTest.lean` (anchored on [berko-1958] and
+[albright-hayes-2003]). The cell type carries:
 
 - a compound (the stimulus),
 - a structural proof that N2 is **free** (so that the LC paradigm has
@@ -592,11 +592,11 @@ theorem bkk_excludes_useListed (n2Slope : ℝ) (hSlope : 0 < n2Slope) :
 -- § 10: Engagement with Optimal Paradigms — McCarthy 2005
 -- ============================================================================
 
-/-! BKK's docstring cites OP (@cite{mccarthy-2005}) as a sister PU
+/-! BKK's docstring cites OP ([mccarthy-2005]) as a sister PU
 theory; the architectural choice is LC over OP because LC's anchor
 primitive structurally encodes the bound/free split.
 
-**Caveat on the analog.** @cite{mccarthy-2005}'s OP, narrowly
+**Caveat on the analog.** [mccarthy-2005]'s OP, narrowly
 construed, ranges over the inflected wordforms of a single lexeme —
 not over a compound and its N2 constituent. Applying OP to N1+N2
 compound paradigms is an *extended application* not licensed by the

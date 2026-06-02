@@ -1,8 +1,8 @@
 import Linglib.Data.Examples.Schema
 
 /-!
-# @cite{musan-1995}: On the Temporal Interpretation of Noun Phrases
-@cite{musan-1995}
+# [musan-1995]: On the Temporal Interpretation of Noun Phrases
+[musan-1995]
 
 Musan's dissertation establishes the **lifetime effects** diagnostic: past
 tense with individual-level predicates implicates that the subject no longer

@@ -11,9 +11,9 @@ set_option autoImplicit false
 
 /-!
 # Symmetry-weighted pairing for GL ↔ CK duality
-@cite{foissy-typed-decorated-rooted-trees-2018}
-@cite{grossman-larson-1989}
-@cite{marcolli-chomsky-berwick-2025}
+[foissy-typed-decorated-rooted-trees-2018]
+[grossman-larson-1989]
+[marcolli-chomsky-berwick-2025]
 
 The pairing `⟨·, ·⟩ : H × H → R` (where `H = ConnesKreimer R (Nonplanar α)`)
 realizes the duality between the Connes-Kreimer (CK) and

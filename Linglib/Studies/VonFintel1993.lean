@@ -2,10 +2,10 @@ import Linglib.Fragments.English.Determiners
 import Linglib.Phenomena.Quantification.Inventory
 
 /-!
-# But-Exceptives @cite{von-fintel-1993}
+# But-Exceptives [von-fintel-1993]
 
 Empirical patterns for "X but Y" exceptive constructions, anchored on
-@cite{von-fintel-1993}'s observation that but-exceptives require
+[von-fintel-1993]'s observation that but-exceptives require
 universal quantifiers (positive or negative):
 
 | Quantifier | Example | Grammatical |
@@ -199,7 +199,7 @@ def predictExceptiveGrammaticality (qt : QuantifierType) : Bool :=
 
 /-!
 ## Exception Uniqueness
-@cite{gajewski-2002}
+[gajewski-2002]
 
 The but-exceptive typically requires that the exception be unique:
 
@@ -373,7 +373,7 @@ def qforceToExceptiveType : QForce → Option QuantifierType
 
 /-- Universal quantifiers in the Fragment license but-exceptives;
     existential quantifiers don't. This connects Fragment metadata
-    to the empirical generalization in @cite{von-fintel-1993}.
+    to the empirical generalization in [von-fintel-1993].
     "Every student but John" ✓ vs "*Some student but John" ✗. -/
 theorem fragment_exceptive_bridge :
     QuantityWord.all.entry.qforce = .universal ∧

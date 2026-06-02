@@ -4,7 +4,7 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Gunlogson Bridge: Rising Declaratives
-@cite{gunlogson-2001}
+[gunlogson-2001]
 
 Connects Gunlogson's source-marking analysis to the rising declarative data.
 

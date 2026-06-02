@@ -6,9 +6,9 @@ import Mathlib.Data.Set.Basic
 /-!
 # Belief Revision and Preferential Reasoning
 
-@cite{halpern-2003} @cite{alchouron-gardenfors-makinson-1985} @cite{kraus-magidor-1990}
+[halpern-2003] [alchouron-gardenfors-makinson-1985] [kraus-magidor-1990]
 
-@cite{halpern-2003} connects three frameworks — default reasoning @cite{kratzer-1981} @cite{kratzer-2012}
+[halpern-2003] connects three frameworks — default reasoning [kratzer-1981] [kratzer-2012]
 (System P), AGM belief revision, and conditional plausibility measures —
 showing they are algebraically equivalent. This file formalizes:
 
@@ -41,7 +41,7 @@ namespace Core.Logic.BeliefRevision
 open Core.Order (PlausibilityOrder PreferentialConsequence NormalityOrder)
 
 -- ══════════════════════════════════════════════════════════════════════
--- § 1. AGM Belief Revision (Alchourrón, @cite{alchouron-gardenfors-makinson-1985})
+-- § 1. AGM Belief Revision (Alchourrón, [alchouron-gardenfors-makinson-1985])
 -- ══════════════════════════════════════════════════════════════════════
 
 /-- A belief set: a deductively closed set of propositions.
@@ -51,7 +51,7 @@ abbrev BeliefSet (W : Type*) := Set (Set W)
 /-- An AGM revision operator with fixed prior beliefs.
 
     The prior belief set K is determined by the measure (the probability-1
-    propositions), not freely chosen. This matches @cite{halpern-2003}'s representation theorem, where the AGM postulates hold for the specific
+    propositions), not freely chosen. This matches [halpern-2003]'s representation theorem, where the AGM postulates hold for the specific
     K induced by the conditional plausibility measure.
 
     K*3 (inclusion) is stated in logical-consequence form: K*φ ⊆ Cn(K ∪ {φ}),
@@ -288,7 +288,7 @@ open Core.Scale in
     For the ratio construction `FinAddMeasure.toCondMeasure`, regularity
     is equivalent to: every singleton has positive measure.
 
-    @cite{halpern-2003}'s regularity condition. -/
+    [halpern-2003]'s regularity condition. -/
 structure Core.Scale.RegularCondMeasure (W : Type*) extends Core.Scale.CondMeasure W where
   regular : ∀ (φ : Set W), (∃ w, w ∈ φ) → condMu φ φ ≠ 0
   muPositive : ∀ (φ : Set W), (∃ w, w ∈ φ) → 0 < mu φ
@@ -423,7 +423,7 @@ private noncomputable def rankingReviseSet {W : Type*} [Fintype W] [DecidableEq 
 
 /-- A ranking function induces an AGM revision operator.
 
-    @cite{goldszmidt-pearl-1996} §6: ranking conditioning satisfies the
+    [goldszmidt-pearl-1996] §6: ranking conditioning satisfies the
     AGM postulates K*2–K*5. K = beliefSet κ (propositions true at all
     rank-0 worlds), K*φ = beliefSet of κ revised by φ.
 

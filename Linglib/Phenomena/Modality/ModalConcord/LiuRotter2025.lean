@@ -2,8 +2,8 @@ import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Phenomena.Modality.ModalConcord.Data
 
 /-!
-# Modal Concord: Commitment and Social Meaning — @cite{rotter-liu-2025}
-@cite{liu-rotter-2025} @cite{zeijlstra-2007}
+# Modal Concord: Commitment and Social Meaning — [rotter-liu-2025]
+[liu-rotter-2025] [zeijlstra-2007]
 
 Empirical data from "Non-redundant modal concord: Evidence from speaker
 commitment and social meaning."

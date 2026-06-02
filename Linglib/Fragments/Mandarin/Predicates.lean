@@ -3,9 +3,9 @@ import Linglib.Semantics.Verb.Basic
 
 /-!
 # Mandarin Predicate Lexicon Fragment
-@cite{qing-uegaki-2025} @cite{glass-2025}
+[qing-uegaki-2025] [glass-2025]
 
-Mandarin predicates relevant to @cite{qing-uegaki-2025}. Properties like
+Mandarin predicates relevant to [qing-uegaki-2025]. Properties like
 C-distributivity and NVP class are DERIVED from the `attitude` field.
 -/
 
@@ -57,7 +57,7 @@ def haipa : MandarinVerbEntry := .mk' {
 
 /-- 以为 "yǐwéi" — be under the impression that.
 
-A nonveridical doxastic attitude. @cite{glass-2025} analyzes its weak
+A nonveridical doxastic attitude. [glass-2025] analyzes its weak
 contrafactive postsupposition (◇¬p, not derivable from veridicality alone);
 that paper-specific apparatus lives in `Glass2025`, not on this entry. -/
 def yiwei : MandarinVerbEntry := .mk' {
@@ -69,10 +69,10 @@ def yiwei : MandarinVerbEntry := .mk' {
 
 /-! ## Liu & Yip 2026 complement-taking predicates
 
-Seven additional Mandarin CTPs cited by @cite{liu-yip-2026} (lists in (18)
+Seven additional Mandarin CTPs cited by [liu-yip-2026] (lists in (18)
 and (19)) for the *you*-skipping pattern. Theory-light: only consensus
 typology — surface form, finite vs nonfinite complement selection, and
-@cite{noonan-2007} `CTPClass`. The [+D] / [-D] selectional refinement
+[noonan-2007] `CTPClass`. The [+D] / [-D] selectional refinement
 within nonfinite TPs (Lin & Liu 2009) is theory-laden and lives in
 `Studies/LiuYip2026.lean` as a Studies-side
 projection per the audit's "derive don't stipulate" discipline. -/
@@ -127,7 +127,7 @@ def dasuan : MandarinVerbEntry := .mk' {
   attitude := some (.preferential (.degreeComparison .positive)) }
 
 /-- 设法 *shefa* 'try' — achievement; nonfinite-taking. Liu & Yip 2026 (18).
-    @cite{noonan-2007} classifies 'try' under the achievement CTP class. -/
+    [noonan-2007] classifies 'try' under the achievement CTP class. -/
 def shefa : MandarinVerbEntry := .mk' {
   form := "shefa"
   complementType := .infinitival

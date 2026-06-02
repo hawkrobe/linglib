@@ -3,7 +3,7 @@ import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!
 # GenHM and Do-Support
-@cite{arregi-pietraszko-2021}
+[arregi-pietraszko-2021]
 
 Connects the GenHM formalization to empirical data from `SubjectAuxInversion.lean`.
 

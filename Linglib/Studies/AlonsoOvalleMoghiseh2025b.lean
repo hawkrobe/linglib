@@ -2,7 +2,7 @@ import Linglib.Core.Logic.Quantification.Generators
 
 /-!
 # Alonso-Ovalle & Moghiseh (2025): Number Marking in *What* Interrogatives
-@cite{alonso-ovalle-moghiseh-2025b}
+[alonso-ovalle-moghiseh-2025b]
 
 Luis Alonso-Ovalle and Esmail Moghiseh. Number marking in interrogative
 phrases: *What* interrogatives in Farsi. In: *Proceedings of Sinn und
@@ -17,13 +17,13 @@ answers only. This divergence is derived from four assumptions:
 
 1. Interrogatives range over generalized quantifiers — conjunctions (⊓)
    and disjunctions (⊔) built from non-empty subsets of an entity domain
-   (@cite{xiang-2016}, @cite{elliott-nicolae-sauerland-2022}).
+   ([xiang-2016], [elliott-nicolae-sauerland-2022]).
 2. Singular marking on bare interrogatives is a morphological default
-   with no semantic import (@cite{maldonado-2020}).
+   with no semantic import ([maldonado-2020]).
 3. Singular marking on complex interrogatives has semantic import: SING
-   restricts the domain to atoms (@cite{scontras-2022}).
+   restricts the domain to atoms ([scontras-2022]).
 4. Differential object marker *-ro* restricts the subset selection
-   function to singletons, signaling specificity (@cite{karimi-2003}).
+   function to singletons, signaling specificity ([karimi-2003]).
 
 ## Predictions
 
@@ -40,7 +40,7 @@ answers only. This divergence is derived from four assumptions:
 ## Connection to *yek-i* DPs
 
 Farsi interrogative forms (`chi`, `che`) are homophonous with indefinites
-(@cite{alonso-ovalle-moghiseh-2025}, §5). The interrogative and indefinite
+([alonso-ovalle-moghiseh-2025], §5). The interrogative and indefinite
 share the same domain-building mechanism (⊓ ∪ ⊔ over GQs), but
 interrogatives compose with ANS while indefinites compose with existential
 closure. See `Farsi.Determiners` and
@@ -60,7 +60,7 @@ open Core.Quantification (NPQ conjGQ disjGQ conjGQs disjGQs nonemptySubsets
 -- ============================================================================
 
 /-- Entity domain: two atomic individuals and their mereological join.
-    `t12 = t1 ⊕ t2` in the sense of @cite{link-1983}. -/
+    `t12 = t1 ⊕ t2` in the sense of [link-1983]. -/
 inductive Entity where | t1 | t2 | t12
   deriving DecidableEq, BEq, Repr
 
@@ -72,7 +72,7 @@ def allEntities : List Entity := [.t1, .t2, .t12]
 def allWorlds : List World := [.w1, .w2, .w12]
 
 /-- Mereological atom predicate. Corresponds to `[+atomic]` in
-    @cite{harbour-2014} (`Features.Number`) and `Mereology.Atom`. -/
+    [harbour-2014] (`Features.Number`) and `Mereology.Atom`. -/
 def isAtom : Entity → Prop
   | .t1 | .t2 => True
   | .t12 => False
@@ -102,7 +102,7 @@ theorem bought_distributive (w : World) :
 
     - `conjGQ X P = X.all P` — universal quantification over X
     - `disjGQ X P = X.any P` — existential quantification over X
-    - `conjGQs dom` — all ⊓(X) for ∅ ≠ X ⊆ dom (@cite{xiang-2016})
+    - `conjGQs dom` — all ⊓(X) for ∅ ≠ X ⊆ dom ([xiang-2016])
     - `disjGQs dom` — all ⊔(X) for ∅ ≠ X ⊆ dom -/
 
 /-- Hamblin set: propositions from applying each GQ in ⊓(dom) ∪ ⊔(dom)
@@ -133,7 +133,7 @@ def entails (p q : World → Bool) : Bool :=
   allWorlds.all (λ w => !p w || q w)
 
 /-- Dayal's Exhaustivity Presupposition: does ANS find a strongest true
-    answer at `w`? (@cite{dayal-1996}, eq. 8)
+    answer at `w`? ([dayal-1996], eq. 8)
 
     EP(H, w) = ∃p ∈ H. p(w) ∧ ∀q ∈ H. q(w) → p ⊆ q
 
@@ -143,7 +143,7 @@ def epHolds (hamblin : List (World → Bool)) (w : World) : Bool :=
   let trueProps := hamblin.filter (· w)
   trueProps.any (λ p => trueProps.all (λ q => entails p q))
 
-/-- EXH_P anti-uniqueness (@cite{marty-2017}, @cite{elliott-sauerland-2019},
+/-- EXH_P anti-uniqueness ([marty-2017], [elliott-sauerland-2019],
     eq. 15). For plural interrogatives competing with singular alternatives:
     the question is felicitous at `w` only if more than one individual-level
     proposition in the singular alternative's Hamblin set is true.
@@ -162,7 +162,7 @@ def exhPAntiUniq (singularIndivH : List (World → Bool)) (w : World) : Bool :=
 def biDomain : List Entity := allEntities
 
 /-- CI domain: atoms only. ⟦SING⟧ = λP.λx: ATOM(x). P(x) (eq. 42,
-    @cite{scontras-2022}). Implements the semantic content of singular
+    [scontras-2022]). Implements the semantic content of singular
     marking on CIs. -/
 def ciDomain : List Entity := allEntities.filter (fun e => decide (isAtom e))
 

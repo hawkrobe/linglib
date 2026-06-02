@@ -2,9 +2,9 @@ import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Mandarin Chinese Evidentiality
-@cite{de-haan-2013} @cite{aikhenvald-2004}
+[de-haan-2013] [aikhenvald-2004]
 
-WALS @cite{de-haan-2013} F77A: `noGrammaticalEvidentials`. Lexical
+WALS [de-haan-2013] F77A: `noGrammaticalEvidentials`. Lexical
 strategies: *tinshuo* (听说), *juede* (觉得), sentence-final *ba* (吧).
 -/
 
@@ -12,7 +12,7 @@ namespace Mandarin.Evidentiality
 
 /-! ### Typed evidential inventory
 
-No grammatical evidentials per @cite{aikhenvald-2004}; lexical
+No grammatical evidentials per [aikhenvald-2004]; lexical
 strategies only. -/
 
 def evidentials : List Semantics.Evidential.Entry := []

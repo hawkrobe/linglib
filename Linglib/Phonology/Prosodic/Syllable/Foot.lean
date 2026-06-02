@@ -2,12 +2,12 @@ import Linglib.Phonology.Prosodic.Syllable.Defs
 
 /-!
 # Metrical Foot Structure
-@cite{hayes-1995} @cite{kager-2007}
+[hayes-1995] [kager-2007]
 
 Foot types, metrical parsing, and OT constraints on metrical structure.
 
 A metrical foot is a prosodic constituent grouping syllables into a
-rhythmic unit. @cite{hayes-1995} identifies three canonical foot types:
+rhythmic unit. [hayes-1995] identifies three canonical foot types:
 
 | Type              | Well-formed shapes | Stress system   |
 |-------------------|--------------------|-----------------|
@@ -35,7 +35,7 @@ namespace Phonology.Syllable
 -- § 1: Foot Type
 -- ============================================================================
 
-/-- The three canonical foot types (@cite{hayes-1995}, Ch. 3). -/
+/-- The three canonical foot types ([hayes-1995], Ch. 3). -/
 inductive FootType where
   /-- Moraic trochee: bimoraic with initial prominence.
       Well-formed shapes: (H) = 2μ, (LL) = 2μ.
@@ -115,7 +115,7 @@ instance (ft : FootType) (ws : List SyllWeight) :
 -- ============================================================================
 
 /-- FT-BIN(μ): assign one violation for each foot that does not consist
-    of exactly two morae (@cite{kager-2007}).
+    of exactly two morae ([kager-2007]).
 
     Well-formed moraic trochees: (H) = 2μ, (LL) = 2μ.
     Violations: degenerate (L) = 1μ, superheavy (SH) = 3μ. -/
@@ -123,13 +123,13 @@ def ftBinViolations (p : MetricalParse) : Nat :=
   p.feet.filter (λ ws => footMorae ws != 2) |>.length
 
 /-- PARSE-SYL: assign one violation for each syllable not parsed into
-    a foot (@cite{kager-2007}). Drives exhaustive parsing. -/
+    a foot ([kager-2007]). Drives exhaustive parsing. -/
 def parseSylViolations (p : MetricalParse) : Nat :=
   p.unparsedCount
 
 /-- ALL-FT-LEFT: for each foot, count the number of syllables
     intervening between the left edge of the prosodic domain and the
-    left edge of the foot (@cite{kager-2007}). Sum over all feet.
+    left edge of the foot ([kager-2007]). Sum over all feet.
 
     A foot at syllable position k (0-indexed) incurs k violations.
     Drives left-to-right iterative footing. -/

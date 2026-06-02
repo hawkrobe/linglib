@@ -6,7 +6,7 @@ import Mathlib.Order.Heyting.Basic
 /-!
 # Algebraic Structure of IL Denotation Domains
 
-@cite{dowty-wall-peters-1981} @cite{gallin-1975} @cite{partee-rooth-1983}
+[dowty-wall-peters-1981] [gallin-1975] [partee-rooth-1983]
 
 The IL operators in `Frame.lean`, `Quantification.lean`, and `Conjunction.lean`
 are instances of general algebraic operations from mathlib's order theory.
@@ -35,7 +35,7 @@ The IL operators are lattice operations in this hierarchy:
 | `genConj`   | pointwise meet    | `Pi.inf`     |
 | `genDisj`   | pointwise join    | `Pi.sup`     |
 
-@cite{partee-rooth-1983}'s generalized conjunction is the pointwise
+[partee-rooth-1983]'s generalized conjunction is the pointwise
 meet in the lattice of type `τ` — a fact that explains *why* conjunction
 is defined recursively over types and *why* it only works for
 conjoinable types (those admitting a lattice structure).
@@ -102,7 +102,7 @@ theorem existsEntity_eq_iSup (body : F.Entity → F.Denot .t) :
 -- § Generalized Conjunction = Pointwise Meet
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{partee-rooth-1983}'s generalized conjunction is the pointwise
+/-! [partee-rooth-1983]'s generalized conjunction is the pointwise
 meet in the lattice of the codomain type. This explains why `genConj`
 is defined recursively: it follows the recursive lattice construction
 on `Pi` types.
@@ -168,7 +168,7 @@ theorem genDisj_et_eq_union (f g : F.Denot (.e ⇒ .t)) :
 -- § Truth, Validity, and Entailment (DWP Ch. 6 §2.C)
 -- ════════════════════════════════════════════════════════════════
 
-/-! Model-theoretic notions from @cite{dowty-wall-peters-1981} Def C.1.
+/-! Model-theoretic notions from [dowty-wall-peters-1981] Def C.1.
 Since we work denotationally (Lean's type system is the metalanguage),
 these definitions apply to *closed* propositions — those already
 evaluated under some assignment. -/

@@ -4,14 +4,14 @@ import Mathlib.Data.Fin.Basic
 
 /-!
 # Modal Force and its Realization across Languages
-@cite{agha-jeretic-2026}
+[agha-jeretic-2026]
 
 A handbook chapter surveying modal force phenomena:
 - §1: Possibility vs necessity (standard ∀/∃ over possible worlds)
 - §2: Weak necessity modals (ought, should) — three competing analyses:
-  (1) domain restriction (@cite{von-fintel-iatridou-2008}, `Directive.lean`),
-  (2) non-quantificational (@cite{agha-jeretic-2022}, `AghaJeretic2022.lean`),
-  (3) comparative semantics (@cite{rubinstein-2014}, `Rubinstein2014.lean`)
+  (1) domain restriction ([von-fintel-iatridou-2008], `Directive.lean`),
+  (2) non-quantificational ([agha-jeretic-2022], `AghaJeretic2022.lean`),
+  (3) comparative semantics ([rubinstein-2014], `Rubinstein2014.lean`)
 - §3: Variable force modals — four cross-linguistic patterns
 - §4: Covert variable force (conditionals, generics, imperatives)
 
@@ -31,7 +31,7 @@ A handbook chapter surveying modal force phenomena:
 4. **Exhaustification analysis** (§3.2): Polarity-sensitive variable force
    modals are underlyingly ◇, with necessity readings derived via EXH.
 
-## Connection to @cite{agha-jeretic-2022}
+## Connection to [agha-jeretic-2022]
 
 The paper's own prior work proposes that weak necessity modals are
 non-quantificational (plural predication over worlds), explaining
@@ -286,7 +286,7 @@ theorem exh_empty : exhStrengthens [] = false := rfl
 
 /-! ## Non-quantificational analysis
 
-@cite{agha-jeretic-2022} observe that weak necessity modals are scopeless
+[agha-jeretic-2022] observe that weak necessity modals are scopeless
 with respect to negation (like plural predication), while strong necessity
 modals (some of them) are neg-raisers:
 

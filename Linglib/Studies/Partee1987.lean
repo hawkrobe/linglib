@@ -2,7 +2,7 @@ import Linglib.Semantics.Composition.TypeShifting
 
 /-!
 # Partee (1987): Noun Phrase Interpretation and Type-shifting Principles
-@cite{partee-1987}
+[partee-1987]
 
 Partee's §5 sketches an analysis of English `be` as a type-shifting
 functor that lowers a generalized quantifier (`⟨⟨e,t⟩,t⟩`) to a

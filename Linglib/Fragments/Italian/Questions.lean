@@ -2,7 +2,7 @@ import Linglib.Typology.Question
 
 /-!
 # Italian question profile
-@cite{wals-2013} @cite{dayal-2025}
+[wals-2013] [dayal-2025]
 
 `QuestionProfile` bundle for Italian (ISO `ita`) per the project's
 "per-language data flows through Fragments" rule. Substrate types live in

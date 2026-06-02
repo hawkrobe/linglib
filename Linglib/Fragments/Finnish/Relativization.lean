@@ -3,7 +3,7 @@ import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Finnish Relativization Fragment
-@cite{keenan-comrie-1977}
+[keenan-comrie-1977]
 
 Two relative clause markers:
 - Relative pronoun *joka* (+case, postnominal, covers SU–GEN)
@@ -13,7 +13,7 @@ Finnish is notable because the +case strategy is the primary (broader) one,
 covering 5 of 6 AH positions. OCOMP does not exist as a distinct
 grammatical category in Finnish.
 
-Data from @cite{keenan-comrie-1977} Table 1.
+Data from [keenan-comrie-1977] Table 1.
 -/
 
 namespace Finnish

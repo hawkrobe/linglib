@@ -1,6 +1,6 @@
 /-!
 # Ukrainian Question Particles
-@cite{simik-2024}
+[simik-2024]
 
 Lexical entries for Ukrainian interrogative particles. The fragment
 commits only to theory-neutral lexical primitives; the left-peripheral
@@ -34,7 +34,7 @@ structure QParticleEntry where
   requiresEpistemicBias : Bool
   deriving Repr, DecidableEq
 
-/-- чи čy — obligatory clause-initial PQ particle (@cite{simik-2024} ex. 29).
+/-- чи čy — obligatory clause-initial PQ particle ([simik-2024] ex. 29).
 Neutral baseline, no bias requirements. -/
 def cy : QParticleEntry where
   form := "чи"
@@ -46,7 +46,7 @@ def cy : QParticleEntry where
   requiresEvidentialBias := false
   requiresEpistemicBias := false
 
-/-- хіба xiba — mirative/dubitative particle (RAZVE family, @cite{simik-2024} §4.2.4).
+/-- хіба xiba — mirative/dubitative particle (RAZVE family, [simik-2024] §4.2.4).
 Ukrainian cognate of Russian razve. Indicates conflict between speaker's
 prior state and contextual evidence. -/
 def xiba : QParticleEntry where

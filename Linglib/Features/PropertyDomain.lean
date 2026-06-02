@@ -1,7 +1,7 @@
 /-!
 # PropertyDomain — Perceptual/Cognitive Channels for Adjective Dimensions
 
-@cite{giles-etal-2026} @cite{wolfe-horowitz-2017}
+[giles-etal-2026] [wolfe-horowitz-2017]
 
 A taxonomy of perceptual and cognitive channels that classify the
 dimension a gradable adjective measures along. The first four domains
@@ -45,7 +45,7 @@ structure Dimension where
     orientation, and state domains contain adjectives with more stable
     meanings.
 
-    @cite{sedivy-etal-1999} showed that comparison-class-dependent
+    [sedivy-etal-1999] showed that comparison-class-dependent
     (scalar) adjectives trigger contrastive inferences in referential
     contexts, while non-dependent (color) adjectives do not. -/
 def PropertyDomain.requiresComparisonClass : PropertyDomain → Bool

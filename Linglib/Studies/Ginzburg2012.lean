@@ -15,7 +15,7 @@ import Linglib.Phenomena.Ellipsis.FragmentAnswers
 
 /-!
 # Ginzburg (2012): The Interactive Stance
-@cite{ginzburg-2012}
+[ginzburg-2012]
 
 Canonical formalization of the KOS framework from
 *The Interactive Stance: Meaning for Conversation* (OUP 2012).
@@ -46,8 +46,8 @@ Sluice-split-faithful Table 7.4 taxonomy.
 
 ## Chronology
 
-@cite{ginzburg-2012} > all references in §12. Cross-framework contrasts
-with later work (@cite{krifka-2015} commitment-spaces; @cite{anderson-2021}
+[ginzburg-2012] > all references in §12. Cross-framework contrasts
+with later work ([krifka-2015] commitment-spaces; [anderson-2021]
 distributional CommonGround) live inside *those* studies per CLAUDE.md's
 "no bridge files" + chronological-dependency rule.
 
@@ -73,7 +73,7 @@ open Dialogue.KOS Question
 
 /-! ## The Turn-Taking Puzzle (Ch. 2 ex. 22–23 p. 23)
 
-@cite{ginzburg-2012} Ch. 2 sets up the book's headline argument:
+[ginzburg-2012] Ch. 2 sets up the book's headline argument:
 **Equal Access to Context fails** (ex. 5 p. 13, ex. 20b p. 21). Two
 participants exposed to the *same* utterance do not have access to the
 *same* contextual resources for interpreting subsequent fragments —
@@ -128,7 +128,7 @@ theorem turn_taking_puzzle_why_parakeet :
 
 /-! ## KOS Architecture Overview
 
-@cite{ginzburg-2012} Ch. 4 introduces the central data structures:
+[ginzburg-2012] Ch. 4 introduces the central data structures:
 
 - **TIS** (Total Information State, ex. 93 p. 107) = public DGB + private state
 - **DGB** (Dialogue Gameboard, ex. 100/113) — each participant has their own:
@@ -154,7 +154,7 @@ example {P Fact QContent Cont : Type} (tis : TIS P Fact QContent Cont) :
 
 /-! ## TTR-Typed Inquiry Cycle (§4.4.5)
 
-@cite{ginzburg-2012} Ch. 4 §4.4.5 walks through the canonical
+[ginzburg-2012] Ch. 4 §4.4.5 walks through the canonical
 Ask → Assert → Accept dialogue. We exercise the TTR-typed substrate
 from `KOS/Austinian.lean`, which instantiates `TIS` with
 `BCheckableAustinian` propositions and `TTRQuestionB` questions over
@@ -180,7 +180,7 @@ theorem string_inquiry_cycle_resolves :
 
 /-! ## Grounding Asymmetry
 
-@cite{ginzburg-2012} Ch. 4: each participant maintains their own DGB.
+[ginzburg-2012] Ch. 4: each participant maintains their own DGB.
 After A asserts p, A's DGB has p in FACTS. B's DGB does NOT have p in
 FACTS until B explicitly accepts. This models the difference between
 *assertion* (one-sided) and *mutual acceptance* (synchronization).
@@ -228,7 +228,7 @@ end GroundingAsymmetry
 
 /-! ## Genre Constraints on Moves (§4.6)
 
-@cite{ginzburg-2012} §4.6: genres are TTR records (ex. 88 p. 104) that
+[ginzburg-2012] §4.6: genres are TTR records (ex. 88 p. 104) that
 classify conversations. The relevance of a move depends on whether the
 resulting DGB outcome can be anticipated to be fulfilled by the genre's
 constraints (eq. 90 p. 105).
@@ -275,7 +275,7 @@ end GenreRelevance
 
 /-! ## Non-Sentential Utterance Resolution
 
-@cite{ginzburg-2012} Ch. 5: bare fragments ("Paris.") are resolved via
+[ginzburg-2012] Ch. 5: bare fragments ("Paris.") are resolved via
 the QUD. The InfoStruc shape of QUD entries (a question + its
 focus-establishing constituents) gives the resolution mechanism: a
 fragment fills the FEC slot of MaxQUD.
@@ -303,8 +303,8 @@ theorem all_fragments_resolved :
 
 /-! ## NSU Classification
 
-@cite{ginzburg-2012} Ch. 7 §7.2 (Tables 7.3–7.4, pp. 221–222) — see
-@cite{fernandez-2006} for the BNC subcorpus study.
+[ginzburg-2012] Ch. 7 §7.2 (Tables 7.3–7.4, pp. 221–222) — see
+[fernandez-2006] for the BNC subcorpus study.
 
 The 16-class taxonomy + 4 functional groupings live in the substrate
 (`KOS/NSUTaxonomy.lean`) — they are framework infrastructure usable by
@@ -336,7 +336,7 @@ example :
 
 /-! ## CR Form & Reading Taxonomy
 
-@cite{ginzburg-2012} Ch. 6 §6.2.1 (pp. 148–149): 8 CR forms × 4 readings.
+[ginzburg-2012] Ch. 6 §6.2.1 (pp. 148–149): 8 CR forms × 4 readings.
 Form variation is morphological/intonational; reading variation is in
 what the CR is asking about (clausal confirmation, intended content,
 phonetic repetition, corrective alternative).
@@ -383,7 +383,7 @@ abbrev CRReading := Dialogue.KOS.RFReading
 
 /-! ## Grounding Protocol via CCURs Pipeline
 
-@cite{ginzburg-2012} §6.6–6.7: the integration protocol for incoming
+[ginzburg-2012] §6.6–6.7: the integration protocol for incoming
 LocProps:
 
 1. **Pending Update** (ex. 45 p. 176): the LocProp enters Pending
@@ -440,7 +440,7 @@ end CCURExample
 
 /-! ## Self-Repair via MaxPending
 
-@cite{ginzburg-2012} §8.2 (pp. 282–290) "Unifying Self- and Other-Correction".
+[ginzburg-2012] §8.2 (pp. 282–290) "Unifying Self- and Other-Correction".
 Per §6.3 footnote 31 p. 168 + §8.2: **MaxPending is the head of `Pending`**,
 not a separate field. The substrate `KOS/SelfRepair.lean` provides:
 
@@ -501,7 +501,7 @@ end SelfRepairExample
 
 /-! ## End-to-End: DialogueSign → LocProp → CCURs → DGB
 
-The full @cite{ginzburg-2012}-architecture pipeline:
+The full [ginzburg-2012]-architecture pipeline:
 
 1. Lexical entry as `DialogueSign Cont` (Ch. 5)
 2. Project to `LocProp Cont` via `toLocProp` (Ch. 6)
@@ -560,11 +560,11 @@ end EndToEnd
 Per the project's chronological-dependency rule, this study engages
 *pre-2012* siblings here:
 
-- @cite{stalnaker-1978}/@cite{stalnaker-2002} — single shared CommonGround
-- @cite{farkas-bruce-2010} — five-way dcS/dcL/cg/table/ps decomposition
-- @cite{roberts-1996} — partition-based QUD-stack
-- @cite{purver-ginzburg-2004} — q-params/dgb-params split
-- @cite{ginzburg-sag-2000} — HPSG grammar foundation
+- [stalnaker-1978]/[stalnaker-2002] — single shared CommonGround
+- [farkas-bruce-2010] — five-way dcS/dcL/cg/table/ps decomposition
+- [roberts-1996] — partition-based QUD-stack
+- [purver-ginzburg-2004] — q-params/dgb-params split
+- [ginzburg-sag-2000] — HPSG grammar foundation
 
 Cross-framework contrasts with *post-2012* siblings (Krifka 2015,
 Anderson 2021) live inside *those* studies, not here.
@@ -586,10 +586,10 @@ instance : DecidablePred isRaining := fun w => by unfold isRaining; exact inferI
 
 /-! ### vs Stalnaker (single shared CommonGround)
 
-@cite{stalnaker-1978}: the common ground is *one shared object*. After
+[stalnaker-1978]: the common ground is *one shared object*. After
 A asserts p, the (single) CommonGround contains p eliminated of ¬p worlds.
 
-@cite{ginzburg-2012}: each participant has their *own* DGB. After A
+[ginzburg-2012]: each participant has their *own* DGB. After A
 asserts p, A's DGB has p in FACTS; B's does not. There is NO shared CommonGround —
 only coupled DGBs synchronized via Accept.
 
@@ -637,12 +637,12 @@ theorem kos_vs_stalnaker_per_dgb_divergence :
 
 /-! ### vs Farkas-Bruce 2010 (five-way decomposition)
 
-@cite{farkas-bruce-2010}: discourse state has FIVE components (dcS, dcL,
+[farkas-bruce-2010]: discourse state has FIVE components (dcS, dcL,
 cg, table, ps). Assertion adds to *speaker's dcS* (private commitment),
 pushes an issue on the table; only *acceptance* moves content to the
 shared CommonGround.
 
-@cite{ginzburg-2012}: per-participant DGBs (no separate dcS/dcL/cg
+[ginzburg-2012]: per-participant DGBs (no separate dcS/dcL/cg
 distinction inside one structure). Assertion goes directly to the
 *speaker's own* DGB.facts.
 
@@ -703,8 +703,8 @@ theorem kos_qud_stack_agrees_with_roberts_at_top
 
 /-! ### vs Purver-Ginzburg 2004 (q-params / dgb-params split)
 
-@cite{purver-ginzburg-2004} ARGUE for the q-params / dgb-params split
-that @cite{ginzburg-2012} adopts (§8.5.1 ex. 101–103 p. 325–326): only
+[purver-ginzburg-2004] ARGUE for the q-params / dgb-params split
+that [ginzburg-2012] adopts (§8.5.1 ex. 101–103 p. 325–326): only
 dgb-params block grounding (trigger CRification); q-params travel with
 the sign but don't block, enabling the Reprise Content Hypothesis.
 
@@ -725,7 +725,7 @@ theorem qparams_dont_block_grounding :
 
 /-! ### vs Ginzburg-Sag 2000 (HPSG grammar foundation)
 
-@cite{ginzburg-2012} Ch. 5 §5.1 explicitly builds on @cite{ginzburg-sag-2000}'s
+[ginzburg-2012] Ch. 5 §5.1 explicitly builds on [ginzburg-sag-2000]'s
 HPSG-formulated grammar. Our `Grammar.lean` integrates with HPSG via
 `DialogueSign.toSynsem` (project to plain HPSG sign) and
 `DialogueSign.toLocProp` (project to KOS-shaped LocProp).
@@ -734,7 +734,7 @@ This is structural agreement, not contrast — KOS's grammar is an
 extension of GS2000's. The HPSG foundations supplement what KOS needs;
 no architectural disagreement. -/
 
-/-- KOS's `DialogueSign` faithfully extends @cite{ginzburg-sag-2000}'s
+/-- KOS's `DialogueSign` faithfully extends [ginzburg-sag-2000]'s
 HPSG `Synsem`: the projection `toSynsem` preserves head-features and
 category, losing only dialogue features (dgbParams, qParams, questDom).
 This is a structural-retract witness: KOS can be "forgotten down" to

@@ -2,7 +2,7 @@ import Linglib.Typology.PolarityItem
 
 /-!
 # French Polarity-Sensitive Items
-@cite{haspelmath-1997} @cite{zanuttini-1997}
+[haspelmath-1997] [zanuttini-1997]
 
 Lexical entries for French polarity-sensitive items (n-word series and
 related), typed by the theory-neutral categories from

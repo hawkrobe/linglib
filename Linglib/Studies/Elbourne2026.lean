@@ -2,7 +2,7 @@ import Linglib.Semantics.Gradability.Classification
 
 /-!
 # Elbourne (2026): Adjectives without syntactic categories
-@cite{elbourne-2026}
+[elbourne-2026]
 
 Published online: 12 March 2026, *Natural Language & Linguistic Theory* 44:17.
 
@@ -10,7 +10,7 @@ Adjectives are uniformly type ⟨et,et⟩ — functions from noun denotations
 to noun denotations. This eliminates Predicate Modification for
 adjective-noun combination (FA suffices) and supports the program of
 eliminating syntactic categories in favor of semantic types
-("Meaning-Dependent Grammar", building on @cite{elbourne-2024}).
+("Meaning-Dependent Grammar", building on [elbourne-2024]).
 
 ## Key result
 
@@ -26,7 +26,7 @@ Elbourne's copula semantics.
 Elbourne's copula takes a tense relation R and an ⟨et,et⟩ adjective G,
 applies G to the trivially true noun `λt.λx. ⊤`, and existentially
 quantifies over a time satisfying R. This contrasts with
-@cite{partee-1987}'s BE (a type-shifting operation `⟨⟨e,t⟩,t⟩ → ⟨e,t⟩`
+[partee-1987]'s BE (a type-shifting operation `⟨⟨e,t⟩,t⟩ → ⟨e,t⟩`
 for nominal predication) — a different function for a different
 construction.
 
@@ -59,7 +59,7 @@ def trivialNoun : Property I E := fun _ _ => True
 
 /-- Intersective ⟨et,et⟩ adjective: `λN.λt.λx. N(t)(x) ∧ Q(t)(x)`.
 
-    @cite{elbourne-2026} (24b)/(59):
+    [elbourne-2026] (24b)/(59):
     `/cute/ :: λf⟨e,it⟩.λx.λt. f(x)(t) & cute(x)(t)` -/
 def intersective (Q : Property I E) : AdjMeaning I E :=
   fun N t x => N t x ∧ Q t x
@@ -84,7 +84,7 @@ variable {I E : Type*}
     to the trivial noun, and existentially quantifies over a time
     satisfying R.
 
-    @cite{elbourne-2026} (8)/(27c):
+    [elbourne-2026] (8)/(27c):
     `BE :: λR⟨i,it⟩.λG⟨eit,eit⟩.λx.λt. ∃t'(R(t')(t) & G(λy.λt''.⊤)(x)(t'))` -/
 def copulaBE (R : I → I → Prop) (G : AdjMeaning I E)
     (x : E) (t : I) : Prop :=
@@ -114,7 +114,7 @@ variable {I E : Type*}
     property with the noun. Since FA reproduces PM for intersective
     adjectives, PM is unnecessary for adjective-noun combination.
 
-    @cite{elbourne-2026} (25)–(26):
+    [elbourne-2026] (25)–(26):
     `⟦cute donkey⟧ = λx.λt. donkey(x)(t) & cute(x)(t)` -/
 theorem fa_eq_pm (Q N : Property I E) :
     intersective Q N = (fun t x => Q t x ∧ N t x) := by
@@ -125,7 +125,7 @@ theorem fa_eq_pm (Q N : Property I E) :
     with witness `A`. This means PM is too restrictive even for merely
     subsective adjectives like `skillful` — not just non-subsective ones.
 
-    @cite{elbourne-2026} (p. 13): under ⟨e,t⟩, "a rule like Predicate
+    [elbourne-2026] (p. 13): under ⟨e,t⟩, "a rule like Predicate
     Modification is presumably necessary; but this would impose the
     intersective semantics that we have just seen is inappropriate for
     merely subsective adjectives." -/
@@ -150,7 +150,7 @@ variable {I E : Type*}
 /-- Truth conditions for "Fido was cute":
     `∃t'(t' < t ∧ cute(Fido)(t'))`.
 
-    Step-by-step derivation (@cite{elbourne-2026} (28)–(30)):
+    Step-by-step derivation ([elbourne-2026] (28)–(30)):
     1. `⟦BE PAST⟧ = λG.λx.λt. ∃t'(t' < t ∧ G(⊤)(x)(t'))`
     2. `⟦[BE PAST] cute⟧ = λx.λt. ∃t'(t' < t ∧ cute(x)(t'))`
     3. `⟦Fido [[BE PAST] cute]⟧ = λt. ∃t'(t' < t ∧ cute(Fido)(t'))` -/
@@ -224,7 +224,7 @@ private def judge : Property T2 E1
     `formerAdj times ltb N t x` iff some earlier time `t'` satisfies
     `ltb t' t ∧ N t' x` and `¬ N t x`.
 
-    @cite{elbourne-2026} (44)/(60):
+    [elbourne-2026] (44)/(60):
     `λf⟨e,it⟩.λx.λt. ∃t'(< (t')(t) & f(x)(t') & ¬f(x)(t))` -/
 def formerAdj {I E : Type*} (times : List I)
     (ltb : I → I → Prop) : AdjMeaning I E :=
@@ -305,7 +305,7 @@ section CompulsoryER
     - **Optional E_R** (`cute`, `tall`): attributive or predicative.
     - **Compulsory E_R** (`former`, `mere`, `alleged`): attributive only.
 
-    @cite{elbourne-2026} § 3.2: the copula derivation requires the
+    [elbourne-2026] § 3.2: the copula derivation requires the
     adjective to appear WITHOUT an E_R feature; adjectives bearing
     compulsory E_R cannot be taken as argument by [BE PAST]. -/
 inductive ERStatus where

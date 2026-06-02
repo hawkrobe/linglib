@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 76A: Overlap between Situational and Epistemic Modal Marking
-@cite{vanderauwera-ammann-2013}
+[vanderauwera-ammann-2013]
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 76A`.

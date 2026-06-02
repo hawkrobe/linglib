@@ -3,10 +3,10 @@ import Linglib.Semantics.Lexical.Roots.RootFeatures
 
 /-!
 # Ellipsis: [E] Features and Deletion Domains
-@cite{merchant-2001} @cite{merchant-2013} @cite{benz-salzmann-2025}
+[merchant-2001] [merchant-2013] [benz-salzmann-2025]
 
 The [E] feature on a functional head triggers PF-deletion of the head's
-complement and presupposes e-GIVENness (@cite{merchant-2001}). Different
+complement and presupposes e-GIVENness ([merchant-2001]). Different
 ellipsis types correspond to different [E] positions in a functional spine.
 
 ## Generic Framework (`DeletionSpine`)
@@ -18,22 +18,22 @@ N-stranding). The `DeletionSpine` class captures the shared structure:
 - A set of spine positions with a complement-of relation (`isBelow`)
 - [E] on position p → everything strictly below p is deleted
 - Monotonicity: lower [E] → smaller domain → more external positions
-- X-stranding (@cite{liptak-saab-2014}): head movement out of the
+- X-stranding ([liptak-saab-2014]): head movement out of the
   deletion domain lets the moved head survive ellipsis
 
 Two instances:
 - **Clausal** (`SpinePos`): V, VP_adj, v, Voice, T, C
 - **Nominal** (`NomSpinePos`): N, NP_adj, n, Num, D
 
-## Clausal Ellipsis (@cite{merchant-2013})
+## Clausal Ellipsis ([merchant-2013])
 
 Voice mismatch tolerance tracks the *height* of ellipsis:
 - **VPE** ([E] on Voice): Voice is *external* → voice mismatch OK
 - **Sluicing** ([E] on C): Voice is *internal* → voice mismatch blocked
 - **vVPE** ([E] on v): both v and Voice are *external* →
-  voice *and* transitivity mismatches OK (@cite{kalyakin-2026})
+  voice *and* transitivity mismatches OK ([kalyakin-2026])
 
-## Nominal Ellipsis (@cite{benz-salzmann-2025})
+## Nominal Ellipsis ([benz-salzmann-2025])
 
 Variable [E] placement in the nominal spine:
 - **N-stranding NP-ellipsis** ([E] on n): N survives via N-to-n movement;
@@ -41,7 +41,7 @@ Variable [E] placement in the nominal spine:
 - **nP-ellipsis** ([E] on Num): N, n, and adjectives all deleted
 - **NumP-ellipsis** ([E] on D): everything below D deleted
 
-## Monotonicity (@cite{sailor-2014}'s Generalization)
+## Monotonicity ([sailor-2014]'s Generalization)
 
 Lower [E] position → smaller deletion domain → more features external
 → more mismatches tolerated. This is a strict monotonicity proved
@@ -61,7 +61,7 @@ open Semantics.Lexical.Roots
 
     Both clausal spines (V, v, Voice, T, C) and nominal spines (N, n, Num, D)
     are instances. The class captures the domain-general logic of
-    @cite{merchant-2001}'s [E]-feature theory:
+    [merchant-2001]'s [E]-feature theory:
 
     - [E] on head H → complement of H (everything `isBelow` H) is deleted
     - Monotonicity: lower [E] → smaller deletion domain
@@ -78,7 +78,7 @@ class DeletionSpine (α : Type) where
   /-- No position is in its own deletion domain. -/
   isBelow_irrefl : ∀ (p : α), isBelow p p = false
   /-- If d is external (not below) at p₁, it is external at any lower p₂.
-      This is @cite{sailor-2014}'s monotonicity generalization. -/
+      This is [sailor-2014]'s monotonicity generalization. -/
   isBelow_mono : ∀ (d p₁ p₂ : α),
     isBelow d p₁ = false → isAtOrBelow p₂ p₁ = true → isBelow d p₂ = false
 
@@ -98,7 +98,7 @@ theorem eHead_external {α : Type} [DeletionSpine α] (ePos : α) :
 
 /-- Generic monotonicity: if a mismatch is tolerated at ePos₁, it is
     tolerated at any structurally lower ePos₂.
-    @cite{sailor-2014}'s generalization, proved once for all spines. -/
+    [sailor-2014]'s generalization, proved once for all spines. -/
 theorem toleratesMismatch_mono {α : Type} [DeletionSpine α]
     (dPos ePos₁ ePos₂ : α)
     (h₁ : toleratesMismatch ePos₁ dPos = true)
@@ -107,7 +107,7 @@ theorem toleratesMismatch_mono {α : Type} [DeletionSpine α]
   simp only [toleratesMismatch, inDomain, Bool.not_eq_true'] at *
   exact DeletionSpine.isBelow_mono dPos ePos₁ ePos₂ h₁ h₂
 
-/-- X-stranding (@cite{liptak-saab-2014}): if X has moved from `base` to
+/-- X-stranding ([liptak-saab-2014]): if X has moved from `base` to
     the [E]-bearing head at `ePos`, X is external (survives ellipsis)
     while its base position is deleted.
 
@@ -137,7 +137,7 @@ theorem xStranding {α : Type} [DeletionSpine α] (ePos base : α)
     *again* and result-state modifiers. Structurally below v but NOT in
     v's complement: adjuncts to XP are part of the XP projection but
     not selected by the head that takes XP as complement. This matters
-    for vVPE (@cite{kalyakin-2026}): VP-adjuncts survive when [E] is on
+    for vVPE ([kalyakin-2026]): VP-adjuncts survive when [E] is on
     v (complement of v = bare VP, excluding adjuncts) but are deleted
     when [E] is on Voice (complement of Voice = full vP, including
     VP-adjuncts). -/
@@ -161,7 +161,7 @@ inductive SpinePos where
     - `VP_adj.isBelow .Voice = true`: VP-adjuncts ARE inside Voice's
       complement (vP contains the full VP projection including adjuncts)
 
-    This distinction is what makes vVPE (@cite{kalyakin-2026}) predict
+    This distinction is what makes vVPE ([kalyakin-2026]) predict
     both *again* readings survive: restitutive *again* (VP-adjoined) is
     outside the complement of v but inside vP. -/
 def SpinePos.isBelow : SpinePos → SpinePos → Bool
@@ -229,7 +229,7 @@ def englishVPE : EllipsisType := ⟨.Voice, "English VPE"⟩
 
 /-- v-stranding VPE: [E] on v, deletes VP.
     Both Voice and v are external → voice and transitivity mismatches OK.
-    Attested in Muira Dargwa complex predicates (@cite{kalyakin-2026}). -/
+    Attested in Muira Dargwa complex predicates ([kalyakin-2026]). -/
 def vVPE : EllipsisType := ⟨.v, "v-stranding VPE"⟩
 
 -- ════════════════════════════════════════════════════
@@ -255,16 +255,16 @@ def transitivityMismatch : MismatchDimension := ⟨"transitivity", .v⟩
 def lexicalMismatch : MismatchDimension := ⟨"lexical verb", .V⟩
 
 /-- Dative alternation: double-object vs prepositional dative.
-    Regulated by distinct v heads below Voice (@cite{merchant-2013} §3.3). -/
+    Regulated by distinct v heads below Voice ([merchant-2013] §3.3). -/
 def dativeAlternation : MismatchDimension := ⟨"dative alternation", .v⟩
 
 /-- Applicative/prepositional alternation: embroider X with Y vs embroider Y on X.
-    Regulated by applicative v heads below Voice (@cite{merchant-2013} §3.3). -/
+    Regulated by applicative v heads below Voice ([merchant-2013] §3.3). -/
 def prepAlternation : MismatchDimension := ⟨"prepositional alternation", .v⟩
 
 /-- Transitive/middle alternation: they market ethanol vs ethanol markets well.
     Regulated by v heads determining external argument realization
-    (@cite{merchant-2013} §3.3). -/
+    ([merchant-2013] §3.3). -/
 def middleAlternation : MismatchDimension := ⟨"middle alternation", .v⟩
 
 /-- A mismatch in dimension d is tolerated by ellipsis type e iff the
@@ -321,7 +321,7 @@ theorem vVPE_lexical_blocked :
 
 /-- If a head is outside the deletion domain at position p₁, then it
     is also outside the deletion domain at any lower position p₂.
-    This is @cite{sailor-2014}'s monotonicity: lower [E] → smaller
+    This is [sailor-2014]'s monotonicity: lower [E] → smaller
     domain → more mismatches tolerated. -/
 private theorem isBelow_monotone (d p₁ p₂ : SpinePos)
     (h₁ : d.isBelow p₁ = false) (h₂ : p₂.isAtOrBelow p₁ = true) :
@@ -345,7 +345,7 @@ theorem mismatch_monotone (d : MismatchDimension) (e₁ e₂ : EllipsisType)
 
 /-- Is a root inside the vVPE deletion domain (= VP)?
     Uses `RootPosition` from `Core.Lexical.RootFeatures` (Marantz 2013,
-    @cite{beavers-koontz-garboden-2020}):
+    [beavers-koontz-garboden-2020]):
     - `.complement` roots (change-of-state) are inside VP → deleted
     - `.adjoined` roots (manner/activity) are outside VP → survive -/
 def rootInVVPEDomain : RootPosition → Bool
@@ -357,14 +357,14 @@ theorem complementRoot_in_vVPE : rootInVVPEDomain .complement = true := rfl
 
 /-- Adjoined roots (manner/activity) survive vVPE — they are outside
     the deletion domain. This is why antipassive roots block vVPE in
-    Muira Dargwa: antipassive coerces adjunction (@cite{kalyakin-2026}). -/
+    Muira Dargwa: antipassive coerces adjunction ([kalyakin-2026]). -/
 theorem adjoinedRoot_outside_vVPE : rootInVVPEDomain .adjoined = false := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 7. Again Ambiguity
 -- ════════════════════════════════════════════════════
 
-/-- Adjunction position of *again*, following @cite{merchant-2013}
+/-- Adjunction position of *again*, following [merchant-2013]
     (building on Johnson 2004, von Stechow 1996). -/
 inductive AgainPosition where
   | vP_adjunction  -- Repetitive: event-level *again* (high)
@@ -388,7 +388,7 @@ def againSurvives (pos : AgainPosition) (e : EllipsisType) : Bool :=
 
 /-- Under English VPE, restitutive *again* is inside the deletion domain
     (deleted), while repetitive *again* survives.
-    @cite{merchant-2013}: only repetitive reading available (Johnson 2004
+    [merchant-2013]: only repetitive reading available (Johnson 2004
     exx. 49a–b). -/
 theorem englishVPE_again :
     againSurvives .vP_adjunction englishVPE = true ∧
@@ -396,7 +396,7 @@ theorem englishVPE_again :
 
 /-- Under vVPE, BOTH readings survive: restitutive *again* (VP-adjoined)
     is outside v's complement, so it is not deleted.
-    @cite{kalyakin-2026} §4.1 (exx. 52a–b): both repetitive and
+    [kalyakin-2026] §4.1 (exx. 52a–b): both repetitive and
     restitutive ʔibrra 'again' are available under vVPE in Muira Dargwa.
     This is the key diagnostic proving the deletion domain is VP (smaller
     than English VPE's vP). -/
@@ -438,7 +438,7 @@ theorem lexical_blocked_both :
 structure VPEProfile where
   /-- The core ellipsis type (spine position of [E]) -/
   ellipsisType : EllipsisType
-  /-- Verbal Identity Requirement (@cite{goldberg-2005}): antecedent and
+  /-- Verbal Identity Requirement ([goldberg-2005]): antecedent and
       target light verbs must be identical in root and derivational
       morphology. Active in Persian and Bangla; inactive in Muira Dargwa. -/
   virRequired : Bool
@@ -448,12 +448,12 @@ structure VPEProfile where
 
 /-- Muira Dargwa vVPE: [E] on v, deletion domain = VP.
     Both *again* readings survive; arg-structure alternations tolerated;
-    LV mismatches tolerated (@cite{kalyakin-2026} ex. 78). -/
+    LV mismatches tolerated ([kalyakin-2026] ex. 78). -/
 def muiraDargwaVVPE : VPEProfile :=
   { ellipsisType := vVPE, virRequired := false, language := "Muira Dargwa" }
 
 /-- Persian vVPE: [E] on v, deletion domain = VP.
-    Both *again* readings survive (@cite{toosarvandani-2009} ex. 90).
+    Both *again* readings survive ([toosarvandani-2009] ex. 90).
     But arg-structure alternations blocked (ex. 91) and LV identity
     required — VIR is active. -/
 def persianVVPE : VPEProfile :=
@@ -505,14 +505,14 @@ theorem again_differentiates_bangla_dargwa :
     `NP_adj` parallels clausal `VP_adj`: the site of prenominal modifiers
     (adjectives in Spec of functional heads within nP) that are inside
     nP but NOT in n's complement (NP). This distinction matters for
-    N-stranding NP-ellipsis (@cite{benz-salzmann-2025}): prenominal
+    N-stranding NP-ellipsis ([benz-salzmann-2025]): prenominal
     adjectives survive n[E] (outside NP) but are deleted under Num[E]
     (inside nP). -/
 inductive NomSpinePos where
   | N      -- Lexical noun (content)
   | NP_adj -- nP-internal modifier position (prenominal adjectives): inside nP, outside NP
-  | n      -- Categorizer (gender/class, nominalizer; @cite{marantz-2001})
-  | Num    -- Number (@cite{ritter-1991})
+  | n      -- Categorizer (gender/class, nominalizer; [marantz-2001])
+  | Num    -- Number ([ritter-1991])
   | D      -- Determiner
   deriving DecidableEq, Repr
 
@@ -576,7 +576,7 @@ def numPEllipsis : NomEllipsisType := ⟨.D, "NumP-ellipsis"⟩
 
 /-- nP-ellipsis: [E] on Num, deletes nP (complement of Num).
     Numeral and determiner survive; N, n, and prenominal adjectives deleted.
-    @cite{saab-2026}: Num[E] in Spanish pseudo-partitive/quantificational
+    [saab-2026]: Num[E] in Spanish pseudo-partitive/quantificational
     binominals. -/
 def nPEllipsis : NomEllipsisType := ⟨.Num, "nP-ellipsis"⟩
 
@@ -584,7 +584,7 @@ def nPEllipsis : NomEllipsisType := ⟨.Num, "nP-ellipsis"⟩
     N survives via N-to-n head movement; prenominal adjectives survive
     (in nP, not NP). Postnominal dependents of N (PPs, relative clauses,
     genitive arguments) are in NP and are deleted.
-    @cite{benz-salzmann-2025}: German N-stranding NP-ellipsis. -/
+    [benz-salzmann-2025]: German N-stranding NP-ellipsis. -/
 def nStrandingNPE : NomEllipsisType := ⟨.n, "N-stranding NP-ellipsis"⟩
 
 -- N-stranding NP-ellipsis: [E] on n
@@ -596,7 +596,7 @@ theorem nStranding_deletes_NP :
 
 /-- Under N-stranding, prenominal adjectives survive: they are inside nP
     but NOT in n's complement (NP).
-    @cite{benz-salzmann-2025} ex. (25): *Ich habe das schönste Auto und du
+    [benz-salzmann-2025] ex. (25): *Ich habe das schönste Auto und du
     das schönste Motorrad — adjective cannot be deleted. -/
 theorem nStranding_adj_survives :
     nomSurvives .NP_adj nStrandingNPE = true := rfl
@@ -607,7 +607,7 @@ theorem nStranding_n_external :
     nomSurvives .n nStrandingNPE = true := rfl
 
 /-- Under N-stranding, Num is external (numerals survive).
-    @cite{benz-salzmann-2025} ex. (25b): numeral *zwei* cannot be deleted
+    [benz-salzmann-2025] ex. (25b): numeral *zwei* cannot be deleted
     under N-stranding. -/
 theorem nStranding_num_survives :
     nomSurvives .Num nStrandingNPE = true := rfl
@@ -627,7 +627,7 @@ theorem nPE_deletes_n :
     nomInDeletionDomain .n nPEllipsis = true := rfl
 
 /-- Under nP-ellipsis, Num is external (numerals survive).
-    @cite{saab-2026}: the numeral/determiner remnant in Spanish
+    [saab-2026]: the numeral/determiner remnant in Spanish
     pseudo-partitive ellipsis. -/
 theorem nPE_num_survives :
     nomSurvives .Num nPEllipsis = true := rfl
@@ -665,7 +665,7 @@ theorem nom_deletion_monotone :
 /-- N-to-n movement instantiates generic X-stranding: N (base) is below
     n (landing), so when [E] is on n, N's base position is in the deletion
     domain but the n head (where N has moved) is external.
-    @cite{benz-salzmann-2025}: German N-stranding NP-ellipsis. -/
+    [benz-salzmann-2025]: German N-stranding NP-ellipsis. -/
 theorem n_stranding_is_xStranding :
     inDomain NomSpinePos.n NomSpinePos.n = false ∧
     inDomain NomSpinePos.N NomSpinePos.n = true :=
@@ -673,7 +673,7 @@ theorem n_stranding_is_xStranding :
 
 /-- V-to-v movement is the clausal analogue: V (base) is below v (landing),
     so when [E] is on v, V's base position is deleted but v survives.
-    This is exactly v-stranding VPE (@cite{kalyakin-2026}). -/
+    This is exactly v-stranding VPE ([kalyakin-2026]). -/
 theorem v_stranding_is_xStranding :
     inDomain SpinePos.v SpinePos.v = false ∧
     inDomain SpinePos.V SpinePos.v = true :=

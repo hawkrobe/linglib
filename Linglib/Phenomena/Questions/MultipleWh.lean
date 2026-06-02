@@ -1,13 +1,13 @@
 /-
 # Multiple Wh-Questions
-@cite{belnap-1982} @cite{groenendijk-stokhof-1984}
+[belnap-1982] [groenendijk-stokhof-1984]
 
 Questions with multiple wh-phrases require n-place term answers.
-@cite{belnap-1982} §4 argues for simultaneous introduction of multiple
+[belnap-1982] §4 argues for simultaneous introduction of multiple
 *which*-phrases (as opposed to one-at-a-time introduction) — the question
 asks for a unique pair, not sequential individuals.
 
-(Separately, @cite{belnap-1982} §5 argues that different wh-words —
+(Separately, [belnap-1982] §5 argues that different wh-words —
 *which*, *who*, *where*, *what* — should be treated as distinct syntactic
 categories with different answer types, contra the assumption that all
 wh-words are interchangeable.)
@@ -93,7 +93,7 @@ def multipleWhExamples : List MultipleWhDatum :=
 
 
 /-- Constituent and sentential answers express the same proposition.
-    @cite{groenendijk-stokhof-1984}: Both derived from the same abstract + term.
+    [groenendijk-stokhof-1984]: Both derived from the same abstract + term.
 -/
 structure AnswerEquivalence where
   /-- The question -/
@@ -171,14 +171,14 @@ def termCategories : List TermCategory :=
 -- ============================================================================
 
 /-! Languages vary in whether multiple wh-specifiers at a phase edge are
-tolerable at PF (@cite{rudin-1988}, @cite{citko-gracanin-yuksek-2025}).
+tolerable at PF ([rudin-1988], [citko-gracanin-yuksek-2025]).
 The substrate primitives (`MWFParameter`, `PhaseEdge`, `EdgeAsterisk`,
 `MWFViolation`, `EllipsisRepairsMWF`) are in `Linglib/Typology/Question.lean`
 per the project layering convention; this file holds only the per-language
 data + theorems consuming it.
 
 The intra-English variety A/B split (paper-specific to
-@cite{citko-gracanin-yuksek-2025}) lives in
+[citko-gracanin-yuksek-2025]) lives in
 `Studies/CitkoGracaninYuksek2025.lean`. -/
 
 /-- Cross-linguistic MWF datum. Records the parameter setting and an
@@ -202,33 +202,33 @@ def MWFLanguageDatum.AllowsMultipleSluicing (d : MWFLanguageDatum) : Prop :=
 instance (d : MWFLanguageDatum) : Decidable d.AllowsMultipleSluicing := by
   unfold MWFLanguageDatum.AllowsMultipleSluicing; infer_instance
 
-/-- Bulgarian: MWF language (@cite{rudin-1988} canonical case). -/
+/-- Bulgarian: MWF language ([rudin-1988] canonical case). -/
 def bulgarian : MWFLanguageDatum :=
   { language := "Bulgarian"
   , mwfParam := .fronts
   , exampleQuestion := "Koj kakvo e kupil?"
   , grammatical := true
-  , notes := "All wh-phrases front; @cite{rudin-1988} canonical MWF language" }
+  , notes := "All wh-phrases front; [rudin-1988] canonical MWF language" }
 
 /-- German: non-MWF; vP-only asterisk; multiple sluicing repairs.
-    @cite{citko-gracanin-yuksek-2025} ex 31a. -/
+    [citko-gracanin-yuksek-2025] ex 31a. -/
 def german : MWFLanguageDatum :=
   { language := "German"
   , mwfParam := .nonFrontsVPOnly
   , exampleQuestion := "*Wer was hat gesehen?"
   , grammatical := false
   , notes := "Non-MWF; bans multiple wh-fronting in questions; "
-           ++ "allows multiple sluicing (@cite{citko-gracanin-yuksek-2025} ex 31a)" }
+           ++ "allows multiple sluicing ([citko-gracanin-yuksek-2025] ex 31a)" }
 
 /-- Greek: non-MWF; vP-only asterisk; multiple sluicing repairs.
-    @cite{citko-gracanin-yuksek-2025} ex 31b. -/
+    [citko-gracanin-yuksek-2025] ex 31b. -/
 def greek : MWFLanguageDatum :=
   { language := "Greek"
   , mwfParam := .nonFrontsVPOnly
   , exampleQuestion := "*Pços ti efere?"
   , grammatical := false
   , notes := "Non-MWF; bans multiple wh-fronting in questions; "
-           ++ "allows multiple sluicing (@cite{citko-gracanin-yuksek-2025} ex 31b)" }
+           ++ "allows multiple sluicing ([citko-gracanin-yuksek-2025] ex 31b)" }
 
 /-- Cross-linguistic MWF table (textbook-consensus subset). -/
 def mwfLanguageTable : List MWFLanguageDatum := [bulgarian, german, greek]

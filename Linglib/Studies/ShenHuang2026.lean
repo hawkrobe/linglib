@@ -15,9 +15,9 @@ set_option autoImplicit false
 
 /-!
 # The Role of Phases and Specificity in Definite Islands
-@cite{shen-huang-2026}
+[shen-huang-2026]
 
-@cite{shen-huang-2026} use parallel acceptability judgment experiments on
+[shen-huang-2026] use parallel acceptability judgment experiments on
 English (wh-movement) and Mandarin Chinese (wh-in-situ) to show that
 definite island effects require BOTH the Phase Impenetrability Condition
 (PIC) and the Specificity Condition.
@@ -32,7 +32,7 @@ definite island effects require BOTH the Phase Impenetrability Condition
    comparable across VOC and non-VOC verbs.
 4. Chinese wh-indefinites are sensitive to specificity (Experiment 3):
    wh-indefinites are degraded inside demonstrative-marked DPs
-   (β = −0.48, p < 0.01), confirming @cite{li-1992}.
+   (β = −0.48, p < 0.01), confirming [li-1992].
 
 ## Proposal
 
@@ -41,11 +41,11 @@ The definite island effect in English involves TWO constraint violations:
 - Specificity Condition violation (the wh-trace is bound inside a specific DP)
 
 VOCs neutralize the PIC via N/D-incorporation (adapting
-@cite{davies-dubinsky-2003}), but cannot neutralize the Specificity
+[davies-dubinsky-2003]), but cannot neutralize the Specificity
 Condition. This explains the partial amelioration.
 
 In Chinese, wh-in-situ involves binding, not movement. The PIC is
-inapplicable (following @cite{fox-pesetsky-2005}: binding does not change
+inapplicable (following [fox-pesetsky-2005]: binding does not change
 linear order). Only the Specificity Condition applies, and it applies
 equally regardless of verb class — hence no VOC effect.
 -/
@@ -65,8 +65,8 @@ open Syntax.Binding.SpecificityCondition (ExternalOperator blocked)
 are established (movement vs binding) and how each interacts with the
 two sources of the definite island effect.
 
-These definitions encode @cite{shen-huang-2026}'s theoretical commitments,
-grounded in @cite{fox-pesetsky-2005}'s cyclic linearization (§12 below)
+These definitions encode [shen-huang-2026]'s theoretical commitments,
+grounded in [fox-pesetsky-2005]'s cyclic linearization (§12 below)
 and Phase Theory (§13 below). -/
 
 /-- How a wh-dependency is established in a given language/construction.
@@ -75,7 +75,7 @@ Overt wh-movement and wh-in-situ are subject to DIFFERENT locality
 constraints. Movement is constrained by both the PIC and the Specificity
 Condition. Binding (in-situ) is constrained only by the Specificity
 Condition — the PIC does not apply because no element crosses a phase
-boundary (@cite{fox-pesetsky-2005}: binding does not change linear order,
+boundary ([fox-pesetsky-2005]: binding does not change linear order,
 so it cannot create ordering contradictions at Spell-out). -/
 inductive WhDependencyType where
   /-- Overt movement to Spec,CP — subject to PIC + Specificity Condition.
@@ -100,7 +100,7 @@ def constraintsForDependencyType : WhDependencyType → List IslandSource
 
 /-- Whether VOCs (verbs of creation) can neutralize a given island source.
 
-VOCs neutralize phasehood via N/D-incorporation (@cite{davies-dubinsky-2003}):
+VOCs neutralize phasehood via N/D-incorporation ([davies-dubinsky-2003]):
 the created object's DP loses its phase status, removing the syntactic
 barrier. This is formally grounded in Phase Theory (§13): `DPPhaseStatus`
 with `incorporated = true` yields `isActivePhase = false`.
@@ -132,7 +132,7 @@ def WhLanguageType.toDependencyType : WhLanguageType → WhDependencyType
 -- §3. Divergent predictions (Table 1, p.11)
 -- ============================================================================
 
-/-! @cite{shen-huang-2026} Table 1 lays out the key motivation for the
+/-! [shen-huang-2026] Table 1 lays out the key motivation for the
 combined account: the DP phasehood/PIC approach and the Specificity Condition
 make DIFFERENT predictions on four empirical dimensions.
 
@@ -268,7 +268,7 @@ After N/D-incorporation, only the semantic source remains. -/
 
 /-- **Only the semantic source constrains binding.**
 The syntactic source (PIC) is inapplicable because binding does not
-cross phase boundaries (@cite{fox-pesetsky-2005}). VOC status is
+cross phase boundaries ([fox-pesetsky-2005]). VOC status is
 irrelevant — there is no syntactic source to neutralize. -/
 @[simp] theorem binding_sources (voc : Bool) :
     activeSources .binding voc = [.semantic] := by cases voc <;> rfl
@@ -295,7 +295,7 @@ theorem binding_voc_invariant (obj : Definiteness) (voc : Bool) :
 -- §6. Experimental data (Experiments 1 & 2)
 -- ============================================================================
 
-/-- Difference-in-difference (DD) scores from @cite{shen-huang-2026}
+/-- Difference-in-difference (DD) scores from [shen-huang-2026]
 Experiments 1 (English) and 2 (Chinese).
 
 DD = (definite_long − definite_short) − (indefinite_long − indefinite_short)
@@ -368,7 +368,7 @@ theorem violations_predict_dd_ordering :
 -- §7. Experiment 3: Wh-indefinites and specificity
 -- ============================================================================
 
-/-- Experiment 3 tests @cite{li-1992}'s observation that Chinese
+/-- Experiment 3 tests [li-1992]'s observation that Chinese
 wh-indefinites are degraded inside demonstrative-marked (specific) DPs.
 
 Four conditions in a 2×2 design:
@@ -579,7 +579,7 @@ theorem nonvoc_verbs_no_amelioration :
 
 Three English verbs — *hear*, *read*, *write* — can appear without objects
 and with *about*-PPs, creating a syntactic ambiguity (the PP could attach
-to the DP or the VP). @cite{shen-huang-2026} reran the analysis excluding
+to the DP or the VP). [shen-huang-2026] reran the analysis excluding
 these verbs. Results were qualitatively identical. -/
 
 /-- English non-VOC DD excluding hear/read/write: 0.53 (p.21). -/
@@ -601,7 +601,7 @@ might reflect parser overload rather than a genuine island effect: processing
 a long covert *wh*-dependency together with relative clauses and definiteness
 simultaneously might overwhelm the parser.
 
-@cite{shen-huang-2026} ran a 2×2 follow-up experiment (DP complexity ×
+[shen-huang-2026] ran a 2×2 follow-up experiment (DP complexity ×
 DP function) with generic/indefinite DPs to rule this out. If parser
 overload were the explanation, there should be an interaction between
 complexity and function. There was none.
@@ -632,7 +632,7 @@ theorem parser_overload_ruled_out :
 -- §13. Connection to cyclic linearization
 -- ============================================================================
 
-/-! @cite{shen-huang-2026} §4.2 use @cite{fox-pesetsky-2005}'s cyclic
+/-! [shen-huang-2026] §4.2 use [fox-pesetsky-2005]'s cyclic
 linearization theory to explain why binding is not subject to the PIC.
 (Note: the journal publication year is 2005; the paper cites the 2004
 working paper version.)
@@ -653,8 +653,8 @@ trivially consistent. -/
 /-- Binding adds no precedence statements: when no elements move
 (the terminal list is empty), `extendOrderingTable` returns the
 existing table unchanged. This is the formal content of "binding does
-not change linear order" (@cite{fox-pesetsky-2005}, as applied in
-@cite{shen-huang-2026} §4.2). -/
+not change linear order" ([fox-pesetsky-2005], as applied in
+[shen-huang-2026] §4.2). -/
 theorem binding_no_new_precedences (existing : OrderingTable) :
     extendOrderingTable existing [] = existing := by
   unfold extendOrderingTable allPrecs; simp
@@ -715,7 +715,7 @@ theorem incorporation_determines_syntactic_source (dHead : SyntacticObject)
   cases inc <;> simp [DPPhaseStatus.isActivePhase, h_phase]
 
 -- ============================================================================
--- §X. Cross-framework divergence from @cite{adger-2025}
+-- §X. Cross-framework divergence from [adger-2025]
 -- ============================================================================
 
 /-! Shen & Huang's PIC + Specificity composite source list and Adger's
@@ -739,7 +739,7 @@ syntactic source neutralization (PIC removed by N/D-incorporation),
 while Adger's account would have to attribute it to something other than
 the AL graph. -/
 
-/-- **Divergence from @cite{adger-2025}**: Shen & Huang argue
+/-- **Divergence from [adger-2025]**: Shen & Huang argue
     definite-nominal islands have two independent sources (syntactic PIC
     + semantic Specificity); Adger's AL collapses to a single syntactic
     source. -/

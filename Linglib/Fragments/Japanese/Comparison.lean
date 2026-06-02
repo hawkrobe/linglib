@@ -2,7 +2,7 @@ import Linglib.Features.Case
 import Linglib.Typology.Comparison
 import Linglib.Typology.Comparison
 /-!
-# Japanese Comparative Construction @cite{stassen-1985}
+# Japanese Comparative Construction [stassen-1985]
 
 Japanese uses a **separative** comparative construction: the standard NP is
 marked with the postposition *yori* ('from/than'), which has ablative
@@ -15,7 +15,7 @@ Example: *Taroo wa Hanako yori se ga takai*
 
 The marker *yori* is etymologically and synchronically a separative/ablative
 postposition, also used in spatial 'from' contexts. This exemplifies
-@cite{stassen-1985}'s localistic hypothesis: comparative markers are borrowed
+[stassen-1985]'s localistic hypothesis: comparative markers are borrowed
 from spatial case morphology.
 -/
 

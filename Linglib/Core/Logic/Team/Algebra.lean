@@ -5,7 +5,7 @@ import Mathlib.Data.Finset.Lattice.Union
 /-!
 # Team algebra — pure `Finset` combinatorics for team semantics
 
-@cite{anttila-2021} @cite{vaananen-2007} @cite{yang-vaananen-2017}
+[anttila-2021] [vaananen-2007] [yang-vaananen-2017]
 
 The combinatorial primitives underlying team-semantic logics — BSML
 (Aloni 2022), QBSML (Aloni & van Ormondt 2023), propositional team
@@ -39,7 +39,7 @@ a set of (world, assignment) pairs (QBSML), a set of assignments
 
 ## Family roadmap
 
-Team-semantic logics form a family along two axes (@cite{anttila-2025}):
+Team-semantic logics form a family along two axes ([anttila-2025]):
 a *signature* axis (propositional, modal, first-order) and a
 *closure-class* axis over team properties (`∅ ∈ ·`, `IsLowerSet`,
 `SupClosed`, `Set.OrdConnected`, with `DC = convex + empty`). Each logic

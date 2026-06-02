@@ -4,7 +4,7 @@ import Linglib.Syntax.DependencyGrammar.Formal.Discontinuity
 /-!
 # Islands as Constraints on Rising Catenae
 
-Formalizes @cite{osborne-2019}'s analysis of islands in dependency grammar:
+Formalizes [osborne-2019]'s analysis of islands in dependency grammar:
 islands are syntactic configurations that constrain which rising catenae can
 form, limiting the reach of discontinuities. Each island example below
 exhibits both (i) island material that is itself a catena and (ii) an
@@ -12,7 +12,7 @@ extraction that produces a risen catena with non-contiguous yield.
 
 ## Main declarations
 
-* `OsborneIslandType` — eight island categories from @cite{osborne-2019} Ch 9.
+* `OsborneIslandType` — eight island categories from [osborne-2019] Ch 9.
 * `islandLeftBranch`, `islandSubject`, `islandAdjunct`, `islandWhIsland`,
   `islandSpecifiedNP` — minimal DG example trees, one per island type with
   a worked extraction.
@@ -40,7 +40,7 @@ open DepGrammar Catena Discontinuity
 
 /-! ### Extended island taxonomy -/
 
-/-- Island types from @cite{osborne-2019}, Ch 9. Each variant names the
+/-- Island types from [osborne-2019], Ch 9. Each variant names the
 construction whose extraction Osborne's rising-catena constraints rule out. -/
 inductive OsborneIslandType where
   /-- §9.4: *"Whose do you like house?" -/
@@ -76,7 +76,7 @@ def islandLeftBranch : DepTree :=
     rootIdx := 1 }
 
 /-- DG tree for the subject island *"Which car did the driver of ignore the light?"
-(@cite{osborne-2019}, §9.7, ex. 48). -/
+([osborne-2019], §9.7, ex. 48). -/
 def islandSubject : DepTree :=
   { words := [ ⟨"which", .DET, { wh := true }⟩, Word.mk' "car" .NOUN
              , Word.mk' "did" .AUX, Word.mk' "the" .DET
@@ -90,7 +90,7 @@ def islandSubject : DepTree :=
     rootIdx := 2 }
 
 /-- DG tree for the adjunct island *"What do they argue before cleaning?"
-(@cite{osborne-2019}, §9.8, ex. 50b/59, simplified). -/
+([osborne-2019], §9.8, ex. 50b/59, simplified). -/
 def islandAdjunct : DepTree :=
   { words := [ ⟨"what", .PRON, { wh := true }⟩, Word.mk' "do" .AUX
              , Word.mk' "they" .PRON, Word.mk' "argue" .VERB
@@ -100,7 +100,7 @@ def islandAdjunct : DepTree :=
     rootIdx := 1 }
 
 /-- DG tree for the wh-island *"Which judge might they inquire surprised?"
-(@cite{osborne-2019}, §9.9, ex. 61b', simplified). -/
+([osborne-2019], §9.9, ex. 61b', simplified). -/
 def islandWhIsland : DepTree :=
   { words := [ ⟨"which", .DET, { wh := true }⟩, Word.mk' "judge" .NOUN
              , Word.mk' "might" .AUX, Word.mk' "they" .PRON
@@ -111,7 +111,7 @@ def islandWhIsland : DepTree :=
     rootIdx := 2 }
 
 /-- DG tree for the specified-NP island ??"Who did you find those pictures of?"
-(@cite{osborne-2019}, §9.6, ex. 36b). -/
+([osborne-2019], §9.6, ex. 36b). -/
 def islandSpecifiedNP : DepTree :=
   { words := [ ⟨"who", .PRON, { wh := true }⟩, Word.mk' "did" .AUX
              , Word.mk' "you" .PRON, Word.mk' "find" .VERB

@@ -7,14 +7,14 @@ import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.Multitier
 
 /-!
-# Belth (2026): A Learning-Based Account of Phonological Tiers @cite{belth-2026}
+# Belth (2026): A Learning-Based Account of Phonological Tiers [belth-2026]
 
 D2L (Distant-to-Local) is an iterative learner that constructs phonological
 tiers as a *byproduct* of trying to express alternations as adjacent
 dependencies. Given underlying-form / surface-form pairs, D2L starts by
 projecting all segments and tries to predict the alternating segment from
 its linear neighbours. When the resulting rule fails Yang's Tolerance
-Principle @cite{yang-2016}, D2L deletes the offending segments from the
+Principle [yang-2016], D2L deletes the offending segments from the
 tier and tries again, until either a tolerated rule is found or no further
 deletion helps.
 
@@ -27,14 +27,14 @@ when the alternation does not factor through a tier projection.
 The function-level subregular classification of D2L outputs lives in
 `Core/Computability/Subregular/Function/`: tier-mediated dissimilation
 rules of the form Belth converges to are Tier-Subsequential
-(@cite{aksenova-rawski-graf-heinz-2020}). For Latin -alis / -aris
-allomorphy (@cite{belth-2026} §5.3, rule 54), the rule D2L converges
+([aksenova-rawski-graf-heinz-2020]). For Latin -alis / -aris
+allomorphy ([belth-2026] §5.3, rule 54), the rule D2L converges
 to is
 
   `Disagree([?lat], {lat}) / [+cons] __ ∘ proj(·, [+cons])`,
 
 i.e. dissimilation of the underspecified affix-initial liquid `/L/` from
-the immediately preceding `[+cons]` tier segment. @cite{belth-2026}
+the immediately preceding `[+cons]` tier segment. [belth-2026]
 reports 0.97 accuracy on a 121-word Perseus dataset; the residual ~3%
 errors are *tolerated* by Yang's Tolerance Principle (4 ≤ 121/ln 121),
 so D2L converges to this rule rather than memorizing the lexicon.
@@ -53,12 +53,12 @@ This study formalizes:
   (`latinDissimRule_tolerated_on_examples`) showing the 1-of-6 exception
   count on this corpus is well under Yang's threshold;
 - a Subregular bridge (`consTier_apply_eq_tierProject`) grounding the
-  consonant tier in the @cite{lambert-2022}/@cite{heinz-rawal-tanner-2011}
+  consonant tier in the [lambert-2022]/[heinz-rawal-tanner-2011]
   TSL formalism;
 - an OCP-on-tier OT constraint (`latinOCP`, via
   `Phonology.Constraints.mkOCPOnTier`) and an OT tableau bridge: each
   empirical contrast becomes a winner-loser pair, `tableauERC` extracts
-  the Elementary Ranking Condition (@cite{merchant-riggle-2016}), and
+  the Elementary Ranking Condition ([merchant-riggle-2016]), and
   the OT analysis is shown to track the rule-based analysis exactly,
   including the same lunaris failure (the lunaris ERC is contradictory
   on the two-constraint inventory ⟨OCP, *r⟩, which is the OT-side
@@ -99,8 +99,8 @@ inductive LatSeg where
 
 namespace LatSeg
 
-/-- `[+cons]` per @cite{cser-2010}'s feature inventory: every non-vowel
-    is consonantal, *except* the orthographic ⟨v⟩, which @cite{belth-2026}
+/-- `[+cons]` per [cser-2010]'s feature inventory: every non-vowel
+    is consonantal, *except* the orthographic ⟨v⟩, which [belth-2026]
     treats as the glide `[w]` (`[−cons]`). This is the choice that lets
     `pluv-aLis` surface as `[r]` (the tier-preceding consonant of `pluv-`
     is `/l/`, not `/v/`). `L` is `[+cons]` — the underspecified `/L/`
@@ -113,7 +113,7 @@ def IsCons : LatSeg → Prop
 instance : DecidablePred IsCons := fun seg => by
   cases seg <;> unfold IsCons <;> infer_instance
 
-/-- `[+lat]` per @cite{cser-2010}: only `l` is lateral, and `L` is
+/-- `[+lat]` per [cser-2010]: only `l` is lateral, and `L` is
     *underspecified* for `[lat]`. Returning `Option Bool` rather than
     `Bool` here avoids the older "junk default" pattern where `L` had
     to fake some concrete value — `none` is the honest answer. -/
@@ -132,7 +132,7 @@ end LatSeg
 -- § 2: The Learned Rule
 -- ============================================================================
 
-/-- The rule D2L learns under the `[+cons]` tier (@cite{belth-2026}
+/-- The rule D2L learns under the `[+cons]` tier ([belth-2026]
     rule 54): `Disagree([?lat], {lat}) / [+cons] __ ∘ proj(·, [+cons])`. -/
 def latinDissimRule : TierRule LatSeg where
   tier := LatSeg.consTier
@@ -143,7 +143,7 @@ def latinDissimRule : TierRule LatSeg where
   default := none
 
 -- ============================================================================
--- § 3: Worked Examples (@cite{belth-2026} §5.3, ex. 5 / 53)
+-- § 3: Worked Examples ([belth-2026] §5.3, ex. 5 / 53)
 -- ============================================================================
 
 /-- Underlying form of *navalis* 'naval': /nav-aLis/. -/
@@ -231,7 +231,7 @@ theorem navalis_popularis_minimal_pair :
 /-- *lunaris*: the rule predicts `[l]` (the last `[+cons]` segment in
     `/lun-a/` is the nasal `/n/`, which is `[−lat]`, so Disagree
     outputs `[+lat]`). This is the wrong prediction — the surface form
-    is `[r]`. @cite{belth-2026} reports this as one of the ~3% of
+    is `[r]`. [belth-2026] reports this as one of the ~3% of
     errors the Tolerance Principle tolerates; D2L does not refine the
     tier further on this dataset. -/
 theorem lunaris_predicts_l_INCORRECT :
@@ -260,14 +260,14 @@ theorem latinDissimRule_misses_lunaris :
   decide
 
 -- ============================================================================
--- § 7: Tolerance Principle Certificate (@cite{yang-2016})
+-- § 7: Tolerance Principle Certificate ([yang-2016])
 -- ============================================================================
 
 /-! Yang's Tolerance Principle is the productivity gate inside D2L: a
 rule with `n` items in scope and `e` exceptions is *tolerated* iff
 `e ≤ n / ln n`. For our six worked examples with one exception
 (*lunaris*), `1 ≤ 6 / ln 6 ≈ 3.35` — the rule is comfortably under the
-threshold, matching @cite{belth-2026}'s 4-of-121 (~3%) result on the
+threshold, matching [belth-2026]'s 4-of-121 (~3%) result on the
 full Perseus corpus. -/
 
 open Yang2016 in
@@ -294,7 +294,7 @@ theorem latinDissimRule_tolerated_on_examples :
   exact tolerates_six_one
 
 -- ============================================================================
--- § 8: Subregular Bridge (@cite{lambert-2022}, @cite{heinz-rawal-tanner-2011})
+-- § 8: Subregular Bridge ([lambert-2022], [heinz-rawal-tanner-2011])
 -- ============================================================================
 
 /-- The consonant tier projection equals the canonical
@@ -309,14 +309,14 @@ theorem consTier_apply_eq_tierProject (xs : List LatSeg) :
 
 /-- The TSL_2 grammar witnessing the Latin allomorphy pattern as a
     tier-based subregular language: project to the `[+cons]` tier, then
-    forbid adjacent identical symbols. Lambert's @cite{lambert-2022}
+    forbid adjacent identical symbols. Lambert's [lambert-2022]
     TSL_k schema, instantiated with `IsCons` as the tier predicate and
     the OCP forbidden 2-factor `[some x, some x]`. -/
 def latinTSLGrammar : Core.Computability.Subregular.TSLGrammar 2 LatSeg :=
   Phonology.Subregular.TSLGrammar.ocp LatSeg.IsCons
 
 -- ============================================================================
--- § 9: OCP-on-Tier Bridge and OT Tableau (@cite{goldsmith-1976})
+-- § 9: OCP-on-Tier Bridge and OT Tableau ([goldsmith-1976])
 -- ============================================================================
 
 /-- Belth's tier-based dissimilation has a natural OCP twin: surface
@@ -521,7 +521,7 @@ theorem latin_OCP_dominates_starR (r : Ranking 2)
 -- § 10: D2L's Other Learned Rules (documentation only)
 -- ============================================================================
 
-/- ### Turkish (@cite{belth-2026} §5.1)
+/- ### Turkish ([belth-2026] §5.1)
 
 D2L converges to two rules on Turkish CHILDES + MorphoChallenge data:
 
@@ -536,15 +536,15 @@ D2L converges to two rules on Turkish CHILDES + MorphoChallenge data:
   `Phonology.Alternation.TierRule.id_tier_left_is_strict_local`.
 
 D2L's reported test accuracy on the two corpora exceeds 0.98, beating
-@cite{hayes-wilson-2008} generative phonotactic learners and LSTM
+[hayes-wilson-2008] generative phonotactic learners and LSTM
 baselines (Belth Table 5).
 
-### Finnish (@cite{belth-2026} §5.2)
+### Finnish ([belth-2026] §5.2)
 
 - (a) `Agree([?back], {back}) / [−cons] __ ∘ proj(·, [−cons] ∖ {i, e})`
   — backness harmony skipping the neutral vowels `{i, e}`. D2L learns
   that the neutral vowels must be deleted from the tier, matching the
-  descriptive analysis in @cite{ringen-heinamaki-1999}.
+  descriptive analysis in [ringen-heinamaki-1999].
 - (b) `Elsewhere [−back]` — the default-value rule for stems containing
   only neutral vowels. In our schema, this corresponds to
   `default := some false` on the corresponding `TierRule`.
@@ -575,7 +575,7 @@ theorem latinTSLGrammar_lang_isTSL2 :
 /-- **BTSL_2 corollary** (via `IsTierStrictlyLocal.toIsBTSL` in
 `Core.Computability.Subregular.Multitier`): Latin liquid dissimilation
 is in the multitier closure of strictly local languages, hence consumed
-by the @cite{lambert-2026} BTC framework. -/
+by the [lambert-2026] BTC framework. -/
 theorem latinTSLGrammar_lang_isBTSL2 :
     Core.Computability.Subregular.IsBTSL 2 latinTSLGrammar.lang :=
   latinTSLGrammar_lang_isTSL2.toIsBTSL

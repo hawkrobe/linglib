@@ -11,8 +11,8 @@ set_option autoImplicit false
 
 /-!
 # Associativity of the Grossman-Larson product via Oudom-Guin 2004 Lemma 2.10
-@cite{oudom-guin-2008}
-@cite{foissy-typed-decorated-rooted-trees-2018}
+[oudom-guin-2008]
+[foissy-typed-decorated-rooted-trees-2018]
 
 Closes `GrossmanLarson.mul_assoc_basis` (and thus `mul_assoc`) via the
 direct algebraic argument of Oudom-Guin (arXiv:math/0404457) §2,

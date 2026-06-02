@@ -7,9 +7,9 @@ import Mathlib.Data.Set.Finite.Powerset
 
 /-!
 # Exhaustivity Operators: `exhMW` and `exhIE`
-@cite{groenendijk-stokhof-1984} @cite{spector-2016} @cite{wang-2025} @cite{chierchia-2013}
+[groenendijk-stokhof-1984] [spector-2016] [wang-2025] [chierchia-2013]
 
-Formalization of @cite{spector-2016} "Comparing exhaustivity operators"
+Formalization of [spector-2016] "Comparing exhaustivity operators"
 (Semantics & Pragmatics 9, Article 11: 1–33).
 
 ## Paper structure
@@ -296,7 +296,7 @@ def closedUnderConj : Prop :=
 /-
 ## Spector's Approach to MC-set Existence
 
-Following @cite{spector-2016} Section 5.3, we do not use Zorn's lemma.
+Following [spector-2016] Section 5.3, we do not use Zorn's lemma.
 Instead, MC-set existence follows from minimal world existence via Lemma 1:
 
   u is minimal ⟺ X(u) is an MC-set

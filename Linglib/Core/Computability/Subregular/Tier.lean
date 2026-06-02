@@ -12,7 +12,7 @@ import Linglib.Core.StringHom
 A **tier-based strictly `k`-local** (TSL_k) language is one whose
 membership is determined by SL_k membership of its **projection** onto a
 *tier* — a designated decidable subset of the alphabet
-@cite{heinz-rawal-tanner-2011} @cite{lambert-2022}. Symbols outside the
+[heinz-rawal-tanner-2011] [lambert-2022]. Symbols outside the
 tier are erased before the SL test; this captures long-distance
 phonological dependencies (consonant harmony, vowel harmony with
 transparent vowels) where tier-adjacent substrings are constrained but
@@ -27,7 +27,7 @@ an SL grammar — projection is the identity. This gives the inclusion
 
 ## Note on terminology
 
-The `tier` here is the *segmental* tier in the sense of @cite{lambert-2022}
+The `tier` here is the *segmental* tier in the sense of [lambert-2022]
 Ch 3 (language-theoretic side, §3.2) — a subset of the alphabet, not an
 autosegmental melody floating above it. The TSL definition specializes to
 the case where projection is `List.filter` over a tier predicate
@@ -69,7 +69,7 @@ lemma tierProject_eq_apply_byClass (T : α → Prop) [DecidablePred T]
 
 /-- `tierProject` reduces to `List.filter` via `Tier.apply_byClass`. This
 is the canonical bridge to Lambert's filter-based formulation
-@cite{lambert-2022}. -/
+[lambert-2022]. -/
 lemma tierProject_eq_filter (T : α → Prop) [DecidablePred T] (xs : List α) :
     tierProject T xs = xs.filter (fun x => decide (T x)) :=
   Core.Tier.apply_byClass _ _

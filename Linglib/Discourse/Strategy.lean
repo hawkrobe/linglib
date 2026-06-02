@@ -3,7 +3,7 @@ import Linglib.Semantics.Questions.Relevance
 
 /-!
 # Strategy of Inquiry: Rose-Tree Decomposition of a QUD
-@cite{roberts-2012}
+[roberts-2012]
 
 A `Strategy W` is a rose-tree plan to answer a question by pursuing
 subquestions whose collective answers resolve the parent. The

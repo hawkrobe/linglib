@@ -2,13 +2,13 @@ import Linglib.Core.Scales.EpistemicScale.Defs
 import Mathlib.Data.Set.Card
 
 /-!
-# Epistemic Entailment Patterns (@cite{holliday-icard-2013}, Figure 1)
+# Epistemic Entailment Patterns ([holliday-icard-2013], Figure 1)
 
-@cite{holliday-icard-2013} @cite{harrison-trainor-holliday-icard-2018} @cite{yalcin-2010}
+[holliday-icard-2013] [harrison-trainor-holliday-icard-2018] [yalcin-2010]
 
-@cite{holliday-icard-2013} Figure 1 lists 10 validity patterns (V1–V7, V11–V13)
+[holliday-icard-2013] Figure 1 lists 10 validity patterns (V1–V7, V11–V13)
 and 3 invalidity patterns (I1–I3) for epistemic comparatives. (V8–V10 are from
-@cite{yalcin-2010} and omitted from H&I's condensed figure.) This file defines
+[yalcin-2010] and omitted from H&I's condensed figure.) This file defines
 each pattern as a `Prop`-valued predicate on a comparison relation `ge`, then
 proves which patterns hold (or fail) in each of three semantic classes:
 
@@ -84,7 +84,7 @@ def patternV5 : Prop :=
 
 /-- V6: □A → △A (necessarily A implies probably A).
     □A is ¬◇¬A = ge ∅ Aᶜ in the set-theoretic framework
-    (@cite{holliday-icard-2013}, Figure 1). -/
+    ([holliday-icard-2013], Figure 1). -/
 def patternV6 : Prop :=
   ∀ A : Set W, ge ∅ Aᶜ → probably ge A
 
@@ -94,7 +94,7 @@ def patternV7 : Prop :=
 
 /-- V11: B ≿ A → △A → △B (if B is at least as likely as a probable set,
     then B is probable). Uses the comparative ≿, not set inclusion ⊆.
-    Invalid for l-lifting (Fact 1 in @cite{holliday-icard-2013}). -/
+    Invalid for l-lifting (Fact 1 in [holliday-icard-2013]). -/
 def patternV11 : Prop :=
   ∀ A B : Set W, ge B A → probably ge A → probably ge B
 
@@ -570,7 +570,7 @@ theorem halpern_V7 {W : Type*} (ge_w : W → W → Prop) :
     exact hAnot (fun b hb => hb.elim)
 
 /-- V11 is **invalid** for world-ordering semantics (Fact 1 in
-    @cite{holliday-icard-2013}). Counterexample: W = Fin 2, ge_w total.
+    [holliday-icard-2013]). Counterexample: W = Fin 2, ge_w total.
     A = W (probably, since W ≿ ∅ and ¬(∅ ≿ W)). B = {0} (B ≿ A since
     ge_w is total, but Bᶜ = {1} ≿ B since ge_w is total — not strictly). -/
 theorem halpern_not_V11 :
@@ -594,7 +594,7 @@ theorem halpern_not_V11 :
   exact ⟨1, fun h1 => absurd (Set.mem_singleton_iff.mp h1) (by omega), trivial⟩
 
 /-- V12 is valid for world-ordering semantics with a preorder (Fact 1 in
-    @cite{holliday-icard-2013}). Requires transitivity for the case where
+    [holliday-icard-2013]). Requires transitivity for the case where
     y ∈ Bᶜ ∩ Aᶜ: chain through A via ge A Aᶜ, then through B via ge B A. -/
 theorem halpern_V12 {W : Type*} (ge_w : W → W → Prop)
     (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
@@ -651,11 +651,11 @@ theorem halpern_I3 {W : Type*} (ge_w : W → W → Prop) (hRefl : ∀ w, ge_w w 
 end WorldOrdering
 
 -- ══════════════════════════════════════════════════════════════════
--- § 6. m-Lifting (@cite{holliday-icard-2013}, Fact 5)
+-- § 6. m-Lifting ([holliday-icard-2013], Fact 5)
 -- ══════════════════════════════════════════════════════════════════
 
 /-! The m-lifting validates all 13 validity patterns V1–V13 and invalidates
-    I1–I3 (Fact 5 in @cite{holliday-icard-2013}). This avoids the
+    I1–I3 (Fact 5 in [holliday-icard-2013]). This avoids the
     "disjunction problem" that plagues the l-lifting.
 
     V1, V3–V7 follow from the l-lifting proofs (since m-lifting implies
@@ -770,9 +770,9 @@ theorem mLift_V7 {W : Type*} (ge_w : W → W → Prop) :
     exact hAnot ⟨id, fun b hb => hb.elim, fun _ _ h1 => h1.elim⟩
 
 -- V11–V13 require [Finite W] and reflexivity (and V11/V12 additionally
--- need transitivity). The paper (@cite{holliday-icard-2013}) assumes a
+-- need transitivity). The paper ([holliday-icard-2013]) assumes a
 -- finite poset (W, ≥). The proofs of V11 and V12 follow the companion
--- paper @cite{harrison-trainor-holliday-icard-2018} (Definition 3.1,
+-- paper [harrison-trainor-holliday-icard-2018] (Definition 3.1,
 -- Lemma 3.7): the injection extension ≥ⁱ (= mLift) is a GFC order,
 -- which implies V12 directly. The key lemma is *complement reversal*:
 -- mLift ge_w B A → mLift ge_w Aᶜ Bᶜ (via an f-chain construction on
@@ -897,7 +897,7 @@ private theorem mLift_chain_dominance {W : Type*} {A : Set W}
     Maps p ∈ A ∩ Bᶜ to f^[k](p) (first exit from A) and
     q ∈ Aᶜ ∩ Bᶜ to q (reflexivity). Injectivity of all four
     cross-cases follows from `chain_origin_eq`
-    (@cite{harrison-trainor-holliday-icard-2018}, Lemma 3.7). -/
+    ([harrison-trainor-holliday-icard-2018], Lemma 3.7). -/
 private theorem mLift_complement_reversal {W : Type*} [Finite W]
     {ge_w : W → W → Prop}
     (hRefl : ∀ w, ge_w w w) (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w)
@@ -937,7 +937,7 @@ private theorem mLift_complement_reversal {W : Type*} [Finite W]
 -- ── V12 and V11 ──
 
 /-- V12 is valid for the m-lifting on finite posets (Fact 5 in
-    @cite{holliday-icard-2013}; proof via @cite{harrison-trainor-holliday-icard-2018},
+    [holliday-icard-2013]; proof via [harrison-trainor-holliday-icard-2018],
     Lemma 3.7). The proof decomposes into complement reversal
     (mLift ge_w B A → mLift ge_w Aᶜ Bᶜ) and two applications of
     mLift transitivity: B ≿ A ≿ Aᶜ ≿ Bᶜ. -/
@@ -950,7 +950,7 @@ theorem mLift_V12 {W : Type*} [Finite W] (ge_w : W → W → Prop)
   exact mLift_trans hTrans hBA (mLift_trans hTrans hAAc hAcBc)
 
 /-- V11 is valid for the m-lifting on finite posets (Fact 5 in
-    @cite{holliday-icard-2013}). The ge half follows from V12; the strict
+    [holliday-icard-2013]). The ge half follows from V12; the strict
     half uses complement reversal + transitivity to derive a contradiction
     with the "probably A" hypothesis. -/
 theorem mLift_V11 {W : Type*} [Finite W] (ge_w : W → W → Prop)
@@ -968,7 +968,7 @@ theorem mLift_V11 {W : Type*} [Finite W] (ge_w : W → W → Prop)
     exact mLift_trans hTrans hAcBcc hBA
 
 /-- V13 is valid for the m-lifting on finite posets (Fact 5 in
-    @cite{holliday-icard-2013}). The ge half uses id on B (reflexivity);
+    [holliday-icard-2013]). The ge half uses id on B (reflexivity);
     the strict half uses pigeonhole (|A∪B| > |B| since A\B nonempty,
     finiteness). -/
 theorem mLift_V13 {W : Type*} [Finite W] (ge_w : W → W → Prop)
@@ -996,7 +996,7 @@ theorem mLift_V13 {W : Type*} [Finite W] (ge_w : W → W → Prop)
       Set.ncard_lt_ncard hsub (Set.toFinite _)
     omega
 
-/-- I1 is **invalid** for the m-lifting (Fact 5 in @cite{holliday-icard-2013}).
+/-- I1 is **invalid** for the m-lifting (Fact 5 in [holliday-icard-2013]).
     Counterexample: W = Fin 2, ge_w total. A = {0}, B = {0}, C = {1}.
     mLift A B and mLift A C both hold (singleton ↪ singleton), but
     ¬mLift A (B ∪ C) since |A| = 1 < 2 = |B ∪ C| (no injection). -/
@@ -1027,7 +1027,7 @@ theorem mLift_not_I1 :
   have := hinj 0 1 (Set.mem_univ _) (Set.mem_univ _) (by rw [hf0, hf1])
   exact absurd this (by omega)
 
-/-- I2 is **invalid** for the m-lifting (Fact 5 in @cite{holliday-icard-2013}).
+/-- I2 is **invalid** for the m-lifting (Fact 5 in [holliday-icard-2013]).
     Counterexample: W = Fin 3, ge_w total. A = {0,1}, B = univ.
     mLift A Aᶜ holds (|Aᶜ| = 1 ≤ 2 = |A|), but ¬mLift A univ
     since |A| = 2 < 3 = |univ|. -/
@@ -1062,7 +1062,7 @@ theorem mLift_not_I2 :
     | (have := hinj 0 2 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
     | (have := hinj 1 2 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
 
-/-- I3 is **invalid** for the m-lifting (Fact 5 in @cite{holliday-icard-2013}).
+/-- I3 is **invalid** for the m-lifting (Fact 5 in [holliday-icard-2013]).
     Same counterexample as I2: W = Fin 3, ge_w total, A = {0,1}, B = univ.
     A ≿ Aᶜ (injection {2} → {0,1}) and ¬(Aᶜ ≿ A) (no injection {0,1} → {2}),
     so probably A. But ¬(A ≿ univ) by cardinality. -/
@@ -1125,7 +1125,7 @@ theorem mLift_not_total :
     omega
 
 /-- The m-lifting of a reflexive, transitive world ordering on finite W
-    is a GFC preorder (@cite{harrison-trainor-holliday-icard-2018}, Theorem 3.2).
+    is a GFC preorder ([harrison-trainor-holliday-icard-2018], Theorem 3.2).
 
     This is the key structural result connecting world-ordering semantics
     to the axiomatic hierarchy: the injection extension ≿ⁱ (= mLift)

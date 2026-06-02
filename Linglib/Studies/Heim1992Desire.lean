@@ -3,17 +3,17 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# @cite{heim-1992} — Comparative-Belief Desire Semantics
+# [heim-1992] — Comparative-Belief Desire Semantics
 
 ⟦α wants φ⟧^w is true iff for every doxastic alternative `w' ∈ Dox_α(w)`,
 every closest `φ`-world to `w'` is more desirable to α than every closest
-`¬φ`-world to `w'`. The semantics builds on @cite{lewis-1973} /
-@cite{stalnaker-1968} similarity orderings, departs from a Kratzer
-@cite{kratzer-1981}-style ordering source, and treats desirability as a
+`¬φ`-world to `w'`. The semantics builds on [lewis-1973] /
+[stalnaker-1968] similarity orderings, departs from a Kratzer
+[kratzer-1981]-style ordering source, and treats desirability as a
 primitive comparative relation parameterized by agent and evaluation
 world.
 
-This study file replicates the desire-semantics half of @cite{heim-1992}
+This study file replicates the desire-semantics half of [heim-1992]
 (the presupposition-projection half is at
 `Studies/Heim1992.lean`). Substrate is
 `Semantics/Attitudes/Desire.lean` (`wantHeim`,
@@ -57,7 +57,7 @@ A simple 4-world model with two binary dimensions:
 | w2    | F               | T          |
 | w3    | F               | F          |
 
-Models the Stalnaker @cite{stalnaker-1984}-style example "I want to
+Models the Stalnaker [stalnaker-1984]-style example "I want to
 get well [recovered] but I don't want to have been sick" — the agent
 prefers `r ∧ ¬s` worlds (recovered without ever being sick) but believes
 they were sick (so all believed worlds have `s`). The (40) amendment
@@ -84,7 +84,7 @@ instance : DecidablePred sick :=
 The "naive Hintikka" rule for `wants` (`α wants φ` iff every doxastic
 alternative is a φ-world) is rejected informally by Heim (it is *not*
 her numbered (27); (27) is the CCP rule). Heim cites
-@cite{asher-1987}'s example at (32), p. 194 ("Nicholas wants a free
+[asher-1987]'s example at (32), p. 194 ("Nicholas wants a free
 trip on the Concorde"): the agent wants φ but does not believe φ, so
 the naive rule wrongly predicts the ascription false.
 

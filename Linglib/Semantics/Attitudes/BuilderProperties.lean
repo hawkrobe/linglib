@@ -1,6 +1,6 @@
 /-
 # Builder Properties: Derived Properties from Fragment Lexical Features
-@cite{elliott-etal-2017} @cite{villalta-2008}
+[elliott-etal-2017] [villalta-2008]
 
 This module connects Fragment lexical entries to Theory-derived properties.
 It provides the derivation functions that compute theoretical properties
@@ -136,7 +136,7 @@ def VerbEntry.isAntiRogative (v : VerbEntry) : Bool :=
 /--
 Can this verb canonically embed a question?
 
-Based on @cite{qing-uegaki-2025} classification:
+Based on [qing-uegaki-2025] classification:
 - Class 1 (non-C-distributive): Yes
 - Class 2 (C-dist + negative): Yes
 - Class 3 (C-dist + positive): No (anti-rogative)

@@ -2,14 +2,14 @@ import Linglib.Syntax.HPSG.Basic
 
 /-!
 # Lexical Rules in HPSG
-@cite{pollard-sag-1987} @cite{pollard-sag-1994}
+[pollard-sag-1987] [pollard-sag-1994]
 
 Formalization of valence-changing lexical rules in HPSG.
 
-@cite{mueller-2013} argues that valence-changing operations (passive,
+[mueller-2013] argues that valence-changing operations (passive,
 resultative, causative) are best analyzed as *lexical rules* — operations
 that transform a sign's valence (subj/comps lists) while preserving its
-head features. This is the HPSG tradition from @cite{pollard-sag-1987}.
+head features. This is the HPSG tradition from [pollard-sag-1987].
 
 ## Key types
 
@@ -141,7 +141,7 @@ theorem same_rule_same_cat (rule : LexicalRule) (s1 s2 : Sign)
     | word w2 ss2 => simp [applyLexRule, Sign.synsem] at h ⊢; exact h
     | phrase ch2 ss2 => simp [applyLexRule, Sign.synsem] at h ⊢; exact h
 
-/-! ## Iterable Lexical Rules (@cite{mueller-2013} §1)
+/-! ## Iterable Lexical Rules ([mueller-2013] §1)
 
 Müller argues that valence-changing operations must be iterable: Turkish
 and Lithuanian allow double passivization (personal passive of an

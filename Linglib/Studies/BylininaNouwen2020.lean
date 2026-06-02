@@ -9,11 +9,11 @@ import Mathlib.Data.Rat.Defs
 set_option Elab.async false
 
 /-!
-# @cite{bylinina-nouwen-2020}: Lower-Bound Bare Numerals + RSA Derive Exact Readings
-@cite{bylinina-nouwen-2020} @cite{horn-1972}
+# [bylinina-nouwen-2020]: Lower-Bound Bare Numerals + RSA Derive Exact Readings
+[bylinina-nouwen-2020] [horn-1972]
 
-@cite{bylinina-nouwen-2020} survey the two camps on bare-numeral semantics:
-the lower-bound view (`bare n` = `≥n`; @cite{horn-1972}) and the exact view
+[bylinina-nouwen-2020] survey the two camps on bare-numeral semantics:
+the lower-bound view (`bare n` = `≥n`; [horn-1972]) and the exact view
 (`bare n` = `=n`). Under the lower-bound camp, the exact reading must arise
 *pragmatically*. This study formalises that derivation: a standard
 L0→S1→L1 RSA cascade with bare numerals over a 0–3 cardinality domain
@@ -69,7 +69,7 @@ theorem lbNuttMeaning_eq_atLeastMeaning (u : NUtt) (w : NCard) :
 open RSA Real in
 /-- Standard belief-based RSA over bare numerals with `≥` semantics:
     `S1` rates worlds by `L0^α` (here α = 1). The cascade is what
-    @cite{bylinina-nouwen-2020} call "scalar implicature in the
+    [bylinina-nouwen-2020] call "scalar implicature in the
     lower-bound camp". -/
 noncomputable def lbNumeralCfg : RSAConfig NUtt NCard where
   Latent := Unit

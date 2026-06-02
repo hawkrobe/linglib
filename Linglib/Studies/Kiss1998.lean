@@ -45,7 +45,7 @@ refuted.
 
 ## References
 
-* @cite{kiss-1998}.
+* [kiss-1998].
 -/
 
 namespace Kiss1998

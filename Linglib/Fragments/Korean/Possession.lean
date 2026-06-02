@@ -2,7 +2,7 @@ import Linglib.Typology.Possession
 
 /-!
 # Korean possession profile
-@cite{stassen-2009} @cite{nichols-1986} @cite{heine-1997} 
+[stassen-2009] [nichols-1986] [heine-1997] 
 
 PossessionProfile bundle for Korean (ISO `kor`), per the
 project's "per-language data flows through Fragments" rule. Substrate

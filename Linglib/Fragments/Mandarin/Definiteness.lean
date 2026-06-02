@@ -2,12 +2,12 @@ import Linglib.Core.Nominal.Determiner
 
 /-!
 # Mandarin Definiteness Fragment
-@cite{jenks-2018} @cite{moroney-2021}
+[jenks-2018] [moroney-2021]
 
 Mandarin has no overt indefinite or unique-definite article. Anaphoric
 definiteness is carried by demonstratives (*nà* 'that', *zhè* 'this');
 bare nouns serve unique definites. Possession is via *de*. Under the
-@cite{moroney-2021} typology this is the `.markedAnaphoric` strategy:
+[moroney-2021] typology this is the `.markedAnaphoric` strategy:
 only the anaphoric type has a dedicated form.
 -/
 

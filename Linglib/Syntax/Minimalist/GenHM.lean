@@ -4,9 +4,9 @@ import Linglib.Syntax.Minimalist.Amalgamation
 
 /-!
 # Generalized Head Movement (GenHM)
-@cite{arregi-pietraszko-2021}
+[arregi-pietraszko-2021]
 
-Formalization of Generalized Head Movement following @cite{arregi-pietraszko-2021}.
+Formalization of Generalized Head Movement following [arregi-pietraszko-2021].
 
 ## Central Claim
 
@@ -119,7 +119,7 @@ theorem genHM_is_agree (g : GenHMRelation) :
 
 /-- Identification of the [+P] specifier that triggers Split-by-Intervention.
 
-    Per @cite{arregi-pietraszko-2021} footnote 30, A&P unify the three
+    Per [arregi-pietraszko-2021] footnote 30, A&P unify the three
     intervention contexts under a single specifier-intervention rule.
     This field is therefore diagnostic only — A&P's chain-splitting rule
     itself does not branch on which specifier intervened. -/
@@ -137,7 +137,7 @@ inductive InterveningSpecifier where
 
 /-- The reason a GenHM chain is split, preventing M-value lowering.
 
-    @cite{arregi-pietraszko-2021} recognize exactly two chain-splitting
+    [arregi-pietraszko-2021] recognize exactly two chain-splitting
     mechanisms:
 
     1. **Split-by-Intervention**: a [+P] specifier intervenes between the

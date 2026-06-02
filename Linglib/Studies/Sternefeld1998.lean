@@ -5,11 +5,11 @@ import Linglib.Studies.Beck2001
 
 /-!
 # Sternefeld (1998): Reciprocity and Cumulative Predication
-@cite{sternefeld-1998}
+[sternefeld-1998]
 
 *Natural Language Semantics* 6(3): 303–337. doi:10.1023/A:1008352502939.
 
-@cite{sternefeld-1998} extends @cite{langendoen-1978}'s
+[sternefeld-1998] extends [langendoen-1978]'s
 reciprocity-as-cumulativity insight into a fully compositional theory.
 Distinct readings of plural and reciprocal sentences arise from
 different placements of the pluralization operators (`*` and `**`) at
@@ -24,21 +24,21 @@ argument — NOT a separate asserted clause as some readings of the
 literature suggest.
 
 In bivalent semantics this is structurally identical to
-@cite{beck-2001}'s eq 120 (`**(λxλy.[R(x,y) ∧ @(x ≠ y)])(A,A)`). The
+[beck-2001]'s eq 120 (`**(λxλy.[R(x,y) ∧ @(x ≠ y)])(A,A)`). The
 two analyses agree on the bivalent predicate — `Plurality.Reciprocal.WeakReciprocity`
 — and diverge only on:
 
 1. **Status of distinctness**: Sternefeld asserts; Beck presupposes
    (`@`). Visible only in trivalent semantics (truth-value gap when R
    holds with x = y).
-2. **Status of SR**: @cite{sternefeld-1998} §3.5 argues SR is
+2. **Status of SR**: [sternefeld-1998] §3.5 argues SR is
    *expressible* in his framework but defends in §3.6 (the
    Geach-Kaplan sentence) that SR is "probably a special case of WR"
-   plus *only*-focus on the non-identity statement. @cite{beck-2001}
+   plus *only*-focus on the non-identity statement. [beck-2001]
    takes SR as a basic reading.
-3. **`**` operator shape**: @cite{sternefeld-1998} eq 5 uses
-   @cite{krifka-1989}'s closure form (smallest relation closed under
-   `⟨a,b⟩+⟨c,d⟩ → ⟨a∪c, b∪d⟩`); @cite{beck-sauerland-2000} use
+3. **`**` operator shape**: [sternefeld-1998] eq 5 uses
+   [krifka-1989]'s closure form (smallest relation closed under
+   `⟨a,b⟩+⟨c,d⟩ → ⟨a∪c, b∪d⟩`); [beck-sauerland-2000] use
    bidirectional coverage (`(∀a∈x. ∃b∈y. R(a,b)) ∧ (∀b∈y. ∃a∈x. R(a,b))`).
    Equivalent on Quine-innovation domains where individuals are
    identified with singletons.
@@ -47,7 +47,7 @@ two analyses agree on the bivalent predicate — `Plurality.Reciprocal.WeakRecip
 
 | Paper §  | Topic                                                    | Lean encoding              |
 |----------|----------------------------------------------------------|----------------------------|
-| §2 eq 5  | `**` operator (@cite{krifka-1989} closure form)          | `sternefeldStarStar` (inductive) |
+| §2 eq 5  | `**` operator ([krifka-1989] closure form)          | `sternefeldStarStar` (inductive) |
 | §2.4 eq 12 | WD analysis (Scha 1981 cumulative)                     | (deferred)                 |
 | §3 eq 26b | WR analysis (distinctness inside relation)              | `sternefeldWR`             |
 | §3 eq 25b | Langendoen-style WR (existence-witnessed)               | `langendoenWR`             |
@@ -70,16 +70,16 @@ interchangeable; not in this study file.
 - §3.2–3.3 dependent plurals + Heim's inner/outer indices — would
   require inner/outer-index distinction substrate.
 - §3.4 LF-movement crossover constraint — syntax, not semantics.
-- §3.6 Geach-Kaplan sentence with @cite{rooth-1985} focus — would
+- §3.6 Geach-Kaplan sentence with [rooth-1985] focus — would
   require Focus substrate; the SR-derivation step is recorded in
   prose but not as a Lean theorem.
-- §4.1–4.2 @cite{schwarzschild-1996} covers as pragmatic supplement —
+- §4.1–4.2 [schwarzschild-1996] covers as pragmatic supplement —
   substrate exists in `Plurality.Cover`; the closure-of-`**` ↔
   Schwarzschild-PPart(PCov) reduction is a separate effort.
 
-## Connection to @cite{beck-2001} and @cite{haug-dalrymple-2020}
+## Connection to [beck-2001] and [haug-dalrymple-2020]
 
-@cite{beck-2001} cites Sternefeld 1998 as the immediate predecessor
+[beck-2001] cites Sternefeld 1998 as the immediate predecessor
 and at one point characterises Sternefeld's analysis as bare-`**(R)(A,A)`
 (i.e., without distinctness in the relation). Reading Sternefeld 1998
 directly: bare `**(R)(A,A)` does NOT appear in his analysis; his
@@ -87,7 +87,7 @@ actual eq 26b *has* distinctness inside the relation. The
 Beck-vs-Sternefeld difference is therefore presupposition-vs-assertion
 of the distinctness clause, not structural placement.
 
-@cite{haug-dalrymple-2020} consumes the same `**` machinery via the
+[haug-dalrymple-2020] consumes the same `**` machinery via the
 PPCDRT bridge `groupIdentityCond_iff_cumulative_eq`. The three-paper
 convergence on `**`-cumulation as the heart of reciprocity is the
 linglib interconnection-density payoff: Sternefeld's WR ↔ Beck's
@@ -103,15 +103,15 @@ open Semantics.Plurality.Reciprocal
 variable {α : Type*} [DecidableEq α]
 
 -- ════════════════════════════════════════════════════════════════
--- § 1: Sternefeld's `**` Operator (paper eq 5, @cite{krifka-1989})
+-- § 1: Sternefeld's `**` Operator (paper eq 5, [krifka-1989])
 -- ════════════════════════════════════════════════════════════════
 
-/-- **Sternefeld eq 5 / @cite{krifka-1989}**: the smallest relation
+/-- **Sternefeld eq 5 / [krifka-1989]**: the smallest relation
     `Q` over `Finset α × Finset α` such that `R ⊆ Q` (lifted to
     singletons) and `Q` is closed under `⟨a,b⟩ + ⟨c,d⟩ → ⟨a∪c, b∪d⟩`.
 
     On Quine-innovation domains, this is equivalent to
-    @cite{beck-sauerland-2000}'s bidirectional-coverage `Cumulative`
+    [beck-sauerland-2000]'s bidirectional-coverage `Cumulative`
     — see `sternefeldStarStar_implies_cumulative` for the easy
     direction. The reverse direction holds on nonempty pluralities
     but the inductive proof is non-trivial; substrate-deferred. -/
@@ -121,7 +121,7 @@ inductive sternefeldStarStar (R : α → α → Prop) : Finset α → Finset α 
       (hab : sternefeldStarStar R a b) (hcd : sternefeldStarStar R c d) :
       sternefeldStarStar R (a ∪ c) (b ∪ d)
 
-/-- **Sternefeld closure form `**` entails @cite{beck-sauerland-2000}
+/-- **Sternefeld closure form `**` entails [beck-sauerland-2000]
     bidirectional coverage** (the easy direction of the equivalence
     `sternefeldStarStar R x y ↔ Cumulative R x y`).
 
@@ -175,7 +175,7 @@ theorem sternefeldStarStar_implies_cumulative
     INSIDE the `**`'s relation argument, NOT a separate asserted
     clause.
 
-    Encoding choice: we use @cite{beck-sauerland-2000}'s bidirectional
+    Encoding choice: we use [beck-sauerland-2000]'s bidirectional
     coverage `Cumulative` for `**` (see
     `sternefeldStarStar_implies_cumulative` for the connection to
     Sternefeld's closure-form `**`).
@@ -184,7 +184,7 @@ theorem sternefeldStarStar_implies_cumulative
     `Plurality.Reciprocal.WeakReciprocity` (and to Beck eq 120). The
     two analyses diverge only on the trivalent assertion-vs-
     presupposition status of `x ≠ y` (Sternefeld asserts;
-    @cite{beck-2001} eq 120 presupposes via `@`). -/
+    [beck-2001] eq 120 presupposes via `@`). -/
 def sternefeldWR (A : Finset α) (R : α → α → Prop) : Prop :=
   Cumulative (fun x y => R x y ∧ x ≠ y) A A
 
@@ -206,10 +206,10 @@ theorem sternefeldWR_iff_WeakReciprocity
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3: Langendoen-style WR (paper §1, eq 25b — equivalent on
--- nonempty A but historically attributed to @cite{langendoen-1978})
+-- nonempty A but historically attributed to [langendoen-1978])
 -- ════════════════════════════════════════════════════════════════
 
-/-- **@cite{langendoen-1978} WR** (paper eq 25b): for each `x ∈ A`,
+/-- **[langendoen-1978] WR** (paper eq 25b): for each `x ∈ A`,
     there are `y, z ∈ A` with `x ≠ y`, `x ≠ z`, `xRy`, `zRx`. This is
     the existence-witnessed form Sternefeld attributes to Langendoen.
 
@@ -228,7 +228,7 @@ instance langendoenWR.instDecidable
     Decidable (langendoenWR A R) := by
   unfold langendoenWR; infer_instance
 
-/-- For symmetric, distinctness-bearing R, @cite{langendoen-1978} WR
+/-- For symmetric, distinctness-bearing R, [langendoen-1978] WR
     entails `Plurality.Reciprocal.WeakReciprocity`: the existence-
     witnesses on each side are the y and z of the Langendoen formula. -/
 theorem langendoenWR_implies_WeakReciprocity
@@ -257,7 +257,7 @@ theorem langendoenWR_implies_WeakReciprocity
     Sternefeld's point (paper §3.5–3.6): SR is *expressible* in his
     framework but is not a basic reading; it falls out of more
     general WR + focus mechanisms (the Geach-Kaplan analysis,
-    paper §3.6). This contrasts with @cite{beck-2001}, who takes SR
+    paper §3.6). This contrasts with [beck-2001], who takes SR
     as a basic reading. -/
 theorem sternefeldSR_iff_StrongReciprocity
     (A : Finset α) (R : α → α → Prop) :
@@ -268,7 +268,7 @@ theorem sternefeldSR_iff_StrongReciprocity
 -- § 5: Cross-paper Cumulation Bridges
 -- ════════════════════════════════════════════════════════════════
 
-/-- **Sternefeld 1998 ↔ @cite{beck-2001} ↔ @cite{haug-dalrymple-2020}
+/-- **Sternefeld 1998 ↔ [beck-2001] ↔ [haug-dalrymple-2020]
     (bivalent)**: chain `sternefeldWR → Cumulative` via the substrate
     `WeakReciprocity` bridge — the meeting point of all three analyses
     at the cumulation substrate.

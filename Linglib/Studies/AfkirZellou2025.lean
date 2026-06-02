@@ -6,7 +6,7 @@ import Linglib.Fragments.Tarifit.Inventory
 
 /-!
 # Afkir & Zellou (2025): The Phonetics of Tarifit
-@cite{afkir-zellou-2025}
+[afkir-zellou-2025]
 
 *The Phonetics of Tarifit: Variation and Change in a Moroccan Amazigh
 Language.* Cambridge Elements in Phonetics.
@@ -102,7 +102,7 @@ def maxV : WeightedConstraint TarifitCandidate :=
     are more marked because they expect a vocalic nucleus.
     Violation count = c2.parkerSonority + c3.parkerSonority.
     Models the regression finding that lower C2/C3 sonority predicts
-    more vowelless production (@cite{afkir-zellou-2025} Figure 19). -/
+    more vowelless production ([afkir-zellou-2025] Figure 19). -/
 def sonoCC : WeightedConstraint TarifitCandidate :=
   mkMarkGradW "*SONO-CC" (fun c => match c.surface with
     | .vowelless => c.c2.parkerSonority + c.c3.parkerSonority
@@ -119,7 +119,7 @@ def depV : WeightedConstraint TarifitCandidate :=
     vocalic gesture between a more-sonorous C1 and less-sonorous C2.
     Zero violations for rising or plateauing onsets (Nat subtraction).
     Captures the regression finding (est. = 0.8, p < 0.001) that
-    rising sonority predicts C1ǎC2 presence (@cite{afkir-zellou-2025}
+    rising sonority predicts C1ǎC2 presence ([afkir-zellou-2025]
     Figure 21). -/
 def sonoPeak : WeightedConstraint TarifitCandidate :=
   mkMarkGradW "*SONO-PEAK" (fun c => match c.surface with
@@ -145,7 +145,7 @@ def tarifitConstraints : List (WeightedConstraint TarifitCandidate) :=
 -- ============================================================================
 
 /-- /qrəβ/ (VLS–liquid, rise=5): intrusive > faithful > vowelless.
-    Table 9 "almost exclusively" C1ǎC2 (@cite{afkir-zellou-2025}). -/
+    Table 9 "almost exclusively" C1ǎC2 ([afkir-zellou-2025]). -/
 theorem qreb_intrusive_gt_faithful :
     harmonyDominates tarifitConstraints
       (mkCandidate w_qreb .intrusive) (mkCandidate w_qreb .faithful) := by
@@ -157,14 +157,14 @@ theorem qreb_faithful_gt_vowelless :
   native_decide
 
 /-- /qməʕ/ (VLS–nasal, rise=4): intrusive > faithful.
-    Table 9 "variably" C1ǎC2 (@cite{afkir-zellou-2025}). -/
+    Table 9 "variably" C1ǎC2 ([afkir-zellou-2025]). -/
 theorem qmes_intrusive_gt_faithful :
     harmonyDominates tarifitConstraints
       (mkCandidate w_qmes .intrusive) (mkCandidate w_qmes .faithful) := by
   native_decide
 
 /-- /srəm/ (VLF–liquid, rise=3): intrusive > faithful.
-    Table 9 "almost exclusively" C1ǎC2 (@cite{afkir-zellou-2025}). -/
+    Table 9 "almost exclusively" C1ǎC2 ([afkir-zellou-2025]). -/
 theorem srem_intrusive_gt_faithful :
     harmonyDominates tarifitConstraints
       (mkCandidate w_srem .intrusive) (mkCandidate w_srem .faithful) := by
@@ -176,7 +176,7 @@ theorem srem_intrusive_gt_faithful :
 
 /-- /ntəf/ (nasal–VLS, fall=4): faithful > vowelless > intrusive.
     Table 9 "never" C1ǎC2, Table 7 "often vowelless"
-    (@cite{afkir-zellou-2025}). -/
+    ([afkir-zellou-2025]). -/
 theorem ntef_faithful_gt_vowelless :
     harmonyDominates tarifitConstraints
       (mkCandidate w_ntef .faithful) (mkCandidate w_ntef .vowelless) := by
@@ -189,7 +189,7 @@ theorem ntef_vowelless_gt_intrusive :
 
 /-- /nqəβ/ (nasal–VLS, fall=4): faithful > vowelless.
     Table 9 "variably" C1ǎC2 — one of the few exceptions to the
-    falling=never pattern (@cite{afkir-zellou-2025} Table 9 note). -/
+    falling=never pattern ([afkir-zellou-2025] Table 9 note). -/
 theorem nqeb_faithful_gt_vowelless :
     harmonyDominates tarifitConstraints
       (mkCandidate w_nqeb .faithful) (mkCandidate w_nqeb .vowelless) := by
@@ -197,7 +197,7 @@ theorem nqeb_faithful_gt_vowelless :
 
 /-- /ħkəm/ (VLF–VLS, fall=2): faithful > intrusive > vowelless (model).
     Table 9 "never" C1ǎC2; Table 7 "often vowelless" (13–20%)
-    (@cite{afkir-zellou-2025}). The model correctly predicts faithful
+    ([afkir-zellou-2025]). The model correctly predicts faithful
     as winner but overpenalizes vowelless via *SONO-CC (C3=nasal, son=5);
     empirically vowelless > intrusive, noted as idiosyncratic in Table 7. -/
 theorem hkem_faithful_gt_intrusive :
@@ -216,7 +216,7 @@ theorem hkem_faithful_gt_vowelless :
 
 /-- /sχəf/ (VLF–VLF, plateau): faithful > intrusive > vowelless (model).
     Table 9 "never" C1ǎC2; Table 7 "often vowelless" (13–20%)
-    (@cite{afkir-zellou-2025}). Like /ħkəm/, the model correctly blocks
+    ([afkir-zellou-2025]). Like /ħkəm/, the model correctly blocks
     intrusive but overpenalizes vowelless; empirically this is one of the
     most frequently vowelless words. -/
 theorem skhef_faithful_gt_intrusive :
@@ -230,7 +230,7 @@ theorem skhef_faithful_gt_vowelless :
   native_decide
 
 /-- /sfən/ (VLF–VLF, plateau): faithful > intrusive > vowelless.
-    Table 9 "never" C1ǎC2 (@cite{afkir-zellou-2025}).
+    Table 9 "never" C1ǎC2 ([afkir-zellou-2025]).
     Unlike /sχəf/, /sfən/ is not listed as frequently vowelless. -/
 theorem sfen_faithful_gt_intrusive :
     harmonyDominates tarifitConstraints
@@ -252,7 +252,7 @@ theorem sfen_faithful_gt_vowelless :
     high-sonority clusters more heavily.
     Captures the regression result (C2 est. = -0.7, C3 est. = -1.4)
     that lower C2/C3 sonority predicts more vowelless production
-    (@cite{afkir-zellou-2025} Figure 19). -/
+    ([afkir-zellou-2025] Figure 19). -/
 theorem vowelless_more_accessible_low_sonority :
     harmonyDominates tarifitConstraints
       (mkCandidate w_ntef .vowelless) (mkCandidate w_qreb .vowelless) := by
@@ -260,7 +260,7 @@ theorem vowelless_more_accessible_low_sonority :
 
 /-- Among vowelless candidates, all-obstruent clusters have the highest
     harmony (least penalized). Consistent with Table 7: /sχəf/ and /skəf/
-    are the most frequently vowelless words (@cite{afkir-zellou-2025}). -/
+    are the most frequently vowelless words ([afkir-zellou-2025]). -/
 theorem vowelless_obstruent_gt_sonorant :
     harmonyDominates tarifitConstraints
       (mkCandidate w_skhef .vowelless) (mkCandidate w_srem .vowelless) := by
@@ -341,7 +341,7 @@ theorem faithful_disjoint (c : TarifitCandidate) (h : c.surface = .faithful) :
 -- § 9: Generic ConstraintSystem Predictions
 -- ============================================================================
 
-/-! @cite{afkir-zellou-2025}'s MaxEnt grammar realised through the
+/-! [afkir-zellou-2025]'s MaxEnt grammar realised through the
 generic `ConstraintSystem` API in `Core.Constraint.System`. The same
 softmax decoder used for English onset phonotactics
 (`HayesWilson2008.onsetSystem`), French hiatus resolution

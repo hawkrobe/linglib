@@ -2,7 +2,7 @@ import Linglib.Semantics.Verb.Basic
 
 /-!
 # Hungarian Predicate Lexicon Fragment
-@cite{egressy-2026}
+[egressy-2026]
 
 Hungarian attitude verb entries, extending `Verb` with the
 Hungarian inflectional paradigm. Hungarian has a distinctive
@@ -22,7 +22,7 @@ structural size difference between *hogy*-CP and bare complements.
 
 ## Attitude Verbs
 
-The three verbs formalized here are used in @cite{egressy-2026} to
+The three verbs formalized here are used in [egressy-2026] to
 demonstrate size-sensitive SOT:
 - *tud* 'know' — factive, doxastic veridical
 - *mond* 'say' — speech-act verb
@@ -51,11 +51,11 @@ structure HungarianVerbEntry extends Verb where
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Attitude Verbs (@cite{egressy-2026})
+-- § Attitude Verbs ([egressy-2026])
 -- ════════════════════════════════════════════════════════════════
 
 /-- *tud* 'know' — factive doxastic attitude verb.
-    @cite{egressy-2026}, exx. (9)–(10): key verb for the size-sensitive SOT contrast.
+    [egressy-2026], exx. (9)–(10): key verb for the size-sensitive SOT contrast.
     Selects both *hogy*-CP (definite conj.) and bare complement (indefinite conj.). -/
 def tud : HungarianVerbEntry where
   form := "tud"
@@ -72,7 +72,7 @@ def tud : HungarianVerbEntry where
   complementSig := some .mono
 
 /-- *mond* 'say' — speech-act verb.
-    @cite{egressy-2026}, ex. (11a): extends SOT pattern to communication verbs.
+    [egressy-2026], ex. (11a): extends SOT pattern to communication verbs.
     Selects *hogy*-CP (definite conj.); no bare complement frame. -/
 def mond : HungarianVerbEntry where
   form := "mond"
@@ -86,7 +86,7 @@ def mond : HungarianVerbEntry where
   levinClass := some .say
 
 /-- *hisz* 'believe' — doxastic non-veridical attitude verb.
-    @cite{egressy-2026}, ex. (11b): extends SOT pattern to belief verbs.
+    [egressy-2026], ex. (11b): extends SOT pattern to belief verbs.
     Selects *hogy*-CP (definite conj.); no bare complement frame. -/
 def hisz : HungarianVerbEntry where
   form := "hisz"

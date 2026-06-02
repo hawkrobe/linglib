@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Modification
 
 /-!
 # Russian Adjective Agreement
-@cite{alexeyenko-zeijlstra-2025}
+[alexeyenko-zeijlstra-2025]
 
 Russian has long and short adjective forms. Long forms are fully inflected
 for gender, number, and case; they appear in BOTH predicative and

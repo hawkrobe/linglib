@@ -7,21 +7,21 @@ import Linglib.Semantics.Plurality.Implicature
 
 /-!
 # Candidate Interpretations for Plural Predication
-@cite{kriz-spector-2021}
+[kriz-spector-2021]
 
-Formalises a cover-cell **simplification** of @cite{kriz-spector-2021}'s
+Formalises a cover-cell **simplification** of [kriz-spector-2021]'s
 candidate interpretation framework. The simplification treats each candidate
 as a subset-universal proposition `λ w => ∀ a ∈ z, P a w` for some
 sub-plurality `z ⊆ x`. This captures K&S's predictions in monotonic
 contexts but is **not** their actual `Cand_x`: K&S build candidates from
 convex closures of sub-plurality bundles (substrate at
 `Core.Mereology.convexClosure`), yielding generalised-quantifier candidates
-that pattern with @cite{schwarzschild-1996}-style covers and
-@cite{brisson-1998}'s ill-fitting covers but diverge in non-monotonic
+that pattern with [schwarzschild-1996]-style covers and
+[brisson-1998]'s ill-fitting covers but diverge in non-monotonic
 contexts. For the cases formalised here the two predictions coincide; the
 divergent non-monotonic cases are flagged in the Todo.
 
-The contrast with @cite{malamud-2012}'s earlier disjunctive aggregation is
+The contrast with [malamud-2012]'s earlier disjunctive aggregation is
 made kernel-checked in `malamud_strictly_weaker_when_mixed`.
 
 ## Main declarations
@@ -39,20 +39,20 @@ made kernel-checked in `malamud_strictly_weaker_when_mixed`.
   parameter machinery (single-argument, sub-plurality-valued simplification
   of K&S's multi-argument GQ-valued `H`).
 * `malamudDisjunction`, `malamud_strictly_weaker_when_mixed` — the
-  @cite{malamud-2012} contrast made kernel-checked.
+  [malamud-2012] contrast made kernel-checked.
 
 ## Implementation notes
 
 Strong relevance (constancy on QUD cells) is defined at the substrate level
 in `Semantics/Homogeneity/Basic.lean` as
 `Semantics.Homogeneity.isStronglyRelevantProp` and re-exported here.
-The bivalent bridge to @cite{kriz-2016}'s `addressesIssue` is proved in
+The bivalent bridge to [kriz-2016]'s `addressesIssue` is proved in
 `Studies/KrizSpector2021.lean`.
 
 ## Todo
 
 * Replace `candidateProp` with K&S's faithful `Cand_x` (def. 21 in
-  @cite{kriz-spector-2021} — UNVERIFIED definition number) via
+  [kriz-spector-2021] — UNVERIFIED definition number) via
   `Core.Mereology.convexClosure`. Current simplification matches K&S
   predictions only in monotonic contexts; non-monotonic cases (e.g. the
   "exactly one student read the books" example, see
@@ -61,7 +61,7 @@ The bivalent bridge to @cite{kriz-2016}'s `addressesIssue` is proved in
 * Re-type `HomParam` as `ArgIdx × Finset Atom → Cand_x` to support K&S's
   multi-argument candidate selection (their Desideratum B on co-referential
   plurals).
-* Bridge to @cite{bar-lev-2021}'s `Exh^{IE+II}` + ∃-PL rival implicature
+* Bridge to [bar-lev-2021]'s `Exh^{IE+II}` + ∃-PL rival implicature
   account.
 -/
 
@@ -83,9 +83,9 @@ variable {Atom W : Type*} [DecidableEq Atom]
 - FALSE: nonempty plurality with no atoms satisfying `P`
 - GAP: witnesses on both sides
 
-This is the core of @cite{kriz-spector-2021}: predication on a plurality
+This is the core of [kriz-spector-2021]: predication on a plurality
 is super-true iff the predicate holds at every atom, super-false iff it
-fails at every atom, gap otherwise. The @cite{van-fraassen-1966}
+fails at every atom, gap otherwise. The [van-fraassen-1966]
 supervaluation framing (each atom as a specification point) is
 documented by `Semantics.Supervaluation.superTrue_eq_dist`. -/
 @[reducible] def pluralTruthValue (P : Atom → W → Prop)
@@ -127,7 +127,7 @@ def inGap (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (x : Finset Atom) (w : W) : Prop :=
   (∃ a ∈ x, P a w) ∧ (∃ a ∈ x, ¬ P a w)
 
-/-- **Homogeneity Theorem** (@cite{kriz-spector-2021}). The gap is
+/-- **Homogeneity Theorem** ([kriz-spector-2021]). The gap is
     symmetric under negation: a world is in the gap for `P` iff it is
     in the gap for `¬P`. This explains why "the Xs are P" and "the Xs
     aren't P" are both undefined in exactly the same worlds. -/
@@ -180,7 +180,7 @@ theorem pluralTruthValue_neg (P : Atom → W → Prop)
 
 /-- The candidate proposition for sub-plurality `z`: `P` holds of every atom
     in `z`. This is the **cover-cell simplification** of
-    @cite{kriz-spector-2021}'s candidate; see module-level Todo for the
+    [kriz-spector-2021]'s candidate; see module-level Todo for the
     convex-closure-enriched faithful version. Definitionally equal to
     `distMaximal P z`. -/
 def candidateProp (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
@@ -404,7 +404,7 @@ theorem forallH_true_iff_pluralTrue (P : Atom → W → Prop)
 /-! ### Candidate conjunction vs Malamud's disjunction
 
 K&S compute sentence meaning as the **conjunction** of all strongly relevant
-candidate interpretations. @cite{malamud-2012}'s earlier proposal used
+candidate interpretations. [malamud-2012]'s earlier proposal used
 **disjunction**: a sentence is true iff some candidate is. The contrast is
 empirically critical in non-monotonic contexts and was K&S's headline
 departure from Malamud; the divergence theorem below makes the prose claim
@@ -429,7 +429,7 @@ theorem candidateConjunction_trichotomy (candidates : Set (W → Prop)) (w : W)
       obtain ⟨p₂, hp₂, hne₂⟩ := hnone
       exact ⟨⟨p₂, hp₂, hne₂⟩, ⟨p₁, hp₁, hne₁⟩⟩
 
-/-- @cite{malamud-2012}'s disjunctive aggregation: a sentence is true iff
+/-- [malamud-2012]'s disjunctive aggregation: a sentence is true iff
     *some* candidate is. Contrasts with `trueOnAll`'s conjunctive
     aggregation. -/
 def malamudDisjunction (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
@@ -450,7 +450,7 @@ theorem trueOnAll_imp_malamud (P : Atom → W → Prop) [∀ a w, Decidable (P a
 /-- **Divergence theorem.** When `P` has mixed truth values on `x` at `w`
     — at least one atom satisfies `P` and at least one does not — Malamud's
     disjunction holds at `w` while K&S's conjunction fails. K&S's prose
-    departure from @cite{malamud-2012} made kernel-checked. -/
+    departure from [malamud-2012] made kernel-checked. -/
 theorem malamud_strictly_weaker_when_mixed (P : Atom → W → Prop)
     [∀ a w, Decidable (P a w)] (x : Finset Atom) (w : W)
     (h_some : ∃ a ∈ x, P a w) (h_other : ∃ b ∈ x, ¬ P b w) :
@@ -469,8 +469,8 @@ theorem malamud_strictly_weaker_when_mixed (P : Atom → W → Prop)
 
 /-! ### Bridge to Bar-Lev's `existPL`
 
-@cite{malamud-2012}'s disjunctive aggregation collapses to
-@cite{bar-lev-2021}'s `existPL` with full domain: both express
+[malamud-2012]'s disjunctive aggregation collapses to
+[bar-lev-2021]'s `existPL` with full domain: both express
 "some atom satisfies `P`". This makes the prior Bar-Lev / K&S
 silent-divergence connection kernel-checked. The K&S divergence
 theorem (`malamud_strictly_weaker_when_mixed`) immediately yields
@@ -509,7 +509,7 @@ theorem existPL_not_eq_pluralTruthValue_true
   have hAll : allSatisfy P x w := (pluralTruthValue_eq_true_iff P x w).mp h
   exact hPb (hAll b hb)
 
-/-! ### Bridge to @cite{schwarzschild-1996} covers
+/-! ### Bridge to [schwarzschild-1996] covers
 
 Cover and Trivalent operate at different conceptual levels — Cover is
 a relation on `Set (Finset Atom) × Finset Atom` ("these parts cover
@@ -521,7 +521,7 @@ direction explicit: every cell of a finite cover produces a candidate
 in `fullCandidateSet`. -/
 
 /-- **Cover cells are candidates**: any non-empty cell of a finite
-    cover of `x` (in the @cite{schwarzschild-1996} sense) corresponds
+    cover of `x` (in the [schwarzschild-1996] sense) corresponds
     to a candidate in `fullCandidateSet P x`. The cover relation
     constrains how parts join to `x`; the candidate function lifts
     each part to its sub-plurality-universal proposition. -/

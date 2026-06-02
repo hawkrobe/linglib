@@ -1,7 +1,7 @@
 /-
 # PLA Epistemic Operators
 
-@cite{dekker-2012} Chapter 4: Quantification and Modality (§4.3: Alethic and Epistemic Modality).
+[dekker-2012] Chapter 4: Quantification and Modality (§4.3: Alethic and Epistemic Modality).
 
 ## Key Concepts
 
@@ -15,7 +15,7 @@ TEST the information state:
 - might φ passes if some (g, ê) satisfies φ
 - must φ passes if all (g, ê) satisfy φ
 
-### Conceptual Covers (@cite{dekker-2012} §3.2/§4.2)
+### Conceptual Covers ([dekker-2012] §3.2/§4.2)
 For de re/de dicto distinctions:
 - A peg is an extensional reference to an entity
 - A concept is an intensional way of identifying entities
@@ -105,7 +105,7 @@ theorem must_preserves_info (M : Model E) (φ : Formula) (s : InfoState E)
   simp only [Formula.must, if_pos h]
 
 /--
-@cite{veltman-1996}: Tests never add possibilities.
+[veltman-1996]: Tests never add possibilities.
 -/
 theorem might_subset (M : Model E) (φ : Formula) (s : InfoState E) :
     φ.might M s ⊆ s := by
@@ -277,8 +277,8 @@ def Concept.fromPron (i : PronIdx) : Concept E := λ p => p.2 i
 
 
 /-!
-## Relationship to @cite{kratzer-1981} Modal Semantics
-@cite{kratzer-1981}
+## Relationship to [kratzer-1981] Modal Semantics
+[kratzer-1981]
 
 PLA's epistemic operators share deep structure with Kratzer's modal semantics
 from `Semantics.Modality.Kratzer`. Both frameworks implement:

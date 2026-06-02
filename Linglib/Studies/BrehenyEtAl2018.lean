@@ -4,7 +4,7 @@ import Linglib.Semantics.Alternatives.Symmetric
 
 /-!
 # The Symmetry Problem: Current Theories and Prospects
-@cite{breheny-et-al-2018}
+[breheny-et-al-2018]
 
 Breheny, R., Klinedinst, N., Romoli, J. & Sudo, Y. (2018).
 The Symmetry Problem: Current Theories and Prospects.
@@ -15,27 +15,27 @@ Natural Language Semantics, 26(2), 85–110.
 Critical survey of three approaches to the **symmetry problem** for
 scalar implicature alternatives:
 
-1. **Structural approach** (@cite{katzir-2007}, @cite{fox-katzir-2011}):
+1. **Structural approach** ([katzir-2007], [fox-katzir-2011]):
    alternatives restricted by structural complexity. Solves the basic
    symmetry problem (some/all) but undergenerates for indirect and
    particularised scalar implicatures.
 
-2. **Atomicity Constraint** (@cite{trinh-haida-2015}): augments the
+2. **Atomicity Constraint** ([trinh-haida-2015]): augments the
    structural approach by making extracted subconstituents atomic (opaque
    to further substitution). Solves indirect SIs but wrongly blocks
    the needed antonym alternative for gradable adjectives under negation.
 
-3. **RSA approach** (@cite{bergen-levy-goodman-2016}): replaces structural
+3. **RSA approach** ([bergen-levy-goodman-2016]): replaces structural
    restriction with utterance cost + relative informativity. Handles
    direct SIs and gradable adjectives but fails for indirect SIs of
-   equal complexity and for the @cite{swanson-2010} cases.
+   equal complexity and for the [swanson-2010] cases.
 
 No single approach handles all cases. The symmetry problem remains open.
 
 ## Formalization Strategy
 
 The paper's core arguments are demonstrated computationally using the
-`exhB`/`ieIndices` machinery from @cite{fox-2007} (`InnocentExclusion.lean`).
+`exhB`/`ieIndices` machinery from [fox-2007] (`InnocentExclusion.lean`).
 Each section defines a small domain and shows how different alternative
 sets yield different (correct/incorrect) predictions. This makes the
 paper's claims machine-checkable: the structural approach's failures
@@ -70,12 +70,12 @@ open Alternatives.Symmetric
 
 This is an **indirect** SI: the inference arises from negating the
 stronger alternative ¬any (= "didn't do any") under the scope of
-sentential negation. The structural approach (@cite{fox-katzir-2011})
+sentential negation. The structural approach ([fox-katzir-2011])
 wrongly generates the symmetric alternative "some" (= "did some")
 by extracting the VP subconstituent and substituting all→some within
 it, blocking the correct inference.
 
-@cite{trinh-haida-2015}'s Atomicity Constraint solves this: after
+[trinh-haida-2015]'s Atomicity Constraint solves this: after
 extracting the VP, it becomes atomic and the internal substitution
 all→some is blocked.
 -/
@@ -103,7 +103,7 @@ private def didSome : HWWorld → Bool
     approach generates), exh is vacuous: neither ¬any nor some is in
     I-E. The correct inference (12b) is not derived.
 
-    F(12a) ⊇ {¬all, ¬any, some} per @cite{fox-katzir-2011}, because
+    F(12a) ⊇ {¬all, ¬any, some} per [fox-katzir-2011], because
     "some" is derivable by extracting the VP subconstituent and
     substituting all→some within it. -/
 theorem indirect_si_blocked :
@@ -307,7 +307,7 @@ theorem particularised_blocked :
     = ran ∧ smoked = {ranAndSmoked}.
 
     The structural approach generates this alternative for (18) via
-    contextual salience (@cite{fox-katzir-2011} def 37), but NOT
+    contextual salience ([fox-katzir-2011] def 37), but NOT
     for (28), where the conjunction spans separate sentences. -/
 theorem particularised_correct :
     innocent.exh (altsFromPreds [ran, ranAndNotSmoked]) (predToFinset ran)
@@ -317,13 +317,13 @@ end ParticularisedSI
 
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §4  Too Many Lexical Alternatives (§4.2, @cite{swanson-2010})
+-- §4  Too Many Lexical Alternatives (§4.2, [swanson-2010])
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-!
 ## Lexicalized Symmetric Alternatives
 
-@cite{swanson-2010} observes scalar items with lexicalized symmetric
+[swanson-2010] observes scalar items with lexicalized symmetric
 counterparts:
 
 (44) Going to confession is permitted.
@@ -387,13 +387,13 @@ end SwansonCases
 
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §5  The RSA Approach (§5, @cite{bergen-levy-goodman-2016})
+-- §5  The RSA Approach (§5, [bergen-levy-goodman-2016])
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-!
 ## The RSA Approach to Symmetry
 
-@cite{bergen-levy-goodman-2016} propose that utterance **cost**
+[bergen-levy-goodman-2016] propose that utterance **cost**
 (structural complexity) combined with **relative informativity**
 dissolves the symmetry problem without structural restriction of
 alternatives.
@@ -411,7 +411,7 @@ alternatives.
 - **Adjective asymmetry** (ex. 56): RSA predicts the same inference
   for all adjective pairs (safe/dangerous, tall/short), but only
   full/empty actually generates it.
-- **@cite{swanson-2010} cases** (ex. 57): "intermittently" is not more
+- **[swanson-2010] cases** (ex. 57): "intermittently" is not more
   complex than "always", so cost cannot break the symmetry.
 
 See `Comparisons/RSANeoGricean.lean` for the formal connection between

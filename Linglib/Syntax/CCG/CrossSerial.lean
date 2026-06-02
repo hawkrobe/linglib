@@ -5,7 +5,7 @@ import Linglib.Syntax.CCG.Classical
 # CCG Cross-Serial Dependencies
 
 CCG derivations for Dutch cross-serial dependencies, in the rule-restricted (classical)
-model `CCG.Classical` (@cite{steedman-2000}). Cross-serial dependencies are the classic
+model `CCG.Classical` ([steedman-2000]). Cross-serial dependencies are the classic
 witness for CCG's super-context-free power; the derivations thread a verb's argument slots
 through the cluster via generalized composition.
 

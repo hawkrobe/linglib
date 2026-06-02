@@ -47,7 +47,7 @@ structure AdjModifierEntry where
   formComp : Option String := none
   /-- Superlative form -/
   formSuper : Option String := none
-  /-- Scale boundedness (from @cite{kennedy-2007}) -/
+  /-- Scale boundedness (from [kennedy-2007]) -/
   scaleType : Boundedness := .open_
   /-- What dimension is being measured? -/
   dimension : Features.Dimension
@@ -58,11 +58,11 @@ structure AdjModifierEntry where
   /-- Does this adjective select the lower endpoint of its scale?
       E.g., "short" selects the low end of height, "empty" selects the low end
       of fullness. This is scale-endpoint polarity, distinct from evaluative
-      polarity (@cite{sassoon-2013}): *empty* is lower-endpoint but evaluatively
+      polarity ([sassoon-2013]): *empty* is lower-endpoint but evaluatively
       positive (total, max-standard). -/
   isLowerEndpoint : Bool := false
   /-- Suppletive pattern across positive, comparative, and superlative
-      grades (@cite{bobaljik-2012}). Default `aaa` = regular (same root
+      grades ([bobaljik-2012]). Default `aaa` = regular (same root
       throughout). Set to `abb` for suppletive entries like *good/better/best*.
       See `DegreeContainment.lean` for pattern definitions and the *ABA
       constraint. -/
@@ -149,7 +149,7 @@ def cheap : AdjModifierEntry :=
   , isLowerEndpoint := true }
 
 -- ============================================================================
--- Value Scale: good, bad (@cite{wolfsdorf-2019}, @cite{beltrama-2025})
+-- Value Scale: good, bad ([wolfsdorf-2019], [beltrama-2025])
 -- ============================================================================
 
 def good : AdjModifierEntry :=
@@ -252,7 +252,7 @@ def dry : AdjModifierEntry :=
   , isLowerEndpoint := true }
 
 -- ============================================================================
--- Gradable Attitude Adjectives (@cite{cariani-santorio-wellwood-2024})
+-- Gradable Attitude Adjectives ([cariani-santorio-wellwood-2024])
 -- ============================================================================
 
 /-- `confident`: gradable attitude adjective on an upper-bounded confidence

@@ -3,7 +3,7 @@ import Linglib.Semantics.Gradability.StatesBased
 /-!
 # Confidence and Certainty as Gradable Attitudes
 
-@cite{cariani-santorio-wellwood-2024}
+[cariani-santorio-wellwood-2024]
 
 Gradable attitude adjectives like `confident`, `certain`, `sure`, and
 `doubtful` denote properties of confidence states. Unlike accessibility-based
@@ -252,7 +252,7 @@ theorem confident_excludes_doubts {E W : Type*}
 
 /-- Confidence orderings need not respect logical conjunction:
     it is consistent to be confident that (p ∧ q) without being
-    confident that p (CSW (52), @cite{tversky-kahneman-1983}).
+    confident that p (CSW (52), [tversky-kahneman-1983]).
 
     Witness: ℕ as a toy ordering with contrast point 1 — the state ranked
     2 is in the positive region (1 ≤ 2) while the state ranked 0 is not

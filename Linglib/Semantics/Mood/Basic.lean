@@ -6,12 +6,12 @@ independent levels:
 
 ## Two Dimensions of Mood
 
-**Situation-level** (@cite{mendes-2025}): Mood operators function like
+**Situation-level** ([mendes-2025]): Mood operators function like
 determiners for situations:
 - **SUBJ**: Introduces a new situation dref (like indefinite "a")
 - **IND**: Retrieves/uses an existing situation (like definite "the")
 
-**Event-level** (@cite{grano-2024}): Mood morphemes existentially close
+**Event-level** ([grano-2024]): Mood morphemes existentially close
 or leave open the complement clause's eventuality argument:
 - **IND**: ∃e.P(e) — existentially closes, yielding a proposition
 - **SBJV₁**: P — leaves open, enabling eventuality abstraction
@@ -74,7 +74,7 @@ abbrev sameWorld {W Time : Type*}
   s₁.world = s₂.world
 
 /--
-SUBJ operator (@cite{mendes-2025}, Definition on p.29).
+SUBJ operator ([mendes-2025], Definition on p.29).
 
 ⟦SUBJ^{s₁}_{s₀}⟧ = λP. [s₁ | s₁ ∈ hist(s₀)]; P(s₁)(s₀)
 
@@ -93,7 +93,7 @@ def SUBJ {W Time : Type*} [LE Time]
     s₁ ∈ historicalBase history s₀ ∧ P s₁ s₀
 
 /--
-IND operator (@cite{mendes-2025}, Definition on p.29).
+IND operator ([mendes-2025], Definition on p.29).
 
 ⟦IND_{s₁,s₂}⟧ = λP. [| s₂ ≤ w_{s₁}]; P(s₂)(s₁)
 
@@ -110,13 +110,13 @@ def IND {W Time : Type*}
   sameWorld s₂ s₁ ∧ P s₂ s₁
 
 -- ════════════════════════════════════════════════════════════════
--- § Event-Level Mood Operators (@cite{grano-2024})
+-- § Event-Level Mood Operators ([grano-2024])
 -- ════════════════════════════════════════════════════════════════
 
 /-!
 ### Mood as Event Closure
 
-@cite{grano-2024} proposes that mood morphemes operate on the eventuality
+[grano-2024] proposes that mood morphemes operate on the eventuality
 argument of the complement clause:
 
 - **IND**: existentially closes the eventuality argument (87),
@@ -130,14 +130,14 @@ This is independent of — and complementary to — the situation-level
 SUBJ/IND operators defined above.
 -/
 
-/-- IND existentially closes the eventuality argument (@cite{grano-2024}, (87)).
+/-- IND existentially closes the eventuality argument ([grano-2024], (87)).
 
     ⟦INDIC⟧ = λP_(⟨vt⟩).∃e.P(e)
 
     The eventuality variable is bound; the complement denotes a proposition. -/
 def INDev {Event : Type*} (P : Event → Prop) : Prop := ∃ e, P e
 
-/-- SBJV₁ leaves the eventuality argument open (@cite{grano-2024}, (88a);
+/-- SBJV₁ leaves the eventuality argument open ([grano-2024], (88a);
     §7 Subjunctive₃ (135)).
 
     ⟦SBJV₁⟧ = λP_(⟨vt⟩).P
@@ -155,15 +155,15 @@ def INDev {Event : Type*} (P : Event → Prop) : Prop := ∃ e, P e
 def SBJVev₁ {Event : Type*} (P : Event → Prop) : Event → Prop := P
 
 /-- SBJV₂ leaves the eventuality argument open AND requires causal
-    self-reference (@cite{grano-2024}, (134); unified theory §7).
+    self-reference ([grano-2024], (134); unified theory §7).
 
     ⟦Subjunctive₂⟧ = λPλe[sn({λw.∃e'.CAUSE*(e,e',w) & P(w)(e')}, content(e), e)]
 
     This is the variant operative with 'intend' in the §7 unified theory,
     which integrates CAUSE* from the core proposal (§4, (79)) with Portner
-    & Rubinstein's (@cite{portner-rubinstein-2020}) modal quantification
+    & Rubinstein's ([portner-rubinstein-2020]) modal quantification
     framework. The attitude state e must causally bring about the described
-    event e' "in the right way" (@cite{searle-1983}; @cite{harman-1976}). -/
+    event e' "in the right way" ([searle-1983]; [harman-1976]). -/
 def SBJVev₂ {Event W : Type*}
     (causeStar : Event → Event → W → Prop)  -- CAUSE*(state, event, world)
     (content : Event → W → Prop)          -- content of the attitude state
@@ -186,14 +186,14 @@ Mood selection by embedding predicates.
 Certain predicates select for specific moods in their complement:
 - "know", "see" → typically indicative
 - "want", "wish" → robustly subjunctive cross-linguistically
-- "hope" → cross-linguistically variable (@cite{grano-2024}, Table 1)
+- "hope" → cross-linguistically variable ([grano-2024], Table 1)
 - "say", "think" → mood-neutral (pragmatically flexible)
 -/
 inductive MoodSelector where
   | indicativeSelecting          -- "know", "see", "believe"
   | subjunctiveSelecting         -- "want", "wish", "demand", "intend"
   | crossLinguisticallyVariable  -- "hope", "expect": SBJV in some languages,
-                                 -- IND in others (@cite{grano-2024}, Table 1)
+                                 -- IND in others ([grano-2024], Table 1)
   | moodNeutral                  -- "say", "think" (pragmatically flexible)
   deriving DecidableEq, Repr
 
@@ -207,7 +207,7 @@ def prefersSubjunctive : MoodSelector → Bool
   | .moodNeutral => false  -- default to indicative
 
 /--
-Conditional with SF antecedent (@cite{mendes-2025}, main application).
+Conditional with SF antecedent ([mendes-2025], main application).
 
 "If Maria be.SF home, she will answer"
 
@@ -330,7 +330,7 @@ theorem subj_nonveridical {W Time : Type*} [LE Time]
 
 /-!
 ### SUBJ as Temporal Anchor
-@cite{giannakidou-1998} @cite{mendes-2025} @cite{muskens-1996}
+[giannakidou-1998] [mendes-2025] [muskens-1996]
 
 Both SUBJ's situation introduction and attitude embedding create new temporal
 reference points for embedded clauses:

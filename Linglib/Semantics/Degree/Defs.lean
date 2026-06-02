@@ -4,10 +4,10 @@ import Linglib.Core.Scales.Scale
 # Degree Semantics: Type Definitions
 
 Pure type definitions for degree-based analyses of gradable expressions
-@cite{heim-2001} @cite{kennedy-2007} @cite{schwarzschild-2008} @cite{beltrama-2025}.
+[heim-2001] [kennedy-2007] [schwarzschild-2008] [beltrama-2025].
 Positive-form semantics is in `Basic.lean`; Kennedy 2007's interpretive
 economy classification is in `Kennedy.lean`. Klein-style delineation
-@cite{klein-1980} has no measure function and lives in
+[klein-1980] has no measure function and lives in
 `Semantics/Gradability/Delineation.lean`.
 
 ## Main definitions
@@ -106,7 +106,7 @@ instance : ToString AdjectivalConstruction where
 
 /-- Positive form standard: how the contextual threshold is determined.
 For open scales, the standard is the contextual norm
-(@cite{kennedy-2007}); for closed scales, it is the relevant endpoint
+([kennedy-2007]); for closed scales, it is the relevant endpoint
 fixed by Interpretive Economy. -/
 inductive PositiveStandard where
   /-- Open-scale: θ = norm relative to comparison class. -/
@@ -115,14 +115,14 @@ inductive PositiveStandard where
   | minEndpoint
   /-- Upper-bounded / closed: θ = maximum (e.g., "full", "dry"). -/
   | maxEndpoint
-  /-- Necessity standard: θ = minimum value for pursuit (@cite{beltrama-2025}). -/
+  /-- Necessity standard: θ = minimum value for pursuit ([beltrama-2025]). -/
   | functional
   deriving DecidableEq, Repr
 
 /-- Whether the positive standard depends on contextual domain information.
 
-@cite{kennedy-2007} argues the comparison class is not a semantic argument
-of *pos* (contra @cite{klein-1980}), replacing it with the standard-fixing
+[kennedy-2007] argues the comparison class is not a semantic argument
+of *pos* (contra [klein-1980]), replacing it with the standard-fixing
 function **s**: `⟦pos⟧ = λg.λx. g(x) ≥ s(g)`. For relative (open-scale)
 adjectives, **s** still requires contextual domain information; for
 absolute (closed-scale) adjectives the standard comes from scale
@@ -140,7 +140,7 @@ instance : DecidablePred PositiveStandard.RequiresComparisonClass
   | .functional  => inferInstanceAs (Decidable True)
 
 /-- Kennedy's adjective classification by scale structure and standard
-type @cite{kennedy-2007} @cite{kennedy-mcnally-2005}, plus a
+type [kennedy-2007] [kennedy-mcnally-2005], plus a
 `nonGradable` case for adjectives outside the degree-based fragment. -/
 inductive AdjectiveClass where
   /-- Standard varies with comparison class — *tall*, *expensive*, *big*. -/
@@ -149,7 +149,7 @@ inductive AdjectiveClass where
   | absoluteMaximum
   /-- Threshold fixed at scale minimum — *wet*, *bent*, *open*, *dirty*. -/
   | absoluteMinimum
-  /-- Necessity-relative threshold — *decent*, *acceptable* (@cite{beltrama-2025}). -/
+  /-- Necessity-relative threshold — *decent*, *acceptable* ([beltrama-2025]). -/
   | mildlyPositive
   /-- Non-gradable: no degree argument, no scale — *atomic*, *prime*,
   *deceased*, *pregnant*. Outside the `GradablePredicate` fragment;

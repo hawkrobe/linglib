@@ -2,15 +2,15 @@ import Linglib.Semantics.Presupposition.Context
 
 /-!
 # Accommodation
-@cite{lewis-1979} @cite{beaver-2001} @cite{van-der-sandt-1992}
+[lewis-1979] [beaver-2001] [van-der-sandt-1992]
 
 Accommodation is the process by which a context is adjusted to satisfy
-a presupposition that is not already entailed. @cite{lewis-1979} introduced
+a presupposition that is not already entailed. [lewis-1979] introduced
 the concept: "If at time t something is said that requires presupposition P
 to be acceptable, and if P is not presupposed just before t, then — ceteris
 paribus — presupposition P comes into existence at t."
 
-## Three Levels (@cite{beaver-2001} Ch. 5)
+## Three Levels ([beaver-2001] Ch. 5)
 
 - **Global**: presupposition is added to the top-level common ground
 - **Local**: presupposition is satisfied within the embedded context
@@ -21,13 +21,13 @@ paribus — presupposition P comes into existence at t."
 
 1. **Heim/Lewis preference**: prefer global > intermediate > local.
  Global preference + consistency constraint ≈ Gazdar's cancellation
- (@cite{beaver-2001} Ch. 5.8.1).
+ ([beaver-2001] Ch. 5.8.1).
 2. **Van der Sandt structural**: DRT-based move-α; presupposition DRS
- is moved to the highest accessible position (@cite{van-der-sandt-1992}).
+ is moved to the highest accessible position ([van-der-sandt-1992]).
 3. **Fauconnier flotation**: presupposition floats upward through
- mental spaces, leaving a shadow at each level (@cite{beaver-2001} Ch. 5.8.3).
+ mental spaces, leaving a shadow at each level ([beaver-2001] Ch. 5.8.3).
 
-## Constraints (@cite{beaver-2001} Ch. 5.3)
+## Constraints ([beaver-2001] Ch. 5.3)
 
 - **Informativity**: accommodation must be informative (add new information)
 - **Consistency**: accommodated content must be consistent with the context
@@ -49,7 +49,7 @@ variable {W : Type*}
 -- ════════════════════════════════════════════════════════════════
 
 /-- The level at which accommodation occurs.
- @cite{beaver-2001} Ch. 5, @cite{lewis-1979}, @cite{heim-1983}. -/
+ [beaver-2001] Ch. 5, [lewis-1979], [heim-1983]. -/
 inductive AccommodationLevel where
  /-- Add presupposition to the global common ground. -/
  | global
@@ -57,7 +57,7 @@ inductive AccommodationLevel where
  | local
  /-- Add presupposition at an intermediate level (e.g., restrictor
  of a quantifier, antecedent of a conditional).
- @cite{beaver-2001} Ch. 5.5 argues this is heavily restricted. -/
+ [beaver-2001] Ch. 5.5 argues this is heavily restricted. -/
  | intermediate (depth : Nat)
  deriving DecidableEq, Repr
 
@@ -66,7 +66,7 @@ inductive AccommodationLevel where
 -- ════════════════════════════════════════════════════════════════
 
 /-- Global accommodation: update the context to include the presupposition.
- @cite{lewis-1979}: "presupposition P comes into existence."
+ [lewis-1979]: "presupposition P comes into existence."
 
  Delegates to `Semantics.Presupposition.Context.accommodate`. -/
 abbrev globalAccommodate (c : ContextSet W) (presup : Set W) : ContextSet W :=
@@ -77,7 +77,7 @@ abbrev globalAccommodate (c : ContextSet W) (presup : Set W) : ContextSet W :=
 -- ════════════════════════════════════════════════════════════════
 
 /-- Trapping: a presupposition with a bound variable cannot be
- accommodated above its binder. @cite{beaver-2001} Ch. 5.3.
+ accommodated above its binder. [beaver-2001] Ch. 5.3.
 
  Modeled as a predicate on the accommodation level and a binding
  depth: accommodation at level `l` is trapped if the presupposition
@@ -101,19 +101,19 @@ structure AccommodationOK (c : ContextSet W) (presup : Set W) : Prop where
 -- ════════════════════════════════════════════════════════════════
 
 /-- An accommodation strategy determines which level of accommodation
- is preferred. @cite{beaver-2001} Ch. 5.8. -/
+ is preferred. [beaver-2001] Ch. 5.8. -/
 inductive AccommodationStrategy where
  /-- Heim/Lewis: prefer global, fall back to local if global is
  inconsistent. Global preference ≈ projection; local fallback
- ≈ cancellation. @cite{heim-1983}, @cite{lewis-1979}. -/
+ ≈ cancellation. [heim-1983], [lewis-1979]. -/
  | heimPreference
  /-- Van der Sandt: DRT-based move-α. Presupposition DRS is moved
  to the highest accessible position that satisfies binding
- constraints. @cite{van-der-sandt-1992}. -/
+ constraints. [van-der-sandt-1992]. -/
  | vanDerSandt
  /-- Fauconnier: presupposition floats upward through mental spaces,
  leaving a copy ("shadow") at each intermediate level.
- @cite{beaver-2001} Ch. 5.8.3. -/
+ [beaver-2001] Ch. 5.8.3. -/
  | fauconnierFlotation
  deriving DecidableEq, Repr
 
@@ -121,7 +121,7 @@ inductive AccommodationStrategy where
 
  Try global first; if inconsistent, fall back to local.
 
- @cite{heim-1983}: "by stipulating a ceteris paribus preference
+ [heim-1983]: "by stipulating a ceteris paribus preference
  for global over local accommodation, we recapture the effect of
  Gazdar's assumption that presupposition cancellation occurs only
  under the threat of inconsistency." -/
@@ -142,7 +142,7 @@ noncomputable def heimSelect (c : ContextSet W) (presup : Set W) :
  local accommodation — which has the same effect as Gazdar's
  presupposition cancellation.
 
- @cite{beaver-2001} Ch. 5.8.1: "with one short remark buried in a
+ [beaver-2001] Ch. 5.8.1: "with one short remark buried in a
  terse paper, Heim offers a simple synthesis between the two antitheses
  of 1970s presupposition theory." -/
 theorem heim_cancellation_equivalence (c : ContextSet W) (presup : Set W)
@@ -159,7 +159,7 @@ theorem heim_projection_when_consistent (c : ContextSet W) (presup : Set W)
 
 /-- **Intermediate accommodation is problematic.**
 
- @cite{beaver-2001} Ch. 5.5 argues that intermediate accommodation
+ [beaver-2001] Ch. 5.5 argues that intermediate accommodation
  (accommodation into the restrictor of a quantifier or antecedent
  of a conditional) is heavily restricted and only occurs with
  generic/habitual statements. Without intermediate accommodation,
@@ -182,7 +182,7 @@ theorem heim_never_intermediate (c : ContextSet W) (presup : Set W) :
  - Fauconnier: presupposition floats up, leaving a copy at
  each level it passes through.
 
- @cite{beaver-2001} Ch. 5.8.3: Fauconnier's strategy correctly
+ [beaver-2001] Ch. 5.8.3: Fauconnier's strategy correctly
  predicts that lexical triggers (factives) must hold at all
  intermediate levels, while anaphoric triggers (definites, 'too')
  only need to hold at the highest level. -/
@@ -196,7 +196,7 @@ inductive TriggerClass where
  deriving DecidableEq, Repr
 
 /-- Select accommodation strategy based on trigger class.
- @cite{beaver-2001} Ch. 5.8, following Zeevat (1992). -/
+ [beaver-2001] Ch. 5.8, following Zeevat (1992). -/
 def strategyForTrigger : TriggerClass → AccommodationStrategy
  | .anaphoric => .vanDerSandt
  | .lexical => .fauconnierFlotation

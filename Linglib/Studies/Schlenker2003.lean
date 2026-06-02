@@ -6,9 +6,9 @@ import Linglib.Semantics.Reference.PersonFeatures
 
 /-!
 # Schlenker (2003): A Plea for Monsters
-@cite{schlenker-2003}
+[schlenker-2003]
 
-End-to-end verification of @cite{schlenker-2003}'s core argument:
+End-to-end verification of [schlenker-2003]'s core argument:
 
 1. Kaplan's thesis (no monsters) holds for English: "I" always refers
    to the actual speaker, even under attitude verbs
@@ -133,7 +133,7 @@ theorem amharic_result :
 
 /-- The English and Amharic versions have different truth values:
     English fails, Amharic holds. This is the formal content of
-    @cite{schlenker-2003}'s argument that context quantification is
+    [schlenker-2003]'s argument that context quantification is
     strictly more expressive than world quantification. -/
 theorem english_amharic_differ :
     ¬ ctxBox bobBel .bob (fun c => isHappy .alice c.world)

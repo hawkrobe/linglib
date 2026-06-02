@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.Merge.Defs
 
 /-!
 # Algebraic Phase Theory
-@cite{marcolli-chomsky-berwick-2025} §1.14
+[marcolli-chomsky-berwick-2025] §1.14
 
 Implements the MCB algebraic formulation of Phase Theory, building on
 the **vertex-keyed head function** `headAtVertex` from `HeadFunction.lean`.
@@ -63,7 +63,7 @@ open Minimalist (HeadFunction ComplementedHeadFunction SyntacticObject LIToken)
 -- ============================================================================
 
 /-- The projection path γ_ℓ of leaf ℓ in T under head function h
-    (@cite{marcolli-chomsky-berwick-2025} Lemma 1.14.1): the multiset of
+    ([marcolli-chomsky-berwick-2025] Lemma 1.14.1): the multiset of
     vertices `w ∈ V(T)` such that `headAtVertex h T w = ℓ`.
 
     Per Lemma 1.14.1, this multiset forms a path in T from ℓ up to the
@@ -229,7 +229,7 @@ theorem projectionPath_chain (h : HeadFunction) (T : SyntacticObject)
   exact projectionPath_chain_aux h T hCoh hNodup ℓ w₁ w₂ hw₁ hw₂ hℓ₁ hℓ₂
 
 /-- The **maximal projection vertex** v_ℓ of leaf ℓ in T
-    (@cite{marcolli-chomsky-berwick-2025} Lemma 1.14.1): the topmost
+    ([marcolli-chomsky-berwick-2025] Lemma 1.14.1): the topmost
     vertex on `projectionPath h T ℓ`, ordered by containment.
 
     Returns `none` if `projectionPath h T ℓ` is empty (ℓ ∉ L(T) under h).
@@ -263,7 +263,7 @@ noncomputable def isNonTrivialProjection (h : HeadFunction) (T : SyntacticObject
     Renamed alias for `HeadFunction.leafTokens` matching MCB notation. -/
 def leafSet (h : HeadFunction) (T : SyntacticObject) : List LIToken := h.leafTokens T
 
-/-- @cite{marcolli-chomsky-berwick-2025} Definition 1.14.3 (eq 1.14.1):
+/-- [marcolli-chomsky-berwick-2025] Definition 1.14.3 (eq 1.14.1):
     L_Φ(T) = the set of leaves ℓ ∈ L(T) such that γ_ℓ contains
     interior (non-leaf) vertices. Each such ℓ is the head of a phase. -/
 noncomputable def phaseHeadLeaves (h : HeadFunction) (T : SyntacticObject) : List LIToken :=
@@ -273,7 +273,7 @@ noncomputable def phaseHeadLeaves (h : HeadFunction) (T : SyntacticObject) : Lis
 -- § 3: Phase Interior Φ°_ℓ and Edge ∂Φ_ℓ (Definitions 1.14.3, 1.14.4)
 -- ============================================================================
 
-/-- @cite{marcolli-chomsky-berwick-2025} Definition 1.14.3 (eq 1.14.3):
+/-- [marcolli-chomsky-berwick-2025] Definition 1.14.3 (eq 1.14.3):
     For ℓ ∈ L_Φ(T) with maximal projection v_ℓ, the **interior** of
     the phase Φ_ℓ is
 
@@ -298,7 +298,7 @@ noncomputable def phaseInterior (h : HeadFunction) (T : SyntacticObject)
     -- restricted to those contained in T_{v_ℓ}
     T.subtrees.filter (fun Tv => decide (Minimalist.contains vℓ Tv))
 
-/-- @cite{marcolli-chomsky-berwick-2025} Definition 1.14.3 (eq 1.14.4):
+/-- [marcolli-chomsky-berwick-2025] Definition 1.14.3 (eq 1.14.4):
     The **edge** ∂Φ_ℓ of phase Φ_ℓ, parameterized over a
     `ComplementedHeadFunction`.
 
@@ -343,7 +343,7 @@ noncomputable def phaseEdge (h : HeadFunction) (T : SyntacticObject)
 -- § 4: Inaccessibility Set Y_ℓ (eq 1.14.5)
 -- ============================================================================
 
-/-- The partial order on phases (@cite{marcolli-chomsky-berwick-2025}
+/-- The partial order on phases ([marcolli-chomsky-berwick-2025]
     after Definition 1.14.3): Φ_ℓ is a **lower phase** than Φ_ℓ' when
     Φ_ℓ ⊂ Φ_ℓ' as sets of accessible terms. We approximate this by
     interior containment of the maximal projection vertices. -/
@@ -353,7 +353,7 @@ noncomputable def isLowerPhaseThan (h : HeadFunction) (T : SyntacticObject)
   | some vℓ, some vℓ' => decide (Minimalist.contains vℓ' vℓ)
   | _, _ => false
 
-/-- @cite{marcolli-chomsky-berwick-2025} eq (1.14.5): the
+/-- [marcolli-chomsky-berwick-2025] eq (1.14.5): the
     **inaccessibility set** Y_ℓ for phase Φ_ℓ:
 
       Y_ℓ := { T_v ∈ Acc'(T) | T_v ∈ ⋃_{ℓ' < ℓ} Φ°_ℓ' }

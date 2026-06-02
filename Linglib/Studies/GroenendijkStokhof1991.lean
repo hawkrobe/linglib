@@ -4,7 +4,7 @@ import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 
 /-!
 # Groenendijk & Stokhof (1991): Dynamic Predicate Logic
-@cite{groenendijk-stokhof-1991}
+[groenendijk-stokhof-1991]
 
 Dynamic Predicate Logic. *Linguistics and Philosophy* 14(1): 39-100.
 
@@ -121,12 +121,12 @@ does export. Hence ¬¬∃xφ ≠ ∃xφ.
 
 This predicts `CrossSententialAnaphora.doubleNegation` should be
 **infelicitous** under standard DPL. (The file marks it as felicitous,
-following @cite{elliott-sudo-2025}'s bilateral analysis — this is a
+following [elliott-sudo-2025]'s bilateral analysis — this is a
 known empirical challenge for DPL that motivated BUS/ICDRT.) -/
 
 /-- DPL predicts double negation blocks anaphora, contra the empirical
 judgment in `doubleNegation`. This is the well-known DPL limitation
-that @cite{elliott-sudo-2025} and bilateral update semantics address. -/
+that [elliott-sudo-2025] and bilateral update semantics address. -/
 theorem dne_blocks_anaphora_dpl_prediction {E : Type*} [Nontrivial E] :
     ∃ (x : Nat) (φ : DPLRel E),
       DPLRel.neg (DPLRel.neg (DPLRel.exists_ x φ)) ≠

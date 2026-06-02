@@ -9,8 +9,8 @@ import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.Hungarian.TemporalDeictic
 
 /-!
-# @cite{tsilia-zhao-2026}: Tense and Perspective
-@cite{tsilia-zhao-2026} @cite{sharvit-2003} @cite{zhao-2025}
+# [tsilia-zhao-2026]: Tense and Perspective
+[tsilia-zhao-2026] [sharvit-2003] [zhao-2025]
 
 The cross-linguistic incompatibility of temporal ⌈then⌉ with shifted present
 tense is derived from **tense presuppositions** anchored to a perspectival
@@ -117,7 +117,7 @@ theorem shift_together_blocks_mixed_reading {Time : Type*}
 -- § 3. Sharvit Bridge
 -- ════════════════════════════════════════════════════════════════
 
-/-- The @cite{sharvit-2003} simultaneous reading is the special case where a PRES
+/-- The [sharvit-2003] simultaneous reading is the special case where a PRES
     presupposition is trivially satisfied at the shifted perspective.
     `simultaneousFrame` has R = P' = E_matrix, satisfying presPresup. -/
 theorem sharvit_simultaneous_satisfies_presPresup {Time : Type*} [LinearOrder Time]

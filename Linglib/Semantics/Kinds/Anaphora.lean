@@ -5,9 +5,9 @@ import Linglib.Core.Assignment
 
 /-!
 # Kind Anaphora: Static-Dynamic Bridge
-@cite{krifka-2026}
+[krifka-2026]
 
-Bridges the static kind semantics in @cite{chierchia-1998} (∩, ⊔, `IsMass`,
+Bridges the static kind semantics in [chierchia-1998] (∩, ⊔, `IsMass`,
 `kindAnaphorMass`, `kindAnaphorCount`) with the dynamic concept discourse
 referent types in `DiscourseRef` (`ConceptDRef`, `DRefVal`).
 
@@ -17,7 +17,7 @@ selection (*it* for [MASS], *they* for [COUNT]).
 
 ## Core insight
 
-@cite{krifka-2026} proposes that head nouns introduce **concept discourse
+[krifka-2026] proposes that head nouns introduce **concept discourse
 referents** — properties annotated with a [MASS]/[COUNT] feature. Kind anaphors
 pick up these concept drefs and derive kind individuals via Chierchia's ∩
 operator:
@@ -53,7 +53,7 @@ open Semantics.Dynamic.Core (ConceptDRef DRefVal)
 
 /-- Select the kind-anaphor operator based on the morphosyntactic mass/count feature.
 
-    @cite{krifka-2026} (17a,b):
+    [krifka-2026] (17a,b):
     - ⟦it⟧  = λP[MASS].  λi. ∩P(i)           → `kindAnaphorMass`
     - ⟦they⟧ = λP[COUNT]. λi. ∩(⊔P)(i)        → `kindAnaphorCount`
 
@@ -67,7 +67,7 @@ def selectKindAnaphor (World Atom : Type) (feature : MassCount)
 
 /-- For mass properties, both anaphor paths yield the same kind.
 
-    @cite{krifka-2026} (16): ⊔⊔S = ⊔S for cumulative S (absorption rule).
+    [krifka-2026] (16): ⊔⊔S = ⊔S for cumulative S (absorption rule).
     Since mass nouns are cumulative, plural closure is a no-op, so
     `kindAnaphorCount P = kindAnaphorMass P` when P is mass.
 
@@ -91,7 +91,7 @@ variable {W E : Type*}
 
 /-- Heterogeneous assignment: maps indices to discourse referent values.
 
-    Following @cite{krifka-2026} §4: assignments are partial functions
+    Following [krifka-2026] §4: assignments are partial functions
     from ℕ to a heterogeneous universe including entities, concepts
     (properties with mass/count features), and world-time indices. Partiality
     is modeled by `DRefVal.undef`, so this is `Core.Assignment (DRefVal W E)`
@@ -100,7 +100,7 @@ abbrev HAssign (W E : Type*) := Core.Assignment (DRefVal W E)
 
 /-- Dynamic sentence meaning: relation between input and output assignments.
 
-    @cite{krifka-2026} §4: meanings of type **aast** map input assignment g
+    [krifka-2026] §4: meanings of type **aast** map input assignment g
     to output assignment h relative to a world-time index i. We omit the
     index parameter for the projection theorems since it is orthogonal
     to the island-escaping behavior. -/
@@ -108,7 +108,7 @@ def DSent (W E : Type*) := HAssign W E → HAssign W E → Prop
 
 /-- DPL-style negation: test (output = input) plus denial of body.
 
-    @cite{krifka-2026} (34): ⟦NEG⟧ = λp.λghi[g=h, ¬∃k[g≤k, p(gki)]]
+    [krifka-2026] (34): ⟦NEG⟧ = λp.λghi[g=h, ¬∃k[g≤k, p(gki)]]
 
     Negation is a *test*: it preserves the input assignment (g = h) and
     checks that no extension of g satisfies the body. This is why
@@ -119,7 +119,7 @@ def dNeg (φ : DSent W E) : DSent W E :=
 
 /-- Existential introduction of an entity dref at index n.
 
-    Models the indexed determiner *a*₃ in @cite{krifka-2026} (40c,e):
+    Models the indexed determiner *a*₃ in [krifka-2026] (40c,e):
     the determiner introduces a new entity dref (index 3) that falls
     under the concept property (index 2). -/
 def entityIntro (n : Nat) (body : DSent W E) : DSent W E :=
@@ -129,7 +129,7 @@ def entityIntro (n : Nat) (body : DSent W E) : DSent W E :=
     a concept dref at index n.
 
     Models how head nouns introduce concept drefs *presuppositionally*
-    in @cite{krifka-2026} §4 — they behave like names. The indexed
+    in [krifka-2026] §4 — they behave like names. The indexed
     head noun *dog*₂ in (40d) is interpreted as a dynamic predicate
     of type **eaast** that *presupposes* dref 2 is anchored to the
     property 'dog'. Unlike entity drefs (existentially introduced by
@@ -151,7 +151,7 @@ theorem dNeg_preserves (φ : DSent W E) {g h : HAssign W E}
     If a concept dref was presupposed in the input, it remains accessible
     in the output of a negated sentence.
 
-    @cite{krifka-2026} §3, §4:
+    [krifka-2026] §3, §4:
     *John doesn't own a dog.* introduces concept dref x₂ for 'dog'
     in the main box / input assignment. After negation, x₂ persists,
     licensing continuations like *He is afraid of them₂.*
@@ -170,7 +170,7 @@ theorem concept_survives_negation {n : Nat} {c : ConceptDRef W E}
     in the output: the existentially introduced entity exists only in the
     local extension k, which is bound under ¬∃.
 
-    @cite{krifka-2026} §4: after *John doesn't own [a₃ dog₂]*,
+    [krifka-2026] §4: after *John doesn't own [a₃ dog₂]*,
     index 3 (the entity dref for the dog John might own) is NOT in the
     output assignment, because it was introduced by ∃k (the determiner)
     under ¬ (the negation operator).
@@ -216,7 +216,7 @@ open _root_.Core (Assignment)
 variable {W E : Type*}
 
 /-- Embed a homogeneous DPL-style assignment (`Assignment E = Nat → E`,
-    @cite{groenendijk-stokhof-1991}) into a heterogeneous Krifka-style
+    [groenendijk-stokhof-1991]) into a heterogeneous Krifka-style
     assignment (`Nat → DRefVal W E`) by wrapping every value in `.entity`. -/
 def embedAssign (g : Assignment E) : HAssign W E :=
   λ n => .entity (g n)
@@ -226,11 +226,11 @@ def embedAssign (g : Assignment E) : HAssign W E :=
 def liftDPL (φ : Update (Assignment E)) : DSent W E :=
   λ g h => ∃ g' h' : Assignment E, embedAssign g' = g ∧ embedAssign h' = h ∧ φ g' h'
 
-/-- `dNeg` and `test (dneg φ)` (the substrate form of @cite{groenendijk-stokhof-1991}'s
+/-- `dNeg` and `test (dneg φ)` (the substrate form of [groenendijk-stokhof-1991]'s
     DPL negation) have identical structure.
 
     Both are: `λ g h => g = h ∧ ¬∃ k, φ g k`.
-    @cite{krifka-2026}'s negation (34) generalizes DPL negation from homogeneous
+    [krifka-2026]'s negation (34) generalizes DPL negation from homogeneous
     (`Nat → E`) to heterogeneous (`Nat → DRefVal W E`) assignments. The structure
     is preserved because the projection mechanism depends only on `g = h`. -/
 theorem dNeg_structure (φ : DSent W E) (g h : HAssign W E) :

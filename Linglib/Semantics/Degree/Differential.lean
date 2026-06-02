@@ -4,14 +4,14 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # Differential Comparative Semantics
-@cite{schwarzschild-2005} @cite{solt-2015} @cite{winter-2005}
+[schwarzschild-2005] [solt-2015] [winter-2005]
 
 Compositional semantics for measure phrase differentials in comparatives:
 "3 inches taller", "twice as tall as".
 
 ## Measure Phrase Composition
 
-@cite{schwarzschild-2005}: measure phrases modify the degree argument of the
+[schwarzschild-2005]: measure phrases modify the degree argument of the
 comparative, specifying the gap between matrix and standard degrees.
 
     "A is 3 inches taller than B" iff height(A) - height(B) = 3 inches
@@ -96,7 +96,7 @@ def factorEquative {Entity D : Type*} [Mul D]
     the same underlying extensive scale (cm, inches, etc.), so
     "the ladder is shorter than the house is high" is meaningful.
 
-    @cite{buring-2007} (p. 2, footnote 2): "spatial extent is the only
+    [buring-2007] (p. 2, footnote 2): "spatial extent is the only
     scale I know of that has measurements in different dimensions
     mapped onto it." This makes cross-polar nomalies possible — they
     require comparing two different measure functions on a shared scale.

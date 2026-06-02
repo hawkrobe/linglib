@@ -2,9 +2,9 @@ import Linglib.Typology.Gender
 
 /-!
 # Georgian Gender
-@cite{corbett-2013} @cite{corbett-1991}
+[corbett-2013] [corbett-1991]
 
-WALS @cite{corbett-2013} F30A/31A/32A codes Georgian as **no gender** —
+WALS [corbett-2013] F30A/31A/32A codes Georgian as **no gender** —
 Georgian lacks noun-class affixes, and WALS applies a noun-side-marking
 criterion. Corbett 1991 classifies Georgian's rationality/animacy split as
 a 4-class non-sex-based gender system on the basis of pronominal and verbal
@@ -16,7 +16,7 @@ namespace Georgian.Gender
 
 open Typology.Gender
 
-/-- Georgian gender typology per WALS @cite{corbett-2013}: no gender on the
+/-- Georgian gender typology per WALS [corbett-2013]: no gender on the
     noun-side-marking criterion. -/
 def genderTypology : GenderProfile :=
   .fromWALS "Georgian" "kat"

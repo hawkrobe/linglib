@@ -14,9 +14,9 @@ import Mathlib.Tactic.NormNum
 
 /-!
 # Standard Average European: A Linguistic Area
-@cite{haspelmath-2001}
+[haspelmath-2001]
 
-Formalization of @cite{haspelmath-2001}'s argument that the core European
+Formalization of [haspelmath-2001]'s argument that the core European
 languages — the Romance, Germanic, Balkan, and Balto-Slavic families plus
 the westernmost Finno-Ugric languages — form a *Sprachbund* (linguistic
 area) called **Standard Average European** (SAE), defined by a dozen
@@ -28,7 +28,7 @@ This study instantiates the framework-neutral schema in
 whose feature set is the twelve major Europeanisms of §2 of the paper, whose
 reference frame is the four samples §1 demands (area, cofamilial, adjacent,
 world), and whose areality is verified feature-by-feature against
-@cite{haspelmath-2001}'s Maps 107.1–107.12.
+[haspelmath-2001]'s Maps 107.1–107.12.
 
 The cluster-map gradience of §4 (most notably the *Charlemagne* nucleus
 formed by French and German) is recovered automatically from the discrete
@@ -63,7 +63,7 @@ open Diachronic.Areal
 -- §1. The Language Sample
 -- ============================================================================
 
-/-- Languages surveyed by @cite{haspelmath-2001}, partitioned by their role
+/-- Languages surveyed by [haspelmath-2001], partitioned by their role
 in the four reference samples (area / cofamilial / adjacent / world).
 
 The list follows the paper's coverage but is necessarily a subset — the
@@ -162,7 +162,7 @@ instance walsClassifies.instDecidable {V : Type} [BEq V]
 -- §2. The Twelve Major SAE Features (§2.1–§2.12)
 -- ============================================================================
 
-/-- The twelve "Europeanisms" identified in §2 of @cite{haspelmath-2001}.
+/-- The twelve "Europeanisms" identified in §2 of [haspelmath-2001].
 Each is the subject of one of Maps 107.1–107.12. -/
 inductive SAEFeature where
   /-- §2.1, Map 107.1: Both definite and indefinite articles present. -/
@@ -223,7 +223,7 @@ def walsHasIndefiniteArticle : Finset SAELanguage :=
     v == .indefiniteAffix)
 
 /-- WALS-derived intersection: languages with **both** a definite and an
-indefinite article in the WALS data, matching @cite{haspelmath-2001} §2.1. -/
+indefinite article in the WALS data, matching [haspelmath-2001] §2.1. -/
 def walsArticleLgs : Finset SAELanguage :=
   walsHasDefiniteArticle ∩ walsHasIndefiniteArticle
 
@@ -247,7 +247,7 @@ def relProLgs : Finset SAELanguage :=
 
 /-- Languages with the 'have'-perfect (Map 107.3).
 
-@cite{haspelmath-2001} §2.3 restricts this isogloss to the Romance and
+[haspelmath-2001] §2.3 restricts this isogloss to the Romance and
 Germanic families plus a Balkan/peripheral fringe — Albanian, Greek,
 Macedonian (an innovation: *ima* + verbal adjective), and (parts of) Czech.
 Bulgarian and Serbo-Croatian retain the inherited Slavic 'be'+l-participle
@@ -283,7 +283,7 @@ def particPassiveLgs : Finset SAELanguage :=
 
 /-- Anticausative-prominent languages (Map 107.6: ≥ 70% anticausative).
 
-@cite{haspelmath-2001} §2.6 / Map 107.6 marks only the languages whose
+[haspelmath-2001] §2.6 / Map 107.6 marks only the languages whose
 inchoative–causative pairs are anticausative-prominent on the Haspelmath
 1993 figures. Romance is partially excluded (only French/Romanian register
 as prominent; Italian/Spanish/Portuguese fall on the causative-prominent
@@ -387,7 +387,7 @@ def isoglossFor (f : SAEFeature) : Isogloss SAELanguage :=
 -- §4. The Reference Frame
 -- ============================================================================
 
-/-- The four reference samples for evaluating areality, per @cite{haspelmath-2001} §1.
+/-- The four reference samples for evaluating areality, per [haspelmath-2001] §1.
 
 * `area`: the core European languages (Romance, Germanic, Balkan, Balto-Slavic,
   marginal Finno-Ugric) that the paper proposes as SAE.
@@ -420,14 +420,14 @@ def europeanReference : ArealReference SAELanguage where
 -- ============================================================================
 
 /-- **Standard Average European** as a `LinguisticArea`: the 12 diagnostic
-features of @cite{haspelmath-2001} §2 over the European/cofamilial/
+features of [haspelmath-2001] §2 over the European/cofamilial/
 adjacent/world reference frame.
 
 `LinguisticArea` does not require every diagnostic feature to satisfy
 the strict `IsAreal` predicate at any particular threshold — and
 indeed, several SAE features (anticausative prominence, V+NI negation,
 strict agreement) do not pass strict majority on Haspelmath's own data.
-This matches the paper: @cite{haspelmath-2001}'s actual argument runs
+This matches the paper: [haspelmath-2001]'s actual argument runs
 through the cluster maps of §4, not through per-feature majority
 thresholds.
 
@@ -485,13 +485,13 @@ theorem french_in_nucleus : French ∈ sae.nucleus := by
   decide
 
 /-- German sits in the SAE cluster nucleus alongside French —
-@cite{haspelmath-2001} §4's *Charlemagne Sprachbund* core. -/
+[haspelmath-2001] §4's *Charlemagne Sprachbund* core. -/
 theorem german_in_nucleus : German ∈ sae.nucleus := by
   unfold LinguisticArea.nucleus LinguisticArea.isopleth LinguisticArea.clusterScore
   decide
 
 /-- The SAE feature inventory has 12 features, matching Maps 107.1–107.12
-of @cite{haspelmath-2001}. -/
+of [haspelmath-2001]. -/
 theorem sae_features_card : sae.features.card = 12 := by decide
 
 end Haspelmath2001

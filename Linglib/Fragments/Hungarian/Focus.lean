@@ -1,8 +1,8 @@
 /-!
 # Hungarian Focus and the Identificational/Information Distinction
-@cite{kiss-1998}
+[kiss-1998]
 
-@cite{kiss-1998} argues that two structurally distinct focus types must
+[kiss-1998] argues that two structurally distinct focus types must
 be distinguished in Hungarian:
 
 1. **Identificational focus** moves to the specifier of a left-peripheral
@@ -17,9 +17,9 @@ be distinguished in Hungarian:
 The two are *not* interpretational variants of one operator: they
 occupy distinct structural positions and trigger distinct semantic
 operations. This is the structural basis for the Hungarian–English
-parallel @cite{kiss-1998} draws (English clefts realise
+parallel [kiss-1998] draws (English clefts realise
 identificational focus) and the typological pivot for the
-@cite{hartmann-zimmermann-2007} debate (Hausa is the *negative*
+[hartmann-zimmermann-2007] debate (Hausa is the *negative*
 counterpart: in-situ position does not block focus interpretation).
 
 Distributional restrictions (paper §3): identificational focus is
@@ -47,7 +47,7 @@ namespace Hungarian.Focus
 
 /-- The two structural positions for focused constituents in Hungarian.
     `preverbal` = Spec,FP (the immediately preverbal identificational
-    focus slot, see @cite{kiss-1998} eq. 5a); `postverbal` = VP-internal
+    focus slot, see [kiss-1998] eq. 5a); `postverbal` = VP-internal
     in situ (the information focus position, see eq. 5b). -/
 inductive Position where
   | preverbal
@@ -58,7 +58,7 @@ inductive Position where
 -- § 2: Focus Type (paper §1, eq. 9)
 -- ============================================================================
 
-/-- The two focus types @cite{kiss-1998} distinguishes. The
+/-- The two focus types [kiss-1998] distinguishes. The
     *identificational* type carries an exhaustivity entailment;
     *information* focus does not. The eq. 5a vs 5b minimal pair is
     the empirical pivot. -/
@@ -68,7 +68,7 @@ inductive FocusType where
   deriving DecidableEq, Repr, Inhabited
 
 /-- Whether the focus type carries an exhaustivity entailment. Direct
-    consequence of @cite{kiss-1998} §2 (the Szabolcsi–Farkas test).
+    consequence of [kiss-1998] §2 (the Szabolcsi–Farkas test).
     Stated at the `FocusType` level — exhaustivity is intrinsic to the
     type, independent of any particular configuration. -/
 def FocusType.IsExhaustive : FocusType → Prop
@@ -102,7 +102,7 @@ inductive ConstituentClass where
 
 /-- A Hungarian focused-clause configuration. Position, focus type, and
     constituent class are independent fields at the structure level;
-    `Licensed` enforces the @cite{kiss-1998} pairings. -/
+    `Licensed` enforces the [kiss-1998] pairings. -/
 structure FocusConfig where
   /-- The structural position of the focused constituent. -/
   position  : Position
@@ -124,7 +124,7 @@ def positionFor : FocusType → Position
 -- ============================================================================
 
 /-- A constituent class is **compatible** with a focus type per
-    @cite{kiss-1998} §3:
+    [kiss-1998] §3:
     - `regular` works as either type;
     - `universal` is barred from identificational (eq. 17b–d) but
       can be information focus (eq. 19b);

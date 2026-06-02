@@ -5,8 +5,8 @@ import Linglib.Pragmatics.RSA.Speaker.CombinedUtility
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{barnett-griffiths-hawkins-2022}: A Pragmatic Account of the Weak Evidence Effect
-@cite{barnett-griffiths-hawkins-2022}
+# [barnett-griffiths-hawkins-2022]: A Pragmatic Account of the Weak Evidence Effect
+[barnett-griffiths-hawkins-2022]
 
 Extends RSA with a **persuasive speaker** who has a goal state w* that may differ
 from the true world state w. The speaker's utility combines epistemic and persuasive
@@ -145,7 +145,7 @@ def s1ScoreQ (w : StickWorld) (u : Stick) : ℚ :=
     | .s5 => 4/9    -- (2/3)²
   else 0
 
-/-- @cite{barnett-griffiths-hawkins-2022} RSA with persuasive speaker.
+/-- [barnett-griffiths-hawkins-2022] RSA with persuasive speaker.
 
 The s1Score implements Eq. 8: S(u|w, longer, β) ∝ L0(longer|u)^β · 𝟙[u ∈ w].
 The score is precomputed as `s1ScoreQ` (ℚ) and cast to ℝ, so that rsa_predict's
@@ -255,8 +255,8 @@ theorem s3_not_positive_argStr :
 
 /-- The weak evidence effect shows that argumentatively positive evidence
 can still backfire under a pragmatic listener model. This is the core
-insight connecting @cite{barnett-griffiths-hawkins-2022} to
-@cite{cummins-franke-2021}'s work on argumentative strength.
+insight connecting [barnett-griffiths-hawkins-2022] to
+[cummins-franke-2021]'s work on argumentative strength.
 
 Stick 4 has positive argStr at L0 (1/2 > 2/5), yet L1 assigns more mass
 to ¬longer than longer after seeing s4. -/

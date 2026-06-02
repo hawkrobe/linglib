@@ -5,14 +5,14 @@ import Linglib.Morphology.DM.ContainmentVI
 
 /-!
 # Smith, Moskal, Xu, Kang & Bobaljik (2019) — Case and Number Suppletion in Pronouns
-@cite{smith-moskal-xu-kang-bobaljik-2019}
+[smith-moskal-xu-kang-bobaljik-2019]
 
-@cite{smith-moskal-xu-kang-bobaljik-2019} extend `@cite{bobaljik-2012}`'s
+[smith-moskal-xu-kang-bobaljik-2019] extend `[bobaljik-2012]`'s
 structural-containment account of *ABA in adjectival degree suppletion
 (`good–better–best` / `*good–better–goodest`) to two further empirical
-domains: pronominal case suppletion (using `@cite{caha-2009}`'s case
+domains: pronominal case suppletion (using `[caha-2009]`'s case
 hierarchy as the structural backbone) and pronominal number suppletion
-(using `@cite{harbour-2008}` / `@cite{noyer-1992}` for the number-feature
+(using `[harbour-2008]` / `[noyer-1992]` for the number-feature
 geometry).
 
 The cross-domain extension is not seamless: the paper identifies three
@@ -26,16 +26,16 @@ refinement of the Bobaljik 2012 framework:
    pronominal number. This is the divergence formalized below.
 
 2. **§3.7 — domain-based locality replaces structural/linear
-   adjacency.** The locality predicate from @cite{bobaljik-2012} (and
-   @cite{embick-2010}) is too restrictive once AAB is admitted. The
+   adjacency.** The locality predicate from [bobaljik-2012] (and
+   [embick-2010]) is too restrictive once AAB is admitted. The
    paper proposes the weaker domain-based locality from
-   @cite{moskal-2015}.
+   [moskal-2015].
 
 3. **§4.3.1 — markedness × suppletion.** Cross-linguistic variation
    in pronominal number suppletion correlates with independent
    evidence for variation in the internal complexity / markedness of
    the number head — connecting suppletion theory to the feature
-   recursion of @cite{harbour-2014} (already substrate in this
+   recursion of [harbour-2014] (already substrate in this
    codebase, see `Syntax/Minimalist/Agreement/FeatureRecursion.lean`).
 
 This file formalizes (1) directly: the DM-derivation in
@@ -103,7 +103,7 @@ theorem dm_excludes_aab
 -- § 2: Case side — §3.6 attested AAB witnesses
 -- ============================================================================
 
-/-! @cite{smith-moskal-xu-kang-bobaljik-2019} §3.6 distinguishes two
+/-! [smith-moskal-xu-kang-bobaljik-2019] §3.6 distinguishes two
 kinds of AAB pattern in pronominal case suppletion:
 
 - **Syncretic AAB** (Table 20: Aghul, Tsez, Hinuq, Archi 2SG): the
@@ -117,7 +117,7 @@ kinds of AAB pattern in pronominal case suppletion:
   variation), and DAT is suppletive. These are real AAB witnesses.
 
 We encode two genuine AAB witnesses:
-- Wardaman 3SG (Table 25, @cite{merlan-1994}): ABS=*narnaj*,
+- Wardaman 3SG (Table 25, [merlan-1994]): ABS=*narnaj*,
   ERG=*narnaj-(j)i*, DAT=*gunga*. ABS and ERG share root *narnaj*
   with ERG bearing an additional ergative suffix; DAT is suppletive.
 - Khinalugh 2SG (Table 24, Nakh-Daghestanian): ABS=*vi*, ERG=*va*,
@@ -129,12 +129,12 @@ the shape `[0, 0, 1]` (positive and middle cells share root-class 0,
 suppletive third cell takes root-class 1). -/
 
 /-- Wardaman 3SG: ABS=*narnaj*, ERG=*narnaj-(j)i*, DAT=*gunga*.
-    @cite{smith-moskal-xu-kang-bobaljik-2019} Table 25 (data from
-    @cite{merlan-1994}). -/
+    [smith-moskal-xu-kang-bobaljik-2019] Table 25 (data from
+    [merlan-1994]). -/
 def wardamanThirdSg : List Nat := [0, 0, 1]
 
 /-- Khinalugh 2SG: ABS=*vi*, ERG=*va*, DAT=*oX(ir)*.
-    @cite{smith-moskal-xu-kang-bobaljik-2019} Table 24. -/
+    [smith-moskal-xu-kang-bobaljik-2019] Table 24. -/
 def khinalughSecondSg : List Nat := [0, 0, 1]
 
 /-- Both genuine-AAB witnesses are contiguous in the substrate sense
@@ -166,7 +166,7 @@ theorem khinalugh_2sg_is_aab :
     where the second cell equals the first but the third cell
     differs.
 
-    @cite{smith-moskal-xu-kang-bobaljik-2019} §3.6 establishes that
+    [smith-moskal-xu-kang-bobaljik-2019] §3.6 establishes that
     AAB is robustly attested in pronominal case suppletion (Table 9:
     10 instances, including Wardaman 3SG and the Nakh-Daghestanian
     2SG patterns). The existence of a contiguous AAB-shaped case
@@ -176,7 +176,7 @@ theorem khinalugh_2sg_is_aab :
     The paper's positive proposal (§3.7) is to weaken the locality
     predicate from structural adjacency (Bobaljik 2012) /
     linear adjacency (Embick 2010) to domain-based locality
-    (@cite{moskal-2015}); see § 4 below. -/
+    ([moskal-2015]); see § 4 below. -/
 theorem case_aab_attested_falsifies_dm :
     ∃ (cells : List Nat),
       Morphology.Containment.IsContiguous cells ∧
@@ -187,7 +187,7 @@ theorem case_aab_attested_falsifies_dm :
 -- § 3: Number side — §4 attested AAB witnesses (Table 46)
 -- ============================================================================
 
-/-! @cite{smith-moskal-xu-kang-bobaljik-2019} §4 surveys pronominal
+/-! [smith-moskal-xu-kang-bobaljik-2019] §4 surveys pronominal
 number suppletion and finds the same AAB-attestation profile that
 §3.6 reports for case: "we find extremely clear-cut examples of ABB,
 ABC and AAB patterns, alongside AAA. We do not find any unambiguously
@@ -197,9 +197,9 @@ Yagua).
 
 §4 Table 46 lists the three concrete AAB number witnesses:
 
-- **Wambaya 1INCL** (@cite{nordlinger-1998}):
+- **Wambaya 1INCL** ([nordlinger-1998]):
   SG=*ngawu(miji)*, PL=*ngurruwani*, DL=*mrindiyani*
-- **Yagua 2** (@cite{payne-payne-1990}):
+- **Yagua 2** ([payne-payne-1990]):
   SG=*jiy*, PL=*jiry-éy*, DL=*sáada*
 - **Dehu 3M** (Smith 2011):
   SG=*angeice*, PL=*angate*, DL=*nyido*
@@ -215,12 +215,12 @@ The number paradigms are 3-cell over SG/PL/DL; the cell-ordering
 reflects the containment structure SG–PL–DL or SG–DL–PL depending on
 the language (the paper notes both orderings are attested, motivating
 the §4.3.1 reanalysis of number representation that connects to
-Harbour's @cite{harbour-2014} feature recursion). For Yagua, the
+Harbour's [harbour-2014] feature recursion). For Yagua, the
 SG–PL–DL ordering matches the table caption directly. -/
 
 /-- Yagua 2nd person number paradigm: SG=*jiy*, PL=*jiry-éy*,
-    DL=*sáada*. @cite{smith-moskal-xu-kang-bobaljik-2019} Table 46
-    (data from @cite{payne-payne-1990}). The PL is transparently
+    DL=*sáada*. [smith-moskal-xu-kang-bobaljik-2019] Table 46
+    (data from [payne-payne-1990]). The PL is transparently
     *jiy* + *-éy*; the DL is suppletive. Projects to `[0, 0, 1]`
     over SG/PL/DL. -/
 def yaguaSecond : List Nat := [0, 0, 1]
@@ -248,11 +248,11 @@ theorem number_aab_attested_falsifies_dm :
 -- § 4: §3.7 — Domain-based locality (case + number partitions)
 -- ============================================================================
 
-/-! @cite{smith-moskal-xu-kang-bobaljik-2019} §3.7 proposes that the
+/-! [smith-moskal-xu-kang-bobaljik-2019] §3.7 proposes that the
 locality predicate driving suppletion contiguity is *not* structural
-adjacency (@cite{bobaljik-2012}) or linear adjacency
-(@cite{embick-2010}), but *domain-based*
-(@cite{moskal-2015a-dissertation}). The substrate for this lives in
+adjacency ([bobaljik-2012]) or linear adjacency
+([embick-2010]), but *domain-based*
+([moskal-2015a-dissertation]). The substrate for this lives in
 `Morphology/DM/DomainLocality.lean` (`DomainPartition`,
 `SameDomain`, `ViolatesABAWithin`, `IsContiguousWithin`,
 `DomainPartition.trivial`).
@@ -265,16 +265,16 @@ case-hierarchy split, not threshold-on-cell-index"):
 
 - **Case partition (`caseDomainPartition`)**: positions 0 (ABS) and 1
   (ERG) in the **non-oblique** domain; position 2 (DAT) in the
-  **oblique** domain. The boundary is the @cite{caha-2009}
+  **oblique** domain. The boundary is the [caha-2009]
   Unmarked-Dependent vs Oblique split (the same containment
-  hierarchy the paper itself adopts at §3.1; @cite{smith-moskal-xu-kang-bobaljik-2019}
+  hierarchy the paper itself adopts at §3.1; [smith-moskal-xu-kang-bobaljik-2019]
   §3.7 does not pin down the boundary location explicitly but the
   Caha hierarchy is the natural one given the paper's case-side
   framework).
 
 - **Number partition (`numberDomainPartition`)**: positions 0 (SG)
   and 1 (PL) in the **non-dual** domain; position 2 (DL) in the
-  **dual** domain. The boundary corresponds to @cite{harbour-2014}'s
+  **dual** domain. The boundary corresponds to [harbour-2014]'s
   feature-recursion split where dual is the marked extension over
   the SG/PL base.
 
@@ -311,14 +311,14 @@ def caseAtPos : Nat → Option Features.Case
     ABS and ERG are off-hierarchy in `containmentRank` (`IsOblique` is
     `False` for them); DAT contains GEN's representation in the Caha
     order so `IsOblique .dat` is `True`. The boundary thus corresponds
-    to @cite{caha-2009}'s Unmarked-Dependent vs Oblique split — *as a
+    to [caha-2009]'s Unmarked-Dependent vs Oblique split — *as a
     consequence* of the order substrate, not as a stipulated threshold. -/
 def caseDomainPartition : DomainPartition Bool := λ i =>
   (caseAtPos i).elim false (λ c => decide (Syntax.Case.IsOblique c))
 
 /-- Number partition: SG (position 0) + PL (position 1) in domain
     `false` (non-dual); DL (position 2) in domain `true` (dual).
-    The boundary corresponds to @cite{harbour-2014}'s feature-recursion
+    The boundary corresponds to [harbour-2014]'s feature-recursion
     split where dual is the marked extension over SG/PL. -/
 def numberDomainPartition : DomainPartition Bool := λ i => i ≥ 2
 

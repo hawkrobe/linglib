@@ -4,12 +4,12 @@ import Linglib.Phonology.Autosegmental.Defs
 import Linglib.Phonology.Process.LocalRewrite
 
 /-!
-# Sagey (1986) @cite{sagey-1986}
+# Sagey (1986) [sagey-1986]
 
 The Representation of Features and Relations in Non-Linear Phonology.
 PhD dissertation, Massachusetts Institute of Technology.
 
-@cite{sagey-1986} proposes a hierarchical feature geometry organized by
+[sagey-1986] proposes a hierarchical feature geometry organized by
 vocal tract articulator, establishing the labial, coronal, dorsal, and
 soft palate nodes that are now standard in phonological theory
 (`Phonology/FeatureGeometry.lean`). The geometry predicts which
@@ -186,7 +186,7 @@ theorem alveolar_not_complex : ¬ IsComplex alveolar_t := by decide
 /-- An alveopalatal (postalveolar) is [+cor, −ant, +dist] — still just
     one articulator (coronal), so not complex. An alveolar-alveopalatal
     doubly-articulated stop is therefore impossible: both articulations
-    use the coronal articulator (@cite{sagey-1986} §2.2). -/
+    use the coronal articulator ([sagey-1986] §2.2). -/
 def alveopalatal : Segment :=
   Segment.ofSpecs
     [(.consonantal, true), (.sonorant, false), (.continuant, false),
@@ -201,7 +201,7 @@ theorem alveopalatal_not_complex : ¬ IsComplex alveopalatal := by decide
 
 /-! ### Temporal derivation of the No-Crossing Constraint
 
-@cite{sagey-1986} Ch. 5 derives the ban on crossing association lines from
+[sagey-1986] Ch. 5 derives the ban on crossing association lines from
 temporal precedence. This section demonstrates the derived constraint with
 concrete integer-valued time instances. -/
 
@@ -240,7 +240,7 @@ theorem contour_HL_valid :
   simp only [contour_HL, mkAssoc, validAssociation, Interval.overlaps]
   omega
 
-/-- **Crossing forces invalidity** (@cite{sagey-1986} §5.3):
+/-- **Crossing forces invalidity** ([sagey-1986] §5.3):
     a crossing configuration — timing₁ at [0,1] → melody₁ at [4,5],
     timing₂ at [2,3] → melody₂ at [0,1] — has its timing positions
     correctly ordered and melody positions reversed, but the first

@@ -5,7 +5,7 @@ import Linglib.Core.CylindricAlgebra
 /-!
 # Variable Binding and Assignment Functions
 
-@cite{heim-kratzer-1998} @cite{charlow-2018}
+[heim-kratzer-1998] [charlow-2018]
 
 Framework-neutral infrastructure for interpreting expressions with free variables,
 built on `Core.Logic.Intensional.Frame`.
@@ -16,8 +16,8 @@ built on `Core.Logic.Intensional.Frame`.
   `F.Entity` for entity pronouns and `F.Index` for situation pronouns
 - `DenotG` — assignment-relative denotations
 - `applyG`, `lambdaAbsG`, `constDenot` — composition with assignments
-- Applicative functor laws (@cite{charlow-2018})
-- Cylindric algebra bridge (@cite{henkin-monk-tarski-1971})
+- Applicative functor laws ([charlow-2018])
+- Cylindric algebra bridge ([henkin-monk-tarski-1971])
 -/
 
 namespace Core.Logic.Intensional.Variables
@@ -91,9 +91,9 @@ theorem lambdaAbsG_alpha {F : Frame} {τ : Ty} (n₁ n₂ : ℕ) (body : DenotG 
 
 /-! ### Assignment-sensitive composition as an applicative functor
 
-@cite{charlow-2018} observes that `constDenot` (ρ) and `applyG` (⊛)
+[charlow-2018] observes that `constDenot` (ρ) and `applyG` (⊛)
 form an applicative functor for the Reader type constructor `G a := g → a`
-(@cite{mcbride-paterson-2008}). The four applicative functor laws hold
+([mcbride-paterson-2008]). The four applicative functor laws hold
 definitionally. -/
 
 section ApplicativeFunctor
@@ -134,7 +134,7 @@ variable {F : Frame}
 
 /-- **Join** (μ): flatten a doubly assignment-dependent meaning.
 
-@cite{charlow-2018} §4.2: `μ m := λg. m g g`.
+[charlow-2018] §4.2: `μ m := λg. m g g`.
 
 Enables higher-order variables: a pronoun anaphoric to an *intension*
 (type `g → g → a`) is flattened to a standard denotation (type `g → a`)
@@ -165,9 +165,9 @@ end MonadicJoin
 
 /-! ### Assignments as a cylindric set algebra
 
-@cite{heim-kratzer-1998} assignment functions satisfy the same algebraic axioms
+[heim-kratzer-1998] assignment functions satisfy the same algebraic axioms
 as DRT's dynamic assignments: predicates on assignments form a cylindric
-set algebra (@cite{henkin-monk-tarski-1971}). -/
+set algebra ([henkin-monk-tarski-1971]). -/
 
 section CylindricStructure
 

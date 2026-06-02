@@ -8,9 +8,9 @@ import Mathlib.Probability.ProbabilityMassFunction.Constructions
 /-!
 # Dirichlet–multinomial PCFG (DMPCFG)
 
-@cite{odonnell-2015}
+[odonnell-2015]
 
-The "full-parsing" model of @cite{odonnell-2015} §2.4.1 / §3.1.4: a
+The "full-parsing" model of [odonnell-2015] §2.4.1 / §3.1.4: a
 PCFG with a Dirichlet prior on the per-LHS rule-weight vector.
 Marginalizing out the rule weights yields the closed-form corpus
 probability of eq 3.9 — the Dirichlet–multinomial likelihood.
@@ -62,7 +62,7 @@ of derivations, not a draw from the unlabeled-count distribution.)
 
 ## References
 
-- @cite{odonnell-2015} §2.4.1, §3.1.4 (eq 3.7–3.9).
+- [odonnell-2015] §2.4.1, §3.1.4 (eq 3.7–3.9).
 -/
 
 namespace Morphology.FragmentGrammars
@@ -73,7 +73,7 @@ open Real
 A Dirichlet–multinomial PCFG over `G`: per-rule pseudo-counts that
 parametrize a Dirichlet prior on the per-LHS rule-weight vector.
 
-Per @cite{odonnell-2015} §2.4.1 the conditional distribution over
+Per [odonnell-2015] §2.4.1 the conditional distribution over
 weights given a corpus is again Dirichlet (conjugacy). The "MAP
 weights" (CL convention) are taken to be the Dirichlet posterior
 **mean** `(π + x) / Σ(π + x)`, proportional to corpus rule frequencies.
@@ -83,7 +83,7 @@ over θ, with formula `(π - 1) / Σ(π - 1)` requiring `π > 1` everywhere.
 For the symmetric Dirichlet priors typical in CL (α ≤ 1) the strict
 mode is at the simplex boundary, so practitioners use the posterior
 mean (= posterior predictive probability) and call it "MAP" loosely.
-@cite{odonnell-2015} follows this convention; we do too. The strict
+[odonnell-2015] follows this convention; we do too. The strict
 mode is also formalized as `posteriorMode`; see that section for the
 ordering-equivalence theorem (`mapWeight_lt_iff_posteriorMode_lt`)
 that shows the loose convention is harmless for ordering claims.
@@ -130,7 +130,7 @@ noncomputable def lhsFactor (a : G.NT) (D : Multiset (CFGTree T G.NT)) : ℝ :=
   (M.lhsUrn a).seqProb (lhsCounts a D)
 
 /--
-DMPCFG corpus probability — eq 3.9 of @cite{odonnell-2015}. Product
+DMPCFG corpus probability — eq 3.9 of [odonnell-2015]. Product
 over LHSs that appear in the grammar of the per-LHS Pólya factor.
 LHSs with no rules in `G` contribute trivially (empty image term)
 so the product is over `G.rules.image (·.input)`.
@@ -184,12 +184,12 @@ theorem corpusProb_zero : M.corpusProb (0 : Multiset (CFGTree T G.NT)) = 1 := by
 
 /-! ## Posterior MAP weights
 
-Per @cite{odonnell-2015} §2.4 (Dirichlet–multinomial conjugacy),
+Per [odonnell-2015] §2.4 (Dirichlet–multinomial conjugacy),
 the posterior over rule weights given a corpus is again Dirichlet,
 so per-rule posterior expected value (the MAP weight in the
 symmetric prior limit) is
 `(π_r + x_r) / Σ_{r' with same LHS} (π_{r'} + x_{r'})`.
-This is the productivity score @cite{odonnell-2015} Ch 7 (p. 268)
+This is the productivity score [odonnell-2015] Ch 7 (p. 268)
 identifies as DMPCFG's failure mode: when corpus counts dominate
 pseudo-counts, frequency wins over the prior. -/
 
@@ -266,7 +266,7 @@ theorem mapWeight_zero (r : ContextFreeRule T G.NT) :
 /-- Same-LHS comparison (iff form): with a shared LHS, `mapWeight`
     ordering is *equivalent* to `pseudo + count` ordering. The shared
     denominator cancels. This is the technical core of the
-    @cite{odonnell-2015} Ch 7 DMPCFG critique: when corpus counts
+    [odonnell-2015] Ch 7 DMPCFG critique: when corpus counts
     overcome pseudo-count differences, the more-frequent rule wins
     regardless of prior. -/
 theorem mapWeight_lt_mapWeight_iff_of_same_lhs
@@ -390,7 +390,7 @@ theorem mapWeightPMF_lt_iff {a : G.NT}
 /-! ## Strict Bayesian mode (the actual MAP)
 
 `mapWeight` computes the Dirichlet posterior **mean**, which is what
-@cite{odonnell-2015} and CL practice generally call "MAP" (a loose
+[odonnell-2015] and CL practice generally call "MAP" (a loose
 convention). The strict Bayesian MAP — the single most likely value
 of the rule-weight vector under the posterior — is the **mode** of
 `Dir(pseudo + count)`, with closed form `(π_i - 1) / Σ(π_j - 1)`.

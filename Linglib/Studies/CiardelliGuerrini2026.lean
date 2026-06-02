@@ -5,8 +5,8 @@ import Linglib.Phenomena.Modality.ModalConcord.Data
 import Mathlib.Data.Set.Basic
 
 /-!
-# @cite{ciardelli-guerrini-2026} — Against Wide Scope Free Choice
-@cite{ciardelli-guerrini-2026} @cite{zeijlstra-2007}
+# [ciardelli-guerrini-2026] — Against Wide Scope Free Choice
+[ciardelli-guerrini-2026] [zeijlstra-2007]
 
 Semantics and Pragmatics 19(4). 2026.
 
@@ -41,7 +41,7 @@ that derive the conjunctive free-choice inference ◇A ∧ ◇B.
 
 ## Compositional Mechanism (§3)
 
-The narrow-scope LF arises via **modal concord** (@cite{zeijlstra-2007}).
+The narrow-scope LF arises via **modal concord** ([zeijlstra-2007]).
 Modal auxiliaries carry uninterpretable features [u∃/∀-MOD]. When two
 auxiliaries with the same feature appear in a coordination, a single
 silent operator [i∃/∀-MOD] c-commands the coordination and checks both
@@ -55,7 +55,7 @@ are vacuous. This yields Δ(A ∘ B), not ΔA ∘ ΔB.
    cannot participate in concord → no FC reading in coordination.
 
 2. **Either position**: Initial "either" does not block narrow-scope
-   readings, contra @cite{meyer-sauerland-2017}, because the silent
+   readings, contra [meyer-sauerland-2017], because the silent
    operator can check features from above "either."
 
 3. **Negation flips force for concord**: derived from `ModalForce.dual`
@@ -88,7 +88,7 @@ matters only for compositional derivation and pragmatic enrichment.
     Promoted to `Exhaustification.FreeChoice.diamond_distributes_iff`.
     The scope distinction is truth-conditionally vacuous — it matters
     only for pragmatic enrichment. This is the central observation of
-    @cite{ciardelli-guerrini-2026}. -/
+    [ciardelli-guerrini-2026]. -/
 example {World : Type*} (p q : Set World) :
     diamond (p ∪ q) ↔ diamond p ∨ diamond q :=
   diamond_distributes_iff p q
@@ -149,7 +149,7 @@ theorem all_ambiguous :
 /-!
 ## Deriving Narrow-Scope LF via Modal Concord
 
-@cite{zeijlstra-2007}'s feature system explains how the narrow-scope LF
+[zeijlstra-2007]'s feature system explains how the narrow-scope LF
 ◇(A ∨ B) arises compositionally for "may A or may B":
 
 1. Each "may" carries [u∃-MOD] (uninterpretable existential feature)
@@ -199,7 +199,7 @@ private theorem silent_checks_matching (g₁ g₂ : ModalFeature)
 
 /-- A concord derivation witnesses that two modal features can be checked
     by a single silent operator. This is the formal content of
-    @cite{ciardelli-guerrini-2026}'s compositional mechanism.
+    [ciardelli-guerrini-2026]'s compositional mechanism.
 
     A `ConcordDerivation` exists iff:
     1. Both features are uninterpretable (u-MOD)
@@ -302,7 +302,7 @@ theorem cross_force_blocked :
 /-!
 ## The Full Pipeline: From Lexical Features to Free Choice
 
-This is the deepest formalization of @cite{ciardelli-guerrini-2026}'s
+This is the deepest formalization of [ciardelli-guerrini-2026]'s
 reductionist thesis. The pipeline has three stages:
 
 1. **Feature matching** → `ConcordDerivation` (§3 above)
@@ -348,7 +348,7 @@ theorem scope_equivalence {World : Type*} (A B : Set World) :
     diamond (A ∪ B) ↔ diamond A ∨ diamond B :=
   diamond_distributes_iff A B
 
-/-- **The Reductionist Thesis** (@cite{ciardelli-guerrini-2026}, formalized).
+/-- **The Reductionist Thesis** ([ciardelli-guerrini-2026], formalized).
 
     Despite truth-conditional equivalence (`scope_equivalence`),
     the two LFs diverge under pragmatic enrichment:
@@ -373,12 +373,12 @@ theorem reductionist_thesis {World : Type*} (A B : Set World) :
 /-!
 ## Prediction: Non-Auxiliary Modals Block FC in Coordination
 
-@cite{meyer-sauerland-2017} observed that (19a-b) lack FC readings:
+[meyer-sauerland-2017] observed that (19a-b) lack FC readings:
 
   (19a) It's ok for John to sing or it's ok for John to dance.  (*FC)
   (19b) John is allowed to sing or he is allowed to dance.      (*FC)
 
-@cite{ciardelli-guerrini-2026} explain this: "it's ok" and "be allowed"
+[ciardelli-guerrini-2026] explain this: "it's ok" and "be allowed"
 carry **interpretable** features. They cannot participate in concord
 with a higher silent operator, so no narrow-scope LF is available.
 
@@ -427,7 +427,7 @@ theorem nonAux_no_fc : nonAuxData.all (·.fcInCoordination == false) = true := r
 /-!
 ## Against ATB Movement (§1, ex. 3)
 
-@cite{simons-2005} proposed that the narrow-scope LF ◇(A ∨ B) arises
+[simons-2005] proposed that the narrow-scope LF ◇(A ∨ B) arises
 from across-the-board (ATB) movement of the modal at LF. C&G note there
 is evidence AGAINST this: ATB movement is independently blocked for
 nominal quantifiers:
@@ -514,7 +514,7 @@ theorem allow_neg_may_bad :
 
 /-- General pattern: cross-negation concord succeeds ↔ forces are duals.
     This is the content of the negation-concord generalization from
-    @cite{grosz-2010} and @cite{anand-brasoveanu-2010}, formalized
+    [grosz-2010] and [anand-brasoveanu-2010], formalized
     as a consequence of `checksAcrossNegation` using `ModalForce.dual`. -/
 theorem negation_concord_pattern (checkerForce checkedForce : ModalForce)
     (hNec : checkerForce = .necessity ∨ checkerForce = .possibility)
@@ -585,9 +585,9 @@ theorem conjunctive_narrow_stronger {World : Type*}
 -- ============================================================================
 
 /-!
-## Connection to Empirical Modal Concord (@cite{rotter-liu-2025})
+## Connection to Empirical Modal Concord ([rotter-liu-2025])
 
-@cite{rotter-liu-2025} study "must have to VP" stacking, where two necessity
+[rotter-liu-2025] study "must have to VP" stacking, where two necessity
 modals yield a single-necessity reading (concord). This is the same phenomenon
 C&G exploit: modal concord — one modal is semantically vacuous.
 
@@ -609,7 +609,7 @@ theorem haveTo_feature_eq :
     haveTo.toModalFeature = some ⟨.necessity, .uninterpretable⟩ := rfl
 
 /-- "Must have to" concord as a `ConcordDerivation` — derived from Fragment.
-    The @cite{rotter-liu-2025} finding that "must have to" yields single
+    The [rotter-liu-2025] finding that "must have to" yields single
     necessity (not double necessity) follows: the checker checks both
     u-features, leaving one semantic operator. -/
 def mustHaveToConcord : ConcordDerivation :=

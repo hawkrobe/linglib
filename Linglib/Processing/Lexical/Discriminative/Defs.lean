@@ -3,13 +3,13 @@ import Mathlib.Data.Real.Basic
 
 /-!
 # Discriminative Lexicon Model — substrate
-@cite{baayen-2019} @cite{heitmeier-chuang-baayen-2026}
-@cite{chuang-bell-tseng-baayen-2026} @cite{lu-chuang-baayen-2026}
+[baayen-2019] [heitmeier-chuang-baayen-2026]
+[chuang-bell-tseng-baayen-2026] [lu-chuang-baayen-2026]
 
 The **Discriminative Lexicon Model** (DLM) is a theory of *lexical
 processing* in which form ↔ meaning relations are mediated by error-
 driven networks rather than by stored lexical entries
-(@cite{baayen-2019}). This file lifts the DLM substrate out of the
+([baayen-2019]). This file lifts the DLM substrate out of the
 two paper-anchored Studies files that introduced it
 (`Studies/ChuangEtAl2026.lean`,
 `Studies/LuChuangBaayen2026.lean`) into a shared
@@ -23,8 +23,8 @@ under a hypothetical `Theories/Lexicon/` for a substantive reason:
 the DLM **denies** that there is a separable lexicon to theorize
 about — its central architectural commitment is that the lexicon-as-
 stored-inventory does not exist; only the connection weights of
-comprehension and production networks do (@cite{baayen-2019},
-abstract; see also the discussion in @cite{lu-chuang-baayen-2026} §5
+comprehension and production networks do ([baayen-2019],
+abstract; see also the discussion in [lu-chuang-baayen-2026] §5
 on word-and-paradigm processing). Filing the DLM under "Lexicon"
 would commit linglib to the very architecture the model rejects. By
 contrast, the DLM is unambiguously a *processing* theory in the sense
@@ -40,10 +40,10 @@ of how form ↔ meaning links are *processed*; they may disagree on
 whether items are stored.
 
 This means `Phonology/ItemSpecificity/` (frequency channels
-parameterised by a stored lexicon: @cite{zuraw-2000}, @cite{pater-2010},
-@cite{coetzee-pater-2008}, @cite{moore-cantwell-2021}) and
+parameterised by a stored lexicon: [zuraw-2000], [pater-2010],
+[coetzee-pater-2008], [moore-cantwell-2021]) and
 `Morphology/UsageBased/Network.lean` (Bybee 1985 dynamic
-network: @cite{bybee-1985}) intentionally do **not** sit alongside
+network: [bybee-1985]) intentionally do **not** sit alongside
 DLM here — they make positive lexicon-architecture commitments and
 belong with the linguistic level whose generalisations they primarily
 explain.
@@ -69,7 +69,7 @@ explain.
 
 ## Out of scope here
 
-- **ResLDL** (linear + nonlinear residual): the @cite{heitmeier-chuang-baayen-2026}
+- **ResLDL** (linear + nonlinear residual): the [heitmeier-chuang-baayen-2026]
   extension of the DLM. A separate sibling file
   (`ResidualDiscriminative.lean`) would extend `LinearDiscriminativeLexicon`
   with a residual nonlinear component once a Studies file consumes it.

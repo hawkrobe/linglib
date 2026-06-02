@@ -7,7 +7,7 @@ import Linglib.Studies.Chierchia1998
 
 /-!
 # Sudo (2016) — The Semantic Role of Classifiers in Japanese
-@cite{sudo-2016}
+[sudo-2016]
 
 Yasutada Sudo. *The Baltic International Yearbook of Cognition, Logic and
 Communication* 11. DOI: 10.4148/1944-3676.1108
@@ -15,8 +15,8 @@ Communication* 11. DOI: 10.4148/1944-3676.1108
 ## Central Claim
 
 Sudo argues that what makes Japanese an *obligatory classifier language* is
-not the semantics of nouns (contra @cite{chierchia-1998}, @cite{krifka-2008},
-@cite{borer-2005}, @cite{rothstein-2010}, @cite{nemoto-2005}, @cite{li-2011})
+not the semantics of nouns (contra [chierchia-1998], [krifka-2008],
+[borer-2005], [rothstein-2010], [nemoto-2005], [li-2011])
 but the semantics of numerals. His core proposal:
 
 1. In *all* natural languages, numerals denote singular terms of type `n`
@@ -24,7 +24,7 @@ but the semantics of numerals. His core proposal:
 2. Languages are equipped with a phonologically silent ∪-operator
    (`Semantics.Classifier.upNum`) that lifts numerals from type `⟨s,n⟩` to
    predicates of type `⟨s,⟨e,t⟩⟩`.
-3. Following @cite{chierchia-1998}'s Blocking Principle, ∪ is *blocked* in
+3. Following [chierchia-1998]'s Blocking Principle, ∪ is *blocked* in
    languages whose lexicon contains overt items playing the same role —
    namely classifiers. In Japanese the classifiers `-rin`, `-hiki`, `-nin`,
    `-mai`, `-hon`, `-ko`, ... are precisely such items, so ∪ is unavailable
@@ -63,7 +63,7 @@ diagnostic battery (`LittleMoroneyRoyer2022.predictionsOf`).
 - Non-atomic classifiers `-kumi` (pair) and `-daasu` (dozen) per Sudo (9a/b)
   require explicit mereological joins of disjoint pairs.
 - Sudo's optional-classifier-language follow-up (Armenian, Hausa) per
-  @cite{bale-khanjian-2008}, @cite{bale-khanjian-2014}, @cite{doetjes-2013}
+  [bale-khanjian-2008], [bale-khanjian-2014], [doetjes-2013]
   is left as a separate study file.
 - The full presupposition-tracking ∪-Shifted FA / PM compositional rules
   (Sudo eqs. 11/19/26) are referenced via the type-shift signatures in
@@ -212,7 +212,7 @@ def japaneseHasOvertClassifiers : Bool :=
 Sudo eq. 15 (*kyoo-no okyakusan-wa juu-ni-da, intended: 'the guests today
 are twelve'): a predicative numeral is ungrammatical in Japanese, despite
 being grammatical in English (Rothstein 2013). Sudo derives this from
-@cite{chierchia-1998}'s Blocking Principle: the silent ∪-operator that
+[chierchia-1998]'s Blocking Principle: the silent ∪-operator that
 would type-shift the numeral is unavailable in Japanese because
 classifiers in the lexicon already do that work. -/
 
@@ -308,7 +308,7 @@ theorem nin_ne_hiki :
 Per-language strategy assignments live in study files (not as metadata on
 `NounCategorizationSystem`). Sudo's view is now a first-class constructor
 of `ClassifierStrategy` (`.sudoBlocking`), so the disagreement with
-@cite{chierchia-1998} reduces to a single decidable inequality. -/
+[chierchia-1998] reduces to a single decidable inequality. -/
 
 /-- Sudo's strategy assignment for Japanese: classifier blocks the silent
     ∪-operator on numerals (Sudo §3, eqs. 15–16). -/
@@ -320,7 +320,7 @@ def japaneseStrategy : Typology.ClassifierStrategy := .sudoBlocking
     on numerals). The disagreement is structural, not editorial.
 
     The two also disagree on the *empirical predictions* this generates
-    under @cite{little-moroney-royer-2022}'s diagnostic battery — see
+    under [little-moroney-royer-2022]'s diagnostic battery — see
     `LittleMoroneyRoyer2022.predictionsOf` for the per-strategy profiles. -/
 theorem sudo_disagrees_with_chierchia_on_japanese :
     japaneseStrategy ≠ NMP.japaneseStrategy := by decide

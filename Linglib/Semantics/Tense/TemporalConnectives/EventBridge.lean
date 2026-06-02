@@ -3,7 +3,7 @@ import Linglib.Semantics.Events.Basic
 
 /-!
 # Event–Interval Bridge
-@cite{krifka-1989} @cite{parsons-1990}
+[krifka-1989] [parsons-1990]
 
 The projection from event predicates (Level 3) to interval sets (Level 2):
 

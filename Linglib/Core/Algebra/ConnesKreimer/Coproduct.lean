@@ -19,9 +19,9 @@ currently planar-only and operates on `Planar (α ⊕ β)` rather than the binar
 ---
 
 # Connes-Kreimer Coproduct on the Bialgebra of Trace-Anonymized Forests
-@cite{marcolli-chomsky-berwick-2025}
+[marcolli-chomsky-berwick-2025]
 
-Per @cite{marcolli-chomsky-berwick-2025} Definition 1.2.8, the
+Per [marcolli-chomsky-berwick-2025] Definition 1.2.8, the
 **contraction coproduct** on the syntactic forest bialgebra is
 
   Δ^c(T) := T ⊗ 1 + 1 ⊗ T + Σ_{F_v} F_v ⊗ T/^c F_v
@@ -38,7 +38,7 @@ Equivalently, identifying the empty cut with the `1 ⊗ T` term:
 
 This file builds Δ^c on `TraceTree α Unit` (the trace-anonymized carrier),
 NOT on `DecoratedTree α` (the linguistic-data carrier). Per
-@cite{marcolli-skigin-2025} §10.1, the bialgebra structure requires
+[marcolli-skigin-2025] §10.1, the bialgebra structure requires
 trace labels to be scalars from a disjoint marked copy of the leaf
 alphabet (specialized here to `β = Unit`), not recursive subtrees.
 The bialgebra instance lives on the object whose elements are the
@@ -369,9 +369,9 @@ theorem comulTreeDel_eq_prim_add_sum (T : TraceTree α Unit) :
               deletionRightChannel (R := R) (CutShape.remainderDeletion c) := rfl
 
 /-! ## §6.5: Cost-weighted Δ^d for Minimal Search
-@cite{marcolli-chomsky-berwick-2025} §1.5
+[marcolli-chomsky-berwick-2025] §1.5
 
-Per @cite{marcolli-chomsky-berwick-2025} rules 1-5, p. 59 + eq. (1.5.1)-(1.5.2)
+Per [marcolli-chomsky-berwick-2025] rules 1-5, p. 59 + eq. (1.5.1)-(1.5.2)
 (§1.5.2 / §1.5.3), the **cost-weighted** Merge operator `M^ε_{S, S'}` weights each
 admissible cut's contribution by `ε^{depth}`. At the coproduct layer this
 corresponds to weighting `comulTreeDel`'s cut sum by `ε^{cutTotalDepth c}`.

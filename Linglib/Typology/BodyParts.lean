@@ -4,12 +4,12 @@ import Linglib.Data.WALS.Features.F130B
 
 /-!
 # Body-part terminology — substrate types and WALS data
-@cite{wals-2013} (Chs 129, 130) @cite{brown-2013}
-@cite{brown-1976} @cite{andersen-1978}
+[wals-2013] (Chs 129, 130) [brown-2013]
+[brown-1976] [andersen-1978]
 
 Type-level enums + per-language profile struct for cross-linguistic
-body-part lexicalization across @cite{wals-2013} chapters 129–130
-(Brown, drawing on @cite{andersen-1978} and @cite{brown-1976}). Two
+body-part lexicalization across [wals-2013] chapters 129–130
+(Brown, drawing on [andersen-1978] and [brown-1976]). Two
 mereologically-related contrasts: 'hand' vs 'arm' and 'finger' vs 'hand'.
 
 ## Schema
@@ -30,7 +30,7 @@ namespace Typology
 -- ============================================================================
 
 /-- Whether a language uses the same or different lexemes for 'hand' and 'arm'
-    (WALS Ch 129, @cite{brown-2013}). Many languages use a single term covering
+    (WALS Ch 129, [brown-2013]). Many languages use a single term covering
     both (e.g., Japanese *te*, Russian *ruka*); others lexically distinguish
     (e.g., English *hand* vs *arm*). -/
 inductive HandArmRelation where
@@ -45,7 +45,7 @@ inductive HandArmRelation where
 -- ============================================================================
 
 /-- Whether a language uses the same or different lexemes for 'finger' and
-    'hand' (WALS Ch 130A, @cite{brown-2013}). Identity is rare cross-
+    'hand' (WALS Ch 130A, [brown-2013]). Identity is rare cross-
     linguistically (12% of sample) and correlates with subsistence type
     per Ch 130B. -/
 inductive FingerHandRelation where
@@ -59,7 +59,7 @@ inductive FingerHandRelation where
 -- Per-language profile
 -- ============================================================================
 
-/-- A language's body-part lexicalization profile across @cite{wals-2013}
+/-- A language's body-part lexicalization profile across [wals-2013]
     Chs 129–130. -/
 structure BodyPartProfile where
   language : String
@@ -90,7 +90,7 @@ def fromWALS130A : Data.WALS.F130A.FingerAndHand → FingerHandRelation
 -- ============================================================================
 
 /-- WALS Ch 129 distribution: hand-arm patterns
-    (@cite{brown-2013}, n = 617). -/
+    ([brown-2013], n = 617). -/
 structure HandArmCounts where
   identical : Nat
   different : Nat
@@ -105,7 +105,7 @@ def walsHandArm : HandArmCounts :=
   , different := 389 }
 
 /-- WALS Ch 130A distribution: finger-hand patterns
-    (@cite{brown-2013}, n = 593). -/
+    ([brown-2013], n = 593). -/
 structure FingerHandCounts where
   identical : Nat
   different : Nat
@@ -120,7 +120,7 @@ def walsFingerHand : FingerHandCounts :=
   , different := 521 }
 
 /-- WALS Ch 130B: cultural categories of languages with finger=hand identity
-    (@cite{brown-2013}, n = 72). The classic cross-cultural correlation:
+    ([brown-2013], n = 72). The classic cross-cultural correlation:
     hunter-gatherer societies dominate the finger=hand identity pattern. -/
 structure FingerHandCulturalCounts where
   hunterGatherers : Nat

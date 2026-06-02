@@ -1,13 +1,13 @@
 import Linglib.Syntax.Case.Dependent
 
 /-!
-# Sakha Two-Modality Case Assignment @cite{baker-vinokurova-2010}
+# Sakha Two-Modality Case Assignment [baker-vinokurova-2010]
 
-@cite{baker-vinokurova-2010} argue that Sakha (Turkic) requires
+[baker-vinokurova-2010] argue that Sakha (Turkic) requires
 **both** of the case-assignment mechanisms that linguistic theory has
-on offer: configurational dependent case (Marantz; @cite{marantz-1991})
+on offer: configurational dependent case (Marantz; [marantz-1991])
 for ACC and DAT, and Agree with a functional head (Chomsky;
-@cite{chomsky-2000}) for NOM and GEN. The two modalities are not in
+[chomsky-2000]) for NOM and GEN. The two modalities are not in
 competition — they coexist in a single grammar:
 
 - **DAT rule (paper (4a)/(85)):** if NP1 c-commands NP2 in the same
@@ -25,7 +25,7 @@ The library's `CaseSystemConfig` (in `DependentCase.lean`) is
 parameterized so each of the four structural cases gets an independent
 mechanism slot. Sakha is the configuration where ACC and DAT are
 dependent while NOM and GEN are Agree-based — exactly the
-@cite{baker-vinokurova-2010} grammar.
+[baker-vinokurova-2010] grammar.
 
 ## Phase visibility and DOM
 
@@ -56,7 +56,7 @@ open Syntax.Case
 -- ============================================================================
 
 /-- Sakha's case system: accusative alignment with the
-    @cite{baker-vinokurova-2010} two-modality split. ACC and DAT are
+    [baker-vinokurova-2010] two-modality split. ACC and DAT are
     dependent (Marantz); NOM and GEN are Agree-based (Chomsky). -/
 def sakhaConfig : CaseSystemConfig where
   langType := .accusative
@@ -198,7 +198,7 @@ theorem ditrans_subj_nom :
 
 /-- The full NOM/DAT/ACC ditransitive pattern derived in one step from
     `assignCasesPhased`: this is the central empirical signature of
-    @cite{baker-vinokurova-2010}'s analysis, and it follows from the
+    [baker-vinokurova-2010]'s analysis, and it follows from the
     interaction of the two modalities, not from a stipulated
     case-assignment template. -/
 theorem ditrans_full_pattern :
@@ -269,7 +269,7 @@ theorem ditrans_three_sources :
 -- § 9: Mongolian Contrast (cf. Fragments/Mongolian/Case.lean)
 -- ============================================================================
 
-/-! @cite{gong-2022} adopts the Sakha framework for Mongolian but
+/-! [gong-2022] adopts the Sakha framework for Mongolian but
 swaps `datMode` from `.dependent` to `.nonstructural`: Mongolian DAT
 is inherent. Holding ACC, NOM, GEN modes constant and varying only
 DAT, the algorithm correctly predicts that Mongolian ditransitives
@@ -288,7 +288,7 @@ def ditransMongolian : List CasedNP :=
 
 /-- Without dependent DAT, no NP gets DAT from the algorithm. The DAT
     on Mongolian goals must be supplied as inherent/lexical case at
-    the lexicon level — exactly @cite{gong-2022}'s claim. -/
+    the lexicon level — exactly [gong-2022]'s claim. -/
 theorem mongolian_no_algorithmic_dat :
     ditransMongolian.all (·.case ≠ .dat) := by decide
 
@@ -323,7 +323,7 @@ theorem all_nom_is_agree_in_sakha :
 -- § 11: Causative Cascade — The Cleanest Test of Dependent Case
 -- ============================================================================
 
-/-! @cite{baker-vinokurova-2010} (23)–(24): morphological causatives in
+/-! [baker-vinokurova-2010] (23)–(24): morphological causatives in
 Sakha exhibit a striking cascade. The causee surfaces with ACC if the
 base verb is intransitive (one argumental NP in max VP, no DAT competitor)
 but with DAT if the base verb is transitive (two argumental NPs in max
@@ -390,7 +390,7 @@ theorem causee_case_depends_on_base_transitivity :
 -- § 12: Bare-NP Adverb Test — The Argumental Filter
 -- ============================================================================
 
-/-! @cite{baker-vinokurova-2010} (8)–(9): rules (4a)/(4b) only apply
+/-! [baker-vinokurova-2010] (8)–(9): rules (4a)/(4b) only apply
 between *argumental* NPs (those bearing a θ-role w.r.t. some case-
 assigning head). Bare-NP adverbs like *sajyn* 'summer' do not count
 as case competitors, even when c-commanded by another caseless NP.
@@ -474,7 +474,7 @@ def pureMarantz : CaseSystemConfig where
     NP as ACC; T-Agree marks the highest as NOM; D-Agree marks DP-
     internals as GEN; DAT is purely lexical/inherent
     (`.nonstructural`). This is the standard
-    @cite{chomsky-2000}/@cite{chomsky-2001} configuration. -/
+    [chomsky-2000]/[chomsky-2001] configuration. -/
 def pureChomsky : CaseSystemConfig where
   langType := .accusative
   nomMode  := .agreeT
@@ -549,7 +549,7 @@ theorem two_modalities_required :
 -- § 14: D-Agree GEN — DP-Internal Possessors (paper (5)/(86))
 -- ============================================================================
 
-/-! @cite{baker-vinokurova-2010} (5)/(86): D Agrees with the
+/-! [baker-vinokurova-2010] (5)/(86): D Agrees with the
 possessor inside DP and values it GEN. The clausal cycles see the DP
 as opaque — its possessor is filtered out of `unmarkedVisible` by
 the `inDP` flag — and `applyGenAgree` runs as the DP-internal

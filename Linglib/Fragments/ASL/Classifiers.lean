@@ -2,10 +2,10 @@ import Linglib.Semantics.Iconic.Basic
 
 /-!
 # ASL Classifier Predicates
-@cite{schlenker-lamberton-2024} @cite{schlenker-lamberton-lamberton-2026}
+[schlenker-lamberton-2024] [schlenker-lamberton-lamberton-2026]
 
 Lexical entries for ASL classifier predicates used in the elicited paradigms
-of @cite{schlenker-lamberton-lamberton-2026}. Each classifier has a handshape
+of [schlenker-lamberton-lamberton-2026]. Each classifier has a handshape
 that iconically represents a class of objects, and its position/movement in
 signing space is interpreted relative to a viewpoint.
 

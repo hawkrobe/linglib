@@ -5,12 +5,12 @@ import Linglib.Syntax.ArgumentStructure.Alternation
 /-!
 # Bohnemeyer 2004: Split intransitivity, linking, and lexical representation
 
-@cite{bohnemeyer-2004}
+[bohnemeyer-2004]
 
 Split intransitivity in Yukatek Maya is governed by **event structure** —
 specifically the distinction between internally- and externally-caused events
-(in the sense of @cite{levin-hovav-1995}) — rather than by lexical aspect
-alone (contra @cite{kraemer-wunderlich-1999}).
+(in the sense of [levin-hovav-1995]) — rather than by lexical aspect
+alone (contra [kraemer-wunderlich-1999]).
 
 ## Core Claims
 
@@ -31,7 +31,7 @@ alone (contra @cite{kraemer-wunderlich-1999}).
 
 ## Against aspect-based linking
 
-@cite{kraemer-wunderlich-1999} propose lexical aspect as the sole
+[kraemer-wunderlich-1999] propose lexical aspect as the sole
 linking-relevant property. Two classes of counterevidence:
 
 - **Degree achievements** (grow, darken): aspectually like processes (atelic)
@@ -180,7 +180,7 @@ the linking pattern, but the two can dissociate — the paper's central argument
 against aspect-based linking. The suffix is paper-specific lexical data, so it
 lives here rather than in the Fragment. -/
 
-/-- The overt transitivizing suffix (@cite{bohnemeyer-2004}): applicative *-t*
+/-- The overt transitivizing suffix ([bohnemeyer-2004]): applicative *-t*
     or causative *-s*. Distinct from `LinkingPattern`. -/
 inductive TransitivizerSuffix where
   | applicativeT   -- *-t*
@@ -296,7 +296,7 @@ theorem naak_is_state_change :
     linking), not like process verbs.
 
     This is the first direct counterevidence against
-    @cite{kraemer-wunderlich-1999}'s aspect-based linking: rule (14) predicts
+    [kraemer-wunderlich-1999]'s aspect-based linking: rule (14) predicts
     applicative for degree achievements (since they are atelic, hence [-perf]
     bases), but they exclusively causativize. ex. (21). -/
 theorem degree_achievements_causativize :

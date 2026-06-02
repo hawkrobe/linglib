@@ -22,7 +22,7 @@ open Features.LevinClassProfiles
 
 /-- Derive unaccusativity from voice type when present, falling back
     to the stored `unaccusative` field. A verb is unaccusative iff its
-    Voice does not introduce an external argument (@cite{kratzer-1996}). -/
+    Voice does not introduce an external argument ([kratzer-1996]). -/
 def Verb.derivedUnaccusative (v : Verb) : Bool :=
   match v.voiceType with
   | some vt => !vt.assignsTheta
@@ -35,7 +35,7 @@ def Verb.derivedVendlerClass (v : Verb) : Option VendlerClass :=
 
 /-- Effective subject entailment profile: verb-level override if present,
     otherwise falls back to the Levin class–level profile
-    (@cite{levin-1993}, @cite{dowty-1991}). -/
+    ([levin-1993], [dowty-1991]). -/
 def Verb.effectiveSubjectEntailments (v : Verb) : Option EntailmentProfile :=
   v.subjectEntailments <|> v.levinClass.bind (·.subjectProfile)
 
@@ -100,7 +100,7 @@ def Verb.isPresupTrigger (v : Verb) : Bool :=
   v.presupType.isSome
 
 /-- Presupposition trigger type DERIVED from event structure rather than
-    stipulated. @cite{roberts-simons-2024} argue that presupposition status
+    stipulated. [roberts-simons-2024] argue that presupposition status
     follows from a verb's event structure (factivity, CoS type), not from
     a lexically specified trigger type. This accessor derives the prediction:
     verbs with factive or CoS event structure are presupposition triggers.
@@ -122,12 +122,12 @@ def Verb.assertsSufficiency (v : Verb) : Bool :=
   v.causative.map (·.assertsSufficiency) |>.getD false
 
 /-- Lexicalist prediction of the external argument's theta role
-    (@cite{levin-1993}, @cite{rappaport-hovav-levin-1998}), based solely
+    ([levin-1993], [rappaport-hovav-levin-1998]), based solely
     on verb-internal properties.
 
     The cascade mirrors traditional linking rules:
     - raising / weather → no external role
-    - external causal source → stimulus (Class II psych, @cite{kim-2024})
+    - external causal source → stimulus (Class II psych, [kim-2024])
     - attitude builder or factive presupposition → experiencer
     - occasion sense (manage-to) → experiencer
     - Levin class flinch / learn → experiencer
@@ -155,7 +155,7 @@ def Verb.predictedSubjectTheta (v : Verb) : Option ThetaRole :=
 
     DERIVED from attitude, implicative, and causative builders. Captures
     the propositional attitude licensing condition from
-    @cite{jin-koenig-2021} §5.5, ex. 13a:
+    [jin-koenig-2021] §5.5, ex. 13a:
 
     - **FEAR class**: negative-valence preferential attitudes activate
       p (feared content) and ¬p (desired alternative).
@@ -196,7 +196,7 @@ def Verb.isPreferentialAttitude (v : Verb) : Bool :=
 
     Checks both primary and alternate complement frames. Used to classify
     verbs as CP-selecting vs non-CP-selecting for coordination studies
-    (@cite{schwarzer-2026}). -/
+    ([schwarzer-2026]). -/
 def Verb.canTakeClausalComplement (v : Verb) : Bool :=
   v.complementType.isClausal ||
   match v.altComplementType with | some ct => ct.isClausal | none => false

@@ -4,7 +4,7 @@ import Linglib.Syntax.Binding.Basic
 /-!
 # Minimalist Coreference (Binding)
 
-Binding via **c-command** and locality (@cite{chomsky-1981}). The binding
+Binding via **c-command** and locality ([chomsky-1981]). The binding
 principles themselves are *not* restated here: this file supplies Minimalism's
 command relation (c-command, read off the phrase-structure tree) as a
 `Syntax.Binding.CommandRelation` instance, and the framework-neutral engine
@@ -96,7 +96,7 @@ instance (c : SimpleClause) (i j : Pos) : Decidable (sameDomain c i j) :=
   inferInstanceAs (Decidable (sameLocalDomain c))
 
 /-- Minimalism is an instance of the abstract command relation
-    (@cite{barker-pullum-1990}). The binding principles
+    ([barker-pullum-1990]). The binding principles
     (`Syntax.Binding.grammaticalForCoreference` etc.) come from the engine;
     a study applies them with this instance in scope and a language classifier. -/
 instance : CommandRelation where

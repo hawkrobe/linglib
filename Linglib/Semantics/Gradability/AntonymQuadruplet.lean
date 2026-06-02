@@ -3,7 +3,7 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # Antonym Quadruplet — Four Surface Forms of a Negated Antonymic Adjective Pair
 
-@cite{cruse-1986} @cite{horn-1989} @cite{krifka-2007b} @cite{tessler-franke-2019}
+[cruse-1986] [horn-1989] [krifka-2007b] [tessler-franke-2019]
 
 Given an antonymic adjective pair (positive / negative — e.g., *happy* /
 *unhappy*), sentential negation generates **four surface forms**:
@@ -14,7 +14,7 @@ This file provides the theory-neutral substrate for that enumeration:
 
 - `AntonymForm` — the four-constructor enum.
 - `AntonymForm.complexity` — default morphological-syntactic complexity per
-  form, matching @cite{krifka-2007b}'s ordering and @cite{tessler-franke-2019}'s
+  form, matching [krifka-2007b]'s ordering and [tessler-franke-2019]'s
   cost function.
 
 The two extensional **denotations** of these forms (contradictory base,
@@ -43,8 +43,8 @@ inductive AntonymForm where
 
 /-- Default morphological-syntactic complexity of each form: count of
     negation operators (morphological *un-* + syntactic *not*), scaled to
-    @cite{krifka-2007b}'s integer ordering 0 < 2 < 3 < 5. Matches
-    @cite{tessler-franke-2019}'s `utteranceCost` exactly.
+    [krifka-2007b]'s integer ordering 0 < 2 < 3 < 5. Matches
+    [tessler-franke-2019]'s `utteranceCost` exactly.
 
     Per-paper analyses may override the cost (TF2020 uses a `ℚ`-valued
     coercion of this; Krifka's Economy constraint reads it directly). -/

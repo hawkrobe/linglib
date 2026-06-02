@@ -2,7 +2,7 @@ import Linglib.Typology.Reference
 
 /-!
 # Finnish article-and-demonstrative profile (WALS Chs 37, 38, 41, 42, 43)
-@cite{wals-2013}
+[wals-2013]
 -/
 
 namespace Finnish

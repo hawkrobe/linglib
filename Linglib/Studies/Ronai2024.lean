@@ -2,22 +2,22 @@ import Linglib.Studies.VanTielEtAl2016
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{ronai-2024} — Embedded Scalar Diversity
-@cite{ronai-2024} @cite{van-tiel-geurts-2016} @cite{gotzner-romoli-2018}
-@cite{chierchia-2004} @cite{chierchia-fox-spector-2012} @cite{bergen-levy-goodman-2016}
-@cite{potts-levy-2015} @cite{sauerland-2004} @cite{geurts-pouscoulous-2009}
-@cite{chemla-spector-2011}
+# [ronai-2024] — Embedded Scalar Diversity
+[ronai-2024] [van-tiel-geurts-2016] [gotzner-romoli-2018]
+[chierchia-2004] [chierchia-fox-spector-2012] [bergen-levy-goodman-2016]
+[potts-levy-2015] [sauerland-2004] [geurts-pouscoulous-2009]
+[chemla-spector-2011]
 
 The graded-rating sliding-scale paradigm Ronai 2024 adopts (via
-@cite{gotzner-romoli-2018}) descends from @cite{chemla-spector-2011}'s
+[gotzner-romoli-2018]) descends from [chemla-spector-2011]'s
 methodological innovation of measuring embedded-SI rates on a
 continuous cursor scale rather than via binary inference judgments.
 CS11 established that graded TVJ detects local readings that GP09's
 binary task missed; Ronai extends the paradigm to test whether the
-embedded-SI rate variation across @cite{van-tiel-geurts-2016}'s 42
+embedded-SI rate variation across [van-tiel-geurts-2016]'s 42
 scales mirrors the global SI variation that VT-G first documented.
 
-Theory-neutral empirical data from @cite{ronai-2024}.
+Theory-neutral empirical data from [ronai-2024].
 
 ## Central Question
 
@@ -27,7 +27,7 @@ properties of alternatives predict this variation?
 
 ## Argumentative Structure
 
-1. **Embedded SIs exist** (Exp 1, §3, N=118): Using @cite{gotzner-romoli-2018}'s
+1. **Embedded SIs exist** (Exp 1, §3, N=118): Using [gotzner-romoli-2018]'s
    sliding-scale paradigm with 42 scales under *every*, the "strong" condition
    (e.g., "Every soup was warm" → "No soup was hot") is rated significantly
    above the false control (Estimate=−26.12, SE=1.47, t=−17.81, p<.001),
@@ -35,30 +35,30 @@ properties of alternatives predict this variation?
 
 2. **Embedded scalar diversity mirrors global** (Exp 1, §3.3): Strong inference
    rates vary across the 42 scales and correlate strongly with
-   @cite{van-tiel-geurts-2016}'s global SI rates (r=0.76, p<.001).
+   [van-tiel-geurts-2016]'s global SI rates (r=0.76, p<.001).
 
 3. **Alternative-based predictors explain the variation** (Exp 1, §3.3):
    - Semantic distance: Estimate=7.28, SE=3.29, t=2.21, p<.05
    - Boundedness: Estimate=18.37, SE=4.41, t=4.17, p<.001
 
 4. **Binary replication rules out baseline concerns** (Exp 2, §4, N=45):
-   Using @cite{van-tiel-geurts-2016}'s Yes/No inference task, the same pattern
+   Using [van-tiel-geurts-2016]'s Yes/No inference task, the same pattern
    emerges: global–embedded correlation r=0.80 (p<.001), with both semantic
    distance (Estimate=0.63, SE=0.31, z=2.05, p<.05) and boundedness
    (Estimate=1.54, SE=0.39, z=3.91, p<.001) significant.
 
 5. **Alternative-based accounts supported** (§5): Results favor accounts that
-   build in scalar alternatives — the grammatical theory (@cite{chierchia-2004};
-   @cite{chierchia-fox-spector-2012}), modified neo-Gricean (@cite{sauerland-2004}),
-   or neo-Gricean RSA-LU (@cite{potts-levy-2015}) — over unconstrained RSA-LU
-   (@cite{bergen-levy-goodman-2016}), which cannot explain why alternative-driven
+   build in scalar alternatives — the grammatical theory ([chierchia-2004];
+   [chierchia-fox-spector-2012]), modified neo-Gricean ([sauerland-2004]),
+   or neo-Gricean RSA-LU ([potts-levy-2015]) — over unconstrained RSA-LU
+   ([bergen-levy-goodman-2016]), which cannot explain why alternative-driven
    variation arises in both global and embedded contexts.
 
 ## Data Provenance
 
 Scale properties (global SI rate, semantic distance, boundedness) are imported
 from `VanTielEtAl2016.Scales` rather than duplicated. The 42 scales are
-@cite{van-tiel-geurts-2016}'s 43 minus ⟨few, none⟩.
+[van-tiel-geurts-2016]'s 43 minus ⟨few, none⟩.
 
 Embedded SI rates are computed from the raw data deposited at
 https://osf.io/kx42p/ — per-scale means of the "strong" condition
@@ -77,8 +77,8 @@ namespace Ronai2024
 /-- Embedded SI data for a single scale.
 
 Scale properties (global SI rate, semantic distance, boundedness) reference
-@cite{van-tiel-geurts-2016} directly rather than duplicating values.
-Embedded SI rates are from @cite{ronai-2024}'s two experiments, computed
+[van-tiel-geurts-2016] directly rather than duplicating values.
+Embedded SI rates are from [ronai-2024]'s two experiments, computed
 from the raw data at https://osf.io/kx42p/. -/
 structure EmbeddedSIDatum where
   /-- VT2016 scale entry (provides global SI rate, semantic distance, bounded) -/
@@ -89,14 +89,14 @@ structure EmbeddedSIDatum where
   exp2Rate : Nat
   deriving Repr
 
-/-- Global SI rate from @cite{van-tiel-geurts-2016} Exp 2 (%). -/
+/-- Global SI rate from [van-tiel-geurts-2016] Exp 2 (%). -/
 def EmbeddedSIDatum.globalSIRate (d : EmbeddedSIDatum) : Nat := d.vt2016.siRateExp2
 
-/-- Semantic distance from @cite{van-tiel-geurts-2016} Exp 4 (1–7 Likert). -/
+/-- Semantic distance from [van-tiel-geurts-2016] Exp 4 (1–7 Likert). -/
 def EmbeddedSIDatum.semanticDistance (d : EmbeddedSIDatum) : Float :=
   d.vt2016.semanticDistance
 
-/-- Boundedness from @cite{van-tiel-geurts-2016} (author-annotated). -/
+/-- Boundedness from [van-tiel-geurts-2016] (author-annotated). -/
 def EmbeddedSIDatum.bounded (d : EmbeddedSIDatum) : Bool := d.vt2016.bounded
 
 
@@ -281,7 +281,7 @@ def uglyHideous : EmbeddedSIDatum :=
 -- Scale Lists
 -- ============================================================================
 
-/-- All 42 scales tested in @cite{ronai-2024}. -/
+/-- All 42 scales tested in [ronai-2024]. -/
 def allScales : List EmbeddedSIDatum := [
   -- Bounded scales (20 = VT2016's 21 minus ⟨few, none⟩)
   someAll, possibleCertain, allowedObligatory, mayHaveTo, mayWill,
@@ -314,12 +314,12 @@ def nonBoundedScales : List EmbeddedSIDatum := allScales.filter (!·.bounded)
 -- Experiment Metadata
 -- ============================================================================
 
-/-- Experiment 1: @cite{gotzner-romoli-2018} sliding-scale paradigm.
+/-- Experiment 1: [gotzner-romoli-2018] sliding-scale paradigm.
 119 recruited, 1 excluded (bilingual), N=118.
 Within-subjects (Latin Square), 42 critical items × 4 conditions. -/
 def exp1N : Nat := 118
 
-/-- Experiment 2: @cite{van-tiel-geurts-2016} binary inference task (Yes/No).
+/-- Experiment 2: [van-tiel-geurts-2016] binary inference task (Yes/No).
 N=45 (all data reported). Within-subjects, 42 critical items. -/
 def exp2N : Nat := 45
 
@@ -347,7 +347,7 @@ def exp1Aggregate : Exp1Aggregate :=
   , falseControl := 4 }   -- mean=3.5
 
 /-- Response ordering: true > weak > strong > false.
-This replicates @cite{gotzner-romoli-2018}'s finding across 42 scales. -/
+This replicates [gotzner-romoli-2018]'s finding across 42 scales. -/
 theorem exp1_ordering :
     exp1Aggregate.trueControl > exp1Aggregate.weakInference ∧
     exp1Aggregate.weakInference > exp1Aggregate.strongInference ∧
@@ -446,7 +446,7 @@ theorem exp2_both_predictors_significant :
   constructor <;> native_decide
 
 /-- Boundedness has a larger effect than semantic distance in both experiments.
-This parallels @cite{van-tiel-geurts-2016}'s finding that boundedness
+This parallels [van-tiel-geurts-2016]'s finding that boundedness
 dominates the combined model. -/
 theorem boundedness_dominates_distance :
     exp1_boundedness.estimate > exp1_semanticDistance.estimate ∧

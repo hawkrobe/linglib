@@ -2,12 +2,12 @@ import Linglib.Features.Coordination
 
 /-!
 # Kannada Coordination Morphemes
-@cite{sridhar-1990} @cite{haspelmath-2007}
+[sridhar-1990] [haspelmath-2007]
 
 Kannada (Dravidian, India) uses the postpositive enclitic *-u* (often *-ū*)
 on each coordinand for conjunction (A-co B-co), bisyndetic postpositive.
 The same morpheme is the Dravidian additive/focus particle ('also').
-@cite{haspelmath-2007} (5) cites @cite{sridhar-1990}:106.
+[haspelmath-2007] (5) cites [sridhar-1990]:106.
 
 - *-u* — MU, bound enclitic, additive: "Narahari-u Somashekhara-u" = 'N and S'
 

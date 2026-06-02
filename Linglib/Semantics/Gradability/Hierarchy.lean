@@ -4,7 +4,7 @@ import Linglib.Semantics.Measurement.Basic
 
 /-!
 # Degree Semantics Hierarchy
-@cite{klein-1980} @cite{kennedy-2007} @cite{scontras-2014} @cite{bale-schwarz-2022}
+[klein-1980] [kennedy-2007] [scontras-2014] [bale-schwarz-2022]
 
 Three frameworks for gradable predicate semantics form a strict
 subsumption hierarchy:
@@ -61,7 +61,7 @@ open Core.Scale (HasDegree)
     non-negativity constraint yields a `HasDegree E` instance: the degree of
     an entity is its measure value.
 
-    This is @cite{scontras-2014}'s key insight: measure terms (kilo, liter)
+    This is [scontras-2014]'s key insight: measure terms (kilo, liter)
     and CARD are all instances of the same degree-assigning operation. -/
 
 /-- Every measure function induces a degree assignment.
@@ -76,7 +76,7 @@ def measure_to_degree {E : Type} (μ : MeasureFn E) : HasDegree E ℚ :=
 /-! Any degree function `μ : E → D` over a linear order induces a Klein
     delineation via `measureDelineation`: entity x is "A-in-C" iff x
     strictly exceeds some member of C on μ. This is the embedding from
-    @cite{kennedy-2007}'s degree semantics into @cite{klein-1980}'s
+    [kennedy-2007]'s degree semantics into [klein-1980]'s
     delineation framework.
 
     The embedding is **faithful**: Klein's ordering under the induced
@@ -210,7 +210,7 @@ theorem delineation_strictly_more_general :
     provides.
 
     - Forward: degree → monotone delineation (§ 2, `degree_delineation_monotone`)
-    - Backward: monotone delineation → degree-recoverable (@cite{klein-1980} §4.2,
+    - Backward: monotone delineation → degree-recoverable ([klein-1980] §4.2,
       proved in `Klein1980.lean` as `kleinDegree_measureDelineation`)
 
     Together: `degree semantics = monotone delineation semantics`.
@@ -234,8 +234,8 @@ theorem degree_characterization {E D : Type*} [LinearOrder D]
 -- § 6. Measurement = Degree + Dimension Typing
 -- ════════════════════════════════════════════════════
 
-/-! The relationship between measurement semantics (@cite{scontras-2014},
-    @cite{bale-schwarz-2022}) and degree semantics (@cite{kennedy-2007})
+/-! The relationship between measurement semantics ([scontras-2014],
+    [bale-schwarz-2022]) and degree semantics ([kennedy-2007])
     is simple: measurement adds typed dimensions to degree functions.
 
     A `MeasureFn E` is a degree function `apply : E → ℚ` PLUS a
@@ -315,7 +315,7 @@ theorem nlDel_not_degree_representable :
 -- § 8. Nondistinctness = Equal Degree
 -- ════════════════════════════════════════════════════
 
-/-! @cite{klein-1980} §4.2 defines degrees as equivalence classes under
+/-! [klein-1980] §4.2 defines degrees as equivalence classes under
     nondistinctness: `degree(u) = {u' : u ≈ u'}`. For measure-induced
     delineations, this collapses to measure equality: two entities are
     nondistinct iff they have the same degree.

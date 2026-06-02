@@ -3,7 +3,7 @@ import Linglib.Phonology.Process.LocalRewrite
 
 /-!
 # Tagalog Phonological Inventory and Nasal Substitution
-@cite{hayes-2009} @cite{zuraw-2010}
+[hayes-2009] [zuraw-2010]
 
 Segment inventory and the nasal substitution process for Tagalog,
 defined using the SPE formalism from `Phonology.LocalRewrite`.
@@ -13,7 +13,7 @@ defined using the SPE formalism from `Phonology.LocalRewrite`.
 Tagalog has a productive process whereby a nasal-final prefix
 (e.g. maŋ-, paŋ-) combines with an obstruent-initial stem and the
 cluster optionally coalesces into a single nasal homorganic with the
-underlying obstruent (@cite{zuraw-2010}):
+underlying obstruent ([zuraw-2010]):
 
 - `maŋ + bigáj` → `mamigáj` 'to distribute' (substitution applies)
 - `paŋ + tabój` → `pantabój` 'to goad'      (faithful cluster preserved)
@@ -30,17 +30,17 @@ target inherits a feature value from the context). Tagalog nasal
 substitution is therefore approximated here as **post-nasal obstruent
 deletion**; the homorganic place of the resulting nasal is supplied by
 the independent rule of homorganic-nasal-place assimilation, which
-@cite{hayes-2009} treats as a separate process.
+[hayes-2009] treats as a separate process.
 
 ## Cross-cutting paper analyses
 
-- @cite{zuraw-2010} factorial typology of NS over six obstruents with
+- [zuraw-2010] factorial typology of NS over six obstruents with
   the constraint set DEP-C / \*NC / \*ASSOC / \*[ŋ / \*[n / \*[m
   → see `Studies/Zuraw2010.lean`.
-- @cite{zuraw-hayes-2017} 2×2 sub-square analysis (maŋ-other × paŋ-res
+- [zuraw-hayes-2017] 2×2 sub-square analysis (maŋ-other × paŋ-res
   prefixes, /b/ × /k/ stems) with prefix-indexed UNIFORMITY constraints
   → see `Studies/ZurawHayes2017.lean`.
-- @cite{magri-2025} MaxEnt-on-square deduction from the Hayes-Zuraw
+- [magri-2025] MaxEnt-on-square deduction from the Hayes-Zuraw
   shifted-sigmoids generalization
   → see `Studies/Magri2025.lean`.
 -/
@@ -110,15 +110,15 @@ def ŋ : Segment := Segment.ofSpecs
 
 /-! ## § 3: Nasal Substitution Rule -/
 
-/-- **Tagalog Nasal Substitution** (@cite{zuraw-2010}).
+/-- **Tagalog Nasal Substitution** ([zuraw-2010]).
 
     Post-nasal obstruent deletion: an obstruent (`[+cons, −son]`) deletes
     when preceded by a nasal (`[+nasal]`). The homorganic place of the
     surviving nasal is supplied by general homorganic-nasal-place
-    assimilation, treated as a separate rule (@cite{hayes-2009} Ch 6).
+    assimilation, treated as a separate rule ([hayes-2009] Ch 6).
 
     The variable application of this process — from ~96% for /p/ to
-    ~52% for /g/ in @cite{zuraw-2010}'s dictionary count — is a
+    ~52% for /g/ in [zuraw-2010]'s dictionary count — is a
     paper-specific empirical claim and lives in the relevant study
     files, not here. -/
 def nasalSubstitution : Rule where

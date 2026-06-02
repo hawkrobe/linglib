@@ -46,7 +46,7 @@ open Core.Context (KContext)
 
 /-- Pragmatic roles determined by structural position in SAP.
 
-    @cite{speas-tenny-2003}: these are NOT primitives — they are configurationally
+    [speas-tenny-2003]: these are NOT primitives — they are configurationally
     assigned by position in the Speech Act Phrase:
     - SPEAKER = Spec-SAP (external argument of SA)
     - HEARER = complement of SA (internal argument)
@@ -295,7 +295,7 @@ theorem discourse_role_from_person (p : PersonalPronoun)
   simp [pronounDiscourseRole, hp]
 
 -- ============================================================================
--- Section G: Sentience Domain (@cite{speas-tenny-2003}, §2)
+-- Section G: Sentience Domain ([speas-tenny-2003], §2)
 -- ============================================================================
 
 /-- Functional projections in the Sentience Domain.

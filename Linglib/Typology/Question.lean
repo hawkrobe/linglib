@@ -4,8 +4,8 @@ import Linglib.Data.WALS.Features.F116A
 
 /-!
 # Question typology — substrate
-@cite{wals-2013} @cite{pesetsky-1987} @cite{huang-1982}
-@cite{sato-ngui-2017} @cite{chan-shen-2026}
+[wals-2013] [pesetsky-1987] [huang-1982]
+[sato-ngui-2017] [chan-shen-2026]
 
 Per-language question-typology substrate for Fragment import. Mirrors the
 `Linglib/Typology/{Domain}.lean` pattern (Possession, Case, Phonology,
@@ -14,13 +14,13 @@ WordOrder).
 ## Substrate enums
 
 - `WhMovementStrategy` (WALS Ch 93A)
-- `WhInterpMechanism` (@cite{pesetsky-1987}, @cite{huang-1982},
-  @cite{sato-ngui-2017})
+- `WhInterpMechanism` ([pesetsky-1987], [huang-1982],
+  [sato-ngui-2017])
 - `QParticlePosition` (WALS Ch 92A)
 - `PolarQuestionStrategy` (WALS Ch 116A)
 - `QuestionProfile`: bundle struct over Chs 92A/93A/116A
-- `MWFParameter`: multiple-wh-fronting parameter (@cite{rudin-1988},
-  with @cite{citko-gracanin-yuksek-2025}'s tri-valued refinement
+- `MWFParameter`: multiple-wh-fronting parameter ([rudin-1988],
+  with [citko-gracanin-yuksek-2025]'s tri-valued refinement
   splitting non-MWF into vP-only vs both-edges asterisk languages)
 - `PhaseEdge`: which phase edge an asterisk lands on
 - `EdgeAsterisk`/`MWFViolation`/`EllipsisRepairsMWF`: Prop predicates
@@ -76,15 +76,15 @@ inductive WhMovementStrategy where
     vs unselective binding), with different empirical consequences for
     island sensitivity and modifier licensing.
 
-    @cite{pesetsky-1987} @cite{sato-ngui-2017} @cite{chan-shen-2026} -/
+    [pesetsky-1987] [sato-ngui-2017] [chan-shen-2026] -/
 inductive WhInterpMechanism where
   /-- Successive cyclic overt movement to matrix Spec-CP. -/
   | overtMovement
-  /-- Single LF movement to Spec-CP (@cite{huang-1982}; Mandarin *daodi*). -/
+  /-- Single LF movement to Spec-CP ([huang-1982]; Mandarin *daodi*). -/
   | covertMovement
   /-- Two-step: overt to intermediate Spec-CP, *then* covert to matrix
       Spec-CP. This is Singlish partial wh-movement
-      (@cite{sato-ngui-2017}). Distinct from `.covertMovement` because
+      ([sato-ngui-2017]). Distinct from `.covertMovement` because
       the overt-then-covert derivation has both a Spell-Out landing site
       and a separate covert step that crosses islands at LF. -/
   | partialMovement
@@ -105,7 +105,7 @@ instance (m : WhInterpMechanism) : Decidable m.ReachesSpecCP := by
   cases m <;> unfold WhInterpMechanism.ReachesSpecCP <;> infer_instance
 
 /-- Is this mechanism sensitive to syntactic islands? Partial movement
-    *is* island-sensitive at its covert step (@cite{sato-ngui-2017}: ex 15). -/
+    *is* island-sensitive at its covert step ([sato-ngui-2017]: ex 15). -/
 def WhInterpMechanism.IslandSensitive : WhInterpMechanism → Prop
   | .overtMovement      => True
   | .covertMovement     => True
@@ -170,7 +170,7 @@ inductive PolarQuestionStrategy where
   | noDistinction
   deriving DecidableEq, Repr
 
-/-- A language's question-formation profile across @cite{wals-2013}
+/-- A language's question-formation profile across [wals-2013]
     Chs 92A, 93A, 116A. Each field is `Option` since WALS samples vary
     by chapter. -/
 structure QuestionProfile where
@@ -220,13 +220,13 @@ def fromWALS116A : Data.WALS.F116A.PolarQuestionType →
   | .noInterrogativeDeclarativeDistinction => .noDistinction
 
 -- ============================================================================
--- §3. Multiple Wh-Fronting parameter (@cite{rudin-1988}, refined by
---      @cite{citko-gracanin-yuksek-2025} p. 19)
+-- §3. Multiple Wh-Fronting parameter ([rudin-1988], refined by
+--      [citko-gracanin-yuksek-2025] p. 19)
 -- ============================================================================
 
-/-- The MWF parameter as in @cite{rudin-1988} + @cite{citko-gracanin-yuksek-2025}.
+/-- The MWF parameter as in [rudin-1988] + [citko-gracanin-yuksek-2025].
 
-    The textbook contrast (@cite{rudin-1988}) is binary — MWF (Bulgarian,
+    The textbook contrast ([rudin-1988]) is binary — MWF (Bulgarian,
     Romanian) vs non-MWF (English, German, Greek). C&G-Y refine the
     non-MWF case by where the PF asterisk for multiple wh-specifiers
     lands: vP-only (sluicing repairs by deleting vP) vs both vP and CP
@@ -238,11 +238,11 @@ inductive MWFParameter where
       at any edge. -/
   | fronts
   /-- Non-MWF with vP-only asterisk (German, Greek;
-      @cite{citko-gracanin-yuksek-2025} "English variety B"). Sluicing
+      [citko-gracanin-yuksek-2025] "English variety B"). Sluicing
       (deleting the vP edge) repairs. -/
   | nonFrontsVPOnly
   /-- Non-MWF with asterisks at *both* vP and CP edges
-      (@cite{citko-gracanin-yuksek-2025} "English variety A"). Sluicing
+      ([citko-gracanin-yuksek-2025] "English variety A"). Sluicing
       cannot repair — the CP-edge asterisk survives ellipsis. -/
   | nonFrontsBothEdges
   deriving DecidableEq, Repr

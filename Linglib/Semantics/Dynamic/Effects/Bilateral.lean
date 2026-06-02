@@ -174,7 +174,7 @@ logic. For atomic propositions, the unknown update is always empty.
 For existential statements, it captures possibilities where variable
 definedness introduces a gap.
 
-Equation (53) of @cite{elliott-sudo-2025}.
+Equation (53) of [elliott-sudo-2025].
 -/
 def unknownUpdate (φ : BilateralDen W E) (s : InfoState W E) : InfoState W E :=
   { p ∈ s | p ∉ φ.positive s ∧ p ∉ φ.negative s }
@@ -199,7 +199,7 @@ Assertability condition: φ is assertable at context c iff the unknown
 update is empty — every possibility is accounted for by either the
 positive or negative update.
 
-Definition (54) of @cite{elliott-sudo-2025}.
+Definition (54) of [elliott-sudo-2025].
 -/
 def assertable (φ : BilateralDen W E) (c : InfoState W E) : Prop :=
   unknownUpdate φ c = ∅
@@ -239,7 +239,7 @@ For conjunction φ ∧ ψ:
              ∪ s[φ]⁺[ψ]⁻              (the (1,0) cell: φ verified, ψ falsified)
              ∪ s[φ]?[ψ]⁻              (the (#,0) cell: φ unknown, ψ falsified)
 
-Equation (61) of @cite{elliott-sudo-2025}.
+Equation (61) of [elliott-sudo-2025].
 -/
 def conj (φ ψ : BilateralDen W E) : BilateralDen W E :=
   { positive := λ s => ψ.positive (φ.positive s)
@@ -271,7 +271,7 @@ The dynamic state-passing in the positive update is what makes bathroom
 disjunctions work: s[¬∃xP(x)]⁻[Q(x)]⁺ = s[∃xP(x)]⁺[Q(x)]⁺ (by DNE),
 introducing the discourse referent x for cross-disjunct anaphora.
 
-Equations (64)/(67) of @cite{elliott-sudo-2025}.
+Equations (64)/(67) of [elliott-sudo-2025].
 -/
 def disj (φ ψ : BilateralDen W E) : BilateralDen W E :=
   { positive := λ s =>

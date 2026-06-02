@@ -2,8 +2,8 @@ import Linglib.Features.Acceptability
 
 /-!
 # Lechner 2004: Ellipsis in Comparatives
-@cite{lechner-2004} @cite{lechner-2001} @cite{bresnan-1973}
-@cite{kennedy-1999} @cite{merchant-2001}
+[lechner-2004] [lechner-2001] [bresnan-1973]
+[kennedy-1999] [merchant-2001]
 
 Winfried Lechner. *Ellipsis in Comparatives.* Studies in Generative
 Grammar 72. Berlin/New York: Mouton de Gruyter.
@@ -14,7 +14,7 @@ The canonical home of the binding diagnostic for phrasal comparatives.
 Lechner Ch 2 §2.1 ("Disjoint reference effects") establishes that the
 comparative-deletion site is reconstructed at LF and is therefore
 visible to Principle C. Lechner's diagnostic is the *source* of
-@cite{bhatt-takahashi-2011}'s English binding battery; B&T fn. 4
+[bhatt-takahashi-2011]'s English binding battery; B&T fn. 4
 explicitly says their (11)–(13) are modelled on this work.
 
 This file owns the diagnostic schema (`BindingDatum`), the two
@@ -80,7 +80,7 @@ open Features (Acceptability)
 
 /-- The two competing structural analyses of phrasal comparatives.
     Lechner Ch 2 §1 introduces both (under different labels) and
-    @cite{bhatt-takahashi-2011} adopts these names.
+    [bhatt-takahashi-2011] adopts these names.
 
     - **Reduction Analysis (RA)**: phrasal `than NP` derives from
       clausal `than [NP is Adj]` via reduction (gapping, conjunction
@@ -112,7 +112,7 @@ inductive PhrasalAnalysis where
     Lechner (24)) so that the relationship between the abstract
     schema and the concrete paper data is auditable. `acceptability`
     records fine-grained judgments where binary `corefAttested`
-    is too coarse — e.g. for the @cite{bhatt-takahashi-2011} (13b)
+    is too coarse — e.g. for the [bhatt-takahashi-2011] (13b)
     "(?)mildly deviant" case. -/
 structure BindingDatum where
   citationId : String

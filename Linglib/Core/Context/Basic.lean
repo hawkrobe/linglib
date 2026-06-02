@@ -3,9 +3,9 @@ import Linglib.Core.Time.Reichenbach
 
 /-!
 # Kaplanian Context of Utterance
-@cite{kaplan-1989} @cite{speas-tenny-2003}
+[kaplan-1989] [speas-tenny-2003]
 
-The full context tuple ⟨agent, world, time, position⟩ from @cite{kaplan-1989}
+The full context tuple ⟨agent, world, time, position⟩ from [kaplan-1989]
 "Demonstratives" §XVIII. Framework-agnostic infrastructure used by reference
 theory, tense semantics, mood, and RSA.
 
@@ -20,7 +20,7 @@ open Core (WorldTimeIndex)
 
 /-- Full Kaplanian context of utterance: ⟨agent, world, time, position⟩.
 
-@cite{kaplan-1989} §XVIII: "A context is a tuple ⟨cₐ, cw, ct, cp⟩ where cₐ is
+[kaplan-1989] §XVIII: "A context is a tuple ⟨cₐ, cw, ct, cp⟩ where cₐ is
 the agent, cw the world, ct the time, and cp the position." -/
 structure KContext (W : Type*) (E : Type*) (P : Type*) (T : Type*) where
   /-- The agent (speaker) of the context -/
@@ -36,7 +36,7 @@ structure KContext (W : Type*) (E : Type*) (P : Type*) (T : Type*) where
 
 /-- Proper context: the agent exists at the context's world.
 
-@cite{kaplan-1989} §XVIII Remark 3: contexts are proper only if the agent exists
+[kaplan-1989] §XVIII Remark 3: contexts are proper only if the agent exists
 at the world of the context. This validates ⊨ Exist I. -/
 def ProperContext {W E P T : Type*} (c : KContext W E P T)
     (exists_ : E → W → Prop) : Prop :=
@@ -83,7 +83,7 @@ def KContext.shiftWorldTime {W E P T : Type*} (c : KContext W E P T)
 
 /-- Project a KContext into a root-clause ReichenbachFrame.
     Speech time S = context time; perspective time P = S (root clause
-    default, @cite{kiparsky-2002}); R and E are supplied per clause. -/
+    default, [kiparsky-2002]); R and E are supplied per clause. -/
 def KContext.toReichenbachFrame {W E P T : Type*}
     (c : KContext W E P T) (R Ev : T) :
     Core.Time.Reichenbach.ReichenbachFrame T where

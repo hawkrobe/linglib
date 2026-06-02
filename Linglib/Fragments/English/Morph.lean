@@ -2,11 +2,11 @@ import Linglib.Morphology.MorphProfile
 
 /-!
 # English Morphological Profile
-@cite{wals-2013} @cite{bickel-nichols-2001}
+[wals-2013] [bickel-nichols-2001]
 
 WALS-derived profile for English (ISO `eng`). B&N 2001 places English
 in the "agglutinating" cell (concatenative + nonflexive + separative)
-despite its small inflectional inventory; cf. @cite{bickel-nichols-2001}.
+despite its small inflectional inventory; cf. [bickel-nichols-2001].
 -/
 
 namespace English

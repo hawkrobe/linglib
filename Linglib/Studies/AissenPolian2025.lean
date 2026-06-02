@@ -6,7 +6,7 @@ import Linglib.Features.InformationStructure
 
 /-!
 # Aissen & Polian 2025: Possessor Extraction and Categorical Subject in Tseltalan
-@cite{aissen-polian-2025}
+[aissen-polian-2025]
 
 *Natural Language & Linguistic Theory* 43:63--113.
 
@@ -18,7 +18,7 @@ nominal size (= specificity) and intervention by A-positioned DPs.
 
 The analysis rests on two independent mechanisms:
 
-1. **Selective opacity** (@cite{keine-2019}): N⁰ is a horizon for wh-probes
+1. **Selective opacity** ([keine-2019]): N⁰ is a horizon for wh-probes
    on C° — Ā-subextraction from within ANY nominal is impossible,
    regardless of size. This forces all possessor extraction to proceed
    via external possession.
@@ -42,7 +42,7 @@ possessor raising via Attract Closest.
 ## ψ-Subject Constructions
 
 A&P identify a family of constructions in which a possessor is interpreted
-as ψ-subject (categorical-judgment subject in Spec,TP, @cite{kuroda-1972}).
+as ψ-subject (categorical-judgment subject in Spec,TP, [kuroda-1972]).
 §5 focuses on three **intransitive unaccusative** cases:
 predicative possession (§5.2), experiential collocations (§5.3), and
 ordinary lexical unaccusatives (§5.4). §6.2 extends the analysis to
@@ -55,7 +55,7 @@ intransitive subset; §6.2 / §7.1 cases are noted but not enumerated.
 
 ## Predecessor Accounts and Comparative Engagement
 
-A&P §4 contests **@cite{little-2020a} / @cite{little-2020b}**, the
+A&P §4 contests **[little-2020a] / [little-2020b]**, the
 proximate Ch'ol analysis that derives possessor-extraction asymmetries
 from a Diesing-style specificity restriction combined with the Freezing
 Principle (Object Shift of specific objects → frozen for Ā-subextraction).
@@ -63,21 +63,21 @@ A&P argue Little's account fails to extend to non-specific cases:
 Ā-subextraction is blocked from non-specifics as well, so a blanket
 nominal-opacity ban (selective opacity) is needed instead.
 
-The escape-hatch view of @cite{gavruseva-2000} (Spec,DP as left-edge
+The escape-hatch view of [gavruseva-2000] (Spec,DP as left-edge
 position parallel to Spec,CP) is the older predecessor view A&P reject:
 their analysis derives extraction without any DP-internal subextraction
-step. @cite{aissen-1996} is the earlier Tsotsil pied-piping analysis;
-@cite{aissen-1999a} establishes that Tseltalan A's extract freely
+step. [aissen-1996] is the earlier Tsotsil pied-piping analysis;
+[aissen-1999a] establishes that Tseltalan A's extract freely
 (used in §6.2 to motivate why intervention is by A-position not
-Ā-extraction). @cite{coon-baier-levin-2021} on Mayan agent focus is
+Ā-extraction). [coon-baier-levin-2021] on Mayan agent focus is
 contested in §6.1 (the file currently does not formalize this).
 
-@cite{coon-henderson-2011} and @cite{aissen-1987} are the two competing
+[coon-henderson-2011] and [aissen-1987] are the two competing
 analyses of the Tseltalan possessive applicative (control vs raising);
 A&P adopt the raising analysis, which the file's `DProbeHead.appl` slot
 implicitly assumes.
 
-@cite{heycock-doron-2003} on Hebrew broad subjects is A&P's primary
+[heycock-doron-2003] on Hebrew broad subjects is A&P's primary
 cross-linguistic typological precedent for ψ-subjects (cited p. 86 fn 22
 alongside Tz'utujil, Chickasaw, Sinitic double-unaccusative).
 
@@ -103,7 +103,7 @@ open Morphology.DM
 -- ============================================================================
 
 /-- Nominal projections in Tseltalan, determining extractability.
-    @cite{aissen-polian-2025} §3.2, (11)/(18): specific indefinites and
+    [aissen-polian-2025] §3.2, (11)/(18): specific indefinites and
     definites project to DP; non-specific indefinites project only to
     nP (if non-possessive) or PossP (if possessive).
 
@@ -126,7 +126,7 @@ def NominalSize.highestProjection : NominalSize → NominalPosition
   | .nP    => .specN    -- possessor directly accessible
 
 /-- Specific nominals project to DP; non-specific nominals do not.
-    @cite{aissen-polian-2025} §3.2. -/
+    [aissen-polian-2025] §3.2. -/
 def NominalSize.IsSpecific : NominalSize → Prop
   | .dp    => True
   | .possP => False
@@ -143,7 +143,7 @@ instance : DecidablePred NominalSize.IsSpecific := fun n => by
     an external argument (vP layer). This is a theoretical classification
     from Minimalist syntax, used here to derive intervention effects.
 
-    @cite{aissen-polian-2025} (9):
+    [aissen-polian-2025] (9):
     - Unaccusative: no vP layer (sole argument is complement of V)
     - Transitive: vP layer with agent in Spec,vP
     - Unergative: vP layer with agentive S in Spec,vP -/
@@ -155,7 +155,7 @@ inductive ArgumentStructureClass where
 
 /-- Whether a clause type projects a vP layer (= has an external argument
     position that could host an intervening DP).
-    @cite{aissen-polian-2025} (9): transitives and unergatives have vP;
+    [aissen-polian-2025] (9): transitives and unergatives have vP;
     unaccusatives do not. -/
 def ArgumentStructureClass.HasVP : ArgumentStructureClass → Prop
   | .unaccusative => False
@@ -175,7 +175,7 @@ theorem unaccusative_no_vP : ¬ ArgumentStructureClass.unaccusative.HasVP := id
 -- ============================================================================
 
 /-- Probe types that trigger movement in Tseltalan.
-    @cite{aissen-polian-2025} §3.1, (10):
+    [aissen-polian-2025] §3.1, (10):
 
     - **[EPP:D]** on T° and Appl°: triggers A-movement of a DP to
       the probe's specifier. T° and Appl° take rightside specifiers.
@@ -186,7 +186,7 @@ inductive ProbeType where
   | whProbe  -- [EPP:WH] on D° or C° (Ā-movement)
   deriving DecidableEq, Repr
 
-/-- **Selective opacity** (@cite{keine-2019}, @cite{aissen-polian-2025} (33)):
+/-- **Selective opacity** ([keine-2019], [aissen-polian-2025] (33)):
     N⁰ is a horizon for wh-probes on C°. Elements inside the extended
     projection of N⁰ are invisible to wh-probes, blocking Ā-subextraction.
 
@@ -208,9 +208,9 @@ theorem d_probes_pass : ¬ SelectivelyOpaque .dProbe := id
 /-- Ā-subextraction from within a nominal is impossible. Derived from
     selective opacity: wh-probes cannot see into nominals, regardless of
     nominal size. The proposition does not depend on `NominalSize` —
-    @cite{aissen-polian-2025} (33) is the universal nominal-opacity ban
+    [aissen-polian-2025] (33) is the universal nominal-opacity ban
     A&P argue against the size-relative Diesing/Freezing predecessor of
-    @cite{little-2020a} / @cite{little-2020b}. -/
+    [little-2020a] / [little-2020b]. -/
 def CanĀSubextract : Prop :=
   ¬ SelectivelyOpaque .whProbe
 
@@ -222,7 +222,7 @@ theorem subextraction_impossible : ¬ CanĀSubextract := fun h => h trivial
 -- ProbeType ↔ ProbeProfile bridge
 -- ────────────────────────────────────────────────────────────────
 
-/-- Convert a `ProbeType` to a `ProbeProfile` from @cite{keine-2019}.
+/-- Convert a `ProbeType` to a `ProbeProfile` from [keine-2019].
 
     - `dProbe` (A-movement, on T°/Appl°) maps to an A-probe on T°
       with horizon C — the same profile as `keineAProbe`.
@@ -285,7 +285,7 @@ theorem nP_no_shield : ¬ DLayerShields .nP := id
 -- ============================================================================
 
 /-- Two possessor extraction strategies in Tseltalan.
-    @cite{aissen-polian-2025} §3. -/
+    [aissen-polian-2025] §3. -/
 inductive ExtractionMode where
   /-- Pied-piping: the entire nominal (including possessor) moves to
       Spec,CP. Requires D projection: only DPs can be targeted by a
@@ -307,7 +307,7 @@ inductive ExtractionMode where
       D-layer shielding. D-probes see through nominals (selective
       opacity doesn't apply), but D° intervenes in specific DPs.
 
-    @cite{aissen-polian-2025} §3.2. -/
+    [aissen-polian-2025] §3.2. -/
 def ExtractionAvailable (mode : ExtractionMode) (size : NominalSize) : Prop :=
   match mode with
   | .piedPiping => size.IsSpecific      -- only DPs can undergo wh-movement
@@ -434,7 +434,7 @@ open Features.InformationStructure
     ψ-subjects are always intransitive subjects — they raise from
     unaccusative clauses where the sole argument is S_O (patientive).
 
-    @cite{aissen-polian-2025} §5, Table 1: all ψ-subject constructions
+    [aissen-polian-2025] §5, Table 1: all ψ-subject constructions
     are structurally unaccusative, so the ψ-subject is always S_O. -/
 def ψSubjectGramFunction : GramFunction := .S_O
 
@@ -454,7 +454,7 @@ theorem thetic_no_ψSubject :
     ¬ JudgmentType.thetic.HasψSubject := by decide
 
 /-- A ψ-subject must be specific (= project to DP) to raise to Spec,TP.
-    @cite{aissen-polian-2025} §5.1, p. 85: "the subject of a clause
+    [aissen-polian-2025] §5.1, p. 85: "the subject of a clause
     which expresses a categorical judgment cannot be non-specific."
 
     This connects the specificity system to the ψ-subject system:
@@ -479,7 +479,7 @@ theorem nonspecific_cannot_be_ψSubject_nP :
 -- ============================================================================
 
 /-- The three intransitive-unaccusative ψ-subject constructions of
-    @cite{aissen-polian-2025} §5. **Not exhaustive**: §6.2 adds path
+    [aissen-polian-2025] §5. **Not exhaustive**: §6.2 adds path
     verbs, locative existentials, and two-argument experiential
     collocations (where the ψ-subject possessor originates inside a
     PP — see `ψPPConstruction` below); §7.1 admits Psr-A as ψ-subject
@@ -503,7 +503,7 @@ inductive ψConstruction where
   | lexicalUnaccusative
   deriving DecidableEq, Repr
 
-/-- Additional ψ-subject configurations from @cite{aissen-polian-2025}
+/-- Additional ψ-subject configurations from [aissen-polian-2025]
     §6.2 in which the ψ-subject possessor originates as the object of
     an internal PP (Psr-OP) rather than as a possessor of the verb's
     direct internal argument. The clauses are still unaccusative (no vP),
@@ -532,7 +532,7 @@ inductive ψPPConstruction where
   deriving DecidableEq, Repr
 
 /-- The clause type for every §5 ψ-construction is unaccusative
-    (@cite{aissen-polian-2025} p. 83 verbatim: "three unaccusative
+    ([aissen-polian-2025] p. 83 verbatim: "three unaccusative
     constructions"). The function is constant over its domain — the
     constraint is intrinsic to membership in `ψConstruction`. -/
 def ψConstruction.clauseType (_ : ψConstruction) : ArgumentStructureClass :=
@@ -573,7 +573,7 @@ theorem ψ_constructions_no_vP (c : ψConstruction) :
     ¬ c.clauseType.HasVP := id
 
 /-- The ψ-subject grammatical function in every §5 construction is S_O
-    (@cite{aissen-polian-2025} §5: in all three, the ψ-subject raises
+    ([aissen-polian-2025] §5: in all three, the ψ-subject raises
     from an unaccusative-internal-argument position). -/
 def ψConstruction.ψSubjectFunction (_ : ψConstruction) : GramFunction :=
   .S_O
@@ -614,7 +614,7 @@ theorem ψ_pp_constructions_no_vP (c : ψPPConstruction) :
 -- ============================================================================
 
 /-- Functional heads that carry [EPP:D] probes triggering A-movement.
-    @cite{aissen-polian-2025} §4.2, §6, Table 4. -/
+    [aissen-polian-2025] §4.2, §6, Table 4. -/
 inductive DProbeHead where
   | t     -- T° in all clause types
   | appl  -- Appl° in applicative constructions
@@ -660,7 +660,7 @@ structure InterventionDatum where
   blocked : Bool
   deriving DecidableEq, Repr
 
-/-- A re-tabulation of @cite{aissen-polian-2025} Table 4 (p. 103) along a
+/-- A re-tabulation of [aissen-polian-2025] Table 4 (p. 103) along a
     different axis. A&P's Table 4 has 10 rows indexed by `(Probe, A-Intervener,
     Clause Type, Intended Goal)` with a yes/no/yes-no `Ā-movement?` column;
     it covers Psr-S_O, Psr-O, and Psr-OP goals. Our table re-indexes by
@@ -725,7 +725,7 @@ theorem appl_stranding_blocked_iff_thematic (ct : ArgumentStructureClass) (ta : 
 
 /-! ### Specifier directionality (deferred)
 
-@cite{aissen-polian-2025} §3.1, (10) parameterizes specifier direction
+[aissen-polian-2025] §3.1, (10) parameterizes specifier direction
 per functional head: the Tseltalan default is leftside, but T°, Appl°,
 and possibly Poss° take rightside specifiers (yielding post-verbal
 ψ-subjects and external possessors). The previous version of this file
@@ -783,7 +783,7 @@ theorem ψ_constructions_permit_both_modes (c : ψConstruction) :
 -- § 13: Table 2 — Psr-S_O vs Psr-O Extraction Asymmetry
 -- ============================================================================
 
-/-- Table 2 of @cite{aissen-polian-2025} (p. 77): possessor extraction
+/-- Table 2 of [aissen-polian-2025] (p. 77): possessor extraction
     and grammatical function in Ch'ol and Tseltalan.
 
     | Mode        | Psr-S_O | Psr-O |
@@ -814,13 +814,13 @@ theorem stranding_asymmetry_is_vP :
 -- ============================================================================
 
 /-- Tseltalan is LOW-ABS: absolutive agreement follows the verb stem.
-    @cite{aissen-polian-2025} p. 97 quotes @cite{aissen-1999a} and
-    @cite{polian-2013} p. 272: "A's extract freely" — there are no
+    [aissen-polian-2025] p. 97 quotes [aissen-1999a] and
+    [polian-2013] p. 272: "A's extract freely" — there are no
     syntactic ergativity effects in Tseltalan. The LOW-ABS / HIGH-ABS
     parameterization (whether Infl° or v° licenses absolutive case) is
     associated with a robust extraction-asymmetry generalization in the
     Mayan literature: HIGH-ABS languages exhibit syntactic ergativity
-    (cf. @cite{coon-mateo-pedro-preminger-2014}); LOW-ABS languages do
+    (cf. [coon-mateo-pedro-preminger-2014]); LOW-ABS languages do
     not. The shared `Mayan.Tseltalan.absPosition` constant is
     the per-subgroup source of truth, definitionally equal to the
     Tsotsil and Tseltal per-language values.
@@ -855,7 +855,7 @@ The boolean functions `dLayerShields`, `hasIntervener`, and
 `canExtractPossessor` above capture the paper's predictions but
 **stipulate** them directly. Here we **derive** them from Attract
 Closest applied to concrete `SyntacticObject` trees
-(@cite{aissen-polian-2025} (9a-c)), using `closestGoalB` from
+([aissen-polian-2025] (9a-c)), using `closestGoalB` from
 `Minimalist.Agree`.
 
 **Key derivation**: T°'s [EPP:D] probe searches its c-command domain
@@ -899,7 +899,7 @@ private def Psm := mkLeaf .N [] 5   -- Possessum (noun, not D-bearing)
 private def D₀  := mkLeaf .D [] 6   -- D° head of specific nominal
 private def Agt := mkLeaf .D [] 7   -- Agent DP (D-bearing)
 
-/-! ### Clause Trees (@cite{aissen-polian-2025} (9a-c))
+/-! ### Clause Trees ([aissen-polian-2025] (9a-c))
 
 (9a) Unaccusative: `[TP T° [VP V° OBJECT]]`
      No vP layer — sole argument is complement of V.
@@ -1010,7 +1010,7 @@ theorem bridge_no_intervention_unacc :
 
 /-! ### Selective Opacity as a Tree Constraint
 
-Selective opacity (@cite{keine-2019}, @cite{aissen-polian-2025} (33))
+Selective opacity ([keine-2019], [aissen-polian-2025] (33))
 states that N° is a horizon for wh-probes: C°'s [EPP:WH] probe
 cannot see elements c-commanded by N° (= inside the nominal's
 lexical projection). Here we derive this from `behindHorizonB`

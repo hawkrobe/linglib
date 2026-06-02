@@ -3,19 +3,19 @@ import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Spector 2013: Bare Numerals and Scalar Implicatures
-@cite{spector-2013} @cite{horn-1972} @cite{kennedy-2015} @cite{chierchia-fox-spector-2012} @cite{fox-2007} @cite{carston-1988} @cite{breheny-2008}
+[spector-2013] [horn-1972] [kennedy-2015] [chierchia-fox-spector-2012] [fox-2007] [carston-1988] [breheny-2008]
 
 Bare numerals and scalar implicatures. Language and Linguistics Compass
 7(5): 273–294.
 
 ## Core Contribution
 
-@cite{spector-2013} evaluates four approaches to bare numeral interpretation:
+[spector-2013] evaluates four approaches to bare numeral interpretation:
 
-1. **Neo-Gricean** (@cite{horn-1972}): basic = ≥n, exact via scalar implicature
-2. **Underspecification** (@cite{carston-1988}): context selects ≥n, =n, or ≤n
-3. **Exactly-only** (@cite{breheny-2008}): basic = =n, other readings via context
-4. **Ambiguity via EXH** (@cite{chierchia-fox-spector-2012}): numerals have an
+1. **Neo-Gricean** ([horn-1972]): basic = ≥n, exact via scalar implicature
+2. **Underspecification** ([carston-1988]): context selects ≥n, =n, or ≤n
+3. **Exactly-only** ([breheny-2008]): basic = =n, other readings via context
+4. **Ambiguity via EXH** ([chierchia-fox-spector-2012]): numerals have an
    "at least" base meaning; a covert exhaustivity operator EXH generates the
    "exactly" reading; both are grammatically available
 
@@ -31,7 +31,7 @@ generalizations about numeral interpretation (§5, (41a–c)):
 - §1: The four approaches as an enum
 - §2: The three generalizations as a checkable predicate
 - §3: **EXH bridge** — proves `exhNumeral` agrees with the general `Excluder.exh`
-  from @cite{fox-2007}'s innocent exclusion on numeral alternative sets
+  from [fox-2007]'s innocent exclusion on numeral alternative sets
 - §4: Neo-Gricean failure in DE contexts + discourse coherence against exactly-only
 - §5: Against underspecification (no genuine "at most" readings)
 - §6: Ambiguity via EXH captures all three generalizations
@@ -43,7 +43,7 @@ generalizations about numeral interpretation (§5, (41a–c)):
 - **EXH bridge** (§3) connects `Semantics/Lexical/Numeral/Semantics.lean`'s
   `exhNumeral` to the `Exhaustification.innocent` excluder
 - `ExhaustivityLimit.lean` proves RSA at α→∞ = EXH for ⟨some, all⟩
-- @cite{spector-2007} proves Max(P) = {Exhaust(P)} (Gricean ↔ exhaustive)
+- [spector-2007] proves Max(P) = {Exhaust(P)} (Gricean ↔ exhaustive)
 -/
 
 namespace Spector2013
@@ -113,15 +113,15 @@ instance (w : BareNumeral) (acc : List Nat) : Decidable (exhOverPossLB w acc) :=
 -- ============================================================================
 
 /-- The four theoretical approaches to bare numeral interpretation
-    evaluated in @cite{spector-2013} §1. -/
+    evaluated in [spector-2013] §1. -/
 inductive Approach where
-  /-- Neo-Gricean (@cite{horn-1972}): basic = ≥n, exact via scalar implicature -/
+  /-- Neo-Gricean ([horn-1972]): basic = ≥n, exact via scalar implicature -/
   | neoGricean
-  /-- Underspecification (@cite{carston-1988}): context selects ≥n, =n, or ≤n -/
+  /-- Underspecification ([carston-1988]): context selects ≥n, =n, or ≤n -/
   | underspecification
-  /-- Exactly-only (@cite{breheny-2008}): basic = =n, other readings via context -/
+  /-- Exactly-only ([breheny-2008]): basic = =n, other readings via context -/
   | exactlyOnly
-  /-- Ambiguity via EXH (@cite{chierchia-fox-spector-2012}): base = ≥n,
+  /-- Ambiguity via EXH ([chierchia-fox-spector-2012]): base = ≥n,
       exact via covert exhaustivity operator; both readings available -/
   | ambiguityEXH
   deriving DecidableEq, Repr
@@ -142,7 +142,7 @@ def Approach.claimsAtMost : Approach → Bool
 -- § 2. The Three Generalizations (41a–c)
 -- ============================================================================
 
-/-- @cite{spector-2013}'s three generalizations about numeral interpretation
+/-- [spector-2013]'s three generalizations about numeral interpretation
     (41a–c). An adequate theory must satisfy all three. -/
 structure ThreeGeneralizations where
   /-- (41a) "At least" readings available in all embedded environments. -/
@@ -199,7 +199,7 @@ theorem only_ambiguity_satisfies_all :
 
 The numeral-specific `exhNumeral` (in `Semantics.lean`) hard-codes the scalar
 alternatives {≥k} and checks only the immediate successor. The general
-`Excluder.exh` from @cite{fox-2007} operates on arbitrary alternative sets
+`Excluder.exh` from [fox-2007] operates on arbitrary alternative sets
 via innocent exclusion.
 
 We prove these agree on the standard numeral domain `Fin 4`. This bridges
@@ -236,7 +236,7 @@ set_option maxRecDepth 2000 in
 /-- **EXH bridge**: The numeral-specific `exhNumeral` agrees with the
     general `innocent.exh` on the four-world domain for all three bare numerals.
 
-    This proves numerals get standard @cite{fox-2007} exhaustification —
+    This proves numerals get standard [fox-2007] exhaustification —
     they are not a special case requiring a bespoke operator. -/
 theorem exhNumeral_eq_innocent_exh :
     (∀ w : NumW, exhNumeral 1 w.val ↔ w ∈ innocent.exh (lbAltsF 1) (lbMeaningF 1)) ∧
@@ -257,7 +257,7 @@ theorem exhLB_eq_innocent_exh :
 -- § 4. Neo-Gricean Failure in DE Contexts
 -- ============================================================================
 
-/-! ### The conditional/tax problem (@cite{spector-2013} §2.2.2)
+/-! ### The conditional/tax problem ([spector-2013] §2.2.2)
 
 "If you have three children, you do not qualify for tax exemptions."
 
@@ -278,7 +278,7 @@ theorem exh_cannot_derive_atMost :
     -- Only ≤3 gets world 2
     atMostMeaning 3 2 := by decide
 
-/-- The indirect scalar implicature problem (@cite{spector-2013} §2.2.2).
+/-- The indirect scalar implicature problem ([spector-2013] §2.2.2).
     "Peter didn't solve three problems" — the neo-Gricean approach predicts
     an indirect SI: "Peter solved exactly two." But this is not perceived.
     Demonstrated on the small domain {0,1,2,3} with numeral "three". -/
@@ -292,7 +292,7 @@ theorem indirect_si_overgeneration :
     (atLeastMeaning 2 2 ∧ ¬ atLeastMeaning 3 2) := by
   decide
 
-/-- Discourse coherence against exactly-only (@cite{spector-2013} §4.2).
+/-- Discourse coherence against exactly-only ([spector-2013] §4.2).
     "I have four chairs. In fact, I have five."
 
     Under LB (≥4): the second sentence is consistent — 5 ≥ 4, so the
@@ -312,7 +312,7 @@ theorem discourse_coherence_against_exact :
 -- § 5. Against Underspecification
 -- ============================================================================
 
-/-! ### No genuine "at most" readings (@cite{spector-2013} §3)
+/-! ### No genuine "at most" readings ([spector-2013] §3)
 
 The decisive argument: if bare numerals could mean ≤n, then "One must be
 (at most) 40 to be eligible for the Fields medal" should be true. But
@@ -345,7 +345,7 @@ theorem gen41a_atLeast :
     necLB .three [3, 4] := by decide
 
 /-- (41b) "Exactly" = EXH(base), available wherever EXH can scope.
-    @cite{spector-2013} suggests that numerals may intrinsically activate
+    [spector-2013] suggests that numerals may intrinsically activate
     their alternatives (§6.2), which would explain why EXH doesn't require
     prosodic marking for numerals (unlike "or" in DE contexts). -/
 theorem gen41b_exactly :
@@ -378,7 +378,7 @@ theorem gen41c_atMost :
 
 /-! ### EXH-ambiguity predicts more readings than lexical ambiguity
 
-(@cite{spector-2013} §6.2, examples (52)–(53))
+([spector-2013] §6.2, examples (52)–(53))
 
 Under lexical ambiguity, a numeral IS either ≥n or =n — no scope flexibility.
 Under EXH-ambiguity, EXH is an operator that can scope at different positions.
@@ -452,21 +452,21 @@ The results here connect to three independent lines of evidence in the library:
 1. **EXH bridge** (§3): `exhNumeral` = `innocent.exh` on the four-world numeral
    domain. This closes the gap between `Semantics/Lexical/Numeral/Semantics.lean`
    and `Semantics/Exhaustification/Innocent.lean` — numerals get standard
-   @cite{fox-2007} exhaustification.
+   [fox-2007] exhaustification.
 
 2. **RSA=EXH limit** (`ExhaustivityLimit.lean`): `l1_weak_weakOnly_tendsto_one`
    proves RSA L1 at α→∞ recovers Fox's EXH for ⟨some, all⟩. Combined with the
    EXH bridge here, this means RSA at α→∞ on numerals should also recover
    `exhNumeral` — the three formalisms (EXH, `exhNumeral`, RSA-limit) converge.
 
-3. **Gricean foundation** (@cite{spector-2007}): `max_eq_exhaust` proves
+3. **Gricean foundation** ([spector-2007]): `max_eq_exhaust` proves
    Max(P) = {Exhaust(P)} — Gricean reasoning derives exhaustive interpretation.
-   @cite{spector-2013}'s EXH operator is the grammaticalized version of the
+   [spector-2013]'s EXH operator is the grammaticalized version of the
    same operation.
 -/
 
 set_option maxRecDepth 2000 in
-/-- @cite{spector-2013}: the ambiguity-via-EXH account uniquely captures all
+/-- [spector-2013]: the ambiguity-via-EXH account uniquely captures all
     three generalizations, and the EXH bridge validates that numeral
     exhaustification is an instance of general innocent exclusion. -/
 theorem spector2013_summary :

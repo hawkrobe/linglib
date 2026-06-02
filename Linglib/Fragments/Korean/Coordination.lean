@@ -2,10 +2,10 @@ import Linglib.Features.Coordination
 
 /-!
 # Korean Coordination Morphemes
-@cite{mitrovic-2021}
+[mitrovic-2021]
 
 Korean has multiple postpositive bound coordinators with register/style
-differences. The @cite{mitrovic-sauerland-2016} J-μ classification used
+differences. The [mitrovic-sauerland-2016] J-μ classification used
 in `Studies/MitrovicSauerland2016.lean` treats *-(i)rang* as J and *-to*
 as μ; the latter doubles as the additive ("also") particle.
 

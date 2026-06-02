@@ -1,14 +1,14 @@
 import Linglib.Semantics.Quantification.BinominalDefs
 
 /-!
-# French Binominal Nouns @cite{ten-wolde-2023}
+# French Binominal Nouns [ten-wolde-2023]
 
 Lexical entries for French nouns appearing in *de*-binominal constructions,
 classified by the shared `OfBinominalType` taxonomy.
 
 French has all six *of*-binominal types, using *de* as the linking element.
 The evaluative BNP may have entered English from French or Latin
-(@cite{ten-wolde-2023}).
+([ten-wolde-2023]).
 
 ## Examples
 

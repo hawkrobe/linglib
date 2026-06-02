@@ -3,13 +3,13 @@ import Linglib.Semantics.Lexical.Roots.Closure
 /-!
 # Yukatek Maya Roots as B&K-G Entailment Sets
 
-@cite{lucy-1994} @cite{beavers-koontz-garboden-2020}
+[lucy-1994] [beavers-koontz-garboden-2020]
 
 A representative cross-section of Yukatek roots, drawn from the lists
-in @cite{lucy-1994} ex. (1), (2), (4), and (7), and encoded as
-@cite{beavers-koontz-garboden-2020}-style entailment sets.
+in [lucy-1994] ex. (1), (2), (4), and (7), and encoded as
+[beavers-koontz-garboden-2020]-style entailment sets.
 
-The selection covers all four salience profiles that @cite{lucy-1994}
+The selection covers all four salience profiles that [lucy-1994]
 identifies in Yukatek (agent-salient, agent-patient salient,
 patient-salient, positional). The roots feed into the operator
 inventory in `Operators.lean` and the orbit-derivation in
@@ -46,7 +46,7 @@ roots with distinct lexical content. We disambiguate by suffixing the
 gloss: `haanCease` here is the patient-salient cessation root;
 `Yukatek.haanEat` (in `VerbClasses.lean`) is the
 inactive-class but internally-caused "eat" verb that
-@cite{bohnemeyer-2004} ex. (9) takes as the key applicative exception.
+[bohnemeyer-2004] ex. (9) takes as the key applicative exception.
 
 The transcription uses ASCII glosses (no IPA diacritics) for ease of
 identifier use; original orthography is preserved in docstrings.
@@ -60,43 +60,43 @@ open Semantics.Lexical.Roots
 -- § 1. Agent-Salient Roots (manner only, take `=t`)
 -- ════════════════════════════════════════════════════
 
-/-- síit' "jump" — manner-of-action activity (@cite{lucy-1994} ex. 1a).
+/-- síit' "jump" — manner-of-action activity ([lucy-1994] ex. 1a).
     Underived intransitive; takes affective `=t` to transitivise.
-    No `.motion` atom: per @cite{lucy-1994}, motion is *not* a B&K-G
+    No `.motion` atom: per [lucy-1994], motion is *not* a B&K-G
     feature in Yukatek (cf. `motion_roots_not_separate_class`); jumping
     qualifies as a manner-of-action irrespective of whether it
     incidentally involves displacement. -/
 def siit : Root := ⟨"siit'", [.hasManner "jumping"]⟩
 
-/-- ¢'iib "write" — manner-of-action activity (@cite{lucy-1994} p. 628). -/
+/-- ¢'iib "write" — manner-of-action activity ([lucy-1994] p. 628). -/
 def tziib : Root := ⟨"tziib", [.hasManner "writing"]⟩
 
 /-- mìis "sweep" — manner-of-action activity
-    (@cite{lucy-1994} agent-salient list). -/
+    ([lucy-1994] agent-salient list). -/
 def miis : Root := ⟨"mìis", [.hasManner "sweeping"]⟩
 
 /-- ć'eh "shout" — manner-of-action activity
-    (@cite{lucy-1994} agent-salient list). -/
+    ([lucy-1994] agent-salient list). -/
 def cheh : Root := ⟨"ć'eh", [.hasManner "shouting"]⟩
 
 /-- paak "weed" — manner-of-action activity
-    (@cite{lucy-1994} agent-salient list). -/
+    ([lucy-1994] agent-salient list). -/
 def paak : Root := ⟨"paak", [.hasManner "weeding"]⟩
 
 -- ════════════════════════════════════════════════════
 -- § 2. Agent-Patient Salient Roots (manner + result, take `=∅`)
 -- ════════════════════════════════════════════════════
 
-/-- kuč "carry" — action with patient affected (@cite{lucy-1994} ex. 1b).
+/-- kuč "carry" — action with patient affected ([lucy-1994] ex. 1b).
     Underived transitive; no derivation needed. -/
 def kuc : Root := ⟨"kuc",
   [.hasManner "carrying", .becomesState "transported"]⟩
 
-/-- p'is "measure" — action with patient affected (@cite{lucy-1994} p. 629). -/
+/-- p'is "measure" — action with patient affected ([lucy-1994] p. 629). -/
 def pis : Root := ⟨"pis",
   [.hasManner "measuring", .becomesState "measured"]⟩
 
-/-- lo'š "punch" — action with patient affected (@cite{lucy-1994} p. 629).
+/-- lo'š "punch" — action with patient affected ([lucy-1994] p. 629).
     No `.contact` atom: contact is implicit in the manner of striking
     rather than a B&K-G feature in Lucy's typology. -/
 def los : Root := ⟨"los",
@@ -106,94 +106,94 @@ def los : Root := ⟨"los",
 -- § 3. Patient-Salient Roots (result only, take `=s`)
 -- ════════════════════════════════════════════════════
 
-/-- kíim "die" — spontaneous state change (@cite{lucy-1994} ex. 1c, 2). -/
+/-- kíim "die" — spontaneous state change ([lucy-1994] ex. 1c, 2). -/
 def kiim : Root := ⟨"kiim", [.becomesState "dead"]⟩
 
-/-- háan "stop, cease, heal" (@cite{lucy-1994} patient-salient list,
+/-- háan "stop, cease, heal" ([lucy-1994] patient-salient list,
     p. 630, ex. 2). High-tone vowel: distinct from `Yukatek.haanEat`
     "eat" (low-tone `hàan`), which is `inactive`-class but
     internally caused — see `Fragments/Mayan/Yukatek/VerbClasses.lean`
-    and @cite{bohnemeyer-2004} ex. (9). -/
+    and [bohnemeyer-2004] ex. (9). -/
 def haanCease : Root := ⟨"háan", [.becomesState "stopped"]⟩
 
-/-- lúub' "fall" (@cite{lucy-1994} ex. 4, Table 4). A "motion verb" by
+/-- lúub' "fall" ([lucy-1994] ex. 4, Table 4). A "motion verb" by
     any reasonable cross-linguistic notional taxonomy, but patterns
     morphologically with other patient-salient change-of-state roots
     in Yukatek. No `.motion` atom: motion is the *issue*, not a
     feature — see `motion_roots_not_separate_class`. -/
 def luub : Root := ⟨"luub'", [.becomesState "fallen"]⟩
 
-/-- 'ok "enter, intrude" (@cite{lucy-1994} ex. 4, Table 4). Another
+/-- 'ok "enter, intrude" ([lucy-1994] ex. 4, Table 4). Another
     notional motion root that takes `=s` like patient-salient state
     changes. -/
 def ok : Root := ⟨"'ok", [.becomesState "inside"]⟩
 
 /-! Additional patient-salient roots from the page-630 list. -/
 
-/-- 'ah "wake" (@cite{lucy-1994} patient-salient list). -/
+/-- 'ah "wake" ([lucy-1994] patient-salient list). -/
 def ah : Root := ⟨"'ah", [.becomesState "awake"]⟩
 
-/-- wen "sleep" (@cite{lucy-1994} patient-salient list). State change
+/-- wen "sleep" ([lucy-1994] patient-salient list). State change
     *into* sleep, not the activity of sleeping. -/
 def wen : Root := ⟨"wen", [.becomesState "asleep"]⟩
 
-/-- siih "be born" (@cite{lucy-1994} patient-salient list). -/
+/-- siih "be born" ([lucy-1994] patient-salient list). -/
 def siih : Root := ⟨"siih", [.becomesState "born"]⟩
 
-/-- tú'ub' "be forgotten" (@cite{lucy-1994} patient-salient list). -/
+/-- tú'ub' "be forgotten" ([lucy-1994] patient-salient list). -/
 def tuub : Root := ⟨"tú'ub'", [.becomesState "forgotten"]⟩
 
-/-- k'a'ah "remember" (@cite{lucy-1994} patient-salient list). -/
+/-- k'a'ah "remember" ([lucy-1994] patient-salient list). -/
 def kaah : Root := ⟨"k'a'ah", [.becomesState "remembered"]⟩
 
-/-- čú'un "begin" (@cite{lucy-1994} patient-salient list). -/
+/-- čú'un "begin" ([lucy-1994] patient-salient list). -/
 def chuun : Root := ⟨"čú'un", [.becomesState "begun"]⟩
 
-/-- č'en "stop, cease" (@cite{lucy-1994} patient-salient list).
+/-- č'en "stop, cease" ([lucy-1994] patient-salient list).
     Distinct from `haanCease` (Lucy lists them as separate entries). -/
 def chenCease : Root := ⟨"č'en", [.becomesState "ceased"]⟩
 
-/-- hó'op' "begin" (@cite{lucy-1994} patient-salient list). Doublet of
+/-- hó'op' "begin" ([lucy-1994] patient-salient list). Doublet of
     `chuun`; both gloss as "begin" in the patient-salient list. -/
 def hoop : Root := ⟨"hó'op'", [.becomesState "started"]⟩
 
-/-- hé'el "rest" (@cite{lucy-1994} patient-salient list). -/
+/-- hé'el "rest" ([lucy-1994] patient-salient list). -/
 def heel : Root := ⟨"hé'el", [.becomesState "rested"]⟩
 
-/-- p'át "remain" (@cite{lucy-1994} patient-salient list). -/
+/-- p'át "remain" ([lucy-1994] patient-salient list). -/
 def paat : Root := ⟨"p'át", [.becomesState "remaining"]⟩
 
-/-! Motion roots from @cite{lucy-1994} Table 4. These pattern as
+/-! Motion roots from [lucy-1994] Table 4. These pattern as
     patient-salient (`becomesState` only) — the central typological
     point. See `motion_roots_not_separate_class` and
     `motion_roots_predicted_patient`. -/
 
-/-- máan "pass" (@cite{lucy-1994} Table 4). -/
+/-- máan "pass" ([lucy-1994] Table 4). -/
 def maan : Root := ⟨"máan", [.becomesState "passed"]⟩
 
-/-- tàal "come" (@cite{lucy-1994} Table 4). -/
+/-- tàal "come" ([lucy-1994] Table 4). -/
 def taal : Root := ⟨"tàal", [.becomesState "arrived"]⟩
 
-/-- b'in "go" (@cite{lucy-1994} Table 4). -/
+/-- b'in "go" ([lucy-1994] Table 4). -/
 def bin : Root := ⟨"b'in", [.becomesState "departed"]⟩
 
-/-- nàak "ascend" (@cite{lucy-1994} Table 4). Distinct from
+/-- nàak "ascend" ([lucy-1994] Table 4). Distinct from
     `Yukatek.naak` "ascend" in `VerbClasses.lean`, which encodes
     Bohnemeyer's stem-class data; both refer to the same Yukatek root. -/
 def naak : Root := ⟨"nàak", [.becomesState "ascended"]⟩
 
-/-- lìik' "rise" (@cite{lucy-1994} Table 4). -/
+/-- lìik' "rise" ([lucy-1994] Table 4). -/
 def liik : Root := ⟨"lìik'", [.becomesState "risen"]⟩
 
 -- ════════════════════════════════════════════════════
 -- § 4. Positional Roots (state only, take `-tal`)
 -- ════════════════════════════════════════════════════
 
-/-- čin "bow, bend down, bend over" (@cite{lucy-1994} ex. 5, 7).
+/-- čin "bow, bend down, bend over" ([lucy-1994] ex. 5, 7).
     Positional root; takes `-tal` (or `-lah`) for the inchoative stem. -/
 def cin : Root := ⟨"cin", [.hasState "bent"]⟩
 
-/-- kul "sit" — positional root (cf. @cite{lucy-1994} ex. 8c on
+/-- kul "sit" — positional root (cf. [lucy-1994] ex. 8c on
     relational positional semantics: "x is-seated [on y]"). -/
 def kul : Root := ⟨"kul", [.hasState "seated"]⟩
 
@@ -336,7 +336,7 @@ def patientSalientRoots : List Root :=
    heel, paat]
 
 /-- The notional motion roots: cross-linguistically "motion" verbs that
-    @cite{lucy-1994} shows pattern as patient-salient (not as a separate
+    [lucy-1994] shows pattern as patient-salient (not as a separate
     class) in Yukatek. -/
 def motionRoots : List Root := [luub, ok, maan, taal, bin, naak, liik]
 

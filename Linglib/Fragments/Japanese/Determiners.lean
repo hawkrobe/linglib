@@ -86,7 +86,7 @@ def dare_ka : JapaneseQuantEntry :=
 
 /-- 誰も dare_mo "everyone / nobody" — universal (affirmative) or
     negative universal (with clausemate negation: dare-mo...nai).
-    @cite{shimoyama-2006}: -mo is Hamblin universal over indeterminate set. -/
+    [shimoyama-2006]: -mo is Hamblin universal over indeterminate set. -/
 def dare_mo : JapaneseQuantEntry :=
   { form := "誰も"
   , romaji := "dare-mo"

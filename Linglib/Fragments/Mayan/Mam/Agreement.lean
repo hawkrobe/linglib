@@ -5,11 +5,11 @@ import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Typology.Extraction
 
 /-!
-# Mam Agreement Fragment @cite{scott-2023}
-@cite{deal-2024} @cite{woolford-1997} @cite{blake-1994}
+# Mam Agreement Fragment [scott-2023]
+[deal-2024] [woolford-1997] [blake-1994]
 
 Agreement morphology and pronoun realization data for **San Juan Atitán
-Mam (SJA Mam)**, the dialect analyzed in @cite{scott-2023}. Per Scott's
+Mam (SJA Mam)**, the dialect analyzed in [scott-2023]. Per Scott's
 Chapter 3 (titled "Object licensing and agreement: SJA Mam is a
 **tripartite high-abs language**"), SJA Mam exhibits morphologically
 tripartite agreement alignment: S, A, and O each trigger distinct
@@ -19,7 +19,7 @@ marking patterns on the verb.
 
 This fragment encodes Scott's analysis of SJA Mam specifically. Other
 Mam dialects (notably Ixtahuacán Mam, the variety described in England
-1983b and used by @cite{zavala-maldonado-2017} §4-5) have been
+1983b and used by [zavala-maldonado-2017] §4-5) have been
 characterized as **ergative with a neutral pattern in aspectless
 dependent clauses** — NOT tripartite. Per Zavala 2017 §4 (p. 237),
 "Ch'orti' is the only Mayan language that exhibits three sets of
@@ -46,7 +46,7 @@ Mam has two agreement paradigms on the verb:
 In the default construction, transitive *objects* are not cross-referenced
 by either set — they co-occur with default Set B (tz'=) and require
 full overt pronouns. However, some speakers accept agreeing Set B
-for objects as a more formal variant (@cite{scott-2023}, ch. 3, ex. 156).
+for objects as a more formal variant ([scott-2023], ch. 3, ex. 156).
 
 ## Case Licensing (per Scott's analysis)
 
@@ -61,7 +61,7 @@ through agreement patterns. This tripartite analysis is dialect-specific
 to SJA Mam per Scott; alternative analyses (for other Mam dialects or
 under different theoretical frameworks) characterize Mam as ergative
 with neutral patterns in dependent clauses (England 1983b;
-@cite{zavala-maldonado-2017} §4-5).
+[zavala-maldonado-2017] §4-5).
 
 ## Argument Positions
 
@@ -92,14 +92,14 @@ open Agreement
 -- ============================================================================
 
 /-- Set A (ERG) markers per cell: prefixes/proclitics on the verb that
-    cross-reference the transitive agent (@cite{scott-2023}, Table 2.8).
+    cross-reference the transitive agent ([scott-2023], Table 2.8).
     All six cells have distinct exponents (with t- syncretism for 2sg/3sg
     and ky- syncretism for 2pl/3pl). -/
 def setAExponent : ExponentTable :=
   [(.pn .first .Sing, "n-/w-"), (.pn .second .Sing, "t-"), (.pn .third .Sing, "t-"),
    (.pn .first .Plur, "q-"), (.pn .second .Plur, "ky-"), (.pn .third .Plur, "ky-")]
 
-/-- Set B (ABS) markers per cell (@cite{scott-2023}, Table 3.5).
+/-- Set B (ABS) markers per cell ([scott-2023], Table 3.5).
     The 2/3SG form tz'= is the **default** — it appears both for real
     agreement with a 2/3SG intransitive S and for default Set B in
     transitives when Infl's probe is blocked by VoiceP.
@@ -128,7 +128,7 @@ def defaultSetB : String := "tz'="
 -- § 2: Argument Positions and Agreement Status (substrate-anchored)
 -- ============================================================================
 
-/-- Argument positions in a Mam clause (@cite{scott-2023} ch. 3).
+/-- Argument positions in a Mam clause ([scott-2023] ch. 3).
     Aliased to the canonical `Features.Prominence.ArgumentRole`
     (S/A/P/R/T) so cross-Mayan and cross-framework code shares one
     inventory. Use the canonical constructor names `.A` / `.P` / `.S`
@@ -218,7 +218,7 @@ theorem reduction_eligible_iff_phi_agreed (pos : ArgPosition) :
   Iff.rfl
 
 -- ============================================================================
--- § 5: Case Inventory Validation (@cite{blake-1994})
+-- § 5: Case Inventory Validation ([blake-1994])
 -- ============================================================================
 
 /-- Mam case inventory, derived from argument position case values. -/
@@ -233,13 +233,13 @@ theorem inventory_covers_positions :
 example : Features.Case.IsValidInventory caseInventory := by decide
 
 -- ============================================================================
--- § 6: Pronoun Internal Structure (@cite{scott-2023}, ch. 4)
+-- § 6: Pronoun Internal Structure ([scott-2023], ch. 4)
 -- ============================================================================
 
 /-- Person features relevant for pronoun reduction.
 
     Scott decomposes person into binary features following
-    @cite{harbour-2016} (Table 4.3-4.4):
+    [harbour-2016] (Table 4.3-4.4):
     - [±author]: distinguishes 1st from non-1st
     - [±participant]: distinguishes local (1st/2nd) from 3rd
     - [±singular]: number
@@ -249,7 +249,7 @@ example : Features.Case.IsValidInventory caseInventory := by decide
 
     The =i enclitic is the **disagreement enclitic** — it realizes
     *disagreeing* values of [±author] and [±participant] (ex. 59,
-    adapting @cite{noyer-1992} / @cite{harbour-2016}):
+    adapting [noyer-1992] / [harbour-2016]):
     - 1SG/1PL.EXCL: [+author, -participant] → disagree → =i
     - 2SG/2PL: [-author, +participant] → disagree → =i
     - 1PL.INCL: [+author, +participant] → agree → no =i
@@ -285,7 +285,7 @@ theorem base_is_redundant : allRedundant baseFeatures = true := by native_decide
 /-- The =i enclitic survives: [participant] is NOT copied by agreement. -/
 theorem enclitic_survives : isRedundant encliticFeature = false := by native_decide
 
-/-- Pronoun realization after impoverishment (@cite{scott-2023}, §4.4.3).
+/-- Pronoun realization after impoverishment ([scott-2023], §4.4.3).
 
     - `reduced`: 1st person agreed-with — impoverishment deletes
       [±singular] in the context of [+author]^F, bleeding insertion of
@@ -379,27 +379,27 @@ theorem patient_person_irrelevant :
 
 /-- Mam is HIGH-ABS: Set B (absolutive) markers appear pre-stem on Infl,
     immediately following the aspect marker. Morpheme template:
-    ASP-**ABS**-ERG-ROOT-SUFFIX (@cite{scott-2023}, §2.5.1). -/
+    ASP-**ABS**-ERG-ROOT-SUFFIX ([scott-2023], §2.5.1). -/
 def absPosition : Mayan.ABSPosition := .high
 
 /-- HIGH-ABS yields ABS=NOM case locus: Infl assigns case to the
-    absolutive argument (@cite{scott-2023}, §3.3). -/
+    absolutive argument ([scott-2023], §3.3). -/
 theorem mam_case_locus :
     Mayan.toCaseLocus absPosition = .absNom := rfl
 
-/-- Set A linearity: prefixal (per @cite{scott-2023} ch. 2; pan-Mayan). -/
+/-- Set A linearity: prefixal (per [scott-2023] ch. 2; pan-Mayan). -/
 def setALinearity : MarkerLinearity := .prefixal
 
 /-- Set B linearity: prefixal (HIGH-ABS Mam morphology; pre-stem on Infl,
-    per @cite{scott-2023} §2.5.1). -/
+    per [scott-2023] §2.5.1). -/
 def setBLinearity : MarkerLinearity := .prefixal
 
 /-- Mam's extraction profile: AF morphology is productive in SJA Mam
-    (@cite{scott-2023} §2.5.4.1 ex. 169 + §2.7.1 syntactic ergativity).
+    ([scott-2023] §2.5.4.1 ex. 169 + §2.7.1 syntactic ergativity).
     The construction combines the antipassive suffix *-(a)n* with the
     AF-specific suffix *-ta* (e.g., `b'yo-n-ta` 'hit-AP-AF'), making
     SJA Mam's AF morphologically distinct from K'iche''s (which uses
-    bare antipassive *-n* in AF contexts per @cite{mondloch-2017}
+    bare antipassive *-n* in AF contexts per [mondloch-2017]
     Lesson 22 — no extra AF morpheme).
 
     For the cross-Mayan typology, we mark the strategy as
@@ -435,9 +435,9 @@ theorem setB_3sg : setBExponent.realize (.pn .third .Sing) = some defaultSetB :=
 /-- A controller's φ-features index the agreement paradigm directly: a 1sg agent
     selects its first-person-singular ergative prefix. The Set A table
     (`setAExponent`) is keyed by canonical φ-cells, so a pronoun's `Word.agrCell`
-    drives agreement realization in one shared feature space (@cite{corbett-1998};
-    @cite{scott-2023} Ch. 2). The realizational account (impoverishment /
-    Elsewhere; @cite{scott-2023} Ch. 4) is theory and stays in the study. -/
+    drives agreement realization in one shared feature space ([corbett-1998];
+    [scott-2023] Ch. 2). The realizational account (impoverishment /
+    Elsewhere; [scott-2023] Ch. 4) is theory and stays in the study. -/
 theorem erg_1sg_from_phi :
     setAExponent.realizeFor
       ⟨"", .PRON, { person := some .first, number := some .sg }⟩ = some "n-/w-" := by

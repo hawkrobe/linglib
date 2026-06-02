@@ -8,9 +8,9 @@ import Linglib.Core.Context.Shifts
 
 /-!
 # Unified Tense Pronoun Architecture
-@cite{abusch-1997} @cite{heim-kratzer-1998} @cite{kratzer-1998} @cite{partee-1973} @cite{von-stechow-2009} @cite{ogihara-1989}
+[abusch-1997] [heim-kratzer-1998] [kratzer-1998] [partee-1973] [von-stechow-2009] [ogihara-1989]
 
-@cite{abusch-1997}'s insight: a tense morpheme is a **temporal pronoun** — a variable with a presupposed temporal constraint (Prior, reinterpreted) and
+[abusch-1997]'s insight: a tense morpheme is a **temporal pronoun** — a variable with a presupposed temporal constraint (Prior, reinterpreted) and
 a binding mode (indexical/anaphoric/bound). This single concept projects onto
 five representations of temporal reference in the codebase:
 
@@ -18,7 +18,7 @@ five representations of temporal reference in the codebase:
 2. **Reichenbach frames** (S, P, R, E): `TensePronoun.toFrame`
 3. **Referential variables**: `TensePronoun.resolve`
 4. **Kaplan indexicals** (rigid to speech time): `mode =.indexical`
-5. **Attitude binding** (zero tense, @cite{ogihara-1989}): `mode =.bound`
+5. **Attitude binding** (zero tense, [ogihara-1989]): `mode =.bound`
 
 The existing ad-hoc bridge theorems (`referential_past_decomposition`,
 `temporallyBound_gives_simultaneous`, `indexical_tense_matches_opNow`,
@@ -58,7 +58,7 @@ inductive GramTense where
   | past
   | present
   | future
-  /-- @cite{klecha-2016}'s non-past tense: perspective ≤ ref (present or future).
+  /-- [klecha-2016]'s non-past tense: perspective ≤ ref (present or future).
       Distinct from `.present` (ref = perspective). The non-past is what allows
       embedded tense under circumstantial modals to have future-oriented readings:
       ⟦NPST⟧ = λp λt λu λh[p(t)(h) & u ≤ t], i.e., ref ≥ perspective. -/
@@ -83,7 +83,7 @@ def inverseRelation : GramTense → Core.Time.Relation
 
 /-- The temporal constraint imposed by a grammatical tense.
     Past: ref < perspective. Present: ref = perspective. Future: ref > perspective.
-    Nonpast: ref ≥ perspective (@cite{klecha-2016}).
+    Nonpast: ref ≥ perspective ([klecha-2016]).
     This is the core ordering that Priorean operators assert and
     Abusch's tense pronouns presuppose. -/
 def constrains {Time : Type*} [LinearOrder Time]
@@ -116,7 +116,7 @@ inductive SOTParameter where
 
 /-! ### Williams Cycle stage -/
 
-/-- Williams Cycle stage for sequence of tense (@cite{egressy-2026}).
+/-- Williams Cycle stage for sequence of tense ([egressy-2026]).
 
     A three-way refinement of `SOTParameter`, classifying a language by how
     many complement boundaries are transparent to upward tense Agree: none
@@ -153,7 +153,7 @@ def WilliamsCycleStage.ofSOTParameter : SOTParameter → WilliamsCycleStage
 abbrev TenseInterpretation := Core.ReferentialMode.ReferentialMode
 
 -- ════════════════════════════════════════════════════════════════
--- § Temporal Variable Infrastructure (@cite{partee-1973})
+-- § Temporal Variable Infrastructure ([partee-1973])
 -- ════════════════════════════════════════════════════════════════
 
 /-! Temporal assignment functions are the temporal instantiation of
@@ -224,10 +224,10 @@ abbrev SitProp (W Time : Type*) := WorldTimeIndex W Time → Prop
 
 
 -- ════════════════════════════════════════════════════════════════
--- § TensePronoun (@cite{abusch-1997})
+-- § TensePronoun ([abusch-1997])
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{abusch-1997}'s unified tense denotation.
+/-- [abusch-1997]'s unified tense denotation.
 
     A tense morpheme introduces a temporal variable with:
     - A variable index in the temporal assignment
@@ -247,7 +247,7 @@ structure TensePronoun where
   /-- Index of the evaluation time variable in the temporal assignment.
       Default 0 = speech time slot. Under embedding, attitude verbs update
       this index to point at the matrix event time.
-      @cite{klecha-2016}: modals can also shift the eval time index. -/
+      [klecha-2016]: modals can also shift the eval time index. -/
   evalTimeIndex : ℕ := 0
   deriving DecidableEq, Repr
 
@@ -355,10 +355,10 @@ theorem TensePronoun.indexical_present_at_speech {Time : Type*} [LinearOrder Tim
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Overtness (@cite{heim-kratzer-1998})
+-- § Overtness ([heim-kratzer-1998])
 -- ════════════════════════════════════════════════════════════════
 
-/-- Phonological overtness of a referential expression (@cite{heim-kratzer-1998} §3).
+/-- Phonological overtness of a referential expression ([heim-kratzer-1998] §3).
 
     Applies uniformly to pronouns and tenses: English has zero tense
     under SOT (bound present surfaces as ∅); Japanese has zero pronouns
@@ -405,10 +405,10 @@ theorem Overtness.bound_nonlocal_is_overt :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Temporal Tower Bridge (@cite{abusch-1997} ↔ ContextTower)
+-- § Temporal Tower Bridge ([abusch-1997] ↔ ContextTower)
 -- ════════════════════════════════════════════════════════════════
 
-/-! The key bridge showing that @cite{abusch-1997}'s De Bruijn temporal indexing is already
+/-! The key bridge showing that [abusch-1997]'s De Bruijn temporal indexing is already
 tower-style depth access. `TensePronoun.evalTimeIndex` is a depth-relative index
 into the tower: when the temporal assignment encodes tower time coordinates
 (`g k = (tower.contextAt k).time`), `interpTense` agrees with `AccessPattern.resolve`.
@@ -488,7 +488,7 @@ theorem tensePronounAccessPattern_root_resolves
   simp only [tensePronounAccessPattern, AccessPattern.resolve, hEval,
              DepthSpec.relative_resolve, ContextTower.root_contextAt]
 
-/-- @cite{von-stechow-2009}'s perspective shift — the attitude verb transmits
+/-- [von-stechow-2009]'s perspective shift — the attitude verb transmits
     its event time to the embedded clause — corresponds to pushing a
     `temporalShift` onto the tower.
 

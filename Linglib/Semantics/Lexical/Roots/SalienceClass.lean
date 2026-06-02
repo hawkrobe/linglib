@@ -3,10 +3,10 @@ import Linglib.Semantics.Lexical.Roots.Closure
 /-!
 # Lexical Salience Classes
 
-@cite{lucy-1994}
+[lucy-1994]
 
 A 4-way classification of verbal roots by which argument(s) the
-underived root form makes "salient" (in @cite{lucy-1994}'s sense:
+underived root form makes "salient" (in [lucy-1994]'s sense:
 default case-role assignment at the propositional level). The four
 classes — agent, agent-patient, patient, positional — are derivable
 from the B&K-G feature signature alone.
@@ -14,7 +14,7 @@ from the B&K-G feature signature alone.
 This file lifts the classification out of any specific empirical
 study so that other Fragment / Theory modules can refer to it
 (e.g., the Yukatek 5-way verb stem classification, which refines
-this 4-way cut). The full @cite{lucy-1994} analysis — operator
+this 4-way cut). The full [lucy-1994] analysis — operator
 orbits, motion-roots-non-class theorem, per-root verifications —
 lives in `Studies/Lucy1994.lean`.
 -/
@@ -22,7 +22,7 @@ lives in `Studies/Lucy1994.lean`.
 namespace Semantics.Lexical.Roots
 
 /-- The 4-way salience classification of verbal roots
-    (@cite{lucy-1994}). "Salience" is shorthand for "default case-role
+    ([lucy-1994]). "Salience" is shorthand for "default case-role
     assignment at the propositional level" — *not* a substantive feature
     `[±agent]` written into the root. -/
 inductive SalienceClass where
@@ -41,7 +41,7 @@ inductive SalienceClass where
 -- ════════════════════════════════════════════════════
 
 /-! Named structural conditions characterising membership in each
-    @cite{lucy-1994} salience class. These predicates are language-
+    [lucy-1994] salience class. These predicates are language-
     independent: the same conditions characterise the class in any
     inventory whose transitivisers respect the diagnostic. They appear
     directly as the `applies` field of each Yukatek operator in
@@ -50,7 +50,7 @@ inductive SalienceClass where
     construction* rather than only provable per-case. -/
 
 /-- Agent-salient: manner without result (intransitive activity that
-    requires =t to transitivise; @cite{lucy-1994}). -/
+    requires =t to transitivise; [lucy-1994]). -/
 def FeatureSignature.IsAgentSalient (s : FeatureSignature) : Prop :=
   s.manner = true ∧ s.result = false
 
@@ -58,7 +58,7 @@ instance (s : FeatureSignature) : Decidable s.IsAgentSalient := by
   unfold FeatureSignature.IsAgentSalient; infer_instance
 
 /-- Agent-patient salient: manner *and* result (already lexically
-    transitive; @cite{lucy-1994}). -/
+    transitive; [lucy-1994]). -/
 def FeatureSignature.IsAgentPatientSalient (s : FeatureSignature) : Prop :=
   s.manner = true ∧ s.result = true
 
@@ -66,7 +66,7 @@ instance (s : FeatureSignature) : Decidable s.IsAgentPatientSalient := by
   unfold FeatureSignature.IsAgentPatientSalient; infer_instance
 
 /-- Patient-salient: result without manner (intransitive change-of-state
-    that requires =s to transitivise; @cite{lucy-1994}). -/
+    that requires =s to transitivise; [lucy-1994]). -/
 def FeatureSignature.IsPatientSalient (s : FeatureSignature) : Prop :=
   s.manner = false ∧ s.result = true
 
@@ -74,7 +74,7 @@ instance (s : FeatureSignature) : Decidable s.IsPatientSalient := by
   unfold FeatureSignature.IsPatientSalient; infer_instance
 
 /-- Positional: pure stative root — state without manner, result, or
-    cause (requires `-tal` for the inchoative; @cite{lucy-1994}). -/
+    cause (requires `-tal` for the inchoative; [lucy-1994]). -/
 def FeatureSignature.IsPositional (s : FeatureSignature) : Prop :=
   s.state = true ∧ s.manner = false ∧ s.result = false ∧ s.cause = false
 
@@ -116,7 +116,7 @@ instance (r : Root) : Decidable r.IsPositional := by
 -- ════════════════════════════════════════════════════
 
 /-- Map a B&K-G feature signature to its salience class
-    (@cite{lucy-1994}). The arms align with operator applicability
+    ([lucy-1994]). The arms align with operator applicability
     conditions in `Fragments/Mayan/Yukatek/Operators.lean`:
 
     | (state, manner, result, cause) | predicted class    |

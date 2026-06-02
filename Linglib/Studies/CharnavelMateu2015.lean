@@ -8,14 +8,14 @@ import Linglib.Fragments.Spanish.Clitics
 
 /-!
 # Charnavel & Mateu (2015): The Clitic Logophoric Restriction
-@cite{charnavel-mateu-2015} @cite{sells-1987} @cite{kuno-1987}
+[charnavel-mateu-2015] [sells-1987] [kuno-1987]
 
 The Clitic Binding Restriction Revisited: Evidence for Antilogophoricity.
 *The Linguistic Review* 32(4).
 
 ## Summary
 
-@cite{charnavel-mateu-2015} (C&M) reanalyze the restriction on accusative
+[charnavel-mateu-2015] (C&M) reanalyze the restriction on accusative
 clitics in Romance clitic clusters. Earlier work (Bhatt & Šimík 2009)
 attributed the restriction to *binding*; C&M's grammaticality experiment
 (97 French + 35 Spanish speakers, 9 conditions) shows that the relevant
@@ -40,7 +40,7 @@ hierarchy). PCC and CLR are both instances:
 - PCC = discourse participant + empathy locus (share `B`)
 - CLR = empathy locus + attitude holder (share `C`)
 
-## Disagreement with @cite{pancheva-zubizarreta-2018}
+## Disagreement with [pancheva-zubizarreta-2018]
 
 C&M unify CLR and PCC under one mechanism. P&Z (page 1308) explicitly
 disagree: "We do not think the CLR and the PCC should be unified along

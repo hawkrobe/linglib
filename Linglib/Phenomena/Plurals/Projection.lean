@@ -6,10 +6,10 @@ import Linglib.Data.Examples.Schema
 
 Cross-paper test substrate for how the homogeneity gap of plural definites
 projects under embedding quantifiers and operators. The pattern's empirical
-literature spans @cite{lobner-2000}, @cite{gajewski-2005},
-@cite{spector-2013}, @cite{magri-2014}, @cite{kriz-chemla-2015},
-@cite{kriz-2016}, @cite{bar-lev-2021}, @cite{augurzky-etal-2023},
-@cite{kriz-spector-2021}, and @cite{haslinger-2025-diss}; the empirical
+literature spans [lobner-2000], [gajewski-2005],
+[spector-2013], [magri-2014], [kriz-chemla-2015],
+[kriz-2016], [bar-lev-2021], [augurzky-etal-2023],
+[kriz-spector-2021], and [haslinger-2025-diss]; the empirical
 generalisation predates any one formal account, justifying a `Phenomena/`
 (theory-neutral) anchor.
 
@@ -45,30 +45,30 @@ theorems comparing each account's prediction to each datum, including
 The substrate is restricted to the smallest set of operator cases that
 closes the current ≥2-consumer graduation criterion: `every` / `no`
 (every major contribution tests these), `exactlyTwo` (introduced by
-@cite{kriz-chemla-2015} Exps. A3/B3/C3/C4), and `notEvery` (the
-no/notEvery asymmetry from @cite{augurzky-etal-2023}). Extend as new
+[kriz-chemla-2015] Exps. A3/B3/C3/C4), and `notEvery` (the
+no/notEvery asymmetry from [augurzky-etal-2023]). Extend as new
 consumers land.
 
 There is deliberately *no* projector-stipulated `monotonicity :
 EmbeddingOperator → ContextPolarity` function — the classical mapping
 (`notEvery ↦ downward` by De Morgan) disagrees with the empirical
 observation that `notEvery` patterns with `every` rather than `no` in
-QUD-manipulation acceptance (@cite{augurzky-etal-2023}), so any single
+QUD-manipulation acceptance ([augurzky-etal-2023]), so any single
 mapping would be wrong for at least one consumer.
 
 ## Todo
 
 * Wire `ProjectionPredict` implementations from each rival account: the
-  scalar-implicature/exhaustification accounts (@cite{magri-2014},
-  @cite{bar-lev-2021}), the supervaluation/trivalence accounts
-  (@cite{spector-2013}, @cite{kriz-2016}, @cite{kriz-spector-2021}), and
-  the presupposition account (@cite{gajewski-2005} + Schwarzschild 1994 —
+  scalar-implicature/exhaustification accounts ([magri-2014],
+  [bar-lev-2021]), the supervaluation/trivalence accounts
+  ([spector-2013], [kriz-2016], [kriz-spector-2021]), and
+  the presupposition account ([gajewski-2005] + Schwarzschild 1994 —
   no linglib study file yet).
 * Prove decidable per-datum predictions and cross-account divergence
   theorems once those implementations land.
 * Add a denotation hook `EmbeddingOperator → ∀ α, Core.Quantification.GQ α`
   once accounts derive predictions structurally rather than dispatch on
-  label (per @cite{peters-westerstahl-2006} discipline).
+  label (per [peters-westerstahl-2006] discipline).
 -/
 
 namespace Phenomena.Plurals.Projection
@@ -92,7 +92,7 @@ inductive EmbeddingOperator where
 
 /--
 Scenario classification used by the trivalent-judgment paradigm
-(@cite{kriz-chemla-2015}). The first three are the canonical TRUE / FALSE
+([kriz-chemla-2015]). The first three are the canonical TRUE / FALSE
 / GAP triad; `gapQ` and `gapQQ` are the `exactly N` refinements that
 isolate the at-least-reading from genuine homogeneity projection.
 -/

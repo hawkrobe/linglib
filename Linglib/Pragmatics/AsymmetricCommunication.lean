@@ -2,24 +2,24 @@ import Linglib.Pragmatics.InformationTheory.Channel
 
 /-!
 # Asymmetric Communication Models
-@cite{xu-etal-2024} @cite{milroy-milroy-1985} @cite{labov-2011}
+[xu-etal-2024] [milroy-milroy-1985] [labov-2011]
 
 A communicative interaction in which **speaker and listener operate on
 different lexicons / different channels**. The canonical case is
 variation/innovation diffusion: a speaker has acquired a novel encoding
 `E*`, the listener has not yet, so the speaker's production policy is
 conditioned on `L'` while the listener's interpretation is conditioned
-on `L` (@cite{xu-etal-2024} §2.1).
+on `L` ([xu-etal-2024] §2.1).
 
 This generalizes the standard symmetric Shannon setup
-(@cite{kemp-regier-2012}, @cite{zaslavsky-kemp-regier-tishby-2018}, where
+([kemp-regier-2012], [zaslavsky-kemp-regier-tishby-2018], where
 speaker and listener share one channel) and serves as substrate for any
 linguistic-modeling case in which the two ends of a communication act
 have different generative models. Concrete uses:
 
-- Lexicalization spread (@cite{xu-etal-2024})
+- Lexicalization spread ([xu-etal-2024])
 - Iterated learning (parent / child generation mismatch;
-  @cite{kirby-tamariz-cornish-smith-2015})
+  [kirby-tamariz-cornish-smith-2015])
 - L1 / L2 communicative accommodation
 - Native / non-native listener mismatch in adaptation studies
 
@@ -62,12 +62,12 @@ open Pragmatics.InformationTheory
     uses `comprehend`. The asymmetry is structural — `produce` and
     `comprehend` are independent fields and may disagree.
 
-    @cite{xu-etal-2024}'s headline conceptual move over @cite{kemp-regier-2012}
-    and @cite{zaslavsky-kemp-regier-tishby-2018}: the speaker's production
+    [xu-etal-2024]'s headline conceptual move over [kemp-regier-2012]
+    and [zaslavsky-kemp-regier-tishby-2018]: the speaker's production
     policy is conditioned on the expanded lexicon `L'` while the listener's
     interpretation is conditioned on the existing lexicon `L`. This
     structural distinction lives in the variation-theory tradition of
-    @cite{labov-2011} and @cite{milroy-milroy-1985}. -/
+    [labov-2011] and [milroy-milroy-1985]. -/
 structure AsymmetricCommModel (C W : Type*) where
   /-- Speaker channel `p(w | c, L')`. -/
   produce : ChannelAccess C W

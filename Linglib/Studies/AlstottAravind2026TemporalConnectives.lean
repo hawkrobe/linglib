@@ -5,13 +5,13 @@ import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
 
 /-!
 # Aspect × Temporal Connective Interaction Bridge
-@cite{alstott-aravind-2026} @cite{moens-steedman-1988} @cite{rett-2020}
+[alstott-aravind-2026] [moens-steedman-1988] [rett-2020]
 
 Connects three layers:
 
 1. **Fragment field**: `TemporalExprEntry.embeddedTelicityEffect : Bool`
 2. **Theory**: `VendlerClass.telicity`, `INCHOAT`, `COMPLET` operators
-3. **Data**: `AspectInteraction` judgments from @cite{moens-steedman-1988}
+3. **Data**: `AspectInteraction` judgments from [moens-steedman-1988]
 
 ## What This File Proves
 

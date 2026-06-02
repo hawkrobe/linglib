@@ -2,7 +2,7 @@ import Linglib.Typology.BodyParts
 
 /-!
 # Swahili body-part profile (WALS Chs 129–130)
-@cite{wals-2013}
+[wals-2013]
 -/
 
 namespace Swahili

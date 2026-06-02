@@ -18,11 +18,11 @@ import Linglib.Data.WALS.Features.F80A
 
 /-!
 # Typology.Morphology
-@cite{bickel-nichols-2013a} @cite{bickel-nichols-2013b} @cite{bickel-nichols-2013c}
-@cite{nichols-bickel-2013} @cite{nichols-bickel-2013a}
-@cite{nichols-bickel-2013b} @cite{nichols-bickel-2013c} @cite{nichols-bickel-2013d}
-@cite{baerman-brown-2013} @cite{baerman-brown-2013a}
-@cite{dryer-2013-wals} @cite{rubino-2013}
+[bickel-nichols-2013a] [bickel-nichols-2013b] [bickel-nichols-2013c]
+[nichols-bickel-2013] [nichols-bickel-2013a]
+[nichols-bickel-2013b] [nichols-bickel-2013c] [nichols-bickel-2013d]
+[baerman-brown-2013] [baerman-brown-2013a]
+[dryer-2013-wals] [rubino-2013]
 
 Per-language typological substrate for morphological mechanisms, covering
 WALS chapters 20--29 (fusion, exponence, synthesis, locus of marking,
@@ -60,7 +60,7 @@ on it -- B&N orthogonality (concatenative × flexivity), agglutinating-vs-
 fusional partition, head-marking-implies-high-synthesis -- live in
 `Studies/BickelNichols2013.lean`.
 
-@cite{ackerman-malouf-2013}'s `LanguageData` (10-language E/I-complexity
+[ackerman-malouf-2013]'s `LanguageData` (10-language E/I-complexity
 sample) and the LCEC apparatus live in
 `Studies/AckermanMalouf2013.lean`.
 -/

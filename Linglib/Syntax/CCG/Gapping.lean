@@ -7,7 +7,7 @@ CCG categories for gapping constructions, proving that:
 1. The "gapped" right conjunct IS a constituent (via type-raising + composition)
 2. Gapping direction follows from lexical verb categories
 
-## Insight (@cite{steedman-2000}, Chapter 7)
+## Insight ([steedman-2000], Chapter 7)
 
 Gapping is not a special ellipsis rule but ordinary constituent coordination.
 

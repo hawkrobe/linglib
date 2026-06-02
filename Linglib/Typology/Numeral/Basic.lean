@@ -11,7 +11,7 @@ supplied compositionally, so it is not a lexical field here.
 
 The comparison vocabulary itself is **not** numeral-specific — it is the shared
 degree-comparison primitive `Core.Scale.Comparison` (also used by measure
-phrases and gradable comparatives, per @cite{kennedy-2015}, @cite{rett-2014});
+phrases and gradable comparatives, per [kennedy-2015], [rett-2014]);
 this file just records that a numeral *entry* carries one. The denotation (the
 `relationalGQ`-based meaning, the Kennedy-vs-Horn bare-form choice) lives in
 `Semantics/Numerals/`, which imports this object — the same object/denotation

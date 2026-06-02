@@ -1,7 +1,7 @@
 import Linglib.Core.Time.AtomDist
 
 /-!
-# Mandarin Cross-Domain Particles @cite{zhao-2025}
+# Mandarin Cross-Domain Particles [zhao-2025]
 
 Lexical entries for Mandarin le, guo, and mei-you with cross-domain behavior.
 These particles operate across temporal and degree domains:

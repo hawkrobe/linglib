@@ -7,7 +7,7 @@ import Linglib.Discourse.SpeechAct.Update
 /-!
 # Commitment Space Semantics
 
-@cite{krifka-2015} @cite{cohen-krifka-2014}
+[krifka-2015] [cohen-krifka-2014]
 
 Krifka's commitment-space framework: the discourse state is a tree — the
 root (√C) is the current CommonGround holding speaker-indexed commitments `S⊢φ`,
@@ -49,7 +49,7 @@ Out of scope (would need substrate extensions):
   single `committer : DiscourseRole` is keeper-only.
 - **Searle's full 5-force taxonomy** (assertive, directive, commissive,
   expressive, declaration): collapsed here to doxastic/preferential per
-  the @cite{lauer-2013} duality. Expressives (wishes, exclamatives) and
+  the [lauer-2013] duality. Expressives (wishes, exclamatives) and
   declarations (performatives) are not modelled.
 - **Time-indexed commitments** (Lauer 2013 PB/PEP carry a `t` index): the
   substrate has no time index; `rejectFirst` is the closest proxy for
@@ -61,7 +61,7 @@ Out of scope (would need substrate extensions):
 
 ## Citation discipline
 
-Equation/page citations to @cite{krifka-2015} throughout this file (eqs.
+Equation/page citations to [krifka-2015] throughout this file (eqs.
 1, 2, 3, 5, 6, 7, 9, 10, 14, 23, 27, 29, 30, 38, 39, 44, 45 with their
 respective pages 329-343) were verified against the SALT 25 paper PDF
 when added (cf. CHANGELOG entries 0.230.652–0.230.654). Flag drift on
@@ -79,7 +79,7 @@ open CommonGround (ContextSet)
 open Semantics.Mood (IllocutionaryMood)
 
 -- ════════════════════════════════════════════════════
--- § 1. Commitment Space: Tree Structure (@cite{krifka-2015}, eq. (2), p. 329)
+-- § 1. Commitment Space: Tree Structure ([krifka-2015], eq. (2), p. 329)
 -- ════════════════════════════════════════════════════
 
 /-- Agent type for two-participant discourse — abbreviation for the
@@ -88,7 +88,7 @@ open Semantics.Mood (IllocutionaryMood)
     `DiscourseRole` (no separate inductive, no bridge function). -/
 abbrev KAgent := DiscourseRole
 
-/-- A commitment space (@cite{krifka-2015}, eq. (2), p. 329).
+/-- A commitment space ([krifka-2015], eq. (2), p. 329).
 
     A set of commitment states organized as root + continuations:
 
@@ -145,13 +145,13 @@ variable {W G : Type*}
 def empty : CommitmentSpace W G := ⟨[], []⟩
 
 /-- Assert weight `weight` on behalf of `committer`
-    (@cite{krifka-2015}, eq. (1) and (3), p. 329).
+    ([krifka-2015], eq. (1) and (3), p. 329).
 
     `C + S⊢φ`: adds `commit committer force weight` to the root and to
     every continuation. Any accepted continuation will also entail the
     weight (with the speaker index recorded). The `force` defaults to
     `.doxastic` (Krifka's standard declarative case); pass `.preferential`
-    for the @cite{lauer-2013} imperative-as-PEP case. -/
+    for the [lauer-2013] imperative-as-PEP case. -/
 def assert (cs : CommitmentSpace W G) (committer : DiscourseRole)
            (weight : W → G) (force : CommitmentForce := .doxastic) :
     CommitmentSpace W G :=
@@ -161,7 +161,7 @@ def assert (cs : CommitmentSpace W G) (committer : DiscourseRole)
     continuations := cs.continuations.map (ic :: ·) }
 
 /-- Monopolar question: propose that the **addressee** commit to weight
-    `weight` (@cite{krifka-2015}, eq. (27), p. 336).
+    `weight` ([krifka-2015], eq. (27), p. 336).
 
     `C + ?φ = {√C} ∪ (C + S₂⊢φ)`
 
@@ -178,7 +178,7 @@ def monopolarQuestion (cs : CommitmentSpace W G) (weight : W → G)
   { root := cs.root
     continuations := (ic :: cs.root) :: cs.continuations.map (ic :: ·) }
 
-/-- High-negation polar question (@cite{krifka-2015}, §4 around eq. (39), p. 340).
+/-- High-negation polar question ([krifka-2015], §4 around eq. (39), p. 340).
 
     `Didn't I win?` = monopolar question with negation at the ComP layer
     (denegation of the addressee's commitment to φ). Proposes that the
@@ -188,7 +188,7 @@ def monopolarQuestion (cs : CommitmentSpace W G) (weight : W → G)
     `W → Prop` (a meta-fact about the agent's slate, not a graded weight),
     so this operator works for any grade type.
 
-    Per @cite{krifka-2015} p. 340: "adding ¬S₂⊢φ to the commitment space
+    Per [krifka-2015] p. 340: "adding ¬S₂⊢φ to the commitment space
     precludes commitment to φ, but is compatible with commitment to ¬φ.
     Hence ¬S₂⊢φ is pragmatically weaker than S₂⊢¬φ." -/
 def negatedQuestionHigh (cs : CommitmentSpace W G) (φ : W → Prop)
@@ -225,9 +225,9 @@ def rejectFirst : CommitmentSpace W G → CommitmentSpace W G
   | cs => cs
 
 /-- Denegate a speech act `~A`. Originally introduced by
-    @cite{cohen-krifka-2014} §2 (around eq. (26), p. 51, with full
+    [cohen-krifka-2014] §2 (around eq. (26), p. 51, with full
     development through eqs. 31–38, pp. 52–53); inherited by
-    @cite{krifka-2015} eq. (5), p. 330.
+    [krifka-2015] eq. (5), p. 330.
 
     `C + ~A = C — [C + A]`: the result keeps √C and prunes the legal
     continuations that would arise from performing the act `A`. The
@@ -237,7 +237,7 @@ def rejectFirst : CommitmentSpace W G → CommitmentSpace W G
     that do NOT contain a matching commitment.
 
     Concrete example: `denegate cs (fun ic => ic matches ASSERT(speaker, doxastic, φ))`
-    is `~ASSERT(φ)` — the GRANT(¬φ) of @cite{cohen-krifka-2014} eq. (38).
+    is `~ASSERT(φ)` — the GRANT(¬φ) of [cohen-krifka-2014] eq. (38).
 
     Polymorphic in `G`. The predicate-based formulation avoids the
     soundness issue of trying to decide equality on `W → G` (generally
@@ -323,7 +323,7 @@ at the consumer's site.
 
 /-- Bipolar question: propose two sibling continuations, one where the
     addressee commits to φ and one where the addressee commits to
-    `complement φ` (@cite{krifka-2015}, eq. (23), p. 335).
+    `complement φ` ([krifka-2015], eq. (23), p. 335).
 
     `C + ?φ_bi = {√C} ∪ (C + S₂⊢φ) ∪ (C + S₂⊢¬φ)`
 
@@ -341,7 +341,7 @@ def bipolarQuestion [CommitmentGrade G] (cs : CommitmentSpace W G)
                       (cs.continuations.map (yes :: ·) ++
                        cs.continuations.map (no :: ·)) }
 
-/-- Low-negation polar question (@cite{krifka-2015}, §4 around eq. (29), p. 339).
+/-- Low-negation polar question ([krifka-2015], §4 around eq. (29), p. 339).
 
     `Did I not win?` = monopolar question with `complement φ` as TP content.
     Proposes that the addressee commit to ¬φ. Polymorphic in `G` via
@@ -356,7 +356,7 @@ def negatedQuestionLow [CommitmentGrade G] (cs : CommitmentSpace W G)
 
     Conflates doxastic and preferential commitments — both narrow
     the context set. For force-aware projections that separate the
-    two attitudes (per @cite{condoravdi-lauer-2012}), use
+    two attitudes (per [condoravdi-lauer-2012]), use
     `toDoxasticContextSet` / `toPreferentialContextSet`. -/
 def toContextSet [HasSupport G] (cs : CommitmentSpace W G) :
     ContextSet W :=
@@ -366,7 +366,7 @@ def toContextSet [HasSupport G] (cs : CommitmentSpace W G) :
     `force = .doxastic` commitments only (preferential commitments are
     ignored).
 
-    Models @cite{condoravdi-lauer-2012}'s `PB_w(Sp, p)` projection: "the
+    Models [condoravdi-lauer-2012]'s `PB_w(Sp, p)` projection: "the
     public BELIEFS the speaker is committed to". A declarative assertion
     contributes here; an imperative utterance does not. -/
 def toDoxasticContextSet [HasSupport G] (cs : CommitmentSpace W G) :
@@ -378,7 +378,7 @@ def toDoxasticContextSet [HasSupport G] (cs : CommitmentSpace W G) :
     `force = .preferential` commitments only (doxastic commitments are
     ignored).
 
-    Models @cite{condoravdi-lauer-2012}'s `PEP_w(Sp, p)` projection:
+    Models [condoravdi-lauer-2012]'s `PEP_w(Sp, p)` projection:
     "the public PREFERENCES the speaker is committed to act on". An
     imperative utterance contributes here; a declarative assertion does
     not. The two projections are independent (Lauer 2013 Ch. 5
@@ -490,13 +490,13 @@ variable {W : Type*}
 def empty : KrifkaState W :=
   ⟨CommitmentSlate.empty, CommitmentSlate.empty, CommitmentSpace.empty⟩
 
-/-- Krifka's commitment operator `+_S₁ S₁⊢p` (@cite{krifka-2015}, eq. (14), p. 332).
+/-- Krifka's commitment operator `+_S₁ S₁⊢p` ([krifka-2015], eq. (14), p. 332).
 
     Speaker (default) commits to p, narrowing the entire space and
     recording on the speaker's slate. Pass `committer := .addressee`
     for the addressee-commits case. The `force` defaults to `.doxastic`
     (declarative assertion); pass `.preferential` for the
-    @cite{condoravdi-lauer-2012} imperative-as-PEP analysis. -/
+    [condoravdi-lauer-2012] imperative-as-PEP analysis. -/
 def assert (s : KrifkaState W) (p : W → Prop)
     (committer : DiscourseRole := .speaker)
     (force : CommitmentForce := .doxastic) : KrifkaState W :=
@@ -510,21 +510,21 @@ def assert (s : KrifkaState W) (p : W → Prop)
       addresseeCS := s.addresseeCS.add p
       space := s.space.assert .addressee p force }
 
-/-- Monopolar question (@cite{krifka-2015}, eq. (27), p. 336):
+/-- Monopolar question ([krifka-2015], eq. (27), p. 336):
     speaker proposes that addressee commit to φ. -/
 def monopolarQuestion (s : KrifkaState W) (φ : W → Prop) : KrifkaState W :=
   { s with space := s.space.monopolarQuestion φ }
 
-/-- Bipolar question (@cite{krifka-2015}, eq. (23), p. 335):
+/-- Bipolar question ([krifka-2015], eq. (23), p. 335):
     propose two sibling continuations (φ-commit and ¬φ-commit). -/
 def bipolarQuestion (s : KrifkaState W) (φ : W → Prop) : KrifkaState W :=
   { s with space := s.space.bipolarQuestion φ }
 
-/-- Low-negation polar question (@cite{krifka-2015}, §4): `Did I not win?`. -/
+/-- Low-negation polar question ([krifka-2015], §4): `Did I not win?`. -/
 def negatedQuestionLow (s : KrifkaState W) (φ : W → Prop) : KrifkaState W :=
   { s with space := s.space.negatedQuestionLow φ }
 
-/-- High-negation polar question (@cite{krifka-2015}, §4): `Didn't I win?`. -/
+/-- High-negation polar question ([krifka-2015], §4): `Didn't I win?`. -/
 def negatedQuestionHigh (s : KrifkaState W) (φ : W → Prop) : KrifkaState W :=
   { s with space := s.space.negatedQuestionHigh φ }
 
@@ -589,7 +589,7 @@ theorem monopolarQuestion_accept_eq_assert_addressee_root {W : Type*}
       | cons _ _ => exact h.elim
 
 -- ════════════════════════════════════════════════════
--- § 3. Actor vs Committer (@cite{krifka-2015}, p. 337 discussion of (30))
+-- § 3. Actor vs Committer ([krifka-2015], p. 337 discussion of (30))
 -- ════════════════════════════════════════════════════
 
 /-- The two discourse roles in a speech act.
@@ -601,7 +601,7 @@ theorem monopolarQuestion_accept_eq_assert_addressee_root {W : Type*}
     - Monopolar question: actor = speaker, committer = addressee
       (the speaker proposes that the addressee commit)
 
-    Per @cite{krifka-2015} p. 337 around eq. (30): the `?` ActP head
+    Per [krifka-2015] p. 337 around eq. (30): the `?` ActP head
     identifies the committer as `S₂`, the addressee; the actor of the
     speech act itself remains `S₁`. -/
 structure ActorCommitter where
@@ -614,7 +614,7 @@ def assertionRoles : ActorCommitter :=
   ⟨.speaker, .speaker⟩
 
 /-- In monopolar questions, speaker acts but addressee commits
-    (@cite{krifka-2015}, p. 337 discussion of eq. (30)). -/
+    ([krifka-2015], p. 337 discussion of eq. (30)). -/
 def questionRoles : ActorCommitter :=
   ⟨.speaker, .addressee⟩
 
@@ -624,14 +624,14 @@ theorem actor_committer_diverge :
     assertionRoles.committer ≠ questionRoles.committer := by decide
 
 -- ════════════════════════════════════════════════════
--- § 4. Speech Act Composition (@cite{krifka-2015}, eqs. (6)–(7), p. 330; §5)
+-- § 4. Speech Act Composition ([krifka-2015], eqs. (6)–(7), p. 330; §5)
 -- ════════════════════════════════════════════════════
 
 /-- A speech act in Krifka's framework: ActP content with its
     discourse function (assertion vs question).
 
-    @cite{krifka-2015} clause structure: ActP > ComP > TP (three layers).
-    @cite{krifka-2020} refines this to ActP > ComP > JP > TP. -/
+    [krifka-2015] clause structure: ActP > ComP > TP (three layers).
+    [krifka-2020] refines this to ActP > ComP > JP > TP. -/
 structure SpeechAct (W : Type*) where
   /-- Propositional content (TP layer) -/
   content : W → Prop
@@ -641,15 +641,15 @@ structure SpeechAct (W : Type*) where
   roles : ActorCommitter := assertionRoles
 
 /-- Construct a monopolar question speech act
-    (@cite{krifka-2015}, eq. (27), p. 336):
+    ([krifka-2015], eq. (27), p. 336):
     proposes a single continuation where the addressee commits to φ. -/
 def monopolarQuestionAct {W : Type*} (φ : W → Prop) : SpeechAct W :=
   { content := φ, actType := .interrogative, roles := questionRoles }
 
 /-- Complex speech act: conjunction or disjunction of atomic acts
-    (@cite{krifka-2015}, eqs. (6)–(7), p. 330).
+    ([krifka-2015], eqs. (6)–(7), p. 330).
 
-    @cite{krifka-2015}, §5: question tags involve composition of speech acts.
+    [krifka-2015], §5: question tags involve composition of speech acts.
     The difference between matching and reverse tags is conjunction vs
     disjunction:
     - **conj**: both acts performed as one complex move (matching tag,
@@ -672,7 +672,7 @@ def ComplexSpeechAct.components {W : Type*} : ComplexSpeechAct W → List (Speec
   | .conj a b => [a, b]
   | .disj a b => [a, b]
 
-/-- A matching question tag (@cite{krifka-2015}, eq. (44), p. 342):
+/-- A matching question tag ([krifka-2015], eq. (44), p. 342):
     conjunction of assertion + monopolar question with same content.
 
     "I have won the race, have I?" = speaker asserts φ AND asks addressee
@@ -688,7 +688,7 @@ def matchingTag {W : Type*} (φ : W → Prop) : ComplexSpeechAct W :=
     { content := φ, actType := .declarative, roles := assertionRoles }
     (monopolarQuestionAct φ)
 
-/-- A reverse question tag (@cite{krifka-2015}, eq. (45), p. 343):
+/-- A reverse question tag ([krifka-2015], eq. (45), p. 343):
     disjunction of assertion + monopolar question with opposite content.
 
     "I have won the race, haven't I?" = speaker offers two continuations.

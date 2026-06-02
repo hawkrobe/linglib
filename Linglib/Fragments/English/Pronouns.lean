@@ -5,7 +5,7 @@ import Linglib.Syntax.Pronoun.Basic
 
 /-!
 # English Pronoun Lexicon Fragment
-@cite{konnelly-cowper-2020} @cite{arnold-2026} @cite{balhorn-2004}
+[konnelly-cowper-2020] [arnold-2026] [balhorn-2004]
 
 Lexical entries for English pronouns. Personal pronouns are values of the
 cross-linguistic `PersonalPronoun` object; reflexives, reciprocals, and
@@ -18,16 +18,16 @@ per-entry kind tag. Binding theories read
 `English.NominalClassification.classifyNominal` (→ `Features.BindingClass`),
 dispatching on those lists, rather than any English-local type.
 
-## Gender (@cite{konnelly-cowper-2020})
+## Gender ([konnelly-cowper-2020])
 
 Gender is stored directly as `PersonalPronoun.gender : Option SurfaceGender`:
 *he*/*she*/*it* carry `.masculine`/`.feminine`/`.neuter`; singular *they* — the
 Elsewhere/least-specified spellout — and 1st/2nd person carry **no** gender
-feature (`none`). Per @cite{konnelly-cowper-2020}, *they*'s gender-neutrality is
+feature (`none`). Per [konnelly-cowper-2020], *they*'s gender-neutrality is
 the *absence* of a contrastive `[MASC]`/`[FEM]`/`[INANIM]` feature, not a positive
 value; `none` encodes exactly that. Singular *they* is distinguished from
 genderless 1st/2nd person by `person`, not gender. The contrastive-vs-adjunct
-feature apparatus that @cite{konnelly-cowper-2020} theorize lives in their study
+feature apparatus that [konnelly-cowper-2020] theorize lives in their study
 file, not on this cross-linguistic schema.
 -/
 
@@ -56,7 +56,7 @@ def it : PersonalPronoun := { form := "it", person := some .third, number := som
 def they : PersonalPronoun := { form := "they", person := some .third, number := some .pl, case_ := some .nom }
 def them : PersonalPronoun := { form := "them", person := some .third, number := some .pl, case_ := some .acc }
 
--- Third-person singular *they* (@cite{arnold-2026}, @cite{balhorn-2004}): same
+-- Third-person singular *they* ([arnold-2026], [balhorn-2004]): same
 -- phonological form and gender-neutral feature as plural *they*, with singular
 -- number. Covers both underspecified and personal singular *they*.
 def they_sg : PersonalPronoun := { form := "they", person := some .third, number := some .sg, case_ := some .nom }
@@ -114,14 +114,14 @@ def pronouns : List PersonalPronoun :=
    Pronouns.he, Pronouns.him, Pronouns.she, Pronouns.her, Pronouns.it,
    Pronouns.they, Pronouns.them, Pronouns.they_sg, Pronouns.them_sg]
 
-/-! ### Gender feature facts (@cite{konnelly-cowper-2020}, @cite{arnold-2026}) -/
+/-! ### Gender feature facts ([konnelly-cowper-2020], [arnold-2026]) -/
 
-/-- Singular *they* bears no gender feature — the @cite{konnelly-cowper-2020}
+/-- Singular *they* bears no gender feature — the [konnelly-cowper-2020]
     Elsewhere case. -/
 theorem they_gender_none : Pronouns.they.gender = none := rfl
 
 /-- Singular and plural *they* share the same (empty) gender feature despite
-    differing in number — the structural correlate of @cite{arnold-2026}'s
+    differing in number — the structural correlate of [arnold-2026]'s
     observation that underspecified and personal *they* share the ungendered
     morphosyntactic feature. -/
 theorem sg_pl_same_gender : Pronouns.they_sg.gender = Pronouns.they.gender := rfl

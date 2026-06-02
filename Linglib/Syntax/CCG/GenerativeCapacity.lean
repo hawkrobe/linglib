@@ -7,8 +7,8 @@ import Linglib.Syntax.CCG.Basic
 # CCG Generative Capacity
 
 CCG is mildly context-sensitive: classical CCG is weakly equivalent to TAG, hence
-strictly more powerful than context-free grammars (@cite{vijay-shanker-weir-1994},
-@cite{weir-joshi-1988}). The classic witnesses are the counting / cross-serial languages
+strictly more powerful than context-free grammars ([vijay-shanker-weir-1994],
+[weir-joshi-1988]). The classic witnesses are the counting / cross-serial languages
 aⁿbⁿcⁿ and aⁿbⁿcⁿdⁿ, which are not context-free.
 
 ## What is established here
@@ -20,7 +20,7 @@ aⁿbⁿcⁿ and aⁿbⁿcⁿdⁿ, which are not context-free.
 ## Restrictions matter: which CCG generates these languages
 
 The "CCG generates a non-context-free language" direction depends critically on the form
-of CCG. @cite{kuhlmann-koller-satta-2015} show that the CCG≡TAG equivalence holds for
+of CCG. [kuhlmann-koller-satta-2015] show that the CCG≡TAG equivalence holds for
 *classical* CCG, where combinatory rules may be **restricted per grammar** (e.g. fired
 only when the target of the primary input category is `S`). For *lexicalized CCG without
 target restrictions* they prove the generative power is strictly *below TAG*. The key

@@ -5,10 +5,10 @@ import Linglib.Data.WALS.Features.F135A
 
 /-!
 # Color-term typology — substrate types and WALS data
-@cite{wals-2013} (Chs 132–135) @cite{berlin-kay-1969} @cite{kay-maffi-2013}
+[wals-2013] (Chs 132–135) [berlin-kay-1969] [kay-maffi-2013]
 
 Type-level enums + per-language profile struct for cross-linguistic color
-naming across @cite{wals-2013} chapters 132–135 (Kay & Maffi: number of basic
+naming across [wals-2013] chapters 132–135 (Kay & Maffi: number of basic
 color categories; green/blue and red/yellow boundary patterns), plus WALS
 distribution data and the principal cross-linguistic generalizations from
 the Berlin & Kay tradition.
@@ -31,7 +31,7 @@ namespace Typology
 /-! ### WALS Ch 132: Number of non-derived basic color categories -/
 
 /-- Number of non-derived basic color categories (WALS Ch 132,
-    @cite{kay-maffi-2013}). Ranges from 3 to 6 along the Berlin & Kay
+    [kay-maffi-2013]). Ranges from 3 to 6 along the Berlin & Kay
     sequence; transitional half-values represent languages with one
     composite category undergoing splitting. -/
 inductive NonDerivedColorCount where
@@ -47,7 +47,7 @@ inductive NonDerivedColorCount where
 /-! ### WALS Ch 133: Total number of basic color categories -/
 
 /-- Total number of basic color categories including derived ones
-    (WALS Ch 133, @cite{kay-maffi-2013a}). Ranges from 3–4 (minimal systems)
+    (WALS Ch 133, [kay-maffi-2013a]). Ranges from 3–4 (minimal systems)
     to the top bucket, WALS's "more than 10" — canonically 11 basic terms,
     the Berlin & Kay Stage-VII maximum (e.g., English, Russian). -/
 inductive BasicColorCount where
@@ -63,7 +63,7 @@ inductive BasicColorCount where
 /-! ### WALS Ch 134: Green and blue -/
 
 /-- How a language treats the green-blue region of color space
-    (WALS Ch 134, @cite{kay-maffi-2013b}). The classic *grue* / green-blue
+    (WALS Ch 134, [kay-maffi-2013b]). The classic *grue* / green-blue
     composite distinction, with several other composite patterns
     (with black, with yellow). -/
 inductive GreenBlueRelation where
@@ -86,7 +86,7 @@ inductive GreenBlueRelation where
 /-! ### WALS Ch 135: Red and yellow -/
 
 /-- How a language treats the red-yellow region of color space
-    (WALS Ch 135, @cite{kay-maffi-2013c}). -/
+    (WALS Ch 135, [kay-maffi-2013c]). -/
 inductive RedYellowRelation where
   /-- Separate terms for red and yellow. -/
   | distinct
@@ -102,7 +102,7 @@ inductive RedYellowRelation where
 
 /-! ### Per-language profile -/
 
-/-- A language's color-naming profile across @cite{wals-2013} Chs 132–135.
+/-- A language's color-naming profile across [wals-2013] Chs 132–135.
     Coverage is sparse (~120 languages); fields are optional. -/
 structure ColorProfile where
   language : String
@@ -175,7 +175,7 @@ def ColorProfile.fromWALS (language iso family : String) : ColorProfile :=
 /-! ### WALS distribution data -/
 
 /-- WALS Ch 134 distribution: green-blue boundary patterns
-    (@cite{kay-maffi-2013b}, n = 120). -/
+    ([kay-maffi-2013b], n = 120). -/
 structure GreenBlueCounts where
   distinct : Nat
   merged : Nat
@@ -192,7 +192,7 @@ def walsGreenBlue : GreenBlueCounts :=
   , other := 22 }
 
 /-- WALS Ch 135 distribution: red-yellow boundary patterns
-    (@cite{kay-maffi-2013c}, n = 120). -/
+    ([kay-maffi-2013c], n = 120). -/
 structure RedYellowCounts where
   distinct : Nat
   merged : Nat

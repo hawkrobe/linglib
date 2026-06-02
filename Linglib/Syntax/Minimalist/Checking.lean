@@ -4,15 +4,15 @@ import Linglib.Syntax.Minimalist.Agree
 
 /-!
 # Feature Checking: The Derivational Lifecycle
-@cite{chomsky-1995}
+[chomsky-1995]
 
 The four-stage lifecycle of formal features in the Minimalist Program
-(Ch 4 §4.5; extended with @cite{preminger-2014} §5 "derivational time
-bombs" and @cite{hewett-2026} Def 23):
+(Ch 4 §4.5; extended with [preminger-2014] §5 "derivational time
+bombs" and [hewett-2026] Def 23):
 
 0. **Inactive**: feature is present but dormant — not yet accessible to
    checking. Must be activated by a syntactic trigger (feature
-   activation, @cite{hewett-2026} Def 23) before entering the
+   activation, [hewett-2026] Def 23) before entering the
    checking lifecycle. Inactive –Interpretable features crash at LF.
 1. **Active**: feature is present and accessible to computation
 2. **Checked** (= deleted): feature has entered a checking relation;
@@ -36,7 +36,7 @@ languages without overt raising lack this strong feature.
 
 ## Connection to Agree
 
-The checking lifecycle predates long-distance Agree (@cite{chomsky-2000}).
+The checking lifecycle predates long-distance Agree ([chomsky-2000]).
 In the 1995 system, checking requires a local Spec-head or head-head
 configuration. The post-2000 Agree mechanism in `Agree.lean` subsumes
 checking: Agree values an unvalued feature, which is equivalent to
@@ -52,7 +52,7 @@ checking + deletion in one step. This module formalizes the finer-grained
 ## Activation Indices
 
 `ActivationIndex α` (§ 7) formalizes ordered n-tuple activation from
-@cite{hewett-2026} Def 23: a feature carries a tuple of keys
+[hewett-2026] Def 23: a feature carries a tuple of keys
 `(c₁, …, cₙ)`, and each c-commanding head strips `c₁` if it matches.
 When the tuple is empty the feature transitions from `.inactive` to
 `.active`. Parametric over the key type `α`.
@@ -66,12 +66,12 @@ namespace Minimalist
 
 /-- Whether a feature type is interpretable on a given host category.
 
-    @cite{chomsky-1995} Ch 4: Categorial features and φ-features of
+    [chomsky-1995] Ch 4: Categorial features and φ-features of
     nouns are +Interpretable. Case features, φ-features on functional
     heads (T, v, C), and EPP/strong features are –Interpretable.
 
     This encodes the default mapping. Individual languages or analyses
-    may override (e.g., @cite{zeijlstra-2012} treats embedded tense as
+    may override (e.g., [zeijlstra-2012] treats embedded tense as
     uninterpretable in SOT languages). -/
 def isInterpretableOn (fv : FeatureVal) (host : Cat) : Interpretability :=
   match fv.inherentInterpretability with
@@ -114,13 +114,13 @@ inductive FeatureStatus where
   /-- Inactive: present but dormant. Not yet accessible to checking
       operations — must be activated first. Used for selectional
       features that await licensing by a specific syntactic trigger
-      (@cite{preminger-2014} "derivational time bombs";
-      @cite{hewett-2026} Def 23: selectional features activated
+      ([preminger-2014] "derivational time bombs";
+      [hewett-2026] Def 23: selectional features activated
       stepwise by categorizing head and template). -/
   | inactive
   /-- Active: present and accessible to all computation. -/
   | active
-  /-- Checked (= deleted in @cite{chomsky-1995}'s terminology):
+  /-- Checked (= deleted in [chomsky-1995]'s terminology):
       has entered a checking relation. Invisible at LF but still
       accessible to narrow-syntactic computation. -/
   | checked
@@ -167,8 +167,8 @@ def TrackedFeature.erase (tf : TrackedFeature) : Option TrackedFeature :=
   | _ => none
 
 /-- Activate a dormant feature: transition from inactive to active.
-    This models @cite{preminger-2014}'s "derivational time bombs" and
-    @cite{hewett-2026} Def 23: a selectional feature begins dormant
+    This models [preminger-2014]'s "derivational time bombs" and
+    [hewett-2026] Def 23: a selectional feature begins dormant
     and is activated by a specific syntactic trigger (a categorizing
     head, a template-defining head, etc.).
     Returns `none` if the feature is not inactive. -/
@@ -326,7 +326,7 @@ theorem full_lifecycle (fv : FeatureVal) (host : Cat)
 
 /-- The extended lifecycle: an inactive –Interpretable feature can be
     activated, checked, and then erased.
-    This is the full chain for @cite{hewett-2026} Def 23 selectional
+    This is the full chain for [hewett-2026] Def 23 selectional
     features: inactive → active → checked → erased. -/
 theorem extended_lifecycle (fv : FeatureVal) (host : Cat) :
     let tf : TrackedFeature := ⟨fv, host, .uninterpretable, .inactive⟩
@@ -407,7 +407,7 @@ example : convergesAtLF [⟨.case .nom, .N, .uninterpretable, .checked⟩] = tru
 
 /-! ### Ordered Activation Tuples
 
-@cite{hewett-2026} Def 23 (adapted from @cite{merchant-2019}): a feature
+[hewett-2026] Def 23 (adapted from [merchant-2019]): a feature
 can be indexed by an ordered tuple of category keys `(c₁, …, cₙ)`. Each
 c-commanding head bearing key `k` strips `c₁` from the tuple **if `k = c₁`**
 (matching activation). When the tuple is exhausted the feature transitions
@@ -496,7 +496,7 @@ theorem full_activation_chain {α : Type} [BEq α] [LawfulBEq α]
 
 /-! ### Connecting Agree (valuation) to Checking (lifecycle)
 
-@cite{chomsky-2000}'s Agree subsumes the 1995 checking lifecycle:
+[chomsky-2000]'s Agree subsumes the 1995 checking lifecycle:
 Agree *values* an unvalued feature, which is equivalent to checking +
 deletion in one step. The two formalizations operate at different levels:
 

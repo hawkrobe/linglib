@@ -3,16 +3,16 @@ import Linglib.Fragments.Slavic.Params
 
 /-!
 # Polish Verbal Prefixes
-@cite{jablonska-2004} @cite{svenonius-2004} @cite{dendikken-1995}
+[jablonska-2004] [svenonius-2004] [dendikken-1995]
 
 Lexical entries for Polish verbal prefixes encoding the
-**lexical / superlexical** distinction of @cite{svenonius-2004},
-specialised to Polish per @cite{jablonska-2004}. The main typological
+**lexical / superlexical** distinction of [svenonius-2004],
+specialised to Polish per [jablonska-2004]. The main typological
 parallels with Russian: lexical prefixes are R-heads inside VP
 (resultative, particle-like); superlexical prefixes are Asp-heads
 outside VP (aspectual operators); the same prefix can realise either
 class depending on context. Polish-specific feature
-(@cite{jablonska-2004}): the prefix *po-* shows verbalizer-class
+([jablonska-2004]): the prefix *po-* shows verbalizer-class
 sensitivity — its interpretation (delimitative vs distributive vs
 inchoative Degree Achievement) depends on the embedded verbalizer
 suffix.
@@ -30,7 +30,7 @@ suffix.
 * `inventory_transparent_concat` — every entry's `prefixedForm` is the
   literal concatenation `morpheme ++ bareStem`.
 * `stemAspect_imperfective_of_isSuperlexical` — diagnostic 56c
-  (@cite{svenonius-2004} §4.1) verified across the inventory.
+  ([svenonius-2004] §4.1) verified across the inventory.
 
 -/
 
@@ -52,7 +52,7 @@ structure PolishPrefixedVerbEntry where
       prefixes — *z-* alternating with *s-*, *roz-* with *ros-* —
       deliberately avoided). -/
   prefixedForm  : String
-  /-- @cite{svenonius-2004} class. -/
+  /-- [svenonius-2004] class. -/
   prefixClass   : PrefixClass
   /-- Gloss of the bare stem. -/
   baseGloss     : String
@@ -62,7 +62,7 @@ structure PolishPrefixedVerbEntry where
 /-! ### Lexical entries -/
 
 /-- *na-pisać* 'write down' — lexical *na-* (spatial 'on, onto').
-    @cite{jablonska-2004} treats Polish *na-* with concrete-spatial
+    [jablonska-2004] treats Polish *na-* with concrete-spatial
     meaning as lexical; the homophonous "pure perfectivising" *na-*
     (the standard PF counterpart of *pisać*) is also typically
     classified as lexical in the Svenonius framework. Built on the
@@ -115,7 +115,7 @@ def zaspiewacInceptive : PolishPrefixedVerbEntry where
   prefixedGloss := "start singing"
 
 /-- *po-siedzieć* 'sit for a while' — superlexical *po-* DLMT.
-    @cite{jablonska-2004}'s central topic: Polish *po-* shows
+    [jablonska-2004]'s central topic: Polish *po-* shows
     verbalizer-sensitive interpretations; with imperfective high
     verbalizers it gives the delimitative reading shown here. Built
     on the imperfective stem *siedzieć*. -/
@@ -161,7 +161,7 @@ theorem inventory_transparent_concat
     IsTransparentConcat e := by
   fin_cases he <;> rfl
 
-/-- @cite{svenonius-2004}'s diagnostic 56c (paper §4.1): superlexical
+/-- [svenonius-2004]'s diagnostic 56c (paper §4.1): superlexical
     entries select imperfective stems. -/
 theorem stemAspect_imperfective_of_isSuperlexical
     (e : PolishPrefixedVerbEntry) (he : e ∈ inventory)

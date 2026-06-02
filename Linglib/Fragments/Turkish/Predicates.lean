@@ -3,9 +3,9 @@ import Linglib.Semantics.Verb.Basic
 
 /-!
 # Turkish Predicate Lexicon Fragment
-@cite{qing-uegaki-2025}
+[qing-uegaki-2025]
 
-Turkish predicates relevant to @cite{qing-uegaki-2025}. Properties like
+Turkish predicates relevant to [qing-uegaki-2025]. Properties like
 C-distributivity and NVP class are DERIVED from the `attitude` field.
 -/
 
@@ -77,7 +77,7 @@ def endiselen : TurkishVerbEntry where
 
 /-! ## Causative predicates
 
-Turkish morphological causative suffix -dür (@cite{song-1996}: COMPACT type).
+Turkish morphological causative suffix -dür ([song-1996]: COMPACT type).
 Allomorphs: -dür, -tür, -dir, -tir (vowel harmony).
 "Ali Hasan-ı öl-dür-dü" = "Ali killed Hasan" (öl 'die' + -dür CAUS) -/
 

@@ -5,14 +5,14 @@ import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!
 # ConstructionGrammar.Resultatives — Theory of the resultative construction family
-@cite{goldberg-jackendoff-2004}
+[goldberg-jackendoff-2004]
 
 Theory-side primitives for the four-way resultative construction family
 (causative/noncausative × property/path RP), the dual subevent structure,
 typed verbal/constructional subevent relations, and the compositional
 fusion machinery linking verb meaning to constructional contribution.
 
-Paper data and per-datum verifications for @cite{goldberg-jackendoff-2004}
+Paper data and per-datum verifications for [goldberg-jackendoff-2004]
 itself live in `Studies/GoldbergJackendoff2004.lean`,
 which imports this file.
 
@@ -57,7 +57,7 @@ inductive SubeventKind where
   deriving Repr, DecidableEq
 
 /-- How the verbal and constructional subevents are related (§3 of
-@cite{goldberg-jackendoff-2004}).
+[goldberg-jackendoff-2004]).
 
 - **means**: The verbal subevent is the means by which the constructional subevent
   is brought about. This is the default relation for all four core subconstructions
@@ -93,7 +93,7 @@ inductive RPType where
   deriving Repr, DecidableEq
 
 /-- The four subconstructions in the resultative family
-(@cite{goldberg-jackendoff-2004} §2, Table 1).
+([goldberg-jackendoff-2004] §2, Table 1).
 
 |               | Property RP      | Path RP          |
 |---------------|------------------|------------------|
@@ -127,7 +127,7 @@ def ResultativeSubconstruction.rpType : ResultativeSubconstruction → RPType
   | .noncausativeProperty => .property
   | .noncausativePath => .path
 
-/-! ## Dual subevent structure (§3 of @cite{goldberg-jackendoff-2004}) -/
+/-! ## Dual subevent structure (§3 of [goldberg-jackendoff-2004]) -/
 
 /-- Description of a subevent via event-structural features.
 
@@ -144,7 +144,7 @@ structure SubeventDesc where
   deriving Repr, BEq, DecidableEq
 
 /-- The dual subevent structure of a resultative
-(@cite{goldberg-jackendoff-2004} §3, Principle 25). -/
+([goldberg-jackendoff-2004] §3, Principle 25). -/
 structure DualSubevent where
   /-- The verbal subevent (from the verb's lexical semantics) -/
   verbal : SubeventDesc
@@ -194,7 +194,7 @@ theorem all_constructional_have_become_derived (sc : ResultativeSubconstruction)
 
 /-! ## Bridge to event structure templates
 
-@cite{goldberg-jackendoff-2004}'s constructional subevent maps to Rappaport
+[goldberg-jackendoff-2004]'s constructional subevent maps to Rappaport
 Hovav & Levin's event structure templates: causative → accomplishment template,
 noncausative → achievement template. The hasCause/hasBecome features of
 SubeventDesc are exactly Template.HasCause/Template.HasResultState. -/
@@ -232,7 +232,7 @@ inductive Boundedness where
   | unbounded
   deriving Repr, DecidableEq
 
-/-! ## Object selection (§2 of @cite{goldberg-jackendoff-2004}, ex. 7–9)
+/-! ## Object selection (§2 of [goldberg-jackendoff-2004], ex. 7–9)
 
 Within transitive resultatives, the object may be independently selected
 by the verb (selected) or licensed only by the construction (unselected).
@@ -298,7 +298,7 @@ def ResultativeEntry.dualSubevent (e : ResultativeEntry) : DualSubevent :=
 def ResultativeEntry.verbMC (e : ResultativeEntry) : MeaningComponents :=
   e.levinClass.meaningComponents
 
-/-! ## Aspectual profile (§4 of @cite{goldberg-jackendoff-2004}, Principle 27)
+/-! ## Aspectual profile (§4 of [goldberg-jackendoff-2004], Principle 27)
 
 The resultative's aspect is derived compositionally:
 - Always dynamic (involves change)
@@ -320,7 +320,7 @@ def resultativeVendlerClass (b : Boundedness) : VendlerClass :=
 /-! ## Semantic roles and argument licensing
 
 Uses the canonical `ThetaRole` from the linking interface rather than
-a paper-specific enum. @cite{goldberg-jackendoff-2004}'s four
+a paper-specific enum. [goldberg-jackendoff-2004]'s four
 resultative-relevant roles map to: agent, patient, theme, goal
 (= "resultGoal" in their terminology). -/
 
@@ -402,19 +402,19 @@ def temporalConstraintSatisfied (rel : SubeventRelation) (order : TemporalOrder)
   | .means, .constructionalFirst => false
   | _, _ => true
 
-/-! ## Closed-scale → bounded RP bridge (§8 of @cite{goldberg-jackendoff-2004},
+/-! ## Closed-scale → bounded RP bridge (§8 of [goldberg-jackendoff-2004],
 Principle 27)
 
-@cite{goldberg-jackendoff-2004} §8: productive property RPs "tend to be
+[goldberg-jackendoff-2004] §8: productive property RPs "tend to be
 nongradable" and "encode a clearly delimited state." The formal correlate
-(@cite{kennedy-2007}): productive RPs have a **maximum endpoint** on
+([kennedy-2007]): productive RPs have a **maximum endpoint** on
 their scale. `dry` (upper-bounded, has max) is productive; `wet`
 (lower-bounded, no max) is not. `flat`, `clean`, `shut`, `dead`, `open`,
 `full`, `empty` are all closed-scale (has max).
 
 The aspectual chain: `hasMax → bounded RP → telic resultative`. -/
 
-/-- Map @cite{kennedy-2007}'s scale boundedness to @cite{goldberg-jackendoff-2004}'s
+/-- Map [kennedy-2007]'s scale boundedness to [goldberg-jackendoff-2004]'s
 RP boundedness. Scales with a maximum endpoint yield bounded RPs (the RP denotes
 a delimited endstate). Scales without a maximum yield unbounded RPs. -/
 def adjScaleToRPBoundedness (b : Core.Scale.Boundedness) : Boundedness :=
@@ -735,7 +735,7 @@ theorem unbounded_rp_atelic :
     resultativeVendlerClass .unbounded = .activity := rfl
 
 /-- Resultative telicizes an activity verb: adding bounded RP to an activity
-    yields an accomplishment (§4 of @cite{goldberg-jackendoff-2004},
+    yields an accomplishment (§4 of [goldberg-jackendoff-2004],
     Principle 27). -/
 theorem resultative_telicizes_activity :
     activityProfile.telicize.toVendlerClass = .accomplishment := rfl

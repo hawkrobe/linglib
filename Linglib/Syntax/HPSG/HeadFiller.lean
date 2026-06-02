@@ -2,7 +2,7 @@ import Linglib.Syntax.HPSG.Basic
 
 /-!
 # Head-Filler Schema and SLASH Feature
-@cite{ginzburg-sag-2000} @cite{pollard-sag-1994} @cite{mueller-2013}
+[ginzburg-sag-2000] [pollard-sag-1994] [mueller-2013]
 
 HPSG's third combination schema: the Head-Filler Schema handles long-distance
 dependencies (extraction, wh-movement). A filler XP combines with a sentence
@@ -20,7 +20,7 @@ HPSG's three immediate dominance schemata.
 - `TrackedSign` — sign paired with its SLASH value
 - `GapRestriction` — island constraints via GAP restrictions
 
-## Connection to @cite{mueller-2013}
+## Connection to [mueller-2013]
 
 Müller §2.3: "the formalization of internal Merge and that of the head-filler
 schema are very similar" — both handle displacement by pairing a moved element
@@ -134,7 +134,7 @@ structure HeadFillerRule where
 /-- All four HPSG immediate dominance schemata, unified.
 
 This inductive covers the complete set of phrase structure schemata
-needed for HPSG phrase building. @cite{mueller-2013} argues the first three
+needed for HPSG phrase building. [mueller-2013] argues the first three
 correspond to three universal combination modes; Head-Modifier handles
 adjunction (relative clauses, adjective/PP modification). -/
 inductive HPSGSchema where
@@ -163,7 +163,7 @@ def HPSGSchema.head : HPSGSchema → Sign
 
 /-! ## Gap Introduction (Argument Realization Principle)
 
-Per @cite{sag-wasow-bender-2003} Ch. 6, a gap arises when one of a word's
+Per [sag-wasow-bender-2003] Ch. 6, a gap arises when one of a word's
 ARG-ST elements is realized as GAP rather than COMPS. The GAP value becomes
 the word's local SLASH contribution.
 
@@ -198,7 +198,7 @@ structure TrackedSign where
 
 /-! ## SLASH Amalgamation (Nonlocal Feature Principle)
 
-@cite{sag-wasow-bender-2003} Ch. 6: In a headed phrase, the mother's SLASH
+[sag-wasow-bender-2003] Ch. 6: In a headed phrase, the mother's SLASH
 is the union of its daughters' SLASH values, minus any elements discharged
 by the Head-Filler Schema. -/
 
@@ -233,12 +233,12 @@ theorem slash_discharged_default (filler headPhrase result : Sign) (headSlash : 
       = headSlash.discharge (filler.synsem.cat) := rfl
 
 -- ============================================================================
--- GAP Restrictions and Island Constraints (@cite{hofmeister-sag-2010})
+-- GAP Restrictions and Island Constraints ([hofmeister-sag-2010])
 -- ============================================================================
 
 /-! ### Islands as GAP restrictions
 
-@cite{hofmeister-sag-2010} argues that island constraints are construction-specific
+[hofmeister-sag-2010] argues that island constraints are construction-specific
 restrictions on the GAP value, not universal Subjacency. This eliminates
 the need for a separate island module in the grammar.
 

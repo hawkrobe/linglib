@@ -8,11 +8,11 @@ import Linglib.Syntax.Minimalist.Movement.Remnant
 import Linglib.Studies.ColeHermon2008
 
 /-!
-# Toba Batak Extraction Restriction @cite{erlewine-2018}
-@cite{elkins-torrence-brown-2026}
+# Toba Batak Extraction Restriction [erlewine-2018]
+[elkins-torrence-brown-2026]
 
 Empirical data on the extraction restriction in Toba Batak (only the
-pivot can undergo Ā-movement) plus @cite{erlewine-2018}'s Minimalist
+pivot can undergo Ā-movement) plus [erlewine-2018]'s Minimalist
 analysis (predicate fronting + nominal licensing).
 
 ## Key Empirical Findings
@@ -51,11 +51,11 @@ iff it is the pivot for the given voice.
 
 Toba Batak's extraction restriction contrasts with:
 - **Tagalog/Seediq**: Philippine-style voice/Case determines extraction
-  via agreement morphology — a voice-as-case system. @cite{erlewine-2018}
+  via agreement morphology — a voice-as-case system. [erlewine-2018]
   argues TB is NOT this type.
 - **Mam** (Mayan): Extraction is unrestricted, but oblique extraction
   triggers a dedicated morpheme as an Agree reflex on Voice⁰
-  (see @cite{elkins-torrence-brown-2026}).
+  (see [elkins-torrence-brown-2026]).
 
 ## Connection to Mam
 
@@ -169,9 +169,9 @@ theorem tb_distinguishes :
 -- ============================================================================
 
 /-! Connects three independent data sources through the AH bridge:
-1. Individual extraction datums (from @cite{erlewine-2018})
+1. Individual extraction datums (from [erlewine-2018])
 2. The ExtractionProfile summary (markedPositions)
-3. Relative-clause markers (from @cite{keenan-comrie-1977})
+3. Relative-clause markers (from [keenan-comrie-1977])
 
 If any link is wrong — e.g., listing `.directObject` as extractable when
 relativization markers don't cover DO — the chain breaks.
@@ -322,11 +322,11 @@ theorem nonDP_unrestricted :
   intro v; rfl
 
 -- ============================================================================
--- § 9: Cross-Austronesian Bridge — @cite{cole-hermon-2008}
+-- § 9: Cross-Austronesian Bridge — [cole-hermon-2008]
 -- ============================================================================
 
-/-- VP-raising (@cite{cole-hermon-2008}, Toba Batak) and predicate
-    fronting (@cite{erlewine-2018}, Toba Batak) share the same core
+/-- VP-raising ([cole-hermon-2008], Toba Batak) and predicate
+    fronting ([erlewine-2018], Toba Batak) share the same core
     prediction: the predicate phrase moves above the subject, yielding
     V-initial surface order.
 
@@ -336,8 +336,8 @@ theorem nonDP_unrestricted :
     3. Non-DP adjuncts extract freely (not subject to Case licensing)
 
     The key parametric difference:
-    - @cite{cole-hermon-2008}: VP moves to Spec,TP; subject stranded in Spec,vP
-    - @cite{erlewine-2018}: vP moves to Spec,CP; subject stranded in Spec,TP -/
+    - [cole-hermon-2008]: VP moves to Spec,TP; subject stranded in Spec,vP
+    - [erlewine-2018]: vP moves to Spec,CP; subject stranded in Spec,TP -/
 theorem predicate_fronting_yields_vi_order :
     (HeadFunction.leftSpine.phonYield ColeHermon2008.tobaBatakVOS.final).head?
       = some "mangatuk" := by
@@ -350,8 +350,8 @@ theorem predicate_fronting_yields_vi_order :
 
 /-! ## vP-to-Spec,CP analysis
 
-@cite{erlewine-2018}'s analysis differs structurally from @cite{cole-hermon-2008}:
-- @cite{cole-hermon-2008}: VP → Spec,TP
+[erlewine-2018]'s analysis differs structurally from [cole-hermon-2008]:
+- [cole-hermon-2008]: VP → Spec,TP
 - Erlewine: Subj → Spec,TP **then** vP → Spec,CP
 
 Both derive the same VOS surface order, but the derived tree is
@@ -409,7 +409,7 @@ theorem cole_erlewine_agree_on_order :
   sorry
 
 /-- Erlewine has TWO movements (Subj → Spec,TP + vP → Spec,CP) vs
-    @cite{cole-hermon-2008}'s ONE (VP → Spec,TP). -/
+    [cole-hermon-2008]'s ONE (VP → Spec,TP). -/
 theorem erlewine_two_movements :
     erlewineDerivation.movedItems.length = 2 := by decide
 
@@ -425,7 +425,7 @@ theorem different_derived_structure :
 
     The fronted vP is in Spec,CP; its sister C' dominates the subject in
     Spec,TP. This yields the same binding prediction as
-    @cite{cole-hermon-2008}'s VP-in-Spec,TP analysis: the predicate
+    [cole-hermon-2008]'s VP-in-Spec,TP analysis: the predicate
     phrase c-commands the subject. -/
 theorem vP_ccommands_subject_erlewine :
     cCommandsIn erlewineDerivation.final vP_traced n_dakdanakan := by
@@ -443,12 +443,12 @@ theorem same_vp :
 
 /-! ### Erlewine's vP-to-Spec,CP fronting as a `RemnantFronting` instance
 
-@cite{erlewine-2018}'s analysis is a *genuine* remnant fronting: the
+[erlewine-2018]'s analysis is a *genuine* remnant fronting: the
 subject DP first moves out of vP to Spec,TP (step 5 of
 `erlewineDerivation`), and only then does the remnant vP — now
 containing only the subject trace — front to Spec,CP (step 7).
 
-This is structurally different from @cite{cole-hermon-2008}'s
+This is structurally different from [cole-hermon-2008]'s
 analysis: there, the VP fronts with the subject still in vP-internal
 position; under Erlewine's analysis, the subject has evacuated
 *before* the larger constituent fronts. Erlewine's case fits

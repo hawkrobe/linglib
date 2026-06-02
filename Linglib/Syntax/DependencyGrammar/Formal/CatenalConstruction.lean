@@ -5,7 +5,7 @@ import Linglib.Syntax.DependencyGrammar.Formal.Catena
 # Catenal Construction: CxG ↔ DG Bridge Type
 
 The fundamental bridge type connecting Construction Grammar and Dependency
-Grammar (@cite{osborne-gross-2012}): a `CatenalCx` pairs a CxG `Construction`
+Grammar ([osborne-gross-2012]): a `CatenalCx` pairs a CxG `Construction`
 (form–meaning description) with a DG catena witness (dependency tree plus a
 set of node indices proven to form a catena).
 

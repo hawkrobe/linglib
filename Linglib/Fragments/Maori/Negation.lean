@@ -2,7 +2,7 @@ import Linglib.Typology.Negation
 
 /-!
 # Maori Negation Fragment
-@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
+[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
 
 Maori expresses standard negation with the word *kāhore* (also written
 *kaahore*). WALS classifies the negator's morpheme type as **wordUnclear** —

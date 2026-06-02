@@ -3,7 +3,7 @@ import Linglib.Core.Constraint.PermSubsetCombinatorics
 
 /-!
 # Partially Ordered Constraints (POC)
-@cite{anttila-1997} @cite{kiparsky-1993b} @cite{coetzee-pater-2011}
+[anttila-1997] [kiparsky-1993b] [coetzee-pater-2011]
 
 A POC grammar is a partial order on the constraint set. Each evaluation
 samples a total order (i.e., a linear extension) consistent with the partial
@@ -43,7 +43,7 @@ content here is:
 The categorical containment `OT ⊆ POC` is somewhat misleading linguistically:
 POC's expressive advantage over OT is *probabilistic*, not categorical. The
 `pocPredict` API is the principled way to surface that — POC can produce
-intermediate frequencies (e.g., 8/24, 12/24 in @cite{coetzee-pater-2011}'s
+intermediate frequencies (e.g., 8/24, 12/24 in [coetzee-pater-2011]'s
 t/d-deletion analysis) that no single OT ranking can reproduce.
 
 ## Where this is used
@@ -115,7 +115,7 @@ variable {n : ℕ}
 
 /-- The discrete partial order on `Fin n`: `rel a b` iff `a = b`. No
     constraint pair is comparable beyond reflexivity. Every permutation
-    is a consistent linear extension — this matches @cite{anttila-1997}'s
+    is a consistent linear extension — this matches [anttila-1997]'s
     "no ranking imposed" baseline. -/
 def discrete (n : ℕ) : PartialOrderConstraints n where
   rel := Eq

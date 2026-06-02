@@ -8,7 +8,7 @@ import Linglib.Core.Scales.Scale
 import Linglib.Phenomena.TenseAspect.Diagnostics
 
 /-!
-# @cite{krifka-1989} "Nominal Reference, Temporal Constitution and Quantification"
+# [krifka-1989] "Nominal Reference, Temporal Constitution and Quantification"
 
 K89's algebraic semantics tying nominal-reference properties (CUM/QUA
 via §3 mass/count/bare-plural) to verbal aspect (CUM/QUA on VPs via §4
@@ -62,7 +62,7 @@ on abstract domains.
 
 ## References
 
-* @cite{krifka-1989} (primary, anchor for this file)
+* [krifka-1989] (primary, anchor for this file)
 * Sister: `Studies/Krifka1998.lean` (K98, same-author 9-years-later
   refinement; covers both §3 incrementality and §4 motion);
   `Studies/Filip2012.lean` (three-way classification critique).
@@ -84,7 +84,7 @@ open Phenomena.TenseAspect.Diagnostics
 /-! ### K89 measure-phrase substrate (inlined from Events/MeasurePhrases.lean in 0.231.55) -/
 
 /-- QMOD produces QUA predicates when μ is extensive and n > 0.
-    @cite{krifka-1989} §2: "three kilos of rice" is QUA because no
+    [krifka-1989] §2: "three kilos of rice" is QUA because no
     proper part of a 3kg entity also weighs 3kg (extensivity of
     weight). -/
 theorem qmod_qua {α : Type*} [SemilatticeSup α]
@@ -96,7 +96,7 @@ theorem qmod_qua {α : Type*} [SemilatticeSup α]
   exact hμ_qua x y hx_eq hlt hy_eq
 
 /-- A CUM mass noun combined with QMOD (via an extensive measure)
-    yields a QUA measure phrase. @cite{krifka-1989} §3 D28. -/
+    yields a QUA measure phrase. [krifka-1989] §3 D28. -/
 theorem qmod_of_cum_is_qua {α : Type*} [SemilatticeSup α]
     {R : α → Prop} (_hCum : CUM R)
     {μ : α → ℚ} [ExtMeasure α μ]
@@ -119,7 +119,7 @@ theorem measure_phrase_makes_qua {α β : Type*}
 
 /-! ### Nominal Reference Classification (K89 §3) -/
 
-/-- Why an NP has the reference type it does, per @cite{krifka-1989} §3.
+/-- Why an NP has the reference type it does, per [krifka-1989] §3.
     Each constructor names the structural source of CUM or QUA reference.
     Replaces a free-form `String` justification field with an enumerated
     typology so per-source consistency can be checked.
@@ -642,7 +642,7 @@ def k89Section7Data : List K89QuantDatum :=
 
 /-! ### Scope: predicate-level QUA/CUM ≠ carrier-level boundedness -/
 
-/-! @cite{krifka-1989} defines `QUA` and `CUM` (D 14, D 12, p. 78) as
+/-! [krifka-1989] defines `QUA` and `CUM` (D 14, D 12, p. 78) as
     properties of *predicates* over a structured carrier — a complete
     join semilattice with a part relation. K89 makes no claim that these
     predicate-level properties entail bounds on the *carrier* itself
@@ -651,14 +651,14 @@ def k89Section7Data : List K89QuantDatum :=
     This matters because downstream linglib code uses
     `Core.Scale.MereoTag.qua = .closed` as a lexical-classification tag
     that conflates the two levels. That conflation is convenient for
-    cross-framework gluing across @cite{krifka-1989}, @cite{kennedy-2007},
-    @cite{rouillard-2026} (see `Core/Scales/MereoDim.lean` for the
+    cross-framework gluing across [krifka-1989], [kennedy-2007],
+    [rouillard-2026] (see `Core/Scales/MereoDim.lean` for the
     structural bridges that DO hold — e.g. `singleton_qua_closed`,
     `qua_kennedy_licensed`), but it does not follow from K89's definitions.
     The two examples below show the gap in both directions.
 
     The defeasible cross-domain bridge `closed scale → telic verb` for
-    *degree achievements specifically* is @cite{hay-kennedy-levin-1999}'s
+    *degree achievements specifically* is [hay-kennedy-levin-1999]'s
     contribution (lengthen, cool, straighten); it is not K89's claim, and
     even HKL restrict it to verbs derived from gradable adjectives. -/
 

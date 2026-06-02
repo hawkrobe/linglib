@@ -10,7 +10,7 @@ A set of links between two ordered tiers — modelled as `Finset (ℕ × ℕ)`,
 where the first component indexes the upper tier (e.g., tones) and the
 second the lower (e.g., segments) — is **no-crossing** iff for any two
 links `(k₁, i₁)`, `(k₂, i₂)`, `k₁ < k₂` implies `i₁ ≤ i₂`. This is the
-discrete-index version of the @cite{goldsmith-1976} / @cite{sagey-1986}
+discrete-index version of the [goldsmith-1976] / [sagey-1986]
 No-Crossing Constraint and is the canonical filter on autosegmental GEN.
 
 ## Main definitions
@@ -37,7 +37,7 @@ universe restriction, etc.) for free.
 
 `IndexCrosses` is the operational candidate predicate used inside GEN.
 Its body is the existential index-ordering formulation
-(`@cite{goldsmith-1976}`-style); decidability falls out by
+(`[goldsmith-1976]`-style); decidability falls out by
 `Finset.decidableBEx`.
 
 The **substrate hom** `linkToPointAssociation : ℕ × ℕ → Association ℕ`
@@ -49,8 +49,8 @@ Goldsmith-style index-NCC to Sagey-style interval-NCC by construction.
 
 ## References
 
-* @cite{goldsmith-1976} — autosegmental phonology, NCC as well-formedness
-* @cite{sagey-1986} — temporal derivation of NCC from interval overlap
+* [goldsmith-1976] — autosegmental phonology, NCC as well-formedness
+* [sagey-1986] — temporal derivation of NCC from interval overlap
 -/
 
 namespace Phonology.Autosegmental

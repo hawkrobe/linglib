@@ -2,16 +2,16 @@ import Linglib.Syntax.Minimalist.Probing.DefectiveGoal
 
 /-!
 # Defective Circumvention
-@cite{storment-2025} @cite{storment-2026} @cite{roberts-2010}
+[storment-2025] [storment-2026] [roberts-2010]
 
 Storment's *defective circumvention* probing operation
-(@cite{storment-2025}, ch. 2; cited as eq. 59 in @cite{storment-2026}):
+([storment-2025], ch. 2; cited as eq. 59 in [storment-2026]):
 
 > A probe P enters into an Agree relation with a higher defective goal α
 > and then conditionally goes on to Agree past α with a lower, more
 > featurally specified goal β.
 
-Two outcomes per @cite{storment-2026}:
+Two outcomes per [storment-2026]:
 
 1. **No circumvention** → 3sg "default" agreement (the unvalued probe
    features that α couldn't supply are spelled out as default values).
@@ -19,7 +19,7 @@ Two outcomes per @cite{storment-2026}:
    are compatible with what was already acquired from α.
 
 Circumvention can fail when β's features conflict with α's
-(@cite{storment-2026} §3.1.4): if α gave [Person:3] and β has
+([storment-2026] §3.1.4): if α gave [Person:3] and β has
 [Person:1], the second cycle produces "an irresolvable and
 uninterpretable feature conflict on the T⁰ probe."
 

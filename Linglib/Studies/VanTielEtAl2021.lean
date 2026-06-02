@@ -4,7 +4,7 @@ import Linglib.Semantics.Probabilistic.PrototypeTheory
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{van-tiel-franke-sauerland-2021}
+# [van-tiel-franke-sauerland-2021]
 
 "Probabilistic pragmatics explains gradience and focality in natural language quantification"
 PNAS 118(9): e2005453118

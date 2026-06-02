@@ -14,8 +14,8 @@ fragments and phenomena layers.
 
 Two orthogonal classifications of expletive negation (EN):
 
-- `ENType` (high/low) — @cite{rett-2026}'s position-based classification
-- `ENStrength` (weak/strong) — @cite{greco-2020}'s polarity-based classification
+- `ENType` (high/low) — [rett-2026]'s position-based classification
+- `ENStrength` (weak/strong) — [greco-2020]'s polarity-based classification
 - `PolarityClass` / `PolarityLicensing` — polarity-sensitive element classes
   and their licensing profiles
 
@@ -31,7 +31,7 @@ namespace Phenomena.Negation.ExpletiveNegation
 open Typology.PolarityItem (PolarityType)
 
 /-- Cross-linguistic reasons why a trigger class may not license
-    expletive negation in a particular language (@cite{jin-koenig-2021} §7). -/
+    expletive negation in a particular language ([jin-koenig-2021] §7). -/
 inductive ENBlockingReason where
   /-- Language disprefers modal operators in complement clauses -/
   | modalRestriction
@@ -45,7 +45,7 @@ inductive ENBlockingReason where
 -- § 2. EN type classification
 -- ════════════════════════════════════════════════════
 
-/-- Two syntactic types of expletive negation (@cite{rett-2026}).
+/-- Two syntactic types of expletive negation ([rett-2026]).
 
     **High EN** appears above TP, targets non-truth-conditional content
     (exclamatives, surprise negation). It is obligatory where licensed.
@@ -82,7 +82,7 @@ instance : LinearOrder ENType :=
 -- § 3. EN strength classification
 -- ════════════════════════════════════════════════════
 
-/-- @cite{greco-2020} §2.1: EN constructions divide into two classes
+/-- [greco-2020] §2.1: EN constructions divide into two classes
     based on co-occurrence with polarity-sensitive elements.
 
     **Weak EN** retains some polarity properties of standard negation:
@@ -121,7 +121,7 @@ instance : LinearOrder ENStrength :=
 -- ════════════════════════════════════════════════════
 
 /-- The four classes of polarity-sensitive elements tested by
-    @cite{greco-2020} Table 1. Each EN environment either licenses
+    [greco-2020] Table 1. Each EN environment either licenses
     or rejects each class, giving a four-bit fingerprint. -/
 inductive PolarityClass where
   | weakNPI      -- weak NPIs: *alcuno*, *qualche*, *any*
@@ -145,7 +145,7 @@ def PolarityClass.equivFin : PolarityClass ≃ Fin 4 where
 
 instance : Fintype PolarityClass := Fintype.ofEquiv _ PolarityClass.equivFin.symm
 
-/-- Polarity licensing profile for an EN environment (@cite{greco-2020} Table 1).
+/-- Polarity licensing profile for an EN environment ([greco-2020] Table 1).
     Each field records whether that class of polarity-sensitive element
     is grammatical in the construction. -/
 structure PolarityLicensing where

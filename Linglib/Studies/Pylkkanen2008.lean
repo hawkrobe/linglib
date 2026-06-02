@@ -9,8 +9,8 @@ import Linglib.Data.WALS.Features.F109A
 import Linglib.Studies.Larson1988
 
 /-!
-# @cite{pylkkanen-2008} — Introducing Arguments
-@cite{pylkkanen-2008} @cite{cuervo-2003} @cite{barss-lasnik-1986}
+# [pylkkanen-2008] — Introducing Arguments
+[pylkkanen-2008] [cuervo-2003] [barss-lasnik-1986]
 
 *Linguistic Inquiry Monographs* 49. MIT Press.
 
@@ -33,7 +33,7 @@ import Linglib.Studies.Larson1988
 
 4. **C-command asymmetries**: In both configurations, the applied argument
    asymmetrically c-commands the theme. This derives the
-   @cite{barss-lasnik-1986} binding asymmetries structurally.
+   [barss-lasnik-1986] binding asymmetries structurally.
 
 5. **Cross-linguistic variation**: English, Japanese, and Korean have LOW
    Appl; Bantu languages (Chaga, Luganda, Venda) and Albanian have HIGH
@@ -92,7 +92,7 @@ def DP_food_t   := mkLeafPhon .D     []      "food"        410
 
     Low Appl merges below V: V takes ApplP as complement. The goal
     (Mary) is in Spec-ApplP, c-commanding the theme (a letter) in
-    complement of Appl. This derives the @cite{barss-lasnik-1986}
+    complement of Appl. This derives the [barss-lasnik-1986]
     asymmetry that IO asymmetrically c-commands DO. -/
 def ditransitiveTree : SyntacticObject :=
   merge DP_john_t
@@ -130,7 +130,7 @@ theorem ditransitive_agent_ccommands_goal :
 theorem ditransitive_agent_ccommands_theme :
     cCommandsIn ditransitiveTree DP_john_t DP_letter_t := by decide
 
-/-- Goal c-commands theme — the @cite{barss-lasnik-1986} asymmetry
+/-- Goal c-commands theme — the [barss-lasnik-1986] asymmetry
     derived structurally from V selecting ApplP. -/
 theorem ditransitive_goal_ccommands_theme :
     cCommandsIn ditransitiveTree DP_mary_t DP_letter_t := by decide
@@ -182,7 +182,7 @@ theorem benefactive_uses_high :
 -- § 5: Cross-linguistic Applicative Typology (Table 2.1, §2.1.2–§2.1.3)
 -- ============================================================================
 
-/-! @cite{pylkkanen-2008} tests the high/low distinction in six languages
+/-! [pylkkanen-2008] tests the high/low distinction in six languages
 using three diagnostics (Table 2.1, p. 33). The diagnostics cluster
 into two groups, confirming the typological split. The classifier
 `Minimalist.classifyByDiagnostics` derives the high/low classification
@@ -342,19 +342,19 @@ theorem hebrew_classification_derives_to_low :
 -- § 6: Bridge — Larson VP Shell ↔ Modern Voice/Appl
 -- ============================================================================
 
-/-! @cite{larson-1988}'s VP shell is the precursor of the modern Voice +
+/-! [larson-1988]'s VP shell is the precursor of the modern Voice +
 Applicative decomposition. While the tree shapes differ (Larson uses
 one VP-shell layer; modern theory uses Voice and Appl heads), the
 c-command hierarchy among DP arguments is identical: agent > goal/IO > theme/DO. -/
 
 open Larson1988 in
 
-/-- @cite{larson-1988}'s DOC and the modern Voice + low-Appl derivation
+/-- [larson-1988]'s DOC and the modern Voice + low-Appl derivation
     produce the same c-command hierarchy: IO asymmetrically c-commands DO.
 
-    This proves that @cite{larson-1988} and @cite{pylkkanen-2008},
+    This proves that [larson-1988] and [pylkkanen-2008],
     despite different decompositions, converge on the same structural
-    prediction for @cite{barss-lasnik-1986} asymmetries. -/
+    prediction for [barss-lasnik-1986] asymmetries. -/
 theorem larson_modern_same_hierarchy :
     -- Larson's DOC: IO > DO
     cCommandsIn docDativeShift.final DP_mary DP_letter ∧
@@ -365,18 +365,18 @@ theorem larson_modern_same_hierarchy :
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-! ## §7. Voice as the head that introduces the external argument
-    (@cite{pylkkanen-2008} Ch. 3 §3.2 + Ch. 4 §4.2)
+    ([pylkkanen-2008] Ch. 3 §3.2 + Ch. 4 §4.2)
 
-@cite{pylkkanen-2008}'s central claim about Voice (Ch. 4 §4.2,
+[pylkkanen-2008]'s central claim about Voice (Ch. 4 §4.2,
 "Eliminating Linking"): the external argument is *not* projected by
 the verb itself but by a separate Voice head, following
-@cite{kratzer-1996}. Voice combines with VP via Event Identification
+[kratzer-1996]. Voice combines with VP via Event Identification
 (Event Identification, Ch. 1; -- UNVERIFIED: eq. number), introducing the external argument and relating it to
 the event described by the verb.
 
 This is one of the two competing views of Voice surveyed in
 `Syntax/Minimalism/VoiceProjection.lean`. The other view,
-defended by @cite{collins-2005} and @cite{storment-2026}, treats Voice
+defended by [collins-2005] and [storment-2026], treats Voice
 as a *structural* head (the smuggling projection) and assigns
 external-argument introduction to *v* instead. The two views are
 orthogonal — see `VoiceProjection.lean` for the substantive contrast. -/
@@ -388,7 +388,7 @@ theorem voice_introduces_external_arg_pylkkanen :
     Minimalist.IsExternalArgIntroducer Minimalist.voiceAgent := by decide
 
 /-! ## §8. Voice-bundling for the English zero-causative
-    (@cite{pylkkanen-2008} Ch. 3 §3.3; -- UNVERIFIED: eq. number)
+    ([pylkkanen-2008] Ch. 3 §3.3; -- UNVERIFIED: eq. number)
 
 A second contribution of Ch. 3: the difference between English (which
 lacks unaccusative causatives) and Japanese/Finnish (which have them)
@@ -403,7 +403,7 @@ canonical-instance affirmations (`english_zero_is_bundled`,
 `japanese_lexical_is_independent`) live alongside the cell definitions
 in §13. -/
 
-/-! ## §9. Cause is not a θ-role (@cite{pylkkanen-2008} Ch. 3 §3.2)
+/-! ## §9. Cause is not a θ-role ([pylkkanen-2008] Ch. 3 §3.2)
 
 Pylkkänen's other major Ch. 3 argument: the causative head Cause
 introduces a *causing event*, not a θ-role on the external argument.
@@ -422,7 +422,7 @@ participant (the Japanese adversity causative), while
 denotations. -/
 
 open Semantics.ArgumentStructure in
-/-- @cite{pylkkanen-2008} §3.2: the Japanese adversity causative — a causing
+/-- [pylkkanen-2008] §3.2: the Japanese adversity causative — a causing
     event with no external argument — is admitted by the bieventive Cause
     denotation, which the θ-role analysis (forcing a causer) cannot model. -/
 theorem cause_bieventive_admits_adversity_causative
@@ -433,7 +433,7 @@ theorem cause_bieventive_admits_adversity_causative
   causeBieventive_no_external_arg cause caused e e' hc hcause
 
 /-! ## §10. Hebrew possessor datives as low source applicatives
-    (@cite{pylkkanen-2008} Ch. 2 §2.2, Table 2.2 p. 60)
+    ([pylkkanen-2008] Ch. 2 §2.2, Table 2.2 p. 60)
 
 The second major Chapter 2 contribution: possessor datives in Hebrew
 (and German, French, Korean) are *low source applicatives* — not double
@@ -447,7 +447,7 @@ applicative* analysis on six properties. The contrast is the paper's
 own argument — Pylkkänen explicitly compares the two analyses. -/
 
 /-- The two competing analyses of possessor dative constructions
-    (@cite{pylkkanen-2008} §2.2). -/
+    ([pylkkanen-2008] §2.2). -/
 inductive PossessorDativeAnalysis where
   | possessorRaising  -- Landau 1999, Ura 1996, Kubo 1992
   | lowSourceApplicative  -- Pylkkänen 2008
@@ -530,12 +530,12 @@ theorem analyses_oppose_on_qbind :
   ⟨rfl, rfl⟩
 
 /-! ## §11. Japanese adversity passives: high vs low split
-    (Kubo's 1992 work (cited by @cite{pylkkanen-2008}; not yet in linglib bib) diagnostics, reanalyzed in
-    @cite{pylkkanen-2008} Ch. 2 §2.3)
+    (Kubo's 1992 work (cited by [pylkkanen-2008]; not yet in linglib bib) diagnostics, reanalyzed in
+    [pylkkanen-2008] Ch. 2 §2.3)
 
 Japanese adversity passives split into *gapped* (low source applicative)
 and *gapless* (high applicative). The gapped/gapless distinction itself
-is Kubo's 1992 work (cited by @cite{pylkkanen-2008}; not yet in linglib bib)'s; @cite{pylkkanen-2008}'s contribution is the
+is Kubo's 1992 work (cited by [pylkkanen-2008]; not yet in linglib bib)'s; [pylkkanen-2008]'s contribution is the
 reanalysis as a low-source vs. high applicative typology. Both share
 the *-rare-* passive morphology; the distinguishing criterion is the
 possessive/transfer relation to the direct object — the gapped (low
@@ -545,7 +545,7 @@ object. The diagnostic bundle
 distinguishing the two types is not formalized here; this section
 records the type-level split for cross-reference. -/
 
-/-- The two types of Japanese adversity passive (@cite{pylkkanen-2008}
+/-- The two types of Japanese adversity passive ([pylkkanen-2008]
     §2.3). -/
 inductive JapaneseAdversityType where
   /-- Gapped: low source applicative. The affected DP is inside VP,
@@ -568,10 +568,10 @@ theorem gapped_is_low_source :
 theorem gapless_is_high :
     JapaneseAdversityType.gaplessHigh.toApplType = .high := rfl
 
-/-! ## §12. Spanish static low applicatives (@cite{cuervo-2003},
-    discussed in @cite{pylkkanen-2008} §2.1.4.2)
+/-! ## §12. Spanish static low applicatives ([cuervo-2003],
+    discussed in [pylkkanen-2008] §2.1.4.2)
 
-@cite{cuervo-2003}'s thesis proposes a *three-way* split of low
+[cuervo-2003]'s thesis proposes a *three-way* split of low
 applicatives in Spanish: low-to (recipient, dynamic), low-from
 (source, dynamic), and low-AT (static possession). The static type is
 Cuervo's contribution; Pylkkänen briefly endorses it in §2.1.4.2 as
@@ -581,14 +581,14 @@ paciencia a Valeria` "Pablo admires Valeria's patience"), unlike
 English low recipients which require event-creating verbs. -/
 
 /-- Cuervo's three-way split of low applicatives. The third type
-    (`staticPossession`) is @cite{cuervo-2003}'s extension; it is
+    (`staticPossession`) is [cuervo-2003]'s extension; it is
     *not* in the canonical `ApplType` taxonomy because it requires
     static rather than dynamic semantics, and (per Cuervo) it
     specifically takes a small-clause complement. -/
 inductive CuervoLowAppl where
   | recipient    -- transfer TO (Pylkkänen)
   | source       -- transfer FROM (Pylkkänen)
-  | staticPossession  -- static IN-THE-POSSESSION (@cite{cuervo-2003}, Spanish)
+  | staticPossession  -- static IN-THE-POSSESSION ([cuervo-2003], Spanish)
   deriving DecidableEq, Repr
 
 /-- Both of Pylkkänen's two low types correspond to dynamic transfer;
@@ -613,7 +613,7 @@ parameterized by Voice-bundling × selection. The inventory
 here; Pylkkanen2008 is the sole writer in the codebase, so substrate
 promotion is unwarranted (per CLAUDE.md "promote when ≥2 consumers").
 
-Orthogonal to @cite{song-1996}'s expression-style typology in
+Orthogonal to [song-1996]'s expression-style typology in
 `Studies/Song1996.lean`: Song classifies the
 morphosyntactic *packaging* of a causative (compact / and / purp);
 Pylkkänen classifies the underlying syntactic *configuration*
@@ -627,7 +627,7 @@ should consume them from here. The earlier extracted-to-Causation/Typology
 plan was overengineering for n=1 writer; the file relocates here when
 the natural single home turns out to be the only home. -/
 
-/-- @cite{pylkkanen-2008} §3.3: whether Cause and Voice are bundled
+/-- [pylkkanen-2008] §3.3: whether Cause and Voice are bundled
     into one morphological head. English bundles ([Cause, Voice]);
     Japanese and Finnish do not. -/
 inductive VoiceBundlingChoice where
@@ -635,7 +635,7 @@ inductive VoiceBundlingChoice where
   | independent   -- Japanese/Finnish-type
   deriving DecidableEq, Repr
 
-/-- @cite{pylkkanen-2008} §3.4: what does Cause select for? -/
+/-- [pylkkanen-2008] §3.4: what does Cause select for? -/
 inductive CauseSelection where
   /-- Cause + √Root: causes a category-free root (English zero-causative). -/
   | root
@@ -783,7 +783,7 @@ theorem pylkkanen_view_partitions_voice_flavors :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 /-! ## §15. Transitivity restriction grounded in EntailmentProfile
-    (@cite{pylkkanen-2008} Diagnostic 1 = eq. 17, p. 18; semantic
+    ([pylkkanen-2008] Diagnostic 1 = eq. 17, p. 18; semantic
     argument at eq. 103, p. 55)
 
 Pylkkänen's *predicted* generalization (book Ch. 2 §2.1.1, Diagnostic 1,
@@ -897,13 +897,13 @@ theorem low_source_combines_with_transitive :
 
 The `applicativeComposition` predicate above captures the empirical content
 structurally (via `ApplType.RequiresThemeInComplement`). The denotational
-*derivation* of @cite{pylkkanen-2008}'s eq. 103 — the type clash that forces
+*derivation* of [pylkkanen-2008]'s eq. 103 — the type clash that forces
 the transitivity restriction — lives in
 `Semantics/ArgumentStructure/ArgumentIntroduction.lean`. There the high/low
 contrast is `IntroMode.toEvent`/`.toTheme`, the two diagnostics are
 `toTheme_blocks_unergative` (Diagnostic 1, no internal argument) and
 `toTheme_blocks_kimian` (Diagnostic 2, no event argument — Kimian states,
-@cite{moltmann-2025}), and the thematic-uniqueness contradiction is
+[moltmann-2025]), and the thematic-uniqueness contradiction is
 `low_external_arg_clash`. We record the correspondence: Pylkkänen's `ApplType`
 projects to an `IntroMode`, and the empirical diagnostics are *instances* of
 the substrate theorems rather than restatements of the `IsLow` predicate. -/
@@ -911,7 +911,7 @@ the substrate theorems rather than restatements of the `IsLow` predicate. -/
 open Semantics.ArgumentStructure
 
 /-- Pylkkänen's high/low `ApplType` as a denotational introduction mode
-    (@cite{wood-marantz-2017}'s contextually-interpreted introducer). -/
+    ([wood-marantz-2017]'s contextually-interpreted introducer). -/
 def applIntroMode : ApplType → IntroMode
   | .high         => .toEvent
   | .lowRecipient => .toTheme
@@ -944,11 +944,11 @@ theorem high_appl_licenses_unergative_denotational
 `ApplHead.licensedWith` (in `Applicative.lean`) checks whether a
 particular Appl head is licensed with a given Voice head: high
 applicatives require event-introducing Voice (`hasSemantics = true`);
-low applicatives are licensed with any Voice. Cross @cite{pylkkanen-2008}'s
+low applicatives are licensed with any Voice. Cross [pylkkanen-2008]'s
 high/low Appl typology with the `VoiceHead` taxonomy: which Voice
 flavors license high Appl, and which don't?
 
-This connects §14's Pylkkänen-Voice partition with the @cite{pylkkanen-2008}
+This connects §14's Pylkkänen-Voice partition with the [pylkkanen-2008]
 Appl typology in a single matrix. -/
 
 /-- High Appl requires Voice with event semantics. The named Voice

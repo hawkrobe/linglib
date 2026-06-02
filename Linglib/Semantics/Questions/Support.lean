@@ -6,7 +6,7 @@ import Mathlib.Data.Set.Basic
 
 A theory-neutral typeclass for the relation "state `s` supports / resolves
 question `Q`". The literature calls this *support* in inquisitive semantics
-(`s ⊨ Q`); the @cite{ginzburg-2012} KOS framework calls it *answerhood*
+(`s ⊨ Q`); the [ginzburg-2012] KOS framework calls it *answerhood*
 (a fact resolves a question); decision-theoretic and TTR variants give
 yet other names. This file fixes the shared mathlib-shaped interface.
 
@@ -47,8 +47,8 @@ canonical one).
   `MentionAll` over `Set W → Question W`. Each is a candidate `Support`
   instance for the inquisitive substrate.
 * `Studies/IppolitoKissWilliams2022.lean` — IKW
-  evidential SUPPORT (introduced in @cite{ippolito-kiss-williams-2022},
-  reused by @cite{ippolito-kiss-williams-2025}): doxastic +
+  evidential SUPPORT (introduced in [ippolito-kiss-williams-2022],
+  reused by [ippolito-kiss-williams-2025]): doxastic +
   probabilistic. Prior-parameterised, so it does **not** fit this
   typeclass; see that file's `Supports` directly.
 -/
@@ -58,7 +58,7 @@ namespace Question
 /-- The state `s` supports / resolves the question `q`.
 
 In inquisitive semantics this is `s ⊨ Q`
-(@cite{ciardelli-groenendijk-roelofsen-2018}); in @cite{ginzburg-2012}
+([ciardelli-groenendijk-roelofsen-2018]); in [ginzburg-2012]
 this is "FACTS contextually entail an answer to q". The interface is
 intentionally minimal: just the binary relation. The specialisations
 — exhaustive, mention-some, partial, probabilistic — each refine

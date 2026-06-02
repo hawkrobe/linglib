@@ -3,7 +3,7 @@ import Linglib.Sociolinguistics.PropertySpace
 
 /-!
 # Stereotype Content Model
-@cite{fiske-cuddy-glick-2007}
+[fiske-cuddy-glick-2007]
 
 The SCM property space: 6 properties organized as 3 bipolar dimensions
 (competence, warmth, solidarity). The `SocialDimension` type (axis
@@ -55,7 +55,7 @@ instance : Fintype SCMProperty where
 -- §2. Social Dimensions (axis labels)
 -- ============================================================================
 
-/-- Social-meaning dimensions, grounded in @cite{fiske-cuddy-glick-xu-2002} @cite{fiske-cuddy-glick-2007}'s
+/-- Social-meaning dimensions, grounded in [fiske-cuddy-glick-xu-2002] [fiske-cuddy-glick-2007]'s
     universal dimensions of social cognition.
 
     * `competence`: precision, intelligence, reliability, education —

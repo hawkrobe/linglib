@@ -1,9 +1,9 @@
 import Linglib.Core.Agent.RationalAction
 
 /-!
-# Algebraic Approximations (@cite{luce-1959}, §1.G, pp. 34–37) @cite{luce-1959}
+# Algebraic Approximations ([luce-1959], §1.G, pp. 34–37) [luce-1959]
 
-@cite{luce-1959} develops the connection between choice probabilities and
+[luce-1959] develops the connection between choice probabilities and
 ordinal preference structures via **just noticeable differences** (jnds).
 
 When stimuli are "close" in value, subjects cannot reliably discriminate
@@ -109,7 +109,7 @@ theorem pairwiseProb_mono_iff (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y z :
 -- §2. Just Noticeable Differences (Definition 3, p. 34)
 -- ============================================================================
 
-/-- The `L(π)` relation (Definition 3, @cite{luce-1959}, p. 34):
+/-- The `L(π)` relation (Definition 3, [luce-1959], p. 34):
     `x L(π) y` iff `P(x, {x,y}) > π`.
 
     This means `x` is **discriminably preferred** to `y` at threshold `π`:
@@ -119,7 +119,7 @@ theorem pairwiseProb_mono_iff (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y z :
 def jndL (v : A → ℝ) (thr : ℝ) (x y : A) : Prop :=
   thr < pairwiseProb v x y
 
-/-- The `I(π)` relation (Definition 3, @cite{luce-1959}, p. 34):
+/-- The `I(π)` relation (Definition 3, [luce-1959], p. 34):
     `x I(π) y` iff `1 - π ≤ P(x, {x,y}) ≤ π`.
 
     This means `x` and `y` are **indistinguishable** at threshold `π`:
@@ -136,7 +136,7 @@ def jndI (v : A → ℝ) (thr : ℝ) (x y : A) : Prop :=
 /-!
 ## Semiorder axioms
 
-@cite{luce-1959} defines a **semiordering** of a set `U` as a pair
+[luce-1959] defines a **semiordering** of a set `U` as a pair
 `(L, I)` of relations satisfying, for all `x, y, z, w ∈ U`:
 
 (i) **Trichotomy**: exactly one of `xLy`, `yLx`, or `xIy` holds
@@ -272,7 +272,7 @@ theorem jndL_no_sandwich (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
 -- §4. The Trace (Definition 4 and Theorem 6, p. 37)
 -- ============================================================================
 
-/-- The trace relation (Definition 4, @cite{luce-1959}, p. 37):
+/-- The trace relation (Definition 4, [luce-1959], p. 37):
     `x ≥_T y` iff `P(x, z) ≥ P(y, z)` for all `z`.
 
     The trace extracts the "underlying" preference ordering by requiring

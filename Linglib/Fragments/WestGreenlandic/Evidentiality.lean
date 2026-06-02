@@ -2,7 +2,7 @@ import Linglib.Semantics.Evidential.Defs
 
 /-!
 # West Greenlandic Evidentiality
-@cite{de-haan-2013} @cite{aikhenvald-2004}
+[de-haan-2013] [aikhenvald-2004]
 
 Inferential mood via verbal suffix; no dedicated direct-evidence marker.
 WALS and Aikhenvald agree.

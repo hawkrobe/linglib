@@ -35,7 +35,7 @@ The file is organized in dependency order:
 * **LogInterval** — `Real.log` for positive rationals via 50-step bisection against
   `expPoint`, with bracket bits proportional to `log q`. Includes a `log 0` fall-through.
 * **SqrtInterval** — `√x = exp(log x / 2)` for positive intervals, used by
-  Hellinger-distance RSA models (@cite{herbstritt-franke-2019}).
+  Hellinger-distance RSA models ([herbstritt-franke-2019]).
 * **rpow specials** — `rpowNat_containsReal` (real-exponent bridge for
   `QInterval.rpowNat`), `rpowZero`, `rpowOne_containsReal` for the
   dominant RSA case (`α : ℕ`).

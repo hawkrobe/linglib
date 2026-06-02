@@ -4,15 +4,15 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Givenness — Cognitive Status of Discourse Referents
-@cite{gundel-hedberg-zacharski-1993} @cite{prince-1981} @cite{chafe-1976}
-@cite{chafe-1987} @cite{ariel-2001}
+[gundel-hedberg-zacharski-1993] [prince-1981] [chafe-1976]
+[chafe-1987] [ariel-2001]
 
 Substrate type for the **Givenness** axis of information structure.
-@cite{krifka-2008} enumerates four IS notions — focus, givenness,
+[krifka-2008] enumerates four IS notions — focus, givenness,
 topic, and **delimitation** (frame-setting). At-issueness (Roberts /
 Tonhauser-Beaver-Roberts-Simons / Tonhauser-Beaver-Degen) is a
 separate axis from the QUD tradition that the post-2008 literature
-treats as orthogonal to Krifka's four. @cite{fery-ishihara-2016}
+treats as orthogonal to Krifka's four. [fery-ishihara-2016]
 (Oxford Handbook of Information Structure introduction) adopts
 Krifka's definitions as the unifying baseline. Linglib currently
 provides substrate for focus, givenness, topic, and at-issueness;
@@ -21,7 +21,7 @@ delimitation has no substrate yet.
 The handbook section on givenness names two interpretive modes:
 
 - **Scalar / hierarchical** — Prince 1981, Chafe 1976,
-  @cite{gundel-hedberg-zacharski-1993} (GHZ), @cite{lambrecht-1994}. The
+  [gundel-hedberg-zacharski-1993] (GHZ), [lambrecht-1994]. The
   cognitive status of a referent in the hearer's mind is graded.
 - **Categorical** — Schwarzschild 1999. Binary given vs not given,
   derived from grammatical antecedent presence.
@@ -46,7 +46,7 @@ This file provides the substrate for both:
 
 ## Critique: Ariel 2001 on GHZ
 
-@cite{ariel-2001} (pp. 62-65) raises four substantive critiques of the
+[ariel-2001] (pp. 62-65) raises four substantive critiques of the
 GHZ-6 hierarchy that consumers should know about:
 
 1. **Limited psychological evidence.** Ariel argues (p. 64) that
@@ -70,13 +70,13 @@ Ariel's own account uses the 18-tier `Features.AccessibilityLevel`
 nonetheless retained as substrate** because it is what the IS
 literature widely cites (Krifka 2008 / Féry-Ishihara 2016 list it as
 the canonical scalar givenness theory), and because Centering's
-@cite{strube-hahn-1999} information-status taxonomy projects naturally
+[strube-hahn-1999] information-status taxonomy projects naturally
 from GHZ-style categories. Discrete enough for `decide`-based
 theorems, where AccessibilityLevel's 18 tiers can be unwieldy.
 
 ## Relation to AccessibilityLevel
 
-`Features.AccessibilityLevel` (@cite{ariel-2001}) is the
+`Features.AccessibilityLevel` ([ariel-2001]) is the
 empirically-better-supported sibling: 18 tiers of NP-form-marking
 with informativity, rigidity, and attenuation criteria. Ariel's `toAccessibility` projection from GHZ-6
 to AccessibilityLevel lives in `Studies/Ariel2001.lean`
@@ -101,7 +101,7 @@ set_option autoImplicit false
 
 namespace Features
 
-/-- @cite{gundel-hedberg-zacharski-1993} (GHZ): six cognitive statuses
+/-- [gundel-hedberg-zacharski-1993] (GHZ): six cognitive statuses
     organized as an implicational hierarchy. Each status implies all
     lower ones (a referent in focus is also activated, familiar, etc.):
 
@@ -122,7 +122,7 @@ namespace Features
     (`GivennessStatus.toAccessibility`) stays in `Ariel2001.lean`. -/
 inductive GivennessStatus where
   /-- Unstressed pronoun: referent currently in attention. Per
-      @cite{ariel-2001} p. 64 (citing Ziv 1996), the implicational
+      [ariel-2001] p. 64 (citing Ziv 1996), the implicational
       claim that `inFocus` entities are also `uniquelyIdentifiable`
       has counterexamples (unidentified inferred role players); this
       enum's ordinal placement is the GHZ-claimed order, not a proven
@@ -153,7 +153,7 @@ def GivennessStatus.rank : GivennessStatus → Nat
   | .referential          => 1
   | .typeIdentifiable     => 0
 
-/-- @cite{prince-1981} hearer-status binary: `given | new`. The simplest
+/-- [prince-1981] hearer-status binary: `given | new`. The simplest
     categorical givenness distinction. `given` covers any referent the
     hearer can identify (regardless of activation state); `new` covers
     referents the hearer doesn't yet know about.

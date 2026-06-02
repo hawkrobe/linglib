@@ -2,9 +2,9 @@ import Linglib.Fragments.Slavic.Case
 
 /-!
 # Slovene Case Inventory
-@cite{priestly-1993} @cite{blake-1994}
+[priestly-1993] [blake-1994]
 
-Per @cite{priestly-1993} (p. 399), Slovene has 6 cases
+Per [priestly-1993] (p. 399), Slovene has 6 cases
 (NOM/ACC/GEN/DAT/INST/LOC) with no productive vocative, patterning
 with standard Russian against Ukrainian/Polish/Czech/Serbo-Croat among
 the modern Slavic case-bearing languages. The prepositional

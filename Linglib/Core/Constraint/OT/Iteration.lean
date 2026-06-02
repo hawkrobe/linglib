@@ -3,7 +3,7 @@ import Mathlib.Logic.Function.Defs
 
 /-!
 # OT — Iterated GEN/EVAL (Harmonic Serialism's Serial Wrapper)
-@cite{mccarthy-2000} @cite{mccarthy-2010} @cite{pruitt-2023}
+[mccarthy-2000] [mccarthy-2010] [pruitt-2023]
 
 Pure combinator for serial OT-style derivations. The iteration combinator
 takes a one-step `gen : C → Finset C` and an `eval : Finset C → Finset C`
@@ -13,25 +13,25 @@ from a starting candidate until a fixed point is reached.
 ## Why `Finset C → Finset C`, not `Finset C → Option C`
 
 Classical OT genuinely has ties: the optimal set need not be a singleton.
-@cite{pruitt-2023} discusses divergent ties extensively
-(@cite{mcpherson-lamont-2026}'s Poko paradox is precisely such a case).
+[pruitt-2023] discusses divergent ties extensively
+([mcpherson-lamont-2026]'s Poko paradox is precisely such a case).
 Returning `Option C` would force `Classical.choice` to pick a winner among
 tied candidates, lying about the math. Mathlib's analogue is
 `Finset.exists_min_image`: existence is proved without commitment to a
 specific extractor. Tie-breaking is a separate concern — directional HS
-(@cite{lamont-2022b}) adds a rule that turns an optimal `Finset` into a
+([lamont-2022b]) adds a rule that turns an optimal `Finset` into a
 singleton; vanilla HS (with arbitrary GEN) may legitimately produce ties.
 
 ## Convergence
 
 A derivation has converged when `eval (gen c) = {c}` — the only optimal
 candidate is the faithful one. This is the canonical HS halting condition
-(@cite{mccarthy-2010}).
+([mccarthy-2010]).
 
 ## Ranking durability
 
 In HS the constraint ranking is **durable** — it is the same at every
-iteration step. @cite{pruitt-2023} (page 508) quotes @cite{mccarthy-2000}
+iteration step. [pruitt-2023] (page 508) quotes [mccarthy-2000]
 (p. 11): "in HS the constraint ranking is 'durable,' in that each step
 in the derivation is subject to the same constraint hierarchy." The
 combinator's signature reflects this: the `eval` argument is fixed
@@ -97,7 +97,7 @@ def hsStep [DecidableEq C] (gen : C → Finset C) (eval : Finset C → Finset C)
     for ill-typed grammars but is excluded by HS's standard guarantees).
 
     HS derivations are not in general guaranteed to converge — see
-    @cite{lamont-2022b} for non-terminating cases. The explicit `Nat`
+    [lamont-2022b] for non-terminating cases. The explicit `Nat`
     bound makes this function total. -/
 def iterateGen [DecidableEq C] (gen : C → Finset C)
     (eval : Finset C → Finset C) (pick : Finset C → Option C)
@@ -179,7 +179,7 @@ theorem iterateGen_idempotent_at_fixedPoint [DecidableEq C]
     Soundness must be witnessed by the caller: `sound` says any candidate
     in the optimal set distinct from the input is strictly more harmonic.
     This captures the "harmonically improving" gloss of HS
-    (@cite{mccarthy-2010}). -/
+    ([mccarthy-2010]). -/
 theorem harmonicImprovement [DecidableEq C] (lt : C → C → Prop)
     (gen : C → Finset C) (eval : Finset C → Finset C)
     (sound : ∀ c c', c' ∈ eval (gen c) → c' ≠ c → lt c' c)

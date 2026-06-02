@@ -1,6 +1,6 @@
 /-!
 # Particle Verb Constructions — Empirical Data
-@cite{dendikken-1995} @cite{johnson-1991}
+[dendikken-1995] [johnson-1991]
 
 Theory-neutral data on English verb-particle constructions (VPCs / PVCs),
 including particle shift alternation and its constraints.

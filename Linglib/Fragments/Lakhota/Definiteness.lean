@@ -2,11 +2,11 @@ import Linglib.Core.Nominal.Determiner
 
 /-!
 # Lakhota Definiteness Fragment
-@cite{schwarz-2013}
+[schwarz-2013]
 
 Lakhota (Siouan, ISO `lkt`). Two overt definite articles: *kiŋ* (weak,
 situational/globally-unique reference) and *k'uŋ* (strong, anaphoric /
-'the above-mentioned'). A *bipartite* article system (@cite{schwarz-2013}
+'the above-mentioned'). A *bipartite* article system ([schwarz-2013]
 §4.2, after Buechel 1939).
 -/
 

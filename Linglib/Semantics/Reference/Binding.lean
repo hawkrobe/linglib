@@ -1,11 +1,11 @@
 /-
 # Anaphora and Binding
-@cite{barker-shan-2014}
+[barker-shan-2014]
 
 The continuation approach to binding and its equivalence with assignment-based
-binding (@cite{heim-kratzer-1998} Ch. 5).
+binding ([heim-kratzer-1998] Ch. 5).
 
-Per @cite{buring-2012} §3, a bound pronoun has the *same* denotation as a free
+Per [buring-2012] §3, a bound pronoun has the *same* denotation as a free
 one — the variable `g(i)` — with binding supplied externally by the β-operator.
 That assignment-based binding is the project-canonical `interpPronoun` /
 `lambdaAbsG` (`Core.Logic.Intensional.Variables`), also the selector of the
@@ -137,7 +137,7 @@ end Continuations
 /-! ### Binding as cylindric algebra substitution
 
 The connection between Heim & Kratzer's binding mechanism and
-cylindric algebra (@cite{henkin-monk-tarski-1971}):
+cylindric algebra ([henkin-monk-tarski-1971]):
 
 - **Binder at index n** creates `fun x => body(g[n↦x])`, the function
   whose existential closure is cylindrification `cₙ`

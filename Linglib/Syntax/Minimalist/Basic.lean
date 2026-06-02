@@ -6,14 +6,14 @@ import Linglib.Core.Combinatorics.RootedTree.Decorated
 
 /-!
 # Syntactic Objects and Containment
-@cite{chomsky-2013} @cite{marcolli-chomsky-berwick-2025}
+[chomsky-2013] [marcolli-chomsky-berwick-2025]
 
 Foundation module for the Minimalist Program formalization.
 
 ## Syntactic Objects
 
 `SyntacticObject` is `FreeMagma LIToken`: bare phrase structure as the
-free magma over lexical-item tokens, following @cite{marcolli-chomsky-berwick-2025}.
+free magma over lexical-item tokens, following [marcolli-chomsky-berwick-2025].
 The two constructors are `FreeMagma.of` (lexical leaves) and
 `FreeMagma.mul` (binary Merge). The shims `SyntacticObject.leaf` /
 `SyntacticObject.node` rename them at the linguistic interface.
@@ -52,27 +52,27 @@ inductive Cat where
   | T     -- tense
   | C     -- complementizer
   | v     -- light verb
-  | n     -- nominal categorizer / gender (little-n, @cite{marantz-2001}; Distributed Morphology)
-  | a     -- adjectival categorizer (little-a, @cite{panagiotidis-2015}; DegP complement)
-  | Place -- locational head (@cite{dendikken-2010}; PlaceP, F1 in adpositional EP)
-  | Path  -- directional head (@cite{dendikken-2010} @cite{svenonius-2010}; PathP, F2 in adpositional EP)
-  | Num   -- number (@cite{ritter-1991}; NumP between nP and QP/DP)
-  | Q     -- quantity / classifier (@cite{borer-2005}; QP between NumP and DP)
-  | Voice -- Voice head (@cite{kratzer-1996}; @cite{schaefer-2008})
-  | Appl  -- Applicative head (@cite{pylkkanen-2008}; @cite{cuervo-2003})
-  | Foc   -- focus (@cite{rizzi-1997} split-CP; hosts [FoC] feature, triggers A-bar movement)
-  | Top   -- topic (@cite{rizzi-1997} split-CP; hosts [G]/givenness, topic fronting)
-  | Fin   -- finiteness (@cite{rizzi-1997} split-CP; allocutive probe in Magahi/Galician)
-  | SA    -- speech act head (@cite{speas-tenny-2003}; hosts speaker/addressee)
-  | Force -- force (@cite{rizzi-1997} split-CP; clause-typing [decl]/[interrog])
-  | Neg   -- negation (@cite{pollock-1989}; @cite{zanuttini-1997}; hosts [±neg])
-  | Mod   -- modality (@cite{cinque-1999}; modal auxiliaries)
-  | Rel   -- relative (cartographic left periphery, @cite{rizzi-1997})
-  | Pol   -- polarity (@cite{laka-1990}; ΣP for affirmation/negation)
-  | Asp   -- aspect (@cite{cinque-1999}; inner inflectional, between Voice and T)
-  | Evid  -- evidential (@cite{cinque-1999}; outer inflectional, above T below Fin)
-  | Nmlz  -- nominalizer (@cite{keine-2020}; Hindi -naa/-ne nominalized clause; clause type distinct from CP)
-  | K     -- inherent case shell (@cite{newman-2024}; KP wraps DP for oblique/inherent case; explains no-IO-passive languages)
+  | n     -- nominal categorizer / gender (little-n, [marantz-2001]; Distributed Morphology)
+  | a     -- adjectival categorizer (little-a, [panagiotidis-2015]; DegP complement)
+  | Place -- locational head ([dendikken-2010]; PlaceP, F1 in adpositional EP)
+  | Path  -- directional head ([dendikken-2010] [svenonius-2010]; PathP, F2 in adpositional EP)
+  | Num   -- number ([ritter-1991]; NumP between nP and QP/DP)
+  | Q     -- quantity / classifier ([borer-2005]; QP between NumP and DP)
+  | Voice -- Voice head ([kratzer-1996]; [schaefer-2008])
+  | Appl  -- Applicative head ([pylkkanen-2008]; [cuervo-2003])
+  | Foc   -- focus ([rizzi-1997] split-CP; hosts [FoC] feature, triggers A-bar movement)
+  | Top   -- topic ([rizzi-1997] split-CP; hosts [G]/givenness, topic fronting)
+  | Fin   -- finiteness ([rizzi-1997] split-CP; allocutive probe in Magahi/Galician)
+  | SA    -- speech act head ([speas-tenny-2003]; hosts speaker/addressee)
+  | Force -- force ([rizzi-1997] split-CP; clause-typing [decl]/[interrog])
+  | Neg   -- negation ([pollock-1989]; [zanuttini-1997]; hosts [±neg])
+  | Mod   -- modality ([cinque-1999]; modal auxiliaries)
+  | Rel   -- relative (cartographic left periphery, [rizzi-1997])
+  | Pol   -- polarity ([laka-1990]; ΣP for affirmation/negation)
+  | Asp   -- aspect ([cinque-1999]; inner inflectional, between Voice and T)
+  | Evid  -- evidential ([cinque-1999]; outer inflectional, above T below Fin)
+  | Nmlz  -- nominalizer ([keine-2020]; Hindi -naa/-ne nominalized clause; clause type distinct from CP)
+  | K     -- inherent case shell ([newman-2024]; KP wraps DP for oblique/inherent case; explains no-IO-passive languages)
   deriving Repr, DecidableEq, Inhabited
 
 /-- Selectional stack consumed left-to-right -/
@@ -143,7 +143,7 @@ instance : DecidableEq LIToken := λ a b =>
 /-- Syntactic object: nonplanar binary tree over `LIToken ⊕ Nat`,
     realized as `FreeCommMagma (LIToken ⊕ Nat)`.
 
-Per @cite{marcolli-chomsky-berwick-2025} Definition 1.1.1 (book p. 22),
+Per [marcolli-chomsky-berwick-2025] Definition 1.1.1 (book p. 22),
 SO is the **free, non-associative, commutative** magma `Magma_{na,c}(SO_0, M)`
 with `M(α,β) = {α,β}` (unordered). Linguistically, this is the position that
 Merge produces unordered sets, with linearization (PF / LCA / head-directionality)
@@ -355,7 +355,7 @@ def merge (x y : SyntacticObject) : SyntacticObject :=
 /-- **Headline of the MCB Phase 1.0 nonplanar migration**:
     Merge is symmetric on the FreeCommMagma carrier.
     `merge x y = merge y x` as strict equality on the quotient,
-    per @cite{marcolli-chomsky-berwick-2025} Definition 1.1.1
+    per [marcolli-chomsky-berwick-2025] Definition 1.1.1
     (book p. 22) + Remark 1.1.2 (p. 23). The earlier planar
     `TraceTree`-based theorem `merge_distinguishes_children`
     (`x ≠ y → merge x y ≠ merge y x`) is now PROVABLY FALSE; this
@@ -403,7 +403,7 @@ def uposToCat : UD.UPOS → Cat
 
 `phonYield`, `linearize`, `leftmostLeaf`, `outerCat` traverse the SO in
 **planar order**, which is a representative-choice over the unordered
-quotient. Per @cite{marcolli-chomsky-berwick-2025} Remark 1.1.2 (book p. 23),
+quotient. Per [marcolli-chomsky-berwick-2025] Remark 1.1.2 (book p. 23),
 linearization belongs to *Externalization*, not to Merge proper.
 
 Phase 1.0 placeholder: pick an arbitrary representative via `Quot.out` and
@@ -447,7 +447,7 @@ def leftmostLeafPlanar : FreeMagma (LIToken ⊕ Nat) → LIToken
 
 /-- Underlying rightmost-leaf on a planar `FreeMagma` representative.
     Mirror of `leftmostLeafPlanar` for harmonic head-final convention
-    (per @cite{marcolli-chomsky-berwick-2025} Lemma 1.13.5). -/
+    (per [marcolli-chomsky-berwick-2025] Lemma 1.13.5). -/
 def rightmostLeafPlanar : FreeMagma (LIToken ⊕ Nat) → LIToken
   | .of (.inl tok) => tok
   | .of (.inr n) => mkTraceToken n
@@ -1140,7 +1140,7 @@ on `FreeMagma`.
 
 The mathlib-style resolution: keep `cCommandsIn` value-side and
 sister-form (it's what binding consumers need, and it reads directly
-off bare phrase structure per @cite{marcolli-chomsky-berwick-2025}).
+off bare phrase structure per [marcolli-chomsky-berwick-2025]).
 Cross-tradition unification via B&P's parametric command lives in
 `Core/Order/Command.lean` and is exercised by HPSG / DG, where its
 universal shape matches the native primitive. Minimalism's c-command

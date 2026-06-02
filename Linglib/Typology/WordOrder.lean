@@ -4,7 +4,7 @@ import Linglib.Data.WALS.Features.F83A
 
 /-!
 # Word-order typology: per-language profile substrate
-@cite{dryer-2013-wals} @cite{greenberg-1963} @cite{dryer-1992}
+[dryer-2013-wals] [greenberg-1963] [dryer-1992]
 
 Framework-agnostic substrate for storing per-language word-order data
 (WALS Chs 81–83). Lives in `Typology/` so that both `Fragments/`
@@ -37,8 +37,8 @@ internally contradictory combinations.
 ## Greenbergian vs Dryerian primacy
 
 The substrate is *neutral* on which classification is theoretically
-primary. @cite{greenberg-1963} treated `BasicOrder` as primary;
-@cite{dryer-1992} explicitly demoted SOV/SVO/VSO in favour of OV/VO
+primary. [greenberg-1963] treated `BasicOrder` as primary;
+[dryer-1992] explicitly demoted SOV/SVO/VSO in favour of OV/VO
 (Branching Direction Theory). Consumers downstream choose which
 fields to read.
 
@@ -229,12 +229,12 @@ abbrev IsSVO (b : BasicOrder) : Prop := b = .svo
 abbrev IsVSO (b : BasicOrder) : Prop := b = .vso
 
 /-- `b` has Subject before Object: SOV, SVO, or VSO.
-    @cite{greenberg-1963} Universal 1's antecedent. -/
+    [greenberg-1963] Universal 1's antecedent. -/
 abbrev IsSubjectBeforeObject (b : BasicOrder) : Prop :=
   b = .sov ∨ b = .svo ∨ b = .vso
 
 /-- `b` has Object before Subject: VOS, OVS, or OSV.
-    @cite{greenberg-1963} Universal 1's negative class. -/
+    [greenberg-1963] Universal 1's negative class. -/
 abbrev IsObjectBeforeSubject (b : BasicOrder) : Prop :=
   b = .vos ∨ b = .ovs ∨ b = .osv
 
@@ -242,7 +242,7 @@ end BasicOrder
 
 namespace OVOrder
 
-/-- `o` is OV (object precedes verb). @cite{dryer-1992}'s primary
+/-- `o` is OV (object precedes verb). [dryer-1992]'s primary
     typological classification under Branching Direction Theory. -/
 abbrev IsOV (o : OVOrder) : Prop := o = .ov
 

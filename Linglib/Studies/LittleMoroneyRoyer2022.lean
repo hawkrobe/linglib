@@ -10,7 +10,7 @@ import Linglib.Fragments.Shan.ClassifierSystem
 
 /-!
 # Little, Moroney & Royer (2022)
-@cite{little-moroney-royer-2022}
+[little-moroney-royer-2022]
 
 Classifiers can be for numerals *or* nouns: Two strategies for numeral
 modification. *Glossa* 7(1). 1–35.
@@ -84,7 +84,7 @@ theorem profiles_distinct : clfForNumPredictions ≠ clfForNounPredictions := fu
 
 /-! ### Plural co-occurrence (§3.4)
 
-@cite{little-moroney-royer-2022} §3.4 refines @cite{borer-2005}'s
+[little-moroney-royer-2022] §3.4 refines [borer-2005]'s
 complementarity intuition: CLF and PL share a functional projection in
 CLF-for-N languages, separate projections in CLF-for-NUM languages. -/
 
@@ -197,7 +197,7 @@ theorem section5_extensionally_equal (x : Finset Dog) :
 
 /-! ### Cross-paper consistency with Chierchia 1998 -/
 
-/-- Shan agrees with @cite{chierchia-1998}'s NMP prediction for
+/-- Shan agrees with [chierchia-1998]'s NMP prediction for
 Mandarin/Japanese — all three are CLF-for-N. -/
 theorem shan_agrees_with_chierchia :
     shanStrategy = NMP.mandarinStrategy ∧ shanStrategy = NMP.japaneseStrategy :=

@@ -6,7 +6,7 @@ import Mathlib.Algebra.Order.Field.Rat
 
 /-!
 # Causal Bayes Net
-@cite{grusdt-lassiter-franke-2022}
+[grusdt-lassiter-franke-2022]
 
 Two-node causal Bayesian network infrastructure: directed causal structure
 over two binary variables, noisy-OR parameterization, and probability
@@ -23,7 +23,7 @@ namespace Core.Causal.BayesNet
 -- Causal Relations
 
 /-- Causal relations between two binary variables A and C.
-    Used by @cite{grusdt-lassiter-franke-2022} for conditional semantics. -/
+    Used by [grusdt-lassiter-franke-2022] for conditional semantics. -/
 inductive CausalRelation
   | ACausesC    -- A → C
   | CCausesA    -- C → A
@@ -80,7 +80,7 @@ end NoisyOR
 
 /-- A probability distribution over two binary variables A and C.
 
-    Used by @cite{grusdt-lassiter-franke-2022}: a "world" is a probability distribution
+    Used by [grusdt-lassiter-franke-2022]: a "world" is a probability distribution
     because conditionals make claims about probabilities (P(C|A) > θ). -/
 structure WorldState where
   /-- Marginal probability P(A) -/

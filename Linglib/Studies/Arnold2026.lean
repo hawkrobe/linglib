@@ -5,7 +5,7 @@ import Linglib.Fragments.English.Pronouns
 import Linglib.Studies.KonnellyCowper2020
 
 /-!
-# @cite{arnold-2026}
+# [arnold-2026]
 
 Arnold, Jennifer E. 2026. Two kinds of singular *they*: A usage-based model.
 *Glossa: a journal of general linguistics* X(X). 1–14.
@@ -17,11 +17,11 @@ English singular *they* is not one phenomenon but two, distinguished by
 inversely correlated pragmatic conditions:
 
 1. **Underspecified singular *they*** (the older form, attested since Middle
-   English; @cite{balhorn-2004}): licensed when the referent's discourse
+   English; [balhorn-2004]): licensed when the referent's discourse
    representation is **underspecified** — quantified, indefinite, epicene,
    or not elaborated in the discourse. The key criterion is **discourse
-   specificity** (@cite{newman-1992} "solidity", @cite{newman-1998}
-   "individuation", @cite{camilliere-etal-2021} "social distance"), not
+   specificity** ([newman-1992] "solidity", [newman-1998]
+   "individuation", [camilliere-etal-2021] "social distance"), not
    gender per se.
 
 2. **Personal singular *they*** (the newer form, emerging ~2018): licensed
@@ -49,7 +49,7 @@ correlated conditions — is a theorem.
 
 ## Connection to Grammatical Accounts
 
-@cite{konnelly-cowper-2020} propose a 3-stage grammatical account where
+[konnelly-cowper-2020] propose a 3-stage grammatical account where
 variation in acceptance of singular *they* reflects changes in the gender
 feature system (contrastive → variably marked → fully underspecified).
 Arnold's account complements this by centering **pragmatic** conditions
@@ -68,7 +68,7 @@ open Features (DiscourseElaboration AccessibilityLevel)
 -- § 2: The Two-Kinds Taxonomy
 -- ============================================================================
 
-/-- The two kinds of singular *they* (@cite{arnold-2026} §1).
+/-- The two kinds of singular *they* ([arnold-2026] §1).
 
     These are distinguished by their pragmatic licensing conditions:
     - Underspecified: discourse representation is thin (§2)
@@ -84,7 +84,7 @@ inductive SingTheyKind where
 
 /-- The personal pronouns a referent uses — a social fact about the *referent*
     (not a property of the pronoun system) that may or may not be in common
-    ground. @cite{arnold-2026}: the pragmatic condition for *personal* singular
+    ground. [arnold-2026]: the pragmatic condition for *personal* singular
     *they* is knowing that the referent's pronouns are *they/them*. Scoped to the
     three English sets this paper's licensing turns on (neopronouns and other
     languages are out of scope here). -/
@@ -101,7 +101,7 @@ inductive PronounSet where
 /-- Underspecified singular *they* is licensed when the referent's
     discourse representation is underspecified.
 
-    @cite{arnold-2026} §2: "Singular *they* is preferred when the
+    [arnold-2026] §2: "Singular *they* is preferred when the
     speaker intends to evoke an underspecified mental representation
     for the addressee in the discourse." -/
 def licensesUnderspecified (de : DiscourseElaboration) : Bool :=
@@ -112,7 +112,7 @@ def licensesUnderspecified (de : DiscourseElaboration) : Bool :=
 /-- Personal singular *they* is licensed when the referent's personal
     pronouns are known to be *they/them*.
 
-    @cite{arnold-2026} §3: "the pragmatic condition for using personal
+    [arnold-2026] §3: "the pragmatic condition for using personal
     *they* is knowing that the referent's personal pronouns are
     *they/them*." This knowledge must be in common ground. -/
 def licensesPersonal (spec : Option PronounSet) : Bool :=
@@ -175,7 +175,7 @@ theorem no_simultaneous_licensing
 
 /-- Antecedent type classification for singular *they*.
 
-    @cite{arnold-2026} Table 1 shows that singular *they* occurs with
+    [arnold-2026] Table 1 shows that singular *they* occurs with
     quantified, indefinite, and definite antecedents, even when the
     referent has a known gender. What unifies these uses (under the
     underspecified account) is that the discourse representation is
@@ -208,7 +208,7 @@ theorem table1_all_license_underspecified (a : AntecedentType) :
 -- § 6: Connection to Gender Layer
 -- ============================================================================
 
-/-- Singular *they* bears no gender feature — the @cite{konnelly-cowper-2020}
+/-- Singular *they* bears no gender feature — the [konnelly-cowper-2020]
     Elsewhere case: *they* spells out a φ-bundle with none of
     `[MASC]`/`[FEM]`/`[INANIM]`, so its `gender` field is `none`, not a positive epicene
     value. -/
@@ -219,7 +219,7 @@ theorem singThey_genderless :
   exact ⟨rfl, rfl, rfl⟩
 
 /-- Singular *they*'s lexical entry carries no surface gender
-    (@cite{konnelly-cowper-2020}): the `gender` field is `none`, the structural
+    ([konnelly-cowper-2020]): the `gender` field is `none`, the structural
     correlate of its Elsewhere status — gender-neutrality is the *absence* of a
     contrastive feature, not a positive value. -/
 theorem they_no_surface_gender :
@@ -234,7 +234,7 @@ theorem underspecified_gender_licenses_underspecified_they :
 -- § 7: Predictions
 -- ============================================================================
 
-/-- @cite{arnold-2026} §4.1: the contexts supporting personal *they*
+/-- [arnold-2026] §4.1: the contexts supporting personal *they*
     are often inconsistent with underspecified *they*. Elaborated
     discourse representations (naming, describing, narrating about a
     person) make underspecified *they* infelicitous because the discourse
@@ -242,7 +242,7 @@ theorem underspecified_gender_licenses_underspecified_they :
 theorem elaborated_blocks_underspecified :
     licensesUnderspecified DiscourseElaboration.elaborated = false := rfl
 
-/-- @cite{arnold-2026} §4.3: personal *they* is harder than
+/-- [arnold-2026] §4.3: personal *they* is harder than
     underspecified *they*. This is modeled by the additional requirement:
     personal *they* needs pronoun knowledge in common ground, while
     underspecified *they* only needs a thin discourse model. -/
@@ -283,7 +283,7 @@ theorem structural_gender_consistency :
 -- § 9: Bridge to Konnelly & Cowper 2020 (morphosyntactic stages)
 -- ============================================================================
 
-/-- **Bridge to @cite{konnelly-cowper-2020}'s grammatical stages.** Arnold's
+/-- **Bridge to [konnelly-cowper-2020]'s grammatical stages.** Arnold's
     pragmatic *underspecified they* aligns with their Stage 1: while the grammar
     still obligatorily projects [MASC]/[FEM] for known-gender referents
     (`Stage.stage1`, `genderObligatory = true`), *they* surfaces only where

@@ -2,7 +2,7 @@ import Linglib.Semantics.Dynamic.Bilateral.BUS
 
 /-!
 # Elliott & Sudo (2025): Free Choice with Anaphora
-@cite{elliott-sudo-2025}
+[elliott-sudo-2025]
 
 Bilateral Update Semantics (BUS) applied to bathroom disjunctions.
 

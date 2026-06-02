@@ -6,7 +6,7 @@ import Linglib.Semantics.Conditionals.Counterfactual
 /-!
 # Psych Verb Causal Links
 
-@cite{kim-2024} @cite{allen-1983} @cite{bach-1986} Formal integration of @cite{kim-2024}'s maintenance relation with existing @cite{lewis-1973}
+[kim-2024] [allen-1983] [bach-1986] Formal integration of [kim-2024]'s maintenance relation with existing [lewis-1973]
 infrastructure: temporal intervals, event sorts,
 and counterfactual semantics.
 
@@ -55,7 +55,7 @@ structure PsychCausalLink (Time : Type*) [LinearOrder Time] where
   causeSort : Features.Dynamicity
   /-- Ontological sort of the caused eventuality -/
   effectSort : Features.Dynamicity
-  /-- Does the effect involve a transition (BECOME in @cite{rappaport-hovav-levin-1998})?
+  /-- Does the effect involve a transition (BECOME in [rappaport-hovav-levin-1998])?
       Eventive: [CAUSE [BECOME [STATE]]] — yes.
       Maintenance: [CAUSE [STATE]] — no. -/
   involvesTransition : Bool
@@ -86,7 +86,7 @@ def eventiveLink (Time : Type*) [LinearOrder Time] : PsychCausalLink Time :=
     representation and John's concern state coexist; if the representation
     ceased, the concern would cease.
 
-    @cite{kim-2024} identifies three defining properties:
+    [kim-2024] identifies three defining properties:
     (a) Relates two eventualities (both states)
     (b) Temporal contemporaneity (τ(cause) overlaps τ(effect))
     (c) Counterfactual dependence (effect ceases when cause ceases) -/
@@ -142,7 +142,7 @@ theorem precedes_excludes_overlap {Time : Type*} [LinearOrder Time]
 -- § 5. Event Sort Properties
 -- ════════════════════════════════════════════════════
 
-/-- Maintenance relates two states (@cite{kim-2024} property (a)). -/
+/-- Maintenance relates two states ([kim-2024] property (a)). -/
 theorem maintenance_both_states {Time : Type*} [LinearOrder Time] :
     (maintenanceLink Time).causeSort = .stative ∧
     (maintenanceLink Time).effectSort = .stative := ⟨rfl, rfl⟩
@@ -177,7 +177,7 @@ theorem flavors_differ_on_all_dimensions {Time : Type*} [LinearOrder Time] :
 
     ¬cause □→ ¬effect
 
-    This characterizes maintenance causation (@cite{kim-2024} property (c)):
+    This characterizes maintenance causation ([kim-2024] property (c)):
     "The problem concerns John" — in the closest worlds where John
     no longer has the mental representation, the concern ceases. -/
 def counterfactuallyDependent {W : Type*} [DecidableEq W] [Fintype W]
@@ -240,11 +240,11 @@ theorem dependent_excludes_persistent {W : Type*} [DecidableEq W] [Fintype W]
   exact (hDep x hx) (hall x hx)
 
 -- ════════════════════════════════════════════════════
--- § 7. @cite{kim-2024}: Three Properties of Maintenance
+-- § 7. [kim-2024]: Three Properties of Maintenance
 -- ════════════════════════════════════════════════════
 
 /-- The three defining properties of maintenance causation from
-    @cite{kim-2024}, formalized using existing infrastructure:
+    [kim-2024], formalized using existing infrastructure:
 
     (a) Relates two eventualities — both are states (`Features.Dynamicity.stative`)
     (b) Temporal contemporaneity — `Interval.overlaps`

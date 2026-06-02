@@ -2,14 +2,14 @@ import Linglib.Features.ModalIndefinite
 
 /-!
 # Spanish Modal Indefinite Fragment
-@cite{alonso-ovalle-menendez-benito-2010} @cite{alonso-ovalle-menendez-benito-2018}
+[alonso-ovalle-menendez-benito-2010] [alonso-ovalle-menendez-benito-2018]
 
 Lexical entries for Spanish modal indefinites *algún* and *uno cualquiera*.
 
 - *algún*: epistemic modal indefinite with anti-singleton constraint
-  (@cite{alonso-ovalle-menendez-benito-2010}).
+  ([alonso-ovalle-menendez-benito-2010]).
 - *uno cualquiera*: random choice modal indefinite with anti-singleton
-  constraint (@cite{alonso-ovalle-menendez-benito-2018}).
+  constraint ([alonso-ovalle-menendez-benito-2018]).
 
 -/
 
@@ -27,7 +27,7 @@ open Features.ModalIndefinite
 /-- *algún*: not-at-issue, epistemic only, upper-bounded.
     The modal component is a conversational implicature derived from
     the anti-singleton constraint on the domain
-    (@cite{alonso-ovalle-menendez-benito-2010}, §4). -/
+    ([alonso-ovalle-menendez-benito-2010], §4). -/
 def algúnEntry : ModalIndefiniteEntry where
   language := "Spanish"
   form := "algún"
@@ -42,7 +42,7 @@ def algúnEntry : ModalIndefiniteEntry where
 /-- *uno cualquiera*: at-issue, random choice only, upper-bounded.
     The random choice interpretation requires a volitional predicate;
     with non-volitional predicates only the unremarkable reading
-    is available (@cite{alonso-ovalle-menendez-benito-2018}, §1.1). -/
+    is available ([alonso-ovalle-menendez-benito-2018], §1.1). -/
 def unoCualquieraEntry : ModalIndefiniteEntry where
   language := "Spanish"
   form := "uno cualquiera"

@@ -6,9 +6,9 @@ import Linglib.Morphology.FragmentGrammars.FragmentGrammar
 # Operational fragment-lambda: a stochastic-lazy unfold sampler
 
 Operational counterpart to `FragmentGrammar.lean`'s joint density
-`fg(F; F)` of @cite{odonnell-2015} §3.1.8 (p. 94): the sampler that draws
+`fg(F; F)` of [odonnell-2015] §3.1.8 (p. 94): the sampler that draws
 from that density. The architecture follows the macro-expansion of
-@cite{odonnell-2015} §2.3.7 Figure 2.21 — `(fragment-lambda args body) ↦
+[odonnell-2015] §2.3.7 Figure 2.21 — `(fragment-lambda args body) ↦
 (PYmem a b (lambda args (if (delay? args) (delay body) body)))` —
 mapping each Church construct to a Lean component:
 
@@ -25,7 +25,7 @@ work). All other operational machinery and preservation theorems
 (`pypDraw_preserves_wellFormed`, `fragmentLambdaDepth_preserves_wellFormed`)
 are real proofs via the `PYM.Preserves` combinator algebra.
 
-@cite{odonnell-2015} §2.3.7, §3.1.8, §3.5.5 (hyperparameters: `a = 0.5`,
+[odonnell-2015] §2.3.7, §3.1.8, §3.5.5 (hyperparameters: `a = 0.5`,
 `b = 100`, `ψ_B = 50`).
 -/
 
@@ -47,7 +47,7 @@ terminals, rules) are all small types so `Type` is sufficient in practice. -/
 
 The lists are kept length-equal by the public API (`empty`, `seatCustomer`,
 `addTable`); we don't enforce this as a structural invariant. Per
-@cite{odonnell-2015} footnote 14 (p. 60), multiple tables may share a dish,
+[odonnell-2015] footnote 14 (p. 60), multiple tables may share a dish,
 which is why we keep `dishes` as a list rather than a set or finmap. -/
 structure PYPSlot (D : Type) where
   dishes : List D
@@ -133,7 +133,7 @@ theorem seatCustomer_wellFormed {s : PYPSlot D} (h : s.WellFormed) (i : ℕ) :
 end PYPSlot
 
 /-- Pitman–Yor hyperparameters: discount `a ∈ [0, 1)` and concentration
-`b > 0`. @cite{odonnell-2015} §3.5.5 (p. 102) sets `a = 0.5`, `b = 100`.
+`b > 0`. [odonnell-2015] §3.5.5 (p. 102) sets `a = 0.5`, `b = 100`.
 
 **Note**: the standard PYP allows `b ≥ -a` (boundary case), including
 negative `b` for `a > 0`. We restrict to `0 < b` to (a) match the book's
@@ -203,7 +203,7 @@ end PYPState
 `PYM α D γ` is the type of `γ`-valued stochastic computations whose state
 is a Pitman–Yor memoisation table over inputs `α` storing dishes of type `D`.
 This is the monad-stack equivalent of the `(PYmem a b _)` wrapper in
-@cite{odonnell-2015} Figure 2.21. -/
+[odonnell-2015] Figure 2.21. -/
 
 abbrev PYM (α D γ : Type) := StateT (PYPState α D) PMF γ
 
@@ -317,7 +317,7 @@ end PYM
 
 /-! ## Pitman–Yor draw
 
-Per @cite{odonnell-2015} §2.3.3.2 (p. 59) and §3.1.6 (p. 89), the
+Per [odonnell-2015] §2.3.3.2 (p. 59) and §3.1.6 (p. 89), the
 (N+1)-th customer at a slot sits at:
 
 - existing table `i` (1 ≤ i ≤ K) with weight `(yᵢ − a) / (N + b)`
@@ -354,7 +354,7 @@ noncomputable def pypDraw {α D : Type} [DecidableEq α] [Inhabited D]
   let K := slot.numTables
   let a := st.hyper.discount
   let b := st.hyper.concentration
-  -- Per @cite{odonnell-2015} §3.1.6 (p. 89): the (N+1)-th customer chooses
+  -- Per [odonnell-2015] §3.1.6 (p. 89): the (N+1)-th customer chooses
   -- table i (i < K) with weight `(yᵢ - a)`, or a fresh table with weight
   -- `K·a + b` (we omit the shared `(N + b)⁻¹` normaliser since `normalize`
   -- recomputes it).
@@ -403,7 +403,7 @@ noncomputable def pypDraw {α D : Type} [DecidableEq α] [Inhabited D]
 constructors:
 
 - `terminal t` — a fully-evaluated terminal symbol (the result of `unfold`
-  reaching a terminal in @cite{odonnell-2015} Figure 2.7, p. 52).
+  reaching a terminal in [odonnell-2015] Figure 2.7, p. 52).
 - `fragment x` — a non-terminal stored as a fragment-leaf: the type-level
   representation of the `(delay body)` thunks of Figure 2.21 (p. 71). When
   the body of `fragment-lambda` flips heads on the halt coin, the result
@@ -411,7 +411,7 @@ constructors:
 - `branch r x children` — a non-terminal expanded by rule `r`. The rule is
   stored alongside the NT and children so that downstream consumers
   (`samplesToCorpusCounts`) can credit halt-vs-recurse decisions to the
-  specific (rule, position) pair, matching @cite{odonnell-2015} §3.1.8's
+  specific (rule, position) pair, matching [odonnell-2015] §3.1.8's
   rule-indexed beta-binomial structure.
 
 The third type parameter `R` is the rule type — typically
@@ -431,7 +431,7 @@ namespace LazyTree
 variable {α β R : Type}
 
 /-- The fragment-leaf frontier: the non-terminals stored as halted
-sub-derivations (the "open slots" of a fragment, in @cite{odonnell-2015}
+sub-derivations (the "open slots" of a fragment, in [odonnell-2015]
 §3.1.8's terminology). -/
 def fragmentLeaves : LazyTree α β R → List α
   | .terminal _        => []
@@ -460,7 +460,7 @@ when the recurse probability is bounded away from 1 (geometric depth).
 Formalising the limit requires probabilistic-fixed-point machinery not
 yet in mathlib; the bounded version is genuine and ships now.
 
-The structure of @cite{odonnell-2015} §3.1.8 (p. 93) is
+The structure of [odonnell-2015] §3.1.8 (p. 93) is
 
 ```
 G^a_FG(d)  = Σ mem{L^A}(s) · ∏ G^root_FG(s'_i)        -- PYP-wrap + recurse on holes
@@ -472,7 +472,7 @@ We split this into two co-located functions:
 
 - `stochasticLazyUnfoldDepth` — the un-memoised §2.3.5.2 model (`L^A` with
   children recursing back into the unfold itself, no PYP). This is
-  @cite{odonnell-2015} §2.3.5.2's `stochastic-lazy-unfold` (Figure 2.18,
+  [odonnell-2015] §2.3.5.2's `stochastic-lazy-unfold` (Figure 2.18,
   p. 68) — a recognised standalone sub-model in the book. Fully defined;
   kept here as the reference for the un-memoised model and as a sub-step
   for understanding the §3.1.8 architecture.
@@ -487,7 +487,7 @@ We split this into two co-located functions:
 
 variable {α β R : Type} [DecidableEq α]
 
-/-- Depth-bounded **stochastic-lazy unfold** per @cite{odonnell-2015}
+/-- Depth-bounded **stochastic-lazy unfold** per [odonnell-2015]
 §2.3.5.2 (Figure 2.18, p. 68). At each call to non-terminal `x`:
 
 1. **Halt-or-recurse step**: flip the biased coin (§3.1.8 `BINOMIAL(ν)`,
@@ -525,7 +525,7 @@ noncomputable def stochasticLazyUnfoldDepth
 Wraps each non-terminal call with `pypDraw` so that previously-sampled
 partial subtrees at the same non-terminal can be reused; recursive
 children calls go back through `fragmentLambdaDepth` itself (PYP-wrapped),
-faithfully matching @cite{odonnell-2015} §3.1.8's mutual recursion
+faithfully matching [odonnell-2015] §3.1.8's mutual recursion
 `G^FG = mem{L^A}` ↔ `L^A`-body-calls-`G^FG`-on-children.
 
 The inner per-call body is factored as `fragmentLambdaStep` so the
@@ -959,7 +959,7 @@ spaces (`TableAssignment`, `HaltCounts` are function types). Convergence
 of this sum is a real-analysis problem (it sums beta/gamma integrals);
 the partition function is essentially the marginal likelihood of the
 fragment-grammar model, which is itself an open computational problem
-(@cite{odonnell-2015} §3.2 introduces an MH sampler precisely because
+([odonnell-2015] §3.2 introduces an MH sampler precisely because
 this constant is intractable). The ratio formulation sidesteps `Z(M)`
 entirely and captures the proportionality content directly.
 
@@ -992,7 +992,7 @@ theorem fragmentLambdaDepth_marginalises_to_fg
     (recurse : G.NT → PMF (ContextFreeRule T G.NT × List (G.NT ⊕ T)))
     (recurseProb : G.NT → NNReal) (recurseProb_le : ∀ x, recurseProb x ≤ 1)
     -- TODO: in a faithful version this is `G.NT → PYPHyper` (per-NT
-    -- restaurants per @cite{odonnell-2015} §3.1.7 `pyp : G.NT → PitmanYor`).
+    -- restaurants per [odonnell-2015] §3.1.7 `pyp : G.NT → PitmanYor`).
     -- The scaffold uses a single global hyper for clarity.
     (hyper : PYPHyper)
     (start : G.NT) (n : ℕ)

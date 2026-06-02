@@ -2,7 +2,7 @@ import Linglib.Semantics.Tense.Basic
 
 /-!
 # Mandarin Temporal Deictic Adverbs
-@cite{zhao-2025}
+[zhao-2025]
 
 Lexical entry for Mandarin 那时 "nà-shí" (that time), typed by `ThenAdverb`.
 

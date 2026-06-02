@@ -4,14 +4,14 @@ import Linglib.Discourse.Centering.Instances.GrammaticalRole
 import Linglib.Core.Constraint.OT.Basic
 
 /-!
-# @cite{beaver-2004}: The Optimization of Discourse Anaphora
+# [beaver-2004]: The Optimization of Discourse Anaphora
 
 David I. Beaver (2004), "The Optimization of Discourse Anaphora,"
 *Linguistics and Philosophy* 27(1): 3-56. © 2004 Kluwer.
 DOI 10.1023/B:LING.0000010796.76522.7a.
 
-Beaver reformulates @cite{grosz-joshi-weinstein-1995} Centering (and
-the @cite{brennan-friedman-pollard-1987} algorithmic version) as an
+Beaver reformulates [grosz-joshi-weinstein-1995] Centering (and
+the [brennan-friedman-pollard-1987] algorithmic version) as an
 Optimality Theory system over six ranked constraints (his §3.2 p. 14):
 
 ```
@@ -24,7 +24,7 @@ if either COT or BFP uniquely predicts an interpretation involving
 fully anaphoric resolution, then both do, and they resolve anaphors
 identically.
 
-@cite{poesio-stevenson-eugenio-hitzeman-2004} §3.1 fn 12 endorse
+[poesio-stevenson-eugenio-hitzeman-2004] §3.1 fn 12 endorse
 this OT reformulation as the right framework for "unpacking" Centering's
 constraints into ranked-OT terms.
 
@@ -152,11 +152,11 @@ def agree : NamedConstraint (Candidate E R) :=
 def disjoint : NamedConstraint (Candidate E R) :=
   mkMark "DISJOINT" (fun c => ¬ c.argDisjointOK = true)
 
-/-- **PRO-TOP** (@cite{beaver-2004} §3.2, "essentially the effect of
+/-- **PRO-TOP** ([beaver-2004] §3.2, "essentially the effect of
     Centering's Rule 1"): "The topic is pronominalized."
 
     **Reused from `Rule1Gordon`** (the *unconditional* Rule 1 variant
-    from `Centering/Rule1.lean`, after @cite{gordon-grosz-gilliom-1993}).
+    from `Centering/Rule1.lean`, after [gordon-grosz-gilliom-1993]).
     Beaver §3.2 explicitly REMOVES the if-clause: in OT, PRO-TOP
     has no antecedent — the topic should be pronominalized, full
     stop. Defeasibility is encoded by PRO-TOP's lower ranking
@@ -184,7 +184,7 @@ def proTop [DecidableEq E] [CfRankerOf E R]
 def famDef : NamedConstraint (Candidate E R) :=
   mkMark "FAM-DEF" (fun c => ¬ c.famDefOK = true)
 
-/-- **COHERE** (@cite{beaver-2004} §3.2, p. 15 statement; commentary
+/-- **COHERE** ([beaver-2004] §3.2, p. 15 statement; commentary
     p. 17): "The topic of the current sentence is the topic of the
     previous one."
 
@@ -204,7 +204,7 @@ def cohere [DecidableEq E] [CfRankerOf E R]
     -- Phrased via Option equality: only "both defined and equal" satisfies.
     ¬ ((cb prev c.utt).isSome ∧ cb prev c.utt = priorTopic))
 
-/-- **ALIGN** (@cite{beaver-2004} §3.2, p. 15 statement; commentary
+/-- **ALIGN** ([beaver-2004] §3.2, p. 15 statement; commentary
     p. 18): "The topic is in subject position."
 
     **Reused from Centering's `cb` and `cp`**: ALIGN is satisfied
@@ -407,7 +407,7 @@ theorem beaver_witness_d12_l_eq_i_wins :
     Mary") outranks PRO-TOP (penalizing the unpronominalized topic),
     so the candidate where Mary in (2c) IS the prior Mary wins.
 
-    This is the @cite{poesio-stevenson-eugenio-hitzeman-2004} §3.1 fn
+    This is the [poesio-stevenson-eugenio-hitzeman-2004] §3.1 fn
     12 critique mechanized: "in BFP Rule 1 is effectively used as a
     hard constraint, a problem fixed by Beaver's own optimality-
     theoretic reformulation of the algorithm." -/

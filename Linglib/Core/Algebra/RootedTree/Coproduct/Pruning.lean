@@ -7,7 +7,7 @@ set_option autoImplicit false
 
 /-!
 # Δ^ρ (admissible-cut, root-component pruning) coproduct on `RootedTree.Planar α`
-@cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
+[marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 The **admissible-cut, root-component pruning** variant of the
 Connes-Kreimer coproduct on planar n-ary rooted trees. For a tree T:

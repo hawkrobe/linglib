@@ -9,7 +9,7 @@ import Linglib.Phonology.Subregular.TierProjection
 /-!
 # OCP (Obligatory Contour Principle) ↔ TSL_2 — the identity instance
 
-The OCP @cite{goldsmith-1976} @cite{mccarthy-1986} is the identity-relation
+The OCP [goldsmith-1976] [mccarthy-1986] is the identity-relation
 instance of the generic forbidden-pair markedness constructor
 `mkForbidPairsOnTier` (see `ForbidPairs.lean`): the forbidden 2-factor is
 `[some x, some x]`, and the corresponding TSL_2 grammar is
@@ -17,7 +17,7 @@ instance of the generic forbidden-pair markedness constructor
 
 Mathematically, the unprojected (single-tier, full-alphabet) case is the
 linguistic instance of the classical theory of *square-free words*
-@cite{thue-1906}: a word is OCP-clean iff it contains no factor `x x`.
+[thue-1906]: a word is OCP-clean iff it contains no factor `x x`.
 Thue's construction shows infinite square-free words exist over a
 3-letter alphabet, while every binary string of length ≥ 4 contains a
 square — i.e. binary tonal alphabets cannot satisfy a strict OCP at
@@ -34,7 +34,7 @@ points downstream consumers reference.
 This file formalizes the **prohibition** reading of the OCP — strings
 containing adjacent identical (tier-projected) autosegments are *rejected*
 by `TSLGrammar.ocp p`. The classical autosegmental tradition
-(@cite{goldsmith-1976}) instead reads the OCP as a *merger
+([goldsmith-1976]) instead reads the OCP as a *merger
 transformation*: adjacent identical autosegments are *collapsed* into a
 single multiply-linked autosegment. The merger reading is formalized by
 `Phonology.Autosegmental.RegisterTier.mergeTRN` (and the underlying

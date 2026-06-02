@@ -13,7 +13,7 @@ import Linglib.Fragments.English.FocusParticles
 import Linglib.Fragments.English.FunctionWords
 
 /-!
-# @cite{umbach-2004} — On the Notion of Contrast @cite{umbach-2004}
+# [umbach-2004] — On the Notion of Contrast [umbach-2004]
 
 Umbach, Carla (2004). On the Notion of Contrast in Information Structure
 and Discourse Structure. *Journal of Semantics* 21(2): 155–175.
@@ -44,14 +44,14 @@ three levels at which "contrast" appears:
 - Confirm+deny condition on "but" (§3.1)
 - Exclusion variety taxonomy connecting *only*-phrases ↔ CONTRAST
   and contrastive focus ↔ CORRECTION (§2.3, §3.2)
-- Bridge: comparison with @cite{merin-1999} DTS account of "but"
+- Bridge: comparison with [merin-1999] DTS account of "but"
 
 ## Connection to existing formalization
 
-- Focus alternatives & FIP: `Semantics.Focus.Interpretation` (@cite{rooth-1992})
-- QUD / implicit questions: `Question`, `Question.isPartialAnswer` (@cite{roberts-2012})
-- DTS "but": `DTS.But` (@cite{merin-1999})
-- Coherence relations: `Discourse.Coherence` (@cite{kehler-2002})
+- Focus alternatives & FIP: `Semantics.Focus.Interpretation` ([rooth-1992])
+- QUD / implicit questions: `Question`, `Question.isPartialAnswer` ([roberts-2012])
+- DTS "but": `DTS.But` ([merin-1999])
+- Coherence relations: `Discourse.Coherence` ([kehler-2002])
 - Focus particles: `English.FocusParticles`
 -/
 
@@ -98,7 +98,7 @@ def hadDrink : Set W := {.jBeer, .jMartini, .jBeerMartini}
 def wentSomewhere : Set W := {.jBerlin, .jParis, .jBoth}
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §3  Alternative Set Well-Formedness (@cite{umbach-2004} §2.2)
+-- §3  Alternative Set Well-Formedness ([umbach-2004] §2.2)
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! The core formal claim: alternatives must be pairwise semantically
@@ -149,7 +149,7 @@ theorem beer_martini_wellformed :
 /-- "drink" subsumes "martini": hadMartini ⊆ hadDrink.
     This violates semantic independence, explaining why
     *#John had a drink and Mary had a martini* is odd
-    (@cite{umbach-2004} §2.2, ex. 9a). -/
+    ([umbach-2004] §2.2, ex. 9a). -/
 theorem drink_subsumes_martini : hadMartini ⊆ hadDrink := by
   intro w hw
   simp [hadMartini] at hw
@@ -193,10 +193,10 @@ theorem somewhere_integrates :
   rcases ha with rfl | rfl <;> · simp [wentBerlin, wentParis, wentSomewhere] at hw ⊢; tauto
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §3d  Connection to @cite{rooth-1992} Focus Interpretation Principle
+-- §3d  Connection to [rooth-1992] Focus Interpretation Principle
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! @cite{umbach-2004} §2.1 builds directly on @cite{rooth-1992}'s alternative
+/-! [umbach-2004] §2.1 builds directly on [rooth-1992]'s alternative
 semantics: all focus evokes alternatives, and Umbach's similarity+dissimilarity
 refines what counts as a well-formed alternative set.
 
@@ -223,10 +223,10 @@ theorem wellformed_implies_fip_compatible {W : Type}
   fun a ha => hfip (hgamma a ha)
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §4  Exclusion Varieties (@cite{umbach-2004} §2.3)
+-- §4  Exclusion Varieties ([umbach-2004] §2.3)
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! @cite{umbach-2004} (§2.3 UNVERIFIED) distinguishes two varieties of
+/-! [umbach-2004] (§2.3 UNVERIFIED) distinguishes two varieties of
 exclusion that cross-cut information structure and discourse structure:
 *only*-phrases exclude *additional* alternatives (mapping to the
 CONTRAST discourse relation), while contrastive focus excludes *by
@@ -244,10 +244,10 @@ theorem only_fragment_exclusion :
     some .contrast := rfl
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §5  Confirm+Deny Condition on "but" (@cite{umbach-2004} §3.1)
+-- §5  Confirm+Deny Condition on "but" ([umbach-2004] §3.1)
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! @cite{umbach-2004} §3.1: a *but*-sentence responds to an implicit
+/-! [umbach-2004] §3.1: a *but*-sentence responds to an implicit
 question with "yes...but no...". One conjunct confirms a sub-question,
 the other denies its counterpart. This is the *confirm+deny* condition.
 
@@ -308,10 +308,10 @@ theorem room_dishes_independent :
 -- §5b  QUD formulation of confirm+deny
 -- ─────────────────────────────────────────────────────────────────────
 
-/-! @cite{umbach-2004} §3.1 formulates confirm+deny in terms of implicit
+/-! [umbach-2004] §3.1 formulates confirm+deny in terms of implicit
 questions (QUDs): "A but B" responds to an implicit conjunctive question
 "Did X do A, and did X do B?" where one sub-answer confirms and the other
-denies. This connects to `Question.fromSetoid` (@cite{roberts-2012}):
+denies. This connects to `Question.fromSetoid` ([roberts-2012]):
 the implicit conjunctive question is the partition by joint
 (room, dishes) values, and confirm+deny picks one cell. -/
 
@@ -356,10 +356,10 @@ theorem confirm_deny_is_partial_answer :
    Or.inl subset_rfl⟩
 
 -- ─────────────────────────────────────────────────────────────────────
--- §5c  Simple vs double contrast (@cite{umbach-2004} §3.1)
+-- §5c  Simple vs double contrast ([umbach-2004] §3.1)
 -- ─────────────────────────────────────────────────────────────────────
 
-/-! @cite{umbach-2004} §3.1 distinguishes two kinds of CONTRAST:
+/-! [umbach-2004] §3.1 distinguishes two kinds of CONTRAST:
 
 - **Single contrast** ("but"): one conjunct confirms, one denies.
   "John cleaned his room, but he didn't wash the dishes."
@@ -378,7 +378,7 @@ abbrev singleContrast {W : Type} (q₁ q₂ c₁ c₂ : Set W) : Prop :=
   confirmDeny q₁ q₂ c₁ c₂
 
 /-- Contrast multiplicity: single vs double.
-    @cite{umbach-2004} §3.1: single contrast ("but") has one contrastive
+    [umbach-2004] §3.1: single contrast ("but") has one contrastive
     focus (confirm+deny); double contrast ("although"/"while") has two
     contrastive foci (both conjuncts bear contrastive marking).
 
@@ -392,7 +392,7 @@ inductive ContrastMultiplicity where
   deriving DecidableEq, Repr
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §6  CONTRAST vs CORRECTION (@cite{umbach-2004} §3.2)
+-- §6  CONTRAST vs CORRECTION ([umbach-2004] §3.2)
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! The discourse relations CONTRAST and CORRECTION both require
@@ -436,17 +436,17 @@ theorem correction_excludes_first :
   · simp [wentParis]
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §7  Bridge: Umbach vs Merin (@cite{merin-1999})
+-- §7  Bridge: Umbach vs Merin ([merin-1999])
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! Two accounts of "but" are now formalized in linglib:
 
-1. **@cite{merin-1999}** (in `DTS.But`): "A but B" is felicitous
+1. **[merin-1999]** (in `DTS.But`): "A but B" is felicitous
    iff A is positively relevant and B is negatively relevant to an issue H,
    with B "winning" (A∧B negatively relevant). This yields unexpectedness
    as the core meaning: P(B|A) < P(B).
 
-2. **@cite{umbach-2004}** (this file): "A but B" requires
+2. **[umbach-2004]** (this file): "A but B" requires
    similarity+dissimilarity in the focused alternatives of the conjuncts,
    plus the confirm+deny condition: one conjunct confirms and one denies
    a sub-question. This yields exclusion of an alternative.
@@ -477,7 +477,7 @@ only on their truth-conditional content, not on what is focused.
 Umbach's account directly predicts that shifting focus in the second
 conjunct changes the contrast (§3.1, ex. 16a vs 16b).
 
-@cite{merin-1999} Theorem 8 (CIP + contrariness → unexpectedness) is in
+[merin-1999] Theorem 8 (CIP + contrariness → unexpectedness) is in
 `DTS.But.cip_contrariness_implies_unexpectedness`.
 -/
 
@@ -499,7 +499,7 @@ theorem contrast_correction_structurally_distinct :
 -- §8  Summary Taxonomy
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! @cite{umbach-2004} Conclusion (Table 1 UNVERIFIED): the notion of
+/-! [umbach-2004] Conclusion (Table 1 UNVERIFIED): the notion of
 contrast decomposes into three nested layers, each adding a requirement:
 
 ```

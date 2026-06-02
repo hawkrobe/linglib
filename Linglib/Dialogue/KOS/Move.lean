@@ -3,9 +3,9 @@ import Linglib.Discourse.IllocutionaryForce
 
 /-!
 # IllocMove ↔ Searle Bridge
-@cite{ginzburg-2012} @cite{searle-1979}
+[ginzburg-2012] [searle-1979]
 
-Maps KOS's `IllocMove` constructors to @cite{searle-1979}'s five-class
+Maps KOS's `IllocMove` constructors to [searle-1979]'s five-class
 illocutionary taxonomy and to direction-of-fit. Surfaces as:
 
 - `IllocMove.toSearleClass`
@@ -20,7 +20,7 @@ machinery.
 
 namespace Dialogue.KOS
 
-/-- Map an illocutionary move to @cite{searle-1979}'s five-class taxonomy.
+/-- Map an illocutionary move to [searle-1979]'s five-class taxonomy.
 
 Assert/accept/confirm are assertives (mind-to-world fit). Ask is a directive
 (world-to-mind: the speaker tries to get the addressee to provide information).

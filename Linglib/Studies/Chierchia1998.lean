@@ -6,8 +6,8 @@ import Linglib.Fragments.Japanese.Nouns
 import Linglib.Fragments.Italian.Nouns
 
 /-!
-Noun Categorization × @cite{chierchia-1998} Nominal Mapping Parameter
-@cite{chierchia-1998}
+Noun Categorization × [chierchia-1998] Nominal Mapping Parameter
+[chierchia-1998]
 
 Connects the cross-linguistic noun categorization typology in
 `Aikhenvald2000` to the Nominal Mapping
@@ -21,9 +21,9 @@ Parameter from `Semantics.Kinds.NMP`.
   `french_chierchia_consistent`, `italian_chierchia_consistent`:
   Actual classifier types match predictions
 
-## Classifier Strategy Connection (@cite{little-moroney-royer-2022})
+## Classifier Strategy Connection ([little-moroney-royer-2022])
 
-@cite{chierchia-1998}'s theory is a CLF-for-N theory: the classifier
+[chierchia-1998]'s theory is a CLF-for-N theory: the classifier
 atomizes the noun denotation (which denotes kinds in [+arg, -pred]
 languages). This predicts that classifiers in [+arg, -pred] languages
 should appear beyond numerals — with demonstratives, quantifiers, and
@@ -109,9 +109,9 @@ theorem french_italian_same_mapping :
     French.Nouns.frenchMapping =
       Italian.Nouns.italianMapping := rfl
 
-/-! ## §2: @cite{chierchia-1998}'s per-language strategy assignments
+/-! ## §2: [chierchia-1998]'s per-language strategy assignments
 
-@cite{chierchia-1998}'s theory is a CLF-for-N theory: the classifier
+[chierchia-1998]'s theory is a CLF-for-N theory: the classifier
 atomizes the noun denotation. The NMP determines that nouns denote kinds
 (need individuation), so classifiers serve the noun (atomization), not the
 numeral. This commits Chierchia's framework to a `.forNoun` strategy for
@@ -119,7 +119,7 @@ every [+arg, -pred] language with classifiers.
 
 Per-language assignments live here (in this study file) rather than on
 `NounCategorizationSystem`, where they would silently endorse Chierchia's
-framework over alternatives like @cite{sudo-2016}'s `.sudoBlocking`. -/
+framework over alternatives like [sudo-2016]'s `.sudoBlocking`. -/
 
 /-- Chierchia's strategy assignment for Japanese: CLF atomizes a kind-denoting
     noun. -/
@@ -138,7 +138,7 @@ theorem chierchia_assignments_uniform :
 -- §?: Bare-NP / Type-Shift Blocking Predictions
 -- ============================================================================
 
-/-! Empirical predictions of @cite{chierchia-1998}'s Nominal Mapping
+/-! Empirical predictions of [chierchia-1998]'s Nominal Mapping
 Parameter, verified against Fragment data. -/
 
 /-- Bare NPs are licensed in [+arg] languages, not in [-arg] languages

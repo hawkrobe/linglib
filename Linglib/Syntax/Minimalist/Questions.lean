@@ -4,13 +4,13 @@ import Linglib.Semantics.Mood.ClauseType
 
 /-!
 # Question Syntax: ForceP, FinP, PolP
-@cite{rizzi-1997} @cite{holmberg-2016}
+[rizzi-1997] [holmberg-2016]
 
 Syntactic projections involved in question formation.
 
 ## Clause Structure for Polar Questions
 
-@cite{rizzi-1997}'s split-CP and @cite{holmberg-2016}'s PolP analysis
+[rizzi-1997]'s split-CP and [holmberg-2016]'s PolP analysis
 give the following structure for a polar question:
 
     [ForceP Force⁰[+Q] [FinP Fin⁰[+finite] [PolP Pol⁰[uPol] [TP ...]]]]
@@ -33,13 +33,13 @@ to the semantic `WHFeature`:
 
 ## Cross-framework: clause-typing locus is contested
 
-This file places clause-typing at `Force⁰[+Q]` per @cite{rizzi-1997}. Two
+This file places clause-typing at `Force⁰[+Q]` per [rizzi-1997]. Two
 sibling analyses in linglib place it elsewhere:
 
-- **@cite{dayal-2025}** (`Studies/Dayal2025.lean`):
+- **[dayal-2025]** (`Studies/Dayal2025.lean`):
   clause-typing locus is `C` for CP-typed languages (English, Italian) and
   `PerspP` for PerspP-typed languages (Hindi-Urdu).
-- **@cite{holmberg-2016}** (`Studies/Holmberg2016.lean`):
+- **[holmberg-2016]** (`Studies/Holmberg2016.lean`):
   the answering-system parameter places polar-Q-typing at `Pol⁰` via
   `Features/AnsweringSystem.lean`.
 
@@ -79,7 +79,7 @@ def QFeature.toForce : QFeature → IllocutionaryMood
 /-- The clause spine for a polar question: V ... T ... Pol ... Fin ... Force.
 
     This is the full IP-to-CP spine with the projections relevant to
-    @cite{holmberg-2016}'s analysis. The Pol head is between T and Fin. -/
+    [holmberg-2016]'s analysis. The Pol head is between T and Fin. -/
 def polarQuestionSpine : ClauseSpine :=
   ⟨[.V, .v, .Voice, .T, .Pol, .Neg, .Fin, .Force], by decide⟩
 

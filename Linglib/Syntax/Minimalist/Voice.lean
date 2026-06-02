@@ -5,18 +5,18 @@ import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!
 # Voice Head Flavors
-@cite{chomsky-2001} @cite{coon-2019} @cite{cuervo-2003} @cite{harley-2014} @cite{kratzer-1996} @cite{legate-2003} @cite{schaefer-2008} @cite{wood-2015}
+[chomsky-2001] [coon-2019] [cuervo-2003] [harley-2014] [kratzer-1996] [legate-2003] [schaefer-2008] [wood-2015]
 
 Voice heads introduce (or fail to introduce) external arguments.
-The key typology from @cite{schaefer-2008}:
+The key typology from [schaefer-2008]:
 
-- **Agentive**: Introduces an agent external argument (@cite{kratzer-1996} Voice_AG)
-- **Causer**: Introduces a causer (@cite{schaefer-2008} Voice_CAUSE)
+- **Agentive**: Introduces an agent external argument ([kratzer-1996] Voice_AG)
+- **Causer**: Introduces a causer ([schaefer-2008] Voice_CAUSE)
 - **NonThematic**: Semantically vacuous — no θ-role, but has a [D] feature
-  requiring PF realization (anticausative SE in Romance; Muñoz @cite{munoz-perez-2026})
+  requiring PF realization (anticausative SE in Romance; Muñoz [munoz-perez-2026])
 - **Expletive**: No specifier, no semantics (middle voice, dispositionals)
-- **Reflexive**: [+θ, +D] with reflexive binding (@cite{wood-2015} Icelandic -st)
-- **Experiencer**: [+θ, +D] introducing experiencer (@cite{wood-2015} subject-exp -st)
+- **Reflexive**: [+θ, +D] with reflexive binding ([wood-2015] Icelandic -st)
+- **Experiencer**: [+θ, +D] introducing experiencer ([wood-2015] subject-exp -st)
 
 ## Key Claim
 
@@ -30,17 +30,17 @@ Voice and VerbHead are both "little-v" but encode different
 dimensions: Voice determines *whether* an external argument is introduced;
 VerbHead decomposes the *event structure* into subevents.
 
-Following @cite{cuervo-2003} and @cite{pylkkanen-2008}, the CAUSE
+Following [cuervo-2003] and [pylkkanen-2008], the CAUSE
 relation is modeled here as an independent VerbHead in the root's
 event decomposition — present in both causative and anticausative
 alternants. Voice contributes vDO (the agent's activity subevent)
 when it assigns a θ-role, but does NOT contribute the causal relation.
 
-Note: @cite{wood-2015} uses a SINGLE v head whose interpretation
-introduces CAUSE, rather than @cite{cuervo-2003}'s multi-headed
+Note: [wood-2015] uses a SINGLE v head whose interpretation
+introduces CAUSE, rather than [cuervo-2003]'s multi-headed
 decomposition. The VerbHead decomposition used here is a linglib
 modeling choice that captures the same Voice–CAUSE independence
-using @cite{cuervo-2003}'s notation. See
+using [cuervo-2003]'s notation. See
 `Wood2015` for the Icelandic -st
 apparatus (the Wood-2015 -st classification, root-structure
 projections, and ±D/±λx grid analysis); the lexical fragment
@@ -60,19 +60,19 @@ namespace Minimalist
     Agentive Voice introduces an agent; causer Voice introduces a causer;
     non-thematic Voice has no semantics (anticausative SE);
     expletive Voice has neither specifier nor semantics (middles);
-    passive Voice checks Case without assigning θ (@cite{collins-2005}: *by*);
-    reflexive Voice introduces agent that binds internal argument (@cite{wood-2015});
-    experiencer Voice introduces experiencer external argument (@cite{wood-2015}). -/
+    passive Voice checks Case without assigning θ ([collins-2005]: *by*);
+    reflexive Voice introduces agent that binds internal argument ([wood-2015]);
+    experiencer Voice introduces experiencer external argument ([wood-2015]). -/
 inductive VoiceFlavor where
-  | agentive     -- Introduces external argument with agent θ-role (@cite{kratzer-1996})
-  | causer       -- Introduces causer (@cite{schaefer-2008}: Voice_CAUSE)
+  | agentive     -- Introduces external argument with agent θ-role ([kratzer-1996])
+  | causer       -- Introduces causer ([schaefer-2008]: Voice_CAUSE)
   | nonThematic  -- Semantically vacuous, no θ-role (anticausative SE, Chuj -j)
   | expletive    -- No specifier, no semantics (middle voice)
   | impersonal   -- Demotes agent to implicit generic human (Finnish "passive")
-  | passive      -- Checks Case but does not assign θ (@cite{collins-2005}: *by* heads VoiceP)
-  | antipassive  -- Introduces agent with absolutive (not ergative) case; demotes object to oblique (@cite{scott-2023})
-  | reflexive    -- [+θ, +D]: introduces agent, binds internal argument (Icelandic -st reflexive; @cite{wood-2015})
-  | experiencer  -- [+θ, +D]: introduces experiencer external argument (@cite{wood-2015} subject-experiencer -st)
+  | passive      -- Checks Case but does not assign θ ([collins-2005]: *by* heads VoiceP)
+  | antipassive  -- Introduces agent with absolutive (not ergative) case; demotes object to oblique ([scott-2023])
+  | reflexive    -- [+θ, +D]: introduces agent, binds internal argument (Icelandic -st reflexive; [wood-2015])
+  | experiencer  -- [+θ, +D]: introduces experiencer external argument ([wood-2015] subject-experiencer -st)
   deriving DecidableEq, Repr
 
 /-- The default phasehood for each Voice flavor under the
@@ -85,7 +85,7 @@ def VoiceFlavor.defaultPhasal : VoiceFlavor → Bool
   | .agentive | .causer | .reflexive | .experiencer => true
   | .nonThematic | .expletive | .impersonal | .passive | .antipassive => false
 
-/-- Severing prediction (@cite{kratzer-1996}): Voice flavor determines
+/-- Severing prediction ([kratzer-1996]): Voice flavor determines
     WHICH theta role the external argument gets, going beyond
     `VoiceHead.AssignsTheta` (which only says WHETHER there is one).
 
@@ -95,8 +95,8 @@ def VoiceFlavor.thetaRole : VoiceFlavor → Option ThetaRole
   | .agentive     => some .agent
   | .causer       => some .stimulus
   | .antipassive  => some .agent     -- agent still present, just with ABS case
-  | .reflexive    => some .agent     -- agent that binds internal arg (@cite{wood-2015})
-  | .experiencer  => some .experiencer  -- subject-experiencer (@cite{wood-2015})
+  | .reflexive    => some .agent     -- agent that binds internal arg ([wood-2015])
+  | .experiencer  => some .experiencer  -- subject-experiencer ([wood-2015])
   | .nonThematic  => none
   | .expletive    => none
   | .impersonal   => none
@@ -115,13 +115,13 @@ structure VoiceHead where
   /-- Per-construction override of the flavor-default phasehood. `none`
       uses `flavor.defaultPhasal`; `some b` overrides to `b`. Use this to
       express principled per-paper divergence from the Collins-2005 baseline:
-      e.g., @cite{erlewine-sommerlot-2025} sets `some true` on Malayic
-      passive Voice, @cite{coon-2019} sets `some false` on Chol intransitive
-      `v_w`/`v_ch` agentive variants, @cite{coon-mateo-pedro-preminger-2014}
+      e.g., [erlewine-sommerlot-2025] sets `some true` on Malayic
+      passive Voice, [coon-2019] sets `some false` on Chol intransitive
+      `v_w`/`v_ch` agentive variants, [coon-mateo-pedro-preminger-2014]
       sets `some false` on Mam Agent Focus Voice. -/
   phaseOverride : Option Bool := none
   /-- Does this Voice head check Case? In active, v checks accusative;
-      in passive, Voice/*by* checks it (@cite{collins-2005}, p. 96: feature
+      in passive, Voice/*by* checks it ([collins-2005], p. 96: feature
       dissociation). Default false — only passive Voice checks Case. -/
   checksCase : Bool := false
   /-- Agree-relevant features on Voice (e.g., [uOblique] for Mam =(y)a').
@@ -212,22 +212,22 @@ def voiceImpersonal : VoiceHead :=
     that makes v* a strong phase head has been dissociated onto Voice/*by*.
 
     This is why PartP (complement of v) remains accessible for smuggling:
-    passive v is a defective v, not v*. Cf. @cite{chomsky-2001}: "only v*
+    passive v is a defective v, not v*. Cf. [chomsky-2001]: "only v*
     (transitive) is a strong phase."
 
-    **Contested**: @cite{legate-2003} argues passive v IS a phase head based
+    **Contested**: [legate-2003] argues passive v IS a phase head based
     on reconstruction and parasitic gap data. The current formalization
-    follows @cite{collins-2005} and @cite{chomsky-2001}. -/
+    follows [collins-2005] and [chomsky-2001]. -/
 def voicePassive : VoiceHead :=
   { flavor := .passive, hasD := true, checksCase := true }
 
-/-- Reflexive Voice (@cite{wood-2015}): introduces agent that is coreferent
+/-- Reflexive Voice ([wood-2015]): introduces agent that is coreferent
     with the internal argument. [+θ, +D], phase head (assigns θ).
     Icelandic -st spells out this Voice in reflexive constructions. -/
 def voiceReflexive : VoiceHead :=
   { flavor := .reflexive, hasD := true }
 
-/-- Experiencer Voice (@cite{wood-2015}): introduces experiencer external
+/-- Experiencer Voice ([wood-2015]): introduces experiencer external
     argument. [+θ, +D], phase head. Icelandic subject-experiencer -st verbs
     (e.g., *leiðast* 'be bored'). -/
 def voiceExperiencer : VoiceHead :=
@@ -244,7 +244,7 @@ theorem agentive_assigns_theta : voiceAgent.AssignsTheta := by decide
 theorem nonThematic_no_theta : ¬ voiceAnticausative.AssignsTheta := by decide
 
 /-- Non-thematic Voice has no semantic contribution.
-    This is the core claim of Muñoz @cite{munoz-perez-2026}: SE is a PF phenomenon. -/
+    This is the core claim of Muñoz [munoz-perez-2026]: SE is a PF phenomenon. -/
 theorem nonThematic_no_semantics : ¬ voiceAnticausative.HasSemantics := by decide
 
 /-- Agentive Voice is a phase head (v* = Voice_AG). -/
@@ -270,13 +270,13 @@ theorem passive_not_phase : ¬ voicePassive.IsPhasal := by decide
 /-- Passive Voice HAS semantic content (*by* mediates Case-checking). -/
 theorem passive_has_semantics : voicePassive.HasSemantics := by decide
 
-/-- Passive Voice checks Case (@cite{collins-2005}, p. 96: feature dissociation). -/
+/-- Passive Voice checks Case ([collins-2005], p. 96: feature dissociation). -/
 theorem passive_checks_case : voicePassive.ChecksCase := by decide
 
-/-- Reflexive Voice assigns a θ-role (@cite{wood-2015}). -/
+/-- Reflexive Voice assigns a θ-role ([wood-2015]). -/
 theorem reflexive_assigns_theta : voiceReflexive.AssignsTheta := by decide
 
-/-- Experiencer Voice assigns a θ-role (@cite{wood-2015}). -/
+/-- Experiencer Voice assigns a θ-role ([wood-2015]). -/
 theorem experiencer_assigns_theta : voiceExperiencer.AssignsTheta := by decide
 
 /-- Only θ-assigning Voice flavors assign θ-roles. The reverse direction
@@ -287,7 +287,7 @@ theorem theta_implies_active_flavor (v : VoiceHead) :
     v.flavor = .reflexive ∨ v.flavor = .experiencer := id
 
 -- ============================================================================
--- § 5: Voice–VerbHead Bridge (@cite{kratzer-1996} in @cite{cuervo-2003} terms)
+-- § 5: Voice–VerbHead Bridge ([kratzer-1996] in [cuervo-2003] terms)
 -- ============================================================================
 
 /-- Build the full verbal decomposition by combining Voice's contribution
@@ -295,8 +295,8 @@ theorem theta_implies_active_flavor (v : VoiceHead) :
 
     Voice contributes vDO when it assigns a θ-role (agentive, causer,
     antipassive). The root supplies the lower structure, which now
-    includes vCAUSE for change-of-state roots (@cite{wood-2015},
-    @cite{pylkkanen-2008}). CAUSE is independent of Voice:
+    includes vCAUSE for change-of-state roots ([wood-2015],
+    [pylkkanen-2008]). CAUSE is independent of Voice:
 
     - Voice_AG + [vCAUSE, vGO, vBE] → [vDO, vCAUSE, vGO, vBE] (causative)
     - Voice_nonTh + [vCAUSE, vGO, vBE] → [vCAUSE, vGO, vBE] (anticausative)
@@ -346,7 +346,7 @@ theorem nonthematic_plus_state_is_state :
 /-- The causative alternation: same root structure [vCAUSE, vGO, vBE] is
     causative under agentive Voice but inchoative under non-thematic Voice.
     CAUSE is shared across both alternants — only vDO (from Voice) differs.
-    This formalizes the @cite{wood-2015}/@cite{pylkkanen-2008} insight:
+    This formalizes the [wood-2015]/[pylkkanen-2008] insight:
     CAUSE is independent of Voice. -/
 theorem causative_alternation :
     isCausative (buildDecomposition voiceAgent [.vCAUSE, .vGO, .vBE]) = true ∧
@@ -369,7 +369,7 @@ theorem cause_independent_of_voice :
   decide
 
 -- ============================================================================
--- § 7: Feature Dissociation (@cite{collins-2005}, §4)
+-- § 7: Feature Dissociation ([collins-2005], §4)
 -- ============================================================================
 
 /-- In active, v (= agentive Voice) assigns θ AND controls Case-checking
@@ -402,7 +402,7 @@ theorem passive_no_vDO (root : List VerbHead) :
 -- ============================================================================
 
 /-- Agentive Voice corresponds to traditional v* (phase head).
-    In the @cite{kratzer-1996}/Schäfer framework, agentive Voice replaces
+    In the [kratzer-1996]/Schäfer framework, agentive Voice replaces
     v*. Both agentive and causer Voice are phase heads. -/
 theorem agentive_voice_is_phase_head :
     voiceAgent.IsPhasal ∧ voiceCauser.IsPhasal := by decide
@@ -413,14 +413,14 @@ theorem nonthematic_voice_not_phase_head :
     ¬ voiceAnticausative.IsPhasal ∧ ¬ voiceMiddle.IsPhasal := by decide
 
 -- Voice phasehood does NOT track θ-role assignment in general.
--- @cite{erlewine-sommerlot-2025} (Malayic) treats every Voice — including passive
--- and bare passive — as a phase head; @cite{coon-2019} (Chol) treats certain
+-- [erlewine-sommerlot-2025] (Malayic) treats every Voice — including passive
+-- and bare passive — as a phase head; [coon-2019] (Chol) treats certain
 -- agentive Voice heads (the intransitive `v_w` / `v_ch` variants) as non-phasal
 -- despite assigning a θ-role. The `phaseOverride` field is the per-construction
 -- locus where such divergences from the flavor default are made explicit.
 
 -- ============================================================================
--- § 9: Parametric Voice Decomposition (@cite{alexiadou-schaefer-2015}, @cite{schaefer-2017})
+-- § 9: Parametric Voice Decomposition ([alexiadou-schaefer-2015], [schaefer-2017])
 -- ============================================================================
 
 /-- How a Voice head introduces (or fails to introduce) an external
@@ -430,7 +430,7 @@ theorem nonthematic_voice_not_phase_head :
       the external argument occupies Spec,VoiceP
     - `thematicExistential`: [+∃x] — introduces agent/causer via ∃-binding;
       agent is semantically present but syntactically implicit
-      (@cite{schaefer-2017} (31b)/(31e): "medio-passive Voice" {λe∃x[agent(e,x)]})
+      ([schaefer-2017] (31b)/(31e): "medio-passive Voice" {λe∃x[agent(e,x)]})
     - `expletive`: [−λx] — no semantic contribution; Voice is semantically
       vacuous (anticausative SE, middles) -/
 inductive ExternalArgSemantics where
@@ -441,8 +441,8 @@ inductive ExternalArgSemantics where
 
 /-- The ±D / ±λx parametric decomposition of Voice heads.
 
-    From @cite{alexiadou-schaefer-2015} (p. 109, ex. (12)), extended by
-    @cite{schaefer-2017}. Two binary parameters generate the core
+    From [alexiadou-schaefer-2015] (p. 109, ex. (12)), extended by
+    [schaefer-2017]. Two binary parameters generate the core
     cross-linguistic typology of Voice:
 
     - **±D** (`selectsSpecifier`): does Voice select a syntactic specifier?
@@ -452,7 +452,7 @@ inductive ExternalArgSemantics where
     with multiple parameter settings, with the actual setting determined by
     independent factors (argument realization, verb class, pragmatics).
     Indonesian *ber-* is fully underspecified ⟨none, none⟩
-    (@cite{beavers-udayana-2022}); Spanish *se* is underspecified for ±D. -/
+    ([beavers-udayana-2022]); Spanish *se* is underspecified for ±D. -/
 structure VoiceParams where
   /-- Does Voice select a syntactic specifier (DP)?
       `some true` = [+D], `some false` = [−D], `none` = underspecified -/
@@ -558,9 +558,9 @@ theorem underspecified_compatible_with_all (f : VoiceFlavor) :
     Hebrew *hit-*, etc.) can spell out distinct functional positions:
     Voice with a [D] feature, specifierless Voice, or v itself. The
     Voice_{D} vs Voice_{∅} distinction is from
-    @cite{alexiadou-schaefer-2015} and
-    @cite{wood-marantz-2017}; the v-vs-Voice distinction, in the
-    @cite{wood-2015} treatment of Icelandic *-ka*, locates *-ka* on v
+    [alexiadou-schaefer-2015] and
+    [wood-marantz-2017]; the v-vs-Voice distinction, in the
+    [wood-2015] treatment of Icelandic *-ka*, locates *-ka* on v
     rather than on Voice.
 
     `voiceDOrBare` represents underspecification — a marking morpheme
@@ -573,15 +573,15 @@ theorem underspecified_compatible_with_all (f : VoiceFlavor) :
     out. -/
 inductive VoiceProjectionLocus where
   /-- Voice carrying a [D] feature; projects a specifier
-      (@cite{wood-2015} Voice_{D}). -/
+      ([wood-2015] Voice_{D}). -/
   | voiceD
   /-- Specifierless Voice; no [D] feature
-      (@cite{wood-2015} Voice_{∅}). -/
+      ([wood-2015] Voice_{∅}). -/
   | voiceBare
   /-- Underspecified: compatible with either `voiceD` or `voiceBare`. -/
   | voiceDOrBare
   /-- Exponent of v, not Voice (e.g., Icelandic *-ka*
-      per @cite{wood-2015} Ch. 3, §3.3). -/
+      per [wood-2015] Ch. 3, §3.3). -/
   | vHead
   deriving DecidableEq, Repr
 

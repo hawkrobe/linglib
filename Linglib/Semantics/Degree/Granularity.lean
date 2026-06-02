@@ -8,7 +8,7 @@ import Linglib.Discourse.Strategy
 import Linglib.Semantics.Questions.Partition.Lattice
 
 /-!
-# Granularity-Sensitive Degree Semantics @cite{thomas-deo-2020}
+# Granularity-Sensitive Degree Semantics [thomas-deo-2020]
 
 Thomas, W. & Deo, A. (2020). The interaction of *just* with modified
 scalar predicates. *Sinn und Bedeutung* 24, vol. 2, pp. 354–372.
@@ -60,7 +60,7 @@ structure GranInterval (D : Type*) where
 -- § 1a. Granularity Construction (eqs. 40–42)
 -- ════════════════════════════════════════════════════
 
-/-! ### @cite{sauerland-stateva-2011} granularity framework
+/-! ### [sauerland-stateva-2011] granularity framework
 
 Eqs. (40a-c) define the properties of a granularity function γ:
 - (40a) s ∈ γ(s) — every degree is in its own cell
@@ -222,7 +222,7 @@ The degree-level infrastructure above handles what happens *within* a
 grain cell (equatives compare against infimum, comparatives against
 supremum). This section connects to the *question* level: how grain
 width determines a partition on the scale, and how finer grains produce
-wider questions (@cite{deo-thomas-2025} §3.1.2–3.2).
+wider questions ([deo-thomas-2025] §3.1.2–3.2).
 
 The key chain:
 - Grain width ε induces a partition via ⌊d/ε⌋ (integer division)
@@ -250,7 +250,7 @@ theorem div_determined_by_finer (d₁ d₂ ε₁ ε₂ : Nat)
     Maps each degree d to grain index ⌊d/ε⌋, inducing a partition where
     degrees in the same grain cell are indistinguishable.
 
-    @cite{deo-thomas-2025} definition (22): γ maps each point p to a cell I
+    [deo-thomas-2025] definition (22): γ maps each point p to a cell I
     of a partition such that p ∈ I. For uniform grain width ε on a discrete
     scale, this is exactly integer division by ε. -/
 def granQUD (n : Nat) (ε : Nat) : QUD (Fin n) :=
@@ -258,7 +258,7 @@ def granQUD (n : Nat) (ε : Nat) : QUD (Fin n) :=
 
 /-- Finer granularity induces partition refinement.
 
-    @cite{deo-thomas-2025} §3.1.2, (23): if ε₁ divides ε₂ (finer grain
+    [deo-thomas-2025] §3.1.2, (23): if ε₁ divides ε₂ (finer grain
     fits evenly into coarser grain), then the ε₁-partition refines the
     ε₂-partition. Every fine cell is contained in exactly one coarse cell. -/
 theorem finer_granularity_refines (n ε₁ ε₂ : Nat) (hdvd : ε₁ ∣ ε₂) :

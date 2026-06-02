@@ -2,7 +2,7 @@ import Mathlib.Tactic.TypeStar
 
 /-!
 # Two-Dimensional Alternative Meanings
-@cite{rooth-1985} @cite{rooth-1992} @cite{kratzer-selkirk-2020}
+[rooth-1985] [rooth-1992] [kratzer-selkirk-2020]
 
 The O-value / A-value pair from Rooth-style alternative semantics.
 Every expression has an *ordinary* denotation (`oValue`) and an
@@ -10,17 +10,17 @@ Every expression has an *ordinary* denotation (`oValue`) and an
 the latter while typically preserving the former.
 
 This file isolates the bare data structure. Categorical refinements
-(@cite{fox-katzir-2011}) live in `Categorical.lean`; structural
-alternatives (@cite{katzir-2007}) live in `Structural.lean`;
+([fox-katzir-2011]) live in `Categorical.lean`; structural
+alternatives ([katzir-2007]) live in `Structural.lean`;
 [FoC]/[G] feature semantics live in `Semantics/Focus/`.
 -/
 
 namespace Semantics.Alternatives
 
-/-- Two-dimensional meaning in @cite{rooth-1992}-style alternative semantics.
+/-- Two-dimensional meaning in [rooth-1992]-style alternative semantics.
     Every expression has an O-value and an A-value.
 
-    @cite{kratzer-selkirk-2020} §3, §8. -/
+    [kratzer-selkirk-2020] §3, §8. -/
 structure AltMeaning (α : Type*) where
   /-- O(rdinary)-value: the actual denotation -/
   oValue : α

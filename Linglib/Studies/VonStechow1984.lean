@@ -9,7 +9,7 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # Von Stechow 1984: Comparing Semantic Theories of Comparison
-@cite{von-stechow-1984}
+[von-stechow-1984]
 
 Arnim von Stechow. Comparing Semantic Theories of Comparison.
 Journal of Semantics 3(1-2): 1–77.
@@ -54,7 +54,7 @@ larger than it is") is explained by presence or absence of an ACTUALLY
 operator that fixes evaluation to the actual world, NOT by scope
 differences of degree operators or definite descriptions. -/
 
-/-- Evaluate an intension at the actual world `w₀`. NOT @cite{kaplan-1989}'s
+/-- Evaluate an intension at the actual world `w₀`. NOT [kaplan-1989]'s
 tower-based indexical ACTUALLY (which manipulates context-index pairs for
 demonstratives) — von Stechow's operator is simpler: given a
 world-dependent value, extract its extension at `w₀`. Defined via
@@ -251,7 +251,7 @@ theorem modalComparative_kripke {W D : Type*} [LinearOrder D]
 
 /-! ### LITTLE–□ non-commutativity (de Morgan)
 
-@cite{buring-2007} §6: degree negation (LITTLE) does not commute with
+[buring-2007] §6: degree negation (LITTLE) does not commute with
 modal operators. Analysis 1 is `LITTLE(□(P))` (exceeds the min);
 Analysis 2 is `□(LITTLE(P))` (exceeds every complement). They differ
 by de Morgan's inequality for infinite meets. -/
@@ -282,7 +282,7 @@ theorem boxOverLittle_implies_littleOverBox {W D : Type*} [LinearOrder D]
 /-- The converse fails: Analysis 1 does NOT entail Analysis 2. Witness:
 `acc = {w₁, w₂}` with `μ(w₁) = 5`, `μ(w₂) = 10`, `d = 7`. Then
 `d > min(5,10) = 5` (Analysis 1 holds) but `d ≯ max(5,10) = 10`
-(Analysis 2 fails). Formal content of @cite{buring-2007} §6. -/
+(Analysis 2 fails). Formal content of [buring-2007] §6. -/
 theorem littleOverBox_not_implies_boxOverLittle :
     ¬ (∀ (acc : Set Bool) (μw : Bool → ℚ) (d : ℚ),
         littleOverBox acc μw d → boxOverLittle acc μw d) := by
@@ -295,7 +295,7 @@ theorem littleOverBox_not_implies_boxOverLittle :
   norm_num at h2
 
 /-- When all accessible worlds agree on degree (trivial modal base), the
-two analyses collapse — scope is undetectable. @cite{heim-2001}'s
+two analyses collapse — scope is undetectable. [heim-2001]'s
 monotone collapse at the modal level. -/
 theorem littleBox_collapse_when_uniform {W D : Type*} [LinearOrder D]
     (acc : Set W) (μw : W → D) (d : D)
@@ -422,7 +422,7 @@ def scorecard : List ScorecardEntry :=
 -- § 2. Russell's Ambiguity via ACTUALLY (§§II–V)
 -- ════════════════════════════════════════════════════
 
--- Cross-reference: @cite{heim-2001} independently notes the Russell
+-- Cross-reference: [heim-2001] independently notes the Russell
 -- ambiguity is not DegP-scope. Von Stechow's ACTUALLY analysis is
 -- the mechanism behind Heim's observation.
 
@@ -585,7 +585,7 @@ theorem modalComparative_from_maxDeg {W : Type*} {D : Type*} [LinearOrder D]
 -- § 7. Klein Criticism (§XI)
 -- ════════════════════════════════════════════════════
 
-/-- @cite{klein-1980}'s degree-free approach cannot handle:
+/-- [klein-1980]'s degree-free approach cannot handle:
     1. Differential readings: "John is six inches taller than Mary"
     2. Factor equatives: "Ede is twice as fat as Angelika"
     3. Cross-dimensional: "Ede is more tall than broad"

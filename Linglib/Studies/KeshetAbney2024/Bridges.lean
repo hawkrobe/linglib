@@ -11,8 +11,8 @@ import Mathlib.Data.Fintype.Basic
 /-!
 # PIP Integration Bridges
 
-@cite{keshet-abney-2024} @cite{abney-keshet-2025} @cite{karttunen-1973}
-@cite{kratzer-1991} @cite{link-1983} @cite{brasoveanu-2010}
+[keshet-abney-2024] [abney-keshet-2025] [karttunen-1973]
+[kratzer-1991] [link-1983] [brasoveanu-2010]
 
 This file connects PIP to the rest of linglib, establishing correspondences
 between PIP's formulation and the standard treatments in:
@@ -25,7 +25,7 @@ between PIP's formulation and the standard treatments in:
 
 The set-based GQ operations (`setEvery`/`setSome`), three-argument modals
 (`mustBase`/`mightBase`), and sigma evaluation (`sigmaEval`) from the Glossa
-companion paper (@cite{abney-keshet-2025}) are in `PIP.Composition`.
+companion paper ([abney-keshet-2025]) are in `PIP.Composition`.
 
 ## Design
 
@@ -54,7 +54,7 @@ open Core.Logic.Modal.Logic (frameConditions)
 ### Presupposition Projection: F ↔ PrProp connectives
 
 PIP's F operator and `Semantics.Presupposition.PrProp` filtering connectives
-implement the same Karttunen conjunction clause (@cite{karttunen-1973}).
+implement the same Karttunen conjunction clause ([karttunen-1973]).
 These theorems were previously in the study file; they belong in the
 theory layer because they establish a general correspondence.
 -/
@@ -95,7 +95,7 @@ PIP's implication felicity agrees with `PrProp.impFilter`.
 
   F(φ → ψ) = Fφ ∧ (φ → Fψ)
 
-This is exactly the filtering implication from @cite{karttunen-1973}:
+This is exactly the filtering implication from [karttunen-1973]:
 the antecedent can satisfy the consequent's presupposition.
 -/
 theorem pip_felicity_agrees_with_impFilter {W : Type*}
@@ -243,7 +243,7 @@ theorem properPlural_implies_plural {α : Type*} {a b : α}
 ### Modal Logic: PIP's must needs the T axiom
 
 PIP's must allows anaphora because of a **realistic modal base**
-(@cite{kratzer-1991}): the evaluation world w* is accessible from
+([kratzer-1991]): the evaluation world w* is accessible from
 itself (`R w* w*`). This is exactly the T axiom (`□p → p`,
 frame condition: reflexivity).
 
@@ -291,7 +291,7 @@ accessibility relation (paper §2.5):
 - MUST^β_w(W₁, W₂) ≜ EVERY(β_w ∩ W₁, W₂)
 - MIGHT^β_w(W₁, W₂) ≜ SOME(β_w ∩ W₁, W₂)
 
-This is structurally identical to @cite{kratzer-1991}'s analysis where:
+This is structurally identical to [kratzer-1991]'s analysis where:
 - β corresponds to the **modal base** (conversational background)
 - The ordering source (for graded modality) is not used in PIP's
   simple must/might
@@ -333,7 +333,7 @@ theorem mustBase_agrees_box {W D : Type*}
 
 PIP is natively a static, truth-conditional system. Our formalization
 in `Basic.lean` / `Connectives.lean` encodes PIP as a dynamic update
-system over `IContext W E`. @cite{brasoveanu-2010} shows the equivalence
+system over `IContext W E`. [brasoveanu-2010] shows the equivalence
 between plural predicate calculi and dynamic plural logics.
 
 The following theorems prove that the static system (`PIPExprF.truth`)

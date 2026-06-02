@@ -2,9 +2,9 @@ import Linglib.Semantics.Comparison.Metalinguistic
 import Linglib.Semantics.Comparison.MetalinguisticDegree
 
 /-!
-# @cite{rudolph-kocurek-2024}: Metalinguistic Gradability
+# [rudolph-kocurek-2024]: Metalinguistic Gradability
 
-@cite{rudolph-kocurek-2024}
+[rudolph-kocurek-2024]
 
 Rachel Etta Rudolph & Alexander W. Kocurek. 2024. Metalinguistic gradability.
 *Semantics & Pragmatics* 17, Article 7: 1-58.
@@ -36,7 +36,7 @@ both hold, and the (La∧¬Pa)-witness i₁ outranks the (Pa∧¬La)-witness i�
 
 Witnesses borderline cases, equative satisfaction, and nonclassicality
 of acceptance-preservation (parallels informational entailment for
-epistemic modals, @cite{yalcin-2007}).
+epistemic modals, [yalcin-2007]).
 
 **Model 3** (3 interpretations, linear i₀ < i₁ < i₂, two entities):
 - i₀: neither Ann nor Ben is tall
@@ -66,7 +66,7 @@ transitivity.
   assertoricContent, DistanceFunction, evalVery/evalSorta/evalMostly,
   noReversal, MetalinguisticCG)
 - **Delineation**: `Semantics/Comparison/Delineation.lean`
-  (@cite{klein-1980}'s comparison class approach — connected via No Reversal)
+  ([klein-1980]'s comparison class approach — connected via No Reversal)
 - **Hierarchy**: `Semantics/Comparison/Hierarchy.lean`
   (Klein ← Kennedy ← Measurement strict hierarchy)
 -/
@@ -334,7 +334,7 @@ tied model. At both maximal interpretations (j₀ ≡ j₁), neither
 direction of MC holds because the interpretations are tied.
 
 This is the key result paralleling informational entailment for
-epistemic modals (@cite{yalcin-2007}). -/
+epistemic modals ([yalcin-2007]). -/
 theorem mc_disj_not_accepted :
     assertoricContent interp₂ (.disj (.mc La (.neg La)) (.mc (.neg La) La))
       tiedOrd .w0 = false := by native_decide
@@ -427,9 +427,9 @@ two-entity model is needed.
 The key consequence of NR: when it holds, `Fa ≻ Gb` simplifies to the
 **delineation comparative** `∃ i' ≤ i : Fa∧¬Gb` — the universal clause
 of eq. (48) becomes redundant. This connects metalinguistic
-comparatives to @cite{klein-1980}'s supervaluation comparative
+comparatives to [klein-1980]'s supervaluation comparative
 (see `Semantics/Comparison/Delineation.lean`) and
-@cite{kamp-1975}'s completion-based approach. -/
+[kamp-1975]'s completion-based approach. -/
 theorem nr_trivial_single_entity :
     noReversal interp₃ ord₃ .linguist .w0 .ann .ann := by
   intro i _ _ h1 h2; simp_all
@@ -511,7 +511,7 @@ NR makes clause (ii) of the MC redundant: if Fa is true and Fb is
 false at i, then for any i' ≤ i where Fb becomes true, Fa must also
 be true — so there are no (Fb∧¬Fa)-witnesses to worry about.
 
-This connects metalinguistic comparatives to @cite{klein-1980}'s
+This connects metalinguistic comparatives to [klein-1980]'s
 delineation comparative (see `Delineation.lean`). -/
 theorem mc_equals_delineation_under_nr :
     ∀ (i : I3),
@@ -578,7 +578,7 @@ every A-interpretation makes A true, so the (A∧¬(¬A))-witness exists,
 and there are no (¬A∧¬A)-witnesses in the restricted ordering.
 
 This parallels the validity of epistemic "if p then probably p"
-(@cite{yalcin-2007}). -/
+([yalcin-2007]). -/
 theorem mcond_m1 :
     ∀ (i : I3),
       evalMCond interp₃ La (.mc La NLa) ord₃ i .w0 = true := by native_decide

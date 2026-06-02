@@ -2,7 +2,7 @@ import Linglib.Core.Mereology
 
 /-!
 # Unified Semantics for Universal Quantification
-@cite{haslinger-etal-2025-nllt}
+[haslinger-etal-2025-nllt]
 
 A single lexical meaning for universal quantifiers across languages,
 from "A unified semantics for distributive and non-distributive universal
@@ -43,7 +43,7 @@ open _root_.Mereology
 An element x is **maximal non-overlapping** in P iff x ∈ P and every
 P-element that overlaps x is a part of x.
 
-This is the condition in @cite{haslinger-etal-2025-nllt} eq. (70):
+This is the condition in [haslinger-etal-2025-nllt] eq. (70):
 P(x) ∧ ¬∃y[P(y) ∧ ∃z[z ⊑ x ∧ z ⊑ y] ∧ y ⊄ x].
 
 Equivalently: x absorbs all overlapping P-elements. In a singular
@@ -61,7 +61,7 @@ def maxNonOverlap {α : Type*} [PartialOrder α] (P : α → Prop) (x : α) : Pr
 ⟦Q_∀⟧ = λP.λQ.∀x[maxNonOverlap(P, x) → Q(x)]
 
 Q_∀ applies the scope predicate Q to every maximal non-overlapping
-element of the restrictor P. @cite{haslinger-etal-2025-nllt} eq. (70).
+element of the restrictor P. [haslinger-etal-2025-nllt] eq. (70).
 
 When P = ⟦student⟧ (atoms {a,b,c}):
   Q_∀(P)(Q) = Q(a) ∧ Q(b) ∧ Q(c)  — distributive
@@ -119,7 +119,7 @@ theorem maxNonOverlap_of_cum_maximal {α : Type*} [SemilatticeSup α]
 When every P-element is an atom and distinct P-atoms don't overlap,
 Q_∀(P)(Q) reduces to universal quantification: ∀x, P(x) → Q(x).
 
-This is the **[+dist]** case: @cite{haslinger-etal-2025-nllt} eq. (30b).
+This is the **[+dist]** case: [haslinger-etal-2025-nllt] eq. (30b).
 -/
 theorem dng_atoms {α : Type*} [PartialOrder α]
     {P Q : α → Prop}
@@ -139,7 +139,7 @@ theorem dng_atoms {α : Type*} [PartialOrder α]
 
 When P is CUM and has a maximal element m, Q_∀(P)(Q) reduces to Q(m).
 
-This is the **[−dist]** case: @cite{haslinger-etal-2025-nllt} eq. (30a).
+This is the **[−dist]** case: [haslinger-etal-2025-nllt] eq. (30a).
 The unique maximal element of a CUM predicate is the join of all
 P-elements — the "maximal plurality."
 -/

@@ -1,11 +1,11 @@
 import Linglib.Semantics.Questions.Partition.Constructors
 
 /-!
-# @cite{groenendijk-stokhof-1984}: Studies on the Semantics of Questions
-@cite{belnap-1982}
+# [groenendijk-stokhof-1984]: Studies on the Semantics of Questions
+[belnap-1982]
 
 Single-paper formalisation of the partition-semantics theorems from
-@cite{groenendijk-stokhof-1984} (Ch. I), formulated over the
+[groenendijk-stokhof-1984] (Ch. I), formulated over the
 `GSQuestion W` substrate. The substrate primitive `ans` and its
 basic algebraic properties live in
 `Semantics/Questions/Partition/Cells.lean`; this file owns the paper-anchored
@@ -36,7 +36,7 @@ open scoped GSQuestion  -- For ⊑ notation
 /-! ### Wh ↔ polar refinement -/
 
 /-- Wh-question refines the polar question for any individual in the
-    domain. Core result of @cite{groenendijk-stokhof-1984}: knowing the
+    domain. Core result of [groenendijk-stokhof-1984]: knowing the
     answer to *Who walks?* determines the answer to *Does John walk?*
     because the full extension determines each individual's value.
 
@@ -75,7 +75,7 @@ theorem composed_polar_refines {W : Type*} (p1 p2 : W → Bool) :
 
 /-! ### Answerhood thesis (p. 15) -/
 
-/-- @cite{groenendijk-stokhof-1984} p. 15: the complete true answer at
+/-- [groenendijk-stokhof-1984] p. 15: the complete true answer at
     any index is determined by Q (functionally projected). -/
 theorem answerhood_thesis {W : Type*} (q : GSQuestion W) (i : W) :
     ∃ (p : W → Bool), p = QUD.ans q i :=
@@ -117,7 +117,7 @@ def deDictoAnswer {W E : Type*} [DecidableEq E]
     (description : W → E) (pred : E → W → Bool) : W → Bool :=
   λ w => pred (description w) w
 
-/-- @cite{groenendijk-stokhof-1984} p. 27: non-rigid descriptions may
+/-- [groenendijk-stokhof-1984] p. 27: non-rigid descriptions may
     fail to be semantic answers. For any non-rigid description there
     exists a predicate and question such that the de dicto answer
     holds at one world but fails at another world in the same cell —

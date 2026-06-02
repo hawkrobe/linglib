@@ -2,10 +2,10 @@ import Linglib.Features.Coordination
 
 /-!
 # Yoruba Coordination Morphemes
-@cite{rowlands-1969} @cite{haspelmath-2007}
+[rowlands-1969] [haspelmath-2007]
 
 Yoruba (Kwa, Nigeria) shows canonical prepositive bisyndetic coordination
-(*àtí A àtí B*). @cite{haspelmath-2007} (25) cites @cite{rowlands-1969}:201ff.
+(*àtí A àtí B*). [haspelmath-2007] (25) cites [rowlands-1969]:201ff.
 
 - *àtí* — J, free, prepositive on each conjunct (bisyndetic A-co B-co)
 

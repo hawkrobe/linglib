@@ -7,11 +7,11 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Paradigms.AcceptabilityJudgment
 
 /-!
-# Sag, Wasow & Bender (2003) — HPSG Binding Theory @cite{sag-wasow-bender-2003}
+# Sag, Wasow & Bender (2003) — HPSG Binding Theory [sag-wasow-bender-2003]
 
 *Syntactic Theory: A Formal Introduction* (2nd ed.), Ch. 7.
 
-The HPSG binding theory of @cite{sag-wasow-bender-2003} reduces the
+The HPSG binding theory of [sag-wasow-bender-2003] reduces the
 Chomskyan three-way classification (anaphor / pronoun / R-expression →
 Principles A/B/C) to two principles based on the `MODE` feature:
 

@@ -3,7 +3,7 @@ import Linglib.Core.Inheritance.Basic
 /-!
 # Default Inheritance — Local Properties + BFS Lookup + Best Fit Principle
 
-@cite{hudson-2010} §2.5, §3.5, §4.6.4
+[hudson-2010] §2.5, §3.5, §4.6.4
 
 A node's value for a relation `r` is determined by:
 
@@ -11,7 +11,7 @@ A node's value for a relation `r` is determined by:
 2. Otherwise, the value of its **nearest ancestor** in the isA chain that
    has a local value for `r` — the **Best Fit Principle**:
    "When a default conflicts with a more specific fact, the specific
-   fact wins" @cite{hudson-2010} §4.6.4. Hudson attributes the principle
+   fact wins" [hudson-2010] §4.6.4. Hudson attributes the principle
    to Winograd's earlier work on frame-based defaults but generalises it
    from frames to a property of the cognitive network as a whole.
 

@@ -3,7 +3,7 @@ import Linglib.Core.Valence
 
 /-!
 # Word
-@cite{biberauer-roberts-2014} @cite{dryer-1992}
+[biberauer-roberts-2014] [dryer-1992]
 
 The lexical unit and its building blocks: morphological feature types (aliased
 to Universal Dependencies), the `Features` bundle, and the `Word` structure.
@@ -102,7 +102,7 @@ end Tense
     distinction. Determines kind-anaphor morphology: [MASS] → *it*,
     [COUNT] → *they*. Evidence: *pollen*[MASS] → *it* vs
     *pollen grains*[COUNT] → *they* for the same referent
-    (@cite{krifka-2026} §2). -/
+    ([krifka-2026] §2). -/
 inductive MassCount where
   | mass   -- mass nouns: *mold*, *pollen*, *milk*, *gold*
   | count  -- count nouns: *spider*, *pollen grain*, *dog*, *cup*

@@ -6,7 +6,7 @@ import Linglib.Semantics.Composition.LexEntry
 /-!
 # Covert Operators: Theory and Compositional Interface
 
-@cite{krifka-etal-1995} @cite{carlson-1977} @cite{guerrini-2026}
+[krifka-etal-1995] [carlson-1977] [guerrini-2026]
 
 Covert operators (Gen, DIST, Hab, DPP) are semantically contentful LF nodes
 with no overt realization. This module provides:
@@ -38,8 +38,8 @@ variable {D : Type}
 /-- A covert quantifier: `∀d ∈ domain. restriction(d) → scope(d)`.
 GEN instantiates with `D = Situation`, `restriction = normal ∧ restrictor`
 (see `traditionalGEN` in `Genericity/Generics.lean`). The "habituality is
-genericity" view (@cite{chierchia-1995}, @cite{krifka-etal-1995}) treats
-HAB the same way; the Boneh–Doron view (@cite{boneh-doron-2013}) treats
+genericity" view ([chierchia-1995], [krifka-etal-1995]) treats
+HAB the same way; the Boneh–Doron view ([boneh-doron-2013]) treats
 HAB as a structurally distinct existential, not a `covertQ` instance —
 see `Studies/BonehDoron2013.lean`. -/
 def covertQ (domain : List D) (restriction : D → Bool) (scope : D → Bool) : Bool :=
@@ -176,7 +176,7 @@ def dist (F : Frame) (atomsOf : F.Entity → List F.Entity)
 
     DPP(P)(Q) = ∃x[P(x) ∧ Q(x)]. An existential type-shift for
     kind-denoting NPs combining with stage-level predicates.
-    @cite{guerrini-2026} structure (105b). -/
+    [guerrini-2026] structure (105b). -/
 def dpp (F : Frame) (atoms : List F.Entity) : LexEntry F :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun prop pred =>
     ∃ x ∈ atoms, prop x ∧ pred x⟩

@@ -3,15 +3,15 @@ import Linglib.Core.Agent.Thurstone
 
 /-!
 # Noisy Harmonic Grammar and Normal MaxEnt
-@cite{boersma-pater-2016} @cite{flemming-2021}
+[boersma-pater-2016] [flemming-2021]
 
-Noisy HG (@cite{boersma-pater-2016}) adds i.i.d. Gaussian noise N(0,σ²) to
+Noisy HG ([boersma-pater-2016]) adds i.i.d. Gaussian noise N(0,σ²) to
 each constraint weight before evaluation. For binary choice between
 candidates a and b, the harmony score difference H(a)−H(b) becomes a
 Gaussian random variable with variance σ² · Σⱼ(cⱼ(a)−cⱼ(b))² — the noise
 is **context-dependent**, scaling with squared violation differences.
 
-Normal MaxEnt (@cite{flemming-2021}) instead adds i.i.d. Gaussian noise
+Normal MaxEnt ([flemming-2021]) instead adds i.i.d. Gaussian noise
 N(0,ε²) directly to candidate scores, giving a constant noise standard
 deviation σ_d = ε√2 for binary choice.
 
@@ -24,7 +24,7 @@ any two candidates equals their harmony score difference:
 
   `log(P(a)/P(b)) = H(a) − H(b)`
 
-This implies **logit uniformity** (@cite{flemming-2021} §5.1, eq (10)): adding one
+This implies **logit uniformity** ([flemming-2021] §5.1, eq (10)): adding one
 violation of constraint j changes the logit by exactly −wⱼ, regardless
 of the violation profile elsewhere. NHG lacks this property because its
 noise variance σ_d depends on the violation profile.
@@ -83,7 +83,7 @@ noncomputable def nhgAsThurstoneV {C : Type*}
   sigma_pos := div_pos (mul_pos hsigma (Real.sqrt_pos.mpr h_diff))
     (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 2))
 
-/-- **NHG binary choice probability** (@cite{flemming-2021} eq (15)):
+/-- **NHG binary choice probability** ([flemming-2021] eq (15)):
     `P(a ≻ b) = Φ((H(a) − H(b)) / σ_d)`.
 
     The Thurstone σ is set to `σ_d / √2` so that Thurstone's
@@ -125,7 +125,7 @@ noncomputable def normalMaxEntAsThurstoneV {C : Type*}
   sigma := epsilon
   sigma_pos := heps
 
-/-- **Normal MaxEnt binary choice probability** (@cite{flemming-2021} eq (17)):
+/-- **Normal MaxEnt binary choice probability** ([flemming-2021] eq (17)):
     `P(a ≻ b) = Φ((H(a) − H(b)) / (ε√2))`.
 
     Since the Thurstone σ is ε and `normalMaxEntSigmaD ε = ε√2`,
@@ -144,7 +144,7 @@ theorem normalMaxEnt_choiceProb_eq {C : Type*}
 -- § 4: MaxEnt Logit-Harmony Identity
 -- ============================================================================
 
-/-- **Logit uniformity** (MaxEnt diagnostic; @cite{flemming-2021} §5.1):
+/-- **Logit uniformity** (MaxEnt diagnostic; [flemming-2021] §5.1):
     for softmax with α = 1, the log-odds between any two alternatives
     equals their score difference. Hence changing one score by −w
     changes the log-odds by exactly −w, regardless of context.
@@ -232,7 +232,7 @@ theorem harmonyScoreR_diff {C : Type*}
   simp only [harmonyScoreR, ← Rat.cast_sub, harmonyScore_diff, Rat.cast_neg]
 
 -- ============================================================================
--- § 6: Censored NHG (@cite{flemming-2021} §7.3)
+-- § 6: Censored NHG ([flemming-2021] §7.3)
 -- ============================================================================
 
 /-- Censored weight: noise is clamped so weights never go negative.
@@ -252,7 +252,7 @@ theorem censoredWeight_mono_weight {w₁ w₂ n : ℝ} (hw : w₁ ≤ w₂) :
     censoredWeight w₁ n ≤ censoredWeight w₂ n :=
   max_le_max_left 0 (by linarith)
 
-/-- **Weight sensitivity** (@cite{flemming-2021} §7.3): censoring is
+/-- **Weight sensitivity** ([flemming-2021] §7.3): censoring is
     non-trivial — different weights produce different censored values
     for some noise realization.
 
@@ -279,7 +279,7 @@ theorem censored_nhg_weight_sensitivity (w₁ w₂ : ℝ) (hw : w₁ < w₂) :
     joint distribution over 3+ candidates is multivariate normal with
     non-diagonal covariance — not reducible to independent binary
     comparisons. This is why NHG violates IIA for 3+ candidates
-    (@cite{flemming-2021} §9). -/
+    ([flemming-2021] §9). -/
 noncomputable def nhgCovariance {C : Type*}
     (constraints : List (WeightedConstraint C)) (sigma : ℝ) (a b c : C) : ℝ :=
   sigma ^ 2 * constraints.foldl (λ acc con =>

@@ -3,7 +3,7 @@ import Linglib.Core.Scales.Scale
 /-!
 # Aspectual boundedness
 
-@cite{smith-1997}
+[smith-1997]
 
 `SituationBoundedness` classifies a situation as bounded
 (telic/perfective/closed) or unbounded (atelic/imperfective/open). It

@@ -8,10 +8,10 @@ import Linglib.Studies.Ross1967
 
 /-!
 # Chan & Shen (2026): Conditions on *wh-the-hell* licensing
-@cite{chan-shen-2026} @cite{pesetsky-1987} @cite{chou-2012}
-@cite{merchant-2002} @cite{sato-ngui-2017} @cite{rawlins-2008}
-@cite{martin-2020} @cite{ippolito-2024} @cite{huang-ochi-2004}
-@cite{linebarger-1987} @cite{hoeksema-napoli-2008}
+[chan-shen-2026] [pesetsky-1987] [chou-2012]
+[merchant-2002] [sato-ngui-2017] [rawlins-2008]
+[martin-2020] [ippolito-2024] [huang-ochi-2004]
+[linebarger-1987] [hoeksema-napoli-2008]
 
 *Linguistic Inquiry*. Advance publication.
 https://doi.org/10.1162/LING.a.562
@@ -31,18 +31,18 @@ Singlish single wh-questions:
   (paper §3.4.1, p. 23–24): no higher wh, no intervener, but still bad.
 
 The original observation that in-situ *wh-the-hell* is bad goes back
-to @cite{pesetsky-1987} (introducing "aggressively non-D-linked").
+to [pesetsky-1987] (introducing "aggressively non-D-linked").
 
 ## Theoretical Contribution
 
 Two-component analysis:
 
-1. **POV licensing** (@cite{chou-2012}, building on @cite{huang-ochi-2004}):
+1. **POV licensing** ([chou-2012], building on [huang-ochi-2004]):
    *the-hell* bears an unvalued POV feature [*ud*] that must be checked
    in a Spec-head relation with a POV operator in matrix CP, ascribing
    the negative attitude of *the-hell* to the speaker of the utterance.
 
-2. **Parasitic movement** (@cite{merchant-2002}): *the-hell* is a
+2. **Parasitic movement** ([merchant-2002]): *the-hell* is a
    modifier adjoined to the wh-head. It cannot move independently — its
    movement to Spec-CP is parasitic on the wh-phrase's movement.
 
@@ -52,12 +52,12 @@ Spec-CP. Full and partial movement satisfy this; unselective binding
 
 ## Comparison with Alternative Accounts
 
-- **@cite{den-dikken-giannakidou-2002}** (intervention/PI): correctly
+- **[den-dikken-giannakidou-2002]** (intervention/PI): correctly
   predicts in-situ bad in *multiple* wh-questions (intervener present)
   but wrongly predicts in-situ OK in *single* wh-questions (no intervener,
-  per @cite{linebarger-1987}'s immediate-scope condition); doubly wrong
+  per [linebarger-1987]'s immediate-scope condition); doubly wrong
   for subject in-situ where Q is in immediate scope.
-- **@cite{vu-lohiniva-2020}** (AttP, building on @cite{huang-ochi-2004}):
+- **[vu-lohiniva-2020]** (AttP, building on [huang-ochi-2004]):
   correctly predicts full OK and in-situ bad, but wrongly predicts
   partial *bad* (paper §3.4.2 ex 32: cannot generate the correct word
   order with *the-hell* in matrix Spec-AttP and wh-phrase in embedded
@@ -65,12 +65,12 @@ Spec-CP. Full and partial movement satisfy this; unselective binding
 
 ## Cross-linguistic generalization
 
-The single typological parameter @cite{chan-shen-2026} isolate is the
+The single typological parameter [chan-shen-2026] isolate is the
 modifier's movement profile (`ANDLMovementType.parasitic` for
 English/Singlish *the-hell* vs `.independent` for Mandarin *daodi*,
-@cite{chou-2012}). Other ANDL items — *the heck*, *the fuck*,
-*the dickens*, *in the world*, *in God's name* (@cite{hoeksema-napoli-2008},
-@cite{jackendoff-audring-2020}; paper footnote 6) — are predicted to
+[chou-2012]). Other ANDL items — *the heck*, *the fuck*,
+*the dickens*, *in the world*, *in God's name* ([hoeksema-napoli-2008],
+[jackendoff-audring-2020]; paper footnote 6) — are predicted to
 behave like *the-hell*.
 
 ## Architecture
@@ -89,8 +89,8 @@ namespace Minimalist.ANDL
 /-! ## Minimalist POV-feature analysis (formerly `Core/ANDL.lean`)
 
 The Minimalist (POV-feature) analysis of aggressively non-D-linked
-(ANDL) wh-modifiers, due to @cite{chou-2012} (building on
-@cite{huang-ochi-2004}, @cite{merchant-2002}). The theory-neutral
+(ANDL) wh-modifiers, due to [chou-2012] (building on
+[huang-ochi-2004], [merchant-2002]). The theory-neutral
 lexical entry lives in `Core/Lexical/ExpressiveModifier.lean`; this
 section adds the framework-specific syntactic apparatus: an unvalued
 POV feature [*ud*] on the modifier, a valued [+d] POV operator
@@ -108,7 +108,7 @@ merged in matrix C, and Spec-head Agree as the licensing relation.
 open Typology.ExpressiveModifier (ExpressiveWhModifier Licensed)
 
 /-- The unvalued POV feature [*ud*] borne by ANDL modifiers
-    (@cite{chou-2012}). A probe seeking a [+d] goal in a Spec-head
+    ([chou-2012]). A probe seeking a [+d] goal in a Spec-head
     relation. -/
 def povUnvaluedFeature : GramFeature := .unvalued (.pov true)
 
@@ -314,7 +314,7 @@ def negativeAttitudeAscription : AccountPredictions 4 :=
 
 /-- Den Dikken & Giannakidou (2002) intervention account predictions.
     Their empirical claim is that *wh-the-hell* is licensed iff Q is in
-    the modifier's *immediate scope* (@cite{linebarger-1987}). In single
+    the modifier's *immediate scope* ([linebarger-1987]). In single
     wh-questions there is no other wh-phrase to intervene; their account
     therefore predicts all four single-wh cells acceptable — including
     object in-situ and subject in-situ, both wrongly. (Paper §3.4.1.) -/
@@ -348,9 +348,9 @@ theorem only_pov_account_matches :
 -- ============================================================================
 
 /-- Singlish wh-in-situ uses binding (not movement), just like Mandarin
-    wh-in-situ in @cite{shen-huang-2026}. Therefore only the Specificity
+    wh-in-situ in [shen-huang-2026]. Therefore only the Specificity
     Condition applies — the PIC is inapplicable. This is why Singlish
-    wh-in-situ is island-insensitive (@cite{sato-ngui-2017}: 11b).
+    wh-in-situ is island-insensitive ([sato-ngui-2017]: 11b).
 
     Connection: `constraintsForDependencyType .binding = [.semantic]`
     (no syntactic / PIC constraint). -/
@@ -374,7 +374,7 @@ theorem partial_movement_pic_applies :
 -- ============================================================================
 
 /-! The syntactic POV feature on *the-hell* is the feature-checking reflex
-    of the semantic PerspectiveP layer (@cite{dayal-2025}). Both encode
+    of the semantic PerspectiveP layer ([dayal-2025]). Both encode
     the requirement that a perspectival center (the speaker, in direct
     questions) must be identified.
 
@@ -384,27 +384,27 @@ theorem partial_movement_pic_applies :
       `◇¬know(speaker, Ans(Q))` — the possible-ignorance presupposition.
 
     *The-hell*'s negative attitude (speaker finds every possible answer
-    improbable, @cite{rawlins-2008}; ignorance reading,
-    @cite{martin-2020}; conventional implicature, @cite{ippolito-2024})
+    improbable, [rawlins-2008]; ignorance reading,
+    [martin-2020]; conventional implicature, [ippolito-2024])
     strengthens PerspP's possible-ignorance presupposition. -/
 
 /-- Direct *wh-the-hell* questions select PerspP — they require the
     speaker as perspectival center (the negative attitude bearer in
-    @cite{chou-2012}'s analysis). Bridges Chan & Shen's syntactic POV
+    [chou-2012]'s analysis). Bridges Chan & Shen's syntactic POV
     apparatus to Dayal's semantic PerspP layer. -/
 def theHellSelectionClass : SelectionClass := .rogativePerspP
 
 /-- The PerspP-selecting class is precisely the one that does *not*
     entail knowledge of the answer — matching *the-hell*'s ignorance
-    component (@cite{martin-2020}). Bridge from `LeftPeriphery`. -/
+    component ([martin-2020]). Bridge from `LeftPeriphery`. -/
 theorem theHell_no_knowledge :
     Syntax.Minimalist.LeftPeriphery.entailsKnowledge
       theHellSelectionClass = false := rfl
 
 /-- The PerspP-selecting class is consistent with the possible-ignorance
     presupposition (`◇¬know(speaker, Ans(Q))`) — the semantic side of
-    *the-hell*'s negative attitude (@cite{rawlins-2008},
-    @cite{ippolito-2024}). -/
+    *the-hell*'s negative attitude ([rawlins-2008],
+    [ippolito-2024]). -/
 theorem theHell_persp_consistent :
     Syntax.Minimalist.LeftPeriphery.perspPConsistent
       theHellSelectionClass false false = true := rfl

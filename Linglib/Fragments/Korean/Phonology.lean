@@ -17,7 +17,7 @@ target feature for the nasalization rule.
 
 1. **Stop Nasalization** (Hayes p.132): `[-del.rel.] → [+nasal, +voice, +son] / __ [+nasal]`
 
-@cite{hayes-2009}
+[hayes-2009]
 -/
 
 open Phonology

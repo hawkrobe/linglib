@@ -5,9 +5,9 @@ import Mathlib.Order.MinMax
 
 /-!
 # Social Utility: Fehr-Schmidt Inequity Aversion
-@cite{fehr-schmidt-1999} @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}
+[fehr-schmidt-1999] [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023]
 
-@cite{fehr-schmidt-1999} model agents who care about fairness, not just
+[fehr-schmidt-1999] model agents who care about fairness, not just
 material payoff. An agent's utility depends on the difference between
 their own payoff and others' payoffs:
 
@@ -17,14 +17,14 @@ where α ≥ 0 captures **disadvantageous inequity aversion** (DIA — disliking
 getting less than others) and β captures **advantageous inequity aversion**
 (AIA — disliking getting more than others).
 
-@cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023} use this as the
+[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023] use this as the
 base utility in their inverse planning model of emotion prediction.
 Observers infer agents' α and β weights from observed choices, then
 use those inferred social preferences to compute emotion appraisals.
 
 ## Connection to RSA
 
-In politeness models (@cite{yoon-etal-2020}), the "social utility" term is
+In politeness models ([yoon-etal-2020]), the "social utility" term is
 a primitive kindness weight φ. Fehr-Schmidt decomposes social utility into
 two structurally distinct components (AIA, DIA), each with its own
 behavioral signature. This decomposition predicts which emotions arise:
@@ -112,7 +112,7 @@ theorem fehrSchmidt_mono_β (vSelf vOther α β₁ β₂ : ℚ)
 
 /-! ### Value Function
 
-@cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023} apply a value function ν
+[houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023] apply a value function ν
 to raw monetary payoffs to capture diminishing marginal utility.
 For their purposes, ν is a sign-adjusted logarithm. We keep the
 utility function generic over any monotone transform. -/

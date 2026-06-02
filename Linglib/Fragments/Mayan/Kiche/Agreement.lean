@@ -5,10 +5,10 @@ import Linglib.Fragments.Mayan.Params
 import Linglib.Typology.Extraction
 
 /-!
-# K'iche' Agreement Fragment @cite{mondloch-2017}
+# K'iche' Agreement Fragment [mondloch-2017]
 
 Theory-neutral typological metadata for K'iche' (K'ichean Mayan)
-agreement morphology, following @cite{mondloch-2017} Lessons 4, 7–8,
+agreement morphology, following [mondloch-2017] Lessons 4, 7–8,
 9, 15. K'iche' is uniformly ergative-absolutive (Set B = ABS, Set A
 = ERG); unlike its sister Kaqchikel it has no construction-specific
 inverted alignment.
@@ -61,7 +61,7 @@ The alignment is ergative-absolutive: Set B groups S and P together
 (both trigger the same paradigm), while A triggers a distinct paradigm
 (Set A). This contrasts with Mam, which shows morphologically
 **tripartite** alignment (S, A, and P each trigger distinct patterns;
-@cite{scott-2023}).
+[scott-2023]).
 
 ## Formal address
 
@@ -103,7 +103,7 @@ abbrev phi (p : Features.Prominence.PersonLevel) (n : Number) : PhiFeatures :=
 /-- Set B (absolutive) agreement markers.
     These are verbal prefixes (or postverbal particles for formal forms)
     that cross-reference S (intransitive subject) and P (transitive
-    object). @cite{mondloch-2017} Lessons 9, 15. -/
+    object). [mondloch-2017] Lessons 9, 15. -/
 def setBMarker : PhiFeatures → String
   | ⟨.first,  .Sing, .informal⟩ => "in-"
   | ⟨.second, .Sing, .informal⟩ => "at-"
@@ -126,7 +126,7 @@ def setBMarker : PhiFeatures → String
 /-- Set A (ergative) markers before consonant-initial roots.
     These cross-reference A (transitive subject) and are identical to
     possessive pronouns before consonant-initial nouns.
-    @cite{mondloch-2017} Lessons 7, 15. -/
+    [mondloch-2017] Lessons 7, 15. -/
 def setAPreC : PhiFeatures → String
   | ⟨.first,  .Sing, .informal⟩ => "nu-/in-"
   | ⟨.second, .Sing, .informal⟩ => "a-"
@@ -142,7 +142,7 @@ def setAPreC : PhiFeatures → String
   | ⟨_, _, .formal⟩            => "Ø"
 
 /-- Set A (ergative) markers before vowel-initial roots.
-    @cite{mondloch-2017} Lesson 8. -/
+    [mondloch-2017] Lesson 8. -/
 def setAPreV : PhiFeatures → String
   | ⟨.first,  .Sing, .informal⟩ => "w-"
   | ⟨.second, .Sing, .informal⟩ => "aw-"
@@ -163,7 +163,7 @@ def setAPreV : PhiFeatures → String
 
 /-- Is a Set B marker a prefix (appearing before the root) or a
     postverbal particle? Formal forms are postverbal; all others
-    are prefixes. @cite{mondloch-2017} Lesson 9. -/
+    are prefixes. [mondloch-2017] Lesson 9. -/
 def SetBIsPrefix (φ : PhiFeatures) : Prop := φ.formality = .informal
 
 instance (φ : PhiFeatures) : Decidable (SetBIsPrefix φ) :=
@@ -287,7 +287,7 @@ theorem setA_preV_3sg : setAPreV (phi .third .Sing) = "r-" := rfl
     subject markers (Lesson 15) are the same forms as the possessive
     prefixes (Lessons 7–8). This is a hallmark of ergative-absolutive
     languages, where ERG agreement and possession share the same
-    morphological paradigm. @cite{mondloch-2017} Lesson 15 explicitly
+    morphological paradigm. [mondloch-2017] Lesson 15 explicitly
     notes this identity. -/
 theorem possessives_equal_setA :
     setAPreC (phi .first .Plur) = "qa-" ∧
@@ -322,7 +322,7 @@ theorem setB_formal_postverbal :
 
 /-- Independent (free) personal pronouns. These are used in nonverbal
     sentences and as emphatic/contrastive pronouns in verbal sentences.
-    @cite{mondloch-2017} Lesson 4. -/
+    [mondloch-2017] Lesson 4. -/
 def independentPronoun : PhiFeatures → String
   | ⟨.first,  .Sing, .informal⟩ => "in"
   | ⟨.second, .Sing, .informal⟩ => "at"
@@ -385,12 +385,12 @@ def setBExponent : ExponentTable :=
    (.pn .third .Plur, setBMarker (phi .third  .Plur))]
 
 /-- 3rd person absolutive is null — invariant across the standard
-    Mayan branches per @cite{kaufman-norman-1984} Table 8. **Not**
+    Mayan branches per [kaufman-norman-1984] Table 8. **Not**
     pan-Mayan: see Mam exception via `MayanLang.isStandard`. -/
 theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "∅" := rfl
 
 /-- K'iche''s extraction profile: Agent-Focus Antipassive is productive
-    (@cite{mondloch-2017} Lesson 22, with parallel coverage at Lessons
+    ([mondloch-2017] Lesson 22, with parallel coverage at Lessons
     30 + 33 for radical TV and perfect aspect). The voice marker is
     *-n* (shared morphologically with the Absolutive Antipassive of
     Lesson 21; the AF vs absolutive-antipassive alternation is

@@ -4,11 +4,11 @@ import Linglib.Core.Word
 import Linglib.Features.Gender
 
 /-!
-# Jarawara Possessed Nouns @cite{adamson-2024} @cite{dixon-2004}
+# Jarawara Possessed Nouns [adamson-2024] [dixon-2004]
 
 Inalienably possessed noun classes and the *mano* 'arm' paradigm
-in Jarawara (Arawan), drawn from @cite{adamson-2024} §3.2 and
-@cite{dixon-2004}.
+in Jarawara (Arawan), drawn from [adamson-2024] §3.2 and
+[dixon-2004].
 
 ## Key facts
 
@@ -21,7 +21,7 @@ in Jarawara (Arawan), drawn from @cite{adamson-2024} §3.2 and
 - The "masculine"/"feminine" alternations on possessed nouns reflect
   φ-agreement with the iPossessor, not gender assignment
 
-## Semantic Classification (@cite{dixon-2004} p. 311)
+## Semantic Classification ([dixon-2004] p. 311)
 
 The iPossessable class maps onto the upper portion of the
 cross-linguistic inalienability hierarchy from `Possession.Typology`.
@@ -36,7 +36,7 @@ open Typology.Possession
 -- ============================================================================
 
 /-- Semantic classification of Jarawara iPossessable nouns
-    (@cite{dixon-2004} p. 311; @cite{adamson-2024} Table 3). -/
+    ([dixon-2004] p. 311; [adamson-2024] Table 3). -/
 structure PossessedNounClass where
   label : String
   memberCount : Nat
@@ -136,12 +136,12 @@ def allClasses : List PossessedNounClass :=
    physicalCharacteristics, noiseAndLanguage, imageAndDream,
    association, containers, waterFireLight, food, place]
 
-/-- Total iPossessable nouns: ~175 (@cite{dixon-2004} p. 310). -/
+/-- Total iPossessable nouns: ~175 ([dixon-2004] p. 310). -/
 theorem total_ipossessable :
     (allClasses.map (·.memberCount)).foldl (· + ·) 0 = 175 := by native_decide
 
 -- ============================================================================
--- § 2: *mano* 'arm' Paradigm (Table 5; @cite{dixon-2004} p. 315)
+-- § 2: *mano* 'arm' Paradigm (Table 5; [dixon-2004] p. 315)
 -- ============================================================================
 
 /-- Person–number features of a Jarawara possessor. -/
@@ -163,13 +163,13 @@ structure Possessor where
   deriving DecidableEq, Repr
 
 /-- Possessed noun form: "masculine" (mano) or "feminine" (mani).
-    These labels follow @cite{dixon-2004}'s terminology; they reflect
+    These labels follow [dixon-2004]'s terminology; they reflect
     φ-agreement with the possessor, not the noun's own gender
     (which is always feminine). -/
 inductive PossessedForm where | mascForm | femForm
   deriving DecidableEq, Repr
 
-/-! ### Derived mano paradigm (@cite{adamson-2024} Appendix B)
+/-! ### Derived mano paradigm ([adamson-2024] Appendix B)
 
 The mano/mani alternation is derived from three components:
 
@@ -224,11 +224,11 @@ theorem mano_3m_pl : manoForm ⟨.third, .pl, some .masc⟩ = .femForm := rfl
 theorem mano_3f_pl : manoForm ⟨.third, .pl, some .fem⟩ = .femForm := rfl
 
 -- ============================================================================
--- § 3: Free vs Possessed Forms (Table 4; @cite{dixon-2004} p. 312)
+-- § 3: Free vs Possessed Forms (Table 4; [dixon-2004] p. 312)
 -- ============================================================================
 
 /-- A subset of nouns with attested free and iPossessed forms.
-    Free forms are all feminine (@cite{dixon-2004} pp. 80, 285). -/
+    Free forms are all feminine ([dixon-2004] pp. 80, 285). -/
 structure FreeVsPossessed where
   free : String
   iPossessed : String

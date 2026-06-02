@@ -2,7 +2,7 @@ import Linglib.Core.Logic.Modal.BSML.Defs
 
 /-!
 # BSML Pragmatic Enrichment
-@cite{aloni-2022}
+[aloni-2022]
 
 Pragmatic enrichment [·]⁺ (Definition 6) adds non-emptiness constraints
 recursively to every subformula, capturing the "neglect-zero" tendency
@@ -33,7 +33,7 @@ variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 -- ============================================================================
 
 /--
-Pragmatic enrichment [·]⁺ (Definition 6 from @cite{aloni-2022}).
+Pragmatic enrichment [·]⁺ (Definition 6 from [aloni-2022]).
 
 Recursively adds non-emptiness constraints at every level:
 - `[p]⁺ = p ∧ NE`
@@ -205,7 +205,7 @@ private theorem enrichment_strengthens_both (M : BSMLModel W Atom)
       exact fun w hw => ih_a _ (h' w hw)
 
 /--
-Enrichment strengthens: [α]⁺ ⊨ α (Fact 1 from @cite{aloni-2022}).
+Enrichment strengthens: [α]⁺ ⊨ α (Fact 1 from [aloni-2022]).
 
 For NE-free α, if a team supports the enriched formula [α]⁺, it also
 supports the original α.
@@ -230,7 +230,7 @@ theorem enrichment_strengthens_antiSupport (M : BSMLModel W Atom)
 -- ============================================================================
 
 /--
-Fact 2 from @cite{aloni-2022}: [α]⁺ ⊨ α ∧ NE for NE-free α.
+Fact 2 from [aloni-2022]: [α]⁺ ⊨ α ∧ NE for NE-free α.
 -/
 theorem enrichment_entails_conj_ne (M : BSMLModel W Atom)
     (φ : BSMLFormula Atom) (t : Finset W)
@@ -246,7 +246,7 @@ theorem enrichment_entails_conj_ne (M : BSMLModel W Atom)
 
 /--
 Pragmatic enrichment is vacuous under single negation for positive formulas
-(Fact 9 from @cite{aloni-2022}).
+(Fact 9 from [aloni-2022]).
 
 For positive α (no negation): ¬[α]⁺ ≡ ¬α (both support and anti-support).
 -/
@@ -299,7 +299,7 @@ theorem enrichment_vacuous_under_negation_support (M : BSMLModel W Atom)
 -- ============================================================================
 
 /-- BSML+ consequence: consequence between enriched formulas.
-    α ⊨_{BSML+} β iff [α]⁺ ⊨_{BSML} [β]⁺ (@cite{aloni-2022} §6.3.1). -/
+    α ⊨_{BSML+} β iff [α]⁺ ⊨_{BSML} [β]⁺ ([aloni-2022] §6.3.1). -/
 def consequencePlus (φ ψ : BSMLFormula Atom) : Prop :=
   ∀ (M : BSMLModel W Atom) (t : Finset W), support M (enrich φ) t → support M (enrich ψ) t
 
@@ -309,7 +309,7 @@ def consequencePlus (φ ψ : BSMLFormula Atom) : Prop :=
 
 /-- A formula is classical positive: no NE atom and no negation.
     These are the formulas for which BSML* and BSML+ consequence coincide
-    (@cite{aloni-2022} Fact 13). -/
+    ([aloni-2022] Fact 13). -/
 def BSMLFormula.isClassicalPositive (φ : BSMLFormula Atom) : Bool :=
   φ.isNEFree && φ.isPositive
 
@@ -375,7 +375,7 @@ private theorem enriched_iff_star_nonempty (M : BSMLModel W Atom)
 
 /--
 For classical positive formulas, BSML* and BSML+ consequence coincide
-(Fact 13 from @cite{aloni-2022}).
+(Fact 13 from [aloni-2022]).
 
 If we restrict to positive formulas without NE or ¬, then ruling out the
 empty state syntactically (via [·]⁺ enrichment) is equivalent to ruling
@@ -398,7 +398,7 @@ theorem bsmlStar_iff_bsmlPlus (φ ψ : BSMLFormula Atom)
 
 /--
 Pragmatic enrichment is NOT vacuous under double negation
-(Fact 10 from @cite{aloni-2022}).
+(Fact 10 from [aloni-2022]).
 
 While Fact 9 shows ¬[α]⁺ ≡ ¬α for positive α (enrichment is vacuous under
 single negation), under **double** negation enrichment has a non-trivial effect:

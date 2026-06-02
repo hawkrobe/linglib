@@ -4,14 +4,14 @@ import Mathlib.Data.Fin.VecNotation
 /-!
 # Maier (2015), *Parasitic Attitudes*
 
-@cite{maier-2015}'s solution to the @cite{karttunen-1973} attitude-projection
+[maier-2015]'s solution to the [karttunen-1973] attitude-projection
 puzzle, formalized as Maier actually states it: **a DRT mechanism**, not a
 world-accessibility abstraction — now over the faithful model-theoretic DRS core
 (`Semantics/Dynamic/DRS/`).
 
 ## The puzzle
 
-@cite{karttunen-1973} (ex. 42) observed that
+[karttunen-1973] (ex. 42) observed that
 
   "Bill believed Fred had been beating his wife and he hoped Fred would stop"
 
@@ -32,7 +32,7 @@ parasitism — realized purely structurally (the labels are not intensional
 operators; Maier fn. 11). Karttunen's puzzle is then solved by two operations
 (his §5): a sequence of same-agent attitude ascriptions is **merged** into one
 mental-state description (his (58)), after which the presupposition triggered in
-the desire compartment **binds** (@cite{van-der-sandt-1992}
+the desire compartment **binds** ([van-der-sandt-1992]
 presupposition-as-anaphora) to the now-accessible believed event (his
 (59)→(60)), rather than projecting.
 

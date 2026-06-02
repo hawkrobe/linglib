@@ -2,7 +2,7 @@
 # Preferential Attitude Semantics
 
 Degree-based semantics for preferential attitude verbs like `hope`, `fear`,
-`worry`, `wish`, `expect`, following @cite{villalta-2008} and @cite{romero-2015-salt}.
+`worry`, `wish`, `expect`, following [villalta-2008] and [romero-2015-salt].
 
 ## Semantic Mechanism
 
@@ -73,7 +73,7 @@ abbrev ThresholdFunction (W : Type*) := ThresholdFn W
 
 /-!
 ## Grounding in Question Semantics
-@cite{uegaki-sudo-2019} @cite{villalta-2008} @cite{rooth-1992} @cite{qing-uegaki-2025}
+[uegaki-sudo-2019] [villalta-2008] [rooth-1992] [qing-uegaki-2025]
 
 Questions are **alternative sets**. Our `AlternativeList W` is the
 extensional, list-based representation of question denotations used by
@@ -83,10 +83,10 @@ Set propositions).
 
 ### Why This Matters for TSP
 
-@cite{uegaki-sudo-2019} derive TSP from the interaction of:
-1. Degree semantics (μ(x,p) > θ) — from @cite{villalta-2008}
-2. Alternative semantics (questions as Hamblin sets) — from @cite{hamblin-1973b}
-3. Focus-induced presuppositions — from @cite{rooth-1992}
+[uegaki-sudo-2019] derive TSP from the interaction of:
+1. Degree semantics (μ(x,p) > θ) — from [villalta-2008]
+2. Alternative semantics (questions as Hamblin sets) — from [hamblin-1973b]
+3. Focus-induced presuppositions — from [rooth-1992]
 
 The key insight: **questions introduce alternatives**, and combining a degree
 predicate with alternatives triggers significance presuppositions.
@@ -94,11 +94,11 @@ predicate with alternatives triggers significance presuppositions.
 ### The Derivation Chain
 
 ```
-Hamblin alternative set Q = {p₁, p₂,...} [@cite{hamblin-1973b}]
+Hamblin alternative set Q = {p₁, p₂,...} [[hamblin-1973b]]
         ↓
-Alternatives trigger focus semantics [@cite{rooth-1992}]
+Alternatives trigger focus semantics [[rooth-1992]]
         ↓
-Focus triggers significance presup [@cite{kennedy-2007}]
+Focus triggers significance presup [[kennedy-2007]]
         ↓
 For positive valence: significance = ∃p ∈ C. μ(x,p) > θ = TSP
 ```
@@ -152,21 +152,21 @@ theorem triviality_representation_independent {W : Type*}
   obtain ⟨p, hp_in_Q, hp_holds⟩ := h_exists_Q
   exact ⟨p, h_subset p hp_in_Q, hp_holds⟩
 
--- Significance Presuppositions (@cite{kennedy-2007}, @cite{uegaki-sudo-2019})
+-- Significance Presuppositions ([kennedy-2007], [uegaki-sudo-2019])
 
 /-!
 ## Deriving TSP from Degree Semantics
 
 ### Background: Significance in Degree Constructions
 
-@cite{kennedy-2007} observes that degree constructions carry **significance presuppositions**.
+[kennedy-2007] observes that degree constructions carry **significance presuppositions**.
 The positive form of a gradable adjective presupposes the scale is "significant" in context:
 
   "John is tall" presupposes height is relevant/significant
 
 ### Application to Preferential Predicates
 
-@cite{villalta-2008} shows preferential predicates ARE gradable predicates with degree semantics:
+[villalta-2008] shows preferential predicates ARE gradable predicates with degree semantics:
 
   ⟦x hopes p⟧ = μ_hope(x, p) > θ(C)
 
@@ -190,7 +190,7 @@ For predicates expressing aversions/threats:
 
 ### Why the Asymmetry?
 
-The key insight (@cite{uegaki-sudo-2019}): Positive predicates express **bouletic goals** — states
+The key insight ([uegaki-sudo-2019]): Positive predicates express **bouletic goals** — states
 the agent wants to achieve. Goals inherently presuppose there's something desirable.
 
 Negative predicates express **threats** — states to avoid. Threats don't require
@@ -373,10 +373,10 @@ theorem degreeComparisonPredicate_isCDistributive {W E : Type*}
 -- Standard Predicates with C-Distributivity Proofs
 
 /-- Hope (preferential component): degree-comparison, positive valence.
-This captures the preference ordering from @cite{villalta-2008} — the
+This captures the preference ordering from [villalta-2008] — the
 component shared by all emotive doxastic analyses. For the full emotive
 doxastic semantics with doxastic + uncertainty + preference components
-(@cite{anand-hacquard-2013}), see `hopeHybrid` below.
+([anand-hacquard-2013]), see `hopeHybrid` below.
 
 Note: `hope` is structurally identical to `want` except for the name —
 both are positive-valence degree-comparison predicates. What distinguishes
@@ -439,7 +439,7 @@ theorem dread_isCDistributive {W E : Type*}
   degreeComparisonPredicate_isCDistributive "dread" .negative μ θ
 
 /-- Hope and wish have identical preference semantics — they differ only
-in name. @cite{anand-hacquard-2013}: what distinguishes hope from
+in name. [anand-hacquard-2013]: what distinguishes hope from
 want/wish is the doxastic component (captured by `hopeHybrid`), not
 the preferential semantics. -/
 theorem hope_eq_wish_semantics {W E : Type*}
@@ -588,7 +588,7 @@ theorem hope_triviality {W E : Type*}
 /--
 **Reverse direction**: TSP → assertion when C ⊆ Q.
 
-This is the other half of the triviality argument from @cite{uegaki-2022} §6.5.4:
+This is the other half of the triviality argument from [uegaki-2022] §6.5.4:
 TSP says ∃p ∈ C. μ(x,p) > θ(C). When C ⊆ Q, this p is also in Q,
 so the assertion ∃p ∈ Q. μ(x,p) > θ(C) holds too.
 -/
@@ -607,12 +607,12 @@ theorem hope_triviality_reverse {W E : Type*}
 /--
 **Triviality identity**: When C = Q, assertion ↔ TSP.
 
-This is the core of @cite{uegaki-2022} §6.5.4: the assertion of a non-veridical
+This is the core of [uegaki-2022] §6.5.4: the assertion of a non-veridical
 preferential with an interrogative complement is **identical** to its
 presupposition (TSP). Whenever TSP is satisfied (defined), the assertion
 is true; whenever TSP fails, the assertion is false. The meaning is
 L-analytic — its truth value is determined entirely by the presupposition,
-leaving no informative content. This is what @cite{gajewski-2002} identifies
+leaving no informative content. This is what [gajewski-2002] identifies
 as the trigger for unacceptability.
 -/
 theorem hope_triviality_identity {W E : Type*}
@@ -635,12 +635,12 @@ example : classifyNVP false .negative = .class1_nonCDist := rfl
 /-- Qidai is Class 1 (positive but non-C-distributive, takes questions) -/
 example : classifyNVP false .positive = .class1_nonCDist := rfl
 
--- Veridical Preferential Predicates (@cite{uegaki-sudo-2019})
+-- Veridical Preferential Predicates ([uegaki-sudo-2019])
 
 /-!
 ## Veridical vs Non-Veridical Preferential Predicates
 
-@cite{uegaki-sudo-2019} established a crucial distinction:
+[uegaki-sudo-2019] established a crucial distinction:
 
 ### Non-Veridical (hope) - TRIVIAL
 ```
@@ -765,7 +765,7 @@ def beHappy {W E : Type*} (μ : PreferenceFunction W E) (θ : ThresholdFunction 
   mkVeridicalPreferential "be happy" .positive μ θ
 
 /-- "be surprised": veridical, positive valence (expectation-violation).
-    Classified as positive following @cite{uegaki-sudo-2019}: the degree
+    Classified as positive following [uegaki-sudo-2019]: the degree
     function measures how much the true answer exceeds the subject's
     expectations, a positive-direction evaluation. -/
 def beSurprised {W E : Type*} (μ : PreferenceFunction W E) (θ : ThresholdFunction W) :
@@ -794,7 +794,7 @@ Even when:
 The question assertion can still be FALSE for veridical predicates,
 because no TRUE answer in w may be the preferred one.
 
-This is the key insight from @cite{uegaki-sudo-2019}: non-veridicality
+This is the key insight from [uegaki-sudo-2019]: non-veridicality
 is a NECESSARY condition for the triviality that makes predicates
 anti-rogative.
 
@@ -884,7 +884,7 @@ theorem beSurprised_isCDistributiveAt {W E : Type*}
 -- The Complete Picture: Why Veridicality Matters
 
 /-!
-## The Triviality Conditions (@cite{uegaki-sudo-2019})
+## The Triviality Conditions ([uegaki-sudo-2019])
 
 For a preferential predicate to be anti-rogative (unable to embed questions),
 ALL THREE conditions must hold:
@@ -945,7 +945,7 @@ the triviality derivation that creates anti-rogativity.
 4. `degreeComparison_triviality` / `hope_triviality`: Class 3 predicates
    yield trivial meanings with questions (assertion ⊆ presupposition when Q ⊆ C).
 
-5. **`veridical_breaks_triviality`** (NEW): The core @cite{uegaki-sudo-2019} insight —
+5. **`veridical_breaks_triviality`** (NEW): The core [uegaki-sudo-2019] insight —
    veridical predicates break triviality because even when TSP holds, the
    assertion can be false (no TRUE answer is preferred).
 
@@ -968,16 +968,16 @@ it is veridical — the truth requirement breaks the triviality derivation.
 -/
 
 -- ============================================================================
--- Highlighting (@cite{uegaki-2022} Ch 6 §6.6, @cite{pruitt-roelofsen-2011})
+-- Highlighting ([uegaki-2022] Ch 6 §6.6, [pruitt-roelofsen-2011])
 -- ============================================================================
 
 /-!
 ## Highlighted Propositions and hope-whether
 
-@cite{uegaki-2022} Ch 6 addresses apparent counterexamples to the anti-rogativity
-of positive NVPs: attested "hope whether" constructions (@cite{white-2021}).
+[uegaki-2022] Ch 6 addresses apparent counterexamples to the anti-rogativity
+of positive NVPs: attested "hope whether" constructions ([white-2021]).
 
-The solution uses **highlighting** (@cite{pruitt-roelofsen-2011}): clauses have both
+The solution uses **highlighting** ([pruitt-roelofsen-2011]): clauses have both
 an ordinary semantic value and a **highlighted value** — a subset of propositions
 with privileged status.
 
@@ -1001,7 +1001,7 @@ inductive HighlightingClauseType where
   deriving DecidableEq, Repr
 
 /--
-Highlighted propositions of a clause (@cite{pruitt-roelofsen-2011}).
+Highlighted propositions of a clause ([pruitt-roelofsen-2011]).
 
 - Polar interrogatives highlight the overtly-realized proposition (singleton)
 - Declaratives highlight the asserted proposition (singleton)
@@ -1087,13 +1087,13 @@ theorem hope_highlight_constituent_trivial {W E : Type*}
 
 -- ════════════════════════════════════════════════════════════════
 -- § Emotive Doxastic Predicates (hope, fear as hybrids)
--- @cite{anand-hacquard-2013} @cite{scheffler-2008}
+-- [anand-hacquard-2013] [scheffler-2008]
 -- ════════════════════════════════════════════════════════════════
 
 /-!
 ## Emotive Doxastics: Hybrid Representational + Preferential
 
-@cite{anand-hacquard-2013} show that `hope` and `fear` are not pure
+[anand-hacquard-2013] show that `hope` and `fear` are not pure
 preferential predicates (like `want`). They have three components:
 
 1. **Doxastic assertion**: the attitude holder believes φ is *possible*
@@ -1110,7 +1110,7 @@ This hybrid structure distinguishes `hope` from `want`:
 - `want` is pure preferential — no doxastic component, no epistemic licensing
 - `hope` has a doxastic component — licenses `might` but not `must`
 
-### Evidence for the doxastic component (@cite{scheffler-2008})
+### Evidence for the doxastic component ([scheffler-2008])
 
 `hope` can felicitously answer questions (providing doxastic information):
   A: "Is Peter coming today?"
@@ -1121,7 +1121,7 @@ This hybrid structure distinguishes `hope` from `want`:
 
 ### Verifiers and Falsifiers
 
-@cite{anand-hacquard-2013} define φ-verifiers in information state S as
+[anand-hacquard-2013] define φ-verifiers in information state S as
 subsets of S that are *certain* about φ — where φ's truth value doesn't
 change with (monotonically) increasing information:
 

@@ -10,7 +10,7 @@ import Linglib.Studies.CoonMateoPedroPreminger2014
 /-!
 # Pietraszko 2026: In defense of the clause-internal phase (Ndebele)
 
-@cite{pietraszko-2026}
+[pietraszko-2026]
 
 VoiceP in Zimbabwean Ndebele is a clause-internal phase, diagnosed by
 **operational opacity** for A-movement and φ-agreement (not by
@@ -25,13 +25,13 @@ in the phase complement and T defaults to class-15 *ku-* agreement.
   `subject_atEdge_accessible`) — the load-bearing structural derivations.
 - §3-§5: Bidirectional movement-agreement, Aux-V uniformity,
   phase-delimited movement.
-- §6: Convergence with @cite{erlewine-sommerlot-2025} (Malayic
+- §6: Convergence with [erlewine-sommerlot-2025] (Malayic
   VoiceP-as-phase) — `voice_phase_attested_in_two_families`.
 - §7: Four-cell `(flavor.defaultPhasal × phaseOverride)` typology
-  witnessed by Pietraszko + E&S + @cite{coon-2019} +
-  @cite{coon-mateo-pedro-preminger-2014}.
+  witnessed by Pietraszko + E&S + [coon-2019] +
+  [coon-mateo-pedro-preminger-2014].
 - §8: Study-local horizon-based reduction (`pietraszkoNdebeleConfig`)
-  for side-by-side comparison with @cite{keine-2020}'s framework.
+  for side-by-side comparison with [keine-2020]'s framework.
 - §3.1.1, §3.1.3, §3.2: Empirical theorems for raising-to-object,
   reduced-clause AspP test (with morphological exponent functions),
   and object-dislocation entails subject accessibility.
@@ -53,7 +53,7 @@ open Minimalist
 /-! ## Notes
 
 **Methodology caveat.** All Ndebele data are from a single native
-consultant (@cite{pietraszko-2026}, fn 1: a 60-year-old speaker who
+consultant ([pietraszko-2026], fn 1: a 60-year-old speaker who
 grew up in Bulawayo). The class-1 */u/* (T) vs */e/* (Perf/Asp)
 allomorphy split (encoded in `class1Allomorph` below) is novel to this
 paper and not yet corroborated against published Ndebele grammars.
@@ -119,8 +119,8 @@ def tToken : LIToken :=
   { item := LexicalItem.simple .T [.Asp]
   , id := idT }
 
-/-- An Asp head also bearing [φ, EPP] (per @cite{baker-2003},
-    @cite{baker-2008}, @cite{collins-2004}, @cite{carstens-2005}:
+/-- An Asp head also bearing [φ, EPP] (per [baker-2003],
+    [baker-2008], [collins-2004], [carstens-2005]:
     in Bantu, φ-probes occur only on heads with EPP, so each
     inflectional head above Voice carries the same probe profile). -/
 def aspToken : LIToken :=
@@ -296,8 +296,8 @@ theorem bidirectional_movement_agreement :
 
 In an Aux-V chain `[T > Asp > Voice > vP]`, every functional head above
 Voice carries the same φ + EPP probe (per the Bantu Baker generalization:
-@cite{baker-2003}, @cite{baker-2008}, @cite{collins-2004},
-@cite{carstens-2005}). Each probe independently checks accessibility
+[baker-2003], [baker-2008], [collins-2004],
+[carstens-2005]). Each probe independently checks accessibility
 across the Voice phase. Because they share the same accessibility
 condition, they uniformly succeed or uniformly fail.
 
@@ -347,7 +347,7 @@ theorem cross_phasal_movement_optional :
       IsSubjectAccessibleInTree tree₁ ∧ ¬ IsSubjectAccessibleInTree tree₂ :=
   ⟨auxVTree_subjectMoved, auxVTree_inSitu, by decide, by decide⟩
 
-/-! ## §6. Convergence with @cite{erlewine-sommerlot-2025}
+/-! ## §6. Convergence with [erlewine-sommerlot-2025]
 
 Both papers commit Voice to be phasal via `phaseOverride := some true`,
 on disjoint empirical domains. The convergence is now machine-checked
@@ -374,9 +374,9 @@ phaseOverride : Option Bool)` typology cells:
   — `Minimalist.voiceAgent`
 - agentive + override-true: Pietraszko 2026, this file —
   `Sample.voiceWithEPP`
-- agentive + override-false: @cite{coon-2019} (Chol intransitive),
-  @cite{coon-mateo-pedro-preminger-2014} (Mam Agent Focus)
-- passive + override-true: @cite{erlewine-sommerlot-2025} (Malayic
+- agentive + override-false: [coon-2019] (Chol intransitive),
+  [coon-mateo-pedro-preminger-2014] (Mam Agent Focus)
+- passive + override-true: [erlewine-sommerlot-2025] (Malayic
   di-passive, bare passive)
 
 The typology theorem witnesses each cell with a concrete VoiceHead. -/
@@ -399,7 +399,7 @@ theorem typology_cell_pietraszko :
 
 /-- **Cell 3**: agentive flavor + `phaseOverride := some false` =
     Chol intransitive variants (`Coon2019.v_w`); also Mam Agent Focus
-    in @cite{coon-mateo-pedro-preminger-2014}. Override forces non-phasal
+    in [coon-mateo-pedro-preminger-2014]. Override forces non-phasal
     against the agentive flavor default. -/
 theorem typology_cell_coon_intransitive :
     Coon2019.v_w.flavor = VoiceFlavor.agentive ∧
@@ -407,7 +407,7 @@ theorem typology_cell_coon_intransitive :
     ¬ Coon2019.v_w.IsPhasal := by decide
 
 /-- **Cell 4**: passive flavor + `phaseOverride := some true` =
-    Malayic *di-* passive in @cite{erlewine-sommerlot-2025}. Override
+    Malayic *di-* passive in [erlewine-sommerlot-2025]. Override
     forces phasal against the passive flavor default (which Collins-style
     treats as non-phasal). -/
 theorem typology_cell_erlewine_sommerlot :
@@ -423,10 +423,10 @@ theorem typology_cell_erlewine_sommerlot :
 -- typological commitment is at stake. No aggregator theorem is offered
 -- — `typology_cell_*` collectively are the typology witness.
 
-/-! ## §8. Divergence from @cite{keine-2020}: study-local probe config
+/-! ## §8. Divergence from [keine-2020]: study-local probe config
 
 Pietraszko 2026 §3.1.2 + §3.1.3 argue that probe-based locality
-(@cite{keine-2020}'s horizons) cannot derive Aux-V uniformity. Below
+([keine-2020]'s horizons) cannot derive Aux-V uniformity. Below
 is a study-local Keine-style probe configuration intended to model
 Pietraszko's data using the horizon framework — included for
 side-by-side comparison, not as the substrate's preferred encoding.

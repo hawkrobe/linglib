@@ -4,8 +4,8 @@ import Linglib.Features.Prominence
 /-!
 # Bantu Language Family: Shared Parameters
 
-@cite{carstens-1991} @cite{kramer-2015} @cite{carstens-2026}
-@cite{halpert-hammerly-2026} @cite{hammerly-2023}
+[carstens-1991] [kramer-2015] [carstens-2026]
+[halpert-hammerly-2026] [hammerly-2023]
 
 Shared types for Bantu language fragments, capturing cross-Bantu structural
 regularities in the noun class system. Individual Bantu languages (Swahili,
@@ -15,15 +15,15 @@ class inventories and morphological forms.
 ## Key shared structure
 
 - Noun classes come in singular/plural pairs that define **genders**
-  (@cite{carstens-1991}, @cite{kramer-2015})
+  ([carstens-1991], [kramer-2015])
 - A small number of genders have **semantic cores** — salient associations
   with entity classes like [human], [animal], [inanimate]
-  (@cite{carstens-2026} §4.2)
+  ([carstens-2026] §4.2)
 - The semantic core determines whether a gender is **interpretable**
   (bears an i[entity] flavor) or **uninterpretable** (purely formal)
 - All Bantu nouns are underlyingly specified for **core noun class** via
-  bivalent features [±Animate] and [±Human], from @cite{hammerly-2023}'s
-  containment hierarchy (@cite{halpert-hammerly-2026} (19))
+  bivalent features [±Animate] and [±Human], from [hammerly-2023]'s
+  containment hierarchy ([halpert-hammerly-2026] (19))
 
 ## Design
 
@@ -35,12 +35,12 @@ Resolution logic (percolation, intersection) lives in the Theory layer
 namespace Bantu
 
 -- ============================================================================
--- § 0: Core Noun Class Features (@cite{halpert-hammerly-2026} (19))
+-- § 0: Core Noun Class Features ([halpert-hammerly-2026] (19))
 -- ============================================================================
 
-/-- Bivalent animacy features from @cite{hammerly-2023}'s containment
+/-- Bivalent animacy features from [hammerly-2023]'s containment
     hierarchy, applied to Bantu core noun class by
-    @cite{halpert-hammerly-2026}.
+    [halpert-hammerly-2026].
 
     Two features determine core noun class:
     - [±Animate]: distinguishes animate from inanimate entities
@@ -58,7 +58,7 @@ structure AnimacyFeatures where
 namespace AnimacyFeatures
 
 /-- Well-formedness: [+Human] → [+Animate].
-    Being human entails being animate (@cite{halpert-hammerly-2026} fn. 10). -/
+    Being human entails being animate ([halpert-hammerly-2026] fn. 10). -/
 def wellFormed (af : AnimacyFeatures) : Bool :=
   !af.isHuman || af.isAnimate
 
@@ -83,7 +83,7 @@ theorem exactly_three :
 /-- Animacy features instantiate the `PhiFeatures` privative pair:
     outer = [±Animate], inner = [±Human]. This is the same mathematical
     structure as person features (outer = [±participant], inner = [±author]),
-    confirming @cite{hammerly-2023}'s claim that person and animacy features
+    confirming [hammerly-2023]'s claim that person and animacy features
     share a common containment architecture. -/
 instance : Features.PhiFeatures AnimacyFeatures where
   toPair af := ⟨af.isAnimate, af.isHuman⟩
@@ -105,11 +105,11 @@ theorem inanimate_level : inanimate.toAnimacyLevel = .inanimate := rfl
 end AnimacyFeatures
 
 -- ============================================================================
--- § 0b: Final Vowels (@cite{halpert-hammerly-2026} §4.1)
+-- § 0b: Final Vowels ([halpert-hammerly-2026] §4.1)
 -- ============================================================================
 
 /-- Bantu nominalizing final vowels encode core noun class on the
-    categorizing head n (@cite{halpert-hammerly-2026} (22)).
+    categorizing head n ([halpert-hammerly-2026] (22)).
 
     - *-i*: n[+Animate, +Human] (human nominalizer)
     - *-o*: n[±Animate, −Human] (non-human nominalizer)
@@ -123,7 +123,7 @@ inductive FinalVowel where
 namespace AnimacyFeatures
 
 /-- Core noun class features determine the nominalizing final vowel
-    (@cite{halpert-hammerly-2026} (22)). -/
+    ([halpert-hammerly-2026] (22)). -/
 def toFinalVowel (af : AnimacyFeatures) : FinalVowel :=
   if af.isHuman then .i else .o
 
@@ -138,7 +138,7 @@ end AnimacyFeatures
 -- ============================================================================
 
 /-- Semantic cores of Bantu gender: salient associations between
-    genders and entity classes (@cite{carstens-2026} §4.2, (71)).
+    genders and entity classes ([carstens-2026] §4.2, (71)).
 
     Not all Bantu genders have a semantic core. Those that do have
     an interpretable i[entity] flavor at their innermost nP layer.
@@ -162,7 +162,7 @@ inductive SemanticCore where
 namespace AnimacyFeatures
 
 /-- Derive `SemanticCore` from bivalent features
-    (@cite{halpert-hammerly-2026} (19)). -/
+    ([halpert-hammerly-2026] (19)). -/
 def toCoreClass : AnimacyFeatures → SemanticCore
   | ⟨true, true⟩   => .human
   | ⟨true, false⟩  => .animal
@@ -191,12 +191,12 @@ theorem AnimacyFeatures.roundtrip (af : AnimacyFeatures)
     AnimacyFeatures.human, AnimacyFeatures.animal, AnimacyFeatures.inanimate]
 
 -- ============================================================================
--- § 1c: Conflation (@cite{halpert-hammerly-2026} §2, (5))
+-- § 1c: Conflation ([halpert-hammerly-2026] §2, (5))
 -- ============================================================================
 
 /-- A language's **conflation pattern**: which containment features it is
     sensitive to. Dropping a feature merges the categories it distinguishes
-    (@cite{halpert-hammerly-2026} (5), following @cite{mcginnis-2005}). -/
+    ([halpert-hammerly-2026] (5), following [mcginnis-2005]). -/
 structure ConflationPattern where
   usesAnimate : Bool
   usesHuman : Bool
@@ -220,7 +220,7 @@ theorem swahili_two_classes : ConflationPattern.swahili.classCount = 2 := rfl
 /-- A feature-definable category: a conjunction of constraints on
     [±Animate] and/or [±Human]. `none` means the feature is unconstrained
     (conflated). This captures exactly the categories that arise from
-    the containment hierarchy (@cite{halpert-hammerly-2026} (4)–(5)). -/
+    the containment hierarchy ([halpert-hammerly-2026] (4)–(5)). -/
 structure FeatureConjunction where
   animateReq : Option Bool  -- constraint on [±Animate], or `none` if conflated
   humanReq : Option Bool    -- constraint on [±Human], or `none` if conflated
@@ -236,7 +236,7 @@ def FeatureConjunction.matches (fc : FeatureConjunction) (af : AnimacyFeatures) 
     while excluding ANIMAL. This follows from containment: HUMAN shares
     [+Animate] with ANIMAL, and INANIMATE shares [−Human] with ANIMAL,
     so any conjunction selecting both endpoints must also select the
-    middle (@cite{halpert-hammerly-2026} §2, p. 5). -/
+    middle ([halpert-hammerly-2026] §2, p. 5). -/
 theorem impossible_human_inanimate_without_animal :
     ¬∃ (fc : FeatureConjunction),
       fc.matches .human = true ∧
@@ -257,7 +257,7 @@ theorem impossible_human_inanimate_without_animal :
 -- § 2: Gender Interpretability
 -- ============================================================================
 
-/-- Gender interpretability status (@cite{carstens-2026} §4.2).
+/-- Gender interpretability status ([carstens-2026] §4.2).
 
     An **interpretable** gender has an i[entity] flavor associated with
     a salient class of countable entities. An **uninterpretable** gender
@@ -265,7 +265,7 @@ theorem impossible_human_inanimate_without_animal :
 
     This distinction directly controls agreement with conjoined singulars:
     gender-matching plural agreement succeeds with uniform conjuncts
-    only for interpretable genders (@cite{carstens-2026} (52), (54)). -/
+    only for interpretable genders ([carstens-2026] (52), (54)). -/
 inductive GenderStatus where
   | interpretable : SemanticCore → GenderStatus
   | uninterpretable : GenderStatus
@@ -283,7 +283,7 @@ def GenderStatus.core : GenderStatus → Option SemanticCore
 -- § 3: nP Stacking
 -- ============================================================================
 
-/-- Stacked nP structure for Bantu nominals (@cite{carstens-2026} §4, (72)–(73)).
+/-- Stacked nP structure for Bantu nominals ([carstens-2026] §4, (72)–(73)).
 
     Bantu nouns have an inner semantic nP (bearing the i-core gender)
     wrapped by zero or more outer nPs (determining the visible noun class).
@@ -307,7 +307,7 @@ def NPStack.isCanonical (s : NPStack) : Bool :=
 /-- Whether the core noun class is [+Animate] (HUMAN or ANIMAL).
     This is the predicate that [+Animate]-relativized probes and
     object-doubling conditions both target
-    (@cite{halpert-hammerly-2026} (29)). -/
+    ([halpert-hammerly-2026] (29)). -/
 def NPStack.hasAnimateCore (s : NPStack) : Bool :=
   match s.status with
   | .interpretable .human  => true
@@ -318,7 +318,7 @@ def NPStack.hasAnimateCore (s : NPStack) : Bool :=
 -- § 4: Default Agreement Classes
 -- ============================================================================
 
-/-- Default agreement class for a semantic core (@cite{carstens-2026} (52c)).
+/-- Default agreement class for a semantic core ([carstens-2026] (52c)).
     Class 2 *ba-* for [human], class 8 *zi-* for [inanimate] and [animal]. -/
 def SemanticCore.defaultPluralClass : SemanticCore → Nat
   | .human     => 2

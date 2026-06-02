@@ -78,7 +78,7 @@ def nixonPresident : ModalArgument :=
 
 /-! ## Donnellan's Martini Case -/
 
-/-- @cite{donnellan-1966}: "The man drinking a martini is happy" said at a party.
+/-- [donnellan-1966]: "The man drinking a martini is happy" said at a party.
 
 The speaker points at Jones, who is actually drinking water.
 Smith, unbeknownst to the speaker, is the one drinking a martini.
@@ -143,7 +143,7 @@ def supermanClark : SubstitutivityFailure :=
 
 /-! ## Kaplan's "I am here now" -/
 
-/-- @cite{kaplan-1989}: "I am here now" is a logical truth — true at every
+/-- [kaplan-1989]: "I am here now" is a logical truth — true at every
 context of utterance — yet its content is contingent.
 
 At a context where Alice is in Paris on Monday, the content is the
@@ -165,7 +165,7 @@ def iAmHereNow : IAmHereNow := {}
 
 /-! ## Kripke's Necessity of Identity -/
 
-/-- @cite{kripke-1980}: if an identity "a = b" is true and both terms are
+/-- [kripke-1980]: if an identity "a = b" is true and both terms are
 rigid designators, then the identity is necessarily true.
 
 "Hesperus = Phosphorus" is true. Both "Hesperus" and "Phosphorus" are
@@ -197,7 +197,7 @@ def waterH2O : NecessityOfIdentity :=
 
 /-! ## Kaplan's Anti-Monster Thesis -/
 
-/-- @cite{kaplan-1989}'s thesis that natural language has no context-shifting
+/-- [kaplan-1989]'s thesis that natural language has no context-shifting
 operators ("monsters").
 
 Status: holds for English; challenged cross-linguistically by indexical

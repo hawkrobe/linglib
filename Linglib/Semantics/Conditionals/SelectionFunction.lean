@@ -2,9 +2,9 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Selection Functions
-@cite{stalnaker-1968}
+[stalnaker-1968]
 
-A **selection function** in the sense of @cite{stalnaker-1968}: given a
+A **selection function** in the sense of [stalnaker-1968]: given a
 world `w` and a non-empty proposition `A ⊆ W`, return a unique
 "selected" world `s w A ∈ A` — intuitively, the closest A-world to `w`.
 
@@ -16,7 +16,7 @@ Selection functions are characterized by two axioms:
   `A`, the closest A-world is `w` itself).
 
 These two axioms suffice for many semantic applications:
-@cite{stalnaker-1968} conditionals, @cite{cariani-santorio-2018}'s
+[stalnaker-1968] conditionals, [cariani-santorio-2018]'s
 selectional semantics for *will*, and Schulz's choice-function
 conditionals all rely on selection functions of this form.
 
@@ -27,7 +27,7 @@ there, and concrete instances may pick any default.
 namespace Semantics.Conditionals
 
 /-- A **selection function** on `W`: maps a world and a proposition to
-    a "selected" world, satisfying @cite{stalnaker-1968}'s Inclusion
+    a "selected" world, satisfying [stalnaker-1968]'s Inclusion
     and Centering axioms. -/
 structure SelectionFunction (W : Type*) where
   /-- The selection map. -/
@@ -51,8 +51,8 @@ theorem sel_mem (s : SelectionFunction W) (w : W) (A : Set W)
     (hA : A.Nonempty) : s.sel w A ∈ A :=
   s.inclusion w A hA
 
-/-- **Selection Excluded Middle** — the structural origin of @cite{stalnaker-1968}'s
-    Conditional Excluded Middle and @cite{cariani-santorio-2018}'s Will
+/-- **Selection Excluded Middle** — the structural origin of [stalnaker-1968]'s
+    Conditional Excluded Middle and [cariani-santorio-2018]'s Will
     Excluded Middle. Because `sel w f` is a *single* world, every
     predicate evaluated there satisfies excluded middle. The selection
     function reduces a quantificational question over a set to a
@@ -65,7 +65,7 @@ theorem sel_em (s : SelectionFunction W) (A : W → Prop) (f : Set W)
 /-- **Selection Negation Swap** — negation commutes through evaluation
     at the selected world: applying a pointwise-negated predicate to
     `sel w f` is the same as negating the application. This is the
-    structural origin of @cite{cariani-santorio-2018}'s Negation Swap
+    structural origin of [cariani-santorio-2018]'s Negation Swap
     for *will*. The equivalence is `Iff.rfl` once the prejacent has
     been reduced to a propositional question at the selected point. -/
 theorem sel_neg_swap (s : SelectionFunction W) (A : W → Prop) (f : Set W)
@@ -83,7 +83,7 @@ def selectionPrefers {W : Type*} (s : SelectionFunction W)
   s.sel w₀ {w₁, w₂} = w₁
 
 /-- **A selection function is coherent** iff its induced pairwise
-preference is transitive. This is the content of @cite{stalnaker-1981}'s
+preference is transitive. This is the content of [stalnaker-1981]'s
 claim that selection functions determine a *well-ordering* of possible
 worlds.
 

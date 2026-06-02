@@ -1,11 +1,11 @@
 /-!
 # KOS: NSU Classification (Table 7.3 + Table 7.4)
-@cite{ginzburg-2012} Ch. 7 §7.2 (pp. 219–222)
-@cite{fernandez-2006}
+[ginzburg-2012] Ch. 7 §7.2 (pp. 219–222)
+[fernandez-2006]
 
 The empirical taxonomy of non-sentential utterances from
-@cite{ginzburg-2012} Tables 7.3 and 7.4, derived from the BNC subcorpus
-study by @cite{fernandez-2006} (200 speaker-turns from 54 BNC files;
+[ginzburg-2012] Tables 7.3 and 7.4, derived from the BNC subcorpus
+study by [fernandez-2006] (200 speaker-turns from 54 BNC files;
 14,315 sentences; 1,299 NSUs found, of which 1,283 = 98.9% classified).
 
 ## Class enumeration (Table 7.3, p. 221)
@@ -57,7 +57,7 @@ namespace Dialogue.KOS
 -- § 1. NSU Classes (Table 7.3 with Table 7.4 sluice split)
 -- ════════════════════════════════════════════════════
 
-/-- The 16 NSU classes from @cite{ginzburg-2012} Table 7.3 + Table 7.4.
+/-- The 16 NSU classes from [ginzburg-2012] Table 7.3 + Table 7.4.
 
 Sluice is split into Reprise Sluice (metacommunicative) and Direct Sluice
 (extension move) per Table 7.4 — the original Table 7.3 had a single
@@ -101,7 +101,7 @@ inductive NSUClass where
 -- § 2. Functional Groups (Table 7.4)
 -- ════════════════════════════════════════════════════
 
-/-- Functional grouping from @cite{ginzburg-2012} Table 7.4 (p. 222). -/
+/-- Functional grouping from [ginzburg-2012] Table 7.4 (p. 222). -/
 inductive NSUFunction where
   /-- Positive feedback (685): plain + repeated acknowledgement. -/
   | positiveFeedback

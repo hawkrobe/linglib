@@ -3,10 +3,10 @@ import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# Property Spaces and Personae (@cite{burnett-2019}, Definitions 3.1–3.3)
-@cite{burnett-2019}
+# Property Spaces and Personae ([burnett-2019], Definitions 3.1–3.3)
+[burnett-2019]
 
-Burnett's formalization of @cite{eckert-2008}'s indexical field as a
+Burnett's formalization of [eckert-2008]'s indexical field as a
 *property space* — a set of social properties with incompatibility
 constraints — from which *personae* emerge as maximal consistent subsets.
 

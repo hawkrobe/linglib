@@ -12,12 +12,12 @@ import Linglib.Core.Computability.Subregular.Function.Subsequential
 
 Worked example using the function-level subregular substrate
 (`Core/Computability/Subregular/Function/`) to classify a fragment of
-Eastern Nilotic ATR harmony per @cite{meinhardt-mai-bakovic-mccollum-2024}.
+Eastern Nilotic ATR harmony per [meinhardt-mai-bakovic-mccollum-2024].
 
 ## The paper
 
-@cite{meinhardt-mai-bakovic-mccollum-2024} (NLLT 42:1191-1232) propose a
-tightening of the @cite{heinz-lai-2013} Weakly Deterministic (WD) function
+[meinhardt-mai-bakovic-mccollum-2024] (NLLT 42:1191-1232) propose a
+tightening of the [heinz-lai-2013] Weakly Deterministic (WD) function
 class. Their thesis:
 
 * **Bidirectional** iterative ATR harmony in Maasai and Turkana (Eastern
@@ -25,7 +25,7 @@ class. Their thesis:
   FSTs reading from opposite directions, where the two passes do not
   interact in the technical sense the paper formalises (§5).
 * Hypothetical *unbounded-circumambient* "sour grapes" patterns
-  (@cite{wilson-2003}; @cite{wilson-2006}) are *unattested* and
+  ([wilson-2003]; [wilson-2006]) are *unattested* and
   **non-deterministic** — the inner and outer passes interact, placing
   the function strictly above WD in the hierarchy (Fig. 1).
 * The original Heinz-Lai 2013 WD definition was too permissive,
@@ -93,7 +93,7 @@ Per CLAUDE.md "stimulus contrasts" discipline for Studies files:
 ## Scope note: cross-construction extrapolation
 
 The OSL framing here characterises ATR harmony **within a single
-spell-out domain** (root + affixes). @cite{sande-clem-dabkowski-2026}
+spell-out domain** (root + affixes). [sande-clem-dabkowski-2026]
 argue that ATR harmony in Guébie particle-verb focus-fronting
 constructions is *also* local at the moment of spell-out but
 *surface-discontinuous* after subsequent A′-movement. Their pattern
@@ -114,7 +114,7 @@ open Core.Computability.Subregular.Function
 -- ============================================================================
 
 /-- Minimal alphabet capturing the dominance-vs-recessive distinction
-that drives Maasai ATR harmony per @cite{meinhardt-mai-bakovic-mccollum-2024}
+that drives Maasai ATR harmony per [meinhardt-mai-bakovic-mccollum-2024]
 p. 1203. Four symbols stand in for the relevant phonological contrasts:
 
 * `recL` — a recessive [-ATR] vowel (e.g., /ɪ/, /ʊ/). Surfaces as
@@ -163,7 +163,7 @@ end Seg
 
 The rule's k = 2: the output decision at each position depends on the
 **single immediately preceding output symbol** (per
-@cite{chandlee-eyraud-heinz-2015} the canonical OSL fragment of
+[chandlee-eyraud-heinz-2015] the canonical OSL fragment of
 phonological maps). Rule logic:
 
 * Current input is `dom` → emit `recH` (dominant always surfaces as
@@ -248,7 +248,7 @@ example : rightwardATR.run [.dom, .recL, .a, .recL]
 -- ============================================================================
 
 /-- **Rightward [+ATR] spreading is Left-Output-Strictly-Local**
-(@cite{chandlee-eyraud-heinz-2015}; @cite{meinhardt-mai-bakovic-mccollum-2024}
+([chandlee-eyraud-heinz-2015]; [meinhardt-mai-bakovic-mccollum-2024]
 §5.4). Witness: the OSL rule `rightwardATR_osl` defined above.
 
 This is the **tighter** classification per the paper — single-direction
@@ -284,10 +284,10 @@ mirror image via `SFST.runRight`):
 maasai := leftwardATR.runRight ∘ rightwardATR.run     -- (or vice versa)
 ```
 
-@cite{meinhardt-mai-bakovic-mccollum-2024} call such *non-interacting*
+[meinhardt-mai-bakovic-mccollum-2024] call such *non-interacting*
 two-pass compositions **Weakly Deterministic**. The non-interaction
 condition is what their paper formalises and tightens compared to
-@cite{heinz-lai-2013}'s original definition.
+[heinz-lai-2013]'s original definition.
 
 **Both definitions land in `Function/WeaklyDeterministic.lean`** (this
 PR) per linglib's "make incompatibilities visible" thesis: the
@@ -297,7 +297,7 @@ bidirectional function is claimed WD by both definitions; the
 divergence point — sour-grapes-style functions admitted by HL2013 but
 rejected by MMBM2024 — is where the patch matters.
 
-Sour grapes harmony (@cite{wilson-2003}; @cite{wilson-2006}) — where
+Sour grapes harmony ([wilson-2003]; [wilson-2006]) — where
 leftward spread fails *entirely* if blocked at any position — is the
 canonical example of a function above WD: the inner (rightward) and
 outer (leftward) passes interact, so no non-interacting two-pass

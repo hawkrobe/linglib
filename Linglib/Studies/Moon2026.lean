@@ -10,7 +10,7 @@ import Mathlib.Tactic.FinCases
 
 /-!
 # Moon 2026: Countability and Measured Parts in Mixed Drink Nouns
-@cite{moon-2026} @cite{filip-2012}
+[moon-2026] [filip-2012]
 
 Mixed drink nouns (*martini*, *cappuccino*) are count despite denoting
 liquids. Moon proposes that their countability derives from a MEASURED
@@ -21,7 +21,7 @@ a unit for individuation. This contrasts with standard mass drink nouns
 ## Connection to Filip 2012's three-way classification
 
 Mixed drink predicates instantiate the ¬CUM ∧ ¬QUA middle ground that
-@cite{filip-2012} identifies as a third class beyond CUM (atelic) and
+[filip-2012] identifies as a third class beyond CUM (atelic) and
 QUA (telic). The topological non-cumulativity proved here
 (`not_cum_of_disconnected`) plus the algebraic non-quantization
 (`mixedDrink_not_qua`) jointly witness Filip's middle ground at the
@@ -64,7 +64,7 @@ This is built from:
 2. This is NOT Universal Packager coercion: countability persists in
    *pitcher of martinis*, *bottomless mimosas* (Moon §3.5)
 3. Multiplier *double* targets the MEASURED PART (*double americano*
-   = double espresso, not double volume), following @cite{wagiel-2021}
+   = double espresso, not double volume), following [wagiel-2021]
 4. Quantity judgments are ambiguous between volume, number of portions,
    and number of measured parts (Moon §4.3.2)
 -/
@@ -149,7 +149,7 @@ structure MixedDrinkWitness {n : ℕ} (recipe : Recipe α n)
 
     The MEASURED PART is the ingredient at `recipe.measuredPart` — it
     provides the unit for individuation and is what *double* targets
-    (@cite{wagiel-2021}). -/
+    ([wagiel-2021]). -/
 def mixedDrinkDen {n : ℕ} (recipe : Recipe α n)
     (μ : α → ℚ) (phase : α → Phase) (x : α) : Prop :=
   Nonempty (MixedDrinkWitness recipe μ phase x)
@@ -210,14 +210,14 @@ theorem single_ingredient_not_mixed_drink {n : ℕ}
   exact hExcl j hj (w.assign j) (w.part_le j) (w.satisfies j)
 
 -- ════════════════════════════════════════════════════
--- § 5. Multiplier Modification (@cite{wagiel-2021})
+-- § 5. Multiplier Modification ([wagiel-2021])
 -- ════════════════════════════════════════════════════
 
 /-- The multiplier reading of *double*: scales the measured part.
 
     *Double americano* = an americano with 2× the measured part (espresso).
     The multiplier targets `recipe.measuredPart`, not the whole drink.
-    Following @cite{wagiel-2021}'s subatomic quantification: multipliers
+    Following [wagiel-2021]'s subatomic quantification: multipliers
     access semantically salient parts of an entity.
 
     A *double* mixed drink has the same recipe but with the measured
@@ -396,7 +396,7 @@ variable {β : Type*} [SemilatticeSup β]
     Contrast with `not_cum_of_disconnected`: mixed drink denotations fail
     CUM because `ConnectedLiquid` rejects disconnected sums.
 
-    Since @cite{chierchia-1998}'s `IsMass` implies CUM (via `isMass_cum`
+    Since [chierchia-1998]'s `IsMass` implies CUM (via `isMass_cum`
     in `Semantics/Lexical/Noun/Kind/NMP.lean`), this
     means substance nouns can be mass. Mixed drink nouns cannot — their
     denotation fails CUM, hence fails `IsMass`. -/
@@ -436,7 +436,7 @@ theorem mass_count_asymmetry
 
 /-! ### Why Div fails for mixed drinks
 
-@cite{borer-2005}'s individuation operator `Div(P) = {x ∈ P | Atom(x)}`
+[borer-2005]'s individuation operator `Div(P) = {x ∈ P | Atom(x)}`
 produces count readings by restricting a cumulative root to mereological
 atoms — entities with no proper parts. This works for standard count
 nouns: "a beer" is an atomic portion of beer-stuff, "a cat" is an
@@ -628,8 +628,8 @@ theorem mixedDrink_middle_ground {n : ℕ}
 /-! ### From NP-level gap to VP-level gap
 
 Sections 4 and 10–11 establish that mixed-drink predicates occupy the
-NP-level ¬CUM ∧ ¬QUA middle ground that @cite{filip-2012} identifies.
-@cite{krifka-1998}'s CUM/QUA propagation machinery (§3.3, formalised in
+NP-level ¬CUM ∧ ¬QUA middle ground that [filip-2012] identifies.
+[krifka-1998]'s CUM/QUA propagation machinery (§3.3, formalised in
 `Studies/Filip2012.lean`'s `middle_ground_stable`) shows the gap
 propagates to VPs under SINC + UP + CumTheta verbs.
 
@@ -648,7 +648,7 @@ section MoonFilipBridge
 variable {β : Type*} [SemilatticeSup β]
 
 /-- Mixed-drink denotations (Moon 2026) instantiate the ¬CUM ∧ ¬QUA
-    middle ground that @cite{filip-2012} identifies. When a SINC
+    middle ground that [filip-2012] identifies. When a SINC
     drinking verb (typeclass `IsSincVerb`) takes a mixed-drink object,
     the resulting drinking-mixed-drink VP inherits the gap.
 

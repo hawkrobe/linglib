@@ -2,7 +2,7 @@ import Linglib.Syntax.Pronoun.Basic
 
 /-!
 # Russian Reciprocal Fragment
-@cite{nordlinger-2023} @cite{konig-kokutani-2006}
+[nordlinger-2023] [konig-kokutani-2006]
 
 Russian uses a dedicated reciprocal pronoun "drug druga" (друг друга,
 literally 'friend of friend'). This is an NP/argument strategy (bivalent):

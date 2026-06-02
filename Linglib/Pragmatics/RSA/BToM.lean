@@ -3,7 +3,7 @@ import Linglib.Pragmatics.RSA.Basic
 
 /-!
 # RSA-BToM Grounding: Latent Classification
-@cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{clark-1996} @cite{goodman-frank-2016}
+[baker-jara-ettinger-saxe-tenenbaum-2017] [clark-1996] [goodman-frank-2016]
 
 The structural mapping `toBToM` and the bridge theorem `L1_eq_btom_worldMarginal`
 now live in `Config.lean` (§5), where they are methods on `RSAConfig`. This file

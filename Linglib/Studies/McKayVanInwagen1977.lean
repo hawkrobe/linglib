@@ -1,14 +1,14 @@
 import Linglib.Semantics.Conditionals.Counterfactual
 
 /-!
-# McKay & Van Inwagen 1977 @cite{mckay-vaninwagen-1977}
+# McKay & Van Inwagen 1977 [mckay-vaninwagen-1977]
 
 Counterfactuals with Disjunctive Antecedents.
 *Philosophical Studies* 31: 353–356.
 
 ## Core Contribution
 
-Defends @cite{lewis-1973}'s variably strict conditional semantics against
+Defends [lewis-1973]'s variably strict conditional semantics against
 the claim that **Simplification of Disjunctive Antecedents (SDA)** should
 be valid:
 
@@ -19,7 +19,7 @@ validity constraint on counterfactual logic. McKay & Van Inwagen refute
 this with two arguments:
 
 1. **The bumper crop argument**: The English sentence "if good weather or
-   sun cold, bumper crop" is false, but @cite{lewis-1973}'s
+   sun cold, bumper crop" is false, but [lewis-1973]'s
    disjunctive-closure reading `(goodWeather ∨ sunCold) > bumperCrop` is
    true. So the English sentence is NOT equivalent to the
    disjunctive-closure reading. The correct regimentation is the

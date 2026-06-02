@@ -3,7 +3,7 @@ import Linglib.Features.Prosody
 
 /-!
 # Prosodic Word (PrWd)
-@cite{selkirk-1984}
+[selkirk-1984]
 
 The prosodic word (PrWd, ω) is the prosodic constituent immediately
 above the foot in the prosodic hierarchy:
@@ -32,7 +32,7 @@ elements fall within the PrWd and which form their own domain:
 
 This boundary is diagnosed by vowel harmony scope, minimal word
 effects, and obligatory vs optional hiatus resolution
-(@cite{aitha-2026} §3.2).
+([aitha-2026] §3.2).
 
 ## Connection to Linglib
 
@@ -57,7 +57,7 @@ open Phonology.Syllable
     `root | derivational | ... | clitic` conflated three independent
     dimensions and made it impossible to add new combinations (e.g., a
     "free" vs. "bound" N2 in a Japanese compound, which is the moderator
-    in @cite{breiss-katsuda-kawahara-2026}) without doubling the case
+    in [breiss-katsuda-kawahara-2026]) without doubling the case
     enumeration.
 
     The three axes:
@@ -65,7 +65,7 @@ open Phonology.Syllable
     - `prWdInternal` — is this element parsed inside the prosodic word
       with the stem? Empirically diagnosed by vowel-harmony scope,
       minimal-word effects, and hiatus-resolution obligation
-      (@cite{aitha-2026} §3.2).
+      ([aitha-2026] §3.2).
     - `free` — can this element stand alone as a wordform? Roots and
       free morphemes are `true`; bound roots, inflectional suffixes,
       and most clitics are `false`. **The Breiss N2 free-vs-bound
@@ -90,12 +90,12 @@ def derivational : MorphStatus := ⟨true,  false, true⟩
 /-- Inflectional affix (case, number, tense): PrWd-internal, bound. -/
 def inflectional : MorphStatus := ⟨true,  false, true⟩
 /-- Agreement marker: PrWd-internal (crucially, for Telugu nominal
-    predicative agreement; @cite{aitha-2026} §3.1). -/
+    predicative agreement; [aitha-2026] §3.1). -/
 def agreement    : MorphStatus := ⟨true,  false, true⟩
 /-- Postposition: forms a **separate** PrWd. Evidence: not subject to
     progressive vowel harmony, obeys minimal word constraint
     independently, hiatus resolution across boundary is optional
-    (@cite{aitha-2026} §3.2). Free-standing in many languages. -/
+    ([aitha-2026] §3.2). Free-standing in many languages. -/
 def postposition : MorphStatus := ⟨false, true,  false⟩
 /-- Clitic: PrWd-external boundary element; phonologically bound but
     syntactically not an affix. -/
@@ -141,12 +141,12 @@ def PrWd.syllableCount (w : PrWd) : Nat :=
 
 /-- Does a prosodic word satisfy the minimal word constraint?
 
-    @cite{mccarthy-prince-1993}: the smallest prosodic word must
+    [mccarthy-prince-1993]: the smallest prosodic word must
     contain at least one foot, which requires at least two morae
     (for moraic trochee languages) or two syllables (for syllabic
     trochee languages).
 
-    Telugu requires a bimoraic minimum (@cite{aitha-2026} §3.2):
+    Telugu requires a bimoraic minimum ([aitha-2026] §3.2):
     the shortest standalone words are informal 2SG imperatives like
     *rā* 'come' (CVV = 2μ) and *pō* 'go' (CVV = 2μ). No word
     consists of a single light syllable. -/
@@ -166,7 +166,7 @@ structure MorphElement where
   status : MorphStatus
   /-- Weight of the initial syllable. Relevant for the Telugu weak
       alternation: the long form is triggered when a *light* initial
-      syllable follows within the PrWd (@cite{aitha-2026} §3.2). -/
+      syllable follows within the PrWd ([aitha-2026] §3.2). -/
   initialWeight : SyllWeight
   deriving DecidableEq, Repr
 
@@ -189,7 +189,7 @@ def MorphElement.triggersLongForm (m : MorphElement) : Bool :=
 /-- Hiatus resolution obligation: within a PrWd, hiatus resolution
     is **obligatory**; across PrWd boundaries, it is **optional**.
 
-    @cite{aitha-2026} §3.2: Telugu *koṭṭu* 'to hit' + *-āli* 'OBLIG'
+    [aitha-2026] §3.2: Telugu *koṭṭu* 'to hit' + *-āli* 'OBLIG'
     → *koṭṭāli* (obligatory deletion of /u/ word-internally), but
     *kukka eduru* 'in front of the dog' allows optional retention. -/
 inductive HiatusObligation where

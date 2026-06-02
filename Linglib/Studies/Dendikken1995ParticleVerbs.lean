@@ -4,9 +4,9 @@ import Linglib.Phenomena.Constructions.ParticleVerbs
 /-!
 # Particle verb constructions — small-clause analysis
 
-@cite{dendikken-1995} @cite{baker-1988}
+[dendikken-1995] [baker-1988]
 
-@cite{dendikken-1995} analyses verbal particles as **ergative** small-clause
+[dendikken-1995] analyses verbal particles as **ergative** small-clause
 heads. The book's primary focus is *complex* particle constructions
 (`make John out a liar`, ch. 2), with applications to triadic constructions
 and Dative Shift (ch. 3-4) and to applicatives and transitive causatives
@@ -22,7 +22,7 @@ to SpecSC. It does **not** capture:
   `SmallClause` itself; current `structure SmallClause` has no
   recursion-friendly shape.
 
-- Overt P-to-V head incorporation. @cite{dendikken-1995} (§2.4.3) argues
+- Overt P-to-V head incorporation. [dendikken-1995] (§2.4.3) argues
   that English does **not** feature overt particle incorporation. Two
   arguments (book p. 89, citing Emonds 1993:243, fn. 27): (i) V+Prt
   sequences like `brush off` lack the English compound stress pattern
@@ -31,12 +31,12 @@ to SpecSC. It does **not** capture:
   participle), not to a putative [V+Prt] complex. Right-Hand Head Rule
   also forbids right-adjoining the particle to V. What den Dikken calls
   "verb-particle reanalysis" is an LF operation (cosuperscripting /
-  Government Transparency Corollary, @cite{baker-1988}), not formation
+  Government Transparency Corollary, [baker-1988]), not formation
   of an overt complex head. Encoding LF reanalysis requires substrate
   distinct from `formComplexLI`.
 
 - A weight-based derivation rule (`pronoun → split` / `heavy → continuous`).
-  This is @cite{kayne-1985}'s account, which @cite{dendikken-1995} (§2.4.5)
+  This is [kayne-1985]'s account, which [dendikken-1995] (§2.4.5)
   explicitly refutes (citing Diesing & Jelinek 1993). den Dikken's own
   account of the pronoun ban derives from LF reanalysis interacting with
   pronominal cliticization, again pending the LF reanalysis substrate.

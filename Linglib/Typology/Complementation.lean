@@ -9,14 +9,14 @@ import Linglib.Data.WALS.Features.F128A
 
 /-!
 # Typology.Complementation
-@cite{noonan-2007} @cite{dryer-2013-wals} @cite{dryer-haspelmath-2013}
+[noonan-2007] [dryer-2013-wals] [dryer-haspelmath-2013]
 
 Per-language typological substrate for complementation, subordination, and
-complement-taking predicates (CTPs), covering @cite{noonan-2007}'s typology
+complement-taking predicates (CTPs), covering [noonan-2007]'s typology
 plus seven WALS chapters:
 
-- **Ch 94** (@cite{dryer-2013-wals}): Order of adverbial subordinator and clause.
-- **Ch 95** (@cite{dryer-2013-wals}): OV order × adposition type.
+- **Ch 94** ([dryer-2013-wals]): Order of adverbial subordinator and clause.
+- **Ch 95** ([dryer-2013-wals]): OV order × adposition type.
 - **Ch 124--128** (Cristofaro): 'Want' complement subjects, purpose clauses,
   'when' clauses, reason clauses, utterance complement clauses.
 
@@ -103,7 +103,7 @@ def NoonanCompType.isReduced : NoonanCompType → Bool
 
 /-- Noonan's twelve CTP classes, organized by semantic contribution.
 
-    The ordering follows @cite{noonan-2007} Table 2.1 from most to least
+    The ordering follows [noonan-2007] Table 2.1 from most to least
     "assertive":
     - Utterance/propAttitude/pretence: report/judge propositional content
     - Commentative/knowledge: evaluate/know propositional content
@@ -124,7 +124,7 @@ inductive CTPClass where
   | achievement     -- positive: manage, dare; negative: try, forget to, avoid (§3.2.10)
   | phasal          -- start, stop, continue
   /-- A CTP whose sole semantic content is sentential negation
-      (@cite{noonan-2007} §3.2.13). Typologically rare; canonical examples
+      ([noonan-2007] §3.2.13). Typologically rare; canonical examples
       are Fijian *sega* and Shuswap negative predicates. English `avoid`,
       `refrain`, `prevent` are NOT in this class — they are *negative
       achievement* predicates (§3.2.10). -/
@@ -133,13 +133,13 @@ inductive CTPClass where
 
 /-- The fundamental realis/irrealis split that predicts complement type
     selection. Realis CTPs tend toward indicative; irrealis toward
-    subjunctive/infinitive (@cite{noonan-2007} §2.3). -/
+    subjunctive/infinitive ([noonan-2007] §2.3). -/
 inductive RealityStatus where
   | realis    -- CTP asserts or presupposes complement truth
   | irrealis  -- CTP does not commit to complement truth
   deriving DecidableEq, Repr
 
-/-- Default reality status of each CTP class (@cite{noonan-2007} Table 2.3). -/
+/-- Default reality status of each CTP class ([noonan-2007] Table 2.3). -/
 def ctpRealityStatus : CTPClass → RealityStatus
   | .utterance    => .realis
   | .propAttitude => .realis
@@ -162,7 +162,7 @@ def ctpRealityStatus : CTPClass → RealityStatus
     - Which complement types this verb allows in this language
     - Reality status (defaults to `ctpRealityStatus ctpClass`, but
       overridable for exceptions)
-    - Control/raising properties (@cite{noonan-2007} §2.1--2.2)
+    - Control/raising properties ([noonan-2007] §2.1--2.2)
     - Negative raising -/
 structure CTPDatum where
   language : String
@@ -426,7 +426,7 @@ theorem purpose_more_deranked_than_utterance :
     (ch128.filter (·.value == .deranked)).length := by native_decide
 
 -- ============================================================================
--- §8. Notional-Complement Surface Structure (@cite{deal-2026})
+-- §8. Notional-Complement Surface Structure ([deal-2026])
 -- ============================================================================
 
 /-! ### Theory-neutral surface enum
@@ -435,15 +435,15 @@ Following the cross-framework reconciler discipline, `ComplementClauseStructure`
 describes the *surface pattern* a notional complement clause realises, without
 committing to one framework's internal analysis. Each Theory projects its native
 account into this enum: HPSG always projects `headExternalModifier` for true
-RCs; Minimalist (with @cite{deal-2026}) projects `abarInternalCP` for Nez Perce
+RCs; Minimalist (with [deal-2026]) projects `abarInternalCP` for Nez Perce
 relative-embeddings (REs) and `barePropositionalCP` for English `that`-clauses.
 -/
 
 /-- Surface-pattern enumeration of notional-complement-clause shapes attested
     cross-linguistically.
 
-    @cite{deal-2026}'s typology dissolves the Kayne/Arsenij\'evi\'c (@cite{kayne-2008},
-    @cite{kayne-2014}, @cite{arsenijevic-2009}) universalist claim that all
+    [deal-2026]'s typology dissolves the Kayne/Arsenij\'evi\'c ([kayne-2008],
+    [kayne-2014], [arsenijevic-2009]) universalist claim that all
     clausal complementation is relativization. The *surface* options are
     independent of any one framework's commitments about underlying structure.
 
@@ -453,15 +453,15 @@ relative-embeddings (REs) and `barePropositionalCP` for English `that`-clauses.
     (Nez Perce simplex embeddings and English *think*-complementation). -/
 inductive ComplementClauseStructure where
   /-- CP with internal Ā-dependency from a high functional projection above TP.
-      Nez Perce REs (@cite{deal-2026}), Adyghe REs (@cite{caponigro-polinsky-2011}),
-      Bulgarian REs (@cite{krapova-2010}). -/
+      Nez Perce REs ([deal-2026]), Adyghe REs ([caponigro-polinsky-2011]),
+      Bulgarian REs ([krapova-2010]). -/
   | abarInternalCP
   /-- Bare CP with no internal Ā-dependency. Nez Perce simplex embeddings and
-      English *think*-complementation (@cite{deal-2026}). -/
+      English *think*-complementation ([deal-2026]). -/
   | barePropositionalCP
   /-- CP wrapped in a nominal projection (D, possibly with N). Washo factive
-      complementation (@cite{hanink-bochnak-2017}, @cite{bochnak-hanink-2021}),
-      Ndebele (@cite{pietraszko-2019}, with additional P shell). -/
+      complementation ([hanink-bochnak-2017], [bochnak-hanink-2021]),
+      Ndebele ([pietraszko-2019], with additional P shell). -/
   | nominalization
   /-- True relative clause: an adjunct modifier of a head noun. The pattern
       that Kayne/Arsenij\'evi\'c claim subsumes all others. -/
@@ -469,12 +469,12 @@ inductive ComplementClauseStructure where
   /-- Internally-headed relative clause (Bambara, Navajo). -/
   | headInternalRelative
   /-- High adjunct, not complementation at all. Amahuaca attitude reports
-      (@cite{deal-2026} §3, citing Clem 2022 — needs separate bib entry). -/
+      ([deal-2026] §3, citing Clem 2022 — needs separate bib entry). -/
   | adjunct
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- §9. CP External Shell Inventory (@cite{deal-2026} Table 79)
+-- §9. CP External Shell Inventory ([deal-2026] Table 79)
 -- ============================================================================
 
 /-! ### CP-external wrapping shells
@@ -484,12 +484,12 @@ Where `ComplementSize` and `ClauseSpine` (Syntax/Minimalist/) record
 *externally*. Deal 2026's Table 79 cross-classifies the two axes; this file
 houses the external axis as Fragment-importable substrate.
 
-Anchored to @cite{deal-2026} Table 79; placement of individual languages in
+Anchored to [deal-2026] Table 79; placement of individual languages in
 Table 79 cells consumes per-language Fragment data and lives in
 `Studies/Deal2026.lean`. -/
 
 /-- A wrapping head category that may appear above a CP in a notional complement.
-    @cite{deal-2026} Table 79 attests three: D (Washo, Adyghe), N (Adyghe),
+    [deal-2026] Table 79 attests three: D (Washo, Adyghe), N (Adyghe),
     P (Bulgarian, Ndebele). C is included as the base case to give a uniform
     representation of `bareCP` as `[.C]`. -/
 inductive CPShell where
@@ -511,11 +511,11 @@ inductive CPShell where
     (P wraps D wraps CP). -/
 abbrev CPShellInventory := List CPShell
 
-/-- Predicate: this shell inventory is attested in @cite{deal-2026} Table 79.
+/-- Predicate: this shell inventory is attested in [deal-2026] Table 79.
 
     Six attested shapes (one per cell), four shell-shapes:
     - `[.c]`        = `bareCP` (V CP row)
-    - `[.c, .d]`    = `dCP`    (V D CP — Washo per @cite{bochnak-hanink-2021})
+    - `[.c, .d]`    = `dCP`    (V D CP — Washo per [bochnak-hanink-2021])
     - `[.c, .n, .d]` = `dnCP`  (V D N CP row — Adyghe)
     - `[.c, .d, .p]` = `pdCP`  (V P D CP row — Bulgarian, Ndebele) -/
 def isAttestedShell : CPShellInventory → Bool
@@ -528,14 +528,14 @@ def isAttestedShell : CPShellInventory → Bool
 /-- The bare-CP cell (Nez Perce REs and simplex; English *think*). -/
 def bareCP : CPShellInventory := [.c]
 
-/-- The V D CP cell (Washo per @cite{bochnak-hanink-2021}). -/
+/-- The V D CP cell (Washo per [bochnak-hanink-2021]). -/
 def dCP : CPShellInventory := [.c, .d]
 
-/-- The V D N CP cell (Adyghe REs per @cite{caponigro-polinsky-2011}). -/
+/-- The V D N CP cell (Adyghe REs per [caponigro-polinsky-2011]). -/
 def dnCP : CPShellInventory := [.c, .n, .d]
 
-/-- The V P D CP cell (Bulgarian REs per @cite{krapova-2010};
-    Ndebele per @cite{pietraszko-2019}). -/
+/-- The V P D CP cell (Bulgarian REs per [krapova-2010];
+    Ndebele per [pietraszko-2019]). -/
 def pdCP : CPShellInventory := [.c, .d, .p]
 
 /-! ### Concrete facts on the named witnesses
@@ -543,7 +543,7 @@ def pdCP : CPShellInventory := [.c, .d, .p]
 The full implicational generalisations ("every attested inventory containing P
 also contains D") are folklore from inspection of the four named cells. We
 prove the consumed facts directly on the named shells; the universal claim is
-tracked in @cite{deal-2026} Table 79 commentary, not as a Lean theorem
+tracked in [deal-2026] Table 79 commentary, not as a Lean theorem
 (general `List.Mem` reasoning over `CPShellInventory` would be substantial
 boilerplate without proportionate payoff). -/
 
@@ -570,7 +570,7 @@ theorem named_shells_contain_c :
     CPShell.c ∈ dnCP ∧ CPShell.c ∈ pdCP := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
-/-- An unattested example: `V P CP` (P with no D shell) — @cite{deal-2026}
+/-- An unattested example: `V P CP` (P with no D shell) — [deal-2026]
     Table 79 has no such cell. -/
 theorem pCP_not_attested : isAttestedShell [.c, .p] = false := rfl
 

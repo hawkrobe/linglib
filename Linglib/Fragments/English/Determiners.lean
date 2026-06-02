@@ -3,7 +3,7 @@ import Linglib.Semantics.Quantification.Lexicon
 
 /-!
 # English Determiners
-@cite{horn-1972} @cite{barwise-cooper-1981}
+[horn-1972] [barwise-cooper-1981]
 
 English-specific determiner lexicon. The shared `QuantifierEntry`
 structure (and the `QForce`/`Monotonicity`/`Strength` enums) lives in
@@ -95,10 +95,10 @@ def many : QuantifierEntry :=
   }
 
 /-! ## Numerical Determiners
-@cite{barwise-cooper-1981} @cite{van-de-pol-etal-2023}
+[barwise-cooper-1981] [van-de-pol-etal-2023]
 
 Parameterized by a numerical threshold `n`. These are the class of
-determiners @cite{van-de-pol-etal-2023} show satisfy all three semantic
+determiners [van-de-pol-etal-2023] show satisfy all three semantic
 universals (and have low MDL).
 -/
 
@@ -165,10 +165,10 @@ def an : QuantifierEntry :=
     `Semantics.Quantification.Quantifier`.
 
     `numberRestriction := some .du` carries the dual core concept
-    (@cite{harbour-2014} `[−atomic, +minimal]`); the cardinality clause
+    ([harbour-2014] `[−atomic, +minimal]`); the cardinality clause
     `|R| ≥ 2` on the denotation side reflects the Harbour
     `dualPredOnLattice` reading
-    (@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}). -/
+    ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]). -/
 def both : QuantifierEntry :=
   { form := "both"
   , qforce := .universal

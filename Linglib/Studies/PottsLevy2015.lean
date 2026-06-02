@@ -4,8 +4,8 @@ import Linglib.Semantics.Exhaustification.Operators.Basic
 import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
-# @cite{potts-levy-2015}: Negotiating Lexical Uncertainty and Speaker Expertise with Disjunction
-@cite{potts-levy-2015}
+# [potts-levy-2015]: Negotiating Lexical Uncertainty and Speaker Expertise with Disjunction
+[potts-levy-2015]
 
 "Negotiating Lexical Uncertainty and Speaker Expertise with Disjunction."
 Proceedings of the 41st Annual Meeting of the Berkeley Linguistics Society, 417–445.
@@ -17,7 +17,7 @@ predicted to be redundant, yet they are felicitous and carry **ignorance
 implicatures**: the listener infers that the speaker is uncertain which
 disjunct holds.
 
-@cite{potts-levy-2015} show that an RSA model with **lexical uncertainty**
+[potts-levy-2015] show that an RSA model with **lexical uncertainty**
 derives this: L1 infers that the speaker might be using a lexicon under which
 the disjuncts are non-overlapping, and the disjunction signals the speaker's
 uncertainty about the world.
@@ -59,7 +59,7 @@ lexicon). The S2 utility:
 
 When β > 0, the speaker has extra incentive to use utterances that signal
 the `excl` lexicon — precisely the Hurford-violating disjunction "A or X".
-Following the @cite{yoon-etal-2020} pattern, we define S2 utility directly
+Following the [yoon-etal-2020] pattern, we define S2 utility directly
 from L1 marginals and prove comparative predictions.
 
 ## Verification Against Paper
@@ -91,9 +91,9 @@ The paper's **definitional reading** (where syn dominates, e.g., "wine lover
 or oenophile") requires β > α (paper Section 5.4, Figures 13–14) and is
 not modeled here.
 
-## Connection to @cite{potts-etal-2016}
+## Connection to [potts-etal-2016]
 
-Both papers use lexical uncertainty (Latent := Lexicon). @cite{potts-etal-2016}
+Both papers use lexical uncertainty (Latent := Lexicon). [potts-etal-2016]
 applies it to embedded scalar implicatures; this paper applies it to
 Hurford-violating disjunctions and speaker expertise. The mechanism is
 identical — only the domain and lexica differ.
@@ -191,7 +191,7 @@ theorem base_entails_excl :
 -- ============================================================================
 
 open RSA Real in
-/-- @cite{potts-levy-2015} lexical uncertainty model for Hurford disjunctions.
+/-- [potts-levy-2015] lexical uncertainty model for Hurford disjunctions.
 
     Latent variable = Lex (base vs excl vs syn).
     L0: literal listener under lexicon l.
@@ -337,7 +337,7 @@ theorem s1_w1_A_vs_AorX :
 
 /-! The Hurford data in `Phenomena.ScalarImplicatures.Basic` records
 that "some or all" is felicitous, rescued by exhaustification.
-This is exactly the phenomenon @cite{potts-levy-2015} models: the
+This is exactly the phenomenon [potts-levy-2015] models: the
 `excl` lexicon plays the role of exhaustification, making the
 disjuncts non-overlapping and the sentence informative.
 
@@ -363,7 +363,7 @@ theorem matches_someOrAll_rescue :
 
 /-! The paper's key contribution: the **expertise parameter β**.
 
-@cite{potts-levy-2015}'s distinctive insight beyond generic LU-RSA is that
+[potts-levy-2015]'s distinctive insight beyond generic LU-RSA is that
 speakers of Hurford-violating disjunctions signal their **expertise** about
 the meaning of the broader term. This is modeled as an S2-level speaker who
 cares not only about informativity (L1 inferring the correct world) but
@@ -526,7 +526,7 @@ theorem S2_expertise_w1_A_vs_AorX :
 -- §12. Findings
 -- ============================================================================
 
-/-- The qualitative findings from the @cite{potts-levy-2015} LU + expertise model. -/
+/-- The qualitative findings from the [potts-levy-2015] LU + expertise model. -/
 inductive Finding where
   /-- L1 -/
   | uncertainty_w12_vs_w1

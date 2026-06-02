@@ -1,11 +1,11 @@
 import Linglib.Features.Coordination
 
 /-!
-# Dargwa (Tanti) Coordination @cite{sumbatova-2021}
+# Dargwa (Tanti) Coordination [sumbatova-2021]
 
 Clause coordination is not typical of Dargwa — subordination via
 non-finite verb forms is the primary strategy for combining clauses
-(@cite{sumbatova-2021} §4.8.1). When coordination does occur, it uses
+([sumbatova-2021] §4.8.1). When coordination does occur, it uses
 the following strategies:
 
 ## NP Coordination

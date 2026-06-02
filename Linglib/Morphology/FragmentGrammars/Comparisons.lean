@@ -4,11 +4,11 @@ import Linglib.Morphology.FragmentGrammars.MultinomialPCFG
 /-!
 # FG-family cross-model comparisons
 
-@cite{odonnell-2015}
+[odonnell-2015]
 
 Theorems that pit `MultinomialPCFG`, `DMPCFG`, and (eventually) `MAG`
 / `FG` against each other on shared mathematical content. Anchored
-on @cite{odonnell-2015} §3.1 ontology of priors over multinomial
+on [odonnell-2015] §3.1 ontology of priors over multinomial
 PCFGs.
 
 ## Architecture

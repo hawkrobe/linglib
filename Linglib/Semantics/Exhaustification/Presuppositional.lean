@@ -5,9 +5,9 @@ import Linglib.Semantics.Exhaustification.Operators.InnocentInclusion
 
 /-!
 # Presuppositional Exhaustification (pex)
-@cite{delpinal-bassi-sauerland-2024} @cite{bassi-delpinal-sauerland-2021}
+[delpinal-bassi-sauerland-2024] [bassi-delpinal-sauerland-2021]
 
-Formalization of @cite{delpinal-bassi-sauerland-2024} "Free choice and
+Formalization of [delpinal-bassi-sauerland-2024] "Free choice and
 presuppositional exhaustification" Semantics & Pragmatics 17, Article 3: 1–52.
 
 ## Core idea
@@ -47,7 +47,7 @@ the presupposition projection infrastructure in `Semantics.Presupposition`.
 
 This file contains only the abstract pex theory (parameterized by an
 arbitrary `World` type and abstract `ALT`, `φ`). The concrete worked
-example over `FCWorld` (the five-world toy from @cite{bar-lev-fox-2020}) and
+example over `FCWorld` (the five-world toy from [bar-lev-fox-2020]) and
 all consequences specific to that example — `pexFC`, `pex_fc`,
 `pex_double_prohibition`, the negative-FC isomorphism, and the embedding
 puzzles from §3–§5 — live in the study file
@@ -282,7 +282,7 @@ embedding under negation. Replacing `PrProp.neg` with a non-projecting
 alternative (e.g. `negExt`) breaks this theorem; it depends on the
 structural projection identity `PrProp.neg_presup`, not just on `And`.
 
-Together these track the difference @cite{bassi-delpinal-sauerland-2021}
+Together these track the difference [bassi-delpinal-sauerland-2021]
 draws between "assertion entails inference" (cheap: also true of any
 flat-EXH assertion paired with its consequence) and "inference projects"
 (expensive: distinguishes pex from flat EXH).

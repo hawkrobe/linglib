@@ -4,7 +4,7 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
 # Nominal Syntax-Semantics Mapping
-@cite{borer-2005} @cite{champollion-2017} @cite{chierchia-1998} @cite{grimshaw-2005} @cite{krifka-1998}
+[borer-2005] [champollion-2017] [chierchia-1998] [grimshaw-2005] [krifka-1998]
 
 Compositional interpretation of the nominal extended projection
 via mereological predicates. Bridges the syntactic spine
@@ -170,7 +170,7 @@ theorem mass_spine_no_q :
     projects Q (individuation). The fragment records `countable` as
     an observable fact; this theorem shows it equals `spineHasQ`.
 
-    Under @cite{chierchia-1998}, `countable` is a lexical primitive and
+    Under [chierchia-1998], `countable` is a lexical primitive and
     this theorem is an accidental correlation rather than an
     explanation. The two theories agree on the data but disagree on
     direction of explanation.
@@ -218,7 +218,7 @@ theorem great_divide_semantic_invariance
   fun _ => div_qua P
 
 /-- In classifier languages, a ClassifierEntry spells out the Q head.
-    This bridges @cite{aikhenvald-2000}'s typological ClassifierEntry to
+    This bridges [aikhenvald-2000]'s typological ClassifierEntry to
     Borer's syntactic CL# at Q(F2) in the nominal EP. -/
 structure ClassifierAsQ where
   /-- The classifier morpheme (from Aikhenvald's typology) -/
@@ -483,12 +483,12 @@ theorem num_without_q_incoherent :
 -- § 7. Bridges
 -- ════════════════════════════════════════════════════
 
-/-! ### Bridge to @cite{chierchia-1998}
+/-! ### Bridge to [chierchia-1998]
 
 Borer and Chierchia offer competing accounts of the mass/count
 distinction and cross-linguistic variation:
 
-| Dimension        | @cite{chierchia-1998}            | @cite{borer-2005}              |
+| Dimension        | [chierchia-1998]            | [borer-2005]              |
 |------------------|--------------------------|-------------------------|
 | Mass/count       | Lexical (`MassCount`)     | Structural (`Div`)      |
 | Cross-ling.      | Parameter (`NominalMapping`)| Functional inventory  |
@@ -500,7 +500,7 @@ WHERE the distinction is encoded — lexicon vs. functional spine.
 A full formal comparison belongs in `Theories/Comparisons/`.
 -/
 
-/-! ### Bridge to @cite{krifka-1998} / Mereology
+/-! ### Bridge to [krifka-1998] / Mereology
 
 Borer's individuation connects directly to Krifka's event mereology
 already formalized in `Core/Mereology`:

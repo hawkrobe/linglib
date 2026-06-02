@@ -6,7 +6,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 /-!
 # Zero Syntax: Experiencers and Cascades
 
-@cite{pesetsky-1995}
+[pesetsky-1995]
 
 Cascade-based analysis of Class II psych verbs. The T/SM restriction
 (Cause and Subject Matter cannot cooccur) is derived from the Head
@@ -42,11 +42,11 @@ namespace Phenomena.PsychVerbs
 -- ============================================================================
 -- Belletti-Rizzi 1988 / Kim 2024 empirical data
 -- (Was `Phenomena/PsychVerbs/Data.lean`; inlined per the provenance-tracking
---  policy. @cite{pesetsky-1995} is the natural owner since it directly
---  consumes the @cite{belletti-rizzi-1988} classification.)
+--  policy. [pesetsky-1995] is the natural owner since it directly
+--  consumes the [belletti-rizzi-1988] classification.)
 -- ============================================================================
 
-/-- @cite{belletti-rizzi-1988} classification of psych verbs. -/
+/-- [belletti-rizzi-1988] classification of psych verbs. -/
 inductive PsychVerbClass where
   | classI    -- Experiencer-subject: enjoy, like, fear / It. temere
   | classII   -- Object-experiencer: frighten, concern / It. preoccupare
@@ -76,7 +76,7 @@ structure BRDiagnosticResult where
   classII : Bool
   deriving Repr, BEq
 
-/-- @cite{belletti-rizzi-1988} diagnostic data.
+/-- [belletti-rizzi-1988] diagnostic data.
 
     | Diagnostic | Class I (*temere*) | Class II (*preoccupare*) |
     |---|---|---|
@@ -131,7 +131,7 @@ def PsychVerbClass.expectedSubjectRole : PsychVerbClass → Option SubjectRole
   | .classII => some .stimulus
   | .classIII => none
 
-/-- Intensionality datum (@cite{kim-2024} Ch. 4): does substitution of
+/-- Intensionality datum ([kim-2024] Ch. 4): does substitution of
 co-referential terms fail in subject position? -/
 structure IntensionalityDatum where
   verb : String
@@ -139,7 +139,7 @@ structure IntensionalityDatum where
   substitutionFails : Bool
   deriving Repr, BEq
 
-/-- Empirical intensionality data from @cite{kim-2024}. -/
+/-- Empirical intensionality data from [kim-2024]. -/
 def intensionalityData : List IntensionalityDatum := [
   ⟨"concern", .stative, true⟩,
   ⟨"interest", .stative, true⟩,
@@ -147,7 +147,7 @@ def intensionalityData : List IntensionalityDatum := [
   ⟨"amuse", .eventive, false⟩
 ]
 
-/-- The T/SM restriction (@cite{kim-2024} Ch. 5): Cause and Subject Matter
+/-- The T/SM restriction ([kim-2024] Ch. 5): Cause and Subject Matter
 cannot cooccur. -/
 structure TSMRestriction where
   causePresent : Bool
@@ -490,7 +490,7 @@ theorem caus_strength_uniform_across_classII :
 
 /-! The HMC predicts that BOTH Target (*at*) and Subject Matter (*about*)
     block CAUS movement equally, because both are nonaffixal P heads.
-    This symmetric prediction is internal to @cite{pesetsky-1995}'s
+    This symmetric prediction is internal to [pesetsky-1995]'s
     account — both stimulus subtypes produce the same HMC configuration.
 
     The bridge to semantic accounts of the T/SM restriction (which may
@@ -560,7 +560,7 @@ theorem vcause_not_caus :
     Each per-verb theorem is a single breakable unit: change any verb's
     `causalSource` field in the Fragment and exactly one theorem fails.
 
-    @cite{pesetsky-1995} Ch. 4 distinguishes **natural** predicates
+    [pesetsky-1995] Ch. 4 distinguishes **natural** predicates
     (Target-selecting, PP *of*: "afraid OF dogs") from **arbitrary**
     predicates (SM-selecting, PP *about*: "worried ABOUT the exam").
     This is derived from the causal source: external → natural,
@@ -647,7 +647,7 @@ theorem puzzle_chain      : cascadeChain puzzle .internal :=
 -- § 10. Heavy NP Shift and Cascade Depth
 -- ════════════════════════════════════════════════════
 
-/-! @cite{pesetsky-1995} Ch. 7 extends the Cascade Hypothesis to derive
+/-! [pesetsky-1995] Ch. 7 extends the Cascade Hypothesis to derive
     heavy NP shift (HNPS) from cascade geometry. Shifted phrases adjoin
     to cascade nodes; cascade depth determines how many potential landing
     sites exist for rightward-shifted heavy NPs.

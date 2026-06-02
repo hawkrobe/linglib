@@ -4,12 +4,12 @@ import Linglib.Phonology.Prosodic.Word
 /-!
 # Moraic Phonology
 
-Moraic representations following @cite{hayes-1989}: the mora (μ) as the
+Moraic representations following [hayes-1989]: the mora (μ) as the
 fundamental unit of prosodic structure. Segments associate to morae, morae
 associate to syllables. This replaces the segmental prosodic tier (X theory,
 CV theory) with a prosodic tier whose elements directly encode weight.
 
-Key design decisions from @cite{hayes-1989}:
+Key design decisions from [hayes-1989]:
 - Onset consonants are **non-moraic** (universally)
 - Short consonants are underlyingly moraless; coda consonants may receive
   a mora via **Weight by Position** (language-specific)
@@ -19,7 +19,7 @@ Key design decisions from @cite{hayes-1989}:
 The moraic tier σ → μ → segment replaces the `List Segment` representation
 in `Syllable.Defs`, which is essentially a segmental (X-theory) view.
 
-@cite{hayes-1989}
+[hayes-1989]
 -/
 
 namespace Phonology.Moraic
@@ -33,7 +33,7 @@ open Phonology.Syllable (Syllable SyllWeight SyllabifiedForm)
 
 /-- A segment's underlying moraic specification.
 
-    Following @cite{hayes-1989}:
+    Following [hayes-1989]:
     - 0 morae: glides, onset consonants
     - 1 mora: short vowels, short consonants (when moraic by WBP)
     - 2 morae: long vowels, geminates, long syllabic consonants -/
@@ -68,7 +68,7 @@ structure MoraicSeg where
 
 /-- A syllable in moraic theory.
 
-    Following @cite{hayes-1989}: the syllable node σ directly dominates morae,
+    Following [hayes-1989]: the syllable node σ directly dominates morae,
     which in turn dominate segments. Onset consonants adjoin directly to σ
     without intervening morae (they are weight-irrelevant).
 
@@ -92,7 +92,7 @@ structure MoraicForm where
 
 /-- Language-specific parameters for moraic structure assignment.
 
-    Following @cite{hayes-1989}, Rule (10): moraic structure is partly
+    Following [hayes-1989], Rule (10): moraic structure is partly
     language-specific. The key parameter is Weight by Position: whether coda
     consonants receive a mora. Languages like Latin have WBP (CVC = heavy);
     languages like Lardil lack it (CVC = light). -/
@@ -106,7 +106,7 @@ structure MoraicParams where
 
 /-- Assign moraic structure to a `Syllable` according to `MoraicParams`.
 
-    Following @cite{hayes-1989}, §2: the moraic structure assignment rules are:
+    Following [hayes-1989], §2: the moraic structure assignment rules are:
     1. Nucleus segments receive one mora each
     2. Coda consonants receive a mora iff WBP is active
     3. Onset consonants are non-moraic

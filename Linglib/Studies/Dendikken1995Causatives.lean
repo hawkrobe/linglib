@@ -4,9 +4,9 @@ import Linglib.Studies.Dendikken1995
 
 /-!
 # Transitive causatives — den Dikken's affixal-particle analysis
-@cite{dendikken-1995} @cite{baker-1988}
+[dendikken-1995] [baker-1988]
 
-@cite{dendikken-1995} chapter 5 extends the SC-in-SC template from
+[dendikken-1995] chapter 5 extends the SC-in-SC template from
 triadic constructions (book chs. 3-4) to transitive causative
 constructions. Central thesis: so-called "applicative" and "causative"
 morphemes (Bantu *-il-*, Dutch *ver-*, Sanuma *-ma*, Indonesian *-kan*,

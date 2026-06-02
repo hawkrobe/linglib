@@ -40,7 +40,7 @@ educational alphabet. The three-case substrate here is what Tsuut'ina
 
 ## References
 
-* @cite{cook-1978} (Tsuut'ina/Sarcee), @cite{sapir-hoijer-1967} (Navajo);
+* [cook-1978] (Tsuut'ina/Sarcee), [sapir-hoijer-1967] (Navajo);
   Heinz (2010) for the PT-vs-TSL lifting; Lambert (2026) §4.1-4.2 for
   the symmetric/asymmetric multitier classification.
 -/
@@ -80,7 +80,7 @@ instance : DecidablePred SibilantTierSeg.onTier
 /-- The symmetric sibilant-harmony TSL_2 grammar: any disagreement
 between adjacent (on-tier) sibilants is forbidden. Identity-relation-
 inverse specialisation of `TSLGrammar.agree` to the three-case alphabet.
-Matches the @cite{sapir-hoijer-1967} / @cite{hansson-2010} Navajo
+Matches the [sapir-hoijer-1967] / [hansson-2010] Navajo
 analysis and other Athabaskan symmetric-harmony languages. -/
 def symmetricHarmony : TSLGrammar 2 SibilantTierSeg :=
   TSLGrammar.agree (α := SibilantTierSeg) SibilantTierSeg.onTier
@@ -90,7 +90,7 @@ def symmetricHarmony : TSLGrammar 2 SibilantTierSeg :=
 -- ============================================================================
 
 /-- Forbidden-pair relation for "anterior preceding posterior is
-forbidden on the tier" — the @cite{cook-1978} Tsuut'ina pattern. -/
+forbidden on the tier" — the [cook-1978] Tsuut'ina pattern. -/
 def antPostForbidden : SibilantTierSeg → SibilantTierSeg → Prop
   | .anterior, .posterior => True
   | _, _ => False
@@ -105,8 +105,8 @@ instance : DecidableRel antPostForbidden
 /-- The asymmetric sibilant-harmony TSL_2 grammar with anterior-first
 prohibition: an anterior sibilant immediately preceding a posterior
 sibilant on the tier is forbidden, but the reverse adjacency
-`[posterior, anterior]` is permitted. The @cite{cook-1978}
-@cite{lambert-2026} §4.2 Tsuut'ina pattern. -/
+`[posterior, anterior]` is permitted. The [cook-1978]
+[lambert-2026] §4.2 Tsuut'ina pattern. -/
 def asymmetricHarmonyAntFirst : TSLGrammar 2 SibilantTierSeg :=
   TSLGrammar.ofForbiddenPairs (α := SibilantTierSeg)
     antPostForbidden SibilantTierSeg.onTier

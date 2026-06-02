@@ -3,10 +3,10 @@ import Linglib.Semantics.Questions.Resolution
 import Linglib.Semantics.Questions.Exhaustivity
 
 /-!
-# @cite{george-2011}: Question Embedding and the Semantics of Answers
-@cite{karttunen-1977} @cite{groenendijk-stokhof-1984} @cite{heim-1994} @cite{dayal-1996}
+# [george-2011]: Question Embedding and the Semantics of Answers
+[karttunen-1977] [groenendijk-stokhof-1984] [heim-1994] [dayal-1996]
 
-Single-paper formalisation of @cite{george-2011}, *Question Embedding
+Single-paper formalisation of [george-2011], *Question Embedding
 and the Semantics of Answers* (UCLA Ph.D. dissertation). George's
 central methodological claim: the **weak/intermediate exhaustivity**
 that is widely posited to explain *Maggie-knows-was-admitted* /
@@ -19,7 +19,7 @@ relationship Groenendijk-Stokhof assumed).
 
 ## Substrate identifications
 
-| @cite{george-2011}                              | substrate                              |
+| [george-2011]                              | substrate                              |
 |-------------------------------------------------|----------------------------------------|
 | **Strong** (eq 125): `λw λα λw'(α(w) = α(w'))`  | `Exhaustivity.strongAnswer`            |
 | **Weak** (eq 130): `λw λα λw' ∀β(α(w)(β) → α(w')(β))` | `Exhaustivity.weakAnswer`        |
@@ -84,7 +84,7 @@ variable {W : Type*}
 
 /-! ### §2.6.2 Strong operator (eq 125) -/
 
-/-- @cite{george-2011} (125): the **Strong** answer operator,
+/-- [george-2011] (125): the **Strong** answer operator,
     `λw λα λw'(α(w) = α(w'))`. Substrate identification: the set of
     worlds whose extension on every alternative matches `w`. Same as
     the substrate's `strongAnswer Q w` (see `Heim1994` for the
@@ -97,7 +97,7 @@ def Strong (Q : Question W) (w : W) : Set W :=
 
 /-! ### §2.6.3 Weak operator (eq 130) -/
 
-/-- @cite{george-2011} (130): the **Weak** answer operator,
+/-- [george-2011] (130): the **Weak** answer operator,
     `λw λα λw' ∀β(α(w)(β) → α(w')(β))`. Substrate identification:
     the set of worlds where the alternative's extension at `w` is a
     subset of its extension here. Same as the substrate's
@@ -108,7 +108,7 @@ def Weak (Q : Question W) (w : W) : Set W :=
 @[simp] theorem Weak_eq_weakAnswer (Q : Question W) (w : W) :
     Weak Q w = weakAnswer Q w := rfl
 
-/-- @cite{george-2011} §2.6.3: any state σ supporting the Strong
+/-- [george-2011] §2.6.3: any state σ supporting the Strong
     answer at `w` also supports the Weak answer at `w` — i.e., strong
     exhaustivity entails weak exhaustivity. This is the formal trace
     of George's claim that "weak exhaustivity is dispensable":
@@ -120,7 +120,7 @@ theorem Strong_subset_Weak (Q : Question W) (w : W) :
 
 /-! ### §3.1.1 Negation Generalization (eq 5)
 
-@cite{george-2011} §3.1.1: under bivalence + domain constancy,
+[george-2011] §3.1.1: under bivalence + domain constancy,
 the strongly exhaustive answer SET to *who walks* and to *who
 doesn't walk* coincide. Substrate-level: this requires a specific
 relationship between the question denotation and its complement —
@@ -140,7 +140,7 @@ hypotheses. -/
     each other (i.e., `Q`-alts and `Q'`-alts agree as a partition),
     then their `strongAnswer` cells coincide at every `w`.
 
-    Captures the @cite{groenendijk-stokhof-1984} argument structure
+    Captures the [groenendijk-stokhof-1984] argument structure
     that George dissects in (5)-(10). -/
 theorem strongAnswer_eq_when_alts_agree
     (Q Q' : Question W) (w : W)
@@ -152,7 +152,7 @@ theorem strongAnswer_eq_when_alts_agree
 
 /-! ### §3.1.2 Domain Uncertainty
 
-@cite{george-2011} §3.1.2: the apparent inequivalence of
+[george-2011] §3.1.2: the apparent inequivalence of
 *Maggie-knows-(12)* and *Maggie-knows-(13)* is consistent with a
 uniform STRONG-exhaustive reading, *provided* the wh-restrictor's
 extension varies across worlds (de dicto interpretation).
@@ -167,10 +167,10 @@ because they're about different sets of possibilities.
 This is a paper-level observation about the *space* of cases
 admitting weak ↔ strong inequivalence; we capture the substrate
 fact that `weakAnswer ⊆ strongAnswer ↔` does NOT hold in general,
-and the @cite{george-2011} argument turns on which side of this
+and the [george-2011] argument turns on which side of this
 asymmetry is empirically active. -/
 
-/-! @cite{george-2011} §3.1.2 substrate fact: the converse
+/-! [george-2011] §3.1.2 substrate fact: the converse
     inclusion `weakAnswer Q w ⊆ strongAnswer Q w` does **not** hold
     in general — strong exhaustivity is strictly stronger than weak.
     Concrete intuition: with `W = {0, 1, 2}` and `Q`'s alts being

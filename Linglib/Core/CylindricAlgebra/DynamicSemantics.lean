@@ -4,7 +4,7 @@ import Linglib.Semantics.Dynamic.CDRT.Basic
 
 /-!
 # Cylindric Algebra Bridges for Dynamic Semantics
-@cite{henkin-monk-tarski-1971} @cite{groenendijk-stokhof-1991} @cite{muskens-1996}
+[henkin-monk-tarski-1971] [groenendijk-stokhof-1991] [muskens-1996]
 
 Proves that the existential quantifiers and identity tests across
 DPL, CDRT, and DRS are all instances of the cylindric algebra
@@ -46,7 +46,7 @@ open Semantics.Dynamic.Core
 `closure(∃x.φ) = cₓ(closure(φ))`: the truth-conditional content of
 DPL's existential quantifier at variable `x` is exactly cylindrification
 at register `x`. This is the defining correspondence between DPL
-and cylindric set algebra (@cite{groenendijk-stokhof-1991}). -/
+and cylindric set algebra ([groenendijk-stokhof-1991]). -/
 theorem dpl_closure_exists_eq_cylindrify {E : Type*} (x : Nat) (φ : DPLRel E) :
     closure (toDRS (DPLRel.exists_ x φ)) =
     cylindrify x (closure (toDRS φ)) := by

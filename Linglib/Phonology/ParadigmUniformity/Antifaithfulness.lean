@@ -3,7 +3,7 @@ import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # Antifaithfulness — Alderete 2001
-@cite{alderete-2001}
+[alderete-2001]
 
 Antifaithfulness is the *polarity flip* of faithfulness: rather than
 penalizing positions where corresponding elements *differ*, it penalizes
@@ -28,8 +28,8 @@ markedness, antifaith forces a minimal contrast that satisfies markedness.
 
 ## Connection to OP / TCT / LC
 
-OP (@cite{mccarthy-2005}) and TCT (@cite{benua-1997}) both posit OO-Faith
-constraints that *prefer identity*. LC (@cite{steriade-2000}) is a
+OP ([mccarthy-2005]) and TCT ([benua-1997]) both posit OO-Faith
+constraints that *prefer identity*. LC ([steriade-2000]) is a
 weighted/anchored variant. Antifaithfulness is the **opposite-polarity
 sibling** in the same paradigm-uniformity family: same diagrams, same
 edges, opposite comparator. It is the fourth corner of the four-corner

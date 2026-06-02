@@ -18,7 +18,7 @@ operators from `Semantics/Lexical/Plural/Distributivity.lean`.
 The key contrast: *jeder* and *jeweils* are both obligatorily distributive,
 but differ in maximality. *jeder* uses identity tolerance (forces maximality);
 *jeweils* uses a contextually provided tolerance (permits non-maximality for
-some speakers). @cite{haslinger-etal-2025}.
+some speakers). [haslinger-etal-2025].
 
 ## Grounding
 
@@ -44,7 +44,7 @@ Equivalent to `distTolerant` with identity tolerance
 (`distMaximal_eq_identity`). On atoms, reduces to P itself
 (`distMaximal_singleton`).
 
-@cite{haslinger-etal-2025} examples (1), (22b-c).
+[haslinger-etal-2025] examples (1), (22b-c).
 -/
 def jederSem (P : Atom → W → Prop) [∀ a w, Decidable (P a w)] :
     Finset Atom → W → Prop :=
@@ -57,7 +57,7 @@ sub-plurality. The tolerance relation ≤ is contextually provided.
 For speakers who accept *jeweils* in non-maximal contexts, the tolerance
 parameter allows exceptions irrelevant to the QUD.
 
-@cite{haslinger-etal-2025} eq. (25), examples (22a), (23b), (24b).
+[haslinger-etal-2025] eq. (25), examples (22a), (23b), (24b).
 -/
 def jeweilsSem (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (tol : Tolerance Atom) : Finset Atom → W → Prop :=
@@ -73,7 +73,7 @@ own dist/non-dist nature is preserved.
 Formally: ⟦alle P⟧ = λw.λx.∀≤'[≤' tolerance → ⟦P⟧^≤'(x)]
 This is equivalent to `allSatisfy` by `allViaForallH_iff_allSatisfy`.
 
-@cite{haslinger-etal-2025} eq. (20b); @cite{kriz-spector-2021} §5.3.
+[haslinger-etal-2025] eq. (20b); [kriz-spector-2021] §5.3.
 -/
 def alleSem [Fintype Atom] (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
     (x : Finset Atom) (w : W) : Prop :=
@@ -144,7 +144,7 @@ theorem alle_iff_allSatisfy [Fintype Atom] (P : Atom → W → Prop)
 
 -- Typological Correlation
 
-/-- The DP-use / maximality correlation from @cite{haslinger-etal-2025} §4:
+/-- The DP-use / maximality correlation from [haslinger-etal-2025] §4:
     items with a DP-internal use (*jeder*, *alle*) enforce maximality;
     items without one (*jeweils*) permit non-maximality.
 

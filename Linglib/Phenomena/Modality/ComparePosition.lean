@@ -2,12 +2,12 @@ import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Semantics.Modality.Narrog
 
 /-!
-# @cite{cinque-1999} vs @cite{hacquard-2006}: Modal Position
+# [cinque-1999] vs [hacquard-2006]: Modal Position
 
-@cite{hacquard-2010} @cite{cinque-1999} @cite{hacquard-2006}Two approaches to the correlation between modal position (high vs low in
+[hacquard-2010] [cinque-1999] [hacquard-2006]Two approaches to the correlation between modal position (high vs low in
 the clause) and modal flavor (epistemic vs root/circumstantial):
 
-## @cite{cinque-1999}: Cartographic Stipulation
+## [cinque-1999]: Cartographic Stipulation
 
 Cinque proposes a universal hierarchy of functional projections with
 dedicated heads for each modal flavor:
@@ -19,7 +19,7 @@ position–flavor correlation is STIPULATED: epistemic modals are high
 because there is an Epistemic Modality Phrase above TP; root modals are
 low because there is an Ability/Root Modality Phrase below AspP.
 
-## @cite{hacquard-2006}: Content Licensing Derivation
+## [hacquard-2006]: Content Licensing Derivation
 
 Hacquard derives the same correlation from a single principle: epistemic
 modal bases require a **contentful** event (one with propositional
@@ -213,9 +213,9 @@ theorem content_licensing_is_uniform :
 -- § 6. Narrog's Perspective: Empirical Scope from Japanese
 -- ════════════════════════════════════════════════════
 
-/-! @cite{narrog-2012} provides a third perspective on the position–flavor
+/-! [narrog-2012] provides a third perspective on the position–flavor
 correlation, complementing Cinque (stipulation) and Hacquard (derivation).
-Narrog's empirical scope hierarchy from Japanese (@cite{narrog-2009a}) shows
+Narrog's empirical scope hierarchy from Japanese ([narrog-2009a]) shows
 that epistemic categories empirically outscope deontic categories, which in
 turn outscope dynamic (ability) categories, which outscope voice and aspect.
 

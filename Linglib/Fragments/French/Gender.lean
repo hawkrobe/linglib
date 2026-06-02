@@ -2,7 +2,7 @@ import Linglib.Typology.Gender
 
 /-!
 # French Gender
-@cite{corbett-1991} @cite{corbett-2013}
+[corbett-1991] [corbett-2013]
 
 2 genders (masc/fem), sex-based, semantic + formal. Agreement on determiners,
 attributive + predicate adjectives, past participles, and personal pronouns.
@@ -26,7 +26,7 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "fra" ∧ genderTypology.name = "French" :=
   ⟨rfl, rfl⟩
 
-/-- French is in @cite{corbett-1991}'s "canonical" cell:
+/-- French is in [corbett-1991]'s "canonical" cell:
     sex-based, 2-or-3 gender, semantic + formal. -/
 example : genderTypology.IsCanonicalGender := by decide
 

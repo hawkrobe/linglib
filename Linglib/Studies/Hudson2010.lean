@@ -4,7 +4,7 @@ import Linglib.Core.Inheritance.Order
 import Linglib.Syntax.WordGrammar.Network
 
 /-!
-# Hudson 2010: kinship as an inheritance network @cite{hudson-2010}
+# Hudson 2010: kinship as an inheritance network [hudson-2010]
 
 The "one network" thesis: Word Grammar models all conceptual knowledge —
 linguistic and non-linguistic alike — as a single inheritance network of
@@ -127,7 +127,7 @@ binary relation over an arbitrary type of individuals. -/
 abbrev ParentRel (α : Type) : Type := α → α → Prop
 
 /-- `grandparentOf` is the relational composition of `parentOf` with itself —
-the kinship side of @cite{hudson-2010}'s Figure 7.6 (p. 161): "my grandmother
+the kinship side of [hudson-2010]'s Figure 7.6 (p. 161): "my grandmother
 is someone who is the mother of one of my parents". This is mathlib's
 `Relation.Comp`, not a fresh definition. -/
 abbrev grandparentOf {α : Type} (parentOf : ParentRel α) : α → α → Prop :=

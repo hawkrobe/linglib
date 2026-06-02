@@ -5,10 +5,10 @@ import Linglib.Core.Context.Shifts
 
 /-!
 # Presupposition: ContextTower Bridge
-@cite{heim-1983} @cite{karttunen-1973} @cite{schlenker-2009}
+[heim-1983] [karttunen-1973] [schlenker-2009]
 
 End-to-end derivation chain connecting the ContextTower infrastructure to
-presupposition projection phenomena via @cite{schlenker-2009}'s local context
+presupposition projection phenomena via [schlenker-2009]'s local context
 computation.
 
 ## Derivation Chain

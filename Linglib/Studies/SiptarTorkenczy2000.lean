@@ -4,7 +4,7 @@ import Linglib.Fragments.Hungarian.VowelHarmony
 
 /-!
 # Siptár & Törkenczy (2000): The Phonology of Hungarian
-@cite{siptar-torkenczy-2000} @cite{prince-smolensky-1993} @cite{rose-walker-2011}
+[siptar-torkenczy-2000] [prince-smolensky-1993] [rose-walker-2011]
 
 End-to-end OT analysis of Hungarian vowel harmony, connecting:
 
@@ -116,20 +116,20 @@ theorem papírCands_ne : papírCands ≠ [] := by simp [papírCands]
 -- ============================================================================
 
 /-- *ház*: SPREAD ≫ IDENT selects back-harmonized suffix as unique winner.
-    @cite{siptar-torkenczy-2000} §3.2.2, class IA-b. -/
+    [siptar-torkenczy-2000] §3.2.2, class IA-b. -/
 theorem ház_back_optimal :
     (mkTableau házCands spreadDominant házCands_ne).optimal
       = {ház_back} := by native_decide
 
 /-- *tűz*: SPREAD ≫ IDENT selects front-harmonized suffix as unique winner.
-    @cite{siptar-torkenczy-2000} §3.2.2, class IA-f. -/
+    [siptar-torkenczy-2000] §3.2.2, class IA-f. -/
 theorem tűz_front_optimal :
     (mkTableau tűzCands spreadDominant tűzCands_ne).optimal
       = {tűz_front} := by native_decide
 
 /-- *papír*: neutral /i/ is transparent — back harmony passes through.
     SPREAD ≫ IDENT selects back-harmonized suffix, same as *ház*.
-    @cite{siptar-torkenczy-2000} §3.2.2, class IIB-b. -/
+    [siptar-torkenczy-2000] §3.2.2, class IIB-b. -/
 theorem papír_transparency_optimal :
     (mkTableau papírCands spreadDominant papírCands_ne).optimal
       = {papír_back} := by native_decide

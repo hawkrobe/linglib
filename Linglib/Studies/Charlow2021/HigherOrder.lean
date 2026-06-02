@@ -3,9 +3,9 @@ import Linglib.Studies.Charlow2021.Basic
 
 /-!
 # Higher-Order Dynamic Generalized Quantifiers
-@cite{barker-shan-2014} @cite{charlow-2021}
+[barker-shan-2014] [charlow-2021]
 
-@cite{charlow-2021}'s first solution to cumulative readings: higher-order
+[charlow-2021]'s first solution to cumulative readings: higher-order
 dynamic GQs using a "tower" continuation type. A modified numeral like
 "exactly 3" denotes a *scope-taking* dynamic meaning — type
 `((Update S → Update S) → Update S) → Update S` — rather than a flat `Update S`.
@@ -51,7 +51,7 @@ def lowerGQ (m : HODGQ S) : Update S := Cont.lower m
 -- § Tower GQs for cumulative readings
 -- ════════════════════════════════════════════════════
 
-/-- Tower-type dynamic GQ (@cite{charlow-2021} §3, equation 24).
+/-- Tower-type dynamic GQ ([charlow-2021] §3, equation 24).
 
     The continuation receives a *scope-taking function* `Update S → Update S`
     rather than a flat Update. This allows the nuclear scope (VP body) to be

@@ -7,11 +7,11 @@ A *core concept* is a conceptual primitive that is universally available
 to every language's grammar, regardless of whether any lexical item in
 that language realizes it.
 
-The notion comes from @cite{chemla-2007}, who introduced it to explain
+The notion comes from [chemla-2007], who introduced it to explain
 the anti-duality of French *tous* despite French lacking a lexical
-counterpart of *both*. @cite{buccola-kriz-chemla-2018} generalize the
+counterpart of *both*. [buccola-kriz-chemla-2018] generalize the
 notion to "conceptual alternatives" feeding pragmatic competition, and
-@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025} refine it:
+[jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025] refine it:
 core concepts feed competition only when an *indirect* alternative —
 a pronounceable expression equivalent in meaning to the unpronounceable
 core-concept structure — is available (Indirect Alternatives,
@@ -35,7 +35,7 @@ inductive Id where
   /-- Number-feature dual: predicate-modifier "and has exactly 2
   atomic parts"; denotation in `Features.Number.dualPredOnLattice`. -/
   | dual
-  /-- Number-feature trial. Mentioned in @cite{harbour-2014} as
+  /-- Number-feature trial. Mentioned in [harbour-2014] as
   morphologically stable but rare. Denotation TBD. -/
   | trial
   /-- Universal quantifier core concept. Lexicalized as `all`/`tous`

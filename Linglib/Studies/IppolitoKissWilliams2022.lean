@@ -2,17 +2,17 @@ import Linglib.Semantics.Questions.Probabilistic
 
 /-!
 # Ippolito, Kiss & Williams 2022: Discourse Function of Adversative Conjunction
-@cite{ippolito-kiss-williams-2022}
+[ippolito-kiss-williams-2022]
 
 The Sinn und Bedeutung 26 paper that introduces the doxastic-evidential
 notions of **SUPPORT**, **AGREEMENT**, and **DISAGREEMENT** which the
-follow-up paper @cite{ippolito-kiss-williams-2025} reuses for discourse
+follow-up paper [ippolito-kiss-williams-2025] reuses for discourse
 *only*. The 2022 paper itself targets adversative *but*; the SUPPORT /
 AGREE / DISAGREE apparatus is the part of that account both papers share.
 
 This file currently formalizes only the shared apparatus — the *but*
 analysis itself is not yet formalized. The recap below follows the
-conceptual statement that @cite{ippolito-kiss-williams-2025} §4 (p. 225)
+conceptual statement that [ippolito-kiss-williams-2025] §4 (p. 225)
 gives explicitly: *"Following Ippolito et al. (2022) we define the
 notion of AGREEMENT (and DISAGREEMENT) and the notion of SUPPORT, on
 which the former notion is based."*
@@ -22,7 +22,7 @@ which the former notion is based."*
 A sentence `S` supports a proposition `r` (in context `c`) iff some
 alternative `q ∈ ⟦S⟧` is doxastically grounded for the speaker
 (`dox_sp ⊆ q`) and provides evidence for `r`. The doxastic anchor
-is what derives the @cite{ippolito-kiss-williams-2025} §5.2
+is what derives the [ippolito-kiss-williams-2025] §5.2
 interrogative-left-argument restriction: a speaker who doesn't believe
 any alternative cannot use the sentence to support anything.
 
@@ -49,7 +49,7 @@ open Question Semantics.Questions.Probabilistic
 
 variable {W : Type*}
 
-/-! ## SUPPORT (paper ex. (13) of @cite{ippolito-kiss-williams-2025},
+/-! ## SUPPORT (paper ex. (13) of [ippolito-kiss-williams-2025],
     restating the 2022 definition) -/
 
 /-- `S` **supports** `r` from doxastic state `dox` under prior `μ`:
@@ -63,7 +63,7 @@ def Supports (dox : Set W) (S : Question W) (r : Set W) (μ : PMF W) : Prop :=
 
 /-- An info-seeking speaker — one who doesn't believe any alternative of
     `S` — cannot use `S` to support anything. The architectural
-    derivation of @cite{ippolito-kiss-williams-2025} §5.2's
+    derivation of [ippolito-kiss-williams-2025] §5.2's
     interrogative-left-argument restriction: the failure isn't a
     clause-type filter but a doxastic consequence of `Supports`. -/
 theorem Supports.of_no_belief_fails {dox : Set W} {S : Question W}
@@ -84,7 +84,7 @@ theorem Supports.exists_dox_alt {dox : Set W} {S : Question W}
   exact ⟨p, hp, hdox⟩
 
 /-! ## AGREEMENT and DISAGREEMENT (paper ex. (14) of
-    @cite{ippolito-kiss-williams-2025}, restating the 2022 definitions) -/
+    [ippolito-kiss-williams-2025], restating the 2022 definitions) -/
 
 /-- Two sentences `S` and `S'` **agree** on QUD `Q` from doxastic state
     `dox` iff some alternative `α ∈ alt Q` is supported by both. -/

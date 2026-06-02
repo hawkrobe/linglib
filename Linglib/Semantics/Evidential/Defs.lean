@@ -2,7 +2,7 @@ import Linglib.Features.Evidentiality
 
 /-!
 # Evidential — lexical structure for evidential markers
-@cite{aikhenvald-2004} @cite{de-haan-2013} @cite{murray-2017}
+[aikhenvald-2004] [de-haan-2013] [murray-2017]
 
 The evidential as a lexical object, following the Determiner-API pattern
 (`Core/Nominal/Determiner.lean`). The base `Evidential` carries only what is
@@ -13,7 +13,7 @@ feature value drawn from `Features.Evidentiality`.
 
 A language's evidential inventory is a `List Evidential.Entry` (heterogeneous
 across the three kinds) declared in its Fragment. Typological classifications
-— WALS Ch 77 system-type, Ch 78 coding strategy, @cite{aikhenvald-2004}
+— WALS Ch 77 system-type, Ch 78 coding strategy, [aikhenvald-2004]
 paradigm system-type — are *derived* from the inventory, not stipulated:
 a language's WALS cell is a theorem about its declared evidentials.
 

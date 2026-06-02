@@ -2,7 +2,7 @@ import Linglib.Morphology.MorphRule
 
 /-!
 # Jakaltek (Jacaltec) Auxiliary Verb Fragment
-@cite{anderson-2006}
+[anderson-2006]
 
 Jakaltek (Mayan; Guatemala) has auxiliary verb constructions with a
 **split** inflectional pattern: absolutive (object) arguments are marked
@@ -10,7 +10,7 @@ on aspectual auxiliaries, while ergative (subject) arguments are marked
 on lexical verbs. This is the reverse of the more common split where
 subject appears on the auxiliary.
 
-Source: Craig 1977, cited in @cite{anderson-2006}.
+Source: Craig 1977, cited in [anderson-2006].
 -/
 
 namespace Jakaltek.AuxiliaryVerbs
@@ -21,7 +21,7 @@ open Morphology (InflDistribution MorphCategory)
     *šk-ach w-ila*
     'COMPL-ABS2 ERG1-see'
     'I saw you'
-    (Craig 1977: 60, cited in @cite{anderson-2006}). -/
+    (Craig 1977: 60, cited in [anderson-2006]). -/
 def form : String := "šk-ach w-ila"
 
 def gloss : String := "COMPL-ABS2 ERG1-see 'I saw you'"

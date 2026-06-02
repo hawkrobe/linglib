@@ -4,7 +4,7 @@ import Mathlib.Probability.Distributions.Uniform
 /-!
 # Concept node for SDS
 
-A concept node in the SDS graphical model (@cite{erk-herbelot-2024}
+A concept node in the SDS graphical model ([erk-herbelot-2024]
 Figure 5 nodes (5), (8), (9); paper §5.1). Each unary predicate in the
 DRS pairs with a concept-node random variable whose value is a concept
 drawn from a distribution determined by:
@@ -74,7 +74,7 @@ selectional preference via Product of Experts (paper §5.1 p. 569
 formula: `P(c | s, r) ∝ P(c | s) · P(c | r)`).
 
 Hypothesis: at least one concept must have non-zero mass under both
-factors (paper @cite{erk-herbelot-2024} fn 10). The finiteness of the
+factors (paper [erk-herbelot-2024] fn 10). The finiteness of the
 sum is automatic: both factors are PMFs, so `∑ p · q ≤ ∑ p = 1`. -/
 noncomputable def conditionalAt
     (perScenario : PerScenarioDist Scenario Concept)
@@ -105,7 +105,7 @@ noncomputable def conditionalKernel
   else none
 
 /-- The PoE support is the intersection of the per-scenario and selectional
-supports (paper @cite{erk-herbelot-2024} fn 10's caveat made formal). -/
+supports (paper [erk-herbelot-2024] fn 10's caveat made formal). -/
 theorem mem_support_conditionalAt_iff
     (perScenario : PerScenarioDist Scenario Concept)
     (sel : SelectionalDist Role Concept)

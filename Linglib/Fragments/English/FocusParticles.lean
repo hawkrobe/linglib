@@ -5,7 +5,7 @@ import Linglib.Features.InformationStructure
 
 /-!
 # English Focus-Sensitive Particles
-@cite{rooth-1992} @cite{karttunen-peters-1979} @cite{francescotti-1995}
+[rooth-1992] [karttunen-peters-1979] [francescotti-1995]
 
 Lexical entries for English focus-sensitive particles, typed by
 `Semantics.Focus.Particles` theory types.
@@ -30,7 +30,7 @@ structure Entry where
   threshold : Option EvenThreshold
   /-- FIP application type -/
   application : FIPApplication
-  /-- Discourse-relation flavor of exclusion (@cite{umbach-2004}): *only*
+  /-- Discourse-relation flavor of exclusion ([umbach-2004]): *only*
       excludes additional alternatives → `.contrast`; contrastive focus
       excludes by substitution → `.correction`. Encoded directly as
       `Discourse.Coherence.CoherenceRelation` (the IS-vocabulary
@@ -41,20 +41,20 @@ structure Entry where
   deriving Repr, BEq
 
 /-- "even" — scalar focus particle.
-    @cite{francescotti-1995}: not truth-functional (Equivalence Thesis),
+    [francescotti-1995]: not truth-functional (Equivalence Thesis),
     contributes via conventional implicature, felicity requires exceeding
     MOST alternatives in surprise. -/
 def even_ : Entry :=
   { form := "even"
   , truthFunctional := false           -- Equivalence Thesis
   , contributionLayer := .implicature  -- conventional implicature
-  , threshold := some .most            -- @cite{francescotti-1995}
+  , threshold := some .most            -- [francescotti-1995]
   , application := .focusingAdverb }
 
 /-- "only" — exclusive focus particle.
     Truth-functional (asserts exclusion of alternatives),
     prejacent is a presupposition.
-    @cite{umbach-2004} §2.3: *only* excludes additional alternatives — it
+    [umbach-2004] §2.3: *only* excludes additional alternatives — it
     excludes the possibility that someone *in addition to* the focused item
     satisfies the predicate. -/
 def only_ : Entry :=
@@ -75,10 +75,10 @@ def also : Entry :=
   , application := .focusingAdverb }
 
 /-- "too" — additive focus particle, sentence-final.
-    @cite{thomas-2026}: felicity requires existence of an antecedent
+    [thomas-2026]: felicity requires existence of an antecedent
     fact and a contextually relevant question RQ such that the Antecedent,
     Conjunction, and Prejacent Conditions (Def. 64) all hold.
-    Subsumes @cite{heim-1992}'s individual-based presupposition as a
+    Subsumes [heim-1992]'s individual-based presupposition as a
     special case of the standard focus-alternative use.
     Unlike sentence-initial "also", subject to the full Prejacent
     Condition including maximality (Def. 64c.ii). -/
@@ -90,11 +90,11 @@ def too_ : Entry :=
   , application := .focusingAdverb }
 
 /-- "either" — negative-polarity additive focus particle.
-    @cite{rullmann-2003}: complementary distribution with "too" in
-    polarity contexts. @cite{thomas-2026} defers full characterization
+    [rullmann-2003]: complementary distribution with "too" in
+    polarity contexts. [thomas-2026] defers full characterization
     to future work (footnote 9); felicity conditions likely share the
     core Antecedent/Conjunction structure with additional polarity
-    constraints. See @cite{ahn-2015} for a Boolean algebra account. -/
+    constraints. See [ahn-2015] for a Boolean algebra account. -/
 def either_ : Entry :=
   { form := "either"
   , truthFunctional := false
@@ -103,7 +103,7 @@ def either_ : Entry :=
   , application := .focusingAdverb }
 
 /-- "just" — domain-widening focus particle.
-    @cite{deo-thomas-2025}: *just* signals that the CQ is the widest
+    [deo-thomas-2025]: *just* signals that the CQ is the widest
     answerable construal of an underspecified question. Unlike *only*,
     *just* does not conventionally encode exclusion — exhaustification
     arises as a mandatory Quantity implicature.
@@ -146,7 +146,7 @@ theorem even_only_differ_on_truth :
     even_.truthFunctional ≠ only_.truthFunctional := by decide
 
 /-- "only" is an exclusive particle: contrast (= "additional"-flavor) exclusion.
-    @cite{umbach-2004} §2.3 (UNVERIFIED): excludes alternatives *in addition to* X,
+    [umbach-2004] §2.3 (UNVERIFIED): excludes alternatives *in addition to* X,
     mapping to the CONTRAST discourse relation. -/
 theorem only_excludes_additional :
     only_.exclusionVariety = some .contrast := rfl
@@ -185,7 +185,7 @@ theorem either_same_profile_as_too :
     either_.contributionLayer = too_.contributionLayer := ⟨rfl, rfl⟩
 
 -- ============================================================
--- "just" (@cite{deo-thomas-2025})
+-- "just" ([deo-thomas-2025])
 -- ============================================================
 
 /-- "just" does not affect truth conditions (prejacent is the at-issue content). -/
@@ -194,12 +194,12 @@ theorem just_not_truth_functional :
 
 /-- "just" is not an exclusive — no conventional exclusion.
     Exhaustification arises pragmatically via mandatory Quantity implicature
-    (@cite{deo-thomas-2025} §4.1). -/
+    ([deo-thomas-2025] §4.1). -/
 theorem just_not_exclusive :
     just_.exclusionVariety = none := rfl
 
 /-- "just" and "only" differ on truth-functionality and exclusion.
-    This is the core of @cite{deo-thomas-2025}'s argument: *just* is not
+    This is the core of [deo-thomas-2025]'s argument: *just* is not
     a variant of *only* — it has a fundamentally different discourse function.
     *only* conventionally excludes alternatives; *just* widens the question. -/
 theorem just_only_differ :

@@ -2,7 +2,7 @@ import Linglib.Morphology.MorphProfile
 
 /-!
 # Mandarin Chinese Morphological Profile
-@cite{wals-2013}
+[wals-2013]
 
 WALS-derived profile for Mandarin Chinese (ISO `cmn`). WALS F20A codes
 Mandarin as `isolatingConcatenative`, a mixed type the local 3-way `Fusion`

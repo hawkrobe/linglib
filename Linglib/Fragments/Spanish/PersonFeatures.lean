@@ -2,10 +2,10 @@ import Linglib.Features.Person
 
 /-!
 # Person Feature Decomposition for Spanish Clitics
-@cite{cysouw-2009} @cite{munoz-perez-2026}
+[cysouw-2009] [munoz-perez-2026]
 
-Bridges @cite{cysouw-2009}'s `Category` to the person feature
-decomposition used in Muñoz @cite{munoz-perez-2026}: [±PART], [±AUTHOR], [±SING].
+Bridges [cysouw-2009]'s `Category` to the person feature
+decomposition used in Muñoz [munoz-perez-2026]: [±PART], [±AUTHOR], [±SING].
 
 Fission (the postsyntactic operation producing stylistic applicatives)
 applies iff [+PART, +SING] — i.e., only to 1SG and 2SG. This is

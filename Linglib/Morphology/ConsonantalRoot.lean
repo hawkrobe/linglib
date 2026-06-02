@@ -6,7 +6,7 @@ an ordered melody of segments stored independently of vocalization or template.
 
 The segment type `α` is parametric. Studies of Tarifit Berber may instantiate
 `α := Phonology.Syllable.NatClass` (sonority-class roots, used by
-@cite{afkir-zellou-2025}); studies of Hebrew or Amharic typically instantiate
+[afkir-zellou-2025]); studies of Hebrew or Amharic typically instantiate
 `α := String` for IPA symbols.
 
 Theory-laden questions about the cognitive reality of roots
@@ -19,7 +19,7 @@ separate matter, parameterized at the study level.
 `Morphology.Root` (this file): a *consonantal* melody, a morphological
 primitive (the underlying form of a morpheme).
 `Semantics.Lexical.Roots.Root` (`Semantics/Lexical/Roots/Basic.lean`):
-a bundle of `LexEntailment` atoms in the @cite{beavers-koontz-garboden-2020}
+a bundle of `LexEntailment` atoms in the [beavers-koontz-garboden-2020]
 sense — same English word, different concept.
 `Core.Lexical.RootFeatures` (`Core/Lexical/RootFeatures.lean`): semantic
 quality dimensions on a verb root — orthogonal to both.
@@ -45,11 +45,11 @@ def arity (r : Root α) : Nat := r.segments.length
 def isFinal (r : Root α) (i : Nat) : Bool := i + 1 == r.arity
 
 /-- Position `i` is *nonfinal* (some position strictly past it exists).
-    Used by *Misalignment (@cite{faust-2026} (2)). -/
+    Used by *Misalignment ([faust-2026] (2)). -/
 def isNonfinal (r : Root α) (i : Nat) : Bool := decide (i + 1 < r.arity)
 
 /-- A root with exactly two segments (e.g. √qt → QaTaT-template
-    biradicals in Hebrew, @cite{mccarthy-1981}). -/
+    biradicals in Hebrew, [mccarthy-1981]). -/
 def biradical (r : Root α) : Bool := r.arity == 2
 
 /-- A root with exactly three segments (the unmarked Semitic case). -/
@@ -75,7 +75,7 @@ def adjDupCount [BEq α] : List α → Nat
   | [] | [_] => 0
   | a :: b :: rest => (if a == b then 1 else 0) + adjDupCount (b :: rest)
 
-/-- Root-level OCP (@cite{mccarthy-1981}, @cite{faust-2026}): a root
+/-- Root-level OCP ([mccarthy-1981], [faust-2026]): a root
     has no adjacent identical segments. The predicate is segment-level
     and theory-neutral — it does not commit to any particular tier
     projection or feature decomposition. Specific theories may impose

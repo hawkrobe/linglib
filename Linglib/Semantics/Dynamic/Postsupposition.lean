@@ -2,13 +2,13 @@ import Mathlib.Data.List.Basic
 
 /-!
 # Postsuppositions
-@cite{brasoveanu-2009} @cite{lauer-2009} @cite{glass-2025}
+[brasoveanu-2009] [lauer-2009] [glass-2025]
 
 Output-context constraints: conditions on the Common Ground *after* an
 utterance updates it, as opposed to presuppositions which constrain
 the *input* context.
 
-@cite{glass-2025} argues that Mandarin yǐwéi has a postsupposition
+[glass-2025] argues that Mandarin yǐwéi has a postsupposition
 ◇¬p — after accepting "x yǐwéi p", the CommonGround must be compatible with ¬p.
 This is distinct from a presupposition (input-context condition) and
 cannot be derived from veridicality alone.
@@ -39,7 +39,7 @@ def none : Postsupposition W := ⟨fun _ _ => true⟩
     compatible with ¬p. That is, at least one world in the output
     context has p false.
 
-    This is yǐwéi's ◇¬p (@cite{glass-2025}, @cite{glass-2023}). -/
+    This is yǐwéi's ◇¬p ([glass-2025], [glass-2023]). -/
 def weakContrafactive : Postsupposition W :=
   ⟨fun cs p => cs.any (!p ·)⟩
 
@@ -60,7 +60,7 @@ theorem none_always_satisfied (cs : List W) (p : W → Bool) :
 
 /-- Strong contrafactivity entails weak contrafactivity (for nonempty contexts):
     if CommonGround ⊨ ¬p (all worlds have ¬p), then CommonGround ◇ ¬p (some world has ¬p).
-    This captures @cite{glass-2025}'s key observation that yǐwéi's requirement
+    This captures [glass-2025]'s key observation that yǐwéi's requirement
     is strictly weaker than the hypothetical *contra* verb's. -/
 theorem strong_entails_weak (cs : List W) (p : W → Bool) (hne : cs ≠ []) :
     strongContrafactive.satisfied cs p = true →

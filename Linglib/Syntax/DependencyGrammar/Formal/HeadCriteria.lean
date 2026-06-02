@@ -4,7 +4,7 @@ import Linglib.Syntax.DependencyGrammar.Basic
 # Head determination criteria
 
 Classification of Universal Dependencies relations by how prototypically
-"head-dependent" they are, following @cite{hudson-1990}'s six criteria:
+"head-dependent" they are, following [hudson-1990]'s six criteria:
 category determination, semantic determination, obligatoriness, selection,
 morphological determination, and positional determination. The classifier
 buckets each UD relation into core argument, modifier, or function-word

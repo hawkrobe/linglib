@@ -3,11 +3,11 @@ import Linglib.Features.PrivativePair
 
 /-!
 # Number
-@cite{corbett-2000} @cite{harbour-2014}
+[corbett-2000] [harbour-2014]
 
 Two components of the number API:
 
-**§ 1–3: Number Categories** (@cite{corbett-2000}). Eight analytical number
+**§ 1–3: Number Categories** ([corbett-2000]). Eight analytical number
 values organized along two orthogonal dimensions:
 - **System membership**: general number is *outside* the number system (a form
   non-committal to cardinality); all others are within it.
@@ -15,7 +15,7 @@ values organized along two orthogonal dimensions:
   dual=2, trial=3) vs those whose boundary varies by context (paucal ≈ 2–6,
   greater plural ≈ abundance).
 
-**§ 4–6: Number Features** (@cite{harbour-2014}). Binary feature decomposition:
+**§ 4–6: Number Features** ([harbour-2014]). Binary feature decomposition:
 - **[±atomic]**: whether the referent is an atom (singleton) or a non-atom
   (plurality). Singular is [+atomic]; dual and plural are [−atomic].
 - **[±minimal]**: whether the referent is a minimal element of the relevant
@@ -48,7 +48,7 @@ namespace Features.Number
 -- § 1: Number Categories
 -- ============================================================================
 
-/-- Number categories in @cite{corbett-2000}'s inventory.
+/-- Number categories in [corbett-2000]'s inventory.
 
     Two orthogonal classifications:
     - **System membership**: general is *outside* the number system; all others
@@ -227,7 +227,7 @@ def pluralF : Features := ⟨false, false⟩
 /-- Map number features to Corbett's analytical number categories.
 
     The three well-formed base feature bundles map to three of
-    @cite{corbett-2000}'s eight categories. The remaining (trial,
+    [corbett-2000]'s eight categories. The remaining (trial,
     paucal, etc.) arise from feature recursion and [±additive], which
     require compositional machinery beyond the base feature pair. -/
 def Features.toCategory : Features → Option Category
@@ -320,7 +320,7 @@ theorem atomic_implies_minimal (f : Features) (hw : f.wellFormed = true) :
 
 Number features grounded in a join-semilattice of individuals.
 
-@cite{link-1983} models the domain of individuals as a join-semilattice
+[link-1983] models the domain of individuals as a join-semilattice
 ⟨D, ⊔⟩. Number categories correspond to lattice predicates:
 - **singular** = atoms (no proper part)
 - **dual** = minimal non-atoms (join of exactly 2 atoms)
@@ -418,7 +418,7 @@ theorem ps3_triple_is_plural :
 -- ============================================================================
 
 /-! ### The Additive Feature
-@cite{harbour-2014}
+[harbour-2014]
 
 [±additive] is the third number feature, characterizing
 join-completeness within a lattice region. Applied to the non-atomic
@@ -434,12 +434,12 @@ The boundary is fixed by sociosemantic convention, subject to:
 
 **Connection to CUM**: [+additive] IS cumulativity restricted to a
 subregion. The link between number and aspect/telicity
-(@cite{harbour-2014} §4.4) runs through exactly this connection:
+([harbour-2014] §4.4) runs through exactly this connection:
 mass nouns satisfy [+additive] (cumulative), count nouns satisfy
 [−additive] (quantized). -/
 
 /-- An element is join-complete in a region under a given join operation.
-    @cite{harbour-2014} (10): [+additive](x) ⟺ x ∈ Q ∧ ∀y ∈ Q, x ⊔ y ∈ Q. -/
+    [harbour-2014] (10): [+additive](x) ⟺ x ∈ Q ∧ ∀y ∈ Q, x ⊔ y ∈ Q. -/
 def isJoinCompleteIn {D : Type} [DecidableEq D]
     (join : D → D → D) (region : List D) (x : D) : Bool :=
   region.contains x &&
@@ -495,13 +495,13 @@ theorem ps5_paucal_not_joinComplete :
     isRegionJoinComplete bitmaskJoin ps5Paucal = false := by decide
 
 /-- The plural region IS join-complete: joining two large sums stays
-    large. Satisfies complement completeness (@cite{harbour-2014} (11)). -/
+    large. Satisfies complement completeness ([harbour-2014] (11)). -/
 theorem ps5_plural_joinComplete :
     isRegionJoinComplete bitmaskJoin ps5Plural = true := by decide
 
 /-- The paucal/plural asymmetry: the [+additive] region is join-complete,
     the [−additive] region is not. This is the formal content of the
-    approximative number distinction (@cite{harbour-2014} §3). -/
+    approximative number distinction ([harbour-2014] §3). -/
 theorem ps5_additive_asymmetry :
     isRegionJoinComplete bitmaskJoin ps5Plural = true ∧
     isRegionJoinComplete bitmaskJoin ps5Paucal = false :=
@@ -512,7 +512,7 @@ theorem ps5_additive_asymmetry :
 -- ============================================================================
 
 /-! ### DUAL as predicate modifier
-@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}
+[jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
 
 The paper proposes (eq 39 in §4.2.1, derived from Harbour features
 in §8 eq 98b) that the core concept DUAL has a predicate-modification
@@ -532,7 +532,7 @@ modifier `dualPredOnLattice _ _ verres` ('cup'), which is what blocks
 *tous les NP.dual*. See `Studies/JereticEtAl2025.lean`. -/
 
 /-- ⟦DUAL⟧ as a predicate modifier on a join-semilattice domain
-(@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025} eq 39).
+([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025] eq 39).
 
 Given a property `P` over individuals and an element `x`, `dualPredOnLattice`
 holds of `x` iff `P x` and `x` has exactly 2 atomic parts. The latter is
@@ -583,7 +583,7 @@ theorem not_atom_of_isMinimalNonAtom {D : Type} [DecidableEq D]
 factors as `P x ∧ latticeToFeatures … x = dualF`.
 
 This grounds the paper's predicate-modifier semantics
-(@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025} eq 39)
+([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025] eq 39)
 in the existing Harbour feature decomposition (Number.lean §§4-5):
 DUAL is *not* a separate primitive but the same conditions used to
 classify a lattice element as `[−atomic, +minimal]`. -/
@@ -626,16 +626,16 @@ theorem ps3_dual_triple_excluded :
   decide
 
 -- ============================================================================
--- § 4: Number Opposition Stages (@cite{cysouw-2009}, Fig 10.8)
+-- § 4: Number Opposition Stages ([cysouw-2009], Fig 10.8)
 -- ============================================================================
 
-/-- Number opposition stages (@cite{cysouw-2009}, Fig 10.8).
-    A coarsening over the eight @cite{corbett-2000} number values into a
+/-- Number opposition stages ([cysouw-2009], Fig 10.8).
+    A coarsening over the eight [corbett-2000] number values into a
     four-step hierarchy of typological "richness", from no number marking
     (N₁) to full number marking with restricted groups (N₃/N₄).
 
-    Used by both @cite{cysouw-2009} (paradigmatic person-marking) and
-    @cite{corbett-2000} (`NumberSystem.toNumberStage` bridge in
+    Used by both [cysouw-2009] (paradigmatic person-marking) and
+    [corbett-2000] (`NumberSystem.toNumberStage` bridge in
     `Studies/Corbett2000.lean`). -/
 inductive NumberStage where
   /-- Undifferentiated number marking (singular = group unmarked). -/

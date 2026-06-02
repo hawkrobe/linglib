@@ -7,7 +7,7 @@ set_option autoImplicit false
 
 /-!
 # Connes-Kreimer Hopf algebra carrier on n-ary planar rooted trees
-@cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
+[marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 The **Connes-Kreimer Hopf algebra** on a tree type T is the formal
 R-linear combinations of forests (multisets of trees), with product =
@@ -33,13 +33,13 @@ of T; see sibling files for specific instantiations.
 
 ## MCB anchor
 
-@cite{marcolli-chomsky-berwick-2025} §1.2 "Workspaces: Product and
+[marcolli-chomsky-berwick-2025] §1.2 "Workspaces: Product and
 Coproduct" introduces the Hopf algebra of workspaces; the carrier is
 `V(𝔉_{SO_0}) = AddMonoidAlgebra R (Multiset (FCM α))`. This file
 generalizes the carrier to arbitrary tree type T, with binary FCM as
 one specialization (eventual Phase B target).
 
-@cite{foissy-introduction-hopf-algebras-trees} §1.2: "The Hopf algebra
+[foissy-introduction-hopf-algebras-trees] §1.2: "The Hopf algebra
 H_R is the free associative commutative unitary K-algebra generated
 by T", where T is the set of rooted trees. Same structure here, with
 T parameterized.

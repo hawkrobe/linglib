@@ -2,14 +2,14 @@ import Linglib.Core.Word
 
 /-!
 # Spanish Clitic Paradigm
-@cite{munoz-perez-2026}
+[munoz-perez-2026]
 
 The full Spanish clitic paradigm, with syncretism data critical for
-Muñoz @cite{munoz-perez-2026}. The key observation: 1SG and 2SG are syncretic
+Muñoz [munoz-perez-2026]. The key observation: 1SG and 2SG are syncretic
 across accusative, dative, and reflexive, while 3SG/PL are not.
 This syncretism drives the availability of stylistic applicatives.
 
-## Paradigm (Muñoz @cite{munoz-perez-2026}, ex. 59)
+## Paradigm (Muñoz [munoz-perez-2026], ex. 59)
 
 |       | ACC    | DAT   | REFL |
 |-------|--------|-------|------|

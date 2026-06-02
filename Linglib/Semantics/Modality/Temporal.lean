@@ -2,17 +2,17 @@ import Linglib.Semantics.Modality.Kratzer.Operators
 
 /-!
 # Temporal Modal Evaluation
-@cite{abusch-1997} @cite{condoravdi-2002} @cite{kratzer-2012} @cite{werner-2006}
+[abusch-1997] [condoravdi-2002] [kratzer-2012] [werner-2006]
 
 Modal bases and ordering sources are functions of both world and time
-(@cite{kratzer-2012} Ch. 4, @cite{condoravdi-2002}). This module extends `Kratzer.lean`
+([kratzer-2012] Ch. 4, [condoravdi-2002]). This module extends `Kratzer.lean`
 with time-indexed conversational backgrounds and derives the static
 (time-independent) versions as a special case.
 
 ## Core Extension
 
 Kratzer.lean defines `ConvBackground W := W → List (W → Prop)`.
-@cite{kratzer-2012} Ch. 4 argues that this should be `W → Time → List (W → Prop)`:
+[kratzer-2012] Ch. 4 argues that this should be `W → Time → List (W → Prop)`:
 the modal base and ordering source can vary with the temporal perspective.
 
 This distinction matters for:

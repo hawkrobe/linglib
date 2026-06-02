@@ -3,7 +3,7 @@ import Linglib.Phenomena.Negation.ExpletiveNegation
 /-!
 # Italian Expletive Negation Environments
 
-Classification of Italian EN construction types from @cite{greco-2020}
+Classification of Italian EN construction types from [greco-2020]
 Table 1 (weak EN) and Table 2 (strong EN, including surprise negation).
 
 Italian has 11 EN construction types, divided into weak and strong based
@@ -23,7 +23,7 @@ open Phenomena.Negation.ExpletiveNegation (ENStrength PolarityLicensing weakENPr
 -- § 1. The 11 Italian EN construction types
 -- ════════════════════════════════════════════════════
 
-/-- The 11 Italian EN construction types classified by @cite{greco-2020}
+/-- The 11 Italian EN construction types classified by [greco-2020]
     Table 1 (extended to include Snegs from Table 2). -/
 inductive ENEnvironment where
   | untilClauses
@@ -43,7 +43,7 @@ inductive ENEnvironment where
 -- § 2. Strength and polarity classification
 -- ════════════════════════════════════════════════════
 
-/-- @cite{greco-2020} Table 1+2 classification. -/
+/-- [greco-2020] Table 1+2 classification. -/
 def ENEnvironment.strength : ENEnvironment → ENStrength
   | .untilClauses          => .weak
   | .whoKnowsClauses       => .weak

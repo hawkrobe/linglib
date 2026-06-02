@@ -2,13 +2,13 @@ set_option autoImplicit false
 
 /-!
 # Syntactic Graphs
-@cite{adger-2025}
+[adger-2025]
 
 Graph-based representation of syntactic structure that generalizes across
 frameworks. Each node has a label and at most two children (1-part and
 2-part), enforcing Dimensionality. In-degree is unbounded, permitting
 multiparthood — a single node simultaneously serving as part of multiple
-parents (@cite{adger-2025}).
+parents ([adger-2025]).
 
 ## Design
 
@@ -22,7 +22,7 @@ parents (@cite{adger-2025}).
 
 ## Angular Locality
 
-The central locality constraint (@cite{adger-2025}, definition 29):
+The central locality constraint ([adger-2025], definition 29):
 
     If γ is a part, then γ can subjoin to β only if there is an α s.t.
     γ is a n-part of α and α is a 1-part of β.
@@ -121,7 +121,7 @@ def SynGraph.isTrans2PartOf (g : SynGraph L) (x y : Fin g.numNodes) : Bool :=
 /-- `x` is a within-dimension transitive n-part of `y` for some n.
     This is the parthood relation relevant to Angular Locality:
     γ is reachable from α by following ONLY 1-part edges or ONLY 2-part
-    edges, never crossing dimensions (@cite{adger-2025}, p. 95). -/
+    edges, never crossing dimensions ([adger-2025], p. 95). -/
 def SynGraph.isWithinDimPartOf (g : SynGraph L) (x y : Fin g.numNodes) : Bool :=
   g.isTrans1PartOf x y || g.isTrans2PartOf x y
 
@@ -155,7 +155,7 @@ def SynGraph.isMultipart (g : SynGraph L) (i : Fin g.numNodes) : Bool :=
 -- ════════════════════════════════════════════════════
 
 /-- Labels along the 1-part chain from `root`, including `root` itself.
-    Corresponds to @cite{grimshaw-2005}'s Extended Projection:
+    Corresponds to [grimshaw-2005]'s Extended Projection:
     the sequence N <₁ Cl <₁ Q <₁ D emerges from successive 1-parts. -/
 def SynGraph.onePartChain (g : SynGraph L) (root : Fin g.numNodes) : List L :=
   g.label root :: (g.chain g.onePart root g.numNodes).map g.label
@@ -174,13 +174,13 @@ def SynGraph.containsLabel [BEq L] (g : SynGraph L) (l : L)
 -- § 7. Angular Locality
 -- ════════════════════════════════════════════════════
 
-/-- Angular Locality (@cite{adger-2025}, definition 29, p. 91):
+/-- Angular Locality ([adger-2025], definition 29, p. 91):
 
     If γ is a part, then γ can subjoin to β only if there is an α s.t.
     γ is a n-part of α and α is a 1-part of β.
 
     "n-part" means transitive parthood **within a single dimension**.
-    Transitivity does NOT cross dimensions (@cite{adger-2025}, p. 95):
+    Transitivity does NOT cross dimensions ([adger-2025], p. 95):
     if x <₁ u and u <₂ e, x is neither a 1-part nor a 2-part of e.
 
     This derives:
@@ -252,7 +252,7 @@ def SynGraph.isMereological (g : SynGraph L) : Bool :=
 -- ════════════════════════════════════════════════════
 
 /-! The five key results derived from Angular Locality in
-@cite{adger-2025}, Chapter 4, list (35), p. 93. Each is demonstrated
+[adger-2025], Chapter 4, list (35), p. 93. Each is demonstrated
 on a concrete `SynGraph` and verified by `native_decide`.
 
 We construct small graphs with specific edge configurations and
@@ -275,7 +275,7 @@ def mkGraph (n : Nat)
 -- (35a) Superlocal / antilocal subjunction ruled out
 -- ────────────────────────────────────────────────────
 
-/-! Structure (28), @cite{adger-2025} p. 90:
+/-! Structure (28), [adger-2025] p. 90:
     a (0) ──1──▶ b (1)
 
     b trying to subjoin to a. AL requires an α that is a 1-part of a
@@ -292,14 +292,14 @@ theorem al_blocks_superlocal :
 -- (35c) Sideward subjunction ruled out
 -- ────────────────────────────────────────────────────
 
-/-! Structure (31a), @cite{adger-2025} p. 92:
+/-! Structure (31a), [adger-2025] p. 92:
     c (0) ──1──▶ b (1),  c (0) ──2──▶ a (2)
 
     a trying to subjoin to b (sibling). b has no 1-parts, so the
     candidate α set is empty. AL fails. -/
 
 /-- The canonical 3-node Sideward subjunction graph from
-    @cite{adger-2025} eq. (31a) p. 92: parent c (0) with two daughter
+    [adger-2025] eq. (31a) p. 92: parent c (0) with two daughter
     1-parts b (1) and a (2). Trying to subjoin a to b (sibling) fails
     Angular Locality because b has no 1-parts (the candidate-α set is
     empty). Cross-referenced from `Studies/Adger2025.lean`
@@ -316,7 +316,7 @@ theorem al_blocks_sideward :
 -- (35d) Parallel subjunction ruled out
 -- ────────────────────────────────────────────────────
 
-/-! @cite{adger-2025} p. 91 (30): subjunction to an unattached object.
+/-! [adger-2025] p. 91 (30): subjunction to an unattached object.
     a (0) ──1──▶ b (1);  c (2) disconnected.
 
     c trying to subjoin to a. a's 1-part chain = [b]. c is not a
@@ -332,7 +332,7 @@ theorem al_blocks_parallel :
 -- (35e) Cross-dimensional long-distance ruled out
 -- ────────────────────────────────────────────────────
 
-/-! Structure (38), @cite{adger-2025} p. 95:
+/-! Structure (38), [adger-2025] p. 95:
     y (0) ──1──▶ e (1) ──1──▶ w (3)
                  e (1) ──2──▶ u (2) ──2──▶ z (4)
                               u (2) ──1──▶ x (5)
@@ -369,7 +369,7 @@ theorem al_blocks_cross_dim :
 -- (35b) Lowering / downward subjunction ruled out
 -- ────────────────────────────────────────────────────
 
-/-! Structure (32), @cite{adger-2025} p. 92:
+/-! Structure (32), [adger-2025] p. 92:
     e (0) ──1──▶ a (1) ──1──▶ d (3)
     e (0) ──2──▶ f (2)
                  a (1) ──2──▶ b (4) ──1──▶ c (5) ──1──▶ g (6)
@@ -389,7 +389,7 @@ theorem al_blocks_lowering :
 -- (24a) Roll-up movement ALLOWED
 -- ────────────────────────────────────────────────────
 
-/-! Structure (24a), @cite{adger-2025} p. 89:
+/-! Structure (24a), [adger-2025] p. 89:
     e (0) ──1──▶ d (1) ──1──▶ a (2) ──1──▶ c (3)
                                     ──2──▶ b (4)
 
@@ -413,7 +413,7 @@ theorem al_allows_rollup_1part :
 -- Successive cyclicity: cross-clausal movement requires stops
 -- ────────────────────────────────────────────────────
 
-/-! @cite{adger-2025}, Chapter 4.3: Angular Locality forces successive-
+/-! [adger-2025], Chapter 4.3: Angular Locality forces successive-
 cyclic movement across clause boundaries. Within a single Extended
 Projection (EP), movement is unrestricted — the 1-part chain connects
 everything. But when movement crosses from an embedded EP to a matrix
@@ -475,7 +475,7 @@ theorem succ_cyc_wh_reaches_C1_after_stop :
 -- Nominal island: D's filled 2-part blocks extraction
 -- ────────────────────────────────────────────────────
 
-/-! @cite{adger-2025}, Chapter 6: When D has a 2-part (because Det/Dem
+/-! [adger-2025], Chapter 6: When D has a 2-part (because Det/Dem
 subjoins to it), its 2-part slot is "used up." The mechanism has two
 parts:
 
@@ -497,7 +497,7 @@ Structure:
                                                         P (6) ──2──▶ wh (9)
 -/
 
-/-- Definite-nominal island configuration (@cite{adger-2025}, Ch 6 §6.3.2).
+/-- Definite-nominal island configuration ([adger-2025], Ch 6 §6.3.2).
     `D (5) ──2──▶ Det (8)` represents Det subjunction filling D's 2-part;
     extracting `wh (9)` to matrix `C (0)` traverses cross-dimensional path.
     Public (consumed by `Studies/Adger2025.lean`). -/
@@ -552,7 +552,7 @@ theorem nominal_island_indefinite_reaches_C :
 -- Subject island: extraction from within a subject
 -- ────────────────────────────────────────────────────
 
-/-! @cite{adger-2025}, Chapter 6: Extraction from within a subject DP
+/-! [adger-2025], Chapter 6: Extraction from within a subject DP
 is blocked because the path from the extracted element to the matrix
 clause crosses dimensions.
 
@@ -571,7 +571,7 @@ any node in C's 1-part chain [T, v, V].
 Crucially, the SUBJECT DP ITSELF can extract (it is T's 2-part):
 this correctly predicts "Who [t arrived]?" is grammatical. -/
 
-/-- Subject-island configuration (@cite{adger-2025}, Ch 7 §7.7).
+/-- Subject-island configuration ([adger-2025], Ch 7 §7.7).
     Sub-extraction of `N_who (8)` from within subject `DP_subj (4)` traverses
     `N_who <₁ PP <₂ NP <₁ DP <₂ T`, crossing dimensions twice.
     Public (consumed by `Studies/Adger2025.lean`). -/
@@ -599,7 +599,7 @@ theorem subject_itself_can_extract :
 -- Adjunct island: extraction from within an adjunct
 -- ────────────────────────────────────────────────────
 
-/-! @cite{adger-2025}, Chapter 6: Extraction from within an adjunct
+/-! [adger-2025], Chapter 6: Extraction from within an adjunct
 is blocked by the same cross-dimensional mechanism as subject islands.
 
 Structure:

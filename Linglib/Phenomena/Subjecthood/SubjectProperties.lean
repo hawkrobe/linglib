@@ -1,7 +1,7 @@
 /-!
-# Subject Properties @cite{comrie-1989}
+# Subject Properties [comrie-1989]
 
-@cite{comrie-1989} (Ch 5) argues that "subject" is not a primitive
+[comrie-1989] (Ch 5) argues that "subject" is not a primitive
 cross-linguistic category but a **bundle** of coding and behavioral properties.
 In accusative languages, all properties converge on the same NP (the S=A
 argument). In ergative languages, they may diverge: coding properties
@@ -23,7 +23,7 @@ How the "subject" NP participates in cross-clausal syntactic operations:
 - **Raising**: the NP that raises to a higher clause subject position
 - **Equi-NP deletion**: the NP deleted as controlled PRO
 - **Relativization**: the most accessible position on the
-  @cite{keenan-comrie-1977} Accessibility Hierarchy
+  [keenan-comrie-1977] Accessibility Hierarchy
 
 ## Key Generalization
 

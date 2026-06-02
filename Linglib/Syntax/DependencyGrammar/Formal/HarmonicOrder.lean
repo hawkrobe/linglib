@@ -2,9 +2,9 @@ import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 
 /-!
 # Harmonic Word Order via Dependency Length Minimization
-@cite{dryer-1992} @cite{futrell-gibson-2020} @cite{gibson-2025} @cite{greenberg-1963}
+[dryer-1992] [futrell-gibson-2020] [gibson-2025] [greenberg-1963]
 
-@cite{gibson-2025} argues that dependency length minimization (DLM) explains
+[gibson-2025] argues that dependency length minimization (DLM) explains
 the head-direction generalization: consistent head direction (HH or FF) keeps
 spine dependencies local, while mixed direction (HF or FH) forces intervening
 subtree material between a head and its spine dependent. For single-word
@@ -22,7 +22,7 @@ intervene.
 * `isLeaf`, `leaf_no_intervening` — the leaf exception that licenses
   free direction for single-word dependents.
 * `harmonicHI`, `harmonicHF`, `disharmonicHF`, `disharmonicFH` — concrete
-  trees instantiating @cite{gibson-2025}'s recursive-embedding pattern.
+  trees instantiating [gibson-2025]'s recursive-embedding pattern.
 * `harmonic_always_shorter`, `dlmPredictsHarmonicCheaper` — the DLM
   prediction in the worked-example set.
 
@@ -221,7 +221,7 @@ theorem monotone_ascending_achieves_span (l : List Nat) (h : isAscending l) :
 
 /-! ### Intervening material in projective trees
 
-The structural heart of @cite{gibson-2025}'s argument: dependency length
+The structural heart of [gibson-2025]'s argument: dependency length
 between head `h` and dependent `d` is bounded below by `1` plus the number
 of `d`'s subtree members that fall between `h` and `d` in linear order. -/
 
@@ -267,7 +267,7 @@ theorem dep_length_ge_one_plus_intervening (t : DepTree) (d : Dependency)
 /-! ### Leaf (single-word) exception
 
 A leaf dependent has no subtree, so no nodes can intervene regardless of
-direction. This is the formal basis for @cite{gibson-2025}'s exception for
+direction. This is the formal basis for [gibson-2025]'s exception for
 single-word adjectives, demonstratives, intensifiers, and negation markers. -/
 
 /-- A node is a leaf if it has no dependents. -/
@@ -312,7 +312,7 @@ theorem leaf_direction_irrelevant_bridge (h d : Nat) :
 
 /-! ### Harmonic vs disharmonic trees
 
-@cite{gibson-2025}'s recursive-embedding pattern: a verb takes a clausal
+[gibson-2025]'s recursive-embedding pattern: a verb takes a clausal
 complement, embedded three levels deep. Head-initial (`HI`) and head-final
 (`HF`) consistent orders share the same TDL; mixed orders inflate it. -/
 

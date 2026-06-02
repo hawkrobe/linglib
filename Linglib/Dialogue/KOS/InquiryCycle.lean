@@ -3,11 +3,11 @@ import Linglib.Semantics.Questions.Support
 
 /-!
 # KOS: Conversational Rules on the TIS
-@cite{ginzburg-2012} Ch. 4
+[ginzburg-2012] Ch. 4
 
 The TIS-level conversational rules: ask, assert, accept, qspec, check,
 confirm, qcoord, factUpdateQudDowndate, greet. Each rule is a
-function `TIS → … → TIS` matching @cite{ginzburg-2012}'s precondition/
+function `TIS → … → TIS` matching [ginzburg-2012]'s precondition/
 effect shape (the precondition is implicit in the input TIS state;
 the effect is the output TIS state).
 
@@ -224,7 +224,7 @@ theorem greet_precond_empty_moves {P Fact QContent : Type*} {Cont : Type}
 
 /-! ## Move Coherence
 
-@cite{ginzburg-2012} ex. 70 (p. 96) defines M(ove)-Coherence: a move m₁
+[ginzburg-2012] ex. 70 (p. 96) defines M(ove)-Coherence: a move m₁
 is coherent with respect to a DGB dgb₀ iff there exists a conversational
 rule c₁ mapping dgb₀ to dgb₁ such that dgb₁.LatestMove = m₁.
 

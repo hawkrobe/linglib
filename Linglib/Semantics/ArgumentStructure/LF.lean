@@ -13,16 +13,16 @@ forms, and adverbial modification (Davidson's key payoff).
 * `ThematicAxioms` — Aktionsart selection + uniqueness constraints
 * `agent_holder_disjoint` — derived from the axioms
 * `EventModifier` + `modify` + `modify_comm` + `modify_assoc` —
-  adverbial modification as predicate conjunction (@cite{davidson-1967})
+  adverbial modification as predicate conjunction ([davidson-1967])
 * `stativeLogicalForm` / `modifiedStativeLogicalForm` /
   `modified_stative_is_pm` — stative LFs with `holder`
-  (@cite{wellwood-2015} §3.2)
+  ([wellwood-2015] §3.2)
 
 ## References
 
-* @cite{davidson-1967} (adverbial modification = predicate conjunction)
-* @cite{parsons-1990} (thematic roles as separate conjuncts)
-* @cite{wellwood-2015} §3.2 (gradable adjectives over states)
+* [davidson-1967] (adverbial modification = predicate conjunction)
+* [parsons-1990] (thematic roles as separate conjuncts)
+* [wellwood-2015] §3.2 (gradable adjectives over states)
 -/
 
 namespace Semantics.ArgumentStructure
@@ -71,7 +71,7 @@ theorem agent_holder_disjoint {Entity Time : Type*} [LinearOrder Time]
 abbrev EventModifier (Time : Type*) [LinearOrder Time] := Event Time → Prop
 
 /-- Apply a modifier to an event predicate via conjunction.
-    @cite{davidson-1967}: adverbial modification is conjunction of event
+    [davidson-1967]: adverbial modification is conjunction of event
     predicates. "John kicked the ball quickly" = ∃e. kick(e) ∧
     Agent(j,e) ∧ Patient(b,e) ∧ quickly(e).
 
@@ -99,7 +99,7 @@ theorem modify_assoc {Time : Type*} [LinearOrder Time]
   exact propext ⟨λ ⟨⟨hp, hm1⟩, hm2⟩ => ⟨hp, hm1, hm2⟩,
                 λ ⟨hp, hm1, hm2⟩ => ⟨⟨hp, hm1⟩, hm2⟩⟩
 
-/-! ### Stative logical forms (@cite{wellwood-2015} §3.2) -/
+/-! ### Stative logical forms ([wellwood-2015] §3.2) -/
 
 /-- "x is happy" ↦ ∃s. P(s) ∧ Holder(x, s). Parallel to
     `intransitiveLogicalForm` but using `holder` instead of `agent`,

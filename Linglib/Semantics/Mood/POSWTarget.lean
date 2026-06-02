@@ -5,12 +5,12 @@ import Linglib.Semantics.Mood.POSWQ
 
 /-!
 # POSWTarget: Which Component a Mood Targets
-@cite{portner-2018}
+[portner-2018]
 
 Each mood-bearing object (verbal mood, sentence mood, modal flavor)
 targets a specific component of a `POSW` (or, for the `partition`
 case, of our extended `POSWQ`; see `Semantics/Mood/POSWQ.lean`).
-@cite{portner-2018}'s unification thesis says: the surface diversity
+[portner-2018]'s unification thesis says: the surface diversity
 of mood phenomena reduces to *which component gets touched*.
 
 This file packages that thesis as a type-level enum `POSWTarget` and
@@ -36,7 +36,7 @@ Modal flavors will get their own instance once
 namespace Semantics.Mood
 
 /-- The component of a `POSW` (or of `POSWQ`, for `.partition`) that a
-    mood-bearing object operates on. @cite{portner-2018}, Ch. 4.
+    mood-bearing object operates on. [portner-2018], Ch. 4.
 
     - `informational`: the context set `cs`. Targeted by indicative
       verbal mood and declarative force (assertion via `+`-update,
@@ -44,14 +44,14 @@ namespace Semantics.Mood
     - `preferential`: the ordering `≤`. Targeted by subjunctive verbal
       mood and imperative force (directive via `⋆`-update,
       desire via `□_≤`). The `.promissive` and `.exclamative`
-      assignments below are extensions of @cite{portner-2018}'s
+      assignments below are extensions of [portner-2018]'s
       core declarative/imperative/interrogative trichotomy and
       should be treated as conjectural.
     - `partition`: a refinement of `cs` into a partition.
-      Targeted by interrogative force. @cite{portner-2018} formalizes
+      Targeted by interrogative force. [portner-2018] formalizes
       this as PPOSW (a partition replaces `cs`); we instead represent
       it as a third coordinate of `POSWQ`. Verbal mood does not
-      select for partition in @cite{portner-2018}; see
+      select for partition in [portner-2018]; see
       `Semantics/Mood/VerbalMood.lean` for our extension. -/
 inductive POSWTarget where
   | informational
@@ -68,7 +68,7 @@ export HasPOSWTarget (target)
 
 /-! ## Instances -/
 
-/-- Verbal mood (@cite{portner-2018}, Ch. 4):
+/-- Verbal mood ([portner-2018], Ch. 4):
     - indicative selected by `believe`-class attitudes (`□_cs` on agent's POSW)
     - subjunctive selected by `want`-class attitudes (`□_≤` on agent's POSW) -/
 instance : HasPOSWTarget GramMood where
@@ -76,12 +76,12 @@ instance : HasPOSWTarget GramMood where
     | .indicative  => .informational
     | .subjunctive => .preferential
 
-/-- Sentence mood (@cite{portner-2018}, Ch. 4):
+/-- Sentence mood ([portner-2018], Ch. 4):
     - declarative `+`-updates `cs` of the discourse POSW
     - imperative `⋆`-updates `<` of the addressee's To-Do List
     - interrogative partitions `cs` (PPOSW)
     The `promissive` (preferential) and `exclamative` (informational)
-    assignments are linglib extensions; @cite{portner-2018} treats
+    assignments are linglib extensions; [portner-2018] treats
     only the declarative/imperative/interrogative trichotomy in
     detail. They are included here for typological coverage and
     should be revisited when each is independently formalized. -/
@@ -98,7 +98,7 @@ instance : HasPOSWTarget IllocutionaryMood where
 A canonical declarative-indicative clause exhibits a *target
 agreement* between its illocutionary force and its grammatical mood:
 both target the informational component. This is the type-level
-shadow of @cite{portner-2018}'s **Indicative Principle**, which is
+shadow of [portner-2018]'s **Indicative Principle**, which is
 itself stated as a one-way conditional ("if a clause's matrix
 operator is `□_cs`, the clause is indicative") rather than as
 target-equality.
@@ -116,7 +116,7 @@ which does not yet exist in linglib. -/
 
 /-- The canonical declarative-indicative clause has matching
     POSW-target on its force and mood components. The type-level
-    shadow of @cite{portner-2018}'s Indicative Principle. -/
+    shadow of [portner-2018]'s Indicative Principle. -/
 theorem decl_ind_target_match :
     target ClauseType.declInd.force = target ClauseType.declInd.mood := by
   rfl
@@ -136,7 +136,7 @@ theorem mood_misalignment_polar_question :
 
 /-! ## Indicative / Subjunctive Principles as biconditionals
 
-The conditional form of @cite{portner-2018}'s Indicative Principle
+The conditional form of [portner-2018]'s Indicative Principle
 ("if the matrix operator is `□_cs`, the clause is indicative") and its
 subjunctive counterpart, restricted to the verbal-mood layer (`GramMood`).
 Because `GramMood` is in bijection with the two POSW components it
@@ -147,14 +147,14 @@ preferential component *exactly* picks out subjunctive.
 These are the strongest type-level statements of Portner's principles
 available without a syntax-side mood-features infrastructure. -/
 
-/-- **Indicative Principle** (@cite{portner-2018}, Ch. 4): a verbal
+/-- **Indicative Principle** ([portner-2018], Ch. 4): a verbal
     mood targets the informational component iff it is indicative.
     The biconditional form available at the GramMood layer. -/
 theorem gram_mood_target_informational_iff_indicative (m : GramMood) :
     target m = .informational ↔ m = .indicative := by
   cases m <;> decide
 
-/-- **Subjunctive Principle** (@cite{portner-2018}, Ch. 4): a verbal
+/-- **Subjunctive Principle** ([portner-2018], Ch. 4): a verbal
     mood targets the preferential component iff it is subjunctive.
     The biconditional form available at the GramMood layer. -/
 theorem gram_mood_target_preferential_iff_subjunctive (m : GramMood) :
@@ -172,7 +172,7 @@ theorem gram_mood_target_ne_partition (m : GramMood) :
 
 /-! ## §3. Farkas-style alternative: target by update type
 
-@cite{farkas-2003} (eq. 11) characterizes mood selection by the *update
+[farkas-2003] (eq. 11) characterizes mood selection by the *update
 type* — `+` for indicative, `⋆` for subjunctive — rather than by the
 matrix modal operator. The target equality `decl_ind_target_match`
 above is the type-level shadow of Farkas's principle as well: the

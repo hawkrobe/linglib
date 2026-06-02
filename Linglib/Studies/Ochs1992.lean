@@ -2,11 +2,11 @@ import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# @cite{ochs-1992} — Indexing Gender
+# [ochs-1992] — Indexing Gender
 
 ## Overview
 
-@cite{ochs-1992} argues that the relation between language and gender is
+[ochs-1992] argues that the relation between language and gender is
 almost never a direct mapping from linguistic form to gender category.
 Instead, linguistic forms index *stances* and *speech acts*, which in turn
 *constitutively* relate to gender identity. Three properties characterize
@@ -16,7 +16,7 @@ this relation:
    index gender. The association is probabilistic, not categorical.
 2. **Constitutivity**: using certain linguistic forms helps *constitute*
    gender identity, not merely reflect it (cf. "doing gender,"
-   @cite{west-zimmerman-1987}).
+   [west-zimmerman-1987]).
 3. **Mediation**: the relation is indirect — form → stance/act → gender.
    Direct indexical relations (e.g., "he"/"she") are rare; mediated
    relations (e.g., *ze* → coarse intensity → masculinity) are the norm.
@@ -24,7 +24,7 @@ this relation:
 ## Formalization
 
 The core formal contribution is modeling indirect indexicality as
-**composition of association maps** (@cite{ochs-1992} Figure 14.2):
+**composition of association maps** ([ochs-1992] Figure 14.2):
 
 - **Field 1** (`formStanceAssoc`): maps sentence-final particles to
   the interactional stances they directly index (categorical 0/1)
@@ -40,7 +40,7 @@ inherit the non-exclusivity.
 
 ## Cross-linguistic data
 
-Japanese sentence-final particles (@cite{uyeno-1971}) illustrate the
+Japanese sentence-final particles ([uyeno-1971]) illustrate the
 mediation thesis (Figure 14.1):
 - *ze/zo* directly index **coarse intensity**, which constitutively
   indexes masculinity
@@ -55,11 +55,11 @@ mediation thesis (Figure 14.1):
 * `Phenomena.SocialMeaning.IndexicalField.composeIndex`: the composition operation
   formalized as a general primitive for indirect indexicality
 * `Phenomena.SocialMeaning.IndexicalField.IndexicalField`: the composed field is lifted
-  to an `IndexicalField`, connecting to @cite{eckert-2008}'s framework
-  which explicitly builds on @cite{ochs-1992} and @cite{silverstein-1976}
+  to an `IndexicalField`, connecting to [eckert-2008]'s framework
+  which explicitly builds on [ochs-1992] and [silverstein-1976]
 * `Burnett2019`: RSA model of persona
   inference from variant choice — the computational realization of
-  Ochs's indirect indexicality thesis via @cite{burnett-2019}'s SMG
+  Ochs's indirect indexicality thesis via [burnett-2019]'s SMG
 -/
 
 set_option autoImplicit false
@@ -74,13 +74,13 @@ open Phenomena.SocialMeaning.IndexicalField
 
 /-- Interactional stances that sentence-final particles directly index.
     These are the intermediate meanings through which gender is indirectly
-    indexed (@cite{ochs-1992} Figure 14.2).
+    indexed ([ochs-1992] Figure 14.2).
 
-    @cite{ochs-1992} identifies two key poles of *intensity* in Japanese:
+    [ochs-1992] identifies two key poles of *intensity* in Japanese:
     "coarse intensity" (indexed by *ze/zo*) and "delicate intensity"
     (indexed by *wa*). These stance categories are distinct from
     `Pragmatics.Expressives.OutlookMarker.StanceType`, which
-    classifies evaluative stances in @cite{kubota-2026}'s theory. -/
+    classifies evaluative stances in [kubota-2026]'s theory. -/
 inductive Stance where
   /-- Coarse intensity — rough, forceful interactional style.
       Indexed by *ze*, *zo*. -/
@@ -107,7 +107,7 @@ def Stance.all : List Stance :=
 /-- Gender identity poles — the endpoints of the social gender dimension.
     Not grammatical gender (masc/fem noun class) but the social identity
     dimension that linguistic forms can index
-    (@cite{west-zimmerman-1987}). -/
+    ([west-zimmerman-1987]). -/
 inductive GenderPole where
   | masculine
   | feminine
@@ -117,8 +117,8 @@ instance : Fintype GenderPole where
   elems := {.masculine, .feminine}
   complete := by intro x; cases x <;> simp
 
-/-- Japanese sentence-final particles discussed in @cite{ochs-1992}.
-    See @cite{uyeno-1971} for the foundational study. -/
+/-- Japanese sentence-final particles discussed in [ochs-1992].
+    See [uyeno-1971] for the foundational study. -/
 inductive SFP where
   | ze   -- ぜ: coarse intensity
   | zo   -- ぞ: coarse intensity (stronger)
@@ -152,7 +152,7 @@ def formStanceAssoc : SFP → Stance → ℚ
 
     Captures how habitual use of certain stances constitutes gender
     identity. Values are association strengths — positive for BOTH poles
-    on every stance, encoding @cite{ochs-1992}'s non-exclusivity.
+    on every stance, encoding [ochs-1992]'s non-exclusivity.
 
     The two intensity stances are mirror images on the gender axis:
     coarse is 3/4 masculine, delicate is 3/4 feminine. The remaining
@@ -172,7 +172,7 @@ def stanceGenderAssoc : Stance → GenderPole → ℚ
 -- ============================================================================
 
 /-- The composed (indirect) form → gender association.
-    This IS @cite{ochs-1992}'s central theoretical claim: linguistic
+    This IS [ochs-1992]'s central theoretical claim: linguistic
     forms index gender only indirectly, mediated through stances.
 
     composedAssoc(sfp, g) = Σ_s formStance(sfp, s) × stanceGender(s, g) -/
@@ -202,7 +202,7 @@ theorem zo_indexes_masculine :
 -- ============================================================================
 
 /-- **Universal non-exclusivity**: every SFP has positive association
-    with both gender poles. This is @cite{ochs-1992}'s property 1:
+    with both gender poles. This is [ochs-1992]'s property 1:
     "few features of language directly and exclusively index gender."
 
     The proof follows from the fact that every stance has positive
@@ -288,7 +288,7 @@ theorem feminine_ranking :
 
 /-- The form–stance relation as an `IndexicalField` at second indexical
     order: SFPs are consciously manipulable markers
-    (@cite{silverstein-2003}). -/
+    ([silverstein-2003]). -/
 def formStanceField : IndexicalField SFP Stance where
   association := formStanceAssoc
   order := .second

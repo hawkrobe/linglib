@@ -3,8 +3,8 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 
 /-!
-# @cite{woodin-etal-2023}: Numeral Frequency and Roundness
-@cite{sigurd-1988} @cite{woodin-etal-2023}
+# [woodin-etal-2023]: Numeral Frequency and Roundness
+[sigurd-1988] [woodin-etal-2023]
 
 Corpus study showing number frequency is predicted by:
 (a) log magnitude, and
@@ -26,7 +26,7 @@ namespace WoodinEtAl2024
 open Core.Roundness
 
 -- ============================================================================
--- β coefficients from regression model (Table 3, @cite{woodin-etal-2023})
+-- β coefficients from regression model (Table 3, [woodin-etal-2023])
 -- ============================================================================
 
 /--

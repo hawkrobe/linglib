@@ -1,14 +1,14 @@
 import Linglib.Typology.Negation
 
 /-! # Italian Negation Fragment
-@cite{haspelmath-2013} @cite{dryer-2013-wals} @cite{zanuttini-1997} @cite{cinque-1999}
+[haspelmath-2013] [dryer-2013-wals] [zanuttini-1997] [cinque-1999]
 
 Italian sentential negation: the standard preverbal negation particle *non*
 and its packaging as a `NegationSystem`. The marker is a free particle
 in preverbal position; WALS Ch 143A classifies Italian as `.negv`.
 Italian object clitics attach between *non* and the verb (*non lo vedo*,
 not **lo non vedo*) — the canonical syntactic analysis is
-@cite{zanuttini-1997}'s NegP cartography, refined by @cite{cinque-1999}'s
+[zanuttini-1997]'s NegP cartography, refined by [cinque-1999]'s
 adverb hierarchy.
 
 ## Sibling files

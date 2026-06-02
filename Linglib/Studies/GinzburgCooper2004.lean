@@ -3,9 +3,9 @@ import Linglib.Phenomena.Ellipsis.ClarificationEllipsis
 
 /-!
 # Ginzburg & Cooper (2004): Clarification, Ellipsis, and Contextual Updates
-@cite{ginzburg-cooper-2004}
+[ginzburg-cooper-2004]
 
-Formalization of the core running example from @cite{ginzburg-cooper-2004}:
+Formalization of the core running example from [ginzburg-cooper-2004]:
 
   A: "Did Bo leave?"
   B: "Bo?"
@@ -41,7 +41,7 @@ open Phenomena.Ellipsis.ClarificationEllipsis
 
 This section was previously in `Dialogue/KOS/Basic.lean`
 §§6, 7, 8, 9, 10, 12, 15. It is paper-specific to
-@cite{ginzburg-cooper-2004}: in @cite{ginzburg-2012}, the corresponding
+[ginzburg-cooper-2004]: in [ginzburg-2012], the corresponding
 machinery uses dgb-params (record types built on the shared `CParam`)
 rather than `CtxtAssignment`, and CCURs (Clarification Context Update
 Rules) rather than the three coercion operations
@@ -68,7 +68,7 @@ namespace Apparatus
 
 Grounding requires a *total* assignment (all C-PARAMS resolved).
 Clarification arises when the assignment is *partial*.
-@cite{ginzburg-cooper-2004} §6, ex. 81–82. -/
+[ginzburg-cooper-2004] §6, ex. 81–82. -/
 structure CtxtAssignment where
   bindings : List (String × String) := []
   deriving Repr, DecidableEq
@@ -92,7 +92,7 @@ def CtxtAssignment.unresolved (f : CtxtAssignment) (ps : CParamSet) : CParamSet 
 The CONSTITS feature (ex. 30) provides access to all sub-utterances.
 C-PARAMS (ex. 28–29) are the contextual dependencies introduced by the
 sign, amalgamated from daughters via the Non-local Amalgamation Constraint.
-@cite{ginzburg-cooper-2004} §3. -/
+[ginzburg-cooper-2004] §3. -/
 structure UttSkeleton where
   phon : String
   cat : String
@@ -110,7 +110,7 @@ def UttSkeleton.constitForParam (u : UttSkeleton) (paramIdx : String) :
 
 /-- A sign paired with a contextual assignment.
 
-@cite{ginzburg-cooper-2004} ex. 81 p.353. The assignment f records which
+[ginzburg-cooper-2004] ex. 81 p.353. The assignment f records which
 C-PARAMS have been resolved. Grounding checks whether f is total. -/
 structure SignAssignment where
   sign : UttSkeleton
@@ -119,8 +119,8 @@ structure SignAssignment where
 
 /-- Clarification Ellipsis processing state.
 
-@cite{ginzburg-cooper-2004}: MAX-QUD and SAL-UTT are processing state for
-the CE analysis. These are NOT part of the @cite{ginzburg-2012} DGB or TIS
+[ginzburg-cooper-2004]: MAX-QUD and SAL-UTT are processing state for
+the CE analysis. These are NOT part of the [ginzburg-2012] DGB or TIS
 (in 2012, MaxQUD is computed from the QUD poset's maximal element, not
 stored separately).
 
@@ -136,7 +136,7 @@ structure CEState (QContent : Type) where
 -- ─── Coercion Operations ───────────────────────────────────
 
 /-- The three coercion operations on signs with unresolved C-PARAMS.
-@cite{ginzburg-cooper-2004} §5. -/
+[ginzburg-cooper-2004] §5. -/
 inductive CoercionOp where
   /-- Clausal CE reading: polar question about content (ex. 53) -/
   | paramFocussing
@@ -156,7 +156,7 @@ structure CoercionOutput where
   maxQud : String
   deriving Repr, DecidableEq
 
-/-- Parameter focussing (@cite{ginzburg-cooper-2004} ex. 53):
+/-- Parameter focussing ([ginzburg-cooper-2004] ex. 53):
 derive clausal CE reading.
 
 Takes the *antecedent sign* and a problematic parameter index.
@@ -172,7 +172,7 @@ def parameterFocussing (antecedent : UttSkeleton) (paramIdx : String) :
     maxQud := s!"?{paramIdx}.{antecedent.cont}"
   }
 
-/-- Parameter identification (@cite{ginzburg-cooper-2004} ex. 59):
+/-- Parameter identification ([ginzburg-cooper-2004] ex. 59):
 derive constituent CE reading.
 
 Produces MAX-QUD = wh-question about speaker meaning. -/
@@ -186,7 +186,7 @@ def parameterIdentification (antecedent : UttSkeleton) (paramIdx : String) :
     maxQud := s!"?c.spkr-meaning-rel(addr,{constit.phon},c)"
   }
 
-/-- Contextual existential generalization (@cite{ginzburg-cooper-2004} ex. 77):
+/-- Contextual existential generalization ([ginzburg-cooper-2004] ex. 77):
 ground without clarifying.
 
 Removes a parameter from C-PARAMS by existentially quantifying it. -/
@@ -197,14 +197,14 @@ def existentialGeneralization (sk : UttSkeleton) (paramIdx : String) : UttSkelet
 
 -- ─── 2004-era Information State ────────────────────────────
 
-/-- Information State for the @cite{ginzburg-cooper-2004} model.
+/-- Information State for the [ginzburg-cooper-2004] model.
 
 Bundles a DGB with CE processing state (pending utterances). Uses `String`
 for both Fact and QContent, matching the string-based representations in
 the 2004 paper. The `Participant` type parameter is set to `String`,
 and the LocProp `Cont` is set to `String` since this is a 2004-era model.
 
-This is NOT the @cite{ginzburg-2012} TIS — it predates the genre/agenda
+This is NOT the [ginzburg-2012] TIS — it predates the genre/agenda
 private state. It exists to support the CE running example. -/
 structure IS (Fact QContent : Type) where
   dgb : DGB String Fact QContent String := {}
@@ -219,7 +219,7 @@ def IS.initial {Fact QContent : Type} : IS Fact QContent := {}
 
 If the assignment fully resolves all C-PARAMS, the utterance is grounded:
 its content goes to FACTS. Otherwise, it goes to PENDING.
-@cite{ginzburg-cooper-2004} §6, ex. 82. -/
+[ginzburg-cooper-2004] §6, ex. 82. -/
 def IS.integrateUtterance {Fact QContent : Type} [BEq Fact]
     (is_ : IS Fact QContent) (skel : UttSkeleton) (assign : CtxtAssignment)
     (toFact : String → Fact) : IS Fact QContent :=
@@ -318,7 +318,7 @@ open Apparatus
 -- ════════════════════════════════════════════════════
 
 /-- C-PARAM for "Bo": binds variable b to the referent named "Bo".
-@cite{ginzburg-cooper-2004} ex. 28. -/
+[ginzburg-cooper-2004] ex. 28. -/
 def cpBo : CParam where
   index := "b"
   restriction := "named(Bo)(b)"
@@ -344,7 +344,7 @@ def cpUttTime : CParam where
   restriction := "utt-time(k)"
 
 /-- The full C-PARAMS set for "Did Bo leave?" — 5 parameters.
-@cite{ginzburg-cooper-2004} ex. 32. -/
+[ginzburg-cooper-2004] ex. 32. -/
 def didBoLeaveCParams : CParamSet := [cpBo, cpTime, cpSpkr, cpAddr, cpUttTime]
 
 -- ════════════════════════════════════════════════════
@@ -372,7 +372,7 @@ def suDidBoLeave : SubUtterance where
   cont := "ask(i,j,?.leave-rel(b,t))"
 
 /-- Full utterance skeleton for "Did Bo leave?" with all 5 C-PARAMS.
-@cite{ginzburg-cooper-2004} ex. 32. -/
+[ginzburg-cooper-2004] ex. 32. -/
 def didBoLeave : UttSkeleton where
   phon := "did bo leave"
   cat := "V[+fin]"
@@ -386,13 +386,13 @@ def didBoLeave : UttSkeleton where
 
 /-- Speaker (A) resolves all parameters: she knows who Bo is, who she is,
 who the addressee is, and the temporal parameters.
-@cite{ginzburg-cooper-2004} ex. 82b. -/
+[ginzburg-cooper-2004] ex. 82b. -/
 def speakerAssignment : CtxtAssignment where
   bindings := [("b", "B"), ("t", "T0"), ("i", "A"), ("j", "B"), ("k", "T1")]
 
 /-- Addressee (B) resolves all parameters EXCEPT b (Bo's referent).
 B doesn't know who "Bo" refers to.
-@cite{ginzburg-cooper-2004} ex. 82c. -/
+[ginzburg-cooper-2004] ex. 82c. -/
 def addresseeAssignment : CtxtAssignment where
   bindings := [("t", "T0"), ("i", "A"), ("j", "B"), ("k", "T1")]
 
@@ -415,21 +415,21 @@ def addresseeIS : IS String String :=
 -- ════════════════════════════════════════════════════
 
 /-- Parameter focussing on "Bo" (parameter b): clausal CE reading.
-@cite{ginzburg-cooper-2004} ex. 53–54.
+[ginzburg-cooper-2004] ex. 53–54.
 Output: SAL-UTT = "Bo" constituent, MAX-QUD = ?b.ask(i,j,?.leave-rel(b,t))
 Paraphrase: "Are you asking if b left?" -/
 def focussingOnBo : Option CoercionOutput :=
   parameterFocussing didBoLeave "b"
 
 /-- Parameter identification on "Bo" (parameter b): constituent CE reading.
-@cite{ginzburg-cooper-2004} ex. 59–60.
+[ginzburg-cooper-2004] ex. 59–60.
 Output: SAL-UTT = "Bo" constituent, MAX-QUD = ?c.spkr-meaning-rel(addr,Bo,c)
 Paraphrase: "Who do you mean by Bo?" -/
 def identificationOnBo : Option CoercionOutput :=
   parameterIdentification didBoLeave "b"
 
 /-- Existential generalization on "Bo" (parameter b).
-@cite{ginzburg-cooper-2004} ex. 77–78.
+[ginzburg-cooper-2004] ex. 77–78.
 Removes b from C-PARAMS, weakens content to ∃b.ask(i,j,?.leave-rel(b,t)). -/
 def existGenOnBo : UttSkeleton :=
   existentialGeneralization didBoLeave "b"
@@ -539,7 +539,7 @@ theorem identification_maxqud :
 
 /-- The KOS theory's coercion operations correspond to the empirical CE readings:
 parameterFocussing ↔ clausal, parameterIdentification ↔ constituent.
-@cite{ginzburg-cooper-2004} §5. -/
+[ginzburg-cooper-2004] §5. -/
 def coercionToReading : CoercionOp → CEReading
   | .paramFocussing => .clausal
   | .paramIdentification => .constituent
@@ -552,7 +552,7 @@ theorem readings_biject_coercions :
 
 -- Hybrid Content Hypothesis
 
-/-- **Hybrid Content Hypothesis** (@cite{ginzburg-cooper-2004} ex. 2/16):
+/-- **Hybrid Content Hypothesis** ([ginzburg-cooper-2004] ex. 2/16):
 The content updated in dynamic semantics consists of structure expressing
 detailed relationships between the content and formal properties (syntax,
 phonology etc) of the various parts of an utterance.

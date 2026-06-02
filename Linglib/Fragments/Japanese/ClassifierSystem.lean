@@ -3,7 +3,7 @@ import Linglib.Fragments.Japanese.Classifier
 
 /-!
 # Japanese noun-categorization system
-@cite{aikhenvald-2000} @cite{downing-1996}
+[aikhenvald-2000] [downing-1996]
 
 Classifier-system metadata for Japanese (ISO `jpn`). The lexical
 classifier inventory itself lives in `Fragments/Japanese/Classifier.lean`;
@@ -27,6 +27,6 @@ def classifierSystem : Typology.NounCategorizationSystem :=
   , isObligatory := true
   , hasUnmarkedDefault := true  -- つ tsu is default
   , preferredSemantics := Classifier.allEncodedParams
-  , source := "@cite{aikhenvald-2000}; @cite{downing-1996}" }
+  , source := "[aikhenvald-2000]; [downing-1996]" }
 
 end Japanese

@@ -2,15 +2,15 @@ import Linglib.Morphology.DM.Impoverishment
 
 /-!
 # Phrase-Level Postsyntactic Operations
-@cite{halle-marantz-1993} @cite{arregi-nevins-2012} @cite{middleton-2026}
+[halle-marantz-1993] [arregi-nevins-2012] [middleton-2026]
 
 Sister to `Impoverishment.lean` and `Metathesis.lean`, which operate at
 the **focus** level — modifying features within a single terminal node.
 This file lifts both operations to the **phrase** level — deleting
 whole terminals (e.g., Basque Participant Dissimilation,
-@cite{arregi-nevins-2012} §4.6, @cite{middleton-2026} (16)) or
+[arregi-nevins-2012] §4.6, [middleton-2026] (16)) or
 swapping adjacent terminals (e.g., Basque Ergative Metathesis,
-@cite{arregi-nevins-2012} §3.2, @cite{middleton-2026} (13)).
+[arregi-nevins-2012] §3.2, [middleton-2026] (13)).
 
 The two-tier framework matches DM's actual practice: some impoverishment
 rules delete features (Taos), others delete entire terminals (Basque
@@ -58,7 +58,7 @@ structure PhraseFocus where
 /-- A **terminal-level Impoverishment** rule: deletes a whole terminal
     when its phrase neighborhood matches `condition`. Models the DM
     rules that target nodes rather than individual features (e.g.,
-    Basque Participant Dissimilation, @cite{middleton-2026} (16)). -/
+    Basque Participant Dissimilation, [middleton-2026] (16)). -/
 structure TermImpovRule where
   condition : PhraseFocus → Prop
   decCond : DecidablePred condition
@@ -95,7 +95,7 @@ def applyTermImpov (rule : TermImpovRule) (phrase : MorphPhrase) : MorphPhrase :
     takes `(leftCtx, t1, t2, rightCtx)` — by convention `t1` is the
     immediate left of `t2`. Models the DM rules that reorder whole
     terminals (e.g., Basque Ergative Metathesis,
-    @cite{middleton-2026} (13)). -/
+    [middleton-2026] (13)). -/
 structure TermMetaRule where
   condition : List FeatureBundle → FeatureBundle → FeatureBundle →
               List FeatureBundle → Prop
@@ -162,7 +162,7 @@ def applyTermMetaChain (rules : List TermMetaRule) (phrase : MorphPhrase) : Morp
 -- § 5: Two Pipelines (Impov-Then-Meta vs Meta-Then-Impov)
 -- ============================================================================
 
-/-- **The endorsed pipeline** (both A&N and @cite{middleton-2026}):
+/-- **The endorsed pipeline** (both A&N and [middleton-2026]):
     impoverishment first, then metathesis. -/
 def runPhraseImpovThenMeta
     (impovs : List TermImpovRule) (metas : List TermMetaRule)
@@ -170,8 +170,8 @@ def runPhraseImpovThenMeta
   applyTermMetaChain metas (applyTermImpovChain impovs phrase)
 
 /-- **The rejected pipeline**: metathesis first, then impoverishment.
-    The Basque data of @cite{middleton-2026} §3.1 (and
-    @cite{arregi-nevins-2012} §3.1.1) shows this order produces wrong
+    The Basque data of [middleton-2026] §3.1 (and
+    [arregi-nevins-2012] §3.1.1) shows this order produces wrong
     surface forms. -/
 def runPhraseMetaThenImpov
     (impovs : List TermImpovRule) (metas : List TermMetaRule)

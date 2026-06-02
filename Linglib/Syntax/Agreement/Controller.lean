@@ -1,6 +1,6 @@
 /-!
 # Agreement Controller — Grammatical Role of the Controlling NP
-@cite{corbett-2006} ch 2 §2.1, ch 6 §6.6
+[corbett-2006] ch 2 §2.1, ch 6 §6.6
 
 While `Syntax/Agreement/Basic.lean` enumerates WHERE agreement morphology
 surfaces (Corbett 1991 Agreement Hierarchy), this file enumerates WHICH
@@ -22,7 +22,7 @@ framework-specific subdirs like `Syntax/Minimalist/Agreement/`.
 
 ## Cases derived from Corbett 2006
 
-@cite{corbett-2006} §2.1 surveys controller TYPES (canonical NPs,
+[corbett-2006] §2.1 surveys controller TYPES (canonical NPs,
 defective clauses §2.1.2, weather-verb absent controllers §2.1.3,
 possessive adjectives §2.1.4, qualitative adjectives §2.1.5). Within
 canonical NP controllers, the orthogonal GRAMMATICAL-ROLE dimension
@@ -61,13 +61,13 @@ With the parametric form, the projection round-trips:
   the CONTROLLER NP that determine agreement values. Not encoded in
   the controller-role enum itself.
 - **Animacy / topicality / focus** — agreement *conditions* per
-  @cite{corbett-2006} ch 6, not controller-role labels.
+  [corbett-2006] ch 6, not controller-role labels.
 -/
 
 namespace Agreement
 
 /-- Grammatical role of the agreement controller. Cross-linguistically
-    motivated typological labels per @cite{corbett-2006} §6.6. -/
+    motivated typological labels per [corbett-2006] §6.6. -/
 inductive Controller where
   /-- Subject (S in intransitive, A in transitive). The unmarked case
       cross-linguistically. Russian *kniga* controlling verb agreement;
@@ -75,20 +75,20 @@ inductive Controller where
   | subj
   /-- Direct object (P in transitive). In ergative-absolutive systems,
       the absolutive argument; cf. Dargwa gender-prefix agreement
-      controlled by absolutive (@cite{corbett-2006} §6.5 ex. 21-26). -/
+      controlled by absolutive ([corbett-2006] §6.5 ex. 21-26). -/
   | obj
   /-- Indirect object / recipient (G in ditransitive). Some Bantu and
       Romance dialects show recipient agreement on the verb. -/
   | iobj
   /-- Possessor. Hungarian possessive suffix; Upper Sorbian
       *moj-eho muž-ow-a sotr-a* where the possessive adjective
-      controls the attributive (@cite{corbett-2006} §2.1.4). -/
+      controls the attributive ([corbett-2006] §2.1.4). -/
   | poss
   /-- Oblique (rare; some Bantu locative agreement). Provided for
       typological completeness. -/
   | obl
   /-- No canonical controller. Weather verbs (Italian *piove*
-      @cite{corbett-2006} §2.1.3), defective clausal/infinitival
+      [corbett-2006] §2.1.3), defective clausal/infinitival
       controllers (§2.1.2): the target shows default agreement
       (typically 3sg.M in IE languages). -/
   | defaultAgr

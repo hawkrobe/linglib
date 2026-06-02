@@ -3,7 +3,7 @@ import Linglib.Semantics.Tense.Compositional
 
 /-!
 # Dynamic Tense as Eliminative Update of Static Tense
-@cite{veltman-1996} @cite{groenendijk-stokhof-veltman-1996} @cite{de-groote-2006} @cite{charlow-2021} @cite{heim-1982}
+[veltman-1996] [groenendijk-stokhof-veltman-1996] [de-groote-2006] [charlow-2021] [heim-1982]
 
 `dynPAST`/`dynPRES`/`dynFUT` are the dynamic-context-update counterparts
 of the static `PAST`/`PRES`/`FUT` operators in `Tense/Compositional.lean`.
@@ -16,29 +16,29 @@ state-level predicate to a context-level filter.
 
 The pattern instantiates a long-standing thread in dynamic semantics:
 
-- @cite{heim-1982} principle (A) — file change for a static condition is
+- [heim-1982] principle (A) — file change for a static condition is
   intersection with the satisfaction set: `SAT(F + φ) = SAT(F) ∩ {a : a SAT φ}`.
   This is the prototype "static condition lifts to context filter."
 
-- @cite{veltman-1996} formalizes this as the *test* operator:
+- [veltman-1996] formalizes this as the *test* operator:
   `[φ]σ = {w ∈ σ : w ⊨ φ}`. A test never adds entries; it only removes
   worlds that fail the static condition.
 
-- @cite{groenendijk-stokhof-veltman-1996} ("Coreference and Modality")
+- [groenendijk-stokhof-veltman-1996] ("Coreference and Modality")
   generalize tests to *eliminative updates* — context-level operations
   `f : Set α → Set α` with `f c ⊆ c`. Linglib's
   `Dynamic/Core/ContextFilter.IsContextFilter` captures exactly this property,
   and `dynRelation R v₁ v₂` is the canonical eliminative update for a
   binary relation on situation-variable values.
 
-- @cite{de-groote-2006} gives a continuation-passing-style translation
+- [de-groote-2006] gives a continuation-passing-style translation
   from static Montague semantics to dynamic, recovering the static reading
   by applying the trivial continuation. The `dynPAST = dynRelation precedes`
   factoring below is the linguistic-tense fragment of that CPS translation:
   the static predicate `precedes` is the pure computation, and `dynRelation`
   is the contextual lift.
 
-- @cite{charlow-2021} recasts dynamic semantics as a monadic effect over
+- [charlow-2021] recasts dynamic semantics as a monadic effect over
   static semantics. `dynRelation` is (a fragment of) the lift `return :
   StaticPred → DynamicOp`; the static reading is recovered by the closure
   `∃ gs ∈ c, R (gs.1 v₁) (gs.1 v₂)`.
@@ -121,7 +121,7 @@ theorem dynFUT_eq_dynRelation_follows {W Time : Type*} [LT Time]
 For each tense, the static operator (with the trivial propositional
 payload `fun _ => True`) holds at `(s_event, s_ref)` iff the dynamic
 operator's filter retains that situation pair. This makes precise the
-@cite{de-groote-2006} sense in which static and dynamic tense are the
+[de-groote-2006] sense in which static and dynamic tense are the
 same operator at different layers — the dynamic version is the
 eliminative-update lift of the static one with the propositional payload
 collapsed to truth.

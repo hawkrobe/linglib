@@ -2,7 +2,7 @@ import Linglib.Typology.Directives
 
 /-!
 # Georgian imperative profile (WALS Chs 70, 71, 72, 73)
-@cite{wals-2013}
+[wals-2013]
 -/
 
 namespace Georgian

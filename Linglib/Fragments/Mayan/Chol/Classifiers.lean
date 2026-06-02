@@ -2,7 +2,7 @@ import Linglib.Typology.ClassifierSystem
 
 /-!
 # Ch'ol Numeral Classifier Lexicon
-@cite{little-moroney-royer-2022} @cite{bale-coon-2014} @cite{arcos-lopez-2009}
+[little-moroney-royer-2022] [bale-coon-2014] [arcos-lopez-2009]
 
 Typed classifier entries for Ch'ol (Cholan, Mayan), a classifier-for-numeral
 language. Classifiers in Ch'ol are bound morphemes suffixed to the numeral
@@ -13,15 +13,15 @@ and do not take classifiers.
 ## Classifier selection
 
 Ch'ol classifiers are largely derived from positional and transitive verb
-roots (@cite{arcos-lopez-2009}; @cite{bale-et-al-2019}). The position or
+roots ([arcos-lopez-2009]; [bale-et-al-2019]). The position or
 shape of the noun is relevant: the same noun can be counted with different
 classifiers depending on its configuration (e.g., one long tree vs. one
-fallen tree). @cite{arcos-lopez-2009} identifies at least 180 classifiers.
+fallen tree). [arcos-lopez-2009] identifies at least 180 classifiers.
 
 ## CLF-for-NUM semantics
 
-In the CLF-for-NUM analysis (@cite{little-moroney-royer-2022} §4;
-@cite{bale-coon-2014}), each classifier denotes a measure function μ
+In the CLF-for-NUM analysis ([little-moroney-royer-2022] §4;
+[bale-coon-2014]), each classifier denotes a measure function μ
 that the numeral requires as its first argument:
   ⟦ux⟧ = λm λP λx. [P(x) ∧ m(x) = 3]
   ⟦-kojty⟧ = μ_# (atom-counting measure for animals)
@@ -32,7 +32,7 @@ namespace Chol.Classifiers
 open Typology (ClassifierEntry SemanticParameter ShapeDimension)
 
 -- ============================================================================
--- Numeral classifiers (Table 4 of @cite{little-moroney-royer-2022})
+-- Numeral classifiers (Table 4 of [little-moroney-royer-2022])
 -- ============================================================================
 
 /-- -p'ej — inanimate/generic default classifier. Semantically bleached

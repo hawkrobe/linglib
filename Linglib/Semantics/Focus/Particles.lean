@@ -24,8 +24,8 @@ presupposition of *even*.
 
 ## References
 
-* @cite{lahiri-1998}, @cite{crnic-2014}, @cite{karttunen-peters-1979},
-  @cite{bennett-1982}, @cite{francescotti-1995}, @cite{rooth-1992}.
+* [lahiri-1998], [crnic-2014], [karttunen-peters-1979],
+  [bennett-1982], [francescotti-1995], [rooth-1992].
 -/
 
 namespace Semantics.Focus.Particles
@@ -58,8 +58,8 @@ def TraditionalEven.assertion (even : TraditionalEven (World := World)) : (World
   even.prejacent
 
 /-- EVEN presupposes prejacent is least likely.
-    This is @cite{karttunen-peters-1979}'s universal threshold: the prejacent
-    must be less likely than ALL alternatives. @cite{francescotti-1995} argues
+    This is [karttunen-peters-1979]'s universal threshold: the prejacent
+    must be less likely than ALL alternatives. [francescotti-1995] argues
     this is too strong — see `EvenThreshold.most` for the revised condition. -/
 def TraditionalEven.presupposition (even : TraditionalEven (World := World)) : Prop :=
   ∀ alt ∈ even.alternatives, even.likelihood even.prejacent alt
@@ -136,9 +136,9 @@ def LikelihoodMonotone {W : Type*} (lessLikely : (W → Bool) → (W → Bool) �
 /-- Threshold variants for the EVEN scalar presupposition.
     The theoretical dispute concerns how many alternatives the prejacent
     must exceed in unlikelihood:
-    - @cite{bennett-1982}: at least one (too weak)
-    - @cite{karttunen-peters-1979}: all (too strong)
-    - @cite{francescotti-1995}: most (correct) -/
+    - [bennett-1982]: at least one (too weak)
+    - [karttunen-peters-1979]: all (too strong)
+    - [francescotti-1995]: most (correct) -/
 inductive EvenThreshold where
   /-- S* more surprising than at least one neighbor -/
   | existential

@@ -1,6 +1,6 @@
 /-!
 # PHOIBLE 2.0 schema
-@cite{moran-mccloy-2019}
+[moran-mccloy-2019]
 
 Substrate types for the PHOIBLE 2.0 phonological inventory database
 (Moran & McCloy 2019, http://phoible.org, DOI 10.5281/zenodo.2626687).

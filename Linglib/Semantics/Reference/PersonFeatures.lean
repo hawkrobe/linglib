@@ -3,9 +3,9 @@ import Linglib.Core.Context.Shifts
 
 /-!
 # Person Features as Presuppositions
-@cite{schlenker-2003}
+[schlenker-2003]
 
-@cite{schlenker-2003}'s MELP (Monstrous Egli Language with Presuppositions)
+[schlenker-2003]'s MELP (Monstrous Egli Language with Presuppositions)
 treats person features as presuppositions on the context:
 
 - `+author*(x)`: x is the agent of the utterance context c*
@@ -45,7 +45,7 @@ variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
     serve as the referent of a pronoun, parameterized by which context
     layer the feature refers to.
 
-    In @cite{schlenker-2003}'s MELP, person features are presuppositions
+    In [schlenker-2003]'s MELP, person features are presuppositions
     of the form "+F(x, c)" where F is a feature (author, hearer),
     x is the entity, and c is a context variable bound by an attitude
     operator. -/
@@ -67,7 +67,7 @@ def PersonFeature.eval (f : PersonFeature W E P T)
 
 /-- +author(x, d): x is the agent of the context at depth d.
 
-    @cite{schlenker-2003}: "+author(x, cᵢ)" presupposes that x is the
+    [schlenker-2003]: "+author(x, cᵢ)" presupposes that x is the
     agent (speaker) of context cᵢ. In the tower framework, cᵢ is
     resolved by `contextAt (d.resolve depth)`. -/
 def authorAt [BEq E] (d : DepthSpec) : PersonFeature W E P T :=
@@ -95,7 +95,7 @@ def hearerStar [BEq E] : PersonFeature W E P T := hearerAt .origin
 
 /-- Logophoric pronoun condition: +author(x, cᵢ) ∧ −author*(x).
 
-    @cite{schlenker-2003} §6: logophoric pronouns in languages like Ewe are
+    [schlenker-2003] §6: logophoric pronouns in languages like Ewe are
     licensed in embedded clauses where x is the agent of the embedding
     context (attitude holder) but NOT the agent of the utterance context
     (actual speaker).

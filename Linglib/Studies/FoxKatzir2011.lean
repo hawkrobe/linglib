@@ -5,7 +5,7 @@ import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Fox & Katzir 2011: On the Characterization of Alternatives
-@cite{fox-katzir-2011}
+[fox-katzir-2011]
 
 Fox, D. & Katzir, R. (2011). On the characterization of alternatives.
 Natural Language Semantics, 19(1), 87–107.
@@ -13,7 +13,7 @@ Natural Language Semantics, 19(1), 87–107.
 ## Core Argument
 
 The formal alternatives for Scalar Implicatures (SI) and Association
-with Focus (AF) are determined the same way — via @cite{katzir-2007}'s
+with Focus (AF) are determined the same way — via [katzir-2007]'s
 structural complexity, not via Horn scales (for SI) or Rooth's focus
 semantics (for AF). The single unified definition (eq. 37) takes a
 contextual parameter C and is focus-sensitive.
@@ -140,7 +140,7 @@ end SomeAll
 ## F Breaks Symmetry
 
 While C cannot break symmetry, the formal alternatives F(S) can.
-@cite{katzir-2007}'s structural definition excludes "some but not all"
+[katzir-2007]'s structural definition excludes "some but not all"
 from F("some") because it requires ConjP/NegP structure not derivable
 from the substitution source.
 
@@ -175,7 +175,7 @@ end FBreaksSymmetry
 
 Fox & Katzir argue that the formal alternatives for SI and AF should
 be defined identically — both via structural complexity (extending
-@cite{katzir-2007} to focused constituents).
+[katzir-2007] to focused constituents).
 
 The standard view (26):
 - For SI: F(S) = Horn scales (stipulated)
@@ -199,7 +199,7 @@ subset of our `formalAlternatives`.
 /-- The substitution source for F(S, C) (conditions 34–35):
     Lexicon ∪ sub-constituents of S ∪ salient constituents in C.
 
-    This extends @cite{katzir-2007}'s substitution source (def 41)
+    This extends [katzir-2007]'s substitution source (def 41)
     with contextually salient material, enabling examples like
     Matsumoto's "warm"/"a little bit more than warm" (ex. 36). -/
 def substitutionSourceFC {C W : Type}
@@ -213,7 +213,7 @@ def substitutionSourceFC {C W : Type}
     F(S, C) = {S' : S' ≲_C S}, where the substitution source includes
     salient constituents from context C.
 
-    When `salient = []`, this reduces to @cite{katzir-2007}'s original
+    When `salient = []`, this reduces to [katzir-2007]'s original
     `structuralAlternatives` (modulo the focus restriction; see above). -/
 def formalAlternatives {C W : Type}
     (lex : List (Core.Tree.Tree C W))
@@ -233,10 +233,10 @@ def formalAlternatives {C W : Type}
 
 Once F(S,C) is fixed, two further selections matter:
 
-- `nSI` (footnote 4 in `@cite{fox-katzir-2011}`): for SI, the "standard
+- `nSI` (footnote 4 in `[fox-katzir-2011]`): for SI, the "standard
   view" picks the strictly stronger alternatives — those whose
   denotations are proper subsets of the prejacent.
-- `nAF` (footnote 8 in `@cite{fox-katzir-2011}`): for AF/Only, the
+- `nAF` (footnote 8 in `[fox-katzir-2011]`): for AF/Only, the
   standard view picks the *non-weaker* alternatives — those whose
   denotations are not supersets of the prejacent (so the prejacent
   itself, anything strictly stronger, and anything logically
@@ -449,7 +449,7 @@ end EmbeddedDisjunction
 /-!
 ## Why C cannot break symmetry (constraint 28)
 
-Eq. 28 is derived in @cite{fox-katzir-2011} §5.1 from the relevance-
+Eq. 28 is derived in [fox-katzir-2011] §5.1 from the relevance-
 closure conditions of eq. 50. The theorem itself lives on its theory-
 neutral substrate in `Alternatives/Symmetric.lean` (it predates F&K and
 is used across the post-2011 exhaustification literature); we re-state

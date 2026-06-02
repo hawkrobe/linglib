@@ -149,7 +149,7 @@ the harder half tracked in phase 5.
    QBSML — *fragment-relative*: the NE-free fragment is sound for `flat`
    (`soundFor_flat_neFree`, via the new `definableClassWhere` substrate), since
    NE is QBSML's only non-classical element so the full logic has no
-   unconditional cell (@cite{aloni-vanormondt-2023} Prop 4.1 / Facts 1–2). BSML
+   unconditional cell ([aloni-vanormondt-2023] Prop 4.1 / Facts 1–2). BSML
    also carries the dual NE-free `flat` cell.
    **Open:** the converse / `ExpressiveCompleteness` + `Axiomatization` per logic;
    graduate BSMLOr and BSMLEmpty out of `Studies/`; add the open cells (classical

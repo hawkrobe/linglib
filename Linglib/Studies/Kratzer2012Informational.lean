@@ -3,7 +3,7 @@ import Linglib.Features.Evidentiality
 import Mathlib.Data.Fin.Basic
 
 /-!
-# Informational Backgrounds — @cite{kratzer-2012} §2.3d
+# Informational Backgrounds — [kratzer-2012] §2.3d
 
 Epistemic modals with an **informational** (potentially non-realistic) modal base.
 

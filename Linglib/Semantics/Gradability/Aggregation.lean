@@ -5,8 +5,8 @@ import Linglib.Semantics.Gradability.Basic
 
 /-!
 # Dimensional Aggregation for Multidimensional Predicates
-@cite{dambrosio-hedden-2024} @cite{sassoon-2013} @cite{waldon-etal-2023}
-@cite{sassoon-fadlon-2017} @cite{tham-2025} @cite{solt-2018-proportional}
+[dambrosio-hedden-2024] [sassoon-2013] [waldon-etal-2023]
+[sassoon-fadlon-2017] [tham-2025] [solt-2018-proportional]
 
 General mechanisms for combining dimensional assessments into overall
 predicate application. These apply to any multi-dimensional predicate —
@@ -48,7 +48,7 @@ variable {α : Type}
 /-- Counting aggregation: x satisfies the predicate iff at least `k` of
     the dimension predicates in `dims` return `true` for `x`.
 
-    Generalizes @cite{sassoon-2013}'s binding types:
+    Generalizes [sassoon-2013]'s binding types:
     - `k = dims.length` → conjunctive (∀ dims)
     - `k = 1` → disjunctive (∃ dim)
     - intermediate `k` → mixed / "dimension counting" -/
@@ -74,8 +74,8 @@ def boolMeasures (dims : List (α → Bool)) : List (α → ℚ) :=
 /-- Weighted score: Σᵢ wᵢ · fᵢ(x), where each fᵢ : α → ℚ is a
     measure function along one dimension.
 
-    This is the unified core: @cite{waldon-etal-2023}'s eq. (8) uses
-    ℚ-valued measures directly; @cite{dambrosio-hedden-2024}'s Bool
+    This is the unified core: [waldon-etal-2023]'s eq. (8) uses
+    ℚ-valued measures directly; [dambrosio-hedden-2024]'s Bool
     dimensions are the special case via `boolMeasures`. -/
 def weightedScore (weights : List ℚ) (measures : List (α → ℚ)) (x : α) : ℚ :=
   (weights.zip measures).foldl (fun acc (w, f) => acc + w * f x) 0
@@ -93,7 +93,7 @@ def weightedBindingQ (weights : List ℚ) (θ : ℚ)
 
 /-- Spatially-normalized weighted score: (Σᵢ wᵢ·fᵢ(x)) / s(x).
 
-    @cite{tham-2025} eq. 47b for physical disturbance adjectives. The
+    [tham-2025] eq. 47b for physical disturbance adjectives. The
     `measures` track per-dimension EXTENT of disturbance (e.g., total
     crack length, depth-weighted area); the `spatial` measure tracks the
     host entity's SPATIAL EXTENT. A small disturbance on a small host can
@@ -178,7 +178,7 @@ theorem spatialNormalizedScore_nonneg
 -- ════════════════════════════════════════════════════
 
 /-- Multiplicative (Cobb-Douglas) score: Πᵢ fᵢ(x).
-    @cite{sassoon-fadlon-2017} argue natural kind nouns compose
+    [sassoon-fadlon-2017] argue natural kind nouns compose
     multiplicatively: failure on ANY single dimension kills membership.
     Contrast with additive `weightedScore` for artifact nouns. -/
 def multiplicativeScore (measures : List (α → ℚ)) (x : α) : ℚ :=
@@ -234,18 +234,18 @@ private theorem any_eq_decide_filter_ge_one :
       exact (decide_eq_true_iff.mpr (by omega)).symm
 
 /-- Conjunctive binding = counting with threshold k = dims.length.
-    @cite{sassoon-2013}'s ∀-binding is a special case of counting. -/
+    [sassoon-2013]'s ∀-binding is a special case of counting. -/
 theorem conjunctive_is_countAll (dims : List (α → Bool)) (x : α) :
     Semantics.Gradability.conjunctiveBinding dims x = countBinding dims.length dims x :=
   all_eq_decide_filter_ge_length dims x
 
 /-- Disjunctive binding = counting with threshold k = 1.
-    @cite{sassoon-2013}'s ∃-binding is a special case of counting. -/
+    [sassoon-2013]'s ∃-binding is a special case of counting. -/
 theorem disjunctive_is_countOne (dims : List (α → Bool)) (x : α) :
     Semantics.Gradability.disjunctiveBinding dims x = countBinding 1 dims x :=
   any_eq_decide_filter_ge_one dims x
 
-/-- @cite{sassoon-2013}'s binding types all map to counting aggregation.
+/-- [sassoon-2013]'s binding types all map to counting aggregation.
     The key gap: Sassoon has no utilitarian or Cobb-Douglas mechanism. -/
 def toAggregationType : Semantics.Gradability.DimensionBindingType → AggregationType
   | .conjunctive => .counting

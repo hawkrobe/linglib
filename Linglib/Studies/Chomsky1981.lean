@@ -7,11 +7,11 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Paradigms.AcceptabilityJudgment
 
 /-!
-# Chomsky (1981) — Binding Principles A/B/C @cite{chomsky-1981}
+# Chomsky (1981) — Binding Principles A/B/C [chomsky-1981]
 
 *Lectures on Government and Binding*. Foris.
 
-The Government-and-Binding binding theory of @cite{chomsky-1981}
+The Government-and-Binding binding theory of [chomsky-1981]
 classifies nominal expressions into three types and constrains their
 distribution by c-command + a local binding domain:
 

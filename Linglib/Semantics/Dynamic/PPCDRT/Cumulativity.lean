@@ -3,12 +3,12 @@ import Linglib.Semantics.Plurality.Cumulativity
 
 /-!
 # PPCDRT — Cumulativity Bridge
-@cite{langendoen-1978} @cite{haug-dalrymple-2020}
+[langendoen-1978] [haug-dalrymple-2020]
 
-@cite{langendoen-1978} first observed that reciprocity is a species of
+[langendoen-1978] first observed that reciprocity is a species of
 cumulativity: in *the women pointed at each other*, every woman points at
 some other woman and every woman is pointed at by some other woman.
-@cite{haug-dalrymple-2020} §1 reaffirms this. The link is structural: the
+[haug-dalrymple-2020] §1 reaffirms this. The link is structural: the
 PPCDRT condition `groupIdentityCond u_anaph u_ant`
 (`Plurality.Cumulativity` is the bidirectional-coverage version of equality
 on the value-sets `∪u_anaph(S) = ∪u_ant(S)`) collapses to
@@ -36,7 +36,7 @@ variable {E : Type}
 -- § 1: Cumulative Operator Reduces to Set Equality on Equality
 -- ════════════════════════════════════════════════════════════════
 
-/-- The cumulative operator `**` of @cite{krifka-1989}/Beck-Sauerland on
+/-- The cumulative operator `**` of [krifka-1989]/Beck-Sauerland on
     the equality relation reduces to `Finset` equality.
 
     This is the structural identity behind the Langendoen reciprocity-as-
@@ -79,7 +79,7 @@ theorem cumulative_eq_iff_finset_eq [DecidableEq E] (x y : Finset E) :
     instantiate this with `[Fintype]` toy domains where the value-sets are
     automatically finite.
 
-    This theorem is the formal realisation of @cite{langendoen-1978}'s
+    This theorem is the formal realisation of [langendoen-1978]'s
     reciprocity-as-cumulativity claim within PPCDRT. -/
 theorem groupIdentityCond_iff_cumulative_eq [DecidableEq E]
     (uAnaph uAnt : Nat) (S : PluralAssign E) (xa xb : Finset E)

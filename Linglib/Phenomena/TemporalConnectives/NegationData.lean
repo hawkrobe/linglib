@@ -1,6 +1,6 @@
 /-!
 # Negation × Temporal Connective Interaction Data
-@cite{giannakidou-2002} @cite{greco-2020} @cite{rett-2026} @cite{jin-koenig-2021}
+[giannakidou-2002] [greco-2020] [rett-2026] [jin-koenig-2021]
 
 Theory-neutral empirical data on the interaction between negation and
 temporal connectives, focusing on:
@@ -28,18 +28,18 @@ temporal connectives, focusing on:
 namespace Phenomena.TemporalConnectives.NegationData
 
 -- ============================================================================
--- § 1: The Two-*Until* Hypothesis (@cite{giannakidou-2002})
+-- § 1: The Two-*Until* Hypothesis ([giannakidou-2002])
 -- ============================================================================
 
 /-- Whether a temporal connective entails that the main-clause event
     actually occurred at the boundary time.
 
     - `entailment`: actualization is part of the assertion — cancellation
-      yields contradiction (@cite{giannakidou-2002}, ex. 38).
+      yields contradiction ([giannakidou-2002], ex. 38).
     - `implicature`: actualization is a Q-implicature — cancellable
-      (@cite{giannakidou-2002}, ex. 7: "Sure, the princess slept until
+      ([giannakidou-2002], ex. 7: "Sure, the princess slept until
       midnight. In fact she only woke up at 2am.").
-    - `none`: no actualization inference at all (@cite{giannakidou-2002},
+    - `none`: no actualization inference at all ([giannakidou-2002],
       ex. 72–73: *prin/before* is compatible with the complement event
       never occurring). -/
 inductive ActualizationStatus where
@@ -49,7 +49,7 @@ inductive ActualizationStatus where
   deriving DecidableEq, Repr
 
 /-- A judgment about the two-*until* distinction, encoding
-    @cite{giannakidou-2002}'s cross-linguistic evidence.
+    [giannakidou-2002]'s cross-linguistic evidence.
 
     `semanticType` classifies connectives into three groups:
     - **before-type** (non-veridical, NPI-licensing, no durative restriction)
@@ -85,14 +85,14 @@ structure TwoUntilDatum where
   deriving Repr
 
 -- ============================================================================
--- § 2: Greek Data (@cite{giannakidou-2002}, §§2–4)
+-- § 2: Greek Data ([giannakidou-2002], §§2–4)
 -- ============================================================================
 
 /-- Greek *prin* (πριν): before-type.
     Requires subjunctive, does not require DE context (unlike English
     NPI-*until* or Greek *para monon*), non-veridical complement, licenses NPIs.
     No actualization entailment: *prin* is compatible with the complement
-    event never occurring (@cite{giannakidou-2002}, §6, ex. (72):
+    event never occurring ([giannakidou-2002], §6, ex. (72):
     "I prigipisa dhen eftase prin apo ta mesanixta" — the princess may or
     may not have arrived).
     "Efije prin na erthi o Janis."
@@ -127,7 +127,7 @@ def greek_mexri : TwoUntilDatum where
   example_ := "I Maria perimine mexri irthi o Janis (Maria waited until Janis came)"
   actualizationStatus := .implicature
 
-/-- English NPI-*until*: eventive-type (@cite{giannakidou-2002}).
+/-- English NPI-*until*: eventive-type ([giannakidou-2002]).
     Requires DE licensor (negation). Unlike Greek *prin*, English collapses
     both types under the single lexeme *until*, disambiguated by context.
 
@@ -173,7 +173,7 @@ def english_dur_until : TwoUntilDatum where
     occurred at the boundary time. Scalar (introduces a scale of
     contextually relevant times).
 
-    @cite{giannakidou-2002}, §3.2: *para monon* is incompatible with
+    [giannakidou-2002], §3.2: *para monon* is incompatible with
     negated perfective eventives (ex. 35: *I prigipisa dhen eftase para
     monon ta mesanixta*) but compatible with perfective statives that
     shift to achievement reading (ex. 37: *I prigipisa dhen (apo)kimithike
@@ -243,7 +243,7 @@ theorem diagnostics_aligned :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 3.5: Actualization Diagnostics (@cite{giannakidou-2002}, §§3.2, 6)
+-- § 3.5: Actualization Diagnostics ([giannakidou-2002], §§3.2, 6)
 -- ============================================================================
 
 /-- The actualization diagnostic: the three-way split.
@@ -279,7 +279,7 @@ theorem para_monon_matches_english_npi_until :
 /-- *Para monon* differs from *prin* on actualization:
     *prin/before* has no actualization, *para monon* entails it.
     This is the paper's central finding — NPI-*until* ≠ *before*
-    on actualization status (@cite{giannakidou-2002}, §6). -/
+    on actualization status ([giannakidou-2002], §6). -/
 theorem para_monon_differs_from_prin :
     greek_para_monon.actualizationStatus ≠ greek_prin.actualizationStatus ∧
     greek_para_monon.semanticType ≠ greek_prin.semanticType :=
@@ -293,7 +293,7 @@ theorem greek_three_way_lexicalized :
   ⟨by decide, by decide, by decide⟩
 
 -- ============================================================================
--- § 4: Expletive Negation Data (@cite{greco-2020})
+-- § 4: Expletive Negation Data ([greco-2020])
 -- ============================================================================
 
 /-- An attested instance of expletive negation (EN) in a temporal clause.
@@ -411,7 +411,7 @@ theorem en_iff_ambidirectional :
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 6: Cross-Linguistic EN Prevalence (@cite{jin-koenig-2021})
+-- § 6: Cross-Linguistic EN Prevalence ([jin-koenig-2021])
 -- ============================================================================
 
 /-! EN survey data (722 languages, 74 with EN, 37 genera) is defined

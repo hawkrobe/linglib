@@ -3,7 +3,7 @@ import Linglib.Core.Constraint.Profile
 
 /-!
 # Communicative Efficiency: β-scalarization and Frontier Deviation
-@cite{xu-etal-2024} @cite{kemp-regier-2012} @cite{zaslavsky-kemp-regier-tishby-2018}
+[xu-etal-2024] [kemp-regier-2012] [zaslavsky-kemp-regier-tishby-2018]
 
 A `CostPair` is a 2-component cost profile (effort, information loss).
 Many linguistic phenomena arise from a tension between two functional
@@ -26,7 +26,7 @@ framework. These are not generic preorder operations.
 - `weightedCost`: linear scalarization `L_β = cost₂ + β · cost₁`
 - `efficiencyLossAt`: per-β deviation from optimal
 - `efficiencyLoss`: minimum deviation across a list of β values
-  (corresponds to ε in @cite{xu-etal-2024} eq. 8)
+  (corresponds to ε in [xu-etal-2024] eq. 8)
 -/
 
 namespace Pragmatics.Efficiency
@@ -34,10 +34,10 @@ namespace Pragmatics.Efficiency
 /-- A pair of communicative costs. The framework is general: `cost₁` and
     `cost₂` can represent any two pressures in a functional tradeoff.
 
-    In @cite{xu-etal-2024}: cost₁ = speaker effort (word length),
+    In [xu-etal-2024]: cost₁ = speaker effort (word length),
     cost₂ = information loss (listener surprisal).
-    In @cite{kemp-regier-2012}: cost₁ = complexity, cost₂ = informativeness loss.
-    In @cite{zaslavsky-kemp-regier-tishby-2018}: cost₁ = I(W;U), cost₂ = D[p||q]. -/
+    In [kemp-regier-2012]: cost₁ = complexity, cost₂ = informativeness loss.
+    In [zaslavsky-kemp-regier-tishby-2018]: cost₁ = I(W;U), cost₂ = D[p||q]. -/
 structure CostPair where
   cost₁ : ℝ
   cost₂ : ℝ
@@ -66,7 +66,7 @@ def efficiencyLossAt (attested optimal : CostPair) (β : ℝ) : ℝ :=
   weightedCost attested β - weightedCost optimal β
 
 /-- Overall efficiency loss: minimum deviation across β values.
-    `ε = min_β (L_β[attested] − L_β[optimal_β])` (@cite{xu-etal-2024} eq. 8). -/
+    `ε = min_β (L_β[attested] − L_β[optimal_β])` ([xu-etal-2024] eq. 8). -/
 noncomputable def efficiencyLoss (attested : CostPair) (optimalAt : ℝ → CostPair)
     (βs : List ℝ) : ℝ :=
   match βs.map (fun β => efficiencyLossAt attested (optimalAt β) β) with

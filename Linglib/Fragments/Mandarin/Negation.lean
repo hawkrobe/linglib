@@ -3,7 +3,7 @@ import Linglib.Fragments.Mandarin.AspectComparison
 
 /-!
 # Mandarin Negation Fragment
-@cite{miestamo-2005} @cite{dryer-haspelmath-2013} @cite{zhao-2025}
+[miestamo-2005] [dryer-haspelmath-2013] [zhao-2025]
 
 Mandarin Chinese has two standard negation particles:
 
@@ -150,7 +150,7 @@ theorem meiyou_matches_aspect_comparison :
   ⟨rfl, rfl⟩
 
 /-! ## Expletive Negation
-@cite{jin-koenig-2021}
+[jin-koenig-2021]
 
 Mandarin EN negators show striking **trigger-class covariation**: different
 trigger classes select different expletive negators, and the choice is
@@ -186,7 +186,7 @@ def bugaiParticle : String := "bùgāi"
 
 /-- An expletive negation marker and its trigger context. -/
 structure ENTriggerNegator where
-  /-- The trigger class label (from @cite{jin-koenig-2021} Table 5) -/
+  /-- The trigger class label (from [jin-koenig-2021] Table 5) -/
   triggerClass : String
   /-- Mandarin trigger lexical item -/
   triggerForm : String
@@ -196,7 +196,7 @@ structure ENTriggerNegator where
   enNegatorGloss : String
   deriving Repr, BEq
 
-/-- EN trigger-negator pairings from @cite{jin-koenig-2021}, Table 5
+/-- EN trigger-negator pairings from [jin-koenig-2021], Table 5
     and §6.1–6.4. -/
 def enTriggerNegators : List ENTriggerNegator :=
   [ { triggerClass := "FEAR", triggerForm := "pà"
@@ -217,7 +217,7 @@ def enTriggerNegators : List ENTriggerNegator :=
 /-- FEAR triggers use imperative negators, not the standard
     *bù* or *méi*. This connects to the desiderative semantics:
     fear activates desire for ¬p, and imperative negation lexicalizes
-    prohibition (@cite{jin-koenig-2021}, §6.1.1, ex. 14). -/
+    prohibition ([jin-koenig-2021], §6.1.1, ex. 14). -/
 theorem fear_uses_imperative_neg :
     (enTriggerNegators.filter (·.triggerClass == "FEAR")).all
       (·.enNegatorForm == "bié") = true := by decide
@@ -225,7 +225,7 @@ theorem fear_uses_imperative_neg :
 /-- REGRET/COMPLAIN triggers use the deontic negator *bùgāi* 'shouldn't'.
     This connects to the behavioral-standards semantics: ¬p is consistent
     with X's standards → p *shouldn't* have happened
-    (@cite{jin-koenig-2021}, §6.1.2). -/
+    ([jin-koenig-2021], §6.1.2). -/
 theorem regret_uses_deontic_neg :
     (enTriggerNegators.filter (fun e =>
       e.triggerClass == "REGRET" || e.triggerClass == "COMPLAIN")).all

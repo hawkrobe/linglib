@@ -4,8 +4,8 @@ import Linglib.Discourse.CommonGround
 import Linglib.Pragmatics.Expressives.Basic
 
 /-!
-# @cite{goldberg-shirtz-2025}: PAL Constructions — Theoretical Analysis
-@cite{goldberg-shirtz-2025}
+# [goldberg-shirtz-2025]: PAL Constructions — Theoretical Analysis
+[goldberg-shirtz-2025]
 
 Formalizes the PAL (Phrasal Adjective-Like) construction and its inheritance
 network using Construction Grammar types from `ConstructionGrammar.Basic`.
@@ -93,7 +93,7 @@ def adjNModification : Construction :=
   , meaning := "adjective restricts noun denotation"
   , specificity := .fullyAbstract }
 
-/-! ## Inheritance network (Figure 5 of @cite{goldberg-shirtz-2025}) -/
+/-! ## Inheritance network (Figure 5 of [goldberg-shirtz-2025]) -/
 
 /-- The PAL constructicon: constructions + inheritance links. -/
 def palConstructicon : Constructicon :=
@@ -164,7 +164,7 @@ situations are a recognized category for both speaker and addressee. -/
 def palPresupposition (W : Type*) (situationType : W → Prop) : PrProp W :=
   { presup := situationType, assertion := λ _ => True }
 
-/-- PAL two-dimensional meaning (@cite{potts-2005} two-dimensional semantics).
+/-- PAL two-dimensional meaning ([potts-2005] two-dimensional semantics).
 
 - At-issue: the head noun's denotation (e.g., "lunch" in "grab-and-go lunch")
 - CI: speaker presupposes shared familiarity with the situation type

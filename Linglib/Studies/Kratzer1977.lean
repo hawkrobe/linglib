@@ -4,15 +4,15 @@ import Mathlib.Data.Fintype.Basic
 /-!
 # Kratzer (1977) — Premise semantics worked example
 
-@cite{kratzer-1977} @cite{kratzer-2012}
+[kratzer-1977] [kratzer-2012]
 
 A concrete formalization of the New Zealand judgments scenario from §1.3
-of @cite{kratzer-1977} (= Chapter 1 of @cite{kratzer-2012}), exercising
+of [kratzer-1977] (= Chapter 1 of [kratzer-2012]), exercising
 the API of `Core.Logic.Intensional.Premise`.
 
 ## The scenario
 
-@cite{kratzer-1977} imagines a country whose entire common law consists
+[kratzer-1977] imagines a country whose entire common law consists
 of three judgments:
 
 1. *Murder is a crime.* — call this proposition `p`.
@@ -90,7 +90,7 @@ def negQ : Fin 4 → Prop := fun w => ¬ q w
 /-- "Murder is not a crime." The negation of `p`. -/
 def negP : Fin 4 → Prop := fun w => ¬ p w
 
-/-- The premise set `A` of @cite{kratzer-1977} §1.3 — *what the New Zealand
+/-- The premise set `A` of [kratzer-1977] §1.3 — *what the New Zealand
     judgments provide*: the three rulings, taken together. -/
 def A : List (Fin 4 → Prop) := [p, q, negQ]
 
@@ -140,7 +140,7 @@ theorem can_q_under_def6 : ¬ canInView f q 0 := by
 
 /-! ## §4. Revised Defs 7–8 give the intuitive predictions
 
-Each theorem corresponds to a sentence number from @cite{kratzer-1977}
+Each theorem corresponds to a sentence number from [kratzer-1977]
 §1.3, with the predicted truth value Kratzer argues for.
 
 The proofs proceed by enumerating the consistent sublists of `A` and,

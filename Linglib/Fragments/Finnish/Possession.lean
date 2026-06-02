@@ -2,7 +2,7 @@ import Linglib.Typology.Possession
 
 /-!
 # Finnish Possessive Constructions
-@cite{stassen-2009} @cite{nichols-1986} @cite{heine-1997}
+[stassen-2009] [nichols-1986] [heine-1997]
 
 Finnish (Uralic) derives its primary have-construction from the **Location
 Schema** ("Y is located at X" → "X has Y"). The construction consists of:
@@ -15,7 +15,7 @@ The adessive case is etymologically locative ('on the surface of'),
 grammaticalized to mark the possessor. Finnish is a textbook example
 of the Location Schema reaching Stage III: the adessive in possessive
 use is no longer interpreted as locative by speakers
-(@cite{heine-1997} Overlap Model).
+([heine-1997] Overlap Model).
 
 PossessionProfile bundle for Finnish (ISO `fin`), per the project's
 "per-language data flows through Fragments" rule. Substrate types live in

@@ -2,7 +2,7 @@ import Linglib.Typology.Indefinite
 
 /-!
 # Degano & Aloni 2025: 7-type team-semantic typology of indefinites
-@cite{degano-aloni-2025} @cite{hodges-1997} @cite{vaananen-2007}
+[degano-aloni-2025] [hodges-1997] [vaananen-2007]
 
 Degano & Aloni 2025's 7-type classification of indefinite pronouns,
 projected from the consensus `Typology.Indefinite.IndefinitePronoun`
@@ -67,7 +67,7 @@ set_option autoImplicit false
 
 -- ============================================================================
 -- §0. Private prelude: Hodges/Väänänen team-semantic primitives
--- @cite{hodges-1997} @cite{vaananen-2007}
+-- [hodges-1997] [vaananen-2007]
 -- ============================================================================
 -- Inlined here pending a second consumer (currently only D&A 2025 + Bubnov 2026
 -- use these primitives). Promotion to `Core/Logic/DependenceLogic.lean` would
@@ -77,7 +77,7 @@ set_option autoImplicit false
 namespace DeganoAloni2025.DependenceLogic
 
 /-- An assignment team: a list of variable-to-entity assignments.
-    The setting for dependence logic (@cite{vaananen-2007}) and D&A's
+    The setting for dependence logic ([vaananen-2007]) and D&A's
     indefinite semantics. -/
 abbrev AssignmentTeam (V E : Type) := List (V → E)
 
@@ -119,7 +119,7 @@ theorem constancy_excludes_variation {V E : Type} [DecidableEq V] [DecidableEq E
 
 /-- Variation lifts to a coarser parameter: if `v`-agreement implies `y`-agreement,
     then `var(v, x) → var(y, x)`. Grounds D&A's diachronic prediction
-    `var(v, x) → var(∅, x)` (see @cite{bubnov-2026} §6). -/
+    `var(v, x) → var(∅, x)` (see [bubnov-2026] §6). -/
 theorem variation_monotone {V E : Type} [DecidableEq V] [DecidableEq E]
     (t : AssignmentTeam V E) (v y x : V)
     (hvar : variation t v x = true)
@@ -141,7 +141,7 @@ namespace DeganoAloni2025
 
 open Typology.Indefinite
 
-/-- @cite{degano-aloni-2025}'s seven-type team-semantic typology. -/
+/-- [degano-aloni-2025]'s seven-type team-semantic typology. -/
 inductive DAType where
   /-- (i) No restriction. Profile: SK ∪ SU ∪ NS. -/
   | unmarked
@@ -253,7 +253,7 @@ def surfaceDAType (e : IndefinitePronoun) : Option DAType :=
     `t`'s theoretical profile. Allows actual ⊊ profile, capturing
     paradigmatic-competition cases such as Russian *kto-to* (type-iv
     epistemic profile permits SU + NS, but *-to* covers only SU because
-    *-nibud'* blocks it from NS — see @cite{bubnov-2026} §7). -/
+    *-nibud'* blocks it from NS — see [bubnov-2026] §7). -/
 def consistentWith (e : IndefinitePronoun) (t : DAType) : Bool :=
   decide (e.functions ⊆ t.profile)
 

@@ -11,10 +11,10 @@ import Linglib.Core.Computability.Subregular.Function.ISL
 
 A **local rewrite rule** is a triple `(target, effect, context)` that
 specifies a featurally-conditioned transformation of segment strings. The
-canonical SPE notation `A → B / C __ D` originates with @cite{chomsky-halle-1968}
+canonical SPE notation `A → B / C __ D` originates with [chomsky-halle-1968]
 *The Sound Pattern of English*; the formal-language characterization of
-ordered SPE-rule cascades as regular relations is @cite{johnson-1972} and
-@cite{kaplan-kay-1994}. Pedagogical exposition: @cite{hayes-2009} Ch 6.
+ordered SPE-rule cascades as regular relations is [johnson-1972] and
+[kaplan-kay-1994]. Pedagogical exposition: [hayes-2009] Ch 6.
 The notation denotes the function "every segment matching natural class
 `A` becomes `B` when preceded by context `C` and followed by context `D`."
 
@@ -28,7 +28,7 @@ constraint-based descendants. What survives in 2026 mainstream
 computational phonology is the **formal-language-theoretic** role:
 local rewrite rules characterize a particular subclass of regular
 relations — specifically the **Input Strictly Local (ISL) functions**
-of @cite{chandlee-2014} @cite{chandlee-heinz-2018}.
+of [chandlee-2014] [chandlee-heinz-2018].
 
 This file therefore frames `Rule` as a **convenient surface notation**
 for local maps, with the formal claim grounded in
@@ -162,8 +162,8 @@ def matchLeftContext (ctx : List ContextElem) (left : List Segment) : Bool :=
 every position where the target and contexts match, applies the effect.
 Application is **simultaneous**: context matches are evaluated against
 the *input* (the prefix `left` accumulates original segments, not their
-post-rule values), per the SPE default (@cite{chomsky-halle-1968} p. 344;
-@cite{chandlee-heinz-2018} §5.1).
+post-rule values), per the SPE default ([chomsky-halle-1968] p. 344;
+[chandlee-heinz-2018] §5.1).
 
 The recursion is structural on `right` (the unprocessed suffix), so
 `Rule.apply` reduces cleanly under `decide` for finite inputs. -/
@@ -194,7 +194,7 @@ def derive (rules : List Rule) (input : List Segment) : List Segment :=
 /-! ### Headline classification (deferred)
 
 Every `Rule.apply` is conjecturally a `k`-Left-ISL function in the sense
-of @cite{chandlee-heinz-2018}, where `k = r.leftContext.length +
+of [chandlee-heinz-2018], where `k = r.leftContext.length +
 r.rightContext.length + 1`. The construction exhibits an `ISLRule k
 (Option Segment) (Option Segment)` whose `windowOutput`:
 

@@ -6,13 +6,13 @@ import Mathlib.Data.Set.Basic
 /-!
 # Intensional Dynamic Semantics — Generic Substrate
 
-@cite{muskens-1996} @cite{stone-1999} @cite{brasoveanu-2006} @cite{hofmann-2025}
+[muskens-1996] [stone-1999] [brasoveanu-2006] [hofmann-2025]
 
 Generic infrastructure for dynamic semantics built over `ICDRTAssignment`
 (individual drefs as `IVar → W → Entity E` plus propositional drefs as
 `PVar → Set W`). This is a layer above `Dynamic/Core/DiscourseRef.lean`
 (which owns the assignment type) and below paper-specific theories such as
-@cite{hofmann-2025} (whose paper apparatus lives in
+[hofmann-2025] (whose paper apparatus lives in
 `Studies/Hofmann2025.lean`).
 
 ## Main definitions
@@ -42,7 +42,7 @@ The factorization `toDynProp = lift ∘ fiberDRS` separates two concerns:
 - `lift`: convert relational meanings to set-transformer meanings
 
 `toDynProp` is always distributive (corollary of `lift_isDistributive`).
-This is the algebraic content of @cite{hofmann-2025}'s observation that
+This is the algebraic content of [hofmann-2025]'s observation that
 ICDRT-style negation via propositional dref complementation stays
 distributive — unlike test-based dynamic negation that inspects whole
 states.
@@ -121,12 +121,12 @@ end DynProp
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 2. Updates as Static Relations (after @cite{muskens-1996})
+-- § 2. Updates as Static Relations (after [muskens-1996])
 -- ════════════════════════════════════════════════════════════════
 
 /-- Static update relation between input and output assignments.
 
-Following @cite{muskens-1996}'s Compositional DRT, dynamic updates are
+Following [muskens-1996]'s Compositional DRT, dynamic updates are
 relations between assignments rather than operations on sets of
 assignment-world pairs. The lift to context transformers is done by
 `toDynProp` below. -/
@@ -198,7 +198,7 @@ def multiVarUp (ps : List PVar) (vs : List IVar)
 
 The biconditional (not just implication) is crucial: it ensures that
 `v` has a referent in all and only the φ-worlds, preventing drefs under
-negation from having global referents. Following @cite{hofmann-2025}
+negation from having global referents. Following [hofmann-2025]
 Definition 25. -/
 def relVarUp (φ : PVar) (v : IVar) (i j : ICDRTAssignment W E) : Prop :=
   indivVarUp v i j ∧
@@ -509,7 +509,7 @@ theorem star_blocks_dynPred (R : E → W → Prop) (φ : PVar) (v : IVar)
 /-- Subset condition + complementation derive counterfactuality of the
 inner content. The shape `DC ⊆ φ_outer ∧ φ_outer = φ̄_inner ⟹ DC ∩ φ_inner = ∅`
 is the core algebraic move that turns negation into commitment-set
-counterfactuality (the recipe used by @cite{hofmann-2025}'s analysis of
+counterfactuality (the recipe used by [hofmann-2025]'s analysis of
 "there isn't a bathroom"). -/
 theorem dec_complement_counterfactual (φ_DC φ_outer φ_inner : PVar)
     (i : ICDRTAssignment W E)

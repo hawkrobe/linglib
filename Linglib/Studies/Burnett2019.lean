@@ -7,7 +7,7 @@ import Linglib.Studies.Labov2012
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
-# @cite{burnett-2019} — Signalling Games, Sociolinguistic Variation, and
+# [burnett-2019] — Signalling Games, Sociolinguistic Variation, and
 the Construction of Style
 
 Linguistics and Philosophy 42: 419–450.
@@ -17,7 +17,7 @@ Linguistics and Philosophy 42: 419–450.
 Social Meaning Games (SMGs) model how sociolinguistic variant choice
 conveys social information. A speaker's use of *-ing* vs *-in'* induces
 listener inferences about persona traits (competent, friendly, etc.).
-The framework combines @cite{lewis-1969}'s signalling games with RSA-style
+The framework combines [lewis-1969]'s signalling games with RSA-style
 Bayesian reasoning to derive both style shifting (intra-speaker variation
 across contexts) and social stratification (inter-speaker variation across
 classes) from the same principles.
@@ -41,7 +41,7 @@ All predictions are verified by `rsa_predict`.
 3. **Stern-leader exclusion**: -in' is incompatible with stern leader
 4. **Listener interpretation**: Rice/Pelosi/Bush /t/ release predictions
 5. **Bulletproofing**: strong prior overwhelms variant effects (Bush)
-6. **Cross-reference**: model predictions close to @cite{labov-2012} data
+6. **Cross-reference**: model predictions close to [labov-2012] data
 -/
 
 set_option autoImplicit false
@@ -285,7 +285,7 @@ theorem careful_coolGuy_prefers_ing :
 end styleShifting
 
 -- ============================================================================
--- §6. /t/ release: listener interpretation (@cite{podesva-etal-2015})
+-- §6. /t/ release: listener interpretation ([podesva-etal-2015])
 -- ============================================================================
 
 /-! The /t/ release variable has the same mathematical structure as (ING).
@@ -349,7 +349,7 @@ end tRelease
 -- ============================================================================
 
 /-- Cross-reference: the SMG model's qualitative predictions match the
-    directional pattern observed in @cite{labov-2012}'s data on Obama's
+    directional pattern observed in [labov-2012]'s data on Obama's
     (ING) rates. The model predicts the cool-guy persona prefers *-in'*
     in casual context and *-ing* in careful context; the data shows
     Obama's *-in'* rate decreasing monotonically from casual (72%)
@@ -386,7 +386,7 @@ section smgBridge
 open Sociolinguistics.SocialMeaningGame
 
 /-- Obama's social value function μ at the barbecue
-    (@cite{burnett-2019}, Table 6, p. 438).
+    ([burnett-2019], Table 6, p. 438).
 
     Cool guy ({competent, friendly}) is most valued (μ = 2);
     asshole ({incompetent, aloof}) is least (μ = 0).
@@ -399,7 +399,7 @@ def obamaValues : Persona → ℚ
   | .asshole     => 0
 
 /-- The (ING) Social Meaning Game for the casual context
-    (@cite{burnett-2019}, Def. 4.1 + Table 2 + Table 6).
+    ([burnett-2019], Def. 4.1 + Table 2 + Table 6).
 
     This connects the study's types to the theory-layer game
     structure from `SMG.lean`, exercising `SocialMeaningGame`,

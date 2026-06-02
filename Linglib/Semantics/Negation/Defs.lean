@@ -138,7 +138,7 @@ The `Bool`-valued `PolarityLicensing` profile in `Core.Negation` is a
 
 The anti-additive and anti-morphic levels both yield `standardNegProfile`
 because `notAlsoConj` and N-word licensing track anti-additivity, not
-anti-morphism (@cite{chierchia-2013} §1.4.3, @cite{icard-2012}). -/
+anti-morphism ([chierchia-2013] §1.4.3, [icard-2012]). -/
 
 /-- Map DE strength to its empirical polarity licensing profile.
 
@@ -180,7 +180,7 @@ hierarchy into a binary:
 - `ENStrength.weak` = the negation retains at least weak DE (≥ `DEStrength.weak`)
 - `ENStrength.strong` = the negation has lost all DE properties
 
-This is @cite{greco-2020}'s core claim: the weak/strong EN distinction
+This is [greco-2020]'s core claim: the weak/strong EN distinction
 reduces to whether negation retains its downward-entailing property. -/
 
 /-- Map DE strength to EN strength: any DE at all → weak EN. -/
@@ -214,8 +214,8 @@ theorem enStrength_licensing_antitone :
 
 /-! ### EN type determines EN strength
 
-The position-based `ENType` (high/low, @cite{rett-2026}) determines the
-polarity-based `ENStrength` (strong/weak, @cite{greco-2020}):
+The position-based `ENType` (high/low, [rett-2026]) determines the
+polarity-based `ENStrength` (strong/weak, [greco-2020]):
 
 - Low EN (truth-conditional, TP-area) → weak EN (retains polarity)
 - High EN (non-truth-conditional, CP-area) → strong EN (loses polarity)

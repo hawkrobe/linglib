@@ -3,14 +3,14 @@ import Linglib.Semantics.Quantification.Binominal
 import Linglib.Syntax.ConstructionGrammar.Basic
 
 /-!
-# English Binominal Noun Phrases @cite{ten-wolde-2023}
+# English Binominal Noun Phrases [ten-wolde-2023]
 
 Lexical entries for English nouns appearing in *of*-binominal constructions
-(N₁ of N₂), classified by @cite{ten-wolde-2023}'s six-way taxonomy.
+(N₁ of N₂), classified by [ten-wolde-2023]'s six-way taxonomy.
 
 ## Taxonomy
 
-@cite{ten-wolde-2023} identifies six *of*-binominal constructions along
+[ten-wolde-2023] identifies six *of*-binominal constructions along
 a grammaticalization cline:
 
 1. **N+PP**: *the beast of the field* — N₁ heads, PP ascribes property
@@ -41,7 +41,7 @@ open Semantics.Quantification.Binominal (ebnpSemantics quantizingToOfBinominal)
 /-- Semantic class of the N₁ noun in an *of*-binominal.
 
 N₁ nouns come from three broad semantic groups
-(@cite{ten-wolde-2023}), each with different
+([ten-wolde-2023]), each with different
 grammaticalization behavior. -/
 inductive N₁SemanticClass where
   /-- Inanimate concrete nouns: *cake*, *nub*, *breeze*, *husk*.
@@ -90,7 +90,7 @@ structure BinominalN₁Entry where
   hasReducedForm : Bool := false
   deriving Repr, BEq
 
--- Case study nouns from @cite{ten-wolde-2023}
+-- Case study nouns from [ten-wolde-2023]
 
 def hell : BinominalN₁Entry where
   form := "hell"
@@ -113,7 +113,7 @@ def cake : BinominalN₁Entry where
   semanticClass := .inanimate
   constructions := [.nPP, .headClassifier, .pseudoPartitive, .evaluative]
 
--- Corpus study nouns from @cite{ten-wolde-2023}
+-- Corpus study nouns from [ten-wolde-2023]
 
 def whale : BinominalN₁Entry where
   form := "whale"
@@ -183,7 +183,7 @@ def allN₁Entries : List BinominalN₁Entry :=
 open ConstructionGrammar
 
 /-- The six *of*-binominal constructions as CxG `Construction` entries
-    (@cite{ten-wolde-2023}). -/
+    ([ten-wolde-2023]). -/
 def nPPConstruction : Construction where
   name := "N+PP"
   form := "[Det][N][of][Det][N]"
@@ -220,7 +220,7 @@ def biConstruction : Construction where
   meaning := "[N₁ of a] intensifies following adjective or quantifier"
   specificity := .partiallyOpen
 
-/-- The simple NP construction (@cite{ten-wolde-2023} §8.4).
+/-- The simple NP construction ([ten-wolde-2023] §8.4).
 
 The simple NP [[Det] (Mod) [N]] plays a key role in the constructional
 network: the head-classifier shares a polysemy link with the classifier
@@ -232,14 +232,14 @@ def simpleNPConstruction : Construction where
   meaning := "denotes a referent, premodifier ascribes property to head"
   specificity := .fullyAbstract
 
-/-- The adjective phrase construction, linked to BI (@cite{ten-wolde-2023} Fig 8.13). -/
+/-- The adjective phrase construction, linked to BI ([ten-wolde-2023] Fig 8.13). -/
 def adjPhraseConstruction : Construction where
   name := "AP"
   form := "[[Intens][Adj]]"
   meaning := "intensifier emphasizes the following adjective"
   specificity := .fullyAbstract
 
-/-- The *of*-binominal constructional network (@cite{ten-wolde-2023}).
+/-- The *of*-binominal constructional network ([ten-wolde-2023]).
 
 All links on the grammaticalization path are **metaphorical** (M) at the
 micro-construction level (Figs 8.7, 8.9, 8.11, 8.13): each step involves
@@ -258,7 +258,7 @@ def ofBinominalNetwork : Constructicon where
         linkType := some .metaphorical
         sharedProperties := ["[Det][N][of] frame", "N₁ heads"]
         overriddenProperties := ["PP classifies → of is linker", "no Det₂"] }
-    , -- NOTE: This link is NOT in @cite{ten-wolde-2023}'s network figures
+    , -- NOTE: This link is NOT in [ten-wolde-2023]'s network figures
       -- (Figs 8.7–8.13), which focus on the main evaluative path. Pseudo-partitive
       -- is a side branch, not on the N+PP → HC → EBNP → EM → BI path.
       -- Included here for structural completeness of the six-type taxonomy.

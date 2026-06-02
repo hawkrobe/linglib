@@ -5,10 +5,10 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Belief Embedding -> Projective Content Taxonomy
-@cite{schlenker-2009} @cite{tonhauser-beaver-roberts-simons-2013}
+[schlenker-2009] [tonhauser-beaver-roberts-simons-2013]
 
 Connects the Schlenker local context machinery for belief embedding
-to the @cite{tonhauser-beaver-roberts-simons-2013} projective content taxonomy.
+to the [tonhauser-beaver-roberts-simons-2013] projective content taxonomy.
 
 Proves that OLE (Obligatory Local Effect) status matches shift behavior
 under belief predicates, and verifies trigger-specific predictions.
@@ -42,7 +42,7 @@ theorem ole_matches_shift (c : ProjectiveClass) :
 
 /--
 The Schlenker local context machinery derives the OLE
-predictions from @cite{tonhauser-beaver-roberts-simons-2013}.
+predictions from [tonhauser-beaver-roberts-simons-2013].
 
 For any trigger:
 - If OLE=yes (Class A, C): Local context under belief = attitude holder's beliefs
@@ -73,7 +73,7 @@ example : ProjectiveTrigger.appositive.toClass.ole = .notObligatory := rfl
 -- ============================================================================
 
 /-! Connects Schlenker's local context theory to the full empirical taxonomy of
-@cite{tonhauser-beaver-roberts-simons-2013}. The four-class taxonomy is derived
+[tonhauser-beaver-roberts-simons-2013]. The four-class taxonomy is derived
 from the SCF x OLE feature space. -/
 
 open Semantics.Presupposition

@@ -6,11 +6,11 @@ import Linglib.Core.Epistemicity
 import Mathlib.Data.Fin.Basic
 
 /-!
-# @cite{cumming-2026} Verification Theorems
-@cite{cumming-2026}
+# [cumming-2026] Verification Theorems
+[cumming-2026]
 
 Verification theorems for the cross-linguistic nonfuture downstream
-generalization from @cite{cumming-2026}. Paradigm data
+generalization from [cumming-2026]. Paradigm data
 lives in Fragment files; this file imports them and proves the empirical
 predictions.
 
@@ -170,8 +170,8 @@ theorem korean_te_ney_ep_diverge :
 -- § Tense-Modal Evidentiality Bridge (Cumming ↔ VF&G 2010 ↔ Zheng 2025)
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{cumming-2026}'s tense evidential constraint and
-    @cite{von-fintel-gillies-2010}'s kernel semantics for epistemic
+/-! [cumming-2026]'s tense evidential constraint and
+    [von-fintel-gillies-2010]'s kernel semantics for epistemic
     `must` reflect the same underlying requirement: the speaker's
     evidence is *indirect* — causally downstream of the target event
     but not directly settling it.
@@ -183,7 +183,7 @@ theorem korean_te_ney_ep_diverge :
     | Future → no constraint            | Bare assertion → no presupposition  |
     | Direct observation → bare past ok | Direct evidence → must infelicitous |
 
-    The dripping-raincoat scenario (@cite{zheng-2025}, used in
+    The dripping-raincoat scenario ([zheng-2025], used in
     `Modality/Kernel.lean`) provides a concrete bridge: the raincoat
     evidence is causally downstream of rain (T ≤ A), and the kernel
     {wearingRaincoat} doesn't settle isRaining. -/

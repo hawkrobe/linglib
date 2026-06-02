@@ -2,7 +2,7 @@ import Linglib.Features.Person
 
 /-!
 # Clusivity systems — typology of inclusive/exclusive distinctions
-@cite{cysouw-2009}
+[cysouw-2009]
 
 System-level typology of how a language encodes the inclusive/exclusive
 distinction in 1pl pronouns. Per-referent person *categories*
@@ -21,7 +21,7 @@ Scope: pronominal clusivity (independent personal pronouns). Verbal
 clusivity (WALS Ch 40, `Pronoun.InclusiveExclusiveVerbal`) is a
 separately-marked phenomenon that may dissociate from pronominal clusivity
 (e.g. some Athabaskan languages). The five-value enum here is a first-cut
-typology; @cite{cysouw-2009} discusses additional minor types
+typology; [cysouw-2009] discusses additional minor types
 (degenerate-minimal-augmented, composite-unit-augmented) that this
 substrate does not currently distinguish.
 -/
@@ -45,7 +45,7 @@ inductive System where
   /-- Minimal-augmented: inclusive further splits into minimal (1+2 only,
       surfaces as a 1-dual-inclusive form) vs augmented (1+2+others); the
       exclusive remains a single category. Tagalog *kata*/*tayo*/*kami*
-      (per @cite{schachter-otanes-1972} Chart 7), many Australian
+      (per [schachter-otanes-1972] Chart 7), many Australian
       languages. -/
   | minimalAugmented
   /-- Unit-augmented: minimal-augmented plus a separate 1+2+1 form
@@ -103,7 +103,7 @@ inductive Value where
 
 open Features.Person (Category)
 
-/-- The @cite{cysouw-2009} `Features.Person.Category` a person + number +
+/-- The [cysouw-2009] `Features.Person.Category` a person + number +
     clusivity triple realizes. Singulars ignore clusivity; clusivity-marked
     first-person non-singulars split inclusive (`.minIncl` dual / `.augIncl`
     plural) from `.excl`. A clusivity-*neutral* first-person plural (English

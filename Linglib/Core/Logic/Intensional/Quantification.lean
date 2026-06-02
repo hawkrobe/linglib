@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Intensional.Frame
 /-!
 # IL Quantification, Modality, and Identity
 
-@cite{dowty-wall-peters-1981} Ch. 6, Semantic Rules B.5, B.9–B.13
+[dowty-wall-peters-1981] Ch. 6, Semantic Rules B.5, B.9–B.13
 
 Completes the IL semantic rule toolkit with:
 - `impl`, `biconditional` — material implication and biconditional (B.9–B.10)

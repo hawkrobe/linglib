@@ -3,7 +3,7 @@ import Linglib.Semantics.Measurement.Basic
 
 /-!
 # English Measure Phrase Fragment
-@cite{bale-schwarz-2022} @cite{bale-schwarz-2026} @cite{coppock-2021} @cite{scontras-2014} @cite{davidson-1979}
+[bale-schwarz-2022] [bale-schwarz-2026] [coppock-2021] [scontras-2014] [davidson-1979]
 
 Lexical entries for English measure terms and the preposition *per*.
 
@@ -70,7 +70,7 @@ def allMeasureTerms : List MeasureTermEntry :=
   [gram, kilo, pound, milliliter, liter, mile, kilometer, meter, hour, second_]
 
 -- ============================================================================
--- § 2. Quantizing Noun Entries (@cite{scontras-2014}, Ch. 3)
+-- § 2. Quantizing Noun Entries ([scontras-2014], Ch. 3)
 -- ============================================================================
 
 open Semantics.Measurement (QuantizingNounClass ContainerReading)
@@ -78,7 +78,7 @@ open Semantics.Measurement (QuantizingNounClass ContainerReading)
 /-- A quantizing noun entry: an English noun that turns a mass term into a
 countable expression.
 
-@cite{scontras-2014} identifies three classes, each with different
+[scontras-2014] identifies three classes, each with different
 semantics:
 
 - **Measure terms** (kilo, liter): type ⟨n, ⟨e,t⟩⟩, always quantity-uniform.
@@ -207,10 +207,10 @@ def allAtomizers : List QuantizingNounEntry :=
   conventions, parallel to mixed quotation. -/
 inductive PerInterpretation where
   /-- Grammatically composed: *per* interacts with a covert pronoun *pro*
-      whose value is determined anaphorically (@cite{bale-schwarz-2022}, eq. 16).
+      whose value is determined anaphorically ([bale-schwarz-2022], eq. 16).
       ⟦per⟧ = λq. λx. μ_{dim(q)}(x) / q
       The result is a pure number that composes with the measure phrase
-      via multiplication (@cite{bale-schwarz-2026}: multiplication only). -/
+      via multiplication ([bale-schwarz-2026]: multiplication only). -/
   | compositional
   /-- Math speak: the *per*-phrase verbalizes a quantity calculus expression.
       Not derived from the syntactic structure of English. -/

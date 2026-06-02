@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Plurals.Projection
 
 /-!
-# @cite{augurzky-etal-2023}: QUD manipulation of homogeneity projection
+# [augurzky-etal-2023]: QUD manipulation of homogeneity projection
 
 Empirical data from Augurzky, Bonnet, Breheny, Cremers, Ebert, Mayr, Romoli,
 Steinbach & Sudo (2023), "Putting plural definites into context," *Sinn und
@@ -10,7 +10,7 @@ Bedeutung 27*: 19-32.
 ## Empirical contribution
 
 Augurzky et al. extend the Križ & Chemla 2015 paradigm
-(`@cite{kriz-chemla-2015}`, formalized at
+(`[kriz-chemla-2015]`, formalized at
 `Studies/KrizChemla2015.lean`) by manipulating the QUD
 between participants:
 
@@ -32,7 +32,7 @@ This data was previously bundled inside `Phenomena/Imprecision/Projection.lean`
 (then `Studies/Haslinger2025.lean`). Moved here at 0.230.521 — the empirical
 anchor is Augurzky et al. 2023, not Haslinger. The asymmetry's *theoretical
 explanation* in the original file invoked exhaustification logic from
-`@cite{bar-lev-2021}` rather than Augurzky's or Haslinger's account; that
+`[bar-lev-2021]` rather than Augurzky's or Haslinger's account; that
 explanation has been replaced with a statement of the empirical pattern alone,
 with the rival explanations cited as future-work targets.
 
@@ -45,11 +45,11 @@ open Phenomena.Plurals.Projection (EmbeddingOperator)
 /--
 QUD-manipulation datum for plural-definite acceptance in gap scenarios.
 
-Source: @cite{augurzky-etal-2023}, Experiments 1-2.
+Source: [augurzky-etal-2023], Experiments 1-2.
 
 The acceptance fields are coded categorically ("low"/"medium"/"high") since
 the original numerical rates depend on per-experiment baselines and stimulus
-sets; consult @cite{augurzky-etal-2023} Tables 1-2 for raw rates.
+sets; consult [augurzky-etal-2023] Tables 1-2 for raw rates.
 -/
 structure QUDManipulationDatum where
   /-- The embedding operator -/
@@ -109,15 +109,15 @@ The `no` / `not every` asymmetry: empirical pattern only.
 
 Both operators are downward-entailing, yet `not every` permits the
 weak/non-maximal reading in gap scenarios while `no` does not. This is
-the central empirical puzzle of @cite{augurzky-etal-2023}.
+the central empirical puzzle of [augurzky-etal-2023].
 
 Two rival theoretical accounts in the literature (cited as future-work
 targets, NOT endorsed by this file):
-- @cite{bar-lev-2021}: exhaustification — `not every` triggers a scalar
+- [bar-lev-2021]: exhaustification — `not every` triggers a scalar
   implicature creating a non-monotonic context where embedded
   exhaustification can strengthen the embedded plural; `no` lacks the
   triggering implicature.
-- @cite{haslinger-2025-diss} §3.6.2 (Magri effects): the asymmetry follows
+- [haslinger-2025-diss] §3.6.2 (Magri effects): the asymmetry follows
   from how potential p-equivalence and complexity interact with embedding
   monotonicity; see also `Studies/Haslinger2025.lean`.
 

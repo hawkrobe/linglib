@@ -3,7 +3,7 @@ import Linglib.Phonology.OptimalityTheory.Correspondence
 
 /-!
 # Optimal Paradigms — McCarthy 2005
-@cite{mccarthy-2005}
+[mccarthy-2005]
 
 The paper-specific OP anchoring of the generic `liftPairwise`
 combinator from `ParadigmUniformity/Defs.lean`. OP evaluates
@@ -32,7 +32,7 @@ true by construction rather than by stipulation.
 
 ## Empirical status
 
-@cite{marco-rasin-2026} show that OP cannot simultaneously predict the
+[marco-rasin-2026] show that OP cannot simultaneously predict the
 distribution of schwa in verbs, nouns, and adjectives in
 Judeo-Tripolitanian Arabic: adjectives pattern phonologically with
 verbs but paradigmatically with nouns — contradicting OP's prediction
@@ -80,7 +80,7 @@ def mkOPMaxV {Form : Type} (vowelMismatch : Form → Form → Nat) :
 -- § 2: Majority Rules
 -- ============================================================================
 
-/-- The Majority Rules condition (@cite{mccarthy-2005}): when a paradigm
+/-- The Majority Rules condition ([mccarthy-2005]): when a paradigm
     member is equivocal between two forms (both satisfy higher-ranked
     markedness constraints equally), OP predicts it will align with the
     group containing more members.

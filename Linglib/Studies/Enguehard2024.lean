@@ -12,7 +12,7 @@ import Mathlib.Tactic.FinCases
 
 /-!
 # Enguehard (2024): What Number Marking on Indefinites Means
-@cite{enguehard-2024}
+[enguehard-2024]
 
 Enguehard, Émile. 2024. What number marking on indefinites means:
 conceivability presuppositions and sensitivity to probabilities.
@@ -38,7 +38,7 @@ conceivability presuppositions and sensitivity to probabilities.
 
 4. **Dynamic potential** (§5.1–5.2): negated indefinites introduce
    discourse referents accessible in bilateral dynamic semantics
-   (@cite{elliott-2020}); the number feature on these referents constrains
+   ([elliott-2020]); the number feature on these referents constrains
    future pronoun binding, grounding the forward-looking principle.
 
 ## Integration Points
@@ -55,7 +55,7 @@ conceivability presuppositions and sensitivity to probabilities.
 
 ## Relation to Sauerland (2003)
 
-@cite{sauerland-2003} treats `plSem` as vacuous (no presupposition).
+[sauerland-2003] treats `plSem` as vacuous (no presupposition).
 Enguehard argues that **indefinite** plurals DO carry a non-trivial
 conceivability presupposition — not about the entity but about the
 *predicate's extension*. This refines rather than replaces Sauerland:
@@ -116,7 +116,7 @@ def Condition.pUnique (c : Condition) : ℚ := 1 - c.pMultiple
 /-!
 ## §2: Book Examples — Conceivability in Action
 
-@cite{enguehard-2024} examples (5)–(6) and @cite{farkas-de-swart-2010}
+[enguehard-2024] examples (5)–(6) and [farkas-de-swart-2010]
 generalization (8) illustrate conceivability presuppositions via world
 knowledge about books:
 
@@ -158,7 +158,7 @@ theorem chapter_pl_conceivable :
   ⟨false, trivial, by norm_num [chapterCard]⟩
 
 /-- Chapters: sg also conceivable (rare situation has |C|=1), BUT
-    @cite{farkas-de-swart-2010} argues this is prototypically
+    [farkas-de-swart-2010] argues this is prototypically
     dispreferred because unique-chapter books are rare. The
     conceivability presupposition per se is satisfied, but
     prototypicality (= frequency) governs actual use. -/
@@ -276,7 +276,7 @@ theorem sg_pl_production_asymmetry :
 /-!
 ## §4: MP Underprediction
 
-@cite{sauerland-2003}'s MP-based account (and all scalar-implicature
+[sauerland-2003]'s MP-based account (and all scalar-implicature
 accounts) predicts **complementary distribution**: where sg's
 presupposition is satisfied, use sg; elsewhere, use pl. The experiment
 shows overlapping use in all intermediate conditions.
@@ -360,7 +360,7 @@ theorem gradient_hypothesis_supported :
 /-!
 ## §6: Provide Useful Referents (Principle 23)
 
-@cite{enguehard-2024} proposes a forward-looking pragmatic principle:
+[enguehard-2024] proposes a forward-looking pragmatic principle:
 
 > **Provide useful referents**: between utterances of equivalent
 > acceptability as per other principles, prefer the one that sets up
@@ -370,7 +370,7 @@ This is a Manner-like maxim: among truth-conditionally equivalent
 alternatives, prefer the one that facilitates future discourse.
 
 Under negation, indefinites introduce discourse referents bearing the
-indefinite's number feature (cf. @cite{elliott-2020}'s bilateral
+indefinite's number feature (cf. [elliott-2020]'s bilateral
 semantics). The number feature constrains future pronoun binding:
 
 - "There is no blue circle₁ on the card. It₁ is hard to see." (sg → "it")
@@ -482,7 +482,7 @@ theorem plIndefPresup_constant {W : Type*}
 /-!
 ## §8: Conceivability is Weaker than Pex
 
-@cite{delpinal-bassi-sauerland-2024}'s presuppositional exhaustification
+[delpinal-bassi-sauerland-2024]'s presuppositional exhaustification
 (pex) derives the sharp multiplicity inference in positive contexts.
 For plural indefinites:
 
@@ -584,7 +584,7 @@ theorem pex_neg_preserves_presup {World : Type*}
 /-!
 ## §9: Refining the Implicature Theory
 
-@cite{sauerland-2003}'s implicature theory (= `Multiplicity.PluralTheory.implicature`)
+[sauerland-2003]'s implicature theory (= `Multiplicity.PluralTheory.implicature`)
 correctly predicts the multiplicity inference in positive UE contexts.
 But it does not predict gradient production in negative contexts.
 
@@ -685,9 +685,9 @@ theorem constant_presup_satisfied_iff_satisfiable
 /-!
 ## §11: Negated Indefinites in Bilateral Dynamic Semantics
 
-@cite{enguehard-2024} §5.1–5.2 argues that negated indefinites introduce
+[enguehard-2024] §5.1–5.2 argues that negated indefinites introduce
 discourse referents accessible for subsequent anaphora, following
-@cite{elliott-2020}'s bilateral dynamic framework. The key mechanism:
+[elliott-2020]'s bilateral dynamic framework. The key mechanism:
 
 1. `exists_ x domain φ` introduces a discourse referent `x` by random
    assignment into the positive update.

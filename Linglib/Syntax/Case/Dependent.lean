@@ -1,7 +1,7 @@
 import Linglib.Features.Case
 /-!
 # Dependent Case Theory
-@cite{marantz-1991} @cite{baker-2015}
+[marantz-1991] [baker-2015]
 
 The dependent case algorithm: case is determined by the structural
 configuration of NPs within a Spell-Out domain, applied via a
@@ -81,10 +81,10 @@ open Features (Case)
     which takes priority over unmarked (default) case. -/
 inductive CaseSource where
   | lexical    -- Assigned by a specific head (P, inherent V case)
-  | dependent  -- Assigned by structural configuration (@cite{baker-2015})
+  | dependent  -- Assigned by structural configuration ([baker-2015])
   | unmarked   -- Default when no other case applies
   | agree      -- Assigned by Agree with a functional head T or D
-               -- (@cite{chomsky-2000}; NOM/GEN in @cite{baker-vinokurova-2010})
+               -- ([chomsky-2000]; NOM/GEN in [baker-vinokurova-2010])
   deriving DecidableEq, Repr
 
 -- ============================================================================
@@ -95,11 +95,11 @@ inductive CaseSource where
     - Accusative: dependent = ACC (on lower NP), unmarked = NOM
     - Ergative: dependent = ERG (on higher NP), unmarked = ABS
     - Tripartite: dependent = ERG (on higher) + ACC (on lower), unmarked = ABS
-      (@cite{scott-2023}: SJA Mam; cf. Nez Perce) -/
+      ([scott-2023]: SJA Mam; cf. Nez Perce) -/
 inductive CaseLanguageType where
   | accusative  -- Japanese, English, Romance, ...
   | ergative    -- Basque, Hindi (split), ...
-  | tripartite  -- Nez Perce (@cite{deal-2010}), Warlpiri, ...
+  | tripartite  -- Nez Perce ([deal-2010]), Warlpiri, ...
   deriving DecidableEq, Repr
 
 -- ============================================================================
@@ -485,8 +485,8 @@ theorem tripartite_nonlexical_cases
 -- ============================================================================
 
 /-- How nominative case is assigned in a language.
-    @cite{baker-vinokurova-2010}: in Sakha (and Mongolian, per
-    @cite{gong-2022}), NOM is assigned by finite T via Agree, not
+    [baker-vinokurova-2010]: in Sakha (and Mongolian, per
+    [gong-2022]), NOM is assigned by finite T via Agree, not
     as an unmarked default. This distinction matters for Wholesale
     Late Merger: Agree-based NOM is tied to a specific functional
     head, while unmarked NOM is a last-resort default. -/
@@ -496,7 +496,7 @@ inductive NomAssignment where
   deriving DecidableEq, Repr
 
 /-- How dative case is assigned.
-    @cite{gong-2022}: DAT is nonstructural in Mongolian — it does not
+    [gong-2022]: DAT is nonstructural in Mongolian — it does not
     participate in dependent case competition and is not available at
     intermediate scrambling positions for WLM. -/
 inductive DatAssignment where
@@ -505,8 +505,8 @@ inductive DatAssignment where
   deriving DecidableEq, Repr
 
 /-- How accusative case is assigned.
-    @cite{baker-vinokurova-2010}: in Sakha (and Mongolian, per
-    @cite{gong-2022}), ACC is dependent case (Marantz-style); the
+    [baker-vinokurova-2010]: in Sakha (and Mongolian, per
+    [gong-2022]), ACC is dependent case (Marantz-style); the
     standard Chomskyan alternative is that ACC is assigned by v/Voice
     via Agree (often paired with Burzio's Generalization). -/
 inductive AccAssignment where
@@ -515,11 +515,11 @@ inductive AccAssignment where
   deriving DecidableEq, Repr
 
 /-- How genitive case is assigned.
-    @cite{baker-vinokurova-2010}: in Sakha, GEN is assigned by D via
+    [baker-vinokurova-2010]: in Sakha, GEN is assigned by D via
     Agree to the possessor (parallel to T-Agree NOM at the clausal
     level). Russian numeric and partitive GEN is nonstructural. -/
 inductive GenAssignment where
-  | agreeD         -- GEN assigned by D via Agree (Sakha; @cite{baker-vinokurova-2010})
+  | agreeD         -- GEN assigned by D via Agree (Sakha; [baker-vinokurova-2010])
   | nonstructural  -- GEN as inherent/lexical (Russian numeric)
   deriving DecidableEq, Repr
 
@@ -550,12 +550,12 @@ structure CaseSystemConfig where
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- § 13: Phased Case Assignment (@cite{baker-vinokurova-2010})
+-- § 13: Phased Case Assignment ([baker-vinokurova-2010])
 -- ============================================================================
 
 /-! ## Phased case assignment
 
-@cite{baker-vinokurova-2010} formalize Sakha case as cycling over
+[baker-vinokurova-2010] formalize Sakha case as cycling over
 two phases: VP (the smaller phase) and CP. Two configurational
 rules apply (paper (4a)/(4b), restated as (85)):
 
@@ -578,7 +578,7 @@ Each NP carries a `basePhase` (where it was merged) and a
 `shifted` flag (did it move to a higher phase before evaluation).
 PIC: NPs that stayed inside VP are not visible on the CP cycle. -/
 
-/-- Cycle in the @cite{baker-vinokurova-2010} two-phase model.
+/-- Cycle in the [baker-vinokurova-2010] two-phase model.
     Distinct from the more articulated `Minimalist.Phase` structure
     in `Phase.lean`; this is just the binary VP-vs-CP distinction
     that the case algorithm cycles over. -/
@@ -593,7 +593,7 @@ inductive CasePhase where
     `isArgumental` flags whether the NP bears a θ-role w.r.t. some
     case-assigning head — only argumental NPs are case competitors
     for rules (4a)/(4b). Bare-NP adverbs (e.g., 'yesterday', 'two
-    kilometers') are non-argumental. @cite{baker-vinokurova-2010}
+    kilometers') are non-argumental. [baker-vinokurova-2010]
     (8)–(9) and footnote 5.
 
     `inDP` flags NPs that participate only in DP-internal case
@@ -656,7 +656,7 @@ def unmarkedEligible (cycle : CasePhase) (s : PhasedState) : Bool :=
     given cycle, in c-command order (highest first, since list-position
     encodes height). Non-argumental NPs (bare-NP adverbs) and DP-
     internal NPs (possessors) are filtered out: per
-    @cite{baker-vinokurova-2010} (8)–(9), rules (4a)/(4b) apply only
+    [baker-vinokurova-2010] (8)–(9), rules (4a)/(4b) apply only
     between argumental NPs at the clausal level. -/
 def unmarkedVisible (cycle : CasePhase) (states : List PhasedState) : List Nat :=
   states.zipIdx.filterMap fun p =>
@@ -683,7 +683,7 @@ def applyAccRule (cfg : CaseSystemConfig) (cycle : CasePhase)
 
 /-- Apply v-Agree: the lowest CP-visible unmarked argumental NP gets
     ACC via Agree. This is the standard Chomskyan picture
-    (@cite{chomsky-2000}; @cite{chomsky-2001}): v probes downward into
+    ([chomsky-2000]; [chomsky-2001]): v probes downward into
     its complement and Agrees with the closest goal. The dependent-
     accusative algorithm (`applyAccRule`) is the alternative to this
     pass; the two are mutually exclusive on a given grammar via the

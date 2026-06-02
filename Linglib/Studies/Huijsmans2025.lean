@@ -2,7 +2,7 @@ import Linglib.Semantics.Tense.Evidential
 import Linglib.Semantics.Modality.ModalTypes
 
 /-!
-# Huijsmans (2025) @cite{huijsmans-2025}
+# Huijsmans (2025) [huijsmans-2025]
 
 *Timing of evidence and epistemic modal claims.* Natural Language Semantics
 33: 207–254.

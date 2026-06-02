@@ -3,10 +3,10 @@ import Linglib.Semantics.Exhaustification.Operators.Basic
 
 /-!
 # Conditional Perfection via Answer-Level Exhaustification
-@cite{cornulier-1983} @cite{evcen-bale-barner-2026} @cite{groenendijk-stokhof-1984} @cite{von-fintel-2001} @cite{geis-zwicky-1971}
+[cornulier-1983] [evcen-bale-barner-2026] [groenendijk-stokhof-1984] [von-fintel-2001] [geis-zwicky-1971]
 
 Formalizes the connection between conditional perfection and speech-act level
-exhaustification, following @cite{von-fintel-2001} "Conditional strengthening."
+exhaustification, following [von-fintel-2001] "Conditional strengthening."
 
 ## Key Insight
 
@@ -17,9 +17,9 @@ exhaustification: the answer "A causes C" is exhaustified against the
 alternative "B causes C," yielding "only A causes C." Combined with a coverage
 assumption (every C-event has some trigger), this entails `¬A→¬C`.
 
-This is @cite{von-fintel-2001}'s reconstruction of @cite{cornulier-1983}: when the QUD
+This is [von-fintel-2001]'s reconstruction of [cornulier-1983]: when the QUD
 asks for sufficient conditions for C (antecedent-focus), the conditional answer
-triggers exhaustification over alternative antecedents. @cite{evcen-bale-barner-2026} experimentally validate this prediction.
+triggers exhaustification over alternative antecedents. [evcen-bale-barner-2026] experimentally validate this prediction.
 
 -/
 
@@ -36,7 +36,7 @@ triggers are contextually available. The key QUD is "which trigger causes
 C?" and the answer "trigger t causes C" is the proposition `causes t`. Its
 alternatives are `causes t'` for each other salient `t'`.
 
-This models @cite{von-fintel-2001}'s analysis: the relevant alternatives
+This models [von-fintel-2001]'s analysis: the relevant alternatives
 are not propositional alternatives to the conditional, but alternative
 *answers* to the question "under which conditions does C hold?" -/
 
@@ -62,7 +62,7 @@ def answerAlternatives {ι W : Type*} (causes : ι → Set W) (triggers : Set ι
 /-- The exhaustified answer: assert "trigger `t` causes C" and innocently
 exclude all alternative triggers.
 
-This is `exhIE` from @cite{spector-2016} applied at the **answer level** rather
+This is `exhIE` from [spector-2016] applied at the **answer level** rather
 than the propositional level — the key move that makes exhaustification yield
 perfection rather than a contradictory specific world.
 
@@ -84,7 +84,7 @@ If:
 
 then `¬p → ¬C`.
 
-This is the core logical step underlying @cite{von-fintel-2001}'s analysis:
+This is the core logical step underlying [von-fintel-2001]'s analysis:
 exhaustification provides exclusion (only t causes C), the QUD-driven
 coverage assumption closes the gap to perfection (every C has a cause,
 the only cause requires p, so ¬p → ¬C).

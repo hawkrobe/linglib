@@ -10,7 +10,7 @@ import Linglib.Studies.KehlerRohde2013
 /-!
 # Solstad & Bott (2022): Implicit causality and consequentiality for psych verbs
 
-@cite{solstad-bott-2022} @cite{dowty-1991} @cite{kehler-2002}
+[solstad-bott-2022] [dowty-1991] [kehler-2002]
 
 Experimental data on implicit causality (I-Caus) and implicit consequentiality
 (I-Cons) for German psych verbs, with proto-role analysis and cross-study bridges.
@@ -43,7 +43,7 @@ slot (Empty Slot Theory) that the continuation fills. I-Cons is discourse-struct
 the Contiguity Principle prefers temporal continuation, defaulting to the endpoint
 of the described eventuality.
 
-## Proto-role analysis (@cite{dowty-1991})
+## Proto-role analysis ([dowty-1991])
 
 IC bias tracks the **stimulus** argument: explanations in *because*-continuations
 target the participant whose entailment profile includes causation, regardless
@@ -97,14 +97,14 @@ def VerbClass.predictedBias : VerbClass → ICBias
 -- § 2. Exp 1: Coreference Biases (Table 1)
 -- ════════════════════════════════════════════════════
 
-/-- Connective conditions in @cite{solstad-bott-2022}.
+/-- Connective conditions in [solstad-bott-2022].
     German connectives *weil* (because) and *sodass* (and so). -/
 inductive ExpConnective where
   | weil      -- "because" → I-Caus (Explanation relation)
   | sodass    -- "and so" → I-Cons (Consequence relation)
   deriving DecidableEq, Repr
 
-/-- Subject coreference proportion from Exp 1, Table 1 of @cite{solstad-bott-2022}.
+/-- Subject coreference proportion from Exp 1, Table 1 of [solstad-bott-2022].
     These are real data from 52 German participants with 20 STIM-EXP and
     20 EXP-STIM verbs (gefallen excluded). -/
 structure CorefDatum where
@@ -113,7 +113,7 @@ structure CorefDatum where
   subjectCorefPct : ℚ    -- Percentage of NP1 (subject) coreference
   deriving Repr
 
--- Exp 1, Table 1 (@cite{solstad-bott-2022}, p. 1322)
+-- Exp 1, Table 1 ([solstad-bott-2022], p. 1322)
 def exp1_stimExp_weil   : CorefDatum := ⟨.stimExp, .weil, 874/10⟩   -- 87.4%
 def exp1_expStim_weil   : CorefDatum := ⟨.expStim, .weil, 40/10⟩    -- 4.0%
 def exp1_stimExp_sodass : CorefDatum := ⟨.stimExp, .sodass, 48/10⟩  -- 4.8%
@@ -135,7 +135,7 @@ theorem expStim_weil_np2_bias :
   show (40 : ℚ)/10 < 50; norm_num
 
 /-- I-Cons (sodass): Biases mirror I-Caus — StimExp → NP2, ExpStim → NP1.
-    (@cite{solstad-bott-2022}, §2.3: "almost perfect negative correlation" r = −0.94) -/
+    ([solstad-bott-2022], §2.3: "almost perfect negative correlation" r = −0.94) -/
 theorem icons_mirrors_icaus :
     exp1_stimExp_sodass.subjectCorefPct < 50 ∧
     exp1_expStim_sodass.subjectCorefPct > 50 := by
@@ -161,7 +161,7 @@ inductive Congruence where
   deriving DecidableEq, Repr
 
 /-- Exp 3 data: proportion of explanations (vs consequences) under forced
-    coreference. @cite{solstad-bott-2022} Table 3.
+    coreference. [solstad-bott-2022] Table 3.
 
     The key finding: even when forced to refer to the non-biased argument
     (incongruent condition), participants STILL produce explanations rather
@@ -174,7 +174,7 @@ structure ForcedCorefDatum where
   explanationPct : ℚ      -- % of continuations that are explanations
   deriving Repr
 
--- Exp 3, Table 3 (@cite{solstad-bott-2022}, p. 1326)
+-- Exp 3, Table 3 ([solstad-bott-2022], p. 1326)
 def exp3_stimExp_congruent   : ForcedCorefDatum := ⟨.stimExp, .congruent, 879/10⟩    -- 87.9%
 def exp3_stimExp_incongruent : ForcedCorefDatum := ⟨.stimExp, .incongruent, 876/10⟩  -- 87.6%
 def exp3_expStim_congruent   : ForcedCorefDatum := ⟨.expStim, .congruent, 837/10⟩    -- 83.7%
@@ -209,7 +209,7 @@ theorem congruence_does_not_reduce_explanations :
 -- ════════════════════════════════════════════════════
 
 /-- Subtypes of explanation continuations from Exp 4 annotation.
-    @cite{solstad-bott-2022} distinguishes three explanation categories:
+    [solstad-bott-2022] distinguishes three explanation categories:
     - **specifying**: fills the verb's causal slot (Empty Slot Theory prediction)
     - **mentalBackground**: provides the experiencer's mental state
     - **nonmentalBackground**: provides non-mental context -/
@@ -219,7 +219,7 @@ inductive ExplanationSubtype where
   | nonmentalBackground -- Non-mental background
   deriving DecidableEq, Repr
 
-/-- Exp 4 explanation subtype frequencies. Table 4 of @cite{solstad-bott-2022}. -/
+/-- Exp 4 explanation subtype frequencies. Table 4 of [solstad-bott-2022]. -/
 structure ExplanationTypeDatum where
   verbClass : VerbClass
   congruence : Congruence
@@ -228,7 +228,7 @@ structure ExplanationTypeDatum where
   nonmentalBgPct : ℚ         -- % non-mental background
   deriving Repr
 
--- Exp 4, Table 4 — explanation subtypes (@cite{solstad-bott-2022}, p. 1333)
+-- Exp 4, Table 4 — explanation subtypes ([solstad-bott-2022], p. 1333)
 -- Absolute frequencies (n): converted to approximate percentages
 def exp4_stimExp_congruent_expl : ExplanationTypeDatum :=
   ⟨.stimExp, .congruent, 876/10, 22/10, 102/10⟩      -- 87.6% spec, 2.2% mental, 10.2% nonmental
@@ -281,7 +281,7 @@ theorem consequence_specification_negligible :
 
 /-- Stimulus-experiencer verb subject profile: causation + independent existence.
     The subject is a stimulus/cause (B&R Class II, Levin 31.1 amuse class).
-    @cite{solstad-bott-2022}: STIM-EXP verbs show NP1 I-Caus bias. -/
+    [solstad-bott-2022]: STIM-EXP verbs show NP1 I-Caus bias. -/
 def stimExpSubjectProfile : EntailmentProfile :=
   ⟨false, false, true, false, true, false, false, false, false, false⟩
 
@@ -292,7 +292,7 @@ def stimExpObjectProfile : EntailmentProfile :=
 
 /-- Experiencer-stimulus verb subject profile: sentience + independent existence.
     The subject is an experiencer (B&R Class I, temere class).
-    @cite{solstad-bott-2022}: EXP-STIM verbs show NP2 I-Caus bias. -/
+    [solstad-bott-2022]: EXP-STIM verbs show NP2 I-Caus bias. -/
 def expStimSubjectProfile : EntailmentProfile :=
   ⟨false, true, false, false, true, false, false, false, false, false⟩
 
@@ -399,7 +399,7 @@ theorem predictions_match_data :
   refine ⟨by native_decide, by native_decide, by native_decide⟩
 
 -- ════════════════════════════════════════════════════
--- § 10. Cross-Study Bridge: @cite{rosa-arnold-2017}
+-- § 10. Cross-Study Bridge: [rosa-arnold-2017]
 -- ════════════════════════════════════════════════════
 
 open RosaArnold2017
@@ -416,9 +416,9 @@ open RosaArnold2017
 
     The IC reversal is the stronger demonstration: it shows the bias direction
     is ENTIRELY determined by the thematic role, not the grammatical position.
-    @cite{rosa-arnold-2017}'s data corroborates this by showing that thematic
+    [rosa-arnold-2017]'s data corroborates this by showing that thematic
     role affects form even when grammatical role is held constant, violating
-    @cite{kehler-rohde-2013}'s independence hypothesis. -/
+    [kehler-rohde-2013]'s independence hypothesis. -/
 theorem thematic_role_not_position_determines_bias :
     -- IC: stimulus=subject → NP1 (derived from entailment profile)
     predictICBias stimExpSubjectProfile = .np1 ∧
@@ -459,12 +459,12 @@ theorem coherence_selects_complementary_roles :
   refine ⟨rfl, rfl, rfl, by decide⟩
 
 -- ════════════════════════════════════════════════════
--- § 11. Cross-Study Bridge: @cite{kehler-rohde-2013}
+-- § 11. Cross-Study Bridge: [kehler-rohde-2013]
 -- ════════════════════════════════════════════════════
 
 open KehlerRohde2013
 
-/-- @cite{kehler-rohde-2013}'s Table 2 establishes that Explanation
+/-- [kehler-rohde-2013]'s Table 2 establishes that Explanation
     coherence relations are Source-biased (80% Source for transfer
     verbs). This study's IC data instantiates the same mechanism for
     psych verbs: Explanation (triggered by "because") selects for
@@ -477,7 +477,7 @@ theorem ic_instantiates_KR_explanation_bias :
     predictICBias expStimSubjectProfile = .np2 := by
   exact ⟨rfl, by native_decide, by native_decide, by native_decide⟩
 
-/-- @cite{kehler-rohde-2013}'s key structural claim is that coherence
+/-- [kehler-rohde-2013]'s key structural claim is that coherence
     relations and referential form contribute to DIFFERENT terms in
     Bayes' rule: P(referent) vs P(pronoun|referent). The IC data
     provides the strongest evidence for the P(referent) side:

@@ -6,15 +6,15 @@ import Linglib.Core.Logic.Team.Definability
 /-!
 # Modal Inclusion Logic (MIL)
 
-@cite{anttila-haggblom-yang-2024} @cite{anttila-2025}
+[anttila-haggblom-yang-2024] [anttila-2025]
 
 Modal inclusion logic ML(⊆) extends classical modal logic with an
 **inclusion atom** `x⃗ ⊆ y⃗` meaning: for every tuple of `x⃗`-truth-values
 realised at some world in the team, the same tuple is realised as a
 tuple of `y⃗`-truth-values at some world in the team. Introduced for
 team semantics by Galliani; the modal variant ML(⊆) is axiomatised in
-@cite{anttila-haggblom-yang-2024} (*Archive for Mathematical Logic*
-2025; arXiv:2312.02285), which is also @cite{anttila-2025} Chapter 5.
+[anttila-haggblom-yang-2024] (*Archive for Mathematical Logic*
+2025; arXiv:2312.02285), which is also [anttila-2025] Chapter 5.
 
 Unlike BSML / MDL, **MIL is unilateral**: there is only a support
 relation, no separate anti-support. Negation is restricted to classical
@@ -343,8 +343,8 @@ theorem not_isLowerSet_incl_of_witness {a b : Atom} {w₁ w₂ : W}
 open Core.Logic.Team in
 /-- **MIL is sound for its closure cell**: every MIL-definable team property is
     union-closed and has the empty-team property. This is the soundness half of
-    the expressive-completeness theorem for ML(⊆) (@cite{anttila-haggblom-yang-2024};
-    @cite{anttila-2025} Ch 5 shows ML(⊆) is complete for the union-closed modal
+    the expressive-completeness theorem for ML(⊆) ([anttila-haggblom-yang-2024];
+    [anttila-2025] Ch 5 shows ML(⊆) is complete for the union-closed modal
     properties with the empty-team property, modulo bounded bisimulation).
 
     Composes `supClosed_support` and `support_empty` through the

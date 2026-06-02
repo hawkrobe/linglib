@@ -3,7 +3,7 @@ import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
-# @cite{fillmore-kay-oconnor-1988}: Let Alone
+# [fillmore-kay-oconnor-1988]: Let Alone
 
 Formalization of "Regularity and Idiomaticity in Grammatical Constructions:
 The Case of *Let Alone*" (Language 64(3):501–538).
@@ -35,7 +35,7 @@ Fillmore et al.'s classification cross-cuts two dimensions:
 - Substantive (lexically filled) vs formal (open slots)
 -/
 
-/-- Encoding vs decoding idioms (§1.1.1, @cite{makkai-1972}).
+/-- Encoding vs decoding idioms (§1.1.1, [makkai-1972]).
 
 A *decoding* idiom cannot be interpreted without prior learning
 ("kick the bucket"). An *encoding* idiom can be understood but its

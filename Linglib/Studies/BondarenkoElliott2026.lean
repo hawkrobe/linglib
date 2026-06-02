@@ -3,16 +3,16 @@ import Linglib.Semantics.Truthmaker.Inexact
 import Linglib.Semantics.Truthmaker.Entailment
 import Linglib.Studies.Pasternak2019
 
-/-! # Bondarenko & Elliott (2026) @cite{bondarenko-elliott-2026}
+/-! # Bondarenko & Elliott (2026) [bondarenko-elliott-2026]
 
 **Monotonicity via mereology in the semantics of attitude reports.**
 *Semantics and Pragmatics* 19(2). DOI: 10.3765/sp.19.2.
 
-## Empirical puzzle (@cite{sharvit-2024})
+## Empirical puzzle ([sharvit-2024])
 
 NPI licensing in negated belief reports patterns differently for
 complement clauses vs. relative clauses inside a singular definite
-(@cite{bondarenko-elliott-2026} eq. 2):
+([bondarenko-elliott-2026] eq. 2):
 
 ```
 *Katya doesn't believe [the rumor [that Anton has ever spread]].
@@ -22,7 +22,7 @@ complement clauses vs. relative clauses inside a singular definite
 The puzzle: weak NPIs (any/ever) require a **Strawson Downward-Entailing**
 (SDE, eq. 18a) and **not Strawson Upward-Entailing** (not-SUE, eq. 18b)
 environment per the licensing condition (eq. 21). Two existing approaches
-both fail (@cite{bondarenko-elliott-2026} §3.2):
+both fail ([bondarenko-elliott-2026] §3.2):
 
 - **Subset semantics** (`CONT(x) ⊆ ⟦S⟧`): *uniqueness collapse* (eq. 24)
   makes singular definites both SUE and SDE, so NPIs should be allowed
@@ -30,7 +30,7 @@ both fail (@cite{bondarenko-elliott-2026} §3.2):
 - **Equality semantics** (`CONT(x) = ⟦S⟧`): *functionality* makes the
   environment neither SUE nor SDE — NPIs blocked everywhere — wrong.
 
-## Proposal (@cite{bondarenko-elliott-2026} §4)
+## Proposal ([bondarenko-elliott-2026] §4)
 
 Adopt EQUALITY semantics (eq. 10) and add three mereological constraints:
 
@@ -169,7 +169,7 @@ def HolderPreservedUnderParts (HOLDER : V → Option E) : Prop :=
 
 /-- **Believing-DIV** (paper footnote 18). All parts of a believing-event
     are themselves believing-events with the same holder. The mereological
-    analogue of *divisive reference* (@cite{cheng-1973} for mass nouns).
+    analogue of *divisive reference* ([cheng-1973] for mass nouns).
 
     Factored as the conjunction of two reusable conditions:
     `Mereology.DIV believe` (every part of a believing is itself a
@@ -179,7 +179,7 @@ def HolderPreservedUnderParts (HOLDER : V → Option E) : Prop :=
 def BelievingDIV (believe : V → Prop) (HOLDER : V → Option E) : Prop :=
   Mereology.DIV believe ∧ HolderPreservedUnderParts HOLDER
 
-/-! **Cross-paper bridge to @cite{pasternak-2019}.** B&E's `BelievingDIV`
+/-! **Cross-paper bridge to [pasternak-2019].** B&E's `BelievingDIV`
 is a *strengthening* of Pasternak's `MentalStateHomogeneity` (which is
 itself defined as `Mereology.DIV` over a preorder, modulo biconditional
 reflexivity — see `Pasternak2019.mentalStateHomogeneity_iff`). The
@@ -258,7 +258,7 @@ end Closure
 -- § 5. The Sharvit configuration: `believes the rumor that p`
 -- ════════════════════════════════════════════════════
 
-/-! Section 5 of @cite{bondarenko-elliott-2026}.
+/-! Section 5 of [bondarenko-elliott-2026].
 
 The full LF for "Mitya believes the rumor that `p`" combines four
 ingredients (paper eqs. 62–65):
@@ -615,7 +615,7 @@ end ClosureUnderConjunction
 -- § 7. §6.3 demonstration: conjunctive parthood discriminates
 -- ════════════════════════════════════════════════════
 
-/-! Section 6.3 of @cite{bondarenko-elliott-2026} notes that
+/-! Section 6.3 of [bondarenko-elliott-2026] notes that
 informational parthood via classical entailment (eq. 88) faces the
 *disjunction-introduction* problem (eq. 91):
 

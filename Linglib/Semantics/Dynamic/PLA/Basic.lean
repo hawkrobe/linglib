@@ -1,8 +1,8 @@
 /-
 # Predicate Logic with Anaphora (PLA)
-@cite{dekker-2012}
+[dekker-2012]
 
-@cite{dekker-2012}'s foundational system for dynamic semantics.
+[dekker-2012]'s foundational system for dynamic semantics.
 
 ## Innovation
 
@@ -12,7 +12,7 @@ PLA distinguishes variables (x_i) from pronouns (p_i):
 
 This distinction prevents variable clash and enables clean compositional semantics.
 
-## Core Definitions (@cite{dekker-2012} Ch. 2)
+## Core Definitions ([dekker-2012] Ch. 2)
 
 | Concept | Notation | Description |
 |---------|----------|-------------|
@@ -175,7 +175,7 @@ def Formula.resolve (ρ : Resolution) : Formula → Formula
   | .exists_ i φ => .exists_ i (φ.resolve ρ)
 
 /--
-Observation 2 (@cite{dekker-2012} §2.1): Resolution preserves domain.
+Observation 2 ([dekker-2012] §2.1): Resolution preserves domain.
 
 n(φ^ρ) = n(φ): resolving pronouns doesn't affect which variables are bound.
 -/
@@ -193,7 +193,7 @@ theorem Term.resolve_no_pronouns (t : Term) (ρ : Resolution) :
   cases t <;> rfl
 
 /--
-Observation 3 (@cite{dekker-2012} §2.1): Resolution eliminates all pronouns.
+Observation 3 ([dekker-2012] §2.1): Resolution eliminates all pronouns.
 
 r(φ^ρ) = ∅: after resolution, the formula contains no pronouns.
 -/

@@ -2,7 +2,7 @@ import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Rigidity
 import Mathlib.Data.Fin.Basic
 
-/-! # Montague (1973) intensional examples @cite{montague-1973}
+/-! # Montague (1973) intensional examples [montague-1973]
 
 Toy examples in Montague's PTQ-style intensional logic:
 - Hesperus/Phosphorus puzzle (co-reference vs co-intension)

@@ -11,7 +11,7 @@ import Linglib.Features.Clusivity
 Lexical core for the pronoun as a grammatical object: the general `Pronoun`
 structure (the morphosyntactic core every pronoun type shares), the
 `PersonalPronoun` schema for personal/referential pronouns (which `extends Pronoun`),
-allocutive markers, and @cite{cardinaletti-starke-1999}'s `Strength` deficiency
+allocutive markers, and [cardinaletti-starke-1999]'s `Strength` deficiency
 classification.
 
 Cross-categorial features a pronoun carries — `Person`, `Number`, `Gender`,
@@ -25,9 +25,9 @@ in as fields of the general `Pronoun`.
   the general concept gets the plain name).
 * `PersonalPronoun` — personal/referential pronoun: `extends Pronoun` with the
   register and referential-person features specific to deictic pronouns.
-* `Pronoun.Strength` — @cite{cardinaletti-starke-1999} strong/weak/clitic
+* `Pronoun.Strength` — [cardinaletti-starke-1999] strong/weak/clitic
   deficiency order (via `Strength.rank`). Orthogonal to
-  @cite{dechaine-wiltschko-2002}'s categorial pro-DP/φP/NP axis; a framework's
+  [dechaine-wiltschko-2002]'s categorial pro-DP/φP/NP axis; a framework's
   structural account of the order stays in its study file.
 * `Pronoun.AllocutiveEntry` — speaker–addressee (allocutive) markers.
 -/
@@ -53,7 +53,7 @@ structure Pronoun where
       by any such pro-form (personal, possessive, reflexive), like `gender`;
       `none` where unmarked (English *we*) or inapplicable. Distinguishes
       Tagalog *tayo* (incl) / *kami* (excl) and *natin* (our.incl) / *namin*
-      (our.excl). @cite{cysouw-2009} -/
+      (our.excl). [cysouw-2009] -/
   clusivity : Option Features.Clusivity.Value := none
   /-- Grammatical case. -/
   case_ : Option Features.Case := none
@@ -81,7 +81,7 @@ structure PersonalPronoun extends Pronoun where
       while `referentialPerson` is 2nd (governing the PCC, Fancy Constraint,
       resolved agreement). For ordinary pronouns, leave as `none` —
       referential person coincides with formal person.
-      @cite{adamson-zompi-2025} -/
+      [adamson-zompi-2025] -/
   referentialPerson : Option Features.Prominence.PersonLevel := none
   deriving Repr, BEq, DecidableEq
 
@@ -101,9 +101,9 @@ def toWord (p : Pronoun) : Word :=
     features := { person := p.person, number := p.number, case_ := p.case_,
                   gender := p.gender.bind (·.toUDGender) } }
 
-/-! ### Derived person category and well-formedness (@cite{cysouw-2009}) -/
+/-! ### Derived person category and well-formedness ([cysouw-2009]) -/
 
-/-- The @cite{cysouw-2009} `Category` this pronoun's person + number + clusivity
+/-- The [cysouw-2009] `Category` this pronoun's person + number + clusivity
     realizes, when fully specified — the neutral typological view of its
     person-reference, *derived* (not stored). `none` when person/number is
     underspecified, or for a clusivity-unmarked first-person plural (a syncretism
@@ -115,7 +115,7 @@ def category (p : Pronoun) : Option Features.Person.Category :=
 
 /-- Well-formedness of a pronoun's φ-features: clusivity is borne only by a
     first-person non-singular (dual/plural) form — the inclusive/exclusive split
-    of the 1st-person plural/dual (@cite{cysouw-2009}). This is the invariant a
+    of the 1st-person plural/dual ([cysouw-2009]). This is the invariant a
     person-value type tower would have enforced, carried as a *predicate* (the
     mathlib way) so illegal states are catchable without fragmenting the type. -/
 def WellFormed (p : Pronoun) : Prop :=
@@ -125,13 +125,13 @@ def WellFormed (p : Pronoun) : Prop :=
 instance (p : Pronoun) : Decidable p.WellFormed := by
   unfold WellFormed; infer_instance
 
-/-! ### Structural deficiency (@cite{cardinaletti-starke-1999}) -/
+/-! ### Structural deficiency ([cardinaletti-starke-1999]) -/
 
-/-- @cite{cardinaletti-starke-1999}'s three pronoun classes, ordered by
+/-- [cardinaletti-starke-1999]'s three pronoun classes, ordered by
     structural deficiency (strong > weak > clitic). Framework-neutral: only the
-    ranking lives here, and it is orthogonal to @cite{dechaine-wiltschko-2002}'s
+    ranking lives here, and it is orthogonal to [dechaine-wiltschko-2002]'s
     pro-DP/pro-φP/pro-NP categorial axis. A framework's structural account of
-    the ranking stays in its study file (e.g. @cite{patel-grosz-grosz-2017}). -/
+    the ranking stays in its study file (e.g. [patel-grosz-grosz-2017]). -/
 inductive Strength where
   /-- Full, stressed forms (e.g., English *me*, French *moi*). -/
   | strong
@@ -142,14 +142,14 @@ inductive Strength where
   deriving DecidableEq, Repr
 
 /-- Structural-richness rank: 2 (strong, least deficient) to 0 (clitic, most
-    deficient). The @cite{cardinaletti-starke-1999} deficiency hierarchy is the
+    deficient). The [cardinaletti-starke-1999] deficiency hierarchy is the
     reverse order. -/
 def Strength.rank : Strength → Nat
   | .strong => 2
   | .weak   => 1
   | .clitic => 0
 
-/-! ### Lexical entry schemas (@cite{alok-bhalla-2026}) -/
+/-! ### Lexical entry schemas ([alok-bhalla-2026]) -/
 
 /-- Cross-linguistic allocutive marker entry.
 

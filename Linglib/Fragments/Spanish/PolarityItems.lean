@@ -2,7 +2,7 @@ import Linglib.Typology.PolarityItem
 
 /-!
 # Spanish Polarity-Sensitive Items
-@cite{haspelmath-1997} @cite{zanuttini-1997}
+[haspelmath-1997] [zanuttini-1997]
 
 Lexical entries for Spanish polarity-sensitive items (n-word series),
 typed by the theory-neutral categories from `Typology.PolarityItem`.

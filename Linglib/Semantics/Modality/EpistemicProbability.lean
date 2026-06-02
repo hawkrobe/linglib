@@ -3,7 +3,7 @@ import Linglib.Semantics.Modality.ProbabilityOrdering
 
 /-!
 # Epistemic Modality: Nested Threshold Semantics
-@cite{fagin-halpern-1994} @cite{herbstritt-franke-2019} @cite{lassiter-goodman-2017} @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
+[fagin-halpern-1994] [herbstritt-franke-2019] [lassiter-goodman-2017] [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025]
 
 Extends the flat threshold semantics of `Attitudes/EpistemicThreshold.lean`
 with *world-dependent credence* and *nested thresholds* for epistemic modals.
@@ -32,7 +32,7 @@ over those belief states.
 
 ## Fagin & Halpern (1994)
 
-The formal foundation is @cite{fagin-halpern-1994}'s logic for reasoning
+The formal foundation is [fagin-halpern-1994]'s logic for reasoning
 about knowledge and probability. Their key innovation: probability formulas
 `w_i(φ) ≥ b` (agent i assigns probability ≥ b to φ) can be *nested*:
 
@@ -69,12 +69,12 @@ open Semantics.Attitudes.EpistemicThreshold
     a (possibly different) probability distribution, yielding credence
     in proposition `φ`.
 
-    This is @cite{fagin-halpern-1994}'s `μ_{i,s}`: the probability space
+    This is [fagin-halpern-1994]'s `μ_{i,s}`: the probability space
     associated with agent `i` at state `s`. The key difference from
     `AgentCredence` is the world parameter — the agent's beliefs can
     vary across worlds (reflecting different information states).
 
-    In @cite{herbstritt-franke-2019}'s urn scenario, each (observation, access)
+    In [herbstritt-franke-2019]'s urn scenario, each (observation, access)
     pair induces a different belief distribution over urn states, so
     the agent's credence in "RED is probable" depends on which world
     (= which observation) they are in. -/
@@ -114,7 +114,7 @@ def nestedThreshold {E W : Type*} (wcr : WorldCredence E W)
 
 /-- Negated nested threshold: agent `a`'s credence in `φ` falls below
     `1 − θ` at world `w`. For negated expressions like "certainly not"
-    and "probably not" (@cite{herbstritt-franke-2019} eq. 14):
+    and "probably not" ([herbstritt-franke-2019] eq. 14):
 
     ⟦certainly not(p)⟧ = {s ∈ S | s/10 < 1 − θ_certainly}
     ⟦probably not(p)⟧  = {s ∈ S | s/10 < 1 − θ_probably} -/
@@ -125,7 +125,7 @@ def nestedThresholdNeg {E W : Type*} (wcr : WorldCredence E W)
 /-- Complex expressions compose: the result of one `nestedThreshold`
     can be the input to another.
 
-    Example (@cite{herbstritt-franke-2019}):
+    Example ([herbstritt-franke-2019]):
     `certainly(probably(RED))` = `nestedThreshold θ_cert (nestedThreshold θ_prob RED)` -/
 def complexExpression {E W : Type*} (wcr : WorldCredence E W)
     (θ_outer θ_inner : ℚ) (a : E) (φ : (W → Bool)) : (W → Bool) :=
@@ -154,8 +154,8 @@ theorem nestedThreshold_const_iff {E W : Type*}
 /-- Standard thresholds for probability expressions.
 
     These are the LaBToM-fitted values
-    (@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}, Table 1(b)).
-    @cite{herbstritt-franke-2019} independently infers similar values from
+    ([ying-zhi-xuan-wong-mansinghka-tenenbaum-2025], Table 1(b)).
+    [herbstritt-franke-2019] independently infers similar values from
     production/interpretation data:
 
     | Expression | LaBToM θ | H&F2019 θ (mean) |

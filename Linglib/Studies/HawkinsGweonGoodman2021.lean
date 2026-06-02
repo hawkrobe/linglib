@@ -1,5 +1,5 @@
 /-
-# @cite{hawkins-gweon-goodman-2021}: Division of Labor in Communication
+# [hawkins-gweon-goodman-2021]: Division of Labor in Communication
 
 "The Division of Labor in Communication: Speakers Help Listeners Account for
 Asymmetries in Visual Perspective"
@@ -13,9 +13,9 @@ Extends RSA with **resource-rational perspective-taking**:
 - Division of labor: optimal effort depends on partner's expected effort
 
 ## Theoretical Framework
-@cite{keysar-etal-2003}
+[keysar-etal-2003]
 
-In the classic @cite{keysar-etal-2003} paradigm:
+In the classic [keysar-etal-2003] paradigm:
 - Speaker (director) sees some objects
 - Listener (matcher) sees those objects PLUS hidden ones
 - Speaker knows listener has "known unknowns" behind occlusions
@@ -65,7 +65,7 @@ namespace HawkinsGweonGoodman2021
 ### Experiment 2: Listener Comprehension
 - 116 dyads
 - Scripted vs unscripted speaker condition
-- Replication of @cite{keysar-etal-2003} materials
+- Replication of [keysar-etal-2003] materials
 
 ## Key Empirical Findings
 
@@ -212,7 +212,7 @@ def keyPredictions : List KeyPrediction := [
   .intermediateWeightsOptimal
 ]
 
-/-- Critical item from @cite{keysar-etal-2003} replication -/
+/-- Critical item from [keysar-etal-2003] replication -/
 structure CriticalItem where
   instruction : String       -- What speaker says
   target : String            -- Intended target object
@@ -699,7 +699,7 @@ noncomputable def updateBeliefs (beliefs : ListenerBeliefs) (shortUtterance : Bo
 noncomputable def beliefsAfterShortUtterances : ListenerBeliefs :=
   updateBeliefs (updateBeliefs (updateBeliefs initialBeliefs true) true) true
 
-/-- **Paper prediction** (@cite{hawkins-gweon-goodman-2021} §2.4.1):
+/-- **Paper prediction** ([hawkins-gweon-goodman-2021] §2.4.1):
     Listeners infer low speaker effort from under-informative utterances. -/
 theorem listener_infers_low_wS_from_short_utterances :
     beliefsAfterShortUtterances.wS_expectation < initialBeliefs.wS_expectation := by
@@ -713,7 +713,7 @@ theorem listener_infers_low_wS_from_short_utterances :
 noncomputable def optimalListenerWeight (speakerWS β : ℝ) : ℝ :=
   min 1 (max 0 (1 - speakerWS + β))
 
-/-- **Paper prediction** (@cite{hawkins-gweon-goodman-2021} §2.4.1):
+/-- **Paper prediction** ([hawkins-gweon-goodman-2021] §2.4.1):
     Listener increases effort when speaker decreases theirs. -/
 theorem listener_compensates_for_low_speaker_effort :
     optimalListenerWeight (3/10) (2/10) > optimalListenerWeight (7/10) (2/10) := by

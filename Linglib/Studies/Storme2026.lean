@@ -5,10 +5,10 @@ import Linglib.Phonology.OptimalityTheory.Constraints
 import Linglib.Fragments.Farsi.Phonology
 
 /-!
-# @cite{storme-2026}: Systemic Constraints in MaxEnt Grammars
-@cite{storme-2026}
+# [storme-2026]: Systemic Constraints in MaxEnt Grammars
+[storme-2026]
 
-Replication of @cite{storme-2026} "A Method to Evaluate Systemic Constraints
+Replication of [storme-2026] "A Method to Evaluate Systemic Constraints
 in Probabilistic Grammars" (Linguistic Inquiry 57(1)).
 
 ## Key idea

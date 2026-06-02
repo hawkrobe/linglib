@@ -12,8 +12,8 @@ set_option autoImplicit false
 
 /-!
 # Multi-path multi-tree grafting and vertex decomposition for `Planar α`
-@cite{foissy-typed-decorated-rooted-trees-2018}
-@cite{foissy-introduction-hopf-algebras-trees}
+[foissy-typed-decorated-rooted-trees-2018]
+[foissy-introduction-hopf-algebras-trees]
 
 `multiGraft T pairs` grafts trees onto `T` at multiple paths
 **simultaneously**, with paths interpreted in the *original* `T`

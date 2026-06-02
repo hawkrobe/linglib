@@ -5,7 +5,7 @@ import Linglib.Fragments.Armenian.ClassifierSystem
 
 /-!
 # Bale & Khanjian (2014) — Singular-Plural Distinction in Western Armenian
-@cite{bale-khanjian-2014}
+[bale-khanjian-2014]
 
 Bale, Alan and Khanjian, Hrayr. *Linguistic Inquiry* 45.1: 1-26.
 Doi pending verification.
@@ -32,17 +32,17 @@ singular has general number?
 
 ## Theoretical move
 
-@cite{bale-khanjian-2014} argue against pure Gricean competition
-(@cite{krifka-1989}, @cite{sauerland-2003}, @cite{spector-2007}), which
+[bale-khanjian-2014] argue against pure Gricean competition
+([krifka-1989], [sauerland-2003], [spector-2007]), which
 over-predicts strict-singular interpretations everywhere; against the
-@cite{bliss-2004} purely-syntactic solution, which requires
-language-specific stipulations; and for **@cite{katzir-2007}'s
-syntactic-complexity competition** combined with @cite{bliss-2004}'s
+[bliss-2004] purely-syntactic solution, which requires
+language-specific stipulations; and for **[katzir-2007]'s
+syntactic-complexity competition** combined with [bliss-2004]'s
 syntactic structures.
 
-Per @cite{bliss-2004}: the singular indefinite has only `NP` (existential
+Per [bliss-2004]: the singular indefinite has only `NP` (existential
 introduced by the verb); the plural indefinite has full `DP[∃ NumP[...]]`.
-Per @cite{katzir-2007}: alternatives must be derivable from the original
+Per [katzir-2007]: alternatives must be derivable from the original
 by deletion, contraction, or same-category substitution — so a plural
 alternative with *more* syntactic structure is not a viable alternative.
 
@@ -54,11 +54,11 @@ Hence:
   applies → strict-singular meaning derived.
 
 The (14a) ungrammaticality is handled by **local Maximize Presupposition**
-(@cite{singh-2011}), applied at the NumP level.
+([singh-2011]), applied at the NumP level.
 
 ## Cross-paper engagement (Sudo 2016)
 
-@cite{sudo-2016}'s §5 flags Armenian as a counterexample to his
+[sudo-2016]'s §5 flags Armenian as a counterexample to his
 blocking-principle account of obligatory classifier languages. The key
 fact from this paper: Western Armenian numerals combine *directly* with
 bare nouns (eq. 10a, *yergu dəgha vaze-ts*). This means the Sudo
@@ -88,21 +88,21 @@ with classifiers).
 ## Out of scope
 
 - Full derivation of the strict-singular meaning via local Maximize
-  Presupposition (@cite{singh-2011} machinery in
+  Presupposition ([singh-2011] machinery in
   `Semantics/Presupposition/MaximizePresupposition.lean` could be
   applied; deferred).
 - Korean / Turkish parallels (BK 2014 fn 14 + §2.3 cite Kim 2005 on Korean,
-  @cite{bliss-2004} on Turkish; not formalized here).
+  [bliss-2004] on Turkish; not formalized here).
 - The compositional semantics of `[-n]/[-ə]` as `sup`/`f_σ`-decomposed
   definiteness (BK 2014 §6, derivation 37–39; deferred to a future pass).
 - The §2.1 predicate-distribution data for general number (eqs. 4–5,
   *John-ə yev Brad-ə dəgha en* "John and Brad are boys (sg.)") which
   is the *primary* empirical anchor for the general-number claim,
-  originally argued by @cite{donabedian-1993}.
+  originally argued by [donabedian-1993].
 
 ## Post-2014 engagement
 
-@cite{marti-2020} *Numerals and the theory of number* (S&P 13:3) revisits
+[marti-2020] *Numerals and the theory of number* (S&P 13:3) revisits
 the BGK 2011 / BK 2014 assumptions about Turkish and Western Armenian
 and proposes an alternative numeral-semantic analysis that doesn't rely
 on syntactic-complexity competition. A Marti 2020 study file would be
@@ -120,7 +120,7 @@ open Core.Tree
 -- ============================================================================
 
 /-- A finite domain of three atomic boys: a, b, c. Mirrors the LMR2022
-    `Dog` toy domain. The denotations in eq. 9 of @cite{bale-khanjian-2014}
+    `Dog` toy domain. The denotations in eq. 9 of [bale-khanjian-2014]
     use exactly this shape. -/
 inductive Boy where | a | b | c
   deriving DecidableEq, Repr
@@ -133,13 +133,13 @@ instance : Fintype Boy where
     or more boys are pluralities; singletons are atomic individuals. -/
 abbrev Plurality := Finset Boy
 
-/-- @cite{bale-khanjian-2014} (9a): general-number denotation of *dəgha*.
+/-- [bale-khanjian-2014] (9a): general-number denotation of *dəgha*.
     Contains all singletons and all sums (the inclusive interpretation):
     `{a, b, c, ab, ac, bc, abc}`. Nonempty subsets of `Boy`. -/
 def daghaGenNum : Finset Plurality :=
   (Finset.univ : Finset Plurality).filter (·.Nonempty)
 
-/-- @cite{bale-khanjian-2014} (9b): strict-plural denotation of *dəgha-ner*.
+/-- [bale-khanjian-2014] (9b): strict-plural denotation of *dəgha-ner*.
     Contains only sums of two or more: `{ab, ac, bc, abc}`. -/
 def daghaNerStrictPl : Finset Plurality :=
   (Finset.univ : Finset Plurality).filter (·.card ≥ 2)
@@ -215,7 +215,7 @@ def pluralDef : Tree Cat String :=
 open Alternatives.Structural
 
 /-- The lexicon needed to derive `singularDef` from `pluralDef` and vice
-    versa via @cite{katzir-2007} substitution operations: all six
+    versa via [katzir-2007] substitution operations: all six
     terminals that differ between the two trees, plus the shared noun.
     `equalComplexity src φ ψ` is checked against `src` in both directions,
     so this lexicon is symmetric. -/
@@ -226,7 +226,7 @@ def waLex : List (Tree Cat String) :=
   , .terminal .N "dəgha" ]
 
 /-- **The headline definite-case theorem**: `singularDef` and `pluralDef`
-    have *equal* @cite{katzir-2007} complexity — each is derivable from
+    have *equal* [katzir-2007] complexity — each is derivable from
     the other by a chain of three same-category leaf substitutions
     (`Num "-∅" ↔ "-ner"`, `Det "-n" ↔ "-ə"`, `V "vaze-ts" ↔ "vaze-ts-in"`).
 
@@ -237,7 +237,7 @@ def waLex : List (Tree Cat String) :=
     `StructOp.inChild` chain (mechanical but verbose); a future
     `katzir_path_subst` tactic could collapse this to ~5 lines.
 
-    Load-bearing claim from @cite{bale-khanjian-2014} §5: the plural
+    Load-bearing claim from [bale-khanjian-2014] §5: the plural
     definite is a viable structural alternative to the singular definite,
     licensing Katzir-mediated competition that derives the strict-singular
     meaning. -/
@@ -292,7 +292,7 @@ theorem singularDef_pluralDef_equalComplexity :
       exact StructOp.subst rfl (by simp [waLex])
 
 /-- **The headline indefinite-case theorem**: `pluralIndef` is strictly
-    larger than `singularIndef`. @cite{katzir-2007}'s deletion/
+    larger than `singularIndef`. [katzir-2007]'s deletion/
     contraction/substitution operations are non-increasing in tree size
     (deletion strictly reduces, the others preserve), so a strict size
     increase is sufficient to rule out structural-alternative status.
@@ -302,11 +302,11 @@ theorem singularDef_pluralDef_equalComplexity :
 theorem singularIndef_size_lt_pluralIndef_size :
     singularIndef.size < pluralIndef.size := by decide
 
-/-! ## §3a: Cross-paper disagreement with @cite{sauerland-2003}
+/-! ## §3a: Cross-paper disagreement with [sauerland-2003]
 
-@cite{bale-khanjian-2014} explicitly reject Gricean / phi-MP accounts
-of number competition (introduction + §3, citing @cite{krifka-1989},
-@cite{sauerland-2003}, @cite{spector-2007}). Sauerland's
+[bale-khanjian-2014] explicitly reject Gricean / phi-MP accounts
+of number competition (introduction + §3, citing [krifka-1989],
+[sauerland-2003], [spector-2007]). Sauerland's
 `mp_blocks_plural_at_atom` says that for any *atomic* individual, MP
 selects the singular form over the plural — pre-empting general number.
 
@@ -328,14 +328,14 @@ argument in prose. -/
 /-- Witness for the Sauerland-vs-BK disagreement: the singleton `{Boy.a}`
     is an atomic individual that BK 2014 say can be picked out by the
     indefinite singular *dəgha* (general-number reading), but
-    @cite{sauerland-2003}'s `mp_blocks_plural_at_atom` would predict
+    [sauerland-2003]'s `mp_blocks_plural_at_atom` would predict
     pre-emption by the strict-singular reading. -/
 theorem singleton_atom_in_genNum :
     ({Boy.a} : Plurality) ∈ daghaGenNum := by decide
 
 /-- The asymmetry between (in)definites: equal complexity for definites,
     strict size increase for indefinites. The empirical wedge that drives
-    the competition asymmetry per @cite{katzir-2007}. -/
+    the competition asymmetry per [katzir-2007]. -/
 theorem definiteness_asymmetry :
     equalComplexity waLex singularDef pluralDef ∧
     singularIndef.size < pluralIndef.size :=
@@ -345,14 +345,14 @@ theorem definiteness_asymmetry :
 -- §5: Cross-paper note — Sudo 2016 doesn't apply to Western Armenian
 -- ============================================================================
 
-/-- Cross-paper note (forward reference): @cite{sudo-2016}'s §5 flags
-    Armenian as a counterexample. The @cite{bale-khanjian-2014} data
+/-- Cross-paper note (forward reference): [sudo-2016]'s §5 flags
+    Armenian as a counterexample. The [bale-khanjian-2014] data
     show *why* the input shape is wrong: Western Armenian numerals
     combine directly with bare nouns (eq. 10a), so there is no overt
     classifier morpheme that the silent ∪-operator would be blocked by.
     Western Armenian's `classifierSystem` carries `isObligatory := false`,
     structurally failing the input shape that obligatory-CL frameworks
-    like @cite{chierchia-1998} and @cite{sudo-2016} presuppose.
+    like [chierchia-1998] and [sudo-2016] presuppose.
 
     The dependency goes from BK 2014 → `Fragments/Armenian/ClassifierSystem.lean`
     rather than BK 2014 → Sudo 2016 (which would violate the chronology

@@ -7,7 +7,7 @@ import Linglib.Studies.DegenEtAl2020
 import Linglib.Studies.EngelhardtEtAl2006
 
 /-!
-# @cite{giles-etal-2026}
+# [giles-etal-2026]
 
 Search Efficiency Drives Reference Production Across Modalities,
 But Colour Is Special. *Open Mind: Discoveries in Cognitive Science*
@@ -178,9 +178,9 @@ theorem search_efficiency_vs_baseline :
 -- ============================================================================
 
 /-- Colour is overinformed more than material (Exp 1), extending
-    @cite{kursat-degen-2021}'s finding cross-modally.
+    [kursat-degen-2021]'s finding cross-modally.
 
-    @cite{kursat-degen-2021} showed colour > material with visual stimuli.
+    [kursat-degen-2021] showed colour > material with visual stimuli.
     This study confirms the asymmetry persists when material is presented
     in the auditory modality via impact sounds, with discriminability
     equalized via psychophysical staircases. -/
@@ -189,7 +189,7 @@ theorem colour_exceeds_material :
     exp1_material_redundant.β < 0 := by
   constructor <;> native_decide
 
-/-- Converging evidence with @cite{kursat-degen-2021}: both studies
+/-- Converging evidence with [kursat-degen-2021]: both studies
     find colour used redundantly more than material. The present study
     adds cross-modal generalisation. -/
 theorem converging_with_kursat_degen :
@@ -224,7 +224,7 @@ theorem noise_model_consistent_with_exp1 :
 
     Possible explanations (General Discussion):
     1. Colour categories are optimised for perceptual communication
-       (@cite{regier-etal-2007}), making colour inherently more
+       ([regier-etal-2007]), making colour inherently more
        search-efficient than orientation across naturalistic contexts.
     2. Speakers learn from experience that colour is a reliable
        referential strategy and deploy it even when its search
@@ -246,7 +246,7 @@ theorem frequency_does_not_explain :
 -- §9. Bridge: cs-RSA and Overinformativeness
 -- ============================================================================
 
-/-- The cs-RSA model (@cite{degen-etal-2020}) explains redundant
+/-- The cs-RSA model ([degen-etal-2020]) explains redundant
     modification via noisy perception. This study provides perceptual
     grounding for the noise parameters: discriminability measured via
     psychophysical staircases maps to the noise gap.
@@ -265,10 +265,10 @@ theorem csrsa_grounding :
   · native_decide
 
 -- ============================================================================
--- §11. Bridge: @cite{engelhardt-etal-2006} Over-Description Rates
+-- §11. Bridge: [engelhardt-etal-2006] Over-Description Rates
 -- ============================================================================
 
-/-- Both this study and @cite{engelhardt-etal-2006} demonstrate that
+/-- Both this study and [engelhardt-etal-2006] demonstrate that
     speakers routinely over-describe. The search efficiency view
     reinterprets these violations of Gricean Q2 as communicatively
     efficient: the "extra" information facilitates listener search. -/
@@ -299,7 +299,7 @@ theorem display_type_predictions :
 -- ============================================================================
 
 /-- **Algebraic biconditional**: In a cs-RSA scene with one target and two
-    distractors (cf. @cite{degen-etal-2020} §2), L0 prefers the overmodified
+    distractors (cf. [degen-etal-2020] §2), L0 prefers the overmodified
     form iff the redundant modifier's noise gap is positive.
 
     Scene structure: size is sufficient (only target is small), color is
@@ -341,7 +341,7 @@ theorem overmodification_iff_positive_gap
     discriminate match from mismatch above chance — exactly when the redundant
     modifier carries useful information through the noise channel.
 
-    @cite{giles-etal-2026} provide the perceptual grounding: discriminability
+    [giles-etal-2026] provide the perceptual grounding: discriminability
     measured via psychophysical staircases (d') maps to the noise parameters
     that drive overinformativeness in reference production. -/
 theorem dprime_iff_overmodification
@@ -360,7 +360,7 @@ theorem dprime_iff_overmodification
       (by exact_mod_cast hcM) hcM_lt1 (by exact_mod_cast hcMM) hcMM_lt1).mpr
       (by exact_mod_cast h)
 
-/-- Instantiation: for the standard @cite{degen-etal-2020} noise parameters
+/-- Instantiation: for the standard [degen-etal-2020] noise parameters
     (color match = 0.99, mismatch = 0.01), the redundant color modifier's
     d' is positive, so L0 prefers "small blue" over "small."
 
@@ -432,12 +432,12 @@ theorem one_param_ratio_is_param_ordering
     a feature (higher d' → more overmod, §14) but *incomplete across*
     features: two features with equal d' can have different overmod rates.
 
-    @cite{giles-etal-2026} propose two accounts for the residual colour
+    [giles-etal-2026] propose two accounts for the residual colour
     privilege:
 
     1. **Category optimality**: Colour naming systems are near-optimal
-       partitions of perceptual space (@cite{regier-etal-2007},
-       @cite{zaslavsky-etal-2019}). Colour categories maximise
+       partitions of perceptual space ([regier-etal-2007],
+       [zaslavsky-etal-2019]). Colour categories maximise
        discriminability *across natural contexts*, making colour
        inherently more search-efficient than orientation even when
        within-trial d' is equalized.
@@ -465,19 +465,19 @@ theorem within_feature_monotonicity_but_not_across :
 
 /-- The cs-RSA Product of Experts architecture — φ(u, o) = ∏ features,
     noiseChannel_f(u, o) — is the UNIQUE factoring consistent with
-    @cite{luce-1959}'s dimension independence axiom, as proven by
+    [luce-1959]'s dimension independence axiom, as proven by
     `Core.multidimensional_decomposition` in Psychophysics.lean.
 
     The argument chain:
-    1. Dimension independence (@cite{luce-1959} §2.C): the ratio
+    1. Dimension independence ([luce-1959] §2.C): the ratio
        v(a[d↦s])/v(a) depends only on dimension d and the old/new values
     2. Decomposition theorem: under independence, v(a) = C · ∏ scale_d(a_d)
     3. cs-RSA instantiation: scale_color(match) = colorMatch = 0.99,
        scale_color(mismatch) = colorMismatch = 0.01, etc.
-    4. @cite{giles-etal-2026} ground the scale parameters in d' measured
+    4. [giles-etal-2026] ground the scale parameters in d' measured
        via psychophysical staircases
 
-    @cite{degen-etal-2020} already proves the factoring holds for the
+    [degen-etal-2020] already proves the factoring holds for the
     concrete φ (`φ_product_of_experts`). This bridge connects to the
     ABSTRACT infrastructure that shows the factoring is forced by
     independence — not an ad hoc modelling choice. -/
@@ -494,7 +494,7 @@ noncomputable def poeNoiseScales : Core.MultidimStimulus (Fin 2) (fun _ => Bool)
     | 1, false => by norm_num [RSA.Noise.colorMismatch]
 
 /-- Map each world to its (sizeMatch?, colorMatch?) feature vector,
-    relative to the "small blue" target from @cite{degen-etal-2020}. -/
+    relative to the "small blue" target from [degen-etal-2020]. -/
 def worldStimulus : DegenEtAl2020.World → (Fin 2 → Bool)
   | .bigBlue   => ![true,  true]
   | .bigRed    => ![true,  false]

@@ -58,14 +58,14 @@ structure DiagnosticResult where
 
 
 /--
-The "allows for" test identifies preconditions (@cite{roberts-simons-2024} §2.1).
+The "allows for" test identifies preconditions ([roberts-simons-2024] §2.1).
 
 Frame: "ψ, which is part of what allows/allowed for φ"
 
 If acceptable, ψ is an ontological precondition of the event in φ.
 Preconditions are states that must hold for the event to be possible.
 
-**Atelic caveat** (@cite{roberts-simons-2024} p. 711–712): For atelic target
+**Atelic caveat** ([roberts-simons-2024] p. 711–712): For atelic target
 verbs (e.g., *know*), the "allows for" frame can yield true readings for
 concomitants due to a "definitional" sense of possibility. Fix: substitute
 "come to V" to force a telic, inceptive interpretation. Example: use
@@ -73,7 +73,7 @@ concomitants due to a "definitional" sense of possibility. Fix: substitute
 -/
 def allowsForFrame : String := "_, which is part of what allowed for _"
 
-/-- @cite{roberts-simons-2024} ex. 5a adapted to *stop*. -/
+/-- [roberts-simons-2024] ex. 5a adapted to *stop*. -/
 def allowsFor_stop_priorState : DiagnosticResult :=
   { frame := allowsForFrame
   , trigger := "stop"
@@ -82,7 +82,7 @@ def allowsFor_stop_priorState : DiagnosticResult :=
   , judgment := .ok
   , interpretation := "Prior smoking is a precondition of stopping" }
 
-/-- @cite{roberts-simons-2024} ex. 5a adapted to *start*. -/
+/-- [roberts-simons-2024] ex. 5a adapted to *start*. -/
 def allowsFor_start_priorNonSmoker : DiagnosticResult :=
   { frame := allowsForFrame
   , trigger := "start"
@@ -91,7 +91,7 @@ def allowsFor_start_priorNonSmoker : DiagnosticResult :=
   , judgment := .ok
   , interpretation := "Prior non-smoking is a precondition of starting" }
 
-/-- @cite{roberts-simons-2024} ex. 13a: selectional restriction passes. -/
+/-- [roberts-simons-2024] ex. 13a: selectional restriction passes. -/
 def allowsFor_kick_hasFeet : DiagnosticResult :=
   { frame := allowsForFrame
   , trigger := "kick"
@@ -100,7 +100,7 @@ def allowsFor_kick_hasFeet : DiagnosticResult :=
   , judgment := .ok
   , interpretation := "Having feet is a precondition of kicking" }
 
-/-- @cite{roberts-simons-2024} ex. 13b: concomitant fails. -/
+/-- [roberts-simons-2024] ex. 13b: concomitant fails. -/
 def allowsFor_kick_touchedTree : DiagnosticResult :=
   { frame := allowsForFrame
   , trigger := "kick"
@@ -109,7 +109,7 @@ def allowsFor_kick_touchedTree : DiagnosticResult :=
   , judgment := .unacceptable
   , interpretation := "Touching is a concomitant (mereological part), not a precondition" }
 
-/-- @cite{roberts-simons-2024} ex. 5b adapted: consequence fails "allows for". -/
+/-- [roberts-simons-2024] ex. 5b adapted: consequence fails "allows for". -/
 def allowsFor_stop_consequence : DiagnosticResult :=
   { frame := allowsForFrame
   , trigger := "stop"
@@ -120,7 +120,7 @@ def allowsFor_stop_consequence : DiagnosticResult :=
 
 
 /--
-The counterfactual test confirms preconditions (@cite{roberts-simons-2024} §2.1).
+The counterfactual test confirms preconditions ([roberts-simons-2024] §2.1).
 
 Frame: "If not-ψ, it would not have been possible for [agent] to VP"
 

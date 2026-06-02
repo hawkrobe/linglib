@@ -3,7 +3,7 @@ import Linglib.Core.Word
 
 /-!
 # Romero & Han (2004): Negative Yes/No Questions and Epistemic Bias
-@cite{romero-han-2004} @cite{ladd-1981}
+[romero-han-2004] [ladd-1981]
 
 ## Core Contribution
 
@@ -338,7 +338,7 @@ theorem really_triggers_verum :
 -- § 3. Ladd's PI/NI ambiguity
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{ladd-1981}: the same negative question form is ambiguous between
+/-! [ladd-1981]: the same negative question form is ambiguous between
     positive-implicature (PI) and negative-implicature (NI) readings,
     disambiguated by polarity items. -/
 

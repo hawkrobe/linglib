@@ -3,24 +3,24 @@ import Linglib.Semantics.Modality.Typology
 /-!
 # St'át'imcets (Lillooet Salish) Modal Inventory
 
-@cite{matthewson-2016} @cite{rullmann-matthewson-davis-2008}
+[matthewson-2016] [rullmann-matthewson-davis-2008]
 
 St'át'imcets (ISO 639-3 `lil`, also known as Lillooet) modal system.
 The system demonstrates two key typological properties:
 
 1. **Single morpheme, multiple forces**: the enclitic *=ka* can express
    either deontic permission or obligation depending on context
-   (@cite{matthewson-2016} example 1).
+   ([matthewson-2016] example 1).
 2. **Dedicated ability morpheme**: the circumfix *ka-...-a* is
    restricted to ability/circumstantial possibility, contrasting with
-   the force-variable *=ka* (@cite{matthewson-2005}).
+   the force-variable *=ka* ([matthewson-2005]).
 3. **Lexicalized epistemic/circumstantial split**: epistemic and
    circumstantial modality are expressed by distinct morphological
    strategies. Epistemic modals are typically second-position clitics
    (*ima*, *gat*-type elements, shared with related Salish languages),
    while circumstantial modals are predicative verbs or circumfixes.
 
-## St'át'imcets modal expressions (from @cite{rullmann-matthewson-davis-2008})
+## St'át'imcets modal expressions (from [rullmann-matthewson-davis-2008])
 
 | Form       | Type        | Flavour        | Force            |
 |-----------|-------------|----------------|------------------|
@@ -40,13 +40,13 @@ private abbrev pc := ForceFlavor.mk .possibility .circumstantial
 /-! ## Modal expressions -/
 
 /-- Deontic enclitic: variable force (permission or obligation).
-    @cite{matthewson-2016} example 1:
+    [matthewson-2016] example 1:
     - *wá7=ka s-lep' i=k'ún7=a ku=pála7 máqa7*
       'The eggs can/have to stay in the ground for a year.' -/
 def ka : ModalExpression := ⟨"=ka", [pd, nd]⟩
 
 /-- Ability circumfix: fixed possibility force, circumstantial flavour.
-    @cite{matthewson-2005}:
+    [matthewson-2005]:
     - *ka-xílh-ts-tal'í-ha* 'could do it the fastest' -/
 def kaCircumfix : ModalExpression := ⟨"ka-...-a", [pc]⟩
 

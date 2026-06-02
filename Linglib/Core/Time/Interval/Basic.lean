@@ -4,9 +4,9 @@ import Linglib.Core.Scales.Scale
 /-!
 # Temporal intervals
 
-@cite{allen-1983} @cite{kamp-reyle-1993} @cite{klein-1994}
-@cite{pancheva-2003} @cite{rouillard-2026} @cite{sagey-1986}
-@cite{smith-1997}
+[allen-1983] [kamp-reyle-1993] [klein-1994]
+[pancheva-2003] [rouillard-2026] [sagey-1986]
+[smith-1997]
 
 The basic interval type and its relational algebra: containment,
 subinterval, overlap, precedence, meets, plus the nuclear cluster
@@ -14,7 +14,7 @@ needed by aspectual semantics (proper subinterval, final subinterval,
 initial overlap, isAfter/isBefore).
 
 Open/closed boundary distinctions and generalized intervals
-(@cite{rouillard-2026}) live in `Generalized.lean`.
+([rouillard-2026]) live in `Generalized.lean`.
 -/
 
 namespace Core.Time
@@ -96,14 +96,14 @@ theorem isAfter_iff_isBefore (i₁ i₂ : Interval Time) :
   Iff.rfl
 
 /-- Final subinterval: i₁ ⊆ i₂ and they share the same right endpoint.
-    @cite{pancheva-2003}: PTS(i', i) iff i is a final subinterval of i'. -/
+    [pancheva-2003]: PTS(i', i) iff i is a final subinterval of i'. -/
 def finalSubinterval (i₁ i₂ : Interval Time) : Prop :=
   i₁.subinterval i₂ ∧ i₁.finish = i₂.finish
 
 /-- Initial overlap (∂): i₁ and i₂ overlap, and the start of i₂ is in i₁.
-    @cite{pancheva-2003}: i ∂τ(e) — the beginning of the eventuality is included
+    [pancheva-2003]: i ∂τ(e) — the beginning of the eventuality is included
     in the reference interval but the end may not be.
-    @cite{smith-1997}: the neutral viewpoint uses the same interval relation. -/
+    [smith-1997]: the neutral viewpoint uses the same interval relation. -/
 def initialOverlap (i₁ i₂ : Interval Time) : Prop :=
   i₁.overlaps i₂ ∧ i₁.contains i₂.start
 
@@ -139,7 +139,7 @@ theorem overlaps_comm (i₁ i₂ : Interval Time) :
 
     This is the cornerstone property that distinguishes overlap from
     simultaneity (identity) and makes the No-Crossing Constraint derivable
-    from temporal precedence alone (@cite{sagey-1986} §5.2.3, fn. 6). -/
+    from temporal precedence alone ([sagey-1986] §5.2.3, fn. 6). -/
 theorem overlaps_not_transitive :
     ¬ ∀ (i₁ i₂ i₃ : Interval ℤ),
       i₁.overlaps i₂ → i₂.overlaps i₃ → i₁.overlaps i₃ := by
@@ -178,7 +178,7 @@ theorem precedes_not_overlaps {i₁ i₂ : Interval Time}
 -- ════════════════════════════════════════════════════
 
 /-- Whether an interval's boundary is included (closed) or excluded (open).
-    @cite{rouillard-2026} §2.2.4: the distinction between closed and open
+    [rouillard-2026] §2.2.4: the distinction between closed and open
     times is central to deriving the polarity sensitivity of G-TIAs.
     Event runtimes are closed; PTSs are open intervals.
 
@@ -193,7 +193,7 @@ inductive BoundaryType where
 -- ════════════════════════════════════════════════════
 
 /-- Interval boundary type maps to scale boundedness.
-    @cite{rouillard-2026}: closed runtimes correspond to closed scales
+    [rouillard-2026]: closed runtimes correspond to closed scales
     (licensed); open PTSs correspond to open scales (blocked/information
     collapse). This is the "interval generalization":
     `Interval.BoundaryType.closed`/`.open_` is isomorphic to

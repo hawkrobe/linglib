@@ -4,7 +4,7 @@ import Mathlib.Data.Fintype.Pi
 
 /-!
 # Modal Compatibility Frames
-@cite{holliday-mandelkern-2024}
+[holliday-mandelkern-2024]
 
 Modal extension of compatibility frames. Adds an accessibility relation R
 and the box/diamond operators whose ortholattice instance validates
@@ -54,7 +54,7 @@ structure ModalCompatFrame (S : Type*) extends CompatFrame S where
   access_refl : ∀ x, access x x
 
 /-- Box operator: `□A = {x | R(x) ⊆ A}`.
-    @cite{holliday-mandelkern-2024} eq. (3). -/
+    [holliday-mandelkern-2024] eq. (3). -/
 def box {S : Type*} (F : ModalCompatFrame S) (A : Set S) : Set S :=
   { x | ∀ y : S, F.access x y → y ∈ A }
 
@@ -73,7 +73,7 @@ instance box_apply_decidable {S : Type*} [Fintype S] (F : ModalCompatFrame S)
   infer_instance
 
 /-- Diamond operator: `◇A = ¬□¬A` (via orthocomplement, NOT Boolean dual).
-    @cite{holliday-mandelkern-2024} eq. (4). -/
+    [holliday-mandelkern-2024] eq. (4). -/
 def diamond {S : Type*} (F : ModalCompatFrame S) (A : Set S) : Set S :=
   orthoNeg F.toCompatFrame (box F (orthoNeg F.toCompatFrame A))
 
@@ -97,7 +97,7 @@ instance diamond_apply_decidable {S : Type*} [Fintype S] (F : ModalCompatFrame S
 
 /-- The T axiom for modal compatibility frames: reflexive accessibility
     means every world accesses itself, so `□A` at x forces A at x.
-    @cite{holliday-mandelkern-2024} Proposition 4.25. -/
+    [holliday-mandelkern-2024] Proposition 4.25. -/
 theorem T_axiom_general {S : Type*}
     (F : ModalCompatFrame S) (A : Set S) (x : S)
     (h : x ∈ box F A) : x ∈ A :=
@@ -111,7 +111,7 @@ theorem T_axiom_general {S : Type*}
     with `x ◇ x'` and some `y'' ◇ x'` refining `y`. Loose reading: "if
     `x` can epistemically access a possibility compatible with `y`, then
     `x` is compatible with a possibility according to which `y` might obtain."
-    @cite{holliday-mandelkern-2024} Definition 4.20 / Definition 4.26
+    [holliday-mandelkern-2024] Definition 4.20 / Definition 4.26
     (R-regularity clause), page 866 of the published JPL version. -/
 def IsRRegular {S : Type*} (F : ModalCompatFrame S) : Prop :=
   ∀ x y' y : S, F.access x y' → F.toCompatFrame.compat y' y →
@@ -127,7 +127,7 @@ instance {S : Type*} [Fintype S] (F : ModalCompatFrame S)
 /-- Knowability: for every possibility `x` there is some `y` such that
     every R-successor of `y` refines `x`. Loose reading: "there is a
     possibility where everything settled true by `x` is known."
-    @cite{holliday-mandelkern-2024} Definition 4.26 (Knowability clause),
+    [holliday-mandelkern-2024] Definition 4.26 (Knowability clause),
     page 866. -/
 def IsKnowable {S : Type*} (F : ModalCompatFrame S) : Prop :=
   ∀ x : S, ∃ y : S, ∀ z : S, F.access y z → refines F.toCompatFrame z x
@@ -141,7 +141,7 @@ instance {S : Type*} [Fintype S] (F : ModalCompatFrame S)
     satisfying R-regularity, T (= reflexivity, already in
     `ModalCompatFrame`), and Knowability. This is the substrate over which
     Wittgenstein's Law (`wittgensteinLaw`, Proposition 4.27) holds.
-    @cite{holliday-mandelkern-2024} Definition 4.26, page 866. -/
+    [holliday-mandelkern-2024] Definition 4.26, page 866. -/
 structure EpistemicCompatFrame (S : Type*) extends ModalCompatFrame S where
   /-- R-regularity per Definition 4.20 / 4.26. -/
   rRegular : IsRRegular toModalCompatFrame
@@ -162,7 +162,7 @@ structure EpistemicCompatFrame (S : Type*) extends ModalCompatFrame S where
     Linguistic punchline: "A is settled false" and "A might be true" cannot
     both hold at any possibility — the algebraic content of the claim that
     "p and might-not-p" is contradictory.
-    @cite{holliday-mandelkern-2024} Proposition 4.27, page 867. -/
+    [holliday-mandelkern-2024] Proposition 4.27, page 867. -/
 theorem wittgensteinLaw {S : Type*} (F : ModalCompatFrame S) (hK : IsKnowable F)
     (A : Set S) :
     orthoNeg F.toCompatFrame A ∩ diamond F A = ∅ := by

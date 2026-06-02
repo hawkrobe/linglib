@@ -4,7 +4,7 @@ import Linglib.Core.Logic.Aristotelian.Basic
 
 /-!
 # Concrete propositional generalized quantifiers
-@cite{barwise-cooper-1981} @cite{keenan-stavi-1986} @cite{peters-westerstahl-2006}
+[barwise-cooper-1981] [keenan-stavi-1986] [peters-westerstahl-2006]
 
 The three propositional GQs `every_sem`, `some_sem`, `no_sem` and the property
 proofs that don't need `Fintype`. Counting GQs (`most_sem`, `few_sem`, etc.) and
@@ -30,7 +30,7 @@ def some_sem {α : Type*} : GQ α := fun R S => ∃ x : α, R x ∧ S x
 /-- ⟦no⟧ = λR.λS. ∀x. R(x) → ¬S(x). -/
 def no_sem {α : Type*} : GQ α := fun R S => ∀ x : α, R x → ¬ S x
 
-/-- B&C semantic universals (@cite{barwise-cooper-1981}): conservativity plus
+/-- B&C semantic universals ([barwise-cooper-1981]): conservativity plus
     monotonicity in scope. Convenience conjunction of three Core predicates. -/
 def SatisfiesUniversals {α : Type*} (q : GQ α) : Prop :=
   Conservative q ∧ (ScopeUpwardMono q ∨ ScopeDownwardMono q)
@@ -120,7 +120,7 @@ theorem no_raa : RightAntiAdditive (no_sem (α := α)) := by
                     fun x hR hS' => h x hR (Or.inr hS')⟩,
           fun ⟨h1, h2⟩ x hR hSS' => hSS'.elim (h1 x hR) (h2 x hR)⟩
 
-/-- @cite{peters-westerstahl-2006} Prop 13: the only non-trivial CONSERV, EXT,
+/-- [peters-westerstahl-2006] Prop 13: the only non-trivial CONSERV, EXT,
     and ISOM quantifiers satisfying LAA are `every` and `no` (and `A = ∅`). -/
 theorem laa_characterization :
     LeftAntiAdditive (every_sem (α := α)) ∧
@@ -172,7 +172,7 @@ theorem no_existential : Existential (no_sem (α := α)) := by
   exact ⟨fun h x ⟨hR, hS⟩ _ => h x hR hS,
          fun h x hR hS => h x ⟨hR, hS⟩ trivial⟩
 
-/-! ### Relational properties (@cite{van-benthem-1984}) -/
+/-! ### Relational properties ([van-benthem-1984]) -/
 
 theorem every_transitive : QTransitive (every_sem (α := α)) := by
   intro A B C hAB hBC x hA; exact hBC x (hAB x hA)
@@ -187,7 +187,7 @@ theorem some_quasi_reflexive : QuasiReflexive (some_sem (α := α)) := by
 theorem no_quasi_universal : QuasiUniversal (no_sem (α := α)) := by
   intro A B hAA x hA; exact absurd hA (hAA x hA)
 
-/-! ### Double monotonicity classification (@cite{van-benthem-1984} §4.2) -/
+/-! ### Double monotonicity classification ([van-benthem-1984] §4.2) -/
 
 /-- `⟦every⟧` is restrictor-↓ (anti-persistent). Follows from Zwarts bridge:
     reflexive + transitive + CONSERV → ↓MON. -/
@@ -291,7 +291,7 @@ theorem every_satisfies_isContradictory_pointwise (R : α → Prop) :
     exact propext ⟨fun _ => trivial, fun _ =>
       (Classical.em (every_sem (α := α) R S)).elim Or.inl Or.inr⟩
 
-/-! ### Basic left monotonicities (@cite{peters-westerstahl-2006} §5.5) -/
+/-! ### Basic left monotonicities ([peters-westerstahl-2006] §5.5) -/
 
 theorem some_upSE : UpSEMon (some_sem (α := α)) :=
   restrictorUpMono_to_upSE _ some_restrictor_up
@@ -311,7 +311,7 @@ theorem no_downNW : DownNWMon (no_sem (α := α)) :=
 theorem no_downNE : DownNEMon (no_sem (α := α)) :=
   restrictorDownMono_to_downNE _ no_restrictor_down
 
-/-! ### Smooth quantifiers (@cite{peters-westerstahl-2006} §5.6) -/
+/-! ### Smooth quantifiers ([peters-westerstahl-2006] §5.6) -/
 
 /-- `⟦some⟧` is ↓_NE Mon (direct proof). -/
 theorem some_downNE : DownNEMon (some_sem (α := α)) := by
@@ -336,7 +336,7 @@ theorem no_coSmooth_partial :
   ⟨restrictorDownMono_to_downNW _ no_restrictor_down,
    restrictorDownMono_to_downNE _ no_restrictor_down⟩
 
-/-! ### Satisfies universals (@cite{van-de-pol-etal-2023}) -/
+/-! ### Satisfies universals ([van-de-pol-etal-2023]) -/
 
 theorem some_satisfiesUniversals : SatisfiesUniversals (some_sem (α := α)) :=
   ⟨some_conservative, Or.inl some_scope_up⟩

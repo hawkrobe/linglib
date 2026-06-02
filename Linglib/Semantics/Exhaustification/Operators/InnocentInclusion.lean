@@ -1,9 +1,9 @@
 import Linglib.Semantics.Exhaustification.Operators.Basic
 
 /-!
-# Innocent Inclusion @cite{bar-lev-fox-2020}
+# Innocent Inclusion [bar-lev-fox-2020]
 
-From @cite{bar-lev-fox-2020}, Definition (51):
+From [bar-lev-fox-2020], Definition (51):
 
 > `II(p, C) = ∩{C'' ⊆ C : C''` is maximal s.t.
 > `{r : r ∈ C''} ∪ {p} ∪ {¬q : q ∈ IE(p,C)}` is consistent`}`
@@ -15,7 +15,7 @@ sets.
 
 ## Cell identification
 
-@cite{bar-lev-fox-2020} eq. (20) + (27) + footnote 21. The *cell* of
+[bar-lev-fox-2020] eq. (20) + (27) + footnote 21. The *cell* of
 `Partition(ALT)` containing prejacent `φ` is the strongest proposition
 that assigns a definite truth value to every alternative in `ALT`: the
 prejacent, the negation of every IE-excludable alternative, and the truth
@@ -65,12 +65,12 @@ def exhIEII : Set World := λ w =>
   (∀ r, IsInnocentlyIncludable ALT φ r → r w)
 
 /-- The non-IE alternatives: members of `ALT` not innocently excludable.
-    @cite{bar-lev-fox-2020} (the `C \ IE(p,C)` of paper eq. 20). -/
+    [bar-lev-fox-2020] (the `C \ IE(p,C)` of paper eq. 20). -/
 def nonExcludable : Set (Set World) :=
   {r ∈ ALT | ¬ IsInnocentlyExcludable ALT φ r}
 
 /-- The cell of `Partition(ALT)` containing prejacent `φ`.
-    @cite{bar-lev-fox-2020} eq. (20):
+    [bar-lev-fox-2020] eq. (20):
     `Cell(p, C) = p ∧ ⋂₀ {¬q : q ∈ IE(p, C)} ∧ ⋂₀ (C \ IE(p, C))`. -/
 def cell : Set World := λ w =>
   φ w ∧
@@ -104,7 +104,7 @@ lemma isIICompatible_nonExcludable_of_cell_nonempty
   · exact hexcl q hq
   · exact hne ψ hr
 
-/-- **Cell identification (@cite{bar-lev-fox-2020} footnote 21)**: when the
+/-- **Cell identification ([bar-lev-fox-2020] footnote 21)**: when the
     cell is consistent, the unique MI-set is `nonExcludable`, hence
     `II = nonExcludable`. -/
 theorem II_eq_nonExcludable_of_cell_nonempty
@@ -134,7 +134,7 @@ theorem II_eq_nonExcludable_of_cell_nonempty
             exact hu r (Set.mem_union_right _ hr)
     exact hR.2 _ hRr_compat Set.subset_union_left (Set.mem_union_right _ rfl)
 
-/-- **Cell identification (@cite{bar-lev-fox-2020} eq. 27)**: when the cell
+/-- **Cell identification ([bar-lev-fox-2020] eq. 27)**: when the cell
     is consistent, `exhIEII` coincides with `cell`. -/
 theorem exhIEII_eq_cell_of_cell_nonempty
     (h : (cell ALT φ).Nonempty) :
@@ -154,7 +154,7 @@ theorem exhIEII_eq_cell_of_cell_nonempty
     non-excludable alternatives), every alternative true at `w` is
     innocently includable.
 
-    The abstract content of @cite{bar-lev-fox-2020}'s free-choice
+    The abstract content of [bar-lev-fox-2020]'s free-choice
     derivation: each disjunct is true at the "separately-A-B" world, which
     is the cell witness for `Alt(◇(a∨b))`. -/
 theorem mem_II_of_cell_witness {target : Set World}
@@ -166,7 +166,7 @@ theorem mem_II_of_cell_witness {target : Set World}
 
 /-! ## Cell-witness factorization: from cell verdict to `exhIEII` consequences
 
-The headline theorem of cell-identification (@cite{bar-lev-fox-2020}
+The headline theorem of cell-identification ([bar-lev-fox-2020]
 §3.3): once a cell witness is exhibited, `exhIEII` factors through
 the per-alternative verdict at the witness. In abstract terms, every
 alternative that holds at a cell witness is in II, hence asserted by
@@ -191,7 +191,7 @@ theorem exhIEII_implies_cell_witnessed_alt {target : Set World}
     Given a cell witness and a list of alternatives all true at the
     witness, `exhIEII` jointly entails every list member. The
     cross-mechanism agreement template: any per-alternative-conjunction
-    operator (e.g., @cite{santorio-2018}'s `sdaEval`) factors through
+    operator (e.g., [santorio-2018]'s `sdaEval`) factors through
     `exhIEII` whenever the per-alternatives hold at a shared cell
     witness. -/
 theorem exhIEII_implies_cell_witnessed_alts

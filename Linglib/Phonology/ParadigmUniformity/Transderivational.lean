@@ -4,7 +4,7 @@ import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # Transderivational Paradigm Uniformity — Benua 1997
-@cite{benua-1997}
+[benua-1997]
 
 The paradigm-uniformity face of TCT: provides paradigm-typed
 `Corr`-style API for OO-Faith constraints between a base form and a
@@ -86,7 +86,7 @@ def diagram {α : Type} (input base derivative : List α) : Corr Role α :=
 variable {α : Type*}
 
 /-- IDENT-OO: featural identity of corresponding base and derivative
-    positions. The load-bearing constraint of @cite{benua-1997}'s
+    positions. The load-bearing constraint of [benua-1997]'s
     misapplication unification — high-ranked IDENT-OO forces overapplication
     (Sundanese nasal harmony, Ch 3) and underapplication (Tiberian Hebrew
     spirantization, Ch 4) as duals of one mechanism. -/

@@ -2,7 +2,7 @@ import Linglib.Typology.Question
 
 /-!
 # English question profile
-@cite{wals-2013}
+[wals-2013]
 
 `QuestionProfile` bundle for English (ISO/WALS `eng`) per the project's
 "per-language data flows through Fragments" rule. Substrate types live in

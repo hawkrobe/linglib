@@ -3,10 +3,10 @@ import Linglib.Core.Mereology
 
 /-!
 # Pointwise Dynamic Generalized Quantifiers
-@cite{brasoveanu-2007} @cite{charlow-2021}
+[brasoveanu-2007] [charlow-2021]
 
-@cite{muskens-1996}/@cite{brasoveanu-2007}-style dynamic GQ operators defined over the pointwise
-`Update S := S → S → Prop` type. These correspond to @cite{charlow-2021} §2.
+[muskens-1996]/[brasoveanu-2007]-style dynamic GQ operators defined over the pointwise
+`Update S := S → S → Prop` type. These correspond to [charlow-2021] §2.
 
 The key operators:
 - `Evar`: existential dref introduction (equation 17)
@@ -32,7 +32,7 @@ They are not ranked or ordered; downstream consumers must pick by hand.
 | Post-suppositional | `Writer (Update S) A` | ✓ via deferred cardinality tests | `Quantification/Dynamic/PostSuppositional.lean` |
 | Subtype-polymorphic | `Update S` with `Completeness` enum | rules out pseudo-cumulative by typing | `Quantification/Dynamic/SubtypePolymorphism.lean` |
 
-All five are @cite{charlow-2021}'s work — the paper canvasses them as
+All five are [charlow-2021]'s work — the paper canvasses them as
 alternative repairs to the pointwise system's failure on
 `exactly 3 boys saw exactly 5 movies`. The variants are not equivalent:
 Update-theoretic and Higher-order produce genuine cumulative readings

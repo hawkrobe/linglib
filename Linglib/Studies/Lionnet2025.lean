@@ -8,7 +8,7 @@ open Paradigms.AcceptabilityJudgment
 
 /-!
 # Lionnet (2025): Tonal Languages Without Tone
-@cite{lionnet-2025}
+[lionnet-2025]
 
 Tonal languages without tone: downstep in Drubea and Numèè
 (Oceanic, New Caledonia). *Phonology* 42, e23, 1–43.
@@ -25,15 +25,15 @@ Tonal languages without tone: downstep in Drubea and Numèè
 3. **Culminativity**: each native stem contains at most one downstep.
 
 4. Drubea/Numèè downstep satisfies the core definitional properties
-   of downstep cross-linguistically (@cite{leben-2018}).
+   of downstep cross-linguistically ([leben-2018]).
 
 5. Tonal systems split into **tone-based** (paradigmatic) and
-   **register-based** (syntagmatic), enriching @cite{hyman-2006}'s
+   **register-based** (syntagmatic), enriching [hyman-2006]'s
    word-prosodic typology.
 
 6. The register analysis is more parsimonious than the tonal
    alternative: 1 underlying primitive + 1 postlexical process
-   vs. 3 + 2 (@cite{lionnet-2025} §5).
+   vs. 3 + 2 ([lionnet-2025] §5).
 -/
 
 namespace Lionnet2025
@@ -48,7 +48,7 @@ open Drubea.Prosody
 /-- Every monosyllabic minimal pair shares the same segmental form.
     The contrast is **purely prosodic** — the register feature `l` is
     the only difference between the two members of each pair
-    (@cite{lionnet-2025}). -/
+    ([lionnet-2025]). -/
 theorem minimal_pairs_same_segments :
     monoMinimalPairs.all (fun (a, b) => a.form == b.form) = true := by
   decide
@@ -65,7 +65,7 @@ theorem minimal_pairs_register_contrast :
 -- ============================================================================
 
 /-- Every stem in the Drubea fragment satisfies culminativity:
-    at most one `l` feature per stem (@cite{lionnet-2025} §3.10). -/
+    at most one `l` feature per stem ([lionnet-2025] §3.10). -/
 theorem all_stems_culminative :
     ∀ e ∈ allStems, IsCulminative e.specs := by
   decide
@@ -89,7 +89,7 @@ theorem pattern_culminative_4 (p : StemPattern) :
 
 /-- The three register patterns produce distinct mora-level specifications
     on bimoraic stems, confirming the mora as the RBU
-    (@cite{lionnet-2025} §3.7, §4.2). -/
+    ([lionnet-2025] §3.7, §4.2). -/
 theorem cvPlusV_three_way_distinct :
     StemPattern.registerless.toSpecs 2 ≠ StemPattern.σ1_downstepped.toSpecs 2 ∧
     StemPattern.registerless.toSpecs 2 ≠ StemPattern.σ2_downstepped.toSpecs 2 ∧
@@ -157,14 +157,14 @@ theorem mixed_terracing :
 -- ============================================================================
 
 /-- Abrupt h-epenthesis: insert `h` on the registerless RBU immediately
-    preceding a downstep (cf. ex. 13b; @cite{lionnet-2025} §3.2, §4.4). -/
+    preceding a downstep (cf. ex. 13b; [lionnet-2025] §3.2, §4.4). -/
 theorem h_epenthesis_abrupt :
     hEpenthesis [TRN.empty, TRN.downstep, TRN.empty] =
       [TRN.upstep, TRN.downstep, TRN.empty] := by rfl
 
 /-- Spreading h-epenthesis: raising extends over the entire sequence
     of registerless syllables before a downstep
-    (@cite{lionnet-2025} §3.2). -/
+    ([lionnet-2025] §3.2). -/
 theorem h_epenthesis_spreads :
     hEpenthesisSpread [TRN.empty, TRN.empty, TRN.empty, TRN.downstep, TRN.empty] =
       [TRN.upstep, TRN.upstep, TRN.upstep, TRN.downstep, TRN.empty] := by rfl
@@ -174,7 +174,7 @@ theorem h_epenthesis_spreads :
 -- ============================================================================
 
 /-- Utterance-initial downstep is not phonetically realized: there is
-    no preceding register to contrast with (@cite{lionnet-2025} §3.5,
+    no preceding register to contrast with ([lionnet-2025] §3.5,
     §4.5). The realized pitch sequence is indistinguishable from a
     registerless initial. -/
 theorem utt_initial_no_contrast :
@@ -185,7 +185,7 @@ theorem utt_initial_no_contrast :
 /-- The contrast between registerless and downstepped IS maintained
     when a downstepped syllable follows: the initial registerless
     syllable undergoes pre-downstep raising, the initial downstepped
-    one does not (@cite{lionnet-2025} §3.5, §4.5). The minimal pair
+    one does not ([lionnet-2025] §3.5, §4.5). The minimal pair
     `/goo ⁺mie/` 'wet Hibbertia' (registerless initial → h-epenthesis)
     vs `/⁺goo ⁺mie/` 'wet tree' (downstepped initial → no h-epenthesis)
     is the diagnostic. -/
@@ -197,7 +197,7 @@ theorem utt_initial_contrast_with_following_downstep :
     `realizePitchUtterance` only suppresses the *phonetic* drop, leaving
     the underlying `l` in place to block h-epenthesis on itself. The
     underlying form is still culminative-sensitive
-    (@cite{lionnet-2025} §3.5). -/
+    ([lionnet-2025] §3.5). -/
 theorem utt_initial_l_underlyingly_active :
     -- Phonetically flat utterance-initially…
     realizePitchUtterance 4 [TRN.downstep, TRN.downstep] = realizePitch 4 [TRN.empty, TRN.downstep] ∧
@@ -210,7 +210,7 @@ theorem utt_initial_l_underlyingly_active :
 -- ============================================================================
 
 /-- Drubea utterance-final raising: `h%` docks onto the final
-    registerless syllable (@cite{lionnet-2025} §3.3, §4.8). The
+    registerless syllable ([lionnet-2025] §3.3, §4.8). The
     Numèè utterance-final downstep `⁺%` is formalized separately
     in §13 because its eligibility conditions (light CV + registerless
     penult) require explicit syllable structure. -/
@@ -223,8 +223,8 @@ theorem drubea_final_raising :
 -- ============================================================================
 
 /-- Drubea/Numèè downstep satisfies all three core definitional
-    properties of downstep (@cite{leben-2018}: 2;
-    @cite{lionnet-2025} §6.1):
+    properties of downstep ([leben-2018]: 2;
+    [lionnet-2025] §6.1):
 
     (a) affects the entire prosodic domain (not just one tone)
     (b) changes the register for what follows
@@ -248,7 +248,7 @@ theorem drubea_core_properties :
     equality of `minimal_pairs_same_segments` plus the register
     contrast of `minimal_pairs_register_contrast`) is exactly what
     `functionsContrastively` claims for the lexical case
-    (@cite{lionnet-2025} §3.10). -/
+    ([lionnet-2025] §3.10). -/
 theorem drubea_contrastively_witnessed :
     drubeaDownstep.functionsContrastively = true ∧
     ∃ a b : StemEntry, a.form = b.form ∧ a.specs ≠ b.specs := by
@@ -261,14 +261,14 @@ theorem drubea_contrastively_witnessed :
 -- § 9: Register vs Tonal Analysis
 -- ============================================================================
 
-/-- The register analysis of Drubea/Numèè (@cite{lionnet-2025} §4):
+/-- The register analysis of Drubea/Numèè ([lionnet-2025] §4):
     1 underlying primitive (the `l` feature) and
     1 postlexical process (h-epenthesis). -/
 def registerAnalysis : AnalysisInventory where
   underlyingPrimitives := 1  -- just `l`
   postlexicalProcesses := 1  -- h-epenthesis
 
-/-- The competing tonal analysis (@cite{lionnet-2025} §5):
+/-- The competing tonal analysis ([lionnet-2025] §5):
     3 representational primitives (underlying L + epenthetic H +
     epenthetic downstep ⁺) and 2 postlexical processes (OCP-driven
     downstep insertion + H-spreading for pre-downstep raising).
@@ -293,7 +293,7 @@ theorem register_more_parsimonious :
 
 /-- Drubea is the first attested **register-only** word-prosodic system:
     tonal contrasts defined entirely syntagmatically, with no paradigmatic
-    tone features (@cite{lionnet-2025} §6.2, Conclusion). -/
+    tone features ([lionnet-2025] §6.2, Conclusion). -/
 theorem drubea_is_register_based :
     wordProsodicType = .registerBased := rfl
 
@@ -301,7 +301,7 @@ theorem drubea_is_register_based :
 -- § 11: Connection to Hyman 2006
 -- ============================================================================
 
-/-- Drubea is +tone under @cite{hyman-2006}'s definition (3): pitch
+/-- Drubea is +tone under [hyman-2006]'s definition (3): pitch
     (via register features) enters into the lexical realization of
     morphemes. The minimal pairs in §1 demonstrate this directly. -/
 theorem drubea_is_tonal_hyman :
@@ -314,7 +314,7 @@ theorem drubea_enriches_hyman :
     Hyman2006.isTonalUnderHyman .registerBased = true ∧
     wordProsodicType = .registerBased := ⟨rfl, rfl⟩
 
-/-- Drubea is +T, −SA under @cite{hyman-2006}'s 2×2 typology
+/-- Drubea is +T, −SA under [hyman-2006]'s 2×2 typology
     (same quadrant as Yoruba). -/
 theorem drubea_quadrant :
     Hyman2006.drubea.quadrant = .toneOnly := rfl
@@ -327,7 +327,7 @@ theorem drubea_quadrant :
     has at most one `l` feature. This is `IsCulminative` from
     RegisterTier, applied to all stems in §2.
 
-    This is NOT @cite{hyman-2006}'s stress culminativity (def. 5b),
+    This is NOT [hyman-2006]'s stress culminativity (def. 5b),
     which concerns primary stress per word. Drubea has no stress
     accent system — OBLHEAD does not apply. The two uses of
     "culminativity" are formally parallel but phonologically distinct
@@ -340,7 +340,7 @@ theorem drubea_register_culminative_not_stress :
   ⟨all_stems_culminative, rfl⟩
 
 -- ============================================================================
--- § 13: Numèè Boundary Downstep ⁺% (@cite{lionnet-2025} §3.4)
+-- § 13: Numèè Boundary Downstep ⁺% ([lionnet-2025] §3.4)
 -- ============================================================================
 
 /-! Numèè shares Drubea's underlying register inventory (registerless vs
@@ -355,13 +355,13 @@ theorem drubea_register_culminative_not_stress :
 open Numee.Prosody
 
 /-- Boundary `⁺%` downsteps a registerless light CV final preceded by
-    a registerless syllable (@cite{lionnet-2025} ex. 24). -/
+    a registerless syllable ([lionnet-2025] ex. 24). -/
 theorem numee_registerless_final_single :
     numeeBoundaryEffect [jaa, niCoconut] = .single := by decide
 
 /-- An *already-downstepped* light CV final receives a *second* downstep
     at the boundary — the stacked `⁺⁺` that preserves the underlying
-    contrast in final position (@cite{lionnet-2025} ex. 25). The minimal
+    contrast in final position ([lionnet-2025] ex. 25). The minimal
     pair `nĩ` 'coconut' (registerless) vs `⁺nĩ` 'breast' (downstepped)
     is realised utterance-finally as a one-step vs two-step pitch drop
     on the same surface segments. -/
@@ -377,18 +377,18 @@ theorem numee_minimal_pair_distinguished :
   decide
 
 /-- A **heavy CVV** final blocks the boundary downstep — eligibility
-    requires a light (monomoraic) final (@cite{lionnet-2025} ex. 26). -/
+    requires a light (monomoraic) final ([lionnet-2025] ex. 26). -/
 theorem numee_heavy_final_blocks :
     numeeBoundaryEffect [regCV, mii] = .none := by decide
 
 /-- A **downstepped preceding syllable** blocks the boundary, even
     when the final is light CV and registerless
-    (@cite{lionnet-2025} ex. 28: `⁺tĩĩ ku` 'three yams'). -/
+    ([lionnet-2025] ex. 28: `⁺tĩĩ ku` 'three yams'). -/
 theorem numee_after_downstepped_blocks :
     numeeBoundaryEffect [regCVV, beTii, ku] = .none := by decide
 
 /-- Same blocking pattern with a different downstepped penult and
-    different light CV final (@cite{lionnet-2025} ex. 29: `⁺paa kwɛ̃`
+    different light CV final ([lionnet-2025] ex. 29: `⁺paa kwɛ̃`
     'down sand'). -/
 theorem numee_after_downstepped_blocks' :
     numeeBoundaryEffect [niCoconut, paa, kwe] = .none := by decide

@@ -5,7 +5,7 @@ import Linglib.Typology.Extraction
 # Relative clauses: structural core
 
 Theory-neutral types for cross-linguistic relative-clause data: the
-@cite{keenan-comrie-1977} Accessibility Hierarchy, the relative-clause
+[keenan-comrie-1977] Accessibility Hierarchy, the relative-clause
 position relative to the head noun, what occupies the relativized position
 (NP_rel), and the `Marker` schema fragments instantiate. Fragments use these
 to encode relative-clause markers and their distributional properties;
@@ -15,7 +15,7 @@ Accessibility Hierarchy. Mirrors `Features.Case` for case inventories.
 ## Main declarations
 
 * `RelativeClause.AHPosition` — grammatical positions on the
-  @cite{keenan-comrie-1977} Accessibility Hierarchy, with `rank` and the
+  [keenan-comrie-1977] Accessibility Hierarchy, with `rank` and the
   `contiguousOnAH` segment predicate (HC₂).
 * `RelativeClause.RCPosition` — position of the relative clause with respect
   to the head noun (post-nominal, pre-nominal, internally-headed, correlative).
@@ -30,7 +30,7 @@ Accessibility Hierarchy. Mirrors `Features.Case` for case inventories.
 ## Implementation notes
 
 The contiguity machinery (`contiguousOnAH`, `AHPosition.rank`) mirrors
-`Core.validInventory` for the case hierarchy (@cite{blake-1994}); the
+`Core.validInventory` for the case hierarchy ([blake-1994]); the
 `contiguousOnAH : Bool` kernel with a `ContiguousOnAH : Prop` wrapper is the
 load-bearing form for the decide-checked case analyses in
 `Studies/KeenanComrie1977.lean`. Coverage predicates (`Covers`, `IsContinuous`,
@@ -46,7 +46,7 @@ open Typology (ExtractionTarget)
 
 /-! ### Grammatical positions on the Accessibility Hierarchy -/
 
-/-- Grammatical positions on the @cite{keenan-comrie-1977} Accessibility
+/-- Grammatical positions on the [keenan-comrie-1977] Accessibility
     Hierarchy (AH).
 
     The hierarchy ranks grammatical relations by their accessibility to
@@ -126,7 +126,7 @@ inductive RCPosition where
 
 /-- What occupies the relativized position (NP_rel) inside the RC.
 
-    This is the core of @cite{keenan-comrie-1977}'s ±case distinction:
+    This is the core of [keenan-comrie-1977]'s ±case distinction:
     -case strategies delete NP_rel (gap), while +case strategies retain
     a pronominal element that bears case marking. -/
 inductive NPRelType where
@@ -141,13 +141,13 @@ inductive NPRelType where
       is partially pronounced rather than fully deleted. Featurally
       reduced relative to a bound resumptive (e.g., personless in
       Swahili). Diagnosed by parasitic gap constructions.
-      @cite{scott-2021} -/
+      [scott-2021] -/
   | resumptiveMovement
   /-- Bound resumptive: a base-generated pronoun syntactically bound
       by the head of the relative clause. Not a movement copy — immune
       to chain reduction. Retains full person features. Diagnosed by
       obligatory presence inside adjunct islands.
-      @cite{scott-2021} -/
+      [scott-2021] -/
   | resumptiveBound
   /-- Relative pronoun: NP_rel is a dedicated relative pronoun that
       typically fronts to clause-initial position and bears case.
@@ -159,15 +159,15 @@ inductive NPRelType where
   deriving DecidableEq, Repr
 
 /-- The movement/base-generation status of a resumptive pronoun, for
-    languages where the two coexist morphologically (@cite{scott-2021} for
-    Swahili, @cite{sichel-2014} for Hebrew). -/
+    languages where the two coexist morphologically ([scott-2021] for
+    Swahili, [sichel-2014] for Hebrew). -/
 inductive ResumptiveKind where
   /-- A partially-pronounced lower copy of an Ā-movement chain. -/
   | movementCopy
   /-- A base-generated pronoun bound by the relative-clause head. -/
   | bound
   /-- A resumptive whose movement-vs-base-generation status is unspecified
-      (pre-@cite{scott-2021} typology). -/
+      (pre-[scott-2021] typology). -/
   | unspecified
   deriving DecidableEq, Repr
 
@@ -184,7 +184,7 @@ def NPRelType.resumptiveKind : NPRelType → Option ResumptiveKind
 /-! ### Realization -/
 
 /-- What a single relative-clause derivation *realizes*, stated
-    framework-neutrally: the relativized @cite{keenan-comrie-1977} AH position
+    framework-neutrally: the relativized [keenan-comrie-1977] AH position
     and the NP_rel type occupying it.
 
     This is the hook by which a syntactic framework's derivation connects to the
@@ -235,7 +235,7 @@ structure Marker where
       so the field stays single-valued.
 
       The descriptive distinction is the one Arabic grammars draw
-      (Wright 1896; Cantarino 1974; @cite{ryding-2005}): MSA *alladhī*
+      (Wright 1896; Cantarino 1974; [ryding-2005]): MSA *alladhī*
       with definite antecedents vs Ø-relative-pronoun with indefinite
       antecedents. Substrate makes no claim about syntactic mechanism. -/
   headDefiniteness : Option Features.Definiteness.Definiteness := none
@@ -260,9 +260,9 @@ def hasAHRank (positions : List AHPosition) (r : Nat) : Bool :=
     for every pair of positions in the set, every intermediate rank
     is also represented.
 
-    Mirrors `Core.validInventory` for the case hierarchy (@cite{blake-1994}).
+    Mirrors `Core.validInventory` for the case hierarchy ([blake-1994]).
 
-    This formalizes HC₂ of @cite{keenan-comrie-1977}: "Any RC-forming
+    This formalizes HC₂ of [keenan-comrie-1977]: "Any RC-forming
     strategy must apply to a continuous segment of the AH." -/
 def contiguousOnAH (positions : List AHPosition) : Bool :=
   positions.all fun p1 =>
@@ -292,7 +292,7 @@ def Marker.IsContinuous (m : Marker) : Prop :=
 instance (m : Marker) : Decidable m.IsContinuous :=
   inferInstanceAs (Decidable (ContiguousOnAH _))
 
-/-- A marker is **primary** in @cite{keenan-comrie-1977}'s sense if it can be
+/-- A marker is **primary** in [keenan-comrie-1977]'s sense if it can be
     used to relativize subjects. HC₁ requires every language to have at
     least one primary marker. -/
 def Marker.IsPrimary (m : Marker) : Prop :=
@@ -326,7 +326,7 @@ theorem ah_transitive (a b c : AHPosition)
 
 Maps between `Typology.ExtractionTarget` (5 structural positions from
 extraction morphology, in `Typology/Extraction.lean`) and `AHPosition` (6
-positions on the @cite{keenan-comrie-1977} Accessibility Hierarchy). Both
+positions on the [keenan-comrie-1977] Accessibility Hierarchy). Both
 encode overlapping Ā-movement phenomena: extraction focuses on *where*
 extraction occurs (Mayan, Austronesian, Celtic Fragments); the AH focuses on
 *what can be relativized*. The bridge is partial: `AHPosition.objComparison`

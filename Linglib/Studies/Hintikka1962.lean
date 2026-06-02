@@ -2,9 +2,9 @@ import Linglib.Discourse.Commitment.Frame
 
 /-!
 # Hintikka (1962): Doxastic indefensibility of Moore's sentence
-@cite{hintikka-1962}
+[hintikka-1962]
 
-@cite{hintikka-1962} Ch. 4 analysis of Moore's paradox. The sentence
+[hintikka-1962] Ch. 4 analysis of Moore's paradox. The sentence
 "p but I do not believe that p" is not self-contradictory — there are
 worlds where `p` holds while the speaker fails to believe `p`. But its
 would-be-believed form `B_a (p ∧ ¬ B_a p)` is *indefensible* in any KD4

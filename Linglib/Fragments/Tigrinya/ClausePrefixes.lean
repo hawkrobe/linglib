@@ -2,8 +2,8 @@ import Linglib.Syntax.Minimalist.Basic
 import Linglib.Morphology.MorphWord
 
 /-!
-# Tigrinya Clausal Prefixes @cite{cacchioli-2025}
-@cite{pollock-1989} @cite{rizzi-1997}
+# Tigrinya Clausal Prefixes [cacchioli-2025]
+[pollock-1989] [rizzi-1997]
 
 Lexical entries for Tigrinya's four clause-initial morphemes, analyzed as
 spell-outs of distinct heads in a cartographic left periphery.
@@ -95,7 +95,7 @@ def ki : ClausePrefixEntry where
   takesAgreementSuffix := true
 
 /-- kəmzi- : factive complementizer.
-    Spells out Force (@cite{rizzi-1997} split-CP).
+    Spells out Force ([rizzi-1997] split-CP).
     Selected by knowledge/commentative verbs.
     "kəmzi-mäs'ə" = COMP-come = "that (he) came" (factive) -/
 def kemzi : ClausePrefixEntry where

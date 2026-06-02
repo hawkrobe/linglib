@@ -4,12 +4,12 @@ import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Fox & Spector 2018: Economy and Embedded Exhaustification
-@cite{fox-spector-2018}
+[fox-spector-2018]
 
 Fox, D. & Spector, B. (2018). Economy and embedded exhaustification.
 Natural Language Semantics, 26(1), 1–50.
 
-## Empirical support: @cite{chemla-spector-2011}
+## Empirical support: [chemla-spector-2011]
 
 The economy-condition framework predicts that embedded `exh` is
 licensed precisely when its insertion is non-vacuous. CS11's §4.4.5
@@ -31,7 +31,7 @@ constraint derives three previously independent generalizations:
 1. **Hurford's Constraint**: disjunctions where one disjunct entails
    the other are infelicitous (unless rescued by embedded `exh`)
 2. **Singh's Asymmetry**: "p or q, or both" is acceptable but
-   "both, or p or q" is not (@cite{singh-2008})
+   "both, or p or q" is not ([singh-2008])
 3. **Implicature Focus Generalization (IFG)**: embedded `exh` under
    DE operators requires focus on the scalar item
 
@@ -56,12 +56,12 @@ non-weaker alternatives, `exh` is vacuous (proved by
 `symmetric_exhB_vacuous`). Vacuous `exh` violates economy
 (`vacuous_violates_economy`), so the grammar rejects the parse
 rather than producing wrong results. But economy does not *derive*
-the correct SI — that requires @cite{katzir-2007}'s structural
+the correct SI — that requires [katzir-2007]'s structural
 complexity restricting the alternative set (see
 `Structural.lean`).
 
 Economy and structural complexity are **complementary**:
-- @cite{katzir-2007} determines *which* alternatives enter the set
+- [katzir-2007] determines *which* alternatives enter the set
   → breaks symmetry → `exh` derives the correct SI
 - Economy determines *whether* `exh` is licensed given those
   alternatives → blocks vacuous/weakening insertions
@@ -207,7 +207,7 @@ theorem hurford_from_economy (ALT : Set (Set World)) (A B : Set World)
 -- ============================================================
 
 /-!
-## Singh's Asymmetry (@cite{singh-2008})
+## Singh's Asymmetry ([singh-2008])
 
 "Mary read [A or B] or [A and B]" ✓ (weak first)
 "Mary read [A and B] or [A or B]" # (strong first)
@@ -439,7 +439,7 @@ Vacuous `exh` violates economy, so the grammar rejects the parse
 rather than producing wrong results.
 
 Economy and structural complexity are **complementary**:
-- @cite{katzir-2007} determines *which* alternatives enter the set
+- [katzir-2007] determines *which* alternatives enter the set
   → breaks symmetry → `exh` derives the correct SI
 - Economy determines *whether* `exh` is licensed given those
   alternatives → blocks vacuous/weakening insertions

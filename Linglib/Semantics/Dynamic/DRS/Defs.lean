@@ -4,7 +4,7 @@ import Mathlib.ModelTheory.Basic
 
 /-!
 # Discourse Representation Structures (faithful, model-theoretic core)
-@cite{kamp-reyle-1993}
+[kamp-reyle-1993]
 
 A faithful Lean model of the canonical DRS data type, built on mathlib's
 `FirstOrder.Language` so its semantics can be given model-theoretically (via
@@ -45,11 +45,11 @@ universe u v w
 
 mutual
 /-- A discourse representation structure: the pair `⟨referents, conditions⟩`
-(@cite{kamp-reyle-1993}, Def. 1.4.1). `referents` is the universe `U` (a finite
+([kamp-reyle-1993], Def. 1.4.1). `referents` is the universe `U` (a finite
 set of discourse referents); `conditions` the DRS-conditions. -/
 inductive DRS (L : Language.{u, v}) (V : Type w) where
   | mk (referents : Finset V) (conditions : List (Condition L V))
-/-- A DRS-condition (@cite{kamp-reyle-1993}, Def. 1.4.1): atomic (`rel`, `eq`) or
+/-- A DRS-condition ([kamp-reyle-1993], Def. 1.4.1): atomic (`rel`, `eq`) or
 complex (`neg`, `imp`, `dis`). Sub-DRSs occur only inside complex conditions. -/
 inductive Condition (L : Language.{u, v}) (V : Type w) where
   /-- Atomic condition: `n`-ary relation symbol `R` applied to referents `args`. -/
@@ -86,7 +86,7 @@ def conditions : DRS L V → List (Condition L V)
 def empty : DRS L V := .mk ∅ []
 
 /-- Merge `⊕`: set-union the referents, concatenate the conditions. The binary
-DRS merge is @cite{muskens-1996}'s compositional operation — Kamp & Reyle
+DRS merge is [muskens-1996]'s compositional operation — Kamp & Reyle
 themselves combine DRSs incrementally via the construction algorithm, not a
 symmetric binary `⊕`. An operation, not a syntactic constructor. -/
 def merge [DecidableEq V] (K₁ K₂ : DRS L V) : DRS L V :=
@@ -103,7 +103,7 @@ end DRS
 /-! ### Subordination and accessibility -/
 
 /-- One-step subordination ("`K'` is *directly subordinate* to `K`"). The `neg`
-case is @cite{kamp-reyle-1993} Def. 1.4.10(i); the `⇒`/`∨` cases are its Chapter 2
+case is [kamp-reyle-1993] Def. 1.4.10(i); the `⇒`/`∨` cases are its Chapter 2
 extension:
 
 * the body of a `¬` is subordinate to the containing DRS;
@@ -120,12 +120,12 @@ inductive DirectlySubordinate {L : Language.{u, v}} {V : Type w} :
   | disR {D l r : DRS L V} : Condition.dis l r ∈ D.conditions → DirectlySubordinate r D
 
 /-- `K₁ < K₂`: subordinate — transitive closure of `DirectlySubordinate`
-(@cite{kamp-reyle-1993}, Def. 1.4.10(ii)). -/
+([kamp-reyle-1993], Def. 1.4.10(ii)). -/
 abbrev Subordinate {L : Language.{u, v}} {V : Type w} : DRS L V → DRS L V → Prop :=
   Relation.TransGen DirectlySubordinate
 
 /-- `K₁ ≤ K₂`: weakly subordinate — reflexive-transitive closure
-(@cite{kamp-reyle-1993}; the `≤` of Def. 1.4.10). -/
+([kamp-reyle-1993]; the `≤` of Def. 1.4.10). -/
 abbrev WeakSubordinate {L : Language.{u, v}} {V : Type w} : DRS L V → DRS L V → Prop :=
   Relation.ReflTransGen DirectlySubordinate
 

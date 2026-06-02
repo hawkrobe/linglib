@@ -2,7 +2,7 @@ import Linglib.Semantics.Quantification.UnifiedUniversal
 
 /-!
 # ONE Modifiers for Distributive Universal Quantifiers
-@cite{haslinger-etal-2025-nllt}
+[haslinger-etal-2025-nllt]
 
 In 2-form languages (English, German, Hindi, ...), distributive [+dist]
 UQ forms contain an additional syntactic head ONE below Q_∀ that
@@ -31,7 +31,7 @@ open Semantics.Quantification.UnifiedUniversal
 **ONE_∅**: presupposes that the restrictor contains at least two
 elements and that no two distinct elements overlap.
 
-@cite{haslinger-etal-2025-nllt} eq. (75a): blocks plural complements
+[haslinger-etal-2025-nllt] eq. (75a): blocks plural complements
 (which contain overlapping sums) and forces [+dist] readings.
 -/
 structure ONE_empty {α : Type*} [PartialOrder α] (P : α → Prop) : Prop where
@@ -44,7 +44,7 @@ structure ONE_empty {α : Type*} [PartialOrder α] (P : α → Prop) : Prop wher
 **ONE_AT**: presupposes that the restrictor contains at least two
 elements and that all elements are atoms.
 
-@cite{haslinger-etal-2025-nllt} eq. (75b): additionally blocks
+[haslinger-etal-2025-nllt] eq. (75b): additionally blocks
 degree-interval predicates like *ten minutes* (which are non-atomic).
 This distinguishes *each* from *every*.
 -/
@@ -71,14 +71,14 @@ theorem ONE_AT_implies_ONE_empty {α : Type*} [PartialOrder α]
 /--
 **all = Q_∀**: bare universal quantifier, no ONE modifier.
 Non-distributive with PL complements, distributive with SG complements.
-@cite{haslinger-etal-2025-nllt} eq. (79a).
+[haslinger-etal-2025-nllt] eq. (79a).
 -/
 abbrev allSem {α : Type*} [PartialOrder α] := @QForall α _
 
 /--
 **every = Q_∀ + ONE_∅**: universal quantifier with non-overlap presupposition.
 Always distributive (since ONE_∅ ensures all elements are maxNonOverlap).
-@cite{haslinger-etal-2025-nllt} eq. (79b).
+[haslinger-etal-2025-nllt] eq. (79b).
 -/
 def everyPresup {α : Type*} [PartialOrder α]
     (P : α → Prop) (Q : α → Prop) : Prop :=
@@ -87,7 +87,7 @@ def everyPresup {α : Type*} [PartialOrder α]
 /--
 **each = Q_∀ + ONE_∅ + ONE_AT**: universal quantifier with atomicity
 presupposition. Always distributive, and restricted to atomic predicates.
-@cite{haslinger-etal-2025-nllt} eq. (79c).
+[haslinger-etal-2025-nllt] eq. (79c).
 -/
 def eachPresup {α : Type*} [PartialOrder α]
     (P : α → Prop) (Q : α → Prop) : Prop :=

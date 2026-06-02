@@ -2,7 +2,7 @@ import Linglib.Syntax.Pronoun.Basic
 
 /-!
 # German Pronoun Fragment
-@cite{adamson-zompi-2025}
+[adamson-zompi-2025]
 
 Personal pronouns for German, including the polite pronoun SIE.
 
@@ -20,10 +20,10 @@ refer to either a singular or plural addressee.
 ## Person hierarchy effects
 
 SIE triggers PCC effects in German's limited PCC environments (Wackernagel
-clusters, @cite{anagnostopoulou-2008}), patterning with 2nd person ((47)–(48)).
+clusters, [anagnostopoulou-2008]), patterning with 2nd person ((47)–(48)).
 In contrast, SIE does NOT trigger the exponence-based person hierarchy effect
-in assumed-identity copular constructions (@cite{keine-et-al-2019},
-@cite{coon-keine-2021}), patterning with 3rd person ((52)–(53)).
+in assumed-identity copular constructions ([keine-et-al-2019],
+[coon-keine-2021]), patterning with 3rd person ((52)–(53)).
 -/
 
 namespace German.Pronouns
@@ -47,7 +47,7 @@ def du : PersonalPronoun :=
     Unlike Italian LEI (3sg.f) and Spanish USTED (3sg), German SIE uses
     the 3pl series. Agreement person is 3rd (plural), interpretable person
     is 2nd. Can refer to singular or plural addressees.
-    @cite{adamson-zompi-2025} -/
+    [adamson-zompi-2025] -/
 def sie_polite : PersonalPronoun :=
   { form := "Sie", person := some .third, number := some .pl, register := .formal,
     referentialPerson := some .second }
@@ -88,7 +88,7 @@ theorem tv_distinction :
     du.register = .informal ∧ sie_polite.register = .formal := ⟨rfl, rfl⟩
 
 /-- SIE has 3rd person (plural) agreement features but 2nd person
-    interpretable features. @cite{adamson-zompi-2025} -/
+    interpretable features. [adamson-zompi-2025] -/
 theorem sie_polite_dual_person :
     sie_polite.person = some .third ∧
     sie_polite.referentialPerson = some .second := ⟨rfl, rfl⟩

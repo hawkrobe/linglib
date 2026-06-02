@@ -1,6 +1,6 @@
 /-
 # Korean Pronoun & Allocutive Fragment
-@cite{kwon-lee-2026} @cite{sohn-1999}
+[kwon-lee-2026] [sohn-1999]
 
 Personal pronouns and allocutive particles in Korean. Korean has
 particle-based allocutive marking (*-yo* polite, *-(su)pnida* formal)
@@ -12,7 +12,7 @@ plain/humble distinction (*na* / *jeo*).
 Korean is discourse-oriented: the unmarked 3rd-person reference is **null**
 (*pro*). The 3rd-person pronoun system splits by register, with a strong
 written/spoken asymmetry (corpus counts from Lee et al. 2010 cited in
-@cite{kwon-lee-2026} fn. 2):
+[kwon-lee-2026] fn. 2):
 
 * *geu* (그) — literary 3sg masculine. 76,235 tokens in written vs only
   145 in oral data. Yale romanization: *ku*.
@@ -22,13 +22,13 @@ written/spoken asymmetry (corpus counts from Lee et al. 2010 cited in
 * *gyae* (걔) — colloquial gender-neutral 3sg. The reverse pattern: 1,160
   oral tokens vs 226 written. Contracted from *ku ay* ('that' + contracted
   *ai* 'child'). Implies the speaker has familiarity with the referent
-  (@cite{kwon-lee-2026} §5). Yale romanization: *kyay* (used in
-  @cite{kwon-lee-2026}).
+  ([kwon-lee-2026] §5). Yale romanization: *kyay* (used in
+  [kwon-lee-2026]).
 
 Traditional Korean relies on null reference, demonstratives, and full
-NPs (e.g., *ku chinkwu* 'that friend'). Per @cite{kwon-lee-2026},
+NPs (e.g., *ku chinkwu* 'that friend'). Per [kwon-lee-2026],
 the three form types null *pro*, overt *gyae*, and demonstrative+noun
-full NPs instantiate three points on @cite{ariel-2001}'s Accessibility
+full NPs instantiate three points on [ariel-2001]'s Accessibility
 Marking Scale.
 
 ## Romanization
@@ -79,14 +79,14 @@ def dangsin : PersonalPronoun :=
 -- ============================================================================
 
 /-- 그 *geu* (Yale: *ku*) — 3sg masculine, **literary** register.
-    76,235 written vs 145 oral tokens (@cite{kwon-lee-2026} fn. 2). -/
+    76,235 written vs 145 oral tokens ([kwon-lee-2026] fn. 2). -/
 def geu : PersonalPronoun :=
   { form := "geu", script := some "그", person := some .third, number := some .sg
   , gender := some .masculine, register := .formal }
 
 /-- 그녀 *geunyeo* (Yale: *kunye*) — 3sg feminine, **literary** register.
     Compound of *ku* ('that') + *nye* ('female'). 25,085 written vs
-    9 oral tokens (@cite{kwon-lee-2026} fn. 2). -/
+    9 oral tokens ([kwon-lee-2026] fn. 2). -/
 def geunyeo : PersonalPronoun :=
   { form := "geunyeo", script := some "그녀", person := some .third, number := some .sg
   , gender := some .feminine, register := .formal }
@@ -95,8 +95,8 @@ def geunyeo : PersonalPronoun :=
     Contracted from *ku ay* ('that' + contracted *ai* 'child'). 1,160
     oral vs 226 written tokens — the reverse register pattern of
     *geu*/*geunyeo*. Implies familiarity between speaker and referent
-    (@cite{kwon-lee-2026} §5). The overt-pronoun referential form
-    tested in @cite{kwon-lee-2026}'s experiments. -/
+    ([kwon-lee-2026] §5). The overt-pronoun referential form
+    tested in [kwon-lee-2026]'s experiments. -/
 def gyae : PersonalPronoun :=
   { form := "gyae", script := some "걔", person := some .third, number := some .sg
   , register := .informal }
@@ -188,7 +188,7 @@ theorem verb_three_levels :
     ga.register = .informal ∧ gayo.register = .neutral ∧ gamnida.register = .formal := ⟨rfl, rfl, rfl⟩
 
 /-- 3rd-person pronouns split by register: *gyae* is colloquial,
-    *geu*/*geunyeo*/*geudeul* are literary (@cite{kwon-lee-2026} fn. 2). -/
+    *geu*/*geunyeo*/*geudeul* are literary ([kwon-lee-2026] fn. 2). -/
 theorem third_person_register_split :
     gyae.register = .informal ∧
     geu.register = .formal ∧

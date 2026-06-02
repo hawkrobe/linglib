@@ -24,7 +24,7 @@ ARE proved here:
   not context-free, neither is the source.
 * `Language.not_isContextFree_of_inter_regular_not` — if `L ∩ R` is not
   context-free for some regular `R`, neither is `L`.
-* `Language.not_isContextFree_via_witness` — the packaged @cite{shieber-1985}
+* `Language.not_isContextFree_via_witness` — the packaged [shieber-1985]
   proof schema: argue `L` is non-CF by mapping it through a homomorphism,
   intersecting with a regular filter, and exhibiting a non-CF witness in
   the result. Used by Swiss German non-CF (Shieber 1985), Dutch non-CF
@@ -74,8 +74,8 @@ theorem Language.not_isContextFree_of_inter_regular_not {α : Type*}
     homomorphic image of `L` intersected with a regular language `R`
     contains a non-context-free witness, then `L` is not context-free.
 
-    This is the proof shape used by @cite{shieber-1985} for Swiss German,
-    closely paralleled by @cite{huybregts-1976} for Dutch, and applicable
+    This is the proof shape used by [shieber-1985] for Swiss German,
+    closely paralleled by [huybregts-1976] for Dutch, and applicable
     to any future natural-language non-CF argument that proceeds via
     homomorphic abstraction (e.g., case-marker-only projection) plus
     regular filtering (e.g., case-sorted clause shape). -/

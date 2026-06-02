@@ -3,7 +3,7 @@ import Linglib.Studies.Ross1967
 
 /-!
 # Bridge: HPSG Extraction to Filler-Gap Phenomena
-@cite{sag-wasow-bender-2003} @cite{hofmeister-sag-2010}
+[sag-wasow-bender-2003] [hofmeister-sag-2010]
 
 Connects HPSG's Head-Filler Schema and SLASH mechanism to empirical
 filler-gap data in `Phenomena.FillerGap`.
@@ -118,7 +118,7 @@ def islandToGapRestriction : ConstraintType → GapRestriction
   | .subject           => .npOnly    -- weak: some NP extraction ok
   | .sententialSubject => .noGap     -- absolute barrier
   | .mannerOfSpeaking  => .npOnly    -- weak: ameliorable with focus
-  | .definiteNominal   => .npOnly    -- weak: ameliorated by VOCs (@cite{shen-huang-2026})
+  | .definiteNominal   => .npOnly    -- weak: ameliorated by VOCs ([shen-huang-2026])
 
 /-- HPSG predicts all absolute islands block extraction. -/
 theorem absolute_islands_block :

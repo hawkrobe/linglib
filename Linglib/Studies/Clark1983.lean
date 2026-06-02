@@ -7,7 +7,7 @@ import Mathlib.Data.Fintype.BigOperators
 
 /-!
 # Clark 1983 — Making Sense of Nonce Sense
-@cite{clark-1983} @cite{clark-clark-1979}
+[clark-1983] [clark-clark-1979]
 
 Clark, Herbert H. (1983). Making sense of nonce sense. In G.B. Flores d'Arcais
 & R.J. Jarvella (Eds.), *The Process of Language Understanding*, pp. 297–331.
@@ -322,8 +322,8 @@ def GoalHierarchy.isInnovative {W : Type*} (g : GoalHierarchy W) : Prop :=
 
 /-! ## §G. Innovative Denominal Verb Convention (paper p. 321)
 
-Clark's central formal contribution (after @cite{clark-clark-1979}, restated
-in @cite{clark-1983} p. 321):
+Clark's central formal contribution (after [clark-clark-1979], restated
+in [clark-1983] p. 321):
 
 > In using an innovative denominal verb sincerely, the speaker means to denote:
 > (a) the kind of situation
@@ -339,7 +339,7 @@ Conditions (b)–(e) are unified as CommonGround-entailment: the CommonGround un
 the situation. Condition (f) requires the parent noun's denotation to hold
 in every situation-world. -/
 
-/-- The Innovative Denominal Verb Convention (@cite{clark-clark-1979};
+/-- The Innovative Denominal Verb Convention ([clark-clark-1979];
     paper p. 321).
 
     Condition (f) — *"the parent noun denotes one role in the situation,
@@ -494,9 +494,9 @@ theorem teapot_role_assignment_distinct :
     teapotConvention.parentNounRole ∉ teapotConvention.otherArgRoles :=
   ⟨rfl, rfl, by decide⟩
 
-/-! ## §H. Bridge to LU-RSA (@cite{bergen-levy-goodman-2016})
+/-! ## §H. Bridge to LU-RSA ([bergen-levy-goodman-2016])
 
-@cite{bergen-levy-goodman-2016}'s LU-RSA operationalizes one dimension of
+[bergen-levy-goodman-2016]'s LU-RSA operationalizes one dimension of
 Clark's sense-creation: the listener marginalizes over possible lexica.
 
   L1(w | u) ∝ Σ_L P(L) · S1(u | w, L) · P(w)

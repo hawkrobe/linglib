@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
 
 /-!
 # Nominal Ellipsis Licensing
-@cite{merchant-2001} @cite{saab-2026} @cite{lobeck-1995}
+[merchant-2001] [saab-2026] [lobeck-1995]
 
 NP-ellipsis is licensed when the Num head carries an [E] feature,
 which permits PF-deletion of the nominal argument domain (complement
@@ -38,7 +38,7 @@ def NominalEllipsisLicense.isLicensed (nel : NominalEllipsisLicense) : Bool :=
   nel.numHasE
 
 -- ═══════════════════════════════════════════════════════════════
--- § 2: Nominal Argument Domain (@cite{saab-2026})
+-- § 2: Nominal Argument Domain ([saab-2026])
 -- ═══════════════════════════════════════════════════════════════
 
 /-- N is within the nominal argument domain (F0 ≤ F1 = n). -/

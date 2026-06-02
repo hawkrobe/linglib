@@ -2,7 +2,7 @@ import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{labov-2012} — Dialect Diversity in America: The Politics of
+# [labov-2012] — Dialect Diversity in America: The Politics of
 Language Change
 
 University of Virginia Press, 2012 (Page-Barbour Lectures for 2009).
@@ -48,7 +48,7 @@ structure StyleShiftObs where
   careful : ℚ
   formal  : ℚ
 
-/-- Obama's (ING) rates across three contexts (@cite{labov-2012},
+/-- Obama's (ING) rates across three contexts ([labov-2012],
     Ch. 2, Figure 3):
     casual (barbecue) ≈ 72% /in/, careful (journalist Q&A) ≈ 33%,
     formal (DNC speech) ≈ 3%.

@@ -3,7 +3,7 @@ import Mathlib.Data.Fintype.Basic
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
-# @cite{warstadt-2022}: Presupposition Triggering and Utterance Utility @cite{warstadt-2022}
+# [warstadt-2022]: Presupposition Triggering and Utterance Utility [warstadt-2022]
 
 Empirical domain types and truth conditions for Warstadt's genus-species
 presupposition model. Two examples demonstrate that presupposition triggering

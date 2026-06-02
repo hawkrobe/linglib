@@ -2,13 +2,13 @@ import Linglib.Core.Nominal.Determiner
 
 /-!
 # English Definiteness Fragment
-@cite{schwarz-2009} @cite{schwarz-2013} @cite{moroney-2021}
+[schwarz-2009] [schwarz-2013] [moroney-2021]
 
 English uses a single syncretic definite article *the* for both uniqueness
 and anaphoric definiteness, an indefinite *a/an*, demonstratives *this/that*,
-and possessives *my/your/...*. Under the @cite{moroney-2021} typology this
+and possessives *my/your/...*. Under the [moroney-2021] typology this
 is the `.generallyMarked` strategy: a single form covers all
-@cite{schwarz-2009} use types.
+[schwarz-2009] use types.
 -/
 
 namespace English.Definiteness

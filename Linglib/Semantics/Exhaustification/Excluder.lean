@@ -6,7 +6,7 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # Exhaustification: abstract excluder
-@cite{fox-2007} @cite{chierchia-2013} @cite{magri-2009} @cite{santorio-2018}
+[fox-2007] [chierchia-2013] [magri-2009] [santorio-2018]
 
 Different exhaustification theories disagree on **which** alternatives the
 operator should negate, but agree on the rest of the architecture: assert

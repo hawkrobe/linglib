@@ -2,7 +2,7 @@ import Linglib.Semantics.Tense.Basic
 
 /-!
 # German Temporal Deictic Adverbs
-@cite{zhao-2025}
+[zhao-2025]
 
 Lexical entry for German "damals" (back then), typed by `ThenAdverb`.
 

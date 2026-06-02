@@ -4,7 +4,7 @@ import Linglib.Syntax.Minimalist.Movement.Smuggling
 
 /-!
 # Verb ↔ Smuggling Interface
-@cite{collins-2005} @cite{storment-2026} @cite{kratzer-1996}
+[collins-2005] [storment-2026] [kratzer-1996]
 
 Promotes the bridge from `Verb`'s lexical fields to the smuggling
 operators in `Syntax/Minimalism/Movement/Smuggling.lean`. These
@@ -39,13 +39,13 @@ def hasComplement (v : Verb) : Bool := v.complementType != .none
     non-thematic (anticausative) for unaccusatives, agentive for unergatives.
     Reads `derivedUnaccusative`, which consults `voiceType.assignsTheta`
     when present, so the bridge is grounded in the Voice-as-not-introducing-
-    external-argument characterization (@cite{kratzer-1996}). -/
+    external-argument characterization ([kratzer-1996]). -/
 def voiceFor (v : Verb) : VoiceHead :=
   if v.derivedUnaccusative then voiceAnticausative else voiceAgent
 
 /-- Derived prediction: does the verb license quotative inversion?
     Composes `voiceFor` and `hasComplement` through `licensesQI`
-    (@cite{storment-2026}, §4: smuggling requires non-phase Voice + a
+    ([storment-2026], §4: smuggling requires non-phase Voice + a
     complement to smuggle). -/
 def derivedQI (v : Verb) : Bool :=
   licensesQI v.voiceFor v.hasComplement

@@ -7,7 +7,7 @@ import Linglib.Discourse.CommonGround
 /-!
 # Stalnaker selection-function counterfactuals
 
-@cite{stalnaker-1968} @cite{stalnaker-1975} @cite{stalnaker-1981}
+[stalnaker-1968] [stalnaker-1975] [stalnaker-1981]
 
 Selection-function-based counterfactual semantics, separated from
 `Conditionals/Basic.lean` (which retains material/strict/variably-strict
@@ -18,20 +18,20 @@ material-conditional reduction — lives here.
 
 ## Selection Functions
 
-@cite{stalnaker-1968}'s selection function approach to counterfactuals:
+[stalnaker-1968]'s selection function approach to counterfactuals:
 - A selection function `s : W × 𝒫(W) → W` selects THE closest
   antecedent-world
 - "If A were, C would be" is true iff C holds at s(w, ⦃A⦄)
 
-Key distinction from @cite{lewis-1973}: Lewis universally quantifies
+Key distinction from [lewis-1973]: Lewis universally quantifies
 over closest A-worlds; Stalnaker selects a single A-world (with
 supervaluation for ties — see `Conditionals/Counterfactual.lean`).
 
 `SelectionFunction` itself lives in `Core/SelectionFunction.lean` and
-is shared with @cite{cariani-santorio-2018}'s selectional *will* in
+is shared with [cariani-santorio-2018]'s selectional *will* in
 `WillConditional.lean`.
 
-## Selection ↔ Similarity Bridge (@cite{stalnaker-1981})
+## Selection ↔ Similarity Bridge ([stalnaker-1981])
 
 A selection function `s` determines a pairwise preference:
 `w₁ ≤_{w₀} w₂` iff `s(w₀, {w₁, w₂}) = w₁`. This is reflexive (by
@@ -40,9 +40,9 @@ A selection function `s` determines a pairwise preference:
 `coherentSelectionToSimilarity` constructor turns a coherent `s` into
 a `Core.Order.SimilarityOrdering`.
 
-## Stalnakerian indicative/subjunctive split (@cite{stalnaker-1975})
+## Stalnakerian indicative/subjunctive split ([stalnaker-1975])
 
-@cite{stalnaker-1975} argues that the indicative/subjunctive
+[stalnaker-1975] argues that the indicative/subjunctive
 distinction is *pragmatic*, not semantic: both have the same
 selection-based truth condition. Indicatives require the selection
 function to obey the **pragmatic constraint** (stay inside the context
@@ -50,7 +50,7 @@ set when possible); subjunctives signal that the constraint is
 suspended.
 
 The previous identification `indicativeConditional := materialImp`
-was inaccurate per @cite{stalnaker-1975} §IV. We now derive the
+was inaccurate per [stalnaker-1975] §IV. We now derive the
 equivalence within an appropriate context (the
 `*_eq_material_within_context` theorems below) rather than stipulate it.
 -/
@@ -87,7 +87,7 @@ def coherentSelectionToSimilarity {W : Type*} [DecidableEq W]
 
 /-- **Selection-based conditional**: "if p, then q" is true at `w` iff
     `q` holds at the world selected by `s` from the p-worlds. The common
-    semantic core of @cite{stalnaker-1975} indicatives and subjunctives. -/
+    semantic core of [stalnaker-1975] indicatives and subjunctives. -/
 def selectionConditional {W : Type*} (s : SelectionFunction W)
     (p q : W → Prop) : W → Prop :=
   λ w => q (s.sel w {w' | p w'})
@@ -98,7 +98,7 @@ instance selectionConditional_decidable {W : Type*} (s : SelectionFunction W)
     Decidable (selectionConditional s p q w) :=
   inferInstanceAs (Decidable (q _))
 
-/-- **Pragmatic constraint on selection** (@cite{stalnaker-1975} §III).
+/-- **Pragmatic constraint on selection** ([stalnaker-1975] §III).
 
 If the conditional is being evaluated at a context-set world `w`, and
 some antecedent-world is also in the context set, then the selected
@@ -106,14 +106,14 @@ world must be in the context set. Equivalently: context-set worlds are
 closer to each other than to non-context-set worlds whenever a
 context-set option is available.
 
-The central new contribution of @cite{stalnaker-1975}: it makes
+The central new contribution of [stalnaker-1975]: it makes
 indicative inference forms behave the way they do, without changing
 the semantic clause. -/
 def pragmaticConstraint {W : Type*} (s : SelectionFunction W)
     (C : ContextSet W) : Prop :=
   ∀ w (A : Set W), C w → (∃ w' ∈ A, C w') → C (s.sel w A)
 
-/-- **Mooded conditional** (@cite{stalnaker-1975}): the truth-conditional
+/-- **Mooded conditional** ([stalnaker-1975]): the truth-conditional
 clause is `selectionConditional` regardless of grammatical mood. The mood
 index `m` is metadata at the call site; the *semantic* mood difference
 is captured by which selection functions are admissible (see
@@ -132,13 +132,13 @@ instance moodedConditional_decidable {W : Type*} (m : GramMood)
   inferInstanceAs (Decidable (selectionConditional s p q w))
 
 /-- **Mood-indexed admissibility on selection functions**
-(@cite{stalnaker-1975}).
+([stalnaker-1975]).
 
 Stalnaker's mood distinction lives here, not in the truth-conditional
 clause:
 - `.indicative` requires the selection function to obey
   `pragmaticConstraint` on the context — the central
-  @cite{stalnaker-1975} contribution.
+  [stalnaker-1975] contribution.
 - `.subjunctive` imposes no such constraint; the selection function
   may reach outside the context set, which is precisely what
   subjunctive mood signals.
@@ -163,14 +163,14 @@ theorem admissibleSelection_subjunctive {W : Type*} (s : SelectionFunction W)
     Mood.admissibleSelection .subjunctive s C = True := rfl
 
 /-- **Mood is irrelevant to the truth-conditional clause**
-(@cite{stalnaker-1975}). For any grammatical mood, the mooded
+([stalnaker-1975]). For any grammatical mood, the mooded
 conditional reduces to the bare selection conditional. -/
 theorem moodedConditional_eq_selectionConditional {W : Type*} (m : GramMood)
     (s : SelectionFunction W) (p q : W → Prop) :
     moodedConditional m s p q = selectionConditional s p q := rfl
 
 /-- **Selection conditional ≡ material within an appropriate context**
-(@cite{stalnaker-1975} §IV).
+([stalnaker-1975] §IV).
 
 In any context `C` evaluated at a context-set world `w`, given that the
 antecedent is open in `C`, the selection function obeys the pragmatic

@@ -6,11 +6,11 @@ import Linglib.Semantics.Plurality.Cumulativity
 # Reciprocal Predicates
 
 Substrate for the reciprocal-meaning typology. The six interpretation
-schemes originate in @cite{langendoen-1978} (Strong Reciprocity SR,
+schemes originate in [langendoen-1978] (Strong Reciprocity SR,
 Intermediate Reciprocity IR, Weak Reciprocity WR), Kański 1987 (bib
 entry pending; Inclusive Alternative Ordering IAO), Fiengo & Lasnik
 1973 (bib entry pending; Partitioned Strong Reciprocity PartSR), and
-@cite{dalrymple-et-al-1998} (the **Alternative** variants SAR/IAR plus
+[dalrymple-et-al-1998] (the **Alternative** variants SAR/IAR plus
 One-way Weak Reciprocity OWR as a methodological waypoint between WR
 and IAO). DKMPK 1998 organises them along two axes — **quantification
 strength** (∀∀ / ∃-chain / ∃∃) and **directionality** (one-way vs
@@ -35,10 +35,10 @@ the entailment lattice between the bivalent versions, and a bridge to
   either as subject or as object of a distinct other.
 * `strong_imp_weak`, `weak_imp_oneWay`, `oneWay_imp_inclusiveAlternative`,
   `strong_imp_inclusiveAlternative` — the entailment lattice
-  (@cite{beck-2001} eq 28 right-hand spine).
+  ([beck-2001] eq 28 right-hand spine).
 * `weakReciprocity_iff_cumulative_strict` — WR factors through
   `Cumulative` of the strict-distinct relation (Beck eq 120 /
-  @cite{sternefeld-1998} eq 26b, bivalent collapse).
+  [sternefeld-1998] eq 26b, bivalent collapse).
 
 ## Implementation notes
 
@@ -71,9 +71,9 @@ open Semantics.Plurality.Cumulativity
 variable {A : Type*}
 
 /-- The six reciprocal interpretation schemes. SR/IR/WR originate in
-    @cite{langendoen-1978}; IAO in Kański 1987 (bib entry pending);
+    [langendoen-1978]; IAO in Kański 1987 (bib entry pending);
     Partitioned SR in Fiengo & Lasnik 1973 (bib entry pending); the
-    **Alternative** variants (SAR, IAR) in @cite{dalrymple-et-al-1998}. -/
+    **Alternative** variants (SAR, IAR) in [dalrymple-et-al-1998]. -/
 inductive ReciprocalScheme where
   | strong                  -- Strong Reciprocity (SR)
   | partitionedStrong       -- Partitioned Strong Reciprocity (PartSR)
@@ -210,7 +210,7 @@ theorem strong_imp_inclusiveAlternative [DecidableEq A]
     `**` applied to the strict-distinct verb relation
     `λ a b. R a b ∧ a ≠ b` on `(X, X)` recovers Weak Reciprocity
     definitionally. This is the substrate-level form of
-    @cite{beck-2001} eq 120 / @cite{sternefeld-1998} eq 26b (bivalent
+    [beck-2001] eq 120 / [sternefeld-1998] eq 26b (bivalent
     collapse). The Beck/Sternefeld trivalent disagreement is invisible
     here — both reduce to the same proposition under bivalent
     encoding. -/

@@ -4,8 +4,8 @@ import Linglib.Phonology.Featural.Features
 # Natural-Class Predicates on Segments
 
 Language-neutral natural-class membership predicates over `Phonology.Segment`,
-defined by the SPE feature decompositions standard since @cite{chomsky-halle-1968}
-and codified in textbook form by @cite{hayes-2009} Table 4.1 (sonority hierarchy
+defined by the SPE feature decompositions standard since [chomsky-halle-1968]
+and codified in textbook form by [hayes-2009] Table 4.1 (sonority hierarchy
 columns).
 
 These predicates are pure substrate: they project information already encoded

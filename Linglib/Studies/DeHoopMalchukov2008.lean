@@ -5,13 +5,13 @@ import Linglib.Features.Prominence
 import Linglib.Studies.Aissen2003
 
 /-!
-# @cite{de-hoop-malchukov-2008}: Case-Marking Strategies @cite{de-hoop-malchukov-2008}
-@cite{aissen-2003} @cite{blutner-2000}
+# [de-hoop-malchukov-2008]: Case-Marking Strategies [de-hoop-malchukov-2008]
+[aissen-2003] [blutner-2000]
 
 Case-Marking Strategies. Linguistic Inquiry 39(4): 565–587.
 
 Derives the basic case-marking typology from two functional constraints and
-an economy constraint, evaluated in @cite{blutner-2000}'s Bidirectional OT:
+an economy constraint, evaluated in [blutner-2000]'s Bidirectional OT:
 
 - **Identify** (I): Case identifies the role — overt marking should match
   argument strength (markedness principle). Penalizes form/strength mismatch.
@@ -24,7 +24,7 @@ an economy constraint, evaluated in @cite{blutner-2000}'s Bidirectional OT:
 ## Bidirectional OT
 
 Standard OT selects the best form for a given meaning (speaker). BiOT adds
-the hearer's perspective via **superoptimality** (@cite{blutner-2000} eq. 14,
+the hearer's perspective via **superoptimality** ([blutner-2000] eq. 14,
 "weak optimality"): a form–meaning pair ⟨f, m⟩ is superoptimal iff no other
 superoptimal pair with the same form or same meaning is strictly more harmonic.
 This is a greatest-fixed-point computation
@@ -121,7 +121,7 @@ def winnerDistinguishSubj : Finset (CaseForm × Strength) :=
   { (.zero, .strong), (.overt, .weak) }
 
 -- ============================================================================
--- § 2: Constraints (@cite{de-hoop-malchukov-2008}, §2)
+-- § 2: Constraints ([de-hoop-malchukov-2008], §2)
 -- ============================================================================
 
 /-- **Identify** (I): Case should identify the argument's role.
@@ -173,7 +173,7 @@ def distinguishObj : NamedConstraint (CaseForm × Strength) :=
   }
 
 /-- **Economy** (*!): Penalizes any overt case marker.
-    Same as @cite{aissen-2003}'s economy family. -/
+    Same as [aissen-2003]'s economy family. -/
 def economy : NamedConstraint (CaseForm × Strength) :=
   { name := "*!"
     family := .faithfulness
@@ -503,7 +503,7 @@ theorem alignment_correlation :
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
--- § 8: Bridge to @cite{aissen-2003}
+-- § 8: Bridge to [aissen-2003]
 -- ============================================================================
 
 /-! Economy (*!) is the same constraint across both analyses. The DOM

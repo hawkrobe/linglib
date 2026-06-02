@@ -1,5 +1,5 @@
 /-!
-# Null Subjects: Pro-Drop and Overt PRO @cite{ostrove-2026}
+# Null Subjects: Pro-Drop and Overt PRO [ostrove-2026]
 
 Framework-agnostic typological parameter: whether a language permits
 null thematic subjects (*pro*-drop) and whether the subject of an
@@ -18,7 +18,7 @@ inventory — likewise live with the theory they presuppose
 
 > If a language requires the subject of obligatory control clauses
 > (i.e., PRO) to be overt, then that language will not allow
-> *pro*-drop. (@cite{ostrove-2026})
+> *pro*-drop. ([ostrove-2026])
 
 This is a one-way implication: non-*pro*-drop does *not* entail overt
 PRO. English is non-*pro*-drop but has null PRO; Mixtec (SMPM) and Gã
@@ -39,7 +39,7 @@ content singly authored.
 namespace Phenomena.NullSubject
 
 /-- A language's pro-drop / overt-PRO profile. The two Booleans are the
-    typological observables; @cite{ostrove-2026}'s implicational
+    typological observables; [ostrove-2026]'s implicational
     universal is a constraint on which combinations are predicted to
     occur. -/
 structure ProDropProfile where
@@ -53,7 +53,7 @@ structure ProDropProfile where
 
 namespace ProDropProfile
 
-/-- @cite{ostrove-2026}'s implicational universal as a `Prop`: overt
+/-- [ostrove-2026]'s implicational universal as a `Prop`: overt
     PRO entails non-*pro*-drop. Stated as a Prop so it composes with
     other logical predicates; `Decidable` instance below makes it
     evaluable by `decide`. -/
@@ -87,7 +87,7 @@ theorem prodrop_excludes_overt_pro (p : ProDropProfile)
 end ProDropProfile
 
 /-- The four cells of the typology. The fourth (overt PRO + *pro*-drop)
-    is predicted absent by @cite{ostrove-2026}'s universal. Names use
+    is predicted absent by [ostrove-2026]'s universal. Names use
     mathlib-style camelCase. -/
 inductive Typology where
   /-- Null PRO + non-*pro*-drop (e.g., English). -/

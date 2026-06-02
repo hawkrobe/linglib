@@ -5,8 +5,8 @@ import Linglib.Core.Constraint.OT.DirectionalTableau
 
 /-!
 # Harmonic Serialism — The Combinator
-@cite{mccarthy-2000} @cite{mccarthy-2010} @cite{pruitt-2023}
-@cite{lamont-2022a} @cite{lamont-2022b}
+[mccarthy-2000] [mccarthy-2010] [pruitt-2023]
+[lamont-2022a] [lamont-2022b]
 
 Bundles a one-step `gen` function and a constraint ranking into an
 `HSDerivation`. Reuses the iteration combinator from `Iteration.lean`
@@ -16,16 +16,16 @@ optimization).
 
 ## NOTE on theoretical scope
 
-Per @cite{pruitt-2023} (Table 1): HS does **not** solve counterfeeding
+Per [pruitt-2023] (Table 1): HS does **not** solve counterfeeding
 underapplication, and only patches counterbleeding overapplication with
 extra GEN assumptions. This file's docstring deliberately does not claim
 HS is "the serial OT solution to opacity" — that would misrepresent the
 field's current understanding. HS is one constraint-based serial framework
-with mixed empirical record; @cite{mcpherson-lamont-2026} is the
+with mixed empirical record; [mcpherson-lamont-2026] is the
 motivating positive case for the directional variant of HS
-(@cite{lamont-2022b}). For counterfeeding cases linglib offers
+([lamont-2022b]). For counterfeeding cases linglib offers
 `Phonology/Process/LocalRewrite.lean` (extrinsic ordering of
-local rewrite rules; subregular-grounded per @cite{chandlee-heinz-2018})
+local rewrite rules; subregular-grounded per [chandlee-heinz-2018])
 and `Phonology/OptimalityTheory/Stratal.lean` (cyclic ranking)
 as architecturally-distinct alternatives.
 
@@ -44,7 +44,7 @@ the parallel-OT primitives in `Basic.lean`:
 HS and Stratal OT are **sister specializations**, not nested: HS holds
 ranking constant and varies the candidate; Stratal OT varies the ranking
 and chains the candidate. Stratal HS combines both axes and is
-deferred (cf. @cite{pruitt-2023} §2.4).
+deferred (cf. [pruitt-2023] §2.4).
 
 ## Sibling, not refactor
 
@@ -52,7 +52,7 @@ This module does **not** modify `NamedConstraint` or `Tableau`
 (load-bearing for `Weighted.lean`/`MaxEnt.lean`/`NoisyHG.lean` and ~30
 study files). The `stepOptimum` function builds an inner `Tableau` and
 reuses `Tableau.optimal` directly. Future directional dispatch
-(@cite{lamont-2022b}; @cite{eisner-2000}) will land as a sibling
+([lamont-2022b]; [eisner-2000]) will land as a sibling
 `DirectionalTableau` consumer; deliberately not stubbed here, to avoid
 silently routing directional callers to the parallel optimum.
 -/
@@ -68,7 +68,7 @@ open Core.Constraint.Evaluation
 /-- A Harmonic Serialism derivation specification.
 
     `gen` is the one-step candidate-generation function (per
-    @cite{mccarthy-2008b}'s restricted GEN). `ranking` is a list of
+    [mccarthy-2008b]'s restricted GEN). `ranking` is a list of
     named constraints, indexed by rank position (head = highest). The
     inner `Tableau` width is inferred from `ranking.length`; no separate
     length parameter is exposed. -/
@@ -126,7 +126,7 @@ def stepOptimum (D : HSDerivation C) (c : C) : Finset C :=
 
 /-- A form `c` has **converged** under `D` iff its optimal set is the
     singleton `{c}` — the faithful candidate is the unique optimum. This
-    is the canonical HS halting condition (@cite{mccarthy-2010}).
+    is the canonical HS halting condition ([mccarthy-2010]).
 
     Equivalent to mathlib's `Function.IsFixedPt (hsStep D.gen D.evalFilter) {c}`
     via `hsStep_singleton`. -/
@@ -176,9 +176,9 @@ theorem converged_of_singleton_gen (D : HSDerivation C) (c : C)
     `D.stepOptimum`. The caller supplies a `pick : Finset C → Option C`
     tie-breaker used when the optimal set isn't a singleton (which would
     indicate either (a) ties not yet broken by directional eval, or (b)
-    a divergent tie in the @cite{pruitt-2009} sense). Returns `none` if
+    a divergent tie in the [pruitt-2009] sense). Returns `none` if
     `pick` ever fails. HS derivations are not in general guaranteed to
-    converge — see @cite{lamont-2022b} for non-terminating cases. -/
+    converge — see [lamont-2022b] for non-terminating cases. -/
 def derive (D : HSDerivation C) (pick : Finset C → Option C) (c : C)
     (steps : Nat) : Option C :=
   iterateGen D.gen D.evalFilter pick c steps
@@ -241,7 +241,7 @@ end HSDerivation
 -- § 6: Directional Harmonic Serialism
 -- ============================================================================
 
-/-! Directional HS (@cite{lamont-2022b}): the constraint hierarchy is a
+/-! Directional HS ([lamont-2022b]): the constraint hierarchy is a
     list of `DirectionalConstraint C`, evaluated via `DirectionalTableau`
     under a chosen `EvalMode`. Sibling to the parallel `HSDerivation`
     above; the two are not unified because their constraint types

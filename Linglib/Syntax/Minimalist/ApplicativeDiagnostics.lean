@@ -2,10 +2,10 @@ import Linglib.Syntax.Minimalist.Applicative
 
 /-!
 # Applicative diagnostics
-@cite{pylkkanen-2008}
+[pylkkanen-2008]
 
 Cluster-based diagnostic classifier for the high/low applicative
-distinction (@cite{pylkkanen-2008}, Table 2.1). Three diagnostics:
+distinction ([pylkkanen-2008], Table 2.1). Three diagnostics:
 
 1. Can unergative verbs be applicativized? (Ch. 2 §2.1.2)
 2. Can static verbs be applicativized? (Ch. 2 §2.1.2)
@@ -73,7 +73,7 @@ def ApplDiagnosticBundle.applicableResults (b : ApplDiagnosticBundle) :
     List ApplDiagnosticResult :=
   b.results.filter (· ≠ .inapplicable)
 
-/-- Cluster-based classification (@cite{pylkkanen-2008}, Table 2.1):
+/-- Cluster-based classification ([pylkkanen-2008], Table 2.1):
     a language has *high* applicatives iff every applicable diagnostic
     passes; *low* iff every applicable diagnostic fails; otherwise the
     pattern is mixed and the classifier returns `none`, requiring

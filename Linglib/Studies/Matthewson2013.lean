@@ -5,7 +5,7 @@ import Linglib.Studies.Condoravdi2002
 import Linglib.Semantics.Modality.ActualityEntailments
 
 /-!
-# @cite{matthewson-2013} — Gitksan Modals
+# [matthewson-2013] — Gitksan Modals
 
 Lisa Matthewson. "Gitksan Modals." *International Journal of American
 Linguistics* 79(3): 349–394. DOI: 10.1086/670751.
@@ -21,7 +21,7 @@ are formalized here against the existing infrastructure:
    not lexically future-oriented. Future orientation comes from `dim`,
    *obligatory* with circumstantial modals and *optional* (only for
    future orientation) with epistemics. This contradicts
-   @cite{condoravdi-2002}'s English analysis, where prospectivity is
+   [condoravdi-2002]'s English analysis, where prospectivity is
    baked into `may`. Structurally: Gitksan *imaa* would be modeled with
    `Condoravdi2002.mayCore` (point evaluation), English *might* with
    `Condoravdi2002.may` (forward expansion). The relationship between
@@ -32,19 +32,19 @@ are formalized here against the existing infrastructure:
    integration audit).
 
 3. **No actuality entailments for da'akhlxw** (§4.1, fn 32):
-   @cite{hacquard-2006} predicts AEs for the perfective + root-modal
+   [hacquard-2006] predicts AEs for the perfective + root-modal
    configuration. da'akhlxw's obligatory co-occurrence with `dim`
    blocks that configuration empirically. The explanation is given
-   in @cite{matthewson-2012}.
+   in [matthewson-2012].
 
 Supporting comparisons: Peterson 2010's variable-force analysis of
-imaa contrasts with @cite{deal-2011}'s strengthened-possibility analysis
+imaa contrasts with [deal-2011]'s strengthened-possibility analysis
 of Nez Perce *o'qa* (§3.1, ex. 30 negation diagnostic). The diagnostic
 content (which scope ¬ takes relative to the modal) is *not* yet
 formalized here — currently only the labels.
 
 The modal inventory is in `Fragments/Gitksan/Modals.lean`. The handbook
-chapter @cite{matthewson-2016} (`Studies/Matthewson2016.lean`) restates
+chapter [matthewson-2016] (`Studies/Matthewson2016.lean`) restates
 the survey-level claims; this file holds the primary-source theorems
 the chapter cites.
 -/
@@ -58,20 +58,20 @@ open Semantics.Modality (ForceAnalysis TemporalPerspective TemporalOrientation)
 -- §1. Mixed-system thesis (Fig. 1)
 -- ============================================================================
 
-/-- @cite{matthewson-2013} Fig. 1: `daakhlxw` is fixed possibility. -/
+/-- [matthewson-2013] Fig. 1: `daakhlxw` is fixed possibility. -/
 @[simp] theorem forceAnalysis_daakhlxw :
     forceAnalysis daakhlxw = .fixed .possibility := rfl
 
-/-- @cite{matthewson-2013} Fig. 1, §4.3: `sgi` is fixed weak necessity. -/
+/-- [matthewson-2013] Fig. 1, §4.3: `sgi` is fixed weak necessity. -/
 @[simp] theorem forceAnalysis_sgi :
     forceAnalysis sgi = .fixed .weakNecessity := rfl
 
-/-- @cite{matthewson-2013} Fig. 1, §3.1: `imaa` is variable-force
+/-- [matthewson-2013] Fig. 1, §3.1: `imaa` is variable-force
     (Peterson 2010 analysis). -/
 @[simp] theorem forceAnalysis_imaa :
     forceAnalysis imaa = .variableForce := rfl
 
-/-- @cite{matthewson-2013} Fig. 1, §3.2: `gat` is variable-force
+/-- [matthewson-2013] Fig. 1, §3.2: `gat` is variable-force
     (reportative). -/
 @[simp] theorem forceAnalysis_gat :
     forceAnalysis gat = .variableForce := rfl
@@ -100,23 +100,23 @@ theorem mixed_system :
 -- §3. No actuality entailments for da'akhlxw (§4.1, fn 32)
 -- ============================================================================
 
-/-! @cite{hacquard-2006} predicts AEs in the configuration
-    `belowAsp + perfective`. @cite{matthewson-2013} reports da'akhlxw
-    lacks AEs. Per @cite{matthewson-2012}: da'akhlxw obligatorily
+/-! [hacquard-2006] predicts AEs in the configuration
+    `belowAsp + perfective`. [matthewson-2013] reports da'akhlxw
+    lacks AEs. Per [matthewson-2012]: da'akhlxw obligatorily
     co-occurs with prospective `dim`, blocking the perfective
     configuration empirically. -/
 
 open Semantics.Modality.ActualityEntailments (actualityEntailmentPredicted)
 
-/-- @cite{hacquard-2006}'s AE prediction for the root + perfective cell. -/
+/-- [hacquard-2006]'s AE prediction for the root + perfective cell. -/
 @[simp] theorem hacquard_AE_root_perfective :
     actualityEntailmentPredicted .belowAsp .perfective = true := rfl
 
-/-- @cite{hacquard-2006}'s AE prediction for the root + imperfective cell. -/
+/-- [hacquard-2006]'s AE prediction for the root + imperfective cell. -/
 @[simp] theorem hacquard_no_AE_root_imperfective :
     actualityEntailmentPredicted .belowAsp .imperfective = false := rfl
 
-/-- @cite{hacquard-2006}'s AE prediction for the epistemic + perfective cell. -/
+/-- [hacquard-2006]'s AE prediction for the epistemic + perfective cell. -/
 @[simp] theorem hacquard_no_AE_epistemic_perfective :
     actualityEntailmentPredicted .aboveAsp .perfective = false := rfl
 
@@ -133,8 +133,8 @@ open Semantics.Modality.ActualityEntailments (actualityEntailmentPredicted)
 -- §4. Peterson vs. Deal: variable-force vs. strengthened possibility
 -- ============================================================================
 
-/-! @cite{matthewson-2013} §3.1 follows Peterson 2010 in analyzing imaa
-    as variable-force. @cite{deal-2011} analyzes Nez Perce *o'qa* as
+/-! [matthewson-2013] §3.1 follows Peterson 2010 in analyzing imaa
+    as variable-force. [deal-2011] analyzes Nez Perce *o'qa* as
     strengthened possibility. The two analyses agree both modals admit
     necessity readings but disagree on the mechanism. The downward-
     entailing diagnostic (paper ex. 30) is consistent with Peterson's
@@ -161,7 +161,7 @@ theorem oqa_admits_necessity :
 -- §5. Figure 4 paradigm: temporal perspective × orientation for imaa
 -- ============================================================================
 
-/-! @cite{matthewson-2013} Fig. 4 (p. 369) cross-tabulates temporal
+/-! [matthewson-2013] Fig. 4 (p. 369) cross-tabulates temporal
     perspective (past/present) with temporal orientation (past/present/
     future) for the two epistemic modals. The two axes are the
     canonical `Semantics.Modality.TemporalPerspective` and
@@ -174,7 +174,7 @@ theorem oqa_admits_necessity :
 structure Fig4Cell where
   perspective : TemporalPerspective
   orientation : TemporalOrientation
-  /-- Example number in @cite{matthewson-2013} Fig. 4. -/
+  /-- Example number in [matthewson-2013] Fig. 4. -/
   exampleNum : Nat
   deriving Repr
 

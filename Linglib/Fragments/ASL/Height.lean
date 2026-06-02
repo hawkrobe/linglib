@@ -4,7 +4,7 @@ import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Height as Domain Restriction in ASL
-@cite{davidson-gagne-2022}
+[davidson-gagne-2022]
 
 Davidson, K. & Gagné, D. (2022). "More is up" for domain restriction in ASL.
 *Semantics & Pragmatics* 15, Article 1: 1–52.
@@ -49,7 +49,7 @@ open Semantics.Presupposition (PrProp)
 
 /-- Vertical height in ASL signing space.
 
-    @cite{davidson-gagne-2022} establish empirically that at least three
+    [davidson-gagne-2022] establish empirically that at least three
     height levels are semantically distinguished (ex. 15–16, 34): neutral
     signing height (default contextual domain), a mid level (superset of
     the default), and a high level (further superset). The contrast between
@@ -98,8 +98,8 @@ instance : OrderBot VerticalHeight where
     A `HeightDDRP E` is a `NestedRestriction` parameterized by `VerticalHeight`:
     each height level maps to a domain predicate, with higher height giving a
     superset. This is the third instance of `NestedRestriction` in linglib,
-    alongside `SpatialScale` (@cite{ritchie-schiller-2024}) and `TwoLevel`
-    (comparison class inference, @cite{tessler-goodman-2022}).
+    alongside `SpatialScale` ([ritchie-schiller-2024]) and `TwoLevel`
+    (comparison class inference, [tessler-goodman-2022]).
 
     All nesting and monotonicity theorems from `NestedRestriction` —
     `forall_nesting`, `exists_nesting`, and the derived `DDRP.every_nesting`,
@@ -108,7 +108,7 @@ abbrev HeightDDRP (E : Type*) := Core.NestedRestriction VerticalHeight E
 
 /-- Construct a height-indexed DDRP from a height assignment function.
 
-    Parallels `sceneToDDRP` in @cite{ritchie-schiller-2024}: given a
+    Parallels `sceneToDDRP` in [ritchie-schiller-2024]: given a
     function assigning entities to their minimum visible height level,
     builds the nested domain restrictor where `region h` contains all
     entities visible at height ≤ h. -/
@@ -137,15 +137,15 @@ def arcPresup (E : Type*) [PartialOrder E] : PrProp E where
 
     - ⟦high⟧ = ⟦domain-k⟧: Cₑ ⊂ {y : y ≤ x} — context is a proper
       subpart, i.e., the domain widens beyond the contextual default.
-      @cite{davidson-gagne-2022} eq. (44).
+      [davidson-gagne-2022] eq. (44).
 
     - ⟦neutral⟧: ∀y(y ≤ x → y ∈ Cₑ) — all parts are in the contextual
       domain. This is the unmarked default.
 
     - ⟦low⟧: Mereology.Atom x — the referent is atomic (a singleton).
-      @cite{davidson-gagne-2022} (p. 39) report that SOME-low yields
+      [davidson-gagne-2022] (p. 39) report that SOME-low yields
       specific indefinite readings ("someone — and maybe you — know who"),
-      consistent with @cite{schwarzschild-2002}'s view of specificity as
+      consistent with [schwarzschild-2002]'s view of specificity as
       extreme domain restriction. The presupposition is maximally
       restrictive: the domain collapses to a single individual. -/
 def domainPresup {E : Type*} [PartialOrder E] (C : E → Prop) :
@@ -185,7 +185,7 @@ theorem high_incompatible_with_neutral {E : Type*} [PartialOrder E]
     non-atomicity (¬Atom), while low requires atomicity (Atom).
     This correctly predicts that the *plural* pronoun IX-arc cannot
     take low height — only singular IX can be specific/low.
-    @cite{davidson-gagne-2022} (p. 39): the specific indefinite reading
+    [davidson-gagne-2022] (p. 39): the specific indefinite reading
     with low height uses SOME (an existential quantifier), not IX-arc
     (the plural pronoun). -/
 theorem arc_low_contradictory {E : Type*} [PartialOrder E]
@@ -198,7 +198,7 @@ theorem arc_low_contradictory {E : Type*} [PartialOrder E]
 -- § 5. Partitive ⟦of⟧ Composition (§5.3, eqs. 50–51)
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{davidson-gagne-2022} §5.3 derives quantifier truth conditions
+/-! [davidson-gagne-2022] §5.3 derives quantifier truth conditions
     step-by-step through the partitive type function ⟦of⟧ = λxλy. y ≤ x
     (Ladusaw 1982). The pronoun IX-arc denotes a discourse referent z
     (the maximal plural individual), and ⟦of⟧ maps z to `Set.Iic z` —
@@ -233,7 +233,7 @@ theorem arc_low_contradictory {E : Type*} [PartialOrder E]
     This IS the neutral presupposition — `domainPresup .neutral` encodes
     exactly `Set.Iic z ⊆ C`. The proof is `id`.
 
-    @cite{davidson-gagne-2022} eq. (50c): ⟦(of) IX-arc-neutral⟧ = λy. y ∈ Cₑ. -/
+    [davidson-gagne-2022] eq. (50c): ⟦(of) IX-arc-neutral⟧ = λy. y ∈ Cₑ. -/
 theorem partitive_neutral_subset {E : Type*} [PartialOrder E]
     {C : Set E} {z : E}
     (hNeut : (domainPresup C .neutral).presup z) :
@@ -246,7 +246,7 @@ theorem partitive_neutral_subset {E : Type*} [PartialOrder E]
     This IS the high presupposition — `domainPresup .high` encodes
     exactly `C ⊆ Set.Iic z` with a witness outside C. The proof is `id`.
 
-    @cite{davidson-gagne-2022} eq. (51c): ⟦(of) IX-arc-high⟧ = λy. y ∈ C',
+    [davidson-gagne-2022] eq. (51c): ⟦(of) IX-arc-high⟧ = λy. y ∈ C',
     where C ⊂ C'. -/
 theorem partitive_high_superset {E : Type*} [PartialOrder E]
     {C : Set E} {z : E}

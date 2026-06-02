@@ -3,10 +3,10 @@ import Linglib.Core.Logic.Modal.Basic
 
 /-!
 # BSML–CML Bridge
-@cite{aloni-2022}
+[aloni-2022]
 
 For NE-free formulas, BSML reduces to classical modal logic (CML) on
-singleton teams (Fact 15 from @cite{aloni-2022}). This module defines
+singleton teams (Fact 15 from [aloni-2022]). This module defines
 a classical evaluation function and proves the correspondence.
 
 ## Key Result
@@ -180,7 +180,7 @@ private theorem neFree_flat_eq (M : BSMLModel W Atom)
 -- ============================================================================
 
 /--
-Classical Collapse (Fact 15 from @cite{aloni-2022}).
+Classical Collapse (Fact 15 from [aloni-2022]).
 
 For NE-free formulas, BSML support on a singleton team equals classical
 Kripke evaluation.

@@ -14,13 +14,13 @@ import Linglib.Fragments.Abkhaz.Evidentiality
 
 /-!
 # Aikhenvald (2004): Evidentiality typology
-@cite{aikhenvald-2004} @cite{de-haan-2013} @cite{barnes-1984} @cite{oswalt-1986}
+[aikhenvald-2004] [de-haan-2013] [barnes-1984] [oswalt-1986]
 
 This file holds only the **analytical disagreements**: where
-@cite{aikhenvald-2004}'s own paradigm-type letter for a language differs
+[aikhenvald-2004]'s own paradigm-type letter for a language differs
 from `Typology.Evidentiality.AikhenvaldSystem.fromInventory` applied to the
 Fragment-declared inventory, or where the resulting classification differs
-from @cite{de-haan-2013}'s WALS Ch 77 coding.
+from [de-haan-2013]'s WALS Ch 77 coding.
 
 Per-language Aikhenvald classifications are *derived* in
 `Typology/Evidentiality.lean`; per-language inventories live in
@@ -47,7 +47,7 @@ open Typology.Evidentiality (AikhenvaldSystem)
 
 /-! ### §1. Paper-vs-derived disagreements
 
-@cite{aikhenvald-2004}'s own letter assignment for the four sample languages
+[aikhenvald-2004]'s own letter assignment for the four sample languages
 where it differs from `AikhenvaldSystem.fromInventory`:
 - Turkish, Bulgarian, Abkhaz: Aikhenvald treats one term as unmarked default
   (A2 = single marked non-firsthand); Fragment counts both terms (A1).

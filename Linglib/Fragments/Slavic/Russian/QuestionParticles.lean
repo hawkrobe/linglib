@@ -1,6 +1,6 @@
 /-!
 # Russian Question Particles
-@cite{esipova-romero-2023} @cite{simik-2024}
+[esipova-romero-2023] [simik-2024]
 
 Lexical entries for Russian interrogative particles with distributional
 properties and bias profiles. The fragment commits only to theory-neutral
@@ -50,7 +50,7 @@ def li : QParticleEntry where
   requiresEvidentialBias := false
   requiresEpistemicBias := false
 
-/-- разве razve — mirative/dubitative question particle (@cite{simik-2024} §4.2.4).
+/-- разве razve — mirative/dubitative question particle ([simik-2024] §4.2.4).
 Indicates conflict between speaker's prior epistemic state and current
 contextual evidence. Compatible with both outer and inner negation. -/
 def razve_ : QParticleEntry where

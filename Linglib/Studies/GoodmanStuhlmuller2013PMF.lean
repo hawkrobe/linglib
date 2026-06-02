@@ -6,8 +6,8 @@ import Mathlib.Probability.ProbabilityMassFunction.Monad
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
-# @cite{goodman-stuhlmuller-2013} on mathlib `PMF`
-@cite{goodman-stuhlmuller-2013}
+# [goodman-stuhlmuller-2013] on mathlib `PMF`
+[goodman-stuhlmuller-2013]
 
 PMF reformulation of GS2013 using `PMF.hypergeometric` as the observation
 kernel primitive. The model is parameterized over `a : Access` throughout —

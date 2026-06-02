@@ -11,20 +11,20 @@ import Linglib.Phonology.OptimalityTheory.Constraints
 
 /-!
 # Correspondence Theory
-@cite{mccarthy-prince-1995} @cite{benua-1997}
+[mccarthy-prince-1995] [benua-1997]
 
 Correspondence diagrams and their faithfulness constraints. A `Corr Role α`
 gives each role a string (`form`) and each ordered role pair a correspondence
 relation `edge` between positions. Each faithfulness constraint is a map
 `Corr Role α → Role → Role → ℕ`.
 
-Following @cite{mccarthy-prince-1995} (Def. 10), `edge r₁ r₂` is the directed
+Following [mccarthy-prince-1995] (Def. 10), `edge r₁ r₂` is the directed
 relation ℛ ⊆ S₁ × S₂ that every constraint reads (MAX off its Domain, DEP off
 its Range, …). Symmetry — "correspondents of one another" — is a *derived*
 property (`IsSymmetric`, proved of the constructors), not built into the type,
 since M&P's ℛ is a directed subset. The position-relation encoding follows the
-model-theoretic treatment of @cite{payne-vu-heinz-2017} and
-@cite{potts-pullum-2002} (reduplicative B-R: @cite{dolatian-heinz-2020}).
+model-theoretic treatment of [payne-vu-heinz-2017] and
+[potts-pullum-2002] (reduplicative B-R: [dolatian-heinz-2020]).
 
 ## Main definitions
 
@@ -63,7 +63,7 @@ inductive Side where
   deriving DecidableEq, Repr
 
 /-- Roles for a reduplicative correspondence: input, base, reduplicant
-    (@cite{mccarthy-prince-1995}); used by `Corr.reduplication`. -/
+    ([mccarthy-prince-1995]); used by `Corr.reduplication`. -/
 inductive RedupRole where
   | input
   | base
@@ -73,7 +73,7 @@ inductive RedupRole where
 /-! ### The correspondence diagram -/
 
 /-- A correspondence diagram: role-indexed `form`s and a directed
-    correspondence relation `edge` between positions (@cite{mccarthy-prince-1995}
+    correspondence relation `edge` between positions ([mccarthy-prince-1995]
     Def. 10). The in-range bound is carried by the `Fin`-indexed type of
     `edge` rather than a separate well-formedness field. -/
 structure Corr (Role : Type*) (α : Type*) where
@@ -85,34 +85,34 @@ namespace Corr
 variable {Role : Type*} {α : Type*}
 
 /-- Correspondence is symmetric — "correspondents of one another"
-    (@cite{mccarthy-prince-1995} Def. 10): each relation is the converse of
+    ([mccarthy-prince-1995] Def. 10): each relation is the converse of
     the reverse one. A derived property (`diagram_isSymmetric`), not a field. -/
 def IsSymmetric (c : Corr Role α) : Prop :=
   ∀ r₁ r₂, c.edge r₂ r₁ = (c.edge r₁ r₂).image Prod.swap
 
 /-! ### Constraint families -/
 
-/-- MAX (@cite{mccarthy-prince-1995} A.1): the count of `form r₁` positions with
-    no correspondent in `form r₂`. MAX-OO is basemap faithfulness (@cite{benua-1997}). -/
+/-- MAX ([mccarthy-prince-1995] A.1): the count of `form r₁` positions with
+    no correspondent in `form r₂`. MAX-OO is basemap faithfulness ([benua-1997]). -/
 def maxViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
   (Finset.univ \ (c.edge r₁ r₂).image Prod.fst).card
 
-/-- DEP (@cite{mccarthy-prince-1995} A.2): the count of `form r₂` positions with
+/-- DEP ([mccarthy-prince-1995] A.2): the count of `form r₂` positions with
     no correspondent in `form r₁`. DEP-IO prohibits epenthesis. -/
 def depViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
   (Finset.univ \ (c.edge r₁ r₂).image Prod.snd).card
 
-/-- IDENT (@cite{mccarthy-prince-1995} A.3): corresponding pairs whose segments
-    differ. IDENT-OO is OO-faithfulness (@cite{benua-1997}, @cite{mccarthy-2005},
-    @cite{rolle-2018}). Each coordinate of a correspondence pair is a `Fin`
+/-- IDENT ([mccarthy-prince-1995] A.3): corresponding pairs whose segments
+    differ. IDENT-OO is OO-faithfulness ([benua-1997], [mccarthy-2005],
+    [rolle-2018]). Each coordinate of a correspondence pair is a `Fin`
     in range, so `(form r₁)[p.1]` is the total indexed lookup (no `Option`).
     See `identViolFeature` for the feature-by-feature variant. -/
 def identViol [DecidableEq α] (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
   ((c.edge r₁ r₂).filter fun p =>
     (c.form r₁)[p.1] ≠ (c.form r₂)[p.2]).card
 
-/-- Featural IDENT (@cite{mccarthy-prince-1995} A.3): corresponding pairs
-    differing under `proj` (@cite{benua-1997}, @cite{rose-walker-2011}). -/
+/-- Featural IDENT ([mccarthy-prince-1995] A.3): corresponding pairs
+    differing under `proj` ([benua-1997], [rose-walker-2011]). -/
 def identViolFeature {F : Type*} [DecidableEq F] (proj : α → F)
     (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
   ((c.edge r₁ r₂).filter fun p =>
@@ -126,14 +126,14 @@ abbrev IsContiguous (l : List ℕ) : Prop := List.IsChain (fun a b => b = a + 1)
 instance : (l : List ℕ) → Decidable (IsContiguous l) :=
   inferInstanceAs ((l : List ℕ) → Decidable (List.IsChain _ l))
 
-/-- I-CONTIGUITY "No Skipping" (@cite{mccarthy-prince-1995} A.4a): the domain
+/-- I-CONTIGUITY "No Skipping" ([mccarthy-prince-1995] A.4a): the domain
     of correspondence is contiguous in `form r₁`. The `Fin`-valued domain is
     projected to its `ℕ` values and sorted before the chain check. -/
 def contigIViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
   let dom := (((c.edge r₁ r₂).image Prod.fst).image Fin.val).sort (· ≤ ·)
   if IsContiguous dom then 0 else 1
 
-/-- O-CONTIGUITY "No Intrusion" (@cite{mccarthy-prince-1995} A.4b): the range
+/-- O-CONTIGUITY "No Intrusion" ([mccarthy-prince-1995] A.4b): the range
     of correspondence is contiguous in `form r₂`. -/
 def contigOViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
   let rng := (((c.edge r₁ r₂).image Prod.snd).image Fin.val).sort (· ≤ ·)
@@ -141,7 +141,7 @@ def contigOViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
 
 /-! ### Anchors -/
 
-/-- L-ANCHOR (@cite{mccarthy-prince-1995} A.5): leftmost positions correspond.
+/-- L-ANCHOR ([mccarthy-prince-1995] A.5): leftmost positions correspond.
     When either form is empty there is no leftmost position, so the constraint
     is vacuously satisfied; otherwise the `Fin` endpoints are the two `0`s. -/
 def anchorLViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
@@ -151,7 +151,7 @@ def anchorLViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
     have h₂ : 0 < (c.form r₂).length := Nat.pos_of_ne_zero (fun e => h (Or.inr e))
     if (⟨0, h₁⟩, ⟨0, h₂⟩) ∈ c.edge r₁ r₂ then 0 else 1
 
-/-- R-ANCHOR (@cite{mccarthy-prince-1995} A.5): rightmost positions correspond.
+/-- R-ANCHOR ([mccarthy-prince-1995] A.5): rightmost positions correspond.
     The `Fin` endpoints are the two `Fin.last`s when both forms are nonempty. -/
 def anchorRViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
   if h : (c.form r₁).length = 0 ∨ (c.form r₂).length = 0 then 0
@@ -164,19 +164,19 @@ def anchorRViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
 
 /-! ### Linearity, uniformity, integrity -/
 
-/-- LINEARITY "No Metathesis" (@cite{mccarthy-prince-1995} A.6): the count of
+/-- LINEARITY "No Metathesis" ([mccarthy-prince-1995] A.6): the count of
     inversion pairs `(i₁,j₁), (i₂,j₂) ∈ edge` with `i₁ < i₂` but `j₂ < j₁`
     (coordinates compared via `Fin.lt`). -/
 def linearityViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
   ((c.edge r₁ r₂ ×ˢ c.edge r₁ r₂).filter fun pq => pq.1.1 < pq.2.1 ∧ pq.2.2 < pq.1.2).card
 
-/-- UNIFORMITY "No Coalescence" (@cite{mccarthy-prince-1995} A.7): the count of
+/-- UNIFORMITY "No Coalescence" ([mccarthy-prince-1995] A.7): the count of
     `form r₂` positions with more than one correspondent in `form r₁`. -/
 def uniformityViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
   ((Finset.univ : Finset (Fin (c.form r₂).length)).filter fun j =>
     ((c.edge r₁ r₂).filter fun p => p.2 = j).card > 1).card
 
-/-- INTEGRITY "No Breaking" (@cite{mccarthy-prince-1995} A.8): the count of
+/-- INTEGRITY "No Breaking" ([mccarthy-prince-1995] A.8): the count of
     `form r₁` positions with more than one correspondent in `form r₂`. -/
 def integrityViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
   ((Finset.univ : Finset (Fin (c.form r₁).length)).filter fun i =>
@@ -329,11 +329,11 @@ def parallel (s₁ s₂ : List α) : Corr Side α :=
   diagram (fun | .lhs => s₁ | .rhs => s₂) (· ≠ ·)
 
 /-- The fully-faithful candidate: identity correspondence on one string
-    (@cite{mccarthy-prince-1995}). -/
+    ([mccarthy-prince-1995]). -/
 def identity (s : List α) : Corr Side α := parallel s s
 
 /-- 3-role input/base/reduplicant diagram with parallel-pair cross-role
-    edges (@cite{mccarthy-prince-1995}). -/
+    edges ([mccarthy-prince-1995]). -/
 def reduplication (input base reduplicant : List α) : Corr RedupRole α :=
   diagram
     (fun | .input => input | .base => base | .reduplicant => reduplicant)
@@ -417,7 +417,7 @@ theorem identity_identFeature_zero {F : Type*} [DecidableEq F] (proj : α → F)
 
 /-- The five order-relevant zeros bundled: a correspondence is **faithful**
     (on the `(r₁, r₂)` edge) when it has no MAX, DEP, INTEGRITY, UNIFORMITY,
-    or LINEARITY violation (@cite{mccarthy-prince-1995} (A.1), (A.2), (A.6),
+    or LINEARITY violation ([mccarthy-prince-1995] (A.1), (A.2), (A.6),
     (A.7), (A.8)). This is exactly the hypothesis set under which the edge is
     the graph of an order isomorphism. -/
 structure IsFaithful (c : Corr Role α) (r₁ r₂ : Role) : Prop where
@@ -553,7 +553,7 @@ end Corr
 
 /-! ### Reduplication constraints
 
-The canonical @cite{mccarthy-prince-1995} reduplicative-faithfulness
+The canonical [mccarthy-prince-1995] reduplicative-faithfulness
 constraints as `NamedConstraint (Corr RedupRole α)`; study files import these
 names rather than re-rolling `Corr.toMaxConstraint .input .base "IO"`. -/
 

@@ -1,6 +1,6 @@
 /-
 # Gapping and Constituent Order
-@cite{steedman-2000}
+[steedman-2000]
 
 Empirical data on gapping patterns across SOV, VSO, and SVO languages.
 
@@ -12,7 +12,7 @@ Gapping involves the apparent "ellipsis" of a verb in coordinated structures:
        ↑ ↑
     overt verb "gapped" verb
 
-## @cite{ross-1970}'s Generalization
+## [ross-1970]'s Generalization
 
 The directionality of gapping correlates with basic word order:
 
@@ -329,11 +329,11 @@ theorem mixed_allows_both :
   exact Or.inr trivial
 
 -- ============================================================================
--- Identity Conditions (@cite{anand-hardt-mccloskey-2021})
+-- Identity Conditions ([anand-hardt-mccloskey-2021])
 -- ============================================================================
 
 /-- Does this ellipsis type require syntactic identity (SIC)?
-    @cite{anand-hardt-mccloskey-2021}: sluicing and gapping require structural matching;
+    [anand-hardt-mccloskey-2021]: sluicing and gapping require structural matching;
     VP ellipsis does not. -/
 def RequiresSyntacticIdentity : EllipsisType → Prop
   | .sluicing => True
@@ -345,7 +345,7 @@ instance : DecidablePred RequiresSyntacticIdentity := fun e => by
   cases e <;> unfold RequiresSyntacticIdentity <;> infer_instance
 
 /-- Does this ellipsis type require semantic identity (e-GIVENness)?
-    @cite{anand-hardt-mccloskey-2021}: all ellipsis types require e-GIVENness. -/
+    [anand-hardt-mccloskey-2021]: all ellipsis types require e-GIVENness. -/
 def RequiresSemanticIdentity : EllipsisType → Prop
   | _ => True
 

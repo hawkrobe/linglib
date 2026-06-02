@@ -1,5 +1,5 @@
 /-
-# @cite{qing-uegaki-2025} Empirical Data
+# [qing-uegaki-2025] Empirical Data
 
 Data from: "When can non-veridical preferential attitude predicates take questions?"
 Authors: Qing, Özyıldız, Roelofsen, Romero, Uegaki

@@ -3,13 +3,13 @@ import Linglib.Features.Logophoricity
 
 /-!
 # Wan (Mande) Reciprocal and Logophoric Fragment
-@cite{dalrymple-haug-2024}
+[dalrymple-haug-2024]
 
 Wan (a Mande language, ISO 639-3: wan) uses logophoric pronouns in
 complement clauses of speech-act verbs. These logophoric pronouns can
 serve as the local antecedent of a reciprocal.
 
-## Key Data (@cite{dalrymple-haug-2024} §6)
+## Key Data ([dalrymple-haug-2024] §6)
 
 When the antecedent of the reciprocal is a logophor, only a narrow scope
 reading is available. In the scenario where each animal says "I will eat
@@ -27,7 +27,7 @@ binder is logophoric).
 
 ## Connection to Logophoricity Theory
 
-The logophoric pronoun in Wan satisfies the `self` role in @cite{sells-1987}'s
+The logophoric pronoun in Wan satisfies the `self` role in [sells-1987]'s
 hierarchy: it refers to the individual whose mental state is reported.
 -/
 

@@ -3,7 +3,7 @@ import Linglib.Core.Time.Boundedness
 
 /-!
 # Relation Origins and Declerck's PUTI
-@cite{declerck-1991} @cite{declerck-2006}
+[declerck-1991] [declerck-2006]
 
 Step 6 of the Tense-API redesign. A **relation origin** tags *where*
 a temporal relation between two TOs came from — grammatical tense,
@@ -122,7 +122,7 @@ end OriginTaggedRelation
 -- ════════════════════════════════════════════════════
 
 /-! Declerck's *Principle of Unmarked Temporal Interpretation*
-    (@cite{declerck-1991}). Given two situations described by
+    ([declerck-1991]). Given two situations described by
     minimally-marked clauses, the default Allen atom-set between their
     event times is determined by their boundedness profile:
 

@@ -6,15 +6,15 @@ import Linglib.Core.Constraint.OT.Basic
 import Linglib.Core.Constraint.Superoptimal
 
 /-!
-# @cite{krifka-2007b} — Negated Antonyms: Creating and Filling the Gap
-@cite{krifka-2007b}
+# [krifka-2007b] — Negated Antonyms: Creating and Filling the Gap
+[krifka-2007b]
 
 In:, Presupposition and Implicature in
 Compositional Semantics, Palgrave Macmillan.
 
 ## Krifka's Thesis
 
-Krifka argues, against the received view (@cite{cruse-1986}, @cite{horn-1989}),
+Krifka argues, against the received view ([cruse-1986], [horn-1989]),
 that antonyms like happy/unhappy are **literally contradictory** — they
 exhaustively partition the scale with a single threshold. The gap between
 "not unhappy" and "happy" arises through **pragmatic strengthening**, not
@@ -30,7 +30,7 @@ through the semantics of contrary negation.
    (ex. 22) entail the predicate covers everyone.
 3. **M-principle**: Of two expressions with similar meaning, the simpler one
    is restricted to stereotypical interpretations, the complex one to
-   non-stereotypical interpretations (@cite{horn-1984}).
+   non-stereotypical interpretations ([horn-1984]).
 
 ### Central Argument
 
@@ -52,10 +52,10 @@ Formalizes the quadruplet structure, proves the contradictory synonymy
 puzzle and its resolution via ThresholdPair, and bridges to the empirical
 data in `FlexibleNegation.lean`. The pragmatic mechanism connecting
 contradictory base → effective ThresholdPair is derived via two routes:
-1. **Bidirectional OT** (§ 9 below): @cite{blutner-2000}'s weak BiOT (eq. 14)
+1. **Bidirectional OT** (§ 9 below): [blutner-2000]'s weak BiOT (eq. 14)
    derives the four-way form-meaning assignment via the greatest-fixed-point
    computation in `Core.Constraint.Evaluation.superoptimal`.
-2. **RSA model**: @cite{tessler-franke-2019} (`Studies/TesslerFranke2020.lean`)
+2. **RSA model**: [tessler-franke-2019] (`Studies/TesslerFranke2020.lean`)
    derives the same effect through Bayesian pragmatic reasoning.
 -/
 
@@ -113,7 +113,7 @@ open Core.Constraint.OT (NamedConstraint)
 -- § 4. Concrete Scale: Happy/Unhappy on Degree 4
 -- ════════════════════════════════════════════════════
 
-/-- 5-point happiness scale (matching @cite{tessler-franke-2019}'s model). -/
+/-- 5-point happiness scale (matching [tessler-franke-2019]'s model). -/
 abbrev HappyDeg := Degree 4
 
 /-- Contradictory boundary at θ = 2 (the literal semantics). -/
@@ -241,14 +241,14 @@ theorem strengthened_not_exhaustive :
 -- § 9. Bidirectional OT: Deriving the Quadruplet
 -- ════════════════════════════════════════════════════
 
-/-! @cite{blutner-2000}'s weak Bidirectional OT (eq. 14, "weak optimality")
+/-! [blutner-2000]'s weak Bidirectional OT (eq. 14, "weak optimality")
     derives the form-meaning assignment from constraint competition. Krifka
-    explicitly invokes this version (p. 6, citing @cite{blutner-2000} and
-    @cite{jaeger-2002}). The evaluation uses `superoptimal` from
+    explicitly invokes this version (p. 6, citing [blutner-2000] and
+    [jaeger-2002]). The evaluation uses `superoptimal` from
     `Core.Constraint.Evaluation`.
 
     Two ranked constraints:
-    1. **M-principle** (@cite{horn-1984}): simple forms pair with stereotypical
+    1. **M-principle** ([horn-1984]): simple forms pair with stereotypical
        meanings; complex forms pair with non-stereotypical meanings.
     2. **Economy**: minimize form complexity.
 
@@ -290,7 +290,7 @@ def krifkaQuadruplet : Finset (AntonymForm × Region) :=
   { (.positive,    .positive), (.notNegative, .plateauHigh),
     (.negative,    .negative), (.notPositive, .plateauLow) }
 
-/-- **M-Principle** constraint (@cite{horn-1984}, Horn's Division of Pragmatic
+/-- **M-Principle** constraint ([horn-1984], Horn's Division of Pragmatic
     Labor): penalizes mismatch between form complexity and meaning
     stereotypicality.
     - Simple form + stereotypical meaning → 0 violations (match)

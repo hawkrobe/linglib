@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Merge.External
 
 /-!
 # Internal Merge bridge: algebraic ↔ linguistic
-@cite{marcolli-chomsky-berwick-2025}
+[marcolli-chomsky-berwick-2025]
 
 Realizes M-C-B Proposition 1.4.2 (book p. 50): Internal Merge as a
 **composition of two algebraic Merges** —
@@ -267,7 +267,7 @@ theorem mergeOp_im_matches_Step
 
 /-! ## §4: IM cost-survival at ε = 0 (M-C-B Prop 1.5.1 bullet 3)
 
-@cite{marcolli-chomsky-berwick-2025} Proposition 1.5.1 says: "in the
+[marcolli-chomsky-berwick-2025] Proposition 1.5.1 says: "in the
 limit ε → 0, only derivations in which all the Merge operations are
 Internal Merge and External Merge remain." Sideward suppression is
 proven in `Sideward.lean` §4.1; this section proves the **IM positive
@@ -285,7 +285,7 @@ whereas MCB's signed-weight cost calculation `c(ℳ(T_v, T_i/T_v)) =
 d_v − d_v = 0` works directly on a single `ℳ` action without
 instantiating the intermediate workspace. The two formulations agree
 numerically; the operational substitution requires accepting `ℳ_{β,1}`
-as a (virtual) intermediate stage. See @cite{marcolli-chomsky-berwick-2025}
+as a (virtual) intermediate stage. See [marcolli-chomsky-berwick-2025]
 on the "virtual particles" caveat for the unit-stage operator.
 
 **Scope.** This section directly realizes Prop 1.5.1 bullets 1+3 (cost-0

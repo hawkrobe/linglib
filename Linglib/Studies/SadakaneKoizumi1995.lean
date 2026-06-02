@@ -4,7 +4,7 @@ import Linglib.Fragments.Japanese.Case
 import Linglib.Syntax.Case.Dependent
 import Linglib.Diachronic.CaseGrammaticalization
 /-!
-# Sadakane & Koizumi 1995 @cite{sadakane-koizumi-1995} @cite{martin-1975}
+# Sadakane & Koizumi 1995 [sadakane-koizumi-1995] [martin-1975]
 
 *On the nature of the "dative" particle ni in Japanese*. Linguistics 33(1):5–33.
 
@@ -25,7 +25,7 @@ Plus an **ambiguous** bucket (D, N1, N2) where speakers disagree on
 whether *ni* is a case marker or a postposition; encoded as
 `Classification.classify _ = none`.
 
-S&K SUPPORT @cite{kuno-1987}'s and Miyagawa (1989)'s case-marker /
+S&K SUPPORT [kuno-1987]'s and Miyagawa (1989)'s case-marker /
 postposition dichotomy — once the four homophones are split apart, the
 remainder respects the binary partition. This is in contrast to the
 "third-type" view (a single *ni* with both case-marker and postposition
@@ -87,7 +87,7 @@ correspondingly coarse.
 
 - Diagnostic acceptability scores use `Features.Acceptability` (the
   project canon), not a per-paper Grammaticality enum.
-- `Classification.marantz` aligns S&K's 4-way with @cite{baker-2015}'s
+- `Classification.marantz` aligns S&K's 4-way with [baker-2015]'s
   `Syntax.Case.CaseSource` from `Syntax.Case.Dependent`. The map
   is partial: copula *ni* lies outside Marantz's case-assignment domain.
   Note: `.niInsertion → .unmarked` (Marantz/Schütze's "default-case"
@@ -103,7 +103,7 @@ correspondingly coarse.
 ## Dialect parameter
 
 S&K's footnote 9 (p. 30) flags that judgments throughout the paper are
-from the **innovating** dialect (per @cite{kuno-1987}, Miyagawa 1989).
+from the **innovating** dialect (per [kuno-1987], Miyagawa 1989).
 The **conservative** dialect (Shibatani 1977) gives different judgments
 for some categories (notably K, *Ohaio Ginkoo-ni* 'work for Ohio Bank').
 This Studies file's `Classification.signature` reflects the innovating
@@ -153,12 +153,12 @@ inductive Classification where
 
 /-! ## §2 Martin (1975) usage categories — 31 letter codes
 
-The 31 categories follow @cite{martin-1975}'s reference grammar; S&K adopt
+The 31 categories follow [martin-1975]'s reference grammar; S&K adopt
 his classification with minor modifications (see §2 fn. 3). Each category
 in the appendix (pp. 23–33) is exemplified by one or more verbs.
 -/
 
-/-- The 31 usage categories of Japanese *ni* per @cite{martin-1975}, as
+/-- The 31 usage categories of Japanese *ni* per [martin-1975], as
     reported in S&K's Appendix (pp. 23–33). Letter codes are S&K's. -/
 inductive MartinCategory where
   | A | B | C1 | C2 | C3 | D | E | F | G
@@ -302,7 +302,7 @@ theorem card_decomposition :
 /-! ## §5 Conflation: Fragment's `ni` collapses S&K types
 
 `Fragments/Japanese/Case.lean` exposes a single `ni : CaseMarker` entry
-(consistent with @cite{tsujimura-2014}'s textbook presentation). S&K's
+(consistent with [tsujimura-2014]'s textbook presentation). S&K's
 4-way analysis would split this entry into multiple lexemes. The
 following theorems make the granularity disagreement Lean-visible: the
 Fragment's `ni` covers Martin categories with INCONSISTENT diagnostic

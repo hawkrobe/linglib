@@ -3,7 +3,7 @@ import Linglib.Semantics.Degree.Basic
 
 /-!
 # Than-Clause Semantics
-@cite{bhatt-pancheva-2004} @cite{heim-2006} @cite{von-stechow-1984}
+[bhatt-pancheva-2004] [heim-2006] [von-stechow-1984]
 
 Compositional semantics for the than-clause in comparative constructions.
 The than-clause introduces the standard of comparison and determines

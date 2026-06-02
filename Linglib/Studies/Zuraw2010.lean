@@ -3,10 +3,10 @@ import Linglib.Core.Constraint.PartiallyOrderedConstraints
 import Linglib.Core.Constraint.PermSubsetCombinatorics
 
 /-!
-# @cite{zuraw-2010}: Factorial Typology of Nasal Substitution
+# [zuraw-2010]: Factorial Typology of Nasal Substitution
 
 Formalizes the factorial typology of Tagalog-style nasal substitution
-from @cite{zuraw-2010} (NLLT 28: 417–472). When a nasal-final prefix
+from [zuraw-2010] (NLLT 28: 417–472). When a nasal-final prefix
 (e.g. maŋ-) is concatenated with an obstruent-initial stem, the nasal
 and the obstruent may **coalesce** into a single nasal retaining the
 place of the latter:
@@ -41,18 +41,18 @@ that any binary-output OT factorial-typology study can consume.
 
 ## Constraint set
 
-Six constraints drive the factorial typology, matching @cite{zuraw-2010}'s
+Six constraints drive the factorial typology, matching [zuraw-2010]'s
 §4.2 footnote 17 (page 446) where the free-ranking enumeration appears:
 
-- **NasSub** (project-canonical name following @cite{zuraw-hayes-2017}
-  ex. (3); extensionally coincides with @cite{zuraw-2010}'s DEP-C —
+- **NasSub** (project-canonical name following [zuraw-hayes-2017]
+  ex. (3); extensionally coincides with [zuraw-2010]'s DEP-C —
   see `nasSub` docstring): violated by NO for every stem.
-- **\*NC**, after @cite{pater-1999}: penalizes nasal+voiceless-obstruent
+- **\*NC**, after [pater-1999]: penalizes nasal+voiceless-obstruent
   clusters; violated by NO for voiceless stems.
 - **\*ASSOC** (faithfulness): penalizes adding a new association line;
   violated by YES for every stem.
 - **\*\[ŋ, \*\[n, \*\[m** (markedness, stringent hierarchy after
-  @cite{prince-1997-stringency} and @cite{delacy-2002}): penalize
+  [prince-1997-stringency] and [delacy-2002]): penalize
   stem-initial nasals at velar/coronal/labial places respectively
   (with backer = more violations).
 
@@ -68,12 +68,12 @@ and the place effect (backer→YES implies fronter→YES within a voicing
 class) follow from the set-theoretic relationships between `D_c` and
 `Y_c` across consonants — proved structurally per-ranking, no enumeration.
 These typological generalizations are independently established in
-@cite{newman-1984}'s overview of Western Austronesian and replicated
-in @cite{blust-2004}'s 48-language survey.
+[newman-1984]'s overview of Western Austronesian and replicated
+in [blust-2004]'s 48-language survey.
 
 ## Dictionary data
 
-@cite{zuraw-2010}'s Tagalog dictionary counts (paper §2.2, page 423)
+[zuraw-2010]'s Tagalog dictionary counts (paper §2.2, page 423)
 confirm the voicing effect: voiceless stems show higher substitution
 rates than voiced stems at the labial place (p: 253/263 vs b: 177/277).
 
@@ -87,7 +87,7 @@ under a different constraint inventory (NasSub / \*NC / \*[stemŋ] /
 \*[stemŋ]/n / prefix-indexed UNIFORMITY) for a MaxEnt analysis of the
 Hayes-Zuraw shifted-sigmoids generalization. The constraint sets and
 the data slices differ; the two strands are complementary readings of
-@cite{zuraw-2010}'s underlying phenomenon. ZurawHayes2017 and Magri2025
+[zuraw-2010]'s underlying phenomenon. ZurawHayes2017 and Magri2025
 import the constraint identity definitions in §1 below via `comap` —
 those definitions must remain stable.
 -/
@@ -100,7 +100,7 @@ open Core.Constraint.PermSubsetCombinatorics
 
 /-! ## § 0: Stems, Substitution Decisions, Dictionary Counts -/
 
-/-- The six stem-initial obstruents in @cite{zuraw-2010}'s nasal
+/-- The six stem-initial obstruents in [zuraw-2010]'s nasal
     substitution typology. Coalescence maps each to its homorganic
     nasal: p,b → m; t,d → n; k,g → ŋ. -/
 inductive StemC where
@@ -118,12 +118,12 @@ inductive SubSt where
 abbrev NSCand := StemC × SubSt
 
 /-- Dictionary substitution rate for voiceless labial p (253/263 ≈ 96.2%).
-    Counts as reported in @cite{zuraw-2010} §2.2 (page 423) from a
+    Counts as reported in [zuraw-2010] §2.2 (page 423) from a
     Tagalog dictionary corpus study. -/
 def dictRate_p : ℚ := 253 / 263
 
 /-- Dictionary substitution rate for voiced labial b (177/277 ≈ 63.9%).
-    Counts as reported in @cite{zuraw-2010} §2.2 (page 423) from a
+    Counts as reported in [zuraw-2010] §2.2 (page 423) from a
     Tagalog dictionary corpus study. -/
 def dictRate_b : ℚ := 177 / 277
 
@@ -136,16 +136,16 @@ theorem dict_voicing_labial : dictRate_p > dictRate_b := by
 -- § 1: Constraints
 -- ============================================================================
 
-/-- **NasSub** (project-canonical name following @cite{zuraw-hayes-2017}
-    ex. (3)). Extensionally equivalent to @cite{zuraw-2010}'s DEP-C in
+/-- **NasSub** (project-canonical name following [zuraw-hayes-2017]
+    ex. (3)). Extensionally equivalent to [zuraw-2010]'s DEP-C in
     the present 6-constraint analysis, though the two papers frame the
     same constraint differently:
 
-    - @cite{zuraw-2010} §3.1 (page 432, ex. 6): **faithfulness DEP-C**,
+    - [zuraw-2010] §3.1 (page 432, ex. 6): **faithfulness DEP-C**,
       penalizes inserting a segmental host for the floating [+nas]
       feature. Violated by NO candidate `pamⱼ-bɪɡaj` because the
       inserted [m] segment has no input correspondent.
-    - @cite{zuraw-hayes-2017} ex. (3): **markedness NasSub**, penalizes
+    - [zuraw-hayes-2017] ex. (3): **markedness NasSub**, penalizes
       nasal + obstruent across morpheme boundaries.
 
     Both fire on every NO candidate in the present 6-constraint subset,
@@ -159,38 +159,38 @@ theorem dict_voicing_labial : dictRate_p > dictRate_b := by
 def nasSub : NamedConstraint NSCand :=
   mkMark "NasSub" fun c => c.2 = SubSt.no
 
-/-- **\*NC**, after @cite{pater-1999} (Austronesian NS) and
-    @cite{pater-2001} (revisited). Penalizes nasal + voiceless-obstruent
+/-- **\*NC**, after [pater-1999] (Austronesian NS) and
+    [pater-2001] (revisited). Penalizes nasal + voiceless-obstruent
     sequences. Violated by NO for voiceless stems only. Per
-    @cite{zuraw-2010} ex. (17) (page 436): "\*NC: A [+nasal] segment
+    [zuraw-2010] ex. (17) (page 436): "\*NC: A [+nasal] segment
     must not be immediately followed by a [-voice, -sonorant] segment". -/
 def starNC : NamedConstraint NSCand :=
   mkMark "*NC" fun c => c.1 ∈ [StemC.p, .t, .k] ∧ c.2 = .no
 
 /-- **\*ASSOC**: penalizes adding a new association line (faithfulness).
-    Per @cite{zuraw-2010} (page 432, ex. 7), this is
+    Per [zuraw-2010] (page 432, ex. 7), this is
     "*ASSOCIATE_hetero-morphemic" — the local restriction of a more
     general *ASSOC family that fires on association lines crossing
     morpheme boundaries. Violated by YES for every stem. -/
 def starAssoc : NamedConstraint NSCand :=
   mkMark "*ASSOC" fun c => c.2 = SubSt.yes
 
-/-- **\*\[ŋ**, after @cite{prince-1997-stringency} and @cite{delacy-2002}
-    on stringency hierarchies; @cite{zuraw-2010} ex. (19) (page 437).
+/-- **\*\[ŋ**, after [prince-1997-stringency] and [delacy-2002]
+    on stringency hierarchies; [zuraw-2010] ex. (19) (page 437).
     Stems must not begin with ŋ. Violated by YES for velar stems
     (k, g coalesce to stem-initial ŋ). -/
 def starInitVelar : NamedConstraint NSCand :=
   mkMark "*[ŋ" fun c => c.1 ∈ [StemC.k, .g] ∧ c.2 = .yes
 
 /-- **\*\[n**: stringency-hierarchy member after
-    @cite{prince-1997-stringency}, @cite{delacy-2002}; @cite{zuraw-2010}
+    [prince-1997-stringency], [delacy-2002]; [zuraw-2010]
     ex. (19) (page 437). Stems must not begin with n or backer.
     Violated by YES for coronal and velar stems. -/
 def starInitCorVel : NamedConstraint NSCand :=
   mkMark "*[n" fun c => c.1 ∈ [StemC.t, .d, .k, .g] ∧ c.2 = .yes
 
 /-- **\*\[m**: top of the stringency hierarchy after
-    @cite{prince-1997-stringency}, @cite{delacy-2002}; @cite{zuraw-2010}
+    [prince-1997-stringency], [delacy-2002]; [zuraw-2010]
     ex. (19) (page 437). Stems must not begin with m or backer.
     Violated by YES for all stems (every coalesced output is
     stem-initial nasal of some place). -/
@@ -198,7 +198,7 @@ def starInitAll : NamedConstraint NSCand :=
   mkMark "*[m" fun c => c.2 = SubSt.yes
 
 /-- The six constraints, indexed for substrate consumption.
-    Order matches @cite{zuraw-2010}'s §4.2 footnote 17 (page 446):
+    Order matches [zuraw-2010]'s §4.2 footnote 17 (page 446):
     NasSub, \*NC, \*ASSOC, \*[ŋ, \*[n, \*[m. -/
 def constraint : Fin 6 → NamedConstraint NSCand
   | 0 => nasSub
@@ -224,7 +224,7 @@ theorem stringency_violations :
 
 /-- *ASSOC and *\[m have identical violation profiles on this candidate
     space. A coincidence of the 0/1-violation simplification rather than
-    a deep identity: in @cite{zuraw-2010}'s richer analysis, *ASSOC's
+    a deep identity: in [zuraw-2010]'s richer analysis, *ASSOC's
     flat penalty contrasts with *[m's stringency-hierarchy role. -/
 theorem assoc_eq_initAll (c : StemC) (s : SubSt) :
     starAssoc.eval (c, s) = starInitAll.eval (c, s) := by
@@ -258,7 +258,7 @@ def yesFav (c : StemC) : Finset (Fin 6) :=
   Finset.univ.filter (fun i => vp c .yes i < vp c .no i)
 
 /-! Concrete `decide`-discharged values for `relevant` and `yesFav`,
-matching @cite{zuraw-2010} §4.2 footnote 17's per-consonant constraint
+matching [zuraw-2010] §4.2 footnote 17's per-consonant constraint
 subsets. -/
 
 @[simp] theorem relevant_p : relevant .p = ({0, 1, 2, 5} : Finset (Fin 6)) := by decide
@@ -346,7 +346,7 @@ theorem subProb_g : subProb .g = 1/5 := by
       show ({0, 2, 3, 4, 5} : Finset (Fin 6)).card = 5 from by decide]
   norm_num
 
-/-- All six factorial percentages, matching @cite{zuraw-2010} §4.2
+/-- All six factorial percentages, matching [zuraw-2010] §4.2
     footnote 17 (page 446)'s free-ranking summary (50%, 40%, 33⅓%,
     33⅓%, 25%, 20% for p, t, k, b, d, g respectively). Each derived in
     closed form from the substrate's `picksAt_rate_eq` — no 6!
@@ -363,7 +363,7 @@ theorem factorial_rates :
 /-- **Place monotonicity** (model property): the factorial rate strictly
     decreases from labial to velar within each voicing class. NB: the
     place effect within voiceless is statistically *not* significant
-    in @cite{zuraw-2010}'s §5 acceptability data (paper page 459: in a
+    in [zuraw-2010]'s §5 acceptability data (paper page 459: in a
     mixed-effects model labials get a slightly *lower* rating difference
     than dentals — by 0.3 points — but this is not significant). The
     strict inequality below is therefore a property of the 6-constraint
@@ -377,7 +377,7 @@ theorem place_monotonicity :
 
 /-- **Voicing monotonicity**: voiceless substitution rate is at least as
     high as voiced at every place. Empirically robust across all of
-    @cite{zuraw-2010}'s data sources (Fig 1 dictionary, Fig 8 corpus,
+    [zuraw-2010]'s data sources (Fig 1 dictionary, Fig 8 corpus,
     Fig 14 acceptability, Fig 15 web survey) — also significant in
     every mixed-effects model the paper reports. -/
 theorem voicing_monotonicity :
@@ -392,8 +392,8 @@ theorem voicing_monotonicity :
 
 /-! These structural per-ranking implication theorems formalize the
 cross-linguistic implicational universals established in
-@cite{newman-1984}'s overview of Western Austronesian (replicated in
-@cite{blust-2004}'s 48-language survey): *if NS applies to a voiced
+[newman-1984]'s overview of Western Austronesian (replicated in
+[blust-2004]'s 48-language survey): *if NS applies to a voiced
 obstruent, it applies to the corresponding voiceless obstruent;
 if NS applies to a stop, it applies to any fronter stop of the same
 voicing*. The substrate proofs go via the lifted helpers
@@ -476,7 +476,7 @@ theorem place_d_implies_b (σ : Equiv.Perm (Fin 6)) :
 
 /-- **Tagalog-style maximal substitution**: if velar voiced g subs, every
     other consonant subs too. Composition of voicing + place effects —
-    the upper end of the @cite{newman-1984} / @cite{blust-2004}
+    the upper end of the [newman-1984] / [blust-2004]
     implicational hierarchy. -/
 theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : PicksAt nsCands vp σ .g .yes) :
     PicksAt nsCands vp σ .p .yes ∧ PicksAt nsCands vp σ .t .yes ∧
@@ -494,7 +494,7 @@ theorem g_implies_all (σ : Equiv.Perm (Fin 6)) (h : PicksAt nsCands vp σ .g .y
 -- ============================================================================
 
 /-- A ranking exists under which every consonant undergoes substitution
-    — corresponding to **Pattern (j)** in @cite{zuraw-2010} Table 5
+    — corresponding to **Pattern (j)** in [zuraw-2010] Table 5
     (page 462), exemplified by Limos Kalinga, Ginaang Kalinga, and
     Sarangani Manobo (paper page 463; not Tagalog itself, which has
     *variation*: Fig 1 rates of 96/91/92/64/26/2% for p/t/k/b/d/g).

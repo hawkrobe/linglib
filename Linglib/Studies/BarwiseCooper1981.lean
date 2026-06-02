@@ -5,7 +5,7 @@ import Linglib.Semantics.Quantification.DomainRestriction
 
 /-!
 # Quantifier Universals Bridge
-@cite{barwise-cooper-1981} @cite{mostowski-1957} @cite{peters-westerstahl-2006} @cite{van-benthem-1984} @cite{van-de-pol-etal-2023}
+[barwise-cooper-1981] [mostowski-1957] [peters-westerstahl-2006] [van-benthem-1984] [van-de-pol-etal-2023]
 
 Bridges the English determiner fragment (`English.Determiners.QuantityWord`)
 to the GQ property predicates in `Core.Quantification` and
@@ -13,30 +13,30 @@ to the GQ property predicates in `Core.Quantification` and
 
 ## Empirical phenomena verified
 
-1. **Conservativity** (@cite{barwise-cooper-1981}, conservativity conjecture):
+1. **Conservativity** ([barwise-cooper-1981], conservativity conjecture):
    all six English quantity words satisfy CONSERV.
-2. **Quantity/isomorphism closure** (@cite{mostowski-1957}): all six satisfy QUANT.
-3. **Table II per-entry verification** (@cite{barwise-cooper-1981} Table II):
+2. **Quantity/isomorphism closure** ([mostowski-1957]): all six satisfy QUANT.
+3. **Table II per-entry verification** ([barwise-cooper-1981] Table II):
    each quantity word's strength and monotonicity direction match the
    paper's classification. Changing a fragment field breaks exactly one theorem.
-4. **Monotonicity–strength correlation** (@cite{barwise-cooper-1981} U7):
+4. **Monotonicity–strength correlation** ([barwise-cooper-1981] U7):
    strong English determiners are scope-↑MON (increasing).
-5. **Weak ↔ there-insertion** (@cite{barwise-cooper-1981} §4.6):
+5. **Weak ↔ there-insertion** ([barwise-cooper-1981] §4.6):
    weak determiners allow there-insertion; strong determiners don't.
-6. **Symmetry ↔ weak** (@cite{peters-westerstahl-2006}, symmetric ↔
+6. **Symmetry ↔ weak** ([peters-westerstahl-2006], symmetric ↔
    there-insertion): weak = symmetric, strong = not symmetric.
-7. **Positive-strong → scope-↑** (@cite{peters-westerstahl-2006},
+7. **Positive-strong → scope-↑** ([peters-westerstahl-2006],
    positive-strong determiners are scope-upward-monotone).
-8. **Duality** (@cite{barwise-cooper-1981} §4.11): outer/inner negation
+8. **Duality** ([barwise-cooper-1981] §4.11): outer/inner negation
    and dual operations connect every ↔ some ↔ no via the Square of
    Opposition, bridged to fragment entries.
-9. **Domain restriction** (@cite{ritchie-schiller-2024}): conservativity
+9. **Domain restriction** ([ritchie-schiller-2024]): conservativity
    enables domain restriction for all six quantity words.
 
 ## Data structures
 
 - `MonotonicitySimplicity`, `ConservativitySimplicity`, `QuantitySimplicity`:
-  @cite{van-de-pol-etal-2023} LZ complexity effect sizes.
+  [van-de-pol-etal-2023] LZ complexity effect sizes.
 
 ## Thread map
 
@@ -65,11 +65,11 @@ open Semantics.Quantification.DomainRestriction (DomainRestrictor
   conservative_domain_restricted)
 
 -- ============================================================================
--- §1. @cite{barwise-cooper-1981}: Conservativity is (near-)universal
+-- §1. [barwise-cooper-1981]: Conservativity is (near-)universal
 -- ============================================================================
 
 /-- Conservativity holds for all simple (lexicalized) English determiners.
-    @cite{barwise-cooper-1981} conjecture this is a universal of natural
+    [barwise-cooper-1981] conjecture this is a universal of natural
     language. Proved individually for each quantity word via
     `every_conservative`, `some_conservative`, etc. -/
 theorem conservativity_universal :
@@ -85,7 +85,7 @@ theorem conservativity_universal :
   · exact Semantics.Quantification.Quantifier.every_conservative
 
 -- ============================================================================
--- §2. @cite{mostowski-1957} / @cite{keenan-stavi-1986}: Quantity
+-- §2. [mostowski-1957] / [keenan-stavi-1986]: Quantity
 -- ============================================================================
 
 /-- All simple determiners satisfy quantity/isomorphism closure:
@@ -122,11 +122,11 @@ theorem quantity_universal :
 
 EXT (`Q(A,B)` depends only on `A` and `B`, not on an ambient universe)
 holds trivially for `GQ α` since the representation is universe-free —
-no axiom needed. EXT + CONS together yield the @cite{van-benthem-1984}
+no axiom needed. EXT + CONS together yield the [van-benthem-1984]
 characterization: determiners can be represented as type ⟨1⟩ quantifiers
 that "live on" their restrictor; see `conservative_iff_livesOn`. -/
 
-/-! ### @cite{barwise-cooper-1981} Table II: per-entry verification
+/-! ### [barwise-cooper-1981] Table II: per-entry verification
 
 Each theorem verifies one quantity word's strength and monotonicity
 direction against the paper's classification (p.184). Changing a field in
@@ -160,8 +160,8 @@ theorem table_II_few :
     QuantityWord.few.entry.strength = .weak ∧
     QuantityWord.few.entry.monotonicity = .decreasing := ⟨rfl, rfl⟩
 
-/-- half: weak, non-monotone. Not in @cite{barwise-cooper-1981} Table II;
-    classification follows @cite{van-de-pol-etal-2023}. -/
+/-- half: weak, non-monotone. Not in [barwise-cooper-1981] Table II;
+    classification follows [van-de-pol-etal-2023]. -/
 theorem table_II_half :
     QuantityWord.half.entry.strength = .weak ∧
     QuantityWord.half.entry.monotonicity = .nonMonotone := ⟨rfl, rfl⟩
@@ -172,7 +172,7 @@ theorem table_II_half :
 
 /-- All English quantity words except "half" are monotone.
     "Half" is the lone non-monotone simple determiner
-    (@cite{van-de-pol-etal-2023} classify it as non-monotone). -/
+    ([van-de-pol-etal-2023] classify it as non-monotone). -/
 theorem english_quantifiers_mostly_monotone :
     ([QuantityWord.none_, .few, .some_, .most, .all].map QuantityWord.monotonicity).all
       (· != .nonMonotone) = true := by native_decide
@@ -186,7 +186,7 @@ theorem some_all_scale_upward :
     [QuantityWord.some_, QuantityWord.all].all
       (·.monotonicity == .increasing) = true := by native_decide
 
-/-- @cite{barwise-cooper-1981} U7 (monotonicity–strength correlation):
+/-- [barwise-cooper-1981] U7 (monotonicity–strength correlation):
     strong determiners are scope-↑MON (increasing). The full universal
     distinguishes positive-strong (→ ↑MON) from negative-strong (→ ↓MON);
     since both English strong determiners (most, every) are positive,
@@ -202,13 +202,13 @@ theorem strong_implies_increasing :
 -- §6. Weak/Strong and There-Insertion
 -- ============================================================================
 
-/-- Weak determiners allow there-insertion (@cite{barwise-cooper-1981} §4.6).
+/-- Weak determiners allow there-insertion ([barwise-cooper-1981] §4.6).
     "There are some/a/few/no cats" vs *"There is every/each cat". -/
 theorem weak_there_insertion :
     ([QuantityWord.none_, .few, .some_].map (·.entry.strength)).all
       (· == .weak) = true := by native_decide
 
-/-- Strong determiners block there-insertion (@cite{barwise-cooper-1981} Table II). -/
+/-- Strong determiners block there-insertion ([barwise-cooper-1981] Table II). -/
 theorem strong_no_there_insertion :
     ([QuantityWord.most, .all].map (·.entry.strength)).all
       (· == .strong) = true := by native_decide
@@ -217,24 +217,24 @@ theorem strong_no_there_insertion :
 -- §7. Symmetry ↔ Weak
 -- ============================================================================
 
-/-- Weak English determiners are symmetric (@cite{peters-westerstahl-2006},
+/-- Weak English determiners are symmetric ([peters-westerstahl-2006],
     symmetric ↔ there-insertion ↔ weak).
     Cross-references: `some_symmetric`, `no_symmetric` in Quantifier.lean. -/
 theorem weak_are_symmetric :
     QuantityWord.some_.entry.strength = .weak ∧
     QuantityWord.none_.entry.strength = .weak := ⟨rfl, rfl⟩
 
-/-- Strong English determiners are not symmetric (@cite{peters-westerstahl-2006}).
+/-- Strong English determiners are not symmetric ([peters-westerstahl-2006]).
     Witness: `every_not_symmetric` in Quantifier.lean. -/
 theorem strong_not_symmetric :
     QuantityWord.all.entry.strength = .strong ∧
     QuantityWord.most.entry.strength = .strong := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- §8. @cite{barwise-cooper-1981} §4.11: Duality (Square of Opposition)
+-- §8. [barwise-cooper-1981] §4.11: Duality (Square of Opposition)
 -- ============================================================================
 
-/-- The dual of ⟦every⟧ is ⟦some⟧: Q̌(every) = some (@cite{barwise-cooper-1981} §4.11).
+/-- The dual of ⟦every⟧ is ⟦some⟧: Q̌(every) = some ([barwise-cooper-1981] §4.11).
     ¬(∀x. R(x) → ¬S(x)) = ∃x. R(x) ∧ S(x).
     Bridges `dualQ_every_eq_some` from Quantifier.lean to fragment entries. -/
 theorem dual_all_eq_some {α : Type*} [Fintype α] [DecidableEq α] :
@@ -242,7 +242,7 @@ theorem dual_all_eq_some {α : Type*} [Fintype α] [DecidableEq α] :
   simp only [QuantityWord.gqDenotation]
   exact Semantics.Quantification.Quantifier.dualQ_every_eq_some
 
-/-- Inner negation maps ⟦every⟧ to ⟦no⟧: every~ = no (@cite{barwise-cooper-1981} §4.11).
+/-- Inner negation maps ⟦every⟧ to ⟦no⟧: every~ = no ([barwise-cooper-1981] §4.11).
     ∀x. R(x) → ¬S(x) = ¬∃x. R(x) ∧ S(x).
     Bridges `pinnerNeg_every_eq_no` to fragment entries. -/
 theorem innerNeg_all_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
@@ -250,7 +250,7 @@ theorem innerNeg_all_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
   simp only [QuantityWord.gqDenotation]
   exact Semantics.Quantification.Quantifier.innerNeg_every_eq_no
 
-/-- Outer negation maps ⟦some⟧ to ⟦no⟧: ~some = no (@cite{barwise-cooper-1981} §4.11).
+/-- Outer negation maps ⟦some⟧ to ⟦no⟧: ~some = no ([barwise-cooper-1981] §4.11).
     ¬(∃x. R(x) ∧ S(x)) = ∀x. R(x) → ¬S(x).
     Bridges `pouterNeg_some_eq_no` to fragment entries. -/
 theorem outerNeg_some_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
@@ -262,7 +262,7 @@ theorem outerNeg_some_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
 -- §9. Left anti-additivity → NPI licensing
 -- ============================================================================
 
-/- Left anti-additive determiners license NPIs (@cite{peters-westerstahl-2006}).
+/- Left anti-additive determiners license NPIs ([peters-westerstahl-2006]).
    LAA is formalized: see `every_laa`, `no_laa` in Quantifier.lean.
    The NPI ↔ DE bridge is now formalized in
    `Ladusaw1979`. -/
@@ -272,7 +272,7 @@ theorem outerNeg_some_eq_none {α : Type*} [Fintype α] [DecidableEq α] :
 -- ============================================================================
 
 /-- Positive-strong determiners are scope-upward-monotone
-    (@cite{peters-westerstahl-2006}).
+    ([peters-westerstahl-2006]).
     Only `all` (= `every_sem`) is genuinely positive-strong; for the rest,
     `PositiveStrong` is vacuously false (contradicted by `R = λ _ => false`
     or `R = λ _ => true`), making the implication trivially true. -/
@@ -293,10 +293,10 @@ theorem positive_strong_determiners_upward_monotone :
   case half => sorry
 
 -- ============================================================================
--- §11. @cite{van-benthem-1984} §3.3: Aristotle Reversed — Square of Opposition
+-- §11. [van-benthem-1984] §3.3: Aristotle Reversed — Square of Opposition
 -- ============================================================================
 
-/- @cite{van-benthem-1984} §3.3: Under CONSERV (+ VAR*), the Square of Opposition
+/- [van-benthem-1984] §3.3: Under CONSERV (+ VAR*), the Square of Opposition
    is completely determined by inferential (relational) conditions:
    - all:     transitive + reflexive      → inclusion  (A ⊆ B)
    - some:    symmetric + quasi-reflexive → overlap    (A ∩ B ≠ ∅)
@@ -322,12 +322,12 @@ theorem positive_strong_determiners_upward_monotone :
    - left-anti-additive quantifiers (every, no) license strong NPIs -/
 
 -- ============================================================================
--- §12. @cite{van-de-pol-etal-2023}: Simplicity and Universals
+-- §12. [van-de-pol-etal-2023]: Simplicity and Universals
 -- ============================================================================
 
 /-- Monotone quantifiers have strictly lower LZ complexity than
     non-monotone ones. This is the strongest of the three effects.
-    (@cite{van-de-pol-etal-2023}) -/
+    ([van-de-pol-etal-2023]) -/
 structure MonotonicitySimplicity where
   /-- Mean LZ complexity of monotone quantifiers (universe size 4) -/
   monotone_mean_lz : ℚ
@@ -360,15 +360,15 @@ structure UniversalsSimplicityRanking where
 
 -- ============================================================================
 -- §13. Conservativity Enables Domain Restriction
--- @cite{barwise-cooper-1981} + @cite{ritchie-schiller-2024}
+-- [barwise-cooper-1981] + [ritchie-schiller-2024]
 -- ============================================================================
 
 /-- Conservativity universally enables domain restriction: all 6 English
     quantity words remain conservative under any domain restrictor C.
 
-    This connects @cite{barwise-cooper-1981}'s conservativity conjecture
+    This connects [barwise-cooper-1981]'s conservativity conjecture
     (all simple determiners are conservative) to
-    @cite{ritchie-schiller-2024}'s DDRPs. Domain restriction via
+    [ritchie-schiller-2024]'s DDRPs. Domain restriction via
     C-intersection is well-defined for the entire English determiner
     system because every lexicalized determiner is conservative.
 

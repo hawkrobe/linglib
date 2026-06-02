@@ -2,13 +2,13 @@ import Linglib.Semantics.Questions.Basic
 
 /-!
 # Question — Hamblin constructions
-@cite{ciardelli-groenendijk-roelofsen-2018} @cite{puncochar-2019}
+[ciardelli-groenendijk-roelofsen-2018] [puncochar-2019]
 
 Two basic question-content constructions, both built from `declarative`
 + inquisitive disjunction:
 
 - `polar p` — the polar interrogative `?p` for proposition `p`. Defined
-  as `declarative p ⊔ declarative pᶜ`, matching @cite{puncochar-2019}'s
+  as `declarative p ⊔ declarative pᶜ`, matching [puncochar-2019]'s
   `?α := α ⩒ ¬α` (since the support clause for `¬α` over an atom with
   truth set `p` reduces to `q ⊆ pᶜ`).
 - `which D P` — the wh-question content "which `e ∈ D` satisfies `P e`?",
@@ -31,7 +31,7 @@ variable {W : Type u}
 /-! ### Polar question via inquisitive disjunction -/
 
 /-- The **polar interrogative** content of a proposition `p`, defined
-    via @cite{puncochar-2019}'s `?α := α ⩒ ¬α`. Alternatives are `p`
+    via [puncochar-2019]'s `?α := α ⩒ ¬α`. Alternatives are `p`
     and `pᶜ`; non-informative (`info = univ`); inquisitive iff `p` is
     non-trivial. -/
 def polar (p : Set W) : Question W :=

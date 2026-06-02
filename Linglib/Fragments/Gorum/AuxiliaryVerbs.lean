@@ -2,14 +2,14 @@ import Linglib.Morphology.MorphRule
 
 /-!
 # Gorum Auxiliary Verb Fragment
-@cite{anderson-2006}
+[anderson-2006]
 
 Gorum (a.k.a. Parenga or Parengi; South Munda, Austroasiatic; India) has
 auxiliary verb constructions with a **doubled** inflectional pattern: both
 the auxiliary verb and the lexical verb are marked for subject (person/number)
 and TAM (tense, affectedness/version).
 
-Source: Aze 1973, cited in @cite{anderson-2006}.
+Source: Aze 1973, cited in [anderson-2006].
 -/
 
 namespace Gorum.AuxiliaryVerbs
@@ -20,7 +20,7 @@ open Morphology (InflDistribution MorphCategory)
     *miŋ ne-gaʔ-ru ne-laʔ-ru*
     'I 1-eat-PST 1-AUX-PST'
     'I ate vigorously'
-    (Aze 1973: 279, cited in @cite{anderson-2006}). -/
+    (Aze 1973: 279, cited in [anderson-2006]). -/
 def form : String := "miŋ ne-gaʔ-ru ne-laʔ-ru"
 
 def gloss : String := "I 1-eat-PST 1-AUX-PST 'I ate vigorously'"
@@ -29,7 +29,7 @@ def gloss : String := "I 1-eat-PST 1-AUX-PST 'I ate vigorously'"
     *kula ne-giʔ-sun miŋ ne-butoŋ-tuʔ ne-i-tuʔ*
     'tiger 1-see-when I 1-fear-NPST:AFF 1-AUX-NPST:AFF'
     'when I see the tiger, I'll be afraid'
-    (Aze 1973, cited in @cite{anderson-2006}). -/
+    (Aze 1973, cited in [anderson-2006]). -/
 def secondaryForm : String := "kula ne-giʔ-sun miŋ ne-butoŋ-tuʔ ne-i-tuʔ"
 
 def family : String := "South Munda, Austroasiatic"

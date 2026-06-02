@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Basic
 
 /-!
 # Multidominance: Substrate for Shared-Material Syntax
-@cite{citko-2014} @cite{wilder-2008}
+[citko-2014] [wilder-2008]
 
 A multidominance (MD) structure is a syntactic object built once that is
 structurally accessible from two (or more) dominating nodes. At PF, it
@@ -20,10 +20,10 @@ needs:
   is pronounced;
 - `PFReducedCoordination` — a coordinate &P with PF reduction.
 
-Anchored on @cite{citko-2014} (textbook treatment of parallel-Merge MD)
-and @cite{wilder-2008} (constituent-sharing flavor). The canonical
+Anchored on [citko-2014] (textbook treatment of parallel-Merge MD)
+and [wilder-2008] (constituent-sharing flavor). The canonical
 non-paper-specific apparatus; consumers include
-@cite{citko-gracanin-yuksek-2025}, and (when written) Bachrach-Katzir
+[citko-gracanin-yuksek-2025], and (when written) Bachrach-Katzir
 2008, Larson 2012, and Belk-Neeleman-Philip 2023 on RNR.
 
 ## Convention notes
@@ -60,7 +60,7 @@ inductive PFReductionMechanism where
 
 /-- How material is shared between conjuncts in an MD coordination.
 
-    The empirical motivation is @cite{citko-gracanin-yuksek-2025}:
+    The empirical motivation is [citko-gracanin-yuksek-2025]:
     coordinated wh-questions use non-bulk-sharing (individual heads
     shared), while coordinated sluices use bulk-sharing (entire C'
     shared). The two sharing modes derive different syntactic and
@@ -105,7 +105,7 @@ structure SharedNode where
     conjunct distinction tracked by these fields is a *coordination-
     specific stipulation* about which conjunct hosts the shared / deleted
     material, parallel to `BrueningAlKhalaf2020.mergeCoordSymmetry`.
-    Phase 2+: harmonize with @cite{citko-2011}'s symmetric-merge
+    Phase 2+: harmonize with [citko-2011]'s symmetric-merge
     multidominance framework, where conjunct ordering is genuinely
     a multiset operation. -/
 structure PFReducedCoordination where

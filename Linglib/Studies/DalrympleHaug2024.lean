@@ -6,7 +6,7 @@ import Linglib.Fragments.Wan.Reciprocals
 
 /-!
 # Dalrymple & Haug (2024): Constraints on Reciprocal Scope
-@cite{dalrymple-haug-2024}
+[dalrymple-haug-2024]
 
 *Linguistic Inquiry*, Early Access. DOI: 10.1162/ling_a_00546.
 
@@ -36,9 +36,9 @@ cases, while the quantificational analysis fails for distributive operators
   relations (=, ∪, R) and prediction functions
 - `Semantics/Lexical/Plural/Distributivity.lean` — distributive
   operators (§5 shows *each* does NOT block wide scope, contra
-  @cite{heim-lasnik-may-1991})
+  [heim-lasnik-may-1991])
 - `Fragments/Hungarian/Reciprocals.lean` — Hungarian *egymás* with
-  singular null pronoun antecedent (§2, @cite{rakosi-2019})
+  singular null pronoun antecedent (§2, [rakosi-2019])
 - `Fragments/Wan/Reciprocals.lean` — Wan logophoric reciprocal data (§6)
 - `Discourse/Logophoricity.lean` — Sells (1987) logophoric roles
 - `Studies/Landau2015.lean` — control tier distinction
@@ -120,17 +120,17 @@ def collectiveConjunct : ScopeJudgment :=
 -- ════════════════════════════════════════════════════════════════
 
 /-- The canonical wide-scope-only case in control constructions
-    (@cite{higginbotham-1980}).
+    ([higginbotham-1980]).
 
     (13) They wanted to visit each other.
     → Wide scope only (I-reading)
 
-    This has been "generally accepted" since @cite{higginbotham-1980}. Note
-    that *want* is actually partial control per @cite{landau-2015}, so
+    This has been "generally accepted" since [higginbotham-1980]. Note
+    that *want* is actually partial control per [landau-2015], so
     the scope fixing here may be due to pragmatic factors rather than
     syntactic constraints on control type. -/
 def wantControl : ScopeJudgment :=
-  { construction := "Control with 'want' (@cite{higginbotham-1980})"
+  { construction := "Control with 'want' ([higginbotham-1980])"
     example_ := "They wanted to visit each other."
     available := [.wide]
     section_ := 4 }
@@ -141,7 +141,7 @@ def wantControl : ScopeJudgment :=
     (14) They decided to keep each other's comments confidential.
     → Narrow scope available (collective "decided")
 
-    @cite{heim-lasnik-may-1991} claim this has two readings (collective
+    [heim-lasnik-may-1991] claim this has two readings (collective
     narrow, distributive wide), but the distinction is hard to verify
     for many verbs. -/
 def exhaustiveControlCollective : ScopeJudgment :=
@@ -190,7 +190,7 @@ def exhaustiveControlNonCollective : ScopeJudgment :=
 -- § 5: Distributive Operators
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{heim-lasnik-may-1991} claim that (18a) is unambiguous (narrow
+/-- [heim-lasnik-may-1991] claim that (18a) is unambiguous (narrow
     only) and that (18b) is ungrammatical:
 
     (18a) They each think they are taller than each other.
@@ -199,7 +199,7 @@ def exhaustiveControlNonCollective : ScopeJudgment :=
     Their reasoning: on the quantificational analysis, distributive *each*
     cannot apply to the already-distributed NP *each* inside *each other*.
     This is "a commonplace in the literature on distributivity"
-    (@cite{champollion-2016}).
+    ([champollion-2016]).
 
     However, corpus examples with *each of them* / *each* and a reciprocal
     antecedent are plentiful (19-20, 23-26), and both readings are
@@ -210,7 +210,7 @@ def hlmDistributiveClaim : ScopeJudgment :=
     available := []  -- HLM predicts ungrammatical / narrow only
     section_ := 5 }
 
-/-- Contra @cite{heim-lasnik-may-1991}, a distributive operator (*each*)
+/-- Contra [heim-lasnik-may-1991], a distributive operator (*each*)
     in the matrix clause does NOT block wide scope. Corpus data shows
     both readings are available.
 
@@ -225,7 +225,7 @@ def hlmDistributiveClaim : ScopeJudgment :=
     not a quantified NP, so there is no double-distribution problem.
     Distributive *each* can access the group denoted by the antecedent
     even if we distribute on that antecedent
-    (@cite{haug-dalrymple-2020} §2.3). -/
+    ([haug-dalrymple-2020] §2.3). -/
 def distributiveOperator : ScopeJudgment :=
   { construction := "Distributive 'each' in matrix clause"
     example_ := "They each think they liked each other."
@@ -316,7 +316,7 @@ def hungarianProps : AntecedentProperties :=
     isExhaustiveControl := false, controllerIsCollective := false
     isLogophoric := false, hasDistributiveOperator := false }
 
-/-- Japanese *zibun-tati* resists bound readings (@cite{nishigauchi-1992}),
+/-- Japanese *zibun-tati* resists bound readings ([nishigauchi-1992]),
     forcing group identity (∪) and thus narrow scope only. -/
 def japaneseProps : AntecedentProperties :=
   { isBound := false, hasCollectiveConjunct := false
@@ -466,7 +466,7 @@ theorem hungarian_recip_not_reflexive :
     Hungarian.Reciprocals.maga.form := by decide
 
 /-- Hungarian allows singular antecedents for the reciprocal
-    (@cite{rakosi-2019}), which forces wide scope (the singular null
+    ([rakosi-2019]), which forces wide scope (the singular null
     pronoun must be bound). All four singular construction types
     license the reciprocal. -/
 theorem hungarian_singular_forces_wide :
@@ -490,21 +490,21 @@ theorem wan_refl_distinct_from_log :
     Wan.Reciprocals.logPl.form := by decide
 
 /-- The Wan logophoric pronoun satisfies at least the pivot role in
-    @cite{sells-1987}'s hierarchy, connecting this fragment to the
+    [sells-1987]'s hierarchy, connecting this fragment to the
     logophoricity theory in `Features/Logophoricity.lean`. -/
 theorem wan_log_is_at_least_pivot :
     Features.Logophoricity.LogophoricRole.pivot ≤
     Wan.Reciprocals.logophoricRole := by decide
 
 -- ════════════════════════════════════════════════════════════════
--- § 11: Connection to Formal Semantics (@cite{haug-dalrymple-2020})
+-- § 11: Connection to Formal Semantics ([haug-dalrymple-2020])
 -- ════════════════════════════════════════════════════════════════
 
 /-- The bound antecedent case (Hungarian) uses the `bindingCond` relation,
     which implies `groupIdentityCond`. Since binding forces equal values
     pointwise, the value-sets are equal, so wide scope is the natural
     reading. Connects the scope predictions to the formal semantics of
-    @cite{haug-dalrymple-2020} §§2.2--3, now over the PPCDRT substrate
+    [haug-dalrymple-2020] §§2.2--3, now over the PPCDRT substrate
     (`Semantics/Dynamic/PPCDRT/Anaphora.lean`). -/
 theorem bound_implies_wide_via_formal_semantics {E : Type}
     (uAnaph uAnt : Nat) (S : PluralAssign E) (Δ : Set Nat)

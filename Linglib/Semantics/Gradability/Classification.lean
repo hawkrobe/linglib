@@ -3,17 +3,17 @@ import Mathlib.Tactic.Common
 
 /-!
 # Adjective Classification Hierarchy
-@cite{kamp-1975} @cite{kamp-partee-1995} @cite{parsons-1970}
+[kamp-1975] [kamp-partee-1995] [parsons-1970]
 
 The standard classification of adjective meanings as functions from
 properties to properties, constrained by meaning postulates.
 
-@cite{parsons-1970} independently introduced the operator approach
+[parsons-1970] independently introduced the operator approach
 (modifiers as functions on predicates, not conjoinable predicates) and
 distinguished "predicative" adjectives (analyzable as conjunction =
 intersective) from "non-predicative" (= non-intersective), and
 "standard" modifiers (A N → N = subsective) from "non-standard"
-(= non-subsective). @cite{kamp-1975} refined these binary distinctions
+(= non-subsective). [kamp-1975] refined these binary distinctions
 into the full four-class hierarchy below; the terminology follows Kamp.
 
 ## Hierarchy
@@ -41,7 +41,7 @@ single-world (extensional) specializations follow — see
 `Montague/Modification.lean` for the Montague-typed extensional versions
 and `Kamp1975.lean` § 1 for single-world specialization theorems.
 
-@cite{partee-2010} argues the privative class should be eliminated
+[partee-2010] argues the privative class should be eliminated
 in favor of subsective + noun coercion; see `Partee2010.lean`. The
 post-collapse 3-class hierarchy is captured by `RevisedClass` below;
 the licensing mechanism (NVP + HPP) lives in
@@ -67,7 +67,7 @@ variable {W E : Type*}
 
 /-- An adjective is **intersective** if its extension at each world is the
     intersection of the noun's extension with some fixed property Q.
-    @cite{kamp-1975} definition (4) ("predicative").
+    [kamp-1975] definition (4) ("predicative").
 
     Examples: "gray", "French", "carnivorous", "four-legged". -/
 def isIntersective (adj : AdjMeaning W E) : Prop :=
@@ -76,7 +76,7 @@ def isIntersective (adj : AdjMeaning W E) : Prop :=
 
 /-- An adjective is **subsective** if its extension is always a subset
     of the noun's extension.
-    @cite{kamp-1975} definition (6) ("affirmative").
+    [kamp-1975] definition (6) ("affirmative").
 
     Examples: "skillful", "good", "typical". -/
 def isSubsective (adj : AdjMeaning W E) : Prop :=
@@ -84,16 +84,16 @@ def isSubsective (adj : AdjMeaning W E) : Prop :=
 
 /-- An adjective is **privative** if its extension is always disjoint
     from the noun's extension.
-    @cite{kamp-1975} definition (5).
+    [kamp-1975] definition (5).
 
     Examples: "fake", "counterfeit".
-    @cite{partee-2010} argues this class should be eliminated. -/
+    [partee-2010] argues this class should be eliminated. -/
 def isPrivative (adj : AdjMeaning W E) : Prop :=
   ∀ (N : Property W E) (w : W) (x : E), adj N w x → ¬ N w x
 
 /-- An adjective is **extensional** if its extension in world w depends
     only on the noun's extension in w, not on the noun's intension.
-    @cite{kamp-1975} definition (7).
+    [kamp-1975] definition (7).
 
     "four-legged" and "gray" are extensional; "skillful" is not (being a
     skillful surgeon depends on what counts as a surgeon across contexts,
@@ -188,10 +188,10 @@ theorem subsective_not_implies_extensional :
 
 end Independence
 
-/-! ### Revised Hierarchy (@cite{partee-2010})
+/-! ### Revised Hierarchy ([partee-2010])
 
 The post-collapse 3-class hierarchy after eliminating "privative" via
-noun coercion. Per @cite{partee-2010} footnote 1, the hierarchy is
+noun coercion. Per [partee-2010] footnote 1, the hierarchy is
 subset-ordered (intersective ⊂ subsective ⊂ unrestricted), not linear;
 the enum picks the *narrowest fit* per adjective. The licensing
 mechanism (NVP + HPP) is in
@@ -201,7 +201,7 @@ section Revised
 
 variable {W E : Type*}
 
-/-- Adjective hierarchy after @cite{partee-2010}'s collapse: the
+/-- Adjective hierarchy after [partee-2010]'s collapse: the
     privative class is eliminated in favor of subsective + noun coercion. -/
 inductive RevisedClass where
   /-- `⟦A N⟧ = ⟦Q⟧ ∩ ⟦N⟧` (Kamp's intersective). -/

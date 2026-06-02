@@ -4,10 +4,10 @@ import Linglib.Semantics.Mood.Basic
 
 /-!
 # Representationality and Epistemic Licensing
-@cite{anand-hacquard-2013} @cite{bolinger-1968} @cite{stalnaker-1984}
+[anand-hacquard-2013] [bolinger-1968] [stalnaker-1984]
 
 Attitude verbs split into two fundamental semantic classes
-(@cite{bolinger-1968}):
+([bolinger-1968]):
 
 - **Representational** attitudes convey a mental picture — a consistent
   set of propositions defining a non-trivial set of possible worlds
@@ -16,7 +16,7 @@ Attitude verbs split into two fundamental semantic classes
 
 - **Non-representational** attitudes combine with their complement via a
   logic of preference, comparing the complement to contextual alternatives
-  on a preference scale (@cite{villalta-2008}). Desideratives (`want`,
+  on a preference scale ([villalta-2008]). Desideratives (`want`,
   `wish`) and directives (`demand`, `order`).
 
 - **Hybrid** attitudes have both components: a representational (doxastic)
@@ -24,7 +24,7 @@ Attitude verbs split into two fundamental semantic classes
   ordering alternatives. Emotive doxastics (`hope`, `fear`) and
   dubitatives (`doubt`).
 
-The central empirical generalization (@cite{anand-hacquard-2013}):
+The central empirical generalization ([anand-hacquard-2013]):
 
 **Epistemic Licensing Generalization**: Epistemic modals are licensed only
 in the scope of attitudes that provide an information state — i.e.,
@@ -68,13 +68,13 @@ namespace Semantics.Attitudes.Representationality
 
 An attitude is representational iff its semantics provides a non-trivial
 information state (a set of worlds) that embedded epistemics can be
-anaphoric to (@cite{anand-hacquard-2013}, §3). -/
+anaphoric to ([anand-hacquard-2013], §3). -/
 inductive Representationality where
   /-- Provides information state S = DOX(x,w). Doxastics, argumentatives,
       semifactives. Epistemics quantify over DOX directly. -/
   | representational
   /-- No information state: S = ∅. Desideratives, directives.
-      Comparative semantics over alternatives (@cite{villalta-2008}).
+      Comparative semantics over alternatives ([villalta-2008]).
       Embedded epistemics yield tautology (might) or contradiction (must). -/
   | nonRepresentational
   /-- Both components: representational (provides DOX for epistemic
@@ -113,7 +113,7 @@ inductive EpistemicForce where
   deriving DecidableEq, Repr
 
 /-- Whether an attitude class licenses an embedded epistemic of given
-    force. This is the central prediction of @cite{anand-hacquard-2013}.
+    force. This is the central prediction of [anand-hacquard-2013].
 
     - Representational: licenses both might and must (S = DOX, non-trivial)
     - Non-representational: licenses neither (S = ∅, trivial modal base)
@@ -165,7 +165,7 @@ open Semantics.Mood
 This captures the strong (but imperfect) correlation between mood
 selection and representationality across Romance. The correlation
 is imperfect because subjunctive tracks preferences, not
-representationality directly (@cite{anand-hacquard-2013}, §6). -/
+representationality directly ([anand-hacquard-2013], §6). -/
 def fromMoodSelector : MoodSelector → Representationality
   | .indicativeSelecting         => .representational
   | .subjunctiveSelecting        => .nonRepresentational
@@ -226,7 +226,7 @@ instance : ∀ c f, Decidable (AttitudeClass.LicensesEpistemic c f) := fun c f =
 -- § 6. The Table 3 Data as Verification Theorems
 -- ════════════════════════════════════════════════════════════════
 
-/-! Per-cell verification of @cite{anand-hacquard-2013} Table 3. -/
+/-! Per-cell verification of [anand-hacquard-2013] Table 3. -/
 
 theorem doxastic_might : AttitudeClass.LicensesEpistemic .doxastic .possibility := trivial
 theorem doxastic_must  : AttitudeClass.LicensesEpistemic .doxastic .necessity := trivial

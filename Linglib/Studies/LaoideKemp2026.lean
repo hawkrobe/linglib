@@ -7,9 +7,9 @@ import Linglib.Phonology.Autosegmental.Graph
 
 /-!
 # Laoide-Kemp (2026): Irish preverbal *d'* as a floating segment
-@cite{laoide-kemp-2026}
+[laoide-kemp-2026]
 
-@cite{laoide-kemp-2026} resolves an apparent ordering paradox in Irish
+[laoide-kemp-2026] resolves an apparent ordering paradox in Irish
 initial consonant mutation (ICM). The preverbal tense particle *d'*
 (glossed `HIST`) is usually taken as the *trigger* of lenition on the
 following verb, yet its appearance is *conditioned on* the post-lenition
@@ -29,7 +29,7 @@ first C-slot full; vowel-initial verbs leave it empty; *f*-initial
 verbs leave it empty after `{L}` deletes the *f* segmental content.
 
 The analysis is **strictly modular** in the sense of
-@cite{bermudez-otero-2012}: morphosyntax inserts the floating
+[bermudez-otero-2012]: morphosyntax inserts the floating
 morpheme in *all* phonological contexts, and the phonology determines
 whether `(d)` surfaces by ordinary representational constraints. The
 paper contrasts this with a morphosyntactic alternative (two separate
@@ -136,7 +136,7 @@ def Segment.isF : Segment → Bool
 
 A 2-kind skeleton (`C` for consonant slot, `V` for vowel slot).
 This is a *local* definition matching the Strict-CV convention
-(@cite{lowenstamm-1996}); a project-canonical Strict-CV substrate
+([lowenstamm-1996]); a project-canonical Strict-CV substrate
 does not exist (see CLAUDE.md for the deferral rationale). Verb
 stems are encoded as `Graph Segment CVKind` values: the upper tier
 is the segmental melody, the lower tier is the CV skeleton, and the
@@ -156,7 +156,7 @@ inductive CVKind
     **lower** tier, links are `(melody-index, skeleton-index)`. -/
 abbrev VerbStem := Graph Segment CVKind
 
-/-- The verb `bog` 'soft', the C-initial example in @cite{laoide-kemp-2026}
+/-- The verb `bog` 'soft', the C-initial example in [laoide-kemp-2026]
     Fig. 1a. Melody = [b, o, g]; skeleton = [C, V, C]; identity
     associations. -/
 def bog : VerbStem where
@@ -165,7 +165,7 @@ def bog : VerbStem where
   links := {(0, 0), (1, 1), (2, 2)}
 
 /-- The verb `ól` 'drink', the V-initial example in
-    @cite{laoide-kemp-2026} Fig. 1b. Melody = [ó, l]; skeleton =
+    [laoide-kemp-2026] Fig. 1b. Melody = [ó, l]; skeleton =
     [C, V, C, V]; the initial C-slot has no melodic association.
     This is the key structural property: the underlying form has an
     empty C-slot at position 0. -/
@@ -175,7 +175,7 @@ def ól : VerbStem where
   links := {(0, 1), (1, 2)}
 
 /-- The verb `fág` 'leave', the *f*-initial example in
-    @cite{laoide-kemp-2026} Fig. 1c. Melody = [f, á, g]; skeleton =
+    [laoide-kemp-2026] Fig. 1c. Melody = [f, á, g]; skeleton =
     [C, V, C]; identity associations. Under lenition, the `f`
     segmental content deletes, leaving an empty C₁-slot — exactly
     the configuration that licenses `(d)`-docking. -/
@@ -189,8 +189,8 @@ def fág : VerbStem where
 The Irish lenition mutation has many surface effects (stop → fricative,
 voiceless → voiced, etc.) but the only effect relevant to the
 distribution of `(d)` is the **deletion of word-initial /f/**
-(@cite{laoide-kemp-2026} §2.2; @cite{gussmann-1986},
-@cite{ni-chiosain-1991}). Under the autosegmental analysis,
+([laoide-kemp-2026] §2.2; [gussmann-1986],
+[ni-chiosain-1991]). Under the autosegmental analysis,
 the lenition-inducing bundle `{L}` docks onto the initial consonant
 and deletes its segmental content; the C-skeletal slot remains
 behind, empty.
@@ -217,7 +217,7 @@ def lenite (v : VerbStem) : VerbStem :=
 
 `(d)` surfaces iff the post-lenition form has an empty C-slot at
 position 0 directly followed by a non-empty V-slot at position 1
-(@cite{laoide-kemp-2026} §4, Fig. 1). The predicate ignores the
+([laoide-kemp-2026] §4, Fig. 1). The predicate ignores the
 floating `(d)` element itself: it asks whether the *target
 configuration* for `(d)`-docking exists in the post-lenition verb
 stem. The actual `(d)` surfacing is then a deterministic consequence
@@ -249,7 +249,7 @@ instance (v : VerbStem) : Decidable v.dDockable :=
 
 /-- `(d)` surfaces in the historic tense form of `v` iff the
     post-lenition form is `(d)`-dockable.
-    @cite{laoide-kemp-2026} §4.1. -/
+    [laoide-kemp-2026] §4.1. -/
 def dPrimeSurfaces (v : VerbStem) : Prop :=
   (lenite v).dDockable
 
@@ -258,7 +258,7 @@ instance (v : VerbStem) : Decidable (dPrimeSurfaces v) :=
 
 /-! ## §5 Worked examples (paper Figs. 1a, 1b, 1c)
 
-The three figures in @cite{laoide-kemp-2026} §4.1 establish the
+The three figures in [laoide-kemp-2026] §4.1 establish the
 core empirical pattern.
 -/
 
@@ -288,7 +288,7 @@ theorem fág_yes_dPrime : dPrimeSurfaces fág := by decide
 
 /-! ## §6 Side-by-side: the paper's empirical core
 
-Putting the three theorems together gives @cite{laoide-kemp-2026}'s
+Putting the three theorems together gives [laoide-kemp-2026]'s
 central observation in one statement: `(d)` surfaces *iff* the
 verb is V-initial (Fig. 1b) or *f*-initial (Fig. 1c), but not when
 C-initial (Fig. 1a).
@@ -303,7 +303,7 @@ theorem laoideKemp_fig1 :
 /-! ## §7 The strict-modularity payoff
 
 The phonological analysis above is *strictly modular* in the sense
-of @cite{bermudez-otero-2012}: morphosyntax inserts the historic-
+of [bermudez-otero-2012]: morphosyntax inserts the historic-
 tense morpheme `(d) + {L}` uniformly, and the phonology decides
 whether `(d)` surfaces by inspecting the post-lenition skeletal
 configuration of the verb. No look-ahead in morphology; no
@@ -312,17 +312,17 @@ diacritic. The paper's §1 frames this in opposition to four
 non-modular alternatives:
 
 * **Morphology directly manipulates phonological structure**
-  (@cite{anderson-1992}).
+  ([anderson-1992]).
 * **Readjustment rules triggered by module-transcending
-  diacritics** (@cite{harley-noyer-1999}).
-* **Co-phonologies** (@cite{anttila-2002}, @cite{inkelas-zoll-2007}).
+  diacritics** ([harley-noyer-1999]).
+* **Co-phonologies** ([anttila-2002], [inkelas-zoll-2007]).
 * **Morpheme-specific phonological constraints**
-  (@cite{pater-2000}, @cite{pater-2009}).
+  ([pater-2000], [pater-2009]).
 
 The autosegmental approach with floating phonologically-defective
-material (@cite{lieber-1983}, @cite{zimmermann-2022}) is the
+material ([lieber-1983], [zimmermann-2022]) is the
 fifth and only strictly-modular alternative, and it is the one
-@cite{laoide-kemp-2026} adopts.
+[laoide-kemp-2026] adopts.
 
 This file does not formalise the other four alternatives directly.
 Their predictions for Standard Irish coincide with the

@@ -2,8 +2,8 @@ import Linglib.Features.Prominence
 import Linglib.Features.Case
 import Linglib.Syntax.Agreement.Paradigm
 /-!
-# Basque Agreement Fragment @cite{just-2024}
-@cite{laka-1996} @cite{preminger-2014} @cite{blake-1994}
+# Basque Agreement Fragment [just-2024]
+[laka-1996] [preminger-2014] [blake-1994]
 
 Basque (isolate) has a rich agreement system where the finite verb indexes
 up to three arguments: ergative (A), absolutive (S/P), and dative (R).
@@ -82,7 +82,7 @@ theorem as_indexing_uniform :
     Cell.pnCells.all asIsIndexed = true := by decide
 
 -- ============================================================================
--- § 5: Case Inventory Validation (@cite{blake-1994})
+-- § 5: Case Inventory Validation ([blake-1994])
 -- ============================================================================
 
 /-- Basque agreement-relevant case inventory: {ERG, ABS, DAT}.

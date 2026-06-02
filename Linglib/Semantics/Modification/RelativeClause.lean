@@ -5,12 +5,12 @@ import Linglib.Semantics.Modification.Basic
 
 /-!
 # Relative-clause denotation
-@cite{heim-kratzer-1998}
+[heim-kratzer-1998]
 
 The framework-neutral meaning of a head noun combined with a (restrictive)
 relative clause: an RC is an **intersective clausal modifier** of the head. Its
 modifier-property is the relative clause abstracted over its gap (Predicate
-Abstraction, @cite{heim-kratzer-1998} Ch. 5); modifying the head with it is the
+Abstraction, [heim-kratzer-1998] Ch. 5); modifying the head with it is the
 intersective modification shared with adjectives and PPs. This is the
 adnominal-modifier diagnostic (a relative clause's framework-neutral essence is
 clausal modification of a nominal head) made compositional: the syntactic

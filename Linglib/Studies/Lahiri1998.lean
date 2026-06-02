@@ -6,18 +6,18 @@ import Linglib.Fragments.Hindi.PolarityItems
 
 /-!
 # Lahiri (1998): Focus and Negative Polarity in Hindi
-@cite{lahiri-1998} @cite{kadmon-landman-1993} @cite{lee-horn-1994}
+[lahiri-1998] [kadmon-landman-1993] [lee-horn-1994]
 
 Hindi NPIs (*koii bhii* 'anyone', *ek bhii* 'even one', *kuch bhii* 'anything',
 *zaraa bhii* 'even a little') are morphologically composed of a weak indefinite
-plus the focus particle *bhii* ('even'). @cite{lahiri-1998} shows that their
+plus the focus particle *bhii* ('even'). [lahiri-1998] shows that their
 distribution — both as NPIs and as free-choice items — follows from the
 compositional semantics of these parts.
 
 ## The implicature clash mechanism
 
 1. *bhii* in focused contexts contributes a conventional implicature
-   (@cite{karttunen-peters-1979}), reanalyzed by Lahiri as scalar, that
+   ([karttunen-peters-1979]), reanalyzed by Lahiri as scalar, that
    the assertion is the LEAST LIKELY among focus-induced alternatives
 2. Weak indefinites as bottom of scale: *ek* ('one') denotes the weakest
    cardinality predicate — true of everything that exists
@@ -348,7 +348,7 @@ theorem even_clash_abstract
 -- §8. Hindi NPI Data (§4)
 -- ============================================================================
 
-/-! Licensing judgments from @cite{lahiri-1998} §4. Each datum demonstrates
+/-! Licensing judgments from [lahiri-1998] §4. Each datum demonstrates
     the compositional prediction: bhii + indefinite is licensed in DE
     contexts and blocked in UE contexts.
 
@@ -512,7 +512,7 @@ def npi_subject_hindi : HindiNPIDatum :=
 -- §9. Free Choice in Generic and Modal Contexts (§5)
 -- ============================================================================
 
-/-! @cite{lahiri-1998} §5: Hindi NPIs also behave as free-choice items in
+/-! [lahiri-1998] §5: Hindi NPIs also behave as free-choice items in
     generic and modal contexts. The environments are:
 
     1. Generic sentences (§5.1): *koii bhii aadmii is mez-ko uThaa letaa hai*
@@ -645,7 +645,7 @@ theorem necessity_blocks :
 -- §10. The ek bhii / koii bhii Contrast (§8)
 -- ============================================================================
 
-/-! @cite{lahiri-1998} §8: The first approximation (§7) treats *koii bhii*
+/-! [lahiri-1998] §8: The first approximation (§7) treats *koii bhii*
     and *ek bhii* as semantically equivalent, but they differ:
 
     (99a) *ek bhii aadmii is mez-ko uThaa saktaa hai*
@@ -735,7 +735,7 @@ def isDEOrQuestion : LicensingContext → Prop
   | .universalRestrictor => True
   | .beforeClause       => True
   | .question            => True
-  | .adversative         => True  -- Strawson-DE (@cite{von-fintel-1999})
+  | .adversative         => True  -- Strawson-DE ([von-fintel-1999])
   | .denyVerb            => True  -- semantically negative
   | _                    => False
 
@@ -759,7 +759,7 @@ theorem grammatical_contexts_are_de :
 -- §12. Subject NPI Licensing: Hindi vs English (§6)
 -- ============================================================================
 
-/-! @cite{lahiri-1998} §6: Hindi allows subject NPIs under clausemate
+/-! [lahiri-1998] §6: Hindi allows subject NPIs under clausemate
     negation, unlike English.
 
     Hindi: "koi bhii aadmii nahiiN aayaa" ('No one came') ✓
@@ -795,7 +795,7 @@ def subjectNPI : SubjectNPIContrast :=
 -- ============================================================================
 
 /-! The fragment entry `Hindi.PolarityItems.koiiBhii` stores
-    licensing contexts as a list. @cite{lahiri-1998}'s contribution is
+    licensing contexts as a list. [lahiri-1998]'s contribution is
     showing that these contexts are not arbitrary — they are exactly the
     DE environments (for NPI readings) and generic/modal environments
     (for FC readings) where the EVEN implicature is satisfiable.

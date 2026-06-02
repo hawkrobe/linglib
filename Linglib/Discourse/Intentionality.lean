@@ -1,7 +1,7 @@
 import Linglib.Discourse.IllocutionaryForce
 /-!
 # Intentional States: S in S(r)
-@cite{searle-1983}
+[searle-1983]
 The Intentional-state side of the Searlean F(p) / S(r) parallel:
 `PsychMode`, `sincerityCondition` (the F → S bridge), `CausalSelfRef`,
 and `IntentionalState`. Performing F(p) sincerely expresses the
@@ -10,7 +10,7 @@ corresponding S(r); conditions of satisfaction transfer.
 namespace Discourse
 open Semantics.Mood (IllocutionaryMood)
 /-! ### Psychological Mode — S(r) -/
-/-- Psychological modes: the "S" in @cite{searle-1983}'s S(r). -/
+/-- Psychological modes: the "S" in [searle-1983]'s S(r). -/
 inductive PsychMode where
   /-- Bel(p): satisfied iff p obtains. -/
   | belief
@@ -39,9 +39,9 @@ def sincerityCondition : IllocutionaryMood → PsychMode
   | .imperative     => .desire     -- ordering expresses Des(hearer do A)
   | .promissive     => .intention  -- promising expresses Int(speaker do A)
   | .exclamative    => .expressive -- exclaiming expresses feeling
-/-! ### Causal Self-Referentiality (@cite{searle-1983}, Ch. 3) -/
+/-! ### Causal Self-Referentiality ([searle-1983], Ch. 3) -/
 /-- Whether an Intentional state must figure in the causal chain
-    producing its conditions of satisfaction (@cite{searle-1983} Ch. 3). -/
+    producing its conditions of satisfaction ([searle-1983] Ch. 3). -/
 inductive CausalSelfRef where
   /-- Not self-referential (beliefs, desires). -/
   | none

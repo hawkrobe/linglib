@@ -2,7 +2,7 @@ import Linglib.Data.WALS.Datapoint
 
 /-!
 # WALS Feature 20A: Fusion of Selected Inflectional Formatives
-@cite{bickel-nichols-2013a}
+[bickel-nichols-2013a]
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 20A`.

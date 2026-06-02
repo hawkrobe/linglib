@@ -4,10 +4,10 @@ import Linglib.Core.Agent.Thurstone
 
 /-!
 # Noise Kernels — Random Utility Models for Constraint Decoders
-@cite{mcfadden-1974} @cite{thurstone-1927}
+[mcfadden-1974] [thurstone-1927]
 
 A `NoiseKernel` names the noise distribution of a Random Utility Model
-(RUM), in McFadden's sense (@cite{mcfadden-1974}): each candidate's
+(RUM), in McFadden's sense ([mcfadden-1974]): each candidate's
 deterministic score `s(c)` is perturbed by an independent noise variable
 `ε(c)`, and the chosen candidate is the argmax of `s(c) + ε(c)`.
 The induced choice probability defines a `Decoder` over real-valued scores.
@@ -71,10 +71,10 @@ inductive NoiseKernel where
   /-- No noise: the decoder is deterministic argmax. -/
   | dirac : NoiseKernel
   /-- I.i.d. Gumbel(0, 1/α) noise. By McFadden's theorem
-      (@cite{mcfadden-1974}), the choice rule is `softmax α`. -/
+      ([mcfadden-1974]), the choice rule is `softmax α`. -/
   | gumbel (α : ℝ) : NoiseKernel
   /-- I.i.d. Gaussian(0, σ²) noise. By Thurstone Case V
-      (@cite{thurstone-1927}), the binary choice probability is
+      ([thurstone-1927]), the binary choice probability is
       `Φ((s_a - s_b)/(σ√2))`. The n-ary decoder requires multivariate
       normal integration and is not yet implemented; the kernel is
       retained as a placeholder so theorems about it can be stated. -/

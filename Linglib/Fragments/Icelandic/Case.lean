@@ -2,7 +2,7 @@ import Linglib.Features.Case
 import Linglib.Features.Case
 /-!
 # Icelandic Case Inventory
-@cite{thrainsson-2007}
+[thrainsson-2007]
 
 Icelandic has **4 morphological cases**: NOM, ACC, DAT, GEN. Contiguous
 on Blake's hierarchy (ranks 6, 6, 5, 4).
@@ -15,7 +15,7 @@ namespace Icelandic.Case
 
 open Features
 
-/-- Icelandic 4-case inventory (@cite{thrainsson-2007} §4.1). -/
+/-- Icelandic 4-case inventory ([thrainsson-2007] §4.1). -/
 def caseInventory : Finset Case := {.nom, .acc, .gen, .dat}
 
 example : Case.IsValidInventory caseInventory := by decide

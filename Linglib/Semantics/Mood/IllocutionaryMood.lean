@@ -43,7 +43,7 @@ inductive IllocutionaryMood where
 
 /-- Which participant holds epistemic authority for a given illocutionary mood.
 
-    @cite{lakoff-1970}: in declaratives, imperatives, and promissives the
+    [lakoff-1970]: in declaratives, imperatives, and promissives the
     speaker is the seat of knowledge; in interrogatives the addressee is. -/
 def moodAuthority : IllocutionaryMood → DiscourseRole
   | .declarative   => .speaker

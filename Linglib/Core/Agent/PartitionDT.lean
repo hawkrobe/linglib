@@ -13,17 +13,17 @@ import Mathlib.Algebra.Order.GroupWithZero.Finset
 
 /-!
 # Decision-Theoretic Bridge for Partition QUDs
-@cite{merin-1999} @cite{blackwell-1953} @cite{van-rooy-2003}
+[merin-1999] [blackwell-1953] [van-rooy-2003]
 
 Decision-theoretic content built on top of the QUD partition lattice
 (`Core/Partition.lean`) and the decision-theory kernel
 (`Core/Agent/DecisionTheory.lean`):
 
 - `partitionEU` — partition-relative expected utility, compositional under
-  coarsening (@cite{merin-1999} central theorem)
+  coarsening ([merin-1999] central theorem)
 - `partitionValue` — the Blackwell-style raw weighted value
 - `blackwell_refinement_value` — finer partitions are at least as valuable
-- `resolution_value_eq_exact` — @cite{van-rooy-2003}'s mention-some =
+- `resolution_value_eq_exact` — [van-rooy-2003]'s mention-some =
   mention-all decision-theoretic equivalence
 - `blackwell_characterizes_refinement` — the converse: ordering on values
   IS partition refinement
@@ -37,7 +37,7 @@ namespace QUD
 
 variable {M : Type*}
 
-/-! ### EU Compositionality under Coarsening (@cite{merin-1999}, Central Theorem) -/
+/-! ### EU Compositionality under Coarsening ([merin-1999], Central Theorem) -/
 
 open Core.DecisionTheory in
 /-- Expected utility computed via a partition: weight each cell's conditional EU
@@ -45,7 +45,7 @@ by the cell's probability.
 
 EU_Q(a) = Σ_{c ∈ cells(Q)} P(c) · EU(a | c)
 
-This is the partition-relative expected utility that @cite{merin-1999} shows is
+This is the partition-relative expected utility that [merin-1999] shows is
 compositional under coarsening. Uses `Finpartition` for exhaustivity and
 disjointness, replacing ~200 lines of custom foldl arithmetic. -/
 def partitionEU [Fintype M] [DecidableEq M] {A : Type*}
@@ -125,7 +125,7 @@ open Core.DecisionTheory in
 
 V_Q(D, W) = Σ_{c ∈ cells(Q,W)} max_a [Σ_{w∈c} p(w)·u(w,a)]
 
-Following @cite{merin-1999}, this uses raw weighted sums directly
+Following [merin-1999], this uses raw weighted sums directly
 rather than factoring through conditional EU. The equivalence
 `P(c) · max_a condEU(a,c) = max_a [Σ_{w∈c} p(w)·u(w,a)]` holds when
 priors are non-negative. The raw form makes Blackwell's theorem a
@@ -267,7 +267,7 @@ open Core.DecisionTheory in
 /-- Resolution–Value Saturation: when every cell of partition Q has a
 dominant action, Q's partition value equals the exact partition's value.
 
-This is the mathematical core of @cite{van-rooy-2003}: resolving
+This is the mathematical core of [van-rooy-2003]: resolving
 partitions achieve the same value as the finest partition, so
 coarsening from G&S exhaustive answers to mention-some answers
 is decision-theoretically free.

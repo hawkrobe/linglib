@@ -4,7 +4,7 @@ import Linglib.Studies.CobrerosEtAl2012
 
 /-!
 # Vagueness Theory Comparison
-@cite{keefe-2000} @cite{williamson-1994}
+[keefe-2000] [williamson-1994]
 
 Theory-comparative infrastructure for vagueness: characterizes what each major
 theoretical position (epistemicism, supervaluationism, degree theory, contextualism)
@@ -22,7 +22,7 @@ Major theoretical positions on vagueness.
 
 This is a theory-neutral characterization of what each position claims.
 
-Source: @cite{keefe-2000}, @cite{williamson-1994}
+Source: [keefe-2000], [williamson-1994]
 -/
 inductive VaguenessTheoryType where
   | epistemicism       -- Sharp boundaries exist but are unknowable
@@ -38,7 +38,7 @@ Data characterizing what each theory says about key phenomena.
 
 This allows us to track which theories predict which patterns.
 
-Source: @cite{keefe-2000}
+Source: [keefe-2000]
 -/
 structure TheoryPredictionProfile where
   theory : VaguenessTheoryType
@@ -90,7 +90,7 @@ def contextualismProfile : TheoryPredictionProfile :=
   , higherOrderResponse := "Higher-order vagueness = higher-order context-sensitivity"
   }
 
-/-- TCS (@cite{cobreros-etal-2012}): similarity-based semantics with
+/-- TCS ([cobreros-etal-2012]): similarity-based semantics with
     three notions of truth (tolerant, classical, strict) and non-transitive
     st-consequence. Distinct from supervaluationism: allows borderline
     contradictions (Pa ∧ ¬Pa tolerantly true). -/
@@ -199,7 +199,7 @@ theorem tcs_sorites_resolution_verified :
   sorites_chain_invalid
 
 /-- TCS validates tolerance: the extension hierarchy s ⊆ c ⊆ t at the
-    formula level (Lemma 1 of @cite{cobreros-etal-2012}, p. 357). -/
+    formula level (Lemma 1 of [cobreros-etal-2012], p. 357). -/
 theorem tcs_hierarchy_verified :
     ∀ (M : TModel Elt VPred) (φ : TCSFormula VPred Elt),
       (Sat M .strict φ → Sat M .classical φ) ∧

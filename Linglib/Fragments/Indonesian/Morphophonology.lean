@@ -1,9 +1,9 @@
 /-!
 # Indonesian Morphophonology
-@cite{sneddon-1996}
+[sneddon-1996]
 
 The nasal assimilation rules governing the meN- prefix allomorph
-selection, from @cite{sneddon-1996} §1.5.
+selection, from [sneddon-1996] §1.5.
 
 ## meN- allomorph rules
 
@@ -24,7 +24,7 @@ consonant is deleted:
 namespace Indonesian.Morphophonology
 
 /-- The meN- allomorph prefix selected by the initial segment of the root
-    (@cite{sneddon-1996} §1.5). The nasal N undergoes assimilation:
+    ([sneddon-1996] §1.5). The nasal N undergoes assimilation:
     - Before **b, p, f**: *mem-* (bilabial nasal m)
     - Before **d, t, c, j, z**: *men-* (alveolar nasal n)
     - Before **s**: *meny-* (palatal nasal ny; s deleted)
@@ -38,7 +38,7 @@ def meNPrefix : Char → String
   | _ => "meng"
 
 /-- Derive the expected meN- form from a root, using the phonological
-    rules from @cite{sneddon-1996} §1.5. The result shows the morpheme
+    rules from [sneddon-1996] §1.5. The result shows the morpheme
     boundary (prefix-root), preserving the root-initial consonant even
     when it is deleted in the surface form (e.g., *mem-pecah* rather
     than *memecah*). -/

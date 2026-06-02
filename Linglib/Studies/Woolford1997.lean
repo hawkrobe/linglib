@@ -3,10 +3,10 @@ import Linglib.Features.Case
 import Linglib.Syntax.Case.Dependent
 
 /-!
-# @cite{woolford-1997} — Four-Way Case Systems
-@cite{woolford-1997} @cite{woolford-2006} @cite{baker-2015} @cite{marantz-1991}
+# [woolford-1997] — Four-Way Case Systems
+[woolford-1997] [woolford-2006] [baker-2015] [marantz-1991]
 
-Formalization of @cite{woolford-1997}'s analysis of four-way case systems,
+Formalization of [woolford-1997]'s analysis of four-way case systems,
 with Nez Perce as the primary case study.
 
 ## Key Claims
@@ -358,7 +358,7 @@ theorem obj_acc_agreement_differ :
 theorem intransitive_maxAcc : maxAcc 1 0 = 0 := rfl
 
 /-- Burzio's generalization as a corollary of the Max. Acc. formula.
-    @cite{woolford-1997} argues that three apparently separate generalizations
+    [woolford-1997] argues that three apparently separate generalizations
     are all instances of the Max. Acc. formula:
     (i) No verb assigns structural ACC to its subject (the −1 term).
     (ii) A verb without an external subject cannot assign ACC
@@ -500,7 +500,7 @@ theorem np_full_valid : Features.Case.IsValidInventory npFullInventory := by dec
 
 /-! ## Woolford vs. Baker/Marantz
 
-@cite{woolford-1997} and @cite{baker-2015}/@cite{marantz-1991} make overlapping
+[woolford-1997] and [baker-2015]/[marantz-1991] make overlapping
 but distinct predictions. Key agreement: both assign structural ACC in
 transitives with two caseless NPs. Key disagreement: dependent case has
 no OBJ/ACC distinction — it assigns a single dependent case (ACC) to

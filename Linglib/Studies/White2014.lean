@@ -4,13 +4,13 @@ import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
 # White 2014: The Modalized Complement Analysis of *forget*
-@cite{white-2014}
+[white-2014]
 
 White 2014 maintains a uniformly factive denotation for *forget* by
 positing a covert root modal in non-finite complements (the Modalized
 Complement Analysis, MCA). The MCA captures Williams' (1)/(4) and (2)/(5)
 data straightforwardly but was later shown to overgenerate: PRO-ing
-gerunds get a non-modal presupposition (cf. @cite{williams-2026}, §3.1.1)
+gerunds get a non-modal presupposition (cf. [williams-2026], §3.1.1)
 that the MCA cannot predict.
 
 This file (a) verifies the MCA's coverage of finite-CP and plain-infinitive
@@ -21,7 +21,7 @@ Fragment-level consistency: the English Fragment's split of *forget* into
 finite) aligns with the typology MCA + pre-existence together predict.
 
 The pre-existence apparatus in `Semantics/Attitudes/PreExistence.lean`
-is post-2014 (Bondarenko 2019/2020, taken up by @cite{williams-2026});
+is post-2014 (Bondarenko 2019/2020, taken up by [williams-2026]);
 where this file uses `needsModalInsertion`, treat that as the project-canonical
 upgrade of White's structural prediction, with the gerund case flagged as
 a known overprediction of the original MCA.

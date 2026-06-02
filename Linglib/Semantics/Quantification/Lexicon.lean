@@ -2,7 +2,7 @@ import Linglib.Core.Word
 
 /-!
 # Quantifier lexicon — shared structure
-@cite{horn-1972} @cite{barwise-cooper-1981}
+[horn-1972] [barwise-cooper-1981]
 
 A theory-level structure for quantifier lexical entries shared across
 language fragments. Carries only descriptive lexical-typological data
@@ -16,7 +16,7 @@ in the study files that commit to specific values.
 - `numberRestriction` — `none` (number-neutral), or `some .sg`/`.pl`/`.du`
   (a single grammatical number; `.du` covers items like English *both*
   and French *les deux* whose meaning composition uses the dual core
-  concept @cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025})
+  concept [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025])
 - `allowsMass` — accepts mass NPs?
 - `monotonicity` — increasing / decreasing / non-monotone (typological label)
 - `strength` — weak / strong (Barwise & Cooper §4.3 Table II;

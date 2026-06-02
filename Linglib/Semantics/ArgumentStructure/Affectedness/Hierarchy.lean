@@ -3,9 +3,9 @@ import Mathlib.Order.Basic
 
 /-!
 # Beavers' Affectedness Hierarchy: Typeclass Chain
-@cite{beavers-2011} @cite{beavers-koontz-garboden-2020}
+[beavers-2011] [beavers-koontz-garboden-2020]
 
-The mathlib-style typeclass `extends` chain encoding @cite{beavers-2011}'s
+The mathlib-style typeclass `extends` chain encoding [beavers-2011]'s
 implicational affectedness hierarchy (eq. 62):
 
     quantized → non-quantized → potential
@@ -46,7 +46,7 @@ open Semantics.ArgumentStructure.Affectedness
 
 /-! ### AffectednessDegree enum (Beavers 4-level scale) -/
 
-/-- @cite{beavers-2011} eq. (62) — *The Affectedness Hierarchy*: four
+/-- [beavers-2011] eq. (62) — *The Affectedness Hierarchy*: four
     degrees of affectedness, defined by increasingly weaker truth
     conditions about what change occurs in the patient.
 
@@ -97,15 +97,15 @@ end AffectednessDegree
 
 /-! ### Typeclass extends chain (Beavers eq. 62) -/
 
-/-- @cite{beavers-2011} eq. (60c) **Potential affectedness**: the
+/-- [beavers-2011] eq. (60c) **Potential affectedness**: the
     bottom of the typeclass chain. Patient is a force-recipient at
     every event of θ — content: `Potential θ` from `ScalarResult.lean`,
     parameterised over a `[HasLatentScale α β]` instance.
 
     Linguistic exemplars: surface contact / impact verbs
     (*hit, wipe, scrub, kick*) — what
-    @cite{rappaport-hovav-levin-2001} called "force recipients"
-    and @cite{beavers-koontz-garboden-2020} retain the term.
+    [rappaport-hovav-levin-2001] called "force recipients"
+    and [beavers-koontz-garboden-2020] retain the term.
 
     Why this is the chain bottom (not Unspecified): Beavers' (60d)
     Unspecified is `θ x e → ∃ θ', θ'(x, e)`, vacuous for any binary
@@ -117,7 +117,7 @@ class IsPotentialAffected {α β : Type*} [HasLatentScale α β]
     (θ : α → β → Prop) : Prop where
   isPotential : Potential θ
 
-/-- @cite{beavers-2011} eq. (60b) **Non-quantized affectedness**:
+/-- [beavers-2011] eq. (60b) **Non-quantized affectedness**:
     extends Potential with a result-state commitment (some final
     degree on the scale). Content: `NonQuantized (δ := δ) θ` from
     `ScalarResult.lean`.
@@ -134,7 +134,7 @@ class IsNonQuantizedAffected {α β δ : Type*}
     (θ : α → β → Prop) : Prop extends IsPotentialAffected θ where
   isNonQuantized : NonQuantized (δ := δ) θ
 
-/-- @cite{beavers-2011} eq. (60a) **Quantized affectedness**: extends
+/-- [beavers-2011] eq. (60a) **Quantized affectedness**: extends
     Non-quantized with the commitment to a SPECIFIC final degree
     `g_φ : δ` (lexically named by the verb).
 

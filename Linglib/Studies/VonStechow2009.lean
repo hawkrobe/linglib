@@ -1,10 +1,10 @@
 import Linglib.Semantics.Tense.Basic
 
 /-!
-# @cite{von-stechow-2009}: Tenses in Compositional Semantics
-@cite{von-stechow-2009}
+# [von-stechow-2009]: Tenses in Compositional Semantics
+[von-stechow-2009]
 
-@cite{von-stechow-2009}'s theory: tense features are checked against a
+[von-stechow-2009]'s theory: tense features are checked against a
 local evaluation time that shifts under attitude embedding. The key
 mechanism is **feature checking**: tense morphology bears a feature
 ([PAST], [PRES]) that must be checked against the local temporal
@@ -28,7 +28,7 @@ anchor.
 
 After the 0.230.452 wrapper-trim and the Phase E 0.230.456 split, this
 file has no concept-file companion in `Semantics/Tense/`.
-@cite{von-stechow-2009}'s contribution is *terminological* — the
+[von-stechow-2009]'s contribution is *terminological* — the
 "feature checking" name for what is structurally `GramTense.constrains`
 applied at a `embeddedFrame`-shifted eval time. The substrate lives
 entirely in `Core.Time.Tense` and `Semantics.Tense.Basic`; this file
@@ -55,7 +55,7 @@ open Semantics.Tense
 -- § Derivation Theorems
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{von-stechow-2009} derives the shifted reading: [PAST] feature
+/-- [von-stechow-2009] derives the shifted reading: [PAST] feature
     checked against matrix E. The embedded reference time is before
     the matrix event time. -/
 theorem vonStechow_derives_shifted {Time : Type*} [LinearOrder Time]
@@ -65,7 +65,7 @@ theorem vonStechow_derives_shifted {Time : Type*} [LinearOrder Time]
   simp only [embeddedFrame, ReichenbachFrame.isPast]
   exact hPast
 
-/-- @cite{von-stechow-2009} derives the simultaneous reading: [PRES]
+/-- [von-stechow-2009] derives the simultaneous reading: [PRES]
     feature checked against matrix E. The embedded reference time
     equals the matrix event time — no deletion rule needed. -/
 theorem vonStechow_derives_simultaneous {Time : Type*} [LinearOrder Time]
@@ -73,7 +73,7 @@ theorem vonStechow_derives_simultaneous {Time : Type*} [LinearOrder Time]
     (embeddedFrame matrixFrame matrixFrame.eventTime embeddedE).isPresent := by
   simp only [embeddedFrame, ReichenbachFrame.isPresent]
 
-/-- @cite{von-stechow-2009} derives double-access: [PRES] feature under
+/-- [von-stechow-2009] derives double-access: [PRES] feature under
     past attitude verb. The present tense is checked against matrix E,
     but its indexical nature also requires truth at speech time. -/
 theorem vonStechow_derives_double_access {Time : Type*}
@@ -84,13 +84,13 @@ theorem vonStechow_derives_double_access {Time : Type*}
     p matrixFrame.eventTime ∧ p matrixFrame.speechTime :=
   ⟨h_matrix, h_speech⟩
 
-/-- @cite{von-stechow-2009} derives relative clause tense: the
+/-- [von-stechow-2009] derives relative clause tense: the
     perspective time in a relative clause is the modified NP's
     temporal coordinate, not necessarily the matrix event time.
     Feature checking works uniformly regardless of the source of the
     eval time.
 
-    This is where von Stechow has an advantage over @cite{abusch-1997}:
+    This is where von Stechow has an advantage over [abusch-1997]:
     feature checking does not require attitude semantics or res
     movement — any eval time source works. -/
 theorem vonStechow_derives_relative_clause {Time : Type*} [LinearOrder Time]
@@ -104,7 +104,7 @@ theorem vonStechow_derives_relative_clause {Time : Type*} [LinearOrder Time]
 -- § Bridge to TensePronoun
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{von-stechow-2009}'s feature checking IS
+/-- [von-stechow-2009]'s feature checking IS
     `TensePronoun.fullPresupposition` when the eval time resolves to
     the same value. -/
 theorem feature_checking_is_fullPresupposition {Time : Type*} [LinearOrder Time]

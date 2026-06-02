@@ -6,7 +6,7 @@ import Linglib.Fragments.English.Auxiliaries
 import Mathlib.Tactic.DeriveFintype
 
 /-!
-# @cite{cariani-santorio-2018} — *Will* done Better
+# [cariani-santorio-2018] — *Will* done Better
 
 Cariani, F. & Santorio, P. (2018). Will done Better: Selection Semantics,
 Future Credence, and Indeterminacy. *Mind* 127(505): 129–165.
@@ -21,7 +21,7 @@ universal view (*will A* = *A* at every historical alternative).
 
 ## Three Constraints (the desiderata)
 
-@cite{cariani-santorio-2018} argue that an adequate theory must satisfy:
+[cariani-santorio-2018] argue that an adequate theory must satisfy:
 
 1. **Modal character** — *will* embeds, takes scope, and interacts with
    negation/quantifiers. Pure tense fails.
@@ -41,7 +41,7 @@ She considers three open historical alternatives — Robin will wear a
 *Warriors* cap (`cw`), a *Giants* cap (`cg`), or *no* cap (`cn`) —
 and assigns each credence 1/3. The example is designed to make every
 predicate of interest land on a probability in `{0, 1/3, 2/3, 1}`,
-which is what blocks @cite{hajek-1989}'s triviality argument from
+which is what blocks [hajek-1989]'s triviality argument from
 applying (paper §8.2 footnote 32).
 
 ## Verified predictions
@@ -74,7 +74,7 @@ open scoped ENNReal
 -- ============================================================================
 
 /-- Three worlds — Robin's cap choices for tomorrow's game
-    @cite{cariani-santorio-2018} §2.3 + §3 figure 2:
+    [cariani-santorio-2018] §2.3 + §3 figure 2:
 - `cw`: Robin wears a Warriors cap.
 - `cg`: Robin wears a Giants cap.
 - `cn`: Robin wears no cap. -/
@@ -83,7 +83,7 @@ inductive W where
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Cynthia's modal parameter: every cap-choice is historically open.
-    @cite{cariani-santorio-2018} treat the Sports Fan as a case where
+    [cariani-santorio-2018] treat the Sports Fan as a case where
     *all three* alternatives are live; nothing is settled at the time
     Cynthia forms her credences. -/
 def histAlt : Set W := { .cw, .cg, .cn }
@@ -108,7 +108,7 @@ noncomputable def selFn (w : W) (A : Set W) : W :=
   if (W.cw : W) ∈ A then .cw else
   if (W.cg : W) ∈ A then .cg else .cn
 
-/-- `selFn` satisfies @cite{stalnaker-1968}'s Inclusion axiom. -/
+/-- `selFn` satisfies [stalnaker-1968]'s Inclusion axiom. -/
 theorem selFn_inclusion (w : W) (A : Set W) (hA : A.Nonempty) :
     selFn w A ∈ A := by
   unfold selFn
@@ -122,7 +122,7 @@ theorem selFn_inclusion (w : W) (A : Set W) (hA : A.Nonempty) :
     · exact absurd hx h1
     · exact hx
 
-/-- `selFn` satisfies @cite{stalnaker-1968}'s Centering axiom. -/
+/-- `selFn` satisfies [stalnaker-1968]'s Centering axiom. -/
 theorem selFn_centering (w : W) (A : Set W) (hw : w ∈ A) :
     selFn w A = w := by
   unfold selFn
@@ -133,7 +133,7 @@ noncomputable def cynthiaSel : SelectionFunction W where
   inclusion := selFn_inclusion
   centering := selFn_centering
 
-/-- **Coherence** @cite{cariani-santorio-2018} §5.1: `cynthiaSel`
+/-- **Coherence** [cariani-santorio-2018] §5.1: `cynthiaSel`
     induces a well-ordering on `{cw, cg, cn}` — its pairwise preference
     is transitive. The order, by construction of `selFn`, is
     `cw < cg < cn` from any centre that is not itself in the candidate
@@ -199,7 +199,7 @@ theorem nonmember_no_collapse :
   unfold selFn counterfactualAlt
   simp [warriorsCap]
 
-/-- **Prediction 5** (= @cite{cariani-santorio-2018} eq. (17) collapse):
+/-- **Prediction 5** (= [cariani-santorio-2018] eq. (17) collapse):
     when `w` is in the modal parameter, `will A` collapses to `A w`. -/
 theorem member_collapses (A : W → Prop) (w : W) (hw : w ∈ histAlt) :
     willSem cynthiaSel A histAlt w ↔ A w :=
@@ -217,7 +217,7 @@ private lemma univ_W_eq : (Finset.univ : Finset W) = {.cw, .cg, .cn} := by
 /-- **Cynthia's credence** over the historical alternatives. Uniform
     on `histAlt = {cw, cg, cn}` — each cap choice gets 1/3.
 
-    The uniform-over-three structure is what blocks the @cite{hajek-1989}
+    The uniform-over-three structure is what blocks the [hajek-1989]
     triviality argument: no proposition lands on probability 1/2
     unconditionally, so the selectional account survives Hájek's
     objection by construction (paper §8.2 footnote 32). -/
@@ -270,7 +270,7 @@ theorem universalWill_warriorsCap_const_false (w : W) :
     Contrast with the selectional reading (`cynthia_credence_one_third`),
     which gives 1/3 — the empirically attested value. The
     selectional/universal split here is the substantive cognitive-role
-    argument from @cite{cariani-santorio-2018} §8.1. -/
+    argument from [cariani-santorio-2018] §8.1. -/
 theorem universal_will_credence_zero :
     cynthiaPMF.probOfSet {w | universalWill warriorsCap histAlt w} = 0 := by
   have hempty : {w | universalWill warriorsCap histAlt w} = (∅ : Set W) := by
@@ -298,7 +298,7 @@ theorem universal_will_credence_zero :
     where the cap-conditional is true: the world `cw`, which has
     mass 1/3 ÷ (1/3 + 1/3) = 1/2 of the cap-wearing mass.
 
-    This exercises @cite{cariani-santorio-2018} §5.3.1 + §5.3.2: the
+    This exercises [cariani-santorio-2018] §5.3.1 + §5.3.2: the
     conditional uses `willConditional`, which Kratzer-restricts the
     modal parameter. -/
 theorem cap_warriors_credence_one_half :
@@ -330,7 +330,7 @@ theorem cap_warriors_credence_one_half :
 /-- **The morphological identity in action**: the would-conditional
     *if Robin had worn a cap, Robin would have worn a Warriors cap*
     is the same proposition as the corresponding will-conditional.
-    @cite{cariani-santorio-2018} §5.3.2's claim that *would* = past-
+    [cariani-santorio-2018] §5.3.2's claim that *would* = past-
     tense *will* lifts to conditionals: `wouldConditional` and
     `willConditional` agree definitionally. -/
 theorem cap_would_eq_will (w : W) :
@@ -347,7 +347,7 @@ theorem cap_would_eq_will (w : W) :
     `cynthiaPMF`-probability `1/2`. The probabilities all land in
     `{0, 1/3, 2/3, 1}`.
 
-    @cite{hajek-1989}'s triviality argument requires a proposition with
+    [hajek-1989]'s triviality argument requires a proposition with
     probability 1/2 to construct its problematic conditional. Cariani &
     Santorio observe that the Sports Fan deliberately avoids any such
     predicate — no proposition gets probability 1/2 here, so Hájek's
@@ -388,7 +388,7 @@ theorem here breaks — making the cascading consequence for C&S visible
 at compile time.
 
 The Auxiliaries Fragment is a hub: other studies that analyse the
-same entries (@cite{condoravdi-2002}, @cite{kratzer-1981}, etc.) record
+same entries ([condoravdi-2002], [kratzer-1981], etc.) record
 their own morphological preconditions parallel to these. To enumerate
 every analysis that touches a given entry, grep for
 `English.Auxiliaries.<entry>` across `Phenomena/`.
@@ -400,7 +400,7 @@ live in the rest of this file and in
 between C&S's atemporal-propositional `willSem` and Condoravdi's
 time-indexed-eventive `woll` means their predictions cannot be
 compared by direct equation; a divergence-witness theorem against
-@cite{condoravdi-2002} is left for follow-up. -/
+[condoravdi-2002] is left for follow-up. -/
 
 /-- **C&S precondition**: the Fragment classifies *will* as a modal
     auxiliary. C&S's selectional analysis presupposes modal status —

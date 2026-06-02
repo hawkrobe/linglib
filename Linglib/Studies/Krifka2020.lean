@@ -3,13 +3,13 @@ import Linglib.Phenomena.Assertion.Basic
 
 /-!
 # Layered Assertive Clauses: JP/ComP modifiers
-@cite{krifka-2020} @cite{speas-2004} @cite{wiltschko-2014}
+[krifka-2020] [speas-2004] [wiltschko-2014]
 
-Worked examples for @cite{krifka-2020}'s four-layer clause structure
-(TP > JP > ComP > ActP). The JP layer originates with @cite{speas-2004}
-and is developed crosslinguistically by @cite{wiltschko-2014};
-@cite{krifka-2020} synthesises them with the commitment-space framework
-of @cite{krifka-2015} (see sibling
+Worked examples for [krifka-2020]'s four-layer clause structure
+(TP > JP > ComP > ActP). The JP layer originates with [speas-2004]
+and is developed crosslinguistically by [wiltschko-2014];
+[krifka-2020] synthesises them with the commitment-space framework
+of [krifka-2015] (see sibling
 `Studies/Krifka2015.lean`).
 
 ## Coverage
@@ -22,10 +22,10 @@ of @cite{krifka-2015} (see sibling
 ## Out of scope
 
 - The actual commitment-space dynamics — see Krifka2015.lean.
-- Proxy assertions ("Mary says p") — flagged in @cite{krifka-2015}
+- Proxy assertions ("Mary says p") — flagged in [krifka-2015]
   conclusion, not exercised here.
 - Conjunct/disjunct systems (Newari etc.) — typological extension noted
-  in @cite{krifka-2015} conclusion but separate study.
+  in [krifka-2015] conclusion but separate study.
 -/
 
 namespace Krifka2020

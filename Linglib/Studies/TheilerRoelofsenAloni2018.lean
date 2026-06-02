@@ -7,7 +7,7 @@ import Linglib.Semantics.Mood.PartitionAsInquiry
 
 /-!
 # Theiler, Roelofsen & Aloni (2018) — A Uniform Semantics for Declarative and Interrogative Complements
-@cite{theiler-etal-2018}
+[theiler-etal-2018]
 
 *Journal of Semantics* 35(3): 409–466, doi:10.1093/jos/ffy003.
 
@@ -29,7 +29,7 @@ example from Section 3.1, which justifies the existence of
 
 2. **Mention-some forcing** (Section 3.1, ex. (13)): the `Janna knows
    where one can buy an Italian newspaper` scenario adapted from
-   @cite{george-2011} requires alternatives that **overlap**
+   [george-2011] requires alternatives that **overlap**
    (a world where two stores both sell Italian newspapers belongs to
    multiple alternatives). We construct a minimal `mentionSome`
    inquisitive content and prove `mentionSome_not_partition_derived`:
@@ -50,7 +50,7 @@ This file does **not** formalize the rest of the paper:
 - Sections 4–6 (verb meanings, predicates of relevance, constraints
   on responsive verb meanings) require a full Fragment of attitude
   verbs typed against `Question`, also future work.
-- Appendices A–B (comparison with @cite{uegaki-2015} inverse reductive
+- Appendices A–B (comparison with [uegaki-2015] inverse reductive
   approach; formal proofs).
 
 The point of this file is the existence theorem for the "more
@@ -66,7 +66,7 @@ open Question
 /-! ### Section 2.1: Figure 2 — Did Amy leave? / Amy left. -/
 
 /-- Worlds: `0, 1` are worlds where Amy left; `2, 3` are worlds where
-    Amy didn't leave. Following @cite{theiler-etal-2018} Figure 2
+    Amy didn't leave. Following [theiler-etal-2018] Figure 2
     (`w₁, w₂` = Amy left, `w₃, w₄` = Amy didn't leave). -/
 abbrev W : Type := Fin 4
 
@@ -122,8 +122,8 @@ theorem didAmyLeaveMeaning_isInquisitive : didAmyLeaveMeaning.isInquisitive := b
 
 /-! ### Mention-some readings force overlapping alternatives
 
-The Janna/Rupert scenario from @cite{george-2011} (cited in
-@cite{theiler-etal-2018} ex. (13)): there are stores Newstopia,
+The Janna/Rupert scenario from [george-2011] (cited in
+[theiler-etal-2018] ex. (13)): there are stores Newstopia,
 Paperworld, and Cellulose City; Newstopia and Paperworld sell Italian
 newspapers, Cellulose City does not. *Janna knows where one can buy an
 Italian newspaper* under a mention-some reading is true if Janna knows
@@ -132,9 +132,9 @@ sell, those worlds belong to multiple alternatives (one per store) —
 the alternatives **overlap**.
 
 The structural feature — non-disjoint alternatives — is what
-@cite{theiler-etal-2018} §2 (Figure 5(b), the non-exhaustive *Who
+[theiler-etal-2018] §2 (Figure 5(b), the non-exhaustive *Who
 left?*) and the broader inquisitive-semantics tradition (e.g.,
-@cite{ciardelli-groenendijk-roelofsen-2018}) use to motivate the move
+[ciardelli-groenendijk-roelofsen-2018]) use to motivate the move
 beyond partition theory. We model the irreducible structural feature
 with three worlds and two overlapping alternatives. The forcing
 theorem `mentionSome_not_partition_derived` shows that no `Setoid` on
@@ -181,7 +181,7 @@ def mentionSome : Question MS where
 
     This is the standard partition-theory limitation that motivates
     inquisitive semantics' move to non-disjoint alternatives
-    (@cite{ciardelli-groenendijk-roelofsen-2018}; @cite{theiler-etal-2018}
+    ([ciardelli-groenendijk-roelofsen-2018]; [theiler-etal-2018]
     §2 Figure 5(b)). -/
 theorem mentionSome_not_partition_derived (r : Setoid MS) :
     fromSetoid r ≠ mentionSome := by

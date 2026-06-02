@@ -3,7 +3,7 @@ import Linglib.Phonology.OptimalityTheory.Constraints
 
 /-!
 # CV-Skeletal Templates and Root–Template Association
-@cite{mccarthy-1981} @cite{lowenstamm-1996} @cite{faust-2026}
+[mccarthy-1981] [lowenstamm-1996] [faust-2026]
 
 The McCarthy 1981 / Strict-CV (Lowenstamm 1996) representation of
 nonconcatenative morphology: a *template* is a sequence of CV slots,
@@ -20,13 +20,13 @@ the same root data is shared between phonology (this module), morphology
 
 ## *Misalignment
 
-Following @cite{faust-2026}, a derived predicate `RootTemplateMatch.isMisaligned`
+Following [faust-2026], a derived predicate `RootTemplateMatch.isMisaligned`
 fires when a *nonfinal* root segment lands in the *final* template slot. The
 predicate distinguishes associations from the root proper (`AssocSource.root`)
 from associations from a sister exponent (`AssocSource.intruder`, e.g. the
 feminine [t] in Hebrew taQTiL or Amharic gerund and INF). Intruder associations
 are exempt from *Misalignment because the intruder is not a root segment in
-the first place — the central analytical move of @cite{faust-2026} §4.
+the first place — the central analytical move of [faust-2026] §4.
 -/
 
 namespace Phonology.Templates
@@ -39,14 +39,14 @@ open Phonology.Constraints (mkAlign)
 -- § 1: CV Slots
 -- ============================================================================
 
-/-- A slot in a CV-skeletal template (@cite{mccarthy-1981}, @cite{lowenstamm-1996}):
+/-- A slot in a CV-skeletal template ([mccarthy-1981], [lowenstamm-1996]):
 
     - `C`: a bare consonantal timing slot.
     - `V`: a vowel timing slot.
     - `Cspec`: a C-slot bearing the [+consonantal] feature, blocking association
       from glides like /j/ — this is the slot type that triggers the
       QaTaT–QaTa problem when paired with a [j]-final root
-      (@cite{faust-2026} (4)). -/
+      ([faust-2026] (4)). -/
 inductive CVSlot where
   | C
   | V
@@ -116,14 +116,14 @@ end Template
     Faust 2026's analysis turns on this distinction: a `.root` association
     is subject to *Misalignment, an `.intruder` association is not. Intruders
     are sister exponents (e.g. the feminine [t] in Hebrew taQTiL nouns,
-    @cite{faust-2026} (10)) that satisfy the template without being root
+    [faust-2026] (10)) that satisfy the template without being root
     segments themselves. -/
 inductive AssocSource where
   | root
   | intruder
   deriving DecidableEq, Repr
 
-/-- A single root-to-slot association line (@cite{mccarthy-1981}).
+/-- A single root-to-slot association line ([mccarthy-1981]).
 
     `rootIndex` is interpreted relative to the root for `.root` associations,
     or as an opaque tag for `.intruder` associations (intruder identity is
@@ -157,7 +157,7 @@ variable {α : Type}
 def isRootFinal (m : RootTemplateMatch α) (a : Association) : Bool :=
   a.source == .root && m.template.isFinalSlot a.slotIndex
 
-/-- *Misalignment* (@cite{faust-2026} (2)): the match has a nonfinal root
+/-- *Misalignment* ([faust-2026] (2)): the match has a nonfinal root
     segment associated to the template-final slot. Intruder associations do
     not count — see `AssocSource`. -/
 def isMisaligned (m : RootTemplateMatch α) : Bool :=
@@ -176,7 +176,7 @@ def allCSlotsFilled (m : RootTemplateMatch α) : Bool :=
 
 /-- The template is *satisfied* iff all C-slots are filled and the result
     is not misaligned. The two requirements are independent — the central
-    point of @cite{faust-2026} is that for [j]-final biradicals in Hebrew,
+    point of [faust-2026] is that for [j]-final biradicals in Hebrew,
     one cannot satisfy the first without violating the second. -/
 def satisfies (m : RootTemplateMatch α) : Bool :=
   m.allCSlotsFilled && !m.isMisaligned
@@ -188,7 +188,7 @@ def inBounds (m : RootTemplateMatch α) : Bool :=
     (a.source != .root || decide (a.rootIndex < m.root.arity))
 
 /-- The list of C-slot indices that are NOT filled by any association.
-    Used by hollow-root analyses (@cite{faust-2026} (13)): when the
+    Used by hollow-root analyses ([faust-2026] (13)): when the
     medial radical is non-consonantal, the medial C-slot is unfilled,
     and the position of the unfilled slot determines whether
     [t]-intrusion is licensed (final-empty: licit; medial-empty: blocked
@@ -199,13 +199,13 @@ def unfilledCSlots (m : RootTemplateMatch α) : List Nat :=
     | some s => decide (CVSlot.IsC s) && !m.associations.any (·.slotIndex == i)
     | none => false
 
-/-- The No-Crossing Constraint (@cite{goldsmith-1976}): an intruder
+/-- The No-Crossing Constraint ([goldsmith-1976]): an intruder
     association at slot `i` crosses an existing association at slot `j > i`.
     Right-edge intruders (e.g. the feminine /t/ suffix in Hebrew taQTiL
     and Amharic gerunds) associate inward from the right, so any root
     segment to the right of the intruder forces line-crossing.
 
-    This is the predicate that explains @cite{faust-2026} (13b–c):
+    This is the predicate that explains [faust-2026] (13b–c):
     [t]-intrusion does not fill the medial C[+c] of [mäsam]/[mähid]
     because the final C-slot is *already* filled by the final root
     radical, so an intruder at the medial position would have to cross
@@ -226,13 +226,13 @@ def hasIntruder (m : RootTemplateMatch α) : Bool :=
 /-- A `RootTemplateMatch` is *intrusion-licensed* under an external
     licensing predicate iff either (a) the predicate is `true`
     (the morphosyntactic context licenses an intruding sister bound
-    root, à la @cite{lowenstamm-2014}), or (b) the match contains no
+    root, à la [lowenstamm-2014]), or (b) the match contains no
     intruder associations.
 
     The licensing predicate is supplied by the morphological theory
-    above — for @cite{faust-2026}'s analysis, it evaluates to `true`
+    above — for [faust-2026]'s analysis, it evaluates to `true`
     iff the template is realized at an `n[+gen]` head in
-    @cite{kramer-2020}'s sense (verbal templates, whose gender lives
+    [kramer-2020]'s sense (verbal templates, whose gender lives
     on a higher Agr head, evaluate to `false` and so admit no
     intrusion). The predicate is `Bool`-valued rather than a
     `MorphologicalLocus` enum so that `Templates.lean` need not
@@ -330,7 +330,7 @@ theorem intrusionLicensed_with_intruder (m : RootTemplateMatch α)
 -- § 5: *Misalignment as an Alignment Constraint
 -- ============================================================================
 
-/-- The \*Misalignment constraint of @cite{faust-2026} (2): a markedness
+/-- The \*Misalignment constraint of [faust-2026] (2): a markedness
     constraint that fires on `RootTemplateMatch` candidates whose
     `isMisaligned` predicate holds. Built via the generic `mkAlign`
     constructor from `Phonology.Constraints`. -/
@@ -341,9 +341,9 @@ def starMisalign {α : Type} : NamedConstraint (RootTemplateMatch α) :=
 theorem starMisalign_is_markedness {α : Type} :
     (starMisalign (α := α)).family = .markedness := rfl
 
-/-- The FILL constraint (@cite{prince-smolensky-1993}): a markedness
+/-- The FILL constraint ([prince-smolensky-1993]): a markedness
     constraint penalizing unfilled C-slots in the template. Used by
-    @cite{faust-2026}'s implicit ranking \*Misalign >> FILL: spreading
+    [faust-2026]'s implicit ranking \*Misalign >> FILL: spreading
     a nonfinal root segment to a final [+c] slot satisfies FILL but
     violates \*Misalign, and the grammar prefers the FILL-violating
     candidate. -/
@@ -355,7 +355,7 @@ def fill {α : Type} : NamedConstraint (RootTemplateMatch α) :=
 theorem fill_is_markedness {α : Type} :
     (fill (α := α)).family = .markedness := rfl
 
-/-- NoCross (@cite{goldsmith-1976}): a markedness constraint penalizing
+/-- NoCross ([goldsmith-1976]): a markedness constraint penalizing
     candidates whose intruder associations cross root associations. -/
 def noCross {α : Type} : NamedConstraint (RootTemplateMatch α) :=
   Phonology.Constraints.mkMark "NoCross"

@@ -3,7 +3,7 @@ import Linglib.Semantics.Aspect.Incremental
 
 /-!
 # Cumulativity and Quantization Propagation
-@cite{krifka-1998} @cite{krifka-1989} @cite{champollion-2017}
+[krifka-1998] [krifka-1989] [champollion-2017]
 
 The central K98 §3.3 result: a thematic relation θ between objects and
 events propagates mereological properties (CUM, QUA) from the object
@@ -12,9 +12,9 @@ itself (eq. 53) and the bridge theorems linking SINC + UP to the
 two propagation chains.
 
 Topic-named (not paper-named): defines the deep substrate that
-@cite{krifka-1998} §3.3 establishes, that @cite{krifka-1989}'s
+[krifka-1998] §3.3 establishes, that [krifka-1989]'s
 nominal-reference-to-VP-aspect chain depends on, and that
-@cite{champollion-2017}'s stratified-reference modernization rests on.
+[champollion-2017]'s stratified-reference modernization rests on.
 
 ## Mathlib discipline: typeclass form is canonical
 
@@ -37,7 +37,7 @@ variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 /-! ### VP Formation (K98 §3.3 eq. 53) -/
 
 /-- VP predicate formed by existential closure over the object argument.
-    @cite{krifka-1998} eq. 53: `VP_θ,OBJ = λe.∃y[OBJ(y) ∧ θ(y,e)]`.
+    [krifka-1998] eq. 53: `VP_θ,OBJ = λe.∃y[OBJ(y) ∧ θ(y,e)]`.
     "eat apples" = `λe.∃y[apples(y) ∧ eat.theme(y,e)]`. -/
 def VP (θ : α → β → Prop) (OBJ : α → Prop) : β → Prop :=
   fun e => ∃ y, OBJ y ∧ θ y e
@@ -45,7 +45,7 @@ def VP (θ : α → β → Prop) (OBJ : α → Prop) : β → Prop :=
 /-! ### CUM Propagation (K98 §3.3) -/
 
 /-- **CUM propagation** (explicit-witness smart constructor): cumulative θ
-    transmits CUM from NP to VP. @cite{krifka-1998} §3.3:
+    transmits CUM from NP to VP. [krifka-1998] §3.3:
     CumTheta(θ) ∧ CUM(OBJ) → CUM(VP θ OBJ).
 
     "eat apples" is CUM because:
@@ -70,7 +70,7 @@ private theorem cum_propagation_of_cumTheta {θ : α → β → Prop} {OBJ : α 
 /-! ### QUA Propagation (K98 §3.3) -/
 
 /-- **QUA propagation**: UP + MSO transmit QUA from NP to VP.
-    @cite{krifka-1998} §3.3: UP(θ) ∧ MSO(θ) ∧ QUA(OBJ) → QUA(VP θ OBJ).
+    [krifka-1998] §3.3: UP(θ) ∧ MSO(θ) ∧ QUA(OBJ) → QUA(VP θ OBJ).
 
     "eat two apples" is QUA because:
     - TWO-APPLES is QUA (quantized NPs have no P-proper-parts)

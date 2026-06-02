@@ -3,7 +3,7 @@ import Linglib.Morphology.RootTypology
 
 /-!
 # German Predicate Lexicon Fragment
-@cite{qing-uegaki-2025} @cite{song-1996} @cite{solstad-bott-2024}
+[qing-uegaki-2025] [song-1996] [solstad-bott-2024]
 
 German causative and attitude verb entries, extending `Verb` with the
 German inflectional paradigm (3sg present, Präteritum, Partizip II).
@@ -37,7 +37,7 @@ structure GermanVerbEntry extends Verb where
   formPast : String
   /-- Past participle (Partizip II) -/
   formPastPart : String
-  /-- Root type (@cite{beavers-etal-2021}): result vs property concept.
+  /-- Root type ([beavers-etal-2021]): result vs property concept.
       Only set for change-of-state verbs where the distinction is applicable. -/
   rootType : Option _root_.RootType := none
   deriving Repr, BEq
@@ -89,7 +89,7 @@ def zerbrechen : GermanVerbEntry where
   causative := some .make
 
 -- ============================================================================
--- § 2: Attitude Verbs (@cite{qing-uegaki-2025})
+-- § 2: Attitude Verbs ([qing-uegaki-2025])
 -- ============================================================================
 
 /-- *hoffen* — "hope" (Class 3: positive, C-distributive, anti-rogative). -/
@@ -148,7 +148,7 @@ def sorgen : GermanVerbEntry where
   attitude := some (.preferential .uncertaintyBased)
 
 -- ============================================================================
--- § 3: Occasion Verbs (@cite{solstad-bott-2024}, S&P 17:11)
+-- § 3: Occasion Verbs ([solstad-bott-2024], S&P 17:11)
 -- ============================================================================
 
 /-! German interpersonal occasion verbs presuppose a prior occasioning
@@ -156,7 +156,7 @@ def sorgen : GermanVerbEntry where
     interpersonal action triggered by the object's prior behavior.
 
     These verbs were tested for projectivity in Experiments 1–3 of the
-    S&P paper and for IC bias (as "agent-evocator" verbs) in @cite{solstad-bott-2022}. -/
+    S&P paper and for IC bias (as "agent-evocator" verbs) in [solstad-bott-2022]. -/
 
 /-- *bestrafen* — "punish": presupposes the object did something wrong -/
 def bestrafen : GermanVerbEntry where
@@ -323,7 +323,7 @@ def zurVerantwortungZiehen : GermanVerbEntry where
   senseTag := .occasion
 
 -- ============================================================================
--- § 4: Verbs from @cite{benz-2025} (Chs. 3–5)
+-- § 4: Verbs from [benz-2025] (Chs. 3–5)
 -- ============================================================================
 
 /-! ### Simplex manner/activity verbs
@@ -420,7 +420,7 @@ change-of-state interpretation from the root. They can typically
 form *-ung* nominalizations (CEN reading). -/
 
 /-- *beobachten* — "observe" (*be-* prefix): accomplishment. The running
-    example in @cite{benz-2025} Ch. 3 — all three nominalization readings
+    example in [benz-2025] Ch. 3 — all three nominalization readings
     (CEN, RN, CCN) are available for *Beobachtung*. -/
 def beobachten : GermanVerbEntry where
   form := "beobachten"
@@ -453,10 +453,10 @@ def verbinden : GermanVerbEntry where
   vendlerClass := some .accomplishment
 
 -- ============================================================================
--- § 5: Selection-Violating Coordination Verbs (@cite{schwarzer-2026})
+-- § 5: Selection-Violating Coordination Verbs ([schwarzer-2026])
 -- ============================================================================
 
-/-! Verbs used in @cite{schwarzer-2026} to test DP-CP coordination in German.
+/-! Verbs used in [schwarzer-2026] to test DP-CP coordination in German.
 
 **Non-CP-selecting** (DP complement only): *beenden*, *streichen*,
 *übereilen*, *entwickeln*. These verbs do not independently license a
@@ -667,7 +667,7 @@ theorem sorgen_is_uncertainty :
     sorgen.attitude = some (.preferential .uncertaintyBased) := rfl
 
 -- ============================================================================
--- § 10: Selection-Violating Coordination Grounding Theorems (@cite{schwarzer-2026})
+-- § 10: Selection-Violating Coordination Grounding Theorems ([schwarzer-2026])
 -- ============================================================================
 
 /-- Non-CP-selecting verbs cannot take clausal complements.

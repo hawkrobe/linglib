@@ -6,7 +6,7 @@ import Linglib.Phenomena.Questions.PolarAnswerStructure
 
 /-!
 # Holmberg (2016): The Syntax of Yes and No
-@cite{holmberg-2016}
+[holmberg-2016]
 
 ## Core Contribution
 
@@ -32,7 +32,7 @@ parameter is the **answering system**: truth-based vs polarity-based.
 - `AnsweringSystem` (typological parameter)
 - `NegationHeight` → `predictedSystem` (negation height derives answering system)
 - `PolarAnswerProfile` (per-language classification)
-- `VerumFocus.lean` (@cite{romero-han-2004}): complementary analysis — VERUM
+- `VerumFocus.lean` ([romero-han-2004]): complementary analysis — VERUM
   explains structural source of bias, Holmberg explains cross-linguistic
   answer variation. Both derive unbalanced partitions for negative questions.
 -/
@@ -174,7 +174,7 @@ theorem endtoend_diverge :
 -- § 6. Polarity reversal ↔ polarity-based correlation
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{holmberg-2016} §4.13: languages with a polarity-reversing particle
+/-! [holmberg-2016] §4.13: languages with a polarity-reversing particle
     (Swedish *jo*, German *doch*, French *si*) are correlated with the
     polarity-based system. Truth-based languages do not need a reversing
     particle because they can always use "no" to disconfirm the negative

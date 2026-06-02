@@ -8,11 +8,11 @@ import Mathlib.Data.Fin.Basic
 
 /-!
 # DM Vocabulary Insertion under Containment Locality
-@cite{bobaljik-2012} @cite{bobaljik-2000} @cite{halle-marantz-1993}
-@cite{smith-moskal-xu-kang-bobaljik-2019}
+[bobaljik-2012] [bobaljik-2000] [halle-marantz-1993]
+[smith-moskal-xu-kang-bobaljik-2019]
 
 The DM-flavored derivation of the *ABA generalization for inflectional
-morphology under root-out Vocabulary Insertion (@cite{bobaljik-2000}):
+morphology under root-out Vocabulary Insertion ([bobaljik-2000]):
 root VI rules can only be conditioned on features inside their local
 domain, which means the same VI rule set competes at multiple cells of
 a containment hierarchy and the Elsewhere mechanism picks identical
@@ -89,13 +89,13 @@ variable {n : Nat}
 
     - `exponent` is the phonological form inserted at the terminal.
     - `contextLevel` is the deepest position whose features the rule's
-      context refers to. Under root-out insertion (@cite{bobaljik-2000}),
+      context refers to. Under root-out insertion ([bobaljik-2000]),
       the rule applies at any position `p` such that `contextLevel ≤ p`
       (positions strictly contain the contextLevel cell's features).
     - `specificity` is the Elsewhere ranking (higher = more specific).
       When two rules both apply, the higher-specificity one wins.
 
-    The locality cap from @cite{bobaljik-2012} is *not* baked into the
+    The locality cap from [bobaljik-2012] is *not* baked into the
     structure; it is a separate hypothesis on rule lists in §6. -/
 structure ContainmentVIRule (n : Nat) where
   /-- Phonological exponent inserted at the terminal. -/
@@ -254,7 +254,7 @@ theorem viExponent_eq_of_applicableRules_eq
 -- ============================================================================
 
 /-- A rule list is **capped at level `M`** when no rule has contextLevel
-    strictly above `M`. This is @cite{bobaljik-2012}'s containment
+    strictly above `M`. This is [bobaljik-2012]'s containment
     locality: root VI rules can be conditioned only on the immediately
     containing functional head, not on more distant ones. -/
 def CappedAt (rules : List (ContainmentVIRule n)) (M : Fin n) : Prop :=
@@ -314,14 +314,14 @@ open Morphology.DegreeContainment
 def cmprLevel : Fin 3 := ⟨1, by decide⟩
 
 /-- A locality-constrained VI rule for root morphemes in degree
-    contexts (@cite{bobaljik-2012}, @cite{bobaljik-2000}).
+    contexts ([bobaljik-2012], [bobaljik-2000]).
 
     Subtype of `ContainmentVIRule 3` with the locality cap `≤ cmprLevel`
     bundled in via subtype refinement. This is the mathlib `OrderHom`
     idiom (bundle the constraint with the carrier) applied to a
     morphological rule with a structural locality property.
 
-    Root-out insertion (@cite{bobaljik-2000}) means root VI rules can
+    Root-out insertion ([bobaljik-2000]) means root VI rules can
     only be conditioned on features in the root's local domain — the
     CMPR head that immediately contains the root. The SPRL head is
     outside CMPR and invisible to root VI; this is the cap. -/
@@ -357,7 +357,7 @@ def viPattern (rules : List LocalVIRule) (defaultForm : Nat) : DegreePattern :=
     `viExponent_const_above_cap` at the cap `cmprLevel`, instantiated
     at positions 1 (CMPR) and 2 (SPRL).
 
-    Formal content of @cite{bobaljik-2012}'s containment argument:
+    Formal content of [bobaljik-2012]'s containment argument:
     root suppletion at SPRL ↔ root suppletion at CMPR. -/
 theorem vi_cmpr_eq_sprl (rules : List LocalVIRule) (defaultForm : Nat) :
     (viPattern rules defaultForm).cmpr = (viPattern rules defaultForm).sprl :=

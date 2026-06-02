@@ -11,7 +11,7 @@ import Mathlib.Data.List.Sublists
 
 A language `L` is **strictly `k`-piecewise** when membership is determined
 by which length-`k` *subsequences* (scattered, non-contiguous selections)
-the input contains @cite{rogers-pullum-2011} @cite{lambert-2022}. Whereas
+the input contains [rogers-pullum-2011] [lambert-2022]. Whereas
 SL_k constrains adjacent material via *factors* (contiguous infixes),
 SP_k constrains long-distance co-occurrence via *subsequences*.
 
@@ -27,7 +27,7 @@ is `[s, ʃ]` (and its reverse), regardless of intervening material.
 No boundary augmentation is needed for SP: subsequences are blind to
 position and to symbols not in the subsequence itself, so leading and
 trailing markers add no information. This is the canonical convention
-in Heinz's SP work @cite{heinz-rogers-2010}.
+in Heinz's SP work [heinz-rogers-2010].
 
 ## Main definitions
 

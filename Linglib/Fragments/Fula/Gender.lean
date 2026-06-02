@@ -2,7 +2,7 @@ import Linglib.Typology.Gender
 
 /-!
 # Fula Gender
-@cite{corbett-1991} @cite{corbett-2013}
+[corbett-1991] [corbett-2013]
 
 ~20+ noun classes (Atlantic, Niger-Congo). One of the richest class systems
 in Africa. Sample maximum in Corbett's 22-language exemplar.
@@ -25,7 +25,7 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "ful" ∧ genderTypology.name = "Fula" :=
   ⟨rfl, rfl⟩
 
-/-- Fula is a noun-class system (20+ classes per @cite{corbett-1991}). -/
+/-- Fula is a noun-class system (20+ classes per [corbett-1991]). -/
 example : genderTypology.IsNounClassSystem := by decide
 
 end Fula.Gender

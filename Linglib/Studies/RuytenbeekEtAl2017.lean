@@ -3,7 +3,7 @@ import Linglib.Semantics.Modality.Assert
 import Linglib.Fragments.French.Modals
 
 /-!
-# @cite{ruytenbeek-etal-2017}: Indirect Request Processing, Sentence Types
+# [ruytenbeek-etal-2017]: Indirect Request Processing, Sentence Types
   and Illocutionary Forces
 
 Journal of Pragmatics 119 (2017) 46–62.
@@ -19,20 +19,20 @@ with imperatives, not from sentence type per se.
 The paper invokes three (overlapping) routes by which a non-imperative
 construction can carry directive force:
 
-1. **Shared deontic semantics** (@cite{kaufmann-2012}; paper §3.4
+1. **Shared deontic semantics** ([kaufmann-2012]; paper §3.4
    Discussion). A construction whose modal flavor matches the
    imperative's deontic semantics is directive-compatible. *Vous devez VP*
    and the permission reading of *Vous pouvez VP* (paper §3.4)
    instantiate this route. Formalised as `SentType.deonticMatch`.
-2. **Preparatory-condition questioning** (@cite{clark-1979}; paper §1
+2. **Preparatory-condition questioning** ([clark-1979]; paper §1
    Introduction). An interrogative that questions an addressee
    preparatory condition (canonically `.ability`) is directive-compatible.
    *Pouvez-vous VP?* and *Est-il possible de VP?* instantiate this route.
    Formalised as `SentType.prepConditionQueried`; the deeper
    characterisation `interrogative + circumstantial-modal` is proved
    equivalent in `prepConditionQueried_iff_interrog_circumstantial`.
-3. **Force-dynamic enablement** (@cite{johnson-1987}, @cite{sweetser-1990},
-   @cite{talmy-2000}; paper §4 General Discussion, p. 61). The four
+3. **Force-dynamic enablement** ([johnson-1987], [sweetser-1990],
+   [talmy-2000]; paper §4 General Discussion, p. 61). The four
    constructions that semantically encode the addressee's *enablement*
    to perform the action — both interrogative IRs *and* both
    ability/possibility declaratives — pattern together. Formalised as
@@ -123,7 +123,7 @@ inductive SentType where
   | canDeclarative
   /-- *Il est possible de VP* — Study 2 existential-possibility
       declarative. Per paper §2.1 the modal base is unrestricted (in
-      the sense of @cite{kratzer-1991}); we choose `.circumstantial`
+      the sense of [kratzer-1991]); we choose `.circumstantial`
       as the canonical flavor since *Pouvez-vous VP?* (semantically
       close per p. 50) is restricted to the ability reading in the
       experimental contexts. -/
@@ -180,12 +180,12 @@ def SentType.modalForce : SentType → Option ModalForce
 
 /-- The imperative's flavor matches the one Hacquard's SAP architecture
     assigns to imperative speech acts — derived, not coincidentally
-    equal. Layered Grounding for the headline @cite{kaufmann-2012}
+    equal. Layered Grounding for the headline [kaufmann-2012]
     commitment. -/
 theorem imperative_modalFlavor_eq_assert :
     SentType.modalFlavor .imperative = some (primaryFlavor .imperative) := rfl
 
-/-! ### Mechanism 1 — shared deontic semantics (@cite{kaufmann-2012})
+/-! ### Mechanism 1 — shared deontic semantics ([kaufmann-2012])
 
 A construction is mechanism-1-compatible with directive force when its
 modal flavor matches the imperative's. The check is a single equality
@@ -195,7 +195,7 @@ possibility — that ranking is a quantitative finding (paper §3.3:
 z = -8.11, p < 0.001) which mechanism 1 alone underdetermines. -/
 
 /-- A sentence type is mechanism-1-compatible iff its modal flavor
-    matches the imperative's. Encodes @cite{kaufmann-2012}'s
+    matches the imperative's. Encodes [kaufmann-2012]'s
     deontic-modal account of imperatives: any construction with the
     same modal flavor is a candidate directive. -/
 def SentType.deonticMatch (s : SentType) : Prop :=
@@ -203,9 +203,9 @@ def SentType.deonticMatch (s : SentType) : Prop :=
 
 instance : DecidablePred SentType.deonticMatch := fun _ => decEq _ _
 
-/-! ### Mechanism 2 — preparatory-condition questioning (@cite{clark-1979})
+/-! ### Mechanism 2 — preparatory-condition questioning ([clark-1979])
 
-Per @cite{clark-1979}, asking about a preparatory condition for a
+Per [clark-1979], asking about a preparatory condition for a
 request licenses the directive interpretation without sharing the
 imperative's modal semantics. The substrate
 `Discourse.PreparatoryCondition` (Searle's hierarchy: ability /
@@ -236,7 +236,7 @@ instance : DecidablePred SentType.prepConditionQueried := fun _ =>
 /-- Deeper characterisation of mechanism 2 in this paper's domain:
     `queriedPrep = some .ability` iff the construction is an
     interrogative with circumstantial modal flavor. This is the
-    structural content of @cite{clark-1979}'s "convention of means"
+    structural content of [clark-1979]'s "convention of means"
     applied to the paper's specific stimulus set, where circumstantial
     modal force in an interrogative form picks out exactly the
     ability-questioning indirect requests. -/
@@ -245,8 +245,8 @@ theorem queriedPrep_eq_ability_iff_interrog_circumstantial (s : SentType) :
       s.mood = .interrogative ∧ s.modalFlavor = some .circumstantial := by
   cases s <;> decide
 
-/-! ### Mechanism 3 — force-dynamic enablement (@cite{johnson-1987},
-    @cite{sweetser-1990}, @cite{talmy-2000})
+/-! ### Mechanism 3 — force-dynamic enablement ([johnson-1987],
+    [sweetser-1990], [talmy-2000])
 
 Per the paper's §4 General Discussion (p. 61), all four constructions
 that semantically encode the addressee's *enablement* to perform the

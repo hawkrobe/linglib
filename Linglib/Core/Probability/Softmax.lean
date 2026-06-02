@@ -21,8 +21,8 @@ impossible utterances — the bug the `EReal` substrate prevents at the root.
 The inverse-temperature factor `β` lives inside the score on the consumer
 side: write `softmax (fun a => (β : EReal) * scoreReal a)`. This keeps the
 substrate generic over score-construction patterns
-(@cite{kao-etal-2014-metaphor}'s `λ · log Σ L0`, @cite{frank-goodman-2012}'s
-`α · log L0`, @cite{herbstritt-franke-2019}'s `λ · (-Hellinger)`, etc.).
+([kao-etal-2014-metaphor]'s `λ · log Σ L0`, [frank-goodman-2012]'s
+`α · log L0`, [herbstritt-franke-2019]'s `λ · (-Hellinger)`, etc.).
 
 ## Main definitions
 
@@ -50,9 +50,9 @@ shape that doesn't reduce to softmax.
 ## Architectural role
 
 Substrate for RSA-style speaker constructions across `Phenomena/`:
-@cite{frank-goodman-2012}, @cite{goodman-stuhlmuller-2013},
-@cite{kao-etal-2014-metaphor}, @cite{lassiter-goodman-2017},
-@cite{herbstritt-franke-2019}, @cite{yoon-etal-2020}, etc. Replaces
+[frank-goodman-2012], [goodman-stuhlmuller-2013],
+[kao-etal-2014-metaphor], [lassiter-goodman-2017],
+[herbstritt-franke-2019], [yoon-etal-2020], etc. Replaces
 the per-paper inline `PMF.normalize ∘ exp ∘ score` pattern with a
 named primitive backed by the structural-decomposition lemma.
 -/
@@ -135,7 +135,7 @@ theorem softmax_partition_ne_top [Fintype α] (score : α → EReal)
 /-- **Softmax positivity criterion**: an atom has positive softmax mass iff
 its score is not `⊥`. The score-`⊥` atoms are exactly the impossible
 utterances (e.g., utterances where the literal listener has 0 support along
-the QUD-projection in @cite{kao-etal-2014-metaphor}). -/
+the QUD-projection in [kao-etal-2014-metaphor]). -/
 theorem softmax_pos_iff_score_ne_bot [Fintype α] (score : α → EReal)
     (h_no_top : ∀ a, score a ≠ ⊤) (h_some_finite : ∃ a, score a ≠ ⊥) (a : α) :
     0 < softmax score h_no_top h_some_finite a ↔ score a ≠ ⊥ := by
@@ -162,8 +162,8 @@ of `EReal.exp` (mathlib's `EReal.exp_lt_exp_iff`).
 Foundation lemma for "speaker prefers utterance u₂ over u₁ at world w" claims
 in RSA: the partition function depends on `w` but not on the utterance being
 compared, so it cancels exactly. The score function bundles the
-inverse-temperature factor (`β · log L0` for @cite{kao-etal-2014-metaphor},
-`λ · -hellingerDist` for @cite{herbstritt-franke-2019}, etc.). -/
+inverse-temperature factor (`β · log L0` for [kao-etal-2014-metaphor],
+`λ · -hellingerDist` for [herbstritt-franke-2019], etc.). -/
 theorem softmax_lt_iff_score_lt [Fintype α] (score : α → EReal)
     (h_no_top : ∀ a, score a ≠ ⊤) (h_some_finite : ∃ a, score a ≠ ⊥)
     (a₁ a₂ : α) :

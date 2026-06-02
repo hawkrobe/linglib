@@ -5,7 +5,7 @@ import Linglib.Core.Logic.Team.Definability
 /-!
 # QBSML formula properties — Anttila 2021 Proposition 2.2.8 (substrate test)
 
-@cite{aloni-vanormondt-2023} @cite{anttila-2021}
+[aloni-vanormondt-2023] [anttila-2021]
 
 **Substrate test**: prove the three structural properties from Anttila 2021
 Proposition 2.2.8 for QBSML's `support` relation, using the SAME
@@ -409,7 +409,7 @@ theorem isFlat_support_of_isNEFree {φ : QBSMLFormula Var Pred}
 
 /-- **The NE-free fragment of QBSML is sound for the flat cell**: every team
     property definable by an NE-free QBSML formula is flat (downward-closed,
-    union-closed, empty-team). This restates @cite{aloni-vanormondt-2023}
+    union-closed, empty-team). This restates [aloni-vanormondt-2023]
     Proposition 4.1 / Fact 2 — NE-free QBSML reduces to classical first-order
     modal logic, whose support is flat — in the `Team/Definability.lean`
     vocabulary.

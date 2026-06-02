@@ -6,8 +6,8 @@ import Linglib.Studies.BarLevFox2020
 import Mathlib.Data.Set.Basic
 
 /-!
-# @cite{delpinal-bassi-sauerland-2024} — Free Choice and Presuppositional Exhaustification
-@cite{delpinal-bassi-sauerland-2024} @cite{bassi-delpinal-sauerland-2021}
+# [delpinal-bassi-sauerland-2024] — Free Choice and Presuppositional Exhaustification
+[delpinal-bassi-sauerland-2024] [bassi-delpinal-sauerland-2021]
 
 "Free choice and presuppositional exhaustification"
 Semantics & Pragmatics 17, Article 3: 1–52.
@@ -279,7 +279,7 @@ The second disjunct contains pex(◇(syn ∨ sem)):
   - presupposition: ◇syn ↔ ◇sem (homogeneity)
 
 In disjunction "A ∨ B", the presupposition of B is *filtered* by ¬A
-(@cite{karttunen-1973}). Here:
+([karttunen-1973]). Here:
   - A = ¬◇ling
   - ¬A = ◇ling (Maria CAN study linguistics)
   - Under ◇ling, the presupposition ◇syn ↔ ◇sem is informative
@@ -396,7 +396,7 @@ theorem filtering_negative_fc (firstDisjunct : FCWorld → Prop) (w : FCWorld)
 /-!
 ## §5.1: Universal, Existential, and Negative-Existential FC
 
-@cite{chemla-2009b} shows that ∀◇∨-sentences have universal FC readings
+[chemla-2009b] shows that ∀◇∨-sentences have universal FC readings
 and ¬∃□∧-sentences have universal negative FC readings.
 
 ### Analysis with embedded pex
@@ -408,7 +408,7 @@ The LFs with embedded pex^{IE+II}:
 
 pex triggers the homogeneity presupposition in the scope of the quantifier.
 Presuppositions project universally from the scope of universal quantifiers
-(@cite{chemla-2009a}, @cite{fox-2013}, @cite{mayr-sauerland-2015}).
+([chemla-2009a], [fox-2013], [mayr-sauerland-2015]).
 Combined with the assertive content, (universal/existential) FC follows.
 -/
 
@@ -530,7 +530,7 @@ theorem negExistsPr_negative_fc {Student W : Type*}
 /-!
 ## §5.2: Non-Monotonic Quantifiers
 
-@cite{gotzner-romoli-santorio-2020} show that "exactly one"-sentences have
+[gotzner-romoli-santorio-2020] show that "exactly one"-sentences have
 salient readings where one student has FC/double prohibition while all others
 have the opposite. pex handles these straightforwardly via universal
 homogeneity projection + the cardinality constraint.
@@ -559,7 +559,7 @@ Combined:
     entails that the unique student has FC and all others have double
     prohibition.
 
-    @cite{gotzner-romoli-santorio-2020}, @cite{delpinal-bassi-sauerland-2024} §5.2 -/
+    [gotzner-romoli-santorio-2020], [delpinal-bassi-sauerland-2024] §5.2 -/
 theorem exactly_one_fc {Student : Type*}
     (S : Student → Prop) (permL permC : Student → Prop)
     (witness : Student) (hw : S witness)
@@ -582,7 +582,7 @@ theorem exactly_one_fc {Student : Type*}
     entails that the unique student has double prohibition and all others
     have FC.
 
-    @cite{gotzner-romoli-santorio-2020}, @cite{delpinal-bassi-sauerland-2024} §5.2 -/
+    [gotzner-romoli-santorio-2020], [delpinal-bassi-sauerland-2024] §5.2 -/
 theorem exactly_one_double_prohibition {Student : Type*}
     (S : Student → Prop) (permL permC : Student → Prop)
     (witness : Student) (_hw : S witness)
@@ -702,7 +702,7 @@ theorem pex_filtering_has_presupposition (firstDisjunct : FCWorld → Prop) :
 | Non-monotonic FC | problematic | ✓ | `exactly_one_fc` |
 | Non-monotonic DP | problematic | ✓ | `exactly_one_double_prohibition` |
 
-pex is the mirror image of "only" (@cite{horn-1969}): *only* presupposes its
+pex is the mirror image of "only" ([horn-1969]): *only* presupposes its
 prejacent and asserts the negation of alternatives; *pex* asserts its
 prejacent and presupposes the alternative-derived content. Both split meaning
 into assertive and presuppositional components; they swap which goes where.
@@ -718,7 +718,7 @@ The key advantage of pex is that embedded FC puzzles are solved by
 /-!
 ## Grounding in Projection Theory
 
-@cite{delpinal-bassi-sauerland-2024}'s central claim is that pex solves embedded
+[delpinal-bassi-sauerland-2024]'s central claim is that pex solves embedded
 FC puzzles using *standard presupposition projection* — no new mechanisms. We
 verify this by showing each embedding prediction is derived from independently
 formalized projection infrastructure:
@@ -804,7 +804,7 @@ theorem negation_grounding :
 
 /-- Accommodation is grounded in Heim's global preference.
 
-    @cite{delpinal-bassi-sauerland-2024} §4.4: in standard cases, pex's
+    [delpinal-bassi-sauerland-2024] §4.4: in standard cases, pex's
     homogeneity presupposition is accommodated globally (added to the
     common ground). This follows from `heimSelect` choosing global
     accommodation whenever the result is consistent.

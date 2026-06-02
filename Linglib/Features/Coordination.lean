@@ -6,7 +6,7 @@ Fragment lexicons and Phenomena/Coordination studies.
 
 ## CoordRole
 
-The role of a coordination morpheme in the @cite{mitrovic-sauerland-2014}
+The role of a coordination morpheme in the [mitrovic-sauerland-2014]
 decomposition and beyond:
 - `j` — set intersection (conjunction proper)
 - `mu` — subset/additive (MU particle)
@@ -18,7 +18,7 @@ decomposition and beyond:
 ## Boundness
 
 Whether a morpheme is a free word or a bound clitic/suffix.
-Relevant to acquisition: @cite{clark-2017} argues free morphemes
+Relevant to acquisition: [clark-2017] argues free morphemes
 are acquired more readily than bound ones.
 
 ## CoordEntry
@@ -27,7 +27,7 @@ Unified coordination morpheme entry used by all Fragment lexicons.
 
 ## ConjunctionStrategy
 
-Cross-linguistic conjunction strategy from @cite{mitrovic-sauerland-2014}:
+Cross-linguistic conjunction strategy from [mitrovic-sauerland-2014]:
 languages vary in which semantic pieces (J, MU, type-shifter) are
 overtly realized.
 -/
@@ -84,13 +84,13 @@ structure CoordEntry where
   deriving DecidableEq, Repr, BEq
 
 -- ============================================================================
--- Conjunction Strategy (@cite{mitrovic-sauerland-2014})
+-- Conjunction Strategy ([mitrovic-sauerland-2014])
 -- ============================================================================
 
 /--
 Cross-linguistic conjunction strategy.
 
-@cite{mitrovic-sauerland-2014} decompose DP conjunction into three
+[mitrovic-sauerland-2014] decompose DP conjunction into three
 semantic pieces: J (set intersection), MU (subset), and a type-shifter.
 Languages vary in which pieces are overtly realized.
 -/
@@ -107,7 +107,7 @@ inductive ConjunctionStrategy where
 /--
 Number of overt functional morphemes per strategy.
 
-Under @cite{mitrovic-sauerland-2016}, the underlying structure always has 3 semantic pieces
+Under [mitrovic-sauerland-2016], the underlying structure always has 3 semantic pieces
 (J + MU1 + MU2). What varies is how many are pronounced.
 -/
 def ConjunctionStrategy.overtMorphemeCount : ConjunctionStrategy → Nat
@@ -116,33 +116,33 @@ def ConjunctionStrategy.overtMorphemeCount : ConjunctionStrategy → Nat
   | .jMu    => 3  -- J + both MUs pronounced
 
 /--
-Under @cite{mitrovic-sauerland-2016}, there are always 3 semantic pieces.
+Under [mitrovic-sauerland-2016], there are always 3 semantic pieces.
 The transparency ratio measures how many are overtly realized.
 -/
 def ConjunctionStrategy.semanticPieceCount : Nat := 3
 
 /--
-@cite{mitrovic-sauerland-2016} + Transparency Principle predicts: more overt morphemes -> easier
+[mitrovic-sauerland-2016] + Transparency Principle predicts: more overt morphemes -> easier
 to acquire (closer to 1-to-1 form-meaning mapping).
 -/
 def ConjunctionStrategy.predictedTransparency : ConjunctionStrategy → Nat :=
   ConjunctionStrategy.overtMorphemeCount
 
 -- ============================================================================
--- Structural Symmetry (@cite{schwarzer-2026})
+-- Structural Symmetry ([schwarzer-2026])
 -- ============================================================================
 
 /--
 Structural symmetry of a coordinate phrase.
 
 The three groups of analyses for selection-violating coordination
-(@cite{schwarzer-2026}) disagree on this parameter:
+([schwarzer-2026]) disagree on this parameter:
 - **Bottom-up accounts** assume `asymmetric` structure: the first conjunct
   is structurally more prominent (c-commands the second), so only it must
   satisfy the selector's c-selectional requirements.
 - **Linear/temporal closeness accounts** are compatible with either, but
   their predictions derive from linear/temporal order, not structure.
-- **Symmetric accounts** (@cite{neeleman-etal-2022}, @cite{przepiorkowski-2024})
+- **Symmetric accounts** ([neeleman-etal-2022], [przepiorkowski-2024])
   posit flat or multidominance structures with no structural prominence.
 -/
 inductive CoordSymmetry where

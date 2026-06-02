@@ -2,7 +2,7 @@ import Linglib.Semantics.Quantification.BinominalDefs
 import Linglib.Morphology.DM.Categorizer
 
 /-!
-# Spanish Binominal Nouns @cite{saab-2026}
+# Spanish Binominal Nouns [saab-2026]
 
 Lexical entries for Spanish nouns appearing in binominal constructions,
 classified by their structural type.
@@ -23,7 +23,7 @@ open Semantics.Quantification.Binominal
 open Morphology.DM
 
 /-- A Spanish binominal noun entry, with gender encoded via the DM
-    categorizing head on n (@cite{kramer-2015}). -/
+    categorizing head on n ([kramer-2015]). -/
 structure BinominalNoun where
   /-- The noun form -/
   form : String

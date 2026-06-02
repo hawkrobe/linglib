@@ -4,18 +4,18 @@ import Linglib.Semantics.Questions.Exhaustivity
 import Linglib.Semantics.Questions.Resolution
 
 /-!
-# @cite{dayal-2016}: Questions
-@cite{dayal-1994} @cite{dayal-1996} @cite{karttunen-1977} @cite{groenendijk-stokhof-1984}
+# [dayal-2016]: Questions
+[dayal-1994] [dayal-1996] [karttunen-1977] [groenendijk-stokhof-1984]
 
 Single-paper formalisation of the Dayal answerhood operator
 **Ans-D** and the **existential presupposition** (EP) from
-@cite{dayal-2016}, *Questions* (Oxford Surveys in Semantics and
+[dayal-2016], *Questions* (Oxford Surveys in Semantics and
 Pragmatics 4), Chapter 2 §2.2–§2.3. Builds on Dayal's earlier work
-(@cite{dayal-1994}, @cite{dayal-1996}).
+([dayal-1994], [dayal-1996]).
 
 ## Substrate identification
 
-@cite{dayal-2016} (48a) defines
+[dayal-2016] (48a) defines
 
     Ans-D_W (Q) = λw ιp [p_w ∧ p ∈ Q ∧ ∀p' [[p'_w ∧ p' ∈ Q] → p ⊆ p']]
 
@@ -67,7 +67,7 @@ variable {W : Type*}
 
 /-! ### Substrate identification -/
 
-/-- @cite{dayal-2016} (48a): the **maximally informative true answer**,
+/-- [dayal-2016] (48a): the **maximally informative true answer**,
     when defined. Identified with the substrate's `dayalAns`. -/
 noncomputable def AnsD (Q : Question W) (w : W) : Option (Set W) :=
   dayalAns Q w
@@ -75,12 +75,12 @@ noncomputable def AnsD (Q : Question W) (w : W) : Option (Set W) :=
 @[simp] theorem ansD_eq_dayalAns (Q : Question W) (w : W) :
     AnsD Q w = dayalAns Q w := rfl
 
-/-- @cite{dayal-2016} (48b): **strong-exhaustivity bridge** — two
+/-- [dayal-2016] (48b): **strong-exhaustivity bridge** — two
     worlds map to the same maximally-informative true answer. -/
 def AnsDHStrong (Q : Question W) (w w' : W) : Prop :=
   AnsD Q w = AnsD Q w'
 
-/-- The **existential presupposition** of @cite{dayal-2016} (the iota
+/-- The **existential presupposition** of [dayal-2016] (the iota
     definedness condition of (48a)) — at world `w`, the question `Q`
     has a unique strongest true alternative. -/
 def IsEPSatisfied (Q : Question W) (w : W) : Prop :=
@@ -95,7 +95,7 @@ theorem ansD_isSome_iff_EP (Q : Question W) (w : W) :
 
 /-! ### §2.2.2 architectural move
 
-@cite{dayal-2016} §2.2.2: Dayal (following @cite{dayal-1994}) separates
+[dayal-2016] §2.2.2: Dayal (following [dayal-1994]) separates
 the truth requirement from the question denotation. Karttunen 1977
 hard-wires truth into the question content; G&S 1984 inherits the
 truth requirement at the partition level. Dayal's move is to keep
@@ -148,7 +148,7 @@ The wh-question-with-no-witness case was already proved as
 `Karttunen1977.karttunen_which_no_witness`; here we add the EP-failure
 view. -/
 
-/-- @cite{dayal-2016} §2.3.4 (57a) cancellation: when `Q` has no true
+/-- [dayal-2016] §2.3.4 (57a) cancellation: when `Q` has no true
     alternative at `w`, the EP fails — the existence presupposition
     is the load-bearing condition that distinguishes Karttunen's
     truth-in-denotation from Dayal's truth-in-answerhood-operator. -/
@@ -158,7 +158,7 @@ theorem ep_fails_when_no_true_alt (Q : Question W) (w : W)
   rintro ⟨p, hp, hwp, _⟩
   exact h p hp hwp
 
-/-- @cite{dayal-2016} §2.3.3 (45)/(49)/(51): a singular wh-question
+/-- [dayal-2016] §2.3.3 (45)/(49)/(51): a singular wh-question
     with multiple incomparable true atomic witnesses has no
     maximally-informative answer. EP fails.
 

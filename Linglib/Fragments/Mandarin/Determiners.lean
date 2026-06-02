@@ -4,24 +4,24 @@ import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.Mandarin.Classifiers
 
 /-! # Mandarin Chinese Quantifier Fragment
-@cite{kuo-yu-2012} @cite{tsai-2015}
+[kuo-yu-2012] [tsai-2015]
 
-Quantifier phrases in Mandarin, following @cite{kuo-yu-2012}'s GQ-theoretic
-inventory (§12.1) and @cite{tsai-2015}'s strong/weak classification (§5.3).
+Quantifier phrases in Mandarin, following [kuo-yu-2012]'s GQ-theoretic
+inventory (§12.1) and [tsai-2015]'s strong/weak classification (§5.3).
 
-Existential (intersective) quantifiers — weak (@cite{kuo-yu-2012} §12.1.1):
+Existential (intersective) quantifiers — weak ([kuo-yu-2012] §12.1.1):
 - hěnduō 很多 (many)
 
-Universal (co-intersective) quantifiers — strong (@cite{kuo-yu-2012} §12.1.2):
+Universal (co-intersective) quantifiers — strong ([kuo-yu-2012] §12.1.2):
 - měi 每 (every), suǒyǒu 所有 (all), quánbù 全部 (all)
 
-Proportional quantifiers (@cite{kuo-yu-2012} §12.1.5):
+Proportional quantifiers ([kuo-yu-2012] §12.1.5):
 - dà-bùfèn 大部分 (most)
 
 Key typological properties:
 - No definiteness-marked quantifiers (no "the")
 - Conservativity expected to hold (universal)
-- měi requires classifiers; suǒyǒu and quánbù do not (@cite{kuo-yu-2012} §12.1.6)
+- měi requires classifiers; suǒyǒu and quánbù do not ([kuo-yu-2012] §12.1.6)
 
 -/
 
@@ -133,7 +133,7 @@ theorem mei_requires_cl : mei.requiresClassifier = true := rfl
 /-- suǒyǒu does not require a classifier. -/
 theorem suoyou_no_cl : suoyou.requiresClassifier = false := rfl
 
-/-- hěnduō is weak; all others are strong QPs (@cite{tsai-2015} §5.3). -/
+/-- hěnduō is weak; all others are strong QPs ([tsai-2015] §5.3). -/
 theorem henduo_weak : henduo.strength = .weak := rfl
 
 theorem strong_qps_are_strong :

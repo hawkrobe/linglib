@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Bilateral.Classical
 
 /-!
 # Mixed Consequence Relations
-@cite{cobreros-etal-2012}
+[cobreros-etal-2012]
 
 Abstract framework for mixed notions of logical consequence, where
 premises and conclusions may be evaluated under different standards
@@ -45,10 +45,10 @@ variable {Model Formula Mode : Type*}
 
     When m = n, this is standard (unmixed) consequence.
     When m ≠ n, the standard for premises differs from that for
-    conclusions — a key feature of @cite{cobreros-etal-2012}'s
+    conclusions — a key feature of [cobreros-etal-2012]'s
     framework for vagueness.
 
-    Definition 15/17 of @cite{cobreros-etal-2012}, specialized
+    Definition 15/17 of [cobreros-etal-2012], specialized
     to single-conclusion. -/
 def MixedConsequence (sat : Model → Mode → Formula → Prop)
     (m n : Mode) (Γ : List Formula) (φ : Formula) : Prop :=
@@ -96,7 +96,7 @@ theorem SatImplies.trans {sat : Model → Mode → Formula → Prop}
   fun M φ h => h₂₃ M φ (h₁₂ M φ h)
 
 /-- **Premise strength monotonicity** (Lemma 7, first part of
-    @cite{cobreros-etal-2012}).
+    [cobreros-etal-2012]).
 
     If m' implies m (m' is at least as strong), then
     mn-consequence is at least as inclusive as m'n-consequence.
@@ -142,7 +142,7 @@ section Duality
 
 variable {Model Formula Mode : Type*}
 
-/-- **Consequence duality** (Lemma 6 of @cite{cobreros-etal-2012}).
+/-- **Consequence duality** (Lemma 6 of [cobreros-etal-2012]).
 
     If φ ⊨ᵐⁿ ψ, then ¬ψ ⊨^{d(n)d(m)} ¬φ.
     Duality swaps premise/conclusion modes and negates formulas. -/
@@ -174,7 +174,7 @@ variable {Mode : Type*}
 /-- A mixed consequence relation ⊨ᵐⁿ is **self-dual** when
     m = d(n) and n = d(m). Self-dual relations are exactly
     those satisfying the deduction theorem (Lemma 10 of
-    @cite{cobreros-etal-2012}).
+    [cobreros-etal-2012]).
 
     The three self-dual relations in TCS are: st, cc, and ts. -/
 def IsSelfDual (dual : Mode → Mode) (m n : Mode) : Prop :=

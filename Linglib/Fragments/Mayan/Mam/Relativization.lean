@@ -2,7 +2,7 @@ import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # Mam relativization profile
-@cite{elkins-torrence-brown-2026}
+[elkins-torrence-brown-2026]
 
 Typological-summary `RelativeClause.Profile` for Mam (ISO `mam`).
 -/
@@ -17,6 +17,6 @@ def relativization : RelativeClause.Profile :=
   , rcPosition := .postNominal
   , lowestRelativizable := .oblique
   , notes := "Agent Focus for subject extraction; =(y)a' marks oblique "
-          ++ "extraction; Mayan; @cite{elkins-torrence-brown-2026}" }
+          ++ "extraction; Mayan; [elkins-torrence-brown-2026]" }
 
 end Mam

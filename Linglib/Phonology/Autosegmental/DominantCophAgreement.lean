@@ -5,7 +5,7 @@ import Linglib.Phonology.OptimalityTheory.CophonologyTheory
 # Dominant Cophonology ↔ Tonal Overwrite Agreement
 
 This file proves the **general agreement** between the two parallel
-formalisms for dominant grammatical tone in @cite{rolle-2018}:
+formalisms for dominant grammatical tone in [rolle-2018]:
 
 1. **Direct**: `tonalOverwrite` — a functional operation replacing tones
 2. **Constraint-based**: `cophonologicalEval` — OT evaluation under a
@@ -36,7 +36,7 @@ candidate does too. This propagates through
 
 ## References
 
-* @cite{rolle-2018}
+* [rolle-2018]
 -/
 
 namespace Phonology.Autosegmental.DominantCophAgreement
@@ -53,7 +53,7 @@ open Core.Constraint.OT (NamedConstraint mkTableau mkTableau_optimal_zero_first 
     is in the cophonological subranking, every OT-optimal candidate is
     basemap-faithful — its tonal tier exactly matches the basemap output.
 
-    This is the mathematical core of @cite{rolle-2018} Ch 5: dominant GT
+    This is the mathematical core of [rolle-2018] Ch 5: dominant GT
     is not a special rule but a consequence of promoting a faithfulness
     constraint. The constraint forces the matrix output to correspond to
     the basemap output, which is independent of the target's underlying

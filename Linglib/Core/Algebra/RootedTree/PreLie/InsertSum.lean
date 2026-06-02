@@ -14,9 +14,9 @@ set_option autoImplicit false
 
 /-!
 # Single-tree pre-Lie product `insertSum` on `Planar α` and `Nonplanar α`
-@cite{foissy-typed-decorated-rooted-trees-2018}
-@cite{chapoton-livernet-2001}
-@cite{marcolli-chomsky-berwick-2025}
+[foissy-typed-decorated-rooted-trees-2018]
+[chapoton-livernet-2001]
+[marcolli-chomsky-berwick-2025]
 
 The **vertex-grafting pre-Lie product** on planar / nonplanar n-ary
 rooted trees: for trees `T₁, T₂`, `T₁ ◁ T₂` is the multiset of all
@@ -30,18 +30,18 @@ nonplanar carrier.
 
 ## Reference
 
-@cite{foissy-typed-decorated-rooted-trees-2018} Proposition 2.2 defines
+[foissy-typed-decorated-rooted-trees-2018] Proposition 2.2 defines
 the multiple pre-Lie product on D-decorated T-typed rooted trees (D =
 decoration set, T = edge type set). Specialized to T = {*} (single
 edge type) and decoration set α, this is exactly `insertSum`.
 
-@cite{chapoton-livernet-2001} introduced the original CL pre-Lie
+[chapoton-livernet-2001] introduced the original CL pre-Lie
 product on undecorated rooted trees, of which the present construction
 is the decorated extension.
 
 ## Relation to MCB §1.7
 
-@cite{marcolli-chomsky-berwick-2025} Definition 1.7.1 (book p. 77)
+[marcolli-chomsky-berwick-2025] Definition 1.7.1 (book p. 77)
 defines a DIFFERENT pre-Lie product on **nonplanar BINARY** rooted
 trees with leaf labels in `SO_0` (internal vertices unlabeled), via
 **edge subdivision**. The two are distinct algebras on distinct

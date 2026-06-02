@@ -3,9 +3,9 @@ import Linglib.Phonology.Process.Alternation
 
 /-!
 # Harmony Systems
-@cite{rose-walker-2011} @cite{belth-2026}
+[rose-walker-2011] [belth-2026]
 
-The @cite{rose-walker-2011} typological lens — a process by which a
+The [rose-walker-2011] typological lens — a process by which a
 distinctive feature value spreads from a **trigger** segment to **target**
 segments, optionally skipping **transparent** segments and halting at
 **blocker** (opaque) segments.
@@ -13,7 +13,7 @@ segments, optionally skipping **transparent** segments and halting at
 ## Architecture
 
 A `HarmonySystem` is a thin typological wrapper around a *tier-based
-agreement rule* (the formal core, à la @cite{belth-2026} / Heinz-style
+agreement rule* (the formal core, à la [belth-2026] / Heinz-style
 TSL phonology):
 
 ```
@@ -31,7 +31,7 @@ this typology). `isTarget`/`isBlocker` are the *spreading discipline* —
 which segments accept the predicted value and where iteration halts.
 
 Why this shape: in the modern computational/learnability framing
-(@cite{belth-2026} and the TSL literature), the tier projection plus a
+([belth-2026] and the TSL literature), the tier projection plus a
 local rule on it is the central object; the Rose-Walker typological
 decomposition (trigger / target / transparent / blocker / direction) is
 the descriptive lens for cataloguing what languages do, not a separate
@@ -39,7 +39,7 @@ formal primitive. So harmony systems *contain* tier rules rather than
 *reducing to them via a bridge theorem* — the relationship is
 true-by-construction.
 
-## Components (§1) of @cite{rose-walker-2011}
+## Components (§1) of [rose-walker-2011]
 
 The smart constructor `HarmonySystem.mk'` exposes exactly Rose-Walker's
 six-way decomposition:
@@ -104,9 +104,9 @@ def HarmonyDir.toSide : HarmonyDir → Side
 -- § 2: HarmonySystem — TierRule + Spreading Discipline
 -- ============================================================================
 
-/-- A harmony system in the @cite{rose-walker-2011} typological sense.
+/-- A harmony system in the [rose-walker-2011] typological sense.
 
-    Structurally a `TierRule` (the value-prediction half — @cite{belth-2026}'s
+    Structurally a `TierRule` (the value-prediction half — [belth-2026]'s
     tier-based AGREE rule) bundled with an application policy (which
     segments accept the change, which halt iteration). The `feature` field
     is the `Phonology.Feature` whose value `harmonizeOne`/`spreadSuffix`
@@ -155,7 +155,7 @@ def HarmonySystem.mk'
 -- ============================================================================
 
 /-- The trigger predicate (= the rule's context class). Convenience accessor
-    for the @cite{rose-walker-2011} typological decomposition. Returns
+    for the [rose-walker-2011] typological decomposition. Returns
     `Bool` via `decide` since the underlying `TierRule` predicate is
     `Prop`-valued; the smart constructor `HarmonySystem.mk'` ensures
     decidability is in scope. -/

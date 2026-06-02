@@ -774,7 +774,7 @@ end FreeCommMagma
 
 A **section** of the projection picks a planar representative (a `FreeMagma α`)
 for each nonplanar tree (a `FreeCommMagma α`). This is the natural primitive
-for the **Externalization** models of @cite{marcolli-chomsky-berwick-2025} §1.12.1
+for the **Externalization** models of [marcolli-chomsky-berwick-2025] §1.12.1
 (book pp. 105-108): the section σ_L assigns to each abstract syntactic object
 T ∈ 𝔗_{SO_0} a planar embedding σ_L(T) ∈ 𝔗^{pl}_{SO_0}, language-dependently.
 
@@ -809,7 +809,7 @@ namespace FreeCommMagma
 variable {α : Type u}
 
 /-- A **section** of the quotient projection `Quot.mk : FreeMagma α → FreeCommMagma α`,
-    per @cite{marcolli-chomsky-berwick-2025} §1.12.1.
+    per [marcolli-chomsky-berwick-2025] §1.12.1.
 
     The section σ : `FreeCommMagma α → FreeMagma α` picks a planar representative
     for each nonplanar tree. The `isSection` field witnesses

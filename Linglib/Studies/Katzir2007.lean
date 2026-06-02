@@ -2,7 +2,7 @@ import Linglib.Semantics.Composition.QuantifierComposition
 
 /-!
 # Katzir 2007: Structurally-Defined Alternatives (End-to-End)
-@cite{katzir-2007}
+[katzir-2007]
 
 Katzir, R. (2007). Structurally-defined alternatives.
 Linguistics and Philosophy, 30(6), 669–690.

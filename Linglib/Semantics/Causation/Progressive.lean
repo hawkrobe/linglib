@@ -4,16 +4,16 @@ import Linglib.Semantics.Aspect.SubeventStructure
 
 /-!
 # Progressive Aspect and Causal Structure
-@cite{nadathur-bar-asher-siegal-2024} @cite{bar-asher-siegal-2026} @cite{dowty-1979}
+[nadathur-bar-asher-siegal-2024] [bar-asher-siegal-2026] [dowty-1979]
 
 The progressive picks out type-level causal processes rather than
 token-level completed events. This module formalizes the distinction
-using V2 SEMs, following @cite{nadathur-bar-asher-siegal-2024}'s
+using V2 SEMs, following [nadathur-bar-asher-siegal-2024]'s
 reframing of the imperfective paradox through causal models.
 
 ## Type-Level vs Token-Level
 
-@cite{bar-asher-siegal-2026}: SEM models distinguish two levels:
+[bar-asher-siegal-2026]: SEM models distinguish two levels:
 - **Type-level**: General causal structure (graph + mechanisms).
 - **Token-level**: A specific causal trajectory completed in the actual world.
 
@@ -228,7 +228,7 @@ theorem progressive_not_entails_perfective :
 -- § 5. Type-level = development under inertia (Dowty 1979)
 -- ════════════════════════════════════════════════════
 
-/-- @cite{dowty-1979}: the progressive is true iff the outcome holds in
+/-- [dowty-1979]: the progressive is true iff the outcome holds in
     all inertia worlds (normal continuations). The causal model account
     refines this: "normal continuation" means "the SEM develops the
     initiator into the result" — i.e., type-level sufficiency. -/
@@ -246,7 +246,7 @@ theorem typeLevelHolds_is_developOn {V : Type*} [Fintype V] [DecidableEq V]
 /-- A causally grounded telic event: bridges `CausalProcess` (causal
     explanation) with `SubeventPhases` (temporal realization).
 
-    @cite{nadathur-bar-asher-siegal-2024}: telic predicates encode
+    [nadathur-bar-asher-siegal-2024]: telic predicates encode
     structured causal models. The activity phase corresponds to the
     initiating action; the result phase corresponds to the effect
     variable. The causal model explains WHY the activity leads to the

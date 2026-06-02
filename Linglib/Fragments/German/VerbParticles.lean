@@ -2,7 +2,7 @@ import Mathlib.Tactic.FinCases
 
 /-!
 # German Verbal Prefix and Particle Verbs
-@cite{ludeling-2001} @cite{dendikken-1995}
+[ludeling-2001] [dendikken-1995]
 
 Lexical entries for German verbs with prefixes — both separable
 particle verbs (*scheidbar zusammengesetzte Verben*, e.g. *anrufen*)
@@ -15,7 +15,7 @@ verbs never split, lack *ge-* in the participle (*verstanden*, not
 *\*geverstanden*), and place *zu* before the whole word in the
 *zu*-infinitive (*zu verstehen*).
 
-@cite{dendikken-1995}'s SC analysis (book ch. 2) takes German
+[dendikken-1995]'s SC analysis (book ch. 2) takes German
 particle verbs as one of the major Germanic test cases for the
 ergative-particle / SC-head proposal.
 

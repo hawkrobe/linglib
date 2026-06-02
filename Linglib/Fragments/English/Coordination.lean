@@ -2,7 +2,7 @@ import Linglib.Features.Coordination
 
 /-!
 # English Coordination Morphemes
-@cite{haspelmath-2007} @cite{mitrovic-sauerland-2016}
+[haspelmath-2007] [mitrovic-sauerland-2016]
 
 English has a sparse coordination inventory:
 
@@ -11,7 +11,7 @@ English has a sparse coordination inventory:
 - *but* — adversative, free, prepositive
 - *both…and*, *either…or*, *neither…nor* — correlative bisyndetic uses
 
-English is a canonical J-only language in the @cite{mitrovic-sauerland-2016}
+English is a canonical J-only language in the [mitrovic-sauerland-2016]
 classification (no overt MU morpheme).
 
 Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.english`).

@@ -4,12 +4,12 @@ import Linglib.Morphology.DM.VocabSimple
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 
 /-!
-# Preminger 2014 — Agreement and Its Failures @cite{preminger-2014}
-@cite{bejar-rezac-2003} @cite{halle-marantz-1993} @cite{harley-ritter-2002}
-@cite{stiebels-2006} @cite{halpert-2012}
+# Preminger 2014 — Agreement and Its Failures [preminger-2014]
+[bejar-rezac-2003] [halle-marantz-1993] [harley-ritter-2002]
+[stiebels-2006] [halpert-2012]
 
-@cite{preminger-2014}, *Agreement and Its Failures* (MIT Press, LI
-Monographs 68), applies @cite{bejar-rezac-2003}'s relativized-probing
+[preminger-2014], *Agreement and Its Failures* (MIT Press, LI
+Monographs 68), applies [bejar-rezac-2003]'s relativized-probing
 mechanism (with the Person Licensing Condition) to the Kichean Agent
 Focus construction (Ch. 4) and uses the resulting failure cases to
 argue for an "obligatory operations" model of φ-Agree (Ch. 5). The
@@ -23,20 +23,20 @@ analytical apparatus.
 Per Preminger's own framing:
 
 - The **feature geometry** [φ] → [PERSON] → [participant] → [author]
-  traces to @cite{harley-ritter-2002}; @cite{preminger-2014} adopts it.
+  traces to [harley-ritter-2002]; [preminger-2014] adopts it.
 - The **relativized-probing mechanism** and the **Person Licensing
-  Condition (PLC)** are @cite{bejar-rezac-2003}'s; Preminger §4.1 is
+  Condition (PLC)** are [bejar-rezac-2003]'s; Preminger §4.1 is
   titled "Background: The Person Case Constraint, and Béjar and
   Rezac's (2003) Account of It" and §4.4 is "Applying Béjar and
   Rezac's (2003) Account to Kichean".
 - **DM Vocabulary insertion** for setAVocab/setBVocab follows
-  @cite{halle-marantz-1993}'s Distributed Morphology framework.
+  [halle-marantz-1993]'s Distributed Morphology framework.
 - What is **distinctively Preminger 2014**:
-  - Application of @cite{bejar-rezac-2003} to Kichean AF specifically
+  - Application of [bejar-rezac-2003] to Kichean AF specifically
     (Ch 4), with a Kichean-specific structural priority of π⁰ over
     #⁰ deriving the surface "overflow" pattern.
   - Arguments against direct salience-hierarchy primitives (Ch 7),
-    targeted at @cite{stiebels-2006} and similar accounts.
+    targeted at [stiebels-2006] and similar accounts.
   - The "obligatory operations" model of φ-Agree (Ch 5): φ-Agree is
     obligatory but failure-tolerant; failed Agree surfaces as the
     Elsewhere (3SG ∅) entry rather than crashing the derivation.
@@ -76,7 +76,7 @@ provides **five** arguments against it (§7.3 summary, p. 127):
    – <initial approximant>` (eq. 149) — a clitic-doubling signature.
    3rd-person markers don't. A hierarchy can't capture this.
 5. **Zulu cross-linguistic parallel** (§7.2, p. 127):
-   @cite{halpert-2012}'s analysis of Zulu augmentless nominals uses
+   [halpert-2012]'s analysis of Zulu augmentless nominals uses
    the same machinery, but operating over augmented/augmentless
    instead of person/number — substantively different categories
    that have no plausible "salience" interpretation. The same
@@ -94,8 +94,8 @@ transitives + K'ichee' fragment + Zulu fragment) to formalize.
 
 - `Syntax/Minimalist/PersonGeometry.lean` — the substrate:
   `decomposePerson`, `probeResolutionRank`, multi-cited
-  (@cite{harley-ritter-2002}, @cite{bejar-rezac-2003},
-  @cite{preminger-2014}, @cite{pancheva-zubizarreta-2018}).
+  ([harley-ritter-2002], [bejar-rezac-2003],
+  [preminger-2014], [pancheva-zubizarreta-2018]).
 - `Morphology/DM/VocabSimple.lean` —
   the substrate: `Vocabulary`, `VocabEntry`, `makePersonVocab`.
 - `Studies/Scott2023Agreement.lean` — parallel
@@ -115,7 +115,7 @@ open Agreement
 -- § 1: Feature Decomposition (grounded in PersonGeometry.lean)
 -- ============================================================================
 
-/-- Bears [+participant]? Derived from @cite{harley-ritter-2002}'s
+/-- Bears [+participant]? Derived from [harley-ritter-2002]'s
     feature geometry via `decomposePerson` (PersonGeometry.lean). -/
 def IsParticipant (c : Agreement.Cell) : Prop :=
   (decomposePerson c.toPersonLevel).hasParticipant = true
@@ -136,7 +136,7 @@ def toPhiFeatures (c : Agreement.Cell) : List PhiFeature :=
   [.person c.toPersonLevel, .number (if c.isPlural then .pl else .sg)]
 
 -- ============================================================================
--- § 2: DM Vocabulary Insertion (@cite{halle-marantz-1993})
+-- § 2: DM Vocabulary Insertion ([halle-marantz-1993])
 -- ============================================================================
 
 /-- Set A as DM Vocabulary entries, contextualized to Voice/v.
@@ -151,7 +151,7 @@ def setBVocab : Vocabulary :=
     (fun c => (setBExponent.realize c).getD "") (some .T)
 
 -- ============================================================================
--- § 3: Two-Probe Relativized Probing (@cite{bejar-rezac-2003}, applied per §4.4)
+-- § 3: Two-Probe Relativized Probing ([bejar-rezac-2003], applied per §4.4)
 -- ============================================================================
 
 /-- Probe-resolution rank for a Kaqchikel person-number cell under the
@@ -161,10 +161,10 @@ def setBVocab : Vocabulary :=
 def afRank (c : Agreement.Cell) : Nat :=
   probeResolutionRank c.toPersonLevel c.isPlural
 
-/-- Person restriction (@cite{preminger-2014} (25)): at most one core
+/-- Person restriction ([preminger-2014] (25)): at most one core
     argument can bear [+participant]. Derives from the Person
-    Licensing Condition (PLC, @cite{bejar-rezac-2003}; cf.
-    @cite{preminger-2014} §4.4 (75)): a [+participant] argument
+    Licensing Condition (PLC, [bejar-rezac-2003]; cf.
+    [preminger-2014] §4.4 (75)): a [+participant] argument
     requires an Agree relation with π⁰ to be licensed. Two
     [+participant] arguments compete for π⁰'s single Agree relation;
     only one can be licensed; the derivation crashes if both occur.
@@ -214,7 +214,7 @@ theorem feature_decomposition_correct :
   all_goals decide
 
 -- ============================================================================
--- § 5: Verification — AF Paradigm (@cite{preminger-2014} table (22))
+-- § 5: Verification — AF Paradigm ([preminger-2014] table (22))
 -- ============================================================================
 
 /-- The full AF paradigm (table 22) is correctly predicted: each
@@ -225,7 +225,7 @@ theorem af_paradigm_correct :
 
 /-- AF agreement is commutative: swapping subject and object yields
     the same marker for ALL person-number combinations
-    (@cite{preminger-2014} §3.3, (67)). Falls out of two-probe
+    ([preminger-2014] §3.3, (67)). Falls out of two-probe
     relativized probing — the probes see both arguments
     symmetrically. -/
 theorem af_commutative :
@@ -245,7 +245,7 @@ theorem participant_over_plural :
     3SG: when both arguments are 3SG, both probes fail to find a
     target and the Elsewhere entry (∅) surfaces — the empirical
     signature of obligatory-but-failure-tolerant Agree
-    (@cite{preminger-2014} Ch. 5). -/
+    ([preminger-2014] Ch. 5). -/
 theorem restriction_and_default :
     afMarker (.pn .first .Sing) (.pn .second .Sing) = none ∧
     afMarker (.pn .second .Sing) (.pn .first .Sing) = none ∧
@@ -262,7 +262,7 @@ theorem person_restriction_symmetric (s o : Agreement.Cell) :
 -- § 6: Verification — Ch 7 Anti-Hierarchy Arguments (3 of 5)
 -- ============================================================================
 
-/-- @cite{preminger-2014} Ch 7 arg 3 (p. 125): a salience hierarchy
+/-- [preminger-2014] Ch 7 arg 3 (p. 125): a salience hierarchy
     `[+participant] > [+plural] > default` predicts symmetric
     blocking — if 1+2 (two participants) is bad, then 3pl+3pl (two
     plurals) should also be bad by the same logic. The data shows
@@ -278,7 +278,7 @@ theorem ch7_arg3_participant_vs_plural_asymmetry :
     afMarker (.pn .third .Plur) (.pn .third .Plur) = some "e-" :=
   ⟨rfl, rfl⟩
 
-/-- @cite{preminger-2014} Ch 7 arg 4 smoke-check (p. 125–126,
+/-- [preminger-2014] Ch 7 arg 4 smoke-check (p. 125–126,
     table (148), eq. (149)): 1st/2nd ABS markers stand in the
     relation `<agreement marker> = <strong pronoun> – <initial
     approximant>` (e.g., 1sg `i(n)-` from *yïn*, 1pl `oj-` from

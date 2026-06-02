@@ -1,6 +1,6 @@
 /-!
 # German Question Particles
-@cite{theiler-2021} @cite{zheng-2025}
+[theiler-2021] [zheng-2025]
 
 Lexical entries for German interrogative/flavoring particles. The fragment
 commits only to theory-neutral lexical primitives; the left-peripheral
@@ -17,7 +17,7 @@ layer assignment lives in `Theiler2021`
 German *denn* parallels Mandarin *nandao*: both require contextual evidence
 prompting the question. Key difference: *denn* is compatible with wh-questions, while *nandao* is restricted to polar questions.
 
-@cite{theiler-2021} analyzes *denn* as highlighting-sensitive: it signals that the
+[theiler-2021] analyzes *denn* as highlighting-sensitive: it signals that the
 question is prompted by the highlighted/salient proposition in context.
 In polar questions, this creates an evidential requirement; in wh-questions,
 it merely signals informational need.
@@ -56,7 +56,7 @@ def denn : QParticleEntry where
 
 /-- *doch wohl* — non-compositional rejecting question marker.
 
-    @cite{seeliger-repp-2018} SS 4.2: *doch* and *wohl* are both modal
+    [seeliger-repp-2018] SS 4.2: *doch* and *wohl* are both modal
     particles but their combination in RQs does not receive a compositional
     interpretation. Instead, *doch wohl* is a conventionalized marker that
     signals the speech act is a rejecting question (RQ).
@@ -71,7 +71,7 @@ def denn : QParticleEntry where
     mark a declarative as a RQ. The combination enters syntactic Agree
     with the illocutionary operator REJECTQ.
 
-    @cite{seeliger-repp-2018} SS 4.3: the formal means employed to mark
+    [seeliger-repp-2018] SS 4.3: the formal means employed to mark
     RQs are *cues* for the speech act, not compositional building blocks.
 
     Cross-linguistically, *doch wohl* parallels Swedish fronted negation +
@@ -92,7 +92,7 @@ theorem denn_evidential : denn.requiresEvidentialBias = true := rfl
 theorem denn_no_epistemic : denn.requiresEpistemicBias = false := rfl
 
 /-- Unlike Mandarin nandao, German denn is compatible with wh-questions
-(@cite{theiler-2021} §3). -/
+([theiler-2021] §3). -/
 theorem denn_wh_ok : denn.whOk = true := rfl
 
 -- doch wohl verification theorems

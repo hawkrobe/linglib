@@ -4,8 +4,8 @@ import Linglib.Semantics.Mood.Basic
 
 /-!
 # Dynamic Mood as Eliminative + Generative Updates of Static Mood
-@cite{veltman-1996} @cite{groenendijk-stokhof-veltman-1996} @cite{heim-1982}
-@cite{de-groote-2006} @cite{charlow-2021} @cite{mendes-2025}
+[veltman-1996] [groenendijk-stokhof-veltman-1996] [heim-1982]
+[de-groote-2006] [charlow-2021] [mendes-2025]
 
 `dynIND` and `dynSUBJ` are the dynamic-context-update counterparts of
 the static `Mood.IND` and `Mood.SUBJ` operators in `Mood/Basic.lean`.
@@ -25,18 +25,18 @@ monad on situation contexts:
 The eliminative-vs-generative split is the canonical algebraic shape
 of dynamic semantics:
 
-- @cite{heim-1982} principle (A) — file change for a static condition
+- [heim-1982] principle (A) — file change for a static condition
   is intersection with the satisfaction set (eliminative); for an
   indefinite, file card creation extends the file (generative).
-- @cite{veltman-1996} formalizes the eliminative side as the *test*
+- [veltman-1996] formalizes the eliminative side as the *test*
   operator `[φ]σ = {w ∈ σ : w ⊨ φ}`.
-- @cite{groenendijk-stokhof-veltman-1996} ("Coreference and
+- [groenendijk-stokhof-veltman-1996] ("Coreference and
   Modality") split context updates into eliminative tests and
   generative introductions for discourse referents. `dynIND` is the
   eliminative arm; `dynSUBJ` is the generative arm.
-- @cite{de-groote-2006} CPS translation: the static predicate is the
+- [de-groote-2006] CPS translation: the static predicate is the
   pure computation, the dynamic operator is the contextual lift.
-- @cite{charlow-2021} casts dynamic semantics as a monadic effect over
+- [charlow-2021] casts dynamic semantics as a monadic effect over
   static semantics; here the underlying monad is the powerset monad
   on situation contexts. `dynRelationOn` is `Set.filter`; `dynIntroduce`
   is `Set.bind` (Kleisli composition).
@@ -181,7 +181,7 @@ theorem dynSUBJ_binds_current {W Time : Type*} [LE Time]
 For each operator, the static version (with the trivial propositional
 payload `fun _ _ => True`) holds at the relevant situation pair iff
 the dynamic operator's update retains/produces the corresponding
-context entry. This makes precise the @cite{de-groote-2006} sense in
+context entry. This makes precise the [de-groote-2006] sense in
 which static and dynamic mood are the same operator at different
 layers.
 -/

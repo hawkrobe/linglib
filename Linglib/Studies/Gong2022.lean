@@ -1,7 +1,7 @@
 import Linglib.Fragments.Mongolian.Case
 
 /-!
-# Gong 2022 @cite{gong-2022}
+# Gong 2022 [gong-2022]
 
 Case in Wholesale Late Merger: Evidence from Mongolian Scrambling.
 *Linguistic Inquiry*, Early Access.
@@ -17,7 +17,7 @@ the pronoun binder.
 ## Mongolian hybrid case system
 
 - ACC = dependent case (assigned by competition between two NPs in
-  the same phase; @cite{baker-vinokurova-2010})
+  the same phase; [baker-vinokurova-2010])
 - NOM = assigned by finite T via Agree
 - DAT = nonstructural (inherent)
 
@@ -41,7 +41,7 @@ the pronoun binder.
 The A/A-bar distinction does not predict these patterns. Mongolian SS and
 IS both behave like A-movement in terms of anaphor binding and WCO
 amelioration, yet they diverge in Condition C reconstruction when the
-binder changes between IO and Subject. The @cite{frank-lee-rambow-1996}
+binder changes between IO and Subject. The [frank-lee-rambow-1996]
 Subject Binding Generalization also fails for Mongolian: scrambling over
 a subject binder can bleed Condition C in LDS when a dependent ACC
 position is available in the matrix clause.
@@ -57,7 +57,7 @@ open Mongolian.Case
 -- S 1: Scrambling Scenarios
 -- ============================================================================
 
-/-- A scrambling scenario encoding the empirical data from @cite{gong-2022}.
+/-- A scrambling scenario encoding the empirical data from [gong-2022].
     Each scenario records the scrambling type, the binder's grammatical role,
     and whether Condition C reconstruction is observed. -/
 structure ScrambleScenario where
@@ -193,14 +193,14 @@ theorem lds_subj_correct :
     involve the same kind of movement. Case-based WLM correctly
     captures the contrast by looking at case positions, not movement type.
 
-    This connects to @cite{keine-2020}'s probe profiles: even if the
+    This connects to [keine-2020]'s probe profiles: even if the
     scrambling probe is classified as A or A-bar, its classification is
     constant across scenarios that differ in reconstruction behavior. -/
 theorem same_movement_different_reconstruction :
     ss_io.scrambleType = ss_io_base_ungrammatical.scrambleType ∧
     ss_io.reconstructs ≠ ss_io_base_ungrammatical.reconstructs := by decide
 
-/-- The Subject Binding Generalization (@cite{frank-lee-rambow-1996}) fails
+/-- The Subject Binding Generalization ([frank-lee-rambow-1996]) fails
     for Mongolian. That generalization predicts that scrambling over a subject
     binder *always* forces reconstruction. But in LDS, dependent ACC can be
     assigned in the matrix clause, allowing WLM to bleed Condition C even
@@ -241,7 +241,7 @@ theorem dependent_acc_determines_wlm :
 -- ============================================================================
 
 /-- PP-scrambling always reconstructs, unlike DP-scrambling.
-    @cite{gong-2022} section 6.2: PPs lack the determiner + NP restrictor
+    [gong-2022] section 6.2: PPs lack the determiner + NP restrictor
     structure required for WLM, so Condition C reconstruction is obligatory
     regardless of the binder's position. This contrast between DP- and
     PP-scrambling is a further prediction of the WLM account. -/
@@ -260,7 +260,7 @@ theorem pp_vs_dp_contrast :
     The embedded ACC object moves to Spec,CP of the embedded clause (phase
     edge escape hatch per PIC), then to the matrix clause. The CP edge
     does NOT provide a case position (C passes features to T via Feature
-    Inheritance, @cite{chomsky-2008}). Case availability in the matrix
+    Inheritance, [chomsky-2008]). Case availability in the matrix
     clause depends on whether a dependent case competitor exists.
 
     This derives the LDS chain positions from phase theory rather than

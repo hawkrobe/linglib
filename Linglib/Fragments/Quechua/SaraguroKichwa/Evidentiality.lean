@@ -2,11 +2,11 @@ import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Saraguro Kichwa Evidentiality
-@cite{aikhenvald-2004} @cite{martinez-vera-2026}
+[aikhenvald-2004] [martinez-vera-2026]
 
 Saraguro Kichwa (ISO `qvj`) is a severely endangered Quechuan language
 spoken in the Saraguro region of Loja Province, Ecuador
-(@cite{martinez-vera-2026}).
+([martinez-vera-2026]).
 
 The evidential paradigm has a 3-way distinction in matrix declaratives:
 
@@ -17,7 +17,7 @@ The evidential paradigm has a 3-way distinction in matrix declaratives:
 Plus the discourse-sensitive enclitic `=mi`, whose semantic analysis is
 contested across Quechuan varieties (Faller's direct-evidential analysis
 for Cuzco Quechua does NOT carry over to Saraguro per
-@cite{martinez-vera-2026}). The Fragment records only the consensus
+[martinez-vera-2026]). The Fragment records only the consensus
 typological metadata; the focus-marker-with-discourse-sensitivity
 analysis lives in `Studies/MartinezVera2026.lean`.
 
@@ -38,7 +38,7 @@ namespace Quechua.SaraguroKichwa.Evidentiality
 /-! ### Typed evidential inventory
 
 Saraguro Kichwa's 3-way matrix-declarative system per
-@cite{martinez-vera-2026}: direct `-rka`, reportative `-shka`,
+[martinez-vera-2026]: direct `-rka`, reportative `-shka`,
 inferential `-shi`. The focus-and-verum enclitic `=mi` is intentionally
 excluded (not analyzed as an evidential in this variety). -/
 

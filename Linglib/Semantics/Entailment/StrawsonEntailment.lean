@@ -6,7 +6,7 @@ import Linglib.Semantics.Presupposition.Basic
 
 /-!
 # Strawson Entailment
-@cite{von-fintel-1999} @cite{strawson-1952}
+[von-fintel-1999] [strawson-1952]
 
 Strawson-DE: a weakened downward entailingness that checks DE inferences
 only when presuppositions of the conclusion are satisfied. This rescues
@@ -43,7 +43,7 @@ open Semantics.Entailment.AntiAdditivity
 -- ============================================================================
 
 /--
-**Strawson-DE** (@cite{von-fintel-1999}, Definition 14, p. 104).
+**Strawson-DE** ([von-fintel-1999], Definition 14, p. 104).
 
 A function `f : Set W → Set W` is Strawson-DE with respect to a
 world-relativized definedness predicate `defined` iff: for all `p ⊆ q`,
@@ -60,7 +60,7 @@ def IsStrawsonDE {α β : Type*} (f : Set α → Set β)
   ∀ p q : Set α, p ⊆ q → ∀ w : β, defined p w → f q w → f p w
 
 /--
-**Strawson-valid inference** (@cite{von-fintel-1999}, Definition 19, p. 105).
+**Strawson-valid inference** ([von-fintel-1999], Definition 19, p. 105).
 
 An inference from premises to conclusion is Strawson-valid iff it is
 classically valid once we add the premise that all presuppositions of
@@ -104,7 +104,7 @@ theorem antiMorphic_implies_strawsonDE (f : Set World → Set World)
 /--
 **Strawson anti-additive** — the Strawson-relativized version of
 anti-additivity. Required by strong NPIs ("lift a finger", "in years"):
-@cite{gajewski-2011}, @cite{chierchia-2013} ch. 3, @cite{crnic-2014}.
+[gajewski-2011], [chierchia-2013] ch. 3, [crnic-2014].
 
 `f` is Strawson-AA iff for all `p, q` and worlds `w` where both `f p`'s
 and `f q`'s presuppositions are satisfied, `f (p ∪ q) w ↔ f p w ∧ f q w`.
@@ -167,7 +167,7 @@ def pnot_fullHierarchy (defined : Set World → World → Prop) :
   { am := pnot_isAntiMorphic }
 
 -- ============================================================================
--- §3 `only` (Horn's asymmetric analysis; @cite{horn-1996})
+-- §3 `only` (Horn's asymmetric analysis; [horn-1996])
 -- ============================================================================
 
 /-!
@@ -228,9 +228,9 @@ theorem onlyFull_isStrawsonDE {W : Type*} (x : W → Prop) :
   · right; intro hpy; exact hnq (hpq hpy)
 
 /--
-@cite{gajewski-2011} Appendix 1 / eqs. 37-38: `onlyFull` is **Strawson-AA**.
+[gajewski-2011] Appendix 1 / eqs. 37-38: `onlyFull` is **Strawson-AA**.
 
-This is the load-bearing puzzle of @cite{gajewski-2011}: vF's recalcitrant
+This is the load-bearing puzzle of [gajewski-2011]: vF's recalcitrant
 Strawson-DE operators are also Strawson-AA, yet they don't license strong
 NPIs (`either`, `in weeks`, punctual `until`). So Strawson-AA is too weak
 as a characterization of strong-NPI licensors — Gajewski argues the
@@ -296,7 +296,7 @@ theorem onlyFull_not_de : ¬ IsDownwardEntailing (onlyFull (· = World.w0)) := b
   exact hp_y
 
 -- ============================================================================
--- §4 Adversative attitudes (vF §3, @cite{heim-1992}, @cite{kadmon-landman-1993})
+-- §4 Adversative attitudes (vF §3, [heim-1992], [kadmon-landman-1993])
 -- ============================================================================
 
 /-!
@@ -304,7 +304,7 @@ theorem onlyFull_not_de : ¬ IsDownwardEntailing (onlyFull (· = World.w0)) := b
 
 Polymorphic over world type `W` and two parameters:
 - `dox : W → Set W` — the agent's doxastic accessibility (DOX in
-  @cite{heim-1992} / vF eq. 41-50). `dox w` is the set of worlds
+  [heim-1992] / vF eq. 41-50). `dox w` is the set of worlds
   compatible with what the agent at `w` believes.
 - `bestOf : W → Set W` — the worlds in `dox w` that maximally satisfy
   the attitude's preference / expectation ordering. Intended to be
@@ -370,7 +370,7 @@ theorem sorryFull_isStrawsonDE {W : Type*} (dox bestOf : W → Set W) :
   intro w' hw' hpw'
   exact hAllNotQ w' hw' (hpq hpw')
 
-/-- @cite{gajewski-2011} Appendix 1: `sorry` is **Strawson-AA**.
+/-- [gajewski-2011] Appendix 1: `sorry` is **Strawson-AA**.
     Definedness: doxastic factivity of *both* p and q. Forward direction
     needs definedness to extract the doxastic-factivity component for
     each conjunct; reverse direction needs only `p ⊆ p ∪ q` and the
@@ -487,7 +487,7 @@ theorem superlative_isStrawsonDE {W : Type*} (α : W) :
   · left; exact heq
   · right; intro hp_y; exact hnq (hpq hp_y)
 
-/-- @cite{gajewski-2011} Appendix 1: superlatives are **Strawson-AA** in
+/-- [gajewski-2011] Appendix 1: superlatives are **Strawson-AA** in
     the restriction position. The "α is/isn't outranked" universal
     composes through union/intersection like `onlyFull`'s "no other y
     satisfies the scope." Definedness: `restriction α` for both p and q. -/
@@ -525,7 +525,7 @@ theorem superlative_isStrawsonAA {W : Type*} (α : W) :
 
 /-!
 ### Conditional Antecedents
-@cite{kratzer-1986}
+[kratzer-1986]
 
 `condNecessity domain α β`: "if α, must β" is true at `w` iff `β` holds
 at all α-worlds in `domain w`. This is the *idle-ordering* subcase of
@@ -533,7 +533,7 @@ the Kratzer restrictor analysis. The full Kratzer conditional with a
 non-trivial preference ordering lives in
 `Semantics/Conditionals/Restrictor.lean::conditionalNecessity`
 and is *not* monotone in its antecedent — that is the §4 puzzle vF
-addresses via dynamic context shifts in @cite{von-fintel-2000}. The
+addresses via dynamic context shifts in [von-fintel-2000]. The
 substrate's `condNecessity` here proves the easy idle case so consumer
 files have a stable handle.
 
@@ -589,7 +589,7 @@ theorem condNecessity_isStrawsonAA {W : Type*} (domain : W → Set W) (β : Set 
       (fun _ _ => True) :=
   antiAdditive_implies_strawsonAA _ (condNecessity_isAntiAdditive domain β) _
 
-/-- @cite{gajewski-2011} Appendix 1's actual `would` SAA result.
+/-- [gajewski-2011] Appendix 1's actual `would` SAA result.
 
     vF's `would` has the same truth conditions as `condNecessity` but
     with the non-vacuity presupposition `D_i(w) ∩ p ≠ ∅` (the modal
@@ -732,7 +732,7 @@ def wishFull_simple {W : Type*} (dox bestOf : W → Set W) (p : Set W) : Set W :
 
 /-!
 ### `IsWDE` — Asher 1987 Weakened Downward Entailment
-@cite{asher-1987}
+[asher-1987]
 
 vF p. 112 (footnote 8) cites Asher's WDE as a sibling of Strawson-DE.
 Asher's schema:

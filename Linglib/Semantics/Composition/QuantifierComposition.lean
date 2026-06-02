@@ -11,7 +11,7 @@ Demonstrates that `interp` composes quantificational sentences
 end-to-end: lexicon → syntax tree (with QR traces and binders) →
 truth conditions.
 
-## H&K Pipeline (@cite{heim-kratzer-1998} Ch. 5)
+## H&K Pipeline ([heim-kratzer-1998] Ch. 5)
 
 After Quantifier Raising moves a DP to a higher position, it leaves a
 trace `tₙ` and creates a binder node `n`. Predicate Abstraction (PA)

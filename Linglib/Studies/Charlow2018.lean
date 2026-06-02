@@ -7,12 +7,12 @@ import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 
 /-!
 # Charlow 2018: A Modular Theory of Pronouns and Binding
-@cite{charlow-2018}
+[charlow-2018]
 
-@cite{charlow-2018} factors the standard @cite{heim-kratzer-1998} treatment
+[charlow-2018] factors the standard [heim-kratzer-1998] treatment
 of assignment-sensitivity into two algebraic operations that form an
 **applicative functor** (the Reader applicative,
-@cite{mcbride-paterson-2008}):
+[mcbride-paterson-2008]):
 
 - `ρ x := λg. x` — lift assignment-independent values = `constDenot`
 - `m ⊛ n := λg. m g (n g)` — assignment-sensitive FA = `applyG`
@@ -27,7 +27,7 @@ analyses of:
   without c-command
 
 The same ρ/⊛ combinators, instantiated with entities instead of assignments,
-recover @cite{jacobson-1999}'s variable-free semantics (§6). The generic
+recover [jacobson-1999]'s variable-free semantics (§6). The generic
 applicative operations (`readerPure`, `readerAp`, `composedPure`, `composedAp`,
 `vfPronoun`) and their laws live in `Composition/Applicative.lean`; this file
 bridges them to the `Frame`/`DenotG` infrastructure.
@@ -61,7 +61,7 @@ open Semantics.Composition.Applicative
 
 /-! ### The ρ/⊛ decomposition of H&K's interpretation function
 
-@cite{charlow-2018} §3.1–3.2: the standard H&K interpretation function
+[charlow-2018] §3.1–3.2: the standard H&K interpretation function
 `⟦α β⟧ := λg. ⟦α⟧ g (⟦β⟧ g)` decomposes into two
 independent operations:
 
@@ -108,7 +108,7 @@ end HKDecomposition
 
 /-! ### Λᵢ: categorematic predicate abstraction
 
-@cite{charlow-2018} eq (13): `Λᵢ := λf. λg. λx. f g^{i→x}`
+[charlow-2018] eq (13): `Λᵢ := λf. λg. λx. f g^{i→x}`
 
 In H&K, predicate abstraction is a syncategorematic rule. With ρ/⊛,
 Λᵢ becomes a *categorematic* operation — `lambdaAbsG`. -/
@@ -140,12 +140,12 @@ end CategorematicAbstraction
 
 /-! ### Paycheck pronouns via higher-order variables and μ
 
-@cite{charlow-2018} §4.1–4.2: paycheck pronouns are anaphoric to
+[charlow-2018] §4.1–4.2: paycheck pronouns are anaphoric to
 *intensions* rather than *extensions*. The key mechanism is
 **higher-order variables** + the monadic join μ (`denotGJoin`).
 
 The `Core.Assignment F.Entity = Nat → F.Entity` type can only store entities, not
-intensions. @cite{charlow-2018} §5.1 proposes type-homogeneous assignments
+intensions. [charlow-2018] §5.1 proposes type-homogeneous assignments
 `gᵣ := ℕ → r` to fix this — see `typed_paycheck` in `Applicative.lean`
 for the self-contained derivation. Here we show the paycheck truth
 conditions using externally-provided intensions. -/
@@ -195,7 +195,7 @@ end Paycheck
 
 /-! ### Binding reconstruction via higher-order trace + Λᵢ
 
-@cite{charlow-2018} §4.2, Fig 7: "[His₁ mom]ⱼ, every boy₁ likes tⱼ."
+[charlow-2018] §4.2, Fig 7: "[His₁ mom]ⱼ, every boy₁ likes tⱼ."
 
 The bound pronoun *his₁* is inside a fronted constituent that is
 syntactically *higher* than the binder *every boy₁*. The analysis
@@ -267,7 +267,7 @@ end ComposedPaycheck
 
 /-! ### Connection to `Reference/Binding.lean`'s Reader monad
 
-@cite{charlow-2018}'s operations are instantiations of the Reader monad
+[charlow-2018]'s operations are instantiations of the Reader monad
 from `Binding.lean`:
 
 - `constDenot d` = Reader pure at `Core.Assignment F.Entity`

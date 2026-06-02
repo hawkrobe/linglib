@@ -3,18 +3,18 @@ import Linglib.Fragments.Slavic.Params
 
 /-!
 # Bulgarian Verbal Prefixes
-@cite{istratkova-2004} @cite{svenonius-2004} @cite{dendikken-1995}
+[istratkova-2004] [svenonius-2004] [dendikken-1995]
 
 Lexical entries for Bulgarian verbal prefixes encoding the
-**lexical / superlexical** distinction of @cite{svenonius-2004} and
+**lexical / superlexical** distinction of [svenonius-2004] and
 the Bulgarian-distinctive feature of **multiple prefixation** per
-@cite{istratkova-2004}: up to seven prefixes can stack on a single
+[istratkova-2004]: up to seven prefixes can stack on a single
 verbal root in Bulgarian, with superlexicals systematically appearing
 outside lexicals (paper §1, ex. 3-4). Lexical prefixes are R-heads
 inside VP (resultative, particle-like); superlexical prefixes are
 Asp-heads outside VP (aspectual operators).
 
-Bulgarian-specific facts (@cite{istratkova-2004} abstract):
+Bulgarian-specific facts ([istratkova-2004] abstract):
 
 1. Prefixes attach to both perfective AND imperfective stems —
    they don't uniformly mark perfectivity.
@@ -32,7 +32,7 @@ Bulgarian-specific facts (@cite{istratkova-2004} abstract):
   in surface (outermost-first) order to support multi-prefixation.
 * `inventory` — six entries: 2 single-prefix lexical, 3 single-prefix
   superlexical, 1 multi-prefix (the canonical *po-na-razkaža* of paper
-  §1 ex. 3a, also cited by @cite{svenonius-2004} p. 207 ex. 3a).
+  §1 ex. 3a, also cited by [svenonius-2004] p. 207 ex. 3a).
 
 ## Main results
 
@@ -40,7 +40,7 @@ Bulgarian-specific facts (@cite{istratkova-2004} abstract):
   literal concatenation of its prefix chain followed by `bareStem`.
 * `inventory_well_stacked` — every multi-prefix entry has all
   prefixes consistently classified (no inconsistent stacking) — a
-  structural invariant from @cite{istratkova-2004} §3.
+  structural invariant from [istratkova-2004] §3.
 
 -/
 
@@ -72,7 +72,7 @@ structure BulgarianPrefixedVerbEntry where
 /-! ### Single-prefix lexical entries -/
 
 /-- *iz-veda* 'take out' — lexical *iz-* (spatial 'out') on stem
-    *veda* 'lead'. @cite{istratkova-2004} §1 ex. 1g. -/
+    *veda* 'lead'. [istratkova-2004] §1 ex. 1g. -/
 def izveda : BulgarianPrefixedVerbEntry where
   bareStem      := "veda"
   stemAspect    := .perfective
@@ -82,7 +82,7 @@ def izveda : BulgarianPrefixedVerbEntry where
   prefixedGloss := "take out (someone)"
 
 /-- *za-piša* 'put down in writing' — lexical *za-* (spatial
-    'down, behind') on stem *piša* 'write'. @cite{istratkova-2004}
+    'down, behind') on stem *piša* 'write'. [istratkova-2004]
     §1 ex. 1a. -/
 def zapisa : BulgarianPrefixedVerbEntry where
   bareStem      := "piša"
@@ -95,7 +95,7 @@ def zapisa : BulgarianPrefixedVerbEntry where
 /-! ### Single-prefix superlexical entries -/
 
 /-- *za-blest'a* 'start to glitter' — superlexical *za-* INCP on
-    imperfective stem *blest'a* 'glitter'. @cite{istratkova-2004} §1
+    imperfective stem *blest'a* 'glitter'. [istratkova-2004] §1
     ex. 3d. -/
 def zablesta : BulgarianPrefixedVerbEntry where
   bareStem      := "blest'a"
@@ -106,7 +106,7 @@ def zablesta : BulgarianPrefixedVerbEntry where
   prefixedGloss := "start to glitter"
 
 /-- *po-znam* 'guess' — superlexical *po-* DLMT on imperfective stem
-    *znam* 'know'. @cite{istratkova-2004} §1 ex. 3c (delimitative-
+    *znam* 'know'. [istratkova-2004] §1 ex. 3c (delimitative-
     flavoured 'know-a-bit' → 'guess'). -/
 def poznam : BulgarianPrefixedVerbEntry where
   bareStem      := "znam"
@@ -117,7 +117,7 @@ def poznam : BulgarianPrefixedVerbEntry where
   prefixedGloss := "guess"
 
 /-- *pro-četa* 'read completely' — superlexical *pro-* CMPL on
-    imperfective stem *četa* 'read'. @cite{istratkova-2004} §1
+    imperfective stem *četa* 'read'. [istratkova-2004] §1
     ex. 3i. -/
 def procheta : BulgarianPrefixedVerbEntry where
   bareStem      := "četa"
@@ -131,12 +131,12 @@ def procheta : BulgarianPrefixedVerbEntry where
 
 The distinctive Bulgarian feature: superlexical prefixes stack outside
 each other (and outside any lexical prefix). The structural constraint
-(@cite{istratkova-2004} §3): outermost takes widest scope. -/
+([istratkova-2004] §3): outermost takes widest scope. -/
 
 /-- *po-na-razkaža* 'tell a little of many' — multi-prefix entry:
     DLMT *po-* outside CMLT *na-* outside the (etymologically complex)
-    bare stem *razkaža* 'narrate'. @cite{istratkova-2004} §3 ex. 4
-    (cited also by @cite{svenonius-2004} p. 207 ex. 3a). The two
+    bare stem *razkaža* 'narrate'. [istratkova-2004] §3 ex. 4
+    (cited also by [svenonius-2004] p. 207 ex. 3a). The two
     superlexicals stack with outer DLMT (*po-*) taking scope over
     inner CMLT (*na-*). -/
 def ponarazkaza : BulgarianPrefixedVerbEntry where

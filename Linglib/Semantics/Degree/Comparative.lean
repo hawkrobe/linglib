@@ -4,7 +4,7 @@ import Linglib.Semantics.Entailment.AntiAdditivity
 
 /-!
 # Framework-Independent Comparative Semantics
-@cite{rett-2026} @cite{schwarzschild-2008} @cite{von-stechow-1984} @cite{hoeksema-1983}
+[rett-2026] [schwarzschild-2008] [von-stechow-1984] [hoeksema-1983]
 
 Comparative semantics shared across all degree frameworks: the basic
 `comparativeSem` and `equativeSem` functions, the set-of-degrees
@@ -12,7 +12,7 @@ generalization `sComparative`, antonymy as scale reversal, DE-ness of
 than-clauses (NPI licensing), and boundary dependence.
 
 The set-of-degrees S-comparative `sComparative` (originally
-@cite{hoeksema-1983} §3.8 Def 7) lives here as the natural generalization
+[hoeksema-1983] §3.8 Def 7) lives here as the natural generalization
 of `comparativeSem` from a binary comparator to a degree-set comparator.
 Hoeksema's polarity-asymmetry consumers (Boolean-hom `npComparativeGQ`,
 the licensing-context registry connection) remain in
@@ -30,7 +30,7 @@ manner implicature) lives in `Studies/Rett2026.lean`.
 3. **sComparative_eq_singleton_of_isGreatest**: the S-comparative is
    determined by the supremum of its degree-set argument when one
    exists. Specializes to: a downward-closed than-clause denotation
-   reduces to its maximum (@cite{bhatt-pancheva-2004} §3 reduction).
+   reduces to its maximum ([bhatt-pancheva-2004] §3 reduction).
 4. **Antonymy as scale reversal**: "A taller than B" ↔ "B shorter than A".
 5. **DE-ness of than-clauses**: universal quantification over the standard
    domain is anti-monotone.
@@ -56,7 +56,7 @@ abbrev ScaleDirection := ScalePolarity
 
 variable {Entity : Type*} {α : Type*} [LinearOrder α]
 
-/-- Comparative semantics (@cite{rett-2026} / @cite{schwarzschild-2008}):
+/-- Comparative semantics ([rett-2026] / [schwarzschild-2008]):
     "A is Adj-er than B" iff μ(a) exceeds μ(b) on the directed scale. -/
 def comparativeSem (μ : Entity → α) (a b : Entity) (dir : ScaleDirection) : Prop :=
   match dir with
@@ -114,7 +114,7 @@ theorem equative_boundary {α : Type*} [LinearOrder α]
 -- § 4½. Set-of-Degrees Comparative (`sComparative`)
 -- ════════════════════════════════════════════════════
 
-/-- S-comparative on a set of degrees (@cite{hoeksema-1983} §3.8 Def 7):
+/-- S-comparative on a set of degrees ([hoeksema-1983] §3.8 Def 7):
     `y ∈ sComparative μ Δ` iff `μ y` strictly exceeds every degree in
     `Δ`. The than-clause supplies a set of degrees `Δ` (typically
     existentially closed). Generalizes the binary `comparativeSem` from
@@ -123,7 +123,7 @@ def sComparative {Entity D : Type*} [Preorder D]
     (μ : Entity → D) (Δ : Set D) : Set Entity :=
   fun y => ∀ d ∈ Δ, d < μ y
 
-/-- @cite{hoeksema-1983} Fact 4: the S-comparative is anti-additive in
+/-- [hoeksema-1983] Fact 4: the S-comparative is anti-additive in
     its set-of-degrees argument. The algebraic source of NPI licensing
     in clausal *than*-comparatives. -/
 theorem sComparative_isAntiAdditive {Entity D : Type*} [Preorder D]
@@ -145,7 +145,7 @@ theorem sComparative_atomic {Entity D : Type*} [Preorder D]
   rw [hd]
   exact h
 
-/-- **Reduction lemma** (@cite{bhatt-pancheva-2004} §3 in algebraic
+/-- **Reduction lemma** ([bhatt-pancheva-2004] §3 in algebraic
     form): the S-comparative is determined by the *greatest* element of
     its degree-set argument. Passing a set whose supremum is `m` yields
     the same predicate as passing `{m}`.
@@ -178,7 +178,7 @@ theorem sComparative_atomic_eq_comparativeSem
 
 /-- Universal quantification over a domain is antitone in the domain.
     This is the generic monotonicity fact behind the surface observation
-    that *than*-clauses are downward-entailing — not @cite{hoeksema-1983}'s
+    that *than*-clauses are downward-entailing — not [hoeksema-1983]'s
     specific anti-additivity / Boolean-homomorphism result, which is
     proved in `Studies/Hoeksema1983.lean`. -/
 theorem comparative_than_DE {α : Type*} (R : α → α → Prop)
@@ -222,7 +222,7 @@ theorem comparative_iff_posExt_ssubset {Entity D : Type*} [LinearOrder D]
     the complementarity of positive and negative extents, not
     stipulated as a lexical property of antonym pairs.
 
-    This is @cite{kennedy-1999}'s central result: antonymy equivalence
+    This is [kennedy-1999]'s central result: antonymy equivalence
     follows from the algebra of extents. Delegates to
     `Core.Scale.antonymy_biconditional`. -/
 theorem comparative_iff_negExt_ssubset {Entity D : Type*} [LinearOrder D]
@@ -232,7 +232,7 @@ theorem comparative_iff_negExt_ssubset {Entity D : Type*} [LinearOrder D]
   rw [comparative_iff_posExt_ssubset, Core.Scale.antonymy_biconditional]
 
 /-! ### Strengthened, negated, and extent-theoretic equatives
-@cite{kennedy-2007} @cite{rett-2020} @cite{schwarzschild-2008} @cite{thomas-deo-2020}
+[kennedy-2007] [rett-2020] [schwarzschild-2008] [thomas-deo-2020]
 
 The literal semantics of the equative is "at least as" (`equativeSem`
 with `.positive`). The "exactly as" reading is derived by scalar
@@ -265,7 +265,7 @@ theorem negatedEquative_iff_not_sem [LinearOrder D] (μ : Entity → D) (a b : E
 
 open Core.Scale (posExt posExt_subset_iff posExt_ssubset_iff)
 
-/-- Equative as positive extent inclusion (@cite{kennedy-1999}):
+/-- Equative as positive extent inclusion ([kennedy-1999]):
 "A is as tall as B" iff `posExt(B) ⊆ posExt(A)` — every degree
 B has, A also has. -/
 theorem equativeSem_iff_posExt_subset [LinearOrder D]

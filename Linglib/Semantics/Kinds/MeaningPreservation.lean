@@ -36,7 +36,7 @@ Singular kinds with one salient instance correspond to the discrete
 Mendia kind-formation (each instance is its own equivalence class). For
 the general framework — kinds formed by partitioning a domain via a
 salient equivalence relation — see
-`Semantics/Kinds/Subkinds.lean` (@cite{mendia-2020}).
+`Semantics/Kinds/Subkinds.lean` ([mendia-2020]).
 Carlson's Disjointness Condition (subkinds of a context-relative
 partition are disjoint) is derived there.
 
@@ -54,7 +54,7 @@ variable (World Atom : Type)
 -- Type-Shifting Operations (with Ranking)
 
 /--
-Type-shifting operations from @cite{partee-1987} / @cite{dayal-2004}.
+Type-shifting operations from [partee-1987] / [dayal-2004].
 
 These convert between semantic types:
 - ∩ (down/cap): Property → Kind (nominalization)
@@ -65,13 +65,13 @@ inductive TypeShift where
   | down           -- ∩: λP λs ιx[Ps(x)] - kind formation
   | iota           -- ι: λP ιx[Ps(x)] - unique definite description
   | iotaAnaphoric  -- ι^x: λP λQ ιx[Ps(x) ∧ Q(x)] - anaphoric definite
-                   -- (@cite{moroney-2021} §4.3 (anaphoric iota)): presupposes unique P-satisfier
+                   -- ([moroney-2021] §4.3 (anaphoric iota)): presupposes unique P-satisfier
                    -- that additionally satisfies anaphoric restrictor Q
   | exists         -- ∃: λP λQ ∃x[P(x) ∧ Q(x)] - existential
   deriving DecidableEq, Repr
 
 /--
-Meaning Preservation Ranking (@cite{dayal-2004}: 408)
+Meaning Preservation Ranking ([dayal-2004]: 408)
 
 {∩, ι} > ∃
 
@@ -159,7 +159,7 @@ inductive NumberFeature where
   | mass    -- Mass: no number distinction
   | neutral -- Number-neutral: no obligatory number marking (Shan, Serbian).
               -- Both ι and ∩ are available; context disambiguates.
-              -- @cite{moroney-2021} §2.1: Shan nouns are genuinely number-neutral,
+              -- [moroney-2021] §2.1: Shan nouns are genuinely number-neutral,
               -- not underlyingly singular or plural.
   deriving DecidableEq, Repr
 
@@ -176,7 +176,7 @@ inductive SingularLicense where
   deriving DecidableEq, Repr
 
 /--
-Singular Kinds (@cite{dayal-2004}: 411-423)
+Singular Kinds ([dayal-2004]: 411-423)
 
 Grammatically singular but denoting kinds:
 - "The lion is a predator" (taxonomic)
@@ -199,7 +199,7 @@ structure SingularKind where
 -- Taxonomic Readings
 
 /--
-Taxonomic readings (@cite{dayal-2004}: 426-433)
+Taxonomic readings ([dayal-2004]: 426-433)
 
 Common nouns can denote:
 1. Properties of INDIVIDUALS: dog(x) = "x is a dog individual"
@@ -269,7 +269,7 @@ structure TypeShiftContext where
   /-- Is ι blocked by an overt definite article? -/
   iotaBlocked : Bool
   /-- Is ι^x blocked by an overt demonstrative or strong article?
-      @cite{moroney-2021} §4.3: ι^x is blocked when an overt form
+      [moroney-2021] §4.3: ι^x is blocked when an overt form
       (demonstrative, strong article) duplicates its anaphoric function. -/
   iotaAnaphoricBlocked : Bool
   /-- Is ∃ blocked by an overt indefinite article? -/
@@ -301,7 +301,7 @@ def availableShifts (ctx : TypeShiftContext) : List TypeShift :=
                 then shifts ++ [.iota]
                 else shifts
   -- ι^x is available if not blocked and number is sg or neutral.
-  -- @cite{moroney-2021} §4.3 (anaphoric iota): anaphoric iota for discourse-familiar referents.
+  -- [moroney-2021] §4.3 (anaphoric iota): anaphoric iota for discourse-familiar referents.
   let shifts := if !ctx.iotaAnaphoricBlocked &&
                    (ctx.number == .sg || ctx.number == .neutral ||
                     !ctx.instantiationAccessible)
@@ -322,7 +322,7 @@ def selectShift (ctx : TypeShiftContext) : Option TypeShift :=
   (availableShifts ctx).head?
 
 -- ============================================================================
--- Intensional Type-Shift Denotations (@cite{moroney-2021} §2.2, §4.3)
+-- Intensional Type-Shift Denotations ([moroney-2021] §2.2, §4.3)
 -- ============================================================================
 
 /-! ## Intensional Semantics of Type-Shifts
@@ -332,7 +332,7 @@ The `TypeShift` enum above classifies type-shifts abstractly; the
 What's been missing is the *intensional denotation* of each shift.
 
 Bare nouns have base type `⟨s,⟨e,t⟩⟩` — they denote properties across
-possible worlds (@cite{moroney-2021} §2.2; @cite{chierchia-1998}). Each
+possible worlds ([moroney-2021] §2.2; [chierchia-1998]). Each
 type-shift converts this intensional property into a different semantic type:
 
 - ∩ (`.down`): `⟨s,⟨e,t⟩⟩ → e` — kind formation (Chierchia's ∩)
@@ -359,7 +359,7 @@ abbrev shiftDown (P : NMP.Property World Atom) :
 /-- ι-shift (unique definite): at world w, returns the unique satisfier
     of P(w) if one exists. This is the world-relative definite description.
 
-    @cite{moroney-2021} §2.2: Shan bare nouns get this reading when the
+    [moroney-2021] §2.2: Shan bare nouns get this reading when the
     context supplies a unique referent. -/
 def shiftIota (P : NMP.Property World Atom) (w : World)
     (unique : ∃! x, x ∈ P w) : NMP.Individual Atom :=
@@ -368,7 +368,7 @@ def shiftIota (P : NMP.Property World Atom) (w : World)
 /-- ι^x-shift (anaphoric definite): at world w, returns the unique
     satisfier of P(w) ∧ Q(w) where Q is the anaphoric restrictor.
 
-    @cite{moroney-2021} §4.3: ι^x P Q = ιx[P(x) ∧ Q(x)]. Shan bare
+    [moroney-2021] §4.3: ι^x P Q = ιx[P(x) ∧ Q(x)]. Shan bare
     nouns get this reading in anaphoric contexts (narrative continuations,
     relational bridging); demonstrative-noun phrases optionally reinforce it. -/
 def shiftIotaAnaphoric (P : NMP.Property World Atom)
@@ -379,7 +379,7 @@ def shiftIotaAnaphoric (P : NMP.Property World Atom)
 /-- ∃-shift (existential closure): at world w, existentially closes over
     P(w). This is `NMP.DPP` restricted to a predicate.
 
-    @cite{moroney-2021} §2.3: the existential reading of Shan bare nouns
+    [moroney-2021] §2.3: the existential reading of Shan bare nouns
     arises via DPP at vP, yielding obligatory low scope w.r.t. negation. -/
 def shiftExists (P : NMP.Property World Atom) (w : World)
     (predicate : NMP.Individual Atom → Prop) : Prop :=
@@ -400,7 +400,7 @@ end IntensionalDenotations
 -- Cross-Linguistic Kind Reference Patterns
 
 /--
-Language-specific parameters for kind reference (@cite{dayal-2004}: 433-445).
+Language-specific parameters for kind reference ([dayal-2004]: 433-445).
 
 Languages differ in:
 1. Whether they have definite/indefinite articles
@@ -498,7 +498,7 @@ def requiresDKP : PredicateType → Bool
   | .objectLevel => true
 
 /--
-Kind-level predicates (@cite{dayal-2004}: 401-403):
+Kind-level predicates ([dayal-2004]: 401-403):
 - be extinct, be widespread, be rare
 - evolve, originate, die out
 - be invented, be discovered
@@ -518,7 +518,7 @@ instance : DecidablePred isKindLevelPredicate := fun s => by
 -- Well-Established Kinds
 
 /--
-Well-established kinds (@cite{dayal-2004}: 417-420)
+Well-established kinds ([dayal-2004]: 417-420)
 
 For ι to apply to a kind (giving "the NP"), the kind must be
 "well-established" - a recognized natural class.

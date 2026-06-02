@@ -7,10 +7,10 @@ import Mathlib.Analysis.Convex.Jensen
 
 /-!
 # Memory Processes (Noisy-Channel Substrate, Memory-Side)
-@cite{futrell-gibson-levy-2020}
+[futrell-gibson-levy-2020]
 
 A `MemoryProcess` is the memory-side noisy-channel substrate of
-@cite{futrell-gibson-levy-2020}'s lossy-context surprisal: a processor that
+[futrell-gibson-levy-2020]'s lossy-context surprisal: a processor that
 compresses its observed history into a (possibly noisy) memory state, then
 predicts the next symbol from that memory state alone. This is the
 context-noise specialization of the broader noisy-channel comprehension
@@ -78,7 +78,7 @@ open Processing.LanguageModel (LangModel)
 memory states; `predict` gives the next-symbol distribution from a memory
 state alone. The memory state mediates *all* information flow from the
 past to the prediction (the inaccessibility-of-context claim of
-@cite{futrell-gibson-levy-2020} §3.1, Claim 3). -/
+[futrell-gibson-levy-2020] §3.1, Claim 3). -/
 structure MemoryProcess (Voc Mem : Type*) where
   /-- Lossy encoder: history → distribution over memory states. -/
   encode : List Voc → PMF Mem
@@ -93,7 +93,7 @@ variable {Voc Mem : Type*}
 
 This is the inner factor that appears inside the paper's Eq. 2 (linking
 hypothesis as proportionality) and Eq. 3 (expected-surprisal expectation).
-@cite{futrell-gibson-levy-2020} does not give it a standalone equation
+[futrell-gibson-levy-2020] does not give it a standalone equation
 number, but factoring it out is convenient for the Dirac-collapse proof
 below. -/
 noncomputable def perStateSurprisal (mp : MemoryProcess Voc Mem)
@@ -102,7 +102,7 @@ noncomputable def perStateSurprisal (mp : MemoryProcess Voc Mem)
 
 /-- Expected surprisal under the lossy memory process:
 `D_lc(w | c) = E_{m ~ encode(c)}[-log P(w | m)]`.
-(@cite{futrell-gibson-levy-2020} Eq. 3.)
+([futrell-gibson-levy-2020] Eq. 3.)
 
 This is the master cost function from which classical surprisal,
 n-gram surprisal, and the cue-based retrieval cost all derive as
@@ -117,7 +117,7 @@ noncomputable def expectedSurprisal (mp : MemoryProcess Voc Mem)
 Computed as `(encode c).bind predict` evaluated at `some w` — the
 mathlib `PMF` monad bind is exactly the marginal of the joint kernel.
 
-This forward marginal is implicit in @cite{futrell-gibson-levy-2020}'s
+This forward marginal is implicit in [futrell-gibson-levy-2020]'s
 setup but not separately numbered. The paper's noisy-channel inversion
 in §3.3 (Eqs. 4–9) goes the *other* direction: marginalizing over
 contexts `c` to compute `p(w | r)` from a fixed memory state `r`. The
@@ -137,7 +137,7 @@ all mass on `f c` for every history `c`. This is the lossless
 ("perfect memory") regime: the memory state is a deterministic
 function of the history.
 
-(@cite{futrell-gibson-levy-2020} §3.5.1: classical surprisal arises
+([futrell-gibson-levy-2020] §3.5.1: classical surprisal arises
 exactly in this case.) -/
 def IsDirac (mp : MemoryProcess Voc Mem)
     (f : List Voc → Mem) : Prop :=
@@ -173,7 +173,7 @@ information) — so per-state surprisal here is the unigram log-prob.
 This is the opposite extreme of `expectedSurprisal_eq_surprisal_of_lossless`:
 where lossless memory recovers classical surprisal, *fully lossy* memory
 (all context information discarded) recovers the unigram prior. Together
-they bracket the lossy-context regime — @cite{futrell-gibson-levy-2020}
+they bracket the lossy-context regime — [futrell-gibson-levy-2020]
 §3.4.2 ("when all information about a true context is lost, the difficulty
 of comprehending a word is given exactly by its log prior unigram
 probability"). -/
@@ -193,7 +193,7 @@ the encoder is a Dirac (no information loss); in general Jensen's
 inequality applied to the concave function `log` gives the strict direction.
 
 This is the substantive content of "lossy memory makes things harder":
-@cite{futrell-gibson-levy-2020} Suppl. Mat. A's *memory distortion bound*
+[futrell-gibson-levy-2020] Suppl. Mat. A's *memory distortion bound*
 rests on this Jensen gap.
 
 **Hypotheses.** `[Fintype Mem]` reduces tsum to Finset.sum so that

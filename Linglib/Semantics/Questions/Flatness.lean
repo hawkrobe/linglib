@@ -6,8 +6,8 @@ import Mathlib.Order.SupClosed
 /-!
 # Flatness of Question — Anttila 2.2.16 specialised to inquisitive content
 
-@cite{anttila-2021} @cite{ciardelli-groenendijk-roelofsen-2018}
-@cite{aloni-2022}
+[anttila-2021] [ciardelli-groenendijk-roelofsen-2018]
+[aloni-2022]
 
 Anttila Proposition 2.2.16 (specialised from Proposition 2.2.2): a
 team-semantic predicate is *flat* iff it is downward-closed, sup-closed,

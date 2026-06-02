@@ -2,13 +2,13 @@ import Linglib.Semantics.Tense.DeRe
 import Linglib.Semantics.Reference.Acquaintance
 
 /-!
-# @cite{heim-1994-comments}: Comments on Abusch's Theory of Tense
-@cite{heim-1994-comments} @cite{abusch-1997} @cite{lewis-1979-attitudes}
+# [heim-1994-comments]: Comments on Abusch's Theory of Tense
+[heim-1994-comments] [abusch-1997] [lewis-1979-attitudes]
 
-Single-paper formalisation of @cite{heim-1994-comments} ("Comments on
+Single-paper formalisation of [heim-1994-comments] ("Comments on
 Abusch's theory of tense", in Kamp ed. *Ellipsis, Tense and Questions*,
 Dyana-2 R2.2.B; pp. 143–162). Heim's contribution: "more concrete
-formulations of some of the sketchier portions" of @cite{abusch-1997}'s
+formulations of some of the sketchier portions" of [abusch-1997]'s
 sequence-of-tense + temporal de re analysis. Three substrate-relevant
 contributions:
 
@@ -22,7 +22,7 @@ contributions:
      then [[α_i]]^g,c is only defined if `g(i)` does-not-follow `g(0)`."
      The substrate's `Tense.upperLimitConstraint` (in `Tense/Basic.lean`)
      IS this presupposition, already typed at `[LE Time]` and credited
-     to @cite{heim-1994-comments} in its docstring; this study file
+     to [heim-1994-comments] in its docstring; this study file
      proves the felicity-to-ULC bridge through the substrate primitive.
    - **Time-concept** (p. 155): "By a 'time-concept' I mean a function
      from world-time pairs to times. Think of these as the meanings
@@ -90,7 +90,7 @@ open Semantics.Tense.DeRe (TemporalDeReReading)
 -- § Heim's "time-concept" (p. 155)
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{heim-1994-comments} (p. 155): "By a 'time-concept' I mean
+/-- [heim-1994-comments] (p. 155): "By a 'time-concept' I mean
     a function from world-time pairs to times." This is the Lewis-style
     centered-world intension at one coordinate less than the substrate's
     `Semantics.Tense.DeRe.TimeConcept` (which adds a Speas-Tenny agent
@@ -178,12 +178,12 @@ theorem toSubstrate_factors_iff_agent_blind {W E P T : Type*}
 -- § ULC as presupposition (eq 16, p. 149)
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{heim-1994-comments} eq (16) p. 149: "If α_i is a tense, then
+/-- [heim-1994-comments] eq (16) p. 149: "If α_i is a tense, then
     [[α_i]]^g,c is only defined if `g(i)` does-not-follow `g(0)`."
-    Heim's presuppositional construal of @cite{abusch-1997}'s Upper
+    Heim's presuppositional construal of [abusch-1997]'s Upper
     Limit Constraint is already encoded in the substrate as
     `Semantics.Tense.upperLimitConstraint` (typed `[LE Time]`,
-    anchored to @cite{heim-1994-comments} in its docstring). This
+    anchored to [heim-1994-comments] in its docstring). This
     bridge theorem projects the substrate's `TemporalDeReReading`
     `isFelicitousWith .past` (strict `<`) onto the substrate's ULC
     primitive (weak `≤`), via `le_of_lt`.
@@ -206,7 +206,7 @@ theorem isFelicitousWith_past_imp_upperLimitConstraint
 -- § Acquaintance: Heim's "suitable" qualification (p. 155)
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{heim-1994-comments} (p. 155): "the qualification 'suitable'
+/-- [heim-1994-comments] (p. 155): "the qualification 'suitable'
     is meant to exclude descriptions by which one might pick out a time
     without being sufficiently acquainted with it; see Abusch and
     Lewis."

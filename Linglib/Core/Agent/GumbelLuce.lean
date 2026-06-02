@@ -4,10 +4,10 @@ import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 /-!
-# Gumbel-Luce Equivalence (McFadden's Theorem) @cite{mcfadden-1974}
+# Gumbel-Luce Equivalence (McFadden's Theorem) [mcfadden-1974]
 
 The exact algebraic connection between Gumbel noise in a Random Utility Model
-(RUM) and the Luce choice rule (softmax). @cite{luce-1959}
+(RUM) and the Luce choice rule (softmax). [luce-1959]
 
 ## Random Utility Models
 
@@ -20,8 +20,8 @@ The choice probability is `P(i chosen) = P(Uᵢ = max_j Uⱼ)`.
 
 Two noise distributions yield closed-form choice probabilities:
 
-- **Gaussian noise** → `Φ` (Thurstone Case V, §2.D of @cite{luce-1959})
-- **Gumbel noise** → softmax (@cite{mcfadden-1974})
+- **Gaussian noise** → `Φ` (Thurstone Case V, §2.D of [luce-1959])
+- **Gumbel noise** → softmax ([mcfadden-1974])
 
 ## McFadden's Theorem
 
@@ -127,7 +127,7 @@ noncomputable def mcfaddenIntegral {ι : Type*} [Fintype ι]
     (u : ι → ℝ) (β : ℝ) (i : ι) : ℝ :=
   exp (u i / β) * ∫ t in Ioi (0 : ℝ), exp (-(∑ j : ι, exp (u j / β)) * t)
 
-/-- **McFadden's Theorem (algebraic core)** — Lemma 1 of @cite{mcfadden-1974}:
+/-- **McFadden's Theorem (algebraic core)** — Lemma 1 of [mcfadden-1974]:
     The McFadden integral equals softmax.
 
     For any utilities `u₁, ..., uₙ` and scale `β > 0`:
@@ -385,7 +385,7 @@ private lemma gumbelMaxProb_integrand_eq {n : ℕ}
 -- ============================================================================
 
 /-- **Gumbel RUM = McFadden Integral** — the measure-theoretic content
-    of Lemma 1 in @cite{mcfadden-1974} (p. 111).
+    of Lemma 1 in [mcfadden-1974] (p. 111).
 
     If `ε₁, ..., εₙ` are i.i.d. Gumbel(0, β), then the probability that
     alternative `i` has the maximum random utility equals the McFadden integral:
@@ -420,7 +420,7 @@ theorem gumbelMaxProb_is_mcfaddenIntegral
 -- ============================================================================
 
 /-!
-## McFadden's Lemma 2 (Uniqueness) @cite{mcfadden-1974}
+## McFadden's Lemma 2 (Uniqueness) [mcfadden-1974]
 
 McFadden's Lemma 2 shows that the Gumbel distribution is the **only**
 i.i.d. noise distribution yielding the softmax (Luce) choice rule. The key

@@ -74,6 +74,11 @@ jobs:
           # cause "no such table" errors if an old DB is reused.
           rm -f "$BUILD/$DB" "$DB"
 
+          # Generate doc-gen4's bibliography from the source bib (its BibTeX
+          # parser rejects the '%' LaTeX comments that blog/references.bib uses).
+          mkdir -p docs
+          grep -vE '^[[:space:]]*%' blog/references.bib > docs/references.bib
+
           # Bibliography prepass
           if [ -f docs/references.bib ]; then
             $DOCGEN bibPrepass --build "$BUILD" docs/references.bib

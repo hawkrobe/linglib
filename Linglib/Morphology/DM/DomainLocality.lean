@@ -4,8 +4,8 @@ import Mathlib.Data.Finset.Range
 
 /-!
 # Domain-Relativized Contiguity
-@cite{moskal-2015a-dissertation} @cite{moskal-2015}
-@cite{smith-moskal-xu-kang-bobaljik-2019}
+[moskal-2015a-dissertation] [moskal-2015]
+[smith-moskal-xu-kang-bobaljik-2019]
 
 A domain partition assigns each cell position in a paradigm to a
 *domain tag* — abstractly representing the cell's locality unit
@@ -16,18 +16,18 @@ boundaries, AAB patterns are admitted.
 ## Motivation
 
 `Morphology.DM.ContainmentVI.Degree.vi_cmpr_eq_sprl` (the DM
-derivation, @cite{bobaljik-2012}) predicts CMPR-cell = SPRL-cell for
+derivation, [bobaljik-2012]) predicts CMPR-cell = SPRL-cell for
 any VI-generable root pattern. Lifted to case (Wardaman 3SG: ABS=
-narnaj, ERG=narnaj-(j)i, DAT=gunga; @cite{smith-moskal-xu-kang-bobaljik-2019}
+narnaj, ERG=narnaj-(j)i, DAT=gunga; [smith-moskal-xu-kang-bobaljik-2019]
 §3.6) and number (Yagua 2: SG=jiy, PL=jiry-éy, DL=sáada;
-@cite{smith-moskal-xu-kang-bobaljik-2019} §4.2 Table 46), the
+[smith-moskal-xu-kang-bobaljik-2019] §4.2 Table 46), the
 prediction is empirically falsified — AAB patterns are attested in
 both case and number suppletion.
 
-@cite{smith-moskal-xu-kang-bobaljik-2019} §3.7 attribute the gap to
-*locality*: structural-adjacency (@cite{bobaljik-2012}) and linear-
-adjacency (@cite{embick-2010}) are too restrictive once AAB is
-admitted. They endorse the @cite{moskal-2015a-dissertation} theory of
+[smith-moskal-xu-kang-bobaljik-2019] §3.7 attribute the gap to
+*locality*: structural-adjacency ([bobaljik-2012]) and linear-
+adjacency ([embick-2010]) are too restrictive once AAB is
+admitted. They endorse the [moskal-2015a-dissertation] theory of
 **accessibility domains (AD)**: a category-defining node has a
 delimiting effect that puts more-distant material outside the AD of
 the root, blocking it from conditioning suppletion. Lexical material
@@ -39,16 +39,16 @@ has such a node (so case can't reach the root); pronouns lack it
 This file represents the **output** of an AD computation projected
 onto cell positions: a function `Nat → Tag` that says, for each cell,
 which locality unit it belongs to. The trigger-relative AD theory
-(@cite{moskal-2015a-dissertation}: "the first category-defining node
+([moskal-2015a-dissertation]: "the first category-defining node
 above the root, and one node above that") is more nuanced — it's a
 relation between a *trigger node* and a *root node* in a tree, not a
 labeling of paradigm cells.
 
 The substrate is theory-neutral about how the partition is computed.
-@cite{moskal-2015a-dissertation}'s AD is one source. @cite{embick-2010}'s
+[moskal-2015a-dissertation]'s AD is one source. [embick-2010]'s
 linear adjacency is another (every position in its own one-cell
-domain). @cite{bobaljik-2012}'s structural adjacency is a third.
-@cite{caha-2009}'s Nanosyntax doesn't fit a domain-partition shape at
+domain). [bobaljik-2012]'s structural adjacency is a third.
+[caha-2009]'s Nanosyntax doesn't fit a domain-partition shape at
 all — it derives AAB exclusion (or non-exclusion) from phrasal
 spellout + the Superset Principle, not from locality. Consumers
 state which projection they want; the substrate doesn't pick.

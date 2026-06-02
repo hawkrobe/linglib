@@ -2,11 +2,11 @@ import Linglib.Semantics.Attitudes.Desire
 import Linglib.Semantics.Attitudes.CondoravdiLauer
 
 /-!
-# @cite{lassiter-2017} (apparatus) / @cite{lassiter-2011} (want application) — Expected-value desire
+# [lassiter-2017] (apparatus) / [lassiter-2011] (want application) — Expected-value desire
 
-@cite{lassiter-2017} ch.7 ("Scalar goodness", *not* a desire chapter)
+[lassiter-2017] ch.7 ("Scalar goodness", *not* a desire chapter)
 develops an expected-value semantics for evaluative gradable predicates;
-@cite{lassiter-2011} (NYU dissertation, ch.6) applies the apparatus to
+[lassiter-2011] (NYU dissertation, ch.6) applies the apparatus to
 *want*. The book extends the *good* analysis to *want* in a single
 sentence at §8.13 (p.249) — *want* is gradable like *like, matter,
 care, need*.
@@ -16,24 +16,24 @@ This study file:
 * §1 builds the **bare-threshold conflict-witness model** (4 worlds,
   uniform prior 1/4, V = (10, 4, 4, 0), θ = 3/2, `p = {w₀, w₁}`).
 * §2 replicates the conflict predictions: `want_p ∧ want_negp`.
-* §3 cross-paper bridge to @cite{condoravdi-lauer-2016}: C&L's
+* §3 cross-paper bridge to [condoravdi-lauer-2016]: C&L's
   `wantEP_jointly_belief_consistent` forbids the witness; the
   Lassiter bare apparatus exhibits it. **Different mechanisms.**
-* §4 cross-paper bridge to @cite{heim-1992}: same configuration is
+* §4 cross-paper bridge to [heim-1992]: same configuration is
   `wantHeimDefined`-OK, but `wantHeim_no_simultaneous_pq_and_negpq`
   rules out joint truth. **Heim's (40) amendment is the structural
   analog of Lassiter's Sloman.**
 * §5 **Sloman's Principle blocks the witness** for Lassiter's *full*
   account. The bare-threshold conflict witness is exactly Cariani's
   Weakening counter-model (Lassiter's Table 8.4 reconstruction of
-  the @cite{cariani-2016} actualist Weakening attack, applied to EV;
+  the [cariani-2016] actualist Weakening attack, applied to EV;
   Cariani's own counter-model uses actualist closeness, not EV)
   p.239); Lassiter's response is Sloman's Principle, which excludes
   it. The witness is a falsifier of the *bare* form, not of
   Lassiter's actual position.
 
 The chronological-dependency rule applies: this file references
-@cite{phillips-brown-2025} only in docstring prose (PB is later);
+[phillips-brown-2025] only in docstring prose (PB is later);
 PhillipsBrown2025.lean already cross-references Lassiter via the
 `BeliefBasedDesireSemantics` typology design.
 -/
@@ -45,8 +45,8 @@ open Semantics.Attitudes.Desire.Lassiter
 
 /-! ## §1. The 4-world conflict-witness model
 
-Following @cite{lassiter-2017} §7.6 eq. 7.22 (apparatus) and
-@cite{lassiter-2011} ch.6 (*want* application). Uniform prior over
+Following [lassiter-2017] §7.6 eq. 7.22 (apparatus) and
+[lassiter-2011] ch.6 (*want* application). Uniform prior over
 `Fin 4`; value function asymmetric on `{w₀, w₁}` vs `{w₂, w₃}`. -/
 
 /-- Worlds. -/
@@ -99,7 +99,7 @@ theorem conflict_concrete :
     Lassiter.want belTotal prior value threshold (fun w => ¬ targetProp w) :=
   ⟨want_p, want_negp⟩
 
-/-! ## §3. Cross-paper bridge: @cite{condoravdi-lauer-2016}
+/-! ## §3. Cross-paper bridge: [condoravdi-lauer-2016]
 
 C&L's `wantEP_jointly_belief_consistent` says that for any
 `EffectivePreferentialBackground EP` and any agent `a`, world `w`,
@@ -127,7 +127,7 @@ theorem condoravdiLauer_blocks_lassiter_witness
   simp only [Set.mem_inter_iff, Set.mem_empty_iff_false, iff_false, not_and]
   exact fun ⟨h1, h2⟩ _ => h2 h1
 
-/-! ## §4. Cross-paper bridge: @cite{heim-1992}
+/-! ## §4. Cross-paper bridge: [heim-1992]
 
 Heim's (40) amendment + comparative-belief semantics block simultaneous
 `wantHeim p ∧ wantHeim ¬p` (substrate's
@@ -158,7 +158,7 @@ theorem heim_blocks_witness
 
 /-! ## §5. Sloman's Principle blocks the witness for Lassiter's full account
 
-Per @cite{lassiter-2017} §8.11 (p.245): *"we should not weaken the
+Per [lassiter-2017] §8.11 (p.245): *"we should not weaken the
 semantics to make room for the simultaneous truth of ought(φ) and
 ought(¬φ). Instead, we should allow that there are various, possibly
 conflicting **sources of value**..."* Sloman's Principle (eq. 8.16,

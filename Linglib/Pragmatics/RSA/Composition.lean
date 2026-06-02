@@ -4,7 +4,7 @@ import Linglib.Pragmatics.RSA.Noisy
 /-!
 # RSAConfig.composeWithPrior — stage-to-stage Bayesian composition
 
-@cite{nouwen-2024}
+[nouwen-2024]
 
 The canonical operation that composes two `RSAConfig`s by Bayesian update:
 the L1 posterior of the previous stage becomes the worldPrior of the next.
@@ -20,7 +20,7 @@ the L1 posterior of the previous stage becomes the worldPrior of the next.
 ```
 
 This makes the "one config's L1 IS the next config's prior" idiom — currently
-inlined in @cite{nouwen-2024}'s `seqAdjCfg` — a first-class operation rather
+inlined in [nouwen-2024]'s `seqAdjCfg` — a first-class operation rather
 than a per-study plumbing pattern.
 
 ## Speaker chain rule (A) vs listener chain rule (C)
@@ -32,11 +32,11 @@ setup:
   `RSAConfig` with `Ctx = List U` and a `ctx`-dependent meaning function.
   Per-word S1 probabilities are chained via `trajectoryProb` (`Basic.lean`).
   Used by `Incremental.lean` (CGGP) and Product-of-Experts noisy models
-  (@cite{waldon-degen-2021}, @cite{schlotterbeck-wang-2023}).
+  ([waldon-degen-2021], [schlotterbeck-wang-2023]).
 
 - **(C) Listener chain (stage-to-stage).** A chain of `RSAConfig`s
   where stage k's worldPrior is stage (k-1)'s L1 (this operation).
-  Used by @cite{nouwen-2024}'s sequential evaluative-then-adjective inference.
+  Used by [nouwen-2024]'s sequential evaluative-then-adjective inference.
 
 For a noisy lex `f : U → W → ℚ` and a sequence `[w₁, ..., wₙ]`, both encodings
 yield the same L1 posterior:

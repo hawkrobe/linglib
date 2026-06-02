@@ -6,11 +6,11 @@ import Linglib.Data.WALS.Features.F32A
 
 /-!
 # Typology.Gender
-@cite{corbett-1991} @cite{corbett-2013} @cite{dryer-haspelmath-2013}
-@cite{dixon-1972} @cite{wals-2013}
+[corbett-1991] [corbett-2013] [dryer-haspelmath-2013]
+[dixon-1972] [wals-2013]
 
 Per-language typological substrate for gender / noun class systems. Covers
-three WALS chapters by @cite{corbett-2013}:
+three WALS chapters by [corbett-2013]:
 
 - **Ch 30**: number of genders (none, 2, 3, 4, 5+).
 - **Ch 31**: sex-based vs non-sex-based.
@@ -34,7 +34,7 @@ substrate-extension pattern. Fragment-importable.
 
 - **`GenderCount.fivePlus` is a single bin** for systems with 5+ noun
   classes. The boundary between "gender" (2-3) and "noun class" (4+) is
-  conventional, not categorical (@cite{corbett-1991}). Bantu languages
+  conventional, not categorical ([corbett-1991]). Bantu languages
   with ~15 classes and Fula with ~20 are both `.fivePlus`.
 - **`SemanticBasis` lists 5 dimensions** (sex, animacy, humanness, shape,
   rationality); other classifications (e.g. Aikhenvald 2003 noun-classifier
@@ -44,7 +44,7 @@ substrate-extension pattern. Fragment-importable.
 
 The 21-language sample and Corbett's typological generalisations live in
 `Studies/Corbett1991.lean`.
-@cite{kramer-2020}'s feature-tier analysis lives in
+[kramer-2020]'s feature-tier analysis lives in
 `Studies/Kramer2020.lean`.
 -/
 
@@ -125,7 +125,7 @@ inductive SemanticBasis where
 -- ============================================================================
 
 /-- A language's gender profile combining WALS Chs 30/31/32 + extra fields
-    (raw count, agreement targets per @cite{corbett-1991}'s Agreement
+    (raw count, agreement targets per [corbett-1991]'s Agreement
     Hierarchy, and semantic-basis dimensions). -/
 structure GenderProfile where
   /-- Language name. -/
@@ -140,7 +140,7 @@ structure GenderProfile where
   basis : GenderBasis
   /-- Ch 32: assignment system. -/
   assignment : AssignmentSystem
-  /-- Where gender agreement surfaces. @cite{corbett-1991}'s Agreement
+  /-- Where gender agreement surfaces. [corbett-1991]'s Agreement
       Hierarchy has four positions (attributive > predicate > relative
       pronoun > personal pronoun); `verb` is a linglib refinement for
       verbal agreement (see `Agreement.AgreementTarget`). -/
@@ -198,7 +198,7 @@ instance : DecidablePred IsCrossChapterConsistent := fun p =>
         p.basis ≠ .noGender ∧ p.assignment ≠ .noGender) from
     inferInstance
 
-/-- "Noun class" system: 5+ categories per @cite{corbett-1991}. -/
+/-- "Noun class" system: 5+ categories per [corbett-1991]. -/
 def IsNounClassSystem (p : GenderProfile) : Prop := p.rawGenderCount ≥ 5
 @[simp] theorem isNounClassSystem_iff (p : GenderProfile) :
     p.IsNounClassSystem ↔ p.rawGenderCount ≥ 5 := Iff.rfl
@@ -212,7 +212,7 @@ def HasAgreement (p : GenderProfile) : Prop := p.agreementTargets ≠ []
 instance : DecidablePred HasAgreement :=
   fun p => decidable_of_iff _ (hasAgreement_iff p).symm
 
-/-- "Canonical" gender system in @cite{corbett-1991}'s sense: sex-based,
+/-- "Canonical" gender system in [corbett-1991]'s sense: sex-based,
     2 or 3 genders, semantic + formal assignment. -/
 def IsCanonicalGender (p : GenderProfile) : Prop :=
   (p.genderCount = .two ∨ p.genderCount = .three) ∧
@@ -230,7 +230,7 @@ instance : DecidablePred IsCanonicalGender := fun p =>
        p.assignment = .semanticAndFormal) from
     inferInstance
 
-/-- Lowest agreement target in @cite{corbett-1991}'s hierarchy. -/
+/-- Lowest agreement target in [corbett-1991]'s hierarchy. -/
 def lowestAgreementTarget (p : GenderProfile) : Option AgreementTarget :=
   p.agreementTargets.foldl
     (λ acc t => match acc with
@@ -282,7 +282,7 @@ def walsAssignment (iso : String) : Option AssignmentSystem :=
     Chs 30/31/32. The three required-field fallbacks (`genderCountFb`,
     `basisFb`, `assignmentFb`) fire only when WALS is silent for that ISO.
     The `rawGenderCount`, `agreementTargets`, `semanticBases`, and
-    `attestedSurfaceGenders` fields are paper-stipulated per @cite{corbett-1991}
+    `attestedSurfaceGenders` fields are paper-stipulated per [corbett-1991]
     — they are not derivable from any WALS chapter and must be passed
     explicitly. -/
 def GenderProfile.fromWALS
@@ -314,6 +314,6 @@ def GenderProfile.fromWALS
     "aggregate-count theorems go stale" anti-pattern AND required
     `native_decide` for ~1000-element list reductions; deleted as part of
     the GenderProfile mathlib polish. The corpus distributions remain
-    documentary in @cite{corbett-2013}'s WALS chapters. -/
+    documentary in [corbett-2013]'s WALS chapters. -/
 
 end Typology.Gender

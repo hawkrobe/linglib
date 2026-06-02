@@ -1,9 +1,9 @@
 /-!
 # Long Distance Agree
-@cite{szabolcsi-2009}
+[szabolcsi-2009]
 
 A minimal formalization of the Long Distance Agree (LDA) configuration
-that @cite{szabolcsi-2009} proposes for cross-clausal feature valuation
+that [szabolcsi-2009] proposes for cross-clausal feature valuation
 of unvalued φ-features on a pronominal goal.
 
 ## Background
@@ -13,15 +13,15 @@ phase (a clause-bounded local relation). LDA relaxes the locality
 requirement: a probe in the matrix clause can value the unvalued
 φ-features of a goal in the embedded clause, provided the intervening
 C head is non-defective for LDA. The proposal originates in
-@cite{szabolcsi-2009} and is extended to controlled subject pronouns
-in @cite{satik-2019} and @cite{allotey-2021}.
+[szabolcsi-2009] and is extended to controlled subject pronouns
+in [satik-2019] and [allotey-2021].
 
 ## Key idea
 
 Three conditions jointly license LDA:
 1. The probe carries valued φ-features.
 2. The goal carries unvalued φ-features ([D, uφ] — a minimal pronoun
-   in the @cite{kratzer-2009} / @cite{landau-2015} sense).
+   in the [kratzer-2009] / [landau-2015] sense).
 3. The C head intervening between probe and goal is non-defective —
    it does not block the Agree relation.
 

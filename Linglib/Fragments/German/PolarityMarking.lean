@@ -2,11 +2,11 @@ import Linglib.Typology.PolarityMarking
 
 /-!
 # German Polarity-Marking Strategies
-@cite{turco-braun-dimroth-2014} @cite{hohle-1992} @cite{romero-han-2004}
+[turco-braun-dimroth-2014] [hohle-1992] [romero-han-2004]
 
 Lexical entries for how German marks polarity switches (negation → affirmation).
 
-The key finding of @cite{turco-braun-dimroth-2014} is that German does NOT use
+The key finding of [turco-braun-dimroth-2014] is that German does NOT use
 sentence-internal particles for polarity switches. Instead, German relies on
 Verum focus: a pitch accent on the finite verb. The particle
 *doch* can appear pre-utterance in corrections but is not sentence-internal
@@ -30,7 +30,7 @@ open Typology.PolarityMarking (Entry Strategy Env)
 /-- Verum focus — pitch accent on the finite verb.
     Dominant strategy in German for neg→affirm switches in both contexts.
     Sentence-internal; available in both contrast and correction.
-    @cite{hohle-1992}, @cite{turco-braun-dimroth-2014}: ~82% in contrast,
+    [hohle-1992], [turco-braun-dimroth-2014]: ~82% in contrast,
     ~78% in correction. -/
 abbrev verumFocus : Entry where
   label := "Verum focus"
@@ -38,10 +38,10 @@ abbrev verumFocus : Entry where
   environments := {.sentenceInternal, .contrast, .correction}
   strategy := .verumFocus
 
-/-- *doch* — polarity-reversing correction particle (@cite{holmberg-2016}).
+/-- *doch* — polarity-reversing correction particle ([holmberg-2016]).
     Assigns [+Pol] while contradicting a negative context. Available only
     in corrections, NOT sentence-internal in the sense of
-    @cite{turco-braun-dimroth-2014}: it precedes the utterance rather than
+    [turco-braun-dimroth-2014]: it precedes the utterance rather than
     appearing within the VP/middle field. Cross-linguistically the same
     class as Swedish *jo* and French *si*. -/
 abbrev dochPreUtterance : Entry where

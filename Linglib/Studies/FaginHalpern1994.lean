@@ -5,12 +5,12 @@ import Mathlib.Data.Fintype.Basic
 /-!
 # Knowledge-Probability Structures
 
-@cite{fagin-halpern-1994}
+[fagin-halpern-1994]
 
 Bridges Boolean epistemic logic (`EpistemicLogic.lean`) and graded
 probability operators (`EpistemicProbability.lean`) by defining
 *Kripke probability structures* — the combined framework from
-@cite{fagin-halpern-1994} where agents have both an information partition
+[fagin-halpern-1994] where agents have both an information partition
 (S5 accessibility) and a probability assignment at each state.
 
 ## Key contributions
@@ -24,12 +24,12 @@ probability operators (`EpistemicProbability.lean`) by defining
 
 3. **Bridge theorem**: under CONS + normalization, Boolean knowledge
    (`K_i φ`) implies probability-1 belief (`w_i(φ) = 1`), which is
-   @cite{fagin-halpern-1994}'s axiom W7.
+   [fagin-halpern-1994]'s axiom W7.
 
 4. **Probabilistic group operators**: `E_G^b` (everyone assigns probability
    ≥ b) and `C_G^b` (common probabilistic knowledge), generalizing the
    Boolean operators from `EpistemicLogic.lean`. Probabilistic CK uses
-   @cite{fagin-halpern-1994}'s `F_G^b` operator (Section 5), NOT the
+   [fagin-halpern-1994]'s `F_G^b` operator (Section 5), NOT the
    naive iteration `(E_G^b)^n`.
 
 5. **Condition hierarchy**: `sdp_implies_unif` under S5 — proves
@@ -41,11 +41,11 @@ probability operators (`EpistemicProbability.lean`) by defining
 ## Connection to the Epistemic Scale Hierarchy
 
 The indirect path from Kratzer ordering to RSA worldPrior goes through
-@cite{holliday-icard-2013}'s epistemic likelihood hierarchy:
+[holliday-icard-2013]'s epistemic likelihood hierarchy:
 
     Kratzer ordering → l-lifting → EpistemicSystemW → ... → RSA worldPrior
 
-This formalization provides @cite{fagin-halpern-1994}'s more direct
+This formalization provides [fagin-halpern-1994]'s more direct
 path: a `KripkeKP` structure already packages both the accessibility
 relation (for knowledge operators) and the probability assignment
 (for RSA). Under CONS, the two are coherently linked.

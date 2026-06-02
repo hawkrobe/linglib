@@ -1,6 +1,6 @@
 /-!
 # Deictic Features: Demonstrative Distance and Person Orientation
-@cite{moroney-2021}
+[moroney-2021]
 
 Framework-agnostic enumeration of deictic features carried by demonstratives.
 Promoted from `Fragments/Shan/Definiteness.SpatialRelation` (which carried

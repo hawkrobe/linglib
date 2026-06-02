@@ -10,7 +10,7 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # Permutation-Subset Combinatorics
-@cite{anttila-1997} @cite{zuraw-2010}
+[anttila-1997] [zuraw-2010]
 
 A closed-form count of `Equiv.Perm (Fin n)` filtered by predicates
 of the form "the highest-ranked constraint in `D` lies in `Y`" — the

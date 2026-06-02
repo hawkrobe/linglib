@@ -1,10 +1,10 @@
 import Linglib.Typology.WordOrder
 
 /-!
-# K'iche' word-order profile @cite{mondloch-2017} @cite{clemens-coon-2018}
+# K'iche' word-order profile [mondloch-2017] [clemens-coon-2018]
 
 K'iche' is not coded in WALS Chs 81/82/83 (ISO `quc` is absent), so
-the profile is grammar-grounded from @cite{mondloch-2017} rather than
+the profile is grammar-grounded from [mondloch-2017] rather than
 via `WordOrderProfile.ofWALS`. Mondloch documents verb-initial order:
 VS for intransitives and VOS for transitives.
 
@@ -17,7 +17,7 @@ for transitive clauses, with subject-initial orders increasingly
 attested under Spanish contact. Sister-language WALS codings
 illustrate the divergence — Kaqchikel `cak` is `.vos` in Ch 81,
 Tzutujil `tzj` is `.noDominantOrder`, Mam `mam` is `.vso` (different
-branch but verb-initial). @cite{clemens-coon-2018} surveys
+branch but verb-initial). [clemens-coon-2018] surveys
 derivational accounts of verb-initiality across Mayan; an alternative
 substrate commitment would be `.noDominant` (parallel to Tzutujil) or
 `.vso` per a corpus analysis. The Fragment commits to `.vos` because
@@ -30,7 +30,7 @@ initial in both intransitive and transitive clauses).
 namespace Kiche
 
 /-- K'iche' word-order profile, grammar-grounded from
-    @cite{mondloch-2017} ("the preferred word order appears to be:
+    [mondloch-2017] ("the preferred word order appears to be:
     verb-subject", with VOS for transitives). Not in WALS Chs
     81/82/83 — fields override `.notInWALS`. The `.vos` basic-order
     commitment is contested across Mayanist literature; see module

@@ -2,10 +2,10 @@ import Linglib.Core.Logic.Modal.BSML.Enrichment
 
 /-!
 # BSML Free Choice Theorems
-@cite{aloni-2022}
+[aloni-2022]
 
 Pragmatic enrichment combined with split disjunction derives free choice
-inferences. This module proves the core FC results from @cite{aloni-2022}
+inferences. This module proves the core FC results from [aloni-2022]
 for arbitrary NE-free formulas.
 
 ## Key Results
@@ -64,7 +64,7 @@ theorem ne_not_downwardClosed [Nonempty W] (M : BSMLModel W Atom) :
 /--
 Narrow-scope Free Choice: [◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β (for NE-free α, β)
 
-(Fact 4 from @cite{aloni-2022})
+(Fact 4 from [aloni-2022])
 
 The enriched disjunction inside ◇ splits the accessible subteam into
 two non-empty parts (by enrichment + NE). Each part supports its
@@ -99,7 +99,7 @@ theorem narrowScopeFC (M : BSMLModel W Atom)
 Wide-scope Free Choice: [◇α ∨ ◇β]⁺ ⊨ ◇α ∧ ◇β (for NE-free α, β with
 indisputable R)
 
-(Fact 5 from @cite{aloni-2022})
+(Fact 5 from [aloni-2022])
 
 The disjunction splits t = t₁ ∪ t₂. From t₁ pick w₁ — it has a subteam
 s_a ⊆ R[w₁] supporting α. By indisputability R[w] = R[w₁] for all w ∈ t,
@@ -137,7 +137,7 @@ theorem wideScopeFC (M : BSMLModel W Atom)
 /--
 Modal Disjunction: [α ∨ β]⁺ ⊨_S ◇α ∧ ◇β (for NE-free α, β with state-based R)
 
-(Fact 3 from @cite{aloni-2022})
+(Fact 3 from [aloni-2022])
 
 Plain disjunction under enrichment, with state-based accessibility,
 derives possibility of each disjunct — without needing ◇ in the formula.
@@ -178,7 +178,7 @@ theorem modalDisjunction (M : BSMLModel W Atom)
 /--
 Dual Prohibition: [¬◇(α ∨ β)]⁺ ⊨ ¬◇α ∧ ¬◇β (for NE-free α, β)
 
-(Fact 11 from @cite{aloni-2022})
+(Fact 11 from [aloni-2022])
 
 Under negation, FC is correctly cancelled: the enriched prohibition
 of the disjunction entails prohibition of each disjunct. The proof
@@ -209,7 +209,7 @@ theorem dualProhibition (M : BSMLModel W Atom)
 /--
 Double Negation FC: [¬¬◇(α ∨ β)]⁺ ⊨ ◇α ∧ ◇β (for NE-free α, β)
 
-(Fact 12 from @cite{aloni-2022})
+(Fact 12 from [aloni-2022])
 
 Under double negation, FC effects re-emerge. Stripping the enrichment
 around ¬ reveals `support M (enrich (◇(α∨β))) t` (by bilateral negation
@@ -231,7 +231,7 @@ theorem doubleNegationFC (M : BSMLModel W Atom)
 section NegativeFC
 
 /--
-Negative FC fails in BSML+ (Fact 14 from @cite{aloni-2022}).
+Negative FC fails in BSML+ (Fact 14 from [aloni-2022]).
 
 In BSML* (where ∅ is excluded), ◇¬(α ∧ β) ⊨ ◇¬α. But in BSML+
 (with pragmatic enrichment), this inference is NOT valid.

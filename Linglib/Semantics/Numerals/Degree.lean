@@ -3,7 +3,7 @@ import Linglib.Core.Scales.Scale
 /-!
 # Numeral Semantics over `HasDegree`
 
-@cite{kennedy-2007} @cite{schwarzschild-2005}
+[kennedy-2007] [schwarzschild-2005]
 
 Generic numeral predicates parameterized by the `Core.Scale.HasDegree`
 typeclass — applicable to any entity type carrying a measure into a totally

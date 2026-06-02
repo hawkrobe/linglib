@@ -2,11 +2,11 @@ import Linglib.Syntax.Minimalist.Basic
 
 /-!
 # Late Merger
-@cite{lebeaux-1988} @cite{takahashi-hulsey-2009} @cite{bhatt-pancheva-2004}
+[lebeaux-1988] [takahashi-hulsey-2009] [bhatt-pancheva-2004]
 
-Late merger (originally @cite{lebeaux-1988} for adjuncts; extended to NP
-restrictors as Wholesale Late Merger by @cite{takahashi-hulsey-2009};
-extended to degree clauses by @cite{bhatt-pancheva-2004}) introduces
+Late merger (originally [lebeaux-1988] for adjuncts; extended to NP
+restrictors as Wholesale Late Merger by [takahashi-hulsey-2009];
+extended to degree clauses by [bhatt-pancheva-2004]) introduces
 some sub-constituent of a moved phrase countercyclically at a non-base
 position on the movement chain.
 
@@ -48,7 +48,7 @@ reconstruction triggers a Condition C violation. Late merger can
 avoid this by introducing the constituent at a higher *admissible*
 copy position.
 
-@cite{gong-2022} shows that for NP restrictors the case requirement is
+[gong-2022] shows that for NP restrictors the case requirement is
 the key factor controlling Condition C reconstruction effects in
 Mongolian scrambling: reconstruction tracks case positions, not the
 A/A-bar distinction.
@@ -77,9 +77,9 @@ namespace Minimalist
     above the binder.
 
     Specializations:
-    - `wlmBleedsCondC` (@cite{takahashi-hulsey-2009}): NP restrictors,
+    - `wlmBleedsCondC` ([takahashi-hulsey-2009]): NP restrictors,
       admissible := case-available
-    - Late merger of degree clauses (@cite{bhatt-pancheva-2004}): degree
+    - Late merger of degree clauses ([bhatt-pancheva-2004]): degree
       clauses, admissible := position can host a ⟨t⟩-scope subject to
       the Heim-Kennedy Constraint -/
 def lateMergerBleeds {α : Type*} (admissible : α → Bool) (height : α → Nat)
@@ -154,7 +154,7 @@ structure ChainPosition where
 
     Case-licensing specialization of `lateMergerBleeds`.
 
-    @cite{gong-2022} condition (2): WLM may bleed Condition C if the
+    [gong-2022] condition (2): WLM may bleed Condition C if the
     movement chain permits a case position higher than the pronoun
     binder. -/
 def wlmBleedsCondC (chain : List ChainPosition) (binderHeight : Nat) : Bool :=
@@ -171,7 +171,7 @@ def wlmForcesReconstruction (chain : List ChainPosition) (binderHeight : Nat) : 
     determiner with an NP restrictor that can be late-merged.
     PP-scrambling always exhibits obligatory Condition C reconstruction.
 
-    @cite{gong-2022} section 6.2: scrambling of PPs headed by *esreg*
+    [gong-2022] section 6.2: scrambling of PPs headed by *esreg*
     'against' always forces reconstruction, regardless of the binder's
     position. -/
 def ppAlwaysReconstructs : Bool := true
@@ -241,9 +241,9 @@ def conditionCSatisfied (tree binder rExpr : SyntacticObject) : Bool :=
 /-- A position at a phase edge on a movement chain.
 
     Successive-cyclic movement creates an intermediate copy at each
-    phase edge the mover passes through (@cite{chomsky-2000}).
+    phase edge the mover passes through ([chomsky-2000]).
     Whether case is available at the edge determines whether WLM
-    can target that position (@cite{gong-2022}). -/
+    can target that position ([gong-2022]). -/
 structure PhaseEdgePosition where
   phaseCat : Cat
   height : Nat
@@ -262,7 +262,7 @@ def successiveCyclicChain (edges : List PhaseEdgePosition) : List ChainPosition 
 
 /-- CP edges do not provide case positions. C does not assign structural
     case; it passes tense/agreement features to T via Feature Inheritance
-    (@cite{chomsky-2008}). -/
+    ([chomsky-2008]). -/
 theorem cp_edge_no_case (h : Nat) :
     (PhaseEdgePosition.mk .C h false).toChainPosition.caseAvailable = false := rfl
 
@@ -270,7 +270,7 @@ theorem cp_edge_no_case (h : Nat) :
     CP edge to a matrix clause position. The CP edge provides no case,
     but the matrix position may — depending on case competitors.
 
-    This is the structural template for @cite{gong-2022}'s LDS data:
+    This is the structural template for [gong-2022]'s LDS data:
     embedded ACC object → Spec,CP (no case) → matrix clause (case
     depends on whether a dependent case competitor exists). -/
 def ldsChainTemplate (cpEdgeHeight matrixHeight : Nat) (matrixCaseAvailable : Bool)
@@ -290,7 +290,7 @@ theorem lds_cp_edge_alone_no_bleed (cpEdgeHeight binderHeight : Nat) :
 
 /-- LDS with a matrix case position above the binder bleeds Condition C.
 
-    @cite{gong-2022} (41): embedded ACC object scrambled to matrix
+    [gong-2022] (41): embedded ACC object scrambled to matrix
     clause; matrix dative argument is the binder. Dependent ACC is
     available in the matrix clause (above the binder), so WLM bleeds. -/
 theorem lds_matrix_case_bleeds (cpEdgeHeight matrixHeight binderHeight : Nat)

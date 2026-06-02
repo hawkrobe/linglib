@@ -2,7 +2,7 @@ import Linglib.Syntax.Pronoun.Basic
 
 /-!
 # Spanish Pronoun Fragment
-@cite{adamson-zompi-2025}
+[adamson-zompi-2025]
 
 Personal pronouns (strong forms) for Spanish, including the polite
 pronoun USTED.
@@ -16,7 +16,7 @@ Spanish has a T/V distinction:
 ## USTED and the PCC
 
 Like Italian LEI, USTED triggers 3sg verbal agreement but is interpretably
-2nd person. @cite{rezac-2011} observes PCC effects with USTED: the
+2nd person. [rezac-2011] observes PCC effects with USTED: the
 accusative clitic *la* is grammatical in a 3>3 configuration if its
 referent is 3rd person, but ungrammatical as polite USTED (§6.1, (43)).
 
@@ -46,8 +46,8 @@ def tu : PersonalPronoun :=
 /-- *usted* — polite 2sg (V form, triggers 3sg agreement).
     Agreement person is 3rd, interpretable person is 2nd. Triggers PCC
     effects: *la* as USTED.ACC is banned in 3>USTED configurations
-    (@cite{rezac-2011}, @cite{adamson-zompi-2025} §6.1).
-    @cite{adamson-zompi-2025} -/
+    ([rezac-2011], [adamson-zompi-2025] §6.1).
+    [adamson-zompi-2025] -/
 def usted : PersonalPronoun :=
   { form := "usted", person := some .third, number := some .sg, register := .formal,
     referentialPerson := some .second }
@@ -89,7 +89,7 @@ theorem tv_distinction :
     tu.register = .informal ∧ usted.register = .formal := ⟨rfl, rfl⟩
 
 /-- USTED has 3rd person agreement features but 2nd person interpretable
-    features. @cite{adamson-zompi-2025} -/
+    features. [adamson-zompi-2025] -/
 theorem usted_dual_person :
     usted.person = some .third ∧
     usted.referentialPerson = some .second := ⟨rfl, rfl⟩

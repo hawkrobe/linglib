@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.Voice
 
 /-!
 # Indonesian Voice System
-@cite{sneddon-1996}
+[sneddon-1996]
 
 Indonesian distinguishes three productive voice prefixes on verbs:
 
@@ -13,13 +13,13 @@ Indonesian distinguishes three productive voice prefixes on verbs:
   expressed via *oleh* 'by' PP or postverbal DP.
 - **ber-** (middle voice): detransitivizing prefix producing reflexive,
   dispositional/passive, anticausative, and incorporation readings
-  (@cite{beavers-udayana-2022}).
+  ([beavers-udayana-2022]).
 
 There is also an unmarked object voice (OV) where the agent is a
 preverbal pronoun/DP and the patient follows the bare root, but we
 focus on the prefixed forms here.
 
-## Passive types (@cite{sneddon-1996} §3.27–3.32)
+## Passive types ([sneddon-1996] §3.27–3.32)
 
 Indonesian has two structurally distinct passive constructions:
 - **Type one** (§3.27): *di-*verb + (*oleh*) + agent. Agent is 3rd person or noun.
@@ -30,7 +30,7 @@ Indonesian has two structurally distinct passive constructions:
 
 ## Parametric decomposition
 
-Under the Minimalist analysis of @cite{alexiadou-schaefer-2015}, the three
+Under the Minimalist analysis of [alexiadou-schaefer-2015], the three
 voices occupy distinct positions in the ±D / ±λx parameter space:
 
 | Voice | ±D | ±λx | Notes |
@@ -92,9 +92,9 @@ def menParams : VoiceParams :=
     syntactically defective (lacking [+D]).
 
     Unlike English passive Voice (which is [+D, −λx] in the
-    @cite{alexiadou-schaefer-2015} typology), *di-*'s implicit argument is
+    [alexiadou-schaefer-2015] typology), *di-*'s implicit argument is
     semantically active: it licenses *oleh* 'by' phrases and controls
-    rationale clause PRO (@cite{beavers-udayana-2022}: §2.1). This places
+    rationale clause PRO ([beavers-udayana-2022]: §2.1). This places
     *di-* in the [+D, +∃x] cell — specifier selected, agent existentially
     bound — rather than the [+D, −λx] cell occupied by English passive
     and Romance anticausative SE. -/
@@ -106,7 +106,7 @@ def diParams : VoiceParams :=
     Neither ±D nor ±λx is fixed — the actual setting is determined by
     independent argument realization strategies (incorporation vs.
     functional application) and lexical semantic/pragmatic factors
-    (@cite{beavers-udayana-2022}: §3). -/
+    ([beavers-udayana-2022]: §3). -/
 def berParams : VoiceParams :=
   { selectsSpecifier := none
   , extArgSemantics := none }
@@ -147,11 +147,11 @@ theorem ber_compatible_with_all (f : VoiceFlavor) :
   cases f <;> rfl
 
 -- ============================================================================
--- § 4: Passive Types (@cite{sneddon-1996} §3.27–3.32)
+-- § 4: Passive Types ([sneddon-1996] §3.27–3.32)
 -- ============================================================================
 
 /-- Indonesian has two structurally distinct passive constructions
-    (@cite{sneddon-1996} §3.27–3.28, following Dardjowidjojo 1978).
+    ([sneddon-1996] §3.27–3.28, following Dardjowidjojo 1978).
 
     - **Type one** (§3.27): *di-*verb + (*oleh*) + agent.
       Subject (patient) + **di-**verb + (**oleh**) + Agent.
@@ -199,7 +199,7 @@ inductive AgentDP where
 
 /-- Whether passive type one (*di-*verb) is available for this agent.
     Type one requires the agent to be in "Box A": 3rd person (pronoun
-    or noun), or absent (@cite{sneddon-1996} §3.27, §3.29). -/
+    or noun), or absent ([sneddon-1996] §3.27, §3.29). -/
 def AgentDP.allowsTypeOne : AgentDP → Bool
   | .firstPerson => false
   | .secondPerson => false
@@ -209,7 +209,7 @@ def AgentDP.allowsTypeOne : AgentDP → Bool
 
 /-- Whether passive type two (agent + bare verb) is available.
     Type two requires the agent to be a pronoun, in "Box B"
-    (@cite{sneddon-1996} §3.28, §3.29). -/
+    ([sneddon-1996] §3.28, §3.29). -/
 def AgentDP.allowsTypeTwo : AgentDP → Bool
   | .firstPerson => true
   | .secondPerson => true
@@ -230,7 +230,7 @@ theorem only_third_pronoun_allows_both :
     = true := rfl
 
 /-- 1st and 2nd person pronouns are type-two-only — type one with
-    these agents is ungrammatical (@cite{sneddon-1996} §3.29 fn. 2). -/
+    these agents is ungrammatical ([sneddon-1996] §3.29 fn. 2). -/
 theorem first_person_type_two_only :
     AgentDP.firstPerson.allowsTypeOne = false ∧
     AgentDP.firstPerson.allowsTypeTwo = true := ⟨rfl, rfl⟩
@@ -239,19 +239,19 @@ theorem second_person_type_two_only :
     AgentDP.secondPerson.allowsTypeTwo = true := ⟨rfl, rfl⟩
 
 /-- Nouns are type-one-only — they cannot appear in the preverbal
-    agent position of type two (@cite{sneddon-1996} §3.29). -/
+    agent position of type two ([sneddon-1996] §3.29). -/
 theorem noun_type_one_only :
     AgentDP.noun.allowsTypeOne = true ∧
     AgentDP.noun.allowsTypeTwo = false := ⟨rfl, rfl⟩
 
 /-- Agentless passives use type one exclusively — there is no
-    type two without an agent (@cite{sneddon-1996} §3.27). -/
+    type two without an agent ([sneddon-1996] §3.27). -/
 theorem unexpressed_type_one_only :
     AgentDP.unexpressed.allowsTypeOne = true ∧
     AgentDP.unexpressed.allowsTypeTwo = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 5: ter- and Passive Type Interaction (@cite{sneddon-1996} §3.32)
+-- § 5: ter- and Passive Type Interaction ([sneddon-1996] §3.32)
 -- ============================================================================
 
 /-- Whether a voice prefix restricts passive type selection.
@@ -267,7 +267,7 @@ inductive VoicePrefixConstraint where
   deriving DecidableEq, Repr
 
 /-- *ter-* verbs force type one passive — the preverbal agent position
-    of type two is unavailable (@cite{sneddon-1996} §3.32). -/
+    of type two is unavailable ([sneddon-1996] §3.32). -/
 def terVoiceConstraint : VoicePrefixConstraint := .typeOneOnly
 
 /-- Regular *di-* verbs have no constraint on passive type selection. -/

@@ -1,6 +1,6 @@
 /-
 HPSG formalization: typed feature structures, signs, and phrase structure schemata.
-@cite{pollard-sag-1994}, @cite{sag-wasow-bender-2003}, @cite{ginzburg-sag-2000}.
+[pollard-sag-1994], [sag-wasow-bender-2003], [ginzburg-sag-2000].
 -/
 
 import Linglib.Core.Word
@@ -24,7 +24,7 @@ inductive Inv where
   | minus
   deriving Repr, DecidableEq
 
-/-- The MODE feature on CONTENT, per @cite{sag-wasow-bender-2003} Ch. 7.
+/-- The MODE feature on CONTENT, per [sag-wasow-bender-2003] Ch. 7.
 
     SWB2003 uses MODE to classify the semantic type of CONTENT:
     - `ref`: referential — pronouns, R-expressions, nouns
@@ -49,7 +49,7 @@ structure HeadFeatures where
   aux : Bool := false
   deriving Repr, DecidableEq
 
-/-- Content features for binding theory, per @cite{sag-wasow-bender-2003} Ch. 7.
+/-- Content features for binding theory, per [sag-wasow-bender-2003] Ch. 7.
 
     SWB2003's binding theory uses MODE and ARG-ST outranking:
     - Principle A: [MODE ana] must be outranked by a coindexed element
@@ -79,13 +79,13 @@ structure Synsem where
   cont : ContentFeatures := {}
   /-- MOD feature: what this sign modifies (none = not a modifier).
 
-      Per @cite{pollard-sag-1994} Ch. 1, MOD is a HEAD feature that
+      Per [pollard-sag-1994] Ch. 1, MOD is a HEAD feature that
       restricts what a modifier can combine with. Relative clauses
       have `[MOD NP]`; adjectives have `[MOD N]`. -/
   mod : Option UD.UPOS := none
   deriving Repr
 
-/-- ARG-ST: the ordered list of a word's arguments, per @cite{sag-wasow-bender-2003} Ch. 7.
+/-- ARG-ST: the ordered list of a word's arguments, per [sag-wasow-bender-2003] Ch. 7.
 
     ARG-ST = SPR ⊕ COMPS. Outranking is defined over position in this list:
     element i outranks element j iff i < j. -/
@@ -99,7 +99,7 @@ def Valence.toArgSt (v : Valence) : ArgSt :=
 
 /-- Does element at position i outrank element at position j on ARG-ST?
 
-    Per @cite{sag-wasow-bender-2003}: "X outranks Y iff X precedes Y on
+    Per [sag-wasow-bender-2003]: "X outranks Y iff X precedes Y on
     some ARG-ST list." -/
 def ArgSt.outranks (argSt : ArgSt) (i j : Nat) : Bool :=
   i < j && j < argSt.args.length
@@ -148,7 +148,7 @@ structure HeadSubjRule where
 
 /-- Head-Modifier Schema: head combines with a modifier.
 
-Per @cite{sag-wasow-bender-2003} (46), a saturated head combines with
+Per [sag-wasow-bender-2003] (46), a saturated head combines with
 a modifier whose MOD value matches the head's category. Used for
 adjective modification ("tall boy"), PP modification ("book on the table"),
 and relative clauses ("book that John read"). -/

@@ -8,11 +8,11 @@ import Mathlib.Data.Set.Lattice
 import Mathlib.Order.Heyting.Basic
 
 /-!
-# Barker & Pullum (1990) — A Theory of Command Relations @cite{barker-pullum-1990}
+# Barker & Pullum (1990) — A Theory of Command Relations [barker-pullum-1990]
 
 *Linguistics and Philosophy* 13(1): 1–34.
 
-@cite{barker-pullum-1990}'s algebraic theory of command relations provides
+[barker-pullum-1990]'s algebraic theory of command relations provides
 a unified framework for cross-theoretic comparison: command relations form
 a **complete lattice** under the antitone map `P ↦ C_P`, and the
 **Intersection Theorem** `C_{P∪Q} = C_P ∩ C_Q` explains why theories
@@ -22,9 +22,9 @@ configurational structures.
 ## Concrete command relations
 
 Different syntactic theories use different "command" relations:
-- **Minimalism**: c-command (tree geometry; @cite{reinhart-1976})
-- **HPSG**: o-command (obliqueness hierarchy; @cite{pollard-sag-1994})
-- **Dependency Grammar**: d-command (dependency paths; @cite{hudson-1990})
+- **Minimalism**: c-command (tree geometry; [reinhart-1976])
+- **HPSG**: o-command (obliqueness hierarchy; [pollard-sag-1994])
+- **Dependency Grammar**: d-command (dependency paths; [hudson-1990])
 
 Under the *configurational assumption* (tree structure encodes obliqueness),
 all three converge — explained by the Intersection Theorem
@@ -32,7 +32,7 @@ all three converge — explained by the Intersection Theorem
 
 ## Algebraic structure
 
-§ J also formalizes @cite{kracht-1993}'s extension showing that command
+§ J also formalizes [kracht-1993]'s extension showing that command
 relations form a **distributoid** — an algebraic structure (D, ∩, ∪, ∘)
 in which composition distributes over intersection. (TODO: split § J into
 its own `Studies/Kracht1993.lean` once the dependencies are isolated.)
@@ -74,7 +74,7 @@ def sister : Address → Option Address
   | [Dir.R] => some [Dir.L]
   | d :: rest => (sister rest).map (d :: ·)
 
-/-- **C-command** (@cite{reinhart-1976} def. 36):
+/-- **C-command** ([reinhart-1976] def. 36):
     A c-commands B iff A's sister dominates B.
 
     Standard definition for binary branching trees; `dominates`
@@ -296,14 +296,14 @@ def branchingNodes {Node : Type} [PartialOrder Node] (T : TreeOrder Node) : Set 
 def maximalProjections {Node : Type} [PartialOrder Node] (T : LabeledTree Node) : Set Node :=
   {n | T.label n = .S ∨ T.label n = .NP ∨ T.label n = .VP ∨ T.label n = .PP}
 
-/-- **S-command** (@cite{langacker-1969}'s original "command" relation, parameterized by S-nodes) -/
+/-- **S-command** ([langacker-1969]'s original "command" relation, parameterized by S-nodes) -/
 def sCommand {Node : Type} [PartialOrder Node] (T : LabeledTree Node) := commandRelation T.toTreeOrder (sNodes T)
 
 /-- **NP-command** -/
 def npCommand {Node : Type} [PartialOrder Node] (T : LabeledTree Node) := commandRelation T.toTreeOrder (npNodes T)
 
-/-- **K-command** (@cite{reinhart-1976}'s c-command, parameterized by branching nodes;
-    also @cite{kayne-1984}) -/
+/-- **K-command** ([reinhart-1976]'s c-command, parameterized by branching nodes;
+    also [kayne-1984]) -/
 def kCommand {Node : Type} [PartialOrder Node] (T : TreeOrder Node) := commandRelation T (branchingNodes T)
 
 /-- **MAX-command** (approximates Chomsky's c-command) -/
@@ -390,8 +390,8 @@ def npMates {Node : Type} [PartialOrder Node] (T : LabeledTree Node) : Set (Node
 -- PART I: B&P COVERAGE SUMMARY
 
 /-!
-## @cite{barker-pullum-1990} Formalization Coverage
-@cite{barker-pullum-1990} @cite{hudson-1990} @cite{pollard-sag-1994} @cite{reinhart-1976}
+## [barker-pullum-1990] Formalization Coverage
+[barker-pullum-1990] [hudson-1990] [pollard-sag-1994] [reinhart-1976]
 
 ### Fully Proved Theorems
 
@@ -456,10 +456,10 @@ are unified through B&P's algebraic framework. When the structural assumptions a
 (configurational languages), the theories necessarily agree by the Intersection Theorem.
 -/
 
--- PART J: @cite{kracht-1993} - DISTRIBUTOID STRUCTURE
+-- PART J: [kracht-1993] - DISTRIBUTOID STRUCTURE
 
 /-!
-## @cite{kracht-1993} "Mathematical Aspects of Command Relations"
+## [kracht-1993] "Mathematical Aspects of Command Relations"
 
 Kracht shows that command relations have richer algebraic structure than B&P
 identified:
@@ -863,7 +863,7 @@ theorem union_elimination_reverse {Node : Type} [PartialOrder Node] (T : TreeOrd
 `Set α` is a `CompleteAtomicBooleanAlgebra` and hence a `HeytingAlgebra`.
 The Heyting implication for sets is: `A ⇨ B = Aᶜ ∪ B`
 
-@cite{kracht-1993} shows command relations form a Heyting algebra. Since command
+[kracht-1993] shows command relations form a Heyting algebra. Since command
 relations are a subset of `Set (Node × Node)`, and the latter is already
 a Heyting algebra, we show:
 
@@ -1030,7 +1030,7 @@ theorem normalForm_meet_is_union {Node : Type} [PartialOrder Node] (T : TreeOrde
 -- J.9: Summary - Kracht's Algebraic Theory
 
 /-!
-### @cite{kracht-1993} Coverage Summary
+### [kracht-1993] Coverage Summary
 
 | Kracht Reference | Name | Status |
 |------------------|------|--------|

@@ -2,9 +2,9 @@ import Linglib.Studies.Ross1967
 
 /-!
 # Manner-of-Speaking Island Effects: Experimental Data
-@cite{lu-pan-degen-2025}
+[lu-pan-degen-2025]
 
-Empirical data from @cite{lu-pan-degen-2025}, "Evidence for a discourse account
+Empirical data from [lu-pan-degen-2025], "Evidence for a discourse account
 of manner-of-speaking islands," *Language* 101(4): 627–659.
 
 Five acceptability judgment experiments testing the causal relationship between

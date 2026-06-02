@@ -13,7 +13,7 @@ stop onto the preceding nasal.
 § 1 demonstrates velar assimilation (/n/ + /k/ → [ŋk]) and § 2 demonstrates
 labial assimilation (/n/ + /p/ → [mp]).
 
-@cite{clements-1985}
+[clements-1985]
 -/
 
 namespace Clements1985

@@ -5,7 +5,7 @@ import Linglib.Phenomena.WordOrder.Basic
 
 /-!
 # Minimalist Derivations of Word Order
-@cite{chomsky-1995}
+[chomsky-1995]
 
 Verifies that Minimalist Merge derivations model SVO sentences from the
 phenomena data, with phonological yields matching expected word order.

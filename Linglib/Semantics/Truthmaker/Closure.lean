@@ -1,6 +1,6 @@
 import Linglib.Semantics.Truthmaker.Basic
 
-/-! # Closure Conditions on Truthmaker Propositions @cite{jago-2026}
+/-! # Closure Conditions on Truthmaker Propositions [jago-2026]
 
 Jago Def 4: A truthmaker proposition (a set of states `P : Set S`) may
 satisfy three closure conditions:
@@ -86,7 +86,7 @@ section Regular
 variable {S : Type*} [SemilatticeSup S]
 
 /-- A proposition is **regular** iff both closed (under fusion) and
-    convex (under parthood) — @cite{jago-2026} Def 4.
+    convex (under parthood) — [jago-2026] Def 4.
     `Prop`-shape via `∧` for mathlib uniformity. -/
 def IsRegular (p : TMProp S) : Prop := IsClosed p ∧ IsConvex p
 

@@ -2,13 +2,13 @@ import Linglib.Features.Polarity
 
 /-!
 # Answering System Typology
-@cite{holmberg-2016}
+[holmberg-2016]
 
 Cross-linguistic variation in how languages answer polar questions.
 
 ## The Binary Parameter
 
-@cite{holmberg-2016}'s central typological contribution: languages divide into
+[holmberg-2016]'s central typological contribution: languages divide into
 two types based on what "yes" means in response to a negative question
 ("Doesn't John drink?"):
 
@@ -28,7 +28,7 @@ or echo the finite verb:
 
 ## Connection to PolP
 
-In @cite{holmberg-2016}'s syntax, every finite clause has a polarity head
+In [holmberg-2016]'s syntax, every finite clause has a polarity head
 (PolP) bearing a valued or unvalued [±Pol] feature. In polar questions,
 [±Pol] is unvalued — the answer values it. The answering system parameter
 determines whether "yes" values the variable as [+Pol] (polarity-based)
@@ -89,7 +89,7 @@ theorem answering_systems_diverge_on_negative :
 
 /-! ## Negation Height and Answering System Derivation
 
-@cite{holmberg-2016} Ch 4.3-4.7 derives the answering system from whether
+[holmberg-2016] Ch 4.3-4.7 derives the answering system from whether
 the negation in the question can assign value to the polarity variable [±Pol].
 The crucial factor is structural accessibility: if negation is close enough to
 [±Pol] to value it, the focused answer particle clashes with the inherited

@@ -8,10 +8,10 @@ import Linglib.Core.Logic.Team.Closure
 /-!
 # State-based Modal Logics for Free Choice — Aloni, Anttila & Yang 2024
 
-@cite{aloni-anttila-yang-2024}
+[aloni-anttila-yang-2024]
 
 Formalisation of two extensions of BSML introduced in
-@cite{aloni-anttila-yang-2024} (Notre Dame J. Formal Logic 65(4), 2024):
+[aloni-anttila-yang-2024] (Notre Dame J. Formal Logic 65(4), 2024):
 
 * `BSMLOr` — BSML extended with the **global disjunction** `⨼`
   (Definition 2.1; written `∨∨` in some sources).
@@ -56,14 +56,14 @@ insight: each extension occupies a different cell of the
 The paper's BSML includes `⊥` (weak contradiction) as a primitive, whereas
 linglib's `BSMLFormula` (Aloni 2022) does not (the original defines
 `⊥ := p ∧ ¬p`). The extension formula types here include `⊥` to match
-@cite{aloni-anttila-yang-2024}; the embedding `BSMLFormula → Formula`
+[aloni-anttila-yang-2024]; the embedding `BSMLFormula → Formula`
 therefore has no preimage for `⊥`.
 
 `BSMLOr`'s global disjunction `⨼` is the team-semantic *inquisitive
 disjunction* — the support clause is propositional disjunction at the
 team level, in contrast to `disj`'s split-existential. Crucially, `⨼` is
 the *only* BSML-family connective that breaks union closure (Fact 2.7,
-proof in @cite{aloni-anttila-yang-2024}).
+proof in [aloni-anttila-yang-2024]).
 
 `BSMLEmpty`'s emptiness operator `⊘φ` is supported when `s ⊨ φ` *or*
 `s = ∅`. It is essentially a restricted `⨼`: `⊘φ ≡ φ ⨼ ⊥`. But since
@@ -76,9 +76,9 @@ BSMLEmpty omits `⨼`, union closure is preserved.
   union-closed ∩ bisimulation-invariant fragment. The bisim-invariance
   half is done (Theorem 3.8 above for both BSMLOr and BSMLEmpty); the
   converse direction requires Hintikka formulas for states (Definition
-  3.10) and finite atom sets. See @cite{anttila-2025} Chapter 3.
+  3.10) and finite atom sets. See [anttila-2025] Chapter 3.
 * §4 Natural-deduction axiomatisations for each of BSML, BSMLOr,
-  BSMLEmpty. Soundness + completeness theorems; @cite{anttila-2025}
+  BSMLEmpty. Soundness + completeness theorems; [anttila-2025]
   Chapter 4 has the updated proofs.
 * Free-choice prediction theorem: state the narrow-scope FC inference
   `[◇(p ∨ q)]⁺ ⊨ ◇p ∧ ◇q` (and the analogous cancellation under
@@ -104,7 +104,7 @@ open Core.Logic.Modal.BSML (BSMLModel BSMLFormula StateBisim WorldBisim)
 
 namespace BSMLOr
 
-/-- BSMLOr syntax (Definition 2.1 of @cite{aloni-anttila-yang-2024}):
+/-- BSMLOr syntax (Definition 2.1 of [aloni-anttila-yang-2024]):
     BSML extended with the global disjunction `gdisj` (`⨼`). The `bot`
     constructor is `⊥` (weak contradiction), included as a primitive in
     the AAY-2024 presentation. -/
@@ -128,7 +128,7 @@ inductive Formula (Atom : Type*) where
   deriving Repr
 
 /-- Bilateral evaluation for BSMLOr (Definition 2.3 of
-    @cite{aloni-anttila-yang-2024}). `eval M true φ t` is support;
+    [aloni-anttila-yang-2024]). `eval M true φ t` is support;
     `eval M false φ t` is anti-support. Negation flips polarity. -/
 def eval (M : BSMLModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .atom p,        t => ∀ w ∈ t, M.val p w = true
@@ -206,7 +206,7 @@ def Formula.modalDepth : Formula Atom → ℕ
   | .gdisj ψ₁ ψ₂ => max ψ₁.modalDepth ψ₂.modalDepth
   | .poss ψ => ψ.modalDepth + 1
 
-/-- **Theorem 3.8 of @cite{aloni-anttila-yang-2024} for BSMLOr**: if
+/-- **Theorem 3.8 of [aloni-anttila-yang-2024] for BSMLOr**: if
     `s ⇌_k s'` and `φ : Formula Atom` has modal depth `≤ k`, then
     `eval M b φ s ↔ eval M' b φ s'` for both polarities. -/
 theorem bisim_invariant_eval (φ : Formula Atom) :
@@ -358,7 +358,7 @@ end BSMLOr
 
 namespace BSMLEmpty
 
-/-- BSMLEmpty syntax (Definition 2.1 of @cite{aloni-anttila-yang-2024}):
+/-- BSMLEmpty syntax (Definition 2.1 of [aloni-anttila-yang-2024]):
     BSML extended with the emptiness operator `empt` (`⊘`). -/
 inductive Formula (Atom : Type*) where
   | atom (p : Atom)
@@ -552,7 +552,7 @@ def Formula.modalDepth : Formula Atom → ℕ
   | .empt ψ => ψ.modalDepth
   | .poss ψ => ψ.modalDepth + 1
 
-/-- **Theorem 3.8 of @cite{aloni-anttila-yang-2024} for BSMLEmpty**: if
+/-- **Theorem 3.8 of [aloni-anttila-yang-2024] for BSMLEmpty**: if
     `s ⇌_k s'` and `φ : Formula Atom` has modal depth `≤ k`, then
     `eval M b φ s ↔ eval M' b φ s'` for both polarities. -/
 theorem bisim_invariant_eval (φ : Formula Atom) :

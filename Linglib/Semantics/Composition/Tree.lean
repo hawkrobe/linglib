@@ -1,5 +1,5 @@
 /-
-# Type-Driven Interpretation (@cite{heim-kratzer-1998}, Ch. 3-5; @cite{von-fintel-heim-2011}, Ch. 1)
+# Type-Driven Interpretation ([heim-kratzer-1998], Ch. 3-5; [von-fintel-heim-2011], Ch. 1)
 
 
 Composition principles:
@@ -7,7 +7,7 @@ Composition principles:
 2. Non-Branching Nodes (NN): identity
 3. Functional Application (FA): `⟦α⟧ = ⟦β⟧(⟦γ⟧)` when types match
 4. Intensional Functional Application (IFA): `⟦α⟧ = ⟦β⟧(^⟦γ⟧)` when
-   β expects an intension `⟨s,σ⟩` and γ has type σ (@cite{von-fintel-heim-2011} Step 10)
+   β expects an intension `⟨s,σ⟩` and γ has type σ ([von-fintel-heim-2011] Step 10)
 5. Predicate Modification (PM): combine two `⟨e,t⟩` predicates (Ch. 4)
 6. Predicate Abstraction (PA): `⟦[n β]⟧^g = λx. ⟦β⟧^{g[n↦x]}` (Ch. 5)
 
@@ -79,7 +79,7 @@ def tryFA {F : Frame} (d1 d2 : TypedDenot F) : Option (TypedDenot F) :=
       else none
     | _ => none
 
-/-- IFA: Intensional Functional Application (@cite{von-fintel-heim-2011} Step 10).
+/-- IFA: Intensional Functional Application ([von-fintel-heim-2011] Step 10).
 
     If β expects an intension `⟨s,σ⟩` as argument and γ has type σ,
     then `⟦α⟧ = ⟦β⟧(^⟦γ⟧)` — we wrap γ's denotation in `up` (rigid intension)
@@ -138,7 +138,7 @@ variable {C : Type}
 
 /-- Interpret a tree under an assignment.
 
-Implements @cite{heim-kratzer-1998} Ch. 3-5 type-driven interpretation:
+Implements [heim-kratzer-1998] Ch. 3-5 type-driven interpretation:
 - **TN**: terminal → lexical lookup
 - **NN**: unary node → identity
 - **FA/PM**: binary node → try FA then PM

@@ -6,11 +6,11 @@ import Linglib.Pragmatics.RSA.Ranking
 /-!
 # Goldszmidt & Pearl (1996): Qualitative Probabilities for Default Reasoning
 
-@cite{goldszmidt-pearl-1996}
+[goldszmidt-pearl-1996]
 
 This study demonstrates System Z — the constructive derivation of
 minimal ranking functions from a knowledge base of default rules.
-Where @cite{spohn-1988} defines ranking functions as primitive objects,
+Where [spohn-1988] defines ranking functions as primitive objects,
 G&P show how to *compute* the unique minimal admissible ranking κ^z
 from a set of defaults, using tolerance-based stratification.
 
@@ -33,7 +33,7 @@ from a set of defaults, using tolerance-based stratification.
    penguin-specific rule has higher Z-priority.
 
 4. **Bridge to Veltman**: The κ^z ranking derives the same specificity
-   result that @cite{veltman-1996} obtains by stipulating orderings.
+   result that [veltman-1996] obtains by stipulating orderings.
    We prove the agreement directly.
 
 ## Scenario
@@ -227,7 +227,7 @@ theorem κz_connected :
 -- § 8. Bridge to Veltman 1996
 -- ══════════════════════════════════════════════════════════════════════
 
-/-! @cite{veltman-1996} manually stipulates subdomain orderings to
+/-! [veltman-1996] manually stipulates subdomain orderings to
     resolve the Tweety Triangle: `birdOrd` promotes flying,
     `penguinOrd` promotes not-flying. The key result is
     `penguinFlies_not_normal_in_birds` — penguinFlies fails the
@@ -240,8 +240,8 @@ theorem κz_connected :
 
 open Veltman1996 in
 
-/-- What @cite{veltman-1996} stipulates about penguin normality,
-    @cite{goldszmidt-pearl-1996}'s System Z derives:
+/-- What [veltman-1996] stipulates about penguin normality,
+    [goldszmidt-pearl-1996]'s System Z derives:
     - Veltman: penguinFlies is not normal among birds (via stipulated
       penguin subdomain ordering)
     - G&P: penguinFlies has strictly higher κ^z rank than birdFlies
@@ -257,9 +257,9 @@ theorem gp_derives_veltman_specificity :
 -- § 9. Bridge to RSA: κ^z as Infinite-Rationality Limit
 -- ══════════════════════════════════════════════════════════════════════
 
-/-! @cite{frank-goodman-2012}'s RSA framework uses softmax-based
+/-! [frank-goodman-2012]'s RSA framework uses softmax-based
     Bayesian inference with a finite rationality parameter α.
-    @cite{goldszmidt-pearl-1996}'s System Z uses ranking functions
+    [goldszmidt-pearl-1996]'s System Z uses ranking functions
     for qualitative default reasoning.
 
     The two frameworks are endpoints of the same continuum: as

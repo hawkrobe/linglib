@@ -6,7 +6,7 @@ import Linglib.Phenomena.Questions.MultipleWh
 import Linglib.Typology.Question
 /-!
 # Economy in PF Reduction
-@cite{citko-gracanin-yuksek-2025}
+[citko-gracanin-yuksek-2025]
 
 Coordinated wh-questions (CWHs) and coordinated sluices (CSs) are two
 PF-reduced constructions with wh-phrase remnants. Despite superficial
@@ -53,14 +53,14 @@ multidominance as the PF reduction mechanism.
   `Typology/Question.lean`. Cross-linguistic data (Bulgarian, German,
   Greek) lives in `Phenomena/Questions/MultipleWh.lean`. The
   intra-English variety A/B split — paper-specific to
-  @cite{citko-gracanin-yuksek-2025} — stays here.
+  [citko-gracanin-yuksek-2025] — stays here.
 - Pronunciation Economy is the **per-operation** primitive
   `pronunciationEconomy : List PFOperation → Prop` from
   `Syntax/Minimalist/Economy.lean`. Paper p. 32 ex (45c) needs
   per-op vacuity (a derivation with one real deletion + one vacuous
   deletion violates), which a whole-derivation `pfBefore ≠ pfAfter`
   check could not express.
-- The CS bulk-sharing structure trivially satisfies @cite{bruening-2021}'s
+- The CS bulk-sharing structure trivially satisfies [bruening-2021]'s
   identity condition (Minimalist.Ellipsis.FormalMatching §7), since
   bulk-sharing means the elided TP literally **is** the antecedent TP
   (one node, two parents). Stated as a theorem in §10 below.
@@ -72,8 +72,8 @@ multidominance as the PF reduction mechanism.
 - The MWF parameter connects to `Questions/MultipleWh.lean`:
   non-MWF languages (English) ban multiple wh-fronting in questions.
 - RNR (§9) demonstrates that economy can force BOTH ellipsis and MD
-  in a single derivation (@cite{belk-neeleman-philip-2023},
-  @cite{barros-vicente-2011}).
+  in a single derivation ([belk-neeleman-philip-2023],
+  [barros-vicente-2011]).
 -/
 
 namespace CitkoGracaninYuksek2025
@@ -296,7 +296,7 @@ theorem cs_obligatory_decomposes :
 /-! Bulgarian, German, Greek MWF data live in
 `Phenomena/Questions/MultipleWh.lean` (textbook-consensus typology). The
 intra-English variety A/B split is paper-specific to
-@cite{citko-gracanin-yuksek-2025} (p. 19): both varieties are non-MWF in
+[citko-gracanin-yuksek-2025] (p. 19): both varieties are non-MWF in
 matrix questions, but they diverge on multiple sluicing — variety A bans
 it, variety B allows it. The paper *derives* this asymmetry from where
 the PF asterisk lands (vP only vs both vP and CP edges), not as a free
@@ -682,7 +682,7 @@ theorem cs_forced_to_bulk (sm sl nsm nsl : Nat) :
 /-! Section 6.2 of the paper extends the economy analysis to Right Node
 Raising (RNR). RNR is a key test case because it can involve BOTH
 ellipsis and MD simultaneously — the "mix and match" analysis of
-@cite{belk-neeleman-philip-2023} (and earlier @cite{barros-vicente-2011}).
+[belk-neeleman-philip-2023] (and earlier [barros-vicente-2011]).
 
 The core claim: economy favors MD over ellipsis when both yield the same
 string and interpretation. In RNR, the shared pivot (rightmost material)
@@ -735,7 +735,7 @@ def rnr_ellipsisPlusMD : RNRDatum :=
   , pivotType := .minimal
   , notes := "Morphological mismatch (work vs working); PP shared via MD, VP ellipsis in first conjunct" }
 
-/-- Vehicle-change diagnostic from @cite{barros-vicente-2011} ex (47):
+/-- Vehicle-change diagnostic from [barros-vicente-2011] ex (47):
     morphological mismatch signals ellipsis (not MD).
 
     The angled brackets mark the **first** conjunct's predicate as
@@ -751,7 +751,7 @@ def rnr_ellipsisOnly : RNRDatum :=
   , mdProperties := false
   , involvesEllipsis := true
   , pivotType := .extended
-  , notes := "@cite{barros-vicente-2011} ex (47): backwards elision pattern; "
+  , notes := "[barros-vicente-2011] ex (47): backwards elision pattern; "
            ++ "1st conjunct predicate PF-reduced under identity with 2nd; "
            ++ "morphological mismatch ('wake' vs 'wakes') signals ellipsis not MD" }
 
@@ -818,7 +818,7 @@ theorem rnr_md_is_economy_winner (pm pl nm nl : Nat) :
 -- § 10: Cross-framework consilience — Bruening 2021 identity condition
 -- ============================================================================
 
-/-! @cite{bruening-2021}'s max-projection identity condition for ellipsis
+/-! [bruening-2021]'s max-projection identity condition for ellipsis
 (formalized as `Minimalist.Ellipsis.FormalMatching.bruening2021StructurallyIdentical`)
 requires the antecedent and the elided constituent to have the same
 filtered max-projection path lists (up to permutation).
@@ -829,7 +829,7 @@ parents. So the filtered max-projection paths are physically identical,
 and `List.Perm.refl` discharges the identity condition. -/
 
 /-- The C&G-Y CS bulk-sharing structure is robust to identity-condition
-    choice: it trivially satisfies @cite{bruening-2021}'s max-projection
+    choice: it trivially satisfies [bruening-2021]'s max-projection
     identity by `List.Perm.refl` on identical path lists, for any
     `HeadFunction` parameterizing the projection paths.
 

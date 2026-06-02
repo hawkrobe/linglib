@@ -4,7 +4,7 @@ import Linglib.Semantics.ArgumentStructure.ArgDerivation
 import Linglib.Syntax.Minimalist.Voice
 
 /-!
-# @cite{krejci-2012} — Lexical Reflexivity and the Ingestive/Middle Class
+# [krejci-2012] — Lexical Reflexivity and the Ingestive/Middle Class
 
 Krejci, Bonnie. 2012. *The Event Structural Properties of the Transitive
 Alternation: A Cross-Linguistic Study*. Master's Report, University of
@@ -60,7 +60,7 @@ open Semantics.ArgumentStructure.ArgDerivation
 /-- Subtype of lexically reflexive verb (§4.1–4.2). -/
 inductive LexReflexiveSubtype where
   /-- Middles: agent acts on own body (wash, dress).
-      @cite{kemmer-1994}: one internally complex participant. -/
+      [kemmer-1994]: one internally complex participant. -/
   | middle
   /-- Ingestives: agent causes substance to enter self (eat, drink).
       Includes "metaphorical ingestives" (learn). -/
@@ -98,7 +98,7 @@ structure LexReflexiveVerb where
 -- § 2. English Diagnostic Data (§4.2–4.4)
 -- ════════════════════════════════════════════════════
 
-/-! All diagnostic data is from English. @cite{krejci-2012} tests four
+/-! All diagnostic data is from English. [krejci-2012] tests four
     verbs — eat, wash, dress, learn — each representing a subtype of the
     lexically reflexive class. All four pass all four diagnostics. -/
 
@@ -182,7 +182,7 @@ theorem both_subtypes :
 -- § 4. Antireflexivization (§4.2)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{krejci-2012}'s central operation: the lexical causative of a
+/-! [krejci-2012]'s central operation: the lexical causative of a
     lexically reflexive verb is derived by **antireflexivization** —
     splitting the coidentified causer-causee into two distinct
     participants.
@@ -226,7 +226,7 @@ theorem dress_same_form : dress.lexicalCausative = none := rfl
 -- § 5. Bridge to Root Dimensions
 -- ════════════════════════════════════════════════════
 
-/-! @cite{krejci-2012}'s claim that eat and dress have causative event
+/-! [krejci-2012]'s claim that eat and dress have causative event
     structure aligns with their `RootEntailments` classification:
     both are `causativeResult` (state + result + cause), meaning the
     root itself entails external causation. -/
@@ -240,7 +240,7 @@ theorem dress_is_causativeResult :
     LevinClass.rootEntailments .dress = .causativeResult := rfl
 
 /-- causativeResult roots entail cause — consistent with
-    @cite{krejci-2012}'s analysis that these verbs have CAUSE in their
+    [krejci-2012]'s analysis that these verbs have CAUSE in their
     simple forms. -/
 theorem causativeResult_entails_cause :
     RootEntailments.causativeResult.cause = true := rfl
@@ -302,7 +302,7 @@ theorem alternation_loses_cause :
 -- § 8. Bridge to IntransitivizationType
 -- ════════════════════════════════════════════════════
 
-/-! @cite{krejci-2012}'s central theoretical claim: lexically reflexive
+/-! [krejci-2012]'s central theoretical claim: lexically reflexive
     verbs have *reflexive* intransitivization (coidentification of causer
     and causee), not *anticausative* intransitivization (removal of the
     external cause). This is what makes their simple forms bieventive —
@@ -342,7 +342,7 @@ theorem anticausative_blocks_bySelf :
 -- § 9. Bridge to Minimalist Voice
 -- ════════════════════════════════════════════════════
 
-/-! @cite{krejci-2012}'s reflexive/anticausative distinction maps onto
+/-! [krejci-2012]'s reflexive/anticausative distinction maps onto
     the Voice typology in Minimalism: reflexive intransitives correspond
     to middle Voice (bieventive, coidentification), and true
     anticausatives correspond to anticausative Voice (monoeventive,
@@ -360,7 +360,7 @@ theorem middle_no_theta :
 -- § 10. Cross-Linguistic Causativizability
 -- ════════════════════════════════════════════════════
 
-/-! @cite{krejci-2012} Table 2.8 validates the causativizability
+/-! [krejci-2012] Table 2.8 validates the causativizability
     hierarchy across 12 languages. This data is formalized in
     `MorphologicalCausation.krejciLanguages` and verified by
     `MorphologicalCausation.krejci_hierarchy_holds`.

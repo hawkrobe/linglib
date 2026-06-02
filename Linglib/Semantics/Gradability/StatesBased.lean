@@ -4,7 +4,7 @@ import Linglib.Semantics.Gradability.Basic
 /-!
 # States-Based Gradable Adjective Semantics
 
-@cite{cariani-santorio-wellwood-2024} @cite{wellwood-2015} @cite{kennedy-2007}
+[cariani-santorio-wellwood-2024] [wellwood-2015] [kennedy-2007]
 
 An alternative to Kennedy-style degree semantics (`Theory.lean`). Gradable
 adjectives denote properties of states (type `⟨v,t⟩`), not measure functions.
@@ -146,17 +146,17 @@ theorem asymEntails_positive_region (e₁ e₂ : StatesBasedEntry S)
     across the literature; linglib hosts it once here and lets every
     consumer credit its own source:
 
-    - @cite{schwarzschild-2002, schwarzschild-2006} — *Monotonicity Constraint*
+    - [schwarzschild-2002] [schwarzschild-2006] — *Monotonicity Constraint*
       on the measure function in nominal pseudopartitives.
-    - @cite{krifka-1989} — extensive measure functions on quantized objects.
-    - @cite{wellwood-2015} — `μ` admissibility for `much`-comparatives;
+    - [krifka-1989] — extensive measure functions on quantized objects.
+    - [wellwood-2015] — `μ` admissibility for `much`-comparatives;
       `Semantics/Measurement.lean::admissibleMeasure_of_mereoDim`
       bridges to the bundled `MereoDim` typeclass.
-    - @cite{cariani-santorio-wellwood-2024} (eq. 21) — CSW use this exact
+    - [cariani-santorio-wellwood-2024] (eq. 21) — CSW use this exact
       formulation for confidence orderings.
-    - @cite{pasternak-2019} (def 4) — `μ_int` monotonicity on the
+    - [pasternak-2019] (def 4) — `μ_int` monotonicity on the
       part-whole structure of mental states.
-    - @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025} —
+    - [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025] —
       `EpistemicThreshold.isProbabilistic` is a strengthening of this
       (Monotone, not StrictMono).
 

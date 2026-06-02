@@ -19,7 +19,7 @@ Languages vary in what they let their NPs denote:
 
 ## Ontology
 
-Following @cite{link-1983} and @cite{chierchia-1998}:
+Following [link-1983] and [chierchia-1998]:
 - Domain U is a complete atomic join semilattice
 - Atoms are singular individuals
 - Non-atoms are pluralities (modeled as sets)
@@ -117,7 +117,7 @@ def up (k : Kind World Atom) : Property World Atom :=
 
 /--
 A property is mass iff its extension at every world is determined by
-atomic content: `x ∈ P w ↔ ∀ a ∈ x, {a} ∈ P w` (@cite{chierchia-1998} §2.2).
+atomic content: `x ∈ P w ↔ ∀ a ∈ x, {a} ∈ P w` ([chierchia-1998] §2.2).
 
 This implies both cumulative reference (CUM) and divisive reference (DIV):
 mass extensions are closed under union and subset.
@@ -151,7 +151,7 @@ end MereologyBridge
 /--
 Plural closure of a property: close extensions under join (⊔) at each world.
 
-This is @cite{link-1983}'s *P operator, Krifka's ⊔ superscript: the smallest
+This is [link-1983]'s *P operator, Krifka's ⊔ superscript: the smallest
 superset of P(w) closed under set union. Singular count nouns like *spider*
 are not cumulative, so `pluralClosure(⟦spider⟧)` adds pluralities — the
 denotation of the bare plural *spiders*.
@@ -167,7 +167,7 @@ section PluralClosure
 variable {World Atom : Type}
 
 /-- Plural closure is idempotent for mass nouns: ⊔P = P when P is cumulative.
-    This is Krifka's absorption rule ⊔⊔S = ⊔S from @cite{krifka-2026} (16). -/
+    This is Krifka's absorption rule ⊔⊔S = ⊔S from [krifka-2026] (16). -/
 theorem pluralClosure_mass (P : Property World Atom)
     (hMass : IsMass World Atom P) :
     pluralClosure World Atom P = P := by
@@ -186,7 +186,7 @@ theorem pluralClosure_cum (P : Property World Atom) (w : World) :
 
 end PluralClosure
 
--- Kind Anaphora (@cite{krifka-2026} §2)
+-- Kind Anaphora ([krifka-2026] §2)
 
 /--
 Kind anaphor for [MASS] concepts: ⟦it⟧ = λP[MASS]. λi. ∩P(i).
@@ -291,9 +291,9 @@ introduce low-scoped existential quantification:
   DPP(Q)(P) = ∃x[P(x) ∧ Q(x)]
 
 This is the mirror image of DKP. Where DKP applies to kinds (via ∪),
-DPP applies to properties directly. @cite{moroney-2021} (85): DPP
+DPP applies to properties directly. [moroney-2021] (85): DPP
 applies when bare nouns (base type ⟨s,⟨e,t⟩⟩) compose with a verb
-at vP, yielding obligatory low scope w.r.t. negation. @cite{guerrini-2026}
+at vP, yielding obligatory low scope w.r.t. negation. [guerrini-2026]
 §5.3: the existential reading of bare plurals in episodic sentences
 arises from property-level LFs via DPP, not from kind-level DKP.
 
@@ -488,10 +488,10 @@ def fallbackToExists (isKindDenoting : Bool) (bp : BlockingPrinciple) : Bool :=
 
 /-!
 ## Computational DKP
-@cite{krifka-2004} @cite{chierchia-1998}
+[krifka-2004] [chierchia-1998]
 
 Simplified, decidable formalization of Chierchia's DKP for concrete
-scrambling comparisons with @cite{krifka-2004}. Uses `List Entity` and `Bool`
+scrambling comparisons with [krifka-2004]. Uses `List Entity` and `Bool`
 (rather than `Set Atom` and `Prop`) so that examples reduce by `rfl`.
 
 The parallel Krifka machinery is in `Krifka2004.lean`; both are

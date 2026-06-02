@@ -2,7 +2,7 @@ import Linglib.Pragmatics.RSA.Operators
 
 /-!
 # RSA — Latent-aware unbundled operators
-@cite{lassiter-goodman-2017} @cite{kao-etal-2014-hyperbole} @cite{nouwen-2024}
+[lassiter-goodman-2017] [kao-etal-2014-hyperbole] [nouwen-2024]
 
 Latent-variable extensions to the unbundled `Operators.lean` API. RSA models
 with latent variables (thresholds, QUDs, lexicons) parameterize their L0/S1
@@ -16,7 +16,7 @@ unbundled v2 API, not an afterthought.
 
 * `L0LassiterGoodman` — L&G L0 with prior baked in: `P.reweight meaning`. The
   paper-name alias for the standard `PMF.reweight` operation specialized to
-  the L&G "prior in literal listener" pattern (eq 70/71 of @cite{lassiter-goodman-2017}).
+  the L&G "prior in literal listener" pattern (eq 70/71 of [lassiter-goodman-2017]).
 * `marginalizeKernel` — marginalize a latent-parameterized kernel against
   a latent prior. Just `PMF.bind` of the latent prior into the kernel slice
   at each world. This is the operator that turns a `Latent → W → PMF U`
@@ -28,8 +28,8 @@ or function composition. See HISTORY at end.)
 
 ## L&G "two priors" pattern
 
-For the L&G family (used by @cite{lassiter-goodman-2017},
-@cite{nouwen-2024}, intensifier studies), the same prior `P` enters BOTH:
+For the L&G family (used by [lassiter-goodman-2017],
+[nouwen-2024], intensifier studies), the same prior `P` enters BOTH:
 - L0 via `P.reweight meaning` (the literal listener is Bayesian with prior `P`)
 - L1 via `PMF.posterior speaker P` (the pragmatic listener is Bayesian with prior `P`)
 
@@ -71,7 +71,7 @@ variable {U W L : Type*}
 
 /-! ## L0 with L&G "prior in literal listener" pattern -/
 
-/-- Lassiter-Goodman literal listener (eq 71 of @cite{lassiter-goodman-2017}):
+/-- Lassiter-Goodman literal listener (eq 71 of [lassiter-goodman-2017]):
 the prior `P` is part of the literal listener's Bayesian update. For a
 Boolean-valued meaning function `meaning : U → W → Bool`, this returns
 `P` reweighted by the indicator function of the meaning's extension.

@@ -19,11 +19,11 @@ as a **fiberwise filter**: F' = {(p, w) ∈ F : ⟦φ⟧(p, w)}.
 Different linguistic theories differ in how they project from the bundle
 back to worlds, using the ∃ ⊣ Δ ⊣ ∀ adjunction:
 
-- **∃-projection** (@cite{caie-2023}, Barker 2002):
+- **∃-projection** ([caie-2023], Barker 2002):
   w survives iff ∃ p ∈ F_w, ⟦φ⟧(p, w)
 - **∀-projection** (supervaluation, Fine 1975):
   w survives iff ∀ p ∈ F_w, ⟦φ⟧(p, w)
-- **Σ-projection** (RSA, @cite{lassiter-goodman-2017}):
+- **Σ-projection** (RSA, [lassiter-goodman-2017]):
   score(w) = Σ_p weight(p) · ⟦φ⟧(p, w)
 
 The first two are De Morgan duals (`not_forall`): ¬(∀p.φ) ↔ ∃p.¬φ.
@@ -69,14 +69,14 @@ variable {P W : Type*}
     F(p, w) holds iff parameter p is available at world w.
     The fiber at w is F_w = {p : F p w}.
 
-    Generalizes `InterpAssignment C W` from @cite{caie-2023}
+    Generalizes `InterpAssignment C W` from [caie-2023]
     (argument order swapped). -/
 abbrev FragmentSet (P W : Type*) := P → W → Prop
 
 /-- Fiberwise filter: restrict a fragment set to parameter–world pairs
     where the semantics holds.
 
-    Generalizes Contextual Pruning (@cite{caie-2023}): after asserting α,
+    Generalizes Contextual Pruning ([caie-2023]): after asserting α,
     only parameters that made α true remain available. -/
 def fiberwiseFilter (F : FragmentSet P W) (sem : P → W → Prop) :
     FragmentSet P W :=
@@ -90,7 +90,7 @@ def fiberwiseFilter (F : FragmentSet P W) (sem : P → W → Prop) :
 /-- Existential projection: w survives iff some parameter in F_w makes
     the semantics true.
 
-    This is @cite{caie-2023}'s disjunctive updating and Barker 2002's
+    This is [caie-2023]'s disjunctive updating and Barker 2002's
     dynamics of vagueness. -/
 def existentialProjection (F : FragmentSet P W) (sem : P → W → Prop) :
     Set W :=
@@ -221,7 +221,7 @@ theorem projections_agree_iff_clear [Preorder P]
     parameters are pruned by α) equals a single ∃-update checking
     both α and β.
 
-    This is the general form of Contextual Pruning (@cite{caie-2023}):
+    This is the general form of Contextual Pruning ([caie-2023]):
     the two-step process (update context set by α, prune parameters
     by α, then update by β) is equivalent to a single update requiring
     both α and β under the same parameter. -/

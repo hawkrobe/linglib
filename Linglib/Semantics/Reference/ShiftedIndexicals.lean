@@ -2,7 +2,7 @@ import Linglib.Semantics.Reference.Kaplan
 
 /-!
 # Shifted Indexicals
-@cite{anand-nevins-2004} @cite{deal-2020} @cite{schlenker-2003}
+[anand-nevins-2004] [deal-2020] [schlenker-2003]
 
 Cross-linguistic variation in indexical interpretation via tower depth:
 English "I" reads from the origin (`.origin`), Amharic "I" reads from the
@@ -12,9 +12,9 @@ person shifts but time does not.
 ## Key Definitions
 
 - `amharic_pronI`: Amharic first person — `⟨.local, KContext.agent⟩`
-- `UniformShiftParam`: @cite{anand-nevins-2004} constraint — all shifted
+- `UniformShiftParam`: [anand-nevins-2004] constraint — all shifted
   indexicals in a language read from the same depth
-- `MixedShiftLexicon`: @cite{deal-2020} — person shifts but time doesn't (Nez Perce)
+- `MixedShiftLexicon`: [deal-2020] — person shifts but time doesn't (Nez Perce)
 - `schlenker_counterexample`: English "I" and Amharic "I" diverge in the
   same tower configuration
 
@@ -28,7 +28,7 @@ open Semantics.Reference.Kaplan
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
 
 -- ════════════════════════════════════════════════════════════════
--- § Amharic Shifted Indexicals (@cite{schlenker-2003})
+-- § Amharic Shifted Indexicals ([schlenker-2003])
 -- ════════════════════════════════════════════════════════════════
 
 /-- Amharic first person pronoun: reads the agent from the innermost
@@ -37,7 +37,7 @@ variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
     "John yä-nä Ïnä dässïtäñ alä" ≈ "John said that I am happy"
     where "I" refers to John (the shifted agent), not the actual speaker.
 
-    @cite{schlenker-2003}: Amharic attitude verbs are context-shifting operators
+    [schlenker-2003]: Amharic attitude verbs are context-shifting operators
     (monsters). Under the tower analysis, the monster pushes an attitude
     shift, and the shifted "I" reads from `.local` rather than `.origin`. -/
 def amharic_pronI : AccessPattern (KContext W E P T) E :=
@@ -61,7 +61,7 @@ def amharic_opHere : AccessPattern (KContext W E P T) P :=
     Amharic "I" reads from the innermost context (shifted to the attitude
     holder).
 
-    This is the formal content of @cite{schlenker-2003}'s counterexample to
+    This is the formal content of [schlenker-2003]'s counterexample to
     Kaplan's thesis: the SAME lexical item ("I") receives different
     interpretations cross-linguistically because of a depth parameter. -/
 theorem schlenker_counterexample
@@ -86,10 +86,10 @@ theorem no_shift_agreement (c : KContext W E P T) :
     ContextTower.depth, List.length_nil, List.take, List.foldl]
 
 -- ════════════════════════════════════════════════════════════════
--- § Uniform Shift Parameter (@cite{anand-nevins-2004})
+-- § Uniform Shift Parameter ([anand-nevins-2004])
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{anand-nevins-2004} Uniform Shift: in languages with indexical
+/-- [anand-nevins-2004] Uniform Shift: in languages with indexical
     shift, ALL shifted indexicals must shift to the same depth.
 
     In Zazaki, if "I" shifts under an attitude verb, then "you" must
@@ -129,10 +129,10 @@ theorem uniform_depth (u : UniformShiftParam) :
     (u.pronYou (W := W) (E := E) (P := P) (T := T)).depth := rfl
 
 -- ════════════════════════════════════════════════════════════════
--- § Mixed Shift Lexicon (@cite{deal-2020})
+-- § Mixed Shift Lexicon ([deal-2020])
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{deal-2020}: Nez Perce exhibits MIXED shifting — person indexicals
+/-- [deal-2020]: Nez Perce exhibits MIXED shifting — person indexicals
     shift under attitude verbs but temporal indexicals do not.
 
     "Hii-pe-n'wi-ye kuhet hi-ppeew-n-e"

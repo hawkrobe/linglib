@@ -4,7 +4,7 @@ import Mathlib.Data.Finset.Card
 /-!
 # Implicational universals and 2×2 contingency tables
 
-@cite{greenberg-1963} @cite{dryer-1992}
+[greenberg-1963] [dryer-1992]
 
 A Greenbergian implicational universal of the form "if a language is φ then
 it is also ψ" is the claim that the *Type IV* cell of a 2×2 contingency
@@ -111,7 +111,7 @@ namespace Typology
 /-- Bridge between the propositional and tetrachoric formulations: an
     implicational universal holds iff its Type IV cell is empty.
 
-    @cite{greenberg-1963}'s reformulation of "P implies Q" as "no language
+    [greenberg-1963]'s reformulation of "P implies Q" as "no language
     is P-but-not-Q" — same content, expressed once as a universal statement
     and once as a count-zero claim. -/
 theorem implicational_iff_no_typeIV

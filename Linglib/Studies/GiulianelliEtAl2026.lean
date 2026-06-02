@@ -4,7 +4,7 @@ import Mathlib.Probability.ProbabilityMassFunction.Monad
 
 /-!
 # Giulianelli, Wallbridge, Cotterell & Fernández (2026)
-@cite{giulianelli-etal-2026}
+[giulianelli-etal-2026]
 
 Incremental alternative sampling as a lens into the temporal and
 representational resolution of linguistic prediction.
@@ -40,7 +40,7 @@ maxima from analyses on GPT-2 hidden states. They are not deductive
 claims and should not be encoded as Lean theorems.
 
 For the record, the paper reports (with sources cited as
-@cite{giulianelli-etal-2026}):
+[giulianelli-etal-2026]):
 
 - Explicit predictability measures (cloze probability, predictability
   ratings, cloze surprisal) peak at horizon h = 1 with representations
@@ -89,7 +89,7 @@ target, the IAS value at horizon 1 depends on the choice of distance
 function. Two distinct distances yield distinct IAS values, while the
 classical surprisal of the target is unchanged.
 
-This is the formal content of @cite{giulianelli-etal-2026}'s claim that
+This is the formal content of [giulianelli-etal-2026]'s claim that
 "the generalised definition of surprisal exposes two potential limitations
 of the standard surprisal model": surprisal collapses representational
 structure that IAS preserves. The paper's empirical case for IAS rests

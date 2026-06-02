@@ -4,18 +4,18 @@ import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # Erlewine 2016: Anti-Locality and Optimality in Kaqchikel Agent Focus
-@cite{erlewine-2016} @cite{erlewine-2018}
+[erlewine-2016] [erlewine-2018]
 
-@cite{erlewine-2016} analyzes Kaqchikel Agent Focus as the optimal
+[erlewine-2016] analyzes Kaqchikel Agent Focus as the optimal
 output of an OT competition between two derivations, ranked by
 **Spec-to-Spec Anti-Locality (SSAL)** ≫ **XRef** (cross-referencing).
 The fragment in `Fragments/Mayan/Kaqchikel/AgentFocus.lean` carries
 typology-neutral data (verb-form types, extraction patterns, the
 empirical AF profile); this study file adds the theory-laden OT
 machinery (competing derivations, constraints, ranking) and verifies
-@cite{erlewine-2016}'s results.
+[erlewine-2016]'s results.
 
-## The Derivation (@cite{erlewine-2016} §§3, 5)
+## The Derivation ([erlewine-2016] §§3, 5)
 
 ### Why the transitive derivation crashes
 
@@ -49,9 +49,9 @@ too-local Spec,TP → Spec,CP step.
 The `specToSpecAntiLocality` predicate (Position.lean) formalizes
 the constraint that blocks the transitive derivation: movement from
 Spec,XP to Spec,YP is blocked when YP immediately dominates XP. In
-Kaqchikel, XP = TP and YP = CP. SSAL traces to @cite{abels-2003}'s
-anti-locality theory, with refinements in @cite{boskovic-1997} and
-many subsequent papers; @cite{erlewine-2016}'s contribution is the
+Kaqchikel, XP = TP and YP = CP. SSAL traces to [abels-2003]'s
+anti-locality theory, with refinements in [boskovic-1997] and
+many subsequent papers; [erlewine-2016]'s contribution is the
 specific application to Kichean AF as an OT-competing-candidate
 analysis.
 
@@ -189,7 +189,7 @@ theorem candidates_differ :
 
 /-- AF is the unique optimal candidate. SSAL ≫ XRef means the derivation
     that avoids anti-locality wins, even though it loses Set A agreement.
-    This is the central result of @cite{erlewine-2016}. -/
+    This is the central result of [erlewine-2016]. -/
 theorem af_is_optimal :
     (mkTableau afCandidates afRanking).optimal =
       {AFCandidate.agentFocusExtraction} := by

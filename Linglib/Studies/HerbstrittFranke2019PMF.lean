@@ -6,8 +6,8 @@ import Linglib.Semantics.Modality.EpistemicProbability
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
-# @cite{herbstritt-franke-2019} on mathlib `PMF` — structural skeleton
-@cite{herbstritt-franke-2019}
+# [herbstritt-franke-2019] on mathlib `PMF` — structural skeleton
+[herbstritt-franke-2019]
 
 Complex probability expressions & higher-order uncertainty: compositional
 threshold semantics + RSA over an urn scenario with N=10 balls. Cognition
@@ -62,8 +62,8 @@ HF 2019's *novel architectural* contributions are:
   showing that KL excludes "true enough" messages but Hellinger doesn't.
 - §7 **Empirical data** (Tables 6, 7, 9, 10) and cross-experiment
   threshold stability.
-- §8 **Cross-paper engagement** — disagreement with LaBToM @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
-  on `probably`/`likely`, and contrast with @cite{goodman-stuhlmuller-2013}'s
+- §8 **Cross-paper engagement** — disagreement with LaBToM [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025]
+  on `probably`/`likely`, and contrast with [goodman-stuhlmuller-2013]'s
   KL-utility model (which would reject "certainly" at 9/10).
 
 **Not captured (paper-specific evaluative content, deferred):**
@@ -522,7 +522,7 @@ theorem cross_experiment_threshold_stability :
 /-! ## §8. Cross-paper engagement -/
 
 /-!
-### Disagreement with LaBToM @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
+### Disagreement with LaBToM [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025]
 
 HF and LaBToM both infer credence thresholds for English probability
 vocabulary by Bayesian fitting against experimental data, but pick
@@ -551,7 +551,7 @@ theorem labtom_likely_above_hf_probably_hdi :
   norm_num
 
 /-!
-### Architectural contrast with @cite{goodman-stuhlmuller-2013}
+### Architectural contrast with [goodman-stuhlmuller-2013]
 
 This model and G&S 2013 share the hypergeometric observation kernel
 (both use `PMF.hypergeometric` with N=10 and N=3 respectively) and the

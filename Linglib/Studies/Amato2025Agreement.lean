@@ -2,10 +2,10 @@ import Linglib.Syntax.Minimalist.NestedAgree
 import Linglib.Studies.Marantz1991
 
 /-!
-# @cite{amato-2025} — Agreement case studies via Nested Agree
-@cite{sigurdsson-holmberg-2008}
+# [amato-2025] — Agreement case studies via Nested Agree
+[sigurdsson-holmberg-2008]
 
-@cite{amato-2025} (NLLT) advances *Nested Agree* — formalized at
+[amato-2025] (NLLT) advances *Nested Agree* — formalized at
 `Syntax/Minimalism/NestedAgree.lean` — as a unifying account
 across at least six syntactic phenomena. This file collects the
 case studies whose primary phenomenon is **agreement**:
@@ -13,7 +13,7 @@ case studies whose primary phenomenon is **agreement**:
 - **§4.1.2 — Icelandic DAT-NOM intervention** (`DatNom`): quirky-dative
   subjects with nominative objects exhibit optional agreement with the
   lower nominative across the structurally higher dative. Derived from
-  *feature ordering on T* (@cite{sigurdsson-holmberg-2008}).
+  *feature ordering on T* ([sigurdsson-holmberg-2008]).
 - **§4.2.1 — Lak perfective person agreement** (`Lak`): in the
   Nakh-Daghestanian language Lak, perfective aspect forces person
   agreement on the lowest argument (the absolutive), even across the
@@ -56,8 +56,8 @@ open Minimalist.NestedAgree
 /-! ## Part A: Icelandic DAT-NOM intervention (Amato §4.1.2)
 
 Icelandic *quirky* dative subjects with nominative objects exhibit a
-well-known optionality. @cite{amato-2025} §4.1.2 derives this from two
-co-existing feature orderings on T (@cite{sigurdsson-holmberg-2008}):
+well-known optionality. [amato-2025] §4.1.2 derives this from two
+co-existing feature orderings on T ([sigurdsson-holmberg-2008]):
 
 - **Ordering A**: `[*case:nom*] ≻ [*φ:_*]` — case-Agree fires first
   and selects the nominative DP (skipping the case-marked dative
@@ -159,14 +159,14 @@ theorem icelandic_optionality :
 theorem orderingA_orderingB_same_tree :
     icelandicOrderingA.root = icelandicOrderingB.root := rfl
 
-/-! ### Bridge to @cite{marantz-1991}'s threshold analysis
+/-! ### Bridge to [marantz-1991]'s threshold analysis
 
-    @cite{marantz-1991} models dative intervention through a *case
+    [marantz-1991] models dative intervention through a *case
     accessibility threshold*: a dative DP intervenes (blocks the probe)
     when its lexical case is below the probe's accessibility threshold
     (so the probe can't Agree with it) but it still blocks access to
     the intended target by minimality. The Marantz analysis produces
-    a Bool `dativeIntervenes`; @cite{amato-2025} §4.1.2 produces a
+    a Bool `dativeIntervenes`; [amato-2025] §4.1.2 produces a
     Prop `¬ IsNestedAgreeConfig orderingB`. The bridge below shows
     they make the same prediction on the same configuration. -/
 
@@ -177,8 +177,8 @@ def orderingB_marantzContext : DativeInterventionContext :=
   ⟨true, .unmarked, .unmarked⟩
 
 /-- **Bridge**: under ordering B's parameter setting,
-    @cite{marantz-1991}'s `dativeIntervenes` predicts intervention iff
-    @cite{amato-2025}'s `IsNestedAgreeConfig` rejects the configuration.
+    [marantz-1991]'s `dativeIntervenes` predicts intervention iff
+    [amato-2025]'s `IsNestedAgreeConfig` rejects the configuration.
     Both theories agree: dative intervention → agreement failure
     (default 3sg in Amato's surface, agreement-failure in Marantz's
     threshold model). -/
@@ -198,11 +198,11 @@ end DatNom
 Lak is a Nakh-Daghestanian language with ergative-absolutive case
 marking. In the present tense, person agreement is controlled by the
 external argument *if* it's not ergative-marked (1st/2nd person under
-the differential ergativity pattern of @cite{radkevich-2017}); else
+the differential ergativity pattern of [radkevich-2017]); else
 by the absolutive object. **In the perfective aspect, however, person
 agreement is always controlled by the lowest argument (the
 absolutive), even when the external argument is unmarked**
-(@cite{amato-2025} §4.2.1, examples 31a–d).
+([amato-2025] §4.2.1, examples 31a–d).
 
 Amato derives this from Nested Agree on the perfective Asp head:
 Asp bears `[*Infl:perf*] ≻ [*π:_*]`. Infl-Agree fires first and
@@ -220,7 +220,7 @@ the surface output.
 
 **Out of scope**: non-perfective Lak (no Asp head, no Nested Agree
 configuration, standard agreement controlled by case-marking
-threshold per @cite{marantz-1991}-style accessibility); the
+threshold per [marantz-1991]-style accessibility); the
 contrast between (31a/b) and (31c/d) demonstrating the perfective's
 distinctive pattern. -/
 
@@ -262,7 +262,7 @@ theorem lakPerfective_runStack_1 :
     above v in Spec,vP). Erg is therefore excluded from probe 1's
     truncated domain.
 
-    This is @cite{amato-2025} §4.2.1's structural resolution of the
+    This is [amato-2025] §4.2.1's structural resolution of the
     Lak agreement puzzle: the ergative looks like a closer goal but
     Nested Agree restricts probe 1 to v's subtree, where Erg has no
     presence. Surface result: agreement with Abs (transitively

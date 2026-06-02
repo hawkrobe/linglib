@@ -3,15 +3,15 @@ import Linglib.Syntax.Minimalist.Features
 /-!
 # Gender Resolution in Coordination
 
-@cite{adamson-anagnostopoulou-2025} @cite{carstens-2026}
+[adamson-anagnostopoulou-2025] [carstens-2026]
 
 When singular DPs are conjoined, the resulting &P must bear phi-features
-for agreement. For number, sg + sg → pl by summation (@cite{corbett-2000}
+for agreement. For number, sg + sg → pl by summation ([corbett-2000]
 §6.3). For gender, the mechanism is more complex: percolation of
 interpretable features to &P, followed by intersection and selection.
 
 This file formalizes the percolation-and-intersection mechanism proposed by
-@cite{adamson-anagnostopoulou-2025} and adopted by @cite{carstens-2026},
+[adamson-anagnostopoulou-2025] and adopted by [carstens-2026],
 parameterized over the feature type so it applies across language families.
 
 ## The mechanism
@@ -27,10 +27,10 @@ parameterized over the feature type so it applies across language families.
 
 ## Cross-linguistic instantiation
 
-- **Bantu** (@cite{carstens-2026}): features are i[entity] flavors
+- **Bantu** ([carstens-2026]): features are i[entity] flavors
   ([human], [animal], [inanimate]). u-genders (Xhosa 3/4, 5/6) have no
   i-features → empty intersection → default cl 2 or cl 8.
-- **Greek** (@cite{adamson-anagnostopoulou-2025}): features are organized
+- **Greek** ([adamson-anagnostopoulou-2025]): features are organized
   in a hierarchy (CLASS > MASC > FEM). FEM entails MASC, so mismatched
   humans yield {CLASS,MASC} → masculine (via Subset Principle). Inanimates
   bear only iCLASS, so mismatch yields {CLASS} → neuter (least specified
@@ -45,7 +45,7 @@ parameterized over the feature type so it applies across language families.
 
 When the intersection contains multiple i-features (from stacked nPs),
 the language must select which one determines the agreement class.
-@cite{carstens-2026} §5.1 identifies two grammars available to Xhosa
+[carstens-2026] §5.1 identifies two grammars available to Xhosa
 speakers: **Highest Wins** (outermost nP layer wins) and **Best Semantic
 Match** (most specific semantic core wins).
 -/
@@ -59,7 +59,7 @@ open _root_.Minimalist (Interpretability)
 -- ============================================================================
 
 /-- A gender feature annotated with interpretability.
-    @cite{kramer-2015}: gender features on categorizing heads n are either
+    [kramer-2015]: gender features on categorizing heads n are either
     interpretable (i) — natural gender — or uninterpretable (u) — arbitrary.
     Only i-features enter the resolution calculus.
 
@@ -80,7 +80,7 @@ abbrev FeatureBundle (F : Type) := List (AnnotatedFeature F)
 
 /-- Percolation: extract only interpretable feature values.
     u-features are excluded from the resolution calculus
-    (@cite{adamson-anagnostopoulou-2025}). -/
+    ([adamson-anagnostopoulou-2025]). -/
 def percolateI {F : Type} (fs : FeatureBundle F) : List F :=
   (fs.filter (·.interp == .interpretable)).map (·.value)
 
@@ -143,7 +143,7 @@ theorem singleton_u_default {F : Type} [BEq F]
 
 /-- When multiple i-features survive intersection (from stacked nPs),
     the language selects which one determines the agreement class.
-    @cite{carstens-2026} §5.1 proposes two grammars available to speakers. -/
+    [carstens-2026] §5.1 proposes two grammars available to speakers. -/
 inductive SelectionGrammar where
   /-- The feature from the outermost (highest) nP layer wins.
       Since features retain their percolation ordering, this is the
@@ -233,7 +233,7 @@ theorem resolveN_binary {F : Type} [BEq F] (fs1 fs2 : FeatureBundle F) :
     if resolution succeeds for every pair of bundles — i.e., no pair produces
     an empty intersection, and no default insertion is ever needed.
 
-    @cite{adamson-anagnostopoulou-2025}: Greek satisfies MRH because all
+    [adamson-anagnostopoulou-2025]: Greek satisfies MRH because all
     resolution outcomes emerge from intersection alone. Bantu does NOT
     satisfy MRH because uninterpretable genders produce empty intersections. -/
 def satisfiesMRH {F : Type} [BEq F] (bundles : List (FeatureBundle F)) : Bool :=
@@ -246,7 +246,7 @@ def satisfiesMRH {F : Type} [BEq F] (bundles : List (FeatureBundle F)) : Bool :=
 -- ============================================================================
 
 /-- A feature geometry that defines entailment between feature nodes.
-    @cite{adamson-anagnostopoulou-2025}: cross-linguistic variation in
+    [adamson-anagnostopoulou-2025]: cross-linguistic variation in
     resolution follows from differences in feature geometry — the same
     labels with different entailment relations yield different outcomes.
 

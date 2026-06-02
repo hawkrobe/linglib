@@ -81,7 +81,7 @@ def wollen : GermanModalEntry where
 /-- *sollte* — Konjunktiv II of *sollen*: weak necessity across multiple flavors.
     Treated as a **separate modal** from *sollen* because it has complex
     morphology (root + Konj. II), following the morphological individuation
-    criterion of @cite{steinert-threlkeld-imel-guo-2023} §4.3.
+    criterion of [steinert-threlkeld-imel-guo-2023] §4.3.
     Both *soll* and *sollte* individually satisfy IFF. -/
 def sollte : GermanModalEntry where
   form := "sollte"

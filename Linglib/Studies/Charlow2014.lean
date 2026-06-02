@@ -6,11 +6,11 @@ import Linglib.Data.Examples.Schema
 
 /-!
 # Charlow (2014) — The Side-Effects Dichotomy in Dynamic Anaphora
-@cite{charlow-2014}
-@cite{sutton-2024} @cite{groenendijk-stokhof-1991} @cite{kamp-reyle-1993}
-@cite{muskens-1996} @cite{cooper-2023}
+[charlow-2014]
+[sutton-2024] [groenendijk-stokhof-1991] [kamp-reyle-1993]
+[muskens-1996] [cooper-2023]
 
-@cite{charlow-2014} Ch. 2 ("Dynamic side effects") recasts dynamic
+[charlow-2014] Ch. 2 ("Dynamic side effects") recasts dynamic
 semantics in terms of *side effects* in the monadic sense:
 state-threading frameworks (DPL, DRT, CDRT, BUS) all use a state
 monad — externally static negation falls out because negation is a
@@ -18,7 +18,7 @@ monad — externally static negation falls out because negation is a
 witness persistence — externally dynamic negation falls out because
 the witness type survives independently of any state.
 
-@cite{sutton-2024} §6.2 surveys the same dichotomy from the type-theory
+[sutton-2024] §6.2 surveys the same dichotomy from the type-theory
 side: RTT donkey approaches (Sundholm 1986, Ranta 1994, Bekki 2014,
 Cooper 2023, Luo 2021) use Σ/Π-types, contrasting with the
 Frege-Church-Montague tradition.
@@ -88,7 +88,7 @@ end Examples
 -- § 1. The dichotomy
 -- ════════════════════════════════════════════════════════════════
 
-/-- The two representational strategies @cite{charlow-2014} Ch. 2
+/-- The two representational strategies [charlow-2014] Ch. 2
 identifies in dynamic anaphora.
 
 * `stateThreading` — DPL, DRT, CDRT, BUS, and other state-monadic
@@ -255,8 +255,8 @@ def supported : List (AnaphoraFramework farmer donkey owns beats) :=
 -- § 4. The headline theorem
 -- ════════════════════════════════════════════════════════════════
 
-/-- **The Anaphora Quartet** (@cite{charlow-2014} Ch. 2;
-@cite{sutton-2024} §6.2).
+/-- **The Anaphora Quartet** ([charlow-2014] Ch. 2;
+[sutton-2024] §6.2).
 
 Every supported framework satisfies two facts: (i) its donkey encoding
 is truth-conditionally equivalent to the classical universal reading,

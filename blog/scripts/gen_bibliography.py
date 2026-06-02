@@ -58,7 +58,12 @@ ROLE_BADGE = {
     "foundational": "foundational",
 }
 
-CITE_RE = re.compile(r"@cite\{([^}]+)\}")
+# Citations are doc-gen4 reference-style links `[bibkey]`. Real citations are
+# author-year-shaped (their key contains "-YYYY"); other bracketed prose such as
+# `[MASC]` or `[h1]` is ignored. A year-shaped bracket whose content is not a
+# known key is flagged as a likely typo.
+BRACKET_RE = re.compile(r"\[([^\[\]\n]+)\]")
+YEAR_SHAPE = re.compile(r"-(?:19|20)\d{2}")
 
 
 # ---------------------------------------------------------------------------
@@ -116,32 +121,40 @@ def parse_bib(path: Path) -> list[dict]:
 # @cite{key} scanner
 # ---------------------------------------------------------------------------
 
-def scan_citations(lean_dir: Path) -> dict[str, list[str]]:
-    """Scan all .lean files for @cite{key}. Returns {key: [relative_paths]}."""
+def scan_citations(
+    lean_dir: Path, valid_keys: set[str]
+) -> tuple[dict[str, list[str]], list[tuple[str, str]]]:
+    """Scan .lean files for reference-style `[bibkey]` citations.
+
+    Returns ``(cited_by, unknown)``:
+    * ``cited_by`` — ``{key: [relative_paths]}`` for brackets matching a key.
+    * ``unknown`` — ``[(content, path)]`` for author-year-shaped brackets that
+      are not known keys (likely citation typos)."""
     cited_by: dict[str, list[str]] = defaultdict(list)
+    unknown: list[tuple[str, str]] = []
     for lean_file in lean_dir.rglob("*.lean"):
         try:
             text = lean_file.read_text(encoding="utf-8")
         except (UnicodeDecodeError, PermissionError):
             continue
-        for m in CITE_RE.finditer(text):
-            cite_key = m.group(1).strip()
-            rel = str(lean_file.relative_to(lean_dir.parent))
-            if rel not in cited_by[cite_key]:
-                cited_by[cite_key].append(rel)
-    return dict(cited_by)
+        rel = str(lean_file.relative_to(lean_dir.parent))
+        for m in BRACKET_RE.finditer(text):
+            content = m.group(1).strip()
+            if content in valid_keys:
+                if rel not in cited_by[content]:
+                    cited_by[content].append(rel)
+            elif YEAR_SHAPE.search(content):
+                unknown.append((content, rel))
+    return dict(cited_by), unknown
 
 
-def validate_citations(
-    bib_keys: set[str], cited_by: dict[str, list[str]]
-) -> list[str]:
-    """Return warning messages for @cite keys not found in .bib."""
-    warnings = []
-    for key, files in sorted(cited_by.items()):
-        if key not in bib_keys:
-            for f in files:
-                warnings.append(f"WARNING: @cite{{{key}}} in {f} not found in references.bib")
-    return warnings
+def validate_citations(unknown: list[tuple[str, str]]) -> list[str]:
+    """Warn for author-year-shaped `[key]` brackets not in the .bib (likely
+    citation typos)."""
+    return [
+        f"WARNING: [{key}] in {f} looks like a citation but is not in references.bib"
+        for key, f in sorted(set(unknown))
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -818,21 +831,18 @@ def main():
     entries = parse_bib(BIB_PATH)
     bib_keys = {e["_key"] for e in entries}
 
-    # Scan Lean files for @cite{key} references
-    cited_by = scan_citations(LEAN_DIR)
+    # Scan Lean files for reference-style [bibkey] citations
+    cited_by, unknown = scan_citations(LEAN_DIR, bib_keys)
 
-    # Validate
-    warnings = validate_citations(bib_keys, cited_by)
+    # Validate (author-year-shaped brackets not in the .bib → likely typos)
+    warnings = validate_citations(unknown)
     for w in warnings:
         print(w, file=sys.stderr)
 
     cite_count = sum(len(files) for files in cited_by.values())
-    valid_cites = sum(
-        len(files) for key, files in cited_by.items() if key in bib_keys
-    )
     print(
-        f"Found {cite_count} @cite references "
-        f"({valid_cites} valid, {cite_count - valid_cites} unknown)"
+        f"Found {cite_count} citation references "
+        f"({len(cited_by)} distinct keys, {len(set(unknown))} unknown year-shaped)"
     )
 
     if check_only:

@@ -2,18 +2,18 @@ import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 
 /-!
 # Reciprocal Semantics: Anaphoric Relations and Scope
-@cite{dalrymple-haug-2024} @cite{dalrymple-et-al-1998}
-@cite{haug-dalrymple-2020}
+[dalrymple-haug-2024] [dalrymple-et-al-1998]
+[haug-dalrymple-2020]
 
 Two competing analyses of reciprocal expressions like *each other*:
 
-1. **Quantificational** (@cite{heim-lasnik-may-1991}): the reciprocal is
+1. **Quantificational** ([heim-lasnik-may-1991]): the reciprocal is
    (or contains) a quantifier that can raise to the matrix clause,
    yielding a wide-scope (I-)reading. The local antecedent is bound by
    the raised quantifier part.
 
-2. **Relational** (@cite{dalrymple-haug-2024}, @cite{sternefeld-1998},
-   @cite{beck-2001}, @cite{dotlacil-2013}, @cite{haug-dalrymple-2020}):
+2. **Relational** ([dalrymple-haug-2024], [sternefeld-1998],
+   [beck-2001], [dotlacil-2013], [haug-dalrymple-2020]):
    the reciprocal is a pronoun bearing an anaphoric relation to its
    antecedent. The narrow/wide scope ambiguity reduces to the choice of
    anaphoric relation: group identity (∪) for narrow scope vs. binding
@@ -21,7 +21,7 @@ Two competing analyses of reciprocal expressions like *each other*:
 
 ## Three Anaphoric Relations
 
-Following @cite{higginbotham-1985} and @cite{williams-1991}, anaphoric
+Following [higginbotham-1985] and [williams-1991], anaphoric
 dependencies between a pronoun and its antecedent come in three types:
 
 - **Binding (=)**: the pronoun is a bound variable; the antecedent denotes
@@ -41,7 +41,7 @@ functions used by the Dalrymple–Haug 2024 cross-construction survey.
 
 ## Two-parameter scope classification
 
-@cite{haug-dalrymple-2020} §3.3 (p. 24) makes the reciprocal-scope
+[haug-dalrymple-2020] §3.3 (p. 24) makes the reciprocal-scope
 classification two-dimensional: the locus of the reciprocal in the matrix
 Update (high or low) crossed with the type of anaphoric relation between the
 matrix subject and the embedded local antecedent (binding or group
@@ -60,7 +60,7 @@ The two analyses diverge on whether properties of the **local antecedent**
 constrain reciprocal scope. The relational analysis predicts they can;
 the quantificational analysis predicts they cannot for cases involving
 distributive operators (§5) and logophoric antecedents (§6) — see
-@cite{dalrymple-haug-2024} for the empirical contrast.
+[dalrymple-haug-2024] for the empirical contrast.
 -/
 
 namespace Semantics.Reference.Reciprocals
@@ -68,7 +68,7 @@ namespace Semantics.Reference.Reciprocals
 open Semantics.Dynamic.PPCDRT
 
 -- ════════════════════════════════════════════════════════════════
--- § 1: Anaphoric Relations (@cite{higginbotham-1985}, @cite{williams-1991})
+-- § 1: Anaphoric Relations ([higginbotham-1985], [williams-1991])
 -- ════════════════════════════════════════════════════════════════
 
 /-- The three types of anaphoric relation between a pronoun and its
@@ -89,10 +89,10 @@ inductive AnaphoricRelation where
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2: Reciprocal Locus and Scope Readings
--- (@cite{haug-dalrymple-2020} §3, §3.3)
+-- ([haug-dalrymple-2020] §3, §3.3)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Locus of the reciprocal in the matrix Update. @cite{haug-dalrymple-2020}
+/-- Locus of the reciprocal in the matrix Update. [haug-dalrymple-2020]
     §3.3 (p. 24): the reciprocal is either interpreted in-situ inside the
     embedded clause (`low` locus) or lifted to the matrix Update (`high`
     locus). The locus is one of the two parameters in the §3.3
@@ -124,11 +124,11 @@ inductive RecipScope where
 /-- The two families of reciprocal analysis. -/
 inductive RecipAnalysis where
   /-- Reciprocal is/contains a quantifier that can QR to the matrix clause.
-      @cite{heim-lasnik-may-1991}. -/
+      [heim-lasnik-may-1991]. -/
   | quantificational
   /-- Reciprocal is a pronoun bearing an anaphoric relation on its
-      antecedent. @cite{sternefeld-1998}, @cite{beck-2001},
-      @cite{dotlacil-2013}, @cite{haug-dalrymple-2020}. -/
+      antecedent. [sternefeld-1998], [beck-2001],
+      [dotlacil-2013], [haug-dalrymple-2020]. -/
   | relational
   deriving DecidableEq, Repr
 
@@ -138,7 +138,7 @@ inductive RecipAnalysis where
 
 /-- Properties of the local antecedent of the reciprocal (the
     embedded-clause pronoun coreferent with the matrix subject) that
-    affect scopal possibilities. @cite{dalrymple-haug-2024}. -/
+    affect scopal possibilities. [dalrymple-haug-2024]. -/
 structure AntecedentProperties where
   /-- Whether the local antecedent is syntactically bound (=) by the
       matrix subject. -/
@@ -153,7 +153,7 @@ structure AntecedentProperties where
   controllerIsCollective : Bool
   /-- Whether the pronoun type forces group identity (∪), excluding the
       binding (=) option. Japanese *zibun-tati* (plural reflexive),
-      @cite{nishigauchi-1992}. -/
+      [nishigauchi-1992]. -/
   forcesGroupIdentity : Bool
   /-- Whether the antecedent is a logophoric pronoun. -/
   isLogophoric : Bool
@@ -163,7 +163,7 @@ structure AntecedentProperties where
   deriving Repr
 
 -- ════════════════════════════════════════════════════════════════
--- § 5: Scope Predictions (@cite{dalrymple-haug-2024})
+-- § 5: Scope Predictions ([dalrymple-haug-2024])
 -- ════════════════════════════════════════════════════════════════
 
 /-- Scope readings predicted by the relational analysis.
@@ -196,13 +196,13 @@ def quantificationalPrediction (props : AntecedentProperties) : List RecipScope 
   else [.narrow, .wide]
 
 /-- A *synthetic* Strongest Meaning Hypothesis at the scope-ambiguity
-    layer (@cite{dalrymple-et-al-1998}'s SMH idea, applied to the choice
+    layer ([dalrymple-et-al-1998]'s SMH idea, applied to the choice
     between narrow and wide scope): when both readings are available,
     pick the logically stronger one. Narrow scope is stronger than wide
     in the sense that the narrow-scope reciprocity reading is more
     restrictive on doxastic alternatives.
 
-    **Caveat.** This is NOT what @cite{haug-dalrymple-2020} §6.1 actually
+    **Caveat.** This is NOT what [haug-dalrymple-2020] §6.1 actually
     argues against. The paper's §6.1 contrast (eq 132–133) is about
     SMH applied to **reciprocal-reading STRENGTH** (Strong vs Weak
     Reciprocity) under downward-entailing contexts — a different
@@ -234,10 +234,10 @@ theorem SMH_diverges_from_relational :
 
 -- ════════════════════════════════════════════════════════════════
 -- § 6: Reciprocal Reading — Locus + Two Anaphoric Relations
--- (@cite{haug-dalrymple-2020} §3, §3.3)
+-- ([haug-dalrymple-2020] §3, §3.3)
 -- ════════════════════════════════════════════════════════════════
 
-/-- A reciprocal reading per the @cite{haug-dalrymple-2020} two-parameter
+/-- A reciprocal reading per the [haug-dalrymple-2020] two-parameter
     classification: locus of the reciprocal × type of antecedent relation
     × type of reciprocal-to-antecedent relation. The three valid cells
     are exhibited by `narrowScopeReading`, `wideScopeReading`,
@@ -255,12 +255,12 @@ structure RecipReading where
   deriving DecidableEq, Repr
 
 /-- Narrow-scope reading (we-reading): low locus, group-identity
-    antecedent, in-situ reciprocity. @cite{haug-dalrymple-2020} eq 52. -/
+    antecedent, in-situ reciprocity. [haug-dalrymple-2020] eq 52. -/
 def narrowScopeReading : RecipReading :=
   { locus := .low, antecedentRel := .groupIdentity, reciprocalRel := .reciprocity }
 
 /-- Wide-scope reading (I-reading): high locus, bound antecedent,
-    matrix-clause reciprocity. @cite{haug-dalrymple-2020} eq 54. -/
+    matrix-clause reciprocity. [haug-dalrymple-2020] eq 54. -/
 def wideScopeReading : RecipReading :=
   { locus := .high, antecedentRel := .binding, reciprocalRel := .reciprocity }
 

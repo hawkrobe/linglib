@@ -4,8 +4,8 @@ import Linglib.Pragmatics.Implicature.Defs
 import Linglib.Pragmatics.Implicature.Diagnostics
 
 /-!
-# @cite{chemla-spector-2011} — Experimental Evidence for Embedded Scalar Implicatures
-@cite{chemla-spector-2011}
+# [chemla-spector-2011] — Experimental Evidence for Embedded Scalar Implicatures
+[chemla-spector-2011]
 
 Chemla, E. & Spector, B. (2011). Experimental evidence for embedded
 scalar implicatures. *Journal of Semantics*, 28(3), 359–400.
@@ -13,7 +13,7 @@ https://doi.org/10.1093/jos/ffq023
 
 ## Two threads
 
-1. **Empirical, contra @cite{geurts-pouscoulous-2009}**: using a graded
+1. **Empirical, contra [geurts-pouscoulous-2009]**: using a graded
    truth-value-judgment paradigm with letter-grid pictures, two
    experiments show that local readings of embedded *some*/*or* under
    universal quantifiers **are** detectable (Exp 1), and that local
@@ -35,13 +35,13 @@ The paper carves the conventionalism debate into three positions:
   student solved some of the problems".
 - **T2 (localist)**: scalar inference can apply in embedded position.
   Predicts (5) IS an available reading.
-  References: @cite{landman-1998}, @cite{chierchia-2004},
-  @cite{recanati-2003}, @cite{fox-2007},
-  @cite{chierchia-fox-spector-2008}.
+  References: [landman-1998], [chierchia-2004],
+  [recanati-2003], [fox-2007],
+  [chierchia-fox-spector-2008].
 - **T3 (non-restricted globalist)**: globalist mechanism applied with
   multi-alternative negation can derive (5) globally. References:
-  @cite{spector-2006}, @cite{vanrooij-schulz-2004},
-  @cite{sauerland-2004}, Chemla 2008/2009b.
+  [spector-2006], [vanrooij-schulz-2004],
+  [sauerland-2004], Chemla 2008/2009b.
 
 Exp 1 tests T1 vs {T2, T3} (via universal-quantifier embedding).
 Exp 2 tests {T1, T3} vs T2 (via non-monotonic embedding where the
@@ -53,7 +53,7 @@ mechanically cannot derive).
 | §  | Content                                                            |
 |----|--------------------------------------------------------------------|
 | §1 | Theories of scalar implicatures (T1/T2/T3 taxonomy)                |
-| §2 | Critique of @cite{geurts-pouscoulous-2009}'s methodology          |
+| §2 | Critique of [geurts-pouscoulous-2009]'s methodology          |
 | §3 | General features of the experimental design (graded judgments)     |
 | §4 | Experiment 1: scalar items in universal sentences                  |
 | §5 | Experiment 2: scalar items in non-monotonic environments           |
@@ -72,7 +72,7 @@ standard pagination).
 The paper uses Wilcoxon signed-rank tests (per-subject, n=16),
 Mann-Whitney U tests (per-item), and ANOVA (Block × Condition
 interactions). Specific W-statistics are *not* encoded here — same
-discipline as @cite{geurts-pouscoulous-2009}: load-bearing inequalities
+discipline as [geurts-pouscoulous-2009]: load-bearing inequalities
 are verified at the rate level.
 
 ## Linglib integration
@@ -96,10 +96,10 @@ are verified at the rate level.
 
 ## Subsequent literature (forward pointers)
 
-- @cite{fox-spector-2018} economy condition predicts CS11's
+- [fox-spector-2018] economy condition predicts CS11's
   distributivity finding (§4.4.5)
-- @cite{ronai-2024} extends CS11's graded paradigm to scalar diversity
-- @cite{potts-etal-2016} lexical-uncertainty RSA on the same
+- [ronai-2024] extends CS11's graded paradigm to scalar diversity
+- [potts-etal-2016] lexical-uncertainty RSA on the same
   *every*/*exactly one*/*no* conditions
 -/
 
@@ -395,7 +395,7 @@ item under STRONG condition, sub-conditions STRONG[≠] (where strong
 verifiers vary in shape, so distributivity inferences are supported)
 and STRONG[=] (where they don't) yield significantly different ratings
 (99.5% vs 73%, W = 78, p < .005). This is the *kind* of empirical
-finding @cite{fox-spector-2018}'s economy-of-exhaustification predicts:
+finding [fox-spector-2018]'s economy-of-exhaustification predicts:
 embedded `exh` is licensed when non-vacuous. Rates as per-mille
 (`Nat`) so the 99.5% value `995` is exact. -/
 def exp1OrStrongDiffShapePerMille : Nat := 995  -- STRONG[≠] = 99.5%
@@ -424,7 +424,7 @@ connected with some of its circles" — were tested in three conditions:
 
 Findings (Figure 6 page 19 / Figure 13 page 29):
 - ?LOCAL ratings are LOW (much lower than BOTH), replicating
-  @cite{geurts-pouscoulous-2009}'s Exp 4 finding that local readings of
+  [geurts-pouscoulous-2009]'s Exp 4 finding that local readings of
   *some* in DE contexts are not detected
 - ?LOCAL is somewhat higher in Exp 2's DE controls than in Exp 1's
   (51%/22% vs 25%/14%) — paper §5.5.4 page 30 attributes this to
@@ -449,7 +449,7 @@ def deControlsExp1Or : DEControlCondition → Nat
   | .de_qLocal  => 140
   | .de_both    => 930
 
-/-- Replicates @cite{geurts-pouscoulous-2009}'s Exp 4 finding: in DE
+/-- Replicates [geurts-pouscoulous-2009]'s Exp 4 finding: in DE
 contexts the ?LOCAL rate is far below the BOTH rate, supporting the
 no-local-SI-in-DE generalization. -/
 theorem de_qLocal_below_both :
@@ -706,7 +706,7 @@ Three connections to existing linglib content:
 2. **Implicature spine**: the qualitative "embedded local reading exists"
    conclusion is wrapped as an `Implicature` value over `Picture6` with
    `mechanism := .exhIE` (Innocent Exclusion / localist EXH family —
-   the @cite{fox-2007} / @cite{chierchia-fox-spector-2008} / T2 cluster).
+   the [fox-2007] / [chierchia-fox-spector-2008] / T2 cluster).
 3. **GP09 *exactly two* connection**: GP09's Exp 3 *exactly two*
    condition is the binary-task analog of CS11's Exp 2 *exactly one*.
    GP09 found ~50% inference rate (chance); CS11 finds 73% LOCAL
@@ -731,7 +731,7 @@ theorem cs_gp_agree_on_de_local_far_below_baseline :
 /-- The qualitative "local reading exists in embedded position" finding
 expressed as an `Implicature Picture6`: scalar SI, content = the local
 reading extension, alternative = the global reading, mechanism = exhIE
-(the @cite{fox-2007}-style localist EXH family that T2 represents). -/
+(the [fox-2007]-style localist EXH family that T2 represents). -/
 def localReadingExistsExp1 : Implicature Picture6 Prop :=
   { kind := .scalar
   , content := Exp1Some.local_
@@ -766,7 +766,7 @@ meaning. This result thus seems to vindicate the localist approach."
 
 Methodological conclusion: graded judgments reveal ambiguities that
 binary judgments mask; CS11 detected what GP09 missed. The
-@cite{geurts-pouscoulous-2009} null result is paradigm-relative, not a
+[geurts-pouscoulous-2009] null result is paradigm-relative, not a
 fact about the language faculty.
 
 Open questions noted by the paper itself (page 32):

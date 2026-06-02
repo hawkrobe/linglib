@@ -8,7 +8,7 @@ import Linglib.Discourse.AtIssueness
 /-!
 # Solstad & Bott (2024): The occasion verb presupposition
 
-@cite{solstad-bott-2024} @cite{tonhauser-beaver-roberts-simons-2013} @cite{heim-1983} @cite{schlenker-2008} @cite{schlenker-2009}
+[solstad-bott-2024] [tonhauser-beaver-roberts-simons-2013] [heim-1983] [schlenker-2008] [schlenker-2009]
 
 Formalizes the experimental evidence from S&P 17:11 establishing occasion
 verbs as a distinct class of presupposition trigger.
@@ -70,7 +70,7 @@ open Discourse.AtIssueness
 -- ════════════════════════════════════════════════════
 
 /-- Filtering direction for presupposition triggers.
-    @cite{solstad-bott-2024} Exp 3 shows occasion verbs allow symmetric
+    [solstad-bott-2024] Exp 3 shows occasion verbs allow symmetric
     filtering, while factives and change-of-state verbs only allow
     left-to-right filtering. -/
 inductive FilteringDirection where
@@ -79,7 +79,7 @@ inductive FilteringDirection where
   deriving DecidableEq, Repr
 
 /-- Context resolution direction for presupposition triggers.
-    Refines @cite{tonhauser-beaver-roberts-simons-2013}'s "m-positive"
+    Refines [tonhauser-beaver-roberts-simons-2013]'s "m-positive"
     into finer-grained categories based on where the resolving material
     can appear. -/
 inductive ContextPolarity where
@@ -92,7 +92,7 @@ inductive ContextPolarity where
 -- § 2. Occasion Verbs are Class C Triggers
 -- ════════════════════════════════════════════════════
 
-/-- Occasion verbs are Class C in the @cite{tonhauser-beaver-roberts-simons-2013} taxonomy:
+/-- Occasion verbs are Class C in the [tonhauser-beaver-roberts-simons-2013] taxonomy:
     SCF=no (can be informative), OLE=yes (attributed to attitude holder). -/
 theorem occasion_verb_is_classC :
     ProjectiveTrigger.occasion_verb.toClass = .classC := rfl
@@ -116,7 +116,7 @@ theorem occasion_verb_patterns_with_stop_know :
 -- § 3. German Occasion Verb Inventory
 -- ════════════════════════════════════════════════════
 
-/-- The 16 German occasion verbs tested in @cite{solstad-bott-2024},
+/-- The 16 German occasion verbs tested in [solstad-bott-2024],
     derived from Fragment entries with `.occasion` sense tag. -/
 def occasionVerbEntries : List GermanVerbEntry :=
   [bestrafen, belohnen, loben, kritisieren, danken,
@@ -139,7 +139,7 @@ theorem all_occasion_entries_soft_trigger :
 -- § 4. Exp 1: Contextual Felicity and Projectivity (N=71)
 -- ════════════════════════════════════════════════════
 
-/-- Exp 1 Block 1 regression estimates (Table 1 of @cite{solstad-bott-2024}).
+/-- Exp 1 Block 1 regression estimates (Table 1 of [solstad-bott-2024]).
     Intercept = occasion verb in neutral context.
     Other coefficients are treatment contrasts.
     N=71 participants (16 occasion verbs × 3 context conditions). -/
@@ -173,7 +173,7 @@ theorem cataphoric_resolution_substantial :
   norm_num [exp1_regression]
 
 /-- Exp 1 Block 2: projectivity and at-issueness ratings (0–1 scale).
-    Gradient measures following @cite{tonhauser-beaver-degen-2018}. -/
+    Gradient measures following [tonhauser-beaver-degen-2018]. -/
 structure ProjectivityDatum where
   projectivity : ℚ   -- Mean projectivity (0–1)
   atIssueness : ℚ    -- Mean at-issueness (0–1)
@@ -202,7 +202,7 @@ theorem exp1_not_at_issue :
 -- § 5. Exp 2: Psych Verbs Do Not Cluster with Occasion Verbs (N=60)
 -- ════════════════════════════════════════════════════
 
-/-- Exp 2 verb classes correspond to @cite{solstad-bott-2022} verb classes.
+/-- Exp 2 verb classes correspond to [solstad-bott-2022] verb classes.
     Occasion verbs = agent-evocator, SE = stimulus-experiencer, ES = experiencer-stimulus. -/
 def exp2VerbClasses : List VerbClass := [.agentEvocator, .stimExp, .expStim]
 
@@ -259,7 +259,7 @@ inductive Exp3TriggerClass where
   | mandelkern    -- Analysis C: factives + aspectuals (4 Mandelkern et al. items)
   deriving DecidableEq, Repr
 
-/-- Exp 3 regression results from Table 3 of @cite{solstad-bott-2024}.
+/-- Exp 3 regression results from Table 3 of [solstad-bott-2024].
     N=58 (75 recruited, 17 excluded). Fixed-effect estimates from
     mixed-effects regression; reference level is trigger-first. -/
 structure Exp3RegressionDatum where
@@ -339,7 +339,7 @@ theorem h8_interaction :
 -- ════════════════════════════════════════════════════
 
 /-- Profile characterizing a presupposition trigger's behavior across the
-    dimensions tested by @cite{solstad-bott-2024}. Uses types from the
+    dimensions tested by [solstad-bott-2024]. Uses types from the
     library's projective content taxonomy and the filtering/polarity
     types defined in this file. -/
 structure TriggerProfile where
@@ -407,7 +407,7 @@ theorem occasion_presup_projects {W : Type*}
     (negative (occasionEventPhase occasion engagement outcome)).presupposition := rfl
 
 -- ════════════════════════════════════════════════════
--- § 9. Asymmetric Filtering (@cite{heim-1983})
+-- § 9. Asymmetric Filtering ([heim-1983])
 -- ════════════════════════════════════════════════════
 
 /-- Under Heim's asymmetric filtering, the local context at the antecedent
@@ -427,7 +427,7 @@ theorem heim_antecedent_projects {W : Type*}
   exact hpresup_false (hfilter hw_in)
 
 -- ════════════════════════════════════════════════════
--- § 10. Symmetric Filtering (@cite{schlenker-2008}, @cite{schlenker-2009})
+-- § 10. Symmetric Filtering ([schlenker-2008], [schlenker-2009])
 -- ════════════════════════════════════════════════════
 
 /-- Under symmetric filtering, material from the consequent IS available
@@ -455,11 +455,11 @@ theorem symmetric_filters_when_consequent_entails {W : Type*}
   exact h w hw_in hcons
 
 -- ════════════════════════════════════════════════════
--- § 11. Bridge to @cite{solstad-bott-2022}
+-- § 11. Bridge to [solstad-bott-2022]
 -- ════════════════════════════════════════════════════
 
 /-- Occasion verbs correspond to the agent-evocator class from
-    @cite{solstad-bott-2022}. The "occasion" presupposition is the same
+    [solstad-bott-2022]. The "occasion" presupposition is the same
     underspecified eventuality that drives the NP2 IC bias: the evocator's
     prior behavior triggers the agent's interpersonal response. -/
 theorem occasion_is_agent_evocator_bias :
@@ -483,7 +483,7 @@ theorem ic_and_presupposition_dissociate :
 -- ════════════════════════════════════════════════════
 
 /-- Occasion verb projectivity/at-issueness from Exp 1 as a GradientPair,
-    bridging to the @cite{tonhauser-beaver-degen-2018} infrastructure. -/
+    bridging to the [tonhauser-beaver-degen-2018] infrastructure. -/
 def exp1_occasion_gpp : GradientPair where
   atIssueness := exp1_occasion_proj.atIssueness
   projectivity := exp1_occasion_proj.projectivity
@@ -512,7 +512,7 @@ def exp2_expStim_gpp : GradientPair where
     Exp 2 (9 trigger types including occasion + psych verbs):
       r = −0.90, t(7) = −5.33, p < .01 (significant)
 
-    These correspond to @cite{tonhauser-beaver-degen-2018}'s positive
+    These correspond to [tonhauser-beaver-degen-2018]'s positive
     correlations between not-at-issueness and projectivity (r = .85, .99),
     since at-issueness = 1 − not-at-issueness flips the sign. -/
 def exp1_gpp_r : ℚ := -70/100

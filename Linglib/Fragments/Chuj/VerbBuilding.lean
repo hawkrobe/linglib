@@ -2,12 +2,12 @@ import Linglib.Morphology.RootTypology
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 
 /-!
-# Chuj Verb Building Fragment @cite{coon-2019}
-@cite{davis-1997}
+# Chuj Verb Building Fragment [coon-2019]
+[davis-1997]
 
 Theory-neutral fragment for Chuj (Q'anjob'alan, Mayan), encoding
 root classification, voice morphology, paradigm grammaticality, and
-lexical inventory from @cite{coon-2019} "Building verbs in Chuj:
+lexical inventory from [coon-2019] "Building verbs in Chuj:
 Consequences for the nature of roots."
 
 ## Contents
@@ -32,7 +32,7 @@ Consequences for the nature of roots."
 
 **RootArity captures complement projection, not semantic type.**
 Coon's semantic types (3) group {√TV, √ITV} together as ⟨e, ⟨s,t⟩⟩ — both
-compose with an entity argument per @cite{davis-1997}. But syntactically, only
+compose with an entity argument per [davis-1997]. But syntactically, only
 √TV projects a complement DP that persists across voice alternations; √ITV's
 entity argument becomes the subject. Our `RootArity.selectsTheme` captures
 the syntactic complement projection, giving {√TV} vs {√ITV, √POS, √NOM}.
@@ -48,20 +48,20 @@ namespace Chuj
 -- ============================================================================
 
 /-- √TV root (PC): selects theme, no entailed change-of-state.
-    Semantic type ⟨e, ⟨s,t⟩⟩ (@cite{coon-2019}, (3)).
+    Semantic type ⟨e, ⟨s,t⟩⟩ ([coon-2019], (3)).
     Examples: mak' "hit", tek' "kick". -/
 def rootTV_pc : RootClassification :=
   { arity := .selectsTheme, changeType := .propertyConcept,
     denotationType := some .indivStatePred }
 
 /-- √TV root (result): selects theme, entails change-of-state.
-    Semantic type ⟨e, ⟨s,t⟩⟩ (@cite{coon-2019}, (3)).
+    Semantic type ⟨e, ⟨s,t⟩⟩ ([coon-2019], (3)).
     Examples: jatz' "hit (breaking)", tzak' "wrap". -/
 def rootTV_res : RootClassification :=
   { arity := .selectsTheme, changeType := .result,
     denotationType := some .indivStatePred }
 
-/-- √ITV root: semantic type ⟨e, ⟨s,t⟩⟩ (same as √TV per @cite{davis-1997}),
+/-- √ITV root: semantic type ⟨e, ⟨s,t⟩⟩ (same as √TV per [davis-1997]),
     but does NOT project a complement — the entity argument becomes the
     subject. The class is morphologically defined: roots that appear
     with null v/Voice⁰ in intransitive stems (p. 40).
@@ -78,14 +78,14 @@ def rootPOS : RootClassification :=
     denotationType := some .measureFn }
 
 /-- √NOM root: nominal base. Semantic type ⟨e,t⟩ — entity predicate
-    with no event argument (@cite{coon-2019}, (3)).
+    with no event argument ([coon-2019], (3)).
     Examples: a' "water", ixim "corn", chanhal "dance". -/
 def rootNOM : RootClassification :=
   { arity := .noTheme, changeType := .propertyConcept,
     denotationType := some .entityPred }
 
 -- ============================================================================
--- § 2: Four-Way Root Classification (@cite{coon-2019}, (3))
+-- § 2: Four-Way Root Classification ([coon-2019], (3))
 -- ============================================================================
 
 /-- Coon's four root classes are recovered as (arity × denotationType) pairs.

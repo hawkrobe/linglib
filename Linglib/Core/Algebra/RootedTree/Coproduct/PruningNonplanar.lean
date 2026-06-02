@@ -10,7 +10,7 @@ set_option autoImplicit false
 
 /-!
 # Δ^ρ on `ConnesKreimer R (Nonplanar α)` via projection from `Planar`
-@cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
+[marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 The Nonplanar Δ^ρ is obtained by descending the planar Δ^ρ
 (`Coproduct.lean`) through the projection `mk : Planar α → Nonplanar α`.
@@ -24,7 +24,7 @@ established, `Nonplanar.lift` produces `cutSummandsN`, which extends to
 
 `[UPSTREAM]` candidate. The Bialgebra structure depends on one Foissy
 axiom (`pairing_gl_eq_pairing_coproduct_Rho`, GL/CK duality identity,
-classical result of @cite{foissy-2002}); the rest is sorry-free. Covers:
+classical result of [foissy-2002]); the rest is sorry-free. Covers:
 the descent (`comulAlgHomN`), the Hochschild 1-cocycle
 (`comulTreeN_node_cocycle`, `comulAlgHomN_bPlusLin_cocycle`),
 coassociativity via GL/CK duality (`comulRhoN_coassoc` →
@@ -1265,10 +1265,10 @@ subsumes both Δ^ρ and Δ^c coassoc (see
 
 The Foissy axiom `pairing_gl_eq_pairing_coproduct_Rho` is the GL/CK
 duality identity at the level of pairing + cut summands for Δ^ρ; this
-is the classical result of @cite{foissy-2002}. Formalization deferred
+is the classical result of [foissy-2002]. Formalization deferred
 (parallel to `pairing_gl_eq_pairing_coproduct_C` for Δ^c). -/
 
-/-- **GL/CK duality for Δ^ρ** (@cite{foissy-2002}): the GL `★` product
+/-- **GL/CK duality for Δ^ρ** ([foissy-2002]): the GL `★` product
     and Δ^ρ coproduct are paired via the symmetry-weighted pairing:
 
     `pairing (gl x y) z = pairing₂ (x ⊗ y) (Δ^ρ z)`

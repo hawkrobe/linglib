@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Intensional.Frame
 /-!
 # Generalized Conjunction
 
-@cite{partee-rooth-1983}
+[partee-rooth-1983]
 
 Conjunction and disjunction defined recursively over the IL type structure:
 - Base case (`t`): Boolean operations
@@ -24,7 +24,7 @@ example : Ty.isConjoinable (.intens .t) = true := rfl
 example : Ty.isConjoinable (.intens .e) = false := rfl
 example : Ty.isConjoinable (.intens (.e ⇒ .t)) = true := rfl
 
-/-- Generalized conjunction (@cite{partee-rooth-1983} Definition 5).
+/-- Generalized conjunction ([partee-rooth-1983] Definition 5).
     At intension types, conjunction is pointwise over indices. -/
 def genConj (τ : Ty) (F : Frame) : F.Denot τ → F.Denot τ → F.Denot τ :=
   match τ with
@@ -68,7 +68,7 @@ theorem genDisj_comm_t (F : Frame) (p q : Prop) :
   simp only [genDisj]; exact propext Or.comm
 
 /-!
-## @cite{partee-rooth-1983} Key Facts
+## [partee-rooth-1983] Key Facts
 
 - Fact 6a: `φ ∩ ψ = λz[φ(z) ∩ ψ(z)]`
 - Fact 6b: `[φ ∩ ψ](α) = φ(α) ∩ ψ(α)`
@@ -126,7 +126,7 @@ end TypeRaising
 -- ════════════════════════════════════════════════════════════════
 
 /-!
-## @cite{mitrovic-sauerland-2014} @cite{mitrovic-sauerland-2016} Decomposition
+## [mitrovic-sauerland-2014] [mitrovic-sauerland-2016] Decomposition
 
 DP conjunction decomposes into three operations:
 - ☉ (`msShift`): individual → singleton set (= Partee's `ident`)

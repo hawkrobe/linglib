@@ -7,10 +7,10 @@ import Linglib.Fragments.English.Definiteness
 
 /-!
 # Schwarz (2009): Two Types of Definites in Natural Language
-@cite{schwarz-2009} @cite{schwarz-2013} @cite{hawkins-1978}
-@cite{coppock-beaver-2015} @cite{patel-grosz-grosz-2017}
+[schwarz-2009] [schwarz-2013] [hawkins-1978]
+[coppock-beaver-2015] [patel-grosz-grosz-2017]
 
-The central thesis of @cite{schwarz-2009} is that the surface category
+The central thesis of [schwarz-2009] is that the surface category
 "definite article" decomposes into **two structurally distinct articles**
 with different presupposition profiles:
 
@@ -23,7 +23,7 @@ Crucially, this is not a stipulation about meaning: it is read off the
 morphology in languages whose article paradigm overtly distinguishes the
 two — most prominently German (weak *im*, *vom*, *zum* vs strong *in dem*,
 *von dem*, *zu dem*), but also Fering, Lakhota, Akan, Hausa, and others
-(@cite{schwarz-2013}). English collapses both into syncretic *the*, masking
+([schwarz-2013]). English collapses both into syncretic *the*, masking
 the distinction at the surface.
 
 ## What this file tests
@@ -35,7 +35,7 @@ The split is operationalized in the Core layer by:
   (`.unique` carries a *situation* index for resource-situation binding;
   `.anaphoric` carries a *discourse* index for antecedent lookup).
 - **`Core.Nominal.Description.expectedPresupType`** — projects each kind
-  to the @cite{schwarz-2009} presupposition type it expresses.
+  to the [schwarz-2009] presupposition type it expresses.
 - **`Core.Nominal.Determiner`** — the declared determiner set records the
   morphological inventory; `Determiner.IsSyncretic` is the predicate that
   distinguishes English-style syncretism from German-style bipartition.
@@ -58,7 +58,7 @@ We verify:
    strong article for donkey pronouns (German *von dem*, not *vom*).
 6. **Bridging split** — part-whole bridging maps to uniqueness (weak
    article), relational/producer bridging to familiarity (strong article).
-   This is @cite{schwarz-2013} §3.2 generalized via `bridgingPresupType`.
+   This is [schwarz-2013] §3.2 generalized via `bridgingPresupType`.
 -/
 
 namespace Schwarz2009
@@ -73,7 +73,7 @@ open Core.Nominal
 -- ════════════════════════════════════════════════════════════════
 
 /-- The two Schwarz presupposition types are distinct constructors of
-    `DefPresupType`. The whole architectural claim of @cite{schwarz-2009}
+    `DefPresupType`. The whole architectural claim of [schwarz-2009]
     rests on this: if the types were the same, there would be no contrast
     to expose morphologically. -/
 theorem two_presup_types_distinct :
@@ -104,7 +104,7 @@ theorem anaphoric_is_familiarity (R : DenotGS F .et) (d : Nat) :
     (Description.anaphoric R d).expectedPresupType = some .familiarity := rfl
 
 /-- The two articles project to distinct presupposition types — the
-    central @cite{schwarz-2009} contrast at the type level. -/
+    central [schwarz-2009] contrast at the type level. -/
 theorem unique_anaphoric_presup_distinct
     (R : DenotGS F .et) (sIdx d : Nat) :
     (Description.unique R sIdx).expectedPresupType ≠
@@ -147,7 +147,7 @@ theorem strong_article_consults_entity_assignment
 
 /-- The classifier `usesSituationPronoun` correctly flags the weak article
     as a structural binder of the resource situation; the strong article
-    is not. This is the structural correlate of the @cite{schwarz-2009}
+    is not. This is the structural correlate of the [schwarz-2009]
     claim that uniqueness is *situational* and familiarity is *anaphoric*. -/
 theorem situation_binding_classifies_articles
     (R : DenotGS F .et) (sIdx d : Nat) :
@@ -158,19 +158,19 @@ theorem situation_binding_classifies_articles
 -- §4: Morphological correlate — German bipartite vs English syncretic
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{schwarz-2009} reads the two-article distinction off German
+/-! [schwarz-2009] reads the two-article distinction off German
 morphology. English collapses both into *the*; the contrast is masked at
 the surface but recoverable via `Determiner.IsSyncretic`. -/
 
 /-- German has both articles overtly, with no syncretism — the structural
-    @cite{schwarz-2009} contrast is morphologically visible. -/
+    [schwarz-2009] contrast is morphologically visible. -/
 theorem german_two_articles :
     Determiner.MarksPresup German.Definiteness.determiners .uniqueness ∧
     Determiner.MarksPresup German.Definiteness.determiners .familiarity ∧
     ¬ Determiner.IsSyncretic German.Definiteness.determiners := by decide
 
 /-- English has both articles, but they are syncretic — *the* covers both.
-    The @cite{schwarz-2009} contrast is real but morphologically invisible. -/
+    The [schwarz-2009] contrast is real but morphologically invisible. -/
 theorem english_syncretic_articles :
     Determiner.MarksPresup English.Definiteness.determiners .uniqueness ∧
     Determiner.MarksPresup English.Definiteness.determiners .familiarity ∧
@@ -189,7 +189,7 @@ theorem strategy_split :
     inventory of semantic distinctions is the same.
 
     German marks 2 (bipartite); English marks 1 (the single *the* form).
-    This is the @cite{patel-grosz-grosz-2017} D-layer count read off
+    This is the [patel-grosz-grosz-2017] D-layer count read off
     the article system. -/
 theorem morphological_distinction_count :
     (articleTypeToDistinguishedPresup
@@ -202,7 +202,7 @@ theorem morphological_distinction_count :
 -- §5: Hawkins use types map onto the Schwarz split (§3.1)
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{schwarz-2013} §3.1: anaphoric uses pattern with the strong
+/-- [schwarz-2013] §3.1: anaphoric uses pattern with the strong
     article — i.e., they project the familiarity presupposition. -/
 theorem anaphoric_use_is_familiarity :
     useTypeToPresupType .anaphoric = .familiarity := rfl
@@ -217,7 +217,7 @@ theorem situational_uses_are_uniqueness :
 -- §6: Donkey anaphora patterns with the strong article (§3)
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{schwarz-2009} §3: donkey pronouns require the strong article
+/-- [schwarz-2009] §3: donkey pronouns require the strong article
     in German (*von dem*, not *vom*). At the use-type level, this
     follows from `useTypeToPresupType .donkey = .familiarity` — the
     same presupposition type the strong article carries.
@@ -235,10 +235,10 @@ theorem donkey_patterns_with_anaphoric :
     useTypeToPresupType .donkey = useTypeToPresupType .anaphoric := rfl
 
 -- ════════════════════════════════════════════════════════════════
--- §7: Bridging split (@cite{schwarz-2013} §3.2)
+-- §7: Bridging split ([schwarz-2013] §3.2)
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{schwarz-2013} §3.2: bridging splits across the two articles.
+/-- [schwarz-2013] §3.2: bridging splits across the two articles.
     Part-whole bridging (*the village ... the church*) takes the weak
     article — situational uniqueness. Relational/producer bridging
     (*the play ... the author*) takes the strong article — anaphoric
@@ -248,7 +248,7 @@ theorem bridging_split_at_presup_layer :
     bridgingPresupType .relational = .familiarity := ⟨rfl, rfl⟩
 
 /-- The two bridging subtypes are exactly the two Schwarz presupposition
-    types — bridging is a microcosm of the @cite{schwarz-2009} contrast.
+    types — bridging is a microcosm of the [schwarz-2009] contrast.
     This is the empirical core of why the bridging split argument
     motivates a structural rather than purely lexical theory of
     definiteness. -/

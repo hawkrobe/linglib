@@ -1,21 +1,21 @@
 import Linglib.Syntax.Minimalist.Voice
 
 /-!
-# Smuggling @cite{collins-2005}
+# Smuggling [collins-2005]
 
-@cite{collins-2005} defines smuggling as follows:
+[collins-2005] defines smuggling as follows:
 
 > Suppose a constituent YP contains XP. Furthermore, suppose XP is
 > inaccessible to Z because of the presence of W (a barrier, phase boundary,
-> or intervener for the MLC / Relativized Minimality (@cite{rizzi-1990})). If YP moves to a
+> or intervener for the MLC / Relativized Minimality ([rizzi-1990])). If YP moves to a
 > position c-commanding W, we say that YP **smuggles** XP past W.
 
 The canonical application is passive: PartP (containing the object) moves
 to Spec-VoiceP, smuggling the object past the external argument in Spec-vP.
-The object can then raise to Spec-TP without violating Relativized Minimality (@cite{rizzi-1990}),
+The object can then raise to Spec-TP without violating Relativized Minimality ([rizzi-1990]),
 because the intervening external argument no longer c-commands it.
 
-@cite{storment-2026} extends this to quotative inversion (QI): VP moves
+[storment-2026] extends this to quotative inversion (QI): VP moves
 to Spec-VoiceP, making the theme subject accessible to T⁰ for Case
 licensing. The quote is clause-external (adjoined high). This yields
 surface order *"Quote" V Subject*.
@@ -31,7 +31,7 @@ This connects to `VoiceHead.IsPhasal`:
 - `voiceAgent.IsPhasal` → vP is a phase → complement frozen → no smuggling
 - `¬ voiceAnticausative.IsPhasal` → vP is not a phase → complement extractable.
 
-@cite{collins-2005} makes the same point: "neither the moved PartP nor
+[collins-2005] makes the same point: "neither the moved PartP nor
 an unaccusative vP are strong phases."
 
 -/
@@ -64,7 +64,7 @@ theorem agentive_blocks_smuggling : voiceAgent.permitsSmuggling = false := rfl
 
 /-- Non-thematic Voice permits smuggling (not a phase head).
     This is why anticausative / unaccusative verbs allow complement fronting
-    (@cite{storment-2026}: quotative inversion; @cite{collins-2005}: passive). -/
+    ([storment-2026]: quotative inversion; [collins-2005]: passive). -/
 theorem nonthematic_permits_smuggling :
     voiceAnticausative.permitsSmuggling = true := rfl
 
@@ -110,7 +110,7 @@ theorem no_theta_permits_smuggling (v : VoiceHead)
     (1) its Voice head permits smuggling (non-phase vP), and
     (2) it has a complement to smuggle (the quote).
 
-    This captures @cite{storment-2026}'s two conditions:
+    This captures [storment-2026]'s two conditions:
     - Unaccusativity (non-thematic Voice → non-phase → smuggling available)
     - Quote complement (something to front)
 
@@ -147,23 +147,23 @@ theorem nonthematic_without_complement_no_qi :
   simp [licensesQI]
 
 -- ============================================================================
--- § 5: Passive as Smuggling Application (@cite{collins-2005})
+-- § 5: Passive as Smuggling Application ([collins-2005])
 -- ============================================================================
 
 /-- A Voice head licenses passive smuggling iff:
     (1) its vP is not a phase (complement remains accessible), and
     (2) there is a PartP (participial phrase) to smuggle.
 
-    @cite{collins-2005}: PartP (= [Part V DP_object]) is complement of v.
+    [collins-2005]: PartP (= [Part V DP_object]) is complement of v.
     In passive, PartP moves to Spec-VoiceP, smuggling the object DP past
     the external argument in Spec-vP. The object can then raise to
-    Spec-TP without violating Relativized Minimality (@cite{rizzi-1990}).
+    Spec-TP without violating Relativized Minimality ([rizzi-1990]).
 
     The structural parallel with QI is exact:
     - QI: VP smuggles theme past agent
     - Passive: PartP smuggles object past external argument
 
-    @cite{collins-2005}: passive v is not v* — it assigns θ but does
+    [collins-2005]: passive v is not v* — it assigns θ but does
     not check Case (dissociated onto Voice/*by*). Without Case-checking,
     v is not a strong phase head, so PartP is extractable. -/
 def licensesPassiveSmuggling (voice : VoiceHead) (hasPartP : Bool) : Bool :=
@@ -176,7 +176,7 @@ theorem passive_smuggling_requires_both (v : VoiceHead) (p : Bool) :
   simp [licensesPassiveSmuggling, Bool.and_eq_true]
 
 /-- Passive Voice licenses smuggling when PartP is present.
-    This is the canonical passive derivation from @cite{collins-2005}. -/
+    This is the canonical passive derivation from [collins-2005]. -/
 theorem passive_voice_licenses_smuggling :
     licensesPassiveSmuggling voicePassive true = true := by
   decide
@@ -199,7 +199,7 @@ theorem smuggling_shared_precondition :
 /-- Passive Voice checks Case but does not assign θ (feature
     dissociation). This is what makes passive v defective (non-phase):
     Case-checking is the property that distinguishes v* from v
-    (@cite{chomsky-2001}, @cite{collins-2005} p. 96). -/
+    ([chomsky-2001], [collins-2005] p. 96). -/
 theorem passive_dissociation_enables_smuggling :
     voicePassive.ChecksCase ∧
     ¬ voicePassive.IsPhasal ∧

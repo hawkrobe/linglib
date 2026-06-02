@@ -2,12 +2,12 @@ import Linglib.Core.Order.PreferenceStructure
 
 /-!
 # Effective Preference Structures
-@cite{condoravdi-lauer-2012} @cite{lauer-2013} @cite{condoravdi-lauer-2016}
+[condoravdi-lauer-2012] [lauer-2013] [condoravdi-lauer-2016]
 
 The agent's distinguished `PreferenceStructure` used to guide action choice
-(@cite{condoravdi-lauer-2016} (68): `EP(a, w)`). Distinguished from
+([condoravdi-lauer-2016] (68): `EP(a, w)`). Distinguished from
 arbitrary preference structures by the consistency + realism axioms
-(@cite{condoravdi-lauer-2012} (66)–(67)).
+([condoravdi-lauer-2012] (66)–(67)).
 -/
 
 namespace Core.Order

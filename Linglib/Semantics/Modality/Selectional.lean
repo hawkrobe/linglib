@@ -4,7 +4,7 @@ import Linglib.Core.Probability.Finite
 
 /-!
 # Selectional Semantics for *will*
-@cite{cariani-santorio-2018}
+[cariani-santorio-2018]
 
 A **selectional** treatment of the future modal *will*: rather than
 quantifying universally or existentially over a modal base of historical
@@ -17,9 +17,9 @@ modal parameter `f`.
 where `s : SelectionFunction W` is a contextually supplied selection
 function and `g(f)` is the relevant set of historical alternatives.
 
-## Three constraints @cite{cariani-santorio-2018}
+## Three constraints [cariani-santorio-2018]
 
-@cite{cariani-santorio-2018} argue that an adequate theory of *will*
+[cariani-santorio-2018] argue that an adequate theory of *will*
 must satisfy three constraints:
 
 1. **Modal character**: *will* takes scope, interacts with negation and
@@ -52,7 +52,7 @@ must satisfy three constraints:
   `Semantics/Modality/HistoricalAlternatives.lean` — the bridge to the
   branching-time substrate.
 - `universalWill`: the universal-quantifier reading used as a foil
-  in @cite{cariani-santorio-2018}'s arguments. Shown to violate
+  in [cariani-santorio-2018]'s arguments. Shown to violate
   Negation Swap (`universal_negation_swap_fails`).
 - `cognitive_role`: under any credence supported on the modal
   parameter, `μ(‖will A‖) = μ(‖A‖)` — the §8.1 prediction that
@@ -71,7 +71,7 @@ variable {W : Type*}
 
 /-! ## §1. The selectional truth-condition -/
 
-/-- Selectional truth-condition for *will* @cite{cariani-santorio-2018}.
+/-- Selectional truth-condition for *will* [cariani-santorio-2018].
 
     `willSem s A f w` is true iff the prejacent `A` holds at the world
     selected by `s` from the modal parameter `f` at `w`.
@@ -94,7 +94,7 @@ instance willSem_decidable (s : SelectionFunction W) (A : W → Prop)
 
 /-! ## §2. Scopelessness, CEM, and unembedded collapse -/
 
-/-- **Negation Swap** @cite{cariani-santorio-2018}: under selectional
+/-- **Negation Swap** [cariani-santorio-2018]: under selectional
     semantics, *will* commutes with negation. `will ¬A ↔ ¬ will A`.
 
     Derived from `Semantics.Conditionals.SelectionFunction.sel_neg_swap` — the structural
@@ -105,7 +105,7 @@ theorem negation_swap (s : SelectionFunction W) (A : W → Prop)
     willSem s (fun w' => ¬ A w') f w ↔ ¬ willSem s A f w :=
   s.sel_neg_swap A f w
 
-/-- **Will Excluded Middle** @cite{cariani-santorio-2018}: `will A ∨
+/-- **Will Excluded Middle** [cariani-santorio-2018]: `will A ∨
     will ¬A` holds at every point of evaluation.
 
     Derived from `Semantics.Conditionals.SelectionFunction.sel_em` — the disjunction
@@ -118,7 +118,7 @@ theorem will_excluded_middle (s : SelectionFunction W) (A : W → Prop)
     willSem s A f w ∨ willSem s (fun w' => ¬ A w') f w :=
   s.sel_em A f w
 
-/-- **Unembedded collapse** @cite{cariani-santorio-2018} eq. (17):
+/-- **Unembedded collapse** [cariani-santorio-2018] eq. (17):
     when the evaluation world is itself in the modal parameter,
     Centering forces the selected world to be `w`, so `will A`
     reduces to `A w`.
@@ -134,13 +134,13 @@ theorem unembedded_collapse (s : SelectionFunction W) (A : W → Prop)
 
 /-! ## §3. Content transparency
 
-The substantive transparency claim of @cite{cariani-santorio-2018}
+The substantive transparency claim of [cariani-santorio-2018]
 §8.1 footnote 30: as a *proposition* (set of worlds), `‖will A‖` is
 not just `‖A‖` — they may diverge outside the modal parameter. But
 *restricted to the modal parameter*, they agree. This is the
 content-level fact from which the cognitive-role prediction follows. -/
 
-/-- **Content transparency** @cite{cariani-santorio-2018} §8.1: on the
+/-- **Content transparency** [cariani-santorio-2018] §8.1: on the
     modal parameter `f`, the truth set of `will A` coincides with the
     truth set of `A`. Pointwise consequence of Centering. -/
 theorem will_eq_A_on_modalParam (s : SelectionFunction W) (A : W → Prop)
@@ -168,7 +168,7 @@ theorem will_or_eq_will_or_will_on_modalParam (s : SelectionFunction W)
   unfold willSem
   exact Iff.rfl
 
-/-- **Set-level Content Transparency** @cite{cariani-santorio-2018}
+/-- **Set-level Content Transparency** [cariani-santorio-2018]
     §8.1: as *propositions* (sets of worlds), `‖will_f A‖` and `‖A‖`
     coincide on the modal parameter `f`. The cognitive-role argument
     (paper §8.1) hinges on this set equality, not just on pointwise
@@ -183,7 +183,7 @@ theorem will_inter_modalParam_eq (s : SelectionFunction W) (A : W → Prop)
   · exact fun ⟨h1, h2⟩ => ⟨(unembedded_collapse s A f w h2).mp h1, h2⟩
   · exact fun ⟨h1, h2⟩ => ⟨(unembedded_collapse s A f w h2).mpr h1, h2⟩
 
-/-- **Conjunction transparency at the set level** @cite{cariani-santorio-2018}
+/-- **Conjunction transparency at the set level** [cariani-santorio-2018]
     §8.1: on `f`, the truth-set of `will (A ∧ B)` coincides with the
     intersection of the truth-sets of `will A` and `will B`.
     Equivalently: `‖will (A ∧ B)‖_f = ‖will A‖_f ∩ ‖will B‖_f`.
@@ -199,7 +199,7 @@ theorem will_and_inter_modalParam_eq (s : SelectionFunction W)
   · exact fun ⟨⟨hA, hB⟩, hw⟩ => ⟨⟨hA, hB⟩, hw⟩
   · exact fun ⟨⟨hA, hB⟩, hw⟩ => ⟨⟨hA, hB⟩, hw⟩
 
-/-- **Disjunction transparency at the set level** @cite{cariani-santorio-2018}
+/-- **Disjunction transparency at the set level** [cariani-santorio-2018]
     §8.1: on `f`, the truth-set of `will (A ∨ B)` coincides with the
     union of the truth-sets of `will A` and `will B`. Selectional `will`
     distributes over disjunction at the set level — a substantively
@@ -216,7 +216,7 @@ theorem will_or_union_modalParam_eq (s : SelectionFunction W)
 
 /-! ## §4. Validity₂ (paper §6)
 
-@cite{cariani-santorio-2018} distinguish *validity₁* (truth at the
+[cariani-santorio-2018] distinguish *validity₁* (truth at the
 context of utterance) from *validity₂* (truth at *every* index
 ⟨w, s, g⟩). The matrix scopelessness theorems are validity₁ claims;
 the more interesting ones are validity₂. -/
@@ -231,7 +231,7 @@ def Valid2 (φ : SelectionFunction W → Set W → W → Prop) : Prop :=
     `fCtx`, and world `wCtx` determined by the utterance — when it
     holds at *that* index.
 
-    This is the weaker of the two validity notions @cite{cariani-santorio-2018}
+    This is the weaker of the two validity notions [cariani-santorio-2018]
     distinguish in §6. The postsemantic indeterminacy phenomena live
     here: a schema can be valid₁ at every context without being valid₂.
 
@@ -279,7 +279,7 @@ theorem postsemantic_will_excluded_middle (A : W → Prop)
 /-! ## §5. Bridge to historical alternatives
 
 Selectional `will` parameterized by the metaphysical modal base of
-@cite{condoravdi-2002} — the historical-alternatives substrate from
+[condoravdi-2002] — the historical-alternatives substrate from
 `Semantics/Modality/HistoricalAlternatives.lean`. -/
 
 /-- **Selectional `will` over historical alternatives.** Evaluates
@@ -291,7 +291,7 @@ def willHistorical {Time : Type*} (s : SelectionFunction W)
   willSem s A (metaphysicalBase history w t) w
 
 /-- When the world-history relation is reflexive (the standard case
-    @cite{condoravdi-2002} §4.1 condition (i)), `willHistorical`
+    [condoravdi-2002] §4.1 condition (i)), `willHistorical`
     collapses to its prejacent: `will_t A` at `w` reduces to `A w`. -/
 theorem willHistorical_reflexive_collapse {Time : Type*}
     (s : SelectionFunction W) {history : HistoricalAlternatives W Time}
@@ -303,7 +303,7 @@ theorem willHistorical_reflexive_collapse {Time : Type*}
 
 /-! ## §6. The universal-quantifier foil
 
-The universal-quantifier reading is what @cite{cariani-santorio-2018}
+The universal-quantifier reading is what [cariani-santorio-2018]
 argue against. Section 8.1's cognitive-role argument is decisive
 because the selectional account validates `μ(‖will A‖) = μ(A)` while
 the universal account collapses credence into a 0/1 step function. -/
@@ -344,7 +344,7 @@ disjunction, and negation variants of earlier drafts: those are just
 this theorem applied to `A ∩ B`, `A ∪ B`, and `Aᶜ` — the Bool
 connectives are encoding set algebra. -/
 
-/-- **Cognitive role** @cite{cariani-santorio-2018} §8.1: under any
+/-- **Cognitive role** [cariani-santorio-2018] §8.1: under any
     credence `μ` whose support lies within the modal parameter `f`,
     the measure of `‖will A‖` (the worlds whose *selected* world is in
     `A`) equals the measure of `‖A‖`.
@@ -367,7 +367,7 @@ theorem cognitive_role (s : SelectionFunction W) (A f : Set W) (μ : PMF W)
 
 /-! ## §9. Multi-premise validity (paper §6)
 
-@cite{cariani-santorio-2018} §6 distinguishes Validity₁ (truth at the
+[cariani-santorio-2018] §6 distinguishes Validity₁ (truth at the
 context) from Validity₂ (truth at every index). Both notions extend
 to multi-premise consequence: an argument `H₁, …, Hₙ ⊨ C` is valid₂
 when every index that satisfies all premises also satisfies the
@@ -415,9 +415,9 @@ theorem valid2_will_modus_ponens (A B : W → Prop) :
   exact hIff.mp hA
 
 /-! ## §8. *Would* as past-tense morphological derivative of *will*
-@cite{cariani-santorio-2018} §5.3.2
+[cariani-santorio-2018] §5.3.2
 
-@cite{cariani-santorio-2018} §5.3.2 argues that *would* is not a separate
+[cariani-santorio-2018] §5.3.2 argues that *would* is not a separate
 modal operator but the past-tense morphological form of *will*. Both
 share the same selectional truth-condition; they differ only in the
 modal parameter `f` made available by tense — present *will*
@@ -432,7 +432,7 @@ is the formal payoff of analysing *would* as a tense form of *will*
 rather than as an independent operator: the entire §2–§7 architecture
 is reused unchanged. -/
 
-/-- **Selectional `would`** @cite{cariani-santorio-2018} §5.3.2:
+/-- **Selectional `would`** [cariani-santorio-2018] §5.3.2:
     definitionally identical to `willSem`. The morphological past-tense
     distinction does not change the semantic clause; it only changes
     which modal parameter is supplied by context. -/
@@ -445,7 +445,7 @@ def wouldSem (s : SelectionFunction W) (A : W → Prop)
     wouldSem s A f w ↔ A (s.sel w f) := Iff.rfl
 
 /-- **Past-tense morphology = parameter shift, not semantic shift**
-    @cite{cariani-santorio-2018} §5.3.2: *would* and *will* have the
+    [cariani-santorio-2018] §5.3.2: *would* and *will* have the
     same selectional truth-condition. The difference is purely in the
     modal parameter `f` supplied by the tense morpheme. -/
 theorem wouldSem_eq_willSem (s : SelectionFunction W) (A : W → Prop)

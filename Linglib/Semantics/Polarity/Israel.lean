@@ -2,7 +2,7 @@ import Linglib.Typology.PolarityItem
 
 /-!
 # Semantics.Polarity.Israel
-@cite{israel-1996} @cite{israel-2001} @cite{israel-2011}
+[israel-1996] [israel-2001] [israel-2011]
 
 Israel's theoretical predictions on polarity-sensitive items: the
 `predictCanonicity` function and `canonicityConsistent` validation
@@ -22,7 +22,7 @@ monotonicity theory hub).
 
 ## Framework commitment
 
-Israel's central empirical claim (@cite{israel-2001}) is that for
+Israel's central empirical claim ([israel-2001]) is that for
 emphatic polarity items, canonicality is determined principally by
 **likelihood effect** (propositional role): impeding roles
 (patient/theme) → canonical items, facilitating roles (agent/stimulus)
@@ -32,7 +32,7 @@ the canonical witness of role-likelihood mapping carrying explanatory
 weight that pure-monotonicity accounts (Ladusaw, K&L) lack.
 
 This file enshrines the Israel framework. Alternative scalar accounts
-(@cite{lahiri-1998} EVEN-based, @cite{chierchia-2006} EXH+D-alternatives,
+([lahiri-1998] EVEN-based, [chierchia-2006] EXH+D-alternatives,
 Krifka 1995 STA) would live as sibling Theories files; the
 `Typology/PolarityItem.lean` Israel-shaped data fields would carry
 each framework's analysis as an optional projection.
@@ -52,7 +52,7 @@ deferred.
 
 namespace Typology.PolarityItem
 
-/-- Israel's prediction (@cite{israel-2001}): for emphatic polarity items,
+/-- Israel's prediction ([israel-2001]): for emphatic polarity items,
     canonical/inverted is determined principally by likelihood effect
     (propositional role).
 

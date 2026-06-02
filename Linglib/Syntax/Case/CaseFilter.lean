@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Features
 
 /-!
 # The Case Filter
-@cite{baker-2015} @cite{chomsky-2001} @cite{marantz-1991} @cite{woolford-2006}
+[baker-2015] [chomsky-2001] [marantz-1991] [woolford-2006]
 
 Every DP must receive Case. In Minimalist terms:
 - Every DP has [uCase] (unvalued Case feature)

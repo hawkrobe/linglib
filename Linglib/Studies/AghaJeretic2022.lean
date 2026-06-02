@@ -10,7 +10,7 @@ import Mathlib.Data.Fin.Basic
 
 /-!
 # Weak Necessity Modals as Homogeneous Pluralities of Worlds
-@cite{agha-jeretic-2022}
+[agha-jeretic-2022]
 
 Proceedings of SALT 32: 831–851.
 
@@ -52,12 +52,12 @@ of plural definite DPs under negation.
 
 ## Independent Support
 
-@cite{tieu-kriz-chemla-2019} find that children acquire homogeneity
+[tieu-kriz-chemla-2019] find that children acquire homogeneity
 independently of scalar implicatures (HOM/−SI group), supporting the
 claim that homogeneity is intrinsic to plural predication rather than
-derived via exhaustification (@cite{magri-2014}).
+derived via exhaustification ([magri-2014]).
 
-## Connection to @cite{agha-jeretic-2026}
+## Connection to [agha-jeretic-2026]
 
 The 2026 handbook chapter surveys this analysis as one of three competing
 accounts of weak necessity (alongside domain restriction and comparative
@@ -378,7 +378,7 @@ theorem should_tolerates_exceptions :
 /-! ## Well-responses in borderline cases
 
 In borderline cases (★), outright denial is infelicitous; *well*-responses
-are preferred. This parallels plural definites (@cite{kriz-2016}).
+are preferred. This parallels plural definites ([kriz-2016]).
 
 Paper example (19). -/
 
@@ -570,7 +570,7 @@ theorem french_both_forces :
 
 /-! ## Why domain restriction doesn't capture homogeneity
 
-The @cite{von-fintel-iatridou-2008} analysis (formalized in `Directive.lean`)
+The [von-fintel-iatridou-2008] analysis (formalized in `Directive.lean`)
 treats *should* as ∀ over a refined set of best worlds. `Directive.weakNecessity`
 returns `Bool` — it is bivalent by construction. A bivalent semantics
 **cannot produce the truth-value gap** that the empirical data require.
@@ -903,7 +903,7 @@ theorem mustEval_eq_ofBool (domain : List World) (p : World → Bool) :
 -- §17. Sufficient Truth and Exception Tolerance (Appendix 1, def 44–46)
 -- ============================================================================
 
-/-! ## Sufficient Truth (@cite{kriz-2016}, A&J Appendix 1)
+/-! ## Sufficient Truth ([kriz-2016], A&J Appendix 1)
 
 Formalizes the mechanism by which indeterminate (★) sentences are rescued
 to "true enough" relative to an Question (= QUD). A sentence S is

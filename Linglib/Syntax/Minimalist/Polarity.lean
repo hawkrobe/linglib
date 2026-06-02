@@ -3,10 +3,10 @@ import Linglib.Features.Polarity
 
 /-!
 # Syntactic Polarity: PolP and [±Pol]
-@cite{holmberg-2016} @cite{laka-1990}
+[holmberg-2016] [laka-1990]
 
 Syntactic polarity as a formal feature on the PolP functional head,
-connecting @cite{laka-1990}'s ΣP and @cite{holmberg-2016}'s analysis
+connecting [laka-1990]'s ΣP and [holmberg-2016]'s analysis
 of yes/no answers.
 
 ## Key Claims
@@ -57,7 +57,7 @@ def PolFeature.toPolarity : PolFeature → Option Features.Polarity
 
 /-- A Pol⁰ head: the functional head projecting PolP.
 
-    In @cite{holmberg-2016}'s analysis, every finite clause has a Pol⁰
+    In [holmberg-2016]'s analysis, every finite clause has a Pol⁰
     bearing a [±Pol] feature. The head's category is `Cat.Pol`. -/
 structure PolHead where
   /-- The polarity feature on this head -/

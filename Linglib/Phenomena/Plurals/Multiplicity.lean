@@ -19,22 +19,22 @@ This monotonicity sensitivity parallels classical scalar implicatures
 ## Theoretical Approaches
 
 Three main accounts:
-1. **Ambiguity** (@cite{farkas-de-swart-2010}): Plural is ambiguous
+1. **Ambiguity** ([farkas-de-swart-2010]): Plural is ambiguous
    (inclusive "one or more" vs exclusive "more than one"), resolved by
    Strongest Meaning Hypothesis.
-2. **Implicature** (@cite{sauerland-2003}, @cite{spector-2007},
-   @cite{zweig-2009}): Plural literally means "one or more," multiplicity
+2. **Implicature** ([sauerland-2003], [spector-2007],
+   [zweig-2009]): Plural literally means "one or more," multiplicity
    arises as a scalar implicature with the singular as alternative.
-3. **Homogeneity** (@cite{kriz-2015}): Plural interpretation via
+3. **Homogeneity** ([kriz-2015]): Plural interpretation via
    homogeneity presupposition.
 
 ## Key References
 
-- @cite{sauerland-2003}
-- @cite{spector-2007}
-- @cite{zweig-2009}
-- @cite{farkas-de-swart-2010}
-- @cite{tieu-etal-2020}
+- [sauerland-2003]
+- [spector-2007]
+- [zweig-2009]
+- [farkas-de-swart-2010]
+- [tieu-etal-2020]
 -/
 
 set_option autoImplicit false
@@ -194,7 +194,7 @@ def PluralTheory.usesSIMechanism : PluralTheory → Bool
 -- is an SI, then known properties of SIs (acquisition delay, uniformity,
 -- polarity sensitivity, truth-value asymmetry) transfer to multiplicity.
 
-/-- Children undercompute SIs (@cite{noveck-2001}). If multiplicity IS
+/-- Children undercompute SIs ([noveck-2001]). If multiplicity IS
     an SI, children should compute fewer multiplicity inferences. -/
 def PluralTheory.predictsChildrenComputeFewer (t : PluralTheory) : Bool :=
   t.usesSIMechanism

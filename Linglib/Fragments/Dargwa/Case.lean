@@ -1,14 +1,14 @@
 import Linglib.Features.Case
 import Linglib.Features.Case
 /-!
-# Dargwa (Tanti) Case Inventory @cite{sumbatova-2021}
+# Dargwa (Tanti) Case Inventory [sumbatova-2021]
 
 Dargwa (Tanti dialect; Nakh-Dagestanian) has a **consistently ergative**
 alignment system — unlike Georgian's tense-conditioned split. All transitive
 verbs mark the A-argument with ergative *-li* and leave the P-argument
 unmarked (absolutive). There is no split conditioning.
 
-## Grammatical Cases (Table 4.3 of @cite{sumbatova-2021})
+## Grammatical Cases (Table 4.3 of [sumbatova-2021])
 
 | Case        | Morpheme | Function                                |
 |-------------|----------|-----------------------------------------|

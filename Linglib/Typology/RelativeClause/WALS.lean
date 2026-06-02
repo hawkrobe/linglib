@@ -5,11 +5,11 @@ import Linglib.Data.WALS.Features.F123A
 
 /-!
 # Relative clauses: typological survey (WALS)
-@cite{comrie-1989} @cite{keenan-comrie-1977} @cite{comrie-kuteva-2013a} @cite{comrie-kuteva-2013b} @cite{dryer-2013-wals}
+[comrie-1989] [keenan-comrie-1977] [comrie-kuteva-2013a] [comrie-kuteva-2013b] [dryer-2013-wals]
 
 The cross-linguistic WALS-survey facet of the relative clause: the per-language
 `Profile` summarizing relativization strategies (WALS Chs 122/123/90D), the RC
-position, and the @cite{keenan-comrie-1977} Accessibility-Hierarchy cut-off,
+position, and the [keenan-comrie-1977] Accessibility-Hierarchy cut-off,
 with the WALS converters and the aggregate distribution theorems. Per-language
 values live in `Fragments/{Lang}/Relativization.lean` as
 `def relativization : RelativeClause.Profile`.
@@ -116,7 +116,7 @@ structure Profile where
   oblStrategy : OblStrategy
   /-- Position of the relative clause with respect to the head noun. -/
   rcPosition : RCPosition
-  /-- Lowest @cite{keenan-comrie-1977} AH position that can be relativized. -/
+  /-- Lowest [keenan-comrie-1977] AH position that can be relativized. -/
   lowestRelativizable : AHPosition
   /-- Status of the head-internal relativization strategy (WALS 90D). Defaults
       to `.absent`, since most languages outside East Asia, Mesoamerica, and a
@@ -165,9 +165,9 @@ def fromWALS90D : Data.WALS.F90D.InternallyHeadedRelativeClauses →
 /-! ### Distribution theorems
 
 WALS-aggregate findings on relative-clause formation strategies
-(@cite{comrie-kuteva-2013a} @cite{comrie-kuteva-2013b} @cite{dryer-2013-wals}).
+([comrie-kuteva-2013a] [comrie-kuteva-2013b] [dryer-2013-wals]).
 Ch 122 (subjects): 166 languages; gap dominates,
-reflecting subjects' high accessibility on the @cite{keenan-comrie-1977}
+reflecting subjects' high accessibility on the [keenan-comrie-1977]
 hierarchy. Ch 123 (obliques): 112 languages; gap remains most common, but
 pronoun retention is far more frequent than for subjects, and a sizeable
 minority cannot relativize obliques at all. -/
@@ -190,7 +190,7 @@ theorem gap_most_common_for_subjects :
 set_option maxRecDepth 2000 in
 /-- WALS Chs 122/123: pronoun retention is more common for obliques than
     for subjects — a key Accessibility-Hierarchy prediction
-    (@cite{keenan-comrie-1977}). -/
+    ([keenan-comrie-1977]). -/
 theorem retention_increases_for_obliques :
     (ch123.filter (·.value == .pronounRetention)).length >
     (ch122.filter (·.value == .pronounRetention)).length := by decide

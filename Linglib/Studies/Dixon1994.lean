@@ -9,14 +9,14 @@ import Linglib.Fragments.Hindi.Case
 
 /-!
 # Dixon (1994): Ergativity — typology + Silverstein hierarchy + ditransitives
-@cite{dixon-1994} @cite{dixon-1972} @cite{silverstein-1976} @cite{blake-1994}
-@cite{comrie-1978} @cite{comrie-2013} @cite{haspelmath-2005}
-@cite{haspelmath-2021} @cite{bohnemeyer-2004} @cite{sumbatova-2021}
+[dixon-1994] [dixon-1972] [silverstein-1976] [blake-1994]
+[comrie-1978] [comrie-2013] [haspelmath-2005]
+[haspelmath-2021] [bohnemeyer-2004] [sumbatova-2021]
 
 R. M. W. Dixon. *Ergativity*. Cambridge University Press, 1994. The
 canonical typological reference for ergative alignment + split ergativity,
-covering @cite{silverstein-1976}'s prominence hierarchy and
-@cite{dixon-1972}'s Dyirbal split-ergative analysis.
+covering [silverstein-1976]'s prominence hierarchy and
+[dixon-1972]'s Dyirbal split-ergative analysis.
 
 This study file holds:
 
@@ -27,7 +27,7 @@ This study file holds:
    rarity of tripartite/active patterns.
 3. **Silverstein's hierarchy** as a threshold-based prominence function
    with monotonicity proven, and the Dyirbal split as a specific instance.
-4. **Ditransitive alignment** (@cite{haspelmath-2005}): the 6-language
+4. **Ditransitive alignment** ([haspelmath-2005]): the 6-language
    indirective/secundative/neutral sample.
 5. **Fragment bridges**: theorems verifying the per-language alignment
    classifications match the Fragment grammatical descriptions.
@@ -218,7 +218,7 @@ def warlpiri : AlignmentProfile :=
   , verbAlignment := .neutral
   , notes := "Split ergative: NPs erg, pronouns acc; free word order" }
 
-/-- Dargwa (Tanti; @cite{sumbatova-2021}): consistently ergative across
+/-- Dargwa (Tanti; [sumbatova-2021]): consistently ergative across
     all three domains. -/
 def dargwa : AlignmentProfile :=
   { name := "Dargwa (Tanti)", iso639 := "dar"
@@ -227,7 +227,7 @@ def dargwa : AlignmentProfile :=
   , verbAlignment := .ergative
   , notes := "Consistently ergative; -li on A; gender agrees with absolutive" }
 
-/-- Yukatek Maya (@cite{bohnemeyer-2004}): aspect-conditioned split
+/-- Yukatek Maya ([bohnemeyer-2004]): aspect-conditioned split
     intransitivity — perfective triggers ergative-like marking, imperfective
     triggers accusative-like marking. -/
 def yukatek : AlignmentProfile :=
@@ -273,13 +273,13 @@ theorem sample_counts :
 -- ============================================================================
 
 /-- Accusative is the most common alignment for pronouns
-    (@cite{dixon-1994}'s prominence hierarchy prediction). -/
+    ([dixon-1994]'s prominence hierarchy prediction). -/
 theorem accusative_most_common_pronouns :
     (allProfiles.filter (fun p => p.pronAlignment == .accusative)).length >=
     (allProfiles.filter (fun p => p.pronAlignment == .ergative)).length := by
   native_decide
 
-/-- @cite{dixon-1994}'s generalisation: ergative case marking is more
+/-- [dixon-1994]'s generalisation: ergative case marking is more
     common on full NPs than on pronouns. -/
 theorem dixon_generalization :
     (allProfiles.filter (fun p => p.npAlignment == .ergative)).length >
@@ -317,7 +317,7 @@ theorem active_rare_case :
     (allProfiles.filter (fun p => p.npAlignment == .active)).length <= 2 := by
   native_decide
 
-/-- Aspect-conditioned split intransitivity (@cite{bohnemeyer-2004}):
+/-- Aspect-conditioned split intransitivity ([bohnemeyer-2004]):
     Yukatek Maya and Georgian both show active verbal person marking. -/
 theorem aspect_split_languages :
     (allProfiles.filter (fun p => p.verbAlignment == .active)).length >= 2 := by
@@ -455,7 +455,7 @@ theorem accusative_marks_patient_only :
 -- §6. Silverstein hierarchy (1976)
 -- ============================================================================
 
-/-! @cite{silverstein-1976} predicts that ergative marking targets the **less
+/-! [silverstein-1976] predicts that ergative marking targets the **less
     prominent** end of the animacy/definiteness scale. More prominent NPs
     (pronouns, 1st/2nd person) get accusative treatment; less prominent NPs
     (full NPs, 3rd person, inanimate) get ergative treatment. -/
@@ -491,7 +491,7 @@ theorem silverstein_monotone (threshold p₁ p₂ : Nat)
 theorem silverstein_predicts_dixon :
     silverstein 1 0 = .ergative ∧ silverstein 1 1 = .accusative := ⟨rfl, rfl⟩
 
-/-- @cite{dixon-1972} Dyirbal split: human/animate → accusative,
+/-- [dixon-1972] Dyirbal split: human/animate → accusative,
     inanimate → ergative. -/
 def dyirbalSplit : Typology.Alignment.SplitErgativity AnimacyLevel :=
   { ergCondition := fun a => a == .inanimate }
@@ -516,7 +516,7 @@ theorem dyirbal_split_matches_pron :
 end SilversteinSplit
 
 -- ============================================================================
--- §7. Ditransitive alignment (@cite{haspelmath-2005})
+-- §7. Ditransitive alignment ([haspelmath-2005])
 -- ============================================================================
 
 def ditrans_english : DitransitiveProfile :=

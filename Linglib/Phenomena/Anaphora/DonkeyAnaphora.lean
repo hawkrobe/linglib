@@ -8,7 +8,7 @@ import Linglib.Fragments.Shan.Definiteness
 
 /-!
 # Donkey Anaphora: Empirical Data
-@cite{geach-1962} @cite{heim-1982} @cite{kadmon-1987} @cite{kanazawa-1994} @cite{schwarz-2009}
+[geach-1962] [heim-1982] [kadmon-1987] [kanazawa-1994] [schwarz-2009]
 
 Theory-neutral data on donkey anaphora and related binding puzzles.
 
@@ -254,7 +254,7 @@ def discourseDonkeyData : List DiscourseDonkeyDatum := [
 
 /-! ### Donkey anaphora as a definiteness use type
 
-@cite{schwarz-2009} §3: donkey pronouns in German pattern with anaphoric
+[schwarz-2009] §3: donkey pronouns in German pattern with anaphoric
 definites (strong article *von dem*), not with uniqueness definites
 (weak article *vom*). This means donkey anaphora selects the
 *familiarity* presupposition type — the same as regular anaphora.
@@ -265,7 +265,7 @@ The cross-linguistic pattern:
 - **Shan**: bare noun — no articles, so no morphological signal
 
 This parallels the general pattern for anaphoric definites in
-@cite{moroney-2021} Table 4.4. -/
+[moroney-2021] Table 4.4. -/
 
 open Features.Definiteness (DefiniteUseType DefPresupType useTypeToPresupType
   ArticleType)
@@ -276,7 +276,7 @@ presupposition type (familiarity). -/
 def donkeyUseType : DefiniteUseType := .donkey
 
 /-- Donkey pronouns select the familiarity (strong article) presupposition
-type. @cite{schwarz-2009} §3: in German, donkey pronouns require the
+type. [schwarz-2009] §3: in German, donkey pronouns require the
 strong article (*von dem*), patterning with anaphoric uses rather
 than uniqueness uses. -/
 theorem donkey_presup_is_familiarity :

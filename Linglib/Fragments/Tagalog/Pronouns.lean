@@ -5,7 +5,7 @@ import Linglib.Features.Person
 
 /-!
 # Tagalog pronoun profile (WALS Chs 39, 40, 44–48)
-@cite{wals-2013} @cite{himmelmann-2005-tagalog}
+[wals-2013] [himmelmann-2005-tagalog]
 
 ## Pronoun paradigm (Himmelmann 2005 Table 12.2, p. 358)
 
@@ -21,31 +21,31 @@ import Linglib.Features.Person
 3.PL            silá          nilá          kanilá
 ```
 
-@cite{himmelmann-2005-tagalog} labels the columns SPEC / POSS(GEN) /
+[himmelmann-2005-tagalog] labels the columns SPEC / POSS(GEN) /
 LOC(DAT) (p. 358; the *sa*-form of personal pronouns and personal names
 is glossed DAT rather than LOC because of distributional differences).
-@cite{kroeger-1991-thesis} (p. 14, ex. 12) uses the cleaner labels
+[kroeger-1991-thesis] (p. 14, ex. 12) uses the cleaner labels
 NOMINATIVE / GENITIVE / DATIVE, explicitly rejecting the older
 "topic"/"complement" terminology.
 
 ## Clusivity (system-level)
 
-Tagalog instantiates Cysouw's *minimal-augmented* type (@cite{cysouw-2009}):
+Tagalog instantiates Cysouw's *minimal-augmented* type ([cysouw-2009]):
 the inclusive splits into a minimal 1du.in form (1+2 only, "we two") and
 an augmented *tayo* (1+2+others — speaker + addressee + additional
-referents, of any number; @cite{schachter-otanes-1972} p. 89 glosses it
+referents, of any number; [schachter-otanes-1972] p. 89 glosses it
 as "you (singular) and I (and others)" / "you (plural) and I"); the
 exclusive *kami* remains a single category. This is a finer typological
 cut than WALS Ch 39's binary incl/excl coding can express, which is why
 the WALS-derived `Pronoun.inclusiveExclusive "tgl"` underdetermines the
 paradigm.
 
-The *kitá* / *katá* cell warrants care. @cite{schachter-otanes-1972}
+The *kitá* / *katá* cell warrants care. [schachter-otanes-1972]
 Chart 7 (p. 88) tabulates the 1du.in NOM as ***kata*** (with *nita*/*kanita*
 GEN/DAT) — and adds a separate portmanteau ***kita*** (p. 89) that combines
 1sg.GEN with 2sg.NOM (occurring "in place of the non-occurring sequences
 \\**ko ka* and \\**ka ko*", e.g. in 'I [verb] you' constructions).
-@cite{himmelmann-2005-tagalog}'s Table 12.2 lists *kitá / katá* together
+[himmelmann-2005-tagalog]'s Table 12.2 lists *kitá / katá* together
 as the 1.DU.IN ang-form, conflating these. S&O (p. 89) further note that
 "the dual non-plural pronouns are obsolescent in educated Manila Tagalog,
 and many speakers do not use them at all, using the dual plural
@@ -57,9 +57,9 @@ collapses to plain inclExcl.
 
 namespace Tagalog
 
-/-- Tagalog clusivity system per @cite{cysouw-2009}: minimal-augmented,
+/-- Tagalog clusivity system per [cysouw-2009]: minimal-augmented,
     with the historical 1-dual-inclusive *kata*
-    (@cite{schachter-otanes-1972} p. 88) alongside the augmented-inclusive
+    ([schachter-otanes-1972] p. 88) alongside the augmented-inclusive
     *tayo* and the exclusive *kami*. Modern Manila Tagalog has largely
     lost the dual; this field reflects the textbook paradigm, not
     colloquial usage. Refines the binary WALS Ch 39 value
@@ -70,15 +70,15 @@ def clusivitySystem : Features.Clusivity.System := .minimalAugmented
 -- Pronoun paradigm (person + number + clusivity, three case series)
 -- ============================================================================
 
-/-! The independent-pronoun paradigm per @cite{schachter-otanes-1972} Chart 7
+/-! The independent-pronoun paradigm per [schachter-otanes-1972] Chart 7
     (p. 88): each cell is a `PersonalPronoun` carrying person, number, and
     clusivity, in three case series — *ang* (NOM), *ng* (GEN), *sa* (DAT). The
-    @cite{cysouw-2009} `category` is *derived* from those features
+    [cysouw-2009] `category` is *derived* from those features
     (`Pronoun.category`), not stored. The minimal-augmented split is the dual
     inclusive *kata* (1+2) vs the plural inclusive *tayo* (1+2+others), with the
-    exclusive *kami* (1+others). The *kitá* form @cite{himmelmann-2005-tagalog}
+    exclusive *kami* (1+others). The *kitá* form [himmelmann-2005-tagalog]
     Table 12.2 lists alongside *katá* is a separate 1sg.GEN+2sg.NOM portmanteau
-    (@cite{schachter-otanes-1972} p. 89), not a 1du.in pronoun. -/
+    ([schachter-otanes-1972] p. 89), not a 1du.in pronoun. -/
 
 open Features.Person (Category)
 
@@ -121,11 +121,11 @@ def pronouns : List PersonalPronoun :=
    kata, nita, kanita, tayo, natin, atin, kami, namin, amin,
    kayo, ninyo, inyo, sila, nila, kanila]
 
-/-- The *ang* (nominative) series, one form per @cite{cysouw-2009} category in
+/-- The *ang* (nominative) series, one form per [cysouw-2009] category in
     canonical order. -/
 def angSeries : List PersonalPronoun := [ako, ikaw, siya, kata, tayo, kami, kayo, sila]
 
-/-- The *ang* series realizes exactly @cite{cysouw-2009}'s eight person
+/-- The *ang* series realizes exactly [cysouw-2009]'s eight person
     categories — *derived* from each form's person + number + clusivity, not
     stored as a tag. -/
 theorem angSeries_categories_match :
@@ -138,7 +138,7 @@ theorem incl_excl_distinct :
 
 /-- The minimal-augmented property: a dual inclusive *kata* (1+2) alongside the
     plural inclusive *tayo* — what makes Tagalog minimal-augmented rather than
-    plain inclusive/exclusive (@cite{cysouw-2009}). -/
+    plain inclusive/exclusive ([cysouw-2009]). -/
 theorem minimal_augmented :
     kata.number = some .du ∧ kata.clusivity = some .inclusive ∧
     tayo.number = some .pl ∧ tayo.clusivity = some .inclusive := ⟨rfl, rfl, rfl, rfl⟩

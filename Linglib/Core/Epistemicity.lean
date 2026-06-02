@@ -4,7 +4,7 @@ import Linglib.Core.Context.Tower
 
 /-!
 # Epistemic Profile Layer
-@cite{floyd-2018} @cite{gawne-spronck-2024} @cite{tournadre-2008}
+[floyd-2018] [gawne-spronck-2024] [tournadre-2008]
 
 Connective layer bundling evidential source, epistemic authority (egophoricity),
 and mirativity into a unified `EpistemicProfile`. Bridges these feature-geometric
@@ -12,7 +12,7 @@ dimensions to the model-theoretic level (`KContext` / `ContextTower`).
 
 ## Motivation
 
-@cite{gawne-spronck-2024} identify 10 concept areas forming a coherent epistemic
+[gawne-spronck-2024] identify 10 concept areas forming a coherent epistemic
 domain. Linglib already covers evidential source (`Features/Evidentiality.lean`),
 epistemic modality (`Modality/Kernel.lean`), and mirativity (`Features/Mirativity.lean`),
 but these are scattered with no connective tissue. The main gap is **egophoricity** -- the
@@ -42,7 +42,7 @@ open Features.Mirativity
 open Core.Context
 
 /-- Epistemic authority: WHO has privileged access to the propositional content.
-    Egophoric systems (@cite{tournadre-2008}, @cite{floyd-2018}, Gawne & Spronck glossary 2)
+    Egophoric systems ([tournadre-2008], [floyd-2018], Gawne & Spronck glossary 2)
     grammaticalize the distinction between:
     - ego: speaker has privileged access (1st person knowledge, volition, intention)
     - allocutive: addressee has privileged access (2nd person questions)
@@ -81,7 +81,7 @@ def strongAssertion : EpistemicProfile :=
   { source := .direct, authority := .ego }
 
 /-- Non-ego authority with inferential evidence: the canonical profile
-    for epistemic 'must' (@cite{von-fintel-gillies-2010}). Speaker infers, no privileged access. -/
+    for epistemic 'must' ([von-fintel-gillies-2010]). Speaker infers, no privileged access. -/
 def inferentialClaim : EpistemicProfile :=
   { source := .inference, authority := .nonparticipant }
 

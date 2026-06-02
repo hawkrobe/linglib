@@ -2,13 +2,13 @@ import Linglib.Syntax.Minimalist.Agree
 import Linglib.Syntax.Minimalist.ClauseSpine
 
 /-!
-# Selective Opacity @cite{keine-2019}
+# Selective Opacity [keine-2019]
 
 Selective Opacity. *Linguistic Inquiry* 50(1), 13–62.
 
 ## Summary
 
-@cite{keine-2019} argues that selective opacity — where the same
+[keine-2019] argues that selective opacity — where the same
 domain is opaque to some operations but transparent to others — is
 a property of *probes*, not of domains. The constraint targets Agree,
 the operation underlying both movement and φ-agreement. Different
@@ -35,17 +35,17 @@ produces the observed selective opacity patterns.
      but not Ā-movement
    - (25): the transparency/opacity table by clause type and operation
 
-## Relationship to @cite{keine-2020}
+## Relationship to [keine-2020]
 
 This article's simplified fValue model (`transparentTo`) treats clause
-types as linearly ordered. @cite{keine-2020} introduces bilateral labeling
+types as linearly ordered. [keine-2020] introduces bilateral labeling
 (`transparentToLabel`) which correctly handles partially ordered clause
 types (NmlzP vs CP in Hindi). The article probes remain useful for
 verifying the paper's original predictions, but the book's model
 supersedes the fValue approximation. See `Keine2020.lean` for the
 book's 4×4 transparency tables and bilateral-labeling theorems.
 
-Key refinements in @cite{keine-2020}:
+Key refinements in [keine-2020]:
 - Hindi φ/A horizon refined from ⊣ C to ⊣ T (book (219))
 - Hindi Ā horizon specified as ⊣ Nmlz (not just "no horizon")
 - English Ā has ⊣ C (the article treated it as horizonless)
@@ -68,7 +68,7 @@ open Minimalist (ProbeProfile keinePhiProbe keineAProbe keineWhLicensing
   keineĀProbe fValue ClauseSpine Cat)
 
 -- ============================================================================
--- § 1: The Transparency Table (@cite{keine-2019} (58))
+-- § 1: The Transparency Table ([keine-2019] (58))
 -- ============================================================================
 
 /-! ### Table (58): Transparency (✓) and opacity (*) by clause type and operation
@@ -240,7 +240,7 @@ theorem tP_transparency :
   ⟨by decide, by decide, by decide, by decide⟩
 
 -- ============================================================================
--- § 6: Hyperraising (@cite{keine-2019} §4.2.3)
+-- § 6: Hyperraising ([keine-2019] §4.2.3)
 -- ============================================================================
 
 /-! ### English hyperraising is blocked by CP

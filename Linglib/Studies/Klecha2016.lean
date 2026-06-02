@@ -11,7 +11,7 @@ import Linglib.Semantics.Tense.DeRe
 import Linglib.Data.Examples.Schema
 
 /-!
-# @cite{klecha-2016}: Modality and Embedded Temporal Operators
+# [klecha-2016]: Modality and Embedded Temporal Operators
 
 Klecha's central result: the temporal orientation of embedded clauses under
 attitude verbs is determined by the **modal base pronoun** (DOX vs. CIR),
@@ -298,11 +298,11 @@ theorem cir_is_future (evalTime refTime : ℤ) :
 
 /-! The §5 theorems prove ULC via `Iff.rfl` against
 `attitudeTemporalConstraint`'s definition. The two theorems below show
-the same fact via the substrate path that @cite{klecha-2016} actually
+the same fact via the substrate path that [klecha-2016] actually
 uses: `actualHistoryBase` membership (Definition 3vi + eq 35a) →
 constraint, by `.2` projection.
 
-This is what differentiates Klecha's ULC from @cite{abusch-1997}'s
+This is what differentiates Klecha's ULC from [abusch-1997]'s
 stipulated one — the upper limit is a kernel-checked consequence of
 DOX-pronoun's lexical entry, not a separately-asserted presupposition
 on T-nodes. The substrate derivation lives in
@@ -338,9 +338,9 @@ theorem future_via_history_base {W : Type*}
 -- § 5c. Klecha ↔ Abusch: ULC predicate convergence
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{klecha-2016} §4.2 last paragraph: "[my] approach to the Upper
+/-! [klecha-2016] §4.2 last paragraph: "[my] approach to the Upper
 Limit Constraint is identical in spirit, if not in implementation, to
-@cite{abusch-1997}'s. Abusch relies on the exact same motivation [...]
+[abusch-1997]'s. Abusch relies on the exact same motivation [...]
 the future viewed as inherently unsettled and therefore unknowable."
 
 The theorem below makes the predicate-level convergence kernel-checked:
@@ -359,8 +359,8 @@ proposition:
 
 - **Abusch route** (in `Semantics/Tense/Basic.lean`): the
   predicate is stated directly as `abbrev upperLimitConstraint
-  embeddedR matrixE := embeddedR ≤ matrixE`. @cite{abusch-1997} §7
-  states ULC informally; @cite{heim-1994-comments} formalizes it as a
+  embeddedR matrixE := embeddedR ≤ matrixE`. [abusch-1997] §7
+  states ULC informally; [heim-1994-comments] formalizes it as a
   presupposition on T-nodes, endorsed by Abusch 1997 fn 20. The
   value-level reduction here strips the modal-alternative
   quantification ("now of an epistemic alternative").
@@ -376,8 +376,8 @@ deferred. -/
     `upperLimitConstraint` are definitionally equal predicates (modulo
     argument order). Both reduce to `refTime ≤ evalTime`.
 
-    @cite{klecha-2016} §4.2: "identical in spirit, if not in
-    implementation, to @cite{abusch-1997}'s [ULC]." This theorem makes
+    [klecha-2016] §4.2: "identical in spirit, if not in
+    implementation, to [abusch-1997]'s [ULC]." This theorem makes
     the implementation-level equality kernel-checked. The substantive
     spirit-level difference (derivation vs. stipulation) is recorded
     in §5b above and in the docstring. -/
@@ -449,7 +449,7 @@ theorem nonpast_strictly_weaker :
 -- § 8. Table 1: Modal flavor → temporal orientation
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{klecha-2016} Table 1 shows that epistemic modals
+/-! [klecha-2016] Table 1 shows that epistemic modals
 ("She has to be home by now") are past/present-oriented, while
 circumstantial/deontic/bouletic modals ("She has to be home tomorrow")
 are future-oriented. This follows from `ModalFlavor.toModalBaseKind`. -/
@@ -487,7 +487,7 @@ theorem non_epistemic_all_cir (f : ModalFlavor) (h : f ≠ .epistemic) :
 -- § 9. Reportatives pattern with doxastics
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{klecha-2016} (80): "*I told John that it rains tomorrow"
+/-! [klecha-2016] (80): "*I told John that it rains tomorrow"
 is unacceptable — *tell* imposes an upper limit, patterning with
 doxastic verbs. Reportatives use DOX, blocking future orientation. -/
 
@@ -538,13 +538,13 @@ theorem cir_compat_permit_future :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 11. Cross-linguistic test: @cite{matthewson-2013} Gitksan imaa
+-- § 11. Cross-linguistic test: [matthewson-2013] Gitksan imaa
 -- ════════════════════════════════════════════════════════════════
 
 /-! Klecha's central universal — epistemic modals are DOX, and DOX
 strictly blocks future orientation (§ 8) — predicts that no language
 will have a felicitous "epistemic modal + future orientation"
-configuration. @cite{matthewson-2013}'s Gitksan data is the obvious
+configuration. [matthewson-2013]'s Gitksan data is the obvious
 test case: the variable-force epistemic *imaa* combines with the
 prospective marker *dim* to produce future-oriented epistemic claims
 (Fig. 4, ex. 42 and 44). The cross-framework outcome is *refutation*,
@@ -563,7 +563,7 @@ theorem klecha_predicts_imaa_no_future :
         (ModalFlavor.toModalBaseKind ff.flavor) .future = false) = true := by
   decide
 
-/-- @cite{matthewson-2013} Fig. 4 records two future-orientation cells
+/-- [matthewson-2013] Fig. 4 records two future-orientation cells
     for `imaa`: TP=PRESENT × TO=FUTURE (ex. 42) and TP=PAST × TO=FUTURE
     (ex. 44). Both require `dim`. The empirical claim is that these
     configurations are felicitous, not blocked. -/
@@ -604,11 +604,11 @@ whose data refutes it. -/
 -- § F1. Phase F bridge: Klecha ↔ Sharvit on the simultaneous reading
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{sharvit-2014} derives the simultaneous reading of past-under-past
+/-! [sharvit-2014] derives the simultaneous reading of past-under-past
 in English attitudes via SOT-deletion of a *pronominal* past
 (`LexicalType.pronominal` + `english.hasSOT = true` →
 `english.simultaneousAttitudeReading = true` in
-`Studies/Sharvit2014.lean`). @cite{klecha-2016} derives the same reading
+`Studies/Sharvit2014.lean`). [klecha-2016] derives the same reading
 via DOX + NPST modal-base composition (`dox_npst_iff` below).
 
 Different mechanisms, same value-level prediction: `embeddedEventTime =
@@ -618,8 +618,8 @@ typology Bool prediction for English, (b) Klecha's value-level Iff. -/
 open Sharvit2014 (english)
 
 /-- Phase F bridge — Klecha-Sharvit agreement on the simultaneous reading
-    for English. @cite{sharvit-2014}'s `english.simultaneousAttitudeReading`
-    Bool fact and @cite{klecha-2016}'s `dox_npst_iff` value-level
+    for English. [sharvit-2014]'s `english.simultaneousAttitudeReading`
+    Bool fact and [klecha-2016]'s `dox_npst_iff` value-level
     equivalence both witness the same prediction by different mechanisms
     (Sharvit: SOT-deletion of pronominal past; Klecha: DOX + NPST
     composition). -/
@@ -635,10 +635,10 @@ theorem sharvit_klecha_agree_simultaneous_english (sayingTime sickTime : ℤ) :
 -- § F2. Phase F bridge: Klecha CIR ⊆ Condoravdi metaphysical base
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{condoravdi-2002}'s metaphysical modal base (formalized in
+/-! [condoravdi-2002]'s metaphysical modal base (formalized in
 `Semantics/Modality/HistoricalAlternatives.lean` as `metaphysicalBase`)
 quantifies over historical alternatives at the eval time.
-@cite{klecha-2016}'s CIR modal base (`futureHistoryBase`) quantifies
+[klecha-2016]'s CIR modal base (`futureHistoryBase`) quantifies
 over future-history situations whose world-component lies in the same
 historical-alternatives equivalence class. The world-component of
 Klecha's CIR is therefore a *subset* of Condoravdi's metaphysical base.
@@ -648,8 +648,8 @@ Klecha §1.1 (PDF p. 7) explicitly identifies metaphysical as a
 makes the world-component subset relation kernel-checked. -/
 
 /-- Phase F bridge — Klecha-Condoravdi: the world-component of any
-    situation in @cite{klecha-2016}'s CIR (`futureHistoryBase`) lies
-    in @cite{condoravdi-2002}'s metaphysical modal base
+    situation in [klecha-2016]'s CIR (`futureHistoryBase`) lies
+    in [condoravdi-2002]'s metaphysical modal base
     (`metaphysicalBase`). The proof is `.1` projection through the
     situation-base + structural unfolding of `metaphysicalBase` /
     `histEquiv`. -/
@@ -662,8 +662,8 @@ theorem klecha_cir_world_in_condoravdi_metaphysical
   h.1
 
 /-- Phase F bridge — Klecha-Condoravdi: the world-component of any
-    situation in @cite{klecha-2016}'s DOX (`actualHistoryBase`) lies
-    in @cite{condoravdi-2002}'s metaphysical modal base. The proof is
+    situation in [klecha-2016]'s DOX (`actualHistoryBase`) lies
+    in [condoravdi-2002]'s metaphysical modal base. The proof is
     `.1` projection (same as the CIR case). -/
 theorem klecha_dox_world_in_condoravdi_metaphysical
     {W : Type*} (history : HistoricalAlternatives W ℤ)
@@ -681,14 +681,14 @@ theorem klecha_dox_world_in_condoravdi_metaphysical
 /-! The 0.230.451 `klecha_dox_iff_abusch_ulc` (§5c above) was honest
 about being shallow: both sides reduce to `≤` at the value level, but
 the *modal layer* — quantification over doxastic alternatives that
-@cite{abusch-1997}'s prose statement requires — was stripped on both
+[abusch-1997]'s prose statement requires — was stripped on both
 sides. With the new `upperLimitConstraintModal` substrate primitive
 (in `Semantics/Modality/HistoricalAlternatives.lean`, F4), the modal-layer
 bridge becomes statable.
 
-@cite{abusch-1997}'s modal-layer ULC: an embedded situation lies in
+[abusch-1997]'s modal-layer ULC: an embedded situation lies in
 the actual-history base of the matrix situation
-(`actualHistoryBase` membership). @cite{klecha-2016}'s modal-layer
+(`actualHistoryBase` membership). [klecha-2016]'s modal-layer
 derivation: `attitudeTemporalConstraint_derived_doxastic` shows the
 same membership produces the value-level constraint via `.2`
 projection.
@@ -700,8 +700,8 @@ sides* now carry the modal-alternative quantification (via
 `s'.world ∈ history s`), not just the time-component projection. -/
 
 /-- Phase F bridge — Klecha ↔ Abusch ULC at the modal layer:
-    @cite{klecha-2016}'s modal-layer doxastic predicate (membership in
-    `actualHistoryBase`) and @cite{abusch-1997}'s modal-layer ULC
+    [klecha-2016]'s modal-layer doxastic predicate (membership in
+    `actualHistoryBase`) and [abusch-1997]'s modal-layer ULC
     (`upperLimitConstraintModal`) are the same membership claim.
     Both carry the doxastic-alternative quantification at the modal
     layer, in contrast to §5c's value-level `klecha_dox_iff_abusch_ulc`
@@ -714,8 +714,8 @@ theorem klecha_dox_iff_abusch_ulc_modal {W : Type*}
   Iff.rfl
 
 /-- Phase F bridge — modal-layer ULC implies value-level constraint:
-    if @cite{abusch-1997}'s modal-layer ULC holds for `(matrix,
-    embedded)`, then @cite{klecha-2016}'s value-level
+    if [abusch-1997]'s modal-layer ULC holds for `(matrix,
+    embedded)`, then [klecha-2016]'s value-level
     `attitudeTemporalConstraint .doxastic` holds for the time
     components. Composes `upperLimitConstraintModal_implies_value`
     with the substrate's `attitudeTemporalConstraint_derived_doxastic`. -/
@@ -731,23 +731,23 @@ theorem abusch_modal_ulc_implies_klecha_dox {W : Type*}
 -- § F6. Phase F bridge: Klecha ↔ Hacquard 2006 complementarity
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{klecha-2016}'s analysis is *complementary* to
-@cite{hacquard-2006}'s positional account: position determines WHICH
+/-! [klecha-2016]'s analysis is *complementary* to
+[hacquard-2006]'s positional account: position determines WHICH
 TIME (high modal = speech time = present orientation; low modal =
 event time = past orientation), modal base kind determines WHICH
 DIRECTION (DOX blocks future, CIR permits future). The Klecha2016
 docstring §4 (line 44) records the prose claim; this bridge makes
 it kernel-checked.
 
-@cite{hacquard-2006}'s `positionToOrientation` covers past + present
+[hacquard-2006]'s `positionToOrientation` covers past + present
 but is silent on future (the position-to-orientation map has no
-future case). @cite{klecha-2016}'s `ModalBaseKind.permitsOrientation`
+future case). [klecha-2016]'s `ModalBaseKind.permitsOrientation`
 adds the future-orientation discriminator. Together they cover all
 three orientations. -/
 
 /-- Phase F bridge — Klecha-Hacquard complementarity:
-    @cite{hacquard-2006}'s `positionToOrientation` covers past +
-    present from modal position; @cite{klecha-2016}'s
+    [hacquard-2006]'s `positionToOrientation` covers past +
+    present from modal position; [klecha-2016]'s
     `ModalBaseKind.permitsOrientation` covers future from modal base
     kind. The conjunction below confirms the four cells:
     `(aboveAsp → present)`, `(belowAsp → past)`,
@@ -768,20 +768,20 @@ theorem klecha_hacquard_complementary :
 Klecha-Ogihara divergence: not past-under-past (where they
 *converge* — both predict simultaneous via Ogihara's zero-tense vs
 Klecha's DOX+NPST), but *hope + past with future-oriented reading*.
-@cite{klecha-2016}'s CIR+NPST mechanism (cell §6 above)
+[klecha-2016]'s CIR+NPST mechanism (cell §6 above)
 uniformly handles "Martina hoped Carissa got pregnant" with the
-future-oriented reading; @cite{ogihara-1996}'s `PastReading` enum
+future-oriented reading; [ogihara-1996]'s `PastReading` enum
 classifies past morphology only and has no machinery for
 future-under-modal.
 
 The bridge below makes Klecha's coverage of the case kernel-checked.
-@cite{ogihara-1996}'s silence is the *absence* of any theorem in
+[ogihara-1996]'s silence is the *absence* of any theorem in
 `Studies/Ogihara1996.lean` covering this configuration; that absence
 is a substantive empirical claim about the scope of Ogihara's
 mechanism. -/
 
 /-- Phase F bridge — Klecha covers hope + past with future-oriented
-    reading via CIR + NPST (cell §6 above); @cite{ogihara-1996}'s
+    reading via CIR + NPST (cell §6 above); [ogihara-1996]'s
     machinery does not. -/
 theorem klecha_covers_hope_future_oriented_reading
     (hopeTime embRT : ℤ) (h : embRT > hopeTime) :
@@ -794,7 +794,7 @@ theorem klecha_covers_hope_future_oriented_reading
 -- § Substrate bridge: Klecha DOX ≡ Abusch's `metaphysicalAlternatives`
 -- ════════════════════════════════════════════════════════════════
 
-/-- **Substrate bridge**: @cite{klecha-2016}'s actual-history base
+/-- **Substrate bridge**: [klecha-2016]'s actual-history base
     `actualHistoryBase history matrix.toSituation` IS the substrate's
     `TemporalDeReReading.metaphysicalAlternatives` (defined in
     `Semantics/Tense/DeRe.lean`) for a `TemporalDeReReading`

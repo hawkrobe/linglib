@@ -1,15 +1,15 @@
 /-
 # RSA/Core/CombinedUtility.lean
-@cite{hawkins-etal-2025} @cite{sumers-etal-2023}
+[hawkins-etal-2025] [sumers-etal-2023]
 
 Combined utility models for trading off multiple objectives.
 
 ## Overview
 
 Many RSA models involve trading off two (or more) utility components:
-- **@cite{sumers-etal-2023}**: truthfulness vs relevance
+- **[sumers-etal-2023]**: truthfulness vs relevance
 - **PRIOR-PQ**: informativity vs action-relevance
-- **@cite{yoon-etal-2020}**: informativity vs social utility
+- **[yoon-etal-2020]**: informativity vs social utility
 
 This module provides a unified framework for such combined utility models.
 
@@ -170,14 +170,14 @@ def normalizeWeights3 (wA wB wC : ℚ) : ℚ × ℚ × ℚ :=
   else (wA / total, wB / total, wC / total)
 
 -- ============================================================
--- Goal-Oriented Utility (@cite{barnett-griffiths-hawkins-2022}, @cite{cummins-franke-2021})
+-- Goal-Oriented Utility ([barnett-griffiths-hawkins-2022], [cummins-franke-2021])
 -- ============================================================
 
 /-- Goal-oriented speaker utility: U_epi + β · U_goal.
 
 This parameterization naturally models argumentative/persuasive speakers:
-- @cite{barnett-griffiths-hawkins-2022}: U_goal = ln P_L0(w*|u), β controls persuasive bias
-- @cite{cummins-franke-2021}: U_goal = argStr(u, G), β → ∞ for pure argStr speaker
+- [barnett-griffiths-hawkins-2022]: U_goal = ln P_L0(w*|u), β controls persuasive bias
+- [cummins-franke-2021]: U_goal = argStr(u, G), β → ∞ for pure argStr speaker
 
 Equivalent to combinedWeighted(1, β, U_epi, U_goal). The parameter β controls
 the cooperativity spectrum:

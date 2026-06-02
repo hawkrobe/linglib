@@ -4,7 +4,7 @@ import Mathlib.Data.Set.Image
 /-!
 # Intensional Properties: Rigidity, Reference, and Variable Interpretation
 
-@cite{gallin-1975} @cite{kripke-1980} @cite{kaplan-1989}
+[gallin-1975] [kripke-1980] [kaplan-1989]
 
 Framework-agnostic types for intensional semantics: intensions as functions
 from indices (possible worlds) to extensions, rigid designators, evaluation,
@@ -35,7 +35,7 @@ versions; `Frame.lean` provides the IL-typed versions.
 namespace Core
 
 /-- An intension of type τ over indices W: a function from worlds to extensions.
-    @cite{gallin-1975}'s Ty2 type system: every type τ has an intensional
+    [gallin-1975]'s Ty2 type system: every type τ has an intensional
     counterpart `(s,τ)` interpreted as `W → ⟦τ⟧`. -/
 abbrev Intension (W : Type*) (τ : Type*) := W → τ
 
@@ -219,7 +219,7 @@ def CoExtensional {W τ : Type*} (f g : Intension W τ) : Prop := ∀ w, f w = g
 /-- Kripke's necessity of identity: if two rigid designators co-refer at any
 world, they are co-extensional (and hence the same intension).
 
-This is the formal kernel of the @cite{kripke-1980} argument: "Hesperus" and
+This is the formal kernel of the [kripke-1980] argument: "Hesperus" and
 "Phosphorus" are both rigid; if they co-refer at the actual world then
 they pick out the same object at every world, so "Hesperus = Phosphorus"
 is necessary if true. -/
@@ -256,7 +256,7 @@ theorem rigid_neq_nonrigid {W τ : Type*} (f g : Intension W τ)
 
 /-- A character is stable iff it assigns the same content at every context.
 
-@cite{kaplan-1989} @cite{von-fintel-heim-2011} Remark 5: non-indexical expressions have stable character —
+[kaplan-1989] [von-fintel-heim-2011] Remark 5: non-indexical expressions have stable character —
 their content does not depend on the context of utterance. This generalizes
 `constantCharacter` from `Reference/Basic.lean` to the framework-agnostic level. -/
 def StableCharacter {C W τ : Type*} (char : C → Intension W τ) : Prop :=
@@ -268,12 +268,12 @@ end Core
 
 
 -- ════════════════════════════════════════════════════════════════
--- Referential Mode (@cite{partee-1973})
+-- Referential Mode ([partee-1973])
 -- ════════════════════════════════════════════════════════════════
 
 namespace Core.ReferentialMode
 
-/-- @cite{partee-1973}'s three-way interpretive classification for referential
+/-- [partee-1973]'s three-way interpretive classification for referential
     expressions. Applies uniformly to pronouns (entity variables) and
     tenses (temporal variables).
 
@@ -283,7 +283,7 @@ namespace Core.ReferentialMode
     | anaphoric | "he" → salient individual| past → salient narrative time  |
     | bound     | "his" in ∀x...his...     | tense in "whenever...is..."    |
 
-    @cite{elbourne-2013} collapses this to a two-way free/bound distinction
+    [elbourne-2013] collapses this to a two-way free/bound distinction
     (`SitVarStatus`); `isFree` provides the coarsening. -/
 inductive ReferentialMode where
   /-- Anchored to utterance context (Kaplan's "I", Partee's deictic tense) -/
@@ -306,12 +306,12 @@ end Core.ReferentialMode
 
 
 -- ════════════════════════════════════════════════════════════════
--- Situation Variable Status (@cite{elbourne-2013})
+-- Situation Variable Status ([elbourne-2013])
 -- ════════════════════════════════════════════════════════════════
 
 namespace Core.SitVarStatus
 
-/-- @cite{elbourne-2013}'s two-way classification of situation variables.
+/-- [elbourne-2013]'s two-way classification of situation variables.
     Coarsens `ReferentialMode`'s three-way distinction: indexical and
     anaphoric both map to `free`. -/
 inductive SitVarStatus where

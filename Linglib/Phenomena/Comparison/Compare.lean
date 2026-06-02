@@ -5,7 +5,7 @@ import Linglib.Semantics.Degree.Comparative
 
 /-!
 # Framework Comparison: Where Kennedy and Heim Diverge
-@cite{heim-2001} @cite{kennedy-2007} @cite{klein-1980} @cite{schwarzschild-2008}
+[heim-2001] [kennedy-2007] [klein-1980] [schwarzschild-2008]
 
 Formal comparison of the degree semantic frameworks on shared
 empirical ground. By implementing all frameworks with the same type

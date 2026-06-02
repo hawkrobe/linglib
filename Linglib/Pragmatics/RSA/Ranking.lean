@@ -5,7 +5,7 @@ import Mathlib.Algebra.Tropical.BigOperators
 /-!
 # Ranking Functions as RSA Limits
 
-@cite{spohn-1988} @cite{goldszmidt-pearl-1996} @cite{frank-goodman-2012}
+[spohn-1988] [goldszmidt-pearl-1996] [frank-goodman-2012]
 
 As the rationality parameter α → ∞, softmax-based probabilistic inference
 converges to ranking-based default reasoning. This file makes the
@@ -24,7 +24,7 @@ connection precise.
 
 ## Mathematical background
 
-@cite{spohn-1988} §7 observes that rankings are ordinal probabilities:
+[spohn-1988] §7 observes that rankings are ordinal probabilities:
 κ(w) = n corresponds to P(w) ∝ ε^n for infinitesimal ε. The finite
 analogue replaces ε^n with exp(-n·α) for large α:
 
@@ -33,9 +33,9 @@ analogue replaces ε^n with exp(-n·α) for large α:
 As α → ∞, this concentrates on rank-0 (most normal) worlds — exactly
 the worlds that survive ranking-based default reasoning.
 
-This makes System Z's κ^z ranking (@cite{goldszmidt-pearl-1996}) the
+This makes System Z's κ^z ranking ([goldszmidt-pearl-1996]) the
 "infinite rationality" limit of RSA pragmatic inference
-(@cite{frank-goodman-2012}). Qualitative default reasoning and
+([frank-goodman-2012]). Qualitative default reasoning and
 quantitative Bayesian pragmatics are not rival frameworks but
 endpoints of the same rationality continuum.
 -/
@@ -55,7 +55,7 @@ variable {W : Type*}
 
     s(w) = -(κ(w) : ℝ). Lower rank → higher score → more plausible.
 
-    This is the finite analogue of @cite{spohn-1988} §7's
+    This is the finite analogue of [spohn-1988] §7's
     P(w) ∝ ε^{κ(w)}: here exp(α · s(w)) = exp(-α · κ(w)) plays
     the role of ε^{κ(w)} with ε = exp(-α). -/
 noncomputable def rankToScore (κ : RankingFunction W) : W → ℝ :=
@@ -204,7 +204,7 @@ theorem minRank_worlds_satisfy [Fintype W]
     maximal prior probability, and the prior ordering on worlds
     matches the ranking ordering.
 
-    @cite{spohn-1988} §7 uses P(w) ∝ ε^{κ(w)} with ε infinitesimal;
+    [spohn-1988] §7 uses P(w) ∝ ε^{κ(w)} with ε infinitesimal;
     here we use the concrete parameterization exp(-κ(w)). -/
 noncomputable def rankToPrior (κ : RankingFunction W) : W → ℝ :=
   fun w => exp (-(κ.rank w : ℝ))
@@ -272,10 +272,10 @@ theorem softmax_rankToScore_eq_normalized_prior [Fintype W] [Nonempty W]
   simp only [softmax, rankToScore, rankToPrior]
 
 -- ══════════════════════════════════════════════════════════════════════
--- § 6. The Exact Tropical Homomorphism (@cite{spohn-1988} §7)
+-- § 6. The Exact Tropical Homomorphism ([spohn-1988] §7)
 -- ══════════════════════════════════════════════════════════════════════
 
-/-! @cite{spohn-1988} §7 observes that ranking functions are the ordinal
+/-! [spohn-1988] §7 observes that ranking functions are the ordinal
     analogue of probability measures. This is not an analogy — it is an
     exact algebraic identity via the tropical semiring.
 
@@ -298,7 +298,7 @@ open Tropical
 /-- The exponential map sends tropical multiplication (= underlying +)
     to real multiplication: ε^{a ×_trop b} = ε^{a + b} = ε^a · ε^b.
 
-    This is exact, not approximate. It formalizes @cite{spohn-1988} §7's
+    This is exact, not approximate. It formalizes [spohn-1988] §7's
     observation that ranking independence (κ(A∩B) = κ(A) + κ(B))
     corresponds to probabilistic independence (P(A∩B) = P(A)·P(B)). -/
 theorem exp_tropical_mul (ε : ℝ) (a b : Tropical ℕ) :
@@ -308,7 +308,7 @@ theorem exp_tropical_mul (ε : ℝ) (a b : Tropical ℕ) :
 /-- The exponential map sends tropical addition (= min) to real max:
     ε^{a +_trop b} = ε^{min(a,b)} = max(ε^a, ε^b) for 0 < ε ≤ 1.
 
-    This formalizes @cite{spohn-1988} §7's observation that ranking
+    This formalizes [spohn-1988] §7's observation that ranking
     disjunction (κ(A∪B) = min(κ(A), κ(B))) corresponds to the dominant
     term in P(A∪B) = P(A) + P(B) − P(A∩B). -/
 theorem exp_tropical_add (ε : ℝ) (hε : 0 < ε) (hε1 : ε ≤ 1)

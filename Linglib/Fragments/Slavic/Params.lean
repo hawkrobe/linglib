@@ -1,9 +1,9 @@
 /-!
 # Shared Slavic Verbal-Prefix Parameters
-@cite{svenonius-2004} @cite{istratkova-2004} @cite{jablonska-2004}
+[svenonius-2004] [istratkova-2004] [jablonska-2004]
 
 Types and parameters shared across Slavic verbal-prefix fragments
-(Russian, Polish, Bulgarian) following @cite{svenonius-2004}'s
+(Russian, Polish, Bulgarian) following [svenonius-2004]'s
 **lexical / superlexical** distinction. Mirrors the
 `Fragments/Mayan/Params.lean` pattern: shared cluster-level types
 factored out so per-language fragments don't triplicate them.
@@ -39,7 +39,7 @@ inductive Aspect
   deriving DecidableEq
 
 /-- Aspectual subtypes for the superlexical class
-    (@cite{svenonius-2004} §3). The same six categories used across
+    ([svenonius-2004] §3). The same six categories used across
     Russian, Polish, and Bulgarian VPC fragments. -/
 inductive SuperlexicalSubtype
   | delimitative
@@ -50,7 +50,7 @@ inductive SuperlexicalSubtype
   | distributive
   deriving DecidableEq
 
-/-- @cite{svenonius-2004}'s lexical / superlexical split as a single
+/-- [svenonius-2004]'s lexical / superlexical split as a single
     ADT — the superlexical case carries its subtype, eliminating the
     need for an `Option`-typed companion field plus a consistency
     lemma. -/

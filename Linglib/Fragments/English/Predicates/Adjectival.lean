@@ -2,7 +2,7 @@ import Linglib.Semantics.Gradability.Basic
 
 /-! # Adjectival Predicate Lexicon Fragment
 
-Gradable adjective entries following @cite{kennedy-2007}. Scale type, dimension, antonyms.
+Gradable adjective entries following [kennedy-2007]. Scale type, dimension, antonyms.
 -/
 
 namespace English.Predicates.Adjectival
@@ -13,7 +13,7 @@ open Features (EvaluativeValence)
 open Features (NegationType)
 
 
-/-- @cite{kennedy-2007}
+/-- [kennedy-2007]
 An adjectival predicate entry.
 
 This is an alias for `GradableAdjEntry` from the Theory module, re-exported
@@ -507,10 +507,10 @@ def quiet : AdjectivalPredicateEntry where
 
 /-! ## Evaluative adjectives -/
 
-/-- "good" — value scale (lower-bounded at 0 per @cite{wolfsdorf-2019}),
+/-- "good" — value scale (lower-bounded at 0 per [wolfsdorf-2019]),
     contrary to "bad". Despite the lower bound, "good" receives a contextual
     standard (not minEndpoint): it patterns with relative adjectives
-    (@cite{beltrama-2025} §3). -/
+    ([beltrama-2025] §3). -/
 def good : AdjectivalPredicateEntry where
   form := "good"
   scaleType := .lowerBounded
@@ -572,17 +572,17 @@ def dangerous : AdjectivalPredicateEntry where
 
 /-! ## Physical disturbance deverbal adjectives
 
-@cite{tham-2025}: physical disturbance predicates are associated with a totally
+[tham-2025]: physical disturbance predicates are associated with a totally
 closed, multi-point scale. Lower bound = physical instantiation of disturbance;
 upper bound = spatial extent of host entity. Gradable (*more cracked*, *badly
 dented*), compatible with *completely* and *partially*. Contra
-@cite{rappaport-hovav-2014} (two-point) and @cite{rotstein-winter-2004}
+[rappaport-hovav-2014] (two-point) and [rotstein-winter-2004]
 (lower-bounded only). -/
 
 /-- "cracked" — closed scale, contradictory to "uncracked".
     Deverbal adjective from *crack* (Levin 45.1 Break verbs).
     NOT a two-point scale: accepts *more cracked*, *completely cracked*,
-    *partially cracked*, *badly cracked* (@cite{tham-2025} §2.3–2.4). -/
+    *partially cracked*, *badly cracked* ([tham-2025] §2.3–2.4). -/
 def cracked : AdjectivalPredicateEntry where
   form := "cracked"
   scaleType := .closed
@@ -590,7 +590,7 @@ def cracked : AdjectivalPredicateEntry where
 
 /-- "dented" — closed scale.
     Deverbal adjective from *dent*. Accepts *more dented*, *completely dented*,
-    *badly dented* (@cite{tham-2025} (11a), (20b)). -/
+    *badly dented* ([tham-2025] (11a), (20b)). -/
 def dented : AdjectivalPredicateEntry where
   form := "dented"
   scaleType := .closed
@@ -598,7 +598,7 @@ def dented : AdjectivalPredicateEntry where
 
 /-- "scratched" — closed scale.
     Deverbal adjective from *scratch*. Accepts *more scratched*, *completely
-    scratched*, *badly scratched* (@cite{tham-2025} (11b), (20c)). -/
+    scratched*, *badly scratched* ([tham-2025] (11b), (20c)). -/
 def scratched : AdjectivalPredicateEntry where
   form := "scratched"
   scaleType := .closed
@@ -607,7 +607,7 @@ def scratched : AdjectivalPredicateEntry where
 /-- "shattered" — closed scale, NON-GRADABLE.
     Deverbal adjective from *shatter* (Levin 45.1 Break verbs).
     Contrast: ??*more shattered*, punctual verb, no durative reading.
-    Not a physical disturbance predicate (@cite{tham-2025} (12c)). -/
+    Not a physical disturbance predicate ([tham-2025] (12c)). -/
 def shattered : AdjectivalPredicateEntry where
   form := "shattered"
   scaleType := .closed
@@ -615,12 +615,12 @@ def shattered : AdjectivalPredicateEntry where
 
 /-! ## Mildly positive adjectives (MPAs)
 
-@cite{beltrama-2025}: MPAs encode a necessity standard — the minimum value
+[beltrama-2025]: MPAs encode a necessity standard — the minimum value
 required for pursuit. They share properties with both relative (context-sensitive,
 gradable) and absolute (no zone of indifference, crisp judgments, *barely*
 compatible) predicates. -/
 
-/-- "nice" — open scale, positive evaluative (@cite{nouwen-2024}).
+/-- "nice" — open scale, positive evaluative ([nouwen-2024]).
     Base for M-degree intensifier *nicely*. -/
 def nice : AdjectivalPredicateEntry where
   form := "nice"
@@ -628,7 +628,7 @@ def nice : AdjectivalPredicateEntry where
   dimension := .value
   evaluativeValence := some .positive
 
-/-- "pleasant" — open scale, positive evaluative (@cite{nouwen-2024}).
+/-- "pleasant" — open scale, positive evaluative ([nouwen-2024]).
     Base for M-degree intensifier *pleasantly*. -/
 def pleasant : AdjectivalPredicateEntry where
   form := "pleasant"
@@ -638,14 +638,14 @@ def pleasant : AdjectivalPredicateEntry where
   antonymRelation := some .contrary
   evaluativeValence := some .positive
 
-/-- "decent" — value scale, necessity standard (@cite{beltrama-2025}) -/
+/-- "decent" — value scale, necessity standard ([beltrama-2025]) -/
 def decent : AdjectivalPredicateEntry where
   form := "decent"
   scaleType := .lowerBounded
   dimension := .value
   evaluativeValence := some .positive
 
-/-- "acceptable" — value scale, necessity standard (@cite{beltrama-2025}).
+/-- "acceptable" — value scale, necessity standard ([beltrama-2025]).
     Deverbal *-able* form: modal suffix contributes functional standard. -/
 def acceptable : AdjectivalPredicateEntry where
   form := "acceptable"
@@ -653,14 +653,14 @@ def acceptable : AdjectivalPredicateEntry where
   dimension := .value
   evaluativeValence := some .positive
 
-/-- "adequate" — value scale, necessity standard (@cite{beltrama-2025}) -/
+/-- "adequate" — value scale, necessity standard ([beltrama-2025]) -/
 def adequate : AdjectivalPredicateEntry where
   form := "adequate"
   scaleType := .lowerBounded
   dimension := .value
   evaluativeValence := some .positive
 
-/-! ## Deadjectival intensifier bases (@cite{nouwen-2024})
+/-! ## Deadjectival intensifier bases ([nouwen-2024])
 
 Adjectival bases for deadjectival intensifiers. Evaluative adjectives
 (horrible, wonderful) derive H-degree or M-degree intensifiers via the
@@ -849,7 +849,7 @@ def allEntries : List (AdjectivalPredicateEntry) := [
   free_, loose, tight,
   -- State: hardness, purity, alive
   hard, soft, pure_, dead, alive,
-  -- State: physical disturbance (@cite{tham-2025})
+  -- State: physical disturbance ([tham-2025])
   cracked, dented, scratched, shattered,
   -- Informationally strong
   pristine, filthy,
@@ -860,9 +860,9 @@ def allEntries : List (AdjectivalPredicateEntry) := [
   bright, dark, loud, quiet,
   -- Evaluative
   good, bad, beautiful, ugly, important, safe, dangerous, nice, pleasant,
-  -- Mildly positive adjectives (@cite{beltrama-2025})
+  -- Mildly positive adjectives ([beltrama-2025])
   decent, acceptable, adequate,
-  -- Intensifier bases: negative-evaluative (@cite{nouwen-2024})
+  -- Intensifier bases: negative-evaluative ([nouwen-2024])
   horrible, terrible, awful, dreadful, frightening,
   disgusting, annoying, unpleasant, scary,
   -- Intensifier bases: positive-evaluative

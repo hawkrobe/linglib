@@ -2,12 +2,12 @@ import Linglib.Core.Nominal.Determiner
 
 /-!
 # Fering Definiteness Fragment
-@cite{schwarz-2013}
+[schwarz-2013]
 
 Fering (North Frisian, ISO `frr`). Ebert's **A-form** (weak article,
 situational uniqueness) contrasts with the **D-form** (strong article,
 anaphoric/familiarity) — a *bipartite* article system, one of
-@cite{schwarz-2013}'s two clearest weak/strong languages (§3).
+[schwarz-2013]'s two clearest weak/strong languages (§3).
 -/
 
 namespace Fering.Definiteness

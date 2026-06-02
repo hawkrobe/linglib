@@ -4,7 +4,7 @@ import Linglib.Features.Case
 import Linglib.Core.Relation.ReflTransGen
 /-!
 # Case Grammaticalization
-@cite{heine-2009}
+[heine-2009]
 
 The case-marker grammaticalization cline (lexical > adposition > case
 affix > loss) and the extension paths from Heine (2009) Table 29.6.
@@ -26,7 +26,7 @@ open Features (Case)
 /-! ## Case-marker cline -/
 
 /-- Source category of a case marker on the grammaticalization cline
-    (@cite{heine-2009} §29.1 eq. (1), §29.2).
+    ([heine-2009] §29.1 eq. (1), §29.2).
 
     noun, verb (> adverb) > adposition > case affix > loss
 
@@ -70,7 +70,7 @@ type via dot-notation (mirroring `Features.Case.hierarchyRank` in
 
 namespace Features
 
-/-- Direct extension between case functions (@cite{heine-2009} Table 29.6).
+/-- Direct extension between case functions ([heine-2009] Table 29.6).
 
     `Case.Extends c₁ c₂` holds iff a single row of Heine's table licenses
     extending a `c₁`-marker to `c₂` uses. Direction is concrete/peripheral
@@ -78,8 +78,8 @@ namespace Features
     target.
 
     See also `Typology.Possession.PossessionSource` for
-    @cite{heine-2009} Table 29.5 (possessive case sources, adapted from
-    @cite{heine-1997}). -/
+    [heine-2009] Table 29.5 (possessive case sources, adapted from
+    [heine-1997]). -/
 def Case.Extends : Case → Case → Prop
   | .abl,  .caus | .abl,  .gen  | .abl,  .part | .abl,  .inst => True
   | .all,  .ben  | .all,  .dat  | .all,  .acc                 => True

@@ -1,6 +1,6 @@
 /-!
 # Horn 1989: Negation ambiguity for metalinguistic negation
-@cite{horn-1989} @cite{horn-1985} @cite{burton-roberts-1989}
+[horn-1989] [horn-1985] [burton-roberts-1989]
 
 Horn, L. R. (1989). *A Natural History of Negation*. Univ. of Chicago Press.
 Foundation: Horn, L. R. (1985). Metalinguistic negation and pragmatic
@@ -34,7 +34,7 @@ analysis is committed to them by stipulating that metalinguistic
 negation is a distinct lexical item with these distributional
 restrictions baked in.
 
-1. **Morpheme incorporation failure** (Horn 1989 p.392; @cite{horn-1985}):
+1. **Morpheme incorporation failure** (Horn 1989 p.392; [horn-1985]):
    morphologically incorporated negation (`unhappy`) cannot host
    metalinguistic readings. "She's not happy, she's ecstatic" is fine;
    "#She's unhappy, she's ecstatic" is anomalous.
@@ -45,7 +45,7 @@ restrictions baked in.
    the problems" does not.
 
 3. **Double-negation-elimination failure** (Burton-Roberts 1989,
-   @cite{burton-roberts-1989}): when both negations are metalinguistic,
+   [burton-roberts-1989]): when both negations are metalinguistic,
    `¬¬p` is NOT equivalent to `p`. "She's not not happy, she's
    inconsolable" is fine; "#She's happy, she's inconsolable" is not.
 

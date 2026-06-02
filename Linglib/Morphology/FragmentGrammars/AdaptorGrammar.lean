@@ -5,9 +5,9 @@ import Mathlib.Analysis.Calculus.ContDiff.FaaDiBruno
 /-!
 # Adaptor grammars (Maximum a posteriori variant: MAG)
 
-@cite{odonnell-2015}
+[odonnell-2015]
 
-The "full-listing" model of @cite{odonnell-2015} §2.4.2 / §3.1.7: a
+The "full-listing" model of [odonnell-2015] §2.4.2 / §3.1.7: a
 Dirichlet–multinomial PCFG (rule weights with conjugate Dirichlet
 prior) augmented with a per-LHS Pitman–Yor process for memoizing
 subtree expansions. Each nonterminal `A` carries a PYP "restaurant"
@@ -16,7 +16,7 @@ new derivations either reuse a stored subtree (with probability
 proportional to its current table occupancy) or productively compute
 a fresh subtree from the underlying CFG.
 
-Per @cite{odonnell-2015} §3.1.7 the corpus probability factorizes
+Per [odonnell-2015] §3.1.7 the corpus probability factorizes
 per-LHS as
 
 ```
@@ -32,7 +32,7 @@ sat at).
 
 ## Why a set partition (not a multiset)?
 
-@cite{odonnell-2015} writes `Y^A = ȳ^A` as a "count vector of reused
+[odonnell-2015] writes `Y^A = ȳ^A` as a "count vector of reused
 derivations stored on each table". Tables in O'Donnell's PYP are
 *labeled* (table 1, 2, ...) — each table stores a specific
 subderivation, and different tables store different ones (line 91-92
@@ -43,7 +43,7 @@ to exactly one labeled assignment under any canonical labeling
 convention.
 
 The EPPF formula `[θ + α]_{K-1, α} · ∏ [1 - α]_{n_i - 1, 1} /
-[θ + 1]_{N - 1, 1}` (@cite{pitman-2006} Thm 3.2 / @cite{odonnell-2015}
+[θ + 1]_{N - 1, 1}` ([pitman-2006] Thm 3.2 / [odonnell-2015]
 eq from §3.1.7) is precisely the probability of one such specific set
 partition. By the EPPF's symmetry it depends only on the multiset of
 block sizes — but the underlying random variable is the set partition
@@ -70,7 +70,7 @@ to evaluate the EPPF.
 `Y^A` is *latent* — it is part of the MAP analysis, not part of the
 observed corpus. To reduce to `D → ℝ` we would have to marginalize
 over all possible `Y`, which is exactly the MH inference target
-distribution of @cite{odonnell-2015} §3.2.1 — out of scope per the
+distribution of [odonnell-2015] §3.2.1 — out of scope per the
 "Processing scope" rule (we formalize target distributions, not
 inference algorithms). The honest signature is `(D, Y) → ℝ`: the
 closed-form probability *given* a particular table assignment.
@@ -99,8 +99,8 @@ factor.
 
 ## References
 
-- @cite{odonnell-2015} §2.4.2, §3.1.7.
-- @cite{pitman-2006} §3.2 (EPPF and the (α, θ) seating plan).
+- [odonnell-2015] §2.4.2, §3.1.7.
+- [pitman-2006] §3.2 (EPPF and the (α, θ) seating plan).
 -/
 
 namespace Morphology.FragmentGrammars
@@ -128,7 +128,7 @@ variable {T : Type} [DecidableEq T] {G : ContextFreeGrammar T} [DecidableEq G.NT
 A *table assignment* gives, for each nonterminal `A`, a set partition
 of `[N^A]` (the uses of `A` in the corpus) into tables. Two uses are
 in the same block iff they sat at the same table. This is the latent
-variable `Y` in @cite{odonnell-2015} eq from §3.1.7; see the module
+variable `Y` in [odonnell-2015] eq from §3.1.7; see the module
 docstring for why a set partition (not a multiset of sizes) is the
 right type.
 
@@ -151,14 +151,14 @@ Per-LHS Pitman–Yor factor for the eq from §3.1.7 product: the
 Pitman–Yor EPPF evaluated on the block-size multiset of the table
 assignment under `M.pyp a`. Pitman's EPPF gives the prob of one
 specific set partition with these block sizes
-(@cite{pitman-2006} Thm 3.2).
+([pitman-2006] Thm 3.2).
 -/
 noncomputable def pypFactor (a : G.NT) (Y : TableAssignment G) : ℝ :=
   (M.pyp a).partitionProb (Y a).snd.toNatPartition
 
 /--
 AG corpus probability conditional on a table assignment `Y`. Per
-@cite{odonnell-2015} §3.1.7:
+[odonnell-2015] §3.1.7:
 
 ```
 ag(X, Y; A) = ∏_{A ∈ V} [DMPCFG-factor on X^A] · [PYP-factor on Y^A]
@@ -227,7 +227,7 @@ multiplicative factor in `corpusProbGivenTables` that does not enter
 the per-LHS rule-weight inference — DMPCFG's `lhsFactor a D` consumes
 the same corpus rule counts whether or not stored fragments are
 reused (under this Lean formalization; see the AG module docstring
-for the simplification relative to @cite{odonnell-2015} §3.1.7).
+for the simplification relative to [odonnell-2015] §3.1.7).
 
 Consequence: the posterior MAP rule weights of an AG are exactly the
 posterior MAP rule weights of its underlying DMPCFG. The bridge is a

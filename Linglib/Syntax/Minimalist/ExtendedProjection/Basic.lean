@@ -1,7 +1,7 @@
 /-
 # Extended Projection
 
-Formalization of @cite{grimshaw-2005} Extended Projection theory.
+Formalization of [grimshaw-2005] Extended Projection theory.
 
 ## Key Ideas
 
@@ -31,7 +31,7 @@ namespace Minimalist
 -- Part 1: Categorial Features [±V, ±N]
 -- ═══════════════════════════════════════════════════════════════
 
-/-- @cite{chomsky-1970}'s [±V, ±N] categorial features, adopted by @cite{grimshaw-2005}
+/-- [chomsky-1970]'s [±V, ±N] categorial features, adopted by [grimshaw-2005]
     for Extended Projections. Cross-classifies the four lexical categories:
     - V = [+V, -N], N = [-V, +N], A = [+V, +N], P = [-V, -N]
 
@@ -44,37 +44,37 @@ structure CatFeatures where
   plusN : Bool   -- [+N] = nominal/adjectival
   deriving Repr, DecidableEq
 
-/-- Compute @cite{chomsky-1970}'s [±V, ±N] features from `Cat`.
+/-- Compute [chomsky-1970]'s [±V, ±N] features from `Cat`.
     Functional categories inherit features from their lexical anchor:
     - v, T, C inherit [+V, -N] from V
     - n, Num, Q, D inherit [-V, +N] from N -/
 def catFeatures : Cat → CatFeatures
   | .V     => ⟨true,  false⟩   -- [+V, -N]
   | .v     => ⟨true,  false⟩   -- [+V, -N] (light verb)
-  | .Voice => ⟨true,  false⟩   -- [+V, -N] (@cite{kratzer-1996})
-  | .Appl  => ⟨true,  false⟩   -- [+V, -N] (@cite{pylkkanen-2008})
+  | .Voice => ⟨true,  false⟩   -- [+V, -N] ([kratzer-1996])
+  | .Appl  => ⟨true,  false⟩   -- [+V, -N] ([pylkkanen-2008])
   | .T     => ⟨true,  false⟩   -- [+V, -N]
-  | .Foc   => ⟨true,  false⟩   -- [+V, -N] (@cite{rizzi-1997} split-CP)
-  | .Top   => ⟨true,  false⟩   -- [+V, -N] (@cite{rizzi-1997} split-CP)
-  | .Fin   => ⟨true,  false⟩   -- [+V, -N] (@cite{rizzi-1997} split-CP)
+  | .Foc   => ⟨true,  false⟩   -- [+V, -N] ([rizzi-1997] split-CP)
+  | .Top   => ⟨true,  false⟩   -- [+V, -N] ([rizzi-1997] split-CP)
+  | .Fin   => ⟨true,  false⟩   -- [+V, -N] ([rizzi-1997] split-CP)
   | .C     => ⟨true,  false⟩   -- [+V, -N]
-  | .SA    => ⟨true,  false⟩   -- [+V, -N] (@cite{speas-tenny-2003})
-  | .Force => ⟨true,  false⟩   -- [+V, -N] (@cite{rizzi-1997} split-CP)
-  | .Neg   => ⟨true,  false⟩   -- [+V, -N] (@cite{pollock-1989})
-  | .Mod   => ⟨true,  false⟩   -- [+V, -N] (@cite{cinque-1999})
-  | .Rel   => ⟨true,  false⟩   -- [+V, -N] (@cite{rizzi-1997})
-  | .Pol   => ⟨true,  false⟩   -- [+V, -N] (@cite{laka-1990})
-  | .Asp   => ⟨true,  false⟩   -- [+V, -N] (@cite{cinque-1999})
-  | .Evid  => ⟨true,  false⟩   -- [+V, -N] (@cite{cinque-1999})
-  | .Nmlz  => ⟨true,  false⟩   -- [+V, -N] (@cite{keine-2020}; nominalizer extends verbal EP)
+  | .SA    => ⟨true,  false⟩   -- [+V, -N] ([speas-tenny-2003])
+  | .Force => ⟨true,  false⟩   -- [+V, -N] ([rizzi-1997] split-CP)
+  | .Neg   => ⟨true,  false⟩   -- [+V, -N] ([pollock-1989])
+  | .Mod   => ⟨true,  false⟩   -- [+V, -N] ([cinque-1999])
+  | .Rel   => ⟨true,  false⟩   -- [+V, -N] ([rizzi-1997])
+  | .Pol   => ⟨true,  false⟩   -- [+V, -N] ([laka-1990])
+  | .Asp   => ⟨true,  false⟩   -- [+V, -N] ([cinque-1999])
+  | .Evid  => ⟨true,  false⟩   -- [+V, -N] ([cinque-1999])
+  | .Nmlz  => ⟨true,  false⟩   -- [+V, -N] ([keine-2020]; nominalizer extends verbal EP)
   | .N     => ⟨false, true⟩    -- [-V, +N]
-  | .n     => ⟨false, true⟩    -- [-V, +N] (categorizer/gender, @cite{marantz-2001})
-  | .Num   => ⟨false, true⟩    -- [-V, +N] (number, @cite{ritter-1991})
-  | .Q     => ⟨false, true⟩    -- [-V, +N] (quantity/classifier, @cite{borer-2005})
+  | .n     => ⟨false, true⟩    -- [-V, +N] (categorizer/gender, [marantz-2001])
+  | .Num   => ⟨false, true⟩    -- [-V, +N] (number, [ritter-1991])
+  | .Q     => ⟨false, true⟩    -- [-V, +N] (quantity/classifier, [borer-2005])
   | .D     => ⟨false, true⟩    -- [-V, +N]
-  | .K     => ⟨false, true⟩    -- [-V, +N] (inherent case shell, @cite{newman-2024})
+  | .K     => ⟨false, true⟩    -- [-V, +N] (inherent case shell, [newman-2024])
   | .A     => ⟨true,  true⟩    -- [+V, +N]
-  | .a     => ⟨true,  true⟩    -- [+V, +N] (adjectival categorizer, @cite{panagiotidis-2015})
+  | .a     => ⟨true,  true⟩    -- [+V, +N] (adjectival categorizer, [panagiotidis-2015])
   | .P | .Place | .Path => ⟨false, false⟩   -- [-V, -N]
 
 -- ═══════════════════════════════════════════════════════════════
@@ -86,7 +86,7 @@ def catFeatures : Cat → CatFeatures
     F-values are globally aligned across category families to capture
     the verbal–nominal parallelism.
 
-    The nominal spine follows @cite{borer-2005}'s ordering: Q (classifier /
+    The nominal spine follows [borer-2005]'s ordering: Q (classifier /
     individuation, CL#) is at F2, below Num (number / counting, #)
     at F3. This reflects the semantic composition order: individuation
     must precede counting (you can't count what hasn't been individuated).
@@ -110,7 +110,7 @@ def catFeatures : Cat → CatFeatures
     Fin types the clause while Num types the nominal. The semantic
     functions differ, but both occupy the same structural zone.
 
-    The verbal C-domain is internally ordered per @cite{rizzi-1997}:
+    The verbal C-domain is internally ordered per [rizzi-1997]:
     Fin(F3) < Foc(F4) < Top(F5) < C(F6). -/
 def fValue : Cat → Nat
   | .V | .N | .A | .P          => 0   -- lexical (F0)
@@ -121,7 +121,7 @@ def fValue : Cat → Nat
   | .Foc | .D                   => 4   -- discourse / referential (F4)
   | .Top | .Rel | .K            => 5   -- topic field / case shell (F5)
   | .C | .Force                 => 6   -- complementizer/force (F6)
-  | .SA                         => 7   -- speech act (F7, @cite{speas-tenny-2003})
+  | .SA                         => 7   -- speech act (F7, [speas-tenny-2003])
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 3: Category Consistency and Monotonicity
@@ -157,7 +157,7 @@ def isLHead (c : Cat) : Bool := fValue c == 0
 def isFHead (c : Cat) : Bool := fValue c > 0
 
 /-- Is this category in the CP area (left periphery)?
-    @cite{rizzi-1997}: Fin (F3) is the boundary between the inflectional
+    [rizzi-1997]: Fin (F3) is the boundary between the inflectional
     domain (F0–F2) and the left periphery (F3+). Categories at or above
     Fin belong to the CP area. -/
 def isCPArea (c : Cat) : Bool := fValue c ≥ fValue .Fin
@@ -185,18 +185,18 @@ def catFamily : Cat → CatFamily
   | .P | .Place | .Path                 => .adpositional
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 5b: Categorial Features — @cite{panagiotidis-2015}
+-- Part 5b: Categorial Features — [panagiotidis-2015]
 -- ═══════════════════════════════════════════════════════════════
 
-/-- @cite{panagiotidis-2015} categorial features: [N] and [V] as substantive,
+/-- [panagiotidis-2015] categorial features: [N] and [V] as substantive,
     LF-interpretable features with semantic content.
 
     - **[N]** = sortal perspective / referentiality (capacity to introduce a
-      discourse referent, following @cite{longobardi-1994}, @cite{longobardi-2005}; §4.3 p84)
+      discourse referent, following [longobardi-1994], [longobardi-2005]; §4.3 p84)
     - **[V]** = temporal perspective / eventivity (capacity to anchor to
       time/events; §4.3 p85)
 
-    This contrasts with @cite{chomsky-1970}'s [±V, ±N] diacritics (see `CatFeatures`):
+    This contrasts with [chomsky-1970]'s [±V, ±N] diacritics (see `CatFeatures`):
     Chomsky's features are arbitrary binary cross-classifiers, while Panagiotidis's
     are grounded in semantic substance. The key empirical difference is the status
     of P: Chomsky treats P as actively bearing [-V, -N]; Panagiotidis treats P as
@@ -216,7 +216,7 @@ structure CategorialFeatures where
   hasV : Bool   -- [V] = temporal predication
   deriving Repr, DecidableEq
 
-/-- Map a category to @cite{panagiotidis-2015}'s categorial features.
+/-- Map a category to [panagiotidis-2015]'s categorial features.
 
     Categorizers (n, v, a) bear the substantive features; functional heads
     in the same EP inherit them (just as in Grimshaw's consistency requirement).
@@ -288,7 +288,7 @@ private noncomputable def computeEPSpinePlanar :
 
 /-- Compute the EP spine from a syntactic object by walking the
     leftmost-leaf head chain (= `HeadFunction.leftSpine` per
-    @cite{marcolli-chomsky-berwick-2025} §1.13). Returns pairs of
+    [marcolli-chomsky-berwick-2025] §1.13). Returns pairs of
     (SO, Cat) from the deepest lexical head up to the root.
 
     For a non-leftmost-headed analysis, replace the recursion's `a`
@@ -339,7 +339,7 @@ theorem verbal_chain_consistent :
 
 /-- The nominal chain N → n → Q → Num → D is category-consistent:
     all have [-V, +N] features. Q (CL#, individuation) is below
-    Num (#, counting) per @cite{borer-2005}. -/
+    Num (#, counting) per [borer-2005]. -/
 theorem nominal_chain_consistent :
     categoryConsistent .N .n ∧ categoryConsistent .n .Q ∧
     categoryConsistent .Q .Num ∧ categoryConsistent .Num .D := by decide
@@ -353,7 +353,7 @@ theorem verbal_fvalues_monotone :
     fValue .T ≤ fValue .C := by decide
 
 /-- F-values increase along the nominal chain: N(0) ≤ n(1) ≤ Q(2) ≤ Num(3) ≤ D(4).
-    Q (individuation) is below Num (counting) per @cite{borer-2005}. -/
+    Q (individuation) is below Num (counting) per [borer-2005]. -/
 theorem nominal_fvalues_monotone :
     fValue .N ≤ fValue .n ∧ fValue .n ≤ fValue .Q ∧
     fValue .Q ≤ fValue .Num ∧ fValue .Num ≤ fValue .D := by decide
@@ -437,7 +437,7 @@ theorem verbal_nominal_parallel :
 
     **Important**: Panagiotidis (§4.5) argues categorizers are NOT functional
     heads — they are the only true *lexical* heads (roots being acategorial).
-    Our F-value system (from @cite{grimshaw-2005}) places them at F1, which makes
+    Our F-value system (from [grimshaw-2005]) places them at F1, which makes
     `isFHead` return true for categorizers. This reflects Grimshaw's architectural
     classification, not Panagiotidis's ontological claim about their nature. -/
 def isCategorizer (c : Cat) : Bool :=
@@ -445,8 +445,8 @@ def isCategorizer (c : Cat) : Bool :=
   | .v | .n | .a => true
   | _            => false
 
-/-- All three categorizers are at F1 in @cite{grimshaw-2005}'s F-value system.
-    @cite{panagiotidis-2015} predicts this parallelism; the F1 encoding is Grimshaw's. -/
+/-- All three categorizers are at F1 in [grimshaw-2005]'s F-value system.
+    [panagiotidis-2015] predicts this parallelism; the F1 encoding is Grimshaw's. -/
 theorem categorizers_at_f1 :
     fValue .v = 1 ∧ fValue .n = 1 ∧ fValue .a = 1 := by decide
 
@@ -459,7 +459,7 @@ theorem a_in_adjectival_family :
     catFamily .a = .adjectival := by decide
 
 /-- The adpositional chain P → Place → Path is category-consistent:
-    all share [-V, -N] features. @cite{dendikken-2010}: PlaceP (locational)
+    all share [-V, -N] features. [dendikken-2010]: PlaceP (locational)
     and PathP (directional) are functional projections above P. -/
 theorem adpositional_chain_consistent :
     categoryConsistent .P .Place ∧ categoryConsistent .Place .Path := by decide
@@ -479,16 +479,16 @@ theorem locational_pp_wellformed :
     allFMonotone [Cat.P, Cat.Place] = true := by decide
 
 /-- The adpositional EP spine [P, Place, Path] is well-formed (directional PP).
-    @cite{dendikken-2010}: directional PPs project PathP above PlaceP. -/
+    [dendikken-2010]: directional PPs project PathP above PlaceP. -/
 theorem directional_pp_wellformed :
     allCategoryConsistent [Cat.P, Cat.Place, Cat.Path] = true ∧
     allFMonotone [Cat.P, Cat.Place, Cat.Path] = true := by decide
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 8: Split-CP Extended Projection (@cite{rizzi-1997})
+-- Part 8: Split-CP Extended Projection ([rizzi-1997])
 -- ═══════════════════════════════════════════════════════════════
 
-/-- The verbal EP spine with @cite{rizzi-1997}'s split-CP layer:
+/-- The verbal EP spine with [rizzi-1997]'s split-CP layer:
     V → v → T → Fin → Foc → Top → C.
     Fin is the boundary between IP and CP; Foc and Top are
     discourse-related projections between Fin and C (= Force). -/
@@ -552,7 +552,7 @@ theorem nominal_functional_heads :
     catFamily .Q = .nominal := by decide
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 9: Complement Size (@cite{egressy-2026}, @cite{wurmbrand-2014})
+-- Part 9: Complement Size ([egressy-2026], [wurmbrand-2014])
 -- ═══════════════════════════════════════════════════════════════
 
 /-- The structural size of a clausal complement, determined by the
@@ -562,7 +562,7 @@ theorem nominal_functional_heads :
     a CP complement constitutes a phase boundary that blocks upward
     Agree for [uPAST], while a TP complement is transparent.
 
-    Also relevant for @cite{wurmbrand-2014}'s three-way infinitival
+    Also relevant for [wurmbrand-2014]'s three-way infinitival
     classification (restructuring ≈ vP, propositional ≈ TP,
     full finite ≈ CP). -/
 structure ComplementSize where
@@ -582,7 +582,7 @@ def ComplementSize.isPhaseSized (cs : ComplementSize) : Bool :=
 /-- A complement is transparent to tense Agree if it is smaller than
     a full CP — i.e., the highest head is below C in the fseq.
 
-    @cite{egressy-2026}: TP complements (fValue 2) are transparent;
+    [egressy-2026]: TP complements (fValue 2) are transparent;
     CP complements (fValue 6) are opaque. -/
 def ComplementSize.transparentToTenseAgree (cs : ComplementSize) : Bool :=
   cs.fLevel < fValue .C
@@ -622,9 +622,9 @@ theorem complement_size_ordering :
     ComplementSize.tP.fLevel < ComplementSize.finP.fLevel ∧
     ComplementSize.finP.fLevel < ComplementSize.cP.fLevel := by decide
 
-/-! ### Infinitival tense classes (@cite{wurmbrand-2014}) -/
+/-! ### Infinitival tense classes ([wurmbrand-2014]) -/
 
-/-- @cite{wurmbrand-2014}'s three-way classification of infinitival complements
+/-- [wurmbrand-2014]'s three-way classification of infinitival complements
     by tense behavior. The type is consumed by `Studies/Wurmbrand2014` and
     `Studies/Ostrove2026`; its `toComplementSize` map and the paper's woll
     decomposition, temporal orientation, and episodic predictions live in
@@ -641,7 +641,7 @@ inductive InfinitivalTenseClass where
 
 /-- The structural complement size of each infinitival class: future irrealis
     projects a modal (wollP ≈ ModP), propositional a TP, restructuring a bare
-    vP (@cite{wurmbrand-2014} §5; @cite{wurmbrand-2001}). The paper's strict
+    vP ([wurmbrand-2014] §5; [wurmbrand-2001]). The paper's strict
     wollP > TP > vP *ordering* is theory-internal and lives in
     `Studies/Wurmbrand2014` (ModP and TP share an fseq tier here). -/
 def InfinitivalTenseClass.toComplementSize : InfinitivalTenseClass → ComplementSize
@@ -650,20 +650,20 @@ def InfinitivalTenseClass.toComplementSize : InfinitivalTenseClass → Complemen
   | .restructuring => .vP
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 10: Split ForceP (@cite{westergaard-2009})
+-- Part 10: Split ForceP ([westergaard-2009])
 -- ═══════════════════════════════════════════════════════════════
 
-/-- The seven clause-type heads in @cite{westergaard-2009}'s split-ForceP.
+/-- The seven clause-type heads in [westergaard-2009]'s split-ForceP.
     Each represents a possible target for verb movement.
 
-    @cite{westergaard-2009} splits @cite{rizzi-1997}'s ForceP into
+    [westergaard-2009] splits [rizzi-1997]'s ForceP into
     clause-type-specific projections: DeclP, IntP, PolP, ExclP, ImpP
     are all "flavors of Force" in the CP domain, while FinP and WhP
     handle embedded contexts. This decomposition allows V2 to be treated
     as multiple independent micro-parameters rather than a single macro-parameter.
 
     All seven heads are at or above FinP. The five root-clause heads
-    (Decl, Int, Pol, Excl, Imp) are finer-grained than @cite{rizzi-1997}'s
+    (Decl, Int, Pol, Excl, Imp) are finer-grained than [rizzi-1997]'s
     single Force head — they are all at the Force level (F6).
     Fin° corresponds to `Cat.Fin` (F3); Wh° is at the Force level (F6). -/
 inductive ForceHead where
@@ -698,7 +698,7 @@ theorem forceHead_verbal (fh : ForceHead) :
     catFamily fh.toCat = .verbal := by
   cases fh <;> decide
 
-/-- @cite{westergaard-2009}'s micro-parameter profile for V2: the set of
+/-- [westergaard-2009]'s micro-parameter profile for V2: the set of
     clause-type heads at which verb movement is active (+) for a given
     language or dialect. Recast as `Typology.Profile ForceHead` so
     that fragment files can be written as set literals
@@ -708,16 +708,16 @@ theorem forceHead_verbal (fh : ForceHead) :
 abbrev V2Profile : Type := Typology.Profile ForceHead
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 11: Wh-Element Head/Phrase Status (@cite{westergaard-2009})
+-- Part 11: Wh-Element Head/Phrase Status ([westergaard-2009])
 -- ═══════════════════════════════════════════════════════════════
 
 /-- The syntactic status of a *wh*-element: head (X°) or phrase (XP).
 
-    @cite{westergaard-2009} argues that monosyllabic *wh*-words (*ka* 'what',
+    [westergaard-2009] argues that monosyllabic *wh*-words (*ka* 'what',
     *kem* 'who', *kor* 'where' in the Tromsø dialect) are syntactic **heads**,
     while polysyllabic *wh*-constituents (*korfor* 'why', *korsen* 'how',
     *katti* 'when') are **phrases**. This distinction is supported by
-    similar patterns in Italian dialects (@cite{poletto-pollock-2004}).
+    similar patterns in Italian dialects ([poletto-pollock-2004]).
 
     The distinction matters for V2: when a *wh*-head occupies Int°, it
     blocks verb movement to that position, making non-V2 possible. When

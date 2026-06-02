@@ -4,7 +4,7 @@ import Linglib.Semantics.Modality.TemporalAxes
 import Linglib.Fragments.English.Auxiliaries
 
 /-!
-# @cite{condoravdi-2002}: Temporal Interpretation of Modals
+# [condoravdi-2002]: Temporal Interpretation of Modals
 
 Condoravdi, C. (2002). Temporal Interpretation of Modals: Modals for the
 Present and for the Past. In D. Beaver, S. Kaufmann, B. Clark, & L. Casillas
@@ -49,9 +49,9 @@ open Semantics.Modality (TemporalPerspective TemporalOrientation)
 
 /-! ## The AT relation
 
-@cite{condoravdi-2002}'s temporal-instantiation relation `AT(t, w, P)`,
-dispatching on eventuality sort (after @cite{kamp-rohrer-1983},
-@cite{partee-1984}): events require temporal inclusion `τ(e) ⊆ t`, states
+[condoravdi-2002]'s temporal-instantiation relation `AT(t, w, P)`,
+dispatching on eventuality sort (after [kamp-rohrer-1983],
+[partee-1984]): events require temporal inclusion `τ(e) ⊆ t`, states
 temporal overlap `τ(e) ∘ t`. The eventive case is definitionally Klein's
 perfective viewpoint (`Aspect.PRFV`) and is reused rather than re-stipulated;
 the forward-expansion variants are Condoravdi's modal apparatus (evaluation
@@ -101,7 +101,7 @@ theorem atState_mono {t₁ t₂ : Interval Time} (P : W → Event Time → Prop)
 
 /-! ### Forward expansion
 
-@cite{condoravdi-2002}: modals expand the evaluation time forward to `[t, _)`
+[condoravdi-2002]: modals expand the evaluation time forward to `[t, _)`
 rather than shifting it. Since `Interval` requires finite bounds, the
 constraints are expressed directly: for events the runtime starts at or after
 `t`; for states it persists at or past `t`. -/
@@ -179,7 +179,7 @@ def mayCore (MB : W → Time → Set W) (sort : Dynamicity)
 
 /-- MAY/MIGHT: existential quantification over the modal base, with
     forward temporal expansion. The English modal lexicalizes the
-    prospective choice (@cite{condoravdi-2002}). -/
+    prospective choice ([condoravdi-2002]). -/
 def may (MB : W → Time → Set W) (sort : Dynamicity)
     (P : W → Event Time → Prop) (w : W) (t : Time) : Prop :=
   ∃ w' ∈ MB w t, atForward sort P w' t
@@ -289,7 +289,7 @@ theorem perf_eventive_implies_perfSimple
   exact ⟨⟨t', t, le_of_lt hlt⟩, rfl, e,
     ⟨hSub.1, le_trans hSub.2 (le_of_lt hlt)⟩, hP⟩
 
-/-- @cite{klein-1994}'s imperfective entails Condoravdi's stative AT: proper
+/-- [klein-1994]'s imperfective entails Condoravdi's stative AT: proper
     inclusion of the reference interval in the event runtime implies overlap. -/
 theorem atState_of_impf (P : W → Event Time → Prop) (w : W) (t : Interval Time)
     (h : IMPF P w t) : atState P w t :=

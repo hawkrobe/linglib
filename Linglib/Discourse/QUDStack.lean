@@ -2,7 +2,7 @@ import Linglib.Semantics.Questions.Basic
 
 /-!
 # QUD Stack: Ordered Accepted-Unanswered Questions
-@cite{roberts-2012}
+[roberts-2012]
 
 Stack of accepted-but-unanswered questions. Head is the immediate QUD;
 subquestions push, answers pop. `Strategy` is the rose-tree counterpart.

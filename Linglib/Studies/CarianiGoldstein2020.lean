@@ -2,14 +2,14 @@ import Linglib.Studies.Santorio2018
 
 /-!
 # Cariani & Goldstein 2020 — "Conditional Heresies"
-@cite{cariani-goldstein-2020}
+[cariani-goldstein-2020]
 
 *Philosophy and Phenomenological Research* 101(2): 251–282.
 
 ## Sibling homogeneity account
 
-@cite{cariani-goldstein-2020} and @cite{santorio-2018} are sibling
-homogeneity accounts of the conditional. @cite{zani-ciardelli-sanfelici-2026}
+[cariani-goldstein-2020] and [santorio-2018] are sibling
+homogeneity accounts of the conditional. [zani-ciardelli-sanfelici-2026]
 (p. 8) writes the C&G truth conditions for `if A, C` as:
 
     ⟦if A, C⟧ʷ = 1   if ∀p ∈ Alt(A) : min_w(p) ⊆ C
@@ -45,8 +45,8 @@ open Santorio2018 (DecAlt homogeneityEval)
 -- § 1. C&G Conditional Verdict
 -- ════════════════════════════════════════════════════
 
-/-- @cite{cariani-goldstein-2020}'s trivalent conditional verdict for a
-    DAC `if A, C` over an alternative set. Per @cite{zani-ciardelli-sanfelici-2026}
+/-- [cariani-goldstein-2020]'s trivalent conditional verdict for a
+    DAC `if A, C` over an alternative set. Per [zani-ciardelli-sanfelici-2026]
     p. 8: TRUE iff all alternative simplifications hold, FALSE iff all
     fail, undefined otherwise. -/
 def cgConditional {W : Type*} [DecidableEq W] [Fintype W]
@@ -59,12 +59,12 @@ def cgConditional {W : Type*} [DecidableEq W] [Fintype W]
 -- § 2. Truth-conditional coincidence with Santorio
 -- ════════════════════════════════════════════════════
 
-/-- **C&G ↔ Santorio coincidence.** @cite{cariani-goldstein-2020}'s
-    trivalent conditional and @cite{santorio-2018}'s `homogeneityEval`
+/-- **C&G ↔ Santorio coincidence.** [cariani-goldstein-2020]'s
+    trivalent conditional and [santorio-2018]'s `homogeneityEval`
     deliver the same verdict on every alternative set. The two accounts
     diverge on **mechanism** (projection vs. truthmaker stability) but
     agree on **truth-conditional content** — a load-bearing fact for
-    the @cite{zani-ciardelli-sanfelici-2026} acquisition study, which
+    the [zani-ciardelli-sanfelici-2026] acquisition study, which
     treats both as members of the homogeneity-of-DACs family. -/
 theorem cgConditional_eq_santorioHomogeneityEval {W : Type*}
     [DecidableEq W] [Fintype W] (sim : SimilarityOrdering W)

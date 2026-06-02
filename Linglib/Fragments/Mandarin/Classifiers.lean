@@ -2,20 +2,20 @@ import Linglib.Typology.ClassifierSystem
 
 /-!
 # Mandarin Chinese Classifier Lexicon
-@cite{li-thompson-1981} §4.2.1; @cite{aikhenvald-2000} (typological schema)
+[li-thompson-1981] §4.2.1; [aikhenvald-2000] (typological schema)
 
 Typed classifier entries for Mandarin Chinese, replacing unstructured
 string representations with semantically annotated `ClassifierEntry` values.
 
 Mandarin has a large numeral classifier system (~100+ classifiers in common
 use). This fragment covers the classifiers attested in the noun lexicon.
-@cite{li-thompson-1981} p. 105 points to Chao (1968) §7.9 as the canonical
+[li-thompson-1981] p. 105 points to Chao (1968) §7.9 as the canonical
 inventory survey.
 
 ## Classifier selection
 
 Classifier selection in Mandarin is semantically motivated but with
-substantial lexical residue: per @cite{li-thompson-1981} p. 112, "which
+substantial lexical residue: per [li-thompson-1981] p. 112, "which
 nouns occur with which classifier must be memorized, though there is a
 slight amount of regularity with respect to the meanings of groups of
 nouns taking the same classifier." Sortal classifiers encode inherent
@@ -110,11 +110,11 @@ def sortalClassifiers : List ClassifierEntry :=
 def defaultClassifier : ClassifierEntry := ge
 
 -- ============================================================================
--- Container / Measure classifiers (@cite{wang-sun-2026})
+-- Container / Measure classifiers ([wang-sun-2026])
 -- ============================================================================
 
 -- Container classifiers can have either sortal or mensural readings
--- depending on structural context (@cite{wang-sun-2026} §4.3): without
+-- depending on structural context ([wang-sun-2026] §4.3): without
 -- 的 (de), the classifier denotes a concrete container (sortal reading);
 -- with de, it becomes an abstract measure unit (mensural reading).
 -- The `isMensural` flag indicates this dual capacity.

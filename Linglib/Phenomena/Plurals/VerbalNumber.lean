@@ -3,10 +3,10 @@ import Linglib.Data.WALS.Features.F80A
 
 /-!
 # Verbal Number and Pluractionality
-@cite{corbett-2000}
+[corbett-2000]
 
 Verbal number — number marking on the verb that quantifies over events
-rather than participants (@cite{corbett-2000} Ch 8). Languages like Hausa,
+rather than participants ([corbett-2000] Ch 8). Languages like Hausa,
 Chechen, and Navajo mark number directly on the verb stem, often via
 suppletion (distinct stems for singular vs plural).
 

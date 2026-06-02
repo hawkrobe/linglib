@@ -3,11 +3,11 @@ import Linglib.Core.Word
 
 /-!
 # Gã Fragment
-@cite{allotey-2021}
+[allotey-2021]
 
 Language data for Gã (ISO: gaa), a Kwa (Niger-Congo) language spoken in
 Greater Accra, Ghana. The data here covers what is needed to formalize
-the obligatory control facts in @cite{allotey-2021}: pronoun paradigm,
+the obligatory control facts in [allotey-2021]: pronoun paradigm,
 TAM marking, complementizer inventory, and embedded clause typology.
 
 ## Coverage
@@ -16,7 +16,7 @@ TAM marking, complementizer inventory, and embedded clause typology.
 - TAM prefixes (future, progressive, perfect) and irrealis tone
 - Complementizer inventory (`akɛ`, `kɛji`, `ni`) with finite vs.
   irrealis distinction; `ni` is recorded as optionally-overt because
-  @cite{allotey-2021} ex 34 shows it dropping in some controlled
+  [allotey-2021] ex 34 shows it dropping in some controlled
   clauses while ex 35–38 show it obligatorily present
 - Embedded clause typology (three-way: `finiteAke`, `finiteKeji`,
   `irrealisNi`)
@@ -32,7 +32,7 @@ while the IPA form is preserved in the corresponding `String` value.
 ## What is NOT covered (deliberately)
 
 Verbal negation morphology and the V-to-T raising claim. Both rely on
-independent morphological argumentation (@cite{pollock-1989}'s
+independent morphological argumentation ([pollock-1989]'s
 diagnostic requires a free Neg head; Gã `-ee` and `-ko` appear
 suffixal) that is orthogonal to the OC story.
 -/
@@ -56,7 +56,7 @@ inductive Number where | sg | pl
 /-- Subject proclitic forms.
 
     Gã subject pronouns are proclitics on the inflected verb. In
-    @cite{allotey-2021}'s OC examples, the embedded subject of a
+    [allotey-2021]'s OC examples, the embedded subject of a
     controlled `ni`-clause is realized as an overt subject proclitic
     (e.g., `e-` for 3SG controllees) — the embedded subject position
     cannot be silent. -/
@@ -74,7 +74,7 @@ def subjectProclitic : Person → Number → String
 
 /-- Prefixal TAM categories of the Gã verb.
 
-    @cite{allotey-2021} uses the future, progressive, and perfect
+    [allotey-2021] uses the future, progressive, and perfect
     prefixes to argue that embedded clauses introduced by `akɛ` and
     `kɛji` allow the full TAM paradigm (finite), while clauses
     introduced by `ni` are restricted to irrealis (no future,
@@ -98,7 +98,7 @@ def TAM.exponent : TAM → String
 
 /-- Whether this TAM is part of the unrestricted (finite) paradigm.
 
-    Per @cite{allotey-2021}, finite embedded clauses (introduced by
+    Per [allotey-2021], finite embedded clauses (introduced by
     `akɛ` or `kɛji`) freely host any of the four TAM categories;
     `ni`-clauses are restricted to `.irrealis`. -/
 def TAM.isFinite : TAM → Bool
@@ -109,7 +109,7 @@ def TAM.isFinite : TAM → Bool
 -- § 4: Complementizers
 -- ════════════════════════════════════════════════════════════════
 
-/-- The three complementizers @cite{allotey-2021} discusses. -/
+/-- The three complementizers [allotey-2021] discusses. -/
 inductive Complementizer where
   /-- `akɛ` — finite complementizer for declarative complements
       (typically utterance and propositional attitude verbs) -/
@@ -138,7 +138,7 @@ def Complementizer.isFinite : Complementizer → Bool
 -- ════════════════════════════════════════════════════════════════
 
 /-- Three embedded clause types in Gã, distinguished by complementizer
-    and TAM properties (@cite{allotey-2021}).
+    and TAM properties ([allotey-2021]).
 
     Note: Gã `irrealisNi` clauses always carry an OVERT subject proclitic
     in controlled contexts — there is no null-PRO option. The OC
@@ -186,14 +186,14 @@ theorem complementizer_isFinite_eq_finiteFlag (c : EmbeddedClauseType) :
 -- ════════════════════════════════════════════════════════════════
 
 /-- Gã does NOT allow null pronominal subjects in matrix clauses:
-    every clause requires an overt subject proclitic (@cite{allotey-2021}). -/
+    every clause requires an overt subject proclitic ([allotey-2021]). -/
 def allowsProDrop : Bool := false
 
 /-- Gã has SVO basic order. -/
 def basicWordOrder : String := "SVO"
 
 /-- Controlled subjects in `irrealisNi` clauses must be OVERT proclitics
-    (@cite{allotey-2021}'s central empirical observation). Null PRO is
+    ([allotey-2021]'s central empirical observation). Null PRO is
     ungrammatical in this position. -/
 def controlledSubjectMustBeOvert : Bool := true
 

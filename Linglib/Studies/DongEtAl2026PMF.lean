@@ -1,7 +1,7 @@
 import Linglib.Core.Probability.Posterior
 
 /-!
-# @cite{dong-etal-2026}: the Value-of-Information clarify-or-commit model
+# [dong-etal-2026]: the Value-of-Information clarify-or-commit model
 
 A PMF-level formalisation of the decision-theoretic Value of Information
 (VoI) framework for adaptive human–agent communication. An agent holds a

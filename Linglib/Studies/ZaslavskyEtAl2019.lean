@@ -2,14 +2,14 @@ import Linglib.Pragmatics.InformationTheory.ChannelCapacity
 
 /-!
 # Zaslavsky, Kemp, Tishby & Regier (2019)
-@cite{zaslavsky-etal-2019}
+[zaslavsky-etal-2019]
 
 Color Naming Reflects Both Perceptual Structure and Communicative Need.
 Topics in Cognitive Science 11(1), 207–219.
 
 ## Core Contributions
 
-@cite{zaslavsky-etal-2019} adjudicate between two explanations of
+[zaslavsky-etal-2019] adjudicate between two explanations of
 cross-linguistic color naming patterns: perceptual structure (the geometry
 of CIELAB space) and communicative need (how often colors must be
 communicated). Their key finding is that *both* matter.
@@ -48,7 +48,7 @@ open Pragmatics.InformationTheory
 -- §1. The WCS Color Domain
 -- ============================================================================
 
-/-- The 80 WCS color chips analyzed by @cite{zaslavsky-etal-2019}.
+/-- The 80 WCS color chips analyzed by [zaslavsky-etal-2019].
     These are the standard Munsell chips from the World Color Survey,
     excluding achromatic chips. Each chip has coordinates in CIELAB
     perceptual color space. -/
@@ -132,7 +132,7 @@ p_l is the CAP for language l's naming system p_l(w|c), found via
 Blahut-Arimoto.
 
 Crucially, averaging CAPs does NOT in general preserve the CAP condition
-(footnote 4 of @cite{zaslavsky-etal-2019}): each p_l satisfies IsCAP for
+(footnote 4 of [zaslavsky-etal-2019]): each p_l satisfies IsCAP for
 its own channel, but the averaged p̄ need not be a CAP for any single
 channel. The paper's key empirical finding is a *dissociation*:
 
@@ -142,12 +142,12 @@ channel. The paper's key empirical finding is a *dissociation*:
   a CAP (r = 0.32) — suggesting real naming systems encode communicative
   structure beyond perceptual clustering.
 - **Salience-weighted prior** (from natural image statistics,
-  @cite{gibson-etal-2017}): exhibits both the linear CAP relation AND the
+  [gibson-etal-2017]): exhibits both the linear CAP relation AND the
   warm–cool asymmetry — evidence for communicative need beyond perceptual
   structure. -/
 
 /-- Average a collection of per-language priors to obtain a universal
-    need distribution (eq. 7 of @cite{zaslavsky-etal-2019}). -/
+    need distribution (eq. 7 of [zaslavsky-etal-2019]). -/
 noncomputable def averageCAP {L : Nat}
     (priors : Fin L → (WCSChip → ℝ)) : WCSChip → ℝ :=
   fun c => (∑ l : Fin L, priors l c) / L
@@ -157,7 +157,7 @@ noncomputable def averageCAP {L : Nat}
 -- ============================================================================
 
 /-- Any TRUE capacity-achieving prior exhibits the linear relation
-    −log p(c) = S(c) + log Z (eq. 6 of @cite{zaslavsky-etal-2019}).
+    −log p(c) = S(c) + log Z (eq. 6 of [zaslavsky-etal-2019]).
 
     This applies to each per-language CAP p_l found via Blahut-Arimoto.
     However, the paper tests *averaged* priors (see `averageCAP`), not
@@ -193,7 +193,7 @@ as given and derives speaker/listener behavior. The CAP framework goes
 one level up: it asks what prior would make the entire system optimally
 informative, and shows that natural priors approximate this optimum.
 
-This "prior optimization" perspective connects to @cite{zaslavsky-hu-levy-2020}'s
+This "prior optimization" perspective connects to [zaslavsky-hu-levy-2020]'s
 rate-distortion view of RSA, where the rationality parameter α trades off
 compression rate against distortion. -/
 

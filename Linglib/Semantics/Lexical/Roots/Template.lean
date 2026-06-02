@@ -4,7 +4,7 @@ import Linglib.Semantics.Lexical.Roots.RootFeatures
 /-!
 # Templatic Heads and Event Structure Composition
 
-@cite{beavers-koontz-garboden-2020} @cite{rappaport-hovav-levin-1998}
+[beavers-koontz-garboden-2020] [rappaport-hovav-levin-1998]
 
 The B&K-G architecture decomposes event structure into **templatic
 heads** that combine with **roots**. The three primitive heads are:
@@ -18,7 +18,7 @@ A root attaches to a head in one of two structural positions:
 - **adjoined** — modifier of a head (typical of manner roots)
 - **complement** — argument of a head (typical of state roots)
 
-The familiar @cite{rappaport-hovav-levin-1998} templates (state,
+The familiar [rappaport-hovav-levin-1998] templates (state,
 activity, achievement, accomplishment) are *compositions* of these
 primitives — see `EventStructure.toTemplate`.
 -/
@@ -30,7 +30,7 @@ namespace Semantics.Lexical.Roots
 -- ════════════════════════════════════════════════════
 
 /-- The three primitive event-structural heads
-    (@cite{beavers-koontz-garboden-2020} ch. 1, ch. 5). -/
+    ([beavers-koontz-garboden-2020] ch. 1, ch. 5). -/
 inductive TemplaticHead where
   | v_act     -- activity: λxλe. P(x, e)
   | v_become  -- BECOME:   λPλxλe. ∃s. become(s, e) ∧ P(x, s)

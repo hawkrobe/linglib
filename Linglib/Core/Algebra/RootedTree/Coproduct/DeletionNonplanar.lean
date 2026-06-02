@@ -10,7 +10,7 @@ set_option autoImplicit false
 
 /-!
 # Δ^d on `ConnesKreimer R (Nonplanar (α ⊕ β))` via projection from Δ^c
-@cite{marcolli-chomsky-berwick-2025}
+[marcolli-chomsky-berwick-2025]
 
 The **deletion variant** of the Connes-Kreimer admissible-cut coproduct,
 derived from Δ^c (`Coproduct/TraceNonplanar.lean`) by stripping

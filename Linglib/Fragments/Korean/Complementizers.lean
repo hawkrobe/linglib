@@ -2,18 +2,18 @@ import Linglib.Semantics.Verb.Basic
 
 /-!
 # Korean Complementizers and Clause-Embedding Verbs
-@cite{bondarenko-2022} @cite{bogal-allbritten-moulton-2018} @cite{kim-min-joo-2009}
+[bondarenko-2022] [bogal-allbritten-moulton-2018] [kim-min-joo-2009]
 
 Korean clause-typing morphology and matrix verbs that select bare vs.
-nominalized embedded clauses (@cite{bondarenko-2022} §4.3.2).
+nominalized embedded clauses ([bondarenko-2022] §4.3.2).
 
 ## Three clause-typing morphemes (Bondarenko's specific decomposition)
 
-- **-ta** — declarative ending. @cite{bondarenko-2022} §4.3.2
-  (following @cite{bogal-allbritten-moulton-2018}) analyses *-ta* as
+- **-ta** — declarative ending. [bondarenko-2022] §4.3.2
+  (following [bogal-allbritten-moulton-2018]) analyses *-ta* as
   the overt exponent of ContP, the projection introducing the CONT
   function. **NOT the consensus view**: alternative analyses
-  (Shim & Ihsane 2015; @cite{kim-min-joo-2009}) treat *-ta*
+  (Shim & Ihsane 2015; [kim-min-joo-2009]) treat *-ta*
   differently (clause-typing morpheme without specific structural
   decomposition). This Fragment file exposes the morpheme; the
   ContP-bearing claim is paper-specific apparatus and lives in
@@ -57,7 +57,7 @@ namespace Korean.Complementizers
 /-- The three clause-typing morphemes covered here. -/
 inductive KoreanClauseSuffix where
   /-- *-ta* — declarative ending. Bondarenko-specific decomposition
-      treats it as overt ContP per @cite{bogal-allbritten-moulton-2018};
+      treats it as overt ContP per [bogal-allbritten-moulton-2018];
       the consensus view (Shim & Ihsane 2015, M.-J. Kim 2009) treats
       it as a clause-typing morpheme without that specific structural
       decomposition. -/
@@ -94,7 +94,7 @@ theorem suffixes_distinct :
 -- § 2. The lexical noun *kes*
 -- ════════════════════════════════════════════════════════════════
 
-/-- *kes* — 'thing'. Light noun analysed by @cite{kim-min-joo-2009}
+/-- *kes* — 'thing'. Light noun analysed by [kim-min-joo-2009]
     as null-D + N. Combines with an adnominal *-nun*-marked clause
     to yield a nominalized DP that can saturate argument slots. -/
 def kes : { form : String // form = "kes" } :=
@@ -105,7 +105,7 @@ def kes : { form : String // form = "kes" } :=
 -- ════════════════════════════════════════════════════════════════
 
 /-- *yukamsulewehay-ta* — 'regret'. Preferential negative, stative.
-    @cite{bondarenko-2022} §4.3.2. -/
+    [bondarenko-2022] §4.3.2. -/
 def yukamsulewehayta : Verb where
   form := "yukamsulewehay-ta"
   complementType := .finiteClause
@@ -137,7 +137,7 @@ def haysekhata : Verb where
   opaqueContext := true
 
 /-- *selmyengha-ta* — 'explain'. Accomplishment; central to
-    @cite{bondarenko-2022} §4.4.2 theme-argument analysis. -/
+    [bondarenko-2022] §4.4.2 theme-argument analysis. -/
 def selmyenghata : Verb where
   form := "selmyengha-ta"
   complementType := .finiteClause

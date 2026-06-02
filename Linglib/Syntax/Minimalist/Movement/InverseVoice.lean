@@ -2,22 +2,22 @@ import Linglib.Syntax.Minimalist.Movement.Smuggling
 
 /-!
 # Inverse Voice Construction Family
-@cite{collins-2005} @cite{storment-2025} @cite{storment-2026}
+[collins-2005] [storment-2025] [storment-2026]
 
 A family abstraction over voice phenomena unified by smuggling
-(@cite{storment-2026}, §4.3 + §6 + §7): passive, dative shift,
+([storment-2026], §4.3 + §6 + §7): passive, dative shift,
 quotative inversion (QI), locative inversion (LI), middles, causatives,
 antipassives. Each is "an information-structurally marked configuration
 in which a given thematic argument is mapped onto an A-position that
 would not be accessible to the same argument in a standard unmarked
-configuration" (@cite{storment-2026}, eq. 121).
+configuration" ([storment-2026], eq. 121).
 
 The unifying syntactic mechanism: a non-phase Voice head permits
 smuggling of a constituent containing the thematic argument to
 Spec,VoiceP, making it accessible to T⁰ for Case licensing.
 
 This file abstracts the family invariant and provides instances for
-the constructions documented in @cite{storment-2026}. Specific paper
+the constructions documented in [storment-2026]. Specific paper
 analyses (Collins 2005 for passive; Storment 2026 for QI/LI) live in
 their respective Studies files; this file is the shared substrate.
 -/
@@ -27,10 +27,10 @@ namespace Minimalist
 /-- Tag identifying which inverse-voice construction is at issue.
     Storment §4.3 lists these as the unified family. -/
 inductive InverseVoiceKind where
-  | passive            -- @cite{collins-2005}
+  | passive            -- [collins-2005]
   | dativeShift        -- Collins 2021/2024
-  | quotativeInversion -- @cite{storment-2026}
-  | locativeInversion  -- @cite{storment-2026}, §6
+  | quotativeInversion -- [storment-2026]
+  | locativeInversion  -- [storment-2026], §6
   | middle             -- Gotah 2024
   | causative          -- Belletti 2017
   | antipassive
@@ -85,7 +85,7 @@ theorem InverseVoiceConstruction.transitivity_failure_blocks
 
 /-! ## Instances
 
-QI/LI from @cite{storment-2026}, passive from @cite{collins-2005}.
+QI/LI from [storment-2026], passive from [collins-2005].
 Middle (Gotah 2024), dative shift (Collins 2021/2024), and causatives
 (Belletti 2017) are accommodated by the family abstraction but await
 their own study files before adding canonical instances here. -/
@@ -98,13 +98,13 @@ def qiCanonical : InverseVoiceConstruction where
   satisfiesTransitivityConstraint := true
 
 /-- Locative inversion in its canonical form: same Voice mechanism as
-    QI per @cite{storment-2026}, §6. -/
+    QI per [storment-2026], §6. -/
 def liCanonical : InverseVoiceConstruction where
   kind := .locativeInversion
   voice := voiceAnticausative
   satisfiesTransitivityConstraint := true
 
-/-- The passive in its canonical form (@cite{collins-2005}): Voice
+/-- The passive in its canonical form ([collins-2005]): Voice
     headed by *by* permits smuggling of PartP containing the underlying
     object. *Passive* Voice rather than *anticausative* — Collins's §4
     proposes that *by* is the Voice head, distinct from the

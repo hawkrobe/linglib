@@ -10,8 +10,8 @@ import Linglib.Semantics.Questions.Support
 
 /-!
 # Question — core type, lattice, Heyting derivatives
-@cite{ciardelli-groenendijk-roelofsen-2018} @cite{puncochar-2016}
-@cite{puncochar-2019} @cite{theiler-etal-2018}
+[ciardelli-groenendijk-roelofsen-2018] [puncochar-2016]
+[puncochar-2019] [theiler-etal-2018]
 
 A bundled `Question W` — a non-empty downward-closed family of information
 states over `W` (where an information state is a subset of `W`). This is
@@ -19,7 +19,7 @@ mathematically a non-empty `LowerSet (Set W)`; in linguistic terms it is
 the umbrella structure for question-flavored content: it subsumes
 Hamblin alternative sets (`polar`, `which`), partition-style questions
 (via `Semantics/Mood/PartitionAsInquiry.lean`), and the inquisitive
-propositions of @cite{ciardelli-groenendijk-roelofsen-2018}. The name
+propositions of [ciardelli-groenendijk-roelofsen-2018]. The name
 "Question" follows the decision-theoretic / discourse-semantic tradition
 (van Rooij, Westera) — neutral as to whether the consumer is doing
 inquisitive theorizing.
@@ -72,7 +72,7 @@ membership/coercion API without forcing `LowerSet`'s `⊥`.
 universe u
 
 /-- An inquisitive proposition in the sense of
-    @cite{ciardelli-groenendijk-roelofsen-2018}: a non-empty
+    [ciardelli-groenendijk-roelofsen-2018]: a non-empty
     downward-closed family of information states over `W`. The states in
     `props` are the ones that *resolve* the issue raised by the sentence. -/
 structure Question (W : Type u) where
@@ -113,14 +113,14 @@ theorem ext {P Q : Question W} (h : ∀ q, q ∈ P ↔ q ∈ Q) : P = Q :=
   SetLike.ext h
 
 /-- The **alternatives** of an inquisitive content
-    (@cite{ciardelli-groenendijk-roelofsen-2018}): the maximal
+    ([ciardelli-groenendijk-roelofsen-2018]): the maximal
     propositions in `props`. These are the "answers" — the strongest
     information states that resolve the issue. -/
 def alt (P : Question W) : Set (Set W) :=
   {p ∈ P.props | ∀ q ∈ P.props, p ⊆ q → p = q}
 
 /-- The **informative content** of an inquisitive content
-    (@cite{ciardelli-groenendijk-roelofsen-2018}): the union of all
+    ([ciardelli-groenendijk-roelofsen-2018]): the union of all
     propositions in `props`. The information any utterance with this
     meaning provides — the actual world must lie in `info P`. -/
 def info (P : Question W) : Set W :=
@@ -140,7 +140,7 @@ def isInquisitive (P : Question W) : Prop :=
 
 /-- A sentence is **declarative** iff it is not inquisitive —
     equivalently, iff `info P ∈ props`. Algebraic characterization
-    (@cite{puncochar-2019}): `props` is a principal ideal in the algebra
+    ([puncochar-2019]): `props` is a principal ideal in the algebra
     of information states; see `isDeclarative_iff_eq_declarative_info`. -/
 def isDeclarative (P : Question W) : Prop :=
   info P ∈ P.props
@@ -182,9 +182,9 @@ theorem not_isInquisitive_declarative (p : Set W) :
     ¬ (declarative p).isInquisitive :=
   fun h => h (isDeclarative_declarative p)
 
-/-! ### Algebraic operations (@cite{puncochar-2019} §2)
+/-! ### Algebraic operations ([puncochar-2019] §2)
 
-Following the support-clause definitions in @cite{puncochar-2019} §2:
+Following the support-clause definitions in [puncochar-2019] §2:
 conjunction is `||α ∧ β|| = ||α|| ∩ ||β||` (state supports `α ∧ β` iff
 it supports both); inquisitive disjunction is `||α ⩒ β|| = ||α|| ∪ ||β||`
 (state supports `α ⩒ β` iff it supports either).
@@ -194,7 +194,7 @@ the `CompleteDistribLattice` structure registered below; see the
 "Heyting derivatives" section for the structural identity
 `Pᶜ = declarative (info P)ᶜ` and the derivatives it grounds. -/
 
-/-- **Inquisitive conjunction** `P ∧ Q` (@cite{puncochar-2019} §2 ∧
+/-- **Inquisitive conjunction** `P ∧ Q` ([puncochar-2019] §2 ∧
     clause): `props` is the pointwise intersection. A state resolves
     `P ∧ Q` iff it resolves both `P` and `Q`. -/
 def conj (P Q : Question W) : Question W where
@@ -203,7 +203,7 @@ def conj (P Q : Question W) : Question W where
   downward_closed := fun p hp q hq =>
     ⟨P.downward_closed p hp.1 q hq, Q.downward_closed p hp.2 q hq⟩
 
-/-- **Inquisitive disjunction** `P ⩒ Q` (@cite{puncochar-2019} §2 ⩒
+/-- **Inquisitive disjunction** `P ⩒ Q` ([puncochar-2019] §2 ⩒
     clause): `props` is the pointwise union. A state resolves
     `P ⩒ Q` iff it resolves `P` or `Q`. Distinct from classical
     disjunction `∨`, whose support clause involves splitting the state
@@ -458,7 +458,7 @@ The `alt` (alternatives) selector picks out maximal propositions in
 `P.props`. Two basic facts: alternatives are propositions, and the
 union of alternatives is contained in `info P` (equality requires
 finite-`W` or other guarantees that maximals exist —
-@cite{ciardelli-groenendijk-roelofsen-2018} discusses the limit case
+[ciardelli-groenendijk-roelofsen-2018] discusses the limit case
 where no maximal element exists). The two-alternatives criterion
 gives a sufficient condition for inquisitivity that does not depend
 on finiteness. -/
@@ -718,14 +718,14 @@ theorem eq_iSup_declarative_alt (P : Question W)
 
 /-! ### Principal-ideal characterization of declaratives
 
-@cite{puncochar-2019}: declarative propositions are, algebraically
+[puncochar-2019]: declarative propositions are, algebraically
 speaking, principal ideals in the algebra of information states. We
 make this characterization explicit: `P` is declarative iff `P` is the
 principal ideal generated by `info P`. We also prove the equivalent
 characterization via alternatives: `P` is declarative iff
 `alt P = {info P}`. -/
 
-/-- **Principal-ideal characterization** (@cite{puncochar-2019}): an
+/-- **Principal-ideal characterization** ([puncochar-2019]): an
     inquisitive content is declarative iff it equals the principal ideal
     generated by its informative content. -/
 theorem isDeclarative_iff_eq_declarative_info (P : Question W) :
@@ -781,7 +781,7 @@ theory is the explicit formula for `Pᶜ`:
 i.e., complementing `P` is the same as complementing its informative
 content and taking the principal ideal. This single identity
 (`compl_eq`) lets us derive the standard inquisitive operators
-(@cite{ciardelli-groenendijk-roelofsen-2018}; @cite{puncochar-2019}):
+([ciardelli-groenendijk-roelofsen-2018]; [puncochar-2019]):
 
 - the **non-inquisitive projection** `!P = Pᶜᶜ = declarative (info P)`
   (`proj_eq_compl_compl`),
@@ -838,7 +838,7 @@ theorem compl_eq (P : Question W) :
   rw [compl_eq, info_declarative]
 
 /-- **Non-inquisitive projection** `!P`: the declarative content with
-    the same informative content as `P` (@cite{ciardelli-groenendijk-roelofsen-2018}).
+    the same informative content as `P` ([ciardelli-groenendijk-roelofsen-2018]).
     Removes any inquisitivity by collapsing all alternatives into a
     single principal ideal. Always declarative; equal to `P` iff `P`
     is declarative.
@@ -849,7 +849,7 @@ def proj (P : Question W) : Question W :=
   declarative P.info
 
 /-- `!P = Pᶜᶜ`: the non-inquisitive projection coincides with the
-    Heyting double-complement (@cite{ciardelli-groenendijk-roelofsen-2018}).
+    Heyting double-complement ([ciardelli-groenendijk-roelofsen-2018]).
     Together with `compl_eq`, this means every inquisitive operator
     derivable from the Heyting structure is, at the level of `info`, a
     Boolean operator on `Set W`. -/
@@ -880,7 +880,7 @@ theorem proj_eq_self_iff (P : Question W) :
     exact ((isDeclarative_iff_eq_declarative_info P).mp h).symm
 
 /-- **Non-informative projection** `?P := P ⊔ Pᶜ`
-    (@cite{ciardelli-groenendijk-roelofsen-2018}). The "inquisitive
+    ([ciardelli-groenendijk-roelofsen-2018]). The "inquisitive
     question" operator: takes any content and returns its non-informative
     counterpart with the same inquisitive structure. -/
 def nonInfo (P : Question W) : Question W := P ⊔ Pᶜ
@@ -888,7 +888,7 @@ def nonInfo (P : Question W) : Question W := P ⊔ Pᶜ
 theorem nonInfo_eq_sup_compl (P : Question W) :
     nonInfo P = P ⊔ Pᶜ := rfl
 
-/-- **Division law** (@cite{ciardelli-groenendijk-roelofsen-2018}):
+/-- **Division law** ([ciardelli-groenendijk-roelofsen-2018]):
     every inquisitive content decomposes uniquely as the meet of its
     non-inquisitive projection and its non-informative projection. This
     is the fundamental decomposition theorem of inquisitive semantics —
@@ -948,7 +948,7 @@ The cross-tradition `s ⊨ Q` interface (`Question.Support`) is satisfied
 by `Question` in the standard inquisitive way: an information state `s : Set W`
 supports / resolves the issue `P` iff `s` is one of the resolving propositions
 (`s ∈ P.props`). This is the inquisitive notion of support
-(@cite{ciardelli-groenendijk-roelofsen-2018}). -/
+([ciardelli-groenendijk-roelofsen-2018]). -/
 
 /-- Inquisitive support: `s ⊨ P` iff the state `s` resolves the issue `P`. -/
 instance instSupport : Question.Support (Set W) (Question W) where

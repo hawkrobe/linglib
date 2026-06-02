@@ -2,7 +2,7 @@ import Mathlib.Data.Finset.Card
 import Linglib.Semantics.Conditionals.Counterfactual
 
 /-!
-# Stalnaker 1981 @cite{stalnaker-1981}
+# Stalnaker 1981 [stalnaker-1981]
 
 A Defense of Conditional Excluded Middle. In Harper, Stalnaker & Pearce
 (eds.), *Ifs*, 87--104. Springer.
@@ -42,7 +42,7 @@ open Core.Duality (Truth3)
 /-!
 ## The Bizet--Verdi Example
 
-The example originates with @cite{quine-1950}.
+The example originates with [quine-1950].
 
 "If Bizet and Verdi had been compatriots, Bizet would have been Italian."
 "If Bizet and Verdi had been compatriots, Verdi would have been French."

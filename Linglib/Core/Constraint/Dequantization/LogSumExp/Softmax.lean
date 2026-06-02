@@ -4,7 +4,7 @@ import Linglib.Core.Constraint.Decoder
 
 /-!
 # Softmax as `lse`-Renormalised Exponential
-@cite{litvinov-2005}
+[litvinov-2005]
 
 The bridge between the warped semiring (`lse α`) and the choice rule
 (`softmaxDecoder α`). The softmax probability admits the clean

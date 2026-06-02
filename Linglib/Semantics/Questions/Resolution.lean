@@ -4,7 +4,7 @@ import Linglib.Semantics.Questions.Relevance
 
 /-!
 # Resolution — answerhood predicates on `Question`
-@cite{ciardelli-groenendijk-roelofsen-2018} @cite{theiler-etal-2018} @cite{roberts-2012} @cite{groenendijk-stokhof-1984}
+[ciardelli-groenendijk-roelofsen-2018] [theiler-etal-2018] [roberts-2012] [groenendijk-stokhof-1984]
 
 Canonical Prop-valued answerhood predicates over the inquisitive
 substrate (`Question W`). One topical home for the "what does it
@@ -18,12 +18,12 @@ Given a state `σ : Set W` and a question `Q : Question W`:
 
 - **Resolves**: σ settles at least one alternative — `∃ p ∈ alt Q, σ ⊆ p`.
   This is the standard inquisitive resolution relation
-  (@cite{ciardelli-groenendijk-roelofsen-2018}, @cite{roelofsen-2013}). It is
+  ([ciardelli-groenendijk-roelofsen-2018], [roelofsen-2013]). It is
   the natural notion of "σ answers Q" — even a singleton state can resolve
   a question by being contained in one of its alternatives.
 
 - **MentionSome**: synonym of `Resolves` — the doctrinal "mention-some"
-  reading of @cite{groenendijk-stokhof-1984} Ch. VI §5 is just resolution
+  reading of [groenendijk-stokhof-1984] Ch. VI §5 is just resolution
   by one alternative. Authors who add an extra "and not all alternatives"
   conjunct (forbidding mention-some answers from also being maximally
   informative) end up ruling out singleton-world states as mention-some
@@ -33,13 +33,13 @@ Given a state `σ : Set W` and a question `Q : Question W`:
   Note this is **not** "σ ⊆ p for every p" (which collapses to
   `σ ⊆ ⋂ alt Q` and is incoherent for partition questions whose
   alternatives are disjoint). The "decides each alternative" form is
-  what aligns with @cite{groenendijk-stokhof-1984}-style strong
+  what aligns with [groenendijk-stokhof-1984]-style strong
   exhaustivity on partition questions. See `Exhaustivity.lean` for the
   weak / intermediate / strong / relativized exhaustivity ladder
-  (@cite{heim-1994}, @cite{george-2011}, @cite{xiang-2022}).
+  ([heim-1994], [george-2011], [xiang-2022]).
 
 - **partiallyResolves**: re-export of `Question.Relevance.partiallyAnswers`
-  (@cite{roberts-2012} Def. 3a). σ settles at least one alternative either
+  ([roberts-2012] Def. 3a). σ settles at least one alternative either
   positively (`σ ⊆ p`) or negatively (`σ ⊆ pᶜ`).
 
 - **CompletelyResolves**: σ entails every alternative —
@@ -68,8 +68,8 @@ open Question
 
 /-- `σ` **resolves** `Q`: settles at least one alternative.
     The standard inquisitive resolution relation
-    (@cite{ciardelli-groenendijk-roelofsen-2018}). The
-    @cite{groenendijk-stokhof-1984} Ch. VI §5 "mention-some" notion is
+    ([ciardelli-groenendijk-roelofsen-2018]). The
+    [groenendijk-stokhof-1984] Ch. VI §5 "mention-some" notion is
     this same predicate; the literature's `MentionSome` is just
     `Resolves` applied to a singleton-witness. -/
 def Resolves (σ : Set W) (Q : Question W) : Prop :=

@@ -6,7 +6,7 @@ import Linglib.Sociolinguistics.EckertMontague
 import Linglib.Fragments.English.NumeralModifiers
 
 /-!
-# @cite{beltrama-solt-burnett-2023}
+# [beltrama-solt-burnett-2023]
 
 Context, precision, and social perception: A sociopragmatic study.
 *Language in Society* 52(5): 805–835. doi:10.1017/S0047404522000240
@@ -58,7 +58,7 @@ open Sociolinguistics.SCM
 
 /-- The three precision variants for numeral use (BSB2022 §3).
 
-    Extends the two-way distinction (exact/approximate) in @cite{beltrama-schwarz-2024} by factoring out bare round numerals as a third, diagnostically
+    Extends the two-way distinction (exact/approximate) in [beltrama-schwarz-2024] by factoring out bare round numerals as a third, diagnostically
     crucial category. -/
 inductive Variant where
   | precise        -- sharp number: "forty-nine minutes"
@@ -198,7 +198,7 @@ theorem antiSol_precise_gt_approx :
     (both favor precise), while warmth reverses (favors approximate).
 
     This is the core sign structure of the precision indexical field. It is
-    consistent with the `precisionField` associations in @cite{beltrama-schwarz-2024}, where `.exact →.competence = +1`, `.exact →.warmth = −1`,
+    consistent with the `precisionField` associations in [beltrama-schwarz-2024], where `.exact →.competence = +1`, `.exact →.warmth = −1`,
     and `.exact →.antiSolidarity = +1`. -/
 theorem sign_alignment :
     (exp1Mean .precise .competence > exp1Mean .approximate .competence ∧
@@ -219,7 +219,7 @@ theorem sign_alignment :
     from §5. The underspecified variant gets 0 (neutral) — the diagnostic
     theorem (§7) shows its empirical position varies by dimension.
 
-    The precise/approximate cells have the same signs as @cite{beltrama-schwarz-2024}'s
+    The precise/approximate cells have the same signs as [beltrama-schwarz-2024]'s
     `precisionField` on all three social dimensions. -/
 def bsbField : IndexicalField Variant SocialDimension :=
   { association := λ v d => match v, d with
@@ -233,7 +233,7 @@ def bsbField : IndexicalField Variant SocialDimension :=
   , order := .third }
 
 /-- Precise and approximate have algebraically opposite associations on
-    every dimension — the same anti-symmetry as @cite{beltrama-schwarz-2024}'s `opposite_directions`. -/
+    every dimension — the same anti-symmetry as [beltrama-schwarz-2024]'s `opposite_directions`. -/
 theorem opposite_directions (d : SocialDimension) :
     bsbField.association .precise d = - bsbField.association .approximate d := by
   cases d <;> simp [bsbField]
@@ -428,7 +428,7 @@ theorem round_supports_contrast (n : Nat)
 /-! The BSB2022 indexical field (`bsbField`) can be lifted to a grounded
 field over the SCM property space via `fromIndexicalField`, connecting
 the empirical sign-valued associations to the persona-theoretic
-infrastructure used by @cite{burnett-2019}'s Social Meaning Games. -/
+infrastructure used by [burnett-2019]'s Social Meaning Games. -/
 
 open Sociolinguistics.EckertMontague
 

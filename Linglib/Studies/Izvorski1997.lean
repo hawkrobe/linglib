@@ -7,9 +7,9 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fin.Basic
 
 /-!
-# @cite{izvorski-1997}: The Present Perfect as an Epistemic Modal — Data @cite{izvorski-1997}
+# [izvorski-1997]: The Present Perfect as an Epistemic Modal — Data [izvorski-1997]
 
-Empirical data from @cite{izvorski-1997}. In Bulgarian, Turkish, Norwegian,
+Empirical data from [izvorski-1997]. In Bulgarian, Turkish, Norwegian,
 and other languages, present perfect morphology doubles as an indirect evidential
 (the "Perfect of Evidentiality" = PE). The paper's central proposal (8):
 
@@ -34,7 +34,7 @@ namespace Izvorski1997
 -- § 1. Languages with PE
 -- ════════════════════════════════════════════════════
 
-/-- Languages exhibiting the Perfect of Evidentiality (@cite{izvorski-1997}, fn. 1).
+/-- Languages exhibiting the Perfect of Evidentiality ([izvorski-1997], fn. 1).
     The paper's body text discusses Bulgarian, Turkish, and Norwegian;
     footnote 1 lists ~25 languages across 6 families. -/
 inductive PELanguage where

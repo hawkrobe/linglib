@@ -3,14 +3,14 @@ import Linglib.Studies.Olivier2026Auxiliary
 import Linglib.Syntax.Minimalist.NestedAgree
 
 /-!
-# @cite{amato-2025} mechanism applied to Italian restructuring AS
+# [amato-2025] mechanism applied to Italian restructuring AS
 
-**Scope clarification.** This file does *not* model @cite{amato-2025}'s
+**Scope clarification.** This file does *not* model [amato-2025]'s
 §3 (monoclausal Italian auxiliary selection in non-restructuring
-contexts). It models the @cite{amato-2025}/@cite{amato-2024}
+contexts). It models the [amato-2025]/[amato-2024]
 *mechanism* (cyclic-Agree person feature on Perf, with Nested Agree
 restricting the second probe) *applied to* the Romance restructuring
-problem set up by @cite{olivier-2026}. The clause structure
+problem set up by [olivier-2026]. The clause structure
 (`RestructuringClauseAmato extends Olivier2026Auxiliary.RestructuringClause`)
 inherits matrix-modal / compound-tense / clitic-position fields from
 the Olivier restructuring framework — not from Amato §3, which is
@@ -29,7 +29,7 @@ models.
 What this file *does* model faithfully:
 - The Nested-Agree-on-Perf configuration (`toNestedConfig`)
 - The DM vocabulary insertion rule HAVE = `Perf[π:α]`, BE elsewhere
-  (@cite{amato-2025} rule 14)
+  ([amato-2025] rule 14)
 - The Amato-2024 complement-size lever (vP vs TP) for restructuring
   optionality
 - The Olivier 2026 / Amato 2024 prediction divergence on the
@@ -50,15 +50,15 @@ phenomena live in `Studies/Amato2025Agreement.lean`
 (§4.1.2 Icelandic DAT-NOM, §4.2.1 Lak perfective) and
 `Studies/Amato2025.lean` (§4.2.3 Bulgarian wh).
 
-## DM elsewhere inversion (vs @cite{olivier-2026})
+## DM elsewhere inversion (vs [olivier-2026])
 
-@cite{amato-2025}: HAVE = `Perf[π:α]`, BE = elsewhere.
-@cite{olivier-2026} inverts: HAVE = elsewhere, BE = `T[ID:α] =
+[amato-2025]: HAVE = `Perf[π:α]`, BE = elsewhere.
+[olivier-2026] inverts: HAVE = elsewhere, BE = `T[ID:α] =
 vAux[ID:α]`. This file follows the Amato convention — load-bearing
 for the cross-theory divergence theorem at the bottom.
 
 The cyclic-Agree person-feature analysis adopted here originates in
-@cite{amato-2023}'s monograph and is refined by @cite{amato-2025}.
+[amato-2023]'s monograph and is refined by [amato-2025].
 -/
 
 namespace Amato2025Auxiliary
@@ -73,7 +73,7 @@ open Minimalist.NestedAgree
 /-- The two features Perf probes for, in order. `inflPerf` is valued
     from below by the participle morphology on the lower v;
     `personUPers` is the open person slot resolved by π-Agree under
-    Nested Agree. @cite{amato-2025}. -/
+    Nested Agree. [amato-2025]. -/
 inductive Probe where
   | inflPerf      -- [*Infl:perf*]
   | personUPers   -- [*π:_*]
@@ -82,14 +82,14 @@ inductive Probe where
 /-- The ordered probe stack on Perf in the argument-structure-driven
     Italian system: `inflPerf` first, then `personUPers`, the second
     constrained by Maximized Matching to the goal already found by
-    Infl-Agree (@cite{amato-2025}). -/
+    Infl-Agree ([amato-2025]). -/
 def vAuxProbes : List Probe := [.inflPerf, .personUPers]
 
 /-! ## Complement size — restructuring optionality lever -/
 
 /-- Size of the complement of the restructuring head. The
     complement-size analysis of restructuring optionality originates in
-    @cite{amato-2024}: a vP complement licenses the Nested-Agree chain
+    [amato-2024]: a vP complement licenses the Nested-Agree chain
     that can yield AS; a TP complement closes the chain (the EA is the
     closest goal for the matrix π-probe), forcing HAVE. The 2025 NLLT
     paper retains this lever within the broader Nested Agree framework. -/
@@ -100,7 +100,7 @@ inductive ComplementSize where
 
 /-! ## Restructuring clauses (Amato variant) -/
 
-/-- A `[Modal + Infinitive]` restructuring clause as @cite{amato-2025}
+/-- A `[Modal + Infinitive]` restructuring clause as [amato-2025]
     models it. Wraps Olivier's `RestructuringClause` (the four shared
     structural diagnostics) with the distinctive `complementSize` field.
     Keeping the base structure intact lets the two theories be compared
@@ -125,7 +125,7 @@ structure RestructuringClauseAmato where
     a derivation through a common primitive instead of an unfolding
     tautology. -/
 
-/-- Does the lower v carry active φ-features in this clause? @cite{amato-2025}:
+/-- Does the lower v carry active φ-features in this clause? [amato-2025]:
 
     - TP complement: embedded T closes the chain at T; v is *effectively*
       the embedded T (φ-active).
@@ -165,11 +165,11 @@ def PersonAgreeSucceeds (c : RestructuringClauseAmato) : Prop := VIsPhiActive c
 instance : DecidablePred PersonAgreeSucceeds := fun c => by
   unfold PersonAgreeSucceeds; infer_instance
 
-/-! ## Vocabulary insertion (@cite{amato-2025}, rule 14a/b) -/
+/-! ## Vocabulary insertion ([amato-2025], rule 14a/b) -/
 
-/-- Spell out Perf per the @cite{amato-2025} vocabulary items: HAVE iff
+/-- Spell out Perf per the [amato-2025] vocabulary items: HAVE iff
     π-Agree succeeded; BE elsewhere. NOTE: this is the *opposite*
-    convention from @cite{olivier-2026} (rule 55), which treats BE as the
+    convention from [olivier-2026] (rule 55), which treats BE as the
     result of an ID-match check and HAVE as elsewhere. The two surface
     predictions agree on the canonical AS configurations but diverge on
     the TP-complement reflexive (see
@@ -227,7 +227,7 @@ def haveModalTransitiveVP : RestructuringClauseAmato :=
 /-! ## Theorems -/
 
 /-- A non-modal matrix never triggers Auxiliary Switch under
-    @cite{amato-2025}. -/
+    [amato-2025]. -/
 theorem amato_as_requires_modal (c : RestructuringClauseAmato)
     (h : c.base.matrixModal = false) :
     ¬ AuxiliarySwitchOccursAmato c := by
@@ -278,7 +278,7 @@ theorem amato_vp_unaccusative_predicts_be (c : RestructuringClauseAmato)
 
 /-- For *any* TP-complement clause, Amato predicts HAVE: the embedded T
     closes the Nested-Agree chain regardless of embedded verb class. The
-    distinctive optionality prediction (originating in @cite{amato-2024}'s
+    distinctive optionality prediction (originating in [amato-2024]'s
     complement-size analysis). -/
 theorem amato_tp_complement_predicts_have (c : RestructuringClauseAmato)
     (hSize : c.complementSize = .tp) :
@@ -336,7 +336,7 @@ def toNestedConfig (c : RestructuringClauseAmato) : NestedAgreeConfig :=
     — `IsNestedAgreeConfig` requires `goalHead` (= v) to be in
     `initialDomain` (= Perf's c-command, filtered by `validGoal`); a
     φ-defective v has `validGoal (.leaf aV) = false` and is correctly
-    excluded. This is the formal expression of @cite{amato-2025}'s
+    excluded. This is the formal expression of [amato-2025]'s
     "the chain breaks down at π-Agree" for unaccusative and
     vP-reflexive-with-climbing cases. -/
 theorem amato_clause_is_nested (c : RestructuringClauseAmato)
@@ -393,7 +393,7 @@ theorem personAgree_iff_runStack_hits (c : RestructuringClauseAmato) :
     --             ≡ decide (VIsPhiActive c) = true
     exact of_decide_eq_true hMemFilter.2
 
-/-! ## Bridge to @cite{olivier-2026}: agreement and divergence -/
+/-! ## Bridge to [olivier-2026]: agreement and divergence -/
 
 /-- On the canonical AS configuration — modal + compound + reflexive
     + climbed clitic + vP complement — both theories predict BE. The

@@ -4,7 +4,7 @@ import Linglib.Core.Logic.Intensional.Frame
 /-!
 # Situations: Partial Indices
 
-@cite{kratzer-1989} @cite{barwise-perry-1983}
+[kratzer-1989] [barwise-perry-1983]
 
 A situation is a *partial* point of evaluation. Where possible-worlds
 semantics evaluates propositions at total worlds, situation semantics

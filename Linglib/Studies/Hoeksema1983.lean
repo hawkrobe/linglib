@@ -9,11 +9,11 @@ import Linglib.Typology.PolarityItem
 
 /-!
 # Hoeksema (1983): Negative Polarity and the Comparative
-@cite{hoeksema-1983}
+[hoeksema-1983]
 
 ## The asymmetry
 
-@cite{hoeksema-1983} (NLLT 1: 403–434) advances a Boolean-algebraic
+[hoeksema-1983] (NLLT 1: 403–434) advances a Boolean-algebraic
 account of comparatives that distinguishes two distinctly typed
 *than*-arguments, each with a different polarity-environment signature.
 The empirical hook is that English / Dutch comparatives sometimes
@@ -42,7 +42,7 @@ and arbitrary `sSup`/`sInf` (strengthening Hoeksema's finitary claim)
 gives complement preservation for free on `BooleanAlgebra → BooleanAlgebra`
 homs.
 
-The S-comparative `sComparative` (originally @cite{hoeksema-1983} §3.8
+The S-comparative `sComparative` (originally [hoeksema-1983] §3.8
 Def 7) and its anti-additivity (Fact 4) live in
 `Semantics/Degree/Comparative.lean` as the natural
 generalization of `comparativeSem` from a binary comparator to a
@@ -113,7 +113,7 @@ variable {Entity : Type*} {D : Type*} [Preorder D]
 def npThreshold (μ : Entity → D) (y : Entity) : Set Entity :=
   {x | μ x < μ y}
 
-/-- @cite{hoeksema-1983} Eq (22): the NP-comparative as a function on
+/-- [hoeksema-1983] Eq (22): the NP-comparative as a function on
     generalized quantifiers, packaged as the bundled mathlib
     `CompleteLatticeHom.setPreimage (npThreshold μ)`.
 
@@ -129,14 +129,14 @@ def npComparativeGQ (μ : Entity → D) :
 
 /-! ## Hoeksema Fact 3: monotonicity, and the §3.6 corollary -/
 
-/-- @cite{hoeksema-1983} Fact 3: the GQ NP-comparative is monotone
+/-- [hoeksema-1983] Fact 3: the GQ NP-comparative is monotone
     *increasing* in its GQ argument. Inherited from the bundled hom's
     `OrderHomClass`. -/
 theorem npComparativeGQ_monotone (μ : Entity → D) :
     Monotone (npComparativeGQ μ) :=
   OrderHomClass.mono _
 
-/-- @cite{hoeksema-1983} Eq (22), complement clause: complement
+/-- [hoeksema-1983] Eq (22), complement clause: complement
     preservation on the NP-comparative GQ, via mathlib's automatic
     `BiheytingHomClass` instance for `BooleanAlgebra → BooleanAlgebra`
     `BoundedLatticeHom`s. -/
@@ -144,7 +144,7 @@ theorem npComparativeGQ_map_compl (μ : Entity → D) (Q : Set (Set Entity)) :
     npComparativeGQ μ Qᶜ = (npComparativeGQ μ Q)ᶜ :=
   map_compl (npComparativeGQ μ) Q
 
-/-- @cite{hoeksema-1983} §3.6: the NP-comparative is *not* downward-
+/-- [hoeksema-1983] §3.6: the NP-comparative is *not* downward-
     entailing on any nontrivial domain. We state the contrapositive: if
     the GQ NP-comparative were antitone, then for `Q ⊆ Q'` it would map
     to `npComparativeGQ μ Q' ⊆ npComparativeGQ μ Q` — combined with the
@@ -166,7 +166,7 @@ theorem npComparativeGQ_antitone_iff_constant_on_chains (μ : Entity → D) :
 
     A specialization of the Hoeksema atom-uniqueness story to the
     `npComparativeGQ` family: distinct measures induce distinct GQs.
-    Adjacent to but not literally @cite{hoeksema-1983} Fact 1 (which is
+    Adjacent to but not literally [hoeksema-1983] Fact 1 (which is
     stated for arbitrary `>`-preserving functions; see below). -/
 
 /-- The NP-comparative GQ uniquely determines its underlying threshold
@@ -186,7 +186,7 @@ theorem npComparativeGQ_injective_in_threshold {μ₁ μ₂ : Entity → D} :
 
 /-! ## Definition 4: `>`-preserving functions on quantifiers
 
-    @cite{hoeksema-1983} Definition 4 isolates the abstract property
+    [hoeksema-1983] Definition 4 isolates the abstract property
     that distinguishes a comparative GQ-to-predicate operator from an
     arbitrary one. The principal ultrafilter `Q_b = {X | b ∈ X}` is the
     GQ denotation of the proper name `b`; `f` *preserves* `>` iff for
@@ -197,13 +197,13 @@ theorem npComparativeGQ_injective_in_threshold {μ₁ μ₂ : Entity → D} :
     proper name `b`. Hoeksema's `Q_b`. -/
 def principalUltrafilter (b : Entity) : Set (Set Entity) := {X | b ∈ X}
 
-/-- @cite{hoeksema-1983} Definition 4: `f` *preserves* `>` iff for every
+/-- [hoeksema-1983] Definition 4: `f` *preserves* `>` iff for every
     pair `a, b`, `μ b < μ a ↔ a ∈ f Q_b`. -/
 def IsOrderingPreserving (μ : Entity → D)
     (f : Set (Set Entity) → Set Entity) : Prop :=
   ∀ a b : Entity, μ b < μ a ↔ a ∈ f (principalUltrafilter b)
 
-/-- The NP-comparative GQ preserves `>` in the sense of @cite{hoeksema-1983}
+/-- The NP-comparative GQ preserves `>` in the sense of [hoeksema-1983]
     Definition 4. Combined with `npComparativeGQ_monotone` (Fact 3), this
     is the precise sense in which `[[Adj-er than]]` is *the* GQ-level
     comparative operator. -/
@@ -216,7 +216,7 @@ theorem npComparativeGQ_preserves_ordering (μ : Entity → D) :
 
 /-! ## Fact 1: any two `>`-preserving functions agree on every atom -/
 
-/-- @cite{hoeksema-1983} Fact 1: any two functions on quantifiers that
+/-- [hoeksema-1983] Fact 1: any two functions on quantifiers that
     both preserve `>` (Definition 4) coincide on every principal
     ultrafilter `Q_b`. The proof is a direct chain of the two
     `IsOrderingPreserving` biconditionals — both sides reduce to
@@ -269,7 +269,7 @@ theorem eq_iSup_singletons (Q : Set (Set Entity)) :
   simp only [Set.iSup_eq_iUnion, Set.mem_iUnion, Set.mem_singleton_iff,
              exists_prop, exists_eq_right']
 
-/-- @cite{hoeksema-1983} Fact 2: a `CompleteLatticeHom` on
+/-- [hoeksema-1983] Fact 2: a `CompleteLatticeHom` on
     `Set (Set Entity) → Set Entity` is determined by its values on the
     principal-ultrafilter generators `Q_b`. The proof composes
     `eq_iSup_singletons` (every `Q` is a `⨆` of singletons),
@@ -311,7 +311,7 @@ theorem npComparativeGQ_uniqueness {μ : Entity → D}
 
 /-! ## §3.9: NP-comparative on principal ultrafilter ≡ S-comparative on singleton -/
 
-/-- @cite{hoeksema-1983} §3.9 (Eq. 44): the NP-comparative applied to a
+/-- [hoeksema-1983] §3.9 (Eq. 44): the NP-comparative applied to a
     principal ultrafilter `Q_b` (the GQ denotation of a proper name)
     coincides with the S-comparative applied to the singleton degree
     set `{μ b}`. Both reduce to "is taller than `b`" — explaining the

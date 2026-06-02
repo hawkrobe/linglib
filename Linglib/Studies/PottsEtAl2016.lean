@@ -4,13 +4,13 @@ import Linglib.Phenomena.ScalarImplicatures.QuantityDomain
 import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
-# @cite{potts-etal-2016}: Embedded Implicatures as Pragmatic Inferences
-@cite{potts-etal-2016} @cite{chemla-spector-2011}
+# [potts-etal-2016]: Embedded Implicatures as Pragmatic Inferences
+[potts-etal-2016] [chemla-spector-2011]
 
 "Embedded Implicatures as Pragmatic Inferences under Compositional Lexical
 Uncertainty." Journal of Semantics 33(4): 755–802.
 
-## Empirical anchor: @cite{chemla-spector-2011}
+## Empirical anchor: [chemla-spector-2011]
 
 The 3-players × 3-outcomes architecture is structurally the same as
 CS11's *every/exactly one/no* × *some/all* design (CS11 uses 6 letters
@@ -20,7 +20,7 @@ predictions — DE prefers weak lexicon (NNN reading), UE prefers strong
 in universal contexts (Exp 1) and LOCAL > FALSE in non-monotonic
 (Exp 2). The LU model is *silent* on the attitude-verb gradient that
 CS11 doesn't test (think > want > all > must, from
-@cite{geurts-pouscoulous-2009}).
+[geurts-pouscoulous-2009]).
 
 ## The Puzzle
 
@@ -41,8 +41,8 @@ Two lexica:
 
 This uses the standard `RSAConfig` latent variable mechanism: `Latent := Lexicon`.
 No special infrastructure needed — the same mechanism handles observations
-(@cite{goodman-stuhlmuller-2013}), scope readings (@cite{scontras-pearl-2021}),
-and QUDs (@cite{kao-etal-2014-hyperbole}).
+([goodman-stuhlmuller-2013]), scope readings ([scontras-pearl-2021]),
+and QUDs ([kao-etal-2014-hyperbole]).
 
 ## Architecture
 
@@ -154,7 +154,7 @@ def utteranceTruth (lex : Lexicon) : Utterance → World → Bool
 -- ============================================================================
 
 open RSA Real in
-/-- @cite{potts-etal-2016} lexical uncertainty model.
+/-- [potts-etal-2016] lexical uncertainty model.
 
     Latent variable = Lexicon (weak vs strong "some").
     L0: literal listener under lexicon l.
@@ -267,7 +267,7 @@ theorem ue_enrichment_SSS_vs_AAA :
 -- §8. Findings: Verified Predictions
 -- ============================================================================
 
-/-- The 6 qualitative findings from the @cite{potts-etal-2016} LU model.
+/-- The 6 qualitative findings from the [potts-etal-2016] LU model.
     3 DE blocking predictions (global reading preferred under "no") +
     3 UE enrichment predictions (enriched reading preferred under "every"). -/
 inductive Finding where
@@ -299,7 +299,7 @@ def formalize : Finding → Prop
   | .ue_SSS_vs_AAA =>
       cfg.L1 (.stmt .every .some_) .SSS > cfg.L1 (.stmt .every .some_) .AAA
 
-/-- The RSA model accounts for all 6 qualitative findings from @cite{potts-etal-2016}. -/
+/-- The RSA model accounts for all 6 qualitative findings from [potts-etal-2016]. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
   intro f; cases f
   · exact de_blocking_NNN_vs_NNA
@@ -313,7 +313,7 @@ theorem all_findings_verified : ∀ f : Finding, formalize f := by
 -- §9. Grounding: Outer Quantifiers
 -- ============================================================================
 
-/-! The outer quantifiers "every" and "no" in the @cite{potts-etal-2016} model
+/-! The outer quantifiers "every" and "no" in the [potts-etal-2016] model
 agree with the generic quantity domain semantics from `Phenomena.ScalarImplicatures.QuantityDomain.meaning`.
 This grounds the stipulated `utteranceTruth` in the shared quantifier infrastructure.
 
@@ -342,7 +342,7 @@ theorem outer_no_grounded (sq : ShotQ) (lex : Lexicon) (w : World) :
 -- §10. Cross-Study Connections
 -- ============================================================================
 
-/-! The @cite{potts-etal-2016} predictions connect to two other parts of linglib:
+/-! The [potts-etal-2016] predictions connect to two other parts of linglib:
 
 1. **`someAllBlocking`** (`ScalarImplicatures.Basic`): The empirical datum that
    "some" implicatures are present in UE and blocked in DE. The Potts model

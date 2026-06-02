@@ -2,7 +2,7 @@ import Linglib.Typology.PolarityItem
 
 /-!
 # Czech Polarity-Sensitive Items
-@cite{haspelmath-1997}
+[haspelmath-1997]
 
 Lexical entries for Czech n-words (the *ni-* series), typed by the
 theory-neutral categories from `Typology.PolarityItem`. Standard

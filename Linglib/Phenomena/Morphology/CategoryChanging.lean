@@ -1,6 +1,6 @@
 /-!
 # Category-Changing Morphology: English Root Families
-@cite{marantz-1997}
+[marantz-1997]
 
 Theory-neutral empirical data on English roots that surface across multiple
 lexical categories via different morphological processes.
@@ -62,7 +62,7 @@ def RootFamily.categoryCount (rf : RootFamily) : Nat :=
   cats.length
 
 -- ============================================================================
--- § 3: English Root Families (@cite{panagiotidis-2015} §5.2, @cite{marantz-1997})
+-- § 3: English Root Families ([panagiotidis-2015] §5.2, [marantz-1997])
 -- ============================================================================
 
 /-- √DESTROY: destroy (V), destruction (N), destructive (A) -/

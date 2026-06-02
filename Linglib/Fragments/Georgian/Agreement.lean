@@ -3,8 +3,8 @@ import Linglib.Features.Case
 import Linglib.Typology.Alignment
 import Linglib.Syntax.Agreement.Paradigm
 /-!
-# Georgian Agreement Fragment @cite{just-2024}
-@cite{harris-1981}
+# Georgian Agreement Fragment [just-2024]
+[harris-1981]
 
 Georgian (Kartvelian) has a polypersonal agreement system where the finite
 verb indexes both subject and object. Object agreement is
@@ -86,7 +86,7 @@ theorem indexed_iff_sap :
     Cell.pnCells.all (fun c => isIndexed c == c.isSAP) = true := by decide
 
 -- ============================================================================
--- § 5: Tense-Conditioned Split-Ergative Case (@cite{harris-1981})
+-- § 5: Tense-Conditioned Split-Ergative Case ([harris-1981])
 -- ============================================================================
 
 /-- Georgian tense series. Case alignment varies by series:
@@ -103,7 +103,7 @@ inductive TenseSeries where
     uses ergative alignment. Present uses NOM-DAT framing and evidential
     uses DAT-NOM "inversion" — both non-ergative.
 
-    This instantiates `Typology.Alignment.SplitErgativity` from @cite{blake-1994}'s typology of tense/aspect-conditioned splits. -/
+    This instantiates `Typology.Alignment.SplitErgativity` from [blake-1994]'s typology of tense/aspect-conditioned splits. -/
 def georgianSplit : Typology.Alignment.SplitErgativity TenseSeries :=
   { ergCondition := fun ts => ts == .aorist }
 
@@ -164,15 +164,15 @@ def fullCaseInventory : Finset Features.Case := {.nom, .erg, .gen, .dat}
 example : Features.Case.IsValidInventory fullCaseInventory := by decide
 
 -- ============================================================================
--- § 6: Verb Classes (@cite{harris-1981}, @cite{marantz-1991})
+-- § 6: Verb Classes ([harris-1981], [marantz-1991])
 -- ============================================================================
 
-/-- Georgian verb classes (@cite{harris-1981}).
+/-- Georgian verb classes ([harris-1981]).
 
     The class determines unaccusativity, case frame, and agreement pattern.
     The key split for case theory: classes 1 and 3 (non-derived subjects)
     take ERG in the aorist, while class 2 (derived/unaccusative subject)
-    does not — motivating @cite{marantz-1991}'s Ergative generalization. -/
+    does not — motivating [marantz-1991]'s Ergative generalization. -/
 inductive VerbClass where
   | class1  -- Transitive (ačvenebs 'shows', xedavs 'sees')
   | class2  -- Medioactive: unaccusative/passive (šendeba 'is built')
@@ -182,7 +182,7 @@ inductive VerbClass where
 
 /-- Does the subject take ERG in the aorist (Series II)?
 
-    The Ergative generalization (@cite{marantz-1991} ex. 6): ERG tracks
+    The Ergative generalization ([marantz-1991] ex. 6): ERG tracks
     the thematic vs derived status of the subject. Class 2 (unaccusative)
     subjects are derived (raised from object position) → no ERG. Class 4
     subjects have quirky DAT (lexical case) → not eligible for ERG. -/
@@ -197,11 +197,11 @@ theorem class2_no_erg : takesErgInAorist .class2 = false := rfl
 theorem class3_takes_erg : takesErgInAorist .class3 = true := rfl
 theorem class4_no_erg : takesErgInAorist .class4 = false := rfl
 
-/-- Subject case by verb class and tense series (@cite{marantz-1991} ex. 1–3).
+/-- Subject case by verb class and tense series ([marantz-1991] ex. 1–3).
 
-    Present/aorist patterns from @cite{marantz-1991}. Evidential follows
+    Present/aorist patterns from [marantz-1991]. Evidential follows
     the general inversion pattern: all subjects surface as DAT
-    (@cite{harris-1981}). -/
+    ([harris-1981]). -/
 def verbClassSubjectCase : VerbClass → TenseSeries → Features.Case
   | .class1, .present    => .nom
   | .class1, .aorist     => .erg

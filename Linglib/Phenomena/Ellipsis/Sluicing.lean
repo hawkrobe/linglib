@@ -21,7 +21,7 @@ The elided material ("left") is reconstructed from the antecedent clause.
 
 ## Theoretical Connections (Promissory Notes)
 
-### Continuation-Based Analysis (@cite{barker-shan-2014}, Ch. 16)
+### Continuation-Based Analysis ([barker-shan-2014], Ch. 16)
 
 Barker & Shan analyze sluicing as anaphora to a continuation:
 - The sluice = wh-phrase + (antecedent − inner-antecedent)

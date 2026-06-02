@@ -5,7 +5,7 @@ import Linglib.Studies.Bruening2021
 
 /-!
 # PVC–DOC Structural Priming
-@cite{haddican-tamminga-dendikken-wade-2026} @cite{dendikken-1995} @cite{halle-marantz-1993} @cite{johnson-1991} @cite{aarts-1989} @cite{bruening-2010a}
+[haddican-tamminga-dendikken-wade-2026] [dendikken-1995] [halle-marantz-1993] [johnson-1991] [aarts-1989] [bruening-2010a]
 
 English Particle Verbs Prime Double Object Constructions in Production.
 *Linguistic Inquiry*. doi:10.1162/LING.a.558
@@ -137,12 +137,12 @@ def doc_appl_type : ApplType := .lowRecipient
 def doc_sc : SyntacticObject :=
   merge V_give (merge DP_hsu DP_book)
 
-/-- **DOC, Applicative** (@cite{halle-marantz-1993}; @cite{bruening-2010a}):
+/-- **DOC, Applicative** ([halle-marantz-1993]; [bruening-2010a]):
     `[ApplP DP_goal [Appl' Appl [VP V DP_theme]]]` -/
 def doc_appl : SyntacticObject :=
   merge DP_hsu (merge Appl_h (merge V_give DP_book))
 
-/-- **PVC, Small Clause** (@cite{aarts-1989}; @cite{dendikken-1995}):
+/-- **PVC, Small Clause** ([aarts-1989]; [dendikken-1995]):
     `[VP V [SC DP Prt]]` -/
 def pvc_sc : SyntacticObject :=
   merge V_lift (merge DP_hsu Prt_up)
@@ -160,7 +160,7 @@ def pd : SyntacticObject :=
 def transitive_control : SyntacticObject :=
   merge V_lift DP_hsu
 
-/-! ## @cite{dendikken-1995} SC family -/
+/-! ## [dendikken-1995] SC family -/
 
 /-- **Resultative, Small Clause**: `[VP V [SC DP AP]]` -/
 def resultative_sc : SyntacticObject :=
@@ -314,7 +314,7 @@ theorem doc_nested_not_flat :
 theorem doc_nested_matches_appl :
     structurallyIsomorphic doc_nested doc_appl := by decide
 
-/-! ## @cite{bruening-2021}: process-level isomorphism
+/-! ## [bruening-2021]: process-level isomorphism
 
 `doc_bruening` below is a `SyntacticObject` witness of Bruening's V+P
 amalgam analysis. The lexical-fragment side of the same paper —

@@ -138,7 +138,7 @@ end FeaturePred
 
 /-!
 ## Compositional Structure
-@cite{bernardy-blanck-chatzikyriakidis-lappin-2018}
+[bernardy-blanck-chatzikyriakidis-lappin-2018]
 
 ### Two Strategies
 

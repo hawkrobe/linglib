@@ -7,7 +7,7 @@ import Linglib.Studies.Bondarenko2022
 import Linglib.Fragments.Greek.StandardModern.Complementizers
 
 /-!
-# Angelopoulos 2026: On clausal complementation, once more @cite{angelopoulos-2026}
+# Angelopoulos 2026: On clausal complementation, once more [angelopoulos-2026]
 
 Nikos Angelopoulos (2026). *Natural Language & Linguistic Theory*
 44:26. DOI 10.1007/s11049-026-09711-w.
@@ -33,40 +33,40 @@ complementizer) and *pu* (situation/factive complementizer):
 
 The unifying mechanism: *oti* and *pu* bear an uninterpretable
 [n]-feature checked by a light noun in their specifier
-(@cite{arsenijevic-2009}, @cite{moltmann-2019}). The light noun is
-licensed by Hale-Keyser noun-incorporation (@cite{hale-keyser-1993})
+([arsenijevic-2009], [moltmann-2019]). The light noun is
+licensed by Hale-Keyser noun-incorporation ([hale-keyser-1993])
 into a *lexical* host (`v_State` or `v_Event`); incorporation into a
 *functional* head (`T`) is impossible. Aspectual head v_State
 selects either content- or situation-typed [n]; v_Event selects
 only content-typed [n]. Adjuncts select-upward
-(@cite{bruening-2013}, @cite{hewett-2023}, @cite{hunter-2015},
-@cite{neeleman-philip-tanaka-vandekoot-2023}), exempting non-
+([bruening-2013], [hewett-2023], [hunter-2015],
+[neeleman-philip-tanaka-vandekoot-2023]), exempting non-
 complement *pu* from v_State.
 
 ## Hedges (per audit)
 
-- **Stativity restriction credit.** Noted in @cite{roussou-2019}
+- **Stativity restriction credit.** Noted in [roussou-2019]
   (Angelopoulos credits her example as the source of his ex. 22b
   discriminating the stativity contrast); the systematic
   generalization across complement *pu*-clauses is presented as
-  novel in @cite{angelopoulos-2026}, derived here from v_State
+  novel in [angelopoulos-2026], derived here from v_State
   c-selection.
 - **Manner-adverb diagnostic.** Unidirectional in the literature.
-  @cite{maienborn-2005} shows Kimian states allow some manner-
+  [maienborn-2005] shows Kimian states allow some manner-
   like modification; the converse (allows manner ⟹ eventive) is
   contested.
 - **Clitic doubling as argumenthood.** Exposed as a construction
   fact (`doubledByClitic`), NOT axiomatized as biconditional with
-  `isArgument`. @cite{anagnostopoulou-2003} ties doubling to
+  `isArgument`. [anagnostopoulou-2003] ties doubling to
   specificity, not bare argumenthood.
 - **Crosslinguistic scope.** Greek with cross-references to
-  @cite{major-2024} (Uyghur *dep*) and @cite{bochnak-hanink-2021}
+  [major-2024] (Uyghur *dep*) and [bochnak-hanink-2021]
   (Washo). Two-language extension, not a typology. Korean -ko,
   Japanese to/koto, Romance que/de, Hebrew še/ki avoided.
 
 ## Cross-framework engagement
 
-- **Theoretical ally:** @cite{bruening-2025} ("C-Selection
+- **Theoretical ally:** [bruening-2025] ("C-Selection
   Irreducibility") makes a parallel argument for bidirectional
   feature-driven selection in coordination, formalised in
   `Studies/Bruening2025.lean`. The
@@ -90,16 +90,16 @@ complement *pu* from v_State.
 
 ## Studies-local apparatus (per audit)
 
-- `vAspectHead` enum (vState / vEvent): per the @cite{borer-2005} /
-  @cite{merchant-2019} light-v split. Not promoted to substrate
+- `vAspectHead` enum (vState / vEvent): per the [borer-2005] /
+  [merchant-2019] light-v split. Not promoted to substrate
   yet — single paper-anchored consumer; promote to
   `Syntax/Minimalist/LightV.lean` when ≥ 2 consumers.
 - `adjunctSelects` predicate: bidirectional selection per
-  @cite{bruening-2013} / @cite{hewett-2023} / @cite{hunter-2015} /
-  @cite{neeleman-philip-tanaka-vandekoot-2023}. Studies-local;
+  [bruening-2013] / [hewett-2023] / [hunter-2015] /
+  [neeleman-philip-tanaka-vandekoot-2023]. Studies-local;
   promote to `Syntax/Minimalist/AdjunctSelection.lean`
   when ≥ 2 consumers.
-- `hkIncorporable` predicate: @cite{hale-keyser-1993} noun-
+- `hkIncorporable` predicate: [hale-keyser-1993] noun-
   incorporation. Distinct from `Phase.lean` D-incorporation
   (Davies-Dubinsky 2003 phase deactivation) and
   `Typology.Voice` noun-incorporation (Beavers-Udayana 2022
@@ -133,8 +133,8 @@ open Greek.StandardModern.Complementizers (GreekComplementizer)
 -- typeclass parametric over the licensee sort, which is queued
 -- as substrate work pending a second consumer.
 
-/-- The light-v aspectual head split (@cite{borer-2005},
-    @cite{merchant-2019}). v_State introduces a stative situation
+/-- The light-v aspectual head split ([borer-2005],
+    [merchant-2019]). v_State introduces a stative situation
     argument; v_Event introduces an eventive one. These select
     different sorts of [n]-licensee in the spec of their CP
     complement.
@@ -167,9 +167,9 @@ instance : ∀ (h : vAspectHead) (s : NominalSort),
     Decidable (h.acceptsSort s) := fun h s => by
   cases h <;> cases s <;> (unfold vAspectHead.acceptsSort; infer_instance)
 
-/-- @cite{hale-keyser-1993} noun-incorporation predicate: a
+/-- [hale-keyser-1993] noun-incorporation predicate: a
     light-noun [n] can incorporate into a category iff that
-    category is *lexical* (in the @cite{panagiotidis-2015} sense:
+    category is *lexical* (in the [panagiotidis-2015] sense:
     bears interpretable categorial features, not uninterpretable
     copies). Functional heads (T, C, D) cannot host incorporation. -/
 def hkIncorporable (host : Cat) : Prop :=
@@ -179,9 +179,9 @@ instance : DecidablePred hkIncorporable := fun c => by
   unfold hkIncorporable; infer_instance
 
 /-- Adjunct-selection predicate: an adjunct selects its host
-    rather than being selected by it (@cite{bruening-2013},
-    @cite{hewett-2023}, @cite{hunter-2015},
-    @cite{neeleman-philip-tanaka-vandekoot-2023}). Studies-local;
+    rather than being selected by it ([bruening-2013],
+    [hewett-2023], [hunter-2015],
+    [neeleman-philip-tanaka-vandekoot-2023]). Studies-local;
     a coarse abstraction over the actual checked-Merge dual that
     a future `AdjunctSelection.lean` substrate would expose. -/
 def adjunctSelects (adj : SyntacticObject) (host : Cat) : Prop :=
@@ -197,7 +197,7 @@ def adjunctSelects (adj : SyntacticObject) (host : Cat) : Prop :=
 
 /-- Was the matrix verb's complement clitic-doubled? Construction
     fact, NOT axiomatized to imply argumenthood. Cf. fn 4 of the
-    paper acknowledging @cite{angelopoulos-michelioudakis-2023}
+    paper acknowledging [angelopoulos-michelioudakis-2023]
     on doubling-as-Agree. -/
 noncomputable def doubledByClitic (xp : SyntacticObject) : Bool :=
   -- Placeholder: actual diagnostic would test for an Agreeing
@@ -236,7 +236,7 @@ inductive ExplanandumReading where
 -- `Syntax/Minimalist/Selection.lean`. The
 -- `hkIncorporable` predicate above states which categories CAN
 -- host incorporation; the actual movement is asserted in prose,
--- not derived. Refer to @cite{matushansky-2006} for an
+-- not derived. Refer to [matushansky-2006] for an
 -- incorporation-as-Merge formalisation candidate.
 
 /-- The *oti* C-head: bears [uN] (= the [n]-feature in the paper's
@@ -273,7 +273,7 @@ def lightNounInSpec (cHead : SyntacticObject) (id : Nat) : SyntacticObject :=
 -- it cannot host Hale-Keyser noun-incorporation.
 
 /-- Functional heads (T, C, D) bear uninterpretable categorial
-    feature copies per @cite{panagiotidis-2015}; they cannot host
+    feature copies per [panagiotidis-2015]; they cannot host
     H&K incorporation. -/
 theorem t_not_incorporable : ¬ hkIncorporable .T := by
   intro h; rcases h with h | h | h | h <;> cases h
@@ -286,7 +286,7 @@ theorem c_not_incorporable : ¬ hkIncorporable .C := by
 theorem d_not_incorporable : ¬ hkIncorporable .D := by
   intro h; rcases h with h | h | h | h <;> cases h
 
-/-- v is lexical (a categorizer per @cite{panagiotidis-2015});
+/-- v is lexical (a categorizer per [panagiotidis-2015]);
     hosts incorporation. This is the case Angelopoulos exploits:
     a light noun in Spec,CP can incorporate into a higher v_State
     or v_Event, satisfying its licensing requirement. -/
@@ -370,10 +370,10 @@ theorem oti_compatible_with_either (head : vAspectHead) :
 -- ════════════════════════════════════════════════════════════════
 --
 -- **Critical framing caveat (syntax expert S2 BPS gap).**
--- @cite{bondarenko-2022} works in Bare Phrase Structure where the
+-- [bondarenko-2022] works in Bare Phrase Structure where the
 -- X-bar argument/modifier distinction is gone; her "modifier" claim
 -- is **semantic** (type incompatibility for FA), NOT structural
--- ("adjunct in the X-bar sense"). @cite{angelopoulos-2026}'s
+-- ("adjunct in the X-bar sense"). [angelopoulos-2026]'s
 -- refutation appeals to *syntactic position* (clitic doubling,
 -- passivization, extraction transparency), which implicitly commits
 -- to a non-BPS view Bondarenko explicitly rejects. The refutation
@@ -382,7 +382,7 @@ theorem oti_compatible_with_either (head : vAspectHead) :
 -- the position↔composition-mode correlation, NOT that Bondarenko's
 -- type-theoretic story (bare CP ≠ Θ-saturator) is internally false.
 
-/-- **Refutation against @cite{bondarenko-2022}'s transparent
+/-- **Refutation against [bondarenko-2022]'s transparent
     Syntax-Semantics mapping** — substantive form, consuming the
     Chapter 4 type-theoretic predicates from
     `Bondarenko2022`.
@@ -422,12 +422,12 @@ theorem angelopoulos_refutes_bondarenko_transparent
     ¬ transparentSSMapping bareOtiInArgPosition := by
   rw [h_struct]; exact bare_argument_predicted_impossible
 
-/-- **Refutation against @cite{bochnak-hanink-2021} / Deal 2026
+/-- **Refutation against [bochnak-hanink-2021] / Deal 2026
     "selection limited to argument clauses".** If selection were
     limited to argument clauses, then a *pu*-adjunct clause would
     not be selected by anything. But Greek adjunct *pu*-clauses
-    select their hosts (§4.2 paper, following @cite{hewett-2023},
-    @cite{hunter-2015}). Witness: paper ex. 24a — *Ton timorisan
+    select their hosts (§4.2 paper, following [hewett-2023],
+    [hunter-2015]). Witness: paper ex. 24a — *Ton timorisan
     γrigora pu iče afti ti siberifora* 'They punished him fast
     because of the fact that he had this behavior'. The *pu*-
     adjunct selects the verbal host; selection is bidirectional.
@@ -499,7 +499,7 @@ theorem doxastic_stative_verb_exists :
 -- PM/FA. The *explanans* reading goes through `compC` /
 -- `existsContentClosure`; the *explanandum* reading goes through
 -- `existsContentNounCP` (silent FACT noun + D layer per
--- @cite{moulton-2020}).
+-- [moulton-2020]).
 
 /-- The *oti*-explanans reading uses the content-CP via PM.
     The CP `oti i Ji ine strojili` 'that the Earth is round'
@@ -512,7 +512,7 @@ theorem explanans_via_compC {W : Type*}
     compC p xc ↔ xc.cont = p := Iff.rfl
 
 /-- The *to oti*-explanandum reading uses the silent FACT noun +
-    D layer per @cite{moulton-2020}. Composes via Functional
+    D layer per [moulton-2020]. Composes via Functional
     Application to deliver an individual argument
     (the fact being explained).
 

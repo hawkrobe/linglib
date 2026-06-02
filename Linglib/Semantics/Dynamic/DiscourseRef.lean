@@ -3,9 +3,9 @@
 
 Types for individual, propositional, and concept discourse referents.
 
-Individual and propositional drefs follow @cite{hofmann-2025} "Anaphoric
+Individual and propositional drefs follow [hofmann-2025] "Anaphoric
 accessibility with flat update". Concept drefs and the mass/count feature
-follow @cite{krifka-2026} "Anaphora for Concepts, Kinds, and Parts in
+follow [krifka-2026] "Anaphora for Concepts, Kinds, and Parts in
 Dynamic Interpretation".
 
 ## Key Types
@@ -29,7 +29,7 @@ The falsifier ⋆ satisfies: R(⋆) = false for all predicates R.
 
 ## Concept Discourse Referents
 
-@cite{krifka-2026} proposes that head nouns introduce concept drefs alongside
+[krifka-2026] proposes that head nouns introduce concept drefs alongside
 entity drefs. For example, *dog* in *a dog* introduces a concept dref anchored
 to the property `λi.λx[dog(i)(x)]` with a [COUNT] feature. Kind anaphors
 (*it* for [MASS], *they* for [COUNT]) pick up concept drefs and derive kind
@@ -100,7 +100,7 @@ def toOption : Entity E → Option E
   | .star => Option.none
 
 /-- ⋆ is the universal falsifier: any lifted predicate yields false for ⋆.
-    Formal statement of @cite{hofmann-2025} §2.1: "R(⋆) = 0 for all R". -/
+    Formal statement of [hofmann-2025] §2.1: "R(⋆) = 0 for all R". -/
 @[simp] theorem star_falsifies (p : E → Bool) :
     Entity.liftPred p (.star : Entity E) = false := rfl
 
@@ -170,7 +170,7 @@ structure ConceptDRef (W E : Type*) where
 Values that discourse referent indices can map to.
 
 Standard dynamic semantics restricts assignments to map indices to
-entities. @cite{krifka-2026} §4 extends this: assignments are partial
+entities. [krifka-2026] §4 extends this: assignments are partial
 functions from ℕ to a heterogeneous universe including entities,
 concepts (properties with count features), and world-time indices.
 
@@ -296,7 +296,7 @@ This is used by intensional dynamic semantics
 structure ICDRTAssignment (W : Type*) (E : Type*) where
   /-- Individual variable assignment: intensional individual drefs (individual
       concepts). Each variable maps worlds to entities, possibly ⋆.
-      In @cite{hofmann-2025}'s notation: type s(we), i.e., for each variable v,
+      In [hofmann-2025]'s notation: type s(we), i.e., for each variable v,
       v(i) is a function from worlds to entities. v(i)(w) = ⋆ when v has no
       referent in w. -/
   indiv : IVar → W → Entity E

@@ -5,7 +5,7 @@ import Linglib.Semantics.Questions.Partition.QUD
 
 /-!
 # KOS: Worked Examples
-@cite{ginzburg-2012} Ch. 4 ex. 66, ex. 68
+[ginzburg-2012] Ch. 4 ex. 66, ex. 68
 
 Public worked examples demonstrating the substrate operations on concrete
 inputs. Earlier these lived inline in `KOS/Rules.lean` as `private` defs;

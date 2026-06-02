@@ -6,7 +6,7 @@ import Linglib.Fragments.English.WordOrder
 import Mathlib.Data.Finset.Basic
 
 /-!
-# @cite{bruening-alkhalaf-2020} — Category Mismatches in Coordination Revisited
+# [bruening-alkhalaf-2020] — Category Mismatches in Coordination Revisited
 
 Bruening, Benjamin & Eman Al Khalaf. 2020. Category mismatches in
 coordination revisited. *Linguistic Inquiry* 51(1). 1–36.
@@ -37,9 +37,9 @@ PF and LF are built left-to-right simultaneously. Feature checking
 at &P proceeds linearly, explaining why the closest conjunct must
 satisfy selection.
 
-## Connection to @cite{schwarzer-2026}
+## Connection to [schwarzer-2026]
 
-@cite{schwarzer-2026} tests the cross-linguistic prediction using German
+[schwarzer-2026] tests the cross-linguistic prediction using German
 OV: B&AK predict CP-first for OV complements, but Schwarzer finds
 DP-first (~77%), supporting bottom-up accounts instead.
 -/
@@ -80,13 +80,13 @@ inductive FeaturePercolation where
   /-- Features percolate from the structurally prominent (spec) position.
       The first conjunct always determines &P's categorical features,
       regardless of surface position relative to the verb.
-      Analyses: @cite{sag-etal-1985}, @cite{munn-1993}, @cite{peterson-2004},
-      @cite{zhang-2010}. -/
+      Analyses: [sag-etal-1985], [munn-1993], [peterson-2004],
+      [zhang-2010]. -/
   | structural
   /-- Features percolate from the linearly closest conjunct to the
       selecting head. Which conjunct is closest depends on surface
       position relative to the verb.
-      Analysis: @cite{bruening-alkhalaf-2020}. -/
+      Analysis: [bruening-alkhalaf-2020]. -/
   | linear
   deriving DecidableEq, Repr, BEq
 
@@ -146,8 +146,8 @@ def linearClosenessPrediction : VerbPosition → ConjunctOrder :=
     prominent. The selected DP must be first, regardless of surface
     position relative to the verb.
 
-    Analyses: @cite{sag-etal-1985}, @cite{munn-1993}, @cite{peterson-2004},
-    @cite{zhang-2010}.
+    Analyses: [sag-etal-1985], [munn-1993], [peterson-2004],
+    [zhang-2010].
 
     Derived from `predictOrder` with structural percolation. -/
 def bottomUpPrediction : VerbPosition → ConjunctOrder :=
@@ -198,7 +198,7 @@ theorem english_complement_postverbal :
       You can depend on [DP my assistant] and [CP that he will
       be on time]. ✓
 
-    @cite{sag-etal-1985} ex. (3a), @cite{bruening-alkhalaf-2020} §3.1. -/
+    [sag-etal-1985] ex. (3a), [bruening-alkhalaf-2020] §3.1. -/
 theorem bak_english_complement :
     linearClosenessPrediction .postverbal = .dpFirst := rfl
 
@@ -261,7 +261,7 @@ theorem bak_predicts_dpfirst_vo :
 /-- OV is the cross-linguistic test case. Bottom-up and B&AK diverge
     on OV complement order.
 
-    @cite{schwarzer-2026} tests this with German and finds DP-first (~77%),
+    [schwarzer-2026] tests this with German and finds DP-first (~77%),
     supporting bottom-up over B&AK for OV complement position. -/
 theorem ov_predictions_diverge :
     (OVOrder.verbPosition .ov).map linearClosenessPrediction ≠
@@ -407,7 +407,7 @@ bottom-up accounts. The disagreement is about the **mechanism**: closeness
     (linear closeness vs structural prominence).
 
     **Substrate note (post-MCB Phase 1.0).** Under
-    @cite{marcolli-chomsky-berwick-2025} Definition 1.1.1 (book p. 22)
+    [marcolli-chomsky-berwick-2025] Definition 1.1.1 (book p. 22)
     + Remark 1.1.2 (p. 23), syntactic objects are the *free,
     non-associative, **commutative*** magma over SO_0 — `merge x y`
     and `merge y x` are *strictly equal* on the quotient (`mul_comm`
@@ -465,7 +465,7 @@ theorem structural_requires_asymmetric :
   ⟨rfl, rfl⟩
 
 /-- **Merge is symmetric on the SO carrier.** Under MCB nonplanar SOs
-    (@cite{marcolli-chomsky-berwick-2025} Def 1.1.1, Remark 1.1.2),
+    ([marcolli-chomsky-berwick-2025] Def 1.1.1, Remark 1.1.2),
     `merge x y = merge y x` is a strict equality. This was *not* the
     case under the prior planar `TraceTree` carrier — the earlier
     version of this file proved a `merge_distinguishes_children`
@@ -511,7 +511,7 @@ theorem stipulated_symmetry_matches_percolation :
     *not* require it: their `linear` mode would predict from PF position
     alone. So the stipulation is load-bearing only for the *alternative*
     account this file also formalizes (Munn 1993 / Zhang 2010 /
-    @cite{citko-2011}-style structural prominence), not for B&AK's own. -/
+    [citko-2011]-style structural prominence), not for B&AK's own. -/
 theorem prediction_chain_from_stipulation (pos : VerbPosition) :
     mergeCoordSymmetry = .asymmetric ∧
     FeaturePercolation.requiredSymmetry .structural = some mergeCoordSymmetry ∧

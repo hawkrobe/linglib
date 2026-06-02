@@ -3,8 +3,8 @@ import Linglib.Core.Scales.Scale
 
 /-!
 # Cross-world extremum under entailment
-@cite{fox-2007} @cite{fox-hackl-2006} @cite{beck-rullmann-1999}
-@cite{von-fintel-fox-iatridou-2014} @cite{rouillard-2026}
+[fox-2007] [fox-hackl-2006] [beck-rullmann-1999]
+[von-fintel-fox-iatridou-2014] [rouillard-2026]
 
 The cross-world entailment-based "maximally informative" predicate (`IsMaxInf`)
 that has no mathlib analogue, plus mathlib bridges for the per-world
@@ -46,7 +46,7 @@ quantifier is the entailment relation between propositions.
 
 ## Beck-Rullmann attribution
 
-@cite{beck-rullmann-1999} introduce `answer1(w)(Q) = ⋂{p : Q(w)(p) ∧ p(w)}` —
+[beck-rullmann-1999] introduce `answer1(w)(Q) = ⋂{p : Q(w)(p) ∧ p(w)}` —
 the conjunction of all true Hamblin propositions at `w`. For upward-monotone
 scalar predicates this reduces to the smallest-true-degree case captured by
 `IsLeast`. For non-scalar predicates (their §4.4) it is the literal
@@ -70,8 +70,8 @@ variable {α : Type*} [LinearOrder α]
     world) for every other true `P y w`.
 
     The unified exhaustivity condition underlying *only*-implicatures, degree
-    questions, and definite descriptions in the @cite{fox-2007} /
-    @cite{von-fintel-fox-iatridou-2014} tradition. @cite{rouillard-2026}
+    questions, and definite descriptions in the [fox-2007] /
+    [von-fintel-fox-iatridou-2014] tradition. [rouillard-2026]
     specializes this to numerals in temporal *in*-adverbials. -/
 def IsMaxInf {W : Type*} (P : α → W → Prop) (x : α) (w : W) : Prop :=
   P x w ∧ ∀ y, P y w → (∀ w', P x w' → P y w')
@@ -81,7 +81,7 @@ def HasMaxInf {W : Type*} (P : α → W → Prop) (w : W) : Prop :=
   ∃ x, IsMaxInf P x w
 
 /-- Information collapse: no element is maximally informative at any world.
-    @cite{fox-hackl-2006}: this is why degree questions fail over dense
+    [fox-hackl-2006]: this is why degree questions fail over dense
     complements, why *only* + "more than n" is contradictory, and why
     definite descriptions over dense open sets lack a presupposition-satisfying
     referent. -/
@@ -114,7 +114,7 @@ theorem isMaxInf_of_isGreatest_downward {W : Type*}
 -- ════════════════════════════════════════════════════
 
 /-- **Maximal Informativity Principle licensing** for upward-monotone
-    derived properties (e.g., E-TIA telic in @cite{rouillard-2026}). The
+    derived properties (e.g., E-TIA telic in [rouillard-2026]). The
     conjunction captures both failure modes:
     - `AdmitsOptimum P` (non-constancy): the family distinguishes alternatives
       at all (failure mode for atelic / homogeneous predicates).
@@ -151,7 +151,7 @@ theorem atLeast_hasMaxInf {W : Type*} (μ : W → α) (w : W) :
     HasMaxInf (atLeastDeg μ) w :=
   ⟨μ w, le_refl _, fun _ hd _ hw' => le_trans hd hw'⟩
 
-/-- **Implicature asymmetry** (@cite{fox-2007}, @cite{fox-hackl-2006}):
+/-- **Implicature asymmetry** ([fox-2007], [fox-hackl-2006]):
     on a dense scale, "more than n" has NO maximally informative element.
 
     For any candidate d₀ < μ(w), density gives d' ∈ (d₀, μ(w)).
@@ -169,7 +169,7 @@ theorem moreThan_noMaxInf {W : Type*} [DenselyOrdered α] (μ : W → α)
   obtain ⟨w₁, rfl⟩ := hSurj m
   exact absurd (hent d' hd'w w₁ hd₀m) (not_lt.mpr (le_of_lt hmd'))
 
-/-- **Kennedy / @cite{fox-hackl-2006} bridge (point-realization form)**:
+/-- **Kennedy / [fox-hackl-2006] bridge (point-realization form)**:
     `IsMaxInf` of the "at least" degree property at value m and world w holds
     iff `μ w = m`, given only that `m` itself is in the image of `μ`. This is
     strictly weaker than full `Function.Surjective μ` and is the hypothesis
@@ -186,7 +186,7 @@ theorem isMaxInf_atLeast_of_hit {W : Type*} (μ : W → α) (m : α) (w : W)
   · rintro rfl
     exact ⟨le_refl _, fun _ hd _ hn' => le_trans hd hn'⟩
 
-/-- **Kennedy / @cite{fox-hackl-2006} bridge**: `IsMaxInf` of the "at least"
+/-- **Kennedy / [fox-hackl-2006] bridge**: `IsMaxInf` of the "at least"
     degree property at value m and world w holds iff the measure at w
     equals m, under full surjectivity. Corollary of `isMaxInf_atLeast_of_hit`. -/
 theorem isMaxInf_atLeast_iff_eq {W : Type*} (μ : W → α) (m : α) (w : W)
@@ -208,7 +208,7 @@ theorem atMost_hasMaxInf {W : Type*} (μ : W → α) (w : W) :
     HasMaxInf (atMostDeg μ) w :=
   ⟨μ w, le_refl _, fun _ hd _ hw' => le_trans hw' hd⟩
 
-/-- **Kennedy / @cite{rouillard-2026} bridge**: `IsMaxInf` of "at most d" at
+/-- **Kennedy / [rouillard-2026] bridge**: `IsMaxInf` of "at most d" at
     value m and world w holds iff the measure at w equals m. Symmetric to
     `isMaxInf_atLeast_iff_eq`: the MIP derives exact meaning from "at most"
     just as it does from "at least". -/
@@ -230,7 +230,7 @@ theorem isMaxInf_atMost_iff_eq {W : Type*} (μ : W → α) (m : α) (w : W)
 
 /-! Kennedy's de-Fregean type-shift is the MIP applied to a monotone degree
     property: for both "at least" (Kennedy direction) and "at most"
-    (@cite{rouillard-2026} direction), max⊨ at world w = μ(w), the true
+    ([rouillard-2026] direction), max⊨ at world w = μ(w), the true
     value. So the MIP universally derives exact meaning from monotone
     degree properties, regardless of monotonicity direction. -/
 

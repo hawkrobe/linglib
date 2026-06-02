@@ -5,12 +5,12 @@ import Linglib.Core.Logic.Team.Definability
 /-!
 # BSML formula closure properties (Anttila 2021 Proposition 2.2.8)
 
-@cite{anttila-2021} @cite{aloni-2022}
+[anttila-2021] [aloni-2022]
 
 For BSML's `support` relation, this file proves the three constituent
 properties from Anttila 2021 Proposition 2.2.8 (specialised to a logic
 without global disjunction ⨼) plus the flatness corollary from Anttila
-2.2.16 / @cite{aloni-2022} Fact 15.
+2.2.16 / [aloni-2022] Fact 15.
 
 ## Main declarations
 
@@ -22,7 +22,7 @@ without global disjunction ⨼) plus the flatness corollary from Anttila
 * `isLowerSet_support_of_isNEFree` — NE-free BSML formulas are
   downward-closed (Anttila 2.2.8 part 1).
 * `isFlat_support_of_isNEFree` — NE-free BSML formulas are flat
-  (Anttila 2.2.16 / @cite{aloni-2022} Fact 15), derived via Anttila
+  (Anttila 2.2.16 / [aloni-2022] Fact 15), derived via Anttila
   Proposition 2.2.2 from the three properties above.
 
 ## Implementation notes
@@ -295,7 +295,7 @@ theorem isLowerSet_support_of_isNEFree {φ : BSMLFormula Atom}
     the upper endpoint holding by **union closure**
     (`support_and_antiSupport_unionClosed`). This is exactly why split
     disjunction preserves convexity only in a union-closed setting
-    (@cite{anttila-2025} Fact 3.2.7 vs Proposition 3.3.1). The other cases use a
+    ([anttila-2025] Fact 3.2.7 vs Proposition 3.3.1). The other cases use a
     single endpoint: the upper (downward-closed-style) for atom, poss and the
     negative polarities; the lower for `ne` (nonemptiness is upward closed). -/
 private theorem support_and_antiSupport_ordConnected
@@ -396,7 +396,7 @@ private theorem support_and_antiSupport_ordConnected
     · intro s t u _hst htu _hs hu w hw; exact hu w (htu hw)
 
 /-- **BSML support is order-convex** for every formula — NE-bearing included
-    (@cite{anttila-2025} Proposition 3.3.1): `{ t | support M φ t }` is
+    ([anttila-2025] Proposition 3.3.1): `{ t | support M φ t }` is
     `Set.OrdConnected`, i.e. `s ⊆ t ⊆ u` with `support M φ s` and
     `support M φ u` forces `support M φ t`.
 
@@ -404,7 +404,7 @@ private theorem support_and_antiSupport_ordConnected
     property holds, and `Core.Logic.Team.isLowerSet_iff_ordConnected_of_empty`
     recovers downward closure from convexity. Together with `supClosed_support`,
     this is the convex-and-union-closed property for which BSML is expressively
-    complete (@cite{anttila-2025}). -/
+    complete ([anttila-2025]). -/
 theorem ordConnected_support (M : BSMLModel W Atom) (φ : BSMLFormula Atom) :
     Set.OrdConnected { t : Finset W | support M φ t } := by
   refine ⟨?_⟩
@@ -415,7 +415,7 @@ theorem ordConnected_support (M : BSMLModel W Atom) (φ : BSMLFormula Atom) :
 /-! ### Flatness corollary (Anttila 2.2.16) -/
 
 /-- **Anttila Proposition 2.2.16** (BSML specialisation of Fact 15 from
-    @cite{aloni-2022}): NE-free BSML formulas are flat — team support
+    [aloni-2022]): NE-free BSML formulas are flat — team support
     equals pointwise support at each world in the team.
 
     Derived from Anttila 2.2.2 (`Core.Logic.Team.isFlat_iff`) applied to
@@ -435,7 +435,7 @@ theorem isFlat_support_of_isNEFree {φ : BSMLFormula Atom}
 open Core.Logic.Team in
 /-- **BSML is sound for its closure cell**: every BSML-definable team property is
     convex and union-closed — the soundness half of BSML's expressive
-    completeness (@cite{anttila-2025} Proposition 3.3.1: BSML is complete for the
+    completeness ([anttila-2025] Proposition 3.3.1: BSML is complete for the
     convex, union-closed modal properties, modulo bounded bisimulation).
 
     Composes `ordConnected_support` and `supClosed_support` through the
@@ -458,7 +458,7 @@ theorem soundFor_convex_inter_unionClosed (M : BSMLModel W Atom) :
 
 open Core.Logic.Team in
 /-- **The NE-free fragment of BSML is sound for the flat cell** (Anttila
-    Proposition 2.2.16 / @cite{aloni-2022} Fact 15): NE-free BSML formulas define
+    Proposition 2.2.16 / [aloni-2022] Fact 15): NE-free BSML formulas define
     flat properties. Companion to `soundFor_convex_inter_unionClosed`: NE is
     exactly what moves a formula off the `flat` cell into the strictly larger
     convex, union-closed cell. -/

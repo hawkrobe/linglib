@@ -5,9 +5,9 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # Numbers as kinds: Polymorphic Contextualism
-@cite{snyder-2026}
+[snyder-2026]
 
-@cite{snyder-2026} (L&P 49:57-100) argues that the lexical meaning of `two`
+[snyder-2026] (L&P 49:57-100) argues that the lexical meaning of `two`
 is an *atomic predicate* `λxα. two(x)` that applies to different countable
 entities (numeral tokens, kinds, subkinds of TWO) in different contexts;
 all other meanings derive via Partee type-shifting. This generalises and
@@ -15,12 +15,12 @@ strictly subsumes two earlier analyses Snyder labels:
 
 * **Polymorphic Substantivalism**: lexical `[[two]] = 2` is a numeral
   (entity of type `e`); cardinal predicates derive via CARD; all else via
-  type-shifting. (@cite{landman-2004}; @cite{scontras-2014}; @cite{snyder-2017}.)
+  type-shifting. ([landman-2004]; [scontras-2014]; [snyder-2017].)
 * **Polymorphic Adjectivalism**: lexical `[[two]] = λx. μ#(x) = 2` is a
   cardinality predicate; numerals derive via NOM + Rothstein's Schematic
-  Equation. (@cite{partee-1987}; @cite{geurts-2006}; @cite{rothstein-2013};
-  @cite{rothstein-2017}; @cite{kennedy-2015}; @cite{bylinina-nouwen-2020}.)
-* **Polymorphic Contextualism** (@cite{snyder-2026}): lexical
+  Equation. ([partee-1987]; [geurts-2006]; [rothstein-2013];
+  [rothstein-2017]; [kennedy-2015]; [bylinina-nouwen-2020].)
+* **Polymorphic Contextualism** ([snyder-2026]): lexical
   `[[two]] = λxα. two(x)` is an atomic predicate over relativized atoms;
   *all* meanings derive via type-shifting (CARD/PM/A/NOM/IOTA), including
   taxonomic, kind-, and token-referential uses the first two analyses miss.
@@ -80,13 +80,13 @@ This file:
    `[[the N₁ N₂]] = ιx[N₁(x) ∧ N₂(x)]` clause carries a uniqueness
    presupposition, modelled as a partial `Option`-valued operation.
 
-The Identification Problem (@cite{benacerraf-1965}; @cite{snyder-2026} §3.1,
-§5.2; @cite{snyder-2025}) is dissolved by *derivation* from the substrate:
+The Identification Problem ([benacerraf-1965]; [snyder-2026] §3.1,
+§5.2; [snyder-2025]) is dissolved by *derivation* from the substrate:
 distinct equivalence classes of TWO under the salient partition are disjoint,
 so close-appositive iota over modifier-restricted subkinds yields distinct
 referents whenever the uniqueness presupposition is satisfied. Cf.
-@cite{moltmann-2013}, @cite{hofweber-2005}, @cite{rieppel-2021} for rival
-treatments of close-appositive coreference, and @cite{anderson-morzycki-2015}
+[moltmann-2013], [hofweber-2005], [rieppel-2021] for rival
+treatments of close-appositive coreference, and [anderson-morzycki-2015]
 for the Degrees-as-Kinds view Snyder adopts in §5.3.
 -/
 
@@ -114,7 +114,7 @@ inductive SemTy where
 /-! ## §2-3, §5: the three polymorphic analyses -/
 
 /-- The three polymorphic analyses Snyder distinguishes — labels verbatim
-    from @cite{snyder-2026} §2-3. -/
+    from [snyder-2026] §2-3. -/
 inductive PolymorphicAnalysis where
   /-- Lexical `[[two]] = 2 : e` (a numeral entity), §2 (5). -/
   | substantivalism
@@ -133,7 +133,7 @@ def PolymorphicAnalysis.lexicalType : PolymorphicAnalysis → SemTy
 
 /-! ## §1, §5: nine semantic functions -/
 
-/-- The nine semantic functions @cite{snyder-2026} attests for `two`.
+/-- The nine semantic functions [snyder-2026] attests for `two`.
     Cases (1a-f) are §1 consensus polysemy data; (76g-j) are the additional
     uses §5 argues only Polymorphic Contextualism handles. -/
 inductive SemanticFunction where
@@ -177,25 +177,25 @@ Each operator has a deterministic input/output type, recorded as `input`/
 supplied externally. -/
 
 /-- Type-shifting operators entering Snyder's diagrams. RSE is *not*
-    included as a typed shifter: per @cite{rothstein-2017} and the
-    discussion in @cite{snyder-2026} §2, RSE is a meta-level identification
+    included as a typed shifter: per [rothstein-2017] and the
+    discussion in [snyder-2026] §2, RSE is a meta-level identification
     `n = ∩[λx. μ#(x) = n]`, not a Partee-style type-shifter. The
     adjectivalist numeral derivation uses NOM and then RSE-identifies
     the resulting entity with a number; this is documented in
     `adjectivalistPath` rather than recorded as an operator. -/
 inductive Operator where
-  /-- @cite{snyder-2026} (6a): `CARD = λn.λx. μ#(x) = n` — a number
+  /-- [snyder-2026] (6a): `CARD = λn.λx. μ#(x) = n` — a number
       entity to a cardinality predicate. -/
   | card
-  /-- @cite{heim-kratzer-1998} (7a): Predicate Modification (monadic). -/
+  /-- [heim-kratzer-1998] (7a): Predicate Modification (monadic). -/
   | pm
-  /-- @cite{partee-1987} (8a): existential closure `λP.λQ.∃x.P(x)∧Q(x)`. -/
+  /-- [partee-1987] (8a): existential closure `λP.λQ.∃x.P(x)∧Q(x)`. -/
   | a
-  /-- @cite{partee-1987} (10a): nominalisation, `et → e`. -/
+  /-- [partee-1987] (10a): nominalisation, `et → e`. -/
   | nom
-  /-- @cite{partee-1987} (74a): Russellian iota `λP.ιx[P(x)]`. -/
+  /-- [partee-1987] (74a): Russellian iota `λP.ιx[P(x)]`. -/
   | iota
-  /-- @cite{partee-1987} (17a): identity-predicate former `λx.λy. y = x`. -/
+  /-- [partee-1987] (17a): identity-predicate former `λx.λy. y = x`. -/
   | ident
   deriving DecidableEq, Repr
 
@@ -293,7 +293,7 @@ instance (a : PolymorphicAnalysis) (sf : SemanticFunction) :
 
 /-! ## Type-soundness of the derivation paths
 
-The substantive content of @cite{snyder-2026}'s diagrams: every prescribed
+The substantive content of [snyder-2026]'s diagrams: every prescribed
 derivation actually composes — input/output types align at each step, and
 the chain ends at the targeted type. This is the type-driven witness that
 the analyses are not just label collections but real compositional
@@ -354,7 +354,7 @@ theorem contextualism_strictly_extends_adjectivalism :
 
 Snyder §4.3 (51) argues NUMBER has subkinds `ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ ⊂ ...`, and
 correspondingly the kind TWO has subkinds `2_ℕ, 2_ℤ, 2_ℚ, 2_ℝ`. The
-formation mechanism is @cite{mendia-2020}'s: partition by the salient
+formation mechanism is [mendia-2020]'s: partition by the salient
 equivalence relation `belongs to the same number system`. Each subkind
 is itself a kind — instantiated by *numeral tokens* representing that
 specific number (Snyder §4 Tokens-Types-Kinds ontology, §4.3). -/
@@ -372,7 +372,7 @@ instance : Fintype MathSystem where
 /-- A token of `two`: a concrete instantiation typed by its number system
     (the partition criterion) plus an index distinguishing multiple tokens
     of the same system (e.g., different concrete numerals on the board).
-    Per @cite{snyder-2026} §4 Tokens-Types-Kinds. -/
+    Per [snyder-2026] §4 Tokens-Types-Kinds. -/
 structure TwoToken where
   /-- Which mathematical number system this token instantiates. -/
   system : MathSystem
@@ -390,7 +390,7 @@ def kfTWO : Setoid TwoToken where
 
 /-- The lexical extension of `two` under Polymorphic Contextualism: the
     set of all tokens classified as a `two` of *some* number system. The
-    extension's full content depends on context (per @cite{rothstein-2017}
+    extension's full content depends on context (per [rothstein-2017]
     relativized atomicity); we use the unrestricted set as a witness for
     the Identification-Problem theorem below. -/
 def two : Set TwoToken := Set.univ
@@ -430,8 +430,8 @@ def sharvyIota (domain : List α) (P : α → Bool) : Option α :=
     `Composition.TypeShifting.PM`. -/
 def setPM (P Q : α → Bool) : α → Bool := fun x => P x && Q x
 
-/-- @cite{snyder-2026} (16b) close-appositive denotation:
-    `[[the N₁ N₂]] = ιx[N₁(x) ∧ N₂(x)]` (@cite{sharvy-1980}). Real Sharvy
+/-- [snyder-2026] (16b) close-appositive denotation:
+    `[[the N₁ N₂]] = ιx[N₁(x) ∧ N₂(x)]` ([sharvy-1980]). Real Sharvy
     iota over the PM-conjunction of the two predicates; uniqueness-
     presupposition failure yields `none`. -/
 def closeAppositive (domain : List α) (n1 n2 : α → Bool) : Option α :=
@@ -479,7 +479,7 @@ end Sharvy
 
 /-! ## §5.2: the Identification Problem dissolved
 
-@cite{benacerraf-1965} + Snyder §3.1, §5.2: the rigid-designator reading
+[benacerraf-1965] + Snyder §3.1, §5.2: the rigid-designator reading
 of `two` predicts that `the von Neumann ordinal two = the Zermelo ordinal
 two`, which is incoherent given the von Neumann ordinal `{∅, {∅}}` has
 two members and the Zermelo ordinal `{{∅}}` has one. Polymorphic
@@ -509,9 +509,9 @@ theorem closeAppositive_canonical (s : MathSystem) :
     closeAppositive canonicalDomain (inSubkind s) inTwo = some (canonicalTwo s) := by
   cases s <;> rfl
 
-/-- @cite{benacerraf-1965}'s Identification Problem (Snyder §3.1, §5.2;
-    cf. @cite{snyder-2025}) **resolved by derivation** from the
-    @cite{mendia-2020} kind-formation substrate plus @cite{sharvy-1980} iota.
+/-- [benacerraf-1965]'s Identification Problem (Snyder §3.1, §5.2;
+    cf. [snyder-2025]) **resolved by derivation** from the
+    [mendia-2020] kind-formation substrate plus [sharvy-1980] iota.
 
     For any two distinct number systems `s₁ ≠ s₂`, the close appositives
     `the [s₁]-system two` and `the [s₂]-system two`:
@@ -534,7 +534,7 @@ theorem identification_problem_resolved {s₁ s₂ : MathSystem} (h : s₁ ≠ s
 /-- Distinct subkinds of TWO are unequal as sets — the Mendia-substrate
     corollary that close-appositive descriptions (which restrict the
     lexical extension) cannot pick out a single rigid referent across
-    contexts. Cf. @cite{snyder-2026} §5.1 discussion of (83). -/
+    contexts. Cf. [snyder-2026] §5.1 discussion of (83). -/
 theorem subkinds_distinct {s₁ s₂ : MathSystem} (h : s₁ ≠ s₂) :
     subkindOf kfTWO ⟨s₁, 0⟩ ≠ subkindOf kfTWO ⟨s₂, 0⟩ :=
   subkindOf_ne kfTWO h
@@ -552,7 +552,7 @@ structure Example where
 
 namespace Example
 
-/-- The six examples from @cite{snyder-2026} (1a-f). -/
+/-- The six examples from [snyder-2026] (1a-f). -/
 def core : List Example :=
   [ ⟨"1a", "Mars's moons are two (in number)",          .predicative,      true⟩
   , ⟨"1b", "Those are (Mars's) two moons",              .attributive,      true⟩
@@ -561,7 +561,7 @@ def core : List Example :=
   , ⟨"1e", "Two is an even number",                     .numeral,          true⟩
   , ⟨"1f", "The number two is even",                    .closeAppositive,  true⟩ ]
 
-/-- The three additional examples from @cite{snyder-2026} (76g,i,j) that
+/-- The three additional examples from [snyder-2026] (76g,i,j) that
     motivate Polymorphic Contextualism. -/
 def extended : List Example :=
   [ ⟨"76g", "Two is next to a five on the board",       .tokenRef,   true⟩
@@ -581,7 +581,7 @@ theorem nine_functions_exhibited (sf : SemanticFunction) :
 
 end Example
 
-/-- @cite{snyder-2026} (20a,b): Identification-Problem judgments. -/
+/-- [snyder-2026] (20a,b): Identification-Problem judgments. -/
 structure IdentificationDatum where
   exNum : String
   sentence : String
@@ -600,14 +600,14 @@ def ex20b : IdentificationDatum :=
 
 /-- The two judgments are jointly coherent — only Polymorphic Contextualism
     predicts both straightforwardly evaluable, by the Identification-Problem
-    resolution above (cf. @cite{moltmann-2013}, @cite{rieppel-2021}). -/
+    resolution above (cf. [moltmann-2013], [rieppel-2021]). -/
 theorem jointly_coherent : ex20a.truthValue ≠ ex20b.truthValue := by decide
 
 end IdentificationDatum
 
 /-! ## Cross-framework hooks
 
-@cite{spector-2013} formalises a four-way taxonomy of bare-numeral analyses
+[spector-2013] formalises a four-way taxonomy of bare-numeral analyses
 (`Approach = neoGricean | underspecification | exactlyOnly | ambiguityEXH`)
 along the *lower-bound vs exact* axis. Snyder's `PolymorphicAnalysis` carves
 the orthogonal *lexical-type* axis. The two are intended to be independent:
@@ -638,7 +638,7 @@ theorem axes_orthogonal :
   · intro h; exact ⟨by injection h, by injection h⟩
   · rintro ⟨rfl, rfl⟩; rfl
 
-/-! @cite{kennedy-2015}'s "de-Fregean" type-shift is structurally
+/-! [kennedy-2015]'s "de-Fregean" type-shift is structurally
 `λn.λx. μ#(x) = n` — *exactly* Snyder's CARD (6a). Adjectivalism's lexical
 denotation `λx. μ#(x) = 2` agrees extensionally with the partial application
 of Kennedy's de-Fregean shift to the constant 2; the two analyses converge
@@ -651,7 +651,7 @@ type, currently blocked by the Frame-vs-Set boundary in TypeShifting.
 
 /-! ## §6-§7: Polymorphic Contextualism for colour terms
 
-@cite{snyder-2026} §6-§7 conjectures that colour words admit the same
+[snyder-2026] §6-§7 conjectures that colour words admit the same
 Polymorphic-Contextualism analysis as numerals. The lexical entry (97):
 
     [[red]] = λxα. red(x)
@@ -663,9 +663,9 @@ like `the color red` can refer to subkinds, the kind RED itself, or
 concrete colour tokens — exactly the polymorphism (76e/g/i/j/f) the
 numeral analysis predicts.
 
-§6 cites @cite{mcnally-2011} and @cite{mcnally-deswart-2011} for the
+§6 cites [mcnally-2011] and [mcnally-deswart-2011] for the
 colours-as-kinds claim. This file implements Snyder's *own* Polymorphic
-Contextualism extension; for the @cite{mcnally-deswart-2011} *competing*
+Contextualism extension; for the [mcnally-deswart-2011] *competing*
 analysis (lexical category-projected, Chierchia ∩-via-*het* nominalisation),
 see `Studies/McNallyDeSwart2011.lean`. Both analyses
 consume the same Mendia substrate (`subkindOf` on a `Setoid` partition by
@@ -683,7 +683,7 @@ colours/tastes. The `kf{Carrier}` naming convention (`kfTWO`, `kfRed`,
     multiple shade-tokens of the same colour. Parallel to `TwoToken`
     above; the Mendia partition is exercised non-trivially when a single
     colour root has multiple tokens (e.g., several physical instances
-    of `rood` on a paint swatch per @cite{snyder-2026} (94)). -/
+    of `rood` on a paint swatch per [snyder-2026] (94)). -/
 structure ColorToken where
   /-- The Dutch colour-adjective entry (`Dutch.Adjectives.rood`,
       `wit`, `groen`, ...). The colour-domain restriction is documentary;
@@ -702,7 +702,7 @@ def kfRed : Setoid ColorToken where
   r t₁ t₂ := t₁.root = t₂.root
   iseqv := ⟨fun _ => rfl, Eq.symm, Eq.trans⟩
 
-/-- @cite{snyder-2026} (97): `[[red]] = λxα. red(x)`. The lexical extension
+/-- [snyder-2026] (97): `[[red]] = λxα. red(x)`. The lexical extension
     of `red` under Polymorphic Contextualism — the universal predicate
     over relativized atoms, indicating that `red` may apply to subkinds
     (CRIMSON, MAROON), to the kind RED itself, or to concrete tokens.
@@ -714,7 +714,7 @@ def canonicalColor (a : Dutch.Adjectives.AdjEntry) : ColorToken :=
   ⟨a, 0⟩
 
 /-- A canonical 6-token domain with one witness per Dutch alternating
-    colour root (per @cite{mcnally-deswart-2011} §1, the inflection-
+    colour root (per [mcnally-deswart-2011] §1, the inflection-
     alternating colour sub-paradigm). -/
 def canonicalColorDomain : List ColorToken :=
   [canonicalColor Dutch.Adjectives.rood,
@@ -760,7 +760,7 @@ theorem closeAppositive_canonical_color
 /-- Colour analog of `identification_problem_resolved`: distinct colour
     close appositives `the color [a₁]` and `the color [a₂]` denote
     distinct canonical witness tokens, supporting the polymorphic-kind
-    analysis of @cite{snyder-2026} §6 (94)-(98). -/
+    analysis of [snyder-2026] §6 (94)-(98). -/
 theorem distinct_colors_distinct_close_appositives
     {a₁ a₂ : Dutch.Adjectives.AdjEntry} (h : a₁ ≠ a₂) :
     canonicalColor a₁ ≠ canonicalColor a₂ :=
@@ -768,7 +768,7 @@ theorem distinct_colors_distinct_close_appositives
 
 /-! ### §6 empirical examples (94)-(98) -/
 
-/-- @cite{snyder-2026} §6 colour-polysemy examples (94)-(98). Each is
+/-- [snyder-2026] §6 colour-polysemy examples (94)-(98). Each is
     classified by the same `SemanticFunction` enum as the numeral cases,
     confirming the polymorphism extends to colours. -/
 def colorExamples : List Example :=

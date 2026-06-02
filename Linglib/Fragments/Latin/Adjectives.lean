@@ -2,10 +2,10 @@ import Linglib.Morphology.DegreeContainment
 
 /-!
 # Latin Adjective Degree Forms
-@cite{bobaljik-2012}
+[bobaljik-2012]
 
 Latin comparative and superlative morphology, used for cross-linguistic
-verification of @cite{bobaljik-2012}'s *ABA constraint and pattern
+verification of [bobaljik-2012]'s *ABA constraint and pattern
 inventory.
 
 Latin exhibits all three attested degree suppletion patterns:
@@ -61,7 +61,7 @@ def fortis : LatinAdjEntry :=
 
 /-- *bonus – melior – optimus* ('good – better – best'): three distinct
     roots (ABC). The paradigmatic example of ABC suppletion
-    (@cite{bobaljik-2012}). -/
+    ([bobaljik-2012]). -/
 def bonus : LatinAdjEntry :=
   { pos := "bonus", cmpr := "melior", sprl := "optimus"
   , suppletion := abc }

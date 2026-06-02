@@ -6,12 +6,12 @@ import Linglib.Data.WALS.Features.F43A
 
 /-!
 # Article-and-demonstrative typology — substrate types and WALS data
-@cite{wals-2013} (Chs 37, 38, 41, 42, 43)
-@cite{bhat-2013} @cite{diessel-2013} @cite{dryer-haspelmath-2013}
-@cite{greenberg-1978} @cite{himmelmann-1997}
+[wals-2013] (Chs 37, 38, 41, 42, 43)
+[bhat-2013] [diessel-2013] [dryer-haspelmath-2013]
+[greenberg-1978] [himmelmann-1997]
 
 Type-level enums + per-language profile struct for definiteness marking,
-indefinite articles, and demonstrative systems across @cite{wals-2013}
+indefinite articles, and demonstrative systems across [wals-2013]
 chapters 37, 38, 41, 42, 43, plus WALS distribution data, the principal
 cross-linguistic generalizations, and the demonstrative→article→affix
 grammaticalization cline.
@@ -38,7 +38,7 @@ namespace Typology
 -- WALS Ch 37: Definite articles
 -- ============================================================================
 
-/-- Definite article type (WALS Ch 37, @cite{dryer-haspelmath-2013}).
+/-- Definite article type (WALS Ch 37, [dryer-haspelmath-2013]).
     Categories ordered along the grammaticalization cline:
     demonstrative → definite word → definite affix. -/
 inductive DefiniteArticleType where
@@ -59,7 +59,7 @@ inductive DefiniteArticleType where
 -- WALS Ch 38: Indefinite articles
 -- ============================================================================
 
-/-- Indefinite article type (WALS Ch 38, @cite{dryer-haspelmath-2013}).
+/-- Indefinite article type (WALS Ch 38, [dryer-haspelmath-2013]).
     Languages either have a dedicated indefinite word, use the numeral
     'one' as an indefinite (the most common grammaticalization path),
     have an indefinite affix, or lack indefinite articles entirely. -/
@@ -81,7 +81,7 @@ inductive IndefiniteArticleType where
 -- ============================================================================
 
 /-- Number of distance contrasts in adnominal demonstratives
-    (WALS Ch 41, @cite{diessel-2013}). Two-way systems are by far the most
+    (WALS Ch 41, [diessel-2013]). Two-way systems are by far the most
     common (54.3%), followed by three-way (37.6%). -/
 inductive DemDistanceSystem where
   /-- No distance contrast (e.g., Modern German *dieser*). -/
@@ -97,7 +97,7 @@ inductive DemDistanceSystem where
   deriving DecidableEq, Repr
 
 /-- Whether a three-way demonstrative system is distance- or person-oriented.
-    @cite{diessel-2013}: about 2/3 of three-way systems are distance-oriented,
+    [diessel-2013]: about 2/3 of three-way systems are distance-oriented,
     1/3 person-oriented (e.g., Japanese is the canonical person-oriented system). -/
 inductive DemOrientationType where
   /-- All terms encode distance from speaker (proximal/medial/distal). -/
@@ -114,7 +114,7 @@ inductive DemOrientationType where
 -- ============================================================================
 
 /-- Relationship between pronominal and adnominal demonstratives
-    (WALS Ch 42, @cite{diessel-2013}). English uses the same forms;
+    (WALS Ch 42, [diessel-2013]). English uses the same forms;
     French uses different stems (*ce*/*cette* vs *celui*/*celle*);
     Turkish uses the same stems but different inflectional features. -/
 inductive DemFormRelation where
@@ -131,7 +131,7 @@ inductive DemFormRelation where
 -- ============================================================================
 
 /-- Relationship between third-person pronouns and demonstratives
-    (WALS Ch 43, @cite{bhat-2013}). In "two-person languages", 3rd-person
+    (WALS Ch 43, [bhat-2013]). In "two-person languages", 3rd-person
     pronouns are demonstrative-derived; in "three-person languages", 3rd-person
     pronouns form an independent person paradigm. -/
 inductive PronounDemRelation where
@@ -162,7 +162,7 @@ def PronounDemRelation.isRelated : PronounDemRelation → Bool
 -- Per-language profile
 -- ============================================================================
 
-/-- A language's article-and-demonstrative profile across @cite{wals-2013}
+/-- A language's article-and-demonstrative profile across [wals-2013]
     Chs 37, 38, 41, 42, 43. WALS samples vary by chapter, so each field
     is optional. -/
 structure ArticleDemProfile where
@@ -249,7 +249,7 @@ def fromWALS43A : Data.WALS.F43A.ThirdPersonPronounsAndDemonstratives → Pronou
 -- WALS distribution data
 -- ============================================================================
 
-/-- WALS Ch 37: definite article distribution (@cite{dryer-haspelmath-2013},
+/-- WALS Ch 37: definite article distribution ([dryer-haspelmath-2013],
     n = 566). -/
 structure DefiniteArticleCounts where
   definiteWord : Nat
@@ -270,7 +270,7 @@ def walsDefiniteArticle : DefiniteArticleCounts :=
   , noDefButIndef := 41
   , noArticle := 188 }
 
-/-- WALS Ch 38: indefinite article distribution (@cite{dryer-haspelmath-2013},
+/-- WALS Ch 38: indefinite article distribution ([dryer-haspelmath-2013],
     n = 473). -/
 structure IndefiniteArticleCounts where
   indefiniteWord : Nat
@@ -291,7 +291,7 @@ def walsIndefiniteArticle : IndefiniteArticleCounts :=
   , noIndefButDef := 81
   , noArticle := 188 }
 
-/-- WALS Ch 41: demonstrative distance contrasts (@cite{diessel-2013},
+/-- WALS Ch 41: demonstrative distance contrasts ([diessel-2013],
     n = 234). -/
 structure DemDistanceCounts where
   noContrast : Nat
@@ -313,7 +313,7 @@ def walsDemDistance : DemDistanceCounts :=
   , fiveOrMore := 4 }
 
 /-- WALS Ch 42: pronominal/adnominal demonstrative form
-    (@cite{diessel-2013}, n = 201). -/
+    ([diessel-2013], n = 201). -/
 structure DemFormCounts where
   sameForms : Nat
   differentStems : Nat
@@ -330,7 +330,7 @@ def walsDemForm : DemFormCounts :=
   , differentInflection := 21 }
 
 /-- WALS Ch 43: 3rd-person pronoun ~ demonstrative relationship
-    (@cite{bhat-2013}, n = 225). -/
+    ([bhat-2013], n = 225). -/
 structure PronounDemCounts where
   unrelated : Nat
   relatedAll : Nat
@@ -364,7 +364,7 @@ def walsPronounDem : PronounDemCounts :=
 -- ============================================================================
 
 /-- Two-way demonstrative systems (proximal/distal) are the most common type:
-    127 of 234 languages (54.3%). @cite{diessel-2013}: "the vast majority of
+    127 of 234 languages (54.3%). [diessel-2013]: "the vast majority of
     the world's languages employ two or three distance-marked demonstratives". -/
 theorem twoWay_most_common :
     walsDemDistance.twoWay > walsDemDistance.threeWay ∧
@@ -404,7 +404,7 @@ theorem majority_have_some_definite_marking :
 
 /-- In a majority of languages (125 of 225 = 55.6%), 3rd-person pronouns show
     some relationship to demonstratives. Supports the diachronic pathway
-    demonstrative → 3rd-person pronoun (@cite{bhat-2013}). -/
+    demonstrative → 3rd-person pronoun ([bhat-2013]). -/
 theorem majority_pronoun_dem_related :
     walsPronounDem.totalRelated > walsPronounDem.unrelated := by decide
 
@@ -422,7 +422,7 @@ theorem relatedAll_most_common_subtype :
 -- ============================================================================
 
 /-- In most languages (143 of 201 = 71.1%), pronominal and adnominal
-    demonstratives have the same forms (@cite{diessel-2013}). Differential
+    demonstratives have the same forms ([diessel-2013]). Differential
     marking via different stems (37) or different inflection (21) is the
     minority. -/
 theorem sameForm_demonstratives_majority :
@@ -434,7 +434,7 @@ theorem sameForm_demonstratives_majority :
 -- ============================================================================
 
 /-- The grammaticalization hierarchy for definiteness marking
-    (@cite{greenberg-1978}, @cite{himmelmann-1997}):
+    ([greenberg-1978], [himmelmann-1997]):
 
       Stage 0 — No definiteness marking (bare nouns; e.g., Mandarin, Russian)
       Stage 1 — Demonstrative used for definiteness (e.g., Swahili, Ojibwa)

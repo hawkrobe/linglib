@@ -4,7 +4,7 @@ import Linglib.Core.Scales.Comparison
 
 /-!
 # Classifier Denotations à la Sudo (2016)
-@cite{sudo-2016}
+[sudo-2016]
 
 A classifier denotation in Sudo's framework: at each world `w`, the classifier
 takes a numeral `n` and an entity `x`, presupposes a sortal predicate `P_w(x)`,

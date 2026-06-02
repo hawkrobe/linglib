@@ -8,16 +8,16 @@ import Linglib.Fragments.Spanish.MoodChoice
 import Linglib.Fragments.Portuguese.MoodChoice
 
 /-!
-# Grano 2024: Intention Reports and Event Abstraction @cite{grano-2024}
+# Grano 2024: Intention Reports and Event Abstraction [grano-2024]
 
 Cross-linguistic mood choice data and bridge theorems connecting
-@cite{grano-2024}'s analysis of intention reports to the mood and
+[grano-2024]'s analysis of intention reports to the mood and
 attitude infrastructure.
 
 ## Core Proposal (three premises → conclusion)
 
 1. **Premise 1**: Intention reports encode causally self-referential content
-   (@cite{searle-1983}; @cite{harman-1976})
+   ([searle-1983]; [harman-1976])
 2. **Premise 2**: Encoding causal self-reference requires abstraction over
    the complement clause's eventuality argument (CAUSE* binds it)
 3. **Premise 3**: Only subjunctive and nonfinite clauses enable eventuality
@@ -41,7 +41,7 @@ indicative rejected.
 
 Subjunctive mood uniformly signals a departure from the default clausal
 semantics of unembedded assertions. Two kinds of departure:
-- **Comparison** (ordering semantics): 'want', 'hope' (@cite{portner-rubinstein-2020})
+- **Comparison** (ordering semantics): 'want', 'hope' ([portner-rubinstein-2020])
 - **Event abstraction**: 'intend', causatives, aspectuals (this paper)
 
 When neither departure is present, only indicative mood is possible.
@@ -59,7 +59,7 @@ open Semantics.Attitudes.RationalAttitude
 -- ════════════════════════════════════════════════════════════════
 
 /-- A mood choice observation: whether a predicate in a language
-    rejects indicative complements (@cite{grano-2024}, Table 1).
+    rejects indicative complements ([grano-2024], Table 1).
 
     This is the key variable: 'want' and 'intend' robustly reject IND
     across languages, while 'hope' does not. -/
@@ -157,7 +157,7 @@ theorem causatives_robustly_reject_ind :
     causativeData.all (·.rejectsIndicative) = true := by native_decide
 
 /-- 'intend' patterns with 'want', not 'hope', on indicative rejection.
-    This is the central empirical finding (@cite{grano-2024}, Table 1). -/
+    This is the central empirical finding ([grano-2024], Table 1). -/
 theorem intend_patterns_with_want :
     intendData.all (·.rejectsIndicative) =
       wantData.all (·.rejectsIndicative) ∧
@@ -201,7 +201,7 @@ theorem hope_selector_matches_data :
     predicates requiring eventuality abstraction (CAUSE* binds the
     event variable) reject indicative complements.
 
-    This is the formal correlate of @cite{grano-2024}'s argument chain:
+    This is the formal correlate of [grano-2024]'s argument chain:
     Premise 2 (CAUSE* needs open event arg) + Premise 3 (IND closes it)
     → Conclusion (intention reports reject IND). -/
 theorem ind_incompatible_with_eventuality_abstraction :
@@ -231,11 +231,11 @@ theorem grano_argument_chain :
 -- § 5. Bridge: Unified Theory — Two Kinds of Departure
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{grano-2024} §7 proposes that subjunctive mood uniformly signals
+/-- [grano-2024] §7 proposes that subjunctive mood uniformly signals
     a departure from the default clausal semantics of unembedded assertions.
     Two kinds of departure trigger SBJV:
     - **Comparison**: ordering semantics with two modal backgrounds
-      (want, hope; @cite{portner-rubinstein-2020})
+      (want, hope; [portner-rubinstein-2020])
     - **Event abstraction**: open event argument for CAUSE* or
       aspect (intend, causatives, aspectuals; this paper)
 
@@ -257,7 +257,7 @@ inductive DepartureKind where
 
 /-- Map departure kind to mood selection prediction.
 
-    @cite{grano-2024} §7: both comparison and eventuality abstraction
+    [grano-2024] §7: both comparison and eventuality abstraction
     are departures from the default clausal semantics that trigger SBJV.
     The key empirical difference:
 
@@ -283,7 +283,7 @@ theorem eventuality_abstraction_robust :
   ⟨rfl, rfl⟩
 
 /-- Simplifiable comparison allows cross-linguistic variation (the 'hope' pattern).
-    Per @cite{portner-rubinstein-2020}: when two modal backgrounds can
+    Per [portner-rubinstein-2020]: when two modal backgrounds can
     simplify to one, IND becomes available. -/
 theorem simplifiable_comparison_variable :
     DepartureKind.comparisonSimplifiable.moodPrediction =
@@ -325,7 +325,7 @@ intention formation depending on complement type ((96)–(97)):
 - Finite complement → belief reading → allows IND
 
 This is exactly the complement-size-driven alternation that
-@cite{fusco-sgrizzi-2026} formalizes for Italian *convincere*.
+[fusco-sgrizzi-2026] formalizes for Italian *convincere*.
 
 ### §6.3 Aspectual Predicates
 
@@ -352,7 +352,7 @@ theorem try_rejects_finite :
     try_.altComplementType = none := by native_decide
 
 /-- 'persuade' is a hybrid predicate: nonfinite complement with object
-    control → intention reading. This matches @cite{grano-2024} §6.2 (96). -/
+    control → intention reading. This matches [grano-2024] §6.2 (96). -/
 theorem persuade_is_hybrid :
     persuade.complementType = .infinitival ∧
     persuade.controlType = .objectControl := by native_decide
@@ -392,7 +392,7 @@ theorem see_is_factive_perception :
     see.levinClass = some .see := by native_decide
 
 /-- 'decide' is a hybrid predicate: nonfinite complement → intention,
-    finite complement → belief (@cite{grano-2024} §6.2, (96)–(97)).
+    finite complement → belief ([grano-2024] §6.2, (96)–(97)).
     Like 'persuade' and 'convince', the complement type determines whether
     the reading is intentional or propositional. -/
 theorem decide_is_hybrid :
@@ -413,8 +413,8 @@ theorem remember_is_implicative :
 
 /-! ### Complement Size → Reading → Mood
 
-@cite{grano-2024}'s hybrid predicate analysis (§6.2) and
-@cite{fusco-sgrizzi-2026}'s complement-size analysis make the same
+[grano-2024]'s hybrid predicate analysis (§6.2) and
+[fusco-sgrizzi-2026]'s complement-size analysis make the same
 prediction: the complement's structural size determines whether the
 reading is intentional (requiring eventuality abstraction → SBJV) or
 propositional (existentially closed → IND-compatible).
@@ -504,7 +504,7 @@ POSWQ-typed verbal-mood operator (`VerbalMood.lean`). For
 robustly subjunctive predicates, the projection lands in
 `some .subjunctive`; for cross-linguistically variable predicates,
 in `none`. The chain `verb → MoodSelector → VerbalMoodOp` makes
-the lexical-class commitment of @cite{grano-2024} operationally
+the lexical-class commitment of [grano-2024] operationally
 ready to feed POSWQ-side glosses (`POSW.boxLe` for subjunctive,
 `POSW.boxCs` for indicative). -/
 

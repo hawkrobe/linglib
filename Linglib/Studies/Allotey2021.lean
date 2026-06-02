@@ -7,21 +7,21 @@ import Linglib.Typology.Complementation
 
 /-!
 # Allotey (2021): Overt Pronouns of Infinitival Predicates in Gã
-@cite{allotey-2021}
+[allotey-2021]
 
 Western Papers in Linguistics / Cahiers linguistiques de Western 4.
 
 Gã (Kwa, Niger-Congo; spoken in Greater Accra, Ghana) shows obligatory
 control over the embedded subject of irrealis `ni`-clauses, where the
 controlled subject is realized as an OVERT subject proclitic — null PRO
-is ungrammatical. This is the same pattern @cite{ostrove-2026} analyzes
-for SMPM and @cite{sulemana-2021} analyzes for Büli, and falls under the
-@cite{kratzer-2009} / @cite{safir-2014} / @cite{landau-2015} minimal
+is ungrammatical. This is the same pattern [ostrove-2026] analyzes
+for SMPM and [sulemana-2021] analyzes for Büli, and falls under the
+[kratzer-2009] / [safir-2014] / [landau-2015] minimal
 pronoun framework: Gã simply lacks a null vocabulary item for the
 controlled subject position.
 
-@cite{allotey-2021} herself adopts @cite{szabolcsi-2009}'s Long Distance
-Agree (LDA) Hypothesis (building on @cite{satik-2019}). The minimal
+[allotey-2021] herself adopts [szabolcsi-2009]'s Long Distance
+Agree (LDA) Hypothesis (building on [satik-2019]). The minimal
 pronoun framework and LDA are compatible — LDA is the syntactic
 mechanism that values the unvalued φ-features of the minimal pronoun
 in the embedded subject position. We wire both perspectives in below.
@@ -37,20 +37,20 @@ in the embedded subject position. We wire both perspectives in below.
    complements (subject-control: `tao` 'want', `hiɛ-kpa-nɔ` 'forget';
    object-control: `kenya` 'urge', `dai` 'force').
 4. **Irrealis ≠ subjunctive**: Allotey argues against
-   @cite{dakubu-2004} and @cite{campbell-2017}, who classify the
+   [dakubu-2004] and [campbell-2017], who classify the
    high-tone marker as subjunctive. The diagnostic she offers
    (controlled-clause obviation) is formalized below.
 5. **Long Distance Agree analysis**: the embedded overt pronoun is a
    minimal pronoun whose φ-features are valued by LDA from the matrix
-   controller (@cite{szabolcsi-2009}, @cite{satik-2019}).
+   controller ([szabolcsi-2009], [satik-2019]).
 6. **Cross-linguistic pattern**: Gã joins SMPM and Büli as a third
    language with obligatory pronominal copy control under the
-   @cite{ostrove-2026} typology.
+   [ostrove-2026] typology.
 
 ## Out of scope
 
 The paper also discusses Gã verbal negation and an analogy to French
-V-movement past `pas` (@cite{pollock-1989}). That analogy depends on
+V-movement past `pas` ([pollock-1989]). That analogy depends on
 treating Gã `-ee` and `-ko` as a free Neg head (Pollock's diagnostic
 crucially relies on negation occupying a fixed structural position
 rather than being a verbal suffix). The morphological argument that
@@ -93,8 +93,8 @@ theorem irrealisNi_no_noncoreferential :
 /-- OC signature derived from clause properties.
 
     A clause type that does not allow noncoreferential embedded
-    subjects forces the full @cite{landau-2013} OC signature; one
-    that does allow them shows none. Per @cite{allotey-2021}, only
+    subjects forces the full [landau-2013] OC signature; one
+    that does allow them shows none. Per [allotey-2021], only
     `irrealisNi` falls in the former group.
 
     This is *derived* from `clauseProperties.noncoreferentialSubject`
@@ -127,9 +127,9 @@ theorem oc_iff_no_noncoreferential (c : EmbeddedClauseType) :
     matrix subject) — i.e., they license noncoreference. An irrealis
     OC clause license the opposite: obligatory coreference.
 
-    @cite{allotey-2021} argues that the high-tone marker on Gã verbs
-    is **irrealis**, not subjunctive (contra @cite{dakubu-2004},
-    @cite{campbell-2017}). The diagnostic below confirms her claim
+    [allotey-2021] argues that the high-tone marker on Gã verbs
+    is **irrealis**, not subjunctive (contra [dakubu-2004],
+    [campbell-2017]). The diagnostic below confirms her claim
     on the noncoreference test: `irrealisNi` fails the subjunctive
     diagnostic. -/
 def isSubjunctiveLike (c : EmbeddedClauseType) : Bool :=
@@ -148,7 +148,7 @@ theorem finiteKeji_subjunctive_test_passes :
 -- § 4: Landau Bridge
 -- ════════════════════════════════════════════════════════════════
 
-/-- Map Gã clause types to @cite{landau-2004}'s finiteness scale.
+/-- Map Gã clause types to [landau-2004]'s finiteness scale.
 
     | Landau class    | Gã clause type   | OC? |
     |-----------------|------------------|-----|
@@ -166,7 +166,7 @@ def gaToLandau : EmbeddedClauseType → LandauClauseClass
 
 /-- Gã Agr status, derived from `clauseProperties.finiteComplementizer`.
 
-    `irrealisNi` is `[−Agr]` in @cite{landau-2015}'s sense — though it
+    `irrealisNi` is `[−Agr]` in [landau-2015]'s sense — though it
     carries an overt subject proclitic, the proclitic is the realization
     of a minimal pronoun rather than independent agreement. The finite
     clause types are `[+Agr]`. -/
@@ -221,10 +221,10 @@ theorem oc_determined_by_clause_type (c : CTP) :
 -- § 6: Long-Distance Agree Analysis (Allotey's syntactic mechanism)
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{allotey-2021}'s syntactic analysis: the embedded overt
+/-- [allotey-2021]'s syntactic analysis: the embedded overt
     pronoun in a controlled `ni`-clause is a minimal pronoun whose
     unvalued φ-features are valued by Long Distance Agree from the
-    matrix controller (@cite{szabolcsi-2009}, @cite{satik-2019}).
+    matrix controller ([szabolcsi-2009], [satik-2019]).
 
     The probe (matrix v/T) has valued φ; the goal (embedded D[uφ])
     has unvalued φ; the intervening `ni` C head is non-defective for
@@ -273,7 +273,7 @@ theorem ga_has_reflexive :
     gaInventory.realize .locallyBound = .reflexive := rfl
 
 -- ════════════════════════════════════════════════════════════════
--- § 8: Pro-Drop / Overt-PRO Universal (@cite{ostrove-2026} 54)
+-- § 8: Pro-Drop / Overt-PRO Universal ([ostrove-2026] 54)
 -- ════════════════════════════════════════════════════════════════
 
 /-- Gã profile derived from fragment data and inventory. -/
@@ -299,7 +299,7 @@ theorem ga_prodrop_would_exclude_overt_pro
 
 open Typology.Complementation
 
-/-- Map Gã clause types to @cite{noonan-2007}'s complement typology.
+/-- Map Gã clause types to [noonan-2007]'s complement typology.
 
     All three Gã clause types are "balanced" in Noonan's sense: they
     are inflected for TAM and carry overt subject morphology. There is

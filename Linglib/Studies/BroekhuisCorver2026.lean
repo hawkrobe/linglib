@@ -7,7 +7,7 @@ import Linglib.Semantics.Spatial.Trace
 
 /-!
 # Broekhuis & Corver (2026): Adpositions in Dutch
-@cite{broekhuis-corver-2026} @cite{dendikken-2010} @cite{svenonius-2010}
+[broekhuis-corver-2026] [dendikken-2010] [svenonius-2010]
 
 The four-way surface classification of Dutch adpositions (preP, postP,
 circumP, intransitive particle) is argued to be epiphenomenal: all derive
@@ -55,7 +55,7 @@ open Semantics.Spatial.Path (PathShape)
 -- ════════════════════════════════════════════════════
 
 /-- Surface order of P and its complement.
-    @cite{broekhuis-corver-2026} §6, ex. 62/64: all four derive from the
+    [broekhuis-corver-2026] §6, ex. 62/64: all four derive from the
     same underlying structure `[FP _ F [PP P DP/PP]]`. -/
 inductive PPSurfaceOrder where
   | preP        -- P DP: complement stays in situ
@@ -65,7 +65,7 @@ inductive PPSurfaceOrder where
   deriving DecidableEq, Repr
 
 /-- What constituent moves to Spec,FP to produce a non-canonical order.
-    @cite{broekhuis-corver-2026} §6 ex. 64: the crucial distinction is
+    [broekhuis-corver-2026] §6 ex. 64: the crucial distinction is
     WHAT moves — DP yields postP, PP/R-pronoun yields circumP. -/
 inductive MovedConstituent where
   | noMovement      -- preP: complement in situ (default)
@@ -75,7 +75,7 @@ inductive MovedConstituent where
   deriving DecidableEq, Repr
 
 /-- Derive surface order from what moved.
-    @cite{broekhuis-corver-2026} §6, ex. 64:
+    [broekhuis-corver-2026] §6, ex. 64:
     - a. PrePP (default): `[FP _ F [P DP]]`
     - b. PostP (semantically conditioned): `[FP DPᵢ F [P tᵢ]]`
     - c. CircumP (default for PP compl): `[FP PPᵢ/R-pronᵢ F [P tᵢ]]` -/
@@ -129,7 +129,7 @@ example : availableOrders af = [.intransP] := by native_decide
 -- § 3. Complement-type restrictions
 -- ════════════════════════════════════════════════════
 
-/-! @cite{broekhuis-corver-2026} §2.2 (p.9): "it seems that postPs and
+/-! [broekhuis-corver-2026] §2.2 (p.9): "it seems that postPs and
     circumPs differ from prePs in that they are incapable of selecting
     adjectival or clausal complements." -/
 
@@ -185,7 +185,7 @@ theorem place_path_family :
 -- § 5. End-to-end: PathShape → telicity → auxiliary
 -- ════════════════════════════════════════════════════
 
-/-! @cite{broekhuis-corver-2026} §2.2 ex. 22: directional *de heuvel op*
+/-! [broekhuis-corver-2026] §2.2 ex. 22: directional *de heuvel op*
     takes *zijn* (be), locational *op de heuvel* takes *hebben* (have).
     This connects through `PathShape → telicity → unaccusativity →
     auxiliary selection`. -/
@@ -210,7 +210,7 @@ theorem postP_has_pathShape :
   exact directional_has_pathShape a ha (postP_implies_directional a ha hpost)
 
 /-- End-to-end chain for *op*: directional → bounded path → telic.
-    @cite{broekhuis-corver-2026} §2.2 ex. 22: *De fietser is de heuvel
+    [broekhuis-corver-2026] §2.2 ex. 22: *De fietser is de heuvel
     op gereden* "The cyclist rode onto the hill" — *zijn* (be) because
     directional postP *op* denotes a bounded path, which is telic. -/
 theorem op_bounded_telic :
@@ -220,7 +220,7 @@ theorem op_bounded_telic :
 
 /-- End-to-end: telic → unaccusative → *zijn* (be) in Dutch.
     Dutch has a split auxiliary system; unaccusative (telic change-of-state)
-    verbs select *zijn*, matching @cite{broekhuis-corver-2026}'s ex. 22. -/
+    verbs select *zijn*, matching [broekhuis-corver-2026]'s ex. 22. -/
 theorem telic_unaccusative_zijn :
     canonicalSelection .unaccusative = .be ∧
     dutchAankomen.selectionRule = .split :=
@@ -237,7 +237,7 @@ theorem op_van_both_telic :
 -- § 6. P-stranding and extraction (§5.2)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{broekhuis-corver-2026} §5.2: Dutch resists P-stranding for DP
+/-! [broekhuis-corver-2026] §5.2: Dutch resists P-stranding for DP
     complements (ex. 53: *✱Janᵢ heeft Els niet [PP op tᵢ] gewacht*), but
     allows R-pronoun extraction (ex. 54: *Daar <op> heeft Els niet <op>
     gewacht*) and postPP complement extraction (ex. 58b-c).
@@ -288,7 +288,7 @@ theorem no_rPron_not_postP :
 -- ════════════════════════════════════════════════════
 
 /-! Dutch is classified as a preposition language in WALS (F85A). This is
-    consistent with @cite{broekhuis-corver-2026}'s analysis: the base order
+    consistent with [broekhuis-corver-2026]'s analysis: the base order
     is always P-DP (preP); postP/circumP are derived by movement, not by
     a different head-direction parameter. -/
 
@@ -304,8 +304,8 @@ theorem dutch_wals_prepositions :
 -- § 8. Bridge to Den Dikken (1995): particles as P heads
 -- ════════════════════════════════════════════════════
 
-/-! @cite{dendikken-1995} analyzes verbal particles as P heads of small
-    clauses. @cite{broekhuis-corver-2026}'s intransitive adpositions include
+/-! [dendikken-1995] analyzes verbal particles as P heads of small
+    clauses. [broekhuis-corver-2026]'s intransitive adpositions include
     the same elements: *op*, *in*, *uit*, *af*, etc. -/
 
 /-- The intransitive adpositions from the fragment. -/
@@ -317,7 +317,7 @@ theorem af_only_intransitive :
     af.prePOk = false ∧ af.postPOk = false ∧ af.intransOk = true :=
   ⟨rfl, rfl, rfl⟩
 
-/-- @cite{dendikken-1995} PVC predicate category is P — matching
+/-- [dendikken-1995] PVC predicate category is P — matching
     the category of intransitive adpositions in the fragment. -/
 theorem pvc_predCat_is_P :
     Dendikken1995ParticleVerbs.pvc_pred_is_P
@@ -327,7 +327,7 @@ theorem pvc_predCat_is_P :
 -- § 9. R-pronominalization and morphological complexity
 -- ════════════════════════════════════════════════════
 
-/-! @cite{broekhuis-corver-2026} §2.1 ex. 19–20: simplex prePs allow
+/-! [broekhuis-corver-2026] §2.1 ex. 19–20: simplex prePs allow
     R-pronominalization (*er op*, *daar in*), but morphologically complex
     prePs (*tijdens*, *ondanks*, *zonder*) resist it. -/
 

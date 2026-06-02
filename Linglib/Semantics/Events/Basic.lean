@@ -7,7 +7,7 @@ import Linglib.Features.Aktionsart
 # Neo-Davidsonian Event Semantics
 
 Foundational types and basic API for neo-Davidsonian event semantics
-(@cite{davidson-1967}, @cite{parsons-1990}). Verbs denote predicates of
+([davidson-1967], [parsons-1990]). Verbs denote predicates of
 events; thematic roles are independent two-place predicates
 (`Semantics.ArgumentStructure.ThematicRel`).
 
@@ -21,7 +21,7 @@ events; thematic roles are independent two-place predicates
 * `Event.existsClosure` — Davidsonian existential closure
 * `Event.Mereology` — part-of typeclass with τ-monotonicity + sort-preservation
 * `Event.preorder` — Preorder instance derived from `Event.Mereology`
-* `Event.Manner` — manner ontology (@cite{liefke-2024} §4.3)
+* `Event.Manner` — manner ontology ([liefke-2024] §4.3)
 * `exampleRun` / `exampleKnow` — concrete `Event ℤ` instances
 
 ## Naming note
@@ -29,18 +29,18 @@ events; thematic roles are independent two-place predicates
 `Event` is the unified type for linguistic events. The Bach 1981/1986
 distinction between "eventuality" (genus, sortless) and "event" (narrow
 sense, non-state) has largely collapsed in current practice —
-@cite{champollion-2017} and @cite{zhao-2025} both use "event"
+[champollion-2017] and [zhao-2025] both use "event"
 generically with sort/aktionsart as an inherent attribute. Tense-aspect
 code that doesn't care about sort simply doesn't reference `.sort`;
 sortless construction sites default to `.dynamic`.
 
 ## References
 
-* @cite{davidson-1967}, @cite{parsons-1990} (neo-Davidsonian foundations)
-* @cite{bach-1986} (action/state ontology)
-* @cite{krifka-1989} (interval-valued runtimes)
-* @cite{champollion-2017}, @cite{zhao-2025} (event-as-generic)
-* @cite{liefke-2024} §4.3 (manner ontology)
+* [davidson-1967], [parsons-1990] (neo-Davidsonian foundations)
+* [bach-1986] (action/state ontology)
+* [krifka-1989] (interval-valued runtimes)
+* [champollion-2017], [zhao-2025] (event-as-generic)
+* [liefke-2024] §4.3 (manner ontology)
 -/
 
 open Core.Time
@@ -50,7 +50,7 @@ open Features
 @[ont_sort] structure Event (Time : Type*) [LinearOrder Time] where
   /-- The temporal extent of this event -/
   runtime : Interval Time
-  /-- Ontological sort (aktionsart): `dynamic` or `stative` (@cite{bach-1986}).
+  /-- Ontological sort (aktionsart): `dynamic` or `stative` ([bach-1986]).
       This is the `Features.Dynamicity` feature — the action/state distinction
       at the event-token level. -/
   sort : Features.Dynamicity
@@ -153,7 +153,7 @@ instance preorder (Time : Type*) [LinearOrder Time]
 /-! ### Manner -/
 
 /-- A manner: the "how" of an event, individuated as an equivalence class
-    of events under a similarity relation (@cite{liefke-2024} §4.3).
+    of events under a similarity relation ([liefke-2024] §4.3).
     Manners are to events what properties are to individuals. -/
 @[ont_sort] structure Manner (Time : Type*) [LinearOrder Time] where
   /-- The characteristic predicate: which events exhibit this manner -/

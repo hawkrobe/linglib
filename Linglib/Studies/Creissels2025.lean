@@ -7,9 +7,9 @@ import Mathlib.Algebra.Group.TypeTags.Basic
 
 /-!
 # Creissels (2025): Transitivity, Valency, and Voice
-@cite{creissels-2025}
+[creissels-2025]
 
-Formalization of key results from @cite{creissels-2025}, a comprehensive
+Formalization of key results from [creissels-2025], a comprehensive
 typological reference on transitivity, valency, and voice across the world's
 languages. The book proposes a unified framework based on:
 
@@ -22,7 +22,7 @@ languages. The book proposes a unified framework based on:
 - **Voice marker polysemy**: systematic cross-linguistic co-expression patterns
   where the same morpheme marks multiple voice alternation types (§8.2)
 
-This study file bridges @cite{creissels-2025}'s framework (formalized in
+This study file bridges [creissels-2025]'s framework (formalized in
 `Syntax/ArgumentStructure/Alternation.lean`) to existing linglib infrastructure:
 
 - `Semantics/Causation/Morphological.lean`: causativization and decausativization
@@ -96,7 +96,7 @@ theorem causativization_decausativization_inverse :
     decausativization.fateOfA = .suppressed :=
   ⟨rfl, rfl⟩
 
-/-- The three morphological complexity levels of @cite{comrie-1989} map to
+/-- The three morphological complexity levels of [comrie-1989] map to
     §12.1.4's synthetic/analytic/periphrastic
     distinction. Lexical = synthetic (most compact). -/
 theorem complexity_alignment :
@@ -342,7 +342,7 @@ def tswana_el : VoiceMarkerProfile :=
 /-! ### Causativizability and Voice Alternations -/
 
 /-! Ch 12 discusses restrictions on causativization.
-@cite{krejci-2012}'s hierarchy (already formalized in
+[krejci-2012]'s hierarchy (already formalized in
 `MorphologicalCausation.lean`) describes which verb classes can be
 causativized: unaccusatives > middles/ingestives > unergatives >
 simple transitives. This hierarchy predicts that causativization
@@ -357,7 +357,7 @@ def causativization_via_antipassive : VoiceStack :=
 
 /-! ### Cross-linguistic voice distribution (Bahrt 2021) -/
 
-/-! §8.3.8 reports @cite{bahrt-2021}'s survey of synthetic voice marking across
+/-! §8.3.8 reports [bahrt-2021]'s survey of synthetic voice marking across
 222 languages from all genera. -/
 
 /-- Cross-linguistic prevalence of a voice alternation type: the share of
@@ -368,7 +368,7 @@ structure VoiceDistribution where
   share : ℚ
   deriving Repr
 
-/-- @cite{bahrt-2021} distribution data, cited in §8.3.8: the fraction of the
+/-- [bahrt-2021] distribution data, cited in §8.3.8: the fraction of the
     222 languages (all genera) with synthetic marking for each voice alternation
     type. Note (§8.3.8): Bahrt's "applicativization" conflates applicativization
     with non-causative A/S-nucleativization, so that row is broader than
@@ -383,7 +383,7 @@ def bahrt2021Distribution : List VoiceDistribution :=
   , { alternation := antipassivization,     share := 185/1000 } ]
 
 /-- Causativization is the most common voice alternation type
-    cross-linguistically (@cite{bahrt-2021}). -/
+    cross-linguistically ([bahrt-2021]). -/
 theorem causativization_most_common :
     (bahrt2021Distribution.head?.map (·.alternation.name)) =
     some "causativization" := rfl

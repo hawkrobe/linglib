@@ -4,7 +4,7 @@ import Linglib.Fragments.Finnish.Negation
 
 /-!
 # Paradigmatic Structure of Person Marking
-@cite{cysouw-2009} @cite{greenberg-1963}
+[cysouw-2009] [greenberg-1963]
 
 Formalizes the typological framework from:
 
@@ -78,7 +78,7 @@ def ParadigmaticStructure.distinctForms (s : ParadigmaticStructure) : Nat :=
 -- §3: Singular Homophony Types (Chapter 2)
 -- ============================================================================
 
-/-- The 5 singular homophony types (@cite{cysouw-2009}, §2.1–2.5).
+/-- The 5 singular homophony types ([cysouw-2009], §2.1–2.5).
 
 Classifies how the three singular categories (1, 2, 3) pattern with
 respect to homophony within a paradigm. -/
@@ -106,7 +106,7 @@ def ParadigmaticStructure.singularType (s : ParadigmaticStructure) : SingularTyp
 -- §4: First Person Complex Types (Chapter 3)
 -- ============================================================================
 
-/-- The 5 common types of marking for 'we' (@cite{cysouw-2009}, Table 3.2/10.3).
+/-- The 5 common types of marking for 'we' ([cysouw-2009], Table 3.2/10.3).
 
 Classifies how the three first-person-complex categories (1+2, 1+2+3, 1+3)
 pattern in the paradigm relative to singular 1. -/
@@ -604,7 +604,7 @@ theorem czech_fragment_pa :
 
 /-! ### Bridge 5: Morphological status ↔ Explicitness
 
-@cite{cysouw-2009} shows that inflectional paradigms
+[cysouw-2009] shows that inflectional paradigms
 correlate with lower explicitness. Our data confirms: all inflectional
 paradigms have explicitness ≤ unified-we (i.e., singular or vertical
 homophony, or unified-we). -/
@@ -628,8 +628,8 @@ theorem independent_more_explicit :
 -- ============================================================================
 
 /-! `NumberStage` (Cysouw Fig 10.8) lives in `Features/Number.lean` —
-    promoted to substrate because both @cite{cysouw-2009} and
-    @cite{corbett-2000} consume it. -/
+    promoted to substrate because both [cysouw-2009] and
+    [corbett-2000] consume it. -/
 
 open Features.Number (NumberStage)
 
@@ -646,7 +646,7 @@ def ParadigmaticStructure.numberStage (s : ParadigmaticStructure) : NumberStage 
 -- §17: Person Differentiation Hierarchy (Fig 10.9)
 -- ============================================================================
 
-/-- Person differentiation stages (@cite{cysouw-2009}, Fig 10.9).
+/-- Person differentiation stages ([cysouw-2009], Fig 10.9).
 
 Measures how finely person is distinguished in non-singular categories. -/
 inductive PersonStage where

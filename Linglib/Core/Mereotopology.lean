@@ -4,7 +4,7 @@ import Linglib.Core.Mereology
 
 /-!
 # Mereotopology
-@cite{casati-varzi-1999} @cite{grimm-2012} @cite{krifka-2021}
+[casati-varzi-1999] [grimm-2012] [krifka-2021]
 
 Mereotopological infrastructure grounded in Mathlib's `TopologicalSpace`,
 `IsConnected`, and `closure`. Extends `Core/Mereology.lean` (algebraic
@@ -20,7 +20,7 @@ We derive it instead from two independent Mathlib structures:
 2. **`TopologicalSpace`** — spatial structure (open sets, closure, connectivity)
 
 The topology is *not* derived from the order (contra `OrderTopology`).
-This respects the philosophical position of @cite{casati-varzi-1999} that
+This respects the philosophical position of [casati-varzi-1999] that
 spatial arrangement is irreducible to parthood: two entities may share
 parts (overlap) without being spatially adjacent, and may touch without
 sharing parts. Adding topology as independent structure captures this.
@@ -56,7 +56,7 @@ abbrev parts {α : Type*} [Preorder α] (x : α) : Set α := Set.Iic x
 
 /-- Self-connected: the set of parts of x is topologically connected.
 
-    @cite{casati-varzi-1999} def 20b:
+    [casati-varzi-1999] def 20b:
       SC(x) := ∀y,z [∀w (O(w,x) ↔ O(w,y) ∨ O(w,z)) → C(y,z)]
 
     Grounded via Mathlib's `IsConnected`: a set is connected iff it is
@@ -77,14 +77,14 @@ def SelfConnected {α : Type*} [Preorder α] [TopologicalSpace α]
 
 /-- Touch: external connection without overlap.
 
-    @cite{casati-varzi-1999}: two entities touch when their closures
+    [casati-varzi-1999]: two entities touch when their closures
     share a point but they have no common part. Grounded via Mathlib's
     `closure`: the smallest closed set containing a given set.
 
     Intuitively: the wine and the bottle touch (their closures share
     boundary points) but do not overlap (no part is both wine and bottle).
 
-    @cite{krifka-2021} def 21 gives an order-theoretic characterization:
+    [krifka-2021] def 21 gives an order-theoretic characterization:
       x ∞ y := ¬O(x,y) ∧ ∃z,z'[z ≤ x ∧ z' ≤ y ∧ ¬∃z''[z < z'' < z']]
     Under the standard spatial model (regular open subsets of ℝⁿ), the
     order-theoretic and closure-based definitions coincide. -/
@@ -103,7 +103,7 @@ theorem Touch.symm {α : Type*} [PartialOrder α] [TopologicalSpace α]
 
 /-- Connection: two entities are connected if they overlap or touch.
 
-    @cite{casati-varzi-1999} take C as primitive. We derive it.
+    [casati-varzi-1999] take C as primitive. We derive it.
     C(x,y) := O(x,y) ∨ Touch(x,y).
 
     Connection is reflexive (via overlap) and symmetric. -/
@@ -126,10 +126,10 @@ theorem overlap_connected {α : Type*} [PartialOrder α] [TopologicalSpace α]
   .inl h
 
 -- ════════════════════════════════════════════════════
--- § 4. Matter Phase (@cite{krifka-2021})
+-- § 4. Matter Phase ([krifka-2021])
 -- ════════════════════════════════════════════════════
 
-/-- Phase of matter, following @cite{krifka-2021}'s trichotomy.
+/-- Phase of matter, following [krifka-2021]'s trichotomy.
 
     - **solid**: retains shape, parts don't move relative to each other
     - **granular**: aggregate of discrete solid pieces (rice, sand)
@@ -139,7 +139,7 @@ theorem overlap_connected {α : Type*} [PartialOrder α] [TopologicalSpace α]
     This distinction drives the count/mass behavior of substance nouns:
     solids and granulars can be individuated by shape/grain boundaries;
     liquids lack internal boundaries (pure substances) or have them
-    only via ingredient structure (mixed drinks, @cite{moon-2026}). -/
+    only via ingredient structure (mixed drinks, [moon-2026]). -/
 inductive Phase where
   | solid
   | granular
@@ -153,7 +153,7 @@ inductive Phase where
 /-- Connected liquid: an entity that is self-connected and whose parts
     are all in liquid phase.
 
-    @cite{moon-2026} def 23 (following @cite{krifka-2021}):
+    [moon-2026] def 23 (following [krifka-2021]):
       CONNECTED LIQUID(x) := ∀t ∈ i ∀x'[x' ≤ x →
         ¬solid(x',t) ∧ ¬granular(x',t) ∧ SC(x,t)]
 
@@ -223,7 +223,7 @@ This asymmetry means:
 
 The result: ¬CUM ∧ ¬QUA predicates exist in mereotopological spaces
 but not in pure semilattices. Natural language exploits this gap for
-mixed drink nouns (@cite{moon-2026}), where individuation comes from
+mixed drink nouns ([moon-2026]), where individuation comes from
 topological connectivity rather than mereological atomicity.
 
 Compare the two independent sources of non-cumulativity:
@@ -271,7 +271,7 @@ theorem connectivity_breaks_cum
     (`qua_cum_incompatible`), so ¬CUM ∧ ¬QUA is impossible.
     With independent topology, the two conditions decouple.
 
-    The linguistic instantiation: mixed drink nouns (@cite{moon-2026})
+    The linguistic instantiation: mixed drink nouns ([moon-2026])
     are ¬CUM (disconnected margaritas aren't a margarita) and ¬QUA
     (half a margarita with preserved ratios is still a margarita). -/
 theorem connectivity_middle_ground

@@ -3,11 +3,11 @@ import Linglib.Core.Logic.Bilateral.Defs
 
 /-!
 # Charlow (2025) — Staged updates: lifted interpretations for DNE in dynamic semantics
-@cite{charlow-2025-staged-updates}
-@cite{groenendijk-stokhof-1991} @cite{krahmer-muskens-1995} @cite{gotham-2019-ac22}
-@cite{mandelkern-2022} @cite{hofmann-2025} @cite{spector-2025} @cite{charlow-2014}
+[charlow-2025-staged-updates]
+[groenendijk-stokhof-1991] [krahmer-muskens-1995] [gotham-2019-ac22]
+[mandelkern-2022] [hofmann-2025] [spector-2025] [charlow-2014]
 
-Charlow's @cite{charlow-2025-staged-updates} (SALT 35 proceedings) gives an
+Charlow's [charlow-2025-staged-updates] (SALT 35 proceedings) gives an
 algebraic characterization of how to **lift** a non-DNE-validating dynamic
 substrate δ (e.g. DPL) into a richer Δ that does validate double-negation
 elimination. Three operations (`up : δ → Δ`, `down : Δ → δ`, `invneg : Δ → Δ`)
@@ -31,7 +31,7 @@ Canonical) have non-bilateral shapes. `IsLawfulDNELift` does not extend
 
 ## Connection to existing linglib infrastructure
 
-@cite{charlow-2014}'s `AnaphoraFramework` (`Linglib/Studies/Charlow2014.lean`)
+[charlow-2014]'s `AnaphoraFramework` (`Linglib/Studies/Charlow2014.lean`)
 formalizes the partition of dynamic-anaphora frameworks into
 `RepStrategy.stateThreading` (DRT, DPL, CDRT, BUS) vs `.typeStructure` (TTR).
 Charlow 2025 strengthens the state-threading side: any two lifts that
@@ -65,7 +65,7 @@ that discriminates bounded meanings from staged updates is not formalized
 here — it requires the Mandelkern2022 study file as scaffolding.
 
 The Section 6 exceptional-scope `D_σ` framework is also out of scope; it
-requires the separate JoS @cite{charlow-2014} successor "Static and dynamic
+requires the separate JoS [charlow-2014] successor "Static and dynamic
 exceptional scope" which has its own study file pending.
 -/
 
@@ -429,7 +429,7 @@ instance instDynamicTruthDPLRel (E : Type u) :
 `Δ ::= δ × δ` (pairs of updates). The lift `m^↑ := (m, ¬_δ m)` pairs every
 update with its substrate negation. `down` projects the first component;
 `invneg` swaps. Charlow notes (p. 865, footnote 5) that this is his own
-reconstruction of @cite{krahmer-muskens-1995} as a lifted interpretation —
+reconstruction of [krahmer-muskens-1995] as a lifted interpretation —
 the original K&M presentation interprets DRSs, not first-order formulas,
 and is distinguished syntactically from static conditions.
 

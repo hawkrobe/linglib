@@ -5,7 +5,7 @@ import Linglib.Core.Scales.Scale
 /-!
 # Gradable Nouns as Measure Functions
 
-@cite{morzycki-2009} @cite{kennedy-mcnally-2005}
+[morzycki-2009] [kennedy-mcnally-2005]
 
 Gradable nouns denote measure functions from individuals to degrees (eq. 48b):
 ⟦idiot⟧ = λx . ιd[x is d-idiotic] = *idiot*.
@@ -47,7 +47,7 @@ structure GradableNoun (Entity : Type) where
 
 Uses strict inequality, matching `positiveMeaning` in `Degree.Basic`:
 an entity satisfies POS(N) iff its degree *exceeds* the standard
-(@cite{kennedy-2007}). -/
+([kennedy-2007]). -/
 def GradableNoun.pos {E : Type} (n : GradableNoun E) : E → Bool :=
   λ x => n.standard < n.measure x
 

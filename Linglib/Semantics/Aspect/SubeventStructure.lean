@@ -3,7 +3,7 @@ import Linglib.Semantics.Aspect.Basic
 
 /-!
 # Temporal Decomposition of Events
-@cite{kiparsky-2002}
+[kiparsky-2002]
 
 Bridges the gap between `EventStructure.Template` (predicate-role decomposition,
 no temporal information) and `ViewpointAspect` (temporal operators on opaque
@@ -309,18 +309,18 @@ theorem impf_activity_prfv_full_incompatible {Time : Type*} [LinearOrder Time]
   | inl h => exact absurd heq_s (ne_of_lt h)
   | inr h => exact absurd heq_f (ne_of_lt h)
 
-/-! ### @cite{moens-steedman-1988} Event Types -/
+/-! ### [moens-steedman-1988] Event Types -/
 
-/-- @cite{moens-steedman-1988} aspectual profile. Extends Vendler's
+/-- [moens-steedman-1988] aspectual profile. Extends Vendler's
     three-feature `AspectualProfile` with ±consequent state, so the
     Vendler classification is inherited rather than stipulated.
-    @cite{moens-steedman-1988} -/
+    [moens-steedman-1988] -/
 structure MoensSteedmanProfile extends AspectualProfile where
   /-- Whether the event has a persistent result after culmination -/
   hasConsequentState : Bool
   deriving DecidableEq, Repr
 
-/-- @cite{moens-steedman-1988} five-way event classification.
+/-- [moens-steedman-1988] five-way event classification.
     Refines Vendler by splitting `achievement` along ±consequent state:
 
     | Class             | Atomic? | +ConsState? | Vendler        |
@@ -331,7 +331,7 @@ structure MoensSteedmanProfile extends AspectualProfile where
     | culmination       | yes     | yes         | achievement    |
     | point             | yes     | no           | (none)         |
 
-    @cite{moens-steedman-1988} -/
+    [moens-steedman-1988] -/
 inductive MoensSteedmanClass where
   | state             -- know, love
   | process           -- run, swim
@@ -387,12 +387,12 @@ theorem isAtomic_iff_punctual (c : MoensSteedmanClass) (h : c ≠ .state) :
 
 end MoensSteedmanClass
 
-/-! ### Unified When-Clause Semantics (@cite{moens-steedman-1988}) -/
+/-! ### Unified When-Clause Semantics ([moens-steedman-1988]) -/
 
 /-- What *when* accesses in each event type. M&S's key claim: *when* has
     a single meaning (locate the main clause at the culmination), with
     apparent ambiguity arising from different nucleus structures.
-    @cite{moens-steedman-1988} -/
+    [moens-steedman-1988] -/
 inductive WhenTarget where
   | directCulmination   -- culmination/point: event IS the culmination
   | completionCoercion  -- culminated process: strip prep, access culmination
@@ -416,7 +416,7 @@ theorem MoensSteedmanClass.when_needs_coercion_iff (c : MoensSteedmanClass) :
 
 /-! ### The Nucleus (Tripartite Event Structure) -/
 
-/-- The @cite{moens-steedman-1988} nucleus: tripartite event structure for
+/-- The [moens-steedman-1988] nucleus: tripartite event structure for
     events with a culmination point. Makes the culmination explicit —
     it is implicit in `SubeventPhases` as the boundary between
     activityTrace and resultTrace.
@@ -427,7 +427,7 @@ theorem MoensSteedmanClass.when_needs_coercion_iff (c : MoensSteedmanClass) :
                                      ↑
                              explicit culmination
     ```
-    @cite{moens-steedman-1988} -/
+    [moens-steedman-1988] -/
 structure Nucleus (Time : Type*) [LinearOrder Time] where
   /-- Preparatory process leading to culmination -/
   prepProcess : Option (Interval Time)

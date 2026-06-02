@@ -7,11 +7,11 @@ import Linglib.Phonology.Featural.Bundle
 # Tonal Root Nodes and Subtonal Features
 
 Tone is paradigmatic. A **Tonal Root Node** (TRN) is a bundle of
-**subtonal features** `[±upper]` and `[±raised]` (@cite{yip-1980}
-@cite{pulleyblank-1986}), each of which links to a TBU (mora, syllable).
-This file follows @cite{lionnet-2022}'s reformulation of register-tier
+**subtonal features** `[±upper]` and `[±raised]` ([yip-1980]
+[pulleyblank-1986]), each of which links to a TBU (mora, syllable).
+This file follows [lionnet-2022]'s reformulation of register-tier
 geometry: the four tier organisation (subtonal features → TRN → TBU)
-is shared with @cite{snider-1999}, but the features themselves are
+is shared with [snider-1999], but the features themselves are
 *paradigmatic* targets, not *syntagmatic* shifts.
 
 ## Main definitions
@@ -40,9 +40,9 @@ is shared with @cite{snider-1999}, but the features themselves are
 
 ### Why paradigmatic, not syntagmatic
 
-@cite{snider-1999}'s `h`/`l` features are defined both paradigmatically
+[snider-1999]'s `h`/`l` features are defined both paradigmatically
 (specifying register half) **and** syntagmatically ("higher / lower than
-the preceding register"). @cite{lionnet-2022} argues this dual
+the preceding register"). [lionnet-2022] argues this dual
 definition is overloaded: the same feature does double duty as a
 representational primitive and as a phonological process trigger.
 Switching to purely paradigmatic `[±upper]`/`[±raised]` separates the
@@ -66,7 +66,7 @@ be **underspecified** (`none`), with surface values filled in by default.
 ### Three-level systems and the Lionnet typology
 
 With binary `[±upper]` and `[±raised]`, four full specifications are
-possible. @cite{lionnet-2022} observes that *three-level* tone
+possible. [lionnet-2022] observes that *three-level* tone
 systems pick three of these four, and the choice of which combination
 is the *gap* defines four typological classes:
 
@@ -75,19 +75,19 @@ is the *gap* defines four typological classes:
 
 This file provides the named TRNs for the Laal pattern (`H`, `M`, `L`),
 the register-only TRNs (`empty`, `downstep`, `upstep`) used by Drubea
-and Numèè (@cite{lionnet-2025}), and the typology of all four 3-tone
+and Numèè ([lionnet-2025]), and the typology of all four 3-tone
 systems.
 
 ### Two realisation modes
 
 A TRN sequence can be realised as pitch in two ways:
 
-1. **Paradigmatic** (Laal-style, @cite{lionnet-2022}): each TRN's pitch
+1. **Paradigmatic** (Laal-style, [lionnet-2022]): each TRN's pitch
    is `2·[upper] + [raised]`, computed independently. No terracing.
    See `TRN.absolutePitch`.
 
 2. **Terracing** (Drubea/Numèè register-only systems,
-   @cite{lionnet-2025}): each `[-raised]` shifts the running register
+   [lionnet-2025]): each `[-raised]` shifts the running register
    baseline downward; `[+raised]` upward. Cumulative.
    See `realizePitch`.
 
@@ -98,18 +98,18 @@ degenerate case.
 
 ## References
 
-* @cite{yip-1980}, @cite{pulleyblank-1986} — `[±upper]` / `[±raised]`
+* [yip-1980], [pulleyblank-1986] — `[±upper]` / `[±raised]`
   subtonal features.
-* @cite{snider-1990}, @cite{snider-1999}, @cite{snider-2020} — four-tier
+* [snider-1990], [snider-1999], [snider-2020] — four-tier
   register-tier geometry.
-* @cite{lionnet-2022} — paradigmatic reformulation of register-tier
+* [lionnet-2022] — paradigmatic reformulation of register-tier
   geometry.
-* @cite{lionnet-2025} — register-only systems (Drubea, Numèè) and
+* [lionnet-2025] — register-only systems (Drubea, Numèè) and
   postlexical operations.
-* @cite{hyman-2006} — word-prosodic typology.
-* @cite{beckman-pierrehumbert-1986} — catathesis and register reset.
-* @cite{leben-2018} — downstep diagnostics.
-* @cite{goldsmith-1976}, @cite{mccarthy-1986} — two readings of the OCP.
+* [hyman-2006] — word-prosodic typology.
+* [beckman-pierrehumbert-1986] — catathesis and register reset.
+* [leben-2018] — downstep diagnostics.
+* [goldsmith-1976], [mccarthy-1986] — two readings of the OCP.
 -/
 
 namespace Phonology.Autosegmental.RegisterTier
@@ -121,8 +121,8 @@ open Phonology.Featural
 section Subtonal
 
 /-- The two paradigmatic subtonal feature dimensions
-    (@cite{lionnet-2022} ex. 52, after @cite{yip-1980},
-    @cite{pulleyblank-1986}).
+    ([lionnet-2022] ex. 52, after [yip-1980],
+    [pulleyblank-1986]).
 
     - `upper`: which register half (upper / lower)
     - `raised`: which target within the register (higher / lower)
@@ -178,26 +178,26 @@ instance : LawfulBEq TRN where
 
 /-- A floating `[+raised]` subtonal feature, no `[upper]` value.
     In the register-only system this is the **upstep** TRN — used by
-    pre-downstep h-epenthesis (@cite{lionnet-2025}). -/
+    pre-downstep h-epenthesis ([lionnet-2025]). -/
 @[match_pattern] def upstep : TRN := ⟨none, some true⟩
 
 /-- The **High** tone of Laal-style 3-tone systems: `[+upper, -raised]`
-    (@cite{lionnet-2022} §4). Highest pitch. -/
+    ([lionnet-2022] §4). Highest pitch. -/
 def H : TRN := ⟨some true, some false⟩
 
 /-- The **Mid** tone of Laal-style 3-tone systems: `[-upper, +raised]`
-    (@cite{lionnet-2022} §4). M is *not* primitive — it is one of the
+    ([lionnet-2022] §4). M is *not* primitive — it is one of the
     four `[±u, ±r]` combinations, derived from the binary subtonal
     features. The Lionnet move: there is no `TRN.M` enum
     constructor; `M` is just a name for a particular bundle. -/
 def M : TRN := ⟨some false, some true⟩
 
 /-- The **Low** tone of Laal-style 3-tone systems: `[-upper, -raised]`
-    (@cite{lionnet-2022} §4). Lowest pitch. -/
+    ([lionnet-2022] §4). Lowest pitch. -/
 def L : TRN := ⟨some false, some false⟩
 
 /-- The fourth combination `[+upper, +raised]` — *unattested* in Laal,
-    where it is the gap of the 3-tone system (@cite{lionnet-2022} §4).
+    where it is the gap of the 3-tone system ([lionnet-2022] §4).
     Provided for typological completeness; an attested 4-tone language
     or a different 3-tone gap would use this. -/
 def superHigh : TRN := ⟨some true, some true⟩
@@ -235,8 +235,8 @@ section Pitch
     underspecified is inert.
 
     This is *not* the paradigmatic interpretation of `[raised]`
-    (@cite{lionnet-2022} §3). It is the realisation pattern attested in
-    register-only systems like Drubea and Numèè (@cite{lionnet-2025}),
+    ([lionnet-2022] §3). It is the realisation pattern attested in
+    register-only systems like Drubea and Numèè ([lionnet-2025]),
     where each `[-raised]` triggers a downstep operation that resets
     the register baseline. -/
 def TRN.pitchEffect (t : TRN) : Int :=
@@ -247,10 +247,10 @@ def TRN.pitchEffect (t : TRN) : Int :=
 
 /-- **Terracing realisation**: realise a TRN sequence as a sequence of
     pitch levels, where each `[-raised]` cumulatively lowers the
-    baseline (@cite{snider-1999} @cite{lionnet-2025}).
+    baseline ([snider-1999] [lionnet-2025]).
 
     Used for register-only systems (Drubea, Numèè) and for catathesis
-    in Japanese / English intonation (@cite{beckman-pierrehumbert-1986}).
+    in Japanese / English intonation ([beckman-pierrehumbert-1986]).
     For the paradigmatic Laal-style realisation see `TRN.absolutePitch`.
 
     Defined by direct case-split on the `[raised]` value so that
@@ -276,8 +276,8 @@ def realizePitch : Int → List TRN → List Int
     | false => simp [realizePitch, TRN.pitchEffect, Int.sub_eq_add_neg]
     | true  => simp [realizePitch, TRN.pitchEffect]
 
-/-- **Pitch deltas** — the theory-primary view (@cite{snider-1999}
-    @cite{lionnet-2025}). Cumulative register shifts produced by a TRN
+/-- **Pitch deltas** — the theory-primary view ([snider-1999]
+    [lionnet-2025]). Cumulative register shifts produced by a TRN
     sequence, expressed as integer offsets from the start. There is no
     privileged "zero" pitch; only the differences are meaningful. -/
 def pitchDeltas (ts : List TRN) : List Int := realizePitch 0 ts
@@ -299,7 +299,7 @@ theorem realizePitch_eq_pitchDeltas_shift (n : Int) (ts : List TRN) :
 
 /-- **Utterance-initial phonetic neutralisation**: an utterance-initial
     `[-raised]` TRN is realised at the starting pitch (no preceding
-    register to contrast with — @cite{lionnet-2025} §3.5, §4.5). The
+    register to contrast with — [lionnet-2025] §3.5, §4.5). The
     feature is **not** removed from the underlying form: it remains
     phonologically active for blocking pre-downstep h-epenthesis on
     itself and for feeding raising on a following registerless TRN. -/
@@ -311,7 +311,7 @@ def realizePitchUtterance (level : Int) : List TRN → List Int
       else
         realizePitch level (t :: rest)
 
-/-- **Paradigmatic Laal-style pitch realisation** (@cite{lionnet-2022}
+/-- **Paradigmatic Laal-style pitch realisation** ([lionnet-2022]
     §4). Pitch is computed from `[upper]` (×2) plus `[raised]` (×1),
     *independently* per TRN — no terracing, no register-baseline state.
 
@@ -329,7 +329,7 @@ end Pitch
 section Typology3Tone
 
 /-- The four typological classes of 3-tone systems
-    (@cite{lionnet-2022} §4). Each class picks three of the four
+    ([lionnet-2022] §4). Each class picks three of the four
     `[±upper, ±raised]` combinations; the unselected combination is
     the *gap*. -/
 inductive ThreeToneGap where
@@ -351,7 +351,7 @@ def ThreeToneGap.gap : ThreeToneGap → TRN
   | .lowerLowered => TRN.L                -- ⟨-u, -r⟩
 
 /-- The Laal-style 3-tone system gap is `[+upper, +raised]`
-    (@cite{lionnet-2022} §4). -/
+    ([lionnet-2022] §4). -/
 theorem laalGap : ThreeToneGap.upperRaised.gap = TRN.superHigh := rfl
 
 end Typology3Tone
@@ -362,14 +362,14 @@ section TypologyProsody
 
 /-- The prosodic domain that carries TRN specifications. In most tone
     languages this is the syllable; in Drubea and Numèè it is the mora
-    (@cite{lionnet-2025}). -/
+    ([lionnet-2025]). -/
 inductive TBUKind where
   | mora
   | syllable
   deriving DecidableEq, Repr
 
-/-- Word-prosodic system types (@cite{hyman-2006}, enriched by
-    @cite{lionnet-2025}).
+/-- Word-prosodic system types ([hyman-2006], enriched by
+    [lionnet-2025]).
 
     Tone systems split into **tone-based** (paradigmatic — full TRN
     contrasts) and **register-based** (only `[raised]` varies, with
@@ -385,8 +385,8 @@ inductive WordProsodicType where
   | mixed
   deriving DecidableEq, Repr
 
-/-- Core definitional properties of downstep, following @cite{leben-2018}
-    as refined by @cite{lionnet-2025}.
+/-- Core definitional properties of downstep, following [leben-2018]
+    as refined by [lionnet-2025].
 
     Properties (a)–(c) are definitional; (d)–(f) are cross-linguistic
     tendencies that need not hold in every system. -/
@@ -406,7 +406,7 @@ structure DownstepProperties where
   functionsContrastively : Bool
   deriving Repr
 
-/-- Inventory of primitives in a phonological analysis (@cite{lionnet-2025}). -/
+/-- Inventory of primitives in a phonological analysis ([lionnet-2025]). -/
 structure AnalysisInventory where
   underlyingPrimitives : Nat
   postlexicalProcesses : Nat
@@ -421,7 +421,7 @@ section Culminativity
 /-- **Register culminativity**: at most one `[-raised]` TRN per stem.
 
     Holds for all native Drubea and Numèè stems
-    (@cite{lionnet-2025} §3.10). The Lionnet 2022 framing: a stem
+    ([lionnet-2025] §3.10). The Lionnet 2022 framing: a stem
     contains at most one bundle whose `[raised]` value is `some false`. -/
 abbrev IsCulminative (ts : List TRN) : Prop :=
   (ts.countP (fun t => t.raised == some false)) ≤ 1
@@ -432,7 +432,7 @@ end Culminativity
 
 section Postlexical
 
-/-- **Pre-downstep h-epenthesis** (@cite{lionnet-2025}): insert an
+/-- **Pre-downstep h-epenthesis** ([lionnet-2025]): insert an
     upstep TRN immediately before a downstep, on a registerless host.
 
     The rule fires when an empty (`⟨none, none⟩`) TRN is immediately
@@ -449,7 +449,7 @@ def hEpenthesis : List TRN → List TRN
 
 /-- **Spreading h-epenthesis**: raise *all* registerless TRNs in the
     sequence preceding a downstep, not just the immediately preceding
-    one (@cite{lionnet-2025} §3.2). Models the **abrupt-spreading**
+    one ([lionnet-2025] §3.2). Models the **abrupt-spreading**
     variant. -/
 def hEpenthesisSpread : List TRN → List TRN
   | []                       => []
@@ -470,7 +470,7 @@ section Operations
 
 /-- **Subtonal assimilation** at feature `f`: the target TRN takes its
     value at `f` from the source TRN, leaving its other feature
-    untouched. The Laal **M-lowering** rule (@cite{lionnet-2022} §5.2)
+    untouched. The Laal **M-lowering** rule ([lionnet-2022] §5.2)
     is `subtonalAssimilate Subtonal.raised src tgt`: a `[-raised]`
     value spreads from `src` to `tgt`, so a target M (`⟨-u, +r⟩`)
     becomes L (`⟨-u, -r⟩`) without altering its `[upper]` value. -/
@@ -479,16 +479,16 @@ def subtonalAssimilate (f : Subtonal) (src tgt : TRN) : TRN :=
 
 /-- **OCP merger**: collapse a sequence of TRNs with identical subtonal
     feature values into a single multiply-linked TRN
-    (@cite{lionnet-2022} ex. 53–54). The Bundle-level merger
+    ([lionnet-2022] ex. 53–54). The Bundle-level merger
     (`FeatureBundle.merge`) takes the value from the left TRN where it
     is specified, falling back to the right.
 
     **Two readings of the OCP — note on theoretical heterogeneity.** The
-    autosegmental tradition (@cite{goldsmith-1976}) treats the OCP as a
+    autosegmental tradition ([goldsmith-1976]) treats the OCP as a
     *transformation* — adjacent identical autosegments at the melodic
     level are merged into a single multiply-linked autosegment. That is
     the reading `mergeTRN` implements: a *repair* operation. The
-    subregular tradition (@cite{mccarthy-1986}) treats the OCP as a
+    subregular tradition ([mccarthy-1986]) treats the OCP as a
     *prohibition* — a constraint on output well-formedness that
     *rejects* strings containing adjacent identical autosegments. The
     prohibition reading is formalized by `Phonology.Subregular.OCP`'s
@@ -502,14 +502,14 @@ def subtonalAssimilate (f : Subtonal) (src tgt : TRN) : TRN :=
 def mergeTRN (t₁ t₂ : TRN) : TRN :=
   TRN.ofBundle (FeatureBundle.merge t₁.toBundle t₂.toBundle)
 
-/-- **TRN-level deletion** (@cite{lionnet-2022} §6.2): delete a TRN's
+/-- **TRN-level deletion** ([lionnet-2022] §6.2): delete a TRN's
     contribution at one subtonal feature, returning to underspecified.
     Used in replaceness operations where a TRN is partially erased
     before a floating feature docks. -/
 def deleteSubtonal (f : Subtonal) (t : TRN) : TRN :=
   TRN.ofBundle (FeatureBundle.delete f t.toBundle)
 
-/-- **Floating-feature docking** (@cite{lionnet-2022} §5.3): a free
+/-- **Floating-feature docking** ([lionnet-2022] §5.3): a free
     `[±f]` subtonal feature docks onto a target TRN, overwriting
     whatever value it had at `f`. Used for the morphosyntactic
     `[-raised]` suffix in Laal that triggers M-lowering. -/
@@ -538,7 +538,7 @@ theorem laal_paradigmatic_pitch :
     TRN.superHigh.absolutePitch = 3 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
-/-- **M-lowering as `[-raised]` assimilation** (@cite{lionnet-2022}
+/-- **M-lowering as `[-raised]` assimilation** ([lionnet-2022]
     §5.2). When a `[-raised]` source assimilates onto an M target, the
     result is L: M's `[+raised]` is overwritten to `[-raised]`, and its
     `[-upper]` is preserved.
@@ -554,7 +554,7 @@ theorem m_lowering_vacuous_on_m :
     subtonalAssimilate Subtonal.raised TRN.M TRN.M = TRN.M := by decide
 
 /-- **Floating `[-raised]` docking onto M produces L**
-    (@cite{lionnet-2022} §5.3): the morphosyntactic suffix is a free
+    ([lionnet-2022] §5.3): the morphosyntactic suffix is a free
     floating feature that overwrites the target's `[raised]` value. -/
 theorem floating_minus_raised_lowers_m :
     dockFloating Subtonal.raised false TRN.M = TRN.L := by decide
@@ -657,7 +657,7 @@ instance : DecidableRel TRN.le := fun _ _ => Int.decLe _ _
     pitch produces pointwise higher output for any fixed TRN sequence.
 
     Structural basis for catathesis blocking
-    (@cite{beckman-pierrehumbert-1986}): when an ip boundary resets the
+    ([beckman-pierrehumbert-1986]): when an ip boundary resets the
     register, subsequent pitches are higher than if catathesis had
     continued from a compressed baseline. -/
 theorem realizePitch_baseline_mono (ts : List TRN)

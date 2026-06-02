@@ -5,7 +5,7 @@ import Linglib.Phonology.Prosodic.Moraic.Defs
 
 Compensatory lengthening (CL) as the filling of stranded morae following
 segment deletion. This module formalizes the core theoretical claims of
-@cite{hayes-1989}:
+[hayes-1989]:
 
 1. **Moraic Conservation**: CL processes conserve total mora count. Deletion
    strands a mora; spreading fills it.
@@ -21,7 +21,7 @@ The CL typology classifies seven attested CL types, all derivable from
 moraic representations without stipulating constraints on association
 line rearrangements.
 
-@cite{hayes-1989}
+[hayes-1989]
 -/
 
 namespace Phonology.Moraic.CL
@@ -34,7 +34,7 @@ open Phonology.Moraic
 -- ============================================================================
 
 /-- The typology of compensatory lengthening processes
-    (@cite{hayes-1989}, §5.1).
+    ([hayes-1989], §5.1).
 
     Each type is defined by the deletion trigger and the spreading target.
     All types share the core mechanism: deletion strands a mora, which is
@@ -72,7 +72,7 @@ inductive CLType where
 /-- Delete a segment from a moraic syllable at a given index in the
     moraic tier. Returns the modified syllable and the number of stranded morae.
 
-    Following @cite{hayes-1989} §3: deletion on the segmental tier only —
+    Following [hayes-1989] §3: deletion on the segmental tier only —
     the mora remains, becoming segmentally unaffiliated. -/
 def deleteMoraic (σ : MoraicSyllable) (idx : Nat) :
     MoraicSyllable × Nat :=
@@ -110,7 +110,7 @@ private def addMorae (ms : MoraicSeg) (n : Nat) : MoraicSeg :=
 
 /-- Apply spreading to fill stranded morae in a moraic syllable.
 
-    Following @cite{hayes-1989}: CL is part of syllabification.
+    Following [hayes-1989]: CL is part of syllabification.
     When a mora is stranded, syllabification principles fill it by spreading
     from the nearest available segment. The direction of spreading is
     language-specific (part of the syllabification algorithm).
@@ -130,7 +130,7 @@ def spreadToFill (σ : MoraicSyllable) (strandedMorae : Nat)
 -- § 4: Core Theorems
 -- ============================================================================
 
-/-- **Onset Deletion Asymmetry** (@cite{hayes-1989}, §5.2.1):
+/-- **Onset Deletion Asymmetry** ([hayes-1989], §5.2.1):
     Deleting an onset consonant strands zero morae, because onset consonants
     are universally non-moraic.
 
@@ -145,7 +145,7 @@ theorem onset_deletion_no_stranding (σ : MoraicSyllable) (idx : Nat) :
   simp only [deleteOnset, MoraicSyllable.moraCount]
 
 /-- **Moraic Conservation** for single-mora CL
-    (@cite{hayes-1989}, Rule (64)):
+    ([hayes-1989], Rule (64)):
     Deleting a monomoraic segment and spreading left preserves total morae. -/
 theorem moraic_conservation_left (v c : Segment) :
     let σ := MoraicSyllable.mk [] [⟨v, .one⟩, ⟨c, .one⟩]
@@ -158,7 +158,7 @@ theorem moraic_conservation_right (v c : Segment) :
     let (σ_del, stranded) := deleteMoraic σ 0
     σ.moraCount = (spreadToFill σ_del stranded .right).moraCount := rfl
 
-/-- **Weight prerequisite** (@cite{hayes-1989}, §6): deleting a non-moraic
+/-- **Weight prerequisite** ([hayes-1989], §6): deleting a non-moraic
     coda (WBP inactive) strands zero morae. No CL is possible. -/
 theorem no_wbp_no_cl (v c₁ c₂ : Segment) :
     (deleteMoraic ⟨[c₁], [⟨v, .one⟩, ⟨c₂, .zero⟩]⟩ 1).2 = 0 := rfl
@@ -167,12 +167,12 @@ theorem no_wbp_no_cl (v c₁ c₂ : Segment) :
 theorem wbp_strands_mora (v c₁ c₂ : Segment) :
     (deleteMoraic ⟨[c₁], [⟨v, .one⟩, ⟨c₂, .one⟩]⟩ 1).2 = 1 := rfl
 
-/-- **Vowel-loss directionality** (@cite{hayes-1989}, §5.2.2):
+/-- **Vowel-loss directionality** ([hayes-1989], §5.2.2):
     CL through vowel loss always lengthens the vowel to the **left** of the
     deleted vowel, never to the right. In moraic theory this follows from
     Parasitic Delinking + the No-Crossing Constraint (derived from temporal
     precedence in `Phonology.Autosegmental.no_crossing`,
-    @cite{sagey-1986} §5.3): a stranded mora can only be picked up by
+    [sagey-1986] §5.3): a stranded mora can only be picked up by
     spreading leftward without crossing. -/
 theorem vowel_loss_leftward (v₁ v₂ : Segment) :
     let σ₁ := MoraicSyllable.mk [] [⟨v₁, .one⟩]
@@ -186,7 +186,7 @@ theorem vowel_loss_leftward (v₁ v₂ : Segment) :
 /-- Syllabification with WBP (Rule (10)) produces moraic codas that can
     trigger CL. This connects `MoraicParams` to the CL mechanism: the *same
     parameter* that determines syllable weight also determines CL possibility
-    (@cite{hayes-1989}, §6). -/
+    ([hayes-1989], §6). -/
 theorem wbp_params_enable_cl (o n c : Segment) :
     let σ := syllableToMoraic { wbp := true } ⟨[o], [n], [c]⟩
     (deleteMoraic σ 1).2 = 1 := rfl

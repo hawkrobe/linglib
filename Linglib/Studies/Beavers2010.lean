@@ -6,7 +6,7 @@ import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
 /-!
-# @cite{beavers-2010} The Structure of Lexical Meaning: Why Semantics Really Matters
+# [beavers-2010] The Structure of Lexical Meaning: Why Semantics Really Matters
 
 Argument realization in direct/oblique alternations is governed not by event
 structure but by **strength of truth conditions**. Direct realization encodes
@@ -380,7 +380,7 @@ theorem locative_data_attested :
 -- § 9. Cross-Study Connection: Decompositions Fill Gaps
 -- ════════════════════════════════════════════════════
 
-/-! @cite{beavers-2010} argues that the MAP and event decompositions are
+/-! [beavers-2010] argues that the MAP and event decompositions are
     *complementary*, not competing (the paper's conclusion, §6):
 
     | Approach        | Semantics                        | Morphosyntax             |
@@ -392,8 +392,8 @@ theorem locative_data_attested :
     (P-Agent features → subject selection). Beavers 2010 adds the missing
     piece: fine-grained P-Patient structure → direct/oblique alternations. -/
 
-/-- Subject selection (from @cite{dowty-1991}) and object alternations
-    (from @cite{beavers-2010}) are *independent* principles operating on
+/-- Subject selection (from [dowty-1991]) and object alternations
+    (from [beavers-2010]) are *independent* principles operating on
     different argument positions. The ASP governs subjects; the MAP governs
     direct vs. oblique objects. -/
 theorem asp_and_map_orthogonal :
@@ -408,10 +408,10 @@ theorem asp_and_map_orthogonal :
   ⟨by decide, rfl, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
--- § 10. Bridge to @cite{grimm-2011} Persistence Lattice
+-- § 10. Bridge to [grimm-2011] Persistence Lattice
 -- ════════════════════════════════════════════════════
 
-/-! @cite{grimm-2011}'s `PersistenceLevel` reformulates P-Patient as 4
+/-! [grimm-2011]'s `PersistenceLevel` reformulates P-Patient as 4
     persistence dimensions (existential/qualitative × beginning/end).
     Beavers' affectedness hierarchy maps systematically onto this lattice:
 
@@ -538,7 +538,7 @@ theorem selfMotion_no_object :
 
 /-- **Affectedness ordering across templates**: the named templates are
     ordered by truth-conditional strength on the object side, reproducing
-    @cite{beavers-2010}'s hierarchy: creation/consumption (quantized) >
+    [beavers-2010]'s hierarchy: creation/consumption (quantized) >
     resultChange (nonquantized) > mannerContact (potential) > perception
     (unspecified). -/
 theorem template_affectedness_hierarchy :

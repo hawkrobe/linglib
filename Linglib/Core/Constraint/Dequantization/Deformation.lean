@@ -5,8 +5,8 @@ import Linglib.Core.Constraint.Dequantization.OTLimit
 
 /-!
 # The Constraint-Framework Deformation Lattice
-@cite{smolensky-legendre-2006} @cite{prince-smolensky-1993}
-@cite{goldwater-johnson-2003} @cite{riggle-2009} @cite{litvinov-2005}
+[smolensky-legendre-2006] [prince-smolensky-1993]
+[goldwater-johnson-2003] [riggle-2009] [litvinov-2005]
 
 OT, HG, MaxEnt, and Stochastic OT are not four unrelated frameworks but
 the four corners of a single **deformation lattice**, parameterised by

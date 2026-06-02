@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Selection
 import Linglib.Syntax.Minimalist.FromFragments
 
 /-!
-# Adger 2003: C-Selection and Subcategorization @cite{adger-2003}
+# Adger 2003: C-Selection and Subcategorization [adger-2003]
 
 Replicates Adger's c-selection account of subcategorization
 (*Core Syntax* ch. 3 §3.5–§3.6) on linglib's Minimalism substrate via the
@@ -89,7 +89,7 @@ def heSO : SyntacticObject := pronounToSO English.Pronouns.he 1
 def herSO : SyntacticObject := pronounToSO English.Pronouns.her 2
 def theySO : SyntacticObject := pronounToSO English.Pronouns.they 3
 
--- Proper nouns (project as DPs per Longobardi 1994 / @cite{adger-2003} ch. 7)
+-- Proper nouns (project as DPs per Longobardi 1994 / [adger-2003] ch. 7)
 def johnSO : SyntacticObject := nounToSO English.Nouns.john 10
 def marySO : SyntacticObject := nounToSO English.Nouns.mary 11
 
@@ -205,7 +205,7 @@ theorem he_sees_her_wellFormed : he_sees_her.WellFormed := by sorry
 
 -- ============================================================================
 -- §2: Ungrammatical Derivations Fail Well-Formedness
--- (@cite{adger-2003} eq. 114: unchecked [uF] violates Full Interpretation.)
+-- ([adger-2003] eq. 114: unchecked [uF] violates Full Interpretation.)
 -- ============================================================================
 
 /-- "*Mary arrives John" — intransitive with spurious complement.
@@ -296,7 +296,7 @@ theorem john_gives_mary_book_not_wellFormed_bare :
 
 /-! ### Null-D-wrapped DPs are well-formed
 
-@cite{adger-2003} ch. 7 (Functional Categories II — the DP) treats bare
+[adger-2003] ch. 7 (Functional Categories II — the DP) treats bare
 common nouns as DPs headed by a phonologically silent D. `Selection.lean`
 provides `nullDWrap : SyntacticObject → Nat → SyntacticObject`, which
 constructs `(∅ᴅ, n)`: the silent D's [uN] feature is checked internally

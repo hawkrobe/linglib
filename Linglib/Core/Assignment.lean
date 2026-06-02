@@ -3,8 +3,8 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Variable Assignments
-@cite{heim-kratzer-1998} @cite{henkin-monk-tarski-1971} @cite{spector-2025}
-@cite{beaver-krahmer-2001}
+[heim-kratzer-1998] [henkin-monk-tarski-1971] [spector-2025]
+[beaver-krahmer-2001]
 
 Tarski-style total assignments and their partial extension. The polymorphic
 substrate shared by extensional Heim-Kratzer composition, DPL-style register
@@ -49,7 +49,7 @@ namespace Core
 
 -- ════════════════════════════════════════════════════════════════
 -- Total Assignments (Tarski-style; the extensional substrate)
--- @cite{heim-kratzer-1998} @cite{henkin-monk-tarski-1971}
+-- [heim-kratzer-1998] [henkin-monk-tarski-1971]
 -- ════════════════════════════════════════════════════════════════
 
 /-- Variable assignment: a function from natural-number indices to values in
@@ -88,12 +88,12 @@ end Assignment
 
 -- ════════════════════════════════════════════════════════════════
 -- Partial Assignments
--- @cite{spector-2025} @cite{beaver-krahmer-2001}
+-- [spector-2025] [beaver-krahmer-2001]
 -- ════════════════════════════════════════════════════════════════
 
 /-- Partial assignment: variables may be undefined (`none`).
 
-    Used in trivalent semantics (@cite{spector-2025}, @cite{beaver-krahmer-2001})
+    Used in trivalent semantics ([spector-2025], [beaver-krahmer-2001])
     where `g(x) = none` means variable `x` is not valued. The trivalent
     *application* rule that turns this into the third value `#` lives with
     the predicate machinery in `Semantics/Presupposition/`, not here. -/
@@ -153,17 +153,17 @@ end PartialAssign
 
 -- ════════════════════════════════════════════════════════════════
 -- Plural Assignments
--- @cite{van-den-berg-1996} @cite{nouwen-2003} @cite{brasoveanu-2008}
--- @cite{spector-2025} @cite{haug-dalrymple-2020}
+-- [van-den-berg-1996] [nouwen-2003] [brasoveanu-2008]
+-- [spector-2025] [haug-dalrymple-2020]
 -- ════════════════════════════════════════════════════════════════
 
 /-- Plural assignment: a set of atomic (partial) assignments.
 
-    Originates in plural dynamic semantics (@cite{van-den-berg-1996},
-    @cite{nouwen-2003}, @cite{brasoveanu-2008}). The plural information
+    Originates in plural dynamic semantics ([van-den-berg-1996],
+    [nouwen-2003], [brasoveanu-2008]). The plural information
     state is the basic carrier of Plural CDRT (Brasoveanu, Dotlačil) and
-    its partial extension PPCDRT (Haug 2014, @cite{haug-dalrymple-2020}).
-    Spector's static reuse (@cite{spector-2025}) is the trivalent point
+    its partial extension PPCDRT (Haug 2014, [haug-dalrymple-2020]).
+    Spector's static reuse ([spector-2025]) is the trivalent point
     of this primitive: variables that are *singular* across the plural
     state behave classically; variables that are not are gappy.
 
@@ -226,7 +226,7 @@ def singular (G : PluralAssign D) (x : Nat) : Prop :=
   ∃ d, G.singularAt x d
 
 /-- Sum-of-values for dref `n` across the plural state. Spector §6.2 and
-    @cite{haug-dalrymple-2020}'s `∪u` operator (paper §2.1, eq 8): the set
+    [haug-dalrymple-2020]'s `∪u` operator (paper §2.1, eq 8): the set
     of values that `n` takes across all atomic assignments in `G`. -/
 def sumDref (G : PluralAssign D) (n : Nat) : Set D :=
   { d | ∃ g ∈ G, g n = some d }

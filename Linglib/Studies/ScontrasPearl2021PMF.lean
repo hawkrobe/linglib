@@ -5,9 +5,9 @@ import Mathlib.Probability.ProbabilityMassFunction.Monad
 import Mathlib.Probability.ProbabilityMassFunction.Binomial
 
 /-!
-# @cite{scontras-pearl-2021} on mathlib `PMF` — chained-RSA + S2 substrate
+# [scontras-pearl-2021] on mathlib `PMF` — chained-RSA + S2 substrate
 
-@cite{scontras-pearl-2021} ("When pragmatics matters more for truth-value
+[scontras-pearl-2021] ("When pragmatics matters more for truth-value
 judgments: An investigation of quantifier scope ambiguity",
 *Glossa* 6(1):110, 2021) presents a parameterized RSA model for
 quantifier scope ambiguity. This file formalises the structural skeleton.
@@ -56,7 +56,7 @@ paper-faithful claims.
 
 This file's RSA chain is the L&G-derived Bayesian inversion architecture
 (cf. `LassiterGoodman2017PMF.lean`). The paper §3.1 explicitly adopts
-@cite{goodman-frank-2016}'s framework. Sibling models on quantifier-negation
+[goodman-frank-2016]'s framework. Sibling models on quantifier-negation
 scope ambiguity exist in linglib's `Studies/` but
 none have been audit-cleaned to PMF; this file's parameterized substrate
 (§8) is the first.

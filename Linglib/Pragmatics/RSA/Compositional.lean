@@ -32,7 +32,7 @@ not the structural level.
 
 1. `LocalAltNode`: A node with local alternatives and meaning
 2. `localExhMW`: EXH using only local alternatives
-3. `local_limit_theorem`: Local RSA → Local EXH (reuses @cite{franke-2011})
+3. `local_limit_theorem`: Local RSA → Local EXH (reuses [franke-2011])
 4. `composed_local_equals_localExh`: Composed local EXH = local reading
 5. `lu_cannot_express_local`: LU is scope-blind like standard RSA
 
@@ -79,7 +79,7 @@ def localExhMW {World Alt : Type} (node : LocalAltNode World Alt) : Set World :=
 
 /-!
 ## LU-RSA: What It Can and Cannot Do
-@cite{potts-etal-2016} @cite{bergen-levy-goodman-2016}
+[potts-etal-2016] [bergen-levy-goodman-2016]
 
 ### The LU Approach
 
@@ -170,7 +170,7 @@ LU would give:
 - Lexicon 1 (weak "some"): every student read at-least-one → SS, SA, AS, AA
 - Lexicon 2 (strong "some"): every student read some-but-not-all → SS only
 
-This matches @cite{potts-levy-2015}, who show strong empirical fits.
+This matches [potts-levy-2015], who show strong empirical fits.
 
 ### Where LU Fails: The Principled Derivation Problem
 
@@ -218,7 +218,7 @@ theorem lu_strong_equals_local :
 
 For single-scalar cases, LU achieves the same result as local EXH:
 - `lu_strong_equals_local` proves this formally
-- This explains the excellent fits to human data in @cite{potts-levy-2015}
+- This explains the excellent fits to human data in [potts-levy-2015]
 
 ### The Compositional Question: Where Does Marginalization Happen?
 
@@ -292,7 +292,7 @@ For the cases Potts et al. test (single scalar under quantifier),
 these approaches are empirically equivalent. The question is whether
 they diverge for more complex compositional structures.
 
-Open question (cf. @cite{franke-bergen-2020} "Global Intentions"):
+Open question (cf. [franke-bergen-2020] "Global Intentions"):
 Does the locus of pragmatic reasoning (global vs. local) matter
 for predicting human behavior in complex embedded contexts?
 -/
@@ -321,7 +321,7 @@ Step 2: Compose with "every"
 
 ### Why This Works
 
-The @cite{franke-2011} limit theorem is parametric in the alternative set:
+The [franke-2011] limit theorem is parametric in the alternative set:
   IBR(alternatives) → exhMW(alternatives)
 
 Instantiating with local alternatives at each node yields local exhMW
@@ -634,7 +634,7 @@ without stipulating EXH. EXH then emerges as the α → ∞ limit of local RSA.
 -- SECTION 6: Global Intentions and "RSA All The Way Down"
 
 /-!
-## @cite{franke-bergen-2020}: Global Intentions Model
+## [franke-bergen-2020]: Global Intentions Model
 
 Franke & Bergen's "Global Intentions" (GI) model provides machinery for
 reasoning over where EXH applies.
@@ -682,7 +682,7 @@ Speaker chooses parse Speaker chooses where to be pragmatic
 ### The Equivalence
 
 In the α → ∞ limit:
-- RSA at node → EXH at node (@cite{franke-2011} limit theorem)
+- RSA at node → EXH at node ([franke-2011] limit theorem)
 - RSA at multiple nodes → EXH at multiple nodes (composition)
 - Reasoning over "where RSA applies" → reasoning over "where EXH is"
 
@@ -1003,7 +1003,7 @@ the full product over all compositional nodes.
 /-!
 ## Summary: The Two Perspectives
 
-### @cite{franke-bergen-2020}
+### [franke-bergen-2020]
 - Primitives: Grammar (generates EXH parses) + Pragmatics (RSA selects)
 - Architecture: P_S(m, p | t) where p is a grammatically-given parse
 - EXH status: Primitive grammatical operator
@@ -1041,17 +1041,17 @@ coincide with EXH's truth set:
 `(uniform_prior ∧ high_rationality ∧ depth_one ∧ no_qud) → ∀ u w, L1(u,w) > 0 ↔ EXH(u) w`.
 Conjectured to be the precise boundary between notational variants and
 genuine empirical disagreement of the two frameworks
-(@cite{frank-goodman-2012}, @cite{fox-2007},
-@cite{chierchia-fox-spector-2012}).
+([frank-goodman-2012], [fox-2007],
+[chierchia-fox-spector-2012]).
 
 `TODO`: **Phase-bounded exhaustification (3 related conjectures)** —
-@cite{charlow-2014} treats scope islands as evaluation boundaries and
+[charlow-2014] treats scope islands as evaluation boundaries and
 CFS treats Exh as applying at scope positions. Hypothesis: phase
 boundaries delimit both exhaustification and RSA computation. (a) Local
 Exh (within a phase) and global Exh agree within the phase domain.
 (b) S1 optimizes within the current phase; for utterances in the same
 phase, local and global S1 agree. (c) Alternatives are computed from
-material within the same phase (cf. @cite{fox-katzir-2011}'s locally-
+material within the same phase (cf. [fox-katzir-2011]'s locally-
 available alternatives). -/
 
 end RSA.Compositional

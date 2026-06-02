@@ -4,12 +4,12 @@ import Linglib.Core.Logic.Modal.BSML.Bisimulation
 /-!
 # Expressive completeness for BSML
 
-@cite{anttila-2025} @cite{aloni-anttila-yang-2024} @cite{aloni-2022}
+[anttila-2025] [aloni-anttila-yang-2024] [aloni-2022]
 
-@cite{anttila-2025} Chapter 3 proves that BSML is **expressively complete** for
+[anttila-2025] Chapter 3 proves that BSML is **expressively complete** for
 the class of convex, union-closed, bounded-bisimulation-invariant modal team
 properties — solving the BSML expressive-power problem left open in
-@cite{aloni-anttila-yang-2024}. In the `Team/Definability.lean` vocabulary this
+[aloni-anttila-yang-2024]. In the `Team/Definability.lean` vocabulary this
 is `ExpressivelyCompleteFor (support M)` for the cell
 `convexProperties ∩ unionClosedProperties ∩ bisimClosedProperties M`.
 
@@ -22,7 +22,7 @@ The theorem splits into two halves:
   invariance, `BSML/Bisimulation.lean`).
 * **Completeness** (`cell ⊆ ⟦BSML⟧`) — the hard converse: every property in the
   cell is BSML-definable. Stated here as `expressiveCompleteness_converse` with
-  a `sorry`; it is the within-model specialisation of @cite{anttila-2025} Ch 3
+  a `sorry`; it is the within-model specialisation of [anttila-2025] Ch 3
   and requires the characteristic-formula machinery (see the TODO there).
 
 ## Main declarations
@@ -47,7 +47,7 @@ variable {W : Type*} [DecidableEq W] [Fintype W] {Atom : Type*}
 /-- A team property is **bounded-bisimulation-closed** in `M` if for some depth
     `k` it is closed under `k`-bisimulation of teams within `M`. This is the
     closure invariant — alongside convexity and union closure — that
-    characterises BSML-definability (@cite{anttila-2025} Ch 3). -/
+    characterises BSML-definability ([anttila-2025] Ch 3). -/
 def BisimClosed (M : BSMLModel W Atom) (P : TeamProperty W) : Prop :=
   ∃ k : ℕ, ∀ s s' : Finset W, StateBisim k M s M s' → (s ∈ P ↔ s' ∈ P)
 
@@ -71,7 +71,7 @@ theorem bisimClosed_definedBy (M : BSMLModel W Atom) (φ : BSMLFormula Atom) :
 
 /-! ### Expressive completeness -/
 
-/-- **Soundness half** (@cite{anttila-2025} Ch 3): every BSML-definable team
+/-- **Soundness half** ([anttila-2025] Ch 3): every BSML-definable team
     property is convex, union-closed, and bounded-bisimulation-closed. Assembles
     `ordConnected_support`, `supClosed_support`, and `bisimClosed_definedBy`. -/
 theorem expressiveSoundness (M : BSMLModel W Atom) :
@@ -82,8 +82,8 @@ theorem expressiveSoundness (M : BSMLModel W Atom) :
   obtain ⟨φ, rfl⟩ := hP
   exact ⟨⟨ordConnected_support M φ, supClosed_support M φ⟩, bisimClosed_definedBy M φ⟩
 
-/-- **Completeness half** (@cite{anttila-2025} Ch 3 — the hard direction, the
-    BSML expressive-power problem left open by @cite{aloni-anttila-yang-2024}
+/-- **Completeness half** ([anttila-2025] Ch 3 — the hard direction, the
+    BSML expressive-power problem left open by [aloni-anttila-yang-2024]
     and solved via Knudstorp's convexity machinery): every convex, union-closed,
     bounded-bisimulation-closed team property is BSML-definable.
 
@@ -102,7 +102,7 @@ theorem expressiveCompleteness_converse (M : BSMLModel W Atom) :
   sorry
 
 /-- **BSML is expressively complete** for the convex, union-closed,
-    bounded-bisimulation-closed team properties (@cite{anttila-2025} Ch 3).
+    bounded-bisimulation-closed team properties ([anttila-2025] Ch 3).
     Inherits the `sorry` of `expressiveCompleteness_converse`. -/
 theorem expressivelyComplete (M : BSMLModel W Atom) :
     ExpressivelyCompleteFor (support M)

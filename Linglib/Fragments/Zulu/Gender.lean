@@ -2,7 +2,7 @@ import Linglib.Typology.Gender
 
 /-!
 # Zulu Gender
-@cite{corbett-1991} @cite{corbett-2013}
+[corbett-1991] [corbett-2013]
 
 ~15 noun classes. Bantu noun-class system parallel to Swahili.
 -/
@@ -25,7 +25,7 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "zul" ∧ genderTypology.name = "Zulu" :=
   ⟨rfl, rfl⟩
 
-/-- Zulu is a noun-class system (5+ classes per @cite{corbett-1991}). -/
+/-- Zulu is a noun-class system (5+ classes per [corbett-1991]). -/
 example : genderTypology.IsNounClassSystem := by decide
 
 end Zulu.Gender

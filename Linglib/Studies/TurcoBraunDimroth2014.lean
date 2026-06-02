@@ -11,8 +11,8 @@ import Linglib.Fragments.Italian.PolarityMarking
 import Linglib.Semantics.Focus.PolarityLevel
 
 /-!
-# @cite{turco-braun-dimroth-2014} — Polarity Marking in Dutch and German
-@cite{turco-braun-dimroth-2014}
+# [turco-braun-dimroth-2014] — Polarity Marking in Dutch and German
+[turco-braun-dimroth-2014]
 
 Cross-linguistic production study comparing how Dutch and German speakers
 mark polarity switches (negation → affirmation) in two discourse contexts:
@@ -33,7 +33,7 @@ polarity contrast (different topic situations) and polarity correction
 
 ## Theoretical contribution
 
-@cite{turco-braun-dimroth-2014} (p. 104, following Blühdorn 2012)
+[turco-braun-dimroth-2014] (p. 104, following Blühdorn 2012)
 argue that VF and *wel* operate at different semantic levels: VF targets
 the *assertion operator* (the element carrying the assertive relation
 between topic and comment), while *wel* targets the *polarity operator*
@@ -368,13 +368,13 @@ theorem strategies_target_different_levels :
 
 /-! ## Cross-Linguistic Extension
 
-@cite{turco-braun-dimroth-2014} compare Dutch and German; the analysis
+[turco-braun-dimroth-2014] compare Dutch and German; the analysis
 naturally extends to other Western European languages with comparable
 polarity-marking inventories: English (emphatic *do*),
 French (*si*), Swedish (*jo*), Spanish (*sí (que)*),
-Italian (*sì che*). See also @cite{holmberg-2016},
-@cite{batllori-hernanz-2013}, @cite{wilder-2013},
-@cite{garassino-jacob-2018}.
+Italian (*sì che*). See also [holmberg-2016],
+[batllori-hernanz-2013], [wilder-2013],
+[garassino-jacob-2018].
 
 We aggregate the seven-language sample and verify the strategy–level,
 correction-only, context-general, and sentence-internality
@@ -406,7 +406,7 @@ theorem strategy_level_partition :
     `environments`. The earlier "correction-only" version of this
     generalization (also asserting `.contrast ∉ e.environments`) was
     falsified by Italian *sì che* and Spanish *sí que* per
-    @cite{garassino-jacob-2018} ex. 17 + @cite{batllori-hernanz-2013}
+    [garassino-jacob-2018] ex. 17 + [batllori-hernanz-2013]
     ex. 4-5 (both license non-contradictory contrast contexts). The
     surviving cross-linguistic generalization is the correction
     direction only. -/

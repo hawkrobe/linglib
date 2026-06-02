@@ -9,10 +9,10 @@ import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Presupposition.TriggerTypology
 
 /-!
-# @cite{wang-2025} Presupposition, Competition, and Coherence
-@cite{heim-1991} @cite{katzir-2007} @cite{wang-2025} @cite{wang-yaxuan-2025}
+# [wang-2025] Presupposition, Competition, and Coherence
+[heim-1991] [katzir-2007] [wang-2025] [wang-yaxuan-2025]
 
-Self-contained study of @cite{wang-2025} "Presupposition, Competition, and
+Self-contained study of [wang-2025] "Presupposition, Competition, and
 Coherence": both the experimental data (three experiments on Mandarin
 presupposition triggers) and the constraint-based formalization (IC ≫ FP ≫ MP)
 that derives Wang's three-way obligatoriness pattern.
@@ -196,7 +196,7 @@ open Semantics.Presupposition.TriggerTypology (AltStructure Obligatoriness)
 open Pragmatics.Expressives (ciLift)
 
 /--
-@cite{wang-2025} pragmatic constraint ranking: IC ≫ FP ≫ MP.
+[wang-2025] pragmatic constraint ranking: IC ≫ FP ≫ MP.
 
 - IC (Internal Coherence): S_p's presupposition is consistent with its
   assertion. Non-violable.
@@ -237,7 +237,7 @@ S_p is internally coherent iff there exists a world where both the presuppositio
 and the assertion hold. IC violation means the presupposition contradicts the
 assertion — the sentence is semantically defective.
 
-@cite{wang-2025}: IC is NON-VIOLABLE.
+[wang-2025]: IC is NON-VIOLABLE.
 -/
 def satisfiesIC (p : PrProp W) : Prop :=
   ∃ w, PrProp.holds w p
@@ -255,7 +255,7 @@ def satisfiesFP (cg : ContextSet W) (p : PrProp W) : Prop :=
 Partial FP satisfaction: the presupposition is compatible with the CommonGround
 but not fully entailed.
 
-@cite{wang-2025} Ch. 2-3: some triggers tolerate partial satisfaction (ye, you, reng)
+[wang-2025] Ch. 2-3: some triggers tolerate partial satisfaction (ye, you, reng)
 while others don't (jiu, zhidao).
 -/
 def partialFP (cg : ContextSet W) (p : PrProp W) : Prop :=
@@ -279,7 +279,7 @@ def mpPrefers (cg : ContextSet W) (sp : PrProp W) : Prop :=
 /--
 Predict obligatoriness from alternative structure and context.
 
-@cite{wang-2025} Ch. 4: The three-way prediction follows from constraint interaction.
+[wang-2025] Ch. 4: The three-way prediction follows from constraint interaction.
 -/
 def predictObligatoriness (altStr : AltStructure) (cgEntailsPresup : Bool)
     (cgPartialPresup : Bool) : Obligatoriness :=
@@ -300,7 +300,7 @@ def predictObligatoriness (altStr : AltStructure) (cgEntailsPresup : Bool)
 /--
 Triggers with deletion alternatives remain felicitous under partial CommonGround.
 
-@cite{wang-2025} Ch. 4: ye/also, you/again, reng/still have deletion alternatives,
+[wang-2025] Ch. 4: ye/also, you/again, reng/still have deletion alternatives,
 so even when the CommonGround only partially entails the presupposition, the
 presuppositional form is not blocked.
 -/
@@ -310,7 +310,7 @@ theorem deletion_alt_partial_resolution :
 /--
 Triggers with no structural alternative are blocked under partial CommonGround.
 
-@cite{wang-2025} Ch. 4: jiu/only has no non-presuppositional alternative, so
+[wang-2025] Ch. 4: jiu/only has no non-presuppositional alternative, so
 when the CommonGround doesn't fully support the presupposition, the presuppositional
 form cannot be used.
 -/
@@ -350,7 +350,7 @@ def icNecessary (p : PrProp W) (h : satisfiesIC p) :
 /--
 The epistemic K operator: speaker believes φ.
 
-@cite{wang-2025} Ch. 4: K is a covert doxastic operator marking the speaker's
+[wang-2025] Ch. 4: K is a covert doxastic operator marking the speaker's
 epistemic stance. It scopes relative to exh_mx:
 - K >> exh_mx: preferred for atomic sentences
 - exh_mx >> K: available for complex sentences
@@ -382,7 +382,7 @@ structure WangInput (W : Type*) where
   ic : Bool
 
 /--
-@cite{wang-2025} felicity check: evaluates constraint satisfaction.
+[wang-2025] felicity check: evaluates constraint satisfaction.
 
 IC violation → odd (non-violable). Otherwise, obligatoriness prediction
 from alternative structure and CommonGround support determines the status.
@@ -399,7 +399,7 @@ def wangCheck (input : WangInput W) : Acceptability :=
 /--
 IC violation always yields oddness, regardless of CommonGround support and alternative structure.
 
-@cite{wang-2025}: IC is the only non-violable constraint. A sentence whose
+[wang-2025]: IC is the only non-violable constraint. A sentence whose
 presupposition contradicts its assertion is always infelicitous, no matter
 what the CommonGround says or what alternatives exist.
 -/

@@ -1,7 +1,7 @@
 /-
 # Dynamic Semantics Translation Layer
 
-Unifies PLA (@cite{dekker-2012}) and Core (Muskens-style) infrastructures.
+Unifies PLA ([dekker-2012]) and Core (Muskens-style) infrastructures.
 
 ## The Problem
 
@@ -118,7 +118,7 @@ def CCP.toPLACCP {E : Type*} (φ : CCP (Possibility Unit E)) : PLACCP E :=
 
 /-!
 ## Why This Works
-@cite{muskens-1996}
+[muskens-1996]
 
 The embedding `PLAPoss.toCore` is injective: different PLA possibilities
 map to different Core possibilities.
@@ -132,9 +132,9 @@ For Unit-world states, this gives an isomorphism between PLA and Core:
   PLAInfoState E ≃ InfoState Unit E
 ```
 
-This is the formal content of @cite{muskens-1996}'s claim that DPL embeds
+This is the formal content of [muskens-1996]'s claim that DPL embeds
 into CDRT: the "worldless" setting is just the W = Unit case.
-The PLA embedding follows analogously via @cite{dekker-2012}'s elaboration.
+The PLA embedding follows analogously via [dekker-2012]'s elaboration.
 
 ## Bilateral Extension
 

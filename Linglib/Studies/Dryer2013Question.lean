@@ -8,7 +8,7 @@ import Linglib.Fragments.Mandarin.Questions
 
 /-!
 # Dryer (2013): WALS chapters on question formation (92A, 93A, 116A)
-@cite{dryer-2013-wals} @cite{wals-2013}
+[dryer-2013-wals] [wals-2013]
 
 WALS chapters by Matthew S. Dryer covering question typology:
 

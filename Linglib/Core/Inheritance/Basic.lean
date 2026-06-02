@@ -5,7 +5,7 @@ import Linglib.Core.Relation.ReflTransGen
 /-!
 # Inheritance Networks — Basic Types and Taxonomy
 
-@cite{hudson-2010}
+[hudson-2010]
 
 Hudson's Word Grammar organizes all linguistic knowledge as networks of nodes
 connected by labeled directed links. Properties are not key-value pairs attached
@@ -16,7 +16,7 @@ down the taxonomy by default inheritance.
 ## Hudson's six primitive relations (Ch 3 summary box, p. 68)
 
 `isA`, `argument`, `value`, `or` (choice), `quantity`, `identity` —
-listed verbatim in @cite{hudson-2010}'s Ch 3 summary box on p. 68 under
+listed verbatim in [hudson-2010]'s Ch 3 summary box on p. 68 under
 "Links between concepts are therefore of two types: primitive relations /
 conceptual relations".
 
@@ -52,7 +52,7 @@ namespace Core.Inheritance
 -- Links
 -- ============================================================================
 
-/-- Distinguished link types in a WG network @cite{hudson-2010} §3.2.
+/-- Distinguished link types in a WG network [hudson-2010] §3.2.
 `isA` and `or` are separated from general property links because the
 inheritance algorithm must traverse `isA` links and choice-set resolution
 uses `or` links. -/

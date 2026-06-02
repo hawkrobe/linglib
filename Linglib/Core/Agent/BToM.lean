@@ -3,8 +3,8 @@ import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Tactic.Ring
 
 /-!
-# Bayesian Theory of Mind (BToM) @cite{baker-jara-ettinger-saxe-tenenbaum-2017}
-@cite{clark-1996} @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023} @cite{kratzer-2006} @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
+# Bayesian Theory of Mind (BToM) [baker-jara-ettinger-saxe-tenenbaum-2017]
+[clark-1996] [houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023] [kratzer-2006] [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025]
 
 Domain-general cognitive architecture for action explanation: how observers
 explain agents' behavior by jointly inferring mental states, shared states,
@@ -45,7 +45,7 @@ all three categories via Bayesian inversion:
 Note that `P(d | w)` is world-conditioned: in many domains, the prior
 distribution over desires depends on the world state. In RSA, this corresponds
 to `latentPrior(w, l)` — the distribution over speaker latent states may
-depend on the true world (e.g., observation probability in @cite{goodman-stuhlmuller-2013}).
+depend on the true world (e.g., observation probability in [goodman-stuhlmuller-2013]).
 
 ## Causal Structure
 
@@ -53,7 +53,7 @@ The perception chain `W → P → B` is one specific causal architecture —
 it decomposes world-to-belief inference into observation then updating.
 Other architectures are possible (direct world-to-belief, joint
 perception-belief formation, belief from memory + percept). The current
-structure follows @cite{baker-jara-ettinger-saxe-tenenbaum-2017} and is sufficient for RSA grounding,
+structure follows [baker-jara-ettinger-saxe-tenenbaum-2017] and is sufficient for RSA grounding,
 where the chain collapses to identity (perfect perception and knowledge).
 
 ## Limitations

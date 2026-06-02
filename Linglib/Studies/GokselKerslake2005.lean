@@ -3,9 +3,9 @@ import Linglib.Fragments.Turkish.TAM
 
 /-!
 # Göksel & Kerslake 2005: Turkish Evidential TAM
-@cite{goksel-kerslake-2005} @cite{cumming-2026}
+[goksel-kerslake-2005] [cumming-2026]
 
-Bridge between Turkish TAM data and @cite{cumming-2026}'s (S, A, T) evidential
+Bridge between Turkish TAM data and [cumming-2026]'s (S, A, T) evidential
 framework. The key prediction: Turkish -DI and -mIş differ in their
 **evidential perspective constraint** (EPCondition), not primarily in their
 temporal (UPCondition) constraint.

@@ -2,7 +2,7 @@ import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Aymara Evidentiality
-@cite{aikhenvald-2004}
+[aikhenvald-2004]
 
 Three-or-more system: direct, reportative, non-personal/inferential. Andean
 areal feature shared with Quechua. WALS Ch 77 has no entry; fallback fires.

@@ -3,7 +3,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Pragmatic Halo and Precision Modes
-@cite{krifka-2007} @cite{lasersohn-1999} @cite{woodin-etal-2023} @cite{kao-etal-2014-hyperbole}
+[krifka-2007] [lasersohn-1999] [woodin-etal-2023] [kao-etal-2014-hyperbole]
 
 Rounding semantics for numeral imprecision.
 Round numbers (100, 1000) are interpreted imprecisely; sharp numbers (103, 1001)
@@ -46,7 +46,7 @@ def matchesPrecision (mode : PrecisionMode) (stated actual : ℚ) (base : ℚ :=
   projectPrecision mode stated base == projectPrecision mode actual base
 
 -- ════════════════════════════════════════════════════
--- Adaptive Pragmatic Halo (@cite{woodin-etal-2023}, @cite{krifka-2007}, @cite{lasersohn-1999})
+-- Adaptive Pragmatic Halo ([woodin-etal-2023], [krifka-2007], [lasersohn-1999])
 -- ════════════════════════════════════════════════════
 
 open Core.Roundness in
@@ -109,11 +109,11 @@ theorem adaptive_base_ge_five_of_div10 (n : Nat) (h10 : n % 10 = 0) :
   · exact absurd ‹_› (Core.Roundness.grade_ne_none_of_score_ge_one n (by omega))
 
 -- ════════════════════════════════════════════════════
--- Speaker-conditioned precision (@cite{beltrama-schwarz-2024})
+-- Speaker-conditioned precision ([beltrama-schwarz-2024])
 -- ════════════════════════════════════════════════════
 
 /-- Speaker-conditioned pragmatic halo width: scales the base `haloWidth`
-    by a tolerance multiplier. @cite{beltrama-schwarz-2024} show that
+    by a tolerance multiplier. [beltrama-schwarz-2024] show that
     numeral precision is jointly determined by roundness AND speaker
     identity — the pragmatic halo is not a property of the number alone
     but of the number-speaker pair. -/

@@ -3,7 +3,7 @@ import Linglib.Discourse.Commitment.Table
 
 /-!
 # Farkas-Bruce Performance Ontology Bridge
-@cite{rudin-2025b} @cite{farkas-bruce-2010}
+[rudin-2025b] [farkas-bruce-2010]
 
 Provides a `PerformanceOntology` instance whose `Commits` and
 `RaisesIssue` are *derived* from Farkas-Bruce discourse-state updates,
@@ -22,7 +22,7 @@ to compute its discourse effect:
 - an interrogative `polarQuestion`s its content (pushes issue, no
   dcS commit)
 - a rising declarative pushes its content as an issue (no dcS commit) —
-  the intermediate prosodic case that drives @cite{rudin-2025b}'s
+  the intermediate prosodic case that drives [rudin-2025b]'s
   empirical engine
 
 `Commits` and `RaisesIssue` are then F&B-grounded predicates: a
@@ -102,7 +102,7 @@ variable {W : Type*}
     - **non-rising declarative**: `assert` (commits + pushes issue)
     - **interrogative**: `polarQuestion` (pushes issue, no commit)
     - **rising declarative**: pushes issue without commit
-      (the intermediate prosodic case @cite{rudin-2025b} relies on) -/
+      (the intermediate prosodic case [rudin-2025b] relies on) -/
 def update (u : FBPerformance W) (s : State W) : State W :=
   match u.rising, u.form with
   | true, _ =>

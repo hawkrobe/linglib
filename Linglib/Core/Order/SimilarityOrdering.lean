@@ -6,19 +6,19 @@ import Linglib.Core.Order.Normality
 /-!
 # Similarity orderings
 
-@cite{lewis-1973} @cite{stalnaker-1968}
+[lewis-1973] [stalnaker-1968]
 
 A `SimilarityOrdering W` equips a type of worlds with a *centered* ternary
 relation `closer w₀ w₁ w₂` ("`w₁` is at least as close to `w₀` as `w₂` is")
 that is reflexive and transitive in the second/third arguments at every
 center. This is the order-theoretic substrate of variably-strict
-counterfactuals (@cite{lewis-1973} / @cite{stalnaker-1968}) and of any
+counterfactuals ([lewis-1973] / [stalnaker-1968]) and of any
 "closest-world" semantics — selectional, supervaluation, homogeneity, etc.
 
 The structure lives in `Core.Order` (not `Conditionals`) because it is a
 general-purpose primitive: it is used directly by counterfactual operators
 in `Semantics/Conditionals/`, by alternative-sensitive operators
-(@cite{santorio-2018}), by causal psycholinguistic models in
+([santorio-2018]), by causal psycholinguistic models in
 `Semantics/Causation/`, and by any future "closest match" theory.
 
 ## Key operations
@@ -30,7 +30,7 @@ in `Semantics/Conditionals/`, by alternative-sensitive operators
 - `candidateSelections` — the set of selection-function candidates induced
   by the ordering (bridge to Stalnaker selection)
 - `≤[sim, w₀]` notation: `w₁ ≤[sim, w₀] w₂` reads "`w₁` is at least as
-  similar to `w₀` as `w₂` is" (@cite{lewis-1973}-style notation)
+  similar to `w₀` as `w₂` is" ([lewis-1973]-style notation)
 
 ## Connection to selection functions
 
@@ -95,7 +95,7 @@ def atCenter (sim : SimilarityOrdering W) (w₀ : W) : NormalityOrder W where
 /-! ## Centering -/
 
 /-- A **strongly centered** similarity ordering: every world is *strictly*
-    closest to itself. This is the centering axiom of @cite{lewis-1973}
+    closest to itself. This is the centering axiom of [lewis-1973]
     that licenses the inference from variably-strict to material truth. -/
 def isCentered (sim : SimilarityOrdering W) : Prop :=
   ∀ w w' : W, w ≠ w' → sim.closer w w w' ∧ ¬sim.closer w w' w
@@ -103,7 +103,7 @@ def isCentered (sim : SimilarityOrdering W) : Prop :=
 /-! ## Closest worlds -/
 
 /-- The closest `A`-worlds to `w₀`: the minimal elements of `A` under the
-    similarity preorder centered at `w₀`. In @cite{lewis-1973}'s notation,
+    similarity preorder centered at `w₀`. In [lewis-1973]'s notation,
     `min_{≤_w}(A) = {w' ∈ A : ¬∃ w'' ∈ A. w'' <_w w'}`. -/
 def closestWorlds [DecidableEq W] (sim : SimilarityOrdering W) (w₀ : W)
     (A : Finset W) : Finset W :=
@@ -132,7 +132,7 @@ theorem mem_closestWorlds [DecidableEq W] (sim : SimilarityOrdering W)
     competitors can only preserve, never lose, "closest" status.)
 
     This is the structural lemma underlying the
-    @cite{ciardelli-zhang-champollion-2018} §1.2 argument that any
+    [ciardelli-zhang-champollion-2018] §1.2 argument that any
     minimal-change semantics inherits the switches falsification: at the
     actual world, the closest worlds in `A̅ ∪ B̅` decompose into closest
     worlds in `A̅` or `B̅` individually. -/
@@ -146,7 +146,7 @@ theorem mem_closestWorlds_of_subset [DecidableEq W]
 
 /-- **Limit Assumption** (closest-world existence): every non-empty
     `Finset` has a closest world under the centered preorder.
-    Discharges the @cite{lewis-1973} "Limit Assumption" automatically
+    Discharges the [lewis-1973] "Limit Assumption" automatically
     on finite types — corresponds to mathlib's
     `Finite.exists_minimal` once the centered relation is exposed
     as a `Preorder`.
@@ -192,9 +192,9 @@ def candidateSelections {W : Type*} (sim : SimilarityOrdering W)
   let pWorlds := A ∩ domain
   { w' ∈ pWorlds | ∀ w'' ∈ pWorlds, sim.closer w w' w'' }
 
-/-- **Comparative-closeness notation** (@cite{lewis-1973}): `w₁ ≤[sim, w₀] w₂`
+/-- **Comparative-closeness notation** ([lewis-1973]): `w₁ ≤[sim, w₀] w₂`
     reads "`w₁` is at least as similar to `w₀` as `w₂` is". A direct
-    @cite{lewis-1973}-style alias for `sim.closer w₀ w₁ w₂`. -/
+    [lewis-1973]-style alias for `sim.closer w₀ w₁ w₂`. -/
 notation:50 w₁ " ≤[" sim "," w₀ "] " w₂ =>
   SimilarityOrdering.closer sim w₀ w₁ w₂
 

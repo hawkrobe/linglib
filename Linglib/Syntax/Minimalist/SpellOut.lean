@@ -35,7 +35,7 @@ At LF, all –Interpretable features must be checked for the derivation to
 converge (`Core.Checking.convergesAtLF`). See `Core.Economy.Admissibility`
 for the full admissibility conditions.
 
-@cite{chomsky-1995} @cite{heim-kratzer-1998}
+[chomsky-1995] [heim-kratzer-1998]
 -/
 
 import Linglib.Syntax.Minimalist.Basic

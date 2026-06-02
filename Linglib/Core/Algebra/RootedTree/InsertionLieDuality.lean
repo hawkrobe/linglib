@@ -10,7 +10,7 @@ set_option autoImplicit false
 
 /-!
 # Insertion Lie algebra ≅ primitives in the dual Hopf algebra (MCB Lemma 1.7.3)
-@cite{marcolli-chomsky-berwick-2025}
+[marcolli-chomsky-berwick-2025]
 
 The architectural payoff of Phase E.3 (R.5–R.9): the GL/CK duality
 framework is designed precisely to make MCB Lemma 1.7.3 expressible.

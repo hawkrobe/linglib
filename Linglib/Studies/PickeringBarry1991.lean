@@ -3,7 +3,7 @@ import Linglib.Phenomena.WordOrder.CrossSerial
 
 /-!
 # Pickering & Barry (1991)
-@cite{pickering-barry-1991}
+[pickering-barry-1991]
 
 Sentence Processing without Empty Categories.
 *Language and Cognitive Processes*, 6(3), 229–259.
@@ -62,7 +62,7 @@ Two concurrent associations can be nested (abba: the second pair is
 enclosed within the first) or disjoint (aabb: each pair completed
 before the next begins).
 
-This is the central formal object of @cite{pickering-barry-1991}. -/
+This is the central formal object of [pickering-barry-1991]. -/
 inductive NestingPattern where
   | nested   -- abba: hard (must hold unfinished association in memory)
   | disjoint -- aabb: easy (each association completed sequentially)
@@ -285,7 +285,7 @@ consistent with the nested dependency pattern in German verb clusters
 relatives and verb clusters — exhibit nesting because the verb that
 closes each dependency comes in reverse order.
 
-@cite{bach-brown-marslen-wilson-1986} confirms the processing prediction:
+[bach-brown-marslen-wilson-1986] confirms the processing prediction:
 German nested constructions are hard, like their Dutch cross-serial
 counterparts (though for different structural reasons). -/
 theorem german_nested_consistent :

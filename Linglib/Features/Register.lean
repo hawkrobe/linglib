@@ -2,7 +2,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Register
-@cite{fiske-cuddy-glick-xu-2002}
+[fiske-cuddy-glick-xu-2002]
 
 Sociolinguistic register as a lexical feature. Register encodes the
 formality level of a linguistic form — whether it belongs to formal
@@ -12,7 +12,7 @@ formality level of a linguistic form — whether it belongs to formal
 Register is currently stipulated as a lexical property of individual
 forms. A future direction is to derive register effects from pragmatic
 factors (e.g., RSA models where formality emerges from competing social
-goals, as in @cite{yoon-etal-2020} for politeness).
+goals, as in [yoon-etal-2020] for politeness).
 
 ## Connections
 
@@ -89,7 +89,7 @@ instance (a b : Level) : Decidable (areVariants a b) :=
 
     Concord phenomena carry social meaning along a competence/solidarity
     axis (drawing on the competence/warmth dichotomy in social cognition;
-    Fiske, Cuddy, @cite{fiske-cuddy-glick-xu-2002}).
+    Fiske, Cuddy, [fiske-cuddy-glick-xu-2002]).
 
     * `competence`: standard dialect, educated, formal, high-SES, confident.
     * `solidarity`: non-standard, friendly, warm, in-group, casual. -/

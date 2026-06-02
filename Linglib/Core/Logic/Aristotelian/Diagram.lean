@@ -4,7 +4,7 @@ import Mathlib.Data.Fintype.Basic
 /-!
 # Aristotelian diagrams
 
-Per @cite{demey-smessaert-2024} (Definition 1). An Aristotelian diagram is a
+Per [demey-smessaert-2024] (Definition 1). An Aristotelian diagram is a
 fragment in a Boolean algebra: a finite indexed family `φ : ι → α` together with
 the matrix of Aristotelian relations between its members. The classical square
 (`Square.lean`) is the case `ι = Fin 4`.
@@ -18,7 +18,7 @@ namespace Aristotelian
 
 variable {α : Type*} [BooleanAlgebra α]
 
-/-- An Aristotelian diagram (@cite{demey-smessaert-2024}, Definition 1): a finite
+/-- An Aristotelian diagram ([demey-smessaert-2024], Definition 1): a finite
 indexed family `φ : ι → α` with a relation matrix, where `relation_correct`
 asserts the labels match the actual Aristotelian relations. `relation` is
 convenience data, determined by `φ`. -/

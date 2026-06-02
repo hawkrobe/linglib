@@ -2,14 +2,14 @@ import Mathlib.Order.Nat
 
 /-!
 # Features.Prosody
-@cite{pierrehumbert-1980} @cite{beckman-pierrehumbert-1986}
+[pierrehumbert-1980] [beckman-pierrehumbert-1986]
 
 Theory-neutral prosodic types: pitch accents, phrase accents, boundary
 tones, and the prosodic hierarchy, following the autosegmental-metrical
-(AM) framework established by @cite{pierrehumbert-1980} for English and
-extended cross-linguistically by @cite{beckman-pierrehumbert-1986}.
+(AM) framework established by [pierrehumbert-1980] for English and
+extended cross-linguistically by [beckman-pierrehumbert-1986].
 
-@cite{steedman-2000} uses these types to connect prosodic structure to
+[steedman-2000] uses these types to connect prosodic structure to
 CCG derivations and information structure.
 
 ## Overview
@@ -29,22 +29,22 @@ namespace Features.Prosody
 -- ============================================================================
 
 /--
-Pitch accent types (@cite{pierrehumbert-1980}, ToBI conventions).
+Pitch accent types ([pierrehumbert-1980], ToBI conventions).
 
 The full inventory of English pitch accents. A starred tone (*) is
 phonologically linked to the stressed syllable; an unstarred tone in a
 bitonal accent precedes or follows it at some given space in time.
 
-@cite{pierrehumbert-1980} identified seven possible pitch accent shapes;
+[pierrehumbert-1980] identified seven possible pitch accent shapes;
 the H*+H accent was eliminated as a possible pattern, leaving six
-(@cite{beckman-pierrehumbert-1986} §2.1).
+([beckman-pierrehumbert-1986] §2.1).
 
 In Japanese, by contrast, the single possible pitch accent shape is a
 lexically linked H, analyzed as H*+L. The accent *location* is lexically
 distinctive, but the *shape* is fixed. English uses the full inventory
 to contrast different intonational meanings (e.g., declarative vs.
 surprise-redundancy vs. impatient reassertion on the same word *orange*
-in *an orange ballgown*; @cite{beckman-pierrehumbert-1986} Fig. 1).
+in *an orange ballgown*; [beckman-pierrehumbert-1986] Fig. 1).
 -/
 inductive PitchAccent where
   | H_star        -- H*: default declarative accent
@@ -58,7 +58,7 @@ inductive PitchAccent where
 
 /-- Is this a bitonal accent (two tones)?
     Bitonal accents trigger catathesis
-    (@cite{beckman-pierrehumbert-1986} §3.2). -/
+    ([beckman-pierrehumbert-1986] §3.2). -/
 def PitchAccent.isBitonal : PitchAccent → Bool
   | .H_star_plus_L | .H_plus_L_star | .L_star_plus_H | .L_plus_H_star => true
   | _ => false
@@ -70,8 +70,8 @@ def PitchAccent.isBitonal : PitchAccent → Bool
 /--
 Phrase accent: terminal tone of the intermediate phrase.
 
-@cite{beckman-pierrehumbert-1986} §4.2–4.3 decompose what
-@cite{pierrehumbert-1980} called the "phrase accent" into a tone that
+[beckman-pierrehumbert-1986] §4.2–4.3 decompose what
+[pierrehumbert-1980] called the "phrase accent" into a tone that
 spreads from the last pitch accent to the edge of the intermediate
 phrase. The phrase accent is H or L, independent of the boundary tone.
 
@@ -87,14 +87,14 @@ inductive PhraseAccent where
 /--
 Boundary tone: terminal tone of the intonation phrase.
 
-@cite{beckman-pierrehumbert-1986} distinguish the boundary tone (edge
+[beckman-pierrehumbert-1986] distinguish the boundary tone (edge
 of the intonation phrase) from the phrase accent (edge of the intermediate
 phrase). Together, the phrase accent and boundary tone produce four
 terminal configurations: LL%, LH%, HL%, HH%.
 
 In Japanese, the boundary tone at an intonation phrase edge is always L
 except in yes/no questions, where H is optional
-(@cite{beckman-pierrehumbert-1986} §4.2).
+([beckman-pierrehumbert-1986] §4.2).
 -/
 inductive BoundaryTone where
   | L_pct  -- L%: low boundary (falling, finality)
@@ -102,7 +102,7 @@ inductive BoundaryTone where
   deriving Repr, DecidableEq, Inhabited
 
 /-- Full terminal contour of an intonation phrase: phrase accent +
-    boundary tone. @cite{pierrehumbert-1980}: four possible combinations. -/
+    boundary tone. [pierrehumbert-1980]: four possible combinations. -/
 structure TerminalContour where
   phraseAccent : PhraseAccent
   boundaryTone : BoundaryTone
@@ -128,17 +128,17 @@ def TerminalContour.calling : TerminalContour := ⟨.H, .L_pct⟩
 
     σ < f < ω < AP < φ < ι
 
-    @cite{beckman-pierrehumbert-1986} establish the accentual phrase (AP)
+    [beckman-pierrehumbert-1986] establish the accentual phrase (AP)
     as the domain of pitch accent distribution (at most one accent per AP,
     §2.2) and the phonological phrase (φ, equivalent to the intermediate
     phrase / ip in ToBI notation) as the domain of catathesis (§3–4).
 
-    Used by @cite{kratzer-selkirk-2020} spellout constraints. -/
+    Used by [kratzer-selkirk-2020] spellout constraints. -/
 inductive ProsodicLevel where
   | σ   -- syllable
   | f   -- foot
   | ω   -- prosodic word
-  | AP  -- accentual phrase (@cite{beckman-pierrehumbert-1986})
+  | AP  -- accentual phrase ([beckman-pierrehumbert-1986])
   | φ   -- phonological phrase / intermediate phrase (ip)
   | ι   -- intonational phrase
   deriving DecidableEq, Repr
@@ -165,7 +165,7 @@ structure ProsodicConstituent where
 
 /--
 How pitch accents relate to the lexicon
-(@cite{beckman-pierrehumbert-1986} §2.5).
+([beckman-pierrehumbert-1986] §2.5).
 
 - `lexical`: accent location specified in lexicon, shape fixed.
   Japanese: H*+L at lexically specified mora. Swedish: accent 1 vs 2.
@@ -186,7 +186,7 @@ inductive AccentSpecification where
 
 /--
 How a morpheme interacts with the prosodic specification of its base.
-@cite{kiparsky-halle-1977} @cite{rolle-2018}
+[kiparsky-halle-1977] [rolle-2018]
 
 Orthogonal to `AccentSpecification`, which classifies word-level accent
 determination (how is the accent *location* decided?). `ProsodicDominance`
@@ -194,20 +194,20 @@ classifies morpheme-level prosodic *interaction* (does this morpheme
 override the base's accent/tone, or respect it?).
 
 The dominant/recessive distinction originates in the accentual morpheme
-classes of @cite{kiparsky-halle-1977} (deaccenting vs non-deaccenting
+classes of [kiparsky-halle-1977] (deaccenting vs non-deaccenting
 suffixes in IE) and was generalized to tonal morphology by
-@cite{rolle-2018} as the GT dominance typology.
+[rolle-2018] as the GT dominance typology.
 
 - `dominant`: overrides the prosodic specification of the base.
-  Accent: Japanese *-teki* removes stem accent (@cite{kawahara-2015}).
+  Accent: Japanese *-teki* removes stem accent ([kawahara-2015]).
   Tone: Mwaghavul verbalisers replace base melody
-  (@cite{akinbo-fwangwar-2026}).
+  ([akinbo-fwangwar-2026]).
 - `recessive`: applies only when the base is prosodically unmarked.
   Accent: Japanese *-si* 'Mr.' preserves stem accent.
   Tone: Giphende floating tones dock only to unvalued TBUs.
 - `neutral`: concatenates without prosodic interaction; the general
   phonological grammar determines the output.
-  Tone: Hausa referential *-ⁿn* (@cite{rolle-2018}).
+  Tone: Hausa referential *-ⁿn* ([rolle-2018]).
 -/
 inductive ProsodicDominance where
   | dominant   -- overrides base prosody
@@ -235,7 +235,7 @@ def ProsodicDominance.combineAccent
   | .recessive => baseAccent
   | .neutral   => baseAccent
 
-/-- **Transparadigmatic uniformity** (@cite{rolle-2018}): dominant
+/-- **Transparadigmatic uniformity** ([rolle-2018]): dominant
     morphemes produce the same output regardless of whether the base
     is accented or unaccented. This is the defining property of
     dominance — it neutralizes the base contrast. -/
@@ -253,11 +253,11 @@ theorem ProsodicDominance.recessive_preserves (a : Option Nat) :
 -- ============================================================================
 
 /--
-Fine-grained affix accent classification (@cite{kawahara-2015} §6).
+Fine-grained affix accent classification ([kawahara-2015] §6).
 
 The 3-way `ProsodicDominance` (dominant/recessive/neutral) captures only
-one axis of morpheme–accent interaction. @cite{kawahara-2015}, building
-on @cite{poser-1984} and @cite{vance-1987}, identifies eight distinct
+one axis of morpheme–accent interaction. [kawahara-2015], building
+on [poser-1984] and [vance-1987], identifies eight distinct
 affix accent behaviors in Japanese, differing in whether the affix
 carries its own accent, whether it deletes or preserves root accent,
 and whether it inserts a new accent at a particular position.

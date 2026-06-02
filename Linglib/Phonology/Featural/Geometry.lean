@@ -1,15 +1,15 @@
 import Linglib.Phonology.Featural.Features
 
 /-!
-# Feature Geometry @cite{clements-1985} @cite{sagey-1986}
+# Feature Geometry [clements-1985] [sagey-1986]
 
 Hierarchical organization of phonological features following the standard
 feature geometry model. The tree synthesizes three sources:
 
-- **@cite{clements-1985}**: root, laryngeal, supralaryngeal, and place nodes
-- **@cite{sagey-1986}**: articulator sub-nodes under Place (labial, coronal, dorsal);
+- **[clements-1985]**: root, laryngeal, supralaryngeal, and place nodes
+- **[sagey-1986]**: articulator sub-nodes under Place (labial, coronal, dorsal);
   soft palate node under Supralaryngeal
-- **@cite{hayes-2009}**: complete 26-feature inventory mapped to geometric nodes
+- **[hayes-2009]**: complete 26-feature inventory mapped to geometric nodes
 
     Root [±syll, ±cons, ±son, ±approx, ±del.rel., ±tap, ±trill]
     ├── Laryngeal [±voice, ±s.g., ±c.g.]
@@ -34,13 +34,13 @@ namespace Phonology.FeatureGeometry
 /-- Class nodes in the feature geometry tree. -/
 inductive GeomNode where
   | root           -- Root node (dominates everything)
-  | laryngeal      -- Laryngeal node (@cite{clements-1985})
-  | supralaryngeal -- Supralaryngeal node (@cite{clements-1985})
-  | softPalate     -- Soft palate node (@cite{sagey-1986})
-  | place          -- Place node (@cite{clements-1985})
-  | labial         -- Labial articulator (@cite{sagey-1986})
-  | coronal        -- Coronal articulator (@cite{sagey-1986})
-  | dorsal         -- Dorsal articulator (@cite{sagey-1986})
+  | laryngeal      -- Laryngeal node ([clements-1985])
+  | supralaryngeal -- Supralaryngeal node ([clements-1985])
+  | softPalate     -- Soft palate node ([sagey-1986])
+  | place          -- Place node ([clements-1985])
+  | labial         -- Labial articulator ([sagey-1986])
+  | coronal        -- Coronal articulator ([sagey-1986])
+  | dorsal         -- Dorsal articulator ([sagey-1986])
   deriving DecidableEq, Repr
 
 -- ============================================================================
@@ -48,7 +48,7 @@ inductive GeomNode where
 -- ============================================================================
 
 /-- Parent of each node in the geometry tree. The supralaryngeal node
-    (@cite{clements-1985}, diagram (4)) mediates between root and place. -/
+    ([clements-1985], diagram (4)) mediates between root and place. -/
 def GeomNode.parent : GeomNode → Option GeomNode
   | .root           => none
   | .laryngeal      => some .root
@@ -161,7 +161,7 @@ theorem labial_depth : GeomNode.labial.depth = 3 := rfl
 theorem coronal_depth : GeomNode.coronal.depth = 3 := rfl
 theorem dorsal_depth : GeomNode.dorsal.depth = 3 := rfl
 
--- Natural class counts (@cite{hayes-2009} complete inventory: 26 features)
+-- Natural class counts ([hayes-2009] complete inventory: 26 features)
 
 theorem root_features_count : GeomNode.root.features.length = 26 := by native_decide
 theorem laryngeal_features_count : GeomNode.laryngeal.features.length = 3 := by native_decide

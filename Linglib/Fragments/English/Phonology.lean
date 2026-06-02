@@ -17,7 +17,7 @@ Core inventory for demo alternations: /p t k b d m n ŋ s w r æ ɪ ə/.
 1. **Preglottalization** (Hayes p.125): `[-cont, -voice] → [+c.g.] / __]word`
 2. **Postnasal /t/ Deletion** (Hayes p.133): `[-cont, +cor, +ant, -voice] → ∅ / [+nasal] __ [+syll]`
 
-@cite{hayes-2009}
+[hayes-2009]
 -/
 
 open Phonology

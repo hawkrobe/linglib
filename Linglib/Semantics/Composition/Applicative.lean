@@ -4,10 +4,10 @@ import Linglib.Core.Assignment
 
 /-!
 # Applicative Functors in Natural Language Semantics
-@cite{charlow-2018} @cite{mcbride-paterson-2008}
+[charlow-2018] [mcbride-paterson-2008]
 
 Three applicative functors — Reader, Set, and Cont — recur across
-natural language semantics. @cite{charlow-2018} shows they share a
+natural language semantics. [charlow-2018] shows they share a
 common algebraic structure (a type constructor `F` with `ρ :: a → F a`
 and `⊛ :: F(a → b) → F a → F b` satisfying four laws), and that this
 structure is **closed under composition**.
@@ -22,7 +22,7 @@ structure is **closed under composition**.
 
 1. Reader satisfies the four applicative functor laws (§3.3)
 2. Composed applicatives F ∘ G are applicative (§3.3, all 4 laws)
-3. Variable-free semantics (@cite{jacobson-1999}) = Reader Entity (§6)
+3. Variable-free semantics ([jacobson-1999]) = Reader Entity (§6)
 4. Set applicative satisfies all 4 laws; the Hamblin functional
    `(W → Bool) → Bool` (Rooth focus values, Karttunen-style answers)
    = `Cont Bool W` definitionally
@@ -46,7 +46,7 @@ The Reader applicative for environment type `E`:
 - `m ⊛ n := λe. m e (n e)` (evaluate both at the same environment)
 
 This is the foundation of assignment-sensitive composition
-(@cite{charlow-2018} §3.1–3.2). The four applicative functor laws
+([charlow-2018] §3.1–3.2). The four applicative functor laws
 hold definitionally. -/
 
 section ReaderApplicative
@@ -81,7 +81,7 @@ end ReaderApplicative
 
 /-! ### Composed applicative functors
 
-@cite{charlow-2018} §3.3, Fig 5: Given two applicative type constructors
+[charlow-2018] §3.3, Fig 5: Given two applicative type constructors
 F and G, their composition F ∘ G is applicative. For Reader E₁ ∘ Reader E₂:
 
     ρ_{F∘G}(x) = λe₁ λe₂. x
@@ -131,7 +131,7 @@ end ComposedApplicatives
 
 /-! ### Variable-free semantics as Reader Entity
 
-@cite{charlow-2018} §6: @cite{jacobson-1999}'s variable-free semantics
+[charlow-2018] §6: [jacobson-1999]'s variable-free semantics
 treats pronouns as identity functions `⟦she⟧ := λx. x` (type `e → e`).
 The composition apparatus is structurally identical to the assignment-
 sensitive version — `readerPure` and `readerAp` — with `Entity` as the
@@ -162,7 +162,7 @@ theorem vf_she_saw_her_single (saw : E → E → Bool) :
 /-- "She saw her" with composed applicative (two entity parameters):
     the two pronouns resolve independently, yielding `λx λy. saw y x`.
     Assignment-dependence "springs organically into being" from
-    uncurrying (@cite{charlow-2018} §6). -/
+    uncurrying ([charlow-2018] §6). -/
 theorem vf_she_saw_her_composed (saw : E → E → Bool) :
     composedAp (composedAp (composedPure saw)
       (fun _ (e₂ : E) => e₂)) (fun (e₁ : E) _ => e₁) =
@@ -176,8 +176,8 @@ end VariableFree
 
 /-! ### Set applicative
 
-@cite{charlow-2018} §3.3 eqs (14)–(15): Alternative semantics of the
-@cite{hamblin-1973b} variety uses an applicative functor for sets:
+[charlow-2018] §3.3 eqs (14)–(15): Alternative semantics of the
+[hamblin-1973b] variety uses an applicative functor for sets:
 
     S a := a → Prop
     ρ x := {x}                          = `setPure`
@@ -243,7 +243,7 @@ end SetApplicative
 
 /-! ### Continuation applicative
 
-@cite{charlow-2018} §3.3 eqs (16)–(17): scope-taking expressions use
+[charlow-2018] §3.3 eqs (16)–(17): scope-taking expressions use
 the continuation applicative `Cᵣ a := (a → r) → r`. The operations
 are definitionally `Cont.pure` and the derived `<*>` from
 `Core/Continuation.lean`. -/
@@ -271,7 +271,7 @@ end ContinuationApplicative
 
 /-! ### Typed assignment family Gᵣ
 
-@cite{charlow-2018} §5.1: type-homogeneous assignments `gᵣ := ℕ → r`
+[charlow-2018] §5.1: type-homogeneous assignments `gᵣ := ℕ → r`
 avoid consistency problems of a single polymorphic assignment type.
 Each type `r` gets its own assignment type:
 - `gₑ`: maps indices to individuals

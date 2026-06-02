@@ -203,7 +203,7 @@ end Modals
 
 /-!
 ### Numerals and Horn Scales
-@cite{horn-1972} @cite{kennedy-2015}
+[horn-1972] [kennedy-2015]
 
 Numerals are NOT represented as a `HornScale` here because:
 
@@ -229,7 +229,7 @@ namespace Number
 
 /-!
 ### Singular/Plural as a Horn Scale
-@cite{sauerland-2003} @cite{spector-2007} @cite{tieu-etal-2020}
+[sauerland-2003] [spector-2007] [tieu-etal-2020]
 
 The singular and plural morphemes form a Horn scale ⟨singular, plural⟩
 where singular ("a giraffe") is the stronger alternative to plural ("giraffes").

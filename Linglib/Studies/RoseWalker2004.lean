@@ -7,12 +7,12 @@ import Linglib.Phonology.Subregular.ForbidPairs
 import Linglib.Core.Computability.Subregular.Multitier
 
 /-!
-# Rose & Walker (2004) @cite{rose-walker-2004}
+# Rose & Walker (2004) [rose-walker-2004]
 
 A Typology of Consonant Agreement as Correspondence. *Language* 80(3):
 475–531.
 
-@cite{rose-walker-2004} present a typology of long-distance consonant
+[rose-walker-2004] present a typology of long-distance consonant
 agreement (LDCA) — covering nasal, laryngeal, liquid, coronal, and
 dorsal harmonies — and analyze it within Optimality Theory using a
 correspondence-theoretic apparatus: pairs of similar consonants in the
@@ -30,8 +30,8 @@ constraint architecture in OT and lives outside the subregular layer.
 What we formalize here is the *surface stringset* of one of their core
 case studies — Kikongo nasal harmony, the paper's leading example —
 as a tier-based strictly 2-local language, following the
-Heinz/Rogers/Hansson subregular tradition (@cite{hansson-2010},
-@cite{mcmullin-2016}).
+Heinz/Rogers/Hansson subregular tradition ([hansson-2010],
+[mcmullin-2016]).
 
 The framing is: Rose & Walker's correspondence analysis *derives* the
 surface generalization; the TSL_2 description *characterizes* the
@@ -43,7 +43,7 @@ The function-level subregular substrate at
 `Core/Computability/Subregular/Function/` provides a separate axis of
 classification for the *map* (UR → SR) rather than the stringset; LDCA
 maps are typically Tier-Subsequential (specifically Right-Tier-Subsequential
-per @cite{hansson-2010}'s anticipatory directionality argument). We
+per [hansson-2010]'s anticipatory directionality argument). We
 keep the language-level TSL_2 statement here because the directionality
 argument is upstream of the surface filter formalised in this file.
 
@@ -76,7 +76,7 @@ Things this formalization is silent on, by design:
 
 ## Kikongo nasal harmony — the paper's leading case
 
-@cite{rose-walker-2004} open with Kikongo (Bantu): a voiced oral stop
+[rose-walker-2004] open with Kikongo (Bantu): a voiced oral stop
 in the suffix is realized as a nasal stop when the stem contains a
 preceding nasal consonant. For example, the suffix `-idi` alternates
 to `-ini` after a nasal. Equivalently, the surface phonotactic is:
@@ -115,7 +115,7 @@ inductive KSeg where
 /-- The harmonizing-class tier predicate: nasal consonants and voiced
 oral stops are on-tier. Neutral consonants and vowels are transparent
 (off-tier). This corresponds to the long-distance reading of the
-@cite{rose-walker-2004} typology — only the segments participating in
+[rose-walker-2004] typology — only the segments participating in
 the agreement form the relevant locality domain. The tier choice is the
 substantive theoretical commitment (cf. the design-boundary docstring
 on `tierProject` non-monotonicity in `ForbiddenPairs.lean`). -/
@@ -238,7 +238,7 @@ theorem kikongoNasalHarmony_lang_isTSL2 :
 /-- **BTSL_2 corollary** (via `IsTierStrictlyLocal.toIsBTSL` in
 `Core.Computability.Subregular.Multitier`): Kikongo nasal harmony is in
 the multitier closure of strictly local languages, hence consumed by
-the @cite{lambert-2026} BTC framework. -/
+the [lambert-2026] BTC framework. -/
 theorem kikongoNasalHarmony_lang_isBTSL2 : IsBTSL 2 kikongoNasalHarmony.lang :=
   kikongoNasalHarmony_lang_isTSL2.toIsBTSL
 

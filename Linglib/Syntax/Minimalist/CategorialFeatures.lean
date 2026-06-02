@@ -1,17 +1,17 @@
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
-# Categorial Feature Theories: @cite{chomsky-1970} vs. @cite{panagiotidis-2015}
+# Categorial Feature Theories: [chomsky-1970] vs. [panagiotidis-2015]
 
-@cite{panagiotidis-2015} @cite{grimshaw-2005} @cite{chomsky-1970}
+[panagiotidis-2015] [grimshaw-2005] [chomsky-1970]
 
 Two theories of what makes a noun a noun and a verb a verb:
 
-1. **@cite{chomsky-1970}**: [±V, ±N] as arbitrary binary diacritics that cross-classify
-   the four lexical categories. Adopted by @cite{grimshaw-2005} for Extended Projections.
+1. **[chomsky-1970]**: [±V, ±N] as arbitrary binary diacritics that cross-classify
+   the four lexical categories. Adopted by [grimshaw-2005] for Extended Projections.
    Implemented in `CatFeatures`.
 
-2. **@cite{panagiotidis-2015}**: [N] and [V] as substantive, LF-interpretable features:
+2. **[panagiotidis-2015]**: [N] and [V] as substantive, LF-interpretable features:
    - [N] = sortal perspective / referentiality
    - [V] = temporal perspective / eventivity (§4.3)
    On categorizers (v, n, a), these are *interpretable*; on functional heads

@@ -4,7 +4,7 @@ import Linglib.Semantics.Composition.Scope
 import Linglib.Semantics.Quantification.CovertQuantifier
 
 /-!
-# @cite{cohen-2013}: No Quantification without Reinterpretation
+# [cohen-2013]: No Quantification without Reinterpretation
 
 Ariel Cohen, "No Quantification without Reinterpretation." Chapter 13 in
 *Genericity* (ed. Mari, Beyssade, Del Prete), OUP, pp. 334–351.
@@ -29,7 +29,7 @@ properties of generics vs habituals.
 
 ## Core Proposal (§§13.3–13.4)
 
-- **Generics** arise from **Predicate Transfer** (T_g, @cite{nunberg-1995}):
+- **Generics** arise from **Predicate Transfer** (T_g, [nunberg-1995]):
   T_g can apply locally (narrow scope) or globally (wide scope), yielding
   scope ambiguity. But T_g requires the intension of the transferred
   property, so it cannot scope out of opaque contexts like *believe*.
@@ -173,7 +173,7 @@ with two options depending on the level of application:
   = gen_y[stork(y)][∃x(area(x) ∧ have(y,x))] — GEN takes **wide** scope
 
 The kind ∩storks is modeled as `Unit` (a single kind-level entity); instances
-are individual storks. This follows @cite{chierchia-1998}'s ∩ (down) operator,
+are individual storks. This follows [chierchia-1998]'s ∩ (down) operator,
 where `∩storks` denotes the kind, and ∪(∩storks) gives the extension (the
 set of individual storks). Here `instanceOfStork` plays the role of ∪.
 -/
@@ -245,7 +245,7 @@ end GenericScope
 /-! ### From SHIFT Non-Commutativity to γ Locality
 
 Cohen's argument for habitual narrow scope flows through the Partee-Rooth
-SHIFT operator (@cite{partee-rooth-1983}):
+SHIFT operator ([partee-rooth-1983]):
 
 1. `shift_neg_noncommutative` (in `PredicateTransfer.lean`) proves that
    SHIFT does not commute with negation: ¬SHIFT(V) ≠ SHIFT(¬V).

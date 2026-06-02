@@ -2,9 +2,9 @@ import Linglib.Semantics.Tense.Evidential
 
 /-!
 # Bulgarian Evidential Fragment
-@cite{cumming-2026}
+[cumming-2026]
 
-Paradigm entries for Bulgarian tense-evidential morphology from @cite{cumming-2026},
+Paradigm entries for Bulgarian tense-evidential morphology from [cumming-2026],
 Table 17. The -l participle interacts with tense to encode evidential perspective.
 
 ## Entries

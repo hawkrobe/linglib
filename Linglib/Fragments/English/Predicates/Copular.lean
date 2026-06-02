@@ -19,7 +19,7 @@ open Semantics.Gradability (ClauseEmbeddingAdj)
 open Semantics.Lexical
 
 /-- "annoyed (that p)" — emotive factive clause-embedding adjective.
-    @cite{degen-tonhauser-2021}, @cite{degen-tonhauser-2022}: canonically factive.
+    [degen-tonhauser-2021], [degen-tonhauser-2022]: canonically factive.
     Presupposes its complement via emotive semantics, not doxastic
     veridicality — hence `factivePresup` on the derived `Verb` is
     `false`, while `presupType = some .softTrigger`. -/
@@ -28,14 +28,14 @@ def beAnnoyed : ClauseEmbeddingAdj where
   presupType := some .softTrigger
 
 /-- "right (that p)" — veridical nonfactive clause-embedding adjective.
-    @cite{degen-tonhauser-2021}, @cite{degen-tonhauser-2022}: veridical nonfactive.
+    [degen-tonhauser-2021], [degen-tonhauser-2022]: veridical nonfactive.
     Entails its complement but does not presuppose it. -/
 def beRight : ClauseEmbeddingAdj where
   adjForm := "right"
 
 /-- "able (to VP)" — copular predicate with infinitival complement.
-    @cite{karttunen-1971} §11: necessary-only (negation → ¬VP; affirmative ↛ VP).
-    @cite{nadathur-2023}: one-way positive, **aspect-governed** — the actuality
+    [karttunen-1971] §11: necessary-only (negation → ¬VP; affirmative ↛ VP).
+    [nadathur-2023]: one-way positive, **aspect-governed** — the actuality
     entailment arises in perfective contexts, not from the lexicon. Therefore
     NO `implicative`: the entailment is not unconditional like *manage*.
 

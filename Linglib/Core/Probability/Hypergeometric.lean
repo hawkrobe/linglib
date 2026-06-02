@@ -23,8 +23,8 @@ proves the sum-to-1 condition via Chu-Vandermonde's identity
 
 ## Use cases in linglib
 
-- @cite{goodman-stuhlmuller-2013}: speaker observation of marbles (N = 3).
-- @cite{herbstritt-franke-2019}: urn-based probability expressions (N = 10).
+- [goodman-stuhlmuller-2013]: speaker observation of marbles (N = 3).
+- [herbstritt-franke-2019]: urn-based probability expressions (N = 10).
 
 Both papers previously open-coded the `C(K, k) · C(N - K, n - k)`
 numerator and the `C(N, n)` denominator separately in their `obsKernelRaw`

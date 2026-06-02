@@ -1,8 +1,8 @@
 /-!
-# @cite{futrell-gibson-2020}: Crosslinguistic Dependency Length Data
-@cite{futrell-gibson-2020} @cite{zaslavsky-hu-levy-2020}
+# [futrell-gibson-2020]: Crosslinguistic Dependency Length Data
+[futrell-gibson-2020] [zaslavsky-hu-levy-2020]
 
-Empirical data from Table 2 of @cite{futrell-gibson-2020} "Dependency
+Empirical data from Table 2 of [futrell-gibson-2020] "Dependency
 locality as an explanatory principle for word order", Language 96(2):371–412.
 
 53 languages from Universal Dependencies corpora, measuring:
@@ -53,7 +53,7 @@ def LanguageDLM.isHeadFinal (l : LanguageDLM) : Bool := l.propHeadFinal > 500
 def LanguageDLM.isHeadInitial (l : LanguageDLM) : Bool := l.propHeadFinal ≤ 500
 
 -- ============================================================================
--- Language Data (@cite{futrell-gibson-2020}, Table 2, representative subset)
+-- Language Data ([futrell-gibson-2020], Table 2, representative subset)
 -- ============================================================================
 -- Values are approximate from the paper's figures and supplementary materials.
 -- Dep lengths are mean dependency lengths at sentence lengths 10, 15, 20.

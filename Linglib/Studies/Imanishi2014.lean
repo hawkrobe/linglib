@@ -5,14 +5,14 @@ import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 
 /-!
-# Imanishi 2014 — Default Ergative @cite{imanishi-2014}
+# Imanishi 2014 — Default Ergative [imanishi-2014]
 
-@cite{imanishi-2014} (MIT PhD dissertation, advisor: David Pesetsky)
+[imanishi-2014] (MIT PhD dissertation, advisor: David Pesetsky)
 addresses an alignment puzzle in non-perfective Mayan: Chol and
 Q'anjob'al show extended-ergative alignment (S/A → ERG, P → ABS),
 but Kaqchikel shows an **inverted** pattern in PROG `ajin`
 constructions (S/A → ABS, P → ERG/GEN). The published successor
-@cite{imanishi-2020} parameterizes the same data through inherent vs
+[imanishi-2020] parameterizes the same data through inherent vs
 structural Case; the dissertation derives both sides from a single
 mechanism: the **Unaccusative Requirement on Nominalization (URN)**.
 
@@ -24,7 +24,7 @@ This study file consumes the substrate primitives in
 `caseChol`, `caseQanjobalan`) and verifies that the substrate
 faithfully encodes Imanishi's analysis.
 
-## The Alignment Puzzle (@cite{imanishi-2014} §3.3, eqs. (87)-(88))
+## The Alignment Puzzle ([imanishi-2014] §3.3, eqs. (87)-(88))
 
 |                | S    | O      |
 |----------------|------|--------|
@@ -36,7 +36,7 @@ faithfully encodes Imanishi's analysis.
 Both are non-perfective (involve embedded nominalization), but
 Kaqchikel's ERG lands on OBJECT, not subject.
 
-## The Mechanism: URN (@cite{imanishi-2014} §3.3.1, eq. (90), p. 123)
+## The Mechanism: URN ([imanishi-2014] §3.3.1, eq. (90), p. 123)
 
 > **Unaccusative Requirement on Nominalization**: Nominalized verbs
 > must lack an external argument.
@@ -68,12 +68,12 @@ p. 95). The fragment substrate `caseKaqchikel` matches: only
 `.Prog` triggers the inverted pattern; `.Perf`, `.Imp`, `.Prosp`,
 `.Hab`, `.Iter` keep canonical ergative.
 
-## Dialectal variation (@cite{imanishi-2014} fn. 26, p. 141)
+## Dialectal variation ([imanishi-2014] fn. 26, p. 141)
 
 Imanishi notes: "My Kaqchikel consultants do not accept nominalized
 patterns as in (120). This is presumably because of dialectal
 differences." Some Kaqchikel varieties documented by
-@cite{garcia-matzar-rodriguez-guajan-1997} show patterns Imanishi's
+[garcia-matzar-rodriguez-guajan-1997] show patterns Imanishi's
 consultants don't accept. The substrate's `caseKaqchikel` encodes
 Imanishi's variety; alternative-variety Lean fragments would need
 a different parameterization.
@@ -88,7 +88,7 @@ open Features.Prominence (ArgumentRole)
 -- § 1: URN (Unaccusative Requirement on Nominalization)
 -- ============================================================================
 
-/-- The URN parameter @cite{imanishi-2014} eq. (90) p. 123: does
+/-- The URN parameter [imanishi-2014] eq. (90) p. 123: does
     nominalization in this language require unaccusative structure
     (no external argument inside the nominalized clause)? -/
 inductive URN where
@@ -100,14 +100,14 @@ inductive URN where
   | optional
   deriving DecidableEq, Repr
 
-/-- Per @cite{imanishi-2014} §3.3.1, Kaqchikel requires URN. -/
+/-- Per [imanishi-2014] §3.3.1, Kaqchikel requires URN. -/
 def kaqchikelURN : URN := .required
 
-/-- Per @cite{imanishi-2014} §3.3.3, Chol does not obligatorily
+/-- Per [imanishi-2014] §3.3.3, Chol does not obligatorily
     require URN. -/
 def cholURN : URN := .optional
 
-/-- Per @cite{imanishi-2014} §3.3.3, Q'anjob'al does not obligatorily
+/-- Per [imanishi-2014] §3.3.3, Q'anjob'al does not obligatorily
     require URN. -/
 def qanjobalURN : URN := .optional
 
@@ -115,7 +115,7 @@ def qanjobalURN : URN := .optional
 -- § 2: Substrate Bridge — caseKaqchikel encodes Imanishi's analysis
 -- ============================================================================
 
-/-- @cite{imanishi-2014} §3.3.1 (the "Kaqchikel: ERG=OBJ" section):
+/-- [imanishi-2014] §3.3.1 (the "Kaqchikel: ERG=OBJ" section):
     in PROG `ajin` constructions, the case pattern is S/A → ABS,
     P → ERG/GEN. The substrate's `caseKaqchikel .Prog` returns
     `Alignment.invertedErgative.assignCase` by definition (see
@@ -136,7 +136,7 @@ theorem invertedErgative_matches_kaqchikel_progressive :
     Mayan.accCaseKaqchikel .S = Alignment.invertedErgative.assignCase .S :=
   ⟨rfl, rfl, rfl⟩
 
-/-- @cite{imanishi-2014} eq. (88) Chol/Q'anjob'al-type: in their
+/-- [imanishi-2014] eq. (88) Chol/Q'anjob'al-type: in their
     non-perfective, S/A → ERG, P → ABS (extended ergative). The
     substrate's `accCaseChol` returns `extendedErgative.assignCase`. -/
 theorem chol_nonperfective_matches_imanishi :
@@ -156,7 +156,7 @@ theorem qanjobalan_progressive_matches_imanishi :
 -- § 3: Cross-Language Inversion — Kaqchikel inverts Chol on A/P axis
 -- ============================================================================
 
-/-- The deepest empirical claim of @cite{imanishi-2014} §3.3: Kaqchikel
+/-- The deepest empirical claim of [imanishi-2014] §3.3: Kaqchikel
     and Chol/Q'anjob'al show MIRROR-IMAGE non-perfective alignment on
     the A/P axis. Where Chol gives A → GEN and P → ABS, Kaqchikel gives
     A → ABS and P → GEN. The two-element diff between the substrate
@@ -178,7 +178,7 @@ theorem S_does_not_invert :
 -- § 4: Construction-Specificity
 -- ============================================================================
 
-/-- Per @cite{imanishi-2014} Table 3.1 (p. 95) and the substrate
+/-- Per [imanishi-2014] Table 3.1 (p. 95) and the substrate
     `caseKaqchikel`: only PROG triggers the inverted pattern. Other
     aspects retain canonical ergative alignment. -/
 theorem kaqchikel_perfective_canonical_ergative :

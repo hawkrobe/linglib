@@ -6,7 +6,7 @@ import Linglib.Studies.Longobardi2001
 
 /-!
 # Longobardi (2005): Toward a Unified Grammar of Reference
-@cite{longobardi-2005} @cite{longobardi-1994}
+[longobardi-2005] [longobardi-1994]
 
 Zeitschrift für Sprachwissenschaft 24(1): 5–44.
 
@@ -42,7 +42,7 @@ follows as a theorem.
 §5–§7 formalize the Last Resort consequences and the bridge to the
 character semantics of `Reference/Basic`. §8–§13 instantiate the
 theory: N-to-D raising as head movement, Italian *solo* diagnostic,
-expletive articles, and the bridge to @cite{longobardi-2001}'s
+expletive articles, and the bridge to [longobardi-2001]'s
 `DPParameter`/`ArgumentType`.
 -/
 
@@ -58,7 +58,7 @@ open Longobardi2001 (DPParameter ArgumentType
 /-- The four classes of nominal heads, ranked from most prototypically
     referential (pronouns) to least (common nouns).
 
-    @cite{longobardi-2005} table (28): these four classes are distinguished
+    [longobardi-2005] table (28): these four classes are distinguished
     by three tests — object-referentiality (in D), predicative restrictions
     (not in D), and kind-referentiality (with definite article). -/
 inductive NominalHeadClass where
@@ -128,7 +128,7 @@ instance : DecidablePred RaisingObligatory := fun c => by
 -- § 2: The Properness Hierarchy — (25)
 -- ============================================================================
 
-/-- The scalar hierarchy of properness from @cite{longobardi-2005} (25).
+/-- The scalar hierarchy of properness from [longobardi-2005] (25).
 
     Nominal expressions are ranked along a scale from most prototypically
     proper-like to most common-like. Access to the N-to-D derivational
@@ -161,7 +161,7 @@ theorem raising_monotone :
 
 /-- The lexical type of a noun: whether it names objects or kinds.
 
-    @cite{longobardi-2005} §4: nouns lexically divide into object-naming
+    [longobardi-2005] §4: nouns lexically divide into object-naming
     (proper names, pronouns — intrinsically referential) and kind-naming
     (common nouns — denote kinds, not individuals). -/
 inductive LexicalNamingType where
@@ -247,8 +247,8 @@ theorem constant_requires_d_content (nc : NominalConfig)
 
 /-- **(41)** A nominal is an argument only if introduced by D.
 
-    @cite{longobardi-2005} §7: this principle, from @cite{szabolcsi-1987}
-    and @cite{stowell-1989-1991}, is derived from (52)+(53). In
+    [longobardi-2005] §7: this principle, from [szabolcsi-1987]
+    and [stowell-1989-1991], is derived from (52)+(53). In
     non-argument environments (predicates, vocatives, exclamations),
     nominals can occur without D. -/
 theorem argument_requires_d (nc : NominalConfig)
@@ -264,7 +264,7 @@ theorem argument_requires_d (nc : NominalConfig)
 -- § 5: Why Proper Names Must Raise / Common Nouns Cannot
 -- ============================================================================
 
-/-- @cite{longobardi-2005} §10, question (57c): why must proper names raise?
+/-- [longobardi-2005] §10, question (57c): why must proper names raise?
 
     Object-naming nouns cannot satisfy (54b) — they name objects, not
     kinds, so they cannot enter the interpretive formula Dx.x ∈ kind(N)
@@ -281,7 +281,7 @@ theorem proper_names_must_raise :
   intro nc _ hArg hLic
   exact argument_requires_d nc hArg hLic
 
-/-- @cite{longobardi-2005} §10, question (57a): why do common nouns not
+/-- [longobardi-2005] §10, question (57a): why do common nouns not
     have to raise?
 
     Kind-naming nouns can satisfy (54b): they name kinds, so they can
@@ -304,7 +304,7 @@ theorem common_nouns_need_not_raise :
 /-- Whether a definite article is expletive (semantically vacuous
     placeholder) or a genuine semantic operator.
 
-    @cite{longobardi-2005} §8: when a proper name appears with a definite
+    [longobardi-2005] §8: when a proper name appears with a definite
     article (*la Maria*, *il Gianni*), the article is expletive — it does
     not contribute uniqueness or familiarity semantics. It merely fills
     the D position that N-raising would otherwise occupy. -/
@@ -319,7 +319,7 @@ inductive ArticleType where
 
 /-- An expletive article does not induce kind readings.
 
-    @cite{longobardi-2005} (46)–(47): *la Maria* behaves identically to
+    [longobardi-2005] (46)–(47): *la Maria* behaves identically to
     bare *Maria* — wide scope, rigid, no generic/kind reading. This
     distinguishes expletive articles from genuine definite operators,
     which CAN induce kind readings (*i cani* 'the dogs' = the dog-kind). -/
@@ -358,10 +358,10 @@ theorem proper_name_in_d_is_constant
 /-- N-to-D raising is head-to-head movement within the nominal extended
     projection.
 
-    @cite{longobardi-2005} §5: proper names in Romance undergo N-to-D
+    [longobardi-2005] §5: proper names in Romance undergo N-to-D
     raising — the noun head moves from N to D, crossing intervening
     material (adjectives, modifiers in α). This is the nominal analogue
-    of V-to-T raising (@cite{pollock-1989}).
+    of V-to-T raising ([pollock-1989]).
 
     The movement is head-to-head (not head-to-spec): the noun stays
     minimal and reprojects in D. Evidence: the raised name forms a
@@ -378,7 +378,7 @@ structure NtoDRaising where
 
 /-- Italian proper names raise obligatorily to D.
 
-    @cite{longobardi-2005} §5: *Gianni ha telefonato* vs **Ha telefonato Gianni*
+    [longobardi-2005] §5: *Gianni ha telefonato* vs **Ha telefonato Gianni*
     (in neutral intonation). The name must precede adjectives and
     modifiers that intervene between N and D. -/
 def italianPN : NtoDRaising where
@@ -406,7 +406,7 @@ def englishPN : NtoDRaising where
 -- § 9: Italian Diagnostic Data — Solo Paradigm
 -- ============================================================================
 
-/-- @cite{longobardi-2005} §2: the *solo* paradigm. *Solo* 'only' is an
+/-- [longobardi-2005] §2: the *solo* paradigm. *Solo* 'only' is an
     adverb that must c-command its associate. When *solo* precedes a
     proper name but follows a common noun, this diagnoses the structural
     position of the noun head.
@@ -438,7 +438,7 @@ theorem solo_diagnoses_raising :
 -- § 10: Expletive Articles with Proper Names
 -- ============================================================================
 
-/-- @cite{longobardi-2005} §8: Italian proper names optionally appear
+/-- [longobardi-2005] §8: Italian proper names optionally appear
     with a definite article (*la Maria*, *il Gianni*). This article is
     **expletive** — semantically vacuous, serving only as a phonological
     placeholder for D.
@@ -486,7 +486,7 @@ theorem expletive_preserves_rigidity :
 -- § 11: Bridge to Longobardi 2001 — ArgumentType ↔ NominalConfig
 -- ============================================================================
 
-/-- Map @cite{longobardi-2001}'s `ArgumentType` to the topological
+/-- Map [longobardi-2001]'s `ArgumentType` to the topological
     mapping's constant/variable distinction.
 
     Referential arguments = constants (D has referential content).
@@ -514,7 +514,7 @@ theorem quantificational_is_variable :
 -- § 12: Bridge to DPParameter — Strong D Requires Overt D Content
 -- ============================================================================
 
-/-- @cite{longobardi-2001}'s `strongD` parameter corresponds to the
+/-- [longobardi-2001]'s `strongD` parameter corresponds to the
     topological mapping's requirement for overt referential content in D.
 
     When D is strong (Romance), referential interpretation requires

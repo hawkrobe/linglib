@@ -3,9 +3,9 @@ import Linglib.Features.Aktionsart
 
 /-!
 # Degree Achievements
-@cite{kennedy-levin-2008}
+[kennedy-levin-2008]
 
-@cite{kennedy-levin-2008} show that degree achievements (rust, cool, widen, increase)
+[kennedy-levin-2008] show that degree achievements (rust, cool, widen, increase)
 have **variable telicity** determined by the boundedness of the underlying adjectival
 scale:
 
@@ -49,7 +49,7 @@ structure DegreeAchievementScale where
 instance : Inhabited DegreeAchievementScale where
   default := { scaleBoundedness := .open_, dimension := "" }
 
-/-- Derive default telicity from scale boundedness (@cite{kennedy-levin-2008} Thm 1).
+/-- Derive default telicity from scale boundedness ([kennedy-levin-2008] Thm 1).
     Scales with a maximum → telic; scales without → atelic.
 
     The mapping follows `Boundedness.hasMax`:

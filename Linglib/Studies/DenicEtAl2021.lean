@@ -3,7 +3,7 @@ import Linglib.Typology.PolarityItem
 import Linglib.Fragments.English.PolarityItems
 
 /-!
-# @cite{denic-homer-rothschild-chemla-2021}
+# [denic-homer-rothschild-chemla-2021]
 
 The influence of polarity items on inferential judgments.
 *Cognition* 215, 104791.
@@ -329,7 +329,7 @@ theorem tested_npis_are_npis :
 /-- The PPI tested is classified as a PPI in the Fragment lexicon. -/
 theorem tested_ppi_is_ppi : some_ppi.isPPI := rfl
 
-/-- The tested NPIs are all strengthening (@cite{israel-2001} Figure 1)
+/-- The tested NPIs are all strengthening ([israel-2001] Figure 1)
     but have heterogeneous semantic bases — the mechanism isn't
     purely about domain widening (§10.2). -/
 theorem tested_npis_all_strengthening :
@@ -342,7 +342,7 @@ theorem tested_npis_all_strengthening :
 heterogeneous NPIs (different base forces) and without domain
 widening. The heterogeneity that matters for the non-scalar argument
 is in baseForce (existential vs temporal vs degree), not in scalar
-direction — all three are strengthening per @cite{israel-2001}. -/
+direction — all three are strengthening per [israel-2001]. -/
 theorem mechanism_constraints :
     exp1_npi_NM.significant = true ∧
     atAll.baseForce ≠ any.baseForce ∧

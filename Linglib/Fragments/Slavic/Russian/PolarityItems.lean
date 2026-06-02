@@ -2,11 +2,11 @@ import Linglib.Typology.PolarityItem
 
 /-!
 # Russian Polarity-Sensitive Items
-@cite{haspelmath-1997} @cite{zeijlstra-2004} @cite{giannakidou-1998}
+[haspelmath-1997] [zeijlstra-2004] [giannakidou-1998]
 
 Russian indefinite-pronoun polarity items, typed by the theory-neutral
 categories from `Typology.PolarityItem`. The classification follows
-@cite{haspelmath-1997}'s implicational map for the Russian series: the
+[haspelmath-1997]'s implicational map for the Russian series: the
 *-либо* series spans the weak-NPI functions (irrealis non-specific,
 question, conditional, comparative, indirect negation), while the *ни-*
 series occupies the *direct negation* function as strict negative-concord
@@ -15,8 +15,8 @@ items, obligatorily co-occurring with clausemate verbal negation *не*.
 - **кто-либо** (kto-libo): weak NPI — questions, conditionals,
   comparatives, indirect negation.
 - **никто / ничего / никогда** (nikto / nichego / nikogda): strict-NC
-  *ни-* words, obligatory clausemate *не* (@cite{zeijlstra-2004},
-  @cite{giannakidou-1998}).
+  *ни-* words, obligatory clausemate *не* ([zeijlstra-2004],
+  [giannakidou-1998]).
 - **кто угодно** (kto ugodno): free-choice item.
 
 The substrate has no dedicated n-word/negative-concord `PolarityType` case
@@ -32,7 +32,7 @@ open Typology.PolarityItem
 /-! ### Weak NPI (the *-либо* series) -/
 
 /-- *кто-либо* (kto-libo) — weak NPI. The *-либо* series is licensed across
-    the DE functions of @cite{haspelmath-1997}'s map: questions, conditionals,
+    the DE functions of [haspelmath-1997]'s map: questions, conditionals,
     comparatives, and indirect (non-clausemate) negation — distinct from the
     direct-negation *ни-* series below. -/
 def ktoLibo : PolarityItemEntry :=

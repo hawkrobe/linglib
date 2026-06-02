@@ -8,7 +8,7 @@ import Linglib.Core.Causal.SEM.Deterministic
 effect under Pearl's `do`-operator. Distinct from counterfactual
 reasoning: there is no observation conditioning, no abduction step.
 
-This file is the home for `probabilisticSuf` (@cite{cao-white-lassiter-2025}'s
+This file is the home for `probabilisticSuf` ([cao-white-lassiter-2025]'s
 graded ALT measure for causal sufficiency) and its deterministic-collapse
 bridge.
 
@@ -44,7 +44,7 @@ variable {V : Type*} {α : V → Type*} [Fintype V] [DecidableEq V] [DecidableVa
     Pearl's `do`-operator gives the probability of the effect under
     forward intervention; no observation conditioning.
 
-    @cite{cao-white-lassiter-2025}'s graded ALT measure for causal
+    [cao-white-lassiter-2025]'s graded ALT measure for causal
     sufficiency. PMF-valued via `develop`; reduces to a {0,1} indicator
     under `IsDeterministic` via `probabilisticSuf_of_deterministic`. -/
 noncomputable def probabilisticSuf

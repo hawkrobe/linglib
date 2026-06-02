@@ -1,9 +1,9 @@
 import Linglib.Core.Agent.RationalAction
 
 /-!
-# Rank Orderings @cite{luce-1959}
+# Rank Orderings [luce-1959]
 
-@cite{luce-1959}: the probability of observing a complete rank
+[luce-1959]: the probability of observing a complete rank
 ordering under the Luce choice rule. The key insight is that ranking
 probability decomposes into a product of successive top-choices from
 shrinking alternative sets — a direct consequence of IIA.
@@ -27,7 +27,7 @@ open BigOperators Finset Real
 variable {S A : Type*} [Fintype A] [DecidableEq A]
 
 -- ============================================================================
--- §2.F Rank Orderings (@cite{luce-1959}, pp. 66–72)
+-- §2.F Rank Orderings ([luce-1959], pp. 66–72)
 -- ============================================================================
 
 /-- The tail suffix of a list starting at position `i` (0-indexed).
@@ -43,7 +43,7 @@ noncomputable def rankStepProb (ra : RationalAction S A) (s : S)
   | none => 1
   | some a => ra.pChoice s (tailSuffix ranking i) a
 
-/-- **Ranking probability** (@cite{luce-1959}, Theorem 9):
+/-- **Ranking probability** ([luce-1959], Theorem 9):
     The probability of observing the complete rank ordering `a₁ > a₂ >... > aₙ`
     is the product of successive top-choices from shrinking sets:
 
@@ -362,7 +362,7 @@ private theorem rankProb_sum_eq_one_aux (ra : RationalAction S A) (s : S) :
     rw [Finset.sum_congr rfl step]
     exact ra.pChoice_sum_eq_one s T (score_sum_ne_zero hT hpos)
 
-/-- **Ranking probabilities sum to 1** (@cite{luce-1959}, Theorem 9 completeness):
+/-- **Ranking probabilities sum to 1** ([luce-1959], Theorem 9 completeness):
     Over all `n!` permutations of the alternative set, ranking probabilities
     form a proper distribution.
 
@@ -404,7 +404,7 @@ private theorem rankingsStartingWith_eq (T : Finset A) (a : A) (ha : a ∈ T) :
   · rintro ⟨rest, hrest, rfl⟩
     exact ⟨cons_mem_allRankings ha hrest, by simp⟩
 
-/-- **Marginal first-choice** (@cite{luce-1959}, Theorem 9 corollary):
+/-- **Marginal first-choice** ([luce-1959], Theorem 9 corollary):
     Summing the ranking probability over all rankings that start with `a`
     recovers the choice probability `pChoice(a, T)`.
 
@@ -717,10 +717,10 @@ private theorem expectedRank_cross_le_aux (ra : RationalAction S A) (s : S) :
     If `v(a₁) > v(a₂)` then `E[rank(a₁)] < E[rank(a₂)]`: the alternative
     with higher ratio-scale value is expected to be ranked higher (closer to 1).
 
-    This is a natural property of the Plackett–Luce model (@cite{luce-1959},
-    @cite{plackett-1975}) but does not appear as a formal theorem in either
-    source. @cite{luce-1959} proves ranking probability decomposition (Theorem 9)
-    and @cite{marden-1995} covers estimation, but neither states the expected
+    This is a natural property of the Plackett–Luce model ([luce-1959],
+    [plackett-1975]) but does not appear as a formal theorem in either
+    source. [luce-1959] proves ranking probability decomposition (Theorem 9)
+    and [marden-1995] covers estimation, but neither states the expected
     rank monotonicity result explicitly.
 
     The proof uses conditional expectation decomposition:

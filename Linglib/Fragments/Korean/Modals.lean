@@ -4,7 +4,7 @@ import Linglib.Semantics.Modality.Typology
 # Korean Modal Inventory
 
 Modal expressions from Korean (Koreanic), based on
-@cite{qing-uegaki-2025}.
+[qing-uegaki-2025].
 -/
 
 namespace Korean.Modals

@@ -1,6 +1,6 @@
 /-!
-# @cite{iatridou-anagnostopoulou-izvorski-2001}: Observations about the form and meaning of the Perfect
-@cite{iatridou-anagnostopoulou-izvorski-2001}
+# [iatridou-anagnostopoulou-izvorski-2001]: Observations about the form and meaning of the Perfect
+[iatridou-anagnostopoulou-izvorski-2001]
 
 Iatridou, Anagnostopoulou & Izvorski (Kenstowicz ed., *Ken Hale: A
 Life in Language*, MIT Press 2001) introduce the **Perfect Time Span
@@ -29,11 +29,11 @@ and its interaction with temporal adverbials.
 
 ## Companion files (paper-anchored extensions)
 
-- `Studies/Kiparsky2002.lean` — @cite{kiparsky-2002}'s event-structure
+- `Studies/Kiparsky2002.lean` — [kiparsky-2002]'s event-structure
   account of perfect polysemy (four readings from subevent-structure
   mappings; three puzzles).
 - `Studies/IatridouZeijlstra2021.lean` —
-  @cite{iatridou-zeijlstra-2021}'s unification of *in years* and
+  [iatridou-zeijlstra-2021]'s unification of *in years* and
   *until* via the Until Time Span (UTS), NPI-strength classification,
   Actuality Inference and Beyond Expectation Inference. Imports the
   `BoundaryKind` from this file.
@@ -45,7 +45,7 @@ namespace IatridouEtAl2001
 /-- Which boundary of a time span an adverbial sets.
     - `left`: LB adverbials (*in years*, *since*, *in (the last) 5 years*)
     - `right`: RB adverbials (*until*)
-    @cite{iatridou-anagnostopoulou-izvorski-2001} §3.1. -/
+    [iatridou-anagnostopoulou-izvorski-2001] §3.1. -/
 inductive BoundaryKind where
   | left   -- sets the left boundary (e.g., *since Monday*, *in years*)
   | right  -- sets the right boundary (e.g., *until 5pm*)

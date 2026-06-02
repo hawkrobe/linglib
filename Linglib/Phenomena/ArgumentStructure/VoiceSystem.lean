@@ -2,7 +2,7 @@ import Linglib.Typology.Extraction
 
 /-!
 # Voice System
-@cite{erlewine-2018}
+[erlewine-2018]
 
 Theory-neutral types for cross-linguistic voice system typology ---
 how languages map argument roles to a privileged syntactic position

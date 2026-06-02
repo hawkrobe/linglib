@@ -6,21 +6,21 @@ predict the observed cross-linguistic patterns.
 
 ## Theoretical Lineage
 
-@cite{carlson-1977} is the foundational paper that all subsequent theories build on:
+[carlson-1977] is the foundational paper that all subsequent theories build on:
 
 ```
-@cite{carlson-1977} (bare plurals = proper names of kinds)
+[carlson-1977] (bare plurals = proper names of kinds)
     │
-    ├──→ @cite{chierchia-1998} (kinds + ∩/∪ operators + DKP + NMP)
+    ├──→ [chierchia-1998] (kinds + ∩/∪ operators + DKP + NMP)
     │ │
-    │ └──→ @cite{dayal-2004} (singular kinds + Meaning Preservation)
+    │ └──→ [dayal-2004] (singular kinds + Meaning Preservation)
     │
-    └──→ @cite{krifka-2004} (bare NPs = properties, position-sensitive ∃-shift)
+    └──→ [krifka-2004] (bare NPs = properties, position-sensitive ∃-shift)
 ```
 
 ## Key Equivalences
 
-| @cite{carlson-1977} | @cite{chierchia-1998} | @cite{krifka-2004} |
+| [carlson-1977] | [chierchia-1998] | [krifka-2004] |
 |--------------|----------------|-------------|
 | Realization relation R(y,x) | ∪ operator (up) | Instance relation |
 | Stage-level predication | DKP (Derived Kind Predication) | ∃-shift |
@@ -52,13 +52,13 @@ open Semantics.Kinds.MeaningPreservation
 open Krifka2004
 open Phenomena.Generics.KindReference
 
--- @cite{carlson-1977}: The Foundation
+-- [carlson-1977]: The Foundation
 
 /-!
 ## Carlson's Foundational Insights
-@cite{carlson-1977}
+[carlson-1977]
 
-@cite{carlson-1977} established the key ideas that all subsequent theories build on:
+[carlson-1977] established the key ideas that all subsequent theories build on:
 
 1. Bare plurals are proper names of kinds (type e, not quantifiers)
 2. Kinds are spatially unbounded (can be "here and there")
@@ -68,7 +68,7 @@ open Phenomena.Generics.KindReference
 
 ### How Subsequent Theories Relate
 
-@cite{chierchia-1998} formalizes Carlson's R relation as the ∪ operator:
+[chierchia-1998] formalizes Carlson's R relation as the ∪ operator:
 - Carlson: `R y k` means "y is a stage/realization of k"
 - Chierchia: `x ∈ ∪k(w)` means "x is in the extension of kind k at world w"
 
@@ -76,7 +76,7 @@ Chierchia's DKP is Carlson's stage-level predication:
 - Carlson: `stageLevelPred R P k = ∃y[R(y,k) ∧ P(y)]`
 - Chierchia: `DKP P k w = ∃x[x ∈ ∪k(w) ∧ P(x)]`
 
-@cite{krifka-2004} departs from Carlson:
+[krifka-2004] departs from Carlson:
 - Rejects kinds as basic; bare NPs are properties
 - But keeps the insight: ∃ is introduced locally, yielding narrow scope
 -/
@@ -113,7 +113,7 @@ theorem carlson_chierchia_structural_equivalence :
 /--
 Predicate classification equivalence:
 
-| @cite{carlson-1977} | @cite{chierchia-1998} | Effect |
+| [carlson-1977] | [chierchia-1998] | Effect |
 |--------------|----------------|--------|
 | Stage-level (states) | Object-level | Triggers DKP / R-predication |
 | Individual-level (properties) | Kind-level | Direct predication of kind |
@@ -344,7 +344,7 @@ theorem theory_phenomena_alignment :
 /-!
 ## Alternative Theories: Same Predictions, Different Mechanisms
 
-@cite{chierchia-1998} and @cite{krifka-2004} both correctly predict the empirical patterns
+[chierchia-1998] and [krifka-2004] both correctly predict the empirical patterns
 but propose different underlying mechanisms:
 
 | Phenomenon | Chierchia | Krifka |
@@ -449,7 +449,7 @@ The theories make different predictions for:
    requires cumulativity.
 -/
 
--- Scrambling: Where Chierchia and Krifka Diverge (@cite{le-bruyn-de-swart-2022})
+-- Scrambling: Where Chierchia and Krifka Diverge ([le-bruyn-de-swart-2022])
 
 /-!
 ## The Scrambling Test Case
@@ -550,7 +550,7 @@ theorem krifka_handles_scrambling_chierchia_doesnt :
   simp [dutchScrambledBoeken, dutchScrambledMensen,
         existentialShiftPositionSensitive, dkpIsLocal]
 
--- Formal Derivations (@cite{le-bruyn-de-swart-2022})
+-- Formal Derivations ([le-bruyn-de-swart-2022])
 
 /-!
 ## Compositional Derivations
@@ -659,10 +659,10 @@ theorem theories_diverge_on_scrambling :
 /-!
 ## Theoretical Implications
 
-@cite{le-bruyn-de-swart-2022} conclude:
+[le-bruyn-de-swart-2022] conclude:
 
-1. @cite{krifka-2004} is empirically superior for scrambling languages
-2. @cite{chierchia-1998} needs modification to handle position-sensitive scope
+1. [krifka-2004] is empirically superior for scrambling languages
+2. [chierchia-1998] needs modification to handle position-sensitive scope
 3. Kind reference ≠ narrow scope: Scrambled BPs can be kind-referring
    while taking wide scope, showing these are orthogonal properties
 

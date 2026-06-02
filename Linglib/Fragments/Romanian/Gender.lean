@@ -2,7 +2,7 @@ import Linglib.Typology.Gender
 
 /-!
 # Romanian Gender
-@cite{corbett-1991} @cite{corbett-2013}
+[corbett-1991] [corbett-2013]
 
 3 genders (masc/fem/neuter — the neuter behaves as masc in the singular and
 fem in the plural; "ambigeneric"). Sex-based, semantic + formal.
@@ -26,7 +26,7 @@ def genderTypology : GenderProfile :=
 example : genderTypology.iso639 = "ron" ∧ genderTypology.name = "Romanian" :=
   ⟨rfl, rfl⟩
 
-/-- Romanian is in @cite{corbett-1991}'s "canonical" cell. -/
+/-- Romanian is in [corbett-1991]'s "canonical" cell. -/
 example : genderTypology.IsCanonicalGender := by decide
 
 end Romanian.Gender

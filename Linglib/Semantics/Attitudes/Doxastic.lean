@@ -1,6 +1,6 @@
 /-
 # Doxastic Attitude Semantics
-@cite{pearl-2000} @cite{glass-2025} @cite{hintikka-1962} @cite{roberts-ozyildiz-2025}
+[pearl-2000] [glass-2025] [hintikka-1962] [roberts-ozyildiz-2025]
 
 Modal/accessibility-based semantics for doxastic attitude verbs like
 `believe`, `know`, `think`.
@@ -20,7 +20,7 @@ Doxastic attitudes use Hintikka-style accessibility relations:
 
 This connects doxastic attitudes to the presupposition infrastructure
 in `Semantics.Presupposition`, enabling uniform treatment of factive
-presuppositions, projection, and the @cite{glass-2025} typology.
+presuppositions, projection, and the [glass-2025] typology.
 
 ## PresupClass
 
@@ -97,13 +97,13 @@ instance diaAt_decidable {W E : Type*} (R : AccessRel W E) [∀ a w w', Decidabl
   inferInstanceAs (Decidable (∃ w' ∈ worlds, _))
 
 -- ============================================================================
--- Presuppositional Classification (@cite{glass-2025})
+-- Presuppositional Classification ([glass-2025])
 -- ============================================================================
 
 /-!
 ## Presuppositional Classification of Doxastic Verbs
 
-@cite{glass-2025} proposes a typology of belief verbs based on their
+[glass-2025] proposes a typology of belief verbs based on their
 presuppositional profile — what they require of the Common Ground:
 
 - **Factive** (know): presupposes p — CommonGround must entail p
@@ -265,7 +265,7 @@ def beliefVarList : List BeliefVar :=
 -- The Predicate Lexicalization Constraint
 -- ============================================================================
 
-/-- **Predicate Lexicalization Constraint (PLC)** (@cite{roberts-ozyildiz-2025}).
+/-- **Predicate Lexicalization Constraint (PLC)** ([roberts-ozyildiz-2025]).
 
     A verbal predicate with at-issue content α can have presupposition π iff
     setting π to true and running the belief-formation SEM's `developDetOn`
@@ -352,7 +352,7 @@ theorem contrafactive_gap_is_structural :
 Weak contrafactives like Mandarin yǐwéi don't violate the PLC because
 their projective content is fundamentally different:
 
-1. **Not a presupposition**: @cite{glass-2025} argues yǐwéi's falsity inference
+1. **Not a presupposition**: [glass-2025] argues yǐwéi's falsity inference
    is a postsupposition (about output context) not presupposition (input).
    Postsuppositions are formalized in `Semantics.Dynamic.Postsupposition`.
 
@@ -414,7 +414,7 @@ def presupClassIsValid : PresupClass → Bool
 
 /-- The PLC derivation: `presupClassIsValid` agrees with running the
     `presupClassSatisfiesPLC` chain (taking `none` as `true`). This
-    bridges the direct classifier to the @cite{roberts-ozyildiz-2025}
+    bridges the direct classifier to the [roberts-ozyildiz-2025]
     causal account. -/
 theorem presupClassIsValid_eq_via_plc (pc : PresupClass) :
     presupClassIsValid pc = (presupClassSatisfiesPLC pc).getD true := by
@@ -526,7 +526,7 @@ theorem DoxasticPredicate.toPrProp_assertion {W E : Type*}
     boxAt V.access agent w worlds p := rfl
 
 /-- PrProp for a hypothetical contrafactive verb: presupposes ¬p,
-    asserts agent believes p. UNATTESTED — see @cite{glass-2025}. -/
+    asserts agent believes p. UNATTESTED — see [glass-2025]. -/
 def contrafactivePrProp {W E : Type*} (R : AccessRel W E) (agent : E)
     (p : W → Prop) (worlds : List W) : PrProp W :=
   { presup := λ w => ¬ p w
@@ -535,7 +535,7 @@ def contrafactivePrProp {W E : Type*} (R : AccessRel W E) (agent : E)
 /--
 Semantics for doxastic predicate taking a Hamblin question.
 
-Following @cite{karttunen-1977}, "know Q" means knowing the true answer:
+Following [karttunen-1977], "know Q" means knowing the true answer:
 ⟦x knows Q⟧(w) = ∃p ∈ Q. p(w) ∧ x knows p
 
 For non-veridical predicates, we drop the p(w) requirement:
@@ -695,7 +695,7 @@ can be computed locally (inside the attitude) or globally (about speaker):
 **Global**: Speaker implicates ¬(speaker believes all)
 **Local**: x believes (some ∧ ¬all) [apparent local reading]
 
-@cite{goodman-stuhlmuller-2013} show the "local" reading arises from
+[goodman-stuhlmuller-2013] show the "local" reading arises from
 pragmatic inference about speaker knowledge, not true local computation.
 
 See `Studies/GoodmanStuhlmuller2013PMF.lean`
@@ -703,12 +703,12 @@ for the RSA treatment.
 -/
 
 -- ════════════════════════════════════════════════════════════════
--- Bridge: Veridicality → @cite{searle-1983} Causal Self-Referentiality
+-- Bridge: Veridicality → [searle-1983] Causal Self-Referentiality
 -- ════════════════════════════════════════════════════════════════
 
 open Discourse (PsychMode CausalSelfRef)
 
-/-- Map veridicality to @cite{searle-1983}'s psychological mode.
+/-- Map veridicality to [searle-1983]'s psychological mode.
 
     Veridical attitudes (know, realize) are like perception: the world must
     *cause* the mental state (you can only know p if p is the case and your
@@ -721,7 +721,7 @@ def psychMode : Veridicality → PsychMode
 
 /-- Veridical attitudes are causally self-referential (world→state);
     non-veridical attitudes are not. This connects the linguistic
-    veridicality distinction to @cite{searle-1983}'s metaphysics:
+    veridicality distinction to [searle-1983]'s metaphysics:
     knowledge requires the world to cause the knowing, while belief
     requires only that the content match reality. -/
 theorem veridical_self_referential :

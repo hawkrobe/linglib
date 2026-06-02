@@ -1,6 +1,6 @@
 /-!
 # Italian Discourse Particles
-@cite{ippolito-kiss-williams-2025}
+[ippolito-kiss-williams-2025]
 
 Lexical entry for Italian *solo che* — the discourse *only* connective. The most restrictive variant: S' must be declarative.
 

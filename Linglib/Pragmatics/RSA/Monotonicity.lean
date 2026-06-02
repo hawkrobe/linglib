@@ -3,7 +3,7 @@ import Linglib.Pragmatics.RSA.Basic
 /-!
 # RSA Monotonicity — Structural Order-Preserving Lemmas
 
-@cite{frank-goodman-2012} @cite{degen-2023}
+[frank-goodman-2012] [degen-2023]
 
 Structural lemmas that reduce RSA inequality proofs to qualitative claims about
 the underlying scores, costs, and meanings — peeling off one layer of

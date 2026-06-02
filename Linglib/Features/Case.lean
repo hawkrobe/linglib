@@ -5,7 +5,7 @@ import Linglib.Core.UD
 
 /-!
 # Case — Feature Taxonomy
-@cite{de-marneffe-zeman-2021} @cite{blake-1994} @cite{stassen-1985}
+[de-marneffe-zeman-2021] [blake-1994] [stassen-1985]
 
 The `Features.Case` type itself (a definitional alias for `UD.Case`), the
 small enums for alignment family / case assignment / fixed encoding, and
@@ -66,7 +66,7 @@ deriving instance Fintype for Case
 theorem Case.card_univ : (Finset.univ : Finset Case).card = 28 := by decide
 
 /-- How case is assigned to an NP in a given construction
-    (@cite{stassen-1985}, §2.2.1). -/
+    ([stassen-1985], §2.2.1). -/
 inductive CaseAssignment where
   | derived
   | fixed
@@ -78,7 +78,7 @@ inductive FixedCaseEncoding where
   | adverbial
   deriving DecidableEq, Repr
 
-/-! ### Blake's Case Hierarchy @cite{blake-1994}
+/-! ### Blake's Case Hierarchy [blake-1994]
 
 Implicational hierarchy over case inventories with contiguity checking.
 The 9 UD-specific spatial cases all sit at the peripheral spatial tier
@@ -88,7 +88,7 @@ spatial group.
 Inventory validity is the `Set.OrdConnected`-style contiguity property
 expressed in a form `decide` can mechanically check. -/
 
-/-- Position on Blake's case hierarchy (@cite{blake-1994}, §5.8, ex. 68).
+/-- Position on Blake's case hierarchy ([blake-1994], §5.8, ex. 68).
 
     Higher rank = more likely to exist in a language's case inventory.
 

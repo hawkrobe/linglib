@@ -7,10 +7,10 @@ import Linglib.Semantics.Modality.BiasedPQ
 
 /-!
 # Bias in Commitment Space Semantics
-@cite{krifka-2015} @cite{cohen-krifka-2014} @cite{ginzburg-2012} @cite{bring-gunlogson-2000}
+[krifka-2015] [cohen-krifka-2014] [ginzburg-2012] [bring-gunlogson-2000]
 
 Worked examples exercising the commitment-space framework of
-@cite{krifka-2015} ("Bias in Commitment Space Semantics: Declarative
+[krifka-2015] ("Bias in Commitment Space Semantics: Declarative
 questions, negated questions, and question tags"). Each worked example
 uses a 2-world Weather model and verifies a specific paper claim.
 
@@ -27,9 +27,9 @@ uses a 2-world Weather model and verifies a specific paper claim.
 - §5 — Question tags (paper §5, eqs. 44–45): matching = conjunction,
        reverse = disjunction, NOT sequential composition
 - §N — Reciprocal cross-framework contrasts:
-       - vs @cite{ginzburg-2012} KOS (per `Studies/Ginzburg2012.lean`
+       - vs [ginzburg-2012] KOS (per `Studies/Ginzburg2012.lean`
          lines 49–52, which delegates Krifka contrasts here)
-       - vs @cite{farkas-bruce-2010} discourse-table model. Krifka §1 (paper
+       - vs [farkas-bruce-2010] discourse-table model. Krifka §1 (paper
          p. 331) cites F&B as the inspiration for his rejection operator ℜ;
          this section makes the structural relationship Lean-checkable.
 - §∞ — Deep structure: the Dialogue Completeness observation —
@@ -40,11 +40,11 @@ uses a 2-world Weather model and verifies a specific paper claim.
 - Speech-act denegation `~𝔄` (paper §1, eq. 5) — substrate gained the
   `denegate` operator at 0.230.656. The first consumer is
   `Studies/CohenKrifka2014.lean` (anchored on the
-  prior @cite{cohen-krifka-2014} introduction of denegation). This file
+  prior [cohen-krifka-2014] introduction of denegation). This file
   could now exercise denegation but doesn't need to for the §§1–5
   scope; reverse-tag worked examples are blocked on a separate
   `applyComplex .disj` substrate gap.
-- JP/ComP layered clause structure — that's @cite{krifka-2020} material;
+- JP/ComP layered clause structure — that's [krifka-2020] material;
   see `Studies/Krifka2020.lean`.
 - Cross-framework contrasts with Stalnaker, Brandom, Lauer, Gunlogson,
   Inquisitive Semantics. Future work; substrates are present.
@@ -87,7 +87,7 @@ def s₀ : KrifkaState Weather := KrifkaState.empty
 
 /-- After asserting "it's raining", the root contains the
     speaker-indexed commitment `S₁⊢φ` — NOT bare `φ`. This is
-    the central content of @cite{krifka-2015} eq. (14):
+    the central content of [krifka-2015] eq. (14):
     `⟨..., C*⟩ +^S₁ S₁⊢φ = ⟨..., C*, [C + S₁⊢φ]^S₁⟩`. -/
 theorem assert_root_eq :
     (s₀.assert isRaining).space.root =
@@ -189,7 +189,7 @@ theorem monopolarQuestion_accept_eq_assert_addressee :
 
 /-! ## High vs low negation — the paper's titular contribution
 
-@cite{krifka-2015} §4 distinguishes:
+[krifka-2015] §4 distinguishes:
 - **Low negation**: *Did I not win?* — TP-internal negation, monopolar
   question with `commit addressee ¬φ`. The addressee is asked to commit
   to ¬φ.
@@ -250,7 +250,7 @@ theorem high_neg_weaker_than_low_neg (w : Weather) :
 
 /-! ## Table 1 (paper p. 341) — Büring & Gunlogson 2000 licensing
 
-@cite{bring-gunlogson-2000} (cited by @cite{krifka-2015} p. 341)
+[bring-gunlogson-2000] (cited by [krifka-2015] p. 341)
 identifies a 3×3 contextual-evidence × negation-type acceptability
 pattern. Contexts (rows): contextual evidence FOR φ / NEUTRAL / AGAINST φ.
 Question types (columns): no negation / low negation / high negation.
@@ -265,7 +265,7 @@ Cell values use `Features.Acceptability` (`ok` / `marginal` / `anomalous`).
 The paper's `(#)` parenthesised hash maps to `marginal`; bare `#` maps to
 `anomalous`. The `ContextualEvidence` enum is reused from
 `Discourse.Commitment` (originally introduced for
-@cite{bring-gunlogson-2000}).
+[bring-gunlogson-2000]).
 -/
 
 /-- The three negation columns of Krifka's Table 1. -/
@@ -279,7 +279,7 @@ inductive NegationType where
   deriving DecidableEq, Repr
 
 /-- Which reading licenses the no-negation question in each context
-    (per @cite{krifka-2015} p. 341 prose). -/
+    (per [krifka-2015] p. 341 prose). -/
 inductive NoNegReading where
   /-- Setting (a): monopolar reading licenses (speaker has prior evidence). -/
   | monopolarLicensed
@@ -302,7 +302,7 @@ def table1 : ContextualEvidence → NegationType → Acceptability
   | .againstP, .lowNeg  => .ok        -- (c, ii) ok
   | .againstP, .highNeg => .ok        -- (c, iii) ok
 
-/-- Per @cite{krifka-2015} p. 341 prose: which reading licenses the
+/-- Per [krifka-2015] p. 341 prose: which reading licenses the
     no-negation question in each contextual-evidence setting. -/
 def noNegLicensing : ContextualEvidence → NoNegReading
   | .forP     => .monopolarLicensed
@@ -335,7 +335,7 @@ theorem noNeg_licensing_distinguishes_contexts :
 
 /-! ## Tags as speech-act conjunction / disjunction
 
-Per @cite{krifka-2015} p. 342: matching tags are speech-act CONJUNCTION
+Per [krifka-2015] p. 342: matching tags are speech-act CONJUNCTION
 applied as ONE complex move — explicitly NOT sequential `assert; question`.
 The substrate's `Dialogue.Krifka.matchingTag` and `reverseTag`
 (`Dialogue/CommitmentSpace.lean` §4) capture this directly.
@@ -388,8 +388,8 @@ theorem matching_tag_apply_continuations_eq :
 /-! ## Krifka commitment-spaces vs KOS per-DGB stance
 
 Per the chronological-dependency rule, this post-2012 study engages the
-2012 framework: @cite{krifka-2015} commitment-spaces and
-@cite{ginzburg-2012} KOS make **structurally different** but
+2012 framework: [krifka-2015] commitment-spaces and
+[ginzburg-2012] KOS make **structurally different** but
 observationally similar predictions about identical event sequences.
 
 Reciprocal entry to `Studies/Ginzburg2012.lean` lines
@@ -445,9 +445,9 @@ end vsGinzburg2012
 
 /-! ## Krifka commitment-spaces vs Farkas-Bruce discourse-table model
 
-Per @cite{krifka-2015} §1 p. 331: "The last of these commitment stages
+Per [krifka-2015] §1 p. 331: "The last of these commitment stages
 would correspond to the notion of a 'Table' in Farkas & Bruce 2010, i.e.,
-the conversational stage under negation." Krifka cites @cite{farkas-bruce-2010}
+the conversational stage under negation." Krifka cites [farkas-bruce-2010]
 as the explicit inspiration for his rejection operator ℜ. The two
 frameworks are observationally similar but structurally distinct on
 identical event sequences.
@@ -474,8 +474,8 @@ open Discourse.Commitment.Table
     stays empty because the assertion lives on the table awaiting
     acceptance. The two frameworks DISAGREE on what's "in CommonGround" mid-trace.
 
-    @cite{krifka-2015} p. 332 eq. (14) puts `S₁⊢φ` directly in the
-    commitment state; @cite{farkas-bruce-2010}'s `assert`
+    [krifka-2015] p. 332 eq. (14) puts `S₁⊢φ` directly in the
+    commitment state; [farkas-bruce-2010]'s `assert`
     only updates `dcS` and pushes a table issue. -/
 theorem krifka_eager_vs_farkasBruce_lazy_intermediate :
     -- Krifka: speaker assert immediately puts speaker-indexed entry in root
@@ -615,7 +615,7 @@ in linglib from per-file `vsX2010` sections to a structural theorem
 about what counts as a dialogue framework at all.
 
 The framework that *refuses the typeclass instance* is the most
-informative: @cite{lauer-2013}'s gradient-credence assertion has no
+informative: [lauer-2013]'s gradient-credence assertion has no
 sharp `commit` event in the Krifka/F&B sense, so it would either
 reject the `DialogueState` instance or implement it with a non-trivial
 projection (mapping credence ≥ θ to commitment for some threshold θ).

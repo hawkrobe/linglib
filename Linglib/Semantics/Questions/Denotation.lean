@@ -4,7 +4,7 @@ import Linglib.Core.Logic.Modal.Inquisitive
 /-!
 # Denotations of logics into Question
 
-@cite{ciardelli-2022} @cite{ciardelli-groenendijk-roelofsen-2018}
+[ciardelli-2022] [ciardelli-groenendijk-roelofsen-2018]
 
 Semantic-theory claim: formulas of various inquisitive-flavored logics
 denote inquisitive contents (`Question`). This file collects the
@@ -43,8 +43,8 @@ characterization.
 
 ## References
 
-* @cite{ciardelli-2022} Chapter 8 — InqML modal preview
-* @cite{ciardelli-groenendijk-roelofsen-2018} Chapter 2 + 3 —
+* [ciardelli-2022] Chapter 8 — InqML modal preview
+* [ciardelli-groenendijk-roelofsen-2018] Chapter 2 + 3 —
   inquisitive proposition algebra
 -/
 

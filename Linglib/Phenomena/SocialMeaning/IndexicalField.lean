@@ -2,11 +2,11 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Features.Register
 
 /-!
-# Social Meaning and the Indexical Field @cite{eckert-2008}
-@cite{beltrama-schwarz-2024}
+# Social Meaning and the Indexical Field [eckert-2008]
+[beltrama-schwarz-2024]
 
 Framework-agnostic types for the social meaning of linguistic variation,
-following @cite{eckert-2008}'s theory of the indexical field.
+following [eckert-2008]'s theory of the indexical field.
 
 A linguistic variable's social meaning is not a fixed correspondence to a
 social category but a constellation of ideologically linked persona
@@ -29,7 +29,7 @@ identity through this stance → quality pathway.
 **Indexical field**: the constellation of potential meanings associated
 with a variant. Not a fixed meaning but a structured space — each use
 activates a region of the field, contextually selecting among
-ideologically linked traits (Figures 3–4 in @cite{eckert-2008}).
+ideologically linked traits (Figures 3–4 in [eckert-2008]).
 
 ## Connections
 
@@ -44,10 +44,10 @@ ideologically linked traits (Figures 3–4 in @cite{eckert-2008}).
 namespace Phenomena.SocialMeaning.IndexicalField
 
 -- ============================================================================
--- Indexical order (@cite{silverstein-2003})
+-- Indexical order ([silverstein-2003])
 -- ============================================================================
 
-/-- @cite{silverstein-2003}'s indexical order: how a variable's social meaning
+/-- [silverstein-2003]'s indexical order: how a variable's social meaning
     accumulates layers through use and metapragmatic awareness.
 
     Each order presupposes the previous: a variable must correlate with a
@@ -71,7 +71,7 @@ instance : LinearOrder IndexicalOrder :=
     (fun a b h => by cases a <;> cases b <;> simp_all [IndexicalOrder.toNat])
 
 -- ============================================================================
--- Indexical field (@cite{eckert-2008})
+-- Indexical field ([eckert-2008])
 -- ============================================================================
 
 /-- An indexical field: the constellation of ideologically
@@ -85,7 +85,7 @@ instance : LinearOrder IndexicalOrder :=
     value. Positive values mean the variant indexes *toward* the trait;
     negative values mean it indexes *away*. The field is context-dependent:
     the same variable may have different fields in different contexts
-    (@cite{eckert-2008}: "the field is a space of potential meanings"). -/
+    ([eckert-2008]: "the field is a space of potential meanings"). -/
 structure IndexicalField (Variant : Type) (Trait : Type) where
   /-- How strongly using this variant indexes this trait.
       Positive = toward, negative = away. -/
@@ -112,10 +112,10 @@ def IndexicalField.indexes {Variant Trait : Type}
 -- of the Stereotype Content Model theory rather than framework-agnostic Core.
 
 -- ============================================================================
--- Contextual style (@cite{labov-2006}, ch. 4)
+-- Contextual style ([labov-2006], ch. 4)
 -- ============================================================================
 
-/-- @cite{labov-2006}'s attention-to-speech model of contextual style.
+/-- [labov-2006]'s attention-to-speech model of contextual style.
 
     Speech formality increases with the degree of conscious monitoring.
     The five levels correspond to the interview methodology: casual speech
@@ -150,11 +150,11 @@ def ContextualStyle.toRegisterLevel : ContextualStyle → Features.Register.Leve
 -- ============================================================================
 
 /-- A stratification profile: the fundamental data object of variationist
-    sociolinguistics (@cite{labov-2006}).
+    sociolinguistics ([labov-2006]).
 
     Maps (social group, contextual style) pairs to a variable index (ℚ),
     where the index is the proportion of non-prestige variant usage (0–100).
-    Every @cite{labov-2006}-style stratification diagram is a visualization
+    Every [labov-2006]-style stratification diagram is a visualization
     of one of these matrices. -/
 structure StratificationProfile (Group Style : Type) where
   index : Group → Style → ℚ
@@ -183,10 +183,10 @@ def StratificationProfile.hasCrossover {Group Style : Type}
   p.index g₁ s₁ > p.index g₂ s₁ ∧ p.index g₁ s₂ < p.index g₂ s₂
 
 -- ============================================================================
--- Variable behavior classification (@cite{labov-2006}, ch. 7)
+-- Variable behavior classification ([labov-2006], ch. 7)
 -- ============================================================================
 
-/-- @cite{labov-2006}'s classification of variable change status.
+/-- [labov-2006]'s classification of variable change status.
 
     Labov distinguishes stable variables (no change in apparent time)
     from variables undergoing change. Changes "from above" are led by
@@ -206,7 +206,7 @@ inductive ChangeStatus where
 /-- A variable's sociolinguistic behavior: its structural properties in
     the social matrix, its indexical order (awareness level), and its
     change status. This type connects Labov's variationist classification
-    to @cite{silverstein-2003}'s indexical orders already formalized in
+    to [silverstein-2003]'s indexical orders already formalized in
     `IndexicalOrder`. -/
 structure VariableBehavior where
   /-- Silverstein's indexical order (awareness level). -/
@@ -230,7 +230,7 @@ def VariableBehavior.isStereotype (vb : VariableBehavior) : Prop :=
   vb.order = .third
 
 -- ============================================================================
--- Indirect indexicality (@cite{ochs-1992}, @cite{silverstein-1976})
+-- Indirect indexicality ([ochs-1992], [silverstein-1976])
 -- ============================================================================
 
 /-- Compose two association maps through an intermediate domain.
@@ -240,7 +240,7 @@ def VariableBehavior.isStereotype (vb : VariableBehavior) : Prop :=
 
       composed(s, t) = Σ_m f₁(s,m) × f₂(m,t)
 
-    This formalizes @cite{ochs-1992}'s indirect indexicality: linguistic
+    This formalizes [ochs-1992]'s indirect indexicality: linguistic
     forms do not directly index gender; they index stances, which in turn
     index gender. The composed value captures how strongly a form
     indirectly indexes a gender category.

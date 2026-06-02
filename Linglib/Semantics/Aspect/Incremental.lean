@@ -4,7 +4,7 @@ import Linglib.Semantics.Aspect.PrecedenceClosure
 
 /-!
 # Incrementality (SINC, INC) and Verb-Class Typeclass Hierarchy
-@cite{krifka-1998} @cite{tenny-1994} @cite{dowty-1991}
+[krifka-1998] [tenny-1994] [dowty-1991]
 
 The incrementality story: a thematic relation θ that establishes a
 correspondence between an object and an event. K98 distinguishes:
@@ -27,16 +27,16 @@ declared as a mathlib-style `extends` chain:
 so that synthesis automatically derives weaker classes from stronger
 ones. Mathlib analogue: `Group extends Monoid extends Semigroup`.
 
-Topic-named (not paper-named): SINC originates in @cite{krifka-1998}
+Topic-named (not paper-named): SINC originates in [krifka-1998]
 §3.2 (eq. 51) but the underlying concept is shared by
-@cite{tenny-1994}'s aspectual roles, @cite{dowty-1991}'s proto-roles,
+[tenny-1994]'s aspectual roles, [dowty-1991]'s proto-roles,
 and any modern incremental-theme account.
 
 ## References
 
-* @cite{krifka-1998} §3.2 (SINC eq. 51), §3.6 (INC eq. 59)
-* @cite{tenny-1994} (aspectual roles)
-* @cite{dowty-1991} (proto-roles)
+* [krifka-1998] §3.2 (SINC eq. 51), §3.6 (INC eq. 59)
+* [tenny-1994] (aspectual roles)
+* [dowty-1991] (proto-roles)
 -/
 
 namespace Semantics.Aspect.Incremental
@@ -49,7 +49,7 @@ variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
 /-- Strict Incrementality (SINC): the conjunction of MSO, UO, MSE, UE
     plus a non-degeneracy condition requiring extended entities.
-    @cite{krifka-1998} eq. 51:
+    [krifka-1998] eq. 51:
 
     SINC(θ) iff
       (i) MSO(θ) ∧ UO(θ) ∧ MSE(θ) ∧ UE(θ)
@@ -124,7 +124,7 @@ theorem mo_of_sinc {θ : α → β → Prop} (h : SINC θ) : MO θ :=
 
 /-- General Incrementality (INC): θ is the closure of some strictly
     incremental θ' under sum formation.
-    @cite{krifka-1998} eq. 59: θ is incremental iff there exists a
+    [krifka-1998] eq. 59: θ is incremental iff there exists a
     SINC θ' such that θ(x,e) holds iff (x,e) can be decomposed into
     θ'-pairs that sum to (x,e). This handles "read the article"
     (allows re-reading/backups): reading events are built from
@@ -151,7 +151,7 @@ theorem inc_of_sinc {θ : α → β → Prop} (h : SINC θ) (hCum : CumTheta θ)
 /-! ### VerbIncClass — Verb Incrementality Classification (K98 §3.6) -/
 
 /-- Incrementality annotations for verbs.
-    @cite{krifka-1998} §3.2-3.7: verbs differ in which thematic role
+    [krifka-1998] §3.2-3.7: verbs differ in which thematic role
     properties their incremental theme satisfies. -/
 inductive VerbIncClass where
   /-- Strictly incremental: consumption/creation verbs (K98 §3.2 page

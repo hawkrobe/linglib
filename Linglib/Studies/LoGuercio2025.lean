@@ -3,7 +3,7 @@ import Linglib.Semantics.Alternatives.Structural
 import Linglib.Data.Examples.Schema
 
 /-!
-# @cite{lo-guercio-2025} — Anti-Conventional Implicatures
+# [lo-guercio-2025] — Anti-Conventional Implicatures
 
 Lo Guercio, N. (2025). Maximize Conventional Implicatures!
 *Semantics & Pragmatics*, 18(9). <https://doi.org/10.3765/sp.18.9>
@@ -15,9 +15,9 @@ supplementary adverbs, and emotive markers.
 
 The mechanism parallels:
 - Scalar Implicatures: compare at-issue content (Conversational Principle,
-  @cite{katzir-2007})
+  [katzir-2007])
 - Antipresuppositions: compare presuppositional content (Maximize
-  Presupposition, @cite{schlenker-2012})
+  Presupposition, [schlenker-2012])
 - ACIs: compare CI content (Maximize Conventional Implicatures!)
 
 All three are instances of `violatesMaximize` from
@@ -30,7 +30,7 @@ not require same assertive content, unlike antipresuppositions" — MP is
 literally Maximize-on-presupposition *plus* a same-assertion clause.
 
 The CI content function used in the §3 worked example follows the
-@cite{gutzmann-2015} / @cite{kaplan-1999} felicity-set semantics adopted by
+[gutzmann-2015] / [kaplan-1999] felicity-set semantics adopted by
 Lo Guercio (paper def 12, p. 9): ⟦φ⟧ᵘ is the set of contexts where φ is
 felicitously usable. The bare sentence is felicitous everywhere (trivial CI);
 the epithet construction is felicitous only at worlds where the speaker
@@ -85,8 +85,8 @@ distinction.
 
 The Japanese vs Spanish honorific systematicity contrast (paper §3.2.2,
 JSON `outOfBlue_honorific` and `contrastive_honorific` comments) is the
-paper's key cross-linguistic argument and is grounded in @cite{mccready-2019}
-(plain vs *desu/masu* polite-form competition) and @cite{oshima-2023}
+paper's key cross-linguistic argument and is grounded in [mccready-2019]
+(plain vs *desu/masu* polite-form competition) and [oshima-2023]
 (*san*/*kun*/*chan* affixal designation terms). In Japanese, ADTs and
 polite forms are systematically contextually relevant by virtue of a
 default expectation of honorification; their omission systematically
@@ -102,7 +102,7 @@ omission triggers an ACI only when honorification is locally relevant.
   `expressiveCI` as `(interpret φ).ci`. Substrate-level change; defer.
 * §3.2.4 expressive-adjective argument extension (paper p. 25-27):
   Lo Guercio is explicit (p. 26) that he merely points to a tentative
-  line of analysis (late-merge at PF following @cite{lo-guercio-orlando-2022});
+  line of analysis (late-merge at PF following [lo-guercio-orlando-2022]);
   not formalized.
 * §4 embeddability data (paper (55)-(60)) — paper devotes 3 pages;
   promote to a `Phenomena/Expressives/Embeddability.lean` hub once a
@@ -325,7 +325,7 @@ def registerBlocking : LinguisticExample :=
     alternatives := []
     readings := []
     paperFeatures := [("aciStatus", "doesNotArise"), ("expressionType", "epithet"), ("licensingMechanism", "register"), ("registerContrast", "bastard~motherfucker")]
-    comment := "Lo Guercio 2025 (28a-b), p. 19. Despite *motherfucker* being CI-stronger than *bastard* (both lexical, both in substitution source), the predicted ACI ¬(John is a motherfucker) does NOT arise. Lo Guercio attributes the blocking to register/coarseness difference, citing @cite{levinson-2000} (`items in the same scale must be in salient opposition: of the same form class, in the same dialect or register, and lexicalised to the same degree`). Note: Lo Guercio is explicit (p. 20) that he does not yet have a full explanation for how register differs from other not-at-issue dimensions in blocking alternativehood."
+    comment := "Lo Guercio 2025 (28a-b), p. 19. Despite *motherfucker* being CI-stronger than *bastard* (both lexical, both in substitution source), the predicted ACI ¬(John is a motherfucker) does NOT arise. Lo Guercio attributes the blocking to register/coarseness difference, citing [levinson-2000] (`items in the same scale must be in salient opposition: of the same form class, in the same dialect or register, and lexicalised to the same degree`). Note: Lo Guercio is explicit (p. 20) that he does not yet have a full explanation for how register differs from other not-at-issue dimensions in blocking alternativehood."
     metaLanguage := "stan1293"
     lgrConformance := "" }
 
@@ -417,7 +417,7 @@ The §3 mechanism in two stages:
 2. **Prior mention**: when the epithet construction occurs elsewhere in
    the discourse (paper's `[DP that bastard Pedro]` in (20a)), the
    substitution source clause (a) admits it as "contextually relevant"
-   (@cite{fox-katzir-2011} def 41). We model this by adding
+   ([fox-katzir-2011] def 41). We model this by adding
    `bastardPedroDP` to `priorContextLex`. Now two Katzir substitutions
    reach `bastardJohnArrived`: outer DP → bastardPedroDP, then inner
    Pedro → John. -/
@@ -474,7 +474,7 @@ def bastardPedroDP : Tree Cat EWord :=
 
 /-- Prior-mention lexicon: out-of-the-blue lexicon augmented by the
 contextually-relevant `bastardPedroDP` constituent. This is the
-substitution-source clause (a) in @cite{fox-katzir-2011} def 41 made
+substitution-source clause (a) in [fox-katzir-2011] def 41 made
 concrete: "α is contextually relevant in c (e.g., by virtue of having
 been mentioned)" → α enters the substitution source. -/
 def priorContextLex : List (Tree Cat EWord) :=
@@ -533,7 +533,7 @@ notes). -/
 abbrev hasEpithetStructure (φ : Tree Cat EWord) : Prop :=
   φ.containsCat .DP = true
 
-/-- Felicity-set CI content (@cite{gutzmann-2015} / @cite{kaplan-1999};
+/-- Felicity-set CI content ([gutzmann-2015] / [kaplan-1999];
 adopted by Lo Guercio (paper def 12, p. 9)).
 
 `expressiveCI φ w` holds iff φ is felicitous at world w on the

@@ -6,10 +6,10 @@ import Linglib.Core.Probability.Finite
 import Mathlib.Algebra.BigOperators.Fin
 
 /-!
-# @cite{ippolito-kiss-williams-2025}: Discourse *only*
-@cite{ippolito-kiss-williams-2022} @cite{potts-2005} @cite{roberts-2012} @cite{thomas-2026}
+# [ippolito-kiss-williams-2025]: Discourse *only*
+[ippolito-kiss-williams-2022] [potts-2005] [roberts-2012] [thomas-2026]
 
-Formalisation of @cite{ippolito-kiss-williams-2025} "Discourse only"
+Formalisation of [ippolito-kiss-williams-2025] "Discourse only"
 (WCCFL 41 proceedings, pp. 222–231). Discourse *only* is a clausal
 connective taking two clausal arguments `S` and `S'` and contributing
 a conventional implicature (CI) of *lack of agreement* between `S` and
@@ -17,7 +17,7 @@ a conventional implicature (CI) of *lack of agreement* between `S` and
 
 The doxastic-evidential apparatus (`Supports`, `Agree`, `Disagree`)
 that the paper's §4 statement uses is attributed by the paper itself
-to the predecessor @cite{ippolito-kiss-williams-2022} ("Following
+to the predecessor [ippolito-kiss-williams-2022] ("Following
 Ippolito et al. (2022) we define…"); it lives in
 `Studies/IppolitoKissWilliams2022.lean` and is imported
 here. This file owns the paper-specific bundling — `Sentence`,
@@ -25,9 +25,9 @@ here. This file owns the paper-specific bundling — `Sentence`,
 derivations of §5.2, and the worked house-buying example of §7.
 
 A previous "Part II: Bayesian-to-DTS bridge" was removed in 0.230.502:
-@cite{merin-1999} is not cited in the paper's reference list, and
+[merin-1999] is not cited in the paper's reference list, and
 the §6 *only*-vs-*but* discussion grounds itself in
-@cite{anscombre-ducrot-1977} and IKW 2022's notion of semantic equality
+[anscombre-ducrot-1977] and IKW 2022's notion of semantic equality
 of *but*'s arguments — not in decision-theoretic semantics. The bridge
 was the formaliser's editorial overlay; the substrate-internal Bayesian
 theorems it contained (`probSupports_implies_posRelevant_binary`,
@@ -107,11 +107,11 @@ structure Context (W : Type*) where
   /-- Speaker's doxastic state `dox_sp`. -/
   dox : Set W
   /-- True partial answers to the QUD established in prior discourse.
-      @cite{ippolito-kiss-williams-2025} ex. (16) CI clause (i)
+      [ippolito-kiss-williams-2025] ex. (16) CI clause (i)
       quantifies universally over all true partial answers `p ∉ QUD`. -/
   partialAnswers : List (Set W)
   /-- Subquestions of the QUD established by the discourse context.
-      @cite{roberts-2012} (subquestion strategy); IKW §5.1: provided
+      [roberts-2012] (subquestion strategy); IKW §5.1: provided
       by the context, not computed. -/
   subquestions : List (Question W)
 
@@ -135,12 +135,12 @@ variable {W : Type*}
 
 /-- At-issue content of `S only S'`: every world where both
     `S` and `S'` are informatively true.
-    @cite{ippolito-kiss-williams-2025} ex. (16). -/
+    [ippolito-kiss-williams-2025] ex. (16). -/
 def atIssueContent (d : Sentence W) : Set W :=
   d.sDen.info ∩ d.s'Den.info
 
 /-- Presupposition / definedness condition for discourse *only*.
-    @cite{ippolito-kiss-williams-2025} ex. (16):
+    [ippolito-kiss-williams-2025] ex. (16):
 
     1. `S` is structurally relevant to the QUD;
     2. `S'` is structurally relevant to the QUD;
@@ -150,7 +150,7 @@ def isDefined (d : Sentence W) (ctx : Context W) : Prop :=
   moveRelevant d.s'Den ctx.qud ctx.subquestions ∧
   ∃ α ∈ alt ctx.qud, Supports ctx.dox d.sDen α ctx.prior
 
-/-- CI content of discourse *only*. @cite{ippolito-kiss-williams-2025}
+/-- CI content of discourse *only*. [ippolito-kiss-williams-2025]
     ex. (16): `∃ α ∈ QUD` such that
     (i)  every true partial answer `p` **with `p ∉ QUD`** is positive
          evidence for `α`;
@@ -174,13 +174,13 @@ def ciContent (d : Sentence W) (ctx : Context W) : Prop :=
 
 /-- `S` and `S'` **agree** on the QUD: there is some `α ∈ QUD`
     that both `Supports`. Lifted from `IKW2022.Agree`.
-    @cite{ippolito-kiss-williams-2025} ex. (14a). -/
+    [ippolito-kiss-williams-2025] ex. (14a). -/
 def agree (d : Sentence W) (ctx : Context W) : Prop :=
   Agree ctx.dox d.sDen d.s'Den ctx.qud ctx.prior
 
 /-- `S` and `S'` **disagree** on the QUD. Lifted from
     `IKW2022.Disagree`.
-    @cite{ippolito-kiss-williams-2025} ex. (14b). -/
+    [ippolito-kiss-williams-2025] ex. (14b). -/
 def disagree (d : Sentence W) (ctx : Context W) : Prop :=
   Disagree ctx.dox d.sDen d.s'Den ctx.qud ctx.prior
 
@@ -193,7 +193,7 @@ end Sentence
 @[simp] theorem atIssue_eq_inter {W : Type*} (d : Sentence W) :
     d.atIssueContent = d.sDen.info ∩ d.s'Den.info := rfl
 
-/-- @cite{ippolito-kiss-williams-2025} §5.2: an info-seeking
+/-- [ippolito-kiss-williams-2025] §5.2: an info-seeking
     interrogative cannot be the left argument because the speaker
     doesn't believe any of its alternatives, so `Supports` fails for
     every answer. Direct re-export of `Supports.of_no_belief_fails`. -/
@@ -203,7 +203,7 @@ theorem interrogative_blocks_support {W : Type*} {dox : Set W}
     ¬ Supports dox S α μ :=
   Supports.of_no_belief_fails h
 
-/-- @cite{ippolito-kiss-williams-2025} §5.2: an info-seeking
+/-- [ippolito-kiss-williams-2025] §5.2: an info-seeking
     interrogative `S'` trivially satisfies the CI's condition (ii) —
     `Supports` fails for every `α`, so `¬ Supports …` holds. -/
 theorem interrogative_satisfies_ci_clause {W : Type*} {dox : Set W}
@@ -212,7 +212,7 @@ theorem interrogative_satisfies_ci_clause {W : Type*} {dox : Set W}
     ¬ Supports dox S' α μ :=
   Supports.of_no_belief_fails h
 
-/-- Weak non-agreement (@cite{ippolito-kiss-williams-2025} §5.2 prose
+/-- Weak non-agreement ([ippolito-kiss-williams-2025] §5.2 prose
     around ex. (18)): when `S'` cannot support any QUD answer, `S` and
     `S'` neither agree nor disagree. Both relations require `S'` to
     support *something*.
@@ -229,7 +229,7 @@ theorem weak_non_agreement {W : Type*} (d : Sentence W) (ctx : Context W)
   · rintro ⟨_, ⟨α, hMem, hS'α⟩, _⟩
     exact hS' α hMem hS'α
 
-/-- @cite{ippolito-kiss-williams-2025} core insight: when `S` and `S'`
+/-- [ippolito-kiss-williams-2025] core insight: when `S` and `S'`
     evidentially clash (`disagree`) and there are no prior partial
     answers, the CI is automatically satisfied.
 
@@ -251,7 +251,7 @@ theorem disagree_imp_ciContent_of_empty_partials {W : Type*}
 /-! ## Part I: End-to-End Derivation Chains
 
 Concrete instantiations on a 8-world model of the house-buying
-scenario (@cite{ippolito-kiss-williams-2025} §7). Connects the
+scenario ([ippolito-kiss-williams-2025] §7). Connects the
 substrate predictions to the empirical data in the sibling `Data.lean`
 under this study's subdirectory. -/
 

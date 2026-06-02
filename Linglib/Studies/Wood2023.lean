@@ -6,15 +6,15 @@ import Linglib.Studies.Panagiotidis2015
 import Linglib.Studies.McNallyDeSwart2011
 
 /-!
-# @cite{wood-2023} — Icelandic Nominalizations and Allosemy
-@cite{wood-2023} @cite{wood-2015} @cite{wood-marantz-2017}
+# [wood-2023] — Icelandic Nominalizations and Allosemy
+[wood-2023] [wood-2015] [wood-marantz-2017]
 
 *Icelandic Nominalizations and Allosemy*. Oxford University Press.
 DOI: 10.1093/oso/9780198865155.001.0001
 
 ## Overview
 
-@cite{wood-2023} argues that Icelandic deverbal nominalizations are
+[wood-2023] argues that Icelandic deverbal nominalizations are
 built on the structure [nP n [vP v √ROOT]] (a complex head, NOT a
 phrasal VoiceP), and that the ambiguity between CEN, SEN, and RN
 readings arises from **allosemy of v and n** — one syntactic terminal
@@ -35,7 +35,7 @@ with multiple context-dependent meanings:
 ## Key Claims Formalized
 
 1. **No Voice in nominalizations** (Ch. 3, Ch. 5): The external argument
-   is introduced by a Poss head (= i* from @cite{wood-marantz-2017}),
+   is introduced by a Poss head (= i* from [wood-marantz-2017]),
    NOT by Voice. Voice diagnostics in nominalizations really test for
    agentive semantics, which Poss can also provide.
 
@@ -71,7 +71,7 @@ open Wood2015 (opnast_info)
 
 /-- Wood's reading derivation: v and n alloseme combinations.
 
-    @cite{wood-2023} Ch. 5 (5.4a–e):
+    [wood-2023] Ch. 5 (5.4a–e):
     - v eventive + n zero → CEN (noun = verb meaning)
     - v zero + n simpleEvent → SEN (event-entity reading)
     - v zero + n entity → simple entity (entity reading)
@@ -98,7 +98,7 @@ theorem cen_sen_v_difference :
     (readingFromAllosemes .zero .simpleEvent).isSome = true ∧
     VAlloseme.eventive ≠ VAlloseme.zero := by decide
 
-/-- The five reading types from @cite{wood-2023} Ch. 1 (1.18) are
+/-- The five reading types from [wood-2023] Ch. 1 (1.18) are
     pairwise distinct. -/
 theorem five_readings_distinct :
     NominalizationReading.complexEvent ≠ .simpleEvent ∧
@@ -116,18 +116,18 @@ theorem five_readings_distinct :
 -- § 2: No Voice in Nominalizations (Ch. 3, Ch. 5)
 -- ============================================================================
 
-/-- Whether a nominalization has Voice (it doesn't, per @cite{wood-2023}).
+/-- Whether a nominalization has Voice (it doesn't, per [wood-2023]).
 
-    @cite{wood-2023} Ch. 5 §5.1.3: "I will assume, as discussed in
+    [wood-2023] Ch. 5 §5.1.3: "I will assume, as discussed in
     Chapter 3, that there is in fact no Voice head in the structure."
     The external argument is introduced by Poss (= i*), not Voice. -/
 def nomHasVoice : Bool := false
 
 /-- Poss head semantics: parallel to Voice but for nominals.
-    @cite{wood-2023} Ch. 5 (5.22):
+    [wood-2023] Ch. 5 (5.22):
     ⟦Poss⟧ ↔ λxλe. agent(x)(e) / __ agentive nP
 
-    @cite{wood-marantz-2017}: Voice and Poss are the same head i*,
+    [wood-marantz-2017]: Voice and Poss are the same head i*,
     appearing in different categories (vP vs nP). -/
 inductive PossReading where
   | agent       -- agent interpretation (agentive event nominal)
@@ -136,7 +136,7 @@ inductive PossReading where
   deriving DecidableEq, Repr
 
 /-- Poss gets agent reading only with agentive (CEN) nP.
-    @cite{wood-2023} Ch. 5 (5.24): "i* ↔ λxλe. agent(x)(e) /
+    [wood-2023] Ch. 5 (5.24): "i* ↔ λxλe. agent(x)(e) /
     __ (agentive event)" -/
 def possReading (nPisCEN : Bool) : PossReading :=
   if nPisCEN then .agent else .possessor
@@ -150,7 +150,7 @@ theorem possessor_without_cen : possReading false = .possessor := rfl
 
 /-- Three patterns of preposition-verb interaction in nominalizations.
 
-    @cite{wood-2023} Ch. 4:
+    [wood-2023] Ch. 4:
     - **Pattern 1**: P conditions root meaning, must be prefixed, can
       also appear as complement PP (*ráða um* → *umráðun á*)
     - **Pattern 2**: P conditions root meaning, must be prefixed,
@@ -185,7 +185,7 @@ theorem umonnun_pattern2 :
 
 /-- Verbal prefixes that diagnose nominalization readings.
 
-    @cite{wood-2023} Ch. 6 §6.4:
+    [wood-2023] Ch. 6 §6.4:
     - *marg-* 'many-' adds iterativity to the event. Only compatible
       with CEN, because only CEN has an event variable at the v level.
     - *endur-* 're-' adds presupposition of prior eventuality. Compatible
@@ -203,7 +203,7 @@ inductive VerbalPrefix where
     Key distinction: *endur-* is compatible with result/product nominals
     (where v is eventive and the entity is computed from the event) but
     NOT with simple entity nominals (where v is zero, no event variable).
-    @cite{wood-2023} Ch. 6 (6.46)–(6.53). -/
+    [wood-2023] Ch. 6 (6.46)–(6.53). -/
 def prefixCompatible : VerbalPrefix → NominalizationReading → Bool
   | .marg,  .complexEvent => true
   | .marg,  _             => false
@@ -212,14 +212,14 @@ def prefixCompatible : VerbalPrefix → NominalizationReading → Bool
   | .endur, .result       => true   -- result/product: event variable present
   | .endur, _             => false  -- simpleEntity, simpleState, content: no event
 
-/-- *marg-* only compatible with CEN (@cite{wood-2023} Ch. 6 (6.38)). -/
+/-- *marg-* only compatible with CEN ([wood-2023] Ch. 6 (6.38)). -/
 theorem marg_cen_only :
     prefixCompatible .marg .complexEvent = true ∧
     prefixCompatible .marg .simpleEvent = false ∧
     prefixCompatible .marg .simpleEntity = false := ⟨rfl, rfl, rfl⟩
 
 /-- *endur-* compatible with CEN, SEN, and result/product RN, but not
-    simple entity RN (@cite{wood-2023} Ch. 6 (6.46)–(6.53)). -/
+    simple entity RN ([wood-2023] Ch. 6 (6.46)–(6.53)). -/
 theorem endur_pattern :
     prefixCompatible .endur .complexEvent = true ∧
     prefixCompatible .endur .simpleEvent = true ∧
@@ -239,7 +239,7 @@ theorem marg_stricter_than_endur (r : NominalizationReading) :
 /-- Borer's Generalization: CEN reading entails the existence of a
     morphologically related verb with the same meaning.
 
-    @cite{wood-2023} Ch. 5 §5.1.5: This follows from two assumptions:
+    [wood-2023] Ch. 5 §5.1.5: This follows from two assumptions:
     (a) verbs are semantically special (they introduce event variables),
     (b) n cannot trigger root suppletion past v. -/
 def borersGeneralization (nom : IcelandicNom) : Prop :=
@@ -259,7 +259,7 @@ theorem borers_generalization_holds :
     Because √VAEÐA is meaningless (like English do-support √DO),
     the root it compounds with must be categorized (n) first.
 
-    @cite{wood-2023} Ch. 6 (6.60):
+    [wood-2023] Ch. 6 (6.60):
     [v [n ... √ROOT n] [v √VAEÐA v]]
 
     This structure entails:
@@ -308,7 +308,7 @@ theorem opnun_connects_to_st_verb :
 
 /-- Anticausative -st verbs can be nominalized: the nominalization
     lacks Voice (hence no -st), but retains the root's meaning.
-    @cite{wood-2023} Ch. 3: -st and nominalization both require
+    [wood-2023] Ch. 3: -st and nominalization both require
     non-agentive contexts, but the nominal achieves this by lacking
     Voice entirely rather than having non-agentive Voice. -/
 theorem st_verb_nominalization_drops_voice :
@@ -324,13 +324,13 @@ theorem voice_irrelevant_for_nom_reading :
     opnun.availableReadings.contains .simpleEntity = true := by decide
 
 -- ============================================================================
--- § 8: Suffix Uniformity (@cite{wood-2023} Ch. 2–3)
+-- § 8: Suffix Uniformity ([wood-2023] Ch. 2–3)
 -- ============================================================================
 
 /-- All nominalizing suffixes spell out the same head n.
     Different suffixes do NOT indicate different functional heads —
     this is allomorphy of n, not different morphemes.
-    @cite{wood-2023} Ch. 2 (2.1), Ch. 3. -/
+    [wood-2023] Ch. 2 (2.1), Ch. 3. -/
 theorem suffix_count : (List.length [NomSuffix.un, .ing, .sla, .stur, .adur]) = 5 := rfl
 
 /-- The same suffix (-un) can yield different readings:
@@ -357,14 +357,14 @@ theorem different_suffix_same_reading :
 
 /-! ## Wood vs Panagiotidis on the n head
 
-@cite{wood-2023} Ch. 1 §1.2.3 + Ch. 5: nominalisations are systematically
+[wood-2023] Ch. 1 §1.2.3 + Ch. 5: nominalisations are systematically
 ambiguous (CEN/SEN/RN/SimpleState/SimpleEntity). All readings stem from
 ONE structure; the *interpretive* variation comes from `n` (and `v`)
 having multiple **allosemes** — `n` can be `zero / sortal / relational /
 alienator / content / simpleEvent / result / state / entity` (9 cases per
 `Morphology/DM/Allosemy.lean`).
 
-@cite{panagiotidis-2015} treats `n` as a uniform categoriser bearing the
+[panagiotidis-2015] treats `n` as a uniform categoriser bearing the
 interpretable feature [N]. There is no alloseme machinery in
 Panagiotidis: interpretation of an `n`-headed projection follows from
 [N] (sortal perspective) plus what the complement contributes. Per p. 95,
@@ -374,11 +374,11 @@ interpretive work.
 
 The two frameworks are **incommensurable on `n`'s interpretive
 contribution**: Wood says context-determined alloseme choice; Panagiotidis
-says uniform [N] feature. Applied to @cite{mcnally-deswart-2011}'s
+says uniform [N] feature. Applied to [mcnally-deswart-2011]'s
 `InflectedAnalysis` rivals (which all involve some `n` head), they
 diverge on what additional commitment is required.
 
-This is the cross-framework divergence the @cite{mcnally-deswart-2011}
+This is the cross-framework divergence the [mcnally-deswart-2011]
 bridge in `Panagiotidis2015.lean` (`namespace MdSBridge`) noted as
 *open* — addressed here. -/
 
@@ -391,9 +391,9 @@ open Morphology.DM.Allosemy
     to an `NAlloseme` (one of the 9 cases). Panagiotidis's framework
     requires no such commitment — `n` is uniformly [N].
 
-    For the @cite{mcnally-deswart-2011} `hetAsCap` analysis (where M&deS
+    For the [mcnally-deswart-2011] `hetAsCap` analysis (where M&deS
     posit a *trope* interpretation, an entity correlate of a property
-    uniquely instantiated in one bearer per @cite{moltmann-2004}), Wood's
+    uniquely instantiated in one bearer per [moltmann-2004]), Wood's
     framework would need to specify which alloseme `het` selects. None
     of the 9 NAlloseme cases is "trope":
 
@@ -405,7 +405,7 @@ open Morphology.DM.Allosemy
     * `simpleEvent, result, state` — event-nominalisation allosemes,
       conceptually for V→N transitions
     * `entity` — closest fit, but M&deS distinguish tropes from
-      ordinary entities (§3.4 + cite of @cite{moltmann-2004} ontology)
+      ordinary entities (§3.4 + cite of [moltmann-2004] ontology)
 
     So Wood's framework would require **extending NAlloseme** to model
     M&deS's trope analysis. Panagiotidis's framework would not. -/

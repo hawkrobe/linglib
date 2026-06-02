@@ -4,7 +4,7 @@ import Linglib.Semantics.Modality.Typology
 # Dutch Modal Inventory
 
 Modal expressions from Dutch (Indo-European), based on
-@cite{qing-uegaki-2025}.
+[qing-uegaki-2025].
 
 Dutch has one non-IFF modal: zou/zouden...kunnen expresses
 {(nec,e),(poss,e),(poss,c)} which is not Cartesian-closed.

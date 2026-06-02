@@ -4,9 +4,9 @@ import Linglib.Studies.GoldbergJackendoff2004
 /-!
 # Resultative — Small Clause Bridge
 
-@cite{dendikken-1995} @cite{goldberg-jackendoff-2004}
+[dendikken-1995] [goldberg-jackendoff-2004]
 
-@cite{dendikken-1995}: resultative constructions instantiate
+[dendikken-1995]: resultative constructions instantiate
 SC predication with an adjectival or prepositional predicate:
 
     "They hammered the metal flat" → V [SC DP AP]
@@ -17,7 +17,7 @@ DP is the SC subject to which the property/path is ascribed.
 
 ## Resultative types as SC predicate categories
 
-@cite{goldberg-jackendoff-2004} five-way resultative typology maps
+[goldberg-jackendoff-2004] five-way resultative typology maps
 onto SC predicate categories:
 
 | Resultative type | SC pred | Example |
@@ -58,7 +58,7 @@ def resToSCPred : ResultativeType → SCPredCategory
   | .noncausativeProperty    => .A
   | .noncausativePath        => .P
   | .fakeReflexive           => .A
-  | .anticausativeProperty   => .A  -- @cite{levin-2026}: "The door pushed open"
+  | .anticausativeProperty   => .A  -- [levin-2026]: "The door pushed open"
 
 /-- Whether a resultative type involves a causative agent. -/
 def ResultativeType.hasCausativeAgent : ResultativeType → Bool

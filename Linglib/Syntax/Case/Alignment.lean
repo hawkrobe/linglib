@@ -3,7 +3,7 @@ import Linglib.Features.Prominence
 
 /-!
 # Alignment Case-Assignment Functions
-@cite{dixon-1994} @cite{comrie-1989} @cite{marantz-1991}
+[dixon-1994] [comrie-1989] [marantz-1991]
 
 The SAP-indexed counterpart to `Syntax/Case/Dependent.lean`'s
 configural algorithm. Each `Alignment.X.assignCase` is a function from
@@ -20,15 +20,15 @@ against the functions here as ground truth.
 - `Alignment.ergative.assignCase` — canonical ergative-absolutive (S = P, A
   distinct). Found in Mayan perfective, Basque, Inuit, Australian languages.
 - `Alignment.extendedErgative.assignCase` — Mayan non-perfective pattern: S/A
-  both bear genitive (Set A), P bears absolutive. Per @cite{coon-2013}
-  + @cite{imanishi-2020}, this arises when a nominalized clause embeds the
+  both bear genitive (Set A), P bears absolutive. Per [coon-2013]
+  + [imanishi-2020], this arises when a nominalized clause embeds the
   external argument so the subject receives genitive from D rather than
-  ergative from v. The "extended ergative" label is from @cite{dixon-1994}.
+  ergative from v. The "extended ergative" label is from [dixon-1994].
 
 ## Ditransitive defaults (R, T)
 
 `ArgumentRole` has 5 constructors covering ditransitives. Ditransitive case
-alignment (indirective vs secundative vs neutral, per @cite{haspelmath-2005}'s
+alignment (indirective vs secundative vs neutral, per [haspelmath-2005]'s
 typology) is its own dimension orthogonal to monotransitive alignment. The
 R/T cases below pick conservative defaults intended to support monotransitive
 reasoning at zero cost; **they have no published audit trail and no current
@@ -81,8 +81,8 @@ end nominativeAccusative
 namespace extendedErgative
 
 /-- Cholan/Q'anjob'alan non-perfective: `S | A → GEN` (from D under
-    nominalization), `P → ABS` (from Voice). Per @cite{coon-2013};
-    @cite{imanishi-2020} parameterizes the same surface pattern via inherent
+    nominalization), `P → ABS` (from Voice). Per [coon-2013];
+    [imanishi-2020] parameterizes the same surface pattern via inherent
     vs structural Case. R/T default to ABS. -/
 def assignCase : ArgumentRole → Features.Case
   | .A | .S => .gen
@@ -95,8 +95,8 @@ namespace tripartite
 
 /-- Tripartite case assignment: A → ERG, P → ACC, S → ABS — three
     distinct cases, one per argument. Found in San Juan Atitán Mam
-    (Mayan, K'ichean-Mamean) per @cite{scott-2023} ch. 3, and (per
-    @cite{dixon-1994} §2.1.5) attested in Pitta-Pitta, Wangkumara,
+    (Mayan, K'ichean-Mamean) per [scott-2023] ch. 3, and (per
+    [dixon-1994] §2.1.5) attested in Pitta-Pitta, Wangkumara,
     and several other Australian languages. Mam lacks independent
     DP case morphology — the tripartite analysis is recoverable only
     from agreement patterns (Set A on A, no agreement on P, Set B
@@ -117,7 +117,7 @@ namespace invertedErgative
     receives ergative/genitive case rather than the subject — opposite
     of the canonical extended-ergative pattern.
 
-    Per @cite{imanishi-2014} §3.3.1 ("Kaqchikel: ERG=OBJ", p. 122):
+    Per [imanishi-2014] §3.3.1 ("Kaqchikel: ERG=OBJ", p. 122):
     "Kaqchikel exhibits a cross-linguistically rare alignment pattern
     in the nominative-accusative system found in the progressives and
     in the complement position of certain embedding verbs – the object
@@ -138,11 +138,11 @@ namespace invertedErgative
     construction has a slightly different sub-pattern with all subjects
     getting ERG too). The `chäp` variant is not encoded here.
 
-    Dialectal variation (per @cite{imanishi-2014} fn. 26, p. 141): "My
+    Dialectal variation (per [imanishi-2014] fn. 26, p. 141): "My
     Kaqchikel consultants do not accept nominalized patterns as in (120).
     This is presumably because of dialectal differences." Some Kaqchikel
     varieties may not show the inverted pattern even in PROG sentences;
-    @cite{garcia-matzar-rodriguez-guajan-1997} document broader patterns
+    [garcia-matzar-rodriguez-guajan-1997] document broader patterns
     that Imanishi's consultants don't accept. R/T default to ABS. -/
 def assignCase : ArgumentRole → Features.Case
   | .A | .S => .abs

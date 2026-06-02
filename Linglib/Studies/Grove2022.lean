@@ -3,19 +3,19 @@ import Linglib.Studies.Heim1992Projection
 
 /-!
 # Grove 2022: Presupposition Projection as a Scope Phenomenon
-@cite{grove-2022}
+[grove-2022]
 
 Presupposition projection as a scope phenomenon. *Semantics and Pragmatics*
 15, Article 15: 1–39.
 
 ## Core Claim
 
-The proviso problem — where @cite{heim-1983}'s satisfaction theory
+The proviso problem — where [heim-1983]'s satisfaction theory
 predicts weak conditional presuppositions for sentences that intuitively
 have unconditional ones — dissolves when presupposition projection is
 treated as **scope-taking**. Presupposition triggers have `Option`-typed
 denotations and interact with their context via monadic bind, exactly
-paralleling @cite{charlow-2020}'s treatment of indefinites.
+paralleling [charlow-2020]'s treatment of indefinites.
 
 ## Key Predictions
 
@@ -30,7 +30,7 @@ The two readings are a genuine **scope ambiguity**, not a semantic +
 pragmatic strengthening. The proviso problem does not arise because the
 unconditional presupposition is semantically available.
 
-## Connection to @cite{heim-1992}
+## Connection to [heim-1992]
 
 For attitude verbs ("Theo believes he lost his wetsuit"), the same
 scope mechanism predicts:
@@ -142,7 +142,7 @@ theorem local_noBro : localReading .noBro = some true := rfl
 
 /-- The local reading is defined iff `hasBrother → hasWetsuit`.
 
-    This is the **conditional presupposition** that @cite{geurts-1996}
+    This is the **conditional presupposition** that [geurts-1996]
     observed satisfaction accounts predict — and which Grove argues is
     merely one of two available readings. -/
 theorem local_definedness (w : CWorld) :
@@ -232,7 +232,7 @@ theorem eta_bind_reconstructs (w : CWorld) :
 
 /-! ### §6 Attitude verb example: "Theo believes he lost his wetsuit"
 
-We reuse the world model from @cite{heim-1992} (`AttWorld` with
+We reuse the world model from [heim-1992] (`AttWorld` with
 `actual` and `believed`) and show that the scope theory derives the
 same empirical predictions via different machinery. -/
 
@@ -301,9 +301,9 @@ theorem believe_global_definedness (w : AttWorld) :
 -- §7 Bridge to Heim 1992
 -- ════════════════════════════════════════════════════════════════
 
-/-! ### §7 Connection to @cite{heim-1992}
+/-! ### §7 Connection to [heim-1992]
 
-@cite{heim-1992}'s know/believe asymmetry is derived in `Heim1992Projection.lean`
+[heim-1992]'s know/believe asymmetry is derived in `Heim1992Projection.lean`
 via local-context filtering and KD45 frame conditions. The scope theory
 provides an alternative explanation: the asymmetry arises because the
 trigger can take different scopes relative to the attitude verb.

@@ -2,20 +2,20 @@ import Linglib.Core.Logic.Intensional.Situations
 import Linglib.Tactics.OntSort
 
 /-!
-# Clause Denotation: Situation @cite{bondarenko-2022} @cite{moltmann-2021}
-@cite{kratzer-1989} @cite{moltmann-2024} @cite{moltmann-2019}
+# Clause Denotation: Situation [bondarenko-2022] [moltmann-2021]
+[kratzer-1989] [moltmann-2024] [moltmann-2019]
 
 CPs as predicates of **situation individuals**, the situation-side
 sibling of `ClauseDenotation/Content.lean`.
 
 Where content nouns (*belief*, *claim*, *rumor*) range over content
-individuals in the sense of @cite{kratzer-2006}, *situation* nouns
+individuals in the sense of [kratzer-2006], *situation* nouns
 (*situation*, *case*, *circumstance*, *event*) range over situations
-in the sense of @cite{kratzer-1989} — partial points of evaluation
+in the sense of [kratzer-1989] — partial points of evaluation
 ordered by parthood. The empirical motivation for the dual sort is
-@cite{bondarenko-2022}'s observation that situation-denoting clauses
+[bondarenko-2022]'s observation that situation-denoting clauses
 exhibit selectional behaviour distinct from content-denoting clauses
-(see also @cite{moltmann-2021}, @cite{moltmann-2024}).
+(see also [moltmann-2021], [moltmann-2024]).
 
 The two licensee sorts are coordinate, not subordinate: a content
 individual is not a situation, and vice versa. Verbs that select for
@@ -27,16 +27,16 @@ reject content-denoting clauses.
 
 In Modern Greek, *oti*-clauses denote content and combine with
 content-selecting verbs; *pu*-clauses denote situations and combine
-with situation-selecting verbs (@cite{angelopoulos-2026} §3.2,
-following @cite{bondarenko-2022}). The same content/situation cut
+with situation-selecting verbs ([angelopoulos-2026] §3.2,
+following [bondarenko-2022]). The same content/situation cut
 appears in other languages with different morphological exponents
 (Korean *-ko* / *-num kes*, Japanese *to* / *koto*; mapping is
 language-specific and not assumed here).
 
 ## Position-orthogonality (mirroring Content.lean)
 
-@cite{bondarenko-2022} (transparent Syntax-Semantics mapping) and
-@cite{angelopoulos-2026} (autonomy of syntax) hold opposing views on
+[bondarenko-2022] (transparent Syntax-Semantics mapping) and
+[angelopoulos-2026] (autonomy of syntax) hold opposing views on
 whether the PM-vs-FA composition mode forces distinct syntactic
 positions for situation-clauses (adjunct vs argument). This file
 stays neutral on the syntax-semantics correspondence; the substrate
@@ -55,7 +55,7 @@ namespace Semantics.Attitudes.ClauseDenotation.Situation
 
     The `sit` field gives the situation predicate (`SIT`): the set of
     situations the entity refers to. For a *case*-individual referring
-    to "the case that the father is absent" (@cite{angelopoulos-2026}
+    to "the case that the father is absent" ([angelopoulos-2026]
     ex. 35b), `sit` is the predicate that holds at exactly those
     situations where the father is absent.
 

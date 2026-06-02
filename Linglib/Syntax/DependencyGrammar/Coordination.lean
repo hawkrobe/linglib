@@ -4,19 +4,19 @@ import Linglib.Syntax.DependencyGrammar.Basic
 # Coordination in UD enhanced graphs
 
 Implements coordination in Universal Dependencies' enhanced-dependency
-graphs (@cite{de-marneffe-nivre-2019}, §4.2 and Figure 9, applied to
+graphs ([de-marneffe-nivre-2019], §4.2 and Figure 9, applied to
 coordinate structures): the basic dependency tree attaches each shared
 dependent to the first conjunct only, and the enhanced graph recovers the
 parallel attachments by propagating `obj` / `nsubj` / `iobj` edges from the
 first-conjunct head to every other conjunct.
 
-Word Grammar (@cite{hudson-2010}, §7.5.4 "Non-constituent coordination")
+Word Grammar ([hudson-2010], §7.5.4 "Non-constituent coordination")
 handles the same data via a different device: a contiguous string of
 words may be treated as a single chunk ("word string") and entered into a
 dependency relation as a whole, eliminating the need to propagate shared
 dependents. For the historical phrase-structure approach to coordination
 (Coordinate Structure Constraint, ATB extraction as theorems of a
-complex-symbol grammar), see @cite{gazdar-1981}.
+complex-symbol grammar), see [gazdar-1981].
 
 ## Main declarations
 
@@ -99,7 +99,7 @@ def checkArgStrMatch (t : DepTree) : Bool :=
 conjunct to all subsequent conjuncts. For each `conj` edge head→dep,
 propagates the head's `obj` / `nsubj` / `iobj` edges to `dep`. Returns a
 `DepGraph` (words may have multiple incoming edges). Cf.
-@cite{de-marneffe-nivre-2019} Figure 9 for the relative-clause analogue. -/
+[de-marneffe-nivre-2019] Figure 9 for the relative-clause analogue. -/
 def enhanceSharedDeps (t : DepTree) : DepGraph :=
   let conjEdges := t.deps.filter (·.depType == .conj)
   let enhancedDeps := conjEdges.foldl (λ acc conjEdge =>

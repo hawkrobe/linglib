@@ -4,13 +4,13 @@ import Linglib.Semantics.Tense.Basic
 import Linglib.Syntax.Minimalist.Features
 
 /-!
-# @cite{zeijlstra-2012}: sequence of tense as upward Agree
+# [zeijlstra-2012]: sequence of tense as upward Agree
 
-@cite{zeijlstra-2012} analyzes Sequence of Tense (SOT) as syntactic concord,
+[zeijlstra-2012] analyzes Sequence of Tense (SOT) as syntactic concord,
 structurally parallel to Negative Concord. Subordinate past morphemes carry
 uninterpretable `[uPAST]`; they Agree *upward* with a c-commanding interpretable
 `[iPAST]`. The subordinate past morphology is semantically vacuous — it is Agree
-spell-out, not semantic past. The account builds on @cite{chomsky-2000}'s Agree,
+spell-out, not semantic past. The account builds on [chomsky-2000]'s Agree,
 reversing its c-command direction.
 
 ## Main declarations
@@ -25,15 +25,15 @@ reversing its c-command direction.
 ## Implementation notes
 
 * **The interpretable past is an abstract operator, not the matrix verb.** In
-  @cite{zeijlstra-2012} (§5.3) the `[iPAST]` sits on an abstract operator
+  [zeijlstra-2012] (§5.3) the `[iPAST]` sits on an abstract operator
   (Op_PAST, after von Stechow); *all* finite verbal morphology, the matrix verb
   included, is `[uPAST]`. `SOTAgreeConfig` simplifies by treating `matrixT` as
   the `[iPAST]` bearer and abstracting the matrix verb's own `[uPAST]`.
-* **SOT crosses CP.** @cite{zeijlstra-2012} (§5.3) holds SOT to be *not*
+* **SOT crosses CP.** [zeijlstra-2012] (§5.3) holds SOT to be *not*
   clause-bounded — unlike Negative Concord it crosses a CP, because the
   embedding C itself carries `[uT]` and so participates in the phase edge.
 * **Embedded `[uPAST]` is modeled as pure simultaneity.** `zeijlstra_derives_simultaneous`
-  yields `simultaneousFrame` (R' = P' = matrix E). @cite{zeijlstra-2012} fn. 9
+  yields `simultaneousFrame` (R' = P' = matrix E). [zeijlstra-2012] fn. 9
   treats embedded `[uPAST]` as a relative non-future ("no later than") licensing
   *both* the simultaneous and a back-shifted reading (not forward); that
   refinement is not formalized here.
@@ -59,7 +59,7 @@ open Minimalist (FeatureVal GramFeature Interpretability)
 /-! ### Tense feature interpretability -/
 
 /-- A tense head: a `GramTense` value together with an `Interpretability`
-    status. Following @cite{zeijlstra-2012}, `[iPAST]` (`.interpretable`)
+    status. Following [zeijlstra-2012], `[iPAST]` (`.interpretable`)
     contributes past semantics; `[uPAST]` (`.uninterpretable`) is checked by
     Agree and is semantically vacuous. -/
 structure TenseHead where
@@ -79,7 +79,7 @@ instance (th : TenseHead) : Decidable th.IsSemanticallyActive :=
 /-! ### Upward Agree -/
 
 /-- Zeijlstra's upward Agree: the goal c-commands the probe, reversing standard
-    @cite{chomsky-2000} Agree. The uninterpretable `[uF]` probe sits low and is
+    [chomsky-2000] Agree. The uninterpretable `[uF]` probe sits low and is
     valued by a c-commanding interpretable `[iF]` goal. -/
 structure UpwardAgree where
   /-- The embedded `T` with `[uT]` (probe). -/
@@ -108,7 +108,7 @@ theorem upwardAgree_goal_active (ua : UpwardAgree) :
 /-! ### SOT Agree configuration -/
 
 /-- An SOT configuration: one interpretable `[iPAST]` head over a list of
-    uninterpretable `[uPAST]` heads (@cite{zeijlstra-2012}, ex. 22–23) — the
+    uninterpretable `[uPAST]` heads ([zeijlstra-2012], ex. 22–23) — the
     `[iF] > [uF] (> [uF])` upward-Agree schema. See the module notes: the
     interpretable head is really an abstract operator, and matrix verbal
     morphology is itself `[uPAST]`. -/
@@ -172,7 +172,7 @@ theorem zeijlstra_upward_direction (ua : UpwardAgree) :
 
 /-- Map a `TenseHead` into the Minimalist `GramFeature` infrastructure:
     interpretable ↦ valued, uninterpretable ↦ unvalued. In the SOT domain the
-    ±interpretable and ±valued axes coincide (@cite{chomsky-1995}); they are
+    ±interpretable and ±valued axes coincide ([chomsky-1995]); they are
     orthogonal in general (see `Minimalist.Features`). -/
 def TenseHead.toGramFeature (th : TenseHead) : GramFeature :=
   match th.status with

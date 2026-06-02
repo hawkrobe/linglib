@@ -6,7 +6,7 @@ import Linglib.Studies.Noonan2007
 
 /-!
 # Landau (2015): A Two-Tiered Theory of Control
-@cite{landau-2015} @cite{landau-2004} @cite{landau-2013}
+[landau-2015] [landau-2004] [landau-2013]
 
 MIT Press. ISBN 978-0-262-02885-1.
 
@@ -50,7 +50,7 @@ open Features (Attitude)
 -- § 1: The Two-Tiered Theory of Control
 -- ════════════════════════════════════════════════════════════════
 
-/-- The two tiers of obligatory control (table (119) of @cite{landau-2015}).
+/-- The two tiers of obligatory control (table (119) of [landau-2015]).
 
     Predicative control (EC complements):
     - Selected by nonattitude predicates (implicative, aspectual, modal, evaluative)
@@ -78,7 +78,7 @@ def ControlTier.isAttitude : ControlTier → Bool
   | .predicative => false
   | .logophoric  => true
 
-/-- Condition on syntactic predication ((90) in @cite{landau-2015}):
+/-- Condition on syntactic predication ((90) in [landau-2015]):
     "The argument predicated of must be syntactically represented."
 
     In predicative control, the controller must be syntactically present
@@ -93,7 +93,7 @@ def ControlTier.requiresSyntacticController : ControlTier → Bool
   | .logophoric  => false
 
 /-- [−human] PRO is compatible with predicative control but
-    incompatible with logophoric control ((81) in @cite{landau-2015}).
+    incompatible with logophoric control ((81) in [landau-2015]).
 
     In predicative control, PRO is bound by a simple λ-operator;
     neither the binder nor the bindee carries any inherent semantic
@@ -119,18 +119,18 @@ def ControlTier.allowsNonhumanPRO : ControlTier → Bool
 
 /-- Partial control is available only under logophoric control.
     Predicative control forces exhaustive control (EC).
-    @cite{landau-2015} Ch 5, §5.1 -/
+    [landau-2015] Ch 5, §5.1 -/
 def ControlTier.allowsPartialControl := ControlTier.isAttitude
 
 /-- Obligatory *de se* arises only under logophoric control.
     Predicative contexts are free of the *de se* entailment.
-    @cite{landau-2015} §3.4 -/
+    [landau-2015] §3.4 -/
 def ControlTier.obligatoryDeSe := ControlTier.isAttitude
 
 /-- Control shift (from subject to object controller) is available
     only under logophoric control. Predicative control enters a biunique
     predication relation that no other DP can saturate.
-    @cite{landau-2015} §4.3 -/
+    [landau-2015] §4.3 -/
 def ControlTier.allowsControlShift := ControlTier.isAttitude
 
 /-- Implicit control is the complement of requiring a syntactic controller.
@@ -139,7 +139,7 @@ def ControlTier.allowsImplicitControl := ControlTier.isAttitude
 
 /-- Split control (two arguments jointly control PRO) is available
     only under logophoric control.
-    @cite{landau-2015} Ch 5, §5.2 -/
+    [landau-2015] Ch 5, §5.2 -/
 def ControlTier.allowsSplitControl := ControlTier.isAttitude
 
 /-- Implicit control derives from condition (90): predicative control
@@ -159,7 +159,7 @@ theorem nonhuman_pro_from_attitude (tier : ControlTier) :
 -- § 2: Predicate Classification
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{landau-2015}'s predicate classification by complement type.
+/-- [landau-2015]'s predicate classification by complement type.
 
     (4) Predicates selecting untensed complements [−T] → nonattitude:
       (a) Implicative: avoid, dare, manage, remember, ...
@@ -210,7 +210,7 @@ theorem propositional_pc :
 -- § 3: Feature Transmission Asymmetry (60)
 -- ════════════════════════════════════════════════════════════════
 
-/-- The Feature Transmission asymmetry ((60) in @cite{landau-2015}).
+/-- The Feature Transmission asymmetry ((60) in [landau-2015]).
 
     This is the single most important mechanism in the TTC. It is the
     reason why [+Agr] blocks logophoric control but not predicative
@@ -224,7 +224,7 @@ theorem propositional_pc :
     The asymmetry is independently motivated: predication tolerates
     φ-feature mismatches (Icelandic quirky constructions, (63)), while
     variable binding requires φ-agreement between binder and bindee
-    (@cite{heim-2008}, @cite{kratzer-2009}). -/
+    ([heim-2008], [kratzer-2009]). -/
 structure FeatureTransmissionAsymmetry where
   /-- (60a): Predication does NOT require feature matching. -/
   predicationContingentOnFeatureMatch : Bool
@@ -240,7 +240,7 @@ def ftAsymmetry : FeatureTransmissionAsymmetry where
 -- § 4: The OC-NC Generalization (derived)
 -- ════════════════════════════════════════════════════════════════
 
-/-- The OC-NC generalization ((70) in @cite{landau-2015}):
+/-- The OC-NC generalization ((70) in [landau-2015]):
 
     "[+Agr] blocks logophoric control but not predicative control."
 
@@ -272,7 +272,7 @@ theorem agr_blocks_derived_from_ft :
 -- § 5: Clause Classes
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{landau-2004}'s finiteness scale, as recast in @cite{landau-2015}.
+/-- [landau-2004]'s finiteness scale, as recast in [landau-2015].
 
     The [±T] distinction is subsumed by the attitude/nonattitude distinction:
     - C-subjunctives (untensed, [−T]) → nonattitude → predicative control
@@ -343,7 +343,7 @@ theorem finite_no_oc (agr : Bool) :
 -- ════════════════════════════════════════════════════════════════
 
 /-- The six empirical contrasts between the two types of control
-    (table (80) in @cite{landau-2015}).
+    (table (80) in [landau-2015]).
 
     Each contrast shows a property that aligns with exactly one
     control tier. The "✓" entries indicate the tier where the
@@ -442,7 +442,7 @@ theorem all_contrasts_derived :
        ∧ ControlTier.allowsSplitControl .logophoric = true) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
-/-- EC verbs resist impersonal passives ((98) in @cite{landau-2015}).
+/-- EC verbs resist impersonal passives ((98) in [landau-2015]).
 
     This is a direct consequence of (90): predicative control requires a
     syntactically present controller, and impersonal passives suppress the
@@ -465,8 +465,8 @@ theorem ec_resists_impersonal_passives :
     referential (free) pronoun. "=" means syncretic with the referential
     pronoun; "×" means a distinct form is used.
 
-    Used by @cite{ostrove-2026} (table 92) and grounded in the minimal
-    pronoun approach of @cite{kratzer-2009} and @cite{safir-2014}. -/
+    Used by [ostrove-2026] (table 92) and grounded in the minimal
+    pronoun approach of [kratzer-2009] and [safir-2014]. -/
 structure BVASyncretism where
   language : String
   /-- Is the reflexive form identical to the referential pronoun? -/
@@ -493,7 +493,7 @@ def syncretismFromInventory {Form : Type} [BEq Form]
 -- § 8: Copy Control Typology
 -- ════════════════════════════════════════════════════════════════
 
-/-- Types of copy control (@cite{polinsky-potsdam-2006}).
+/-- Types of copy control ([polinsky-potsdam-2006]).
 
     Copy control: the subject of a control clause is a phonologically
     overt copy of its controller. Four subtypes are distinguished by
@@ -539,7 +539,7 @@ def copyControlProfile : CopyControlType → CopyControlProfile
 -- § 9: Exempt Anaphors
 -- ════════════════════════════════════════════════════════════════
 
-/-- Exempt anaphors (@cite{pollard-sag-1992}): reflexive forms used
+/-- Exempt anaphors ([pollard-sag-1992]): reflexive forms used
     outside their canonical binding domain (Condition A domain).
 
     Key constraint: exempt anaphors cannot have quantified antecedents. -/
@@ -576,7 +576,7 @@ def predictsExemptWithQuantifiedController : ControlDerivation → Bool
 -- ════════════════════════════════════════════════════════════════
 
 /-- The two logophoric readings of OC PRO under attitude predicates
-    (table (36) in @cite{landau-2015}).
+    (table (36) in [landau-2015]).
 
     Under logophoric control, PRO is bound by a projected coordinate
     of the embedded context of evaluation. Which coordinate is
@@ -617,7 +617,7 @@ theorem communicative_deTe :
 -- § 12: Derived Landau Class from Verb
 -- ════════════════════════════════════════════════════════════════
 
-/-- Derive @cite{landau-2015}'s predicate class from Verb fields.
+/-- Derive [landau-2015]'s predicate class from Verb fields.
 
     This creates a bridge from Fragment verb entries to the TTC by
     deriving the predicate classification from existing semantic fields
@@ -723,13 +723,13 @@ theorem hope_desiderative :
 
 /-- "promise" (preferential attitude) → desiderative → logophoric.
     Previously unclassified; fixed by adding `attitude` to the
-    Fragment entry per @cite{landau-2015} (5c). -/
+    Fragment entry per [landau-2015] (5c). -/
 theorem promise_desiderative :
     derivedLandauClass promise.toVerb = some .desiderative := rfl
 
 /-- "persuade" (preferential attitude, object control) → desiderative → logophoric.
     Previously unclassified; fixed by adding `attitude` per
-    @cite{landau-2015} table (36). -/
+    [landau-2015] table (36). -/
 theorem persuade_desiderative :
     derivedLandauClass persuade.toVerb = some .desiderative := rfl
 
@@ -802,7 +802,7 @@ end VerbVerification
 
 open Typology.Complementation
 
-/-- Map @cite{noonan-2007}'s CTP classes to @cite{landau-2015}'s
+/-- Map [noonan-2007]'s CTP classes to [landau-2015]'s
     control tiers.
 
     Noonan's twelve CTP classes partition into nonattitude (predicative)
@@ -843,7 +843,7 @@ theorem propAttitude_logophoric : ctpToControlTier .propAttitude = some .logopho
 theorem utterance_logophoric : ctpToControlTier .utterance = some .logophoric := rfl
 theorem manipulative_logophoric : ctpToControlTier .manipulative = some .logophoric := rfl
 
-/-- Map @cite{noonan-2007}'s CTP classes to @cite{landau-2015}'s
+/-- Map [noonan-2007]'s CTP classes to [landau-2015]'s
     predicate classes (where the mapping is unambiguous). -/
 def ctpToLandauClass : CTPClass → Option LandauPredicateClass
   | .modal        => some .modal
@@ -867,11 +867,11 @@ theorem ctp_tier_consistent (c : CTPClass)
   cases c <;> simp_all [ctpToControlTier, ctpToLandauClass, LandauPredicateClass.controlTier]
 
 -- ════════════════════════════════════════════════════════════════
--- § Bridge to @cite{noonan-2007}: equi-deletion → predicative tier
+-- § Bridge to [noonan-2007]: equi-deletion → predicative tier
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{noonan-2007}'s equi-deletion criterion (§2.1) and
-    @cite{landau-2015}'s control tiers (Ch 2, table (119)) classify the
+/-! [noonan-2007]'s equi-deletion criterion (§2.1) and
+    [landau-2015]'s control tiers (Ch 2, table (119)) classify the
     same English verbs by independent properties: equi-deletion via
     coreferential subject erasure, predicative tier via complement
     head-feature ([uD]). The two should agree on `manage`-class verbs:

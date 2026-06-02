@@ -7,7 +7,7 @@ import Linglib.Fragments.Bantu.Params
 
 /-!
 # Taraldsen, Taraldsen Medová & Langa (2018)
-@cite{taraldsen-et-al-2018}
+[taraldsen-et-al-2018]
 
 "Class prefixes as specifiers in Southern Bantu."
 *Natural Language & Linguistic Theory* 36:1339–1394.
@@ -25,7 +25,7 @@ import Linglib.Fragments.Bantu.Params
 4. The **Foot Condition** constrains prefix insertion and derives
    nP stacking (double prefix constructions in Changana/Rhonga).
 5. The specifier analysis **unifies** Bantu class prefixes with
-   classifiers on the @cite{aikhenvald-2000} continuum.
+   classifiers on the [aikhenvald-2000] continuum.
 
 ## Formalization
 
@@ -37,7 +37,7 @@ import Linglib.Fragments.Bantu.Params
 - §6: Pluralization derivation — the backtracking algorithm
 - §7: Stacking-agreement correlation (central bridge theorem)
 - §8: DM vs Nanosyntax comparison on SC prefixes
-- §9: Agreement-classifier bridge (@cite{carstens-2026})
+- §9: Agreement-classifier bridge ([carstens-2026])
 - §10: NPStack derivation from stacking analysis
 - §11: NPStack–stacking bridge (canonical ↔ direct spellout)
 - §12: NounClass alignment (Fragment enums ↔ study Nats)
@@ -59,7 +59,7 @@ open Typology.NounCategorizationSystem (isNounClassType isClassifierType)
 /-- Nominal features on the Bantu nanosyntactic fseq.
     `num` = number head (#); `cls n` = classifier head Nn.
 
-    @cite{taraldsen-et-al-2018}: class prefixes spell out phrasal
+    [taraldsen-et-al-2018]: class prefixes spell out phrasal
     trees built from these features. Singular prefixes lexicalize
     just Nx; plural prefixes lexicalize [# Nx]. -/
 inductive NCFeature where
@@ -74,7 +74,7 @@ open NCFeature
 -- ============================================================================
 
 /-- Singular class prefixes: each lexicalizes just Nx.
-    @cite{taraldsen-et-al-2018} (60)–(61): singular prefixes are
+    [taraldsen-et-al-2018] (60)–(61): singular prefixes are
     specifiers of nP, spelling out the classifier head N alone. -/
 def cl1Sg : TreeLexEntry NCFeature := ⟨.leaf (.cls 1), "um", .prefix⟩
 def cl3Sg : TreeLexEntry NCFeature := ⟨.leaf (.cls 3), "um", .prefix⟩
@@ -83,14 +83,14 @@ def cl7Sg : TreeLexEntry NCFeature := ⟨.leaf (.cls 7), "isi", .prefix⟩
 def cl9Sg : TreeLexEntry NCFeature := ⟨.leaf (.cls 9), "in", .prefix⟩
 
 /-- Plural class prefixes: each lexicalizes [# Nx].
-    @cite{taraldsen-et-al-2018} (60)–(61), (77), (83): plural prefixes
+    [taraldsen-et-al-2018] (60)–(61), (77), (83): plural prefixes
     are specifiers of #P, spelling out [number + classifier].
 
     **Critical**: "strong" classes (2, 8) share the same N with their
     singular counterparts (N₁, N₇). "Weak" classes (4, 6, 10)
     contain DISTINCT Ns: N₄ ≠ N₃, N₆ ≠ N₅, N₁₀ ≠ N₉. This is the
     paper's central empirical finding from agreement with conjoined
-    subjects (@cite{taraldsen-et-al-2018} §2). -/
+    subjects ([taraldsen-et-al-2018] §2). -/
 def cl2Pl : TreeLexEntry NCFeature :=
   ⟨.node .num [.leaf (.cls 1)], "aba", .prefix⟩     -- [# N₁] — shares N₁ with cl1
 def cl4Pl : TreeLexEntry NCFeature :=
@@ -152,7 +152,7 @@ theorem spellout_cl2_sg_none :
 -- ============================================================================
 
 /-- Whether a singular-plural class pair shares the same classifier N.
-    @cite{taraldsen-et-al-2018} §2: strong classes (1/2, 7/8) share Ns;
+    [taraldsen-et-al-2018] §2: strong classes (1/2, 7/8) share Ns;
     weak classes (3/4, 5/6, 9/10) have distinct Ns. The evidence comes
     from agreement with conjoined singular subjects: a conjunction of
     two class X singulars triggers plural class Y agreement iff the
@@ -169,14 +169,14 @@ theorem cl1_cl2_share_N : sharesClassifierN cl1Sg cl2Pl = true := rfl
 theorem cl7_cl8_share_N : sharesClassifierN cl7Sg cl8Pl = true := rfl
 
 /-- Classes 3/4 do NOT share Ns — weak class pair.
-    @cite{taraldsen-et-al-2018} §2.1–2.4: a conjunction of two class 3
+    [taraldsen-et-al-2018] §2.1–2.4: a conjunction of two class 3
     singular nouns does NOT trigger class 4 agreement. The plural
     prefix *mi* contains N₄, distinct from the N₃ in the singular
     prefix *mu*. -/
 theorem cl3_cl4_distinct_N : sharesClassifierN cl3Sg cl4Pl = false := rfl
 
 /-- Classes 5/6 do NOT share Ns — weak class pair.
-    @cite{taraldsen-et-al-2018} §2.5: a conjunction of two class 5
+    [taraldsen-et-al-2018] §2.5: a conjunction of two class 5
     singular nouns does NOT trigger class 6 agreement. The plural
     prefix *ma* contains N₆, distinct from the N₅ in class 5. -/
 theorem cl5_cl6_distinct_N : sharesClassifierN cl5Sg cl6Pl = false := rfl
@@ -228,7 +228,7 @@ theorem foot_not_met_weak_cl6 :
     can spell out the target [# N_sg]. The derivation must backtrack,
     splitting the structure and building a Specifier — producing the
     stacking pattern observed in Changana/Rhonga.
-    @cite{taraldsen-et-al-2018} §4.2, prediction derived from (77)–(83).
+    [taraldsen-et-al-2018] §4.2, prediction derived from (77)–(83).
 
     Contrast with strong classes (§3) where spellout succeeds directly. -/
 theorem no_spellout_forces_stacking_cl3 :
@@ -248,7 +248,7 @@ theorem no_spellout_forces_stacking_cl9 :
 -- ============================================================================
 
 /-- Result of pluralizing a Bantu noun.
-    @cite{taraldsen-et-al-2018} §4.2 derives two outcomes:
+    [taraldsen-et-al-2018] §4.2 derives two outcomes:
     - `direct`: one plural prefix replaces the singular (strong class).
     - `stacked`: the plural prefix stacks on top of the singular prefix
       (weak class), producing double prefix constructions. -/
@@ -263,7 +263,7 @@ def PluralizationResult.isStacked : PluralizationResult → Bool
 
 /-- Derive the plural form for a noun with singular class `sgCls`.
 
-    Models @cite{taraldsen-et-al-2018} §4.2 cyclic derivation:
+    Models [taraldsen-et-al-2018] §4.2 cyclic derivation:
     1. Noun N_Y merges with classifier N_sgCls → [N_sgCls N_Y].
     2. Number head # merges → target [# N_sgCls].
     3. Try spellout of [# N_sgCls]. If some entry's tree contains
@@ -385,7 +385,7 @@ private theorem derivePlural_isStacked_eq
     - **Entries**: `sharesClassifierN` = (s = pN) for standard-form
       entries (definitional from `NanoTree.foot`)
 
-    @cite{taraldsen-et-al-2018}: the correlation between agreement
+    [taraldsen-et-al-2018]: the correlation between agreement
     failure and stacking is not stipulated — it is derived from
     distinct Ns in the lexical entries. -/
 theorem stacking_iff_distinct_N_general
@@ -456,7 +456,7 @@ def classPairings : List ClassPairing :=
 /-- In stacked forms, the outer prefix is always from a plural entry
     (has # at root). Singular prefixes never appear as the outer
     layer in stacking.
-    @cite{taraldsen-et-al-2018} §4.5: "while plural prefixes may stack
+    [taraldsen-et-al-2018] §4.5: "while plural prefixes may stack
     on top of singular prefixes, we have found no cases where a
     singular prefix stacks on top of a plural prefix." This follows
     from the derivation: stacking is triggered by failure to lexicalize
@@ -512,15 +512,15 @@ section AgreementBridge
 open Carstens2026
 open Minimalist.Agreement.GenderResolution
 
-/-- Combining @cite{carstens-2026}'s agreement diagnostic with the
+/-- Combining [carstens-2026]'s agreement diagnostic with the
     classifier analysis: matching agreement (resolve succeeds) iff
     the gender has a semantic core — identifying it as a semantically
     motivated, classifier-like noun class.
 
     This theorem bridges two phenomena: genders where conjoined
-    singulars allow matching plural agreement (@cite{carstens-2026})
+    singulars allow matching plural agreement ([carstens-2026])
     are exactly those whose class prefixes have classifier-like
-    semantic content (@cite{taraldsen-et-al-2018}). -/
+    semantic content ([taraldsen-et-al-2018]). -/
 theorem agreement_resolve_iff_core (s : GenderStatus) :
     (resolve (statusToBundle s) (statusToBundle s)).isSome =
     s.core.isSome := by
@@ -532,7 +532,7 @@ theorem agreement_resolve_iff_core (s : GenderStatus) :
 end AgreementBridge
 
 open Aikhenvald2000 in
-/-- Xhosa sits at the noun-class pole of the @cite{aikhenvald-2000}
+/-- Xhosa sits at the noun-class pole of the [aikhenvald-2000]
     classifier-to-noun-class continuum. -/
 theorem xhosa_on_classifier_continuum :
     isNounClassType xhosa.classifierType = true ∧
@@ -546,7 +546,7 @@ theorem xhosa_on_classifier_continuum :
     is the outermost N; the core class is the innermost (= foot).
     When visible = core, the noun is canonical (strong class);
     when they differ, stacking has occurred because the plural
-    prefix contains a different N (@cite{taraldsen-et-al-2018} §4). -/
+    prefix contains a different N ([taraldsen-et-al-2018] §4). -/
 def treeToNPStack (visibleClass coreClass : Nat)
     (status : GenderStatus) : NPStack :=
   { visibleClass, coreClass, status }

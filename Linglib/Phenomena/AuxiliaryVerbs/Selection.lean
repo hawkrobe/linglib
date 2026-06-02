@@ -2,7 +2,7 @@ import Linglib.Core.Word
 
 /-!
 # Be/Have Auxiliary Selection in European Perfects
-@cite{burzio-1986} @cite{sorace-2000}
+[burzio-1986] [sorace-2000]
 
 Many European languages select between *be* and *have* as the perfect auxiliary
 based on the transitivity/unaccusativity of the lexical verb. The canonical
@@ -54,7 +54,7 @@ inductive SelectionRule where
     HAVE-selecting (German pattern)? Unaccusatives always select BE,
     unergatives and transitives always select HAVE; the only point of
     cross-linguistic variation in this small typology is the reflexive
-    row (@cite{burzio-1986}, @cite{sorace-2000}). -/
+    row ([burzio-1986], [sorace-2000]). -/
 def selection (reflexIsBe : Bool) : TransitivityClass → PerfectAux
   | .unaccusative => .be
   | .reflexive    => if reflexIsBe then .be else .have
@@ -65,7 +65,7 @@ def selection (reflexIsBe : Bool) : TransitivityClass → PerfectAux
 def canonicalSelection : TransitivityClass → PerfectAux := selection true
 
 /-- German auxiliary selection: reflexives → *haben*, not *sein*
-    (@cite{burzio-1986}). -/
+    ([burzio-1986]). -/
 def germanSelection : TransitivityClass → PerfectAux := selection false
 
 /-- Does this transitivity class canonically select *be*?
@@ -91,7 +91,7 @@ structure AuxSelectionDatum where
   deriving Repr, BEq
 
 /-- Italian *arrivare* (arrive) — unaccusative, selects *essere*
-    (@cite{burzio-1986}). -/
+    ([burzio-1986]). -/
 def italianArrivare : AuxSelectionDatum :=
   { language := "Italian"
   , selectionRule := .split
@@ -101,7 +101,7 @@ def italianArrivare : AuxSelectionDatum :=
   , gloss := "è arrivato 'is arrived'" }
 
 /-- Italian *mangiare* (eat) — transitive, selects *avere*
-    (@cite{burzio-1986}). -/
+    ([burzio-1986]). -/
 def italianMangiare : AuxSelectionDatum :=
   { language := "Italian"
   , selectionRule := .split
@@ -111,7 +111,7 @@ def italianMangiare : AuxSelectionDatum :=
   , gloss := "ha mangiato 'has eaten'" }
 
 /-- French *arriver* (arrive) — unaccusative, selects *être*
-    (@cite{burzio-1986}). -/
+    ([burzio-1986]). -/
 def frenchArriver : AuxSelectionDatum :=
   { language := "French"
   , selectionRule := .split
@@ -121,7 +121,7 @@ def frenchArriver : AuxSelectionDatum :=
   , gloss := "est arrivé 'is arrived'" }
 
 /-- German *ankommen* (arrive) — unaccusative, selects *sein*
-    (@cite{burzio-1986}). -/
+    ([burzio-1986]). -/
 def germanAnkommen : AuxSelectionDatum :=
   { language := "German"
   , selectionRule := .split
@@ -131,7 +131,7 @@ def germanAnkommen : AuxSelectionDatum :=
   , gloss := "ist angekommen 'is arrived'" }
 
 /-- Dutch *aankomen* (arrive) — unaccusative, selects *zijn*
-    (@cite{sorace-2000}). -/
+    ([sorace-2000]). -/
 def dutchAankomen : AuxSelectionDatum :=
   { language := "Dutch"
   , selectionRule := .split

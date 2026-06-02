@@ -4,8 +4,8 @@ import Mathlib.Order.Basic
 
 /-!
 # Centering — Information-Status Cf Ranking
-@cite{strube-hahn-1999} @cite{prince-1981}
-@cite{gundel-hedberg-zacharski-1993}
+[strube-hahn-1999] [prince-1981]
+[gundel-hedberg-zacharski-1993]
 
 Strube-Hahn's 3-tier information-status ranker (HEARER-OLD > MEDIATED
 > HEARER-NEW) as a `CfRanker` instance. `ofGivenness` projects GHZ's

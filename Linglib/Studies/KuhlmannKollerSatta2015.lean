@@ -5,12 +5,12 @@ import Mathlib.Data.List.Basic
 /-!
 # Classical CCG generates a non-context-free language
 
-Formalisation of the construction in @cite{kuhlmann-koller-satta-2015}, Example 2: a
+Formalisation of the construction in [kuhlmann-koller-satta-2015], Example 2: a
 rule-restricted combinatory categorial grammar — the classical formalism of
-@cite{vijay-shanker-weir-1994} and @cite{weir-joshi-1988} — that generates the
+[vijay-shanker-weir-1994] and [weir-joshi-1988] — that generates the
 non-context-free language `aⁿbⁿcⁿ`.
 
-The point is theoretical. @cite{kuhlmann-koller-satta-2015} show that the CCG≡TAG weak
+The point is theoretical. [kuhlmann-koller-satta-2015] show that the CCG≡TAG weak
 equivalence holds for *classical* CCG, where combinatory rules may be restricted per
 grammar (here, via the target restriction modelled in `Syntax/CCG/Classical`: every rule
 fires only when the *target* of its primary input category is `S`). For lexicalized CCG
@@ -174,7 +174,7 @@ theorem build_yield {n : Nat} (hn : 1 ≤ n) :
 def anbncStrings : Set (List String) :=
   {w | ∃ n, 1 ≤ n ∧ w = List.replicate n "a" ++ List.replicate n "b" ++ List.replicate n "c"}
 
-/-- **The construction generates `aⁿbⁿcⁿ`** (@cite{kuhlmann-koller-satta-2015}, Ex. 2):
+/-- **The construction generates `aⁿbⁿcⁿ`** ([kuhlmann-koller-satta-2015], Ex. 2):
 every string in the non-context-free language is the yield of a well-formed (target-
 restricted) CCG derivation. This is the completeness half of CCG ⊋ CFG; the language
 `anbnc` it covers is not context-free (`AnBnCn.anbnc_not_contextFree`). -/

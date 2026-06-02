@@ -11,7 +11,7 @@ set_option autoImplicit false
 
 /-!
 # B- operator on `ConnesKreimer R (Nonplanar α)` and the B+/B- pairing adjoint
-@cite{oudom-guin-2008} @cite{foissy-typed-decorated-rooted-trees-2018}
+[oudom-guin-2008] [foissy-typed-decorated-rooted-trees-2018]
 
 The `B-_a` operator is the transpose of `B+_a` (defined in
 `Coproduct/PruningNonplanar.lean`) under the symmetry-weighted pairing
@@ -34,7 +34,7 @@ label).
 
 This is the OG Prop 3.2 substrate: the transpose property anchors
 the duality argument for `B-(A ∗ B) = ε(A) B-(B) + B-(A) ∗ B`
-(@cite{oudom-guin-2008} §3.2; deferred to a sibling file).
+([oudom-guin-2008] §3.2; deferred to a sibling file).
 
 ## Why this file (OG-faithful Q5c route)
 
@@ -346,7 +346,7 @@ theorem bMinusLin_pairing_adjoint (a : α)
 
 /-! ## Phase C: OG-style identity `B-_a(x *_GL y) = ε(x) • B-_a y + B-_a x *_GL y`
 
-OG paper @cite{oudom-guin-2008} §3.2 proves this identity on the S(L)
+OG paper [oudom-guin-2008] §3.2 proves this identity on the S(L)
 side. On the CK side (under the algebra iso ckIso), this becomes the
 direct identity `bMinusLin a (x *_GL y) = counit(x) • bMinusLin a y +
 bMinusLin a x *_GL y`.

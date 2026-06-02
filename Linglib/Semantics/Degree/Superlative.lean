@@ -4,13 +4,13 @@ import Linglib.Semantics.Degree.Comparative
 
 /-!
 # Superlative Semantics
-@cite{heim-1999} @cite{sharvit-stateva-2002} @cite{szabolcsi-1986}
+[heim-1999] [sharvit-stateva-2002] [szabolcsi-1986]
 
 Compositional semantics for the superlative morpheme `-est`/`most`.
 
-## @cite{heim-1999}: Absolute vs. Relative
+## [heim-1999]: Absolute vs. Relative
 
-@cite{heim-1999} identifies two readings of superlatives:
+[heim-1999] identifies two readings of superlatives:
 
 - **Absolute**: "Kim climbed the highest mountain" = the mountain that
   is highest of all mountains.
@@ -93,12 +93,12 @@ theorem absoluteSuperlative_isGreatest {Entity D : Type*} [LinearOrder D]
 -- § 5. Superlative as Universal Comparative
 -- ════════════════════════════════════════════════════
 
-/-- **Superlative = universal comparative** (@cite{heim-1999}):
+/-- **Superlative = universal comparative** ([heim-1999]):
     "x is the tallest in C" iff "x is taller than every other y in C".
 
     The superlative universally quantifies over the comparative:
     ⟦-est⟧ applies ⟦-er⟧ to every alternative in the comparison class.
-    This semantic decomposition is the reflex of @cite{bobaljik-2012}'s
+    This semantic decomposition is the reflex of [bobaljik-2012]'s
     morphosyntactic containment hypothesis (`[[[ADJ] CMPR] SPRL]`). -/
 theorem superlative_iff_universal_comparative {Entity D : Type*} [LinearOrder D]
     (μ : Entity → D) (C : Set Entity) (x : Entity) :

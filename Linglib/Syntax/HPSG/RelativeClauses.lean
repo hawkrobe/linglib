@@ -3,7 +3,7 @@ import Linglib.Typology.RelativeClause.Basic
 
 /-!
 # Relative Clauses in HPSG
-@cite{pollard-sag-1994} @cite{ginzburg-sag-2000} @cite{sag-wasow-bender-2003}
+[pollard-sag-1994] [ginzburg-sag-2000] [sag-wasow-bender-2003]
 
 Relative clauses are analyzed as modifiers that contain a filler-gap
 dependency. A relative pronoun (or complementizer "that") introduces
@@ -35,11 +35,11 @@ This HPSG derivation projects to the framework-neutral descriptive profile in
 *descriptive* projection only — the GAP/MOD *mechanism* is HPSG-specific and is
 not unified with other frameworks' derivations.
 
-## Connection to @cite{sag-wasow-bender-2003} Ch. 14
+## Connection to [sag-wasow-bender-2003] Ch. 14
 
 SWB2003 explicitly defers relative clause analysis ("beyond the scope
 of this text", p. 442). We follow the standard HPSG approach from
-@cite{pollard-sag-1994} and @cite{ginzburg-sag-2000}, using the GAP
+[pollard-sag-1994] and [ginzburg-sag-2000], using the GAP
 mechanism from SWB2003 Ch. 14 combined with the MOD feature.
 -/
 

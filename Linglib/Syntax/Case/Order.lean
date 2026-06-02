@@ -2,7 +2,7 @@ import Mathlib.Order.Basic
 import Linglib.Features.Case
 /-!
 # Caha Containment Order on Case
-@cite{caha-2009} @cite{mcfadden-2018}
+[caha-2009] [mcfadden-2018]
 
 The canonical order on `Features.Case`: state-of-the-art syntax
 (configurational case + nanosyntactic spellout) assumes Caha's
@@ -26,7 +26,7 @@ open Features (Case)
 namespace Syntax
 namespace Case
 
-/-- Caha's containment rank (@cite{caha-2009}). Cases higher on the
+/-- Caha's containment rank ([caha-2009]). Cases higher on the
     containment hierarchy have representations that include all lower cases.
 
     [[[[[ NOM ] ACC ] GEN ] DAT ] LOC ]
@@ -35,12 +35,12 @@ namespace Case
     (e.g., ERG/ABS in ergative systems, or minor cases whose containment
     structure is less well established).
 
-    **Encoding caveat.** @cite{caha-2009} (10b), p. 10 gives the Universal
+    **Encoding caveat.** [caha-2009] (10b), p. 10 gives the Universal
     Case sequence NOM-ACC-GEN-DAT-INST-COM (no LOC); the Russian-specific
     sequence (16) p. 12 inserts PREP between GEN and DAT. The encoding
     below — NOM=0, ACC=1, GEN=2, DAT=3, LOC=4, INST=none — matches
     neither verbatim; it is closer to Blake's typological hierarchy
-    (@cite{blake-1994} §5.8, which Caha himself argues on p. 31 should
+    ([blake-1994] §5.8, which Caha himself argues on p. 31 should
     coincide with his sequence). For Slavic 6-case inventories the
     encoding choice is verdict-equivalent; inventories with INST or COM
     *without* LOC may diverge. For paradigm-shape work that needs Caha's
@@ -53,7 +53,7 @@ def containmentRank : Case → Option Nat
   | .loc => some 4
   | _ => none
 
-/-- Caha's Slavic-specific Case sequence (@cite{caha-2009} (16) p. 12 for
+/-- Caha's Slavic-specific Case sequence ([caha-2009] (16) p. 12 for
     Russian; (7) p. 238 confirms the same for Serbian): NOM – ACC – GEN –
     PREP/LOC – DAT – INS. Differs from `containmentRank` in placing LOC
     between GEN and DAT (not at top) and INST at the top (not
@@ -149,7 +149,7 @@ instance : PartialOrder Case where
   le_antisymm _ _ := cahaLE_antisymm _ _
 
 /-- A case is **nonnominative** iff its representation contains ACC's, i.e.
-    `(.acc : Case) ≤ c` in the Caha order. @cite{mcfadden-2018} argues this is
+    `(.acc : Case) ≤ c` in the Caha order. [mcfadden-2018] argues this is
     the key natural class for stem allomorphy: a VI rule conditioned on
     `[ACC]` captures the NOM-vs-oblique split found cross-linguistically. -/
 def IsNonnominative (c : Case) : Prop := (.acc : Case) ≤ c
@@ -158,7 +158,7 @@ instance (c : Case) : Decidable (IsNonnominative c) :=
   inferInstanceAs (Decidable ((.acc : Case) ≤ c))
 
 /-- A case is **oblique** iff its representation contains GEN's, i.e.
-    `(.gen : Case) ≤ c` in the Caha order. Per @cite{caha-2009}'s
+    `(.gen : Case) ≤ c` in the Caha order. Per [caha-2009]'s
     Unmarked-Dependent vs Oblique split, NOM/ACC are unmarked-dependent
     and GEN/DAT/LOC/INS/COM/etc. are oblique. Ergative-aligned ABS/ERG
     are off-hierarchy in `containmentRank` and so satisfy `¬ IsOblique`

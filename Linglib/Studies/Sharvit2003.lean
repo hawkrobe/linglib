@@ -3,8 +3,8 @@ import Linglib.Core.Time.Reichenbach
 import Linglib.Semantics.Tense.Basic
 
 /-!
-# @cite{sharvit-2003}: Embedded Tense and Universal Grammar
-@cite{sharvit-2003} @cite{abusch-1997} @cite{ogihara-1996}
+# [sharvit-2003]: Embedded Tense and Universal Grammar
+[sharvit-2003] [abusch-1997] [ogihara-1996]
 
 Sharvit (Linguistic Inquiry 34(4), 2003) observes a cross-linguistic
 correlation between (a) the obligatoriness of utterance-time reference

@@ -4,7 +4,7 @@ import Linglib.Semantics.Conditionals.Presupposition
 /-!
 # Rooth-Partee Conditionals: Empirical Data
 
-@cite{sharvit-2025} @cite{rooth-partee-1982}Theory-neutral data for @cite{sharvit-2025} "Rooth-Partee Conditionals."
+[sharvit-2025] [rooth-partee-1982]Theory-neutral data for [sharvit-2025] "Rooth-Partee Conditionals."
 
 ## The puzzle
 

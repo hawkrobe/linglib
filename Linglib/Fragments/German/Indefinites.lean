@@ -2,23 +2,23 @@ import Linglib.Typology.Indefinite
 
 /-!
 # German Indefinite Pronouns
-@cite{aloni-port-2015} @cite{bubnov-2026} @cite{wals-2013}
+[aloni-port-2015] [bubnov-2026] [wals-2013]
 
 German uses multiple morphological bases for indefinites: the dedicated
 prefix *irgend-* (special), and the generic-noun-derived *jemand* 'someone'
-and *etwas* 'something'. Per @cite{wals-2013} F46A, German is classified
+and *etwas* 'something'. Per [wals-2013] F46A, German is classified
 `.mixed` on this basis.
 
 *irgend-* is an epistemic indefinite (D&A type iv, `var(∅,x)`):
 its semantics requires variation across epistemic alternatives, allowing
 both specific-unknown and non-specific contexts. Diachronically, *irgend-*
-extended from non-specific to epistemic (@cite{aloni-port-2015}),
+extended from non-specific to epistemic ([aloni-port-2015]),
 instantiating the semantic weakening path `var(v,x) → var(∅,x)`
-(@cite{bubnov-2026} §6, Figure 3).
+([bubnov-2026] §6, Figure 3).
 
 See also `German.ModalIndefinites` for the modal-indefinite
 perspective on *irgendein* (domain widening per
-@cite{kratzer-shimoyama-2002}).
+[kratzer-shimoyama-2002]).
 -/
 
 set_option autoImplicit false
@@ -29,7 +29,7 @@ open Typology.Indefinite
 
 /-- German *irgend-*: dedicated indefinite prefix (special basis),
     epistemic indefinite (D&A type iv).
-    @cite{aloni-port-2015}; @cite{bubnov-2026} §6, Table 3. -/
+    [aloni-port-2015]; [bubnov-2026] §6, Table 3. -/
 def irgendEntry : IndefinitePronoun where
   form := "irgend-"
   ontology := .person

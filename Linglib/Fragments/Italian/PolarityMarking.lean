@@ -2,7 +2,7 @@ import Linglib.Typology.PolarityMarking
 
 /-!
 # Italian Polarity-Marking Strategies
-@cite{garassino-jacob-2018} @cite{bernini-1995} @cite{poletto-zanuttini-2013} @cite{batllori-hernanz-2013}
+[garassino-jacob-2018] [bernini-1995] [poletto-zanuttini-2013] [batllori-hernanz-2013]
 
 Italian marks emphatic polarity affirmation with the construction *sì che*,
 the surface-level cognate of Spanish *sí que*: an affirmative polarity
@@ -15,23 +15,23 @@ is contested (see "Analyses" below).
 
 - "È poi arrivato Gianni?" (Has Gianni arrived?)
   → "Sì che è arrivato." (Of course he has.) — example from
-  @cite{poletto-zanuttini-2013} cited in @cite{garassino-jacob-2018} (ex. 17).
+  [poletto-zanuttini-2013] cited in [garassino-jacob-2018] (ex. 17).
 
 - "No ha cantado la soprano." (The soprano didn't sing.)
   → "Sí que ha cantado la soprano." (She DID sing.) — Spanish cognate,
-  from @cite{batllori-hernanz-2013}.
+  from [batllori-hernanz-2013].
 
-## Corpus distribution (@cite{garassino-jacob-2018} Table 1)
+## Corpus distribution ([garassino-jacob-2018] Table 1)
 
-In @cite{garassino-jacob-2018}'s search of the *Direct Europarl* corpus
+In [garassino-jacob-2018]'s search of the *Direct Europarl* corpus
 (Italian 2.3M words, French 2.5M, Spanish 2.8M), the *sì che / sí que*
 construction is attested **0 times in Italian, 61 times in Spanish**, and
 not searched for in French. The picture is sharpened by the polar
 left-dislocation counts in the same table (Italian 6, French 4, Spanish 0):
 the two constructions are in **complementary distribution** across the
 three languages — Italian uses LDs where Spanish uses *sí que*. *Sì che*
-is well-attested in the Italian literature (@cite{bernini-1995};
-@cite{poletto-zanuttini-2013}) and appears in Italian translations of
+is well-attested in the Italian literature ([bernini-1995];
+[poletto-zanuttini-2013]) and appears in Italian translations of
 speeches originally given in other languages, but is dispreferred in
 spontaneous Italian production at the European Parliament register.
 
@@ -39,7 +39,7 @@ spontaneous Italian production at the European Parliament register.
 
 *Sì che* shares the surface schema *[affirmative-particle + complementizer]*
 with Spanish *sí que*, but the wider lumping with French *si*, German *doch*,
-and Swedish *jo* obscures real differences. Per @cite{garassino-jacob-2018}
+and Swedish *jo* obscures real differences. Per [garassino-jacob-2018]
 (fn 11), French *si* is restricted to **dialogical contexts** — it answers a
 preceding negative turn — making it a response particle, not a clause-initial
 construction comparable to *sì che*. German *doch* and Swedish *jo* are
@@ -51,9 +51,9 @@ shared functional role, not a shared syntactic category.
 
 The literature does not converge on a single syntactic analysis:
 
-- @cite{bernini-1995}: *sì che* is a **cleft-like** structure (a "profrasi"),
+- [bernini-1995]: *sì che* is a **cleft-like** structure (a "profrasi"),
   with the embedded *che*-clause analogous to a cleft pivot.
-- @cite{poletto-zanuttini-2013}: *sì che* is a **reduplication** structure
+- [poletto-zanuttini-2013]: *sì che* is a **reduplication** structure
   in which the polarity particle *sì* and the complementizer *che* together
   realize the same syntactic head in the left periphery (a polarity head).
 
@@ -73,13 +73,13 @@ open Typology.PolarityMarking (Entry Strategy Env)
     Cleft-like or left-peripheral PolP structure (analyses contested):
     affirmative particle *sì* + complementizer *che*. Clause-initial;
     not sentence-internal. Licensed in both *contrast* and *correction*
-    environments — @cite{garassino-jacob-2018} ex. 17 (a positive
+    environments — [garassino-jacob-2018] ex. 17 (a positive
     answer to a yes/no question with no negative antecedent) is a
-    contrast-context use, not a correction; @cite{batllori-hernanz-2013}
+    contrast-context use, not a correction; [batllori-hernanz-2013]
     note that the cognate Spanish *sí que* also occurs in
     non-contradictory contexts (G&J ex. 19). The earlier `correction`-only
     encoding was empirically too narrow.
-    @cite{garassino-jacob-2018}: cognate of Spanish *sí que*;
+    [garassino-jacob-2018]: cognate of Spanish *sí que*;
     rare in spontaneous Italian corpora but grammatically available. -/
 abbrev siChe : Entry where
   label := "sì che"

@@ -10,12 +10,12 @@ import Linglib.Semantics.Tense.ConditionalShift
 /-!
 # Exclusion features and X/O-marking strategies
 
-@cite{iatridou-2000} @cite{condoravdi-2002} @cite{deal-2020}
-@cite{anderson-1951} @cite{schlenker-2004} @cite{von-fintel-iatridou-2023}
+[iatridou-2000] [condoravdi-2002] [deal-2020]
+[anderson-1951] [schlenker-2004] [von-fintel-iatridou-2023]
 
 Framework primitives for the **Exclusion Feature** analysis of past
-morphology (@cite{iatridou-2000}) and the **X-marking / O-marking**
-typology of counterfactuality (@cite{von-fintel-iatridou-2023}).
+morphology ([iatridou-2000]) and the **X-marking / O-marking**
+typology of counterfactuality ([von-fintel-iatridou-2023]).
 
 This file provides the *framework primitives* — types, predicates, and
 bridge theorems usable by any study of counterfactuals or
@@ -40,14 +40,14 @@ This maps onto the `ContextTower`'s `origin` / `innermost` distinction:
 differs from that of `tower.origin`.
 
 The **X-marking / O-marking** distinction (per
-@cite{von-fintel-iatridou-2023}) is the typological label for whether
+[von-fintel-iatridou-2023]) is the typological label for whether
 a language uses counterfactual morphology (X-marking, produces ExclF)
 or some other strategy (O-marking, e.g., Japanese Historical Present)
 to grammatically distinguish live from non-live possibilities.
 
 ## Bicontextual semantics
 
-@cite{schlenker-2004} distinguishes the **Context of Thought** θ
+[schlenker-2004] distinguishes the **Context of Thought** θ
 (speech-act context, anchors temporal indexicals) from the **Context of
 Utterance** v (can be shifted by HP). The `ContextTower` implements
 this distinction: `tower.origin` = θ, `tower.innermost` = v. The
@@ -73,19 +73,19 @@ open Semantics.Tense.ConditionalShift (domainRestrictedConditional
 -- § Counterfactual past — the two-uses-of-past machinery
 -- ════════════════════════════════════════════════════════════════
 
-/-! @cite{iatridou-2000}: past morphology is **ambiguous between
+/-! [iatridou-2000]: past morphology is **ambiguous between
     temporal and counterfactual uses**, with only the temporal use
     subject to the Upper Limit Constraint. The substrate primitives
     here are consumed by the `ExclF` machinery below and by the
     paper-anchored Iatridou2000 / Mizuno2024 Studies files. -/
 
-/-- Two uses of past morphology, following @cite{iatridou-2000}.
+/-- Two uses of past morphology, following [iatridou-2000].
 
     Past morphology is ambiguous between:
     1. Temporal precedence (genuine past tense)
     2. Modal remoteness (counterfactual distance from actuality)
 
-    @cite{iatridou-2000}'s "exclusion feature": past morphology marks
+    [iatridou-2000]'s "exclusion feature": past morphology marks
     exclusion from the set of relevant times/worlds. Temporal past
     excludes present times; counterfactual past excludes actual
     worlds. -/
@@ -136,12 +136,12 @@ theorem temporal_ne_counterfactual :
   nofun
 
 -- ════════════════════════════════════════════════════════════════
--- § ExclF: The Exclusion Feature (@cite{iatridou-2000})
+-- § ExclF: The Exclusion Feature ([iatridou-2000])
 -- ════════════════════════════════════════════════════════════════
 
 /-- The two dimensions along which past morphology can exclude.
 
-@cite{iatridou-2000}'s key insight: past morphology has a single
+[iatridou-2000]'s key insight: past morphology has a single
 semantic contribution (exclusion) that applies to different dimensions.
 The temporal/modal ambiguity of "past" is not lexical ambiguity — it
 is the same feature targeting different coordinates. -/
@@ -179,10 +179,10 @@ theorem exclF_modal_iff (tower : ContextTower (KContext W E P T)) :
 -- § ExclF–Deal Bridge
 -- ════════════════════════════════════════════════════════════════
 
-/-- Map ExclDimension to @cite{deal-2020}'s `PastMorphologyUse`.
+/-- Map ExclDimension to [deal-2020]'s `PastMorphologyUse`.
 
-This connects @cite{iatridou-2000}'s exclusion analysis to
-@cite{deal-2020}'s tense typology: temporal exclusion corresponds to
+This connects [iatridou-2000]'s exclusion analysis to
+[deal-2020]'s tense typology: temporal exclusion corresponds to
 temporal tense, modal exclusion corresponds to counterfactual tense. -/
 def ExclDimension.toDealUse : ExclDimension → PastMorphologyUse
   | .temporal => .temporal
@@ -202,7 +202,7 @@ theorem exclF_modal_is_deal_cf :
 
 When a subjunctive clause introduces a new world that differs from the
 origin, the resulting tower has modal ExclF. This is the tower-level
-formalization of @cite{iatridou-2000}'s claim that counterfactual
+formalization of [iatridou-2000]'s claim that counterfactual
 morphology signals world exclusion. -/
 theorem subjShift_produces_modal_exclF (c : KContext W E P T) (w' : W) (t' : T)
     (h : w' ≠ c.world) :
@@ -247,11 +247,11 @@ theorem root_no_modal_exclF (c : KContext W E P T) :
 time. When the counterfactual world differs from the origin, the
 resulting tower has modal ExclF.
 
-**Kratzer-level counterpart**: in @cite{kratzer-2012}'s modal
+**Kratzer-level counterpart**: in [kratzer-2012]'s modal
 semantics, the same X-marking operation corresponds to ∗-revision of
 the modal base (`Semantics.Modality.Kratzer.XMarking.IsStarRevision`):
 the `expandedDomain` parameter here maps to the widened accessible
-world set ∩f'(w) ⊇ ∩f(w). See @cite{ferreira-2023} for the full 2×2
+world set ∩f'(w) ⊇ ∩f(w). See [ferreira-2023] for the full 2×2
 square of necessities generated by X-marking on both modal base (Xf)
 and ordering source (Xg). -/
 theorem xMarking_produces_modal_exclF
@@ -263,14 +263,14 @@ theorem xMarking_produces_modal_exclF
   h
 
 -- ════════════════════════════════════════════════════════════════
--- § X-marking / O-marking typology (@cite{von-fintel-iatridou-2023})
+-- § X-marking / O-marking typology ([von-fintel-iatridou-2023])
 -- ════════════════════════════════════════════════════════════════
 
 /-- The two crosslinguistic strategies for grammatically distinguishing
-live from non-live possibilities (@cite{von-fintel-iatridou-2023}'s
+live from non-live possibilities ([von-fintel-iatridou-2023]'s
 typological label).
 
-Used by @cite{mizuno-2024} to characterize how different languages
+Used by [mizuno-2024] to characterize how different languages
 express Anderson conditionals: English uses X-marking (counterfactual
 morphology), Japanese uses O-marking (Non-Past + Historical Present). -/
 inductive MarkingStrategy where
@@ -281,7 +281,7 @@ inductive MarkingStrategy where
       exactly the symptoms he is *actually* showing." -/
   | xMarking
   /-- O-marking: Non-Past morphology triggers a perspectival shift
-      analogous to the Historical Present (@cite{schlenker-2004}). The
+      analogous to the Historical Present ([schlenker-2004]). The
       backward time shift expands the domain under branching time,
       avoiding triviality without counterfactual morphology. The actual
       world is directly accessible (no world shift, so no need for
@@ -319,7 +319,7 @@ def MarkingStrategy.exclDimension : MarkingStrategy → Option ExclDimension
   | .xMarking => some .modal
   | .oMarking => none
 
-/-- Map marking strategies to @cite{deal-2020}'s `PastMorphologyUse`. -/
+/-- Map marking strategies to [deal-2020]'s `PastMorphologyUse`. -/
 def MarkingStrategy.toDealUse : MarkingStrategy → PastMorphologyUse
   | .xMarking => .counterfactual
   | .oMarking => .temporal
@@ -432,7 +432,7 @@ theorem expanded_conditional_informative
     h_nontrivial h_cond
 
 -- ════════════════════════════════════════════════════════════════
--- § Bicontextual semantics (@cite{schlenker-2004})
+-- § Bicontextual semantics ([schlenker-2004])
 -- ════════════════════════════════════════════════════════════════
 
 /-- In O-marking (HP) strategy, temporal indexicals still evaluate
@@ -442,7 +442,7 @@ against the speech-act context (θ = origin), not the shifted context
 This explains why Japanese *sakuya* 'last night' in the antecedent of
 an HP-shifted O-marked conditional evaluates against the utterance
 time, paralleling the behavior of *seventy-eight years ago* in
-@cite{schlenker-2004}'s HP example. -/
+[schlenker-2004]'s HP example. -/
 theorem oMarking_indexicals_at_origin
     (ap : Core.Context.AccessPattern (KContext W E P T) W)
     (hd : ap.depth = .origin)

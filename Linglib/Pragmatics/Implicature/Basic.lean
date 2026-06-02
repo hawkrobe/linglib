@@ -4,7 +4,7 @@ import Linglib.Semantics.Entailment.Polarity
 /-!
 # Neo-Gricean Pragmatics: Basic Definitions
 
-Core formalization of the Standard Recipe from @cite{geurts-2010} Chapter 2.
+Core formalization of the Standard Recipe from [geurts-2010] Chapter 2.
 
 ## Key Concepts
 

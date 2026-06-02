@@ -10,7 +10,7 @@ distributions, with `none` denoting end-of-string.
 
 This is the smallest cross-cutting primitive shared by everything in
 `Processing/`: surprisal-based theories, the IAS family
-(@cite{giulianelli-etal-2026}), and any downstream measure that wants
+([giulianelli-etal-2026]), and any downstream measure that wants
 a unified notion of "the LM's predictive distribution at a context".
 
 `PMF` is mathlib's probability monad over a (countable) type
@@ -23,7 +23,7 @@ need not be finite).
 
 - `LangModel Voc`: kernel `List Voc → PMF (Option Voc)`
 - `LangModel.nextProb`: conditional probability of a single symbol
-- `LangModel.surprisal`: −log p(w | c), in nats (@cite{levy-2008})
+- `LangModel.surprisal`: −log p(w | c), in nats ([levy-2008])
 -/
 
 set_option autoImplicit false
@@ -48,7 +48,7 @@ variable {Voc : Type*} (lm : LangModel Voc)
 def nextProb (c : List Voc) (w : Voc) : ℝ≥0∞ := lm.next c (some w)
 
 /-- Surprisal of the next symbol `w` given context `c` (in nats).
-This is the classical Shannon information content @cite{levy-2008}. -/
+This is the classical Shannon information content [levy-2008]. -/
 noncomputable def surprisal (c : List Voc) (w : Voc) : ℝ :=
   -Real.log (lm.nextProb c w).toReal
 

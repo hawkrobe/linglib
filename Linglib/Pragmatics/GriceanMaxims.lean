@@ -1,7 +1,7 @@
 /-!
 # Gricean Maxims of Conversation
 
-@cite{grice-1975}
+[grice-1975]
 
 Logic and Conversation. In P. Cole & J.L. Morgan (eds.), *Syntax and
 Semantics 3: Speech Acts*, 41–58. Academic Press.
@@ -13,7 +13,7 @@ as behavioral predictions. Behavioral predictions (e.g., "speakers
 maximize informativity") belong in the implementing frameworks — RSA
 formalizes Quantity via `s1Score`, NeoGricean via the Standard Recipe,
 Dale & Reiter via incremental attribute selection. Study files that
-test the maxims directly (e.g., @cite{engelhardt-etal-2006}) import
+test the maxims directly (e.g., [engelhardt-etal-2006]) import
 this module.
 
 Linking theorems connecting maxims to specific frameworks belong in
@@ -28,7 +28,7 @@ Grice's Quantity maxim has two sub-maxims:
 2. **Q2**: "Do not make your contribution more informative than is
    required."
 
-@cite{engelhardt-etal-2006} showed these behave asymmetrically:
+[engelhardt-etal-2006] showed these behave asymmetrically:
 Q1 violations (under-description) are penalized in both production
 and explicit judgment; Q2 violations (over-description) are produced
 frequently, tolerated explicitly, but detected implicitly via
@@ -61,7 +61,7 @@ inductive Maxim where
 -- ============================================================================
 
 /-- The Quantity maxim decomposes into two independent sub-maxims.
-    Grice (1975) states both; @cite{engelhardt-etal-2006} showed
+    Grice (1975) states both; [engelhardt-etal-2006] showed
     empirically that they are independently violable. -/
 inductive QuantitySubmaxim where
   /-- "Make your contribution as informative as is required
@@ -96,8 +96,8 @@ theorem violations_independent :
 -- § The Manner Submaxims
 -- ============================================================================
 
-/-- The four Manner sub-maxims (@cite{grice-1975} p.46).
-    @cite{martin-schaefer-kastner-2025} show that M2 (avoid ambiguity) and
+/-- The four Manner sub-maxims ([grice-1975] p.46).
+    [martin-schaefer-kastner-2025] show that M2 (avoid ambiguity) and
     its counterpart (maintain ambiguity) drive the distribution of French
     anticausative *se*. -/
 inductive MannerSubmaxim where
@@ -105,7 +105,7 @@ inductive MannerSubmaxim where
   | avoidObscurity
   /-- M2: "Avoid ambiguity." Formalized as a parse-blocking
   predicate in `Pragmatics.AvoidAmbiguity.Blocked`
-  (@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}
+  ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
   eq 37). -/
   | avoidAmbiguity
   /-- M3: "Be brief (avoid unnecessary prolixity)." -/

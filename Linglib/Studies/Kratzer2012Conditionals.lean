@@ -2,9 +2,9 @@ import Mathlib.Data.Fin.Basic
 import Linglib.Semantics.Modality.Kratzer.Operators
 
 /-!
-# §2.9 Conditionals — @cite{kratzer-2012}
+# §2.9 Conditionals — [kratzer-2012]
 
-@cite{kratzer-2012} §2.9 ("Conditionals", pp. 65-68) presents the *if-clause-as-
+[kratzer-2012] §2.9 ("Conditionals", pp. 65-68) presents the *if-clause-as-
 modal-base-restrictor* schema `[[if α β]]^{f,g} = [[β]]^{f⁺, g}` where
 `f⁺(w) = f(w) ∪ {[[α]]^{f,g}}`, plus a "Sketch of proof" showing the four
 conditional types (material, strict, counterfactual, deontic-ordering) fall
@@ -51,7 +51,7 @@ open Semantics.Modality.Kratzer
 /-- Pointwise-realistic modal base: `f(w) = [(= w)]`, so `⋂f(w) = {w}`.
 
     NB: This is the *trivial* collapse where one proposition already IS the
-    singleton {w}. @cite{kratzer-2012} distinguishes this from totally-realistic
+    singleton {w}. [kratzer-2012] distinguishes this from totally-realistic
     backgrounds proper (`isTotallyRealistic` in
     `Core/Logic/Intensional/ConversationalBackground.lean`), which carry many
     propositions — facts about `w` — whose intersection is `{w}`. The
@@ -251,7 +251,7 @@ theorem ex61_fails (w : World) :
 
 /-! ## §4. Headline: Kratzer differentiates (60) and (61); traditional analysis collapses them. -/
 
-/-- **Kratzer's analysis differentiates (60) and (61).** Per @cite{kratzer-2012}
+/-- **Kratzer's analysis differentiates (60) and (61).** Per [kratzer-2012]
     p. 67: "On this analysis, it is possible for the first two propositions
     [(59) and (60)] to be true, and the third one [(61)] to be false." -/
 theorem kratzer_distinguishes_60_61 :

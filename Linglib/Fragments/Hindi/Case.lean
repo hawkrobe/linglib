@@ -2,7 +2,7 @@ import Linglib.Features.Case
 import Linglib.Features.Case
 import Linglib.Typology.Alignment
 /-!
-# Hindi Case Inventory @cite{blake-1994}
+# Hindi Case Inventory [blake-1994]
 
 Hindi has a **split-ergative** case system:
 ergative -ne marks the transitive agent in perfective aspect only.

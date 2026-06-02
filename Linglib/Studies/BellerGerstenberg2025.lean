@@ -10,8 +10,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{beller-gerstenberg-2025}: Causation, Meaning, and Communication
-@cite{beller-gerstenberg-2025}
+# [beller-gerstenberg-2025]: Causation, Meaning, and Communication
+[beller-gerstenberg-2025]
 
 Formalizes Beller & Gerstenberg (2025) "Causation, Meaning, and Communication,"
 *Psychological Review* 133(2), 339–381.
@@ -273,7 +273,7 @@ theorem table1b_scenario4 :
 -- ============================================================================
 
 open RSA Real in
-/-- @cite{beller-gerstenberg-2025} causal expression model as RSAConfig.
+/-- [beller-gerstenberg-2025] causal expression model as RSAConfig.
 
 Meaning: Boolean expression semantics (1 if true, 0 if false).
 World prior: uniform over the 8 possible W-H-S worlds.

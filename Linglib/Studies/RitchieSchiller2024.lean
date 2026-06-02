@@ -10,10 +10,10 @@ import Linglib.Discourse.Strategy
 import Linglib.Features.Subjectivity
 
 /-!
-# @cite{ritchie-schiller-2024} — Default Domain Restriction Possibilities
+# [ritchie-schiller-2024] — Default Domain Restriction Possibilities
 
-@cite{ritchie-schiller-2024} @cite{cutting-vishton-1995} @cite{baker-jara-ettinger-saxe-tenenbaum-2017}
-@cite{clark-1996} @cite{stalnaker-2002}
+[ritchie-schiller-2024] [cutting-vishton-1995] [baker-jara-ettinger-saxe-tenenbaum-2017]
+[clark-1996] [stalnaker-2002]
 
 Ritchie, K. & Schiller, H. (2024). Default Domain Restriction Possibilities.
 *Semantics & Pragmatics* 17, Article 13: 1–49.
@@ -411,10 +411,10 @@ theorem uniform_some_distal_wins :
 -- §9. Perception & Common Ground
 -- ============================================================================
 
-/-! Connects DDRPs to @cite{baker-jara-ettinger-saxe-tenenbaum-2017}'s BToM
-architecture and @cite{stalnaker-2002}'s common ground.
+/-! Connects DDRPs to [baker-jara-ettinger-saxe-tenenbaum-2017]'s BToM
+architecture and [stalnaker-2002]'s common ground.
 
-When the scene is common ground (@cite{clark-1996} on joint attention),
+When the scene is common ground ([clark-1996] on joint attention),
 speaker and hearer derive the same DDRP. Different perceptual access yields
 different DDRPs, motivating R&S's requirement of perceptual co-presence. -/
 
@@ -473,7 +473,7 @@ theorem perception_mismatch_changes_truth :
 /-! R&S §4 argues that non-default domain restrictions arise from explicit
     discourse moves. When the QUD shifts (e.g., "Where are the blue things?"),
     the domain restriction can widen beyond the cognitive default. We connect
-    this to the `QUD` infrastructure from @cite{roberts-2012}. -/
+    this to the `QUD` infrastructure from [roberts-2012]. -/
 
 /-- QUD partitioning worlds by spatial emptiness profile: which bottles are
     empty at each spatial scale? Worlds that agree on the emptiness of
@@ -496,13 +496,13 @@ theorem spatialQUD_distinguishes_all :
 -- ============================================================================
 
 /-! R&S §3.2 argue that default domain restrictions are *objective*
-    (nonsubjective on @cite{traugott-dasher-2002}'s cline): they derive from
+    (nonsubjective on [traugott-dasher-2002]'s cline): they derive from
     perceptual/cognitive structure (location, spatial proximity), not from
     speaker attitude (subjective) or addressee face (intersubjective). This
     predicts that spatial/temporal restrictions make better defaults than
     evaluative restrictions (beauty, tastiness).
 
-    @cite{scontras-degen-goodman-2017} find that more objective adjectives are
+    [scontras-degen-goodman-2017] find that more objective adjectives are
     ordered closer to the noun — "the big blue box" over "the blue big box" —
     because less subjective content is more useful for communication. R&S
     extend this: more objective *domain restrictions* are similarly privileged
@@ -525,7 +525,7 @@ def ddprSubjectivityLevel : SubjectivityLevel := .nonSubjective
 /-- Objectivity prediction: DDRPs (nonsubjective) precede subjective
     interpretations on the Traugott-Dasher cline, predicting they are
     available as defaults before evaluative restrictions require discourse
-    setup. The ordering reflects @cite{scontras-degen-goodman-2017}'s finding:
+    setup. The ordering reflects [scontras-degen-goodman-2017]'s finding:
     less subjective content is more useful for communication. -/
 theorem ddpr_precedes_subjective :
     ddprSubjectivityLevel ≤ SubjectivityLevel.subjective := by decide

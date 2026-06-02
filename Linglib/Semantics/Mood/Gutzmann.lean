@@ -2,14 +2,14 @@ import Linglib.Semantics.UseConditional.LTU
 
 /-!
 # Sentence Mood as Use-Conditional Meaning
-@cite{gutzmann-2015}
+[gutzmann-2015]
 
 Sentence mood operators (deontic, epistemic, hearer knowledge) analyzed
 as use-conditional items within the L_TU framework.
 
 ## Key Thesis
 
-@cite{gutzmann-2015} argues that Truckenbrodt (2006b)'s sentence mood
+[gutzmann-2015] argues that Truckenbrodt (2006b)'s sentence mood
 operators — epistemic and deontic — should NOT be treated as
 presuppositions integrated into truth conditions. Instead, they are
 *use-conditional*: they constrain the context of utterance without
@@ -38,7 +38,7 @@ This file provides the *language-agnostic* operators. Per-language
 clause-type taxonomies and their mood compositions live in
 `Fragments/<Language>/ClauseTypes.lean` (e.g.,
 `German.ClauseTypes` for the German V2/VL/dass-VL/imperative
-inventory analyzed in @cite{gutzmann-2015}, Ch 5).
+inventory analyzed in [gutzmann-2015], Ch 5).
 -/
 
 namespace Semantics.Mood.Gutzmann
@@ -53,7 +53,7 @@ namespace Semantics.Mood.Gutzmann
 Captures the context parameters that sentence mood operators quantify
 over: `c_S` (speaker), `c_A` (addressee), `c_W` (world of the context).
 
-**Simplification**: @cite{gutzmann-2015} defines DEONT via existential
+**Simplification**: [gutzmann-2015] defines DEONT via existential
 quantification over a set D of contextually suitable deontic predicates
 (wants, wishes, orders, ...). The full definition is:
 `⟦DEONT⟧ = λp.{c : ∃ d ∈ D, d suitable for p in c ∧ d(c_S, p, c_W)}`.
@@ -73,7 +73,7 @@ structure MoodContext (W : Type*) where
 -- § 2. Sentence Mood Operators
 -- ════════════════════════════════════════════════════════════════
 
-/-- Deontic sentence mood operator (@cite{gutzmann-2015}, (5.85)).
+/-- Deontic sentence mood operator ([gutzmann-2015], (5.85)).
 
 ⟦DEONT⟧ = λp. {c : there is a d ∈ D such that d is suitable for p
 in c and d holds for p in c_W}
@@ -85,7 +85,7 @@ interpretation, expressing a volition on the part of the speaker. -/
 def deont {W : Type*} (p : W → Bool) (c : MoodContext W) : Bool :=
   c.speakerWants (p c.world)
 
-/-- Epistemic sentence mood operator (@cite{gutzmann-2015}, (5.90)).
+/-- Epistemic sentence mood operator ([gutzmann-2015], (5.90)).
 
 ⟦EPIS⟧ = λp. {w : EPIS(p)(w) in w} = λp. {w : there is an e ∈ E
 suitable for p in w and e holds for p in w}
@@ -95,7 +95,7 @@ The epistemic contribution is in the *use-conditional* dimension,
 mediated by the E modifier. -/
 def epis {W : Type*} (p : W → Bool) : W → Bool := p
 
-/-- The E operator: epistemic modifier on UCIs (@cite{gutzmann-2015}, (5.91)).
+/-- The E operator: epistemic modifier on UCIs ([gutzmann-2015], (5.91)).
 
 E = λDλp. D(EPIS(p))
 
@@ -109,7 +109,7 @@ def episModifier {W : Type*}
     (W → Bool) → MoodContext W → Bool :=
   λ p c => d (epis p) c
 
-/-- Hearer knowledge operator (@cite{gutzmann-2015}, (5.99)).
+/-- Hearer knowledge operator ([gutzmann-2015], (5.99)).
 
 ⟦HKNOW⟧ = λp. {c : c_A knows whether p in c_W}
 
@@ -126,7 +126,7 @@ def hknow {W : Type*} (p : W → Bool) (c : MoodContext W) : Bool :=
 -- ════════════════════════════════════════════════════════════════
 
 /-- Which sentence mood operators are present in a clause type
-(@cite{gutzmann-2015}, Table 5.1).
+([gutzmann-2015], Table 5.1).
 
 Language-agnostic predicate over a (possibly language-specific) clause
 type, recording which of DEONT, EPIS, and HKNOW the clause composes.

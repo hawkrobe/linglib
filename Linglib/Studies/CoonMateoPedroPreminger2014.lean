@@ -9,7 +9,7 @@ import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 
 /-!
-# Coon, Mateo Pedro & Preminger (2014) @cite{coon-mateo-pedro-preminger-2014}
+# Coon, Mateo Pedro & Preminger (2014) [coon-mateo-pedro-preminger-2014]
 
 The role of Case in A-bar extraction asymmetries: Evidence from Mayan.
 *Linguistic Variation* 14(2), 179–242.
@@ -62,7 +62,7 @@ open Mayan (ABSPosition CaseLocus toCaseLocus)
 -- ============================================================================
 
 /-- Abstract case features assigned by functional heads. Following
-    @cite{legate-2008}, "absolutive" is not an abstract case but a descriptive
+    [legate-2008], "absolutive" is not an abstract case but a descriptive
     cover term for the morphological form shared by transitive objects and
     intransitive subjects. The actual abstract cases are:
 
@@ -163,7 +163,7 @@ theorem intransitive_subject_never_trapped (locus : CaseLocus) :
 /-- Agent Focus Voice: a marked variant of Voice⁰ that assigns structural
     case to the internal argument (the transitive object).
 
-    Following @cite{ordonez-1995} on Popti', *-on* assigns case to the
+    Following [ordonez-1995] on Popti', *-on* assigns case to the
     object. Unlike regular transitive Voice, AF Voice is NOT a phase head:
     its v⁰ is the intransitive variety (non-phasal), explaining why the
     intransitive status suffix *-i* surfaces rather than transitive *-V'*.
@@ -610,7 +610,7 @@ theorem reflexive_end_to_end :
 
 /-- Extended reflexives (possessor bound by subject) pattern with
     reflexives: caseless, AF impossible, subject extracts freely.
-    Examples (75a)–(76a) of @cite{coon-mateo-pedro-preminger-2014}. -/
+    Examples (75a)–(76a) of [coon-mateo-pedro-preminger-2014]. -/
 theorem extReflexive_end_to_end :
     ObjectType.extendedReflexive.needsCase = false ∧
     afAvailable .extendedReflexive = false ∧
@@ -686,9 +686,9 @@ theorem coreCase_bridge_subject (locus : CaseLocus) :
 /-! Theory-laden Voice/ClauseSpine apparatus for Kaqchikel, formerly in
     `Fragments/Mayan/Kaqchikel/AgentFocus.lean`. Lives here because this
     is the file that uses it (§18 cross-language bridge), and because
-    Voice-flavor analysis is the @cite{coon-mateo-pedro-preminger-2014}
+    Voice-flavor analysis is the [coon-mateo-pedro-preminger-2014]
     side of the same author cluster's Mayan work
-    (@cite{preminger-2014}'s Ch 4 covers the agreement side; CMP 2014
+    ([preminger-2014]'s Ch 4 covers the agreement side; CMP 2014
     covers the case/Voice side). The fragment data
     (`VerbForm.agentFocus.hasSetA`, `kaqAFType`, etc.) stays
     typology-neutral. -/
@@ -720,11 +720,11 @@ theorem kaq_voice_is_agentive : kaqVoice.flavor = .agentive := rfl
 -- ============================================================================
 
 /-! Different Mayan languages circumvent syntactic ergativity through
-different mechanisms (@cite{coon-mateo-pedro-preminger-2014} §4.2, §5).
+different mechanisms ([coon-mateo-pedro-preminger-2014] §4.2, §5).
 Q'anjob'al uses case assignment: Voice_AF assigns case to the object,
 freeing the escape hatch. Kaqchikel uses an anti-locality repair: AF
 structure avoids the too-local Spec,TP → Spec,CP movement step (SSAL),
-at the cost of losing Set A agreement (@cite{erlewine-2016}). -/
+at the cost of losing Set A agreement ([erlewine-2016]). -/
 
 /-- Q'anjob'al AF Voice checks case; Kaqchikel's regular Voice does NOT.
     This is the core parametric difference: Q'anjob'al's AF is a

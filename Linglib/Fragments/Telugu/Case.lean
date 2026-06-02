@@ -6,18 +6,18 @@ open Morphology.Case.Allomorphy
 
 /-!
 # Telugu Case Inventory
-@cite{krishnamurti-gwynn-1985} @cite{mcfadden-2018}
+[krishnamurti-gwynn-1985] [mcfadden-2018]
 
 Telugu (Dravidian) has **5 core cases** with agglutinative suffixes:
 NOM (∅), ACC (-ni), GEN (∅), DAT (-ki), and a locative postposition
-(-lō 'in'). @cite{krishnamurti-gwynn-1985} list these as the
+(-lō 'in'). [krishnamurti-gwynn-1985] list these as the
 productive case/postposition forms for modern Telugu nominals.
 
 Like Tamil and other Dravidian languages, Telugu shows a robust
 **NOM-vs-oblique split** in stem allomorphy: the nominative stem
 form differs from the form used in all nonnominative contexts
-(@cite{mcfadden-2018}). This split is predicted by the case containment
-hierarchy (@cite{caha-2009}), where all nonnominative cases include
+([mcfadden-2018]). This split is predicted by the case containment
+hierarchy ([caha-2009]), where all nonnominative cases include
 the ACC feature in their syntactic representation.
 
 See `Studies/Aitha2026.lean` for

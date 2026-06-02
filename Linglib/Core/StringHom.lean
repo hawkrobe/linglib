@@ -8,8 +8,8 @@ monoids: it satisfies `h(uv) = h(u) ++ h(v)` and `h(ε) = ε`. Such a map is
 **letterwise** when it is determined by its action on single symbols, and
 **erasing** when each symbol maps to *at most one* output symbol.
 
-A **tier projection** in autosegmental phonology (@cite{goldsmith-1976}) and
-in tier-based learning (@cite{belth-2026}) is exactly the letterwise erasing
+A **tier projection** in autosegmental phonology ([goldsmith-1976]) and
+in tier-based learning ([belth-2026]) is exactly the letterwise erasing
 case: a per-symbol partial map `α → Option β`, lifted to `α* → β*` via
 `List.filterMap`. This is the morphism `α → β` in the Kleisli category of
 `Option` over the free-monoid functor.
@@ -27,7 +27,7 @@ and HG constraint evaluation (`mkOCP` in `Phonology/Constraints.lean`
 already takes a generic `project : C → List α`, so `Tier.apply T` plugs in
 directly).
 
-@cite{goldsmith-1976} @cite{belth-2026}
+[goldsmith-1976] [belth-2026]
 -/
 
 namespace Core
@@ -167,7 +167,7 @@ theorem apply_byClass (p : α → Prop) [DecidablePred p] (xs : List α) :
 
 /-- The last (rightmost) projected symbol of `xs` satisfying `q`. The
     standard "preceding tier-adjacent context" lookup for rules like
-    @cite{belth-2026}'s `Disagree(A, F) / C __ ∘ proj(·, T)`. -/
+    [belth-2026]'s `Disagree(A, F) / C __ ∘ proj(·, T)`. -/
 def lastWith (T : Tier α β) (q : β → Prop) [DecidablePred q]
     (xs : List α) : Option β :=
   ((apply T xs).filter (fun y => decide (q y))).getLast?

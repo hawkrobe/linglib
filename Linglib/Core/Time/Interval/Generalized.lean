@@ -3,7 +3,7 @@ import Linglib.Core.Time.Interval.Basic
 /-!
 # Generalized intervals with open/closed boundaries
 
-@cite{rouillard-2026}
+[rouillard-2026]
 
 `GInterval` extends the basic `Interval` with explicit open/closed
 annotations on each endpoint, plus the `closed`/`open_` constructors,
@@ -18,7 +18,7 @@ namespace Core.Time.Interval
 
 /-- A generalized interval with specified boundary types.
     Extends the basic `Interval` with open/closed annotations on each end.
-    @cite{rouillard-2026} eq. (14a–b), (99a–b). -/
+    [rouillard-2026] eq. (14a–b), (99a–b). -/
 structure GInterval (Time : Type*) [LinearOrder Time] where
   /-- Left endpoint -/
   left : Time
@@ -36,7 +36,7 @@ namespace GInterval
 variable {Time : Type*} [LinearOrder Time]
 
 /-- A closed interval [m₁, m₂]: both endpoints included.
-    @cite{rouillard-2026} eq. (14a): C := {t | min(t) ⊑ᵢ t ∧ max(t) ⊑ᵢ t}. -/
+    [rouillard-2026] eq. (14a): C := {t | min(t) ⊑ᵢ t ∧ max(t) ⊑ᵢ t}. -/
 def closed (i : Interval Time) : GInterval Time where
   left := i.start
   right := i.finish
@@ -45,7 +45,7 @@ def closed (i : Interval Time) : GInterval Time where
   valid := i.valid
 
 /-- An open interval]m₁, m₂[: both endpoints excluded.
-    @cite{rouillard-2026} eq. (14b): O := {t | min(t) ⊄ᵢ t ∨ max(t) ⊄ᵢ t}. -/
+    [rouillard-2026] eq. (14b): O := {t | min(t) ⊄ᵢ t ∨ max(t) ⊄ᵢ t}. -/
 def open_ (i : Interval Time) : GInterval Time where
   left := i.start
   right := i.finish
@@ -54,13 +54,13 @@ def open_ (i : Interval Time) : GInterval Time where
   valid := i.valid
 
 /-- The o(t) operation: open counterpart of a time.
-    @cite{rouillard-2026} eq. (99a): if t is open, o(t) = t; if t is closed,
+    [rouillard-2026] eq. (99a): if t is open, o(t) = t; if t is closed,
     o(t) is the open interval with the same endpoints. -/
 def toOpen (gi : GInterval Time) : GInterval Time :=
   { gi with leftType := .open_, rightType := .open_ }
 
 /-- The c(t) operation: closed counterpart of a time.
-    @cite{rouillard-2026} eq. (99b): if t is closed, c(t) = t; if t is open,
+    [rouillard-2026] eq. (99b): if t is closed, c(t) = t; if t is open,
     c(t) adds the endpoints. -/
 def toClosed (gi : GInterval Time) : GInterval Time :=
   { gi with leftType := .closed, rightType := .closed }

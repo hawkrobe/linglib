@@ -4,8 +4,8 @@ import Linglib.Studies.BhattDayal2020
 
 /-!
 # Dayal (2025): Three-layer cartography for clause-typing
-@cite{dayal-2025} @cite{mccloskey-2006} @cite{zu-2018}
-@cite{bhatt-dayal-2020}
+[dayal-2025] [mccloskey-2006] [zu-2018]
+[bhatt-dayal-2020]
 
 Veneeta Dayal (2025), *Linguistic Inquiry* 56(4):663-712. Develops the
 three-layer cartographic split `[SAP [PerspP [CP ...]]]` and uses it to
@@ -221,7 +221,7 @@ theorem hindi_urdu_shiftiness_parallels_english :
   simp [hindi_urdu_know_bare, hindi_urdu_know_negated, hindi_urdu_know_questioned]
 
 -- ============================================================================
--- §4. Newari conjunct/disjunct marking (Dayal 2025 §5.2, @cite{zu-2018})
+-- §4. Newari conjunct/disjunct marking (Dayal 2025 §5.2, [zu-2018])
 -- ============================================================================
 
 /-- Newari uses conjunct vs disjunct verb forms sensitive to whether the

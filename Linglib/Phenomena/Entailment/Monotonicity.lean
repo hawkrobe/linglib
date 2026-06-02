@@ -16,9 +16,9 @@ Given: dogs ⊆ animals
 
 ## Data Source
 
-- @cite{ladusaw-1980} on polarity sensitivity
-- @cite{van-benthem-1986} on monotonicity
-- @cite{barwise-cooper-1981} on generalized quantifiers
+- [ladusaw-1980] on polarity sensitivity
+- [van-benthem-1986] on monotonicity
+- [barwise-cooper-1981] on generalized quantifiers
 -/
 
 import Linglib.Features.Acceptability

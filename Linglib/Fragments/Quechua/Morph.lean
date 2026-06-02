@@ -2,7 +2,7 @@ import Linglib.Morphology.MorphProfile
 
 /-!
 # Quechua (Imbabura) Morphological Profile
-@cite{wals-2013} @cite{bickel-nichols-2001}
+[wals-2013] [bickel-nichols-2001]
 
 WALS-derived profile for Imbabura Quechua (ISO `qvi`). B&N 2001 places
 Quechua in the "agglutinating" cell (concatenative + nonflexive + separative).

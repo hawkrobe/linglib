@@ -3,7 +3,7 @@ import Linglib.Typology.Extraction
 
 /-!
 # Tsotsil Agreement Fragment
-@cite{polian-2013} @cite{aissen-polian-2025}
+[polian-2013] [aissen-polian-2025]
 
 Agreement morphology for Zinacantec Tsotsil (Tseltalan, Mayan).
 
@@ -12,7 +12,7 @@ Agreement morphology for Zinacantec Tsotsil (Tseltalan, Mayan).
 Tsotsil has two agreement paradigms on the verb:
 - **Set A** (ERG/GEN): prefixes cross-referencing the transitive agent
   (ergative) and the possessor (genitive). Ergative and genitive are
-  homophonous (@cite{polian-2013}).
+  homophonous ([polian-2013]).
 - **Set B** (ABS): prefixes or suffixes cross-referencing the absolutive
   argument (intransitive subject and transitive patient). Position varies
   by dialect and morphosyntactic context; in Zinacantec Tsotsil, Set B
@@ -29,7 +29,7 @@ Grammatical function classification is shared across Tseltalan — see
 ## Alignment
 
 Tseltalan languages are uniformly **ergative-absolutive** with no
-aspect-conditioned split (in contrast with Cholan; per @cite{polian-2013}).
+aspect-conditioned split (in contrast with Cholan; per [polian-2013]).
 -/
 
 namespace Tsotsil
@@ -57,7 +57,7 @@ abbrev ArgPosition.case : ArgPosition → Features.Case :=
   Mayan.caseTseltalan .Perf
 
 /-- Non-perfective case assignment for Tsotsil. Identical to perfective
-    (no aspect split per @cite{polian-2013}). -/
+    (no aspect split per [polian-2013]). -/
 abbrev ArgPosition.accCase : ArgPosition → Features.Case :=
   Mayan.caseTseltalan .Imp
 
@@ -77,12 +77,12 @@ def absPosition : Mayan.ABSPosition := .low
 -- § 3: Agreement Marker Linearity
 -- ============================================================================
 
-/-- Set A markers in Tsotsil are prefixal (per @cite{aissen-polian-2025}
+/-- Set A markers in Tsotsil are prefixal (per [aissen-polian-2025]
     Table 1; pan-Mayan invariant). -/
 def setALinearity : MarkerLinearity := .prefixal
 
 /-- Set B markers in Tsotsil are prefixal or suffixal, depending on
-    dialect and morphosyntactic context (@cite{aissen-polian-2025}
+    dialect and morphosyntactic context ([aissen-polian-2025]
     Table 1). The Tsotsil-vs-Tseltal contrast in Set B linearity is the
     headline Tseltalan-internal divergence. -/
 def setBLinearity : MarkerLinearity := .either
@@ -92,14 +92,14 @@ def setBLinearity : MarkerLinearity := .either
 -- ============================================================================
 
 /-- Set A (ERG/GEN) exponents for Zinacantec Tsotsil
-    (@cite{polian-2013}). Prefixes on the verb (for ERG) or the possessed
+    ([polian-2013]). Prefixes on the verb (for ERG) or the possessed
     noun (for GEN). Forms vary by following segment; shown as
     `pre-C/pre-V` allomorph pairs. -/
 def setAExponent : ExponentTable :=
   [(.pn .first .Sing, "k-/j-"), (.pn .second .Sing, "a-/av-"), (.pn .third .Sing, "s-/y-"),
    (.pn .first .Plur, "k-/j-"), (.pn .second .Plur, "a-/av-"), (.pn .third .Plur, "s-/y-")]
 
-/-- Set B (ABS) exponents for Zinacantec Tsotsil (@cite{polian-2013}).
+/-- Set B (ABS) exponents for Zinacantec Tsotsil ([polian-2013]).
     3rd person singular has no overt exponent (`-∅`). Some forms show
     allomorphic alternation depending on suffix harmony. -/
 def setBExponent : ExponentTable :=
@@ -107,7 +107,7 @@ def setBExponent : ExponentTable :=
    (.pn .first .Plur, "-otik/-utik"), (.pn .second .Plur, "-oxuk"), (.pn .third .Plur, "-ik")]
 
 /-- 3rd person absolutive is null — invariant across the standard
-    Mayan branches per @cite{kaufman-norman-1984} Table 8. **Not**
+    Mayan branches per [kaufman-norman-1984] Table 8. **Not**
     pan-Mayan: see Mam exception via `MayanLang.isStandard`. -/
 theorem p3sg_abs_null : setBExponent.realize (.pn .third .Sing) = some "-∅" := rfl
 

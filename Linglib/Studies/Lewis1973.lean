@@ -4,9 +4,9 @@ import Linglib.Core.WorldTimeIndex
 import Mathlib.Logic.Relation
 
 /-!
-# @cite{lewis-1973-causation}: Causation
+# [lewis-1973-causation]: Causation
 
-@cite{lewis-1973-causation}
+[lewis-1973-causation]
 
 Formalization of Lewis's counterfactual analysis of causation against
 the V2 SEM substrate.
@@ -33,7 +33,7 @@ Lewis's causal dependence corresponds to the simple but-for test in our
 V2 SEM framework. For exogenous causes, `lewisButFor` is structurally
 identical to `¬ BoolSEM.causallySufficient` with the alternative cause-value.
 
-The key difference from @cite{nadathur-2024} Def 10b (`causallyNecessary`):
+The key difference from [nadathur-2024] Def 10b (`causallyNecessary`):
 Lewis's but-for operates on the actual world via minimal intervention,
 while Def 10b quantifies over consistent supersituations. For simple models
 they agree; for complex models with alternative pathways, Def 10b is
@@ -42,7 +42,7 @@ the Necessity hub migration to V2.
 
 ## Limitations
 
-@cite{lewis-1973-causation} acknowledges two limitations:
+[lewis-1973-causation] acknowledges two limitations:
 
 - **Overdetermination** (fn. 12): symmetric overdetermination cases are
   excluded — neither overdetermining cause passes the but-for test.
@@ -75,7 +75,7 @@ noncomputable instance {W : Type*} [Fintype W] [DecidableEq W]
     (vs : List W) (bg : Valuation _) (cause effect : W) :
     Decidable (lewisButFor M vs bg cause effect) := Classical.dec _
 
-/-- Lewis's causal dependence (@cite{lewis-1973-causation} p. 563).
+/-- Lewis's causal dependence ([lewis-1973-causation] p. 563).
 
     Three conjuncts: cause develops, effect develops, and without cause
     the effect does not developDet. -/
@@ -93,7 +93,7 @@ noncomputable instance {W : Type*} [Fintype W] [DecidableEq W]
     Decidable (lewisDependence M vs bg cause effect) := Classical.dec _
 
 /-- Lewis's causation: transitive closure of causal dependence
-    (@cite{lewis-1973-causation} p. 563), via `Relation.TransGen`. -/
+    ([lewis-1973-causation] p. 563), via `Relation.TransGen`. -/
 def lewisCausation {W : Type*} [Fintype W] [DecidableEq W]
     (M : BoolSEM W) [SEM.IsDeterministic M]
     (vs : List W) (bg : Valuation (fun _ : W => Bool))
@@ -205,7 +205,7 @@ end Chain
 
 namespace Epiphenomena
 
-/-! @cite{lewis-1973-causation} p. 565: barometer reading (B) and storm (S)
+/-! [lewis-1973-causation] p. 565: barometer reading (B) and storm (S)
     are both effects of atmospheric pressure (P). The counterfactual analysis
     correctly identifies P as the common cause and rejects spurious
     "barometer causes storm" inference. -/
@@ -246,7 +246,7 @@ theorem pressure_causes_storm : lewisDependence sem varList bg .pressure .storm 
 
 /-- The barometer does NOT cause the storm.
 
-    @cite{lewis-1973-causation} p. 565: intervention on the barometer
+    [lewis-1973-causation] p. 565: intervention on the barometer
     (do(B=false)) cuts B's incoming law (P→B) but leaves P→S intact.
     P still causes S regardless of B. -/
 theorem barometer_not_causes_storm :
@@ -270,7 +270,7 @@ end Epiphenomena
 
 namespace Overdetermination
 
-/-! @cite{lewis-1973-causation} fn. 12: symmetric overdetermination cases
+/-! [lewis-1973-causation] fn. 12: symmetric overdetermination cases
     are excluded — neither overdetermining factor passes the but-for test.
 
     Model: A ∨ B → E. With both present, neither is necessary. -/

@@ -4,7 +4,7 @@ import Linglib.Syntax.Binding.Basic
 /-!
 # Dependency-grammar coreference (binding)
 
-Binding via **d-command** and locality (@cite{hudson-1990}, @cite{gibson-2025}).
+Binding via **d-command** and locality ([hudson-1990], [gibson-2025]).
 The c-command analogue in dependency grammar is *d-command*: `x` d-commands `y`
 iff both are dependents of the same head and `x` bears the subject relation.
 Locality is the dependency subgraph rooted at the matrix verb.
@@ -81,7 +81,7 @@ instance (c : SimpleClause) (i j : Pos) : Decidable (sameDomain c i j) :=
   inferInstanceAs (Decidable (sameLocalDomain c = true))
 
 /-- The dependency-grammar instance of the abstract command relation
-    (@cite{barker-pullum-1990}): d-command. The engine supplies Principles
+    ([barker-pullum-1990]): d-command. The engine supplies Principles
     A/B/C; a study applies them with this instance and a language classifier. -/
 instance : CommandRelation where
   commands := commands

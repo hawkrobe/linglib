@@ -10,10 +10,10 @@ import Linglib.Semantics.Mood.POSWQ
 
 /-!
 # Scoreboard: Unified Discourse State
-@cite{roberts-2023} @cite{roberts-2012} @cite{lewis-1979} @cite{portner-2004}
+[roberts-2023] [roberts-2012] [lewis-1979] [portner-2004]
 
 The scoreboard K for a language game at time t is a tuple
-⟨I, M, ≺, CommonGround, QUD, G⟩ (@cite{roberts-2023}), tracking:
+⟨I, M, ≺, CommonGround, QUD, G⟩ ([roberts-2023]), tracking:
 
 - **I**: the set of interlocutors
 - **M**: illocutionary moves made so far (with subsets A, Q, D, Acc)
@@ -24,7 +24,7 @@ The scoreboard K for a language game at time t is a tuple
 
 The three central elements — CommonGround, QUD, G — are updated by assertion,
 interrogation, and direction respectively, via the Illocutionary
-Force Linking Principle (@cite{roberts-2023}).
+Force Linking Principle ([roberts-2023]).
 
 -/
 
@@ -37,7 +37,7 @@ variable {W : Type*}
 /-! ### Goals (the G component) -/
 
 /-- A single goal: a proposition the agent is committed to realizing,
-    conditional on certain circumstances obtaining (@cite{roberts-2023}). -/
+    conditional on certain circumstances obtaining ([roberts-2023]). -/
 structure Goal (W : Type*) where
   /-- The content: what the agent aims to bring about. -/
   content : W → Prop
@@ -67,7 +67,7 @@ def add (gs : GoalSet W) (g : Goal W) : GoalSet W :=
 @[simp] theorem add_goals (gs : GoalSet W) (g : Goal W) :
     (gs.add g).goals = g :: gs.goals := rfl
 
-/-- Project to a flat list of contents (@cite{portner-2004} ToDo list interface). -/
+/-- Project to a flat list of contents ([portner-2004] ToDo list interface). -/
 def toPropertyList (gs : GoalSet W) : List (W → Prop) :=
   gs.goals.map Goal.content
 
@@ -81,7 +81,7 @@ end GoalSet
 
 /-- The semantic type of a clause, determining its default illocutionary force.
 
-    @cite{roberts-2023}: propositions → assertion, sets of propositions →
+    [roberts-2023]: propositions → assertion, sets of propositions →
     interrogation, indexed properties → direction. -/
 inductive SemanticType where
   /-- Type ⟨s, t⟩: a proposition (set of worlds) -/

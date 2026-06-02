@@ -2,7 +2,7 @@ import Linglib.Semantics.Alternatives.Source
 
 /-!
 # Indirect alternatives
-@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}
+[jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
 
 A novel notion of pragmatic alternative introduced by Jeretič, Bassi,
 Gonzalez, Yatsushiro, Meyer & Sauerland (2025) to account for the

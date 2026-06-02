@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Applicative
 import Linglib.Studies.Pylkkanen2008
 
 /-!
-# @cite{everdell-2023} — Applicativization in O'dam (Southeastern Tepiman)
+# [everdell-2023] — Applicativization in O'dam (Southeastern Tepiman)
 
 Everdell, Michael. 2023. *Arguments and adjuncts in O'dam:
 language-specific realization of a cross-linguistic distinction*. PhD
@@ -658,7 +658,7 @@ theorem inanimate_locatives_not_promotable :
 /-- The exceptional transitive classes are exactly those where the
     subject is not maximally distinct from the object.
 
-    This captures @cite{naess-2007}'s observation: ingestion/perception
+    This captures [naess-2007]'s observation: ingestion/perception
     verbs and lexical middles minimize the affector-affectee distinction,
     making them functionally intransitive. -/
 def isExceptionalTransitive : VerbClass → Prop
@@ -709,7 +709,7 @@ theorem refined_agrees_on_nonexceptional (v : OdamVerb)
 -- § 15. Connection to Krejci's Causativizability Hierarchy
 -- ════════════════════════════════════════════════════
 
-/-! @cite{krejci-2012} proposes a hierarchy of causativizability:
+/-! [krejci-2012] proposes a hierarchy of causativizability:
 
         unaccusatives > middles/ingestives > unergatives > simple transitives
 
@@ -727,7 +727,7 @@ theorem refined_agrees_on_nonexceptional (v : OdamVerb)
 -- § 16. Bridge to Pylkkänen 2008 (High/Low Typology)
 -- ════════════════════════════════════════════════════
 
-/-! O'dam applicatives challenge the @cite{pylkkanen-2008} binary
+/-! O'dam applicatives challenge the [pylkkanen-2008] binary
     high/low classification. They exhibit properties of BOTH types:
 
     - **High-like**: can applicativize unergatives (agent introduction)
@@ -740,7 +740,7 @@ theorem refined_agrees_on_nonexceptional (v : OdamVerb)
 
 /-- O'dam passes both high-applicative diagnostics from Table 2.1.
     Test 3 (depictive modification) is `.inapplicable` here because
-    @cite{everdell-2024} doesn't test depictives with O'dam applicatives. -/
+    [everdell-2024] doesn't test depictives with O'dam applicatives. -/
 def odam_appl : Pylkkanen2008.LangApplProfile :=
   { language := "O'dam"
   , diagnostics :=
@@ -766,7 +766,7 @@ theorem odam_also_promotes :
 -- § 17. The "Soup" — Thematic Hierarchy as a Linking Factor
 -- ════════════════════════════════════════════════════
 
-/-! @cite{beavers-2023-sag-lectures} argues that argument realization is
+/-! [beavers-2023-sag-lectures] argues that argument realization is
     governed by a "soup" of factors: truth-conditional strength (MAP),
     event-structural templates, convention, and discourse/pragmatics.
     Beavers acknowledges that thematic hierarchies play SOME role but
@@ -836,7 +836,7 @@ theorem motion_verbs_gain_agents :
     predictFunction aaya = .agentIntroduction := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 19. Bridge to MAP (@cite{beavers-2010})
+-- § 19. Bridge to MAP ([beavers-2010])
 -- ════════════════════════════════════════════════════
 
 /-! O'dam applicative promotion is orthogonal to MAP. MAP governs

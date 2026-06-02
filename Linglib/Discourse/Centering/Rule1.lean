@@ -1,8 +1,8 @@
 import Linglib.Discourse.Centering.Basic
 /-!
 # Centering Theory — Rule 1 (Pronominalization Constraint)
-@cite{grosz-joshi-weinstein-1995} @cite{gordon-grosz-gilliom-1993}
-@cite{poesio-stevenson-eugenio-hitzeman-2004}
+[grosz-joshi-weinstein-1995] [gordon-grosz-gilliom-1993]
+[poesio-stevenson-eugenio-hitzeman-2004]
 Three variants of Rule 1, each making a different empirical claim:
 GJW 95 (conditional on any pronominalization), GJW 83 (conditional
 on CB stability), Gordon (unconditional). Each is its own predicate
@@ -47,7 +47,7 @@ instance Rule1GJW83.decidable [DecidableEq E] [CfRankerOf E R] {U : Type*}
   cases cb prev cur <;> infer_instance
 /-! ### Rule 1 (Gordon, Grosz, Gilliom 1993) — unconditional -/
 /-- Rule 1 (Gordon, motivated by the repeated-name penalty,
-    @cite{gordon-grosz-gilliom-1993}): the CB must always be
+    [gordon-grosz-gilliom-1993]): the CB must always be
     pronominalized. Unconditional on what else is pronominalized. -/
 def Rule1Gordon [DecidableEq E] [CfRankerOf E R] {U : Type*}
     [Realizes U E] [Pronominalizes U E]

@@ -6,20 +6,20 @@ import Linglib.Features.Case
 import Linglib.Fragments.SwissGerman.Case
 
 /-!
-# Shieber (1985) @cite{shieber-1985}
+# Shieber (1985) [shieber-1985]
 
 Evidence against the Context-Freeness of Natural Language.
 *Linguistics and Philosophy*, 8(3), 333–343.
 
 ## Core Argument
 
-@cite{shieber-1985} proves that Swiss German is not weakly context-free,
+[shieber-1985] proves that Swiss German is not weakly context-free,
 using a purely string-based argument that makes no assumptions about
 constituent structure or semantics. The proof rests on four empirical
 claims about Swiss German subordinate clauses, plus the closure of
 context-free languages under string homomorphism and intersection with
 regular languages (proven in `Linglib.Core.Computability.ContextFreeGrammar.{Map, InterRegular}`
-following @cite{bar-hillel-perles-shamir-1961} / @cite{hopcroft-motwani-ullman-2000}
+following [bar-hillel-perles-shamir-1961] / [hopcroft-motwani-ullman-2000]
 Theorems 7.24, 7.27).
 
 ## The Four Claims
@@ -58,7 +58,7 @@ schema, source SG is non-CF.
 Proof bottoms out at the two CFL closure theorems in
 `Linglib.Core.Computability.ContextFreeGrammar.{Map, InterRegular}`
 (homomorphism + intersection-with-regular, both proven; see those files for
-@cite{bar-hillel-perles-shamir-1961} / @cite{hopcroft-motwani-ullman-2000}
+[bar-hillel-perles-shamir-1961] / [hopcroft-motwani-ullman-2000]
 construction details) and `ambncmdn_not_contextFree` (the two-parameter
 pumping result) in `Linglib.Core.Computability.NonContextFree`.
 
@@ -77,17 +77,17 @@ matrix-token positions to specific SG fragment data would be a substantive
 extension; the current formalization captures Shieber's full argument
 without it.
 
-## Contrast with @cite{bresnan-etal-1982}
+## Contrast with [bresnan-etal-1982]
 
-@cite{bresnan-etal-1982}'s earlier argument for Dutch non-context-freeness
+[bresnan-etal-1982]'s earlier argument for Dutch non-context-freeness
 relied on linguistic assumptions about constituent structure, which
-@cite{gazdar-pullum-1982} contested. @cite{shieber-1985}'s argument is
+[gazdar-pullum-1982] contested. [shieber-1985]'s argument is
 purely formal — it rests entirely on the string set of Swiss German and
 the case-marking facts, making no claims about phrase structure.
 
 ## Subsequent literature
 
-- @cite{huybregts-1976} gave a contemporaneous Swiss German argument.
+- [huybregts-1976] gave a contemporaneous Swiss German argument.
 - Joshi (1985) introduced TAG and the mild-CS hierarchy; Vijay-Shanker–Weir
   (1994) established the equivalence of TAG/CCG/MCFG/MG within mild-CS.
   The MCS classification of cross-serial dependencies is post-Shieber and not
@@ -97,7 +97,7 @@ the case-marking facts, making no claims about phrase structure.
 - Stabler (1997) and Kobele (2006) provide MG analyses of the same data.
 
 The processing-side dissociation (cross-serial easier than nested despite
-greater formal complexity) is the subject of @cite{bach-brown-marslen-wilson-1986},
+greater formal complexity) is the subject of [bach-brown-marslen-wilson-1986],
 formalized in `BachBrownMarslenWilson1986` —
 not duplicated here.
 -/
@@ -115,7 +115,7 @@ open SwissGerman.Case (CrossSerialVerb verbObjectCase)
 /-- A Swiss German subordinate clause token, abstracting over specific lexical
     items to their role in the cross-serial construction.
 
-    @cite{shieber-1985}'s argument projects SG sentences to four case-marked
+    [shieber-1985]'s argument projects SG sentences to four case-marked
     classes (DAT-NP / ACC-NP / DAT-V / ACC-V) plus boundary material. The
     `matrix` constructor abstracts non-cross-serial tokens — matrix subjects,
     complementizers, auxiliaries, finite verbs of the embedding clause, etc.
@@ -299,7 +299,7 @@ theorem stringMap_diagonal_eq_anbncndn :
     rw [← clauseImage_eq_apply, diagonal_is_anbncndn]
 
 /-- **Diagonal Swiss German is not context-free.** A formal corollary of
-    @cite{shieber-1985}'s argument, using only the one-parameter substrate
+    [shieber-1985]'s argument, using only the one-parameter substrate
     `{aⁿbⁿcⁿdⁿ}`. The image of the diagonal SG language under `tokenStringHom`
     equals `anbncndn` (not CF), so by closure under string homomorphism
     (`Linglib.Core.Computability.ContextFreeGrammar.Closure`), the source is not CF. -/
@@ -774,7 +774,7 @@ theorem stringMap_swissGerman_inter_caseSorted_eq_ambncmdn :
     rw [← clauseImage_eq_apply, clauseImage_shape]
     rfl
 
-/-- **@cite{shieber-1985}'s main theorem.** Swiss German subordinate clauses
+/-- **[shieber-1985]'s main theorem.** Swiss German subordinate clauses
     are not weakly context-free.
 
     Proof structure (the actual Shieber schema, both legs exercised):

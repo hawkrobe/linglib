@@ -4,7 +4,7 @@ import Linglib.Studies.Lahiri1998
 import Linglib.Studies.Hoeksema1983
 
 /-!
-# @cite{von-fintel-1999} — Strawson entailment as a rescue for Fauconnier-Ladusaw
+# [von-fintel-1999] — Strawson entailment as a rescue for Fauconnier-Ladusaw
 
   von Fintel, K. (1999). NPI Licensing, Strawson Entailment, and Context
   Dependency. Journal of Semantics 16(2), 97–148.
@@ -129,7 +129,7 @@ theorem ex22_since_strawsonDE (pastEvent sinceWindow : World → Set World) :
 
 /-! ### §2.3 — pseudo-anti-additivity is useless for NPI licensing
 
-@cite{atlas-1996} suggests that `only John` is "pseudo-anti-additive"
+[atlas-1996] suggests that `only John` is "pseudo-anti-additive"
 (ex. 25, p. 109): it satisfies the half of anti-additivity in which
 `f(x) ∧ f(y) → f(x ∨ y)`. Von Fintel shows this is "useless for the
 analysis of NPI licensing" (p. 110): pseudo-anti-additivity is too weak —
@@ -167,7 +167,7 @@ adding factivity at the world of evaluation.
 >      that Robin bought a Honda Civic. (p. 112)
 
 If `regret` were uniformly DE, (31) should be incoherent.
-@cite{kadmon-landman-1993} defend monotonicity by appealing to a *change
+[kadmon-landman-1993] defend monotonicity by appealing to a *change
 of perspective* between the conjuncts; von Fintel's §3.1 reanalysis
 treats this as a shift of the modal-base parameter rather than a failure
 of the underlying operator's monotonicity. The Strawson-DE result for
@@ -226,7 +226,7 @@ theorem ex45_want_isUE (bestOf : World → Set World) :
 
 /-! ### §3 footnote 8 — Asher's WDE as a sibling notion
 
-vF p. 112 (footnote 8) cites @cite{asher-1987}'s Weakened Downward
+vF p. 112 (footnote 8) cites [asher-1987]'s Weakened Downward
 Entailment as a related but formally distinct notion: it has a
 *doxastic* side condition (belief in the conclusion's complement) and
 operates in the *upward* direction, in contrast to Strawson-DE's
@@ -246,7 +246,7 @@ and `glad` (UE) is what predicts the asymmetry in NPI licensing:
 sentence with `sorry` is fine.
 
 The same adversative/non-adversative asymmetry shows up in Hindi
-(@cite{lahiri-1998} §4.5): *aaScarya* 'surprised' licenses *koii bhii* /
+([lahiri-1998] §4.5): *aaScarya* 'surprised' licenses *koii bhii* /
 *ek bhii*; *khuS* 'glad' does not. See `Studies/Lahiri1998.lean`
 for the Hindi data (`npi_adversative_surprise_ek`,
 `npi_adversative_surprise_koii`, `npi_glad_bad`). The two papers offer
@@ -306,7 +306,7 @@ associate) is also Strawson-DE in its prejacent. Von Fintel notes
 (eq. 68 (a/b), p. 134) that this requires the option-(a) semantics for
 propositional `only` (weakening the asserted claim by closure under
 entailment of the prejacent), not the option-(b) semantics adopted in
-@cite{von-fintel-1997}. The substrate's `onlyFull` already captures the
+[von-fintel-1997]. The substrate's `onlyFull` already captures the
 option-(a) reading via its assertion clause "no `y ≠ x` satisfies the
 scope".
 -/
@@ -322,7 +322,7 @@ scope".
 Conditional antecedents license NPIs (ex. 70). Whether they are DE
 depends on the conditional analysis adopted:
 
-- *Restrictor analysis* (@cite{kratzer-1986}; eq. 72, p. 137):
+- *Restrictor analysis* ([kratzer-1986]; eq. 72, p. 137):
   the if-clause restricts the modal base of the consequent's modal
   operator. With an *idle* ordering source, antecedent strengthening
   only shrinks the domain, so the antecedent position is classically
@@ -330,10 +330,10 @@ depends on the conditional analysis adopted:
   idle-ordering case (the simpler subcase of eq. 72 with `max_g` set
   to identity); the full Kratzer conditional with non-trivial
   ordering source is *not* monotone, which is exactly the §4 puzzle.
-- *Stalnaker-Lewis non-monotonic analysis* (@cite{stalnaker-1968},
-  @cite{lewis-1973}; ex. 73, p. 138): Strengthening the Antecedent
+- *Stalnaker-Lewis non-monotonic analysis* ([stalnaker-1968],
+  [lewis-1973]; ex. 73, p. 138): Strengthening the Antecedent
   fails, so the antecedent is not DE. Von Fintel §4.3 (p. 141)
-  defends a dynamic monotonic semantics in @cite{von-fintel-2000}
+  defends a dynamic monotonic semantics in [von-fintel-2000]
   under which the apparent failures reduce to context shifts,
   parallel to §3.4.
 
@@ -403,7 +403,7 @@ recalcitrant operators (`onlyFull`, `sorryFull`, `superlativeAssert`,
 sits outside the hierarchy entirely (UE).
 -/
 
-/-- The four "recalcitrant" Strawson-DE operators of @cite{von-fintel-1999},
+/-- The four "recalcitrant" Strawson-DE operators of [von-fintel-1999],
     each strict (Strawson-DE without classical DE) where applicable: -/
 theorem strawson_DE_recalcitrants :
     -- §2 only: Strawson-DE without classical DE
@@ -435,12 +435,12 @@ theorem strawson_DE_recalcitrants :
 These theorems make explicit the relationships between vF's Strawson-DE
 analysis and three sibling NPI theories already formalized in linglib.
 Per CLAUDE.md "chronological dependency" rule: this file may reference
-@cite{kadmon-landman-1993} (1993 < 1999), @cite{lahiri-1998} (1998 < 1999),
-and @cite{hoeksema-1983} (1983 < 1999), but not the reverse.
+[kadmon-landman-1993] (1993 < 1999), [lahiri-1998] (1998 < 1999),
+and [hoeksema-1983] (1983 < 1999), but not the reverse.
 -/
 
 /-- **K&L ≡ vF on the basic adversative asymmetry.** Both
-    @cite{kadmon-landman-1993} (K&L) and @cite{von-fintel-1999} (vF)
+    [kadmon-landman-1993] (K&L) and [von-fintel-1999] (vF)
     derive the `sorry`/`glad` asymmetry from formally identical Lean
     theorems — K&L via "lexical entailment to *want ¬A*", vF via
     Strawson-DE / UE of the attitude operator. The two prose
@@ -465,7 +465,7 @@ theorem bridge_kl_vf_glad_UE_agreement
   rfl
 
 /-- **`gladFull_isUE` overgenerates against Lahiri's "settle for less"
-    Hindi data.** @cite{lahiri-1998} §4.5 (datum
+    Hindi data.** [lahiri-1998] §4.5 (datum
     `npi_glad_settle`) records that Hindi *khuS* + NPI *koii bhii* IS
     grammatical on a "settle for less" reading. K&L flag the same in
     English (file `KadmonLandman1993.settle_glad_anybody`,
@@ -492,12 +492,12 @@ theorem bridge_lahiri_glad_settle_overgeneration :
   ⟨rfl, rfl, rfl, trivial⟩
 
 /-- **Hoeksema's S-comparative is anti-additive, hence trivially Strawson-DE.**
-    @cite{hoeksema-1983} proves the S-comparative anti-additive
+    [hoeksema-1983] proves the S-comparative anti-additive
     (`Semantics.Degree.Comparative.sComparative_isAntiAdditive`); the
     inheritance chain AA → DE → Strawson-DE makes the bridge automatic.
 
     This places the S-comparative in the same Strawson-DE class as
-    @cite{von-fintel-1999}'s recalcitrants, but with the additional
+    [von-fintel-1999]'s recalcitrants, but with the additional
     classical AA backing — meaning S-comparatives license *strong* NPIs
     too (whereas vF's `only` only licenses weak NPIs). -/
 theorem bridge_hoeksema_sComparative_strawsonDE

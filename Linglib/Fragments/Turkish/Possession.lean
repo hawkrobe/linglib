@@ -2,7 +2,7 @@ import Linglib.Typology.Possession
 
 /-!
 # Turkish Possessive Constructions
-@cite{stassen-2009} @cite{nichols-1986} @cite{heine-1997}
+[stassen-2009] [nichols-1986] [heine-1997]
 
 Turkish (Altaic) derives its primary have-construction from the **Genitive
 Schema** ("X's Y exists" → "X has Y"). The construction consists of:
@@ -81,7 +81,7 @@ inductive ExistPred where
 
 /-- `var`/`yok` is not a verb — it is a non-verbal predicate that takes
     no tense/aspect morphology in the base form. This is characteristic
-    of non-lexical predicate nuclei in @cite{heine-1997}'s Genitive Schema. -/
+    of non-lexical predicate nuclei in [heine-1997]'s Genitive Schema. -/
 def existPredIsNonVerbal : Bool := true
 
 -- ============================================================================
@@ -97,7 +97,7 @@ def locationVariant : PossessionSource := .location
     genitive predicates: `Kitap Hasan-ın.` 'The book is Hasan's.' -/
 def belongSchema : PossessionSource := .equation
 
-/-- Turkish exhibits three schemas, as @cite{heine-1997} predicts is common
+/-- Turkish exhibits three schemas, as [heine-1997] predicts is common
     for languages that draw on Existence sub-schemas. -/
 def attestedSchemas : List PossessionSource :=
   [sourceSchema, locationVariant, belongSchema]
@@ -112,7 +112,7 @@ theorem three_schemas :
 /-- The Genitive Schema in Turkish is used for permanent, inalienable,
     and abstract possession. Physical/temporary possession is expressed
     by the Location Schema variant with locative case. This matches
-    @cite{heine-1997}'s generalizations: Existence schemas correlate with
+    [heine-1997]'s generalizations: Existence schemas correlate with
     permanent/inalienable notions; Location with physical/temporary. -/
 def genitiveNotions : List PossessiveNotion :=
   [.permanent, .inalienable, .abstract]
@@ -135,8 +135,8 @@ theorem location_not_inalienable :
 /-- Turkish possession profile.
 
     Note: Turkish's primary construction (`Hasan-ın inek-i var`) is
-    @cite{heine-1997}'s Genitive Schema, encoded as `.genitiveDative`
-    in @cite{stassen-2009}'s WALS Ch 117 typology. -/
+    [heine-1997]'s Genitive Schema, encoded as `.genitiveDative`
+    in [stassen-2009]'s WALS Ch 117 typology. -/
 def possession : PossessionProfile :=
   { language := "Turkish"
   , family := "Turkic"

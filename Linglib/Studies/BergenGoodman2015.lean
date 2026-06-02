@@ -5,8 +5,8 @@ import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Phenomena.Focus.ProsodicExhaustivity
 
 /-!
-# @cite{bergen-goodman-2015}
-@cite{frank-goodman-2012} @cite{degen-etal-2020}
+# [bergen-goodman-2015]
+[frank-goodman-2012] [degen-etal-2020]
 
 The Strategic Use of Noise in Pragmatic Reasoning.
 *Topics in Cognitive Science* 7(2), 336–350.
@@ -529,12 +529,12 @@ theorem prosody_matches_data :
     noiseChannel(match, mismatch, b) = match · b + mismatch · (1 - b)
 
 Both the ellipsis deletion channel and the prosody confusion channel are
-special cases. The key insight from @cite{bergen-goodman-2015} is that noise
+special cases. The key insight from [bergen-goodman-2015] is that noise
 can be **strategically exploited** — a feature not shared by
-@cite{degen-etal-2020}'s semantic noise model
+[degen-etal-2020]'s semantic noise model
 (see `DegenEtAl2020`).
 
-| Property | @cite{bergen-goodman-2015} | @cite{degen-etal-2020} |
+| Property | [bergen-goodman-2015] | [degen-etal-2020] |
 |----------|---------------------------|----------------------|
 | Noise location | Channel (transmission) | Semantics (perception) |
 | Type | P_N(u_p \| u_i) | φ(u, o) ∈ [0,1] |

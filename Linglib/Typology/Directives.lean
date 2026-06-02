@@ -5,10 +5,10 @@ import Linglib.Data.WALS.Features.F73A
 
 /-!
 # Imperative-system typology — substrate types and WALS data
-@cite{wals-2013} (Chs 70, 71, 72, 73) @cite{van-der-auwera-lejeune-2013}
+[wals-2013] (Chs 70, 71, 72, 73) [van-der-auwera-lejeune-2013]
 
 Type-level enums + per-language profile struct for the imperative-prohibitive-
-hortative-jussive-optative complex across @cite{wals-2013} chapters 70–73,
+hortative-jussive-optative complex across [wals-2013] chapters 70–73,
 plus WALS distribution data and the principal cross-linguistic generalizations
 from van der Auwera & Lejeune (2013).
 
@@ -33,7 +33,7 @@ namespace Typology
 
 /-- WALS Ch 70: whether a language has a dedicated morphological imperative,
     and if so whether the paradigm extends beyond 2nd person.
-    @cite{van-der-auwera-lejeune-2013}: 426/548 (77.7%) of sampled languages
+    [van-der-auwera-lejeune-2013]: 426/548 (77.7%) of sampled languages
     have some morphological imperative; only 122 lack one entirely. -/
 inductive MorphImpType where
   /-- Dedicated morphological imperative for second person only
@@ -57,7 +57,7 @@ inductive MorphImpType where
     affirmative or SPECIAL, and is the negation strategy SAME as in
     declaratives or SPECIAL? Yields four structural types.
 
-    The key typological finding (@cite{van-der-auwera-lejeune-2013}): Type 1
+    The key typological finding ([van-der-auwera-lejeune-2013]): Type 1
     (normal+normal) is surprisingly uncommon — languages tend to treat
     prohibitives differently from simple negation of an imperative. -/
 inductive ProhibitiveType where
@@ -119,7 +119,7 @@ inductive OptativePresence where
 -- Per-language profile
 -- ============================================================================
 
-/-- A language's imperative-system profile across @cite{wals-2013} Chs 70–73. -/
+/-- A language's imperative-system profile across [wals-2013] Chs 70–73. -/
 structure ImperativeProfile where
   language : String
   iso : String := ""
@@ -220,7 +220,7 @@ def MorphImpCounts.withMorphImp (c : MorphImpCounts) : Nat :=
   c.secondSingularAndSecondPlural + c.secondSingular + c.secondPlural +
   c.secondPersonNumberNeutral
 
-/-- WALS Ch 70 counts (548 languages, @cite{van-der-auwera-lejeune-2013}). -/
+/-- WALS Ch 70 counts (548 languages, [van-der-auwera-lejeune-2013]). -/
 def ch70Distribution : MorphImpCounts :=
   { secondSingularAndSecondPlural := 292
   , secondSingular := 78

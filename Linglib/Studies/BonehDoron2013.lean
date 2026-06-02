@@ -4,7 +4,7 @@ import Linglib.Semantics.Aspect.Basic
 import Linglib.Features.Genericity
 
 /-!
-# @cite{boneh-doron-2013} — Hab and Gen in the Expression of Habituality
+# [boneh-doron-2013] — Hab and Gen in the Expression of Habituality
 
 In *Genericity* (Mari, Beyssade, Del Prete eds.), OUP, Oxford Studies in
 Theoretical Linguistics 43.
@@ -60,7 +60,7 @@ open Semantics.Aspect (ViewpointAspectB)
 
 /-- Quantificational force of a covert operator.
 
-    @cite{boneh-doron-2013} §6.2.1: HAB is a "modalized existential
+    [boneh-doron-2013] §6.2.1: HAB is a "modalized existential
     quantifier over sums of events"; GEN is a "modalized universal
     quantifier" (Krifka et al. 1995). -/
 inductive QForce where
@@ -115,7 +115,7 @@ theorem gen_hab_differ_on_force_and_restrictor :
 
 /-- The three English verb forms that express habituality.
 
-    @cite{boneh-doron-2013} §6.1, ex. (1): "In the good old days, people
+    [boneh-doron-2013] §6.1, ex. (1): "In the good old days, people
     dressed/used to dress/would dress elegantly to go to the opera." -/
 inductive HabitualForm where
   /-- Simple past tense form: "people dressed elegantly." -/
@@ -128,7 +128,7 @@ inductive HabitualForm where
 
 /-- Whether a habitual form admits perfective aspect.
 
-    @cite{boneh-doron-2013} Table (41): only the simple form admits
+    [boneh-doron-2013] Table (41): only the simple form admits
     perfective; the periphrastic forms are imperfective only. -/
 def admitsPerfective : HabitualForm → Bool
   | .simpleForm => true
@@ -137,7 +137,7 @@ def admitsPerfective : HabitualForm → Bool
 
 /-- Whether a habitual form has a retrospective perspective.
 
-    @cite{boneh-doron-2013} Table (41): the simple form can be either,
+    [boneh-doron-2013] Table (41): the simple form can be either,
     *used to* is retrospective, *would* is internal (not retrospective). -/
 def hasRetrospective : HabitualForm → Bool
   | .simpleForm => true   -- can be retrospective
@@ -147,7 +147,7 @@ def hasRetrospective : HabitualForm → Bool
 /-- Whether a habitual form requires actualization (habit must be
     instantiated by actual episodes in the world).
 
-    @cite{boneh-doron-2013} §6.3.2, ex. (42): *used to* requires
+    [boneh-doron-2013] §6.3.2, ex. (42): *used to* requires
     actualization; the simple form and *would* do not. -/
 def requiresActualization : HabitualForm → Bool
   | .simpleForm => false
@@ -224,7 +224,7 @@ def maryCigarette : EnglishDatum :=
 /-- Ex. (6b): "A flower grows out behind the old shed" — singular
     indefinite under Hab forces a same-object reading: the same flower
     grows out repeatedly. This is the same-object phenomenon that
-    @cite{del-prete-2013} calls the Same-Object Effect (SOE). -/
+    [del-prete-2013] calls the Same-Object Effect (SOE). -/
 def flowerGrows : EnglishDatum :=
   { sentence := "A flower grows out behind the old shed"
   , form := .simpleForm
@@ -399,7 +399,7 @@ theorem gen_restrictor_across_forms :
     a same-object reading. When pragmatically implausible (7b), the sentence
     is infelicitous.
 
-    This is the English counterpart of @cite{del-prete-2013}'s SOE in Italian.
+    This is the English counterpart of [del-prete-2013]'s SOE in Italian.
     Del Prete's "Gianni leggeva un libro di filosofia" (HAB blocked, SOE
     implausible) parallels B&D's "#Max killed a rabbit repeatedly." -/
 theorem sameObjectParallel :

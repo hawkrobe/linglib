@@ -20,7 +20,7 @@ and domain givenness.
 
 ## References
 
-* @cite{umbach-2004}, @cite{erteschik-shir-1973}, @cite{abeille-et-al-2020}.
+* [umbach-2004], [erteschik-shir-1973], [abeille-et-al-2020].
 -/
 
 namespace Semantics.Focus.Comparability
@@ -29,29 +29,29 @@ open Features (BinaryGivenness)
 open Features.InformationStructure (FocusMark)
 
 /-- Two propositions are semantically independent iff neither entails the other.
-    @cite{umbach-2004} §2.2: required for alternatives in focus, coordination,
+    [umbach-2004] §2.2: required for alternatives in focus, coordination,
     and discourse relations. Violation explains the oddness of
     *#John had a drink and Mary had a martini*. -/
 def semanticallyIndependent {W : Type*} (a b : Set W) : Prop :=
   ¬ a ⊆ b ∧ ¬ b ⊆ a
 
 /-- A common integrator subsumes all alternatives.
-    @cite{umbach-2004} §2.2, following @cite{lang-1984}: coordinated elements
+    [umbach-2004] §2.2, following [lang-1984]: coordinated elements
     and focus alternatives must share a common superordinate concept.
     For example, in "beer and martini", "drink" is the common integrator. -/
 def commonIntegrator {W : Type*} (alts : List (Set W)) (integ : Set W) : Prop :=
   ∀ a ∈ alts, a ⊆ integ
 
 /-- A well-formed alternative set satisfies both constraints.
-    @cite{umbach-2004} §2.2: alternatives must be comparable, i.e.,
+    [umbach-2004] §2.2: alternatives must be comparable, i.e.,
     similar (common integrator) and dissimilar (pairwise independent). -/
 def wellFormedAlts {W : Type*} (alts : List (Set W)) (integ : Set W) : Prop :=
   commonIntegrator alts integ ∧
   ∀ a ∈ alts, ∀ b ∈ alts, a ≠ b → semanticallyIndependent a b
 
 
-/-- **Information-structural extraction clash** (@cite{erteschik-shir-1973},
-    @cite{abeille-et-al-2020}): a focused filler extracted from a
+/-- **Information-structural extraction clash** ([erteschik-shir-1973],
+    [abeille-et-al-2020]): a focused filler extracted from a
     given/backgrounded domain creates an incompatibility between the
     filler's discourse function (addressing the QUD) and the domain's
     discourse status (QUD-invisible).

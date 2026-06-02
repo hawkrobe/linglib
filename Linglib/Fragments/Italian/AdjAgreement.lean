@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Modification
 
 /-!
 # Italian Adjective Agreement
-@cite{alexeyenko-zeijlstra-2025}
+[alexeyenko-zeijlstra-2025]
 
 Italian adjectives are inflected for gender and number (φ-features) in
 both predicative and attributive use, but NOT for case (κ-features).

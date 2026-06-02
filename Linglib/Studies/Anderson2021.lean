@@ -8,7 +8,7 @@ import Linglib.Dialogue.DistributionalCG
 /-!
 # Anderson (2021): Conversation Update for RSA
 
-@cite{anderson-2021}
+[anderson-2021]
 
 A system for multi-turn conversation update in the Rational Speech Acts
 framework. The core contributions:
@@ -25,12 +25,12 @@ framework. The core contributions:
 ## Key Connections
 
 The CommonGround update rule `CommonGround'(w) = (1-lr)·CommonGround(w) + lr·post(w)` is algebraically
-identical to @cite{luce-1959}'s linear learning rule with retention rate
+identical to [luce-1959]'s linear learning rule with retention rate
 `1-lr` and reinforcement target `post`. This connects RSA pragmatics to
 learning theory: multi-turn conversation IS iterated learning over
 distributions.
 
-The distributional CommonGround refines @cite{stalnaker-2002}'s classical context set:
+The distributional CommonGround refines [stalnaker-2002]'s classical context set:
 worlds with zero weight are excluded from the context, recovering
 set-intersection update as a special case.
 
@@ -158,7 +158,7 @@ theorem updateCG_eq {W : Type*} (cg : DistributionalCG W)
     (updateCG cg posterior hn lr h0 h1).weight w =
     (1 - lr) * cg.weight w + lr * posterior w := rfl
 
-/-- **Bridge to @cite{luce-1959} linear learning**: the CommonGround update has the same
+/-- **Bridge to [luce-1959] linear learning**: the CommonGround update has the same
 algebraic form as `LinearLearner.update` with retention rate `1 - lr` and
 reinforcement target `posterior`:
 
@@ -676,7 +676,7 @@ theorem s1_informed_speaker_is_informative :
 -- § 16. Bridge to Classical CommonGround Update
 -- ════════════════════════════════════════════════════
 
-/-- Anderson's distributional CommonGround update subsumes @cite{stalnaker-2002}'s
+/-- Anderson's distributional CommonGround update subsumes [stalnaker-2002]'s
 set-intersection update as a special case: with learning rate 1 and a
 posterior that assigns zero weight to worlds where the utterance is false,
 the updated CommonGround excludes exactly those worlds — recovering `ContextSet.update`.
@@ -834,7 +834,7 @@ noncomputable def BeliefUpdateState.initial {W : Type*}
   speakerIsA := true
 
 /-- Belief update is algebraically identical to CommonGround update — both are
-instances of @cite{luce-1959}'s linear learning rule. The only difference
+instances of [luce-1959]'s linear learning rule. The only difference
 is the learning rate parameter and the interpretation (private vs shared). -/
 theorem belief_update_is_linear_learning {W : Type*}
     (bel : DistributionalCG W)

@@ -6,7 +6,7 @@ import Linglib.Dialogue.Stalnaker
 import Linglib.Dialogue.CommitmentSpace
 
 /-!
-# Stalnaker 1975 @cite{stalnaker-1975}
+# Stalnaker 1975 [stalnaker-1975]
 
 *Indicative Conditionals.* Philosophia 5(3): 269–286.
 
@@ -81,7 +81,7 @@ open Dialogue.ReasonableInference
 -- § 1. The direct argument is REASONABLE (abstract version)
 
 /--
-**Stalnaker's direct argument is reasonable** (@cite{stalnaker-1975} §IV).
+**Stalnaker's direct argument is reasonable** ([stalnaker-1975] §IV).
 
 Quantified over any selection function `s` and context `C` such that:
 - `s` obeys the pragmatic constraint relative to `C`;
@@ -113,7 +113,7 @@ theorem direct_argument_reasonable {W : Type*}
 
 /--
 **The direct argument is reasonable as a `reasonableInference`**
-(@cite{stalnaker-1975} Appendix), in the sense of the change-function
+([stalnaker-1975] Appendix), in the sense of the change-function
 calculus: in every prior context `k` such that asserting `A∨B` lands one
 in a Stalnakerian indicative-friendly state, the post-update context
 entails the indicative conditional.
@@ -208,7 +208,7 @@ theorem direct_argument_not_entailment :
     obeys the pragmatic constraint relative to `C`), the conditional *does*
     hold at every `C`-world satisfying the disjunction. The contrast with
     `direct_argument_not_entailment` is the pragmatic-vs-semantic gap
-    @cite{stalnaker-1975} emphasises. -/
+    [stalnaker-1975] emphasises. -/
 theorem direct_argument_holds_under_indicative_selection :
     ∀ s : SelectionFunction W3,
       pragmaticConstraint s (λ w => w ≠ .someoneElse ∧ AorB3 w) →
@@ -337,7 +337,7 @@ theorem direct_argument_reasonable_krifka {W : Type*}
 
 /-! ### Contraposition / hypothetical syllogism
 
-@cite{stalnaker-1975} observes that contraposition and hypothetical
+[stalnaker-1975] observes that contraposition and hypothetical
 syllogism fail in general for selection-based conditionals; the
 counterexamples all involve **subjunctives** whose antecedents are
 presupposed false. For indicatives — which obey `pragmaticConstraint` —

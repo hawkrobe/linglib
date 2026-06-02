@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.HeadFunction
 
 /-!
 # C-Selection and Derivation Well-Formedness
-@cite{adger-2003} @cite{marcolli-chomsky-berwick-2025}
+[adger-2003] [marcolli-chomsky-berwick-2025]
 
 Implements Adger's c-selectional checking system over linglib's Minimalism
 substrate. `Syntax/Minimalism/Derivation.lean` defines free Merge
@@ -28,7 +28,7 @@ that filters which derivations satisfy Full Interpretation.
 
 ## M-C-B alignment: head info lives in the derivation
 
-Per @cite{marcolli-chomsky-berwick-2025} §1.13.3 / §1.15, NEW Minimalism
+Per [marcolli-chomsky-berwick-2025] §1.13.3 / §1.15, NEW Minimalism
 keeps `SyntacticObject` label-free (= `FreeMagma LIToken` here) and treats
 head functions as **external partial maps** `Dom(h) ⊂ SO → LIToken`.
 linglib follows this discipline:
@@ -90,7 +90,7 @@ V's c-selection). The projecting head does not change.
 namespace Minimalist
 
 /-- A `SyntacticObject` paired with the projecting head's `LIToken` (per
-    @cite{marcolli-chomsky-berwick-2025} §1.13.3) and its remaining
+    [marcolli-chomsky-berwick-2025] §1.13.3) and its remaining
     uninterpretable c-selectional features.
 
     Convention: features are consumed left-to-right by sister `emR`
@@ -175,7 +175,7 @@ def checkedSelWith? (h : HeadFunction) (so : SyntacticObject) :
 -- The parameterized `checkedSelWith?_trace` above (h : HeadFunction) subsumes it
 -- via the keystone `Section.σ_of` helper.
 
-/-- Apply a `Step` under c-selection (@cite{adger-2003} eq. 134 Checking
+/-- Apply a `Step` under c-selection ([adger-2003] eq. 134 Checking
     Requirement, eq. 106 Checking under Sisterhood). The projecting head
     is preserved across all step constructors — this matches M-C-B §1.15
     (the labeling algorithm assigns the same head to a node and its head
@@ -216,7 +216,7 @@ noncomputable def Derivation.checkedFinal? (d : Derivation) : Option Selectional
     (some ⟨d.initial, HeadFunction.leftSpine.head d.initial, pending⟩)
 
 /-- A derivation is **well-formed** (Adger's Full Interpretation,
-    @cite{adger-2003} eq. 104+161) iff it completes with no unchecked
+    [adger-2003] eq. 104+161) iff it completes with no unchecked
     selectional features remaining on the projecting head. -/
 def Derivation.WellFormed (d : Derivation) : Prop :=
   d.checkedFinal?.map (·.pending) = some []
@@ -250,7 +250,7 @@ noncomputable def Derivation.outerCat? (d : Derivation) : Option Cat :=
 
 /-! ## Adger ch. 7: silent D for bare nominal arguments
 
-@cite{adger-2003} ch. 7 (Functional Categories II — the DP) treats every
+[adger-2003] ch. 7 (Functional Categories II — the DP) treats every
 argumental nominal as a DP. Bare common nouns (mass nouns, generic plurals)
 are headed by a phonologically silent D that projects DP and consumes the
 noun's [N] feature.
@@ -268,17 +268,17 @@ def nullD (id : Nat) : SyntacticObject :=
 
 /-- Wrap a bare N (or any N-projecting SO) under a silent D, yielding a
     saturated DP suitable for use as a verb's [uD] complement.
-    @cite{adger-2003} ch. 7. -/
+    [adger-2003] ch. 7. -/
 def nullDWrap (n : SyntacticObject) (id : Nat) : SyntacticObject :=
   .node (nullD id) n
 
 /-! ## Angelopoulos 2026: silent light noun for [n]-feature checking
 
-@cite{angelopoulos-2026} §3.1 (following @cite{arsenijevic-2009},
-@cite{moltmann-2019}) analyses Greek *oti*/*pu* as bearing an
+[angelopoulos-2026] §3.1 (following [arsenijevic-2009],
+[moltmann-2019]) analyses Greek *oti*/*pu* as bearing an
 uninterpretable [n]-feature checked by a silent light noun in their
 specifier. The light noun is then licensed by incorporation
-(@cite{hale-keyser-1993}) into a higher *lexical* head (`v_State` or
+([hale-keyser-1993]) into a higher *lexical* head (`v_State` or
 `v_Event`); incorporation into a *functional* head (`T`) is impossible.
 
 `nullN id` builds a saturated silent little-n leaf, parallel to
@@ -290,7 +290,7 @@ no new `Cat` constructor required. -/
 
 /-- A silent light noun (n head) with no selectional features, used for
     checking a complementizer's [n]-feature in its specifier per
-    @cite{angelopoulos-2026} §3.1. The `id` argument should be unique
+    [angelopoulos-2026] §3.1. The `id` argument should be unique
     within the derivation. Mirrors `nullD`. -/
 def nullN (id : Nat) : SyntacticObject :=
   mkLeafPhon .n [] "" id

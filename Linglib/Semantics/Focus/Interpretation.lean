@@ -26,7 +26,7 @@ matching Hamblin-style question denotations.
 
 ## References
 
-* @cite{rooth-1992}, @cite{ozyildiz-etal-2025}.
+* [rooth-1992], [ozyildiz-etal-2025].
 -/
 
 open Features.InformationStructure
@@ -83,7 +83,7 @@ structure FocusResolution (W : Type*) where
 
 /-- Clause-embedding predicate with explicit access to focus
 alternatives: agent → ordinary proposition → focus alternatives → world
-predicate. @cite{ozyildiz-etal-2025}. -/
+predicate. [ozyildiz-etal-2025]. -/
 abbrev ClauseEmbedPred (W E : Type*) := E → Set W → PropFocusValue W → Set W
 
 /-- A clause-embedding predicate is focus-sensitive when its truth

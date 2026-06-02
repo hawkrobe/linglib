@@ -2,7 +2,7 @@ import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Tibetan (Lhasa) Evidentiality
-@cite{aikhenvald-2004}
+[aikhenvald-2004]
 
 Two-choice direct vs indirect via copula/auxiliary contrast. *red*/*yod*
 (personal knowledge) vs *yin*/*'dug* (indirect or new information).

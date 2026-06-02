@@ -1,7 +1,7 @@
 /-
 # Extended Projection: Derived Properties
 
-Properties derived from @cite{grimshaw-2005} Extended Projection theory.
+Properties derived from [grimshaw-2005] Extended Projection theory.
 
 ## Key Ideas
 
@@ -40,31 +40,31 @@ inductive EPSemanticType where
     changes the denotation from ⟨e,t⟩ to a closed type. -/
 def epSemanticType : Cat → EPSemanticType
   | .V | .N | .A | .P => .property       -- F0: property-denoting
-  | .Place              => .intermediate   -- F1: locational (@cite{dendikken-2010})
-  | .Path               => .intermediate   -- F2: directional (@cite{dendikken-2010})
+  | .Place              => .intermediate   -- F1: locational ([dendikken-2010])
+  | .Path               => .intermediate   -- F2: directional ([dendikken-2010])
   | .v                 => .intermediate   -- F1: event quantification domain
-  | .n                 => .intermediate   -- F1: categorizer (gender/class, @cite{marantz-2001})
-  | .a                 => .intermediate   -- F1: adjectival categorizer (@cite{panagiotidis-2015})
-  | .Voice             => .intermediate   -- F1: introduces external argument (@cite{kratzer-1996})
-  | .Appl              => .intermediate   -- F1: introduces applied argument (@cite{pylkkanen-2008})
-  | .Num               => .intermediate   -- F2: number inflection (@cite{ritter-1991})
-  | .Q                 => .intermediate   -- F3: quantity/classifier (@cite{borer-2005})
+  | .n                 => .intermediate   -- F1: categorizer (gender/class, [marantz-2001])
+  | .a                 => .intermediate   -- F1: adjectival categorizer ([panagiotidis-2015])
+  | .Voice             => .intermediate   -- F1: introduces external argument ([kratzer-1996])
+  | .Appl              => .intermediate   -- F1: introduces applied argument ([pylkkanen-2008])
+  | .Num               => .intermediate   -- F2: number inflection ([ritter-1991])
+  | .Q                 => .intermediate   -- F3: quantity/classifier ([borer-2005])
   | .D                 => .entity         -- F4: entity-denoting (in nominal EP)
-  | .K                 => .entity         -- F5: case-marked entity (@cite{newman-2024})
+  | .K                 => .entity         -- F5: case-marked entity ([newman-2024])
   | .T                 => .intermediate   -- F2: tense/aspect binding
-  | .Neg               => .intermediate   -- F2: negation (@cite{pollock-1989})
-  | .Mod               => .intermediate   -- F2: modality (@cite{cinque-1999})
-  | .Pol               => .intermediate   -- F2: polarity (@cite{laka-1990})
-  | .Asp               => .intermediate   -- F2: aspect (@cite{cinque-1999})
-  | .Evid              => .intermediate   -- F2: evidential (@cite{cinque-1999})
-  | .Foc               => .intermediate   -- F4: focus (@cite{rizzi-1997} split-CP)
-  | .Top               => .intermediate   -- F5: topic (@cite{rizzi-1997} split-CP)
-  | .Rel               => .intermediate   -- F5: relative (@cite{rizzi-1997})
-  | .Fin               => .intermediate   -- F3: finiteness (@cite{rizzi-1997})
-  | .Nmlz              => .intermediate   -- F3: nominalizer (@cite{keine-2020})
+  | .Neg               => .intermediate   -- F2: negation ([pollock-1989])
+  | .Mod               => .intermediate   -- F2: modality ([cinque-1999])
+  | .Pol               => .intermediate   -- F2: polarity ([laka-1990])
+  | .Asp               => .intermediate   -- F2: aspect ([cinque-1999])
+  | .Evid              => .intermediate   -- F2: evidential ([cinque-1999])
+  | .Foc               => .intermediate   -- F4: focus ([rizzi-1997] split-CP)
+  | .Top               => .intermediate   -- F5: topic ([rizzi-1997] split-CP)
+  | .Rel               => .intermediate   -- F5: relative ([rizzi-1997])
+  | .Fin               => .intermediate   -- F3: finiteness ([rizzi-1997])
+  | .Nmlz              => .intermediate   -- F3: nominalizer ([keine-2020])
   | .C                 => .proposition    -- F6: proposition (force)
-  | .Force             => .proposition    -- F6: force (@cite{rizzi-1997} split-CP)
-  | .SA                => .proposition    -- F7: speech act (@cite{speas-tenny-2003})
+  | .Force             => .proposition    -- F6: force ([rizzi-1997] split-CP)
+  | .SA                => .proposition    -- F7: speech act ([speas-tenny-2003])
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 2: Generalized Theta Criterion
@@ -74,7 +74,7 @@ def epSemanticType : Cat → EPSemanticType
     Functional heads (v, D, T, C) do not introduce new theta roles —
     they provide functional structure (agreement, tense, force, determination).
 
-    @cite{grimshaw-2005} Definition 10: theta-role assignment is restricted
+    [grimshaw-2005] Definition 10: theta-role assignment is restricted
     to the lexical level of projection. -/
 def canAssignTheta (c : Cat) : Bool := isLHead c
 
@@ -114,7 +114,7 @@ def fullVerbalEP : List Cat := [.V, .v, .T, .C]
 
 /-- Full nominal EP: N → n → Q → Num → D.
     Q (classifier / individuation) is below Num (number / counting)
-    per @cite{borer-2005}: individuation must precede counting. -/
+    per [borer-2005]: individuation must precede counting. -/
 def fullNominalEP : List Cat := [.N, .n, .Q, .Num, .D]
 
 /-- Small clause EP: just the lexical head, no functional layers.
@@ -133,12 +133,12 @@ def adjectivalEP : List Cat := [.A, .a]
 def smallClauseAdjectivalEP : List Cat := [.A]
 
 /-- Locational adpositional EP: P → Place.
-    @cite{dendikken-2010}: locational PPs project PlaceP but not PathP.
+    [dendikken-2010]: locational PPs project PlaceP but not PathP.
     E.g., Dutch preP *op de heuvel* 'on the hill' (locational). -/
 def locationalPP : List Cat := [.P, .Place]
 
 /-- Directional adpositional EP: P → Place → Path.
-    @cite{dendikken-2010}: directional PPs project PathP above PlaceP.
+    [dendikken-2010]: directional PPs project PathP above PlaceP.
     E.g., Dutch postP *de heuvel op* 'onto the hill' (directional). -/
 def directionalPP : List Cat := [.P, .Place, .Path]
 
@@ -281,7 +281,7 @@ theorem c_not_in_argdomain :
 
 /-- The argument domain boundary is always in the property-or-intermediate zone.
 
-    @cite{anand-hardt-mccloskey-2025} Def 4: the argument domain is the most
+    [anand-hardt-mccloskey-2025] Def 4: the argument domain is the most
     inclusive ⟨e,t⟩ projection. In this formalization, `.intermediate` subsumes
     the paper's ⟨e,t⟩ notion for vP/nP: these denote a property of events/entities
     (conceptually ⟨e,t⟩) but are encoded as `.intermediate` because they sit
@@ -295,7 +295,7 @@ theorem argumentDomainCat_in_property_zone (c : Cat) :
 
 /-- The argument domain is cross-categorial: it works uniformly for
     verbal (vP), nominal (nP), adjectival (A), and adpositional (P) EPs.
-    @cite{anand-hardt-mccloskey-2025} Def 4. -/
+    [anand-hardt-mccloskey-2025] Def 4. -/
 theorem argdomain_cross_categorial :
     argumentDomainCat .C = .v ∧    -- verbal
     argumentDomainCat .D = .n ∧    -- nominal
@@ -331,7 +331,7 @@ theorem small_clause_is_truncated :
 theorem full_verbal_not_truncated :
     isTruncated fullVerbalEP = false := by decide
 
-/-- F1+ heads cannot assign theta roles (@cite{grimshaw-2005} Definition 10).
+/-- F1+ heads cannot assign theta roles ([grimshaw-2005] Definition 10).
     Note: Panagiotidis (2015 §4.5) argues categorizers (v, n, a) are lexical,
     not functional — but in Grimshaw's F-value system they are F1 (non-lexical).
     The theta restriction here follows Grimshaw, not Panagiotidis. -/
@@ -352,11 +352,11 @@ theorem place_path_no_theta :
     canAssignTheta .Place = false ∧ canAssignTheta .Path = false := by decide
 
 /-- P is EP-internal to PlaceP: same [-V,-N], F0 < F1.
-    @cite{dendikken-2010}: P is the lexical complement of Place. -/
+    [dendikken-2010]: P is the lexical complement of Place. -/
 theorem p_internal_to_place : isEPInternal .P .Place = true := by decide
 
 /-- PlaceP is EP-internal to PathP: same [-V,-N], F1 < F2.
-    @cite{dendikken-2010}: Place is the complement of Path in directional PPs. -/
+    [dendikken-2010]: Place is the complement of Path in directional PPs. -/
 theorem place_internal_to_path : isEPInternal .Place .Path = true := by decide
 
 /-- Locational PP EP is well-formed: consistent and monotone. -/
@@ -370,7 +370,7 @@ theorem directional_pp_ep_wellformed :
     allFMonotone directionalPP = true := by decide
 
 /-- A locational PP [P, Place] is truncated relative to the full
-    adpositional EP [P, Place, Path]. @cite{dendikken-2010}: locational
+    adpositional EP [P, Place, Path]. [dendikken-2010]: locational
     PPs lack the directional PathP layer. -/
 theorem locational_pp_truncated :
     isTruncated locationalPP = true := by decide

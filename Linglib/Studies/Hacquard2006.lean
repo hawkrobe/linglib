@@ -8,7 +8,7 @@ import Linglib.Semantics.Modality.ActualityEntailments
 /-!
 # Event Projection → Temporal Orientation
 
-@cite{hacquard-2006} @cite{hacquard-2010} @cite{condoravdi-2002} @cite{kratzer-2012}Derives the temporal orientation of modals from event projection. High modals get the speech time (present
+[hacquard-2006] [hacquard-2010] [condoravdi-2002] [kratzer-2012]Derives the temporal orientation of modals from event projection. High modals get the speech time (present
 perspective); low modals get the event time (past perspective).
 
 ## The Pattern
@@ -24,7 +24,7 @@ Individual-time pairs are DERIVED from events via projection functions
 `holder(e)` and `τ(e)`. Since high modals bind to the speech event and
 low modals bind to the VP event, their temporal parameters differ:
 
-- "Jane a dû prendre le train" (@cite{hacquard-2006}, (201)):
+- "Jane a dû prendre le train" ([hacquard-2006], (201)):
   - Epistemic (high): τ(e₀) = now → "Given my evidence NOW,..."
   - Root (low): τ(e₂) = then → "Given Jane's circumstances THEN,..."
 
@@ -44,8 +44,8 @@ open Semantics.Modality (TemporalOrientation TemporalPerspective)
 -- § 1. Temporal Orientation Type
 -- ════════════════════════════════════════════════════
 
-/-! @cite{hacquard-2006} derives present vs. past from modal position
-(§ 3). @cite{klecha-2016} adds future: derived not from position but
+/-! [hacquard-2006] derives present vs. past from modal position
+(§ 3). [klecha-2016] adds future: derived not from position but
 from the modal base kind (CIR permits future orientation). The
 canonical 3-value `TemporalOrientation` lives in
 `Semantics/Modality/TemporalAxes.lean` and is opened above. -/
@@ -150,7 +150,7 @@ theorem event_projection_subsumes_temporal :
 -- § 5. Worked Example: "Jane a dû prendre le train"
 -- ════════════════════════════════════════════════════
 
-/-! (@cite{hacquard-2006}, (201)): two readings of the same sentence with
+/-! ([hacquard-2006], (201)): two readings of the same sentence with
 different temporal perspectives, derived from event binding.
 
 Epistemic (high): "Given MY evidence NOW, Jane must have taken the train."
@@ -181,7 +181,7 @@ theorem jane_train_orientation :
 -- § 6. Hacquard ↔ Klecha comparison
 -- ════════════════════════════════════════════════════
 
-/-! @cite{hacquard-2006} and @cite{klecha-2016} explain different aspects of
+/-! [hacquard-2006] and [klecha-2016] explain different aspects of
 temporal orientation:
 
 - **Hacquard**: Position (high/low) determines whether the conversational
@@ -198,7 +198,7 @@ is available from that time. -/
 
 /-- Hacquard's derivation covers present and past orientation.
     Future orientation is NOT derived from position — it requires
-    @cite{klecha-2016}'s modal base analysis. -/
+    [klecha-2016]'s modal base analysis. -/
 theorem position_covers_present_past :
     positionToOrientation .aboveAsp = .present ∧
     positionToOrientation .belowAsp = .past :=
@@ -213,10 +213,10 @@ theorem future_not_from_position :
   exact ⟨by decide, by decide⟩
 
 
-/-! ## Bridge: Hacquard ↔ @cite{condoravdi-2002}
+/-! ## Bridge: Hacquard ↔ [condoravdi-2002]
 
-@cite{hacquard-2006} determines which time the modal base is evaluated at
-(via event projection); @cite{condoravdi-2002} determines what modal base
+[hacquard-2006] determines which time the modal base is evaluated at
+(via event projection); [condoravdi-2002] determines what modal base
 types are available at that time (via settledness and diversity).
 
 The half proved here is Hacquard's: position fixes the temporal
@@ -276,12 +276,12 @@ end Hacquard2006
 
 /-!
 # Actuality Inference Data (Cross-Linguistic)
-@cite{bhatt-1999} @cite{hacquard-2006} @cite{nadathur-2023}
+[bhatt-1999] [hacquard-2006] [nadathur-2023]
 
 Cross-linguistic empirical data on actuality inferences with ability modals,
 following the pattern of `Phenomena/Causation/Data.lean`.
 
-## Key Generalization (@cite{nadathur-2023}, Chapter 1)
+## Key Generalization ([nadathur-2023], Chapter 1)
 
 Across languages, ability modals with **perfective** aspect entail the
 complement, while those with **imperfective** aspect do not.
@@ -433,7 +433,7 @@ theorem imperfective_no_entailment :
 /-- **Central empirical generalization**: across all 8 data points,
     `complementEntailed` tracks `aspect ==.perfective` exactly.
 
-    This is the empirical observation that @cite{nadathur-2023} explains
+    This is the empirical observation that [nadathur-2023] explains
     via the causal sufficiency + aspect interaction. -/
 theorem empirical_matches_theory :
     allData.all (λ d => (d.aspect == .perfective) == d.complementEntailed) = true := by
@@ -451,7 +451,7 @@ theorem balanced_design :
 
 -- ════════════════════════════════════════════════════
 -- Bridge: Data → Position × Aspect Theory
--- (@cite{hacquard-2006}, via ActualityEntailments.lean)
+-- ([hacquard-2006], via ActualityEntailments.lean)
 -- ════════════════════════════════════════════════════
 
 open Semantics.Modality.ActualityEntailments (actualityEntailmentPredicted)
@@ -462,7 +462,7 @@ prediction for root modals. All data involves root/ability modals
 (below AspP), so the prediction is `actualityEntailmentPredicted.belowAsp d.aspect`.
 
 This connects the theory-neutral empirical data (§§ above) to
-@cite{hacquard-2006}'s structural explanation: root modals are below Asp,
+[hacquard-2006]'s structural explanation: root modals are below Asp,
 so perfective forces actualization. -/
 theorem data_matches_position_theory :
     allData.all (λ d =>

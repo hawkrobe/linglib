@@ -16,7 +16,7 @@ import Linglib.Phenomena.Modality.GermanModals
 # Cross-Linguistic Modal Typology
 
 Empirical modal inventories from 27 languages (17 families) mapped to the
-3×3 force-flavor meaning space, following Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}.
+3×3 force-flavor meaning space, following Imel, Guo, & [imel-guo-steinert-threlkeld-2026].
 
 ## Mapping conventions (raw typological data → 3×3 grid)
 
@@ -29,7 +29,7 @@ Empirical modal inventories from 27 languages (17 families) mapped to the
 
 ## Data source
 
-@cite{steinert-threlkeld-imel-guo-2023}. A database for modal semantic typology.
+[steinert-threlkeld-imel-guo-2023]. A database for modal semantic typology.
 https://clmbr.shane.st/modal-typology/
 
 -/
@@ -52,7 +52,7 @@ private abbrev pd := ForceFlavor.mk .possibility .deontic
 private abbrev pc := ForceFlavor.mk .possibility .circumstantial
 
 -- ============================================================================
--- §1: Tlingit (Athabaskan-Eyak-Tlingit) — @cite{cable-2017}
+-- §1: Tlingit (Athabaskan-Eyak-Tlingit) — [cable-2017]
 -- ============================================================================
 
 def tlingit : ModalInventory where
@@ -66,7 +66,7 @@ theorem tlingit_size : tlingit.size = 5 := by native_decide
 theorem tlingit_has_synonymy : tlingit.hasSynonymy = true := by native_decide
 
 -- ============================================================================
--- §2: Javanese-Paciran (Austronesian) — Van@cite{vander-klok-2013a}
+-- §2: Javanese-Paciran (Austronesian) — Van[vander-klok-2013a]
 -- ============================================================================
 
 def javanese : ModalInventory where
@@ -79,7 +79,7 @@ theorem javanese_all_iff : javanese.allIFF = true := by native_decide
 theorem javanese_size : javanese.size = 7 := by native_decide
 
 -- ============================================================================
--- §3: Gitksan (Tsimshian) — @cite{matthewson-2013}
+-- §3: Gitksan (Tsimshian) — [matthewson-2013]
 -- ============================================================================
 
 /-- Gitksan has variable-force modals: ima('a) and gat express both
@@ -107,7 +107,7 @@ theorem prepei_not_sav :
     Semantics.Modality.Typology.satisfiesSAV [ne, pe, nd, nc] = false := by native_decide
 
 -- ============================================================================
--- §4: Korean (Koreanic) — @cite{qing-uegaki-2025}
+-- §4: Korean (Koreanic) — [qing-uegaki-2025]
 -- ============================================================================
 
 def korean : ModalInventory where
@@ -120,7 +120,7 @@ theorem korean_all_iff : korean.allIFF = true := by native_decide
 theorem korean_size : korean.size = 10 := by native_decide
 
 -- ============================================================================
--- §5: Modern Greek (Indo-European) — @cite{qing-uegaki-2025}
+-- §5: Modern Greek (Indo-European) — [qing-uegaki-2025]
 -- ============================================================================
 
 /-- Greek has non-IFF modals: Prepei and Mporei express non-rectangular
@@ -142,7 +142,7 @@ theorem greek_prepei_not_iff :
     satisfiesIFF [ne, pe, nd, nc] = false := by native_decide
 
 -- ============================================================================
--- §6: Mandarin (Sino-Tibetan) — @cite{qing-uegaki-2025}
+-- §6: Mandarin (Sino-Tibetan) — [qing-uegaki-2025]
 -- ============================================================================
 
 /-- Mandarin has many modals, extensive synonymy, but all satisfy IFF.
@@ -158,7 +158,7 @@ theorem mandarin_size : mandarin.size = 12 := by native_decide
 theorem mandarin_has_synonymy : mandarin.hasSynonymy = true := by native_decide
 
 -- ============================================================================
--- §7: Dutch (Indo-European) — @cite{qing-uegaki-2025}
+-- §7: Dutch (Indo-European) — [qing-uegaki-2025]
 -- ============================================================================
 
 /-- Dutch has one non-IFF modal: zou/zouden...kunnen expresses
@@ -174,7 +174,7 @@ theorem dutch_size : dutch.size = 10 := by native_decide
 theorem dutch_iff_count : dutch.iffCount = 9 := by native_decide
 
 -- ============================================================================
--- §8: Hungarian (Uralic) — @cite{qing-uegaki-2025}
+-- §8: Hungarian (Uralic) — [qing-uegaki-2025]
 -- ============================================================================
 
 def hungarian : ModalInventory where
@@ -203,14 +203,14 @@ theorem english_all_iff : english.allIFF = true := by native_decide
 theorem english_size : english.size = 9 := by native_decide
 
 -- ============================================================================
--- §10: Washo (isolate) — @cite{bochnak-2015a}, @cite{bochnak-2015b}
+-- §10: Washo (isolate) — [bochnak-2015a], [bochnak-2015b]
 -- ============================================================================
 
 /-- Washo is a key counterexample to the SAV universal: *-eʔ* expresses
     both possibility and necessity with both epistemic and deontic flavors,
     varying on both axes simultaneously. Its meaning is the full Cartesian
     product {□,◇} × {e,d}, so it satisfies IFF.
-    @cite{steinert-threlkeld-imel-guo-2023} §4.1. -/
+    [steinert-threlkeld-imel-guo-2023] §4.1. -/
 def washo : ModalInventory where
   language := "Washo"
   family := "isolate"
@@ -229,13 +229,13 @@ theorem washo_eq_not_sav :
     Semantics.Modality.Typology.satisfiesSAV [ne, nd, pe, pd] = false := by native_decide
 
 -- ============================================================================
--- §11: Koryak (Chukotko-Kamchatkan) — @cite{mocnik-abramovitz-2019}
+-- §11: Koryak (Chukotko-Kamchatkan) — [mocnik-abramovitz-2019]
 -- ============================================================================
 
 /-- Koryak *ivək* is the other SAV counterexample: it expresses both
     necessity and possibility with doxastic and assertive flavors (both
     mapped to epistemic in the 3×3 space).
-    @cite{steinert-threlkeld-imel-guo-2023} §3, §4.1. -/
+    [steinert-threlkeld-imel-guo-2023] §3, §4.1. -/
 def koryak : ModalInventory where
   language := "Koryak"
   family := "Chukotko-Kamchatkan"
@@ -252,7 +252,7 @@ theorem koryak_size : koryak.size = 1 := by native_decide
 /-- The hypothetical modal *mighst* (epistemic possibility + deontic
     necessity) is ruled out by IFF: its meaning {(◇,e),(□,d)} is not
     Cartesian-closed (missing (◇,d) and (□,e)).
-    @cite{steinert-threlkeld-imel-guo-2023} §4.1. -/
+    [steinert-threlkeld-imel-guo-2023] §4.1. -/
 theorem mighst_not_iff :
     satisfiesIFF [pe, nd] = false := by native_decide
 
@@ -278,7 +278,7 @@ theorem all_have_some_iff :
     allInventories.all (fun inv => inv.iffCount > 0) = true := by native_decide
 
 /-- The two SAV counterexamples (Washo, Koryak) both satisfy IFF:
-    this is the core empirical claim of @cite{steinert-threlkeld-imel-guo-2023}. -/
+    this is the core empirical claim of [steinert-threlkeld-imel-guo-2023]. -/
 theorem sav_counterexamples_satisfy_iff :
     washo.allIFF = true ∧ koryak.allIFF = true := ⟨washo_all_iff, koryak_all_iff⟩
 
@@ -286,7 +286,7 @@ theorem sav_counterexamples_satisfy_iff :
 -- §14: IFF and Efficient Communication
 -- ============================================================================
 
-/-! ## Efficient Communication (Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026})
+/-! ## Efficient Communication (Imel, Guo, & [imel-guo-steinert-threlkeld-2026])
 
 Key computational results (verified over 32,301 generated + 27 natural languages):
 

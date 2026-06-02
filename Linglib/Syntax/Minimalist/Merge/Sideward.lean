@@ -2,7 +2,7 @@ import Linglib.Syntax.Minimalist.Merge.External
 
 /-!
 # Sideward Merge: realization + cost-suppression
-@cite{marcolli-chomsky-berwick-2025}
+[marcolli-chomsky-berwick-2025]
 
 Realizes M-C-B Lemmas 1.4.4 + 1.4.5 (book pp. 54-55) for the three
 Sideward-flavored cases of §1.4.1, plus the §1.5 cost-suppression

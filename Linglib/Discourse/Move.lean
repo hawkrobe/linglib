@@ -2,12 +2,12 @@ import Linglib.Semantics.Mood.IllocutionaryMood
 
 /-!
 # Discourse Move
-@cite{roberts-2023} @cite{lewis-1979}
+[roberts-2023] [lewis-1979]
 
 An illocutionary move: speaker performs `mood F(p)` for some content `p`,
 addressed to an interlocutor, possibly accepted.
 
-@cite{roberts-2023} §2.1.1: M is the set of moves on the scoreboard, with
+[roberts-2023] §2.1.1: M is the set of moves on the scoreboard, with
 distinguished subsets A (assertions), Q (questions), D (directions),
 Acc (accepted).
 

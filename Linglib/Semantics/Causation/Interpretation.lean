@@ -10,10 +10,10 @@ import Linglib.Semantics.Causation.Prevention
 
 /-!
 # Causative Interpretation (force-dynamic dispatch)
-@cite{nadathur-lauer-2020} @cite{talmy-1988} @cite{wolff-2003}
+[nadathur-lauer-2020] [talmy-1988] [wolff-2003]
 
 Maps `Causative` verb classifications to their compositional semantics
-under the **force-dynamic** view (@cite{talmy-1988}, @cite{wolff-2003}),
+under the **force-dynamic** view ([talmy-1988], [wolff-2003]),
 which collapses `enable`/`force`/`make` into a single sufficiency
 predicate (`causallySufficient`) distinguished post-hoc by `isCoercive`/`isPermissive`.
 
@@ -28,7 +28,7 @@ predicate (`causallySufficient`) distinguished post-hoc by `isCoercive`/`isPermi
 ## Theoretical commitment
 
 This file commits to the force-dynamic mapping. The competing
-**causal-model-theoretic** view (@cite{sloman-barbey-hotaling-2009})
+**causal-model-theoretic** view ([sloman-barbey-hotaling-2009])
 distinguishes `enable` from `make`/`cause` *structurally*: enable
 asserts `B := A ∧ X` (accessory variable required), while cause asserts
 `B := A`. Under that view, the present `Causative.toSemantics`
@@ -107,7 +107,7 @@ theorem make_enable_distinguished_by_permissivity :
 -- ════════════════════════════════════════════════════
 
 /-! `Causative` encodes force-dynamic mechanisms; `CCSelectionMode`
-(@cite{baglini-bar-asher-siegal-2025}) encodes which element of a causal
+([baglini-bar-asher-siegal-2025]) encodes which element of a causal
 model the construction can select as "the cause." These are orthogonal
 but connected: each variant has a canonical selection mode. -/
 

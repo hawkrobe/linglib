@@ -4,13 +4,13 @@ import Mathlib.Data.Finset.Lattice.Fold
 /-!
 # Ranking Functions and Iterated Belief Revision
 
-@cite{halpern-2003} @cite{darwiche-pearl-1997} @cite{spohn-1988}
+[halpern-2003] [darwiche-pearl-1997] [spohn-1988]
 
 Ranking functions (ordinal conditional functions, OCFs) provide a
 qualitative, ordinal approach to belief revision that serves as the
 quantitative semantics for System P + Rational Monotonicity.
 
-@cite{spohn-1988} introduced ranking functions as ordinal-valued measures
+[spohn-1988] introduced ranking functions as ordinal-valued measures
 of disbelief. We restrict to ℕ-valued rankings, following the
 simplification noted in Note 16 of the paper. κ(w) = 0 means w is
 maximally plausible (believed possible), while higher ranks indicate
@@ -45,7 +45,7 @@ See `Spohn1988` for a verified
 concrete instance demonstrating evidence strength, commutativity
 (Theorem 4), and the connection to `NormalityOrder`.
 
-## Bridge to Probability (@cite{spohn-1988} §7)
+## Bridge to Probability ([spohn-1988] §7)
 
 Ranking conditioning is the ordinal analogue of Bayesian conditioning.
 The structural parallel (min/+ for ordinals mirrors product/sum for
@@ -76,7 +76,7 @@ open Core.Order (PlausibilityOrder PreferentialConsequence rationalMonotonicity)
     Normalization: some world has rank 0 (the agent considers at least
     one world possible).
 
-    @cite{spohn-1988}, Definition 4 uses ordinals in the general case;
+    [spohn-1988], Definition 4 uses ordinals in the general case;
     we restrict to ℕ following Note 16 of the paper. -/
 structure RankingFunction (W : Type*) where
   /-- The rank (degree of disbelief) of each world -/
@@ -102,13 +102,13 @@ noncomputable def rankProp [Fintype W] (κ : RankingFunction W) (φ : W → Prop
 /-- The A-part of κ: the ranking restricted to A-worlds, shifted so
     the most plausible A-world has rank 0.
 
-    @cite{spohn-1988}, Definition 5: κ(w|A) = κ(w) - κ(A) for w ∈ A.
+    [spohn-1988], Definition 5: κ(w|A) = κ(w) - κ(A) for w ∈ A.
     This is the primitive from which conditioning derives. -/
 noncomputable def aPart [Fintype W] (κ : RankingFunction W) (φ : W → Prop)
     [DecidablePred φ] (hφ : ∃ w, φ w) (w : W) : ℕ :=
   κ.rank w - κ.rankProp φ hφ
 
-/-- @cite{spohn-1988}, Theorem 2(a): For any proposition, either it
+/-- [spohn-1988], Theorem 2(a): For any proposition, either it
     or its negation has rank 0 (or both).
 
     Normalization propagates from worlds to propositions: the rank-0
@@ -134,7 +134,7 @@ theorem rankProp_dichotomy [Fintype W] (κ : RankingFunction W)
       exact (Finset.inf'_le κ.rank hmem).trans (le_of_eq hw₀)
     omega
 
-/-- @cite{spohn-1988}, Theorem 2(b): The rank of a disjunction is
+/-- [spohn-1988], Theorem 2(b): The rank of a disjunction is
     the minimum of the disjuncts' ranks.
 
     κ(A ∪ B) = min(κ(A), κ(B)) for any non-empty A, B. This is
@@ -239,7 +239,7 @@ theorem ranking_connected (κ : RankingFunction W) :
 
 /-- A,α-conditionalization: revise κ by evidence φ with firmness α.
 
-    @cite{spohn-1988}, Definition 6: κ_{A,α}(w) = κ(w|A) for w ∈ A,
+    [spohn-1988], Definition 6: κ_{A,α}(w) = κ(w|A) for w ∈ A,
     and α + κ(w|Ā) for w ∈ Ā. The parameter α controls how firmly
     the evidence is believed:
 
@@ -249,7 +249,7 @@ theorem ranking_connected (κ : RankingFunction W) :
       at least α ranks
     - Large α: very firm belief in the evidence
 
-    @cite{goldszmidt-pearl-1996} call this **J-conditioning** (after
+    [goldszmidt-pearl-1996] call this **J-conditioning** (after
     Jeffrey); the operation is identical under the name change α = j.
 
     Requires both φ and ¬φ to be satisfiable (matching Spohn's
@@ -322,7 +322,7 @@ theorem ranking_rationalMonotonicity (κ : RankingFunction W) :
     exact Nat.le_trans hwu huv
 
 -- ══════════════════════════════════════════════════════════════════════
--- § 2. Iterated Belief Revision (@cite{darwiche-pearl-1997})
+-- § 2. Iterated Belief Revision ([darwiche-pearl-1997])
 -- ══════════════════════════════════════════════════════════════════════
 
 /-- The belief set of a ranking function: propositions true at all
@@ -334,7 +334,7 @@ def beliefSet (κ : RankingFunction W) : Set (W → Prop) :=
     α = κ(¬φ) + 1.
 
     This is the standard belief-revision operator for ranking functions
-    (@cite{spohn-1988}). The firmness is determined by the current
+    ([spohn-1988]). The firmness is determined by the current
     ranking, not a free parameter: the agent revises just firmly enough
     to make φ believed (the success postulate).
 
@@ -635,13 +635,13 @@ theorem ranking_satisfies_C4 [Fintype W] [DecidableEq W]
   exact Nat.sub_self _
 
 -- ══════════════════════════════════════════════════════════════════════
--- § 3. Independence (@cite{spohn-1988}, Definition 8)
+-- § 3. Independence ([spohn-1988], Definition 8)
 -- ══════════════════════════════════════════════════════════════════════
 
 /-- Two propositions are **independent** with respect to κ iff
     κ(φ ∩ ψ) = κ(φ) + κ(ψ).
 
-    @cite{spohn-1988}, Definition 8 (simplified from σ-fields to
+    [spohn-1988], Definition 8 (simplified from σ-fields to
     propositions). This is the ordinal analogue of probabilistic
     independence P(A ∩ B) = P(A) · P(B): where probability uses
     multiplication, ranking uses addition. -/
@@ -654,7 +654,7 @@ def independent [Fintype W] (κ : RankingFunction W)
 
 /-- **L-conditioning**: shift-based belief revision.
 
-    @cite{goldszmidt-pearl-1996}, Eqs. 29–30: L-conditioning with l ≥ 0
+    [goldszmidt-pearl-1996], Eqs. 29–30: L-conditioning with l ≥ 0
     keeps φ-worlds at their original rank and shifts ¬φ-worlds up by l.
     Unlike J-conditioning (`conditionα`), L-conditioning is commutative:
     κ_{A,l₁}_{B,l₂} = κ_{B,l₂}_{A,l₁}.
@@ -674,7 +674,7 @@ noncomputable def lCondition [Fintype W]
 /-- **AGM success postulate** (K*2): after revision by φ, the evidence
     φ is believed (all rank-0 worlds satisfy φ).
 
-    @cite{goldszmidt-pearl-1996} §6: ranking revision satisfies the AGM
+    [goldszmidt-pearl-1996] §6: ranking revision satisfies the AGM
     postulates. The proof is direct: ¬φ-worlds receive rank ≥ α =
     κ(¬φ) + 1 ≥ 1, so they cannot be rank-0 in the revised ranking. -/
 theorem revise_success [Fintype W] [DecidableEq W]

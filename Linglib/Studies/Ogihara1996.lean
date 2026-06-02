@@ -3,18 +3,18 @@ import Linglib.Semantics.Tense.SOT.Ambiguity
 import Linglib.Data.Examples.Schema
 
 /-!
-# @cite{ogihara-1996}: Tense, Attitudes, and Scope
-@cite{ogihara-1996} @cite{ogihara-1989}
+# [ogihara-1996]: Tense, Attitudes, and Scope
+[ogihara-1996] [ogihara-1989]
 
-@cite{ogihara-1996}'s theory: embedded past tense is **ambiguous**
+[ogihara-1996]'s theory: embedded past tense is **ambiguous**
 between a genuine past reading and a zero-tense reading. Zero tense is
 a bound variable that receives the matrix event time, producing the
 simultaneous reading.
 
 The substrate enum `PastReading` lives in
 `Semantics/Tense/SOT/Ambiguity.lean`. This Studies file
-attributes the two-reading commitment to @cite{ogihara-1996}, derives
-the two predictions, and records the contrast with @cite{kratzer-1998}
+attributes the two-reading commitment to [ogihara-1996], derives
+the two predictions, and records the contrast with [kratzer-1998]
 (deletion, not ambiguity).
 
 ## Core Mechanisms
@@ -121,9 +121,9 @@ end Examples
 -- § Ogihara's ambiguity claim (the divergence from Kratzer)
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{ogihara-1996}'s key claim: past IS ambiguous between genuine
+/-- [ogihara-1996]'s key claim: past IS ambiguous between genuine
     past and zero tense. This is a categorical structural difference
-    from @cite{kratzer-1998}'s deletion analysis. In Ogihara, the
+    from [kratzer-1998]'s deletion analysis. In Ogihara, the
     simultaneous reading = the zero-tense READING of past (semantic
     ambiguity); in Kratzer, it = deletion of past (morphological
     operation, no ambiguity). -/
@@ -136,7 +136,7 @@ theorem ogihara_ambiguity_vs_deletion :
 -- § Derivation Theorems
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{ogihara-1996} derives the simultaneous reading via the zero
+/-- [ogihara-1996] derives the simultaneous reading via the zero
     tense reading of past: the bound variable receives `E_matrix`. The
     derivation chain is `zeroTense_receives_binder_time` (substrate) →
     `embeddedR = matrixFrame.eventTime` → `embeddedFrame.isPresent`. -/
@@ -147,7 +147,7 @@ theorem ogihara_derives_simultaneous {Time : Type*}
   simp only [zeroTense_receives_binder_time, embeddedFrame,
     ReichenbachFrame.isPresent]
 
-/-- @cite{ogihara-1996} derives the shifted reading via the
+/-- [ogihara-1996] derives the shifted reading via the
     genuine-past reading: the past tense contributes temporal
     precedence. -/
 theorem ogihara_derives_shifted {Time : Type*} [LinearOrder Time]

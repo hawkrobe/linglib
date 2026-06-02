@@ -1,7 +1,7 @@
 import Linglib.Features.Case
 import Linglib.Features.Case
 /-!
-# Greek Case Inventory @cite{blake-1994}
+# Greek Case Inventory [blake-1994]
 
 Modern Greek has **4 cases**: NOM, ACC, GEN, VOC. The dative was lost
 during the Koine period (1st c. BCE – 4th c. CE), with its functions

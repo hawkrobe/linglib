@@ -2,17 +2,17 @@ import Linglib.Core.Nominal.Determiner
 
 /-!
 # Thai Definiteness Fragment
-@cite{jenks-2015} @cite{moroney-2021}
+[jenks-2015] [moroney-2021]
 
-Thai patterns with Mandarin on the @cite{moroney-2021} typology: bare nouns
+Thai patterns with Mandarin on the [moroney-2021] typology: bare nouns
 serve uniqueness contexts and demonstratives carry the anaphoric load —
 no overt indefinite or unique article. Possessives are productive. Under
-the @cite{moroney-2021} typology this is the `.markedAnaphoric` strategy.
+the [moroney-2021] typology this is the `.markedAnaphoric` strategy.
 -/
 
 namespace Thai.Definiteness
 
-/-- Thai @cite{jenks-2015}: same definite-marking pattern as Mandarin — the
+/-- Thai [jenks-2015]: same definite-marking pattern as Mandarin — the
     demonstrative (*nán* 'that') obligatorily expones anaphoric definites;
     uniqueness is bare; possessives via *khɔ̌ɔng*. -/
 def determiners : List Determiner.Entry :=

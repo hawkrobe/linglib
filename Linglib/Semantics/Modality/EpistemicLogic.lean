@@ -5,9 +5,9 @@ import Linglib.Core.Scales.EpistemicScale.Defs
 /-!
 # Multi-Agent Epistemic Logic
 
-@cite{halpern-2003} @cite{fagin-halpern-1994}
+[halpern-2003] [fagin-halpern-1994]
 
-Multi-agent epistemic operators from @cite{halpern-2003}: individual
+Multi-agent epistemic operators from [halpern-2003]: individual
 knowledge (Kᵢ), everyone knows (E_G), common knowledge (C_G),
 distributed knowledge (D_G), and their doxastic (KD45 belief) counterparts.
 
@@ -239,7 +239,7 @@ theorem believes_not_veridical :
 
 /-! ## Common Ground as Common Knowledge
 
-@cite{stalnaker-2002}: the common ground is the set of propositions that
+[stalnaker-2002]: the common ground is the set of propositions that
 are common knowledge among the discourse participants. -/
 
 /-- A common ground is grounded in common knowledge when its context

@@ -3,9 +3,9 @@ import Linglib.Syntax.Minimalist.VerbalDecomposition
 set_option autoImplicit false
 
 /-!
-# Cascade Structures (@cite{pesetsky-1995})
+# Cascade Structures ([pesetsky-1995])
 
-@cite{pesetsky-1995}
+[pesetsky-1995]
 
 Binary-branching PP spines where each node is a preposition (possibly
 phonologically null) that θ-selects its specifier. Cascade structures
@@ -39,7 +39,7 @@ nonaffixal.
 
 Pesetsky's CAUS is a **syntactic zero morpheme** — a phonologically null
 P head that creates causative verbs by incorporating into V. This is
-distinct from @cite{cuervo-2003}'s `VerbHead.vCAUSE`, which is an
+distinct from [cuervo-2003]'s `VerbHead.vCAUSE`, which is an
 **event-structural** head present in both causative and anticausative
 decompositions.
 
@@ -130,7 +130,7 @@ theorem spine_length_eq_depth (c : Cascade) : c.spine.length = c.depth := by
     (positions idx−1, idx−2, …, 0) before reaching V. Movement is
     blocked if any intermediate head is nonaffixal, because the
     resulting complex is headed by the nonaffixal host, which cannot
-    itself move. @cite{pesetsky-1995} §6.2.
+    itself move. [pesetsky-1995] §6.2.
 
     Formally: all heads at positions 0 … idx−1 must be affixal. -/
 def canReachV (spine : List CascadeHead) (idx : Nat) : Bool :=
@@ -195,7 +195,7 @@ def headOf : CascadeHead := ⟨"of", true, false⟩
 -- § 7. θ-Suppression
 -- ════════════════════════════════════════════════════
 
-/-- @cite{pesetsky-1995} (522): Suppression of external argument.
+/-- [pesetsky-1995] (522): Suppression of external argument.
 
     Only affixation of a **semantically contentful** morpheme to a verb
     with an external argument α allows α to be unexpressed. When CAUS
@@ -212,7 +212,7 @@ def thetaSuppressed (causAffixed : Bool) (rootHasExtArg : Bool) : Bool :=
 -- ════════════════════════════════════════════════════
 
 /-- Two occurrences of CAUS in Experiencer predicate structures
-    (@cite{pesetsky-1995} §6.2.2, p. 208):
+    ([pesetsky-1995] §6.2.2, p. 208):
 
     - `affixal` (CAUS_aff): starts affixed to V in the lexicon; bears
       strong features that must be discharged at PF
@@ -233,7 +233,7 @@ def CausVariant.hasStrongFeatures : CausVariant → Bool
 -- ════════════════════════════════════════════════════
 
 /-- Three types of semantically causative verbs, classified by their
-    relationship to CAUS (@cite{pesetsky-1995} §6.3, p. 217):
+    relationship to CAUS ([pesetsky-1995] §6.3, p. 217):
 
     1. `strong`: A-Causer suppressed by CAUS_aff (ObjExp psych verbs,
        causative *give*). Subject = A-Causer, not Agent.
@@ -282,7 +282,7 @@ def Cascade.specCCommands (c : Cascade) (commander commanded : String) : Bool :=
 
 /-- Number of potential heavy NP shift landing sites in a cascade.
     Each cascade layer provides one rightward adjunction site.
-    @cite{pesetsky-1995} Ch. 7 derives HNPS from cascade geometry:
+    [pesetsky-1995] Ch. 7 derives HNPS from cascade geometry:
     shifted phrases adjoin to cascade nodes, so cascade depth
     determines how many landing sites are available. -/
 def Cascade.shiftSites (c : Cascade) : Nat := c.depth
@@ -374,7 +374,7 @@ end CascadeTheorems
 
 /-- Pesetsky's CAUS is distinct from event-structural vCAUSE.
 
-    `VerbHead.vCAUSE` (from @cite{cuervo-2003}) is present in both
+    `VerbHead.vCAUSE` (from [cuervo-2003]) is present in both
     causative and anticausative decompositions — it encodes the causal
     **relation** between subevents, independent of Voice.
 

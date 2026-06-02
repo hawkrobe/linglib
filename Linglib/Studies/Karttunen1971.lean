@@ -5,7 +5,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Copular
 
 /-!
-# Karttunen 1971: Implicative Verbs @cite{karttunen-1971}
+# Karttunen 1971: Implicative Verbs [karttunen-1971]
 
 Implicative Verbs. Language 47(2): 340–358.
 
@@ -26,7 +26,7 @@ Complement-taking predicates that take infinitival complements divide into
 ## Historical Context
 
 Karttunen's 2×2 classification (necessary × sufficient) was the original
-descriptive taxonomy. The modern consensus (@cite{nadathur-2023}) derives
+descriptive taxonomy. The modern consensus ([nadathur-2023]) derives
 the entailment patterns from **causal structure** rather than from
 presuppositional schemas. The theory layer (`Causation/Implicative.lean`)
 implements the modern causal analysis; this study file preserves
@@ -135,7 +135,7 @@ theorem force_prevent_same_profile :
   exact ⟨rfl, rfl, by decide⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 2. Bridge to Modern Classification (@cite{nadathur-2023})
+-- § 2. Bridge to Modern Classification ([nadathur-2023])
 -- ════════════════════════════════════════════════════════════════
 
 /-- Convert KarttunenClass to ImplicativeClass (Nadathur 2023).
@@ -166,7 +166,7 @@ def karttunenOfImplicative (b : Implicative) : KarttunenClass :=
     - Affirmative "V-ed X to VP" → VP (all require the effect occurred)
     - Negation "didn't V X to VP" ↛ ¬VP (effect might occur from other causes)
 
-    The modern insight of @cite{nadathur-lauer-2020} is that these verbs
+    The modern insight of [nadathur-lauer-2020] is that these verbs
     differ in causal MECHANISM (sufficiency vs necessity) despite sharing
     the same ENTAILMENT PATTERN. See `cause_make_same_cell_different_mechanism`. -/
 def karttunenOfCausative : Causative → KarttunenClass
@@ -189,7 +189,7 @@ theorem prevent_karttunen_class :
 
 /-- `cause` and `make` have the same Karttunen entailment cell
     (sufficient-only) despite having different causal mechanisms.
-    This is the central insight of @cite{nadathur-lauer-2020}: same
+    This is the central insight of [nadathur-lauer-2020]: same
     entailment pattern ≠ same truth conditions. The difference emerges
     in overdetermination scenarios where `causallySufficient` is true but `causeSem`
     is false (see `truth_conditionally_distinct` in Interpretation.lean). -/
@@ -394,7 +394,7 @@ theorem all_cells_populated :
 -- ── Necessary-only cell: be able (§11, schema 54) ──
 
 /-- *be able* is NOT a lexical implicative — it has no `implicative`.
-    The actuality entailment is **aspect-governed** (@cite{nadathur-2023}):
+    The actuality entailment is **aspect-governed** ([nadathur-2023]):
     perfective "was able to VP" → VP; imperfective "was able to VP" ↛ VP.
     Karttunen (§11) notes these verbs are ambiguous between implicative
     and non-implicative readings. -/
@@ -409,7 +409,7 @@ theorem beAble_infinitival_subject_control :
 
 /-! ### Tension with Noonan's Reality Status
 
-    @cite{noonan-2007} classifies achievement CTPs (*manage*, *fail*) as
+    [noonan-2007] classifies achievement CTPs (*manage*, *fail*) as
     IRREALIS because they take infinitival complements. But Karttunen shows
     these verbs ENTAIL complement truth — semantically realis. Complement
     *form* (irrealis) and complement *entailment* (realis) diverge for

@@ -3,10 +3,10 @@ import Linglib.Phonology.Process.LocalRewrite
 
 /-!
 # Akan Phonological Inventory (Palatalization-Relevant Segments)
-@cite{mccarthy-prince-1995} @cite{schachter-fromkin-1968}
+[mccarthy-prince-1995] [schachter-fromkin-1968]
 
 Segment inventory for the Akan velar–palatal alternation and its
-interaction with reduplication (§5.1 of @cite{mccarthy-prince-1995}).
+interaction with reduplication (§5.1 of [mccarthy-prince-1995]).
 
 Akan palatalization: velars become corono-dorsal complex segments
 (palatals) before front vowels. The segments defined here are the
@@ -17,9 +17,9 @@ minimal inventory needed to ground the OT analysis:
 - `/a/`: low vowel ([−front] — does not trigger palatalization)
 - `/ɪ/`: high front vowel ([+front] — triggers palatalization)
 
-The feature specifications follow @cite{hayes-2009} for manner and
+The feature specifications follow [hayes-2009] for manner and
 laryngeal features, and the corono-dorsal complex analysis of Akan
-palatals from @cite{mccarthy-prince-1995} (citing Keating 1987,
+palatals from [mccarthy-prince-1995] (citing Keating 1987,
 Clements 1976, Hume 1992).
 -/
 
@@ -42,7 +42,7 @@ def seg_k : Segment := Segment.ofSpecs
 /-- /tɕ/: voiceless palatal affricate — [+coronal, +dorsal, +del.rel.].
     The palatalized output of /k/ before front vowels.
     Corono-dorsal complex segment per Keating 1987 (cited in
-    @cite{mccarthy-prince-1995}): palatalization spreads [+coronal,
+    [mccarthy-prince-1995]): palatalization spreads [+coronal,
     −anterior] from the front vowel while preserving [+dorsal]. -/
 def seg_tc : Segment := Segment.ofSpecs
   [(Feature.syllabic, false), (Feature.consonantal, true),

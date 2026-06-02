@@ -190,7 +190,7 @@ Theories/CCG/Basic.lean
     ↑ provides: DerivStep, Cat, combinatory rules
 ```
 
-This is the **second complete pipeline analysis** in Linglib (after @cite{scontras-pearl-2021}),
+This is the **second complete pipeline analysis** in Linglib (after [scontras-pearl-2021]),
 demonstrating that the architecture generalizes across phenomena.
 -/
 

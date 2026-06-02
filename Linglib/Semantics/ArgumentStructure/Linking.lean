@@ -3,7 +3,7 @@ import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 /-!
 # Linking Theory Interface
 
-@cite{beavers-koontz-garboden-2020} @cite{dowty-1991} @cite{goldberg-1995} @cite{kratzer-1996} @cite{levin-2004} @cite{levin-hovav-1995} @cite{pesetsky-1995} @cite{pylkkanen-2008} @cite{rappaport-hovav-levin-1998}
+[beavers-koontz-garboden-2020] [dowty-1991] [goldberg-1995] [kratzer-1996] [levin-2004] [levin-hovav-1995] [pesetsky-1995] [pylkkanen-2008] [rappaport-hovav-levin-1998]
 
 General interface for theories of argument realization — how verbs'
 arguments get their thematic roles.
@@ -16,7 +16,7 @@ primitives: the authoritative representation of argument semantics is
 the entailment profile, and role labels are computed from it via
 `EntailmentProfile.toRole`.
 
-The field consensus (@cite{levin-2019}) is that discrete thematic roles
+The field consensus ([levin-2019]) is that discrete thematic roles
 have been superseded by entailment-based representations. Role labels
 remain useful as a **shared interface vocabulary** for linking theories,
 neo-Davidsonian logical forms, and cross-framework comparison.
@@ -73,7 +73,7 @@ open Semantics.ArgumentStructure.EntailmentProfile
     representation is the `EntailmentProfile`, and role labels are computed
     from it via `EntailmentProfile.toRole`.
 
-    The field consensus (@cite{levin-2019}) is that discrete thematic roles
+    The field consensus ([levin-2019]) is that discrete thematic roles
     have been superseded by entailment-based representations. Role labels
     remain useful as shared interface vocabulary for linking theories,
     neo-Davidsonian logical forms, and cross-framework comparison. -/
@@ -265,7 +265,7 @@ inductive ArgPosition where
   | directObject    -- Direct object
   | indirectObject  -- Indirect object / dative
   | oblique         -- Oblique / PP complement
-  | applied         -- Applied argument (@cite{pylkkanen-2008})
+  | applied         -- Applied argument ([pylkkanen-2008])
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════════════

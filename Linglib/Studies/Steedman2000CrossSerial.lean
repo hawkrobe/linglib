@@ -3,7 +3,7 @@ import Linglib.Phenomena.WordOrder.CrossSerial
 
 /-!
 # CCG Cross-Serial Bridge
-@cite{bresnan-etal-1982} @cite{steedman-2000}
+[bresnan-etal-1982] [steedman-2000]
 
 Connects CCG derivations (from `Syntax.CCG.CrossSerial`) to
 empirical cross-serial dependency data (from `Phenomena.WordOrder.CrossSerial`).

@@ -2,7 +2,7 @@ import Linglib.Semantics.Reference.Monsters
 
 /-!
 # Kocurek, Jerzak & Rudolph 2020: Against Conventional Wisdom (c-monsters)
-@cite{kocurek-jerzak-rudolph-2020}
+[kocurek-jerzak-rudolph-2020]
 
 Kocurek, A. W., Jerzak, E. & Rudolph, R. E. (2020). Against conventional
 wisdom. *Philosophers' Imprint* 20(22), 1–27.

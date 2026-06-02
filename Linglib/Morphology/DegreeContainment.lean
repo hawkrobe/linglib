@@ -2,7 +2,7 @@ import Linglib.Morphology.Containment
 
 /-!
 # Degree Containment — Substrate
-@cite{bobaljik-2012}
+[bobaljik-2012]
 
 Framework-neutral substrate for the three-grade degree hierarchy
 (positive, comparative, superlative) and the *ABA generalization that
@@ -11,7 +11,7 @@ case morphology: an `AllomorphyPattern`-style record + decidable
 contiguity predicates derived from the generic
 `Morphology.Containment` substrate.
 
-The empirical generalization @cite{bobaljik-2012} surveys: across
+The empirical generalization [bobaljik-2012] surveys: across
 languages, suppletion in adjectival comparison patterns as `tall–
 taller–tallest` (AAA), `good–better–best` (ABB), or `bonus–melior–
 optimus` (ABC); the configuration `*good–better–goodest` (ABA) is
@@ -22,7 +22,7 @@ elsewhere — see `Morphology/DM/ContainmentVI.lean` for the
 DM-flavored VI account and `Studies/Bobaljik2012.lean`
 for the bundle of CSG predictions and attested-pattern theorems.
 
-Scope restriction (cf. @cite{bobaljik-2012} on relative vs. absolute
+Scope restriction (cf. [bobaljik-2012] on relative vs. absolute
 superlatives): the contiguity claim concerns *relative* superlatives.
 Absolute / elatival superlatives (e.g., Italian *bellissimo*) are a
 distinct morphological category whose internal structure need not
@@ -160,7 +160,7 @@ example : aab.IsContiguous := by decide
 -- § 5: CSG Part I (from Contiguity Alone)
 -- ============================================================================
 
-/-- **Comparative-Superlative Generalization, Part I** (@cite{bobaljik-2012}):
+/-- **Comparative-Superlative Generalization, Part I** ([bobaljik-2012]):
     if the comparative is suppletive, then the superlative is also
     suppletive (with respect to the positive). Follows from contiguity
     alone — if POS ≠ CMPR, then a contiguous pattern cannot have

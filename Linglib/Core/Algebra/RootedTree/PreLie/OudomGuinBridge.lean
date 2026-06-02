@@ -16,7 +16,7 @@ set_option autoImplicit false
 
 /-!
 # Bridge: GrossmanLarson product = Oudom-Guin ★ on basis
-@cite{oudom-guin-2008} @cite{foissy-2021}
+[oudom-guin-2008] [foissy-2021]
 
 For the pre-Lie algebra `L = InsertionAlgebra α` (rooted trees with
 vertex-insertion product), the Oudom-Guin construction gives an

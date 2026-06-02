@@ -4,17 +4,17 @@ import Linglib.Semantics.Lexical.LevinClassProfiles
 /-!
 # Argument Structure Derivation Pipeline
 
-@cite{beavers-koontz-garboden-2020} @cite{rappaport-hovav-levin-1998}
-@cite{rappaport-hovav-levin-2024} @cite{dowty-1991}
+[beavers-koontz-garboden-2020] [rappaport-hovav-levin-1998]
+[rappaport-hovav-levin-2024] [dowty-1991]
 
 The derivational chain from root content to argument structure, made
 explicit as composed functions:
 
     RootEntailments → Template → ArgTemplate → ThetaRole
 
-Each step exists in the literature: @cite{beavers-koontz-garboden-2020}
-define root entailments; @cite{rappaport-hovav-levin-1998} define event
-structure templates; @cite{dowty-1991} defines proto-role entailment
+Each step exists in the literature: [beavers-koontz-garboden-2020]
+define root entailments; [rappaport-hovav-levin-1998] define event
+structure templates; [dowty-1991] defines proto-role entailment
 profiles. But nobody has written down the full pipeline as a single
 computable derivation. This file does so.
 
@@ -24,7 +24,7 @@ Root and template meanings are not ontologically distinct — both are
 sets of lexical entailments about events and participants. They differ
 in degree of specificity: templates have general meanings shared across
 many roots; roots have specific meanings that can include templatic
-content (contra the Bifurcation Thesis, @cite{embick-2009}).
+content (contra the Bifurcation Thesis, [embick-2009]).
 
 The template determines structural argument positions (subject, object).
 The root determines WHICH template the verb fills, and class membership
@@ -64,7 +64,7 @@ open Semantics.Lexical.Roots
     (ACT, CAUSE, BECOME); roots fill the content slots (STATE,
     MANNER).
 
-    @cite{beavers-koontz-garboden-2020} (SAG Lectures 2023 §6): roots
+    [beavers-koontz-garboden-2020] (SAG Lectures 2023 §6): roots
     fall into types based on how much templatic meaning they entail,
     and these types predict which templates they can fill.
 
@@ -184,7 +184,7 @@ def templateArgTemplate (t : Template) : ArgTemplate where
     - manner without result → activity (specifies action manner)
     - state only → state (names a property/state)
 
-    @cite{beavers-koontz-garboden-2020} (SAG Lectures 2023 §6, table 32):
+    [beavers-koontz-garboden-2020] (SAG Lectures 2023 §6, table 32):
     the root typology mirrors the template typology.
 
     | Root type | Primary template |
@@ -487,7 +487,7 @@ theorem build_subject_agrees_object_diverges :
 -- § 7. Root Typology Predictions
 -- ════════════════════════════════════════════════════
 
-/-! @cite{beavers-koontz-garboden-2020} (SAG Lectures 2023 §6):
+/-! [beavers-koontz-garboden-2020] (SAG Lectures 2023 §6):
 roots fall into three types based on how much templatic meaning they
 entail. This predicts morphological and semantic properties
 cross-linguistically (validated across 88 languages).

@@ -2,7 +2,7 @@ import Linglib.Phonology.ItemSpecificity.Defs
 
 /-!
 # UseListed
-@cite{zuraw-2000}
+[zuraw-2000]
 
 The whole-word retrieval theory: an item with high token frequency may
 be **stored as a fully-formed surface representation**, bypassing the
@@ -27,7 +27,7 @@ UseListed prediction must be tested on the productivity gradient: novel
 items pattern with the *grammar*, not with the high-frequency lexicon.
 
 The Breiss-Katsuda-Kawahara compounds (Figure 7 of
-@cite{breiss-katsuda-kawahara-2026}) test this directly: novel
+[breiss-katsuda-kawahara-2026]) test this directly: novel
 compounds show the same compound-frequency-conditioned nasalisation
 gradient as familiar compounds, contra UseListed.
 -/

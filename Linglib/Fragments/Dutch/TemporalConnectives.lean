@@ -2,7 +2,7 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Dutch Temporal Connectives Fragment
-@cite{giannakidou-2002} @cite{karttunen-1974}
+[giannakidou-2002] [karttunen-1974]
 
 Dutch (and German) represent a third strategy for the two-*until* problem:
 rather than collapsing both types under one lexeme (English) or lexicalizing
@@ -22,7 +22,7 @@ German parallels Dutch exactly: *bis* (durative until, blocked under
 negation) and *erst* (PPI, 'only then').
 
 This typological pattern — PPI replacement instead of NPI *until* — was
-noted by @cite{giannakidou-2002} (ex. 47) and Declerk 1995.
+noted by [giannakidou-2002] (ex. 47) and Declerk 1995.
 -/
 
 namespace Dutch.TemporalConnectives

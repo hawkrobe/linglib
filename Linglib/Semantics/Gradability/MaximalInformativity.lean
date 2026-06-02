@@ -5,7 +5,7 @@ import Linglib.Core.Scales.DirectedMeasure
 
 /-!
 # Maximal Informativity Principle (MIP)
-@cite{rouillard-2026} @cite{kennedy-2015} @cite{fox-2007}
+[rouillard-2026] [kennedy-2015] [fox-2007]
 
 The **Maximal Informativity Principle** is the licensing condition originally
 proposed for temporal *in*-adverbials (E-TIAs and G-TIAs) by Rouillard 2026,
@@ -31,7 +31,7 @@ always `μ(w)` — the true value.
 
 Renamed from `rouillardETIA`/`rouillardGTIA` per master plan v4 idea-naming
 discipline (file names + operators describe the IDEA, not the proposer).
-The proposer is cited in @cite{} blocks throughout.
+The proposer is cited in [key] blocks throughout.
 
 ## Cross-framework agreement
 
@@ -52,13 +52,13 @@ variable {α : Type*} [LinearOrder α] {W : Type*}
 -- § 1. MIP-domain operators
 -- ════════════════════════════════════════════════════
 
-/-- @cite{rouillard-2026} E-TIA domain: event runtime ≤ interval size.
+/-- [rouillard-2026] E-TIA domain: event runtime ≤ interval size.
     Boundedness determined by Vendler class (telic → closed, atelic → open).
     Direction is negative (atMostDeg) per Rouillard's MIP analysis. -/
 def etia (μ : W → α) (b : Boundedness) : DirectedMeasure α W :=
   { boundedness := b, μ := μ, direction := .negative }
 
-/-- @cite{rouillard-2026} G-TIA domain: PTS extent on open intervals.
+/-- [rouillard-2026] G-TIA domain: PTS extent on open intervals.
     Always open → always blocked (information collapse). -/
 def gtia (μ : W → α) : DirectedMeasure α W :=
   { boundedness := .open_, μ := μ, direction := .negative }
@@ -91,7 +91,7 @@ theorem numeral_etia_same_licensing (μ₁ μ₂ : W → α) :
 
 /-- All four frameworks (Kennedy adjectives, Rouillard E-TIAs, Krifka quantization,
     Zwarts paths) agree: licensing depends solely on boundedness.
-    @cite{kennedy-2007} @cite{rouillard-2026} @cite{krifka-1989} @cite{zwarts-2005}. -/
+    [kennedy-2007] [rouillard-2026] [krifka-1989] [zwarts-2005]. -/
 theorem four_frameworks_agree (b : Boundedness) (μ₁ μ₂ : W → α) :
     (DirectedMeasure.adjective μ₁ b).licensed = (etia μ₂ b).licensed := rfl
 

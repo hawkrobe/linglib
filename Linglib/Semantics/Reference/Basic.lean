@@ -1,7 +1,7 @@
 /-
 # Direct Reference: Core Infrastructure
 
-@cite{almog-2014}'s three-mechanism taxonomy of direct reference:
+[almog-2014]'s three-mechanism taxonomy of direct reference:
 1. **Designation**: A term rigidly picks out an object
 2. **Singular proposition**: Content is a structured ⟨individual, property⟩
 3. **Referential use**: Speaker intends a particular individual
@@ -32,7 +32,7 @@ open Core.Intension (rigid IsRigid rigid_isRigid evalAt CoRefer CoExtensional
 /-- A Kaplanian context of utterance.
 
 Contexts supply the parameters that indexicals depend on: who is speaking,
-what world is actual, etc. Following @cite{kaplan-1989}, characters are functions
+what world is actual, etc. Following [kaplan-1989], characters are functions
 from contexts to contents. -/
 structure Context (W : Type*) (E : Type*) where
   /-- The agent of the context (the speaker) -/
@@ -50,9 +50,9 @@ abbrev Character (C : Type*) (W : Type*) (E : Type*) := C → Intension W E
 /-- Content is just an intension — a function from worlds to extensions. -/
 abbrev Content (W : Type*) (E : Type*) := Intension W E
 
-/-! ## Referential Profile (@cite{almog-2014}) -/
+/-! ## Referential Profile ([almog-2014]) -/
 
-/-- @cite{almog-2014}'s three independent mechanisms of direct reference,
+/-- [almog-2014]'s three independent mechanisms of direct reference,
 represented as a three-dimensional Boolean profile.
 
 Each dimension is a distinct *way* that an expression can refer:
@@ -62,7 +62,7 @@ Each dimension is a distinct *way* that an expression can refer:
   individual, regardless of the expression's descriptive content (Donnellan)
 
 The three dimensions are logically independent: any of the 2³ = 8 combinations
-is coherent, and @cite{almog-2014} argues each is linguistically attested. -/
+is coherent, and [almog-2014] argues each is linguistically attested. -/
 structure ReferentialProfile where
   /-- Kripke: the expression rigidly designates its referent -/
   designation : Bool
@@ -83,7 +83,7 @@ structure ReferringExpression (C : Type*) (W : Type*) (E : Type*) where
 
 /-- An expression is directly referential iff its content is rigid at every context.
 
-@cite{kaplan-1989}: "For directly referential terms, the referent determines
+[kaplan-1989]: "For directly referential terms, the referent determines
 the content; once we fix the referent, the content is just the referent
 itself." -/
 def isDirectlyReferential {C W E : Type*} (char : Character C W E) : Prop :=
@@ -126,7 +126,7 @@ theorem properName_content_eq_rigid {C W E : Type*} (e : E) (c : C) :
 /-- De jure rigidity: the expression is rigid *by mechanism* — its linguistic
 meaning guarantees rigidity. Proper names and indexicals are de jure rigid.
 
-Cf. @cite{kripke-1980}: "one meter" is de facto rigid (happens to pick out the
+Cf. [kripke-1980]: "one meter" is de facto rigid (happens to pick out the
 same length at every world) but not de jure rigid (its character involves
 a description). -/
 def IsDeJureRigid {C W E : Type*} (expr : ReferringExpression C W E) : Prop :=

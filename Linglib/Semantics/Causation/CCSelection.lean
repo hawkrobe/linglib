@@ -3,7 +3,7 @@ import Linglib.Semantics.Causation.Necessity
 
 /-!
 # Causative Construction Selection (CC-Selection)
-@cite{baglini-bar-asher-siegal-2020} @cite{baglini-bar-asher-siegal-2025} @cite{bar-asher-siegal-2026}
+[baglini-bar-asher-siegal-2020] [baglini-bar-asher-siegal-2025] [bar-asher-siegal-2026]
 
 CC-selection is the mechanism by which causative constructions constrain
 which element of a causal model can be linguistically realized as

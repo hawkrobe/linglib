@@ -4,12 +4,12 @@ import Linglib.Phonology.OptimalityTheory.TCT
 
 /-!
 # Stratal OT ↔ Corr ↔ TCT — Architectural Bridge
-@cite{kiparsky-2000} @cite{benua-1997}
+[kiparsky-2000] [benua-1997]
 
-The substrate-level integration between Stratal OT (@cite{kiparsky-2000})
-and TCT (@cite{benua-1997}) over the unifying `Corr Role α` substrate.
+The substrate-level integration between Stratal OT ([kiparsky-2000])
+and TCT ([benua-1997]) over the unifying `Corr Role α` substrate.
 
-## The polemic of @cite{benua-1997}
+## The polemic of [benua-1997]
 
 Benua's thesis defends a strong architectural claim: **for every stratal
 analysis there exists a TCT analysis producing the same surface

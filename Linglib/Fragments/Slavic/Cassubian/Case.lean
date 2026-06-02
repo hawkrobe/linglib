@@ -2,9 +2,9 @@ import Linglib.Fragments.Slavic.Case
 
 /-!
 # Cassubian Case Inventory
-@cite{stone-1993-cassubian} @cite{blake-1994}
+[stone-1993-cassubian] [blake-1994]
 
-Per @cite{stone-1993-cassubian} (p. 769): "The seven cases are the
+Per [stone-1993-cassubian] (p. 769): "The seven cases are the
 same as in Polish, but the tendency for the nominative to replace the
 vocative is greater than in Polish. The locative never occurs without
 a preposition, and there is a strong tendency for the instrumental to

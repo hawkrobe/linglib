@@ -2,7 +2,7 @@ import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Communication Channels
-@cite{cover-thomas-2006} @cite{shannon-1948} @cite{zaslavsky-etal-2019}
+[cover-thomas-2006] [shannon-1948] [zaslavsky-etal-2019]
 
 A `CommChannel C W` is a finite-alphabet stochastic conditional
 distribution `p(w | c)` — the basic Shannon channel restricted to finite
@@ -41,7 +41,7 @@ variable {C W : Type} [Fintype C] [Fintype W]
     `encode c w = p(w | c)`. The Shannon-channel primitive shared by
     information-theoretic and pragmatic communication models.
 
-    Originally `NamingChannel` in @cite{zaslavsky-etal-2019}; lifted here
+    Originally `NamingChannel` in [zaslavsky-etal-2019]; lifted here
     because the same primitive serves color-naming, lexicalization,
     asymmetric-lexicon models, and RSA literal-speaker semantics. -/
 structure CommChannel (C W : Type) [Fintype C] [Fintype W] where
@@ -63,7 +63,7 @@ noncomputable def posterior (nc : CommChannel C W) (prior : C → ℝ)
 
 /-- Communicative precision (expected surprisal) of meaning `c`:
     `S(c) = -Σ_w p(w|c) · log p(c|w)`. Lower means the channel
-    communicates `c` more precisely. Defined in @cite{zaslavsky-etal-2019}. -/
+    communicates `c` more precisely. Defined in [zaslavsky-etal-2019]. -/
 noncomputable def commPrecision (nc : CommChannel C W) (prior : C → ℝ)
     (c : C) : ℝ :=
   -∑ w : W, nc.encode c w * log (posterior nc prior w c)

@@ -7,7 +7,7 @@ import Linglib.Syntax.Minimalist.Voice
 
 /-!
 # Staps & Rooryck (2024): Formalizing Spatial-Causal Polysemy of Agent Prepositions
-@cite{staps-rooryck-2024}
+[staps-rooryck-2024]
 
 Semantics and Pragmatics 17, Article 4, pp. 1–47.
 
@@ -15,7 +15,7 @@ Semantics and Pragmatics 17, Article 4, pp. 1–47.
 
 1. Agent prepositions (*by*, French *par*/*de*) are **not** semantically vacuous
    case markers. They have non-trivial semantic content derived from their
-   spatial meanings via principled polysemy (@cite{tyler-evans-2003}).
+   spatial meanings via principled polysemy ([tyler-evans-2003]).
 
 2. The general denotation is **polymorphically typed**: ⟨η, ⟨θ, t⟩⟩, where
    η (Figure) and θ (Ground) are instantiated by the syntactic/semantic
@@ -28,7 +28,7 @@ Semantics and Pragmatics 17, Article 4, pp. 1–47.
 
 4. The same polymorphic mechanism extends to **causal adjuncts** (§2.3):
    *de* marks causes-as-situations (type ⟨s, ⟨s, t⟩⟩), *par* marks
-   causes-as-forces (type ⟨f, ⟨s, t⟩⟩), following @cite{copley-harley-2022}.
+   causes-as-forces (type ⟨f, ⟨s, t⟩⟩), following [copley-harley-2022].
 
 ## Formalization Strategy
 
@@ -39,17 +39,17 @@ entailments; *de* is the default for low-agentivity subjects.
 
 We derive the par/de preference from the verb's stored `EntailmentProfile`
 and `VendlerClass`, connecting to the affectedness hierarchy
-(@cite{beavers-2010}) and aspectual classification (@cite{vendler-1957}).
+([beavers-2010]) and aspectual classification ([vendler-1957]).
 
 ## Integration with linglib
 
-- Subject profiles reuse canonical @cite{dowty-1991} profiles
+- Subject profiles reuse canonical [dowty-1991] profiles
   (`kickSubjectProfile`, `seeSubjectProfile`, `runSubjectProfile`)
   rather than duplicating them, making the connection structural.
-- Passive voice connects to @cite{collins-2005}'s `voicePassive` —
+- Passive voice connects to [collins-2005]'s `voicePassive` —
   Case-checking by Voice is the syntactic correlate of the preposition's
   semantic contribution.
-- Object affectedness derives from @cite{beavers-2010}'s `profileToDegree`.
+- Object affectedness derives from [beavers-2010]'s `profileToDegree`.
 -/
 
 namespace StapsRooryck2024
@@ -74,7 +74,7 @@ open Minimalist
 inductive SemDomain where
   | e  -- Entity: concrete individuals
   | s  -- Event: situations or events
-  | f  -- Force: causal forces (@cite{copley-harley-2022})
+  | f  -- Force: causal forces ([copley-harley-2022])
   deriving DecidableEq, Repr
 
 /-- A polymorphic preposition type: ⟨η, ⟨θ, t⟩⟩.
@@ -113,7 +113,7 @@ theorem causal_force_not_situation : causalForceType ≠ causalSituationType := 
 /-- The "active" P-Agent entailments that drive *par* selection.
     §3.5 (34): change/causation, volitionality, and kinesis/movement are
     the three entailments that distinguish par-requiring from de-allowing
-    contexts. These are a strict subset of @cite{dowty-1991}'s five
+    contexts. These are a strict subset of [dowty-1991]'s five
     P-Agent entailments — sentience and independent existence do NOT
     contribute to par selection (experiencers allow *de*).
 
@@ -152,12 +152,12 @@ theorem par_de_complementary (p : EntailmentProfile) :
 
 /-- Canonical agents (laver, écrire, construire, tuer, abandonner,
     délaisser) have V+S+C+M+IE → par required. This is `kickSubjectProfile`
-    from @cite{dowty-1991}. -/
+    from [dowty-1991]. -/
 theorem canonical_agent_requires_par :
     predictsParRequired protoTransSubjectProfile = true := by native_decide
 
 /-- Experiencer subjects (aimer, adorer, respecter) have S+IE only →
-    de available. This is `seeSubjectProfile` from @cite{dowty-1991}. -/
+    de available. This is `seeSubjectProfile` from [dowty-1991]. -/
 theorem experiencer_allows_de :
     predictsDeAvailable experiencerSubjectProfile = true := by native_decide
 
@@ -167,7 +167,7 @@ theorem stative_positional_allows_de :
     predictsDeAvailable stativePositionalSubjectProfile = true := by native_decide
 
 /-- Dynamic motion subjects (dynamic suivre) have V+S+M+IE → par
-    required. This is `runSubjectProfile` from @cite{dowty-1991}. -/
+    required. This is `runSubjectProfile` from [dowty-1991]. -/
 theorem dynamic_motion_requires_par :
     predictsParRequired dynamicFollowSubjectProfile = true := by native_decide
 
@@ -191,7 +191,7 @@ theorem state_no_telic_par : telicityFavorsPar .state = false := rfl
 
 /-- §3.1: Object affectedness also matters. Verbs with quantized or
     nonquantized affectedness entail a Patient change → forces *par*.
-    Connects to @cite{beavers-2010}'s affectedness hierarchy. -/
+    Connects to [beavers-2010]'s affectedness hierarchy. -/
 def objectChangeFavorsPar (objProfile : EntailmentProfile) : Bool :=
   match profileToDegree objProfile with
   | .quantized | .nonquantized => true
@@ -257,7 +257,7 @@ structure SurveyJudgment where
   parMean : Int           -- scaled ×100
   deriving Repr
 
-/-- Survey data from @cite{staps-rooryck-2024} Table 2.
+/-- Survey data from [staps-rooryck-2024] Table 2.
     Means are ×100 (e.g., 0.87 → 87, -0.96 → -96). -/
 def surveyData : List SurveyJudgment := [
   -- § Causal adjuncts (§2.3)
@@ -328,8 +328,8 @@ theorem suivi_low_prefers_de :
     Case-checking relationship, with the semantic contribution being
     Initiator(x,e) plus the proto-agentivity presupposition.
 
-    This connects @cite{staps-rooryck-2024}'s §2.2 to
-    @cite{collins-2005}'s passive structure: Voice_PASS checks Case
+    This connects [staps-rooryck-2024]'s §2.2 to
+    [collins-2005]'s passive structure: Voice_PASS checks Case
     while v assigns the external θ-role. -/
 inductive FrenchAgentPrep where
   | par  -- 'through, via': high proto-agentivity presupposition
@@ -355,7 +355,7 @@ theorem par_de_different_causal_type :
     FrenchAgentPrep.par.causalType ≠ FrenchAgentPrep.de.causalType := by decide
 
 /-- The syntactic precondition for par/de: passive Voice checks Case
-    (feature dissociation per @cite{collins-2005}), providing the
+    (feature dissociation per [collins-2005]), providing the
     structural position for the preposition. The par/de choice is
     then determined by proto-agentivity. -/
 theorem passive_provides_case_position :
@@ -366,7 +366,7 @@ theorem passive_provides_case_position :
 -- ============================================================================
 
 /-- Position in the causal chain relative to the Patient.
-    @cite{croft-2012}: *par* 'through' = perlative (path position),
+    [croft-2012]: *par* 'through' = perlative (path position),
     *de* 'from' = ablative (source position). Closer to Patient →
     more proto-agentive. -/
 inductive CausalChainPosition where
@@ -396,7 +396,7 @@ theorem par_closer_than_de :
 
 /-- Verbs with quantized object affectedness always require *par*.
     Quantized affectedness implies the subject causes a definite change
-    (@cite{beavers-2010}). -/
+    ([beavers-2010]). -/
 theorem quantized_object_implies_par (obj : EntailmentProfile)
     (h : profileToDegree obj = .quantized) :
     objectChangeFavorsPar obj = true := by
@@ -428,11 +428,11 @@ theorem stativePositional_is_minimal :
     stativePositionalSubjectProfile = minimalParticipantProfile := rfl
 
 -- ============================================================================
--- § 10. Cross-Study: @cite{dowty-1991} P-Agent Score
+-- § 10. Cross-Study: [dowty-1991] P-Agent Score
 -- ============================================================================
 
 /-- The "active" agent entailments (V, C, M) are a strict subset of
-    @cite{dowty-1991}'s full P-Agent set (V, S, C, M, IE). Profiles with
+    [dowty-1991]'s full P-Agent set (V, S, C, M, IE). Profiles with
     active entailments always have pAgentScore ≥ 1, but the converse fails:
     experiencer profiles have pAgentScore = 2 (S+IE) yet no active
     entailments — which is exactly why they allow *de*. -/
@@ -446,8 +446,8 @@ theorem active_implies_pAgent_ge_1 (p : EntailmentProfile)
 
 /-- Converse fails: experiencer profiles have pAgentScore ≥ 1 but no
     active agent entailments. This is the theoretical crux —
-    @cite{staps-rooryck-2024}'s par/de distinction is sensitive to a
-    narrower notion of agentivity than @cite{dowty-1991}'s full count. -/
+    [staps-rooryck-2024]'s par/de distinction is sensitive to a
+    narrower notion of agentivity than [dowty-1991]'s full count. -/
 theorem experiencer_high_pAgent_but_no_active :
     experiencerSubjectProfile.pAgentScore ≥ 1 ∧
     hasActiveAgentEntailment experiencerSubjectProfile = false :=
@@ -455,8 +455,8 @@ theorem experiencer_high_pAgent_but_no_active :
 
 /-- Canonical agents have all three active entailments and the
     maximum pAgentScore of 5. This is the canonical case where
-    @cite{staps-rooryck-2024}'s active-agent test and
-    @cite{dowty-1991}'s full P-Agent count agree. -/
+    [staps-rooryck-2024]'s active-agent test and
+    [dowty-1991]'s full P-Agent count agree. -/
 theorem canonical_agent_full_agreement :
     hasActiveAgentEntailment protoTransSubjectProfile = true ∧
     protoTransSubjectProfile.pAgentScore = 5 :=
@@ -573,7 +573,7 @@ The denotations are thin wrappers over the causal relations. -/
 
 /-- ⟦par⟧_causal (14b): λf.λe. f FORCES e.
     Force-based causation — par marks the cause as a force
-    (@cite{copley-harley-2022}). -/
+    ([copley-harley-2022]). -/
 def parCausalDenot (Force Event W : Type)
     (forces : Force → Event → W → Bool)
     (f : Force) (e : Event) (w : W) : Bool :=
@@ -581,7 +581,7 @@ def parCausalDenot (Force Event W : Type)
 
 /-- ⟦de⟧_causal (15b): λs'.λe. s' CAUSE e.
     Situation-based causation — de marks the cause as a situation
-    (@cite{copley-harley-2022}). -/
+    ([copley-harley-2022]). -/
 def deCausalDenot (Situation Event W : Type)
     (cause : Situation → Event → W → Bool)
     (s' : Situation) (e : Event) (w : W) : Bool :=

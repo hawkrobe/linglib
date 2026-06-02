@@ -20,9 +20,9 @@ for working with such posteriors:
 
 ## Use cases
 
-- @cite{lassiter-goodman-2017} Eq. 30: height marginalization of the
+- [lassiter-goodman-2017] Eq. 30: height marginalization of the
   joint `(world × threshold)` posterior gives the world posterior.
-- @cite{kao-etal-2014-metaphor}: world marginalization of the joint
+- [kao-etal-2014-metaphor]: world marginalization of the joint
   `(world × QUD)` posterior.
 - General latent-variable RSA where the listener jointly infers
   `(state, latent)` and the per-state marginal posterior is wanted.

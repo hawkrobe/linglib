@@ -4,7 +4,7 @@ import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Fragments.French.Predicates
 
 /-!
-# @cite{martin-schaefer-kastner-2025} — The Lexical Pragmatics of Reflexive Marking
+# [martin-schaefer-kastner-2025] — The Lexical Pragmatics of Reflexive Marking
 
 Martin, Fabienne, Florian Schäfer & Itamar Kastner. 2025. The lexical
 pragmatics of reflexive marking. *Language* 101(3): 524–571.
@@ -43,7 +43,7 @@ by three interacting factors:
 
 ## Bridges
 
-- `VoiceFlavor.nonThematic` (@cite{schaefer-2008}): the anticausative voice
+- `VoiceFlavor.nonThematic` ([schaefer-2008]): the anticausative voice
   flavor — contributes no semantics. Both ±*se* anticausatives have this.
 - `VoiceFlavor.reflexive`: the reflexive voice flavor — assigns agent + theme
   to the sole DP. Only available with *se*.
@@ -53,7 +53,7 @@ by three interacting factors:
   anticausative subjects. ControlLevel cross-cuts these: limited-control
   and in-control property-change verbs share the same profile.
 
-## Relationship to @cite{koontz-garboden-2009}
+## Relationship to [koontz-garboden-2009]
 
 MSK2025 presupposes K-G 2009's reflexive-anticausative syncretism: *se*
 marks both anticausative and reflexive voice because anticausativization
@@ -73,7 +73,7 @@ open French.Predicates
 -- ============================================================================
 
 /-- Morphological class of an anticausative with respect to *se*-marking.
-    @cite{martin-schaefer-kastner-2025} §1:
+    [martin-schaefer-kastner-2025] §1:
     - −*se*: AC form cannot have *se* (*changer de position*)
     - +*se*: AC form must have *se* (*s'affaiblir*)
     - ±*se*: AC form optionally has *se* (*casser*, *plier*, *rougir*) -/
@@ -85,7 +85,7 @@ inductive SeMarking where
 
 /-- Lexical-semantic class of a change-of-state verb based on whether
     the change is typically under the human undergoer's control.
-    @cite{martin-schaefer-kastner-2025} §1.1.
+    [martin-schaefer-kastner-2025] §1.1.
 
     This classification reflects shared world knowledge about human
     agency, NOT lexical-semantic structure. Property-change verbs from
@@ -154,7 +154,7 @@ def bareVoiceOptions : List VoiceFlavor := [.nonThematic]
 /-- Voice flavors available for a form WITH *se*.
     Both anticausative and reflexive parses are available —
     this is the reflexive-anticausative syncretism
-    (@cite{schaefer-2008}, @cite{koontz-garboden-2009}).
+    ([schaefer-2008], [koontz-garboden-2009]).
 
     K-G 2009's reflexivization analysis predicts exactly this
     syncretism: *se* marks reflexivization, which covers both
@@ -184,7 +184,7 @@ theorem reflexive_only_with_se :
 -- ============================================================================
 
 /-- Agent bias: human DPs in subject position are preferentially
-    interpreted as agents (@cite{bickel-etal-2015}, @cite{sauppe-etal-2023}).
+    interpreted as agents ([bickel-etal-2015], [sauppe-etal-2023]).
     With nonhuman DPs, the reflexive parse is not a priori salient. -/
 def reflexiveParseSalient (anim : Animacy) : Bool :=
   match anim with
@@ -221,7 +221,7 @@ def reflexiveParseClashes (ctrl : ControlLevel) : Bool :=
 
     2. If salient, does it clash with shared assumptions? (`reflexiveParseClashes`)
        - YES (limited-control): reflexive parse misleading → AVOID
-         ambiguity → prefer bare (−*se*). @cite{dowty-1980}: if structure A
+         ambiguity → prefer bare (−*se*). [dowty-1980]: if structure A
          is ambiguous between X and Y while B has only X, reserve A for Y.
        - NO (in-control): bare form's anti-implicature ("no agent") clashes
          instead → MAINTAIN ambiguity → prefer +*se*.
@@ -336,7 +336,7 @@ theorem motion_cos_profile_unaccusative :
 -- § 9: Against the Causation Claim
 -- ============================================================================
 
-/-- The causation claim (@cite{labelle-1992}, @cite{labelle-doron-2010})
+/-- The causation claim ([labelle-1992], [labelle-doron-2010])
     predicts that the presence vs. absence of *se* correlates with external
     vs. internal causation ACROSS THE BOARD. But the preferences documented
     here arise ONLY with ±*se* verbs (where the speaker has a choice) and

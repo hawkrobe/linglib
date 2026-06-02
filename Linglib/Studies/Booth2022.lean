@@ -4,10 +4,10 @@ import Linglib.Semantics.Questions.Basic
 /-!
 # Booth 2022 — Bilateral inquisitive minimal-cover semantics for `□`
 
-@cite{booth-2022}
+[booth-2022]
 
 A self-contained study file formalizing the bilateral inquisitive
-semantics of @cite{booth-2022} for necessity-modal-with-disjunction
+semantics of [booth-2022] for necessity-modal-with-disjunction
 sentences (`□(p ∨ q)`). The novel content is the **minimal-cover**
 requirement on `□`'s positive interpretation, which derives the
 **Independence inferences**
@@ -15,9 +15,9 @@ requirement on `□`'s positive interpretation, which derives the
   `□(p ∨ q) ⊨ ◇(p ∧ ¬q)` and `□(p ∨ q) ⊨ ◇(q ∧ ¬p)`
 
 (Booth Fact 9). Pure-bilateral analyses without minimal-cover
-(BSML+, @cite{aloni-2022}) do not derive Independence; pure-inquisitive
+(BSML+, [aloni-2022]) do not derive Independence; pure-inquisitive
 analyses without bilateral negation
-(@cite{ciardelli-groenendijk-roelofsen-2018}) do not derive the
+([ciardelli-groenendijk-roelofsen-2018]) do not derive the
 duality between `□` and `◇`. Booth's bilateral inquisitive propositions
 combine both.
 
@@ -41,7 +41,7 @@ combine both.
 
 ## Out of scope
 
-- The collectivity heuristic of @cite{booth-2022} §4 is a discourse-level
+- The collectivity heuristic of [booth-2022] §4 is a discourse-level
   proposal not formalized here.
 - Booth's restrictor conditional and accessibility-update operator
   (Definitions 15–16) are out of scope for this initial formalization.
@@ -602,7 +602,7 @@ theorem pos_eq_iSup_alt_possibility (R : W → Set W) (φ : BilatInqProp W) :
 
 /-! ### §8 The Independence inference, general meta-language form (Booth Fact 9)
 
-The headline theorem of @cite{booth-2022}: when `p ∨ q` is non-Hurford
+The headline theorem of [booth-2022]: when `p ∨ q` is non-Hurford
 (neither disjunct entails the other), `□(p ∨ q) ⊨ ◇(p ∧ ¬q)` and
 `□(p ∨ q) ⊨ ◇(q ∧ ¬p)`.
 

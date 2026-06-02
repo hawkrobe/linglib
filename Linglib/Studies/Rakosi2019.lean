@@ -5,7 +5,7 @@ import Linglib.Fragments.Hungarian.Reciprocals
 
 /-!
 # Rákosi (2019): Reciprocal anaphors in singular constructions in Hungarian
-@cite{rakosi-2019}
+[rakosi-2019]
 
 Workshop on Cross-Linguistic Semantics of Reciprocals, Utrecht University,
 7–8 October 2019. Proceedings edited by Palmieri, Winter & Zwarts (2020).
@@ -164,7 +164,7 @@ theorem collective_noun_asymmetry :
     'Péter and Éva think that they love each other.'
     (pro-dropped 3SG embedded subject, reciprocal OK, wide scope only)
 
-    This case is also discussed in @cite{dalrymple-haug-2024} §2 as
+    This case is also discussed in [dalrymple-haug-2024] §2 as
     evidence for the relational analysis: the singular bound pronoun
     forces binding (=), yielding the I-reading. -/
 theorem bound_variable_asymmetry :

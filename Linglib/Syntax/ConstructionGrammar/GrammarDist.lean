@@ -5,7 +5,7 @@ import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 /-!
 # Grammar as Distribution
 
-@cite{dunn-2025} @cite{bergen-levy-goodman-2016}
+[dunn-2025] [bergen-levy-goodman-2016]
 
 A grammar is a frequency profile over constructions. This
 generalizes lexical uncertainty: where LU varies meaning
@@ -13,13 +13,13 @@ assignments, grammar uncertainty varies both meaning AND production frequency.
 
 ## Architecture
 
-Two types capture the individual–population hierarchy from @cite{dunn-2025}
+Two types capture the individual–population hierarchy from [dunn-2025]
 variationist CxG:
 
 - `GrammarDist C` — frequency profile over constructions (individual grammar)
 - `Grammar C W` — frequency + interpretation (connects to RSA `Lexicon`)
 
-@cite{dunn-2025} measures variation across three dimensions — individuals,
+[dunn-2025] measures variation across three dimensions — individuals,
 populations (dialects), and contexts (registers) — using Shannon entropy for
 constructional diversity and Jensen-Shannon divergence for grammar similarity.
 -/
@@ -44,7 +44,7 @@ structure GrammarDist (C : Type*) where
 
 Extends `GrammarDist` with a meaning function mapping each construction
 to a graded truth function over worlds. This connects grammar distributions
-to RSA's literal semantics and to @cite{bergen-levy-goodman-2016}'s
+to RSA's literal semantics and to [bergen-levy-goodman-2016]'s
 `Lexicon` type. -/
 structure Grammar (C W : Type) extends GrammarDist C where
   meaning : C → W → ℚ
@@ -58,7 +58,7 @@ variable {C : Type*}
 
 /-- Constructional diversity: Shannon entropy of the frequency profile (in nats).
 
-Higher entropy = more diverse construction usage. @cite{dunn-2025} uses
+Higher entropy = more diverse construction usage. [dunn-2025] uses
 grammar entropy to compare registers, dialects, and individual variation
 within L1 populations.
 
@@ -71,7 +71,7 @@ noncomputable def GrammarDist.entropyOver (g : GrammarDist C) (inventory : Finse
 
 /-- Jensen-Shannon divergence between two grammars over a shared inventory (in nats).
 
-Symmetric, bounded, and a metric (after sqrt). Used by @cite{dunn-2025} to
+Symmetric, bounded, and a metric (after sqrt). Used by [dunn-2025] to
 measure register distance, dialect boundaries, and L1-L2 differences.
 
 Defined via the standard mixture form `H(m) − (H(p) + H(q))/2` where
@@ -83,7 +83,7 @@ noncomputable def GrammarDist.jsd (p q : GrammarDist C) (inventory : Finset C) :
 end EntropyAndSimilarity
 
 -- ============================================================================
--- §3. Connection to Lexicon (@cite{bergen-levy-goodman-2016})
+-- §3. Connection to Lexicon ([bergen-levy-goodman-2016])
 -- ============================================================================
 
 section LexiconConnection
@@ -138,7 +138,7 @@ variable {C : Type}
 /-- Production cost derived from frequency: -log(freq), in nats.
 
 Frequent constructions are cheap; rare ones are expensive. This connects
-@cite{dunn-2025}'s frequency-based grammar to RSA's utterance cost: setting
+[dunn-2025]'s frequency-based grammar to RSA's utterance cost: setting
 `cost(u) = -log(freq(u))` in S1's action-based scoring rule grounds
 utterance cost in production frequency rather than stipulating it. The
 fallback `10` is an arbitrary high cost for the freq ≤ 0 (undefined log)

@@ -3,13 +3,13 @@ import Linglib.Semantics.Kinds.NominalMappingParameter
 
 /-!
 # Dutch Noun Lexicon Fragment
-@cite{krifka-2004} @cite{chierchia-1998} @cite{le-bruyn-de-swart-2022}
+[krifka-2004] [chierchia-1998] [le-bruyn-de-swart-2022]
 
 Dutch-specific noun entries with scrambling support. Dutch allows scrambling:
 objects can move across negation/adverbs, affecting bare plural scope.
 
-Based on @cite{le-bruyn-de-swart-2022}: scrambled BPs take wide scope but can
-still be kind-referring, supporting @cite{krifka-2004} over @cite{chierchia-1998}.
+Based on [le-bruyn-de-swart-2022]: scrambled BPs take wide scope but can
+still be kind-referring, supporting [krifka-2004] over [chierchia-1998].
 -/
 
 namespace Dutch.Nouns
@@ -93,7 +93,7 @@ def barePluralScope (np : NP) : String :=
     | some .unscrambled => "narrow"
     | none => "underspecified"
 
--- Nouns from @cite{le-bruyn-de-swart-2022}
+-- Nouns from [le-bruyn-de-swart-2022]
 def boek : NounEntry :=
   { formSg := "boek", formPl := some "boeken", formDim := some "boekje" }
 

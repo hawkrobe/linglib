@@ -1,8 +1,8 @@
 import Linglib.Features.Case
 import Linglib.Features.Case
 /-!
-# Turkish Case Inventory @cite{blake-1994}
-@cite{goksel-kerslake-2005}
+# Turkish Case Inventory [blake-1994]
+[goksel-kerslake-2005]
 
 Turkish has **6 cases** with agglutinative suffixes:
 NOM (∅), ACC (-I), GEN (-In), DAT (-A), LOC (-DA), ABL (-DAn).

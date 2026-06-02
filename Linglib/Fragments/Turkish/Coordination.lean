@@ -2,18 +2,18 @@ import Linglib.Features.Coordination
 
 /-!
 # Turkish Coordination Morphemes
-@cite{kornfilt-1997} @cite{haspelmath-2007}
+[kornfilt-1997] [haspelmath-2007]
 
 Turkish has:
 
 - *ve* — J, free, prepositive: "A ve B" (Arabic-origin loan)
 - *de* — MU, bound clitic, postpositive on first word of second coordinand:
   "Hasan ıstakoz-u pisirdi, Ali de balığ-ı" — monosyndetic A B-co
-  (@cite{haspelmath-2007} (23), @cite{kornfilt-1997}:120). Also bisyndetic
+  ([haspelmath-2007] (23), [kornfilt-1997]:120). Also bisyndetic
   *de…de* as a marked emphatic variant ('also A, also B').
 
 The original `Haspelmath2007.turkish` record had *de* as free; corrected
-here per @cite{kornfilt-1997}'s enclitic analysis.
+here per [kornfilt-1997]'s enclitic analysis.
 
 Consumed by `Studies/Haspelmath2007.lean` (`Haspelmath2007.turkish`).
 -/

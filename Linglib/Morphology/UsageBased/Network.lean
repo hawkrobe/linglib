@@ -2,7 +2,7 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Bybee 1985 Ch 5: Dynamic Network Model of Lexical Representation
-@cite{bybee-1985}
+[bybee-1985]
 
 This file formalizes the substrate of Bybee 1985 Ch 5 ("Two Principles in
 a Dynamic Model of Lexical Representation," pp. 111-135). It is a peer-

@@ -2,7 +2,7 @@ import Linglib.Typology.Gender
 
 /-!
 # Latin Gender
-@cite{corbett-1991} @cite{corbett-2013}
+[corbett-1991] [corbett-2013]
 
 3 genders (masc/fem/neut), sex-based, semantic + formal. Agreement on
 attributive + predicate adjectives, relative + personal pronouns.
@@ -25,7 +25,7 @@ def genderTypology : GenderProfile :=
 
 example : genderTypology.iso639 = "lat" ∧ genderTypology.name = "Latin" := ⟨rfl, rfl⟩
 
-/-- Latin is in @cite{corbett-1991}'s "canonical" cell. -/
+/-- Latin is in [corbett-1991]'s "canonical" cell. -/
 example : genderTypology.IsCanonicalGender := by decide
 
 end Latin.Gender

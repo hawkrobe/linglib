@@ -54,7 +54,7 @@ open Semantics.Montague.BayesianSemantics
 
 We show that the soft meanings defined in ThresholdSemantics.lean
 are equal to the SDS marginals computed via SDSConstraintSystem.
-The gradable noun threshold pattern draws on @cite{morzycki-2009}.
+The gradable noun threshold pattern draws on [morzycki-2009].
 -/
 
 /--

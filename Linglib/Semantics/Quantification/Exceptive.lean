@@ -2,7 +2,7 @@ import Linglib.Core.Logic.Quantification
 
 /-!
 # Exceptive Quantifiers
-@cite{peters-westerstahl-2006} @cite{von-fintel-1993} @cite{gajewski-2002}
+[peters-westerstahl-2006] [von-fintel-1993] [gajewski-2002]
 
 Semantic operators for "but"-exceptive constructions:
 
@@ -19,8 +19,8 @@ Only universal quantifiers (positive or negative) license exceptives.
 ## Peters & Westerståhl (2006) Operators
 
 - `IsException`: whether an element is an exception for a quantifier
-- `ExcW`: the weak exceptive operator (@cite{peters-westerstahl-2006} Ch 8, (8.31))
-- `ExcS`: the strong exceptive operator (@cite{peters-westerstahl-2006} Ch 8, (8.33))
+- `ExcW`: the weak exceptive operator ([peters-westerstahl-2006] Ch 8, (8.31))
+- `ExcS`: the strong exceptive operator ([peters-westerstahl-2006] Ch 8, (8.33))
 
 ## Key Results
 
@@ -36,7 +36,7 @@ variable {α : Type*}
 
 /-! ### Von Fintel (1993) Exceptive Operators -/
 
-/-- Inclusive exceptive (@cite{von-fintel-1993}): Q(A \ E, B) ∧ ¬Q(A, B).
+/-- Inclusive exceptive ([von-fintel-1993]): Q(A \ E, B) ∧ ¬Q(A, B).
 
     "Every student but John passed" =
       every(student \ {John}, passed) ∧ ¬every(student, passed)
@@ -46,7 +46,7 @@ variable {α : Type*}
 def ExcI (Q : GQ α) (A E B : α → Prop) : Prop :=
   Q (λ x => A x ∧ ¬ E x) B ∧ ¬ Q A B
 
-/-- Exclusive exceptive (@cite{von-fintel-1993}): Q(A \ E, B) ∧ complement condition on E.
+/-- Exclusive exceptive ([von-fintel-1993]): Q(A \ E, B) ∧ complement condition on E.
 
     "No student but John passed" =
       no(student \ {John}, passed) ∧ John passed
@@ -66,18 +66,18 @@ def ExcE (Q : GQ α) (A E B : α → Prop) : Prop :=
     For negative generalizations (like "no"), the notion inverts: an exception
     would be an element of A ∩ B. We handle this via `IsExceptionNeg`.
 
-    @cite{peters-westerstahl-2006} Ch 8, p299. -/
+    [peters-westerstahl-2006] Ch 8, p299. -/
 def IsException (a : α) (A B : α → Prop) : Prop :=
   A a ∧ ¬ B a
 
 /-- Whether an element is an "exception" for a negative generalization:
     an element of A that IS in B (a counterexample to "no A is B").
 
-    @cite{peters-westerstahl-2006} Ch 8, p299. -/
+    [peters-westerstahl-2006] Ch 8, p299. -/
 def IsExceptionNeg (a : α) (A B : α → Prop) : Prop :=
   A a ∧ B a
 
-/-- Weak exceptive (@cite{peters-westerstahl-2006} Ch 8, (8.31)):
+/-- Weak exceptive ([peters-westerstahl-2006] Ch 8, (8.31)):
 
     `Exc_w(Q₁, C)(A, B) ⟺ Q₁(A \ C, B) ∧ something in A ∩ C is an exception for Q₁`
 
@@ -90,7 +90,7 @@ def ExcW (Q₁ : GQ α) (C A B : α → Prop) : Prop :=
   Q₁ (λ x => A x ∧ ¬ C x) B ∧
   (∃ x, A x ∧ C x ∧ IsException x A B)
 
-/-- Strong exceptive (@cite{peters-westerstahl-2006} Ch 8, (8.33)):
+/-- Strong exceptive ([peters-westerstahl-2006] Ch 8, (8.33)):
 
     `Exc_s(Q₁, C)(A, B) ⟺ Q₁(A \ C, B) ∧ A ∩ C ≠ ∅ ∧ everything in A ∩ C is an exception for Q₁`
 
@@ -108,7 +108,7 @@ def ExcS (Q₁ : GQ α) (C A B : α → Prop) : Prop :=
   (∃ x, A x ∧ C x) ∧
   (∀ x, A x → C x → IsException x A B)
 
-/-- Weak exceptive for negative quantifiers (@cite{peters-westerstahl-2006} Ch 8, (8.31)):
+/-- Weak exceptive for negative quantifiers ([peters-westerstahl-2006] Ch 8, (8.31)):
 
     `Exc_w(no, C)(A, B) ⟺ no(A \ C, B) ∧ something in A ∩ C is in B`
 
@@ -118,7 +118,7 @@ def ExcWNeg (Q₁ : GQ α) (C A B : α → Prop) : Prop :=
   Q₁ (λ x => A x ∧ ¬ C x) B ∧
   (∃ x, A x ∧ C x ∧ IsExceptionNeg x A B)
 
-/-- Strong exceptive for negative quantifiers (@cite{peters-westerstahl-2006} Ch 8, (8.33)):
+/-- Strong exceptive for negative quantifiers ([peters-westerstahl-2006] Ch 8, (8.33)):
 
     `Exc_s(no, C)(A, B) ⟺ no(A \ C, B) ∧ A ∩ C ≠ ∅ ∧ everything in A ∩ C is in B`
 
@@ -132,7 +132,7 @@ def ExcSNeg (Q₁ : GQ α) (C A B : α → Prop) : Prop :=
 /-! ### Compatibility (von Fintel 1993) -/
 
 /-- A quantifier is exceptive-compatible iff there exist A, E, B such that
-    ExcI(Q, A, E, B). @cite{von-fintel-1993}: only (variants of)
+    ExcI(Q, A, E, B). [von-fintel-1993]: only (variants of)
     every and no are compatible. -/
 def ExceptiveCompatible (Q : GQ α) : Prop :=
   ∃ (A E B : α → Prop), ExcI Q A E B
@@ -141,7 +141,7 @@ def ExceptiveCompatible (Q : GQ α) : Prop :=
 
     For "every": every(A\E, B) can be true (all non-excepted As are Bs)
     while every(A, B) is false (the excepted elements fail B).
-    @cite{von-fintel-1993}, @cite{peters-westerstahl-2006} Ch 8. -/
+    [von-fintel-1993], [peters-westerstahl-2006] Ch 8. -/
 theorem positiveStrong_exceptive
     (Q : GQ α) (hCons : Conservative Q) (hPS : PositiveStrong Q)
     (hNontriv : ∃ A B, ¬ Q A B) :
@@ -178,7 +178,7 @@ theorem positiveStrong_exceptive
     make Q(A\E, B) true and Q(A, B) false, because the intersection
     |A∩B| ⊇ |(A\E)∩B| — removing elements from A can only shrink
     the intersection, not enlarge it.
-    @cite{von-fintel-1993}, @cite{peters-westerstahl-2006} Ch 8. -/
+    [von-fintel-1993], [peters-westerstahl-2006] Ch 8. -/
 theorem symmetric_not_exceptive (Q : GQ α)
     (hCons : Conservative Q) (hSym : QSymmetric Q)
     (hPS : PositiveStrong Q) :

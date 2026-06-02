@@ -5,9 +5,9 @@ import Linglib.Fragments.Tigrinya.ClausePrefixes
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
-# @cite{cacchioli-2025} — Empirical Data @cite{cacchioli-2025}
+# [cacchioli-2025] — Empirical Data [cacchioli-2025]
 
-Pure empirical data from @cite{cacchioli-2025} "The Syntax of Clausal Prefixes
+Pure empirical data from [cacchioli-2025] "The Syntax of Clausal Prefixes
 in Tigrinya." No theory imports — this file contains only observed patterns,
 grammaticality judgments, and co-occurrence restrictions.
 
@@ -76,7 +76,7 @@ structure SelectionDatum where
   grammatical : Bool := true
   deriving Repr, BEq
 
-/-- Verb class selection data from @cite{cacchioli-2025}. -/
+/-- Verb class selection data from [cacchioli-2025]. -/
 def selectionData : List SelectionDatum := [
   -- Knowledge verbs → kəmzi- (factive)
   { verb := "fälätä", verbGloss := "know", verbClass := "knowledge",
@@ -200,7 +200,7 @@ theorem irrealis_always_nonfinite (c : CTPClass)
   cases c <;> simp_all [ctpToFiniteness, ctpRealityStatus]
 
 /-- **Cross-paper divergence theorem**: phasal CTPs witness the failure of
-    the realis ↔ finite correspondence. @cite{noonan-2007} §3.1.1 puts
+    the realis ↔ finite correspondence. [noonan-2007] §3.1.1 puts
     phasal complements in DTR, but the substrate's `ctpRealityStatus`
     classifies them as realis (event is asserted as actual). Cacchioli's
     feature-based analysis classifies the same complements as

@@ -2,7 +2,7 @@ import Linglib.Phonology.Featural.Features
 import Linglib.Phonology.OptimalityTheory.Constraints
 
 /-!
-# Slavic Verbalizer @cite{stojkovic-2026}
+# Slavic Verbalizer [stojkovic-2026]
 
 Stojković (2026) argues the Slavic verbalizer (VBLZ) suffix used in
 secondary imperfectivisation has a single abstract underlying

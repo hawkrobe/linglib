@@ -1,6 +1,6 @@
 /-
 # Plural Phenomena
-@cite{malamud-2012}
+[malamud-2012]
 
 Empirical patterns related to plural semantics: distributivity, homogeneity,
 non-maximality, and bare plurals.
@@ -23,7 +23,7 @@ For bare plural phenomena, see:
 
 ## Studies
 
-- `Studies/Kriz2016.lean` - @cite{kriz-2016} Homogeneity, Non-Maximality, and All
+- `Studies/Kriz2016.lean` - [kriz-2016] Homogeneity, Non-Maximality, and All
 - `Studies/HaslingerEtAl2025.lean` - Distributivity ≠ Maximality
 
 -/

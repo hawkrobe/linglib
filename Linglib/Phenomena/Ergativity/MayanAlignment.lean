@@ -8,8 +8,8 @@ import Linglib.Fragments.Mayan.Kiche.Agreement
 
 /-!
 # Cross-Mayan Alignment Typology
-@cite{kaufman-norman-1984} @cite{coon-mateo-pedro-preminger-2014}
-@cite{aissen-polian-2025} @cite{polian-2013}
+[kaufman-norman-1984] [coon-mateo-pedro-preminger-2014]
+[aissen-polian-2025] [polian-2013]
 
 Cross-Mayan typology theorems quantified over `Mayan.MayanLang`,
 made statable by the per-language Fragment shape consolidation
@@ -20,12 +20,12 @@ per-paper Studies.
 ## What this file is anchored on
 
 - **Tada's Generalization** (the HIGH-ABS / syntactic-ergativity
-  correlation) — empirically motivated by @cite{coon-mateo-pedro-preminger-2014}
+  correlation) — empirically motivated by [coon-mateo-pedro-preminger-2014]
   and the broader Mayan literature.
 - **Pan-Mayan Set B 3sg null** — proto-Cholan reconstruction in
-  @cite{kaufman-norman-1984} Table 8, holds across all the formalised
+  [kaufman-norman-1984] Table 8, holds across all the formalised
   Mayan fragments.
-- **Pan-Mayan Set A prefixal** — @cite{aissen-polian-2025} Table 1
+- **Pan-Mayan Set A prefixal** — [aissen-polian-2025] Table 1
   (Tseltalan instance); the morphological position of Set A is
   uniformly prefixal across the formalised Mayan languages.
 - **Pan-Mayan perfective ergative alignment** — the unmarked aspect
@@ -109,7 +109,7 @@ def absPositionOf : MayanLang → ABSPosition
   | .Kiche     => Kiche.absPosition
 
 -- ============================================================================
--- § 2: Pan-Mayan Set B 3sg Null Invariant (@cite{kaufman-norman-1984})
+-- § 2: Pan-Mayan Set B 3sg Null Invariant ([kaufman-norman-1984])
 -- ============================================================================
 
 /-- **Pan-Mayan Set B 3sg invariant** (standard languages): across the
@@ -122,7 +122,7 @@ def absPositionOf : MayanLang → ABSPosition
     Notation differs by linearity (`"-∅"` for suffixal Set B,
     `"∅"` for prefixal); `IsThirdSgZero` is notation-agnostic.
 
-    **Mam exception**: per @cite{scott-2023}, San Juan Atitán Mam's
+    **Mam exception**: per [scott-2023], San Juan Atitán Mam's
     Set B 3sg surfaces as the default `tz'=` form (not null) — see
     `mam_set_b_3sg_not_null` below. This theorem hypothesizes
     `lang.isStandard = true` to scope around the exception. -/
@@ -158,7 +158,7 @@ theorem mayan_set_a_uniformly_prefixal (lang : MayanLang) :
     ergatively (A → ERG, S/P → ABS), regardless of any aspect-conditioned
     splits in non-perfective aspects.
 
-    **Mam exception**: per @cite{scott-2023}, Mam is morphologically
+    **Mam exception**: per [scott-2023], Mam is morphologically
     tripartite — `caseMam .Perf .P = .acc`, not `.abs`. The substrate
     surfaces this falsification when Mam is in scope; this theorem
     hypothesizes `lang.isStandard = true` to scope around it. See

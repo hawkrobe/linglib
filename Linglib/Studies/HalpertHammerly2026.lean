@@ -7,7 +7,7 @@ import Linglib.Morphology.DM.Categorizer
 /-!
 # Halpert & Hammerly 2026: Reconciling Animacy and Noun Class in Bantu
 
-@cite{halpert-hammerly-2026}
+[halpert-hammerly-2026]
 
 Halpert, Claire & Hammerly, Christopher. 2026. Reconciling animacy and noun
 class in Bantu. *Glossa: a journal of general linguistics* 11(1). 1--25.
@@ -16,7 +16,7 @@ class in Bantu. *Glossa: a journal of general linguistics* 11(1). 1--25.
 
 1. **Core Noun Class Hypothesis** (19): All Bantu nouns are underlyingly
    specified for one of three core noun classes based on features
-   [±Animate] and [±Human] from @cite{hammerly-2023}'s containment
+   [±Animate] and [±Human] from [hammerly-2023]'s containment
    hierarchy: HUMAN [+Anim, +Hum] ≈ cl 1/2, NON-HUMAN ANIMATE
    [+Anim, −Hum] ≈ cl 9/10, INANIMATE [−Anim, −Hum] ≈ cl 7/8.
 
@@ -46,9 +46,9 @@ class in Bantu. *Glossa: a journal of general linguistics* 11(1). 1--25.
 
 ## Relationship to Carstens 2026
 
-@cite{halpert-hammerly-2026} and @cite{carstens-2026} converge on nP
+[halpert-hammerly-2026] and [carstens-2026] converge on nP
 stacking and the three-way core noun class split, but differ on the
-theoretical grounding: H&H derive core classes from @cite{hammerly-2023}'s
+theoretical grounding: H&H derive core classes from [hammerly-2023]'s
 containment-type features [±Animate, ±Human] and propose final vowels
 as their morphophonological locus. Carstens rejects a grammaticalized
 animacy hierarchy (fn. 12). The `AnimacyFeatures` type in `Bantu/Params.lean`
@@ -63,7 +63,7 @@ is derived from it via `AnimacyFeatures.toCoreClass`.
   hierarchy used throughout the codebase
 - `impossible_human_inanimate_without_animal` proves the conflation
   impossibility predicted by containment
-- `AnimacyFeatures.toGenderFeature` bridges to @cite{kramer-2015}'s
+- `AnimacyFeatures.toGenderFeature` bridges to [kramer-2015]'s
   `GenderFeature` type on the n-head
 - Cross-references: `Carstens2026.lean` (convergence data),
   `Kramer2020.lean` (n-head typology)
@@ -79,7 +79,7 @@ open Features.Prominence (PersonLevel)
 -- § 1: Person–Animacy Containment Bridge
 -- ============================================================================
 
-/-- The full prominence hierarchy from @cite{hammerly-2023} (3):
+/-- The full prominence hierarchy from [hammerly-2023] (3):
     [Auth] ⊂ [Part] ⊂ [Hum] ⊂ [Anim] ⊂ [Agent] ⊂ [Indiv] ⊂ φ.
 
     This structure encodes the four innermost features. Person features
@@ -110,7 +110,7 @@ def ProminenceFeatures.animacyFeatures (pf : ProminenceFeatures) :
   ⟨pf.isAnimate, pf.isHuman⟩
 
 /-- The containment chain predicts: speech-act participants are human.
-    [+Participant] → [+Human] (@cite{halpert-hammerly-2026} (3)–(4)). -/
+    [+Participant] → [+Human] ([halpert-hammerly-2026] (3)–(4)). -/
 theorem participant_implies_human (pf : ProminenceFeatures)
     (hw : pf.wellFormed = true) (hp : pf.hasParticipant = true) :
     pf.isHuman = true := by
@@ -151,7 +151,7 @@ theorem first_person_is_human_animate :
     Both `Features.Person.Features` and `AnimacyFeatures` are `PhiFeatures`
     instances — the same three-cell, no-four-way-distinction architecture.
     This is not a coincidence: they are fragments of the same containment
-    hierarchy (@cite{hammerly-2023}). -/
+    hierarchy ([hammerly-2023]). -/
 theorem person_animacy_same_structure :
     (Features.PhiFeatures.toPair Features.Person.first).wellFormed = true ∧
     (Features.PhiFeatures.toPair AnimacyFeatures.human).wellFormed = true ∧
@@ -249,7 +249,7 @@ theorem aa_structural_basis :
 -- ============================================================================
 
 /-- Probe sensitivity determines whether agreement tracks n_core or
-    n_secondary (@cite{halpert-hammerly-2026} (29)).
+    n_secondary ([halpert-hammerly-2026] (29)).
 
     - **flat**: the probe targets the closest φ-features (n_secondary).
       Agreement always reflects the visible noun class.
@@ -414,7 +414,7 @@ theorem om_and_override_share_predicate (stack : NPStack) :
 section KramerBridge
 open Morphology.DM
 
-/-- Bridge from H&H's animacy features to @cite{kramer-2015}'s
+/-- Bridge from H&H's animacy features to [kramer-2015]'s
     `GenderFeature` on the categorizing head n.
 
     H&H's `AnimacyFeatures` encode core noun class via [±Animate, ±Human].
@@ -440,7 +440,7 @@ theorem inanimate_is_iAnimNeg :
     toGenderFeature AnimacyFeatures.inanimate = iAnimNeg := rfl
 
 /-- All core noun class features yield interpretable gender on n.
-    This matches @cite{kramer-2015}'s prediction that natural gender
+    This matches [kramer-2015]'s prediction that natural gender
     is always interpretable, and connects H&H's claim that core noun
     class lives on n to Kramer's n-head architecture. -/
 theorem core_features_are_interpretable :

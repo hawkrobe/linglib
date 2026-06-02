@@ -3,7 +3,7 @@ import Linglib.Syntax.DependencyGrammar.LongDistance
 
 /-!
 # Enhanced dependencies
-@cite{de-marneffe-nivre-2019}
+[de-marneffe-nivre-2019]
 
 Basic dependency trees enforce a **unique-heads constraint**: every word
 (except root) has exactly one head, so certain predicate-argument relations

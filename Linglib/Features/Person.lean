@@ -4,15 +4,15 @@ import Linglib.Features.PrivativePair
 
 /-!
 # Person
-@cite{harbour-2016} @cite{harley-ritter-2002} @cite{ackema-neeleman-2018}
-@cite{cysouw-2009} @cite{siewierska-2004}
+[harbour-2016] [harley-ritter-2002] [ackema-neeleman-2018]
+[cysouw-2009] [siewierska-2004]
 
 Two components of the person API:
 
-**§ 1–4: Person Features** (@cite{harbour-2016}, @cite{harley-ritter-2002}; the
-privative-feature decomposition, with @cite{ackema-neeleman-2018}'s
+**§ 1–4: Person Features** ([harbour-2016], [harley-ritter-2002]; the
+privative-feature decomposition, with [ackema-neeleman-2018]'s
 function-valued alternative). The typological *category* inventory (§5+) is
-@cite{cysouw-2009}'s, *derived* from these features — not their source.
+[cysouw-2009]'s, *derived* from these features — not their source.
 Decomposition of person into binary privative features:
 - **[±participant]**: whether the referent includes a speech-act participant
   (speaker or addressee). 1st and 2nd person are [+participant]; 3rd person
@@ -24,15 +24,15 @@ These features form a containment hierarchy: [+author] → [+participant].
 An author (speaker) is necessarily a participant.
 
 This decomposition is shared across theoretical frameworks:
-- Minimalism: @cite{preminger-2014}, @cite{bejar-rezac-2009}
-- Distributed Morphology: @cite{munoz-perez-2026} (Fission)
-- Typology: @cite{cysouw-2009}, @cite{siewierska-2004}
+- Minimalism: [preminger-2014], [bejar-rezac-2009]
+- Distributed Morphology: [munoz-perez-2026] (Fission)
+- Typology: [cysouw-2009], [siewierska-2004]
 
 The Minimalist-specific extension [±proximate]
-(@cite{pancheva-zubizarreta-2018}) is added in
+([pancheva-zubizarreta-2018]) is added in
 `Syntax/Minimalism/PersonGeometry.lean`.
 
-**§ 5–9: Person Categories** (@cite{cysouw-2009}). The 8 referential person
+**§ 5–9: Person Categories** ([cysouw-2009]). The 8 referential person
 categories from Cysouw's paradigmatic framework. Three singular categories
 (individual speech act roles) and five group categories (attested
 combinations of participants).
@@ -167,7 +167,7 @@ theorem no_fourth_person :
 -- § 6: Person Categories (Cysouw)
 -- ============================================================================
 
-/-- The 8 referential person categories (@cite{cysouw-2009}, Fig 10.1).
+/-- The 8 referential person categories ([cysouw-2009], Fig 10.1).
 
 Three singular categories (individual speech act roles) and five group
 categories (attested combinations of participants). -/
@@ -372,11 +372,11 @@ theorem s3_features_match :
     Category.s3.toFeatures = Features.Prominence.PersonLevel.third.toFeatures := rfl
 
 -- ============================================================================
--- § 11: Epistemic Authority (@cite{bickel-nichols-2001})
+-- § 11: Epistemic Authority ([bickel-nichols-2001])
 -- ============================================================================
 
 /-- Epistemic authority marking on verb agreement.
-    @cite{bickel-nichols-2001}
+    [bickel-nichols-2001]
 
     Some languages (Akhvakh, Kathmandu Newari, Tibetan) mark whether the
     speaker has direct epistemic authority over the event. The morphological

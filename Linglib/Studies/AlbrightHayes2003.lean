@@ -4,8 +4,8 @@ import Linglib.Paradigms.WugTest
 
 /-!
 # Albright & Hayes (2003): Rules vs. analogy in English past tenses
-@cite{albright-hayes-2003} @cite{berko-1958} @cite{albright-hayes-2002}
-@cite{mikheev-1997} @cite{pinker-prince-1988} @cite{bybee-moder-1983}
+[albright-hayes-2003] [berko-1958] [albright-hayes-2002]
+[mikheev-1997] [pinker-prince-1988] [bybee-moder-1983]
 
 A computational/experimental study of how speakers form past tenses
 for novel English verbs (wug verbs). The paper's central architectural
@@ -52,7 +52,7 @@ sensitive to IOR membership.
 ## What this file formalises
 
 This is the second consumer of `Paradigms/WugTest.lean` (the first is
-@cite{breiss-katsuda-kawahara-2026}). It supplies:
+[breiss-katsuda-kawahara-2026]). It supplies:
 
 - The 4-way IOR Core wug stem set (example 14 in the paper);
 - A `StochasticRule` type with scope/hits/rawConfidence;
@@ -78,13 +78,13 @@ theorems with `rfl` proofs. The numbers are reported in prose and the
 paper-side citation. We formalise the *qualitative* prediction-shape
 contrasts that the empirical correlations support.
 
-We also do not implement the @cite{mikheev-1997} lower-confidence-limit
+We also do not implement the [mikheev-1997] lower-confidence-limit
 interval. The discriminator below depends only on `rawConfidence` and
 on the qualitative shape of the prediction (gradient on novel cells
 across IOR membership), not on the adjustment formula. We expose
 `adjustedConfidence` as a placeholder definition equal to
 `rawConfidence` so that downstream code can reference the API name;
-wiring this to a real Wilson interval (or the @cite{albright-hayes-2002}
+wiring this to a real Wilson interval (or the [albright-hayes-2002]
 MGL implementation) is deferred.
 -/
 
@@ -103,7 +103,7 @@ open Paradigms.WugTest (Attestation HasFactor HasAttestation Rate
     is in exactly one cell, picked out by two booleans. Structural
     encoding via product avoids the 4-way enum + 2 helper accessors
     pattern: the cells of a 2×2 design *are* the boolean product.
-    Table 3 of @cite{albright-hayes-2003}. -/
+    Table 3 of [albright-hayes-2003]. -/
 structure IORCategory where
   /-- Whether the stem is in an island of reliability for the regular
       allomorph. Example for `regular = true`: *bredge* /brɛdʒ/. -/
@@ -134,7 +134,7 @@ abbrev neither : IORCategory := ⟨false, false⟩
 end IORCategory
 
 /-- A wug stem with its IPA form and its IOR category. The IPA strings
-    are taken verbatim from example (14) of @cite{albright-hayes-2003}. -/
+    are taken verbatim from example (14) of [albright-hayes-2003]. -/
 structure WugStem where
   ipa : String
   category : IORCategory
@@ -205,7 +205,7 @@ structure StochasticRule where
 
 /-- Raw confidence: hits / scope. Defaults to 0 when scope = 0 to
     avoid division by zero; that case never arises for a rule
-    extracted from real data. @cite{albright-hayes-2003}. -/
+    extracted from real data. [albright-hayes-2003]. -/
 def StochasticRule.rawConfidence (r : StochasticRule) : ℚ :=
   if r.scope = 0 then 0 else (r.hits : ℚ) / (r.scope : ℚ)
 
@@ -220,14 +220,14 @@ theorem StochasticRule.rawConfidence_le_one (r : StochasticRule) :
     rw [div_le_one hscope_pos]
     exact_mod_cast r.hits_le_scope
 
-/-- @cite{mikheev-1997} lower-confidence-limit adjustment to raw
-    confidence, used by @cite{albright-hayes-2003} to penalise rules
+/-- [mikheev-1997] lower-confidence-limit adjustment to raw
+    confidence, used by [albright-hayes-2003] to penalise rules
     supported by few forms; A&H §2.3.4 reports the best-fit lower-
     confidence-limit parameter α = 0.55.
 
     **TODO**: this is a placeholder equal to `rawConfidence`. A faithful
     implementation would apply the Wilson-style interval used in the
-    @cite{albright-hayes-2002} MGL code. The discriminator below depends
+    [albright-hayes-2002] MGL code. The discriminator below depends
     on `rawConfidence`, not on this adjustment, so the placeholder is
     sound for the present proof obligations. -/
 noncomputable def adjustedConfidence (r : StochasticRule) : ℚ := r.rawConfidence
@@ -341,7 +341,7 @@ not to fit the empirical numbers. -/
     IOR-for-regular proposition holds, 0 otherwise. A faithful proxy
     for the monotonic relationship between IOR-supported rule-
     confidence and novel-form ratings reported in
-    @cite{albright-hayes-2003} for the regulars panel. Noncomputable
+    [albright-hayes-2003] for the regulars panel. Noncomputable
     because the IOR-for-regular field is `Prop` rather than `Bool`;
     `Classical.propDecidable` discharges the `Decidable`-of-`if`. -/
 noncomputable def ahRegularRating (slope : ℝ) (c : AHWugCell) : ℝ :=
@@ -386,7 +386,7 @@ def cell_bredge : AHWugCell where
   withinIORForRegular := True
 
 /-- **A&H rules out the single-default-rule dual-mechanism
-    prediction** (the @cite{pinker-prince-1988} family). Wired through
+    prediction** (the [pinker-prince-1988] family). Wired through
     `Paradigms/WugTest.lean`'s `novelGradient_inconsistent_with_invariance`
     at `F := Bool`: the empirical fact that novel regulars show an
     IOR gradient is structurally incompatible with the single-rule
@@ -398,7 +398,7 @@ def cell_bredge : AHWugCell where
     prong. A&H also argue against pure analogy via §4.3.2 ("Failure of
     the analogical model to locate islands of reliability"); the
     structured-vs-variegated similarity contrast that drives the
-    anti-analogy prong is not formalised here. See @cite{bybee-moder-1983}
+    anti-analogy prong is not formalised here. See [bybee-moder-1983]
     for the analogical tradition A&H argue against. -/
 theorem ah_excludes_singleDefaultRule
     (slope : ℝ) (hSlope : 0 < slope) :

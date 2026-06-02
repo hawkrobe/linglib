@@ -6,7 +6,7 @@ import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # NP Type-Shifting Principles
-@cite{partee-1987}
+[partee-1987]
 
 Three NP semantic types and six type-shifting operations (three inverse pairs):
 
@@ -19,7 +19,7 @@ Three NP semantic types and six type-shifting operations (three inverse pairs):
 In the finite extensional setting, `pred = ident` and `nom = iota`. The
 conceptual difference: `ident`/`iota` are *formal* (pure combinatorics),
 while `pred`/`nom` are *substantive* (depend on entity-property correspondence).
-The `pred`/`nom` pair originates in @cite{chierchia-1984}'s nominalization
+The `pred`/`nom` pair originates in [chierchia-1984]'s nominalization
 operator `^` from HST* (Cocchiarella's property theory), applied to infinitival
 and gerundive complements. The intensional generalizations are Chierchia's
 ∪ (up) and ∩ (down) operators in `Semantics.Kinds.NMP`,
@@ -49,7 +49,7 @@ def ident (j : F.Entity) : F.Denot Ty.et :=
 /-- Propositional analogue of `ident`: `propIdent(p) = λq. [p = q]`,
 i.e. the singleton question `{p}` from a proposition `p`.
 
-This is `ID` of @cite{elliott-etal-2017} (their eq. 10), used to coerce a
+This is `ID` of [elliott-etal-2017] (their eq. 10), used to coerce a
 proposition into a question denotation when an embedding predicate (e.g.
 a Predicate of Relevance like `care`) selects only for questions. The shape
 mirrors `ident` one type-theoretic level up: entities ↦ singleton properties
@@ -66,7 +66,7 @@ def BE (Q : F.Denot Ty.ett) : F.Denot Ty.et :=
     In the finite extensional setting, `pred` coincides with `ident`:
     both map an entity to its singleton property `λx. [j = x]`.
 
-    Conceptually distinct (@cite{partee-1987} Figure 1):
+    Conceptually distinct ([partee-1987] Figure 1):
     - `ident` is *formal* — pure combinatorics, always defined.
     - `pred` is *substantive* — applies to entity-correlates of properties
       and returns the corresponding property.
@@ -106,11 +106,11 @@ theorem BE_lift_eq_ident (j : F.Entity) :
     BE (lift j) = ident j := by
   funext x; simp only [BE, lift, ident]; rfl
 
-/-- **Fact 2** (@cite{partee-1987} §3.3): `BE` is the **unique**
+/-- **Fact 2** ([partee-1987] §3.3): `BE` is the **unique**
     `BoundedLatticeHom` from `⟨⟨e,t⟩,t⟩` to `⟨e,t⟩` that makes
     Figure 3 commute (i.e., satisfies `f(lift(j)) = ident(j)`).
 
-    Proof (@cite{keenan-faltz-1985}): For each entity `x`, construct the
+    Proof ([keenan-faltz-1985]): For each entity `x`, construct the
     atom `atom_x = ⨅_j literal(j)` where `literal(j) = lift(j)` if `j = x`
     and `(lift(j))ᶜ` otherwise. This atom is the indicator of `{P_x}` where
     `P_x = λy. [y = x]`. Since `f` preserves `⊓` and complements, `f` maps
@@ -212,7 +212,7 @@ noncomputable def iota (domain : List F.Entity) (P : F.Denot Ty.et) : Option (F.
   | [j] => some j
   | _ => none
 
-/-- NOM: Nominalization (@cite{partee-1987} Figure 1, @cite{chierchia-1984}).
+/-- NOM: Nominalization ([partee-1987] Figure 1, [chierchia-1984]).
     Maps a property to its individual correlate: `⟨e,t⟩ → e` (partial).
 
     In the finite extensional setting, NOM = iota (returns the unique
@@ -225,7 +225,7 @@ noncomputable def NOM (domain : List F.Entity) (P : F.Denot Ty.et) : Option (F.E
 def A (domain : List F.Entity) (P : F.Denot Ty.et) : F.Denot Ty.ett :=
   fun Q => ∃ x ∈ domain, P x ∧ Q x
 
-/-- THE: Presuppositional type-shifter for definites (@cite{partee-1987} Figure 1).
+/-- THE: Presuppositional type-shifter for definites ([partee-1987] Figure 1).
     `THE(P) = lift(iota(P))` when `iota(P)` is defined (P has a unique satisfier).
 
     Maps `⟨e,t⟩ → ⟨⟨e,t⟩,t⟩` (partial). Unlike `A` (which is total), `THE`
@@ -306,7 +306,7 @@ end PartialShifts
 theorem lift_eq_typeRaise (j : F.Entity) :
     lift j = typeRaise j := rfl
 
-/-- Coherence of the three readings of "the king" (@cite{partee-1987} §3.2).
+/-- Coherence of the three readings of "the king" ([partee-1987] §3.2).
     When `iota` succeeds, the `e`, `⟨e,t⟩`, and `⟨⟨e,t⟩,t⟩` readings are
     related by `BE(lift(j)) = ident(j)` (Figure 2 commutativity). -/
 theorem the_king_coherence (domain : List F.Entity) (P : F.Denot Ty.et)
@@ -362,7 +362,7 @@ theorem roundtrip_preserves_principal (domain : List F.Entity) (j : F.Entity)
   simp only [A, BE, lift]
   exact propext (exists_eq_and_iff domain j hj P)
 
-/-- **`BE ∘ A = id` on properties** (@cite{partee-1987} §3.3).
+/-- **`BE ∘ A = id` on properties** ([partee-1987] §3.3).
 
     For any property `P`, `BE(A(P)) = P`. This makes `A` a right inverse
     of `BE`: existential closure followed by predicative content recovers
@@ -418,7 +418,7 @@ example : BE (F := toyModel) (lift john_sem) = ident john_sem :=
 end ToyExamples
 
 -- ============================================================================
--- The Type-Shifting Triangle (@cite{partee-1987} Figure 3)
+-- The Type-Shifting Triangle ([partee-1987] Figure 3)
 -- ============================================================================
 
 /-! ## The Full Commutativity Diagram
@@ -544,7 +544,7 @@ end TypeShiftingTriangle
 
 /-! ## The A/BE Adjunction on Monotone GQs
 
-@cite{barwise-cooper-1981} observed that natural language determiners
+[barwise-cooper-1981] observed that natural language determiners
 denote **upward-closed** (monotone) generalized quantifiers: if `Q(P)` and
 `P ⊆ P'`, then `Q(P')`. This constraint is exactly what makes `A` and `BE`
 form a `GaloisCoinsertion` — an adjunction where the upper adjoint (`BE`)
@@ -570,7 +570,7 @@ private instance (F : Frame) : BooleanAlgebra (F.Denot (.e ⇒ .t)) :=
   show BooleanAlgebra (F.Entity → Prop) from inferInstance
 
 /-- Upward-closed (monotone) generalized quantifiers — the
-    @cite{barwise-cooper-1981} constraint on natural language determiners.
+    [barwise-cooper-1981] constraint on natural language determiners.
 
     `Q` is upward-closed when `Q(P)` and `P ≤ P'` imply `Q(P')`.
     Equivalently, `Monotone Q` in the pointwise order on `⟨e,t⟩`. -/
@@ -632,7 +632,7 @@ theorem A_BE_le_of_mono (domain : List F.Entity) (Q : UpwardGQ F) :
     - `BE ∘ A = id` on predicates (the retraction)
     - `A(BE(Q)) ≤ Q` for monotone Q (the counit inequality)
 
-    Linguistically: @cite{barwise-cooper-1981}'s constraint that natural
+    Linguistically: [barwise-cooper-1981]'s constraint that natural
     language determiners denote monotone GQs is **exactly** the condition
     under which the A/BE pair forms an adjunction. -/
 def galoisCoinsertion (domain : List F.Entity)
@@ -653,18 +653,18 @@ theorem gc_A_BE (domain : List F.Entity)
 end GaloisStructure
 
 -- ============================================================================
--- Numeral type-shifters (@cite{snyder-2026})
+-- Numeral type-shifters ([snyder-2026])
 -- ============================================================================
 
 section NumeralShifts
 
-/-- CARD: number → cardinality predicate (@cite{snyder-2026}, (6a)).
+/-- CARD: number → cardinality predicate ([snyder-2026], (6a)).
     CARD = λn.λx. μ(x) = n. Turns a number into a predicate
     on entities that have exactly n atomic parts. -/
 def CARD (μ : F.Entity → Nat) (n : Nat) : F.Denot Ty.et :=
   fun x => μ x = n
 
-/-- PM: Predicate Modification (@cite{heim-kratzer-1998}, (7a)).
+/-- PM: Predicate Modification ([heim-kratzer-1998], (7a)).
     PM = λP.λQ.λx. P(x) ∧ Q(x). Intersective modifier. -/
 def PM (P Q : F.Denot Ty.et) : F.Denot Ty.et :=
   fun x => P x ∧ Q x
@@ -680,15 +680,15 @@ theorem NOM_pred [DecidableEq F.Entity] (domain : List F.Entity) (j : F.Entity)
   iota_ident domain j hmem hnd
 
 -- ============================================================================
--- Complement Denotation Types (@cite{chierchia-1984})
+-- Complement Denotation Types ([chierchia-1984])
 -- ============================================================================
 
 /-! ## Property vs. Proposition: Complement Denotation Types
 
-@cite{chierchia-1984} argues that infinitival and gerundive complements
+[chierchia-1984] argues that infinitival and gerundive complements
 denote **properties** (type ⟨e,t⟩), not propositions (type ⟨s,t⟩). This
 is the original linguistic motivation for the `pred`/`nom` operators in
-@cite{partee-1987}'s type-shifting triangle.
+[partee-1987]'s type-shifting triangle.
 
 The key insight: `pred` and `nom` mediate between the **individual
 correlate** of a property (an entity of type `e` that "is" the property)
@@ -696,7 +696,7 @@ and the property itself (type ⟨e,t⟩). This is exactly what infinitival
 complements need: "to run" denotes a property, but it can be nominalized
 ("running is fun") to denote the individual correlate of that property.
 
-The intensional generalization of this idea appears in @cite{chierchia-1998}
+The intensional generalization of this idea appears in [chierchia-1998]
 as ∩ (down) and ∪ (up), applied to kinds rather than infinitives.
 Both applications share the same underlying type-shift: there is a
 systematic correspondence between properties and their individual
@@ -705,7 +705,7 @@ correlates in the domain. -/
 /-- Complement denotation layer: whether a complement denotes a
     property (⟨e,t⟩, open predicate) or a proposition (t / ⟨s,t⟩, closed).
 
-    @cite{chierchia-1984} Ch I: the infinitive/gerund vs. finite clause
+    [chierchia-1984] Ch I: the infinitive/gerund vs. finite clause
     distinction corresponds to this type distinction. Nominalization
     (`NOM`/`nom`) and control both require the property layer — control
     needs an unsaturated individual argument to bind, and nominalization
@@ -713,8 +713,8 @@ correlates in the domain. -/
     (`A`) to reach the GQ layer.
 
     The extensional `pred`/`nom` pair, their intensional generalization
-    as ∩/∪ in @cite{chierchia-1998}, and the Control Principle in
-    @cite{chierchia-1984} Ch IV all operate on the property layer. -/
+    as ∩/∪ in [chierchia-1998], and the Control Principle in
+    [chierchia-1984] Ch IV all operate on the property layer. -/
 inductive ComplSemLayer where
   /-- Property layer: ⟨e,t⟩. Domain of `pred`/`nom`/`NOM`.
       Infinitival and gerundive complements. -/
@@ -727,7 +727,7 @@ inductive ComplSemLayer where
 /-- Property-type complements support nominalization (⟨e,t⟩ → e via `NOM`)
     and control (the unsaturated argument position can be bound).
 
-    This unifies @cite{chierchia-1984}'s two central claims: control and
+    This unifies [chierchia-1984]'s two central claims: control and
     nominalization are both consequences of the property/proposition
     type distinction. -/
 def ComplSemLayer.isProperty : ComplSemLayer → Bool

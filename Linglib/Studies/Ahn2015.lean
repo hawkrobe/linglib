@@ -4,7 +4,7 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Ahn (2015): The Semantics of Additive *Either*
-@cite{ahn-2015}
+[ahn-2015]
 
 Proceedings of Sinn und Bedeutung 19, pp. 20–35.
 
@@ -16,13 +16,13 @@ and a silent propositional anaphor q as arguments:
 - ⟦**either**⟧(q)(p) = q ⊔ p (join)
 
 The propositional anaphor q must be a distinct focus alternative of p
-(@cite{rooth-1985}), capturing three properties shared by both particles:
+([rooth-1985]), capturing three properties shared by both particles:
 1. **Antecedent Requirement**: q must be salient in discourse
 2. **Focus Sensitivity**: q must be a focus alternative of p
 3. **Distinctness**: q must be distinct from p
 
 This replaces the traditional fully presuppositional account
-(@cite{heim-1992}, Rullmann 2003) with an assertive one. The key
+([heim-1992], Rullmann 2003) with an assertive one. The key
 advantage is that it handles cases where *too*'s additive meaning does
 not seem fully presupposed (e.g., "I don't know if Mary is in the
 elevator, but if John is in the elevator too, we will go over the weight
@@ -42,7 +42,7 @@ and the entire NPI asymmetry falls out of the ⊓/⊔ duality:
 
 The ∨/∧ scale parallels ∃/∀: *either* (⊔, weak) is an NPI for exactly
 the same structural reason as *any* (∃, weak). The bridge theorem
-`either_npi_via_chierchia` instantiates @cite{chierchia-2013}'s SI–NPI
+`either_npi_via_chierchia` instantiates [chierchia-2013]'s SI–NPI
 generalization.
 
 Note: the full NPI derivation uses the naive exhaustification operator
@@ -106,10 +106,10 @@ theorem either_negative_vacuous (q p : Set World) :
     (compl_le_compl (inf_le_left.trans le_sup_left))
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- Bridge: @cite{chierchia-2013} SI–NPI Generalization
+-- Bridge: [chierchia-2013] SI–NPI Generalization
 -- ═══════════════════════════════════════════════════════════════════════════
 
-/-- *Either*'s NPI behavior as an instance of @cite{chierchia-2013}'s
+/-- *Either*'s NPI behavior as an instance of [chierchia-2013]'s
     SI–NPI generalization: for any antitone (DE) context C,
     C(q ⊔ p) ∧ ¬C(q ⊓ p) is vacuous. -/
 theorem either_npi_via_chierchia (C : FreeChoice.Ctx World)

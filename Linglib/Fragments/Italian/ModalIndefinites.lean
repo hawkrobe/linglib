@@ -2,7 +2,7 @@ import Linglib.Features.ModalIndefinite
 
 /-!
 # Italian Modal Indefinite Fragment
-@cite{chierchia-2013}
+[chierchia-2013]
 
 Lexical entry for Italian modal indefinite *un qualsiasi*.
 
@@ -21,7 +21,7 @@ open Features.ModalIndefinite
 
 /-- *un qualsiasi*: at-issue, random choice, not upper-bounded.
     Existential FCI; requires a modal licensor
-    (@cite{chierchia-2013}, §5.3.2). -/
+    ([chierchia-2013], §5.3.2). -/
 def unQualsiasiEntry : ModalIndefiniteEntry where
   language := "Italian"
   form := "un qualsiasi"

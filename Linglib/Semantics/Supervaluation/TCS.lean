@@ -10,9 +10,9 @@ import Mathlib.Logic.Function.Basic
 /-!
 # Tolerant, Classical, Strict (TCS)
 
-@cite{cobreros-etal-2012}
+[cobreros-etal-2012]
 
-@cite{cobreros-etal-2012} "Tolerant, Classical, Strict",
+[cobreros-etal-2012] "Tolerant, Classical, Strict",
 *Journal of Philosophical Logic* 41:347–385.
 
 A similarity-based three-valued semantics for vague predicates that
@@ -32,7 +32,7 @@ The paper formulates TCS in terms of indifference relations derived from
 operators are equivalently described as the **lower / upper approximation
 operators** of a tolerance approximation space in the rough-set tradition.
 The paper flags this analogy in **footnote 5 (p. 355)**, citing
-@cite{pawlak-1982} (paper's reference [19]) for the equivalence-relation
+[pawlak-1982] (paper's reference [19]) for the equivalence-relation
 case; borderline cases are exactly the boundary `upper \ lower`.
 
 ## Re-reading TCS through a modal-logic lens (formaliser's framing)
@@ -55,14 +55,14 @@ The s ⊆ c ⊆ t hierarchy is the **T axiom** instantiated at `box`
 (`Core.Logic.Modal.box_T`); the t/s duality is the standard
 modal de Morgan `box R ¬p ↔ ¬diamond R p`. T-models satisfy
 `frameConditions Logic.KTB` by construction (Definition 4 of
-@cite{cobreros-etal-2012}); see `TModel.satisfies_KTB` for the explicit
+[cobreros-etal-2012]); see `TModel.satisfies_KTB` for the explicit
 witness. The Brouwersche axiom B / symmetric-frame correspondence is
 a standard Sahlqvist result; for systematic treatment see
-@cite{blackburn-derijke-venema-2001} §3.5–3.6 and the model-theoretic
-overview @cite{goranko-otto-2007}. The non-equivalence-relation
+[blackburn-derijke-venema-2001] §3.5–3.6 and the model-theoretic
+overview [goranko-otto-2007]. The non-equivalence-relation
 generalisation of Pawlak's rough sets to tolerance approximation spaces
 (which the paper implicitly uses in footnote 5) is due to
-@cite{skowron-stepaniuk-1996}; this attribution is supplied by the
+[skowron-stepaniuk-1996]; this attribution is supplied by the
 formaliser, not the paper.
 
 ## Key Results (paper-section-tagged)
@@ -147,7 +147,7 @@ open Semantics.Supervaluation (SpecSpace superTrue
     relations. Each `~_P` is reflexive and symmetric — but possibly
     non-transitive — capturing "looks the same for predicate P."
 
-    Definition 4 of @cite{cobreros-etal-2012}. The non-transitivity of
+    Definition 4 of [cobreros-etal-2012]. The non-transitivity of
     `~_P` is what makes vagueness possible: a can look like b and b can
     look like c, but a need not look like c.
 
@@ -205,7 +205,7 @@ end TModel
 -- ════════════════════════════════════════════════════
 
 /-- Atoms of the propositional restricted vocabulary of TCS. Two
-    constructors per Definitions 8-9 of @cite{cobreros-etal-2012}:
+    constructors per Definitions 8-9 of [cobreros-etal-2012]:
 
     - `pred P a` ≡ `P(a)` — predicate application; t/c/s satisfaction
       clauses depend on the mode (Definition 9).
@@ -277,7 +277,7 @@ theorem StrictAt.imp_tolerant (M : TModel D Pred) (P : Pred) (a : D)
 -- § 5. Tolerance Principle (Facts 2-3, p. 354)
 -- ════════════════════════════════════════════════════
 
-/-- **One-step tolerance** (Fact 2 of @cite{cobreros-etal-2012}, p. 354):
+/-- **One-step tolerance** (Fact 2 of [cobreros-etal-2012], p. 354):
     if `a` is strictly `P` and `a ~_P b`, then `b` is tolerantly `P`.
     The tolerance principle `∀x∀y(P(x) ∧ x~_Py → P(y))` is t-valid.
 
@@ -288,7 +288,7 @@ theorem tolerance_one_step (M : TModel D Pred) (P : Pred) (a b : D)
     TolerantAt M P b :=
   TolerantAt.of_classical M P b (hs b hsim)
 
-/-- **Two-step tolerance** (Fact 3 of @cite{cobreros-etal-2012}, p. 354):
+/-- **Two-step tolerance** (Fact 3 of [cobreros-etal-2012], p. 354):
     tolerance propagates across two similarity steps. The third step
     can fail because `~_P` is non-transitive — paper footnote 4
     illustrates this on the 4-element model with `Pa, a~b, b~c, c~d`
@@ -384,7 +384,7 @@ theorem TolerantAt.not_iff_superFalse (M : TModel D Pred) (P : Pred) (a : D)
     exact h d hd hpd
 
 /-- **Borderline = supervaluationally indeterminate** over the tolerance
-    neighborhood. Connects TCS to @cite{fine-1975}: borderline cases are
+    neighborhood. Connects TCS to [fine-1975]: borderline cases are
     exactly where the tolerance neighborhood disagrees on `P`. -/
 theorem IsBorderline.iff_superTrue_indet (M : TModel D Pred) (P : Pred) (a : D)
     [DecidablePred (M.sim P a)] :
@@ -405,7 +405,7 @@ end Bridge
 -- § 8. SatMode and Compositional Satisfaction (Definition 9 full)
 -- ════════════════════════════════════════════════════
 
-/-- The three satisfaction modes of @cite{cobreros-etal-2012}. -/
+/-- The three satisfaction modes of [cobreros-etal-2012]. -/
 inductive SatMode | tolerant | classical | strict
   deriving DecidableEq, Repr, Inhabited
 
@@ -562,7 +562,7 @@ theorem identityModel.modes_agree (interp : Pred → D → Prop)
 -- § 11. Mixed Consequence (Definition 17, p. 366)
 -- ════════════════════════════════════════════════════
 
-/-- **Mixed TCS-consequence** (Definition 17 of @cite{cobreros-etal-2012}):
+/-- **Mixed TCS-consequence** (Definition 17 of [cobreros-etal-2012]):
     `Γ ⊨ᵐⁿ φ` iff every T-model that m-satisfies all premises also
     n-satisfies the conclusion. The nine combinations (m, n ∈ {t, c, s})
     yield the nine consequence relations.

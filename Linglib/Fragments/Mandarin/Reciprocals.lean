@@ -2,14 +2,14 @@ import Linglib.Core.Word
 
 /-!
 # Mandarin Reciprocal Fragment
-@cite{nordlinger-2023} @cite{konig-kokutani-2006}
+[nordlinger-2023] [konig-kokutani-2006]
 
 Mandarin uses a compound verb strategy for reciprocity: V-lái-V-qù
 (V-come-V-go), expressing mutual back-and-forth action. This is a
 verbal strategy (monovalent) and is distinct from the reflexive "zìjǐ".
 
 Example: "dǎ-lái-dǎ-qù" (beat-come-beat-go = 'beat each other')
-@cite{nordlinger-2023} ex. 13.
+[nordlinger-2023] ex. 13.
 
 The adverb "hùxiāng" ('mutually') can also mark reciprocity but is
 not the primary morphosyntactic strategy.
@@ -28,7 +28,7 @@ structure CompoundRecip where
 def CompoundRecip.toForm (c : CompoundRecip) : String :=
   c.verb ++ "-lái-" ++ c.verb ++ "-qù"
 
-/-- dǎ-lái-dǎ-qù — 'beat each other' (@cite{nordlinger-2023} ex. 13). -/
+/-- dǎ-lái-dǎ-qù — 'beat each other' ([nordlinger-2023] ex. 13). -/
 def daLaiDaQu : CompoundRecip :=
   { verb := "dǎ", script := some "打来打去" }
 

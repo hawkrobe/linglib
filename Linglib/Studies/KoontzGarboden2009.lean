@@ -99,7 +99,7 @@ theorem satisfiesMH_comp {Op : Type} [BEq Op] [LawfulBEq Op]
 end KoontzGarboden2009.Monotonicity
 
 /-!
-# @cite{koontz-garboden-2009} — Anticausativization
+# [koontz-garboden-2009] — Anticausativization
 
 Koontz-Garboden, Andrew. 2009. Anticausativization.
 *Natural Language & Linguistic Theory* 27(1): 77–138.
@@ -111,7 +111,7 @@ the reflexive clitic (*se*, *sich*, *-da*, *-wa*) takes the two-place
 causative denotation and identifies the EFFECTOR with the THEME.
 Derived inchoatives **retain CAUSE** in their lexical semantic
 representation, contra the deletion analysis (Grimshaw 1982;
-@cite{krejci-2012}).
+[krejci-2012]).
 
 ## Key formal apparatus
 
@@ -145,7 +145,7 @@ inchoatives have CAUSE.
 
 - `CauserSpec` (Spanish fragment) — EFFECTOR vs AGENT verb taxonomy
 - `InternalExternalCause.HasCauseInLSR` — internally vs externally caused distinction
-- `IntransitivizationType` — competing structural analysis (@cite{krejci-2012})
+- `IntransitivizationType` — competing structural analysis ([krejci-2012])
 - `reflexivization` / `decausativization` — valency alternation types
 -/
 
@@ -210,8 +210,8 @@ def reflexivizationYieldsAnticausative : CauserSpec → Bool
 -- § 3b. Reduction to Proto-Role Entailments
 -- ════════════════════════════════════════════════════
 
-/-! K-G's EFFECTOR/AGENT distinction (@cite{van-valin-wilkins-1996})
-    partially reduces to @cite{dowty-1991}'s proto-role entailments.
+/-! K-G's EFFECTOR/AGENT distinction ([van-valin-wilkins-1996])
+    partially reduces to [dowty-1991]'s proto-role entailments.
 
     The reduction: EFFECTOR verbs entail causation but NOT volition
     for their subject. AGENT verbs entail both. Volition is the
@@ -296,7 +296,7 @@ theorem agent_verbs_dont_alternate :
 -- § 5. Non-Entailment of Inchoative by Causative (§3.5)
 -- ════════════════════════════════════════════════════
 
-/-! Contrary to the received wisdom (from @cite{lakoff-1965}), the
+/-! Contrary to the received wisdom (from [lakoff-1965]), the
     reflexivization analysis predicts that causative does NOT entail
     inchoative for derived inchoatives.
 
@@ -385,7 +385,7 @@ theorem feel_like_requires_cause :
     remove operators from lexical semantic representations. This is a
     constraint on the FORM of word formation rules, not on their output.
 
-    @cite{koontz-garboden-2009} argues that anticausativization is the
+    [koontz-garboden-2009] argues that anticausativization is the
     strongest apparent counterexample to the MH, since the deletion
     analysis requires removing the CAUSE operator. The reflexivization
     analysis resolves this: no operator is deleted, the relation is
@@ -421,7 +421,7 @@ theorem deletion_not_monotonic :
 -- § 8. Bridge: Reflexivization ↔ ValencyAlternation
 -- ════════════════════════════════════════════════════
 
-/-! @cite{koontz-garboden-2009}'s core claim is that what @cite{creissels-2025}
+/-! [koontz-garboden-2009]'s core claim is that what [creissels-2025]
     calls `decausativization` (A suppressed from participant structure) is
     semantically `reflexivization` (A and P cumulated). The structural
     effect looks like decausativization — the derived construction is
@@ -451,8 +451,8 @@ theorem reflexivization_is_cumulation :
 -- § 9. Bridge: IntransitivizationType
 -- ════════════════════════════════════════════════════
 
-/-! @cite{krejci-2012}'s `IntransitivizationType.anticausative` says the
-    external cause is removed (monoeventive). @cite{koontz-garboden-2009}
+/-! [krejci-2012]'s `IntransitivizationType.anticausative` says the
+    external cause is removed (monoeventive). [koontz-garboden-2009]
     says it is retained via reflexivization (bieventive). These are
     competing analyses.
 
@@ -477,7 +477,7 @@ theorem krejci_reflexive_bieventive :
     it. The structural content lives in `reflexivize` above and the
     `causative_does_not_entail_inchoative` theorem below. -/
 
-/-- Deletion (@cite{krejci-2012}) and reflexivization (this file) make
+/-- Deletion ([krejci-2012]) and reflexivization (this file) make
 opposing predictions about whether *romperse* retains CAUSE: deletion
 maps `.accomplishment` to `.achievement` (no CAUSE); reflexivization
 preserves the LSR of an externally-caused verb (CAUSE retained). *por
@@ -496,7 +496,7 @@ theorem deletion_vs_reflexivization_diverge_on_romper :
     and would be a remarkable coincidence on any other analysis. -/
 
 /-- Cross-linguistic anticausative/reflexive marker syncretism data
-    from Haspelmath 1990, cited in @cite{koontz-garboden-2009} (35). -/
+    from Haspelmath 1990, cited in [koontz-garboden-2009] (35). -/
 structure MarkerSyncretismDatum where
   language : String
   hasReflexiveUse : Bool
@@ -541,7 +541,7 @@ anticausative — i.e., `anticausativeMarking` is `.marked` or
 The third link (SE-as-spell-out-of-cumulation) is a morphological
 premise of the analysis, exposed below as `hasSEMarking`. A verb
 that alternates while remaining `.unmarked` falsifies the chain.
-@cite{munoz-perez-2026} uses *mejorar* "improve" as exactly such a
+[munoz-perez-2026] uses *mejorar* "improve" as exactly such a
 falsifier (Studies/MunozPerez2026.lean, `refutes_koontzgarboden`). -/
 
 /-- The morphological premise of K-G's analysis applied to Spanish:

@@ -8,8 +8,8 @@ between velar [ɪŋ] (*-ing*) and apical [ɪn] (*-in'*) variants of the
 English progressive/gerund suffix.
 
 This is arguably the most-studied variable in sociolinguistics
-(@cite{labov-2006}, @cite{campbell-kibler-2007}, @cite{eckert-2008},
-@cite{burnett-2019}). The shared type is imported by study files
+([labov-2006], [campbell-kibler-2007], [eckert-2008],
+[burnett-2019]). The shared type is imported by study files
 that formalize different aspects of (ING).
 -/
 

@@ -2,10 +2,10 @@ import Linglib.Fragments.Turkish.Negation
 
 /-!
 # Turkish Tense-Aspect-Modality System
-@cite{goksel-kerslake-2005}
+[goksel-kerslake-2005]
 
 The TAM system is the core of the Turkish verbal paradigm
-(@cite{goksel-kerslake-2005} Ch 21, Appendix 2). There are five **basic** TAM
+([goksel-kerslake-2005] Ch 21, Appendix 2). There are five **basic** TAM
 categories and three **modal** categories, occupying a single paradigmatic slot.
 
 ## Key properties

@@ -2,9 +2,9 @@ import Linglib.Core.Constraint.Evaluation
 
 /-!
 # OT — Evaluation Mode (Parallel vs Directional)
-@cite{eisner-2000} @cite{eisner-2002} @cite{lamont-2022a} @cite{lamont-2022b}
+[eisner-2000] [eisner-2002] [lamont-2022a] [lamont-2022b]
 
-Encodes @cite{lamont-2022b}'s reframing: directionality is a property of
+Encodes [lamont-2022b]'s reframing: directionality is a property of
 EVAL, not of constraints. We do **not** define
 `DirectionalConstraint C := C → List Nat` — that is the obsolete
 constraint-side encoding. Instead, an `EvalMode` parameter governs how
@@ -22,7 +22,7 @@ Under this convention:
 - `parallel`     — classical OT: profile is conventionally a singleton
                    `[count]` (total violation count). `le` uses
                    `LexLE`, which on singletons reduces to `Nat ≤`.
-- `directional .leftToRight` — @cite{eisner-2000}'s left-to-right
+- `directional .leftToRight` — [eisner-2000]'s left-to-right
                    evaluation. Indicator vector is in left-to-right
                    position order; `LexLE` compares from the leftmost
                    position. The candidate without a violation at the
@@ -41,7 +41,7 @@ fig. 3), the three depth-1 candidates have indicator vectors
 indistinguishable. The correct semantics is plain `LexLE` on the
 position-ordered indicator (no sorting): then `[0,1,1] < [1,0,1] <
 [1,1,0]` lex, picking the leftmost-deletion candidate as the winner —
-which is what @cite{mcpherson-lamont-2026} require.
+which is what [mcpherson-lamont-2026] require.
 
 The forgetful map `count := positions.length` lets a counting constraint
 embed cleanly into the directional setting as the degenerate case where
@@ -72,7 +72,7 @@ by `HarmonicSerialism.lean`'s combinator, which currently routes the
 namespace Core.Constraint.OT
 
 /-- Direction of lex comparison on violation position vectors.
-    @cite{eisner-2000} §3, @cite{eisner-2002}. -/
+    [eisner-2000] §3, [eisner-2002]. -/
 inductive Direction
   | leftToRight
   | rightToLeft
@@ -80,9 +80,9 @@ inductive Direction
 
 /-- Evaluation mode for the OT EVAL function.
 
-    `parallel` is classical @cite{prince-smolensky-1993} OT. `directional`
-    instances correspond to @cite{eisner-2000}'s direction of evaluation;
-    @cite{lamont-2022b} reframes directionality as a property of EVAL
+    `parallel` is classical [prince-smolensky-1993] OT. `directional`
+    instances correspond to [eisner-2000]'s direction of evaluation;
+    [lamont-2022b] reframes directionality as a property of EVAL
     (not of constraints), and shows it is needed to break ties locally
     without invoking globally-aware tie-breakers. -/
 inductive EvalMode

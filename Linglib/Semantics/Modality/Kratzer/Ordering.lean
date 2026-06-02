@@ -1,5 +1,5 @@
 /-
-@cite{kratzer-1981} World Ordering
+[kratzer-1981] World Ordering
 
 Worlds are ordered by set-inclusion of satisfied propositions:
 w ≤_A z iff {p ∈ A : z ∈ p} ⊆ {p ∈ A : w ∈ p}.
@@ -44,7 +44,7 @@ noncomputable def satisfiedPropositions (A : List (W → Prop)) (w : W) : List (
 /--
 Kratzer's ordering relation: w ≤_A z
 
-@cite{kratzer-1981}: `w ≤_A z` iff every ideal proposition `p ∈ A` that
+[kratzer-1981]: `w ≤_A z` iff every ideal proposition `p ∈ A` that
 holds at `z` also holds at `w`. Intuitively: `w` is at least as good as
 `z` (w.r.t. ideal `A`) iff every ideal proposition that `z` satisfies,
 `w` also satisfies.
@@ -177,7 +177,7 @@ theorem empty_ordering_emptyBackground (f : ModalBase W) (w : W) :
     Unlike `bestWorlds` which computes accessible worlds from a modal base,
     `bestAmong` takes a precomputed world set. This is needed when the
     domain has already been restricted (e.g., by promoted priorities in
-    @cite{rubinstein-2014}'s favored worlds). -/
+    [rubinstein-2014]'s favored worlds). -/
 def bestAmong (worlds : Set W) (ordering : List (W → Prop)) : Set W :=
   {w' | w' ∈ worlds ∧ ∀ w'' ∈ worlds, atLeastAsGoodAs ordering w' w''}
 

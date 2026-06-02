@@ -1,16 +1,16 @@
 import Linglib.Semantics.Verb.Basic
 
 /-!
-# Romanian Mood-Choice Verb Entries @cite{grano-2024}
+# Romanian Mood-Choice Verb Entries [grano-2024]
 
 Minimal verb entries for Romanian attitude and causative predicates
-relevant to cross-linguistic mood choice (@cite{grano-2024}, Table 1).
+relevant to cross-linguistic mood choice ([grano-2024], Table 1).
 
 In Romanian, mood is reflected in both complementizer choice (*să* = SBJV
 vs *că* = IND) and verb morphology. 'want' and 'intend' take *să* (SBJV);
 'hope' allows both *să* and *că* (IND/SBJV). Causatives take *să* (SBJV).
 
-## Key examples (from @cite{grano-2024})
+## Key examples (from [grano-2024])
 
 - (6a) Ion vrea [**să** meargă în parc]. ('want': SBJV)
 - (6b) \*Ion vrea [**că** va merge în parc]. ('want': \*IND)
@@ -26,7 +26,7 @@ namespace Romanian.MoodChoice
 open Semantics.Lexical
 
 /-- *a vrea* 'want' — robustly subjunctive-selecting via *să*.
-    @cite{grano-2024}, (6): *să* (SBJV) required, *că* (IND) rejected. -/
+    [grano-2024], (6): *să* (SBJV) required, *că* (IND) rejected. -/
 def a_vrea : Verb where
   form := "a vrea"
   complementType := .finiteClause
@@ -36,7 +36,7 @@ def a_vrea : Verb where
   levinClass := some .want
 
 /-- *a spera* 'hope' — cross-linguistically variable (IND/SBJV).
-    @cite{grano-2024}, (14): both *să* (SBJV) and *că* (IND) accepted. -/
+    [grano-2024], (14): both *să* (SBJV) and *că* (IND) accepted. -/
 def a_spera : Verb where
   form := "a spera"
   complementType := .finiteClause
@@ -45,7 +45,7 @@ def a_spera : Verb where
   attitude := some (.preferential (.degreeComparison .positive))
 
 /-- *a intenționa* 'intend' — robustly rejects indicative.
-    @cite{grano-2024}, (23): *să* (SBJV) required, *că* (IND) rejected. -/
+    [grano-2024], (23): *să* (SBJV) required, *că* (IND) rejected. -/
 def a_intentiona : Verb where
   form := "a intenționa"
   complementType := .finiteClause
@@ -55,7 +55,7 @@ def a_intentiona : Verb where
   levinClass := some .want
 
 /-- *a face* 'make' — causative, subjunctive-selecting via *să*.
-    @cite{grano-2024}, (46): *să* (SBJV) required, *că* (IND) rejected. -/
+    [grano-2024], (46): *să* (SBJV) required, *că* (IND) rejected. -/
 def a_face : Verb where
   form := "a face"
   complementType := .finiteClause

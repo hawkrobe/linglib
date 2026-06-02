@@ -6,10 +6,10 @@ import Linglib.Phonology.Autosegmental.RegisterTier
 
 Grammatical tone (GT) is a tonological operation "restricted to a specific
 morpheme or construction... and not attributable to the general tonal
-phonology" (@cite{lionnet-etal-2022}:386). More precisely, GT is a
+phonology" ([lionnet-etal-2022]:386). More precisely, GT is a
 tonological operation which is not general across the phonological grammar,
 and is restricted to the context of a specific morpheme or construction, or
-a natural class of morphemes or constructions (@cite{rolle-2018} Def 5).
+a natural class of morphemes or constructions ([rolle-2018] Def 5).
 
 ## Main definitions
 
@@ -17,17 +17,17 @@ a natural class of morphemes or constructions (@cite{rolle-2018} Def 5).
   over segmental content type.
 * `TonalValue`, `GTOperation`, `GTDominance`, `GTLevel`, `ExponenceType`,
   `ValuationWindow`, `IndomitabilityType`, `GTRepair` — typological
-  classifications from @cite{rolle-2018} and @cite{hyman-etal-2021}.
+  classifications from [rolle-2018] and [hyman-etal-2021].
 * `Spec`, `GTSpec` — grammatical tone specifications bundling the five
   components (grammatical tune, trigger, target, host, valuation window).
 * `tonalOverwrite` — apply a grammatical tone to a host word, overwriting
   lexical tones in the valuation window (replacive-dominant GT).
 * `DominantGTAsymmetry` — the typological generalization that dominant
-  GT triggers are always dependents (@cite{rolle-2018} §3.4.1).
+  GT triggers are always dependents ([rolle-2018] §3.4.1).
 
 ## Implementation notes
 
-@cite{rolle-2018} proposes a formal framework with five components for
+[rolle-2018] proposes a formal framework with five components for
 cross-linguistic classification: grammatical tune, trigger, target, host,
 and valuation window. The **sponsor** is the morpheme (or natural class
 of morphemes) which covaries with the grammatical tune. In most cases,
@@ -35,11 +35,11 @@ the trigger is coextensive with the sponsor and the target with the host.
 
 Interactions between the trigger-sponsor and the target-host based on
 their morphosyntactic identity and tonal value are GT dominance effects
-(à la @cite{kiparsky-halle-1977}, @cite{kiparsky-1982},
-@cite{inkelas-1998}). These split into dominant (replacive vs subtractive)
+(à la [kiparsky-halle-1977], [kiparsky-1982],
+[inkelas-1998]). These split into dominant (replacive vs subtractive)
 and non-dominant (recessive vs neutral) types.
 
-@cite{hyman-etal-2021} distinguish two broad categories of GT: word-level
+[hyman-etal-2021] distinguish two broad categories of GT: word-level
 (tone is the sole exponent of inflectional/derivational morphology, e.g.,
 Kalabari imperative H-L melody) and phrase-level (a phrasal construction
 triggers tonal modification of its complement, e.g., Kalabari associative
@@ -50,7 +50,7 @@ instantiations live in `Fragments/`; empirical applications in `Phenomena/`.
 
 ## References
 
-@cite{rolle-2018} @cite{hyman-etal-2021}
+[rolle-2018] [hyman-etal-2021]
 -/
 
 namespace Phonology.Autosegmental.GrammaticalTone
@@ -69,12 +69,12 @@ structure TBU (S : Type*) where
 /-! ### Tonal values -/
 
 /-- Whether a TBU is tonally **valued** (has a linked toneme T) or
-    **unvalued** (a 'free TBU' — @cite{clements-goldsmith-1984}).
+    **unvalued** (a 'free TBU' — [clements-goldsmith-1984]).
 
     The distinction between valued and unvalued targets is critical for
     defining GT dominance effects: dominant triggers impose their pattern
     regardless of tonal value, while recessive triggers only apply to
-    unvalued targets (@cite{rolle-2018} §3.1, Table 2). -/
+    unvalued targets ([rolle-2018] §3.1, Table 2). -/
 inductive TonalValue where
   | valued    -- TBU τ is linked to a toneme T
   | unvalued  -- TBU τ has no linked toneme (free TBU)
@@ -83,7 +83,7 @@ inductive TonalValue where
 /-! ### Tonological operations -/
 
 /-- The inventory of grammatically-conditioned tonological operations
-    (@cite{rolle-2018} Table 3). Each variant represents a distinct type
+    ([rolle-2018] Table 3). Each variant represents a distinct type
     of input→output tonal mapping that can be triggered by a specific
     morpheme or construction. -/
 inductive GTOperation where
@@ -96,7 +96,7 @@ inductive GTOperation where
       (the grammatical tune). -/
   | replacement
   /-- Tone shifts from one TBU to an adjacent one (e.g., rightward
-      shift in Jita — @cite{downing-2014}). -/
+      shift in Jita — [downing-2014]). -/
   | shifting
   /-- Target tone changes to avoid identity with an adjacent tone
       (e.g., L→H next to L). -/
@@ -107,7 +107,7 @@ inductive GTOperation where
   /-- A contour tone on the target loses one component (e.g., HL→H). -/
   | absorption
   /-- Target assimilates to the pitch level of an adjacent tone on the
-      same tier (horizontal spreading — @cite{hyman-2007}). -/
+      same tier (horizontal spreading — [hyman-2007]). -/
   | horizontalAssimilation
   /-- Target shifts to a nearby pitch level (e.g., L→M next to H). -/
   | verticalAssimilation
@@ -120,7 +120,7 @@ inductive GTOperation where
 
 /-- The four-way typology of GT dominance effects, based on the
     interaction between trigger-sponsor and target-host tonal values
-    (@cite{rolle-2018} §3.1, Table 2).
+    ([rolle-2018] §3.1, Table 2).
 
     This is the tonal instantiation of `Features.Prosody.ProsodicDominance`,
     which captures the abstract dominant/recessive/neutral distinction
@@ -131,7 +131,7 @@ inductive GTOperation where
     Dominance is a **lexical idiosyncrasy** of the trigger: it cannot
     be predicted from segmental or prosodic properties, the markedness
     of the grammatical tune, or the morphosyntactic position of the
-    trigger relative to the target (@cite{inkelas-1998}:128). -/
+    trigger relative to the target ([inkelas-1998]:128). -/
 inductive GTDominance where
   /-- **Replacive-dominant**: automatic replacement of the underlying
       tone within the valuation window of the target-host, revalued
@@ -140,19 +140,19 @@ inductive GTDominance where
 
       Neutralizes the distinction between valued and unvalued targets:
       both receive the same output tone pattern. This neutralization
-      is "intentional" in the sense of @cite{hyman-2018a}.
+      is "intentional" in the sense of [hyman-2018a].
 
-      Examples: Hausa plural -óoCíí (@cite{inkelas-1998}),
-      Kalabari demonstrative /mí/ (@cite{harry-hyman-2014}),
-      Mwaghavul verbalisers (@cite{akinbo-fwangwar-2026}). -/
+      Examples: Hausa plural -óoCíí ([inkelas-1998]),
+      Kalabari demonstrative /mí/ ([harry-hyman-2014]),
+      Mwaghavul verbalisers ([akinbo-fwangwar-2026]). -/
   | replaciveDominant
   /-- **Subtractive-dominant**: automatic deletion of the underlying
       tone within the valuation window, WITHOUT revaluation by a
       grammatical tune. The surface form receives a default pattern
       at a later stage.
 
-      Examples: Japanese -teki (@cite{kawahara-2015}),
-      Baka 3sg/1pl/3pl inflection (@cite{waag-phodunze-2013}). -/
+      Examples: Japanese -teki ([kawahara-2015]),
+      Baka 3sg/1pl/3pl inflection ([waag-phodunze-2013]). -/
   | subtractiveDominant
   /-- **Recessive-non-dominant**: the grammatical tune applies only
       when the target-host is unvalued within its valuation window.
@@ -161,8 +161,8 @@ inductive GTDominance where
       Found primarily in privative-culminative systems where the
       tonal contrast is presence vs. absence (e.g., /H/ vs. Ø).
 
-      Examples: Japanese -si 'Mr.' (@cite{kawahara-2015}),
-      Giphende floating tones (@cite{hyman-2017}). -/
+      Examples: Japanese -si 'Mr.' ([kawahara-2015]),
+      Giphende floating tones ([hyman-2017]). -/
   | recessive
   /-- **Neutral-non-dominant**: the trigger-sponsor concatenates
       with the target-host without automatic replacement, deletion,
@@ -172,14 +172,14 @@ inductive GTDominance where
 
       Most cases of "floating tones" in the literature are neutral.
 
-      Examples: Hausa referential -ⁿn (@cite{newman-2000}),
-      Igbo associative construction (@cite{hyman-schuh-1974}). -/
+      Examples: Hausa referential -ⁿn ([newman-2000]),
+      Igbo associative construction ([hyman-schuh-1974]). -/
   | neutral
   deriving DecidableEq, Repr
 
 /-- Dominant GT neutralizes the lexical tonal contrast of the target:
     whether the target is valued or unvalued, the output is the same.
-    This property is what @cite{rolle-2018} calls **dominance as
+    This property is what [rolle-2018] calls **dominance as
     transparadigmatic uniformity**. -/
 abbrev GTDominance.IsDominant (d : GTDominance) : Prop :=
   d = .replaciveDominant ∨ d = .subtractiveDominant
@@ -207,7 +207,7 @@ theorem GTDominance.toProsodicDominance_preserves_isDominant (d : GTDominance) :
 /-! ### GT level -/
 
 /-- The morphosyntactic level at which the GT construction operates.
-    @cite{hyman-etal-2021} distinguish word-level from phrase-level GT. -/
+    [hyman-etal-2021] distinguish word-level from phrase-level GT. -/
 inductive GTLevel where
   /-- Tone is the sole exponent of word-level (inflectional or
       derivational) morphology. -/
@@ -220,7 +220,7 @@ inductive GTLevel where
 /-! ### Exponence types -/
 
 /-- How the GT construction relates to segmental exponence of
-    grammatical meaning (@cite{rolle-2018} Defs 16–17). -/
+    grammatical meaning ([rolle-2018] Defs 16–17). -/
 inductive ExponenceType where
   /-- **Independent prosodic exponence** (Def 16): the grammatical
       category is exponed only by prosodic units of contrast (tonemes,
@@ -241,7 +241,7 @@ abbrev TonalMelody := List TRN
 /-- Valuation window: the portion of the host that the grammatical tune
     targets. Determines which TBUs are overwritten.
 
-    @cite{rolle-2018} (Def 15): the portion of the target-host which
+    [rolle-2018] (Def 15): the portion of the target-host which
     is evaluated with respect to whether its TBUs are valued or unvalued;
     this can be coextensive with the target-host, or strictly a local
     subconstituent. -/
@@ -254,11 +254,11 @@ inductive ValuationWindow where
   /-- A local subconstituent of the host (e.g., only the final mora,
       only the TBU adjacent to the trigger). Used in
       subtractive-dominant GT with local scope, e.g., Japanese
-      genitive -no (@cite{kawahara-2015}). -/
+      genitive -no ([kawahara-2015]). -/
   | local
   deriving DecidableEq, Repr
 
-/-- A grammatical tone specification following @cite{rolle-2018}.
+/-- A grammatical tone specification following [rolle-2018].
 
     Captures the tonal exponent of a morpheme or construction:
     what tonal melody it imposes, and on which portion of the host. -/
@@ -274,13 +274,13 @@ structure Spec where
   deriving Repr
 
 /-- Full GT specification extending `Spec` with the dominance type,
-    morphosyntactic level, and exponence type from @cite{rolle-2018}'s
+    morphosyntactic level, and exponence type from [rolle-2018]'s
     typological framework. This bundles all five GT components plus the
     typological classification into a single record. -/
 structure GTSpec extends Spec where
   /-- The dominance type of this GT trigger. -/
   dominance : GTDominance
-  /-- Word-level or phrase-level GT (@cite{hyman-etal-2021}). -/
+  /-- Word-level or phrase-level GT ([hyman-etal-2021]). -/
   level : GTLevel
   /-- Whether the tonal exponent is the sole exponent (independent)
       or co-occurs with segmental material (auxiliary). -/
@@ -291,7 +291,7 @@ structure GTSpec extends Spec where
 
 /-- Apply a grammatical tone to a host word, overwriting lexical tones
     in the valuation window. This implements **replacive-dominant GT**
-    (@cite{rolle-2018} Def 1): the underlying tones of the target-host
+    ([rolle-2018] Def 1): the underlying tones of the target-host
     are automatically replaced by the grammatical tune.
 
     - `whole` + `[t]`: every TBU gets tone `t`
@@ -319,7 +319,7 @@ def tonalOverwrite {S : Type*} [DecidableEq S] [BEq S] [Repr S]
     clitics), and the target is always the **lexical head** (root, stem,
     noun). Lexical heads do not impose dominant GT on their dependents.
 
-    @cite{rolle-2018} derives this from the CoP-scope hierarchy:
+    [rolle-2018] derives this from the CoP-scope hierarchy:
     VIs within specifiers scope over heads, and VIs within heads scope
     over complements. Since dependents are structurally outer relative
     to the head, dominant triggers are always dependents.
@@ -347,29 +347,29 @@ def DominantGTAsymmetry.holds (a : DominantGTAsymmetry) : Bool :=
 
 /-- Types of GT indomitability: exceptional targets that fail to undergo
     a tonological operation despite being within the scope of the trigger
-    (@cite{rolle-2018} §3.3.2). -/
+    ([rolle-2018] §3.3.2). -/
 inductive IndomitabilityType where
   /-- **Morphemic**: specific morphemes or morpheme classes resist
       the GT operation (e.g., Jita -lí NEG.DIST.FUT —
-      @cite{downing-2014}). -/
+      [downing-2014]). -/
   | morphemic
   /-- **Morphosyntactic**: certain syntactic constituents are
       transparent or opaque to the GT operation (e.g., Tommo So
-      alienable possessors — @cite{mcpherson-heath-2016}). -/
+      alienable possessors — [mcpherson-heath-2016]). -/
   | morphosyntactic
   /-- **Tonological**: targets with specific input tone melodies
-      resist (e.g., Nzadi /LH/ targets — @cite{crane-etal-2011}). -/
+      resist (e.g., Nzadi /LH/ targets — [crane-etal-2011]). -/
   | tonological
   /-- **Phonological**: targets with specific phonological properties
       resist (e.g., monomoraic targets with Japanese -no genitive —
-      @cite{kawahara-2015}). -/
+      [kawahara-2015]). -/
   | phonological
   deriving DecidableEq, Repr
 
 /-! ### Repairs in GT application -/
 
 /-- Repair strategies when a grammatical tune cannot dock to its
-    intended target (@cite{rolle-2018} §3.3.3). -/
+    intended target ([rolle-2018] §3.3.3). -/
 inductive GTRepair where
   /-- The grammatical tune is deleted (the most common repair). -/
   | tuneDeactivation

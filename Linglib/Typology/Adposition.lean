@@ -3,7 +3,7 @@ import Linglib.Core.Word
 
 /-!
 # Adposition typology: shared substrate type
-@cite{dryer-2013-wals} @cite{greenberg-1963} @cite{dryer-1992}
+[dryer-2013-wals] [greenberg-1963] [dryer-1992]
 
 Framework-agnostic enum for storing per-language adposition order
 (WALS Ch 85). Lives in `Typology/` so both `Fragments/` (per-language
@@ -35,9 +35,9 @@ neutral.
 ## Greenbergian vs Dryerian primacy
 
 The substrate is *neutral* on which classification is theoretically
-primary. @cite{greenberg-1963}'s Universals 3 and 4 treat adposition
+primary. [greenberg-1963]'s Universals 3 and 4 treat adposition
 as the *correlate* of basic constituent order (VSO → Prep, SOV →
-Postp). @cite{dryer-1992} explicitly demoted SOV/SVO/VSO in favour of
+Postp). [dryer-1992] explicitly demoted SOV/SVO/VSO in favour of
 OV/VO + correlation pairs (Branching Direction Theory), making
 adposition a co-primary head-direction phenomenon. Consumers
 downstream choose which projection to read; the substrate provides

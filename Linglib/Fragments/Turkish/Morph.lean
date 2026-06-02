@@ -2,7 +2,7 @@ import Linglib.Morphology.MorphProfile
 
 /-!
 # Turkish Morphological Profile
-@cite{wals-2013} @cite{bickel-nichols-2001}
+[wals-2013] [bickel-nichols-2001]
 
 WALS-derived profile for Turkish (ISO `tur`). B&N 2001 places Turkish in
 the canonical "agglutinating" cell (concatenative + nonflexive + separative);

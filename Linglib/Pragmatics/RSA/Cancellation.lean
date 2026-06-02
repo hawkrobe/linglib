@@ -7,7 +7,7 @@ import Linglib.Pragmatics.RSA.Silence
 /-!
 # Cancellation theorems for RSA models with noisy observation
 
-@cite{goodman-stuhlmuller-2013}'s **cancellation principle** (informal):
+[goodman-stuhlmuller-2013]'s **cancellation principle** (informal):
 as a speaker's observation kernel becomes noisier, the listener's posterior
 given an utterance moves closer to the prior.
 

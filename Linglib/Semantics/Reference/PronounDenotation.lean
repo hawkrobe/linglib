@@ -14,10 +14,10 @@ selector is the project-canonical variable denotation `interpPronoun`
 (`g ↦ g i`), so the pronoun-as-object and the bare assignment-indexed
 variable are the same individual *by construction* — not via a bridge
 theorem. The intrinsic presupposition is the φ-feature presupposition read
-off the entry's person/number/gender via the @cite{sauerland-2003}-style
+off the entry's person/number/gender via the [sauerland-2003]-style
 cells in `Semantics.Presupposition.PhiFeatures`.
 
-This follows @cite{buring-2012}'s survey: the assignment lookup (his (14)), the
+This follows [buring-2012]'s survey: the assignment lookup (his (14)), the
 feature presuppositions (his (49)/(50)), and the absence-of-features treatment
 of unmarked values. The same `interpPronoun` selector serves bound, anaphoric,
 and deictic uses (his §2.1.1); binding is the external β-operator
@@ -121,11 +121,11 @@ example {F : Frame} [PartialOrder F.Entity] (g : Assignment F.Entity) (i : ℕ)
   refine ⟨⟨trivial, trivial, hFem⟩, ?_⟩
   rfl
 
-/-! ### Pronouns are definite descriptions (@cite{elbourne-2005}, @cite{patel-grosz-grosz-2017})
+/-! ### Pronouns are definite descriptions ([elbourne-2005], [patel-grosz-grosz-2017])
 
 A referential pronoun *is* a (null-NP) definite description over its φ-feature
-restrictor — a `Description`. @cite{patel-grosz-grosz-2017}'s proposal is that the
-personal/demonstrative split is the @cite{schwarz-2009} weak/strong-article split:
+restrictor — a `Description`. [patel-grosz-grosz-2017]'s proposal is that the
+personal/demonstrative split is the [schwarz-2009] weak/strong-article split:
 PER (*er*) the **weak** article (`Description.ofPresupType .uniqueness` = `.unique`),
 "DEM" (*der*) the **strong** article (`…ofPresupType .familiarity` = `.anaphoric`,
 the weak description plus an anaphoric index). PG&G's "DEM = PER + index" is the
@@ -135,13 +135,13 @@ the strength round-trips through `expectedPresupType`. The extra layer is that i
 separate type; genuine deictic demonstratives are `Description.demonstrative`.
 
 Caveat on `denote` below: the project's canonical `PersonalPronoun.denote` realizes
-the @cite{buring-2012} assignment lookup `g i` — the *indexed/anaphoric* referent,
+the [buring-2012] assignment lookup `g i` — the *indexed/anaphoric* referent,
 i.e. the **strong** arm — so the bridge proves `denote` = `ofPresupType .familiarity`.
 PG&G's *weak* PER (`ofPresupType .uniqueness`, the uniqueness iota over the
 φ-restrictor) is a distinct denotation `denote` does not compute; the two arms agree
 exactly when `g i` is the unique satisfier. -/
 
-/-- A pronoun's @cite{buring-2012} variable-lookup referent equals its definite
+/-- A pronoun's [buring-2012] variable-lookup referent equals its definite
 description whenever the restrictor holds of the indexed referent: the
 **strong-article** (`Description.ofPresupType .familiarity`) reading, since the
 anaphoric index *is* the indexed entity. The **weak** reading coincides too when

@@ -5,8 +5,8 @@ import Linglib.Phonology.Featural.NaturalClasses
 # Latin Phonology — Fragment
 
 Synchronic segmental inventory of Classical Latin, anchored on
-@cite{cser-2020} (the most recent comprehensive synchronic phonology of the
-language). @cite{sen-2015} is the complementary diachronic anchor for study
+[cser-2020] (the most recent comprehensive synchronic phonology of the
+language). [sen-2015] is the complementary diachronic anchor for study
 files that explain *why* the inventory has this shape (clear and dark /l/
 allophony, inverse compensatory lengthening, syllabification).
 
@@ -31,18 +31,18 @@ that consume this Fragment.
 
 **Vowel length is prosodic, not segmental.** The `[long]` feature is not
 in the `Phonology.Featural.Features` inventory (which follows
-@cite{hayes-2009}'s decision to treat duration as a syllable-level
+[hayes-2009]'s decision to treat duration as a syllable-level
 property). Long vowels are encoded as two morae in `Phonology.Moraic`
 rather than as distinct segments; consumers needing a surface short-vs-long
 contrast construct it at the syllable level.
 
-**Clear vs dark /l/ is allophonic.** @cite{sen-2015} ch. 2 treats both
+**Clear vs dark /l/ is allophonic.** [sen-2015] ch. 2 treats both
 [l] and [ɫ] as positional realizations of a single /l/ phoneme (clear
 before /i/ and in geminates, dark elsewhere). The Fragment supplies one
 `l` segment; the clear and dark variants surface in a Sen 2015 study file
 that derives them from positional context.
 
-**Orthographic ⟨v⟩ is the glide [w].** @cite{belth-2026} encodes ⟨v⟩ as
+**Orthographic ⟨v⟩ is the glide [w].** [belth-2026] encodes ⟨v⟩ as
 [-consonantal] so that the tier projection of *pluv-* in `pluvaris` picks
 up the preceding /l/ rather than /v/ — the choice the Fragment adopts. A
 later study that needs the consonantal-fricative realization /β/ of late
@@ -59,10 +59,10 @@ land when the first consumer needs them.
 
 ## Todo
 
-* `lDark` allophone and the contextual mapping (@cite{sen-2015} ch. 2).
+* `lDark` allophone and the contextual mapping ([sen-2015] ch. 2).
 * Long-vowel surface notation if a consumer outside the moraic framework
   needs it.
-* Frequency table from @cite{cser-2020} Appendix 1.
+* Frequency table from [cser-2020] Appendix 1.
 * Onset and coda phonotactic predicates.
 * Labio-velars /kʷ/, /gʷ/; rare segments /h/, /y/; diphthongs.
 -/
@@ -174,7 +174,7 @@ def n : Segment := .ofSpecs
 
 /-! ### Liquids -/
 
-/-- /l/ — alveolar lateral. @cite{sen-2015} ch. 2 treats clear [l] and
+/-- /l/ — alveolar lateral. [sen-2015] ch. 2 treats clear [l] and
 dark [ɫ] as positional allophones of this single phoneme; the Fragment
 exposes just /l/, with the allophonic split derived in a Sen 2015 study
 file. -/
@@ -184,7 +184,7 @@ def l : Segment := .ofSpecs
    (.lateral, true), (.voice, true),
    (.coronal, true), (.anterior, true)]
 
-/-- /r/ — alveolar trill (@cite{cser-2020} §2). @cite{sen-2015} §4.3
+/-- /r/ — alveolar trill ([cser-2020] §2). [sen-2015] §4.3
 discusses /r/'s behaviour in vowel reduction before TR clusters. -/
 def r : Segment := .ofSpecs
   [(.syllabic, false), (.consonantal, true), (.sonorant, true),
@@ -194,7 +194,7 @@ def r : Segment := .ofSpecs
 /-! ### Glides -/
 
 /-- /w/ — labio-velar glide, written orthographic ⟨v⟩ in Classical Latin.
-@cite{belth-2026} treats this as [-consonantal] so that the tier projection
+[belth-2026] treats this as [-consonantal] so that the tier projection
 of *pluv-* in `pluvaris` picks up the preceding /l/ rather than /v/. -/
 def v : Segment := .ofSpecs
   [(.syllabic, false), (.consonantal, false), (.sonorant, true),

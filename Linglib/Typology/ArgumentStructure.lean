@@ -12,25 +12,25 @@ import Linglib.Features.Case
 
 /-!
 # Typology.ArgumentStructure
-@cite{maslova-nedjalkov-2013} @cite{siewierska-2013}
-@cite{haspelmath-2013-ditransitive}
-@cite{polinsky-2013-antipassive} @cite{polinsky-2013-applicative}
-@cite{song-2013-periphrastic} @cite{song-2013-nonperiphrastic}
-@cite{nordlinger-2023}
-@cite{konig-kokutani-2006} @cite{siloni-2008} @cite{siloni-2012}
+[maslova-nedjalkov-2013] [siewierska-2013]
+[haspelmath-2013-ditransitive]
+[polinsky-2013-antipassive] [polinsky-2013-applicative]
+[song-2013-periphrastic] [song-2013-nonperiphrastic]
+[nordlinger-2023]
+[konig-kokutani-2006] [siloni-2008] [siloni-2012]
 
 Per-language typological substrate for valence and voice constructions,
 covering WALS chapters 105--111:
 
-- **Ch 105** (@cite{haspelmath-2013-ditransitive}): Ditransitive constructions ('give') --
+- **Ch 105** ([haspelmath-2013-ditransitive]): Ditransitive constructions ('give') --
   alignment of R (recipient) and T (theme) with monotransitive P.
-- **Ch 106** (@cite{maslova-nedjalkov-2013}): Reciprocal constructions and
+- **Ch 106** ([maslova-nedjalkov-2013]): Reciprocal constructions and
   their relationship to reflexives.
-- **Ch 107** (@cite{siewierska-2013}): Passive constructions -- presence/absence.
-- **Ch 108** (@cite{polinsky-2013-antipassive}): Antipassive constructions.
-- **Ch 109** (@cite{polinsky-2013-applicative}): Applicative constructions.
-- **Ch 110** (@cite{song-2013-periphrastic}): Periphrastic causative constructions.
-- **Ch 111** (@cite{song-2013-nonperiphrastic}): Nonperiphrastic causative
+- **Ch 107** ([siewierska-2013]): Passive constructions -- presence/absence.
+- **Ch 108** ([polinsky-2013-antipassive]): Antipassive constructions.
+- **Ch 109** ([polinsky-2013-applicative]): Applicative constructions.
+- **Ch 110** ([song-2013-periphrastic]): Periphrastic causative constructions.
+- **Ch 111** ([song-2013-nonperiphrastic]): Nonperiphrastic causative
   constructions (morphological vs compound).
 
 Mirrors the `Linglib/Typology/{Possession,Negation,Comparison,Coordination,
@@ -93,7 +93,7 @@ private abbrev f111a := Data.WALS.F111A.allData
 
 /-- WALS Ch 106: How reciprocal situations are encoded relative to reflexives.
 
-    The four values follow @cite{maslova-nedjalkov-2013}'s classification:
+    The four values follow [maslova-nedjalkov-2013]'s classification:
 
     - `noDedicated`: "There are no non-iconic reciprocal constructions" --
       the language lacks a dedicated grammatical reciprocal marker.
@@ -118,7 +118,7 @@ instance : Inhabited ReciprocalType := ⟨.noDedicated⟩
 
 /-- Morphosyntactic strategy for encoding reciprocity.
 
-    @cite{nordlinger-2023} summarizes the structural typologies of
+    [nordlinger-2023] summarizes the structural typologies of
     König & Kokutani (2006), Nedjalkov (2007a), and Evans (2008), which
     classify reciprocal constructions by the morphosyntactic locus
     of the reciprocal marking:
@@ -170,7 +170,7 @@ def RecipStrategy.isNominal : RecipStrategy → Bool
 /-- Valency effect of reciprocal construction on the base predicate.
 
     Maslova (2008) distinguishes "unary" and "binary" reciprocals;
-    @cite{nordlinger-2023} discusses how NP/argument strategies tend to
+    [nordlinger-2023] discusses how NP/argument strategies tend to
     preserve valency while verb-marked strategies tend to reduce it. The
     correlation is a tendency, not absolute -- Malagasy verb-marked
     reciprocals retain full valency at f-structure (Hurst 2006, 2012). -/
@@ -181,7 +181,7 @@ inductive RecipValency where
 
 /-- Where reciprocal verbs are formed, per Siloni (2008, 2012).
 
-    @cite{nordlinger-2023} discusses Siloni's distinction:
+    [nordlinger-2023] discusses Siloni's distinction:
     - `lexical`: formed in the lexicon through "bundling" -- two thematic
       roles (agent, patient) merge into a single complex role. Produces
       verbs with inherently symmetric semantics. Can license discontinuous
@@ -198,7 +198,7 @@ inductive RecipFormation where
 
 /-- Can the reciprocal construction appear in discontinuous form
     (reciprocants split across subject and comitative argument)?
-    @cite{nordlinger-2023} §3.3. -/
+    [nordlinger-2023] §3.3. -/
 def RecipFormation.allowsDiscontinuous : RecipFormation → Bool
   | .lexical   => true
   | .syntactic => false
@@ -462,7 +462,7 @@ theorem passives_substantial_minority :
     let present := (f107a.filter (·.value == .present)).length
     present * 3 > f107a.length := by native_decide
 
-/-- Ch 108: in @cite{polinsky-2013-antipassive}'s sample, more languages have
+/-- Ch 108: in [polinsky-2013-antipassive]'s sample, more languages have
     oblique-patient antipassives than implicit-patient antipassives, and the
     majority have no antipassive at all. -/
 theorem antipassive_distribution :
@@ -472,15 +472,15 @@ theorem antipassive_distribution :
     oblique > implicit ∧ none_ > oblique + implicit := by native_decide
 
 /-- Ch 111: morphological causatives appear in more than 80% of WALS-sampled
-    languages (~90% in @cite{song-2013-nonperiphrastic}'s tally). This dwarfs
+    languages (~90% in [song-2013-nonperiphrastic]'s tally). This dwarfs
     periphrastic causatives in frequency. -/
 theorem morphological_causative_dominant :
     let morphOnly := (f111a.filter (·.value == .morphologicalOnly)).length
     let both := (f111a.filter (·.value == .both)).length
     (morphOnly + both) * 10 > f111a.length * 8 := by native_decide
 
-/-- Ch 106: @cite{nordlinger-2023} reports that of the 175 languages in
-    @cite{maslova-nedjalkov-2013}'s sample, polysemous reflexive/reciprocal
+/-- Ch 106: [nordlinger-2023] reports that of the 175 languages in
+    [maslova-nedjalkov-2013]'s sample, polysemous reflexive/reciprocal
     constructions are present in 60 (34%). In WALS terms, polysemy corresponds
     to Values 3 (mixed) and 4 (identical to reflexive). -/
 theorem polysemy_count :
@@ -495,12 +495,12 @@ theorem polysemy_percentage :
     polysemous * 3 > f106a.length ∧ polysemous * 2 < f106a.length := by
   native_decide
 
-/-- @cite{polinsky-2013-antipassive}'s headline data: WALS data refutes any
+/-- [polinsky-2013-antipassive]'s headline data: WALS data refutes any
     biconditional between antipassive (F108A) and ergative verbal person
     marking (F100A). Lango (`laj`) is accusative-aligned and has an
     implicit-patient antipassive — refuting "antipassive ⟹ ergative".
     Abkhaz (`abk`) is ergative-aligned and has no antipassive — refuting
-    "ergative ⟹ antipassive". Cf. @cite{silverstein-1976}. -/
+    "ergative ⟹ antipassive". Cf. [silverstein-1976]. -/
 theorem antipassive_alignment_independence :
     (Data.WALS.F100A.lookupISO "laj").map (·.value) = some .accusative ∧
     (Data.WALS.F108A.lookupISO "laj").map (·.value) = some .implicitPatient ∧
@@ -508,7 +508,7 @@ theorem antipassive_alignment_independence :
     (Data.WALS.F108A.lookupISO "abk").map (·.value) = some .noAntipassive := by
   decide
 
-/-- @cite{song-2013-periphrastic}: in WALS Ch 110, the purposive type
+/-- [song-2013-periphrastic]: in WALS Ch 110, the purposive type
     (effect clause marked by future/irrealis or purposive particle) is
     the dominant periphrastic causative strategy, more common than the
     sequential type (cause and effect clauses in fixed temporal order). -/
@@ -517,7 +517,7 @@ theorem periphrastic_purposive_dominant :
     let purposive := (f110a.filter (·.value == .purposiveOnly)).length
     purposive > sequential := by decide
 
-/-- @cite{polinsky-2013-applicative}'s near-universal: applicatives formed
+/-- [polinsky-2013-applicative]'s near-universal: applicatives formed
     only from intransitive bases (`.nonBenefactiveIntransOnly`) are
     vanishingly rare in WALS Ch 109, while applicatives on both bases
     dominate by more than 10:1. The exceptions are Fijian and Wambaya. -/

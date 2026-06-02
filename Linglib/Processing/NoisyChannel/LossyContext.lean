@@ -2,10 +2,10 @@ import Linglib.Processing.NoisyChannel.Basic
 
 /-!
 # Lossy-Context Surprisal: Bridge to Classical Surprisal
-@cite{futrell-gibson-levy-2020}
+[futrell-gibson-levy-2020]
 
 `MemoryProcess` (in `Basic.lean`) is the abstract type underlying the
-lossy-context surprisal model of @cite{futrell-gibson-levy-2020}
+lossy-context surprisal model of [futrell-gibson-levy-2020]
 ("Lossy-Context Surprisal: An Information-Theoretic Model of Memory
 Effects in Sentence Processing", Cog Sci 44, e12814).
 
@@ -45,7 +45,7 @@ variable {Voc Mem : Type*}
 deterministic history-summary `f` makes the encoder a Dirac at `f c`
 and the predictor's distribution at `f c` equal to `lm.next c`.
 
-(@cite{futrell-gibson-levy-2020} §3.5.1: this is the "perfect memory"
+([futrell-gibson-levy-2020] §3.5.1: this is the "perfect memory"
 regime in which lossy-context surprisal collapses to classical
 surprisal.) -/
 def IsLosslessFor (mp : MemoryProcess Voc Mem) (lm : LangModel Voc) : Prop :=

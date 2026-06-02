@@ -2,25 +2,25 @@ import Linglib.Semantics.Questions.Hamblin
 
 /-!
 # Question — singleton-alternative predicate
-@cite{bhatt-dayal-2020} @cite{roelofsen-farkas-2015}
+[bhatt-dayal-2020] [roelofsen-farkas-2015]
 
 A foundational predicate over `Question W`: an issue is *singleton* iff its
 alternative set is a singleton, i.e. there is exactly one maximal
 resolving proposition. This isolates the algebraic shape that drives
 several cross-linguistic question-particle analyses:
 
-- @cite{bhatt-dayal-2020}'s analysis of Hindi-Urdu *kya:* (eq. 23):
+- [bhatt-dayal-2020]'s analysis of Hindi-Urdu *kya:* (eq. 23):
   the polar question particle presupposes that its sister denotes a
   question whose alternative set is a singleton (the "highlighted"
-  cell, in the sense of @cite{roelofsen-farkas-2015}).
+  cell, in the sense of [roelofsen-farkas-2015]).
 - the parallel analysis of Mandarin *nandao* that
-  @cite{bhatt-dayal-2020} fn. 11 cites as the model for kya:.
+  [bhatt-dayal-2020] fn. 11 cites as the model for kya:.
 
 Declarative contents are exactly the singleton ones (under finiteness
 of `props`); the standard two-cell polar `polar p` (with both `p` and
 `pᶜ` as alternatives) is **not** singleton when `p` is non-trivial.
 
-The "highlighted polar" terminology of @cite{roelofsen-farkas-2015} is a
+The "highlighted polar" terminology of [roelofsen-farkas-2015] is a
 notational alias for `declarative p` in the inquisitive setting; we do
 not introduce a separate definition because the singleton alternative is
 the only feature that distinguishes it from the two-cell `polar p`, and
@@ -41,8 +41,8 @@ variable {W : Type u}
 
 /-- An inquisitive content is **singleton** iff its alternative set
     contains exactly one element. The shape encoded by the singleton
-    presupposition of @cite{bhatt-dayal-2020}'s eq. 23 (kya:) and the
-    parallel nandao analysis cited in @cite{bhatt-dayal-2020} fn. 11. -/
+    presupposition of [bhatt-dayal-2020]'s eq. 23 (kya:) and the
+    parallel nandao analysis cited in [bhatt-dayal-2020] fn. 11. -/
 def IsSingleton (P : Question W) : Prop :=
   ∃ p, alt P = {p}
 
@@ -95,12 +95,12 @@ theorem not_isSingleton_of_two_alternatives (P : Question W)
   exact hne (h₁.trans h₂.symm)
 
 /-- The two-cell polar question `polar p` (in the standard
-    @cite{ciardelli-groenendijk-roelofsen-2018} / Hamblin sense) is
+    [ciardelli-groenendijk-roelofsen-2018] / Hamblin sense) is
     **not** singleton when `p` is non-trivial — it has two distinct
     alternatives `p` and `pᶜ`. This is the structural reason the
-    @cite{bhatt-dayal-2020} kya:-style "singleton presupposition"
+    [bhatt-dayal-2020] kya:-style "singleton presupposition"
     cannot be satisfied by a two-cell polar Q; it requires the
-    one-cell highlighted polar of @cite{roelofsen-farkas-2015}
+    one-cell highlighted polar of [roelofsen-farkas-2015]
     (= `declarative p`). -/
 theorem not_isSingleton_polar_of_nontrivial {p : Set W}
     (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
@@ -129,7 +129,7 @@ presupposition satisfied". Used by particle-specific study files
 /-- The **subtype of singleton issues** — issues whose alternative set
     is a singleton. Used as the well-typed sister-content for
     singleton-presuppositional Q-particles
-    (@cite{bhatt-dayal-2020}, kya: eq. 23 and parallel nandao analysis
+    ([bhatt-dayal-2020], kya: eq. 23 and parallel nandao analysis
     cited in fn. 11). The mathlib pattern for "predicate + partial
     function" pairs: rather than `Option`-valued partial interpretation,
     use a subtype. -/
@@ -140,12 +140,12 @@ namespace SingletonQuestion
 
 /-- The underlying issue of a `SingletonQuestion` — the truth-conditional
     content delivered when the singleton presupposition is satisfied.
-    @cite{bhatt-dayal-2020} eq. 23: `⟦kya:⟧` returns its sister `Q`
+    [bhatt-dayal-2020] eq. 23: `⟦kya:⟧` returns its sister `Q`
     unchanged on felicitous inputs. -/
 def issue (Q : SingletonQuestion W) : Question W := Q.val
 
 /-- The unique alternative of a singleton issue (the "highlighted" cell
-    in @cite{roelofsen-farkas-2015}'s sense). -/
+    in [roelofsen-farkas-2015]'s sense). -/
 noncomputable def witness (Q : SingletonQuestion W) : Set W :=
   Q.property.choose
 

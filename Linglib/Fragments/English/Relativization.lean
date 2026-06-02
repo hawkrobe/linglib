@@ -3,13 +3,13 @@ import Linglib.Typology.RelativeClause.WALS
 
 /-!
 # English Relativization Fragment
-@cite{keenan-comrie-1977}
+[keenan-comrie-1977]
 
 Two relative clause markers:
 - Complementizer *that*/∅ with gap in NP_rel (-case, covers SU/DO)
 - Relative pronoun *who/whom/which/whose* (+case, covers IO–OCOMP)
 
-Data from @cite{keenan-comrie-1977} Table 1.
+Data from [keenan-comrie-1977] Table 1.
 -/
 
 namespace English

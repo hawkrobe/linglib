@@ -7,9 +7,9 @@ import Linglib.Pragmatics.RSA.Channel
 import Linglib.Studies.SedivyEtAl1999
 
 /-!
-# @cite{ronderos-etal-2024}
-@cite{sedivy-etal-1999} @cite{kursat-degen-2021} @cite{giles-etal-2026}
-@cite{aparicio-xiang-kennedy-2015} @cite{aparicio-2017}
+# [ronderos-etal-2024]
+[sedivy-etal-1999] [kursat-degen-2021] [giles-etal-2026]
+[aparicio-xiang-kennedy-2015] [aparicio-2017]
 
 Perceptual, Semantic, and Pragmatic Factors Affect the Derivation of
 Contrastive Inferences. *Open Mind: Discoveries in Cognitive Science*
@@ -34,7 +34,7 @@ distinct findings, formalised here as two predicates:
    either color (β = 0.25, p < 0.01) or material (β = 0.24, p < 0.05).
    No significant difference between color and material. Attributed to
    scalar adjectives requiring more comparison-class processing
-   (@cite{aparicio-xiang-kennedy-2015}, @cite{aparicio-2017}) — gaze
+   ([aparicio-xiang-kennedy-2015], [aparicio-2017]) — gaze
    is more distributed across all four display objects when the listener
    must construct a comparison class.
 
@@ -46,7 +46,7 @@ The paper's contribution is teasing these apart.
 
 ## Paradigm
 
-Built on `Paradigms.VisualWorld` (@cite{huettig-rommers-meyer-2011}).
+Built on `Paradigms.VisualWorld` ([huettig-rommers-meyer-2011]).
 The display contains four objects (`ObjectRole`):
 
 - `target`: the intended referent.
@@ -62,7 +62,7 @@ Within-subjects manipulations on `Cell`:
   present vs. absent.
 - **AdjType**: color, scalar, material — a study-local factor that
   partitions the cell space into three strata. Adjective type is *not*
-  a paradigm primitive (the @cite{huettig-rommers-meyer-2011} review
+  a paradigm primitive (the [huettig-rommers-meyer-2011] review
   does not single it out), so it stays study-local; the paradigm
   exposes the stratified predicates `ContrastReducesCompetitorLooksWhen`
   and `RoleSumLowerInBaselineWhen` to consume it.
@@ -92,10 +92,10 @@ This file is an **empirical anchor**: it defines the experimental cells
 and qualitative predicates that downstream theoretical models must
 satisfy. The empirical claims are encoded as paradigm-level
 predicates, never as `rfl`-over-stipulated-statistics theorems
-(@cite{ronderos-etal-2024}'s F/β/p values are documented in prose at
+([ronderos-etal-2024]'s F/β/p values are documented in prose at
 each predicate, per the `CLAUDE.md` Processing scope).
 
-The novel architectural feature relative to @cite{sedivy-etal-1999} is
+The novel architectural feature relative to [sedivy-etal-1999] is
 **stratification**: where Sedivy's contrast effect is universal over
 cells, Ronderos's is conditional on the stratum (color or scalar, not
 material). The stratified predicate
@@ -109,23 +109,23 @@ shape of an "X × condition" interaction.
 The scalar baseline disadvantage is expressed via
 `Paradigms.VisualWorld.RoleSumLowerInBaselineWhen` — also added to the
 paradigm because it is a recurring analysis pattern
-(@cite{aparicio-xiang-kennedy-2015} report it on color vs. scalar;
-@cite{ronderos-etal-2024} replicate and extend to material vs. scalar).
+([aparicio-xiang-kennedy-2015] report it on color vs. scalar;
+[ronderos-etal-2024] replicate and extend to material vs. scalar).
 
 ## Theoretical Significance
 
 Two prior accounts of the contrastive inference effect:
 
-1. **Lexical comparison-class** (@cite{sedivy-etal-1999},
-   @cite{bierwisch-1989}): scalar adjectives carry a free
+1. **Lexical comparison-class** ([sedivy-etal-1999],
+   [bierwisch-1989]): scalar adjectives carry a free
    comparison-class variable, bound by visual context, which makes
    the contrast pair pragmatically informative. Predicts an effect
    for scalar but *not* for color or material (color and material do
    not require a comparison class — see
    `Features.PropertyDomain.requiresComparisonClass`).
 
-2. **Perceptual discrimination** (@cite{kursat-degen-2021},
-   @cite{giles-etal-2026}): high perceptual discriminability makes a
+2. **Perceptual discrimination** ([kursat-degen-2021],
+   [giles-etal-2026]): high perceptual discriminability makes a
    contrastive description informative. Predicts an effect tracking
    the noise-discrimination ordering color > size > material from
    `RSA.Noise`.
@@ -426,7 +426,7 @@ take on. They are *type-level* connections to the relevant
 infrastructure (`Features.PropertyDomain`, `RSA.Noise`,
 `SedivyEtAl1999`), not restated empirical claims. -/
 
-/-- **Agreement with @cite{sedivy-etal-1999} on scalar adjectives.**
+/-- **Agreement with [sedivy-etal-1999] on scalar adjectives.**
     Both studies place the scalar contrast effect on the size domain,
     which `Features.PropertyDomain` flags as requiring comparison-class
     binding. -/
@@ -460,8 +460,8 @@ theorem material_does_not_require_comparison_class :
     ordering. Ronderos's qualitative effect ordering — present for
     color and scalar, absent for material — is consistent with
     `RSA.Noise`'s ordering color (≈0.98) > size (≈0.60) > material
-    (≈0.40). @cite{kursat-degen-2021} found the same direction on
-    the production side; @cite{ronderos-etal-2024} extends it to
+    (≈0.40). [kursat-degen-2021] found the same direction on
+    the production side; [ronderos-etal-2024] extends it to
     comprehension. -/
 theorem effect_ordering_aligns_with_noise_discrimination :
     RSA.Noise.colorDiscrimination > RSA.Noise.sizeDiscrimination ∧

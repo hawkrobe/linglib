@@ -3,7 +3,7 @@ import Linglib.Semantics.Genericity.Generics
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 
 /-!
-# @cite{asher-pelletier-2012} — More Truths about Generic Truth
+# [asher-pelletier-2012] — More Truths about Generic Truth
 
 Nicholas Asher and Francis Jeffry Pelletier, ch. 12 of
 *Genericity* (Mari, Beyssade, Del Prete eds.), OUP, Oxford Studies in
@@ -41,7 +41,7 @@ fly" correctly overrides "Birds fly" for penguins (exx. 7–8).
 
 ## Refinement vs Specificity
 
-`processDefault` below uses `NormalityOrder.refine` (@cite{veltman-1996}'s
+`processDefault` below uses `NormalityOrder.refine` ([veltman-1996]'s
 operation), which intersects ordering constraints. For the Tweety Triangle,
 Veltman's refinement produces **incomparability** between penguinFlies and
 penguinNoFly (neither is ≤ the other, since each satisfies one default
@@ -70,7 +70,7 @@ structure DefaultRule (W : Type*) where
 
     "Normally, if P then Q" refines the ordering to promote P∧Q worlds
     over P∧¬Q worlds via `NormalityOrder.refine`. This is
-    @cite{veltman-1996}'s monotonic (intersection-based) operation.
+    [veltman-1996]'s monotonic (intersection-based) operation.
 
     Note: A&P's actual system uses per-individual evaluation with
     specificity, which goes beyond simple refinement. See the module
@@ -313,7 +313,7 @@ def challengeData : List ChallengeDatum :=
 
 -- ═══ Against Probabilistic Alternatives (§12.4) ═══
 
-/-- A&P's arguments against @cite{cohen-1999a}'s probabilistic semantics
+/-- A&P's arguments against [cohen-1999a]'s probabilistic semantics
     for generics.
 
     Cohen proposes generic truth ↔ Pr(B(a)|A(a)) > 0.5 (the "Cohen

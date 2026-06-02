@@ -1,7 +1,7 @@
 /-
 # True Demonstratives and Demonstrations
 
-@cite{kaplan-1989} "Demonstratives" §IX, XV, XVI: the theory of true
+[kaplan-1989] "Demonstratives" §IX, XV, XVI: the theory of true
 demonstratives ("that", "this") as opposed to pure indexicals ("I", "now").
 
 True demonstratives require a *demonstration* — an act of pointing, directing
@@ -36,7 +36,7 @@ open Semantics.Reference.Basic (ReferringExpression isDirectlyReferential)
 
 /-- A demonstration: an act that presents an individual in a context.
 
-@cite{kaplan-1989} §IX: "A demonstration is, roughly, a visual presentation of
+[kaplan-1989] §IX: "A demonstration is, roughly, a visual presentation of
 a local object discriminated by a pointing." The demonstration provides the
 *manner of presentation* — different demonstrations of the same object
 constitute different modes of presentation. -/
@@ -62,7 +62,7 @@ def constantDemonstration {C E : Type*} (e : E) (desc : String) : Demonstration 
 
 /-- A true demonstrative: a demonstrative expression completed by a demonstration.
 
-@cite{kaplan-1989} §XV: "that [pointing at Venus in the evening] is bright."
+[kaplan-1989] §XV: "that [pointing at Venus in the evening] is bright."
 The demonstration completes the character; without it, "that" is incomplete. -/
 structure TrueDemonstrative (C : Type*) (W : Type*) (E : Type*) where
   /-- The associated demonstration -/
@@ -81,7 +81,7 @@ def TrueDemonstrative.character {C W E : Type*} [Inhabited E]
     | some e => rigid e
     | none   => rigid default
 
-/-- Principle 2 (@cite{kaplan-1989} §XVI): Complete demonstratives are directly
+/-- Principle 2 ([kaplan-1989] §XVI): Complete demonstratives are directly
 referential — at every context, their content is rigid. -/
 theorem demo_directlyReferential {C W E : Type*} [Inhabited E]
     (td : TrueDemonstrative C W E) :
@@ -152,7 +152,7 @@ def TrueDemonstrative.toReferringExpression {C W E : Type*} [Inhabited E]
 /-! ### Bridge to `NominalDenot`
 
 A demonstrative is the third instance of the unified presuppositional nominal
-(@cite{buring-2012} §1.2): like a pronoun or definite, it is a selector plus a
+([buring-2012] §1.2): like a pronoun or definite, it is a selector plus a
 presupposition. Its selector is the demonstratum (`C → Option E`, fixed by the
 context's demonstration); its intrinsic presupposition is the sortal
 restriction ("that *planet*"). What distinguishes it is that the selector
@@ -169,7 +169,7 @@ def TrueDemonstrative.toNominal {C W E : Type*} (td : TrueDemonstrative C W E) :
     | _, _ => True
   selector := fun c _ => td.demonstration.demonstratum c
 
-/-- Direct reference (@cite{kaplan-1989} Principle 2): the demonstrative's
+/-- Direct reference ([kaplan-1989] Principle 2): the demonstrative's
 selector is world-invariant — the referent is fixed by the context, not the
 world of evaluation. (Contrast a definite, whose `attributiveContent` selector
 varies by world.) -/

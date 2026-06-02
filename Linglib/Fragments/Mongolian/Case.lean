@@ -4,18 +4,18 @@ import Linglib.Syntax.Minimalist.LateMerger
 
 /-!
 # Mongolian Case System
-@cite{gong-2022} @cite{baker-vinokurova-2010}
+[gong-2022] [baker-vinokurova-2010]
 
 Mongolian (Khalkha/Chakhar) uses a hybrid case assignment system:
 
 - **Accusative**: dependent case, assigned when two argumental NPs in the
   same phase compete and the higher NP c-commands the lower one
-  (following @cite{baker-vinokurova-2010}'s analysis of Sakha)
+  (following [baker-vinokurova-2010]'s analysis of Sakha)
 - **Nominative**: assigned by finite T via Agree
 - **Dative**: nonstructural (inherent) case
 
 This hybrid system is the key to understanding Condition C
-reconstruction effects in Mongolian scrambling (@cite{gong-2022}):
+reconstruction effects in Mongolian scrambling ([gong-2022]):
 because ACC is a dependent case, it can be assigned at intermediate
 positions on a scrambling chain (wherever a case competitor exists),
 providing the case positions needed for Wholesale Late Merger.
@@ -30,7 +30,7 @@ tracking case positions, not the A/A-bar distinction.
 
 ## Case assignment rules
 
-@cite{gong-2022} (26)/(84):
+[gong-2022] (26)/(84):
 a. If two distinct argumental NPs in the same phase are such that NP1
    c-commands NP2, value NP2 as ACC, unless NP1 is already marked for case.
 b. NOM is assigned by finite T.
@@ -67,7 +67,7 @@ theorem mongolian_dat_is_nonstructural :
 -- ============================================================================
 
 /-- Scrambling types in Mongolian, classified by distance and landing site.
-    @cite{gong-2022} section 2. -/
+    [gong-2022] section 2. -/
 inductive ScrambleType where
   /-- Short scrambling: DO moves past IO within the clause. -/
   | SS
@@ -96,7 +96,7 @@ inductive BinderRole where
 
 /-- Mongolian case inventory.
     NOM, ACC, GEN, DAT, ABL, INST, COM.
-    @cite{gong-2022}: the cases relevant to scrambling and WLM are
+    [gong-2022]: the cases relevant to scrambling and WLM are
     NOM (Agree-based), ACC (dependent), and DAT (nonstructural).
 
     Note: Mongolian lacks a dedicated locative suffix (LOC is expressed
@@ -170,20 +170,20 @@ def binderHeight (role : BinderRole) : Nat :=
 -- ============================================================================
 
 /-- Whether WLM predicts Condition C reconstruction in a given scenario.
-    This is the central prediction of @cite{gong-2022}: reconstruction
+    This is the central prediction of [gong-2022]: reconstruction
     tracks case positions, not scrambling type or A/A-bar status. -/
 def predictsReconstruction (role : BinderRole) : Bool :=
   wlmForcesReconstruction (casePositionsAbove role) (binderHeight role)
 
 /-- Scrambling over IO: WLM bleeds Condition C.
-    @cite{gong-2022} (4), (18b), (27): dependent ACC is available at
+    [gong-2022] (4), (18b), (27): dependent ACC is available at
     Spec,VP (derived from `do_gets_dependent_acc`), so the NP restrictor
     can merge above the IO binder without violating Condition C. -/
 theorem io_binder_no_reconstruction :
     predictsReconstruction .io = false := by decide
 
 /-- Scrambling over Subject: WLM forces Condition C reconstruction.
-    @cite{gong-2022} (3), (20), (21), (29): no dependent case position
+    [gong-2022] (3), (20), (21), (29): no dependent case position
     exists above the subject (derived from `subject_gets_unmarked`),
     so the NP restrictor must merge below the subject binder. -/
 theorem subject_binder_forces_reconstruction :
@@ -195,7 +195,7 @@ theorem subject_binder_forces_reconstruction :
 
 /-- PP-scrambling always forces Condition C reconstruction.
     PPs lack the DP-internal structure (determiner + NP restrictor)
-    required for WLM. @cite{gong-2022} (93)-(94): scrambling of PPs
+    required for WLM. [gong-2022] (93)-(94): scrambling of PPs
     headed by *esreg* 'against' always shows obligatory reconstruction,
     regardless of whether the binder is an IO or Subject. -/
 def ppReconstructsOverIO : Bool := ppAlwaysReconstructs

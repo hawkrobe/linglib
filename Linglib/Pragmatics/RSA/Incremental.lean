@@ -2,7 +2,7 @@ import Linglib.Pragmatics.RSA.Basic
 
 /-!
 # IncrementalSemantics — Cohn-Gordon's bundle for word-by-word RSA
-@cite{cohn-gordon-goodman-potts-2019}
+[cohn-gordon-goodman-potts-2019]
 
 A scene-specific incremental RSA model factors into three pieces:
 
@@ -16,8 +16,8 @@ the literal-listener categorical L0^UTT, and the full `RSAConfig` — is
 *derived* rather than re-stipulated per study.
 
 This consolidates what was previously triplicated across CommonGround's Figure 1
-scene, the @cite{sedivy-2007} reference-game scene, and the
-@cite{rubio-fernandez-2016} display: each becomes a single
+scene, the [sedivy-2007] reference-game scene, and the
+[rubio-fernandez-2016] display: each becomes a single
 `IncrementalSemantics` value, with `toRSAConfig` producing the model.
 
 ## The deep theorem (§2.4)
@@ -37,7 +37,7 @@ namespace RSA
 The three fields jointly determine the entire model: `toRSAConfig`
 builds the No-Brevity (`s1Score = L0`, α = 1, no cost) `RSAConfig`,
 `incrementalSem` derives the extension-based meaning function
-(@cite{cohn-gordon-goodman-potts-2019} §2.2), and `l0Utt` projects
+([cohn-gordon-goodman-potts-2019] §2.2), and `l0Utt` projects
 the literal listener over complete utterances. -/
 structure IncrementalSemantics (U W : Type) [DecidableEq U] where
   /-- Word-level Boolean truth: does word `u` apply to world `w`? -/
@@ -67,7 +67,7 @@ def viableExtCount (sem : IncrementalSemantics U W) (pfx : List U) : ℕ :=
     (fun u => pfx.isPrefixOf u && sem.worlds.any (fun r => sem.uttSem u r))).length
 
 /-- Extension-based incremental semantics
-    (@cite{cohn-gordon-goodman-potts-2019} §2.2):
+    ([cohn-gordon-goodman-potts-2019] §2.2):
 
       ⟦pfx⟧(r) = trueExtCount(pfx, r) / viableExtCount(pfx) -/
 noncomputable def incrementalSem (sem : IncrementalSemantics U W)
@@ -137,7 +137,7 @@ variable [Fintype U] [Fintype W]
 /-- The No-Brevity incremental RSA built from the bundle:
     chain-rule speaker, α = 1, no cost, uniform priors,
     extension-based L0 meaning. The "No-Brevity" name (after
-    @cite{dale-reiter-1995}) flags `s1Score = L0`: the speaker scores
+    [dale-reiter-1995]) flags `s1Score = L0`: the speaker scores
     each next word by the literal listener's posterior, with brevity
     emerging only via the chain-rule product over longer trajectories. -/
 noncomputable def toRSAConfig (sem : IncrementalSemantics U W) : RSAConfig U W where

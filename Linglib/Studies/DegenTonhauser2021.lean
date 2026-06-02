@@ -3,8 +3,8 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Copular
 
 /-!
-# @cite{degen-tonhauser-2021}: Prior Beliefs Modulate Projection
-@cite{qing-goodman-lassiter-2016}
+# [degen-tonhauser-2021]: Prior Beliefs Modulate Projection
+[qing-goodman-lassiter-2016]
 
 Prior beliefs modulate projection. Open Mind 5:59–70.
 
@@ -45,7 +45,7 @@ Spearman r = .991.
 ## Theoretical Significance
 
 The prior-belief effect motivates probabilistic models of projection
-(e.g., @cite{qing-goodman-lassiter-2016}). Both existing probabilistic
+(e.g., [qing-goodman-lassiter-2016]). Both existing probabilistic
 projection models (Qing et al. 2016, Stevens et al. 2017) are couched
 within the RSA framework, which standardly assumes utterance interpretation
 is modulated by listeners' prior beliefs.

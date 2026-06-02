@@ -7,18 +7,18 @@ import Linglib.Semantics.Lexical.Roots.RootFeatures
 /-!
 # Morphological Causation: Causative Construction Typology
 
-@cite{comrie-1989} @cite{song-1996} @cite{krejci-2012}
+[comrie-1989] [song-1996] [krejci-2012]
 
 Causative constructions cross-linguistically vary along two orthogonal
 axes: **morphological complexity** (compact → analytic) and **semantic
-directness** (direct → indirect mediation). @cite{comrie-1989}'s central
+directness** (direct → indirect mediation). [comrie-1989]'s central
 generalization: more complex morphology correlates with more indirect
 causation.
 
 ## Causer Type
 
 Causative constructions are sensitive to the causer's **intentionality**
-and ontological category. Following @cite{hafeez-2025}, we distinguish:
+and ontological category. Following [hafeez-2025], we distinguish:
 - **intentional human** (IHCr): volitional, controlled action → full agentivity
 - **accidental human** (AHCr): unintentional, no control → marginal agentivity
 - **natural force** (NFCr): non-human, non-volitional → non-agentive
@@ -30,7 +30,7 @@ construction selection in Urdu and other languages.
 ## Causee/Affectee Type
 
 The second participant in a causal chain (causee or affectee) varies in
-four levels of control and animacy, following @cite{hafeez-2025}:
+four levels of control and animacy, following [hafeez-2025]:
 - **controlling human** (ContrHCEAF): exercises control over the induced action
 - **physically impacted human** (PhysImpHCEAF): involuntarily coerced
 - **psychologically impacted human** (PsychImpHCEAF): mentally affected
@@ -39,7 +39,7 @@ four levels of control and animacy, following @cite{hafeez-2025}:
 ## Agentivity
 
 Agentivity decomposes into **intentionality × control** (following
-@cite{van-valin-wilkins-1996}). Three degrees:
+[van-valin-wilkins-1996]). Three degrees:
 - **full**: intentional causer (IHCr)
 - **marginal**: accidental human (AHCr) or natural force (NFCr)
 - **partial/induced**: causee exercises control under causer's influence
@@ -54,11 +54,11 @@ Agentivity decomposes into **intentionality × control** (following
   restrictions for cross-linguistic comparison
 - `comrie_monotone` formalizes the compact-diffuse correlation
 
-## Intransitivization (@cite{krejci-2012})
+## Intransitivization ([krejci-2012])
 
 The causative/inchoative alternation has two directions: causativization
 (adding an external cause) and intransitivization (removing or
-coidentifying it). @cite{krejci-2012}'s central insight: intransitive
+coidentifying it). [krejci-2012]'s central insight: intransitive
 variants are NOT structurally uniform. **Reflexive** intransitives
 (German *sich*, Hindi *apne-aap*) coidentify causer and causee,
 retaining bieventive structure. **Anticausative** intransitives remove
@@ -78,7 +78,7 @@ open Semantics.ArgumentStructure.AgentivityLattice (AgentivityNode)
 open Semantics.Lexical.Roots
 
 -- ════════════════════════════════════════════════════
--- § 1. Causer Type (@cite{hafeez-2025}, @cite{comrie-1989})
+-- § 1. Causer Type ([hafeez-2025], [comrie-1989])
 -- ════════════════════════════════════════════════════
 
 /-- Causer type distinguished by intentionality and ontological category.
@@ -88,7 +88,7 @@ open Semantics.Lexical.Roots
     and non-intentional.
 
     This three-way distinction drives construction selection in Urdu
-    (@cite{hafeez-2025}) and other languages. -/
+    ([hafeez-2025]) and other languages. -/
 inductive CauserType where
   | intentionalHuman  -- IHCr: volitional, controlled action
   | accidentalHuman   -- AHCr: unintentional, no control
@@ -97,7 +97,7 @@ inductive CauserType where
 
 /-- Causee/affectee type: four levels of control and animacy.
 
-    @cite{hafeez-2025}'s four-way distinction captures the gradient of
+    [hafeez-2025]'s four-way distinction captures the gradient of
     the second participant's autonomy in a causal chain. A controlling
     causee reduces the causer's responsibility; an inanimate affectee
     increases it. -/
@@ -109,12 +109,12 @@ inductive CauseeAffecteeType where
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 2. Agentivity Degree (@cite{hafeez-2025} Ch. 7)
+-- § 2. Agentivity Degree ([hafeez-2025] Ch. 7)
 -- ════════════════════════════════════════════════════
 
 /-- Degree of agentivity, decomposed from intentionality × control.
 
-    @cite{hafeez-2025}: "an intentional causer displays full agentivity,
+    [hafeez-2025]: "an intentional causer displays full agentivity,
     an accidental causer shows reduced or marginal agentivity, and a
     causee/affectee who exerts control displays induced or partial
     agentivity." -/
@@ -137,12 +137,12 @@ def CauseeAffecteeType.hasInducedAgentivity : CauseeAffecteeType → Bool
   | _                 => false
 
 -- ════════════════════════════════════════════════════
--- § 3. Mediation (@cite{comrie-1989}, directness chapter)
+-- § 3. Mediation ([comrie-1989], directness chapter)
 -- ════════════════════════════════════════════════════
 
 /-- Directness of causal mediation between causer and result.
 
-    @cite{comrie-1989}: direct causation involves no intermediary — the
+    [comrie-1989]: direct causation involves no intermediary — the
     causer brings about the result without an intervening causee
     decision or action. Indirect causation involves a mediating causee
     who retains some autonomy over the caused event. -/
@@ -159,12 +159,12 @@ def Mediation.rank : Mediation → Nat
   | .indirect => 1
 
 -- ════════════════════════════════════════════════════
--- § 4. Causative Complexity (@cite{comrie-1989}, morphological typology)
+-- § 4. Causative Complexity ([comrie-1989], morphological typology)
 -- ════════════════════════════════════════════════════
 
 /-- Morphological complexity of a causative construction.
 
-    @cite{comrie-1989}'s compact-to-analytic continuum:
+    [comrie-1989]'s compact-to-analytic continuum:
     - **lexical**: suppletive or idiosyncratic (kill/die, fell/fall)
     - **morphological**: productive affix (Urdu -aa, Japanese -(s)ase)
     - **periphrastic**: analytic multi-word (English "make X do Y")
@@ -182,7 +182,7 @@ def Mediation.rank : Mediation → Nat
     interconvertible; the lossy `CausativeConstructionType.toComplexity`
     bridge in `Studies/Song1996.lean` collapses Song's
     `compact / freeMorpheme` (e.g. French *faire-V*) into
-    `CausativeComplexity.morphological`, even though @cite{folli-harley-2005}
+    `CausativeComplexity.morphological`, even though [folli-harley-2005]
     analyse French *faire* as periphrastic. -/
 inductive CausativeComplexity where
   | lexical
@@ -227,7 +227,7 @@ structure CausativeConstruction where
     is preferentially produced.
 
     -- UNVERIFIED: table number
-    @cite{hafeez-2025}: each construction has a (possibly empty)
+    [hafeez-2025]: each construction has a (possibly empty)
     set of features that define its prototype. A prototype is "hypothesized"
     when the acceptability peak exceeds 50% ceiling for a scene type.
 
@@ -251,7 +251,7 @@ structure SemanticPrototype where
 -- § 7. Comrie's Generalization
 -- ════════════════════════════════════════════════════
 
-/-- **Comrie's monotonicity** (@cite{comrie-1989}): within a single
+/-- **Comrie's monotonicity** ([comrie-1989]): within a single
     language, if construction A is morphologically more compact than
     construction B, then A encodes at least as direct causation as B.
 
@@ -262,13 +262,13 @@ def comrie_monotone (c1 c2 : CausativeConstruction) : Prop :=
   c1.complexity < c2.complexity → c1.mediation.rank ≤ c2.mediation.rank
 
 -- ════════════════════════════════════════════════════
--- § 7b. Causee Marking Hierarchy (@cite{comrie-1989}, Ch 8)
+-- § 7b. Causee Marking Hierarchy ([comrie-1989], Ch 8)
 -- ════════════════════════════════════════════════════
 
 /-- Grammatical relation slots available for causee assignment,
     ordered from highest to lowest on the hierarchy.
 
-    @cite{comrie-1989}: when a verb is causativized, the original
+    [comrie-1989]: when a verb is causativized, the original
     subject (S or A) is demoted to the next available slot on the
     grammatical relations hierarchy. The slot depends on the
     base verb's valency — higher valency leaves fewer slots open:
@@ -293,7 +293,7 @@ def CauseeSlot.rank : CauseeSlot → Nat
 
 /-- Predict causee slot from base verb valency.
 
-    @cite{comrie-1989}: the causee occupies the highest available slot
+    [comrie-1989]: the causee occupies the highest available slot
     not already filled by the base verb's arguments.
 
     - valency 1 (intransitive): S is the sole argument → causee = DO
@@ -315,7 +315,7 @@ theorem causee_demotion_monotone :
 -- § 8. Bridges to Existing Infrastructure
 -- ════════════════════════════════════════════════════
 
-/-- All causer types are "external" in @cite{kim-2024}'s sense.
+/-- All causer types are "external" in [kim-2024]'s sense.
 
     The causer type taxonomy refines `CausalSource.external`:
     psych verbs' internal source (mental representation) is
@@ -385,19 +385,19 @@ theorem physImpact_no_induced :
     CauseeAffecteeType.hasInducedAgentivity .physImpactHuman = false := rfl
 
 -- ════════════════════════════════════════════════════
--- § 10. Intransitivization Type (@cite{krejci-2012})
+-- § 10. Intransitivization Type ([krejci-2012])
 -- ════════════════════════════════════════════════════
 
 /-- How an alternating verb forms its intransitive variant.
 
-    @cite{krejci-2012}'s central insight: intransitive variants of
+    [krejci-2012]'s central insight: intransitive variants of
     causative/inchoative alternation verbs are NOT structurally uniform.
     Two distinct operations produce surface intransitives:
 
-    - **anticausative**: on the deletion analysis (@cite{krejci-2012}),
+    - **anticausative**: on the deletion analysis ([krejci-2012]),
       the external cause is removed entirely; the result is monoeventive:
       [BECOME [x STATE]], with no causer position. On the competing
-      reflexivization analysis (@cite{koontz-garboden-2009}), CAUSE is
+      reflexivization analysis ([koontz-garboden-2009]), CAUSE is
       retained and the EFFECTOR is identified with the THEME — the result
       is bieventive. See `Studies/KoontzGarboden2009.lean`.
     - **reflexive**: the causer and causee are *coidentified* —
@@ -453,9 +453,9 @@ theorem bieventive_implies_bySelf (it : IntransitivizationType) :
   cases it <;> simp [IntransitivizationType.isBieventive,
     IntransitivizationType.licensesBySelf]
 
-/-- Anticausatives are monoeventive on @cite{krejci-2012}'s analysis:
+/-- Anticausatives are monoeventive on [krejci-2012]'s analysis:
     no coidentification, no bieventivity, no "by itself" licensing.
-    @cite{koontz-garboden-2009} disputes this — see
+    [koontz-garboden-2009] disputes this — see
     `Studies/KoontzGarboden2009.lean`. -/
 theorem anticausative_monoeventive :
     IntransitivizationType.isBieventive .anticausative = false ∧
@@ -469,10 +469,10 @@ theorem reflexive_bieventive :
     IntransitivizationType.licensesBySelf .reflexive = true := ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 11. Causativizability Hierarchy (@cite{krejci-2012})
+-- § 11. Causativizability Hierarchy ([krejci-2012])
 -- ════════════════════════════════════════════════════
 
-/-! @cite{krejci-2012} proposes a cross-linguistic hierarchy of
+/-! [krejci-2012] proposes a cross-linguistic hierarchy of
     causativizability — the extent to which a morphological causative
     morpheme can apply to different verb classes:
 
@@ -481,7 +481,7 @@ theorem reflexive_bieventive :
     The hierarchy is implicational: if a morpheme causativizes a
     higher verb class, it also causativizes all lower classes. This
     -- UNVERIFIED: table number
-    is validated across 12 languages in @cite{krejci-2012}. -/
+    is validated across 12 languages in [krejci-2012]. -/
 
 /-- Cross-linguistic data on causativizability: which verb classes
     a given morphological causative morpheme can apply to. -/
@@ -501,7 +501,7 @@ def CausativizabilityData.respectsHierarchy (d : CausativizabilityData) : Bool :
   (!d.unergative || d.middlesIngestive) &&
   (!d.middlesIngestive || d.unaccusative)
 
-/-- Cross-linguistic causativizability data from @cite{krejci-2012}.
+/-- Cross-linguistic causativizability data from [krejci-2012].
     Languages are ordered from narrowest to broadest causative scope. -/
 def krejciLanguages : List CausativizabilityData :=
   [ { language := "Slave",            morpheme := "-h-",    unaccusative := true }

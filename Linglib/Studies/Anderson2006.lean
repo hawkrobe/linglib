@@ -15,11 +15,11 @@ import Linglib.Features.Aktionsart
 
 /-!
 # Anderson (2006): Auxiliary Verb Constructions
-@cite{anderson-2006} @cite{heine-1993}
+[anderson-2006] [heine-1993]
 
 Cross-linguistic typology of auxiliary verb constructions (AVCs):
 classification by inflectional distribution between auxiliary and
-lexical verb, with diachronic grounding in @cite{heine-1993}'s
+lexical verb, with diachronic grounding in [heine-1993]'s
 grammaticalization framework.
 
 ## Key contributions formalized
@@ -37,7 +37,7 @@ grammaticalization framework.
    onto Heine 1993's cline (Anderson p. 5: *"According to Heine
    (1993: 48ff.)..."*). The cline lives in
    `Diachronic/Grammaticalization.lean`, anchored on
-   @cite{heine-1993} ch. 3.
+   [heine-1993] ch. 3.
 
 ## Coverage
 
@@ -50,7 +50,7 @@ Sample of 9 AVC datums across 7 languages, covering all 5 patterns:
 - Jakaltek (split, abs/erg)
 - Pipil split/doubled (Anderson ch. 5 ex. 133, p. 224)
 - Pipil lex-headed (Anderson p. 220-221 fn. 6, with *weli*)
-- Finnish split (negative auxiliary *ei*) @cite{karlsson-2017}
+- Finnish split (negative auxiliary *ei*) [karlsson-2017]
 - Hemba split/doubled
 
 ## 2026-04-30 audit fixes
@@ -64,14 +64,14 @@ and Heine 1993 (book p. 48ff. via Anderson p. 5):
 - **Pipil `.split` → `.splitDoubled`** (Ch 5 ex. 133, with subjects
   doubly marked). Fragment `splitDistribution` corrected to put
   `.agreement` on AUX (matches the gloss `1-AUX 1-2PL-show`).
-- **Cline reattributed to @cite{heine-1993}** (Anderson p. 5
+- **Cline reattributed to [heine-1993]** (Anderson p. 5
   explicitly cites Heine 1993:48ff.). Substrate
   `GramStage.toMorphStatus` projection moved to
   `Diachronic/Grammaticalization.lean`.
 - **`negStrategyStage` moved to `NegativeAuxiliaries.lean`** as
   `NegStrategy.toGramStage : NegStrategy → Option GramStage`, with
   `.negParticle => none` (not on the verbal cline) — fixes the
-  earlier formaliser-introduced collapse of @cite{miestamo-2005}'s
+  earlier formaliser-introduced collapse of [miestamo-2005]'s
   particle-vs-verb distinction.
 - **Dropped Table 2.3 reference**: Anderson's Table 2.3 (p. 114)
   catalogs *non-finite forms within AUX-headed AVCs* (a single-
@@ -88,7 +88,7 @@ and Heine 1993 (book p. 48ff. via Anderson p. 5):
   `finnish_1sg_in_paradigm` witness lemma, now provably
   grounded in the Fragment paradigm rather than passing through
   the dead `none` fallback branch.
-- **Sorace bridge** chains through @cite{sorace-2000}'s
+- **Sorace bridge** chains through [sorace-2000]'s
   `vendlerClassToTypicalTransitivity` for a 2-step Vendler
   → TransitivityClass derivation.
 - **Cross-framework theorem** `anderson_miestamo_agree_on_neg_morphology`
@@ -193,7 +193,7 @@ def pipilLexHeaded : AVCDatum :=
     AVC patterns — Udihe and Neyo as aux-headed, Kokota as split,
     Kwerba as lex-headed, 'Iipay as doubled. Finnish *ei* itself is
     not classified by Anderson in §1.7.2 with a specific pattern label;
-    the split classification here follows @cite{karlsson-2017} §19.5
+    the split classification here follows [karlsson-2017] §19.5
     where the connegative suffix on the LV is the load-bearing diagnostic.
     The split nature derives from `Finnish.Negation.finnishNegDistribution`:
     the negative auxiliary hosts negation, tense, and agreement, while
@@ -431,7 +431,7 @@ theorem heads_coincide_iff_lexHeaded (p : InflPattern) :
 
 /-! ## Negative auxiliaries as AVCs
 
-@cite{anderson-2006} §1.7.2 (p. 33-34) treats negative auxiliaries
+[anderson-2006] §1.7.2 (p. 33-34) treats negative auxiliaries
 across multiple AVC patterns: aux-headed in Udihe, Neyo; split in
 Kokota; lex-headed in Kwerba; doubled in 'Iipay. The substantive
 theorems about NegStrategy → InflPattern live in
@@ -472,7 +472,7 @@ theorem splitDoubled_predicts_finite_lv :
 
 Be/have auxiliary selection (`Selection.lean`) operates within
 aux-headed AVCs: the question of *which* auxiliary appears
-presupposes the auxiliary hosts inflection. @cite{sorace-2000}'s
+presupposes the auxiliary hosts inflection. [sorace-2000]'s
 sister study `Studies/Sorace2000.lean` provides
 `vendlerClassToTypicalTransitivity`; the quantified composition
 with `canonicalSelection` is given below.
@@ -514,9 +514,9 @@ theorem italian_arrivare_grounds_chain :
 
 /-! ## Cross-framework: Miestamo 2005 (negation morpheme classification)
 
-@cite{miestamo-2005} classifies negation strategies by morpheme
+[miestamo-2005] classifies negation strategies by morpheme
 type (`NegMorphemeType`: `.auxVerb`, `.affix`, `.particle`, ...);
-@cite{anderson-2006} via @cite{heine-1993}'s grammaticalization
+[anderson-2006] via [heine-1993]'s grammaticalization
 framework places verbal negators on the cline at `.auxiliary` and
 non-verbal negators off the cline (Anderson §1.7.2 covers only
 verbal negators). The two frameworks classify by independently-
@@ -525,7 +525,7 @@ motivated criteria but, for the strategies linglib's
 "verbal": Anderson's `.toGramStage = some .auxiliary` is exactly
 Miestamo's `.toNegMorphemeType = .auxVerb`.
 
-Composition with @cite{miestamo-2005}'s
+Composition with [miestamo-2005]'s
 `verbal_constructional_always_derived` (in
 `Linglib/Studies/Miestamo2005.lean`) then
 yields: any `NegStrategy` Anderson places at the auxiliary cline

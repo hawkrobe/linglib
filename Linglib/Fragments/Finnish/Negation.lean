@@ -2,8 +2,8 @@ import Linglib.Morphology.MorphRule
 import Linglib.Typology.Negation
 
 /-!
-# Finnish Negation: The Negative Auxiliary *ei* @cite{karlsson-2017}
-@cite{bybee-1985} @cite{miestamo-2005} @cite{haspelmath-2013}
+# Finnish Negation: The Negative Auxiliary *ei* [karlsson-2017]
+[bybee-1985] [miestamo-2005] [haspelmath-2013]
 
 Finnish expresses sentential negation through a **conjugated negative
 auxiliary verb** *ei*. The negative verb inflects
@@ -21,7 +21,7 @@ for person and number, while the lexical verb appears in a nonfinite
 ## Key structural property
 
 The negative auxiliary bears the inflection that the main verb would
-otherwise carry. This splits the @cite{bybee-1985} relevance hierarchy:
+otherwise carry. This splits the [bybee-1985] relevance hierarchy:
 negation (rank 7) hosts agreement (rank 8) and tense, while the
 main verb retains only the stem and aspect. This is a counter-example
 to strict stem-outward ordering within a single word — the ordering

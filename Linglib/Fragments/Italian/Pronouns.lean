@@ -6,7 +6,7 @@ import Linglib.Core.Word
 Personal pronouns (strong forms) and clitic paradigm for Italian.
 
 ## Strong Pronouns
-@cite{munoz-perez-2026}
+[munoz-perez-2026]
 
 Italian has a T/V distinction in 2nd person:
 - Singular: *tu* (familiar T) vs *Lei* (formal V, 3sg agreement)
@@ -48,7 +48,7 @@ def tu : PersonalPronoun :=
     agreement, patterns with 3sg.f clitics, binds 3rd person reflexive *si*.
     Interpretably 2nd person: triggers PCC effects, Fancy Constraint effects,
     2PL resolved agreement in coordination.
-    @cite{adamson-zompi-2025} -/
+    [adamson-zompi-2025] -/
 def lei_formal : PersonalPronoun :=
   { form := "Lei", person := some .third, number := some .sg, register := .formal,
     referentialPerson := some .second }
@@ -203,7 +203,7 @@ theorem tv_distinction :
     tu.register = .informal ∧ lei_formal.register = .formal := ⟨rfl, rfl⟩
 
 /-- *Lei* has 3rd person agreement features but 2nd person interpretable features.
-    @cite{adamson-zompi-2025} -/
+    [adamson-zompi-2025] -/
 theorem lei_formal_dual_person :
     lei_formal.person = some .third ∧
     lei_formal.referentialPerson = some .second := ⟨rfl, rfl⟩
@@ -224,7 +224,7 @@ theorem has_both_numbers :
 -- ============================================================================
 
 /-- Italian's two pronoun series instantiate two Cardinaletti–Starke deficiency
-    classes (@cite{cardinaletti-starke-1999}): the strong forms (`allPronouns`)
+    classes ([cardinaletti-starke-1999]): the strong forms (`allPronouns`)
     are `.strong`; the object clitics (`paradigm`) are `.clitic`. -/
 def strongStrength : Strength := .strong
 

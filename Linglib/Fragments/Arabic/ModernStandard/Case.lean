@@ -3,7 +3,7 @@ import Linglib.Typology.Case
 
 /-!
 # Modern Standard Arabic Case Inventory
-@cite{ryding-2005}
+[ryding-2005]
 
 Three-case nominal inflection (Ryding §5, p. 165): nominative *raf ʿ*
 (`-u`), genitive *jarr* (`-i`), accusative *naSb* (`-a`). Case marking

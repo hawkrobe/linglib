@@ -4,7 +4,7 @@ import Mathlib.Data.Rat.Defs
 /-!
 # Evaluative Measure Semantics for Deadjectival Intensifiers
 
-@cite{nouwen-2024} proposes that deadjectival intensifiers derive their degree
+[nouwen-2024] proposes that deadjectival intensifiers derive their degree
 function from the evaluative meaning of their adjectival base.
 
 ## Core Idea
@@ -17,7 +17,7 @@ For "pleasant": μ_pleasant(d) peaks at moderate degrees (near the norm).
 
 ## Intensified Meaning
 
-Simplified from @cite{nouwen-2024} eq. 44–45; the RSA model (§4, eq. 72)
+Simplified from [nouwen-2024] eq. 44–45; the RSA model (§4, eq. 72)
 uses this direct degree-level intersection:
 
 ⟦horribly warm⟧ = λd. warm(d) ∧ horrible(d)
@@ -93,7 +93,7 @@ def muPleasant (max : Nat) : EvaluativeMeasure max where
 -- Intensified Meaning (Nouwen eq. 45)
 
 /--
-Intensified positive meaning (simplified from @cite{nouwen-2024} eq. 44–45).
+Intensified positive meaning (simplified from [nouwen-2024] eq. 44–45).
 
 ⟦ADV-ly ADJ⟧(d, θ_adj, θ_eval) = (d > θ_adj) ∧ (μ_eval(d) > θ_eval)
 

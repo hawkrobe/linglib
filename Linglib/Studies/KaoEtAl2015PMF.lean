@@ -6,8 +6,8 @@ import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 
 /-!
-# @cite{kao-goodman-2015} on mathlib `PMF` — headline architectural theorem
-@cite{kao-goodman-2015}
+# [kao-goodman-2015] on mathlib `PMF` — headline architectural theorem
+[kao-goodman-2015]
 
 "Let's talk (ironically) about the weather: Modeling verbal irony"
 *Proceedings of the 37th Annual Meeting of the Cognitive Science Society* (2015).

@@ -1,7 +1,7 @@
 /-
 # PLA Belief Reports
 
-@cite{dekker-2012} Chapter 4 (Quantification and Modality), §4.2: Knowing Who and Believing What.
+[dekker-2012] Chapter 4 (Quantification and Modality), §4.2: Knowing Who and Believing What.
 
 ## Key Concepts
 
@@ -20,7 +20,7 @@
   The belief is about whoever satisfies "the winner" in John's belief worlds.
   Uses descriptive concept - may pick out different individuals.
 
-### Conceptual Covers (@cite{aloni-2001}, @cite{dekker-2012} §3.2/§4.2)
+### Conceptual Covers ([aloni-2001], [dekker-2012] §3.2/§4.2)
 A conceptual cover is a set of concepts that:
 1. Covers the domain (every entity is picked out by some concept)
 2. Is functional (each concept picks out at most one entity per possibility)
@@ -240,7 +240,7 @@ theorem substitutivity_deRe (R : DoxAccessibility E) (M : Model E)
 
 /-!
 ## Quine's Ortcutt Puzzle
-@cite{quine-1956}
+[quine-1956]
 
 The linguistic puzzle that motivates conceptual covers:
 
@@ -318,7 +318,7 @@ theorem quine_requires_divergence (R : DoxAccessibility E) (M : Model E)
 /-!
 ## Observation 20: Quantifier Scope and Belief
 
-@cite{dekker-2012} Observation 20 (Quantifier Import and Export, p.95):
+[dekker-2012] Observation 20 (Quantifier Import and Export, p.95):
 > B(r, ∃x_C Sx) = ∃x_C B(r, Sx)
 
 This equivalence holds when quantification is relativized to a conceptual cover C.
@@ -405,7 +405,7 @@ theorem obs20_equiv_iff_uniform_witness (R : DoxAccessibility E) (M : Model E)
 /-!
 ## Observation 21: Knowing Who is Cover-Relative
 
-@cite{dekker-2012} Observation 21 (Knowing and not Knowing Who, p.97):
+[dekker-2012] Observation 21 (Knowing and not Knowing Who, p.97):
 > "Knowing who" is relative to a conceptual cover.
 
 The Hesperus/Phosphorus puzzle:

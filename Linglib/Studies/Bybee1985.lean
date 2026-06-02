@@ -5,9 +5,9 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Bybee (1985): Morphology — A Study of the Relation Between Meaning and Form
-@cite{bybee-1985}
+[bybee-1985]
 
-@cite{bybee-1985} (Typological Studies in Language 9, John Benjamins) reports
+[bybee-1985] (Typological Studies in Language 9, John Benjamins) reports
 a 50-language sample (Perkins 1980 stratified probability sample) and tests
 three predictions of the **relevance hypothesis**: morpheme categories whose
 meaning is more directly relevant to the verb stem (a) occur more frequently
@@ -74,7 +74,7 @@ The raw counts (percentage × 50 / 100) are integers because the sample is
 exactly 50 languages. -/
 
 /-- Number of languages (out of 50) that have *inflectional* expression of
-the given category. Verified directly against @cite{bybee-1985} Fig 1
+the given category. Verified directly against [bybee-1985] Fig 1
 (p. 30). The raw counts equal `0.01 × percentage × 50`. -/
 def inflectionalCount50 : BybeeCategory → Nat
   | .valence       => 3   -- 6%

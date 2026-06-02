@@ -7,9 +7,9 @@ import Linglib.Studies.Santorio2018
 
 /-!
 # Bar-Lev & Fox (2020) — Free Choice via Innocent Inclusion
-@cite{bar-lev-fox-2020} @cite{fox-2007} @cite{spector-2016}
+[bar-lev-fox-2020] [fox-2007] [spector-2016]
 
-Worked example of @cite{bar-lev-fox-2020} "Free choice, simplification, and
+Worked example of [bar-lev-fox-2020] "Free choice, simplification, and
 Innocent Inclusion" (Natural Language Semantics 28:175–223) over a five-world
 toy modal model.
 
@@ -72,7 +72,7 @@ disjuncts are individually or jointly permitted.
 
 The `separatelyAB` world is the cell witness: each disjunct is individually
 permitted but they are not jointly permitted. This world distinguishes
-`◇a ∧ ◇b` from `◇(a ∧ b)` and is the cornerstone of @cite{bar-lev-fox-2020}'s
+`◇a ∧ ◇b` from `◇(a ∧ b)` and is the cornerstone of [bar-lev-fox-2020]'s
 free-choice derivation. -/
 inductive FCWorld where
   | neither : FCWorld       -- Neither a nor b permitted
@@ -125,7 +125,7 @@ def fcPrejacent : Set FCWorld := permAorB
 -- §2. Non-closure under conjunction
 -- ============================================================================
 
-/-- @cite{bar-lev-fox-2020} eqn (13b) p. 182: the pairwise conjunction
+/-- [bar-lev-fox-2020] eqn (13b) p. 182: the pairwise conjunction
     of the disjunctive alternatives is NOT closed by `fcALT`. The
     `separatelyAB` world satisfies `permA ∩ permB` but no element of
     `fcALT` (specifically not `permAandB`); witnesses at `.onlyA`/
@@ -344,7 +344,7 @@ Direct application of the substrate-level cell-witness factorization
 `exhIEII_implies_cell_witnessed_alt` (`Operators/InnocentInclusion.lean`)
 to each disjunct, using `separatelyAB_in_cell` as the cell witness.
 The substrate theorem encapsulates the abstract content of
-@cite{bar-lev-fox-2020} §3.3: any alternative true at a cell witness
+[bar-lev-fox-2020] §3.3: any alternative true at a cell witness
 is entailed by `exhIEII`. -/
 theorem free_choice :
     ∀ w, exhIEII fcALT fcPrejacent w → permA w ∧ permB w := fun w h_exh =>
@@ -409,7 +409,7 @@ theorem simple_has_conjunction : propAandB ∈ simpleALT := by simp [simpleALT]
 /-!
 ## SDA — the second contribution highlighted in the paper title
 
-@cite{bar-lev-fox-2020} §7 derives **simplification of disjunctive
+[bar-lev-fox-2020] §7 derives **simplification of disjunctive
 antecedents** by applying `Exh^{IE+II}` to a counterfactual prejacent
 `(p∨q)□→r` over the 4-element alternative set obtained by
 disjunct-replacement (eqn 65 p. 205):
@@ -422,7 +422,7 @@ alternatives, giving Bar-Lev/Fox's verdict (eqn 67 p. 206):
 
   Exh^{IE+II}((p∨q)□→r) ⇔ (p□→r) ∧ (q□→r) ∧ ¬((p∧q)□→r)
 
-This is the **central rival mechanism** to @cite{santorio-2018}'s
+This is the **central rival mechanism** to [santorio-2018]'s
 homogeneity-based SDA derivation: both predict the SDA inference
 `(p∨q)□→r ⊨ (p□→r) ∧ (q□→r)` via incompatible mechanisms (Bar-Lev/Fox:
 exhaustification-via-Innocent-Inclusion; Santorio: per-alternative
@@ -767,16 +767,16 @@ end SDA
 /-!
 ## The central debate Zani-Ciardelli-Sanfelici 2026 frames
 
-@cite{santorio-2018} derives SDA via per-alternative homogeneity
+[santorio-2018] derives SDA via per-alternative homogeneity
 (`sdaEval` = universal over per-disjunct counterfactuals).
-@cite{bar-lev-fox-2020} derives SDA via Innocent Inclusion
+[bar-lev-fox-2020] derives SDA via Innocent Inclusion
 (`exhIEII` over disjunct-replacement alternatives, asserting the
 non-IE conditional alternatives). The two mechanisms are RIVAL but
 they AGREE on the SDA inference proper:
 
    `(p∨q)□→r  ⊨  (p□→r) ∧ (q□→r)`
 
-This agreement is the substrate for @cite{zani-ciardelli-sanfelici-2026}'s
+This agreement is the substrate for [zani-ciardelli-sanfelici-2026]'s
 acquisition study, which contrasts the two frameworks' predicted
 developmental trajectories (Bar-Lev/Fox: AR→SDA; Santorio: DCR→SDA).
 The cross-mechanism agreement theorem below makes this Lean-checkable.
@@ -791,13 +791,13 @@ extra negative conjunct.
 open Santorio2018
 
 /-- The SDA alternatives as `DecAlt SDAWorld`s for use in
-    @cite{santorio-2018}'s `sdaEval` apparatus. -/
+    [santorio-2018]'s `sdaEval` apparatus. -/
 def sdaSantorioAlts : List (DecAlt SDAWorld) :=
   [⟨sdaP, inferInstance⟩, ⟨sdaQ, inferInstance⟩]
 
 /-- **Cross-framework agreement on the SDA inference.**
-    @cite{bar-lev-fox-2020}'s `Exh^{IE+II}` verdict on the SDA prejacent
-    entails @cite{santorio-2018}'s `sdaEval` verdict on the same scenario.
+    [bar-lev-fox-2020]'s `Exh^{IE+II}` verdict on the SDA prejacent
+    entails [santorio-2018]'s `sdaEval` verdict on the same scenario.
 
     Direct application of the substrate-level multi-target cell-witness
     factorization `exhIEII_implies_cell_witnessed_alts` to the list of
@@ -838,7 +838,7 @@ theorem bar_lev_fox_sda_implies_santorio_sda_inference :
 /-!
 ## ◇∀x(Px ∨ Qx) ⊨ ◇∀xPx ∧ ◇∀xQx — second application of `Exh^{IE+II}`
 
-@cite{bar-lev-fox-2020} §6.1 derives **universal free choice** by
+[bar-lev-fox-2020] §6.1 derives **universal free choice** by
 applying `Exh^{IE+II}` to a counterfactual prejacent `◇∀x(Px ∨ Qx)`
 over the 8-element alternative set obtained by replacing both the
 universal quantifier and the disjunction (eqn 55 p. 202):

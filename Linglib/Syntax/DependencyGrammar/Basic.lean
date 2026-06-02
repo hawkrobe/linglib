@@ -10,7 +10,7 @@ graphs allowing multiple incoming arcs (`DepGraph`). Argument structures
 (`ArgStr`) record direction and selectional category for each slot.
 
 Dependency relations use `UD.DepRel` from `Core/UD.lean` (Universal
-Dependencies v2). @cite{hudson-2010}, @cite{gibson-2025}.
+Dependencies v2). [hudson-2010], [gibson-2025].
 
 ## Main declarations
 

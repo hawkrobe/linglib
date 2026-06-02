@@ -1,10 +1,10 @@
 import Linglib.Core.Agent.RationalAction
 
 /-!
-# Luce's Utility Decomposition Theory (Chapter 3) @cite{luce-1959}
+# Luce's Utility Decomposition Theory (Chapter 3) [luce-1959]
 
 
-@cite{luce-1959} extends the choice axiom from simple alternatives to
+[luce-1959] extends the choice axiom from simple alternatives to
 **gambles** — uncertain prospects of the form "get outcome `a` if event `ρ` occurs,
 otherwise get outcome `b`." The key result is a decomposition theorem: the
 subjective value of a gamble factors multiplicatively into a component that depends
@@ -42,7 +42,7 @@ structure Event where
   deriving DecidableEq, Repr
 
 /-- A gamble `aρb`: receive outcome `a` if event `ρ` occurs, else outcome `b`.
-    (@cite{luce-1959}, §3.A) -/
+    ([luce-1959], §3.A) -/
 structure Gamble (Outcome : Type*) where
   /-- Outcome if event occurs -/
   win : Outcome
@@ -72,7 +72,7 @@ Luce Chapter 3's gamble/outcome/event choice functions are all
 markers. Binary-style theorems use `cf.binary x y` notation. -/
 
 /-- A gamble choice function: `cf.binary g₁ g₂ = cf.prob {g₁, g₂} g₁` is
-    the probability of choosing gamble `g₁` over `g₂` (@cite{luce-1959}, §3.A). -/
+    the probability of choosing gamble `g₁` over `g₂` ([luce-1959], §3.A). -/
 abbrev GambleChoiceFn (Outcome : Type*) [DecidableEq Outcome] :=
   ChoiceFn (Gamble Outcome)
 
@@ -88,7 +88,7 @@ abbrev EventChoiceFn := ChoiceFn Event
 -- §2. Luce's Axioms for Gamble Choice
 -- ============================================================================
 
-/-- **Decomposition Axiom** (@cite{luce-1959}, Axiom 2):
+/-- **Decomposition Axiom** ([luce-1959], Axiom 2):
     When comparing gambles with fixed outcomes (same `a`, same `b`),
     the choice probability depends only on the events.
 
@@ -100,7 +100,7 @@ structure DecompositionAxiom (P : GambleChoiceFn Outcome) where
   decomp : ∀ (a b : Outcome) (ρ σ : Event),
     P.binary ⟨a, ρ, b⟩ ⟨a, σ, b⟩ = eventChoice.binary ρ σ
 
-/-- **Monotonicity Axiom** (@cite{luce-1959}, Axiom 3):
+/-- **Monotonicity Axiom** ([luce-1959], Axiom 3):
     If outcome `a` is preferred to `b` (P(a,b) ≥ ½) and event `ρ` is preferred
     to `σ` (Q(ρ,σ) ≥ ½), then gamble `aρb` is preferred to `bσa`.
 
@@ -128,7 +128,7 @@ structure EventLuceScale (Q : EventChoiceFn) where
 
 /-- A Luce ratio scale for a gamble choice function: P(g₁,g₂) = v(g₁)/(v(g₁)+v(g₂))
     for some positive scoring function v. This is the gamble-level Luce choice axiom
-    (@cite{luce-1959}, Chapter 1 applied to gamble alternatives). -/
+    ([luce-1959], Chapter 1 applied to gamble alternatives). -/
 structure GambleLuceScale (P : GambleChoiceFn Outcome) where
   v : Gamble Outcome → ℝ
   v_pos : ∀ g, 0 < v g
@@ -148,7 +148,7 @@ inductive EventClass where
   deriving DecidableEq, Repr
 
 /-- Classify an event based on its choice probability against a reference event.
-    (@cite{luce-1959}, §3.C) -/
+    ([luce-1959], §3.C) -/
 noncomputable def classifyEvent (Q : EventChoiceFn) (ref : Event) (ρ : Event) : EventClass :=
   if Q.binary ρ ref > 1/2 then .favorable
   else if Q.binary ρ ref < 1/2 then .unfavorable
@@ -197,7 +197,7 @@ private lemma luce_eq_half_iff {Q : EventChoiceFn} (hScale : EventLuceScale Q)
       linarith [hScale.v_pos ρ, hScale.v_pos σ]
     rw [div_eq_iff hne, h]; ring
 
-/-- **Neutral class indifference** (@cite{luce-1959}, Theorem 12):
+/-- **Neutral class indifference** ([luce-1959], Theorem 12):
     Under the Luce choice axiom, events classified as neutral relative to a
     reference event are indifferent to each other: Q(ρ, σ) = ½.
 
@@ -270,7 +270,7 @@ theorem favorable_over_neutral (Q : EventChoiceFn) (hScale : EventLuceScale Q)
 -- ============================================================================
 
 /-- A gamble value function that factors into outcome value × event weight.
-    (@cite{luce-1959}, §3.D)
+    ([luce-1959], §3.D)
 
     `v(aρb) = w(a,b) · φ(ρ)` where:
     - `w(a,b)` depends only on the outcomes
@@ -328,7 +328,7 @@ private lemma v_eq_product (P : GambleChoiceFn Outcome) (hLuce : GambleLuceScale
   field_simp at hratio ⊢
   nlinarith
 
-/-- **Scale decomposition theorem** (@cite{luce-1959}, §3.D):
+/-- **Scale decomposition theorem** ([luce-1959], §3.D):
     Under the Luce choice axiom and the decomposition axiom, the choice
     probability for gambles can be represented as a Luce choice rule with
     scores that factor as `v(aρb) = w(a,b) · φ(ρ)`.

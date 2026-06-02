@@ -1,7 +1,7 @@
 import Linglib.Semantics.Conditionals.PremiseSemantic
 
 /-!
-# @cite{ciardelli-zhang-champollion-2018} switches under @cite{kratzer-2012} lumping CF
+# [ciardelli-zhang-champollion-2018] switches under [kratzer-2012] lumping CF
 
 Companion to `Studies/CiardelliZhangChampollion2018.lean`
 (which formalizes CZC's argument against minimal-change semantics) and to
@@ -71,7 +71,7 @@ consequent`, i.e., "every antecedent-world satisfies the consequent."
 
 This is the **worlds-only** model (no proper partial situations
 beyond worlds-as-themselves). A more sophisticated partial-situation
-model with the wiring law as a @cite{kratzer-2012} §5.5 non-accidental
+model with the wiring law as a [kratzer-2012] §5.5 non-accidental
 generalization (rather than a contingent member of `Fw`) might
 ameliorate the asymmetry. We do not explore that here.
 

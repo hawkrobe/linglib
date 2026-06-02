@@ -10,7 +10,7 @@ import Linglib.Core.WorldTimeIndex
 
 /-!
 # Cross-Domain Licensing Agreement Bridge
-@cite{champollion-2017} @cite{kennedy-2007} @cite{krifka-1989} @cite{krifka-1998} @cite{rouillard-2026} @cite{zwarts-2005} @cite{vendler-1957}
+[champollion-2017] [kennedy-2007] [krifka-1989] [krifka-1998] [rouillard-2026] [zwarts-2005] [vendler-1957]
 
 The showcase theorem: six independent classification systems from different
 linguistic subfields all agree on licensing predictions, because they all
@@ -132,10 +132,10 @@ theorem bounded_eq_closedBoundary :
     LicensingPipeline.isLicensed Interval.BoundaryType.closed := rfl
 
 -- ════════════════════════════════════════════════════
--- § 5. Epistemic Modal Domain (@cite{lassiter-goodman-2017})
+-- § 5. Epistemic Modal Domain ([lassiter-goodman-2017])
 -- ════════════════════════════════════════════════════
 
-/-! The epistemic probability scale is closed [0,1] (@cite{kennedy-2007}),
+/-! The epistemic probability scale is closed [0,1] ([kennedy-2007]),
 so epistemic adjectives like "certain" license degree modification ("completely
 certain") for the same structural reason that "full" does — closed-scale
 boundedness routes through `Boundedness.closed → isLicensed = true`.

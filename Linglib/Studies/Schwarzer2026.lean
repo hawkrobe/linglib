@@ -8,7 +8,7 @@ import Linglib.Studies.BrueningAlKhalaf2020
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
-# @cite{schwarzer-2026} — Selection-Violating Coordination in German
+# [schwarzer-2026] — Selection-Violating Coordination in German
 
 Schwarzer, Luise. 2026. The law and order of selection-violating
 coordination: German DP-CP-coordination is not sensitive to linear
@@ -20,16 +20,16 @@ When a CP appears coordinated with a DP in a DP-selecting position
 (selection-violating coordination), which conjunct must be the DP?
 Three families of analyses make different predictions:
 
-1. **Bottom-up** (@cite{sag-etal-1985}, @cite{munn-1993}): asymmetric &P
+1. **Bottom-up** ([sag-etal-1985], [munn-1993]): asymmetric &P
    structure; the structurally prominent (first) conjunct must be the
    selected DP. Predicts DP-first universally.
 
-2. **Linear closeness** (@cite{bruening-alkhalaf-2020}, @cite{bruening-2025}):
+2. **Linear closeness** ([bruening-alkhalaf-2020], [bruening-2025]):
    left-to-right derivation; the linearly closest conjunct to the verb
    must satisfy selection. Predicts the preferred order depends on
    whether complements precede or follow the verb.
 
-3. **Temporal closeness** (@cite{kim-lu-2024}): processing illusion;
+3. **Temporal closeness** ([kim-lu-2024]): processing illusion;
    the temporally closest conjunct to the verb has its features checked.
    Makes the same predictions as linear closeness.
 
@@ -92,7 +92,7 @@ theorem german_embedded_v_to_i : ForceHead.Fin ∈ german := by decide
 /-- In German root declaratives, V2 places the verb before its complements.
     Coordination of complements is therefore postverbal.
 
-    This is the VO condition in @cite{schwarzer-2026}'s Experiment 2,
+    This is the VO condition in [schwarzer-2026]'s Experiment 2,
     corresponding to examples (17a/b) in the paper. -/
 def germanRootComplementPosition : VerbPosition := .postverbal
 
@@ -100,7 +100,7 @@ def germanRootComplementPosition : VerbPosition := .postverbal
     (V-to-I in SOV base → verb at end of IP). Coordination of
     complements is therefore preverbal.
 
-    This is the OV condition in @cite{schwarzer-2026}'s Experiment 2,
+    This is the OV condition in [schwarzer-2026]'s Experiment 2,
     corresponding to examples (16a/b) in the paper. -/
 def germanEmbeddedComplementPosition : VerbPosition := .preverbal
 
@@ -164,7 +164,7 @@ theorem beschliessen_selecting :
 -- ============================================================================
 
 /-! `ConjunctOrder`, `bottomUpPrediction`, and `linearClosenessPrediction`
-    are defined in @cite{bruening-alkhalaf-2020} and imported via `open`.
+    are defined in [bruening-alkhalaf-2020] and imported via `open`.
     `VerbPosition` and `OVOrder.verbPosition` live in `Typology.WordOrder`
     substrate. -/
 
@@ -172,7 +172,7 @@ theorem beschliessen_selecting :
     time to the verb has its features checked. Makes the same
     predictions as linear closeness.
 
-    Analysis: @cite{kim-lu-2024}. -/
+    Analysis: [kim-lu-2024]. -/
 def temporalClosenessPrediction : VerbPosition → ConjunctOrder :=
   linearClosenessPrediction
 
@@ -334,7 +334,7 @@ theorem all_agree_postverbal :
     positions, while linear percolation fails in the preverbal
     position that distinguishes them.
 
-    As @cite{schwarzer-2026} notes (§4), the results are "not
+    As [schwarzer-2026] notes (§4), the results are "not
     straightforwardly an argument *for*" the bottom-up approach —
     there could be an independent DP-first preference — but they are
     decisive *against* linear/temporal closeness accounts. -/
@@ -344,7 +344,7 @@ theorem percolation_adjudication :
     predictOrder .linear .preverbal ≠ exp2_preverbal.majorityOrder :=
   ⟨rfl, rfl, by decide⟩
 
-/-- Temporal closeness (@cite{kim-lu-2024}) uses the same linear
+/-- Temporal closeness ([kim-lu-2024]) uses the same linear
     percolation mechanism as B&AK, applied to parsing time rather
     than surface string position. -/
 theorem temporal_is_linear_percolation (pos : VerbPosition) :

@@ -1,6 +1,6 @@
 /-!
-# @cite{funakoshi-2016} — Verb-Stranding VP Ellipsis in Japanese
-@cite{funakoshi-2016}
+# [funakoshi-2016] — Verb-Stranding VP Ellipsis in Japanese
+[funakoshi-2016]
 
 Funakoshi, Kenshi (2016). Verb-stranding verb phrase ellipsis in Japanese.
 *Journal of East Asian Linguistics* 25.2, pp. 113–142.
@@ -14,7 +14,7 @@ another adjunct *cannot* be the elided element — only an argument can be.
 This provides an **argumenthood diagnostic**: if a constituent can be elided
 in the presence of an overt adjunct, it must be an argument.
 
-## Application (@cite{ozaki-2026})
+## Application ([ozaki-2026])
 
 Ozaki uses Funakoshi's generalization to show that the source phrase of
 Japanese Alternation Verbs (*hanareru* 'leave', *deru* 'exit') is always

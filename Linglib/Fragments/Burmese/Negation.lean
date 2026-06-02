@@ -2,7 +2,7 @@ import Linglib.Typology.Negation
 
 /-!
 # Burmese Negation Fragment
-@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
+[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
 
 Burmese expresses standard negation with a circumfix: prefix *ma-* on
 the verb and suffix *-bu* replacing the TAM markers of the affirmative.

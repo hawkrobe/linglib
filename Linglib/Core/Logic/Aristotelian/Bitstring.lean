@@ -6,7 +6,7 @@ import Mathlib.Order.BooleanSubalgebra
 /-!
 # Bitstring semantics for logical fragments
 
-Per @cite{demey-smessaert-2018} §3.2. For a fragment `φ : ι → W → Bool`, the
+Per [demey-smessaert-2018] §3.2. For a fragment `φ : ι → W → Bool`, the
 bitstring of a formula `ψ` in the Boolean closure of `Set.range φ` records, for
 each consistent anchor cell, whether that cell entails `ψ`. This map is a Boolean
 isomorphism onto `Fin n → Bool` (Theorem 1), hence an Aristotelian isomorphism
@@ -33,7 +33,7 @@ variable {W : Type*}
 /-! ### Anchor-decidedness -/
 
 /-- Lemma 6 for the indexed-family `anchor`: every closure element is entailed by
-an anchor or by its complement (@cite{demey-smessaert-2018}). -/
+an anchor or by its complement ([demey-smessaert-2018]). -/
 theorem anchor_le_or_le_compl_mem_closure
     {ι : Type*} [Fintype ι] (φ : ι → W → Bool) (σ : ι → Bool) {ψ : W → Bool}
     (hψ : ψ ∈ BooleanSubalgebra.closure (Set.range φ)) :
@@ -169,7 +169,7 @@ private noncomputable def anchorIndex {ι : Type*} [Fintype ι] [DecidableEq ι]
   fun i => ((partition ι W φ).equivFin.symm i).val
 
 /-- The bitstring of `ψ` relative to `φ`: bit `i` is `true` iff anchor `i` entails
-`ψ` (@cite{demey-smessaert-2018}, Definition 7). -/
+`ψ` ([demey-smessaert-2018], Definition 7). -/
 noncomputable def bitstringOf {ι : Type*} [Fintype ι] [DecidableEq ι]
     (φ : ι → W → Bool) (ψ : W → Bool) :
     Fin (partition ι W φ).card → Bool :=
@@ -347,7 +347,7 @@ theorem bitstringInverse_bitstringOf {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-! ### Theorem 1: the Boolean isomorphism -/
 
-/-- **Theorem 1** (@cite{demey-smessaert-2018}): `bitstringOf φ` is an order
+/-- **Theorem 1** ([demey-smessaert-2018]): `bitstringOf φ` is an order
 isomorphism `closure (Set.range φ) ≃o (Fin n → Bool)`, `n = |partition|`. -/
 noncomputable def bitstringOf_orderIso
     {ι : Type*} [Fintype ι] [DecidableEq ι] (φ : ι → W → Bool) :
@@ -376,7 +376,7 @@ noncomputable def bitstringOf_orderIso
 /-! ### Theorem 2: Aristotelian transfer
 
 Each relation transfers along the Boolean isomorphism `bitstringOf_orderIso`
-(@cite{demey-smessaert-2018}, Theorem 2). -/
+([demey-smessaert-2018], Theorem 2). -/
 
 section Transfer
 variable {ι : Type*} [Fintype ι] [DecidableEq ι] (φ : ι → W → Bool)

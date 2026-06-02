@@ -2,10 +2,10 @@ import Linglib.Processing.MemorySurprisal.Basic
 import Linglib.Syntax.DependencyGrammar.Formal.DependencyLength
 
 /-!
-# Study 1: Artificial Language Learning (@cite{fedzechkina-newport-2012}/2017)
-@cite{fedzechkina-newport-2012} @cite{fedzechkina-newport-2017} @cite{hahn-degen-futrell-2021}
+# Study 1: Artificial Language Learning ([fedzechkina-newport-2012]/2017)
+[fedzechkina-newport-2012] [fedzechkina-newport-2017] [hahn-degen-futrell-2021]
 
-@cite{hahn-degen-futrell-2021} Study 1 reanalyzes @cite{fedzechkina-newport-2012}: learners of an artificial language with flexible word order converge
+[hahn-degen-futrell-2021] Study 1 reanalyzes [fedzechkina-newport-2012]: learners of an artificial language with flexible word order converge
 toward orders that minimize dependency length — and these orders also
 achieve more efficient memory-surprisal trade-offs.
 
@@ -136,7 +136,7 @@ theorem langA_efficient_vs_B :
 /-- Learner convergence rate: proportion choosing Language A's order × 1000.
 
 By end of training, ~67% of productions used the short-dependency order
-(@cite{fedzechkina-newport-2012}, Figure 2). This exceeds chance (50%). -/
+([fedzechkina-newport-2012], Figure 2). This exceeds chance (50%). -/
 def learnerConvergenceRate : Nat := 670
 
 /-- Learners converge above chance toward the efficient order. -/

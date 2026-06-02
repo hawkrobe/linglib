@@ -6,7 +6,7 @@ import Mathlib.Data.Fin.Basic
 
 /-!
 # On Necessity and Comparison
-@cite{rubinstein-2014}
+[rubinstein-2014]
 
 Pacific Philosophical Quarterly 95(4): 512–554.
 
@@ -19,11 +19,11 @@ associated with **negotiable** ideals — priorities not universally endorsed
 by all discourse participants.
 
 This is the third of three competing analyses of weak necessity surveyed
-in @cite{agha-jeretic-2026} §2.2:
+in [agha-jeretic-2026] §2.2:
 
-1. **Domain restriction** (@cite{von-fintel-iatridou-2008}): `Directive.lean`
-2. **Non-quantificational** (@cite{agha-jeretic-2022}): `AghaJeretic2022.lean`
-3. **Comparative semantics** (@cite{rubinstein-2014}): this file
+1. **Domain restriction** ([von-fintel-iatridou-2008]): `Directive.lean`
+2. **Non-quantificational** ([agha-jeretic-2022]): `AghaJeretic2022.lean`
+3. **Comparative semantics** ([rubinstein-2014]): this file
 
 ## Key Claims Formalized
 
@@ -51,20 +51,20 @@ in @cite{agha-jeretic-2026} §2.2:
 7. **Neg-raising** (§2.2): Weak necessity modals and evaluative comparatives
    are neg-raisers; strong necessity modals are not.
 
-## Theoretical Disagreement with @cite{agha-jeretic-2022}
+## Theoretical Disagreement with [agha-jeretic-2022]
 
 Both accounts agree on the data: "I don't think you should go" has a
 lower-negation reading, while "I don't think you have to go" does not
 (for most speakers). They disagree on the **mechanism**:
 
 - **Rubinstein**: *should* genuinely neg-raises (pragmatic O→E strengthening,
-  following @cite{horn-2001}). Strong necessity modals do NOT neg-raise.
+  following [horn-2001]). Strong necessity modals do NOT neg-raise.
 - **Agha & Jeretič**: *should*'s apparent neg-raising is **scopelessness**
   (homogeneity), not true neg-raising. *must* genuinely neg-raises.
 
 ## Connection to Existing Infrastructure
 
-- `Directive.lean` provides the @cite{von-fintel-iatridou-2008} analysis where
+- `Directive.lean` provides the [von-fintel-iatridou-2008] analysis where
   weak necessity = ∀ over a refined best-world set (ordering refinement g ∪ g').
   Rubinstein differs by *promoting* some priorities to modal-base status.
 - Under the simplifying assumption that no priorities are promoted (h = ∅),
@@ -88,7 +88,7 @@ open Semantics.Modality (ModalForce)
 /-! ## Two kinds of priorities
 
 Rubinstein argues that norms, ideals, and preferences — traditionally all
-ordering-source material in @cite{kratzer-1981}'s framework — come in two kinds:
+ordering-source material in [kratzer-1981]'s framework — come in two kinds:
 
 - **Non-negotiable**: promoted to modal-base status. These restrict which
   worlds are "live possibilities" (the favored worlds).
@@ -108,7 +108,7 @@ inductive Negotiability where
 
 /-- Rubinstein's reconceptualized modal backgrounds (§3.2).
 
-    In standard @cite{kratzer-1981}, there is one modal base f and one ordering
+    In standard [kratzer-1981], there is one modal base f and one ordering
     source g. Rubinstein splits priorities into two components based on
     negotiability, promoting the non-negotiable part to modal-base status. -/
 structure PriorityTypology where
@@ -465,8 +465,8 @@ quantify over favored worlds WITHOUT ordering, lack this alternative.
 
 ### Theoretical disagreement
 
-This classification **disagrees** with @cite{agha-jeretic-2022} /
-@cite{agha-jeretic-2026}, who analyze *should*'s apparent neg-raising as
+This classification **disagrees** with [agha-jeretic-2022] /
+[agha-jeretic-2026], who analyze *should*'s apparent neg-raising as
 homogeneity (scopelessness) and classify *must* as the genuine neg-raiser.
 The `NegRaisingProfile` structure in `AghaJeretic2026.lean` encodes their
 opposing classification. -/

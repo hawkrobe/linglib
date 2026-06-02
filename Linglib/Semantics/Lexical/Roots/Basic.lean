@@ -1,18 +1,18 @@
 /-!
 # Atomic Lexical Entailments and Roots
 
-@cite{beavers-koontz-garboden-2020}
+[beavers-koontz-garboden-2020]
 
 Lexical entailments are the atomic claims a verbal root makes about
 the events it describes and the participants in those events.
-Following @cite{beavers-koontz-garboden-2020}, we treat these as
+Following [beavers-koontz-garboden-2020], we treat these as
 *structured atoms* rather than as a fixed feature vector.
 
 A **root** is a finite collection of such atoms. The root's
 B&K-G feature signature (±state, ±manner, ±result, ±cause) is then a
 *derived* predicate over the entailment set, not a separately stipulated
 classification — exposing both the Bifurcation Thesis of Roots and
-Manner/Result Complementarity (@cite{rappaport-hovav-levin-2010}) as
+Manner/Result Complementarity ([rappaport-hovav-levin-2010]) as
 testable conjectures rather than architectural commitments.
 
 ## Relation to existing infrastructure
@@ -49,7 +49,7 @@ inductive LexEntailment where
   /-- Entails a causing event. Nullary because B&K-G's typology is
       neutral about *what* causes — only that there is a cause.
       The cause-type distinction (internal vs external,
-      @cite{bohnemeyer-2004}) is carried separately by
+      [bohnemeyer-2004]) is carried separately by
       `Semantics.Lexical.EventStructure.InternalExternalCause`. -/
   | hasCause
   /-- The agent acts intentionally. -/

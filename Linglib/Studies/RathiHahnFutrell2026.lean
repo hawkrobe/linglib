@@ -7,12 +7,12 @@ import Linglib.Morphology.MorphRule
 import Linglib.Morphology.Paradigm
 
 /-!
-# @cite{rathi-hahn-futrell-2026}: Information-theoretic morphological fusion
-@cite{rathi-hahn-futrell-2026} @cite{rathi-hahn-futrell-2021}
-@cite{hahn-degen-futrell-2021} @cite{hahn-mathew-degen-2021}
+# [rathi-hahn-futrell-2026]: Information-theoretic morphological fusion
+[rathi-hahn-futrell-2026] [rathi-hahn-futrell-2021]
+[hahn-degen-futrell-2021] [hahn-mathew-degen-2021]
 
-@cite{rathi-hahn-futrell-2026} extend the **Memory-Surprisal Tradeoff**
-(@cite{hahn-degen-futrell-2021}, formalized in
+[rathi-hahn-futrell-2026] extend the **Memory-Surprisal Tradeoff**
+([hahn-degen-futrell-2021], formalized in
 `Processing/MemorySurprisal/Basic.lean` and consumed in
 `Studies/HahnDegenFutrell2021Morphology.lean`) from word/morpheme
 order to four further morphological phenomena:
@@ -43,8 +43,8 @@ segmentation.
 ## Numerics that are NOT Lean-internal
 
 The paper's empirical results are computed by an external LSTM seq2seq learner
-on UniMorph 3.0 paradigm data (@cite{mccarthy-kirov-2020},
-@cite{sylak-glassman-2015}). Specific φ₂ values, Pareto AUC values, and
+on UniMorph 3.0 paradigm data ([mccarthy-kirov-2020],
+[sylak-glassman-2015]). Specific φ₂ values, Pareto AUC values, and
 permutation-test p-values cannot be re-derived inside Lean — the LSTM is the
 authoritative source. All such values below are flagged `-- UNVERIFIED:` per
 CLAUDE.md hallucination-prevention rules; they are recorded here for cross-
@@ -55,9 +55,9 @@ study reference and human verification against the published figures.
 The number-vs-case suppletion result (§4 below, 15/17 languages confirm the
 ETH prediction) glosses over a known counterexample: Russian `čelovek/ljudi`
 ('person') coexists with case-and-number suppletion `god/let` ('year') where
-the GEN.PL form is suppletive in both number AND case. @cite{moskal-2015}
+the GEN.PL form is suppletive in both number AND case. [moskal-2015]
 advances the asymmetry as a **structural universal** under a phase-based
-locality account; @cite{rathi-hahn-futrell-2026} treat it as a frequency-
+locality account; [rathi-hahn-futrell-2026] treat it as a frequency-
 based regularity averaged over the typological sample. These are different
 claims about the same data; this study file follows the paper but flags the
 distinction.
@@ -125,7 +125,7 @@ def L_fus : ParadigmSystem 2 String :=
       ({ realize := fun i => if i = 0 then "B" else "C" }, 3/8)
     ] }
 
-/-- E-complexity (`@cite{ackerman-malouf-2013}`): both toy languages have
+/-- E-complexity (`[ackerman-malouf-2013]`): both toy languages have
     4 inflection classes. -/
 theorem L_agg_eComplexity : L_agg.eComplexity = 4 := by decide
 theorem L_fus_eComplexity : L_fus.eComplexity = 4 := by decide
@@ -307,8 +307,8 @@ theorem all_polyexponent_groups_clustered :
 /-! ### Suppletion as fusion of root with feature
 
 The paper frames suppletion as fusion of the root with the suppletion-
-triggering grammatical feature. @cite{veselinova-2013} (WALS Ch 79) and
-@cite{moskal-2015} document that nominal suppletion is more commonly
+triggering grammatical feature. [veselinova-2013] (WALS Ch 79) and
+[moskal-2015] document that nominal suppletion is more commonly
 triggered by **number** than by **case**. The paper's prediction: in
 the memory-surprisal optimal ordering of features, number should be
 closer to the root than case across languages.
@@ -317,7 +317,7 @@ closer to the root than case across languages.
 case in optimal ordering. Two exceptions: Russian and Urdu.
 
 The two exceptions are non-trivial. Russian *čelovek/ljudi* coexists with
-the case-and-number suppletion *god/let* (GEN.PL). @cite{moskal-2015}
+the case-and-number suppletion *god/let* (GEN.PL). [moskal-2015]
 treats nominal-suppletion locality as a **structural universal** with a
 phase-based account; the paper treats it as a tendency derivable from
 average-case frequency reasoning. These are different theoretical claims
@@ -416,7 +416,7 @@ fuse, due to high mutual information.
 
 This is a substantive reframing, not a translation. Bybee's "relevance" is
 defined in terms of *semantic effect on stem denotation* (valence > voice >
-aspect > tense > mood > agreement; @cite{bybee-1985} Ch 2 §3 p. 20). Mutual
+aspect > tense > mood > agreement; [bybee-1985] Ch 2 §3 p. 20). Mutual
 information is a *usage-statistic*. These coincide to the extent that
 semantic relevance drives co-occurrence regularity, but they are distinct
 constructs and can in principle diverge.
@@ -425,7 +425,7 @@ The substrate's `Morphology.MorphCategory.peripherality` numerically
 encodes Bybee's hierarchy as constants (`MorphRule.lean:264-276`). The
 bridge `Bybee1985.toMorphCategory : BybeeCategory → MorphCategory`
 (`Bybee1985.lean:248-257`) connects the paper-typed enum to the substrate.
-@cite{rathi-hahn-futrell-2026}'s reframing makes those constants
+[rathi-hahn-futrell-2026]'s reframing makes those constants
 potentially derivable from MI on a large multilingual corpus.
 
 The substrate retains the Bybee primitive (option (a) in the cross-
@@ -460,8 +460,8 @@ theorem polyexponent_categories_in_core_inflectional_range :
 
 /-! ### Mirror Principle ↔ ETH
 
-@cite{baker-1985}'s Mirror Principle holds that morpheme order reflects
-syntactic-derivation order. @cite{rathi-hahn-futrell-2026} §5.1 argues ETH
+[baker-1985]'s Mirror Principle holds that morpheme order reflects
+syntactic-derivation order. [rathi-hahn-futrell-2026] §5.1 argues ETH
 makes compatible predictions for affix order, but for a different reason:
 ETH derives ordering from on-line processing efficiency rather than from
 underlying syntactic structure.
@@ -474,18 +474,18 @@ and should eventually carry such a bridge.
 
 ### DM Fusion ↔ informational fusion
 
-@cite{halle-marantz-1993} treat fusion as postsyntactic merger of adjacent
+[halle-marantz-1993] treat fusion as postsyntactic merger of adjacent
 terminals (`FusionRule`, inlined in `HalleMarantz1993.lean`).
-@cite{rathi-hahn-futrell-2026}'s informational fusion is a usage-statistic
+[rathi-hahn-futrell-2026]'s informational fusion is a usage-statistic
 on surface paradigm forms. The two are different mathematical objects with
 overlapping names; a formal bridge `dm_fusion_implies_high_mi` is out of
 scope but would tie the substrate together.
 
 ### Ackerman-Malouf 2013 LCEC ↔ informational fusion
 
-@cite{ackerman-malouf-2013}'s i-complexity is `(1/n(n-1)) Σᵢ≠ⱼ H(Cᵢ|Cⱼ)`,
+[ackerman-malouf-2013]'s i-complexity is `(1/n(n-1)) Σᵢ≠ⱼ H(Cᵢ|Cⱼ)`,
 the average pairwise conditional entropy across cells of the same paradigm
-system. @cite{rathi-hahn-futrell-2026}'s pairwise informational fusion
+system. [rathi-hahn-futrell-2026]'s pairwise informational fusion
 `φ₂(f₁,f₂)` is closely related — both measure paradigm-internal
 predictability. With Phase 3 of the substrate restructure, both consumers
 share `Morphology.ParadigmSystem` and route through

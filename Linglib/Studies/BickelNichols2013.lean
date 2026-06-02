@@ -20,8 +20,8 @@ import Linglib.Fragments.Spanish.Morph
 
 /-!
 # BickelNichols2013
-@cite{bickel-nichols-2013a} @cite{bickel-nichols-2013b} @cite{bickel-nichols-2013c}
-@cite{bickel-nichols-2001}
+[bickel-nichols-2013a] [bickel-nichols-2013b] [bickel-nichols-2013c]
+[bickel-nichols-2001]
 
 Cross-linguistic analyses anchored on Bickel & Nichols's WALS chapters
 (Ch 20 fusion, Ch 21 exponence, Ch 22 inflectional synthesis) and their
@@ -53,7 +53,7 @@ The substrate types (`MorphProfile`, `Fusion`, `Flexivity`, ...) and WALS
 converters live in `Morphology/MorphProfile.lean`. Per-language B&N
 classification commitments (e.g., "German is fusional") live in each
 `Fragments/{Lang}/Morph.lean` as local bridge theorems.
-@cite{ackerman-malouf-2013}'s E-complexity / I-complexity analysis lives
+[ackerman-malouf-2013]'s E-complexity / I-complexity analysis lives
 in `Studies/AckermanMalouf2013.lean`.
 
 This file deliberately omits aggregate-count theorems (`sample_X_count = N`)
@@ -112,7 +112,7 @@ theorem morph_iso_unique :
 -- §2. B&N Orthogonality and Cell-Population Theorems
 -- ============================================================================
 
-/-! @cite{bickel-nichols-2001} argue fusion and flexivity are orthogonal,
+/-! [bickel-nichols-2001] argue fusion and flexivity are orthogonal,
     and that the four cells of the (concatenative ∪ nonlinear ∪ isolating)
     × (flexive ∪ nonflexive ∪ none) space are independently attested. The
     theorems below witness the cells the sample populates. -/

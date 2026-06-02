@@ -3,7 +3,7 @@ import Mathlib.Data.Finset.Powerset
 
 /-!
 # Plurality — Shared substrate
-@cite{kriz-spector-2021} @cite{haslinger-etal-2025}
+[kriz-spector-2021] [haslinger-etal-2025]
 
 Substrate primitives shared across all theoretical accounts of plural
 predication in this directory: a tolerance relation on `Finset Atom`
@@ -71,7 +71,7 @@ def identity : Tolerance Atom where
   sub x y h := h ▸ Finset.Subset.refl x
 
 /-- Trivial tolerance: any sub-plurality is tolerated (allows existential
-    reading). @cite{kriz-spector-2021} call this the *trivial* tolerance
+    reading). [kriz-spector-2021] call this the *trivial* tolerance
     — the relation is just sub-pluralityhood, with no further restriction. -/
 def trivial : Tolerance Atom where
   rel x y := x ⊆ y

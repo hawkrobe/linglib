@@ -4,7 +4,7 @@ import Linglib.Studies.BarkerPullum1990
 
 /-!
 # Bakay, Akkuş & Dillon (2026)
-@cite{bakay-etal-2026}
+[bakay-etal-2026]
 
 Hierarchical relations guide memory retrieval in sentence comprehension:
 Evidence from a local anaphor in Turkish. *Journal of Memory and Language*

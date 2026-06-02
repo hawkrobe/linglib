@@ -5,7 +5,7 @@ import Linglib.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 /-!
 # Slot/Filler Verification
 
-@cite{dunn-2025} @cite{kay-fillmore-1999} @cite{goldberg-shirtz-2025}
+[dunn-2025] [kay-fillmore-1999] [goldberg-shirtz-2025]
 
 Per-datum verification that `derivedSpecificity` (computed from the typed
 slot structure) matches the `Specificity` values stipulated in existing
@@ -57,7 +57,7 @@ def letAloneForm : TypedForm String :=
   , { filler := .fixed "alone" }
   , { filler := .open_ .NOUN, role := some "focusB" } ]
 
-/-- Veggie-wrap: a fully lexically specified compound (@cite{goldberg-2003}:220). -/
+/-- Veggie-wrap: a fully lexically specified compound ([goldberg-2003]:220). -/
 def veggieWrapForm : TypedForm String :=
   [ { filler := .fixed "veggie" }
   , { filler := .fixed "wrap", isHead := true } ]
@@ -122,10 +122,10 @@ theorem ditransitive_embedding_consistent :
     ditransitive.toTypedForm = ditransitiveForm := by native_decide
 
 -- ============================================================================
--- § 5. WXDY (@cite{kay-fillmore-1999}, Figure 12)
+-- § 5. WXDY ([kay-fillmore-1999], Figure 12)
 -- ============================================================================
 
-/-! @cite{kay-fillmore-1999} formalize the WXDY construction
+/-! [kay-fillmore-1999] formalize the WXDY construction
     as a hierarchical AVM with valence sets, grammatical functions,
     coreference indices (#1, #2), and feature constraints ([loc -],
     [neg -], [ref ∅]). This flat projection captures the key structural
@@ -136,7 +136,7 @@ theorem ditransitive_embedding_consistent :
     subject share a coreference index. WXDY's X–Y coindexation is an
     instance of this pattern. -/
 
-/-- WXDY construction typed form (@cite{kay-fillmore-1999}, Figure 12).
+/-- WXDY construction typed form ([kay-fillmore-1999], Figure 12).
 
     Flat projection of the hierarchical AVM. The five positions:
     - X (subject of BE): open NP, coindexed with Y via refIdx 2
@@ -158,7 +158,7 @@ def wxdyForm : TypedForm String :=
   , { filler := .open_ .X, role := some "predicate", gf := some .pred
     , refIdx := some 2 } ]
 
-/-- Coinstantiation construction (@cite{kay-fillmore-1999}, Figure 13, §4.2).
+/-- Coinstantiation construction ([kay-fillmore-1999], Figure 13, §4.2).
 
     A general pattern for subject control: the matrix subject and
     the complement's subject share a coreference index.

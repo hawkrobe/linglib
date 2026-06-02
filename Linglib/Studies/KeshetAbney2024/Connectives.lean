@@ -5,7 +5,7 @@ import Mathlib.Data.Fintype.Basic
 /-!
 # PIP Connectives and Modal Operators
 
-@cite{keshet-abney-2024} @cite{kratzer-1991} @cite{veltman-1996}Dynamic encoding of PIP connectives:
+[keshet-abney-2024] [kratzer-1991] [veltman-1996]Dynamic encoding of PIP connectives:
 - Conjunction, negation, disjunction (with label floating)
 - Labeled existential quantification
 - Modal operators (must, might, would) as world quantifiers
@@ -348,7 +348,7 @@ the body predicate holds at w₀.
 
 This is the version that applies to non-globally-reflexive relations
 (e.g., epistemic access from a specific evaluation world). It captures
-@cite{kratzer-1991}'s realistic modal base without requiring global reflexivity.
+[kratzer-1991]'s realistic modal base without requiring global reflexivity.
 -/
 theorem must_realistic_at [Fintype W]
     (R : AccessRel W) (p : ICDRTAssignment W E → W → Prop)

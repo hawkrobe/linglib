@@ -9,9 +9,9 @@ import Linglib.Phenomena.AuxiliaryVerbs.Selection
 
 /-!
 # Quotative Inversion as Smuggling
-@cite{storment-2026}
+[storment-2026]
 
-Formalizes @cite{storment-2026}: the smuggling derivation of quotative
+Formalizes [storment-2026]: the smuggling derivation of quotative
 inversion in English and Setswana.
 
 ## Storment's central claims
@@ -20,11 +20,11 @@ inversion in English and Setswana.
   the quote moves to a position above the agentive AGENT, which remains
   in-situ in Spec,vP. Evidence: agreement, parasitic gaps, raising,
   conjoint/disjoint marking in Setswana.
-- **§4**: This is **smuggling** (@cite{collins-2005}): the VP moves to
+- **§4**: This is **smuggling** ([collins-2005]): the VP moves to
   Spec,VoiceP, making the theme accessible to T⁰ for Case licensing.
   The smuggling projection is identified as VoiceP, which is *not* the
   external-argument-introducing head (departing from
-  @cite{kratzer-1996}/Pylkkänen).
+  [kratzer-1996]/Pylkkänen).
 - **§5**: The transitivity constraint — QI is blocked when multiple DPs
   compete for Case licensing — falls out from the Case-licensing
   configuration after smuggling.
@@ -40,8 +40,8 @@ claims. They live in topic-named files alongside this study:
   Storment's QI-based unaccusativity classification (the MoS divergence)
 - `../Unaccusativity/VerbClasses.lean` — Levin verb classes vs. the QI
   classification (alignment + the §37.3 within-class split)
-- `../Unaccusativity/IslandSensitivity.lean` — @cite{storment-2026}'s
-  smuggling-licenses-QI prediction vs. @cite{lu-pan-degen-2025}'s
+- `../Unaccusativity/IslandSensitivity.lean` — [storment-2026]'s
+  smuggling-licenses-QI prediction vs. [lu-pan-degen-2025]'s
   discourse-sourced MoS island finding (compatibility, not contradiction)
 -/
 
@@ -55,7 +55,7 @@ open Minimalist (VoiceFlavor VoiceHead voiceAnticausative voiceAgent)
 
 /-! ## §1 + §2. Lexical annotations and QI data
 
-Per @cite{storment-2026}, every MoS verb passes the QI diagnostic and
+Per [storment-2026], every MoS verb passes the QI diagnostic and
 is classified unaccusative; the canonical communication verbs `speak`/
 `talk` fail QI and are unergative. Quantified theorems collapse the
 per-verb pattern; specific instances are recoverable by `fin_cases`. -/
@@ -109,9 +109,9 @@ theorem kick_transitive : deriveTransitivityClass kick.toVerb = .transitive := r
 
 `Verb.voiceFor` (defined in `Semantics/Lexical/VerbSmuggling.lean`)
 maps unaccusative→non-thematic Voice and
-unergative→agentive Voice. Per @cite{storment-2026}'s §4.3, the Voice
+unergative→agentive Voice. Per [storment-2026]'s §4.3, the Voice
 head is the smuggling projection (not the external-argument introducer
-of @cite{kratzer-1996}); permitting smuggling is equivalent to being
+of [kratzer-1996]); permitting smuggling is equivalent to being
 non-phase, which is equivalent to not introducing an external argument. -/
 
 theorem mos_unaccusatives_nonThematic_voice :

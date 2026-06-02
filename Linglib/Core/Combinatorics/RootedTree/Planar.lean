@@ -6,7 +6,7 @@ set_option autoImplicit false
 
 /-!
 # Planar n-ary rooted trees with vertex labels in `α`
-@cite{marcolli-chomsky-berwick-2025} @cite{foissy-introduction-hopf-algebras-trees}
+[marcolli-chomsky-berwick-2025] [foissy-introduction-hopf-algebras-trees]
 
 A **planar rooted tree** has: a distinguished root vertex, an
 α-label at every vertex, and an ordered (list-valued) sequence of
@@ -38,7 +38,7 @@ nonplanar version. This file provides the list-valued primitive;
 
 ## MCB anchor
 
-@cite{marcolli-chomsky-berwick-2025} §1.11 introduces n-ary syntactic
+[marcolli-chomsky-berwick-2025] §1.11 introduces n-ary syntactic
 objects `SO^(n) ≃ ℑ^(n)_{SO_0}` as the free nonassociative commutative
 n-magma; book p. 96 Definition 1.11.2. §1.17 uses the n-ary
 Connes-Kreimer Hopf algebra of rooted trees in the recursive
@@ -46,7 +46,7 @@ construction of solutions to combinatorial Dyson-Schwinger equations
 (book p. 149-150). The carrier here is parameterized over arity (no
 fixed n), subsuming all n-ary cases via subtypes.
 
-@cite{foissy-introduction-hopf-algebras-trees} §1.1 (p. 3) introduces
+[foissy-introduction-hopf-algebras-trees] §1.1 (p. 3) introduces
 rooted trees as finite graphs, connected and without cycles, with a
 distinguished root vertex; this file's `Planar` is the planar / ordered
 variant (Foissy's H_PR setting, §2). The nonplanar variant (Foissy's

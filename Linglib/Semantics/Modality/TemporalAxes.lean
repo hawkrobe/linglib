@@ -1,10 +1,10 @@
 /-!
 # Modal-Temporal Axes
 
-@cite{condoravdi-2002}
+[condoravdi-2002]
 
 The two temporal axes that any modal interpretation theory must
-distinguish (cf. @cite{condoravdi-2002}, §2):
+distinguish (cf. [condoravdi-2002], §2):
 
 - **Temporal perspective**: the time at which the modal base / ordering
   source is evaluated. Either present (utterance time) or past (an
@@ -21,7 +21,7 @@ Klecha 2016 (CIR-based future orientation), Matthewson 2013 (Gitksan
 `dim`-based future orientation), and any other modal-temporal theory.
 
 This file is the canonical home; downstream modules import from here
-rather than redeclaring local copies. @cite{condoravdi-2002} uses only
+rather than redeclaring local copies. [condoravdi-2002] uses only
 the `future`/`past` orientations — the `present` cell of
 `TemporalOrientation` goes unused there.
 -/

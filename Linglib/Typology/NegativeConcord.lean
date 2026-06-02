@@ -1,6 +1,6 @@
 /-!
 # Typology.NegativeConcord
-@cite{giannakidou-2000} @cite{van-der-auwera-van-alsenoy-2016}
+[giannakidou-2000] [van-der-auwera-van-alsenoy-2016]
 
 Lightweight, Fragment-importable types for negative concord: the item-level n-word
 status, the NC subtype, and the clausal-position parameter the strict/non-strict
@@ -23,12 +23,12 @@ bridge the item-level status to its language-level WALS 115A `NegIndefiniteStrat
 namespace Typology.NegativeConcord
 
 /-- Item-level status of a negation-sensitive indefinite: the n-word vs
-    negative-quantifier vs NPI trichotomy. @cite{giannakidou-2000} gives the minimal,
+    negative-quantifier vs NPI trichotomy. [giannakidou-2000] gives the minimal,
     deliberately theory-neutral definition — n-words "occur in NC structures and can be
     associated with negative meaning" — and stresses their heterogeneity. The *internal*
     semantics is contested (negative existential vs polarity-sensitive universal vs an
     NPI licensed by a null negation); this enum records only the distributional class,
-    which @cite{van-der-auwera-van-alsenoy-2016} take as the basis of the NC typology.
+    which [van-der-auwera-van-alsenoy-2016] take as the basis of the NC typology.
     Lets a strict-NC n-word (Russian никто, Italian *nessuno*) be classified honestly
     rather than borrowing a strong-NPI slot in `Typology.PolarityItem`. -/
 inductive NWordStatus where
@@ -45,12 +45,12 @@ inductive NWordStatus where
   | npi
   deriving DecidableEq, BEq, Repr
 
-/-- Subtype of negative concord (@cite{van-der-auwera-van-alsenoy-2016};
-    @cite{giannakidou-2000}). `strict` keeps the clausal negation marker regardless of
+/-- Subtype of negative concord ([van-der-auwera-van-alsenoy-2016];
+    [giannakidou-2000]). `strict` keeps the clausal negation marker regardless of
     n-word position (Greek, Hungarian, Slavic); `nonStrict` drops it when the n-word is
     preverbal but requires it postverbally (Italian, Spanish, Portuguese);
     `negativeSpread` has several n-words share one negation with no clausal marker at all
-    (French *personne n'a rien dit*). @cite{van-der-auwera-van-alsenoy-2016} find
+    (French *personne n'a rien dit*). [van-der-auwera-van-alsenoy-2016] find
     `strict` far more frequent than `nonStrict`, and `nonStrict` itself heterogeneous —
     not cleanly a single category. -/
 inductive NegConcordSubtype where
@@ -67,7 +67,7 @@ inductive NWordPosition where
   deriving DecidableEq, BEq, Repr
 
 /-- Whether a clausal negation marker is required, given the NC subtype and the n-word's
-    position (@cite{giannakidou-2000}: strict NC keeps the marker regardless of position;
+    position ([giannakidou-2000]: strict NC keeps the marker regardless of position;
     non-strict drops it for a preverbal n-word but requires it postverbally; negative
     spread has no clausal marker). The strict/non-strict contrast falls out of the type. -/
 def NegConcordSubtype.nmRequired : NegConcordSubtype → NWordPosition → Bool
@@ -77,7 +77,7 @@ def NegConcordSubtype.nmRequired : NegConcordSubtype → NWordPosition → Bool
   | .negativeSpread, _ => false
 
 /-- The strict vs non-strict contrast: both require the marker postverbally, but only
-    strict requires it preverbally (@cite{giannakidou-2000}). -/
+    strict requires it preverbally ([giannakidou-2000]). -/
 theorem strict_nonstrict_contrast :
     NegConcordSubtype.strict.nmRequired .preverbal = true ∧
     NegConcordSubtype.nonStrict.nmRequired .preverbal = false ∧

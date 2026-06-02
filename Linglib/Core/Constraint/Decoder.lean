@@ -2,7 +2,7 @@ import Linglib.Core.Agent.RationalAction
 
 /-!
 # Decoders — From Scored Candidates to Probability Distributions
-@cite{mcfadden-1974}
+[mcfadden-1974]
 
 A `Decoder` is the *choice* component of a constraint-based grammar.
 Given a finite set of candidates, each carrying a score, a decoder
@@ -26,7 +26,7 @@ same `Decoder` interface, varying only the score type and the choice rule:
 | Stochastic OT     | `LexProfile Nat n`   | ranking-perturbed argmin      |
 
 The unifying principle is McFadden's Random Utility Model
-(@cite{mcfadden-1974}): every stochastic decoder is "argmax after a
+([mcfadden-1974]): every stochastic decoder is "argmax after a
 noise kernel applied to the scores". The noise distribution determines
 the choice rule (Gumbel ⇒ softmax, Gaussian ⇒ probit, point-mass ⇒
 deterministic argmax). Noise-kernel-based decoders live in a sibling

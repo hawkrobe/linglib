@@ -7,7 +7,7 @@ Inlined from the deleted `Syntax/Minimalist/HeadMovement/Basic.lean`
 at 0.230.788 when the legacy `Movement` record was removed. This is the
 only file that uses `formComplexLI`, so the substrate is co-located here.
 If a second consumer arises, promote to its own file (most natural home:
-`Morphology/` per @cite{senturia-marcolli-2025} §1, where
+`Morphology/` per [senturia-marcolli-2025] §1, where
 amalgamation operations live in MCB-aligned terms). -/
 
 namespace Minimalist
@@ -15,7 +15,7 @@ namespace Minimalist
 /-- Build a complex `LIToken` by combining two LIs' feature bundles.
     The target's identity (id) is preserved; the mover's features are
     appended. Used by both overt head-to-head incorporation and LF
-    abstract incorporation / cosuperscripting (@cite{baker-1988} GTC). -/
+    abstract incorporation / cosuperscripting ([baker-1988] GTC). -/
 def formComplexLI (target mover : LIToken) : LIToken :=
   ⟨target.item.combine mover.item, target.id⟩
 
@@ -30,7 +30,7 @@ theorem complex_li_outer_projects (target mover : LIToken) :
 /-- Overt head-to-head incorporation alias: complex head exists at PF. -/
 abbrev formOvertIncorporation : LIToken → LIToken → LIToken := formComplexLI
 
-/-- Abstract LF incorporation (@cite{baker-1988} GTC): heads share
+/-- Abstract LF incorporation ([baker-1988] GTC): heads share
     features at LF without a PF reflex. -/
 abbrev formAbstractIncorporation : LIToken → LIToken → LIToken := formComplexLI
 
@@ -44,9 +44,9 @@ end Minimalist
 
 /-!
 # Triadic constructions and Dative Shift — den Dikken's SC-in-SC analysis
-@cite{dendikken-1995} @cite{baker-1988} @cite{larson-1988}
+[dendikken-1995] [baker-1988] [larson-1988]
 
-@cite{dendikken-1995} chapters 3-4 extend the SC analysis from particle
+[dendikken-1995] chapters 3-4 extend the SC analysis from particle
 verb constructions (book ch. 2) to **triadic** constructions and
 Dative Shift. The central thesis: ditransitives instantiate a SC-in-SC
 template with an *abstract* copular verb BE between the matrix V and
@@ -80,7 +80,7 @@ Two operations relate (52a) → (52b):
 
 2. **P-incorporation**: the empty head P_∅ incorporates into BE,
    producing the complex BE+P_∅. Per book §3.10.1, the incorporation
-   appeals to @cite{baker-1988}'s Government Transparency Corollary
+   appeals to [baker-1988]'s Government Transparency Corollary
    for Case licensing of the embedded NP — consistent with the
    broader treatment of incorporation as LF reanalysis throughout the
    book (cf. ch. 2.4.3 on V-Prt reanalysis as LF, not overt). Same
@@ -104,19 +104,19 @@ movement to receive Case from V. In the DOC, by contrast, the
 *predicate* moves: the empty-headed dative PP raises to SpecSC2,
 allowing the Theme NP to receive Case in situ via BE+P_∅ (which
 inherits Case-assigning capability from the incorporated P, per
-@cite{baker-1988}'s GTC). The Goal NP receives Case via further
+[baker-1988]'s GTC). The Goal NP receives Case via further
 movement of the empty-headed PP to SpecSC1.
 
 ## Cross-references
 
-- Book §3.2 contrasts with @cite{larson-1988}'s VP-shell analysis,
+- Book §3.2 contrasts with [larson-1988]'s VP-shell analysis,
   which derives the DOC from the prepositional dative via a
   PASSIVE-style operation. den Dikken argues Larson's analysis fails
   for triadic VPCs (book §3.2 ex. 4-6) because the particle's
   position cannot be accommodated in Larson's flat VP shell.
   See `Studies/Larson1988.lean` for the
   predecessor formalization.
-- @cite{baker-1988} is the source of the Government Transparency
+- [baker-1988] is the source of the Government Transparency
   Corollary used to license Case assignment after P-incorporation.
 
 ## Scope
@@ -347,7 +347,7 @@ theorem HAVE_outer_is_V : BE_plus_P.item.outerCat = .V := by
 
 /-! ## §9. Connection to predecessor analysis (book §3.2)
 
-Book §3.2 argues that @cite{larson-1988}'s VP-shell analysis fails
+Book §3.2 argues that [larson-1988]'s VP-shell analysis fails
 for triadic verb-particle constructions of the form *send a package
 off to Bob*: Larson's flat VP shell cannot accommodate the particle
 in a position consistent with both the binding asymmetries he

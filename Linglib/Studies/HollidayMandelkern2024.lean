@@ -7,9 +7,9 @@ import Linglib.Studies.Mandelkern2019
 import Linglib.Studies.KlinedinstRothschild2012
 
 /-!
-# @cite{holliday-mandelkern-2024}: Possibility-Semantics Case Studies
+# [holliday-mandelkern-2024]: Possibility-Semantics Case Studies
 
-@cite{holliday-mandelkern-2024}
+[holliday-mandelkern-2024]
 
 Concrete instantiations and paper-specific theorems from H&M 2024
 "The Orthologic of Epistemic Modals" (JPL 2024). The general substrate
@@ -77,7 +77,7 @@ open Orthologic
     4-element frames realizing the smaller non-Boolean ortholattices
     O₆ and MO₂ from Figure 1 — the path frame is the canonical
     illustrative example, not the smallest non-Boolean instance.
-    @cite{holliday-mandelkern-2024} Example 4.11, Figure 7. -/
+    [holliday-mandelkern-2024] Example 4.11, Figure 7. -/
 inductive Poss5 where
   | x1 | x2 | x3 | x4 | x5
   deriving DecidableEq, Repr, Inhabited
@@ -165,7 +165,7 @@ theorem nonContradiction_left (x : Poss5) :
     Possibility x₃ is compatible with both A and B worlds, so it makes
     A ∨ B true; but it doesn't commit to either disjunct, so neither
     C ∧ A nor C ∧ B is non-empty.
-    @cite{holliday-mandelkern-2024} Example 4.33 (the path-frame
+    [holliday-mandelkern-2024] Example 4.33 (the path-frame
     instantiation; the algebraic version is Example 3.20, Figure 3).
     Figure 8 enumerates the ten ◇-regular subsets of `pathFrame`;
     the distributivity discussion appears in the prose following
@@ -267,7 +267,7 @@ theorem pLeftReg_compl_eq : pLeftRegᶜ = pRightReg := by
 
     Compatibility: (a,i) ◇ (a',i') iff a ∩ a' ≠ ∅ ∧ a ⊆ i' ∧ a' ⊆ i.
     Accessibility: (a,i) R (a',i') iff a ⊆ a' ∧ i' ⊆ i.
-    @cite{holliday-mandelkern-2024} Definition 5.1, Example 5.3. -/
+    [holliday-mandelkern-2024] Definition 5.1, Example 5.3. -/
 
 /-- Epistemic accessibility for the Epistemic Scale.
     R(x₁) = {x₁}, R(x₂) = {x₁,x₂,x₃}, R(x₃) = {x₃},
@@ -289,7 +289,7 @@ instance : DecidableRel Poss5.epistAccess := fun a b => by
 
 /-- The epistemic scale frame. Compatibility is the path graph;
     accessibility captures epistemic access (refining information).
-    @cite{holliday-mandelkern-2024} Example 4.30, Example 4.33. -/
+    [holliday-mandelkern-2024] Example 4.30, Example 4.33. -/
 def epistemicScale : ModalCompatFrame Poss5 where
   toCompatFrame := pathFrame
   access := Poss5.epistAccess
@@ -389,14 +389,14 @@ theorem uncertainty_at_x3 :
 /-- ◇¬p does NOT entail ¬p: x₃ makes "it might not be raining" true
     but does not settle "it's not raining." This is the core motivation
     for the entire paper — in classical logic, ◇¬p → ¬p, but this fails
-    in possibility semantics. @cite{holliday-mandelkern-2024} §1. -/
+    in possibility semantics. [holliday-mandelkern-2024] §1. -/
 theorem diamond_neg_not_entail_neg :
     diamond epistemicScale (orthoNeg pathFrame propP) .x3 ∧
     ¬ orthoNeg pathFrame propP .x3 := by decide
 
 /-- p does NOT entail □p: x₂ makes p true without knowing p. "It's
     raining" does not mean "It must be raining." Failure of necessitation
-    for non-logical truths. @cite{holliday-mandelkern-2024} §2. -/
+    for non-logical truths. [holliday-mandelkern-2024] §2. -/
 theorem p_not_entail_box_p :
     propP .x2 ∧ ¬ box epistemicScale propP .x2 := by decide
 
@@ -409,7 +409,7 @@ theorem p_not_entail_box_p :
     In possibility semantics, if x settles ¬A (all compatible possibilities
     fail A), then x cannot also make ◇A true (which requires a compatible
     possibility in □¬A's complement).
-    @cite{holliday-mandelkern-2024} Proposition 4.27.
+    [holliday-mandelkern-2024] Proposition 4.27.
 
     Both theorems below are **structural corollaries** of the substrate
     `wittgensteinLaw` on epistemic compatibility frames — no per-frame
@@ -443,7 +443,7 @@ theorem wittgenstein_neg_p (x : Poss5) :
     The partial possibility x₃ verifies the disjunction without
     committing to either disjunct — both disjuncts are empty by
     Wittgenstein's Law (p ∧ ◇¬p = ∅ and ¬p ∧ ◇p = ∅).
-    @cite{holliday-mandelkern-2024} Example 3.20 (algebraic), Example 4.33
+    [holliday-mandelkern-2024] Example 3.20 (algebraic), Example 4.33
     (possibility-semantic instantiation). -/
 theorem epistemic_distrib_failure :
     let pDisj := disj pathFrame propP (orthoNeg pathFrame propP)
@@ -499,7 +499,7 @@ theorem free_choice_fails_at_x1 :
 -- ════════════════════════════════════════════════════
 
 /-- T axiom: □A entails A (knowledge is factive).
-    @cite{holliday-mandelkern-2024} Proposition 4.25. -/
+    [holliday-mandelkern-2024] Proposition 4.25. -/
 theorem T_axiom_p (x : Poss5) :
     box epistemicScale propP x → propP x := by
   cases x <;> decide
@@ -517,7 +517,7 @@ theorem box_implies_diamond (x : Poss5) :
     "Either the dog is inside or it must be outside; it's not the case that
     it must be outside; therefore it is inside." The tautological first
     premise carries no information.
-    @cite{holliday-mandelkern-2024} §2.3. -/
+    [holliday-mandelkern-2024] §2.3. -/
 
 /-- Disjunctive syllogism fails: p ∨ □¬p and ¬□¬p both hold at x₃
     (full uncertainty) but p does not. -/
@@ -536,7 +536,7 @@ theorem disjSyllogism_fails :
     Since p ⊨ ◇p, orthomodularity would give ◇p ⊨ p ∨ (¬p ∧ ◇p).
     But ¬p ∧ ◇p = ⊥ by Wittgenstein's Law, so this collapses to
     ◇p ⊨ p — absurd.
-    @cite{holliday-mandelkern-2024} §2.4. -/
+    [holliday-mandelkern-2024] §2.4. -/
 
 /-- p entails ◇p: truth implies epistemic possibility.
     Follows from T (`T_axiom_general`) + duality (per HM 2024 §2.4 p. 839,
@@ -560,7 +560,7 @@ theorem orthomodularity_fails :
     algebra, ¬a is the greatest element disjoint from a. In an ortholattice
     this need not hold: p ∧ ◇¬p = ⊥ (Wittgenstein) but ◇¬p ≰ ¬p.
     This is the algebraic root of why ◇¬p ≠ ¬p.
-    @cite{holliday-mandelkern-2024} Lemma 3.6 (algebraic statement),
+    [holliday-mandelkern-2024] Lemma 3.6 (algebraic statement),
     Example 3.20 (concrete failure). -/
 
 /-- Pseudocomplementation fails: p ∧ ◇¬p = ⊥ but ◇¬p ≰ ¬p.
@@ -581,7 +581,7 @@ theorem pseudocomplementation_fails :
     B₀ = {⊥, p, ¬p, ⊤} is a four-element Boolean algebra; B₁ (generated
     by applying □ and ◇ to B₀) is an eight-element Boolean algebra.
     Distributivity only fails when mixing levels.
-    @cite{holliday-mandelkern-2024} §3.2.4. -/
+    [holliday-mandelkern-2024] §3.2.4. -/
 
 /-- Within-level distributivity (B₁): ◇p ∧ (◇¬p ∨ ◇p) = (◇p ∧ ◇¬p) ∨ (◇p ∧ ◇p).
     All operands from the same epistemic level → distributivity holds. -/
@@ -647,7 +647,7 @@ def worldlyI1 : Poss5 → Bool
 
 /-- Compatibility derived from lifting: (A,I) ◇ (A',I') iff
     A ∩ A' ≠ ∅ ∧ A ⊆ I' ∧ A' ⊆ I.
-    @cite{holliday-mandelkern-2024} Definition 5.1.2. -/
+    [holliday-mandelkern-2024] Definition 5.1.2. -/
 def liftedCompat (x y : Poss5) : Bool :=
   -- A ∩ A' ≠ ∅ (share at least one actual world)
   ((worldlyA0 x && worldlyA0 y) || (worldlyA1 x && worldlyA1 y)) &&
@@ -658,7 +658,7 @@ def liftedCompat (x y : Poss5) : Bool :=
 
 /-- Accessibility derived from lifting: (A,I) R (A',I') iff
     A ⊆ A' ∧ I' ⊆ I (refining = expanding actuality, shrinking information).
-    @cite{holliday-mandelkern-2024} Definition 5.1.3. -/
+    [holliday-mandelkern-2024] Definition 5.1.3. -/
 def liftedAccess (x y : Poss5) : Bool :=
   -- A ⊆ A' (y's actuality contains x's)
   ((!worldlyA0 x || worldlyA0 y) && (!worldlyA1 x || worldlyA1 y)) &&
@@ -679,7 +679,7 @@ theorem access_from_lifting (x y : Poss5) :
 -- § 16. Truth from Worlds (Lemma 5.4)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{holliday-mandelkern-2024} Lemma 5.4: truth at a possibility
+/-! [holliday-mandelkern-2024] Lemma 5.4: truth at a possibility
     reduces to truth at worlds via the A and I sets.
 
     - propP x = true  iff  world 1 ∉ A(x)  (all actual worlds satisfy p)

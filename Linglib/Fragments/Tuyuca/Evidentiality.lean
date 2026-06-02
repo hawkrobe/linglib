@@ -2,14 +2,14 @@ import Linglib.Semantics.Evidential.Defs
 
 /-!
 # Tuyuca Evidentiality
-@cite{aikhenvald-2004} @cite{barnes-1984} @cite{de-haan-2013}
+[aikhenvald-2004] [barnes-1984] [de-haan-2013]
 
 Five-term system: visual, nonvisual, apparent (inferential), secondhand
-(reported), assumed. Obligatory verbal suffixes. @cite{barnes-1984} is the
+(reported), assumed. Obligatory verbal suffixes. [barnes-1984] is the
 classic description. Vaupés multilingual area.
 
-WALS @cite{de-haan-2013} F77A codes Tuyuca as `directAndIndirect`, lumping
-the 5-term system into the canonical 2-way bucket. @cite{aikhenvald-2004}'s
+WALS [de-haan-2013] F77A codes Tuyuca as `directAndIndirect`, lumping
+the 5-term system into the canonical 2-way bucket. [aikhenvald-2004]'s
 richer typology distinguishes 3-or-more systems; the local `EvidentialSystem`
 enum's `threeOrMore` value is the per-Aikhenvald override (Studies-side).
 The `markers` field below preserves the full 5-term inventory.
@@ -19,8 +19,8 @@ namespace Tuyuca.Evidentiality
 
 /-! ### Typed evidential inventory
 
-Tuyuca's 5-term D1 system per @cite{aikhenvald-2004} Ch 2 §2.4 and
-@cite{barnes-1984}. -/
+Tuyuca's 5-term D1 system per [aikhenvald-2004] Ch 2 §2.4 and
+[barnes-1984]. -/
 
 open Semantics.Evidential
 

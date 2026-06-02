@@ -1,6 +1,6 @@
 /-!
 # Physical Dimension
-@cite{bale-schwarz-2026} @cite{scontras-2014} @cite{zabbal-2005}
+[bale-schwarz-2026] [scontras-2014] [zabbal-2005]
 
 Per-entry feature taxonomy of physical measurement dimensions: the typed tag
 that classifies what a measure function measures (mass, volume, distance,
@@ -11,7 +11,7 @@ speed, pressure) that ratios of simplex dimensions give rise to.
 
 `Dimension` is the simplex feature: directly-measurable properties accessible
 to compositional semantics. `QuotientDimension` is the parallel taxonomy of
-derived ratios. Per @cite{bale-schwarz-2026}'s No Division Hypothesis
+derived ratios. Per [bale-schwarz-2026]'s No Division Hypothesis
 (eq. (5), p. 135), the grammar does not compositionally produce values in
 quotient dimensions; references to them go through extra-grammatical
 "math speak".
@@ -38,8 +38,8 @@ namespace Features.Dimension
 
 Simplex dimensions are directly measurable properties of entities and are
 accessible to compositional semantics. The `cardinality` constructor names
-the dimension of @cite{zabbal-2005}'s CARD (the Num-head behind cardinal
-numerals), aligned by @cite{scontras-2014} with measure terms. -/
+the dimension of [zabbal-2005]'s CARD (the Num-head behind cardinal
+numerals), aligned by [scontras-2014] with measure terms. -/
 inductive Dimension where
   | mass         -- weight (grams, kilos, pounds)
   | volume       -- volume (milliliters, liters, gallons)
@@ -58,7 +58,7 @@ inductive Dimension where
 /-- Quotient dimensions: ratios of simplex dimensions.
 
 These exist in the quantity calculus but are not compositionally derivable
-within the grammar (@cite{bale-schwarz-2026}'s No Division Hypothesis). -/
+within the grammar ([bale-schwarz-2026]'s No Division Hypothesis). -/
 inductive QuotientDimension where
   | density      -- mass / volume
   | speed        -- distance / time

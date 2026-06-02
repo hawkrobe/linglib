@@ -4,8 +4,8 @@ import Linglib.Core.Time.Boundedness
 import Linglib.Semantics.Tense.Basic
 
 /-!
-# @cite{declerck-1991}: Tense and the Present/Past Time-Sphere
-@cite{declerck-1991}
+# [declerck-1991]: Tense and the Present/Past Time-Sphere
+[declerck-1991]
 
 Declerck's *A Comprehensive Descriptive Grammar of English* (1991)
 organizes English tense around two **time-spheres** (past vs present)
@@ -234,7 +234,7 @@ open Core.Time.Reichenbach (ReichenbachFrame)
 -- § Time-Spheres
 -- ════════════════════════════════════════════════════════════════
 
-/-- The two time-spheres of English (@cite{declerck-1991}, @cite{declerck-2006}).
+/-- The two time-spheres of English ([declerck-1991], [declerck-2006]).
 
     The tense system partitions linguistic time into two spheres:
     - **past**: wholly before t₀, containing the preterit, past perfect,
@@ -658,7 +658,7 @@ end Bridge
     TOs, their relation is genuinely unspecified.
 
     The future perfect and conditional tense are both vague about
-    the relation between TO_sit and TO₁. @cite{reichenbach-1947}
+    the relation between TO_sit and TO₁. [reichenbach-1947]
     incorrectly treats this as three-way ambiguity (S–R–E, R–S–E,
     R–E–S as distinct schemata for the conditional). -/
 
@@ -680,7 +680,7 @@ theorem futurePerfect_vague_sit_t0 :
     the chain relates TO_sit to TO₂ and TO₂ to TO₁, but NOT
     TO_sit to TO₁. All three scenarios are consistent.
 
-    @cite{reichenbach-1947}'s three separate schemata for the conditional
+    [reichenbach-1947]'s three separate schemata for the conditional
     (S–R–E, R–S–E, R–E–S) are NOT distinct tenses — they are instances
     of a single vague schema. -/
 theorem conditional_vague_sit_t0 :

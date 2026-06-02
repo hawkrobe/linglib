@@ -3,7 +3,7 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # RSA Question Embedding
-@cite{geurts-2010} @cite{hamblin-1973b} @cite{groenendijk-stokhof-1984}
+[geurts-2010] [hamblin-1973b] [groenendijk-stokhof-1984]
 
 Models scalar implicatures embedded in questions.
 

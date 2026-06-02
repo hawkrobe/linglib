@@ -3,10 +3,10 @@ import Linglib.Semantics.Causation.Morphological
 /-!
 # Urdu Causative Construction System
 
-@cite{hafeez-2025}
+[hafeez-2025]
 
 Urdu distinguishes at least 7 causative constructions tested in
-@cite{hafeez-2025}'s acceptability rating study. Each construction is
+[hafeez-2025]'s acceptability rating study. Each construction is
 sensitive to three semantic variables: **causer type** (IHCr/AHCr/NFCr),
 **causee/affectee type** (ContrHCEAF/PhysImpHCEAF/PsychImpHCEAF/InanCEAF),
 and **mediation** (direct/indirect).
@@ -25,7 +25,7 @@ and **mediation** (direct/indirect).
 
 ## Semantic Prototypes (Table 25)
 
-@cite{hafeez-2025} identifies hypothesized semantic prototypes for 5 of
+[hafeez-2025] identifies hypothesized semantic prototypes for 5 of
 the 7 constructions via acceptability rating peaks (>50% ceiling).
 Prototypes use both positive ([+F]) and negative ([-F]) features:
 
@@ -108,7 +108,7 @@ def lexInst : ConstructionEntry :=
 /-- Lexical Dative (LEX-DAT): causative verb with dative case on the
     highest-ranked NP.
     No semantic prototype identified — high acceptability across all
-    scene types. @cite{hafeez-2025} suggests this may be a default
+    scene types. [hafeez-2025] suggests this may be a default
     case in Urdu, consistent with Van Valin (2018). -/
 def lexDat : ConstructionEntry :=
   { construction :=
@@ -177,7 +177,7 @@ def nca : ConstructionEntry :=
 /-- Non-sentential Causer Adjunct (NCrA): causer NP as adjunct phrase
     in a matrix clause predicting the result.
     Categorically restricted to natural force causers in
-    @cite{hafeez-2025}'s data — human causers never trigger NCrA.
+    [hafeez-2025]'s data — human causers never trigger NCrA.
     Prototype: [-InanCEAF, +NFCr] — natural force causer with human
     affectee. -/
 def ncrA : ConstructionEntry :=
@@ -282,7 +282,7 @@ theorem lexDat_no_prototype :
 
 /-- **NCrA categorical restriction**: NCrA is restricted to natural
     force causers. No human causer (intentional or accidental) triggers
-    NCrA in @cite{hafeez-2025}'s data. -/
+    NCrA in [hafeez-2025]'s data. -/
 theorem ncrA_requires_natural_force :
     ncrA.construction.causerRestriction = some .naturalForce := rfl
 

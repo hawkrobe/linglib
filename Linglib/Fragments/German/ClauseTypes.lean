@@ -3,7 +3,7 @@ import Linglib.Features.ClauseForm
 
 /-!
 # German Clause Types
-@cite{gutzmann-2015}
+[gutzmann-2015]
 
 German clause-type taxonomy used by Gutzmann (2015) for the analysis of
 sentence mood operators (DEONT, EPIS, HKNOW). Five clause types
@@ -16,7 +16,7 @@ operators in `Semantics.Mood.Gutzmann`. The theory file
 defines DEONT, EPIS, the E modifier, and HKNOW; this file specifies
 *which* of those operators each German clause type composes.
 
-## German Clause Type Inventory (@cite{gutzmann-2015}, Ch 5)
+## German Clause Type Inventory ([gutzmann-2015], Ch 5)
 
 | Clause type       | Mood operators           | Example                |
 |-------------------|--------------------------|------------------------|
@@ -37,7 +37,7 @@ open Semantics.Mood.Gutzmann
 -- § 1. German clause-type mood compositions
 -- ════════════════════════════════════════════════════════════════
 
-/-- dass-VL clause mood: DEONT only (@cite{gutzmann-2015}, (5.82)).
+/-- dass-VL clause mood: DEONT only ([gutzmann-2015], (5.82)).
 
 No [±wh] visible at LF (dass is semantically empty, so [−wh] is
 invisible per the visibility condition (5.41)). Therefore no epistemic
@@ -47,7 +47,7 @@ interpretation is triggered. The root rule introduces DEONT.
 def dassVLMood {W : Type*} (p : W → Bool) (c : MoodContext W) : Bool :=
   deont p c
 
-/-- V2-declarative mood: DEONT(EPIS(p)) (@cite{gutzmann-2015}, (5.93)–(5.96)).
+/-- V2-declarative mood: DEONT(EPIS(p)) ([gutzmann-2015], (5.93)–(5.96)).
 
 The finite verb moves to C⁰ (V-to-C triggered by [−wh] attached to an
 overt element at PF). The [−wh] is visible at LF, triggering epistemic
@@ -60,7 +60,7 @@ def v2DeclMood {W : Type*} (p : W → Bool) (c : MoodContext W) : Bool :=
   episModifier deont p c
 
 /-- V2-interrogative mood: DEONT(EPIS(p)) ⊙ HKNOW(p)
-(@cite{gutzmann-2015}, (5.100)).
+([gutzmann-2015], (5.100)).
 
 V2-interrogatives have two [±wh] specifications: [+wh] in CP^spec
 and [−wh] in C⁰ (Brandt et al. 1992). The first triggers epistemic
@@ -75,7 +75,7 @@ def v2InterrogMood {W : Type*} (p : W → Bool) (c : MoodContext W) : Bool :=
   episModifier deont p c && hknow p c
 
 /-- VL-interrogative mood: DEONT(EPIS(p)) only — no HKNOW
-(@cite{gutzmann-2015}, p. 213).
+([gutzmann-2015], p. 213).
 
 VL-interrogatives (e.g., "Wann Peter nach Hause kommt?") lack the
 [−wh] in C⁰ that triggers HKNOW. Therefore they are felicitous even
@@ -144,7 +144,7 @@ separate proof:
 /-- German clause types distinguished by verb position and complementizer,
 indexed by their `Features.ClauseForm` projection. The
 verb-position/complementizer information determines mood operator
-inventory (@cite{gutzmann-2015}, Ch 5). -/
+inventory ([gutzmann-2015], Ch 5). -/
 inductive GermanClauseType : ClauseForm → Type where
   /-- dass-VL: complementizer clause, verb-last. No [±wh] visible at LF.
       Form-level: declarative. -/
@@ -217,7 +217,7 @@ theorem embedded_question_is_vl_interrog (ct : GermanClauseType .embeddedQuestio
 
 /-- HKNOW iff matrix question — restated structurally as a fact about the
 index. The HKNOW use condition tracks *form*-level matrix interrogativity
-(@cite{gutzmann-2015}, p. 213, Cuban cigar argument). -/
+([gutzmann-2015], p. 213, Cuban cigar argument). -/
 theorem hknow_iff_matrix_question {f : ClauseForm} (ct : GermanClauseType f) :
     ct.moodStructure.hasHearerKnowledge = true ↔ f = .matrixQuestion := by
   cases ct <;> simp [GermanClauseType.moodStructure]

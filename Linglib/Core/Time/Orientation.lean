@@ -1,6 +1,6 @@
 /-!
 # Orientation Times: the universal role vocabulary for tense
-@cite{klein-1994} @cite{kiparsky-2002} @cite{reichenbach-1947} @cite{declerck-2006}
+[klein-1994] [kiparsky-2002] [reichenbach-1947] [declerck-2006]
 
 The contemporary linguistic literature on tense has largely converged on a
 four-element role vocabulary for the times that tense and aspect manipulate:

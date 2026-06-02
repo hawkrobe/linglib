@@ -27,7 +27,7 @@ def german : ModalInventory :=
 theorem german_all_iff : german.allIFF = true := by native_decide
 
 /-- German has seven modal expressions (*sollte* counted separately from *sollen*
-    per morphological individuation, @cite{steinert-threlkeld-imel-guo-2023} §4.3). -/
+    per morphological individuation, [steinert-threlkeld-imel-guo-2023] §4.3). -/
 theorem german_size : german.expressions.length = 7 := by native_decide
 
 end Phenomena.Modality.GermanModalsBridge

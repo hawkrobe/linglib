@@ -3,9 +3,9 @@ import Linglib.Studies.Stakov2026Typology
 
 /-!
 # Gärtner & Gyuris (2017): Delimiting the Space of Bias Profiles
-@cite{gartner-gyuris-2017}
+[gartner-gyuris-2017]
 
-Formalization of the bias profile framework from @cite{gartner-gyuris-2017},
+Formalization of the bias profile framework from [gartner-gyuris-2017],
 which defines bias profiles as non-empty power-set choices from {+, −, %}
 for evidential and epistemic dimensions across PPQ/IN-NPQ/ON-NPQ forms.
 
@@ -587,7 +587,7 @@ private def czechEpChoice (f : CzechPQForm) : BiasChoice :=
   (if neut then [BiasValue.neut] else []) ++
   (if againstP then [BiasValue.neg] else [])
 
-/-- Czech bias profile in G&G format, derived from @cite{simik-2024} Table 2
+/-- Czech bias profile in G&G format, derived from [simik-2024] Table 2
 via `czechBiasProfile`.
 
 Czech V1-Interrogative (InterPPQ/InterNPQ as PPQ/ON-NPQ):
@@ -609,13 +609,13 @@ theorem czechV1_ppq_ev : czechV1.ppqEv = [.neut] := rfl
 
 /-- Czech ON-NPQ (InterNPQ) has *broader* evidential distribution than
 English — it admits +, %, and − evidence, reflecting FALSUM^CZ's weaker
-requirements (@cite{simik-2024} §5). -/
+requirements ([simik-2024] §5). -/
 theorem czechV1_onNpq_ev : czechV1.onNpqEv = [.pos, .neut, .neg] := rfl
 
 /-- Czech ON-NPQ (InterNPQ) epistemic bias admits + and % (speaker believes
 p or is neutral). Unlike English HiNQ which requires bias for p, Czech
 InterNPQ is also felicitous in explanation-seeking contexts (neutral
-epistemic bias, @cite{simik-2024} §5.2). -/
+epistemic bias, [simik-2024] §5.2). -/
 theorem czechV1_onNpq_ep : czechV1.onNpqEp = [.pos, .neut] := rfl
 
 /-- Czech V1 profile satisfies No Uniformity. -/
@@ -639,7 +639,7 @@ theorem czechV1_violates_staticComplementarity :
 
 /-- The key Czech vs English difference: Czech ON-NPQ admits positive
 evidence while English ON-NPQ does not. This is the empirical core of
-@cite{simik-2024}'s FALSUM^CZ proposal. -/
+[simik-2024]'s FALSUM^CZ proposal. -/
 theorem czech_vs_english_onNpq_evidence :
     -- Czech ON-NPQ: positive evidence OK
     evidentiallyCompatible czechV1.onNpqEv .forP = true ∧

@@ -9,7 +9,7 @@ Fragment entries for numeral modification expressions, covering:
 - **Bound-setting modifiers**: "at least", "at most", "more than", "fewer than",
   "up to", "from... on"
 
-The bound-setting modifiers are classified following @cite{kennedy-2015}:
+The bound-setting modifiers are classified following [kennedy-2015]:
 - Class A (strict: >, <): "more than", "fewer than" — no ignorance implicature
 - Class B (non-strict: ≥, ≤): "at least", "at most", "up to", "from...on" — ignorance
 
@@ -42,7 +42,7 @@ inductive ModifierType where
   | interval     -- "between ... and ..."
   | exactifier   -- "exactly", "precisely"
   | bound        -- "at least", "at most", "more than", "fewer than", "up to", "from...on"
-  | approximator -- "almost", "nearly": proximal + polar (@cite{nouwen-2006} @cite{penka-2006})
+  | approximator -- "almost", "nearly": proximal + polar ([nouwen-2006] [penka-2006])
   deriving Repr, DecidableEq
 
 /--
@@ -80,7 +80,7 @@ structure NumeralModifierEntry where
   boundDir : Option BoundDirection := none
   /-- Modifier class (for bound-setting modifiers) -/
   modClass : Option ModifierClass := none
-  /-- Evaluative valence (@cite{blok-2015} / @cite{claus-walch-2024}) -/
+  /-- Evaluative valence ([blok-2015] / [claus-walch-2024]) -/
   evaluativeValence : EvaluativeValence := .neutral
   /-- Does this modifier generate ignorance implicatures? -/
   generatesIgnorance : Bool := false
@@ -101,7 +101,7 @@ The most common English approximator. Used in BSB2022's stimuli:
 ⟦about n⟧ = λy.λx. |n-x| ≤ y
 Pragmatically signals peaked private distribution centered on n.
 
-Source: @cite{beltrama-solt-burnett-2023}
+Source: [beltrama-solt-burnett-2023]
 -/
 def about : NumeralModifierEntry :=
   { form := "about"
@@ -226,7 +226,7 @@ def precisely : NumeralModifierEntry :=
   }
 
 -- ============================================================================
--- Bound-Setting Modifiers (@cite{kennedy-2015})
+-- Bound-Setting Modifiers ([kennedy-2015])
 -- ============================================================================
 
 /-- "at least n": Class B lower bound (max ≥ n).
@@ -249,7 +249,7 @@ def atLeast : NumeralModifierEntry :=
 /-- "at most n": Class B upper bound (max ≤ n).
 
 Generates ignorance implicatures. NEGATIVE evaluative valence:
-"at most" is endorsed more in negative contexts. @cite{claus-walch-2024} show
+"at most" is endorsed more in negative contexts. [claus-walch-2024] show
 this produces reversed framing effects. -/
 def atMost : NumeralModifierEntry :=
   { form := "at most"
@@ -300,7 +300,7 @@ def fewerThan : NumeralModifierEntry :=
 
 /-- "up to n": Class B upper bound (max ≤ n).
 
-Same truth conditions as "at most n", but POSITIVE evaluative valence. @cite{claus-walch-2024} show "up to" follows standard framing
+Same truth conditions as "at most n", but POSITIVE evaluative valence. [claus-walch-2024] show "up to" follows standard framing
 (endorsed more in positive contexts), unlike "at most". -/
 def upTo : NumeralModifierEntry :=
   { form := "up to"
@@ -333,7 +333,7 @@ def fromOn : NumeralModifierEntry :=
   }
 
 -- ============================================================================
--- Approximators (@cite{penka-2006} @cite{nouwen-2006})
+-- Approximators ([penka-2006] [nouwen-2006])
 -- ============================================================================
 
 /--
@@ -342,18 +342,18 @@ def fromOn : NumeralModifierEntry :=
 ⟦almost n⟧ = λx. close(x, n) ∧ ¬(x = n) [or ¬(x ≥ n) under LB]
 
 Unlike tolerance modifiers ("around"), "almost" EXCLUDES the target value
-(the polar component). @cite{nouwen-2006} decomposes "almost" into proximal
+(the polar component). [nouwen-2006] decomposes "almost" into proximal
 (close to p) and polar (¬p) components. This creates a key LB/BL divergence:
 - Under LB: "almost three" = close to 3 AND <3 → only values below 3
 - Under BL: "almost three" = close to 3 AND ≠3 → values above OR below 3
 
-The empirical asymmetry (below only) is argued by @cite{penka-2006} to
-favor LB. @cite{nouwen-2006} shows that polar orientation is in general
+The empirical asymmetry (below only) is argued by [penka-2006] to
+favor LB. [nouwen-2006] shows that polar orientation is in general
 context-dependent (e.g., "almost that warm" vs "almost that cold" orient
 in opposite directions depending on the scale).
 
-Source: @cite{penka-2006} "Almost there: The meaning of almost";
-  @cite{nouwen-2006} "Remarks on the Polar Orientation of Almost".
+Source: [penka-2006] "Almost there: The meaning of almost";
+  [nouwen-2006] "Remarks on the Polar Orientation of Almost".
 -/
 def almost : NumeralModifierEntry :=
   { form := "almost"
@@ -465,7 +465,7 @@ theorem only_tolerance_sorites :
   constructor <;> native_decide
 
 -- ============================================================================
--- Verification: @cite{kennedy-2015} Class A/B Properties
+-- Verification: [kennedy-2015] Class A/B Properties
 -- ============================================================================
 
 /-- All Class B modifiers generate ignorance implicatures. -/
@@ -479,7 +479,7 @@ theorem classA_no_ignorance :
 /-- "at most" and "up to" differ only in evaluative valence.
 
 Same modType, modClass, boundDir, but different evaluativeValence.
-This is the key @cite{blok-2015} / @cite{claus-walch-2024} observation. -/
+This is the key [blok-2015] / [claus-walch-2024] observation. -/
 theorem atMost_upTo_differ_only_in_valence :
     atMost.modType = upTo.modType ∧
     atMost.modClass = upTo.modClass ∧

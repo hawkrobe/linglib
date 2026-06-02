@@ -4,12 +4,12 @@ import Linglib.Fragments.Indonesian.Morphophonology
 
 /-!
 # Indonesian Verbal Predicates
-@cite{sneddon-1996} @cite{beavers-udayana-2022}
+[sneddon-1996] [beavers-udayana-2022]
 
 Indonesian verb entries with voice paradigm forms (*meN-*, *ber-*,
-*ter-*, *di-*), root class annotations from @cite{beavers-udayana-2022},
+*ter-*, *di-*), root class annotations from [beavers-udayana-2022],
 and *ter-* semantic classification (stative, accidental, abilitative)
-from @cite{sneddon-1996} §1.265–1.275.
+from [sneddon-1996] §1.265–1.275.
 
 ## Root classes
 
@@ -27,7 +27,7 @@ interpretation of the suppressed variable *z* in *ber-* middles:
   *ber-* surfaces as *ter-* with an anticausative reading.
   Examples: *buka* 'open', *pecah* 'break'.
 
-## *ter-* classification (@cite{sneddon-1996} §1.265–1.275)
+## *ter-* classification ([sneddon-1996] §1.265–1.275)
 
 The prefix *ter-* has three semantic categories:
 - **Stative** (§1.266): result state, no agent (*terbuka* 'open', *tertulis* 'written')
@@ -59,7 +59,7 @@ open Indonesian.Morphophonology
 
 /-- Root class of Indonesian verbs, determining the default interpretation
     of the suppressed variable in *ber-* middles
-    (@cite{beavers-udayana-2022}, §3.5, table (58)). -/
+    ([beavers-udayana-2022], §3.5, table (58)). -/
 inductive RootClass where
   /-- Body care/grooming verbs: default coreferent (*z* = surface subject). -/
   | reflexive
@@ -78,11 +78,11 @@ def RootClass.defaultReading : RootClass → SuppressedVarReading
   | .causerUnspecified => .disjoint
 
 -- ============================================================================
--- § 1b: ter- Classification (@cite{sneddon-1996} §1.265–1.275)
+-- § 1b: ter- Classification ([sneddon-1996] §1.265–1.275)
 -- ============================================================================
 
 /-- The three semantic categories of *ter-* verbs, following
-    @cite{sneddon-1996} §1.265–1.275.
+    [sneddon-1996] §1.265–1.275.
 
     - **Stative** (§1.266): refers to a resulting state, not an action.
       No agent is possible. Corresponds to *di-* passives but describes
@@ -115,7 +115,7 @@ inductive TerClass where
 /-- Whether the *ter-* reading entails the existence of an agent.
     Stative *ter-* is agentless (no *oleh* 'by' phrase possible);
     accidental and abilitative *ter-* allow an (often pronoun) agent
-    (@cite{sneddon-1996} §1.266 vs §1.269, §1.272). -/
+    ([sneddon-1996] §1.266 vs §1.269, §1.272). -/
 def TerClass.hasAgent : TerClass → Bool
   | .stative => false
   | .accidental => true
@@ -147,15 +147,15 @@ def TerClass.retainsSuffix : TerClass → Bool
 
 /-- An Indonesian verb entry extending Verb with voice paradigm forms.
 
-    Voice prefixes follow @cite{sneddon-1996} (§1.167–177 for *ber-*,
+    Voice prefixes follow [sneddon-1996] (§1.167–177 for *ber-*,
     §1.265–275 for *ter-*, §3.26–40 for active/passive voice):
-    - *meN-*: agent voice / active (@cite{sneddon-1996} §3.26)
-    - *di-*: patient voice / passive (@cite{sneddon-1996} §3.27–28)
+    - *meN-*: agent voice / active ([sneddon-1996] §3.26)
+    - *di-*: patient voice / passive ([sneddon-1996] §3.27–28)
     - *ber-*: middle voice — reflexive, dispositional, incorporation
-      (@cite{beavers-udayana-2022})
-    - *ter-*: stative / accidental / abilitative (@cite{sneddon-1996} §1.265–275);
+      ([beavers-udayana-2022])
+    - *ter-*: stative / accidental / abilitative ([sneddon-1996] §1.265–275);
       analyzed as anticausative for causer-unspecified roots by
-      @cite{beavers-udayana-2022} -/
+      [beavers-udayana-2022] -/
 structure IndonesianVerbEntry extends Verb where
   /-- Active voice *meN-* form (with allomorph selection). -/
   formMeN : Option String := none
@@ -163,7 +163,7 @@ structure IndonesianVerbEntry extends Verb where
   formBer : Option String := none
   /-- Anticausative / stative / accidental / abilitative *ter-* form. -/
   formTer : Option String := none
-  /-- Semantic class of the *ter-* form (@cite{sneddon-1996} §1.265–1.275). -/
+  /-- Semantic class of the *ter-* form ([sneddon-1996] §1.265–1.275). -/
   terClass : Option TerClass := none
   /-- Passive voice *di-* form. -/
   formDi : Option String := none
@@ -263,7 +263,7 @@ def cukur : IndonesianVerbEntry :=
 /-- *jemur* 'sunbathe': natural reflexive.
     Active: *men-jemur*. Middle: *ber-jemur*.
     Optionally takes *diri* 'self': *ber-jemur (diri)*
-    (@cite{sneddon-1996} §1.168; the paper's table (15)). -/
+    ([sneddon-1996] §1.168; the paper's table (15)). -/
 def jemur : IndonesianVerbEntry :=
   { form := "jemur"
   , complementType := .np
@@ -313,7 +313,7 @@ def pecah : IndonesianVerbEntry :=
   , rootClass := .causerUnspecified
   , levinClass := some .break_ }
 
--- § 3d: Stative ter- (@cite{sneddon-1996} §1.266)
+-- § 3d: Stative ter- ([sneddon-1996] §1.266)
 
 /-- *tulis* 'write': stative *ter-*.
     Active: *Surat itu di-tulis(nya) dalam bahasa Inggris.*
@@ -322,7 +322,7 @@ def pecah : IndonesianVerbEntry :=
       'That letter is written in English.'
     The *ter-* form describes the resulting state; the *di-* form
     describes the action. No agent (*oleh*) possible with stative *ter-*.
-    (@cite{sneddon-1996} §1.266). -/
+    ([sneddon-1996] §1.266). -/
 def tulis : IndonesianVerbEntry :=
   { form := "tulis"
   , complementType := .np
@@ -332,7 +332,7 @@ def tulis : IndonesianVerbEntry :=
   , formDi := some "di-tulis"
   , rootClass := .obviative }
 
--- § 3e: Accidental ter- (@cite{sneddon-1996} §1.267–1.270)
+-- § 3e: Accidental ter- ([sneddon-1996] §1.267–1.270)
 
 /-- *bawa* 'carry, bring': accidental *ter-*.
     Active: *Dia mem-bawa koran saudara.* 'He carried your newspaper.'
@@ -340,7 +340,7 @@ def tulis : IndonesianVerbEntry :=
       'Sorry, I took your newspaper by mistake.'
     The accidental *ter-* form explicitly marks the action as unintended.
     Contrasts with deliberate *di-bawa*. Agent expressed with *oleh* (§1.269).
-    (@cite{sneddon-1996} §1.269, §1.273). -/
+    ([sneddon-1996] §1.269, §1.273). -/
 def bawa : IndonesianVerbEntry :=
   { form := "bawa"
   , complementType := .np
@@ -350,7 +350,7 @@ def bawa : IndonesianVerbEntry :=
   , formDi := some "di-bawa"
   , rootClass := .obviative }
 
--- § 3f: Abilitative ter- (@cite{sneddon-1996} §1.272)
+-- § 3f: Abilitative ter- ([sneddon-1996] §1.272)
 
 /-- *dengar* 'hear': abilitative *ter-*.
     Active: *Dia men-dengar suara dosen.* 'He heard the lecturer's voice.'
@@ -358,7 +358,7 @@ def bawa : IndonesianVerbEntry :=
       'The lecturer can't be heard from here.'
     Abilitative *ter-* is usually negated, expressing inability.
     The negated form *tidak terdengar* corresponds to English 'inaudible'.
-    (@cite{sneddon-1996} §1.272). -/
+    ([sneddon-1996] §1.272). -/
 def dengar : IndonesianVerbEntry :=
   { form := "dengar"
   , complementType := .np
@@ -439,7 +439,7 @@ theorem cuci_incorporates_diri : cuci.incorporatesDiri = true := rfl
 theorem cuci_incorporation_count : cuci.incorporatedNPs.length = 9 := rfl
 
 /-- *jemur* 'sunbathe' optionally incorporates *diri* 'self'
-    (@cite{sneddon-1996} §1.168: *berjemur (diri)*). -/
+    ([sneddon-1996] §1.168: *berjemur (diri)*). -/
 theorem jemur_incorporates_diri : jemur.incorporatesDiri = true := rfl
 
 /-- Reflexive-root verbs (dandan, cukur) do not incorporate lexical NPs
@@ -468,7 +468,7 @@ theorem cukur_predicted_reading :
 theorem pecah_levin_class :
     pecah.toVerb.levinClass = some .break_ := rfl
 
--- § 5f: ter- class verification (@cite{sneddon-1996} §1.265–1.275)
+-- § 5f: ter- class verification ([sneddon-1996] §1.265–1.275)
 
 theorem buka_ter_stative : buka.terClass = some .stative := rfl
 theorem pecah_ter_stative : pecah.terClass = some .stative := rfl
@@ -479,11 +479,11 @@ theorem dengar_ter_abilitative : dengar.terClass = some .abilitative := rfl
 -- § 5g: ter- class semantic bridges
 
 /-- Stative *ter-* has no agent — the *oleh* 'by' phrase is impossible
-    (@cite{sneddon-1996} §1.266). -/
+    ([sneddon-1996] §1.266). -/
 theorem stative_no_agent : TerClass.stative.hasAgent = false := rfl
 
 /-- Accidental *ter-* entails the agent acted nonvolitionally
-    (@cite{sneddon-1996} §1.267: "unintended, unexpected, sudden"). -/
+    ([sneddon-1996] §1.267: "unintended, unexpected, sudden"). -/
 theorem accidental_nonvolitional :
     TerClass.accidental.volitionality = .nonvolitional := rfl
 
@@ -494,13 +494,13 @@ theorem accidental_has_agent : TerClass.accidental.hasAgent = true := rfl
 
 /-- Abilitative *ter-* retains transitive suffixes (-kan, -i) from the
     base verb, unlike accidental *ter-*, which drops them
-    (@cite{sneddon-1996} §1.272, §1.274). -/
+    ([sneddon-1996] §1.272, §1.274). -/
 theorem abilitative_retains_suffix :
     TerClass.abilitative.retainsSuffix = true := rfl
 theorem accidental_drops_suffix :
     TerClass.accidental.retainsSuffix = false := rfl
 
-/-- The causer-unspecified roots from @cite{beavers-udayana-2022} have
+/-- The causer-unspecified roots from [beavers-udayana-2022] have
     stative *ter-* — their *ter-* forms describe resulting states, not
     unintended actions or abilities. This connects B&U's root class
     analysis to Sneddon's ter- classification. -/
@@ -514,7 +514,7 @@ theorem causer_unspecified_have_stative_ter :
 -- ============================================================================
 
 -- ============================================================================
--- § 6b: Denominal ber- middles (@cite{beavers-udayana-2022} §4)
+-- § 6b: Denominal ber- middles ([beavers-udayana-2022] §4)
 -- ============================================================================
 
 /-- Denominal root class: relational nouns (body parts, kin terms,
@@ -527,7 +527,7 @@ theorem causer_unspecified_have_stative_ter :
     These combine incorporation (the noun head-adjoins to *ber-*) with
     object promotion (the possessor surfaces as subject). The reading
     derives from the relational noun's possession relation π'
-    (@cite{barker-1995}; @cite{beavers-udayana-2022} §4). -/
+    ([barker-1995]; [beavers-udayana-2022] §4). -/
 inductive DenominalNounClass where
   /-- Body part nouns: inalienable possession. -/
   | bodyPart
@@ -550,7 +550,7 @@ structure DenominalBerEntry where
   gloss : String
   deriving Repr, BEq
 
--- Body parts (@cite{beavers-udayana-2022} table (61))
+-- Body parts ([beavers-udayana-2022] table (61))
 
 def kaki : DenominalBerEntry :=
   { root := "kaki", formBer := "ber-kaki", nounClass := .bodyPart
@@ -564,7 +564,7 @@ def tangan : DenominalBerEntry :=
   { root := "tangan", formBer := "ber-tangan", nounClass := .bodyPart
   , gloss := "have hands" }
 
--- Kin terms (@cite{beavers-udayana-2022} table (61))
+-- Kin terms ([beavers-udayana-2022] table (61))
 
 def istri : DenominalBerEntry :=
   { root := "istri", formBer := "ber-istri", nounClass := .kinTerm
@@ -578,7 +578,7 @@ def adik : DenominalBerEntry :=
   { root := "adik", formBer := "ber-adik", nounClass := .kinTerm
   , gloss := "have a younger sibling" }
 
--- Clothing (@cite{beavers-udayana-2022} table (61))
+-- Clothing ([beavers-udayana-2022] table (61))
 
 def topi : DenominalBerEntry :=
   { root := "topi", formBer := "ber-topi", nounClass := .clothing
@@ -637,7 +637,7 @@ theorem all_ter_classified :
     terVerbs.all (fun (v : IndonesianVerbEntry) =>
       v.terClass.isSome) = true := rfl
 
-/-- The fragment covers all three ter- classes from @cite{sneddon-1996}. -/
+/-- The fragment covers all three ter- classes from [sneddon-1996]. -/
 theorem ter_classes_covered :
     [TerClass.stative, TerClass.accidental, TerClass.abilitative].all
       (fun tc => terVerbs.any (fun v => v.terClass == some tc)) = true := rfl
@@ -647,7 +647,7 @@ theorem ter_classes_covered :
 -- ============================================================================
 
 /-- Every verb's stored meN- form matches the phonologically derived
-    form from @cite{sneddon-1996} §1.5. This proves the stipulated
+    form from [sneddon-1996] §1.5. This proves the stipulated
     forms are not arbitrary — they follow the regular nasal assimilation
     rules. If a root or meN- form is changed incorrectly, this breaks. -/
 theorem all_men_forms_derived :

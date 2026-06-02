@@ -1,7 +1,7 @@
 /-
 # PLA Generalized Quantifiers
 
-@cite{dekker-2012} Chapter 4 (Quantification and Modality), §4.1: Terms and Quantifiers.
+[dekker-2012] Chapter 4 (Quantification and Modality), §4.1: Terms and Quantifiers.
 
 ## Key Concepts
 
@@ -33,7 +33,7 @@ We formalize:
 `Core.Quantification` defines a parallel Bool-based GQ type:
   `GQ α = (α → Bool) → (α → Bool) → Bool`
 with model-agnostic properties (`Conservative`, `ScopeUpwardMono`, etc.)
-and @cite{van-benthem-1984} relational characterizations.
+and [van-benthem-1984] relational characterizations.
 
 This module uses the Set-based `GQRel α = Set α → Set α → Prop` because
 PLA's dynamic updates operate on `Set`-valued info states. The two
@@ -195,8 +195,8 @@ PLA's `GQRel α = Set α → Set α → Prop` and Core's
 *is defined* as `α → Prop`). The property predicates align via the
 `A ∩ B = {x | A x ∧ B x}` set-vs-predicate shift. `toCoreGQ` is the
 canonical bridge; the bridges below let PLA consumers cash in Core's
-@cite{barwise-cooper-1981} / @cite{peters-westerstahl-2006} /
-@cite{van-benthem-1984} theorems instead of reproving them. -/
+[barwise-cooper-1981] / [peters-westerstahl-2006] /
+[van-benthem-1984] theorems instead of reproving them. -/
 
 /-- Bridge: a `GQRel` viewed as a `Core.Quantification.GQ`. -/
 def toCoreGQ (D : GQRel α) : Core.Quantification.GQ α :=
@@ -267,7 +267,7 @@ some condition, a witnessing entity.
 For "Every farmer who owns a donkey beats it":
 - For each farmer f who owns a donkey, `wit f` is a donkey that f owns
 
-This is @cite{dekker-2012}'s solution to donkey anaphora with universal quantifiers.
+This is [dekker-2012]'s solution to donkey anaphora with universal quantifiers.
 -/
 abbrev WitnessFn (α : Type*) := α → α
 

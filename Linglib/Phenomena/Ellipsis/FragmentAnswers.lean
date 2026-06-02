@@ -31,9 +31,9 @@ import Linglib.Core.Word
 
 /-!
 ## Connection to RSA Theory
-@cite{bergen-goodman-2015} @cite{merchant-2004}
+[bergen-goodman-2015] [merchant-2004]
 
-This phenomenon is modeled by @cite{bergen-goodman-2015}'s noisy channel RSA.
+This phenomenon is modeled by [bergen-goodman-2015]'s noisy channel RSA.
 See `BergenGoodman2015` for the noisy channel RSA
 model that derives fragment interpretation from noise inference.
 

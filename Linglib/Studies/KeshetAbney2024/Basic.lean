@@ -3,7 +3,7 @@ import Linglib.Semantics.Dynamic.Intensional
 /-!
 # Plural Intensional Presuppositional Predicate Calculus (PIP)
 
-@cite{keshet-abney-2024} @cite{brasoveanu-2010} @cite{stone-1997}Core types for @cite{keshet-abney-2024}'s PIP system, which extends
+[keshet-abney-2024] [brasoveanu-2010] [stone-1997]Core types for [keshet-abney-2024]'s PIP system, which extends
 first-order predicate calculus with set abstraction, plural assignments,
 formula labels, and world-subscripted predicates to handle intensional
 anaphora uniformly.
@@ -22,7 +22,7 @@ truth values relative to a model, plural assignment set G, and evaluation
 world w*. Our formalization encodes PIP as a dynamic update system over
 the generic intensional context type `IContext W E` (in
 `Dynamic/Core/Intensional.lean`), which is a legitimate approach:
-@cite{brasoveanu-2010} shows the equivalence between plural predicate calculi
+[brasoveanu-2010] shows the equivalence between plural predicate calculi
 and dynamic plural logics. The key properties (label monotonicity,
 external/local variable distinction) are faithfully preserved.
 
@@ -178,7 +178,7 @@ A PIP update: discourse-to-discourse transformer.
 
 In PIP's native formulation, formulas are truth-conditional (not updates).
 Our dynamic encoding represents PIP formulas as discourse transformers,
-following the @cite{brasoveanu-2010} equivalence. The key invariant: labels
+following the [brasoveanu-2010] equivalence. The key invariant: labels
 are monotonically accumulated (never retracted), mirroring PIP's property
 that formula-label definitions X ≡ φ are tautologies that float freely.
 -/

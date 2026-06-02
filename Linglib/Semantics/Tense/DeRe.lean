@@ -5,9 +5,9 @@ import Linglib.Semantics.Tense.Basic
 
 /-!
 # Centered-World Temporal De Re
-@cite{lewis-1979-attitudes} (centered-worlds + de se reduction);
-@cite{cresswell-vonstechow-1982} (de re belief generalized);
-@cite{abusch-1997} (the temporal application).
+[lewis-1979-attitudes] (centered-worlds + de se reduction);
+[cresswell-vonstechow-1982] (de re belief generalized);
+[abusch-1997] (the temporal application).
 
 Abusch 1997's temporal de re analysis: a tense morpheme can take wide
 scope over an attitude operator by occupying the *res* position. The res
@@ -76,12 +76,12 @@ live in `Studies/Abusch1997.lean`.
 
 - The `holderContext` field represents the **attitude holder's
   centered context**, NOT the outer speaker's context. Per
-  @cite{abusch-1997} §7 ULC (p. 24-25), the relevant evaluation time
+  [abusch-1997] §7 ULC (p. 24-25), the relevant evaluation time
   for embedded tenses is the holder's now (= `holderContext.time`),
   not the outer speech time.
 - `IsRigidAcrossAlternatives` is parameterized on
   `Set (WorldTimeIndex W T)` rather than committing to a particular
-  modal base. Doxastic (the @cite{abusch-1997}-canonical Hintikka
+  modal base. Doxastic (the [abusch-1997]-canonical Hintikka
   setup) and metaphysical (Klecha 2016 DOX, Lewis-Cariani-Santorio
   shared past) become explicit instantiation choices via convenience
   constructors `doxasticAlternatives` and `metaphysicalAlternatives`.
@@ -110,15 +110,15 @@ open Core.Time.Tense (TensePronoun GramTense TemporalAssignment)
 -- ════════════════════════════════════════════════════════════════
 
 /-- A **time-concept**: an intension from a centered Kaplanian context
-    to a time. The temporal specialization of @cite{abusch-1997}'s
+    to a time. The temporal specialization of [abusch-1997]'s
     centered-proposition framework (§3 develops it for individuals via
     the acquaintance relation `R₁ : eeiwt` at eq. 12; §12 generalizes
     to times). The Lewis-style
     "way of identifying a time" Abusch's `R₁ : eeiwt` builds on. -/
 abbrev TimeConcept (W E P T : Type*) := Intension (KContext W E P T) T
 
-/-- An **entity-concept** (@cite{lewis-1979-attitudes} centered-world de re,
-    @cite{cresswell-vonstechow-1982}): an intension from a centered
+/-- An **entity-concept** ([lewis-1979-attitudes] centered-world de re,
+    [cresswell-vonstechow-1982]): an intension from a centered
     Kaplanian context to an entity. The dual of `TimeConcept` —
     instantiating Abusch 1997's individual ↔ temporal de re parallel
     on the entity side at the same evaluation index. -/
@@ -129,7 +129,7 @@ abbrev EntityConcept (W E P T : Type*) := Intension (KContext W E P T) E
 -- § Temporal de re reading
 -- ════════════════════════════════════════════════════════════════
 
-/-- A **temporal de re reading** (@cite{abusch-1997} §3): a time-concept
+/-- A **temporal de re reading** ([abusch-1997] §3): a time-concept
     paired with the **attitude holder's centered context**. The actual
     res-denotation is the concept evaluated at the holder's context
     (`actualRes`); the base-world condition (Abusch p. 9) is satisfied
@@ -138,7 +138,7 @@ abbrev EntityConcept (W E P T : Type*) := Intension (KContext W E P T) E
     The `holderContext` field carries the attitude bearer's centered
     Kaplanian context — `agent` = the believer, `world` = her actual
     world, `time` = her **now** (the perspective time at which embedded
-    tenses are evaluated, per @cite{abusch-1997} §7 ULC). It is *not*
+    tenses are evaluated, per [abusch-1997] §7 ULC). It is *not*
     the outer speaker's speech context; for unembedded uses the
     speaker is treated as her own attitude holder. -/
 @[ext]
@@ -147,7 +147,7 @@ structure TemporalDeReReading (W E P T : Type*) where
       time across centered-world alternatives. -/
   concept : TimeConcept W E P T
   /-- The attitude holder's centered Kaplanian context. Per
-      @cite{abusch-1997} §7 ULC, `holderContext.time` is the relevant
+      [abusch-1997] §7 ULC, `holderContext.time` is the relevant
       perspective time for embedded tense evaluation — *not* the outer
       speaker's speech time. -/
   holderContext : KContext W E P T
@@ -161,7 +161,7 @@ variable {W E P T : Type*}
 def actualRes (dr : TemporalDeReReading W E P T) : T :=
   dr.concept dr.holderContext
 
-/-- **Base-world coherence** (@cite{abusch-1997} §3 p. 9): the actual
+/-- **Base-world coherence** ([abusch-1997] §3 p. 9): the actual
     res-time equals the concept's value at the holder's centered context.
     True by construction in this substrate. -/
 theorem baseCoherent (dr : TemporalDeReReading W E P T) :
@@ -174,7 +174,7 @@ theorem baseCoherent (dr : TemporalDeReReading W E P T) :
 
 /-- Felicity of a temporal de re reading under a tense constraint:
     the actual res-time stands in the constraint's relation to the
-    **holder's now** (= `holderContext.time`). Per @cite{abusch-1997}
+    **holder's now** (= `holderContext.time`). Per [abusch-1997]
     §7 ULC (p. 24-25), the holder's now is the relevant evaluation time
     for embedded tenses — a past-marked tense res-moved from under
     `believe` is constrained to denote a time before the believer's
@@ -211,7 +211,7 @@ theorem isFelicitousWith_iff_tensePronoun_fullPresupposition
     *the* de re property — what distinguishes a wide-scope res-time
     from a de dicto descriptive concept.
 
-    Substrate-level lift of @cite{abusch-1997}'s base-world condition
+    Substrate-level lift of [abusch-1997]'s base-world condition
     (§3 p. 9: "in the base world, the [res] is picked out by the
     acquaintance relation relative to the believer and the believing
     time") to a quantification over the believer's alternative set.
@@ -233,7 +233,7 @@ def IsRigidAcrossAlternatives (dr : TemporalDeReReading W E P T)
     dr.concept (dr.holderContext.shiftWorldTime s))
     alternatives
 
-/-- **Full Abusch felicity** (@cite{abusch-1997} §3): value-level
+/-- **Full Abusch felicity** ([abusch-1997] §3): value-level
     constraint check (actual res-time stands in the constraint's
     relation to the holder's now) AND modal rigidity across a
     supplied alternative-set. The value-level shadow `isFelicitousWith`
@@ -279,7 +279,7 @@ theorem isFelicitousWith_of_isAbuschFelicitous [LinearOrder T]
 -- § Alternative-set constructors (modal-base instantiations)
 -- ════════════════════════════════════════════════════════════════
 
-/-- **Metaphysical** alternative-set instantiation (@cite{klecha-2016}
+/-- **Metaphysical** alternative-set instantiation ([klecha-2016]
     DOX): the worlds sharing the holder's actual world's history up to
     her now, paired with times at-or-before her now. Recovers the
     legacy `HistoricalAlternatives`-based behavior as a special case. -/
@@ -288,12 +288,12 @@ def metaphysicalAlternatives [LE T]
     Set (WorldTimeIndex W T) :=
   actualHistoryBase history dr.holderContext.toSituation
 
-/-- **Doxastic** alternative-set instantiation (@cite{abusch-1997} §3,
+/-- **Doxastic** alternative-set instantiation ([abusch-1997] §3,
     Hintikka belief alternatives): the world-time pairs the holder
     considers epistemically possible. Parameterized on a generic
     `dox : E → W → WorldTimeIndex W T → Prop` representing the
     holder's doxastic accessibility relation over centered alternatives.
-    This is the modal-base @cite{abusch-1997} canonically uses, distinct
+    This is the modal-base [abusch-1997] canonically uses, distinct
     from the metaphysical version above. -/
 def doxasticAlternatives
     (dox : E → W → WorldTimeIndex W T → Prop) (dr : TemporalDeReReading W E P T) :
@@ -313,7 +313,7 @@ abbrev TimeCover (W E P T : Type*) :=
 
 /-- A time `t` is **temporally-acquainted** at the holder's context `c`
     (with respect to a time-cover `C`) when some concept in `C` picks
-    out `t` at `c`. The temporal analog of @cite{lewis-1979-attitudes}'s
+    out `t` at `c`. The temporal analog of [lewis-1979-attitudes]'s
     acquaintance — instantiating polymorphic `isAcquaintedWith` at
     `Idx := KContext`, `Res := T`. -/
 abbrev isTemporallyAcquaintedWith {W E P T : Type*}

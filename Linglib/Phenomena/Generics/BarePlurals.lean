@@ -2,7 +2,7 @@ import Linglib.Semantics.Kinds.SortedOntology
 
 /-
 # Bare Plurals: Generic vs Existential Interpretation
-@cite{cohen-erteschik-shir-2002}
+[cohen-erteschik-shir-2002]
 
 Theory-neutral data on when bare plurals receive generic vs existential readings, focusing on information structure effects.
 

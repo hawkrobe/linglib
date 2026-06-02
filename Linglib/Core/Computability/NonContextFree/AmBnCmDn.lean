@@ -6,7 +6,7 @@ import Linglib.Core.Computability.NonContextFree.AnBnCnDn
 The two-parameter relaxation of `anbncndn`: case-sorted strings with
 `a-count = c-count` and `b-count = d-count` (the diagonal pairs only —
 not all four counts equal). Strict superset of `anbncndn`; this is the
-language @cite{shieber-1985}'s argument that Swiss German is not weakly
+language [shieber-1985]'s argument that Swiss German is not weakly
 context-free actually requires.
 
 ## Pumping
@@ -251,6 +251,6 @@ theorem ambncmdn_not_pumpable :
   exact hbreak (hall i)
 
 /-- {aᵐbⁿcᵐdⁿ} is not context-free. The two-parameter relaxation that
-    @cite{shieber-1985}'s Swiss German argument actually requires. -/
+    [shieber-1985]'s Swiss German argument actually requires. -/
 theorem ambncmdn_not_contextFree : ¬ Language.IsContextFree ambncmdn :=
   not_isContextFree_of_not_pumpable ambncmdn ambncmdn_not_pumpable

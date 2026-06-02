@@ -2,7 +2,7 @@ import Linglib.Processing.Cost.Profile
 
 /-!
 # Cue-Based Retrieval
-@cite{lewis-vasishth-2005}
+[lewis-vasishth-2005]
 
 Content-addressable memory retrieval for sentence processing. Items in
 working memory are encoded with feature bundles and retrieved via parallel
@@ -11,7 +11,7 @@ constraints, and the item best matching those cues is accessed.
 
 ## Cue Source Decomposition
 
-Following @cite{bakay-etal-2026}, retrieval cues are classified by source:
+Following [bakay-etal-2026], retrieval cues are classified by source:
 
 - **Structural** cues derive from hierarchical relations in the evolving
   parse (c-command, clause-mateness, argument position). These are
@@ -32,19 +32,19 @@ Two classes of model predict a **structural advantage** — that
 c-commanding antecedents are retrieved over non-c-commanding distractors
 even when item-level cues don't distinguish them:
 
-1. **Weighted activation** (@cite{lewis-vasishth-2005}; @cite{kush-2013}):
+1. **Weighted activation** ([lewis-vasishth-2005]; [kush-2013]):
    Activation is a weighted sum of cue matches. Structural cues can be
    weighted more heavily, or structural features (like Kush's LOCAL:1/0)
    can be dynamically maintained to approximate c-command.
 
-2. **Privileged access** (@cite{mcelree-2006}; @cite{oberauer-2002}):
+2. **Privileged access** ([mcelree-2006]; [oberauer-2002]):
    Structurally prominent items occupy a "region of direct access" and
    bypass cue-based search entirely.
 
 The models diverge on **interference**: the weighted model predicts graded
 interference from feature-matching distractors, while the privileged-
 access model predicts little early interference from non-prominent items.
-@cite{bakay-etal-2026} find limited, inconsistent evidence for number-
+[bakay-etal-2026] find limited, inconsistent evidence for number-
 based interference, leaving this distinction open.
 
 -/
@@ -59,7 +59,7 @@ namespace Processing.CueBasedRetrieval
 
 /-- Source of a retrieval cue.
 
-    @cite{bakay-etal-2026}'s core empirical contribution is decomposing
+    [bakay-etal-2026]'s core empirical contribution is decomposing
     the structural cues that prior studies confounded with clause-level and
     case-marking cues (their Figure 1 Venn diagram), and showing that
     structural cues guide retrieval independently. -/
@@ -92,7 +92,7 @@ structure Cue (F : Type) where
     and dynamically assigned structural properties (c-commands-anaphor,
     clause-mate-of-anaphor). The structural features are computed from
     the evolving parse and dynamically updated at clause boundaries
-    (@cite{kush-2013}: LOCAL:1 items reset to LOCAL:0). -/
+    ([kush-2013]: LOCAL:1 items reset to LOCAL:0). -/
 structure Item (F : Type) where
   label : String
   features : List F
@@ -127,7 +127,7 @@ def totalMatchCount (item : Item F) (cues : List (Cue F)) : Nat :=
 /-- **Fan**: number of items matching a particular cue.
     Higher fan reduces the associative boost each item receives from
     that cue, leading to similarity-based interference
-    (@cite{van-dyke-mcelree-2011}). -/
+    ([van-dyke-mcelree-2011]). -/
 def fan (cue : Cue F) (items : List (Item F)) : Nat :=
   (items.filter (·.matchesCue cue)).length
 
@@ -166,7 +166,7 @@ def Scenario.interferenceCount {F : Type} [BEq F] (s : Scenario F) : Nat :=
 
 /-! ### Weighted Activation
 
-@cite{lewis-vasishth-2005}: activation = Σ (weight × match). Items with
+[lewis-vasishth-2005]: activation = Σ (weight × match). Items with
 higher activation are retrieved faster and more accurately. The weights
 determine the relative importance of different cue sources.
 
@@ -192,7 +192,7 @@ def weightedActivation (ws wi wp : Nat) (item : Item F) (cues : List (Cue F)) : 
     they tie on item-level and positional cues, and the structural weight
     is positive, then the target has strictly higher activation.
 
-    This is the qualitative prediction tested by @cite{bakay-etal-2026}
+    This is the qualitative prediction tested by [bakay-etal-2026]
     Experiments 1–3: c-commanding antecedents are retrieved over
     non-c-commanding distractors even when clause, case, and number
     are controlled.
@@ -217,7 +217,7 @@ theorem structural_advantage
     (more recent = more positional matches), a more recent item has
     higher activation, all else equal.
 
-    @cite{bakay-etal-2026} Experiment 1 finds that the recency advantage
+    [bakay-etal-2026] Experiment 1 finds that the recency advantage
     is *additive* with the structural advantage: linearly recent targets
     receive even more looks. -/
 theorem recency_advantage
@@ -242,7 +242,7 @@ end Weighted
 
 /-! ### Privileged Access
 
-@cite{mcelree-2006}; @cite{oberauer-2002}: structurally prominent items
+[mcelree-2006]; [oberauer-2002]: structurally prominent items
 (those c-commanding the retrieval site) occupy a "region of direct access"
 in working memory. They are retrieved without search, yielding an immediate
 structural advantage independent of cue matching.

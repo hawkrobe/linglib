@@ -2,15 +2,15 @@ import Linglib.Semantics.Modality.Kratzer.Operators
 import Linglib.Data.Examples.Schema
 
 /-!
-# @cite{vonfintel-iatridou-2005} — Anankastic conditionals and related matters
+# [vonfintel-iatridou-2005] — Anankastic conditionals and related matters
 
 The "Harlem Sentence" — *If you want to go to Harlem, you have to take
 the A train* — and the puzzle: no straightforward Kratzerian analysis
 delivers its truth conditions. vF&I rule out three candidate analyses
 (if-clause restricts the modal base, modifies the ordering source à la
-@cite{saebo-2001}, or is restricted by a covert higher modal), then
+[saebo-2001], or is restricted by a covert higher modal), then
 propose a **Designated Goals** account paired with
-@cite{sloman-1970}'s have-to-vs-ought-to distinction.
+[sloman-1970]'s have-to-vs-ought-to distinction.
 
 This file contains:
 
@@ -21,7 +21,7 @@ This file contains:
 * the **Designated Goals** structure with `oughtTo`/`haveTo` operators
   and the Sloman entailment `haveTo_implies_oughtTo_of_best_subset_accessible`;
 * cross-reference (in the closing docstring) to
-  @cite{chung-mascarenhas-2024}: the C&M exhaustification clause is the
+  [chung-mascarenhas-2024]: the C&M exhaustification clause is the
   formal expected-value realisation of Sloman's "only candidate".
   C&M handles the Harlem base case, Burdick's contextual designation,
   and Breathe-style trivialities (via §5 plausibility). Open: Nissenbaum
@@ -107,7 +107,7 @@ theorem hoboken_refutes_obvious :
 
 /-! ### Sæbø 2001's analysis and the Conflicting Goals refutation
 
-@cite{saebo-2001} adds the *if*-clause's proposition to the **ordering
+[saebo-2001] adds the *if*-clause's proposition to the **ordering
 source** rather than the modal base: `g⁺(w) := g(w) ∪ {⟦want-Harlem⟧}`.
 The modal quantifies over best worlds in the modal base under `g⁺`.
 This survives the basic Hoboken setup but is non-compositional
@@ -172,7 +172,7 @@ formalised here. -/
 section DesignatedGoals
 open Semantics.Modality.Kratzer
 
-/-- @cite{vonfintel-iatridou-2005} §6 parameter for a teleological
+/-- [vonfintel-iatridou-2005] §6 parameter for a teleological
 modal: a *designated goal* supplied by the to/if-clause, *ancillary
 considerations* ranking goal-achieving worlds, and a circumstantial
 modal base. -/
@@ -193,11 +193,11 @@ def oughtTo {W : Type*} (dg : DesignatedGoal W) (q : W → Prop) (w : W) : Prop 
 
 /-- vF&I (24b): *to p, have-to q* — q at every goal-achieving world
 in the modal base. The exhaustification (no ranking) is the formal
-counterpart of @cite{sloman-1970}'s "only candidate". -/
+counterpart of [sloman-1970]'s "only candidate". -/
 def haveTo {W : Type*} (dg : DesignatedGoal W) (q : W → Prop) (w : W) : Prop :=
   ∀ w' : W, w' ∈ accessibleWorlds dg.modalBase w → dg.goal w' → q w'
 
-/-- @cite{sloman-1970} / vF&I §6: have-to entails ought-to, under the
+/-- [sloman-1970] / vF&I §6: have-to entails ought-to, under the
 structural assumption that every ancillary-best world is accessible
 and goal-achieving. -/
 theorem haveTo_implies_oughtTo_of_best_subset_accessible {W : Type*}
@@ -214,11 +214,11 @@ theorem haveTo_implies_oughtTo_of_best_subset_accessible {W : Type*}
 
 end DesignatedGoals
 
-/-! ### Cross-reference to @cite{chung-mascarenhas-2024}
+/-! ### Cross-reference to [chung-mascarenhas-2024]
 
 C&M's `mustCM` operator
 (`Studies/ChungMascarenhas2024.lean`) realises
-@cite{sloman-1970}'s "only candidate" condition as an
+[sloman-1970]'s "only candidate" condition as an
 **exhaustification clause** on expected values:
 `mustCM φ` iff `E[μ_R ∣ φ] > θ ∧ ∀ψ ∈ Alt(φ). E[μ_R ∣ ψ] ≤ θ`.
 The first conjunct is strong permissibility (φ achieves the goal

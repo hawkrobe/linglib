@@ -20,8 +20,8 @@ explicit:
    by the embedding.
 
 The substantive consequence: constraints requiring multi-tone TBUs
-(*FALL, *CROWD per @cite{mcpherson-lamont-2026}) and heteromorphic
-links (*TAUTDOCK after @cite{wolf-2007}) are evaluable on
+(*FALL, *CROWD per [mcpherson-lamont-2026]) and heteromorphic
+links (*TAUTDOCK after [wolf-2007]) are evaluable on
 `FloatingForm` but not on overwrite outputs. This formalises the
 docstring claim in `Floating.lean` that the floating substrate
 "refactors over" the overwrite substrate — the gap is theorem-level,
@@ -40,9 +40,9 @@ not editorial.
 
 ## References
 
-* @cite{rolle-2018} — replacive-dominant GT via `tonalOverwrite`
-* @cite{mcpherson-lamont-2026} — multi-tone TBUs in Poko
-* @cite{wolf-2007} — *TAUTDOCK requires heteromorphic discrimination
+* [rolle-2018] — replacive-dominant GT via `tonalOverwrite`
+* [mcpherson-lamont-2026] — multi-tone TBUs in Poko
+* [wolf-2007] — *TAUTDOCK requires heteromorphic discrimination
 -/
 
 namespace Phonology.Autosegmental
@@ -103,8 +103,8 @@ theorem FloatingForm.ofTBUList_linksTo_subsingleton {S : Type*}
 /-- **Divergence (existence direction).** There is a `FloatingForm`
     with two surface tones on a single TBU — a configuration unreachable
     by `FloatingForm.ofTBUList`. Witnesses the expressive gap between
-    the overwrite encoding (@cite{rolle-2018}) and the floating encoding
-    (@cite{mcpherson-lamont-2026}). -/
+    the overwrite encoding ([rolle-2018]) and the floating encoding
+    ([mcpherson-lamont-2026]). -/
 theorem FloatingForm.exists_multi_tone_TBU :
     ∃ f : FloatingForm Unit TRN, ∃ i : SegIdx, 2 ≤ (f.linksTo i).length := by
   refine ⟨?_, 0, ?_⟩

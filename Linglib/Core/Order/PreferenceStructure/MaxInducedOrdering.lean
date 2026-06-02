@@ -2,12 +2,12 @@ import Linglib.Core.Order.PreferenceStructure
 
 /-!
 # World Preorder Induced by Maximal Preferences
-@cite{condoravdi-lauer-2016} @cite{kratzer-1981} @cite{portner-2018}
+[condoravdi-lauer-2016] [kratzer-1981] [portner-2018]
 
 The world-side preorder `w ≤ v` iff `w` satisfies every maximal preference
 that `v` satisfies. The Kratzer-style derivation of a world ordering from
 an ordering source, applied to `maxElts`. Used by
-@cite{condoravdi-lauer-2016} (88): `g_epA(w) = max[EP(Ad, w)]`.
+[condoravdi-lauer-2016] (88): `g_epA(w) = max[EP(Ad, w)]`.
 
 The bridge to a `List`-valued `Semantics.Modality.Kratzer.OrderingSource`
 requires either a finiteness witness or a non-constructive enumeration; that

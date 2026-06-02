@@ -5,8 +5,8 @@ import Linglib.Fragments.English.MeasurePhrases
 import Linglib.Studies.BaleSchwarz2022
 
 /-!
-# @cite{bale-schwarz-2026} — Natural Language and External Conventions: Re-examining *per*
-@cite{bale-schwarz-2022} @cite{bale-schwarz-2026} @cite{coppock-2021} @cite{davidson-1979}
+# [bale-schwarz-2026] — Natural Language and External Conventions: Re-examining *per*
+[bale-schwarz-2022] [bale-schwarz-2026] [coppock-2021] [davidson-1979]
 
 Linguistics and Philosophy 49: 133--151
 
@@ -22,7 +22,7 @@ Linguistics and Philosophy 49: 133--151
    speed), they are instances of **math speak** --- verbalizations of quantity calculus
    notation whose meanings come from extra-grammatical conventions.
 
-3. **Multiplication-only reformulation**: Both @cite{coppock-2021}'s and @cite{bale-schwarz-2022} lexical entries for *per* can be restated using only pure numbers and
+3. **Multiplication-only reformulation**: Both [coppock-2021]'s and [bale-schwarz-2022] lexical entries for *per* can be restated using only pure numbers and
    multiplication, without any appeal to division.
 
 4. **Mixed quotation parallel**: Non-compositional *per*-phrases are unified with
@@ -280,12 +280,12 @@ theorem diagnostic_biconditional :
   simp [allExamples]; decide
 
 -- ============================================================================
--- Section 8: Cross-reference to @cite{bale-schwarz-2022}
+-- Section 8: Cross-reference to [bale-schwarz-2022]
 -- ============================================================================
 
 /-! ### Connection to the 2022 SALT paper
 
-The anaphoric theory of *per* originates in @cite{bale-schwarz-2022}.
+The anaphoric theory of *per* originates in [bale-schwarz-2022].
 This 2026 paper extends it with the No Division Hypothesis, the math-speak
 analysis, and the substitution/sub-extraction diagnostics.
 

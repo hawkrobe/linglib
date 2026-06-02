@@ -1,16 +1,16 @@
 import Mathlib.Data.Set.Basic
 
 /-!
-# Tense as a typed lexical object @cite{sharvit-2014}
+# Tense as a typed lexical object [sharvit-2014]
 
-@cite{sharvit-2014}'s central distinction ((30), p. 274): tenses come in
+[sharvit-2014]'s central distinction ((30), p. 274): tenses come in
 two semantic types across languages, motivated by cross-linguistic
 variation in *before*-clauses (Japanese vs Polish/English) and attitude
 reports (English vs Japanese vs Polish).
 
 ## Two semantic types
 
-- **Pronominal tense** (after @cite{partee-1973}): an element of `D_i`. A
+- **Pronominal tense** (after [partee-1973]): an element of `D_i`. A
   pronominal past `past_{j,k}` carries two indices — `j` *evaluation*,
   `k` *referential*. When defined, `[[past_{j,k}]]^g := g k`, with
   definedness condition `g k < g j` ((30a)).
@@ -24,7 +24,7 @@ reports (English vs Japanese vs Polish).
 
 The two types make different predictions for *past-under-past in
 before-clauses*: quantificational past triggers Inherent Presupposition
-Failure under @cite{beaver-condoravdi-2003}'s `before` semantics, because
+Failure under [beaver-condoravdi-2003]'s `before` semantics, because
 no minimum exists in a dense set of times preceded by a quantificational-
 past witness. The IPF mechanism is in
 `Semantics/Tense/TemporalConnectives/Before.lean`.
@@ -35,7 +35,7 @@ The cross-linguistic typology ((98), (99)) lives in
 
 namespace Semantics.Tense
 
-/-- @cite{sharvit-2014}'s two semantic types for tense lexical items
+/-- [sharvit-2014]'s two semantic types for tense lexical items
     ((30), p. 274). -/
 inductive LexicalType
   /-- Pronominal: an element of `D_i`, two-indexed `past_{j,k}`. -/
@@ -44,14 +44,14 @@ inductive LexicalType
   | quantificational
   deriving DecidableEq, Repr
 
-/-- @cite{sharvit-2014}'s no-mixing assumption (§6.1, p. 300): a language
+/-- [sharvit-2014]'s no-mixing assumption (§6.1, p. 300): a language
     has either pronominal or quantificational tenses, not both, and not
     neither. The two types are distinct as a structural fact. -/
 theorem LexicalType.pronominal_ne_quantificational :
     LexicalType.pronominal ≠ LexicalType.quantificational :=
   nofun
 
-/-- @cite{sharvit-2014} (30a), p. 274: pronominal-past lookup. The two
+/-- [sharvit-2014] (30a), p. 274: pronominal-past lookup. The two
     indices are `j` (evaluation) and `k` (referential); the past is
     *defined* iff `g k < g j`, in which case it denotes `g k`.
 
@@ -67,7 +67,7 @@ theorem pronominalLookup_eq_some_iff {Time : Type*} [LT Time]
   unfold pronominalLookup
   by_cases h : g k < g j <;> simp [h, eq_comm]
 
-/-- @cite{sharvit-2014} (30b), p. 274: quantificational past. The
+/-- [sharvit-2014] (30b), p. 274: quantificational past. The
     contextual restrictor `K` constrains the domain of quantification. -/
 def quantificationalPast {Time : Type*} [LT Time]
     (K : Set Time) (p : Time → Prop) (t : Time) : Prop :=

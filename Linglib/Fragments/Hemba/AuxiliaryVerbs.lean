@@ -2,7 +2,7 @@ import Linglib.Morphology.MorphRule
 
 /-!
 # Hemba Auxiliary Verb Fragment
-@cite{anderson-2006}
+[anderson-2006]
 
 Hemba (Bantu, Democratic Republic of Congo) exhibits a **split/doubled**
 AVC pattern. In the progressive/past construction, subject agreement is

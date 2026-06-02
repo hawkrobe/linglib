@@ -2,7 +2,7 @@ import Linglib.Core.Time.Domain
 
 /-!
 # Tense and Aspect Systems
-@cite{declerck-1991} @cite{reichenbach-1947}
+[declerck-1991] [reichenbach-1947]
 
 Type classes that abstract over specific tense and aspect frameworks.
 `TenseSystem α Time Role` says "the type `α` is a way of describing
@@ -43,8 +43,8 @@ universe u v w
     Each instance commits to:
     - `toDomain`: how to lift the schema into a `Core.Time.Domain`
     - `anchor`: the role of the *anchor* TO (the TO that tense locates
-      the situation against). For @cite{reichenbach-1947} (extended with
-      Kiparsky's P) this is `.perspective`; for @cite{declerck-1991} the
+      the situation against). For [reichenbach-1947] (extended with
+      Kiparsky's P) this is `.perspective`; for [declerck-1991] the
       binding-TO TO₁ also plays this role and is again `.perspective`.
     - `situation`: the role of the *situation* TO. For Reichenbach this
       is `.topic` (= R); for Declerck the situation time TS coincides

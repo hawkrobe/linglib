@@ -2,7 +2,7 @@ import Linglib.Typology.Negation
 
 /-!
 # Hixkaryana Negation Fragment
-@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
+[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
 
 Hixkaryana (Carib; Brazil) expresses standard negation with the suffix
 *-hira* on the verb. Negation is **asymmetric (A/Fin)**: the negative

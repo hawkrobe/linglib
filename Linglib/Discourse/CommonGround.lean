@@ -4,8 +4,8 @@ import Mathlib.Data.Set.Lattice
 /-!
 # Common Ground
 
-Framework-agnostic context management following @cite{stalnaker-1974} and
-@cite{stalnaker-2002}: context sets, common ground as proposition lists, and
+Framework-agnostic context management following [stalnaker-1974] and
+[stalnaker-2002]: context sets, common ground as proposition lists, and
 the `HasContextSet` interface unifying both with the various discourse-state
 representations across the discourse layer.
 

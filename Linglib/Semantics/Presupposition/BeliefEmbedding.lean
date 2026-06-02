@@ -2,8 +2,8 @@
 # Belief Embedding and Local Contexts
 
 Formalizes how presuppositions project under belief predicates, following
-@cite{schlenker-2009} Section 3.1.2. This provides the machinery for deriving
-Obligatory Local Effect (OLE) from @cite{tonhauser-beaver-roberts-simons-2013}.
+[schlenker-2009] Section 3.1.2. This provides the machinery for deriving
+Obligatory Local Effect (OLE) from [tonhauser-beaver-roberts-simons-2013].
 
 ## Insight
 
@@ -19,7 +19,7 @@ For "John believes that pp'" uttered in context C:
 - Presupposition p projects iff p is NOT entailed by this local context
 - Result: p must be part of John's beliefs (attributed to attitude holder)
 
-## Connection to @cite{tonhauser-beaver-roberts-simons-2013}
+## Connection to [tonhauser-beaver-roberts-simons-2013]
 
 OLE = yes (Class A, Class C): Presupposition attributed to attitude holder
   - Predicted by computing local context from attitude holder's beliefs
@@ -92,7 +92,7 @@ The local context at φ is the set of (w*, w) pairs where:
 - w* is in the global context C
 - w is compatible with what agent believes at w*
 
-Following @cite{schlenker-2009} Section 3.1.2, this is a function from
+Following [schlenker-2009] Section 3.1.2, this is a function from
 "context of utterance" (w*) to context sets.
 -/
 structure BeliefLocalCtx (W : Type*) (Agent : Type*) where
@@ -284,7 +284,7 @@ theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PrProp W)
 
 /-!
 ### Bridging Agent-Indexed Accessibility into `DoxasticAccessibility`
-@cite{hintikka-1962}
+[hintikka-1962]
 
 `EpistemicLogic` uses Prop-valued `AgentAccessRel W E = E → W → W → Prop`.
 `BeliefEmbedding` uses Prop-valued `DoxasticAccessibility W E = E → W → ContextSet W`
@@ -337,13 +337,13 @@ end BoolPropBridge
 
 -- ════════════════════════════════════════════════════════════════
 -- § Opaque vs Transparent Projection
--- @cite{delpinal-bassi-sauerland-2024} §3.2
+-- [delpinal-bassi-sauerland-2024] §3.2
 -- ════════════════════════════════════════════════════════════════
 
 /-!
 ### Opaque vs Transparent Presupposition Projection
 
-@cite{delpinal-bassi-sauerland-2024} §3.2 distinguish two projection modes for
+[delpinal-bassi-sauerland-2024] §3.2 distinguish two projection modes for
 presuppositions under attitude predicates:
 
 - **Transparent**: presupposition evaluated in the global context (speaker's
@@ -367,7 +367,7 @@ variable {W : Type*} {Agent : Type*}
     Captures negative factives ("is unaware that"): the factive presupposes
     the complement *holds* in the actual world.
 
-    @cite{delpinal-bassi-sauerland-2024} §3.2 -/
+    [delpinal-bassi-sauerland-2024] §3.2 -/
 def transparentProjection (globalCtx : ContextSet W) (p : PrProp W) : Prop :=
   ContextSet.entails globalCtx p.presup
 
@@ -376,7 +376,7 @@ def transparentProjection (globalCtx : ContextSet W) (p : PrProp W) : Prop :=
     the complement's presupposition.
 
     This grounds the `negFactive` combinator in the projection theory.
-    @cite{heim-1992}, @cite{delpinal-bassi-sauerland-2024} §3.2 -/
+    [heim-1992], [delpinal-bassi-sauerland-2024] §3.2 -/
 theorem negFactive_entails_transparent (complement : PrProp W)
     (believes : Set W → Set W) (globalCtx : ContextSet W)
     (h : ContextSet.entails globalCtx (PrProp.negFactive complement believes).presup) :
@@ -389,7 +389,7 @@ theorem negFactive_entails_transparent (complement : PrProp W)
 
     Reflexive `dox` means the evaluation world is among its own accessible
     worlds. What holds at all accessible worlds holds at the evaluation world.
-    @cite{hintikka-1962}: S5 knowledge is reflexive. -/
+    [hintikka-1962]: S5 knowledge is reflexive. -/
 theorem opaque_implies_transparent_when_reflexive
     (blc : BeliefLocalCtx W Agent) (p : PrProp W)
     (hReflexive : ∀ w, blc.globalCtx w → blc.dox blc.agent w w)

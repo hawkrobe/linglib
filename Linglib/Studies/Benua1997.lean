@@ -7,7 +7,7 @@ import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # Benua 1997 — Misapplication Unification
-@cite{benua-1997}
+[benua-1997]
 
 Benua's central empirical claim, defended across three case studies:
 **overapplication** (Sundanese nasal harmony) and **underapplication**
@@ -57,7 +57,7 @@ Consumes:
 
 By construction, every claim about misapplication routes through the
 unifying `Corr` substrate. There is no separate Sundanese or Hebrew
-machinery — the cross-linguistic point of @cite{benua-1997} is that
+machinery — the cross-linguistic point of [benua-1997] is that
 **one mechanism explains both**.
 -/
 
@@ -103,8 +103,8 @@ namespace Sundanese
 Singular: /ɲiar/ → [ɲĩãr] 'seek'
 Plural:   /ɲ-ar-iar/ → [ɲ-ãl-ĩãr] 'seek (pl)'
 
-The data source is @cite{cohn-1990} on Sundanese nasal phonology;
-@cite{benua-1997} reanalyzes it in TCT terms.
+The data source is [cohn-1990] on Sundanese nasal phonology;
+[benua-1997] reanalyzes it in TCT terms.
 
 Canonical postnasal nasal harmony: vowels are nasalized iff they follow
 a nasal consonant. In the singular [ɲĩãr], the post-ɲ vowels [ĩ ã] are
@@ -304,7 +304,7 @@ def normalDiagram : Corr Role Seg :=
 
 /-- **Featural OO-IDENT**: counts pairs `(i, j) ∈ ooEdge` where the
     `[continuant]` feature value differs between `base[i]` and `derivative[j]`.
-    The constraint @cite{benua-1997} actually appeals to (Ch 4).
+    The constraint [benua-1997] actually appeals to (Ch 4).
 
     For the underapplied candidate: base[2] = spirant ([+cont]),
     deriv[2] = stop ([-cont]) — featural mismatch. Other pairs preserve
@@ -338,7 +338,7 @@ example : identContViol normalDiagram = 0 := by decide
     canonical-spirantization candidate. Under pure OO-IDENT-[cont] ≫ M₂,
     canonical would win — contradicting the empirical fact.
 
-    The resolution (per @cite{benua-1997} Ch 4): the load-bearing
+    The resolution (per [benua-1997] Ch 4): the load-bearing
     constraint is **`IDENT-[continuant]-IO`** preserving the *input* stop,
     not OO-Ident. The TETRU schema for Hebrew puts IO-Ident-[cont] above
     OO-Ident, then *MAX-V (deletes [o]) above all the rest. This file
@@ -353,7 +353,7 @@ end TiberianHebrew
 -- § 4: The Unified Misapplication Theorem
 -- ============================================================================
 
-/-! **The unified architectural claim of @cite{benua-1997}**: both
+/-! **The unified architectural claim of [benua-1997]**: both
     overapplication (Sundanese, §2) and underapplication (Tiberian Hebrew,
     §3) are formalized as the *same* construction — a 3-role TCT
     correspondence diagram with IDENT-OO (segmental or featural) on the
@@ -394,7 +394,7 @@ example (s : TetruSchema (Corr Role Seg))
 
 /-! ### The polemic of Benua's thesis
 
-@cite{benua-1997}'s central architectural argument is that **parallel TCT
+[benua-1997]'s central architectural argument is that **parallel TCT
 subsumes the predictions of stratal/cyclic phonology** for misapplication
 patterns, eliminating the need for cycles. The two architectures differ
 in *how* they explain misapplication, but converge on the same surface
@@ -480,7 +480,7 @@ theorem stratal_phrase_eq_tct_derivative :
     and the directly-built TCT diagram (Sundanese.overappliedDiagram)
     agree on the surface form. Both produce
     `Sundanese.derivOutputOverapplied` — the empirical convergence
-    claim of @cite{benua-1997}. -/
+    claim of [benua-1997]. -/
 theorem stratal_tct_agree_on_sundanese_surface :
     sundaneseStratalAsTCT.form .derivative =
       Sundanese.overappliedDiagram.form .derivative :=
@@ -524,7 +524,7 @@ requiring:
    essentially: "TCT's OO-Faith with stratum-1-output as base = stratum-2's
    IDENT-IO with stratum-1-output as input."
 
-Step 3 is the load-bearing piece; @cite{benua-1997}'s polemic is that
+Step 3 is the load-bearing piece; [benua-1997]'s polemic is that
 this translation *exists* (and is empirically supported by Sundanese,
 Tiberian Hebrew, and English). Formalizing the constructive translation
 — or finding a counterexample — is the next major scientific step.

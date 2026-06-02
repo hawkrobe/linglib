@@ -2,7 +2,7 @@ import Linglib.Typology.Question
 
 /-!
 # Japanese question profile
-@cite{wals-2013} @cite{bhatt-dayal-2020} @cite{sauerland-yatsushiro-2017}
+[wals-2013] [bhatt-dayal-2020] [sauerland-yatsushiro-2017]
 
 `QuestionProfile` bundle for Japanese (ISO `jpn`) per the project's
 "per-language data flows through Fragments" rule. Substrate types live in

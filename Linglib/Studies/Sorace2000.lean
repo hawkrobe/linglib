@@ -3,7 +3,7 @@ import Linglib.Features.Aktionsart
 
 /-!
 # Sorace (2000): Auxiliary Selection × Vendler Aspect Classes
-@cite{sorace-2000}
+[sorace-2000]
 
 Connects the auxiliary selection data in
 `Phenomena.AuxiliaryVerbs.Selection` to Vendler's aspectual
@@ -11,7 +11,7 @@ classification from `Features.Aktionsart`.
 
 ## Known gaps
 
-- @cite{sorace-2000}'s gradient Auxiliary Selection Hierarchy is
+- [sorace-2000]'s gradient Auxiliary Selection Hierarchy is
   not yet formalized — `vendlerClassToTypicalTransitivity` is a
   flat lookup, not a derivation from proto-role entailments. A
   principled version would build the mapping out of

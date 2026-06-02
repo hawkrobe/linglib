@@ -5,11 +5,11 @@ import Linglib.Core.Logic.Duality
 /-!
 # Quantified counterfactuals — projection-duality machinery
 
-@cite{ramotowska-marty-romoli-santorio-2025}
+[ramotowska-marty-romoli-santorio-2025]
 
 Extracted from `Semantics/Conditionals/Counterfactual.lean`
 (was lines 217–492). Provides the projection-duality apparatus that
-the @cite{ramotowska-marty-romoli-santorio-2025} study file uses to
+the [ramotowska-marty-romoli-santorio-2025] study file uses to
 predict the strength × CF embedding pattern.
 
 ## Projection Duality: Why Strength Matters
@@ -55,7 +55,7 @@ counterfactuals are embedded under quantifiers in mixed scenarios
 
 The universal and selectional theories agree on "every" and "not every"
 but DISAGREE on "some" and "no" — the discriminating contrast tested
-in @cite{ramotowska-marty-romoli-santorio-2025}.
+in [ramotowska-marty-romoli-santorio-2025].
 -/
 
 namespace Semantics.Conditionals.Counterfactual
@@ -122,7 +122,7 @@ def notEverySelectional (results : List Truth3) : Truth3 :=
 
 /-! ### Selectional Theory: Embedded Determinacy
 
-@cite{ramotowska-marty-romoli-santorio-2025} §2.2.2: embedded
+[ramotowska-marty-romoli-santorio-2025] §2.2.2: embedded
 selectional counterfactuals are DETERMINATE even though unembedded
 ones can be indeterminate. This is because the quantifier operates
 INSIDE the scope of the selection function — within each selected
@@ -210,7 +210,7 @@ theory:
 
 The theories agree on "every" and "not every" but DISAGREE on
 "some" and "no" — the empirical discriminators tested in
-@cite{ramotowska-marty-romoli-santorio-2025}. -/
+[ramotowska-marty-romoli-santorio-2025]. -/
 
 /-- Universal theory embedded predictions: all individual CFs false. -/
 theorem universal_all_false (n : Nat) (hn : n > 0) :

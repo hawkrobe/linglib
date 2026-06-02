@@ -1,10 +1,10 @@
 /-!
 # Latvian Indeterminate Pronoun Paradigm
-@cite{haspelmath-1997} @cite{kratzer-shimoyama-2002}
+[haspelmath-1997] [kratzer-shimoyama-2002]
 
 Latvian exhibits a morphologically transparent indeterminate system with
 three productive prefixes that mark operator association (p. 277 of
-@cite{haspelmath-1997}, cited in §1 of @cite{kratzer-shimoyama-2002}):
+[haspelmath-1997], cited in §1 of [kratzer-shimoyama-2002]):
 
 - **kaut-** series: existential (∃)
 - **ne-** series: negative polarity (direct negation scope)
@@ -13,11 +13,11 @@ three productive prefixes that mark operator association (p. 277 of
 Each prefix attaches to the same set of wh-interrogative bases
 (*kas* 'who/what', *kur* 'where', *kad* 'when', *ka* 'how', *kads/kurs* 'which'),
 making Latvian a **selective** system in the sense of
-@cite{kratzer-shimoyama-2002}: the morphological prefix determines the
+[kratzer-shimoyama-2002]: the morphological prefix determines the
 operator, unlike Japanese where a single base (*dare*) combines with
 different particles.
 
-Diacritics omitted following @cite{kratzer-shimoyama-2002}.
+Diacritics omitted following [kratzer-shimoyama-2002].
 -/
 
 set_option autoImplicit false

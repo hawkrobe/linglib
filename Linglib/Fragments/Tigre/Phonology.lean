@@ -8,12 +8,12 @@ import Linglib.Fragments.Tigrinya.Phonology
 
 /-!
 # Tigre Phonological Inventory and Verbal Roots
-@cite{raz-1980} @cite{raz-1983} @cite{lowenstamm-prunet-1988}
-@cite{faust-2014} @cite{faust-2015} @cite{faust-2017b}
-@cite{faust-lampitelli-2026}
+[raz-1980] [raz-1983] [lowenstamm-prunet-1988]
+[faust-2014] [faust-2015] [faust-2017b]
+[faust-lampitelli-2026]
 
 Theory-neutral IPA inventory and the Tigre verbal roots used in the
-@cite{faust-lampitelli-2026} guttural-synersis analysis.
+[faust-lampitelli-2026] guttural-synersis analysis.
 
 Per the paper §2.1: "The vocalic systems of Tigre and Tigrinya are
 quite similar. In both languages, one finds six full vowel qualities
@@ -22,28 +22,28 @@ also coincide: ʔ, h, ʕ, ħ in both, with χ/ʁ unattested in either
 (paper n. 14).
 
 This file therefore **re-exports** the Tigrinya `Vowel` and `Guttural`
-types per @cite{lowenstamm-prunet-1988}'s observation that the two
+types per [lowenstamm-prunet-1988]'s observation that the two
 languages share their vowel and guttural systems. The differences
 between Tigre and Tigrinya lie in:
 
 * templatic morphology (Tigre's PRF [samʕa] vs Tigrinya's
   [sʌβʌrʌ]; Tigre dialects exhibit different verb stems per
-  @cite{raz-1980}, @cite{raz-1983}),
+  [raz-1980], [raz-1983]),
 * vowel harmony processes (Tigre rounding/lowering harmonies per
-  @cite{lowenstamm-prunet-1988}, @cite{faust-2017b}, mostly
+  [lowenstamm-prunet-1988], [faust-2017b], mostly
   irrelevant for the present synersis discussion).
 
 ## Cross-reference: PHOIBLE 2.0
 
-@cite{moran-mccloy-2019} has two Tigre inventories (both glottocode
+[moran-mccloy-2019] has two Tigre inventories (both glottocode
 `tigr1270`): ID 130 (donor `spa`) with 87 phonemes including length
 and gemination contrasts, and ID 576 (donor `upsid`) with 33
 phonemes (no length). Both confirm the four-guttural inventory
 `{ʔ, h, ʕ, ħ}` exactly as the paper claims, with [χ, ʁ] absent
 (paper n. 14, confirmed). The 7-vowel inventory is also present in
 both PHOIBLE inventories, but transcribed differently: PHOIBLE
-follows @cite{raz-1980}'s long-vowel notation (`iː, uː, e̞ː, o̞ː,
-a̟ː, ə, ɜ`) where the paper follows @cite{buckley-1997-vowel-length}'s
+follows [raz-1980]'s long-vowel notation (`iː, uː, e̞ː, o̞ː,
+a̟ː, ə, ɜ`) where the paper follows [buckley-1997-vowel-length]'s
 no-length analysis (`i, u, e, o, a, ɨ, ʌ`). The seven-element
 *partition* is identical: 5 peripheral + 1 weak (ə ↔ ɨ) + 1
 marked-low (ɜ ↔ ʌ); the dispute is over whether the peripheral
@@ -52,7 +52,7 @@ Tigre the facts are less clear" and sides with the no-length
 analysis.
 
 The verbal roots below are the Tigre exemplars from
-@cite{faust-lampitelli-2026} eq. (5)-(6) and eq. (12), used for the
+[faust-lampitelli-2026] eq. (5)-(6) and eq. (12), used for the
 parallel-language demonstration of guttural synersis. Naming
 convention follows `Fragments/Tigrinya/Phonology.lean`: ASCII
 identifiers; IPA forms in docstrings.
@@ -64,7 +64,7 @@ open Morphology
 
 /-- Re-export the Tigrinya vowel type for Tigre. The two languages
     share the same seven-vowel inventory per paper §2.1 +
-    @cite{lowenstamm-prunet-1988}. -/
+    [lowenstamm-prunet-1988]. -/
 abbrev Vowel := Tigrinya.Phonology.Vowel
 
 /-- Re-export the Tigrinya guttural type for Tigre. Both languages

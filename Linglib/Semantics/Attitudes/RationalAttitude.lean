@@ -6,8 +6,8 @@ import Linglib.Semantics.Events.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
 /-!
-# Rational Attitude Semantics @cite{fusco-sgrizzi-2026}
-@cite{dowty-1979}
+# Rational Attitude Semantics [fusco-sgrizzi-2026]
+[dowty-1979]
 
 Unified semantics for attitude verbs that support both belief and intention
 readings. The key insight: these are not two separate verb types but a single
@@ -23,7 +23,7 @@ The difference is determined by **complement size**:
 - CP complement → CLOSURE applies → propositional content → belief
 - Sub-CP complement → event variable open → intention
 
-## Denotation (@cite{fusco-sgrizzi-2026}, ex. 24)
+## Denotation ([fusco-sgrizzi-2026], ex. 24)
 
 ⟦convincere⟧ = λP.λx.λy.λe. ∃e'. Convince(e) ∧ Agent(e,y) ∧ Patient(e,x)
                                    ∧ CAUSE(e,e') ∧ RATIONAL-ATTITUDE(e')
@@ -95,7 +95,7 @@ theorem size_determines_reading (cs : ComplementSize) :
     proposition ∃e. P(e), yielding a belief-compatible propositional content.
 
     This is pointwise Davidsonian existential closure (`Event.existsClosure`),
-    re-exported under the name used in @cite{fusco-sgrizzi-2026}. -/
+    re-exported under the name used in [fusco-sgrizzi-2026]. -/
 abbrev closure {W Time : Type*} [LinearOrder Time] (P : W → Event Time → Prop) : W → Prop :=
   fun w => Event.existsClosure (P w)
 
@@ -168,16 +168,16 @@ theorem CausativeAttitude.readings_from_single_denote {E Time : Type*} [LinearOr
   ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 3b. CAUSE* — Causal Self-Reference (@cite{grano-2024})
+-- § 3b. CAUSE* — Causal Self-Reference ([grano-2024])
 -- ════════════════════════════════════════════════════════════════
 
-/-- CAUSE*(s, e, w): causal self-reference relation (@cite{grano-2024}, (79);
-    @cite{searle-1983}).
+/-- CAUSE*(s, e, w): causal self-reference relation ([grano-2024], (79);
+    [searle-1983]).
 
     The attitude state `s` causally brings about event `e` in world `w`
     "in the right way." Distinguished from plain CAUSE by requiring that
     the causation proceed via the agent's intention-in-action, not via
-    a deviant causal chain (@cite{harman-1976}; @cite{chisholm-1966}).
+    a deviant causal chain ([harman-1976]; [chisholm-1966]).
 
     Example (Harman): Betty aims her gun intending to kill the target.
     Her intention makes her nervous; nervousness causes her to pull the
@@ -188,7 +188,7 @@ theorem CausativeAttitude.readings_from_single_denote {E Time : Type*} [LinearOr
 abbrev CauseStar (W Time : Type*) [LinearOrder Time] := Event Time → Event Time → W → Prop
 
 /-- Semantics for intention reports with causal self-reference
-    (@cite{grano-2024}, version 4, (79)).
+    ([grano-2024], version 4, (79)).
 
     ⟦Kim intends to leave⟧ᵂ·ᵗ =
       ∃s. INTENTION(s,w) ∧ HOLDER(k,s,w)
@@ -197,7 +197,7 @@ abbrev CauseStar (W Time : Type*) [LinearOrder Time] := Event Time → Event Tim
 
     The complement `P` has type `(E → W → Event Time → Prop)` — an event
     predicate with an open eventuality argument. This is the formal
-    correlate of @cite{grano-2024}'s Premise 3: IND would existentially
+    correlate of [grano-2024]'s Premise 3: IND would existentially
     close the event argument, yielding `(E → W → Prop)`, which is
     type-incompatible with CAUSE*. The type system enforces that
     intention reports require eventuality abstraction. -/
@@ -228,7 +228,7 @@ def beliefHolds {E W : Type*}
     (agent : E) (P : W → Prop) (w : W) : Prop :=
   ∀ w' ∈ dox agent w, P w'
 
-/-! ### Premise 3: Type-Level Enforcement (@cite{grano-2024}, §4.3)
+/-! ### Premise 3: Type-Level Enforcement ([grano-2024], §4.3)
 
 Intention reports require eventuality abstraction: `intentionHolds`
 demands a complement with an open event argument (`P : E → W → Event Time → Prop`),
@@ -287,12 +287,12 @@ theorem diagnostics_distinguish_readings :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 6. Bridge: Reading → @cite{searle-1983} Direction of Fit
+-- § 6. Bridge: Reading → [searle-1983] Direction of Fit
 -- ════════════════════════════════════════════════════════════════
 
 open Discourse (DirectionOfFit PsychMode)
 
-/-- Map rational attitude readings to @cite{searle-1983}'s direction of fit.
+/-- Map rational attitude readings to [searle-1983]'s direction of fit.
 
     Belief readings have mind-to-world fit: the propositional content must
     match independently existing reality. Intention readings have
@@ -301,9 +301,9 @@ def Reading.directionOfFit : Reading → DirectionOfFit
   | .belief    => .mindToWorld
   | .intention => .worldToMind
 
-/-- Map rational attitude readings to @cite{searle-1983}'s psychological mode.
+/-- Map rational attitude readings to [searle-1983]'s psychological mode.
 
-    This connects @cite{fusco-sgrizzi-2026}'s complement-size analysis to
+    This connects [fusco-sgrizzi-2026]'s complement-size analysis to
     Searle's theory of Intentional states: the same verb produces different
     psychological modes depending on syntactic complement structure. -/
 def Reading.psychMode : Reading → PsychMode
@@ -317,7 +317,7 @@ theorem reading_direction_matches_psychMode :
   intro r; cases r <;> rfl
 
 /-- Belief readings are not causally self-referential; intention readings are.
-    This is the formal correlate of @cite{fusco-sgrizzi-2026}'s CONTENT vs
+    This is the formal correlate of [fusco-sgrizzi-2026]'s CONTENT vs
     INERTIA modal base distinction: INERTIA worlds are those where the agent's
     intentions *cause* the events to come about. -/
 theorem intention_self_referential_belief_not :

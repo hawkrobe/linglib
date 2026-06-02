@@ -10,17 +10,17 @@ argument realization) filled by **roots** (idiosyncratic content).
 Templates compose via CAUSE; which sub-predicate determines argument
 realization yields different syntactic frames.
 
-The four templates here are @cite{rappaport-hovav-levin-1998}'s; the
+The four templates here are [rappaport-hovav-levin-1998]'s; the
 enriched two-predicate event structure for the wiping-verbs class
-(@cite{rappaport-hovav-levin-2024}) is paper-anchored at
+([rappaport-hovav-levin-2024]) is paper-anchored at
 `Studies/RappaportHovavLevin2024.lean`.
 
 ## Bridges
 
 - `Template.toAspectualProfile` → `AspectualProfile` (aspect)
-- `HasResultState` → bieventive sub-event boundary (@cite{krejci-2012}; @cite{dowty-1979}; structural-scope alternative: @cite{von-stechow-1996}, @cite{beck-2005})
+- `HasResultState` → bieventive sub-event boundary ([krejci-2012]; [dowty-1979]; structural-scope alternative: [von-stechow-1996], [beck-2005])
 - `cause_implies_resultState` → CAUSE entails result state
-- `intransitiveVariant` → causative/inchoative alternation (@cite{krejci-2012}; @cite{rappaport-hovav-levin-1998})
+- `intransitiveVariant` → causative/inchoative alternation ([krejci-2012]; [rappaport-hovav-levin-1998])
 
 -/
 
@@ -32,7 +32,7 @@ open Features
 
 /-! ### Event structure templates -/
 
-/-- Canonical event structure templates per @cite{rappaport-hovav-levin-1998}. -/
+/-- Canonical event structure templates per [rappaport-hovav-levin-1998]. -/
 inductive Template where
   | state          -- [x ⟨STATE⟩]
   | activity       -- [x ACT]
@@ -44,7 +44,7 @@ inductive Template where
 
 /-- Does the template involve CAUSE? At the template level this coincides
 with having an external causer position: only `.accomplishment` decomposes
-as `[[x ACT] CAUSE [BECOME [y STATE]]]` per @cite{rappaport-hovav-levin-1998}. -/
+as `[[x ACT] CAUSE [BECOME [y STATE]]]` per [rappaport-hovav-levin-1998]. -/
 def Template.HasCause : Template → Prop
   | .accomplishment => True
   | _ => False
@@ -80,23 +80,23 @@ def Template.vendlerClass (t : Template) : VendlerClass :=
     by CAUSE or embedding BECOME — license scopal ambiguities that
     mono-eventive templates do not.
 
-    At the template level, three diagnostics from @cite{dowty-1979} reduce
+    At the template level, three diagnostics from [dowty-1979] reduce
     to two structural properties already defined above:
 
     1. ***again*/*re-* ambiguity** tracks `HasResultState`: templates
        embedding [BECOME [STATE]] allow restitutive readings where a
        scopal modifier targets just the result sub-event. The
-       structural-scope rival (@cite{von-stechow-1996}, @cite{beck-2005})
+       structural-scope rival ([von-stechow-1996], [beck-2005])
        derives restitutive readings from adverbial attachment levels
        rather than lexical entailment; the lexical-decomposition account
        encoded here is one of two live analyses.
-    2. **Negation over CAUSE** (@cite{koontz-garboden-2009}) tracks
+    2. **Negation over CAUSE** ([koontz-garboden-2009]) tracks
        `HasCause`: negation can scope narrowly over CAUSE, denying
        the causal link while maintaining the result.
-    3. **"By itself" licensing** (@cite{koontz-garboden-2009}) also tracks
+    3. **"By itself" licensing** ([koontz-garboden-2009]) also tracks
        `HasCause`: "without outside help" requires CAUSE in the meaning.
 
-    @cite{krejci-2012}'s insight is that some verbs assigned simpler templates
+    [krejci-2012]'s insight is that some verbs assigned simpler templates
     (eat, wash, dress, learn) nonetheless pass all three diagnostics — evidence
     that they have bieventive, causative event structures in their simple forms.
     This verb-level property is captured in `RootTypology` and `ArgDerivation`,
@@ -122,19 +122,19 @@ theorem cause_implies_resultState (t : Template) :
 
     The accomplishment template [[x ACT] CAUSE [BECOME [y STATE]]]
     has an intransitive variant. On the **deletion** analysis
-    (@cite{krejci-2012}; @cite{rappaport-hovav-levin-1998}), this is
+    ([krejci-2012]; [rappaport-hovav-levin-1998]), this is
     the achievement [BECOME [x STATE]], obtained by stripping the
     external cause — yielding a monoeventive representation.
 
-    On the competing **reflexivization** analysis (@cite{koontz-garboden-2009};
-    @cite{chierchia-2004}), anticausativization does NOT delete CAUSE.
+    On the competing **reflexivization** analysis ([koontz-garboden-2009];
+    [chierchia-2004]), anticausativization does NOT delete CAUSE.
     Instead, the reflexive clitic (*se*, *sich*) identifies the EFFECTOR
     with the THEME: the derived inchoative retains the full causative
     structure [∃v[CAUSE(v,e) ∧ EFFECTOR(v,x) ∧ BECOME(e,s) ∧ THEME(s,x)]].
     This preserves the Monotonicity Hypothesis and explains the
     cross-linguistic tendency for anticausative morphology to coincide
     with reflexive morphology (Haspelmath's typological work on the
-    causative-anticausative alternation; see @cite{alexiadou-schaefer-2015}
+    causative-anticausative alternation; see [alexiadou-schaefer-2015]
     for the modern cross-linguistic picture). -- UNVERIFIED: original
     text cited "Haspelmath 1990: 9/13 languages" — Haspelmath 1990 is on
     passives; the typology of C/I alternation is in Haspelmath 1993,
@@ -149,7 +149,7 @@ theorem cause_implies_resultState (t : Template) :
     partner.
 
     NOTE: this implements one specific analysis. On the reflexivization
-    analysis (@cite{koontz-garboden-2009}), the intransitive variant retains
+    analysis ([koontz-garboden-2009]), the intransitive variant retains
     CAUSE with reflexivized arguments. -/
 def Template.intransitiveVariant : Template → Option Template
   | .accomplishment => some .achievement
@@ -163,7 +163,7 @@ theorem intransitive_has_resultState (t t' : Template) :
   rintro rfl; decide
 
 /-- The intransitive variant loses CAUSE (on the deletion analysis).
-    @cite{koontz-garboden-2009} disputes this on Monotonicity-Hypothesis
+    [koontz-garboden-2009] disputes this on Monotonicity-Hypothesis
     grounds; see `Studies/KoontzGarboden2009.lean`. -/
 theorem intransitive_no_cause (t t' : Template) :
     t.intransitiveVariant = some t' → ¬ t'.HasCause := by
@@ -195,10 +195,10 @@ def Template.objectProfile : Template → Option EntailmentProfile
 theorem accomplishment_subject_is_agent :
     (Template.subjectProfile .accomplishment).pAgentScore = 5 := by decide
 
-/-! ### Bridge to @cite{levin-1993} verb classes -/
+/-! ### Bridge to [levin-1993] verb classes -/
 
 /-! Levin classes map to event structure templates via meaning components
-    (@cite{rappaport-hovav-levin-1998}; @cite{rappaport-hovav-levin-2010}):
+    ([rappaport-hovav-levin-1998]; [rappaport-hovav-levin-2010]):
 
     | Meaning component pattern | Template | Example class |
     |---|---|---|
@@ -211,17 +211,17 @@ theorem accomplishment_subject_is_agent :
     decision tree, with its motion-and-sustained-contact substructure
     formalized at `Studies/RappaportHovavLevin2024.lean`. -/
 
-/-! ### Process vs state-change (@cite{bohnemeyer-2004}) -/
+/-! ### Process vs state-change ([bohnemeyer-2004]) -/
 
 /-- The fundamental binary distinction in event types: whether a predicate
     encodes a process (PROC only) or a state change (involves CHANGE).
 
     This crosscuts Vendler's four-way classification: degree achievements
     are Vendler activities or accomplishments depending on scale boundedness
-    but are event-structurally state-change predicates (@cite{bohnemeyer-2004}
+    but are event-structurally state-change predicates ([bohnemeyer-2004]
     on degree achievements within the Yukatek transitivity system).
 
-    @cite{bohnemeyer-2004} argues this is the primary semantic distinction
+    [bohnemeyer-2004] argues this is the primary semantic distinction
     governing verb classification in Yukatek Maya — more fundamental than
     Vendler classes for predicting argument linking and transitivization. -/
 inductive EventType where
@@ -242,11 +242,11 @@ def Template.eventType : Template → EventType
     This is a per-verb property of the ROOT, not of the template.
     Two activity verbs can differ: *sing* (internal) vs *roll* (external).
 
-    @cite{levin-hovav-1995} on the internal/external causation distinction
-    in Unaccusativity; @cite{bohnemeyer-2004} on internal/external
+    [levin-hovav-1995] on the internal/external causation distinction
+    in Unaccusativity; [bohnemeyer-2004] on internal/external
     causation in Yukatek argument linking.
 
-    @cite{koontz-garboden-2009}: externally caused COS verbs have
+    [koontz-garboden-2009]: externally caused COS verbs have
     CAUSE+EFFECTOR in their LSR and license *por sí solo* 'by itself'.
     Internally caused COS verbs (*empeorar*, *hervir*, *crecer*) lack CAUSE
     in their LSR and reject *por sí solo*. -/
@@ -256,8 +256,8 @@ inductive InternalExternalCause where
   deriving DecidableEq, Repr
 
 /-- Externally caused COS verbs have CAUSE in their LSR;
-    internally caused COS verbs do not (@cite{koontz-garboden-2009};
-    @cite{levin-hovav-1995}). Per @cite{koontz-garboden-2009}, this
+    internally caused COS verbs do not ([koontz-garboden-2009];
+    [levin-hovav-1995]). Per [koontz-garboden-2009], this
     licenses *por sí solo* / *by itself* modification on externally
     caused inchoatives and rejects it on internally caused ones.
 
@@ -375,8 +375,8 @@ alternation predictions from a single componentwise OR operation.
 The central theorem — `ci_alternation_iff_template_alternates` — says the
 causative/inchoative alternation is exactly the syntactic reflex of having an
 accomplishment event template (which has an intransitive variant), modulo
-`instrumentSpec`. This connects @cite{levin-1993}'s diathesis alternation diagnostics
-to @cite{rappaport-hovav-levin-1998}'s event structure decomposition. -/
+`instrumentSpec`. This connects [levin-1993]'s diathesis alternation diagnostics
+to [rappaport-hovav-levin-1998]'s event structure decomposition. -/
 
 /-- The causative/inchoative alternation is available iff the verb's event template
     has an intransitive variant (i.e., is an accomplishment), given no instrumentSpec.
@@ -441,8 +441,8 @@ theorem fuse_vendler_class_shift (v c : MeaningComponents)
 
 /-- Fusion with CoS + causation yields result state, enabling *again*/*re-*
     restitutive readings on the lexical-decomposition account
-    (@cite{dowty-1979}; cf. structural-scope rival @cite{von-stechow-1996},
-    @cite{beck-2005}). -/
+    ([dowty-1979]; cf. structural-scope rival [von-stechow-1996],
+    [beck-2005]). -/
 theorem fuse_cos_caus_has_result_state (v c : MeaningComponents)
     (hCoS : c.changeOfState = true) (hCaus : c.causation = true) :
     (v.fuse c).predictedTemplate.HasResultState := by
@@ -450,7 +450,7 @@ theorem fuse_cos_caus_has_result_state (v c : MeaningComponents)
 
 /-- Fusion with CoS + causation yields CAUSE structure, enabling
     negation-over-CAUSE readings and *by itself* modification
-    (@cite{koontz-garboden-2009}). -/
+    ([koontz-garboden-2009]). -/
 theorem fuse_cos_caus_has_cause (v c : MeaningComponents)
     (hCoS : c.changeOfState = true) (hCaus : c.causation = true) :
     (v.fuse c).predictedTemplate.HasCause := by

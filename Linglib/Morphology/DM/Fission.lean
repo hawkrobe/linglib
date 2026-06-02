@@ -2,7 +2,7 @@ import Mathlib.Logic.Basic
 
 /-!
 # Fission (Distributed Morphology)
-@cite{halle-marantz-1993} @cite{noyer-1992}
+[halle-marantz-1993] [noyer-1992]
 
 Fission is the postsyntactic DM operation that splits a single terminal
 node into two morphological exponents. In the DM derivation, Fission
@@ -10,10 +10,10 @@ applies after syntax but before Vocabulary Insertion: a feature bundle
 with multiply-realizable content is partitioned into two pieces, each
 of which is then independently subject to VI.
 
-The classical motivation is @cite{noyer-1992}'s analysis of Afro-Asiatic
+The classical motivation is [noyer-1992]'s analysis of Afro-Asiatic
 person/number portmanteaux, where a single agreement slot surfaces as
 two clitic-like exponents. Subsequent work — notably
-@cite{arregi-nevins-2012} on Basque auxiliary doubling — has used the
+[arregi-nevins-2012] on Basque auxiliary doubling — has used the
 same operation for clitic doubling more generally.
 
 ## Architecture
@@ -46,7 +46,7 @@ language-neutral and the second consumer is identified.
 
 * Migrate a second consumer to discharge the ≥2-consumer rule.
   The DM literature has several Fission analyses that could be
-  formalised against this substrate — @cite{arregi-nevins-2012} on
+  formalised against this substrate — [arregi-nevins-2012] on
   Basque clitic doubling is the most direct candidate; Spanish dialect
   clitic doubling and ditropic clitics in Romance are also natural
   fits.
@@ -59,7 +59,7 @@ namespace Morphology.DM.Fission
 /-- A Fission rule is parameterized over:
 * `Person` — the morphological category fissioned (e.g., φ-features);
 * `Ctx`    — the structural context licensing Fission
-            (e.g., a verbal-head list in @cite{munoz-perez-2026});
+            (e.g., a verbal-head list in [munoz-perez-2026]);
 * `Out`    — the two-piece realization output.
 
 Both `contextOk` and `personOk` are `Prop`-valued with carried
@@ -102,7 +102,7 @@ def applyFission (rule : FissionRule Person Ctx Out) (p : Person) (c : Ctx) :
 
 /-- A PF well-formedness check over the realization output. Each
     language stipulates its own marking requirement (e.g., the
-    anticausative-Voice PF requirement in @cite{munoz-perez-2026},
+    anticausative-Voice PF requirement in [munoz-perez-2026],
     rule 55). -/
 structure PFMarkingCondition (Out : Type*) where
   /-- Does this realization satisfy the PF marking requirement? -/

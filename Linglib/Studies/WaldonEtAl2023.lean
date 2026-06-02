@@ -6,7 +6,7 @@ import Mathlib.Tactic.DeriveFintype
 import Mathlib.Data.Fintype.Prod
 
 /-!
-# @cite{waldon-etal-2023}
+# [waldon-etal-2023]
 
 Waldon, B., Condoravdi, C., Levin, B., & Degen, J. (2023). On the context
 dependence of artifact noun interpretation. In *Proceedings of Sinn und
@@ -22,7 +22,7 @@ Bedeutung 27*, pp. 674–692.
 2. **Multi-dimensional degree semantics for artifact nouns** (eq. 8):
    ⟦vehicle⟧ = λx. Σ_{f ∈ **F**(vehicle)} f(x) · **W**(vehicle, f)
    where **F** returns context-relevant measure functions and **W** weights
-   them. Artifact nouns compose additively (@cite{sassoon-fadlon-2017}),
+   them. Artifact nouns compose additively ([sassoon-fadlon-2017]),
    in contrast to natural kinds which compose multiplicatively.
 
    This is the `weightedScore` substrate primitive in
@@ -176,7 +176,7 @@ theorem rsaMeaning_nonneg :
     Follows the companion handout's architecture:
     L₁(obj, goal | rule) ∝ S(rule | obj, goal) · P_G(goal) · P_CAT(obj)
 
-    Structurally parallel to @cite{lassiter-goodman-2017}'s threshold RSA:
+    Structurally parallel to [lassiter-goodman-2017]'s threshold RSA:
     both jointly infer world state and a latent parameter (threshold θ in
     LG2017, policy goal in this model). -/
 noncomputable def mkCfg (condition : GoalCondition) :
@@ -226,7 +226,7 @@ theorem limitLight_tablet_gt_boombox :
 /-! Cross-config predictions (goal modulation).
     The paper's central empirical claim: the same edge-case object
     receives different L1 scores under different goal conditions.
-    Parallel to @cite{lassiter-goodman-2017}'s `basketball_tall_favors_taller`,
+    Parallel to [lassiter-goodman-2017]'s `basketball_tall_favors_taller`,
     which shows context (prior) modulates L1 across configs. -/
 
 /-- **Goal sensitivity for flashlights** (the paper's key result, Fig. 1):
@@ -303,7 +303,7 @@ theorem utility_is_feature :
 -- § 6. Additive vs. Multiplicative Composition
 -- ════════════════════════════════════════════════════
 
-/-! @cite{sassoon-fadlon-2017} contrast artifact nouns (additive: Σ)
+/-! [sassoon-fadlon-2017] contrast artifact nouns (additive: Σ)
     with natural kinds (multiplicative: Π). Under multiplicative
     composition, a zero on ANY dimension kills membership. Under
     additive, other dimensions compensate. -/
@@ -323,8 +323,8 @@ theorem flashlight_additive_positive :
     weightedScore [1, 1, 1] allFeatures .flashlight > 1/2 := by native_decide
 
 /-- Artifact noun aggregation is utilitarian, not counting — the same
-    point made by @cite{dambrosio-hedden-2024} for multidimensional
-    adjectives. @cite{sassoon-2013}'s binding types (conjunctive,
+    point made by [dambrosio-hedden-2024] for multidimensional
+    adjectives. [sassoon-2013]'s binding types (conjunctive,
     disjunctive, mixed) are all counting aggregation and cannot
     capture the weighted, continuous-measure structure of artifact
     noun interpretation. -/

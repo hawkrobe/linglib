@@ -3,7 +3,7 @@ import Linglib.Core.Epistemicity
 
 /-!
 # Subjectivity Cline
-@cite{traugott-dasher-2002} @cite{traugott-2010}
+[traugott-dasher-2002] [traugott-2010]
 
 Traugott & Dasher's synchronic cline of (inter)subjectivity, formalized as an
 ordered type. Expressions range from **nonsubjective** (ideational, propositional)
@@ -25,8 +25,8 @@ namespace Features.Subjectivity
 
 open Core.Epistemicity (EpistemicAuthority)
 
-/-- Synchronic subjectivity scale (@cite{traugott-dasher-2002} Table 1,
-    @cite{traugott-2010} cline 2). Diachronic work shows that subjective
+/-- Synchronic subjectivity scale ([traugott-dasher-2002] Table 1,
+    [traugott-2010] cline 2). Diachronic work shows that subjective
     polysemies arise later than ideational ones, and intersubjective
     polysemies arise later than subjective ones. -/
 inductive SubjectivityLevel where
@@ -55,7 +55,7 @@ def SubjectivityLevel.ofEpistemicAuthority : EpistemicAuthority → Subjectivity
   | .allocutive => .intersubjective
   | .nonparticipant => .nonSubjective
 
-/-- Intersubjectivity presupposes subjectivity (@cite{traugott-2010} section 2). -/
+/-- Intersubjectivity presupposes subjectivity ([traugott-2010] section 2). -/
 theorem intersubjective_ge_subjective :
     SubjectivityLevel.subjective ≤ SubjectivityLevel.intersubjective := by decide
 
@@ -73,7 +73,7 @@ theorem nonSubjective_le (l : SubjectivityLevel) :
     The performative/descriptive distinction originates with Austin (1962) and
     cross-cuts subjectivity: a speaker-oriented utterance can be performative
     ("You must go" — creates the obligation) or descriptive ("He must be home"
-    — assesses without creating). @cite{narrog-2012} §2.4 argues that
+    — assesses without creating). [narrog-2012] §2.4 argues that
     Traugott's subjectivity cline conflates speaker-orientation with
     performativity, collapsing distinctions that matter for face-threat,
     person restrictions, and diachronic change paths.

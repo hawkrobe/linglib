@@ -2,10 +2,10 @@ import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 
 /-!
 # Plurality Licensing for Anaphors
-@cite{rakosi-2019}
+[rakosi-2019]
 
 The split between **morphosyntactic** and **semantic** plurality licensing
-of anaphors. @cite{rakosi-2019} demonstrates that Hungarian reciprocals
+of anaphors. [rakosi-2019] demonstrates that Hungarian reciprocals
 (*egymás*) tolerate morphosyntactically singular antecedents (quantified
 NPs, singular coordinate DPs, collective nouns) while reflexives
 (*maga/maguk*) require morphosyntactic plurality (plural noun head + plural
@@ -23,7 +23,7 @@ The distinction is derivable from the formal semantics:
 
 ## Anchoring
 
-Substrate originating with @cite{rakosi-2019}; consumed by
+Substrate originating with [rakosi-2019]; consumed by
 `Studies/Rakosi2019.lean` (the paper formalisation) and
 `Fragments/Hungarian/Reciprocals.lean` (the per-language data file). Two
 consumers cross the linglib substrate-promotion threshold; sits in
@@ -51,7 +51,7 @@ variable {E : Type u}
 
 /-- What kind of plurality an anaphor requires from its antecedent.
 
-    @cite{rakosi-2019}: Hungarian reciprocals tolerate morphosyntactically
+    [rakosi-2019]: Hungarian reciprocals tolerate morphosyntactically
     singular antecedents while reflexives do not. The distinction is
     derivable from the formal semantics:
 

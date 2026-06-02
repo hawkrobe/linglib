@@ -2,7 +2,7 @@ import Linglib.Semantics.Exhaustification.Excluder
 
 /-!
 # Tolerant Exhaustification (Chierchia 2013)
-@cite{chierchia-2013}
+[chierchia-2013]
 
 A second `Excluder`: negate **every** alternative not entailed by the
 prejacent, even if the result is contradictory.
@@ -14,7 +14,7 @@ tolerant operator drops that requirement and excludes every non-weaker
 alternative unconditionally. The result `tolerant.exh` may therefore be
 empty (a contradiction).
 
-Tolerance is empirically motivated by EFCIs (@cite{alonso-ovalle-moghiseh-2025}):
+Tolerance is empirically motivated by EFCIs ([alonso-ovalle-moghiseh-2025]):
 applying `tolerant` to an unembedded existential free-choice item produces
 the contradiction that drives modal insertion or partial exhaustification.
 

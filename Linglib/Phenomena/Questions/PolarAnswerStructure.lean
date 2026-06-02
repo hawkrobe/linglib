@@ -5,14 +5,14 @@ import Linglib.Fragments.Swedish.AnswerParticles
 
 /-!
 # Polar Answer Structure
-@cite{holmberg-2016}
+[holmberg-2016]
 
 Yes/no answers are question-specific structures, not instances of
 general fragment interpretation or ellipsis.
 
 ## Holmberg's Analysis
 
-@cite{holmberg-2016} argues that yes/no answers are elliptical full clauses
+[holmberg-2016] argues that yes/no answers are elliptical full clauses
 with the following structure:
 
     [FocP yes/no Foc⁰ [PolP ... [±Pol] ... ]]

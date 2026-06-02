@@ -3,9 +3,9 @@ import Linglib.Fragments.Chuj.VerbBuilding
 
 /-!
 # Cross-Linguistic Typology of Change-of-State Verbs
-@cite{dixon-1982} @cite{levin-1993} @cite{beavers-etal-2021} @cite{rose-nichols-2021} @cite{coon-2019}
+[dixon-1982] [levin-1993] [beavers-etal-2021] [rose-nichols-2021] [coon-2019]
 
-Empirical data from Beavers, Everdell, Jerro, Kauhanen, @cite{beavers-etal-2021} "States and changes of state: A crosslinguistic
+Empirical data from Beavers, Everdell, Jerro, Kauhanen, [beavers-etal-2021] "States and changes of state: A crosslinguistic
 study of the roots of verbal meaning." Language 97(3), 439–484.
 
 88-language balanced sample (WALS 100 + additions). For each of 36 property
@@ -36,11 +36,11 @@ namespace BeaversEtAl2021
 -- ════════════════════════════════════════════════════
 
 /-- Two classes of change-of-state verb roots, defined by morphological
-    and semantic diagnostics (@cite{beavers-etal-2021} §3.1).
+    and semantic diagnostics ([beavers-etal-2021] §3.1).
 
     Classification criteria:
-    - PC roots: the root of deadjectival CoS verbs (@cite{levin-1993}:245);
-      describe @cite{dixon-1982}'s basic property types
+    - PC roots: the root of deadjectival CoS verbs ([levin-1993]:245);
+      describe [dixon-1982]'s basic property types
     - Result roots: the root of non-deadjectival CoS verbs;
       describe specific result states (physical damage, cooking, etc.) -/
 inductive CoSRootClass where
@@ -48,7 +48,7 @@ inductive CoSRootClass where
   | result           -- non-deadjectival: break, crack, shatter
   deriving DecidableEq, Repr
 
-/-- PC subclasses (@cite{dixon-1982}; @cite{beavers-etal-2021} ex. 5). -/
+/-- PC subclasses ([dixon-1982]; [beavers-etal-2021] ex. 5). -/
 inductive PCSubclass where
   | dimension         -- large/big, small, long, short, deep, wide, tall/high
   | age               -- old/aged
@@ -58,7 +58,7 @@ inductive PCSubclass where
   | speed             -- fast, slow
   deriving DecidableEq, Repr
 
-/-- Result root subclasses (@cite{levin-1993}; @cite{beavers-etal-2021} ex. 6). -/
+/-- Result root subclasses ([levin-1993]; [beavers-etal-2021] ex. 6). -/
 inductive ResultSubclass where
   | entitySpecificCoS          -- burned, melted, frozen, decayed, bloomed
   | cooking                    -- cooked, baked, fried, roasted, boiled
@@ -74,7 +74,7 @@ inductive ResultSubclass where
 -- § 2. Morphological Paradigm Structure
 -- ════════════════════════════════════════════════════
 
-/-- The five positions in a CoS verb paradigm (@cite{beavers-etal-2021} eq. 40).
+/-- The five positions in a CoS verb paradigm ([beavers-etal-2021] eq. 40).
     Every root meaning is associated with (up to) five forms. -/
 inductive ParadigmPosition where
   | underlyingRoot  -- Position 1: base morphological root
@@ -84,8 +84,8 @@ inductive ParadigmPosition where
   | resultStative   -- Position 5: deverbal stative (participle-like)
   deriving DecidableEq, Repr
 
-/-- Morphological relationship codes between forms (@cite{beavers-etal-2021}
-    eq. 41, generalizing @cite{haspelmath-1993}:90–92). -/
+/-- Morphological relationship codes between forms ([beavers-etal-2021]
+    eq. 41, generalizing [haspelmath-1993]:90–92). -/
 inductive MorphRelation where
   | input      -- (i) X is the input to a rule forming Y_k
   | derived    -- (d) X is the output of a rule on Y_k
@@ -184,7 +184,7 @@ def resultRoots : List RootMeaning :=
 
 /-- Summary of a crosslinguistic comparison between PC and result roots.
     Numeric fields are exact ℚ (mathlib idiom for kernel-decidable arithmetic;
-    @cite{beavers-etal-2021} reports values to 2 decimal places). -/
+    [beavers-etal-2021] reports values to 2 decimal places). -/
 structure TypologicalComparison where
   /-- What is being measured -/
   measure : String
@@ -422,7 +422,7 @@ theorem result_no_stative_prediction_matches_data :
 -- ════════════════════════════════════════════════════
 
 /-- **Theory predicts**: PC verbs are morphologically marked; result verbs
-    are unmarked (Markedness Generalization, @cite{beavers-etal-2021}).
+    are unmarked (Markedness Generalization, [beavers-etal-2021]).
     **Data confirms**: PC median marked % (56.01) > result median (15.20). -/
 theorem markedness_prediction_matches_statistics :
     -- Theory: PC verbs are marked
@@ -455,7 +455,7 @@ theorem unattested_type_matches_complementarity :
   intro rt; cases rt <;> decide
 
 -- ════════════════════════════════════════════════════
--- § 13. Fragment Grounding: Chuj Roots Instantiate Theory (@cite{coon-2019})
+-- § 13. Fragment Grounding: Chuj Roots Instantiate Theory ([coon-2019])
 -- ════════════════════════════════════════════════════
 
 open Chuj
@@ -528,8 +528,8 @@ theorem result_roots_classified_and_predicted :
 
 /-- The subclass taxonomies are aligned: B&KG's `PCSubclass` has 6
     categories (matching their Table 2); the theory's `PCClass` has 7
-    (adding `humanPropensity` from @cite{dixon-1982}, attested in
-    @cite{hanink-koontz-garboden-2025}). `ResultClass` and `ResultSubclass`
+    (adding `humanPropensity` from [dixon-1982], attested in
+    [hanink-koontz-garboden-2025]). `ResultClass` and `ResultSubclass`
     match exactly (8 subclasses). -/
 theorem subclass_counts_match :
     -- B&KG's 6 PC subclasses are a subset of the theory's 7

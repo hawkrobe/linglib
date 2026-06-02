@@ -3,9 +3,9 @@ import Mathlib.Data.Setoid.Basic
 
 /-!
 # Reference to ad hoc kinds
-@cite{mendia-2020}
+[mendia-2020]
 
-@cite{mendia-2020} (L&P 43:589-631) argues that *ad hoc* kind reference —
+[mendia-2020] (L&P 43:589-631) argues that *ad hoc* kind reference —
 uses of `that kind of dog` to refer to a kind no lexicalized noun names — is
 best analysed by giving speakers the ability to choose, in context, an
 equivalence relation on the instances of a base kind. Members of each
@@ -15,7 +15,7 @@ out one such class via demonstration.
 Subkinds-as-equivalence-classes is *exactly* mathlib's `Setoid`. This file
 provides Mendia's linguistic vocabulary (`subkindOf`, `instantiates`,
 `disjointness_condition`) on top of `Setoid` directly — no parallel struct
-is introduced. @cite{carlson-1977}'s Disjointness Condition is then a
+is introduced. [carlson-1977]'s Disjointness Condition is then a
 corollary of the standard fact that distinct equivalence classes are
 disjoint.
 
@@ -36,7 +36,7 @@ variable {Atom : Type*}
 /-- The subkind containing `a` under the salient kind-formation `s`: its
     equivalence class.
 
-    @cite{mendia-2020}: "For any entities instantiating a kind k, we can
+    [mendia-2020]: "For any entities instantiating a kind k, we can
     exhaustively partition those entities into disjoint subsets via a
     salient equivalence relation, where members of the resulting equivalence
     classes instantiate subkinds of k." -/
@@ -47,7 +47,7 @@ def subkindOf (s : Setoid Atom) (a : Atom) : Set Atom := {x | s.r a x}
 def instantiates (s : Setoid Atom) (a x : Atom) : Prop :=
   x ∈ subkindOf s a
 
-/-- @cite{carlson-1977}'s Disjointness Condition, derived from the
+/-- [carlson-1977]'s Disjointness Condition, derived from the
     equivalence-class structure. Distinct classes of any equivalence
     relation are disjoint as subsets of the carrier. -/
 theorem disjointness_condition (s : Setoid Atom) {a b : Atom} (h : ¬ s.r a b) :

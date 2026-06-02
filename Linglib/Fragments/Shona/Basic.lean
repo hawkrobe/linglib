@@ -4,10 +4,10 @@ import Linglib.Fragments.Bantu.Params
 /-!
 # Shona: Basic Types
 
-@cite{carstens-2026}
+[carstens-2026]
 
 The Shona noun class system with eight singular/plural pairings and
-semantic core associations following @cite{carstens-2026} §3.5, §5.2.
+semantic core associations following [carstens-2026] §3.5, §5.2.
 
 Shona has fourteen active noun classes (1–14), organized into eight genders.
 Unlike Xhosa's three-way semantic split ([human]/[inanimate]/[animal]),
@@ -23,7 +23,7 @@ The only consistent agreement patterns with conjoined singulars are:
 
 Six of eight genders are uninterpretable, so default agreement dominates.
 Gender-matching plural agreement is the exception, not the rule
-(@cite{carstens-2026} §3.5, §5.2).
+([carstens-2026] §3.5, §5.2).
 -/
 
 namespace Shona
@@ -68,7 +68,7 @@ def NounClass.isSingular : NounClass → Bool
 -- ============================================================================
 
 /-- Subject marker prefix for each class on the verb.
-    From examples in @cite{carstens-2026} §3.5. -/
+    From examples in [carstens-2026] §3.5. -/
 def NounClass.subjPrefix : NounClass → String
   | .cl1  => "a"
   | .cl2  => "va"
@@ -90,7 +90,7 @@ def NounClass.subjPrefix : NounClass → String
 -- ============================================================================
 
 /-- Shona genders: eight singular/plural noun class pairings.
-    From @cite{carstens-2026} (16). -/
+    From [carstens-2026] (16). -/
 inductive Gender where
   | genderA   -- cl1/cl2 (human)
   | genderB   -- cl3/cl4 (trees/plants)
@@ -123,12 +123,12 @@ def Gender.pluralClass : Gender → NounClass
   | .genderH => .cl13
 
 -- ============================================================================
--- § 4: Semantic Core Assignments (@cite{carstens-2026} §5.2)
+-- § 4: Semantic Core Assignments ([carstens-2026] §5.2)
 -- ============================================================================
 
 /-- Semantic core status for each Shona gender.
 
-    @cite{carstens-2026} §5.2: Shona has a binary [±human] split.
+    [carstens-2026] §5.2: Shona has a binary [±human] split.
     Only classes 1/2 have the [human] core. Classes 7/8 serve as the
     non-human default — the core for "all and only non-humans." The
     [animal] association with 9/10 has bleached; the remaining six

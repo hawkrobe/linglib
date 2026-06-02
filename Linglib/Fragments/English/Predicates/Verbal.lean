@@ -181,7 +181,7 @@ def kick : VerbEntry := .mkRegular {
   } }
 
 /-- "give" — ditransitive, alternates DOC/PP.
-    Implicit goal is definite (@cite{fillmore-1986}: pragmatically recoverable).
+    Implicit goal is definite ([fillmore-1986]: pragmatically recoverable).
     Neither object can be implicit alone. -/
 def give : VerbEntry where
   form := "give"
@@ -447,7 +447,7 @@ def keep : VerbEntry where
 
 /-- "manage" — positive implicative: "managed to VP" entails "VP".
     Traditional analysis: agentive subject controls the complement.
-    See also `manage_occasion` for the @cite{solstad-bott-2024} analysis. -/
+    See also `manage_occasion` for the [solstad-bott-2024] analysis. -/
 def manage : VerbEntry := .mkRegular {
   form := "manage"
   complementType := .infinitival
@@ -481,7 +481,7 @@ def try_ : VerbEntry where
 
 /-- "persuade" — object control: "persuade X to VP" (X = agent of VP).
     Psychological attitude verb: causes the object to form an intention.
-    Projects AUTHOR coordinate → obligatory *de se* (@cite{landau-2015} table (36)). -/
+    Projects AUTHOR coordinate → obligatory *de se* ([landau-2015] table (36)). -/
 def persuade : VerbEntry := .mkRegular {
   form := "persuade"
   complementType := .infinitival
@@ -492,7 +492,7 @@ def persuade : VerbEntry := .mkRegular {
 
 /-- "promise" — subject control with object: "promise X to VP".
     Desiderative attitude verb: the subject commits to a future action.
-    @cite{landau-2015} (5c) classifies it as desiderative → logophoric control. -/
+    [landau-2015] (5c) classifies it as desiderative → logophoric control. -/
 def promise : VerbEntry := .mkRegular {
   form := "promise"
   complementType := .infinitival
@@ -524,7 +524,7 @@ def forget : VerbEntry where
   passivizable := false
   implicative := some .negative
 
-/-- "neglect" — negative implicative (@cite{karttunen-1971} §10, ex. 38):
+/-- "neglect" — negative implicative ([karttunen-1971] §10, ex. 38):
     "John neglected to lock his door" entails "John didn't lock his door." -/
 def neglect : VerbEntry := .mkRegular {
   form := "neglect"
@@ -579,7 +579,7 @@ def want : VerbEntry := .mkRegular {
   complementSig := some .mono
   levinClass := some .want }
 
-/-- "intend" — intention-reporting attitude verb (@cite{grano-2024}).
+/-- "intend" — intention-reporting attitude verb ([grano-2024]).
     Primary frame: infinitival with subject control ("intend to leave").
     Alternate frame: for-to non-control ("intend for Ben to come along").
     Rejects indicative complements cross-linguistically: *"Kim intends
@@ -595,11 +595,11 @@ def intend : VerbEntry := .mkRegular {
   attitude := some (.preferential (.degreeComparison .positive))
   levinClass := some .want }
 
-/-- "decide" — belief/intention hybrid attitude verb (@cite{grano-2024}, §6.2).
+/-- "decide" — belief/intention hybrid attitude verb ([grano-2024], §6.2).
     Nonfinite complement → intention formation: "Kim decided to quit smoking"
     Finite complement → belief formation: "Kim decided that smoking is harmful"
     The complement type determines the reading, as with Italian *convincere*
-    (@cite{fusco-sgrizzi-2026}). -/
+    ([fusco-sgrizzi-2026]). -/
 def decide_ : VerbEntry := .mkRegular {
   form := "decide"
   complementType := .infinitival
@@ -625,7 +625,7 @@ def hope : VerbEntry := .mkRegular {
   complementSig := some .mono }
 
 /-- "pray" — preferential attitude verb, permits future temporal orientation.
-    @cite{klecha-2016}: like *hope*, *pray* can take a circumstantial modal base,
+    [klecha-2016]: like *hope*, *pray* can take a circumstantial modal base,
     allowing future-oriented readings under past tense morphology.
     Primary frame: finite clause ("pray that God helps").
     Alternate frame: infinitival with subject control ("pray to be saved"). -/
@@ -789,7 +789,7 @@ def force : VerbEntry := .mkRegular {
 /-- "prevent" — blocking causative (barrier addition).
     "X prevented Y from V-ing" entails the effect did NOT occur
     (¬p in w₀) but would have without X's intervention.
-    @cite{nadathur-lauer-2020}: `preventSem` (dual of `causeSem`). -/
+    [nadathur-lauer-2020]: `preventSem` (dual of `causeSem`). -/
 def prevent : VerbEntry := .mkRegular {
   form := "prevent"
   complementType := .gerund
@@ -815,9 +815,9 @@ def kill : VerbEntry := .mkRegular {
     agentControl := some [.neutral, .compatible]
   } }
 
-/-- "break" — thick lexical causative (Levin 45.1 Break Verbs; @cite{embick-2009} break-class).
+/-- "break" — thick lexical causative (Levin 45.1 Break Verbs; [embick-2009] break-class).
     Pure change-of-state verb: change in "material integrity"
-    with no specification of how the change comes about (@cite{levin-1993}:242). -/
+    with no specification of how the change comes about ([levin-1993]:242). -/
 def break_ : VerbEntry where
   form := "break"
   form3sg := "breaks"
@@ -837,15 +837,15 @@ def break_ : VerbEntry where
     resultType := some [.fracture]
     agentControl := some [.incompatible, .neutral]
     -- break is unspecified for instrument and object dimensionality
-    -- (@cite{majid-boster-bowerman-2008}: Dim 1 low predictability)
+    -- ([majid-boster-bowerman-2008]: Dim 1 low predictability)
   }
 
 /-- "tear" — Levin 45.1 Break Verbs. Contrary-direction separation with force.
     Unlike *break*, *tear* implies a specific directionality (bidirectional /
     pulling apart) and is compatible with careful controlled action.
     Patient restriction: any solid capable of irregular separation.
-    @cite{spalek-mcnally-2026} (§3.1–3.2).
-    @cite{majid-boster-bowerman-2008}: Dimension 2 — tearing consistently
+    [spalek-mcnally-2026] (§3.1–3.2).
+    [majid-boster-bowerman-2008]: Dimension 2 — tearing consistently
     distinguished from break/cut across 10/28 languages. -/
 def tear_ : VerbEntry where
   form := "tear"
@@ -870,11 +870,11 @@ def tear_ : VerbEntry where
   }
 
 -- ════════════════════════════════════════════════════
--- § Physical Disturbance CoS Verbs (@cite{tham-2025})
+-- § Physical Disturbance CoS Verbs ([tham-2025])
 -- ════════════════════════════════════════════════════
 
 /-- "crack" — Levin 45.1 Break verbs. Physical disturbance CoS verb.
-    @cite{tham-2025}: closed scale (contra @cite{rappaport-hovav-2014} two-point
+    [tham-2025]: closed scale (contra [rappaport-hovav-2014] two-point
     classification), but allows BOTH telic ("cracked in a minute") and atelic
     ("cracked for two days") readings. Compatible with *completely*, *partially*,
     *badly*. The verb is NOT a standard degree achievement: its variable telicity
@@ -891,7 +891,7 @@ def crack : VerbEntry := .mkRegular {
   levinClass := some .break_ }
 
 /-- "dent" — Levin 45.1 Break verbs. Physical disturbance CoS verb.
-    @cite{tham-2025}: closed scale, compatible with *more dented*, *completely
+    [tham-2025]: closed scale, compatible with *more dented*, *completely
     dented*, *badly dented*. -/
 def dent : VerbEntry := .mkRegular {
   form := "dent"
@@ -905,7 +905,7 @@ def dent : VerbEntry := .mkRegular {
   levinClass := some .break_ }
 
 /-- "scratch" — Levin 45.1 Break verbs. Physical disturbance CoS verb.
-    @cite{tham-2025}: closed scale, compatible with *more scratched*, *completely
+    [tham-2025]: closed scale, compatible with *more scratched*, *completely
     scratched*, *badly scratched*. Note: also has a manner reading (Levin
     §10.4.1 wipe verbs: "The cat scratched the sofa") distinct from
     the CoS reading formalized here. -/
@@ -922,7 +922,7 @@ def scratch : VerbEntry := .mkRegular {
 
 /-- "shatter" — Levin 45.1 Break verbs. NOT a physical disturbance verb.
     Punctual, non-gradable: *shatter in two minutes* (after, not duration),
-    #*shatter for two minutes*, ??*more shattered* (@cite{tham-2025} (12)). -/
+    #*shatter for two minutes*, ??*more shattered* ([tham-2025] (12)). -/
 def shatter : VerbEntry := .mkRegular {
   form := "shatter"
   complementType := .np
@@ -980,10 +980,10 @@ def melt : VerbEntry := .mkRegular {
   } }
 
 -- ════════════════════════════════════════════════════
--- § @cite{martin-rose-nichols-2025} — Thick/Thin Causatives
+-- § [martin-rose-nichols-2025] — Thick/Thin Causatives
 -- ════════════════════════════════════════════════════
 
--- Entries for causative verbs classified by @cite{martin-rose-nichols-2025} that don't
+-- Entries for causative verbs classified by [martin-rose-nichols-2025] that don't
 -- already have Fragment entries elsewhere (break_, burn, destroy, melt, kill,
 -- cut, mix, start, stop already defined above).
 
@@ -1157,7 +1157,7 @@ def build : VerbEntry where
 
 /-- "write" — creation verb, strictly incremental theme.
     Alternates DOC/PP. Implicit DO in both frames (indefinite).
-    Uniquely allows implicit DO in both DOC and PP (@cite{bruening-2021}). -/
+    Uniquely allows implicit DO in both DOC and PP ([bruening-2021]). -/
 def write : VerbEntry where
   form := "write"
   form3sg := "writes"
@@ -1229,7 +1229,7 @@ def say : VerbEntry where
 
 /-- "tell" — communication verb with recipient.
     Also ditransitive ("tell me a story"). Implicit second obj is definite
-    (@cite{bruening-2021}: recoverable). Implicit goal (PP) is indefinite. -/
+    ([bruening-2021]: recoverable). Implicit goal (PP) is indefinite. -/
 def tell : VerbEntry where
   form := "tell"
   form3sg := "tells"
@@ -1255,14 +1255,14 @@ def claim : VerbEntry := .mkRegular {
   levinClass := some .say }
 
 -- ════════════════════════════════════════════════════
--- § Verb Entries — Clause-Embedding Predicates (@cite{degen-tonhauser-2021})
+-- § Verb Entries — Clause-Embedding Predicates ([degen-tonhauser-2021])
 -- ════════════════════════════════════════════════════
 
-/-! The 20 clause-embedding predicates from @cite{degen-tonhauser-2021}.
+/-! The 20 clause-embedding predicates from [degen-tonhauser-2021].
     Predicates already defined above: know, discover, see, think, say, hear.
     "be annoyed" and "be right" are copular constructions, not simple verbs. -/
 
-/-- "reveal" — factive communication verb (@cite{degen-tonhauser-2022}: canonically factive) -/
+/-- "reveal" — factive communication verb ([degen-tonhauser-2022]: canonically factive) -/
 def reveal : VerbEntry := .mkRegular {
   form := "reveal"
   complementType := .finiteClause
@@ -1360,7 +1360,7 @@ def prove : VerbEntry := .mkRegular {
 -- ════════════════════════════════════════════════════
 
 /-! Manner-of-speaking (MoS) verbs specify *how* something is said.
-    @cite{storment-2026} shows these divide into two classes:
+    [storment-2026] shows these divide into two classes:
     - **QI-permitting** (unaccusative): whisper, murmur, mumble, mutter, shout,
       cry, scream, shriek, yell, groan, grumble, hiss, sigh, whimper, snap
     - **Non-QI** (unergative): speak, talk -/
@@ -1550,7 +1550,7 @@ def investigate : VerbEntry := .mkRegular {
   takesQuestionBase := true
   levinClass := some .search }
 
-/-- "depend_on" — rogative, embeds interrogatives only (@cite{dayal-2025}: rogativeCP) -/
+/-- "depend_on" — rogative, embeds interrogatives only ([dayal-2025]: rogativeCP) -/
 def depend_on : VerbEntry where
   form := "depend on"
   form3sg := "depends on"
@@ -1588,7 +1588,7 @@ def forget_rog : VerbEntry where
   senseTag := .rogative
 
 -- ════════════════════════════════════════════════════
--- § Verb Entries — Occasion Verbs (@cite{solstad-bott-2024})
+-- § Verb Entries — Occasion Verbs ([solstad-bott-2024])
 -- ════════════════════════════════════════════════════
 
 /-! Occasion verbs presuppose a prior occasioning eventuality and have
@@ -1597,7 +1597,7 @@ def forget_rog : VerbEntry where
 
     "manage" has two entries: `manage` (`.default`, agentive subject — traditional
     implicative analysis) and `manage_occasion` (`.occasion`, experiencer subject —
-    Solstad & Bott's agent-evocator analysis). This mirrors @cite{kim-2024}'s observation
+    Solstad & Bott's agent-evocator analysis). This mirrors [kim-2024]'s observation
     that the same verb can project different effective argument structures
     depending on the interpretive context. -/
 
@@ -1619,7 +1619,7 @@ def manage_occasion : VerbEntry := .mkRegular {
 /-- "dare" — positive implicative with prerequisite presupposition: courage.
     "Ana dared to enter the cave" → "Ana entered the cave."
     Presupposes that daring/courageous action was required for complement
-    realization (@cite{nadathur-2024} §5.2, ex. 3–4, 26). -/
+    realization ([nadathur-2024] §5.2, ex. 3–4, 26). -/
 def dare : VerbEntry := .mkRegular {
   form := "dare"
   complementType := .infinitival
@@ -1632,7 +1632,7 @@ def dare : VerbEntry := .mkRegular {
 /-- "bother" — positive implicative with prerequisite presupposition: engagement.
     "He bothered to answer" → "He answered."
     Presupposes that overcoming apathy/effort was required
-    (@cite{nadathur-2024} §2, ex. 10, 28). -/
+    ([nadathur-2024] §2, ex. 10, 28). -/
 def bother : VerbEntry := .mkRegular {
   form := "bother"
   complementType := .infinitival
@@ -1647,7 +1647,7 @@ def bother : VerbEntry := .mkRegular {
     "Amira did not hesitate to drink a beer" → "Amira drank a beer."
     The paper does not explicitly name the prerequisite for *hesitate*;
     it is treated as a polarity-reversing analog of *dare*
-    (@cite{nadathur-2024} §6.4, ex. 45–47). -/
+    ([nadathur-2024] §6.4, ex. 45–47). -/
 def hesitate : VerbEntry := .mkRegular {
   form := "hesitate"
   complementType := .infinitival
@@ -1657,7 +1657,7 @@ def hesitate : VerbEntry := .mkRegular {
   presupType := some .prerequisiteSoft
   implicative := some .negative }
 
-/-- "venture" — positive implicative (@cite{karttunen-1971} ex. 2):
+/-- "venture" — positive implicative ([karttunen-1971] ex. 2):
     "John ventured to speak" entails "John spoke." -/
 def venture : VerbEntry := .mkRegular {
   form := "venture"
@@ -1667,7 +1667,7 @@ def venture : VerbEntry := .mkRegular {
   passivizable := false
   implicative := some .positive }
 
-/-- "condescend" — positive implicative (@cite{karttunen-1971} ex. 2):
+/-- "condescend" — positive implicative ([karttunen-1971] ex. 2):
     "John condescended to help" entails "John helped." -/
 def condescend : VerbEntry := .mkRegular {
   form := "condescend"
@@ -1677,7 +1677,7 @@ def condescend : VerbEntry := .mkRegular {
   passivizable := false
   implicative := some .positive }
 
-/-- "happen" — raising verb, positive implicative (@cite{karttunen-1971} ex. 2):
+/-- "happen" — raising verb, positive implicative ([karttunen-1971] ex. 2):
     "John happened to see Mary" entails "John saw Mary."
     Raising: "It happened to rain" — no theta role for matrix subject. -/
 def happen : VerbEntry := .mkRegular {
@@ -1688,10 +1688,10 @@ def happen : VerbEntry := .mkRegular {
   implicative := some .positive }
 
 -- ════════════════════════════════════════════════════
--- § Verb Entries — Agent-Experiencer (@cite{solstad-bott-2024})
+-- § Verb Entries — Agent-Experiencer ([solstad-bott-2024])
 -- ════════════════════════════════════════════════════
 
-/-! @cite{levin-1993} class 31.2 (admire). Subject = experiencer, object = stimulus.
+/-! [levin-1993] class 31.2 (admire). Subject = experiencer, object = stimulus.
     NP1 (subject) IC bias. -/
 
 /-- "enjoy" — AgExp verb (experiencer-subject) -/
@@ -1773,13 +1773,13 @@ def dread_np : VerbEntry := .mkRegular {
   levinClass := some .admire }
 
 -- ════════════════════════════════════════════════════
--- § Verb Entries — Stimulus-Experiencer (@cite{solstad-bott-2024})
+-- § Verb Entries — Stimulus-Experiencer ([solstad-bott-2024])
 -- ════════════════════════════════════════════════════
 
-/-! @cite{levin-1993} class 31.1 (amuse). Subject = stimulus, object = experiencer.
+/-! [levin-1993] class 31.1 (amuse). Subject = stimulus, object = experiencer.
     NP2 (object) IC bias. -/
 
-/-- "frighten" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
+/-- "frighten" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def frighten : VerbEntry := .mkRegular {
   form := "frighten"
   complementType := .np
@@ -1787,7 +1787,7 @@ def frighten : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "amuse" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
+/-- "amuse" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def amuse : VerbEntry := .mkRegular {
   form := "amuse"
   complementType := .np
@@ -1795,7 +1795,7 @@ def amuse : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "fascinate" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
+/-- "fascinate" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def fascinate : VerbEntry := .mkRegular {
   form := "fascinate"
   complementType := .np
@@ -1803,7 +1803,7 @@ def fascinate : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "irritate" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
+/-- "irritate" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def irritate : VerbEntry := .mkRegular {
   form := "irritate"
   complementType := .np
@@ -1811,7 +1811,7 @@ def irritate : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "annoy" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
+/-- "annoy" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def annoy : VerbEntry := .mkRegular {
   form := "annoy"
   complementType := .np
@@ -1819,7 +1819,7 @@ def annoy : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "bore" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
+/-- "bore" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def bore : VerbEntry := .mkRegular {
   form := "bore"
   complementType := .np
@@ -1827,7 +1827,7 @@ def bore : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "charm" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
+/-- "charm" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def charm : VerbEntry := .mkRegular {
   form := "charm"
   complementType := .np
@@ -1835,7 +1835,7 @@ def charm : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "impress" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
+/-- "impress" — StimExp verb (stimulus-subject, eventive: [kim-2024] UPH) -/
 def impress : VerbEntry := .mkRegular {
   form := "impress"
   complementType := .np
@@ -1843,7 +1843,7 @@ def impress : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "concern" — stative Class II psych verb (@cite{kim-2024} UPH, internal cause) -/
+/-- "concern" — stative Class II psych verb ([kim-2024] UPH, internal cause) -/
 def concern : VerbEntry := .mkRegular {
   form := "concern"
   complementType := .np
@@ -1852,7 +1852,7 @@ def concern : VerbEntry := .mkRegular {
   opaqueContext := true
   levinClass := some .amuse }
 
-/-- "interest" — stative Class II psych verb (@cite{kim-2024} UPH, internal cause) -/
+/-- "interest" — stative Class II psych verb ([kim-2024] UPH, internal cause) -/
 def interest : VerbEntry := .mkRegular {
   form := "interest"
   complementType := .np
@@ -1943,7 +1943,7 @@ def worry_eventive : VerbEntry := .mkRegular {
   levinClass := some .amuse }
 
 /-- "worry" (stative) — Class II, internal cause. "The situation worries John."
-    @cite{kim-2024} UPH: same theta grid as worry_eventive, different causal source. -/
+    [kim-2024] UPH: same theta grid as worry_eventive, different causal source. -/
 def worry_stative : VerbEntry := .mkRegular {
   form := "worry"
   complementType := .np
@@ -1952,7 +1952,7 @@ def worry_stative : VerbEntry := .mkRegular {
   opaqueContext := true
   levinClass := some .amuse }
 
-/-- "please" — stative Class II (@cite{kim-2024} UPH, internal cause).
+/-- "please" — stative Class II ([kim-2024] UPH, internal cause).
     "The idea pleases John." Related to B&R Class III It. *piacere*. -/
 def please_psych : VerbEntry := .mkRegular {
   form := "please"
@@ -1962,7 +1962,7 @@ def please_psych : VerbEntry := .mkRegular {
   opaqueContext := true
   levinClass := some .amuse }
 
-/-- "trouble" — stative Class II (@cite{kim-2024} UPH, internal cause).
+/-- "trouble" — stative Class II ([kim-2024] UPH, internal cause).
     "The thought troubles John." -/
 def trouble : VerbEntry := .mkRegular {
   form := "trouble"
@@ -1972,7 +1972,7 @@ def trouble : VerbEntry := .mkRegular {
   opaqueContext := true
   levinClass := some .amuse }
 
-/-- "puzzle" — stative Class II (@cite{kim-2024} UPH, internal cause).
+/-- "puzzle" — stative Class II ([kim-2024] UPH, internal cause).
     "The problem puzzles John." -/
 def puzzle : VerbEntry := .mkRegular {
   form := "puzzle"
@@ -1983,7 +1983,7 @@ def puzzle : VerbEntry := .mkRegular {
   levinClass := some .amuse }
 
 -- ════════════════════════════════════════════════════
--- § Verb Entries — Agent-Patient (@cite{solstad-bott-2024})
+-- § Verb Entries — Agent-Patient ([solstad-bott-2024])
 -- ════════════════════════════════════════════════════
 
 /-! Agent-patient verbs with full agentive subjects. NP1 IC bias (default).
@@ -2024,14 +2024,14 @@ def pull : VerbEntry := .mkRegular {
   verbIncClass := some .cumOnly
   levinClass := some .pushPull }
 
-/-- "shove" — verb of exerting force (Levin 12, @cite{levin-2026} (31)) -/
+/-- "shove" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def shove : VerbEntry := .mkRegular {
   form := "shove"
   complementType := .np
   vendlerClass := some .activity
   levinClass := some .pushPull }
 
-/-- "tug" — verb of exerting force (Levin 12, @cite{levin-2026} (31)) -/
+/-- "tug" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def tug : VerbEntry where
   form := "tug"
   form3sg := "tugs"
@@ -2042,21 +2042,21 @@ def tug : VerbEntry where
   vendlerClass := some .activity
   levinClass := some .pushPull
 
-/-- "yank" — verb of exerting force (Levin 12, @cite{levin-2026} (31)) -/
+/-- "yank" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def yank : VerbEntry := .mkRegular {
   form := "yank"
   complementType := .np
   vendlerClass := some .activity
   levinClass := some .pushPull }
 
-/-- "jerk" — verb of exerting force (Levin 12, @cite{levin-2026} (31)) -/
+/-- "jerk" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def jerk : VerbEntry := .mkRegular {
   form := "jerk"
   complementType := .np
   vendlerClass := some .activity
   levinClass := some .pushPull }
 
-/-- "wrench" — verb of exerting force (Levin 12, @cite{levin-2026} (31)) -/
+/-- "wrench" — verb of exerting force (Levin 12, [levin-2026] (31)) -/
 def wrench : VerbEntry := .mkRegular {
   form := "wrench"
   complementType := .np
@@ -2064,7 +2064,7 @@ def wrench : VerbEntry := .mkRegular {
   levinClass := some .pushPull }
 
 /-- "fling" — verb of exerting force / throwing (Levin 12/17,
-    @cite{levin-2026} (31)). Irregular past. -/
+    [levin-2026] (31)). Irregular past. -/
 def fling : VerbEntry where
   form := "fling"
   form3sg := "flings"
@@ -2076,7 +2076,7 @@ def fling : VerbEntry where
   levinClass := some .pushPull
 
 /-- "slam" — verb of surface contact, hitting (Levin 18.1,
-    @cite{levin-2026} (32a)). Irregular doubling. -/
+    [levin-2026] (32a)). Irregular doubling. -/
 def slam : VerbEntry where
   form := "slam"
   form3sg := "slams"
@@ -2088,7 +2088,7 @@ def slam : VerbEntry where
   levinClass := some .hit
 
 /-- "punch" — verb of surface contact, hitting (Levin 18.1,
-    @cite{levin-2026} (32a)) -/
+    [levin-2026] (32a)) -/
 def punch : VerbEntry := .mkRegular {
   form := "punch"
   complementType := .np
@@ -2096,7 +2096,7 @@ def punch : VerbEntry := .mkRegular {
   levinClass := some .hit }
 
 /-- "smack" — verb of surface contact, hitting (Levin 18.1,
-    @cite{levin-2026} (32a)) -/
+    [levin-2026] (32a)) -/
 def smack : VerbEntry := .mkRegular {
   form := "smack"
   complementType := .np
@@ -2104,7 +2104,7 @@ def smack : VerbEntry := .mkRegular {
   levinClass := some .hit }
 
 /-- "thump" — verb of surface contact, hitting (Levin 18.1,
-    @cite{levin-2026} (32a)) -/
+    [levin-2026] (32a)) -/
 def thump : VerbEntry := .mkRegular {
   form := "thump"
   complementType := .np
@@ -2112,7 +2112,7 @@ def thump : VerbEntry := .mkRegular {
   levinClass := some .hit }
 
 /-- "bang" — verb of surface contact, hitting (Levin 18.1,
-    @cite{levin-2026} (32a)) -/
+    [levin-2026] (32a)) -/
 def bang : VerbEntry := .mkRegular {
   form := "bang"
   complementType := .np
@@ -2120,7 +2120,7 @@ def bang : VerbEntry := .mkRegular {
   levinClass := some .hit }
 
 /-- "thrash" — verb of surface contact, hitting (Levin 18.1,
-    @cite{levin-2026} (32a)) -/
+    [levin-2026] (32a)) -/
 def thrash : VerbEntry := .mkRegular {
   form := "thrash"
   complementType := .np
@@ -2128,7 +2128,7 @@ def thrash : VerbEntry := .mkRegular {
   levinClass := some .hit }
 
 /-- "scrape" — verb of surface contact, wiping (Levin 10.4,
-    @cite{levin-2026} (32b)). In intr-push-open, enters through
+    [levin-2026] (32b)). In intr-push-open, enters through
     surface-contact sense, not removing sense. -/
 def scrape : VerbEntry := .mkRegular {
   form := "scrape"
@@ -2365,7 +2365,7 @@ def touch : VerbEntry := .mkRegular {
 -- ════════════════════════════════════════════════════
 
 /-- "cut" — Levin 21.1 Cut verbs. Incremental by length of cut.
-    @cite{majid-boster-bowerman-2008}: Dimension 1 high predictability —
+    [majid-boster-bowerman-2008]: Dimension 1 high predictability —
     sharp instrument on yielding object → predictable locus of separation. -/
 def cut : VerbEntry where
   form := "cut"
@@ -2483,7 +2483,7 @@ def appoint : VerbEntry := .mkRegular {
 -- ════════════════════════════════════════════════════
 
 /-- "hear" — Levin 30.1 See verbs. Stative perception. Also embeds
-    finite clauses (optionally factive per @cite{degen-tonhauser-2022}). -/
+    finite clauses (optionally factive per [degen-tonhauser-2022]). -/
 def hear : VerbEntry where
   form := "hear"
   form3sg := "hears"
@@ -2555,7 +2555,7 @@ def breathe : VerbEntry := .mkRegular {
   levinClass := some .bodyProcess }
 
 /-- "cough" — Levin 40.1 Body Process verbs.
-    Semelfactive: single involuntary event, no result state (@cite{smith-1997} §2.4.3). -/
+    Semelfactive: single involuntary event, no result state ([smith-1997] §2.4.3). -/
 def cough : VerbEntry := .mkRegular {
   form := "cough"
   complementType := .none
@@ -2564,7 +2564,7 @@ def cough : VerbEntry := .mkRegular {
   levinClass := some .bodyProcess }
 
 /-- "hiccup" — Levin 40.1 Body Process verbs.
-    Semelfactive: single involuntary body event (@cite{smith-1997} §2.4.3). -/
+    Semelfactive: single involuntary body event ([smith-1997] §2.4.3). -/
 def hiccup : VerbEntry := .mkRegular {
   form := "hiccup"
   complementType := .none
@@ -2573,7 +2573,7 @@ def hiccup : VerbEntry := .mkRegular {
   levinClass := some .bodyProcess }
 
 /-- "blink" — Levin 40.3 Body-Internal Motion.
-    Semelfactive: single instantaneous eye movement (@cite{smith-1997} §2.4.3). -/
+    Semelfactive: single instantaneous eye movement ([smith-1997] §2.4.3). -/
 def blink : VerbEntry := .mkRegular {
   form := "blink"
   complementType := .none
@@ -2583,7 +2583,7 @@ def blink : VerbEntry := .mkRegular {
 
 /-- "knock" — Levin 18.1 Hit verbs (intransitive use).
     Semelfactive: single percussive contact event
-    (@cite{smith-1997} §2.4.3: "Guy knocked at the door"). -/
+    ([smith-1997] §2.4.3: "Guy knocked at the door"). -/
 def knock : VerbEntry := .mkRegular {
   form := "knock"
   complementType := .none
@@ -2592,7 +2592,7 @@ def knock : VerbEntry := .mkRegular {
   levinClass := some .hit }
 
 /-- "tap" — Levin 18.1 Hit verbs (intransitive use).
-    Semelfactive: single light percussive contact event (@cite{smith-1997} §2.4.3). -/
+    Semelfactive: single light percussive contact event ([smith-1997] §2.4.3). -/
 def tap : VerbEntry := .mkRegular {
   form := "tap"
   complementType := .none
@@ -2601,7 +2601,7 @@ def tap : VerbEntry := .mkRegular {
   levinClass := some .hit }
 
 /-- "flash" — Levin 43.1 Light Emission verbs.
-    Semelfactive: single instantaneous light event (@cite{smith-1997} §2.4.3). -/
+    Semelfactive: single instantaneous light event ([smith-1997] §2.4.3). -/
 def flash : VerbEntry := .mkRegular {
   form := "flash"
   complementType := .none
@@ -2725,7 +2725,7 @@ def increase : VerbEntry := .mkRegular {
   levinClass := some .calibratableCoS }
 
 -- ════════════════════════════════════════════════════
--- § Degree Achievement Verb Pairs (@cite{kennedy-2007})
+-- § Degree Achievement Verb Pairs ([kennedy-2007])
 -- ════════════════════════════════════════════════════
 
 /-- "straighten" — Closed-scale degree achievement (base adj: straight).
@@ -2935,11 +2935,11 @@ def rain : VerbEntry := .mkRegular {
   levinClass := some .weather }
 
 -- ════════════════════════════════════════════════════
--- § Ditransitive Verbs — Implicit Arguments (@cite{bruening-2021})
+-- § Ditransitive Verbs — Implicit Arguments ([bruening-2021])
 -- ════════════════════════════════════════════════════
 
 /-! Ditransitive verbs classified by their implicit argument behavior,
-    following @cite{bruening-2021} Table (56). The classification is
+    following [bruening-2021] Table (56). The classification is
     theory-neutral: it records surface optionality and interpretation
     without committing to a specific structural analysis. -/
 
@@ -3026,7 +3026,7 @@ def spare : VerbEntry := .mkRegular {
   vendlerClass := some .accomplishment }
 
 /-- "deny" — DOC-only. Implicit goal def; second object obligatory
-    (@cite{bruening-2021} Table 56 row 3 col 1, ex. (32d) p. 1032). -/
+    ([bruening-2021] Table 56 row 3 col 1, ex. (32d) p. 1032). -/
 def deny : VerbEntry where
   form := "deny"
   form3sg := "denies"
@@ -3038,7 +3038,7 @@ def deny : VerbEntry where
   vendlerClass := some .accomplishment
 
 /-- "permit" — DOC-only. Implicit goal def (addressee); second object
-    obligatory (@cite{bruening-2021} Table 56 row 3 col 1, ex. (32e) p. 1032). -/
+    obligatory ([bruening-2021] Table 56 row 3 col 1, ex. (32e) p. 1032). -/
 def permit : VerbEntry where
   form := "permit"
   form3sg := "permits"
@@ -3050,7 +3050,7 @@ def permit : VerbEntry where
   vendlerClass := some .accomplishment
 
 /-- "assign" — alternating (DOC + PP). Implicit goal def; second object
-    obligatory (Pesetsky 1995:157 ex. (3a-c); @cite{bruening-2021} Table 56 row 3). -/
+    obligatory (Pesetsky 1995:157 ex. (3a-c); [bruening-2021] Table 56 row 3). -/
 def assign : VerbEntry := .mkRegular {
   form := "assign"
   complementType := .np_np
@@ -3216,46 +3216,46 @@ def allVerbs : List VerbEntry := [
   manage, fail, try_, persuade, promise, remember, forget, neglect,
   -- Doxastic Attitude
   believe, think,
-  -- Preferential Attitude (@cite{qing-uegaki-2025})
+  -- Preferential Attitude ([qing-uegaki-2025])
   want, hope, expect, wish,
   fear, dread,
   worry,
   -- Raising
   seem,
-  -- Causative (@cite{nadathur-lauer-2020} + @cite{wolff-2003})
+  -- Causative ([nadathur-lauer-2020] + [wolff-2003])
   cause,
   make,
   let_, have_caus, get_caus, force, prevent,
-  -- Lexical causatives (Martin, @cite{martin-rose-nichols-2025})
+  -- Lexical causatives (Martin, [martin-rose-nichols-2025])
   kill, break_, tear_, burn, destroy, melt,
   activate, affect, change, damage, eliminate, hurt, restore, trigger,
   bury, drop, lift, lock, shut, spread, stretch, switch,
   -- Communication
   say, tell, claim,
-  -- Clause-Embedding (@cite{degen-tonhauser-2021})
+  -- Clause-Embedding ([degen-tonhauser-2021])
   reveal, acknowledge, admit, announce, confess, inform, suggest,
   pretend, confirm, demonstrate, establish, prove,
-  -- Manner of Speaking (@cite{storment-2026})
+  -- Manner of Speaking ([storment-2026])
   whisper, murmur, shout, cry, scream, speak, talk,
-  -- Question-embedding (@cite{dayal-2025})
+  -- Question-embedding ([dayal-2025])
   wonder, ask, investigate, depend_on,
   -- Factive question-embedding senses
   remember_rog, forget_rog,
-  -- Occasion Verbs (@cite{solstad-bott-2024})
+  -- Occasion Verbs ([solstad-bott-2024])
   manage_occasion, dare, bother, hesitate, venture, condescend, happen,
-  -- Agent-Experiencer (@cite{solstad-bott-2024})
+  -- Agent-Experiencer ([solstad-bott-2024])
   enjoy, like, love, hate, admire, envy, respect, value,
-  -- Stimulus-Experiencer (@cite{solstad-bott-2024})
+  -- Stimulus-Experiencer ([solstad-bott-2024])
   frighten, amuse, fascinate, irritate, annoy, bore, charm, impress,
-  -- Stative Class II (@cite{kim-2024} UPH)
+  -- Stative Class II ([kim-2024] UPH)
   concern, interest,
-  -- Agent-Patient (@cite{solstad-bott-2024})
+  -- Agent-Patient ([solstad-bott-2024])
   chase, hit, push, pull, carry, drag, call,
-  -- Levin § 12 Push/Pull (exerting force, @cite{levin-2026})
+  -- Levin § 12 Push/Pull (exerting force, [levin-2026])
   shove, tug, yank, jerk, wrench, fling,
-  -- Levin § 18.1 Hit (surface contact, @cite{levin-2026})
+  -- Levin § 18.1 Hit (surface contact, [levin-2026])
   slam, punch, smack, thump, bang, thrash,
-  -- Levin § 10.4 Wipe (surface contact, @cite{levin-2026})
+  -- Levin § 10.4 Wipe (surface contact, [levin-2026])
   scrape,
   -- Levin § 9 Putting
   place, pour, spray, load,
@@ -3269,7 +3269,7 @@ def allVerbs : List VerbEntry := [
   learn, hold, hide,
   -- Levin § 17 Throwing
   throw,
-  -- Ditransitive — implicit arguments (@cite{bruening-2021})
+  -- Ditransitive — implicit arguments ([bruening-2021])
   charge, cost, fine, tip, pay, strike_, forgive, spare, deny, permit, assign,
   begrudge, bet, serve, teach, feed, show_, award, forward_, grant, offer,
   reserve, pass, hand, lend,
@@ -3301,7 +3301,7 @@ def allVerbs : List VerbEntry := [
   glow, buzz, bleed,
   -- Levin § 45 Change of State
   bend, boil, rust, increase,
-  -- Degree Achievement Pairs (@cite{kennedy-2007})
+  -- Degree Achievement Pairs ([kennedy-2007])
   straighten, flatten, open_, lengthen, widen, cool, warm,
   -- Levin § 47–50 Existence, Appearance, Position
   exist, appear, fidget, sit, stand,
@@ -3437,7 +3437,7 @@ theorem prevent_not_sufficiency :
 
 /-- "prevent" is an EN trigger — it entails ¬p in w₀ (complement
     falsity), satisfying the FORGET class licensing condition
-    (@cite{jin-koenig-2021}, §6.1.4). -/
+    ([jin-koenig-2021], §6.1.4). -/
 theorem prevent_is_en_trigger :
     prevent.toVerb.isENTrigger = true := rfl
 

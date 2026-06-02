@@ -6,13 +6,13 @@ data fully theory-neutral.
 
 /-!
 # Unaccusativity Diagnostic Data
-@cite{burzio-1986} @cite{levin-hovav-1995} @cite{storment-2026}
+[burzio-1986] [levin-hovav-1995] [storment-2026]
 
 Theory-neutral empirical data on unaccusativity diagnostics.
 
 ## Diagnostics
 
-- **Quotative inversion** (QI): "whispered Mary" vs *"spoke Mary" (@cite{storment-2026}, NLLT)
+- **Quotative inversion** (QI): "whispered Mary" vs *"spoke Mary" ([storment-2026], NLLT)
 - **There-insertion**: "there arrived a letter" vs *"there ran a man"
 - **Locative inversion**: "into the room walked a man"
 - **Resultative predication**: "the river froze solid" vs *"John ran tired"
@@ -51,7 +51,7 @@ structure DiagnosticDatum where
   deriving Repr, BEq
 
 -- ════════════════════════════════════════════════════
--- § Quotative Inversion Data (@cite{storment-2026})
+-- § Quotative Inversion Data ([storment-2026])
 -- ════════════════════════════════════════════════════
 
 def qi_whisper : DiagnosticDatum :=
@@ -157,11 +157,11 @@ def qi_talk : DiagnosticDatum :=
   , sentence := "*\"Hello,\" talked Mary." }
 
 -- ════════════════════════════════════════════════════
--- § Quotative Inversion — Additional English Data (@cite{storment-2026})
+-- § Quotative Inversion — Additional English Data ([storment-2026])
 -- ════════════════════════════════════════════════════
 
 /-- MoS verb with quote complement + PP goal still permits QI.
-    @cite{storment-2026}: QI is blocked only when multiple DP arguments
+    [storment-2026]: QI is blocked only when multiple DP arguments
     compete for Case licensing. A PP goal does not need Case. -/
 def qi_whisper_transitive : DiagnosticDatum :=
   { verbForm := "whisper"
@@ -178,7 +178,7 @@ def qi_shout_heavysubj : DiagnosticDatum :=
   , sentence := "\"Stop!\" shouted the police officer on duty."
   , note := "Heavy postverbal subject — QI still grammatical" }
 
-/-- Pronominal subjects degrade QI (@cite{storment-2026}, §3: pronouns resist
+/-- Pronominal subjects degrade QI ([storment-2026], §3: pronouns resist
     postverbal position in QI, unlike full DPs). -/
 def qi_whisper_pronoun : DiagnosticDatum :=
   { verbForm := "whisper"
@@ -188,7 +188,7 @@ def qi_whisper_pronoun : DiagnosticDatum :=
   , note := "Pronominal subjects degrade QI — full DPs preferred postverbally (§3)" }
 
 /-- QI blocked with multiple DP arguments: the transitivity constraint
-    (@cite{storment-2026}, §5, eq. 125). T⁰ can license only one DP (the theme);
+    ([storment-2026], §5, eq. 125). T⁰ can license only one DP (the theme);
     a second DP argument has no Case licenser. *Warn* is naturally ditransitive
     (`warn ⟨GOAL⟩ ⟨THEME⟩`), so the QI failure isolates the transitivity
     constraint rather than confounding it with verb subcategorization. -/
@@ -200,11 +200,11 @@ def qi_warn_double_obj : DiagnosticDatum :=
   , note := "QI blocked with two DP arguments — transitivity constraint from Case licensing (§5, eq. 125)" }
 
 -- ════════════════════════════════════════════════════
--- § QI and LI: Distributional Contrasts (@cite{storment-2026}, §5–§6)
+-- § QI and LI: Distributional Contrasts ([storment-2026], §5–§6)
 -- ════════════════════════════════════════════════════
 
 /-! Quotative inversion and locative inversion share the same mechanism
-    (smuggling of VP to Spec-VoiceP, @cite{storment-2026} §6) but differ in
+    (smuggling of VP to Spec-VoiceP, [storment-2026] §6) but differ in
     their inputs and distribution:
 
     1. **Fronted constituent**: QI requires a quote; LI requires a locative PP
@@ -231,14 +231,14 @@ def li_arrive_pronoun : DiagnosticDatum :=
   , note := "LI categorically blocks pronominal subjects (cf. QI which merely degrades them, §3)" }
 
 -- ════════════════════════════════════════════════════
--- § Quotative Inversion — Setswana (@cite{collins-1997}, @cite{storment-2026})
+-- § Quotative Inversion — Setswana ([collins-1997], [storment-2026])
 -- ════════════════════════════════════════════════════
 
-/-! Setswana quotative inversion data from @cite{collins-1997}, discussed
-    extensively in @cite{storment-2026}. Setswana QI uses class 17
+/-! Setswana quotative inversion data from [collins-1997], discussed
+    extensively in [storment-2026]. Setswana QI uses class 17
     default subject agreement (SM17 `go`), never tracking the agent. -/
 
-/-- Setswana QI with 'botsa' (ask). @cite{collins-1997}, cited as Storment ex. (4). -/
+/-- Setswana QI with 'botsa' (ask). [collins-1997], cited as Storment ex. (4). -/
 def qi_setswana_botsa : DiagnosticDatum :=
   { verbForm := "botsa"
   , diagnostic := .quotativeInversion
@@ -267,7 +267,7 @@ def qi_setswana_transitivity : DiagnosticDatum :=
   , note := "SM17.PST ask Mpho Seabelo — transitivity constraint: two DPs block QI (§5)" }
 
 -- ════════════════════════════════════════════════════
--- § QI Structural Evidence (@cite{storment-2026}, §3)
+-- § QI Structural Evidence ([storment-2026], §3)
 -- ════════════════════════════════════════════════════
 
 /-! Structural evidence for the VP-smuggling analysis of QI (§3).
@@ -377,7 +377,7 @@ def qi_quote_nongrammatical : QIStructuralDatum :=
   , sentence := "\"Pop!\" goes the weasel."
   , note := "'Pop!' is not a grammatical sentence — quote is clause-external (§3.5)" }
 
--- § Constituent Ordering (@cite{storment-2026}, §2)
+-- § Constituent Ordering ([storment-2026], §2)
 
 /-- Setswana: depictive follows Agent — depictives are vP-external
     adjuncts, so they stay behind when VP smuggles. Storment ex. (11). -/
@@ -465,7 +465,7 @@ def loc_whisper : DiagnosticDatum :=
   , note := "MoS verbs show variable acceptability in locative inversion" }
 
 -- ════════════════════════════════════════════════════
--- § Japanese Passive Type (@cite{ozaki-2026}, @cite{jo-seo-2023})
+-- § Japanese Passive Type ([ozaki-2026], [jo-seo-2023])
 -- ════════════════════════════════════════════════════
 
 /-! Japanese distinguishes direct and indirect passives. Direct passives
@@ -490,11 +490,11 @@ def jp_hanareru_direct : DiagnosticDatum :=
   , note := "*niyotte blocked — no thematic Voice, therefore unaccusative (Ozaki 2026, ex. 20)" }
 
 -- ════════════════════════════════════════════════════
--- § Japanese *nani-o* Wh-Adjunct (@cite{kurafuji-1997}, @cite{ozaki-2026})
+-- § Japanese *nani-o* Wh-Adjunct ([kurafuji-1997], [ozaki-2026])
 -- ════════════════════════════════════════════════════
 
 /-! *Nani-o* 'what-ACC' can mean 'why' with unergatives and transitives
-    (@cite{kurafuji-1997}), but not with unaccusatives. If a verb blocks
+    ([kurafuji-1997]), but not with unaccusatives. If a verb blocks
     the 'why' reading of *nani-o*, it is unaccusative. -/
 
 def jp_hanareru_nanio : DiagnosticDatum :=

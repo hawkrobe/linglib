@@ -1,11 +1,11 @@
 import Linglib.Features.Case
 import Linglib.Features.Case
 /-!
-# Hungarian Case Inventory @cite{kenesei-vago-fenyvesi-1998} @cite{rounds-2001} @cite{caha-2008}
+# Hungarian Case Inventory [kenesei-vago-fenyvesi-1998] [rounds-2001] [caha-2008]
 
 Hungarian's case inventory per the two standard reference grammars:
-@cite{kenesei-vago-fenyvesi-1998} list **18** cases (see their Symbols
-table); @cite{rounds-2001} adds **4 less-productive** cases (temporal
+[kenesei-vago-fenyvesi-1998] list **18** cases (see their Symbols
+table); [rounds-2001] adds **4 less-productive** cases (temporal
 -kor, distributive-temporal -nta, sociative -stul / -stül, locative
 fossilized -t / -tt) for a total of **22**. All marking is via
 agglutinative suffixes.
@@ -14,10 +14,10 @@ Both reference grammars converge on three substantive points:
 
 1. **No morphological genitive.** -nak / -nek is exclusively glossed as
    dative — even in possessive constructions where the possessor is
-   "extracted" into a non-adjacent position. @cite{kenesei-vago-fenyvesi-1998}
+   "extracted" into a non-adjacent position. [kenesei-vago-fenyvesi-1998]
    §1.10 explicitly attributes the analysis to Szabolcsi 1986/1992,
    1994 and frames the possessor as **the dative possessor** (not GEN).
-   @cite{caha-2008} §5 (pp. 266–267) likewise states verbatim:
+   [caha-2008] §5 (pp. 266–267) likewise states verbatim:
    "Hungarian has nominative, accusative, dative, instrumental and a
    number of spatial cases, but no genitive ... possessor inside a
    Noun phrase ... is expressed as a dative, or nominative, depending
@@ -25,11 +25,11 @@ Both reference grammars converge on three substantive points:
    the possessum; see `Fragments/Hungarian/Possession.lean`.
 
 2. **Local cases form a 3 × 3 matrix** (interior / exterior / near ×
-   motion-toward / no-motion / motion-away) — see @cite{rounds-2001}
+   motion-toward / no-motion / motion-away) — see [rounds-2001]
    §6.2's "Locative system: parameters of motion and space" table.
 
 3. **Hungarian is a known surface counterexample to Blake's hierarchy.**
-   @cite{caha-2008} fn. 8 cites Blake's own resolution: "the
+   [caha-2008] fn. 8 cites Blake's own resolution: "the
    counterexamples are superficial, and are basically due to two
    factors: systematic syncretism (perhaps as in the case of Hungarian
    which uses dative to express possessor)..." Both Blake and Caha
@@ -47,7 +47,7 @@ broad case-functions that participate in Blake's hierarchy:
       delative (-ról / -ről)
     - goal   (→ `.all`): illative (-ba / -be), allative
       (-hoz / -hez / -höz), sublative (-ra / -re)
-- **Other**: INST (-val / -vel), COM (= INS-form per @cite{kenesei-vago-fenyvesi-1998};
+- **Other**: INST (-val / -vel), COM (= INS-form per [kenesei-vago-fenyvesi-1998];
   separate Finset element here), CAUS (-ért, "causal-final")
 
 **What `Features.Case` can express but this inventory omits**:
@@ -60,7 +60,7 @@ broad case-functions that participate in Blake's hierarchy:
   both grammars, omitted here.
 - ESS-FOR (-ként, "essive-formal", listed separately by both grammars)
   has no `Features.Case` constructor.
-- DISTR (-nként), per @cite{rounds-2001} §6.4, has no `Features.Case`
+- DISTR (-nként), per [rounds-2001] §6.4, has no `Features.Case`
   constructor — the only Hungarian case the substrate genuinely cannot
   express.
 
@@ -70,15 +70,15 @@ namespace Hungarian.Case
 
 /-- Hungarian case inventory: 9-element sample of `Features.Case`. The
     omission of `.gen` reflects the descriptive-grammar consensus
-    (@cite{kenesei-vago-fenyvesi-1998}, @cite{rounds-2001}) and
-    @cite{caha-2008} §5 — Hungarian has no morphological genitive. -/
+    ([kenesei-vago-fenyvesi-1998], [rounds-2001]) and
+    [caha-2008] §5 — Hungarian has no morphological genitive. -/
 def caseInventory : Finset Features.Case :=
   {.nom, .acc, .dat, .loc, .abl, .all, .inst, .com, .caus}
 
 /-- Hungarian fails Blake's strict contiguity at rank 5 (GEN), since
     the inventory has DAT (rank 4) without GEN. Parallels Finnish's
     failure at rank 4 (DAT) — `Finnish.Case.inventory_fails_strict`.
-    @cite{caha-2008} §5 (pp. 266–267) cites Hungarian as the textbook
+    [caha-2008] §5 (pp. 266–267) cites Hungarian as the textbook
     surface counterexample to Blake, resolved (per Blake fn. 8) by the
     dative-as-possessor syncretism. -/
 theorem inventory_fails_strict :

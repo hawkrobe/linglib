@@ -9,7 +9,7 @@ import Linglib.Studies.BeaversKoontzGarboden2020
 import Linglib.Core.Scales.Scale
 
 /-!
-# @cite{tham-2025}
+# [tham-2025]
 
 Shiao Wei Tham (2025). Multidimensionality and the scalar components of
 physical disturbance predicates. *Glossa: a journal of general linguistics*
@@ -19,16 +19,16 @@ physical disturbance predicates. *Glossa: a journal of general linguistics*
 
 Physical disturbance predicates (*crack/cracked*, *dent/dented*,
 *scratch/scratched*) — Tham's "host irregularities" in the sense of
-@cite{karmo-1977} — are associated with a **totally closed, multi-point
+[karmo-1977] — are associated with a **totally closed, multi-point
 scale**. Four substantive claims:
 
-1. **Contra @cite{rappaport-hovav-2014}**: *crack*/*cracked* is NOT
+1. **Contra [rappaport-hovav-2014]**: *crack*/*cracked* is NOT
    two-point (like *die*/*dead*). The verb allows durative *for*
    adverbials and the adjective accepts comparatives (*more cracked*).
-2. **Contra @cite{rotstein-winter-2004}**: *cracked* is NOT a "partial"
+2. **Contra [rotstein-winter-2004]**: *cracked* is NOT a "partial"
    adjective with a lower-bounded, upper-open scale. It accepts
    *completely* (upper bound) and *partially* (lower bound).
-3. **Multidimensional in the sense of @cite{sassoon-2013}**: dimensions
+3. **Multidimensional in the sense of [sassoon-2013]**: dimensions
    are *quantity* of disturbances, *quality* (depth, length), and
    *spatial positioning* (centrality, array, functional impact).
 4. **Lower bound = physical instantiation** (objective: no faultless
@@ -254,7 +254,7 @@ structure ContrastPredicate where
 
 /-- *die/dead*: two-point scale, non-gradable (#*more dead*), punctual.
     Tham §2.3: *crack* ≠ *die* despite both being Levin 45.1. Tham's
-    Table 1 (= @cite{rappaport-hovav-2014} Table 1) groups both as
+    Table 1 (= [rappaport-hovav-2014] Table 1) groups both as
     "Two-valued" — Tham contests this for *crack*. -/
 def dieDead : ContrastPredicate where
   root := "die"
@@ -291,7 +291,7 @@ theorem all_disturbance_totally_closed :
       (fun p => p.adjCompletely && p.adjPartially) = true := rfl
 
 /-- All disturbance predicates are gradable (contra two-point
-    classification in @cite{rappaport-hovav-2014} Table 1). -/
+    classification in [rappaport-hovav-2014] Table 1). -/
 theorem all_disturbance_gradable :
     allDisturbancePredicates.all (fun p => p.adjGradable) = true := rfl
 
@@ -390,7 +390,7 @@ theorem tham_objective_subjective_wedge :
     adjective lack the entailment. The class-level claim is NOT a
     universal "always lacks" but the existential "does not necessarily
     express." Compare related discussion of *bend/bent* and
-    *darken/darkened* in @cite{gawron-2009} and @cite{koontz-garboden-2011}. -/
+    *darken/darkened* in [gawron-2009] and [koontz-garboden-2011]. -/
 
 /-- All disturbance adjectives have at least one well-attested use
     where the deverbal adjective does NOT entail a preceding CoS
@@ -414,7 +414,7 @@ theorem all_disturbance_adj_can_lack_preceding_change :
     The adjective allows **quantificational** access to individual
     dimensions via *respect* PPs and quantificational operators (*every
     respect*, *at least with respect to*); the verb allows only
-    **conceptual** access (§4.2). This aligns with @cite{ruiz-faroldi-2022}'s
+    **conceptual** access (§4.2). This aligns with [ruiz-faroldi-2022]'s
     quantificational/conceptual typology of multidimensionality. -/
 
 /-- Adjective: quantificational access (respect PPs accepted). -/
@@ -508,7 +508,7 @@ theorem cracked_standard_maxEndpoint :
 -- § 9. Cross-paper engagement: Kennedy-Levin pipeline
 -- ════════════════════════════════════════════════════
 
-/-! @cite{kennedy-levin-2008}'s pipeline maps closed scales to telic
+/-! [kennedy-levin-2008]'s pipeline maps closed scales to telic
     (accomplishment) interpretations. Tham §2.4 shows that disturbance
     verbs allow BOTH telic and atelic readings — variable telicity in a
     single closed-scale verb. Tham does not commit to "achievement"
@@ -585,7 +585,7 @@ theorem crack_boundedness_converges_despite_vendler_divergence :
 -- § 10. Cross-paper engagement: Hay-Kennedy-Levin matrix
 -- ════════════════════════════════════════════════════
 
-/-! @cite{hay-kennedy-levin-1999}'s central thesis (HKL §3.2): closed-
+/-! [hay-kennedy-levin-1999]'s central thesis (HKL §3.2): closed-
     range adjectives → telic DA verbs; open-range adjectives → atelic.
     The substrate sibling
     `Studies/HayKennedyLevin1999.lean` proves this
@@ -611,7 +611,7 @@ theorem crack_refutes_strict_hkl_matrix :
 -- § 11. Cross-paper engagement: Kennedy 2007 licensing
 -- ════════════════════════════════════════════════════
 
-/-! @cite{kennedy-2007}'s `closedAdj_licensed` substrate (consumed in
+/-! [kennedy-2007]'s `closedAdj_licensed` substrate (consumed in
     `Studies/Kennedy2007Licensing.lean` for *full*,
     *wet*, *dry*, *straight*) extends to disturbance adjectives without
     modification. The convergence at `Boundedness` is the partner of the
@@ -641,15 +641,15 @@ theorem all_disturbance_pipeline_licensed :
 -- § 12. Cross-paper engagement: Sassoon 2013 binding insufficiency
 -- ════════════════════════════════════════════════════
 
-/-! **Honesty caveat.** Tham herself does not engage @cite{sassoon-2013}'s
+/-! **Honesty caveat.** Tham herself does not engage [sassoon-2013]'s
     binding-type typology directly. She cites Sassoon for the *fact* of
     multidimensionality and *respect*-PP diagnostics (Tham pp. 13, 24),
-    and adopts Solt's representation (@cite{solt-2018}) rather than
+    and adopts Solt's representation ([solt-2018]) rather than
     Sassoon's. The argument below is the formaliser's reconstruction of
     what Tham's data WOULD force on Sassoon's apparatus — a
     cross-paper engagement constructed in linglib, not drawn out by Tham.
 
-    @cite{sassoon-2013}'s typology of multidimensional adjectives
+    [sassoon-2013]'s typology of multidimensional adjectives
     assigns each adjective a single `DimensionBindingType` —
     `.conjunctive` (*healthy* — all dimensions), `.disjunctive` (*sick*
     — some dimension), or `.mixed` (*intelligent* — context-dependent).
@@ -886,7 +886,7 @@ theorem largeVase_score_le_one :
 -- § 14. Cross-paper engagement: Beavers & Koontz-Garboden 2020
 -- ════════════════════════════════════════════════════
 
-/-! @cite{beavers-koontz-garboden-2020} formalize verbal roots as
+/-! [beavers-koontz-garboden-2020] formalize verbal roots as
     bundles of lexical entailments
     (`Semantics/Lexical/Roots/Basic.lean`). Their classification
     of √crack is `[.becomesState "fissured", .hasCause]` — the
@@ -921,7 +921,7 @@ theorem cracked_adj_refutes_bkg_crack_root_inheritance :
 -- § 15. Cross-paper engagement: Waldon et al. 2023 contrast
 -- ════════════════════════════════════════════════════
 
-/-! @cite{waldon-etal-2023} formalize artifact-noun multidimensionality
+/-! [waldon-etal-2023] formalize artifact-noun multidimensionality
     using the same `weightedScore` substrate that powers Tham's eq. 47b
     numerator. Both consume the substrate; they differ at the
     DENOMINATOR. Waldon's artifact-noun domain doesn't have a
@@ -981,7 +981,7 @@ theorem solt_tham_share_substrate_bounded_by_one :
 -- § 17. Cross-paper engagement: Interpretive Economy wedge
 -- ════════════════════════════════════════════════════
 
-/-! @cite{kennedy-2007}'s Interpretive Economy principle predicts a
+/-! [kennedy-2007]'s Interpretive Economy principle predicts a
     max-endpoint standard for closed-scale adjectives (`cracked` →
     `.maxEndpoint`, witnessed by `cracked_standard_maxEndpoint` in §8
     above). Tham's §3.2.1 lower-bound argument (`simple predication
@@ -1016,7 +1016,7 @@ theorem cracked_ie_max_vs_tham_lower_bound :
 -- § 18. Cross-paper engagement: Solt 2018 multidim typology
 -- ════════════════════════════════════════════════════
 
-/-! @cite{solt-2018} (the Springer multidim chapter, distinct from the
+/-! [solt-2018] (the Springer multidim chapter, distinct from the
     SuB proportional-comparatives paper engaged in §16) presents an
     experimental five-class subjectivity typology
     (RelNum/AbsTot/AbsPart/RelNo/Eval, Fig. 1, pp. 5–6). The class

@@ -2,10 +2,10 @@ import Mathlib.Logic.Basic
 
 /-!
 # Modifiers
-@cite{parsons-1970} @cite{kamp-1975}
+[parsons-1970] [kamp-1975]
 
 A **modifier** of `τ` is a function on the modificand's denotation
-(@cite{parsons-1970}: "modifiers as functions on predicates"). Adjectives,
+([parsons-1970]: "modifiers as functions on predicates"). Adjectives,
 adverbs, and relative clauses are all modifiers — of *different* `τ` (nominal
 `e ⇒ t`, event `Event → Prop`, …) — unified by *being* this type, not by
 implementing an interface.
@@ -19,7 +19,7 @@ intersective adjectives, and manner adverbs all converge.
 * `Modifier` — a modifier of `τ` is an endofunction `τ → τ`.
 * `Modifier.intersective` — the intersective modifier built from a property `P`.
 * `Modifier.isIntersective` / `.isSubsective` / `.isPrivative` — the
-  @cite{kamp-1975} modifier-meaning classification, as predicates on a modifier.
+  [kamp-1975] modifier-meaning classification, as predicates on a modifier.
 
 ## Implementation notes
 
@@ -31,7 +31,7 @@ events calls it; the type-driven interpreter's Predicate Modification step is it
 -/
 
 /-- A modifier of `τ` is a function on the modificand's denotation
-    (@cite{parsons-1970}). Adjectives, adverbs, and relative clauses are modifiers
+    ([parsons-1970]). Adjectives, adverbs, and relative clauses are modifiers
     of different `τ`; they compose as endofunctions (modifier stacking). -/
 abbrev Modifier (τ : Type*) := τ → τ
 
@@ -69,7 +69,7 @@ def isPrivative (m : Modifier (α → Prop)) : Prop :=
 theorem intersective_isIntersective (P : α → Prop) : isIntersective (intersective P) :=
   ⟨P, fun _ => rfl⟩
 
-/-- Intersective ⟹ subsective (@cite{kamp-1975}'s implication structure). -/
+/-- Intersective ⟹ subsective ([kamp-1975]'s implication structure). -/
 theorem isSubsective_of_isIntersective {m : Modifier (α → Prop)}
     (h : isIntersective m) : isSubsective m := by
   obtain ⟨P, hP⟩ := h

@@ -3,13 +3,13 @@ import Linglib.Studies.Landau2015
 
 /-!
 # Gã Complement-Taking Predicates
-@cite{allotey-2021}
+[allotey-2021]
 
 Inventory of Gã verbs that take embedded clausal complements, classified
 by the clause type they select and (where the semantic class is clear)
-their @cite{landau-2015} predicate class.
+their [landau-2015] predicate class.
 
-All entries here are attested in @cite{allotey-2021}'s example data
+All entries here are attested in [allotey-2021]'s example data
 (the only verb-list source). The single exception is `kee` 'say', which
 the paper uses in passing as the standard `akɛ`-clause exemplar but
 does not pull out as part of its CTP inventory; it is kept because
@@ -83,7 +83,7 @@ def kpang : CTP :=
 
 /-- 'forget' — implicative (negative), subject control. Predicative tier.
     Allotey ex 37–38: *e-hiɛ-kpa-nɔ akɛ è-fee shi̇kpɔ̃ɔ̃ lε* 'he forgot
-    to do that work'. Like English `forget` (@cite{karttunen-1971}):
+    to do that work'. Like English `forget` ([karttunen-1971]):
     failure entails the complement. -/
 def hiekpano : CTP :=
   ⟨"hiɛ-kpa-nɔ", "forget", .irrealisNi, .subjectControl, some .implicative⟩
@@ -107,7 +107,7 @@ def laka : CTP :=
   ⟨"laka", "persuade", .irrealisNi, .objectControl, some .desiderative⟩
 
 /-- 'force' — implicative causative, object control. Predicative tier.
-    Treated like English `force` per @cite{landau-2015}'s (4a):
+    Treated like English `force` per [landau-2015]'s (4a):
     coercive causatives pattern as implicatives. -/
 def dai : CTP :=
   ⟨"dai", "force", .irrealisNi, .objectControl, some .implicative⟩
@@ -123,7 +123,7 @@ def wa : CTP :=
 
 /-- 'say' — utterance verb, finite `akɛ`-clause.
 
-    Not pulled out as a CTP entry by @cite{allotey-2021}, but used in
+    Not pulled out as a CTP entry by [allotey-2021], but used in
     passing as the canonical example of an `akɛ`-clause selector
     (the cross-Kwa standard utterance verb). Kept here so that the
     library can exhibit the OC-vs-non-OC contrast end-to-end. -/

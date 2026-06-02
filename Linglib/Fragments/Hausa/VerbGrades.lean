@@ -3,10 +3,10 @@ import Linglib.Phonology.Autosegmental.RegisterTier
 
 /-!
 # Hausa Verb Grades (Parsons System) — mathlib-style
-@cite{newman-2000}
+[newman-2000]
 
 Hausa verbs are organised by the **Parsons grade system** (Parsons
-1960b, codified in @cite{newman-2000} ch. 74): a closed inventory of
+1960b, codified in [newman-2000] ch. 74): a closed inventory of
 derivational stem-templates (gr0–gr7) defined by a fixed pairing of
 **tone melody**, **final-vowel template**, and **derivational function**. Each grade also has up to four
 **syntactic forms** (A/B/C/D) selected by the post-verbal environment.
@@ -38,7 +38,7 @@ namespace Hausa.VerbGrades
 open Phonology.Autosegmental.RegisterTier (TRN)
 
 -- ============================================================================
--- § 1: Form Inventory (A/B/C/D — @cite{newman-2000} §74.2)
+-- § 1: Form Inventory (A/B/C/D — [newman-2000] §74.2)
 -- ============================================================================
 
 /-- The four syntactic forms selected by the post-verbal environment.
@@ -87,7 +87,7 @@ instance (t : FVTemplate) : Decidable t.threeWayChanging :=
 -- § 3: Stem Templates (tone × vowel × function × Verb defaults)
 -- ============================================================================
 
-/-- Coarse derivational function of a grade (@cite{newman-2000}
+/-- Coarse derivational function of a grade ([newman-2000]
     §74.3–74.10). A grade may have several uses; the *primary* function
     fixes the default argument structure. Secondary uses (e.g. gr1's
     actor-intransitive sub-use) appear as per-verb overrides. -/
@@ -235,7 +235,7 @@ def mkVerb (form : String) (g : StemTemplate)
   grade          := g
   lexTones       := lexTones
 
--- Concrete entries (citation forms after @cite{newman-2000} §74)
+-- Concrete entries (citation forms after [newman-2000] §74)
 
 def ci    : HausaVerb := mkVerb "ci"    gr0 (lexTones := [.H])
 def shaa  : HausaVerb := mkVerb "shā"   gr0 (lexTones := [.H])
@@ -246,13 +246,13 @@ def fita  : HausaVerb := mkVerb "fita"  gr3
 def kashe : HausaVerb := mkVerb "kashē" gr4
 /-- gr5 efferential of *sayā* 'buy' — *sayař* 'sell'. Same root as
     `saya` (gr1 basic) — minimal pair illustrating the efferential
-    derivation (@cite{newman-2000} §74.9). -/
+    derivation ([newman-2000] §74.9). -/
 def sayar : HausaVerb := mkVerb "sayař" gr5
-/-- gr6 ventive *kōmō* 'return here' (@cite{newman-2000} §74.11).
+/-- gr6 ventive *kōmō* 'return here' ([newman-2000] §74.11).
     Note: *zō* 'come' is **irregular** (v*) and not gr6, despite
     semantic overlap with the ventive function. -/
 def koomoo : HausaVerb := mkVerb "kōmō"  gr6
-/-- gr7 sustentative *tāru* 'meet' / 'be assembled' (@cite{newman-2000}
+/-- gr7 sustentative *tāru* 'meet' / 'be assembled' ([newman-2000]
     §74.13). gr7 derives a passive-like reading: the action is
     successfully sustained, with no external argument introduced. -/
 def taaru : HausaVerb := mkVerb "tāru"  gr7
@@ -264,7 +264,7 @@ def lexicon : List HausaVerb :=
   [ci, shaa, soo, saya, sayi, fita, kashe, sayar, koomoo, taaru]
 
 /-- **Override demonstration.** Some gr1 verbs have an *actor-intransitive*
-    sub-use (@cite{newman-2000} §74.4): morphologically gr1 (H–L, -ā)
+    sub-use ([newman-2000] §74.4): morphologically gr1 (H–L, -ā)
     but syntactically intransitive. We model this by overriding
     `complementType` while keeping the gr1 grade. The override breaks
     canonicity — making the empirical claim "gr1 has an intransitive

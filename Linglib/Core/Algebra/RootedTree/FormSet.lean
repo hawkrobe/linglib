@@ -9,7 +9,7 @@ set_option autoImplicit false
 
 /-!
 # FormSet operators `FS^(k)` — MCB Def 1.16.1
-@cite{marcolli-chomsky-berwick-2025}
+[marcolli-chomsky-berwick-2025]
 
 The **FormSet** operator family on workspaces, introduced in MCB §1.16
 (book p. 141–146). FormSet is a structure-formation operation that

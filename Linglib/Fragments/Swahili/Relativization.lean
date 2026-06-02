@@ -4,7 +4,7 @@ import Linglib.Fragments.Swahili.Basic
 
 /-!
 # Swahili Relativization Fragment
-@cite{scott-2021} @cite{keenan-comrie-1977}
+[scott-2021] [keenan-comrie-1977]
 
 Swahili *amba*-relative clauses use the overt complementizer *amba*
 (related to *ku-amba* 'say'), which agrees with the head noun in noun
@@ -12,7 +12,7 @@ class via a suffix. The head appears before the complementizer.
 
 ## Two Types of Resumptive Pronouns
 
-@cite{scott-2021} shows Swahili distinguishes two types of resumptive
+[scott-2021] shows Swahili distinguishes two types of resumptive
 pronouns that coexist within the same language and are morphologically
 distinct:
 
@@ -79,7 +79,7 @@ def ambaGap : Marker :=
 /-- The *amba*-complementizer with bound resumptive pronoun
     (person-matching). Objects of monosyllabic prepositions inside
     adjunct islands obligatorily surface with person features.
-    @cite{scott-2021} examples (31)–(33). -/
+    [scott-2021] examples (31)–(33). -/
 def ambaBound : Marker :=
   { form := "amba + bound RP"
   , npRel := .resumptiveBound
@@ -91,7 +91,7 @@ def ambaBound : Marker :=
 /-- The *amba*-complementizer with movement resumptive pronoun
     (personless). Objects of monosyllabic prepositions in parasitic
     gap constructions surface without person features.
-    @cite{scott-2021} examples (36)–(37). -/
+    [scott-2021] examples (36)–(37). -/
 def ambaMovement : Marker :=
   { form := "amba + movement RP"
   , npRel := .resumptiveMovement
@@ -117,7 +117,7 @@ def relativization : RelativeClause.Profile :=
 -- ============================================================================
 
 /-- Person feature in the Swahili relativization paradigm
-    (@cite{scott-2021} Table 1). Prefixed `Rel` so it can live at
+    ([scott-2021] Table 1). Prefixed `Rel` so it can live at
     top-level `Swahili` without colliding with morphology-side
     person features. -/
 inductive RelPerson where | first | second | third
@@ -140,7 +140,7 @@ def fullPronoun : RelPerson → RelGramNum → String
 -- § 3: Resumptive Pronoun Paradigm
 -- ============================================================================
 
-/-- Resumptive (suffixal) pronoun forms (@cite{scott-2021} Table 2).
+/-- Resumptive (suffixal) pronoun forms ([scott-2021] Table 2).
     Person-matching forms: 1st/2nd person specify [PERS].
     Personless defaults: 3rd person = noun class agreement (no [PERS]). -/
 def resumptivePronoun : RelPerson → RelGramNum → String
@@ -151,7 +151,7 @@ def resumptivePronoun : RelPerson → RelGramNum → String
   | .third,  .sg => "-ye"
   | .third,  .pl => "-o"
 
-/-- Resumptive pronoun by noun class (@cite{scott-2021} Table 3).
+/-- Resumptive pronoun by noun class ([scott-2021] Table 3).
     These forms express number and gender only (no person features).
     For animate classes 1/2, the forms *-ye*/*-o* are identical to the
     3rd person resumptive pronouns — this identity is what the
@@ -188,7 +188,7 @@ def resumptivePronounIsPersonMatching : RelPerson → RelGramNum → Bool
 -- § 5: Resumption Trigger (Phonological Minimality)
 -- ============================================================================
 
-/-- Monosyllabic words that trigger resumption. @cite{scott-2021} §3.3:
+/-- Monosyllabic words that trigger resumption. [scott-2021] §3.3:
     resumption is triggered when a monosyllabic word (*na*, *ya*, *mwa*,
     etc.) would otherwise be stranded, violating the bimoraic Minimality
     requirement. These include true prepositions and connectives (the
@@ -204,7 +204,7 @@ inductive RelMonosyllabicWord where
     instead. Noun-like words (*uvunguni* 'under', *chini* 'below',
     *kando* 'beside') must be followed by a monosyllabic connective,
     so it is the connective (not the noun-like word) that determines
-    resumption. @cite{scott-2021} (22)–(23). -/
+    resumption. [scott-2021] (22)–(23). -/
 inductive RelNonTriggeringWord where
   | katika    -- 'on', 'in' (trisyllabic; dropped under relativization)
   deriving DecidableEq, Repr

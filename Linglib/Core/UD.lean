@@ -2,7 +2,7 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Universal Dependencies Types
-@cite{de-marneffe-zeman-2021}
+[de-marneffe-zeman-2021]
 
 Universal part-of-speech tags (UPOS), morphological features, and dependency
 relations from UD v2.
@@ -15,7 +15,7 @@ theory-specific categories (CCG.Cat, Minimalism features, DG trees, etc.).
 
 Lifted from `Core/Lexical/UD.lean` in the cleanup that dissolved
 `Core/Lexical/`. UD is an external typological standard
-(@cite{de-marneffe-zeman-2021}); its types are the foundational
+([de-marneffe-zeman-2021]); its types are the foundational
 substrate every other layer aliases against (see `Core/Word.lean`).
 The bare `UD` namespace (no `Core.` prefix) is intentional — UD is its
 own external project, and this file is the linglib mirror of its
@@ -498,7 +498,7 @@ def DepRel.isCoreArg : DepRel → Bool
 
 /-- Is this a valency-bearing dependency? Extends `isCoreArg` with
     `.obl` (oblique nominals), which valency frameworks (e.g.
-    @cite{osborne-li-2023} on dependency-grammar valent typology)
+    [osborne-li-2023] on dependency-grammar valent typology)
     treat as a valency role even though UD classifies it as
     non-core. -/
 def DepRel.isValencyArg : DepRel → Bool

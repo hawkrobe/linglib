@@ -1,6 +1,6 @@
 /-!
 # Marathi Utterance-Final Particles
-@cite{deo-2025-bara} @cite{deo-2023}
+[deo-2025-bara] [deo-2023]
 
 Lexical entries for Marathi utterance-final discourse particles. The
 semantic/pragmatic content lives in `Studies/Deo2025.lean`;
@@ -26,12 +26,12 @@ structure ParticleEntry where
   inImperatives : Prop
   /-- Felicitous in wh-interrogatives. -/
   inWhInterrogatives : Prop
-  /-- Felicitous in polar interrogatives. @cite{deo-2025-bara} reports
+  /-- Felicitous in polar interrogatives. [deo-2025-bara] reports
       `bərə` is *never* used in polar interrogatives (§ 1, p. 387). -/
   inPolarInterrogatives : Prop
   /-- The particle conventionally signals a *preferential* commitment
       dimension on top of the clause-type-determined commitment.
-      `bərə` does (@cite{deo-2025-bara} (20)); pure clause-typing particles
+      `bərə` does ([deo-2025-bara] (20)); pure clause-typing particles
       like `ka` (polar Q) do not. -/
   carriesPreferentialCommitment : Prop
 
@@ -40,7 +40,7 @@ structure ParticleEntry where
     *dependent* doxastic or preferential commitment, with a felicity
     condition tying this uptake to a salient addressee-benefiting goal.
 
-    @cite{deo-2025-bara} (20)–(21). The semantic/pragmatic apparatus
+    [deo-2025-bara] (20)–(21). The semantic/pragmatic apparatus
     lives in `Studies/Deo2025.lean`. -/
 def bara : ParticleEntry where
   form  := "bərə"
@@ -51,19 +51,19 @@ def bara : ParticleEntry where
   inPolarInterrogatives := False
   carriesPreferentialCommitment := True
 
-/-- *na* — utterance-final particle analyzed in @cite{deo-2023} as
+/-- *na* — utterance-final particle analyzed in [deo-2023] as
     signalling preference for *independent* shared commitment (CommonGround
     update; doxastic sourcehood mirror of `bərə`'s dependent-uptake
     convention).
 
     Stub entry — full lexical/semantic apparatus deferred to a future
     `Studies/Deo2023.lean`. The clause-type
-    distribution fields are placeholders; @cite{deo-2025-bara}
+    distribution fields are placeholders; [deo-2025-bara]
     footnote 6 (p. 392) only attests *na* as one of the four
     imperative-augmenting particles (*na, hã/h̆ə, ki, bərə*); the
     declarative/interrogative pattern is unverified pending the
-    @cite{deo-2023} formalization.
-    `carriesPreferentialCommitment := false` reflects @cite{deo-2023}'s
+    [deo-2023] formalization.
+    `carriesPreferentialCommitment := false` reflects [deo-2023]'s
     framing as a *doxastic* (CommonGround-update) particle, not preferential. -/
 def na : ParticleEntry where
   form  := "na"

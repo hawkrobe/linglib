@@ -2,8 +2,8 @@ import Linglib.Discourse.AtIssueness
 import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 /-!
-# @cite{tonhauser-beaver-degen-2018}: How Projective Is Projective Content?
-@cite{tonhauser-beaver-degen-2018} @cite{potts-2005} @cite{tonhauser-beaver-roberts-simons-2013}Empirical data from "How projective is projective content? Gradience in
+# [tonhauser-beaver-degen-2018]: How Projective Is Projective Content?
+[tonhauser-beaver-degen-2018] [potts-2005] [tonhauser-beaver-roberts-simons-2013]Empirical data from "How projective is projective content? Gradience in
 projectivity and at-issueness." Journal of Semantics 35(3): 495–542.
 
 ## Key Findings
@@ -13,7 +13,7 @@ projectivity and at-issueness." Journal of Semantics 35(3): 495–542.
 2. **Not-at-issueness is gradient** and **positively correlated** with
    projectivity: r = .85 across 9 expression types (Exp 1a), r = .99
    across 12 predicates (Exp 1b).
-3. **Appositives are not maximally projective**, contra @cite{potts-2005}.
+3. **Appositives are not maximally projective**, contra [potts-2005].
 4. **Within-type variation**: different lexical items of the same type
    yield different ratings.
 
@@ -235,7 +235,7 @@ theorem only_least_notAtIssue : ∀ e : ExpressionType,
     notAtIssuenessRating .only ≤ notAtIssuenessRating e := by
   intro e; cases e <;> native_decide
 
-/-- Appositives are not maximally projective, contra @cite{potts-2005}.
+/-- Appositives are not maximally projective, contra [potts-2005].
     Potts predicted CI content (including appositives) should project
     obligatorily. The data shows 94/100 — high but not 1.0. -/
 theorem appositives_not_maximally_projective :

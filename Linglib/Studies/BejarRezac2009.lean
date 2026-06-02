@@ -3,9 +3,9 @@ import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement
 
 /-!
-# Cyclic Agree and Differential P Indexing @cite{bejar-rezac-2009}
+# Cyclic Agree and Differential P Indexing [bejar-rezac-2009]
 
-@cite{bejar-rezac-2009} derive **agreement displacement** — where
+[bejar-rezac-2009] derive **agreement displacement** — where
 the agreement controller alternates between the EA and IA based on
 person — from cyclic Agree with articulated φ-probes.
 
@@ -134,7 +134,7 @@ theorem georgian_indexed_iff_always_inverse : ∀ c ∈ Cell.pnCells,
 /-- Georgian 1sg agreement: *m-* appears when 1P is the IA (cycle I only),
     *v-* appears when 1P is the EA (cycle II, IA=3P).
 
-    @cite{bejar-rezac-2009} §3.2: the *m-*/*v-* alternation correlates with
+    [bejar-rezac-2009] §3.2: the *m-*/*v-* alternation correlates with
     whether the probe was valued on the first or second cycle. -/
 theorem georgian_m_is_cycle_I :
     hasSecondCycleEffect .standard partialProbe .third .first = false ∧
@@ -166,7 +166,7 @@ theorem georgian_mv_split_is_inverse_direct :
 -- § 5: Basque Agreement Displacement Paradigm (Table 1)
 -- ============================================================================
 
--- @cite{bejar-rezac-2009} Table 1: Basque paradigm cells showing which
+-- [bejar-rezac-2009] Table 1: Basque paradigm cells showing which
 -- argument controls the agreement slot.
 -- The notation `x→y = z` means: EA=x, IA=y, agreement tracks z.
 -- Underlined forms in the paper track the IA (inverse/displacement);

@@ -4,7 +4,7 @@ import Linglib.Morphology.Containment
 
 /-!
 # Case Allomorphy and Syncretism — Substrate
-@cite{blake-1994} @cite{caha-2009} @cite{bobaljik-2012}
+[blake-1994] [caha-2009] [bobaljik-2012]
 
 Framework-neutral substrate for talking about allomorphy and
 syncretism patterns over morphological case. Provides:
@@ -19,8 +19,8 @@ syncretism patterns over morphological case. Provides:
   decidability theorems for adjacency on small inventories.
 
 What *explains* the *ABA gap is contested between DM (post-syntactic
-VI + Elsewhere ordering — `@cite{bobaljik-2012}`) and Nanosyntax
-(phrasal spellout + Superset Principle — `@cite{caha-2009}`). This
+VI + Elsewhere ordering — `[bobaljik-2012]`) and Nanosyntax
+(phrasal spellout + Superset Principle — `[caha-2009]`). This
 file commits to neither; per-paper analyses live in
 `Studies/`.
 -/

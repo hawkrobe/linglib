@@ -1,12 +1,12 @@
 import Linglib.Syntax.Minimalist.Features
 
 /-!
-# Basque Auxiliary Postsyntactic Inventory @cite{arregi-nevins-2012} @cite{middleton-2026}
-@cite{halle-marantz-1993} @cite{harbour-2014} @cite{harbour-2016}
+# Basque Auxiliary Postsyntactic Inventory [arregi-nevins-2012] [middleton-2026]
+[halle-marantz-1993] [harbour-2014] [harbour-2016]
 
 The fragment-level data needed to formalize the postsyntactic argument
-about Basque auxiliaries in @cite{middleton-2026} §3.1 (extending
-@cite{arregi-nevins-2012} §3.1.1, §4.6).
+about Basque auxiliaries in [middleton-2026] §3.1 (extending
+[arregi-nevins-2012] §3.1.1, §4.6).
 
 A finite Basque auxiliary linearizes as a sequence of terminal
 nodes (each a `FeatureBundle`): an absolutive clitic, a T head, an
@@ -45,7 +45,7 @@ open Minimalist
 -- ============================================================================
 
 /-- A 1st-person absolutive clitic: `[CL ABS +participant +author]`.
-    The trigger of @cite{middleton-2026} (16) Participant
+    The trigger of [middleton-2026] (16) Participant
     Dissimilation. -/
 def abs1pAuthor : FeatureBundle :=
   [.valued (.case .abs),
@@ -53,7 +53,7 @@ def abs1pAuthor : FeatureBundle :=
    .valued (.author true)]
 
 /-- A 2nd-person ergative clitic: `[CL ERG +participant −author]`.
-    The right-context of @cite{middleton-2026} (16) — the participant
+    The right-context of [middleton-2026] (16) — the participant
     ergative that licenses deletion of `abs1pAuthor`. -/
 def erg2s : FeatureBundle :=
   [.valued (.case .erg),
@@ -61,7 +61,7 @@ def erg2s : FeatureBundle :=
    .valued (.author false)]
 
 /-- A T head with `[+tense]`. The leftmost-position trigger and
-    swap-source of @cite{middleton-2026} (13) Ergative Metathesis. -/
+    swap-source of [middleton-2026] (13) Ergative Metathesis. -/
 def tPast : FeatureBundle :=
   [.valued (.tense true)]
 

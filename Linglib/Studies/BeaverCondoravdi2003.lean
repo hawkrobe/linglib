@@ -3,8 +3,8 @@ import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Core.Scales.Scale
 
 /-!
-# @cite{beaver-condoravdi-2003}: Uniform Analysis with `earliest`
-@cite{beaver-condoravdi-2003} @cite{thomason-1984}
+# [beaver-condoravdi-2003]: Uniform Analysis with `earliest`
+[beaver-condoravdi-2003] [thomason-1984]
 
 A **uniform** semantics for *before* and *after*: both connectives use the
 same `earliest` operator, with the veridicality asymmetry derived from
@@ -167,7 +167,7 @@ def instTimes (worlds : Set W) (B : Set (W × T)) : Set T :=
 
     Uses `maxOnScale (· < ·)` which selects elements dominated by all others
     on the < ordering — i.e., the minimum / GLB. This is the same operator
-    @cite{rett-2020} uses for her MAX₍<₎. -/
+    [rett-2020] uses for her MAX₍<₎. -/
 def earliestAlt (alt : HistAlt W T) (B : Set (W × T)) (w : W) (t : T) : Set T :=
   maxOnScale (· < ·) (instTimes (alt w t) B)
 
@@ -270,7 +270,7 @@ theorem BC.uniform_structure (A B : Set (W × T)) (alt : HistAlt W T) (w : W) :
 -- § 7: O&ST Event-Relative Equivalence (def 17)
 -- ============================================================================
 
-/-! @cite{ogihara-steinert-threlkeld-2024} §4 propose revising B&C's equivalence
+/-! [ogihara-steinert-threlkeld-2024] §4 propose revising B&C's equivalence
     relation to be sensitive to both an interval I and an eventuality e. The key
     idea: alternative worlds must contain a counterpart of e that co-occurs with
     e throughout the interval [START_w(e₁), START(I)), and worlds must be
@@ -281,12 +281,12 @@ theorem BC.uniform_structure (A B : Set (W × T)) (alt : HistAlt W T) (w : W) :
     run up until I (not necessarily including I). -/
 
 /-- Counterpart relation on eventualities across worlds
-    (@cite{ogihara-steinert-threlkeld-2024}, fn. 18): counterpart eventualities
+    ([ogihara-steinert-threlkeld-2024], fn. 18): counterpart eventualities
     share essential properties such as starting time and thematic participants. -/
 abbrev Counterpart (W T : Type*) := W → T → W → T → Prop
 
 /-- **Event-relative equivalence** ≃_{I,e₁}
-    (@cite{ogihara-steinert-threlkeld-2024}, def 17).
+    ([ogihara-steinert-threlkeld-2024], def 17).
 
     For worlds w₁, w₂ ∈ W, interval I, and eventuality e₁ in w₁,
     w₁ ≃_{I,e₁} w₂ iff:
@@ -315,10 +315,10 @@ def equivIE
 -- ============================================================================
 
 /-! The revised alt(w, I, e) uses the eventuality-relative equivalence
-    (@cite{ogihara-steinert-threlkeld-2024}, def 18a). -/
+    ([ogihara-steinert-threlkeld-2024], def 18a). -/
 
 /-- **Event-relative alternatives** alt(w, I, e)
-    (@cite{ogihara-steinert-threlkeld-2024}, def 18a):
+    ([ogihara-steinert-threlkeld-2024], def 18a):
     alt(w, I, e) ⊆ {w' : w ≃_{I,e} w'}. -/
 def altIE
     (counterpart : Counterpart W T)
@@ -327,14 +327,14 @@ def altIE
     (w : W) (startI : T) (e_start : T) : Set W :=
   { w' | equivIE counterpart coOccur agree w w' startI e_start }
 
-/-- **Event continuation condition** (@cite{ogihara-steinert-threlkeld-2024}, def 18b):
+/-- **Event continuation condition** ([ogihara-steinert-threlkeld-2024], def 18b):
     alt(w, I, e) contains only those worlds w' in which the counterpart
     eventuality of e develops beyond I, as long as this is reasonable.
     Modeled as a predicate on the alternative set. -/
 def eventContinuation (alt : Set W) (continues : W → Prop) : Set W :=
   { w' ∈ alt | continues w' }
 
-/-- **Downward closure** (@cite{ogihara-steinert-threlkeld-2024}, def 18c):
+/-- **Downward closure** ([ogihara-steinert-threlkeld-2024], def 18c):
     If w ≃_{I,e} w' and I' < I, then w ≃_{I',e} w'.
     Earlier equivalence classes are supersets. -/
 theorem equivIE_downward_closed

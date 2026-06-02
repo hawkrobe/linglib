@@ -5,7 +5,7 @@ import Linglib.Semantics.Modality.HistoricalAlternatives
 /-!
 # Mendes (2025): The Subordinate Future
 
-@cite{mendes-2025}
+[mendes-2025]
 
 The Subordinate Future (SF) in Portuguese is a mood form (subjunctive
 with future morphology) that:
@@ -15,7 +15,7 @@ with future morphology) that:
    restrictors (§2.2)
 3. Has a future-oriented temporal interpretation that is *parasitic on*
    the modal anaphora — not stipulated by an independent temporal
-   operator (§3.2, following @cite{crouch-1993} @cite{crouch-1994})
+   operator (§3.2, following [crouch-1993] [crouch-1994])
 
 ## Organization
 
@@ -56,7 +56,7 @@ The SF in Portuguese conditionals:
   "Se Maria estiver em casa, ela vai atender."
   "If Maria be.SF at home, she will answer."
 
-Structure (@cite{mendes-2025} §3.2):
+Structure ([mendes-2025] §3.2):
 1. SF = SUBJ^{s₁}_{s₀} + FUT
 2. SUBJ introduces s₁ ∈ hist(s₀)
 3. FUT constrains τ(s₁) > τ(s₀)
@@ -167,7 +167,7 @@ theorem sf_introduces_future {W Time : Type*} [Preorder Time]
 /--
 Temporal shift is parasitic on modal donkey anaphora.
 
-@cite{mendes-2025} §3.2: the future-oriented interpretation of SF is not due
+[mendes-2025] §3.2: the future-oriented interpretation of SF is not due
 to an independent temporal operator. Instead, it follows from:
 
 1. SUBJ introduces s₁ ∈ hist(s₀) - modal component
@@ -631,7 +631,7 @@ theorem modal_displacement_weaker_than_accommodation {W Time E : Type*} [LE Time
 -- ════════════════════════════════════════════════════════════════
 
 /-!
-The central theoretical insight of @cite{mendes-2025} §3.1: SF enables
+The central theoretical insight of [mendes-2025] §3.1: SF enables
 modal donkey anaphora — subjunctive binds situation variables across
 clause boundaries, just like indefinites bind individual variables in
 classic donkey sentences.
@@ -799,14 +799,14 @@ theorem subjIndChain_entails_conditionalSF {W Time : Type*} [LE Time]
 ### Bridge to Hofmann (2025) accessibility
 
 The same-world constraint enforced by `dynIND` (via the `sameWorld`
-kernel in `Mood/Basic.lean`) parallels @cite{hofmann-2025}'s
+kernel in `Mood/Basic.lean`) parallels [hofmann-2025]'s
 veridicality-based accessibility for individual drefs:
 
-- **Situation level** (this file, @cite{mendes-2025}): `dynIND`
+- **Situation level** (this file, [mendes-2025]): `dynIND`
   retrieves `s₁` via `s₂.world = s₁.world`. Governs cross-clausal
   situation binding (modal donkey anaphora).
 - **Propositional dref level** (`Studies/Hofmann2025.lean`,
-  @cite{hofmann-2025}): a dref is accessible iff it has a referent in
+  [hofmann-2025]): a dref is accessible iff it has a referent in
   all worlds of the local context, plus a discourse-consistency
   condition. Governs individual dref accessibility across negation,
   disjunction, and attitude contexts.

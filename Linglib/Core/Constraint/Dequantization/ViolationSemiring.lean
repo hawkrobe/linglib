@@ -4,14 +4,14 @@ import Mathlib.Algebra.Tropical.Basic
 
 /-!
 # Violation Semiring — OT/HG Unification
-@cite{riggle-2009}
+[riggle-2009]
 
 OT and HG are instances of a single algebraic framework: evaluation over
 a commutative semiring. Violation profiles form a commutative semiring V
 (the **violation semiring**); real-valued costs form the standard tropical
 semiring T. HG weights define a structure-preserving map from V to T.
 
-## The two semirings (Example 2 of @cite{riggle-2009})
+## The two semirings (Example 2 of [riggle-2009])
 
 **V** = `Tropical (WithTop (ViolationProfile n))` — the **violation semiring**:
 - ⊕ (tropical addition) = `min` under harmonic inequality (choose winner)
@@ -30,7 +30,7 @@ w : Fin n → ℚ induces a map V → T via the weighted sum v ↦ Σ wᵢ · v�
 This map always preserves ⊗ (merge/tropical multiplication — linearity
 of the dot product). It preserves ⊕ (min/tropical addition) when weights
 are exponentially separated — which is exactly the content of the HG–OT
-agreement theorem (@cite{smolensky-legendre-2006}, formalized in
+agreement theorem ([smolensky-legendre-2006], formalized in
 `Core.Constraint.OTLimit`).
 
 ## Monotonicity (Dijkstra's Principle)
@@ -49,7 +49,7 @@ open Core.Constraint.Evaluation Core.Constraint
 -- § 1: The Violation Semiring V
 -- ============================================================================
 
-/-- The **violation semiring** (@cite{riggle-2009} Definition 2, Example 2):
+/-- The **violation semiring** ([riggle-2009] Definition 2, Example 2):
     `Tropical (WithTop (ViolationProfile n))` for n ranked constraints.
 
     Tropical addition (⊕) is `min` under harmonic inequality.
@@ -78,7 +78,7 @@ theorem ViolationProfile.zero_le (n : Nat) (a : ViolationProfile n) :
   not_lt.mp fun ⟨_, _, hi⟩ => absurd hi (Nat.not_lt_zero _)
 
 /-- **Dijkstra's principle** for violation profiles
-    (@cite{riggle-2009} §4, @cite{dijkstra-1959}):
+    ([riggle-2009] §4, [dijkstra-1959]):
     merging violations can only make things worse (or keep them equal).
 
     In Riggle's terms: the ⊎ (merge) operator is **monotone** —
@@ -104,7 +104,7 @@ noncomputable example (n : Nat) (a : ViolationProfile n) :
 -- § 3: Weight Map V → ℚ (AddMonoidHom)
 -- ============================================================================
 
-/-- The **weight map** (@cite{riggle-2009} §4): an additive monoid
+/-- The **weight map** ([riggle-2009] §4): an additive monoid
     homomorphism from the violation semiring's underlying monoid
     `(ViolationProfile n, +, 0)` to `(ℚ, +, 0)`.
 
@@ -162,8 +162,8 @@ theorem lt_iff_lexStrictlyBetter {n : Nat} (a b : ViolationProfile n) :
     a < b ↔ LexStrictlyBetter a b := Iff.rfl
 
 /-- **The weight map is strictly order-preserving** when weights are
-    exponentially separated (@cite{riggle-2009} §4,
-    @cite{smolensky-legendre-2006} ch. 14):
+    exponentially separated ([riggle-2009] §4,
+    [smolensky-legendre-2006] ch. 14):
 
     If `a < b` lexicographically and all violations are bounded by `M`,
     then `weight(a) < weight(b)`.

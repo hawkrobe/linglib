@@ -2,7 +2,7 @@ import Linglib.Fragments.English.FocusParticles
 import Linglib.Phenomena.Focus.Basic
 
 /-!
-# @cite{francescotti-1995}
+# [francescotti-1995]
 
 Even: The Conventional Implicature Approach Reconsidered.
 Linguistics and Philosophy 18: 153–173.
@@ -19,7 +19,7 @@ of its true neighbors.
 (b) "Even" is epistemic: it implies surprise, unexpectedness, or unlikelihood.
 (c) "Even" is scalar: unexpectedness comes in degrees.
 (d) Felicity requires S* to be more surprising than MOST true neighbors —
-    not just one (@cite{bennett-1982}), not all (@cite{karttunen-peters-1979}).
+    not just one ([bennett-1982]), not all ([karttunen-peters-1979]).
 
 ## Formalization
 

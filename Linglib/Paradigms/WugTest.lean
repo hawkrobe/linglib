@@ -5,8 +5,8 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # Wug-Test Paradigm
 
-@cite{berko-1958}
-@cite{albright-hayes-2003}
+[berko-1958]
+[albright-hayes-2003]
 
 Shared vocabulary for the *wug paradigm*: subjects are presented with
 nonce (novel) lexical items and asked to produce, judge, or rate
@@ -28,11 +28,11 @@ reports.
 
 Two papers ground the contract:
 
-- @cite{berko-1958} introduced the test as a probe for productive
+- [berko-1958] introduced the test as a probe for productive
   morpho-phonological knowledge: presented with the nonce *wug*,
   children produce *wugs* /wʌgz/ rather than refusing or randomising.
   The factor that matters is `Attestation`.
-- @cite{albright-hayes-2003} is the modern reference for *gradient*
+- [albright-hayes-2003] is the modern reference for *gradient*
   wug responses: subjects rate alternative output forms, and the
   ratings track how well the input is supported by lexical
   generalisations of varying scope. This is what makes wug responses
@@ -57,9 +57,9 @@ lexical-frequency effects via constraints / weights) and theories that
 locate productivity in *lexical listing* (where novel forms cannot
 inherit anything because they are by definition unlisted). The
 predicate `NovelInvariantInFactor` is the UseListed
-@cite{zuraw-2000} prediction; `NovelShowsFactorGradient` is the
-prediction of indexed-constraint @cite{pater-2010} or scaled-weight
-@cite{coetzee-pater-2008} accounts. The theorem
+[zuraw-2000] prediction; `NovelShowsFactorGradient` is the
+prediction of indexed-constraint [pater-2010] or scaled-weight
+[coetzee-pater-2008] accounts. The theorem
 `novelGradient_inconsistent_with_invariance` proves the two are
 mutually incompatible on cells with a non-vacuous factor space, so a
 study that adopts a typed `Cell` can pose the discrimination as a
@@ -103,7 +103,7 @@ namespace Paradigms.WugTest
 
 /-- Whether a stimulus is an *attested* lexical item or a *novel*
     (nonce, wug-like) form. The basic categorical contrast that
-    @cite{berko-1958} introduced and that every wug paradigm crosses. -/
+    [berko-1958] introduced and that every wug paradigm crosses. -/
 inductive Attestation where
   | attested
   | novel
@@ -140,14 +140,14 @@ class HasFactor (Cell : Type) (F : Type) where
       ∀ f₁ f₂ c, setFactor f₁ (setFactor f₂ c) = setFactor f₁ c
 
 /-- `Cell` has an attestation factor that can be swapped without
-    touching other factors. The @cite{berko-1958} dimension. -/
+    touching other factors. The [berko-1958] dimension. -/
 abbrev HasAttestation (Cell : Type) := HasFactor Cell Attestation
 
 /-- `Cell` exposes a real-valued frequency factor (e.g. log token
     frequency of the source lexeme; log corpus frequency of an
     analogous attested compound). Frequency is `ℝ`-valued because
-    lexical-frequency theories (@cite{coetzee-pater-2008},
-    @cite{coetzee-kawahara-2013}) operate on log frequencies as a
+    lexical-frequency theories ([coetzee-pater-2008],
+    [coetzee-kawahara-2013]) operate on log frequencies as a
     continuous regressor. -/
 abbrev HasFrequency (Cell : Type) := HasFactor Cell ℝ
 
@@ -179,9 +179,9 @@ variable {Cell : Type} {F : Type} {R : Type}
     holding all other factors constant and fixing `attestation =
     novel`, varying the `F`-typed factor strictly varies the rate.
     This is the prediction of indexed-constraint
-    (@cite{pater-2010}), scaled-weight
-    (@cite{coetzee-pater-2008}), and representation-strength
-    (@cite{moore-cantwell-2021}, @cite{smolensky-goldrick-2016})
+    ([pater-2010]), scaled-weight
+    ([coetzee-pater-2008]), and representation-strength
+    ([moore-cantwell-2021], [smolensky-goldrick-2016])
     theories: novel forms inherit a frequency-conditioned grammar
     pressure from analogous lexical items and therefore show a
     factor gradient even though they are themselves unlisted. -/
@@ -195,7 +195,7 @@ def NovelShowsFactorGradient
 /-- A rate observable is *factor-invariant on novel forms* if, holding
     all other factors constant and fixing `attestation = novel`,
     varying the `F`-typed factor leaves the rate unchanged. This is
-    the prediction of UseListed (@cite{zuraw-2000}): novel forms have
+    the prediction of UseListed ([zuraw-2000]): novel forms have
     no lexical entry, so no entry-keyed factor lookup can affect their
     grammar pressure. The two hypotheses thus make opposite predictions
     on the same paradigm cell. -/

@@ -13,9 +13,9 @@ import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Nouns
 
 /-!
-# @cite{elbourne-2013}: Situation-Semantic Definite Descriptions @cite{elbourne-2013}
-@cite{barwise-perry-1983} @cite{elbourne-2005} @cite{heim-1982} @cite{postal-1966} @cite{schwarz-2009} @cite{kamp-1981} @cite{stanley-szab-2000} @cite{tonhauser-beaver-roberts-simons-2013} @cite{roberts-2012}
-@cite{donnellan-1966} @cite{kripke-1977} @cite{karttunen-1974}
+# [elbourne-2013]: Situation-Semantic Definite Descriptions [elbourne-2013]
+[barwise-perry-1983] [elbourne-2005] [heim-1982] [postal-1966] [schwarz-2009] [kamp-1981] [stanley-szab-2000] [tonhauser-beaver-roberts-simons-2013] [roberts-2012]
+[donnellan-1966] [kripke-1977] [karttunen-1974]
 
 Formalizes the core theoretical machinery and empirical predictions from:
 
@@ -75,7 +75,7 @@ open Semantics.Reference.Donnellan (UseMode definiteNominal)
 
 
 -- ════════════════════════════════════════════════════════════════
--- §1: Situation Ontology (@cite{barwise-perry-1983}, @cite{kratzer-1989})
+-- §1: Situation Ontology ([barwise-perry-1983], [kratzer-1989])
 -- ════════════════════════════════════════════════════════════════
 
 /-- A situation frame: the ontological foundation for Elbourne's system.
@@ -85,9 +85,9 @@ Worlds are maximal situations. Properties and quantifiers are evaluated
 relative to situations rather than worlds, enabling situation-dependent
 uniqueness and domain restriction.
 
-Based on @cite{barwise-perry-1983}: situations are "individuals having
+Based on [barwise-perry-1983]: situations are "individuals having
 properties and standing in relations at various spatiotemporal locations".
-@cite{kratzer-1989}: situations are parts of worlds with a mereological structure. -/
+[kratzer-1989]: situations are parts of worlds with a mereological structure. -/
 structure SituationFrame where
   /-- Domain of situations (D_s) — includes both partial situations and worlds -/
   Sit : Type
@@ -116,7 +116,7 @@ def SituationFrame.isMinimal (F : SituationFrame)
 
 
 -- ════════════════════════════════════════════════════════════════
--- §2: The Situation-Relative Definite Article (@cite{elbourne-2013}, Ch 3)
+-- §2: The Situation-Relative Definite Article ([elbourne-2013], Ch 3)
 -- ════════════════════════════════════════════════════════════════
 
 /-- ⟦the⟧ in Elbourne's system: the situation-relative Fregean definite.
@@ -188,7 +188,7 @@ theorem the_sit_assertion_implies_presup
 
 
 -- ════════════════════════════════════════════════════════════════
--- §4: Referential vs Attributive (@cite{elbourne-2013}, Ch 5)
+-- §4: Referential vs Attributive ([elbourne-2013], Ch 5)
 -- ════════════════════════════════════════════════════════════════
 
 /-- Donnellan's attributive semantics (the canonical `definiteNominal`
@@ -201,7 +201,7 @@ theorem attributive_is_the_sit_bound
 
 
 -- ════════════════════════════════════════════════════════════════
--- §5: Donkey Anaphora via Minimal Situations (@cite{elbourne-2013}, Ch 6)
+-- §5: Donkey Anaphora via Minimal Situations ([elbourne-2013], Ch 6)
 -- ════════════════════════════════════════════════════════════════
 
 /-- In Elbourne's system, donkey pronouns are definite articles with
@@ -249,7 +249,7 @@ theorem useMode_sitVar_roundtrip :
 
 
 -- ════════════════════════════════════════════════════════════════
--- §7: Existence Entailments (@cite{elbourne-2013}, Ch 8)
+-- §7: Existence Entailments ([elbourne-2013], Ch 8)
 -- ════════════════════════════════════════════════════════════════
 
 structure ExistenceEntailmentDatum where
@@ -268,7 +268,7 @@ structure ExistenceEntailmentDatum where
 
 
 -- ════════════════════════════════════════════════════════════════
--- §8: Incomplete Definites (@cite{elbourne-2013}, Ch 9)
+-- §8: Incomplete Definites ([elbourne-2013], Ch 9)
 -- ════════════════════════════════════════════════════════════════
 
 inductive IncompletenessSource where
@@ -283,7 +283,7 @@ def elbournePreferred : IncompletenessSource := .situationVariable
 
 
 -- ════════════════════════════════════════════════════════════════
--- §9: Pronouns as Definite Descriptions (@cite{elbourne-2013}, Ch 10)
+-- §9: Pronouns as Definite Descriptions ([elbourne-2013], Ch 10)
 -- ════════════════════════════════════════════════════════════════
 
 /-- How the deleted NP content is recovered. -/
@@ -323,7 +323,7 @@ theorem pronoun_assertion_implies_presup
 
 
 -- ════════════════════════════════════════════════════════════════
--- §10: Situation Binding Operators (@cite{elbourne-2013}, Ch 2)
+-- §10: Situation Binding Operators ([elbourne-2013], Ch 2)
 -- ════════════════════════════════════════════════════════════════
 
 /-- Elbourne's three situation binders. -/
@@ -341,7 +341,7 @@ inductive SitVar where
 
 
 -- ════════════════════════════════════════════════════════════════
--- §11: QUD–Situation Bridge (@cite{roberts-1996}, @cite{kratzer-2004})
+-- §11: QUD–Situation Bridge ([roberts-1996], [kratzer-2004])
 -- ════════════════════════════════════════════════════════════════
 
 /-- A QUD over worlds induces a "relevance" relation on situations. -/

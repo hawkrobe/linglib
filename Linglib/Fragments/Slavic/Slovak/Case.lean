@@ -2,9 +2,9 @@ import Linglib.Fragments.Slavic.Case
 
 /-!
 # Slovak Case Inventory
-@cite{short-1993-slovak} @cite{blake-1994}
+[short-1993-slovak] [blake-1994]
 
-Per @cite{short-1993-slovak} (p. 541): "The case system has shrunk
+Per [short-1993-slovak] (p. 541): "The case system has shrunk
 from seven members to six, the vocative being replaced by the
 nominative. Some vocative forms survive, but are not considered part
 of their respective paradigms. They occur in addressing kin, close

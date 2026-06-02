@@ -3,9 +3,9 @@ import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
 /-!
 # Dependency Length Minimization
 
-Formalises the core quantity behind @cite{futrell-gibson-2020}'s claim that
+Formalises the core quantity behind [futrell-gibson-2020]'s claim that
 natural languages minimise total dependency length beyond what independent
-constraints predict, together with @cite{behaghel-1909}'s "Oberstes Gesetz"
+constraints predict, together with [behaghel-1909]'s "Oberstes Gesetz"
 threshold predicate. The two short-before-long arithmetic lemmas record the
 *direction* of the DLM savings at the lemma level; the per-paper example trees
 and cross-linguistic data sit in `Studies/FutrellEtAl2020.lean`,
@@ -44,7 +44,7 @@ def totalDepLength (t : DepTree) : Nat :=
 
 /-! ### Behaghel's Oberstes Gesetz -/
 
-/-- @cite{behaghel-1932}'s Oberstes Gesetz: every dependency has length at
+/-- [behaghel-1932]'s Oberstes Gesetz: every dependency has length at
 most `threshold`. -/
 def oberstesGesetz (t : DepTree) (threshold : Nat) : Bool :=
   t.deps.all λ d => depLength d ≤ threshold

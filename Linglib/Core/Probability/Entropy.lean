@@ -423,7 +423,7 @@ theorem jsd_symm [MeasurableSpace α] (p q : PMF α) : jsd p q = jsd q p := by
 
 /-! ### Hellinger family on PMF
 
-@cite{herbstritt-franke-2019} use Hellinger distance as an alternative to
+[herbstritt-franke-2019] use Hellinger distance as an alternative to
 KL divergence in RSA speaker utilities, because Hellinger remains finite
 when literal interpretations assign zero probability to states the speaker
 considers possible (whereas KL diverges).

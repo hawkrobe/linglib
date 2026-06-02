@@ -5,16 +5,16 @@ import Linglib.Semantics.Mood.Basic
 
 /-!
 # Verbal Mood as POSWQ Component Selection
-@cite{portner-2018} @cite{groenendijk-stokhof-1984}
+[portner-2018] [groenendijk-stokhof-1984]
 
 Verbal mood — the indicative/subjunctive contrast visible in the
 complement clauses of attitude verbs (Romance, Greek, Balkan, …) —
-reduces, on @cite{portner-2018}'s account, to *which component of the
+reduces, on [portner-2018]'s account, to *which component of the
 embedding attitude's POSW* the mood operator quantifies over. We
 extend that account to a third operator targeting the inquiry
 component for question-embedding predicates.
 
-@cite{portner-2018} (Ch. 2) identifies two main intuitions about what
+[portner-2018] (Ch. 2) identifies two main intuitions about what
 distinguishes indicative from subjunctive complementation:
 
 - **Truth intuition** (Farkas 1985, Portner 1997 tradition):
@@ -26,7 +26,7 @@ distinguishes indicative from subjunctive complementation:
   ordering or comparison among alternatives — preference, doxastic
   ranking, intention.
 
-@cite{portner-2018}'s unification of these two: *both intuitions are
+[portner-2018]'s unification of these two: *both intuitions are
 correct* because they target two different POSW components. The
 **information component** (`cs`) underwrites Truth-style universal
 quantification (`POSW.boxCs`); the **preference component** (`le`)
@@ -37,8 +37,8 @@ We add a third operator `.interrogative` for question-embedding
 predicates (`wonder`, `ask`, `investigate`), which select for clauses
 *settled by the open question* — clauses with constant truth value
 within each cell of the inquiry partition (`POSWQ.boxAns`,
-@cite{groenendijk-stokhof-1984} answerhood). Question embedding is
-not part of @cite{portner-2018}'s verbal-mood unification proper,
+[groenendijk-stokhof-1984] answerhood). Question embedding is
+not part of [portner-2018]'s verbal-mood unification proper,
 which is restricted to declarative complementation; we plug it into
 the same POSWQ substrate to give all three operators a uniform type.
 
@@ -59,7 +59,7 @@ lives in `Discourse/Scoreboard.lean`:
 | modal necessity  | `boxCs` (informational)      | `boxLe` (preferential)        | `boxAns` (answerhood)      |
 | verbal mood      | `interp .indicative`         | `interp .subjunctive`         | `interp .interrogative`    |
 
-The first two columns are @cite{portner-2018}'s; the third column is
+The first two columns are [portner-2018]'s; the third column is
 this library's extension (see `Semantics/Mood/POSWQ.lean`). The shared
 substrate is `POSWQ`. Verbal mood is the *modal* row read as a
 complementizer-domain selector triggered by lexical class of the
@@ -75,7 +75,7 @@ universe u
 variable {W : Type u}
 
 /-- The three verbal-mood operators on POSWQ. The `.indicative` and
-    `.subjunctive` cases are @cite{portner-2018}'s; `.interrogative`
+    `.subjunctive` cases are [portner-2018]'s; `.interrogative`
     is our extension to question-embedding predicates. The
     `crossLinguistic` and `neutral` cases of `MoodSelector`
     (Mood/Basic.lean) project to `none` via
@@ -91,9 +91,9 @@ inductive VerbalMoodOp where
   | subjunctive
   /-- Interrogative: answerhood with respect to the *inquiry*
       component (constant truth value per cell), à la
-      @cite{groenendijk-stokhof-1984}. Selected by question-embedding
+      [groenendijk-stokhof-1984]. Selected by question-embedding
       predicates (`wonder`, `ask`, `investigate`). Our extension —
-      not part of @cite{portner-2018}'s verbal-mood unification. -/
+      not part of [portner-2018]'s verbal-mood unification. -/
   | interrogative
   deriving DecidableEq, Repr
 
@@ -128,7 +128,7 @@ the constant-truth-per-cell property. The natural monotonicity for
 `boxAns` is *anti*-monotone in the inquiry partition (covered by
 `POSWQ.boxAns_anti`).
 
-This asymmetry is itself a content claim of @cite{portner-2018}'s
+This asymmetry is itself a content claim of [portner-2018]'s
 unification: the three operators have *different* natural ordering
 behaviors precisely because they consult different POSWQ components,
 which carry different lattice structures. -/
@@ -241,7 +241,7 @@ instance : Semantics.Mood.HasPOSWTarget VerbalMoodOp where
 `VerbalMoodOp` is in bijection with `POSWTarget`: each operator
 *exactly* picks out one POSW component, and conversely each component
 is targeted by *exactly* one operator. The biconditionals below are
-the type-level shadow of @cite{portner-2018}'s Indicative / Subjunctive
+the type-level shadow of [portner-2018]'s Indicative / Subjunctive
 Principles extended to interrogative — at the verbal-mood layer, mood
 selection and POSWQ-component selection are the same thing. -/
 
@@ -262,7 +262,7 @@ theorem verbal_mood_target_partition_iff_interrogative (m : VerbalMoodOp) :
 The `MoodSelector` enum (Mood/Basic.lean, taxonomic by predicate
 class — knowledge/belief, preference/desire, etc.) projects onto
 `VerbalMoodOp` for the predicate classes that select the *same*
-mood across @cite{portner-2018}'s indicative/subjunctive languages.
+mood across [portner-2018]'s indicative/subjunctive languages.
 Cross-linguistically variable selectors and mood-neutral predicates
 project to `none` — they are not committed to either quantification
 scheme by lexical-class membership alone.

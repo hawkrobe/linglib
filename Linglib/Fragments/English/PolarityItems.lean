@@ -13,10 +13,10 @@ Theory-neutral lexical entries for polarity-sensitive items:
 1. Licensing contexts: where the item can appear
 2. Strength: weak (DE) vs strong (anti-additive) NPIs
 3. Base quantificational force: underlying semantic type
-4. Scalar direction: strengthening vs attenuating (@cite{israel-1996})
-5. Scalar value: high vs low on the relevant scale (@cite{israel-2001})
-6. Canonicity: canonical vs inverted (@cite{israel-2001} §3)
-7. Likelihood effect: facilitating vs impeding (@cite{israel-2001} §4)
+4. Scalar direction: strengthening vs attenuating ([israel-1996])
+5. Scalar value: high vs low on the relevant scale ([israel-2001])
+6. Canonicity: canonical vs inverted ([israel-2001] §3)
+7. Likelihood effect: facilitating vs impeding ([israel-2001] §4)
 
 ## Theoretical Analyses
 
@@ -54,7 +54,7 @@ def any : PolarityItemEntry :=
   , canonicity := .canonical           -- low NPI = canonical
   , likelihoodEffect := .impeding      -- theme/patient role in typical use
   , alternativeType := .domain         -- D-MIN domain alternatives (Chierchia 2006)
-  , notes := "Dual NPI/FCI; obligatory domain alternatives yield universal-like FC. Also licensed in focus of 'only' (@cite{von-fintel-1999} ex. 10) and adversative complements (ex. 28b)"
+  , notes := "Dual NPI/FCI; obligatory domain alternatives yield universal-like FC. Also licensed in focus of 'only' ([von-fintel-1999] ex. 10) and adversative complements (ex. 28b)"
   }
 
 /-- "ever" - temporal NPI -/
@@ -69,7 +69,7 @@ def ever : PolarityItemEntry :=
   , scalarValue := .low               -- minimal temporal extent
   , canonicity := .canonical
   , alternativeType := .domain         -- D-MAX domain alternatives (Chierchia 2006)
-  , notes := "Temporal NPI; also in superlatives ('best ever'), focus of 'only' (@cite{von-fintel-1999} ex. 10), and adversative attitudes (ex. 28a)"
+  , notes := "Temporal NPI; also in superlatives ('best ever'), focus of 'only' ([von-fintel-1999] ex. 10), and adversative attitudes (ex. 28a)"
   }
 
 /-- "yet" - temporal NPI (different from "ever") -/
@@ -180,9 +180,9 @@ def until_ : PolarityItemEntry :=
   , notes := "Durative 'until' is NPI: 'didn't leave until 5'"
   }
 
-/-- "either" — additive strong NPI (@cite{rullmann-2003}, @cite{gajewski-2011}).
+/-- "either" — additive strong NPI ([rullmann-2003], [gajewski-2011]).
 
-    Per @cite{gajewski-2011} (exs. 39c, 40c, 41c, p. 120):
+    Per [gajewski-2011] (exs. 39c, 40c, 41c, p. 120):
     *Only John likes pancakes, either / *If Bill likes pancakes, either / *Mary
     is sorry that she likes pancakes, either — strong NPI ungrammatical under
     Strawson-DE / Strawson-AA operators despite vF1999 having shown those
@@ -192,7 +192,7 @@ def either_npi : PolarityItemEntry :=
   , polarityType := .npiStrong
   , baseForce := .additive
   , licensingContexts := [.negation, .nobody]
-  , notes := "Strong additive NPI per @cite{rullmann-2003}, @cite{gajewski-2011}: ungrammatical under SAA-only operators (only, conditional antecedents, emotive factives)"
+  , notes := "Strong additive NPI per [rullmann-2003], [gajewski-2011]: ungrammatical under SAA-only operators (only, conditional antecedents, emotive factives)"
   }
 
 -- ----------------------------------------------------------------------------

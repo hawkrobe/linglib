@@ -3,9 +3,9 @@ import Mathlib.Data.Set.Function
 
 /-!
 # Acquaintance and Conceptual Covers
-@cite{lewis-1979-attitudes} (de se / de re reduction via centered worlds);
-@cite{cresswell-vonstechow-1982} (de re belief generalized);
-@cite{aloni-2001} (conceptual covers); @cite{abusch-1997} (the temporal
+[lewis-1979-attitudes] (de se / de re reduction via centered worlds);
+[cresswell-vonstechow-1982] (de re belief generalized);
+[aloni-2001] (conceptual covers); [abusch-1997] (the temporal
 analogue: a "way of identifying a time" is the temporal time-concept
 licensing temporal de re).
 
@@ -33,7 +33,7 @@ namespace Semantics.Reference.Acquaintance
 
 open Core (Intension)
 
-/-- A conceptual cover (@cite{aloni-2001} §3.2): a set of intensions over
+/-- A conceptual cover ([aloni-2001] §3.2): a set of intensions over
     an evaluation index `Idx` representing the agent's available "ways of
     identifying" values of type `Res`.
 
@@ -49,7 +49,7 @@ def Cover.isExhaustiveOn {Idx Res : Type*} (C : Cover Idx Res)
     (dom : Set Res) : Prop :=
   ∀ p : Idx, Set.SurjOn (· p) C dom
 
-/-- @cite{lewis-1979-attitudes}'s acquaintance relation, generalized: `r` is
+/-- [lewis-1979-attitudes]'s acquaintance relation, generalized: `r` is
     acquainted-with at index `p` (relative to `C`) when some concept in
     `C` picks out `r` at `p`.
 
@@ -58,7 +58,7 @@ def isAcquaintedWith {Idx Res : Type*}
     (r : Res) (C : Cover Idx Res) (p : Idx) : Prop :=
   r ∈ ((fun (c : Intension Idx Res) => c p) '' C)
 
-/-- @cite{aloni-2001}'s name cover: rigid concepts (one per entity).
+/-- [aloni-2001]'s name cover: rigid concepts (one per entity).
     Each entity is identified by its constant intension `Intension.rigid`.
     This is the "de re" cover — entities thought of as themselves. -/
 def nameCover {Idx Res : Type*} (dom : Set Res) : Cover Idx Res :=

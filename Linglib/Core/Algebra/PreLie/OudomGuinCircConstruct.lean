@@ -60,7 +60,7 @@ detour.
 
 ## References
 
-* @cite{oudom-guin-2008} Def 2.4 + Lemma 2.5.
+* [oudom-guin-2008] Def 2.4 + Lemma 2.5.
 -/
 
 namespace PreLie
@@ -822,7 +822,7 @@ private theorem circTMultilinear_symm_exterior_adj (R : Type) [CommRing R]
     `circTMultilinear R T (n+1)` is invariant under
     `Equiv.swap (Fin.castSucc i) (Fin.last n)`.
 
-    **OG-paper-derived plan** (after reading @cite{oudom-guin-2008} Lemma 2.5
+    **OG-paper-derived plan** (after reading [oudom-guin-2008] Lemma 2.5
     proof, page 5). Substantially cleaner than the recursive-cancellation
     approach. Outline:
 
@@ -858,7 +858,7 @@ private theorem circTMultilinear_symm_exterior_adj (R : Type) [CommRing R]
     via `circT_succ_succ_snoc_eval` (six-term decomposition) +
     `sixTerm_symm` (algebraic symmetry).
 
-    Reference: @cite{oudom-guin-2008} Lemma 2.5 proof, p. 5. -/
+    Reference: [oudom-guin-2008] Lemma 2.5 proof, p. 5. -/
 private theorem circTMultilinear_symm_exterior (R : Type) [CommRing R]
     {L : Type} [RightPreLieRing L] [RightPreLieAlgebra R L]
     (T : L) (n : ℕ) (i : Fin n)

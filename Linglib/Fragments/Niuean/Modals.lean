@@ -3,7 +3,7 @@ import Linglib.Semantics.Modality.Typology
 /-!
 # Niuean Modal Inventory
 
-@cite{matthewson-2016} @cite{matthewson-et-al-2012} @cite{seiter-1980}
+[matthewson-2016] [matthewson-et-al-2012] [seiter-1980]
 
 Niuean (Polynesian, ISO 639-3 `niu`) modal system. Niuean exemplifies
 a typological pattern where force distinctions are encoded in the
@@ -15,34 +15,34 @@ epistemic modal covers both force values).
 
 | Modal   | Domain         | Force           | Source                         |
 |---------|---------------|-----------------|--------------------------------|
-| liga    | epistemic     | poss + nec      | @cite{matthewson-et-al-2012}   |
-| maeke   | circumstantial| possibility     | @cite{seiter-1980} p. 140      |
-| lata    | circumstantial| necessity       | @cite{seiter-1980} p. 133      |
+| liga    | epistemic     | poss + nec      | [matthewson-et-al-2012]   |
+| maeke   | circumstantial| possibility     | [seiter-1980] p. 140      |
+| lata    | circumstantial| necessity       | [seiter-1980] p. 133      |
 
-## Key data (@cite{matthewson-2016} §18.5, examples 64–68)
+## Key data ([matthewson-2016] §18.5, examples 64–68)
 
 (64) *liga kua fano tei* — 'He might have left.'
-     (@cite{matthewson-et-al-2012} p. 224)
+     ([matthewson-et-al-2012] p. 224)
 
 (65) *Hí ika a Tom he aho nei ... liga malolo a ia*
      'Tom is fishing today ... he's probably well.'
-     (@cite{matthewson-et-al-2012} p. 228)
+     ([matthewson-et-al-2012] p. 228)
 
 (66) *ne liga kua veli hifo e tama ke he pelapela*
      'The boy must have fallen in the mud.'
-     (@cite{seiter-1980} p. 13)
+     ([seiter-1980] p. 13)
 
 (67) *kua maeke he tama ia ke taute pasikala afi*
      'That child is able to fix motorbikes.'
-     (@cite{seiter-1980} p. 140)
+     ([seiter-1980] p. 140)
 
 (68) *lata ke ō a tautolu he aho nei ki Queen Street*
      'We should go to Queen Street today.'
-     (@cite{seiter-1980} p. 133)
+     ([seiter-1980] p. 133)
 
 ## Typological significance
 
-@cite{matthewson-2016} §18.5: Niuean tests whether epistemic modals
+[matthewson-2016] §18.5: Niuean tests whether epistemic modals
 are more likely to lack duals than circumstantial modals. The pattern —
 general-purpose epistemic + dual circumstantial — is consistent with
 Gitksan (variable-force epistemics, dual circumstantials) and with the
@@ -63,16 +63,16 @@ private abbrev pc := ForceFlavor.mk .possibility .circumstantial
 /-! ## Modal expressions -/
 
 /-- General-purpose epistemic modal: usable in both possibility and
-    necessity contexts. @cite{matthewson-et-al-2012}.
+    necessity contexts. [matthewson-et-al-2012].
     Translatable as 'might', 'probably', 'must' depending on context. -/
 def liga : ModalExpression := ⟨"liga", [pe, ne]⟩
 
 /-- Circumstantial possibility modal ('able to', 'can').
-    @cite{seiter-1980} p. 140. -/
+    [seiter-1980] p. 140. -/
 def maeke : ModalExpression := ⟨"maeke", [pc]⟩
 
 /-- Circumstantial necessity modal ('should', 'must').
-    @cite{seiter-1980} p. 133. -/
+    [seiter-1980] p. 133. -/
 def lata : ModalExpression := ⟨"lata", [nc]⟩
 
 def allExpressions : List ModalExpression := [liga, maeke, lata]

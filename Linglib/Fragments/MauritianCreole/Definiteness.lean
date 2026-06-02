@@ -2,11 +2,11 @@ import Linglib.Core.Nominal.Determiner
 
 /-!
 # Mauritian Creole Definiteness Fragment
-@cite{schwarz-2013}
+[schwarz-2013]
 
 Mauritian Creole (French-lexified creole, ISO `mfe`). A single post-nominal
 **strong** definite clitic *la* (familiarity/anaphoric); uniqueness definites
-are bare nominals (no weak article). Under @cite{schwarz-2013} §4.1 this is a
+are bare nominals (no weak article). Under [schwarz-2013] §4.1 this is a
 strong-article-only language → the `.markedAnaphoric` Moroney cell.
 -/
 

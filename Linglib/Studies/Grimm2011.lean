@@ -3,10 +3,10 @@ import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Studies.Aissen2003
 
 /-!
-# @cite{grimm-2011}: Semantics of Case — Lattice Predictions
-@cite{grimm-2011} @cite{aissen-2003} @cite{von-heusinger-2008}
+# [grimm-2011]: Semantics of Case — Lattice Predictions
+[grimm-2011] [aissen-2003] [von-heusinger-2008]
 
-Study file connecting @cite{grimm-2011}'s agentivity lattice
+Study file connecting [grimm-2011]'s agentivity lattice
 (`Semantics/Events/AgentivityLattice.lean`) to the differential
 object marking profiles in `Studies/Aissen2003.lean`.
 
@@ -20,7 +20,7 @@ object marking profiles in `Studies/Aissen2003.lean`.
    {animate, human}, but Spanish only marks {human}.
 
 3. **Two frameworks, same predictions**: the lattice-derived DOM is
-   always monotone in @cite{aissen-2003}'s sense, and the lattice's
+   always monotone in [aissen-2003]'s sense, and the lattice's
    canonical transitive prediction exactly matches Aissen's OT Type 2.
 
 4. **Full case region table**: every canonical verb is mapped through
@@ -30,7 +30,7 @@ object marking profiles in `Studies/Aissen2003.lean`.
 5. **Verb class effect**: the lattice predicts that creation verb objects
    are entirely outside the transitivity region (DOM inapplicable), while
    contact and consumption verbs have objects in the canonical patient
-   region. This connects to @cite{von-heusinger-2008}'s observation that
+   region. This connects to [von-heusinger-2008]'s observation that
    DOM regularized earliest for agent-patient verbs.
 -/
 
@@ -45,7 +45,7 @@ open Aissen2003
 -- § 0. DOM Substrate: animacy → agentivity, DOM predicate
 -- ════════════════════════════════════════════════════
 
-/-! @cite{grimm-2011} p.534: "it is a combination of verbal and nominal
+/-! [grimm-2011] p.534: "it is a combination of verbal and nominal
     properties which trigger DOM." This substrate maps nominal animacy to
     a baseline agentive position on the lattice, combines it with verbal
     persistence to predict a case region, and packages the residual
@@ -179,7 +179,7 @@ theorem creation_outside_transitivity (a : AnimacyLevel) :
     subject (NOM/ERG) and object (ACC/ABS or below), and DOM can
     regularize — it is redundant for disambiguation.
 
-    @cite{von-heusinger-2008}: *matar* 'kill' (Class 1, subject →
+    [von-heusinger-2008]: *matar* 'kill' (Class 1, subject →
     NOM/ERG) regularized DOM centuries before *ver* 'see' (Class 2,
     subject → oblique). -/
 def SubjectInAgentRegion (subjProfile : EntailmentProfile) : Prop :=
@@ -205,7 +205,7 @@ theorem build_subject_in_agent_region :
 
 -- ── §0.7 Monotonicity: Aissen's staircase from lattice structure ──
 
-/-- The lattice reproduces @cite{aissen-2003}'s monotonicity prediction:
+/-- The lattice reproduces [aissen-2003]'s monotonicity prediction:
     if DOM is predicted for a lower animacy level, it is also predicted
     for all higher levels. Universally quantified over persistence.
 
@@ -241,7 +241,7 @@ theorem totalPersistence_all_outside_accAbs (a : AnimacyLevel) :
   cases a <;> decide
 
 -- ════════════════════════════════════════════════════
--- § 1. DOM Profile Matching (@cite{grimm-2011} §4)
+-- § 1. DOM Profile Matching ([grimm-2011] §4)
 -- ════════════════════════════════════════════════════
 
 /-! The lattice predicts DOM when an object is in the transitivity region
@@ -301,12 +301,12 @@ theorem animacy_dom_within_lattice :
         else true)) = true := by decide
 
 -- ════════════════════════════════════════════════════
--- § 2. Cross-Framework Monotonicity (Lattice ↔ @cite{aissen-2003})
+-- § 2. Cross-Framework Monotonicity (Lattice ↔ [aissen-2003])
 -- ════════════════════════════════════════════════════
 
-/-! @cite{aissen-2003} derives DOM monotonicity from OT constraint
+/-! [aissen-2003] derives DOM monotonicity from OT constraint
     interaction (harmonic alignment of iconicity and economy constraints).
-    @cite{grimm-2011} derives it from lattice geometry (animacy maps
+    [grimm-2011] derives it from lattice geometry (animacy maps
     monotonically to agentivity, and `toCaseRegion` preserves the boundary).
     Two independent frameworks, same prediction. -/
 
@@ -321,7 +321,7 @@ def latticeDOM (p : PersistenceLevel) : DOMProfile :=
     marks := λ a _ => decide (DomPredictedByLattice a p) }
 
 /-- Every lattice-derived DOM profile is monotone in
-    @cite{aissen-2003}'s sense (upper set in the bidimensional grid).
+    [aissen-2003]'s sense (upper set in the bidimensional grid).
     Universally quantified over all 5 persistence levels.
 
     This connects the lattice's geometric structure to OT's constraint-based
@@ -334,7 +334,7 @@ theorem lattice_dom_always_monotone (p : PersistenceLevel) :
   cases p <;> decide
 
 /-- The lattice's canonical transitive prediction matches
-    @cite{aissen-2003}'s OT Type 2 (Hu + An, not In). Two independent
+    [aissen-2003]'s OT Type 2 (Hu + An, not In). Two independent
     theories converge on the Russian pattern. -/
 theorem lattice_matches_aissen_type2 :
     DomPredictedByLattice .human .quPersBeginning ∧
@@ -347,8 +347,8 @@ theorem lattice_matches_aissen_type2 :
 -- ════════════════════════════════════════════════════
 
 /-! Every canonical verb with an `EntailmentProfile` is mapped through
-    the lattice to a case region. This connects @cite{dowty-1991}'s
-    entailment profiles to @cite{grimm-2011}'s case theory:
+    the lattice to a case region. This connects [dowty-1991]'s
+    entailment profiles to [grimm-2011]'s case theory:
 
     | Verb | Subject region | Object region |
     |------|---------------|--------------|
@@ -416,7 +416,7 @@ theorem see_case_region :
 
 /-- buy/sell: both subjects → NOM/ERG (both have instigation via causation).
     The lattice predicts both are prototypical agents — consistent with
-    @cite{dowty-1991}'s prediction that buy/sell allow alternation. -/
+    [dowty-1991]'s prediction that buy/sell allow alternation. -/
 theorem buy_sell_case_regions :
     (GrimmNode.fromSubjectProfile buySubjectProfile).toCaseRegion = .nomErg ∧
     (GrimmNode.fromSubjectProfile sellSubjectProfile).toCaseRegion = .nomErg :=
@@ -426,9 +426,9 @@ theorem buy_sell_case_regions :
 -- § 4. Verb Persistence and Transitivity
 -- ════════════════════════════════════════════════════
 
-/-! @cite{grimm-2011}'s Tsunoda hierarchy distinguishes verbs by the
-    persistence of their object. This connects @cite{dowty-1991}'s
-    P-Patient entailments to @cite{grimm-2011}'s persistence levels:
+/-! [grimm-2011]'s Tsunoda hierarchy distinguishes verbs by the
+    persistence of their object. This connects [dowty-1991]'s
+    P-Patient entailments to [grimm-2011]'s persistence levels:
 
     | Verb | P-Patient features | Persistence | Tsunoda class |
     |------|-------------------|-------------|--------------|
@@ -468,10 +468,10 @@ theorem transitivity_membership :
   ⟨by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
--- § 5. Verb Class Effect on DOM (@cite{von-heusinger-2008})
+-- § 5. Verb Class Effect on DOM ([von-heusinger-2008])
 -- ════════════════════════════════════════════════════
 
-/-! @cite{von-heusinger-2008} observes that DOM regularized diachronically
+/-! [von-heusinger-2008] observes that DOM regularized diachronically
     in Spanish at different rates depending on verb class:
 
     - *matar* 'kill' (Class 1, agent-patient): DOM regularized first
@@ -591,7 +591,7 @@ theorem instigation_is_the_feature :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 8. Russian Genitive/Accusative Alternation (@cite{grimm-2011} §5.2)
+-- § 8. Russian Genitive/Accusative Alternation ([grimm-2011] §5.2)
 -- ════════════════════════════════════════════════════
 
 /-- The Russian genitive/accusative alternation arises when the object
@@ -628,7 +628,7 @@ theorem genAcc_specific_is_acc :
     russianGenAcc.specificReading.toCaseRegion = .accAbs := by decide
 
 -- ════════════════════════════════════════════════════
--- § 9. Semantic Opposition (@cite{grimm-2011} §3, p.530)
+-- § 9. Semantic Opposition ([grimm-2011] §3, p.530)
 -- ════════════════════════════════════════════════════
 
 /-- Semantic opposition between two GrimmNodes. Transitivity increases
@@ -651,7 +651,7 @@ theorem classI_more_opposition_than_classII :
       (TransitivityClass.contact.patientNode) := by decide
 
 -- ════════════════════════════════════════════════════
--- § 10. Canonical Verb-Agentivity Chain (@cite{grimm-2011} §2.2, p.523–524)
+-- § 10. Canonical Verb-Agentivity Chain ([grimm-2011] §2.2, p.523–524)
 -- ════════════════════════════════════════════════════
 
 /-! Illustrates the agentivity lattice with a chain of canonical verbs,
@@ -731,7 +731,7 @@ theorem fromEntailmentProfile_drops_patient :
 
 /-- **wellFormedPair is not preserved by the Grimm projection.**
 
-    @cite{dowty-1991}'s `wellFormedPair` constrains inter-argument entailment
+    [dowty-1991]'s `wellFormedPair` constrains inter-argument entailment
     pairings: causation→CoS, movement→stationary, IE→DE. These are
     *relational* constraints between two profiles.
 
@@ -755,7 +755,7 @@ theorem wellFormedPair_not_preserved_by_grimm :
    by decide, by decide, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 13. Tsunoda Hierarchy Membership (@cite{grimm-2011} §3)
+-- § 13. Tsunoda Hierarchy Membership ([grimm-2011] §3)
 -- ════════════════════════════════════════════════════
 
 /-- Class I patients (break) are in the transitivity region. -/
@@ -796,7 +796,7 @@ theorem classIII_patient_le_classI :
     TransitivityClass.resultativeEffective.patientNode := by decide
 
 -- ════════════════════════════════════════════════════
--- § 14. Named Participants & Alignment (@cite{grimm-2011} §4)
+-- § 14. Named Participants & Alignment ([grimm-2011] §4)
 -- ════════════════════════════════════════════════════
 
 /-- Maximal agent maps to NOM/ERG region. -/
@@ -862,7 +862,7 @@ theorem sweep_basic_agentivity :
     = ⟨false, false, false, true⟩ := rfl
 
 /-- sweep broom subject → agentivity {V,S,I,M} (instrument lexicalization
-    adds full agentivity, @cite{rappaport-hovav-levin-2024}). -/
+    adds full agentivity, [rappaport-hovav-levin-2024]). -/
 theorem sweep_broom_agentivity :
     AgentivityNode.fromEntailmentProfile sweepBroomSubjectProfile
     = ⟨true, true, true, true⟩ := rfl

@@ -21,7 +21,7 @@ import Linglib.Fragments.French.Comparison
 
 /-!
 # Stassen 1985: Comparison and Universal Grammar
-@cite{stassen-1985}
+[stassen-1985]
 
 Stassen's central claim is that the typology of comparative constructions is
 **determined by** the typology of temporal chaining constructions. Comparatives
@@ -35,7 +35,7 @@ The 1985 book (110-language sample) classifies comparatives into six types:
 **separative**, **allative**, **locative** (the three adverbial subtypes
 collectively making up the "locational" category in WALS 2013), plus
 **exceed**, **conjoined**, and **particle**. The WALS 2013 typology
-(@cite{stassen-2013}, in the substrate `Linglib/Typology/Comparison.lean`)
+([stassen-2013], in the substrate `Linglib/Typology/Comparison.lean`)
 collapses the spatial triad into single `locational`, dropping the spatial-
 relation distinction that drives Stassen's explanatory universals connecting
 comparison to temporal chaining.
@@ -86,7 +86,7 @@ open Typology.Comparison (ComparativeEntry)
 -- § 0. The Stassen 1985 six-way typology
 -- ════════════════════════════════════════════════════
 
-/-- The six comparative construction types of @cite{stassen-1985} Ch 2.
+/-- The six comparative construction types of [stassen-1985] Ch 2.
 
     Finer than the WALS 2013 types (`Typology.Comparison.ComparativeType`):
     the three adverbial subtypes (separative, allative, locative) are
@@ -106,7 +106,7 @@ inductive ComparativeType1985 where
   | separative | allative | locative | exceed | conjoined | particle
   deriving DecidableEq, BEq, Repr
 
-/-- Map @cite{stassen-1985} types to the coarser WALS 2013 types
+/-- Map [stassen-1985] types to the coarser WALS 2013 types
     (`Typology.Comparison.ComparativeType`). -/
 def ComparativeType1985.toWALS :
     ComparativeType1985 → Typology.Comparison.ComparativeType

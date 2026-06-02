@@ -4,7 +4,7 @@ import Mathlib.Data.Fintype.Basic
 /-!
 # Kripke models for modal logic
 
-@cite{vaananen-2008}
+[vaananen-2008]
 
 A **Kripke model** for modal logic over a finite world-type `W` and an
 atom-type `Atom`: an accessibility relation `R : W → Finset W` together

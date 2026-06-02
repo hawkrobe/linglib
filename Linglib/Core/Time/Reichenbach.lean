@@ -3,10 +3,10 @@ import Linglib.Core.Time.System
 
 /-!
 # Reichenbach's Temporal Framework
-@cite{kiparsky-2002} @cite{klein-1994} @cite{reichenbach-1947}
+[kiparsky-2002] [klein-1994] [reichenbach-1947]
 
-@cite{reichenbach-1947} / @cite{klein-1994} tense–aspect parameters, extended with
-@cite{kiparsky-2002}'s perspective time P.
+[reichenbach-1947] / [klein-1994] tense–aspect parameters, extended with
+[kiparsky-2002]'s perspective time P.
 
 Three (four) distinguished times:
 - **S** (Speech time): When the utterance occurs
@@ -38,10 +38,10 @@ open Core.Time.AllenRelation (precedesSet equalSet)
 
 /--
 Reichenbach's temporal parameters for tense/aspect analysis,
-extended with @cite{kiparsky-2002}'s perspective time P.
+extended with [kiparsky-2002]'s perspective time P.
 
 - `speechTime`: When the utterance is made (S)
-- `perspectiveTime`: Origin of temporal deixis (P, @cite{kiparsky-2002})
+- `perspectiveTime`: Origin of temporal deixis (P, [kiparsky-2002])
 - `referenceTime`: The time being talked about (R, Klein's "topic time")
 - `eventTime`: When the described event occurs (E)
 
@@ -64,7 +64,7 @@ namespace ReichenbachFrame
 variable {Time : Type*} [LinearOrder Time]
 
 /-- PAST: R < P (reference time precedes perspective time).
-    @cite{kiparsky-2002}: tense locates R relative to P, not S. -/
+    [kiparsky-2002]: tense locates R relative to P, not S. -/
 def isPast (f : ReichenbachFrame Time) : Prop :=
   f.referenceTime < f.perspectiveTime
 

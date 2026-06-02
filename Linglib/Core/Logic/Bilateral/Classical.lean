@@ -3,7 +3,7 @@ import Mathlib.Logic.Function.Basic
 /-!
 # Classical bilateral satisfaction — `SatDuality`
 
-@cite{cobreros-etal-2012} @cite{ripley-2012}
+[cobreros-etal-2012] [ripley-2012]
 
 The **classical** bilateral pattern: a satisfaction relation
 `sat : Model → Mode → Formula → Prop` parameterised by `Mode`, with a
@@ -16,7 +16,7 @@ M, m ⊨ ¬φ  ↔  ¬(M, dual m ⊨ φ)
 
 The Mode parameter generalises:
 - **Classical bivalent**: `Mode := Bool`, `dual := not`
-- **TCS strict-tolerant** (`@cite{cobreros-etal-2012}`): `Mode := {strict, tolerant}`,
+- **TCS strict-tolerant** (`[cobreros-etal-2012]`): `Mode := {strict, tolerant}`,
   `dual` swaps them
 - **LP / RM3**: `Mode := {true, false, both}`, `dual` swaps the first two
 

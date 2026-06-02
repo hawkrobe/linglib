@@ -4,7 +4,7 @@ import Mathlib.Order.Basic
 
 /-!
 # Metalinguistic Degrees
-@cite{rudolph-kocurek-2024}
+[rudolph-kocurek-2024]
 
 Degree-theoretic formulation of metalinguistic gradability (Supplement §C).
 The revised semantics (`evalRevised`) induces a degree structure on
@@ -21,7 +21,7 @@ an index ⟨≤, i, w⟩) is the equivalence class of its denotation set
 
 This connects the expressivist framework to a proper algebraic structure
 backed by Mathlib's `Setoid`, `Quotient`, and order theory. The metalinguistic
-degree construction parallels @cite{klein-1980}'s emergent degrees
+degree construction parallels [klein-1980]'s emergent degrees
 (see `Hierarchy.lean:nondistinct_iff_equal_measure`), but operates on
 *interpretations* rather than *entities*.
 -/

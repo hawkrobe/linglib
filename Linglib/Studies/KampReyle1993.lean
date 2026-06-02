@@ -4,7 +4,7 @@ import Mathlib.Tactic.FinCases
 
 /-!
 # Kamp & Reyle (1993): From Discourse to Logic
-@cite{kamp-reyle-1993}
+[kamp-reyle-1993]
 
 K&R's worked examples, evaluated through the faithful model-theoretic DRS core
 (`Semantics/Dynamic/DRS/`). Each truth-condition is a theorem about the substrate

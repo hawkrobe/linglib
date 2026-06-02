@@ -6,7 +6,7 @@ import Linglib.Semantics.Gradability.Classification
 
 `LicensedCoercion` and `ParteeReanalysis`: type-level architecture for
 noun-extension shifts under the Non-Vacuity Principle and Head Primacy
-Principle of @cite{kamp-partee-1995}. Consumed by
+Principle of [kamp-partee-1995]. Consumed by
 `Studies/Partee2010.lean`.
 
 ## Main definitions
@@ -17,8 +17,8 @@ Principle of @cite{kamp-partee-1995}. Consumed by
 
 ## References
 
-* @cite{kamp-partee-1995} formulae 18 (NVP), 20 (HPP), p. 161.
-* @cite{partee-2010} § 4.
+* [kamp-partee-1995] formulae 18 (NVP), 20 (HPP), p. 161.
+* [partee-2010] § 4.
 -/
 
 namespace Semantics.Composition.Coercion

@@ -1,7 +1,7 @@
 import Linglib.Semantics.Genericity.GenericsDynamic
 
 /-!
-# @cite{kirkpatrick-2024}: The Dynamics of Generics
+# [kirkpatrick-2024]: The Dynamics of Generics
 
 James Ravi Kirkpatrick, "The Dynamics of Generics."
 *Journal of Semantics* 40(4), 2024. 523–548.
@@ -14,7 +14,7 @@ using a dynamic semantic theory where generics expand a "modal horizon."
 - **Sobel sequence**: "Ravens are black; but albino ravens aren't." (felicitous)
 - **Reverse Sobel**: "#Albino ravens aren't black; but ravens are." (infelicitous)
 
-Existing static theories (Cohen's probabilistic account, @cite{cohen-1999a};
+Existing static theories (Cohen's probabilistic account, [cohen-1999a];
 Greenberg's normality-based account; Sterken's indexical approach) assign
 equivalent truth conditions to both orders and cannot explain the asymmetry.
 
@@ -33,9 +33,9 @@ makes exceptional individuals salient before the general claim is assessed.
 
 ## Connection to other Generics studies
 
-- @cite{cohen-1999a} (`Studies/Cohen1999.lean`): static probabilistic GEN
+- [cohen-1999a] (`Studies/Cohen1999.lean`): static probabilistic GEN
   with threshold 0.5 — cannot explain order effects
-- @cite{tessler-goodman-2019} (`Studies/TesslerGoodman2019.lean`): RSA model
+- [tessler-goodman-2019] (`Studies/TesslerGoodman2019.lean`): RSA model
   explaining prevalence-based judgments — complementary, not competing
 -/
 
@@ -321,9 +321,9 @@ arises: the subset relation between restrictors (albino raven ⊆ raven)
 creates asymmetric blocking in horizon evolution. The abstract
 impossibility theorem (`commutative_implies_equal_verdicts` in
 `Generics.lean`) then rules out ANY commutative framework — including
-@cite{veltman-1996}'s `normallyUpdate` — from modeling this asymmetry.
+[veltman-1996]'s `normallyUpdate` — from modeling this asymmetry.
 
-@cite{veltman-1996}'s `normallyUpdate` is commutative
+[veltman-1996]'s `normallyUpdate` is commutative
 (`normallyUpdate_comm` in `UpdateSemantics/Default.lean`), meaning that
 processing "normally (ravens are black)" then "normally (albino ravens
 aren't black)" produces the same expectation state as the reverse order.
@@ -339,7 +339,7 @@ def allRavens : List Raven := [.normal1, .normal2, .albino]
 
 /-- Normality ordering on ravens: normal ravens are equally normal;
     the albino raven is less normal than both. This encodes the
-    normality intuition that @cite{kirkpatrick-2024}'s theory relies on:
+    normality intuition that [kirkpatrick-2024]'s theory relies on:
     normal-colored ravens are the "default" for raven-kind.
 
     `ravenNormality e₁ e₂` means `e₁` is at least as normal as `e₂`. -/
@@ -398,9 +398,9 @@ theorem fromPredicate_agrees_fromOrder :
 
 -- ═══ Static Theory Impossibility (§3) ═══
 
-/-! @cite{kirkpatrick-2024} §3 argues that static theories — @cite{cohen-1999a}'s
-probabilistic account, @cite{greenberg-2003}'s normality-based account,
-@cite{sterken-2015}'s indexical approach — all fail to predict the Sobel
+/-! [kirkpatrick-2024] §3 argues that static theories — [cohen-1999a]'s
+probabilistic account, [greenberg-2003]'s normality-based account,
+[sterken-2015]'s indexical approach — all fail to predict the Sobel
 asymmetry. The formal reason: static theories evaluate each generic
 independently (no state threading), so the conjunction of truth values
 is commutative. If both generics are independently true, both orders
@@ -420,7 +420,7 @@ theorem static_order_irrelevant {α : Type} (truth : α → Prop) (g₁ g₂ : �
     (= statically), yet the dynamic theory distinguishes the orders.
 
     Static theories predict `true ∧ true` for both orders and therefore
-    cannot model the asymmetry that @cite{kirkpatrick-2024}'s dynamic
+    cannot model the asymmetry that [kirkpatrick-2024]'s dynamic
     theory captures via horizon expansion and blocking. -/
 theorem static_vs_dynamic_divergence :
     -- Both true in isolation (static prediction: both orders felicitous)

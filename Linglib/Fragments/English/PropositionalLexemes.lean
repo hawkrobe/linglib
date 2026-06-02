@@ -2,7 +2,7 @@ import Linglib.Dialogue.KOS.Defs
 
 /-!
 # Propositional Lexemes
-@cite{ginzburg-2012} Appendix C (exx. 10–12)
+[ginzburg-2012] Appendix C (exx. 10–12)
 
 Propositional lexemes are words whose meaning is defined by reference to
 the DGB state — they cannot be interpreted without knowing what question
@@ -60,7 +60,7 @@ structure PropLexeme where
   polarity : Polarity
   /-- Informal description of the content rule -/
   contentRule : String
-  /-- Source in @cite{ginzburg-2012} -/
+  /-- Source in [ginzburg-2012] -/
   source : String := ""
   deriving Repr, DecidableEq
 
@@ -69,7 +69,7 @@ structure PropLexeme where
 -- ════════════════════════════════════════════════════
 
 /-- "yes" — propositional abstract of MaxQUD.
-@cite{ginzburg-2012} §7.5, ex. 21 (p. 232): content = max-qud([ ]).
+[ginzburg-2012] §7.5, ex. 21 (p. 232): content = max-qud([ ]).
 When MaxQUD = ?p (a polar question), max-qud([ ]) = p.
 DGB-PARAMS references max-qud : PolQuestion. -/
 def yes : PropLexeme where
@@ -80,7 +80,7 @@ def yes : PropLexeme where
   source := "§7.5, ex. 21"
 
 /-- "no" — negation of MaxQUD's propositional abstract.
-@cite{ginzburg-2012} §7.5, ex. 25 (p. 233): content is a proposition such that
+[ginzburg-2012] §7.5, ex. 25 (p. 233): content is a proposition such that
 NegProp(cont) ∧ SimpleAns(cont, max-qud).
 DGB-PARAMS references max-qud : PolQuestion. -/
 def no : PropLexeme where
@@ -91,7 +91,7 @@ def no : PropLexeme where
   source := "§7.5, ex. 25"
 
 /-- "mmh" / "uh-huh" — informal positive acknowledgment.
-@cite{ginzburg-2012} Appendix C. -/
+[ginzburg-2012] Appendix C. -/
 def mmh : PropLexeme where
   phon := "mmh"
   dgbRef := .maxPending
@@ -100,7 +100,7 @@ def mmh : PropLexeme where
   source := "Appendix C"
 
 /-- "huh" — clarification request.
-@cite{ginzburg-2012} Appendix C. -/
+[ginzburg-2012] Appendix C. -/
 def huh : PropLexeme where
   phon := "huh"
   dgbRef := .both
@@ -119,7 +119,7 @@ theorem all_have_content_rules :
     propLexemes.all (fun l => !l.contentRule.isEmpty) = true := by native_decide
 
 /-- yes and no both reference MaxQUD (not MaxPending directly).
-@cite{ginzburg-2012} §7.5: both derive content from max-qud via dgb-params. -/
+[ginzburg-2012] §7.5: both derive content from max-qud via dgb-params. -/
 theorem yes_no_reference_maxQUD :
     yes.dgbRef = .maxQUD ∧ no.dgbRef = .maxQUD := ⟨rfl, rfl⟩
 

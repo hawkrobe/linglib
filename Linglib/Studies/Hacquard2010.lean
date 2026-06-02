@@ -3,12 +3,12 @@ import Linglib.Semantics.Modality.EventRelativity
 
 /-!
 # Event-Relative Modality
-@cite{hacquard-2010} @cite{kratzer-1981} @cite{cinque-1999} @cite{cinque-2004} @cite{rizzi-1978}
+[hacquard-2010] [kratzer-1981] [cinque-1999] [cinque-2004] [rizzi-1978]
 
 ## Part I: Italian Restructuring
 
 Connects the Italian restructuring data (Fragments/Italian/Modals) to
-@cite{hacquard-2010}'s content licensing theory (EventRelativity §8).
+[hacquard-2010]'s content licensing theory (EventRelativity §8).
 
 ### The Argument
 
@@ -26,7 +26,7 @@ purely on its syntactic position, explained by content licensing.
 
 ## Part II: Event Projection and Unattested Pairs
 
-@cite{hacquard-2010}, §4.2: modals are keyed to (individual, time) pairs,
+[hacquard-2010], §4.2: modals are keyed to (individual, time) pairs,
 but not all combinations are attested. A modal must be keyed to the
 participants and running time of the MOST LOCAL event. Event projection
 (holder(e), τ(e)) derives the correct pair for each event binder,
@@ -112,7 +112,7 @@ appears high (with epistemic) and low (without epistemic). This rules
 out lexical ambiguity as an explanation — the flavor restriction follows
 from structural position alone.
 
-@cite{hacquard-2010}, §1: Italian *potere* and *dovere* express both
+[hacquard-2010], §1: Italian *potere* and *dovere* express both
 epistemic and root modality with the same lexical item, and the
 availability of epistemic readings tracks the syntactic position. -/
 theorem same_lexical_items :
@@ -152,7 +152,7 @@ theorem both_modals_restructure :
 -- § 6: The Unattested Pairs Restriction
 -- ============================================================================
 
-/-! @cite{hacquard-2010}, §4.2: modals are keyed to (individual, time)
+/-! [hacquard-2010], §4.2: modals are keyed to (individual, time)
 pairs, but not all combinations of individuals and times are attested.
 
 | Individual | Time | Attested? | Example |
@@ -172,7 +172,7 @@ the VP time, or the subject with the speech time. -/
 pair. This is why not all combinations are attested — pairs not
 projected by any event are systematically absent.
 
-@cite{hacquard-2010}, §4.2: "a modal seems to be relative to an
+[hacquard-2010], §4.2: "a modal seems to be relative to an
 individual and a time, but not all time/individual pairs are attested.
 Instead, the modal has to be keyed to the participants and running
 time of the most local event." -/
@@ -194,10 +194,10 @@ is DERIVED from content licensing, not stipulated.
 
 High modals (above AspP) bind to contentful events → epistemic
 available. Low modals (below AspP) bind by aspect to the VP event →
-no content → no epistemic. This dissolves @cite{cinque-1999}'s puzzle
+no content → no epistemic. This dissolves [cinque-1999]'s puzzle
 without dedicated functional heads for each modal flavor.
 
-@cite{hacquard-2010}, §6.3: "high modals tend to be epistemic and
+[hacquard-2010], §6.3: "high modals tend to be epistemic and
 low modals circumstantial, without having to stipulate two separate
 entries for each modal." -/
 theorem position_flavor_derived_not_stipulated :
@@ -221,7 +221,7 @@ do not. This is the key advantage of event-relative modality over
 pair-relative modality: the content licensing predicate `hasContent`
 discriminates events even when they project to similar pairs.
 
-@cite{hacquard-2010}, §6: "what sets speech and attitude events
+[hacquard-2010], §6: "what sets speech and attitude events
 apart from ordinary events is (what I am calling) their associated
 propositional 'content', which I take to be crucial for licensing
 epistemic modal bases." -/

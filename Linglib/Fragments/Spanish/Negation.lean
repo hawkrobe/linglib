@@ -2,8 +2,8 @@ import Linglib.Typology.Negation
 
 /-!
 # Spanish Negation Fragment
-@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
-@cite{zanuttini-1997}
+[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
+[zanuttini-1997]
 
 Spanish expresses standard negation with the preverbal particle *no*.
 Negation is **symmetric**: adding *no* introduces no structural changes

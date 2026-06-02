@@ -1,7 +1,7 @@
 import Linglib.Semantics.Events.CEM
 
 /-!
-# Stratified Reference @cite{champollion-2017}
+# Stratified Reference [champollion-2017]
 
 Champollion's unified Stratified Reference property `SR_{d,γ}` and the
 three specializations linglib uses.
@@ -42,7 +42,7 @@ direction, by Champollion's own design:
   time has SSR (split each event in halves) but fails CUM (two unit-
   length disjoint events sum to length 2).
 
-The contrast with Krifka @cite{krifka-1998} that Champollion makes in
+The contrast with Krifka [krifka-1998] that Champollion makes in
 Ch 6 is **SR vs. divisive-reference**, not SR vs. CUM. Champollion
 retains CUM as a baseline holding of all VPs and replaces Krifka's
 `≤_τ`-divisiveness diagnostic with the strictly weaker SR diagnostic.
@@ -67,11 +67,11 @@ atelicity diagnostic; CUM is the NP→VP propagation property.
 
 ## References
 
-* @cite{champollion-2017} (primary, all SR primitives + §2.7.2 lexical
+* [champollion-2017] (primary, all SR primitives + §2.7.2 lexical
   cumulativity stance + Ch 6 vs-Krifka argument)
-* @cite{krifka-1998} (the divisive-reference atelicity diagnostic SR
+* [krifka-1998] (the divisive-reference atelicity diagnostic SR
   replaces, per Champollion Ch 6)
-* @cite{link-1983} (the `*` algebraic-closure operator SR builds on)
+* [link-1983] (the `*` algebraic-closure operator SR builds on)
 -/
 
 namespace Semantics.Aspect.Stratified
@@ -81,10 +81,10 @@ open _root_.Mereology
 open Core.Time
 open Features
 
-/-! ### Stratified Reference (@cite{champollion-2017} eq. 16/17) -/
+/-! ### Stratified Reference ([champollion-2017] eq. 16/17) -/
 
 /-- Stratified Reference: the core unified property from
-    @cite{champollion-2017} eq. (16), with the binary-granularity
+    [champollion-2017] eq. (16), with the binary-granularity
     convention from eq. (17)'s γ-helper inlined.
 
     `SR d γ P x` holds iff `x` can be decomposed into `P`-parts `y` whose
@@ -127,11 +127,11 @@ def SR_univ {α β : Type*} [SemilatticeSup α]
 def AtomicGranularity {β : Type*} [PartialOrder β] : β → β → Prop :=
   fun inner _outer => Atom inner
 
-/-! ### SDR — Stratified Distributive Reference (@cite{champollion-2017} eq. 24) -/
+/-! ### SDR — Stratified Distributive Reference ([champollion-2017] eq. 24) -/
 
 /-- Stratified Distributive Reference: dimension is a thematic role θ,
     granularity is `Atom` on the inner image (the outer is unused —
-    atomicity is an absolute property). @cite{champollion-2017} eq. (24).
+    atomicity is an absolute property). [champollion-2017] eq. (24).
 
     SDR captures *distributivity*: "The boys each saw a movie" distributes
     over atomic agents.
@@ -146,7 +146,7 @@ def SDR_univ {α β : Type*} [SemilatticeSup α] [PartialOrder β]
     (θ : α → β) (P : α → Prop) : Prop :=
   ∀ x, P x → SDR θ P x
 
-/-! ### SSR — Stratified Subinterval Reference (@cite{champollion-2017} eq. 38) -/
+/-! ### SSR — Stratified Subinterval Reference ([champollion-2017] eq. 38) -/
 
 /-- Proper-subinterval granularity: inner runtime is a proper subinterval
     of outer runtime. The binary `γ` for SSR. -/
@@ -157,7 +157,7 @@ def SSRGranularity {Time : Type*} [LinearOrder Time]
 /-- Stratified Subinterval Reference: dimension is τ (runtime),
     granularity is proper-subinterval. `SSR P e` holds iff `e` can be
     built from `P`-parts with runtimes properly included in `τ e`.
-    @cite{champollion-2017} eq. (38).
+    [champollion-2017] eq. (38).
 
     SSR captures *atelicity*: predicates compatible with for-adverbials
     have SSR. "John ran for an hour" → run has SSR.
@@ -175,16 +175,16 @@ def SSR_univ {Time : Type*} [LinearOrder Time] [SemilatticeSup (Event Time)]
 /-! ### SMR — Stratified Measurement Reference -/
 
 /-! **Naming caveat.** "SMR" is linglib's name for the measurement
-    specialization of SR. @cite{champollion-2017} does not give this
+    specialization of SR. [champollion-2017] does not give this
     specialization a separate name — Ch 7 §7.4 writes it directly as
     `SR_{μ, λd.d < μ(x)}` (eqs. 18-26 for *thirty liters of water*,
     *five feet of snow*, *two degrees Celsius of global warming*, etc.).
 
     The strict-less-than granularity is Champollion's faithful translation
-    of @cite{schwarzschild-2006}'s monotonic measure function predicate
+    of [schwarzschild-2006]'s monotonic measure function predicate
     (Ch 7 eq. 8: `μ` is monotonic iff `a < b → μ(a) < μ(b)`), with
     Schwarzschild's intensive/extensive distinction
-    (cf. @cite{krifka-1998} Sec. 3.4) reduced to whether the resulting
+    (cf. [krifka-1998] Sec. 3.4) reduced to whether the resulting
     SMR presupposition is satisfiable on the given substance noun.
 -/
 
@@ -205,7 +205,7 @@ def SMR_univ {α β : Type*} [SemilatticeSup α] [Preorder β]
 
 /-! ### Distributivity Constraint -/
 
-/-- @cite{champollion-2017} Ch 4 §4.6 **Distributivity Constraint**
+/-- [champollion-2017] Ch 4 §4.6 **Distributivity Constraint**
     (restated in Ch 7 §7.4 for the measurement chapter):
     a distributive construction with Share `S`, Map `M`, granularity `γ`
     describing entity `x` is acceptable iff `SR_{M,γ}(S)(x)`. The same

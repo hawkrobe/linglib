@@ -1,6 +1,6 @@
 /-!
 # Generalised Surprisal Configuration
-@cite{giulianelli-etal-2026}
+[giulianelli-etal-2026]
 
 Enum-level configuration for the generalised surprisal family. The
 real-valued semantics of these enum tags lives in `IAS.lean`; this file
@@ -29,7 +29,7 @@ theorems.
 ## Main definitions
 
 - `SurprisalConfig`: Complete generalised surprisal parameter tuple
-- `standardSurprisal`: The configuration corresponding to @cite{levy-2008}
+- `standardSurprisal`: The configuration corresponding to [levy-2008]
 - `informationValue`: The IAS configuration at a given (horizon, level)
 - `ias_recovers_surprisal`: Standard surprisal is a special case of IAS
 -/
@@ -59,7 +59,7 @@ inductive ScoringFn where
   /-- d_r(a, w): representational distance. With identity → information value. -/
   | distance
   /-- sim(r(a), r(w)): semantic similarity.
-      @cite{meister-giulianelli-pimentel-2024} -/
+      [meister-giulianelli-pimentel-2024] -/
   | similarity
   deriving DecidableEq, Repr
 
@@ -103,7 +103,7 @@ structure SurprisalConfig where
   deriving DecidableEq, Repr
 
 /-- Standard surprisal: −log P(next word).
-@cite{levy-2008} @cite{smith-levy-2013} -/
+[levy-2008] [smith-levy-2013] -/
 def standardSurprisal : SurprisalConfig where
   warp    := .negLog
   scoring := .indicator
@@ -111,7 +111,7 @@ def standardSurprisal : SurprisalConfig where
   level   := .predictive
 
 /-- Incremental information value at temporal-representational resolution (h, l).
-@cite{giulianelli-etal-2026} -/
+[giulianelli-etal-2026] -/
 def informationValue (h : ForecastHorizon) (l : RepLevel) : SurprisalConfig where
   warp    := .identity
   scoring := .distance

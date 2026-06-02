@@ -1,9 +1,9 @@
 import Linglib.Syntax.Minimalist.PersonGeometry
 
 /-!
-# Cyclic Agree @cite{bejar-rezac-2009}
+# Cyclic Agree [bejar-rezac-2009]
 
-@cite{bejar-rezac-2009} derive person hierarchy (PH) effects from three
+[bejar-rezac-2009] derive person hierarchy (PH) effects from three
 independently motivated mechanisms:
 
 1. **Articulated φ-features**: person is decomposed into hierarchical
@@ -31,9 +31,9 @@ The interaction of probe articulation and cyclic Agree derives:
 Two attested geometries for the innermost feature:
 
 - **Standard (1>2>3)**: [speaker] distinguishes 1st from 2nd. Used by
-  Basque, Georgian (@cite{bejar-rezac-2009} Table 2B).
+  Basque, Georgian ([bejar-rezac-2009] Table 2B).
 - **Addressee (2>1>3)**: [addressee] distinguishes 2nd from 1st. Used by
-  Nishnaabemwin, Mohawk (@cite{bejar-rezac-2009} Table 2C).
+  Nishnaabemwin, Mohawk ([bejar-rezac-2009] Table 2C).
 
 ## Person Licensing and Repair
 
@@ -56,8 +56,8 @@ classification predicts which languages show differential P indexing
 
 ## Sibling mechanisms in `Syntax/Minimalism/`
 
-`NestedAgree.lean` (@cite{amato-2025}) and `LongDistanceAgree.lean`
-(@cite{szabolcsi-2009}) are sibling Layer-2 patterns. All three
+`NestedAgree.lean` ([amato-2025]) and `LongDistanceAgree.lean`
+([szabolcsi-2009]) are sibling Layer-2 patterns. All three
 address what a probe does beyond its first operation, but
 differently:
 
@@ -162,7 +162,7 @@ def fullProbeAddr : ProbeArticulation := [.pi, .participant, .addressee]
 
 /-- A language's agreement system: the geometry and characteristic probe.
 
-    @cite{bejar-rezac-2009} parameterize crosslinguistic variation by
+    [bejar-rezac-2009] parameterize crosslinguistic variation by
     two choices: (1) which geometry organizes the innermost feature, and
     (2) how articulated the probe is. The full probe depends on the
     geometry (standard uses [speaker], addressee uses [addressee]). -/
@@ -191,7 +191,7 @@ def nishnaabemwin : AgreementSystem := ⟨.addressee, fullProbeAddr⟩
     a match remain *active* and can participate in further Agree on
     the next cycle.
 
-    This is the core operation of @cite{bejar-rezac-2009}: partial
+    This is the core operation of [bejar-rezac-2009]: partial
     matching of articulated probes drives agreement displacement. -/
 def activeResidue (probe : ProbeArticulation) (goal : List Segment) : ProbeArticulation :=
   probe.filter (fun s => !goal.contains s)
@@ -249,7 +249,7 @@ def AgreementSystem.value (sys : AgreementSystem)
 
 /-- Which cycle valued the probe's remaining segments.
 
-    @cite{bejar-rezac-2009} §3.2: when the probe is valued on two
+    [bejar-rezac-2009] §3.2: when the probe is valued on two
     different cycles, the morphological realization can differ. Georgian
     uses *m-* (first cycle) vs *v-* (second cycle) for 1sg agreement;
     Nishnaabemwin uses *-in* (1P, cycle II) vs *-igw* (3P, cycle II)
@@ -305,7 +305,7 @@ def AgreementSystem.isInverse (sys : AgreementSystem)
 
 /-- The Person-Licensing Condition (PLC).
 
-    @cite{bejar-rezac-2009} eq. (13): "A π-feature [F] must be licensed
+    [bejar-rezac-2009] eq. (13): "A π-feature [F] must be licensed
     by Agree of some segment in a feature structure of which [F] is a
     subset."
 
@@ -334,7 +334,7 @@ theorem plc_violation_iff_inverse (geom : Geometry) (probe : ProbeArticulation)
 
 /-- Repair strategies for PLC violations in inverse contexts.
 
-    @cite{bejar-rezac-2009} §4 identifies two strategies:
+    [bejar-rezac-2009] §4 identifies two strategies:
     - `addedProbe`: an extra probe is inserted on v_II, creating an
       additional agreement slot for the EA (Nishnaabemwin, Mohawk, Basque)
     - `rCase`: the IA receives a special oblique Case distinct from the

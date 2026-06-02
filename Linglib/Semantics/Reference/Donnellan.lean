@@ -1,21 +1,21 @@
 /-
 # Donnellan's Referential/Attributive Distinction
 
-Formalizes @cite{donnellan-1966}: definite descriptions have two uses:
+Formalizes [donnellan-1966]: definite descriptions have two uses:
 - **Attributive**: "The φ is ψ" means whoever uniquely satisfies φ is ψ
 - **Referential**: "The φ is ψ" — the speaker has a particular individual
   in mind; what is *said* is about that individual
 
-On @cite{donnellan-1966}'s account, the truth conditions of a referential
+On [donnellan-1966]'s account, the truth conditions of a referential
 use depend on the *intended referent*, not on whoever satisfies the
 description. "The man drinking a martini is happy" (said about Jones,
 who is drinking water) is true iff Jones is happy.
 
 Whether this makes the expression's semantic content rigid is a disputed
 interpretive question:
-- @cite{kripke-1977} argues referential use is merely pragmatic (speaker's
+- [kripke-1977] argues referential use is merely pragmatic (speaker's
   reference ≠ semantic reference); the semantic content remains descriptive.
-- @cite{almog-2014} (Ch 3) argues referential use is genuinely semantic but
+- [almog-2014] (Ch 3) argues referential use is genuinely semantic but
   operates through a cognitive mechanism independent of rigidification.
 - Many semanticists (Kaplan, Wettstein) treat referential use as producing
   singular propositional content about the intended individual.
@@ -58,7 +58,7 @@ open Core.Nominal (russellIotaList)
 - `attributive`: The speaker means "whoever uniquely satisfies the
   description". Content is descriptive (non-rigid in general).
 - `referential`: The speaker has a particular individual in mind.
-  What is *said* is about that individual (@cite{donnellan-1966}).
+  What is *said* is about that individual ([donnellan-1966]).
   The interpretive status of this (pragmatic vs. semantic) is disputed;
   see module docstring. -/
 inductive UseMode where
@@ -109,7 +109,7 @@ def definiteNominal {W E : Type*} (domain : List E) (restrictor : E → W → Bo
 /-- Referential content: truth conditions fixed to the speaker's intended
 referent, regardless of which world we evaluate at.
 
-@cite{donnellan-1966}: in referential use, what is *said* is about the
+[donnellan-1966]: in referential use, what is *said* is about the
 intended individual. "The man drinking a martini is happy" (referential,
 about Jones) is true iff Jones is happy — even if Jones isn't drinking
 a martini.
@@ -126,7 +126,7 @@ def referentialContent {W E : Type*} (intended : E) : Intension W E :=
 The profile ⟨false, false, true⟩ records:
 - `designation = false`: not a rigid designator by linguistic type
   (it is a description, not a name or indexical)
-- `singularProp = false`: per @cite{almog-2014}'s reading of Donnellan
+- `singularProp = false`: per [almog-2014]'s reading of Donnellan
   (Ch 3, §2.12), referential use gives a "proposition-free" account,
   not a structured ⟨individual, property⟩ pair
 - `referentialUse = true`: the speaker has a cognitive fix on the referent -/

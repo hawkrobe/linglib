@@ -4,10 +4,10 @@ import Linglib.Syntax.Minimalist.Voice
 import Linglib.Studies.Olivier2026Auxiliary
 
 /-!
-# @cite{olivier-2026} — clitic-typology asymmetry
+# [olivier-2026] — clitic-typology asymmetry
 
-Novel observation in @cite{olivier-2026} (also reported by
-@cite{cardinaletti-shlonsky-2004}, but not previously formalised):
+Novel observation in [olivier-2026] (also reported by
+[cardinaletti-shlonsky-2004], but not previously formalised):
 not all climbing clitics interact with Auxiliary Switch.
 **Prepositional clitics** (locative *y/ci*, partitive *en/ne*,
 non-reflexive dative *lui/gli*) climb to the matrix domain
@@ -18,9 +18,9 @@ correlates with AS.
 
 The asymmetry derives from one structural property: a reflexive
 clitic is bound by the External Argument via Voice* (the strong,
-agentive phase head — @cite{wurmbrand-shimamura-2017},
-@cite{wood-2015}'s [+θ, +D] reflexive Voice). Under the SHARE
-mode of φ-feature transfer (@cite{ouali-2008}, formalised in
+agentive phase head — [wurmbrand-shimamura-2017],
+[wood-2015]'s [+θ, +D] reflexive Voice). Under the SHARE
+mode of φ-feature transfer ([ouali-2008], formalised in
 `Minimalist.TransferStyle`), Voice* shares the now-EA-identical
 clitic features with vMOD; vAux inherits these via head-splitting;
 T probes EA and ends up with matching person/ID values, yielding
@@ -78,7 +78,7 @@ forms (*y/ci*, *en/ne*, *lui/gli*, *le/la/lo*, *se/si*) and by
 their differential climbing behaviour in restructuring contexts. -/
 
 /-- Romance clitic categories relevant to the AS-trigger asymmetry
-    in @cite{olivier-2026}. -/
+    in [olivier-2026]. -/
 inductive CliticType where
   /-- *se*, *si* — bound by the local subject via Voice*. -/
   | reflexive
@@ -95,7 +95,7 @@ inductive CliticType where
 
 /-! ## The load-bearing configurational property
 
-Per @cite{olivier-2026} §6.2: only reflexive clitics enter binding
+Per [olivier-2026] §6.2: only reflexive clitics enter binding
 by the External Argument via Voice*. This is the single structural
 property from which the AS-trigger asymmetry derives. -/
 
@@ -148,7 +148,7 @@ smoke checks below follow from it. -/
 
 /-- A clitic of type `c`, climbing in its canonical scenario,
     triggers Auxiliary Switch iff it is bound by the External
-    Argument via Voice*. This is @cite{olivier-2026}'s central
+    Argument via Voice*. This is [olivier-2026]'s central
     asymmetry, derived (not stipulated) from the structural
     property `boundByEAviaVoiceStar` and the AuxVerbs sibling's
     AS predicate. -/

@@ -14,7 +14,7 @@ type/structure declarations and the Fragment ↔ Theory bridge.
 * `ThematicRel` — `Entity → Event Time → Prop`, the core neo-Davidsonian
   relation type
 * `EventRel` — event-first generalization (argument may be proposition,
-  performance, content, etc.; cf. @cite{rudin-2025b} §4.4–4.7)
+  performance, content, etc.; cf. [rudin-2025b] §4.4–4.7)
 * `ThematicFrame` — a model's assignment of role relations
   (agent / patient / theme / experiencer / goal / source /
   instrument / stimulus / holder)
@@ -22,8 +22,8 @@ type/structure declarations and the Fragment ↔ Theory bridge.
 
 ## References
 
-* @cite{davidson-1967}, @cite{parsons-1990} (neo-Davidsonian foundations)
-* @cite{rudin-2025b} (EventRel for non-entity arguments)
+* [davidson-1967], [parsons-1990] (neo-Davidsonian foundations)
+* [rudin-2025b] (EventRel for non-entity arguments)
 -/
 
 namespace Semantics.ArgumentStructure
@@ -43,7 +43,7 @@ abbrev ThematicRel (Entity Time : Type*) [LinearOrder Time] :=
     order is *event-first* (vs. ThematicRel's entity-first), reflecting
     the neo-Davidsonian convention for thematic roles vs. the more
     general event-relation pattern used by content/reenactment relations
-    (@cite{rudin-2025b}, §4.4–4.7). -/
+    ([rudin-2025b], §4.4–4.7). -/
 abbrev EventRel (Time α : Type*) [LinearOrder Time] := Event Time → α → Prop
 
 /-- A thematic frame bundles thematic relations for a given model.

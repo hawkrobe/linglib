@@ -3,9 +3,9 @@ import Linglib.Semantics.Modality.TemporalConstraint
 
 /-!
 # Tense × Modal Base composition
-@cite{klecha-2016}
+[klecha-2016]
 
-The four-cell matrix that arises when @cite{klecha-2016}'s modal-base
+The four-cell matrix that arises when [klecha-2016]'s modal-base
 pronoun temporal constraints (DOX gives RT ≤ EvalT, CIR gives RT > EvalT)
 intersect with grammatical tense (PAST gives RT < EvalT, NPST gives
 RT ≥ EvalT).
@@ -19,7 +19,7 @@ The four cells are realized as `↔` theorems below. The DOX/PAST cell
 gives the genuine past reading of "Martina thought Carissa got pregnant";
 DOX/NPST forces simultaneity; CIR/NPST gives the future-oriented reading
 of "Martina hoped Carissa got pregnant" (with surface PAST morphology
-analyzed as SOT agreement over semantic NPST per @cite{klecha-2016}
+analyzed as SOT agreement over semantic NPST per [klecha-2016]
 §3.3); CIR/PAST is empty.
 
 The `attitudeTemporalConstraint` dispatch and its derivation from
@@ -29,7 +29,7 @@ situation-base membership live in
 
 ## What this file does NOT formalize
 
-The contrast @cite{klecha-2016} draws (§4.1) is between *constraining*
+The contrast [klecha-2016] draws (§4.1) is between *constraining*
 the prejacent's RT vs *binding* the open temporal argument inside the
 prejacent. This file formalizes the constraint side only. Klecha's
 de se enrichment (§3.4 + Appendix B), where attitudes quantify over
@@ -62,7 +62,7 @@ theorem dox_past_iff {Time : Type*} [LinearOrder Time]
     semantic past tense requires RT < t. The conjunction is empty. The
     surface "past" morphology in "Martina hoped Carissa got pregnant"
     under the future-oriented (CIR) reading is SOT agreement over
-    semantic NPST per @cite{klecha-2016} §3.3, not semantic PAST. -/
+    semantic NPST per [klecha-2016] §3.3, not semantic PAST. -/
 theorem cir_past_iff_false {Time : Type*} [LinearOrder Time]
     (evalTime refTime : Time) :
     attitudeTemporalConstraint .circumstantial evalTime refTime ∧

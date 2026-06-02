@@ -4,7 +4,7 @@ import Mathlib.Data.Finset.Basic
 
 /-!
 # Supervaluation Framework
-@cite{fine-1975} @cite{kamp-1975}
+[fine-1975] [kamp-1975]
 
 General supervaluation theory for vague languages. A vague sentence
 is **super-true** iff true under all admissible precisifications,
@@ -24,8 +24,8 @@ is **super-true** iff true under all admissible precisifications,
 
 This file provides the *general* supervaluation framework, parameterized
 by an abstract specification type `Spec`. Study files specialize `Spec`:
-- `Threshold max` for gradable adjectives (@cite{fine-1975})
-- `ComparisonClass Entity` for delineation (@cite{klein-1980})
+- `Threshold max` for gradable adjectives ([fine-1975])
+- `ComparisonClass Entity` for delineation ([klein-1980])
 - Product types for multi-predicate penumbral connections
 
 Fine's full framework includes partial specifications with an extension
@@ -266,7 +266,7 @@ theorem superValid_implies_classical {Spec : Type*} [DecidableEq Spec]
     (Finset.mem_singleton.mpr rfl)
 
 /-- **Super-validity ↔ classical validity.** This is the deepest logical
-    result in @cite{fine-1975}: supervaluationism makes a difference to
+    result in [fine-1975]: supervaluationism makes a difference to
     truth but not to logic. -/
 theorem superValid_iff_classical {Spec : Type*} [DecidableEq Spec]
     (eval : Spec → Prop) [DecidablePred eval] :

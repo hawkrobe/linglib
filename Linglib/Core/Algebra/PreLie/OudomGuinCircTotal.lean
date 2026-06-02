@@ -62,7 +62,7 @@ left-arguments via OG Prop 2.7.iii.
 
 ## References
 
-* @cite{oudom-guin-2008} Def 2.4 + Lemma 2.5 (per-degree symmetry).
+* [oudom-guin-2008] Def 2.4 + Lemma 2.5 (per-degree symmetry).
 -/
 
 namespace PreLie

@@ -27,7 +27,7 @@ structure ConjDistDatum where
   citation : String
   deriving Repr, BEq
 
-/-- Empirical data from @cite{bondarenko-elliott-2026} §1.
+/-- Empirical data from [bondarenko-elliott-2026] §1.
     Upward-monotone attitudes distribute; non-monotone ones do not. -/
 def data : List ConjDistDatum := [
   -- Upward-monotone: distribute

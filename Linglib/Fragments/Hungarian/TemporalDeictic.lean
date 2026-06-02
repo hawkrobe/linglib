@@ -2,10 +2,10 @@ import Linglib.Semantics.Tense.Basic
 
 /-!
 # Hungarian Temporal Deictic Adverbs
-@cite{egressy-2026} @cite{zhao-2025}
+[egressy-2026] [zhao-2025]
 
 Lexical entries for Hungarian temporal adverbs used as clause-size
-diagnostics in @cite{egressy-2026}.
+diagnostics in [egressy-2026].
 
 ## Temporal Adverb Diagnostics
 
@@ -31,7 +31,7 @@ open Semantics.Tense
 
 /-- Hungarian *akkor* 'then' — perspective-shifting temporal deictic.
     Part of the cross-linguistic "then"-present incompatibility
-    inventory (@cite{zhao-2025}, @cite{tsilia-zhao-2026}). -/
+    inventory ([zhao-2025], [tsilia-zhao-2026]). -/
 def akkor : ThenAdverb where
   language := "Hungarian"
   form := "akkor"
@@ -71,7 +71,7 @@ def elozo_nap : TemporalFrameAdverb where
   forcesShifted := true
   compatSimultaneous := false
 
-/-- All temporal frame adverbs from @cite{egressy-2026}. -/
+/-- All temporal frame adverbs from [egressy-2026]. -/
 def allFrameAdverbs : List TemporalFrameAdverb := [aznap, elozo_nap]
 
 /-- *előző nap* forces the shifted reading. -/

@@ -3,7 +3,7 @@ import Mathlib.Order.Basic
 import Mathlib.Order.Nat
 /-!
 # Centering Theory — Transitions
-@cite{grosz-joshi-weinstein-1995}
+[grosz-joshi-weinstein-1995]
 The three transition types (continuation / retaining / shifting) and
 their classification. `classifyTransitionStrict` is faithful to GJW
 Def 4; `classifyTransitionExtended` applies the worked-example
@@ -13,7 +13,7 @@ set_option autoImplicit false
 namespace Discourse.Centering
 /-! ### Transition Type -/
 /-- Three transition types between consecutive utterances
-    (@cite{grosz-joshi-weinstein-1995} Def 4). -/
+    ([grosz-joshi-weinstein-1995] Def 4). -/
 inductive Transition where
   | continuation
   | retaining

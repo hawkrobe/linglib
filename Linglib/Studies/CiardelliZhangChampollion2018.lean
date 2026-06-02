@@ -3,7 +3,7 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{ciardelli-zhang-champollion-2018} — Two switches in the theory of counterfactuals
+# [ciardelli-zhang-champollion-2018] — Two switches in the theory of counterfactuals
 
 Ciardelli, I., Zhang, L. & Champollion, L. (2018). Two switches in the
 theory of counterfactuals: A study of truth conditionality and minimal
@@ -56,8 +56,8 @@ counterfactuals; the discriminating contrast (Tables 7–8, p. 607):
 
 ## Connection to linglib's Kratzer infrastructure
 
-@cite{ciardelli-zhang-champollion-2018} §6.3 extends the argument to
-*standard premise semantics* as formulated in @cite{kratzer-1981} (CZC
+[ciardelli-zhang-champollion-2018] §6.3 extends the argument to
+*standard premise semantics* as formulated in [kratzer-1981] (CZC
 cite both Kratzer 1981a and 1981b — only the 1981 "Notional Category"
 paper is in the linglib bib): "regardless of the particular ordering
 source that
@@ -67,7 +67,7 @@ Lewis 1981, standard premise semantics is equivalent to ordering
 semantics with a weak partial order, which puts it in scope of the §1.2
 argument formalized above.
 
-**Whether the argument extends to @cite{kratzer-2012}'s lumping-based
+**Whether the argument extends to [kratzer-2012]'s lumping-based
 revision (§5.4.4) is open and not addressed by CZC.** The lumping CF
 truth condition (§5.4.4) is a quantifier alternation — "for every set
 in F_{w,p} there is a superset that implies q" — *not* the
@@ -119,7 +119,7 @@ inductive World where
 def aUp : World → Prop | .uu | .ud => True | .du | .dd => False
 def bUp : World → Prop | .uu | .du => True | .ud | .dd => False
 
-/-- The wiring law (@cite{ciardelli-zhang-champollion-2018}, p. 578):
+/-- The wiring law ([ciardelli-zhang-champollion-2018], p. 578):
     light is on iff both switches are in the same position. -/
 def lightOn : World → Prop | .uu | .dd => True | .ud | .du => False
 
@@ -207,7 +207,7 @@ theorem aOrBdn_off_at_uu :
     de-Morgan equivalent. **Empirically: only ~20% true.**
 
     This is the central empirical contrast of
-    @cite{ciardelli-zhang-champollion-2018}: a truth-conditional
+    [ciardelli-zhang-champollion-2018]: a truth-conditional
     semantics combined with minimal change cannot reproduce the sharp
     divergence between the two predictions, since the two antecedents
     are forced to behave identically. -/
@@ -216,7 +216,7 @@ theorem notBothUp_off_at_uu :
 
 /-! ### Same falsified prediction under selectional and homogeneity
 
-@cite{ciardelli-zhang-champollion-2018}'s argument targets *any*
+[ciardelli-zhang-champollion-2018]'s argument targets *any*
 minimal-change semantics. Both `selectionalCounterfactual` (Stalnaker
 + supervaluation) and `homogeneityCounterfactual` (von Fintel/Križ)
 share the same closest-worlds substrate as `universalCounterfactual`,
@@ -235,7 +235,7 @@ theorem homogeneity_notBothUp_off_at_uu :
       { presupposition := .satisfied, assertion := some true } := by
   decide
 
-/-! ## Abstract minimal-change forcing (@cite{ciardelli-zhang-champollion-2018} §1.2, p. 582)
+/-! ## Abstract minimal-change forcing ([ciardelli-zhang-champollion-2018] §1.2, p. 582)
 
 The concrete predictions above used a specific similarity ordering. The
 following theorem strengthens the argument: for *any* similarity

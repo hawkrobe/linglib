@@ -4,10 +4,10 @@ import Linglib.Data.Examples.Schema
 /-!
 # Hofmann (2025): Anaphoric Accessibility with Flat Update
 
-@cite{hofmann-2025}
+[hofmann-2025]
 
 Formalizes the core empirical and theoretical contributions of
-@cite{hofmann-2025}'s unified account of anaphoric accessibility.
+[hofmann-2025]'s unified account of anaphoric accessibility.
 
 ## Core Claim
 
@@ -26,21 +26,21 @@ Indefinites under nonveridical operators introduce drefs globally
 The paper provides a single analysis for four previously disparate
 patterns of anaphora to negated antecedents:
 
-- **Double negation** (@cite{krahmer-muskens-1995}): "It's not the case
+- **Double negation** ([krahmer-muskens-1995]): "It's not the case
   that there isn't a bathroom. It's upstairs."
-- **Bathroom disjunctions** (@cite{roberts-1989}): "Either there isn't
+- **Bathroom disjunctions** ([roberts-1989]): "Either there isn't
   a bathroom, or it's upstairs."
-- **Disagreement** (@cite{hofmann-2019}): A: "There isn't a bathroom."
+- **Disagreement** ([hofmann-2019]): A: "There isn't a bathroom."
   B: "It's upstairs."
-- **Modal subordination** (@cite{frank-1996}, @cite{roberts-1989}):
+- **Modal subordination** ([frank-1996], [roberts-1989]):
   "There isn't a bathroom. It would be upstairs."
 
 ## Theoretical Framework
 
 The analysis is implemented in Intensional CDRT (ICDRT), extending
-@cite{muskens-1996}'s Compositional DRT with intensionality and
-propositional drefs, following @cite{stone-1999} and
-@cite{brasoveanu-2006}'s flat-update approach. Generic ICDRT
+[muskens-1996]'s Compositional DRT with intensionality and
+propositional drefs, following [stone-1999] and
+[brasoveanu-2006]'s flat-update approach. Generic ICDRT
 infrastructure (assignments, updates, variable updates, dynamic
 conditions, predication, veridicality typology, multi-agent discourse
 contexts, maximization) lives in `Dynamic/Core/Intensional.lean`;
@@ -55,9 +55,9 @@ empirical applications.
 4. **Accessibility predictions** (§4): The classification, verified against derivations
 5. **Per-datum verification** (§5)
 6. **Compositional fragment** (§6): Hofmann's Appendix C lexical entries
-7. **Comparison with Bilateral Update Semantics** (§7): @cite{hofmann-2025} §5.1.1
+7. **Comparison with Bilateral Update Semantics** (§7): [hofmann-2025] §5.1.1
    — where ICDRT covers cases that bilateral accounts (BUS,
-   @cite{krahmer-muskens-1995}, @cite{elliott-sudo-2025}) cannot.
+   [krahmer-muskens-1995], [elliott-sudo-2025]) cannot.
 -/
 
 namespace Hofmann2025
@@ -193,7 +193,7 @@ structure AccessDatum where
 
 -- § 1.1 Basic contrast
 
-/-- (1a): "Mary owns a car. It is red." @cite{hofmann-2025} -/
+/-- (1a): "Mary owns a car. It is red." [hofmann-2025] -/
 def veridicalBasic : AccessDatum where
   label := "veridical-basic"
   antecedentSentence := "Mary owns a car."
@@ -203,7 +203,7 @@ def veridicalBasic : AccessDatum where
   felicitous := true
   source := "Hofmann 2025: (1a)"
 
-/-- (1b): "Mary doesn't own a car. #It is red." @cite{hofmann-2025} -/
+/-- (1b): "Mary doesn't own a car. #It is red." [hofmann-2025] -/
 def negatedBasic : AccessDatum where
   label := "negated-basic"
   antecedentSentence := "Mary doesn't own a car."
@@ -215,7 +215,7 @@ def negatedBasic : AccessDatum where
 
 -- § 1.2 Four counterexamples to nested update
 
-/-- (2a)/(42a): Double negation. @cite{krahmer-muskens-1995} -/
+/-- (2a)/(42a): Double negation. [krahmer-muskens-1995] -/
 def doubleNegation : AccessDatum where
   label := "double-negation"
   antecedentSentence := "It's not true that there isn't a bathroom."
@@ -225,7 +225,7 @@ def doubleNegation : AccessDatum where
   felicitous := true
   source := "Krahmer & Muskens 1995: (5)"
 
-/-- (2b)/(42b): Bathroom disjunction. @cite{roberts-1989} -/
+/-- (2b)/(42b): Bathroom disjunction. [roberts-1989] -/
 def bathroomDisjunction : AccessDatum where
   label := "bathroom-disjunction"
   antecedentSentence := "Either there isn't a bathroom in this house"
@@ -235,7 +235,7 @@ def bathroomDisjunction : AccessDatum where
   felicitous := true
   source := "Roberts 1989: (12)"
 
-/-- (2c)/(42c): Disagreement. @cite{hofmann-2019} -/
+/-- (2c)/(42c): Disagreement. [hofmann-2019] -/
 def disagreement : AccessDatum where
   label := "disagreement"
   antecedentSentence := "A: There isn't a bathroom in this house."
@@ -245,7 +245,7 @@ def disagreement : AccessDatum where
   felicitous := true
   source := "Hofmann 2019: (2d)"
 
-/-- (2d)/(42d): Modal subordination. @cite{frank-1996} -/
+/-- (2d)/(42d): Modal subordination. [frank-1996] -/
 def modalSubordination : AccessDatum where
   label := "modal-subordination"
   antecedentSentence := "Fred didn't buy a microwave oven."
@@ -257,7 +257,7 @@ def modalSubordination : AccessDatum where
 
 -- § 1.3 Veridical under negation
 
-/-- (5a): Negated factive. @cite{karttunen-1976} -/
+/-- (5a): Negated factive. [karttunen-1976] -/
 def negatedFactive : AccessDatum where
   label := "negated-factive"
   antecedentSentence := "Bill didn't realize that he had a dime."
@@ -267,7 +267,7 @@ def negatedFactive : AccessDatum where
   felicitous := true
   source := "Karttunen 1976: (16)"
 
-/-- (5b): Negative implicative. @cite{karttunen-1976} -/
+/-- (5b): Negative implicative. [karttunen-1976] -/
 def negativeImplicative : AccessDatum where
   label := "negative-implicative"
   antecedentSentence := "John forgot not to bring an umbrella."
@@ -740,7 +740,7 @@ theorem modal_sub_accessible :
 
 /-! ## Accessibility generalization (7)
 
-The paper's core empirical generalization (@cite{hofmann-2025}, (7)):
+The paper's core empirical generalization ([hofmann-2025], (7)):
 
 > A dref is accessible iff it is veridical OR the anaphor occurs in
 > a nonveridical context.
@@ -755,7 +755,7 @@ phenomenon via ICDRT derivations with zero sorry:
   `disagreement_accessible` (§3.5), `modal_sub_accessible` (§3.6)
 -/
 
-/-- The accessibility generalization (@cite{hofmann-2025}, (7)):
+/-- The accessibility generalization ([hofmann-2025], (7)):
     accessible iff veridical OR nonveridical anaphor context. -/
 def accessiblePred (status : DrefStatus) (ctx : AnaphorContext) : Bool :=
   match status, ctx with
@@ -906,7 +906,7 @@ def properName (name : E) (v : IVar) (P : SemE W E) (φ : PVar) :
 /-- (18a) Sentential negation: `NOT^{φ'} ⟿ λSc.λφ.[φ' | φ ≡ φ̄']; max_{φ'}(Sc(φ'))`.
 
 Static complementation over propositional drefs, NOT bilateral swap —
-the algebraic content of @cite{hofmann-2025}'s key insight (§5.1.1). -/
+the algebraic content of [hofmann-2025]'s key insight (§5.1.1). -/
 def semNOT (φ' : PVar) (Sc : SemW W E) (φ : PVar) : ICDRTUpdate W E :=
   ICDRTUpdate.seq
     (λ i j => propVarUp φ' i j ∧ isComplement φ φ' j)
@@ -1109,8 +1109,8 @@ theorem veridical_comp_factors (c : IContext BWorld BEnt) :
 
 /-! ## ICDRT vs. BUS: where the multi-agent architecture pays for itself
 
-@cite{hofmann-2025} §5.1.1 contrasts ICDRT with Bilateral Update
-Semantics (BUS, @cite{krahmer-muskens-1995}, @cite{elliott-sudo-2025}).
+[hofmann-2025] §5.1.1 contrasts ICDRT with Bilateral Update
+Semantics (BUS, [krahmer-muskens-1995], [elliott-sudo-2025]).
 BUS uses two update channels (positive/negative) and treats negation as
 a swap; ICDRT uses propositional drefs and per-speaker commitment sets.
 

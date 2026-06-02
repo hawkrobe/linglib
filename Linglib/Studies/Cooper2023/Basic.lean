@@ -5,11 +5,11 @@ import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.Coreference
 
 /-!
-# Cooper (2023) — TTR Underspecification @cite{cooper-2023}
+# Cooper (2023) — TTR Underspecification [cooper-2023]
 
 Connects TTR underspecification to anaphora data, drawing on
-@cite{kanazawa-1994}, @cite{groenendijk-stokhof-1991},
-@cite{muskens-1996}, @cite{sutton-2024}, @cite{chomsky-1981}.
+[kanazawa-1994], [groenendijk-stokhof-1991],
+[muskens-1996], [sutton-2024], [chomsky-1981].
 
 Connects TTR's localization (donkey anaphora) and binding theory
 (reflexivization, anaphoric resolution) from
@@ -21,11 +21,11 @@ Per-datum verification: each theorem verifies one data point from the
 Phenomena files against TTR predictions.
 
 §§ 4–5 establish the truth-conditional bridge from CDRT
-(Dynamic/CDRT/Basic.lean, @cite{muskens-1996}) to TTR for the existential
+(Dynamic/CDRT/Basic.lean, [muskens-1996]) to TTR for the existential
 and donkey-implication core, and the divergence under negation: TTR and
 CDRT agree on truth conditions but differ on anaphoric potential
 (state-threading vs. type-structure). This is the formal correspondence
-surveyed in @cite{sutton-2024}.
+surveyed in [sutton-2024].
 
 -/
 
@@ -87,7 +87,7 @@ theorem strongDominant_readings_available :
 Connect TTR's reflexivization and anaphoric resolution to the theory-neutral binding
 data in `Phenomena.Anaphora.Coreference`.
 
-@cite{cooper-2023} Ch8 section 8.3 gives a type-theoretic account of @cite{chomsky-1981}'s binding conditions:
+[cooper-2023] Ch8 section 8.3 gives a type-theoretic account of [chomsky-1981]'s binding conditions:
 - **Condition A** (reflexives must be locally bound): reflexivization forces argument identity
 - **Condition B** (pronouns must be locally free): anaphoric resolution with disjoint reference
 - **Complementary distribution**: reflexivization vs anaphoric resolution for the same position
@@ -135,7 +135,7 @@ theorem complementary_distribution_predicted :
 
     1. Reflexivization forces local coreference (Condition A): Cooper eq (84)
     2. Anaphoric resolution allows disjoint reference (Condition B): Cooper eq (28)
-    3. The empirical coreference patterns match: @cite{chomsky-1981}
+    3. The empirical coreference patterns match: [chomsky-1981]
     4. Reflexivization = anaphoricResolve with id: reflexivization is a special case -/
 theorem reflexive_predicts_binding :
     -- Reflexivization forces identity (Condition A)
@@ -156,8 +156,8 @@ theorem reflexive_predicts_binding :
 -- § 4. Truth-Conditional Bridge: CDRT ↔ TTR
 -- ════════════════════════════════════════════════════════════════
 
-/-! CDRT (Dynamic/CDRT/Basic.lean, @cite{muskens-1996}) and TTR
-(TypeTheoretic/, @cite{cooper-2023}) handle overlapping anaphora
+/-! CDRT (Dynamic/CDRT/Basic.lean, [muskens-1996]) and TTR
+(TypeTheoretic/, [cooper-2023]) handle overlapping anaphora
 phenomena — discourse referents, donkey anaphora, cross-sentential
 binding — with no shared infrastructure. This section proves they
 agree on truth conditions for the existential and donkey cores, and

@@ -2,7 +2,7 @@ import Linglib.Typology.Extraction
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 
 /-!
-# Kaqchikel Agent Focus Fragment @cite{erlewine-2016}
+# Kaqchikel Agent Focus Fragment [erlewine-2016]
 
 Theory-neutral typological data for Agent Focus (AF) in Kaqchikel
 (K'ichean, Mayan): verb-form types, the empirical extraction
@@ -95,7 +95,7 @@ def patientExtractionTrans : ExtractionDatum :=
     Spec,TP → Spec,CP step within the embedded clause is avoided.
 
     This is the key evidence that AF is triggered by *locality of
-    movement*, not simply by agent extraction (@cite{erlewine-2016} §2.3,
+    movement*, not simply by agent extraction ([erlewine-2016] §2.3,
     examples 21–22). -/
 def longDistanceAgentExtraction : ExtractionDatum :=
   { extracted := .agent
@@ -116,7 +116,7 @@ def extractionProfile : Typology.ExtractionProfile :=
   , notes := "AF (*-Vn*) obligatory for clause-local agent extraction; Erlewine 2016" }
 
 -- ============================================================================
--- § 4: Mayan AF Typology (@cite{erlewine-2016} §6.1)
+-- § 4: Mayan AF Typology ([erlewine-2016] §6.1)
 -- ============================================================================
 
 /-- Mayan languages vary in whether AF is available, depending on the

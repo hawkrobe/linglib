@@ -5,7 +5,7 @@ import Linglib.Core.Order.SimilarityOrdering
 /-!
 # Conditional Semantics
 
-@cite{lewis-1973} @cite{stalnaker-1968}
+[lewis-1973] [stalnaker-1968]
 
 Compositional semantics for conditional sentences.
 
@@ -14,7 +14,7 @@ Compositional semantics for conditional sentences.
 This module provides the semantic building blocks for conditionals:
 1. **Material conditional**: p → q = ¬p ∨ q (classical logic)
 2. **Strict conditional**: □(p → q) - necessity of material conditional
-3. **Variably strict conditional**: @cite{stalnaker-1968}/@cite{lewis-1973}-style conditionals
+3. **Variably strict conditional**: [stalnaker-1968]/[lewis-1973]-style conditionals
 
 ## The Material Conditional Problem
 
@@ -22,7 +22,7 @@ The material conditional (p → q ≡ ¬p ∨ q) has well-known problems:
 - "If pigs fly, then the moon is cheese" comes out true
 - It doesn't capture "If A, then C" as speakers use it
 
-However, following @cite{grusdt-lassiter-franke-2022}, we can maintain
+However, following [grusdt-lassiter-franke-2022], we can maintain
 classical semantics while deriving apparent exceptions through RSA
 pragmatics. The key is that conditionals assert high conditional
 probability, not material implication.
@@ -65,7 +65,7 @@ Parameters:
 def strictImp {W : Type*} (access : W → Set W) (p q : Set W) : Set W :=
   λ w => ∀ w' ∈ access w, p w' → q w'
 
--- Variably Strict Conditional (@cite{stalnaker-1968}–@cite{lewis-1973})
+-- Variably Strict Conditional ([stalnaker-1968]–[lewis-1973])
 
 /-! `SimilarityOrdering` and its constructors (`ofBool`, `atCenter`) live
     in `Core.Order.SimilarityOrdering` since they are general-purpose
@@ -74,7 +74,7 @@ def strictImp {W : Type*} (access : W → Set W) (p q : Set W) : Set W :=
     `open Core.Order`. -/
 
 /--
-Variably strict conditional (@cite{stalnaker-1968}/@cite{lewis-1973}):
+Variably strict conditional ([stalnaker-1968]/[lewis-1973]):
 
 "If p, then q" is true at w iff:
 - Either there are no p-worlds (vacuous truth), or
@@ -154,7 +154,7 @@ theorem perfection_not_entailed : ∃ (W : Type) (p q : Set W) (w : W),
 /--
 **Conditional perfection is NOT semantically entailed** (variably strict).
 
-Even under @cite{stalnaker-1968}/@cite{lewis-1973} variably strict semantics (stronger than material
+Even under [stalnaker-1968]/[lewis-1973] variably strict semantics (stronger than material
 implication), the conditional does not entail its converse. There exist a
 similarity ordering, propositions p and q, and a world w such that
 "if p then q" holds but "if ¬p then ¬q" does not.

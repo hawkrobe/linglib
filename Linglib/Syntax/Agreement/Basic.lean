@@ -1,9 +1,9 @@
 import Mathlib.Order.Nat
 
 /-!
-# Agreement Target Hierarchy @cite{corbett-1991}
+# Agreement Target Hierarchy [corbett-1991]
 
-@cite{corbett-1991}'s Agreement Hierarchy has four positions —
+[corbett-1991]'s Agreement Hierarchy has four positions —
 attributive > predicate > relative pronoun > personal pronoun — along which
 the likelihood of *semantic* (rather than syntactic) agreement increases
 monotonically from left to right.
@@ -21,7 +21,7 @@ This type is shared by gender typology (`Linglib/Typology/Gender.lean` and
 namespace Agreement
 
 /-- Morphosyntactic targets where agreement can surface, ranked by
-    @cite{corbett-1991}'s Agreement Hierarchy (with `verb` as a linglib
+    [corbett-1991]'s Agreement Hierarchy (with `verb` as a linglib
     refinement below personal pronoun — see the module docstring).
 
     Higher rank = closer to the controller, agreement more syntactic.
@@ -56,11 +56,11 @@ theorem AgreementTarget.rank_injective :
   fun a b h => by cases a <;> cases b <;> simp_all [AgreementTarget.rank]
 
 -- ============================================================================
--- § 2: Predicate Hierarchy (@cite{comrie-1975}; @cite{corbett-2000} Ch 6)
+-- § 2: Predicate Hierarchy ([comrie-1975]; [corbett-2000] Ch 6)
 -- ============================================================================
 
-/-- The Predicate Hierarchy (@cite{comrie-1975}, systematised by
-    @cite{corbett-2000}) decomposes the predicate position on the Agreement
+/-- The Predicate Hierarchy ([comrie-1975], systematised by
+    [corbett-2000]) decomposes the predicate position on the Agreement
     Hierarchy into a sub-hierarchy:
     verb < participle < adjective < noun.
 
@@ -107,11 +107,11 @@ def PredicateTarget.toAgreementTarget : PredicateTarget → AgreementTarget
   | .noun       => .predicate
 
 -- ============================================================================
--- § 3: Agreement Type (@cite{bickel-nichols-2001})
+-- § 3: Agreement Type ([bickel-nichols-2001])
 -- ============================================================================
 
 /-- Whether agreement markers have referential autonomy.
-    @cite{bickel-nichols-2001}
+    [bickel-nichols-2001]
 
     - **grammatical**: pure agreement — the marker cannot stand alone as
       an argument; an independent NP is required (English *she walk-s*,
@@ -130,11 +130,11 @@ inductive AgreementType where
   deriving DecidableEq, Repr, Inhabited
 
 -- ============================================================================
--- § 4: Agreement Direction (@cite{bickel-nichols-2001})
+-- § 4: Agreement Direction ([bickel-nichols-2001])
 -- ============================================================================
 
 /-- Direction of agreement: which element originates ("drives") the features.
-    @cite{bickel-nichols-2001} §9
+    [bickel-nichols-2001] §9
 
     - **headDriven**: the phrasal head provides features that percolate to
       its dependents — dependents carry the agreement morphology.

@@ -1,8 +1,8 @@
 import Linglib.Core.Logic.PolarizedIndividuals
 
 /-!
-# Split Scope via Polarized Individuals @cite{elliott-2025}
-@cite{rullmann-1995} @cite{barwise-cooper-1981}
+# Split Scope via Polarized Individuals [elliott-2025]
+[rullmann-1995] [barwise-cooper-1981]
 
 Connects standard quantifier denotations to the polarized individual
 decomposition from `Core.Logic.PolarizedIndividuals`, then derives
@@ -32,7 +32,7 @@ classic case is negative quantifiers under modals:
       a. Surface: ¬∃x[book(x) ∧ need(read(x))] — "no" takes wide scope
       b. Split: need(¬∃x[book(x) ∧ read(x)]) — neg above, ∃ below
 
-@cite{elliott-2025} derives split scope from the polarized individual
+[elliott-2025] derives split scope from the polarized individual
 decomposition: `no` = `(⋁_e (e,+))ᶜ`. Since complement distributes
 over scope position changes, the negative and existential components
 can end up at different heights.

@@ -1,6 +1,6 @@
 /-!
 # Turkish Converbal Suffixes
-@cite{goksel-kerslake-2005} @cite{kornfilt-1997}
+[goksel-kerslake-2005] [kornfilt-1997]
 
 Medial clause markers in Turkish: converbal (zarf-fiil) suffixes on the verb
 stem that link clauses in a chain. Like Korean, Turkish has no switch-reference

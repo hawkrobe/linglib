@@ -2,7 +2,7 @@ import Mathlib.Data.List.Basic
 
 /-!
 # Writer Monad for Compositional Side-Effects
-@cite{giorgolo-asudeh-2012} @cite{shan-2001}
+[giorgolo-asudeh-2012] [shan-2001]
 
 The Writer monad `⟨M, η, ⋆⟩` models meaning dimensions that accumulate
 side-effect information during compositional interpretation:
@@ -19,7 +19,7 @@ This pattern unifies several linglib constructions:
 | Post-suppositions | DRS content | cardinality tests |
 | Expressives | denotation | speaker attitude |
 
-The Writer monad enforces @cite{potts-2005}'s flow restriction structurally:
+The Writer monad enforces [potts-2005]'s flow restriction structurally:
 `bind`'s function argument receives only the value, never the log. At-issue
 content can flow into side-issue computations, but side-issue content cannot
 leak back into at-issue computation.
@@ -31,7 +31,7 @@ namespace Semantics.Composition.WriterMonad
 
 /-- The Writer monad: a value paired with an accumulated log.
 
-    In @cite{giorgolo-asudeh-2012}'s notation, `Writer P A` is `M(A)`,
+    In [giorgolo-asudeh-2012]'s notation, `Writer P A` is `M(A)`,
     where the second component is a collection of logged items of type `P`,
     represented as a `List` for computability. -/
 structure Writer (P : Type*) (A : Type*) where
@@ -68,7 +68,7 @@ def pure (a : A) : Writer P A := ⟨a, []⟩
     `⟨x, P⟩ ⋆ f = ⟨π₁(f x), P ++ π₂(f x)⟩`
 
     The function `f` receives only the value `x`, not the log `P`.
-    This enforces @cite{potts-2005}'s restriction: side-issue content
+    This enforces [potts-2005]'s restriction: side-issue content
     (in the log) is invisible to subsequent at-issue computation. -/
 def bind (m : Writer P A) (f : A → Writer P B) : Writer P B :=
   ⟨(f m.val).val, m.log ++ (f m.val).log⟩
@@ -80,7 +80,7 @@ def map (f : A → B) (m : Writer P A) : Writer P B :=
 /-- **tell** (write): log a single item.
 
     Used by CI-contributing expressions to add propositions to the
-    side-issue dimension. In @cite{giorgolo-asudeh-2012}:
+    side-issue dimension. In [giorgolo-asudeh-2012]:
     `write(t) = ⟨⊥, {t}⟩` -/
 def tell (p : P) : Writer P Unit := ⟨(), [p]⟩
 

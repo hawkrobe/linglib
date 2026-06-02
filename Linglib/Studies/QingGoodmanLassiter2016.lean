@@ -4,7 +4,7 @@ import Linglib.Semantics.Aspect.ChangeOfState
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# @cite{qing-goodman-lassiter-2016}
+# [qing-goodman-lassiter-2016]
 
 A rational speech-act model of projective content. CogSci 2016, pp. 1110–1115.
 
@@ -39,7 +39,7 @@ sets derivable from observations about past/now, since the remaining 6 (e.g.,
 `change = {(T,F),(F,T)}`) receive only the noise prior (≥18× lower) and do not
 affect qualitative predictions.
 
-## Connection to @cite{scontras-tonhauser-2025} and @cite{warstadt-2022}
+## Connection to [scontras-tonhauser-2025] and [warstadt-2022]
 
 All three papers implement the same mathematical structure with different
 domains (change-of-state verbs, factives, genus-species). The latent variable
@@ -483,7 +483,7 @@ theorem three_entail_past :
 -- ============================================================================
 
 /-!
-## Mathematical Equivalence with @cite{scontras-tonhauser-2025} and @cite{warstadt-2022}
+## Mathematical Equivalence with [scontras-tonhauser-2025] and [warstadt-2022]
 
 All three papers implement the same RSA computation:
 
@@ -493,15 +493,15 @@ L1(w, C | u, Q) ∝ S1(u | w, C, Q) · P(w) · P(C)
 
 | Paper | Latent | Interpretation | Domain |
 |-------|--------|---------------|--------|
-| @cite{qing-goodman-lassiter-2016} | Context set C | Common ground | CoS verbs |
-| @cite{scontras-tonhauser-2025} | Assumptions A | Speaker beliefs | Factives |
-| @cite{warstadt-2022} | Context set C | Common ground | Genus-species |
+| [qing-goodman-lassiter-2016] | Context set C | Common ground | CoS verbs |
+| [scontras-tonhauser-2025] | Assumptions A | Speaker beliefs | Factives |
+| [warstadt-2022] | Context set C | Common ground | Genus-species |
 
 The RSAConfig encoding is structurally identical: `Latent` = context/belief
 state, `meaning` filters by compatibility, `s1Score` uses QUD-projected rpow.
 See `ScontrasTonhauser2025.lean` for the factive domain implementation.
 
-@cite{scontras-tonhauser-2025} fn. 10: "@cite{qing-goodman-lassiter-2016} call these subsets
+[scontras-tonhauser-2025] fn. 10: "[qing-goodman-lassiter-2016] call these subsets
 the 'common ground,' but we think 'private assumptions' better captures
 this component of the model."
 

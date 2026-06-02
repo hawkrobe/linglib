@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Intensional.Rigidity
 
 /-!
 # Numerals as Type-n Singular Terms
-@cite{sudo-2016}
+[sudo-2016]
 
 Sudo's central typed-semantic claim: in *all* natural languages, numerals
 denote singular terms of type `n` (an abstract numerical type). They are
@@ -41,7 +41,7 @@ namespace Semantics.Classifier
 universe u
 
 /-- A numeral intension: a function from worlds to natural-number meanings.
-    @cite{sudo-2016} (eq. 2) ⟦six⟧ = λw_s. 6 is a `NumeralIntens W` for any
+    [sudo-2016] (eq. 2) ⟦six⟧ = λw_s. 6 is a `NumeralIntens W` for any
     world type `W`. -/
 abbrev NumeralIntens (W : Type u) := Core.Intension W ℕ
 

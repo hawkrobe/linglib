@@ -2,7 +2,7 @@ import Linglib.Semantics.Attitudes.ClauseDenotation.Content
 import Linglib.Semantics.Attitudes.ClauseDenotation.Situation
 
 /-!
-# Bondarenko 2022: Anatomy of an Attitude @cite{bondarenko-2022}
+# Bondarenko 2022: Anatomy of an Attitude [bondarenko-2022]
 
 Tatiana Bondarenko (2022). MIT PhD dissertation. Thesis advisors:
 P. Elliott, K. von Fintel, D. Fox, S. Iatridou, R. Schwarzschild.
@@ -13,7 +13,7 @@ The §-numbers below DO NOT track a single dissertation chapter;
 the file is paper-anchored as a whole and the sections were added
 across multiple phases:
 
-- §§ 1-7: reference @cite{bondarenko-2022} Chapter 1 brief summary
+- §§ 1-7: reference [bondarenko-2022] Chapter 1 brief summary
   overview (locators verified at the chapter-1 level).
 - §§ 8-12: reference Chapter 4 substantive bare-vs-nominalized
   treatment (Phase 2 type-theoretic refactor; §§4.2-4.5).
@@ -66,7 +66,7 @@ Buryat gɔ 'say'); in others (English, Russian) it is null.
    (bare, FA-argument) and (nominalized, PM-modifier) cells are
    ruled out by the structural correlation.
 
-   This is the thesis @cite{angelopoulos-2026} attacks (autonomy of
+   This is the thesis [angelopoulos-2026] attacks (autonomy of
    syntax: same syntactic position can yield either composition
    mode at LF). The conditional refutation theorem in
    `Angelopoulos2026` cites the
@@ -216,7 +216,7 @@ theorem subset_does_not_force_functionality :
 -- The DPs *this woman* and *the queen* are coextensional at the
 -- evaluation world but the rumor's content may not connect the
 -- two. Cont-CPs constitute a referentially opaque domain
--- (@cite{barwise-1981}, @cite{higginbotham-1983}).
+-- ([barwise-1981], [higginbotham-1983]).
 --
 -- Under a Sit-NP like *slučaj* 'event', the same premises DO
 -- entail the conclusion: all DPs inside the Sit-CP are evaluated
@@ -308,7 +308,7 @@ theorem compC_not_transparentAt :
 -- argument); nominalized CPs MUST compose as arguments (FA via
 -- the DP argument).
 --
--- This is the thesis @cite{angelopoulos-2026} §7.3 attacks.
+-- This is the thesis [angelopoulos-2026] §7.3 attacks.
 
 /-- The four logically possible (clause shape, composition path)
     combinations. -/
@@ -331,7 +331,7 @@ inductive ClauseStructurePath where
     The two off-diagonal cells (bareArgument, nominalizedModifier)
     are predicted impossible by this thesis.
 
-    @cite{angelopoulos-2026} attacks the bareArgument cell with
+    [angelopoulos-2026] attacks the bareArgument cell with
     Greek *oti*/*pu*: bare clauses pattern as internal arguments
     (clitic doubling, passivization, extraction transparency)
     while still composing via PM (the *explanans* reading).
@@ -356,7 +356,7 @@ def transparentSSMapping : ClauseStructurePath → Prop
   | .nominalizedArgument => True
 
 /-- Bondarenko predicts the (bare, argument) cell is empty. This
-    is the EXACT cell @cite{angelopoulos-2026} attacks. The proof
+    is the EXACT cell [angelopoulos-2026] attacks. The proof
     is by table-unfolding; the substantive refutation lives in
     `Angelopoulos2026`. -/
 theorem bare_argument_predicted_impossible :
@@ -537,8 +537,8 @@ theorem bareCP_not_Causer :
 
 /-- **Bondarenko §4.4.2**: Bare CPs cannot be Theme-arguments. Same
     mechanism as Causer. The *explain*-class data
-    (@cite{halpert-schueler-2013}, @cite{elliott-2016},
-    @cite{roelofsen-uegaki-2021}, @cite{pietroski-2000}) is what makes
+    ([halpert-schueler-2013], [elliott-2016],
+    [roelofsen-uegaki-2021], [pietroski-2000]) is what makes
     this derivation tight: when *explain* takes a bare clause vs a
     nominalized clause, only the latter receives the Theme reading. -/
 theorem bareCP_not_Theme :
@@ -657,12 +657,12 @@ theorem transparentSSMapping_iff_typed (path : ClauseStructurePath) :
 -- This list is grep-discoverable for downstream typology work.
 
 /-- Cross-linguistic overt exponents of ContP per
-    @cite{bondarenko-2022}'s analysis (§4.3.1 Buryat, §4.3.2 Korean)
-    extended with Tigrinya *kemzi* (@cite{cacchioli-2025}). -/
+    [bondarenko-2022]'s analysis (§4.3.1 Buryat, §4.3.2 Korean)
+    extended with Tigrinya *kemzi* ([cacchioli-2025]). -/
 def overtContPExponents : List (String × String) :=
-  [ ("Tigrinya",  "kemzi"),  -- @cite{cacchioli-2025} factive
-    ("Buryat",    "gɔ"),     -- @cite{bondarenko-2022} §4.3.1
-    ("Korean",    "-ta") ]   -- @cite{bogal-allbritten-moulton-2018} / Bondarenko §4.3.2
+  [ ("Tigrinya",  "kemzi"),  -- [cacchioli-2025] factive
+    ("Buryat",    "gɔ"),     -- [bondarenko-2022] §4.3.1
+    ("Korean",    "-ta") ]   -- [bogal-allbritten-moulton-2018] / Bondarenko §4.3.2
 
 -- ════════════════════════════════════════════════════════════════
 -- § 13. Chapter 2 §2.2.3: noun-predicate co-occurrence diagnostics
@@ -721,7 +721,7 @@ instance : DecidablePred NominalSort.occurrenceCompatible
 -- § 14. Chapter 2 §2.3 Proposal: Cont and Comp head denotations
 -- ════════════════════════════════════════════════════════════════
 --
--- @cite{bondarenko-2022} §2.3 ex. 150 proposes the Cont head
+-- [bondarenko-2022] §2.3 ex. 150 proposes the Cont head
 -- denotation; ex. 151 proposes the Comp head denotation. Both are
 -- formalised below by consuming existing substrate (Layered
 -- Grounding obligation per cross-framework audit).
@@ -741,17 +741,17 @@ instance : DecidablePred NominalSort.occurrenceCompatible
 -- *justification* for the equality shape of Cont (vs subset
 -- `entails` or existential) lives partly in §3 above
 -- (`cont_function_blocks_conjunction` — Bassi & Bondarenko 2021
--- argument) and partly in @cite{bondarenko-2022} §2.4 (deferred:
+-- argument) and partly in [bondarenko-2022] §2.4 (deferred:
 -- the nominal-CP-interpretation argument). One of three §2.4
 -- arguments is therefore already present in this file.
 --
 -- **Note (per syntax expert S3).** The situation-parameter `s` in
--- ex. 150 is omitted in this Chapter-2 reduction; @cite{bondarenko-2022}
+-- ex. 150 is omitted in this Chapter-2 reduction; [bondarenko-2022]
 -- footnote 37 anticipates it becoming consequential in §5.2.3
 -- (clauses as restrictors of existential quantifiers). When
 -- Chapter 5 is formalised, the parameter must be re-introduced.
 
-/-- @cite{bondarenko-2022} §2.3 ex. 150 Cont head denotation IS
+/-- [bondarenko-2022] §2.3 ex. 150 Cont head denotation IS
     the existing `compC` substrate. The denotational identity is
     one-line — the substantive Layered-Grounding fact is that
     Bondarenko's Chapter-2 proposal does NOT introduce new
@@ -761,7 +761,7 @@ theorem cont_head_denotation_is_compC {W : Type*}
     (p : W → Prop) (xc : ContentIndividual W) :
     compC p xc ↔ (xc.cont = p) := Iff.rfl
 
-/-- @cite{bondarenko-2022} §2.3 ex. 151 Comp head denotation,
+/-- [bondarenko-2022] §2.3 ex. 151 Comp head denotation,
     consuming the Truthmaker substrate
     (`Semantics/Truthmaker/Basic.lean` `attHolds`-style
     parthood `s ≤ σ x`, `Semantics/Truthmaker/Inexact.lean`

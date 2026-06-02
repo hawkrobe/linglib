@@ -2,8 +2,8 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# @cite{charlow-2021}: Empirical Data
-@cite{charlow-2021}
+# [charlow-2021]: Empirical Data
+[charlow-2021]
 
 Finite witnessing models for the cumulative reading puzzle.
 

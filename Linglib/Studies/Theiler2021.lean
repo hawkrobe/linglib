@@ -4,18 +4,18 @@ import Linglib.Fragments.Mandarin.QuestionParticles
 
 /-!
 # Theiler (2021): *Denn* as a Highlighting-Sensitive Particle
-@cite{theiler-2021} @cite{zheng-2025} @cite{dayal-2025}
+[theiler-2021] [zheng-2025] [dayal-2025]
 
-@cite{theiler-2021} analyzes German *denn* as a flavoring particle that
+[theiler-2021] analyzes German *denn* as a flavoring particle that
 signals the question is prompted by a salient/highlighted proposition
 in the discourse context. In polar questions this manifests as an
 evidential-bias requirement; in *wh*-questions it merely signals
 informational need.
 
 This study file records *denn*'s left-peripheral layer assignment
-within the @cite{dayal-2025} cartography `[SAP [PerspP [CP ...]]]`:
+within the [dayal-2025] cartography `[SAP [PerspP [CP ...]]]`:
 *denn* sits at PerspP, alongside its Mandarin parallel *nandao*
-(@cite{zheng-2025}). The PerspP analysis predicts that *denn* — like
+([zheng-2025]). The PerspP analysis predicts that *denn* — like
 *nandao* — should be incompatible with subordinated interrogatives.
 The point of contrast with *nandao* is the *wh*-question compatibility
 of *denn*: *denn* is at the (matrix) PerspP layer but is not restricted

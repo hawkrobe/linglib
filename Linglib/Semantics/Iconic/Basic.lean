@@ -2,7 +2,7 @@ import Linglib.Core.Context.Tower
 
 /-!
 # Iconological Semantics
-@cite{schlenker-lamberton-2024}
+[schlenker-lamberton-2024]
 
 Core types for Iconological Semantics: a framework combining compositional
 logical semantics with pictorial semantics for sign language classifier
@@ -10,7 +10,7 @@ predicates. Classifiers have both a logical component (predicate over entities)
 and an iconic component (projection from a viewpoint).
 
 Viewpoints may be static (a fixed observation point) or dynamic (varying with
-time and world), following @cite{schlenker-lamberton-lamberton-2026}'s
+time and world), following [schlenker-lamberton-lamberton-2026]'s
 extension.
 
 ## Key Types
@@ -35,7 +35,7 @@ structure StaticViewpoint (P : Type*) where
   position : P
 
 /-- A dynamic viewpoint: a function from time-world pairs to static
-    viewpoints. This is @cite{schlenker-lamberton-lamberton-2026}'s key
+    viewpoints. This is [schlenker-lamberton-lamberton-2026]'s key
     generalization: viewpoints can move, modeling traveling camera shots
     in sign language narrative. -/
 def DynamicViewpoint (W : Type*) (T : Type*) (P : Type*) :=

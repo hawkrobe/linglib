@@ -1,6 +1,6 @@
 /-!
 # Hungarian Discourse Particles
-@cite{ippolito-kiss-williams-2025}
+[ippolito-kiss-williams-2025]
 
 Lexical entry for Hungarian *csak* — the discourse *only* connective. Allows all clause types as S'.
 

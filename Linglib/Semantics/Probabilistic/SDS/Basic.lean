@@ -350,7 +350,7 @@ All share: **Boolean semantics + parameter uncertainty = soft/graded meanings**
 /--
 A disambiguation scenario with selectional and scenario constraints.
 
-This is the standard SDS setup from @cite{erk-herbelot-2024}: an ambiguous word
+This is the standard SDS setup from [erk-herbelot-2024]: an ambiguous word
 in context, with a selectional factor (from the governing predicate) and a
 scenario factor (from the activated frame/script).
 -/
@@ -371,10 +371,10 @@ instance {C : Type} : SDSConstraintSystem (DisambiguationScenario C) C where
   selectionalFactor s c := s.selectional c
   scenarioFactor s c := s.scenario c
 
--- Concept Features (@cite{erk-herbelot-2024} §6)
+-- Concept Features ([erk-herbelot-2024] §6)
 
 /--
-Concept-associated features, following @cite{mcrae-etal-2005}.
+Concept-associated features, following [mcrae-etal-2005].
 
 Each concept has features with associated probabilities. For example,
 `BAT-ANIMAL` has features like `flies` (prob 1.0), `is_black` (prob 0.75).

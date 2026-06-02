@@ -7,7 +7,7 @@ import Linglib.Semantics.Causation.Necessity
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# @cite{grusdt-lassiter-franke-2022}
+# [grusdt-lassiter-franke-2022]
 
 "Probabilistic modeling of rational communication with conditionals"
 PLoS ONE 17(7): e0269937.
@@ -217,7 +217,7 @@ theorem strict_assertability_s3_false :
 -- ============================================================================
 
 open RSA Real in
-/-- @cite{grusdt-lassiter-franke-2022} toy example as RSAConfig.
+/-- [grusdt-lassiter-franke-2022] toy example as RSAConfig.
 
 Meaning: Boolean assertability (1 if assertable, 0 if not).
 World prior: uniform over the 3 states.
@@ -495,7 +495,7 @@ theorem perfection_modulated_by_context :
     `causallySufficient` / `causallyNecessary` substrate was dropped along
     with that substrate. The qualitative claim — *structural sufficiency
     ∧ necessity ⇒ probabilistic ACausesC* — is now witnessed at the V2
-    SEM level by @cite{nadathur-lauer-2020}'s Fire/Bus/Lighthouse scenarios
+    SEM level by [nadathur-lauer-2020]'s Fire/Bus/Lighthouse scenarios
     (`NadathurLauer2020.{Fire,Bus,Lighthouse}`):
     the make/cause divergence cases concretely demonstrate sufficiency
     without necessity (Bus) and necessity without sufficiency (Fire); the

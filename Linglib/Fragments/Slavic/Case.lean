@@ -3,17 +3,17 @@ import Linglib.Features.Case
 
 /-!
 # Shared Slavic Case Inventories
-@cite{comrie-corbett-1993} @cite{blake-1994}
+[comrie-corbett-1993] [blake-1994]
 
 The 6-case core (NOM/ACC/GEN/DAT/LOC/INST) attested across all modern
 Slavic case-bearing languages, plus a 7-case extension (with VOC) for
 Ukrainian/Polish/Czech/Serbo-Croat. Factored from per-language
 Fragments to remove byte-identical duplication.
 
-Per-language sources (chapters of @cite{comrie-corbett-1993}):
-@cite{shevelov-1993} (p. 956), @cite{rothstein-1993} (p. 696),
-@cite{short-1993-czech} (p. 466), @cite{browne-1993} (p. 319),
-@cite{timberlake-1993} (p. 836), @cite{priestly-1993} (p. 399).
+Per-language sources (chapters of [comrie-corbett-1993]):
+[shevelov-1993] (p. 956), [rothstein-1993] (p. 696),
+[short-1993-czech] (p. 466), [browne-1993] (p. 319),
+[timberlake-1993] (p. 836), [priestly-1993] (p. 399).
 
 Caha-containment lemmas live in `Studies/Caha2009.lean`
 (paper-anchored, keeps this substrate file Theory-import-free).

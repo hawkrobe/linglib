@@ -4,12 +4,12 @@ import Linglib.Syntax.Minimalist.Voice
 import Linglib.Fragments.Mayan.Mam.Agreement
 
 /-!
-# @cite{scott-2023} — Voice-Based Case in Mam
-@cite{scott-2023} @cite{woolford-1997} @cite{marantz-1991} @cite{baker-2015}
+# [scott-2023] — Voice-Based Case in Mam
+[scott-2023] [woolford-1997] [marantz-1991] [baker-2015]
 
-@cite{scott-2023}'s analysis of San Juan Atitán Mam treats case as assigned
+[scott-2023]'s analysis of San Juan Atitán Mam treats case as assigned
 directly by functional heads keyed to argument position, building on
-@cite{woolford-1997}'s claim that ergative is lexical/inherent Case
+[woolford-1997]'s claim that ergative is lexical/inherent Case
 assigned with θ-role rather than configurationally derived.
 
 ## Three Heads, Three Cases
@@ -17,7 +17,7 @@ assigned with θ-role rather than configurationally derived.
 In Scott's Mam architecture each case has a dedicated assigner:
 
 - **Voice → ERG** (inherent, to the agent in Spec,VoiceP — extending
-  @cite{woolford-1997}'s inherent-ERG claim into a modern Voice-based
+  [woolford-1997]'s inherent-ERG claim into a modern Voice-based
   architecture)
 - **Voice → ACC** (structural, to the patient — low-abs syntax,
   §3.4)
@@ -31,12 +31,12 @@ through the Mam agreement patterns formalized in
 
 The Mam data discriminates between three theories of case assignment:
 
-1. **Agree-based** (@cite{chomsky-2000}, @cite{chomsky-2001}): Case is
+1. **Agree-based** ([chomsky-2000], [chomsky-2001]): Case is
    assigned by Agree from a probing functional head. ACC requires v* as a
    *phase head*; non-thematic Voice (e.g., anticausative) is not a phase
    head and cannot assign ACC.
 
-2. **Dependent case** (@cite{marantz-1991}, @cite{baker-2015}): Case is
+2. **Dependent case** ([marantz-1991], [baker-2015]): Case is
    determined by the configuration of caseless NPs in a Spell-Out domain;
    Voice flavor is irrelevant to the algorithm.
 

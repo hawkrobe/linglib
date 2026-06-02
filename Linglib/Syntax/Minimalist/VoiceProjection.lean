@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.Movement.Smuggling
 
 /-!
 # What is Voice? Two competing views
-@cite{kratzer-1996} @cite{pylkkanen-2008} @cite{collins-2005} @cite{storment-2026}
+[kratzer-1996] [pylkkanen-2008] [collins-2005] [storment-2026]
 
 A formalizer-side meta-bridge surfacing a substantive theoretical
 disagreement neither paper sets up directly: what is the *job* of the
@@ -11,23 +11,23 @@ syntactic head called Voice?
 
 ## The two views
 
-**Pylkkänen / Kratzer view** (@cite{kratzer-1996}, @cite{pylkkanen-2008}):
+**Pylkkänen / Kratzer view** ([kratzer-1996], [pylkkanen-2008]):
 Voice is the head that *introduces the external argument*. Its job is
 thematic — it bears a θ-relation between the external argument and the
-event described by the verb (Event Identification, @cite{kratzer-1996}
+event described by the verb (Event Identification, [kratzer-1996]
 eq. 10). All argument-structure theory follows from where Voice projects
-and what it bundles with (Cause-Voice bundling, @cite{pylkkanen-2008}
+and what it bundles with (Cause-Voice bundling, [pylkkanen-2008]
 Ch. 3 §3.3). Without Voice, no external argument is introduced at all.
 
-**Collins / Storment view** (@cite{collins-2005}, @cite{storment-2026}):
+**Collins / Storment view** ([collins-2005], [storment-2026]):
 Voice is the *smuggling projection*. Its job is structural — it provides
 the landing site (Spec,VoiceP) into which a constituent can move,
 licensing A-movement past an in-situ external argument. The external
 argument itself is introduced by *v*, not Voice
-(@cite{storment-2026} §4.3). Voice's status as a non-phase head is what
+([storment-2026] §4.3). Voice's status as a non-phase head is what
 permits smuggling. The voice-as-smuggling-projection conception is "a
 notable departure from the view of Voice⁰ as an applicative head that
-introduces the external argument" (@cite{storment-2026}, §4.3).
+introduces the external argument" ([storment-2026], §4.3).
 
 ## The disagreement is partly substantive, partly terminological
 
@@ -64,7 +64,7 @@ about what makes a Voice head "well-formed Voice." -/
 
 /-- **Pylkkänen / Kratzer view**: a Voice head is "doing its job" iff
     it introduces an external argument (assigns external θ).
-    @cite{kratzer-1996}: Voice = the head bearing the θ-relation. -/
+    [kratzer-1996]: Voice = the head bearing the θ-relation. -/
 def IsExternalArgIntroducer (v : VoiceHead) : Prop :=
   v.AssignsTheta
 
@@ -74,7 +74,7 @@ instance (v : VoiceHead) : Decidable (IsExternalArgIntroducer v) := by
 /-- **Collins / Storment view**: a Voice head is "doing its job" iff
     it permits smuggling (it is the structural landing site for a
     constituent moving past an in-situ external argument).
-    @cite{collins-2005}, @cite{storment-2026}. -/
+    [collins-2005], [storment-2026]. -/
 def IsSmugglingProjection (v : VoiceHead) : Prop :=
   v.permitsSmuggling = true
 
@@ -98,7 +98,7 @@ theorem voiceAgent_pylkkanen_yes_collins_no :
 /-- `voicePassive` satisfies the Collins view (it is the smuggling
     landing site) but **fails** the Pylkkänen view (it does not
     introduce an external argument — the external arg is in Spec,vP
-    per @cite{collins-2005} §2 UTAH). The passive Voice head is
+    per [collins-2005] §2 UTAH). The passive Voice head is
     *puzzling* on Pylkkänen's view: a Voice head with no θ-role to
     assign. -/
 theorem voicePassive_collins_yes_pylkkanen_no :

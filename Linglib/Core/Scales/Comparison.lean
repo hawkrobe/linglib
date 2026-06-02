@@ -7,12 +7,12 @@ import Mathlib.Order.Interval.Set.Basic
 `=`, `≥`, `>`, `≤`, `<` — as data (cf. core `Ordering`, reified for `compare`).
 It is the shared, theory-neutral primitive behind numeral modifiers, measure
 phrases, and (the measure-derived case of) gradable comparatives, per the
-joint degree-semantic treatment of @cite{kennedy-2015} and @cite{rett-2014}.
+joint degree-semantic treatment of [kennedy-2015] and [rett-2014].
 
 It interprets two ways, both bottoming out in mathlib's order API so downstream
 proofs reduce into `Set.mem_Ici` & friends rather than a bespoke lemma set:
 
-* `Comparison.rel`      — the order relation (`@cite{kennedy-2015}`'s `REL`).
+* `Comparison.rel`      — the order relation (`[kennedy-2015]`'s `REL`).
 * `Comparison.interval` — the order-interval (`Set.Ici`/`Ioi`/`Iic`/`Iio`/`{·}`).
 * `Comparison.over μ n` — the predication `μ ⁻¹' (c.interval n)`: the entities
   whose measure lands in the interval. Bare cardinals are `over .eq id`, measure
@@ -32,7 +32,7 @@ the latter factor through `Comparison.gt` (see `HasComparison.ofMeasure`).
 
 namespace Core.Scale
 
-/-- @cite{kennedy-2015}'s `REL` reified: the relation a degree modifier draws
+/-- [kennedy-2015]'s `REL` reified: the relation a degree modifier draws
     between a measured value and a threshold. -/
 inductive Comparison where
   /-- Exact / bare: `μ x = n`. -/
@@ -48,7 +48,7 @@ inductive Comparison where
   deriving DecidableEq, Repr, Inhabited
 
 /-- Strict (Class A: `>`, `<`) vs. non-strict (bare `=`, Class B `≥`, `≤`). The
-    modifier-level Class A/B split (@cite{geurts-nouwen-2007}, @cite{nouwen-2010})
+    modifier-level Class A/B split ([geurts-nouwen-2007], [nouwen-2010])
     is `isStrict` restricted to the four modified forms. -/
 def Comparison.isStrict : Comparison → Prop
   | .gt | .lt => True
@@ -90,7 +90,7 @@ def Comparison.over {E α : Type*} [Preorder α]
 /-- **Class A/B is interval-endpoint membership.** A non-strict comparison
     (bare `=`, Class B `≥`/`≤`) keeps the boundary `n`; a strict one (Class A
     `>`/`<`) drops it — the whole Class A/B distinction
-    (@cite{geurts-nouwen-2007}, @cite{nouwen-2010}) in one lemma. -/
+    ([geurts-nouwen-2007], [nouwen-2010]) in one lemma. -/
 @[simp] theorem Comparison.boundary_mem {α : Type*} [Preorder α]
     (c : Comparison) (n : α) : n ∈ c.interval n ↔ ¬ c.isStrict := by
   cases c <;> simp [Comparison.interval, Comparison.isStrict]

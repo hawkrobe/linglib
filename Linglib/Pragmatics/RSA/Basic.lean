@@ -4,7 +4,7 @@ import Linglib.Pragmatics.RSA.Defs
 
 /-!
 # RSAConfig — Unified RSA Configuration
-@cite{degen-2023} @cite{frank-goodman-2012} @cite{bergen-levy-goodman-2016} @cite{kao-etal-2014-hyperbole} @cite{qing-franke-2013}
+[degen-2023] [frank-goodman-2012] [bergen-levy-goodman-2016] [kao-etal-2014-hyperbole] [qing-franke-2013]
 
 A streamlined RSA configuration grounded in rational action theory. Each RSA
 model decomposes into two orthogonal dimensions:
@@ -33,13 +33,13 @@ exactly where its latent variables enter:
 
 | Model | meaning uses latent? | s1Score uses latent? |
 |-------|---------------------|---------------------|
-| @cite{frank-goodman-2012} | no (Unit) | no (Unit) |
-| @cite{kao-etal-2014-hyperbole} (QUD) | no (ignores q) | yes (cell aggregation) |
-| @cite{bergen-levy-goodman-2016} (lex) | yes (lexicon) | no (standard rpow) |
+| [frank-goodman-2012] | no (Unit) | no (Unit) |
+| [kao-etal-2014-hyperbole] (QUD) | no (ignores q) | yes (cell aggregation) |
+| [bergen-levy-goodman-2016] (lex) | yes (lexicon) | no (standard rpow) |
 
 S1 score examples:
-- Belief-based (@cite{frank-goodman-2012}): score = rpow(L0(w|u), α). rpow(0,α)=0.
-- Action-based (@cite{qing-franke-2013}): score = exp(α · (L0(w|u) - cost(u)))
+- Belief-based ([frank-goodman-2012]): score = rpow(L0(w|u), α). rpow(0,α)=0.
+- Action-based ([qing-franke-2013]): score = exp(α · (L0(w|u) - cost(u)))
 - QUD-based: score = exp(α · (ln L0(g(s,a)|u) - C(u)))
 
 ## BToM Grounding (§5)
@@ -239,7 +239,7 @@ theorem L1_marginal_lt_of_score_sum_lt (cfg : RSAConfig U W) (u : U)
 
 /-- S2 agent: pragmatic speaker conditioning on observed world.
 
-    S2 inverts L1 via Bayes' rule over utterances (eq 8, @cite{scontras-pearl-2021}):
+    S2 inverts L1 via Bayes' rule over utterances (eq 8, [scontras-pearl-2021]):
     S2(u|w) ∝ P_{L1}(w|u) = L1(u, w) [the normalized L1 posterior]
 
     Used for endorsement tasks: "would you endorse utterance u given that
@@ -291,7 +291,7 @@ The new S1 scoring rule applies `rpow(l₁(w|u,L), α₂)` times an optional
 `bonus` (e.g., L₁(L|u)^β for expertise) and `costFactor` (e.g., exp(-C(u))).
 
 This gives `S₂(u|w,L) ∝ l₁(w|u,L)^α₂ · bonus(L,u) · costFactor(u)`,
-matching eq 15 of @cite{potts-levy-2015} when `bonus = L₁(L|u)` and
+matching eq 15 of [potts-levy-2015] when `bonus = L₁(L|u)` and
 `costFactor = exp(-C(u))`.
 
 The stacked config's L1 = L₂ (world posterior) and L1_latent = L₂_latent
@@ -342,7 +342,7 @@ noncomputable def trajectoryProbFrom (cfg : RSAConfig U W)
     where ctx₀ = initial and ctxⱼ₊₁ = transition(ctxⱼ, uⱼ).
 
     This is the chain rule for incremental production
-    (@cite{cohn-gordon-goodman-potts-2019}, @cite{waldon-degen-2021}). -/
+    ([cohn-gordon-goodman-potts-2019], [waldon-degen-2021]). -/
 noncomputable def trajectoryProb (cfg : RSAConfig U W)
     (l : cfg.Latent) (w : W) (traj : List U) : ℝ :=
   cfg.trajectoryProbFrom cfg.initial l w traj
@@ -373,7 +373,7 @@ theorem trajectoryProbFrom_nonneg (cfg : RSAConfig U W) (ctx : cfg.Ctx)
     ρ_a(w | u) = softmax(L1(u, ·), α_L)(w)
 
     Models a listener who soft-maximizes over Bayesian beliefs rather than
-    reporting beliefs directly (@cite{qing-franke-2015}). Provides an additional
+    reporting beliefs directly ([qing-franke-2015]). Provides an additional
     degree of freedom (α_L) for fitting listener data. -/
 noncomputable def L1_action (cfg : RSAConfig U W) (αL : ℝ) (u : U) (w : W) : ℝ :=
   softmax (αL • cfg.L1 u) w

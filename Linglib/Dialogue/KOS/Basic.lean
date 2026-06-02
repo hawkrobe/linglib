@@ -4,7 +4,7 @@ import Linglib.Semantics.Questions.Support
 
 /-!
 # KOS: DGB Operations
-@cite{ginzburg-2012} Ch. 4
+[ginzburg-2012] Ch. 4
 
 Operations on the Dialogue Gameboard: pushing onto QUD, downdating
 resolved questions, recording moves, asserting facts. Plus the
@@ -149,7 +149,7 @@ theorem DGB.mapFacts_length {Participant Fact Fact' QContent : Type*} {Cont : Ty
 
 open CommonGround in
 /-- DGB with `Set W` facts projects to a context set.
-    @cite{ginzburg-2012} Ch. 4: the DGB's FACTS field IS the common ground. -/
+    [ginzburg-2012] Ch. 4: the DGB's FACTS field IS the common ground. -/
 instance {W Participant QContent : Type*} {Cont : Type} :
     HasContextSet (DGB Participant (Set W) QContent Cont) W where
   toContextSet dgb := λ w => ∀ p ∈ dgb.facts, p w
@@ -193,13 +193,13 @@ theorem downdateQud_removes_resolved {P Fact QContent : Type*} {Cont : Type}
 
 /-! ## DGB Well-Formedness: Non-Resolve-Cond
 
-@cite{ginzburg-2012} ex. 100 (p. 111): the DGB includes a well-formedness
+[ginzburg-2012] ex. 100 (p. 111): the DGB includes a well-formedness
 constraint `non-resolve-cond` requiring that no question on QUD is already
 resolved by FACTS. This prevents trivially answered questions from lingering
 on QUD — they should be downdated. -/
 
 /-- The non-resolve-cond: no question on QUD is resolved by FACTS.
-@cite{ginzburg-2012} ex. 100 (p. 111). -/
+[ginzburg-2012] ex. 100 (p. 111). -/
 def DGB.nonResolveCond {P Fact QContent : Type*} {Cont : Type}
     [DecidableSupport Fact QContent]
     (dgb : DGB P Fact QContent Cont) : Prop :=
@@ -242,7 +242,7 @@ theorem downdateQud_restores_nonResolveCond
 Ch. 4 defines QUD-downdate in terms of FACTS resolving questions.
 The `Support` typeclass abstracts this. Here we connect it to the
 partition-based `QUD W` from `Discourse/QUD.lean`
-(@cite{groenendijk-stokhof-1984}):
+([groenendijk-stokhof-1984]):
 
 A `Set W` fact supports a `QUD W` question when the fact determines
 a unique cell — all worlds where the fact holds are in the same

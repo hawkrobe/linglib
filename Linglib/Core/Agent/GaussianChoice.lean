@@ -4,7 +4,7 @@ import Linglib.Core.Agent.GumbelLuce
 import Linglib.Core.Agent.Psychophysics
 
 /-!
-# Gaussian Choice Bridge @cite{luce-1959}
+# Gaussian Choice Bridge [luce-1959]
 
 Connects the two Gaussian choice models formalized independently in
 `SignalDetection.lean` (§2.E) and `Thurstone.lean` (§2.D):
@@ -162,8 +162,8 @@ theorem logisticApproxConst_eq_thurstoneLuceK :
     so the Thurstone argument `d'/√2` is larger, and `Φ` is strictly monotone.
 
     *Connection to AUC*: under the equal-variance Gaussian SDT model, the
-    area under the ROC curve equals `Φ(d'/√2)` (@cite{green-swets-1966};
-    @cite{macmillan-creelman-2005}, ch. 3). This theorem therefore proves
+    area under the ROC curve equals `Φ(d'/√2)` ([green-swets-1966];
+    [macmillan-creelman-2005], ch. 3). This theorem therefore proves
     that AUC is strictly monotone in `d'`. The AUC integral identity itself
     — `∫₀¹ rocCurve d' f df = Φ(d'/√2)` — is correct but unproved here;
     integrating `rocCurve` requires additional measure-theoretic
@@ -227,13 +227,13 @@ power law `ψ(s) = k · sⁿ`, the deterministic intensity-to-percept mapping) a
 `SDTModel` (signal detection, the noisy discrimination operator) — sit in
 *different regimes*:
 
-- **Stevens** (`Psychophysics.lean`, @cite{luce-1959} §2.B): supra-threshold
+- **Stevens** (`Psychophysics.lean`, [luce-1959] §2.B): supra-threshold
   magnitude estimation. Maps physical intensity to perceived intensity
   deterministically.
-- **Thurstone** (`Thurstone.lean`, @cite{thurstone-1927}; `luce-1959` §2.D):
+- **Thurstone** (`Thurstone.lean`, [thurstone-1927]; `luce-1959` §2.D):
   paired comparison via Gaussian discriminal processes. Adds noise on top
   of a scale value.
-- **SDT** (`SignalDetection.lean`, @cite{green-swets-1966}): near-threshold
+- **SDT** (`SignalDetection.lean`, [green-swets-1966]): near-threshold
   binary discrimination. The yes/no specialization of Thurstone Case V.
 
 This section composes the three: **Stevens scale + Gaussian noise = Thurstone
@@ -242,7 +242,7 @@ observer with Stevens-scaled perception of intensity and Gaussian noise of
 SD `σ` discriminating two stimuli `s_signal` vs `s_noise` is an SDT observer
 with `d' = (ψ(s_signal) - ψ(s_noise)) / σ`.
 
-This is the standard psychophysics chain; cf. @cite{macmillan-creelman-2005}
+This is the standard psychophysics chain; cf. [macmillan-creelman-2005]
 ch. 1 for the d′-vs-Stevens-Δψ relationship. -/
 
 /-- **Stevens → Thurstone constructor**: Stevens' power-law perception with

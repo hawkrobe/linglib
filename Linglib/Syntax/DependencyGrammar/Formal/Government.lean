@@ -3,7 +3,7 @@ import Linglib.Syntax.DependencyGrammar.Basic
 /-!
 # Government in Dependency Grammar
 
-Formalizes government (@cite{osborne-2019}, Ch. 4 §4.8 and Ch. 5): the
+Formalizes government ([osborne-2019], Ch. 4 §4.8 and Ch. 5): the
 mechanism by which a head determines the morphosyntactic form of its
 dependent — case on a complement of a preposition, verb form on the
 complement of a control verb, finiteness of a clausal complement.
@@ -17,7 +17,7 @@ share an `xcomp` slot but require different forms (`infinitive` vs.
 * `GovernedFeature`, `GovernedValue` — the morphosyntactic dimensions a
   head can govern, with a typed value space (no `String` tags).
 * `GovRequirement` — one head-cat / dep-rel / feature / required-value
-  4-tuple, with five English instances from @cite{osborne-2019}.
+  4-tuple, with five English instances from [osborne-2019].
 * `checkGovernment` — Bool checker that verifies every dependency in a
   `DepTree` honours every requirement that applies to it.
 * `withHim_govOk` / `withHe_govFail` etc. — small fixtures exercising
@@ -43,7 +43,7 @@ open DepGrammar
 /-! ### Government dimensions and values -/
 
 /-- A morphosyntactic feature a head can govern on its dependent.
-    @cite{osborne-2019}. -/
+    [osborne-2019]. -/
 inductive GovernedFeature where
   | Case
   | VForm
@@ -52,7 +52,7 @@ inductive GovernedFeature where
   deriving Repr, DecidableEq
 
 /-- The typed value space for governed features (replaces stringly-typed
-    requirement tags). @cite{osborne-2019}. -/
+    requirement tags). [osborne-2019]. -/
 inductive GovernedValue where
   | acc | nom | gen
   | infinitive | base | gerund | participle
@@ -61,7 +61,7 @@ inductive GovernedValue where
 
 /-- A government requirement: a head of category `headCat` requires its
     dependent on relation `depRel` to have value `requiredValue` of
-    feature `feature`. @cite{osborne-2019}. -/
+    feature `feature`. [osborne-2019]. -/
 structure GovRequirement where
   headCat : UD.UPOS
   depRel : UD.DepRel
@@ -91,7 +91,7 @@ def govVerbFinite : GovRequirement :=
 def govPrepAcc : GovRequirement :=
   ⟨.ADP, .obj, .Case, .acc⟩
 
-/-- The English government patterns from @cite{osborne-2019}. -/
+/-- The English government patterns from [osborne-2019]. -/
 def englishGovRequirements : List GovRequirement :=
   [govVerbInfinitive, govVerbBareInf, govVerbGerund, govVerbFinite, govPrepAcc]
 

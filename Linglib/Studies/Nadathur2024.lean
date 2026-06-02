@@ -2,15 +2,15 @@ import Linglib.Core.Causal.SEM.Counterfactual
 
 /-!
 # Nadathur 2024: Causal Semantics for Implicative Verbs
-@cite{nadathur-2024}
+[nadathur-2024]
 
 Causal Semantics for Implicative Verbs. Journal of Semantics 40: 311–358.
 
 ## Summary
 
 Derives the inferential profile of implicative verbs from causal structure
-(structural equation models, @cite{pearl-2000}; @cite{schulz-2011}).
-Builds on @cite{baglini-francez-2016}'s causal analysis of *manage* but
+(structural equation models, [pearl-2000]; [schulz-2011]).
+Builds on [baglini-francez-2016]'s causal analysis of *manage* but
 extends to the full implicative class: lexically-specific two-way verbs
 (*dare*, *bother*), one-way verbs (*jaksaa*, *pystyä*), and polarity-
 reversing verbs (*fail*, *hesitate*).
@@ -55,7 +55,7 @@ namespace Nadathur2024
 
 open Core.Causal Core.Causal.Mechanism Core.Causal.SEM
 
-/-- Dreyfus scenario vertices (@cite{nadathur-2024} §6.1.1, Figure 3). -/
+/-- Dreyfus scenario vertices ([nadathur-2024] §6.1.1, Figure 3). -/
 inductive V | INT | NRV | LST | BRK | SEC | MSG | COM | SPY
   deriving DecidableEq, Fintype, Repr
 

@@ -9,7 +9,7 @@ set_option autoImplicit false
 
 /-!
 # Dyson-Schwinger equations on `ConnesKreimer R (Nonplanar α)` — MCB §1.17
-@cite{marcolli-chomsky-berwick-2025}
+[marcolli-chomsky-berwick-2025]
 
 MCB §1.17 ("Merge and Combinatorial Recursions in Physics") draws a
 structural parallel between two recursive equations:

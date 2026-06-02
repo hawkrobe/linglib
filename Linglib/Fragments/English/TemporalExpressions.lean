@@ -5,7 +5,7 @@ import Linglib.Fragments.English.FunctionWords
 
 /-!
 # English Temporal Expressions Fragment
-@cite{alstott-aravind-2026} @cite{heinamaki-1974} @cite{rett-2020} @cite{karttunen-1974} @cite{ogihara-steinert-threlkeld-2024} @cite{iatridou-anagnostopoulou-izvorski-2001} @cite{vendler-1957}
+[alstott-aravind-2026] [heinamaki-1974] [rett-2020] [karttunen-1974] [ogihara-steinert-threlkeld-2024] [iatridou-anagnostopoulou-izvorski-2001] [vendler-1957]
 
 Lexical entries for English temporal expressions, organised into two sibling
 structures (mathlib pattern, mirroring `QuantifierEntry` + `NumericalDetEntry`
@@ -15,7 +15,7 @@ in `Determiners.lean`):
   (*before*, *after*, *while*, *when*, *until*, *since*, *till*) and ordering
   modifiers (*within*, *at*, *by*). The `complementType` field captures the
   clausal-vs-nominal distinction; semantic fields (`order`, `licensesNPI`,
-  `complementVeridical`) are shared so generalizations like @cite{rett-2020}'s
+  `complementVeridical`) are shared so generalizations like [rett-2020]'s
   veridicality typology apply uniformly.
 
 - `DurationExprEntry` — **duration / measure adverbials**: *for*, *in* (telic
@@ -75,7 +75,7 @@ inductive ComplementType where
 
 /-- Lexical entry for any temporal expression — subordinating connective
     or adverbial modifier. Unifies the semantic fields (ordering direction,
-    NPI licensing, veridicality) that @cite{heinamaki-1974} shows are shared
+    NPI licensing, veridicality) that [heinamaki-1974] shows are shared
     across both syntactic categories.
 
     The `complementType` field records the syntactic distinction (clausal
@@ -96,7 +96,7 @@ structure TemporalExprEntry where
   coercedReading : Option Reading
   /-- Does telicity of the embedded clause affect interpretation? -/
   embeddedTelicityEffect : Bool
-  /-- Attested in all 17 languages of @cite{rett-2020}'s typological survey -/
+  /-- Attested in all 17 languages of [rett-2020]'s typological survey -/
   crossLinguisticBasic : Bool
   /-- Does the expression entail the truth of its complement?
       *after* is veridical: "He left after she arrived" entails she arrived.
@@ -287,7 +287,7 @@ def by_deadline : TemporalExprEntry :=
   , triggeredCoercion := none }
 
 -- ============================================================================
--- § 4b: Additional Connective Entries (@cite{heinamaki-1974})
+-- § 4b: Additional Connective Entries ([heinamaki-1974])
 -- ============================================================================
 
 /-- *as long as*: temporal containment, synonymous with *while*.
@@ -513,7 +513,7 @@ structure DurationExprEntry where
   /-- True for postpositions (*ago*); most duration adverbials are prepositions. -/
   isPostposition : Prop := False
   /-- Aspectual class the adverbial selects for at the VP it modifies
-      (Vendler-level consensus; @cite{vendler-1957}).
+      (Vendler-level consensus; [vendler-1957]).
       `none` = no restriction; `some .telic` = requires
       accomplishment/achievement; `some .atelic` = requires
       state/activity. -/

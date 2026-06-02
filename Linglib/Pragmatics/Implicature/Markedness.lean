@@ -1,7 +1,7 @@
 /-
 # Neo-Gricean Markedness Infrastructure
 
-Formalization of markedness computation for @cite{rett-2015} Chapters 5-6.
+Formalization of markedness computation for [rett-2015] Chapters 5-6.
 
 ## Insight
 
@@ -11,7 +11,7 @@ member of an antonym pair is marked.
 
 ## Markedness Criteria
 
-Following @cite{horn-1984} and @cite{rett-2015}:
+Following [horn-1984] and [rett-2015]:
 
 1. **Morphological complexity**: un-happy > happy (more morphemes = marked)
 2. **Scale direction**: negative pole is typically marked
@@ -110,7 +110,7 @@ Morphological complexity criterion.
 The form with MORE morphemes is marked.
 This captures cases like un-happy > happy.
 
-From @cite{horn-1984}: "Toward a new taxonomy for pragmatic inference"
+From [horn-1984]: "Toward a new taxonomy for pragmatic inference"
 -/
 def morphologicalCriterion : MarkednessCriterion where
   name := "Morphological Complexity"
@@ -129,7 +129,7 @@ Scale direction criterion.
 The NEGATIVE pole is marked.
 This captures cases like short (negative pole) vs tall (positive pole).
 
-From @cite{bierwisch-1989}, @cite{kennedy-2007}
+From [bierwisch-1989], [kennedy-2007]
 -/
 def scaleDirectionCriterion : MarkednessCriterion where
   name := "Scale Direction"
@@ -150,7 +150,7 @@ Forms with negative prefixes (un-, in-, dis-) are marked.
 This is a specific case of morphological complexity that tracks
 derivational direction.
 
-From @cite{cruse-1986}
+From [cruse-1986]
 -/
 def negativePrefixCriterion : MarkednessCriterion where
   name := "Negative Prefix"
@@ -167,7 +167,7 @@ def negativePrefixCriterion : MarkednessCriterion where
 /--
 Default priority ordering for markedness criteria.
 
-Following @cite{rett-2015} and @cite{horn-1984}:
+Following [rett-2015] and [horn-1984]:
 1. Morphological complexity (most reliable)
 2. Negative prefix (specific morphological indicator)
 3. Scale direction (fallback for equal morphology)
@@ -325,7 +325,7 @@ This keeps the lexicon theory-neutral.
 
 M-alternatives differ in FORM COST (markedness), not truth conditions.
 They only exist in polar-invariant constructions where antonyms have
-the same truth conditions (@cite{rett-2015} Chapter 5).
+the same truth conditions ([rett-2015] Chapter 5).
 
 ### Polar Variance
 
@@ -343,7 +343,7 @@ inductive PolarVariance where
   deriving Repr, DecidableEq
 
 /-- Polar variance by adjectival construction type.
-    @cite{rett-2015} Table 3.1/5.1. -/
+    [rett-2015] Table 3.1/5.1. -/
 def polarVariance : AdjectivalConstruction → PolarVariance
   | .positive => .variant
   | .comparative => .variant

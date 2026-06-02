@@ -5,13 +5,13 @@ import Mathlib.Tactic.FinCases
 
 /-!
 # Relational (dynamic) semantics of DRSs, and its equivalence with verifying embeddings
-@cite{muskens-1996}
+[muskens-1996]
 
 Muskens's reformulation of DRT. Conditions denote *sets* of embeddings (SEM1/2);
 boxes denote *binary relations* between embeddings (SEM3, input → output); a box
 is true under an input embedding `a` iff some output `a'` is related to it
 (p. 148). This is the dynamic / CCP face of DRT, dual to the static
-verifying-embedding semantics `DRS.Realize` (@cite{kamp-reyle-1993}, Def. 1.4.4).
+verifying-embedding semantics `DRS.Realize` ([kamp-reyle-1993], Def. 1.4.4).
 
 The two semantics are *defined independently* and proved equivalent — Muskens's
 remark that the relational interpretation "is in fact equivalent" to Kamp &
@@ -67,12 +67,12 @@ variable {L : Language.{u, v}} {V : Type w} {M : Type x} [L.Structure M]
 /-! ### The relational denotation -/
 
 mutual
-/-- The relational (dynamic) denotation of a DRS (@cite{muskens-1996}, SEM3): the
+/-- The relational (dynamic) denotation of a DRS ([muskens-1996], SEM3): the
 input-output relation `⟨a, a'⟩` where `a'` differs from `a` at most on the
 universe and verifies every condition. -/
 def DRS.toRel : DRS L V → (V → M) → (V → M) → Prop
   | .mk U conds => fun a a' => (∀ x, x ∉ U → a' x = a x) ∧ Condition.holdsAll conds a'
-/-- The set denotation of a condition (@cite{muskens-1996}, SEM1/2): the set of
+/-- The set denotation of a condition ([muskens-1996], SEM1/2): the set of
 embeddings at which it holds. Complex conditions reference the box relation
 `DRS.toRel` of their sub-DRSs. -/
 def Condition.holds : Condition L V → (V → M) → Prop
@@ -89,13 +89,13 @@ def Condition.holdsAll : List (Condition L V) → (V → M) → Prop
 end
 
 /-- A DRS is *true* under an input embedding `a` iff some output embedding is
-related to it (@cite{muskens-1996}, p. 148). -/
+related to it ([muskens-1996], p. 148). -/
 def DRS.trueRel (K : DRS L V) (a : V → M) : Prop := ∃ a', DRS.toRel K a a'
 
 /-! ### Equivalence with the verifying-embedding semantics -/
 
 mutual
-/-- **Muskens ≡ Kamp & Reyle** (@cite{muskens-1996}): the relational denotation
+/-- **Muskens ≡ Kamp & Reyle** ([muskens-1996]): the relational denotation
 agrees with the static verifying-embedding semantics — `toRel K a a'` holds iff
 the output `a'` extends the input `a` over `K`'s universe and verifies `K`. -/
 theorem DRS.toRel_iff_realize (K : DRS L V) (a a' : V → M) :
@@ -134,7 +134,7 @@ theorem Condition.holdsAll_iff_realizeAll (cs : List (Condition L V)) (a : V →
 end
 
 /-- The dynamic truth of a DRS equals its first-order translation's `Realize`
-(@cite{muskens-1996}; @cite{kamp-reyle-1993} §1.5) — the third edge of the
+([muskens-1996]; [kamp-reyle-1993] §1.5) — the third edge of the
 `Realize`/`toFormula`/`toRel` triangle. -/
 theorem DRS.trueRel_iff_realize_toFormula [DecidableEq V] (K : DRS L V) (a : V → M) :
     DRS.trueRel K a ↔ (K.toFormula).Realize a := by
@@ -256,7 +256,7 @@ theorem Condition.holdsAll_append (cs ds : List (Condition L V)) (a : V → M) :
   | nil => simp [Condition.holdsAll]
   | cons c cs ih => simp only [List.cons_append, Condition.holdsAll, ih, and_assoc]
 
-/-- **Merging Lemma** (@cite{muskens-1996}, §II.2): when `K₂`'s universe is fresh
+/-- **Merging Lemma** ([muskens-1996], §II.2): when `K₂`'s universe is fresh
 for `K₁`'s conditions, the relation denoted by the merge `K₁ ⊕ K₂` is the
 relational composition (sequencing `K₁ ; K₂`) of the two box relations —
 `‖K₁ ⊕ K₂‖ = ‖K₁‖ ∘ ‖K₂‖`. This is what gives `merge` its dynamic meaning. -/

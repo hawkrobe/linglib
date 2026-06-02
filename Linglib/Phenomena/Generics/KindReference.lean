@@ -11,7 +11,7 @@ Theory-neutral data on kind reference, bare nominals, cross-linguistic patterns,
 
 For *ad hoc* kind formation — kinds picked out by a salient equivalence
 relation, as in `that kind of dog` constructions — see
-`Semantics/Kinds/Subkinds.lean` (@cite{mendia-2020}).
+`Semantics/Kinds/Subkinds.lean` ([mendia-2020]).
 The taxonomic and singular-kind data here are candidate consumers of
 the Mendia framework.
 
@@ -247,7 +247,7 @@ def universalSomeBooks : ScopeDatum :=
   , notes := "'Some books' can scope over 'every student'"
   }
 
--- Scrambling and Scope (@cite{le-bruyn-de-swart-2022})
+-- Scrambling and Scope ([le-bruyn-de-swart-2022])
 
 
 /-- Scrambling position. -/
@@ -281,7 +281,7 @@ def dutchUnscrambledNeg : ScramblingScopeDatum :=
   , notes := "Unscrambled: bare plural narrow scope only"
   }
 
--- Dutch scrambled bare plurals with negation (@cite{le-bruyn-de-swart-2022}, ex. 34-35)
+-- Dutch scrambled bare plurals with negation ([le-bruyn-de-swart-2022], ex. 34-35)
 
 def dutchScrambledMensen : ScramblingScopeDatum :=
   { sentence := "... dat je mensen niet hebt uitgenodigd"
@@ -305,7 +305,7 @@ def dutchScrambledBoeken : ScramblingScopeDatum :=
   , notes := "Scrambled BP: wide scope, not 'I finished no books'"
   }
 
--- Scrambled bare plurals CAN still be kind-referring (@cite{le-bruyn-de-swart-2022}, ex. 36-37)
+-- Scrambled bare plurals CAN still be kind-referring ([le-bruyn-de-swart-2022], ex. 36-37)
 
 def dutchScrambledKindMensen : ScramblingScopeDatum :=
   { sentence := "... dat ik mensen altijd gehaat heb"
@@ -355,7 +355,7 @@ def germanScrambledMenschen : ScramblingScopeDatum :=
   , notes := "German: specific people the speaker didn't recognize"
   }
 
--- Modified bare plurals CAN scope wide even unscrambled (@cite{carlson-1977}, @cite{geurts-2010})
+-- Modified bare plurals CAN scope wide even unscrambled ([carlson-1977], [geurts-2010])
 
 def modifiedBPwideScope : ScramblingScopeDatum :=
   { sentence := "John didn't see parts of that machine"
@@ -552,7 +552,7 @@ def dogMammal : TaxonomicDatum :=
 -- See `Phenomena/Generics/BarePlurals.lean` for the full data on
 -- predicate-level effects (ILP/SLP, locative status, presuppositionality).
 
--- English BP Ambiguity: Kind vs Property (@cite{guerrini-2026}, diagram (145))
+-- English BP Ambiguity: Kind vs Property ([guerrini-2026], diagram (145))
 
 /-- Denotation type for bare nominal expressions. -/
 inductive NominalDenotation where
@@ -564,7 +564,7 @@ inductive NominalDenotation where
 
 /-- English bare plural denotation ambiguity datum.
 
-@cite{guerrini-2026} argues that English BPs are systematically
+[guerrini-2026] argues that English BPs are systematically
 ambiguous between kind and property denotation. The kind reading
 feeds Distributive/Cumulative Kind Predication; the property reading
 feeds Bona Fide Generic LFs or low-scoped existential LFs (via DPP).

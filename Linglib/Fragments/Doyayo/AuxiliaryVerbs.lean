@@ -2,9 +2,9 @@ import Linglib.Morphology.MorphRule
 
 /-!
 # Doyayo Auxiliary Verb Fragment
-@cite{anderson-2006}
+[anderson-2006]
 
-Doyayo (Adamawa, Niger-Congo; Cameroon) appears in @cite{anderson-2006}
+Doyayo (Adamawa, Niger-Congo; Cameroon) appears in [anderson-2006]
 under **two** distinct AVC patterns:
 
 - **Ch 3 (LEX-headed), ex. (15a-b), p. 121.** Auxiliary uninflected
@@ -40,7 +40,7 @@ def location : String := "Cameroon"
     *mi¹ (gi²) kpel¹-ko¹*
     'I AUX pour-PROX'
     'I'm going to pour'
-    (Wiering and Wiering 1994: 55, cited in @cite{anderson-2006}).
+    (Wiering and Wiering 1994: 55, cited in [anderson-2006]).
     AUX `gi²` is parenthesized in Anderson's gloss; per Anderson p. 120
     it "partially encodes person of the subject through the tone associated
     with the auxiliary". The LV `kpel¹-ko¹` carries the proximate-future
@@ -61,7 +61,7 @@ def lexHeadedDistribution : InflDistribution :=
     *hi¹-za¹ hi¹-zaa¹³ hi¹-lɔ-mɔ*
     '3PL-POT 3PL-come 3PL-bite-2'
     'they might come bite you'
-    (Wiering and Wiering 1994: 221, cited in @cite{anderson-2006}).
+    (Wiering and Wiering 1994: 221, cited in [anderson-2006]).
     Subject `hi¹` is doubly marked on AUX and LV (each prefixed with
     `hi¹-`); object `-mɔ` (2nd person) appears only on the LV.
     Anderson p. 223: "this pattern, consisting of an object found on

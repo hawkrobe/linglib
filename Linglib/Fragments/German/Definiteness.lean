@@ -2,14 +2,14 @@ import Linglib.Core.Nominal.Determiner
 
 /-!
 # German Definiteness Fragment
-@cite{schwarz-2009} @cite{schwarz-2013} @cite{moroney-2021}
+[schwarz-2009] [schwarz-2013] [moroney-2021]
 
 German morphologically distinguishes the weak (uniqueness) article — often
 contracted, e.g., *im*, *vom*, *zum* — from the strong (anaphoric/familiarity)
 article — full forms *dem*, *von dem*. Indefinite *ein-*, demonstratives,
-and possessives complete the inventory. Under the @cite{moroney-2021}
+and possessives complete the inventory. Under the [moroney-2021]
 typology this is the `.bipartite` strategy: distinct forms for each
-@cite{schwarz-2009} use type.
+[schwarz-2009] use type.
 -/
 
 namespace German.Definiteness

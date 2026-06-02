@@ -8,16 +8,16 @@ import Mathlib.Tactic.NormNum
 /-!
 # Epistemic Threshold Semantics
 
-@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025} @cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{klein-1980} @cite{lassiter-goodman-2017} @cite{hintikka-1962}
+[ying-zhi-xuan-wong-mansinghka-tenenbaum-2025] [baker-jara-ettinger-saxe-tenenbaum-2017] [klein-1980] [lassiter-goodman-2017] [hintikka-1962]
 
 Epistemic vocabulary — attitude verbs (`believes`, `knows`), modal verbs
 (`might`, `must`), and modal adjectives (`likely`, `certain`) — denotes
 **threshold functions over agent credence** Pr(A, φ).
 
 This file formalizes the **probabilistic-credence-with-threshold** tradition
-(LaBToM: @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}; epistemic
-modals: @cite{lassiter-goodman-2017}). It is **not** a formalization of
-@cite{cariani-santorio-wellwood-2024}'s confidence semantics — CSW's account
+(LaBToM: [ying-zhi-xuan-wong-mansinghka-tenenbaum-2025]; epistemic
+modals: [lassiter-goodman-2017]). It is **not** a formalization of
+[cariani-santorio-wellwood-2024]'s confidence semantics — CSW's account
 is in `Confidence.lean` and is explicitly non-probabilistic. §6 below
 documents the empirical disagreement between the two traditions; the
 refutation theorem `confidence_not_probabilistic` packages it formally.
@@ -132,7 +132,7 @@ structure EpistemicEntry where
   factive : Bool := false
   deriving DecidableEq, Repr
 
-/-! Standard epistemic thresholds (@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}, Table 1(b)).
+/-! Standard epistemic thresholds ([ying-zhi-xuan-wong-mansinghka-tenenbaum-2025], Table 1(b)).
 
 These are the best-fit values from LaBToM's grid-search parameter
 fitting against human plausibility ratings in a Doors, Keys, & Gems
@@ -411,7 +411,7 @@ theorem prob_conjunction_elim (cr : AgentCredence E W)
     use to argue against probabilistic-credence accounts of confidence:
     `Confidence.conjunction_fallacy_compatible` shows the CSW ordering
     *admits* such witnesses (the John/Linda case from
-    @cite{tversky-kahneman-1983}); this theorem shows that any credence
+    [tversky-kahneman-1983]); this theorem shows that any credence
     function reproducing such a witness *cannot* satisfy
     `isProbabilistic`. The two theories therefore make incompatible
     predictions about the same data point.
@@ -574,15 +574,15 @@ end IdentityPerception
 /-!
 ### Epistemic Expressions as Gradable Predicates
 
-The structural analogy between adjective degree semantics (@cite{kennedy-2007},
-@cite{lassiter-goodman-2017}) and epistemic threshold semantics: both are
+The structural analogy between adjective degree semantics ([kennedy-2007],
+[lassiter-goodman-2017]) and epistemic threshold semantics: both are
 instances of `μ(entity) ≥ θ`. The threshold semantics makes this precise:
 
     ⟦tall⟧(x) = height(x) ≥ θ_tall (Degree.positiveSem)
     ⟦believes⟧(A, φ) = Pr(A, φ) ≥ θ_bel (meetsThreshold)
 
 Both are instances of `μ(entity) ≥ θ`. The epistemic scale is the
-probability interval [0, 1], which is **closed** in the sense of @cite{kennedy-2007}: it has both an upper bound (certainty, 1) and a lower bound
+probability interval [0, 1], which is **closed** in the sense of [kennedy-2007]: it has both an upper bound (certainty, 1) and a lower bound
 (impossibility, 0).
 
 This has consequences for scale structure:
@@ -635,7 +635,7 @@ theorem meetsThreshold_eq_positiveSem (cr : AgentCredence E W) (θ : ℚ)
 
 /-- The epistemic scale is licensed: closed → admits absolute standards.
 
-    Since credence is bounded by [0, 1], @cite{kennedy-2007}'s licensing
+    Since credence is bounded by [0, 1], [kennedy-2007]'s licensing
     prediction says epistemic adjectives like `certain` can use endpoint
     standards (θ ≈ 1.0). This unifies with the five-framework licensing
     agreement from `Core/EpistemicScale.lean`. -/
@@ -650,7 +650,7 @@ theorem epistemicScale_licensed :
 ### From Credence to Comparative Likelihood
 
 When `AgentCredence` is a genuine probability measure (probabilistic
-credence), it induces the full @cite{holliday-icard-2013} hierarchy:
+credence), it induces the full [holliday-icard-2013] hierarchy:
 
     AgentCredence → FinAddMeasure → EpistemicSystemFA
                                     ↓
@@ -707,13 +707,13 @@ def epistemicComparativeScale : Core.Scale.ComparativeScale ℚ where
   boundedness := epistemicBoundedness
 
 -- ============================================================================
--- §10. Degree-Semantic Bridges (@cite{klein-1980})
+-- §10. Degree-Semantic Bridges ([klein-1980])
 -- ============================================================================
 
 /-!
 ### Klein's Reduction: Comparative from Positive
 
-The central formal insight of @cite{klein-1980} — extended here to
+The central formal insight of [klein-1980] — extended here to
 epistemic modality — is that the comparative is not an independent
 primitive but *reduces to* the positive form via existential quantification
 over thresholds (or contexts, in Klein's original delineation semantics):
@@ -740,7 +740,7 @@ the structure of threshold semantics on a linear order.
     "φ more likely than ψ" iff there exists a threshold that φ meets
     and ψ fails. This is THE structural theorem connecting comparative
     and positive-form degree semantics, originally due to
-    @cite{klein-1980}'s delineation semantics for adjectives and
+    [klein-1980]'s delineation semantics for adjectives and
     extended to epistemic vocabulary by treating credence as a measure
     function.
 
@@ -748,7 +748,7 @@ the structure of threshold semantics on a linear order.
     - Backward: if θ separates, then cr(a,ψ) < θ ≤ cr(a,φ).
 
     Note: linglib's `Semantics/Gradability/Theory.lean` follows
-    @cite{kennedy-2007}'s degree typology (open/closed scales,
+    [kennedy-2007]'s degree typology (open/closed scales,
     min/max-standard adjectives), which is downstream of Klein's
     comparative reduction. -/
 theorem comparative_from_positive (cr : AgentCredence E W)
@@ -768,7 +768,7 @@ theorem comparative_from_positive (cr : AgentCredence E W)
 
     On a probability scale, positive and negative epistemic modals are
     contradictories, not contraries — the same threshold θ separates
-    "likely" from "unlikely" (cf. @cite{lassiter-goodman-2017} fn. 8
+    "likely" from "unlikely" (cf. [lassiter-goodman-2017] fn. 8
     for the analogous tall/short case). -/
 theorem meetsThreshold_iff_not_failsThreshold (cr : AgentCredence E W)
     (θ : ℚ) (a : E) (φ : (W → Bool)) :
@@ -786,7 +786,7 @@ theorem meetsThreshold_iff_not_failsThreshold (cr : AgentCredence E W)
     this *derives* the antonymy connection from `comparative_from_positive`
     + `meetsThreshold_iff_not_failsThreshold`.
 
-    The likely/unlikely pattern parallels @cite{lassiter-goodman-2017}'s
+    The likely/unlikely pattern parallels [lassiter-goodman-2017]'s
     tall/short (Eqs. 22–23): same scale, reversed polarity. -/
 theorem antonymy_from_polarity (cr : AgentCredence E W)
     (a : E) (φ ψ : (W → Bool)) :

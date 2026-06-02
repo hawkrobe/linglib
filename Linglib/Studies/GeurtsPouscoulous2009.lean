@@ -8,8 +8,8 @@ import Linglib.Pragmatics.Implicature.Diagnostics
 import Linglib.Semantics.Entailment.Polarity
 
 /-!
-# @cite{geurts-pouscoulous-2009} — Embedded Implicatures?!?
-@cite{geurts-pouscoulous-2009}
+# [geurts-pouscoulous-2009] — Embedded Implicatures?!?
+[geurts-pouscoulous-2009]
 
 Geurts, B. & Pouscoulous, N. (2009). Embedded implicatures?!?
 *Semantics & Pragmatics*, 2(4), 1–34. https://doi.org/10.3765/sp.2.4
@@ -19,13 +19,13 @@ Geurts, B. & Pouscoulous, N. (2009). Embedded implicatures?!?
 The paper makes two interlocking arguments, both formalized here:
 
 1. **Empirical**: four experiments show that mainstream conventionalist
-   theories of scalar implicature (@cite{landman-1998},
-   @cite{levinson-2000}, @cite{recanati-2003}, @cite{chierchia-2004},
-   @cite{chierchia-2006}, @cite{fox-2007},
-   @cite{chierchia-fox-spector-2008}) — and even a *minimal*
+   theories of scalar implicature ([landman-1998],
+   [levinson-2000], [recanati-2003], [chierchia-2004],
+   [chierchia-2006], [fox-2007],
+   [chierchia-fox-spector-2008]) — and even a *minimal*
    conventionalism that only claims local-SI readings exist — fail to
    predict the patterns observed. The embedded-implicature problem is
-   traced back to @cite{cohen-1971}; @cite{landman-1998} is credited in
+   traced back to [cohen-1971]; [landman-1998] is credited in
    the paper's footnote 2 with first noting the belief-report case.
 2. **Methodological**: introspection systematically inflates SI rates
    (Worries §2 + Exp 2 + Exp 3); "subtle intuitions are best classified
@@ -387,13 +387,13 @@ the inference paradigm exaggerates SI rates. These motivate Exp 2.
 - **Worry #1** (page 4:14): the rate at which people spontaneously draw
   a conclusion ϕ from premises A is generally lower than the rate at
   which they endorse the corresponding argument "A, therefore ϕ" when
-  asked explicitly (cf. @cite{evans-newstead-byrne-1993}).
+  asked explicitly (cf. [evans-newstead-byrne-1993]).
 - **Worry #2** (page 4:15): asking whether (b) might be implied by (a)
   changes the context: it makes the question of whether the speaker
   believes (b) contextually relevant. The inference paradigm thereby
   *creates* the relevance condition that makes the SI more likely.
 - **Worry #3** (page 4:15): superficial similarity to valid syllogisms
-  (@cite{chater-oaksford-1999}) may cause errors. SIs derived in the
+  ([chater-oaksford-1999]) may cause errors. SIs derived in the
   inference task may piggyback on this surface-similarity heuristic. -/
 
 /-- Paper §1.4 page 4:13 informal follow-up: "we asked 31 Dutch
@@ -419,7 +419,7 @@ for the low embedded-SI rates of Exp 1a-b. -/
 def maryStampsFollowUp : StampsFollowUp :=
   { n := 31, endorsementCount := 27, endorsementRate := 89 }
 
-/-- @cite{chater-oaksford-1999}'s syllogism meta-analysis (paper §2
+/-- [chater-oaksford-1999]'s syllogism meta-analysis (paper §2
 Worry #3, page 4:15): people endorse the valid `All A → All C`
 syllogism ~90% of the time across independent experiments, and endorse
 three superficially-similar *invalid* syllogisms ~63% on average. The
@@ -494,11 +494,11 @@ tested in Exp 3:
   predicts local SIs are *preferred*.
 - (27) NM context (`exactly two`): mainstream theories diverge here,
   none of them flatly predicting local SIs:
-  - @cite{geurts-2009}: the default construal of (26) and (27) is
+  - [geurts-2009]: the default construal of (26) and (27) is
     *without* local SIs.
-  - @cite{vanrooij-schulz-2004}: opinions are divided, but local SIs
+  - [vanrooij-schulz-2004]: opinions are divided, but local SIs
     *can* occur in UE contexts.
-  - @cite{chierchia-2004}: local SIs are *possible* in (26a,b) and
+  - [chierchia-2004]: local SIs are *possible* in (26a,b) and
     (27), but not argued to be preferred.
 
 `Exp3Row.verificationPred` and `inferencePred` encode the bracketed
@@ -822,10 +822,10 @@ plausible" than (33).
 
 Footnote 11 (page 4:28) lists the references for the Gricean
 derivation of seemingly-embedded SIs that the §8 argument is built on:
-@cite{recanati-2003}, @cite{sauerland-2004}, @cite{vanrooij-schulz-2004},
-@cite{geurts-2006}, @cite{geurts-2009}, @cite{russell-2006},
-@cite{spector-2006}. None of @cite{russell-2006}, @cite{spector-2006},
-or @cite{geurts-2006} are formalized in linglib yet. -/
+[recanati-2003], [sauerland-2004], [vanrooij-schulz-2004],
+[geurts-2006], [geurts-2009], [russell-2006],
+[spector-2006]. None of [russell-2006], [spector-2006],
+or [geurts-2006] are formalized in linglib yet. -/
 
 /-- The §8 derivation routed through the canonical Sauerland-style
 competence machinery in `Implicature.Competence`. The paper's claim is
@@ -962,7 +962,7 @@ end AttitudesBridge
 /-! ## §Conclusion: Chierchia et al. (39)
 
 Paper §Conclusion (page 4:30) example (39) is the marked contrastive
-construction @cite{chierchia-fox-spector-2008} cite as evidence for
+construction [chierchia-fox-spector-2008] cite as evidence for
 embedded SI: "If you take a salad OR desert, you pay $20; but if you
 take BOTH there is a surcharge" (paper's typo "desert" preserved).
 Geurts & Pouscoulous's punchline: such examples are *strongly marked*,

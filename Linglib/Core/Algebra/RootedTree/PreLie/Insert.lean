@@ -13,8 +13,8 @@ set_option autoImplicit false
 
 /-!
 # Path-based single-vertex insertion and vertex decomposition for `Planar α`
-@cite{foissy-typed-decorated-rooted-trees-2018}
-@cite{chapoton-livernet-2001}
+[foissy-typed-decorated-rooted-trees-2018]
+[chapoton-livernet-2001]
 
 `insertAt p T₂ T` grafts `T₂` as a new first child at the vertex
 addressed by path `p` in `T`. Out-of-bounds path: no-op.

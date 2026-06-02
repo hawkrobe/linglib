@@ -2,10 +2,10 @@ import Linglib.Core.Causal.SEM.Counterfactual
 
 /-!
 # Causal Sufficiency
-@cite{nadathur-lauer-2020} @cite{schulz-2011}
+[nadathur-lauer-2020] [schulz-2011]
 
 Causal sufficiency semantics for the verb "make" based on
-@cite{nadathur-lauer-2020} Definition 23.
+[nadathur-lauer-2020] Definition 23.
 
 ## Insight
 

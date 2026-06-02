@@ -3,9 +3,9 @@ import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # Transderivational Correspondence Theory (TCT)
-@cite{benua-1997}
+[benua-1997]
 
-TCT extends @cite{mccarthy-prince-1995} Correspondence Theory with O-O
+TCT extends [mccarthy-prince-1995] Correspondence Theory with O-O
 faithfulness constraints over morphologically related words. The
 characteristic architectural commitment is **recursive evaluation** with
 **base priority**: the base form is computed under a sub-grammar
@@ -19,18 +19,18 @@ The base-priority discipline is what distinguishes TCT from siblings:
 
 | Theory | Architecture | Base priority? |
 |---|---|---|
-| Parallel OT (@cite{mccarthy-prince-1995}) | One pass, joint EVAL | n/a — no separate base |
-| Optimal Paradigms (@cite{mccarthy-2005}) | Symmetric pairwise OO-Faith over paradigm | No — no privileged base |
-| Stratal OT (@cite{kiparsky-2000}) | Cyclic stratal EVAL | Yes, but via *cycles* |
-| **TCT (@cite{benua-1997})** | Parallel within-form, recursive across forms | Yes, by sub-grammar |
-| Lexical Conservatism (@cite{steriade-2000}) | Anchor on attested wordform | Yes, but anchor optional |
+| Parallel OT ([mccarthy-prince-1995]) | One pass, joint EVAL | n/a — no separate base |
+| Optimal Paradigms ([mccarthy-2005]) | Symmetric pairwise OO-Faith over paradigm | No — no privileged base |
+| Stratal OT ([kiparsky-2000]) | Cyclic stratal EVAL | Yes, but via *cycles* |
+| **TCT ([benua-1997])** | Parallel within-form, recursive across forms | Yes, by sub-grammar |
+| Lexical Conservatism ([steriade-2000]) | Anchor on attested wordform | Yes, but anchor optional |
 
 We *encode* base priority by the type signature
 `TCTGrammar.baseEval : List α → List α` — there is no derivative slot,
 so derivative-back-influence is ill-typed by construction. This is a
 modeling choice (one could equally have written
 `baseEval : List α → List α → List α`); the type-level encoding
-*reflects* the architectural commitment of @cite{benua-1997}'s "Priority
+*reflects* the architectural commitment of [benua-1997]'s "Priority
 of the Base", but does not *deduce* it.
 
 ## TETRU schema
@@ -66,7 +66,7 @@ open Core.Constraint.OT (NamedConstraint ConstraintFamily)
 -- § 1: TCT Roles
 -- ============================================================================
 
-/-- The three derivational roles of @cite{benua-1997}: `.input` is the
+/-- The three derivational roles of [benua-1997]: `.input` is the
     underlying form (UR); `.base` is the morphologically simpler related
     word; `.derivative` is the complex word whose phonology is being
     computed. The `(base, derivative)` edge of a `Corr TCT.Role α` carries
@@ -94,7 +94,7 @@ def Role.label : Role → String
     including OO-Faith against the frozen base output). The `α`-typed
     forms are tier-projected representations (segments, tones, etc.).
 
-    The architectural claim of @cite{benua-1997}'s "Priority of the Base"
+    The architectural claim of [benua-1997]'s "Priority of the Base"
     is *encoded* in the type signatures: `baseEval : List α → List α`
     cannot mention the derivative; `derivativeEval : List α → List α → List α`
     takes the base output as a frozen parameter. -/
@@ -128,7 +128,7 @@ theorem TCTGrammar.base_invariant_under_derivative_eval {α} (input : List α)
 -- ============================================================================
 
 /-- The TETRU constraint-ranking schema as a structure with named slots.
-    Used by @cite{benua-1997} (analog of @cite{mccarthy-prince-1995}'s
+    Used by [benua-1997] (analog of [mccarthy-prince-1995]'s
     reduplicative TETU schema, with OO-Ident replacing BR-Ident as the
     "covering" faithfulness constraint).
 
@@ -178,7 +178,7 @@ def TetruSchema.toRanking {C : Type} (s : TetruSchema C) :
 -- ============================================================================
 
 /-- **Misapplication unification** (the architectural content of TCT
-    @cite{benua-1997}): under TETRU, when two candidates tie on M₁,
+    [benua-1997]): under TETRU, when two candidates tie on M₁,
     the candidate with strictly fewer OO-Ident violations strictly beats
     the other on OO-Ident — regardless of M₂ and IO-Faith.
 

@@ -13,8 +13,8 @@ set_option autoImplicit false
 
 /-!
 # Δ^c on `ConnesKreimer R (Nonplanar (α ⊕ β))` via descent + duality
-@cite{marcolli-chomsky-berwick-2025}
-@cite{foissy-typed-decorated-rooted-trees-2018}
+[marcolli-chomsky-berwick-2025]
+[foissy-typed-decorated-rooted-trees-2018]
 
 The decorated coproduct Δ^c (contraction-extraction with trace
 placeholders) descended from the planar version `comulCAlgHomP` in

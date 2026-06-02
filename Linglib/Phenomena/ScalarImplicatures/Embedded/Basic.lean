@@ -3,7 +3,7 @@ import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
 # RSA Embedded Scalar Implicatures: Simplified Model (For Analysis)
-@cite{bergen-levy-goodman-2016} @cite{geurts-2010} @cite{potts-etal-2016}
+[bergen-levy-goodman-2016] [geurts-2010] [potts-etal-2016]
 
 This file implements a **simplified** 2-lexicon model to analyze why minimal
 Lexical Uncertainty models fail to derive embedded implicature patterns.

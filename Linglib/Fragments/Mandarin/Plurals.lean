@@ -2,7 +2,7 @@ import Linglib.Typology.Plurals
 
 /-!
 # Mandarin plurality profile (WALS Chs 33–36)
-@cite{wals-2013}
+[wals-2013]
 -/
 
 namespace Mandarin

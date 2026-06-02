@@ -5,12 +5,12 @@ import Linglib.Semantics.Kinds.NominalMappingParameter
 /-! # Italian Noun Lexicon Fragment
 
 Italian NP structure with gender. Bare arguments restricted
-(@cite{chierchia-1998} [-arg, +pred]). Italian is the star witness for
+([chierchia-1998] [-arg, +pred]). Italian is the star witness for
 Chierchia's `predOnly` parameter: nouns denote predicates and require
 a determiner to be argumental.
 
 ## Determiner System
-@cite{chierchia-1998}
+[chierchia-1998]
 
 Italian has a richer article paradigm than French, with allomorphy
 conditioned by gender, number, and phonological context:
@@ -185,7 +185,7 @@ example : barePluralLicensed = false := rfl
 example : bareSingularLicensed = false := rfl
 
 -- ============================================================================
--- § 9a: Nominal Denotation — Kind vs Property (@cite{guerrini-2026})
+-- § 9a: Nominal Denotation — Kind vs Property ([guerrini-2026])
 -- ============================================================================
 
 open Semantics.Kinds.NMP (CanDenoteKind CanDenoteProperty)

@@ -3,7 +3,7 @@ import Linglib.Phonology.Prosodic.Moraic.Defs
 import Linglib.Fragments.Japanese.Prosody
 
 /-!
-# Kawahara (2015) @cite{kawahara-2015}
+# Kawahara (2015) [kawahara-2015]
 
 The phonology of Japanese accent. In Haruo Kubozono (ed.),
 *The handbook of Japanese phonetics and phonology*, 445–492.
@@ -46,7 +46,7 @@ open Japanese.Prosody
     containing the antepenultimate mora) while the LSR predicts accent
     on σ₁ (the antepenultimate syllable, because the penult is light).
 
-    @cite{kubozono-2008} argues that LSR-conforming pronunciations
+    [kubozono-2008] argues that LSR-conforming pronunciations
     appear as variants even in the mismatch cases, suggesting the LSR
     may be the better characterization. -/
 theorem table1_exactly_two_mismatches :
@@ -158,7 +158,7 @@ theorem long_n2_initial_avoids_final :
     vowels all contribute to syllable weight. The weight sensitivity of
     accent assignment (AAR/LSR) operates on these moraic weights.
 
-    @cite{kawahara-2015} §2.3: syllables with coda nasal, first part of
+    [kawahara-2015] §2.3: syllables with coda nasal, first part of
     geminate, long vowel, or diphthong are bimoraic (heavy). Open
     syllables with short vowels are monomoraic (light). -/
 theorem japanese_wbp_active (o n c : Phonology.Segment) :

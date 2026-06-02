@@ -3,10 +3,10 @@ import Linglib.Semantics.Supervaluation.Basic
 
 /-!
 # Klein's Delineation Approach
-@cite{klein-1980} @cite{kennedy-2007}
-@cite{kamp-1975}
+[klein-1980] [kennedy-2007]
+[kamp-1975]
 
-@cite{klein-1980} "A Semantics for Positive and Comparative Adjectives":
+[klein-1980] "A Semantics for Positive and Comparative Adjectives":
 a degree-free analysis where gradable adjectives are simple predicates
 (type `⟨e,t⟩`) whose extension is determined relative to a **comparison
 class** — a contextually supplied set of entities.
@@ -14,7 +14,7 @@ class** — a contextually supplied set of entities.
 ## Lineage from Kamp (1975)
 
 Klein's comparative — `∃ C. tall(a,C) ∧ ¬tall(b,C)` — is a direct
-formalization of @cite{kamp-1975}'s definition (12): u₁ is at least as A
+formalization of [kamp-1975]'s definition (12): u₁ is at least as A
 as u₂ iff in every completion where u₂ is in the extension, u₁ is too.
 Kamp's "completions" become Klein's "comparison classes"; both derive
 the comparative from existential quantification over ways of making a
@@ -36,7 +36,7 @@ vague predicate precise.
 
 ## Comparison with Kennedy
 
-| Feature           | @cite{kennedy-2007}           | @cite{klein-1980}             |
+| Feature           | [kennedy-2007]           | [klein-1980]             |
 |-------------------|--------------------------|--------------------------|
 | Ontology          | Degrees exist            | No degrees               |
 | ⟦tall⟧           | λd.λx. height(x) ≥ d    | λx. tall(x) in C        |
@@ -45,7 +45,7 @@ vague predicate precise.
 | Comparison class  | Not a semantic argument  | Semantic argument of pos |
 | Measure phrases   | Direct (3 inches of d)   | Via ≈-classes (§4.2)     |
 
-@cite{kennedy-2007} argues (§2.2–2.3) that the comparison class is NOT
+[kennedy-2007] argues (§2.2–2.3) that the comparison class is NOT
 a semantic argument of *pos* (contra Klein). Instead, the standard is
 determined by a context-sensitive function **s** (eq 27) that may draw on
 domain information descriptively called a "comparison class" but which
@@ -114,8 +114,8 @@ def IsMonotoneDelineation {Entity : Type*}
 -- § 5. Bridge: Klein ↔ Fine (Supervaluation)
 -- ════════════════════════════════════════════════════
 
-/-! @cite{klein-1980}'s comparative is the **existential dual** of
-    @cite{fine-1975}'s supervaluation. Where supervaluation asks "true at
+/-! [klein-1980]'s comparative is the **existential dual** of
+    [fine-1975]'s supervaluation. Where supervaluation asks "true at
     ALL specifications?", Klein asks "true at SOME specification where the
     other is false?" Both quantify over the same space — comparison classes
     (Klein) = specification points (Fine). The positive form "a is tall"
@@ -527,14 +527,14 @@ theorem fairly_excludes_very {Entity : Type*}
 /-! Two typeclasses recording how a delineation `del` relates to an
     abstract scalar relation `R : Entity → Entity → Prop`. Both are
     substrate notions used across paper-anchor files:
-    - **Soundness** = @cite{bochnak-2015} eq. (28b) **Consistency
-      Constraint b** (cf. @cite{klein-1980}, @cite{kennedy-2011},
-      @cite{van-rooij-2011a}; @cite{bochnak-2015} adopts CC-b as the
+    - **Soundness** = [bochnak-2015] eq. (28b) **Consistency
+      Constraint b** (cf. [klein-1980], [kennedy-2011],
+      [van-rooij-2011a]; [bochnak-2015] adopts CC-b as the
       formal engine converting per-context conjoined-comparison content
       into the height-comparison entailment).
     - **Completeness** = the converse direction (NOT in
-      @cite{bochnak-2015}; closer to @cite{burnett-2017}'s *Plenitude*
-      / *Granularity* axioms and @cite{klein-1980} coverage
+      [bochnak-2015]; closer to [burnett-2017]'s *Plenitude*
+      / *Granularity* axioms and [klein-1980] coverage
       assumptions).
 
     Promoted here so that Kamp/Klein/Fine/Kennedy/Hierarchy and any
@@ -542,7 +542,7 @@ theorem fairly_excludes_very {Entity : Type*}
     Motu, Wellwood's *much* analyses) can import and instantiate
     uniformly without going through any paper-specific anchor file.
 
-    @cite{bochnak-2015} eq. (28a) **Consistency Constraint a** is exactly
+    [bochnak-2015] eq. (28a) **Consistency Constraint a** is exactly
     `IsMonotoneDelineation _ Set.univ` (§4 above) — no separate
     typeclass needed.
 
@@ -554,16 +554,16 @@ theorem fairly_excludes_very {Entity : Type*}
       bridge content. `comparativeSem_iff_of_sound_and_complete`
       instantiated at `measureDelineation μ` is the `Set.univ`
       restriction of `ordering_iff_degree μ Set.univ`.
-    - **@cite{kamp-1975}**: `IsCompleteDelineation`'s "R-distinguished
+    - **[kamp-1975]**: `IsCompleteDelineation`'s "R-distinguished
       pairs admit a discriminating context" is the existential dual of
       Kamp's preorder universal `∀ C, del C v → del C u`. For monotone
       delineations, the equivalence fires via `comparativeSem ↔
       kleinPreorder.lt` (§12 above).
-    - **@cite{fine-1975}**: `monotone_comparative_superTrue` (§5 above)
+    - **[fine-1975]**: `monotone_comparative_superTrue` (§5 above)
       shows monotonicity carries `comparativeSem` into Fine's super-true
       entailment. CC-b is the delineation-side statement of the same
       supervaluationist content under the Klein↔Fine duality.
-    - **Tension with @cite{cobreros-etal-2012}**: CC-b
+    - **Tension with [cobreros-etal-2012]**: CC-b
       is a strict-classical condition (`¬ del C y` absolutely). Under
       tolerant semantics for vague predicates, similar pairs would
       satisfy `tolerantAtom M P x ∧ tolerantAtom M P y` jointly, so
@@ -576,7 +576,7 @@ theorem fairly_excludes_very {Entity : Type*}
     encoded by G" is left abstract — `R : Entity → Entity → Prop` is
     not constrained to be a strict order or scale-induced.
 
-    Generalises @cite{bochnak-2015} eq. (28b) from the measure-induced
+    Generalises [bochnak-2015] eq. (28b) from the measure-induced
     case to arbitrary relations. The Bochnak citation tag is preserved
     in `ConsistencyConstraints.lean`. -/
 class IsSoundDelineation {Entity : Type*}
@@ -589,10 +589,10 @@ class IsSoundDelineation {Entity : Type*}
     `R` iff every R-distinguished pair admits a discriminating context:
     whenever `R x y`, there is some context `C` with `del C x ∧ ¬ del C y`.
 
-    NOT in @cite{bochnak-2015} (whose footnote 11 explicitly notes the
+    NOT in [bochnak-2015] (whose footnote 11 explicitly notes the
     one-directional character of the comparison entailment); related to
-    @cite{burnett-2017}'s *Plenitude* and *Granularity* axioms and to
-    @cite{klein-1980} coverage assumptions. Required for the bidirectional
+    [burnett-2017]'s *Plenitude* and *Granularity* axioms and to
+    [klein-1980] coverage assumptions. Required for the bidirectional
     `comparativeSem ↔ R` equivalence below; without it the right-to-left
     direction fails. -/
 class IsCompleteDelineation {Entity : Type*}

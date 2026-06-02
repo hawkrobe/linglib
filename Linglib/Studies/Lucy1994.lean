@@ -5,9 +5,9 @@ import Linglib.Semantics.Lexical.Roots.SalienceClass
 /-!
 # Lucy 1994: The role of semantic value in lexical comparison
 
-@cite{lucy-1994}
+[lucy-1994]
 
-@cite{lucy-1994} argues that the right way to identify lexical
+[lucy-1994] argues that the right way to identify lexical
 classes is *morpho-distributional*, not denotational. Yucatek's
 "spatial" verbs are his test case: a notional set assembled by English
 intuition fails to coincide with any morphologically defined Yucatek
@@ -52,7 +52,7 @@ open Yukatek.Operators
 
 /-! `SalienceClass` and `classOfSignature` live in
     `Semantics/Lexical/Roots/SalienceClass.lean`. This file
-    provides the full @cite{lucy-1994} analysis on top of them:
+    provides the full [lucy-1994] analysis on top of them:
     operator-orbit characterizations and per-root sanity checks.
 
     Local short alias `predictedClass = Root.predictedSalience`. -/
@@ -112,7 +112,7 @@ theorem positional_iff_orbit_tal (r : Root) :
     predictedClass r = some .positional ↔ inventory.orbit r = ["-tal"] := by
   lucy_orbit r
 
-/-- An empty orbit characterises roots outside @cite{lucy-1994}'s
+/-- An empty orbit characterises roots outside [lucy-1994]'s
     diagnostic gap (`(¬manner, ¬result)` rows that lack the positional
     configuration `state ∧ ¬cause`). -/
 theorem none_iff_orbit_empty (r : Root) :
@@ -120,7 +120,7 @@ theorem none_iff_orbit_empty (r : Root) :
   lucy_orbit r
 
 /-- **Orbit-as-classifier.** Two roots have the same operator orbit
-    under @cite{lucy-1994}'s diagnostic inventory iff they have the
+    under [lucy-1994]'s diagnostic inventory iff they have the
     same predicted salience class. The 4 named-class iff-theorems are
     special cases. -/
 theorem orbit_eq_iff_predictedClass_eq (r₁ r₂ : Root) :
@@ -187,7 +187,7 @@ theorem kul_positional : predictedClass kul = some .positional := rfl
 -- § 6. The "Motion Verbs" Non-Class
 -- ════════════════════════════════════════════════════
 
-/-- @cite{lucy-1994}'s central typological point: "motion" verbs
+/-- [lucy-1994]'s central typological point: "motion" verbs
     (`luub` "fall", `ok` "enter") are not in their own salience class
     — they pattern with other patient-salient state-change roots.
     Concretely: their predicted class is the same as `kiim` "die". -/
@@ -234,7 +234,7 @@ theorem predictedClass_closure_invariant (r : Root) :
 -- § 8. Bridge to Bohnemeyer's 5-Way Verb Stem Classes
 -- ════════════════════════════════════════════════════
 
-/-! @cite{bohnemeyer-2004} refines @cite{lucy-1994}'s 4-way salience
+/-! [bohnemeyer-2004] refines [lucy-1994]'s 4-way salience
     cut into a 5-way stem classification (`active`, `inactive`,
     `inchoative`, `positional`, `transitiveActive`). The mapping is
     `VerbStemClass.toSalienceClass` in `VerbClasses.lean`. The agent /

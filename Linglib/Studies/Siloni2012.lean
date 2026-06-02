@@ -4,7 +4,7 @@ import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 /-!
 # Siloni (2012): Reciprocal Verbs and Symmetry
 
-@cite{siloni-2012} @cite{siloni-2008}
+[siloni-2012] [siloni-2008]
 
 Natural Language and Linguistic Theory 30(1): 261–320.
 
@@ -238,7 +238,7 @@ def BundledRole.componentCount (_b : BundledRole) : Nat := 2
 -- § 5. The "I" Reading (§2.1, §4.3)
 -- ════════════════════════════════════════════════════
 
-/-! The "I" reading of embedded reciprocals (@cite{higginbotham-1980}):
+/-! The "I" reading of embedded reciprocals ([higginbotham-1980]):
 
     "John and Paul said they defeated each other in the final."
 

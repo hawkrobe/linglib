@@ -2,7 +2,7 @@ import Linglib.Typology.Negation
 
 /-!
 # Imbabura Quechua Negation Fragment
-@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
+[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
 
 Imbabura Quechua expresses standard negation with the preverbal particle
 *mana*, optionally reinforced by the suffix *-chu* on the verb.
@@ -17,7 +17,7 @@ WALS classifies Imbabura Quechua as **both symmetric and asymmetric**:
 - **Asymmetric (A/NonReal)**: in other constructions, negation triggers
   obligatory *-chu* marking on the verb. *-chu* is a **validator** enclitic
   that also appears in polar interrogatives; it expresses assertion
-  authority and certainty (@cite{miestamo-2005} p. 158). Its use in
+  authority and certainty ([miestamo-2005] p. 158). Its use in
   negatives introduces a non-realized category absent from affirmatives.
 
 The A/NonReal asymmetry is **paradigmatic**: the negative paradigm
@@ -44,7 +44,7 @@ def mana : NegMarkerEntry :=
     contexts. Glossed as VAL (validator); shared with polar questions.
     Not a negation marker — its appearance under negation is what
     distinguishes the asymmetric Quechua negative paradigm
-    (@cite{miestamo-2005} p. 158). -/
+    ([miestamo-2005] p. 158). -/
 def chuSuffix : String := "-chu"
 
 /-- The Imbabura Quechua negation system: a single preverbal particle.

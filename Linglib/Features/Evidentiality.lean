@@ -1,6 +1,6 @@
 /-!
 # Evidentiality
-@cite{aikhenvald-2004} @cite{cumming-2026} @cite{von-fintel-gillies-2010}
+[aikhenvald-2004] [cumming-2026] [von-fintel-gillies-2010]
 
 Framework-agnostic evidentiality vocabulary: the canonical Aikhenvald
 three-way source taxonomy, the temporal-orientation classification of
@@ -14,14 +14,14 @@ described event: the event causes the perceptual state, the report, or the
 observable effects from which the inference is drawn.
 
 This module supplies the shared vocabulary that bridges
-@cite{cumming-2026}'s tense evidentiality (T ≤ A = downstream evidence) and
-@cite{von-fintel-gillies-2010} epistemic evidentiality (direct vs indirect).
+[cumming-2026]'s tense evidentiality (T ≤ A = downstream evidence) and
+[von-fintel-gillies-2010] epistemic evidentiality (direct vs indirect).
 
 -/
 
 namespace Features.Evidentiality
 
-/-- Canonical three-way evidential source classification (@cite{aikhenvald-2004}). -/
+/-- Canonical three-way evidential source classification ([aikhenvald-2004]). -/
 inductive CoarseSource where
   /-- Direct sensory observation (seeing, hearing the event). -/
   | direct
@@ -32,7 +32,7 @@ inductive CoarseSource where
   deriving DecidableEq, Repr, Inhabited
 
 /-- Evidential perspective: the temporal relation of evidence acquisition
-    to the described event. @cite{cumming-2026}'s three evidential
+    to the described event. [cumming-2026]'s three evidential
     orientations, named in framework-agnostic terms. -/
 inductive EvidentialPerspective where
   /-- T ≤ A: evidence acquired after (or at) the event. Speaker observed

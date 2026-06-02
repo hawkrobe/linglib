@@ -5,7 +5,7 @@ import Linglib.Data.WALS.Features.F52A
 
 /-!
 # Case typology — WALS substrate (Chapters 49–52)
-@cite{dryer-haspelmath-2013} @cite{iggesen-2013} @cite{stolz-veselinova-2013}
+[dryer-haspelmath-2013] [iggesen-2013] [stolz-veselinova-2013]
 
 Theory-neutral case-typology substrate distilled from four WALS chapters,
 in the same `Linglib/Typology/{Domain}.lean` mould as `WordOrder.lean`,
@@ -63,7 +63,7 @@ private abbrev ch52 := Data.WALS.F52A.allData
 -- §1. WALS Ch 49 — Number of Cases
 -- ============================================================================
 
-/-- Number-of-cases categories (WALS Ch 49, @cite{iggesen-2013}).
+/-- Number-of-cases categories (WALS Ch 49, [iggesen-2013]).
 
 Languages are classified by the number of morphological case distinctions
 in their nominal paradigm. WALS additionally distinguishes
@@ -163,7 +163,7 @@ def fromWALS50A : Data.WALS.F50A.AsymmetricalCaseMarking →
 -- §3. WALS Ch 51 — Position of Case Affixes
 -- ============================================================================
 
-/-- Position of case affixes (WALS Ch 51, @cite{iggesen-2013}). -/
+/-- Position of case affixes (WALS Ch 51, [iggesen-2013]). -/
 inductive CaseAffixPosition where
   | noAffixes         -- no case affixes (no case, or case-by-adposition only)
   | suffixesOnly
@@ -186,7 +186,7 @@ def CaseAffixPosition.hasSuffix : CaseAffixPosition → Bool
 -- §4. WALS Ch 52 — Comitatives and Instrumentals
 -- ============================================================================
 
-/-- Comitative–instrumental relation (WALS Ch 52, @cite{stolz-veselinova-2013}).
+/-- Comitative–instrumental relation (WALS Ch 52, [stolz-veselinova-2013]).
 
 In many languages the marker for 'with X' (comitative: accompaniment) and
 'by means of X' (instrumental: means/instrument) is the same morpheme

@@ -222,7 +222,7 @@ theorem dynRelation_trichotomy {W Time α : Type*} [LinearOrder α]
 -- ════════════════════════════════════════════════════════════════
 
 /-!
-The eliminative-vs-generative dichotomy from @cite{groenendijk-stokhof-veltman-1996}
+The eliminative-vs-generative dichotomy from [groenendijk-stokhof-veltman-1996]
 is exactly the `Set.filter` vs `Set.bind` dichotomy of the powerset monad.
 `dynRelationOn`/`dynRelation` cover the eliminative side
 (`f c ⊆ c`); `dynIntroduce` covers the generative side: it produces

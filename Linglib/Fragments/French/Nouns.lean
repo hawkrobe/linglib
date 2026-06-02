@@ -4,7 +4,7 @@ import Linglib.Semantics.Kinds.NominalMappingParameter
 
 /-! # French Noun Lexicon Fragment
 
-French NP structure with gender. Bare arguments restricted (@cite{chierchia-1998} [-arg, +pred]).
+French NP structure with gender. Bare arguments restricted ([chierchia-1998] [-arg, +pred]).
 -/
 
 namespace French.Nouns

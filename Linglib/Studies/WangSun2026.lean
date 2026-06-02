@@ -5,9 +5,9 @@ import Linglib.Studies.Chierchia1998
 
 /-!
 # Wang & Sun (2026): Detaching Mandarin Classifiers from Nouns
-@cite{wang-sun-2026} @cite{adger-2025}
+[wang-sun-2026] [adger-2025]
 
-Applies @cite{adger-2025}'s mereological syntax to three problems in
+Applies [adger-2025]'s mereological syntax to three problems in
 Mandarin classifier phrases:
 
 1. **Modification**: Degree-modified adjectives cannot appear between Num
@@ -460,7 +460,7 @@ theorem ge_is_default :
 -- § 6. Bridge to Borer 2005
 -- ════════════════════════════════════════════════════
 
-/-! Both @cite{borer-2005} and @cite{wang-sun-2026} place Q below D
+/-! Both [borer-2005] and [wang-sun-2026] place Q below D
     and above N in the nominal spine, and both treat classifiers as
     independent of nouns. The mereological analysis adds a structural
     explanation for the 的-contrast that Borer's theory does not directly
@@ -468,7 +468,7 @@ theorem ge_is_default :
     with 的, it is invisible (mensural). -/
 
 /-- The 1-part chain from D (without 的) follows the ordering
-    D → Q → Cl → N. Two differences from @cite{borer-2005}'s EP
+    D → Q → Cl → N. Two differences from [borer-2005]'s EP
     (D → Num → Q → n → N): (1) n (categorizer) is absent in the
     mereological analysis; (2) Num is Q's 2-part here (outside
     the 1-part chain), whereas Borer places Num above Q in the
@@ -491,7 +491,7 @@ theorem q_is_individuation_locus :
     1. Fragment: bēi has mensural affordance (`isMensural = true`)
     2. Without 的: Cl visible from D → sortal reading (real glass)
     3. With 的: Cl invisible from D → mensural reading (glassful)
-    4. Without-的 spine matches @cite{borer-2005}'s nominal EP -/
+    4. Without-的 spine matches [borer-2005]'s nominal EP -/
 theorem bei_end_to_end :
     Mandarin.Classifiers.bei.isMensural = true ∧
     classifierReading noDe_D = .sortal ∧
@@ -513,7 +513,7 @@ theorem modification_end_to_end :
 -- ════════════════════════════════════════════════════
 
 /-! The structural predictions in §§ 3–5 determine syntactic visibility.
-    This section connects visibility to @cite{borer-2005}'s mereological
+    This section connects visibility to [borer-2005]'s mereological
     semantics via the bridge in `Interpretation.lean`: visible Cl → QUA
     (count/sortal); invisible Cl → root preserved (mass/mensural). -/
 
@@ -554,12 +554,12 @@ end SemanticGrounding
 
 /-! End-to-end argumentation connecting three independent theories:
 
-    1. **@cite{chierchia-1998}**: Mandarin is [+arg, -pred] → nouns are
+    1. **[chierchia-1998]**: Mandarin is [+arg, -pred] → nouns are
        kind-denoting → bare nouns are arguments → classifiers required.
-    2. **@cite{borer-2005}**: Roots denote cumulative (CUM) predicates.
+    2. **[borer-2005]**: Roots denote cumulative (CUM) predicates.
        The Q head hosts individuation (Div), converting CUM → QUA.
        Classifiers spell out at Q.
-    3. **@cite{wang-sun-2026}**: Mereological syntax determines whether
+    3. **[wang-sun-2026]**: Mereological syntax determines whether
        Cl is visible from D via 1-part chain transitivity. Visible Cl → QUA
        (sortal); invisible Cl → CUM (mensural). The particle 的 changes
        dimensional attachment, toggling visibility.

@@ -2,9 +2,9 @@ import Linglib.Features.Aktionsart
 
 /-!
 # Aspect × Temporal Connective Interaction Data
-@cite{moens-steedman-1988} @cite{vendler-1957}
+[moens-steedman-1988] [vendler-1957]
 
-Theory-neutral empirical data on how temporal connectives interact with the @cite{heinamaki-1974} @cite{rett-2020}
+Theory-neutral empirical data on how temporal connectives interact with the [heinamaki-1974] [rett-2020]
 aspectual class (Vendler class) of their complement and main clauses.
 
 ## Key Empirical Generalizations
@@ -54,7 +54,7 @@ structure AspectInteraction where
   deriving Repr
 
 -- ============================================================================
--- § 2: *When* + Embedded Clause (@cite{moens-steedman-1988}, §4.2)
+-- § 2: *When* + Embedded Clause ([moens-steedman-1988], §4.2)
 -- ============================================================================
 
 /-- *when* + state → no coercion (state persists).
@@ -104,7 +104,7 @@ def when_achievement : AspectInteraction where
   example_ := "When John arrived, Mary left"
 
 -- ============================================================================
--- § 3: *Until* Main Clause Restrictions (@cite{karttunen-1974})
+-- § 3: *Until* Main Clause Restrictions ([karttunen-1974])
 -- ============================================================================
 
 /-- *until* + stative main clause → acceptable (canonical use).
@@ -154,7 +154,7 @@ def until_accomplishment_main : AspectInteraction where
   example_ := "*John built the house until 3pm"
 
 -- ============================================================================
--- § 4: *Before*/*After* + Embedded Clause Telicity (@cite{rett-2020})
+-- § 4: *Before*/*After* + Embedded Clause Telicity ([rett-2020])
 -- ============================================================================
 
 /-- *before* + stative embedded → default before-start reading.
@@ -171,7 +171,7 @@ def before_stative : AspectInteraction where
 /-- *before* + accomplishment embedded → before-start is default;
     before-finish (COMPLET) reading is available with coercion cost.
     "John left before she climbed the mountain." Default: before onset.
-    Coerced: before completion. (@cite{alstott-aravind-2026}, Exp. 2) -/
+    Coerced: before completion. ([alstott-aravind-2026], Exp. 2) -/
 def before_accomplishment : AspectInteraction where
   connective := "before"
   vendlerClass := .accomplishment
@@ -184,7 +184,7 @@ def before_accomplishment : AspectInteraction where
 /-- *after* + stative embedded → default after-finish; after-start (INCHOAT)
     requires coercion. "John left after she was surprised."
     Default: after end of surprise. Coerced: after onset.
-    (@cite{alstott-aravind-2026}, Exp. 4) -/
+    ([alstott-aravind-2026], Exp. 4) -/
 def after_stative : AspectInteraction where
   connective := "after"
   vendlerClass := .state
@@ -206,7 +206,7 @@ def after_accomplishment : AspectInteraction where
   example_ := "John left after she climbed the mountain"
 
 -- ============================================================================
--- § 5: *Since* Main Clause Restrictions (@cite{heinamaki-1974})
+-- § 5: *Since* Main Clause Restrictions ([heinamaki-1974])
 -- ============================================================================
 
 /-- *since* + stative main clause → acceptable.
@@ -263,7 +263,7 @@ theorem durative_restriction_iff_state_or_activity (c : VendlerClass) :
   cases c <;> decide
 
 -- ============================================================================
--- § 7: Coercion Network Transitions (@cite{moens-steedman-1988}, Fig. 2)
+-- § 7: Coercion Network Transitions ([moens-steedman-1988], Fig. 2)
 -- ============================================================================
 
 /-- A directed edge in Moens & Steedman's aspectual coercion network.
@@ -306,7 +306,7 @@ def addProcess : CoercionEdge where
 
 /-- Iterate: achievement → activity.
     "John coughed" → "John coughed for hours" (iterated).
-    In @cite{moens-steedman-1988} Fig. 2, the iteration arrow goes from POINT
+    In [moens-steedman-1988] Fig. 2, the iteration arrow goes from POINT
     to PROCESS specifically; culminations reach process via a two-step path
     (culmination → point → process). At the Vendler level both are "achievement." -/
 def iterate_ : CoercionEdge where

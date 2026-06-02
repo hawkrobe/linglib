@@ -4,7 +4,7 @@ import Linglib.Features.ScopeTypes
 /-!
 # CCG Scope Theory
 
-CCG derivational structure determines available scope readings (@cite{steedman-2000} Ch. 6).
+CCG derivational structure determines available scope readings ([steedman-2000] Ch. 6).
 -/
 
 namespace CCG.Scope

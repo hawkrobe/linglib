@@ -2,10 +2,10 @@ import Linglib.Typology.Pronoun.WALS
 
 /-!
 # Plural-marking typology — substrate types
-@cite{wals-2013} (Chs 33-36)
+[wals-2013] (Chs 33-36)
 
 Type-level enums + per-language profile struct for nominal and pronominal
-plurality across @cite{wals-2013} chapters 33–36.
+plurality across [wals-2013] chapters 33–36.
 
 ## Schema
 
@@ -90,7 +90,7 @@ inductive AssociativePlural where
   | absent
   deriving DecidableEq, Repr
 
-/-- A language's plurality profile across @cite{wals-2013} Chs 33-36. -/
+/-- A language's plurality profile across [wals-2013] Chs 33-36. -/
 structure PluralityProfile where
   /-- Language name (matches `LanguageProfile.name` when bundled). -/
   language : String

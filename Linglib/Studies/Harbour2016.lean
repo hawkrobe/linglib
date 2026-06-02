@@ -6,7 +6,7 @@ import Linglib.Studies.Corbett2000
 
 /-!
 # Harbour (2016): Impossible Persons
-@cite{harbour-2016}
+[harbour-2016]
 
 Formalizes the core results of:
 
@@ -29,7 +29,7 @@ not just atomic referents. A group is [+author] iff it **contains** the speaker;
 
 1. **Discourse groups derive the 8 person categories** (Ch 4–5). Three discourse
    roles (speaker, addressee, other) × atomicity yield exactly the 8 categories
-   from @cite{cysouw-2009}'s typological inventory. No more, no fewer.
+   from [cysouw-2009]'s typological inventory. No more, no fewer.
 
 2. **Person–number isomorphism** (Ch 9: "The Phi Kernel"). Person features
    [±participant, ±author] and number features [±minimal, ±atomic] instantiate
@@ -45,7 +45,7 @@ not just atomic referents. A group is [+author] iff it **contains** the speaker;
 5. **Containment hierarchy** (Ch 9). The person hierarchy 1 > 2 > 3 and number
    hierarchy sg > du > pl both reduce to the specification ordering of
    `PrivativePair`. Bridge theorem `specLevel_agrees_with_segments` connects
-   this to @cite{bejar-rezac-2009}'s articulated segments.
+   this to [bejar-rezac-2009]'s articulated segments.
 
 -/
 
@@ -61,7 +61,7 @@ open Features (PhiFeatures PrivativePair)
 
 /-- Clusivity values for non-atomic [+author] groups.
 
-    @cite{harbour-2016} Ch 5: clusivity is derived from the interaction
+    [harbour-2016] Ch 5: clusivity is derived from the interaction
     of person features and group composition, not from a stipulated
     [±inclusive] feature. -/
 inductive Clusivity where
@@ -80,7 +80,7 @@ inductive Clusivity where
     contain at least one member (`nonempty`). An atomic group contains
     exactly one individual (`atomic_exclusive`).
 
-    **Representational note**: @cite{harbour-2016} uses actual sets of
+    **Representational note**: [harbour-2016] uses actual sets of
     individuals, making atomicity a derived property (|group| = 1). The
     Boolean encoding here requires explicit constraints (`atomic_exclusive`,
     `nonatomic_multiple`) to maintain consistency between the role flags
@@ -118,7 +118,7 @@ structure DiscourseGroup where
 -- ============================================================================
 
 /-- [+author]: the group contains the speaker.
-    @cite{harbour-2016} Ch 4: features evaluate over sets, not atoms. -/
+    [harbour-2016] Ch 4: features evaluate over sets, not atoms. -/
 def DiscourseGroup.author (g : DiscourseGroup) : Bool := g.hasSpeaker
 
 /-- [+participant]: the group contains at least one SAP. -/
@@ -186,7 +186,7 @@ theorem all_categories_reachable :
     from its Cysouw category.
 
     This is the key consistency result: the set-level feature evaluation
-    (@cite{harbour-2016}) and the individual-level feature assignment
+    ([harbour-2016]) and the individual-level feature assignment
     (Core) agree on the person feature values for each category. -/
 theorem group_features_match_category :
     ∀ c : Category,
@@ -209,7 +209,7 @@ theorem group_features_match_category :
 
 /-- Person and number share the same PrivativePair skeleton.
 
-    This is @cite{harbour-2016}'s "phi kernel" (Ch 9): the structural parallel
+    This is [harbour-2016]'s "phi kernel" (Ch 9): the structural parallel
     between person (1st/2nd/3rd) and number (singular/dual/plural) is not
     accidental — both are instances of the same 2-feature containment geometry.
 
@@ -286,7 +286,7 @@ theorem no_four_singular_persons :
 
 /-- **No exclusive without inclusive** (system-level).
 
-    @cite{harbour-2016} Ch 5, §5.3: if a person system has the exclusive
+    [harbour-2016] Ch 5, §5.3: if a person system has the exclusive
     category (non-atomic [+author] groups without the addressee), then
     inclusive groups are also constructible from the same feature inventory.
     Both configurations use [+author] on a non-atomic group; they differ
@@ -309,9 +309,9 @@ theorem no_exclusive_without_inclusive :
 
 /-- The person hierarchy 1 > 2 > 3 is the specification ordering of
     PrivativePair: maximal > intermediate > minimal. This connects
-    @cite{harbour-2016}'s lattice approach to the person hierarchy
-    used in @cite{bejar-rezac-2009}'s Cyclic Agree and
-    @cite{preminger-2014}'s relativized probing. -/
+    [harbour-2016]'s lattice approach to the person hierarchy
+    used in [bejar-rezac-2009]'s Cyclic Agree and
+    [preminger-2014]'s relativized probing. -/
 theorem person_hierarchy_is_spec_ordering :
     PhiFeatures.specLevel Features.Person.first >
       PhiFeatures.specLevel Features.Person.second ∧
@@ -333,16 +333,16 @@ open Minimalist.CyclicAgree (personSpec)
 open Features.Prominence (PersonLevel)
 
 /-- The person hierarchy from `PrivativePair.specLevel` agrees with the
-    segment count hierarchy from @cite{bejar-rezac-2009}'s Cyclic Agree.
+    segment count hierarchy from [bejar-rezac-2009]'s Cyclic Agree.
 
     In the standard geometry, `specLevel + 1 = segment count`:
     - 1st: specLevel 2, segments [π, participant, speaker] (length 3)
     - 2nd: specLevel 1, segments [π, participant] (length 2)
     - 3rd: specLevel 0, segments [π] (length 1)
 
-    This is the formal bridge between @cite{harbour-2016}'s algebraic
+    This is the formal bridge between [harbour-2016]'s algebraic
     person hierarchy (PrivativePair specification level) and
-    @cite{bejar-rezac-2009}'s syntactic one (articulated segment count).
+    [bejar-rezac-2009]'s syntactic one (articulated segment count).
     The person hierarchy is *one* hierarchy realized in two independent
     formalizations: featural (spec level) and configurational (probe depth). -/
 theorem specLevel_agrees_with_segments (p : PersonLevel) :
@@ -354,8 +354,8 @@ theorem specLevel_agrees_with_segments (p : PersonLevel) :
 -- § 11: Bridge to Corbett2000 via Feature Geometry
 -- ============================================================================
 
-/-! Every attested number system from @cite{corbett-2000} can be generated
-    by some well-formed @cite{harbour-2016} configuration. This bridges the
+/-! Every attested number system from [corbett-2000] can be generated
+    by some well-formed [harbour-2016] configuration. This bridges the
     typological inventory (observed systems) with the feature geometry
     (generative mechanism).
 
@@ -397,7 +397,7 @@ theorem attested_number_systems_derivable :
       ((HarbourConfig.mk true false false false false).categories.contains ·) = true
     := by native_decide
 
-/-- MIN/AUG systems from @cite{harbour-2014} Table 3, now expressible
+/-- MIN/AUG systems from [harbour-2014] Table 3, now expressible
     with the expanded `Category` type. -/
 theorem minAug_systems_derivable :
     winnebagoNS.values.all

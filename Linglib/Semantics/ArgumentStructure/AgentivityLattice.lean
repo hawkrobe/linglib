@@ -8,9 +8,9 @@ import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Data.Fintype.Prod
 
 /-!
-# The Agentivity Lattice @cite{grimm-2011}
+# The Agentivity Lattice [grimm-2011]
 
-@cite{grimm-2011} reformulates @cite{dowty-1991}'s proto-role entailments as
+[grimm-2011] reformulates [dowty-1991]'s proto-role entailments as
 **privative features** organized into a lattice via subset inclusion. The key
 innovations over Dowty:
 
@@ -77,7 +77,7 @@ structure AgentivityNode where
   deriving DecidableEq, Repr
 
 /-- Validity constraint: volition presupposes sentience
-    (p.521, following @cite{dowty-1991} p.607). -/
+    (p.521, following [dowty-1991] p.607). -/
 def AgentivityNode.Valid (a : AgentivityNode) : Prop :=
   a.volition = true → a.sentience = true
 
@@ -621,7 +621,7 @@ theorem oblique_not_orderConvex :
   exact absurd habs (by decide)
 
 -- ════════════════════════════════════════════════════
--- § 7. Bridge to EntailmentProfile (@cite{dowty-1991})
+-- § 7. Bridge to EntailmentProfile ([dowty-1991])
 -- ════════════════════════════════════════════════════
 
 /-- Map Dowty's P-Agent entailments to Grimm's agentivity features.

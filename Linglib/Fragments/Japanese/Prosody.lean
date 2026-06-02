@@ -5,11 +5,11 @@ import Linglib.Studies.BeckmanPierrehumbert1986
 
 /-!
 # Japanese Prosody Fragment
-@cite{beckman-pierrehumbert-1986} @cite{kawahara-2015}
+[beckman-pierrehumbert-1986] [kawahara-2015]
 
 Japanese prosodic entries following the autosegmental-metrical analysis
-of @cite{beckman-pierrehumbert-1986}, with accent assignment rules and
-affix typology from @cite{kawahara-2015}.
+of [beckman-pierrehumbert-1986], with accent assignment rules and
+affix typology from [kawahara-2015].
 
 ## Key Properties
 
@@ -122,7 +122,7 @@ structure JLexicalEntry extends JProsodicEntry where
   tokenLogFreq : ℚ := 0
   /-- Can this morpheme stand alone as a wordform? `false` for bound
       stems that occur only in compounds (e.g., the bound N2s targeted
-      in @cite{breiss-katsuda-kawahara-2026}). -/
+      in [breiss-katsuda-kawahara-2026]). -/
   canStandAlone : Bool := true
   deriving Repr
 
@@ -141,7 +141,7 @@ noncomputable instance : Phonology.ItemSpecificity.HasTokenFreq JLexicalEntry wh
 
 /-- A Japanese N1 + N2 nominal compound. Compound-medial position is
     the locus of voiced velar nasalisation (/g/ → [ŋ]) studied in
-    @cite{breiss-katsuda-kawahara-2026}: obligatory when N2 is bound,
+    [breiss-katsuda-kawahara-2026]: obligatory when N2 is bound,
     optional and frequency-conditioned when N2 is free.
 
     The compound's own `tokenLogFreq` is **independent** of N1's and
@@ -165,7 +165,7 @@ def JCompound.form (c : JCompound) : String := c.n1.form ++ c.n2.form
 
 /-- A compound's nasalisation is *obligatory* iff its N2 is bound. The
     free-N2 case is the gradient one tested in
-    @cite{breiss-katsuda-kawahara-2026}. -/
+    [breiss-katsuda-kawahara-2026]. -/
 def JCompound.nasalisationObligatory (c : JCompound) : Bool :=
   ! c.n2.canStandAlone
 
@@ -175,7 +175,7 @@ def JCompound.nasalisationObligatory (c : JCompound) : Bool :=
 
 /-- Japanese accentual phrase tonal specification.
 
-    @cite{beckman-pierrehumbert-1986} §2.2: the AP is defined by:
+    [beckman-pierrehumbert-1986] §2.2: the AP is defined by:
     - A boundary L at the beginning (or end of preceding AP)
     - A phrasal H on the second sonorant mora
     - An optional accent HL (if the word is accented)
@@ -241,14 +241,14 @@ theorem accented_ap :
     ({ words := [kami_god, mame] : JAccentualPhrase }).isAccented = true := rfl
 
 -- ============================================================================
--- § 5: Suffix Prosodic Dominance (@cite{kawahara-2015})
+-- § 5: Suffix Prosodic Dominance ([kawahara-2015])
 -- ============================================================================
 
 /-- Japanese suffix accent specification.
 
     Japanese suffixes exhibit the same dominant/recessive distinction
-    as IE accent systems (@cite{kiparsky-halle-1977}) and GT systems
-    (@cite{rolle-2018}). Dominant suffixes remove stem accent;
+    as IE accent systems ([kiparsky-halle-1977]) and GT systems
+    ([rolle-2018]). Dominant suffixes remove stem accent;
     recessive suffixes preserve it when present. -/
 structure JSuffixAccent where
   form : String
@@ -258,12 +258,12 @@ structure JSuffixAccent where
 
 /-- *-teki* (的): deaccenting suffix. Removes stem accent regardless
     of whether the stem is accented or unaccented — classified as
-    subtractive-dominant in GT terms (@cite{kawahara-2015}). -/
+    subtractive-dominant in GT terms ([kawahara-2015]). -/
 def teki_suffix : JSuffixAccent :=
   { form := "-teki", gloss := "的 ADJ", dominance := .dominant }
 
 /-- *-si* (氏): non-deaccenting suffix. Preserves stem accent when
-    present — classified as recessive (@cite{kawahara-2015}). -/
+    present — classified as recessive ([kawahara-2015]). -/
 def si_suffix : JSuffixAccent :=
   { form := "-si", gloss := "氏 Mr.", dominance := .recessive }
 
@@ -274,7 +274,7 @@ theorem teki_is_dominant : teki_suffix.dominance.IsDominant := by decide
 theorem si_is_not_dominant : ¬ si_suffix.dominance.IsDominant := by decide
 
 -- ============================================================================
--- § 6: Accent Combination (@cite{kawahara-2015})
+-- § 6: Accent Combination ([kawahara-2015])
 -- ============================================================================
 
 /-- Derive the accent of a suffixed word from stem accent + suffix dominance. -/
@@ -308,7 +308,7 @@ theorem si_maintains_kami_contrast :
     suffixedAccent kami_paper si_suffix := by decide
 
 -- ============================================================================
--- § 7: Loanword Entries (@cite{kawahara-2015} §2)
+-- § 7: Loanword Entries ([kawahara-2015] §2)
 -- ============================================================================
 
 /-- Loanword prosodic entry. Extends `JProsodicEntry` with syllable weight
@@ -320,28 +320,28 @@ structure JLoanwordEntry where
   deriving Repr
 
 /-- *kurisumasu* 'Christmas' — accent on antepenultimate mora (su).
-    @cite{kawahara-2015} (10a). -/
+    [kawahara-2015] (10a). -/
 def kurisumasu : JLoanwordEntry :=
   { entry := { form := "kurisumasu", gloss := "Christmas"
                accentMora := some 2, nMorae := 5 }
     weights := [.light, .light, .light, .light, .light] }
 
 /-- *asufaruto* 'asphalt' — accent on antepenultimate mora (fa).
-    @cite{kawahara-2015} (10g). -/
+    [kawahara-2015] (10g). -/
 def asufaruto : JLoanwordEntry :=
   { entry := { form := "asufaruto", gloss := "asphalt"
                accentMora := some 2, nMorae := 5 }
     weights := [.light, .light, .light, .light, .light] }
 
 /-- *makudonarudo* 'McDonald' — accent on antepenultimate mora (na).
-    @cite{kawahara-2015} (10h). -/
+    [kawahara-2015] (10h). -/
 def makudonarudo : JLoanwordEntry :=
   { entry := { form := "makudonarudo", gloss := "McDonald's"
                accentMora := some 4, nMorae := 7 }
     weights := [.light, .light, .light, .light, .light, .light, .light] }
 
 /-- *amerika* 'America' — unaccented (4-mora with two final light σ).
-    @cite{kawahara-2015} (16a). -/
+    [kawahara-2015] (16a). -/
 def amerika : JLoanwordEntry :=
   { entry := { form := "amerika", gloss := "America"
                accentMora := none, nMorae := 4 }
@@ -357,18 +357,18 @@ theorem kurisumasu_matches_lsr :
   unfold latinStressRule; unfold latinStressRule; unfold latinStressRule; rfl
 
 -- ============================================================================
--- § 8: AAR vs LSR Mismatch Cases (@cite{kawahara-2015} Table 1)
+-- § 8: AAR vs LSR Mismatch Cases ([kawahara-2015] Table 1)
 -- ============================================================================
 
 /-- HLH: AAR predicts penultimate (σ₂), LSR predicts antepenultimate (σ₁).
-    @cite{kawahara-2015} Table 1, row (c). -/
+    [kawahara-2015] Table 1, row (c). -/
 theorem aar_lsr_mismatch_hlh :
     defaultAccentAAR [.heavy, .light, .heavy] = some 1 ∧
     latinStressRule [.heavy, .light, .heavy] = some 0 := by
   constructor <;> (first | rfl | (unfold latinStressRule; rfl))
 
 /-- LLH: AAR predicts penultimate (σ₂), LSR predicts antepenultimate (σ₁).
-    @cite{kawahara-2015} Table 1, row (g). -/
+    [kawahara-2015] Table 1, row (g). -/
 theorem aar_lsr_mismatch_llh :
     defaultAccentAAR [.light, .light, .heavy] = some 1 ∧
     latinStressRule [.light, .light, .heavy] = some 0 := by
@@ -395,7 +395,7 @@ theorem aar_lsr_match_lll :
     latinStressRule [.light, .light, .light] := by unfold latinStressRule; rfl
 
 -- ============================================================================
--- § 9: Fine-Grained Affix Accent Typology (@cite{kawahara-2015} §6)
+-- § 9: Fine-Grained Affix Accent Typology ([kawahara-2015] §6)
 -- ============================================================================
 
 /-- Japanese suffix with fine-grained accent classification. -/
@@ -408,45 +408,45 @@ structure JAffixEntry where
 -- The eight affix types with canonical examples from Kawahara (2015):
 
 /-- *-tara* (conditional): recessive suffix — bears accent, loses to root.
-    @cite{kawahara-2015} (29). -/
+    [kawahara-2015] (29). -/
 def tara_suffix : JAffixEntry :=
   { form := "-tara", gloss := "conditional", accentType := .recessive }
 
 /-- *-ppoi* (-ish): dominant suffix — bears accent, overrides root.
-    @cite{kawahara-2015} (30). -/
+    [kawahara-2015] (30). -/
 def ppoi_suffix : JAffixEntry :=
   { form := "-ppoi", gloss := "-ish", accentType := .dominant }
 
 /-- *-si* (Mr.): recessive pre-accenting — inserts accent on root-final σ
     when root is unaccented, preserves root accent when present.
-    @cite{kawahara-2015} (31). -/
+    [kawahara-2015] (31). -/
 def si_affix : JAffixEntry :=
   { form := "-si", gloss := "Mr.", accentType := .recessivePreAccent }
 
 /-- *-ke* (family of): dominant pre-accenting — always inserts accent on
     root-final σ, deleting any root accent.
-    @cite{kawahara-2015} (32). -/
+    [kawahara-2015] (32). -/
 def ke_suffix : JAffixEntry :=
   { form := "-ke", gloss := "family of", accentType := .dominantPreAccent }
 
 /-- *-mono* (thing): accent-shifting — shifts existing root accent to
     pre-suffix position. Unaccented roots stay unaccented.
-    @cite{kawahara-2015} (33). -/
+    [kawahara-2015] (33). -/
 def mono_suffix : JAffixEntry :=
   { form := "-mono", gloss := "thing", accentType := .accentShifting }
 
 /-- *o-* (honorific prefix): post-accenting — inserts accent after prefix.
-    @cite{kawahara-2015} (34). -/
+    [kawahara-2015] (34). -/
 def o_prefix : JAffixEntry :=
   { form := "o-", gloss := "honorific", accentType := .postAccenting }
 
 /-- *-teki* (的 -like): deaccenting — deletes root accent, no new accent.
-    @cite{kawahara-2015} (36). -/
+    [kawahara-2015] (36). -/
 def teki_affix : JAffixEntry :=
   { form := "-teki", gloss := "的 -like", accentType := .deaccenting }
 
 /-- *-zu* (group/plural): initial-accenting — inserts accent on root-initial σ.
-    @cite{kawahara-2015} (39). -/
+    [kawahara-2015] (39). -/
 def zu_suffix : JAffixEntry :=
   { form := "-zu", gloss := "group", accentType := .initialAccenting }
 
@@ -471,26 +471,26 @@ theorem mono_is_recessive_coarse :
     mono_suffix.accentType.toProsodicDominance = .recessive := rfl
 
 -- ============================================================================
--- § 10: Compound Accent (@cite{kawahara-2015} §4)
+-- § 10: Compound Accent ([kawahara-2015] §4)
 -- ============================================================================
 
 /-- *kabuto+musi* 'beetle': short N2 (*musi*, 2μ) pre-accents on
-    N1-final syllable. @cite{kawahara-2015} (22a). -/
+    N1-final syllable. [kawahara-2015] (22a). -/
 theorem kabuto_musi_compound :
     shortN2CompoundAccent 3 (some 0) true = some 2 := rfl
 
 /-- *sin+yokohama* 'Shin-Yokohama': long N2 (*yokohama*, 4μ, unaccented)
-    → accent on N2-initial syllable. @cite{kawahara-2015} (23a). -/
+    → accent on N2-initial syllable. [kawahara-2015] (23a). -/
 theorem sin_yokohama_compound :
     longN2CompoundAccent 2 none 4 = some 2 := rfl
 
 /-- *sin+tamane'gi* 'new onion': long N2 retains accent.
-    @cite{kawahara-2015} (24a). -/
+    [kawahara-2015] (24a). -/
 theorem sin_tamanegi_compound :
     longN2CompoundAccent 2 (some 2) 4 = some 4 := rfl
 
 -- ============================================================================
--- § 11: Accent-to-Tone Verification (@cite{kawahara-2015} §1.4)
+-- § 11: Accent-to-Tone Verification ([kawahara-2015] §1.4)
 -- ============================================================================
 
 /-- Unaccented trisyllable *ame+ga* → LHH (initial rise + H spread). -/

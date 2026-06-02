@@ -13,23 +13,23 @@ import Mathlib.CategoryTheory.Monoidal.Category
 `AR α β` is the bundled type of **well-formed autosegmental
 representations**: a `Graph α β` paired with proofs that the link
 set is in-bounds and that the representation is planar (satisfies
-@cite{goldsmith-1976}'s No-Crossing Constraint, equivalently
-@cite{pulleyblank-1986}'s reformulated Well-Formedness Condition).
+[goldsmith-1976]'s No-Crossing Constraint, equivalently
+[pulleyblank-1986]'s reformulated Well-Formedness Condition).
 
 In mathlib's pattern (`Group` → `Grp`, `Module` → `ModuleCat`),
 `Graph α β` is the underlying object type and `AR α β` is the
 *bundled* type that carries the autosegmental well-formedness
 invariants — the canonical objects of the category of autosegmental
 representations. The bundled name `AR` matches the field's standard
-abbreviation across @cite{jardine-2017},
-@cite{chandlee-jardine-2019}, @cite{burness-mcmullin-2020} and the
+abbreviation across [jardine-2017],
+[chandlee-jardine-2019], [burness-mcmullin-2020] and the
 broader Heinz-Jardine-Chandlee tradition.
 
 ## Main definitions (this file)
 
 * `AR α β` — the bundled well-formed AR type (Graph + InBounds + Planar).
 * `AR.empty`, `AR.concat` — lifted from Graph; concat preserves the
-  invariants because @cite{jardine-heinz-2015} Theorem 4 + our
+  invariants because [jardine-heinz-2015] Theorem 4 + our
   `inBounds_concat` lemma carry both invariants through.
 * `AR.Hom A B := Graph.Hom A.toGraph B.toGraph` — morphisms are
   just graph homomorphisms on the underlying graphs.
@@ -57,7 +57,7 @@ namespace Phonology.Autosegmental
 
 `AR α β` extends `Graph α β` with structural well-formedness
 proofs. The Pulleyblank-1986 WFC is **planarity (NCC) alone**;
-@cite{goldsmith-1979}'s saturation is language-particular and is
+[goldsmith-1979]'s saturation is language-particular and is
 *not* carried as a structural invariant here. `InBounds` is a
 substrate-level requirement (Graph doesn't enforce links to fall
 within tier lengths structurally; the subtype does).
@@ -65,9 +65,9 @@ within tier lengths structurally; the subtype does).
 
 /-- A well-formed autosegmental representation: a `Graph` whose link
     set is in-bounds (`InBounds`) and which satisfies the No-Crossing
-    Constraint (`IsPlanar`). Per @cite{pulleyblank-1986}, planarity is
+    Constraint (`IsPlanar`). Per [pulleyblank-1986], planarity is
     the sole universal structural well-formedness condition on
-    autosegmental representations; @cite{goldsmith-1979}'s additional
+    autosegmental representations; [goldsmith-1979]'s additional
     saturation requirements are language-particular and live at the
     consumer level, not in this subtype. -/
 @[ext]
@@ -88,7 +88,7 @@ def empty : AR α β where
   inBounds := Graph.inBounds_empty
   planar := Graph.isPlanar_empty
 
-/-- Concatenation of ARs (@cite{jardine-heinz-2015}): tiers are
+/-- Concatenation of ARs ([jardine-heinz-2015]): tiers are
     concatenated, link sets are unioned with B's shifted by A's tier
     lengths. The InBounds invariant is preserved by
     `Graph.inBounds_concat`; planarity is preserved by
@@ -164,7 +164,7 @@ theorem tensorHom_comp {A A' A'' B B' B'' : AR α β}
 /-! ### Strict monoid structure (associativity + unitors as equalities)
 
 The underlying `Graph` operations satisfy `concat_assoc`,
-`empty_concat`, `concat_empty` as *equalities* (@cite{jardine-heinz-2015}
+`empty_concat`, `concat_empty` as *equalities* ([jardine-heinz-2015]
 Theorems 1 + 3). The bundled `AR` lifts these directly: the underlying
 graphs are equal by `Graph.concat_assoc` etc., and the `inBounds` /
 `planar` proofs match by proof irrelevance (they're propositions of

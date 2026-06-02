@@ -6,7 +6,7 @@ import Linglib.Core.Relation.ReflTransGen
 
 /-!
 # Stratal Optimality Theory
-@cite{kiparsky-2000}
+[kiparsky-2000]
 
 Stratal OT is a theory of the phonology-morphology interface where
 phonological computation is **cyclic**: it applies at multiple levels
@@ -38,14 +38,14 @@ otherwise constraint-based framework. Linglib's siblings:
 * `Phonology/Process/LocalRewrite.lean` — full extrinsic-
   ordering derivation via local rewrite rules; the modern subregular
   characterization grounds these as Input Strictly Local functions
-  (@cite{chandlee-heinz-2018}).
+  ([chandlee-heinz-2018]).
 * `Core/Constraint/OT/HarmonicSerialism.lean` — gradual constraint
   optimization, no strata.
 * `Core/Computability/Subregular/Function/` — function-level subregular
   hierarchy (ISL ⊊ OSL ⊊ Subsequential ⊊ Weakly Deterministic) that
   classifies what each architecture can express
-  (@cite{aksenova-rawski-graf-heinz-2020};
-  @cite{meinhardt-mai-bakovic-mccollum-2024}).
+  ([aksenova-rawski-graf-heinz-2020];
+  [meinhardt-mai-bakovic-mccollum-2024]).
 
 ## Connection to Linglib
 
@@ -53,7 +53,7 @@ Each individual stratum is evaluated using `Core.Constraint.OT.mkTableau` and
 `Tableau.optimal`. This module adds the stratal architecture:
 strata ordering, cross-stratal chaining, and reranking specification.
 
-The Telugu weak alternation (@cite{aitha-2026}) is a key application:
+The Telugu weak alternation ([aitha-2026]) is a key application:
 the interaction of IDENT-STRESS with FT-BIN across Stem, Word, and
 Phrase strata derives the *-am*/*-āni* alternation from a single
 underlying form.
@@ -68,7 +68,7 @@ open Core.Constraint.Evaluation
 -- § 1: Strata
 -- ============================================================================
 
-/-- The three phonological strata of Stratal OT (@cite{kiparsky-2000}).
+/-- The three phonological strata of Stratal OT ([kiparsky-2000]).
 
     | Stratum | Domain                  | Morphological boundary      |
     |---------|-------------------------|-----------------------------|
@@ -193,7 +193,7 @@ where
     ranking `r₁` than in `r₂`? Captures **promotion** across strata.
 
     Example: ONSET is promoted from Word to Phrase level in Telugu
-    (@cite{aitha-2026} §5.3), switching from below IDENT-STRESS to
+    ([aitha-2026] §5.3), switching from below IDENT-STRESS to
     above it. -/
 def isPromoted {C : Type*} (name : String)
     (r₁ r₂ : List (NamedConstraint C)) : Prop :=
@@ -209,7 +209,7 @@ instance {C : Type*} (name : String) (r₁ r₂ : List (NamedConstraint C)) :
     Captures **demotion** across strata.
 
     Example: *DIST-0 is demoted from Word to Phrase level in Telugu
-    (@cite{aitha-2026} §5.3), allowing consonant retention at phrase
+    ([aitha-2026] §5.3), allowing consonant retention at phrase
     boundaries. -/
 def isDemoted {C : Type*} (name : String)
     (r₁ r₂ : List (NamedConstraint C)) : Prop :=
@@ -228,7 +228,7 @@ instance {C : Type*} (name : String) (r₁ r₂ : List (NamedConstraint C)) :
     inventory is shared by *name*, not by candidate type.
 
     Example: ONSET is promoted from Word to Phrase level in Telugu
-    (@cite{aitha-2026} §5.3), even though the Word and Phrase strata
+    ([aitha-2026] §5.3), even though the Word and Phrase strata
     score different candidate types. -/
 def isPromotedAcross {C₁ C₂ : Type*} (name : String)
     (r₁ : List (NamedConstraint C₁)) (r₂ : List (NamedConstraint C₂)) : Prop :=
@@ -244,7 +244,7 @@ instance {C₁ C₂ : Type*} (name : String)
 /-- Cross-stratum demotion. Dual of `isPromotedAcross`.
 
     Example: `*DIST-0` is demoted from Word to Phrase level in Telugu
-    (@cite{aitha-2026} §5.3), permitting consonant retention at phrase
+    ([aitha-2026] §5.3), permitting consonant retention at phrase
     boundaries that would otherwise trigger compensatory lengthening. -/
 def isDemotedAcross {C₁ C₂ : Type*} (name : String)
     (r₁ : List (NamedConstraint C₁)) (r₂ : List (NamedConstraint C₂)) : Prop :=
@@ -263,10 +263,10 @@ instance {C₁ C₂ : Type*} (name : String)
     (a ≫ b). Lists of such pairs specify a partial order on constraints.
 
     For classical OT, the transitive closure must be a total order. For
-    comparative tableaux (@cite{prince-2002}), partial specifications
+    comparative tableaux ([prince-2002]), partial specifications
     suffice.
 
-    Example: the Stem-level ranking in Telugu (@cite{aitha-2026} §5.1)
+    Example: the Stem-level ranking in Telugu ([aitha-2026] §5.1)
     is specified as:
     ```
     [("FT-BIN(μ)", "PARSE-SYL"), ("PARSE-SYL", "ALL-FT-LEFT")]
@@ -316,7 +316,7 @@ instance (spec : RankingSpec) (a b : String) :
     can change the representation in ways that feed or bleed processes
     at the next cycle.
 
-    Key empirical consequence (@cite{aitha-2026}): compensatory
+    Key empirical consequence ([aitha-2026]): compensatory
     lengthening is optimal at the Word level (MAX ≫ ALIGN-RIGHT) but
     not at the Phrase level (constraint reranking), producing different
     outputs for the same segmental configuration at different strata. -/

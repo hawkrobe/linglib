@@ -18,7 +18,7 @@ import Linglib.Fragments.Zulu.Phonology
 
 /-!
 # Maddieson 2013: WALS phonology chapters ↔ PHOIBLE 2.0 bridges
-@cite{maddieson-2013} @cite{moran-mccloy-2019} @cite{dryer-haspelmath-2013}
+[maddieson-2013] [moran-mccloy-2019] [dryer-haspelmath-2013]
 
 Cross-dataset bridge theorems verifying that PHOIBLE 2.0 inventories
 are consistent with the WALS Maddieson chapter classifications, for

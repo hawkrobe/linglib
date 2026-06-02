@@ -3,13 +3,13 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Plural Partial Compositional DRT — Definitions
-@cite{van-den-berg-1996} @cite{brasoveanu-2007} @cite{haug-2014}
-@cite{dotlacil-2013} @cite{haug-dalrymple-2020}
+[van-den-berg-1996] [brasoveanu-2007] [haug-2014]
+[dotlacil-2013] [haug-dalrymple-2020]
 
 The plural partial extension of Compositional DRT (PPCDRT). Plural CDRT
-@cite{brasoveanu-2007} replaces single information states with **sets** of
+[brasoveanu-2007] replaces single information states with **sets** of
 states (plural information states), tracking inter-variable dependencies.
-Partial CDRT @cite{haug-2014} adds *partial* assignments so a discourse
+Partial CDRT [haug-2014] adds *partial* assignments so a discourse
 referent can be introduced without forcing eager pragmatic resolution: the
 unresolved condition `u_anaph → u_ant` is interpreted as a presupposition.
 
@@ -32,12 +32,12 @@ it — see `Anaphora.lean`.
 
 ## What does NOT live here (yet)
 
-The full PPCDRT operator set from @cite{haug-dalrymple-2020} eq 25 — the
+The full PPCDRT operator set from [haug-dalrymple-2020] eq 25 — the
 Δ-relativized DRS as a 3-place relation `λΔ.λI.λO.…`, the sequencing
 operator `⨟`, the distribution operator `δ_u`, the presupposition wrapper
 `∂`, the `max^u` maximizing operator, the dref-introduction `[u₁ … uₙ]` —
 was prototyped but trimmed because **no current consumer exercises any of
-them**. Per @cite{haug-dalrymple-2020}'s presentation those operators
+them**. Per [haug-dalrymple-2020]'s presentation those operators
 *are* the substrate's expressive interest; their absence here is honest
 about the substrate-façade flag from the second-pass audit. They will land
 when:
@@ -53,8 +53,8 @@ need `PPDRSCond` plus the `Core.PluralAssign` primitives (`singularAt`,
 
 ## Anchoring
 
-Framework substrate. PPCDRT originates with @cite{brasoveanu-2007} (PCDRT)
-and @cite{haug-2014} (Partial CDRT); @cite{haug-dalrymple-2020} composes
+Framework substrate. PPCDRT originates with [brasoveanu-2007] (PCDRT)
+and [haug-2014] (Partial CDRT); [haug-dalrymple-2020] composes
 them into PPCDRT. Initial linglib consumer:
 `Studies/HaugDalrymple2020.lean`. Mirrors
 `Semantics/Dynamic/Intensional.lean` (ICDRT substrate, also
@@ -70,7 +70,7 @@ universe u
 variable {E : Type u}
 
 /-- A PPDRS condition: takes the (output) plural state and the
-    distribution context `Δ`. @cite{haug-dalrymple-2020} eq 27.
+    distribution context `Δ`. [haug-dalrymple-2020] eq 27.
 
     The Δ argument is part of the eq-25 three-place DRS shape but is
     ignored by the present `bindingCond` / `groupIdentityCond` /

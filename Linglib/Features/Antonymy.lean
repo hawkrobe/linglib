@@ -3,7 +3,7 @@ import Mathlib.Tactic.DeriveFintype
 /-!
 # Antonymy — Contradictory vs Contrary Distinction
 
-@cite{cruse-1986} @cite{horn-1989} @cite{kennedy-2007}
+[cruse-1986] [horn-1989] [kennedy-2007]
 
 The classical lexical-semantic distinction between two kinds of opposite
 pairs:

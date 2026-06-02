@@ -6,7 +6,7 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
 /-!
 # Categorial Features ↔ Category-Changing Morphology
 
-@cite{panagiotidis-2015} @cite{marantz-1997}Connects the theory-side predictions of @cite{panagiotidis-2015} — substantive
+[panagiotidis-2015] [marantz-1997]Connects the theory-side predictions of [panagiotidis-2015] — substantive
 categorial features [N] and [V] hosted on categorizer heads — to the empirical
 data on category-changing morphology in English.
 
@@ -138,7 +138,7 @@ theorem all_categorizer_eps_wellformed :
 
 /-- The F-level jump from lexical head to categorizer is exactly 1 in all cases.
     The uniformity of categorization is Panagiotidis's prediction (§4.4–§4.5);
-    the F-value encoding is @cite{grimshaw-2005}'s EP architecture. -/
+    the F-value encoding is [grimshaw-2005]'s EP architecture. -/
 theorem categorization_uniform_fstep :
     fValue .v - fValue .V = 1 ∧
     fValue .n - fValue .N = 1 ∧
@@ -190,12 +190,12 @@ theorem all_families_match_all_categorizers :
   native_decide
 
 -- ════════════════════════════════════════════════════════════════
--- § 6: Cross-framework bridge to @cite{mcnally-deswart-2011}
+-- § 6: Cross-framework bridge to [mcnally-deswart-2011]
 -- ════════════════════════════════════════════════════════════════
 
 /-! ## Bridge: §6.7.1 modifier-distribution diagnostic ↔ M&deS §2.3 (13)
 
-@cite{panagiotidis-2015} §6.7.1 (35)–(36) deploys a *modifier-distribution*
+[panagiotidis-2015] §6.7.1 (35)–(36) deploys a *modifier-distribution*
 diagnostic for SWITCH placement in mixed projections, with Dutch examples
 adapted from Ackema & Neeleman (2004:173):
 
@@ -211,7 +211,7 @@ SWITCH retains its verbal/adjectival categorial identity and takes
 adverbial modifiers. The diagnostic gives SWITCH placement: where the
 modifier-category transition occurs is where the SWITCH sits.
 
-@cite{mcnally-deswart-2011} §2.3 (13) makes a *similar* modifier-
+[mcnally-deswart-2011] §2.3 (13) makes a *similar* modifier-
 distribution observation about the inflected adjective in `het rode
 van X`: M&deS observe `het intens/*intense rode` (adverbial-only) and
 conclude that `rode` remains adjectival, with `het` carrying the
@@ -266,7 +266,7 @@ def switchPosition : InflectedAnalysis → SwitchPosition
   | .ellipsis       => .none
   | .hetAsCap       => .high
 
-/-- Per @cite{panagiotidis-2015} p. 146 + §6.7.1: the SWITCH's complement
+/-- Per [panagiotidis-2015] p. 146 + §6.7.1: the SWITCH's complement
     is recategorised by [N], so a constituent dominated by a SWITCH
     projects nominally (takes adjectival modifiers) while a constituent
     below the SWITCH retains its adjectival identity (takes adverbial
@@ -293,7 +293,7 @@ def panagiotidisPredictsAdverbialMod (a : InflectedAnalysis) : Prop :=
 instance : DecidablePred panagiotidisPredictsAdverbialMod :=
   fun a => by unfold panagiotidisPredictsAdverbialMod; exact inferInstance
 
-/-- The Panagiotidis prediction matches the @cite{mcnally-deswart-2011}
+/-- The Panagiotidis prediction matches the [mcnally-deswart-2011]
     prediction on every rival. Both predicates encode the same modifier-
     distribution diagnostic (which they both inherit from Ackema &
     Neeleman 2004); the agreement is shared-methodology consequence, not
@@ -313,7 +313,7 @@ theorem mcnally_panagiotidis_diagnostics_agree :
     Panagiotidis's geometric diagnostic over its low-SWITCH commitment
     predicts the inflected form should admit adjectival modification
     (because `rode` would be SWITCH-dominated and project nominally);
-    @cite{mcnally-deswart-2011} (13) shows the inflected form REJECTS
+    [mcnally-deswart-2011] (13) shows the inflected form REJECTS
     adjectival modification. The combined refutation routes through
     `switchPosition .nominalisation = .low → ¬panagiotidisPredictsAdverbialMod`
     and the M&deS data point. -/

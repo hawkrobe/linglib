@@ -6,9 +6,9 @@ set_option autoImplicit false
 
 /-!
 # Mereological Syntax: Angular Locality and Islands
-@cite{adger-2025}
+[adger-2025]
 
-@cite{adger-2025} (Linguistic Inquiry Monograph 90, MIT Press) develops a
+[adger-2025] (Linguistic Inquiry Monograph 90, MIT Press) develops a
 mereological alternative to set-theoretic Bare Phrase Structure: syntactic
 objects are *parts* of one another (rather than members of sets), and the
 operation `Subjoin` makes one object a 1-part or 2-part of another. The
@@ -63,22 +63,22 @@ engagement. The substrate covers:
 ## Cross-framework engagement
 
 §3 of this file articulates AL's relationship to one rival framework
-(@cite{marcolli-chomsky-berwick-2025} §1.6 algebraic Merge): both reach
+([marcolli-chomsky-berwick-2025] §1.6 algebraic Merge): both reach
 a `false` verdict on Sideward Merge from incompatible primitives.
 
 The classification handles `adgerSubjectIslandSource` and
 `adgerDefiniteNominalSources` are exposed for use by *later* paper-anchored
 Studies files. Newer rivals make convergence/divergence claims against
 Adger's classification:
-- @cite{cartner-et-al-2026} (`Studies/CartnerEtAl2026.lean`) converges with
+- [cartner-et-al-2026] (`Studies/CartnerEtAl2026.lean`) converges with
   Adger on `IslandSource.syntactic` for subject islands, from cross-
   constructional invariance data.
-- @cite{shen-huang-2026} (`Studies/ShenHuang2026.lean`) diverges from
+- [shen-huang-2026] (`Studies/ShenHuang2026.lean`) diverges from
   Adger on definite-nominal sources, arguing for a `[.syntactic, .semantic]`
   composite from English VOC effects + Mandarin wh-in-situ data.
 
 Phase Theory (`Syntax/Minimalist/Phase.lean`,
-@cite{chomsky-2000}, @cite{chomsky-2008}) is the immediate theoretical
+[chomsky-2000], [chomsky-2008]) is the immediate theoretical
 rival — Adger's framing is to derive island effects "without stipulating
 phases, barriers, or subjacency." No formal cross-translation is provided
 here: AL operates on graph-theoretic parthood across dimensions; Phase
@@ -159,7 +159,7 @@ def adgerSubjectIslandSource : IslandSource := .syntactic
     (`nominal_island_definite_blocks`). No separate semantic mechanism
     is invoked.
 
-    @cite{shen-huang-2026} (`Studies/ShenHuang2026.lean`) argues from
+    [shen-huang-2026] (`Studies/ShenHuang2026.lean`) argues from
     English VOC effects + Mandarin wh-in-situ data that this should be a
     `[.syntactic, .semantic]` composite — the divergence is recorded in
     that file's theorems. -/
@@ -167,8 +167,8 @@ def adgerDefiniteNominalSources : List IslandSource := [.syntactic]
 
 -- §4. Cross-framework convergence: Adger AL ↔ MCB §1.6 on Sideward
 
-/-! Both @cite{adger-2025} (mereological Merge, this file) and
-@cite{marcolli-chomsky-berwick-2025} §1.6 (algebraic Merge) reach a
+/-! Both [adger-2025] (mereological Merge, this file) and
+[marcolli-chomsky-berwick-2025] §1.6 (algebraic Merge) reach a
 `false` verdict on Sideward Merge from incompatible structural primitives:
 
 - **Adger**: Sideward subjunction (sibling subjoin) violates Angular

@@ -1,6 +1,6 @@
 /-!
 # Chatzikyriakidis & Luo (2020): MTT semantics via coercive subtyping
-@cite{chatzikyriakidis-luo-2020}
+[chatzikyriakidis-luo-2020]
 
 Modern Type Theory (MTT) analysis where common nouns denote *types*,
 not predicates, and subtyping is *coercive* — `A ≤_c B` whenever
@@ -34,7 +34,7 @@ Props below.
 
 ## References
 
-* @cite{chatzikyriakidis-luo-2020} §2.4 (coercive subtyping),
+* [chatzikyriakidis-luo-2020] §2.4 (coercive subtyping),
   §3.2.1 (CNs as types), §3.2.2 (subtyping in MTT-semantics,
   esp. eq. 3.30-3.33 and projective subtyping at eq. 3.33).
 -/

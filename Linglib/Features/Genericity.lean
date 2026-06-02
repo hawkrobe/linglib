@@ -10,7 +10,7 @@ in the introduction to *Genericity* (Mari, Beyssade, Del Prete, OUP 2013):
 1. **GenericForm**: what DP form expresses the generic meaning?
    The introduction spends 30 pages on this distinction (§1.1, §1.3.1).
 2. **GenericReading**: what kind of generalization is being expressed?
-   @cite{krifka-2013}'s descriptive/definitional split (ch. 15).
+   [krifka-2013]'s descriptive/definitional split (ch. 15).
 -/
 
 namespace Features.Genericity
@@ -30,27 +30,27 @@ namespace Features.Genericity
 -/
 inductive GenericForm where
   /-- Indefinite singular: "A madrigal is polyphonic."
-      Tends toward definitional readings (@cite{krifka-2013}).
+      Tends toward definitional readings ([krifka-2013]).
       Expresses rules (Cohen 2001a). Cannot be used for
       direct kind predication (*"A dinosaur is extinct"). -/
   | indefiniteSingular
   /-- Bare plural: "Dogs bark" / "Madrigals are popular."
       Both descriptive and definitional readings available.
       Kind-denoting on Carlson/Chierchia; property-denoting on Krifka 2004.
-      Scopeless (@cite{carlson-1977}). -/
+      Scopeless ([carlson-1977]). -/
   | barePlural
   /-- Definite singular: "The lion is a predator."
-      Limited to well-established kinds (@cite{krifka-etal-1995}).
+      Limited to well-established kinds ([krifka-etal-1995]).
       Blocked by modification (*"The tall lion is a predator"). -/
   | definiteSingular
   /-- Definite plural: "Les chiens aboient" (Fr.), "I cani abbaiano" (It.)
       Romance-language kind reference via the plural definite article.
       Patterns partly with BPs, partly with DSs.
-      @cite{dayal-2004} analyzes as ι applied to the plural kind. -/
+      [dayal-2004] analyzes as ι applied to the plural kind. -/
   | definitePlural
   deriving DecidableEq, Repr
 
-/-- Type of generic reading (@cite{krifka-2013}, ch. 15).
+/-- Type of generic reading ([krifka-2013], ch. 15).
 
     The descriptive/definitional distinction is orthogonal to `GenericForm`:
     BPs can express both, while ISs strongly prefer definitional.
@@ -62,7 +62,7 @@ inductive GenericForm where
 inductive GenericReading where
   /-- Descriptive: empirical generalization about the world.
       "Dogs bark" — in normal worlds where there are dogs, they bark.
-      Amenable to threshold/RSA treatment (@cite{tessler-goodman-2019}). -/
+      Amenable to threshold/RSA treatment ([tessler-goodman-2019]). -/
   | descriptive
   /-- Definitional: restricts admissible interpretations.
       "A madrigal is polyphonic" — only interpretations where madrigals

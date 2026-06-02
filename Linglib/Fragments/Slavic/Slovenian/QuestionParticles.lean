@@ -1,6 +1,6 @@
 /-!
 # Slovenian Question Particles
-@cite{simik-2024}
+[simik-2024]
 
 Lexical entries for Slovenian interrogative particles. The fragment
 commits only to theory-neutral lexical primitives; the left-peripheral
@@ -13,7 +13,7 @@ layer assignment lives in `Simik2024`.
 | ali | neutral PQ | none |
 
 *ali* is a clause-initial particle, optional in default PQs.
-Incompatible with DeclPQs (@cite{simik-2024} ex. 28).
+Incompatible with DeclPQs ([simik-2024] ex. 28).
 
 ## Cross-Module Connections
 
@@ -34,7 +34,7 @@ structure QParticleEntry where
   requiresEpistemicBias : Bool
   deriving Repr, DecidableEq
 
-/-- ali — clause-initial PQ particle (@cite{simik-2024} ex. 28).
+/-- ali — clause-initial PQ particle ([simik-2024] ex. 28).
 Optional; incompatible with DeclPQs. No bias requirements. -/
 def ali : QParticleEntry where
   form := "ali"

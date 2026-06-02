@@ -2,7 +2,7 @@ import Linglib.Core.Time.Tense
 
 /-!
 # Modal Base Kind
-@cite{klecha-2016}
+[klecha-2016]
 
 Classification of modal bases by their temporal character. This is the
 foundational type underlying the distinction between doxastic (DOX) and
@@ -21,7 +21,7 @@ namespace Semantics.Modality
 open Core.Time.Tense (GramTense)
 
 /-- Classification of modal base temporal character.
-    @cite{klecha-2016} (35): DOX returns actual histories 𝒜_t, CIR returns
+    [klecha-2016] (35): DOX returns actual histories 𝒜_t, CIR returns
     future histories ℱ_t. -/
 inductive ModalBaseKind where
   /-- Doxastic: accessible histories are actual (end at eval time).
@@ -33,7 +33,7 @@ inductive ModalBaseKind where
   deriving DecidableEq, Repr
 
 /-- The temporal orientation permitted by a modal base kind.
-    @cite{klecha-2016} Table 1 and §1.2. -/
+    [klecha-2016] Table 1 and §1.2. -/
 def ModalBaseKind.permitsOrientation : ModalBaseKind → GramTense → Bool
   | .doxastic, .past => true
   | .doxastic, .present => true

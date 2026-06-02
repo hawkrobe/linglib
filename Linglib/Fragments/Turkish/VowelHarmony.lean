@@ -6,10 +6,10 @@ import Linglib.Phonology.Process.Harmony.Defs
 
 /-!
 # Turkish Vowel Harmony
-@cite{goksel-kerslake-2005} @cite{rose-walker-2011}
+[goksel-kerslake-2005] [rose-walker-2011]
 
 Turkish has a perfectly symmetric 2x2x2 vowel inventory and a
-**two-dimensional** vowel harmony system (@cite{goksel-kerslake-2005} Ch 3).
+**two-dimensional** vowel harmony system ([goksel-kerslake-2005] Ch 3).
 
 ## Vowel inventory
 
@@ -41,7 +41,7 @@ Examples with *göz* 'eye' [front, rounded]:
 Examples with *kol* 'arm' [back, rounded]:
   Plural kol-lar (A -> a), Accusative kol-u (I -> u)
 
-## Harmony systems (@cite{rose-walker-2011})
+## Harmony systems ([rose-walker-2011])
 
 Turkish VH decomposes into two `HarmonySystem` instances:
 - `palatalHarmony`: [back] spreads to all suffix vowels (twofold A)

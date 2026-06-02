@@ -8,7 +8,7 @@ import Linglib.Discourse.Strategy
 import Linglib.Tactics.RSAPredict
 
 /-!
-# @cite{cremers-wilcox-spector-2023}: Exhaustivity and Anti-Exhaustivity in RSA
+# [cremers-wilcox-spector-2023]: Exhaustivity and Anti-Exhaustivity in RSA
 
 "Exhaustivity and Anti-Exhaustivity in the RSA Framework: Testing the
 Effect of Prior Beliefs." Cognitive Science 47(5), e13286.
@@ -94,7 +94,7 @@ distinctive mechanism maps to a different `Latent` type and `meaning`.
 Costs enter S1 via `utteranceCost` (= 0, so exp(-λ·0) = 1 is implicit);
 the analytic condition `antiExhaustivityCondition` handles general costs.
 
-RSA-LI (Models 8–9) is @cite{franke-bergen-2020}'s Lexical Intentions model;
+RSA-LI (Models 8–9) is [franke-bergen-2020]'s Lexical Intentions model;
 at L1 with uniform P(i) and equal costs it equals EXH-LU (Table 1).
 wRSA and BwRSA are identical at L1 (BwRSA adds a Bayesian S2 layer).
 svRSA uses no prior in L0 meaning — QUD projection neutralizes it
@@ -351,7 +351,7 @@ theorem exh_meaning_blocks_wab :
 -- §9. Additional Domain Types (Models 2–6, 8–9)
 -- ============================================================================
 
-/-- Background assumption for wRSA (@cite{degen-etal-2015}).
+/-- Background assumption for wRSA ([degen-etal-2015]).
     - `wonky`: unusual situation, uniform prior over worlds
     - `default_`: default assumption, prior follows the bias -/
 inductive CWSBackground where
@@ -363,7 +363,7 @@ instance : Fintype CWSBackground where
   elems := {.wonky, .default_}
   complete := fun x => by cases x <;> simp
 
-/-- QUD for svRSA (@cite{spector-2017}).
+/-- QUD for svRSA ([spector-2017]).
     - `coarse`: Q_A — is A true? Corresponds to `Discourse.QUD.trivial`.
       All A-true worlds are equivalent; QUD projection gives L0 = 1.
     - `fine`: Q_fine — which world? Corresponds to `Discourse.QUD.exact`.
@@ -377,7 +377,7 @@ instance : Fintype CWSQUD where
   elems := {.coarse, .fine}
   complete := fun x => by cases x <;> simp
 
-/-- Interpretation for FREE-LU (@cite{bergen-levy-goodman-2016}).
+/-- Interpretation for FREE-LU ([bergen-levy-goodman-2016]).
     - `literal`: A true in both worlds
     - `exh`: A ∧ ¬B (true only in w_a)
     - `antiExh`: A ∧ B (true only in w_ab) -/
@@ -437,7 +437,7 @@ noncomputable def wRSABiased : RSA.RSAConfig CWSUtterance CWSWorld where
     | .w_ab, .default_ => 3
   latentPrior_nonneg := fun w b => by cases w <;> cases b <;> positivity
 
-/-- svRSA (Models 4–5) — @cite{spector-2017} supervaluationist RSA.
+/-- svRSA (Models 4–5) — [spector-2017] supervaluationist RSA.
 
     The paper's svRSA (§4.2, eqs 3–8) has S1 compute expected utility over
     interpretations i, parameterized by QUD Q. The key structural properties
@@ -497,7 +497,7 @@ noncomputable def freeLUBiased : RSA.RSAConfig CWSUtterance CWSWorld where
   worldPrior_nonneg := fun _ => le_of_lt one_pos
   latentPrior_nonneg := fun _ _ => le_of_lt one_pos
 
-/-- RSA-LI (Models 8–9) — @cite{franke-bergen-2020} Lexical Intentions.
+/-- RSA-LI (Models 8–9) — [franke-bergen-2020] Lexical Intentions.
 
     The paper's RSA-LI (§4.4, eqs 1–6 on p.18) has S1 jointly choose
     (utterance, interpretation): S1(u,i|w) ∝ exp(λ·U1(u,i|w)), normalized

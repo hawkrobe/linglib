@@ -15,7 +15,7 @@ import Linglib.Features.Clusivity
 
 /-!
 # Pronoun — typological survey (WALS)
-@cite{wals-2013} @cite{nichols-peterson-2013}
+[wals-2013] [nichols-peterson-2013]
 
 The cross-linguistic WALS-survey facet of the pronoun object: the friendly
 feature enums (Chs 39–48) and phonological-shape enums (Chs 136–137), their
@@ -35,7 +35,7 @@ theorem over the accessor in that study file.
   from `Data.WALS` via the `fromWALS*` converters.
 * `Pronoun.mtPattern`, `mIn1sg`, `nmPattern`, `mIn2sg` — iso-keyed accessors
   for the M-T / N-M phonological-shape survey, WALS Chs 136–137
-  (@cite{nichols-peterson-2013}).
+  ([nichols-peterson-2013]).
 * `Pronoun.Plurality` — how independent personal pronouns encode number,
   WALS Ch 35. The canonical home for this pronoun-paradigm feature; the
   per-language values are carried by `Typology.PluralityProfile` (which bundles
@@ -280,11 +280,11 @@ theorem noPoliteness_is_majority_ch45 :
 
 end Pronoun
 
-/-! ### Phonological shape (WALS Chs 136–137, @cite{nichols-peterson-2013}) -/
+/-! ### Phonological shape (WALS Chs 136–137, [nichols-peterson-2013]) -/
 
 namespace Pronoun
 
-/-- M-T pronoun pattern (WALS Ch 136A, @cite{nichols-peterson-2013}):
+/-- M-T pronoun pattern (WALS Ch 136A, [nichols-peterson-2013]):
     whether 1SG has /m/ and 2SG has /t/, a widespread cross-linguistic
     pattern hypothesized to reflect deep genealogical signal. -/
 inductive MTPattern where
@@ -302,7 +302,7 @@ inductive MIn1SG where
   | present
   deriving DecidableEq, Repr
 
-/-- N-M pronoun pattern (WALS Ch 137A, @cite{nichols-peterson-2013}):
+/-- N-M pronoun pattern (WALS Ch 137A, [nichols-peterson-2013]):
     whether 1SG has /n/ and 2SG has /m/. -/
 inductive NMPattern where
   | absent
@@ -355,7 +355,7 @@ def mIn2sg (iso : String) : Option MIn2SG :=
   (Data.WALS.F137B.lookupISO iso).map (fromWALS137B ·.value)
 
 /-- WALS Ch 136A distribution: M-T pronoun patterns
-    (@cite{nichols-peterson-2013}, n = 230). -/
+    ([nichols-peterson-2013], n = 230). -/
 structure MTCounts where
   absent : Nat
   paradigmatic : Nat

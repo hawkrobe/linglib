@@ -5,7 +5,7 @@ import Linglib.Semantics.Questions.Partition.Binary
 
 /-!
 # Negative Attributes via Proper Coarsening
-@cite{merin-1999}
+[merin-1999]
 
 Epistemic, syntax-independent characterization of negativity:
 
@@ -14,7 +14,7 @@ Epistemic, syntax-independent characterization of negativity:
 * `isNegativeAttribute R q elements` — `binaryPartition R` is a proper
   coarsening of `q`.
 
-@cite{merin-1999}: a predicate is negative not because of morphological
+[merin-1999]: a predicate is negative not because of morphological
 form (`un-`, `not`, etc.) but because its yes/no distinction is strictly
 coarser than the partition under discussion — answering "does R hold?"
 discards information `q` distinguishes.
@@ -27,7 +27,7 @@ variable {M : Type*}
 /-- Q is a proper coarsening of Q' over a finite domain iff Q coarsens Q'
 and has strictly fewer cells.
 
-@cite{merin-1999} defines negative attributes via proper coarsening:
+[merin-1999] defines negative attributes via proper coarsening:
 R is a *negative attribute* with respect to partition F iff for some Q ∈ F,
 {R, Q} is a proper coarsening of F. This characterization is purely epistemic
 and syntax-independent — negativity is a matter of partition kinetics, not
@@ -38,7 +38,7 @@ def isProperCoarsening [DecidableEq M] (q q' : QUD M) (elements : List M) : Prop
 /-- A predicate R is a *negative attribute* with respect to partition Q over
 a finite domain iff the binary partition of R is a proper coarsening of Q.
 
-@cite{merin-1999}: negativity is not a syntactic property (presence of "un-",
+[merin-1999]: negativity is not a syntactic property (presence of "un-",
 "not", etc.) but a partition-kinetic one. R is negative relative to Q when
 the R/¬R distinction is strictly coarser than Q's partition — answering
 whether R holds loses information that Q distinguishes. -/

@@ -3,9 +3,9 @@ import Linglib.Features.Subjectivity
 
 /-!
 # Narrog's Semantic Map of Modality and Mood
-@cite{narrog-2010} @cite{narrog-2012} @cite{heine-1995}
+[narrog-2010] [narrog-2012] [heine-1995]
 
-@cite{narrog-2010}'s two-dimensional semantic map classifies modal meanings along
+[narrog-2010]'s two-dimensional semantic map classifies modal meanings along
 two orthogonal axes:
 
 1. **Volitivity** (horizontal): whether a modal meaning involves the speaker's
@@ -23,7 +23,7 @@ The central diachronic claim: modal meanings always shift **upward** — toward
 increased speaker-orientation — independently of the volitive/non-volitive
 dimension. The well-known deontic → epistemic shift is just one instance.
 
-@cite{narrog-2012} adds a third dimension: **performativity** — whether the
+[narrog-2012] adds a third dimension: **performativity** — whether the
 utterance constitutes the modal act or merely describes it. This dimension
 is orthogonal to speaker-orientation and is precisely what Traugott's
 subjectivity cline fails to distinguish (§2.4, ch. 3).
@@ -35,7 +35,7 @@ subjectivity cline fails to distinguish (§2.4, ch. 3).
 - `NarrogRegion` → `ModalFlavor`: reverse bridge from the 2D map back to
   Kratzer's flavor classification (partial — mood regions have no Kratzer analog).
 - `SpeakerOrientationLevel` → `SubjectivityLevel`: event-oriented = nonSubjective;
-  speaker-oriented = subjective; mood = intersubjective. Note: @cite{narrog-2012}
+  speaker-oriented = subjective; mood = intersubjective. Note: [narrog-2012]
   argues this bridge is an oversimplification — see `performativity_invisible_to_traugott`.
 - The 200-language sample's NEC/POT cross-linguistic data lives with
   the formalised study at `Studies/Narrog2010.lean`.
@@ -52,8 +52,8 @@ open Features.Subjectivity (SubjectivityLevel Performativity)
 
 /-- Whether a modal meaning involves the will of the speaker or subject.
 
-    @cite{narrog-2010} §3.1, building on Jespersen ([1924] 1992) and
-    @cite{heine-1995}: "the element of will" is the most fundamental
+    [narrog-2010] §3.1, building on Jespersen ([1924] 1992) and
+    [heine-1995]: "the element of will" is the most fundamental
     distinguishing element between different kinds of mood. -/
 inductive Volitivity where
   | volitive     -- involves will/desire (deontic, boulomaic)
@@ -78,7 +78,7 @@ def toVolitivity : ModalFlavor → Volitivity
 
 /-- Degree of anchoring to the speech situation.
 
-    @cite{narrog-2010} Figure 1: the vertical axis ranges from event-oriented
+    [narrog-2010] Figure 1: the vertical axis ranges from event-oriented
     (bottom) through speaker-oriented modality (middle) to mood / illocutionary
     force modulation (top). -/
 inductive SpeakerOrientationLevel where
@@ -102,7 +102,7 @@ instance : LinearOrder SpeakerOrientationLevel :=
     event-oriented = nonSubjective, speaker-oriented = subjective,
     mood = intersubjective (imperatives direct the addressee).
 
-    **Caveat**: @cite{narrog-2012} ch. 3 argues this bridge is an
+    **Caveat**: [narrog-2012] ch. 3 argues this bridge is an
     oversimplification. Traugott's cline conflates speaker-orientation with
     performativity: deontic obligation (performative, face-threatening) and
     epistemic assessment (descriptive, not face-threatening) both map to
@@ -131,7 +131,7 @@ structure NarrogRegion where
 
 /-- A position in Narrog's full 3D space: volitivity × orientation × performativity.
 
-    @cite{narrog-2012} §2.4: "subjectivity" decomposes into speaker-orientation
+    [narrog-2012] §2.4: "subjectivity" decomposes into speaker-orientation
     (who is the modal source) and performativity (whether the utterance
     constitutes the modal act). The 2D map captures the first two dimensions;
     the full 3D space adds the third. -/
@@ -154,7 +154,7 @@ def NarrogPosition.toRegion (r : NarrogPosition) : NarrogRegion :=
     Mood-level regions (imperative, hortative) are illocutionary rather
     than truth-conditional, so they have no clean Kratzer flavor.
 
-    @cite{narrog-2012} §2.4: this bridge makes explicit Narrog's claim that
+    [narrog-2012] §2.4: this bridge makes explicit Narrog's claim that
     his 2D map *classifies* the Kratzer parameterization space — the
     combination of volitivity and orientation determines whether the
     conversational background is epistemic, deontic, or circumstantial. -/
@@ -195,7 +195,7 @@ theorem modalFlavor_roundtrip (f : ModalFlavor) (hf : f ≠ .bouletic) :
     `SubjectivityLevel.subjective`, even though they differ radically in
     face-threatening potential and pragmatic effects.
 
-    This is @cite{narrog-2012}'s central critique of Traugott's
+    This is [narrog-2012]'s central critique of Traugott's
     unidirectional subjectification: the cline conflates two independent
     dimensions (speaker-orientation and performativity), collapsing
     distinctions that matter for understanding both synchronic typology
@@ -210,7 +210,7 @@ theorem performativity_invisible_to_traugott :
     than describes the modal state), volitive (involves the will), and
     speaker-oriented or higher (directed at the addressee).
 
-    @cite{narrog-2010} §4.2: strong obligation is cross-linguistically
+    [narrog-2010] §4.2: strong obligation is cross-linguistically
     avoided with 2nd-person subjects precisely because it occupies this
     region — performative + volitive + speaker-oriented. -/
 def NarrogPosition.isFaceThreatening (r : NarrogPosition) : Bool :=

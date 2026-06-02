@@ -3,7 +3,7 @@ import Linglib.Semantics.TypeTheoretic.Discourse
 
 /-!
 # KOS over Austinian Propositions
-@cite{ginzburg-2012} @cite{cooper-2023}
+[ginzburg-2012] [cooper-2023]
 
 The TTR-typed instantiation of KOS substrate. `LocProp ⊐ TTRSign` is
 already structural in `KOS/Defs.lean` (via `LocProp.toTTRSign` and the
@@ -73,7 +73,7 @@ QUD entries are Bool-valued TTR questions. The `Cont` parameter governs
 the LocProp content type for `pending` and `qud` (use `Unit` if Pending
 is unused; use `BCheckableAustinian S` for full TTR-typed CRification).
 
-@cite{ginzburg-2012} Ch. 4: FACTS is a set of Austinian propositions
+[ginzburg-2012] Ch. 4: FACTS is a set of Austinian propositions
 `[sit = s, sit-type = T]`. QUD is a poset of questions. -/
 abbrev AustinianDGB (S R : Type) (Cont : Type) :=
   DGB String (BCheckableAustinian S) (TTRQuestionB R) Cont
@@ -89,7 +89,7 @@ abbrev AustinianTIS (S R : Type) (Cont : Type) :=
 /-- A `BCheckableAustinian S` resolves a `TTRQuestionB S` when the
 Austinian proposition is true at a situation that satisfies the question body.
 
-@cite{ginzburg-2012} Ch. 4: "q is resolved relative to a DGB dgb iff the
+[ginzburg-2012] Ch. 4: "q is resolved relative to a DGB dgb iff the
 FACTS in dgb contextually entail an answer to q."
 
 For a fact `⟨s, T⟩` and question `Q`: the fact resolves Q when T(s) is true

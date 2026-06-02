@@ -5,7 +5,7 @@ import Linglib.Core.Relation.ReflTransGen
 
 /-!
 # RSRL interpretations
-@cite{richter-2000}, @cite{richter-2024}
+[richter-2000], [richter-2024]
 
 An RSRL **interpretation** of a `Signature` (Def. 48): a universe `U`, a species assignment
 `S`, partial attribute functions `A`, and a relation interpretation `R`. `WellTyped` is the
@@ -18,7 +18,7 @@ namespace HPSG.RSRL
 universe u
 
 -- TODO: generalise `U : Type v` (currently tied to the signature's universe `u`).
-/-- An RSRL interpretation of a signature (@cite{richter-2000}, Def. 48). -/
+/-- An RSRL interpretation of a signature ([richter-2000], Def. 48). -/
 structure Interpretation {Srt : Type u} [PartialOrder Srt] (Sig : Signature Srt) where
   /-- The universe of entities. -/
   U : Type u
@@ -47,7 +47,7 @@ instance (I : Interpretation Sig) [Fintype Sig.Attr] [DecidableEq I.U] :
     DecidableRel I.attrSucc := fun _ _ => by unfold attrSucc; infer_instance
 
 /-- `v` is a **component of** `u` — reachable from `u` by following attributes. RSRL bounds
-quantification to these (@cite{richter-2024}, Ch. 3). -/
+quantification to these ([richter-2024], Ch. 3). -/
 abbrev IsComponentOf (I : Interpretation Sig) (u v : I.U) : Prop :=
   Relation.ReflTransGen I.attrSucc u v
 

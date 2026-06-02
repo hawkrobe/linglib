@@ -4,7 +4,7 @@ set_option autoImplicit false
 
 /-!
 # Core Computational Structure of Merge — MCB §1.10
-@cite{marcolli-chomsky-berwick-2025}
+[marcolli-chomsky-berwick-2025]
 
 MCB §1.10 (book p. 92, "The Core Computational Structure of Merge")
 characterizes the computational structure of `SyntacticObject` as the

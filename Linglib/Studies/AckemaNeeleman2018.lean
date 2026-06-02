@@ -2,7 +2,7 @@ import Linglib.Features.Person
 
 /-!
 # Ackema & Neeleman (2018): Features of Person
-@cite{ackema-neeleman-2018} @cite{harbour-2016} @cite{cysouw-2009}
+[ackema-neeleman-2018] [harbour-2016] [cysouw-2009]
 
 Formalizes the person-feature system of Ch 2 ("Person Features: Deriving the
 Inventory of Persons"): two privative features `PROX` and `DIST`, interpreted as
@@ -14,10 +14,10 @@ with no negative features and without generating nonattested persons.
 
 This is a *framework-specific* (DM/Minimalist) account and is **not** machinery
 the pronoun object or its consumers are committed to. A&N's PROX/DIST geometry
-is one of several competing decompositions (cf. @cite{harbour-2016}'s
+is one of several competing decompositions (cf. [harbour-2016]'s
 `Studies/Harbour2016.lean`); the widely-adopted, framework-neutral
 representation is person + number + clusivity, encapsulated typologically by
-@cite{cysouw-2009}'s `Features.Person.Category`. The deliverable here is
+[cysouw-2009]'s `Features.Person.Category`. The deliverable here is
 therefore `specToCategory`: a *converter* from an A&N feature structure to that
 neutral inventory. A consumer that wants the feature geometry imports it;
 everyone else uses the neutral category.
@@ -43,7 +43,7 @@ on a layer they are undefined, which is what bounds the inventory.
 * `eval_third`/`eval_second`/`eval_first`/`eval_incl` — the canonical structures
   `[DIST]`, `[PROX,DIST]`, `[PROX,PROX]`, `[PROX]` derive 3/2/1/inclusive.
 * `excl_eq_first_singular` — first-person *exclusive* and first-person singular
-  share the structure `[PROX,PROX]`, deriving @cite{cysouw-2009}'s homophony
+  share the structure `[PROX,PROX]`, deriving [cysouw-2009]'s homophony
   observation; inclusive (`[PROX]`) is distinct.
 * `reverse_order_incoherent` / `output_bounded` — `DIST` then `PROX` is
   incoherent and the output space is finite, so no nonattested person is
@@ -134,7 +134,7 @@ theorem eval_incl : incl.eval = some .siu := rfl
 
 First-person exclusive and first-person singular share the *same* feature
 structure `[PROX, PROX]`; the inclusive has a distinct structure `[PROX]`. This
-derives @cite{cysouw-2009}'s observation that the exclusive is regularly
+derives [cysouw-2009]'s observation that the exclusive is regularly
 homophonous with the first-person singular while the inclusive is hardly ever. -/
 
 /-- First-person exclusive *is* the first-person singular structure. -/
@@ -166,10 +166,10 @@ theorem output_bounded (fs : PSpec) :
   · exact .inl rfl
   · cases s <;> simp
 
-/-! ### Bridge to the neutral inventory (@cite{cysouw-2009} `Category`) -/
+/-! ### Bridge to the neutral inventory ([cysouw-2009] `Category`) -/
 
 /-- Map an output set together with its number (`plural`) to the neutral
-    @cite{cysouw-2009} person category. `S_i` is first-singular / exclusive
+    [cysouw-2009] person category. `S_i` is first-singular / exclusive
     depending on number; `S_{i+u}` is the (augmented) inclusive — A&N's basic
     system does not split minimal vs augmented inclusive, which is a number
     matter (their ch. 3), so it maps to `.augIncl`. `none` for the
@@ -185,14 +185,14 @@ def outputToCategory : PSet → Bool → Option Category
   | _,       _     => none
 
 /-- Converter from an A&N feature structure (plus number) to the neutral
-    @cite{cysouw-2009} `Category`. This is the opt-in bridge: the pronoun object
+    [cysouw-2009] `Category`. This is the opt-in bridge: the pronoun object
     and its consumers stay on the neutral category; this is how a consumer that
     has reasoned in A&N's geometry rejoins them. -/
 def specToCategory (fs : PSpec) (plural : Bool) : Option Category :=
   (fs.eval).bind (outputToCategory · plural)
 
 /-- The seven attested persons map onto seven distinct neutral categories,
-    covering all of @cite{cysouw-2009}'s inventory except `.minIncl` (the
+    covering all of [cysouw-2009]'s inventory except `.minIncl` (the
     minimal inclusive — a number refinement A&N defer to their ch. 3). -/
 theorem inventory_distinct :
     specToCategory first false = some .s1 ∧

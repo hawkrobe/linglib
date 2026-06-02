@@ -7,8 +7,8 @@ import Linglib.Data.WALS.Features.F78A
 
 /-!
 # Typology.Modality
-@cite{aikhenvald-2004} @cite{de-haan-2013} @cite{vanderauwera-ammann-2013}
-@cite{de-haan-2013b} @cite{wals-2013}
+[aikhenvald-2004] [de-haan-2013] [vanderauwera-ammann-2013]
+[de-haan-2013b] [wals-2013]
 
 Per-language typological substrate enums + WALS lookups for modality and
 evidentiality. Covers five WALS chapters:

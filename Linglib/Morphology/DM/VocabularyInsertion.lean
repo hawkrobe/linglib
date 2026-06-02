@@ -2,7 +2,7 @@ import Mathlib.Tactic.TypeStar
 
 /-!
 # Vocabulary Insertion (Distributed Morphology)
-@cite{halle-marantz-1993} @cite{bobaljik-2000}
+[halle-marantz-1993] [bobaljik-2000]
 
 Vocabulary Insertion is the mechanism by which syntactic terminal nodes
 receive phonological exponents in Distributed Morphology. It is the
@@ -17,13 +17,13 @@ A Vocabulary Item specifies:
 3. A **root context** (optional: which roots the rule applies to)
 
 When multiple VI rules match a terminal, the **Elsewhere Condition**
-(@cite{halle-marantz-1993}) resolves the competition: the most specific
+([halle-marantz-1993]) resolves the competition: the most specific
 matching rule wins. A rule is more specific if its context is a proper
 superset of another matching rule's context.
 
 ## Root-Out Insertion
 
-@cite{bobaljik-2000} argues that VI proceeds **root-out**: the root is
+[bobaljik-2000] argues that VI proceeds **root-out**: the root is
 inserted first, then inflectional affixes outward. This means VI for
 outer morphemes can only be phonologically conditioned by material
 already inserted (inward) — it cannot "look ahead" to morphemes not yet
@@ -88,7 +88,7 @@ def VocabItem.matches {Ctx Root : Type*}
     first matching rule. Returns `none` if no rule matches.
 
     This implements the **Subset Principle** / **Elsewhere Condition**
-    (@cite{halle-marantz-1993}): among all matching rules, the most
+    ([halle-marantz-1993]): among all matching rules, the most
     specific one wins. -/
 def vocabularyInsert {Ctx Root : Type*}
     (rules : List (VocabItem Ctx Root))
@@ -128,7 +128,7 @@ def overrides {Ctx Root : Type*}
 /-- Root-out ordering: a terminal at position `i` in the morphological
     structure (0 = root, increasing outward) is inserted at step `i`.
 
-    @cite{bobaljik-2000} argues this is the standard assumption in DM:
+    [bobaljik-2000] argues this is the standard assumption in DM:
     the root is the first exponent to be inserted, then the innermost
     inflectional affix, then the next one out, etc.
 
@@ -191,13 +191,13 @@ theorem outer_cannot_condition_inner :
 
     Used when VI is purely determined by feature-subset matching
     (e.g., gender agreement class selection in
-    @cite{adamson-anagnostopoulou-2025}). -/
+    [adamson-anagnostopoulou-2025]). -/
 structure FeatureVI (F E : Type*) where
   features : List F
   exponent : E
   deriving DecidableEq, Repr
 
-/-- The **Subset Principle** (@cite{halle-marantz-1993}): among vocabulary
+/-- The **Subset Principle** ([halle-marantz-1993]): among vocabulary
     items whose feature specification is a subset of the target, select
     the most specific (longest feature list).
 

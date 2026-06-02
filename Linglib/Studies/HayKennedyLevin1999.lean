@@ -4,8 +4,8 @@ import Linglib.Core.Scales.Scale
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
-# @cite{hay-kennedy-levin-1999}: Scalar Structure Underlies Telicity in DAs
-@cite{hay-kennedy-levin-1999}
+# [hay-kennedy-levin-1999]: Scalar Structure Underlies Telicity in DAs
+[hay-kennedy-levin-1999]
 
 HKL 1999's central claim (p.3): *"when the scalar structure associated
 with the base adjective has a natural bound, the derived verb is telic;
@@ -299,7 +299,7 @@ theorem hklSection3_3Data_matrix :
 /-! HKL §4.1 extends the analysis to **consumption** (*eat the sandwich*,
     eqs 36-37), **motion** (*run a mile*, *descend 1000m*, eqs 38-42),
     and **creation** (*draw a house*, eq 39) — the "classically telic"
-    verbs of @cite{krifka-1989}'s incremental-theme tradition. Their
+    verbs of [krifka-1989]'s incremental-theme tradition. Their
     telicity ALSO depends on the boundedness of a difference value:
     bounded → telic, unbounded → atelic. The difference value is "the
     measure of change along a path of motion, in spatial extent, or in

@@ -7,9 +7,9 @@ import Linglib.Syntax.Minimalist.CombinationSchemata
 /-!
 # Sluicing: Syntactic Isomorphism Condition
 
-Formalization of @cite{anand-hardt-mccloskey-2025} Syntactic Isomorphism Condition
-for sluicing, building on @cite{grimshaw-2005} Extended Projection, with a
-comparison to @cite{rudin-2019}'s domination-chain–based structure matching.
+Formalization of [anand-hardt-mccloskey-2025] Syntactic Isomorphism Condition
+for sluicing, building on [grimshaw-2005] Extended Projection, with a
+comparison to [rudin-2019]'s domination-chain–based structure matching.
 
 ## Key Ideas
 
@@ -35,8 +35,8 @@ Sluicing is licensed when the **argument domain** of the ellipsis site is
 
 ## AHM vs Rudin
 
-@cite{rudin-2019} Def 9 requires domination chains from the domain root to match.
-This makes the domain root category load-bearing. @cite{anand-hardt-mccloskey-2025}
+[rudin-2019] Def 9 requires domination chains from the domain root to match.
+This makes the domain root category load-bearing. [anand-hardt-mccloskey-2025]
 Def 6 checks only head pairs, abstracting away from the domain root. The theories
 converge on standard sluicing (same domain root) and diverge on cross-category
 antecedence (different domain roots). We prove this convergence/divergence generally
@@ -56,11 +56,11 @@ open Minimalist
     Head pairs encode the local syntactic structure that must match
     between antecedent and ellipsis site.
 
-    @cite{anand-hardt-mccloskey-2025} Definition 5: Two heads are lexically identical
+    [anand-hardt-mccloskey-2025] Definition 5: Two heads are lexically identical
     iff they have the same category AND complement category. Case is
     included because it is assigned within the argument domain: a V that
     assigns dative is structurally distinct from one that assigns
-    accusative (@cite{merchant-2001}, @cite{anand-hardt-mccloskey-2021} §5.5). -/
+    accusative ([merchant-2001], [anand-hardt-mccloskey-2021] §5.5). -/
 structure HeadPair where
   /-- The category of the head -/
   head : Cat
@@ -74,7 +74,7 @@ structure HeadPair where
       the argument domain. -/
   voiceFlavor : Option VoiceFlavor := none
   /-- Is this PP an argument of the verb (selected) or an adjunct?
-      @cite{anand-hardt-mccloskey-2025} §4: argument PPs (e.g., "rely on X")
+      [anand-hardt-mccloskey-2025] §4: argument PPs (e.g., "rely on X")
       are inside the argument domain and must match under the SIC;
       nonargument PPs (e.g., "sing in the shower") are outside.
       `none` for non-PP head pairs. -/
@@ -95,7 +95,7 @@ def optAgree {α : Type} [DecidableEq α] (o1 o2 : Option α) : Prop :=
 instance {α} [DecidableEq α] (o1 o2 : Option α) : Decidable (optAgree o1 o2) := by
   unfold optAgree; infer_instance
 
-/-- Lexical identity of head pairs (@cite{anand-hardt-mccloskey-2025}, Def 5):
+/-- Lexical identity of head pairs ([anand-hardt-mccloskey-2025], Def 5):
     Two head pairs are lexically identical iff they have the same
     head category, complement category, and assigned case (when both
     specify case).
@@ -146,7 +146,7 @@ instance : (l1 l2 : List HeadPair) → Decidable (matchHeadPairs l1 l2)
     | none => exact isFalse not_false
     | some remaining => exact instDecidableMatchHeadPairs rest remaining
 
-/-- Structural identity (@cite{anand-hardt-mccloskey-2025}, Def 6):
+/-- Structural identity ([anand-hardt-mccloskey-2025], Def 6):
     Two sets of head pairs are structurally identical iff they can be
     put in 1-1 correspondence where each pair is lexically identical.
 
@@ -184,10 +184,10 @@ instance (sl : SluicingLicense) : Decidable sl.isLicensed := by
 -- § 4: SIC Predictions
 -- ═══════════════════════════════════════════════════════════════
 
--- Voice Mismatch Resolution (@cite{anand-hardt-mccloskey-2021})
+-- Voice Mismatch Resolution ([anand-hardt-mccloskey-2021])
 
 /-- Voice is within the argument domain (F1, same level as v).
-    @cite{anand-hardt-mccloskey-2021}: voice mismatches ARE blocked by the SIC because
+    [anand-hardt-mccloskey-2021]: voice mismatches ARE blocked by the SIC because
     v[agentive] ≠ v[nonThematic] within the argument domain. -/
 theorem voice_flavor_in_argdomain :
     isInArgumentDomain .Voice .C = true := by decide
@@ -243,7 +243,7 @@ theorem small_clause_argdomain_is_self :
 theorem small_clause_excludes_v :
     isInArgumentDomain .v .V = false := by decide
 
--- Cross-categorial SC argument domains (@cite{anand-hardt-mccloskey-2025} Def 4)
+-- Cross-categorial SC argument domains ([anand-hardt-mccloskey-2025] Def 4)
 
 /-- For a P-headed small clause, the argument domain is P itself.
     E.g., absolute *with*: "with [the campaign on hold]". -/
@@ -544,14 +544,14 @@ example : selects HeadFunction.leftSpine
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 5: Nonargument PPs and Chung's Generalization
--- (@cite{anand-hardt-mccloskey-2025} §4)
+-- ([anand-hardt-mccloskey-2025] §4)
 -- ═══════════════════════════════════════════════════════════════
 
 /-- Is this head pair a nonargument PP? Nonargument PPs are outside
     the argument domain: they are merged above vP and do not participate
     in the SIC matching calculation.
 
-    @cite{anand-hardt-mccloskey-2025} §4: Chung's Generalization
+    [anand-hardt-mccloskey-2025] §4: Chung's Generalization
     (preposition stranding in sluicing) follows because stranded
     prepositions in nonargument PPs need not match structurally. -/
 def HeadPair.isNonargumentPP (hp : HeadPair) : Bool :=
@@ -565,7 +565,7 @@ def filterArgumentPairs (pairs : List HeadPair) : List HeadPair :=
 /-- Chung's Generalization: a stranded nonargument preposition in the
     ellipsis site need not have a counterpart in the antecedent.
 
-    @cite{anand-hardt-mccloskey-2025} §4: "government regulation is
+    [anand-hardt-mccloskey-2025] §4: "government regulation is
     necessary in [some form]" — the stranded *in* has no antecedent
     source, but sluicing is licensed because the PP is nonargument
     (outside the argument domain). Filtering removes it, and the
@@ -598,12 +598,12 @@ theorem argument_pp_must_match :
 -- § 6: Rudin (2019) Comparison — Domination Chains vs Head Pairs
 -- ═══════════════════════════════════════════════════════════════
 
-/-- @cite{rudin-2019}'s structure matching (Def 9) requires that heads
+/-- [rudin-2019]'s structure matching (Def 9) requires that heads
     be dominated by identical sequences of immediately dominating nodes.
     This means the **domain root category** is necessarily part of the
     match: every domination chain starts from the domain root.
 
-    @cite{anand-hardt-mccloskey-2025}'s SIC (Def 6) checks only head
+    [anand-hardt-mccloskey-2025]'s SIC (Def 6) checks only head
     pairs ⟨head, complement⟩ within the argument domain, without
     reference to the domain root.
 
@@ -628,7 +628,7 @@ def annotateWithRoot (root : Cat) (pairs : List HeadPair) : List DomainAnnotated
 
 /-- Rudin-style matching: lexical identity of head pairs PLUS
     domain root identity. The domain root requirement follows from
-    @cite{rudin-2019} Def 9: domination chains necessarily include
+    [rudin-2019] Def 9: domination chains necessarily include
     the domain root as their first element, so if domain roots
     differ, no chain can match. -/
 def rudinIdentical (h1 h2 : DomainAnnotatedPair) : Prop :=
@@ -769,7 +769,7 @@ def copularEllipsisSC : List DomainAnnotatedPair :=
 def copularAntecedentDP : List DomainAnnotatedPair :=
   [⟨⟨.N, .D, none, none, none⟩, .D⟩]
 
-/-- @cite{anand-hardt-mccloskey-2025} correctly licenses copular
+/-- [anand-hardt-mccloskey-2025] correctly licenses copular
     pseudosluices: the head pair ⟨N, D⟩ in the SC argument domain
     matches the head pair ⟨N, D⟩ in the antecedent DP. Domain root
     categories (.N vs .D) are NOT part of AHM's matching. -/
@@ -779,12 +779,12 @@ theorem ahm_licenses_copular_pseudosluice :
       [⟨.N, .D, none, none, none⟩] :=
   structurallyIdentical_refl _
 
-/-- @cite{rudin-2019}'s condition incorrectly blocks copular
+/-- [rudin-2019]'s condition incorrectly blocks copular
     pseudosluices: the domain roots differ (.N for the SC, .D for the
     antecedent DP), so domination chains cannot match.
 
     This is the central empirical argument in
-    @cite{anand-hardt-mccloskey-2025} §5 for revising Rudin's condition.
+    [anand-hardt-mccloskey-2025] §5 for revising Rudin's condition.
     The copular pseudosluice data (23 corpus instances, ex. 18–19)
     show that a head-pair–based SIC is empirically superior to a
     domination-chain–based one. -/
@@ -797,7 +797,7 @@ theorem rudin_blocks_copular_pseudosluice :
     only head pairs (domain-root-invariant), while Rudin's checks
     domination chains (domain-root-sensitive).
 
-    @cite{anand-hardt-mccloskey-2025} ex. 18–19: "Bradley said that
+    [anand-hardt-mccloskey-2025] ex. 18–19: "Bradley said that
     he has not shut the door to [a presidential race], though he would
     not say when." — grammatical, with nominal antecedent and implicit
     copular elided clause. -/
@@ -829,9 +829,9 @@ theorem domain_root_is_divergence_source :
 -- § 7: Bruening (2021) Maximal-Projection Identity
 -- ═══════════════════════════════════════════════════════════════
 --
--- @cite{bruening-2021} §5.5 (pp. 1064–1067) proposes a maximal-projection-
+-- [bruening-2021] §5.5 (pp. 1064–1067) proposes a maximal-projection-
 -- based identity condition for ellipsis (ex. 122–124), modifying
--- @cite{rudin-2019}'s head-based condition (§ 6 above). Bruening's
+-- [rudin-2019]'s head-based condition (§ 6 above). Bruening's
 -- condition reads: ellipsis of E given antecedent A is licit iff every
 -- max-proj in E that is not a movement non-head has a structure-matching
 -- correlate in A, and conversely. Structure-matching is identity of the
@@ -849,18 +849,18 @@ theorem domain_root_is_divergence_source :
 
 /-- Maximal projections within a SO `root`: subtrees `t` such that
     `Labeling.isMaximalAt h root t` under head function `h`. Per
-    @cite{bruening-2021} §5.5 ex. 122, the identity condition
+    [bruening-2021] §5.5 ex. 122, the identity condition
     quantifies over these XPs (modulo movement non-heads).
 
     Parametric over `h : HeadFunction` per
-    @cite{marcolli-chomsky-berwick-2025} §1.13.6 — there is no canonical
+    [marcolli-chomsky-berwick-2025] §1.13.6 — there is no canonical
     "the" labeling without a chosen head function. -/
 noncomputable def maximalProjections (h : HeadFunction) (root : SyntacticObject) :
     Multiset SyntacticObject :=
   root.subtrees.filter (fun t => decide (Labeling.isMaximalAt h root t))
 
 /-- A SO is a "nonhead member of a movement chain" iff it is a trace
-    (lower copy left after movement). Per @cite{bruening-2021} §5.5 ex. 122
+    (lower copy left after movement). Per [bruening-2021] §5.5 ex. 122
     "not a nonhead member of a movement chain". For G1 only wh-traces in
     elided IPs are relevant. Higher copies in head-movement chains are
     not handled — flag for future ATB / remnant studies. -/
@@ -870,7 +870,7 @@ def isNonHeadMemberOfChain (x : SyntacticObject) : Bool :=
 /-- Underlying planar path-finder on a `FreeMagma` representative.
     Phase 1.0 noncomputable (depends on planar order).
 
-    Per @cite{bruening-2021} §5.5 ex. 123: position-sensitive equality
+    Per [bruening-2021] §5.5 ex. 123: position-sensitive equality
     rules out cross-paradigm false positives where two unrelated trees
     share a max-proj cat multiset. -/
 private noncomputable def labelPathFromRootPlanar (h : HeadFunction) :
@@ -907,7 +907,7 @@ noncomputable def filteredMaxProjPaths (h : HeadFunction) (root : SyntacticObjec
     (fun x => !isNonHeadMemberOfChain x)).toList).filterMap
     (labelPathFromRoot h root ·)
 
-/-- @cite{bruening-2021} §5.5 ex. 122 maximal-projection identity
+/-- [bruening-2021] §5.5 ex. 122 maximal-projection identity
     condition, parametric over the head function `h`. Ellipsis of
     `ellipsis` given `antecedent` is licit iff their filtered max-proj
     path lists are permutations of each other.

@@ -2,9 +2,9 @@ import Mathlib.Tactic.Basic
 
 /-!
 # Continuation Monad
-@cite{barker-shan-2014} @cite{charlow-2021}
+[barker-shan-2014] [charlow-2021]
 
-General-purpose continuation monad, following @cite{barker-shan-2014}.
+General-purpose continuation monad, following [barker-shan-2014].
 The type `Cont R A := (A → R) → R` underlies lifted question types
 (Lifted.lean), higher-order dynamic GQs, and
 scope-taking expressions generally.

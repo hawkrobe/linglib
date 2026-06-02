@@ -5,8 +5,8 @@ import Linglib.Core.Time.Reichenbach
 import Linglib.Semantics.Tense.Compositional
 
 /-!
-# @cite{kiparsky-2002}: Event structure and the perfect
-@cite{kiparsky-2002} @cite{pancheva-2003} @cite{iatridou-anagnostopoulou-izvorski-2001}
+# [kiparsky-2002]: Event structure and the perfect
+[kiparsky-2002] [pancheva-2003] [iatridou-anagnostopoulou-izvorski-2001]
 
 Kiparsky's argument that the English perfect's distinct readings
 arise from how the **event structure** of the verbal predicate is
@@ -40,7 +40,7 @@ Kiparsky's theory solves three classic perfect puzzles (§2-§4):
 
 ## Pancheva 2003 relation
 
-@cite{pancheva-2003}'s aspect-of-perfect-participle classification
+[pancheva-2003]'s aspect-of-perfect-participle classification
 (universal / experiential / resultative) embeds into Kiparsky's via
 the `toKiparsky` bridge that lives in `Studies/Pancheva2003.lean`.
 Pancheva's account is independent: she derives the readings from
@@ -67,7 +67,7 @@ open Semantics.Aspect
 open Semantics.Aspect.SubeventStructure
 
 -- ════════════════════════════════════════════════════
--- § 1. Perfect Readings (@cite{kiparsky-2002})
+-- § 1. Perfect Readings ([kiparsky-2002])
 -- ════════════════════════════════════════════════════
 /-- Kiparsky's four readings of the perfect.
     - `existential`: ∃ event in PTS ("has visited Paris")
@@ -307,7 +307,7 @@ theorem existential_available_for_all_classes (c : VendlerClass) :
 
 /-- Available readings refined by M&S event type. The key insight:
     points lack resultative and present-state readings because they have
-    no consequent state to anchor. @cite{moens-steedman-1988} -/
+    no consequent state to anchor. [moens-steedman-1988] -/
 def msAvailableReadings : MoensSteedmanClass → List PerfectReading
   | .state => [.existential, .universal]
   | .process => [.existential, .universal]
@@ -315,7 +315,7 @@ def msAvailableReadings : MoensSteedmanClass → List PerfectReading
   | .culmination => [.existential, .universal, .resultative, .presentState]
   | .point => [.existential, .universal]
 
-/-- The resultative reading requires a consequent state (@cite{moens-steedman-1988}).
+/-- The resultative reading requires a consequent state ([moens-steedman-1988]).
     Points (telic but without consequent state) cannot anchor a result. -/
 theorem resultative_requires_consState (c : MoensSteedmanClass)
     (h : c.toProfile.hasConsequentState = false) :

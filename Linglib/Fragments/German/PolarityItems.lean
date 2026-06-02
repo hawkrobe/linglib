@@ -2,12 +2,12 @@ import Linglib.Typology.PolarityItem
 
 /-!
 # German Polarity-Sensitive Items
-@cite{haspelmath-1997} @cite{chierchia-2006}
+[haspelmath-1997] [chierchia-2006]
 
 German indefinite pronoun polarity items, typed by the categories from
 `Typology.PolarityItem`.
 
-German's *irgendein* is a key example in @cite{chierchia-2006}'s typology
+German's *irgendein* is a key example in [chierchia-2006]'s typology
 as an existential FCI with both NPI and FCI uses:
 - **irgendein/irgendwer**: NPI/FCI (*irgend-* prefix = domain widening)
 - **wer** (conditional): Bare wh-word as weak NPI
@@ -23,7 +23,7 @@ open Typology.PolarityItem
 -- ============================================================================
 
 /-- *irgendein/irgendwer* — NPI/FCI.
-    @cite{chierchia-2006}'s EFCI class: existential FCI with both
+    [chierchia-2006]'s EFCI class: existential FCI with both
     NPI uses (questions) and FCI uses (irrealis, modals).
     The *irgend-* prefix marks non-specificity / domain widening. -/
 def irgendein : PolarityItemEntry :=

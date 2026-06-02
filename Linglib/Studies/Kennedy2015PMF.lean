@@ -3,8 +3,8 @@ import Linglib.Studies.Kennedy2015
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
-# @cite{kennedy-2015} on mathlib `PMF` (Shape A migration)
-@cite{kennedy-2015} @cite{frank-goodman-2012}
+# [kennedy-2015] on mathlib `PMF` (Shape A migration)
+[kennedy-2015] [frank-goodman-2012]
 
 PMF-shaped re-formalisation of `Kennedy2015.lean`'s 7 RSA L1 findings.
 Domain: KCard = `Fin 6`, KUtt = 5 numeral alternatives. Same-observation

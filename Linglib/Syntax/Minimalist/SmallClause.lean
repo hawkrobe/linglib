@@ -3,9 +3,9 @@ import Linglib.Syntax.Minimalist.Applicative
 /-!
 # Small Clause Predication
 
-@cite{dendikken-1995} @cite{baker-1988}
+[dendikken-1995] [baker-1988]
 
-@cite{dendikken-1995}'s central thesis: all subject-predicate relationships
+[dendikken-1995]'s central thesis: all subject-predicate relationships
 are incarnated as small clauses `[SC Subject Predicate]`. The predicate
 head's category determines the construction type:
 
@@ -34,7 +34,7 @@ namespace Minimalist
 
 /-- Category of the predicate head in a small clause.
 
-    @cite{dendikken-1995}: X ∈ {A, N, P, V} — the four
+    [dendikken-1995]: X ∈ {A, N, P, V} — the four
     LEXICAL categories. The SC family is parameterized by which
     lexical category serves as the predicate head. -/
 inductive SCPredCategory where
@@ -57,7 +57,7 @@ def SCPredCategory.toCat : SCPredCategory → Cat
 @[simp] theorem SCPredCategory.toCat_N : SCPredCategory.toCat .N = Cat.N := rfl
 
 /-- A small clause: subject-predicate pair where the predicate
-    is categorially typed (@cite{dendikken-1995}:27, ex. 44).
+    is categorially typed ([dendikken-1995]:27, ex. 44).
 
     `[SC subject predicate]`
 
@@ -119,7 +119,7 @@ noncomputable abbrev SyntacticObject.headCat (so : SyntacticObject) : Cat :=
   HeadFunction.leftSpine.outerCat so
 
 /-- A syntactic object qualifies as a small-clause predicate iff its
-    head category is one of @cite{dendikken-1995}'s four SC-licensed
+    head category is one of [dendikken-1995]'s four SC-licensed
     lexical categories (P/A/V/N). -/
 def IsSmallClausePredicate (so : SyntacticObject) : Prop :=
   so.headCat = .P ∨ so.headCat = .A ∨ so.headCat = .V ∨ so.headCat = .N
@@ -201,7 +201,7 @@ theorem SmallClause.toSO_isSmallClause (sc : SmallClause)
   cases sc.predCat <;> simp
 
 -- ============================================================================
--- Applicative connection (@cite{dendikken-1995}, Ch. 5)
+-- Applicative connection ([dendikken-1995], Ch. 5)
 -- ============================================================================
 
 /-- Whether an applicative head is analyzable as an affixal particle.

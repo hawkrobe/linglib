@@ -9,11 +9,11 @@ import Linglib.Fragments.Mayan.Chol.Agreement
 
 /-!
 # Baker (2015) — Case: Its Principles and Its Parameters
-@cite{baker-2015} @cite{marantz-1991} @cite{baker-vinokurova-2010}
+[baker-2015] [marantz-1991] [baker-vinokurova-2010]
 
-@cite{baker-2015}'s monograph takes the dependent case algorithm
-originally proposed by @cite{marantz-1991} and refined by
-@cite{baker-vinokurova-2010} for Sakha and develops it as a *cross-
+[baker-2015]'s monograph takes the dependent case algorithm
+originally proposed by [marantz-1991] and refined by
+[baker-vinokurova-2010] for Sakha and develops it as a *cross-
 linguistic* theory of morphological case, sweeping accusative,
 ergative, and split-ergative systems under one assignment mechanism.
 The algorithm:
@@ -45,13 +45,13 @@ The dependent case algorithm assigns ABS (`.abs`) as the
 unmarked case in ergative alignment. Hindi and Georgian, however,
 realize this function morphologically as NOM (no overt marker), not
 as a distinct ABS form — their inventories contain ERG (the dependent
-case) but not ABS. @cite{baker-2015} treats this as the canonical
+case) but not ABS. [baker-2015] treats this as the canonical
 abstract-vs-morphological case distinction inherited from
-@cite{marantz-1991}: many split-ergative languages have a syncretic
+[marantz-1991]: many split-ergative languages have a syncretic
 unmarked case serving both nominative (accusative frames) and
 absolutive (ergative frames) functions.
 
-@cite{baker-vinokurova-2010}'s Sakha analysis is the empirical
+[baker-vinokurova-2010]'s Sakha analysis is the empirical
 foundation of one of Baker's columns; that paper's full derivations
 live in `Studies/BakerVinokurova2010.lean` and are not
 duplicated here. Marantz's original abstract-vs-morphological case
@@ -305,10 +305,10 @@ theorem georgian_present_in_inventory :
   decide
 
 -- ============================================================================
--- § 3: Comparison with @cite{coon-2013}'s inherent-ERG account of Chol
+-- § 3: Comparison with [coon-2013]'s inherent-ERG account of Chol
 -- ============================================================================
 
-/-! @cite{coon-2013}'s Chol monograph licenses ERG as **inherent** case from
+/-! [coon-2013]'s Chol monograph licenses ERG as **inherent** case from
     transitive *v*. Marantz/Baker dependent case derives the same surface
     case pattern from a structural-configurational rule (lower NP gets
     ERG-as-dependent in the higher-NP-as-caseless configuration). The two
@@ -403,7 +403,7 @@ theorem dependent_accusative_matches_alignment_function_transitive :
 /-- The equivalence at the **surface case** level (theorems above) does NOT
     extend to the **licensing source** level. Marantz/Baker's algorithm
     labels Chol's perfective ergative case as `.dependent` (configurational
-    — assigned by the c-command rule). @cite{coon-2013}'s inherent-from-v
+    — assigned by the c-command rule). [coon-2013]'s inherent-from-v
     account would label it as `.lexical` (assigned by selecting head v⁰).
     The two accounts disagree on *what licenses* the case, even though they
     agree on *which* case appears.
@@ -434,8 +434,8 @@ theorem chol_perfective_ergCase_matches_dependent :
 /-- **Dependent case is INSUFFICIENT for extended ergative.** The Chol
     non-perfective S/A → GEN, P → ABS pattern is a fourth typological
     arrangement that Baker's algorithm cannot derive without auxiliary
-    nominalization machinery. @cite{coon-2013} supplies that machinery via
-    embedded nominalization; @cite{imanishi-2020} via parameterized
+    nominalization machinery. [coon-2013] supplies that machinery via
+    embedded nominalization; [imanishi-2020] via parameterized
     inherent vs structural Case. Either way, Baker's algorithm alone is
     not a complete theory of ergative-class case assignment. -/
 theorem dependent_case_insufficient_for_extended_ergative :

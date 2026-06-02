@@ -3,9 +3,9 @@ import Linglib.Processing.Cost.Profile
 
 /-!
 # Cognitive Constraints and Island Effects
-@cite{hofmeister-sag-2010}
+[hofmeister-sag-2010]
 
-@cite{hofmeister-sag-2010} argue that island effects are gradient along
+[hofmeister-sag-2010] argue that island effects are gradient along
 multiple dimensions and that acceptability varies systematically with
 nonstructural manipulations (filler complexity, referential load) that
 leave island configurations intact. This challenges every categorical
@@ -24,7 +24,7 @@ and the Minimal Link Condition.
 
 The cross-theory comparison (competence vs. performance vs. discourse) lives in
 `LuPanDegen2025`, which integrates these findings
-with @cite{lu-pan-degen-2025}'s discourse-based account.
+with [lu-pan-degen-2025]'s discourse-based account.
 -/
 
 namespace HofmeisterSag2010
@@ -81,7 +81,7 @@ inductive IslandNPType where
   | indefinite
   deriving Repr, DecidableEq
 
-/-- An experimental condition from @cite{hofmeister-sag-2010}.
+/-- An experimental condition from [hofmeister-sag-2010].
 Acceptability stored as Nat (judgment ratio x 100, so 78 means 0.78). -/
 structure IslandCondition where
   island : ConstraintType

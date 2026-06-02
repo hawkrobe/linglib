@@ -7,9 +7,9 @@ import Linglib.Phonology.Autosegmental.Graph
 
 /-!
 # Jardine (2017): tone-association patterns as forbidden subgraphs
-@cite{jardine-2017}
+[jardine-2017]
 
-@cite{jardine-2017} argues that tone-association patterns over
+[jardine-2017] argues that tone-association patterns over
 autosegmental representations are *computationally local* in a
 well-defined sense: each pattern's well-formedness can be specified
 by a finite set of forbidden connected subgraphs. An AR is
@@ -25,7 +25,7 @@ This gives a restrictive theory of tonal well-formedness that:
 
 ## Coverage
 
-This file formalises §3.1 + §5.1 of @cite{jardine-2017}: the Mende
+This file formalises §3.1 + §5.1 of [jardine-2017]: the Mende
 right-edge multiple-association pattern and the contrasting Hausa
 left-edge pattern. Hirosaki Japanese (§5.3), Northern Karanga Shona
 (§5.1's second half), and Kukuya (§5.2) are sketched in the
@@ -43,7 +43,7 @@ Laoide-Kemp doesn't touch.
 * `AR` — `Graph Tone TBU`, an autosegmental representation in
   Jardine's sense.
 * `Mende.attested` — three worked Mende ARs from
-  @cite{jardine-2017} eq. (5): `mbû` ('owl', HL contour on 1σ),
+  [jardine-2017] eq. (5): `mbû` ('owl', HL contour on 1σ),
   `ngìlà` ('dog', H L on 2σ), `félàmà` ('junction', HLL with
   L-spread on 3σ).
 * `Mende.forbidden_*` — three forbidden subgraphs from eq. (21):
@@ -84,12 +84,12 @@ inductive Tone
   | H
   | L
   /-- Word/tier boundary marker (#). Used by some grammars (e.g.,
-      Northern Karanga Shona in @cite{jardine-2017} eq. 24); not used
+      Northern Karanga Shona in [jardine-2017] eq. 24); not used
       in the Mende/Hausa formalisations below. -/
   | bdry
   deriving DecidableEq, Repr
 
-/-- Tone-bearing unit label. Most patterns in @cite{jardine-2017}
+/-- Tone-bearing unit label. Most patterns in [jardine-2017]
     use the syllable σ; Hirosaki Japanese (§5.3) uses the mora μ. -/
 inductive TBU
   | σ
@@ -104,7 +104,7 @@ inductive TBU
 abbrev AR := Graph Tone TBU
 
 /-! ## §2 Mende: right-edge multiple association
-@cite{jardine-2017} §3.1, eq. (5)
+[jardine-2017] §3.1, eq. (5)
 
 In Mende, tonal *plateaus* (a single tone associated to multiple
 syllables) and contour tones (multiple tones on one syllable) are
@@ -136,7 +136,7 @@ def félàmà : AR where
   lower := [.σ, .σ, .σ]
   links := {(0, 0), (1, 1), (1, 2)}
 
-/-! ### §2.1 Forbidden subgraphs (@cite{jardine-2017} eq. 21)
+/-! ### §2.1 Forbidden subgraphs ([jardine-2017] eq. 21)
 
 The Mende grammar is the conjunction of three forbidden subgraphs.
 Each subgraph captures one structural configuration that doesn't
@@ -195,7 +195,7 @@ theorem félàmà_no_nonfinal_contour :
 
 /-- All three Mende attested forms satisfy the full Mende grammar
     (none of the three forbidden subgraphs embeds into any of them).
-    @cite{jardine-2017} §5.1, the main empirical claim. -/
+    [jardine-2017] §5.1, the main empirical claim. -/
 theorem mende_grammar_admits_attested :
     (¬ SubgraphEmbeds forbidden_nonfinal_H mbû ∧
      ¬ SubgraphEmbeds forbidden_nonfinal_L mbû ∧
@@ -213,7 +213,7 @@ theorem mende_grammar_admits_attested :
 end Mende
 
 /-! ## §3 Hausa: left-edge multiple association
-@cite{jardine-2017} eq. (7), (22)
+[jardine-2017] eq. (7), (22)
 
 Hausa is the *mirror* of Mende: multiple association occurs only at
 the left edge. `háantúnàa` 'noses' has HHL surface — the H spreads
@@ -235,7 +235,7 @@ def háantúnàa : AR where
   lower := [.σ, .σ, .σ]
   links := {(0, 0), (0, 1), (1, 2)}
 
-/-! ### §3.1 Forbidden subgraphs (@cite{jardine-2017} eq. 22)
+/-! ### §3.1 Forbidden subgraphs ([jardine-2017] eq. 22)
 
 Hausa's grammar is the mirror of Mende's: non-*initial* multiple
 association is forbidden. The first two subgraphs match an L
@@ -283,7 +283,7 @@ theorem háantúnàa_no_noninitial_contour :
 end Hausa
 
 /-! ## §4 The Mende/Hausa contrast: same shape, opposite edges
-@cite{jardine-2017} §3.1 and §5.1
+[jardine-2017] §3.1 and §5.1
 
 Mende's `félàmà` (HLL on 3σ, L-spread at *right* edge) is exactly
 the kind of pattern Hausa's grammar would forbid (its mirror is a

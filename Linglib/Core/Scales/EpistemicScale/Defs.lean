@@ -8,16 +8,16 @@ import Mathlib.Tactic.IntervalCases
 /-!
 # Epistemic Comparative Likelihood
 
-@cite{holliday-icard-2013} @cite{halpern-2003} @cite{van-der-hoek-1996}
+[holliday-icard-2013] [halpern-2003] [van-der-hoek-1996]
 
 Epistemic likelihood scales: the `EpistemicScale` arm of the categorical
 diagram in `Core/Scale.lean`.
 
-@cite{holliday-icard-2013} study the logic of "at least as likely as" (≿) on
+[holliday-icard-2013] study the logic of "at least as likely as" (≿) on
 propositions, defining a hierarchy of axiom systems (W ⊂ F ⊂ FA) whose
 qualitative additivity axiom is the epistemic counterpart of `AdditiveScale.fa`.
 
-**Axiom hierarchy** (@cite{holliday-icard-2013}, Figure 3; axioms in Figures 4–6):
+**Axiom hierarchy** ([holliday-icard-2013], Figure 3; axioms in Figures 4–6):
 
 | System | Axioms                  | Semantics                          |
 |--------|-------------------------|------------------------------------|
@@ -56,7 +56,7 @@ def F {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ge Set.univ ∅
 
 /-- Axiom BT: ¬(∅ ≿ Ω) — contradiction is NOT at least as likely as tautology.
-    The non-triviality condition from @cite{holliday-icard-2013}.
+    The non-triviality condition from [holliday-icard-2013].
     Without this, the degenerate ordering (all sets equivalent) would satisfy
     FA but admit no finitely additive measure representation (since μ(∅) = 0
     but μ(Ω) = 1). -/
@@ -68,12 +68,12 @@ def BT {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
 def A {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ A B, ge A B ↔ ge (A \ B) (B \ A)
 
-/-- Axiom J (@cite{holliday-icard-2013}, Figure 4): right-union —
+/-- Axiom J ([holliday-icard-2013], Figure 4): right-union —
     φ ≿ ψ ∧ φ ≿ χ → φ ≿ (ψ ∨ χ). -/
 def J {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ A B C, ge A B → ge A C → ge A (B ∪ C)
 
-/-- Axiom DS: determination by singletons (@cite{halpern-2003}, Thm. 7.5.1a) —
+/-- Axiom DS: determination by singletons ([halpern-2003], Thm. 7.5.1a) —
     A ≿ {b} → ∃ a ∈ A, {a} ≿ {b}. The comparison can be witnessed
     by a single element of the dominating set. -/
 def DS {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
@@ -99,23 +99,23 @@ structure EpistemicSystemF (W : Type*) extends EpistemicSystemW W where
 
 /-- System FA: System F + totality + transitivity + qualitative additivity.
     Sound and complete for **qualitatively additive** measure semantics
-    (@cite{holliday-icard-2013}, Theorem 6; @cite{van-der-hoek-1996}).
+    ([holliday-icard-2013], Theorem 6; [van-der-hoek-1996]).
     Strictly weaker than FP∞ (finitely additive measures) for |W| ≥ 5
-    (Kraft, @cite{kraft-pratt-seidenberg-1959}, Theorem 8).
+    (Kraft, [kraft-pratt-seidenberg-1959], Theorem 8).
 
-    Totality and transitivity are part of the FA logic in @cite{holliday-icard-2013}: FA = Bot + BT + Tot + Tran + A. -/
+    Totality and transitivity are part of the FA logic in [holliday-icard-2013]: FA = Bot + BT + Tot + Tran + A. -/
 structure EpistemicSystemFA (W : Type*) extends EpistemicSystemF W where
   total : ∀ A B : Set W, ge A B ∨ ge B A
   trans : ∀ A B C : Set W, ge A B → ge B C → ge A C
   additive : EpistemicAxiom.A ge
 
--- ── GFC Order (@cite{harrison-trainor-holliday-icard-2018} Definition 2.7) ──
+-- ── GFC Order ([harrison-trainor-holliday-icard-2018] Definition 2.7) ──
 
 /-- A **GFC preorder** on propositions: a preorder on `Set W` that is
     monotone (supersets are at least as likely) and complement-reversing
     (A ≿ B → Bᶜ ≿ Aᶜ).
 
-    @cite{harrison-trainor-holliday-icard-2018} Definition 2.7. The acronym
+    [harrison-trainor-holliday-icard-2018] Definition 2.7. The acronym
     "GFC" reflects the three axiom groups: (G) preorder, (F) faithfulness
     (monotonicity), (C) complement reversal.
 
@@ -182,7 +182,7 @@ theorem mu_empty (m : FinAddMeasure W) : m.mu ∅ = 0 := by
   exact add_left_cancel h
 
 /-- Every finitely additive measure satisfies the FA axioms.
-    A fortiori from @cite{holliday-icard-2013} Theorem 6 soundness,
+    A fortiori from [holliday-icard-2013] Theorem 6 soundness,
     since every finitely additive measure is qualitatively additive. -/
 def toSystemFA (m : FinAddMeasure W) : EpistemicSystemFA W where
   ge := m.inducedGe
@@ -235,7 +235,7 @@ end FinAddMeasure
     for disjoint A, B. Instead it requires the weaker **qualitative additivity**
     condition: μ(A) ≥ μ(B) ↔ μ(A \ B) ≥ μ(B \ A).
 
-    @cite{holliday-icard-2013} Theorem 6: System FA is sound and complete
+    [holliday-icard-2013] Theorem 6: System FA is sound and complete
     with respect to qualitatively additive measure models.
 
     Note: the paper's definition of qualitatively additive measures includes μ(∅) = 0, but we omit it here
@@ -272,7 +272,7 @@ theorem inducedGe_axiomT (m : QualAddMeasure W) (h_empty : m.mu ∅ = 0) :
   exact m.nonneg (B \ A)
 
 /-- A qualitatively additive measure with μ(∅) = 0 induces System FA.
-    Soundness direction of @cite{holliday-icard-2013} Theorem 6:
+    Soundness direction of [holliday-icard-2013] Theorem 6:
     every qualitatively additive measure model (with μ(∅) = 0) satisfies
     the FA axioms.
 
@@ -324,7 +324,7 @@ noncomputable def FinAddMeasure.toQualAdd {W : Type*} (m : FinAddMeasure W) : Qu
 
 /-- The *l*-lifting: a preorder on worlds induces a comparison on
     propositions. A ≿ B iff for every b ∈ B, ∃ a ∈ A with a ≥_w b.
-    @cite{holliday-icard-2013} Definition 6; see also their injection-based
+    [holliday-icard-2013] Definition 6; see also their injection-based
     *m*-lifting (Definition 7), which yields a complete logic for
     world-ordering models. -/
 def halpernLift {W : Type*} (ge_w : W → W → Prop) (A B : Set W) : Prop :=
@@ -345,7 +345,7 @@ theorem halpernLift_axiomT {W : Type*} {ge_w : W → W → Prop}
 
 /-- The *l*-lifting from a reflexive preorder yields System W.
     Soundness direction: world-ordering models with the l-lifting
-    validate System W (@cite{halpern-2003}; @cite{holliday-icard-2013}). -/
+    validate System W ([halpern-2003]; [holliday-icard-2013]). -/
 def halpernSystemW {W : Type*} (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w) :
     EpistemicSystemW W where
@@ -368,9 +368,9 @@ theorem halpernLift_axiomDS {W : Type*} {ge_w : W → W → Prop} :
     let ⟨a, ha, hab⟩ := hAb b rfl
     ⟨a, ha, fun _b' hb' => ⟨a, rfl, hb' ▸ hab⟩⟩
 
--- ── m-Lifting (@cite{holliday-icard-2013} Definition 7) ──
+-- ── m-Lifting ([holliday-icard-2013] Definition 7) ──
 
-/-- The *m*-lifting (@cite{holliday-icard-2013}, Definition 7): an injection-based
+/-- The *m*-lifting ([holliday-icard-2013], Definition 7): an injection-based
     alternative to `halpernLift`. A ≿ B iff there exists an injection
     f : B ↪ A such that f(b) ≥_w b for all b ∈ B.
 

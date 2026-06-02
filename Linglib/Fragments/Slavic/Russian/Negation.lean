@@ -2,7 +2,7 @@ import Linglib.Typology.Negation
 
 /-!
 # Russian Negation Fragment
-@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
+[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
 
 Russian expresses standard negation with the preverbal particle *не* (*ne*).
 Negation is **symmetric**: adding *не* introduces no structural changes —

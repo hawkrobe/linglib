@@ -11,8 +11,8 @@ set_option autoImplicit false
 
 /-!
 # Foissy 2021 Theorem 5.1 multi-tree insertion (path-based)
-@cite{foissy-typed-decorated-rooted-trees-2018}
-@cite{foissy-introduction-hopf-algebras-trees}
+[foissy-typed-decorated-rooted-trees-2018]
+[foissy-introduction-hopf-algebras-trees]
 
 The Foissy 2021 Theorem 5.1 multi-tree multi-vertex insertion operator.
 Defined as a sum over functions `Ts → V(T)` of `multiGraft`, taken as

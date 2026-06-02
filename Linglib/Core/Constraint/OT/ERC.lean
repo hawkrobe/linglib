@@ -33,8 +33,8 @@ the winner α) is ranked above all L-constraints (preferring the loser β).
 
 ## References
 
-@cite{prince-2002} — Entailed ranking arguments (original ERC formulation)
-@cite{merchant-riggle-2016} — OT grammars, beyond partial orders:
+[prince-2002] — Entailed ranking arguments (original ERC formulation)
+[merchant-riggle-2016] — OT grammars, beyond partial orders:
 ERC sets and antimatroids
 -/
 
@@ -280,7 +280,7 @@ def ERCSet.consistent {n : Nat} (E : List (ERC n)) : Prop :=
   ∃ r : Ranking n, ERCSet.satisfiedBy r E
 
 /-- The set of rankings consistent with an ERC set — its **linear
-    extensions** in the terminology of @cite{merchant-riggle-2016}. -/
+    extensions** in the terminology of [merchant-riggle-2016]. -/
 def ERCSet.linearExtensions {n : Nat} (E : List (ERC n)) :
     Set (Ranking n) :=
   { r | ERCSet.satisfiedBy r E }
@@ -350,7 +350,7 @@ def tableauERC {C : Type*} [DecidableEq C] {n : Nat}
 
     Simple ERCs correspond to edges in the Hasse diagram of the ranking
     partial order. Sets of simple ERCs describe exactly the rankings
-    representable as partial orders (@cite{merchant-riggle-2016} §1.1). -/
+    representable as partial orders ([merchant-riggle-2016] §1.1). -/
 def ERC.isSimple {n : Nat} (α : ERC n) : Prop :=
   (∃! w, α w = .W) ∧ (∃! l, α l = .L)
 

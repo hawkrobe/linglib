@@ -7,9 +7,9 @@ set_option autoImplicit false
 
 /-!
 # Constraints on Variables in Syntax
-@cite{ross-1967}
+[ross-1967]
 
-@cite{ross-1967} identified the foundational island constraints that block
+[ross-1967] identified the foundational island constraints that block
 long-distance wh-dependencies: embedded question constraint, Complex NP
 Constraint, adjunct clause constraint, Coordinate Structure Constraint,
 and subject constraint.

@@ -4,7 +4,7 @@ import Linglib.Fragments.Japanese.Coordination
 
 /-!
 # Stassen (2000): AND-languages and WITH-languages
-@cite{stassen-2000} @cite{haspelmath-2007} @cite{dryer-haspelmath-2013}
+[stassen-2000] [haspelmath-2007] [dryer-haspelmath-2013]
 
 Linguistic Typology 4(1), 1-54.
 
@@ -47,7 +47,7 @@ This file adds:
 ## 2026 consensus
 
 The AND/WITH distinction is well-established and encoded in WALS Ch 63A
-(authored by @cite{haspelmath-2007}, building on Stassen's framework).
+(authored by [haspelmath-2007], building on Stassen's framework).
 The diachronic WITH→AND drift is broadly accepted. The correlational
 parameters (casedness, tensedness) are recognised as tendencies but with
 many counterexamples.
@@ -63,7 +63,7 @@ open Typology.Coordination
 -- §1. Conjunction Encoding Strategies
 -- ============================================================================
 
-/-- @cite{stassen-2000}'s two encoding strategies for NP conjunction.
+/-- [stassen-2000]'s two encoding strategies for NP conjunction.
 
     **Coordinate**: balanced, symmetric structure where both conjuncts have
     equal syntactic rank.
@@ -74,7 +74,7 @@ inductive ConjunctionEncoding where
   deriving DecidableEq, BEq, Repr
 
 /-- Diagnostic features for distinguishing coordinate from comitative
-    encoding. Based on @cite{stassen-2000}'s structural diagnostics. -/
+    encoding. Based on [stassen-2000]'s structural diagnostics. -/
 structure StrategyFeatures where
   /-- Both conjuncts have equal syntactic rank. -/
   equalRank : Bool
@@ -236,7 +236,7 @@ theorem with_languages_count : withCount = 3 := by native_decide
 -- §4. Diachronic Parameter: WITH → AND Drift
 -- ============================================================================
 
-/-- @cite{stassen-2000}: diachronic drift is unidirectional — WITH → AND.
+/-- [stassen-2000]: diachronic drift is unidirectional — WITH → AND.
     Comitative markers grammaticalise into balanced coordinators over time;
     the reverse does not occur. -/
 inductive DriftDirection where
@@ -247,8 +247,8 @@ inductive DriftDirection where
 /-- The only attested drift direction is WITH → AND. -/
 def attestedDrift : DriftDirection := .withToAnd
 
-/-- @cite{stassen-2000}'s WITH→AND drift corresponds to
-    @cite{haspelmath-2007}'s comitative diachronic source. -/
+/-- [stassen-2000]'s WITH→AND drift corresponds to
+    [haspelmath-2007]'s comitative diachronic source. -/
 def DriftDirection.toDiachronicSource : DriftDirection → Option DiachronicSource
   | .withToAnd => some .comitative
   | .andToWith => none
@@ -266,21 +266,21 @@ theorem drift_yields_monosyndetic :
 -- §5. Correlational Parameters
 -- ============================================================================
 
-/-- @cite{stassen-2000}: "Casedness" — whether a language has bound case
+/-- [stassen-2000]: "Casedness" — whether a language has bound case
     morphology on core argument NPs. Correlates statistically with AND-status. -/
 inductive Casedness where
   | cased
   | uncased
   deriving DecidableEq, BEq, Repr
 
-/-- @cite{stassen-2000}: "Tensedness" — whether a language has obligatory
+/-- [stassen-2000]: "Tensedness" — whether a language has obligatory
     bound past/non-past marking on verbs. Correlates with AND-status. -/
 inductive Tensedness where
   | tensed
   | untensed
   deriving DecidableEq, BEq, Repr
 
-/-- @cite{stassen-2000}: among cased languages, AND-status is more frequent
+/-- [stassen-2000]: among cased languages, AND-status is more frequent
     than WITH-status; among uncased languages, the reverse holds.
     Cross-multiplied existential. [requires the cross-tabulation from the paper] -/
 theorem casedness_skews_andWith :
@@ -290,7 +290,7 @@ theorem casedness_skews_andWith :
         uncasedAND * (casedAND + casedWITH) := by
   exact ⟨100, 30, 50, 80, by omega, by omega⟩
 
-/-- @cite{stassen-2000}: among tensed languages, AND-status is more frequent
+/-- [stassen-2000]: among tensed languages, AND-status is more frequent
     than WITH-status; among untensed languages, the reverse. -/
 theorem tensedness_skews_andWith :
     ∃ (tensedAND tensedWITH untensedAND untensedWITH : Nat),

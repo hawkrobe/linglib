@@ -2,7 +2,7 @@ import Linglib.Typology.ClassifierSystem
 
 /-!
 # Shona noun-categorization system
-@cite{carstens-2026}
+[carstens-2026]
 
 Classifier-system metadata for Shona (ISO `sna`): Bantu noun-class
 system with 14 classes and binary human/non-human split.
@@ -24,6 +24,6 @@ def classifierSystem : Typology.NounCategorizationSystem :=
   , hasUnmarkedDefault := true
   , preferredSemantics := [.humanness, .animacy]
   , hasObligatoryNumber := true  -- singular/plural class pairs
-  , source := "@cite{carstens-2026}" }
+  , source := "[carstens-2026]" }
 
 end Shona

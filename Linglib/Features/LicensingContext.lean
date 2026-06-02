@@ -1,6 +1,6 @@
 /-!
 # Features.LicensingContext
-@cite{ladusaw-1979} @cite{kadmon-landman-1993}
+[ladusaw-1979] [kadmon-landman-1993]
 
 The 22-case enum of licensing contexts for polarity-sensitive items.
 Theory-neutral data substrate: every framework that talks about polarity
@@ -66,12 +66,12 @@ inductive LicensingContext where
   | onlyFocus        -- Focus of "only"
   | question          -- Questions (for some NPIs)
   | comparativeNP     -- surface "taller than NP" — Boolean homomorphism, monotone increasing,
-                      -- and per @cite{hoeksema-1983} *not* an NPI environment.
+                      -- and per [hoeksema-1983] *not* an NPI environment.
                       -- Surface NPIs in "than NP" arise from a covert clausal source
-                      -- (modern: @cite{bhatt-pancheva-2004} interval reduction) — list
+                      -- (modern: [bhatt-pancheva-2004] interval reduction) — list
                       -- such NPIs under `.comparativeS`, not here.
-  | comparativeS      -- "taller than S is" — anti-additive (@cite{hoeksema-1983}, refined
-                      -- in interval semantics by @cite{bhatt-pancheva-2004}, @cite{heim-2006})
+  | comparativeS      -- "taller than S is" — anti-additive ([hoeksema-1983], refined
+                      -- in interval semantics by [bhatt-pancheva-2004], [heim-2006])
   | superlative       -- "the most", "the least"
   | tooTo            -- "too ADJ to VP"
   | modalPossibility -- Possibility modals (for FCIs)

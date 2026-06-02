@@ -4,9 +4,9 @@ import Mathlib.Logic.Relation
 
 /-!
 # Cyclic Linearization of Syntactic Structure
-@cite{fox-pesetsky-2005}
+[fox-pesetsky-2005]
 
-Formalizes the core of @cite{fox-pesetsky-2005}'s theory of the
+Formalizes the core of [fox-pesetsky-2005]'s theory of the
 syntax-phonology interface. The key claims:
 
 1. **Spell-out domains**: linearization applies at the end of each phase
@@ -25,7 +25,7 @@ syntax-phonology interface. The key claims:
 
 The formalization here provides the minimal infrastructure needed to
 derive the *meN*-deletion effect in Malayic languages
-(@cite{erlewine-sommerlot-2025}), Holmberg's Generalization
+([erlewine-sommerlot-2025]), Holmberg's Generalization
 (Object Shift requires verb movement), and successive-cyclicity
 requirements. All three are formalized as concrete theorems.
 
@@ -51,7 +51,7 @@ namespace Minimalist.Linearization
 -- ============================================================================
 
 /-- A precedence statement: `before` must linearly precede `after` in PF.
-    Corresponds to @cite{fox-pesetsky-2005}'s "α < β" notation (their (10)). -/
+    Corresponds to [fox-pesetsky-2005]'s "α < β" notation (their (10)). -/
 structure Prec where
   before : String
   after  : String
@@ -70,7 +70,7 @@ def allPrecs : List String → List Prec
 
 /-- An Ordering Table is the accumulated set of precedence statements
     across all Spell-out domains in a derivation.
-    Corresponds to @cite{fox-pesetsky-2005}'s Ordering Table ((52)). -/
+    Corresponds to [fox-pesetsky-2005]'s Ordering Table ((52)). -/
 abbrev OrderingTable := List Prec
 
 /-- An Ordering Table contains a direct contradiction: some α, β such
@@ -101,7 +101,7 @@ instance (table : OrderingTable) : Decidable (Consistent table) :=
     terminals in the phase, and append them to the table.
 
     Implements Order Preservation: existing statements are kept (never
-    deleted), new statements appended. Corresponds to @cite{fox-pesetsky-2005}'s
+    deleted), new statements appended. Corresponds to [fox-pesetsky-2005]'s
     Linearize operation ((52)). Renamed from `spellout` to disambiguate
     from `Minimalist.spellout` (the VI exponent-realization operation). -/
 def extendOrderingTable (existing : OrderingTable)
@@ -120,7 +120,7 @@ instance (phases : List (List String)) : Decidable (SpelloutAndCheck phases) :=
 
 /-- Order Preservation: existing ordering statements are never deleted
     by extension. All precedences from earlier phases persist.
-    Formal content of @cite{fox-pesetsky-2005}'s Order Preservation. -/
+    Formal content of [fox-pesetsky-2005]'s Order Preservation. -/
 theorem extendOrderingTable_preserves (existing : OrderingTable) (phase : List String)
     (p : Prec) (hp : p ∈ existing) : p ∈ extendOrderingTable existing phase := by
   unfold extendOrderingTable; exact List.mem_append_left _ hp
@@ -195,21 +195,21 @@ theorem single_phase_consistent (ts : List String) (hnd : ts.Nodup) :
   exact allPrecs_antisym _ hnd s hs t ht h1 h2
 
 /-- Leftward movement from the phase edge preserves ordering.
-    Scenario 1 of @cite{fox-pesetsky-2005} (their (13)):
+    Scenario 1 of [fox-pesetsky-2005] (their (13)):
     X was at the left edge of D; when D' is spelled out, X moves further
     left. The new ordering X < α is consistent with X < Y from D. -/
 theorem edge_movement_consistent :
     SpelloutAndCheck [["X", "Y", "Z"], ["X", "α", "Y", "Z"]] := by decide
 
 /-- Leftward movement from a non-edge position creates contradiction.
-    Scenario 2 of @cite{fox-pesetsky-2005} (their (14)):
+    Scenario 2 of [fox-pesetsky-2005] (their (14)):
     Y was NOT at the left edge of D (X < Y at D Spell-out). When Y moves
     left in D', it must precede α, but α < X and X < Y yield a cycle. -/
 theorem non_edge_movement_contradiction :
     ¬ SpelloutAndCheck [["X", "Y", "Z"], ["Y", "α", "X", "Z"]] := by decide
 
 /-- Successive-cyclic *wh*-movement avoids ordering contradiction.
-    @cite{fox-pesetsky-2005} (their (6)–(8)): *to whom* moves through
+    [fox-pesetsky-2005] (their (6)–(8)): *to whom* moves through
     Spec,VP before moving to Spec,CP, preserving VP-internal order. -/
 theorem successive_cyclic_ok :
     SpelloutAndCheck [["to_whom", "gave", "the_book"],
@@ -217,7 +217,7 @@ theorem successive_cyclic_ok :
   decide
 
 /-- Non-successive-cyclic movement creates ordering contradiction.
-    @cite{fox-pesetsky-2005} (their (3)–(5)): *to whom* skips Spec,VP
+    [fox-pesetsky-2005] (their (3)–(5)): *to whom* skips Spec,VP
     and moves directly to Spec,CP, contradicting VP-internal order. -/
 theorem non_successive_cyclic_bad :
     ¬ SpelloutAndCheck [["gave", "the_book", "to_whom"],
@@ -227,7 +227,7 @@ theorem non_successive_cyclic_bad :
 /-- Order-preserving simultaneous movement: two elements moving out of a
     phase in their original relative order creates no contradiction.
     This is the key configuration for Malayic object extraction
-    (@cite{erlewine-sommerlot-2025} ex. 55–56). -/
+    ([erlewine-sommerlot-2025] ex. 55–56). -/
 theorem simultaneous_order_preserving :
     SpelloutAndCheck [["A", "B", "C"], ["A", "B", "D", "C"]] := by decide
 
@@ -241,7 +241,7 @@ theorem simultaneous_order_reversing :
 
 /-! ### Object Shift and verb movement
 
-@cite{fox-pesetsky-2005} derive Holmberg's Generalization: Object Shift
+[fox-pesetsky-2005] derive Holmberg's Generalization: Object Shift
 in Scandinavian is only possible when the verb has also moved out of VP.
 
 VP Spell-out establishes V < Obj. If the verb stays in VP and the object
@@ -257,7 +257,7 @@ theorem no_object_shift :
 
 /-- Object Shift WITH verb movement: both V and Obj move past Neg.
     VP-internal ordering V < Obj is preserved at IP. Consistent.
-    @cite{fox-pesetsky-2005} §3. -/
+    [fox-pesetsky-2005] §3. -/
 theorem object_shift_with_verb_movement :
     SpelloutAndCheck [["V", "Obj"],
                       ["Subj", "V", "Obj", "Neg"]] := by decide
@@ -265,7 +265,7 @@ theorem object_shift_with_verb_movement :
 /-- Object Shift WITHOUT verb movement: Obj moves past Neg but V stays.
     VP: V < Obj. IP: Obj < ... < V. Direct contradiction → crash.
     This IS Holmberg's Generalization, derived from cyclic linearization.
-    @cite{fox-pesetsky-2005} §3. -/
+    [fox-pesetsky-2005] §3. -/
 theorem object_shift_without_verb_movement :
     ¬ SpelloutAndCheck [["V", "Obj"],
                         ["Subj", "Obj", "Neg", "V"]] := by decide
@@ -344,14 +344,14 @@ theorem cycle_direct_agree_malayic :
 
 /-! ### Per-cycle frozen feature assignments
 
-@cite{fox-pesetsky-2005}'s Order Preservation says precedences emitted
+[fox-pesetsky-2005]'s Order Preservation says precedences emitted
 at one Spell-out are preserved through subsequent Spell-outs. The same
 shape applies to *feature values* established by phase-bounded
 phonological computation: when vP is spelled out and a feature value
 (e.g. `+ATR` on a particle) is set by phase-internal phonology, that
 value is preserved through later syntactic movement of the bearer.
 
-@cite{sande-clem-dabkowski-2026} §6.1 argues this is the right way to
+[sande-clem-dabkowski-2026] §6.1 argues this is the right way to
 think about Guébie discontinuous harmony: the particle's ATR value is
 fixed at vP spell-out (when the verb is local to it inside vP), and
 later A′-movement of the remnant VP carries the frozen value to
@@ -385,7 +385,7 @@ def extendFrozenFeatures (existing : FrozenFeatureTable)
 
 /-- Order-Preservation analogue for features: feature freezings emitted
     at earlier phases survive subsequent spell-out. The formal content
-    of @cite{sande-clem-dabkowski-2026}'s "the ATR value persists through
+    of [sande-clem-dabkowski-2026]'s "the ATR value persists through
     syntactic movement" claim. -/
 theorem extendFrozenFeatures_preserves
     (existing : FrozenFeatureTable) (phaseFreezings : List FrozenFeature)

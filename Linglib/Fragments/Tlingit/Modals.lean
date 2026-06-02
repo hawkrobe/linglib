@@ -4,7 +4,7 @@ import Linglib.Semantics.Modality.Typology
 # Tlingit Modal Inventory
 
 Modal expressions from Tlingit (Athabaskan-Eyak-Tlingit), based on
-@cite{cable-2017}.
+[cable-2017].
 -/
 
 namespace Tlingit.Modals

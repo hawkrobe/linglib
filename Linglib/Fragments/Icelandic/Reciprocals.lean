@@ -2,7 +2,7 @@ import Linglib.Syntax.Pronoun.Basic
 
 /-!
 # Icelandic Reciprocal Fragment
-@cite{nordlinger-2023}
+[nordlinger-2023]
 
 Icelandic uses a bipartite NP strategy: "hvor...annad" ('each...other'),
 where each part independently inflects for case. The first element "hvor"
@@ -12,7 +12,7 @@ the verb.
 This is a bivalent strategy: the bipartite NP fills the object position,
 preserving transitivity. Formally distinct from the reflexive "sig".
 
-@cite{nordlinger-2023} ex. 17 (citing Hurst & Nordlinger 2021).
+[nordlinger-2023] ex. 17 (citing Hurst & Nordlinger 2021).
 -/
 
 namespace Icelandic.Reciprocals

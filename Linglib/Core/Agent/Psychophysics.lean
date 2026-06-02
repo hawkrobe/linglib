@@ -1,10 +1,10 @@
 import Linglib.Core.Agent.RationalAction
 
 /-!
-# Psychophysics: Stevens' Power Law and Multidimensional Stimuli @cite{luce-1959}
+# Psychophysics: Stevens' Power Law and Multidimensional Stimuli [luce-1959]
 
 
-@cite{luce-1959} §2.B–C: the power-law specialization of the Fechnerian framework
+[luce-1959] §2.B–C: the power-law specialization of the Fechnerian framework
 and its extension to multi-dimensional stimulus continua.
 
 ## §2.B: Stevens' Power Law (pp. 44–49)
@@ -160,7 +160,7 @@ theorem stevens_luce_pairwise {σ : StevensScale} {s₁ s₂ : ℝ}
   rw [hts]
   simp [ra, stevens_is_luce, StevensScale.choiceProb, Matrix.cons_val_zero]
 
-/-- **Stevens–Fechner equivalence** (@cite{luce-1959}, §2.B):
+/-- **Stevens–Fechner equivalence** ([luce-1959], §2.B):
     Stevens' power law on raw intensity is equivalent to Fechner's
     exponential law on log-intensity.
 
@@ -210,7 +210,7 @@ structure MultidimStimulus (D : Type*) (S : D → Type*) where
   /-- Scale values are positive. -/
   scale_pos : ∀ (d : D) (s : S d), 0 < scale d s
 
-/-- Independence axiom for multi-dimensional stimuli (@cite{luce-1959}, §2.C):
+/-- Independence axiom for multi-dimensional stimuli ([luce-1959], §2.C):
     the relative discriminability along one dimension does not depend
     on the value along the other dimensions.
 
@@ -233,7 +233,7 @@ structure DimensionIndependence {D : Type*} [Fintype D] [DecidableEq D] {S : D �
   ratio_indep : ∀ (d : D) (a : (d : D) → S d) (s : S d),
     v (Function.update a d s) / v a = ms.scale d s / ms.scale d (a d)
 
-/-- **Multidimensional decomposition** (@cite{luce-1959}, §2.C, Theorem):
+/-- **Multidimensional decomposition** ([luce-1959], §2.C, Theorem):
     Under dimension independence, the overall scale function factors
     as a product of per-dimension scales (up to a global constant).
 

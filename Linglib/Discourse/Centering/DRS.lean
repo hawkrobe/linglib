@@ -3,13 +3,13 @@ import Linglib.Semantics.Dynamic.DRS.Basic
 
 /-!
 # Centering ↔ DRT Bridge
-@cite{grosz-joshi-weinstein-1995} @cite{kamp-reyle-1993}
+[grosz-joshi-weinstein-1995] [kamp-reyle-1993]
 
 A bridge between Centering Theory's notion of *realization* and the
 Discourse Representation Theory notion of *occurrence in a DRS*.
 
 Centering is normally presented with a list-of-realizations utterance
-representation. But the "realizes" relation is, in @cite{grosz-joshi-weinstein-1995},
+representation. But the "realizes" relation is, in [grosz-joshi-weinstein-1995],
 deliberately abstracted from the underlying semantic theory: the paper allows any
 semantic representation that supplies a realizes relation. DRT's `DRS` is one
 natural choice — its discourse referents are exactly the discourse entities an

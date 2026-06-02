@@ -3,7 +3,7 @@ import Linglib.Features.Polarity
 /-!
 # Homogeneity: Empirical Data
 
-@cite{kriz-2015} @cite{kriz-spector-2021} @cite{lobner-2000}
+[kriz-2015] [kriz-spector-2021] [lobner-2000]
 
 Theory-neutral empirical patterns for homogeneity gaps in natural language.
 
@@ -74,7 +74,7 @@ In a scenario with 10 switches:
 - None on: positive false, negative true
 - 5 on: neither clearly true nor false
 
-Source: @cite{kriz-2015}, @cite{kriz-chemla-2015}
+Source: [kriz-2015], [kriz-chemla-2015]
 -/
 def switchesExample : HomogeneityDatum :=
   { positiveSentence := "The switches are on."
@@ -91,7 +91,7 @@ def switchesExample : HomogeneityDatum :=
   }
 
 /--
-Books example from @cite{kriz-chemla-2015} experimental design.
+Books example from [kriz-chemla-2015] experimental design.
 -/
 def booksExample : HomogeneityDatum :=
   { positiveSentence := "Ann liked the books."
@@ -114,7 +114,7 @@ Conjunctions exhibit homogeneity but resist non-maximal readings.
 "Ann and Bert have red hair" behaves like a plural definite
 for homogeneity, but unlike plural definites, it resists non-maximal readings.
 
-Source: @cite{schwarzschild-1996}, @cite{kriz-2015}
+Source: [schwarzschild-1996], [kriz-2015]
 -/
 def conjunctionExample : HomogeneityDatum :=
   { positiveSentence := "Ann and Bert have red hair."
@@ -133,7 +133,7 @@ def conjunctionExample : HomogeneityDatum :=
 /--
 The contrast between conjunctions and plural definites for non-maximality.
 
-Source: @cite{brisson-1998}, @cite{kriz-2015}
+Source: [brisson-1998], [kriz-2015]
 -/
 structure ConjunctionVsPluralDatum where
   /-- The conjunction sentence -/
@@ -162,7 +162,7 @@ Summative predicates: apply to parts of a singular entity.
 
 "The flag is blue" requires all (salient) parts to be blue.
 
-Source: @cite{lobner-2000}, @cite{kriz-2015},
+Source: [lobner-2000], [kriz-2015],
 -/
 def summativeExample : HomogeneityDatum :=
   { positiveSentence := "The flag is blue."
@@ -182,7 +182,7 @@ def summativeExample : HomogeneityDatum :=
 /--
 Bare conditionals exhibit homogeneity over situations.
 
-Source: @cite{von-fintel-1997}, @cite{gajewski-2005}, @cite{kriz-2015}
+Source: [von-fintel-1997], [gajewski-2005], [kriz-2015]
 -/
 def conditionalExample : HomogeneityDatum :=
   { positiveSentence := "They play soccer if the sun shines."
@@ -205,7 +205,7 @@ Collective predicates: "The teachers met."
 Homogeneity concerns whether all teachers participated in a meeting,
 or just some subgroup.
 
-Source: @cite{kriz-2015}, @cite{kriz-2016}
+Source: [kriz-2015], [kriz-2016]
 -/
 def collectiveExample : HomogeneityDatum :=
   { positiveSentence := "The teachers met last week."
@@ -227,7 +227,7 @@ def collectiveExample : HomogeneityDatum :=
 When a plurality is part of a larger group that satisfies a collective predicate,
 the smaller plurality is neither clearly a satisfier nor clearly not.
 
-Source: @cite{kriz-2015}, @cite{kriz-2016},
+Source: [kriz-2015], [kriz-2016],
 -/
 structure UpwardHomogeneityDatum where
   /-- The sentence -/
@@ -244,7 +244,7 @@ def hamletExample : UpwardHomogeneityDatum :=
   , judgment := .neitherTrueNorFalse
   }
 
-/-- @cite{kriz-spector-2021} §3.3, example (31): "The soldiers of my brigade
+/-- [kriz-spector-2021] §3.3, example (31): "The soldiers of my brigade
     didn't surround the castle." False when half the brigade surrounded the
     castle WITH other soldiers — the predicate's truth leaks upward through
     mereological overlap. -/
@@ -264,7 +264,7 @@ inductive HomogeneityRemover where
   | every         -- "every door" (nominal domain)
   | each          -- "each door" (nominal domain)
   | completely    -- "completely blue" (degree domain)
-  | necessarily   -- "necessarily" (modal domain; @cite{agha-jeretic-2022})
+  | necessarily   -- "necessarily" (modal domain; [agha-jeretic-2022])
   deriving Repr, DecidableEq
 
 /--
@@ -318,7 +318,7 @@ Responses to questions in gap scenarios.
 
 Neither "yes" nor "no" is fully appropriate.
 
-Source: @cite{kriz-2015}
+Source: [kriz-2015]
 -/
 structure QuestionAnswerDatum where
   /-- The question -/

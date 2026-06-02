@@ -2,7 +2,7 @@ import Linglib.Typology.Negation
 
 /-!
 # Czech Negation Fragment
-@cite{miestamo-2005} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
+[miestamo-2005] [haspelmath-2013] [dryer-haspelmath-2013]
 
 Czech expresses standard negation with the verbal prefix *ne-*.
 Negation is **symmetric**: the prefix attaches directly to the verb

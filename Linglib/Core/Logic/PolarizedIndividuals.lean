@@ -2,15 +2,15 @@ import Linglib.Core.Logic.Quantification
 import Mathlib.Order.BooleanAlgebra.Defs
 
 /-!
-# Polarized Individuals and the Birkhoff Representation @cite{elliott-2025}
-@cite{van-benthem-1984}
+# Polarized Individuals and the Birkhoff Representation [elliott-2025]
+[van-benthem-1984]
 
 Entity–polarity pairs, trivalent functions, and the Birkhoff
 representation theorem for conservative GQs.
 
 ## Overview
 
-@cite{elliott-2025} argues that determiners denote sets of **polarized
+[elliott-2025] argues that determiners denote sets of **polarized
 individuals** — entity–polarity pairs `(e, ±)` that encode whether an
 entity witnesses the restrictor ∩ scope (positive) or the restrictor ∖
 scope (negative). The conservative GQ lattice (`ConsGQ`, §12 of
@@ -53,7 +53,7 @@ namespace Core.Quantification
     - `pos`: entity is in restrictor ∩ scope
     - `neg`: entity is in restrictor ∖ scope
     - `blank`: entity is irrelevant (not constrained by the quantifier)
-    @cite{elliott-2025}, §4.3. -/
+    [elliott-2025], §4.3. -/
 inductive Tri where
   | pos   : Tri
   | neg   : Tri
@@ -150,17 +150,17 @@ def triPositive (f : α → Tri) : α → Prop :=
 -- ============================================================================
 
 /-- Map a predicate on trivalent functions to a GQ.
-    @cite{elliott-2025}, §4.3.2, equation (44). -/
+    [elliott-2025], §4.3.2, equation (44). -/
 noncomputable def predToGQ (P : (α → Tri) → Prop) : GQ α :=
   λ R S => P (triFunction R S)
 
 /-- Map a GQ to a predicate on trivalent functions.
-    @cite{elliott-2025}, §4.3.1, equation (40). -/
+    [elliott-2025], §4.3.1, equation (40). -/
 def gqToPred (Q : GQ α) : (α → Tri) → Prop :=
   λ f => Q (triSupport f) (triPositive f)
 
 /-- **Conservativity for free**: any predicate on trivalent functions
-    yields a conservative GQ. This is the central insight of @cite{elliott-2025}:
+    yields a conservative GQ. This is the central insight of [elliott-2025]:
     conservativity is a structural consequence of the predicative theory,
     not an additional constraint. -/
 private theorem triFunction_and_absorb (R S : α → Prop) :
@@ -225,7 +225,7 @@ noncomputable def consGQOrderIso : ConsGQ α ≃o ((α → Tri) → Prop) :=
     replaces S with R ∩ S. Conservative GQs are exactly those for which
     this substitution is the identity. Non-conservative determiners
     cannot be expressed as predicates on trivalent functions.
-    @cite{elliott-2025}, §4.3, eq. (43). -/
+    [elliott-2025], §4.3, eq. (43). -/
 theorem predToGQ_gqToPred_eq (Q : GQ α) (R S : α → Prop) :
     predToGQ (gqToPred Q) R S ↔ Q R (λ x => R x ∧ S x) := by
   simp only [predToGQ, gqToPred, triSupport_triFunction, triPositive_triFunction]
@@ -353,7 +353,7 @@ end PolInd
 --
 -- This extends the bounded distributive lattice from §12 of
 -- `Quantification.lean` (via Sublattice) to a full `BooleanAlgebra`.
--- @cite{elliott-2025}, §4.3.
+-- [elliott-2025], §4.3.
 
 section ConsGQ_BA
 

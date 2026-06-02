@@ -1,9 +1,9 @@
 import Linglib.Core.Word
 
 /-!
-# Copredication: @cite{gotham-2017}'s account + bridge data
-@cite{asher-2011} @cite{gotham-2017} @cite{pustejovsky-1995}
-@cite{chatzikyriakidis-etal-2025}
+# Copredication: [gotham-2017]'s account + bridge data
+[asher-2011] [gotham-2017] [pustejovsky-1995]
+[chatzikyriakidis-etal-2025]
 
 Copredication is the phenomenon where predicates selecting different
 semantic aspects apply to the same polysemous noun phrase ("the book
@@ -31,7 +31,7 @@ is heavy and interesting"). This study file owns:
 
 1. Copredication is well-typed via meet-type projection.
 2. Different individuation criteria yield different counts.
-3. The counting puzzle from @cite{gotham-2017} is reproduced.
+3. The counting puzzle from [gotham-2017] is reproduced.
 
 -/
 
@@ -77,7 +77,7 @@ Values of a dot type are pairs `A₁ × A₂` (= `MeetType A₁ A₂` in TTR). -
 
 /-- A dot type: a polysemous type with two aspects and an individuation
 criterion (a `Setoid`). The individuation determines counting under
-copredication. @cite{chatzikyriakidis-etal-2025} §3. -/
+copredication. [chatzikyriakidis-etal-2025] §3. -/
 structure DotType (A₁ A₂ : Type) where
   /-- How to individuate objects of this complex type -/
   individuation : Setoid (A₁ × A₂)
@@ -107,7 +107,7 @@ def countDistinct {α : Type} (s : Setoid α)
 
 /-- Different individuation criteria can yield different counts
 for the same collection. This is the formal content of
-@cite{chatzikyriakidis-etal-2025} §3's counting puzzle. -/
+[chatzikyriakidis-etal-2025] §3's counting puzzle. -/
 theorem individuation_can_diverge :
     ∃ (A₁ A₂ : Type) (_ : DecidableEq A₁) (_ : DecidableEq A₂)
       (xs : List (A₁ × A₂))
@@ -186,7 +186,7 @@ structure CountingDatum where
   deriving Repr
 
 /-- "Three books were mastered and burned" with two copies of the same novel.
-@cite{gotham-2017}: physical count = 3, informational count = 2 (if one novel
+[gotham-2017]: physical count = 3, informational count = 2 (if one novel
 has two copies). -/
 def masteredAndBurned : CountingDatum :=
   { sentence := "Three books were mastered and burned"
@@ -225,7 +225,7 @@ structure Info where
   deriving Repr, DecidableEq
 
 /-- "book" as a dot type: physical × informational, individuated physically.
-@cite{gotham-2017}: the default criterion for "book" counts physical volumes. -/
+[gotham-2017]: the default criterion for "book" counts physical volumes. -/
 def bookDot : DotType PhysObj Info := DotType.byAspect₁
 
 /-- "heavy": a predicate on the physical aspect. -/
@@ -242,7 +242,7 @@ theorem book_heavy_and_interesting (b : PhysObj × Info) (h : b.1.weight > 500) 
 
 /-! ## Counting under copredication
 
-Model the scenario from @cite{gotham-2017} / @cite{chatzikyriakidis-etal-2025} §3:
+Model the scenario from [gotham-2017] / [chatzikyriakidis-etal-2025] §3:
 Two physical copies of one novel, plus one copy of a different novel.
 Physical count = 3, informational count = 2. -/
 

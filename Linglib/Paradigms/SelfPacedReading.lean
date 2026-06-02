@@ -1,7 +1,7 @@
 /-!
 # Self-Paced Reading Paradigm
 
-@cite{jegerski-2014}
+[jegerski-2014]
 
 Shared vocabulary for the self-paced reading (SPR) experimental paradigm —
 a sentence-level on-line method in which participants advance through a
@@ -21,14 +21,14 @@ shape of output a theory must produce*.
 ## Anchoring on a methodological review
 
 This file's type structure follows the data-field ontology of
-@cite{jegerski-2014}'s methodological review of SPR. Each paradigm-level
+[jegerski-2014]'s methodological review of SPR. Each paradigm-level
 type cites the section of the chapter it comes from, so the lineage
 stays auditable. New paradigm primitives should not be added without a
 corresponding review section motivating them — the discipline is to
 follow existing methodological consensus rather than invent categories.
 
 The chapter predates the bidirectional masked SPR (BSPR) variant
-(@cite{paape-vasishth-2026}); that constructor of `Presentation` is
+([paape-vasishth-2026]); that constructor of `Presentation` is
 flagged as post-Jegerski.
 
 ## Out of scope (per `CLAUDE.md` Processing scope)
@@ -52,7 +52,7 @@ namespace Paradigms.SelfPacedReading
 -- §1. Region — offset from a designated critical region
 -- ============================================================================
 
-/-! Per @cite{jegerski-2014} ("What is Looked at and Measured"), an SPR
+/-! Per [jegerski-2014] ("What is Looked at and Measured"), an SPR
 stimulus is broken into *regions of interest*, each contributing a
 single reading-time data point. The chapter uses absolute 1-indexed
 region numbering ("Region 1 is a subject NP") for stimulus design;
@@ -103,7 +103,7 @@ end Region
 -- §2. Presentation
 -- ============================================================================
 
-/-! Per @cite{jegerski-2014} (Figs 2.1–2.3), historical SPR displays vary
+/-! Per [jegerski-2014] (Figs 2.1–2.3), historical SPR displays vary
 along two orthogonal axes: cumulative-vs-noncumulative (whether previous
 segments stay visible) and centered-vs-linear (where on the screen each
 segment appears). Three of the four combinations have been used in
@@ -113,9 +113,9 @@ linear, "moving window") and notes the others are deprecated:
 - Cumulative is "problematic because most participants develop a reading
   strategy in which they reveal several segments of a stimulus at a time
   before reading them all at once" (Ferreira & Henderson 1990; Just et
-  al. 1982, both cited in @cite{jegerski-2014}).
+  al. 1982, both cited in [jegerski-2014]).
 - Centered display is "avoided with SPR because it is less like normal
-  reading" (@cite{jegerski-2014}).
+  reading" ([jegerski-2014]).
 
 This enum names the historically-attested displays as flat alternatives
 rather than encoding the two axes separately, matching how SPR studies
@@ -124,19 +124,19 @@ actually describe their methods. -/
 inductive Presentation where
   /-- Noncumulative + linear; the modern de facto standard. Each segment
       is unmasked one at a time in normal left-to-right (or right-to-left)
-      succession. Same as "moving window." Per @cite{jegerski-2014}. -/
+      succession. Same as "moving window." Per [jegerski-2014]. -/
   | movingWindow
   /-- Cumulative + linear; previous segments stay visible as the next
       segment is unmasked. Deprecated (multi-segment-reveal strategy).
-      Per @cite{jegerski-2014} citing Ferreira & Henderson 1990;
+      Per [jegerski-2014] citing Ferreira & Henderson 1990;
       Just et al. 1982. -/
   | cumulative
   /-- Noncumulative + centered; segments overwrite at screen center.
-      Avoided in SPR (less like normal reading). Per @cite{jegerski-2014}. -/
+      Avoided in SPR (less like normal reading). Per [jegerski-2014]. -/
   | centered
   /-- Bidirectional masked SPR (BSPR): segments can be re-read by pressing
-      the back button, with masking. A post-@cite{jegerski-2014} variant
-      used by @cite{paape-vasishth-2026}. -/
+      the back button, with masking. A post-[jegerski-2014] variant
+      used by [paape-vasishth-2026]. -/
   | bidirectional
   deriving DecidableEq, Repr, Inhabited
 
@@ -144,7 +144,7 @@ inductive Presentation where
 -- §3. Segmentation
 -- ============================================================================
 
-/-! Per @cite{jegerski-2014} ("Issues in the Development and Presentation
+/-! Per [jegerski-2014] ("Issues in the Development and Presentation
 of Stimuli", ex. (5)–(6)), regions of interest can be either single words
 or multi-word phrases. The choice is "typically a compromise between the
 conflicting goals of maximizing the level of detail in the reading time
@@ -154,11 +154,11 @@ is not possible. -/
 
 inductive Segmentation where
   /-- Word-by-word: each region is a single word. Higher data resolution;
-      may induce overly-incremental processing. Per @cite{jegerski-2014}
+      may induce overly-incremental processing. Per [jegerski-2014]
       ex. (5). -/
   | wordByWord
   /-- Phrase-by-phrase: each region is a meaningful phrase. Lower data
-      resolution; closer to normal reading. Per @cite{jegerski-2014}
+      resolution; closer to normal reading. Per [jegerski-2014]
       ex. (6). -/
   | phraseByPhrase
   deriving DecidableEq, Repr, Inhabited
@@ -167,22 +167,22 @@ inductive Segmentation where
 -- §4. Distractor task
 -- ============================================================================
 
-/-! Per @cite{jegerski-2014} ("Issues in the Development..."), most SPR
+/-! Per [jegerski-2014] ("Issues in the Development..."), most SPR
 studies follow each stimulus with a distractor task to maintain
 attention. Two main types are attested. The chapter expresses a strong
 methodological preference for comprehension questions over acceptability
 judgments in SLA research, citing the demonstrated effect of distractor
 type on processing strategy (Aaronson & Scarborough 1976; Havik et al.
-2009; Leeser, Brandl & Weissglass 2011, all cited in @cite{jegerski-2014}). -/
+2009; Leeser, Brandl & Weissglass 2011, all cited in [jegerski-2014]). -/
 
 inductive DistractorTask where
   /-- Meaning-based comprehension question. Preferred per
-      @cite{jegerski-2014}; avoids inducing metalinguistic processing
+      [jegerski-2014]; avoids inducing metalinguistic processing
       strategy on the SPR task itself. -/
   | comprehensionQuestion
   /-- Off-line acceptability judgment. Used in some psycholinguistic
       studies but has known cross-contamination effects on RT data
-      (Luka & Barsalou 2005, cited in @cite{jegerski-2014}). -/
+      (Luka & Barsalou 2005, cited in [jegerski-2014]). -/
   | acceptabilityJudgment
   deriving DecidableEq, Repr, Inhabited
 

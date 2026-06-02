@@ -3,7 +3,7 @@ import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # Frequency-Scaled Weights
-@cite{coetzee-pater-2008} @cite{coetzee-kawahara-2013}
+[coetzee-pater-2008] [coetzee-kawahara-2013]
 
 The "frequency lives in the grammar, continuously" theory:
 constraint weights themselves vary as a linear function of an item's
@@ -18,7 +18,7 @@ The schema:
 Different alternations / constraints can have different slopes:
 positive slope means "high-frequency items are more strongly subject
 to the constraint" (the empirical pattern in
-@cite{coetzee-kawahara-2013} for Japanese geminate devoicing); negative
+[coetzee-kawahara-2013] for Japanese geminate devoicing); negative
 slope means the opposite (high-frequency items more lenient — closer
 to representation-strength predictions).
 

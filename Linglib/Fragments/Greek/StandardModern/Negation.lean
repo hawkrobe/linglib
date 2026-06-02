@@ -3,7 +3,7 @@ import Linglib.Typology.Negation
 import Mathlib.Data.Fin.Basic
 /-!
 # Greek Negation Fragment
-@cite{tsiakmakis-2025} @cite{haspelmath-2013} @cite{dryer-haspelmath-2013}
+[tsiakmakis-2025] [haspelmath-2013] [dryer-haspelmath-2013]
 
 Greek distinguishes two sentential negation markers that are in
 complementary distribution by mood:
@@ -18,7 +18,7 @@ complementary distribution by mood:
   ⟦min_expletive⟧ = λp.∀w' ∈ Best_g(w) : p(w').
 
 The two markers are the overt morphological reflex of the NEG₁/NEG₂
-distinction that @cite{tsiakmakis-2025} argues is cross-linguistically valid.
+distinction that [tsiakmakis-2025] argues is cross-linguistically valid.
 -/
 
 namespace Greek.StandardModern.Negation
@@ -33,7 +33,7 @@ abbrev World := Fin 4
 /-! ### Negation marker entries -/
 
 /-- A Greek sentential negation marker, augmented with the mood/NCI
-    properties from @cite{tsiakmakis-2025}'s NEG₁/NEG₂ analysis.
+    properties from [tsiakmakis-2025]'s NEG₁/NEG₂ analysis.
 
     Distinct from the cross-linguistic `Typology.Negation.NegMarkerEntry`
     substrate (which carries only form/morphemeType/position): this

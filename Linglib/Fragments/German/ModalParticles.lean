@@ -8,12 +8,12 @@ import Linglib.Features.ClauseForm
 
 /-!
 # German Modal Particles
-@cite{gutzmann-2015}
+[gutzmann-2015]
 
 Lexical entries for German modal particles (*Modalpartikeln*), analyzed
 within the L_TU framework.
 
-## Two Kinds of Modal Particle (@cite{gutzmann-2015}, §6.5)
+## Two Kinds of Modal Particle ([gutzmann-2015], §6.5)
 
 Modal particles fall into two categories with distinct types and restriction
 mechanisms:
@@ -41,7 +41,7 @@ L_TU's composition rules, without any special syntactic assumptions:
 - **Unfocusability**: focus operator and MP end up in different dimensions
 - **Uncoordinatability**: no LER extends use-conditional coordination to 3D
 
-## Mood Distribution (@cite{gutzmann-2015}, Table 6.1)
+## Mood Distribution ([gutzmann-2015], Table 6.1)
 
 | Particle | Declarative | Interrogative | Imperative | Kind        | Restriction |
 |----------|-------------|---------------|------------|-------------|-------------|
@@ -69,7 +69,7 @@ verification. -/
 structure ModalParticleEntry where
   /-- Surface form -/
   form : String
-  /-- Whether this is a UCI or a UC-modifier (@cite{gutzmann-2015}, §6.5) -/
+  /-- Whether this is a UCI or a UC-modifier ([gutzmann-2015], §6.5) -/
   exprKind : UCExprKind
   /-- UCI classification (only meaningful when `exprKind = .uci`) -/
   uciClass : UCIClass

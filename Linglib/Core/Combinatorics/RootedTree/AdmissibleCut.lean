@@ -16,9 +16,9 @@ canonical replacement is `Linglib/Core/Combinatorics/RootedTree/PlanarCut.lean`
 
 ---
 
-# Admissible Cuts on Trees @cite{marcolli-chomsky-berwick-2025}
+# Admissible Cuts on Trees [marcolli-chomsky-berwick-2025]
 
-Per @cite{marcolli-chomsky-berwick-2025} Definition 1.2.6, an
+Per [marcolli-chomsky-berwick-2025] Definition 1.2.6, an
 **admissible cut** of a binary rooted tree T is a removal of a
 collection of edges of T such that no two lie on the same root-to-leaf
 path. Equivalently (Lemma 1.2.7), the data of an admissible cut on T
@@ -30,8 +30,8 @@ accessible terms of T.
 This file defines `CutShape` on `TraceTree α β` (not on `DecoratedTree α`).
 The `TraceTree` carrier has scalar trace labels (`.trace (b : β)`)
 rather than recursive subtree data. This is the carrier the bialgebra
-of @cite{marcolli-chomsky-berwick-2025} Lemma 1.2.10 actually inhabits;
-see `Decorated.lean` for the rationale: per @cite{marcolli-skigin-2025}
+of [marcolli-chomsky-berwick-2025] Lemma 1.2.10 actually inhabits;
+see `Decorated.lean` for the rationale: per [marcolli-skigin-2025]
 §10.1 (clarifying the brief discussion in M-C-B §1.3), trace labels
 are elements of a disjoint marked copy `̄SO₀` of the leaf alphabet,
 NOT recursive subtrees, for the bialgebra structure to be well-formed.
@@ -40,14 +40,14 @@ For the bialgebra layer, `β = Unit` (no informative trace label) — the
 minimal instance, sufficient for coassoc but a strict simplification
 of M-S. For the linguistic layer (CI interpretation, FormCopy), a
 richer `β` plus a head-function-transparent extractor realizes
-@cite{marcolli-skigin-2025} Definition 10.3 (head function projects
+[marcolli-skigin-2025] Definition 10.3 (head function projects
 each contracted subtree to its head leaf's struck-through label).
 
 This file is **[UPSTREAM]** — generic over `α : Type*` and `β : Type*`.
 
 ## Crucial M-C-B reading: leaves ARE accessible terms
 
-Per @cite{marcolli-chomsky-berwick-2025} Definition 1.2.2, accessible
+Per [marcolli-chomsky-berwick-2025] Definition 1.2.2, accessible
 terms are subtrees `T_v` for `v ∈ V_int(T) := V(T) \ {root of T}`.
 M-C-B's "internal" excludes the root vertex but **includes leaves** —
 so leaves of `T` are accessible terms. (Verified against the worked
@@ -233,7 +233,7 @@ For an admissible cut `c : CutShape T`:
 
 The trace label is a SCALAR `β` (not a recursive subtree). For `β = Unit`,
 the trace marker carries no information; for `β = α`, it carries a head
-label per @cite{marcolli-skigin-2025} Definition 10.3. -/
+label per [marcolli-skigin-2025] Definition 10.3. -/
 
 /-- The pruned forest of a cut: the multiset of extracted subtrees.
     M-C-B Definition 1.2.4: F_v = T_{v_1} ⊔ ⋯ ⊔ T_{v_n}. -/
@@ -440,9 +440,9 @@ theorem cutForest_eq_zero_iff {T : TraceTree α β} (c : CutShape T) :
     rfl
 
 /-! ## §5.5: Cut depth (cost weighting for Minimal Search)
-@cite{marcolli-chomsky-berwick-2025} §1.5
+[marcolli-chomsky-berwick-2025] §1.5
 
-Per @cite{marcolli-chomsky-berwick-2025} Definition in §1.5.2 (p. 59), each
+Per [marcolli-chomsky-berwick-2025] Definition in §1.5.2 (p. 59), each
 extracted accessible term `T_v ⊂ T` carries a weight `ε^{d_v}` where
 `d_v = dist(v, v_T)` is the depth of vertex `v` from the root of `T`.
 

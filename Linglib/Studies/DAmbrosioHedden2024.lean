@@ -2,7 +2,7 @@ import Linglib.Semantics.Gradability.Aggregation
 import Linglib.Studies.Sassoon2013
 
 /-!
-# @cite{dambrosio-hedden-2024}
+# [dambrosio-hedden-2024]
 
 D'Ambrosio, J. & Hedden, B. (2024). Multidimensional Adjectives.
 *Australasian Journal of Philosophy* 102(2): 253–277.
@@ -31,7 +31,7 @@ DOI: 10.1080/00048402.2023.2277923
 - §1: Arrow's constraints
 - §2: *athletic* example (majority rule and weighted aggregation)
 - §3: Comparative vagueness from weight multiplicity
-- §4: Connection to @cite{sassoon-2013} (binding types = counting)
+- §4: Connection to [sassoon-2013] (binding types = counting)
 -/
 
 namespace DAmbrosioHedden2024
@@ -167,7 +167,7 @@ theorem comparative_vagueness :
 -- § 4. Connection to Sassoon 2013
 -- ════════════════════════════════════════════════════
 
-/-! @cite{sassoon-2013}'s framework classifies binding as conjunctive
+/-! [sassoon-2013]'s framework classifies binding as conjunctive
     (∀), disjunctive (∃), or mixed (dimension counting). D&H show all
     three are **counting aggregation** — a single escape route from
     Arrow's theorem. Utilitarian aggregation (weighted sum) is a

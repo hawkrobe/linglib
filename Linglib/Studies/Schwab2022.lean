@@ -2,8 +2,8 @@ import Linglib.Typology.PolarityItem
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{schwab-2022}: Lexical Variation in NPI Illusions
-@cite{krifka-1995a}
+# [schwab-2022]: Lexical Variation in NPI Illusions
+[krifka-1995a]
 
 Experimental data from "Lexical variation in NPI illusions" (JML).
 Core finding: NPI illusions (acceptance of NPIs in non-licensing environments)

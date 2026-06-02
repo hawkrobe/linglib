@@ -3,8 +3,8 @@ import Linglib.Core.Nominal.Maximality
 
 /-!
 # Interpretation of Nominal Descriptions
-@cite{coppock-beaver-2015} @cite{hanink-2021} @cite{schwarz-2009}
-@cite{patel-grosz-grosz-2017} @cite{sharvy-1980}
+[coppock-beaver-2015] [hanink-2021] [schwarz-2009]
+[patel-grosz-grosz-2017] [sharvy-1980]
 
 Maps `Description F` to a referent in `Option F.Entity`, relative to a
 (entity, situation) bi-assignment. `none` represents either presupposition
@@ -202,7 +202,7 @@ theorem interpret_anaphoric_isSome_iff
   · simp [h]
   · simp [h]
 
-/-- @cite{patel-grosz-grosz-2017}'s "DEM = PER + index": the **strong** article
+/-- [patel-grosz-grosz-2017]'s "DEM = PER + index": the **strong** article
     (`anaphoric` at index `i`) and the **weak** article (`unique`) over a shared
     restrictor pick the same referent exactly when the indexed entity `g i` is the
     unique satisfier of `R`. The hypotheses are load-bearing — off this condition

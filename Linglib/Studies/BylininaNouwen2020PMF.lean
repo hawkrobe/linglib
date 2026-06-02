@@ -3,8 +3,8 @@ import Linglib.Studies.BylininaNouwen2020
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
-# @cite{bylinina-nouwen-2020} on mathlib `PMF` (Shape A migration pilot)
-@cite{bylinina-nouwen-2020}
+# [bylinina-nouwen-2020] on mathlib `PMF` (Shape A migration pilot)
+[bylinina-nouwen-2020]
 
 PMF-shaped re-formalisation of `BylininaNouwen2020.lean`'s 3 findings:
 - `lb_rsa_strengthens_two`: L1("two") prefers `c2` over `c3`

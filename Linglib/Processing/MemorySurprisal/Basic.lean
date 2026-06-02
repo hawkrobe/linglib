@@ -4,9 +4,9 @@ import Linglib.Processing.NoisyChannel.LossyContext
 
 /-!
 # Memory-Surprisal Trade-off Framework
-@cite{futrell-2019} @cite{hahn-degen-futrell-2021} @cite{zaslavsky-hu-levy-2020}
+[futrell-2019] [hahn-degen-futrell-2021] [zaslavsky-hu-levy-2020]
 
-Core formalization of @cite{hahn-degen-futrell-2021} "Modeling Word and Morpheme
+Core formalization of [hahn-degen-futrell-2021] "Modeling Word and Morpheme
 Order as an Efficient Trade-Off of Memory and Surprisal", *Psychological Review*
 128(4):726–756.
 
@@ -341,8 +341,8 @@ This is the information-theoretic analog of dependency length
 minimization: when syntactic dependencies are short (capped at length
 `L`), the corresponding I_t profile is local with bound `L`, and the
 memory cost grows at most linearly in `L`. The memory-surprisal
-trade-off (@cite{hahn-degen-futrell-2021}) is thus *strictly more
-general* than DLM (@cite{futrell-mahowald-gibson-2015}): DLM optimizes
+trade-off ([hahn-degen-futrell-2021]) is thus *strictly more
+general* than DLM ([futrell-mahowald-gibson-2015]): DLM optimizes
 the structural distance `L`; information locality optimizes the entire
 I_t profile, of which DLM is the bound-`L` special case. -/
 theorem MutualInfoProfile.weightedSum_le_of_isLocal
@@ -357,7 +357,7 @@ theorem MutualInfoProfile.weightedSum_le_of_isLocal
 
 /-! ### Information Locality Bound
 
-**Theorem 1** of @cite{hahn-degen-futrell-2021} establishes that the mutual
+**Theorem 1** of [hahn-degen-futrell-2021] establishes that the mutual
 information profile I_t determines a lower bound on the achievable
 memory-surprisal trade-off. Specifically, for any memory encoding with
 capacity T:
@@ -496,7 +496,7 @@ region boundary.
 
 TODO: Formal proof requires showing that the memory-surprisal trade-off
 curve equals the rate-distortion function for the appropriate source
-and distortion measure. See @cite{hahn-degen-futrell-2021} SI §1.3. -/
+and distortion measure. See [hahn-degen-futrell-2021] SI §1.3. -/
 theorem memory_surprisal_rate_distortion_correspondence :
     -- The memory-surprisal framework is a special case of rate-distortion
     -- where the source is the past context and the distortion is surprisal
@@ -543,8 +543,8 @@ The structural content of this bridge is `MutualInfoProfile.weightedSum_le_of_is
 (§3): for any profile that is information-local with bound `L`, the
 memory cost is bounded by `L · totalInfo`. DLM (which caps `L`
 structurally) is therefore the dependency-graph-level instantiation of
-information-locality optimization. See @cite{futrell-2019} and
-@cite{hahn-degen-futrell-2021} §2.3 for the broader empirical case. -/
+information-locality optimization. See [futrell-2019] and
+[hahn-degen-futrell-2021] §2.3 for the broader empirical case. -/
 
 /-- **Universal length bound on memory cost** (vacuous case of
 `weightedSum_le_of_isLocal`). For any profile, the weighted sum is
@@ -567,7 +567,7 @@ configuration: negLog warping, indicator scoring, horizon 1, predictive
 level. The trade-off curve varies *memory capacity* while holding the
 prediction resolution fixed.
 
-@cite{giulianelli-etal-2026} generalizes this by also varying the
+[giulianelli-etal-2026] generalizes this by also varying the
 resolution parameters (forecast horizon h and representational level l),
 showing that different psycholinguistic measures are best predicted at
 different resolutions. The memory-surprisal trade-off is the special case
@@ -585,12 +585,12 @@ def memorySurprisalConfig : Processing.PredictiveUncertainty.SurprisalConfig :=
 
 /-! ### Bridge to NoisyChannel: deterministic encoders are Dirac MemoryProcesses
 
-The `MemoryEncoding` of @cite{hahn-degen-futrell-2021} is a *deterministic*
+The `MemoryEncoding` of [hahn-degen-futrell-2021] is a *deterministic*
 context-summary `(Mem × W) → Mem` (plus an initial state). Paired with a
 predictor `Mem → PMF (Option W)`, it induces a `MemoryProcess` (in
 `Processing.NoisyChannel`) whose encoder is a Dirac at the
 iterated memory state. The deterministic encoder is exactly the lossless
-special case that the @cite{futrell-gibson-levy-2020} `MemoryProcess`
+special case that the [futrell-gibson-levy-2020] `MemoryProcess`
 substrate generalizes — making the connection true by construction. -/
 
 namespace MemoryEncoding
@@ -612,7 +612,7 @@ theorem toMemoryProcess_isDirac {W Mem : Type} (me : MemoryEncoding W Mem)
 
 /-- **Lossless reduction transported.** A `MemoryEncoding` paired with a
 predictor recovers classical surprisal under its induced language model
-(the @cite{futrell-gibson-levy-2020} §3.5.1 reduction, applied here). -/
+(the [futrell-gibson-levy-2020] §3.5.1 reduction, applied here). -/
 theorem toMemoryProcess_expectedSurprisal_eq_virtualLM_surprisal
     {W Mem : Type} (me : MemoryEncoding W Mem)
     (predict : Mem → PMF (Option W)) (c : List W) (w : W) :

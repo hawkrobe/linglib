@@ -71,7 +71,7 @@ this file are flagged `-- UNVERIFIED` accordingly.
 
 ## References
 
-* @cite{hartmann-zimmermann-2007}, @cite{newman-2000}.
+* [hartmann-zimmermann-2007], [newman-2000].
 -/
 
 namespace HartmannZimmermann2007
@@ -87,7 +87,7 @@ open Features (SurfaceGender)
 /-! ## Pragmatic focus types (paper §1.2, after Uhmann 1991) -/
 
 /-- The four pragmatic uses of focus distinguished in
-    @cite{hartmann-zimmermann-2007} §1.2 (eq. 1a–d), built on a single
+    [hartmann-zimmermann-2007] §1.2 (eq. 1a–d), built on a single
     Roothian alternative-set semantics. The paper emphasises that these
     are *pragmatic* uses of one *semantic* focus, not distinct semantic
     types — so the type carries no semantic load, only a label for
@@ -129,7 +129,7 @@ structure FocusUtterance where
 /-- A focus utterance is **Hausa-licensed** iff it satisfies *both* the
     morphosyntactic licensing condition (`FocusConfig.Licensed`,
     encoding the relative-TAM requirement on ex-situ focus) *and* the
-    @cite{hartmann-zimmermann-2007} §2.2.2 subject-focus generalization,
+    [hartmann-zimmermann-2007] §2.2.2 subject-focus generalization,
     *conditional on the TAM admitting a relative form*. Per the paper
     (p. 4): "subject foci are syntactically and morphologically
     unmarked in the future, habitual and subjunctive aspects". The

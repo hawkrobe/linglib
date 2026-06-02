@@ -2,9 +2,9 @@ import Linglib.Fragments.Slavic.Case
 
 /-!
 # Polish Case Inventory
-@cite{rothstein-1993} @cite{blake-1994}
+[rothstein-1993] [blake-1994]
 
-Per @cite{rothstein-1993} (p. 696), Polish has the full inherited
+Per [rothstein-1993] (p. 696), Polish has the full inherited
 7-case system including a productive vocative used consistently with
 titles and vocative phrases (panie Janku, kochana Basiu), with a
 growing tendency for NOM to substitute for VOC with bare personal

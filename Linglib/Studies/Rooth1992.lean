@@ -7,7 +7,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Focus.Basic
 
 /-!
-# @cite{rooth-1992} Bridge — Focus Interpretation @cite{rooth-1992}
+# [rooth-1992] Bridge — Focus Interpretation [rooth-1992]
 
 Bridges the empirical data in `Focus/Basic.lean` to the formal theory
 in `Focus/Interpretation.lean` (FIP, Q-A congruence), with a full
@@ -106,7 +106,7 @@ theorem unfeatured_preserves_oValue :
     altPredicateUnfeatured.oValue = "ate the beans" := rfl
 
 /-- Unfeatured A-value is a singleton containing the O-value.
-    Non-focused expressions evoke no alternatives (@cite{rooth-1992} §1). -/
+    Non-focused expressions evoke no alternatives ([rooth-1992] §1). -/
 theorem unfeatured_singleton_aValue :
     altPredicateUnfeatured.aValue = ["ate the beans"] := rfl
 
@@ -201,7 +201,7 @@ theorem infoStructure_extracts_background :
 -- §6  Q-A Congruence: FIP at the Propositional Level
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! @cite{rooth-1992} §2.4, constraint (26d):
+/-! [rooth-1992] §2.4, constraint (26d):
     In a Q-A pair ⟨ψ, α⟩, ⟦ψ⟧° ⊆ ⟦α⟧f.
     The ordinary semantic value of the question is a subset of the
     focus semantic value of the answer. -/
@@ -268,7 +268,7 @@ theorem fip_fails_object_focus :
   fun h => maryAteBeans_not_in_objectFocus (h maryAteBeans_in_question)
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §7  "Only" Association (@cite{rooth-1992} §2.1)
+-- §7  "Only" Association ([rooth-1992] §2.1)
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! Rooth §2.1, constraint (26a): the domain of quantification C of

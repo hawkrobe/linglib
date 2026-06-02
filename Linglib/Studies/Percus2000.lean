@@ -7,8 +7,8 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.FunctionWords
 
 /-!
-# @cite{percus-2000}: Constraints on Situation Variables in Syntax @cite{percus-2000}
-@cite{heim-kratzer-1998} @cite{kratzer-1998} @cite{partee-1973}
+# [percus-2000]: Constraints on Situation Variables in Syntax [percus-2000]
+[heim-kratzer-1998] [kratzer-1998] [partee-1973]
 
 Formalizes Percus's theory of situation pronouns in LF and derives
 concrete de re / de dicto predictions from Fragment lexical entries.

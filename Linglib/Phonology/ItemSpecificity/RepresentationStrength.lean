@@ -3,7 +3,7 @@ import Mathlib.Analysis.SpecialFunctions.Exp
 
 /-!
 # Representation Strength (Gradient Symbolic Representations)
-@cite{smolensky-goldrick-2016} @cite{pierrehumbert-2001} @cite{todd-pierrehumbert-hay-2019}
+[smolensky-goldrick-2016] [pierrehumbert-2001] [todd-pierrehumbert-hay-2019]
 
 The "frequency lives in the lexicon, not the grammar" theory: the
 grammar's weights are fixed; what varies with frequency is the
@@ -13,7 +13,7 @@ weakened UR more susceptible to deletion / repair / coalescence.
 
 ## Architectural backbone: S-G 2016 GSR
 
-The gradient-activity machinery follows @cite{smolensky-goldrick-2016}.
+The gradient-activity machinery follows [smolensky-goldrick-2016].
 A symbol's *activity* is a real-valued degree of presence — the /t/ at
 the end of *petit* in their analysis is `0.5·t`, half-active. Surface
 realization is decided by a Harmonic Grammar in which faithfulness
@@ -32,11 +32,11 @@ their §3.6: "Such frequency dependence motivates certain 'usage-' or
 'construction-'based accounts of liaison; a formalization of a kind
 of usage-based account will in fact be blended into the proposed
 account." This file formalizes that hybrid: activity is a function of
-token log-frequency, following @cite{pierrehumbert-2001}'s
+token log-frequency, following [pierrehumbert-2001]'s
 "resting activation level" primitive (TSL 45 p. 141: *"each exemplar
 has an associated strength — which may be viewed as a resting
 activation level"*). Direction-of-effect predictions follow
-@cite{todd-pierrehumbert-hay-2019}: high-frequency items are more
+[todd-pierrehumbert-hay-2019]: high-frequency items are more
 robustly recognized under acoustic ambiguity, with consequences that
 depend on whether the category moves toward or away from a competitor.
 
@@ -62,10 +62,10 @@ they diverge on:
 
 ## The Breiss-Katsuda-Kawahara N2-frequency effect
 
-@cite{breiss-katsuda-kawahara-2026} report that high N2 token
+[breiss-katsuda-kawahara-2026] report that high N2 token
 frequency in Japanese compounds *blocks* nasalisation (preserves the
 boundary). They themselves analyze this with MaxEnt + Lexical
-Conservatism (@cite{steriade-2000}); the GSR + frequency-derived
+Conservatism ([steriade-2000]); the GSR + frequency-derived
 activity hybrid here is one of several siblings consistent with the
 pattern. Under this hybrid: high N2 frequency → high N2-initial
 activity → activity threshold for faithful boundary preservation
@@ -114,7 +114,7 @@ def compoundActivation {α : Type} [HasTokenFreq α]
     (n1 n2 : α) : ℝ :=
   combine (activation sigmoid n1) (activation sigmoid n2)
 
-/-- The **additive combine rule** matching @cite{smolensky-goldrick-2016}'s
+/-- The **additive combine rule** matching [smolensky-goldrick-2016]'s
     coalescence: surface activity at the W₁-W₂ boundary is the sum of
     the constituents' contributions (their `χ = λ + τ`, p. 17, p. 20),
     arising from MAX as a positive constraint that rewards faithfulness

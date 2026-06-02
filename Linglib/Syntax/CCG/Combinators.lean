@@ -7,11 +7,11 @@ import Linglib.Semantics.Composition.Combinator
 # CCG combinatory rules as combinatory-logic combinators
 
 CCG's combinatory rules correspond to the basis combinators of combinatory logic
-(@cite{curry-feys-1958}, @cite{smullyan-1985}): forward and backward composition to `B`,
+([curry-feys-1958], [smullyan-1985]): forward and backward composition to `B`,
 type-raising to `T`, the substitution rule to `S`. The combinator algebra itself lives in
 `Semantics/Composition/Combinator.lean`; this file establishes the correspondence between
 those combinators and the *types* CCG assigns (`catToTy`), so that each rule's semantic
-action is literally a combinator acting on `Frame.Denot` meanings (@cite{steedman-2000},
+action is literally a combinator acting on `Frame.Denot` meanings ([steedman-2000],
 Chapters 3 and 8).
 -/
 

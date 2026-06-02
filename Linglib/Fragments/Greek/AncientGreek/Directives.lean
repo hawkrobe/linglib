@@ -2,7 +2,7 @@ import Linglib.Typology.Directives
 
 /-!
 # Ancient Greek imperative profile (WALS Chs 70, 71, 72, 73)
-@cite{wals-2013}
+[wals-2013]
 
 Diachronic variant kept distinct from Standard Modern Greek under the
 `AncientGreek` namespace, sibling to

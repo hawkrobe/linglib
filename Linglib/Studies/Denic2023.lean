@@ -6,7 +6,7 @@ import Linglib.Studies.Magri2009
 
 /-!
 # Probabilities and Logic in Implicature Computation
-@cite{denic-2023}
+[denic-2023]
 
 Denić, M. (2023). Probabilities and logic in implicature computation:
 Two puzzles with embedded disjunction. *Semantics and Pragmatics* 16,
@@ -27,7 +27,7 @@ and (ii) the number of disjuncts:
 
 This contrast is surprising: the two sentences stand in identical
 entailment relations to their alternatives, so any entailment-based
-theory (@cite{fox-2007} exhaustification, neo-Gricean) predicts the
+theory ([fox-2007] exhaustification, neo-Gricean) predicts the
 same implicatures for both.
 
 **Deviance puzzle** (§5–6): Certain sentences with embedded disjunction
@@ -40,7 +40,7 @@ The key property: the identity copula + proper name is *singleton-
 denoting* (given CK, only one individual can be Mary), while "is called"
 is not. Deviance arises because ignorance inferences of singleton-
 denoting predicates contradict common knowledge — extending
-@cite{magri-2009}'s blindness hypothesis.
+[magri-2009]'s blindness hypothesis.
 
 ## Proposal
 
@@ -49,7 +49,7 @@ Two components:
 1. **Informativeness-based pruning** (§4, proposal (30)): Alternative
    pruning is sensitive to probabilistic informativeness — the probability
    of pruning alternative A from ALT(S) increases with P(A|S). This is
-   in addition to contextual relevance (@cite{fox-katzir-2011}).
+   in addition to contextual relevance ([fox-katzir-2011]).
 
 2. **Blind informativeness** (§7.3): The informativeness computation that
    feeds pruning is blind to (most of) common knowledge — only logical
@@ -57,13 +57,13 @@ Two components:
 
 ## Key connections
 
-- @cite{fox-2007}: innocent exclusion (IE) algorithm — `innocent.exh`,
+- [fox-2007]: innocent exclusion (IE) algorithm — `innocent.exh`,
   `innocent.excluded`, `IsMCSet` from `Innocent.lean`
-- @cite{magri-2009}: blindness hypothesis + mismatch hypothesis —
+- [magri-2009]: blindness hypothesis + mismatch hypothesis —
   `BlindScenario`, `blindOdd` from `Magri2009.lean`
-- @cite{fox-katzir-2011}: contextual constraint on alternatives
-- @cite{franke-2011}: IBR = exhMW result (inherits the puzzle)
-- @cite{chierchia-2004}: embedded scalar items and disjunction
+- [fox-katzir-2011]: contextual constraint on alternatives
+- [franke-2011]: IBR = exhMW result (inherits the puzzle)
+- [chierchia-2004]: embedded scalar items and disjunction
 -/
 
 namespace Denic2023
@@ -79,7 +79,7 @@ open Magri2009 (BlindScenario)
 
 /-- The two inference types that embedded disjunction can trigger.
 
-@cite{denic-2023} §2: the central empirical observation is that the
+[denic-2023] §2: the central empirical observation is that the
 *same* sentence structure preferably triggers different inference types
 depending on domain size and disjunct count. -/
 inductive InferenceType where
@@ -91,7 +91,7 @@ inductive InferenceType where
   | ignorance
   deriving DecidableEq, Repr
 
-/-- An empirical datum from @cite{denic-2023} §2. -/
+/-- An empirical datum from [denic-2023] §2. -/
 structure InferenceDatum where
   /-- Human-readable label. -/
   label : String
@@ -104,41 +104,41 @@ structure InferenceDatum where
   deriving Repr
 
 /-- ALL-20-OR: "All 20 of Mary's friends are French or Spanish."
-@cite{denic-2023} ex. (6): preferably triggers distributive inferences. -/
+[denic-2023] ex. (6): preferably triggers distributive inferences. -/
 def all20or : InferenceDatum :=
   { label := "ALL-20-OR", restrictorSize := 20, disjunctCount := 2,
     preferred := .distributive }
 
 /-- ALL-2-OR: "Both of Mary's friends are French or Spanish."
-@cite{denic-2023} ex. (7): preferably triggers ignorance inferences. -/
+[denic-2023] ex. (7): preferably triggers ignorance inferences. -/
 def all2or : InferenceDatum :=
   { label := "ALL-2-OR", restrictorSize := 2, disjunctCount := 2,
     preferred := .ignorance }
 
 /-- SIMPLE-DISJ: "All four of Mary's friends are French or Spanish."
-@cite{denic-2023} ex. (8): distributive more natural than COMPLEX-DISJ. -/
+[denic-2023] ex. (8): distributive more natural than COMPLEX-DISJ. -/
 def simpleDisj : InferenceDatum :=
   { label := "SIMPLE-DISJ", restrictorSize := 4, disjunctCount := 2,
     preferred := .distributive }
 
 /-- COMPLEX-DISJ: "All four of Mary's friends are French, Spanish,
 German, or Dutch."
-@cite{denic-2023} ex. (9): ignorance more natural than SIMPLE-DISJ. -/
+[denic-2023] ex. (9): ignorance more natural than SIMPLE-DISJ. -/
 def complexDisj : InferenceDatum :=
   { label := "COMPLEX-DISJ", restrictorSize := 4, disjunctCount := 4,
     preferred := .ignorance }
 
-/-- The four key data points from @cite{denic-2023} §2. -/
+/-- The four key data points from [denic-2023] §2. -/
 def inferencePuzzleData : List InferenceDatum :=
   [all20or, all2or, simpleDisj, complexDisj]
 
-/-- Threshold generalization (@cite{denic-2023} (10)): when the ratio
+/-- Threshold generalization ([denic-2023] (10)): when the ratio
 of restrictor cardinality to disjunct count exceeds a threshold T ≥ 1,
 distributive inferences are preferably derived. -/
 def thresholdPrediction (T : Nat) (d : InferenceDatum) : InferenceType :=
   if d.restrictorSize / d.disjunctCount ≥ T then .distributive else .ignorance
 
-/-- Gradient generalization (@cite{denic-2023} (11)): the larger the
+/-- Gradient generalization ([denic-2023] (11)): the larger the
 ratio of restrictor to disjuncts, the greater the preference for
 distributive over ignorance. -/
 def ratio (d : InferenceDatum) : Nat := d.restrictorSize / d.disjunctCount
@@ -164,11 +164,11 @@ theorem threshold_2_correct :
 
 /-! ### Why entailment-based theories fail
 
-@cite{denic-2023} §3.2–3.4: ALL-20-OR and ALL-2-OR activate the same
+[denic-2023] §3.2–3.4: ALL-20-OR and ALL-2-OR activate the same
 structural alternatives (up to domain-size relabeling). Since entailment
 relations between a sentence and its alternatives are invariant under
 domain size, any approach where implicatures are a function of entailment
-relations (@cite{fox-2007} exhaustification, neo-Gricean) predicts
+relations ([fox-2007] exhaustification, neo-Gricean) predicts
 identical inferences.
 
 The unembedded baseline (disjunction without universal quantifier) is
@@ -206,7 +206,7 @@ private def allSpanishAlt : GroupWorld → Bool
   | .allSpanish | .allBoth => true | _ => false
 
 /-- ALT-or: alternatives when only the disjunction activates its scale.
-@cite{denic-2023} (24)/(25): {All n are French, All n are Spanish}. -/
+[denic-2023] (24)/(25): {All n are French, All n are Spanish}. -/
 private def altOr : List (GroupWorld → Bool) := [allFrenchAlt, allSpanishAlt]
 
 /-- With ALT-or, both alternatives are IE: each can be negated consistently
@@ -236,7 +236,7 @@ private def someSpanishAlt : GroupWorld → Bool
   | .allSpanish | .mixed | .allBoth => true | _ => false
 
 /-- ALT-all-or: alternatives when both quantifier and disjunction activate.
-@cite{denic-2023} (22)/(23): {All French, All Spanish, Some French, Some Spanish}. -/
+[denic-2023] (22)/(23): {All French, All Spanish, Some French, Some Spanish}. -/
 private def altAllOr : List (GroupWorld → Bool) :=
   [allFrenchAlt, allSpanishAlt, someFrenchAlt, someSpanishAlt]
 
@@ -246,7 +246,7 @@ Result: no distributive inferences; ignorance inferences are derived.
 
 Note: this is a distinct mechanism from `symmetric_not_ie` in
 `Symmetric.lean`. The alternatives here are NOT symmetric in the
-@cite{fox-katzir-2011} partition sense (see `altAllOr_not_symmetric`
+[fox-katzir-2011] partition sense (see `altAllOr_not_symmetric`
 below) — the IE emptiness arises from the MCE structure, not from
 alternative pairs partitioning the prejacent. -/
 theorem altAllOr_no_ie :
@@ -254,7 +254,7 @@ theorem altAllOr_no_ie :
   decide
 
 /-- IE collapse for ALT-all-or: with three incompatible maximal
-consistent exclusions (@cite{denic-2023} (26a–c)), no alternative
+consistent exclusions ([denic-2023] (26a–c)), no alternative
 survives in every MC-set. Consequently `exhIE` returns the prejacent
 unchanged — exhaustification is vacuous.
 
@@ -269,7 +269,7 @@ theorem altAllOr_exh_vacuous :
       = predToFinset allForS := by decide
 
 /-- The existential alternatives ("some are French" / "some are Spanish")
-are NOT symmetric in the @cite{fox-katzir-2011} sense: they overlap at
+are NOT symmetric in the [fox-katzir-2011] sense: they overlap at
 `mixed` and `allBoth` worlds (both alternatives true), so they do not
 partition the prejacent's denotation.
 
@@ -292,12 +292,12 @@ stand in the same entailment relations regardless of whether n = 2
 or n = 20. Therefore, the IE set — and hence the predicted implicatures
 — are identical.
 
-This is @cite{denic-2023}'s argument in §3.2 (final paragraph):
+This is [denic-2023]'s argument in §3.2 (final paragraph):
 "ALL-20-OR and ALL-2-OR activate comparable sets of alternatives, [so]
 they stand in the same entailment relations to them, and will thus
 necessarily be predicted to have the same implicatures."
 
-Since @cite{franke-2011}'s IBR converges to exhMW for scalar games
+Since [franke-2011]'s IBR converges to exhMW for scalar games
 (`ibr_equals_exhMW` in `ScalarGames.lean`), IBR inherits the same
 inability to distinguish ALL-20-OR from ALL-2-OR. -/
 theorem entailment_invariant_across_domain_size :
@@ -317,7 +317,7 @@ end EntailmentNegativeResult
 
 /-! ### Informativeness-based alternative pruning
 
-@cite{denic-2023} proposal (30): the probability of pruning alternative A
+[denic-2023] proposal (30): the probability of pruning alternative A
 from ALT(S) increases with P(A|S) — the conditional probability that A
 is true given S. Informativeness is inversely related: the more likely
 A is given S (the less informative A is relative to S), the more
@@ -342,7 +342,7 @@ individual is assigned to A with probability 1/m, so:
 - P(no individual is A) = ((m−1)/m)^n
 - P(∃x. A(x)) = 1 − ((m−1)/m)^n
 
-@cite{denic-2023} §4: the critical observation is that this probability
+[denic-2023] §4: the critical observation is that this probability
 increases with n (more individuals → more likely someone is A) and
 decreases with m (more disjuncts → less likely any given one holds). -/
 def uniformCondProb (n m : Nat) : ℚ :=
@@ -414,7 +414,7 @@ end ProbabilisticPruning
 
 /-! ### Singleton-denoting predicates and deviance
 
-@cite{denic-2023} §5: a predicate (in context) is *singleton-denoting*
+[denic-2023] §5: a predicate (in context) is *singleton-denoting*
 if, given common knowledge, it can only be true of a unique individual.
 
 - "is Mary" is singleton-denoting: CK says only one person IS Mary
@@ -422,14 +422,14 @@ if, given common knowledge, it can only be true of a unique individual.
   called Mary
 
 Deviance arises when ignorance inferences of singleton-denoting
-predicates contradict CK. This extends @cite{magri-2009}'s blind
+predicates contradict CK. This extends [magri-2009]'s blind
 oddness mechanism. -/
 
 section DeviancePuzzle
 
 /-- Whether a predicate is singleton-denoting in context.
 
-@cite{denic-2023} §5: a (complex) predicate is singleton-denoting if,
+[denic-2023] §5: a (complex) predicate is singleton-denoting if,
 given common knowledge, it can only be true of a unique (singular or
 plural) individual. Examples:
 - "is Mary" + domain of individuals → singleton-denoting
@@ -471,7 +471,7 @@ theorem isCalledMary_not_singleton :
 
 -- ── Deviance data ──────────────────────────────────────────────────
 
-/-- A deviance datum from @cite{denic-2023} §5. -/
+/-- A deviance datum from [denic-2023] §5. -/
 structure DevianceDatum where
   label : String
   isDeviant : Bool
@@ -479,28 +479,28 @@ structure DevianceDatum where
   deriving Repr
 
 /-- DEVIANT-BE: "#Each of those three girls is Mary, Susan, or Jane."
-@cite{denic-2023} ex. (31). -/
+[denic-2023] ex. (31). -/
 def deviantBe : DevianceDatum :=
   { label := "DEVIANT-BE", isDeviant := true, isSingletonDenoting := true }
 
 /-- NON-DEVIANT-CALLED: "Each of those three girls is called Mary, Susan, or Jane."
-@cite{denic-2023} ex. (32). -/
+[denic-2023] ex. (32). -/
 def nonDeviantCalled : DevianceDatum :=
   { label := "NON-DEVIANT-CALLED", isDeviant := false, isSingletonDenoting := false }
 
 /-- DEVIANT-WRITE: "#Each of those three writers wrote Anna Karenina,
 Germinal, or Harry Potter."
-@cite{denic-2023} ex. (33). -/
+[denic-2023] ex. (33). -/
 def deviantWrite : DevianceDatum :=
   { label := "DEVIANT-WRITE", isDeviant := true, isSingletonDenoting := true }
 
 /-- NON-DEVIANT-READ: "Each of those three students read Anna Karenina,
 Germinal, or Harry Potter."
-@cite{denic-2023} ex. (34). -/
+[denic-2023] ex. (34). -/
 def nonDeviantRead : DevianceDatum :=
   { label := "NON-DEVIANT-READ", isDeviant := false, isSingletonDenoting := false }
 
-/-- The four deviance data points from @cite{denic-2023} §5. -/
+/-- The four deviance data points from [denic-2023] §5. -/
 def deviancePuzzleData : List DevianceDatum :=
   [deviantBe, nonDeviantCalled, deviantWrite, nonDeviantRead]
 
@@ -524,8 +524,8 @@ denoting, the ignorance inferences ("the speaker is ignorant about
 whether at least one girl is Mary") contradict CK (the speaker must
 know which girl is which).
 
-This is exactly @cite{magri-2009}'s mechanism (BH + MH) applied to a
-new empirical domain, as @cite{denic-2023} proposes in §6. -/
+This is exactly [magri-2009]'s mechanism (BH + MH) applied to a
+new empirical domain, as [denic-2023] proposes in §6. -/
 
 /-- Worlds for DEVIANT-BE.
 
@@ -591,7 +591,7 @@ theorem deviantBE_no_ie :
 contradicting CK — a subtlety that requires grammatical ignorance
 inferences (K_speaker in the grammar, or Gricean quantity reasoning).
 
-@cite{denic-2023} §6–7: deviance is due to ignorance inferences (derived
+[denic-2023] §6–7: deviance is due to ignorance inferences (derived
 via the maxim of quantity or grammatically via K_speaker) contradicting
 CK. Since all alternatives are true at all CK worlds, claiming ignorance
 about any of them contradicts CK. -/
@@ -604,7 +604,7 @@ Non-IE alternatives exist (the speaker should be ignorant about them),
 but CK settles all of them (every existential alternative is true at
 every CK world). The speaker CANNOT be ignorant → contradiction → deviant.
 
-This is @cite{denic-2023}'s proposal (40): "Sentences DEVIANT-BE and
+This is [denic-2023]'s proposal (40): "Sentences DEVIANT-BE and
 DEVIANT-WRITE are deviant because they trigger ignorance inferences
 which contradict common knowledge." -/
 theorem deviantBE_ignorance_contradicts_ck :
@@ -668,7 +668,7 @@ theorem nonDeviantCalled_ignorance_ok :
 /-- The deviance contrast: singleton-denoting predicates trigger CK-
 contradicting ignorance inferences; non-singleton-denoting ones don't.
 
-@cite{denic-2023} §5–6: the property distinguishing DEVIANT-BE from
+[denic-2023] §5–6: the property distinguishing DEVIANT-BE from
 NON-DEVIANT-CALLED is exactly whether the predicate is singleton-
 denoting. -/
 theorem deviance_contrast :
@@ -685,14 +685,14 @@ end DeviancePuzzle
 
 /-! ### Blindness extends to informativeness computation
 
-@cite{denic-2023} §7.3: the informativeness computation feeding
+[denic-2023] §7.3: the informativeness computation feeding
 pruning must itself be blind to common knowledge. The argument:
 
-1. @cite{magri-2009}: EXH is blind to CK (BH) — formalized via
+1. [magri-2009]: EXH is blind to CK (BH) — formalized via
    `BlindScenario.strengthened`, which uses logical entailment, not
    CK-relativized entailment.
 
-2. @cite{denic-2023}: informativeness evaluation for pruning is ALSO
+2. [denic-2023]: informativeness evaluation for pruning is ALSO
    blind to CK. If it weren't, then for DEVIANT-BE, CK would tell us
    P(at least one is Mary | Each is Mary, Susan, or Jane) = 1 — ALL
    existential alternatives would have condProb = 1 given CK, so all
@@ -742,7 +742,7 @@ end BlindnessArgument
 
 /-! ### The two puzzles constrain each other
 
-@cite{denic-2023} §7: the deviance puzzle constrains the solution to
+[denic-2023] §7: the deviance puzzle constrains the solution to
 the inference puzzle. The deviance data requires blindness of
 informativeness to CK (§5). Combined with the inference puzzle's
 requirement that informativeness guides pruning (§3), we get:

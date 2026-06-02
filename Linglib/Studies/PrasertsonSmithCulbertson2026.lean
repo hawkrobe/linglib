@@ -4,27 +4,27 @@ import Linglib.Studies.Aikhenvald2000
 
 /-!
 # Prasertsom, Smith & Culbertson (2026)
-@cite{prasertsom-smith-culbertson-2026}
+[prasertsom-smith-culbertson-2026]
 
 Domain-general categorisation explains constrained cross-linguistic
 variation in noun classification. Cognition 271, 106411.
 
 ## Key Claims
 
-@cite{prasertsom-smith-culbertson-2026} ask why animacy — but not colour —
+[prasertsom-smith-culbertson-2026] ask why animacy — but not colour —
 appears in noun classification systems, despite colour being perceptually
 salient. They argue the answer lies in a domain-general categorisation
 principle: features with higher **predictive power** (the ability to predict
 other features of category members) yield more compact, more distinct
 categories, which are easier to learn. Animacy is more predictive than
 colour, explaining its cross-linguistic prevalence via cultural transmission
-amplification (@cite{griffiths-kalish-2007}, @cite{kirby-et-al-2007},
-@cite{smith-2011}).
+amplification ([griffiths-kalish-2007], [kirby-et-al-2007],
+[smith-2011]).
 
 ## Argument Chain
 
 1. **Typological observation** (§1): Animacy is universal in noun
-   categorization (@cite{aikhenvald-2000}); colour is absent from every
+   categorization ([aikhenvald-2000]); colour is absent from every
    attested system — despite high perceptual salience.
 2. **Learning bias** (Exp 1a–b): Participants learn animacy-based artificial
    noun classes better than colour-based ones.
@@ -318,10 +318,10 @@ theorem exp3b_no_animacy_advantage :
 -- ============================================================================
 
 /-- The animacy hierarchy that governs noun classification
-    (@cite{aikhenvald-2000}, @cite{silverstein-1976}) is the same hierarchy
+    ([aikhenvald-2000], [silverstein-1976]) is the same hierarchy
     that governs differential argument marking (`Features.Prominence`).
 
-    @cite{prasertsom-smith-culbertson-2026} provide a domain-general
+    [prasertsom-smith-culbertson-2026] provide a domain-general
     explanation for WHY animacy is grammatically privileged in both domains:
     animacy is highly predictive of other referent features, making it a
     good basis for categorization in general.

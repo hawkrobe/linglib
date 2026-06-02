@@ -6,7 +6,7 @@ import Linglib.Syntax.Agreement.Paradigm
 
 /-!
 # Shared Mayan Fragment Infrastructure
-@cite{coon-mateo-pedro-preminger-2014} @cite{imanishi-2020} @cite{tada-1993} @cite{coon-2013}
+[coon-mateo-pedro-preminger-2014] [imanishi-2020] [tada-1993] [coon-2013]
 
 Types and parameters shared across Mayan language fragments (Q'anjob'al,
 Chol, Kaqchikel, K'iche', Mam, etc.).
@@ -21,7 +21,7 @@ is an observable morphological parameter:
 - **LOW-ABS**: absolutive follows the verb stem (post-stem).
   Template: ASP-ERG-ROOT-SUFFIX-ABS. Lowland Mexico languages.
 
-@cite{coon-mateo-pedro-preminger-2014} observe (extending @cite{tada-1993})
+[coon-mateo-pedro-preminger-2014] observe (extending [tada-1993])
 that this correlates with extraction asymmetries: overwhelmingly, HIGH-ABS
 languages exhibit syntactic ergativity while LOW-ABS languages do not.
 
@@ -62,9 +62,9 @@ inductive ABSPosition where
 /-- Abstract case assignment locus for transitive objects.
 
     - **absNom**: Infl⁰ assigns case to transitive object (HIGH-ABS).
-      @cite{legate-2008}'s ABS=NOM.
+      [legate-2008]'s ABS=NOM.
     - **absDef**: v⁰ assigns case to transitive object (LOW-ABS).
-      @cite{legate-2008}'s ABS=DEF. -/
+      [legate-2008]'s ABS=DEF. -/
 inductive CaseLocus where
   | absNom  -- Infl⁰ assigns case to transitive object (HIGH-ABS)
   | absDef  -- v⁰ assigns case to transitive object (LOW-ABS)
@@ -102,8 +102,8 @@ inductive MarkerSet where
 
 /-! ## Three different major Mayan branches; two different cut-off patterns
 
-Per @cite{aissen-england-zavala-2017} (Routledge handbook) and
-@cite{koizumi-2023} Ch. 2 (citing Campbell & Kaufman 1985), the
+Per [aissen-england-zavala-2017] (Routledge handbook) and
+[koizumi-2023] Ch. 2 (citing Campbell & Kaufman 1985), the
 canonical Mayan family classification places these languages in
 **three different major branches**:
 
@@ -119,8 +119,8 @@ But while the surface alignment is similar (Set A on subjects in
 non-perfective contexts), the **trigger for the split differs**:
 
 **Cholan trigger (aspect category)** — per
-@cite{vazquez-alvarez-2011} §1.9.4, @cite{imanishi-2020} §2.2,
-and @cite{zavala-maldonado-2017} §3:
+[vazquez-alvarez-2011] §1.9.4, [imanishi-2020] §2.2,
+and [zavala-maldonado-2017] §3:
 
   Chol, Chontal, and other Cholan languages exhibit **aspect-based**
   split ergativity. The split is triggered by aspect category:
@@ -129,8 +129,8 @@ and @cite{zavala-maldonado-2017} §3:
   §1.9.4: "the ergative pattern is split in all non-perfective aspects."
 
 **Q'anjob'alan trigger (syntactic dependency)** — per
-@cite{mateo-toledo-2008} §1.1.1, @cite{imanishi-2020} §2.2,
-and @cite{zavala-maldonado-2017} §3 (citing Francisco Pascual 2007):
+[mateo-toledo-2008] §1.1.1, [imanishi-2020] §2.2,
+and [zavala-maldonado-2017] §3 (citing Francisco Pascual 2007):
 
   Q'anjob'al, Akateko, Popti', Chuj, etc. exhibit a **syntactic** split
   triggered by **dependent clauses lacking aspect markers** — NOT by
@@ -151,8 +151,8 @@ contexts can't be encoded at this granularity.
 
 ## Why `.gen` not `.nom`?
 
-Both descriptive grammars (@cite{vazquez-alvarez-2011} §1.9.4 for Chol,
-@cite{mateo-toledo-2008} §1.1.1 for Q'anjob'al) characterize the
+Both descriptive grammars ([vazquez-alvarez-2011] §1.9.4 for Chol,
+[mateo-toledo-2008] §1.1.1 for Q'anjob'al) characterize the
 non-perfective alignment as **nominative-accusative** (Set A as
 nominative-like). The substrate's `Alignment.extendedErgative.assignCase`
 returns `.gen` (from Coon's analytical view: Set A on subjects in
@@ -161,19 +161,19 @@ morphological identity of Set A with possessive markers across Mayan
 makes `.gen` analytically defensible, but it's a theoretical choice;
 a descriptive-grammar implementation would return `.nom`.
 
-@cite{zavala-maldonado-2017} §3 (p. 235) calls Coon's no-split
+[zavala-maldonado-2017] §3 (p. 235) calls Coon's no-split
 re-analysis "unconvincing" — the split-ergative pattern is the
 descriptive consensus, with Coon's nominalization analysis being one
 analytical framing among several. -/
 
 /-- Cholan aspect-driven case assignment.
 
-    Per @cite{vazquez-alvarez-2011} §1.9.4 + @cite{zavala-maldonado-2017}
+    Per [vazquez-alvarez-2011] §1.9.4 + [zavala-maldonado-2017]
     §3: ergative in perfective; accusative-like (extended-ergative) in
     ALL non-perfective aspects (imperfective, progressive, prospective,
     habitual, iterative). Used by Chol; presumably also Chontal,
     Ch'orti', Cholti per the Cholan-branch generalization in
-    @cite{aissen-england-zavala-2017}. -/
+    [aissen-england-zavala-2017]. -/
 def caseChol : UD.Aspect → Features.Prominence.ArgumentRole → Features.Case
   | .Perf, r => Alignment.ergative.assignCase r
   | .Imp, r | .Prog, r | .Prosp, r | .Hab, r | .Iter, r =>
@@ -181,7 +181,7 @@ def caseChol : UD.Aspect → Features.Prominence.ArgumentRole → Features.Case
 
 /-- Q'anjob'alan aspect-driven case assignment.
 
-    Per @cite{mateo-toledo-2008} §1.1.1 + @cite{zavala-maldonado-2017}
+    Per [mateo-toledo-2008] §1.1.1 + [zavala-maldonado-2017]
     §3: split is triggered by **dependent clauses lacking aspect
     markers**, not by aspect category. The aspect-indexed function below
     approximates this with `.Prog` (since the progressive uses the
@@ -222,8 +222,8 @@ abbrev accCaseQanjobalan : Features.Prominence.ArgumentRole → Features.Case :=
 /-- Kaqchikel (K'ichean / K'ichean-Mamean = Eastern Mayan) aspect-driven
     case assignment.
 
-    Per @cite{imanishi-2014} §3.3.1 ("Kaqchikel: ERG=OBJ", p. 122) and
-    @cite{imanishi-2020} §2.2: Kaqchikel exhibits a cross-linguistically
+    Per [imanishi-2014] §3.3.1 ("Kaqchikel: ERG=OBJ", p. 122) and
+    [imanishi-2020] §2.2: Kaqchikel exhibits a cross-linguistically
     rare INVERTED alignment in PROG sentences with the `ajin` matrix
     predicate — the OBJECT (not the subject) is cross-referenced by
     Set A (ergative/genitive). This is the OPPOSITE of the
@@ -240,9 +240,9 @@ abbrev accCaseQanjobalan : Features.Prominence.ArgumentRole → Features.Case :=
     generalization. Other aspects in Kaqchikel (perfective, imperfective)
     keep canonical ergative alignment per Imanishi 2014 Table 3.1 (p. 95).
 
-    Dialectal variation: per @cite{imanishi-2014} fn. 26 (p. 141), some
+    Dialectal variation: per [imanishi-2014] fn. 26 (p. 141), some
     Kaqchikel varieties / consultants don't accept all the patterns
-    documented in @cite{garcia-matzar-rodriguez-guajan-1997}. The
+    documented in [garcia-matzar-rodriguez-guajan-1997]. The
     inverted-pattern claim is grounded in Imanishi's primary fieldwork
     on a specific Kaqchikel variety. -/
 def caseKaqchikel : UD.Aspect → Features.Prominence.ArgumentRole → Features.Case
@@ -266,12 +266,12 @@ abbrev accCaseKaqchikel : Features.Prominence.ArgumentRole → Features.Case :=
 
 /-- K'iche' (K'ichean) case assignment.
 
-    Per @cite{mondloch-2017} (Lessons 9, 15): K'iche' is a uniformly
+    Per [mondloch-2017] (Lessons 9, 15): K'iche' is a uniformly
     **ergative-absolutive** language without an aspect-conditioned
     split — Set A (ergative) cross-references A across all aspects;
     Set B (absolutive) cross-references S and P. This contrasts with
     its sister Kaqchikel, which has the construction-specific
-    inverted pattern in PROG `ajin`. Per @cite{imanishi-2014} fn. 26
+    inverted pattern in PROG `ajin`. Per [imanishi-2014] fn. 26
     p. 141, dialectal variation in K'ichean languages is non-trivial,
     but Mondloch documents no analogous K'iche' split. The aspect
     parameter is retained for shape-uniformity with the other Mayan
@@ -286,7 +286,7 @@ abbrev ergCaseKiche : Features.Prominence.ArgumentRole → Features.Case :=
 
 /-- San Juan Atitán Mam (K'ichean-Mamean / Eastern Mayan) case assignment.
 
-    Per @cite{scott-2023} ch. 3: SJA Mam is **morphologically
+    Per [scott-2023] ch. 3: SJA Mam is **morphologically
     tripartite** — A → ERG (Set A on Voice), P → ACC (no agreement;
     overt pronoun required), S → ABS (Set B on Infl). Mam lacks
     independent DP case morphology; the tripartite analysis is
@@ -296,7 +296,7 @@ abbrev ergCaseKiche : Features.Prominence.ArgumentRole → Features.Case :=
     ABS (structural from Infl).
 
     Other Mam dialects (notably Ixtahuacán Mam per England 1983b /
-    @cite{zavala-maldonado-2017} §4–5) have been characterized as
+    [zavala-maldonado-2017] §4–5) have been characterized as
     ergative with neutral patterns in dependent clauses, NOT
     tripartite. This substrate encodes Scott's SJA Mam analysis;
     alternative-dialect fragments would need a different
@@ -316,7 +316,7 @@ abbrev ergCaseMam : Features.Prominence.ArgumentRole → Features.Case :=
 
 /-- Tseltalan (Tseltal, Tsotsil) case assignment.
 
-    Per @cite{polian-2013} and @cite{aissen-polian-2025}: Tseltalan
+    Per [polian-2013] and [aissen-polian-2025]: Tseltalan
     languages are uniformly **ergative-absolutive** with no aspect-
     conditioned split (in contrast with their Cholan cousins). The
     aspect parameter is retained for shape-uniformity with the other
@@ -336,12 +336,12 @@ abbrev ergCaseTseltalan : Features.Prominence.ArgumentRole → Features.Case :=
 /-! The pan-Mayan person/number agreement paradigm is keyed by the canonical
     φ-cell `Agreement.Cell` (the same φ a `Pronoun`/`Word` carries): the six
     cells covering the cross-Mayan consensus (Cholan, K'ichean, Q'anjob'alan,
-    Tseltalan; @cite{kaufman-norman-1984} Tables 7-8) are exactly
+    Tseltalan; [kaufman-norman-1984] Tables 7-8) are exactly
     `Agreement.Cell.pnCells`. Per-language Set A / Set B tables are
     `Agreement.Paradigm String` values constructed over those cells, so a
-    controller's `Word.agrCell` indexes them directly (@cite{corbett-1998}).
+    controller's `Word.agrCell` indexes them directly ([corbett-1998]).
     Languages with a 1pl inclusive/exclusive split (Chol's `-on lojon` 1plExcl,
-    @cite{kaufman-norman-1984} p. 91) refine at the per-language level. -/
+    [kaufman-norman-1984] p. 91) refine at the per-language level. -/
 
 -- ============================================================================
 -- § 6: Verb Form (transitive vs Agent Focus)
@@ -358,7 +358,7 @@ inductive VerbForm where
 
 /-- Whether the form bears Set A agreement (ergative cross-reference).
     Canonical transitive: yes. AF: no (the agent loses Set A under
-    @cite{coon-mateo-pedro-preminger-2014}'s analysis). -/
+    [coon-mateo-pedro-preminger-2014]'s analysis). -/
 def VerbForm.hasSetA : VerbForm → Bool
   | .transitive => true
   | .agentFocus => false
@@ -375,9 +375,9 @@ abbrev ExponentTable := Agreement.Paradigm String
 
 /-- Decidable predicate: the third-person singular slot is morphologically
     null. An invariant of the **standard** Mayan branches per
-    @cite{kaufman-norman-1984} Table 8 — Set B 3sg null reconstructs to
+    [kaufman-norman-1984] Table 8 — Set B 3sg null reconstructs to
     proto-Cholan and proto-Mayan. **Not strictly pan-Mayan**: SJA Mam's
-    default Set B `tz'=` surfaces in the 3sg slot per @cite{scott-2023}
+    default Set B `tz'=` surfaces in the 3sg slot per [scott-2023]
     §3.3.2; the cross-Mayan theorem `mayan_p3sg_abs_null` quantifies
     only over `MayanLang.isStandard = true`. The predicate is
     **notation-agnostic** — surface notation varies by linearity:
@@ -402,7 +402,7 @@ instance (e : ExponentTable) : Decidable e.IsThirdSgZero := by
 /-- The morphological linearity of an agreement marker on the verb stem.
 
     Tseltalan languages contrast on this dimension: per
-    @cite{aissen-polian-2025} Table 1, Tseltal Set B is consistently
+    [aissen-polian-2025] Table 1, Tseltal Set B is consistently
     suffixal, while Tsotsil Set B is prefixal-or-suffixal depending on
     dialect and morphosyntactic context. Cholan and Q'anjob'alan Set B
     are uniformly suffixal. Set A is uniformly prefixal across all
@@ -433,7 +433,7 @@ def MayanLang.all : List MayanLang :=
 /-- The Mayan languages with the **standard ergative-absolutive base**
     (perfective ergative; Set B 3sg null per K&N reconstruction).
 
-    Mam is the **exception**: per @cite{scott-2023}, San Juan Atitán
+    Mam is the **exception**: per [scott-2023], San Juan Atitán
     Mam is morphologically **tripartite** (S, A, P each receive
     distinct case and agreement), and its Set B 3sg surfaces as the
     default `tz'=` form rather than null. The substrate exposes this

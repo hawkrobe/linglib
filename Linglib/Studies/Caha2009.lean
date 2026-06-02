@@ -30,9 +30,9 @@ import Linglib.Fragments.Yakut.Case
 
 /-!
 # Caha (2009) — The Nanosyntax of Case
-@cite{caha-2009} @cite{blake-1994}
+[caha-2009] [blake-1994]
 
-Caha's central proposal (@cite{caha-2009} §1.1): the morphosyntactic
+Caha's central proposal ([caha-2009] §1.1): the morphosyntactic
 representation of each case literally *contains* the representations
 of all cases below it on the universal hierarchy:
 `[[[[[ NOM ] ACC ] GEN ] DAT ] P ]`. This study file defines the
@@ -40,18 +40,18 @@ Caha-specific containment predicate `RespectsCahaContainment` and
 applies it to each Fragment case inventory.
 
 Caha's **Universal Case sequence** is NOM – ACC – GEN – DAT – INST –
-COM (@cite{caha-2009} (10b), p. 10); the Russian-specific sequence
-inserts a "prepositional" between GEN and DAT (@cite{caha-2009} (16),
+COM ([caha-2009] (10b), p. 10); the Russian-specific sequence
+inserts a "prepositional" between GEN and DAT ([caha-2009] (16),
 p. 12). Vocatives are explicitly excluded from Caha's scope
-(@cite{caha-2009} §1.1 fn. 4, p. 9). For the substrate's encoding of
+([caha-2009] §1.1 fn. 4, p. 9). For the substrate's encoding of
 this hierarchy and how it relates to Caha's actual sequence, see
 `Core/Case/Order.lean`.
 
 Of 22 Fragment case inventories, 19 conform; the three principled
 exceptions are: Dargwa (ergative — Caha is keyed to accusative
-alignment), Finnish (DAT-less, ALL → DAT extension per @cite{blake-1994}
+alignment), Finnish (DAT-less, ALL → DAT extension per [blake-1994]
 Ch. 6), and Hungarian (GEN-less, dative-as-possessor syncretism per
-@cite{caha-2008} §5).
+[caha-2008] §5).
 -/
 
 namespace Caha2009
@@ -89,7 +89,7 @@ theorem slavicCore_respectsCaha :
     RespectsCahaContainment Slavic.Case.coreInventory := by decide
 
 /-- Vacuous: `Syntax.Case.Order.containmentRank .voc = none` faithfully
-    encodes Caha's own scope choice (@cite{caha-2009} §1.1 fn. 4,
+    encodes Caha's own scope choice ([caha-2009] §1.1 fn. 4,
     p. 9: "Vocatives ... are ignored throughout this dissertation"). -/
 theorem slavicSeven_respectsCaha :
     RespectsCahaContainment Slavic.Case.sevenCaseInventory := by decide
@@ -194,15 +194,15 @@ theorem dargwa_not_respectsCaha :
     ¬ RespectsCahaContainment Dargwa.Case.caseInventory := by decide
 
 /-- Finnish has no dedicated dative — the allative (-lle) covers
-    recipient function (@cite{blake-1994} Ch. 6, ALL → DAT extension;
-    @cite{karlsson-2017} confirms). The inventory has rank 4 (LOC)
+    recipient function ([blake-1994] Ch. 6, ALL → DAT extension;
+    [karlsson-2017] confirms). The inventory has rank 4 (LOC)
     without rank 3 (DAT). -/
 theorem finnish_not_respectsCaha :
     ¬ RespectsCahaContainment Finnish.Case.caseInventory := by decide
 
 /-- Hungarian has no morphological genitive — both standard reference
-    grammars (@cite{kenesei-vago-fenyvesi-1998} §1.10, @cite{rounds-2001}
-    ch. 6) gloss -nak / -nek exclusively as dative; @cite{caha-2008} §5
+    grammars ([kenesei-vago-fenyvesi-1998] §1.10, [rounds-2001]
+    ch. 6) gloss -nak / -nek exclusively as dative; [caha-2008] §5
     (pp. 266–267) explicitly addresses Hungarian as the textbook
     Blake-hierarchy surface counterexample, citing Blake's own footnote
     that the GEN-less inventory is resolved by treating the dative as
@@ -234,7 +234,7 @@ were added; cross-Slavic narrative closes in § 4.6. -/
 
 namespace Slavic
 
-/-- Caha's Slavic-specific Case sequence (@cite{caha-2009} (16), p. 12
+/-- Caha's Slavic-specific Case sequence ([caha-2009] (16), p. 12
     for Russian; (7) p. 238 confirms the same for Serbian): NOM – ACC –
     GEN – PREP/LOC – DAT – INS. Re-export from
     `Syntax.Case.Order.cahaSlavicRank` (the substrate definition). For
@@ -249,7 +249,7 @@ abbrev slavicRank : Features.Case → Option (Fin 6) :=
     indices are equal. -/
 abbrev Paradigm := Fin 6 → Nat
 
-/-- Caha's Universal Contiguity (@cite{caha-2009} (10), p. 10) on a
+/-- Caha's Universal Contiguity ([caha-2009] (10), p. 10) on a
     Slavic paradigm. Defers to the domain-independent
     `Morphology.Containment.isContiguous` substrate (which
     `Morphology.Case.Allomorphy.AllomorphyPattern.IsContiguous` specializes

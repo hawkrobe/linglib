@@ -3,11 +3,11 @@ import Linglib.Semantics.Modality.EventRelativity
 /-!
 # Italian Modal Auxiliaries
 
-@cite{hacquard-2010} @cite{cinque-2004} @cite{hacquard-2006} @cite{rizzi-1978}
+[hacquard-2010] [cinque-2004] [hacquard-2006] [rizzi-1978]
 
 Italian modal auxiliaries *dovere* ('must') and *potere* ('can'), with
 their behavior under restructuring. These are the primary empirical
-evidence for @cite{hacquard-2006}'s event-relative analysis: when
+evidence for [hacquard-2006]'s event-relative analysis: when
 Italian modals appear in restructuring configurations (syntactically
 low, below AspP), they lose epistemic readings.
 
@@ -61,7 +61,7 @@ structure ItalianModalEntry where
     High: epistemic, deontic, circumstantial.
     Low (restructured): deontic, circumstantial only.
 
-    @cite{rizzi-1978}; @cite{hacquard-2006}, Ch. 4:
+    [rizzi-1978]; [hacquard-2006], Ch. 4:
     - "Gianni può essere intelligente" (epistemic, non-restructured)
     - "Gianni lo può fare" (root, restructured — clitic climbing) -/
 def potere : ItalianModalEntry where
@@ -75,7 +75,7 @@ def potere : ItalianModalEntry where
     High: epistemic, deontic, circumstantial.
     Low (restructured): deontic, circumstantial only.
 
-    @cite{rizzi-1978}; @cite{hacquard-2006}, Ch. 4:
+    [rizzi-1978]; [hacquard-2006], Ch. 4:
     - "Gianni deve essere a casa" (epistemic, non-restructured)
     - "Gianni deve lavorare" (deontic/circumstantial, restructured) -/
 def dovere : ItalianModalEntry where
@@ -90,7 +90,7 @@ def dovere : ItalianModalEntry where
 -- § 3. Restructuring Diagnostics
 -- ════════════════════════════════════════════════════
 
-/-- Restructuring diagnostics from @cite{rizzi-1978}. -/
+/-- Restructuring diagnostics from [rizzi-1978]. -/
 inductive RestructuringDiagnostic where
   /-- Clitic climbing: clitic raises past the modal to the higher verb -/
   | cliticClimbing
@@ -115,7 +115,7 @@ structure RestructuringExample where
 /-- Non-restructured *potere* — epistemic.
     "Gianni può essere intelligente" = Gianni may be intelligent.
     No clitic climbing; epistemic reading available.
-    @cite{hacquard-2006}, Ch. 4. -/
+    [hacquard-2006], Ch. 4. -/
 def potere_high : RestructuringExample where
   italian := "Gianni può essere intelligente."
   gloss := "Gianni can be intelligent."
@@ -126,7 +126,7 @@ def potere_high : RestructuringExample where
 /-- Restructured *potere* — root only.
     "Lo posso fare" = I can do it (clitic climbing).
     Clitic climbing diagnoses low position; epistemic unavailable.
-    @cite{rizzi-1978}; @cite{hacquard-2006}, Ch. 4. -/
+    [rizzi-1978]; [hacquard-2006], Ch. 4. -/
 def potere_low_clitic : RestructuringExample where
   italian := "Lo posso fare."
   gloss := "It I-can do."
@@ -137,7 +137,7 @@ def potere_low_clitic : RestructuringExample where
 /-- Non-restructured *dovere* — epistemic.
     "Gianni deve essere a casa" = Gianni must be at home.
     Epistemic necessity.
-    @cite{hacquard-2006}, Ch. 4. -/
+    [hacquard-2006], Ch. 4. -/
 def dovere_high : RestructuringExample where
   italian := "Gianni deve essere a casa."
   gloss := "Gianni must be at home."
@@ -148,7 +148,7 @@ def dovere_high : RestructuringExample where
 /-- Restructured *dovere* — deontic/root only.
     "È dovuto andare a casa" = He had to go home.
     Auxiliary change (*essere* from unaccusative *andare*).
-    @cite{rizzi-1978}; @cite{hacquard-2006}, Ch. 4. -/
+    [rizzi-1978]; [hacquard-2006], Ch. 4. -/
 def dovere_low_aux : RestructuringExample where
   italian := "È dovuto andare a casa."
   gloss := "He had-to go home."

@@ -65,7 +65,7 @@ instance (a : SubjectAssignment) (p : Person) : Decidable (a.allowsProDropAt p) 
 
 /-- Per-person anti-agreement licensing: the language drops a matrix
     finite subject of person `p` *under Ā-extraction* even when it
-    cannot drop the same subject in situ (@cite{baier-2018}). -/
+    cannot drop the same subject in situ ([baier-2018]). -/
 def licensesAntiAgreementAt (a : SubjectAssignment) (p : Person) : Prop :=
   a (.matrixExtracted p) = .null ∧ a (.matrixFinite p) = .overt
 
@@ -75,7 +75,7 @@ instance (a : SubjectAssignment) (p : Person) :
 
 /-- The language has overt PRO iff EVERY thematic person realizes
     controlled-subject position overtly. The honest quantified
-    version of @cite{ostrove-2026}'s "overt PRO" parameter. -/
+    version of [ostrove-2026]'s "overt PRO" parameter. -/
 def hasOvertPRO (a : SubjectAssignment) : Prop :=
   ∀ p ∈ thematicPersons, a.hasOvertPROAt p
 
@@ -115,7 +115,7 @@ def toProDropProfile (a : SubjectAssignment) : ProDropProfile :=
   { allowsProDrop := decide a.allowsProDrop,
     hasOvertPRO   := decide a.hasOvertPRO }
 
-/-- @cite{ostrove-2026}'s implicational universal applied to the
+/-- [ostrove-2026]'s implicational universal applied to the
     abstract assignment. Defined via the projection so there is one
     canonical `Satisfies` definition (`ProDropProfile.Satisfies`) and
     the assignment-level form is its lift. -/

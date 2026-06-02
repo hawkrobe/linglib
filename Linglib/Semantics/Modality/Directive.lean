@@ -2,9 +2,9 @@ import Linglib.Semantics.Modality.Kratzer.Flavor
 
 /-!
 # Directive Modality: Strong and Weak Necessity
-@cite{kratzer-2012} @cite{von-fintel-iatridou-2008}
+[kratzer-2012] [von-fintel-iatridou-2008]
 
-@cite{von-fintel-iatridou-2008} argue that natural languages systematically
+[von-fintel-iatridou-2008] argue that natural languages systematically
 distinguish **strong necessity** ("must", "have to") from **weak necessity**
 ("ought", "should"). The difference is not in modal force — both are universal
 quantifiers over best worlds — but in the ordering source.

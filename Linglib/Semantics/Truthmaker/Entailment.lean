@@ -1,21 +1,21 @@
 import Linglib.Semantics.Truthmaker.Inexact
 import Linglib.Semantics.Truthmaker.Closure
 
-/-! # Analytic Entailment and Consequence Relations @cite{jago-2026}
+/-! # Analytic Entailment and Consequence Relations [jago-2026]
 
 Truthmaker semantics distinguishes several inequivalent notions of
-consequence (@cite{jago-2026}):
+consequence ([jago-2026]):
 
 - **Exact entailment** `p ⊨ₑ q`: every exact verifier of `p` also
   exactly verifies `q`. Hyperintensional — sensitive to subject-matter.
 - **Inexact entailment** `p ⊨ᵢ q`: every inexact verifier of `p` also
   inexactly verifies `q`. Coarser than exact entailment. On basic
-  models @cite{jago-2026} reports a coincidence with **FDE**
-  (@cite{vanfraassen-1969}); FDE is not formalized in linglib, so
+  models [jago-2026] reports a coincidence with **FDE**
+  ([vanfraassen-1969]); FDE is not formalized in linglib, so
   this bridge is documented externally rather than proved here.
 - **Analytic / Angellic entailment (AC)** `p ≼ q`: corresponds to
   *content containment* — `p`'s content contains `q`'s content. This is
-  the system of @cite{jago-2026} (Fine 2016 *Angellic content*) and is
+  the system of [jago-2026] (Fine 2016 *Angellic content*) and is
   the natural truthmaker home for the law of conjunction elimination
   without disjunction introduction (`p ∧ q ⊢ p` but ⊬ `p ⊢ p ∨ q`).
 
@@ -31,7 +31,7 @@ This file:
 ## Cross-framework convergence
 
 `Santorio2018.IsTruthmaker p S` is the
-**world-extensional** truthmaker of @cite{santorio-2018}. It is now
+**world-extensional** truthmaker of [santorio-2018]. It is now
 defined as an `abbrev` for `ExactEntails` on the Bool extension:
 `IsTruthmaker p S := (p · = true) ⊨ₑ (S · = true)`. It does **not**
 correspond to `IsContentPart` (= `AnalyticEntails`); the Up clause and
@@ -42,7 +42,7 @@ drops. This non-equivalence is theorematised in
 `Semantics/Attitudes/Doxastic.lean`'s Hintikka `boxAt` is
 ∀-over-accessible-worlds; truthmaker `attHolds` (`Basic.lean`) is
 ∃-verifier-part-of-info-state. The empirical heart of
-@cite{bondarenko-elliott-2026} is exactly this divergence: `attHolds`
+[bondarenko-elliott-2026] is exactly this divergence: `attHolds`
 distinguishes hyperintensional content (witness: the headline theorem
 `subjectMatter_distinguishes_classically_equivalent` in `Basic.lean`),
 which `boxAt` cannot.
@@ -59,7 +59,7 @@ namespace Semantics.Truthmaker
 section Analytic
 variable {S : Type*} [Preorder S]
 
-/-- **Analytic entailment** (AC, @cite{jago-2026} after Fine 2016):
+/-- **Analytic entailment** (AC, [jago-2026] after Fine 2016):
     `p ≼ q` iff `q` is a content part of `p` — the Down clause says
     every verifier of `p` has a part verifying `q`, and the Up clause
     says every verifier of `q` is part of some verifier of `p`. This is
@@ -134,7 +134,7 @@ end ConjDisj
     `p` does not in general subsume `p ∨ q`. A verifier of `p ∨ q` that
     only verifies `q` need not have a part verifying `p`.
 
-    This is the @cite{jago-2026} headline distinction: classical,
+    This is the [jago-2026] headline distinction: classical,
     intuitionistic, and relevant logics all collapse `p ∨ (p ∧ q) ≡ p`
     in some directions, conflating containment-respecting and
     containment-violating consequence. Truthmaker semantics keeps the

@@ -2,7 +2,7 @@ import Linglib.Semantics.Dynamic.Connectives.CCP
 
 /-!
 # Update Semantics
-@cite{veltman-1996}
+[veltman-1996]
 
 In Update Semantics:
 - Information states are sets of worlds (not assignments)
@@ -139,7 +139,7 @@ def accepts {W : Type*} (s : State W) (φ : Update W) : Prop :=
 
     ψ₁,...,ψₙ ⊩₁ φ  iff  **0**[ψ₁]⋯[ψₙ] ⊨ φ
 
-    @cite{veltman-1996}, §1.2. This is the notion Veltman concentrates on:
+    [veltman-1996], §1.2. This is the notion Veltman concentrates on:
     it captures the fact that default conclusions depend on exactly what
     information is available. -/
 def valid₁ {W : Type*} (premises : List (Update W)) (conclusion : Update W) : Prop :=
@@ -161,7 +161,7 @@ def valid₃ {W : Type*} (premises : List (Update W)) (conclusion : Update W) : 
 
 /-- Validity₂ implies validity₁: specializing σ = **0**.
 
-    @cite{veltman-1996}, Proposition 1.3 (one direction, unconditional). -/
+    [veltman-1996], Proposition 1.3 (one direction, unconditional). -/
 theorem valid₂_imp_valid₁ {W : Type*}
     (premises : List (Update W)) (conclusion : Update W) :
     valid₂ premises conclusion → valid₁ premises conclusion :=
@@ -169,29 +169,29 @@ theorem valid₂_imp_valid₁ {W : Type*}
 
 /-- Validity₃ is monotonic: adding premises preserves validity.
 
-    @cite{veltman-1996}, §1.2: validity₃ is the only notion that is
+    [veltman-1996], §1.2: validity₃ is the only notion that is
     both left and right monotonic. -/
 theorem valid₃_monotone {W : Type*}
     (premises extra : List (Update W)) (conclusion : Update W) :
     valid₃ premises conclusion → valid₃ (premises ++ extra) conclusion :=
   fun h σ hsup => h σ (fun p hp => hsup p (List.mem_append_left extra hp))
 
--- ═══ Presuppositional Updates (§2.3 of @cite{yagi-2025}) ═══
+-- ═══ Presuppositional Updates (§2.3 of [yagi-2025]) ═══
 
 /-- The designated undefined state: update failure.
 
-    @cite{yagi-2025} Definition 5: when a presupposition is not satisfied,
+    [yagi-2025] Definition 5: when a presupposition is not satisfied,
     the update yields ∗. We model ∗ as `none` via `Option (State W)`. -/
 abbrev PState (W : Type*) := Option (State W)
 
 /-- Presuppositional update: update by φ_p is defined only when the
     presupposition p is supported (i.e. `s[p] = s`).
 
-    @cite{yagi-2025} Definition 5:
+    [yagi-2025] Definition 5:
       s[φ_p] = ∗  if s[p] ≠ s
              = s[φ]  otherwise
 
-    @cite{heim-1982} @cite{beaver-2001} @cite{veltman-1996} -/
+    [heim-1982] [beaver-2001] [veltman-1996] -/
 noncomputable def PUpdate.presup {W : Type*} (p φ : W → Prop) : PState W → PState W
   | none => none
   | some s =>
@@ -202,14 +202,14 @@ noncomputable def PUpdate.presup {W : Type*} (p φ : W → Prop) : PState W → 
 
 /-- Negation extended to PState: s[¬φ] = s/s[φ].
 
-    @cite{yagi-2025} Definition 4: s[¬φ] = s \ s[φ]. -/
+    [yagi-2025] Definition 4: s[¬φ] = s \ s[φ]. -/
 noncomputable def PUpdate.neg {W : Type*} (φ : W → Prop) : PState W → PState W
   | none => none
   | some s => some (s \ Update.prop φ s)
 
 /-- Disjunction extended to PState: s[φ ∨ ψ] = s[φ] ∪ s[¬φ][ψ].
 
-    @cite{yagi-2025} Definition 4, @cite{heim-1982}.
+    [yagi-2025] Definition 4, [heim-1982].
     Extended with ∗ ∪ s = s ∪ ∗ = ∗. -/
 noncomputable def PUpdate.disj {W : Type*} (φ ψ : W → Prop) :
     PState W → PState W
@@ -248,12 +248,12 @@ noncomputable def PUpdate.disjPresup {W : Type*} (p φ q ψ : W → Prop) :
 
 /-- **Flexible accommodation disjunction** (dynamic version).
 
-    @cite{yagi-2025} (13) / @cite{geurts-2005} / @cite{aloni-2022}:
+    [yagi-2025] (13) / [geurts-2005] / [aloni-2022]:
       s[φ ∨ ψ] = s[χ][φ] ∪ s[ω][ψ], where s[χ] ∪ s[ω] = s
 
     The propositions χ and ω *split* the state s into two substates.
     By default χ = ω = ⊤ (both tautological), but when the default
-    violates genuineness (@cite{zimmermann-2000}), the split becomes
+    violates genuineness ([zimmermann-2000]), the split becomes
     non-trivial: χ = ¬q and ω = ¬p for conflicting presuppositions. -/
 noncomputable def PUpdate.disjFlex {W : Type*}
     (χ φ_presup φ ω ψ_presup ψ : W → Prop)

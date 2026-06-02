@@ -2,11 +2,11 @@ import Linglib.Features.Coordination
 
 /-!
 # Hausa Coordination Morphemes
-@cite{schwartz-1989} @cite{haspelmath-2007}
+[schwartz-1989] [haspelmath-2007]
 
 Hausa (Chadic, Nigeria) uses *da* for both comitative ("with") and
-conjunction ("and") — a classic WITH-language in @cite{stassen-2000}'s
-classification. @cite{haspelmath-2007} (12) cites @cite{schwartz-1989}:32,36
+conjunction ("and") — a classic WITH-language in [stassen-2000]'s
+classification. [haspelmath-2007] (12) cites [schwartz-1989]:32,36
 for the data.
 
 - *da* — J, free, prepositive medial: "A da B" = 'A and B' / 'A with B'

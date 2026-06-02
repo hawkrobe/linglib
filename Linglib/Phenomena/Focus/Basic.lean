@@ -8,7 +8,7 @@ Empirical data on focus interpretation effects (association with focus, contrast
 
 - `FocusDatum`: Data structure for focus examples
 - `FIPApplication`: Types of focus interpretation effects
-- Classic examples from @cite{rooth-1992}
+- Classic examples from [rooth-1992]
 
 -/
 
@@ -36,7 +36,7 @@ structure FocusDatum where
   source : String := ""
   deriving Repr
 
--- Part 1: Association with Focus (@cite{rooth-1992} §2.1)
+-- Part 1: Association with Focus ([rooth-1992] §2.1)
 
 /-!
 ## "Only" Associates with Focus
@@ -84,7 +84,7 @@ def evenExample : FocusDatum := {
 def focusingAdverbExamples : List FocusDatum :=
   [roothOnlyBill, roothOnlySue, evenExample]
 
--- Part 2: Contrast and Parallelism (@cite{rooth-1992} §3)
+-- Part 2: Contrast and Parallelism ([rooth-1992] §3)
 
 /-!
 ## Contrast in Discourse

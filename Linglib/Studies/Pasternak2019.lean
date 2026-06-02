@@ -6,9 +6,9 @@ import Linglib.Core.Mereology
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
-# @cite{pasternak-2019}: Intensity in the Mereology of Mental States
+# [pasternak-2019]: Intensity in the Mereology of Mental States
 
-@cite{pasternak-2019}
+[pasternak-2019]
 
 Pasternak argues that intensity is a **monotonic measure function** on
 mental states: a more intense psychological state is "bigger" along a
@@ -120,7 +120,7 @@ and pattern with the monotonic readings. -/
 /-- The five English measurement constructions Pasternak §2 surveys. -/
 inductive MeasurementConstruction : Type where
   /-- `twelve ounces of gold` (Pasternak (5), PDF p.272;
-      @cite{krifka-1989}, @cite{schwarzschild-2002, schwarzschild-2006};
+      [krifka-1989], [schwarzschild-2002] [schwarzschild-2006];
       Pasternak also cites Brasoveanu 2009 NELS 38 — not in linglib bib) -/
   | pseudopartitive
   /-- `water out the wazoo` / `snow in spades` (Pasternak (10)–(11), PDF p.274) -/
@@ -128,11 +128,11 @@ inductive MeasurementConstruction : Type where
   /-- `Mara swam a lot` (Pasternak (12), PDF p.275) -/
   | adverbialMeasurePhrase
   /-- `more snow than Williamstown did` (Pasternak (15), PDF p.276;
-      @cite{schwarzschild-2002, schwarzschild-2006},
-      @cite{wellwood-hacquard-pancheva-2012}, @cite{wellwood-2015}) -/
+      [schwarzschild-2002] [schwarzschild-2006],
+      [wellwood-hacquard-pancheva-2012], [wellwood-2015]) -/
   | nominalComparative
   /-- `Dee ran more than Evan did` (Pasternak (1), PDF p.268;
-      @cite{wellwood-hacquard-pancheva-2012}, @cite{wellwood-2015}) -/
+      [wellwood-hacquard-pancheva-2012], [wellwood-2015]) -/
   | verbalComparative
   deriving DecidableEq, Repr
 
@@ -142,7 +142,7 @@ Pasternak's (27) (PDF p.278): `⟦hate⟧_deg = λx.λd.λe. hate(e) ∧ Thm(e, 
 ∧ μ_int(e) ≥ d`. The verb's denotation includes the intensity measure
 `μ_int` and a degree threshold. Theta-role assignment (`Thm`, `Exp`)
 is supplied by a `ThematicFrame` at use sites (Pasternak follows
-@cite{kratzer-1996} severance: Voice/v introduces the experiencer,
+[kratzer-1996] severance: Voice/v introduces the experiencer,
 not the verb).
 -/
 
@@ -294,7 +294,7 @@ The biconditional form. Forward direction is exactly `Mereology.DIV`
 
 /-- Mental state homogeneity (Pasternak (55)): the predicate is closed
     under taking parts. Defined as `Mereology.DIV` — the substrate-level
-    downward-closure primitive @cite{champollion-2017} §2.3.3. -/
+    downward-closure primitive [champollion-2017] §2.3.3. -/
 def MentalStateHomogeneity {Event : Type*} [Preorder Event] (P : Event → Prop) : Prop :=
   Mereology.DIV P
 
@@ -346,7 +346,7 @@ for sort-determined predicates (using `Event.Mereology.sort_preserved`),
 and a g-homogeneity bridge to `Core/Mereology.lean::gHomogeneous`
 (triggered when the carrier is a `PartialOrder`).
 
-CSW @cite{cariani-santorio-wellwood-2024} share Pasternak's monotonicity
+CSW [cariani-santorio-wellwood-2024] share Pasternak's monotonicity
 discipline: their eq. (21) is the same `StrictMono` constraint exposed
 as `StatesBased.admissibleMeasure` (multi-tradition naming there). The
 architectural mismatch with Pasternak is theme typing — Pasternak's
@@ -438,7 +438,7 @@ follow-up. Out of scope here because it is not load-bearing for §1–§6.
 
 Pasternak §5 integrates Hintikkan world-quantification into the two-
 dimensional ontology via point-states (eq. 67), `WANT_vF` (eq. 73,
-@cite{von-fintel-1999}), `WANT_H` (eq. 91, @cite{heim-1992}), and DOG.
+[von-fintel-1999]), `WANT_H` (eq. 91, [heim-1992]), and DOG.
 The substrate has `Attitudes.Desire.wantVF` and
 `Attitudes.Desire.worldAtLeastAsGood` already; the Pasternak §5
 integration is a composition with `MentalStateHomogeneity`, not new
@@ -447,15 +447,15 @@ this file) is the natural next paper-level deepening, alongside
 Phillips-Brown 2018 (Sinn und Bedeutung) on graded want — also not in
 linglib bib yet.
 
-The chronologically-later @cite{phillips-brown-2025} formalization
+The chronologically-later [phillips-brown-2025] formalization
 (`Studies/PhillipsBrown2025.lean`) builds on the same
 `Attitudes.Desire` substrate, generalizing `wantVF` to question-based
 `wantQuestionBased`. That study file's §11 makes the disagreement with
-@cite{condoravdi-lauer-2016} explicit; the analogous Pasternak vs
+[condoravdi-lauer-2016] explicit; the analogous Pasternak vs
 question-based contrast (intensity-based vs question-based resolution
 of conflicting desires) is left as future work.
 
-The chronologically-later @cite{lassiter-2017} formalization
+The chronologically-later [lassiter-2017] formalization
 (`Studies/Lassiter2017.lean`) sits structurally
 adjacent to Pasternak: both are gradable-`want` accounts (Pasternak
 intensity, Lassiter expected value) using ℚ-valued degree functions.

@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Aristotelian.Basic
 /-!
 # Square of Opposition
 
-@cite{barwise-cooper-1981} @cite{horn-2001}. The Aristotelian square reified as an
+[barwise-cooper-1981] [horn-2001]. The Aristotelian square reified as an
 algebraic object: four corners `A`, `E`, `I`, `O` over a Boolean algebra, related
 by contradiction (A–O, E–I), contrariety (A–E), subcontrariety (I–O), and
 subalternation (A→I, E→O). Concrete instantiations (quantifiers, modals,

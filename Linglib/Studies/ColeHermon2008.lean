@@ -5,9 +5,9 @@ import Linglib.Syntax.Minimalist.Movement.Remnant
 import Linglib.Fragments.TobaBatak.Basic
 
 /-!
-# VP Raising in a VOS Language @cite{cole-hermon-2008}
+# VP Raising in a VOS Language [cole-hermon-2008]
 
-@cite{cole-hermon-2008} argue that VOS word order in Toba Batak derives
+[cole-hermon-2008] argue that VOS word order in Toba Batak derives
 from VP-raising to Spec,TP (or more precisely, VoiceP-raising to Spec,FP
 in their full analysis), rather than from rightward subject shift or
 base-generation. Three lines of evidence converge:
@@ -47,7 +47,7 @@ The Extended Projection Principle (EPP) requires Spec,TP to be filled.
 Cross-linguistically, languages differ in *how* this requirement is
 satisfied, yielding different basic word orders from the same
 underlying vP-internal structure. This is the parameter space
-@cite{cole-hermon-2008} exploit. -/
+[cole-hermon-2008] exploit. -/
 
 /-- What satisfies the EPP (requirement to fill Spec,TP). -/
 inductive EPPStrategy where
@@ -194,7 +194,7 @@ theorem english_moves_subject :
     The derived tree is `[TP [VP V Obj] [T' T [vP Subj [v' v tVP]]]]`.
     VP is the left daughter of TP; its sister T' dominates the subject.
 
-    @cite{cole-hermon-2008} use this c-command relation to explain:
+    [cole-hermon-2008] use this c-command relation to explain:
     - **Freezing**: the raised VP is a moved constituent in specifier
       position, making it an island for extraction. Elements inside VP
       (including the direct object) are frozen and cannot Ā-extract.
@@ -230,7 +230,7 @@ theorem epp_predicts_order :
 
 /-! ### Freezing under VP-raising
 
-@cite{cole-hermon-2008} §4: the VP-raising analysis predicts extraction
+[cole-hermon-2008] §4: the VP-raising analysis predicts extraction
 restrictions via **freezing**. The raised VP/VoiceP is a moved constituent
 in specifier position, making it an island (following the Sentential
 Subject Constraint / Condition on Extraction Domain). The predictions:
@@ -287,7 +287,7 @@ theorem extraction_matches_vp_containment :
 
 /-! ### Binding data from Table 1
 
-@cite{cole-hermon-2008} §3.4–§5 present binding data that bear on the
+[cole-hermon-2008] §3.4–§5 present binding data that bear on the
 choice between a c-command analysis and the Semantic Hierarchy Condition
 of Schachter (1984b) and Sugamoto (1984). The key data from Table 1:
 
@@ -310,7 +310,7 @@ both should be ill-formed, since in both cases the patient antecedes the
 agent reflexive).
 -/
 
-/-- Binding acceptability from Table 1 of @cite{cole-hermon-2008}. -/
+/-- Binding acceptability from Table 1 of [cole-hermon-2008]. -/
 inductive BindingAcceptability where
   /-- Type A: fully acceptable for all speakers. -/
   | fullyAcceptable
@@ -446,7 +446,7 @@ theorem vp_ccommands_subject_decide :
 
 /-! ### The VOS Hypothesis
 
-@cite{cole-hermon-2008} §5: SVO order is common in Toba Batak (~1/3 of
+[cole-hermon-2008] §5: SVO order is common in Toba Batak (~1/3 of
 sentences). Two competing analyses:
 
 - **SVO Hypothesis**: SVO sentences have underlying SVO and VoiceP never
@@ -522,7 +522,7 @@ theorem svo_has_two_movements :
 
 /-! ### English passives and the agent-as-adjunct analysis
 
-@cite{cole-hermon-2008} §7 extends the VP-raising analysis to English
+[cole-hermon-2008] §7 extends the VP-raising analysis to English
 passives, predicting why English and Toba Batak differ on passive binding.
 
 The key structural difference: in TB, the passive agent is an *argument*
@@ -541,7 +541,7 @@ Consequence:
 
 We model the English passive with the agent as a low complement of V
 (representing the by-phrase adjunct) and the patient as specifier of VP
-(following @cite{larson-1988}), with no external argument in Spec,vP.
+(following [larson-1988]), with no external argument in Spec,vP.
 -/
 
 def v_injured     := mkLeafPhon .V [] "was-injured" 21
@@ -653,7 +653,7 @@ end ColeHermon2008
 
 /-! ### Toba Batak VP-raising as a `RemnantFronting` instance
 
-@cite{cole-hermon-2008}'s VP-raising analysis is one of the canonical
+[cole-hermon-2008]'s VP-raising analysis is one of the canonical
 empirical motivations for remnant-XP movement substrate
 (`Syntax/Minimalist/Movement/Remnant.lean`). The full §4
 analysis has IO/Adv evacuating before VoiceP raises — making the

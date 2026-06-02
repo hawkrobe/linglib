@@ -1,9 +1,9 @@
 /-!
-# Manambu Medial Clause Markers @cite{aikhenvald-2008}
+# Manambu Medial Clause Markers [aikhenvald-2008]
 
 
 Medial clause markers (clause chain linkers) in Manambu (Ndu family, East Sepik,
-Papua New Guinea). Data from @cite{aikhenvald-2008} and @cite{sarvasy-aikhenvald-2025}.
+Papua New Guinea). Data from [aikhenvald-2008] and [sarvasy-aikhenvald-2025].
 
 Manambu has a rich system of medial clause markers that encode:
 1. **Switch-reference**: SS (same subject) vs. DS (different subject), or neutral
@@ -12,7 +12,7 @@ Manambu has a rich system of medial clause markers that encode:
 3. **Subject agreement**: some DS markers trigger subject agreement on the
    medial verb; SS markers do not
 
-## Inventory (@cite{sarvasy-aikhenvald-2025}: Table 3)
+## Inventory ([sarvasy-aikhenvald-2025]: Table 3)
 
 | Form | SR | Meaning | Subject marking |
 |------|-----|---------|-----------------|
@@ -50,7 +50,7 @@ structure MarkerEntry where
   deriving Repr, BEq
 
 -- ============================================================================
--- § Marker inventory (@cite{sarvasy-aikhenvald-2025}: Table 3)
+-- § Marker inventory ([sarvasy-aikhenvald-2025]: Table 3)
 -- ============================================================================
 
 /-- -ku: SS, temporal completive 'after'. No subject marking. -/

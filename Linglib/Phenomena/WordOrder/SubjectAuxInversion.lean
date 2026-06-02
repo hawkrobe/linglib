@@ -1,6 +1,6 @@
 /-!
 # Subject-Auxiliary Inversion: Empirical Data
-@cite{radford-2009} @cite{adger-2003} @cite{sag-wasow-bender-2003} @cite{chomsky-1957} @cite{henry-1995} @cite{klima-1964} @cite{mccloskey-2006} @cite{westergaard-2009}
+[radford-2009] [adger-2003] [sag-wasow-bender-2003] [chomsky-1957] [henry-1995] [klima-1964] [mccloskey-2006] [westergaard-2009]
 
 Theory-neutral data on subject-auxiliary inversion (SAI) in English and beyond.
 
@@ -13,8 +13,8 @@ conditionals, exclamatives, and shows systematic dialectal variation.
 ## Classic Data
 
 The core SAI pattern has been a central case study in generative syntax
-since @cite{chomsky-1957}. Textbook presentations: @cite{radford-2009},
-@cite{adger-2003}, @cite{sag-wasow-bender-2003}.
+since [chomsky-1957]. Textbook presentations: [radford-2009],
+[adger-2003], [sag-wasow-bender-2003].
 
 ## Boundary Cases
 
@@ -141,7 +141,7 @@ def ex05 : SAIDatum :=
     context := .matrixYN
     acceptability := .ungrammatical
     description := "Polar question without inversion"
-    citation := "@cite{radford-2009}" }
+    citation := "[radford-2009]" }
 
 def ex06 : SAIDatum :=
   { sentence := "Is the cat sleeping?"
@@ -168,7 +168,7 @@ def ex08 : SAIDatum :=
     context := .embedded
     acceptability := .ungrammatical
     description := "Embedded question with inversion (Standard English)"
-    citation := "@cite{radford-2009}" }
+    citation := "[radford-2009]" }
 
 def ex09 : SAIDatum :=
   { sentence := "She asked whether John had left"
@@ -190,7 +190,7 @@ def ex10 : SAIDatum :=
     description := "Echo question — wh-in-situ, no inversion" }
 
 -- ============================================================================
--- § 3  Negative Inversion (@cite{klima-1964})
+-- § 3  Negative Inversion ([klima-1964])
 -- ============================================================================
 
 /-! When a negative or restrictive adverbial is fronted, SAI is obligatory.
@@ -205,7 +205,7 @@ def ex11 : SAIDatum :=
     context := .negativeInversion
     acceptability := .grammatical
     description := "Fronted negative adverb triggers inversion"
-    citation := "@cite{klima-1964}" }
+    citation := "[klima-1964]" }
 
 def ex12 : SAIDatum :=
   { sentence := "Never I have seen such a thing"
@@ -320,7 +320,7 @@ def ex23 : SAIDatum :=
     context := .embeddedDialectal
     acceptability := .dialectal
     description := "Belfast English embedded inversion with 'wonder'"
-    citation := "@cite{henry-1995}" }
+    citation := "[henry-1995]" }
 
 def ex24 : SAIDatum :=
   { sentence := "I asked would she help"
@@ -328,7 +328,7 @@ def ex24 : SAIDatum :=
     context := .embeddedDialectal
     acceptability := .dialectal
     description := "Belfast English embedded inversion with 'ask'"
-    citation := "@cite{henry-1995}" }
+    citation := "[henry-1995]" }
 
 def ex25 : SAIDatum :=
   { sentence := "I don't know is he coming"
@@ -336,7 +336,7 @@ def ex25 : SAIDatum :=
     context := .embeddedDialectal
     acceptability := .dialectal
     description := "Hiberno-English embedded inversion"
-    citation := "@cite{mccloskey-2006}" }
+    citation := "[mccloskey-2006]" }
 
 def ex26 : SAIDatum :=
   { sentence := "I told him could he come"
@@ -344,13 +344,13 @@ def ex26 : SAIDatum :=
     context := .embeddedDialectal
     acceptability := .ungrammatical
     description := "Embedded inversion with 'tell' blocked even in Belfast English"
-    citation := "@cite{henry-1995}" }
+    citation := "[henry-1995]" }
 
 -- ============================================================================
--- § 7  The French/English Verb Movement Contrast (@cite{pollock-1989})
+-- § 7  The French/English Verb Movement Contrast ([pollock-1989])
 -- ============================================================================
 
-/-! @cite{pollock-1989} established that French and English differ fundamentally in
+/-! [pollock-1989] established that French and English differ fundamentally in
 verb movement. French lexical verbs obligatorily raise to I (T), placing them
 before adverbs, negation, and floating quantifiers. English lexical verbs
 stay in situ, below adverbs and negation.
@@ -393,7 +393,7 @@ def ex_p01 : SAIDatum :=
     acceptability := .grammatical
     language := "French"
     description := "French lexical verb inverts (V-to-I-to-C)"
-    citation := "@cite{pollock-1989}" }
+    citation := "[pollock-1989]" }
 
 def ex_p02 : SAIDatum :=
   { sentence := "Likes he Mary?"
@@ -401,7 +401,7 @@ def ex_p02 : SAIDatum :=
     context := .matrixYN
     acceptability := .ungrammatical
     description := "English lexical verb cannot invert (*V-to-C)"
-    citation := "@cite{pollock-1989}" }
+    citation := "[pollock-1989]" }
 
 /-- Pollock (4): Adverb placement diagnostic -/
 
@@ -412,7 +412,7 @@ def ex_p03 : SAIDatum :=
     acceptability := .grammatical
     language := "French"
     description := "French V raises past adverb (V > Adv)"
-    citation := "@cite{pollock-1989}" }
+    citation := "[pollock-1989]" }
 
 def ex_p04 : SAIDatum :=
   { sentence := "John kisses often Mary"
@@ -420,7 +420,7 @@ def ex_p04 : SAIDatum :=
     context := .verbRaising
     acceptability := .ungrammatical
     description := "English V cannot raise past adverb (*V > Adv)"
-    citation := "@cite{pollock-1989}" }
+    citation := "[pollock-1989]" }
 
 def ex_p05 : SAIDatum :=
   { sentence := "John often kisses Mary"
@@ -428,7 +428,7 @@ def ex_p05 : SAIDatum :=
     context := .verbRaising
     acceptability := .grammatical
     description := "English Adv precedes V (Adv > V)"
-    citation := "@cite{pollock-1989}" }
+    citation := "[pollock-1989]" }
 
 def ex_p06 : SAIDatum :=
   { sentence := "Jean souvent embrasse Marie"
@@ -437,7 +437,7 @@ def ex_p06 : SAIDatum :=
     acceptability := .ungrammatical
     language := "French"
     description := "French Adv cannot precede V (*Adv > V, V must raise)"
-    citation := "@cite{pollock-1989}" }
+    citation := "[pollock-1989]" }
 
 /-- Pollock (2): Negation diagnostic -/
 
@@ -448,7 +448,7 @@ def ex_p07 : SAIDatum :=
     acceptability := .grammatical
     language := "French"
     description := "French V raises past negation (V > Neg)"
-    citation := "@cite{pollock-1989}" }
+    citation := "[pollock-1989]" }
 
 def ex_p08 : SAIDatum :=
   { sentence := "John likes not Mary"
@@ -456,7 +456,7 @@ def ex_p08 : SAIDatum :=
     context := .sententialNegation
     acceptability := .ungrammatical
     description := "English V cannot raise past negation (*V > Neg)"
-    citation := "@cite{pollock-1989}" }
+    citation := "[pollock-1989]" }
 
 /-- Pollock (5): Floating quantifier diagnostic -/
 
@@ -467,7 +467,7 @@ def ex_p09 : SAIDatum :=
     acceptability := .grammatical
     language := "French"
     description := "French V raises past floating quantifier (V > FQ)"
-    citation := "@cite{pollock-1989}" }
+    citation := "[pollock-1989]" }
 
 def ex_p10 : SAIDatum :=
   { sentence := "My friends love all Mary"
@@ -475,7 +475,7 @@ def ex_p10 : SAIDatum :=
     context := .verbRaising
     acceptability := .ungrammatical
     description := "English V cannot raise past floating quantifier (*V > FQ)"
-    citation := "@cite{pollock-1989}" }
+    citation := "[pollock-1989]" }
 
 /-- English auxiliaries DO raise (unlike lexical verbs) — same diagnostic -/
 
@@ -485,7 +485,7 @@ def ex_p11 : SAIDatum :=
     context := .verbRaising
     acceptability := .grammatical
     description := "English auxiliary raises past adverb (Aux > Adv)"
-    citation := "@cite{pollock-1989}" }
+    citation := "[pollock-1989]" }
 
 def ex_p12 : SAIDatum :=
   { sentence := "John often has eaten pizza"
@@ -493,17 +493,17 @@ def ex_p12 : SAIDatum :=
     context := .verbRaising
     acceptability := .marginal
     description := "English adverb before auxiliary — marginal (Aux should raise)"
-    citation := "@cite{pollock-1989}" }
+    citation := "[pollock-1989]" }
 
 -- ============================================================================
 -- § 8  Do-Support and Generalized Head Movement
---      (@cite{pollock-1989}, @cite{arregi-pietraszko-2021})
+--      ([pollock-1989], [arregi-pietraszko-2021])
 -- ============================================================================
 
 /-! SAI interacts with do-support: when no auxiliary is present, 'do' is
 inserted to host tense and carry out inversion.
 
-@cite{arregi-pietraszko-2021} unify upward displacement (T-to-C in SAI) and
+[arregi-pietraszko-2021] unify upward displacement (T-to-C in SAI) and
 downward displacement (T-to-V lowering) as a single operation: Generalized
 Head Movement (GenHM). Under GenHM, the same mechanism of M-value sharing
 drives both. The crucial empirical support is that lexical verbs trigger
@@ -535,7 +535,7 @@ def ex27 : SAIDatum :=
     context := .matrixWh
     acceptability := .grammatical
     description := "Do-support in wh-question (lexical verb)"
-    citation := "@cite{arregi-pietraszko-2021}" }
+    citation := "[arregi-pietraszko-2021]" }
 
 def ex28 : SAIDatum :=
   { sentence := "Eats John pizza?"
@@ -559,7 +559,7 @@ def ex30 : SAIDatum :=
     context := .matrixWh
     acceptability := .grammatical
     description := "Auxiliary inverts directly — no do-support"
-    citation := "@cite{arregi-pietraszko-2021}" }
+    citation := "[arregi-pietraszko-2021]" }
 
 def ex31 : SAIDatum :=
   { sentence := "Where does Sue be eating fish?"
@@ -567,7 +567,7 @@ def ex31 : SAIDatum :=
     context := .matrixWh
     acceptability := .ungrammatical
     description := "Do-support with auxiliary is ungrammatical"
-    citation := "@cite{arregi-pietraszko-2021}" }
+    citation := "[arregi-pietraszko-2021]" }
 
 /-- The negation/verum parallel (same auxiliary vs lexical verb contrast) -/
 
@@ -577,7 +577,7 @@ def ex32 : SAIDatum :=
     context := .sententialNegation
     acceptability := .grammatical
     description := "Do-support in sentential negation (lexical verb)"
-    citation := "@cite{arregi-pietraszko-2021}" }
+    citation := "[arregi-pietraszko-2021]" }
 
 def ex33 : SAIDatum :=
   { sentence := "Sue not eats fish"
@@ -585,7 +585,7 @@ def ex33 : SAIDatum :=
     context := .sententialNegation
     acceptability := .ungrammatical
     description := "Lexical verb cannot raise past negation"
-    citation := "@cite{arregi-pietraszko-2021}" }
+    citation := "[arregi-pietraszko-2021]" }
 
 def ex34 : SAIDatum :=
   { sentence := "Sue is not eating fish"
@@ -593,7 +593,7 @@ def ex34 : SAIDatum :=
     context := .sententialNegation
     acceptability := .grammatical
     description := "Auxiliary raises past negation — no do-support"
-    citation := "@cite{arregi-pietraszko-2021}" }
+    citation := "[arregi-pietraszko-2021]" }
 
 def ex35 : SAIDatum :=
   { sentence := "Sue does not be eating fish"
@@ -601,7 +601,7 @@ def ex35 : SAIDatum :=
     context := .sententialNegation
     acceptability := .ungrammatical
     description := "Do-support with auxiliary is ungrammatical even in negation"
-    citation := "@cite{arregi-pietraszko-2021}" }
+    citation := "[arregi-pietraszko-2021]" }
 
 -- ============================================================================
 -- § 8b  Additional Do-Support Contexts (Tag Questions, VP Ellipsis, Verum)
@@ -640,7 +640,7 @@ def ex39 : SAIDatum :=
     context := .emphatic
     acceptability := .grammatical
     description := "Verum focus with do-support (lexical verb)"
-    citation := "@cite{arregi-pietraszko-2021}" }
+    citation := "[arregi-pietraszko-2021]" }
 
 def ex40 : SAIDatum :=
   { sentence := "She IS eating fish"
@@ -648,7 +648,7 @@ def ex40 : SAIDatum :=
     context := .emphatic
     acceptability := .grammatical
     description := "Verum focus with auxiliary — no do-support needed"
-    citation := "@cite{arregi-pietraszko-2021}" }
+    citation := "[arregi-pietraszko-2021]" }
 
 def ex41 : SAIDatum :=
   { sentence := "She DOES be eating fish"
@@ -656,7 +656,7 @@ def ex41 : SAIDatum :=
     context := .emphatic
     acceptability := .ungrammatical
     description := "Do-support with auxiliary is ungrammatical even for verum"
-    citation := "@cite{arregi-pietraszko-2021}" }
+    citation := "[arregi-pietraszko-2021]" }
 
 -- ============================================================================
 -- Aggregate Collections

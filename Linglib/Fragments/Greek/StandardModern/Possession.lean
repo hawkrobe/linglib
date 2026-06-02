@@ -2,9 +2,9 @@ import Linglib.Typology.Possession
 
 /-!
 # Standard Modern Greek possession profile
-@cite{stassen-2009} @cite{nichols-1986} @cite{heine-1997}
-@cite{holton-mackridge-philippaki-warburton-spyropoulos-2012}
-@cite{kampanarou-alexiadou-2026}
+[stassen-2009] [nichols-1986] [heine-1997]
+[holton-mackridge-philippaki-warburton-spyropoulos-2012]
+[kampanarou-alexiadou-2026]
 
 `PossessionProfile` bundle for Standard Modern Greek (SMG; ISO `ell`), per
 the project's per-language data flows through Fragments rule. Substrate
@@ -14,8 +14,8 @@ consume this profile from `Studies/NicholsBickel2013.lean`.
 Greek is the canonical case of a language that **morphologically** has a
 single adnominal possession class (no alienable/inalienable split is marked
 on the noun) yet **structurally** distinguishes the two via the position of
-the possessor (per @cite{kampanarou-alexiadou-2026} §7, citing
-@cite{alexiadou-2003}: inalienable possessors are introduced as complements
+the possessor (per [kampanarou-alexiadou-2026] §7, citing
+[alexiadou-2003]: inalienable possessors are introduced as complements
 of the possessee NP, alienable possessors in the specifier of a dedicated
 PossP). The structural distinction is not visible on `PossessionProfile`,
 which is a typological-surface bundle; it lives in
@@ -23,16 +23,16 @@ which is a typological-surface bundle; it lives in
 
 The `apo`-PP variant of the genitive (e.g., *to vivlio apo ton ðimarxo*
 'the book of the mayor') is a partitive-coerced alternative to inflectional
-genitive (per @cite{kampanarou-alexiadou-2026} §5). Felicity is gated by
+genitive (per [kampanarou-alexiadou-2026] §5). Felicity is gated by
 the relation type (part-whole and source: free; ownership and kinship:
 degraded) and by whether the possessor can be construed as a set (modified
 or pluralised possessors are felicitous). The licensing apparatus lives in
 `Studies/KampanarouAlexiadou2026.lean`.
 
 For the dialect contrast, see `Fragments/Greek/Grevena/Possession.lean`
-(genitive-loss endpoint per @cite{michelioudakis-chatzikyriakidis-spathas-2024})
+(genitive-loss endpoint per [michelioudakis-chatzikyriakidis-spathas-2024])
 and `Fragments/Greek/Smyrna/Possession.lean` (over-extended genitive per
-@cite{kampanarou-alexiadou-2026} fn 7, citing @cite{liosis-2016}).
+[kampanarou-alexiadou-2026] fn 7, citing [liosis-2016]).
 -/
 
 set_option autoImplicit false
@@ -48,7 +48,7 @@ def genNotions : List PossessiveNotion :=
    .inanimateInalienable, .inanimateAlienable]
 
 /-- Heine notions naturally expressible by the SMG `apo`-PP variant.
-    Restricted set per @cite{kampanarou-alexiadou-2026} (5)–(11): part-whole
+    Restricted set per [kampanarou-alexiadou-2026] (5)–(11): part-whole
     and source-like readings; ownership and kinship are degraded
     (the `apo`-PP coerces a partitive interpretation). -/
 def apoNotions : List PossessiveNotion :=

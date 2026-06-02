@@ -2,7 +2,7 @@ import Linglib.Semantics.Genericity.Generics
 import Linglib.Features.Genericity
 
 /-!
-# @cite{nickel-2009}: Generics and the Ways of Normality
+# [nickel-2009]: Generics and the Ways of Normality
 
 Bernhard Nickel, "Generics and the Ways of Normality",
 *Linguistics and Philosophy* 31 (2009), 629–648.
@@ -10,7 +10,7 @@ Bernhard Nickel, "Generics and the Ways of Normality",
 ## The Problem: Conjunctive Generics
 
 Nickel criticizes majority-based views of generics (including
-@cite{cohen-1999a}'s probability-based GEN) by showing they cannot
+[cohen-1999a]'s probability-based GEN) by showing they cannot
 handle conjunctive generics like:
 
     (1) Elephants live in Africa and Asia.
@@ -110,7 +110,7 @@ def nickelConjunctiveGEN
 
 -- The Majority-Based View (for comparison)
 
-/-- Majority-based GEN (@cite{cohen-1999a}'s view): generic is true iff
+/-- Majority-based GEN ([cohen-1999a]'s view): generic is true iff
     prevalence exceeds 1/2. Structurally identical to `cohenGEN` in
     `Cohen1999.lean` — both are `thresholdGeneric` with θ = 1/2, just
     instantiated at different domain types (Entity here, Situation there). -/
@@ -251,9 +251,9 @@ theorem nickel_single_way_is_traditional
 
 | View | Normality | GEN formula | Handles elephants? |
 |------|-----------|-------------|-------------------|
-| @cite{cohen-1999a} | Probability > 0.5 | P(Q\|P) > 0.5 | No |
-| @cite{asher-pelletier-2012} | Modal ordering | ∀w ≤ w₀. P(x,w) → Q(x,w) | Partially |
-| @cite{nickel-2009} | Ways of being normal | ∃w. ∀x. normal(x,w) → Q(x) | Yes |
+| [cohen-1999a] | Probability > 0.5 | P(Q\|P) > 0.5 | No |
+| [asher-pelletier-2012] | Modal ordering | ∀w ≤ w₀. P(x,w) → Q(x,w) | Partially |
+| [nickel-2009] | Ways of being normal | ∃w. ∀x. normal(x,w) → Q(x) | Yes |
 
 The three views are formalized in:
 - `Cohen1999.lean` (probability)

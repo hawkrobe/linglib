@@ -5,19 +5,19 @@ import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 import Linglib.Core.Computability.NonContextFree.AnBnCn
 
 /-!
-# Pullum & Gazdar (1982) @cite{gazdar-pullum-1982}
+# Pullum & Gazdar (1982) [gazdar-pullum-1982]
 
 Natural Languages and Context-Free Languages.
 *Linguistics and Philosophy*, 4(4), 471–504.
 
 ## Core Argument
 
-@cite{gazdar-pullum-1982} systematically examine every published argument
+[gazdar-pullum-1982] systematically examine every published argument
 purporting to demonstrate the non-context-freeness of some natural language,
 and show that each is invalid — either empirically or formally. The five
 arguments examined:
 
-1. **Comparatives** (§2): @cite{chomsky-1963} claims English comparative
+1. **Comparatives** (§2): [chomsky-1963] claims English comparative
    constructions form an xy language (requiring nonidentity between substrings
    x and y). P&G show the empirical premise is wrong (the data doesn't support
    the nonidentity claim) and the formal premise is false: infinitely many xy
@@ -30,7 +30,7 @@ arguments examined:
    confuses grammaticality with arithmetic truth — the sentences are
    grammatical regardless of whether the digits are correct.
 
-3. **Respectively** (§4): Bar-Hillel & Shamir (1960) and @cite{langendoen-1978}
+3. **Respectively** (§4): Bar-Hillel & Shamir (1960) and [langendoen-1978]
    argue that *respectively* constructions require matching the number of
    elements in two lists, creating non-CF dependencies. P&G show both the
    empirical characterization of English *respectively* data and the formal
@@ -60,7 +60,7 @@ Two constructive results are formalized here:
 
 2. **The critical distinction**: Cross-serial word order alone is CF (grammar
    29). What is non-CF is cross-serial order PLUS case agreement across
-   unbounded depth — proven for Swiss German by @cite{shieber-1985},
+   unbounded depth — proven for Swiss German by [shieber-1985],
    formalized in `Shieber1985`.
 
 ## Architectural Note
@@ -79,7 +79,7 @@ namespace PullumGazdar1982
 
 /-! ### §2: xy Languages Can Be Context-Free
 
-@cite{gazdar-pullum-1982} refute @cite{chomsky-1963}'s claim that xy
+[gazdar-pullum-1982] refute [chomsky-1963]'s claim that xy
 languages are inherently non-context-free. The language
 {aⁿbᵐ | n ≠ m} is both an xy language (nonidentity between the a-block
 and b-block) and context-free.
@@ -111,7 +111,7 @@ open Symbol in
     - S₂ → S₂b | aS₂b | b     (n < m: at least one extra b)
 
     This refutes the claim that xy languages are inherently non-CF.
-    @cite{gazdar-pullum-1982} §2, with grammar (9) for the more general case. -/
+    [gazdar-pullum-1982] §2, with grammar (9) for the more general case. -/
 def xyGrammar : ContextFreeGrammar XYT where
   NT := XYNT
   initial := .S
@@ -171,7 +171,7 @@ section DutchGrammar
 
 /-- Terminal symbols for Dutch subordinate clause verb phrases.
 
-    Following @cite{gazdar-pullum-1982} grammar (29b), these are the
+    Following [gazdar-pullum-1982] grammar (29b), these are the
     syntactic categories of words that appear in Dutch verb-final
     subordinate clauses. Each category determines the verb's valency
     (transitive vs intransitive) and whether it takes a VP complement. -/
@@ -195,7 +195,7 @@ inductive DutchNT where
   deriving DecidableEq, Repr
 
 open Symbol in
-/-- @cite{gazdar-pullum-1982} grammar (29): a context-free grammar generating
+/-- [gazdar-pullum-1982] grammar (29): a context-free grammar generating
     Dutch subordinate clause verb phrases with correct NP-verb valency.
 
     Syntactic rules (29a):
@@ -210,7 +210,7 @@ open Symbol in
     Crucially, this grammar makes NO case-agreement demands: the NPs are
     untyped. This is why the string set is context-free. Adding case
     agreement (requiring NP case to match verb case across unbounded depth)
-    takes the language beyond CF — that is @cite{shieber-1985}'s argument. -/
+    takes the language beyond CF — that is [shieber-1985]'s argument. -/
 def dutchGrammar : ContextFreeGrammar DutchT where
   NT := DutchNT
   initial := .A
@@ -306,18 +306,18 @@ end DutchGrammar
 -- ============================================================================
 
 /-- **The critical distinction.** Cross-serial word order alone is context-free
-    (@cite{gazdar-pullum-1982} grammar 29, demonstrated above). What takes
+    ([gazdar-pullum-1982] grammar 29, demonstrated above). What takes
     the language beyond CF is cross-serial order PLUS case agreement — the
     requirement that dative NPs match dative verbs and accusative NPs match
     accusative verbs across unbounded depth.
 
     This distinction resolves the apparent contradiction:
-    - @cite{bresnan-etal-1982} argue Dutch cross-serial dependencies are non-CF
-    - @cite{gazdar-pullum-1982} show CF grammars CAN generate cross-serial strings
-    - @cite{shieber-1985} proves Swiss German IS non-CF, using case-marking
+    - [bresnan-etal-1982] argue Dutch cross-serial dependencies are non-CF
+    - [gazdar-pullum-1982] show CF grammars CAN generate cross-serial strings
+    - [shieber-1985] proves Swiss German IS non-CF, using case-marking
 
-    The resolution: @cite{bresnan-etal-1982}'s argument relied on constituency
-    assumptions. The valid proof (@cite{shieber-1985}) uses case agreement,
+    The resolution: [bresnan-etal-1982]'s argument relied on constituency
+    assumptions. The valid proof ([shieber-1985]) uses case agreement,
     which grammar (29) deliberately omits. -/
 theorem crossSerial_order_cf_but_caseMatching_not :
     -- Cross-serial word order is context-free (grammar 29 generates it)
@@ -327,12 +327,12 @@ theorem crossSerial_order_cf_but_caseMatching_not :
   ⟨⟨dutchGrammar, trivial⟩, anbncndn_not_pumpable⟩
 
 /-- The question of whether natural languages are context-free remained open
-    as of 1982. @cite{gazdar-pullum-1982} conclude: "Notice that this paper
+    as of 1982. [gazdar-pullum-1982] conclude: "Notice that this paper
     has not claimed that all natural languages are CFL's. What it has shown
     is that every published argument purporting to demonstrate the
     non-context-freeness of some natural language is invalid."
 
-    The question was settled by @cite{shieber-1985}, who provided the first
+    The question was settled by [shieber-1985], who provided the first
     valid proof (for Swiss German) using case-marking — a purely string-based
     argument making no constituency assumptions. -/
 theorem question_settled_by_shieber :

@@ -71,7 +71,7 @@ structure AuxEntry where
       Note: "past" modals (*could*, *would*) carry `Past` as a morphological
       feature even when semantically non-past (counterfactual, polite). -/
   tense : Option UD.Tense := none
-  /-- Modal meaning in the force-flavor space (Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}).
+  /-- Modal meaning in the force-flavor space (Imel, Guo, & [imel-guo-steinert-threlkeld-2026]).
       Empty for non-modal auxiliaries. -/
   modalMeaning : List ForceFlavor := []
   /-- Register level. Formal items (*must*,
@@ -83,23 +83,23 @@ structure AuxEntry where
       `true` when the contracted form cannot be derived by regular *-n't*
       suffixation (e.g., *won't* ← *will*, *can't* ← *can*, *don't* ← *do*). -/
   negIrregular : Bool := false
-  /-- Modal feature interpretability (@cite{zeijlstra-2007}).
+  /-- Modal feature interpretability ([zeijlstra-2007]).
       Modal auxiliaries carry **uninterpretable** features [u∃/∀-MOD]:
       they are semantically vacuous and checked by a c-commanding
       interpretable operator. Non-modal auxiliaries (do, be, have) carry
       no modal feature (`none`).
 
-      @cite{ciardelli-guerrini-2026} use this to derive narrow-scope
+      [ciardelli-guerrini-2026] use this to derive narrow-scope
       LFs for "may A or may B" via modal concord: both "may"s carry
       [u∃-MOD], checked by a single silent [i∃-MOD] operator. -/
   interpretability : Option ModalInterpretability := none
   deriving Repr, BEq
 
--- Modals (no agreement). Modal meanings follow @cite{kratzer-1981}, @cite{palmer-2001}.
+-- Modals (no agreement). Modal meanings follow [kratzer-1981], [palmer-2001].
 -- Each uses cartesianProduct with singleton force (fixed force, variable flavor).
 private abbrev cp := ForceFlavor.cartesianProduct
 
--- Modals. Negative forms from @cite{zwicky-pullum-1983}, Table 1.
+-- Modals. Negative forms from [zwicky-pullum-1983], Table 1.
 def can : AuxEntry where
   form := "can"; auxType := .modal
   modalMeaning := cp [.possibility] [.epistemic, .deontic, .circumstantial]

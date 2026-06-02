@@ -5,8 +5,8 @@ import Linglib.Pragmatics.RSA.Noisy
 import Linglib.Pragmatics.RSA.Sequential
 
 /-!
-# @cite{schlotterbeck-wang-2023} — Incremental RSA for Adjective Ordering (sanity-check slice)
-@cite{cohn-gordon-goodman-potts-2019} @cite{degen-etal-2020} @cite{waldon-degen-2021}
+# [schlotterbeck-wang-2023] — Incremental RSA for Adjective Ordering (sanity-check slice)
+[cohn-gordon-goodman-potts-2019] [degen-etal-2020] [waldon-degen-2021]
 
 Schlotterbeck, F. & Wang, H. (2023). An incremental RSA model for adjective
 ordering preferences in referential visual context. *Proceedings of the Society
@@ -31,7 +31,7 @@ equivalence statement.
 What this file does **not** formalize:
 - Asymmetric per-class semantics (k%-threshold for size dimensions à la
   Schmidt et al. 2009 / Cremers 2022 / Franke et al. 2019, vs binomial-ε
-  for color à la @cite{degen-etal-2020})
+  for color à la [degen-etal-2020])
 - The language model `P_Lang` constraining S1's per-step vocabulary to
   grammatical continuations
 - The utterance-prior bias `b` for size-first defaults
@@ -45,7 +45,7 @@ score reduces to a per-prefix product of literal-listener posteriors:
   S1^inc(w₁,...,wₙ | r) ∝ ∏ₖ L0(r | w₁,...,wₖ)
 
 The L0 meaning is the Product-of-Experts noisy semantics
-(@cite{degen-etal-2020}): each word contributes an independent ℚ-valued
+([degen-etal-2020]): each word contributes an independent ℚ-valued
 factor `lex(w, r)`, and the prefix meaning is their product. With strictly
 positive `lex`, the product commutes (`RSA.prefixMeaning_perm`), so the
 full-sequence L0 posterior is order-independent.
@@ -122,7 +122,7 @@ def reliabilityQ (sRel cRel : ℚ) : Word → ℚ
 
 /-- Noisy word meaning: returns reliability if the word truly applies,
     `1 − reliability` (noise floor) otherwise. Bernoulli-channel form of
-    @cite{degen-etal-2020}'s continuous semantics. -/
+    [degen-etal-2020]'s continuous semantics. -/
 def lexQ (sRel cRel : ℚ) (w : Word) (r : Referent) : ℚ :=
   if wordApplies w r then reliabilityQ sRel cRel w
   else 1 - reliabilityQ sRel cRel w
@@ -206,7 +206,7 @@ theorem prefix_meaning_swap_head (sRel cRel : ℚ) (hs0 : 0 ≤ sRel) (hs1 : sRe
   (noisyLex sRel cRel hs0 hs1 hc0 hc1).prefixMeaning_perm (List.Perm.swap b a rest) r
 
 /-- Two-word prefix meaning decomposes as a product of per-word noisy
-    meanings (the Product-of-Experts structure of @cite{degen-etal-2020}). -/
+    meanings (the Product-of-Experts structure of [degen-etal-2020]). -/
 theorem prefix_meaning_product (sRel cRel : ℚ) (hs0 : 0 ≤ sRel) (hs1 : sRel ≤ 1)
     (hc0 : 0 ≤ cRel) (hc1 : cRel ≤ 1) (a b : Word) (r : Referent) :
     (noisyLex sRel cRel hs0 hs1 hc0 hc1).prefixMeaning [a, b] r =
@@ -305,7 +305,7 @@ theorem both_orderings_identify_target_B :
 
 /-- `lexQ` is an instance of the unified noise channel from `RSA.Noise`:
     onMatch = `reliabilityQ`, onMismatch = `1 − reliabilityQ`. Connects
-    @cite{schlotterbeck-wang-2023} to the @cite{degen-etal-2020}
+    [schlotterbeck-wang-2023] to the [degen-etal-2020]
     parameterization where mismatch = 1 − match. -/
 theorem lexQ_as_noiseChannel (sRel cRel : ℚ) (w : Word) (r : Referent) :
     lexQ sRel cRel w r =

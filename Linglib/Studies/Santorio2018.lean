@@ -8,7 +8,7 @@ import Linglib.Studies.McKayVanInwagen1977
 
 /-!
 # Santorio 2018 — Alternative-Sensitive Conditional Semantics
-@cite{santorio-2018}
+[santorio-2018]
 
 Self-contained formalization of *Alternatives and truthmakers in
 conditional semantics*, *The Journal of Philosophy* 115(10): 513–549.
@@ -16,7 +16,7 @@ conditional semantics*, *The Journal of Philosophy* 115(10): 513–549.
 ## Substrate consumption
 
 Built on `Conditionals.Counterfactual.universalCounterfactual` (the
-canonical @cite{lewis-1973}/Kratzer universal counterfactual operator)
+canonical [lewis-1973]/Kratzer universal counterfactual operator)
 and on `Truthmaker.ExactEntails` (= `≤` on `TMProp`,
 `Truthmaker/Inexact.lean`). Predicates are typed `Prop` with
 `DecidablePred` instances throughout — no Bool-vs-Prop adapters. The
@@ -38,8 +38,8 @@ predicate.
 - §7 Generic truthmaker lemmas
 - §8 Hyperintensionality / SLE failure (§VI)
 - §9 Otto/Anna stability worked example (pp. 535–537)
-- §10 Spain analysis on top of @cite{mckay-vaninwagen-1977} data
-- §11 Cross-framework: Santorio classical truthmaker ≠ @cite{jago-2026}
+- §10 Spain analysis on top of [mckay-vaninwagen-1977] data
+- §11 Cross-framework: Santorio classical truthmaker ≠ [jago-2026]
   Fine-style content parthood
 
 ## Faithfulness notes
@@ -58,7 +58,7 @@ predicate.
    (with DIST_π) vs. asymmetric/Lewis (without DIST_π — modal extracts
    the disjunctive closure, p. 547). The "DCR" (Disjunctive Conditional
    Reading) is **not** Santorio's term; it is named in
-   @cite{zani-ciardelli-sanfelici-2026} (p. 10) and lives in that file.
+   [zani-ciardelli-sanfelici-2026] (p. 10) and lives in that file.
 
 3. **Stability non-emptiness.** Santorio's definition (p. 540) does not
    include a non-empty clause; he discharges the empty-σ case via the
@@ -69,7 +69,7 @@ predicate.
 
 4. **Fox–Santorio relationship (footnote 40 p. 540).** Santorio
    observes that minimal stability is "something like the converse" of
-   @cite{fox-2007}'s **maximal exclusion** (note: not innocent
+   [fox-2007]'s **maximal exclusion** (note: not innocent
    exclusion, which is the intersection of maximals). He does not say
    "dual" and hedges. The general theorem
    `santorio_minimal_stable_dual_to_fox_maximal_exclusion` is not
@@ -107,15 +107,15 @@ predicate.
 
 ## Citations engaged in the formalization
 
-@cite{lewis-1973} (universal counterfactual substrate),
-@cite{kratzer-1981} / @cite{kratzer-1991} / @cite{kratzer-2012}
+[lewis-1973] (universal counterfactual substrate),
+[kratzer-1981] / [kratzer-1991] / [kratzer-2012]
 (premise/restrictor semantics, sibling no-SDA tradition),
-@cite{katzir-2007} (structural alternative generation, source of ALT_S),
-@cite{kriz-spector-2021} (homogeneity-style trivalent option declined
-by fn 52 p. 545), @cite{chierchia-2013} (domain alternatives, fn 40
-p. 540), @cite{cariani-goldstein-2020} (sibling homogeneity account,
-see `CarianiGoldstein2020.lean`), @cite{mckay-vaninwagen-1977} (Spain
-data, §10), @cite{jago-2026} (Fine-style truthmaker contrast, §11).
+[katzir-2007] (structural alternative generation, source of ALT_S),
+[kriz-spector-2021] (homogeneity-style trivalent option declined
+by fn 52 p. 545), [chierchia-2013] (domain alternatives, fn 40
+p. 540), [cariani-goldstein-2020] (sibling homogeneity account,
+see `CarianiGoldstein2020.lean`), [mckay-vaninwagen-1977] (Spain
+data, §10), [jago-2026] (Fine-style truthmaker contrast, §11).
 Santorio also engages Alonso-Ovalle 2009 (§III precursor, no bib
 entry yet), Klinedinst (scalar account refuted in §II, no bib entry
 yet), Schlenker 2004 ("Conditionals as Definite Descriptions" — the
@@ -217,7 +217,7 @@ instance (alts : List (DecAlt W)) :
 
 /-- **DIST_π-absent reading** (§V p. 547): the modal `would` extracts
     the disjunctive closure of the alternatives, evaluating min_w(⋁S)
-    against C. Reduces to @cite{lewis-1973}'s universal counterfactual
+    against C. Reduces to [lewis-1973]'s universal counterfactual
     on the disjunctive closure. -/
 def disjunctiveCounterfactual (sim : SimilarityOrdering W)
     (alts : List (DecAlt W)) (C : W → Prop) [DecidablePred C]
@@ -254,7 +254,7 @@ theorem sda_iff_homogeneity_true (sim : SimilarityOrdering W)
 -- § 4. Lewis Bridge
 -- ════════════════════════════════════════════════════
 
-/-- `disjunctiveCounterfactual` IS @cite{lewis-1973}'s universal
+/-- `disjunctiveCounterfactual` IS [lewis-1973]'s universal
     counterfactual on the disjunctive closure of the alternatives.
     Definitionally true; named for explicit cross-framework consumption. -/
 theorem disjunctiveCounterfactual_eq_universalCounterfactual_disjunctiveClosure
@@ -473,7 +473,7 @@ end OttoAnna
 
 /-!
 Per CLAUDE.md "chronological dependency": this 2018 study consumes
-@cite{mckay-vaninwagen-1977}'s 1977 data (worlds, similarity
+[mckay-vaninwagen-1977]'s 1977 data (worlds, similarity
 ordering, disjunct predicates).
 -/
 
@@ -481,15 +481,15 @@ private def spainAlts : List (DecAlt McKayVanInwagen1977.SpainWorld) :=
   [⟨McKayVanInwagen1977.foughtAxis, inferInstance⟩,
    ⟨McKayVanInwagen1977.foughtAllies, inferInstance⟩]
 
-/-- @cite{santorio-2018}'s homogeneity verdict on the
-    @cite{mckay-vaninwagen-1977} Spain scenario: `.indet` (mixed
+/-- [santorio-2018]'s homogeneity verdict on the
+    [mckay-vaninwagen-1977] Spain scenario: `.indet` (mixed
     results across the two alternatives), demonstrating the `Truth3`
     middle column. -/
 theorem spain_homogeneity_gap :
     homogeneityEval McKayVanInwagen1977.spainSim
       spainAlts McKayVanInwagen1977.foughtAxis .actual = .indet := by decide
 
-/-- @cite{santorio-2018}'s SDA verdict on the same scenario: FALSE
+/-- [santorio-2018]'s SDA verdict on the same scenario: FALSE
     (the Allies simplification fails). -/
 theorem spain_sda_false :
     ¬ sdaEval McKayVanInwagen1977.spainSim
@@ -501,7 +501,7 @@ theorem spain_sda_false :
 -- ════════════════════════════════════════════════════
 
 /-!
-@cite{santorio-2018}'s `IsTruthmaker` is `ExactEntails` from
+[santorio-2018]'s `IsTruthmaker` is `ExactEntails` from
 `Truthmaker/Inexact.lean` (the Down clause only). Fine-style
 `IsContentPart` adds the Up clause: every part of the truthmade
 proposition extends to a part of the truthmaker. The two relations are
@@ -529,7 +529,7 @@ theorem santorio_truthmaker_neq_fine_content_part :
 -- ════════════════════════════════════════════════════
 
 /-!
-@cite{santorio-2018}'s introduction (pp. 513–514) lists three
+[santorio-2018]'s introduction (pp. 513–514) lists three
 constraints on classical counterfactual logic that the paper refutes:
 
 - **Constraint #1**: Antecedent Strengthening — `(A □→ C) ⊨ (A ∧ B) □→ C`
@@ -538,7 +538,7 @@ constraints on classical counterfactual logic that the paper refutes:
 - **Constraint #3**: Substitution of Logical Equivalents (SLE)
 
 The Spain analysis (§10) refutes Constraint #1 via
-@cite{mckay-vaninwagen-1977} data; `sle_fails` (§8) refutes
+[mckay-vaninwagen-1977] data; `sle_fails` (§8) refutes
 Constraint #3. Constraint #2 is engaged throughout (it IS the central
 phenomenon under DIST_π) — the theorem below states it as a structural
 witness anchored to the named constraint.
@@ -573,7 +573,7 @@ section KareninaWP
 /-! ### Santorio vs. Alonso-Ovalle on Karenina/W&P (§IV.3 pp. 537–539)
 
 For the prejacent **(35)** "Every student read War and Peace or
-Anna Karenina", @cite{santorio-2018}'s stability algorithm (running
+Anna Karenina", [santorio-2018]'s stability algorithm (running
 on Katzir-generated 8-alternative ALT_S, eqn (48) p. 538) identifies
 **three** minimal-stable subsets, each yielding one truthmaker:
 
@@ -582,12 +582,12 @@ on Katzir-generated 8-alternative ALT_S, eqn (48) p. 538) identifies
 - σ₃ = {∀(A∨W), ∃(A), ∃(W), ∃(A∨W)} → "**some** students read AK
   and **some** students read W&P" (the **mixed truthmaker**)
 
-@cite{alonso-ovalle-2009}'s pointwise computation (running only on
+[alonso-ovalle-2009]'s pointwise computation (running only on
 the disjunct alternatives `{∀(A), ∀(W)}` per his Or Rule (10) p. 212)
 identifies only **two** truthmakers (the universals); the mixed
 truthmaker is invisible to AO's local algorithm.
 
-@cite{santorio-2018}'s example (39) p. 539:
+[santorio-2018]'s example (39) p. 539:
 "If every student read AK or W&P, the world would be a better place.
  **But if some students read AK and some read W&P, the world would
  not be a better place.**"
@@ -612,7 +612,7 @@ private instance : Fintype KareninaWorld where
   elems := {.actual, .everyAK, .everyWP, .mixed, .everyBoth}
   complete x := by cases x <;> simp
 
-/-! ### Alternative predicates per @cite{santorio-2018} (48) p. 538 -/
+/-! ### Alternative predicates per [santorio-2018] (48) p. 538 -/
 
 /-- ∀(A∧W) — every student read both AK and W&P. -/
 private def everyReadAandW (w : KareninaWorld) : Prop := w = .everyBoth
@@ -650,7 +650,7 @@ private instance : DecidablePred someReadW := fun w => by
 private instance : DecidablePred someReadAorW := fun w => by
   unfold someReadAorW; exact inferInstance
 
-/-- ALT_S per @cite{santorio-2018} (48) p. 538: the 8 Katzir-
+/-- ALT_S per [santorio-2018] (48) p. 538: the 8 Katzir-
     generated structural alternatives for "every student read AK or
     W&P". Index map: 0=∀(A∧W), 1=∀(A), 2=∀(W), 3=∀(A∨W) [prejacent],
     4=∃(A∧W), 5=∃(A), 6=∃(W), 7=∃(A∨W). -/
@@ -696,8 +696,8 @@ theorem karenina_sigmaWP_realized_at_everyWP :
     conjunctiveClosure kareninaAlts kareninaSigmaWP .everyWP := by decide
 
 /-- **The mixed truthmaker is realized at `.mixed`** — the load-bearing
-    fact distinguishing @cite{santorio-2018} from
-    @cite{alonso-ovalle-2009}. At `.mixed`, every student reads at
+    fact distinguishing [santorio-2018] from
+    [alonso-ovalle-2009]. At `.mixed`, every student reads at
     least one book, some students read AK, some students read W&P, and
     no student reads both. -/
 theorem karenina_sigmaMixed_realized_at_mixed :
@@ -707,11 +707,11 @@ theorem karenina_sigmaMixed_realized_at_mixed :
 
 /-- **Santorio finds the mixed truthmaker; Alonso-Ovalle 2009 cannot.**
 
-    @cite{alonso-ovalle-2009}'s alternative set for the prejacent
+    [alonso-ovalle-2009]'s alternative set for the prejacent
     "every student read AK or W&P" is just the two disjunct universals
     `{∀(A), ∀(W)}` (from the Hamblin Or Rule (10) p. 212 plus the
     universal force §2.2.3 p. 218). At the `.mixed` world neither AO
-    alternative holds. But @cite{santorio-2018}'s `kareninaSigmaMixed`
+    alternative holds. But [santorio-2018]'s `kareninaSigmaMixed`
     truthmaker IS realized at `.mixed`. AO's pointwise alternative
     generation thus undergenerates the truthmaker set: the mixed-
     reading way for the antecedent to be true is invisible to AO but

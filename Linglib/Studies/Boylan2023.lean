@@ -6,7 +6,7 @@ import Mathlib.Data.Fin.Basic
 
 /-!
 # Putting *oughts* together
-@cite{boylan-2023}
+[boylan-2023]
 
 Semantics and Pragmatics 16, Article 5: 1–53.
 
@@ -23,7 +23,7 @@ three independently motivated components:
 
 2. **Question-sensitivity**: The ordering only ranks partial answers to a
    contextually supplied relevance question Q, following
-   @cite{karttunen-1977}'s partition semantics.
+   [karttunen-1977]'s partition semantics.
 
 3. **Pairwise consistency definedness**: *ought* is defined only when all
    pairs in PBEST are consistent with the background information.
@@ -65,8 +65,8 @@ Dessert) and comparisons (conflict account, Kratzer bridge).
 - Bridges to `Kratzer.Background` (`isConsistent` ↔ `pairConsistent`).
 - Connects to `Kratzer.Flavor` (`EpistemicFlavor`, `DeonticFlavor`).
 - Contrasts with the universal-quantifier accounts in `Directive.lean`
-  (@cite{von-fintel-iatridou-2008}) and `Rubinstein2014.lean`
-  (@cite{rubinstein-2014}), which model weak necessity as ∀ over refined
+  ([von-fintel-iatridou-2008]) and `Rubinstein2014.lean`
+  ([rubinstein-2014]), which model weak necessity as ∀ over refined
   best-world sets. Boylan's operator is existential over propositions.
 -/
 
@@ -880,7 +880,7 @@ theorem boylan_correct_office :
 
 /-! ## The conflict account wrongly predicts dilemmas
 
-The conflict account (@cite{von-fintel-2012}, @cite{horty-2012}) says
+The conflict account ([von-fintel-2012], [horty-2012]) says
 ⟦ought φ⟧ = 1 iff some maximally consistent subset of the best propositions
 entails φ. In The Office, this predicts epistemic dilemmas: for each worker,
 there is an MCS entailing their absence. Boylan argues this is wrong — The

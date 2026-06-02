@@ -5,7 +5,7 @@ import Mathlib.Tactic.Linarith
 /-!
 # Cobreros, Egré, Ripley & van Rooij 2012: 4-Element Sorites Model
 
-@cite{cobreros-etal-2012}
+[cobreros-etal-2012]
 
 The paper's worked 4-element example (described in the body text on
 p. 354, immediately above footnote 4), formalized against the substrate
@@ -47,7 +47,7 @@ a proper "borderline-verdict comparator" theorem awaits its formalisation.
 
 The asymmetric-engagement reciprocation: `LassiterGoodman2017PMF.lean::lg_literal_borderline_bounded`
 proves L&G's literal-meaning rule predicts ≤ 25% acceptance for
-borderline `tall ∧ ¬ tall`, well below the @cite{alxatib-pelletier-2011}
+borderline `tall ∧ ¬ tall`, well below the [alxatib-pelletier-2011]
 empirical 44.7%. That paper's docstring cites TCS as the alternative
 that handles the data; this file's `b_tolerant_contradiction` shows the
 TCS prediction direction matches the data.

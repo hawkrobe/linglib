@@ -1,9 +1,9 @@
 import Linglib.Syntax.Minimalist.NestedAgree
 
 /-!
-# @cite{amato-2025} — Filler-gap case studies via Nested Agree
+# [amato-2025] — Filler-gap case studies via Nested Agree
 
-@cite{amato-2025} (NLLT) §4.2.3 extends Nested Agree from Agree
+[amato-2025] (NLLT) §4.2.3 extends Nested Agree from Agree
 features to **Merge features**, deriving order-preserving multiple
 wh-fronting in Bulgarian (and Romanian) from a probe stack on C
 where the Merge probe `[•wh•]` is restricted by Nested Agree to the
@@ -68,7 +68,7 @@ both a wh-subject and a wh-object, the surface order is wh-sbj > wh-obj
 matching base-merge order, *not* the order standard minimality would
 predict (which would require wh-sbj first regardless of base order).
 
-@cite{amato-2025} §4.2.3 derives order-preservation from Nested Agree
+[amato-2025] §4.2.3 derives order-preservation from Nested Agree
 applied to Merge features:
 
 1. C bears `[*wh*] ≻ [•wh•]` — Agree feature first, Merge feature

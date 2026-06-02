@@ -2,7 +2,7 @@ import Linglib.Core.Logic.Intensional.Variables
 
 /-!
 # Maximality and Coppock–Beaver Factorization
-@cite{sharvy-1980} @cite{kriz-2015} @cite{coppock-beaver-2015} @cite{russell-1905}
+[sharvy-1980] [kriz-2015] [coppock-beaver-2015] [russell-1905]
 
 Predicate operators consumed by the `Description` interpretation function in
 `Core/Nominal/Interpret.lean`. All operators live over
@@ -10,21 +10,21 @@ Predicate operators consumed by the `Description` interpretation function in
 
 ## What this module provides
 
-- **Coppock–Beaver factorization** (@cite{coppock-beaver-2015}): the Russellian
+- **Coppock–Beaver factorization** ([coppock-beaver-2015]): the Russellian
   iota is split into two independent predicates over restrictors —
   `Existence` (∃x. P x) and `Uniqueness` (∀ x y. P x → P y → x = y). The
   classical Russellian condition `existsUnique` is the conjunction.
 
-- **Sharvy maximality** (@cite{sharvy-1980}): the maximal P-satisfier under a
+- **Sharvy maximality** ([sharvy-1980]): the maximal P-satisfier under a
   partial order on `F.Entity`. For singular count nouns this collapses to
   Russellian iota; for plurals (with a join-semilattice on entities) it
   returns the join of all satisfiers. We supply both:
     - `russellIota` — order-free unique-element selector
     - `sharvyMax` — preorder-relative maximal-element selector
 
-- **Križ homogeneity** (@cite{kriz-2015}): the predicate `homogeneous P S`
+- **Križ homogeneity** ([kriz-2015]): the predicate `homogeneous P S`
   holds when the scope predicate is either uniformly true or uniformly false
-  on the satisfiers of P. Required for the @cite{kriz-2015} semantics of
+  on the satisfiers of P. Required for the [kriz-2015] semantics of
   plural definites, where "the boys are tall" presupposes homogeneity rather
   than universality.
 
@@ -34,10 +34,10 @@ Predicate operators consumed by the `Description` interpretation function in
   `Core/Nominal/Interpret.lean` wires `Description` constructors to them.
 
 - **Ord-free vs. order-relative.** `russellIota` uses only `Eq`; `sharvyMax`
-  requires `PartialOrder F.Entity`. This is the @cite{sharvy-1980} /
-  @cite{link-1983} split: singular definites work over flat individuals,
+  requires `PartialOrder F.Entity`. This is the [sharvy-1980] /
+  [link-1983] split: singular definites work over flat individuals,
   plural definites need the join-semilattice from mereology
-  (@cite{link-1983}).
+  ([link-1983]).
 
 - **`Option` is the right return type.** A definite description with an
   unsatisfied uniqueness presupposition has no referent; rather than throw
@@ -54,12 +54,12 @@ open Core.Logic.Intensional
 -- § Coppock–Beaver Factorization
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{coppock-beaver-2015}'s Existence component. Asserted, not
+/-- [coppock-beaver-2015]'s Existence component. Asserted, not
     presupposed, in their factorization of the Russellian iota. -/
 def Existence {F : Frame} (P : F.Denot .et) : Prop :=
   ∃ x : F.Entity, P x
 
-/-- @cite{coppock-beaver-2015}'s Uniqueness component. Presupposed (rather
+/-- [coppock-beaver-2015]'s Uniqueness component. Presupposed (rather
     than asserted) on their account; this is the projection contrast that
     distinguishes "the King of France isn't bald" (uniqueness presupposed)
     from a plain Russellian negation (uniqueness in scope of negation). -/
@@ -67,7 +67,7 @@ def Uniqueness {F : Frame} (P : F.Denot .et) : Prop :=
   ∀ x y : F.Entity, P x → P y → x = y
 
 /-- The classical Russellian condition: `∃!x. P x`. By construction the
-    conjunction of @cite{coppock-beaver-2015}'s two components. -/
+    conjunction of [coppock-beaver-2015]'s two components. -/
 def existsUnique {F : Frame} (P : F.Denot .et) : Prop :=
   Existence P ∧ Uniqueness P
 
@@ -79,7 +79,7 @@ theorem existsUnique_iff_existence_and_uniqueness
 
 /-- Existence and Uniqueness are logically independent. The empty predicate
     `λ _ => False` satisfies Uniqueness (vacuously) but not Existence —
-    @cite{coppock-beaver-2015}'s key motivating data. -/
+    [coppock-beaver-2015]'s key motivating data. -/
 theorem uniqueness_does_not_imply_existence {F : Frame} :
     Uniqueness (F := F) (fun _ => False) ∧ ¬ Existence (F := F) (fun _ => False) := by
   refine ⟨?_, ?_⟩
@@ -155,10 +155,10 @@ theorem russellIotaList_eq_some_iff {E : Type*} (domain : List E) (P : E → Boo
 -- § Sharvy Maximality (preorder-relative)
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{sharvy-1980}: an entity `e` is *maximal* among the P-satisfiers
+/-- [sharvy-1980]: an entity `e` is *maximal* among the P-satisfiers
     when `e` satisfies `P` and dominates every other P-satisfier under `≤`.
     For singular count nouns the order is flat (only `e ≤ e`) so maximality
-    coincides with Russellian uniqueness; for plurals (with @cite{link-1983}'s
+    coincides with Russellian uniqueness; for plurals (with [link-1983]'s
     join semilattice) maximality returns the sum of all atoms. -/
 def IsMaximal {F : Frame} [LE F.Entity] (P : F.Denot .et) (e : F.Entity) : Prop :=
   P e ∧ ∀ x : F.Entity, P x → x ≤ e
@@ -211,7 +211,7 @@ theorem sharvyMax_witness_satisfies
 -- § Križ Homogeneity
 -- ════════════════════════════════════════════════════════════════
 
-/-- @cite{kriz-2015}: a scope predicate `S` is *homogeneous* on the
+/-- [kriz-2015]: a scope predicate `S` is *homogeneous* on the
     P-satisfiers when it holds either of all of them or of none of them.
     This is what licenses "the boys are tall" — Križ argues uniformity is
     presupposed, so partial-truth cases (some boys tall, others not) yield

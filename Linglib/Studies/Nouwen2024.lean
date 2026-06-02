@@ -4,8 +4,8 @@ import Linglib.Tactics.RSAPredict
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{nouwen-2024} Deadjectival Intensifiers
-@cite{lassiter-goodman-2017} @cite{nouwen-2024}
+# [nouwen-2024] Deadjectival Intensifiers
+[lassiter-goodman-2017] [nouwen-2024]
 
 "The semantics and probabilistic pragmatics of deadjectival intensifiers"
 Semantics and Pragmatics, Volume 17, Article 2.
@@ -22,7 +22,7 @@ Semantics and Pragmatics, Volume 17, Article 2.
 
 ## RSA Model
 
-Extends @cite{lassiter-goodman-2017} threshold RSA with **evaluative measures**:
+Extends [lassiter-goodman-2017] threshold RSA with **evaluative measures**:
 deadjectival adverbs (horribly, pleasantly) derive their degree function
 from the evaluative meaning of their adjectival base.
 
@@ -43,7 +43,7 @@ evaluative threshold θ_e. The meaning function is an intersection:
 - pleasantly_warm: (h > θ) ∧ (μ_pleasant(h) > θ_e)
 - silent: ⊤
 
-### Sequential Model (@cite{nouwen-2024}'s key innovation)
+### Sequential Model ([nouwen-2024]'s key innovation)
 
 The evaluative adverb updates the prior before the adjective threshold
 applies: Step 1 infers P₁(h | "horribly"), Step 2 infers P₂(h | "warm")
@@ -55,13 +55,13 @@ using P₁ as prior.
 - **W** = `Height` (Degree 6, 7 values: h0–h6)
 - **Latent** = `Threshold × Threshold` (36 values: θ_adj × θ_eval)
 - **s1Score** = beliefAction: `exp(α · (log L0 − C(u)))`
-- **α** = 4 (matching @cite{lassiter-goodman-2017})
+- **α** = 4 (matching [lassiter-goodman-2017])
 - **C(bare)** = 1, **C(horribly/pleasantly)** = 2, **C(∅)** = 0
 
 ### Performance Note
 
 Uses scale n=6 (7 heights, 6 thresholds) rather than the paper's continuous
-distribution or @cite{lassiter-goodman-2017}'s n=10, giving 4.4× fewer L0 cells
+distribution or [lassiter-goodman-2017]'s n=10, giving 4.4× fewer L0 cells
 in the simultaneous model (1008 vs 4400) and 2.6× fewer in the sequential model.
 All qualitative Goldilocks predictions are preserved.
 -/
@@ -87,7 +87,7 @@ inductive IntensifierClass where
 
 /--
 Classification of adjectival base for deadjectival intensifiers
-(@cite{nouwen-2024} §2.4).
+([nouwen-2024] §2.4).
 
 - **evaluative**: core case — horrible, pleasant, nice
 - **mirative**: non-evaluative but extremity-sensitive — unusual, surprising, remarkable
@@ -338,7 +338,7 @@ theorem stunningly_goldilocks : goldilocksHolds stunningly = true := by native_d
 -- Zwicky's Generalization (§3.2)
 
 /--
-Zwicky's generalization (§2.5, @cite{zwicky-1970}): among modal/mirative
+Zwicky's generalization (§2.5, [zwicky-1970]): among modal/mirative
 adjectives, only those denoting deviation from expectation (negative
 deviation polarity) can serve as intensifiers; conformity-denoting ones
 (positive deviation polarity) cannot.
@@ -526,7 +526,7 @@ theorem all_valences_agree :
 /-- All intensifier bases except necessity-standard evaluatives have open
     scales (§2.1, fn. 3: "I will restrict my attention to adjectives with
     open-ended scales"). "Decent" is the one exception: it has a lower-bounded
-    scale (@cite{kennedy-mcnally-2005} necessity standard). Derived from Fragment. -/
+    scale ([kennedy-mcnally-2005] necessity standard). Derived from Fragment. -/
 theorem non_necessity_bases_open_scale :
     (allEntries.filter (λ e => e.adjBase != "decent")).all (λ e =>
       match e.fragmentEntry with
@@ -597,7 +597,7 @@ end Nouwen2024.Intensifiers
 namespace RSA.Nouwen2024
 
 -- Local scale: n=6 (Degree 6 = Fin 7, Threshold 6 = Fin 6)
--- Coarser than @cite{lassiter-goodman-2017}'s n=10 for faster rsa_predict
+-- Coarser than [lassiter-goodman-2017]'s n=10 for faster rsa_predict
 -- (1008 vs 4400 L0 cells in the simultaneous model) while preserving
 -- all qualitative Goldilocks predictions. Norm = 3.
 
@@ -683,7 +683,7 @@ def muPleasant (h : Height) : ℕ :=
 /--
 Full meaning function.
 
-- bare_warm: h > θ (standard @cite{lassiter-goodman-2017})
+- bare_warm: h > θ (standard [lassiter-goodman-2017])
 - horribly_warm: (h > θ) ∧ (μ_horrible(h) > θ_e)
 - pleasantly_warm: (h > θ) ∧ (μ_pleasant(h) > θ_e)
 - silent: always true
@@ -785,7 +785,7 @@ open Real (exp log exp_pos)
 noncomputable def utteranceCostR (u : Utterance) : ℝ := ↑(utteranceCost u)
 
 /-- S1 scoring rule: exp(α · (log L0(h|u,θ,θ_e) − C(u))), gated at L0=0.
-    Identical to @cite{lassiter-goodman-2017}'s beliefAction but with
+    Identical to [lassiter-goodman-2017]'s beliefAction but with
     Latent = Threshold × Threshold for the dual-threshold model. -/
 noncomputable def intensifierS1Score :
     (Utterance → Height → ℝ) → ℝ → (Threshold × Threshold) → Height → Utterance → ℝ :=
@@ -803,7 +803,7 @@ theorem intensifierS1Score_nonneg :
 
 /-- RSAConfig for the simultaneous dual-threshold model.
 
-    Extends @cite{lassiter-goodman-2017} threshold RSA with a second threshold
+    Extends [lassiter-goodman-2017] threshold RSA with a second threshold
     for the evaluative adverb. L1 jointly infers height, adjective threshold,
     and evaluative threshold:
 
@@ -1012,7 +1012,7 @@ theorem adjS1Score_nonneg :
 /-- RSAConfig for the adjective step with the evaluative posterior as
     L0 prior AND L1 worldPrior.
 
-    Implements @cite{nouwen-2024} eq (73): the second update applies
+    Implements [nouwen-2024] eq (73): the second update applies
     L&G's pragmatic listener (eq 71) with prior `Π = (evalCfg evalMu).L1
     .eval_pos`. Per L&G, that prior enters in TWO places —
     inside the literal listener's normalization (via `meaning`) AND

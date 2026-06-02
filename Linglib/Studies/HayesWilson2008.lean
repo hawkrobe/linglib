@@ -6,10 +6,10 @@ import Linglib.Phonology.Process.LocalRewrite
 import Linglib.Fragments.English.Phonology
 
 /-!
-# @cite{hayes-wilson-2008}: A Maximum Entropy Model of Phonotactics
-@cite{hayes-wilson-2008}
+# [hayes-wilson-2008]: A Maximum Entropy Model of Phonotactics
+[hayes-wilson-2008]
 
-@cite{hayes-wilson-2008} propose that phonotactic well-formedness is
+[hayes-wilson-2008] propose that phonotactic well-formedness is
 probability: a MaxEnt grammar assigns each surface form a score
 `h(x) = Σ wⱼ · Cⱼ(x)`, and well-formedness is `P(x) = exp(−h(x)) / Z`.
 
@@ -179,7 +179,7 @@ open English.Phonology
 def candidateOnsets : Finset Onset :=
   ({[k], [ŋ], [r, k], [b, r]} : Finset Onset)
 
-/-- @cite{hayes-wilson-2008}'s grammar realised as a generic
+/-- [hayes-wilson-2008]'s grammar realised as a generic
     `ConstraintSystem` over `candidateOnsets`, decoded by softmax at
     temperature 1. The score component is `harmonyScoreR onsetGrammar`
     (the canonical MaxEnt harmony function). -/

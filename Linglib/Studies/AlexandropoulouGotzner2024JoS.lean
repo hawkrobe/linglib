@@ -4,15 +4,15 @@ import Linglib.Semantics.Gradability.AntonymPrediction
 import Linglib.Studies.Krifka2007
 import Linglib.Fragments.English.Predicates.Adjectival
 /-!
-# @cite{alexandropoulou-gotzner-2024-jos} — The Interpretation of Relative and Absolute Adjectives Under Negation
-@cite{alexandropoulou-gotzner-2024-jos}
+# [alexandropoulou-gotzner-2024-jos] — The Interpretation of Relative and Absolute Adjectives Under Negation
+[alexandropoulou-gotzner-2024-jos]
 
 In: *Journal of Semantics* 41(3), pp. 373–399.
 
 ## Thesis
 
-@cite{alexandropoulou-gotzner-2024-jos} (JoS) tests the @cite{horn-1989} R-
-implicature account vs. @cite{krifka-2007b}'s complexity-based account of
+[alexandropoulou-gotzner-2024-jos] (JoS) tests the [horn-1989] R-
+implicature account vs. [krifka-2007b]'s complexity-based account of
 negative strengthening across **three distinct cases** of negated antonymic
 adjectives:
 
@@ -31,7 +31,7 @@ adjectives:
 
 ## Companion paper
 
-The Glossa companion @cite{alexandropoulou-gotzner-2024} formalised in
+The Glossa companion [alexandropoulou-gotzner-2024] formalised in
 `AlexandropoulouGotzner2024.lean` extends this work by isolating the role of
 overt contextual *competition* in surfacing the asymmetric pattern. The
 Glossa paper builds on the JoS findings as established results.

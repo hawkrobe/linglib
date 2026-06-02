@@ -5,7 +5,7 @@ import Mathlib.Data.List.Sublists
 /-!
 # Premise Sets and Logical Relations
 
-@cite{kratzer-1977} @cite{kratzer-1981} @cite{kratzer-2012}
+[kratzer-1977] [kratzer-1981] [kratzer-2012]
 
 Generic, modality-agnostic primitives over **premise sets** — finite collections
 of propositions over an arbitrary index type. These are the logical primitives
@@ -72,11 +72,11 @@ def propIntersection (props : List (Index → Prop)) : Set Index :=
   {i | ∀ p ∈ props, p i}
 
 /-- A proposition `p` **follows from** a premise set `A` iff `⋂ A ⊆ {i | p i}`
-    (@cite{kratzer-1977} p. 31). -/
+    ([kratzer-1977] p. 31). -/
 def followsFrom (p : Index → Prop) (A : List (Index → Prop)) : Prop :=
   propIntersection A ⊆ propExtension p
 
-/-- A premise set is **consistent** iff `⋂ A` is non-empty (@cite{kratzer-1977} p. 31). -/
+/-- A premise set is **consistent** iff `⋂ A` is non-empty ([kratzer-1977] p. 31). -/
 def isConsistent (A : List (Index → Prop)) : Prop :=
   (propIntersection A).Nonempty
 
@@ -86,14 +86,14 @@ def isCompatibleWith (p : Index → Prop) (A : List (Index → Prop)) : Prop :=
 
 /-! ## Kratzer 1977 Definitions 5–6: must/can in view of -/
 
-/-- **Def 5** (@cite{kratzer-1977}): `must p in view of f` at index `i`
+/-- **Def 5** ([kratzer-1977]): `must p in view of f` at index `i`
     iff `p` follows from the premise set `f i`.
 
     `ν(p, f) = {i : ⋂(f i) ⊆ p}` -/
 def mustInView (f : Index → List (Index → Prop)) (p : Index → Prop) (i : Index) : Prop :=
   followsFrom p (f i)
 
-/-- **Def 6** (@cite{kratzer-1977}): `can p in view of f` at index `i`
+/-- **Def 6** ([kratzer-1977]): `can p in view of f` at index `i`
     iff `p` is compatible with the premise set `f i`.
 
     `μ(p, f) = {i : ⋂((f i) ∪ {p}) ≠ ∅}` -/
@@ -109,7 +109,7 @@ def canInView (f : Index → List (Index → Prop)) (p : Index → Prop) (i : In
 def consistentSublists (A : List (Index → Prop)) : Set (List (Index → Prop)) :=
   {B | B ∈ A.sublists ∧ isConsistent B}
 
-/-- **Def 7** (@cite{kratzer-1977}): the revised necessity operator that handles
+/-- **Def 7** ([kratzer-1977]): the revised necessity operator that handles
     possibly inconsistent premise sets.
 
     `must p in view of f` at `i` iff for every consistent subset `B` of `f i`,
@@ -121,7 +121,7 @@ def mustInView' (f : Index → List (Index → Prop)) (p : Index → Prop) (i : 
   ∀ B ∈ consistentSublists (f i),
     ∃ C ∈ consistentSublists (f i), B ⊆ C ∧ followsFrom p C
 
-/-- **Def 8** (@cite{kratzer-1977}): the revised possibility operator that handles
+/-- **Def 8** ([kratzer-1977]): the revised possibility operator that handles
     possibly inconsistent premise sets.
 
     `can p in view of f` at `i` iff there exists a consistent subset `B` of `f i`

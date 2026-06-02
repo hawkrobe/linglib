@@ -8,7 +8,7 @@ import Linglib.Semantics.Supervaluation.Basic
 import Linglib.Core.Logic.Truth3
 
 /-!
-# Haug & Dalrymple (2020) @cite{haug-dalrymple-2020}
+# Haug & Dalrymple (2020) [haug-dalrymple-2020]
 
 Reciprocity: Anaphora, scope, and quantification.
 *Semantics & Pragmatics* 13:10, 1–62. doi:10.3765/sp.13.10.
@@ -46,22 +46,22 @@ the §5.2 empirical-fit table; the §7 typological excursus.
 
 ## Connections to existing linglib substrate
 
-- @cite{champollion-bumford-henderson-2019} for the §5 supervaluationist
+- [champollion-bumford-henderson-2019] for the §5 supervaluationist
   truth-value-gap analysis — realised via
   `Semantics/Homogeneity/Basic.lean`'s `removeGap` /
   `Truth3.metaAssert`.
-- @cite{kriz-2015} for the homogeneity background; same substrate.
-- @cite{langendoen-1978} for the reciprocity-as-cumulativity link —
+- [kriz-2015] for the homogeneity background; same substrate.
+- [langendoen-1978] for the reciprocity-as-cumulativity link —
   realised via `PPCDRT/Cumulativity.lean`'s
   `groupIdentityCond_iff_cumulativeOp_eq` bridge theorem.
-- @cite{murray-2008}, @cite{cable-2014} for the §4.2 underspecification
+- [murray-2008], [cable-2014] for the §4.2 underspecification
   examples.
 
 ## Source-paper attribution note
 
-The §4.2 paragraph in @cite{haug-dalrymple-2020} attributes the German
-*sich* / Romance reflexive examples to @cite{cable-2014} (paper p. 32),
-not to @cite{murray-2008} alone — the latter focuses on Cheyenne. The
+The §4.2 paragraph in [haug-dalrymple-2020] attributes the German
+*sich* / Romance reflexive examples to [cable-2014] (paper p. 32),
+not to [murray-2008] alone — the latter focuses on Cheyenne. The
 docstrings here follow that attribution.
 -/
 
@@ -281,7 +281,7 @@ theorem reciprocity_full :
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4: §3.3 Four-Cell Crossed Readings Classification
--- (@cite{haug-dalrymple-2020} §3.3, p. 24)
+-- ([haug-dalrymple-2020] §3.3, p. 24)
 -- ════════════════════════════════════════════════════════════════
 
 /-- The two-parameter classification: locus × antecedent relation.
@@ -323,7 +323,7 @@ theorem crossed_reading_high_groupIdentity_groupIdentity :
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5: §4.2 Underspecified Reflexive/Reciprocal
--- (@cite{murray-2008} Cheyenne, @cite{cable-2014} German *sich*)
+-- ([murray-2008] Cheyenne, [cable-2014] German *sich*)
 -- ════════════════════════════════════════════════════════════════
 
 /-- Underspecified anaphors (German *sich*, Cheyenne REFL/RECIP affix)
@@ -476,7 +476,7 @@ theorem collective_groupIdentity_no_distinct :
 
 -- ════════════════════════════════════════════════════════════════
 -- § 9: §5 Quantified Antecedents + Truth-Value Gap
--- (paper eq 99, 109; @cite{champollion-bumford-henderson-2019}; @cite{kriz-2015})
+-- (paper eq 99, 109; [champollion-bumford-henderson-2019]; [kriz-2015])
 -- ════════════════════════════════════════════════════════════════
 
 /-! Paper §5 introduces `max^u(K)` and shows that quantified antecedents
@@ -484,7 +484,7 @@ theorem collective_groupIdentity_no_distinct :
     other) give rise to a truth-value gap: True iff true on both the
     maximal-set reading and the reference-set reading; False iff false on
     both; Neither otherwise (paper eq 109). The paper invokes
-    @cite{champollion-bumford-henderson-2019}, following @cite{kriz-2015},
+    [champollion-bumford-henderson-2019], following [kriz-2015],
     for the supervaluationist machinery.
 
     Here we encode the truth-value gap directly via `Truth3`, exploiting
@@ -602,7 +602,7 @@ theorem R_u_reciprocity_no_diagonal :
 
 -- ════════════════════════════════════════════════════════════════
 -- § 11: §6.1 Maximize Anaphora vs Strongest Meaning Hypothesis
--- (@cite{dalrymple-et-al-1998}, paper eq 132–133, @cite{sauerland-2012})
+-- ([dalrymple-et-al-1998], paper eq 132–133, [sauerland-2012])
 -- ════════════════════════════════════════════════════════════════
 
 /-! Paper §6.1 (p. 55) argues SMH over-strengthens. The substrate-level
@@ -611,10 +611,10 @@ theorem R_u_reciprocity_no_diagonal :
     the default property bundle, while SMH commits to narrow only.
 
     Related principles cited by paper §6: the Maximal Interpretation
-    Hypothesis of @cite{sabato-winter-2012} and @cite{winter-2001}
-    (p. 54), the typicality-constrained MA of @cite{poortman-struiksma-kerem-friedmann-winter-2018}
-    (p. 54), the anaphora-as-exhaustive principle of @cite{kadmon-1990}
-    (p. 54), and the experimental evidence of @cite{majewski-2014}
+    Hypothesis of [sabato-winter-2012] and [winter-2001]
+    (p. 54), the typicality-constrained MA of [poortman-struiksma-kerem-friedmann-winter-2018]
+    (p. 54), the anaphora-as-exhaustive principle of [kadmon-1990]
+    (p. 54), and the experimental evidence of [majewski-2014]
     (paper §6 docstring reference). The trio MIH/MA/SMH form the natural
     scaffold for a principled treatment of the §4.5 reciprocal-strength
     typology — see the open work in the future-directions note below. -/
@@ -692,7 +692,7 @@ theorem threeWay_R_u_full_off_diagonal :
 
 /-- The bridge theorem from `PPCDRT/Cumulativity.lean` is consumable here:
     group identity reduces to Beck-Sauerland `**` over the Finset of
-    value pairs. This is the formal realization of @cite{langendoen-1978}'s
+    value pairs. This is the formal realization of [langendoen-1978]'s
     reciprocity-as-cumulativity claim, asserted in the original
     `Reciprocals.lean` docstring as prose (audit finding 4). -/
 theorem cumulativity_bridge_smoke :

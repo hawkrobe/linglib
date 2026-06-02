@@ -6,7 +6,7 @@ import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Semantics.Mood.Basic
 
 /-!
-# Napoli & Nespor (1976): Negatives in Comparatives @cite{napoli-nespor-1976}
+# Napoli & Nespor (1976): Negatives in Comparatives [napoli-nespor-1976]
 
 *Language* 52(4), 811–838.
 
@@ -15,7 +15,7 @@ truth-conditional effect: *Maria è più intelligente di quanto non sia
 Carlo* 'Maria is more intelligent than Carlo (is)'. The construction
 had previously been treated either as pleonastic (Antinucci & Puglielli
 1971) or as evidence that all *than*-clauses are underlyingly negative
-(Seuren 1969). @cite{napoli-nespor-1976} reject both: *non₂* is real
+(Seuren 1969). [napoli-nespor-1976] reject both: *non₂* is real
 negation, but its distribution is governed by a discourse condition,
 not by the syntax of comparison.
 
@@ -31,7 +31,7 @@ to Italian comparatives.
 
 ## What's Foundational vs. Historical
 
-@cite{napoli-nespor-1976} bundles two contributions:
+[napoli-nespor-1976] bundles two contributions:
 
 - **Foundational (preserved):** the licensing predicate, the Dario/Paolo
   context paradigm, the morphosyntactic diagnostics for underlying
@@ -43,23 +43,23 @@ to Italian comparatives.
   apparatus — abstract higher S₂ dominating S₃ with *non₂* base-generated
   in S₃ and optionally deleted by transformation. The covert-operator
   insight is preserved by modern verum / use-conditional / commitment-
-  update accounts (@cite{romero-han-2004}, @cite{repp-2013},
-  @cite{gutzmann-2015}, @cite{farkas-bruce-2010}); the deletion-rule
+  update accounts ([romero-han-2004], [repp-2013],
+  [gutzmann-2015], [farkas-bruce-2010]); the deletion-rule
   mechanism specifically is not.
 
 ## Connection to Existing linglib Studies
 
-- @cite{rett-2026} classifies Italian comparative EN as low/optional with
+- [rett-2026] classifies Italian comparative EN as low/optional with
   weak-NPI rejection. The N&N data refines this: optionality is
   *contextually conditioned* (a `BiasLicensingProfile`, not a `Bool`),
   and weak NPIs *are* licensed when the profile licenses (modulo
   independent precision-blockers like *affatto*). See
   `Rett2026.italianComparative` and the patches in §6 below.
-- @cite{tsiakmakis-2025} classifies Italian comparative *non* as NEG₁
+- [tsiakmakis-2025] classifies Italian comparative *non* as NEG₁
   (apparent EN, standard negation masked). N&N's analysis is the
   original NEG₁-style account: *non₂* is real negation in underlying
   structure, masked at surface by deletion or by an abstract operator.
-- @cite{greco-2020} lists *comparativeClauses* among Italian weak-EN
+- [greco-2020] lists *comparativeClauses* among Italian weak-EN
   environments. N&N's *pur*-licensing data motivates this classification.
 -/
 
@@ -78,7 +78,7 @@ open Typology.PolarityItem (LicensingContext PolarityItemEntry)
 
 /-! ### Four contexts varying the speaker's epistemic state
 
-@cite{napoli-nespor-1976} pp. 812–813 construct four dialogues showing
+[napoli-nespor-1976] pp. 812–813 construct four dialogues showing
 that *non₂*'s acceptability tracks the speaker's presupposition that
 their assertion contradicts a prior belief — neither too uncertain
 (no presupposition to contradict) nor too explicit (use simple negation
@@ -116,7 +116,7 @@ theorem context9_licenses : context9.licenses := by decide
 
 /-! ### Five distributional environments, each isolating one axis
 
-@cite{napoli-nespor-1976} demonstrates each licensing condition by
+[napoli-nespor-1976] demonstrates each licensing condition by
 exhibiting an environment where exactly that condition fails. -/
 
 /-- §2.1 ex. 10b: *È più intelligente di quanto non sia Carlo?*
@@ -160,7 +160,7 @@ theorem meno_licenses_non2 : menoComparative.licenses := by decide
 
 /-! ### Predictions derived from the licensing profile
 
-@cite{napoli-nespor-1976} §3 marshals six independent diagnostics for
+[napoli-nespor-1976] §3 marshals six independent diagnostics for
 the presence of underlying negation in the comparative clause. Each
 diagnostic targets a different surface correlate (mood morphology, NPI
 surface form, indefinite specificity, conjunction admissibility,
@@ -173,7 +173,7 @@ licensed profile rather than asserting they are tautologically equal. -/
 /-- Specificity restriction on embedded indefinites. Without *non₂* an
     indefinite in the *than*-clause is [±specific]; with *non₂* it is
     restricted to [−specific] under the scope of the underlying negation.
-    @cite{napoli-nespor-1976} §3.11 ex. 44–45. -/
+    [napoli-nespor-1976] §3.11 ex. 44–45. -/
 inductive SpecificityProfile where
   | unrestricted    -- [+specific] reading available
   | nonspecificOnly -- restricted to [−specific] (negation-scope)
@@ -181,7 +181,7 @@ inductive SpecificityProfile where
 
 /-- Complementizer choice in Italian comparatives.
     *Di quanto* is the standard *than*-complementizer; *che* surfaces
-    when the abstract higher S of @cite{napoli-nespor-1976} §3.24 is
+    when the abstract higher S of [napoli-nespor-1976] §3.24 is
     present, which co-varies with *non₂*. -/
 inductive ComplementizerChoice where
   | che      -- bias-licensed alternant
@@ -249,7 +249,7 @@ def predictsLoClitic (p : BiasLicensingProfile) : CliticPresence :=
 
 /-- The six diagnostics agree on the **licensed** profile: each surface
     correlate takes its bias-marked value. The conjunction below is the
-    theoretical unification @cite{napoli-nespor-1976} §3 argues for —
+    theoretical unification [napoli-nespor-1976] §3 argues for —
     one licensing predicate explains all six surface diagnostics. The
     *neanche*-conjunction conjunct is non-trivial: it factors through
     the Italian Fragment's `neanche.licensingContexts` and needs `decide`
@@ -282,7 +282,7 @@ theorem blocked_diagnostics_agree :
 
 /-! ### Why some weak NPIs are licensed and others blocked
 
-@cite{napoli-nespor-1976} §3.11 ex. 46–48 show that *pur* (weak NPI) is
+[napoli-nespor-1976] §3.11 ex. 46–48 show that *pur* (weak NPI) is
 licensed in *non₂*-comparatives. §3.22 fn (i) shows that *affatto* (also
 a weak NPI) is *blocked*. The contrast is not about NPI licensing per se:
 *affatto* requires *precise* knowledge of the listener's belief, which
@@ -311,7 +311,7 @@ shows them follow from the bias profile. -/
     contexts.
 
     `.comparativeS` rather than `.comparativeNP` because surface NP-
-    comparatives are not NPI environments (@cite{hoeksema-1983} §3.6). -/
+    comparatives are not NPI environments ([hoeksema-1983] §3.6). -/
 def predictsWeakNPI (p : BiasLicensingProfile) (npi : PolarityItemEntry) : Prop :=
   p.licenses ∧ npi.licensingContexts.contains .comparativeS = true
 
@@ -326,7 +326,7 @@ theorem pur_licensed_with_non2 : predictsWeakNPI licensedProfile pur := by decid
 
 /-- *Affatto* is *never* licensed in *non₂*-comparatives — the block is
     *registered in the lexical entry itself* (`affatto.licensingContexts`
-    excludes `.comparativeS` per @cite{napoli-nespor-1976} §3.22 fn 6). The
+    excludes `.comparativeS` per [napoli-nespor-1976] §3.22 fn 6). The
     bias profile's licensing status is irrelevant: the Fragment's
     distributional fact alone settles the case.
 
@@ -345,7 +345,7 @@ theorem affatto_blocked_in_non2 (p : BiasLicensingProfile) :
 
 /-! ### *Non₂* outside comparatives: indirect questions
 
-@cite{napoli-nespor-1976} §4 ex. 88–91 show that the same *non₂* appears
+[napoli-nespor-1976] §4 ex. 88–91 show that the same *non₂* appears
 in indirect questions where the speaker presupposes the negated
 proposition is contrary to expectation: *Chissà se non vale la pena di
 comprarlo* 'Who knows if it's not worth buying it' (suggests the
@@ -388,7 +388,7 @@ theorem bias_paradigm_is_optional :
     licensedProfile.licenses ∧ ¬ blockedProfile.licenses := by
   refine ⟨?_, ?_⟩ <;> decide
 
-/-- Bridge to @cite{rett-2026}: the `italianComparative` datum's
+/-- Bridge to [rett-2026]: the `italianComparative` datum's
     `isOptional` field reflects exactly this contextual conditioning. -/
 theorem rett_italianComparative_optionality_grounded :
     Rett2026.italianComparative.isOptional = true ∧

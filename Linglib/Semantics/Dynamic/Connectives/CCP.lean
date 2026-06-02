@@ -17,8 +17,8 @@ Abstract foundations shared by PLA, DRT, DPL, CDRT, and other dynamic semantics 
 
 ## Relationship to `DynProp`
 
-The relational type `Update S = S → S → Prop` (@cite{groenendijk-stokhof-1991},
-@cite{muskens-1996}) is the primary dynamic semantic type. `CCP S` is the
+The relational type `Update S = S → S → Prop` ([groenendijk-stokhof-1991],
+[muskens-1996]) is the primary dynamic semantic type. `CCP S` is the
 derived set-transformer view, connected via `lift`/`lower`:
 
 - `lift R σ = { j | ∃ i ∈ σ, R i j }` (relational image)
@@ -99,7 +99,7 @@ open Classical in
 /--
 Test-based negation: passes (returns input) iff φ yields ∅.
 
-This is the standard dynamic negation of @cite{heim-1982}, @cite{veltman-1996}:
+This is the standard dynamic negation of [heim-1982], [veltman-1996]:
 ¬φ(s) = s if φ(s) = ∅, else ∅. Does not validate DNE.
 -/
 noncomputable def neg (φ : CCP P) : CCP P :=
@@ -135,7 +135,7 @@ noncomputable def impl (φ ψ : CCP P) : CCP P :=
 /--
 Dynamic disjunction via De Morgan: φ ∨ ψ = ¬(¬φ ; ¬ψ).
 
-@cite{heim-1983}: the local context for the second disjunct is the
+[heim-1983]: the local context for the second disjunct is the
 global context updated with ¬φ. This yields the standard Karttunen
 projection pattern for inclusive disjunction.
 -/
@@ -176,7 +176,7 @@ theorem eliminative_seq {P : Type*} (u v : CCP P)
 An update is expansive if it never removes possibilities.
 
 Expansive operations include discourse referent introduction (DRT/DPL),
-modal horizon expansion (@cite{kirkpatrick-2024}), and accommodation.
+modal horizon expansion ([kirkpatrick-2024]), and accommodation.
 These are the dual of eliminative operations: where eliminative updates
 can only shrink the state, expansive updates can only grow it.
 -/

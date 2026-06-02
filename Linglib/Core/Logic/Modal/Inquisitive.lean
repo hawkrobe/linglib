@@ -5,16 +5,16 @@ import Linglib.Core.Logic.Team.Definability
 /-!
 # Inquisitive Modal Logic (InqML)
 
-@cite{ciardelli-2022} @cite{ciardelli-2014}
-@cite{ciardelli-groenendijk-roelofsen-2018}
+[ciardelli-2022] [ciardelli-2014]
+[ciardelli-groenendijk-roelofsen-2018]
 
 Inquisitive modal logic extends classical modal logic with a treatment
 of questions alongside statements, following the
 Ciardelli-Groenendijk-Roelofsen tradition. The originating modal paper
-is @cite{ciardelli-2014} (Advances in Modal Logic), with the
+is [ciardelli-2014] (Advances in Modal Logic), with the
 propositional inquisitive system InqB developed in
-@cite{ciardelli-groenendijk-roelofsen-2018} (Oxford University Press)
-and the modal preview in @cite{ciardelli-2022} Chapter 8.
+[ciardelli-groenendijk-roelofsen-2018] (Oxford University Press)
+and the modal preview in [ciardelli-2022] Chapter 8.
 
 Formulas are evaluated at **information states** (teams of worlds),
 with two crucial novelties relative to BSML / MDL / MIL:
@@ -30,7 +30,7 @@ with two crucial novelties relative to BSML / MDL / MIL:
   relation, distinct from BSML's per-world *sub-witness* or MDL's
   single-witness or MIL's lax form).
 
-Reference: @cite{ciardelli-2022} Chapter 8 (modal preview), with the
+Reference: [ciardelli-2022] Chapter 8 (modal preview), with the
 propositional InqB base from Chapter 3.
 
 ## Closure profile
@@ -55,7 +55,7 @@ flavored (InqML) or dependence-flavored (MDL).
 * `Formula` — InqML syntax (Ciardelli §8.2 modal + §3 propositional base).
 * `eval` — single-relation team-semantic evaluation (only support,
   no anti-support). Negation derived as `φ → ⊥`, matching
-  @cite{ciardelli-2022}.
+  [ciardelli-2022].
 * `Formula.neg`, `Formula.polarQ` — standard inquisitive abbreviations
   (`¬φ := φ → ⊥`, `?φ := φ \\/ ¬φ`).
 * `Formula.modalDepth` — depth of nested `□`.
@@ -72,7 +72,7 @@ The standard inquisitive connective set is `{⊥, ∧, →, \\/}` with
 as primitives; `¬`, `!`, `?` can be added as helpers later when a
 consumer needs them.
 
-The modal extension adds only `□` per @cite{ciardelli-2022} §8.2.
+The modal extension adds only `□` per [ciardelli-2022] §8.2.
 Section 8.3 introduces a second modality `⊞` (properly inquisitive,
 using a relation `R : W × ℘(W)` instead of `R : W × W`) — deferred to
 a follow-up file/PR because it requires a different model carrier
@@ -277,8 +277,8 @@ theorem not_supClosed_inqDisj_of_witness {p q : Atom} {w₁ w₂ : W}
 open Core.Logic.Team in
 /-- **InqML is sound for its closure cell**: every InqML-definable team property
     is downward-closed (persistent) and has the empty-team property. InqML shares
-    the downward-closed, empty-team cell with dependence logic (@cite{ciardelli-2022};
-    @cite{anttila-2025}) — but breaks union closure via inquisitive disjunction
+    the downward-closed, empty-team cell with dependence logic ([ciardelli-2022];
+    [anttila-2025]) — but breaks union closure via inquisitive disjunction
     `\\/` (see `not_supClosed_inqDisj_of_witness`) rather than via a dependence
     atom.
 

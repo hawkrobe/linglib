@@ -2,7 +2,7 @@ import Linglib.Features.Case
 import Linglib.Typology.Comparison
 import Linglib.Typology.Comparison
 /-!
-# Korean Comparative Construction @cite{stassen-1985}
+# Korean Comparative Construction [stassen-1985]
 
 Korean uses a **separative** comparative construction: the standard NP is
 marked with the postposition *-boda* ('from/than'), which has ablative
@@ -15,7 +15,7 @@ Example: *Yenghi-ga Chelswu-boda (deo) khu-da*
 
 The marker *-boda* is sometimes analyzed as a particle rather than a case
 marker, but its ablative/separative semantics ('from the point of view of')
-places Korean firmly in the separative class in @cite{stassen-1985}'s
+places Korean firmly in the separative class in [stassen-1985]'s
 typology.
 -/
 

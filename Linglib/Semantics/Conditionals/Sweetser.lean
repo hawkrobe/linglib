@@ -1,7 +1,7 @@
 /-!
 # Sweetser's three domains of conditional meaning
 
-@cite{sweetser-1990} @cite{bar-asher-siegal-2026}
+[sweetser-1990] [bar-asher-siegal-2026]
 
 Conditionals can express dependencies at three levels:
 - **content**: real-world causal or temporal dependency.
@@ -12,7 +12,7 @@ Conditionals can express dependencies at three levels:
   speech act performed by the consequent.
   *"If you're hungry, there's food in the fridge."*
 
-@cite{bar-asher-siegal-2026}: content-domain conditionals frequently
+[bar-asher-siegal-2026]: content-domain conditionals frequently
 presuppose or invite causal interpretations, connecting conditional
 semantics to the causal-model infrastructure in `Causation/`.
 
@@ -21,7 +21,7 @@ Extracted from `Conditionals/ConditionalType.lean` (was lines 309–368).
 
 namespace Semantics.Conditionals
 
-/-- @cite{sweetser-1990}'s three domains of conditional meaning. -/
+/-- [sweetser-1990]'s three domains of conditional meaning. -/
 inductive SweetserDomain where
   /-- Real-world causal/temporal dependency between events. -/
   | content

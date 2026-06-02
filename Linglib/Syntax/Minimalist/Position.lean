@@ -3,7 +3,7 @@ import Linglib.Syntax.Minimalist.Features
 
 /-!
 # Derivational Positions
-@cite{abels-2012} @cite{erlewine-2016} @cite{erlewine-2018} @cite{chomsky-1995}
+[abels-2012] [erlewine-2016] [erlewine-2018] [chomsky-1995]
 
 Derives positional information (specifier vs. complement) from merge
 history, following the Minimalist view that position is derivational,
@@ -27,11 +27,11 @@ Two variants are formalized:
    cannot move to Spec,HP. Restated positionally here; the original
    formulation is in `Phase.lean`.
 
-2. **Spec-to-Spec** (@cite{erlewine-2016}): movement
+2. **Spec-to-Spec** ([erlewine-2016]): movement
    from Spec,XP to Spec,YP is blocked when YP immediately dominates XP
    (no intervening maximal projection). Originally proposed for Agent Focus
-   in Kaqchikel (@cite{erlewine-2016}). Also interacts with
-   Toba Batak clause structure (@cite{erlewine-2018}).
+   in Kaqchikel ([erlewine-2016]). Also interacts with
+   Toba Batak clause structure ([erlewine-2018]).
 
 -/
 
@@ -105,7 +105,7 @@ def movedToSpecOf (events : List MergeEvent) (x y : SyntacticObject) : Prop :=
 /-- Complement-to-Spec anti-locality, restated positionally.
 
     If X is the complement of H, then X cannot move to Spec,HP.
-    This is the canonical formulation of @cite{abels-2012}'s anti-locality
+    This is the canonical formulation of [abels-2012]'s anti-locality
     constraint (Ch. 4): the complement of a phase head cannot raise to its
     edge because no maximal projection intervenes. -/
 def compToSpecAntiLocality
@@ -120,7 +120,7 @@ def compToSpecAntiLocality
     projection boundary.
 
     In Toba Batak, this prevents the pivot in Spec,TP from moving to
-    Spec,CP clause-internally (fn. 24, @cite{erlewine-2018}), though the
+    Spec,CP clause-internally (fn. 24, [erlewine-2018]), though the
     primary extraction restriction derives from nominal licensing. -/
 def specToSpecAntiLocality
     (events : List MergeEvent) (mover xP yP : SyntacticObject) : Prop :=
@@ -167,7 +167,7 @@ theorem stranded_or_trapped (pf : PredicateFronting) (x : SyntacticObject) :
   em (contains pf.predicate x) |>.elim (Or.inr) (Or.inl)
 
 -- ============================================================================
--- § 6: Extraction Restriction (@cite{erlewine-2018})
+-- § 6: Extraction Restriction ([erlewine-2018])
 -- ============================================================================
 
 /-- The extraction restriction in predicate-fronting languages:

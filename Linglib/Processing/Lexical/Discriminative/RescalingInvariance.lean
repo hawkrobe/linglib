@@ -2,7 +2,7 @@ import Linglib.Processing.Lexical.Discriminative.Training
 
 /-!
 # DLM ERM-invariance under positive rescaling
-@cite{baayen-2019} @cite{gahl-baayen-2024}
+[baayen-2019] [gahl-baayen-2024]
 
 Sibling to `Training.lean`. Two theorems making explicit that ERM
 solutions for the DLM weighted loss are invariant under positive
@@ -21,7 +21,7 @@ word-learning posteriors over the same event inventory, the
 make identical predictions about which `G : MeaningVec → FormVec` is
 ERM-optimal.
 
-The DLM literature (paper appendix §A1.3 of @cite{gahl-baayen-2024})
+The DLM literature (paper appendix §A1.3 of [gahl-baayen-2024])
 uses `Q` as a diagonal matrix of raw counts, not a normalised
 distribution. Paper §6.4 explicitly cautions against reifying any
 single mathematical representation. The rescaling-invariance theorems

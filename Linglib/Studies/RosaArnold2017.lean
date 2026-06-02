@@ -6,8 +6,8 @@ import Linglib.Studies.ArnoldEtAl2000
 import Linglib.Studies.KehlerRohde2013
 
 /-!
-# @cite{rosa-arnold-2017}
-@cite{kehler-rohde-2013} @cite{kehler-2002} @cite{arnold-wasow-losongco-ginstrom-2000}
+# [rosa-arnold-2017]
+[kehler-rohde-2013] [kehler-2002] [arnold-wasow-losongco-ginstrom-2000]
 
 Predictability Affects Production: Thematic Roles Can Affect Reference Form
 Selection. *Journal of Memory and Language* 94, 43–60.
@@ -37,7 +37,7 @@ affect form.
 | 8 | Goal > Source mirrors IC next-mention mechanism | cross-study |
 | 9 | Form reduction feeds into ordering (Arnold et al. 2000) | cross-study |
 
-## Debate with @cite{kehler-rohde-2013}
+## Debate with [kehler-rohde-2013]
 
 Kehler & Rohde decompose pronoun interpretation via Bayes' rule:
 
@@ -48,11 +48,11 @@ They propose two independent factors:
 - **P(pronoun | referent)**: centering-driven form bias (sensitive to subjecthood ONLY)
 
 This predicts thematic roles should NOT affect pronominalization rate.
-@cite{rosa-arnold-2017} directly challenges this independence: goals get
+[rosa-arnold-2017] directly challenges this independence: goals get
 more pronouns than sources even controlling for grammatical role, showing
 P(pronoun | referent) is also sensitive to thematic role predictability.
 
-## Connection to @cite{arnold-wasow-losongco-ginstrom-2000}
+## Connection to [arnold-wasow-losongco-ginstrom-2000]
 
 The same verb ("give"), the same construction (dative/transfer), but different
 dependent variables: Arnold et al. (2000) study **position** (heavy NP shift,
@@ -243,7 +243,7 @@ theorem coherence_amplifies_goal_bias :
 -- § 6. Kehler & Rohde Two-Component Model
 -- ════════════════════════════════════════════════════
 
-/-- @cite{kehler-rohde-2013}'s independence hypothesis:
+/-- [kehler-rohde-2013]'s independence hypothesis:
     P(pronoun | referent) depends only on grammatical/topichood status,
     NOT on thematic role or coherence-driven predictability.
 
@@ -254,7 +254,7 @@ def kehlerRohdeIndependence
     (gram : GramRole) : Prop :=
   pronounGivenReferent .goal gram = pronounGivenReferent .source gram
 
-/-- @cite{rosa-arnold-2017}'s challenge: goals get more pronouns than
+/-- [rosa-arnold-2017]'s challenge: goals get more pronouns than
     sources even in the same grammatical position. This violates the
     independence hypothesis. Verified in Exp 1 subject condition. -/
 theorem independence_violated_exp1_subj :
@@ -307,8 +307,8 @@ theorem result_is_cause_effect :
 -- ════════════════════════════════════════════════════
 
 /-- The same transfer verb "give" is studied for both referential form
-    (@cite{rosa-arnold-2017}) and constituent ordering
-    (@cite{arnold-wasow-losongco-ginstrom-2000}). Pronouns are more
+    ([rosa-arnold-2017]) and constituent ordering
+    ([arnold-wasow-losongco-ginstrom-2000]). Pronouns are more
     reduced than names on the accessibility scale, and at most as heavy
     by word count. The referential form choice connects to ordering:
 
@@ -328,18 +328,18 @@ theorem pronoun_at_most_as_heavy :
   native_decide
 
 -- ════════════════════════════════════════════════════
--- § 10. Cross-Study Bridge: @cite{arnold-wasow-losongco-ginstrom-2000}
+-- § 10. Cross-Study Bridge: [arnold-wasow-losongco-ginstrom-2000]
 -- ════════════════════════════════════════════════════
 
 open ArnoldEtAl2000 Core.Constraint
 
 /-- The goal argument receives a MORE REDUCED referential form than the
     source argument. This derived contrast — not the individual predictions —
-    is the empirical content of @cite{rosa-arnold-2017}.
+    is the empirical content of [rosa-arnold-2017].
 
     The same reduction asymmetry creates a weight asymmetry: goal arguments
     surface as lighter NPs (pronouns) while source arguments surface as
-    heavier NPs (names). @cite{arnold-wasow-losongco-ginstrom-2000} prove
+    heavier NPs (names). [arnold-wasow-losongco-ginstrom-2000] prove
     that exactly this weight dimension independently predicts constituent
     ordering in dative constructions with the same verb. So thematic roles
     affect ordering *through* referential form reduction. -/
@@ -348,8 +348,8 @@ theorem goal_more_reduced_than_source :
     (transferNextMention .source).predictedForm.rank := by
   native_decide
 
-/-- @cite{arnold-wasow-losongco-ginstrom-2000} show that heaviness and
-    newness BOTH independently predict ordering. @cite{rosa-arnold-2017}
+/-- [arnold-wasow-losongco-ginstrom-2000] show that heaviness and
+    newness BOTH independently predict ordering. [rosa-arnold-2017]
     show thematic roles affect BOTH form (the heaviness dimension) and
     predictability (the newness dimension). Thematic roles therefore have
     a **dual path** to constituent ordering:
@@ -383,12 +383,12 @@ theorem dual_path_to_ordering :
     exact new_theme_predicts_themeLast
 
 -- ════════════════════════════════════════════════════
--- § 11. Cross-Study Bridge: @cite{kehler-rohde-2013}
+-- § 11. Cross-Study Bridge: [kehler-rohde-2013]
 -- ════════════════════════════════════════════════════
 
 open KehlerRohde2013
 
-/-- @cite{kehler-rohde-2013}'s Bayesian decomposition predicts that
+/-- [kehler-rohde-2013]'s Bayesian decomposition predicts that
     P(pronoun | referent) depends only on topichood, not on semantic
     factors like thematic role. This study directly violates that
     prediction: goals get more pronouns than sources in the same

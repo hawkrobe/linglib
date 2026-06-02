@@ -1,11 +1,11 @@
 /-!
 # Polarity Operators
-@cite{laka-1990} @cite{turk-hirsch-2026}
+[laka-1990] [turk-hirsch-2026]
 
 The two semantic operators that polarity heads spell out, as bare functions
 on `(W → Prop)` propositions:
 
-- **`affirm`** — identity (the affirmative Σ operator of @cite{laka-1990}).
+- **`affirm`** — identity (the affirmative Σ operator of [laka-1990]).
 - **`neg`** — pointwise propositional negation.
 
 This module is deliberately syntax-free: no UPOS, no head structure, no
@@ -22,11 +22,11 @@ namespace Semantics.Polarity
 universe u
 
 /-- Affirmative polarity operator — identity on propositions
-    (@cite{laka-1990}'s Σ). -/
+    ([laka-1990]'s Σ). -/
 def affirm (W : Type u) : (W → Prop) → (W → Prop) := id
 
 /-- Negative polarity operator — pointwise propositional negation
-    (@cite{laka-1990}'s NEG). -/
+    ([laka-1990]'s NEG). -/
 def neg (W : Type u) : (W → Prop) → (W → Prop) := λ p w => ¬ p w
 
 @[simp] theorem affirm_eq_id (W : Type u) : affirm W = id := rfl

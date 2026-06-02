@@ -2,7 +2,7 @@ import Linglib.Semantics.Negation.CzechNegation
 
 /-!
 # Czech Three-Way Negation in Polar Questions
-@cite{stankova-2025} @cite{zeijlstra-2004} @cite{romero-2024}
+[stankova-2025] [zeijlstra-2004] [romero-2024]
 
 Core empirical data for Staňková (2026), who proposes that negation in Czech
 occupies three distinct LF positions in polar questions:
@@ -23,7 +23,7 @@ syntactic/prosodic encoding (word order and focus).
 This file contains per-cell verification theorems and scope generalizations.
 The core types (`NegPosition`, `Diagnostic`, `licenses`) are in
 `Semantics.Negation.CzechNegation`. Cross-linguistic bridges to
-@cite{romero-2024}, @cite{simik-2024}, verb position, and bias profiles are in
+[romero-2024], [simik-2024], verb position, and bias profiles are in
 `CzechThreeWayNeg.Typology`.
 
 -/

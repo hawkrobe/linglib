@@ -2,25 +2,25 @@ import Linglib.Semantics.Kinds.SortedOntology
 
 /-!
 # German Bare Plural Word Order
-@cite{magri-2009} @cite{diesing-1992}
+[magri-2009] [diesing-1992]
 
 Distributional restrictions on bare plural subjects (BPS) in German,
 conditioned by predicate level. The key diagnostic is the placement of
 BPS relative to the modal particles *ja doch* ('indeed/after all') in
 the Mittelfeld (middle field).
 
-@cite{diesing-1992} first observed:
+[diesing-1992] first observed:
 - S-predicate *verfügbar* ('available'): BPS can sit both LEFT and RIGHT
   of *ja doch*
 - I-predicate *intelligent*: BPS can only sit LEFT of *ja doch*
 
-@cite{magri-2009} §4.5 provides a semantic account: there is no syntactic
+[magri-2009] §4.5 provides a semantic account: there is no syntactic
 difference between s- and i-predicate subjects. Rather, when the BPS sits
 to the right of *ja doch* (= VP-internal at Surface Structure), the truth
 conditions are identical to the basic "Firemen are tall" BPS — whose
 ∃-reading is ruled out by the Mismatch Hypothesis for i-predicates.
 
-The key advantage over @cite{diesing-1992}'s syntactic account: the semantic
+The key advantage over [diesing-1992]'s syntactic account: the semantic
 account correctly predicts that universally quantified subjects like *alle
 Studenten* ('all students') are fine to the right of *ja* (ex. 132), since
 universal quantifiers are maximal in their Horn scale and blind
@@ -51,7 +51,7 @@ structure JaDochDatum where
   gloss : String
   deriving Repr
 
-/-- @cite{diesing-1992} ex. (8a)/(125a): s-predicate *verfügbar*, BPS left of
+/-- [diesing-1992] ex. (8a)/(125a): s-predicate *verfügbar*, BPS left of
 *ja doch* — OK. Both generic and existential readings available. -/
 def verfuegbar_left : JaDochDatum where
   predicate := "verfügbar"
@@ -60,7 +60,7 @@ def verfuegbar_left : JaDochDatum where
   acceptable := true
   gloss := "...weil Feuerwehrmänner ja doch verfügbar sind"
 
-/-- @cite{diesing-1992} ex. (8a)/(125a): s-predicate *verfügbar*, BPS right of
+/-- [diesing-1992] ex. (8a)/(125a): s-predicate *verfügbar*, BPS right of
 *ja doch* — OK. Existential reading available in both positions. -/
 def verfuegbar_right : JaDochDatum where
   predicate := "verfügbar"
@@ -69,7 +69,7 @@ def verfuegbar_right : JaDochDatum where
   acceptable := true
   gloss := "...weil ja doch Feuerwehrmänner verfügbar sind"
 
-/-- @cite{diesing-1992} ex. (8d)/(125b): i-predicate *intelligent*, BPS left
+/-- [diesing-1992] ex. (8d)/(125b): i-predicate *intelligent*, BPS left
 of *ja doch* — OK. Generic reading available. -/
 def intelligent_left : JaDochDatum where
   predicate := "intelligent"
@@ -78,10 +78,10 @@ def intelligent_left : JaDochDatum where
   acceptable := true
   gloss := "...weil Feuerwehrmänner ja doch intelligent sind"
 
-/-- @cite{diesing-1992} ex. (8c)/(125b): i-predicate *intelligent*, BPS right
+/-- [diesing-1992] ex. (8c)/(125b): i-predicate *intelligent*, BPS right
 of *ja doch* — ODD.
 
-@cite{magri-2009} §4.5: this is odd (not ungrammatical) because the
+[magri-2009] §4.5: this is odd (not ungrammatical) because the
 truth conditions are identical to the basic ∃-BPS reading, whose
 strengthened meaning contradicts common knowledge via the MH. -/
 def intelligent_right : JaDochDatum where

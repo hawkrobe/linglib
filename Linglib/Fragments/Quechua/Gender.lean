@@ -2,7 +2,7 @@ import Linglib.Typology.Gender
 
 /-!
 # Quechua Gender
-@cite{corbett-1991} @cite{corbett-2013}
+[corbett-1991] [corbett-2013]
 
 No grammatical gender — pan-Quechuan property. Corbett 1991 cites Cusco
 Quechua (`quz`) specifically; the Imbabura variety (`qvi`) used by

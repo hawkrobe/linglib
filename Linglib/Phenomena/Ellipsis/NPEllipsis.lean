@@ -2,8 +2,8 @@ import Linglib.Core.Word
 import Linglib.Semantics.Quantification.BinominalDefs
 
 /-!
-# NP-Ellipsis in Spanish Binominals @cite{saab-2026}
-@cite{lobeck-1995} @cite{pesetsky-2013}
+# NP-Ellipsis in Spanish Binominals [saab-2026]
+[lobeck-1995] [pesetsky-2013]
 
 Theory-neutral data on NP-ellipsis patterns across three types of
 Spanish binominal constructions that are superficially syncretic
@@ -42,10 +42,10 @@ open Semantics.Quantification.Binominal
 -- § 1: Genitive Structure
 -- ═══════════════════════════════════════════════════════════════
 
-/-- The structural source of the genitive *de* (@cite{saab-2026} §4). -/
+/-- The structural source of the genitive *de* ([saab-2026] §4). -/
 inductive GenitiveSource where
-  | primeval    -- @cite{pesetsky-2013}: default case when D blocks structural case
-  | equative   -- @cite{dendikken-2006}: EquP predication, not true genitive
+  | primeval    -- [pesetsky-2013]: default case when D blocks structural case
+  | equative   -- [dendikken-2006]: EquP predication, not true genitive
   deriving DecidableEq, Repr
 
 /-- Map binominal type to its genitive source. -/
@@ -59,16 +59,16 @@ def genitiveSource : BinominalType → GenitiveSource
 -- ═══════════════════════════════════════════════════════════════
 
 /-- Agreement number on the verb in binominal constructions.
-    @cite{saab-2026} §2: the controller is always Num, not QP in Spec,DP. -/
+    [saab-2026] §2: the controller is always Num, not QP in Spec,DP. -/
 inductive AgreementNumber where
   | singular
   | plural
   deriving DecidableEq, Repr
 
 /-- Which element controls verbal agreement?
-    @cite{saab-2026}: Num in all three types, never QP in Spec,DP. -/
+    [saab-2026]: Num in all three types, never QP in Spec,DP. -/
 inductive AgreementController where
-  | num       -- Num head (correct: @cite{saab-2026})
+  | num       -- Num head (correct: [saab-2026])
   | specDP    -- QP in Spec,DP (incorrect alternative)
   deriving DecidableEq, Repr
 

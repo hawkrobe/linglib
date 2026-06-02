@@ -9,10 +9,10 @@ import Linglib.Semantics.Modality.ModalTypes
 
 /-!
 # Modal Base Temporal Constraints
-@cite{klecha-2016}
+[klecha-2016]
 
 Klecha-namespace dispatch on `ModalBaseKind` for the temporal constraints
-that fall out of @cite{klecha-2016}'s modal-base-pronoun architecture, plus
+that fall out of [klecha-2016]'s modal-base-pronoun architecture, plus
 bridges from `Attitude` / `ModalFlavor` to `ModalBaseKind`.
 
 The framework-neutral interval predicates (`isActualHistory`,
@@ -52,7 +52,7 @@ open HistoricalAlternatives
     time relative to the modal's evaluation time (RT ≤ EvalT).
 
     This is the compositional source of the Upper Limit Constraint.
-    @cite{klecha-2016} derives it from DOX's temporal character: since DOX
+    [klecha-2016] derives it from DOX's temporal character: since DOX
     returns actual histories (ending at t), the embedded event must be
     located within that interval. -/
 def doxConstrainsRT {Time : Type*} [LE Time]
@@ -64,7 +64,7 @@ def doxConstrainsRT {Time : Type*} [LE Time]
 
     This is what permits future-oriented readings under *hope*, *pray*,
     and circumstantial/teleological/deontic modals.
-    @cite{klecha-2016} derives it from CIR's temporal character: since CIR
+    [klecha-2016] derives it from CIR's temporal character: since CIR
     returns future histories (departing from t), the embedded event must be
     located after that time. -/
 def cirConstrainsRT {Time : Type*} [LT Time]
@@ -118,12 +118,12 @@ theorem cir_compatible_with_future {Time : Type*} [LinearOrder Time]
 
 /-! ## Klecha 2016: constraint as derivation, not stipulation
 
-The two theorems below make @cite{klecha-2016}'s central architectural
+The two theorems below make [klecha-2016]'s central architectural
 claim kernel-checked: `attitudeTemporalConstraint` is *derived* from
 membership in the corresponding situation-base (`actualHistoryBase` for
 DOX, `futureHistoryBase` for CIR), not stipulated.
 
-This is the formal contrast with @cite{abusch-1997}'s ULC, which is
+This is the formal contrast with [abusch-1997]'s ULC, which is
 stipulated as a presupposition on T-nodes; here, ULC follows by `.2`
 projection through the situation-base definition. The substrate
 derivation lives in `HistoricalAlternatives` as
@@ -131,7 +131,7 @@ derivation lives in `HistoricalAlternatives` as
 these theorems re-express it in the Klecha-namespace
 `attitudeTemporalConstraint` form. -/
 
-/-- @cite{klecha-2016} eq (35a): DOX returns the actual history base.
+/-- [klecha-2016] eq (35a): DOX returns the actual history base.
     Membership in `actualHistoryBase` derives the doxastic temporal
     constraint (Upper Limit Constraint) by `.2` projection. -/
 theorem attitudeTemporalConstraint_derived_doxastic
@@ -142,7 +142,7 @@ theorem attitudeTemporalConstraint_derived_doxastic
     attitudeTemporalConstraint .doxastic s.time s'.time :=
   actualHistoryBase_time_actual history s s' h
 
-/-- @cite{klecha-2016} eq (35b): CIR returns the future history base.
+/-- [klecha-2016] eq (35b): CIR returns the future history base.
     Membership in `futureHistoryBase` derives the circumstantial
     temporal constraint (future orientation) by `.2` projection. -/
 theorem attitudeTemporalConstraint_derived_circumstantial
@@ -157,7 +157,7 @@ theorem attitudeTemporalConstraint_derived_circumstantial
 /-! ## Attitude → ModalBaseKind bridge -/
 
 /-- Derive `ModalBaseKind` from `Attitude` classification.
-    @cite{klecha-2016}: doxastic attitudes select DOX, preferential attitudes
+    [klecha-2016]: doxastic attitudes select DOX, preferential attitudes
     select CIR. The derived kind determines temporal orientation.
 
     Note: preferential attitudes CAN also take DOX (e.g., "I hope she
@@ -184,7 +184,7 @@ theorem permitsCirc_iff_cir (a : Features.Attitude) :
 
 /-! ## ModalFlavor → ModalBaseKind bridge
 
-@cite{klecha-2016} Table 1: the temporal orientation of a modal correlates
+[klecha-2016] Table 1: the temporal orientation of a modal correlates
 with its flavor. Epistemic modals are past/present-oriented (DOX-like);
 circumstantial, deontic, bouletic, and teleological modals are
 future-oriented (CIR-like). This function bridges the four-way

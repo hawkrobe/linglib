@@ -1,6 +1,6 @@
 /-
 # CCG Analysis of Non-Constituent Coordination
-@cite{pickering-barry-1991} @cite{steedman-2000}
+[pickering-barry-1991] [steedman-2000]
 
 ## The Phenomenon
 
@@ -52,7 +52,7 @@ structure SemanticEquivalence where
 
 /-- "John likes and Mary hates beans" ≡
 "John likes beans and Mary hates beans" — the canonical
-non-constituent coordination test pair (@cite{steedman-2000}). -/
+non-constituent coordination test pair ([steedman-2000]). -/
 def johnLikesAndMaryHatesBeans : SemanticEquivalence :=
   { sentence := ["John", "likes", "and", "Mary", "hates", "beans"]
   , equivalentTo := ["John", "likes", "beans", "and", "Mary", "hates", "beans"] }

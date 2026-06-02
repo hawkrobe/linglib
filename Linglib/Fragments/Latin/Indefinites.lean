@@ -2,14 +2,14 @@ import Linglib.Typology.Indefinite
 
 /-!
 # Latin Indefinite Pronouns
-@cite{haspelmath-1997} @cite{bubnov-2026}
+[haspelmath-1997] [bubnov-2026]
 
-Latin has a two-way split in the SK–SU–NS region of @cite{haspelmath-1997}'s
+Latin has a two-way split in the SK–SU–NS region of [haspelmath-1997]'s
 map: *aliquis* (`ali-` + interrogative `quis`) covers non-specific and
 specific-unknown (AAB pattern); *quidam* (interrogative `qui` + `-dam`)
 covers specific-known. Both forms are interrogative-based.
 
-Latin is not in @cite{wals-2013} F46A's 326-language sample, so no WALS
+Latin is not in [wals-2013] F46A's 326-language sample, so no WALS
 bridge theorem is stated for Latin in `Phenomena/Indefinites/Typology.lean`.
 The morphological-basis encoding is recorded for cross-linguistic
 comparison anyway.
@@ -24,7 +24,7 @@ open Typology.Indefinite
 /-- Latin *aliquis*: non-specific + specific-unknown (AAB pattern).
     Interrogative-based: `ali-` + interrogative `quis`. D&A type iv
     epistemic (`var(∅,x)`); distribution matches profile.
-    @cite{haspelmath-1997}, @cite{bubnov-2026} Table 1. -/
+    [haspelmath-1997], [bubnov-2026] Table 1. -/
 def aliEntry : IndefinitePronoun where
   form := "aliquis"
   ontology := .person
@@ -33,7 +33,7 @@ def aliEntry : IndefinitePronoun where
 
 /-- Latin *quidam*: specific-known indefinite (interrogative `qui` + `-dam`).
     D&A type v `dep(∅,x)`.
-    @cite{haspelmath-1997}, @cite{bubnov-2026} Table 1. -/
+    [haspelmath-1997], [bubnov-2026] Table 1. -/
 def damEntry : IndefinitePronoun where
   form := "quidam"
   ontology := .person

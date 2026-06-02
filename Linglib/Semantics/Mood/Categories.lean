@@ -55,9 +55,9 @@ inductive SubjunctiveType where
 /--
 The semantic effects of grammatical mood, connecting two independent dimensions:
 
-- **Situation-level** (@cite{mendes-2025}): SUBJ introduces a new situation dref;
+- **Situation-level** ([mendes-2025]): SUBJ introduces a new situation dref;
   IND retrieves an existing one
-- **Eventuality-level** (@cite{grano-2024}): SBJV leaves the complement's eventuality
+- **Eventuality-level** ([grano-2024]): SBJV leaves the complement's eventuality
   argument open for abstraction; IND existentially closes it
 
 These dimensions are complementary: situation introduction enables temporal
@@ -66,9 +66,9 @@ abstraction over the event argument (required by causatives, intention reports,
 aspectual predicates, and memory/perception reports).
 -/
 structure MoodEffect where
-  /-- SUBJ introduces a new situation dref (@cite{mendes-2025}) -/
+  /-- SUBJ introduces a new situation dref ([mendes-2025]) -/
   introducesSituation : Bool
-  /-- SBJV leaves the eventuality argument open for abstraction (@cite{grano-2024}) -/
+  /-- SBJV leaves the eventuality argument open for abstraction ([grano-2024]) -/
   eventualityOpen : Bool
   deriving DecidableEq, Repr
 

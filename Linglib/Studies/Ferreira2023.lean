@@ -6,7 +6,7 @@ import Mathlib.Data.Fin.Basic
 
 /-!
 # Ferreira (2023): A square of necessities
-@cite{ferreira-2023}
+[ferreira-2023]
 
 A square of necessities: X-marking weak and strong necessity modals.
 *Semantics and Pragmatics* 16, Article 8: 1–54.
@@ -54,7 +54,7 @@ variable {W : Type*}
 
 /-! ### Star-revision: X-marking on modal bases (Xf) -/
 
-/-- Property: `f'` is a **∗-revision** of `f` for `p` (@cite{ferreira-2023}).
+/-- Property: `f'` is a **∗-revision** of `f` for `p` ([ferreira-2023]).
     A ∗-revision widens the modal domain by adding p-worlds:
     (1) every world accessible under `f` remains accessible under `f'`;
     (2) every newly accessible world satisfies `p`. -/
