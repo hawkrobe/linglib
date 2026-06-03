@@ -67,29 +67,24 @@ private theorem pivot
   have hgvstar : 0 < g vstar := (hPmem.1 hvstarP).2
   -- `t > 0`.
   have ht_pos : 0 < t := by
-    rw [ht]
-    rw [Finset.lt_inf'_iff]
-    intro v hv
-    exact div_pos (hpos v (hPmem.1 hv).1) (hPmem.1 hv).2
+    rw [ht, Finset.lt_inf'_iff]
+    exact fun v hv => div_pos (hpos v (hPmem.1 hv).1) (hPmem.1 hv).2
   -- The shifted coefficients.
   set d : (Fin 4 → ℚ) → ℚ := fun v => c v - t * g v with hd
   -- `0 ≤ d v` for every `v ∈ V`.
   have hd_nonneg : ∀ v ∈ V, 0 ≤ d v := by
     intro v hv
+    simp only [hd]
     rcases lt_or_ge 0 (g v) with hgvpos | hgvnonpos
     · -- `v ∈ P`, so `t ≤ c v / g v`, hence `t * g v ≤ c v`.
-      have hvP : v ∈ P := hPmem.2 ⟨hv, hgvpos⟩
-      have hle : t ≤ c v / g v := by rw [ht]; exact Finset.inf'_le _ hvP
-      have : t * g v ≤ c v := by rw [le_div_iff₀ hgvpos] at hle; exact hle
-      simp only [hd]; linarith
+      have hle : t ≤ c v / g v := by rw [ht]; exact Finset.inf'_le _ (hPmem.2 ⟨hv, hgvpos⟩)
+      rw [le_div_iff₀ hgvpos] at hle; linarith
     · -- `g v ≤ 0`, so `t * g v ≤ 0 < c v`.
-      have : t * g v ≤ 0 := mul_nonpos_of_nonneg_of_nonpos ht_pos.le hgvnonpos
-      have hcv := hpos v hv
-      simp only [hd]; linarith
+      have := mul_nonpos_of_nonneg_of_nonpos ht_pos.le hgvnonpos
+      linarith [hpos v hv]
   -- `d vstar = 0`.
   have hd_vstar : d vstar = 0 := by
-    have htv : t = c vstar / g vstar := by rw [ht, hvstar_eq]
-    simp only [hd, htv]
+    simp only [hd, ht, hvstar_eq]
     rw [div_mul_cancel₀ _ (ne_of_gt hgvstar), sub_self]
   -- The new positive support.
   set V' := V.filter (fun v => 0 < d v) with hV'
@@ -115,22 +110,18 @@ private theorem pivot
   have hd_pos : ∀ v ∈ V', 0 < d v := fun v hv => (mem_filter.1 hv).2
   -- The zero-sum is preserved: dropped terms have `d v = 0`.
   have hsum' : ∑ v ∈ V', d v • v = 0 := by
+    -- Restrict to `V'`: dropped terms have `d v = 0`, hence `d v • v = 0`.
     have hsplit : ∑ v ∈ V, d v • v = ∑ v ∈ V', d v • v := by
-      rw [hV']
-      rw [Finset.sum_filter_of_ne]
+      rw [hV', Finset.sum_filter_of_ne]
       intro v hv hne
-      -- `d v • v ≠ 0` and `0 ≤ d v` force `0 < d v`.
-      rcases (hd_nonneg v hv).lt_or_eq with hlt | heq
-      · exact hlt
-      · exact absurd (by rw [← heq, zero_smul] : d v • v = 0) hne
-    have hVsum : ∑ v ∈ V, d v • v = 0 := by
-      have hstep : ∑ v ∈ V, d v • v = (∑ v ∈ V, c v • v) - t • ∑ v ∈ V, g v • v := by
-        rw [Finset.smul_sum, ← Finset.sum_sub_distrib]
-        refine Finset.sum_congr rfl fun v _ => ?_
-        show (c v - t * g v) • v = c v • v - t • (g v • v)
-        rw [sub_smul, mul_smul]
-      rw [hstep, hcsum, hgsum, smul_zero, sub_zero]
-    rw [← hsplit]; exact hVsum
+      refine (hd_nonneg v hv).lt_or_eq.resolve_right fun heq => ?_
+      exact hne (by rw [← heq, zero_smul])
+    have hVsum : ∑ v ∈ V, d v • v = (∑ v ∈ V, c v • v) - t • ∑ v ∈ V, g v • v := by
+      rw [Finset.smul_sum, ← Finset.sum_sub_distrib]
+      refine Finset.sum_congr rfl fun v _ => ?_
+      show (c v - t * g v) • v = c v • v - t • (g v • v)
+      rw [sub_smul, mul_smul]
+    rw [← hsplit, hVsum, hcsum, hgsum, smul_zero, sub_zero]
   exact ⟨V', hV'sub, hcard, ⟨v₀, hv₀V'⟩, d, hd_pos, hsum'⟩
 
 /-- **Conic Carathéodory pivot, dimension 4.**  A positive dependence among finitely
@@ -172,21 +163,18 @@ theorem exists_posdep_card_le_five
         refine Finset.sum_congr rfl fun v hv => ?_
         rw [hg]; simp [(mem_erase.1 hv).1]
       -- WLOG `g` is positive somewhere on `V` (negate if necessary).
-      rcases hgxne.lt_or_gt with hxneg | hxpos
-      · -- `g x < 0`: use `-g`, positive at `x`.
-        obtain ⟨V', hV'sub, hV'card, hV'ne, d, hd_pos, hd_sum⟩ :=
-          pivot V c hpos hsum (fun v => -g v)
-            (by simp only [neg_smul, Finset.sum_neg_distrib, hgsum, neg_zero])
-            v₀ hv₀ (by simp [hgv₀]) x hxV (by simpa using hxneg)
-        obtain ⟨S, hSV', hSne, hScard, e, he_pos, he_sum⟩ :=
-          ih V'.card hV'card V' d hd_pos hV'ne hd_sum rfl
-        exact ⟨S, hSV'.trans hV'sub, hSne, hScard, e, he_pos, he_sum⟩
-      · -- `g x > 0`: use `g` directly.
-        obtain ⟨V', hV'sub, hV'card, hV'ne, d, hd_pos, hd_sum⟩ :=
-          pivot V c hpos hsum g hgsum v₀ hv₀ hgv₀ x hxV hxpos
-        obtain ⟨S, hSV', hSne, hScard, e, he_pos, he_sum⟩ :=
-          ih V'.card hV'card V' d hd_pos hV'ne hd_sum rfl
-        exact ⟨S, hSV'.trans hV'sub, hSne, hScard, e, he_pos, he_sum⟩
+      obtain ⟨g', hg'sum, hg'v₀, hg'x⟩ :
+          ∃ g' : (Fin 4 → ℚ) → ℚ, ∑ v ∈ V, g' v • v = 0 ∧ g' v₀ = 0 ∧ 0 < g' x := by
+        rcases hgxne.lt_or_gt with hxneg | hxpos
+        · exact ⟨fun v => -g v,
+            by simp only [neg_smul, Finset.sum_neg_distrib, hgsum, neg_zero],
+            by simp [hgv₀], by simpa using hxneg⟩
+        · exact ⟨g, hgsum, hgv₀, hxpos⟩
+      obtain ⟨V', hV'sub, hV'card, hV'ne, d, hd_pos, hd_sum⟩ :=
+        pivot V c hpos hsum g' hg'sum v₀ hv₀ hg'v₀ x hxV hg'x
+      obtain ⟨S, hSV', hSne, hScard, e, he_pos, he_sum⟩ :=
+        ih V'.card hV'card V' d hd_pos hV'ne hd_sum rfl
+      exact ⟨S, hSV'.trans hV'sub, hSne, hScard, e, he_pos, he_sum⟩
 
 end EpiCarath
 
@@ -194,8 +182,7 @@ end EpiCarath
 /-! # `core_le5`: balanced no-g-merge sign families have an anti-dominating pair
 
 A self-contained reformulation of the combinatorial crux behind Theorem 8a for
-`Fin 4` epistemic-comparison systems (the `v1_tailored` sorry in
-`scratch/epi_work.lean`).
+`Fin 4` epistemic-comparison systems, consumed by `v1_tailored` below.
 -/
 
 open Finset
@@ -218,49 +205,6 @@ private lemma balance_coord (S : Finset (Fin 4 → ℚ)) (d : (Fin 4 → ℚ) �
   have := congrFun hsum i
   rw [Finset.sum_apply] at this
   simpa [Pi.smul_apply, smul_eq_mul] using this
-
-/-- If a coordinate is hit with `+1` by some member, balance forces a `-1` member. -/
-private lemma neg_of_pos (S : Finset (Fin 4 → ℚ))
-    (hsign : ∀ v ∈ S, ∀ i, v i = -1 ∨ v i = 0 ∨ v i = 1)
-    (d : (Fin 4 → ℚ) → ℚ) (hd : ∀ v ∈ S, 0 < d v)
-    (hsum : ∑ v ∈ S, d v • v = 0) (i : Fin 4)
-    (hex : ∃ v ∈ S, v i = 1) : ∃ w ∈ S, w i = -1 := by
-  by_contra hno
-  push_neg at hno
-  -- every term d v * v i ≥ 0, with the witness term strictly > 0 ⟹ sum > 0
-  have hbal := balance_coord S d hsum i
-  obtain ⟨v₀, hv₀S, hv₀⟩ := hex
-  have hpos : 0 < ∑ w ∈ S, d w * w i := by
-    apply Finset.sum_pos'
-    · intro w hwS
-      rcases hsign w hwS i with h | h | h
-      · exact absurd h (hno w hwS)
-      · simp [h]
-      · rw [h, mul_one]; exact le_of_lt (hd w hwS)
-    · exact ⟨v₀, hv₀S, by rw [hv₀, mul_one]; exact hd v₀ hv₀S⟩
-  rw [hbal] at hpos
-  exact lt_irrefl 0 hpos
-
-/-- If a coordinate is hit with `-1` by some member, balance forces a `+1` member. -/
-private lemma pos_of_neg (S : Finset (Fin 4 → ℚ))
-    (hsign : ∀ v ∈ S, ∀ i, v i = -1 ∨ v i = 0 ∨ v i = 1)
-    (d : (Fin 4 → ℚ) → ℚ) (hd : ∀ v ∈ S, 0 < d v)
-    (hsum : ∑ v ∈ S, d v • v = 0) (i : Fin 4)
-    (hex : ∃ v ∈ S, v i = -1) : ∃ w ∈ S, w i = 1 := by
-  by_contra hno
-  push_neg at hno
-  have hbal := balance_coord S d hsum i
-  obtain ⟨v₀, hv₀S, hv₀⟩ := hex
-  have hneg : ∑ w ∈ S, d w * w i < 0 := by
-    apply Finset.sum_neg'
-    · intro w hwS
-      rcases hsign w hwS i with h | h | h
-      · rw [h, mul_neg, mul_one]; exact le_of_lt (neg_neg_of_pos (hd w hwS))
-      · simp [h]
-      · exact absurd h (hno w hwS)
-    · exact ⟨v₀, hv₀S, by rw [hv₀, mul_neg, mul_one]; exact neg_neg_of_pos (hd v₀ hv₀S)⟩
-  rw [hbal] at hneg
-  exact lt_irrefl 0 hneg
 
 /-! ### Sizes 1 and 2 are impossible -/
 
@@ -285,28 +229,21 @@ private lemma core_card_two (S : Finset (Fin 4 → ℚ))
   obtain ⟨v, w, hvw, rfl⟩ := Finset.card_eq_two.mp h2
   have hvS : v ∈ ({v, w} : Finset (Fin 4 → ℚ)) := by simp
   have hwS : w ∈ ({v, w} : Finset (Fin 4 → ℚ)) := by simp
-  have hdv := hd v hvS
-  have hdw := hd w hwS
   -- pointwise, balance forces `w = -v`
   have hopp : ∀ i, w i = - v i := by
     intro i
     have hbal : d v * v i + d w * w i = 0 := by
       have := balance_coord {v, w} d hsum i
       rwa [Finset.sum_pair hvw] at this
+    have hdv := hd v hvS; have hdw := hd w hwS
     rcases hsign v hvS i with h | h | h <;> rcases hsign w hwS i with h' | h' | h' <;>
       rw [h, h'] at hbal ⊢ <;> linarith
-  -- so the pair g-merges, contradicting `hnogm`
-  refine hnogm v hvS w hwS hvw ⟨?_, ?_⟩
-  · rw [Finset.disjoint_left]
-    intro i hi hi'
-    rw [mem_spos] at hi hi'
-    rw [hopp i, hi] at hi'
-    norm_num at hi'
-  · rw [Finset.disjoint_left]
-    intro i hi hi'
-    rw [mem_sneg] at hi hi'
-    rw [hopp i, hi] at hi'
-    norm_num at hi'
+  -- so the pair g-merges, contradicting `hnogm`: same-sign coords clash with `w = -v`
+  refine hnogm v hvS w hwS hvw ⟨?_, ?_⟩ <;>
+    · rw [Finset.disjoint_left]
+      intro i hi hi'
+      simp only [mem_spos, mem_sneg, hopp i] at hi hi'
+      rw [hi] at hi'; norm_num at hi'
 
 /-! ### Weight-4 dichotomy, sharing, and the size-3 case -/
 
@@ -385,14 +322,58 @@ private def ip (v w : Fin 4 → ℚ) : ℚ := ∑ i, v i * w i
 private lemma ip_functional (S : Finset (Fin 4 → ℚ)) (d : (Fin 4 → ℚ) → ℚ)
     (hsum : ∑ v ∈ S, d v • v = 0) (v : Fin 4 → ℚ) :
     ∑ w ∈ S, d w * ip v w = 0 := by
-  have key : ∑ w ∈ S, d w * ip v w = ∑ i : Fin 4, v i * ∑ w ∈ S, d w * w i := by
-    unfold ip
-    simp_rw [Finset.mul_sum]
-    rw [Finset.sum_comm]
-    refine Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun w _ => by ring
-  rw [key]
-  have hz : ∀ i, ∑ w ∈ S, d w * w i = 0 := balance_coord S d hsum
-  simp [hz]
+  calc ∑ w ∈ S, d w * ip v w
+      = ∑ i : Fin 4, v i * ∑ w ∈ S, d w * w i := by
+        unfold ip
+        simp_rw [Finset.mul_sum]
+        rw [Finset.sum_comm]
+        exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun w _ => by ring
+    _ = 0 := by simp [balance_coord S d hsum]
+
+/-- Positive and negative supports are disjoint. -/
+private lemma disjoint_spos_sneg (w : Fin 4 → ℚ) : Disjoint (spos w) (sneg w) := by
+  rw [Finset.disjoint_left]
+  intro i hi hi'
+  rw [mem_spos] at hi
+  rw [mem_sneg, hi] at hi'
+  norm_num at hi'
+
+/-- The `𝟙`-functional of a sign vector counts positives minus negatives. -/
+private lemma ip_one_eq {w : Fin 4 → ℚ} (hw : ∀ i, w i = -1 ∨ w i = 0 ∨ w i = 1) :
+    ip (fun _ => 1) w = ((spos w).card : ℚ) - ((sneg w).card : ℚ) := by
+  unfold ip
+  simp only [one_mul]
+  have hcov : (Finset.univ : Finset (Fin 4)) =
+      (spos w ∪ sneg w) ∪ (Finset.univ \ (spos w ∪ sneg w)) := by
+    rw [Finset.union_sdiff_of_subset (Finset.subset_univ _)]
+  rw [hcov, Finset.sum_union Finset.disjoint_sdiff,
+    Finset.sum_union (disjoint_spos_sneg w)]
+  have h0 : ∑ k ∈ Finset.univ \ (spos w ∪ sneg w), w k = 0 := by
+    apply Finset.sum_eq_zero
+    intro k hk
+    simp only [Finset.mem_sdiff, Finset.mem_union, mem_spos, mem_sneg] at hk
+    rcases hw k with h | h | h
+    · exact absurd h (fun f => hk.2 (Or.inr f))
+    · exact h
+    · exact absurd h (fun f => hk.2 (Or.inl f))
+  have h1 : ∑ k ∈ spos w, w k = ((spos w).card : ℚ) := by
+    rw [Finset.sum_congr rfl (fun k hk => mem_spos.mp hk)]
+    simp
+  have h2 : ∑ k ∈ sneg w, w k = -((sneg w).card : ℚ) := by
+    rw [Finset.sum_congr rfl (fun k hk => mem_sneg.mp hk)]
+    simp
+  rw [h0, h1, h2]
+  ring
+
+/-- At most four signed coordinates. -/
+private lemma card_spos_add_sneg_le (w : Fin 4 → ℚ) :
+    (spos w).card + (sneg w).card ≤ 4 := by
+  calc (spos w).card + (sneg w).card
+      = (spos w ∪ sneg w).card :=
+        (Finset.card_union_of_disjoint (disjoint_spos_sneg w)).symm
+    _ ≤ (Finset.univ : Finset (Fin 4)).card :=
+        Finset.card_le_card (Finset.subset_univ _)
+    _ = 4 := by simp
 
 /-- **A1**: no member of the family has two zero coordinates. -/
 private lemma at_most_one_zero (S : Finset (Fin 4 → ℚ))
@@ -445,10 +426,10 @@ private lemma at_most_one_zero (S : Finset (Fin 4 → ℚ))
         rw [h, h'] <;> norm_num
     have hcard_erase : (supp.erase j).card ≤ 1 := by
       rw [Finset.card_erase_of_mem hjsupp]; omega
-    have hsum_erase : -1 ≤ ∑ i ∈ supp.erase j, v i * w i := by
-      have hcq : ((supp.erase j).card : ℚ) ≤ 1 := by exact_mod_cast hcard_erase
-      calc (-1 : ℚ) ≤ -((supp.erase j).card : ℚ) := by linarith
-        _ = (supp.erase j).card • (-1 : ℚ) := by simp [nsmul_eq_mul]
+    have hsum_erase : -1 ≤ ∑ i ∈ supp.erase j, v i * w i :=
+      calc (-1 : ℚ) ≤ (supp.erase j).card • (-1 : ℚ) := by
+            have : ((supp.erase j).card : ℚ) ≤ 1 := by exact_mod_cast hcard_erase
+            simp only [nsmul_eq_mul]; linarith
         _ ≤ ∑ i ∈ supp.erase j, v i * w i := Finset.card_nsmul_le_sum _ _ _ hbound
     rw [hip_supp, ← Finset.add_sum_erase _ _ hjsupp, hjterm]
     linarith
@@ -534,21 +515,16 @@ private lemma constraints_of_sp3 (S : Finset (Fin 4 → ℚ))
     · rw [hsx, Finset.disjoint_singleton_left]
       simp only [mem_spos]
       exact h1
-    · rw [hnx, Finset.disjoint_left]
-      intro k hk
-      simp only [Finset.mem_insert, Finset.mem_singleton] at hk
-      simp only [mem_sneg]
-      rcases hk with rfl | rfl
+    · rw [hnx]
+      simp only [Finset.disjoint_left, Finset.mem_insert, Finset.mem_singleton, mem_sneg]
+      rintro k (rfl | rfl)
       · exact h2
       · exact h3
   · by_contra hc
     push_neg at hc
     obtain ⟨h1, h2⟩ := hc
     refine hno x hxS w hwS hxw ?_ ?_
-    · rw [hsx]
-      rintro k hk
-      rw [Finset.mem_singleton] at hk
-      subst hk
+    · rw [hsx, Finset.singleton_subset_iff]
       exact mem_sneg.mpr h1
     · intro k hk
       rw [mem_spos] at hk
@@ -599,12 +575,8 @@ private lemma s_shape_forcing (S : Finset (Fin 4 → ℚ))
   have hsx := spos_singleton hpζ hxp hxζ hxn
   -- the functional `w ↦ w p + w ζ` sums to zero over `S`
   have hF : ∑ w ∈ S, d w * (w p + w ζ) = 0 := by
-    have h1 := balance_coord S d hsum p
-    have h2 := balance_coord S d hsum ζ
-    calc ∑ w ∈ S, d w * (w p + w ζ)
-        = ∑ w ∈ S, (d w * w p + d w * w ζ) := by simp_rw [mul_add]
-      _ = (∑ w ∈ S, d w * w p) + ∑ w ∈ S, d w * w ζ := Finset.sum_add_distrib
-      _ = 0 := by rw [h1, h2, add_zero]
+    simp_rw [mul_add]
+    rw [Finset.sum_add_distrib, balance_coord S d hsum p, balance_coord S d hsum ζ, add_zero]
   -- `x`'s term is positive, so some member has `w p + w ζ < 0`
   obtain ⟨y, hyS, hy⟩ : ∃ w ∈ S, w p + w ζ < 0 := by
     by_contra hall
@@ -622,14 +594,8 @@ private lemma s_shape_forcing (S : Finset (Fin 4 → ℚ))
       have hxy : x ≠ y := by
         intro he; rw [← he, hxp] at h; norm_num at h
       have hsub : spos x ⊆ sneg y := by
-        rw [hsx]
-        rintro k hk
-        rw [Finset.mem_singleton] at hk
-        subst hk
-        exact mem_sneg.mpr h
-      have hnsub := hno x hxS y hyS hxy hsub
-      rw [Finset.not_subset] at hnsub
-      obtain ⟨m, hmy, hmx⟩ := hnsub
+        rw [hsx, Finset.singleton_subset_iff]; exact mem_sneg.mpr h
+      obtain ⟨m, hmy, hmx⟩ := Finset.not_subset.mp (hno x hxS y hyS hxy hsub)
       rw [mem_spos] at hmy
       rw [mem_sneg] at hmx
       have hmp : m ≠ p := by intro he; rw [he, h] at hmy; norm_num at hmy
@@ -657,14 +623,9 @@ private lemma s_shape_forcing (S : Finset (Fin 4 → ℚ))
     intro he; rw [← he, hxp] at hyp; norm_num at hyp
   have hyj : y j = -1 := by
     have hdp : Disjoint (spos x) (spos y) := by
-      rw [hsx, Finset.disjoint_singleton_left]
-      simp only [mem_spos]
-      rw [hyp]
-      norm_num
-    have hni : ¬Disjoint (sneg x) (sneg y) :=
-      fun hdn => hnogm x hxS y hyS hxy ⟨hdp, hdn⟩
-    rw [Finset.not_disjoint_iff] at hni
-    obtain ⟨m, hmx, hmy⟩ := hni
+      rw [hsx, Finset.disjoint_singleton_left]; simp only [mem_spos]; rw [hyp]; norm_num
+    obtain ⟨m, hmx, hmy⟩ := Finset.not_disjoint_iff.mp
+      (fun hdn => hnogm x hxS y hyS hxy ⟨hdp, hdn⟩)
     rw [mem_sneg] at hmx hmy
     have hmp : m ≠ p := by intro he; rw [he, hxp] at hmx; norm_num at hmx
     have hmζ : m ≠ ζ := by intro he; rw [he, hxζ] at hmx; norm_num at hmx
@@ -721,17 +682,11 @@ private lemma sp3_kill (S : Finset (Fin 4 → ℚ))
     · exact hab rfl
     · -- the witness functional `G w = w p + w i + w a - w b` sums to zero
       have hG : ∑ w ∈ S, d w * (w p + w i + w a - w b) = 0 := by
-        have h1 := balance_coord S d hsum p
-        have h2 := balance_coord S d hsum i
-        have h3 := balance_coord S d hsum a
-        have h4 := balance_coord S d hsum b
-        calc ∑ w ∈ S, d w * (w p + w i + w a - w b)
-            = ∑ w ∈ S, (d w * w p + d w * w i + d w * w a - d w * w b) := by
-              simp_rw [mul_sub, mul_add]
-          _ = 0 := by
-              rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_add_distrib,
-                h1, h2, h3, h4]
-              norm_num
+        simp_rw [mul_sub, mul_add]
+        rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, Finset.sum_add_distrib,
+          balance_coord S d hsum p, balance_coord S d hsum i, balance_coord S d hsum a,
+          balance_coord S d hsum b]
+        norm_num
       -- ... and `y₂`'s remaining structure
       have hy₂n : ∀ k, k ≠ a → k ≠ i → y₂ k = -1 := by
         intro k hkζ hki
@@ -792,11 +747,9 @@ private lemma sp3_kill (S : Finset (Fin 4 → ℚ))
         simp only [mem_spos]
         rw [hy₂p]
         norm_num
-      · rw [sneg_pair hpζ hip hiζ hjp hjζ hij hxp hxζ hxn, Finset.disjoint_left]
-        intro k hk
-        simp only [Finset.mem_insert, Finset.mem_singleton] at hk
-        simp only [mem_sneg]
-        rcases hk with rfl | rfl
+      · rw [sneg_pair hpζ hip hiζ hjp hjζ hij hxp hxζ hxn]
+        simp only [Finset.disjoint_left, Finset.mem_insert, Finset.mem_singleton, mem_sneg]
+        rintro k (rfl | rfl)
         · rw [hy₂i]; norm_num
         · rw [hy₂a]; norm_num
     · exact hab rfl
@@ -823,6 +776,66 @@ private lemma core_card_ge4 (S : Finset (Fin 4 → ℚ))
     ∃ v ∈ S, ∃ w ∈ S, v ≠ w ∧ spos v ⊆ sneg w ∧ spos w ⊆ sneg v := by
   by_contra hno
   push_neg at hno
+  -- Every member has at least two positive coordinates: singleton-positive
+  -- members die on balance (weight-4 directly, weight-3 via the s-shape chain).
+  have hcard2 : ∀ v ∈ S, 2 ≤ (spos v).card := by
+    intro v hv
+    by_contra hlt
+    push_neg at hlt
+    obtain ⟨k, hk⟩ := hposne v hv
+    -- `spos v` has one element and contains `k`, so it is `{k}`.
+    have hk' : spos v = {k} := Finset.eq_singleton_iff_unique_mem.mpr
+      ⟨mem_spos.mpr hk, fun x hx => Finset.card_le_one.mp (by omega) x hx k (mem_spos.mpr hk)⟩
+    by_cases hzero : ∃ m, v m = 0
+    · -- weight-3 singleton-positive: the s-shape chain kill
+      obtain ⟨m, hm⟩ := hzero
+      have hmk : k ≠ m := by intro he; rw [← he, hk] at hm; norm_num at hm
+      have hvn : ∀ l, l ≠ k → l ≠ m → v l = -1 := by
+        intro l hlk hlm
+        rcases hsign v hv l with h | h | h
+        · exact h
+        · exact (at_most_one_zero S hsign hposne hnogm d hd hsum hv hlm h hm).elim
+        · exfalso
+          have hl : l ∈ spos v := mem_spos.mpr h
+          rw [hk', Finset.mem_singleton] at hl
+          exact hlk hl
+      exact sp3_kill S hsign hposne hnogm hno d hd hsum hv hmk hk hm hvn
+    · -- full-support singleton-positive: balance at `k` kills directly
+      push_neg at hzero
+      have hnok : ∀ w ∈ S, w ≠ v → w k ≠ -1 := by
+        intro w hw hwv hwk
+        have hsub : spos v ⊆ sneg w := by
+          rw [hk', Finset.singleton_subset_iff]; exact mem_sneg.mpr hwk
+        have hnsub := hno v hv w hw (Ne.symm hwv) hsub
+        rw [Finset.not_subset] at hnsub
+        obtain ⟨m, hmw, hmv⟩ := hnsub
+        rw [mem_spos] at hmw
+        rw [mem_sneg] at hmv
+        have hm1 : v m = 1 := by
+          rcases hsign v hv m with h | h | h
+          · exact absurd h hmv
+          · exact absurd h (hzero m)
+          · exact h
+        have hmem : m ∈ spos v := mem_spos.mpr hm1
+        rw [hk', Finset.mem_singleton] at hmem
+        subst hmem
+        rw [hmw] at hwk
+        norm_num at hwk
+      have hbal := balance_coord S d hsum k
+      have hposk : 0 < ∑ w ∈ S, d w * w k := by
+        apply Finset.sum_pos'
+        · intro w hw
+          rcases eq_or_ne w v with rfl | hwv
+          · rw [hk, mul_one]
+            exact le_of_lt (hd w hw)
+          · rcases hsign w hw k with h | h | h
+            · exact absurd h (hnok w hw hwv)
+            · simp [h]
+            · rw [h, mul_one]
+              exact le_of_lt (hd w hw)
+        · exact ⟨v, hv, by rw [hk, mul_one]; exact hd v hv⟩
+      rw [hbal] at hposk
+      exact lt_irrefl 0 hposk
   by_cases hall : ∀ v ∈ S, ∀ i : Fin 4, v i ≠ 0
   · -- Case A: every member has full support (weight 4)
     have hsign' : ∀ v ∈ S, ∀ i, v i = -1 ∨ v i = 1 := by
@@ -836,93 +849,27 @@ private lemma core_card_ge4 (S : Finset (Fin 4 → ℚ))
       intro v hv w hw hvw hdisj
       obtain ⟨had1, had2⟩ := wt4_antidom (hsign' v hv) (hsign' w hw) hdisj
       exact hno v hv w hw hvw had1 had2
-    -- every positive support has ≥ 2 elements
-    have hcard2 : ∀ v ∈ S, 2 ≤ (spos v).card := by
-      intro v hv
-      obtain ⟨k, hk⟩ := hposne v hv
-      have hkmem : k ∈ spos v := mem_spos.mpr hk
-      by_contra hlt
-      push_neg at hlt
-      have h1 : (spos v).card = 1 :=
-        le_antisymm (by omega) (Finset.card_pos.mpr ⟨k, hkmem⟩)
-      obtain ⟨k', hk'⟩ := Finset.card_eq_one.mp h1
-      have hkk : k = k' := by
-        rw [hk'] at hkmem; exact Finset.mem_singleton.mp hkmem
-      subst hkk
-      have hallk : ∀ w ∈ S, w k = 1 := by
-        intro w hw
-        rcases eq_or_ne w v with rfl | hwv
-        · exact hk
-        · have hnd := hint v hv w hw (Ne.symm hwv)
-          rw [Finset.not_disjoint_iff] at hnd
-          obtain ⟨j, hj1, hj2⟩ := hnd
-          rw [hk', Finset.mem_singleton] at hj1
-          subst hj1
-          exact mem_spos.mp hj2
-      have hbal := balance_coord S d hsum k
-      have hpos : 0 < ∑ w ∈ S, d w * w k := by
-        apply Finset.sum_pos
-        · intro w hw; rw [hallk w hw, mul_one]; exact hd w hw
-        · exact ⟨v, hv⟩
-      rw [hbal] at hpos
-      exact lt_irrefl 0 hpos
-    -- support/cosupport bookkeeping
-    have hdisjps : ∀ w : Fin 4 → ℚ, Disjoint (spos w) (sneg w) := by
-      intro w
-      rw [Finset.disjoint_left]
-      intro i hi hi'
-      rw [mem_spos] at hi; rw [mem_sneg] at hi'
-      rw [hi] at hi'; norm_num at hi'
-    have hcover : ∀ w ∈ S, (Finset.univ : Finset (Fin 4)) = spos w ∪ sneg w := by
-      intro w hw
-      ext i
-      simp only [Finset.mem_univ, true_iff, Finset.mem_union, mem_spos, mem_sneg]
-      rcases hsign' w hw i with h | h
-      · exact Or.inr h
-      · exact Or.inl h
-    have hip1 : ∀ w ∈ S, ip (fun _ => 1) w
-        = ((spos w).card : ℚ) - ((sneg w).card : ℚ) := by
-      intro w hw
-      unfold ip
-      simp only [one_mul]
-      rw [show (Finset.univ : Finset (Fin 4)) = spos w ∪ sneg w from hcover w hw,
-        Finset.sum_union (hdisjps w)]
-      have h1 : ∑ i ∈ spos w, w i = ((spos w).card : ℚ) := by
-        rw [Finset.sum_congr rfl (fun i hi => mem_spos.mp hi)]
-        simp
-      have h2 : ∑ i ∈ sneg w, w i = -((sneg w).card : ℚ) := by
-        rw [Finset.sum_congr rfl (fun i hi => mem_sneg.mp hi)]
-        simp
-      rw [h1, h2]; ring
-    have hcard4 : ∀ w ∈ S, ((spos w).card : ℚ) + ((sneg w).card : ℚ) = 4 := by
-      intro w hw
-      have hn : (spos w).card + (sneg w).card = 4 := by
-        rw [← Finset.card_union_of_disjoint (hdisjps w),
-          ← (hcover w hw)]
-        simp
-      exact_mod_cast hn
     -- the 𝟙-functional forces all supports to have exactly 2 elements
-    have hone := ip_functional S d hsum (fun _ => 1)
-    have hnn : ∀ w ∈ S, 0 ≤ d w * ip (fun _ => 1) w := by
-      intro w hw
-      have hcs : (2:ℚ) ≤ ((spos w).card : ℚ) := by exact_mod_cast hcard2 w hw
-      have hge : (0:ℚ) ≤ ip (fun _ => 1) w := by
-        rw [hip1 w hw]
-        have := hcard4 w hw
-        linarith
-      exact mul_nonneg (le_of_lt (hd w hw)) hge
     have hterm0 : ∀ w ∈ S, (spos w).card = 2 := by
+      have hone := ip_functional S d hsum (fun _ => 1)
+      have hnn : ∀ w ∈ S, 0 ≤ d w * ip (fun _ => 1) w := by
+        intro w hw
+        have hcs : (2:ℚ) ≤ ((spos w).card : ℚ) := by exact_mod_cast hcard2 w hw
+        have hc4 : ((spos w).card : ℚ) + ((sneg w).card : ℚ) ≤ 4 := by
+          exact_mod_cast card_spos_add_sneg_le w
+        exact mul_nonneg (hd w hw).le (by rw [ip_one_eq (hsign w hw)]; linarith)
       intro w hw
       have hz := (Finset.sum_eq_zero_iff_of_nonneg hnn).mp hone w hw
       have hipz : ip (fun _ => 1) w = 0 := by
         rcases mul_eq_zero.mp hz with h | h
         · exact absurd h (ne_of_gt (hd w hw))
         · exact h
-      have he1 := hip1 w hw
-      have he4 := hcard4 w hw
+      rw [ip_one_eq (hsign w hw)] at hipz
+      have hcs : (2:ℚ) ≤ ((spos w).card : ℚ) := by exact_mod_cast hcard2 w hw
+      have hc4 : ((spos w).card : ℚ) + ((sneg w).card : ℚ) ≤ 4 := by
+        exact_mod_cast card_spos_add_sneg_le w
       have : ((spos w).card : ℚ) = 2 := by linarith
       exact_mod_cast this
-    -- distinct members have distinct supports
     have hinj : ∀ v ∈ S, ∀ w ∈ S, spos v = spos w → v = w := by
       intro v hv w hw heq
       funext i
@@ -949,128 +896,19 @@ private lemma core_card_ge4 (S : Finset (Fin 4 → ℚ))
   · -- Case B: some member has a zero coordinate
     push_neg at hall
     obtain ⟨v₀, hv₀S, z, hv₀z⟩ := hall
-    have hdisjps : ∀ w : Fin 4 → ℚ, Disjoint (spos w) (sneg w) := by
-      intro w
-      rw [Finset.disjoint_left]
-      intro k hk hk'
-      rw [mem_spos] at hk
-      rw [mem_sneg] at hk'
-      rw [hk] at hk'
-      norm_num at hk'
-    -- every member has at least two positive coordinates
-    have hcard2 : ∀ v ∈ S, 2 ≤ (spos v).card := by
-      intro v hv
-      by_contra hlt
-      push_neg at hlt
-      obtain ⟨k, hk⟩ := hposne v hv
-      have h1 : (spos v).card = 1 :=
-        le_antisymm (by omega) (Finset.card_pos.mpr ⟨k, mem_spos.mpr hk⟩)
-      obtain ⟨k', hk'⟩ := Finset.card_eq_one.mp h1
-      have hkk : k = k' := by
-        have hkm := mem_spos.mpr hk
-        rw [hk'] at hkm
-        exact Finset.mem_singleton.mp hkm
-      subst hkk
-      by_cases hzero : ∃ m, v m = 0
-      · -- weight-3 singleton-positive: the s-shape chain kill
-        obtain ⟨m, hm⟩ := hzero
-        have hmk : k ≠ m := by intro he; rw [← he, hk] at hm; norm_num at hm
-        have hvn : ∀ l, l ≠ k → l ≠ m → v l = -1 := by
-          intro l hlk hlm
-          rcases hsign v hv l with h | h | h
-          · exact h
-          · exact (at_most_one_zero S hsign hposne hnogm d hd hsum hv hlm h hm).elim
-          · exfalso
-            have hl : l ∈ spos v := mem_spos.mpr h
-            rw [hk', Finset.mem_singleton] at hl
-            exact hlk hl
-        exact sp3_kill S hsign hposne hnogm hno d hd hsum hv hmk hk hm hvn
-      · -- full-support singleton-positive: balance at `k` kills directly
-        push_neg at hzero
-        have hnok : ∀ w ∈ S, w ≠ v → w k ≠ -1 := by
-          intro w hw hwv hwk
-          have hsub : spos v ⊆ sneg w := by
-            rw [hk']
-            rintro l hl
-            rw [Finset.mem_singleton] at hl
-            subst hl
-            exact mem_sneg.mpr hwk
-          have hnsub := hno v hv w hw (Ne.symm hwv) hsub
-          rw [Finset.not_subset] at hnsub
-          obtain ⟨m, hmw, hmv⟩ := hnsub
-          rw [mem_spos] at hmw
-          rw [mem_sneg] at hmv
-          have hm1 : v m = 1 := by
-            rcases hsign v hv m with h | h | h
-            · exact absurd h hmv
-            · exact absurd h (hzero m)
-            · exact h
-          have hmem : m ∈ spos v := mem_spos.mpr hm1
-          rw [hk', Finset.mem_singleton] at hmem
-          subst hmem
-          rw [hmw] at hwk
-          norm_num at hwk
-        have hbal := balance_coord S d hsum k
-        have hposk : 0 < ∑ w ∈ S, d w * w k := by
-          apply Finset.sum_pos'
-          · intro w hw
-            rcases eq_or_ne w v with rfl | hwv
-            · rw [hk, mul_one]
-              exact le_of_lt (hd w hw)
-            · rcases hsign w hw k with h | h | h
-              · exact absurd h (hnok w hw hwv)
-              · simp [h]
-              · rw [h, mul_one]
-                exact le_of_lt (hd w hw)
-          · exact ⟨v, hv, by rw [hk, mul_one]; exact hd v hv⟩
-        rw [hbal] at hposk
-        exact lt_irrefl 0 hposk
-    -- the 𝟙-functional is nonnegative termwise and positive at `v₀`
-    have hipw : ∀ w ∈ S, ip (fun _ => 1) w
-        = ((spos w).card : ℚ) - ((sneg w).card : ℚ) := by
-      intro w hw
-      unfold ip
-      simp only [one_mul]
-      have hcov : (Finset.univ : Finset (Fin 4)) =
-          (spos w ∪ sneg w) ∪ (Finset.univ \ (spos w ∪ sneg w)) := by
-        rw [Finset.union_sdiff_of_subset (Finset.subset_univ _)]
-      rw [hcov, Finset.sum_union Finset.disjoint_sdiff, Finset.sum_union (hdisjps w)]
-      have h0 : ∑ k ∈ Finset.univ \ (spos w ∪ sneg w), w k = 0 := by
-        apply Finset.sum_eq_zero
-        intro k hk
-        simp only [Finset.mem_sdiff, Finset.mem_union, mem_spos, mem_sneg] at hk
-        rcases hsign w hw k with h | h | h
-        · exact absurd h (fun f => hk.2 (Or.inr f))
-        · exact h
-        · exact absurd h (fun f => hk.2 (Or.inl f))
-      have h1 : ∑ k ∈ spos w, w k = ((spos w).card : ℚ) := by
-        rw [Finset.sum_congr rfl (fun k hk => mem_spos.mp hk)]
-        simp
-      have h2 : ∑ k ∈ sneg w, w k = -((sneg w).card : ℚ) := by
-        rw [Finset.sum_congr rfl (fun k hk => mem_sneg.mp hk)]
-        simp
-      rw [h0, h1, h2]
-      ring
-    have hcsum : ∀ w : Fin 4 → ℚ, (spos w).card + (sneg w).card ≤ 4 := by
-      intro w
-      calc (spos w).card + (sneg w).card
-          = (spos w ∪ sneg w).card := (Finset.card_union_of_disjoint (hdisjps w)).symm
-        _ ≤ (Finset.univ : Finset (Fin 4)).card :=
-            Finset.card_le_card (Finset.subset_univ _)
-        _ = 4 := by simp
     have hone := ip_functional S d hsum (fun _ => 1)
     have hposS : 0 < ∑ w ∈ S, d w * ip (fun _ => 1) w := by
       apply Finset.sum_pos'
       · intro w hw
         apply mul_nonneg (le_of_lt (hd w hw))
-        rw [hipw w hw]
+        rw [ip_one_eq (hsign w hw)]
         have hc2 : (2:ℚ) ≤ ((spos w).card : ℚ) := by exact_mod_cast hcard2 w hw
         have hc4 : ((spos w).card : ℚ) + ((sneg w).card : ℚ) ≤ 4 := by
-          exact_mod_cast hcsum w
+          exact_mod_cast card_spos_add_sneg_le w
         linarith
       · refine ⟨v₀, hv₀S, ?_⟩
         apply mul_pos (hd v₀ hv₀S)
-        rw [hipw v₀ hv₀S]
+        rw [ip_one_eq (hsign v₀ hv₀S)]
         have hc2 : (2:ℚ) ≤ ((spos v₀).card : ℚ) := by exact_mod_cast hcard2 v₀ hv₀S
         have hc3 : (spos v₀).card + (sneg v₀).card ≤ 3 := by
           have hz : z ∉ spos v₀ ∪ sneg v₀ := by
@@ -1078,7 +916,7 @@ private lemma core_card_ge4 (S : Finset (Fin 4 → ℚ))
             norm_num
           calc (spos v₀).card + (sneg v₀).card
               = (spos v₀ ∪ sneg v₀).card :=
-                (Finset.card_union_of_disjoint (hdisjps v₀)).symm
+                (Finset.card_union_of_disjoint (disjoint_spos_sneg v₀)).symm
             _ ≤ (Finset.univ.erase z).card := Finset.card_le_card
                 (fun k hk => Finset.mem_erase.mpr
                   ⟨fun he => hz (he ▸ hk), Finset.mem_univ _⟩)
@@ -1120,41 +958,16 @@ lemma ge_union_context {n : ℕ} (sys : EpistemicSystemFA (Fin n)) (X Y C : Set 
   have hCXl : ∀ x, x ∈ C → x ∉ X := fun x hx => Set.disjoint_left.mp hCX hx
   have hCYl : ∀ x, x ∈ C → x ∉ Y := fun x hx => Set.disjoint_left.mp hCY hx
   have e1 : (X ∪ C) \ (Y ∪ C) = X \ Y := by
-    ext x; simp only [Set.mem_diff, Set.mem_union]
-    constructor
-    · rintro ⟨hx | hx, hn⟩
-      · exact ⟨hx, fun h => hn (Or.inl h)⟩
-      · exact absurd (Or.inr hx) hn
-    · rintro ⟨hxX, hxnY⟩
-      exact ⟨Or.inl hxX, fun h => h.elim hxnY (fun hxC => hCXl x hxC hxX)⟩
+    ext x
+    have := hCXl x
+    simp only [Set.mem_diff, Set.mem_union]
+    tauto
   have e2 : (Y ∪ C) \ (X ∪ C) = Y \ X := by
-    ext x; simp only [Set.mem_diff, Set.mem_union]
-    constructor
-    · rintro ⟨hx | hx, hn⟩
-      · exact ⟨hx, fun h => hn (Or.inl h)⟩
-      · exact absurd (Or.inr hx) hn
-    · rintro ⟨hxY, hxnX⟩
-      exact ⟨Or.inl hxY, fun h => h.elim hxnX (fun hxC => hCYl x hxC hxY)⟩
+    ext x
+    have := hCYl x
+    simp only [Set.mem_diff, Set.mem_union]
+    tauto
   rw [e1, e2]
-
-/-- **Exchange lemma**: two valid disjoint comparisons merge into their union,
-    provided the supports interleave disjointly. Holds in ANY de Finetti order
-    (Axiom A twice + transitivity) — this is the derivable width-2 additivity. -/
-lemma ge_exchange {n : ℕ} (sys : EpistemicSystemFA (Fin n))
-    {A₁ B₁ A₂ B₂ : Set (Fin n)}
-    (h1 : sys.ge A₁ B₁) (h2 : sys.ge A₂ B₂)
-    (hA₂A₁ : Disjoint A₂ A₁) (hA₂B₁ : Disjoint A₂ B₁) (hB₁B₂ : Disjoint B₁ B₂) :
-    sys.ge (A₁ ∪ A₂) (B₁ ∪ B₂) := by
-  -- step1: add context A₂ to (A₁ ≿ B₁): A₁∪A₂ ≿ B₁∪A₂
-  have step1 : sys.ge (A₁ ∪ A₂) (B₁ ∪ A₂) :=
-    (ge_union_context sys A₁ B₁ A₂ hA₂A₁ hA₂B₁).mp h1
-  -- step2: add context B₁ to (A₂ ≿ B₂): A₂∪B₁ ≿ B₂∪B₁
-  have step2 : sys.ge (A₂ ∪ B₁) (B₂ ∪ B₁) :=
-    (ge_union_context sys A₂ B₂ B₁ hA₂B₁.symm hB₁B₂).mp h2
-  -- reconcile via commutativity, then transitivity through (B₁ ∪ A₂)
-  rw [Set.union_comm A₂ B₁] at step2
-  rw [Set.union_comm B₂ B₁] at step2
-  exact sys.trans _ _ _ step1 step2
 
 /-- **Generalized merge**: two valid comparisons whose left parts are disjoint and
     whose right parts are disjoint merge into their union — even with pivot overlaps
@@ -1185,24 +998,14 @@ lemma ge_generalized_merge {n : ℕ} (sys : EpistemicSystemFA (Fin n))
   set P : Set (Fin n) := X₂ ∩ Y₁ with hP
   have hLHS : X₁ ∪ (X₂ \ Y₁) = (X₁ ∪ X₂) \ P := by
     ext x
+    have := hXl x
     simp only [Set.mem_union, Set.mem_diff, hP, Set.mem_inter_iff, not_and]
-    constructor
-    · rintro (hx1 | ⟨hx2, hnY1⟩)
-      · exact ⟨Or.inl hx1, fun hx2 _ => hXl x hx1 hx2⟩
-      · exact ⟨Or.inr hx2, fun _ hY1 => hnY1 hY1⟩
-    · rintro ⟨hx1 | hx2, hn⟩
-      · exact Or.inl hx1
-      · exact Or.inr ⟨hx2, fun hY1 => hn hx2 hY1⟩
+    tauto
   have hRHS : Y₂ ∪ (Y₁ \ X₂) = (Y₁ ∪ Y₂) \ P := by
     ext x
+    have := hYl x
     simp only [Set.mem_union, Set.mem_diff, hP, Set.mem_inter_iff, not_and]
-    constructor
-    · rintro (hy2 | ⟨hy1, hnX2⟩)
-      · exact ⟨Or.inr hy2, fun _ hY1 => hYl x hy2 hY1⟩
-      · exact ⟨Or.inl hy1, fun hX2 _ => hnX2 hX2⟩
-    · rintro ⟨hy1 | hy2, hn⟩
-      · exact Or.inr ⟨hy1, fun hX2 => hn hX2 hy1⟩
-      · exact Or.inl hy2
+    tauto
   rw [hLHS, hRHS] at htrans
   have hPsubX : P ⊆ X₁ ∪ X₂ := Set.inter_subset_left.trans Set.subset_union_right
   have hPsubY : P ⊆ Y₁ ∪ Y₂ := Set.inter_subset_right.trans Set.subset_union_left
@@ -1253,8 +1056,8 @@ lemma cmpVec_mergeCmp {n : ℕ} (c d : Finset (Fin n) × Finset (Fin n))
       | exact absurd hd1 (h1 hc1)
       | exact absurd hd2 (h2 hc2)
       | (simp only [cmpVec, mergeCmp, Finset.mem_sdiff, Finset.mem_union, hc1, hc2, hd1, hd2,
-          true_or, or_true, false_or, or_false, true_and, and_true, false_and, and_false,
-          not_true, not_false_iff, if_true, if_false] <;> omega)
+          or_true, or_false, and_true, and_false, not_true, not_false_iff, if_true,
+          if_false] <;> omega)
 
 /-- `mergeCmp` of two valid comparisons is valid, given the disjointness conditions.
     Uses `ge_generalized_merge` then Axiom A to reach disjoint normal form. -/
@@ -1279,9 +1082,6 @@ lemma mergeCmp_valid {n : ℕ} (sys : EpistemicSystemFA (Fin n))
 def cvSumList {n : ℕ} (L : List (Finset (Fin n) × Finset (Fin n))) (i : Fin n) : ℤ :=
   (L.map (fun c => cmpVec c i)).sum
 
-@[simp] lemma cvSumList_nil {n : ℕ} (i : Fin n) :
-    cvSumList ([] : List (Finset (Fin n) × Finset (Fin n))) i = 0 := rfl
-
 @[simp] lemma cvSumList_cons {n : ℕ} (c : Finset (Fin n) × Finset (Fin n))
     (L : List (Finset (Fin n) × Finset (Fin n))) (i : Fin n) :
     cvSumList (c :: L) i = cmpVec c i + cvSumList L i := by
@@ -1302,21 +1102,20 @@ lemma null_from_pair (sys : EpistemicSystemFA (Fin 4))
     (hle : ∀ i, cmpVec (A, B) i + cmpVec (C, D) i ≤ 0)
     (i₀ : Fin 4) (hlt : cmpVec (A, B) i₀ + cmpVec (C, D) i₀ < 0) :
     ∃ i, sys.ge (∅ : Set (Fin 4)) {i} := by
-  -- membership facts from disjointness
-  have hAnB : ∀ x, x ∈ A → x ∉ B := fun x hx => Finset.disjoint_left.mp hABd hx
-  have hCnD : ∀ x, x ∈ C → x ∉ D := fun x hx => Finset.disjoint_left.mp hCDd hx
-  -- A ⊆ D and C ⊆ B
+  -- A ⊆ D and C ⊆ B (membership facts from disjointness)
   have hAD : A ⊆ D := by
     intro a ha
     by_contra haD
     have := hle a
-    simp only [cmpVec, if_pos ha, if_neg (hAnB a ha), if_neg haD, sub_zero] at this
+    simp only [cmpVec, if_pos ha, if_neg (Finset.disjoint_left.mp hABd ha), if_neg haD,
+      sub_zero] at this
     split_ifs at this <;> omega
   have hCB : C ⊆ B := by
     intro c hc
     by_contra hcB
     have := hle c
-    simp only [cmpVec, if_pos hc, if_neg (hCnD c hc), if_neg hcB, sub_zero] at this
+    simp only [cmpVec, if_pos hc, if_neg (Finset.disjoint_left.mp hCDd hc), if_neg hcB,
+      sub_zero] at this
     split_ifs at this <;> omega
   -- ge C A, ge C B
   have hCA : sys.ge ↑C ↑A := sys.trans _ _ _ hCD (sys.mono ↑A ↑D (Finset.coe_subset.mpr hAD))
@@ -1324,29 +1123,20 @@ lemma null_from_pair (sys : EpistemicSystemFA (Fin 4))
   -- Axiom A: ge ∅ (B \ C)
   have hBC : sys.ge (∅ : Set (Fin 4)) ↑(B \ C) := by
     have hax := (sys.additive ↑C ↑B).mp hCB_ge
-    have e1 : (↑C : Set (Fin 4)) \ ↑B = ∅ := by
-      rw [← Finset.coe_sdiff, Finset.sdiff_eq_empty_iff_subset.mpr hCB, Finset.coe_empty]
-    have e2 : (↑B : Set (Fin 4)) \ ↑C = ↑(B \ C) := by rw [Finset.coe_sdiff]
-    rwa [e1, e2] at hax
+    rwa [← Finset.coe_sdiff, ← Finset.coe_sdiff,
+      Finset.sdiff_eq_empty_iff_subset.mpr hCB, Finset.coe_empty] at hax
   -- symmetric: ge A D, ge A C, ge A D? -> ge ∅ (D \ A)
   have hAC : sys.ge ↑A ↑C := sys.trans _ _ _ hAB (sys.mono ↑C ↑B (Finset.coe_subset.mpr hCB))
   have hAD_ge : sys.ge ↑A ↑D := sys.trans _ _ _ hAC hCD
   have hDA : sys.ge (∅ : Set (Fin 4)) ↑(D \ A) := by
     have hax := (sys.additive ↑A ↑D).mp hAD_ge
-    have e1 : (↑A : Set (Fin 4)) \ ↑D = ∅ := by
-      rw [← Finset.coe_sdiff, Finset.sdiff_eq_empty_iff_subset.mpr hAD, Finset.coe_empty]
-    have e2 : (↑D : Set (Fin 4)) \ ↑A = ↑(D \ A) := by rw [Finset.coe_sdiff]
-    rwa [e1, e2] at hax
+    rwa [← Finset.coe_sdiff, ← Finset.coe_sdiff,
+      Finset.sdiff_eq_empty_iff_subset.mpr hAD, Finset.coe_empty] at hax
   -- strict coordinate i₀ ∈ (B \ C) ∪ (D \ A)
   have hmem : i₀ ∈ B \ C ∨ i₀ ∈ D \ A := by
-    simp only [cmpVec] at hlt
+    simp only [cmpVec, Finset.mem_sdiff] at hlt ⊢
     by_cases hiA : i₀ ∈ A <;> by_cases hiB : i₀ ∈ B <;>
-      by_cases hiC : i₀ ∈ C <;> by_cases hiD : i₀ ∈ D <;>
-      simp only [hiA, hiB, hiC, hiD, if_true, if_false] at hlt <;>
-      first
-        | omega
-        | (rw [Finset.mem_sdiff, Finset.mem_sdiff]; exact Or.inl ⟨hiB, hiC⟩)
-        | (rw [Finset.mem_sdiff, Finset.mem_sdiff]; exact Or.inr ⟨hiD, hiA⟩)
+      by_cases hiC : i₀ ∈ C <;> by_cases hiD : i₀ ∈ D <;> simp_all
   rcases hmem with hm | hm
   · exact ⟨i₀, sys.trans _ _ _ hBC (sys.mono {i₀} ↑(B \ C)
       (by rw [Set.singleton_subset_iff]; exact Finset.mem_coe.mpr hm))⟩
@@ -1368,21 +1158,19 @@ lemma spos_toQVec {c : Finset (Fin 4) × Finset (Fin 4)} (hc : Disjoint c.1 c.2)
     spos (toQVec c) = c.1 := by
   ext k
   rw [mem_spos, toQVec_apply]
-  by_cases h1 : k ∈ c.1 <;> by_cases h2 : k ∈ c.2
-  · exact absurd h2 (Finset.disjoint_left.mp hc h1)
-  · norm_num [h1, h2]
-  · norm_num [h1, h2]
-  · norm_num [h1, h2]
+  by_cases h1 : k ∈ c.1 <;> by_cases h2 : k ∈ c.2 <;>
+    first
+      | exact absurd h2 (Finset.disjoint_left.mp hc h1)
+      | norm_num [h1, h2]
 
 lemma sneg_toQVec {c : Finset (Fin 4) × Finset (Fin 4)} (hc : Disjoint c.1 c.2) :
     sneg (toQVec c) = c.2 := by
   ext k
   rw [mem_sneg, toQVec_apply]
-  by_cases h1 : k ∈ c.1 <;> by_cases h2 : k ∈ c.2
-  · exact absurd h2 (Finset.disjoint_left.mp hc h1)
-  · norm_num [h1, h2]
-  · norm_num [h1, h2]
-  · norm_num [h1, h2]
+  by_cases h1 : k ∈ c.1 <;> by_cases h2 : k ∈ c.2 <;>
+    first
+      | exact absurd h2 (Finset.disjoint_left.mp hc h1)
+      | norm_num [h1, h2]
 
 lemma cmpVec_swap (A B : Finset (Fin 4)) (i : Fin 4) :
     cmpVec (B, A) i = -cmpVec (A, B) i := by
@@ -1400,12 +1188,10 @@ lemma cvSumList_filter_ne_empty (L : List (Finset (Fin 4) × Finset (Fin 4)))
       fun c' hc' => h0 c' (List.mem_cons_of_mem _ hc')
     by_cases hc : c.1 = ∅
     · have hc2 := h0 c (List.mem_cons.mpr (Or.inl rfl)) hc
-      rw [List.filter_cons_of_neg (by simp [hc])]
-      rw [cvSumList_cons, ih h0']
-      have hz : cmpVec c i = 0 := by simp [cmpVec, hc, hc2]
+      rw [List.filter_cons_of_neg (by simp [hc]), cvSumList_cons, ih h0',
+        show cmpVec c i = 0 from by simp [cmpVec, hc, hc2]]
       omega
-    · rw [List.filter_cons_of_pos (by simp [hc])]
-      rw [cvSumList_cons, cvSumList_cons, ih h0']
+    · rw [List.filter_cons_of_pos (by simp [hc]), cvSumList_cons, cvSumList_cons, ih h0']
 
 /-- **The (V1) consequence** the recursion needs (the combinatorial crux, isolated):
     a "stuck" family — no generalized-mergeable pair, no mono-dominating member,
@@ -1498,11 +1284,8 @@ lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
     rw [Finset.sum_apply]
     simp only [Pi.smul_apply, smul_eq_mul, Pi.zero_apply]
     have hc := Finset.sum_list_map_count l (fun v => v i)
-    rw [hS]
-    have he : ∀ v ∈ l.toFinset, ((l.count v : ℕ) : ℚ) * v i = l.count v • v i := by
-      intro v _
-      rw [nsmul_eq_mul]
-    rw [Finset.sum_congr rfl he, ← hc, hl, List.map_map]
+    rw [hS, Finset.sum_congr rfl (fun v _ => (nsmul_eq_mul _ _).symm), ← hc, hl,
+      List.map_map]
     simp only [Function.comp_def, List.map_cons, List.sum_cons]
     have hLs : (L'.map (fun c => toQVec c i)).sum = ((cvSumList L' i : ℤ) : ℚ) := by
       simp only [toQVec, cvSumList]
@@ -1546,25 +1329,15 @@ lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
   have hps' : ∀ i, w i = 1 → v i = -1 := fun i h => mem_sneg.mp (had2 (mem_spos.mpr h))
   have hvle : ∀ i, v i + w i ≤ 0 := by
     intro i
-    rcases hsign v hvS i with h1 | h1 | h1 <;> rcases hsign w hwS i with h2 | h2 | h2
-    · rw [h1, h2]; norm_num
-    · rw [h1, h2]; norm_num
-    · rw [h1, h2]; norm_num
-    · rw [h1, h2]; norm_num
-    · rw [h1, h2]; norm_num
-    · -- v = 0, w = 1: anti-domination forces v = -1, contradiction
-      have hbad := hps' i h2
-      rw [h1] at hbad
-      norm_num at hbad
-    · rw [h1, h2]; norm_num
-    · -- v = 1, w = 0: anti-domination forces w = -1, contradiction
-      have hbad := hps i h1
-      rw [h2] at hbad
-      norm_num at hbad
-    · -- v = 1, w = 1: anti-domination forces w = -1, contradiction
-      have hbad := hps i h1
-      rw [h2] at hbad
-      norm_num at hbad
+    rcases eq_or_ne (v i) 1 with h1 | h1
+    · rw [h1, hps i h1]; norm_num
+    rcases eq_or_ne (w i) 1 with h2 | h2
+    · rw [h2, hps' i h2]; norm_num
+    rcases hsign v hvS i with h | h | h <;> rcases hsign w hwS i with h' | h' | h' <;>
+      first
+        | exact absurd h h1
+        | exact absurd h' h2
+        | (rw [h, h']; norm_num)
   have hvstrict : ∃ i, v i + w i < 0 := by
     by_contra hall
     push_neg at hall
@@ -1588,29 +1361,17 @@ lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
   · exact (hvw rfl).elim
   · -- the reversed target anti-dominated by `c'` is mono-domination, excluded
     exfalso
-    have h1 : c'.1 ⊆ vpos := by
-      have h := had2
-      rw [spos_toQVec (hdisj' c' (Or.inr hc')),
-        sneg_toQVec (hdisj' _ (Or.inl rfl))] at h
-      exact h
-    have h2 : vneg ⊆ c'.2 := by
-      have h := had1
-      rw [spos_toQVec (hdisj' _ (Or.inl rfl)),
-        sneg_toQVec (hdisj' c' (Or.inr hc'))] at h
-      exact h
-    exact hnotdom c' (List.mem_of_mem_filter hc') h1 h2
+    refine hnotdom c' (List.mem_of_mem_filter hc') ?_ ?_
+    · rw [spos_toQVec (hdisj' c' (Or.inr hc')),
+        sneg_toQVec (hdisj' _ (Or.inl rfl))] at had2; exact had2
+    · rw [spos_toQVec (hdisj' _ (Or.inl rfl)),
+        sneg_toQVec (hdisj' c' (Or.inr hc'))] at had1; exact had1
   · exfalso
-    have h1 : c.1 ⊆ vpos := by
-      have h := had1
-      rw [spos_toQVec (hdisj' c (Or.inr hc)),
-        sneg_toQVec (hdisj' _ (Or.inl rfl))] at h
-      exact h
-    have h2 : vneg ⊆ c.2 := by
-      have h := had2
-      rw [spos_toQVec (hdisj' _ (Or.inl rfl)),
-        sneg_toQVec (hdisj' c (Or.inr hc))] at h
-      exact h
-    exact hnotdom c (List.mem_of_mem_filter hc) h1 h2
+    refine hnotdom c (List.mem_of_mem_filter hc) ?_ ?_
+    · rw [spos_toQVec (hdisj' c (Or.inr hc)),
+        sneg_toQVec (hdisj' _ (Or.inl rfl))] at had1; exact had1
+    · rw [spos_toQVec (hdisj' _ (Or.inl rfl)),
+        sneg_toQVec (hdisj' c (Or.inr hc))] at had2; exact had2
   · -- both from `L`: the null pair
     refine Or.inl ⟨c, List.mem_of_mem_filter hc, c', List.mem_of_mem_filter hc',
       fun i => ?_, ?_⟩
@@ -1707,7 +1468,7 @@ theorem merge_to_single (sys : EpistemicSystemFA (Fin 4))
             have h1 : cvSumList L i = cmpVec c i + cvSumList (L.erase c) i := by
               rw [cvSumList_perm hperm i, cvSumList_cons]
             have he : cvSumList (L.erase c) i = cmpVec (vpos, vneg) i - cmpVec c i := by
-              have hh := hsum i; omega
+              have := hsum i; omega
             rw [he]
             have a1 : i ∈ vpos → i ∉ vneg := fun h => Finset.disjoint_left.mp hvpvn h
             have a2 : i ∈ vpos → i ∉ c.2 := fun h => Finset.disjoint_left.mp hrc2 h
@@ -1810,13 +1571,10 @@ private lemma cleared_sum_eq (P : Portfolio 4) (i : Fin 4) (D : ℕ)
   induction P with
   | nil => simp
   | cons a P ih =>
-    have ha : List.Mem a (a :: P) := List.Mem.head P
-    have hsub : ∀ wc, List.Mem wc P → ((mult wc : ℤ) : ℚ) = wc.weight * (D : ℚ) :=
-      fun wc h => hcast wc (List.Mem.tail a h)
     simp only [List.map_cons, List.sum_cons, Int.cast_add, Int.cast_mul]
-    rw [ih hsub, mul_add]
+    rw [ih (fun wc h => hcast wc (List.Mem.tail a h)), mul_add]
     congr 1
-    rw [hcast a ha]
+    rw [hcast a (List.Mem.head P)]
     show a.weight * ↑D * ↑(comparisonVec 4 a.left a.right i)
         = ↑D * (a.weight * ↑(comparisonVec 4 a.left a.right i))
     ring
@@ -1897,10 +1655,8 @@ theorem exists_balanced_list (sys : EpistemicSystemFA (Fin 4))
       apply List.map_congr_left
       intro wc _
       rw [cvSumList_replicate]
-    have hcastsum : ((cvSumList Lfull i : ℤ) : ℚ) = (D : ℚ) * P.weightedSum i := by
-      rw [hstep]; exact cleared_sum_eq P i D mult hcast
     have hzero : ((cvSumList Lfull i : ℤ) : ℚ) = 0 := by
-      rw [hcastsum, hneutral i, mul_zero]
+      rw [hstep, cleared_sum_eq P i D mult hcast, hneutral i, mul_zero]
     exact_mod_cast hzero
   have hsLfull : (s.left, s.right) ∈ Lfull := by
     rw [hLfull, List.mem_flatMap]
