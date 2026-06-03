@@ -57,7 +57,7 @@ refines this into D-MAX (even-like) vs D-MIN (antiexhaustive) enrichment.
 namespace Chierchia2006
 
 open Haspelmath1997Polarity
-open Typology.Indefinite
+open Indefinite
 open Chierchia2013 (FCIFlavor)
 open Farsi.Determiners (EFCIRescue)
 

@@ -5,7 +5,7 @@ import Linglib.Features.Deixis
 # Determiner
 
 The determiner (D head) as a lexical object, following the standard determiner
-taxonomy: `Article`, `Demonstrative`, `Quantifier`, and `Possessive` each
+taxonomy: `Article`, `DemonstrativeDeterminer`, `Quantifier`, and `Possessive` each
 `extends` the base `Determiner`. The base carries only what is universal to all
 determiners — a surface `form`; each specialization adds its own structure.
 
@@ -25,7 +25,7 @@ localized to a single declaration.
 ## Main declarations
 
 * `Determiner` — the base D-head record (just `form`).
-* `Article`, `Demonstrative`, `Quantifier`, `Possessive` — the four
+* `Article`, `DemonstrativeDeterminer`, `Quantifier`, `Possessive` — the four
   specializations.
 * `Determiner.Entry` — a determiner occurrence in a language's inventory.
 * `Determiner.markingStrategy` — derives the [moroney-2021] 4-cell typology
@@ -38,7 +38,7 @@ An `Article`'s admissible [schwarz-2009] strengths are `Article.presupTypes`
 (`Core/Nominal/DeterminerLicensing.lean`, Frame-aware) — the set of `Description`s
 those strengths admit via `Description.ofPresupType`, so a syncretic article like
 English *the* denotes *both* the weak and the strong description.
-`Demonstrative.denote` (deictic), the `Quantifier` generalized quantifier
+`DemonstrativeDeterminer.denote` (deictic), the `Quantifier` generalized quantifier
 (`Core/Logic/Quantification`), and the `Possessive` possession relation remain
 deferred; `Quantifier`/`Possessive` are declared but not fleshed out beyond `form`.
 This file stays the Frame-free lexical/typological layer.
@@ -70,7 +70,7 @@ inductive Exponent where
 end Determiner
 
 /-- The base determiner (D head): only what is universal to every determiner —
-a surface form. Specializations (`Article`, `Demonstrative`, `Quantifier`,
+a surface form. Specializations (`Article`, `DemonstrativeDeterminer`, `Quantifier`,
 `Possessive`) `extends` this. -/
 structure Determiner where
   /-- Surface form (a representative morpheme or construction label). -/
@@ -88,15 +88,20 @@ structure Article extends Determiner where
   uses : List DefiniteUseType := []
   deriving DecidableEq, Repr
 
-/-- A demonstrative (this/that). `definiteUses` is nonempty iff the demonstrative
-is the *obligatory* exponent of some definite use (Mandarin anaphoric); for a
-plain demonstrative that merely *can* be used deictically it is empty. -/
-structure Demonstrative extends Determiner where
+/-- A demonstrative determiner (*this*/*that* book). `definiteUses` is nonempty iff the
+demonstrative is the *obligatory* exponent of some definite use (Mandarin anaphoric); for a
+plain demonstrative that merely *can* be used deictically it is empty. The determiner carrier of
+the word-class-neutral `Demonstrative` deixis capability, sharing it with `DemonstrativePronoun`. -/
+structure DemonstrativeDeterminer extends Determiner where
   /-- Deictic feature (proximal/medial/distal/unspecified). -/
   deictic : Features.Deixis.Feature
   /-- Definite use-types this demonstrative obligatorily expones. -/
   definiteUses : List DefiniteUseType := []
   deriving DecidableEq, Repr
+
+/-- The demonstrative determiner exposes its `deictic` field as the `Demonstrative` capability,
+    shared word-class-neutrally with `DemonstrativePronoun`. -/
+instance : Demonstrative DemonstrativeDeterminer := ⟨DemonstrativeDeterminer.deictic⟩
 
 /-- A quantificational determiner (every/some/most/no). Its denotation is a
 generalized quantifier (`Core/Logic/Quantification`); deferred. -/
@@ -114,7 +119,7 @@ namespace Determiner
 carrying its typed payload. -/
 inductive Entry where
   | article (a : Article)
-  | demonstrative (d : Demonstrative)
+  | demonstrative (d : DemonstrativeDeterminer)
   | quantifier (q : Quantifier)
   | possessive (p : Possessive)
   deriving DecidableEq, Repr

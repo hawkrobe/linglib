@@ -71,3 +71,23 @@ theorem encodesDistance_iff (f : Feature) :
     f.EncodesDistance ↔ f ≠ .unspecified := Iff.rfl
 
 end Features.Deixis
+
+/-! ### The demonstrative capability
+
+`[Demonstrative α]` is the *spatial-deixis* property itself — the genuinely demonstrative axis,
+word-class-neutral (a demonstrative pronoun *this*, determiner *this* book, or adverb *here* all
+instance it). This is the lesson of [patel-grosz-grosz-2017]: the morphological "demonstrative
+pronoun" label is **not** the property. They show German *der/die/das* — long called demonstrative
+pronouns — are strong-article *personal* pronouns with no spatial deixis (footnote 1: "it is far
+from clear that there is anything truly 'demonstrative' about" them); the genuine German
+demonstrative is *dieser*. So a carrier counts as a demonstrative iff it carries a
+`Features.Deixis.Feature`, not by morphological label — *dieser* and *this* instance `Demonstrative`,
+*der* does not (it is a `PersonalPronoun`). Mirrors the word-class-neutral `Indefinite` capability. -/
+
+/-- A carrier that encodes a deictic (demonstrative) contrast: it exposes a
+    `Features.Deixis.Feature` (proximal/medial/distal, or `unspecified` for a distance-neutral
+    demonstrative like German *dieser*). The deictic feature varies per element (*this* proximal vs
+    *that* distal), so this is a genuine per-element accessor. -/
+class Demonstrative (α : Type _) where
+  /-- The deictic feature the carrier encodes. -/
+  deixis : α → Features.Deixis.Feature

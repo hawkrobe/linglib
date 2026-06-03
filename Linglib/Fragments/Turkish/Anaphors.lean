@@ -1,4 +1,5 @@
 import Linglib.Fragments.Turkish.Case
+import Linglib.Syntax.Pronoun.Capabilities
 
 /-!
 # Turkish Anaphors
@@ -62,6 +63,20 @@ structure TurkishAnaphor where
   preverbal : Bool := true
   deriving Repr
 
+/-! ### Anaphors as `Bound` carriers
+
+The anaphor's binding class is *derived* from its `anaphorType`, and `Anaphoric` records that the
+whole carrier is Principle-A. (`Proform` is not instanced: the struct carries no surface form —
+the forms *birbirleri*/*kendi* live in the entry names, a pre-existing data gap.) -/
+
+/-- Binding class from the anaphor type: reciprocal → reciprocal, reflexive → reflexive. -/
+instance : Bound TurkishAnaphor :=
+  ⟨fun a => match a.anaphorType with | .reciprocal => .reciprocal | .reflexive => .reflexive⟩
+
+/-- Every Turkish anaphor is a Principle-A anaphor. -/
+instance : Anaphoric TurkishAnaphor where
+  isAnaphor a := by obtain ⟨t, _, _⟩ := a; cases t <;> simp [Bound.bindingClass]
+
 /-- birbirleri as direct object (ACC case).
     Used in [bakay-etal-2026] Experiments 1–3 as the critical anaphor. -/
 def birbirleriAcc : TurkishAnaphor :=
@@ -88,6 +103,10 @@ theorem birbirleri_requires_plural :
 
 /-- All birbirleri variants are preverbal -/
 theorem birbirleriAcc_preverbal : birbirleriAcc.preverbal = true := rfl
+
+-- *birbirleri* is a Principle-A anaphor, read through the generic `Bound` capability.
+example : Bound.IsAnaphor birbirleriAcc := by decide
+theorem birbirleriAcc_bindingClass : Bound.bindingClass birbirleriAcc = .reciprocal := rfl
 
 /-- The case inventory of birbirleri forms used in [bakay-etal-2026] -/
 def experimentalCases : List Features.Case :=

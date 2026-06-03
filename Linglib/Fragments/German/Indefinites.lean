@@ -25,7 +25,7 @@ set_option autoImplicit false
 
 namespace German.Indefinites
 
-open Typology.Indefinite
+open Indefinite
 
 /-- German *irgend-*: dedicated indefinite prefix (special basis),
     epistemic indefinite (D&A type iv).

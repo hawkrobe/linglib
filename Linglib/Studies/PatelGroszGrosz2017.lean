@@ -16,8 +16,12 @@ PER the *weak* article ("the latter are anaphoric in a way that the former are
 not"). The extra layer is that index, **not** spatial deixis — their footnote 1
 stresses "it is far from clear that there is anything truly 'demonstrative' about"
 German DEMs. So here *der/die/das* are **strong-article `PersonalPronoun`s**, not a
-separate demonstrative type; the genuinely deictic `Description.demonstrative` is a
-different object. The PER/DEM distribution then follows from **structural economy**
+separate demonstrative type. The genuinely deictic objects are a different matter: the
+`Description.demonstrative` denotation, and the deictic demonstrative *pronoun*
+`DemonstrativePronoun` (German *dieser*, English *this*), which carries a `Features.Deixis.Feature`
+— *der* does **not**, so it is no `Demonstrative` (`Syntax/Pronoun/Demonstrative.lean`). PER/DEM
+(article strength) is thus orthogonal to demonstrativehood (deixis). The PER/DEM distribution then
+follows from **structural economy**
 (*Minimize DP!*): PER, being less structured, is the default; DEM is licensed only
 by an added pragmatic effect (emotivity §5.1, disambiguation §5.2, register §5.3).
 

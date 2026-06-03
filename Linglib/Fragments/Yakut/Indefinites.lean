@@ -34,7 +34,7 @@ set_option autoImplicit false
 
 namespace Yakut.Indefinites
 
-open Typology.Indefinite
+open Indefinite
 
 /-- Yakut *kim ere*: enclitic particle for specific indefinites; covers
     both specific-known and specific-unknown functions (ABB syncretism).

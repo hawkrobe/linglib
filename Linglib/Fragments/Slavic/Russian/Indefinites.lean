@@ -30,7 +30,7 @@ set_option autoImplicit false
 
 namespace Russian.Indefinites
 
-open Typology.Indefinite
+open Indefinite
 
 /-- *кто-нибудь* (*kto-nibud'*): non-specific indefinite, interrogative
     `kto` 'who' + suffix `-nibud'`. Imperatives, questions, irrealis.

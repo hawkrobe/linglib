@@ -2,6 +2,7 @@ import Linglib.Core.Word
 import Linglib.Features.Case
 import Linglib.Features.Gender
 import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Demonstrative
 
 /-!
 # English Pronoun Lexicon Fragment
@@ -12,11 +13,10 @@ cross-linguistic `PersonalPronoun` object; reflexives, reciprocals, and
 wh-pronouns are bare `Pronoun` shells (φ-features + surface form, no referential
 denotation of their own).
 
-The pronoun *kind* is encoded by **which lexicon list** a form sits in
-(`English.pronouns`, `reflexives`, `reciprocals`, `whWords`) — there is no
-per-entry kind tag. Binding theories read
-`English.NominalClassification.classifyNominal` (→ `Features.BindingClass`),
-dispatching on those lists, rather than any English-local type.
+Each entry declares its `Pronoun.bindingClass`, so a form's binding-theoretic kind
+is the entry's own declaration; the lexicon lists below group them by class.
+`English.NominalClassification.classifyNominal` (a `Features.BindingSource Word`)
+reads that declaration.
 
 ## Gender ([konnelly-cowper-2020])
 
@@ -37,7 +37,7 @@ open Features (SurfaceGender)
 
 /-! ### Personal pronouns (`PersonalPronoun`) -/
 
--- First person (no gender feature)
+-- First person (no gender feature). `bindingClass := some .pronoun` is the PersonalPronoun default.
 def i : PersonalPronoun := { form := "I", person := some .first, number := some .sg, case_ := some .nom }
 def me : PersonalPronoun := { form := "me", person := some .first, number := some .sg, case_ := some .acc }
 def we : PersonalPronoun := { form := "we", person := some .first, number := some .pl, case_ := some .nom }
@@ -65,41 +65,60 @@ def them_sg : PersonalPronoun := { form := "them", person := some .third, number
 /-! ### Reflexive, reciprocal, and wh pronouns (bare `Pronoun`)
 
 These are not referential pronouns; they carry φ-features and a surface form but
-no denotation of their own. Their binding-theoretic kind is recovered by
-`classifyNominal` from list membership, not a stored tag. -/
+no denotation of their own. Their binding-theoretic kind is the `bindingClass`
+each declares (tagged per list below). -/
 
-def myself : Pronoun := { form := "myself", person := some .first, number := some .sg }
-def yourself : Pronoun := { form := "yourself", person := some .second, number := some .sg }
-def himself : Pronoun := { form := "himself", person := some .third, number := some .sg, gender := some .masculine }
-def herself : Pronoun := { form := "herself", person := some .third, number := some .sg, gender := some .feminine }
-def itself : Pronoun := { form := "itself", person := some .third, number := some .sg, gender := some .neuter }
-def ourselves : Pronoun := { form := "ourselves", person := some .first, number := some .pl }
-def yourselves : Pronoun := { form := "yourselves", person := some .second, number := some .pl }
-def themselves : Pronoun := { form := "themselves", person := some .third, number := some .pl }
-def themself : Pronoun := { form := "themself", person := some .third, number := some .sg }
+def myself : Pronoun := { form := "myself", person := some .first, number := some .sg, bindingClass := some .reflexive }
+def yourself : Pronoun := { form := "yourself", person := some .second, number := some .sg, bindingClass := some .reflexive }
+def himself : Pronoun := { form := "himself", person := some .third, number := some .sg, gender := some .masculine, bindingClass := some .reflexive }
+def herself : Pronoun := { form := "herself", person := some .third, number := some .sg, gender := some .feminine, bindingClass := some .reflexive }
+def itself : Pronoun := { form := "itself", person := some .third, number := some .sg, gender := some .neuter, bindingClass := some .reflexive }
+def ourselves : Pronoun := { form := "ourselves", person := some .first, number := some .pl, bindingClass := some .reflexive }
+def yourselves : Pronoun := { form := "yourselves", person := some .second, number := some .pl, bindingClass := some .reflexive }
+def themselves : Pronoun := { form := "themselves", person := some .third, number := some .pl, bindingClass := some .reflexive }
+def themself : Pronoun := { form := "themself", person := some .third, number := some .sg, bindingClass := some .reflexive }
 
-def eachOther : Pronoun := { form := "each other" }
-def oneAnother : Pronoun := { form := "one another" }
+def eachOther : Pronoun := { form := "each other", bindingClass := some .reciprocal }
+def oneAnother : Pronoun := { form := "one another", bindingClass := some .reciprocal }
 
-def who : Pronoun := { form := "who" }
-def whom : Pronoun := { form := "whom", case_ := some .acc }
-def what : Pronoun := { form := "what" }
-def which : Pronoun := { form := "which" }
-def where_ : Pronoun := { form := "where" }
-def when_ : Pronoun := { form := "when" }
-def why : Pronoun := { form := "why" }
-def how : Pronoun := { form := "how" }
+def who : Pronoun := { form := "who", bindingClass := some .pronoun }
+def whom : Pronoun := { form := "whom", case_ := some .acc, bindingClass := some .pronoun }
+def what : Pronoun := { form := "what", bindingClass := some .pronoun }
+def which : Pronoun := { form := "which", bindingClass := some .pronoun }
+def where_ : Pronoun := { form := "where", bindingClass := some .pronoun }
+def when_ : Pronoun := { form := "when", bindingClass := some .pronoun }
+def why : Pronoun := { form := "why", bindingClass := some .pronoun }
+def how : Pronoun := { form := "how", bindingClass := some .pronoun }
+
+/-! ### Demonstrative pronouns (`DemonstrativePronoun`)
+
+Genuine deictic demonstratives — a two-way proximal/distal distance system ([moroney-2021]).
+Unlike German *der* (a strong-article personal pronoun, see [patel-grosz-grosz-2017]), these encode
+a real spatial contrast, so they are `Demonstrative` carriers. -/
+
+def this_ : DemonstrativePronoun := { form := "this", person := some .third, number := some .sg, deixis := .proximal }
+def that_ : DemonstrativePronoun := { form := "that", person := some .third, number := some .sg, deixis := .distal }
+def these : DemonstrativePronoun := { form := "these", person := some .third, number := some .pl, deixis := .proximal }
+def those : DemonstrativePronoun := { form := "those", person := some .third, number := some .pl, deixis := .distal }
+
+/-- The four English demonstrative pronouns. -/
+def demonstratives : List DemonstrativePronoun := [this_, that_, these, those]
+
+/-- Every English demonstrative genuinely encodes a distance contrast (proximal/distal) — they are
+    real `Demonstrative`s, the deictic property the morphological "DEM" label does not guarantee. -/
+theorem demonstratives_encode_distance :
+    ∀ d ∈ demonstratives, (Demonstrative.deixis d).EncodesDistance := by decide
 
 /-! ### Lexicon lists (the kind partition) -/
 
-/-- Reflexive pronouns (Principle A anaphors). -/
+/-- Reflexive pronouns (Principle A anaphors); each entry declares `bindingClass := .reflexive`. -/
 def reflexives : List Pronoun :=
   [myself, yourself, himself, herself, itself, ourselves, yourselves, themselves, themself]
 
-/-- Reciprocal pronouns (bipartite-NP anaphors). -/
+/-- Reciprocal pronouns (bipartite-NP anaphors); each declares `bindingClass := .reciprocal`. -/
 def reciprocals : List Pronoun := [eachOther, oneAnother]
 
-/-- Wh-pronouns and wh-adverbs. -/
+/-- Wh-pronouns and wh-adverbs (Principle B pronominals); each declares `bindingClass := .pronoun`. -/
 def whWords : List Pronoun := [who, whom, what, which, where_, when_, why, how]
 
 end English.Pronouns

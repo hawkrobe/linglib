@@ -19,7 +19,7 @@ set_option autoImplicit false
 
 namespace English.Indefinites
 
-open Typology.Indefinite
+open Indefinite
 
 /-- English `some-` series (*someone*, *somebody*, *something*, …):
     AAA syncretism, D&A type i unmarked. The form is generic-noun-based

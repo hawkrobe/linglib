@@ -1,204 +1,43 @@
-import Mathlib.Data.Finset.Basic
-import Mathlib.Data.Fintype.Basic
 import Linglib.Data.WALS.Features.F46A
-import Linglib.Syntax.Pronoun.Basic
+import Linglib.Features.Indefinite
+import Linglib.Syntax.Pronoun.Indefinite
 
 /-!
-# Indefinite-pronoun typology — consensus substrate
+# Indefinite-pronoun typology — cross-linguistic generalizations
 [haspelmath-1997] [wals-2013]
 
-Theory-neutral types for cross-linguistic indefinite-pronoun data, following
-the same `Typology/{Domain}.lean` pattern as `WordOrder.lean`,
-`Adposition.lean`, `MorphProfile.lean`. The lexical object `IndefinitePronoun`
-`extends` the general `Pronoun` (`Syntax/Pronoun/Basic.lean`), so an
-indefinite pronoun is a single object that flows through the Pronoun API and
-carries its own implicational-map distribution.
+Typological generalizations *over* indefinite pronouns. The lexical object itself —
+`IndefinitePronoun` and its [haspelmath-1997] feature taxonomy (`HaspelmathFunction`,
+`OntologicalCategory`, `MorphologicalBasis`) — is an *object*, and lives in the pronoun layer at
+`Syntax/Pronoun/Indefinite.lean`; this file imports it and adds the cross-linguistic apparatus a
+typological reference grammar records: a language's full paradigm, the WALS F46A bridge, and the
+SK/SU/NS syncretism typology.
 
-Theory-specific apparatus (Degano & Aloni's 7-type team-semantic typology,
-choice-function denotations, Hamblin alternatives, …) lives as projections
-in theory files (e.g., `Semantics/Quantification/DeganoAloni2025.lean`),
-not in this substrate. This follows the consensus-only Fragment-schema
-discipline: the substrate carries only what a typological reference
-grammar would record.
+Theory-specific apparatus (Degano & Aloni's 7-type team-semantic typology, choice-function
+denotations, Hamblin alternatives) lives as projections in theory files (e.g.,
+`Studies/DeganoAloni2025.lean`), not in this substrate.
 
 ## Schema
 
-- `HaspelmathFunction`: 9 functions on [haspelmath-1997]'s implicational map
-- `OntologicalCategory`: 7 core categories (+ determiner, reason) of §3.1.3
-- `MorphologicalBasis`: 4 morphological strategies (= 4 of WALS F46A's 5 cells)
-- `IndefinitePronoun`: `extends Pronoun` with ontology + basis + function-coverage
-- `IndefiniteParadigm`: a language's full paradigm + ISO 639-3 code
+- `MorphologicalBasis.toWALS46A`: each single basis → its [wals-2013] F46A cell
+- `IndefiniteParadigm`: a language's full paradigm + ISO 639-3 code, with F46A derivation,
+  contiguity / coverage / disjointness predicates
+- `SyncretismPattern`: the SK/SU/NS triangle patterns, `.ABA` banned by the adjacency universal
 
 ## WALS bridge
 
-`MorphologicalBasis.toWALS46A` maps each basis to its WALS F46A cell;
-`IndefiniteParadigm.toWALS46A` derives the paradigm-level F46A classification
-(including the `.mixed` cell when forms use multiple bases) from the per-form
-basis distribution. Cross-linguistic bridge theorems anchored on a paper live
-in that paper's `Studies/AuthorYear.lean`.
+`IndefiniteParadigm.toWALS46A` derives the paradigm-level F46A classification (including the
+`.mixed` cell when forms use multiple bases) from the per-form basis distribution. Cross-linguistic
+bridge theorems anchored on a paper live in that paper's `Studies/AuthorYear.lean`.
 -/
 
 set_option autoImplicit false
 
-namespace Typology.Indefinite
+namespace Indefinite
 
 open Data.WALS
 
--- ============================================================================
--- §1. Haspelmath 1997 function map
--- ============================================================================
-
-/-- The 9 indefinite-pronoun functions on [haspelmath-1997]'s
-    implicational map. A single form covers a contiguous region of the map. -/
-inductive HaspelmathFunction where
-  /-- Function 1: Specific known. Speaker has a referent in mind. -/
-  | specificKnown
-  /-- Function 2: Specific unknown. Speaker presupposes a referent
-      but cannot identify it. -/
-  | specificUnknown
-  /-- Function 3: Irrealis non-specific. No specific referent intended. -/
-  | irrealis
-  /-- Function 4: Polar / content question. -/
-  | question
-  /-- Function 5: Conditional protasis. -/
-  | conditional
-  /-- Function 6: Standard of comparison. -/
-  | comparative
-  /-- Function 7: Indirect (clause-mate) negation. -/
-  | indirectNeg
-  /-- Function 8: Direct negation. -/
-  | directNeg
-  /-- Function 9: Free choice. -/
-  | freeChoice
-  deriving DecidableEq, Repr, BEq
-
-/-- All nine functions, listed in map order. -/
-def HaspelmathFunction.all : List HaspelmathFunction :=
-  [ .specificKnown, .specificUnknown, .irrealis, .question
-  , .conditional, .indirectNeg, .directNeg, .comparative, .freeChoice ]
-
-/-- Adjacency on [haspelmath-1997]'s implicational map.
-
-    ```
-    specKnown — specUnknown — irrealis — question — conditional — indNeg — dirNeg
-                                                                              |
-                                                    freeChoice — comparative —+
-    ```
-
-    Crucial typological claim: any pronoun series covers a *contiguous* region. -/
-def HaspelmathFunction.adjacent : HaspelmathFunction → List HaspelmathFunction
-  | .specificKnown   => [.specificUnknown]
-  | .specificUnknown => [.specificKnown, .irrealis]
-  | .irrealis        => [.specificUnknown, .question]
-  | .question        => [.irrealis, .conditional]
-  | .conditional     => [.question, .indirectNeg]
-  | .indirectNeg     => [.conditional, .directNeg]
-  | .directNeg       => [.indirectNeg, .comparative]
-  | .comparative     => [.directNeg, .freeChoice]
-  | .freeChoice      => [.comparative]
-
-/-- Is `f` a downward-entailing / nonveridical context (the classical
-    NPI-licensing region: question, conditional, indirect/direct negation)?
-    Used by [chierchia-2006]-style polarity-item typologies to predict
-    NPI distribution. -/
-def HaspelmathFunction.isDE : HaspelmathFunction → Bool
-  | .question | .conditional | .indirectNeg | .directNeg => true
-  | _ => false
-
-/-- Is `f` a free-choice context (comparative + freeChoice)? Comparative
-    standards are universal-flavored and pattern with FC cross-linguistically
-    ([haspelmath-1997]). -/
-def HaspelmathFunction.isFC : HaspelmathFunction → Bool
-  | .comparative | .freeChoice => true
-  | _ => false
-
-/-- BFS on the implicational map restricted to a given set of functions.
-    Returns the set of nodes reachable from `start` through edges whose
-    endpoints both lie in `funcs`. -/
-def HaspelmathFunction.bfsReachable
-    (funcs : List HaspelmathFunction) (start : HaspelmathFunction)
-    (fuel : Nat := 10) : List HaspelmathFunction :=
-  let rec go (queue visited : List HaspelmathFunction) (fuel : Nat) :
-      List HaspelmathFunction :=
-    match fuel, queue with
-    | 0,         _       => visited
-    | _,         []      => visited
-    | fuel + 1, f :: rest =>
-      let neighbors := f.adjacent.filter (fun g =>
-        funcs.contains g && !visited.contains g)
-      go (rest ++ neighbors) (visited ++ neighbors) fuel
-  go [start] [start] fuel
-
-/-- A list of functions is *contiguous* on the implicational map iff BFS
-    from any element reaches all others. [haspelmath-1997]'s key
-    constraint: every pronoun series must cover a contiguous region. -/
-def HaspelmathFunction.isContiguous (funcs : List HaspelmathFunction) : Bool :=
-  match funcs with
-  | []     => true
-  | f :: _ => funcs.all (HaspelmathFunction.bfsReachable funcs f 15).contains
-
--- ============================================================================
--- §1b. Ontological categories ([haspelmath-1997] §3.1.3)
--- ============================================================================
-
-/-- The ontological categories of indefinite pronouns
-    ([haspelmath-1997] §3.1.3, Table 3.1). The seven core categories —
-    person, thing, property, place, time, manner, amount — are the categories
-    "most often expressed by simple means in the languages of the world"; the
-    human/non-human cut (person vs thing, *somebody* vs *something*) is made
-    practically everywhere. `determiner` ('which', distinct from substantival
-    'who'/'what') and `reason` ('why') are common but non-universal (English
-    and German have no indefinite *somewhy*). -/
-inductive OntologicalCategory where
-  /-- Person: *somebody/someone* (interrogative *who?*). -/
-  | person
-  /-- Thing: *something* (interrogative *what?*). -/
-  | thing
-  /-- Property / kind: *some kind of* (interrogative *what kind?*). -/
-  | property
-  /-- Place: *somewhere* (interrogative *where?*). -/
-  | place
-  /-- Time: *sometime* (interrogative *when?*). -/
-  | time
-  /-- Manner: *somehow* (interrogative *how?*). -/
-  | manner
-  /-- Amount: *some amount* (interrogative *how much?*). -/
-  | amount
-  /-- Determiner: *some N* / 'which' — non-universal, distinct from the
-      substantival 'who'/'what'. -/
-  | determiner
-  /-- Reason / cause: 'for some reason' (interrogative *why?*) — non-universal. -/
-  | reason
-  deriving DecidableEq, Repr, BEq
-
-/-- The seven core ontological categories realized "practically everywhere"
-    ([haspelmath-1997] §3.1.3); excludes the non-universal `determiner`
-    and `reason`. -/
-def OntologicalCategory.core : List OntologicalCategory :=
-  [.person, .thing, .property, .place, .time, .manner, .amount]
-
-/-- All nine ontological categories (the seven core plus `determiner`, `reason`). -/
-def OntologicalCategory.all : List OntologicalCategory :=
-  OntologicalCategory.core ++ [.determiner, .reason]
-
--- ============================================================================
--- §2. Morphological basis (= WALS F46A categories)
--- ============================================================================
-
-/-- [haspelmath-1997]'s four morphological strategies for deriving
-    indefinite pronouns. Aligns with the four single-strategy values of
-    [wals-2013] F46A; F46A's `.mixed` cell arises only at the
-    paradigm level (see `IndefiniteParadigm.toWALS46A`). -/
-inductive MorphologicalBasis where
-  /-- Built from interrogative pronouns (`who-`, `what-`, …). -/
-  | interrogative
-  /-- Built from generic nouns ('person', 'thing', 'place'). -/
-  | genericNoun
-  /-- A dedicated indefinite morpheme. -/
-  | special
-  /-- An existential predication construction. -/
-  | existentialConstruction
-  deriving DecidableEq, Repr, BEq
+/-! ### Morphological basis → WALS F46A -/
 
 /-- Forward map to the [wals-2013] F46A category for a single basis.
     F46A's fifth cell `.mixed` is reserved for paradigms with multiple bases. -/
@@ -208,41 +47,7 @@ def MorphologicalBasis.toWALS46A : MorphologicalBasis → F46A.IndefinitePronoun
   | .special                 => .special
   | .existentialConstruction => .existentialConstruction
 
--- ============================================================================
--- §3. Entry + paradigm
--- ============================================================================
-
-/-- A single indefinite pronoun — the canonical lexical object, `extends`ing the
-    general `Pronoun` (surface `form` + φ-features) with the indefinite-specific
-    structure: its `ontology`-cal category ([haspelmath-1997] §3.1.3), its
-    morphological `basis`, and the `functions` it covers on the implicational map.
-
-    This is the single source of truth for an indefinite pronoun: it *is* a
-    `Pronoun`, so it flows through the Pronoun API, and it carries its own
-    distribution. `functions` is the realized cross-linguistic distribution
-    (textbook-consensus data); theory-specific predictions about which functions
-    a form *should* cover (Degano & Aloni 7-type team-semantics, choice-function
-    denotation, Hamblin alternatives) are projections into theory-side types,
-    not fields here. -/
-structure IndefinitePronoun extends Pronoun where
-  /-- The [haspelmath-1997] §3.1.3 ontological category (person, thing, …). -/
-  ontology : OntologicalCategory
-  /-- The morphological derivation strategy (interrogative-based, etc.). -/
-  basis : MorphologicalBasis
-  /-- The functions on [haspelmath-1997]'s implicational map this form
-      covers (a contiguous region; see `IndefiniteParadigm.AllContiguous`). -/
-  functions : Finset HaspelmathFunction
-  deriving DecidableEq
-
-/-- Manual `Repr` showing just the surface `form` to avoid the `unsafe`
-    `Repr (Finset α)` instance from `Mathlib.Data.Finset.Sort`, which
-    would propagate unsafety into every consumer of `IndefinitePronoun`. -/
-instance : Repr IndefinitePronoun where
-  reprPrec e _ := s!"{e.form}"
-
-/-- Does this entry cover function `f`? -/
-def IndefinitePronoun.covers (e : IndefinitePronoun) (f : HaspelmathFunction) : Bool :=
-  decide (f ∈ e.functions)
+/-! ### The paradigm -/
 
 /-- A language's full indefinite-pronoun paradigm. `isoCode` is ISO 639-3,
     the join key for [wals-2013] `Datapoint.iso`. -/
@@ -318,18 +123,7 @@ instance : Decidable p.FormsDisjoint := List.decidableBAll _ _
 
 end IndefiniteParadigm
 
-/-- For each form, the list of functions it covers, in `HaspelmathFunction.all`
-    order. -/
-def IndefinitePronoun.functionList (e : IndefinitePronoun) : List HaspelmathFunction :=
-  HaspelmathFunction.all.filter (e.covers ·)
-
-/-- Coverage of a single form: number of functions it spans. -/
-def IndefinitePronoun.coverage (e : IndefinitePronoun) : Nat :=
-  e.functionList.length
-
--- ============================================================================
--- §4. Syncretism patterns on the SK/SU/NS triangle
--- ============================================================================
+/-! ### Syncretism patterns on the SK/SU/NS triangle -/
 
 /-- Syncretism pattern on [haspelmath-1997]'s SK/SU/NS triple.
     `IsAttested` excludes `.ABA` (banned by the implicational map's
@@ -374,9 +168,7 @@ instance : DecidablePred SyncretismPattern.IsAttested :=
 
 theorem aba_unattested : ¬ SyncretismPattern.IsAttested .ABA := by decide
 
--- ============================================================================
--- §5. Verification
--- ============================================================================
+/-! ### Verification -/
 
 theorem classify_aaa : classifyTriple "A" "A" "A" = .AAA := rfl
 theorem classify_aab : classifyTriple "A" "A" "B" = .AAB := rfl
@@ -384,4 +176,4 @@ theorem classify_abb : classifyTriple "A" "B" "B" = .ABB := rfl
 theorem classify_abc : classifyTriple "A" "B" "C" = .ABC := rfl
 theorem classify_aba : classifyTriple "A" "B" "A" = .ABA := rfl
 
-end Typology.Indefinite
+end Indefinite

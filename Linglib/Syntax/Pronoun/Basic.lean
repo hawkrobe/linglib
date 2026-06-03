@@ -36,9 +36,12 @@ in as fields of the general `Pronoun`.
 set_option autoImplicit false
 
 /-- The general pronoun object: the morphosyntactic core shared by every pronoun
-    type (personal, indefinite, demonstrative, interrogative, …). Carries only what
-    is true of *all* pronouns — surface form and agreement φ-features — and has no
-    denotation of its own; each specialization (`PersonalPronoun` for personal/
+    type (personal, indefinite, demonstrative, interrogative, …). Carries what is true
+    of *all* pronouns — surface form, agreement φ-features, and a binding-theoretic
+    `bindingClass` *slot* (the Principle A/B/C role every pronoun has; `none` on the bare
+    base, *fixed by the kind*: `PersonalPronoun` defaults it, reflexive/reciprocal shells
+    declare it) — and has no denotation of its own; each specialization (`PersonalPronoun`
+    for personal/
     referential pronouns, and future `IndefinitePronoun` etc.) `extends` this and
     supplies its own meaning. Coexists with `namespace Pronoun` (a type and a
     namespace may share a name, cf. `List`). -/
@@ -64,12 +67,12 @@ structure Pronoun where
   gender : Option Features.SurfaceGender := none
   /-- Native script form (hangul, kanji, Devanagari, …). -/
   script : Option String := none
-  /-- The binding class this pro-form declares — which binding principle governs it
-      (Principle A anaphor: `.reflexive`/`.reciprocal`; Principle B pronominal:
-      `.pronoun`; Principle C R-expression). The pro-form is the source of truth for
-      its own binding role; the binding engine reads this declaration rather than
-      recovering the class from surface strings. `none` for a bare φ-shell that
-      declares no class. -/
+  /-- The binding class this pro-form declares — its `Features.BindingSource Pronoun` value:
+      Principle A anaphor (`.reflexive`/`.reciprocal`), B pronominal (`.pronoun`), or C
+      R-expression. *One* source of an expression's binding class — the lexical declaration
+      ([chomsky-1981]'s GB classes); the binding engine is polymorphic over `BindingSource`, so
+      a theory may instead source the class structurally or from context. `none` for a bare
+      φ-shell. -/
   bindingClass : Option Features.BindingClass := none
   deriving Repr, BEq, DecidableEq
 
@@ -78,6 +81,9 @@ structure Pronoun where
 deictic pronouns. Covers personal pronouns across all Fragment languages;
 any language-specific refinements remain in their respective Fragment files. -/
 structure PersonalPronoun extends Pronoun where
+  /-- Personal pronouns are Principle-B pronominals: the *type* fixes the binding class
+      ([chomsky-1981]), overriding `Pronoun`'s `none` default so entries needn't restate it. -/
+  bindingClass := some .pronoun
   /-- Register level (formality/honorifics). Binary T/V systems use
       `.informal`/`.formal`; ternary honorific systems (Hindi, Magahi,
       Maithili, Korean) use all three levels. -/
