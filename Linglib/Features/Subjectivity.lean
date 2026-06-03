@@ -1,5 +1,5 @@
 import Mathlib.Order.Basic
-import Linglib.Core.Epistemicity
+import Linglib.Semantics.Epistemicity
 
 /-!
 # Subjectivity Cline
@@ -23,7 +23,7 @@ intersubjectification.
 
 namespace Features.Subjectivity
 
-open Core.Epistemicity (EpistemicAuthority)
+open Semantics.Epistemicity (EpistemicAuthority)
 
 /-- Synchronic subjectivity scale ([traugott-dasher-2002] Table 1,
     [traugott-2010] cline 2). Diachronic work shows that subjective

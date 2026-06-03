@@ -287,7 +287,7 @@ open Abusch1997 in
 theorem schlenker_origin_supports_abusch_double_access
     (p : ℤ → Prop) (h_speech : p (presentAccess.resolve sotTower))
     (h_matrix : p matrixSaid.eventTime) :
-    Core.Time.Tense.doubleAccess p
+    Semantics.Tense.doubleAccess p
       (presentAccess.resolve sotTower) matrixSaid.eventTime :=
   ⟨h_speech, h_matrix⟩
 
@@ -412,10 +412,10 @@ open Abusch1997 in
     agreement apparatus and Abusch's res-movement make different
     predictions — not yet substrate-formalized. -/
 theorem schlenker_abusch_agree_on_simultaneous_value
-    (tp : Core.Time.Tense.TensePronoun)
-    (g : Core.Time.Tense.TemporalAssignment ℤ) :
+    (tp : Semantics.Tense.TensePronoun)
+    (g : Semantics.Tense.TemporalAssignment ℤ) :
     shiftedAccess.resolve sotTower =
-    tp.resolve (Core.Time.Tense.updateTemporal g tp.varIndex matrixSaid.eventTime) := by
+    tp.resolve (Semantics.Tense.updateTemporal g tp.varIndex matrixSaid.eventTime) := by
   show matrixSaid.eventTime = _
   exact (Abusch1997.abusch_derives_simultaneous_via_binding
     tp g matrixSaid).symm

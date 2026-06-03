@@ -216,7 +216,7 @@ import Linglib.Pragmatics.GameTheory
 import Linglib.Pragmatics.SignalingGames
 import Linglib.Features.Evidentiality
 import Linglib.Features.Mirativity
-import Linglib.Core.Epistemicity
+import Linglib.Semantics.Epistemicity
 import Linglib.Features.Logophoricity
 import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Time.Interval.Basic
@@ -230,7 +230,7 @@ import Linglib.Core.Time.Domain
 import Linglib.Core.Time.RelationOrigin
 import Linglib.Core.Time.System
 import Linglib.Core.Time.Reichenbach
-import Linglib.Core.Time.Tense
+import Linglib.Semantics.Tense.GramTense
 import Linglib.Typology.WordOrder
 import Linglib.Typology.Adposition
 import Linglib.Typology.ArgumentStructure

@@ -71,7 +71,7 @@ open English.Predicates.Verbal (think believe hope pray)
 open Semantics.Tense.Modal.Matrix
   (dox_past_iff dox_npst_iff cir_npst_iff cir_past_iff_false)
 open Semantics.Tense (upperLimitConstraint)
-open Core.Time.Tense (GramTense)
+open Semantics.Tense (GramTense)
 open Semantics.Modality (ModalFlavor)
 open Data.Examples (LinguisticExample)
 

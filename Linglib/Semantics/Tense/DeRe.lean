@@ -102,7 +102,7 @@ namespace Semantics.Tense.DeRe
 open Core (Intension WorldTimeIndex)
 open Core.Context (KContext)
 open HistoricalAlternatives (actualHistoryBase)
-open Core.Time.Tense (TensePronoun GramTense TemporalAssignment)
+open Semantics.Tense (TensePronoun GramTense TemporalAssignment)
 
 
 -- ════════════════════════════════════════════════════════════════

@@ -23,7 +23,7 @@ the two predictions, and records the contrast with [kratzer-1998]
    genuine past (temporal precedence) vs zero tense (bound variable).
 2. **Zero tense = bound variable**: receives binder time via lambda
    abstraction. The substrate primitive
-   `Core.Time.Tense.zeroTense_receives_binder_time` proves the bound
+   `Semantics.Tense.zeroTense_receives_binder_time` proves the bound
    variable resolves to the binder.
 3. **SOT = zero tense**: the simultaneous reading is the zero-tense
    reading.
@@ -44,7 +44,7 @@ puzzle (where they actually diverge).
 
 namespace Ogihara1996
 
-open Core.Time.Tense
+open Semantics.Tense
 open Core.Time.Reichenbach
 open Semantics.Tense
 open Semantics.Tense.SOT.Ambiguity (PastReading)

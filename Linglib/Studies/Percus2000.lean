@@ -1,6 +1,6 @@
 import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Core.Assignment
-import Linglib.Core.Time.Tense
+import Linglib.Semantics.Tense.GramTense
 import Linglib.Core.Context.Tower
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Nouns
@@ -175,12 +175,12 @@ theorem sitVar_other_unaffected {W Time : Type*}
 -- ════════════════════════════════════════════════════════════════
 
 def toTemporalAssignment {W Time : Type*}
-    (g : SituationAssignment W Time) : Core.Time.Tense.TemporalAssignment Time :=
+    (g : SituationAssignment W Time) : Semantics.Tense.TemporalAssignment Time :=
   λ n => (g n).time
 
 theorem temporal_projection_commutes {W Time : Type*}
     (g : SituationAssignment W Time) (n : ℕ) :
-    Core.Time.Tense.interpTense n (toTemporalAssignment g) = (interpSitVar n g).time :=
+    Semantics.Tense.interpTense n (toTemporalAssignment g) = (interpSitVar n g).time :=
   rfl
 
 

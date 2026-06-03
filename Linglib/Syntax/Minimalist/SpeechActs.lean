@@ -351,7 +351,7 @@ abbrev EvidPSpecifier := Features.Evidentiality.CoarseSource
     two specifiers (SEAT OF KNOWLEDGE + EVIDENCE) correspond to
     `EpistemicProfile`'s two main fields (authority + source).
 
-    | S&T Sentience Domain | Core.Epistemicity     |
+    | S&T Sentience Domain | Semantics.Epistemicity     |
     |----------------------|-----------------------|
     | EvalP spec (Seat)    | EpistemicProfile.authority |
     | EvidP spec (Evidence)| EpistemicProfile.source    |
