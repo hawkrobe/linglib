@@ -64,4 +64,32 @@ instance (a : α) : Decidable (IsRExpression a) := by unfold IsRExpression; infe
 
 end Lexicon
 
+/-! ### Single-kind marker mixins
+
+A carrier all of whose pro-forms declare one binding kind — the `[Anaphoric α]`-style
+markers. Prop-mixins over `[Lexicon α]`, instantiable on a *single-kind* carrier (a subtype
+of a lexicon narrowed to one class) but NOT on the multi-kind `Pronoun` record (whose
+`bindingClass` varies per entry; use the per-element `Lexicon.Is*` predicates there).
+Stacking these is how a pronoun *kind* is composed and *derived*, never stipulated. -/
+
+/-- All pro-forms of `α` are Principle-A anaphors. -/
+class Anaphoric (α : Type) [Lexicon α] : Prop where
+  isAnaphor : ∀ a : α, Lexicon.IsAnaphor a
+
+/-- All pro-forms of `α` are Principle-B pronominals. -/
+class Pronominal (α : Type) [Lexicon α] : Prop where
+  isPronominal : ∀ a : α, Lexicon.IsPronominal a
+
+/-- All pro-forms of `α` are Principle-C R-expressions. -/
+class RExpression (α : Type) [Lexicon α] : Prop where
+  isRExpression : ∀ a : α, Lexicon.IsRExpression a
+
+/-- A **reflexive pronoun**, derived not stipulated: the sub-carrier of `Pronoun` whose
+declaration is `.reflexive`. The dissolution of "should `ReflexivePronoun` be a `structure`?"
+— it is the narrowed carrier, and it is `Anaphoric` by construction. -/
+abbrev ReflexivePronoun := {p : Pronoun // p.bindingClass = some .reflexive}
+
+instance : Lexicon ReflexivePronoun := ⟨fun r => r.val.bindingClass⟩
+instance : Anaphoric ReflexivePronoun := ⟨fun r => Or.inl r.property⟩
+
 end Binding
