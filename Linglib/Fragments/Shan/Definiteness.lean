@@ -123,6 +123,10 @@ structure ShanDemonstrative where
   spatial : Features.Deixis.Feature
   deriving Repr
 
+/-- A Shan demonstrative is a `Demonstrative` carrier — its `spatial` field *is* the deictic
+    contrast the capability exposes. -/
+instance : Demonstrative ShanDemonstrative := ⟨ShanDemonstrative.spatial⟩
+
 /-- *nâj* — proximal demonstrative ('this'). -/
 def naj : ShanDemonstrative :=
   { form := "nâj", gloss := "this", spatial := .proximal }
@@ -130,6 +134,11 @@ def naj : ShanDemonstrative :=
 /-- *nân* — distal demonstrative ('that'). -/
 def nan : ShanDemonstrative :=
   { form := "nân", gloss := "that", spatial := .distal }
+
+/-- Both Shan demonstratives encode a distance contrast (`nâj` proximal, `nân` distal). -/
+theorem shan_demonstratives_encode_distance :
+    (Demonstrative.deixis naj).EncodesDistance ∧ (Demonstrative.deixis nan).EncodesDistance := by
+  decide
 
 /-- Demonstrative denotation as a referent selector with spatial filter.
 

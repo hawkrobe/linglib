@@ -125,7 +125,7 @@ phenomena when the contributions split cleanly. The split here:
 
 namespace Haspelmath1997Polarity
 
-open _root_.Typology.Indefinite
+open _root_.Indefinite
 open Data.WALS
 
 -- ============================================================================

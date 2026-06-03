@@ -56,8 +56,7 @@ for cross-linguistic comparison anyway.
 
 namespace Haspelmath1997
 
-open _root_.Typology
-open _root_.Typology.Indefinite
+open _root_.Indefinite
 open Data.WALS
 
 -- ============================================================================

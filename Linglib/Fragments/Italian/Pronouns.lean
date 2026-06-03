@@ -1,4 +1,5 @@
 import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Core.Word
 
 /-! # Italian Pronoun and Clitic Fragment
@@ -101,6 +102,22 @@ structure CliticEntry where
   case_ : CliticCase
   deriving Repr, BEq
 
+/-! ### Clitics as capability carriers (`Proform` / `Bound`)
+
+The clitic is its own bespoke struct — capabilities abstract over it without merging it into
+`Pronoun` (the `FunLike`-over-many-hom-types pattern). Deficiency is deliberately *not* a capability
+here: it is per-series (the whole clitic paradigm is `.clitic`), modelled by `cliticStrength` below
+and `Strength.rank`, not by a per-element accessor. -/
+
+/-- A clitic's surface form + φ-features (person/number). -/
+instance : Proform CliticEntry :=
+  ⟨CliticEntry.form, fun c => { person := some c.person, number := some c.number }⟩
+
+/-- Binding class from the clitic's case: a reflexive clitic (*si*, *mi* …) is a Principle-A
+    anaphor; an accusative/dative object clitic is a Principle-B pronominal. -/
+instance : Bound CliticEntry :=
+  ⟨fun c => match c.case_ with | .reflexive => .reflexive | _ => .pronoun⟩
+
 -- 1sg clitics
 def mi_acc : CliticEntry := { form := "mi", person := .first, number := .Sing, case_ := .accusative }
 def mi_dat : CliticEntry := { form := "mi", person := .first, number := .Sing, case_ := .dative }
@@ -146,6 +163,13 @@ def paradigm : List CliticEntry :=
     ci_acc, ci_dat, ci_refl,
     vi_acc, vi_dat, vi_refl,
     li_cl, le_cl, loro_dat, si_refl_pl ]
+
+/-! ### Capability checks -/
+
+-- The reflexive clitic *si* is a Principle-A anaphor; the accusative *lo* a pronominal —
+-- read through the generic `Bound` capability.
+example : Bound.IsAnaphor si_refl := by decide
+example : Bound.IsPronominal lo_cl := by decide
 
 /-- Look up the form for a given person, number, and case in the paradigm. -/
 def lookupForm (p : Person) (n : Number) (c : CliticCase) : Option String :=

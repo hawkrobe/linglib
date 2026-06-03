@@ -20,7 +20,7 @@ set_option autoImplicit false
 
 namespace Kannada.Indefinites
 
-open Typology.Indefinite
+open Indefinite
 
 /-- Kannada *-oo*: specific-unknown indefinite suffix on interrogative
     bases (e.g., *yāru-oo* 'someone'). D&A type vii: `dep(v,x) ∧ var(∅,x)`.

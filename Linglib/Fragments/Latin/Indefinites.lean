@@ -19,7 +19,7 @@ set_option autoImplicit false
 
 namespace Latin.Indefinites
 
-open Typology.Indefinite
+open Indefinite
 
 /-- Latin *aliquis*: non-specific + specific-unknown (AAB pattern).
     Interrogative-based: `ali-` + interrogative `quis`. D&A type iv

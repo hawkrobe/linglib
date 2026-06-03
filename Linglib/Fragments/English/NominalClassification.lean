@@ -1,48 +1,52 @@
 import Linglib.Core.Word
 import Linglib.Features.CoreferenceStatus
+import Linglib.Syntax.Binding.Lexical
 import Linglib.Fragments.English.Pronouns
 
 /-!
 # English nominal classification for binding
 
-Lexicon-driven classification of English nominals into `Features.BindingClass`,
-shared by the coreference/binding analyses in every syntactic framework
-(`Syntax.Minimalist.Coreference`, `Syntax.HPSG.Coreference`,
-`Syntax.DependencyGrammar`). Each previously re-stipulated this with hardcoded
-pronoun-form string lists; routing through `English.Pronouns` makes
-the three frameworks classify against one lexicon.
+Lexicon-driven classification of English nominals into `Features.BindingClass` — the
+binding-class **source** the coreference/binding analyses in every syntactic framework
+(`Syntax.Minimalist.Coreference`, `Syntax.HPSG.Coreference`, `Syntax.DependencyGrammar`)
+consume. The class is read from each lexicon entry's declared `Pronoun.bindingClass` (set at
+the entry; see `English.Pronouns`), looked up by surface form — one `Features.BindingSource
+Word`. Other theories may source the class differently (HPSG sorts, minimal-pronoun context);
+the engine is polymorphic over the source.
 
-φ-feature agreement is *not* here: it is `Word.Agree` (`Core.Word`), a
-feature-based relation over `UD.MorphFeatures.compatible` that reads the
-gender carried by `toWord` — no surface-form gender table.
+φ-feature agreement is *not* here: it is `Word.Agree` (`Core.Word`), a feature-based relation
+over `UD.MorphFeatures.compatible`.
 
 ## Main definitions
 
-* `classifyNominal` — `Word → Option Features.BindingClass`, via the English
-  pronoun lexicon lists (`reflexives`/`reciprocals`/personal/`whWords`) with a
-  UPOS fallback for R-expressions.
+* `classifyNominal` — the English `Features.BindingSource Word`: the binding class each
+  matching lexicon entry *declares*, with a UPOS fallback for R-expressions.
 -/
 
 namespace English.NominalClassification
 
-open Features (BindingClass)
+open Features (BindingClass BindingSource)
 
 /-- Is this a nominal category (proper noun, common noun, or pronoun)? -/
 def isNominalCat (c : UD.UPOS) : Bool :=
   c == .PROPN || c == .NOUN || c == .PRON
 
-/-- Classify a word as a binding-theoretic nominal type.
+/-- The full English pro-form lexicon; each entry carries its declared `bindingClass`
+(set at the entry defs in `English.Pronouns`). -/
+def lexicon : List Pronoun :=
+  English.Pronouns.reflexives ++ English.Pronouns.reciprocals ++ English.Pronouns.whWords
+    ++ English.pronouns.map (·.toPronoun)
 
-    Derives the classification from the English pronoun lexicon lists rather
-    than a per-entry tag: a form in `reflexives` or `reciprocals` is an anaphor,
-    a form in the personal or wh lists is a pronoun, and any other nominal
-    category is an R-expression. -/
-def classifyNominal (w : Word) : Option BindingClass :=
-  if English.Pronouns.reflexives.any (·.form == w.form) then some .reflexive
-  else if English.Pronouns.reciprocals.any (·.form == w.form) then some .reciprocal
-  else if English.pronouns.any (·.form == w.form)
-        || English.Pronouns.whWords.any (·.form == w.form) then some .pronoun
-  else if isNominalCat w.cat then some .rExpression
-  else none
+/-- Classify an English nominal: the binding class the matching lexicon entry *declares*
+(`Pronoun.bindingClass`), looked up by surface form, with a UPOS R-expression fallback. The
+binding class is sourced from the entry's own declaration, not from list membership. -/
+def classifyNominal : BindingSource Word := fun w =>
+  match lexicon.find? (·.form == w.form) with
+  | some e => e.bindingClass
+  | none => if isNominalCat w.cat then some .rExpression else none
+
+/-- Every reflexive entry is a Principle-A anaphor by its declaration — `Pronoun.IsAnaphor`
+(over `bindingClass`) holds across the `reflexives` lexicon. -/
+theorem reflexives_are_anaphors : ∀ p ∈ English.Pronouns.reflexives, p.IsAnaphor := by decide
 
 end English.NominalClassification

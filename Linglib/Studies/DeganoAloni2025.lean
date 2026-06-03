@@ -5,7 +5,7 @@ import Linglib.Typology.Indefinite
 [degano-aloni-2025] [hodges-1997] [vaananen-2007]
 
 Degano & Aloni 2025's 7-type classification of indefinite pronouns,
-projected from the consensus `Typology.Indefinite.IndefinitePronoun`
+projected from the consensus `Indefinite.IndefinitePronoun`
 substrate (Haspelmath 1997 function-coverage data).
 
 The team-semantic logic primitives D&A use (Hodges 1997 / Väänänen 2007:
@@ -139,7 +139,7 @@ end DeganoAloni2025.DependenceLogic
 
 namespace DeganoAloni2025
 
-open Typology.Indefinite
+open Indefinite
 
 /-- [degano-aloni-2025]'s seven-type team-semantic typology. -/
 inductive DAType where
@@ -228,7 +228,7 @@ end DeganoAloni2025
 
 /- Methods on `IndefinitePronoun` live in its own namespace so that
    dot notation (`entry.surfaceDAType`) resolves them. -/
-namespace Typology.Indefinite.IndefinitePronoun
+namespace Indefinite.IndefinitePronoun
 
 open DeganoAloni2025
 
@@ -257,4 +257,4 @@ def surfaceDAType (e : IndefinitePronoun) : Option DAType :=
 def consistentWith (e : IndefinitePronoun) (t : DAType) : Bool :=
   decide (e.functions ⊆ t.profile)
 
-end Typology.Indefinite.IndefinitePronoun
+end Indefinite.IndefinitePronoun

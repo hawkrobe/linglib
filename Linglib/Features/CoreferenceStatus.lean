@@ -43,4 +43,11 @@ inductive BindingClass where
   | rExpression
   deriving Repr, BEq, DecidableEq
 
+/-- A **binding-class source**: *where* an expression's `BindingClass` comes from. Theories
+source it differently — a lexical declaration (`Pronoun.bindingClass`), a form-string
+classifier (`English.NominalClassification.classifyNominal`), a structural sort (HPSG), or the
+syntactic context (minimal-pronoun / DM). The framework-neutral binding engine is polymorphic
+over the source: it takes a `BindingSource` and stays agnostic to where the class came from. -/
+abbrev BindingSource (α : Type _) := α → Option BindingClass
+
 end Features
