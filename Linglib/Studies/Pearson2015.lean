@@ -1,11 +1,12 @@
 import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Semantics.Reference.Acquaintance
 import Linglib.Features.Logophoricity
 import Linglib.Syntax.Pronoun.Logophoric
 
 /-!
 # Pearson (2015): The interpretation of the logophoric pronoun in Ewe
 [pearson-2015] [sells-1987] [percus-sauerland-2003] [charlow-sharvit-2014]
-[chierchia-1990] [kratzer-2009] [lewis-1979-attitudes]
+[chierchia-1990] [kratzer-2009] [lewis-1979-attitudes] [aloni-2001]
 
 [pearson-2015] (*Nat Lang Semantics* 23(2)) gives the definitive modern semantics of the
 Ewe logophoric pronoun *yè* — the carrier `ye : LogophoricPronoun`
@@ -21,36 +22,38 @@ That view predicts *yè* is obligatorily **de se**.
 distribution) but lets it additionally sit inside a **`resP`** — a covert constituent housing a
 **concept generator** variable ([percus-sauerland-2003], [charlow-sharvit-2014]) — yielding the
 de re reading. A concept generator maps a *res* to an individual concept; it is **suitable**
-when *reliable* (returns the res in the actual world) and *acquaintance-based*, with Pearson's
-revision that a variable over the attitude holder's **epistemic alternatives** is overwritten
-with the attitude holder herself (eq. 82) — the clause that makes "John claims he is
-delusional" (de re, true) diverge from "John claims Napoleon is delusional" (false).
+when *reliable* (returns the res in the actual world, with a variable over the holder's
+epistemic alternatives overwritten with the holder) and **acquaintance-based** (the concept is
+one of the holder's available ways of identifying — a member of her conceptual cover,
+[aloni-2001]).
 
-## This file (core machinery + ambiguity theorem)
+## This file
 
-* `Concept` / `ConceptGenerator` — over `Core.Intension`. The general acquaintance/cover
-  substrate (`Semantics/Reference/Acquaintance.lean`) is the natural home for the
-  acquaintance-based clause; wiring onto it is the extension below.
-* `sayDeSe` (eq. 76) and `sayDeRe` (eq. 77/79b) — the two denotations of *say*, with
-  `Reliable` (eq. 82.i) the reliability-with-epistemic-overwrite clause of Pearson's *suitable*.
+* `Concept` / `ConceptGenerator` — over `Core.Intension`; a `Concept` *is* an element of an
+  `Acquaintance.Cover`, so acquaintance is membership in the holder's cover.
+* `sayDeSe` (eq. 76), `sayDeRe`/`claimDeRe` (eq. 77/79b) — the two denotations of *say*, with
+  `Reliable` (eq. 82.i, reliability-with-epistemic-overwrite) and `Suitable` (eq. 82 = reliable
+  ∧ acquaintance-based-via-cover).
 * **Scenario 1** (eq. 75, §5.3): John says "whoever wrote this is clever", unaware he is the
   author. `ye_de_se_de_re_ambiguous` proves the de se LF is **false** while the de re LF is
-  **true** — via an explicit witnessing "author" concept generator (`authorGen`). This is
-  [pearson-2015]'s central finding, made true by construction.
+  **true** — via an explicit witnessing "author" concept generator. [pearson-2015]'s central
+  finding, made true by construction.
+* **Scenario 2** (`Napoleon`, §6, eq. 80–85): John believes he is Napoleon and, not recognising
+  himself on TV, says the patient is delusional. `napoleon_contrast` proves "John claims he is
+  delusional" **true** but "John claims Napoleon is delusional" **false** — the bound pronoun
+  (overwritten to John, whom John is acquainted with) succeeds where the name (the actual-world
+  Napoleon, to whom John bears no acquaintance, so no cover concept reliably picks him) fails.
 * `ye_antecedent_is_attitude_holder` grounds the carrier: *yè*'s antecedent is the attitude
   holder in both readings, i.e. the carrier's `requiredRole = .self`.
 
-Deferred to prose (and the natural extensions): the **acquaintance-based** clause of *suitable*
-(eq. 82.ii — a *fixed* acquaintance relation the holder bears uniquely to the concept's value;
-its faithful form needs the `Acquaintance.lean` cover substrate, not the vacuous `∃R` an
-earlier draft used), the **Napoleon contrast** (§6) that clause licenses, and the *yè*-vs-PRO
-φ-feature asymmetry (§7.1: PRO is a φ-less [kratzer-2009] minimal pronoun, so — unlike *yè* —
-it takes no long-distance antecedent).
+Deferred to prose: the *yè*-vs-PRO φ-feature asymmetry (§7.1: PRO is a φ-less [kratzer-2009]
+minimal pronoun, so — unlike *yè* — it takes no long-distance antecedent).
 -/
 
 namespace Pearson2015
 
 open Core (Intension)
+open Semantics.Reference.Acquaintance (Cover)
 open Features.Logophoricity (LogophoricRole Logophoric)
 
 /-! ### Concept generators ([percus-sauerland-2003], [charlow-sharvit-2014]) -/
@@ -60,8 +63,8 @@ open Features.Logophoricity (LogophoricRole Logophoric)
 abbrev Centered (W E : Type*) := W × E
 
 /-- An individual concept à la [percus-sauerland-2003]: a function from centered worlds
-    to individuals (`Core.Intension` over `Centered`). Acquaintance-based concepts are
-    functions from world-individual pairs, not from worlds. -/
+    to individuals (`Core.Intension` over `Centered`). This is exactly an element of an
+    `Acquaintance.Cover (Centered W E) E`. -/
 abbrev Concept (W E : Type*) := Intension (Centered W E) E
 
 /-- A concept generator: from a *res* to an individual concept. -/
@@ -81,31 +84,37 @@ def epiAlt {W E : Type*} (alts : List (Centered W E)) : List E := alts.map Prod.
 def sayDeSe {W E : Type*} (alts : List (Centered W E)) (P : CProp W E) : Prop :=
   ∀ p ∈ alts, P p.2 p.1
 
-/-- A concept generator is **reliable** for holder `x` in `w` ([pearson-2015] eq. 82, the
-    "Reliability" clause; over a finite res domain `dom`): for each res `u` the concept
-    returns `u` in the actual world, **or** `u` is an epistemic alternative of `x` and the
-    concept returns `x` (the epistemic-alternative *overwrite*). The overwrite is what — given
-    a genuine acquaintance relation — makes "John claims he is delusional" (de re, true)
-    diverge from "John claims Napoleon is delusional" (false) in §6.
-
-    Pearson's full *suitable* adds an **acquaintance-based** clause (eq. 82.ii): the holder
-    bears a *fixed* acquaintance relation uniquely to the concept's value at every
-    alternative. That clause is the content of "the concept is a genuine way of identifying
-    the res", and faithfully modelling it needs the cover/acquaintance substrate
-    (`Semantics/Reference/Acquaintance.lean`); it is left to prose here (an earlier `∃R`
-    encoding was **vacuous** — the graph of *any* `G` satisfies it — so it is dropped rather
-    than feigned, and the Napoleon contrast it would license is deferred with it). -/
+/-- A concept generator is **reliable** for holder `x` in `w` ([pearson-2015] eq. 82.i, the
+    "Reliability" clause; over a finite res domain `dom`): for each res `u` the concept returns
+    `u` in the actual world, **or** `u` is an epistemic alternative of `x` and the concept
+    returns `x` (the epistemic-alternative *overwrite*). -/
 def Reliable {W E : Type*} [DecidableEq E] (alts : List (Centered W E))
     (G : ConceptGenerator W E) (x : E) (w : W) (dom : List E) : Prop :=
   ∀ u ∈ dom, G u (w, x) = u ∨ (u ∈ epiAlt alts ∧ G u (w, x) = x)
 
-/-- `⟦say^de re⟧` (eq. 77/79b): there is a **reliable** concept generator `G` (Pearson's
-    *suitable*, with the acquaintance-based half deferred — see `Reliable`) such that at each
-    attitude alternative `⟨w',y⟩`, the individual `G`'s concept (fed the de se center as res)
-    picks out at `⟨w',y⟩` has the embedded property at `w'`. *yè* sits in a `resP`. -/
-def sayDeRe {W E : Type*} [DecidableEq E] (alts : List (Centered W E))
-    (P : CProp W E) (x : E) (w : W) (dom : List E) : Prop :=
-  ∃ G : ConceptGenerator W E, Reliable alts G x w dom ∧ ∀ p ∈ alts, P (G p.2 p) p.1
+/-- A concept generator is **suitable** for `x` in `w` ([pearson-2015] eq. 82): it is `Reliable`
+    **and acquaintance-based** — each concept it produces (for a res in `dom`) is one of the
+    holder's available ways of identifying, i.e. a member of her conceptual cover ([aloni-2001];
+    `Acquaintance.Cover`). The cover is what makes suitability non-trivial: a generator whose
+    concepts lie outside the holder's cover is unsuitable, even if reliable. -/
+def Suitable {W E : Type*} [DecidableEq E] (cover : Cover (Centered W E) E)
+    (alts : List (Centered W E)) (G : ConceptGenerator W E) (x : E) (w : W) (dom : List E) : Prop :=
+  Reliable alts G x w dom ∧ ∀ u ∈ dom, G u ∈ cover
+
+/-- `⟦say^de re⟧` for a **pronoun** (*yè*) res (eq. 77/79b): there is a `Suitable` concept
+    generator `G` such that at each attitude alternative `⟨w',y⟩`, the individual `G`'s concept
+    (fed the **de se center** `y` as res) picks out at `⟨w',y⟩` has the embedded property at
+    `w'`. *yè* sits in a `resP`, bound by the attitude abstractor. -/
+def sayDeRe {W E : Type*} [DecidableEq E] (cover : Cover (Centered W E) E)
+    (alts : List (Centered W E)) (P : CProp W E) (x : E) (w : W) (dom : List E) : Prop :=
+  ∃ G : ConceptGenerator W E, Suitable cover alts G x w dom ∧ ∀ p ∈ alts, P (G p.2 p) p.1
+
+/-- `⟦say^de re⟧` for a **name** res (eq. 79): like `sayDeRe`, but the res fed to `G` is the
+    fixed individual `res` (a rigid, actual-world-bound name), not the de se center. The
+    difference from `sayDeRe` is exactly the pronoun/name asymmetry that delivers §6. -/
+def claimDeRe {W E : Type*} [DecidableEq E] (cover : Cover (Centered W E) E)
+    (alts : List (Centered W E)) (P : CProp W E) (res x : E) (w : W) (dom : List E) : Prop :=
+  ∃ G : ConceptGenerator W E, Suitable cover alts G x w dom ∧ ∀ p ∈ alts, P (G res p) p.1
 
 /-! ### Scenario 1: the de se / de re ambiguity ([pearson-2015] eq. 75, §5.3)
 
@@ -138,11 +147,15 @@ def cleverB : Wld → Ind → Bool
 /-- Reducible so `decide` sees the underlying `Bool` test through the wrapper. -/
 abbrev cleverP : CProp Wld Ind := fun y w => cleverB w y = true
 
-/-- The "author of the paper" concept generator: **reliable** — it returns the res `john` in
-    the actual world (John really is the author) — but the believed author `auth` in John's
-    belief world (he does not recognise himself). The acquaintance-based "read the paper of". -/
-def authorGen : ConceptGenerator Wld Ind :=
-  fun _u p => if p.1 = actual then john else auth
+/-- The "author of the paper" concept: returns the res `john` in the actual world (John really
+    is the author) but the believed author `auth` in John's belief world. -/
+def authorConcept : Concept Wld Ind := fun p => if p.1 = actual then john else auth
+
+/-- The generator carrying the "author" concept for any res. -/
+def authorGen : ConceptGenerator Wld Ind := fun _u => authorConcept
+
+/-- John's conceptual cover: the "author of the paper" concept he is acquainted via. -/
+def s1Cover : Cover (Centered Wld Ind) Ind := {authorConcept}
 
 /-! ### The ambiguity, derived -/
 
@@ -150,24 +163,101 @@ def authorGen : ConceptGenerator Wld Ind :=
     centre (john) is not clever — John did not self-ascribe cleverness. -/
 theorem deSe_false : ¬ sayDeSe sayAlts cleverP := by unfold sayDeSe; decide
 
-/-- The "author" concept generator is **reliable** for John: it returns the res `john` in the
-    actual world (John really is the author), satisfying eq. 82's Reliability clause via its
-    first disjunct. -/
-theorem authorGen_reliable : Reliable sayAlts authorGen john actual dom := by
-  unfold Reliable; decide
+/-- The "author" generator is **suitable** for John: reliable (returns the res `john` in the
+    actual world) and acquaintance-based (its concept is in John's cover). -/
+theorem authorGen_suitable : Suitable s1Cover sayAlts authorGen john actual dom := by
+  refine ⟨by unfold Reliable; decide, ?_⟩
+  intro u hu
+  simp only [dom, List.mem_singleton] at hu; subst hu
+  simp [authorGen, s1Cover]
 
-/-- The **de re** reading is **true**: under the reliable "author" concept generator, at each
+/-- The **de re** reading is **true**: under the suitable "author" generator, at each
     say-alternative the individual it picks (the author) is clever — the de re reading rescues
     truth where de se fails. -/
-theorem deRe_true : sayDeRe sayAlts cleverP john actual dom :=
-  ⟨authorGen, authorGen_reliable, by decide⟩
+theorem deRe_true : sayDeRe s1Cover sayAlts cleverP john actual dom :=
+  ⟨authorGen, authorGen_suitable, by decide⟩
 
 /-- **yè is de se / de re ambiguous** ([pearson-2015]'s central finding): the same sentence is
     **false** on the de se LF (78) but **true** on the de re LF (79). The Heim & von Stechow
     prediction of obligatory de se is thereby refuted, by construction. -/
 theorem ye_de_se_de_re_ambiguous :
-    ¬ sayDeSe sayAlts cleverP ∧ sayDeRe sayAlts cleverP john actual dom :=
+    ¬ sayDeSe sayAlts cleverP ∧ sayDeRe s1Cover sayAlts cleverP john actual dom :=
   ⟨deSe_false, deRe_true⟩
+
+/-! ### Scenario 2: the Napoleon contrast ([pearson-2015] §6, eq. 80–85)
+
+John is delusional and believes he is Napoleon; watching a TV report he does not recognise
+himself, he says the patient he saw is delusional. "John claims he is delusional" (the pronoun
+*yè*, de re) is **true**; "John claims Napoleon is delusional" is **false** — though John
+believes he is Napoleon. A variable bound by the attitude verb (*yè*) ranges over John's
+epistemic alternatives and is overwritten with John, whom John identifies via the in-cover
+"patient on TV" concept; the name *Napoleon* denotes the actual-world individual, to whom John
+bears **no** acquaintance — no concept in his cover reliably picks Napoleon. -/
+
+namespace Napoleon
+
+/-- Worlds: `actualN` (0) and `belN` (1), John's claim-alternative world. -/
+abbrev Wld := Fin 2
+/-- Individuals: `john` (0), the `patient` John sees on TV (1), and `napoleon` (2). -/
+abbrev Ind := Fin 3
+
+def actualN : Wld := 0
+def belN : Wld := 1
+def john : Ind := 0
+def patient : Ind := 1
+def napoleon : Ind := 2
+
+/-- John's claim-alternatives: world `belN`, de se center `john`. -/
+def claimAlts : List (Centered Wld Ind) := [(belN, john)]
+
+/-- `delusional` in `belN`: the patient John saw on TV is delusional. -/
+def delusionalB : Wld → Ind → Bool
+  | 1, 1 => true
+  | _, _ => false
+
+abbrev delusionalP : CProp Wld Ind := fun y w => delusionalB w y = true
+
+/-- The "patient I saw on TV" concept: the actual world → `john` (reliably himself), the belief
+    world → `patient` (whom John takes the man on TV to be). -/
+def patientConcept : Concept Wld Ind := fun p => if p.1 = actualN then john else patient
+
+/-- The generator carrying the "patient" concept for any res. -/
+def patientGen : ConceptGenerator Wld Ind := fun _u => patientConcept
+
+/-- John's conceptual cover: the single "patient on TV" concept. He has **no** concept that
+    picks out the actual-world `napoleon`. -/
+def johnCover : Cover (Centered Wld Ind) Ind := {patientConcept}
+
+/-- "John claims he is delusional" is **true** on the de re LF: the de se center (= John) is fed
+    to the suitable "patient" generator, which at the claim-alternative picks the delusional
+    patient. -/
+theorem claimsHe_true : sayDeRe johnCover claimAlts delusionalP john actualN [john] := by
+  refine ⟨patientGen, ⟨by unfold Reliable; decide, ?_⟩, by decide⟩
+  intro u hu
+  rw [List.mem_singleton] at hu; subst hu
+  simp [patientGen, johnCover]
+
+/-- "John claims Napoleon is delusional" is **false**: no concept in John's cover is reliable for
+    the res `napoleon` (the only cover concept returns John, not Napoleon, in the actual world,
+    and Napoleon is not an epistemic alternative of John). So no suitable generator exists. -/
+theorem claimsNapoleon_false :
+    ¬ claimDeRe johnCover claimAlts delusionalP napoleon john actualN [napoleon] := by
+  rintro ⟨G, ⟨hrel, hcov⟩, -⟩
+  have hmem := hcov napoleon (by simp)
+  simp only [johnCover, Set.mem_singleton_iff] at hmem
+  have hr := hrel napoleon (by simp)
+  rw [hmem] at hr
+  exact absurd hr (by decide)
+
+/-- The **Napoleon contrast** ([pearson-2015] §6): the bound-pronoun (*yè*) reading is true while
+    the name reading is false — the discrimination Pearson's suitability (reliability +
+    acquaintance-based cover) delivers, and which the earlier vacuous `∃R` could not. -/
+theorem napoleon_contrast :
+    sayDeRe johnCover claimAlts delusionalP john actualN [john] ∧
+    ¬ claimDeRe johnCover claimAlts delusionalP napoleon john actualN [napoleon] :=
+  ⟨claimsHe_true, claimsNapoleon_false⟩
+
+end Napoleon
 
 /-! ### Grounding the `LogophoricPronoun` carrier -/
 
