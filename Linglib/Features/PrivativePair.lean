@@ -1,3 +1,5 @@
+import Mathlib.Logic.Equiv.Defs
+
 /-!
 # Privative Feature Pairs
 [harbour-2016]
@@ -216,6 +218,17 @@ theorem no_four_way [DecidableEq α] (a b c d : α)
 
 /-- Specification level via the embedding. -/
 def specLevel (a : α) : Nat := (toPair a).specLevel
+
+/-- The isomorphism the class is named for, made explicit. The `roundtrip` field gives
+one direction (`ofPair ∘ toPair = id`); when `toPair` is also a right inverse — which
+holds whenever the instance is a genuine bijection, as for person and number features —
+`PhiFeatures` upgrades to a full `Equiv α ≃ PrivativePair`. -/
+def toEquiv (h : Function.RightInverse (@ofPair α inst) (@toPair α inst)) :
+    α ≃ PrivativePair where
+  toFun := @toPair α inst
+  invFun := @ofPair α inst
+  left_inv := @roundtrip α inst
+  right_inv := h
 
 end PhiFeatures
 

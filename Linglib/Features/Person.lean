@@ -30,7 +30,7 @@ This decomposition is shared across theoretical frameworks:
 
 The Minimalist-specific extension [±proximate]
 ([pancheva-zubizarreta-2018]) is added in
-`Syntax/Minimalism/PersonGeometry.lean`.
+`Syntax/Minimalist/Phi/Geometry.lean`.
 
 **§ 5–9: Person Categories** ([cysouw-2009]). The 8 referential person
 categories from Cysouw's paradigmatic framework. Three singular categories
@@ -153,6 +153,12 @@ instance : Features.PhiFeatures Features where
 @[simp] theorem first_is_maximal : PhiFeatures.toPair first = .maximal := rfl
 @[simp] theorem second_is_intermediate : PhiFeatures.toPair second = .intermediate := rfl
 @[simp] theorem third_is_minimal : PhiFeatures.toPair third = .minimal := rfl
+
+/-- The `[±participant, ±author]` decomposition **is** the privative pair: an equivalence
+`Features ≃ PrivativePair` ([harbour-2016]'s phi-kernel skeleton as an isomorphism, not a
+one-directional embedding). -/
+def featuresEquiv : Features ≃ PrivativePair :=
+  PhiFeatures.toEquiv fun p => by cases p; rfl
 
 /-- No 4-way singular person distinction (inherited from `PhiFeatures`). -/
 theorem no_fourth_person :
@@ -290,7 +296,7 @@ theorem ud_conflates_incl_excl :
     (the `Category` enum carries the clusivity distinction the features cannot). The
     theory-laden Harbour-*sign* decomposition that *does* distinguish the exclusive
     (`+author −participant`) lives in the theory layer
-    (`Syntax.Minimalist.Phi.Lattice`, consumed by `Studies.Harbour2016`), not here. -/
+    (as `Studies.Harbour2016.signOf`, over `Syntax.Minimalist.Phi.Lattice` operators), not here. -/
 def Category.toFeatures : Category → Features
   | .s1        => ⟨true, true⟩
   | .s2        => ⟨true, false⟩
@@ -320,7 +326,7 @@ theorem toFeatures_wellFormed (p : Category) :
 -- ============================================================================
 
 /-- Map singular Category to PersonLevel (the canonical three-way
-    person distinction used by PersonGeometry, DifferentialIndexing, etc.).
+    person distinction used by Phi.Geometry, DifferentialIndexing, etc.).
     Group categories map to `none` — they encode number distinctions that
     PersonLevel does not capture. -/
 def Category.toPersonLevel : Category → Option Features.Prominence.PersonLevel
@@ -344,7 +350,7 @@ theorem personLevel_roundtrip (p : Features.Prominence.PersonLevel) :
     PersonLevel for singular categories: speaker (s1) = [+participant,
     +author], addressee (s2) = [+participant, −author], other (s3) =
     [−participant, −author]. This unifies the Category decomposition
-    in `Spanish/PersonFeatures.lean` with `PersonGeometry.decomposePerson`. -/
+    in `Spanish/PersonFeatures.lean` with `Phi.Geometry.decomposePerson`. -/
 theorem includesSpeaker_iff_author :
     Category.s1.IncludesSpeaker ∧
     ¬ Category.s2.IncludesSpeaker ∧

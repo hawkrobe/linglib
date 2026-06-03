@@ -324,6 +324,7 @@ import Linglib.Core.CylindricAlgebra
 import Linglib.Core.CylindricAlgebra.DynamicSemantics
 import Linglib.Features.PrivativePair
 import Linglib.Features.Person
+import Linglib.Features.PhiKernel
 import Linglib.Features.Number
 import Linglib.Core.CoreConcept
 import Linglib.Morphology.MorphRule
