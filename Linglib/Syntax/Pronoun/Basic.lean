@@ -4,6 +4,7 @@ import Linglib.Features.Register
 import Linglib.Features.Prominence
 import Linglib.Features.Gender
 import Linglib.Features.Clusivity
+import Linglib.Features.CoreferenceStatus
 
 /-!
 # Pronoun
@@ -63,6 +64,13 @@ structure Pronoun where
   gender : Option Features.SurfaceGender := none
   /-- Native script form (hangul, kanji, Devanagari, …). -/
   script : Option String := none
+  /-- The binding class this pro-form declares — which binding principle governs it
+      (Principle A anaphor: `.reflexive`/`.reciprocal`; Principle B pronominal:
+      `.pronoun`; Principle C R-expression). The pro-form is the source of truth for
+      its own binding role; the binding engine reads this declaration rather than
+      recovering the class from surface strings. `none` for a bare φ-shell that
+      declares no class. -/
+  bindingClass : Option Features.BindingClass := none
   deriving Repr, BEq, DecidableEq
 
 /-- Cross-linguistic *personal/referential* pronoun: the general `Pronoun` object
