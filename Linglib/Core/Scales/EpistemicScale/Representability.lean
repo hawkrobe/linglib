@@ -51,15 +51,15 @@ private def kpsRank (s : Finset (Fin 5)) : ℕ :=
 
 private theorem kps_mono_finset :
     ∀ (a b : Finset (Fin 5)), a ⊆ b → kpsRank b ≥ kpsRank a := by
-  native_decide
+  decide
 
 private theorem kps_additive_finset :
     ∀ (a b : Finset (Fin 5)),
       (kpsRank a ≥ kpsRank b) ↔ (kpsRank (a \ b) ≥ kpsRank (b \ a)) := by
-  native_decide
+  decide
 
 private theorem kps_bottom_finset :
-    kpsRank Finset.univ ≥ kpsRank ∅ := by native_decide
+    kpsRank Finset.univ ≥ kpsRank ∅ := by decide
 
 section KPSSystem
 
@@ -100,7 +100,7 @@ noncomputable def kpsSystemFA : EpistemicSystemFA (Fin 5) where
     exact kps_bottom_finset
   nonTrivial := by
     simp only [EpistemicAxiom.BT, kpsGe, kpsRankSet, toFS_univ, toFS_empty]
-    native_decide
+    decide
   total := λ A B => le_total (kpsRankSet B) (kpsRankSet A)
   trans := λ {_ _ _} hab hbc => le_trans hbc hab
   additive := by
@@ -142,22 +142,22 @@ theorem kps_not_representable :
     unfold kpsGe kpsRankSet
     have h1 : toFS ({1, 3} : Set (Fin 5)) = {1, 3} := by ext x; simp [toFS_mem]
     have h2 : toFS ({(0 : Fin 5)} : Set (Fin 5)) = {0} := by ext x; simp [toFS_mem]
-    rw [h1, h2]; native_decide
+    rw [h1, h2]; decide
   have hord2 : ¬ kpsGe ({0, 1} : Set (Fin 5)) {2, 3} := by
     unfold kpsGe kpsRankSet
     have h1 : toFS ({0, 1} : Set (Fin 5)) = {0, 1} := by ext x; simp [toFS_mem]
     have h2 : toFS ({2, 3} : Set (Fin 5)) = {2, 3} := by ext x; simp [toFS_mem]
-    rw [h1, h2]; native_decide
+    rw [h1, h2]; decide
   have hord3 : ¬ kpsGe ({0, 3} : Set (Fin 5)) {1, 4} := by
     unfold kpsGe kpsRankSet
     have h1 : toFS ({0, 3} : Set (Fin 5)) = {0, 3} := by ext x; simp [toFS_mem]
     have h2 : toFS ({1, 4} : Set (Fin 5)) = {1, 4} := by ext x; simp [toFS_mem]
-    rw [h1, h2]; native_decide
+    rw [h1, h2]; decide
   have hord4 : kpsGe ({0, 1, 3} : Set (Fin 5)) {2, 4} := by
     unfold kpsGe kpsRankSet
     have h1 : toFS ({0, 1, 3} : Set (Fin 5)) = {0, 1, 3} := by ext x; simp [toFS_mem]
     have h2 : toFS ({2, 4} : Set (Fin 5)) = {2, 4} := by ext x; simp [toFS_mem]
-    rw [h1, h2]; native_decide
+    rw [h1, h2]; decide
   -- Convert to measure inequalities via the representation isomorphism
   have hmeas1 : m.mu ({1, 3} : Set _) < m.mu ({(0 : Fin 5)} : Set _) :=
     not_le.mp (λ h => hord1 ((hm _ _).mpr h))

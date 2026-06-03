@@ -31,8 +31,7 @@ reasoning happens in Finset land:
 ## Usage
 
 These replace the manual `ext x; fin_cases x <;> simp [Set.mem_diff, ...]`
-pattern used throughout the epistemic scale proofs. Every `sd_*` lemma in
-`CancellationHelpers.lean` can be proved by `set_sdiff_fin`.
+pattern used throughout the epistemic scale proofs.
 -/
 
 namespace Core.Scale
