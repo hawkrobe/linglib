@@ -1,4 +1,4 @@
-import Linglib.Dialogue.KOS.Basic
+import Linglib.Discourse.KOS.Basic
 
 /-!
 # KOS: Genre Relevance & Outcome Fulfillment
@@ -50,7 +50,7 @@ co-propositionality predicates) that downstream consumers can add when
 they exercise these claims.
 -/
 
-namespace Dialogue.KOS
+namespace Discourse.KOS
 
 -- ════════════════════════════════════════════════════
 -- § 1. Outcome fulfillment (ex. 89 p. 105)
@@ -154,4 +154,4 @@ theorem genreRelevantViaQnud_preserves_outcomeFulfilled
     -- hm : ∀ q' ∈ q :: dgb.qud.map (·.q), q' ∈ genre.qnud
     exact hm q List.mem_cons_self
 
-end Dialogue.KOS
+end Discourse.KOS

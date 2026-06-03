@@ -27,7 +27,7 @@ reasonable without being entailments. The Stalnaker1975 study file
 exhibits the gap.
 -/
 
-namespace Dialogue.ReasonableInference
+namespace Discourse.ReasonableInference
 
 open CommonGround
 
@@ -110,4 +110,4 @@ theorem changeFn_eq {W : Type*} (P : Set W) (k : ContextSet W) (w : W) :
     changeFn P k w ↔ k w ∧ P w := by
   unfold changeFn ContextSet.update; rfl
 
-end Dialogue.ReasonableInference
+end Discourse.ReasonableInference

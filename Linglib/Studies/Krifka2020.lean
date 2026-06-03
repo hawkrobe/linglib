@@ -1,4 +1,4 @@
-import Linglib.Dialogue.LayeredAssertion
+import Linglib.Discourse.LayeredAssertion
 import Linglib.Phenomena.Assertion.Basic
 
 /-!
@@ -30,7 +30,7 @@ of [krifka-2015] (see sibling
 
 namespace Krifka2020
 
-open Dialogue.Krifka
+open Discourse.Krifka
 open Phenomena.Assertion (hedgeExamples oathExamples
   all_hedges_reduce all_oaths_increase)
 

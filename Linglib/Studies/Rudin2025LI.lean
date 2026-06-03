@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quotation.Demonstration
-import Linglib.Dialogue.QuotationFBOntology
+import Linglib.Discourse.QuotationFBOntology
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -47,7 +47,7 @@ matrix and its derivation are the same proposition.
 namespace Rudin2025LI
 
 open Semantics.Quotation.Demonstration
-open Dialogue.QuotationFBOntology
+open Discourse.QuotationFBOntology
 open Discourse.Commitment.Table
 
 -- ════════════════════════════════════════════════════

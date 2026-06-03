@@ -1,3 +1,4 @@
+import Linglib.Semantics.Questions.Bias.Defs
 /-!
 # Serbian Question Particles
 [simik-2024]
@@ -23,6 +24,8 @@ layer assignment lives in `Simik2024`.
 
 namespace Serbian.QuestionParticles
 
+open Semantics.Questions.Bias (ContextualEvidence OriginalBias)
+
 /-- A Serbian interrogative particle entry. -/
 structure QParticleEntry where
   form : String
@@ -30,8 +33,8 @@ structure QParticleEntry where
   polarOk : Bool
   declOk : Bool
   whOk : Bool
-  requiresEvidentialBias : Bool
-  requiresEpistemicBias : Bool
+  requiresContextualEvidence : Option ContextualEvidence
+  requiresOriginalBias : Option OriginalBias
   deriving Repr, DecidableEq
 
 /-- da li — default PQ particle combination ([simik-2024] ex. 31).
@@ -42,8 +45,8 @@ def daLi : QParticleEntry where
   polarOk := true
   declOk := false
   whOk := false
-  requiresEvidentialBias := false
-  requiresEpistemicBias := false
+  requiresContextualEvidence := none
+  requiresOriginalBias := none
 
 /-- zar — mirative/dubitative particle (RAZVE family, [simik-2024] §4.2.4).
 Compatible with both outer and inner negation (like Russian razve). -/
@@ -53,20 +56,20 @@ def zar_ : QParticleEntry where
   polarOk := true
   declOk := false
   whOk := false
-  requiresEvidentialBias := true
-  requiresEpistemicBias := false
+  requiresContextualEvidence := some .forP
+  requiresOriginalBias := none
 
 def allQuestionParticles : List QParticleEntry := [daLi, zar_]
 
 theorem daLi_neutral :
-    daLi.requiresEvidentialBias = false ∧ daLi.requiresEpistemicBias = false :=
+    daLi.requiresContextualEvidence = none ∧ daLi.requiresOriginalBias = none :=
   ⟨rfl, rfl⟩
 
-theorem zar_evidential : zar_.requiresEvidentialBias = true := rfl
+theorem zar_evidential : zar_.requiresContextualEvidence = some .forP := rfl
 
 /-- da li and zar form a neutral/evidential contrast. -/
 theorem bias_contrast :
-    daLi.requiresEvidentialBias = false ∧ zar_.requiresEvidentialBias = true :=
+    daLi.requiresContextualEvidence = none ∧ zar_.requiresContextualEvidence = some .forP :=
   ⟨rfl, rfl⟩
 
 end Serbian.QuestionParticles

@@ -1,6 +1,6 @@
 import Linglib.Discourse.SpeechAct.Update
-import Linglib.Dialogue.Stalnaker
-import Linglib.Dialogue.CommitmentSpace
+import Linglib.Discourse.Stalnaker
+import Linglib.Discourse.CommitmentSpace
 
 /-!
 # Assertion Theories: Cross-Theory Comparison
@@ -103,7 +103,7 @@ agree with every other such framework on the projected context set
 after assertion.
 
 Two frameworks currently instantiate `Assertable`:
-`Dialogue.Stalnaker.StalnakerState` and `Dialogue.Krifka.KrifkaState`.
+`Discourse.Stalnaker.StalnakerState` and `Discourse.Krifka.KrifkaState`.
 The theorems below show the value of polymorphism: write the proof
 *once* against the typeclass, apply to *both* concrete frameworks.
 
@@ -134,7 +134,7 @@ theorem any_assertable_narrows_initial
 theorem stalnaker_assertion_narrows {W : Type*} (φ : W → Prop) :
     HasContextSet.toContextSet
       (Assertable.speakerAssert
-        (Assertable.initial : Dialogue.Stalnaker.StalnakerState W) φ) ⊆ {w | φ w} :=
+        (Assertable.initial : Discourse.Stalnaker.StalnakerState W) φ) ⊆ {w | φ w} :=
   any_assertable_narrows_initial φ
 
 /-- **Krifka satisfies the polymorphic theorem**: applying
@@ -146,7 +146,7 @@ theorem stalnaker_assertion_narrows {W : Type*} (φ : W → Prop) :
 theorem krifka_assertion_narrows {W : Type*} (φ : W → Prop) :
     HasContextSet.toContextSet
       (Assertable.speakerAssert
-        (Assertable.initial : Dialogue.Krifka.KrifkaState W) φ) ⊆ {w | φ w} :=
+        (Assertable.initial : Discourse.Krifka.KrifkaState W) φ) ⊆ {w | φ w} :=
   any_assertable_narrows_initial φ
 
 /-- **Cross-framework two-step narrowing**: asserting φ then ψ in
@@ -161,7 +161,7 @@ theorem any_assertable_twice_narrows
 
 /-- **Stalnaker satisfies two-step narrowing**. -/
 theorem stalnaker_twice_narrows {W : Type*}
-    (s : Dialogue.Stalnaker.StalnakerState W) (φ ψ : W → Prop) :
+    (s : Discourse.Stalnaker.StalnakerState W) (φ ψ : W → Prop) :
     HasContextSet.toContextSet
       (Assertable.speakerAssert (Assertable.speakerAssert s φ) ψ) ⊆
         {w | φ w ∧ ψ w} :=
@@ -169,7 +169,7 @@ theorem stalnaker_twice_narrows {W : Type*}
 
 /-- **Krifka satisfies two-step narrowing**. -/
 theorem krifka_twice_narrows {W : Type*}
-    (s : Dialogue.Krifka.KrifkaState W) (φ ψ : W → Prop) :
+    (s : Discourse.Krifka.KrifkaState W) (φ ψ : W → Prop) :
     HasContextSet.toContextSet
       (Assertable.speakerAssert (Assertable.speakerAssert s φ) ψ) ⊆
         {w | φ w ∧ ψ w} :=
@@ -193,10 +193,10 @@ theorem krifka_twice_narrows {W : Type*}
 theorem stalnaker_krifka_agree_on_initial_assertion {W : Type*} (φ : W → Prop) :
     (HasContextSet.toContextSet
       (Assertable.speakerAssert
-        (Assertable.initial : Dialogue.Stalnaker.StalnakerState W) φ) ⊆ {w | φ w}) ∧
+        (Assertable.initial : Discourse.Stalnaker.StalnakerState W) φ) ⊆ {w | φ w}) ∧
     (HasContextSet.toContextSet
       (Assertable.speakerAssert
-        (Assertable.initial : Dialogue.Krifka.KrifkaState W) φ) ⊆ {w | φ w}) :=
+        (Assertable.initial : Discourse.Krifka.KrifkaState W) φ) ⊆ {w | φ w}) :=
   ⟨any_assertable_narrows_initial φ, any_assertable_narrows_initial φ⟩
 
 end Phenomena.Assertion.Compare

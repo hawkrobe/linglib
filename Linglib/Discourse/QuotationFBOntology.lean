@@ -54,7 +54,7 @@ The `Volume` enumeration (`neutral`, `loud`, `whispered`) makes
 simultaneously be both values.
 -/
 
-namespace Dialogue.QuotationFBOntology
+namespace Discourse.QuotationFBOntology
 
 open Discourse.Commitment.Table
 open Semantics.Mood (IllocutionaryMood)
@@ -233,4 +233,4 @@ theorem update_decl_eq_assert (u : FBPerformance W)
 
 end FBPerformance
 
-end Dialogue.QuotationFBOntology
+end Discourse.QuotationFBOntology

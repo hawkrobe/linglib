@@ -1,5 +1,5 @@
-import Linglib.Dialogue.KOS.Defs
-import Linglib.Dialogue.KOS.RepriseContent
+import Linglib.Discourse.KOS.Defs
+import Linglib.Discourse.KOS.RepriseContent
 
 /-!
 # Purver & Ginzburg (2004): Clarifying Noun Phrase Semantics
@@ -62,7 +62,7 @@ record visible at the reprise interface.
 
 namespace PurverGinzburg2004
 
-open Dialogue.KOS
+open Discourse.KOS
 
 -- ════════════════════════════════════════════════════
 -- § 1. A worked example: 'a thief broke in'

@@ -1,9 +1,9 @@
 import Linglib.Semantics.Conditionals.Basic
 import Linglib.Semantics.Conditionals.Stalnaker
-import Linglib.Dialogue.ReasonableInference
+import Linglib.Discourse.ReasonableInference
 import Linglib.Discourse.SpeechAct.Update
-import Linglib.Dialogue.Stalnaker
-import Linglib.Dialogue.CommitmentSpace
+import Linglib.Discourse.Stalnaker
+import Linglib.Discourse.CommitmentSpace
 
 /-!
 # Stalnaker 1975 [stalnaker-1975]
@@ -76,7 +76,7 @@ open Semantics.Mood (GramMood)
 open CommonGround (ContextSet)
 open _root_.Semantics.Conditionals (SelectionFunction)
 open Semantics.Conditionals
-open Dialogue.ReasonableInference
+open Discourse.ReasonableInference
 
 -- § 1. The direct argument is REASONABLE (abstract version)
 
@@ -233,7 +233,7 @@ theorem direct_argument_holds_under_indicative_selection :
 
 /-! Stalnaker 1975's change-function calculus uses `changeFn p k`
 (set intersection) as the post-assertion update operator. The
-`Dialogue/Assertable.lean` typeclass abstracts over
+`Discourse/Assertable.lean` typeclass abstracts over
 *any* dialogue-state representation that admits Stalnakerian
 narrowing. This section shows that:
 
@@ -264,7 +264,7 @@ open CommonGround (HasContextSet)
     `HasContextSet.toContextSet (Stalnaker.assert s p) = p ∩ s.contextSet`.
     They're equal up to `Set.inter_comm`. -/
 theorem stalnaker_speakerAssert_eq_changeFn {W : Type*}
-    (s : Dialogue.Stalnaker.StalnakerState W) (p : Set W) :
+    (s : Discourse.Stalnaker.StalnakerState W) (p : Set W) :
     HasContextSet.toContextSet (Assertable.speakerAssert s p) =
     changeFn p (HasContextSet.toContextSet s) := Set.inter_comm _ _
 
@@ -299,7 +299,7 @@ theorem direct_argument_reasonable_polymorphic
     the Stalnaker framework. Recovers the framework-specific
     `direct_argument_reasonable` for the post-assertion context. -/
 theorem direct_argument_reasonable_stalnaker {W : Type*}
-    (s : Dialogue.Stalnaker.StalnakerState W) (sel : SelectionFunction W)
+    (s : Discourse.Stalnaker.StalnakerState W) (sel : SelectionFunction W)
     (notA B AorB : W → Prop)
     (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
     (h_constraint : pragmaticConstraint sel
@@ -318,7 +318,7 @@ theorem direct_argument_reasonable_stalnaker {W : Type*}
     direct-argument inference is equally valid — the Assertable
     typeclass abstracts over the representational difference. -/
 theorem direct_argument_reasonable_krifka {W : Type*}
-    (s : Dialogue.Krifka.KrifkaState W) (sel : SelectionFunction W)
+    (s : Discourse.Krifka.KrifkaState W) (sel : SelectionFunction W)
     (notA B AorB : W → Prop)
     (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
     (h_constraint : pragmaticConstraint sel

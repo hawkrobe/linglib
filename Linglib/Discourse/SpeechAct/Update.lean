@@ -23,8 +23,8 @@ informationally important non-instance, not a gap.
 * `speakerAssert_initial_subset` — headline framework-generic theorem.
 * `speakerAssert_twice_narrows` — composition lemma.
 
-Instances live with the framework types (e.g. `Dialogue/Stalnaker.lean`,
-`Dialogue/CommitmentSpace.lean`).
+Instances live with the framework types (e.g. `Discourse/Stalnaker.lean`,
+`Discourse/CommitmentSpace.lean`).
 -/
 
 namespace Discourse.SpeechAct

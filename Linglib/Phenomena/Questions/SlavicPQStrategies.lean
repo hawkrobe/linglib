@@ -285,22 +285,22 @@ there are no separate "bridge" theorems — the connection is by construction. -
 
 /-- All RAZVE-family Fragment entries require evidential bias. -/
 theorem razve_family_all_evidential :
-    Russian.QuestionParticles.razve_.requiresEvidentialBias = true ∧
-    Ukrainian.QuestionParticles.xiba.requiresEvidentialBias = true ∧
-    Polish.QuestionParticles.czyzby.requiresEvidentialBias = true ∧
-    Bulgarian.QuestionParticles.nima.requiresEvidentialBias = true ∧
-    Serbian.QuestionParticles.zar_.requiresEvidentialBias = true :=
+    Russian.QuestionParticles.razve_.requiresContextualEvidence = some .forP ∧
+    Ukrainian.QuestionParticles.xiba.requiresContextualEvidence = some .forP ∧
+    Polish.QuestionParticles.czyzby.requiresContextualEvidence = some .forP ∧
+    Bulgarian.QuestionParticles.nima.requiresContextualEvidence = some .forP ∧
+    Serbian.QuestionParticles.zar_.requiresContextualEvidence = some .forP :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 /-- All neutral PQ Fragment entries do NOT require evidential bias. -/
 theorem neutral_particles_no_evidential :
-    Russian.QuestionParticles.li.requiresEvidentialBias = false ∧
-    Ukrainian.QuestionParticles.cy.requiresEvidentialBias = false ∧
-    Polish.QuestionParticles.czy.requiresEvidentialBias = false ∧
-    Bulgarian.QuestionParticles.li.requiresEvidentialBias = false ∧
-    Serbian.QuestionParticles.daLi.requiresEvidentialBias = false ∧
-    Slovenian.QuestionParticles.ali.requiresEvidentialBias = false ∧
-    Macedonian.QuestionParticles.dali.requiresEvidentialBias = false :=
+    Russian.QuestionParticles.li.requiresContextualEvidence = none ∧
+    Ukrainian.QuestionParticles.cy.requiresContextualEvidence = none ∧
+    Polish.QuestionParticles.czy.requiresContextualEvidence = none ∧
+    Bulgarian.QuestionParticles.li.requiresContextualEvidence = none ∧
+    Serbian.QuestionParticles.daLi.requiresContextualEvidence = none ∧
+    Slovenian.QuestionParticles.ali.requiresContextualEvidence = none ∧
+    Macedonian.QuestionParticles.dali.requiresContextualEvidence = none :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 end Phenomena.Questions.SlavicPQStrategies

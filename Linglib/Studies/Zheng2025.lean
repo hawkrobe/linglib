@@ -218,19 +218,19 @@ open Semantics.Modality (Kernel Background nandaoFelicitous World)
 /-- The nandao Fragment entry's evidential bias requirement matches the
 empirical generalization: all felicitous nandao-Qs have evidential bias. -/
 theorem fragment_data_evidential :
-    nandao.requiresEvidentialBias = true ∧
+    nandao.requiresContextualEvidence = some .forP ∧
     (allData.filter (·.felicitous)).all (·.evidentialBias) = true :=
   ⟨rfl, by native_decide⟩
 
 /-- The nandao Fragment entry correctly does NOT require epistemic bias,
 matching the empirical finding that some felicitous nandao-Qs lack it. -/
 theorem fragment_data_epistemic :
-    nandao.requiresEpistemicBias = false ∧
+    nandao.requiresOriginalBias = none ∧
     (allData.filter (λ d => d.felicitous && !d.epistemicBias)).length > 0 :=
   ⟨rfl, by native_decide⟩
 
 /-- Kernel `nandaoFelicitous` entails `evidenceSupports`, connecting the
-Theory predicate to the Fragment's `requiresEvidentialBias = true` and
+Theory predicate to the Fragment's `requiresContextualEvidence = some .forP` and
 the empirical generalization `evidential_bias_necessary`. -/
 theorem kernel_requires_evidence (k : Kernel World) (u : Background World) (φ : (World → Prop))
     [DecidablePred φ] (h : nandaoFelicitous k u φ) :
@@ -265,9 +265,9 @@ theorem ba_nandao_PerspP :
     particle is CP, the biased ones are PerspP. -/
 theorem layer_correlates_with_bias :
     ma_layer ma = .cp ∧
-    ma.requiresEvidentialBias = false ∧ ma.requiresEpistemicBias = false ∧
-    ba_layer ba = .perspP ∧ ba.requiresEpistemicBias = true ∧
-    nandao_layer nandao = .perspP ∧ nandao.requiresEvidentialBias = true :=
+    ma.requiresContextualEvidence = none ∧ ma.requiresOriginalBias = none ∧
+    ba_layer ba = .perspP ∧ ba.requiresOriginalBias = some .forP ∧
+    nandao_layer nandao = .perspP ∧ nandao.requiresContextualEvidence = some .forP :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════════════════

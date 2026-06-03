@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.BiasedPQ
+import Linglib.Semantics.Questions.Bias.Defs
 
 /-!
 # Mandarin Question Particles
@@ -19,15 +19,15 @@ lexical primitives; the left-peripheral layer assignment lives in
 
 ## Cross-Module Connections
 
-- `BiasedPQ.OriginalBias`: ba requires `.forP`; nandao/ma compatible with `.neutral`
-- `BiasedPQ.ContextualEvidence`: nandao requires `.forP`; ma/ba do not
+- `Bias.OriginalBias`: ba requires `.forP`; nandao/ma compatible with `.neutral`
+- `Bias.ContextualEvidence`: nandao requires `.forP`; ma/ba do not
 - `Kernel.nandaoFelicitous`: formal felicity conditions for nandao
 
 -/
 
 namespace Mandarin.QuestionParticles
 
-open Semantics.Modality.BiasedPQ (OriginalBias ContextualEvidence)
+open Semantics.Questions.Bias (OriginalBias ContextualEvidence)
 
 /-- A Mandarin interrogative particle entry. -/
 structure QuestionParticleEntry where
@@ -40,10 +40,10 @@ structure QuestionParticleEntry where
   declOk : Bool
   /-- Compatible with wh-questions? -/
   whOk : Bool
-  /-- Requires positive evidential bias (contextual evidence for p)? -/
-  requiresEvidentialBias : Bool
-  /-- Requires negative epistemic bias (prior belief against p)? -/
-  requiresEpistemicBias : Bool
+  /-- Contextual-evidence bias the particle requires, or `none`. -/
+  requiresContextualEvidence : Option ContextualEvidence
+  /-- Original speaker bias the particle requires, or `none`. -/
+  requiresOriginalBias : Option OriginalBias
   deriving Repr, DecidableEq
 
 -- ============================================================================
@@ -60,8 +60,8 @@ def ma : QuestionParticleEntry where
   polarOk := true
   declOk := false
   whOk := true
-  requiresEvidentialBias := false
-  requiresEpistemicBias := false
+  requiresContextualEvidence := none
+  requiresOriginalBias := none
 
 -- ============================================================================
 -- 吧 ba — confirmation-seeking / tag particle
@@ -78,8 +78,8 @@ def ba : QuestionParticleEntry where
   polarOk := true
   declOk := false
   whOk := false
-  requiresEvidentialBias := false
-  requiresEpistemicBias := true
+  requiresContextualEvidence := none
+  requiresOriginalBias := some .forP
 
 -- ============================================================================
 -- 难道 nándào — evidential question particle
@@ -96,8 +96,8 @@ def nandao : QuestionParticleEntry where
   polarOk := true
   declOk := false
   whOk := false
-  requiresEvidentialBias := true
-  requiresEpistemicBias := false
+  requiresContextualEvidence := some .forP
+  requiresOriginalBias := none
 
 def allQuestionParticles : List QuestionParticleEntry := [ma, ba, nandao]
 
@@ -109,7 +109,7 @@ def allQuestionParticles : List QuestionParticleEntry := [ma, ba, nandao]
 
 /-- ma is the unmarked baseline: no bias requirements. -/
 theorem ma_no_bias :
-    ma.requiresEvidentialBias = false ∧ ma.requiresEpistemicBias = false :=
+    ma.requiresContextualEvidence = none ∧ ma.requiresOriginalBias = none :=
   ⟨rfl, rfl⟩
 
 /-- ma is compatible with wh-questions (unlike ba and nandao). -/
@@ -119,7 +119,7 @@ theorem ma_wh_ok : ma.whOk = true := rfl
 
 /-- ba requires epistemic bias (speaker expects p). -/
 theorem ba_requires_epistemic :
-    ba.requiresEpistemicBias = true ∧ ba.requiresEvidentialBias = false :=
+    ba.requiresOriginalBias = some .forP ∧ ba.requiresContextualEvidence = none :=
   ⟨rfl, rfl⟩
 
 /-- ba is restricted to polar questions. -/
@@ -136,12 +136,12 @@ theorem nandao_polar_only :
 
 /-- nandao requires evidential but not epistemic bias ([zheng-2025] §2). -/
 theorem nandao_bias_profile :
-    nandao.requiresEvidentialBias = true ∧ nandao.requiresEpistemicBias = false :=
+    nandao.requiresContextualEvidence = some .forP ∧ nandao.requiresOriginalBias = none :=
   ⟨rfl, rfl⟩
 
 /-- nandao is compatible with neutral original speaker bias (pure inquiry). -/
 theorem nandao_neutral_bias_ok :
-    nandao.requiresEpistemicBias = false := rfl
+    nandao.requiresOriginalBias = none := rfl
 
 -- ============================================================================
 -- Cross-Particle Contrast Theorems
@@ -150,19 +150,19 @@ theorem nandao_neutral_bias_ok :
 /-- The three particles form a bias contrast triple: ma is neutral,
 ba requires epistemic, nandao requires evidential. -/
 theorem bias_contrast_triple :
-    ma.requiresEvidentialBias = false ∧ ma.requiresEpistemicBias = false ∧
-    ba.requiresEvidentialBias = false ∧ ba.requiresEpistemicBias = true ∧
-    nandao.requiresEvidentialBias = true ∧ nandao.requiresEpistemicBias = false :=
+    ma.requiresContextualEvidence = none ∧ ma.requiresOriginalBias = none ∧
+    ba.requiresContextualEvidence = none ∧ ba.requiresOriginalBias = some .forP ∧
+    nandao.requiresContextualEvidence = some .forP ∧ nandao.requiresOriginalBias = none :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Only ma is compatible with wh-questions. -/
 theorem only_ma_allows_wh :
-    allQuestionParticles.filter (·.whOk) = [ma] := by native_decide
+    allQuestionParticles.filter (·.whOk) = [ma] := by decide
 
-/-- No particle requires BOTH evidential and epistemic bias. -/
+/-- No particle requires BOTH contextual-evidence and original-speaker bias. -/
 theorem no_double_bias :
     allQuestionParticles.all
-      (λ p => !(p.requiresEvidentialBias && p.requiresEpistemicBias)) = true := by
-  native_decide
+      (λ p => !(p.requiresContextualEvidence.isSome && p.requiresOriginalBias.isSome)) = true := by
+  decide
 
 end Mandarin.QuestionParticles

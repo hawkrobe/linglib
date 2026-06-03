@@ -1,6 +1,6 @@
 import Linglib.Discourse.Commitment.Table
-import Linglib.Dialogue.Gunlogson
-import Linglib.Dialogue.CommitmentSpace
+import Linglib.Discourse.Gunlogson
+import Linglib.Discourse.CommitmentSpace
 import Linglib.Semantics.Highlighting
 
 /-!
@@ -62,7 +62,7 @@ to give a uniform account of the six sentence types in (3)–(8):
    predicate, anchored on the same Roelofsen-Farkas line of work
    ([roelofsen-farkas-2015], two years prior to F&R 2017).
 8. **Cross-framework divergences** (§8): formal contrasts with
-   `Dialogue/Gunlogson.lean` on rising declaratives (different
+   `Discourse/Gunlogson.lean` on rising declaratives (different
    substrate, different state predictions) and Krifka 2015 on tag
    interrogatives (sequential composition vs conjunction/disjunction;
    see also `Studies/Krifka2015.lean` §5).
@@ -85,7 +85,7 @@ to give a uniform account of the six sentence types in (3)–(8):
 - `Semantics/Highlighting.lean` — `HighlightingContext`,
   `Highlighted`, `AddressesQUD`. Anchored on Roelofsen & Farkas (2015),
   which F&R 2017 cites and builds on.
-- `Dialogue/Gunlogson.lean` — the divergence in §8 (rising
+- `Discourse/Gunlogson.lean` — the divergence in §8 (rising
   declarative writes to addressee slate vs. F&R + F&B's "no commitment
   write" prediction).
 
@@ -770,7 +770,7 @@ section makes two divergences Lean-checkable. -/
 -- ─────────────────────────────────────────────────────────────────
 
 /-! [gunlogson-2008] (and earlier [gunlogson-2001], the work
-F&R 2017's footnote 13 cites), formalized in `Dialogue/Gunlogson.lean`,
+F&R 2017's footnote 13 cites), formalized in `Discourse/Gunlogson.lean`,
 records rising-declarative information by writing to the **addressee's**
 slate as an other-generated commitment. F&R 2017 (threaded through F&B
 substrate) writes nothing to the speaker's `dcS` (only pushes an issue).
@@ -800,10 +800,10 @@ theorem fr_rising_dec_no_speaker_commitment {W : Type*}
 /-- Gunlogson 2008 prediction for rising declarative from the empty
     state: the addressee's slate gains exactly one commitment
     (other-generated). Restated from
-    `Dialogue/Gunlogson.lean` for the cross-framework comparison. -/
+    `Discourse/Gunlogson.lean` for the cross-framework comparison. -/
 theorem gunlogson_rising_dec_writes_addressee {W : Type*} (content : Set W) :
-    ((Dialogue.Gunlogson.GunlogsonState.empty :
-        Dialogue.Gunlogson.GunlogsonState W).risingDeclarative
+    ((Discourse.Gunlogson.GunlogsonState.empty :
+        Discourse.Gunlogson.GunlogsonState W).risingDeclarative
       content).addresseeSlate.commitments.length = 1 := rfl
 
 /-- **Cross-framework state-shape divergence**: F&R + F&B record the
@@ -823,8 +823,8 @@ theorem fr_vs_gunlogson_rising_dec_state_shape {W : Type*} (content : Set W) :
         (DiscourseState.empty : State W)).dcS = [] ∧
     -- Gunlogson from empty state: addressee slate non-empty (addressee
     -- attribution recorded at the discourse layer)
-    ((Dialogue.Gunlogson.GunlogsonState.empty :
-        Dialogue.Gunlogson.GunlogsonState W).risingDeclarative
+    ((Discourse.Gunlogson.GunlogsonState.empty :
+        Discourse.Gunlogson.GunlogsonState W).risingDeclarative
       content).addresseeSlate.commitments ≠ [] := by
   refine ⟨rfl, ?_⟩
   intro h
@@ -839,7 +839,7 @@ theorem fr_vs_gunlogson_rising_dec_state_shape {W : Type*} (content : Set W) :
 -- ─────────────────────────────────────────────────────────────────
 
 /-! [krifka-2015] §5 (eqs. 44–45), with substrate in
-`Dialogue/CommitmentSpace.lean`, argues that tag interrogatives
+`Discourse/CommitmentSpace.lean`, argues that tag interrogatives
 are a SINGLE complex speech act — `matchingTag` is a `ComplexSpeechAct.conj`
 of an assertion and a monopolar question (sharing content φ), `reverseTag`
 is a `ComplexSpeechAct.disj`. Krifka explicitly contrasts this with the
@@ -872,19 +872,19 @@ theorem fr_tag_table_forms {W : Type*} (content : Set W) :
 
 /-- Krifka 2015 prediction for a matching tag: a SINGLE
     `ComplexSpeechAct.conj` wrapper around two component speech acts.
-    Restated from `Dialogue/CommitmentSpace.lean` for the
+    Restated from `Discourse/CommitmentSpace.lean` for the
     cross-framework comparison. -/
 theorem krifka_matching_tag_is_single_conjunction {W : Type*}
     (φ : W → Prop) :
-    ∃ a b, Dialogue.Krifka.matchingTag φ = .conj a b :=
+    ∃ a b, Discourse.Krifka.matchingTag φ = .conj a b :=
   ⟨_, _, rfl⟩
 
 /-- In Krifka's matching tag, the two components share content `φ`
     (matching the assertion + monopolar-question semantics of "I have
     won the race, have I?"). Restated from `CommitmentSpace.lean`. -/
 theorem krifka_matching_tag_shared_content {W : Type*} (φ : W → Prop) :
-    (Dialogue.Krifka.matchingTag φ).components.map
-      Dialogue.Krifka.SpeechAct.content = [φ, φ] := rfl
+    (Discourse.Krifka.matchingTag φ).components.map
+      Discourse.Krifka.SpeechAct.content = [φ, φ] := rfl
 
 /-- **Cross-framework structural divergence on tag interrogatives**:
     F&R + F&B produces a sequence of TWO distinct issues with DIFFERENT
@@ -898,11 +898,11 @@ theorem fr_vs_krifka_tag_structural_divergence {W : Type*} (φ : W → Prop) :
         (DiscourseState.empty : State W)).table.map (·.mood) =
       [.interrogative, .declarative] ∧
     -- Krifka: SINGLE complex speech act, NOT a sequence of atoms
-    (∃ a b, Dialogue.Krifka.matchingTag φ = .conj a b) ∧
+    (∃ a b, Discourse.Krifka.matchingTag φ = .conj a b) ∧
     -- Krifka's components share content (vs F&R's mixed declarative φ
     -- and interrogative {φ, φᶜ})
-    (Dialogue.Krifka.matchingTag φ).components.map
-      Dialogue.Krifka.SpeechAct.content = [φ, φ] :=
+    (Discourse.Krifka.matchingTag φ).components.map
+      Discourse.Krifka.SpeechAct.content = [φ, φ] :=
   ⟨rfl, ⟨_, _, rfl⟩, rfl⟩
 
 end FarkasRoelofsen2017

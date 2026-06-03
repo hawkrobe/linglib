@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.BiasedPQ
+import Linglib.Semantics.Questions.Bias.Defs
 import Linglib.Studies.Stakov2026Typology
 
 /-!
@@ -31,7 +31,7 @@ and verified against the delimiting principles.
 
 namespace GartnerGyuris2017
 
-open Semantics.Modality.BiasedPQ (PQForm OriginalBias ContextualEvidence)
+open Semantics.Questions.Bias (PQForm OriginalBias ContextualEvidence)
 
 -- ============================================================================
 -- §1: Core Types
@@ -510,7 +510,7 @@ theorem englishV1_markednessCollective :
 -- §12: Bridge to Romero Typology
 -- ============================================================================
 
-/-- Map G&G's evidential bias choice to Romero/BiasedPQ ContextualEvidence
+/-- Map G&G's evidential bias choice to Romero/Bias ContextualEvidence
 compatibility. A bias choice lists which evidence types are felicitous. -/
 def evidentiallyCompatible (bc : BiasChoice) (ce : ContextualEvidence) : Bool :=
   match ce with
@@ -518,7 +518,7 @@ def evidentiallyCompatible (bc : BiasChoice) (ce : ContextualEvidence) : Bool :=
   | .neutral  => bc.contains .neut
   | .againstP => bc.contains .neg
 
-/-- Map G&G's epistemic bias choice to Romero/BiasedPQ OriginalBias
+/-- Map G&G's epistemic bias choice to Romero/Bias OriginalBias
 compatibility. -/
 def epistemicallyCompatible (bc : BiasChoice) (ob : OriginalBias) : Bool :=
   match ob with

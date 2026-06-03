@@ -8,9 +8,11 @@ import Linglib.Fragments.Mandarin.QuestionParticles
 
 [theiler-2021] analyzes German *denn* as a flavoring particle that
 signals the question is prompted by a salient/highlighted proposition
-in the discourse context. In polar questions this manifests as an
-evidential-bias requirement; in *wh*-questions it merely signals
-informational need.
+in the discourse context: using *denn* signals that learning the clause's
+highlighted content is a necessary precondition for the speaker to proceed
+from a salient prior move. The polar/wh asymmetry (denn is freer in
+*wh*-questions) follows from highlighting-sensitivity, not from any
+contextual-evidence bias.
 
 This study file records *denn*'s left-peripheral layer assignment
 within the [dayal-2025] cartography `[SAP [PerspP [CP ...]]]`:
@@ -35,16 +37,17 @@ def denn_layer (_ : German.QuestionParticles.QParticleEntry) : QParticleLayer :=
 theorem denn_is_PerspP :
     denn_layer German.QuestionParticles.denn = .perspP := rfl
 
-/-- *denn* requires evidential bias — the highlighting/salience condition
-    is what surfaces as a positive-evidential requirement in polar
-    questions. This connects the PerspP assignment to the bias profile
-    in the fragment. -/
-theorem denn_evidential :
-    German.QuestionParticles.denn.requiresEvidentialBias = true := rfl
+/-- *denn* imposes no bias requirement. Theiler's felicity condition is a
+    highlighting/precondition relation, not a contextual- or speaker-bias
+    requirement; this is the point on which *denn* differs from its
+    evidence-requiring Mandarin parallel *nandao*. -/
+theorem denn_imposes_no_bias :
+    German.QuestionParticles.denn.requiresContextualEvidence = none ∧
+    German.QuestionParticles.denn.requiresOriginalBias = none := ⟨rfl, rfl⟩
 
 /-- Unlike Mandarin *nandao*, *denn* is compatible with *wh*-questions.
-    Both are PerspP-layer particles requiring evidential bias, but
-    *denn* lacks the polar-only restriction. -/
+    Both are PerspP-layer particles, but *denn* lacks *nandao*'s polar-only
+    restriction (and its contextual-evidence requirement). -/
 theorem denn_wh_unlike_nandao :
     German.QuestionParticles.denn.whOk = true ∧
     Mandarin.QuestionParticles.nandao.whOk = false := ⟨rfl, rfl⟩

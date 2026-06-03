@@ -1,6 +1,6 @@
 import Linglib.Studies.Stakov2026
 import Linglib.Semantics.Negation.CzechNegation
-import Linglib.Semantics.Modality.BiasedPQ
+import Linglib.Semantics.Questions.Bias.Defs
 
 /-!
 # Czech Three-Way Negation: Cross-Linguistic Typology
@@ -18,7 +18,7 @@ Also contains example data (CzechNegDatum), bias profiles, and corpus data.
 -- §7: NegPosition dot-notation extensions (must be in NegPosition's namespace)
 -- ============================================================================
 
-open Semantics.Modality.BiasedPQ
+open Semantics.Questions.Bias
 
 namespace Semantics.Negation.CzechNegation
 
@@ -60,7 +60,7 @@ end Semantics.Negation.CzechNegation
 namespace Stakov2026Typology
 
 open Semantics.Negation.CzechNegation
-open Semantics.Modality.BiasedPQ
+open Semantics.Questions.Bias
 
 /-- Outer negation maps to HiNQ (high negation = interrogative word order). -/
 theorem outer_is_hiNQ : NegPosition.outer.toPQForm = .HiNQ := rfl
@@ -153,7 +153,7 @@ end Semantics.Negation.CzechNegation
 
 namespace Stakov2026Typology
 open Semantics.Negation.CzechNegation
-open Semantics.Modality.BiasedPQ
+open Semantics.Questions.Bias
 open Stakov2026 (signature)
 
 /-- A Czech PQ negation example with its reading and Romero classification. -/
@@ -432,7 +432,7 @@ end Semantics.Negation.CzechNegation
 
 namespace Stakov2026Typology
 open Semantics.Negation.CzechNegation
-open Semantics.Modality.BiasedPQ
+open Semantics.Questions.Bias
 
 /-- The CzechPQForm → PQForm mapping is consistent with NegPosition → PQForm. -/
 theorem czechPQForm_consistent_with_pqForm :
@@ -450,7 +450,7 @@ Each cell records which Czech PQ forms are felicitous under a given
 combination of contextual evidence × original speaker bias. Empty list = no
 form is natural.
 
-Uses `ContextualEvidence` and `OriginalBias` from BiasedPQ
+Uses `ContextualEvidence` and `OriginalBias` from Bias
 rather than Czech-specific copies — these are the same bias dimensions.
 
 Table 2 (glossing over details):

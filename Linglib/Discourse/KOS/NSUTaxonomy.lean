@@ -51,7 +51,7 @@ assertions.
 
 -/
 
-namespace Dialogue.KOS
+namespace Discourse.KOS
 
 -- ════════════════════════════════════════════════════
 -- § 1. NSU Classes (Table 7.3 with Table 7.4 sluice split)
@@ -208,4 +208,4 @@ theorem frequency_coherent :
 /-- All 16 classes are present in the freqTable (in order). -/
 theorem allNSUClasses_complete : allNSUClasses.length = 16 := by decide
 
-end Dialogue.KOS
+end Discourse.KOS

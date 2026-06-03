@@ -1,3 +1,4 @@
+import Linglib.Semantics.Questions.Bias.Defs
 /-!
 # Russian Question Particles
 [esipova-romero-2023] [simik-2024]
@@ -25,6 +26,8 @@ left-peripheral layer assignment lives in
 
 namespace Russian.QuestionParticles
 
+open Semantics.Questions.Bias (ContextualEvidence OriginalBias)
+
 /-- A Russian interrogative particle entry. -/
 structure QParticleEntry where
   form : String
@@ -33,8 +36,8 @@ structure QParticleEntry where
   polarOk : Bool
   declOk : Bool
   whOk : Bool
-  requiresEvidentialBias : Bool
-  requiresEpistemicBias : Bool
+  requiresContextualEvidence : Option ContextualEvidence
+  requiresOriginalBias : Option OriginalBias
   deriving Repr, DecidableEq
 
 /-- ли li — neutral polar question particle (formal register).
@@ -47,8 +50,8 @@ def li : QParticleEntry where
   polarOk := true
   declOk := false
   whOk := false
-  requiresEvidentialBias := false
-  requiresEpistemicBias := false
+  requiresContextualEvidence := none
+  requiresOriginalBias := none
 
 /-- разве razve — mirative/dubitative question particle ([simik-2024] §4.2.4).
 Indicates conflict between speaker's prior epistemic state and current
@@ -60,23 +63,23 @@ def razve_ : QParticleEntry where
   polarOk := true
   declOk := false
   whOk := false
-  requiresEvidentialBias := true
-  requiresEpistemicBias := false
+  requiresContextualEvidence := some .forP
+  requiresOriginalBias := none
 
 def allQuestionParticles : List QParticleEntry := [li, razve_]
 
 -- Per-datum verification
 
 theorem li_neutral :
-    li.requiresEvidentialBias = false ∧ li.requiresEpistemicBias = false :=
+    li.requiresContextualEvidence = none ∧ li.requiresOriginalBias = none :=
   ⟨rfl, rfl⟩
 
-theorem razve_evidential : razve_.requiresEvidentialBias = true := rfl
-theorem razve_no_epistemic : razve_.requiresEpistemicBias = false := rfl
+theorem razve_evidential : razve_.requiresContextualEvidence = some .forP := rfl
+theorem razve_no_epistemic : razve_.requiresOriginalBias = none := rfl
 
 /-- li and razve form a neutral/evidential contrast (like Mandarin ma/nandao). -/
 theorem bias_contrast :
-    li.requiresEvidentialBias = false ∧ razve_.requiresEvidentialBias = true :=
+    li.requiresContextualEvidence = none ∧ razve_.requiresContextualEvidence = some .forP :=
   ⟨rfl, rfl⟩
 
 end Russian.QuestionParticles

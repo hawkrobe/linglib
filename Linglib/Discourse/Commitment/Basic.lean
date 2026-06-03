@@ -280,11 +280,31 @@ def content : IndexedCommitment W → (W → Prop)
   | IndexedWeightedCommitment.commit _ _ φ => φ
   | IndexedWeightedCommitment.refuse _ _ φ => φ
 
-/-- Project to the context-set constraint. `commit` projects to its
-    content; `refuse` projects to `True`. -/
+/-- Project to the *world-level* context-set constraint. `commit` projects to
+    its content; `refuse` projects to `True` — because `¬S⊢φ` imposes no
+    constraint on the facts of the world. The constraint `refuse` *does* impose
+    is second-order (on the committer's commitment state); see `holdsIn`. -/
 def toCommitment : IndexedCommitment W → (W → Prop)
   | IndexedWeightedCommitment.commit _ _ φ => φ
   | IndexedWeightedCommitment.refuse _ _ _ => fun _ => True
+
+/-- Commitment-level meaning of an entry as a constraint on the committer's
+    resulting commitment state `t` (Krifka's `S⊢_`, [krifka-2015] §4):
+    `commit r φ` requires `t` to entail `φ` (`r⊢φ`); `refuse r φ` requires `t`
+    NOT to entail `φ` (`¬ r⊢φ`). The `refuse` case is the second-order
+    constraint that the world-level `toCommitment` (sending `refuse` to `True`)
+    deliberately cannot express. -/
+def holdsIn : IndexedCommitment W → CommitmentSlate W → Prop
+  | IndexedWeightedCommitment.commit _ _ φ, t => t.entails φ
+  | IndexedWeightedCommitment.refuse _ _ φ, t => ¬ t.entails φ
+
+@[simp] theorem holdsIn_commit (r : DiscourseRole) (φ : W → Prop)
+    (t : CommitmentSlate W) :
+    (IndexedCommitment.commit r φ).holdsIn t = t.entails φ := rfl
+
+@[simp] theorem holdsIn_refuse (r : DiscourseRole) (φ : W → Prop)
+    (t : CommitmentSlate W) :
+    (IndexedCommitment.refuse r φ).holdsIn t = ¬ t.entails φ := rfl
 
 end IndexedCommitment
 

@@ -1,15 +1,15 @@
-import Linglib.Dialogue.KOS.Defs
-import Linglib.Dialogue.KOS.Basic
-import Linglib.Dialogue.KOS.InquiryCycle
-import Linglib.Dialogue.KOS.Genre
-import Linglib.Dialogue.KOS.Grounding
-import Linglib.Dialogue.KOS.SelfRepair
-import Linglib.Dialogue.KOS.NSUTaxonomy
-import Linglib.Dialogue.KOS.Examples
-import Linglib.Dialogue.KOS.Grammar
-import Linglib.Dialogue.KOS.RepriseContent
-import Linglib.Dialogue.KOS.Austinian
-import Linglib.Dialogue.KOS.CooperInfoState
+import Linglib.Discourse.KOS.Defs
+import Linglib.Discourse.KOS.Basic
+import Linglib.Discourse.KOS.InquiryCycle
+import Linglib.Discourse.KOS.Genre
+import Linglib.Discourse.KOS.Grounding
+import Linglib.Discourse.KOS.SelfRepair
+import Linglib.Discourse.KOS.NSUTaxonomy
+import Linglib.Discourse.KOS.Examples
+import Linglib.Discourse.KOS.Grammar
+import Linglib.Discourse.KOS.RepriseContent
+import Linglib.Discourse.KOS.Austinian
+import Linglib.Discourse.KOS.CooperInfoState
 import Linglib.Discourse.Commitment.Table
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
 
@@ -20,7 +20,7 @@ import Linglib.Phenomena.Ellipsis.FragmentAnswers
 Canonical formalization of the KOS framework from
 *The Interactive Stance: Meaning for Conversation* (OUP 2012).
 
-This study consumes the KOS substrate at `Dialogue/KOS/`,
+This study consumes the KOS substrate at `Discourse/KOS/`,
 which was rebuilt to faithfully match the book's Ch. 6 final shape
 (ex. 43 p. 175): `DGB` takes a `Cont` parameter, `pending` stores
 `LocProp Cont`, `qud` stores `InfoStruc QContent Cont`, `GenreType`
@@ -65,7 +65,7 @@ core that downstream work consumes.
 
 namespace Ginzburg2012
 
-open Dialogue.KOS Question
+open Discourse.KOS Question
 
 -- ════════════════════════════════════════════════════════════
 -- § 1. The Turn-Taking Puzzle (Ch. 2)
@@ -139,7 +139,7 @@ theorem turn_taking_puzzle_why_parakeet :
 - **Conversational rules** (Ch. 4): `ask`, `assertRule`/`assertWithQUD`,
   `accept`, `qspec`, `check`, `confirm`, `qcoord`, `greet` — TIS → TIS
 
-The substrate provides all of this in `Dialogue/KOS/`. This
+The substrate provides all of this in `Discourse/KOS/`. This
 section just imports the conventions; subsequent sections exercise them. -/
 
 /-- The TIS type structure as a sanity check: a TIS bundles a DGB with
@@ -166,13 +166,13 @@ the substrate has been built to support them. -/
 /-- KOS's inquiry cycle works at TTR-typed content level: asserting
 "it is raining" resolves "is it raining?". -/
 theorem ttr_inquiry_cycle_resolves :
-    Dialogue.KOS.Austinian.atis₂.dgb.qud = [] :=
-  Dialogue.KOS.Austinian.atis_assert_resolves
+    Discourse.KOS.Austinian.atis₂.dgb.qud = [] :=
+  Discourse.KOS.Austinian.atis_assert_resolves
 
 /-- The same inquiry cycle in string-typed form (legacy worked example). -/
 theorem string_inquiry_cycle_resolves :
-    Dialogue.KOS.Examples.tis₂.dgb.qud = [] :=
-  Dialogue.KOS.Examples.inquiry_step2_qud_empty
+    Discourse.KOS.Examples.tis₂.dgb.qud = [] :=
+  Discourse.KOS.Examples.inquiry_step2_qud_empty
 
 -- ════════════════════════════════════════════════════════════
 -- § 4. Grounding Asymmetry: per-DGB stance (Ch. 4)
@@ -193,7 +193,7 @@ this divergence Lean-checkable. -/
 section GroundingAsymmetry
 
 -- DecidableSupport String String instance is provided by KOS.Examples
--- (transitively imported via the open Dialogue.KOS at top of file).
+-- (transitively imported via the open Discourse.KOS at top of file).
 
 /-- Speaker's TIS after asserting "It's raining". -/
 def speakerAfterAssert : TIS String String String String :=
@@ -375,7 +375,7 @@ theorem allCRForms_count : allCRForms.length = 8 := rfl
 /-- The 4 CR readings. We re-export the substrate's `RFReading` from
 `KOS/RepriseContent.lean` rather than re-stipulating a parallel
 `CRReading` enum. -/
-abbrev CRReading := Dialogue.KOS.RFReading
+abbrev CRReading := Discourse.KOS.RFReading
 
 -- ════════════════════════════════════════════════════════════
 -- § 9. Grounding via CCURs (§6.6–6.7)
@@ -547,7 +547,7 @@ theorem e2e_exhaustive (lp : LocProp String) (b : BeliefBase) :
 /-- The Grammar.jo lexical entry's `toLocProp` itself has unresolved
 cparams (it's a referential proper name). -/
 theorem grammar_jo_unresolved :
-    ¬ Dialogue.KOS.Grammar.jo.toLocProp.isFullyResolved := by decide
+    ¬ Discourse.KOS.Grammar.jo.toLocProp.isFullyResolved := by decide
 
 end EndToEnd
 
@@ -740,7 +740,7 @@ category, losing only dialogue features (dgbParams, qParams, questDom).
 This is a structural-retract witness: KOS can be "forgotten down" to
 plain HPSG. -/
 theorem dialogueSign_extends_hpsg_faithfully {Cont : Type}
-    (ds : Dialogue.KOS.Grammar.DialogueSign Cont) :
+    (ds : Discourse.KOS.Grammar.DialogueSign Cont) :
     ds.toSynsem.cat = ds.pos ∧ ds.toSynsem.head = ds.head :=
   ⟨rfl, rfl⟩
 

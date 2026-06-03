@@ -1,4 +1,4 @@
-import Linglib.Dialogue.KOS.InquiryCycle
+import Linglib.Discourse.KOS.InquiryCycle
 import Linglib.Semantics.TypeTheoretic.Discourse
 
 /-!
@@ -27,7 +27,7 @@ The Cooper-2023 ↔ Ginzburg-2012 genealogical bridge
 (`tisToInfoState`) lives in the sibling `KOS/CooperInfoState.lean`.
 -/
 
-namespace Dialogue.KOS.Austinian
+namespace Discourse.KOS.Austinian
 
 open Semantics.TypeTheoretic (BCheckableAustinian CheckableAustinian
   IsTrue IsFalse)
@@ -172,4 +172,4 @@ theorem atis_has_fact : itIsRaining ∈ atis₂.dgb.facts := by
 
 end AustinianExample
 
-end Dialogue.KOS.Austinian
+end Discourse.KOS.Austinian

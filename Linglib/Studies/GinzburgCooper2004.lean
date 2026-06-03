@@ -1,4 +1,4 @@
-import Linglib.Dialogue.KOS.Defs
+import Linglib.Discourse.KOS.Defs
 import Linglib.Phenomena.Ellipsis.ClarificationEllipsis
 
 /-!
@@ -30,7 +30,7 @@ sign, and demonstrates the speaker/addressee IS asymmetry.
 
 namespace GinzburgCooper2004
 
-open Dialogue.KOS
+open Discourse.KOS
 open Phenomena.Ellipsis.ClarificationEllipsis
 
 -- ════════════════════════════════════════════════════
@@ -39,7 +39,7 @@ open Phenomena.Ellipsis.ClarificationEllipsis
 
 /-! ## 1994/2004 Clarification Ellipsis Apparatus
 
-This section was previously in `Dialogue/KOS/Basic.lean`
+This section was previously in `Discourse/KOS/Basic.lean`
 §§6, 7, 8, 9, 10, 12, 15. It is paper-specific to
 [ginzburg-cooper-2004]: in [ginzburg-2012], the corresponding
 machinery uses dgb-params (record types built on the shared `CParam`)
@@ -256,7 +256,7 @@ def UttSkeleton.toLocProp (sk : UttSkeleton) : LocProp String where
 
 /-- Convert a `LocProp String` back to an `UttSkeleton`.
     Plain function (not `LocProp.toSkeleton`) because `LocProp` lives in
-    `Dialogue.KOS` and dot notation looks there for the method, not in
+    `Discourse.KOS` and dot notation looks there for the method, not in
     `Apparatus`. Use as `locPropToSkeleton lp`. -/
 def locPropToSkeleton (lp : LocProp String) : UttSkeleton where
   phon := lp.phon
