@@ -26,11 +26,11 @@ def naan : PersonalPronoun :=
 
 /-- *naam* — 1pl inclusive (speaker + addressee). -/
 def naam : PersonalPronoun :=
-  { form := "naam", person := some .first, number := some .pl }
+  { form := "naam", person := some .first, number := some .pl, clusivity := some .inclusive }
 
 /-- *naangaL* — 1pl exclusive (speaker + others, not addressee). -/
 def naangaL : PersonalPronoun :=
-  { form := "naangaL", person := some .first, number := some .pl }
+  { form := "naangaL", person := some .first, number := some .pl, clusivity := some .exclusive }
 
 -- ============================================================================
 -- Second Person (two-level honorific)

@@ -2,7 +2,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Order.Defs.PartialOrder
 import Linglib.Features.Prominence
-import Linglib.Syntax.Minimalist.PersonGeometry
+import Linglib.Syntax.Minimalist.Phi.Geometry
 
 /-!
 # The P-Constraint

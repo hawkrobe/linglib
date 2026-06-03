@@ -1,12 +1,12 @@
 import Linglib.Phenomena.Agreement.DifferentialIndexing
-import Linglib.Syntax.Minimalist.PersonGeometry
+import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement
 import Linglib.Fragments.Hungarian.Predicates
 
 /-!
-Differential Indexing ↔ DOM, PersonGeometry, Kaqchikel
+Differential Indexing ↔ DOM, Phi.Geometry, Kaqchikel
 [aissen-2003] [just-2024] [preminger-2014]
 
 Connects [just-2024] differential indexing to three existing formalizations:
@@ -16,7 +16,7 @@ Connects [just-2024] differential indexing to three existing formalizations:
    This bridge proves that DOM profiles and P-indexing profiles share the
    same monotonicity constraint over the same scales.
 
-2. **[preminger-2014] PersonGeometry** (`Syntax/Minimalism/`):
+2. **[preminger-2014] Phi.Geometry** (`Syntax/Minimalist/Phi/`):
    Just's binary person split (SAP vs 3rd) is precisely Preminger's
    [±participant] feature. This bridge makes the connection explicit.
 
@@ -47,7 +47,7 @@ open Kaqchikel
     directly — no conversion or bridge theorems needed. -/
 
 -- ============================================================================
--- § 2: PersonGeometry ↔ IndexingPersonLevel Connection
+-- § 2: Phi.Geometry ↔ IndexingPersonLevel Connection
 -- ============================================================================
 
 /-! Just's binary person split (SAP vs 3rd) is exactly Preminger's

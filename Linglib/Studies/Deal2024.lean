@@ -488,7 +488,7 @@ theorem strong_entails_sd (io do_ : PersonLevel) :
 -- ============================================================================
 
 /-- `dpBears` is grounded in the shared feature geometry `decomposePerson`
-    from PersonGeometry.lean. This makes the connection structural — Deal's
+    from Phi/Geometry.lean. This makes the connection structural — Deal's
     person features are not independently stipulated but derived from the
     same privative geometry used by [pancheva-zubizarreta-2018]'s
     `satisfiesProminence` and [bejar-rezac-2009]'s `personSpec`. -/

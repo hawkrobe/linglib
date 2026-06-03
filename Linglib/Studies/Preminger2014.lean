@@ -1,5 +1,5 @@
 import Linglib.Syntax.Minimalist.Agree
-import Linglib.Syntax.Minimalist.PersonGeometry
+import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Morphology.DM.VocabSimple
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 
@@ -92,7 +92,7 @@ transitives + K'ichee' fragment + Zulu fragment) to formalize.
 
 ## Cross-references
 
-- `Syntax/Minimalist/PersonGeometry.lean` — the substrate:
+- `Syntax/Minimalist/Phi/Geometry.lean` — the substrate:
   `decomposePerson`, `probeResolutionRank`, multi-cited
   ([harley-ritter-2002], [bejar-rezac-2003],
   [preminger-2014], [pancheva-zubizarreta-2018]).
@@ -112,11 +112,11 @@ open Minimalist
 open Agreement
 
 -- ============================================================================
--- § 1: Feature Decomposition (grounded in PersonGeometry.lean)
+-- § 1: Feature Decomposition (grounded in Phi/Geometry.lean)
 -- ============================================================================
 
 /-- Bears [+participant]? Derived from [harley-ritter-2002]'s
-    feature geometry via `decomposePerson` (PersonGeometry.lean). -/
+    feature geometry via `decomposePerson` (Phi/Geometry.lean). -/
 def IsParticipant (c : Agreement.Cell) : Prop :=
   (decomposePerson c.toPersonLevel).hasParticipant = true
 
@@ -192,7 +192,7 @@ def afMarker (subj obj : Agreement.Cell) : Option String :=
   (afAgreementTarget subj obj).bind setBExponent.realize
 
 -- ============================================================================
--- § 4: Verification — Grounding in PersonGeometry
+-- § 4: Verification — Grounding in Phi.Geometry
 -- ============================================================================
 
 /-- Compact grounding check covering the four key cells of

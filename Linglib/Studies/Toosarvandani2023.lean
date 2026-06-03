@@ -6,6 +6,7 @@ import Mathlib.Data.Finset.Prod
 import Mathlib.Data.Finset.Erase
 import Mathlib.Data.Fintype.Basic
 import Linglib.Features.Person
+import Linglib.Syntax.Minimalist.Phi.Lattice
 
 /-!
 # Toosarvandani (2023): The Interpretation and Grammatical Representation of Animacy
@@ -40,7 +41,7 @@ with first- and second-person plural pronouns.
 
 ## File structure
 
-- §1 Operators (oplus, lexComp, singularFilter, pluralFilter, npow encoding)
+- §1 Operators (oplus, lexComp, singularFilter, pluralFilter, nePowerset encoding)
 - §2 PhiDomain and the Zapotec instantiation
 - §3 Feature denotations
 - §4 Pronoun composition (Zapotec 4-way animacy + LC)
@@ -64,105 +65,12 @@ not formalized here).
 
 namespace Toosarvandani2023
 
+open Minimalist.Phi.Lattice
+
 -- ============================================================================
--- § 1: Operators
+-- § 1: Operators (lattice ops lifted to Syntax.Minimalist.Phi.Lattice; number filters local)
 -- ============================================================================
 
-/-- Nonempty powerset: all nonempty subsets of `atoms`. Lean-side encoding
-    of the lattice of plural individuals — every nonempty sum of atoms
-    satisfying a feature predicate. The paper works in a Linkian/Krifkan
-    lattice (47); we represent that lattice as the powerset of an atomic
-    domain. -/
-def npow {α : Type*} [DecidableEq α] (atoms : Finset α) : Finset (Finset α) :=
-  atoms.powerset.erase ∅
-
-/-- ⊕ (oplus): pointwise lattice join of two feature denotations (50):
-    `[⊕ G F] = λx . ∃y∃z[x = y ⊔ z, y ∈ ⟦F⟧, z ∈ ⟦G⟧]`.
-    Following [harbour-2016], generalising [kratzer-2009]'s sum
-    operator. Generates heterogeneous pluralities: `oplus SPEAKER ANIMATE`
-    includes `{speaker, animal}`.
-
-    Defined directly via `Finset.image` (rather than the equivalent
-    `Finset.image₂ (· ∪ ·)`) so that `decide` can unfold concrete instances
-    without an extra `image₂` layer. The structural lemmas
-    (`oplus_subset`, `oplus_assoc`) inherit from mathlib via defeq. -/
-def oplus {α : Type*} [DecidableEq α]
-    (F G : Finset (Finset α)) : Finset (Finset α) :=
-  (F ×ˢ G).image fun yz => yz.1 ∪ yz.2
-
-/-- `oplus` agrees with `Finset.image₂ (· ∪ ·)` definitionally. Used to
-    inherit mathlib's `image₂_*` lemmas. -/
-theorem oplus_eq_image₂ {α : Type*} [DecidableEq α]
-    (F G : Finset (Finset α)) :
-    oplus F G = Finset.image₂ (· ∪ ·) F G := rfl
-
-/-- Monotonicity of ⊕: pointwise on both arguments. Inherits from
-    `Finset.image₂_subset`. -/
-theorem oplus_subset {α : Type*} [DecidableEq α]
-    {F F' G G' : Finset (Finset α)} (hF : F ⊆ F') (hG : G ⊆ G') :
-    oplus F G ⊆ oplus F' G' :=
-  Finset.image₂_subset hF hG
-
-/-- Associativity of ⊕: inherits from `Finset.image₂_assoc` and
-    `Finset.union_assoc`. -/
-theorem oplus_assoc {α : Type*} [DecidableEq α]
-    (F G H : Finset (Finset α)) :
-    oplus (oplus F G) H = oplus F (oplus G H) := by
-  show Finset.image₂ (· ∪ ·) (Finset.image₂ (· ∪ ·) F G) H =
-       Finset.image₂ (· ∪ ·) F (Finset.image₂ (· ∪ ·) G H)
-  exact Finset.image₂_assoc (fun a b c => Finset.union_assoc a b c)
-
-/-- Monotonicity of `npow`: `powerset_mono` + `erase_subset_erase`. -/
-theorem npow_mono {α : Type*} [DecidableEq α]
-    {s t : Finset α} (h : s ⊆ t) : npow s ⊆ npow t :=
-  Finset.erase_subset_erase ∅ (Finset.powerset_mono.mpr h)
-
-/-- Membership in `oplus`: `z ∈ oplus F G ↔ ∃ x ∈ F, ∃ y ∈ G, x ∪ y = z`.
-    Inherits from `Finset.mem_image₂` via `oplus_eq_image₂`. -/
-theorem mem_oplus_iff {α : Type*} [DecidableEq α]
-    {F G : Finset (Finset α)} {z : Finset α} :
-    z ∈ oplus F G ↔ ∃ x ∈ F, ∃ y ∈ G, x ∪ y = z := by
-  rw [oplus_eq_image₂]; exact Finset.mem_image₂
-
-/-- Constructor form of membership: `x ∈ F → y ∈ G → x ∪ y ∈ oplus F G`. -/
-theorem mem_oplus_of_mem {α : Type*} [DecidableEq α]
-    {F G : Finset (Finset α)} {x y : Finset α} (hx : x ∈ F) (hy : y ∈ G) :
-    x ∪ y ∈ oplus F G :=
-  mem_oplus_iff.mpr ⟨x, hx, y, hy, rfl⟩
-
-/-- `npow X` is closed under nonempty union: union of two nonempty subsets
-    of `X` is itself a nonempty subset of `X`. -/
-theorem npow_union_mem {α : Type*} [DecidableEq α]
-    {X : Finset α} {s t : Finset α} (hs : s ∈ npow X) (ht : t ∈ npow X) :
-    s ∪ t ∈ npow X := by
-  simp only [npow, Finset.mem_erase, Finset.mem_powerset] at hs ht ⊢
-  refine ⟨?_, Finset.union_subset hs.2 ht.2⟩
-  intro huv
-  exact hs.1 (Finset.subset_empty.mp (huv ▸ Finset.subset_union_left))
-
-/-- If `F ⊆ npow X` and `G ⊆ npow X`, then `oplus F G ⊆ npow X`. The
-    pointwise union of nonempty subsets of `X` lands back in `npow X`. -/
-theorem oplus_subset_npow {α : Type*} [DecidableEq α]
-    {X : Finset α} {F G : Finset (Finset α)}
-    (hF : F ⊆ npow X) (hG : G ⊆ npow X) :
-    oplus F G ⊆ npow X := by
-  intro z hz
-  obtain ⟨x, hx, y, hy, rfl⟩ := mem_oplus_iff.mp hz
-  exact npow_union_mem (hF hx) (hG hy)
-
-/-- `npow X` is closed under self-`oplus`: union of two elements of
-    `npow X` is again in `npow X`. -/
-theorem oplus_npow_self_subset {α : Type*} [DecidableEq α] (X : Finset α) :
-    oplus (npow X) (npow X) ⊆ npow X :=
-  oplus_subset_npow (Finset.Subset.refl _) (Finset.Subset.refl _)
-
-/-- Lexical Complementarity (52): for feature denotations ⟦F⟧ ⊂ ⟦G⟧, use
-    of G is restricted to ⟦G⟧ \ ⟦F⟧. Forestalls a pronoun from being used
-    to refer to individuals picked out by a more featurally specified
-    pronoun (Harbour 2016:80). -/
-def lexComp {α : Type*} [DecidableEq α]
-    (G F : Finset (Finset α)) : Finset (Finset α) :=
-  G \ F
 
 /-- SINGULAR (56a): `⟦SINGULAR⟧ = λx . ∀y[y ≤ x → x = y]`. Picks out the
     atomic individuals. In the Finset encoding, atomic = singleton. Number
@@ -260,16 +168,16 @@ variable (pd : PhiDomain)
 
 /-- ⟦SPEAKER⟧ (48a): singleton sums containing the speaker. -/
 def speakerDen : Finset (Finset pd.Ind) :=
-  npow {pd.speaker}
+  nePowerset {pd.speaker}
 
 /-- ⟦PARTICIPANT⟧ (48b): nonempty subsets of {speaker, addressee}. -/
 def participantDen : Finset (Finset pd.Ind) :=
-  npow {pd.speaker, pd.addressee}
+  nePowerset {pd.speaker, pd.addressee}
 
 /-- ⟦π⟧ (48c): all nonempty sums of individuals — the maximal feature
     denotation. -/
 def piDen : Finset (Finset pd.Ind) :=
-  npow Finset.univ
+  nePowerset Finset.univ
 
 /-- ⟦ELDER⟧ (58a): individuals holding a salient social role. With (58a)'s
     semantics, the denotation includes SAPs as well as nonconversational
@@ -277,16 +185,16 @@ def piDen : Finset (Finset pd.Ind) :=
     p. 787). The pronoun-level restriction to nonconversational elders
     arises only after lexical complementarity (62). -/
 def elderDen : Finset (Finset pd.Ind) :=
-  npow (Finset.univ.filter fun a =>
+  nePowerset (Finset.univ.filter fun a =>
     pd.isElder a || a == pd.speaker || a == pd.addressee)
 
 /-- ⟦HUMAN⟧ (58b). SAPs are included via `speaker_human`/`addressee_human`. -/
 def humanDen : Finset (Finset pd.Ind) :=
-  npow (Finset.univ.filter fun a => pd.isHuman a)
+  nePowerset (Finset.univ.filter fun a => pd.isHuman a)
 
 /-- ⟦ANIMATE⟧ (58c). -/
 def animateDen : Finset (Finset pd.Ind) :=
-  npow (Finset.univ.filter fun a => pd.isAnimate a)
+  nePowerset (Finset.univ.filter fun a => pd.isAnimate a)
 
 -- ============================================================================
 -- § 4: Pronoun Composition via Nested Oplus
@@ -414,31 +322,31 @@ theorem elder_with_animal :
   exact singleton_mem_oplus (by decide) (by decide)
 
 /-! Base-feature containment: each animacy denotation is contained in
-    the next less-marked one. These follow from `npow_mono` plus a small
+    the next less-marked one. These follow from `nePowerset_mono` plus a small
     `decide` on the underlying 6-atom filter. -/
 
 theorem elderDen_sub_humanDen :
-    elderDen zd ⊆ humanDen zd := npow_mono (by decide)
+    elderDen zd ⊆ humanDen zd := nePowerset_mono (by decide)
 
 theorem humanDen_sub_animateDen :
-    humanDen zd ⊆ animateDen zd := npow_mono (by decide)
+    humanDen zd ⊆ animateDen zd := nePowerset_mono (by decide)
 
 theorem animateDen_sub_piDen :
-    animateDen zd ⊆ piDen zd := npow_mono (by decide)
+    animateDen zd ⊆ piDen zd := nePowerset_mono (by decide)
 
 /-! Denotation containment chain. Each pronoun is `oplus` of progressively
     less-marked feature denotations. The proof pattern: replace the
     most-marked component (e.g. elder in elderPron) with the next
     component (human) using `oplus_subset` + base-feature monotonicity,
-    then use `oplus_assoc` and `oplus_npow_self_subset` to absorb the
+    then use `oplus_assoc` and `oplus_nePowerset_self_subset` to absorb the
     duplicated component. -/
 
 theorem animalPron_sub_piDen :
     animalPron zd ⊆ piDen zd := by
-  -- animalPron = oplus animateDen piDen ⊆ npow univ = piDen.
-  -- Both args are ⊆ npow univ (their elements are subsets of univ).
-  refine oplus_subset_npow (X := Finset.univ) ?_ (Finset.Subset.refl _)
-  exact npow_mono (Finset.subset_univ _)
+  -- animalPron = oplus animateDen piDen ⊆ nePowerset univ = piDen.
+  -- Both args are ⊆ nePowerset univ (their elements are subsets of univ).
+  refine oplus_subset_nePowerset (X := Finset.univ) ?_ (Finset.Subset.refl _)
+  exact nePowerset_mono (Finset.subset_univ _)
 
 theorem humanPron_sub_animalPron :
     humanPron zd ⊆ animalPron zd := by
@@ -452,7 +360,7 @@ theorem humanPron_sub_animalPron :
   show oplus (animateDen zd) (oplus (animateDen zd) (piDen zd)) ⊆
        oplus (animateDen zd) (piDen zd)
   rw [← oplus_assoc]
-  exact oplus_subset (oplus_npow_self_subset _) (Finset.Subset.refl _)
+  exact oplus_subset (oplus_nePowerset_self_subset _) (Finset.Subset.refl _)
 
 theorem elderPron_sub_humanPron :
     elderPron zd ⊆ humanPron zd := by
@@ -463,7 +371,7 @@ theorem elderPron_sub_humanPron :
   show oplus (humanDen zd) (oplus (humanDen zd) (oplus (animateDen zd) (piDen zd))) ⊆
        oplus (humanDen zd) (oplus (animateDen zd) (piDen zd))
   rw [← oplus_assoc]
-  exact oplus_subset (oplus_npow_self_subset _) (Finset.Subset.refl _)
+  exact oplus_subset (oplus_nePowerset_self_subset _) (Finset.Subset.refl _)
 
 /-- SPEAKER ⊂ PARTICIPANT at the feature-denotation level. -/
 theorem speaker_sub_participant :

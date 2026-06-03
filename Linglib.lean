@@ -324,6 +324,7 @@ import Linglib.Core.CylindricAlgebra
 import Linglib.Core.CylindricAlgebra.DynamicSemantics
 import Linglib.Features.PrivativePair
 import Linglib.Features.Person
+import Linglib.Features.PhiKernel
 import Linglib.Features.Number
 import Linglib.Core.CoreConcept
 import Linglib.Morphology.MorphRule
@@ -1902,7 +1903,7 @@ import Linglib.Studies.BejarRezac2009
 import Linglib.Studies.Deal2024
 import Linglib.Studies.ClemDeal2024
 import Linglib.Studies.PanchevaZubizarreta2018
-import Linglib.Syntax.Minimalist.Agreement.FeatureRecursion
+import Linglib.Syntax.Minimalist.Phi.Recursion
 import Linglib.Syntax.Minimalist.Agreement.GenderResolution
 import Linglib.Syntax.Minimalist.Agreement.CoordinateResolution
 import Linglib.Studies.Corbett2000
@@ -2166,7 +2167,8 @@ import Linglib.Syntax.Minimalist.Probe
 import Linglib.Syntax.Minimalist.Aspect
 import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.NestedAgree
-import Linglib.Syntax.Minimalist.PersonGeometry
+import Linglib.Syntax.Minimalist.Phi.Geometry
+import Linglib.Syntax.Minimalist.Phi.Lattice
 import Linglib.Syntax.Minimalist.PConstraint
 import Linglib.Syntax.Minimalist.ObligatoryOperations
 import Linglib.Syntax.Case.Alignment

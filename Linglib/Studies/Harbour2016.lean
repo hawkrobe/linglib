@@ -1,381 +1,289 @@
+import Mathlib.Data.Finset.Card
+import Mathlib.Data.Finset.Powerset
+import Mathlib.Data.Finset.NAry
+import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Features.Person
 import Linglib.Features.Number
 import Linglib.Syntax.Minimalist.CyclicAgree
-import Linglib.Syntax.Minimalist.Agreement.FeatureRecursion
+import Linglib.Syntax.Minimalist.Phi.Recursion
+import Linglib.Syntax.Minimalist.Phi.Lattice
 import Linglib.Studies.Corbett2000
+import Linglib.Syntax.Pronoun.Basic
+import Linglib.Fragments.Tamil.Pronouns
 
 /-!
-# Harbour (2016): Impossible Persons
+# Harbour (2016): *Impossible Persons* — the partition calculus
 [harbour-2016]
 
-Formalizes the core results of:
+Person categories are **derived**, not primitive: they are the cells of a
+*partition of the π-lattice* induced by two features, `±author` and
+`±participant`. Crucially — and this is the thesis of [harbour-2016] (Ch. 4.2.3,
+Ch. 9) — the features denote **operations on person lattices, not predicates**:
+their values are actions `⊕` (disjoint addition) and `⊖` (joint subtraction),
+"not truth functors, which would reduce the features to first-order predicates,
+but actions by and on the person lattices."
 
-  Harbour, D. (2016). *Impossible Persons*. Linguistic Inquiry Monographs 74.
-  MIT Press.
+The operators themselves (`⊕`/`⊖`/`lexComp`/`nePowerset`) are reusable substrate in
+`Syntax.Minimalist.Phi.Lattice`; this file builds the partition *construction* on
+top and checks the empirical results, which come out *by construction* rather than
+being stipulated:
 
-## The Partition Problem
+* the **ontology** is the speaker `i`, hearer `u`, and others `o`; referents are
+  sets of these (`Finset Ω`), and the three feature lattices are powerset
+  sublattices `ℒau ⊆ ℒpt ⊆ ℒπ` (the egocentric chain, [harbour-2016] p. 74);
+* a **feature acts** on a collection: `+F(G) = G ⊕ ℒF` (pairwise join, (17)) and
+  `−F(G) = G ⊖ ℒF` (strip `ℒF`'s maximum, (19));
+* cells are made disjoint by **Lexical Complementarity** ((31): a cell properly
+  containing a sibling is confined to the difference) and the **∅-winnowing** of
+  the variable head `φ` (§4.4); and
+* **composition is noncommutative** (Ch. 4.2.3), so the order of the two features
+  yields the *standard tripartition* (participant outermost: the two `−participant`
+  cells coincide) or the *quadripartition* (author outermost: inclusive/exclusive
+  split).
 
-Person categories are not primitives — they are **derived** from two privative
-features [±author] and [±participant] operating on **sets** of discourse
-participants. These features have the containment relation [+author] ⊂
-[+participant] (an author is necessarily a participant), making them an instance
-of the `Features.PrivativePair` abstraction.
+## Main declarations
 
-The key insight: features evaluate over groups (non-empty sets of individuals),
-not just atomic referents. A group is [+author] iff it **contains** the speaker;
-[+participant] iff it contains **any** speech-act participant.
+* `refine` / `cellsOf` — Lexical Complementarity over a sibling family + ∅-winnowing,
+  the partition construction over `Phi.Lattice`'s `⊕`/`⊖`/`act` operators.
+* `Examples` — the concrete three-element ontology `{i, u, o} = Fin 3`, where the
+  partition cells live and the derived theorems are `decide`-checked.
+* `signOf` — Harbour's `±author`/`±participant` *signs* for a Cysouw `Category`
+  (theory-laden; cf. the neutral `Features.Person.Category.toFeatures`).
 
-## Results Formalized
+## Main results (all *derived*, none stipulated)
 
-1. **Discourse groups derive the 8 person categories** (Ch 4–5). Three discourse
-   roles (speaker, addressee, other) × atomicity yield exactly the 8 categories
-   from [cysouw-2009]'s typological inventory. No more, no fewer.
+* `inclusive_ne_exclusive`, `exclusive_excludes_addressee`, `inclusive_has_both` —
+  inclusive (`+author +participant`) and exclusive (`+author −participant`) come
+  out **disjoint**, with the exclusive genuinely `−participant`. This is exactly the
+  distinction a Boolean-membership encoding (the foil [harbour-2016] argues against)
+  collapses.
+* `quad_covers` / `quad_disjoint` — the cells cover `ℒπ` and are pairwise disjoint.
+* `tri_card` / `quad_card` — composition order gives 3 vs 4 cells (noncommutativity).
+* `five_partitions` — the two-feature inventory's five parameter settings yield five
+  distinct partitions ([harbour-2016] Table 4.1).
+* `inclusive_has_no_singleton` — the inclusive holds no singleton, so the singular
+  realizes only three persons (no four-way singular).
 
-2. **Person–number isomorphism** (Ch 9: "The Phi Kernel"). Person features
-   [±participant, ±author] and number features [±minimal, ±atomic] instantiate
-   the same `PrivativePair` skeleton via `PhiFeatures`.
-
-3. **Clusivity derived** (Ch 5). Inclusive/exclusive is not a feature — it falls
-   out of person × atomicity. A [+author] non-atomic group is inclusive iff it
-   also contains the addressee; exclusive otherwise.
-
-4. **Impossibility results** (Ch 4–5). No 4-way singular person; no person
-   system with exclusive but not inclusive.
-
-5. **Containment hierarchy** (Ch 9). The person hierarchy 1 > 2 > 3 and number
-   hierarchy sg > du > pl both reduce to the specification ordering of
-   `PrivativePair`. Bridge theorem `specLevel_agrees_with_segments` connects
-   this to [bejar-rezac-2009]'s articulated segments.
-
+The number side ([harbour-2014]; [harbour-2016] Ch. 6) is the `Phi.Recursion`/`Corbett2000`
+bridge.
 -/
 
 namespace Harbour2016
 
-open Features.Person
+open Finset
+open Minimalist.Phi.Lattice (act nePowerset)
+
+/-! ### The partition construction (over `Phi.Lattice`'s operators) -/
+
+section Construction
+variable {Ω : Type*} [DecidableEq Ω]
+
+/-- Lexical Complementarity over a sibling family + the `φ` domain restriction
+([harbour-2016] (31), §4.4): confine a cell `c` by removing every sibling cell
+*properly contained* in it (`Phi.Lattice.lexComp` across the family), then winnow the
+empty set (there are no empty persons). -/
+def refine (siblings : List (Finset (Finset Ω))) (c : Finset (Finset Ω)) :
+    Finset (Finset Ω) :=
+  (siblings.foldl (fun acc d => if d ⊂ c then acc \ d else acc) c).erase ∅
+
+/-- The cells of a partition, given the raw (pre-refinement) denotations of each sign
+assignment: refine each against the whole family, collected as a set. -/
+def cellsOf (raws : List (Finset (Finset Ω))) : Finset (Finset (Finset Ω)) :=
+  (raws.map (refine raws)).toFinset
+
+end Construction
+
+/-! ### The three-element ontology `{i, u, o}` and the derived results
+
+Harbour's abbreviation `i_o`/`iu_o`/`u_o`/`o_o` collapses the π-lattice into four
+shape-classes; the minimal ontology realizing all four is `{i, u, o}`, taken here
+as `Fin 3` with `i = 0`, `u = 1`, `o = 2`. A single `o` suffices for the *person*
+partition (the four cells are fixed by `has i?`/`has u?`, not the others' count); the
+3rd-person *group* `{o, o'}` is not modelled, and no result below depends on it. All
+theorems are kernel-checked by `decide` on this finite model. -/
+
+namespace Examples
+
+abbrev Ω := Fin 3      -- 0 = speaker i, 1 = hearer u, 2 = other o
+
+/-- The author lattice `ℒau = {{i}}` (powerset of `{i}`, minus `∅`). -/
+def ℒau : Finset (Finset Ω) := {{0}}
+/-- The participant lattice `ℒpt = {{i}, {u}, {i,u}}` (powerset of `{i,u}`, minus `∅`). -/
+def ℒpt : Finset (Finset Ω) := {{0}, {1}, {0, 1}}
+/-- The π-lattice: all nonempty referent-sets. -/
+def ℒπ  : Finset (Finset Ω) := nePowerset univ
+
+/-- The egocentric containment chain `ℒau ⊆ ℒpt ⊆ ℒπ` ([harbour-2016] p. 74). -/
+theorem lattice_chain : ℒau ⊆ ℒpt ∧ ℒpt ⊆ ℒπ := by decide
+
+/-! #### Quadripartition — author composes outermost ([harbour-2016] §4.3.5) -/
+
+/-- Raw cell of the quadripartition for sign `sa` of author, `sp` of participant
+(author outermost, participant innermost). -/
+def quadRaw (sa sp : Bool) : Finset (Finset Ω) := act sa ℒau (act sp ℒpt ℒπ)
+
+/-- The four raw quadripartition cells. -/
+def quadRaws : List (Finset (Finset Ω)) :=
+  [quadRaw true true, quadRaw true false, quadRaw false true, quadRaw false false]
+
+/-- A refined quadripartition cell. -/
+def quadCell (sa sp : Bool) : Finset (Finset Ω) := refine quadRaws (quadRaw sa sp)
+
+/-- 1st-person **inclusive** = `+author +participant`. -/
+def inclusive : Finset (Finset Ω) := quadCell true true
+/-- 1st-person **exclusive** = `+author −participant`. -/
+def exclusive : Finset (Finset Ω) := quadCell true false
+/-- 2nd person = `−author +participant`. -/
+def secondP : Finset (Finset Ω) := quadCell false true
+/-- 3rd person = `−author −participant`. -/
+def thirdP : Finset (Finset Ω) := quadCell false false
+
+/-! Inclusive and exclusive come out as distinct, disjoint cells *by construction*: -/
+
+/-- The exclusive never contains the addressee `u` — it is genuinely `−participant`
+in Harbour's sense, the case a Boolean-membership decomposition collapses. -/
+theorem exclusive_excludes_addressee : ∀ s ∈ exclusive, (1 : Ω) ∉ s := by decide
+
+/-- The exclusive always contains the speaker `i`. -/
+theorem exclusive_includes_speaker : ∀ s ∈ exclusive, (0 : Ω) ∈ s := by decide
+
+/-- The inclusive always contains *both* speaker and addressee. -/
+theorem inclusive_has_both : ∀ s ∈ inclusive, (0 : Ω) ∈ s ∧ (1 : Ω) ∈ s := by decide
+
+/-- Inclusive ≠ exclusive — they do **not** collapse to one feature bundle. -/
+theorem inclusive_ne_exclusive : inclusive ≠ exclusive := by decide
+
+/-- The four quadripartition cells cover the π-lattice. -/
+theorem quad_covers : inclusive ∪ exclusive ∪ secondP ∪ thirdP = ℒπ := by decide
+
+/-- The four quadripartition cells are pairwise disjoint. -/
+theorem quad_disjoint :
+    Disjoint inclusive exclusive ∧ Disjoint inclusive secondP ∧
+    Disjoint inclusive thirdP ∧ Disjoint exclusive secondP ∧
+    Disjoint exclusive thirdP ∧ Disjoint secondP thirdP := by decide
+
+/-- The quadripartition has four cells. -/
+theorem quad_card : (cellsOf quadRaws).card = 4 := by decide
+
+/-! #### Standard tripartition — participant composes outermost ([harbour-2016] §4.3.4) -/
+
+/-- Raw cell of the tripartition for sign `sp` of participant, `sa` of author
+(participant outermost). The two `−participant` cells coincide. -/
+def triRaw (sp sa : Bool) : Finset (Finset Ω) := act sp ℒpt (act sa ℒau ℒπ)
+
+/-- The (four) raw tripartition cells. -/
+def triRaws : List (Finset (Finset Ω)) :=
+  [triRaw true true, triRaw true false, triRaw false true, triRaw false false]
+
+/-- Composition order matters: with participant outermost, the two `−participant`
+specifications coincide, so the tripartition has only **three** cells — whereas the
+quadripartition has four. This *is* the noncommutativity of feature composition
+([harbour-2016] Ch. 4.2.3). -/
+theorem tri_card : (cellsOf triRaws).card = 3 := by decide
+
+theorem tri_ne_quad : cellsOf triRaws ≠ cellsOf quadRaws := by decide
+
+/-! #### The five partitions ([harbour-2016] Table 4.1) -/
+
+/-- Monopartition: no features active. -/
+def monoP : Finset (Finset (Finset Ω)) := cellsOf [ℒπ]
+/-- Author bipartition: `{±author}`. -/
+def authorBi : Finset (Finset (Finset Ω)) := cellsOf [act true ℒau ℒπ, act false ℒau ℒπ]
+/-- Participant bipartition: `{±participant}`. -/
+def participantBi : Finset (Finset (Finset Ω)) := cellsOf [act true ℒpt ℒπ, act false ℒpt ℒπ]
+/-- The standard tripartition as a set of cells. -/
+def triP : Finset (Finset (Finset Ω)) := cellsOf triRaws
+/-- The quadripartition as a set of cells. -/
+def quadP : Finset (Finset (Finset Ω)) := cellsOf quadRaws
+
+/-- The five parameter settings of [harbour-2016] Table 4.1 — `∅`, `{±author}`,
+`{±participant}`, and the two composition orders of `{±author, ±participant}` — yield five
+**distinct** partitions (monopartition, the two bipartitions, the tripartition, the
+quadripartition). This theorem checks the distinctness; that these five settings *exhaust*
+the two-feature parameter space is the enumeration of Table 4.1 itself. -/
+theorem five_partitions :
+    [monoP, authorBi, participantBi, triP, quadP].dedup.length = 5 := by decide
+
+/-! #### No four-way singular person ([harbour-2016] Ch. 4) -/
+
+/-- The singleton referents (atoms): `{i}`, `{u}`, `{o}`. -/
+def singletons : Finset (Finset Ω) := {{0}, {1}, {2}}
+
+/-- **No four-way singular person** ([harbour-2016] Ch. 4): the inclusive — the only cell
+distinguishing the quadripartition from the tripartition — contains no singleton referent,
+so the singular realizes only three persons (the inclusive/exclusive split collapses). -/
+theorem inclusive_has_no_singleton : inclusive ∩ singletons = ∅ := by decide
+
+/-- Every inclusive referent set has ≥ 2 members (it contains both speaker and addressee) —
+the elementwise form of `inclusive_has_no_singleton`. -/
+theorem inclusive_card_ge_two : ∀ s ∈ inclusive, 2 ≤ s.card := by decide
+
+end Examples
+
+/-! ### The phi kernel: a shared *form*, not a shared denotation ([harbour-2016] Ch. 9)
+
+Harbour's "phi kernel" is the cluster of structural properties that person and number
+features *share*: both are **operations** (not predicates), both are **bivalent**, and
+both have **freely-ordered composition**. It is **not** a `1 ↔ sg` / `2 ↔ du` / `3 ↔ pl`
+identification — §9.5.1 stresses that the two families' values *denote differently*
+(person's `±` are `⊕`/`⊖` on the person lattices; number's `+` is the identity map and
+`−` a type-flexible `¬`). What they share at the level of the abstract `PrivativePair`
+carrier is the **containment hierarchy**: the person hierarchy `1 > 2 > 3` and the number
+hierarchy `sg > du > pl` are both the specification ordering `maximal > intermediate >
+minimal`. -/
+
+open Features (PhiFeatures)
 open Features.Number (singularF dualF pluralF)
-open Features (PhiFeatures PrivativePair)
 
--- ============================================================================
--- § 1: Clusivity
--- ============================================================================
-
-/-- Clusivity values for non-atomic [+author] groups.
-
-    [harbour-2016] Ch 5: clusivity is derived from the interaction
-    of person features and group composition, not from a stipulated
-    [±inclusive] feature. -/
-inductive Clusivity where
-  | inclusive   -- speaker + addressee (± others)
-  | exclusive   -- speaker + others, no addressee
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- § 2: Discourse Groups
--- ============================================================================
-
-/-- A discourse group: a non-empty collection of discourse participants,
-    described by which role types are present and whether the group is atomic.
-
-    Three role types: speaker, addressee, other (non-SAP). A group must
-    contain at least one member (`nonempty`). An atomic group contains
-    exactly one individual (`atomic_exclusive`).
-
-    **Representational note**: [harbour-2016] uses actual sets of
-    individuals, making atomicity a derived property (|group| = 1). The
-    Boolean encoding here requires explicit constraints (`atomic_exclusive`,
-    `nonatomic_multiple`) to maintain consistency between the role flags
-    and the atomicity flag. These constraints are representational guards,
-    not part of Harbour's theory. -/
-structure DiscourseGroup where
-  /-- The group contains the speaker. -/
-  hasSpeaker : Bool
-  /-- The group contains the addressee. -/
-  hasAddressee : Bool
-  /-- The group contains at least one non-SAP individual. -/
-  hasOther : Bool
-  /-- The group is a singleton (one individual). -/
-  isAtomic : Bool
-  /-- Non-empty: at least one role present. -/
-  nonempty : hasSpeaker || hasAddressee || hasOther = true
-  /-- Atomic groups have at most one role type (no pair is both true).
-      Combined with `nonempty`, this gives exactly one. -/
-  atomic_exclusive : isAtomic = true →
-    (hasSpeaker && hasAddressee) = false ∧
-    (hasSpeaker && hasOther) = false ∧
-    (hasAddressee && hasOther) = false
-  /-- Non-atomic groups require multiple individuals. In the Boolean encoding,
-      this means either ≥ 2 role types are present, or the "other" slot
-      represents multiple individuals (as in thirdGrp = {3, 3}). -/
-  nonatomic_multiple : isAtomic = false →
-    (hasSpeaker && hasAddressee) = true ∨
-    (hasSpeaker && hasOther) = true ∨
-    (hasAddressee && hasOther) = true ∨
-    hasOther = true
-  deriving DecidableEq
-
--- ============================================================================
--- § 3: Person Features on Groups
--- ============================================================================
-
-/-- [+author]: the group contains the speaker.
-    [harbour-2016] Ch 4: features evaluate over sets, not atoms. -/
-def DiscourseGroup.author (g : DiscourseGroup) : Bool := g.hasSpeaker
-
-/-- [+participant]: the group contains at least one SAP. -/
-def DiscourseGroup.participant (g : DiscourseGroup) : Bool :=
-  g.hasSpeaker || g.hasAddressee
-
-/-- Extract the PrivativePair: outer = participant, inner = author. -/
-def DiscourseGroup.toPrivativePair (g : DiscourseGroup) : PrivativePair :=
-  ⟨g.participant, g.author⟩
-
-/-- Person features on groups are always well-formed:
-    [+author] → [+participant] because the speaker is a participant. -/
-theorem DiscourseGroup.wellFormed (g : DiscourseGroup) :
-    g.toPrivativePair.wellFormed = true := by
-  simp [toPrivativePair, participant, author, PrivativePair.wellFormed]
-  cases g.hasSpeaker <;> simp
-
-/-- Group-level person features agree with Features.Person.Features
-    on the atomic (singular) cases. -/
-theorem DiscourseGroup.agrees_with_core (g : DiscourseGroup) :
-    g.toPrivativePair =
-      PhiFeatures.toPair (Features.Person.Features.mk g.participant g.author) := by
-  rfl
-
--- ============================================================================
--- § 4: The Eight Categories
--- ============================================================================
-
-/-- Map a DiscourseGroup to the corresponding Cysouw Category. -/
-def DiscourseGroup.toCategory (g : DiscourseGroup) : Category :=
-  match g.isAtomic, g.hasSpeaker, g.hasAddressee, g.hasOther with
-  -- Singular (atomic) categories
-  | true, true,  false, false => .s1         -- speaker alone
-  | true, false, true,  false => .s2         -- addressee alone
-  | true, false, false, true  => .s3         -- other alone
-  -- Group (non-atomic) categories
-  | false, true,  true,  false => .minIncl   -- speaker + addressee
-  | false, true,  true,  true  => .augIncl   -- speaker + addressee + other(s)
-  | false, true,  false, true  => .excl      -- speaker + other(s)
-  | false, false, true,  true  => .secondGrp -- addressee + other(s)
-  | false, false, false, true  => .thirdGrp  -- other(s) only, non-atomic
-  -- Remaining cases are unreachable for well-formed groups; the constraints
-  -- `nonempty`, `atomic_exclusive`, and `nonatomic_multiple` rule them out.
-  | _, _, _, _ => .s3
-
-/-- All 8 Cysouw categories are reachable from discourse groups. -/
-theorem all_categories_reachable :
-    ∀ c : Category, ∃ g : DiscourseGroup, g.toCategory = c := by
-  intro c; cases c
-  · exact ⟨⟨true, false, false, true, rfl, by decide, by decide⟩, rfl⟩
-  · exact ⟨⟨false, true, false, true, rfl, by decide, by decide⟩, rfl⟩
-  · exact ⟨⟨false, false, true, true, rfl, by decide, by decide⟩, rfl⟩
-  · exact ⟨⟨true, true, false, false, rfl, by decide, by decide⟩, rfl⟩
-  · exact ⟨⟨true, true, true, false, rfl, by decide, by decide⟩, rfl⟩
-  · exact ⟨⟨true, false, true, false, rfl, by decide, by decide⟩, rfl⟩
-  · exact ⟨⟨false, true, true, false, rfl, by decide, by decide⟩, rfl⟩
-  · exact ⟨⟨false, false, true, false, rfl, by decide, by decide⟩, rfl⟩
-
--- ============================================================================
--- § 5: Person Features Agree with Core
--- ============================================================================
-
-/-- Group-level person features agree with `Category.toFeatures`:
-    the PrivativePair extracted from a group matches the one extracted
-    from its Cysouw category.
-
-    This is the key consistency result: the set-level feature evaluation
-    ([harbour-2016]) and the individual-level feature assignment
-    (Core) agree on the person feature values for each category. -/
-theorem group_features_match_category :
-    ∀ c : Category,
-      ∃ g : DiscourseGroup,
-        g.toCategory = c ∧
-        g.toPrivativePair = PhiFeatures.toPair c.toFeatures := by
-  intro c; cases c
-  · exact ⟨⟨true, false, false, true, rfl, by decide, by decide⟩, rfl, rfl⟩
-  · exact ⟨⟨false, true, false, true, rfl, by decide, by decide⟩, rfl, rfl⟩
-  · exact ⟨⟨false, false, true, true, rfl, by decide, by decide⟩, rfl, rfl⟩
-  · exact ⟨⟨true, true, false, false, rfl, by decide, by decide⟩, rfl, rfl⟩
-  · exact ⟨⟨true, true, true, false, rfl, by decide, by decide⟩, rfl, rfl⟩
-  · exact ⟨⟨true, false, true, false, rfl, by decide, by decide⟩, rfl, rfl⟩
-  · exact ⟨⟨false, true, true, false, rfl, by decide, by decide⟩, rfl, rfl⟩
-  · exact ⟨⟨false, false, true, false, rfl, by decide, by decide⟩, rfl, rfl⟩
-
--- ============================================================================
--- § 6: Person–Number Isomorphism
--- ============================================================================
-
-/-- Person and number share the same PrivativePair skeleton.
-
-    This is [harbour-2016]'s "phi kernel" (Ch 9): the structural parallel
-    between person (1st/2nd/3rd) and number (singular/dual/plural) is not
-    accidental — both are instances of the same 2-feature containment geometry.
-
-    - Person maximal = 1st person = [+participant, +author]
-    - Number maximal = singular = [+minimal, +atomic]
-    - Both map to `PrivativePair.maximal` = `⟨true, true⟩`
-
-    And so on for intermediate (2nd/dual) and minimal (3rd/plural). -/
-theorem person_number_isomorphism :
-    PhiFeatures.toPair singularF = PhiFeatures.toPair Features.Person.first ∧
-    PhiFeatures.toPair dualF = PhiFeatures.toPair Features.Person.second ∧
-    PhiFeatures.toPair pluralF = PhiFeatures.toPair Features.Person.third := ⟨rfl, rfl, rfl⟩
-
-/-- The isomorphism factors through PrivativePair's canonical cells. -/
-theorem person_number_via_cells :
-    PhiFeatures.toPair Features.Person.first = .maximal ∧
-    PhiFeatures.toPair Features.Person.second = .intermediate ∧
-    PhiFeatures.toPair Features.Person.third = .minimal ∧
-    PhiFeatures.toPair singularF = .maximal ∧
-    PhiFeatures.toPair dualF = .intermediate ∧
-    PhiFeatures.toPair pluralF = .minimal := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 7: Clusivity Derivation
--- ============================================================================
-
-/-- Clusivity is derived, not stipulated.
-
-    A non-atomic [+author] group (= first person non-singular) is:
-    - **inclusive** iff it also contains the addressee
-    - **exclusive** iff it does not
-
-    No [±inclusive] feature is needed — clusivity falls out of the
-    interaction between person features and group composition (Ch 5). -/
-def clusivityFromGroup (g : DiscourseGroup) : Option Clusivity :=
-  if g.isAtomic then none
-  else if !g.hasSpeaker then none
-  else if g.hasAddressee then some .inclusive
-  else some .exclusive
-
-/-- Inclusive groups are exactly those with both speaker and addressee. -/
-theorem inclusive_iff_addressee (g : DiscourseGroup)
-    (hna : g.isAtomic = false) (hspk : g.hasSpeaker = true) :
-    clusivityFromGroup g = some .inclusive ↔ g.hasAddressee = true := by
-  cases ha : g.hasAddressee <;> simp [clusivityFromGroup, hna, hspk, ha]
-
-/-- Clusivity agrees with `Category.isInclusive`: categories that
-    Cysouw marks as inclusive (minIncl, augIncl) are exactly the
-    non-atomic [+author] groups that contain the addressee. -/
-theorem clusivity_matches_category :
-    clusivityFromGroup ⟨true, true, false, false, rfl,
-      by decide, by decide⟩ = some .inclusive ∧   -- minIncl
-    clusivityFromGroup ⟨true, true, true, false, rfl,
-      by decide, by decide⟩ = some .inclusive ∧   -- augIncl
-    clusivityFromGroup ⟨true, false, true, false, rfl,
-      by decide, by decide⟩ = some .exclusive     -- excl
-  := ⟨rfl, rfl, rfl⟩
-
--- ============================================================================
--- § 8: Impossibility Results
--- ============================================================================
-
-/-- **No 4-way singular person.** (Immediate from `Features.Person.no_fourth_person`.)
-
-    Since singular categories are atomic discourse groups, and person
-    features on atomic groups reduce to individual-level features,
-    the 3-cell PrivativePair limit applies directly (Ch 4). -/
-theorem no_four_singular_persons :
-    ∀ (a b c d : Features.Person.Features),
-      a.wellFormed = true → b.wellFormed = true →
-      c.wellFormed = true → d.wellFormed = true →
-      a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False :=
-  Features.Person.no_fourth_person
-
-/-- **No exclusive without inclusive** (system-level).
-
-    [harbour-2016] Ch 5, §5.3: if a person system has the exclusive
-    category (non-atomic [+author] groups without the addressee), then
-    inclusive groups are also constructible from the same feature inventory.
-    Both configurations use [+author] on a non-atomic group; they differ
-    only in whether the addressee is present in the group.
-
-    The feature system [±participant, ±author] operating over non-atomic
-    groups *necessarily* generates both inclusive and exclusive
-    configurations. Any feature inventory supporting exclusive
-    automatically supports inclusive — this is an inherent consequence
-    of the feature system, not an independent parameter. -/
-theorem no_exclusive_without_inclusive :
-    (∃ g : DiscourseGroup, clusivityFromGroup g = some .exclusive) →
-    (∃ g : DiscourseGroup, clusivityFromGroup g = some .inclusive) := by
-  intro ⟨_, _⟩
-  exact ⟨⟨true, true, false, false, rfl, by decide, by decide⟩, rfl⟩
-
--- ============================================================================
--- § 9: Containment Hierarchy
--- ============================================================================
-
-/-- The person hierarchy 1 > 2 > 3 is the specification ordering of
-    PrivativePair: maximal > intermediate > minimal. This connects
-    [harbour-2016]'s lattice approach to the person hierarchy
-    used in [bejar-rezac-2009]'s Cyclic Agree and
-    [preminger-2014]'s relativized probing. -/
+/-- The person hierarchy `1 > 2 > 3` is the specification ordering of `PrivativePair`
+(maximal > intermediate > minimal), connecting [harbour-2016]'s lattice approach to the
+hierarchy in [bejar-rezac-2009]'s Cyclic Agree and [preminger-2014]'s relativized
+probing. -/
 theorem person_hierarchy_is_spec_ordering :
     PhiFeatures.specLevel Features.Person.first >
       PhiFeatures.specLevel Features.Person.second ∧
     PhiFeatures.specLevel Features.Person.second >
-      PhiFeatures.specLevel Features.Person.third := ⟨by decide, by decide⟩
+      PhiFeatures.specLevel Features.Person.third :=
+  PhiFeatures.specLevel_strict_order Features.Person.first_is_maximal
+    Features.Person.second_is_intermediate Features.Person.third_is_minimal
 
-/-- The number hierarchy sg > du > pl is the same specification ordering. -/
+/-- The number hierarchy `sg > du > pl` is the *same* specification ordering — the
+structural reflection of the phi kernel, not an identification of the categories. -/
 theorem number_hierarchy_is_spec_ordering :
-    PhiFeatures.specLevel singularF >
-      PhiFeatures.specLevel dualF ∧
-    PhiFeatures.specLevel dualF >
-      PhiFeatures.specLevel pluralF := ⟨by decide, by decide⟩
+    PhiFeatures.specLevel singularF > PhiFeatures.specLevel dualF ∧
+    PhiFeatures.specLevel dualF > PhiFeatures.specLevel pluralF :=
+  PhiFeatures.specLevel_strict_order Features.Number.singular_is_maximal
+    Features.Number.dual_is_intermediate Features.Number.plural_is_minimal
 
--- ============================================================================
--- § 10: Bridge to Cyclic Agree
--- ============================================================================
+/-! ### Bridge to Cyclic Agree ([bejar-rezac-2009]) -/
 
 open Minimalist.CyclicAgree (personSpec)
 open Features.Prominence (PersonLevel)
 
-/-- The person hierarchy from `PrivativePair.specLevel` agrees with the
-    segment count hierarchy from [bejar-rezac-2009]'s Cyclic Agree.
-
-    In the standard geometry, `specLevel + 1 = segment count`:
-    - 1st: specLevel 2, segments [π, participant, speaker] (length 3)
-    - 2nd: specLevel 1, segments [π, participant] (length 2)
-    - 3rd: specLevel 0, segments [π] (length 1)
-
-    This is the formal bridge between [harbour-2016]'s algebraic
-    person hierarchy (PrivativePair specification level) and
-    [bejar-rezac-2009]'s syntactic one (articulated segment count).
-    The person hierarchy is *one* hierarchy realized in two independent
-    formalizations: featural (spec level) and configurational (probe depth). -/
+/-- The person hierarchy from `PrivativePair.specLevel` agrees with the segment-count
+hierarchy of [bejar-rezac-2009]'s Cyclic Agree: in the standard geometry, `specLevel + 1
+= segment count` (1st: 2/[π, participant, speaker]; 2nd: 1/[π, participant]; 3rd: 0/[π]).
+The person hierarchy is *one* hierarchy in two formalizations — featural (spec level) and
+configurational (probe depth). -/
 theorem specLevel_agrees_with_segments (p : PersonLevel) :
-    PhiFeatures.specLevel (p.toFeatures) + 1 =
-    (personSpec .standard p).length := by
+    PhiFeatures.specLevel p.toFeatures + 1 = (personSpec .standard p).length := by
   cases p <;> rfl
 
--- ============================================================================
--- § 11: Bridge to Corbett2000 via Feature Geometry
--- ============================================================================
+/-! ### Bridge to Corbett (2000): attested number systems are generable ([harbour-2014])
 
-/-! Every attested number system from [corbett-2000] can be generated
-    by some well-formed [harbour-2016] configuration. This bridges the
-    typological inventory (observed systems) with the feature geometry
-    (generative mechanism).
+Every attested number system from [corbett-2000] is a subset of what some well-formed
+Harbour configuration generates (a language may not lexicalize every category its geometry
+affords). The number side uses the three-feature `±atomic`/`±minimal`/`±additive` calculus
+of [harbour-2014] (developed at chapter length in [harbour-2016] Ch. 6), faithfully distinct
+from the two-feature *person* calculus above. -/
 
-    The bridge is a SUBSET relation: a language may not lexicalize all
-    categories its feature geometry makes available (syncretism, facultative
-    marking). What matters is that every attested category IS generated. -/
-
-open Minimalist.Agreement.FeatureRecursion (HarbourConfig)
+open Minimalist.Phi.Recursion (HarbourConfig)
 open Corbett2000
 
-/-- Every attested number system's values are a subset of what some
-    well-formed Harbour configuration generates.
-
-    - Pirahã: no features → no categories
-    - English/Russian/Japanese: [±atomic] only → {sg, pl}
-    - Upper Sorbian/Slovene: [±atomic, ±minimal] → {sg, du, pl}
-    - Bayso: [±atomic, ±additive] → {sg, pl, pauc}
-    - Larike: [±atomic, ±minimal] + [±minimal] recursion → {sg, du, pl, trial, grpl}
-    - Lihir: [±atomic, ±minimal, ±additive] + [±minimal] recursion →
-             {sg, du, pl, trial, grpl, pauc} -/
+/-- Every attested number system's values are generated by some well-formed Harbour
+configuration: Pirahã (∅ → no number), English/Russian/Japanese (`±atomic` → sg/pl),
+Upper Sorbian/Slovene (`±atomic, ±minimal` → sg/du/pl), Bayso (`±atomic, ±additive` →
+sg/pl/pauc), Larike and Lihir (with `±minimal` recursion). -/
 theorem attested_number_systems_derivable :
     pirahaNS.values.all
       ((HarbourConfig.mk false false false false false).categories.contains ·) = true ∧
@@ -395,10 +303,9 @@ theorem attested_number_systems_derivable :
       ((HarbourConfig.mk true true true true false).categories.contains ·) = true ∧
     japaneseNS.values.all
       ((HarbourConfig.mk true false false false false).categories.contains ·) = true
-    := by native_decide
+    := by decide
 
-/-- MIN/AUG systems from [harbour-2014] Table 3, now expressible
-    with the expanded `Category` type. -/
+/-- MIN/AUG systems from [harbour-2014] Table 3. -/
 theorem minAug_systems_derivable :
     winnebagoNS.values.all
       ((HarbourConfig.mk false true false false false).categories.contains ·) = true ∧
@@ -406,7 +313,7 @@ theorem minAug_systems_derivable :
       ((HarbourConfig.mk false true false true false).categories.contains ·) = true ∧
     mebengokreNS.values.all
       ((HarbourConfig.mk false true true false false).categories.contains ·) = true
-    := by native_decide
+    := by decide
 
 /-- The Harbour configurations used in the bridge are all well-formed. -/
 theorem bridge_configs_wellFormed :
@@ -416,10 +323,75 @@ theorem bridge_configs_wellFormed :
     (HarbourConfig.mk true false true false false).wellFormed = true ∧
     (HarbourConfig.mk true true false true false).wellFormed = true ∧
     (HarbourConfig.mk true true true true false).wellFormed = true ∧
-    -- New configs for MIN/AUG systems:
     (HarbourConfig.mk false true false false false).wellFormed = true ∧
     (HarbourConfig.mk false true false true false).wellFormed = true ∧
     (HarbourConfig.mk false true true false false).wellFormed = true
     := by decide
+
+/-! ### Harbour's sign decomposition of the Cysouw categories ([harbour-2016] Table 4.3)
+
+The neutral `Features.Person.Category.toFeatures` underdetermines the group categories
+(`excl`/`minIncl`/`augIncl` all `⟨true,true⟩`). Harbour's **operational signs** distinguish
+them; that distinction is *this theory's* commitment, derived from the partition above. A
+dedicated `Sign` carrier is used rather than `Features.Person.Features`, because the
+exclusive's `+author −participant` is exactly the combination the neutral type's `wellFormed`
+invariant (SAP containment: author ⟹ participant) rejects — for operations, not SAP-membership
+predicates, that invariant does not apply ([harbour-2016] Ch. 9). -/
+
+open Features.Person (Category)
+
+/-- A Harbour `±author`/`±participant` sign — bivalent feature *values* ([harbour-2016]
+Ch. 9), distinct from the SAP-membership `Features.Person.Features`. -/
+structure Sign where
+  author : Bool
+  participant : Bool
+  deriving DecidableEq, Repr
+
+/-- Harbour's signs for a Cysouw `Category` ([harbour-2016] Table 4.3). The 1st-person
+*exclusive* — and the singular speaker `.s1`, which Harbour's quadripartition lumps into
+the exclusive cell `i_o` (p. 96) — is `+author −participant`, so it does *not* collapse
+with the *inclusive* `+author +participant`, unlike the neutral `Category.toFeatures`. -/
+def signOf : Category → Sign
+  | .minIncl | .augIncl => ⟨true, true⟩    -- +author +participant (inclusive)
+  | .s1 | .excl         => ⟨true, false⟩   -- +author −participant (exclusive / sg speaker)
+  | .s2 | .secondGrp    => ⟨false, true⟩   -- −author +participant
+  | .s3 | .thirdGrp     => ⟨false, false⟩  -- −author −participant
+
+/-- Harbour's signs distinguish exclusive from inclusive, where the neutral membership
+decomposition (`Category.toFeatures`) collapses them (cf. `Examples.inclusive_ne_exclusive`). -/
+theorem signOf_excl_ne_incl : signOf .excl ≠ signOf .minIncl := by decide
+
+/-! ### Application: the Tamil clusivity contrast through the Pronoun API
+
+A lexical pronoun entry feeds Harbour's signs by composing `Pronoun.category` — the
+[cysouw-2009] category a `person`/`number`/`clusivity` triple realizes — with `signOf`. Tamil's
+clusivity-marked 1pl forms *naam* (inclusive) and *naangaL* (exclusive) land on distinct signs,
+where the neutral `Category.toFeatures` collapses both 1pl categories to `⟨true, true⟩`: the
+distinction [harbour-2016]'s decomposition exists to draw, here discharged on real Fragment
+entries rather than a stipulated example. -/
+
+open Tamil.Pronouns (naam naangaL)
+
+/-- The Harbour sign a pronoun realizes: its [cysouw-2009] `Category` (via the Pronoun API's
+`Pronoun.category`) decomposed by `signOf`. `none` when the φ-features underdetermine a
+category. The bridge from a lexical pronoun entry to [harbour-2016]'s `±author/±participant`
+operations. -/
+def harbourSign (p : Pronoun) : Option Sign := p.category.map signOf
+
+/-- *naam* (1pl inclusive) realizes the inclusive sign `+author +participant`. -/
+theorem naam_sign : harbourSign naam.toPronoun = some ⟨true, true⟩ := by decide
+
+/-- *naangaL* (1pl exclusive) realizes the exclusive sign `+author −participant`. -/
+theorem naangaL_sign : harbourSign naangaL.toPronoun = some ⟨true, false⟩ := by decide
+
+/-- Harbour's signs distinguish *naam* from *naangaL* through the Pronoun API. -/
+theorem tamil_clusivity_distinguished :
+    harbourSign naam.toPronoun ≠ harbourSign naangaL.toPronoun := by decide
+
+/-- The neutral membership decomposition collapses them: both 1pl categories map to the same
+`Category.toFeatures`, so only Harbour's operational signs keep *naam* and *naangaL* apart. -/
+theorem tamil_clusivity_collapsed_by_toFeatures :
+    naam.toPronoun.category.map Category.toFeatures
+      = naangaL.toPronoun.category.map Category.toFeatures := by decide
 
 end Harbour2016

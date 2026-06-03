@@ -268,6 +268,11 @@ instance : Features.PhiFeatures Features where
 @[simp] theorem dual_is_intermediate : PhiFeatures.toPair dualF = .intermediate := rfl
 @[simp] theorem plural_is_minimal : PhiFeatures.toPair pluralF = .minimal := rfl
 
+/-- The `[±atomic, ±minimal]` decomposition **is** the privative pair: an equivalence
+`Features ≃ PrivativePair` (the number half of [harbour-2016]'s phi-kernel skeleton). -/
+def featuresEquiv : Features ≃ PrivativePair :=
+  PhiFeatures.toEquiv fun p => by cases p; rfl
+
 /-- No 4-way base number distinction (inherited from `PhiFeatures`). -/
 theorem no_fourth_base_number :
     ∀ (a b c d : Features),

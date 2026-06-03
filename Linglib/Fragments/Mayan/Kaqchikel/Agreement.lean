@@ -12,7 +12,7 @@ agreement morphology: paradigm exponents, person-number cells, argument
 positions, and the empirical AF agreement table.
 
 The theory-laden apparatus that interprets this data — DM Vocabulary
-insertion, PersonGeometry feature decomposition, the omnivorous
+insertion, Phi.Geometry feature decomposition, the omnivorous
 hierarchy, the AgreeOutcome inductive — lives in
 `Studies/Preminger2014.lean`. Per the project
 Fragment-discipline rule (CLAUDE.md), fragments hold only consensus
