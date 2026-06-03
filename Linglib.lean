@@ -90,6 +90,7 @@ import Linglib.Core.Order.PreferenceStructure.EffectivePreference
 import Linglib.Core.Order.PreferenceStructure.MaxInducedOrdering
 import Linglib.Core.Order.ComparativeProbability.Defs
 import Linglib.Core.Order.ComparativeProbability.Patterns
+import Linglib.Core.Order.FourierMotzkin
 import Linglib.Core.Logic.RankingFunction
 import Linglib.Core.Logic.SystemZ
 import Linglib.Features.Register
