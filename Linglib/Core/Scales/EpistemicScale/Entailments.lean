@@ -1,5 +1,5 @@
-import Linglib.Core.Scales.EpistemicScale.Defs
 import Linglib.Core.Order.ComparativeProbability.Patterns
+import Linglib.Core.Scales.EpistemicScale.Defs
 import Mathlib.Data.Set.Card
 
 /-!
@@ -640,7 +640,8 @@ The m-lifting of a reflexive, transitive world ordering on finite `W` is a GFC
 preorder ([harrison-trainor-holliday-icard-2018], Theorem 3.2): the injection
 extension `≿ⁱ` (= `matchingLift`) satisfies all three GFC axiom groups — preorder (G),
 monotonicity (F), and complement reversal (C). V11 and V12 then follow from the
-shared `GFCPreorder.v11`/`GFCPreorder.v12`. -/
+abstract `patternV11_of`/`patternV12_of`, with the GFC components registered as
+local `IsTrans`/`IsComplementReversing` instances. -/
 
 def matchingLift_toGFCPreorder {W : Type*} [Finite W] (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w)
@@ -653,7 +654,7 @@ def matchingLift_toGFCPreorder {W : Type*} [Finite W] (ge_w : W → W → Prop)
   complRev := fun _ _ h => matchingLift_complement_reversal hRefl hTrans h
 
 /-- V12 is valid for the m-lifting on finite posets (Fact 5 in
-    [holliday-icard-2013]): every m-lift is a `GFCPreorder`, so `GFCPreorder.v12`
+    [holliday-icard-2013]): every m-lift is a `GFCPreorder`, so `patternV12_of`
     supplies the pattern. -/
 theorem matchingLift_V12 {W : Type*} [Finite W] (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w)
@@ -666,7 +667,7 @@ theorem matchingLift_V12 {W : Type*} [Finite W] (ge_w : W → W → Prop)
   exact patternV12_of
 
 /-- V11 is valid for the m-lifting on finite posets (Fact 5 in
-    [holliday-icard-2013]): immediate from `GFCPreorder.v11`. -/
+    [holliday-icard-2013]): immediate from `patternV11_of`. -/
 theorem matchingLift_V11 {W : Type*} [Finite W] (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w)
     (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :

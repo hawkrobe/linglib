@@ -1585,14 +1585,5 @@ theorem fa_cancellation_fin4_null0 (sys : EpistemicSystemFA (Fin 4))
   obtain ⟨m, hm⟩ := null_elem_reduce sys h0 hnn (fun sys' => theorem8a_fin3 sys')
   exact representable_implies_cancellation sys m hm
 
--- ═══════════════════════════════════════════════════════════════
--- § 6. KPS Theorem 8a via cancellation
--- ═══════════════════════════════════════════════════════════════
-
-/-- **Theorem 8a for Fin 3** (via cancellation): every FA system on Fin 3 is
-    representable by a finitely additive probability measure. -/
-theorem theorem8a_fin3' (sys : EpistemicSystemFA (Fin 3)) :
-    ∃ (m : FinAddMeasure (Fin 3)), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
-  cancellation_implies_representable sys (fa_cancellation_fin3 sys)
 
 end Core.Scale
