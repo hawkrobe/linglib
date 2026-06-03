@@ -28,10 +28,11 @@ delusional" (de re, true) diverge from "John claims Napoleon is delusional" (fal
 
 ## This file (core machinery + ambiguity theorem)
 
-* `Concept` / `ConceptGenerator` — over `Core.Intension`; the general acquaintance/cover
-  substrate is `Semantics/Reference/Acquaintance.lean`.
-* `sayDeSe` (eq. 76) and `sayDeRe` (eq. 77) — the two denotations of *say*, with `Suitable`
-  (eq. 82) the reliability-with-epistemic-overwrite + acquaintance-based condition.
+* `Concept` / `ConceptGenerator` — over `Core.Intension`. The general acquaintance/cover
+  substrate (`Semantics/Reference/Acquaintance.lean`) is the natural home for the
+  acquaintance-based clause; wiring onto it is the extension below.
+* `sayDeSe` (eq. 76) and `sayDeRe` (eq. 77/79b) — the two denotations of *say*, with
+  `Reliable` (eq. 82.i) the reliability-with-epistemic-overwrite clause of Pearson's *suitable*.
 * **Scenario 1** (eq. 75, §5.3): John says "whoever wrote this is clever", unaware he is the
   author. `ye_de_se_de_re_ambiguous` proves the de se LF is **false** while the de re LF is
   **true** — via an explicit witnessing "author" concept generator (`authorGen`). This is
@@ -39,10 +40,12 @@ delusional" (de re, true) diverge from "John claims Napoleon is delusional" (fal
 * `ye_antecedent_is_attitude_holder` grounds the carrier: *yè*'s antecedent is the attitude
   holder in both readings, i.e. the carrier's `requiredRole = .self`.
 
-The Napoleon contrast (§6), the *yè*-vs-PRO φ-feature asymmetry (§7.1, PRO is a φ-less
-[kratzer-2009] minimal pronoun → no long-distance antecedent), and the full acquaintance
-semantics are left to prose; here the acquaintance-based clause is modelled as
-unique-image functionality, the load-bearing discriminating clause being reliability.
+Deferred to prose (and the natural extensions): the **acquaintance-based** clause of *suitable*
+(eq. 82.ii — a *fixed* acquaintance relation the holder bears uniquely to the concept's value;
+its faithful form needs the `Acquaintance.lean` cover substrate, not the vacuous `∃R` an
+earlier draft used), the **Napoleon contrast** (§6) that clause licenses, and the *yè*-vs-PRO
+φ-feature asymmetry (§7.1: PRO is a φ-less [kratzer-2009] minimal pronoun, so — unlike *yè* —
+it takes no long-distance antecedent).
 -/
 
 namespace Pearson2015
@@ -78,25 +81,31 @@ def epiAlt {W E : Type*} (alts : List (Centered W E)) : List E := alts.map Prod.
 def sayDeSe {W E : Type*} (alts : List (Centered W E)) (P : CProp W E) : Prop :=
   ∀ p ∈ alts, P p.2 p.1
 
-/-- **Suitable** concept generator ([pearson-2015] eq. 82, here over a finite domain `dom`):
+/-- A concept generator is **reliable** for holder `x` in `w` ([pearson-2015] eq. 82, the
+    "Reliability" clause; over a finite res domain `dom`): for each res `u` the concept
+    returns `u` in the actual world, **or** `u` is an epistemic alternative of `x` and the
+    concept returns `x` (the epistemic-alternative *overwrite*). The overwrite is what — given
+    a genuine acquaintance relation — makes "John claims he is delusional" (de re, true)
+    diverge from "John claims Napoleon is delusional" (false) in §6.
 
-    (i) *reliability with epistemic-alternative overwrite* — for each res `u`, the concept
-        returns `u` in the actual world, **or** `u` is an epistemic alternative of the holder
-        and the concept returns the holder `x` (the clause discriminating the Napoleon case);
-    (ii) *acquaintance-based* — there is a relation the de se center bears **uniquely** to the
-        concept's value (modelled here as unique-image functionality). -/
-def Suitable {W E : Type*} [DecidableEq E] (alts : List (Centered W E))
+    Pearson's full *suitable* adds an **acquaintance-based** clause (eq. 82.ii): the holder
+    bears a *fixed* acquaintance relation uniquely to the concept's value at every
+    alternative. That clause is the content of "the concept is a genuine way of identifying
+    the res", and faithfully modelling it needs the cover/acquaintance substrate
+    (`Semantics/Reference/Acquaintance.lean`); it is left to prose here (an earlier `∃R`
+    encoding was **vacuous** — the graph of *any* `G` satisfies it — so it is dropped rather
+    than feigned, and the Napoleon contrast it would license is deferred with it). -/
+def Reliable {W E : Type*} [DecidableEq E] (alts : List (Centered W E))
     (G : ConceptGenerator W E) (x : E) (w : W) (dom : List E) : Prop :=
-  (∀ u ∈ dom, G u (w, x) = u ∨ (u ∈ epiAlt alts ∧ G u (w, x) = x)) ∧
-  (∀ u ∈ dom, ∃ R : E → W → E → Prop,
-      ∀ p ∈ (w, x) :: alts, R p.2 p.1 (G u p) ∧ ∀ z, R p.2 p.1 z → z = G u p)
+  ∀ u ∈ dom, G u (w, x) = u ∨ (u ∈ epiAlt alts ∧ G u (w, x) = x)
 
-/-- `⟦say^de re⟧` (eq. 77/79b): there is a **suitable** concept generator `G` such that at
-    each attitude alternative `⟨w',y⟩`, the individual `G`'s concept (fed the de se center as
-    res) picks out at `⟨w',y⟩` has the embedded property at `w'`. *yè* sits in a `resP`. -/
+/-- `⟦say^de re⟧` (eq. 77/79b): there is a **reliable** concept generator `G` (Pearson's
+    *suitable*, with the acquaintance-based half deferred — see `Reliable`) such that at each
+    attitude alternative `⟨w',y⟩`, the individual `G`'s concept (fed the de se center as res)
+    picks out at `⟨w',y⟩` has the embedded property at `w'`. *yè* sits in a `resP`. -/
 def sayDeRe {W E : Type*} [DecidableEq E] (alts : List (Centered W E))
     (P : CProp W E) (x : E) (w : W) (dom : List E) : Prop :=
-  ∃ G : ConceptGenerator W E, Suitable alts G x w dom ∧ ∀ p ∈ alts, P (G p.2 p) p.1
+  ∃ G : ConceptGenerator W E, Reliable alts G x w dom ∧ ∀ p ∈ alts, P (G p.2 p) p.1
 
 /-! ### Scenario 1: the de se / de re ambiguity ([pearson-2015] eq. 75, §5.3)
 
@@ -141,18 +150,17 @@ def authorGen : ConceptGenerator Wld Ind :=
     centre (john) is not clever — John did not self-ascribe cleverness. -/
 theorem deSe_false : ¬ sayDeSe sayAlts cleverP := by unfold sayDeSe; decide
 
-/-- The "author" concept generator is **suitable** for John: reliable (returns the res john in
-    the actual world) and acquaintance-based (unique-image). -/
-theorem authorGen_suitable : Suitable sayAlts authorGen john actual dom := by
-  refine ⟨by decide, ?_⟩
-  intro u _hu
-  exact ⟨fun y w z => z = authorGen u (w, y), fun p _hp => ⟨rfl, fun _z hz => hz⟩⟩
+/-- The "author" concept generator is **reliable** for John: it returns the res `john` in the
+    actual world (John really is the author), satisfying eq. 82's Reliability clause via its
+    first disjunct. -/
+theorem authorGen_reliable : Reliable sayAlts authorGen john actual dom := by
+  unfold Reliable; decide
 
-/-- The **de re** reading is **true**: under the suitable "author" concept generator, at each
+/-- The **de re** reading is **true**: under the reliable "author" concept generator, at each
     say-alternative the individual it picks (the author) is clever — the de re reading rescues
     truth where de se fails. -/
 theorem deRe_true : sayDeRe sayAlts cleverP john actual dom :=
-  ⟨authorGen, authorGen_suitable, by decide⟩
+  ⟨authorGen, authorGen_reliable, by decide⟩
 
 /-- **yè is de se / de re ambiguous** ([pearson-2015]'s central finding): the same sentence is
     **false** on the de se LF (78) but **true** on the de re LF (79). The Heim & von Stechow
