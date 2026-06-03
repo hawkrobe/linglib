@@ -6,9 +6,9 @@ import Linglib.Core.Word
 
 `PronounLike α` is the lexical word-class interface — a surface form and agreement
 φ-features (`UD.MorphFeatures`) — abstracted over carriers, so that the `Pronoun` record,
-a `Core.Word`, or a syntactic theory's representation are all treated uniformly. It is the
-`[Pronoun α]`-style half of the lexical mixin pair (the binding half is `Binding.Lexicon`):
-binding and agreement range over `[PronounLike α]` rather than a concrete pronoun type.
+a `Core.Word`, or a syntactic theory's representation are all treated uniformly, so binding
+and agreement range over `[PronounLike α]` rather than a concrete pronoun type. A pro-form's
+binding role is carried separately, by the `Pronoun.bindingClass` declaration.
 
 ## Main declarations
 
