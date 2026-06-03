@@ -1,4 +1,4 @@
-import Linglib.Dialogue.KOS.Defs
+import Linglib.Discourse.KOS.Defs
 import Linglib.Discourse.IllocutionaryForce
 
 /-!
@@ -18,7 +18,7 @@ illocutionary primitives — they do not depend on the dialogue gameboard
 machinery.
 -/
 
-namespace Dialogue.KOS
+namespace Discourse.KOS
 
 /-- Map an illocutionary move to [searle-1979]'s five-class taxonomy.
 
@@ -69,4 +69,4 @@ theorem directive_moves_world_to_mind {Fact QContent : Type*}
     (IllocMove.check (QContent := QContent) p).directionOfFit = .worldToMind :=
   ⟨rfl, rfl⟩
 
-end Dialogue.KOS
+end Discourse.KOS

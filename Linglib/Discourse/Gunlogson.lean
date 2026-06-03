@@ -2,7 +2,7 @@ import Linglib.Discourse.CommonGround
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment.Basic
-import Linglib.Semantics.Modality.BiasedPQ
+import Linglib.Semantics.Questions.Bias.Defs
 
 /-!
 # [gunlogson-2004]: Source-Marked Commitments
@@ -34,12 +34,12 @@ Source determines who can challenge:
 
 -/
 
-namespace Dialogue.Gunlogson
+namespace Discourse.Gunlogson
 
 open Discourse.Commitment
 open CommonGround (ContextSet)
 open Discourse (DiscourseRole)
-open Semantics.Modality.BiasedPQ (ContextualEvidence)
+open Semantics.Questions.Bias (ContextualEvidence)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Gunlogson State
@@ -345,4 +345,4 @@ open CommonGround in
 instance {W : Type*} : HasContextSet (GunlogsonState W) W where
   toContextSet := GunlogsonState.contextSet
 
-end Dialogue.Gunlogson
+end Discourse.Gunlogson

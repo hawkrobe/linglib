@@ -1,5 +1,5 @@
-import Linglib.Dialogue.KOS.Defs
-import Linglib.Dialogue.KOS.Grounding
+import Linglib.Discourse.KOS.Defs
+import Linglib.Discourse.KOS.Grounding
 import Linglib.Syntax.HPSG.HeadFiller
 
 /-!
@@ -25,9 +25,9 @@ continue to use plain HPSG signs. Theories that need the Ginzburg 2012
 architecture import this module.
 -/
 
-namespace Dialogue.KOS.Grammar
+namespace Discourse.KOS.Grammar
 
-open Dialogue.KOS
+open Discourse.KOS
 open HPSG
 
 -- ════════════════════════════════════════════════════
@@ -175,4 +175,4 @@ theorem slash_cparams_both_decrease
   · simp only [HPSG.SlashValue.discharge]; exact List.length_erase_le
   · exact List.length_filter_le _ _
 
-end Dialogue.KOS.Grammar
+end Discourse.KOS.Grammar

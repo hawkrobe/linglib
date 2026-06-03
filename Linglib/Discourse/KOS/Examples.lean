@@ -1,6 +1,6 @@
-import Linglib.Dialogue.KOS.InquiryCycle
-import Linglib.Dialogue.KOS.Genre
-import Linglib.Dialogue.KOS.Grounding
+import Linglib.Discourse.KOS.InquiryCycle
+import Linglib.Discourse.KOS.Genre
+import Linglib.Discourse.KOS.Grounding
 import Linglib.Semantics.Questions.Partition.QUD
 
 /-!
@@ -28,9 +28,9 @@ counterpart over `BCheckableAustinian S` and `TTRQuestionB R`.
 
 -/
 
-namespace Dialogue.KOS.Examples
+namespace Discourse.KOS.Examples
 
-open Dialogue.KOS Question
+open Discourse.KOS Question
 
 -- ════════════════════════════════════════════════════
 -- § 1. Inquiry Cycle Example (Bo)
@@ -220,4 +220,4 @@ theorem rain_assert_resolves : rainTIS₂.dgb.qud = [] := by
 
 end PartitionExample
 
-end Dialogue.KOS.Examples
+end Discourse.KOS.Examples

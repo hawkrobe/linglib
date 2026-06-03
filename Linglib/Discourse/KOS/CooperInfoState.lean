@@ -1,4 +1,4 @@
-import Linglib.Dialogue.KOS.Defs
+import Linglib.Discourse.KOS.Defs
 import Linglib.Semantics.TypeTheoretic.Discourse
 
 /-!
@@ -32,7 +32,7 @@ The deletions are exactly what [cooper-2023] drops to make TTR
 dialogue tractable for incremental processing.
 -/
 
-namespace Dialogue.KOS.CooperInfoState
+namespace Discourse.KOS.CooperInfoState
 
 open Semantics.TypeTheoretic (InfoState)
 
@@ -63,4 +63,4 @@ theorem tisToInfoState_latest {P QContent : Type*} {Fact Cont SignT : Type}
     (tis : TIS P Fact QContent Cont) (f : IllocMove Fact QContent → SignT) :
     (tisToInfoState tis f).latestUtterance = tis.dgb.latestMove.map f := rfl
 
-end Dialogue.KOS.CooperInfoState
+end Discourse.KOS.CooperInfoState

@@ -1,5 +1,5 @@
 import Linglib.Pragmatics.Bias
-import Linglib.Semantics.Modality.BiasedPQ
+import Linglib.Semantics.Questions.Bias.Defs
 
 /-!
 # Romero (2024): Biased Polar Questions
@@ -16,7 +16,7 @@ the bridge is at the condition-level, not at the form-level.
 
 This study file is the home for that cross-construction bridge. It was
 formerly inlined into `Pragmatics/Bias.lean` §7, but the
-`BiasedPQ` import (with its CommonGround/InformationStructure/Discourse
+`Bias` import (with its CommonGround/InformationStructure/Discourse
 transitive stack) dominated the build cost of `Bias.lean`. Hosting the
 bridge here keeps `Bias.lean` lean and concentrates Romero-2024-specific
 content under its primary phenomenon (polar question bias).
@@ -30,7 +30,7 @@ predicate-level bridge below is the right granularity.
 namespace Romero2024
 
 open Pragmatics.Bias
-open Semantics.Modality.BiasedPQ
+open Semantics.Questions.Bias
 
 /-- HiNQ's original-bias filter requires speaker bias for p. The
     licensed bias profile's `contradictsPriorBelief` axis is the

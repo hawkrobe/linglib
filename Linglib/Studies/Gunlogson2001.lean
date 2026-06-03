@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Assertion.Basic
-import Linglib.Dialogue.Gunlogson
+import Linglib.Discourse.Gunlogson
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -23,7 +23,7 @@ to the addressee and invite confirmation or denial.
 
 namespace Gunlogson2001
 
-open Dialogue.Gunlogson
+open Discourse.Gunlogson
 open Discourse.Commitment (CommitmentSource)
 open Phenomena.Assertion
 

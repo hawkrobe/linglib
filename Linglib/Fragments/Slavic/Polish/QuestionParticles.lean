@@ -1,3 +1,4 @@
+import Linglib.Semantics.Questions.Bias.Defs
 /-!
 # Polish Question Particles
 [simik-2024]
@@ -22,6 +23,8 @@ layer assignment lives in `Simik2024`.
 
 namespace Polish.QuestionParticles
 
+open Semantics.Questions.Bias (ContextualEvidence OriginalBias)
+
 /-- A Polish interrogative particle entry. -/
 structure QParticleEntry where
   form : String
@@ -29,8 +32,8 @@ structure QParticleEntry where
   polarOk : Bool
   declOk : Bool
   whOk : Bool
-  requiresEvidentialBias : Bool
-  requiresEpistemicBias : Bool
+  requiresContextualEvidence : Option ContextualEvidence
+  requiresOriginalBias : Option OriginalBias
   deriving Repr, DecidableEq
 
 /-- czy — obligatory clause-initial PQ particle ([simik-2024] ex. 30).
@@ -41,8 +44,8 @@ def czy : QParticleEntry where
   polarOk := true
   declOk := false
   whOk := true
-  requiresEvidentialBias := false
-  requiresEpistemicBias := false
+  requiresContextualEvidence := none
+  requiresOriginalBias := none
 
 /-- czyżby — mirative/dubitative particle (RAZVE family, [simik-2024] §4.2.4).
 Polish member of the cross-Slavic razve family. -/
@@ -52,20 +55,20 @@ def czyzby : QParticleEntry where
   polarOk := true
   declOk := false
   whOk := false
-  requiresEvidentialBias := true
-  requiresEpistemicBias := false
+  requiresContextualEvidence := some .forP
+  requiresOriginalBias := none
 
 def allQuestionParticles : List QParticleEntry := [czy, czyzby]
 
 theorem czy_neutral :
-    czy.requiresEvidentialBias = false ∧ czy.requiresEpistemicBias = false :=
+    czy.requiresContextualEvidence = none ∧ czy.requiresOriginalBias = none :=
   ⟨rfl, rfl⟩
 
-theorem czyzby_evidential : czyzby.requiresEvidentialBias = true := rfl
+theorem czyzby_evidential : czyzby.requiresContextualEvidence = some .forP := rfl
 
 /-- czy and czyżby form a neutral/evidential contrast. -/
 theorem bias_contrast :
-    czy.requiresEvidentialBias = false ∧ czyzby.requiresEvidentialBias = true :=
+    czy.requiresContextualEvidence = none ∧ czyzby.requiresContextualEvidence = some .forP :=
   ⟨rfl, rfl⟩
 
 end Polish.QuestionParticles

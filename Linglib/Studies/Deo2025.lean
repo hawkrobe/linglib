@@ -1,7 +1,7 @@
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Discourse.Roles
 import Linglib.Discourse.IllocutionaryForce
-import Linglib.Dialogue.Gunlogson
+import Linglib.Discourse.Gunlogson
 import Linglib.Semantics.Attitudes.CondoravdiLauer
 import Linglib.Fragments.Marathi.Particles
 
@@ -61,7 +61,7 @@ namespace Deo2025
 
 open Discourse
 open Discourse.Commitment
-open Dialogue.Gunlogson (GunlogsonState)
+open Discourse.Gunlogson (GunlogsonState)
 
 universe u
 

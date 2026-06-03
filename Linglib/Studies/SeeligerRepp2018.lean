@@ -1,4 +1,4 @@
-import Linglib.Semantics.Modality.BiasedPQ
+import Linglib.Semantics.Questions.Bias.Defs
 import Linglib.Features.Polarity
 import Linglib.Features.QParticleLayer
 import Linglib.Fragments.Swedish.QuestionParticles
@@ -85,7 +85,7 @@ with low negation). Supports fronted-negation + *väl* marking NRQs.
 
 ## Related Work
 
-- `Semantics/Modality/BiasedPQ.lean` — Romero's PQ bias
+- `Semantics/Questions/Bias/Basic.lean` — Romero's PQ bias
   framework (VERUM, FALSUM, OriginalBias, ContextualEvidence). The
   bridge maps Sudo's bias values to Romero's coarser three-valued scheme.
 - `Studies/RomeroHan2004.lean::Verum` — detailed
@@ -212,7 +212,7 @@ def DeclQuestionType.declPolarity : DeclQuestionType → Features.Polarity
     evidential version of VERUM may appear.
 
     These correspond to the operators defined in
-    `Semantics.Modality.BiasedPQ` (`verum`, `mkFalsum`). -/
+    `Semantics.Questions.Bias` (`verum`, `mkFalsum`). -/
 inductive IllocutionaryModifier where
   /-- FALSUM: zero commitment to q (non-propositional negation).
       [repp-2013]: speaker is not committed to q at issue. -/
@@ -417,7 +417,7 @@ theorem verum_falsum_opposite_epistemic :
     IllocutionaryModifier.falsum.epistemicBias := by decide
 
 -- ════════════════════════════════════════════════════════════════
--- § 8. Bridge to Romero's BiasedPQ ([romero-2024])
+-- § 8. Bridge to Romero's Bias ([romero-2024])
 -- ════════════════════════════════════════════════════════════════
 
 /-- Map Sudo's evidential bias values to Romero's contextual evidence.
@@ -425,7 +425,7 @@ theorem verum_falsum_opposite_epistemic :
     The [+positive]/[+negative] values map directly. [neutral] maps to
     neutral. The "minus" values have no direct Romero counterpart — they
     encode incompatibility constraints rather than positive evidence. -/
-def evidentialToContextualEvidence : BiasValue → Option Modality.BiasedPQ.ContextualEvidence
+def evidentialToContextualEvidence : BiasValue → Option Questions.Bias.ContextualEvidence
   | .plusPos  => some .forP
   | .plusNeg  => some .againstP
   | .neutral  => some .neutral
@@ -437,7 +437,7 @@ def evidentialToContextualEvidence : BiasValue → Option Modality.BiasedPQ.Cont
     [+positive] maps to forP (speaker expected p). [+negative] maps to
     againstP. [neutral] maps to neutral. The "minus" values are not
     directly representable in Romero's three-valued system. -/
-def epistemicToOriginalBias : BiasValue → Option Modality.BiasedPQ.OriginalBias
+def epistemicToOriginalBias : BiasValue → Option Questions.Bias.OriginalBias
   | .plusPos  => some .forP
   | .plusNeg  => some .againstP
   | .neutral  => some .neutral
@@ -494,7 +494,7 @@ theorem val_creates_questions :
     contexts with contextual evidence for the proposition, matching the
     evidential bias of PDQs and NRQs. -/
 theorem val_requires_evidence :
-    Swedish.QuestionParticles.val.requiresEvidentialBias = true := rfl
+    Swedish.QuestionParticles.val.requiresContextualEvidence = some .forP := rfl
 
 /-- Swedish *väl* signals epistemic uncertainty — the speaker suspects
     p is true but is not certain. This corresponds to the [-positive]
@@ -511,8 +511,8 @@ theorem val_signals_uncertainty :
     presuppositions in the REJECTQ definition (eq. 40). Both presuppositions
     must be satisfied for REJECTQ to be felicitous. -/
 theorem dochWohl_matches_rejectQ :
-    German.QuestionParticles.dochWohl.requiresEvidentialBias = true ∧
-    German.QuestionParticles.dochWohl.requiresEpistemicBias = true := ⟨rfl, rfl⟩
+    German.QuestionParticles.dochWohl.requiresContextualEvidence = some .forP ∧
+    German.QuestionParticles.dochWohl.requiresOriginalBias = some .againstP := ⟨rfl, rfl⟩
 
 /-- *doch wohl* is not usable in assertions — it marks questions. -/
 theorem dochWohl_not_assertion :
@@ -523,8 +523,8 @@ theorem dochWohl_not_assertion :
     This connects the Fragment entry to the theory-level theorem
     `rq_epistemic_is_plus`. -/
 theorem dochWohl_both_biases_active :
-    dochWohl.requiresEvidentialBias = true ∧
-    dochWohl.requiresEpistemicBias = true ∧
+    dochWohl.requiresContextualEvidence = some .forP ∧
+    dochWohl.requiresOriginalBias = some .againstP ∧
     DeclQuestionType.PRQ.biasProfile.epistemic.IsPlus ∧
     DeclQuestionType.NRQ.biasProfile.epistemic.IsPlus := ⟨rfl, rfl, by decide, by decide⟩
 
@@ -536,8 +536,8 @@ theorem dochWohl_both_biases_active :
     This reflects the shared property that both languages require
     contextual evidence for DQs/RQs. -/
 theorem both_require_evidential :
-    Swedish.QuestionParticles.val.requiresEvidentialBias =
-    German.QuestionParticles.dochWohl.requiresEvidentialBias := rfl
+    Swedish.QuestionParticles.val.requiresContextualEvidence =
+    German.QuestionParticles.dochWohl.requiresContextualEvidence := rfl
 
 /-- German *doch wohl* additionally requires epistemic bias, while
     Swedish *väl* signals epistemic *uncertainty* — a weaker condition.
@@ -545,15 +545,16 @@ theorem both_require_evidential :
     and DQs (epistemic non-commitment): *doch wohl* marks RQs (plus
     epistemic), *väl* marks DQs (minus epistemic). -/
 theorem german_stricter_epistemic :
-    German.QuestionParticles.dochWohl.requiresEpistemicBias = true ∧
+    German.QuestionParticles.dochWohl.requiresOriginalBias = some .againstP ∧
     Swedish.QuestionParticles.val.signalsEpistemicUncertainty = true := ⟨rfl, rfl⟩
 
 /-- German *denn* (flavoring particle) differs from *doch wohl* (RQ marker):
-    *denn* highlights contextual evidence without requiring epistemic
-    commitment. *doch wohl* requires both. -/
+    *denn* imposes no bias requirement — its felicity condition is the
+    highlighting/precondition relation (see `Theiler2021`), not bias —
+    whereas *doch wohl* requires both bias dimensions. -/
 theorem denn_vs_dochWohl :
-    German.QuestionParticles.denn.requiresEpistemicBias = false ∧
-    German.QuestionParticles.dochWohl.requiresEpistemicBias = true := ⟨rfl, rfl⟩
+    German.QuestionParticles.denn.requiresOriginalBias = none ∧
+    German.QuestionParticles.dochWohl.requiresOriginalBias = some .againstP := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 12. Non-compositional *doch wohl* and the dual role of *doch*

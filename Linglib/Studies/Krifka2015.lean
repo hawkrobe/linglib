@@ -1,9 +1,9 @@
-import Linglib.Dialogue.CommitmentSpace
-import Linglib.Dialogue.KOS.Defs
-import Linglib.Dialogue.KOS.Basic
+import Linglib.Discourse.CommitmentSpace
+import Linglib.Discourse.KOS.Defs
+import Linglib.Discourse.KOS.Basic
 import Linglib.Discourse.Commitment.Table
 import Linglib.Features.Acceptability
-import Linglib.Semantics.Modality.BiasedPQ
+import Linglib.Semantics.Questions.Bias.Defs
 
 /-!
 # Bias in Commitment Space Semantics
@@ -53,10 +53,10 @@ uses a 2-world Weather model and verifies a specific paper claim.
 
 namespace Krifka2015
 
-open Dialogue.Krifka
+open Discourse.Krifka
 open Discourse (DiscourseRole)
-open Discourse.Commitment (IndexedCommitment)
-open Semantics.Modality.BiasedPQ (ContextualEvidence)
+open Discourse.Commitment (IndexedCommitment CommitmentSlate)
+open Semantics.Questions.Bias (ContextualEvidence)
 open Features (Acceptability)
 
 -- ════════════════════════════════════════════════════
@@ -226,27 +226,38 @@ theorem high_neg_uses_refuse :
   rw [heq] at h
   exact h
 
-/-- Pragmatic-strength asymmetry (paper p. 340): the high-negation
-    continuation, projected to a context-set constraint, is WEAKER than
-    the low-negation continuation — `refuse` projects to the trivial
-    `True` constraint, while `commit ¬φ` projects to actual `¬φ`. -/
-theorem high_neg_weaker_than_low_neg (w : Weather) :
-    -- High-negation continuation imposes no constraint on w
-    (∀ ic ∈ ([IndexedCommitment.refuse .addressee isRaining] :
-              List (IndexedCommitment Weather)),
-        ic.toCommitment w) ∧
-    -- Low-negation continuation imposes ¬ isRaining
-    (∀ ic ∈ ([IndexedCommitment.commit .addressee
-              (fun w => ¬ isRaining w)] :
-              List (IndexedCommitment Weather)),
-        ic.toCommitment w ↔ ¬ isRaining w) := by
+/-- Pragmatic-strength asymmetry, direction 1 (paper p. 340): low negation
+    `S₂⊢¬φ` ENTAILS high negation `¬S₂⊢φ` whenever the addressee's commitment
+    state `t` is consistent. Committing to ¬φ precludes commitment to φ —
+    Krifka's "adding ¬S₂⊢φ … precludes commitment to φ". The bite is at the
+    commitment level (`holdsIn`), not the world level (`toCommitment`, which
+    sends `refuse` to the trivial `True`). -/
+theorem low_neg_entails_high_neg (t : CommitmentSlate Weather)
+    (hcons : ∃ w, t.toContextSet w) :
+    (IndexedCommitment.commit .addressee (fun w => ¬ isRaining w)).holdsIn t →
+    (IndexedCommitment.refuse .addressee isRaining).holdsIn t := by
+  simp only [IndexedCommitment.holdsIn_commit, IndexedCommitment.holdsIn_refuse]
+  intro hlow hhigh
+  obtain ⟨w, hw⟩ := hcons
+  exact hlow w hw (hhigh w hw)
+
+/-- Pragmatic-strength asymmetry, direction 2 (paper p. 340): the converse
+    FAILS — high negation `¬S₂⊢φ` does NOT entail low negation `S₂⊢¬φ`. The
+    empty (neutral) state witnesses non-commitment to `isRaining` while not
+    committing to `¬isRaining`: Krifka's "compatible with commitment to ¬φ"
+    /neutrality. Together with `low_neg_entails_high_neg`, this makes `¬S₂⊢φ`
+    STRICTLY weaker than `S₂⊢¬φ` — not vacuously weaker. -/
+theorem high_neg_not_entails_low_neg :
+    (IndexedCommitment.refuse .addressee isRaining).holdsIn CommitmentSlate.empty ∧
+    ¬ (IndexedCommitment.commit .addressee (fun w => ¬ isRaining w)).holdsIn
+        CommitmentSlate.empty := by
   refine ⟨?_, ?_⟩
-  · intro ic hic
-    rcases List.mem_singleton.mp hic with rfl
-    trivial
-  · intro ic hic
-    rcases List.mem_singleton.mp hic with rfl
-    rfl
+  · simp only [IndexedCommitment.holdsIn_refuse]
+    intro h
+    exact h .noRain (CommitmentSlate.empty_trivial _)
+  · simp only [IndexedCommitment.holdsIn_commit]
+    intro h
+    exact (h .rain (CommitmentSlate.empty_trivial _)) (by trivial)
 
 /-! ## Table 1 (paper p. 341) — Büring & Gunlogson 2000 licensing
 
@@ -337,8 +348,8 @@ theorem noNeg_licensing_distinguishes_contexts :
 
 Per [krifka-2015] p. 342: matching tags are speech-act CONJUNCTION
 applied as ONE complex move — explicitly NOT sequential `assert; question`.
-The substrate's `Dialogue.Krifka.matchingTag` and `reverseTag`
-(`Dialogue/CommitmentSpace.lean` §4) capture this directly.
+The substrate's `Discourse.Krifka.matchingTag` and `reverseTag`
+(`Discourse/CommitmentSpace.lean` §4) capture this directly.
 -/
 
 /-- Substrate's `matchingTag φ` is structurally a `conj` of two atomic
@@ -407,7 +418,7 @@ both Krifka's eager-narrowing root behaviour and KOS's per-DGB asymmetry.
 
 section vsGinzburg2012
 
-open Dialogue.KOS
+open Discourse.KOS
 
 /-- The contrast theorem: post-assertion, Krifka's `space.root` narrows
     to a singleton list `[commit speaker isRaining]` (immediate, with
@@ -600,7 +611,7 @@ This file proves the conjecture's restriction to a 2-element framework
 class `{Krifka2015, FarkasBruce2010}` and a 2-event trace
 (`assert; accept`). The general statement requires:
 
-1. A `DialogueState` typeclass in `Dialogue/Common.lean`
+1. A `DialogueState` typeclass in `Discourse/Common.lean`
    (does not yet exist) parameterising over the four operations above.
 2. Per-framework instances for Krifka, Farkas-Bruce, KOS, Stalnaker,
    Brandom, Gunlogson, Lauer.

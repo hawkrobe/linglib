@@ -1,4 +1,4 @@
-import Linglib.Dialogue.KOS.Basic
+import Linglib.Discourse.KOS.Basic
 import Linglib.Semantics.Questions.Support
 
 /-!
@@ -36,7 +36,7 @@ The LocProp grounding/CRification protocol (Ch. 6 §6.5–6.7) lives in
 the sibling `KOS/Grounding.lean`.
 -/
 
-namespace Dialogue.KOS
+namespace Discourse.KOS
 
 open Question
 
@@ -246,4 +246,4 @@ def mCoherent {P Fact QContent : Type*} {Cont : Type}
     (dgb₀ : DGB P Fact QContent Cont) (m : IllocMove Fact QContent) : Prop :=
   ∃ rule, rule ∈ rules ∧ (rule dgb₀).latestMove = some m
 
-end Dialogue.KOS
+end Discourse.KOS

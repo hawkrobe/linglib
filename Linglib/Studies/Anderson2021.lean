@@ -2,8 +2,8 @@ import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Core.Agent.Learning
 import Linglib.Discourse.CommonGround
-import Linglib.Dialogue.CommitmentSpace
-import Linglib.Dialogue.DistributionalCG
+import Linglib.Discourse.CommitmentSpace
+import Linglib.Discourse.DistributionalCG
 
 /-!
 # Anderson (2021): Conversation Update for RSA
@@ -125,11 +125,11 @@ theorem studyHumanity_partition :
 /-! `DistributionalCG`, its `HasContextSet` instance, the `HasSupport ℝ`
     instance, the `toCommitmentSpace` bridge, and the support-equivalence
     theorem are all hosted in the substrate file
-    `Dialogue/DistributionalCG.lean` (extracted from this file
+    `Discourse/DistributionalCG.lean` (extracted from this file
     in CHANGELOG 0.230.670). The Anderson study below builds on those
-    primitives. The substrate file is opened via the `Dialogue` namespace. -/
+    primitives. The substrate file is opened via the `Discourse` namespace. -/
 
-open Dialogue (DistributionalCG)
+open Discourse (DistributionalCG)
 
 -- ════════════════════════════════════════════════════
 -- § 3. CommonGround Update

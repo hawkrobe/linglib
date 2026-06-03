@@ -1,4 +1,4 @@
-import Linglib.Dialogue.CommitmentSpace
+import Linglib.Discourse.CommitmentSpace
 import Linglib.Studies.Krifka2015
 
 /-!
@@ -58,7 +58,7 @@ This is the substrate's `CommitmentForce` axis.
 
 namespace CondoravdiLauer2012
 
-open Dialogue.Krifka
+open Discourse.Krifka
 open Discourse (DiscourseRole)
 open Discourse.Commitment (IndexedCommitment IndexedWeightedCommitment CommitmentForce)
 
@@ -182,7 +182,7 @@ theorem dox_pref_dual (w : AddrPosture) :
     really committed. The conflated view loses information. -/
 theorem imperative_conflated_loses_distinction (w : AddrPosture) :
     imperativeState.space.toContextSet w ↔ isSitting w := by
-  rw [Dialogue.Krifka.CommitmentSpace.toContextSet_eq_doxastic_and_preferential]
+  rw [Discourse.Krifka.CommitmentSpace.toContextSet_eq_doxastic_and_preferential]
   constructor
   · rintro ⟨_, hp⟩
     exact (imperative_preferential_narrows w).mp hp

@@ -79,8 +79,8 @@ open Serbian.QuestionParticles    in
 open Macedonian.QuestionParticles in
 /-- The neutral polar-question particle of every surveyed Slavic language
     sits at CP. The fragment-level evidence that this is the *neutral*
-    particle is the conjunction of `requiresEvidentialBias = false` and
-    `requiresEpistemicBias = false`. -/
+    particle is the conjunction of `requiresContextualEvidence = none` and
+    `requiresOriginalBias = none`. -/
 theorem neutral_PQ_particles_are_CP :
     russianLi_layer Russian.QuestionParticles.li = .cp ∧
     bulgarianLi_layer Bulgarian.QuestionParticles.li = .cp ∧
@@ -111,16 +111,16 @@ theorem razve_family_is_PerspP :
     in the fragments: every PerspP-layer Slavic particle in this study
     requires evidential bias, while every CP-layer particle does not. -/
 theorem layer_correlates_with_bias :
-    Russian.QuestionParticles.li.requiresEvidentialBias = false ∧
-    Russian.QuestionParticles.razve_.requiresEvidentialBias = true ∧
-    Bulgarian.QuestionParticles.li.requiresEvidentialBias = false ∧
-    Bulgarian.QuestionParticles.nima.requiresEvidentialBias = true ∧
-    Ukrainian.QuestionParticles.cy.requiresEvidentialBias = false ∧
-    Ukrainian.QuestionParticles.xiba.requiresEvidentialBias = true ∧
-    Polish.QuestionParticles.czy.requiresEvidentialBias = false ∧
-    Polish.QuestionParticles.czyzby.requiresEvidentialBias = true ∧
-    Serbian.QuestionParticles.daLi.requiresEvidentialBias = false ∧
-    Serbian.QuestionParticles.zar_.requiresEvidentialBias = true :=
+    Russian.QuestionParticles.li.requiresContextualEvidence = none ∧
+    Russian.QuestionParticles.razve_.requiresContextualEvidence = some .forP ∧
+    Bulgarian.QuestionParticles.li.requiresContextualEvidence = none ∧
+    Bulgarian.QuestionParticles.nima.requiresContextualEvidence = some .forP ∧
+    Ukrainian.QuestionParticles.cy.requiresContextualEvidence = none ∧
+    Ukrainian.QuestionParticles.xiba.requiresContextualEvidence = some .forP ∧
+    Polish.QuestionParticles.czy.requiresContextualEvidence = none ∧
+    Polish.QuestionParticles.czyzby.requiresContextualEvidence = some .forP ∧
+    Serbian.QuestionParticles.daLi.requiresContextualEvidence = none ∧
+    Serbian.QuestionParticles.zar_.requiresContextualEvidence = some .forP :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 end Simik2024

@@ -34,7 +34,7 @@ inferential role.
 
 -/
 
-namespace Dialogue.Brandom
+namespace Discourse.Brandom
 
 open Discourse.Commitment (CommitmentSlate)
 open CommonGround (ContextSet)
@@ -230,4 +230,4 @@ open CommonGround in
 instance {W : Type*} : HasContextSet (BrandomState W) W where
   toContextSet := BrandomState.effectiveContextSet
 
-end Dialogue.Brandom
+end Discourse.Brandom

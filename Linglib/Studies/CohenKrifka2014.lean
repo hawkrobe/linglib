@@ -1,4 +1,4 @@
-import Linglib.Dialogue.CommitmentSpace
+import Linglib.Discourse.CommitmentSpace
 
 /-!
 # Superlative Quantifiers and Meta-Speech Acts
@@ -78,7 +78,7 @@ computation.
 
 namespace CohenKrifka2014
 
-open Dialogue.Krifka
+open Discourse.Krifka
 open Discourse (DiscourseRole)
 open Discourse.Commitment (IndexedCommitment IndexedWeightedCommitment CommitmentForce)
 

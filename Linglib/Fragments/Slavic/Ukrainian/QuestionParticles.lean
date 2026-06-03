@@ -1,3 +1,4 @@
+import Linglib.Semantics.Questions.Bias.Defs
 /-!
 # Ukrainian Question Particles
 [simik-2024]
@@ -22,6 +23,8 @@ layer assignment lives in `Simik2024`.
 
 namespace Ukrainian.QuestionParticles
 
+open Semantics.Questions.Bias (ContextualEvidence OriginalBias)
+
 /-- A Ukrainian interrogative particle entry. -/
 structure QParticleEntry where
   form : String
@@ -30,8 +33,8 @@ structure QParticleEntry where
   polarOk : Bool
   declOk : Bool
   whOk : Bool
-  requiresEvidentialBias : Bool
-  requiresEpistemicBias : Bool
+  requiresContextualEvidence : Option ContextualEvidence
+  requiresOriginalBias : Option OriginalBias
   deriving Repr, DecidableEq
 
 /-- чи čy — obligatory clause-initial PQ particle ([simik-2024] ex. 29).
@@ -43,8 +46,8 @@ def cy : QParticleEntry where
   polarOk := true
   declOk := false
   whOk := true
-  requiresEvidentialBias := false
-  requiresEpistemicBias := false
+  requiresContextualEvidence := none
+  requiresOriginalBias := none
 
 /-- хіба xiba — mirative/dubitative particle (RAZVE family, [simik-2024] §4.2.4).
 Ukrainian cognate of Russian razve. Indicates conflict between speaker's
@@ -56,20 +59,20 @@ def xiba : QParticleEntry where
   polarOk := true
   declOk := false
   whOk := false
-  requiresEvidentialBias := true
-  requiresEpistemicBias := false
+  requiresContextualEvidence := some .forP
+  requiresOriginalBias := none
 
 def allQuestionParticles : List QParticleEntry := [cy, xiba]
 
 theorem cy_neutral :
-    cy.requiresEvidentialBias = false ∧ cy.requiresEpistemicBias = false :=
+    cy.requiresContextualEvidence = none ∧ cy.requiresOriginalBias = none :=
   ⟨rfl, rfl⟩
 
-theorem xiba_evidential : xiba.requiresEvidentialBias = true := rfl
+theorem xiba_evidential : xiba.requiresContextualEvidence = some .forP := rfl
 
 /-- čy and xiba form a neutral/evidential contrast. -/
 theorem bias_contrast :
-    cy.requiresEvidentialBias = false ∧ xiba.requiresEvidentialBias = true :=
+    cy.requiresContextualEvidence = none ∧ xiba.requiresContextualEvidence = some .forP :=
   ⟨rfl, rfl⟩
 
 end Ukrainian.QuestionParticles

@@ -28,7 +28,7 @@ The norms are relevant to Krifka's separation of commitment from belief.
 
 -/
 
-namespace Dialogue.Stalnaker
+namespace Discourse.Stalnaker
 
 open CommonGround (ContextSet)
 
@@ -96,4 +96,4 @@ instance instAssertable {W : Type*} :
   speakerAssert_subset_prior _ _ _ h := h.2
   speakerAssert_narrows _ _ _ h := h.1
 
-end Dialogue.Stalnaker
+end Discourse.Stalnaker

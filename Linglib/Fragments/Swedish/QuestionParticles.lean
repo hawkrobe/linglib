@@ -1,3 +1,4 @@
+import Linglib.Semantics.Questions.Bias.Defs
 /-!
 # Swedish Question Particles
 [seeliger-repp-2018]
@@ -41,6 +42,8 @@ position, and their clause-initial uses require further investigation.
 
 namespace Swedish.QuestionParticles
 
+open Semantics.Questions.Bias (ContextualEvidence)
+
 /-- A Swedish question/modal particle entry. -/
 structure QParticleEntry where
   form : String
@@ -51,8 +54,8 @@ structure QParticleEntry where
   declOk : Bool
   /-- Compatible with wh-questions? -/
   whOk : Bool
-  /-- Does this particle require evidential bias (contextual evidence)? -/
-  requiresEvidentialBias : Bool
+  /-- Contextual-evidence bias the particle requires, or `none`. -/
+  requiresContextualEvidence : Option ContextualEvidence
   /-- Does this particle signal epistemic uncertainty? -/
   signalsEpistemicUncertainty : Bool
   /-- Is this particle question-inducing? -/
@@ -77,7 +80,7 @@ def val : QParticleEntry where
   polarOk := true
   declOk := false  -- väl-declaratives are questions, not assertions
   whOk := false
-  requiresEvidentialBias := true
+  requiresContextualEvidence := some .forP
   signalsEpistemicUncertainty := true
   questionInducing := true
 
@@ -87,7 +90,7 @@ def allQuestionParticles : List QParticleEntry := [val]
 theorem val_form : val.form = "väl" := rfl
 theorem val_question_inducing : val.questionInducing = true := rfl
 theorem val_signals_uncertainty : val.signalsEpistemicUncertainty = true := rfl
-theorem val_requires_evidential : val.requiresEvidentialBias = true := rfl
+theorem val_requires_evidential : val.requiresContextualEvidence = some .forP := rfl
 theorem val_not_assertion : val.declOk = false := rfl
 
 end Swedish.QuestionParticles

@@ -35,7 +35,7 @@ holds indexed commitments, projected to a flat context set via
 
 ## Sibling files
 
-`Dialogue/LayeredAssertion.lean` houses Krifka 2020's
+`Discourse/LayeredAssertion.lean` houses Krifka 2020's
 TP/JP/ComP/ActP layered-clause framework. The two files are independent
 (neither imports the other); study files target whichever fits.
 
@@ -69,7 +69,7 @@ re-audit if substrate operators are renamed or restructured.
 
 -/
 
-namespace Dialogue.Krifka
+namespace Discourse.Krifka
 
 open Discourse.Commitment
   (CommitmentSlate IndexedCommitment IndexedWeightedCommitment CommitmentForce
@@ -798,4 +798,4 @@ instance instAssertable {W : Type*} :
       simp only [KrifkaState.assert, CommitmentSpace.assert, List.mem_cons, true_or]
     exact h _ head_mem
 
-end Dialogue.Krifka
+end Discourse.Krifka

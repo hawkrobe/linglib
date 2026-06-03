@@ -1,4 +1,4 @@
-import Linglib.Dialogue.KOS.Defs
+import Linglib.Discourse.KOS.Defs
 
 /-!
 # The Reprise Content Hypothesis (RCH)
@@ -44,7 +44,7 @@ in `Studies/PurverGinzburg2004.lean`, which consumes this
 file.
 -/
 
-namespace Dialogue.KOS
+namespace Discourse.KOS
 
 -- ════════════════════════════════════════════════════
 -- § 1. Reprise readings ([ginzburg-2012] Ch. 6 §6.2.1, Table 6.1)
@@ -192,4 +192,4 @@ theorem qParamsPredictor_satisfies_strongRCH {Cont : Type} :
   intro ev qt
   exact Iff.rfl
 
-end Dialogue.KOS
+end Discourse.KOS

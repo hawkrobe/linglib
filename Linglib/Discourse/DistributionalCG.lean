@@ -2,7 +2,7 @@ import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Linarith
 import Linglib.Discourse.CommonGround
 import Linglib.Discourse.Commitment.Basic
-import Linglib.Dialogue.CommitmentSpace
+import Linglib.Discourse.CommitmentSpace
 
 /-!
 # Distributional Common Ground
@@ -23,7 +23,7 @@ This file hosts:
 - The `HasSupport ℝ` instance enabling the polymorphic
   `CommitmentSpace W G` substrate to be hosted at `G = ℝ`.
 - The `toCommitmentSpace` bridge from `DistributionalCG W` to
-  `Dialogue.Krifka.CommitmentSpace W ℝ`, plus the support-equivalence
+  `Discourse.Krifka.CommitmentSpace W ℝ`, plus the support-equivalence
   theorem.
 
 The Anderson 2021 study (`Studies/Anderson2021.lean`)
@@ -41,7 +41,7 @@ over `[0,1]` would unlock graded bipolar questions for probabilistic
 frameworks.
 -/
 
-namespace Dialogue
+namespace Discourse
 
 open CommonGround (ContextSet HasContextSet)
 open Discourse (DiscourseRole)
@@ -125,7 +125,7 @@ instance : HasSupport ℝ where
     invariant. -/
 noncomputable def DistributionalCG.toCommitmentSpace {W : Type*}
     (cg : DistributionalCG W) :
-    Dialogue.Krifka.CommitmentSpace W ℝ where
+    Discourse.Krifka.CommitmentSpace W ℝ where
   root := [IndexedWeightedCommitment.commit .speaker .doxastic cg.weight]
   continuations := []
 
@@ -138,7 +138,7 @@ theorem DistributionalCG.toCommitmentSpace_support {W : Type*}
     (cg : DistributionalCG W) (w : W) :
     (cg.toCommitmentSpace).toContextSet w ↔ cg.toContextSet w := by
   unfold toCommitmentSpace
-  simp only [Dialogue.Krifka.CommitmentSpace.toContextSet, List.mem_singleton]
+  simp only [Discourse.Krifka.CommitmentSpace.toContextSet, List.mem_singleton]
   constructor
   · intro h
     have := h _ rfl
@@ -147,4 +147,4 @@ theorem DistributionalCG.toCommitmentSpace_support {W : Type*}
     rw [heq]
     exact h
 
-end Dialogue
+end Discourse

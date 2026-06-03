@@ -1,3 +1,4 @@
+import Linglib.Semantics.Questions.Bias.Defs
 /-!
 # Slovenian Question Particles
 [simik-2024]
@@ -23,6 +24,8 @@ Incompatible with DeclPQs ([simik-2024] ex. 28).
 
 namespace Slovenian.QuestionParticles
 
+open Semantics.Questions.Bias (ContextualEvidence OriginalBias)
+
 /-- A Slovenian interrogative particle entry. -/
 structure QParticleEntry where
   form : String
@@ -30,8 +33,8 @@ structure QParticleEntry where
   polarOk : Bool
   declOk : Bool
   whOk : Bool
-  requiresEvidentialBias : Bool
-  requiresEpistemicBias : Bool
+  requiresContextualEvidence : Option ContextualEvidence
+  requiresOriginalBias : Option OriginalBias
   deriving Repr, DecidableEq
 
 /-- ali — clause-initial PQ particle ([simik-2024] ex. 28).
@@ -42,13 +45,13 @@ def ali : QParticleEntry where
   polarOk := true
   declOk := false
   whOk := false
-  requiresEvidentialBias := false
-  requiresEpistemicBias := false
+  requiresContextualEvidence := none
+  requiresOriginalBias := none
 
 def allQuestionParticles : List QParticleEntry := [ali]
 
 theorem ali_neutral :
-    ali.requiresEvidentialBias = false ∧ ali.requiresEpistemicBias = false :=
+    ali.requiresContextualEvidence = none ∧ ali.requiresOriginalBias = none :=
   ⟨rfl, rfl⟩
 
 end Slovenian.QuestionParticles

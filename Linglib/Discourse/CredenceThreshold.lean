@@ -25,7 +25,7 @@ substrate-supported elsewhere:
   `Discourse/Commitment.lean` as `CommitmentForce` (with
   `.doxastic` and `.preferential` cases).
 - Krifka-style commitment spaces consume it via
-  `Dialogue/CommitmentSpace.lean` (the `force` parameter on
+  `Discourse/CommitmentSpace.lean` (the `force` parameter on
   `IndexedWeightedCommitment.commit/refuse` and the
   `toDoxasticContextSet` / `toPreferentialContextSet` projections).
 - The [condoravdi-lauer-2012] imperative-as-PEP study lives in
@@ -46,7 +46,7 @@ model lacks.
 
 -/
 
-namespace Dialogue.CredenceThreshold
+namespace Discourse.CredenceThreshold
 
 open Discourse.Commitment (CommitmentSlate)
 open CommonGround (ContextSet)
@@ -175,4 +175,4 @@ open CommonGround in
 instance {W : Type*} : HasContextSet (State W) W where
   toContextSet := State.contextSet
 
-end Dialogue.CredenceThreshold
+end Discourse.CredenceThreshold

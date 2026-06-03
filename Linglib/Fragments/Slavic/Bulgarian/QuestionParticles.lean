@@ -1,3 +1,4 @@
+import Linglib.Semantics.Questions.Bias.Defs
 /-!
 # Bulgarian Question Particles
 [simik-2024]
@@ -23,6 +24,8 @@ layer assignment lives in `Simik2024`.
 
 namespace Bulgarian.QuestionParticles
 
+open Semantics.Questions.Bias (ContextualEvidence OriginalBias)
+
 /-- A Bulgarian interrogative particle entry. -/
 structure QParticleEntry where
   form : String
@@ -31,8 +34,8 @@ structure QParticleEntry where
   polarOk : Bool
   declOk : Bool
   whOk : Bool
-  requiresEvidentialBias : Bool
-  requiresEpistemicBias : Bool
+  requiresContextualEvidence : Option ContextualEvidence
+  requiresOriginalBias : Option OriginalBias
   deriving Repr, DecidableEq
 
 /-- ли li — verb-attached neutral PQ particle ([simik-2024] ex. 33).
@@ -44,8 +47,8 @@ def li : QParticleEntry where
   polarOk := true
   declOk := false
   whOk := false
-  requiresEvidentialBias := false
-  requiresEpistemicBias := false
+  requiresContextualEvidence := none
+  requiresOriginalBias := none
 
 /-- нима nima — mirative/dubitative particle (RAZVE family, [simik-2024] §4.2.4).
 Expresses incredulity: speaker encounters evidence conflicting with prior
@@ -57,20 +60,20 @@ def nima : QParticleEntry where
   polarOk := true
   declOk := false
   whOk := false
-  requiresEvidentialBias := true
-  requiresEpistemicBias := false
+  requiresContextualEvidence := some .forP
+  requiresOriginalBias := none
 
 def allQuestionParticles : List QParticleEntry := [li, nima]
 
 theorem li_neutral :
-    li.requiresEvidentialBias = false ∧ li.requiresEpistemicBias = false :=
+    li.requiresContextualEvidence = none ∧ li.requiresOriginalBias = none :=
   ⟨rfl, rfl⟩
 
-theorem nima_evidential : nima.requiresEvidentialBias = true := rfl
+theorem nima_evidential : nima.requiresContextualEvidence = some .forP := rfl
 
 /-- li and nima form a neutral/evidential contrast. -/
 theorem bias_contrast :
-    li.requiresEvidentialBias = false ∧ nima.requiresEvidentialBias = true :=
+    li.requiresContextualEvidence = none ∧ nima.requiresContextualEvidence = some .forP :=
   ⟨rfl, rfl⟩
 
 end Bulgarian.QuestionParticles

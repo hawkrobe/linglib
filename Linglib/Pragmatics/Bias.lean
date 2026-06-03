@@ -53,7 +53,7 @@ in `Phenomena.Negation.ExpletiveNegation.PolarityLicensing`. The Romero-2024 HiN
 predicate-level correspondence between this licensing condition and
 Romero's bias requirement — lives in
 `Studies/Romero2024.lean`, so that this file does
-not have to import the BiasedPQ stack.
+not have to import the Bias stack.
 
 These are **predicate-level correspondences**, not stipulated maps. An
 earlier draft had `toRomeroForm := if licenses then HiNQ else none` (a
@@ -234,7 +234,7 @@ theorem licensed_activates_weakEN :
 
 -- The Romero (2024) HiNQ bridge formerly lived here as §7 but was relocated
 -- to `Studies/Romero2024.lean` so that this file does not
--- have to import the BiasedPQ stack (CommonGround / InformationStructure /
+-- have to import the Bias stack (CommonGround / InformationStructure /
 -- Discourse.{IllocutionaryForce,Intentionality,Commitment} / Kratzer.Flavor /
 -- Core.Logic.Intensional.Examples). The bridge is predicate-level — sharing only the
 -- licensing predicate, not the form-level structure — and lives naturally in

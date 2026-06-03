@@ -1,3 +1,4 @@
+import Linglib.Semantics.Questions.Bias.Defs
 /-!
 # Macedonian Question Particles
 [simik-2024]
@@ -24,6 +25,8 @@ Saračević (2024) contrast *dali* with biased particles *zar* and *neli*.
 
 namespace Macedonian.QuestionParticles
 
+open Semantics.Questions.Bias (ContextualEvidence OriginalBias)
+
 /-- A Macedonian interrogative particle entry. -/
 structure QParticleEntry where
   form : String
@@ -32,8 +35,8 @@ structure QParticleEntry where
   polarOk : Bool
   declOk : Bool
   whOk : Bool
-  requiresEvidentialBias : Bool
-  requiresEpistemicBias : Bool
+  requiresContextualEvidence : Option ContextualEvidence
+  requiresOriginalBias : Option OriginalBias
   /-- Does adding negation to the PQ trigger epistemic bias? -/
   negationTriggersBias : Bool
   deriving Repr, DecidableEq
@@ -47,14 +50,14 @@ def dali : QParticleEntry where
   polarOk := true
   declOk := false
   whOk := false
-  requiresEvidentialBias := false
-  requiresEpistemicBias := false
+  requiresContextualEvidence := none
+  requiresOriginalBias := none
   negationTriggersBias := false
 
 def allQuestionParticles : List QParticleEntry := [dali]
 
 theorem dali_neutral :
-    dali.requiresEvidentialBias = false ∧ dali.requiresEpistemicBias = false :=
+    dali.requiresContextualEvidence = none ∧ dali.requiresOriginalBias = none :=
   ⟨rfl, rfl⟩
 
 /-- dali + negation does NOT trigger bias (unlike Bulgarian li).

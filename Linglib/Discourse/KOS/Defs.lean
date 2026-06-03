@@ -71,7 +71,7 @@ tags carry information our consumers find useful.
 
 -/
 
-namespace Dialogue.KOS
+namespace Discourse.KOS
 
 open Semantics.TypeTheoretic (TTRSign)
 
@@ -402,4 +402,4 @@ structure TIS (Participant Fact QContent : Type*) (Cont : Type) where
 def TIS.initial {Participant Fact QContent : Type*} {Cont : Type} :
     TIS Participant Fact QContent Cont := {}
 
-end Dialogue.KOS
+end Discourse.KOS

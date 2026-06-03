@@ -21,7 +21,7 @@ synthesises them with the commitment-space framework.
 JP and ComP are independent: "I think I swear p" vs "I swear I think p"
 both involve TP content p, but with different epistemic/commitment profiles.
 
-This file is sibling to `Dialogue/CommitmentSpace.lean` (the 2015
+This file is sibling to `Discourse/CommitmentSpace.lean` (the 2015
 commitment-space framework). The two are independent — neither imports
 the other — and study files target whichever is appropriate:
 
@@ -29,7 +29,7 @@ the other — and study files target whichever is appropriate:
 - `Studies/Krifka2020.lean` consumes this file
 -/
 
-namespace Dialogue.Krifka
+namespace Discourse.Krifka
 
 open Semantics.Mood (IllocutionaryMood)
 
@@ -124,4 +124,4 @@ structure TypedAssertion (W : Type*) extends LayeredAssertion W where
 theorem default_assertion_informative {W : Type*} (p : Set W) :
     ({ content := p : TypedAssertion W }).updateType = .informative := rfl
 
-end Dialogue.Krifka
+end Discourse.Krifka

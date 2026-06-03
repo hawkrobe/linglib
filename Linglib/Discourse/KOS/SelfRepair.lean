@@ -1,5 +1,5 @@
-import Linglib.Dialogue.KOS.Defs
-import Linglib.Dialogue.KOS.Basic
+import Linglib.Discourse.KOS.Defs
+import Linglib.Discourse.KOS.Basic
 
 /-!
 # KOS: Self-Repair via MaxPending (= head of Pending)
@@ -34,7 +34,7 @@ incremental-construction model needs. The §8.2.3 incremental dynamics is
 deferred substrate work.
 -/
 
-namespace Dialogue.KOS
+namespace Discourse.KOS
 
 -- ════════════════════════════════════════════════════
 -- § 1. MaxPending Accessor
@@ -113,4 +113,4 @@ def TIS.replaceMaxPending {P Fact QContent : Type*} {Cont : Type}
   unfold TIS.replaceMaxPending
   cases tis.dgb.pending <;> rfl
 
-end Dialogue.KOS
+end Discourse.KOS
