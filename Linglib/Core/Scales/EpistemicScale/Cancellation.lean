@@ -24,7 +24,7 @@ with a strict member.
 * `representable_implies_cancellation` — easy direction: measure existence → cancellation
 * `cancellation_implies_representable` — hard direction: cancellation → measure existence
   (via `feasibleWeights`, `cancellation_nonempty`, `feasible_to_measure`)
-* `fa_cancellation_fin3` — FA axioms imply cancellation on Fin 3
+* `fa_cancellation_fin3` — FA axioms imply cancellation on Fin 3 (in `CancellationFin4.lean`)
 * `fa_cancellation_fin4` — FA axioms imply cancellation on Fin 4 (in `CancellationFin4.lean`)
 -/
 
@@ -1142,14 +1142,6 @@ theorem cancellation_implies_representable {n : ℕ}
 -- § 5. FA → Cancellation for small n
 -- ═══════════════════════════════════════════════════════════════
 
-/-- FA on Fin 3 implies the cancellation property.
-    Derived from the direct measure construction (`theorem8a_fin3` in Defs.lean)
-    composed with the easy direction of Scott's theorem. -/
-theorem fa_cancellation_fin3 (sys : EpistemicSystemFA (Fin 3)) :
-    Cancellation 3 sys.ge := by
-  obtain ⟨m, hm⟩ := theorem8a_fin3 sys
-  exact representable_implies_cancellation sys m hm
-
 /-- Not all 4 singletons can be null (non-triviality). -/
 theorem not_all_null_fin4 (sys : EpistemicSystemFA (Fin 4))
     (h0 : sys.ge ∅ {(0 : Fin 4)}) (h1 : sys.ge ∅ {(1 : Fin 4)})
@@ -1173,14 +1165,6 @@ theorem not_all_null_fin4 (sys : EpistemicSystemFA (Fin 4))
       (by rw [show ({3} : Set (Fin 4)) \ Set.univ = ∅ from by ext x; simp,
               show (Set.univ : Set (Fin 4)) \ {3} = {0, 1, 2} from by ext x; fin_cases x <;> simp_all]
           exact h012)))
-
-/-- Helper: if element 0 is null on Fin 4, derive cancellation via null reduction to Fin 3. -/
-theorem fa_cancellation_fin4_null0 (sys : EpistemicSystemFA (Fin 4))
-    (h0 : sys.ge ∅ {(0 : Fin 4)})
-    (hnn : ∃ i : Fin 3, ¬sys.ge ∅ {Fin.succ i}) :
-    Cancellation 4 sys.ge := by
-  obtain ⟨m, hm⟩ := null_elem_reduce sys h0 hnn (fun sys' => theorem8a_fin3 sys')
-  exact representable_implies_cancellation sys m hm
 
 
 end Core.Scale
