@@ -1,7 +1,7 @@
 import Linglib.Core.Scales.EpistemicScale.Defs
 import Linglib.Core.Scales.EpistemicScale.Entailments
 import Linglib.Core.Scales.EpistemicScale.Representability
-import Linglib.Core.Scales.EpistemicScale.Cancellation88
+import Linglib.Core.Scales.EpistemicScale.CancellationFin4
 
 /-!
 # Epistemic Comparative Likelihood — Main Theorems
@@ -10,7 +10,7 @@ import Linglib.Core.Scales.EpistemicScale.Cancellation88
 
 Re-exports `EpistemicScale.Defs` (axioms, structures, semantics),
 `EpistemicScale.Representability` (KPS counterexample, Fin 0–3 proofs),
-and `EpistemicScale.Cancellation88` (Fin 4 via Scott cancellation),
+and `EpistemicScale.CancellationFin4` (Fin 4 via Scott cancellation),
 then states the top-level KPS theorems (8a, 8b) and completeness results.
 -/
 

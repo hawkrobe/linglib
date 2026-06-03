@@ -46,7 +46,7 @@ a neutral portfolio with a strict member.
 * `cancellation_implies_representable` — hard direction: cancellation → measure existence
   (via `feasibleWeights`, `cancellation_nonempty`, `feasible_to_measure`)
 * `fa_cancellation_fin3` — FA axioms imply cancellation on Fin 3
-* `fa_cancellation_fin4` — FA axioms imply cancellation on Fin 4 (in `Cancellation88.lean`)
+* `fa_cancellation_fin4` — FA axioms imply cancellation on Fin 4 (in `CancellationFin4.lean`)
 * `theorem8a_fin3'` — KPS Theorem 8a for n = 3 (via cancellation)
 -/
 
