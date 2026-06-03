@@ -102,7 +102,7 @@ structure AGMRevision (W : Type*) where
     `PlausibilityOrder`. The bridge connects:
     - Kratzer modal semantics (Semantics/Modality/Kratzer.lean)
     - Preferential reasoning (System P axioms above)
-    - Epistemic likelihood (Core/Scales/EpistemicScale/ via halpernLift) -/
+    - Epistemic likelihood (Core/Scales/EpistemicScale/ via dominationLift) -/
 private lemma filter_sublist_of_imp {α : Type*} (l : List α)
     (p q : α → Prop) [DecidablePred p] [DecidablePred q]
     (h : ∀ x ∈ l, p x → q x) :
@@ -174,32 +174,6 @@ noncomputable def kratzerDefault {W : Type*} [Fintype W] [DecidableEq W]
 -- ══════════════════════════════════════════════════════════════════════
 
 open Core.Scale in
-/-- The empty set has measure 0. -/
-private theorem mu_empty {W : Type*} (m : FinAddMeasure W) :
-    m.mu ∅ = 0 := by
-  have h := m.additive ∅ Set.univ (fun x hx _ => hx.elim)
-  simp [m.total] at h
-  linarith [m.nonneg ∅]
-
-open Core.Scale in
-/-- Subset monotonicity: A ⊆ B → μ(A) ≤ μ(B). -/
-private theorem mu_mono {W : Type*} (m : FinAddMeasure W)
-    (A B : Set W) (h : A ⊆ B) : m.mu A ≤ m.mu B := by
-  have hdisj : ∀ x, x ∈ A → x ∉ B \ A := fun x hx ⟨_, hna⟩ => hna hx
-  have hunion := m.additive A (B \ A) hdisj
-  rw [Set.union_diff_cancel h] at hunion
-  linarith [m.nonneg (B \ A)]
-
-open Core.Scale in
-/-- Complement measure: μ(A) + μ(Aᶜ) = 1. -/
-private theorem mu_compl {W : Type*} (m : FinAddMeasure W)
-    (A : Set W) : m.mu A + m.mu Aᶜ = 1 := by
-  have hdisj : ∀ x, x ∈ A → x ∉ Aᶜ := fun x hx hxc => hxc hx
-  have hunion := m.additive A Aᶜ hdisj
-  rw [Set.union_compl_self] at hunion
-  linarith [m.total]
-
-open Core.Scale in
 /-- In finite W, if every singleton in A has measure 0, then μ(A) = 0. -/
 private theorem mu_eq_zero_of_singletons {W : Type*} [Fintype W] [DecidableEq W]
     (m : FinAddMeasure W) (A : Set W)
@@ -211,7 +185,7 @@ private theorem mu_eq_zero_of_singletons {W : Type*} [Fintype W] [DecidableEq W]
     exact key _ (fun w hw => by simp [Finset.mem_filter] at hw; exact h w hw)
   intro s
   induction s using Finset.cons_induction with
-  | empty => intro _; simp [Finset.coe_empty, mu_empty m]
+  | empty => intro _; simp [Finset.coe_empty, m.mu_empty]
   | cons a t ha ih =>
     intro hall
     rw [Finset.coe_cons, Set.insert_eq a ↑t]
@@ -274,10 +248,10 @@ private theorem mem_of_mu_singleton_pos {W : Type*}
     (m : FinAddMeasure W) (w : W) (A : Set W)
     (hw : 0 < m.mu {w}) (hA : m.mu A = 1) : w ∈ A := by
   by_contra hw_not
-  have hAc : m.mu Aᶜ = 0 := by have := mu_compl m A; linarith
+  have hAc : m.mu Aᶜ = 0 := by have := m.mu_compl A; linarith
   have hsub : ({w} : Set W) ⊆ Aᶜ := fun v hv => by
     rw [Set.mem_singleton_iff.mp hv]; exact hw_not
-  linarith [mu_mono m {w} Aᶜ hsub]
+  linarith [m.mu_mono hsub]
 
 open Core.Scale in
 /-- A **regular** conditional measure: every satisfiable proposition is
@@ -311,10 +285,10 @@ private theorem revised_entails {W : Type*}
   have hsub : ({w} : Set W) ⊆ (fun w => φ w : Set W) \ (fun w => ψ w : Set W) :=
     fun v hv => by rw [Set.mem_singleton_iff.mp hv]; exact ⟨hφ, hnψ⟩
   have hw_zero : m.mu ({w} : Set W) = 0 :=
-    le_antisymm (by linarith [mu_mono m.toFinAddMeasure _ _ hsub]) (m.nonneg _)
+    le_antisymm (by linarith [m.toFinAddMeasure.mu_mono hsub]) (m.nonneg _)
   -- μ({w}ᶜ) = 1, so by hbeliefs, w ∈ {w}ᶜ — contradiction
   have hcompl : m.mu ({w} : Set W)ᶜ = 1 := by
-    have := mu_compl m.toFinAddMeasure ({w} : Set W); linarith
+    have := m.toFinAddMeasure.mu_compl ({w} : Set W); linarith
   exact absurd (hbeliefs (fun v => v ≠ w) hcompl) (not_not.mpr rfl)
 
 open Core.Scale in
@@ -352,7 +326,7 @@ noncomputable def Core.Scale.RegularCondMeasure.toAGM {W : Type*}
     show m.condMu (fun w => ψ w) (fun w => φ w) = m.condMu Set.univ (fun w => φ w)
     -- ¬φ ∉ beliefs ↔ μ(φᶜ) ≠ 1 ↔ μ(φ) > 0
     have hmu_phi_pos : 0 < m.mu (fun w => φ w : Set W) := by
-      have hcompl := mu_compl m.toFinAddMeasure (fun w => φ w : Set W)
+      have hcompl := m.toFinAddMeasure.mu_compl (fun w => φ w : Set W)
       by_contra h; push_neg at h
       have h0 := le_antisymm h (m.nonneg _)
       have hone : m.mu (fun w => φ w : Set W)ᶜ = 1 := by linarith

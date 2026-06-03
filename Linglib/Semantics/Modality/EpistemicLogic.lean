@@ -259,16 +259,16 @@ syntactic side (Kripke frames, correspondence theorems in
 representation theorems in `EpistemicScale/`). -/
 
 /-- An S5 accessibility relation induces a world ordering for
-    `halpernLift`: w ≥ v iff w is accessible from v. -/
+    `dominationLift`: w ≥ v iff w is accessible from v. -/
 def s5ToWorldOrder {W : Type*} (R : AccessRel W) (w v : W) : Prop :=
   R v w
 
 /-- An S5 frame yields an `EpistemicSystemW` via l-lifting.
 
     The reflexivity of R gives reflexivity of the world ordering;
-    `halpernSystemW` does the rest. -/
+    `dominationLiftSystemW` does the rest. -/
 def s5ToSystemW {W : Type*} (R : AccessRel W) [hRefl : Std.Refl R] :
     Core.Scale.EpistemicSystemW W :=
-  Core.Scale.halpernSystemW (s5ToWorldOrder R) (fun w => hRefl.refl w)
+  Core.Scale.dominationLiftSystemW (s5ToWorldOrder R) (fun w => hRefl.refl w)
 
 end Semantics.Modality.EpistemicLogic

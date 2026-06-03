@@ -1,4 +1,5 @@
 import Linglib.Core.Scales.Scale
+import Linglib.Core.Order.ComparativeProbability.Defs
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Tactic.Linarith
@@ -121,7 +122,7 @@ structure EpistemicSystemFA (W : Type*) extends EpistemicSystemF W where
 
     The m-lifting (≿ⁱ) of any reflexive, transitive world ordering is a
     GFC preorder (Theorem 3.2). Note that GFC preorders are NOT necessarily
-    total — `mLift_not_total` gives a counterexample. -/
+    total — `matchingLift_not_total` gives a counterexample. -/
 structure GFCPreorder (W : Type*) where
   ge : Set W → Set W → Prop
   refl : EpistemicAxiom.R ge
@@ -134,6 +135,20 @@ def GFCPreorder.toSystemW {W : Type*} (g : GFCPreorder W) : EpistemicSystemW W w
   ge := g.ge
   refl := g.refl
   mono := g.mono
+
+/-- Every System FA model is a GFC preorder: Axiom A (qualitative additivity)
+    yields complement reversal, since `Bᶜ \ Aᶜ = A \ B` and `Aᶜ \ Bᶜ = B \ A`
+    (`compl_sdiff_compl`). -/
+def EpistemicSystemFA.toGFCPreorder {W : Type*} (sys : EpistemicSystemFA W) :
+    GFCPreorder W where
+  ge := sys.ge
+  refl := sys.refl
+  trans := sys.trans
+  mono := sys.mono
+  complRev := fun A B hAB => by
+    rw [sys.additive Bᶜ Aᶜ]
+    simp only [compl_sdiff_compl]
+    exact (sys.additive A B).mp hAB
 
 -- ── Measure Semantics ───────────────────────────
 
@@ -180,6 +195,22 @@ theorem mu_empty (m : FinAddMeasure W) : m.mu ∅ = 0 := by
   simp only [Set.empty_union] at hempty
   have h : m.mu ∅ + m.mu ∅ = m.mu ∅ + 0 := by rw [add_zero]; exact hempty.symm
   exact add_left_cancel h
+
+/-- Subset monotonicity: `A ⊆ B → μ(A) ≤ μ(B)`. -/
+theorem mu_mono (m : FinAddMeasure W) {A B : Set W} (h : A ⊆ B) :
+    m.mu A ≤ m.mu B := by
+  have hdisj : ∀ x, x ∈ A → x ∉ B \ A := fun x hx ⟨_, hna⟩ => hna hx
+  have hunion := m.additive A (B \ A) hdisj
+  rw [Set.union_diff_cancel h] at hunion
+  linarith [m.nonneg (B \ A)]
+
+/-- Complement measure: `μ(A) + μ(Aᶜ) = 1`. -/
+theorem mu_compl (m : FinAddMeasure W) (A : Set W) :
+    m.mu A + m.mu Aᶜ = 1 := by
+  have hdisj : ∀ x, x ∈ A → x ∉ Aᶜ := fun x hx hxc => hxc hx
+  have hunion := m.additive A Aᶜ hdisj
+  rw [Set.union_compl_self] at hunion
+  linarith [m.total]
 
 /-- Every finitely additive measure satisfies the FA axioms.
     A fortiori from [holliday-icard-2013] Theorem 6 soundness,
@@ -327,43 +358,43 @@ noncomputable def FinAddMeasure.toQualAdd {W : Type*} (m : FinAddMeasure W) : Qu
     [holliday-icard-2013] Definition 6; see also their injection-based
     *m*-lifting (Definition 7), which yields a complete logic for
     world-ordering models. -/
-def halpernLift {W : Type*} (ge_w : W → W → Prop) (A B : Set W) : Prop :=
+def dominationLift {W : Type*} (ge_w : W → W → Prop) (A B : Set W) : Prop :=
   ∀ b, b ∈ B → ∃ a, a ∈ A ∧ ge_w a b
 
-/-- Halpern lift from a reflexive relation satisfies Axiom R. -/
-theorem halpernLift_axiomR {W : Type*} {ge_w : W → W → Prop}
+/-- l-lifting from a reflexive relation satisfies Axiom R. -/
+theorem dominationLift_axiomR {W : Type*} {ge_w : W → W → Prop}
     (hRefl : ∀ w, ge_w w w) :
-    EpistemicAxiom.R (halpernLift ge_w) :=
+    EpistemicAxiom.R (dominationLift ge_w) :=
   fun _ b hb => ⟨b, hb, hRefl b⟩
 
-/-- Halpern lift from a reflexive relation satisfies Axiom T.
+/-- l-lifting from a reflexive relation satisfies Axiom T.
     If A ⊆ B and b ∈ A, then b ∈ B, so take a = b. -/
-theorem halpernLift_axiomT {W : Type*} {ge_w : W → W → Prop}
+theorem dominationLift_axiomT {W : Type*} {ge_w : W → W → Prop}
     (hRefl : ∀ w, ge_w w w) :
-    EpistemicAxiom.T (halpernLift ge_w) :=
+    EpistemicAxiom.T (dominationLift ge_w) :=
   fun _ _ hAB b hbA => ⟨b, hAB hbA, hRefl b⟩
 
 /-- The *l*-lifting from a reflexive preorder yields System W.
     Soundness direction: world-ordering models with the l-lifting
     validate System W ([halpern-2003]; [holliday-icard-2013]). -/
-def halpernSystemW {W : Type*} (ge_w : W → W → Prop)
+def dominationLiftSystemW {W : Type*} (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w) :
     EpistemicSystemW W where
-  ge := halpernLift ge_w
-  refl := halpernLift_axiomR hRefl
-  mono := halpernLift_axiomT hRefl
+  ge := dominationLift ge_w
+  refl := dominationLift_axiomR hRefl
+  mono := dominationLift_axiomT hRefl
 
-/-- Halpern lift satisfies Axiom J (right-union).
+/-- l-lifting satisfies Axiom J (right-union).
     If every b ∈ B is dominated and every c ∈ C is dominated, then
     every element of B ∪ C is dominated. -/
-theorem halpernLift_axiomJ {W : Type*} {ge_w : W → W → Prop} :
-    EpistemicAxiom.J (halpernLift ge_w) :=
+theorem dominationLift_axiomJ {W : Type*} {ge_w : W → W → Prop} :
+    EpistemicAxiom.J (dominationLift ge_w) :=
   fun _ _ _ hAB hAC b hb => hb.elim (hAB b) (hAC b)
 
-/-- Halpern lift satisfies Axiom DS (determination by singletons).
+/-- l-lifting satisfies Axiom DS (determination by singletons).
     If A ≿ {b} via the lift, some a ∈ A has ge_w a b, so {a} ≿ {b}. -/
-theorem halpernLift_axiomDS {W : Type*} {ge_w : W → W → Prop} :
-    EpistemicAxiom.DS (halpernLift ge_w) :=
+theorem dominationLift_axiomDS {W : Type*} {ge_w : W → W → Prop} :
+    EpistemicAxiom.DS (dominationLift ge_w) :=
   fun _ b hAb =>
     let ⟨a, ha, hab⟩ := hAb b rfl
     ⟨a, ha, fun _b' hb' => ⟨a, rfl, hb' ▸ hab⟩⟩
@@ -371,37 +402,62 @@ theorem halpernLift_axiomDS {W : Type*} {ge_w : W → W → Prop} :
 -- ── m-Lifting ([holliday-icard-2013] Definition 7) ──
 
 /-- The *m*-lifting ([holliday-icard-2013], Definition 7): an injection-based
-    alternative to `halpernLift`. A ≿ B iff there exists an injection
+    alternative to `dominationLift`. A ≿ B iff there exists an injection
     f : B ↪ A such that f(b) ≥_w b for all b ∈ B.
 
-    The key difference from `halpernLift` (l-lifting) is that dominators
+    The key difference from `dominationLift` (l-lifting) is that dominators
     must be **distinct**: each element of B is matched to a unique element
     of A. This avoids the "disjunction problem" (I1–I3 become invalid),
     while validating all 13 validity patterns V1–V13 (Fact 5). -/
-def mLift {W : Type*} (ge_w : W → W → Prop) (A B : Set W) : Prop :=
+def matchingLift {W : Type*} (ge_w : W → W → Prop) (A B : Set W) : Prop :=
   ∃ (f : W → W),
     (∀ b, b ∈ B → f b ∈ A ∧ ge_w (f b) b) ∧
     (∀ b₁ b₂, b₁ ∈ B → b₂ ∈ B → f b₁ = f b₂ → b₁ = b₂)
 
 /-- m-lift from a reflexive relation satisfies Axiom R. -/
-theorem mLift_axiomR {W : Type*} {ge_w : W → W → Prop}
+theorem matchingLift_axiomR {W : Type*} {ge_w : W → W → Prop}
     (hRefl : ∀ w, ge_w w w) :
-    EpistemicAxiom.R (mLift ge_w) :=
+    EpistemicAxiom.R (matchingLift ge_w) :=
   fun _ => ⟨id, fun b hb => ⟨hb, hRefl b⟩, fun _ _ _ _ h => h⟩
 
 /-- m-lift from a reflexive relation satisfies Axiom T.
     If A ⊆ B and b ∈ A, then b ∈ B, so take f = id. -/
-theorem mLift_axiomT {W : Type*} {ge_w : W → W → Prop}
+theorem matchingLift_axiomT {W : Type*} {ge_w : W → W → Prop}
     (hRefl : ∀ w, ge_w w w) :
-    EpistemicAxiom.T (mLift ge_w) :=
+    EpistemicAxiom.T (matchingLift ge_w) :=
   fun _ _ hAB => ⟨id, fun b hbA => ⟨hAB hbA, hRefl b⟩, fun _ _ _ _ h => h⟩
 
 /-- m-lifting from a reflexive preorder yields System W. -/
-def mLiftSystemW {W : Type*} (ge_w : W → W → Prop)
+def matchingLiftSystemW {W : Type*} (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w) :
     EpistemicSystemW W where
-  ge := mLift ge_w
-  refl := mLift_axiomR hRefl
-  mono := mLift_axiomT hRefl
+  ge := matchingLift ge_w
+  refl := matchingLift_axiomR hRefl
+  mono := matchingLift_axiomT hRefl
+
+/-! ### Connection to the `ComparativeProbability` theory
+
+Every finitely-additive measure's induced order is a comparative-probability
+order (monotone, transitive, qualitatively additive, non-trivial), so the
+validity patterns V1–V13 transfer for free from `ComparativeProbability.Patterns`
+by instance resolution — no per-measure arithmetic. -/
+
+namespace FinAddMeasure
+
+variable {W : Type*} (m : FinAddMeasure W)
+
+instance : ComparativeProbability.IsLikelihoodMono m.inducedGe where
+  mono a b h := m.inducedGe_axiomT a b h
+
+instance : IsTrans (Set W) m.inducedGe where
+  trans _ _ _ hab hbc := le_trans hbc hab
+
+instance : ComparativeProbability.IsQualitativeAdditive m.inducedGe where
+  qadd a b := m.toSystemFA.additive a b
+
+instance : ComparativeProbability.IsNontrivial m.inducedGe where
+  bot_not_ge_top := m.toSystemFA.nonTrivial
+
+end FinAddMeasure
 
 end Core.Scale
