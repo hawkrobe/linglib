@@ -8,15 +8,27 @@ import Mathlib.Tactic.FinCases
 /-! # Cancellation for `Fin 4`: the structural merge-reduction proof
 
 Every finitely additive epistemic-comparison system on four worlds satisfies
-Scott cancellation (`fa_cancellation_fin4`), hence is representable by a
-finitely additive measure (`theorem8a_fin4` — [holliday-icard-2013] Theorem 8).
+Scott cancellation, hence is representable by a finitely additive measure
+([holliday-icard-2013] Theorem 8).
+
+## Main declarations
+
+* `Core.Scale.fa_cancellation_fin4` — FA axioms imply cancellation on `Fin 4`.
+* `Core.Scale.theorem8a_fin4` — every FA system on `Fin 4` is representable.
+* `Core.Scale.no_null_cancellation` — cancellation for systems with no null atoms.
+* `Core.Scale.ge_union_context`, `ge_generalized_merge`, `ge_mono_dominated`,
+  `ge_empty_target` — reusable consequences of the FA axioms (any arity).
+
+## Implementation notes
 
 The proof rests on two imported layers — conic Carathéodory
-(`ConicCaratheodory.exists_posdep_card_le_five`) and the sign-vector core
+(`Caratheodory.exists_posdep_card_le_five`) and the sign-vector core
 (`SignVec.exists_antidom_pair`) — and adds the merge reduction: a valid family
 of comparisons whose vector sum is a single comparison vector proves that
 comparison (`merge_to_single`), by a four-rule recursion whose stuck case is
-discharged through the sign-vector core via `v1_tailored`.
+discharged through the sign-vector core via `v1_tailored`.  The comparison
+vector calculus (`cmpVec`, `mergeCmp`, `cvSumList`) and the merge recursion
+itself are private plumbing; only the theorems above are exported.
 -/
 
 namespace Core.Scale
@@ -107,17 +119,17 @@ A comparison is a pair of disjoint finsets `(pos, neg)`; its integer vector is
 neg-parts are disjoint into the disjoint-normal-form of their vector sum. -/
 
 /-- Integer comparison vector of a finset pair. -/
-def cmpVec {n : ℕ} (c : Finset (Fin n) × Finset (Fin n)) (i : Fin n) : ℤ :=
+private def cmpVec {n : ℕ} (c : Finset (Fin n) × Finset (Fin n)) (i : Fin n) : ℤ :=
   (if i ∈ c.1 then 1 else 0) - (if i ∈ c.2 then 1 else 0)
 
 /-- Merge two comparisons into the disjoint normal form of their vector sum. -/
-def mergeCmp {n : ℕ} (c d : Finset (Fin n) × Finset (Fin n)) :
+private def mergeCmp {n : ℕ} (c d : Finset (Fin n) × Finset (Fin n)) :
     Finset (Fin n) × Finset (Fin n) :=
   ((c.1 ∪ d.1) \ (c.2 ∪ d.2), (c.2 ∪ d.2) \ (c.1 ∪ d.1))
 
 /-- The merged comparison's vector is the sum of the two vectors, provided pos-parts
     are disjoint and neg-parts are disjoint (so no coordinate doubles). -/
-lemma cmpVec_mergeCmp {n : ℕ} (c d : Finset (Fin n) × Finset (Fin n))
+private lemma cmpVec_mergeCmp {n : ℕ} (c d : Finset (Fin n) × Finset (Fin n))
     (hpos : Disjoint c.1 d.1) (hneg : Disjoint c.2 d.2) (i : Fin n) :
     cmpVec (mergeCmp c d) i = cmpVec c i + cmpVec d i := by
   have h1 : i ∈ c.1 → i ∉ d.1 := fun h => Finset.disjoint_left.mp hpos h
@@ -133,7 +145,7 @@ lemma cmpVec_mergeCmp {n : ℕ} (c d : Finset (Fin n) × Finset (Fin n))
 
 /-- `mergeCmp` of two valid comparisons is valid, given the disjointness conditions.
     Uses `ge_generalized_merge` then Axiom A to reach disjoint normal form. -/
-lemma mergeCmp_valid {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+private lemma mergeCmp_valid {n : ℕ} (sys : EpistemicSystemFA (Fin n))
     {c d : Finset (Fin n) × Finset (Fin n)}
     (hc : sys.ge ↑c.1 ↑c.2) (hd : sys.ge ↑d.1 ↑d.2)
     (hpos : Disjoint c.1 d.1) (hneg : Disjoint c.2 d.2) :
@@ -151,15 +163,15 @@ lemma mergeCmp_valid {n : ℕ} (sys : EpistemicSystemFA (Fin n))
   rwa [e1, e2] at hmerge
 
 /-- Pointwise integer vector-sum of a list of comparisons. -/
-def cvSumList {n : ℕ} (L : List (Finset (Fin n) × Finset (Fin n))) (i : Fin n) : ℤ :=
+private def cvSumList {n : ℕ} (L : List (Finset (Fin n) × Finset (Fin n))) (i : Fin n) : ℤ :=
   (L.map (fun c => cmpVec c i)).sum
 
-@[simp] lemma cvSumList_cons {n : ℕ} (c : Finset (Fin n) × Finset (Fin n))
+@[simp] private lemma cvSumList_cons {n : ℕ} (c : Finset (Fin n) × Finset (Fin n))
     (L : List (Finset (Fin n) × Finset (Fin n))) (i : Fin n) :
     cvSumList (c :: L) i = cmpVec c i + cvSumList L i := by
   simp only [cvSumList, List.map_cons, List.sum_cons]
 
-lemma cvSumList_perm {n : ℕ} {L L' : List (Finset (Fin n) × Finset (Fin n))}
+private lemma cvSumList_perm {n : ℕ} {L L' : List (Finset (Fin n) × Finset (Fin n))}
     (h : L.Perm L') (i : Fin n) : cvSumList L i = cvSumList L' i := by
   simp only [cvSumList]; exact (h.map _).sum_eq
 
@@ -167,7 +179,7 @@ lemma cvSumList_perm {n : ℕ} {L L' : List (Finset (Fin n) × Finset (Fin n))}
     everywhere with a strict negative coordinate, some atom is null (`ge ∅ {i}`).
     Disjointness forces `A ⊆ D` and `C ⊆ B`, giving `ge C A → ge C B → (Axiom A) ge ∅ (B\C)`
     and symmetrically `ge ∅ (D\A)`; the strict coordinate lies in one of them. -/
-lemma null_from_pair (sys : EpistemicSystemFA (Fin 4))
+private lemma null_from_pair (sys : EpistemicSystemFA (Fin 4))
     {A B C D : Finset (Fin 4)}
     (hAB : sys.ge ↑A ↑B) (hCD : sys.ge ↑C ↑D)
     (hABd : Disjoint A B) (hCDd : Disjoint C D)
@@ -218,15 +230,15 @@ lemma null_from_pair (sys : EpistemicSystemFA (Fin 4))
 /-! ### Bridging comparisons to ℚ sign vectors -/
 
 /-- ℚ-valued sign vector of a comparison. -/
-def toQVec (c : Finset (Fin 4) × Finset (Fin 4)) : Fin 4 → ℚ :=
+private def toQVec (c : Finset (Fin 4) × Finset (Fin 4)) : Fin 4 → ℚ :=
   fun i => (cmpVec c i : ℚ)
 
-lemma toQVec_apply (c : Finset (Fin 4) × Finset (Fin 4)) (k : Fin 4) :
+private lemma toQVec_apply (c : Finset (Fin 4) × Finset (Fin 4)) (k : Fin 4) :
     toQVec c k = (if k ∈ c.1 then (1 : ℚ) else 0) - (if k ∈ c.2 then 1 else 0) := by
   simp only [toQVec, cmpVec]
   split_ifs <;> norm_num
 
-lemma posSupport_toQVec {c : Finset (Fin 4) × Finset (Fin 4)} (hc : Disjoint c.1 c.2) :
+private lemma posSupport_toQVec {c : Finset (Fin 4) × Finset (Fin 4)} (hc : Disjoint c.1 c.2) :
     SignVec.posSupport (toQVec c) = c.1 := by
   ext k
   rw [SignVec.mem_posSupport, toQVec_apply]
@@ -235,7 +247,7 @@ lemma posSupport_toQVec {c : Finset (Fin 4) × Finset (Fin 4)} (hc : Disjoint c.
       | exact absurd h2 (Finset.disjoint_left.mp hc h1)
       | norm_num [h1, h2]
 
-lemma negSupport_toQVec {c : Finset (Fin 4) × Finset (Fin 4)} (hc : Disjoint c.1 c.2) :
+private lemma negSupport_toQVec {c : Finset (Fin 4) × Finset (Fin 4)} (hc : Disjoint c.1 c.2) :
     SignVec.negSupport (toQVec c) = c.2 := by
   ext k
   rw [SignVec.mem_negSupport, toQVec_apply]
@@ -244,13 +256,13 @@ lemma negSupport_toQVec {c : Finset (Fin 4) × Finset (Fin 4)} (hc : Disjoint c.
       | exact absurd h2 (Finset.disjoint_left.mp hc h1)
       | norm_num [h1, h2]
 
-lemma cmpVec_swap (A B : Finset (Fin 4)) (i : Fin 4) :
+private lemma cmpVec_swap (A B : Finset (Fin 4)) (i : Fin 4) :
     cmpVec (B, A) i = -cmpVec (A, B) i := by
   simp only [cmpVec]
   ring
 
 /-- Comparisons with both parts empty contribute nothing to the vector sum. -/
-lemma cvSumList_filter_ne_empty (L : List (Finset (Fin 4) × Finset (Fin 4)))
+private lemma cvSumList_filter_ne_empty (L : List (Finset (Fin 4) × Finset (Fin 4)))
     (h0 : ∀ c ∈ L, c.1 = ∅ → c.2 = ∅) (i : Fin 4) :
     cvSumList (L.filter (fun c => c.1 ≠ ∅)) i = cvSumList L i := by
   induction L with
@@ -276,7 +288,7 @@ lemma cvSumList_filter_ne_empty (L : List (Finset (Fin 4) × Finset (Fin 4)))
     pair with the reversed target is mono-domination (excluded), a g-merge pair inside
     `L` is excluded by `hnogm`, leaving a g-merge with the reversed target.
     Verified true for all families (expert proof + exhaustive ≤5-circuit check). -/
-lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
+private lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
     (L : List (Finset (Fin 4) × Finset (Fin 4)))
     (hdisj : ∀ c ∈ L, Disjoint c.1 c.2)
     (hvalid : ∀ c ∈ L, sys.ge ↑c.1 ↑c.2)
@@ -390,10 +402,11 @@ lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
         hp1.trans (List.Perm.cons c hp2), hg1, hg2⟩
   -- Carathéodory pivot, then the finite core
   obtain ⟨S', hS'S, hS'ne, hS'card, d', hd', hsum'⟩ :=
-    ConicCaratheodory.exists_posdep_card_le_five S (fun v => ((l.count v : ℕ) : ℚ)) hdQ hSne hbal
+    Caratheodory.exists_posdep_card_le_five S (fun v => ((l.count v : ℕ) : ℚ)) hdQ hSne hbal
   obtain ⟨v, hvS', w, hwS', hvw, had1, had2⟩ :=
-    SignVec.exists_antidom_pair S' (fun v hv => hsign v (hS'S hv)) (fun v hv => hposne v (hS'S hv))
-      hS'card (fun v hv w hw => hSnogm v (hS'S hv) w (hS'S hw)) d' hd' hS'ne hsum'
+    SignVec.exists_antidom_pair S' d' hd' (fun v hv => hsign v (hS'S hv))
+      (fun v hv => hposne v (hS'S hv)) (fun v hv w hw => hSnogm v (hS'S hv) w (hS'S hw))
+      hsum' hS'ne hS'card
   have hvS : v ∈ S := hS'S hvS'
   have hwS : w ∈ S := hS'S hwS'
   -- vector-level consequences of the anti-dominating pair
@@ -461,7 +474,7 @@ lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
     `(p, q)` with `p = (vpos \ c.1) ∪ (c.2 \ vneg)`, `q = (vneg \ c.2) ∪ (c.1 \ vpos)`
     — is provable (`ge p q`, the IH), then `ge vpos vneg`. Proved by merging `(p,q)`
     with `c` via `mergeCmp_valid`; the disjoint-normal-form is exactly `(vpos, vneg)`. -/
-lemma recombine (sys : EpistemicSystemFA (Fin 4))
+private lemma recombine (sys : EpistemicSystemFA (Fin 4))
     (vpos vneg : Finset (Fin 4)) (c : Finset (Fin 4) × Finset (Fin 4))
     (hcd : Disjoint c.1 c.2) (hvv : Disjoint vpos vneg)
     (hrc1 : Disjoint vneg c.1) (hrc2 : Disjoint vpos c.2)
@@ -506,7 +519,7 @@ lemma recombine (sys : EpistemicSystemFA (Fin 4))
     mono-domination, merge a generalizable pair and recurse, or (no g-merge pair)
     `v1_tailored` gives a null pair (→ contradiction via `hnull`) or a member merged
     by the reversed target (→ peel it, recurse, `recombine`). -/
-theorem merge_to_single (sys : EpistemicSystemFA (Fin 4))
+private theorem merge_to_single (sys : EpistemicSystemFA (Fin 4))
     (hnull : ∀ i : Fin 4, ¬ sys.ge ∅ {i})
     (L : List (Finset (Fin 4) × Finset (Fin 4)))
     (hdisj : ∀ c ∈ L, Disjoint c.1 c.2)
@@ -655,7 +668,7 @@ private lemma cleared_sum_eq (P : Portfolio 4) (i : Fin 4) (D : ℕ)
     clearing denominators yields a unit-weight list `R` of valid disjoint comparisons
     with `cvSumList R = cmpVec (s.right, s.left)` — the denominator-cleared balanced
     multiset with one copy of `s` removed. -/
-theorem exists_balanced_list (sys : EpistemicSystemFA (Fin 4))
+private theorem exists_balanced_list (sys : EpistemicSystemFA (Fin 4))
     (P : Portfolio 4) (hvalid : P.isValid sys.ge) (hneutral : P.isNeutral)
     (s : WComparison 4) (hsmem : List.Mem s P) :
     ∃ R : List (Finset (Fin 4) × Finset (Fin 4)),
@@ -792,7 +805,6 @@ theorem fa_cancellation_fin4 (sys : EpistemicSystemFA (Fin 4)) :
               (fun sys' => theorem8a_fin3 sys'))
           exact representable_implies_cancellation sys m hm
         · exact no_null_cancellation sys (fun i => by fin_cases i <;> assumption)
-
 
 /-- **Theorem 8a for Fin 4**: every FA system on 4 elements is representable.
     Via Scott cancellation — see `Cancellation.lean` for the framework. -/

@@ -9,13 +9,21 @@ import Mathlib.Tactic.Ring
 
 /-! # Balanced sign-vector families on `Fin 4` have an anti-dominating pair
 
-The finite combinatorial core of the `Fin 4` cancellation theorem: any family
-of `{-1,0,1}`-valued vectors on four coordinates, each with a positive
-coordinate, balanced by strictly positive weights, of size at most `5`, and
-pairwise *non-generalized-mergeable* (every pair shares a same-sign
-coordinate), contains an **anti-dominating pair** — two members whose positive
-supports sit inside each other's negative supports
-(`SignVec.exists_antidom_pair`).
+The finite combinatorial core of the `Fin 4` cancellation theorem.
+
+## Main declarations
+
+* `Core.Scale.SignVec.posSupport`, `Core.Scale.SignVec.negSupport` — positive and
+  negative supports of a `{-1,0,1}`-valued vector on four coordinates (the sign
+  values and the arity are deliberately hardcoded: the pigeonhole and `decide`
+  steps below are irreducibly `Fin 4`-specific).
+* `Core.Scale.SignVec.exists_antidom_pair` — any family of sign vectors, each with
+  a positive coordinate, balanced by strictly positive weights, of size at most
+  `5`, and pairwise *non-generalized-mergeable* (every pair shares a same-sign
+  coordinate), contains an **anti-dominating pair**: two members whose positive
+  supports sit inside each other's negative supports.
+
+## Implementation notes
 
 Sizes 1–3 fall to coefficient arithmetic.  For sizes 4–5: full-support
 families are forced into 2-element positive supports by the `𝟙`-functional and
@@ -24,9 +32,12 @@ with a zero coordinate die through the *s-shape chain* — a singleton-positive
 weight-3 member forces a cascade closing into a 3-cycle whose Stiemke witness
 is nonnegative on every admissible sign pattern and positive somewhere,
 contradicting balance.
--/
 
-open Finset
+The recurring hypothesis bundle (sign-valued, positive coordinate, no g-merge,
+positively weighted balance) is threaded flat rather than packaged in a
+structure: every consumer below `exists_antidom_pair` is private, and the
+theorem has a single external caller.
+-/
 
 namespace Core.Scale.SignVec
 
@@ -772,14 +783,15 @@ private lemma core_card_ge4 (S : Finset (Fin 4 → ℚ))
     rw [hone] at hposS
     exact lt_irrefl 0 hposS
 
-theorem exists_antidom_pair (S : Finset (Fin 4 → ℚ))
+/-- **Anti-domination from balance**: a balanced family of at most five pairwise
+    non-generalized-mergeable sign vectors contains an anti-dominating pair. -/
+theorem exists_antidom_pair (S : Finset (Fin 4 → ℚ)) (d : (Fin 4 → ℚ) → ℚ)
+    (hd : ∀ v ∈ S, 0 < d v)
     (hsign : ∀ v ∈ S, ∀ i, v i = -1 ∨ v i = 0 ∨ v i = 1)
     (hposne : ∀ v ∈ S, ∃ i, v i = 1)
-    (hcard : S.card ≤ 5)
     (hnogm : ∀ v ∈ S, ∀ w ∈ S, v ≠ w →
       ¬(Disjoint (posSupport v) (posSupport w) ∧ Disjoint (negSupport v) (negSupport w)))
-    (d : (Fin 4 → ℚ) → ℚ) (hd : ∀ v ∈ S, 0 < d v) (hSne : S.Nonempty)
-    (hsum : ∑ v ∈ S, d v • v = 0) :
+    (hsum : ∑ v ∈ S, d v • v = 0) (hSne : S.Nonempty) (hcard : S.card ≤ 5) :
     ∃ v ∈ S, ∃ w ∈ S, v ≠ w ∧ posSupport v ⊆ negSupport w ∧ posSupport w ⊆ negSupport v := by
   have hcard1 : 1 ≤ S.card := Finset.card_pos.mpr hSne
   interval_cases hc : S.card
@@ -788,7 +800,6 @@ theorem exists_antidom_pair (S : Finset (Fin 4 → ℚ))
   · exact (core_card_three S hsign hnogm d hd hsum hc).elim
   · exact core_card_ge4 S hsign hposne hnogm d hd hsum (Or.inl hc)
   · exact core_card_ge4 S hsign hposne hnogm d hd hsum (Or.inr hc)
-
 
 
 end Core.Scale.SignVec
