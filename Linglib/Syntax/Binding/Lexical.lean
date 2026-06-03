@@ -1,4 +1,5 @@
 import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Mixin
 import Linglib.Features.CoreferenceStatus
 
 /-!
@@ -91,5 +92,15 @@ abbrev ReflexivePronoun := {p : Pronoun // p.bindingClass = some .reflexive}
 
 instance : Lexicon ReflexivePronoun := ⟨fun r => r.val.bindingClass⟩
 instance : Anaphoric ReflexivePronoun := ⟨fun r => Or.inl r.property⟩
+instance : PronounLike ReflexivePronoun where
+  form := fun r => r.val.form
+  phi := fun r => r.val.toWord.phi
+
+/-- `ReflexivePronoun` carries the full lexical stack — `PronounLike` (word-class: form + φ)
+*and* the `Anaphoric` marker (Principle A) — composed with no diamond, since the word-class
+and binding axes are orthogonal. -/
+example (r : ReflexivePronoun) :
+    PronounLike.form r = r.val.form ∧ Lexicon.IsAnaphor r :=
+  ⟨rfl, Anaphoric.isAnaphor r⟩
 
 end Binding

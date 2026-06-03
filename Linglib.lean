@@ -15,6 +15,7 @@ import Linglib.Typology.Negation
 import Linglib.Features.ClauseForm
 import Linglib.Features.Clusivity
 import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Mixin
 import Linglib.Typology.Pronoun.WALS
 import Linglib.Typology.Evidentiality
 import Linglib.Core.Logic.FactorsThroughOn
