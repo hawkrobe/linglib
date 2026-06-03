@@ -1,6 +1,7 @@
 import Linglib.Core.Nominal.Description
 import Linglib.Core.Nominal.Interpret
 import Linglib.Core.Nominal.Maximality
+import Linglib.Syntax.Pronoun.Demonstrative
 
 /-!
 # Hanink (2021): DP Structure and Internally Headed Relatives in Wášiw
@@ -206,5 +207,41 @@ theorem anaphoric_const_restrictor_situation_insensitive (d : Nat) :
     interpret (F := F) (.anaphoric (DenotGS.const (fun _ => True)) d) g₀ gsKitchen =
     interpret (F := F) (.anaphoric (DenotGS.const (fun _ => True)) d) g₀ gsLiving :=
   anaphoric_independent_of_situation _ _ rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- §6: Grounding the Pronoun API — `DemonstrativePronoun` denotes via `demonstrative`
+-- ════════════════════════════════════════════════════════════════
+
+/-! [hanink-2021] is the theory hub for the demonstrative pronoun (`Syntax/Pronoun/Demonstrative`):
+a demonstrative is the bare anaphoric `idx` (Hanink's Washo *gí*; [elbourne-2005]
+pronouns-as-definites) plus a deictic feature realized as a presupposition on D. The lexical
+`DemonstrativePronoun` supplies its proximal/distal deixis via the `Demonstrative` capability; the
+restrictor and indices come from context. -/
+
+/-- The denotation of a demonstrative pronoun: `Description.demonstrative` over a context restrictor,
+    with the pronoun's deictic feature as the presupposition on D ([hanink-2021] (34)/(35)). -/
+def demDescription {Fr : Frame} (p : DemonstrativePronoun)
+    (R : DenotGS Fr .et) (sIdx d : Nat) : Description Fr :=
+  .demonstrative R p.deixis sIdx d
+
+/-- A demonstrative pronoun picks the *same referent* as a plain anaphoric definite: its deixis is a
+    presupposition filter, not a referent selector ([hanink-2021]). The Pronoun-API capability
+    `Demonstrative.deixis` is exactly the presupposition that drops out of referent selection. -/
+theorem demDescription_eq_anaphoric {Fr : Frame} (p : DemonstrativePronoun)
+    (R : DenotGS Fr .et) (sIdx d : Nat) (g : Core.Assignment Fr.Entity) (gs : SitAssignment Fr) :
+    interpret (demDescription p R sIdx d) g gs = interpret (.anaphoric R d) g gs :=
+  interpret_demonstrative_eq_anaphoric R p.deixis sIdx d g gs
+
+/-- [patel-grosz-grosz-2017]'s orthogonality, now grounded in *meaning* (and stated in the later
+    study, per chronology): German *der* — the strong-article personal pronoun, an **anaphoric**
+    definite with no deixis — and a demonstrative pronoun pick the **same referent** (both anaphoric
+    over `d`), yet only the demonstrative carries a deictic feature. Article-strength ⊥
+    demonstrativehood: PG&G's "*der* is not a `Demonstrative`" is a semantic fact, not just typing. -/
+theorem der_strong_vs_demonstrative {Fr : Frame} (p : DemonstrativePronoun)
+    (hdist : (Demonstrative.deixis p).EncodesDistance)
+    (R : DenotGS Fr .et) (sIdx d : Nat) (g : Core.Assignment Fr.Entity) (gs : SitAssignment Fr) :
+    interpret (demDescription p R sIdx d) g gs = interpret (.anaphoric R d) g gs
+      ∧ (Demonstrative.deixis p).EncodesDistance :=
+  ⟨demDescription_eq_anaphoric p R sIdx d g gs, hdist⟩
 
 end Hanink2021
