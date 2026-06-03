@@ -241,13 +241,17 @@ theorem person_hierarchy_is_spec_ordering :
     PhiFeatures.specLevel Features.Person.first >
       PhiFeatures.specLevel Features.Person.second ∧
     PhiFeatures.specLevel Features.Person.second >
-      PhiFeatures.specLevel Features.Person.third := ⟨by decide, by decide⟩
+      PhiFeatures.specLevel Features.Person.third :=
+  PhiFeatures.specLevel_strict_order Features.Person.first_is_maximal
+    Features.Person.second_is_intermediate Features.Person.third_is_minimal
 
 /-- The number hierarchy `sg > du > pl` is the *same* specification ordering — the
 structural reflection of the phi kernel, not an identification of the categories. -/
 theorem number_hierarchy_is_spec_ordering :
     PhiFeatures.specLevel singularF > PhiFeatures.specLevel dualF ∧
-    PhiFeatures.specLevel dualF > PhiFeatures.specLevel pluralF := ⟨by decide, by decide⟩
+    PhiFeatures.specLevel dualF > PhiFeatures.specLevel pluralF :=
+  PhiFeatures.specLevel_strict_order Features.Number.singular_is_maximal
+    Features.Number.dual_is_intermediate Features.Number.plural_is_minimal
 
 /-! ### Bridge to Cyclic Agree ([bejar-rezac-2009]) -/
 

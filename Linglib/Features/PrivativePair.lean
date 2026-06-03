@@ -219,6 +219,16 @@ theorem no_four_way [DecidableEq α] (a b c d : α)
 /-- Specification level via the embedding. -/
 def specLevel (a : α) : Nat := (toPair a).specLevel
 
+/-- The specification ordering transports to any `PhiFeatures` triple landing on the three
+cells. Person (`1 > 2 > 3`) and number (`sg > du > pl`) inherit their hierarchy from this
+single `PrivativePair` fact rather than re-checking it per domain. -/
+theorem specLevel_strict_order {a b c : α}
+    (ha : toPair a = PrivativePair.maximal) (hb : toPair b = PrivativePair.intermediate)
+    (hc : toPair c = PrivativePair.minimal) :
+    specLevel a > specLevel b ∧ specLevel b > specLevel c := by
+  simp only [specLevel, ha, hb, hc]
+  exact PrivativePair.spec_strict_order
+
 /-- The isomorphism the class is named for, made explicit. The `roundtrip` field gives
 one direction (`ofPair ∘ toPair = id`); when `toPair` is also a right inverse — which
 holds whenever the instance is a genuine bijection, as for person and number features —
