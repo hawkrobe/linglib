@@ -376,7 +376,7 @@ theorem three_lines_converge :
     resolvedAgreement imposter = .pl3 := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 8: Integration with PersonGeometry — [±participant] Drives the PCC
+-- § 8: Integration with Phi.Geometry — [±participant] Drives the PCC
 -- ============================================================================
 
 /-- The PCC's sensitivity to interpretable person is equivalent to
@@ -683,7 +683,7 @@ theorem all_fragments_grounded :
 open Features.Person in
 /-- The [±participant] decomposition in `Core/Person/Category.lean`
     (operating on `Category`) is the same decomposition as
-    `PersonGeometry.decomposePerson` (operating on `PersonLevel`).
+    `Phi.Geometry.decomposePerson` (operating on `PersonLevel`).
 
     This theorem bridges the two: for all singular Categories,
     `toFeatures.hasParticipant` equals `decomposePerson.hasParticipant`. -/

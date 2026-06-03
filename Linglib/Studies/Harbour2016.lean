@@ -21,7 +21,7 @@ their values are actions `⊕` (disjoint addition) and `⊖` (joint subtraction)
 "not truth functors, which would reduce the features to first-order predicates,
 but actions by and on the person lattices."
 
-The operators themselves (`⊕`/`⊖`/`lexComp`/`npow`) are reusable substrate in
+The operators themselves (`⊕`/`⊖`/`lexComp`/`nePowerset`) are reusable substrate in
 `Syntax.Minimalist.Phi.Lattice`; this file builds the partition *construction* on
 top and checks the empirical results, which come out *by construction* rather than
 being stipulated:
@@ -59,16 +59,17 @@ being stipulated:
 * `tri_card` / `quad_card` — composition order gives 3 vs 4 cells (noncommutativity).
 * `five_partitions` — the two-feature inventory's five parameter settings yield five
   distinct partitions ([harbour-2016] Table 4.1).
-* `no_four_singular` — the inclusive holds no singleton, so the singular has three
-  persons.
+* `inclusive_has_no_singleton` — the inclusive holds no singleton, so the singular
+  realizes only three persons (no four-way singular).
 
-The number side ([harbour-2014a], Ch. 6) is the `Phi.Recursion`/`Corbett2000` bridge.
+The number side ([harbour-2014]; [harbour-2016] Ch. 6) is the `Phi.Recursion`/`Corbett2000`
+bridge.
 -/
 
 namespace Harbour2016
 
 open Finset
-open Minimalist.Phi.Lattice (act npow)
+open Minimalist.Phi.Lattice (act nePowerset)
 
 /-! ### The partition construction (over `Phi.Lattice`'s operators) -/
 
@@ -108,7 +109,7 @@ def ℒau : Finset (Finset Ω) := {{0}}
 /-- The participant lattice `ℒpt = {{i}, {u}, {i,u}}` (powerset of `{i,u}`, minus `∅`). -/
 def ℒpt : Finset (Finset Ω) := {{0}, {1}, {0, 1}}
 /-- The π-lattice: all nonempty referent-sets. -/
-def ℒπ  : Finset (Finset Ω) := npow univ
+def ℒπ  : Finset (Finset Ω) := nePowerset univ
 
 /-- The egocentric containment chain `ℒau ⊆ ℒpt ⊆ ℒπ` ([harbour-2016] p. 74). -/
 theorem lattice_chain : ℒau ⊆ ℒpt ∧ ℒpt ⊆ ℒπ := by decide
@@ -206,15 +207,14 @@ theorem five_partitions :
 /-- The singleton referents (atoms): `{i}`, `{u}`, `{o}`. -/
 def singletons : Finset (Finset Ω) := {{0}, {1}, {2}}
 
-/-- The inclusive — the only cell distinguishing the quadripartition from the
-tripartition — contains no singleton referent (its every set has ≥ 2 members). -/
+/-- **No four-way singular person** ([harbour-2016] Ch. 4): the inclusive — the only cell
+distinguishing the quadripartition from the tripartition — contains no singleton referent,
+so the singular realizes only three persons (the inclusive/exclusive split collapses). -/
 theorem inclusive_has_no_singleton : inclusive ∩ singletons = ∅ := by decide
 
-/-- **No four-way singular person** ([harbour-2016] Ch. 4). Every inclusive referent set
-has at least two members, so no singleton (atomic) referent is inclusive: the
-inclusive/exclusive split — the only difference between the quadri- and tripartition —
-collapses in the singular, leaving three persons. -/
-theorem no_four_singular : ∀ s ∈ inclusive, 2 ≤ s.card := by decide
+/-- Every inclusive referent set has ≥ 2 members (it contains both speaker and addressee) —
+the elementwise form of `inclusive_has_no_singleton`. -/
+theorem inclusive_card_ge_two : ∀ s ∈ inclusive, 2 ≤ s.card := by decide
 
 end Examples
 
@@ -263,13 +263,13 @@ theorem specLevel_agrees_with_segments (p : PersonLevel) :
     PhiFeatures.specLevel p.toFeatures + 1 = (personSpec .standard p).length := by
   cases p <;> rfl
 
-/-! ### Bridge to Corbett (2000): attested number systems are generable ([harbour-2014a])
+/-! ### Bridge to Corbett (2000): attested number systems are generable ([harbour-2014])
 
 Every attested number system from [corbett-2000] is a subset of what some well-formed
 Harbour configuration generates (a language may not lexicalize every category its geometry
 affords). The number side uses the three-feature `±atomic`/`±minimal`/`±additive` calculus
-of [harbour-2014a] (Ch. 6), faithfully distinct from the two-feature *person* calculus
-above. -/
+of [harbour-2014] (developed at chapter length in [harbour-2016] Ch. 6), faithfully distinct
+from the two-feature *person* calculus above. -/
 
 open Minimalist.Phi.Recursion (HarbourConfig)
 open Corbett2000
@@ -325,21 +325,31 @@ theorem bridge_configs_wellFormed :
 /-! ### Harbour's sign decomposition of the Cysouw categories ([harbour-2016] Table 4.3)
 
 The neutral `Features.Person.Category.toFeatures` underdetermines the group categories
-(`excl`/`minIncl`/`augIncl` all `⟨true,true⟩`). Harbour's **operational signs** — the
-exclusive is `+author −participant` — distinguish them; that distinction is *this theory's*
-commitment, derived from the partition above, not a property of the neutral decomposition. -/
+(`excl`/`minIncl`/`augIncl` all `⟨true,true⟩`). Harbour's **operational signs** distinguish
+them; that distinction is *this theory's* commitment, derived from the partition above. A
+dedicated `Sign` carrier is used rather than `Features.Person.Features`, because the
+exclusive's `+author −participant` is exactly the combination the neutral type's `wellFormed`
+invariant (SAP containment: author ⟹ participant) rejects — for operations, not SAP-membership
+predicates, that invariant does not apply ([harbour-2016] Ch. 9). -/
 
 open Features.Person (Category)
 
-/-- Harbour's `±author`/`±participant` signs for a Cysouw `Category` ([harbour-2016]
-Table 4.3): the exclusive is `+author −participant` (`⟨false, true⟩`), so it does *not*
-collapse with the inclusive `+author +participant` — unlike the neutral
-`Category.toFeatures`. -/
-def signOf : Category → Features.Person.Features
-  | .s1 | .minIncl | .augIncl => ⟨true, true⟩    -- +author +participant
-  | .excl                     => ⟨false, true⟩   -- +author −participant
-  | .s2 | .secondGrp          => ⟨true, false⟩   -- −author +participant
-  | .s3 | .thirdGrp           => ⟨false, false⟩  -- −author −participant
+/-- A Harbour `±author`/`±participant` sign — bivalent feature *values* ([harbour-2016]
+Ch. 9), distinct from the SAP-membership `Features.Person.Features`. -/
+structure Sign where
+  author : Bool
+  participant : Bool
+  deriving DecidableEq, Repr
+
+/-- Harbour's signs for a Cysouw `Category` ([harbour-2016] Table 4.3). The 1st-person
+*exclusive* — and the singular speaker `.s1`, which Harbour's quadripartition lumps into
+the exclusive cell `i_o` (p. 96) — is `+author −participant`, so it does *not* collapse
+with the *inclusive* `+author +participant`, unlike the neutral `Category.toFeatures`. -/
+def signOf : Category → Sign
+  | .minIncl | .augIncl => ⟨true, true⟩    -- +author +participant (inclusive)
+  | .s1 | .excl         => ⟨true, false⟩   -- +author −participant (exclusive / sg speaker)
+  | .s2 | .secondGrp    => ⟨false, true⟩   -- −author +participant
+  | .s3 | .thirdGrp     => ⟨false, false⟩  -- −author −participant
 
 /-- Harbour's signs distinguish exclusive from inclusive, where the neutral membership
 decomposition (`Category.toFeatures`) collapses them (cf. `Examples.inclusive_ne_exclusive`). -/

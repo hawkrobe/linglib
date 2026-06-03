@@ -41,7 +41,7 @@ with first- and second-person plural pronouns.
 
 ## File structure
 
-- §1 Operators (oplus, lexComp, singularFilter, pluralFilter, npow encoding)
+- §1 Operators (oplus, lexComp, singularFilter, pluralFilter, nePowerset encoding)
 - §2 PhiDomain and the Zapotec instantiation
 - §3 Feature denotations
 - §4 Pronoun composition (Zapotec 4-way animacy + LC)
@@ -168,16 +168,16 @@ variable (pd : PhiDomain)
 
 /-- ⟦SPEAKER⟧ (48a): singleton sums containing the speaker. -/
 def speakerDen : Finset (Finset pd.Ind) :=
-  npow {pd.speaker}
+  nePowerset {pd.speaker}
 
 /-- ⟦PARTICIPANT⟧ (48b): nonempty subsets of {speaker, addressee}. -/
 def participantDen : Finset (Finset pd.Ind) :=
-  npow {pd.speaker, pd.addressee}
+  nePowerset {pd.speaker, pd.addressee}
 
 /-- ⟦π⟧ (48c): all nonempty sums of individuals — the maximal feature
     denotation. -/
 def piDen : Finset (Finset pd.Ind) :=
-  npow Finset.univ
+  nePowerset Finset.univ
 
 /-- ⟦ELDER⟧ (58a): individuals holding a salient social role. With (58a)'s
     semantics, the denotation includes SAPs as well as nonconversational
@@ -185,16 +185,16 @@ def piDen : Finset (Finset pd.Ind) :=
     p. 787). The pronoun-level restriction to nonconversational elders
     arises only after lexical complementarity (62). -/
 def elderDen : Finset (Finset pd.Ind) :=
-  npow (Finset.univ.filter fun a =>
+  nePowerset (Finset.univ.filter fun a =>
     pd.isElder a || a == pd.speaker || a == pd.addressee)
 
 /-- ⟦HUMAN⟧ (58b). SAPs are included via `speaker_human`/`addressee_human`. -/
 def humanDen : Finset (Finset pd.Ind) :=
-  npow (Finset.univ.filter fun a => pd.isHuman a)
+  nePowerset (Finset.univ.filter fun a => pd.isHuman a)
 
 /-- ⟦ANIMATE⟧ (58c). -/
 def animateDen : Finset (Finset pd.Ind) :=
-  npow (Finset.univ.filter fun a => pd.isAnimate a)
+  nePowerset (Finset.univ.filter fun a => pd.isAnimate a)
 
 -- ============================================================================
 -- § 4: Pronoun Composition via Nested Oplus
@@ -322,31 +322,31 @@ theorem elder_with_animal :
   exact singleton_mem_oplus (by decide) (by decide)
 
 /-! Base-feature containment: each animacy denotation is contained in
-    the next less-marked one. These follow from `npow_mono` plus a small
+    the next less-marked one. These follow from `nePowerset_mono` plus a small
     `decide` on the underlying 6-atom filter. -/
 
 theorem elderDen_sub_humanDen :
-    elderDen zd ⊆ humanDen zd := npow_mono (by decide)
+    elderDen zd ⊆ humanDen zd := nePowerset_mono (by decide)
 
 theorem humanDen_sub_animateDen :
-    humanDen zd ⊆ animateDen zd := npow_mono (by decide)
+    humanDen zd ⊆ animateDen zd := nePowerset_mono (by decide)
 
 theorem animateDen_sub_piDen :
-    animateDen zd ⊆ piDen zd := npow_mono (by decide)
+    animateDen zd ⊆ piDen zd := nePowerset_mono (by decide)
 
 /-! Denotation containment chain. Each pronoun is `oplus` of progressively
     less-marked feature denotations. The proof pattern: replace the
     most-marked component (e.g. elder in elderPron) with the next
     component (human) using `oplus_subset` + base-feature monotonicity,
-    then use `oplus_assoc` and `oplus_npow_self_subset` to absorb the
+    then use `oplus_assoc` and `oplus_nePowerset_self_subset` to absorb the
     duplicated component. -/
 
 theorem animalPron_sub_piDen :
     animalPron zd ⊆ piDen zd := by
-  -- animalPron = oplus animateDen piDen ⊆ npow univ = piDen.
-  -- Both args are ⊆ npow univ (their elements are subsets of univ).
-  refine oplus_subset_npow (X := Finset.univ) ?_ (Finset.Subset.refl _)
-  exact npow_mono (Finset.subset_univ _)
+  -- animalPron = oplus animateDen piDen ⊆ nePowerset univ = piDen.
+  -- Both args are ⊆ nePowerset univ (their elements are subsets of univ).
+  refine oplus_subset_nePowerset (X := Finset.univ) ?_ (Finset.Subset.refl _)
+  exact nePowerset_mono (Finset.subset_univ _)
 
 theorem humanPron_sub_animalPron :
     humanPron zd ⊆ animalPron zd := by
@@ -360,7 +360,7 @@ theorem humanPron_sub_animalPron :
   show oplus (animateDen zd) (oplus (animateDen zd) (piDen zd)) ⊆
        oplus (animateDen zd) (piDen zd)
   rw [← oplus_assoc]
-  exact oplus_subset (oplus_npow_self_subset _) (Finset.Subset.refl _)
+  exact oplus_subset (oplus_nePowerset_self_subset _) (Finset.Subset.refl _)
 
 theorem elderPron_sub_humanPron :
     elderPron zd ⊆ humanPron zd := by
@@ -371,7 +371,7 @@ theorem elderPron_sub_humanPron :
   show oplus (humanDen zd) (oplus (humanDen zd) (oplus (animateDen zd) (piDen zd))) ⊆
        oplus (humanDen zd) (oplus (animateDen zd) (piDen zd))
   rw [← oplus_assoc]
-  exact oplus_subset (oplus_npow_self_subset _) (Finset.Subset.refl _)
+  exact oplus_subset (oplus_nePowerset_self_subset _) (Finset.Subset.refl _)
 
 /-- SPEAKER ⊂ PARTICIPANT at the feature-denotation level. -/
 theorem speaker_sub_participant :

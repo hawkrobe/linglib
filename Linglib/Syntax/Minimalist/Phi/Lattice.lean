@@ -1,8 +1,7 @@
-import Mathlib.Data.Finset.Card
-import Mathlib.Data.Finset.Powerset
-import Mathlib.Data.Finset.NAry
-import Mathlib.Data.Finset.Prod
 import Mathlib.Data.Finset.Lattice.Fold
+import Mathlib.Data.Finset.NAry
+import Mathlib.Data.Finset.Powerset
+import Mathlib.Data.Finset.Prod
 
 /-!
 # Phi lattices and their operations
@@ -20,16 +19,16 @@ sibling denotations disjoint (p. 80).
 This is the shared origin substrate for [harbour-2016]'s person partition
 (`Studies.Harbour2016`, which builds the partition *construction* on top) and for
 [toosarvandani-2023]'s animacy account (`Studies.Toosarvandani2023`, which reuses
-`oplus`/`npow`/`lexComp` for heterogeneous pluralities such as `oplus SPEAKER
+`oplus`/`nePowerset`/`lexComp` for heterogeneous pluralities such as `oplus SPEAKER
 ANIMATE`). Generic over the atom type `α`. Sits beside `Phi.Geometry` (the person
 feature geometry) and `Phi.Recursion` (the number calculus).
 
 ## Main declarations
 
-* `npow` — the nonempty powerset (a phi lattice generated from an atom set).
-* `oplus` (`⊕`) — disjoint addition: pointwise lattice join of two denotations
+* `nePowerset` — the nonempty powerset (a phi lattice generated from an atom set).
+* `oplus` — disjoint addition (`⊕`): pointwise lattice join of two denotations
   ([harbour-2016] (17); `= Finset.image₂ (· ∪ ·)`).
-* `ominus` (`⊖`) — joint subtraction: strip a feature lattice's maximum from each
+* `ominus` — joint subtraction (`⊖`): strip a feature lattice's maximum from each
   element ([harbour-2016] (19)).
 * `lexComp` — Lexical Complementarity: `G \ F`, restricting `G` away from a more
   specified sibling `F` ([harbour-2016] (31)).
@@ -48,28 +47,31 @@ variable {α : Type*} [DecidableEq α]
 
 /-- Nonempty powerset: all nonempty subsets of `atoms`. The phi lattice generated
 from an atom set — every nonempty sum of atoms (`ℒπ` when `atoms` is the full
-participant domain). -/
-def npow (atoms : Finset α) : Finset (Finset α) := atoms.powerset.erase ∅
+participant domain). Mathlib has no such operation; this mirrors the definitional shape
+of `Finset.ssubsets` (`= powerset.erase s`, the *proper* subsets — removing the *top*),
+removing the *bottom* `∅` instead. -/
+def nePowerset (atoms : Finset α) : Finset (Finset α) := atoms.powerset.erase ∅
 
-/-- Monotonicity of `npow`. -/
-theorem npow_mono {s t : Finset α} (h : s ⊆ t) : npow s ⊆ npow t :=
+/-- Monotonicity of `nePowerset`. -/
+theorem nePowerset_mono {s t : Finset α} (h : s ⊆ t) : nePowerset s ⊆ nePowerset t :=
   erase_subset_erase ∅ (powerset_mono.mpr h)
 
-/-- `npow X` is closed under nonempty union. -/
-theorem npow_union_mem {X s t : Finset α} (hs : s ∈ npow X) (ht : t ∈ npow X) :
-    s ∪ t ∈ npow X := by
-  simp only [npow, mem_erase, mem_powerset] at hs ht ⊢
+/-- `nePowerset X` is closed under nonempty union. -/
+theorem nePowerset_union_mem {X s t : Finset α} (hs : s ∈ nePowerset X)
+    (ht : t ∈ nePowerset X) : s ∪ t ∈ nePowerset X := by
+  simp only [nePowerset, mem_erase, mem_powerset] at hs ht ⊢
   refine ⟨?_, union_subset hs.2 ht.2⟩
   intro huv
   exact hs.1 (subset_empty.mp (huv ▸ subset_union_left))
 
 /-! ### `⊕` — disjoint addition ([harbour-2016] (17)) -/
 
-/-- `⊕` (`oplus`): pointwise lattice join of two feature denotations
-([harbour-2016] (17), generalising [kratzer-2009]'s sum operator). Generates
-heterogeneous pluralities: `oplus SPEAKER ANIMATE` includes `{speaker, animal}`.
-Defined via `Finset.image` over the product so `decide` unfolds concrete instances
-without an extra `image₂` layer; `oplus_eq_image₂` transfers mathlib's `image₂_*`. -/
+/-- Disjoint addition `⊕` (`oplus`): the pointwise lattice join of two feature
+denotations ([harbour-2016] (17)) — the Linkian join operator [link-1983] (cf.
+[chierchia-1998]'s sum). Generates heterogeneous pluralities: `oplus SPEAKER ANIMATE`
+includes `{speaker, animal}`. The body `(F ×ˢ G).image (· ∪ ·)` is mathlib's own
+unfolding of `Finset.image₂ (· ∪ ·)` (see `oplus_eq_image₂`), so the `image₂_*`
+lemmas transfer by `rfl`. -/
 def oplus (F G : Finset (Finset α)) : Finset (Finset α) :=
   (F ×ˢ G).image fun yz => yz.1 ∪ yz.2
 
@@ -98,24 +100,25 @@ theorem oplus_assoc (F G H : Finset (Finset α)) :
   show image₂ (· ∪ ·) (image₂ (· ∪ ·) F G) H = image₂ (· ∪ ·) F (image₂ (· ∪ ·) G H)
   exact image₂_assoc fun a b c => union_assoc a b c
 
-/-- `⊕` of two sub-lattices of `npow X` lands back in `npow X`. -/
-theorem oplus_subset_npow {X : Finset α} {F G : Finset (Finset α)}
-    (hF : F ⊆ npow X) (hG : G ⊆ npow X) : oplus F G ⊆ npow X := by
+/-- `⊕` of two sub-lattices of `nePowerset X` lands back in `nePowerset X`. -/
+theorem oplus_subset_nePowerset {X : Finset α} {F G : Finset (Finset α)}
+    (hF : F ⊆ nePowerset X) (hG : G ⊆ nePowerset X) : oplus F G ⊆ nePowerset X := by
   intro z hz
   obtain ⟨x, hx, y, hy, rfl⟩ := mem_oplus_iff.mp hz
-  exact npow_union_mem (hF hx) (hG hy)
+  exact nePowerset_union_mem (hF hx) (hG hy)
 
-/-- `npow X` is closed under self-`⊕`. -/
-theorem oplus_npow_self_subset (X : Finset α) : oplus (npow X) (npow X) ⊆ npow X :=
-  oplus_subset_npow (Subset.refl _) (Subset.refl _)
+/-- `nePowerset X` is closed under self-`⊕`. -/
+theorem oplus_nePowerset_self_subset (X : Finset α) :
+    oplus (nePowerset X) (nePowerset X) ⊆ nePowerset X :=
+  oplus_subset_nePowerset (Subset.refl _) (Subset.refl _)
 
 /-! ### `⊖` — joint subtraction ([harbour-2016] (19)) -/
 
-/-- `⊖` (`ominus`): strip the feature lattice `F`'s maximum (`F.sup id`, its
-generating set) from every element of the collection `G`. Cumulative subtraction
-reduces to subtracting the maximum, since the feature lattices have a unique maximal
-element ([harbour-2016] (19)). The empty set may appear and is winnowed downstream
-by the variable head `φ`. -/
+/-- Joint subtraction `⊖` (`ominus`): strip the feature lattice `F`'s maximum
+(`F.sup id`, its generating set) from every element of the collection `G`. Cumulative
+subtraction reduces to subtracting the maximum, since the feature lattices have a
+unique maximal element ([harbour-2016] (19)). The empty set may appear and is winnowed
+downstream by the variable head `φ`. -/
 def ominus (F G : Finset (Finset α)) : Finset (Finset α) := G.image (· \ F.sup id)
 
 /-- Membership in `ominus`. -/
@@ -135,6 +138,19 @@ specified sibling already picks out ([harbour-2016] (31), p. 80). -/
 def lexComp (G F : Finset (Finset α)) : Finset (Finset α) := G \ F
 
 theorem lexComp_subset (G F : Finset (Finset α)) : lexComp G F ⊆ G := sdiff_subset
+
+/-- Membership in `lexComp`. -/
+theorem mem_lexComp_iff {G F : Finset (Finset α)} {z : Finset α} :
+    z ∈ lexComp G F ↔ z ∈ G ∧ z ∉ F := mem_sdiff
+
+/-- A `lexComp` result is disjoint from the more-specified sibling it excludes. -/
+theorem lexComp_disjoint (G F : Finset (Finset α)) : Disjoint (lexComp G F) F :=
+  sdiff_disjoint
+
+/-- `lexComp` stays within `nePowerset X` (it only removes elements). -/
+theorem lexComp_subset_nePowerset {X : Finset α} {G F : Finset (Finset α)}
+    (hG : G ⊆ nePowerset X) : lexComp G F ⊆ nePowerset X :=
+  (lexComp_subset G F).trans hG
 
 /-! ### Signed feature application -/
 

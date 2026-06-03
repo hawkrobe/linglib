@@ -50,7 +50,7 @@ inverse contexts.
 
 ## Integration
 
-Connects to `PersonGeometry.lean` via bridge theorems. The direct/inverse
+Connects to `Phi/Geometry.lean` via bridge theorems. The direct/inverse
 classification predicts which languages show differential P indexing
 (Basque, Georgian fragments).
 

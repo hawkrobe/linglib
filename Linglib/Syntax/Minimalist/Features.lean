@@ -33,7 +33,7 @@ meaningless person values (e.g., `person 47`) and grounds the feature
 inventory in the same canonical type used across the library:
 
 - `Features.Prominence.PersonLevel` — framework-agnostic person hierarchy
-- `PersonGeometry.DecomposedPerson` — [preminger-2014]'s [±participant,
+- `Phi.Geometry.DecomposedPerson` — [preminger-2014]'s [±participant,
   ±author] decomposition, now mapping from `PersonLevel`
 - `DifferentialIndexing.IndexingPersonLevel` — [just-2024]'s SAP/3rd
   binary split, bridged to `PersonLevel`
