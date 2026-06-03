@@ -41,6 +41,6 @@ inductive BindingClass where
   | pronoun
   /-- Referring expression (proper name, full NP). -/
   | rExpression
-  deriving Repr, DecidableEq
+  deriving Repr, BEq, DecidableEq
 
 end Features
