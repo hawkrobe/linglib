@@ -2,6 +2,7 @@ import Linglib.Syntax.Pronoun.Basic
 import Linglib.Core.Nominal.Determiner
 import Linglib.Fragments.German.Definiteness
 import Linglib.Studies.Schwarz2009
+import Linglib.Semantics.Presupposition.PhiFeatures
 
 /-!
 # Patel-Grosz & Grosz (2017): Revisiting Pronominal Typology
@@ -157,5 +158,38 @@ theorem der_er_can_diverge :
         (Core.Nominal.Description.ofPresupType .familiarity Schwarz2009.studentRestr 0)
         Schwarz2009.gAlice Schwarz2009.gs0 :=
   Schwarz2009.two_articles_can_disagree
+
+/-! ### Grounding the Pronoun API: `PersonalPronoun` denotes via a φ-restricted definite description
+
+A personal pronoun is a definite description over a null NP whose φ-features are presuppositions
+([elbourne-2005] pronouns-as-definites; gender = null-NP concord à la Sauerland; the
+partial-identity view of φ in `Semantics/Presupposition/PhiFeatures`, after Cooper/Heim & Kratzer).
+The PER series is the **weak** article (uniqueness); the marked DEM series the **strong**
+(familiarity, `der_er_can_diverge` above) — article-strength is *per-series*, not a per-element slot
+(like deficiency, unlike the demonstrative's deixis). The load-bearing parallel to the demonstrative
+grounding (`Studies/Hanink2021`): there `deixis` filled `Description.demonstrative`'s slot; here the
+`Proform.phi` **gender** supplies the restrictor's presupposition. -/
+
+open Semantics.Presupposition.PhiFeatures (femSem)
+
+/-- `⟦sie⟧` made concrete: the feminine PER's weak-article restrictor **is** the `femSem`
+    presupposition — true by construction (`(femSem isFemale).presup = isFemale`), so the gender
+    feature *drives* the definite description's restrictor rather than re-stipulating it. -/
+theorem feminine_per_restrictor_is_femSem {F : Core.Logic.Intensional.Frame}
+    (isFemale : F.Entity → Prop) (sIdx : Nat) :
+    Core.Nominal.Description.ofPresupType .uniqueness
+        (fun _ _ x => (femSem isFemale).presup x) sIdx
+      = Core.Nominal.Description.unique (fun _ _ x => isFemale x) sIdx := rfl
+
+/-- Consequently a feminine PER picks the *unique female* — the gender presupposition is the
+    restrictor of the weak-article definite (`ιx[isFemale x]`). -/
+theorem feminine_per_picks_unique_female {F : Core.Logic.Intensional.Frame}
+    (isFemale : F.Entity → Prop) (sIdx : Nat)
+    (g : Core.Assignment F.Entity) (gs : Core.Logic.Intensional.Variables.SitAssignment F) :
+    Core.Nominal.interpret
+        (Core.Nominal.Description.ofPresupType .uniqueness
+          (fun _ _ x => (femSem isFemale).presup x) sIdx) g gs
+      = Core.Nominal.russellIota (fun x => isFemale x) :=
+  Core.Nominal.interpret_unique (fun _ _ x => isFemale x) sIdx g gs
 
 end PatelGroszGrosz2017
