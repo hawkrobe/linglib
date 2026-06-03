@@ -19,6 +19,7 @@ import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Syntax.Pronoun.Demonstrative
 import Linglib.Syntax.Pronoun.Indefinite
+import Linglib.Syntax.Pronoun.Logophoric
 import Linglib.Typology.Pronoun.WALS
 import Linglib.Typology.Evidentiality
 import Linglib.Core.Logic.FactorsThroughOn

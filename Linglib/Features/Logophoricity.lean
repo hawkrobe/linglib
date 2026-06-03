@@ -128,4 +128,50 @@ theorem pov_satisfied :
 theorem pov_violated :
     pointOfViewPrinciple true false = false := rfl
 
+-- ============================================================================
+-- § 4: The `Logophoric` capability
+-- ============================================================================
+
+/-- A carrier whose every element is **logophoric** — oriented toward a perspectival
+    centre rather than to the utterance situation. `requiredRole` is the minimum
+    [sells-1987] role an antecedent must fill to license the form: a `self` for an Ewe
+    *yè*-type logophoric pronoun (the antecedent must be an attitude holder), a `pivot`
+    for a *zibun*-type long-distance reflexive (any point-of-view centre suffices).
+
+    Word-class-neutral, like `Indefinite`/`Demonstrative`: logophoric pronouns, exempt
+    reflexives, and verbal logophoric marking are sibling carriers, each supplying its own
+    instance and read by the same `[Logophoric α]` generic code. **Orthogonal to `Bound`**
+    (`Syntax/Pronoun/Capabilities.lean`): perspectival orientation is not the Principle
+    A/B/C binding role — [sells-1987]'s point that logophoric anaphora is role-oriented,
+    licensed by a discourse role, not configurationally bound. -/
+class Logophoric (α : Type*) where
+  /-- The minimum [sells-1987] role an antecedent must fill to license the form. -/
+  requiredRole : α → LogophoricRole
+
+/-- The form `a` is **licensed** by an antecedent filling role `antecedentRole`: the
+    antecedent reaches at least the form's `requiredRole` on the `pivot ≤ self ≤ source`
+    hierarchy. Derived from the order (`§ 2`), not stipulated — a form requiring `self`
+    is licensed by a `source` antecedent *because* `self ≤ source`. -/
+def Logophoric.LicensedBy {α : Type*} [Logophoric α] (a : α)
+    (antecedentRole : LogophoricRole) : Prop :=
+  Logophoric.requiredRole a ≤ antecedentRole
+
+instance {α : Type*} [Logophoric α] (a : α) (r : LogophoricRole) :
+    Decidable (Logophoric.LicensedBy a r) :=
+  inferInstanceAs (Decidable (_ ≤ _))
+
+/-- Every logophoric form is licensed by a **source** antecedent — the reporter sits at
+    the top of the hierarchy, so it meets any form's requirement (`le_source`). A generic
+    fact over the capability, independent of carrier or `requiredRole`. -/
+theorem Logophoric.source_licenses {α : Type*} [Logophoric α] (a : α) :
+    Logophoric.LicensedBy a .source :=
+  le_source _
+
+/-- Licensing is monotone in the antecedent's role: a stronger centre still licenses
+    whatever a weaker one does (transitivity of the hierarchy). -/
+theorem Logophoric.LicensedBy.mono {α : Type*} [Logophoric α] {a : α}
+    {r r' : LogophoricRole} (h : Logophoric.LicensedBy a r) (hr : r ≤ r') :
+    Logophoric.LicensedBy a r' :=
+  le_trans h hr
+
 end Features.Logophoricity
