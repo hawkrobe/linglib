@@ -8,6 +8,8 @@ import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.Phi.Recursion
 import Linglib.Syntax.Minimalist.Phi.Lattice
 import Linglib.Studies.Corbett2000
+import Linglib.Syntax.Pronoun.Basic
+import Linglib.Fragments.Tamil.Pronouns
 
 /-!
 # Harbour (2016): *Impossible Persons* — the partition calculus
@@ -358,5 +360,38 @@ def signOf : Category → Sign
 /-- Harbour's signs distinguish exclusive from inclusive, where the neutral membership
 decomposition (`Category.toFeatures`) collapses them (cf. `Examples.inclusive_ne_exclusive`). -/
 theorem signOf_excl_ne_incl : signOf .excl ≠ signOf .minIncl := by decide
+
+/-! ### Application: the Tamil clusivity contrast through the Pronoun API
+
+A lexical pronoun entry feeds Harbour's signs by composing `Pronoun.category` — the
+[cysouw-2009] category a `person`/`number`/`clusivity` triple realizes — with `signOf`. Tamil's
+clusivity-marked 1pl forms *naam* (inclusive) and *naangaL* (exclusive) land on distinct signs,
+where the neutral `Category.toFeatures` collapses both 1pl categories to `⟨true, true⟩`: the
+distinction [harbour-2016]'s decomposition exists to draw, here discharged on real Fragment
+entries rather than a stipulated example. -/
+
+open Tamil.Pronouns (naam naangaL)
+
+/-- The Harbour sign a pronoun realizes: its [cysouw-2009] `Category` (via the Pronoun API's
+`Pronoun.category`) decomposed by `signOf`. `none` when the φ-features underdetermine a
+category. The bridge from a lexical pronoun entry to [harbour-2016]'s `±author/±participant`
+operations. -/
+def harbourSign (p : Pronoun) : Option Sign := p.category.map signOf
+
+/-- *naam* (1pl inclusive) realizes the inclusive sign `+author +participant`. -/
+theorem naam_sign : harbourSign naam.toPronoun = some ⟨true, true⟩ := by decide
+
+/-- *naangaL* (1pl exclusive) realizes the exclusive sign `+author −participant`. -/
+theorem naangaL_sign : harbourSign naangaL.toPronoun = some ⟨true, false⟩ := by decide
+
+/-- Harbour's signs distinguish *naam* from *naangaL* through the Pronoun API. -/
+theorem tamil_clusivity_distinguished :
+    harbourSign naam.toPronoun ≠ harbourSign naangaL.toPronoun := by decide
+
+/-- The neutral membership decomposition collapses them: both 1pl categories map to the same
+`Category.toFeatures`, so only Harbour's operational signs keep *naam* and *naangaL* apart. -/
+theorem tamil_clusivity_collapsed_by_toFeatures :
+    naam.toPronoun.category.map Category.toFeatures
+      = naangaL.toPronoun.category.map Category.toFeatures := by decide
 
 end Harbour2016
