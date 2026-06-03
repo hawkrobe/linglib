@@ -1,7 +1,7 @@
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Core.Context.Basic
+import Linglib.Semantics.Context.Basic
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Semantics.Mood.ClauseType
 import Linglib.Discourse.Intentionality
@@ -38,7 +38,7 @@ c-commands content.
 namespace Minimalist.SpeechActs
 
 open Minimalist
-open Core.Context (KContext)
+open Semantics.Context (KContext)
 
 -- ============================================================================
 -- Section A: Pragmatic Roles

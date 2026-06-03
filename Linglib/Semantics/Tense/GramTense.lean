@@ -3,8 +3,8 @@ import Linglib.Core.Assignment
 import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Time.Relation
 import Linglib.Core.Time.Reichenbach
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
 
 /-!
 # Unified Tense Pronoun Architecture
@@ -421,7 +421,7 @@ into the tower: when the temporal assignment encodes tower time coordinates
 
 section TemporalBridge
 
-open Core.Context (KContext ContextTower ContextShift AccessPattern DepthSpec
+open Semantics.Context (KContext ContextTower ContextShift AccessPattern DepthSpec
   temporalShift)
 
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}

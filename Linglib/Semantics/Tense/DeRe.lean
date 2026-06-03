@@ -1,4 +1,4 @@
-import Linglib.Core.Context.Basic
+import Linglib.Semantics.Context.Basic
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Reference.Acquaintance
 import Linglib.Semantics.Tense.Basic
@@ -37,7 +37,7 @@ live in `Studies/Abusch1997.lean`.
   property that distinguishes de re from de dicto temporal anaphora.
   `IsRigidOn` (set-relativized) is the workhorse for modal-alternative
   rigidity.
-- `Core.Context.KContext W E P T` (`Core/Context/Basic.lean`) — the
+- `Semantics.Context.KContext W E P T` (`Core/Context/Basic.lean`) — the
   centered Kaplanian context `⟨agent, addressee, world, time, position⟩`.
   Abusch's `⟨x_self, t_now, w⟩` is a 3-field projection; `KContext` is
   the richer object the rest of linglib already commits to.
@@ -100,7 +100,7 @@ live in `Studies/Abusch1997.lean`.
 namespace Semantics.Tense.DeRe
 
 open Core (Intension WorldTimeIndex)
-open Core.Context (KContext)
+open Semantics.Context (KContext)
 open HistoricalAlternatives (actualHistoryBase)
 open Semantics.Tense (TensePronoun GramTense TemporalAssignment)
 

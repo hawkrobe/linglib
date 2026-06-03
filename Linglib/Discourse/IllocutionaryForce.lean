@@ -1,4 +1,4 @@
-import Linglib.Core.Context.Tower
+import Linglib.Semantics.Context.Tower
 import Linglib.Discourse.Roles
 import Linglib.Semantics.Mood.IllocutionaryMood
 /-!
@@ -11,7 +11,7 @@ The pragmatic-act side of the Searlean F(p) parallel: `DirectionOfFit`,
 `Discourse/Intentionality.lean`.
 -/
 namespace Discourse
-open Core.Context
+open Semantics.Context
 open Semantics.Mood (IllocutionaryMood moodAuthority)
 /-! ### Direction of Fit ([searle-1983]) -/
 /-- Direction of fit: how responsibility for matching the state and

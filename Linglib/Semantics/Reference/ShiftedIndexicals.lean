@@ -22,7 +22,7 @@ person shifts but time does not.
 
 namespace Semantics.Reference.ShiftedIndexicals
 
-open Core.Context
+open Semantics.Context
 open Semantics.Reference.Kaplan
 
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}

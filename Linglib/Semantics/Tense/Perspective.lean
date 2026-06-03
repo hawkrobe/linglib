@@ -1,6 +1,6 @@
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Core.Time.Reichenbach
-import Linglib.Core.Context.Basic
+import Linglib.Semantics.Context.Basic
 import Linglib.Semantics.Tense.Basic
 
 /-!
@@ -40,7 +40,7 @@ namespace Semantics.Tense.Perspective
 
 open Core.Time.Reichenbach
 open Semantics.Presupposition
-open Core.Context (KContext)
+open Semantics.Context (KContext)
 open Semantics.Tense
 
 

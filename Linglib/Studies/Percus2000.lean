@@ -1,7 +1,7 @@
 import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Core.Assignment
 import Linglib.Semantics.Tense.GramTense
-import Linglib.Core.Context.Tower
+import Linglib.Semantics.Context.Tower
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.FunctionWords
@@ -47,7 +47,7 @@ Fragments/English/Predicates/Verbal.lean
 namespace Percus2000
 
 open Core (WorldTimeIndex Assignment)
-open Core.Context
+open Semantics.Context
 open Features (Attitude)
 
 

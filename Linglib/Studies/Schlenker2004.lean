@@ -1,6 +1,6 @@
 import Linglib.Studies.Abusch1997
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
 import Linglib.Data.Examples.Schema
 
 /-!
@@ -43,9 +43,9 @@ The general-indexicals content of [schlenker-2003] lives at
 ## Derivation Chain
 
 ```
-Core.Context.Tower (ContextTower, push, innermost, origin)
+Semantics.Context.Tower (ContextTower, push, innermost, origin)
     ↓
-Core.Context.Shifts (temporalShift: changes time, preserves agent/world)
+Semantics.Context.Shifts (temporalShift: changes time, preserves agent/world)
     ↓
 This file: tower operations produce the Reichenbach frames in Studies/Abusch1997.lean
     ↓
@@ -66,7 +66,7 @@ Abusch1997 (matrixSaid, embeddedSickSimultaneous, etc.)
 
 namespace Schlenker2004
 
-open Core.Context
+open Semantics.Context
 open Abusch1997
 open Data.Examples (LinguisticExample)
 

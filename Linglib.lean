@@ -252,10 +252,10 @@ import Linglib.Typology.Reference
 import Linglib.Typology.TenseAspect
 import Linglib.Typology.Color
 import Linglib.Typology.BodyParts
-import Linglib.Core.Context.Basic
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
-import Linglib.Core.Context.Rich
+import Linglib.Semantics.Context.Basic
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
+import Linglib.Semantics.Context.Rich
 import Linglib.Features.InformationStructure
 import Linglib.Features.Givenness
 import Linglib.Features.Topic

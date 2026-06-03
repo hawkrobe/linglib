@@ -1,6 +1,6 @@
 import Linglib.Features.Evidentiality
 import Linglib.Features.Mirativity
-import Linglib.Core.Context.Tower
+import Linglib.Semantics.Context.Tower
 
 /-!
 # Epistemic Profile Layer
@@ -39,7 +39,7 @@ namespace Semantics.Epistemicity
 
 open Features.Evidentiality
 open Features.Mirativity
-open Core.Context
+open Semantics.Context
 
 /-- Epistemic authority: WHO has privileged access to the propositional content.
     Egophoric systems ([tournadre-2008], [floyd-2018], Gawne & Spronck glossary 2)
