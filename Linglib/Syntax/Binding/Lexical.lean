@@ -103,4 +103,44 @@ example (r : ReflexivePronoun) :
     PronounLike.form r = r.val.form ∧ Lexicon.IsAnaphor r :=
   ⟨rfl, Anaphoric.isAnaphor r⟩
 
+/-! ### A validated consumer: Principle A driven by the declaration
+
+A minimal slice of Principle A (`Binding.reflexiveLicensed`, `Syntax/Binding/Basic.lean`)
+re-expressed over the lexical mixins: it reads the dependent's kind from `[Lexicon α]` and
+the φ-agreement from `[PronounLike α]`, folding the structural command + locality facts into
+`commandsLocally` — *no* `classify : Word → BindingClass` parameter. This validates the mixin
+layer: the engine's Principle-A logic is driven by the lexical *declaration*. -/
+
+/-- Principle A over the mixins: a declared reflexive `dep` is licensed by `ante` iff `ante`
+locally commands it and they φ-agree. A non-reflexive `dep` is vacuously licensed (Principle
+A is silent on it). -/
+def licensesReflexive {α : Type} [Lexicon α] [PronounLike α]
+    (commandsLocally : Prop) (ante dep : α) : Prop :=
+  match Lexicon.bindingClass dep with
+  | some .reflexive => commandsLocally ∧ (PronounLike.phi ante).compatible (PronounLike.phi dep)
+  | _ => True
+
+/-- The reflexive case reduces to *local command ∧ φ-agreement* — exactly the reflexive clause
+of `Binding.reflexiveLicensed`, now driven by `[Lexicon α]` rather than a form-string
+classifier. -/
+theorem licensesReflexive_of_declared {α : Type} [Lexicon α] [PronounLike α]
+    (commandsLocally : Prop) (ante dep : α)
+    (h : Lexicon.bindingClass dep = some .reflexive) :
+    licensesReflexive commandsLocally ante dep
+      = (commandsLocally ∧ (PronounLike.phi ante).compatible (PronounLike.phi dep)) := by
+  simp only [licensesReflexive, h]
+
+private def exHe : Pronoun :=
+  { form := "he", person := some .third, number := some .sg,
+    gender := some .masculine, bindingClass := some .pronoun }
+private def exHimself : Pronoun :=
+  { form := "himself", person := some .third, number := some .sg,
+    gender := some .masculine, bindingClass := some .reflexive }
+
+/-- Validation: `himself` (declaring `.reflexive`), φ-agreeing with and locally commanded by
+`he`, is licensed by Principle A — driven entirely by the declaration, no classifier. -/
+example : licensesReflexive True exHe exHimself := by
+  rw [licensesReflexive_of_declared True exHe exHimself rfl]
+  exact ⟨trivial, by decide⟩
+
 end Binding
