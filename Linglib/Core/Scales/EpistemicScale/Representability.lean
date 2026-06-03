@@ -599,13 +599,6 @@ theorem perm_repr {n : ℕ} (σ : Fin n ≃ Fin n) (sys : EpistemicSystemFA (Fin
   obtain ⟨m, hm⟩ := h
   exact ⟨transportMeasure σ m, transfer_repr σ sys m hm⟩
 
--- Permutation helper for singleton orderings
-theorem perm_singleton_iff {n : ℕ} (σ : Fin n ≃ Fin n)
-    (sys : EpistemicSystemFA (Fin n)) (i j : Fin n) :
-    (transportFA σ sys).ge {i} {j} ↔ sys.ge {σ.symm i} {σ.symm j} := by
-  show sys.ge (σ.symm '' {i}) (σ.symm '' {j}) ↔ _
-  simp only [Set.image_singleton]
-
 
 
 -- ══════════════════════════════════════════════════════════════════

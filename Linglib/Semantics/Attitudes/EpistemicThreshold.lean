@@ -1,8 +1,11 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Scales.EpistemicScale
+import Linglib.Core.Scales.Defs
+import Linglib.Core.Scales.Predicate
+import Linglib.Core.Scales.Comparative
 import Linglib.Core.Agent.BToM
 import Linglib.Semantics.Degree.Basic
 import Linglib.Semantics.Attitudes.Confidence
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -638,7 +641,7 @@ theorem meetsThreshold_eq_positiveSem (cr : AgentCredence E W) (θ : ℚ)
     Since credence is bounded by [0, 1], [kennedy-2007]'s licensing
     prediction says epistemic adjectives like `certain` can use endpoint
     standards (θ ≈ 1.0). This unifies with the five-framework licensing
-    agreement from `Core/EpistemicScale.lean`. -/
+    agreement from `Core/Scales/EpistemicScale.lean`. -/
 theorem epistemicScale_licensed :
     epistemicBoundedness.isLicensed = true := rfl
 
@@ -664,7 +667,7 @@ Threshold semantics then arises by cutting this comparative ordering
 at specific points on the scale.
 
 This places the Ying et al. threshold semantics within the algebraic
-framework of Core/EpistemicScale.lean: the fitted thresholds from
+framework of `Core/Scales/EpistemicScale.lean`: the fitted thresholds from
 Table 1(b) are points on a finitely additive probability scale that
 satisfies System FA (and hence all of W ⊂ F ⊂ FA).
 -/

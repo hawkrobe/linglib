@@ -12,7 +12,7 @@ import Mathlib.Tactic.IntervalCases
 [holliday-icard-2013] [halpern-2003] [van-der-hoek-1996]
 
 Epistemic likelihood scales: the `EpistemicScale` arm of the categorical
-diagram in `Core/Scale.lean`.
+diagram in `Core/Scales/Scale.lean`.
 
 [holliday-icard-2013] study the logic of "at least as likely as" (≿) on
 propositions, defining a hierarchy of axiom systems (W ⊂ F ⊂ FA) whose
