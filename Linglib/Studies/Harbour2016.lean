@@ -5,7 +5,8 @@ import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Features.Person
 import Linglib.Features.Number
 import Linglib.Syntax.Minimalist.CyclicAgree
-import Linglib.Syntax.Minimalist.Agreement.FeatureRecursion
+import Linglib.Syntax.Minimalist.Phi.Recursion
+import Linglib.Syntax.Minimalist.Phi.Lattice
 import Linglib.Studies.Corbett2000
 
 /-!
@@ -20,8 +21,10 @@ their values are actions `⊕` (disjoint addition) and `⊖` (joint subtraction)
 "not truth functors, which would reduce the features to first-order predicates,
 but actions by and on the person lattices."
 
-This file formalizes that calculus directly, so the empirical results come out
-*by construction* rather than being stipulated:
+The operators themselves (`⊕`/`⊖`/`lexComp`/`npow`) are reusable substrate in
+`Syntax.Minimalist.Phi.Lattice`; this file builds the partition *construction* on
+top and checks the empirical results, which come out *by construction* rather than
+being stipulated:
 
 * the **ontology** is the speaker `i`, hearer `u`, and others `o`; referents are
   sets of these (`Finset Ω`), and the three feature lattices are powerset
@@ -38,11 +41,12 @@ This file formalizes that calculus directly, so the empirical results come out
 
 ## Main declarations
 
-* `posAct` / `negAct` — the `⊕` / `⊖` actions of a feature lattice on a collection.
-* `refine` — Lexical Complementarity + ∅-winnowing.
-* `quadCell` / `triCell` — the cells of the quadri- and tripartition.
-* `Examples` — the concrete three-element ontology `{i, u, o} = Fin 3` on which the
-  derived theorems are `decide`-checked.
+* `refine` / `cellsOf` — Lexical Complementarity over a sibling family + ∅-winnowing,
+  the partition construction over `Phi.Lattice`'s `⊕`/`⊖`/`act` operators.
+* `Examples` — the concrete three-element ontology `{i, u, o} = Fin 3`, where the
+  partition cells live and the derived theorems are `decide`-checked.
+* `signOf` — Harbour's `±author`/`±participant` *signs* for a Cysouw `Category`
+  (theory-laden; cf. the neutral `Features.Person.Category.toFeatures`).
 
 ## Main results (all *derived*, none stipulated)
 
@@ -51,65 +55,49 @@ This file formalizes that calculus directly, so the empirical results come out
   out **disjoint**, with the exclusive genuinely `−participant`. This is exactly the
   distinction a Boolean-membership encoding (the foil [harbour-2016] argues against)
   collapses.
-* `quad_is_partition` / `tri_is_partition` — the cells cover `ℒπ` and are pairwise
-  disjoint.
+* `quad_covers` / `quad_disjoint` — the cells cover `ℒπ` and are pairwise disjoint.
 * `tri_card` / `quad_card` — composition order gives 3 vs 4 cells (noncommutativity).
-* `five_partitions` — the two-feature inventory generates exactly five partitions
-  ([harbour-2016] Table 4.1), no more.
-* `no_four_singular` — at most three person cells contain a singleton referent.
+* `five_partitions` — the two-feature inventory's five parameter settings yield five
+  distinct partitions ([harbour-2016] Table 4.1).
+* `no_four_singular` — the inclusive holds no singleton, so the singular has three
+  persons.
 
-The number side ([harbour-2014a], Ch. 6) and the Cysouw-`Category` bridge live in
-later sections / `Features.Person`.
+The number side ([harbour-2014a], Ch. 6) is the `Phi.Recursion`/`Corbett2000` bridge.
 -/
 
 namespace Harbour2016
 
 open Finset
+open Minimalist.Phi.Lattice (act npow)
 
-/-! ### The feature calculus (Ch. 4.2.3) -/
+/-! ### The partition construction (over `Phi.Lattice`'s operators) -/
 
-section Calculus
+section Construction
 variable {Ω : Type*} [DecidableEq Ω]
 
-/-- Positive action `⊕`: *disjoint addition*. `+F` joins every element of the input
-collection `G` with every element of the feature lattice `F`
-([harbour-2016] (17)). This is `Finset.image₂` of the lattice join `∪`. -/
-def posAct (G F : Finset (Finset Ω)) : Finset (Finset Ω) := image₂ (· ∪ ·) G F
-
-/-- The maximum of a (powerset-generated) feature lattice — its generating set. -/
-def maxElt (F : Finset (Finset Ω)) : Finset Ω := F.sup id
-
-/-- Negative action `⊖`: *joint subtraction*. `−F` strips `F`'s maximum from every
-element of `G`. Cumulative subtraction reduces to subtracting the maximum, since
-the feature lattices have a unique maximal element ([harbour-2016] (19)). -/
-def negAct (G F : Finset (Finset Ω)) : Finset (Finset Ω) := G.image (· \ maxElt F)
-
-/-- Apply a signed feature (lattice `F`) to a collection `G`: `+F` is `posAct`,
-`−F` is `negAct`. -/
-def act (sign : Bool) (F G : Finset (Finset Ω)) : Finset (Finset Ω) :=
-  if sign then posAct G F else negAct G F
-
-/-- Lexical Complementarity + the `φ` domain restriction ([harbour-2016] (31), §4.4):
-confine a cell `c` by removing every sibling cell *properly contained* in it ("catch
-the slack" of more-specified cells), then winnow the empty set (there are no empty
-persons). -/
+/-- Lexical Complementarity over a sibling family + the `φ` domain restriction
+([harbour-2016] (31), §4.4): confine a cell `c` by removing every sibling cell
+*properly contained* in it (`Phi.Lattice.lexComp` across the family), then winnow the
+empty set (there are no empty persons). -/
 def refine (siblings : List (Finset (Finset Ω))) (c : Finset (Finset Ω)) :
     Finset (Finset Ω) :=
   (siblings.foldl (fun acc d => if d ⊂ c then acc \ d else acc) c).erase ∅
 
-/-- The cells of a partition, given the raw (pre-refinement) denotations of each
-sign assignment: refine each against the whole family, collected as a set. -/
+/-- The cells of a partition, given the raw (pre-refinement) denotations of each sign
+assignment: refine each against the whole family, collected as a set. -/
 def cellsOf (raws : List (Finset (Finset Ω))) : Finset (Finset (Finset Ω)) :=
   (raws.map (refine raws)).toFinset
 
-end Calculus
+end Construction
 
 /-! ### The three-element ontology `{i, u, o}` and the derived results
 
 Harbour's abbreviation `i_o`/`iu_o`/`u_o`/`o_o` collapses the π-lattice into four
 shape-classes; the minimal ontology realizing all four is `{i, u, o}`, taken here
-as `Fin 3` with `i = 0`, `u = 1`, `o = 2`. All theorems below are kernel-checked
-by `decide` on this finite model. -/
+as `Fin 3` with `i = 0`, `u = 1`, `o = 2`. A single `o` suffices for the *person*
+partition (the four cells are fixed by `has i?`/`has u?`, not the others' count); the
+3rd-person *group* `{o, o'}` is not modelled, and no result below depends on it. All
+theorems are kernel-checked by `decide` on this finite model. -/
 
 namespace Examples
 
@@ -120,7 +108,7 @@ def ℒau : Finset (Finset Ω) := {{0}}
 /-- The participant lattice `ℒpt = {{i}, {u}, {i,u}}` (powerset of `{i,u}`, minus `∅`). -/
 def ℒpt : Finset (Finset Ω) := {{0}, {1}, {0, 1}}
 /-- The π-lattice: all nonempty referent-sets. -/
-def ℒπ  : Finset (Finset Ω) := univ.powerset.erase ∅
+def ℒπ  : Finset (Finset Ω) := npow univ
 
 /-- The egocentric containment chain `ℒau ⊆ ℒpt ⊆ ℒπ` ([harbour-2016] p. 74). -/
 theorem lattice_chain : ℒau ⊆ ℒpt ∧ ℒpt ⊆ ℒπ := by decide
@@ -147,10 +135,10 @@ def secondP : Finset (Finset Ω) := quadCell false true
 /-- 3rd person = `−author −participant`. -/
 def thirdP : Finset (Finset Ω) := quadCell false false
 
-/-! The collapse the predicate encoding suffers is gone *by construction*: -/
+/-! Inclusive and exclusive come out as distinct, disjoint cells *by construction*: -/
 
 /-- The exclusive never contains the addressee `u` — it is genuinely `−participant`
-in Harbour's sense, the case `Category.toFeatures` (membership reading) gets wrong. -/
+in Harbour's sense, the case a Boolean-membership decomposition collapses. -/
 theorem exclusive_excludes_addressee : ∀ s ∈ exclusive, (1 : Ω) ∉ s := by decide
 
 /-- The exclusive always contains the speaker `i`. -/
@@ -197,17 +185,19 @@ theorem tri_ne_quad : cellsOf triRaws ≠ cellsOf quadRaws := by decide
 /-- Monopartition: no features active. -/
 def monoP : Finset (Finset (Finset Ω)) := cellsOf [ℒπ]
 /-- Author bipartition: `{±author}`. -/
-def authorBi : Finset (Finset (Finset Ω)) := cellsOf [posAct ℒπ ℒau, negAct ℒπ ℒau]
+def authorBi : Finset (Finset (Finset Ω)) := cellsOf [act true ℒau ℒπ, act false ℒau ℒπ]
 /-- Participant bipartition: `{±participant}`. -/
-def participantBi : Finset (Finset (Finset Ω)) := cellsOf [posAct ℒπ ℒpt, negAct ℒπ ℒpt]
+def participantBi : Finset (Finset (Finset Ω)) := cellsOf [act true ℒpt ℒπ, act false ℒpt ℒπ]
 /-- The standard tripartition as a set of cells. -/
 def triP : Finset (Finset (Finset Ω)) := cellsOf triRaws
 /-- The quadripartition as a set of cells. -/
 def quadP : Finset (Finset (Finset Ω)) := cellsOf quadRaws
 
-/-- The two-feature inventory `{±author, ±participant}` generates **exactly five**
-distinct partitions — monopartition, the two bipartitions, the tripartition, and the
-quadripartition — and no more ([harbour-2016] Table 4.1). -/
+/-- The five parameter settings of [harbour-2016] Table 4.1 — `∅`, `{±author}`,
+`{±participant}`, and the two composition orders of `{±author, ±participant}` — yield five
+**distinct** partitions (monopartition, the two bipartitions, the tripartition, the
+quadripartition). This theorem checks the distinctness; that these five settings *exhaust*
+the two-feature parameter space is the enumeration of Table 4.1 itself. -/
 theorem five_partitions :
     [monoP, authorBi, participantBi, triP, quadP].dedup.length = 5 := by decide
 
@@ -281,7 +271,7 @@ affords). The number side uses the three-feature `±atomic`/`±minimal`/`±addit
 of [harbour-2014a] (Ch. 6), faithfully distinct from the two-feature *person* calculus
 above. -/
 
-open Minimalist.Agreement.FeatureRecursion (HarbourConfig)
+open Minimalist.Phi.Recursion (HarbourConfig)
 open Corbett2000
 
 /-- Every attested number system's values are generated by some well-formed Harbour
@@ -331,5 +321,28 @@ theorem bridge_configs_wellFormed :
     (HarbourConfig.mk false true false true false).wellFormed = true ∧
     (HarbourConfig.mk false true true false false).wellFormed = true
     := by decide
+
+/-! ### Harbour's sign decomposition of the Cysouw categories ([harbour-2016] Table 4.3)
+
+The neutral `Features.Person.Category.toFeatures` underdetermines the group categories
+(`excl`/`minIncl`/`augIncl` all `⟨true,true⟩`). Harbour's **operational signs** — the
+exclusive is `+author −participant` — distinguish them; that distinction is *this theory's*
+commitment, derived from the partition above, not a property of the neutral decomposition. -/
+
+open Features.Person (Category)
+
+/-- Harbour's `±author`/`±participant` signs for a Cysouw `Category` ([harbour-2016]
+Table 4.3): the exclusive is `+author −participant` (`⟨false, true⟩`), so it does *not*
+collapse with the inclusive `+author +participant` — unlike the neutral
+`Category.toFeatures`. -/
+def signOf : Category → Features.Person.Features
+  | .s1 | .minIncl | .augIncl => ⟨true, true⟩    -- +author +participant
+  | .excl                     => ⟨false, true⟩   -- +author −participant
+  | .s2 | .secondGrp          => ⟨true, false⟩   -- −author +participant
+  | .s3 | .thirdGrp           => ⟨false, false⟩  -- −author −participant
+
+/-- Harbour's signs distinguish exclusive from inclusive, where the neutral membership
+decomposition (`Category.toFeatures`) collapses them (cf. `Examples.inclusive_ne_exclusive`). -/
+theorem signOf_excl_ne_incl : signOf .excl ≠ signOf .minIncl := by decide
 
 end Harbour2016

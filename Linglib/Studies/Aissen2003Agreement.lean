@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Agreement.DifferentialIndexing
-import Linglib.Syntax.Minimalist.PersonGeometry
+import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement

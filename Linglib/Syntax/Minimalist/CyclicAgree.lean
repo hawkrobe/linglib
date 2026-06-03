@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.PersonGeometry
+import Linglib.Syntax.Minimalist.Phi.Geometry
 
 /-!
 # Cyclic Agree [bejar-rezac-2009]

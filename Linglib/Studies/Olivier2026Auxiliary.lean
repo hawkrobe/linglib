@@ -1,5 +1,5 @@
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
-import Linglib.Syntax.Minimalist.PersonGeometry
+import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Phase
 
 /-!

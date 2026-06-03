@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.PersonGeometry
+import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.PConstraint
 import Linglib.Syntax.Minimalist.Agree
 import Linglib.Fragments.Italian.Pronouns

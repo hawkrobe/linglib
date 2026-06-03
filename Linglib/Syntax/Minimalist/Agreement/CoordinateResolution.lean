@@ -1,7 +1,7 @@
 import Linglib.Features.Number
 import Linglib.Features.Prominence
 import Linglib.Syntax.Minimalist.Agreement.GenderResolution
-import Linglib.Syntax.Minimalist.Agreement.FeatureRecursion
+import Linglib.Syntax.Minimalist.Phi.Recursion
 
 /-!
 # Coordinate Agreement Resolution
@@ -41,7 +41,7 @@ Number resolution is derived from the join-semilattice of individuals
 
 ## Relation to existing modules
 
-- `FeatureRecursion.lean`: `HarbourConfig.surfaceCategories` provides the
+- `Phi/Recursion.lean`: `HarbourConfig.surfaceCategories` provides the
   set of available number categories. `numberResolveConfig` composes
   canonical resolution with coarsening to a Harbour configuration.
 - `GenderResolution.lean`: compositional endpoint for gender resolution.
@@ -183,7 +183,7 @@ def numberOp (system : List Category) : ResolutionOp Category :=
   ⟨numberResolveIn system⟩
 
 /-- `numberResolveIn` with the system from a `HarbourConfig`. -/
-def numberResolveConfig (c : FeatureRecursion.HarbourConfig)
+def numberResolveConfig (c : Phi.Recursion.HarbourConfig)
     (a b : Category) : Option Category :=
   numberResolveIn c.surfaceCategories a b
 
@@ -288,7 +288,7 @@ entries (12 distinct configs, covering 2–5 value systems). -/
 /-- Resolution closure: for every Harbour 2014 Table 3 system, resolving
     any two categories from the system produces a category in the system. -/
 theorem resolution_closure_table3 :
-    FeatureRecursion.harbour2014Table3.all (fun entry =>
+    Phi.Recursion.harbour2014Table3.all (fun entry =>
       let sys := entry.config.surfaceCategories
       sys.all (fun a =>
         sys.all (fun b =>

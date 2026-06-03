@@ -278,53 +278,42 @@ theorem ud_conflates_incl_excl :
 -- § 8: Category ↔ Features Bridge
 -- ============================================================================
 
-/-- Decompose a Category into [harbour-2016]'s `±author`/`±participant` **signs**
-    (the values of the two-feature person calculus, `Harbour2016`), *not* set
-    membership.
+/-- Decompose any Category into binary person features (the framework-neutral
+    Cysouw/Siewierska `[±participant, ±author]` decomposition).
 
-    For singular categories the signs coincide with membership; for the group
-    categories they follow the quadripartition ([harbour-2016] Table 4.3):
-    inclusive `+author +participant`, **exclusive `+author −participant`**, second
-    `−author +participant`, third `−author −participant`. So the exclusive and
-    inclusive get *distinct* bundles — the operations calculus (`Harbour2016`) is
-    what justifies the exclusive being `−participant` despite containing the speaker,
-    which a membership reading (the foil [harbour-2016] argues against) could not. -/
+    - `hasAuthor` = `includesSpeaker`: the referent contains the speaker.
+    - `hasParticipant` = `includesSpeaker ∨ includesAddressee`: the referent
+      contains at least one speech-act participant.
+
+    Features underdetermine group categories: `excl`, `minIncl`, and `augIncl` all
+    map to `⟨true, true⟩` — a genuine property of the descriptive two-feature system
+    (the `Category` enum carries the clusivity distinction the features cannot). The
+    theory-laden Harbour-*sign* decomposition that *does* distinguish the exclusive
+    (`+author −participant`) lives in the theory layer
+    (`Syntax.Minimalist.Phi.Lattice`, consumed by `Studies.Harbour2016`), not here. -/
 def Category.toFeatures : Category → Features
   | .s1        => ⟨true, true⟩
   | .s2        => ⟨true, false⟩
   | .s3        => ⟨false, false⟩
   | .minIncl   => ⟨true, true⟩
   | .augIncl   => ⟨true, true⟩
-  | .excl      => ⟨false, true⟩   -- +author −participant ([harbour-2016] Table 4.3)
+  | .excl      => ⟨true, true⟩
   | .secondGrp => ⟨true, false⟩
   | .thirdGrp  => ⟨false, false⟩
-
-/-- The exclusive and inclusive no longer collapse to one bundle: the exclusive is
-    `+author −participant`, the inclusive `+author +participant` ([harbour-2016]
-    Table 4.3; cf. `Harbour2016.inclusive_ne_exclusive`). -/
-theorem excl_features_ne_incl : Category.excl.toFeatures ≠ Category.minIncl.toFeatures := by
-  decide
 
 /-- `hasAuthor` ↔ `IncludesSpeaker` for all categories. -/
 theorem toFeatures_author_iff_speaker (p : Category) :
     p.toFeatures.hasAuthor = true ↔ p.IncludesSpeaker := by
   cases p <;> simp [Category.toFeatures, Category.IncludesSpeaker]
 
-/-- `hasParticipant` ↔ `IncludesSpeaker ∨ IncludesAddressee`, **except** for the
-    exclusive — whose `−participant` sign diverges from set membership
-    ([harbour-2016] Table 4.3). -/
-theorem toFeatures_participant_iff_sap (p : Category) (hp : p ≠ .excl) :
+/-- `hasParticipant` ↔ `IncludesSpeaker ∨ IncludesAddressee` for all categories. -/
+theorem toFeatures_participant_iff_sap (p : Category) :
     p.toFeatures.hasParticipant = true ↔ p.IncludesSpeaker ∨ p.IncludesAddressee := by
-  cases p <;> first
-    | exact absurd rfl hp
-    | simp [Category.toFeatures, Category.IncludesSpeaker, Category.IncludesAddressee]
+  cases p <;> simp [Category.toFeatures, Category.IncludesSpeaker, Category.IncludesAddressee]
 
-/-- Every category except the exclusive yields singular-wellFormed features. The
-    exclusive is `+author −participant` — the one sign combination impossible for a
-    singular (cf. `Features.wellFormed`), realized by the 1st-person-plural exclusive
-    ([harbour-2016] Table 4.3). -/
-theorem toFeatures_wellFormed (p : Category) (hp : p ≠ .excl) :
-    p.toFeatures.wellFormed = true := by cases p <;> first | exact absurd rfl hp | rfl
+/-- All 8 categories yield well-formed features. -/
+theorem toFeatures_wellFormed (p : Category) :
+    p.toFeatures.wellFormed = true := by cases p <;> rfl
 
 -- ============================================================================
 -- § 9: Category ↔ PersonLevel Bridge

@@ -1,4 +1,4 @@
-import Linglib.Syntax.Minimalist.PersonGeometry
+import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Studies.Olivier2026Auxiliary
