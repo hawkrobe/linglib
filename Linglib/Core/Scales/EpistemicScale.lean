@@ -196,10 +196,10 @@ theorem theorem2_completeness {W : Type*} [Fintype W]
     (hJ : EpistemicAxiom.J sys.ge)
     (hDS : EpistemicAxiom.DS sys.ge) :
     ∃ (ge_w : W → W → Prop) (_ : ∀ w, ge_w w w),
-      ∀ A B, sys.ge A B ↔ halpernLift ge_w A B := by
+      ∀ A B, sys.ge A B ↔ dominationLift ge_w A B := by
   refine ⟨fun u v => sys.ge {u} {v}, fun w => sys.refl {w}, fun A B => ?_⟩
   constructor
-  · -- Forward: sys.ge A B → halpernLift (fun u v => sys.ge {u} {v}) A B
+  · -- Forward: sys.ge A B → dominationLift (fun u v => sys.ge {u} {v}) A B
     intro hAB b hbB
     -- {b} ⊆ B, so sys.ge B {b} by monotonicity (Axiom T)
     have hBb : sys.ge B {b} := sys.mono {b} B (Set.singleton_subset_iff.mpr hbB)
@@ -207,7 +207,7 @@ theorem theorem2_completeness {W : Type*} [Fintype W]
     have hAb : sys.ge A {b} := hTran A B {b} hAB hBb
     -- DS: sys.ge A {b} → ∃ a ∈ A, sys.ge {a} {b}
     exact hDS A b hAb
-  · -- Backward: halpernLift → sys.ge A B
+  · -- Backward: dominationLift → sys.ge A B
     intro hLift
     apply ge_of_forall_singleton sys.mono hJ A B
     intro b hbB
