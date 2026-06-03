@@ -315,6 +315,8 @@ import Linglib.Core.Scales.EpistemicScale.FinsetBridge
 import Linglib.Core.Scales.EpistemicScale.Conditional
 import Linglib.Core.Scales.EpistemicScale.Cancellation
 import Linglib.Core.Scales.EpistemicScale.CancellationFin4
+import Linglib.Core.Scales.EpistemicScale.Caratheodory
+import Linglib.Core.Scales.EpistemicScale.SignVectors
 import Linglib.Core.Scales.EpistemicScale.Representability
 import Linglib.Core.Mereology
 import Linglib.Core.Mereotopology
