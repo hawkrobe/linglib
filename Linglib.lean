@@ -314,9 +314,7 @@ import Linglib.Core.Scales.EpistemicScale.Entailments
 import Linglib.Core.Scales.EpistemicScale.FinsetBridge
 import Linglib.Core.Scales.EpistemicScale.Conditional
 import Linglib.Core.Scales.EpistemicScale.Cancellation
-import Linglib.Core.Scales.EpistemicScale.Cancellation88
-import Linglib.Core.Scales.EpistemicScale.CancellationChambers
-import Linglib.Core.Scales.EpistemicScale.CancellationHelpers
+import Linglib.Core.Scales.EpistemicScale.CancellationFin4
 import Linglib.Core.Scales.EpistemicScale.Representability
 import Linglib.Core.Mereology
 import Linglib.Core.Mereotopology
@@ -597,8 +595,6 @@ import Linglib.Data.WALS.Features.F144Y
 import Linglib.Tactics.NonnegOfForall
 import Linglib.Tactics.RSAPredict
 import Linglib.Tactics.OntSort
-import Linglib.Tactics.NgeFS
-import Linglib.Tactics.CancelFin4
 import Linglib.Tactics.ENNRealArith
 -- Paradigms (contract layer between Theories/ and Phenomena/Studies/)
 import Linglib.Paradigms.VisualWorld
