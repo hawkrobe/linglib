@@ -35,13 +35,16 @@ Unification (§3.2.3) is "the most general feature structure `D` such that `D′
 ## Implementation notes
 
 Morphology owns the bundle algebra: `MorphFeatures` is the token's morphology (UD's
-Feats column), unification at the ms-word level is the morphology/syntax interface
-operation, and the order's natural in-house consumers are DM's Subset Principle
-(insert an exponent iff `exponent.features ≤ morpheme.features`) and Nanosyntax
-spellout — its dual. Lives apart from `Data/UD/Basic.lean` so the (heavily imported)
-standard mirror stays mathlib-free — this file is the one that pays for
-`Mathlib.Order` — and it is the canonical home for order instances on
-`UD.MorphFeatures`.
+Feats column), and unification at the ms-word level is the morphology/syntax interface
+operation. A natural in-house consumer is the *matching clause* of DM's Subset
+Principle (an exponent is insertable iff `exponent.features ≤ morpheme.features`);
+the competition clause — most-specified-wins — is separate `argmax` machinery, already
+implemented in `Morphology/DM/VocabularyInsertion.lean`. (Nanosyntax's Superset
+Principle is *not* a consumer: it matches by containment of syntactic trees, see
+`Nanosyntax/TreeSpellout.lean`'s `NanoTree.contains`, not by an order on flat
+bundles.) Lives apart from `Data/UD/Basic.lean` so the (heavily imported) standard
+mirror stays mathlib-free — this file is the one that pays for `Mathlib.Order` — and
+it is the canonical home for order instances on `UD.MorphFeatures`.
 -/
 
 set_option autoImplicit false
