@@ -9,6 +9,7 @@ import Linglib.Features.Dimension
 import Linglib.Features.Gender
 import Linglib.Core.Valence
 import Linglib.Core.UniversalDependencies
+import Linglib.Core.Subsumption
 import Linglib.Typology.NegativeConcord
 import Linglib.Typology.PolarityItem
 import Linglib.Typology.Negation
