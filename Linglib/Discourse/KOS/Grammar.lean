@@ -136,7 +136,7 @@ def jo : DialogueSign String where
 def left : DialogueSign String where
   phon := "left"
   pos := .VERB
-  head := { verbForm := .finite }
+  head := { vform := .finite }
   cont := "leave(x)"
 
 -- ════════════════════════════════════════════════════
