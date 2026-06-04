@@ -59,12 +59,11 @@ private noncomputable def uf3 : FinAddMeasure (Fin 3) where
   nonneg := λ A => add_nonneg (add_nonneg
     (by split <;> norm_num) (by split <;> norm_num)) (by split <;> norm_num)
   additive := λ A B hAB => by
-    have hdisj : ∀ x ∈ A, x ∉ B := λ x hx => Set.disjoint_left.mp hAB hx
     simp only [Set.mem_union]
     by_cases h0A : (0 : Fin 3) ∈ A <;> by_cases h0B : (0 : Fin 3) ∈ B <;>
     by_cases h1A : (1 : Fin 3) ∈ A <;> by_cases h1B : (1 : Fin 3) ∈ B <;>
     by_cases h2A : (2 : Fin 3) ∈ A <;> by_cases h2B : (2 : Fin 3) ∈ B <;>
-    simp_all <;> linarith
+    simp_all [Set.disjoint_left] <;> linarith
   total := by simp only [Set.mem_univ, ite_true]; norm_num
 
 private theorem uf3_mu_eq (A : Set (Fin 3)) :
@@ -83,16 +82,13 @@ private theorem uf3_mu_2 : uf3.mu {(2 : Fin 3)} = 1/3 := by
   simp only [uf3_mu_eq, Set.mem_singleton_iff, Fin.reduceEq, reduceIte]; norm_num
 
 private theorem uf3_mu_union_12 : uf3.mu ({(1 : Fin 3)} ∪ {2}) = 2/3 := by
-  rw [uf3.additive _ _ (Set.disjoint_singleton.mpr (by omega))]
-  rw [uf3_mu_1, uf3_mu_2]; norm_num
+  rw [uf3.additive _ _ (Set.disjoint_singleton.mpr (by omega)), uf3_mu_1, uf3_mu_2]; norm_num
 
 private theorem uf3_mu_pair_01 : uf3.mu ({0, 1} : Set (Fin 3)) = 2/3 := by
-  rw [show ({0, 1} : Set (Fin 3)) = {0} ∪ {1} from Set.insert_eq 0 {1}]
-  rw [uf3.additive _ _ (Set.disjoint_singleton.mpr (by omega))]
-  rw [uf3_mu_0, uf3_mu_1]; norm_num
+  rw [show ({0, 1} : Set (Fin 3)) = {0} ∪ {1} from Set.insert_eq 0 {1},
+    uf3.additive _ _ (Set.disjoint_singleton.mpr (by omega)), uf3_mu_0, uf3_mu_1]; norm_num
 
-private theorem uf3_mu_compl' (A : Set (Fin 3)) :
-    uf3.mu Aᶜ = 1 - uf3.mu A := by
+private theorem uf3_mu_compl' (A : Set (Fin 3)) : uf3.mu Aᶜ = 1 - uf3.mu A := by
   have := uf3.mu_compl A; linarith
 
 /-- I1 is invalid for measure semantics: with uniform measure on Fin 3,
@@ -105,9 +101,8 @@ theorem measure_not_I1 :
   have h02 : uf3.inducedGe {(0 : Fin 3)} {2} := by
     unfold FinAddMeasure.inducedGe; rw [uf3_mu_0, uf3_mu_2]
   have hconc := hI1 {(0 : Fin 3)} {1} {2} h01 h02
-  unfold FinAddMeasure.inducedGe at hconc
-  simp only [Set.sup_eq_union] at hconc
-  rw [uf3_mu_0, uf3_mu_union_12] at hconc; linarith
+  simp only [FinAddMeasure.inducedGe, Set.sup_eq_union, uf3_mu_0, uf3_mu_union_12] at hconc
+  linarith
 
 /-- I2 is invalid for measure semantics: with uniform measure on Fin 3,
     {0,1} ≿ {0,1}ᶜ but ¬({0,1} ≿ univ). -/
@@ -115,11 +110,9 @@ theorem measure_not_I2 :
     ∃ m : FinAddMeasure (Fin 3), ¬patternI2 m.inducedGe := by
   refine ⟨uf3, λ hI2 => ?_⟩
   have hge : uf3.inducedGe ({0, 1} : Set (Fin 3)) ({0, 1} : Set (Fin 3))ᶜ := by
-    unfold FinAddMeasure.inducedGe
-    rw [uf3_mu_pair_01, uf3_mu_compl', uf3_mu_pair_01]; linarith
+    simp only [FinAddMeasure.inducedGe, uf3_mu_pair_01, uf3_mu_compl']; linarith
   have hconc := hI2 ({0, 1} : Set (Fin 3)) Set.univ hge
-  unfold FinAddMeasure.inducedGe at hconc
-  rw [uf3_mu_pair_01, uf3.total] at hconc; linarith
+  simp only [FinAddMeasure.inducedGe, uf3_mu_pair_01, uf3.total] at hconc; linarith
 
 /-- I3 is invalid for measure semantics: with uniform measure on Fin 3,
     Probably({0,1}) but ¬({0,1} ≿ univ). -/
@@ -127,14 +120,11 @@ theorem measure_not_I3 :
     ∃ m : FinAddMeasure (Fin 3), ¬patternI3 m.inducedGe := by
   refine ⟨uf3, λ hI3 => ?_⟩
   have hprob : Probably uf3.inducedGe ({0, 1} : Set (Fin 3)) := by
-    constructor
-    · unfold FinAddMeasure.inducedGe
-      rw [uf3_mu_pair_01, uf3_mu_compl', uf3_mu_pair_01]; linarith
-    · intro h; unfold FinAddMeasure.inducedGe at h
-      rw [uf3_mu_pair_01, uf3_mu_compl', uf3_mu_pair_01] at h; linarith
+    refine ⟨by simp only [FinAddMeasure.inducedGe, uf3_mu_pair_01, uf3_mu_compl']; linarith,
+      fun h => ?_⟩
+    simp only [FinAddMeasure.inducedGe, uf3_mu_pair_01, uf3_mu_compl'] at h; linarith
   have hconc := hI3 ({0, 1} : Set (Fin 3)) Set.univ hprob
-  unfold FinAddMeasure.inducedGe at hconc
-  rw [uf3_mu_pair_01, uf3.total] at hconc; linarith
+  simp only [FinAddMeasure.inducedGe, uf3_mu_pair_01, uf3.total] at hconc; linarith
 
 end MeasureSemantics
 
@@ -185,38 +175,30 @@ theorem dominationLift_V1 {W : Type*} (ge_w : W → W → Prop) :
 theorem dominationLift_V2 {W : Type*} (ge_w : W → W → Prop) :
     patternV2 (dominationLift ge_w) := by
   intro A B ⟨hAB, hABnot⟩
-  constructor
-  · constructor
-    · -- ge A Aᶜ: ∀ b ∈ Aᶜ, ∃ a ∈ A, ge_w a b.
-      -- b ∈ Aᶜ → b ∉ A → b ∉ A ∩ B. Since Aᶜ ⊆ (A ∩ B)ᶜ, use hAB.
-      intro b hb
-      have hb' : b ∈ (A ∩ B)ᶜ := fun ⟨ha, _⟩ => hb ha
-      obtain ⟨a, ⟨ha, _⟩, hge⟩ := hAB b hb'
-      exact ⟨a, ha, hge⟩
-    · -- ¬ge Aᶜ A: if so, every b ∈ A has dominator in Aᶜ ⊆ (A ∩ B)ᶜ.
-      -- Then every b ∈ A ∩ B (⊆ A) has dominator in (A ∩ B)ᶜ, so ge (A∩B)ᶜ (A∩B).
-      intro hc; apply hABnot; intro b ⟨hbA, _⟩
-      obtain ⟨a, ha, hge⟩ := hc b hbA
-      exact ⟨a, fun ⟨haA, _⟩ => ha haA, hge⟩
-  · constructor
-    · intro b hb
-      have hb' : b ∈ (A ∩ B)ᶜ := fun ⟨_, hbB⟩ => hb hbB
-      obtain ⟨a, ⟨_, ha⟩, hge⟩ := hAB b hb'
-      exact ⟨a, ha, hge⟩
-    · intro hc; apply hABnot; intro b ⟨_, hbB⟩
-      obtain ⟨a, ha, hge⟩ := hc b hbB
-      exact ⟨a, fun ⟨_, haB⟩ => ha haB, hge⟩
+  refine ⟨⟨?_, ?_⟩, ?_, ?_⟩
+  · -- ge A Aᶜ: Aᶜ ⊆ (A ∩ B)ᶜ, use hAB.
+    intro b hb
+    obtain ⟨a, ⟨ha, _⟩, hge⟩ := hAB b (fun ⟨ha, _⟩ => hb ha)
+    exact ⟨a, ha, hge⟩
+  · -- ¬ge Aᶜ A: restricts to ge (A∩B)ᶜ (A∩B).
+    intro hc; apply hABnot; intro b ⟨hbA, _⟩
+    obtain ⟨a, ha, hge⟩ := hc b hbA
+    exact ⟨a, fun ⟨haA, _⟩ => ha haA, hge⟩
+  · intro b hb
+    obtain ⟨a, ⟨_, ha⟩, hge⟩ := hAB b (fun ⟨_, hbB⟩ => hb hbB)
+    exact ⟨a, ha, hge⟩
+  · intro hc; apply hABnot; intro b ⟨_, hbB⟩
+    obtain ⟨a, ha, hge⟩ := hc b hbB
+    exact ⟨a, fun ⟨_, haB⟩ => ha haB, hge⟩
 
 theorem dominationLift_V3 {W : Type*} (ge_w : W → W → Prop) :
     patternV3 (dominationLift ge_w) := by
   intro A B ⟨hA, hAnot⟩
   constructor
-  · -- ge (A ∪ B) (A ∪ B)ᶜ: b ∈ (A ∪ B)ᶜ = Aᶜ ∩ Bᶜ → b ∈ Aᶜ → use hA.
-    rw [compl_sup]; intro b ⟨hbAc, _⟩
+  · rw [compl_sup]; intro b ⟨hbAc, _⟩
     obtain ⟨a, ha, hge⟩ := hA b hbAc
     exact ⟨a, Set.mem_union_left B ha, hge⟩
-  · -- ¬ge (A ∪ B)ᶜ (A ∪ B): if so, restricting to A ⊆ A ∪ B gives ge Aᶜ A.
-    rw [compl_sup]; intro hc; apply hAnot; intro b hbA
+  · rw [compl_sup]; intro hc; apply hAnot; intro b hbA
     obtain ⟨a, ⟨haAc, _⟩, hge⟩ := hc b (Set.mem_union_left B hbA)
     exact ⟨a, haAc, hge⟩
 
@@ -231,7 +213,6 @@ theorem dominationLift_V5 {W : Type*} (ge_w : W → W → Prop) (hRefl : ∀ w, 
 theorem dominationLift_V6 {W : Type*} [Nonempty W] (ge_w : W → W → Prop) :
     patternV6 (dominationLift ge_w) := by
   intro A hAc
-  -- dominationLift ge_w ∅ Aᶜ forces Aᶜ = ∅ (no function from Aᶜ to ∅)
   have hAuniv : A = Set.univ := by
     ext x; simp only [Set.mem_univ, iff_true]
     by_contra hx; obtain ⟨a, ha, _⟩ := hAc x hx; exact ha.elim
@@ -245,8 +226,7 @@ theorem dominationLift_V7 {W : Type*} (ge_w : W → W → Prop) :
     patternV7 (dominationLift ge_w) := by
   intro A ⟨_, hAnot⟩ hempty
   by_cases hne : (A : Set W).Nonempty
-  · obtain ⟨x, hx⟩ := hne
-    obtain ⟨a, ha, _⟩ := hempty x hx; exact ha.elim
+  · obtain ⟨x, hx⟩ := hne; exact (hempty x hx).choose_spec.1.elim
   · rw [Set.not_nonempty_iff_eq_empty] at hne
     rw [hne, Set.compl_empty] at hAnot
     exact hAnot (fun b hb => hb.elim)
@@ -258,21 +238,13 @@ theorem dominationLift_V7 {W : Type*} (ge_w : W → W → Prop) :
 theorem dominationLift_not_V11 :
     ∃ (W : Type) (ge_w : W → W → Prop),
       (∀ w, ge_w w w) ∧ ¬patternV11 (dominationLift ge_w) := by
-  refine ⟨Fin 2, fun _ _ => True, fun _ => trivial, ?_⟩
-  intro h
-  -- B = {0}, A = Set.univ
+  refine ⟨Fin 2, fun _ _ => True, fun _ => trivial, fun h => ?_⟩
   have hBA : dominationLift (fun (_ _ : Fin 2) => True) {(0 : Fin 2)} Set.univ :=
     fun _ _ => ⟨0, rfl, trivial⟩
-  have hprobA : Probably (dominationLift (fun (_ _ : Fin 2) => True)) Set.univ := by
-    refine ⟨fun b hb => absurd (Set.mem_univ b) hb, ?_⟩
-    intro hge
-    obtain ⟨a, ha, _⟩ := hge (0 : Fin 2) (Set.mem_univ _)
-    exact absurd (Set.mem_univ a) ha
-  have hresult := h Set.univ {(0 : Fin 2)} hBA hprobA
-  -- hresult : Probably {0}, i.e., {0} ≿ {1} and ¬({1} ≿ {0})
-  -- But {1} ≿ {0} since ge_w is total: 1 ≥ 0.
-  apply hresult.2
-  intro b _
+  have hprobA : Probably (dominationLift (fun (_ _ : Fin 2) => True)) Set.univ :=
+    ⟨fun b hb => absurd (Set.mem_univ b) hb, fun hge =>
+      absurd (Set.mem_univ _) (hge (0 : Fin 2) (Set.mem_univ _)).choose_spec.1⟩
+  refine (h Set.univ {(0 : Fin 2)} hBA hprobA).2 (fun b _ => ?_)
   exact ⟨1, fun h1 => absurd (Set.mem_singleton_iff.mp h1) (by omega), trivial⟩
 
 /-- V12 is valid for world-ordering semantics with a preorder (Fact 1 in
@@ -283,12 +255,8 @@ theorem dominationLift_V12 {W : Type*} (ge_w : W → W → Prop)
     patternV12 (dominationLift ge_w) := by
   intro A B hBA hA y hyBc
   by_cases hyA : y ∈ A
-  · -- y ∈ A: from ge B A, get b ∈ B with b ≥ y.
-    exact hBA y hyA
-  · -- y ∈ Aᶜ: from ge A Aᶜ, get a ∈ A with a ≥ y.
-    --          from ge B A, get b ∈ B with b ≥ a.
-    --          transitivity: b ≥ a ≥ y → b ≥ y.
-    obtain ⟨a, haA, hge_ay⟩ := hA y hyA
+  · exact hBA y hyA
+  · obtain ⟨a, haA, hge_ay⟩ := hA y hyA
     obtain ⟨b, hbB, hge_ba⟩ := hBA a haA
     exact ⟨b, hbB, hTrans b a y hge_ba hge_ay⟩
 
@@ -298,18 +266,16 @@ theorem dominationLift_V12 {W : Type*} (ge_w : W → W → Prop)
 theorem dominationLift_not_V13 :
     ∃ (W : Type) (ge_w : W → W → Prop),
       (∀ w, ge_w w w) ∧ ¬patternV13 (dominationLift ge_w) := by
-  refine ⟨Fin 2, fun _ _ => True, fun _ => trivial, ?_⟩
-  intro h
+  refine ⟨Fin 2, fun _ _ => True, fun _ => trivial, fun h => ?_⟩
   have hA : ({0} : Set (Fin 2)) \ {1} = {0} := by
     ext x; simp only [Set.mem_diff, Set.mem_singleton_iff]; omega
   have hstrict : Strict (dominationLift (fun (_ _ : Fin 2) => True)) ({0} \ {1}) ∅ :=
     ⟨fun b hb => hb.elim, fun hge => by
       obtain ⟨a, ha, _⟩ := hge (0 : Fin 2) (by rw [hA]; rfl); exact ha.elim⟩
-  have hresult := h {0} {1} hstrict
   have huniv : ({0} : Set (Fin 2)) ∪ {1} = Set.univ := by
     ext x; simp only [Set.mem_union, Set.mem_singleton_iff, Set.mem_univ, iff_true]; omega
-  simp only [Set.sup_eq_union] at hresult
-  rw [huniv] at hresult
+  have hresult := h {0} {1} hstrict
+  simp only [Set.sup_eq_union, huniv] at hresult
   exact hresult.2 (fun b _ => ⟨1, rfl, trivial⟩)
 
 /-- I1 is valid for world-ordering semantics: the "disjunction problem". -/
@@ -366,22 +332,14 @@ theorem matchingLift_V2 {W : Type*} (ge_w : W → W → Prop) :
     patternV2 (matchingLift ge_w) := by
   intro A B ⟨⟨f, hf, hinj⟩, hABnot⟩
   refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩⟩
-  · -- matchingLift ge_w A Aᶜ: restrict f from (A∩B)ᶜ to Aᶜ
-    exact ⟨f,
-      fun b hb => ⟨(hf b (fun h => hb h.1)).1.1, (hf b (fun h => hb h.1)).2⟩,
+  · exact ⟨f, fun b hb => ⟨(hf b (fun h => hb h.1)).1.1, (hf b (fun h => hb h.1)).2⟩,
       fun b₁ b₂ h1 h2 => hinj b₁ b₂ (fun h => h1 h.1) (fun h => h2 h.1)⟩
-  · -- ¬matchingLift ge_w Aᶜ A: any g : A → Aᶜ restricts to A∩B → (A∩B)ᶜ
-    intro ⟨g, hg, ginj⟩
-    exact hABnot ⟨g,
+  · exact fun ⟨g, hg, ginj⟩ => hABnot ⟨g,
       fun b hb => ⟨fun h => (hg b hb.1).1 h.1, (hg b hb.1).2⟩,
       fun b₁ b₂ h1 h2 => ginj b₁ b₂ h1.1 h2.1⟩
-  · -- matchingLift ge_w B Bᶜ: restrict f from (A∩B)ᶜ to Bᶜ
-    exact ⟨f,
-      fun b hb => ⟨(hf b (fun h => hb h.2)).1.2, (hf b (fun h => hb h.2)).2⟩,
+  · exact ⟨f, fun b hb => ⟨(hf b (fun h => hb h.2)).1.2, (hf b (fun h => hb h.2)).2⟩,
       fun b₁ b₂ h1 h2 => hinj b₁ b₂ (fun h => h1 h.2) (fun h => h2 h.2)⟩
-  · -- ¬matchingLift ge_w Bᶜ B: any g : B → Bᶜ restricts to A∩B → (A∩B)ᶜ
-    intro ⟨g, hg, ginj⟩
-    exact hABnot ⟨g,
+  · exact fun ⟨g, hg, ginj⟩ => hABnot ⟨g,
       fun b hb => ⟨fun h => (hg b hb.2).1 h.2, (hg b hb.2).2⟩,
       fun b₁ b₂ h1 h2 => ginj b₁ b₂ h1.2 h2.2⟩
 
@@ -390,24 +348,13 @@ theorem matchingLift_V3 {W : Type*} (ge_w : W → W → Prop) :
   intro A B ⟨hA, hAnot⟩
   obtain ⟨f, hf, hinj⟩ := hA
   constructor
-  · -- ge (A ∪ B) (A ∪ B)ᶜ: f maps Aᶜ ↪ A, and (A ∪ B)ᶜ ⊆ Aᶜ,
-    -- so restriction to (A ∪ B)ᶜ still injective, images land in A ⊆ A ∪ B.
-    rw [compl_sup]
-    exact ⟨f,
-      fun b ⟨hbAc, _⟩ =>
-        let ⟨ha, hge⟩ := hf b hbAc
-        ⟨Set.mem_union_left B ha, hge⟩,
+  · rw [compl_sup]
+    exact ⟨f, fun b ⟨hbAc, _⟩ => let ⟨ha, hge⟩ := hf b hbAc; ⟨Set.mem_union_left B ha, hge⟩,
       fun b₁ b₂ ⟨h1, _⟩ ⟨h2, _⟩ => hinj b₁ b₂ h1 h2⟩
-  · -- ¬ge (A ∪ B)ᶜ (A ∪ B): if so, restricting g to A ⊆ A ∪ B
-    -- gives an injection A → Aᶜ (since (A ∪ B)ᶜ ⊆ Aᶜ), contradicting hAnot.
-    intro ⟨g, hg, ginj⟩
-    apply hAnot
-    exact ⟨g,
-      fun b hbA => by
-        obtain ⟨hgc, hge⟩ := hg b (Set.mem_union_left B hbA)
-        exact ⟨fun hga => hgc (Set.mem_union_left B hga), hge⟩,
-      fun b₁ b₂ h1 h2 =>
-        ginj b₁ b₂ (Set.mem_union_left B h1) (Set.mem_union_left B h2)⟩
+  · refine fun ⟨g, hg, ginj⟩ => hAnot ⟨g, fun b hbA => ?_,
+      fun b₁ b₂ h1 h2 => ginj b₁ b₂ (Set.mem_union_left B h1) (Set.mem_union_left B h2)⟩
+    obtain ⟨hgc, hge⟩ := hg b (Set.mem_union_left B hbA)
+    exact ⟨fun hga => hgc (Set.mem_union_left B hga), hge⟩
 
 theorem matchingLift_V4 {W : Type*} (ge_w : W → W → Prop) :
     patternV4 (matchingLift ge_w) := by
@@ -420,7 +367,6 @@ theorem matchingLift_V5 {W : Type*} (ge_w : W → W → Prop) (hRefl : ∀ w, ge
 theorem matchingLift_V6 {W : Type*} [Nonempty W] (ge_w : W → W → Prop) :
     patternV6 (matchingLift ge_w) := by
   intro A hAc
-  -- matchingLift ge_w ∅ Aᶜ forces Aᶜ = ∅ (no injection from Aᶜ to ∅)
   have hAuniv : A = Set.univ := by
     ext x; simp only [Set.mem_univ, iff_true]
     by_contra hx; obtain ⟨f, hf, _⟩ := hAc; obtain ⟨ha, _⟩ := hf x hx; exact ha.elim
@@ -428,19 +374,14 @@ theorem matchingLift_V6 {W : Type*} [Nonempty W] (ge_w : W → W → Prop) :
   show matchingLift ge_w Set.univ Set.univᶜ ∧ ¬matchingLift ge_w Set.univᶜ Set.univ
   rw [Set.compl_univ]
   exact ⟨⟨id, fun b hb => hb.elim, fun _ _ h1 => h1.elim⟩,
-    fun ⟨f, hf, _⟩ => by
-      obtain ⟨w⟩ := ‹Nonempty W›
-      obtain ⟨ha, _⟩ := hf w (Set.mem_univ w)
-      exact ha.elim⟩
+    fun ⟨f, hf, _⟩ => by obtain ⟨w⟩ := ‹Nonempty W›; exact (hf w (Set.mem_univ w)).1.elim⟩
 
 theorem matchingLift_V7 {W : Type*} (ge_w : W → W → Prop) :
     patternV7 (matchingLift ge_w) := by
   intro A ⟨_, hAnot⟩ hempty
-  -- hempty : matchingLift ge_w ∅ A, i.e. ∃ f, ∀ b ∈ A, f b ∈ ∅ — impossible if A nonempty
   obtain ⟨f, hf, _⟩ := hempty
   by_cases hne : (A : Set W).Nonempty
-  · obtain ⟨x, hx⟩ := hne
-    obtain ⟨ha, _⟩ := hf x hx; exact ha.elim
+  · obtain ⟨x, hx⟩ := hne; exact (hf x hx).1.elim
   · rw [Set.not_nonempty_iff_eq_empty] at hne
     rw [hne, Set.compl_empty] at hAnot
     exact hAnot ⟨id, fun b hb => hb.elim, fun _ _ h1 => h1.elim⟩
@@ -488,9 +429,8 @@ private theorem matchingLift_iter_ne_of_lt {W : Type*} {A B : Set W} {f : W → 
   induction i with
   | zero =>
     intro j hj heq
-    have : f^[j] p ∈ B := matchingLift_iter_in_B hfmem j (by omega) (fun m _ => hall m)
     simp only [Function.iterate_zero, id_eq] at heq
-    exact hpB (heq ▸ this)
+    exact hpB (heq ▸ matchingLift_iter_in_B hfmem j (by omega) (fun m _ => hall m))
   | succ i' ih =>
     intro j hj heq
     obtain ⟨j', rfl⟩ : ∃ j', j = j' + 1 := ⟨j - 1, by omega⟩
@@ -588,10 +528,8 @@ private theorem matchingLift_complement_reversal {W : Type*} [Finite W]
     fun w hwA hwB => Nat.find_spec (hExits w hwA hwB)
   have ei_min : ∀ w hwA hwB m, m < ei w hwA hwB → f^[m] w ∈ A :=
     fun w hwA hwB m hm => by_contra fun h => Nat.find_min (hExits w hwA hwB) hm h
-  -- The witness: f^[k] for A ∩ Bᶜ (chain exit), identity for Aᶜ ∩ Bᶜ
   let g : W → W := fun w =>
     if hwA : w ∈ A then if hwB : w ∈ B then w else f^[ei w hwA hwB] w else w
-  -- Express g(b') as f^[k] b' uniformly for all b' ∈ Bᶜ
   have g_iter : ∀ b' (_ : b' ∉ B), ∃ k,
       g b' = f^[k] b' ∧ f^[k] b' ∉ A ∧ ∀ m, m < k → f^[m] b' ∈ A := by
     intro b' hb'
@@ -600,11 +538,9 @@ private theorem matchingLift_complement_reversal {W : Type*} [Finite W]
         ei_spec b' hbA hb', ei_min b' hbA hb'⟩
     · exact ⟨0, by simp [g, dif_neg hbA], hbA, fun _ hm => absurd hm (by omega)⟩
   refine ⟨g, fun b' hb' => ?_, fun b₁ b₂ hb1 hb2 heq => ?_⟩
-  · -- Membership in Aᶜ and dominance
-    obtain ⟨k, hgk, hnotA, hkA⟩ := g_iter b' hb'
+  · obtain ⟨k, hgk, hnotA, hkA⟩ := g_iter b' hb'
     exact ⟨hgk ▸ hnotA, hgk ▸ matchingLift_chain_dominance hRefl hfge hTrans k hkA⟩
-  · -- Injectivity: all four cases via chain_origin_eq
-    obtain ⟨k₁, hgk1, -, hk1A⟩ := g_iter b₁ hb1
+  · obtain ⟨k₁, hgk1, -, hk1A⟩ := g_iter b₁ hb1
     obtain ⟨k₂, hgk2, -, hk2A⟩ := g_iter b₂ hb2
     rw [hgk1, hgk2] at heq
     exact matchingLift_chain_origin_eq hfmem hinj_f hb1 hb2 hk1A hk2A heq
@@ -676,18 +612,15 @@ theorem matchingLift_V13 {W : Type*} [Finite W] (ge_w : W → W → Prop)
     rw [Set.not_nonempty_iff_eq_empty] at h
     apply hNotEmpty; rw [h]
     exact ⟨id, fun b hb => hb.elim, fun _ _ _ _ h => h⟩
-  constructor
-  · exact ⟨id, fun b hb => ⟨Set.mem_union_right A hb, hRefl b⟩,
-           fun _ _ _ _ h => h⟩
-  · intro ⟨f, hf, hinj⟩
-    have hle : (A ∪ B).ncard ≤ B.ncard :=
-      Set.ncard_le_ncard_of_injOn f (fun b hb => (hf b hb).1)
-        (fun b₁ hb₁ b₂ hb₂ heq => hinj b₁ b₂ hb₁ hb₂ heq) (Set.toFinite _)
-    have hsub : B ⊂ A ∪ B :=
-      ⟨Set.subset_union_right, fun h => hABne.elim fun x hx =>
-        hx.2 (h (Set.mem_union_left B hx.1))⟩
-    have hlt := Set.ncard_lt_ncard hsub (Set.toFinite _)
-    omega
+  refine ⟨⟨id, fun b hb => ⟨Set.mem_union_right A hb, hRefl b⟩, fun _ _ _ _ h => h⟩,
+    fun ⟨f, hf, hinj⟩ => ?_⟩
+  have hle : (A ∪ B).ncard ≤ B.ncard :=
+    Set.ncard_le_ncard_of_injOn f (fun b hb => (hf b hb).1)
+      (fun b₁ hb₁ b₂ hb₂ heq => hinj b₁ b₂ hb₁ hb₂ heq) (Set.toFinite _)
+  have hsub : B ⊂ A ∪ B := ⟨Set.subset_union_right, fun h =>
+    hABne.elim fun x hx => hx.2 (h (Set.mem_union_left B hx.1))⟩
+  have hlt := Set.ncard_lt_ncard hsub (Set.toFinite _)
+  omega
 
 /-- I1 is **invalid** for the m-lifting (Fact 5 in [holliday-icard-2013]).
     Counterexample: W = Fin 2, ge_w total. A = {0}, B = {0}, C = {1}.
@@ -696,24 +629,17 @@ theorem matchingLift_V13 {W : Type*} [Finite W] (ge_w : W → W → Prop)
 theorem matchingLift_not_I1 :
     ∃ (W : Type) (ge_w : W → W → Prop),
       (∀ w, ge_w w w) ∧ ¬patternI1 (matchingLift ge_w) := by
-  refine ⟨Fin 2, fun _ _ => True, fun _ => trivial, ?_⟩
-  intro h
-  -- I1 says: A ≿ B → A ≿ C → A ≿ (B ∪ C)
-  -- Take A = {0}, B = {0}, C = {1}
+  refine ⟨Fin 2, fun _ _ => True, fun _ => trivial, fun h => ?_⟩
   have hAB : matchingLift (fun (_ _ : Fin 2) => True) {(0 : Fin 2)} {0} :=
     ⟨id, fun b hb => ⟨hb, trivial⟩, fun _ _ _ _ h => h⟩
   have hAC : matchingLift (fun (_ _ : Fin 2) => True) {(0 : Fin 2)} {1} :=
     ⟨fun _ => 0, fun _ hb => ⟨rfl, trivial⟩,
-     fun b₁ b₂ h1 h2 _ => by
-       rw [Set.mem_singleton_iff] at h1 h2; rw [h1, h2]⟩
-  have hresult := h {(0 : Fin 2)} {0} {1} hAB hAC
-  -- hresult : matchingLift {0} ({0} ∪ {1}) = matchingLift {0} univ
+     fun b₁ b₂ h1 h2 _ => by rw [Set.mem_singleton_iff] at h1 h2; rw [h1, h2]⟩
   have huniv : ({0} : Set (Fin 2)) ∪ {1} = Set.univ := by
     ext x; simp only [Set.mem_union, Set.mem_singleton_iff, Set.mem_univ, iff_true]; omega
-  simp only [Set.sup_eq_union] at hresult
-  rw [huniv] at hresult
+  have hresult := h {(0 : Fin 2)} {0} {1} hAB hAC
+  simp only [Set.sup_eq_union, huniv] at hresult
   obtain ⟨f, hf, hinj⟩ := hresult
-  -- f(b) ∈ {0} for all b, so f 0 = 0 = f 1, but injectivity forces 0 = 1
   have hf0 := Set.mem_singleton_iff.mp (hf 0 (Set.mem_univ _)).1
   have hf1 := Set.mem_singleton_iff.mp (hf 1 (Set.mem_univ _)).1
   exact absurd (hinj 0 1 (Set.mem_univ _) (Set.mem_univ _) (hf0.trans hf1.symm)) (by omega)
@@ -759,13 +685,11 @@ theorem matchingLift_not_I3 :
       (∀ w, ge_w w w) ∧ ¬patternI3 (matchingLift ge_w) := by
   refine ⟨Fin 3, fun _ _ => True, fun _ => trivial, fun h => ?_⟩
   refine matchingLift_pair01_not_univ (h _ Set.univ ⟨matchingLift_pair01_AAc, ?_⟩)
-  -- ¬matchingLift Aᶜ A: Aᶜ = {2}, need injection {0,1} → {2}, impossible
   intro ⟨f, hf, hinj⟩
   have h0 := (hf 0 (Set.mem_insert 0 {1})).1
   have h1 := (hf 1 (Or.inr rfl : (1 : Fin 3) ∈ ({0, 1} : Set (Fin 3)))).1
   simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at h0 h1
-  have := hinj 0 1 (Set.mem_insert 0 {1}) (Or.inr rfl) (by omega)
-  omega
+  have := hinj 0 1 (Set.mem_insert 0 {1}) (Or.inr rfl) (by omega); omega
 
 /-! #### GFC preorder -/
 

@@ -100,13 +100,9 @@ theorem fa_qualAdd_complete {W : Type*} [Fintype W] (sys : EpistemicSystemFA W) 
 /-- **Theorem 8** ([kraft-pratt-seidenberg-1959]): every FA system on `Fin n`
     is representable by a finitely additive measure iff `n < 5`. -/
 theorem fa_representable_iff_card_lt_five (n : ℕ) :
-    (∀ sys : EpistemicSystemFA (Fin n), Representable sys) ↔ n < 5 := by
-  constructor
-  · intro h
-    by_contra hge
-    obtain ⟨sys, hsys⟩ := exists_nonrepresentable_fin (n := n) (by omega)
-    exact hsys (h sys)
-  · intro h sys
-    exact representable_of_card_lt_five sys (by simpa using h)
+    (∀ sys : EpistemicSystemFA (Fin n), Representable sys) ↔ n < 5 :=
+  ⟨fun h => by_contra fun hge =>
+      let ⟨sys, hsys⟩ := exists_nonrepresentable_fin (n := n) (by omega); hsys (h sys),
+    fun h sys => representable_of_card_lt_five sys (by simpa using h)⟩
 
 end HollidayIcard2013

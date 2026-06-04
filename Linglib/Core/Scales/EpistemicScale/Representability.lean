@@ -96,10 +96,9 @@ private theorem toFS_diff (A B : Set (Fin 5)) :
   ext x; simp only [toFS_mem, Set.mem_diff, Finset.mem_sdiff]
 
 private theorem toFS_subset (A B : Set (Fin 5)) :
-    A ⊆ B ↔ toFS A ⊆ toFS B := by
-  constructor
-  · intro h x hx; rw [toFS_mem] at hx ⊢; exact h hx
-  · intro h x hx; exact (toFS_mem B x).mp (h ((toFS_mem A x).mpr hx))
+    A ⊆ B ↔ toFS A ⊆ toFS B :=
+  ⟨fun h x hx => by rw [toFS_mem] at hx ⊢; exact h hx,
+   fun h x hx => (toFS_mem B x).mp (h ((toFS_mem A x).mpr hx))⟩
 
 private noncomputable def kpsRankSet (A : Set (Fin 5)) : ℕ := kpsRank (toFS A)
 private noncomputable def kpsGe (A B : Set (Fin 5)) : Prop := kpsRankSet A ≥ kpsRankSet B
@@ -109,19 +108,15 @@ noncomputable def kpsSystemFA : EpistemicSystemFA (Fin 5) where
   refl := λ A => le_refl (kpsRankSet A)
   mono := λ {A B} hAB => kps_mono_finset _ _ ((toFS_subset A B).mp hAB)
   bottom := by
-    simp only [EpistemicAxiom.F, kpsGe, kpsRankSet, toFS_univ, toFS_empty]
-    exact kps_bottom_finset
+    simp only [EpistemicAxiom.F, kpsGe, kpsRankSet, toFS_univ, toFS_empty]; exact kps_bottom_finset
   nonTrivial := by
-    simp only [EpistemicAxiom.BT, kpsGe, kpsRankSet, toFS_univ, toFS_empty]
-    decide
+    simp only [EpistemicAxiom.BT, kpsGe, kpsRankSet, toFS_univ, toFS_empty]; decide
   total := λ A B => le_total (kpsRankSet B) (kpsRankSet A)
   trans := λ {_ _ _} hab hbc => le_trans hbc hab
-  additive := by
-    intro A B
+  additive A B := by
     show kpsRank (toFS A) ≥ kpsRank (toFS B) ↔
          kpsRank (toFS (A \ B)) ≥ kpsRank (toFS (B \ A))
-    rw [toFS_diff, toFS_diff]
-    exact kps_additive_finset (toFS A) (toFS B)
+    rw [toFS_diff, toFS_diff]; exact kps_additive_finset (toFS A) (toFS B)
 
 private theorem mu_pair (m : FinAddMeasure (Fin 5)) (a b : Fin 5) (hab : a ≠ b) :
     m.mu ({a, b} : Set (Fin 5)) = m.mu {a} + m.mu {b} := by
@@ -135,9 +130,8 @@ private theorem mu_triple (m : FinAddMeasure (Fin 5)) (a b c : Fin 5)
       rw [Set.mem_singleton_iff] at hx
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hxbc
       subst hx; rcases hxbc with rfl | rfl
-      · exact absurd rfl hab
-      · exact absurd rfl hac)]
-  rw [mu_pair m b c hbc, add_assoc]
+      exacts [absurd rfl hab, absurd rfl hac]),
+    mu_pair m b c hbc, add_assoc]
 
 theorem kps_not_representable : ¬Representable kpsSystemFA := by
   intro ⟨m, hm⟩
@@ -150,23 +144,19 @@ theorem kps_not_representable : ¬Representable kpsSystemFA := by
   have hord1 : ¬ kpsGe ({1, 3} : Set (Fin 5)) {0} := by
     unfold kpsGe kpsRankSet
     rw [show toFS ({1, 3} : Set (Fin 5)) = {1, 3} by ext x; simp [toFS_mem],
-        show toFS ({(0 : Fin 5)} : Set (Fin 5)) = {0} by ext x; simp [toFS_mem]]
-    decide
+        show toFS ({(0 : Fin 5)} : Set (Fin 5)) = {0} by ext x; simp [toFS_mem]]; decide
   have hord2 : ¬ kpsGe ({0, 1} : Set (Fin 5)) {2, 3} := by
     unfold kpsGe kpsRankSet
     rw [show toFS ({0, 1} : Set (Fin 5)) = {0, 1} by ext x; simp [toFS_mem],
-        show toFS ({2, 3} : Set (Fin 5)) = {2, 3} by ext x; simp [toFS_mem]]
-    decide
+        show toFS ({2, 3} : Set (Fin 5)) = {2, 3} by ext x; simp [toFS_mem]]; decide
   have hord3 : ¬ kpsGe ({0, 3} : Set (Fin 5)) {1, 4} := by
     unfold kpsGe kpsRankSet
     rw [show toFS ({0, 3} : Set (Fin 5)) = {0, 3} by ext x; simp [toFS_mem],
-        show toFS ({1, 4} : Set (Fin 5)) = {1, 4} by ext x; simp [toFS_mem]]
-    decide
+        show toFS ({1, 4} : Set (Fin 5)) = {1, 4} by ext x; simp [toFS_mem]]; decide
   have hord4 : kpsGe ({0, 1, 3} : Set (Fin 5)) {2, 4} := by
     unfold kpsGe kpsRankSet
     rw [show toFS ({0, 1, 3} : Set (Fin 5)) = {0, 1, 3} by ext x; simp [toFS_mem],
-        show toFS ({2, 4} : Set (Fin 5)) = {2, 4} by ext x; simp [toFS_mem]]
-    decide
+        show toFS ({2, 4} : Set (Fin 5)) = {2, 4} by ext x; simp [toFS_mem]]; decide
   -- Convert to measure inequalities via the representation isomorphism
   have hmeas1 : m.mu ({1, 3} : Set _) < m.mu ({(0 : Fin 5)} : Set _) :=
     not_le.mp (λ h => hord1 ((hm _ _).mpr h))
@@ -220,16 +210,14 @@ theorem null_removal_disjoint {W : Type*} (sys : EpistemicSystemFA W)
   have null_sub : ∀ S : Set W, sys.ge (S \ {j}) S := by
     intro S
     by_cases hj_in : j ∈ S
-    · rw [sys.additive (S \ {j}) S]
-      have h1 : (S \ {j}) \ S = ∅ := by
-        ext x; simp only [Set.mem_diff, Set.mem_empty_iff_false, iff_false]
-        tauto
-      have h2 : S \ (S \ {j}) = {j} := by
-        ext x; simp only [Set.mem_diff, Set.mem_singleton_iff]
-        constructor
-        · rintro ⟨hx, hn⟩; by_contra hne; exact hn ⟨hx, hne⟩
-        · rintro rfl; exact ⟨hj_in, fun ⟨_, h⟩ => h rfl⟩
-      rw [h1, h2]; exact hj
+    · rw [sys.additive (S \ {j}) S,
+        show (S \ {j}) \ S = ∅ by
+          ext x; simp only [Set.mem_diff, Set.mem_empty_iff_false, iff_false]; tauto,
+        show S \ (S \ {j}) = {j} by
+          ext x; simp only [Set.mem_diff, Set.mem_singleton_iff]
+          exact ⟨fun ⟨hx, hn⟩ => by by_contra hne; exact hn ⟨hx, hne⟩,
+            by rintro rfl; exact ⟨hj_in, fun ⟨_, h⟩ => h rfl⟩⟩]
+      exact hj
     · rw [Set.diff_singleton_eq_self hj_in]; exact sys.refl S
   by_cases hjC : j ∈ C
   · have hjnD : j ∉ D := Set.disjoint_left.mp hdisj hjC
@@ -259,8 +247,7 @@ def comapFA {α W : Type*} (f : α → W) (hf : Function.Injective f)
   mono _ _ hAB := sys.mono _ _ (Set.image_mono hAB)
   bottom := by
     show sys.ge (f '' Set.univ) (f '' ∅)
-    rw [Set.image_empty]
-    exact sys.mono _ _ (Set.empty_subset _)
+    rw [Set.image_empty]; exact sys.mono _ _ (Set.empty_subset _)
   nonTrivial := by
     show ¬sys.ge (f '' ∅) (f '' Set.univ)
     rwa [Set.image_empty, Set.image_univ]
@@ -268,8 +255,7 @@ def comapFA {α W : Type*} (f : α → W) (hf : Function.Injective f)
   trans _ _ _ h1 h2 := sys.trans _ _ _ h1 h2
   additive A B := by
     show sys.ge (f '' A) (f '' B) ↔ sys.ge (f '' (A \ B)) (f '' (B \ A))
-    rw [Set.image_diff hf, Set.image_diff hf]
-    exact sys.additive _ _
+    rw [Set.image_diff hf, Set.image_diff hf]; exact sys.additive _ _
 
 /-- Null element reduction: if atom 0 is null in an FA system on `Fin (n+2)` and
     some atom is not, representability reduces along `Fin.succ` to `Fin (n+1)`. -/
@@ -288,11 +274,8 @@ theorem null_elem_reduce {n : ℕ} (sys : EpistemicSystemFA (Fin (n + 2)))
     mu := fun A => m_r.mu (Fin.succ ⁻¹' A)
     nonneg := fun A => m_r.nonneg _
     additive := fun A B hdisj => by
-      rw [Set.preimage_union]
-      exact m_r.additive _ _ (hdisj.preimage _)
-    total := by
-      show m_r.mu (Fin.succ ⁻¹' Set.univ) = 1
-      rw [Set.preimage_univ]; exact m_r.total
+      rw [Set.preimage_union]; exact m_r.additive _ _ (hdisj.preimage _)
+    total := by rw [Set.preimage_univ]; exact m_r.total
   }, reduce_to_disjoint sys _ (fun C D hdisj => ?_)⟩
   rw [null_removal_disjoint sys 0 hn0 C D hdisj,
       ← succ_image_preimage C, ← succ_image_preimage D]
@@ -309,9 +292,7 @@ theorem no_fa_empty (sys : EpistemicSystemFA (Fin 0)) : False := by
 private theorem set_fin1_eq (A : Set (Fin 1)) : A = ∅ ∨ A = Set.univ := by
   by_cases h : (0 : Fin 1) ∈ A
   · right; ext x; simp [Fin.eq_zero x, h]
-  · left; ext x; constructor
-    · intro hx; rw [Fin.eq_zero x] at hx; exact absurd hx h
-    · intro hx; exact hx.elim
+  · left; ext x; exact ⟨fun hx => absurd (Fin.eq_zero x ▸ hx) h, fun hx => hx.elim⟩
 
 private noncomputable def measure_fin1 : FinAddMeasure (Fin 1) where
   mu := fun A => if (0 : Fin 1) ∈ A then 1 else 0
@@ -321,8 +302,7 @@ private noncomputable def measure_fin1 : FinAddMeasure (Fin 1) where
     · exact absurd h0B (Set.disjoint_left.mp hdisj h0A)
     · simp [Set.mem_union, h0A, h0B]
     · simp [Set.mem_union, h0A, h0B]
-    · have : (0 : Fin 1) ∉ A ∪ B := fun h => h.elim h0A h0B
-      simp [h0A, h0B, this]
+    · simp [h0A, h0B, show (0 : Fin 1) ∉ A ∪ B from fun h => h.elim h0A h0B]
   total := by simp [Set.mem_univ]
 
 theorem representable_fin1 (sys : EpistemicSystemFA (Fin 1)) : Representable sys := by
@@ -361,19 +341,17 @@ private theorem mf2_empty (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
 
 private theorem mf2_zero (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
     (measure_fin2 a ha ha1).mu {(0 : Fin 2)} = a := by
-  rw [measure_fin2_mu]
-  have h0 : (0 : Fin 2) ∈ ({(0 : Fin 2)} : Set _) := rfl
-  have h1 : (1 : Fin 2) ∉ ({(0 : Fin 2)} : Set _) := by
-    simp only [Set.mem_singleton_iff]; exact fun h => absurd (Fin.ext_iff.mp h) (by omega)
-  rw [if_pos h0, if_neg h1]; linarith
+  rw [measure_fin2_mu, if_pos (show (0 : Fin 2) ∈ ({(0 : Fin 2)} : Set _) from rfl),
+    if_neg (show (1 : Fin 2) ∉ ({(0 : Fin 2)} : Set _) by
+      simp only [Set.mem_singleton_iff]; exact fun h => absurd (Fin.ext_iff.mp h) (by omega))]
+  linarith
 
 private theorem mf2_one (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
     (measure_fin2 a ha ha1).mu {(1 : Fin 2)} = 1 - a := by
-  rw [measure_fin2_mu]
-  have h0 : (0 : Fin 2) ∉ ({(1 : Fin 2)} : Set _) := by
-    simp only [Set.mem_singleton_iff]; exact fun h => absurd (Fin.ext_iff.mp h) (by omega)
-  have h1 : (1 : Fin 2) ∈ ({(1 : Fin 2)} : Set _) := rfl
-  rw [if_neg h0, if_pos h1]; linarith
+  rw [measure_fin2_mu, if_neg (show (0 : Fin 2) ∉ ({(1 : Fin 2)} : Set _) by
+      simp only [Set.mem_singleton_iff]; exact fun h => absurd (Fin.ext_iff.mp h) (by omega)),
+    if_pos (show (1 : Fin 2) ∈ ({(1 : Fin 2)} : Set _) from rfl)]
+  linarith
 
 private theorem mf2_univ (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) :
     (measure_fin2 a ha ha1).mu (Set.univ : Set (Fin 2)) = 1 := by
@@ -531,11 +509,8 @@ def transportMeasure {W α : Type*}
   mu := fun A => m.mu (e '' A)
   nonneg := fun A => m.nonneg _
   additive := fun A B hdisj => by
-    rw [Set.image_union]
-    exact m.additive _ _ ((Set.disjoint_image_iff e.injective).mpr hdisj)
-  total := by
-    rw [Set.image_univ_of_surjective e.surjective]
-    exact m.total
+    rw [Set.image_union]; exact m.additive _ _ ((Set.disjoint_image_iff e.injective).mpr hdisj)
+  total := by rw [Set.image_univ_of_surjective e.surjective]; exact m.total
 
 theorem transfer_repr {W α : Type*}
     (e : W ≃ α) (sys : EpistemicSystemFA W) (m : FinAddMeasure α)
@@ -543,8 +518,7 @@ theorem transfer_repr {W α : Type*}
     ∀ A B : Set W, sys.ge A B ↔ (transportMeasure e m).inducedGe A B := by
   intro A B
   have h := hm (e '' A) (e '' B)
-  simp only [transportFA, comapFA, Equiv.symm_image_image] at h
-  exact h
+  simpa only [transportFA, comapFA, Equiv.symm_image_image] using h
 
 /-- Null pattern transport: j is null in `transportFA σ sys` iff `σ.symm j` is null in `sys`. -/
 theorem perm_null_iff {n : ℕ} (σ : Fin n ≃ Fin n)
@@ -569,26 +543,22 @@ def padFA {n : ℕ} (sys : EpistemicSystemFA (Fin n)) : EpistemicSystemFA (Fin (
   mono _ _ hAB := sys.mono _ _ (Set.preimage_mono hAB)
   bottom := by
     show sys.ge (Fin.castSucc ⁻¹' Set.univ) (Fin.castSucc ⁻¹' ∅)
-    rw [Set.preimage_univ, Set.preimage_empty]
-    exact sys.bottom
+    rw [Set.preimage_univ, Set.preimage_empty]; exact sys.bottom
   nonTrivial := by
     show ¬sys.ge (Fin.castSucc ⁻¹' ∅) (Fin.castSucc ⁻¹' Set.univ)
-    rw [Set.preimage_univ, Set.preimage_empty]
-    exact sys.nonTrivial
+    rw [Set.preimage_univ, Set.preimage_empty]; exact sys.nonTrivial
   total _ _ := sys.total _ _
   trans _ _ _ h1 h2 := sys.trans _ _ _ h1 h2
   additive A B := by
     show sys.ge _ _ ↔ sys.ge _ _
-    rw [Set.preimage_diff, Set.preimage_diff]
-    exact sys.additive _ _
+    rw [Set.preimage_diff, Set.preimage_diff]; exact sys.additive _ _
 
 /-- The padded atom is null. -/
 theorem padFA_last_null {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
     (padFA sys).ge ∅ {Fin.last n} := by
   show sys.ge (Fin.castSucc ⁻¹' ∅) (Fin.castSucc ⁻¹' {Fin.last n})
   rw [Set.preimage_empty, show Fin.castSucc ⁻¹' {Fin.last n} = (∅ : Set (Fin n)) from
-    Set.eq_empty_of_forall_notMem fun i hi => (Fin.castSucc_lt_last i).ne hi]
-  exact sys.refl ∅
+    Set.eq_empty_of_forall_notMem fun i hi => (Fin.castSucc_lt_last i).ne hi]; exact sys.refl ∅
 
 /-- Padding reflects representability: a measure for `padFA sys` assigns the
     padded atom measure zero, so its `Fin.castSucc`-image restriction represents
@@ -599,10 +569,7 @@ theorem representable_of_padFA {n : ℕ} {sys : EpistemicSystemFA (Fin n)}
   have hinj := Fin.castSucc_injective n
   have hlast : m.mu {Fin.last n} = 0 := by
     have h0 : m.mu ∅ ≥ m.mu {Fin.last n} := (hm _ _).mp (padFA_last_null sys)
-    rw [m.mu_empty] at h0
-    linarith [m.nonneg {Fin.last n}]
-  have hdisj : Disjoint (Fin.castSucc '' (Set.univ : Set (Fin n))) {Fin.last n} :=
-    Set.disjoint_singleton_right.mpr fun ⟨i, _, hi⟩ => (Fin.castSucc_lt_last i).ne hi
+    rw [m.mu_empty] at h0; linarith [m.nonneg {Fin.last n}]
   have hcover : Fin.castSucc '' (Set.univ : Set (Fin n)) ∪ {Fin.last n} = Set.univ := by
     rw [Set.image_univ]
     ext i
@@ -610,16 +577,16 @@ theorem representable_of_padFA {n : ℕ} {sys : EpistemicSystemFA (Fin n)}
     rcases Fin.eq_castSucc_or_eq_last i with ⟨j, rfl⟩ | rfl
     · exact Or.inl ⟨j, rfl⟩
     · exact Or.inr rfl
+  have hdisj : Disjoint (Fin.castSucc '' (Set.univ : Set (Fin n))) {Fin.last n} :=
+    Set.disjoint_singleton_right.mpr fun ⟨i, _, hi⟩ => (Fin.castSucc_lt_last i).ne hi
   have htotal : m.mu (Fin.castSucc '' (Set.univ : Set (Fin n))) = 1 := by
     have := m.additive _ _ hdisj
-    rw [hcover, m.total, hlast, add_zero] at this
-    linarith
+    rw [hcover, m.total, hlast, add_zero] at this; linarith
   refine ⟨{
     mu := fun A => m.mu (Fin.castSucc '' A)
     nonneg := fun A => m.nonneg _
     additive := fun A B hd => by
-      rw [Set.image_union]
-      exact m.additive _ _ ((Set.disjoint_image_iff hinj).mpr hd)
+      rw [Set.image_union]; exact m.additive _ _ ((Set.disjoint_image_iff hinj).mpr hd)
     total := htotal
   }, fun A B => ?_⟩
   have key := hm (Fin.castSucc '' A) (Fin.castSucc '' B)

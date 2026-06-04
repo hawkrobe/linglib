@@ -103,9 +103,8 @@ noncomputable def FinAddMeasure.toCondMeasure {W : Type*}
     simp only [Set.inter_self] at hne ⊢
     exact div_self fun h => hne (by rw [h, div_zero])
   cond_additive := fun A₁ A₂ B hdisj => by
-    rw [Set.union_inter_distrib_right,
-      m.additive (A₁ ∩ B) (A₂ ∩ B)
-        (hdisj.mono Set.inter_subset_left Set.inter_subset_left), add_div]
+    rw [Set.union_inter_distrib_right, m.additive (A₁ ∩ B) (A₂ ∩ B)
+      (hdisj.mono Set.inter_subset_left Set.inter_subset_left), add_div]
   cond_chain := fun A B C => by
     -- Ratio algebra a/c = (a/b)·(b/c): when μ(B∩C)=0 both sides vanish, else cancel.
     rw [Set.inter_assoc]
@@ -156,21 +155,16 @@ theorem jeffreyUpdate_additive {W : Type*} (m : CondMeasure W)
   simp only [jeffreyUpdate]
   induction ev.cells.zip ev.weights with
   | nil => simp
-  | cons p l ih =>
-    simp only [List.map_cons, List.sum_cons, ih, m.cond_additive A B p.1 hAB]
-    ring
+  | cons p l ih => simp only [List.map_cons, List.sum_cons, ih, m.cond_additive A B p.1 hAB]; ring
 
 /-- Jeffrey update is normalized when every cell is normal. -/
 theorem jeffreyUpdate_total {W : Type*} (m : CondMeasure W)
     (ev : EvidencePartition W) (hnorm : ∀ E ∈ ev.cells, m.condMu E E ≠ 0) :
     jeffreyUpdate m ev Set.univ = 1 := by
   simp only [jeffreyUpdate]
-  have hcell : ∀ p ∈ ev.cells.zip ev.weights,
-      m.condMu Set.univ p.1 * p.2 = Prod.snd p := by
-    intro p hp
-    rw [m.condMu_univ_of_normal (hnorm p.1 (List.of_mem_zip hp).1), one_mul]
-  rw [List.map_congr_left hcell, List.map_snd_zip (le_of_eq ev.aligned.symm),
-    ev.weights_sum]
+  rw [List.map_congr_left fun p hp => by
+      rw [m.condMu_univ_of_normal (hnorm p.1 (List.of_mem_zip hp).1), one_mul],
+    List.map_snd_zip (le_of_eq ev.aligned.symm), ev.weights_sum]
 
 /-- **Jeffrey's rule yields a measure**: for a partition of normal cells, the
     Jeffrey update is a finitely additive probability measure. -/

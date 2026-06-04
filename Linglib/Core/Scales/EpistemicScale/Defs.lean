@@ -150,18 +150,12 @@ lemma ge_union_context {W : Type*} (sys : EpistemicSystemFA W) (X Y C : Set W)
     (hCX : Disjoint C X) (hCY : Disjoint C Y) :
     sys.ge X Y ↔ sys.ge (X ∪ C) (Y ∪ C) := by
   rw [sys.additive X Y, sys.additive (X ∪ C) (Y ∪ C)]
-  have hCXl : ∀ x, x ∈ C → x ∉ X := fun x hx => Set.disjoint_left.mp hCX hx
-  have hCYl : ∀ x, x ∈ C → x ∉ Y := fun x hx => Set.disjoint_left.mp hCY hx
+  have hCXl := Set.disjoint_left.mp hCX
+  have hCYl := Set.disjoint_left.mp hCY
   have e1 : (X ∪ C) \ (Y ∪ C) = X \ Y := by
-    ext x
-    have := hCXl x
-    simp only [Set.mem_diff, Set.mem_union]
-    tauto
+    ext x; simp only [Set.mem_diff, Set.mem_union]; have := @hCXl x; tauto
   have e2 : (Y ∪ C) \ (X ∪ C) = Y \ X := by
-    ext x
-    have := hCYl x
-    simp only [Set.mem_diff, Set.mem_union]
-    tauto
+    ext x; simp only [Set.mem_diff, Set.mem_union]; have := @hCYl x; tauto
   rw [e1, e2]
 
 /-- **Generalized merge**: two valid comparisons with disjoint left parts and
@@ -175,38 +169,27 @@ lemma ge_generalized_merge {W : Type*} (sys : EpistemicSystemFA W)
     sys.ge (X₁ ∪ X₂) (Y₁ ∪ Y₂) := by
   have hXl : ∀ x, x ∈ X₁ → x ∉ X₂ := fun x hx => Set.disjoint_left.mp hX hx
   have hYl : ∀ x, x ∈ Y₂ → x ∉ Y₁ := fun x hy2 hy1 => Set.disjoint_left.mp hY hy1 hy2
-  -- context C₁ = X₂ \ Y₁ added to (X₁ ≿ Y₁)
+  -- context C₁ = X₂ \ Y₁ added to (X₁ ≿ Y₁); C₂ = Y₁ \ X₂ added to (X₂ ≿ Y₂)
   have step1 : sys.ge (X₁ ∪ (X₂ \ Y₁)) (Y₁ ∪ (X₂ \ Y₁)) :=
-    (ge_union_context sys X₁ Y₁ (X₂ \ Y₁)
-      (Set.disjoint_left.mpr fun x hx hx1 => hXl x hx1 hx.1)
+    (ge_union_context sys X₁ Y₁ (X₂ \ Y₁) (Set.disjoint_left.mpr fun x hx hx1 => hXl x hx1 hx.1)
       (Set.disjoint_left.mpr fun x hx hxY1 => hx.2 hxY1)).mp h1
-  -- context C₂ = Y₁ \ X₂ added to (X₂ ≿ Y₂)
   have step2 : sys.ge (X₂ ∪ (Y₁ \ X₂)) (Y₂ ∪ (Y₁ \ X₂)) :=
-    (ge_union_context sys X₂ Y₂ (Y₁ \ X₂)
-      (Set.disjoint_left.mpr fun x hx hx2 => hx.2 hx2)
+    (ge_union_context sys X₂ Y₂ (Y₁ \ X₂) (Set.disjoint_left.mpr fun x hx hx2 => hx.2 hx2)
       (Set.disjoint_left.mpr fun x hx hxY2 => hYl x hxY2 hx.1)).mp h2
-  have hmid : Y₁ ∪ (X₂ \ Y₁) = X₂ ∪ (Y₁ \ X₂) := by
-    ext x; simp only [Set.mem_union, Set.mem_diff]; tauto
-  rw [hmid] at step1
+  rw [show Y₁ ∪ (X₂ \ Y₁) = X₂ ∪ (Y₁ \ X₂) by ext x; simp only [Set.mem_union, Set.mem_diff]; tauto]
+    at step1
   have htrans : sys.ge (X₁ ∪ (X₂ \ Y₁)) (Y₂ ∪ (Y₁ \ X₂)) := sys.trans _ _ _ step1 step2
   set P : Set W := X₂ ∩ Y₁ with hP
   have hLHS : X₁ ∪ (X₂ \ Y₁) = (X₁ ∪ X₂) \ P := by
-    ext x
-    have := hXl x
-    simp only [Set.mem_union, Set.mem_diff, hP, Set.mem_inter_iff, not_and]
-    tauto
+    ext x; have := hXl x; simp only [Set.mem_union, Set.mem_diff, hP, Set.mem_inter_iff, not_and]; tauto
   have hRHS : Y₂ ∪ (Y₁ \ X₂) = (Y₁ ∪ Y₂) \ P := by
-    ext x
-    have := hYl x
-    simp only [Set.mem_union, Set.mem_diff, hP, Set.mem_inter_iff, not_and]
-    tauto
+    ext x; have := hYl x; simp only [Set.mem_union, Set.mem_diff, hP, Set.mem_inter_iff, not_and]; tauto
   rw [hLHS, hRHS] at htrans
-  have hPsubX : P ⊆ X₁ ∪ X₂ := Set.inter_subset_left.trans Set.subset_union_right
-  have hPsubY : P ⊆ Y₁ ∪ Y₂ := Set.inter_subset_right.trans Set.subset_union_left
   have key := (ge_union_context sys ((X₁ ∪ X₂) \ P) ((Y₁ ∪ Y₂) \ P) P
     (Set.disjoint_left.mpr fun x hxP hxd => hxd.2 hxP)
     (Set.disjoint_left.mpr fun x hxP hxd => hxd.2 hxP)).mp htrans
-  rwa [Set.diff_union_of_subset hPsubX, Set.diff_union_of_subset hPsubY] at key
+  rwa [Set.diff_union_of_subset (Set.inter_subset_left.trans Set.subset_union_right),
+    Set.diff_union_of_subset (Set.inter_subset_right.trans Set.subset_union_left)] at key
 
 /-- **Mono-domination**: a valid comparison `X ≿ Y` with `X ⊆ P` and `Q ⊆ Y`
     proves `P ≿ Q`. -/
@@ -296,22 +279,19 @@ theorem inducedGe_axiomT (m : FinAddMeasure W) :
     Follows from additivity: μ(∅ ∪ ∅) = μ(∅) + μ(∅), but ∅ ∪ ∅ = ∅. -/
 theorem mu_empty (m : FinAddMeasure W) : m.mu ∅ = 0 := by
   have hempty := m.additive ∅ ∅ disjoint_bot_left
-  rw [Set.empty_union] at hempty
-  linarith
+  rw [Set.empty_union] at hempty; linarith
 
 /-- Subset monotonicity: `A ⊆ B → μ(A) ≤ μ(B)`. -/
 theorem mu_mono (m : FinAddMeasure W) {A B : Set W} (h : A ⊆ B) :
     m.mu A ≤ m.mu B := by
   have hunion := m.additive A (B \ A) disjoint_sdiff_self_right
-  rw [Set.union_diff_cancel h] at hunion
-  linarith [m.nonneg (B \ A)]
+  rw [Set.union_diff_cancel h] at hunion; linarith [m.nonneg (B \ A)]
 
 /-- Complement measure: `μ(A) + μ(Aᶜ) = 1`. -/
 theorem mu_compl (m : FinAddMeasure W) (A : Set W) :
     m.mu A + m.mu Aᶜ = 1 := by
   have hunion := m.additive A Aᶜ disjoint_compl_right
-  rw [Set.union_compl_self] at hunion
-  linarith [m.total]
+  rw [Set.union_compl_self] at hunion; linarith [m.total]
 
 /-- Qualitative additivity for a finitely additive measure: splitting `A` and `B`
     into the shared part `A ∩ B` and the private parts cancels the shared part. -/
@@ -321,11 +301,9 @@ theorem mu_qadd (m : FinAddMeasure W) (A B : Set W) :
     conv_lhs => rw [(Set.diff_union_inter A B).symm]
     exact m.additive _ _ (Set.disjoint_left.mpr fun _ hx hy => hx.2 hy.2)
   have hmuB : m.mu B = m.mu (B \ A) + m.mu (A ∩ B) := by
-    conv_lhs => rw [show B = (B \ A) ∪ (A ∩ B) from by
-      rw [Set.inter_comm]; exact (Set.diff_union_inter B A).symm]
+    conv_lhs => rw [show B = (B \ A) ∪ (A ∩ B) by rw [Set.inter_comm]; exact (Set.diff_union_inter B A).symm]
     exact m.additive _ _ (Set.disjoint_left.mpr fun _ hx hy => hx.2 hy.1)
-  rw [hmuA, hmuB]
-  exact add_le_add_iff_right (m.mu (A ∩ B))
+  rw [hmuA, hmuB]; exact add_le_add_iff_right (m.mu (A ∩ B))
 
 /-- Every finitely additive measure satisfies the FA axioms.
     A fortiori from [holliday-icard-2013] Theorem 6 soundness,
@@ -334,12 +312,8 @@ def toSystemFA (m : FinAddMeasure W) : EpistemicSystemFA W where
   ge := m.inducedGe
   refl := m.inducedGe_axiomR
   mono := m.inducedGe_axiomT
-  bottom := by
-    show m.mu Set.univ ≥ m.mu ∅
-    rw [m.mu_empty]; exact m.nonneg Set.univ
-  nonTrivial := by
-    show ¬(m.mu ∅ ≥ m.mu Set.univ)
-    rw [m.mu_empty, m.total]; exact not_le.mpr one_pos
+  bottom := by show m.mu Set.univ ≥ m.mu ∅; rw [m.mu_empty]; exact m.nonneg Set.univ
+  nonTrivial := by show ¬(m.mu ∅ ≥ m.mu Set.univ); rw [m.mu_empty, m.total]; exact not_le.mpr one_pos
   total := fun A B => le_total (m.mu B) (m.mu A)
   trans := fun _ _ _ hab hbc => le_trans hbc hab
   additive := m.mu_qadd
@@ -383,8 +357,7 @@ theorem inducedGe_axiomT (m : QualAddMeasure W) :
     EpistemicAxiom.T m.inducedGe := by
   intro A B hAB
   show m.mu B ≥ m.mu A
-  rw [m.qualAdd B A, Set.diff_eq_empty.mpr hAB, m.mu_empty]
-  exact m.nonneg (B \ A)
+  rw [m.qualAdd B A, Set.diff_eq_empty.mpr hAB, m.mu_empty]; exact m.nonneg (B \ A)
 
 /-- A qualitatively additive measure induces System FA.
     Soundness direction of [holliday-icard-2013] Theorem 6:
@@ -393,12 +366,8 @@ def toSystemFA (m : QualAddMeasure W) : EpistemicSystemFA W where
   ge := m.inducedGe
   refl := fun _ => le_refl _
   mono := m.inducedGe_axiomT
-  bottom := by
-    show m.mu Set.univ ≥ m.mu ∅
-    rw [m.mu_empty]; exact m.nonneg Set.univ
-  nonTrivial := by
-    show ¬(m.mu ∅ ≥ m.mu Set.univ)
-    rw [m.mu_empty, m.total]; exact not_le.mpr one_pos
+  bottom := by show m.mu Set.univ ≥ m.mu ∅; rw [m.mu_empty]; exact m.nonneg Set.univ
+  nonTrivial := by show ¬(m.mu ∅ ≥ m.mu Set.univ); rw [m.mu_empty, m.total]; exact not_le.mpr one_pos
   total := fun A B => le_total (m.mu B) (m.mu A)
   trans := fun _ _ _ hab hbc => le_trans hbc hab
   additive := m.qualAdd

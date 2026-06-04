@@ -63,45 +63,33 @@ private theorem belowCount_univ {W : Type*} [Fintype W]
     (sys : EpistemicSystemFA W) :
     belowCount sys Set.univ = Fintype.card (Finset W) := by
   unfold belowCount
-  rw [Finset.filter_true_of_mem]
-  · exact Finset.card_univ
-  · intro S _; exact sys.mono _ _ (Set.subset_univ _)
+  rw [Finset.filter_true_of_mem fun S _ => sys.mono _ _ (Set.subset_univ _)]
+  exact Finset.card_univ
 
 private theorem belowCount_mono {W : Type*} [Fintype W]
     (sys : EpistemicSystemFA W) (A B : Set W)
     (h : sys.ge A B) : belowCount sys A ≥ belowCount sys B := by
-  unfold belowCount
-  apply Finset.card_le_card
-  intro S hS
+  refine Finset.card_le_card fun S hS => ?_
   rw [Finset.mem_filter] at hS ⊢
   exact ⟨hS.1, sys.trans _ _ _ h hS.2⟩
 
 private theorem belowCount_strict {W : Type*} [Fintype W]
     (sys : EpistemicSystemFA W) (A B : Set W)
     (h : ¬sys.ge A B) : belowCount sys A < belowCount sys B := by
-  unfold belowCount
-  apply Finset.card_lt_card
-  refine ⟨?_, ?_⟩
-  · intro S hS
-    rw [Finset.mem_filter] at hS ⊢
-    have hBA := (sys.total A B).resolve_left h
-    exact ⟨hS.1, sys.trans _ _ _ hBA hS.2⟩
-  · intro hsub
-    have : B.toFinset ∈ Finset.univ.filter (fun S : Finset W => sys.ge A ↑S) :=
+  refine Finset.card_lt_card ⟨fun S hS => ?_, fun hsub => ?_⟩
+  · rw [Finset.mem_filter] at hS ⊢
+    exact ⟨hS.1, sys.trans _ _ _ ((sys.total A B).resolve_left h) hS.2⟩
+  · have : B.toFinset ∈ Finset.univ.filter (fun S : Finset W => sys.ge A ↑S) :=
       hsub (Finset.mem_filter.mpr ⟨Finset.mem_univ _, by rw [Set.coe_toFinset]; exact sys.refl B⟩)
-    rw [Finset.mem_filter] at this
-    rw [Set.coe_toFinset] at this
+    rw [Finset.mem_filter, Set.coe_toFinset] at this
     exact h this.2
 
 private theorem belowCount_iff {W : Type*} [Fintype W]
     (sys : EpistemicSystemFA W) (A B : Set W) :
     belowCount sys A ≥ belowCount sys B ↔ sys.ge A B := by
-  constructor
-  · intro hcount
-    by_contra hng
-    have := belowCount_strict sys A B hng
-    omega
-  · exact belowCount_mono sys A B
+  refine ⟨fun hcount => by_contra fun hng => ?_, belowCount_mono sys A B⟩
+  have := belowCount_strict sys A B hng
+  omega
 
 private theorem ge_div_iff {a b d : ℚ} (hd : 0 < d) :
     a / d ≥ b / d ↔ a ≥ b := by
@@ -119,29 +107,22 @@ theorem exists_qualAddMeasure_repr {W : Type*} [Fintype W]
   have hd : (0 : ℚ) < N - E := by
     have := belowCount_strict sys ∅ Set.univ sys.nonTrivial
     rw [belowCount_univ] at this
-    rw [hN, hE]
-    exact sub_pos.mpr (by exact_mod_cast this)
+    exact sub_pos.mpr (by rw [hN, hE]; exact_mod_cast this)
   -- the affine map t ↦ (t − E)/(N − E) is an order isomorphism
   have key : ∀ A B : Set W,
       ((belowCount sys A : ℚ) - E) / (N - E) ≥ ((belowCount sys B : ℚ) - E) / (N - E) ↔
-      sys.ge A B := by
-    intro A B
-    rw [ge_div_iff hd, ge_iff_le, sub_le_sub_iff_right, Nat.cast_le]
-    exact belowCount_iff sys A B
+      sys.ge A B := fun A B => by
+    rw [ge_div_iff hd, ge_iff_le, sub_le_sub_iff_right, Nat.cast_le]; exact belowCount_iff sys A B
   have hAle : ∀ A : Set W, E ≤ (belowCount sys A : ℚ) := fun A => by
-    rw [hE, Nat.cast_le]
-    exact belowCount_mono sys A ∅ (sys.mono ∅ A (Set.empty_subset A))
+    rw [hE, Nat.cast_le]; exact belowCount_mono sys A ∅ (sys.mono ∅ A (Set.empty_subset A))
   refine ⟨⟨fun A => ((belowCount sys A : ℚ) - E) / (N - E),
     fun A => div_nonneg (sub_nonneg.mpr (hAle A)) hd.le,
-    by simp only [← hE, sub_self, zero_div],
-    ?_, ?_⟩, fun A B => (key A B).symm⟩
+    by simp only [← hE, sub_self, zero_div], ?_, ?_⟩, fun A B => (key A B).symm⟩
   · show ((belowCount sys Set.univ : ℚ) - E) / (N - E) = 1
-    rw [belowCount_univ, ← hN]
-    exact div_self hd.ne'
+    rw [belowCount_univ, ← hN]; exact div_self hd.ne'
   · intro A B
     show _ ≥ _ ↔ _ ≥ _
-    rw [key A B, key (A \ B) (B \ A)]
-    exact sys.additive A B
+    rw [key A B, key (A \ B) (B \ A)]; exact sys.additive A B
 
 /-- Helper: if ge A {b} for every b ∈ B, then ge A B, given monotonicity (T)
     and right-union (J). Proved by Finset induction on B.toFinset. -/
@@ -212,12 +193,9 @@ theorem exists_dominationLift_repr {W : Type*} [Fintype W]
 private theorem union_diff_union_disjoint {W : Type*} (A B C : Set W)
     (hAC : ∀ x, x ∈ A → x ∉ C) : (A ∪ C) \ (B ∪ C) = A \ B := by
   ext x; simp only [Set.mem_diff, Set.mem_union]
-  constructor
-  · rintro ⟨hx | hx, hnx⟩
-    · exact ⟨hx, fun hb => hnx (Or.inl hb)⟩
-    · exact absurd (Or.inr hx) hnx
-  · rintro ⟨hxA, hxnB⟩
-    exact ⟨Or.inl hxA, fun h => h.elim hxnB (hAC x hxA)⟩
+  refine ⟨fun h => h.1.elim (fun hx => ⟨hx, fun hb => h.2 (Or.inl hb)⟩)
+    (fun hx => absurd (Or.inr hx) h.2), fun ⟨hxA, hxnB⟩ =>
+    ⟨Or.inl hxA, fun h => h.elim hxnB (hAC x hxA)⟩⟩
 
 /-- **Algebraic bridge**: Axiom A and the finite additivity property
     of `AdditiveScale` are equivalent for any comparison on sets. -/
@@ -227,20 +205,13 @@ theorem axiomA_iff_fa {W : Type*} (ge : Set W → Set W → Prop) :
       (ge A B ↔ ge (A ∪ C) (B ∪ C))) := by
   constructor
   · intro hA A B C hAC hBC
-    have h1 := hA A B
     have h2 := hA (A ∪ C) (B ∪ C)
     rw [union_diff_union_disjoint A B C hAC, union_diff_union_disjoint B A C hBC] at h2
-    exact h1.trans h2.symm
+    exact (hA A B).trans h2.symm
   · intro hFA A B
-    have hdA : ∀ x, x ∈ A \ B → x ∉ A ∩ B :=
-      fun x ⟨_, hxnB⟩ ⟨_, hxB⟩ => hxnB hxB
-    have hdB : ∀ x, x ∈ B \ A → x ∉ A ∩ B :=
-      fun x ⟨_, hxnA⟩ ⟨hxA, _⟩ => hxnA hxA
-    have hA_eq : (A \ B) ∪ (A ∩ B) = A := Set.diff_union_inter A B
-    have hB_eq : (B \ A) ∪ (A ∩ B) = B := by
-      rw [Set.inter_comm]; exact Set.diff_union_inter B A
-    have h := hFA (A \ B) (B \ A) (A ∩ B) hdA hdB
-    rw [hA_eq, hB_eq] at h
+    have h := hFA (A \ B) (B \ A) (A ∩ B)
+      (fun x ⟨_, hxnB⟩ ⟨_, hxB⟩ => hxnB hxB) (fun x ⟨_, hxnA⟩ ⟨hxA, _⟩ => hxnA hxA)
+    rw [Set.diff_union_inter A B, Set.inter_comm A B, Set.diff_union_inter B A] at h
     exact h.symm
 
 end Core.Scale
