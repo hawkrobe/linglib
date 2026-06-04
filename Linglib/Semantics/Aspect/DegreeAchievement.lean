@@ -54,19 +54,15 @@ instance : Inhabited DegreeAchievementScale where
 /-- Derive default telicity from scale boundedness — the central claim of
     [kennedy-levin-2008]. Scales with a maximum → telic; scales without → atelic.
 
-    The mapping follows `Boundedness.hasMax`:
-    - `.closed` (has max) → `.telic`
-    - `.upperBounded` (has max) → `.telic`
-    - `.open_` (no max) → `.atelic`
-    - `.lowerBounded` (no max) → `.atelic` -/
+    Delegates to `Dimension.defaultTelicity` — a scale with a maximal degree gives
+    a telic verb — grounded to the order mixin in `ScalarTelicity`. -/
 def DegreeAchievementScale.defaultTelicity (s : DegreeAchievementScale) : Telicity :=
-  if s.scaleBoundedness.hasMax then .telic else .atelic
+  s.dimension.defaultTelicity
 
-/-- Derive default VendlerClass from scale boundedness.
-    All degree achievements are dynamic and durative, so:
-    telic → accomplishment, atelic → activity. -/
+/-- Default Vendler class, delegating to `Dimension.defaultVendlerClass`:
+    closed scale → accomplishment, open → activity. -/
 def DegreeAchievementScale.defaultVendlerClass (s : DegreeAchievementScale) : VendlerClass :=
-  if s.scaleBoundedness.hasMax then .accomplishment else .activity
+  s.dimension.defaultVendlerClass
 
 -- ════════════════════════════════════════════════════
 -- § Theorems
@@ -97,22 +93,24 @@ end
     degree achievements are always dynamic and durative. -/
 theorem default_vendler_is_dynamic (s : DegreeAchievementScale) :
     s.defaultVendlerClass = .accomplishment ∨ s.defaultVendlerClass = .activity := by
-  simp only [DegreeAchievementScale.defaultVendlerClass]
-  cases h : s.scaleBoundedness.hasMax <;> simp
+  simp only [DegreeAchievementScale.defaultVendlerClass,
+    ScalarTelicity.Dimension.defaultVendlerClass]
+  cases s.dimension.boundedness <;> simp
 
 /-- defaultTelicity agrees with the telicity of defaultVendlerClass. -/
 theorem telicity_vendler_agree (s : DegreeAchievementScale) :
     s.defaultVendlerClass.telicity = s.defaultTelicity := by
-  simp only [DegreeAchievementScale.defaultVendlerClass, DegreeAchievementScale.defaultTelicity]
-  cases h : s.scaleBoundedness.hasMax <;> simp [VendlerClass.telicity]
+  simp only [DegreeAchievementScale.defaultVendlerClass, DegreeAchievementScale.defaultTelicity,
+    ScalarTelicity.Dimension.defaultVendlerClass, ScalarTelicity.Dimension.defaultTelicity]
+  cases s.dimension.boundedness <;> simp [VendlerClass.telicity]
 
 -- ════════════════════════════════════════════════════
 -- § LicensingPipeline instance
 -- ════════════════════════════════════════════════════
 
-/-- LicensingPipeline instance for DegreeAchievementScale:
-    maps through scaleBoundedness directly. hasMax → closed, else open. -/
+/-- LicensingPipeline instance: a degree-achievement scale's boundedness is its
+    dimension's (a derived view, no stored flag). -/
 instance : LicensingPipeline DegreeAchievementScale where
-  toBoundedness s := if s.scaleBoundedness.hasMax then .closed else .open_
+  toBoundedness s := s.scaleBoundedness
 
 end Features.DegreeAchievement
