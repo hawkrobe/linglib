@@ -39,7 +39,7 @@ complex-symbol grammar), see [gazdar-1981].
   consumers (`Formal/EnhancedDependencies.lean`,
   `Formal/CoordinationParallelism.lean`) define their own local minimal
   fixtures.
-* `checkArgStrMatch` is a coarse heuristic over `Features.valence`. Real
+* `checkArgStrMatch` is a coarse heuristic over `DepTree.frames`. Real
   coordination-parallelism judgements (gapping, ATB extraction) live in
   `Formal/CoordinationParallelism.lean`.
 -/
@@ -86,9 +86,9 @@ def checkArgStrMatch (t : DepTree) : Bool :=
   t.deps.all λ d =>
     if d.depType == .conj then
       match t.words[d.headIdx]?, t.words[d.depIdx]? with
-      | some hw, some dw =>
+      | some hw, some _ =>
         if hw.cat == UD.UPOS.VERB then
-          hw.valence == dw.valence
+          t.frame d.headIdx == t.frame d.depIdx
         else true
       | _, _ => false
     else true

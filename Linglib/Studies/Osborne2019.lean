@@ -33,7 +33,7 @@ the corresponding valency frames.
 ```
 Fragment VerbEntry.complementType ← lexical data (sleep=.none, kick=.np, give=.np_np)
     ↓ complementToValence
-VerbEntry.toWord3sg.valence ← intransitive / transitive / ditransitive
+Verb.valence (Fragment complementType) → DepTree.frames premises
     ↓
 DepTree instances ← concrete parse trees
     ↓
@@ -97,28 +97,27 @@ private def lex_kicked : LexEntry :=
 
 /-- sleep.complementType =.none → intransitive. -/
 theorem sleep_valence_from_fragment :
-    sleeps.valence = some .intransitive := rfl
+    English.Predicates.Verbal.sleep.valence = .intransitive := rfl
 
 /-- devour.complementType =.np → transitive. -/
 theorem devour_valence_from_fragment :
-    devours.valence = some .transitive := rfl
+    English.Predicates.Verbal.devour.valence = .transitive := rfl
 
 /-- give.complementType =.np_np → ditransitive. -/
 theorem give_valence_from_fragment :
-    gives.valence = some .ditransitive := rfl
+    English.Predicates.Verbal.give.valence = .ditransitive := rfl
 
 /-- kick.complementType =.np → transitive (active). -/
 theorem kick_valence_from_fragment :
-    kicked.valence = some .transitive := rfl
+    English.Predicates.Verbal.kick.valence = .transitive := rfl
 
-/-- The passive valence (intransitive) is consistent with the passive rule:
-    the rule removes the obj slot from the transitive frame. -/
+/-- The passive frame (intransitive, as carried on `passiveTree.frames`) is consistent
+    with the passive rule: the rule removes the obj slot from kick's transitive frame. -/
 theorem passive_valence_consistent :
-    kicked_pass.valence = some .intransitive ∧
-    kicked.valence = some .transitive ∧
+    English.Predicates.Verbal.kick.valence = .transitive ∧
     passiveRule.applies lex_kicked = true ∧
     (passiveRule.transform lex_kicked).argStr.slots.any (·.depType == .obj) = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+  ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- §3: Grammatical Trees
@@ -126,35 +125,39 @@ theorem passive_valence_consistent :
 
 /-- "John sleeps" — intransitive, no object.
     Matches `Subcategorization.data` pair 1. -/
-def intransTree := mkSVTree john sleeps
+def intransTree := mkSVTree john sleeps (some English.Predicates.Verbal.sleep.valence)
 
 /-- "John devours pizza" — transitive with object.
     Matches `Subcategorization.data` pair 3. -/
-def transTree := mkSVOTree john devours pizza
+def transTree := mkSVOTree john devours pizza (some English.Predicates.Verbal.devour.valence)
 
 /-- "John gives Mary book" — ditransitive with two objects.
     Matches `Subcategorization.data` pair 5. -/
-def ditransTree := mkDitransTree john gives mary book
+def ditransTree :=
+  mkDitransTree john gives mary book (some English.Predicates.Verbal.give.valence)
 
 /-- "John kicked the ball" — active transitive (for passive derivation). -/
 def activeTree : DepTree :=
   { words := [john, kicked, the_, ball]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .obj⟩, ⟨3, 2, .det⟩]
-    rootIdx := 1 }
+    rootIdx := 1
+    frames := [none, some English.Predicates.Verbal.kick.valence, none, none] }
 
-/-- "The ball was kicked" — short passive.
-    Matches `Passive.data` pair 1. -/
+/-- "The ball was kicked" — short passive; the passive analysis detransitivizes
+    kick's frame. Matches `Passive.data` pair 1. -/
 def passiveTree : DepTree :=
   { words := [the_, ball, was_, kicked_pass]
     deps := [⟨1, 0, .det⟩, ⟨3, 1, .nsubj⟩, ⟨3, 2, .auxPass⟩]
-    rootIdx := 3 }
+    rootIdx := 3
+    frames := [none, none, none, some .intransitive] }
 
 /-- "The ball was kicked by John" — long passive with agent by-phrase. -/
 def longPassiveTree : DepTree :=
   { words := [the_, ball, was_, kicked_pass, by_, john]
     deps := [⟨1, 0, .det⟩, ⟨3, 1, .nsubj⟩, ⟨3, 2, .auxPass⟩,
              ⟨3, 5, .obl⟩, ⟨5, 4, .case_⟩]
-    rootIdx := 3 }
+    rootIdx := 3
+    frames := [none, none, none, some .intransitive, none, none] }
 
 -- ============================================================================
 -- §4: Ungrammatical Trees
@@ -165,18 +168,20 @@ def longPassiveTree : DepTree :=
 def intrans_with_obj : DepTree :=
   { words := [john, sleeps, book]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩]
-    rootIdx := 1 }
+    rootIdx := 1
+    frames := [none, some English.Predicates.Verbal.sleep.valence, none] }
 
 /-- "*John devours" — transitive missing required object.
     Matches `Subcategorization.data` pair 3. -/
-def trans_no_obj := mkSVTree john devours
+def trans_no_obj := mkSVTree john devours (some English.Predicates.Verbal.devour.valence)
 
 /-- "*John gives Mary" — ditransitive missing direct object.
     Matches `Subcategorization.data` pair 5. -/
 def ditrans_no_obj : DepTree :=
   { words := [john, gives, mary]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .iobj⟩]
-    rootIdx := 1 }
+    rootIdx := 1
+    frames := [none, some English.Predicates.Verbal.give.valence, none] }
 
 /-- "*The ball was kicked the ball" — passive with spurious object.
     Matches `Passive.data` pair 1. -/
@@ -184,7 +189,8 @@ def passive_with_obj : DepTree :=
   { words := [the_, ball, was_, kicked_pass, the_, ball]
     deps := [⟨1, 0, .det⟩, ⟨3, 1, .nsubj⟩, ⟨3, 2, .auxPass⟩,
              ⟨3, 5, .obj⟩, ⟨5, 4, .det⟩]
-    rootIdx := 3 }
+    rootIdx := 3
+    frames := [none, none, none, some .intransitive, none, none] }
 
 -- ============================================================================
 -- LEVEL 1: Valency Frame Satisfaction
@@ -305,7 +311,7 @@ theorem ditrans_verb_obj_catena_not_constituent :
     7. Passive + spurious obj correctly rejected ✗ -/
 theorem valency_derivation_chain :
     -- Fragment grounding
-    kicked.valence = some .transitive ∧
+    English.Predicates.Verbal.kick.valence = .transitive ∧
     -- Active: frame ✓, subcat ✓
     satisfiesArgStr activeTree 1 argStr_VN = true ∧
     checkVerbSubcat activeTree = true ∧

@@ -36,25 +36,25 @@ namespace Ross1967
 private def what : Word := { form :="what", cat := .PRON, features := { pronType := some .Int }}
 private def did : Word := { form :="did", cat := .AUX, features := {}}
 private def john : Word := { form :="John", cat := .DET, features := { number := some .Sing, person := some .third }}
-private def buy : Word := { form :="buy", cat := .VERB, valence := some .transitive, features := { number := some .Plur }}
+private def buy : Word := { form :="buy", cat := .VERB, features := { number := some .Plur }}
 private def you : Word := { form :="you", cat := .DET, features := { person := some .second, case_ := some .nom }}
-private def wonder : Word := { form :="wonder", cat := .VERB, valence := some .transitive, features := { number := some .Plur }}
+private def wonder : Word := { form :="wonder", cat := .VERB, features := { number := some .Plur }}
 private def who : Word := { form :="who", cat := .PRON, features := { pronType := some .Int }}
-private def bought : Word := { form :="bought", cat := .VERB, valence := some .transitive, features := { verbForm := some .Fin }}
-private def see : Word := { form :="see", cat := .VERB, valence := some .transitive, features := { number := some .Plur }}
-private def met : Word := { form :="met", cat := .VERB, valence := some .transitive, features := { verbForm := some .Fin }}
+private def bought : Word := { form :="bought", cat := .VERB, features := { verbForm := some .Fin }}
+private def see : Word := { form :="see", cat := .VERB, features := { number := some .Plur }}
+private def met : Word := { form :="met", cat := .VERB, features := { verbForm := some .Fin }}
 private def man : Word := { form :="man", cat := .NOUN, features := { number := some .Sing }}
 private def that : Word := { form :="that", cat := .DET, features := { number := some .Sing }}
-private def saw : Word := { form :="saw", cat := .VERB, valence := some .transitive, features := { verbForm := some .Fin }}
-private def leave : Word := { form :="leave", cat := .VERB, valence := some .intransitive, features := { number := some .Plur }}
+private def saw : Word := { form :="saw", cat := .VERB, features := { verbForm := some .Fin }}
+private def leave : Word := { form :="leave", cat := .VERB, features := { number := some .Plur }}
 private def before : Word := { form :="before", cat := .ADP, features := {}}
 private def because : Word := { form :="because", cat := .SCONJ, features := {}}
 private def books : Word := { form :="books", cat := .NOUN, features := { number := some .Plur }}
 private def and_ : Word := { form :="and", cat := .CCONJ, features := {}}
-private def sell : Word := { form :="sell", cat := .VERB, valence := some .transitive, features := { number := some .Plur }}
+private def sell : Word := { form :="sell", cat := .VERB, features := { number := some .Plur }}
 private def do_ : Word := { form :="do", cat := .AUX, features := { number := some .Plur }}
 private def the : Word := { form :="the", cat := .DET, features := {}}
-private def sees : Word := { form :="sees", cat := .VERB, valence := some .transitive, features := { number := some .Sing, person := some .third }}
+private def sees : Word := { form :="sees", cat := .VERB, features := { number := some .Sing, person := some .third }}
 private def mary : Word := { form :="Mary", cat := .DET, features := { number := some .Sing, person := some .third }}
 
 -- ============================================================================

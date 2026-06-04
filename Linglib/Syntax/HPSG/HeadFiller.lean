@@ -302,7 +302,7 @@ Derivation sketch:
 section DerivationExamples
 
 -- Lexical entries for the derivation
-private def see_word : Word := { form :="see", cat := .VERB, valence := some .transitive}
+private def see_word : Word := { form :="see", cat := .VERB}
 private def see_synsem : Synsem :=
   { cat := .VERB, val := { subj := [.NOUN], comps := [.NOUN] } }
 

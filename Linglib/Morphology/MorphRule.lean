@@ -1,4 +1,5 @@
 import Linglib.Core.UD.Word
+import Linglib.Core.Valence
 import Linglib.Syntax.Agreement.Controller
 
 /-!
