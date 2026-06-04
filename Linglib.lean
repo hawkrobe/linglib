@@ -1557,6 +1557,7 @@ import Linglib.Studies.TrinhHaida2015
 import Linglib.Studies.Yalcin2007
 import Linglib.Studies.Mandelkern2019
 import Linglib.Studies.KlinedinstRothschild2012
+import Linglib.Studies.HollidayIcard2013
 import Linglib.Studies.HollidayMandelkern2024
 import Linglib.Studies.Haspelmath1997
 import Linglib.Studies.AlonsoOvalleMenendezBenito2010
