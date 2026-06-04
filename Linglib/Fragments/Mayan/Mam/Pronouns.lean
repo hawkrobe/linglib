@@ -1,0 +1,210 @@
+import Linglib.Syntax.Pronoun.Basic
+
+/-! # San Juan Atitán Mam Pronouns
+
+Pronoun lexicon for San Juan Atitán Mam (SJA Mam, Mayan), from [scott-2023]
+ch. 4. Scott's central claim is that the reduced subject/possessor forms are
+**true pronouns** in argument position — not agreement markers (contra her own
+Scott 2020 analysis) and not a special clitic series (she explicitly prefers an
+impoverishment derivation over "positing a unique series of 'clitic' pronouns",
+p. 162, citing the Agree-affects-pronouns family: Cardinaletti & Starke, Nevins,
+Kramer, Stegovec, Yuan). The entries therefore live here as `PersonalPronoun`
+values flowing through the shared Pronoun API.
+
+Two series (her Table 4.1 / 4.9, p. 160 / 185):
+
+* **Independent** ("most morphosyntactically rich", her fn. 2 — the 2SG
+  "independent" form is the enclitic *=i* itself): *qini* (= *qin+=i*),
+  *qoy* (= *qo'+=y*), *qo*, *=i*, *qi* (= *q+=i*), 3SG ∅, *qa*.
+* **Subject/possessor** (reduced): first-person cells lose their base
+  morphemes (*qin* [+author,+sg], *qo* [+author,−sg], Table 4.10) via an
+  impoverishment rule conditioned on agreement (§4.4); 2nd/3rd cells are
+  identical to the independent series.
+
+The disagreement enclitic *=i* (gloss DISAGR; [noyer-1992], [harbour-2016];
+her §4.3.3) realizes *disagreeing* values of [±author]/[±participant] —
+`enclitic_iff_disagrees` verifies the XOR distribution across the paradigm.
+`reduction_iff_author` verifies that the two series differ exactly at
+[+author] cells.
+
+Feature values follow her Table 4.4 (p. 183). NB the convention:
+Harbour's [±participant] "functions more like a [+/−hearer] or
+[+/−addressee] feature" (p. 182), so 1EXCL is [−participant] — this
+deliberately diverges from `Features.Person.Features`, whose `wellFormed`
+invariant (author → participant) encodes the speech-act-participant
+convention; hence the fragment-local `ScottFeatures`.
+
+Wordhood: *=i* is a morphological enclitic with promiscuous attachment
+(nouns, verbs, pronouns, other clitics; allomorphs <i>/<y>, =ni after [m]);
+whether *qi*/*qa* are words or enclitics is left open by Scott (p. 163, her
+p. 39) — none of this is a Cardinaletti–Starke deficiency classification,
+so `strength` is left unset throughout.
+-/
+
+set_option autoImplicit false
+
+namespace Mam
+
+/-! ### Lexical entries -/
+
+/-- *=i* — the disagreement enclitic pronoun (DISAGR): realizes disagreeing
+    [±author]/[±participant] values, hence φ-underspecified (it serves 1SG,
+    1PL.EXCL, 2SG, and — with the plural piece *q* — 2PL; Table 4.11).
+    Doubles as the 2SG "independent" form (her fn. 2). -/
+def iDisagr : PersonalPronoun :=
+  { form := "=i", person := none, number := none }
+
+/-- *qini* — 1SG independent pronoun; bimorphemic *qin+=i* (base *qin*
+    [+author,+sg] + disagreement enclitic, Table 4.9). -/
+def qini : PersonalPronoun :=
+  { form := "qini", person := some .first, number := some .Sing }
+
+/-- *qoy* — 1PL exclusive independent pronoun; bimorphemic *qo'+=y*
+    (base *qo* [+author,−sg] + enclitic; glottalization from the enclitic,
+    her fn. 7). -/
+def qoy : PersonalPronoun :=
+  { form := "qoy", person := some .first, number := some .Plur,
+    clusivity := some .exclusive }
+
+/-- *qo* — 1PL inclusive independent pronoun; monomorphemic (1INCL's
+    [+author,+participant] values *agree*, so no enclitic). -/
+def qo : PersonalPronoun :=
+  { form := "qo", person := some .first, number := some .Plur,
+    clusivity := some .inclusive }
+
+/-- *qi* — 2PL pronoun, both series; bimorphemic *q+=i* (§4.3.3.2).
+    Word-vs-enclitic status left open by Scott (p. 163). -/
+def qi : PersonalPronoun :=
+  { form := "qi", person := some .second, number := some .Plur }
+
+/-- *qa* — 3PL pronoun, both series; also the generic plural marker of the
+    language (her (42)–(44)). Word-vs-enclitic status left open. -/
+def qa : PersonalPronoun :=
+  { form := "qa", person := some .third, number := some .Plur }
+
+/-- The clusivity-marked entries satisfy the API's well-formedness invariant
+    (clusivity only on 1st-person non-singular). -/
+theorem clusive_entries_wellFormed :
+    qoy.toPronoun.WellFormed ∧ qo.toPronoun.WellFormed := by
+  constructor <;> decide
+
+/-! ### The paradigm -/
+
+/-- A cell of the SJA Mam pronominal paradigm: the quadripartition
+    (1EXCL/1INCL/2/3, Table 4.3) crossed with number, minus the principled
+    gap *1SG-inclusive (Table 4.4). -/
+inductive Cell where
+  | firstSg | firstPlExcl | firstPlIncl
+  | secondSg | secondPl
+  | thirdSg | thirdPl
+  deriving DecidableEq, Repr
+
+/-- Cell person, in the API's vocabulary. -/
+def Cell.person : Cell → Features.Person
+  | .firstSg | .firstPlExcl | .firstPlIncl => .first
+  | .secondSg | .secondPl => .second
+  | .thirdSg | .thirdPl => .third
+
+/-- Cell number, in the API's vocabulary. -/
+def Cell.number : Cell → Features.Number
+  | .firstSg | .secondSg | .thirdSg => .Sing
+  | _ => .Plur
+
+/-- Cell clusivity (1PL cells only), in the API's vocabulary. -/
+def Cell.clusivity : Cell → Option Features.Clusivity.Value
+  | .firstPlExcl => some .exclusive
+  | .firstPlIncl => some .inclusive
+  | _ => none
+
+/-- [scott-2023]'s bivalent φ-features (Table 4.4, after [harbour-2016]):
+    [±author], [±participant], [±singular]. Fragment-local because the
+    participant convention (≈ [±hearer]: 1EXCL is [−participant]) is
+    incompatible with `Features.Person.Features`' author → participant
+    invariant. -/
+structure ScottFeatures where
+  author : Bool
+  participant : Bool
+  singular : Bool
+  deriving DecidableEq, Repr
+
+/-- Feature values per cell — a transcription of Table 4.4. -/
+def Cell.features : Cell → ScottFeatures
+  | .firstSg     => ⟨true,  false, true⟩
+  | .firstPlExcl => ⟨true,  false, false⟩
+  | .firstPlIncl => ⟨true,  true,  false⟩
+  | .secondSg    => ⟨false, true,  true⟩
+  | .secondPl    => ⟨false, true,  false⟩
+  | .thirdSg     => ⟨false, false, true⟩
+  | .thirdPl     => ⟨false, false, false⟩
+
+/-- [±author]/[±participant] values disagree — the condition under which the
+    enclitic *=i* is inserted ([noyer-1992]; [scott-2023] §4.3.3). -/
+def Cell.Disagrees (c : Cell) : Prop :=
+  c.features.author ≠ c.features.participant
+
+/-- The feature table is faithful to the API-side person values:
+    [+author] exactly at first person. -/
+theorem author_iff_first (c : Cell) :
+    c.features.author = true ↔ c.person = .first := by
+  cases c <;> simp [Cell.features, Cell.person]
+
+/-- The feature table is faithful to the API-side number values:
+    [+singular] exactly at singular cells. -/
+theorem singular_iff_sing (c : Cell) :
+    c.features.singular = true ↔ c.number = .Sing := by
+  cases c <;> simp [Cell.features, Cell.number]
+
+/-- Independent pronoun by cell (Table 4.1 right column; 3SG has no overt
+    pronoun). -/
+def independent : Cell → Option PersonalPronoun
+  | .firstSg     => some qini
+  | .firstPlExcl => some qoy
+  | .firstPlIncl => some qo
+  | .secondSg    => some iDisagr
+  | .secondPl    => some qi
+  | .thirdSg     => none
+  | .thirdPl     => some qa
+
+/-- Subject/possessor (reduced) pronoun by cell (Table 4.1 left column):
+    first-person bases are bled by impoverishment (§4.4), so 1SG/1PL.EXCL
+    surface as bare *=i* and 1PL.INCL as ∅; 2nd/3rd are identical to the
+    independent series. -/
+def subjPoss : Cell → Option PersonalPronoun
+  | .firstSg     => some iDisagr
+  | .firstPlExcl => some iDisagr
+  | .firstPlIncl => none
+  | .secondSg    => some iDisagr
+  | .secondPl    => some qi
+  | .thirdSg     => none
+  | .thirdPl     => some qa
+
+/-- Morphological-parse data (Table 4.9): the form contains the disagreement
+    enclitic. *qini* = *qin+=i*, *qoy* = *qo'+=y*, *qi* = *q+=i*, and *=i*
+    itself; *qo* and *qa* contain no enclitic. -/
+def bearsEnclitic (p : PersonalPronoun) : Bool :=
+  p == iDisagr || p == qini || p == qoy || p == qi
+
+/-! ### Verification theorems -/
+
+/-- Noyer/Scott's disagreement generalization, verified across the whole
+    paradigm: a cell's independent form contains *=i* iff its
+    [±author]/[±participant] values disagree (Table 4.4 × Table 4.9/4.11). -/
+theorem enclitic_iff_disagrees (c : Cell) :
+    (independent c).any bearsEnclitic = true ↔ c.Disagrees := by
+  cases c <;> decide
+
+/-- Reduction is exactly first-personhood: the subject/possessor form differs
+    from the independent form precisely at [+author] cells (Table 4.1;
+    the impoverishment rule targets [+author] under agreement, §4.4). -/
+theorem reduction_iff_author (c : Cell) :
+    subjPoss c ≠ independent c ↔ c.features.author = true := by
+  cases c <;> decide
+
+/-- What reduction leaves behind is never a base: every reduced (≠ independent)
+    cell surfaces as bare *=i* or as ∅ — the enclitic is all that survives
+    impoverishment. -/
+theorem reduced_residue (c : Cell) (h : subjPoss c ≠ independent c) :
+    subjPoss c = some iDisagr ∨ subjPoss c = none := by
+  cases c <;> simp_all [subjPoss, independent] <;> decide
+
+end Mam
