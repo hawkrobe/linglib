@@ -92,8 +92,8 @@ def Cancellation (n : ℕ) (ge : Set (Fin n) → Set (Fin n) → Prop) : Prop :=
 -- ═══════════════════════════════════════════════════════════════
 
 private lemma mu_zero {W : Type*} (m : FinAddMeasure W) : m.mu ∅ = 0 := by
-  have := m.additive ∅ ∅ (fun x hx => hx.elim)
-  simp only [Set.empty_union] at this; linarith
+  have h := m.additive ∅ ∅ (fun x hx => hx.elim)
+  rw [Set.empty_union] at h; linarith
 
 private lemma mu_finset_sum {n : ℕ} (m : FinAddMeasure (Fin n))
     (S : Finset (Fin n)) : m.mu ↑S = S.sum (fun i => m.mu {i}) := by
@@ -108,15 +108,6 @@ private lemma mu_finset_sum {n : ℕ} (m : FinAddMeasure (Fin n))
       rw [Finset.coe_insert]; exact Set.insert_eq a ↑S
     rw [hins, m.additive _ _ hdisj, ih, Finset.sum_insert ha]
 
-private lemma list_sum_nonneg {l : List ℚ} (h : ∀ x ∈ l, (0 : ℚ) ≤ x) :
-    0 ≤ l.sum := by
-  induction l with
-  | nil => simp
-  | cons hd tl ih =>
-    simp only [List.sum_cons]
-    exact add_nonneg (h hd (List.mem_cons.mpr (Or.inl rfl)))
-      (ih (fun x hx => h x (List.mem_cons.mpr (Or.inr hx))))
-
 private lemma list_sum_pos {l : List ℚ}
     (hnn : ∀ x ∈ l, (0 : ℚ) ≤ x) (hp : ∃ x ∈ l, (0 : ℚ) < x) :
     (0 : ℚ) < l.sum := by
@@ -128,7 +119,7 @@ private lemma list_sum_pos {l : List ℚ}
     have htl_nn : ∀ y ∈ tl, (0 : ℚ) ≤ y :=
       fun y hy => hnn y (List.mem_cons.mpr (Or.inr hy))
     rcases List.mem_cons.mp hx with rfl | hxtl
-    · linarith [list_sum_nonneg htl_nn]
+    · linarith [List.sum_nonneg htl_nn]
     · linarith [hnn hd (List.mem_cons.mpr (Or.inl rfl)), ih htl_nn hxtl]
 
 /-- The portfolio value (weighted sum of measure differences) equals the
@@ -150,12 +141,6 @@ private lemma single_comp_sum {n : ℕ} (m : FinAddMeasure (Fin n))
   simp only [comparisonVec]
   by_cases hL : i ∈ L <;> by_cases hR : i ∈ R <;> simp_all [Finset.disjoint_left.mp hd]
 
-private lemma finset_mul_sum {n : ℕ} (s : Finset (Fin n)) (f : Fin n → ℚ) (c : ℚ) :
-    c * s.sum f = s.sum (fun i => c * f i) := by
-  induction s using Finset.induction_on with
-  | empty => simp
-  | @insert a s ha ih => simp only [Finset.sum_insert ha, mul_add]; rw [ih]
-
 private lemma portfolio_interchange {n : ℕ} (m : FinAddMeasure (Fin n))
     (P : Portfolio n) :
     (P.map (fun wc => wc.weight * (m.mu ↑wc.left - m.mu ↑wc.right))).sum =
@@ -176,7 +161,7 @@ private lemma portfolio_interchange {n : ℕ} (m : FinAddMeasure (Fin n))
     simp_rw [hwsum, mul_add, Finset.sum_add_distrib]
     -- Suffices: w*(mu L - mu R) = Σ mu{i}*(w*compVec i)
     congr 1
-    rw [single_comp_sum m wc.left wc.right wc.disjoint, finset_mul_sum]
+    rw [single_comp_sum m wc.left wc.right wc.disjoint, Finset.mul_sum]
     apply Finset.sum_congr rfl; intro i _; exact mul_left_comm _ _ _
 
 /-- **Easy direction**: If μ represents the ordering, no neutral portfolio has a
@@ -265,11 +250,8 @@ private theorem feasible_to_measure {n : ℕ} (sys : EpistemicSystemFA (Fin n))
     simp only [atomMu, ← Finset.sum_add_distrib]
     apply Finset.sum_congr rfl
     intro i _
-    by_cases hA : i ∈ A <;> by_cases hB : i ∈ B
-    · exact absurd hB (hdisj i hA)
-    · simp [Set.mem_union, hA, hB]
-    · simp [Set.mem_union, hA, hB]
-    · simp [Set.mem_union, hA, hB]
+    by_cases hA : i ∈ A <;> by_cases hB : i ∈ B <;>
+      simp_all [Set.mem_union]
   -- Normalization: all atoms in univ
   have h_total : atomMu p Set.univ = 1 := by
     simp only [atomMu, Set.mem_univ, ite_true, hsum]
@@ -377,7 +359,7 @@ private theorem weightedSum_portfolioOfWeights {n : ℕ}
     Portfolio.weightedSum (portfolioOfWeights pairs ws h_disj h_pos) j =
     ∑ m : Fin pairs.length,
       ws m * ((comparisonVec n (pairs.get m).1 (pairs.get m).2 j : ℤ) : ℚ) := by
-  simp only [portfolioOfWeights, Portfolio.weightedSum, List.map_map, Function.comp]
+  simp only [portfolioOfWeights, Portfolio.weightedSum, List.map_map]
   exact finRange_map_sum _
 
 /-- Validity of `portfolioOfWeights`: each entry's pair has `ge`. -/
@@ -393,6 +375,33 @@ private theorem isValid_portfolioOfWeights {n : ℕ}
   simp only [portfolioOfWeights] at hwc
   obtain ⟨m, _, rfl⟩ := List.mem_map.mp hwc
   exact h_ge m
+
+/-- All disjoint `ge`-pairs: disjoint (A, B) where `sys.ge ↑A ↑B`. -/
+private noncomputable def gePairsOf {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
+    List (Finset (Fin n) × Finset (Fin n)) :=
+  ((Finset.univ ×ˢ Finset.univ : Finset _).filter
+    (fun ab => Disjoint ab.1 ab.2 ∧ sys.ge ↑ab.1 ↑ab.2)).toList
+
+private theorem gePairs_mem {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+    (A B : Finset (Fin n)) (hd : Disjoint A B) (hge : sys.ge ↑A ↑B) :
+    (A, B) ∈ gePairsOf sys := by
+  simp only [gePairsOf, Finset.mem_toList, Finset.mem_filter, Finset.mem_product,
+    Finset.mem_univ, true_and]
+  exact ⟨hd, hge⟩
+
+private theorem gePairs_disj {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+    (m : Fin (gePairsOf sys).length) :
+    Disjoint ((gePairsOf sys).get m).1 ((gePairsOf sys).get m).2 := by
+  have := List.get_mem (gePairsOf sys) m
+  simp only [gePairsOf, Finset.mem_toList, Finset.mem_filter] at this
+  exact this.2.1
+
+private theorem gePairs_ge {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+    (m : Fin (gePairsOf sys).length) :
+    sys.ge ↑((gePairsOf sys).get m).1 ↑((gePairsOf sys).get m).2 := by
+  have := List.get_mem (gePairsOf sys) m
+  simp only [gePairsOf, Finset.mem_toList, Finset.mem_filter] at this
+  exact this.2.2
 
 /-- **Farkas alternative for the ordering LP**: either a one-directional
     probability representation exists, or there is a valid portfolio
@@ -411,9 +420,7 @@ private theorem farkas_ordering_lp {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
     (∃ P : Portfolio n, P.isValid sys.ge ∧
       ∀ i : Fin n, P.weightedSum i < 0) := by
   -- Enumerate all disjoint ge-pairs
-  let gePairs : List (Finset (Fin n) × Finset (Fin n)) :=
-    ((Finset.univ ×ˢ Finset.univ : Finset _).filter
-      (fun ab => Disjoint ab.1 ab.2 ∧ sys.ge ↑ab.1 ↑ab.2)).toList
+  let gePairs : List (Finset (Fin n) × Finset (Fin n)) := gePairsOf sys
   let k := gePairs.length
   -- Constraint function: n nonnegativity + 1 normUp + 1 normLo + k ordering
   let ineqFn : Fin ((n + 2) + k) → Polyhedral.Ineq n := fun i =>
@@ -431,21 +438,11 @@ private theorem farkas_ordering_lp {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
   have hget : ∀ i : Fin ((n + 2) + k), ineqFn i ∈ S :=
     fun i => List.mem_ofFn.mpr ⟨i, rfl⟩
   have hgePairsMem : ∀ (A B : Finset (Fin n)), Disjoint A B → sys.ge ↑A ↑B →
-      (A, B) ∈ gePairs := by
-    intro A B hd hge
-    simp only [gePairs, Finset.mem_toList, Finset.mem_filter, Finset.mem_product,
-      Finset.mem_univ, true_and]
-    exact ⟨hd, hge⟩
-  have hgePairsDisj : ∀ m : Fin k, Disjoint (gePairs.get m).1 (gePairs.get m).2 := by
-    intro ⟨m, hm⟩
-    have := List.get_mem gePairs ⟨m, hm⟩
-    simp only [gePairs, Finset.mem_toList, Finset.mem_filter] at this
-    exact this.2.1
-  have hgePairsGe : ∀ m : Fin k, sys.ge ↑(gePairs.get m).1 ↑(gePairs.get m).2 := by
-    intro ⟨m, hm⟩
-    have := List.get_mem gePairs ⟨m, hm⟩
-    simp only [gePairs, Finset.mem_toList, Finset.mem_filter] at this
-    exact this.2.2
+      (A, B) ∈ gePairs := gePairs_mem sys
+  have hgePairsDisj : ∀ m : Fin k, Disjoint (gePairs.get m).1 (gePairs.get m).2 :=
+    gePairs_disj sys
+  have hgePairsGe : ∀ m : Fin k, sys.ge ↑(gePairs.get m).1 ↑(gePairs.get m).2 :=
+    gePairs_ge sys
   -- Apply Farkas
   rcases Polyhedral.farkas S with ⟨x, hx⟩ | hcert
   · -- ═══ Feasible case: extract probability vector ═══
@@ -629,7 +626,7 @@ private theorem farkas_ordering_lp {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
       have hcvs_le : (∑ m : Fin k, ((comparisonVec n (gePairs.get m).1
           (gePairs.get m).2 j : ℤ) : ℚ)) ≤ ↑k :=
         le_trans (Finset.sum_le_sum fun m _ => hcv_le1 m)
-          (by simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul])
+          (by simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin])
       -- ε * cv_bound = min_gap / 2
       have hε_eq : ε * cv_bound = min_gap / 2 := by
         simp only [ε]
@@ -730,7 +727,6 @@ private theorem strictPairs_strict {n : ℕ} (sys : EpistemicSystemFA (Fin n))
   simp only [strictPairsOf, Finset.mem_toList, Finset.mem_filter] at this
   exact this.2.2.2
 
-set_option maxHeartbeats 1600000 in
 private theorem cancel_strengthens_to_bidir {n : ℕ} (sys : EpistemicSystemFA (Fin n))
     (hcancel : Cancellation n sys.ge)
     (hexists : ∃ p : Fin n → ℚ, (∀ i, 0 ≤ p i) ∧ Finset.univ.sum p = 1 ∧
@@ -739,28 +735,16 @@ private theorem cancel_strengthens_to_bidir {n : ℕ} (sys : EpistemicSystemFA (
     ∃ p, p ∈ feasibleWeights n sys := by
   obtain ⟨p₀, hnn₀, hsum₀, hge₀⟩ := hexists
   -- Enumerate all ge pairs
-  let gePairs : List (Finset (Fin n) × Finset (Fin n)) :=
-    ((Finset.univ ×ˢ Finset.univ : Finset _).filter
-      (fun ab => Disjoint ab.1 ab.2 ∧ sys.ge ↑ab.1 ↑ab.2)).toList
+  let gePairs : List (Finset (Fin n) × Finset (Fin n)) := gePairsOf sys
   let k := gePairs.length
   let sp := strictPairsOf sys
   let K := sp.length
   have hgePairsMem : ∀ (A B : Finset (Fin n)), Disjoint A B → sys.ge ↑A ↑B →
-      (A, B) ∈ gePairs := by
-    intro A B hd hge
-    simp only [gePairs, Finset.mem_toList, Finset.mem_filter, Finset.mem_product,
-      Finset.mem_univ, true_and]
-    exact ⟨hd, hge⟩
-  have hgePairsDisj : ∀ m : Fin k, Disjoint (gePairs.get m).1 (gePairs.get m).2 := by
-    intro ⟨m, hm⟩
-    have := List.get_mem gePairs ⟨m, hm⟩
-    simp only [gePairs, Finset.mem_toList, Finset.mem_filter] at this
-    exact this.2.1
-  have hgePairsGe : ∀ m : Fin k, sys.ge ↑(gePairs.get m).1 ↑(gePairs.get m).2 := by
-    intro ⟨m, hm⟩
-    have := List.get_mem gePairs ⟨m, hm⟩
-    simp only [gePairs, Finset.mem_toList, Finset.mem_filter] at this
-    exact this.2.2
+      (A, B) ∈ gePairs := gePairs_mem sys
+  have hgePairsDisj : ∀ m : Fin k, Disjoint (gePairs.get m).1 (gePairs.get m).2 :=
+    gePairs_disj sys
+  have hgePairsGe : ∀ m : Fin k, sys.ge ↑(gePairs.get m).1 ↑(gePairs.get m).2 :=
+    gePairs_ge sys
   -- Case split: are there strict pairs?
   by_cases hK : K = 0
   · -- No strict pairs: p₀ is already ↔ feasible
@@ -826,14 +810,10 @@ private theorem cancel_strengthens_to_bidir {n : ℕ} (sys : EpistemicSystemFA (
           (strictPairs_disj sys ⟨s, hs⟩)]
       -- Normalize: Σx > 0 (from strict constraint on pair 0)
       have hsum_pos : 0 < Finset.univ.sum x := by
-        have hs0 := hx_strict ⟨0, hK_pos⟩
-        have hA := Finset.sum_nonneg (fun i (_ : i ∈ (sp.get ⟨0, hK_pos⟩).1) => hx_nn i)
-        have hB := Finset.sum_nonneg (fun i (_ : i ∈ (sp.get ⟨0, hK_pos⟩).2) => hx_nn i)
-        calc Finset.univ.sum x
-            ≥ (sp.get ⟨0, hK_pos⟩).1.sum x := Finset.sum_le_univ_sum_of_nonneg hx_nn
-          _ ≥ (sp.get ⟨0, hK_pos⟩).2.sum x + 1 := hs0
-          _ ≥ 0 + 1 := by linarith
-          _ > 0 := by linarith
+        have hpair : 0 < (sp.get ⟨0, hK_pos⟩).1.sum x := by
+          linarith [hx_strict ⟨0, hK_pos⟩,
+            Finset.sum_nonneg (fun i (_ : i ∈ (sp.get ⟨0, hK_pos⟩).2) => hx_nn i)]
+        linarith [Finset.sum_le_univ_sum_of_nonneg hx_nn (s := (sp.get ⟨0, hK_pos⟩).1)]
       -- Define normalized vector
       let σ := Finset.univ.sum x
       have hσ_pos : 0 < σ := hsum_pos
@@ -848,10 +828,8 @@ private theorem cancel_strengthens_to_bidir {n : ℕ} (sys : EpistemicSystemFA (
         · -- → direction
           intro hge
           show A.sum (fun i => x i / σ) ≥ B.sum (fun i => x i / σ)
-          have h := hx_ord A B hdisj hge
-          rw [show A.sum (fun i => x i / σ) = A.sum x / σ from by rw [Finset.sum_div],
-              show B.sum (fun i => x i / σ) = B.sum x / σ from by rw [Finset.sum_div]]
-          exact div_le_div_of_nonneg_right h (le_of_lt hσ_pos)
+          rw [← Finset.sum_div, ← Finset.sum_div]
+          exact div_le_div_of_nonneg_right (hx_ord A B hdisj hge) (le_of_lt hσ_pos)
         · -- ← direction (contrapositive)
           intro hge
           by_contra hng
@@ -862,8 +840,7 @@ private theorem cancel_strengthens_to_bidir {n : ℕ} (sys : EpistemicSystemFA (
           rw [hgets] at hgap
           -- B.sum x > A.sum x, so A.sum (x/σ) < B.sum (x/σ)
           have hlt : A.sum (fun i => x i / σ) < B.sum (fun i => x i / σ) := by
-            rw [show A.sum (fun i => x i / σ) = A.sum x / σ from by rw [Finset.sum_div],
-                show B.sum (fun i => x i / σ) = B.sum x / σ from by rw [Finset.sum_div]]
+            rw [← Finset.sum_div, ← Finset.sum_div]
             exact div_lt_div_of_pos_right (by linarith) hσ_pos
           linarith
     · -- ═══ Infeasible case: certificate → cancellation violation ═══
@@ -1142,29 +1119,26 @@ theorem cancellation_implies_representable {n : ℕ}
 -- § 5. FA → Cancellation for small n
 -- ═══════════════════════════════════════════════════════════════
 
+/-- Extend `∅ ≿ S` to `∅ ≿ T` by absorbing one null atom `a`, where
+    `{a} \ T = ∅` and `T \ {a} = S`. -/
+private lemma ge_empty_extend {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+    {a : Fin n} {S T : Set (Fin n)} (hNull : sys.ge ∅ {a}) (hRest : sys.ge ∅ S)
+    (h1 : ({a} : Set (Fin n)) \ T = ∅) (h2 : T \ ({a} : Set (Fin n)) = S) :
+    sys.ge ∅ T :=
+  sys.trans ∅ {a} T hNull ((sys.additive {a} T).mpr (h1 ▸ h2 ▸ hRest))
+
 /-- Not all 4 singletons can be null (non-triviality). -/
 theorem not_all_null_fin4 (sys : EpistemicSystemFA (Fin 4))
     (h0 : sys.ge ∅ {(0 : Fin 4)}) (h1 : sys.ge ∅ {(1 : Fin 4)})
     (h2 : sys.ge ∅ {(2 : Fin 4)}) (h3 : sys.ge ∅ {(3 : Fin 4)}) : False := by
-  have h01 : sys.ge ∅ ({0, 1} : Set (Fin 4)) := by
-    have : sys.ge {1} ({0, 1} : Set (Fin 4)) := by
-      rw [sys.additive {1} {0, 1}]
-      rw [show ({1} : Set (Fin 4)) \ {0, 1} = ∅ from by ext x; fin_cases x <;> simp_all]
-      rw [show ({0, 1} : Set (Fin 4)) \ {1} = {0} from by ext x; fin_cases x <;> simp_all]
-      exact h0
-    exact sys.trans _ _ _ h1 this
-  have h012 : sys.ge ∅ ({0, 1, 2} : Set (Fin 4)) := by
-    have : sys.ge {2} ({0, 1, 2} : Set (Fin 4)) := by
-      rw [sys.additive {2} {0, 1, 2}]
-      rw [show ({2} : Set (Fin 4)) \ {0, 1, 2} = ∅ from by ext x; fin_cases x <;> simp_all]
-      rw [show ({0, 1, 2} : Set (Fin 4)) \ {2} = {0, 1} from by ext x; fin_cases x <;> simp_all]
-      exact h01
-    exact sys.trans _ _ _ h2 this
-  exact sys.nonTrivial (sys.trans _ _ _ h3
-    ((sys.additive {3} Set.univ).mpr
-      (by rw [show ({3} : Set (Fin 4)) \ Set.univ = ∅ from by ext x; simp,
-              show (Set.univ : Set (Fin 4)) \ {3} = {0, 1, 2} from by ext x; fin_cases x <;> simp_all]
-          exact h012)))
+  have h01 : sys.ge ∅ ({0, 1} : Set (Fin 4)) :=
+    ge_empty_extend sys h1 h0
+      (by ext x; fin_cases x <;> simp_all) (by ext x; fin_cases x <;> simp_all)
+  have h012 : sys.ge ∅ ({0, 1, 2} : Set (Fin 4)) :=
+    ge_empty_extend sys h2 h01
+      (by ext x; fin_cases x <;> simp_all) (by ext x; fin_cases x <;> simp_all)
+  exact sys.nonTrivial (ge_empty_extend sys h3 h012
+    (by ext x; simp) (by ext x; fin_cases x <;> simp_all))
 
 
 end Core.Scale

@@ -1,5 +1,6 @@
 import Linglib.Core.Scales.EpistemicScale.Representability
 import Linglib.Core.Scales.EpistemicScale.CancellationFin4
+import Mathlib.Tactic.IntervalCases
 
 /-! # KPS representation and completeness theorems
 
@@ -33,24 +34,21 @@ theorem theorem8a {W : Type*} [Fintype W]
     ∃ (m : FinAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
   haveI : DecidableEq W := Classical.typeDecidableEq W
   let e := Fintype.equivFin W
+  -- Each `n ∈ {1,2,3,4}` case transports the per-cardinality measure back via `e`.
+  have transfer : ∀ {n} (e : W ≃ Fin n),
+      (∃ m' : FinAddMeasure (Fin n), ∀ A B, (transportFA e sys).ge A B ↔ m'.inducedGe A B) →
+      ∃ m : FinAddMeasure W, ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
+    fun e ⟨m', hm'⟩ => ⟨transportMeasure e m', transfer_repr e sys m' hm'⟩
   set n := Fintype.card W with hn_def
   interval_cases n
   · -- n = 0: impossible
     exfalso
     have : (∅ : Set (Fin 0)) = Set.univ := by ext x; exact Fin.elim0 x
     exact (transportFA e sys).nonTrivial (this ▸ (transportFA e sys).refl ∅)
-  · -- n = 1
-    obtain ⟨m', hm'⟩ := theorem8a_fin1 (transportFA e sys)
-    exact ⟨transportMeasure e m', transfer_repr e sys m' hm'⟩
-  · -- n = 2
-    obtain ⟨m', hm'⟩ := theorem8a_fin2 (transportFA e sys)
-    exact ⟨transportMeasure e m', transfer_repr e sys m' hm'⟩
-  · -- n = 3
-    obtain ⟨m', hm'⟩ := theorem8a_fin3 (transportFA e sys)
-    exact ⟨transportMeasure e m', transfer_repr e sys m' hm'⟩
-  · -- n = 4
-    obtain ⟨m', hm'⟩ := theorem8a_fin4 (transportFA e sys)
-    exact ⟨transportMeasure e m', transfer_repr e sys m' hm'⟩
+  · exact transfer e (theorem8a_fin1 (transportFA e sys))
+  · exact transfer e (theorem8a_fin2 (transportFA e sys))
+  · exact transfer e (theorem8a_fin3 (transportFA e sys))
+  · exact transfer e (theorem8a_fin4 (transportFA e sys))
 
 /-- **Theorem 8b**: for |W| ≥ 5,
     FA is strictly weaker than FP∞ — there exists a 5-element type
@@ -221,6 +219,18 @@ theorem theorem2_completeness {W : Type*} [Fintype W]
 
 -- ── Bridge: Axiom A ↔ FA ────────────────────────
 
+/-- Adding a set `C` disjoint from `A` to both sides of a difference leaves
+    `A \ B` unchanged: `(A ∪ C) \ (B ∪ C) = A \ B`. -/
+private theorem union_diff_union_disjoint {W : Type*} (A B C : Set W)
+    (hAC : ∀ x, x ∈ A → x ∉ C) : (A ∪ C) \ (B ∪ C) = A \ B := by
+  ext x; simp only [Set.mem_diff, Set.mem_union]
+  constructor
+  · rintro ⟨hx | hx, hnx⟩
+    · exact ⟨hx, fun hb => hnx (Or.inl hb)⟩
+    · exact absurd (Or.inr hx) hnx
+  · rintro ⟨hxA, hxnB⟩
+    exact ⟨Or.inl hxA, fun h => h.elim hxnB (hAC x hxA)⟩
+
 /-- **Algebraic bridge**: Axiom A and the finite additivity property
     of `AdditiveScale` are equivalent for any comparison on sets. -/
 theorem axiomA_iff_fa {W : Type*} (ge : Set W → Set W → Prop) :
@@ -231,23 +241,7 @@ theorem axiomA_iff_fa {W : Type*} (ge : Set W → Set W → Prop) :
   · intro hA A B C hAC hBC
     have h1 := hA A B
     have h2 := hA (A ∪ C) (B ∪ C)
-    have hd1 : (A ∪ C) \ (B ∪ C) = A \ B := by
-      ext x; simp only [Set.mem_diff, Set.mem_union]
-      constructor
-      · rintro ⟨hx | hx, hnx⟩
-        · exact ⟨hx, fun hb => hnx (Or.inl hb)⟩
-        · exact absurd (Or.inr hx) hnx
-      · rintro ⟨hxA, hxnB⟩
-        exact ⟨Or.inl hxA, fun h => h.elim hxnB (hAC x hxA)⟩
-    have hd2 : (B ∪ C) \ (A ∪ C) = B \ A := by
-      ext x; simp only [Set.mem_diff, Set.mem_union]
-      constructor
-      · rintro ⟨hx | hx, hnx⟩
-        · exact ⟨hx, fun ha => hnx (Or.inl ha)⟩
-        · exact absurd (Or.inr hx) hnx
-      · rintro ⟨hxB, hxnA⟩
-        exact ⟨Or.inl hxB, fun h => h.elim hxnA (hBC x hxB)⟩
-    rw [hd1, hd2] at h2
+    rw [union_diff_union_disjoint A B C hAC, union_diff_union_disjoint B A C hBC] at h2
     exact h1.trans h2.symm
   · intro hFA A B
     have hdA : ∀ x, x ∈ A \ B → x ∉ A ∩ B :=

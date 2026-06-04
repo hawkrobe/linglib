@@ -73,31 +73,13 @@ private theorem uf3_mu_eq (A : Set (Fin 3)) :
     (if (2 : Fin 3) ∈ A then (1:ℚ)/3 else 0) := rfl
 
 private theorem uf3_mu_0 : uf3.mu {(0 : Fin 3)} = 1/3 := by
-  rw [uf3_mu_eq]
-  have h0 : (0 : Fin 3) ∈ ({(0 : Fin 3)} : Set _) := rfl
-  have h1 : (1 : Fin 3) ∉ ({(0 : Fin 3)} : Set _) :=
-    fun h => absurd (Set.mem_singleton_iff.mp h) (by omega)
-  have h2 : (2 : Fin 3) ∉ ({(0 : Fin 3)} : Set _) :=
-    fun h => absurd (Set.mem_singleton_iff.mp h) (by omega)
-  rw [if_pos h0, if_neg h1, if_neg h2]; norm_num
+  simp only [uf3_mu_eq, Set.mem_singleton_iff, Fin.reduceEq, reduceIte]; norm_num
 
 private theorem uf3_mu_1 : uf3.mu {(1 : Fin 3)} = 1/3 := by
-  rw [uf3_mu_eq]
-  have h0 : (0 : Fin 3) ∉ ({(1 : Fin 3)} : Set _) :=
-    fun h => absurd (Set.mem_singleton_iff.mp h) (by omega)
-  have h1 : (1 : Fin 3) ∈ ({(1 : Fin 3)} : Set _) := rfl
-  have h2 : (2 : Fin 3) ∉ ({(1 : Fin 3)} : Set _) :=
-    fun h => absurd (Set.mem_singleton_iff.mp h) (by omega)
-  rw [if_neg h0, if_pos h1, if_neg h2]; norm_num
+  simp only [uf3_mu_eq, Set.mem_singleton_iff, Fin.reduceEq, reduceIte]; norm_num
 
 private theorem uf3_mu_2 : uf3.mu {(2 : Fin 3)} = 1/3 := by
-  rw [uf3_mu_eq]
-  have h0 : (0 : Fin 3) ∉ ({(2 : Fin 3)} : Set _) :=
-    fun h => absurd (Set.mem_singleton_iff.mp h) (by omega)
-  have h1 : (1 : Fin 3) ∉ ({(2 : Fin 3)} : Set _) :=
-    fun h => absurd (Set.mem_singleton_iff.mp h) (by omega)
-  have h2 : (2 : Fin 3) ∈ ({(2 : Fin 3)} : Set _) := rfl
-  rw [if_neg h0, if_neg h1, if_pos h2]; norm_num
+  simp only [uf3_mu_eq, Set.mem_singleton_iff, Fin.reduceEq, reduceIte]; norm_num
 
 private theorem uf3_mu_union_12 : uf3.mu ({(1 : Fin 3)} ∪ {2}) = 2/3 := by
   rw [uf3.additive _ _ (λ x hx hx2 => by
@@ -168,27 +150,18 @@ section QualitativeAdditivity
     counterexample (every finitely additive measure induces an FA system
     via `toSystemFA`). -/
 theorem fa_not_I1 : ¬∀ (W : Type) (sys : EpistemicSystemFA W),
-    patternI1 sys.ge := by
-  intro hall
-  apply measure_not_I1
-  intro m
-  exact hall (Fin 3) m.toSystemFA
+    patternI1 sys.ge :=
+  λ hall => measure_not_I1 λ m => hall (Fin 3) m.toSystemFA
 
 /-- I2 is invalid for FA. -/
 theorem fa_not_I2 : ¬∀ (W : Type) (sys : EpistemicSystemFA W),
-    patternI2 sys.ge := by
-  intro hall
-  apply measure_not_I2
-  intro m
-  exact hall (Fin 3) m.toSystemFA
+    patternI2 sys.ge :=
+  λ hall => measure_not_I2 λ m => hall (Fin 3) m.toSystemFA
 
 /-- I3 is invalid for FA. -/
 theorem fa_not_I3 : ¬∀ (W : Type) (sys : EpistemicSystemFA W),
-    patternI3 sys.ge := by
-  intro hall
-  apply measure_not_I3
-  intro m
-  exact hall (Fin 3) m.toSystemFA
+    patternI3 sys.ge :=
+  λ hall => measure_not_I3 λ m => hall (Fin 3) m.toSystemFA
 
 end QualitativeAdditivity
 
@@ -383,9 +356,7 @@ section MLift
 theorem matchingLift_implies_dominationLift {W : Type*} {ge_w : W → W → Prop}
     {A B : Set W} (h : matchingLift ge_w A B) : dominationLift ge_w A B := by
   obtain ⟨f, hf, _⟩ := h
-  intro b hbB
-  obtain ⟨ha, hge⟩ := hf b hbB
-  exact ⟨f b, ha, hge⟩
+  exact fun b hbB => ⟨f b, (hf b hbB).1, (hf b hbB).2⟩
 
 theorem matchingLift_V1 {W : Type*} (ge_w : W → W → Prop) :
     patternV1 (matchingLift ge_w) := patternV1_holds
@@ -717,13 +688,10 @@ theorem matchingLift_V13 {W : Type*} [Finite W] (ge_w : W → W → Prop)
     have hle : (A ∪ B).ncard ≤ B.ncard :=
       Set.ncard_le_ncard_of_injOn f (fun b hb => (hf b hb).1)
         (fun b₁ hb₁ b₂ hb₂ heq => hinj b₁ b₂ hb₁ hb₂ heq) (Set.toFinite _)
-    have hsub : B ⊂ A ∪ B := by
-      constructor
-      · exact Set.subset_union_right
-      · intro h; obtain ⟨x, hx⟩ := hABne
-        exact hx.2 (h (Set.mem_union_left B hx.1))
-    have hlt : B.ncard < (A ∪ B).ncard :=
-      Set.ncard_lt_ncard hsub (Set.toFinite _)
+    have hsub : B ⊂ A ∪ B :=
+      ⟨Set.subset_union_right, fun h => hABne.elim fun x hx =>
+        hx.2 (h (Set.mem_union_left B hx.1))⟩
+    have hlt := Set.ncard_lt_ncard hsub (Set.toFinite _)
     omega
 
 /-- I1 is **invalid** for the m-lifting (Fact 5 in [holliday-icard-2013]).
@@ -750,13 +718,32 @@ theorem matchingLift_not_I1 :
   simp only [Set.sup_eq_union] at hresult
   rw [huniv] at hresult
   obtain ⟨f, hf, hinj⟩ := hresult
-  -- f : Fin 2 → Fin 2 with f(b) ∈ {0} for all b, i.e. f = const 0
-  have hf0 : f 0 ∈ ({0} : Set (Fin 2)) := (hf 0 (Set.mem_univ _)).1
-  have hf1 : f 1 ∈ ({0} : Set (Fin 2)) := (hf 1 (Set.mem_univ _)).1
-  rw [Set.mem_singleton_iff] at hf0 hf1
-  -- f 0 = 0 and f 1 = 0, but f is injective on univ → 0 = 1, contradiction
-  have := hinj 0 1 (Set.mem_univ _) (Set.mem_univ _) (by rw [hf0, hf1])
-  exact absurd this (by omega)
+  -- f(b) ∈ {0} for all b, so f 0 = 0 = f 1, but injectivity forces 0 = 1
+  have hf0 := Set.mem_singleton_iff.mp (hf 0 (Set.mem_univ _)).1
+  have hf1 := Set.mem_singleton_iff.mp (hf 1 (Set.mem_univ _)).1
+  exact absurd (hinj 0 1 (Set.mem_univ _) (Set.mem_univ _) (hf0.trans hf1.symm)) (by omega)
+
+/-- Shared counterexample core for I2/I3: with the total relation on `Fin 3`,
+    `{0,1}` m-lifts its complement `{2}` (injection `_ ↦ 0`) but not all of
+    `univ` (no injection `Fin 3 ↪ {0,1}`, by pigeonhole). -/
+private theorem matchingLift_pair01_AAc :
+    matchingLift (fun (_ _ : Fin 3) => True) ({0, 1} : Set (Fin 3)) ({0, 1} : Set (Fin 3))ᶜ :=
+  ⟨fun _ => 0, fun _ _ => ⟨Set.mem_insert 0 {1}, trivial⟩, fun b₁ b₂ hb1 hb2 _ => by
+    simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hb1 hb2
+    omega⟩
+
+private theorem matchingLift_pair01_not_univ :
+    ¬matchingLift (fun (_ _ : Fin 3) => True) ({0, 1} : Set (Fin 3)) Set.univ := by
+  intro ⟨f, hf, hinj⟩
+  have h0 := (hf 0 (Set.mem_univ _)).1
+  have h1 := (hf 1 (Set.mem_univ _)).1
+  have h2 := (hf 2 (Set.mem_univ _)).1
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at h0 h1 h2
+  rcases h0 with h0 | h0 <;> rcases h1 with h1 | h1 <;> rcases h2 with h2 | h2 <;>
+    first
+    | (have := hinj 0 1 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
+    | (have := hinj 0 2 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
+    | (have := hinj 1 2 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
 
 /-- I2 is **invalid** for the m-lifting (Fact 5 in [holliday-icard-2013]).
     Counterexample: W = Fin 3, ge_w total. A = {0,1}, B = univ.
@@ -764,34 +751,9 @@ theorem matchingLift_not_I1 :
     since |A| = 2 < 3 = |univ|. -/
 theorem matchingLift_not_I2 :
     ∃ (W : Type) (ge_w : W → W → Prop),
-      (∀ w, ge_w w w) ∧ ¬patternI2 (matchingLift ge_w) := by
-  refine ⟨Fin 3, fun _ _ => True, fun _ => trivial, ?_⟩
-  intro h
-  -- A = {0,1}, B = univ
-  -- A ≿ Aᶜ: Aᶜ = {2}, need injection {2} → {0,1}, e.g. f(2) = 0
-  have hAAc : matchingLift (fun (_ _ : Fin 3) => True) ({0, 1} : Set (Fin 3)) ({0, 1} : Set (Fin 3))ᶜ := by
-    refine ⟨fun _ => 0, fun b hb => ⟨Set.mem_insert 0 {1}, trivial⟩, ?_⟩
-    intro b₁ b₂ hb1 hb2 _
-    -- b₁, b₂ ∈ {0,1}ᶜ = {2}
-    have : b₁ ∈ ({0, 1} : Set (Fin 3))ᶜ := hb1
-    have : b₂ ∈ ({0, 1} : Set (Fin 3))ᶜ := hb2
-    simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at *
-    omega
-  -- I2 gives: matchingLift A univ
-  have hresult := h ({0, 1} : Set (Fin 3)) Set.univ hAAc
-  obtain ⟨f, hf, hinj⟩ := hresult
-  -- f : Fin 3 → Fin 3 with f(b) ∈ {0,1} for all b ∈ univ
-  -- So f maps {0,1,2} → {0,1}: pigeonhole, not injective
-  have h0 := (hf 0 (Set.mem_univ _)).1
-  have h1 := (hf 1 (Set.mem_univ _)).1
-  have h2 := (hf 2 (Set.mem_univ _)).1
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at h0 h1 h2
-  -- f maps 3 elements to {0,1} — pigeonhole
-  rcases h0 with h0 | h0 <;> rcases h1 with h1 | h1 <;> rcases h2 with h2 | h2 <;>
-    first
-    | (have := hinj 0 1 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
-    | (have := hinj 0 2 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
-    | (have := hinj 1 2 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
+      (∀ w, ge_w w w) ∧ ¬patternI2 (matchingLift ge_w) :=
+  ⟨Fin 3, fun _ _ => True, fun _ => trivial, fun h =>
+    matchingLift_pair01_not_univ (h _ Set.univ matchingLift_pair01_AAc)⟩
 
 /-- I3 is **invalid** for the m-lifting (Fact 5 in [holliday-icard-2013]).
     Same counterexample as I2: W = Fin 3, ge_w total, A = {0,1}, B = univ.
@@ -800,34 +762,15 @@ theorem matchingLift_not_I2 :
 theorem matchingLift_not_I3 :
     ∃ (W : Type) (ge_w : W → W → Prop),
       (∀ w, ge_w w w) ∧ ¬patternI3 (matchingLift ge_w) := by
-  refine ⟨Fin 3, fun _ _ => True, fun _ => trivial, ?_⟩
-  intro h
-  -- A = {0,1}, B = univ. Probably A holds, but ¬matchingLift A univ.
-  have hprob : Probably (matchingLift (fun (_ _ : Fin 3) => True)) ({0, 1} : Set (Fin 3)) := by
-    constructor
-    · -- matchingLift A Aᶜ: Aᶜ = {2}, inject f(2) = 0
-      refine ⟨fun _ => 0, fun b hb => ⟨Set.mem_insert 0 {1}, trivial⟩, ?_⟩
-      intro b₁ b₂ hb1 hb2 _
-      simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hb1 hb2
-      omega
-    · -- ¬matchingLift Aᶜ A: Aᶜ = {2}, need injection {0,1} → {2}, impossible
-      intro ⟨f, hf, hinj⟩
-      have h0 := (hf 0 (Set.mem_insert 0 {1})).1
-      have h1 := (hf 1 (Or.inr rfl : (1 : Fin 3) ∈ ({0, 1} : Set (Fin 3)))).1
-      simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at h0 h1
-      have := hinj 0 1 (Set.mem_insert 0 {1}) (Or.inr rfl) (by omega)
-      omega
-  have hresult := h ({0, 1} : Set (Fin 3)) Set.univ hprob
-  obtain ⟨f, hf, hinj⟩ := hresult
-  have h0 := (hf 0 (Set.mem_univ _)).1
-  have h1 := (hf 1 (Set.mem_univ _)).1
-  have h2 := (hf 2 (Set.mem_univ _)).1
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at h0 h1 h2
-  rcases h0 with h0 | h0 <;> rcases h1 with h1 | h1 <;> rcases h2 with h2 | h2 <;>
-    first
-    | (have := hinj 0 1 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
-    | (have := hinj 0 2 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
-    | (have := hinj 1 2 (Set.mem_univ _) (Set.mem_univ _) (by omega); omega)
+  refine ⟨Fin 3, fun _ _ => True, fun _ => trivial, fun h => ?_⟩
+  refine matchingLift_pair01_not_univ (h _ Set.univ ⟨matchingLift_pair01_AAc, ?_⟩)
+  -- ¬matchingLift Aᶜ A: Aᶜ = {2}, need injection {0,1} → {2}, impossible
+  intro ⟨f, hf, hinj⟩
+  have h0 := (hf 0 (Set.mem_insert 0 {1})).1
+  have h1 := (hf 1 (Or.inr rfl : (1 : Fin 3) ∈ ({0, 1} : Set (Fin 3)))).1
+  simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at h0 h1
+  have := hinj 0 1 (Set.mem_insert 0 {1}) (Or.inr rfl) (by omega)
+  omega
 
 /-! #### GFC preorder -/
 
@@ -847,9 +790,7 @@ theorem matchingLift_not_total :
     have h2 := hf 2 (by simp [Set.mem_insert_iff, Set.mem_singleton_iff])
     have h1 := hf 1 (by simp [Set.mem_insert_iff, Set.mem_singleton_iff])
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at h2 h1
-    have hf2 : f 2 = 3 := by omega
-    have hf1 : f 1 = 3 := by omega
-    exact absurd (hinj 2 1 (by simp) (by simp) (by rw [hf2, hf1])) (by omega)
+    exact absurd (hinj 2 1 (by simp) (by simp) (by omega)) (by omega)
   · intro ⟨f, hf, _⟩
     have h3 := hf 3 (by simp [Set.mem_insert_iff, Set.mem_singleton_iff])
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at h3

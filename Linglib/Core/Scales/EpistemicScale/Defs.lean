@@ -1,10 +1,6 @@
 import Linglib.Core.Scales.Scale
 import Linglib.Core.Order.ComparativeProbability.Defs
-import Mathlib.Data.Fintype.Powerset
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.FinCases
-import Mathlib.Tactic.IntervalCases
 
 /-!
 # Epistemic Comparative Likelihood
@@ -134,17 +130,13 @@ namespace EpistemicSystemFA
 
 variable {W : Type*} (sys : EpistemicSystemFA W)
 
-instance : ComparativeProbability.IsLikelihoodMono sys.ge where
-  mono A B h := sys.mono A B h
+instance : ComparativeProbability.IsLikelihoodMono sys.ge := ⟨sys.mono⟩
 
-instance : IsTrans (Set W) sys.ge where
-  trans A B C := sys.trans A B C
+instance : IsTrans (Set W) sys.ge := ⟨sys.trans⟩
 
-instance : ComparativeProbability.IsQualitativeAdditive sys.ge where
-  qadd A B := sys.additive A B
+instance : ComparativeProbability.IsQualitativeAdditive sys.ge := ⟨sys.additive⟩
 
-instance : ComparativeProbability.IsNontrivial sys.ge where
-  bot_not_ge_top := sys.nonTrivial
+instance : ComparativeProbability.IsNontrivial sys.ge := ⟨sys.nonTrivial⟩
 
 end EpistemicSystemFA
 
@@ -183,7 +175,7 @@ def EpistemicSystemFA.toGFCPreorder {W : Type*} (sys : EpistemicSystemFA W) :
   refl := sys.refl
   trans := sys.trans
   mono := sys.mono
-  complRev := fun A B hAB => ComparativeProbability.complRev A B hAB
+  complRev := ComparativeProbability.complRev
 
 -- ── Measure Semantics ───────────────────────────
 
@@ -217,35 +209,43 @@ theorem inducedGe_axiomT (m : FinAddMeasure W) :
     EpistemicAxiom.T m.inducedGe := by
   intro A B hAB
   show m.mu B ≥ m.mu A
-  have hdecomp : B = A ∪ (B \ A) := (Set.union_diff_cancel hAB).symm
-  have hdisj : ∀ x, x ∈ A → x ∉ B \ A := fun x hx ⟨_, hna⟩ => hna hx
-  rw [hdecomp, m.additive A (B \ A) hdisj]
+  rw [(Set.union_diff_cancel hAB).symm, m.additive A (B \ A) (fun _ hx ⟨_, hna⟩ => hna hx)]
   exact le_add_of_nonneg_right (m.nonneg (B \ A))
 
 /-- μ(∅) = 0 for any finitely additive measure.
     Follows from additivity: μ(∅ ∪ ∅) = μ(∅) + μ(∅), but ∅ ∪ ∅ = ∅. -/
 theorem mu_empty (m : FinAddMeasure W) : m.mu ∅ = 0 := by
-  have hempty : m.mu (∅ ∪ ∅) = m.mu ∅ + m.mu ∅ :=
-    m.additive ∅ ∅ (fun x hx => hx.elim)
-  simp only [Set.empty_union] at hempty
-  have h : m.mu ∅ + m.mu ∅ = m.mu ∅ + 0 := by rw [add_zero]; exact hempty.symm
-  exact add_left_cancel h
+  have hempty := m.additive ∅ ∅ (fun _ hx => hx.elim)
+  rw [Set.empty_union] at hempty
+  linarith
 
 /-- Subset monotonicity: `A ⊆ B → μ(A) ≤ μ(B)`. -/
 theorem mu_mono (m : FinAddMeasure W) {A B : Set W} (h : A ⊆ B) :
     m.mu A ≤ m.mu B := by
-  have hdisj : ∀ x, x ∈ A → x ∉ B \ A := fun x hx ⟨_, hna⟩ => hna hx
-  have hunion := m.additive A (B \ A) hdisj
+  have hunion := m.additive A (B \ A) (fun _ hx ⟨_, hna⟩ => hna hx)
   rw [Set.union_diff_cancel h] at hunion
   linarith [m.nonneg (B \ A)]
 
 /-- Complement measure: `μ(A) + μ(Aᶜ) = 1`. -/
 theorem mu_compl (m : FinAddMeasure W) (A : Set W) :
     m.mu A + m.mu Aᶜ = 1 := by
-  have hdisj : ∀ x, x ∈ A → x ∉ Aᶜ := fun x hx hxc => hxc hx
-  have hunion := m.additive A Aᶜ hdisj
+  have hunion := m.additive A Aᶜ (fun _ hx hxc => hxc hx)
   rw [Set.union_compl_self] at hunion
   linarith [m.total]
+
+/-- Qualitative additivity for a finitely additive measure: splitting `A` and `B`
+    into the shared part `A ∩ B` and the private parts cancels the shared part. -/
+theorem mu_qadd (m : FinAddMeasure W) (A B : Set W) :
+    m.mu A ≥ m.mu B ↔ m.mu (A \ B) ≥ m.mu (B \ A) := by
+  have hmuA : m.mu A = m.mu (A \ B) + m.mu (A ∩ B) := by
+    conv_lhs => rw [(Set.diff_union_inter A B).symm]
+    exact m.additive _ _ (fun _ ⟨_, hxnb⟩ ⟨_, hxb⟩ => hxnb hxb)
+  have hmuB : m.mu B = m.mu (B \ A) + m.mu (A ∩ B) := by
+    conv_lhs => rw [show B = (B \ A) ∪ (A ∩ B) from by
+      rw [Set.inter_comm]; exact (Set.diff_union_inter B A).symm]
+    exact m.additive _ _ (fun _ ⟨_, hxna⟩ ⟨hxa, _⟩ => hxna hxa)
+  rw [hmuA, hmuB]
+  exact add_le_add_iff_right (m.mu (A ∩ B))
 
 /-- Every finitely additive measure satisfies the FA axioms.
     A fortiori from [holliday-icard-2013] Theorem 6 soundness,
@@ -262,20 +262,7 @@ def toSystemFA (m : FinAddMeasure W) : EpistemicSystemFA W where
     rw [m.mu_empty, m.total]; exact not_le.mpr one_pos
   total := fun A B => le_total (m.mu B) (m.mu A)
   trans := fun _ _ _ hab hbc => le_trans hbc hab
-  additive := by
-    intro A B
-    show m.mu A ≥ m.mu B ↔ m.mu (A \ B) ≥ m.mu (B \ A)
-    have hdA : ∀ x, x ∈ A \ B → x ∉ A ∩ B := fun x ⟨_, hxnb⟩ ⟨_, hxb⟩ => hxnb hxb
-    have hdB : ∀ x, x ∈ B \ A → x ∉ A ∩ B := fun x ⟨_, hxna⟩ ⟨hxa, _⟩ => hxna hxa
-    have hmuA : m.mu A = m.mu (A \ B) + m.mu (A ∩ B) := by
-      conv_lhs => rw [(Set.diff_union_inter A B).symm]
-      exact m.additive _ _ hdA
-    have hmuB : m.mu B = m.mu (B \ A) + m.mu (A ∩ B) := by
-      conv_lhs => rw [show B = (B \ A) ∪ (A ∩ B) from by
-        rw [Set.inter_comm]; exact (Set.diff_union_inter B A).symm]
-      exact m.additive _ _ hdB
-    rw [hmuA, hmuB]
-    exact add_le_add_iff_right (m.mu (A ∩ B))
+  additive := m.mu_qadd
 
 /-- Extract a world prior from a finitely additive measure by
     evaluating μ on singletons: prior(w) = μ({w}).
@@ -332,9 +319,7 @@ theorem inducedGe_axiomT (m : QualAddMeasure W) (h_empty : m.mu ∅ = 0) :
     EpistemicAxiom.T m.inducedGe := by
   intro A B hAB
   show m.mu B ≥ m.mu A
-  have hAB_diff : A \ B = ∅ := Set.diff_eq_empty.mpr hAB
-  rw [m.qualAdd B A]
-  rw [hAB_diff, h_empty]
+  rw [m.qualAdd B A, Set.diff_eq_empty.mpr hAB, h_empty]
   exact m.nonneg (B \ A)
 
 /-- A qualitatively additive measure with μ(∅) = 0 induces System FA.
@@ -358,9 +343,7 @@ def toSystemFA (m : QualAddMeasure W) (h_empty : m.mu ∅ = 0) :
     rw [h_empty, m.total]; exact not_le.mpr one_pos
   total := fun A B => le_total (m.mu B) (m.mu A)
   trans := fun _ _ _ hab hbc => le_trans hbc hab
-  additive := by
-    intro A B; show m.mu A ≥ m.mu B ↔ m.mu (A \ B) ≥ m.mu (B \ A)
-    exact m.qualAdd A B
+  additive := m.qualAdd
 
 end QualAddMeasure
 
@@ -371,20 +354,7 @@ noncomputable def FinAddMeasure.toQualAdd {W : Type*} (m : FinAddMeasure W) : Qu
   mu := m.mu
   nonneg := m.nonneg
   total := m.total
-  qualAdd := fun A B => by
-    have hdA : ∀ x, x ∈ A \ B → x ∉ A ∩ B :=
-      fun x ⟨_, hxnB⟩ ⟨_, hxB⟩ => hxnB hxB
-    have hdB : ∀ x, x ∈ B \ A → x ∉ A ∩ B :=
-      fun x ⟨_, hxnA⟩ ⟨hxA, _⟩ => hxnA hxA
-    have hmuA : m.mu A = m.mu (A \ B) + m.mu (A ∩ B) := by
-      conv_lhs => rw [show A = (A \ B) ∪ (A ∩ B) from (Set.diff_union_inter A B).symm]
-      exact m.additive _ _ hdA
-    have hmuB : m.mu B = m.mu (B \ A) + m.mu (A ∩ B) := by
-      conv_lhs => rw [show B = (B \ A) ∪ (A ∩ B) from by
-        rw [Set.inter_comm]; exact (Set.diff_union_inter B A).symm]
-      exact m.additive _ _ hdB
-    rw [hmuA, hmuB]
-    exact add_le_add_iff_right (m.mu (A ∩ B))
+  qualAdd := m.mu_qadd
 
 -- ── World-Ordering Semantics ────────────────────
 
@@ -481,17 +451,13 @@ namespace FinAddMeasure
 
 variable {W : Type*} (m : FinAddMeasure W)
 
-instance : ComparativeProbability.IsLikelihoodMono m.inducedGe where
-  mono a b h := m.inducedGe_axiomT a b h
+instance : ComparativeProbability.IsLikelihoodMono m.inducedGe := ⟨m.inducedGe_axiomT⟩
 
-instance : IsTrans (Set W) m.inducedGe where
-  trans _ _ _ hab hbc := le_trans hbc hab
+instance : IsTrans (Set W) m.inducedGe := ⟨fun _ _ _ hab hbc => le_trans hbc hab⟩
 
-instance : ComparativeProbability.IsQualitativeAdditive m.inducedGe where
-  qadd a b := m.toSystemFA.additive a b
+instance : ComparativeProbability.IsQualitativeAdditive m.inducedGe := ⟨m.toSystemFA.additive⟩
 
-instance : ComparativeProbability.IsNontrivial m.inducedGe where
-  bot_not_ge_top := m.toSystemFA.nonTrivial
+instance : ComparativeProbability.IsNontrivial m.inducedGe := ⟨m.toSystemFA.nonTrivial⟩
 
 end FinAddMeasure
 

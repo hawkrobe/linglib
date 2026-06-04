@@ -114,32 +114,16 @@ noncomputable def FinAddMeasure.toCondMeasure {W : Type*}
   cond_nonneg := fun A B => div_nonneg (m.nonneg _) (m.nonneg _)
   cond_norm := fun B hne => by
     simp only [Set.inter_self] at hne ⊢
-    have hB : m.mu B ≠ 0 := by
-      intro h; apply hne; rw [h, div_zero]
-    exact div_self hB
+    exact div_self fun h => hne (by rw [h, div_zero])
   cond_additive := fun A₁ A₂ B hdisj => by
-    have hd : ∀ x, x ∈ A₁ ∩ B → x ∉ A₂ ∩ B :=
-      fun x ⟨h1, _⟩ ⟨h2, _⟩ => hdisj x h1 h2
-    rw [Set.union_inter_distrib_right, m.additive _ _ hd, add_div]
+    rw [Set.union_inter_distrib_right,
+      m.additive (A₁ ∩ B) (A₂ ∩ B) (fun x h1 h2 => hdisj x h1.1 h2.1), add_div]
   cond_chain := fun A B C => by
-    -- P(A ∩ B | C) = μ(A ∩ B ∩ C) / μ(C)
-    -- P(A | B ∩ C) · P(B | C) = [μ(A ∩ (B ∩ C)) / μ(B ∩ C)] · [μ(B ∩ C) / μ(C)]
-    -- Since A ∩ (B ∩ C) = A ∩ B ∩ C, this is μ(A∩B∩C)/μ(B∩C) · μ(B∩C)/μ(C)
-    -- = μ(A∩B∩C)/μ(C) when μ(B∩C) ≠ 0, and 0 = 0 otherwise.
-    -- μ(A∩B∩C)/μ(C) = [μ(A∩B∩C)/μ(B∩C)] · [μ(B∩C)/μ(C)]
-    -- Standard ratio algebra: a/c = (a/b)·(b/c), case-splitting on b = 0.
-    -- When b = 0: a ≤ b = 0 (subset monotonicity) so a = 0, both sides = 0.
-    -- When b ≠ 0: cancel b in numerator/denominator.
+    -- Ratio algebra a/c = (a/b)·(b/c): when μ(B∩C)=0 both sides vanish, else cancel.
     rw [Set.inter_assoc]
     by_cases hBC : m.mu (B ∩ C) = 0
-    · have hABC : m.mu (A ∩ (B ∩ C)) = 0 := by
-        have : m.mu (B ∩ C) ≥ m.mu (A ∩ (B ∩ C)) := by
-          have hd : ∀ x, x ∈ A ∩ (B ∩ C) → x ∉ (B ∩ C) \ (A ∩ (B ∩ C)) :=
-            fun x hx ⟨_, hna⟩ => hna hx
-          have := m.additive (A ∩ (B ∩ C)) ((B ∩ C) \ (A ∩ (B ∩ C))) hd
-          rw [Set.union_diff_cancel Set.inter_subset_right] at this
-          linarith [m.nonneg ((B ∩ C) \ (A ∩ (B ∩ C)))]
-        linarith [m.nonneg (A ∩ (B ∩ C))]
+    · have hABC : m.mu (A ∩ (B ∩ C)) = 0 :=
+        le_antisymm (hBC ▸ m.mu_mono Set.inter_subset_right) (m.nonneg _)
       simp [hABC, hBC]
     · rw [div_mul_div_comm, mul_comm (m.mu (A ∩ (B ∩ C))), mul_div_mul_left _ _ hBC]
   cond_univ := fun A => by simp [Set.inter_univ, m.total, div_one]

@@ -1,4 +1,7 @@
 import Linglib.Core.Scales.EpistemicScale.Defs
+import Mathlib.Data.Fintype.Powerset
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Tactic.FinCases
 
 /-!
 # Representability of Epistemic Systems
@@ -113,16 +116,13 @@ noncomputable def kpsSystemFA : EpistemicSystemFA (Fin 5) where
 
 private theorem mu_pair (m : FinAddMeasure (Fin 5)) (a b : Fin 5) (hab : a ≠ b) :
     m.mu ({a, b} : Set (Fin 5)) = m.mu {a} + m.mu {b} := by
-  have hunion : ({a, b} : Set (Fin 5)) = {a} ∪ {b} := Set.insert_eq a {b}
-  rw [hunion, m.additive {a} {b} (λ x hx hxb => by
+  rw [Set.insert_eq a {b}, m.additive {a} {b} (λ x hx hxb => by
     rw [Set.mem_singleton_iff] at hx hxb; exact hab (hx ▸ hxb))]
 
 private theorem mu_triple (m : FinAddMeasure (Fin 5)) (a b c : Fin 5)
     (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
     m.mu ({a, b, c} : Set (Fin 5)) = m.mu {a} + m.mu {b} + m.mu {c} := by
-  have hunion : ({a, b, c} : Set (Fin 5)) = {a} ∪ ({b, c} : Set (Fin 5)) := by
-    ext x; simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
-  rw [hunion, m.additive {a} {b, c} (λ x hx hxbc => by
+  rw [Set.insert_eq a ({b, c} : Set (Fin 5)), m.additive {a} {b, c} (λ x hx hxbc => by
     rw [Set.mem_singleton_iff] at hx
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hxbc
     subst hx; rcases hxbc with rfl | rfl
@@ -141,24 +141,24 @@ theorem kps_not_representable :
   -- Ordering facts: three strict (rank <), one weak (rank ≥)
   have hord1 : ¬ kpsGe ({1, 3} : Set (Fin 5)) {0} := by
     unfold kpsGe kpsRankSet
-    have h1 : toFS ({1, 3} : Set (Fin 5)) = {1, 3} := by ext x; simp [toFS_mem]
-    have h2 : toFS ({(0 : Fin 5)} : Set (Fin 5)) = {0} := by ext x; simp [toFS_mem]
-    rw [h1, h2]; decide
+    rw [show toFS ({1, 3} : Set (Fin 5)) = {1, 3} by ext x; simp [toFS_mem],
+        show toFS ({(0 : Fin 5)} : Set (Fin 5)) = {0} by ext x; simp [toFS_mem]]
+    decide
   have hord2 : ¬ kpsGe ({0, 1} : Set (Fin 5)) {2, 3} := by
     unfold kpsGe kpsRankSet
-    have h1 : toFS ({0, 1} : Set (Fin 5)) = {0, 1} := by ext x; simp [toFS_mem]
-    have h2 : toFS ({2, 3} : Set (Fin 5)) = {2, 3} := by ext x; simp [toFS_mem]
-    rw [h1, h2]; decide
+    rw [show toFS ({0, 1} : Set (Fin 5)) = {0, 1} by ext x; simp [toFS_mem],
+        show toFS ({2, 3} : Set (Fin 5)) = {2, 3} by ext x; simp [toFS_mem]]
+    decide
   have hord3 : ¬ kpsGe ({0, 3} : Set (Fin 5)) {1, 4} := by
     unfold kpsGe kpsRankSet
-    have h1 : toFS ({0, 3} : Set (Fin 5)) = {0, 3} := by ext x; simp [toFS_mem]
-    have h2 : toFS ({1, 4} : Set (Fin 5)) = {1, 4} := by ext x; simp [toFS_mem]
-    rw [h1, h2]; decide
+    rw [show toFS ({0, 3} : Set (Fin 5)) = {0, 3} by ext x; simp [toFS_mem],
+        show toFS ({1, 4} : Set (Fin 5)) = {1, 4} by ext x; simp [toFS_mem]]
+    decide
   have hord4 : kpsGe ({0, 1, 3} : Set (Fin 5)) {2, 4} := by
     unfold kpsGe kpsRankSet
-    have h1 : toFS ({0, 1, 3} : Set (Fin 5)) = {0, 1, 3} := by ext x; simp [toFS_mem]
-    have h2 : toFS ({2, 4} : Set (Fin 5)) = {2, 4} := by ext x; simp [toFS_mem]
-    rw [h1, h2]; decide
+    rw [show toFS ({0, 1, 3} : Set (Fin 5)) = {0, 1, 3} by ext x; simp [toFS_mem],
+        show toFS ({2, 4} : Set (Fin 5)) = {2, 4} by ext x; simp [toFS_mem]]
+    decide
   -- Convert to measure inequalities via the representation isomorphism
   have hmeas1 : m.mu ({1, 3} : Set _) < m.mu ({(0 : Fin 5)} : Set _) :=
     not_le.mp (λ h => hord1 ((hm _ _).mpr h))
@@ -228,14 +228,13 @@ theorem null_removal_disjoint {W : Type*} (sys : EpistemicSystemFA W)
     by_cases hj_in : j ∈ S
     · rw [sys.additive (S \ {j}) S]
       have h1 : (S \ {j}) \ S = ∅ := by
-        ext x; constructor
-        · intro ⟨⟨_, _⟩, hns⟩; exact absurd (by assumption) hns
-        · intro h; exact h.elim
+        ext x; simp only [Set.mem_diff, Set.mem_empty_iff_false, iff_false]
+        tauto
       have h2 : S \ (S \ {j}) = {j} := by
         ext x; simp only [Set.mem_diff, Set.mem_singleton_iff]
         constructor
-        · intro ⟨hx, hn⟩; by_contra hne; exact hn ⟨hx, hne⟩
-        · intro hx; subst hx; exact ⟨hj_in, fun ⟨_, h⟩ => h rfl⟩
+        · rintro ⟨hx, hn⟩; by_contra hne; exact hn ⟨hx, hne⟩
+        · rintro rfl; exact ⟨hj_in, fun ⟨_, h⟩ => h rfl⟩
       rw [h1, h2]; exact hj
     · rw [Set.diff_singleton_eq_self hj_in]; exact sys.refl S
   by_cases hjC : j ∈ C
@@ -359,7 +358,7 @@ private noncomputable def measure_fin2 (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) 
     simp only [Set.mem_union]
     by_cases h0A : (0 : Fin 2) ∈ A <;> by_cases h0B : (0 : Fin 2) ∈ B <;>
     by_cases h1A : (1 : Fin 2) ∈ A <;> by_cases h1B : (1 : Fin 2) ∈ B <;>
-    simp_all <;> linarith
+    simp_all
   total := by simp only [Set.mem_univ, ite_true]; linarith
 
 private theorem measure_fin2_mu (a : ℚ) (ha : 0 ≤ a) (ha1 : a ≤ 1) (A : Set (Fin 2)) :
@@ -434,7 +433,7 @@ private theorem fin2_dispatch (sys : EpistemicSystemFA (Fin 2))
   -- ∅ vs ∅
   · exact ⟨fun _ => le_refl _, fun _ => sys.refl _⟩
   -- ∅ vs {0}
-  · show sys.ge ∅ {0} ↔ _ ≥ _; rw [hme, hm0]; exact ⟨fun h => he0.mp h, fun h => he0.mpr h⟩
+  · show sys.ge ∅ {0} ↔ _ ≥ _; rw [hme, hm0]; exact he0
   -- ∅ vs {1}
   · show sys.ge ∅ {1} ↔ _ ≥ _; rw [hme, hm1]
     exact ⟨fun h => by linarith [he1.mp h], fun h => he1.mpr (by linarith)⟩
@@ -445,31 +444,29 @@ private theorem fin2_dispatch (sys : EpistemicSystemFA (Fin 2))
   · show sys.ge {0} ∅ ↔ _ ≥ _; rw [hm0, hme]
     exact ⟨fun _ => ha, fun _ => sys.mono _ _ (Set.empty_subset _)⟩
   -- {0} vs {0}: not disjoint
-  · exfalso; exact hdisj 0 rfl rfl
+  · exact (hdisj 0 rfl rfl).elim
   -- {0} vs {1}
-  · show sys.ge {0} {1} ↔ _ ≥ _; rw [hm0, hm1]
-    exact ⟨fun h => h01.mp h, fun h => h01.mpr h⟩
+  · show sys.ge {0} {1} ↔ _ ≥ _; rw [hm0, hm1]; exact h01
   -- {0} vs univ: not disjoint
-  · exfalso; exact hdisj 0 rfl (Set.mem_univ _)
+  · exact (hdisj 0 rfl (Set.mem_univ _)).elim
   -- {1} vs ∅
   · show sys.ge {1} ∅ ↔ _ ≥ _; rw [hm1, hme]
     exact ⟨fun _ => by linarith, fun _ => sys.mono _ _ (Set.empty_subset _)⟩
   -- {1} vs {0}
-  · show sys.ge {1} {0} ↔ _ ≥ _; rw [hm1, hm0]
-    exact ⟨fun h => h10.mp h, fun h => h10.mpr h⟩
+  · show sys.ge {1} {0} ↔ _ ≥ _; rw [hm1, hm0]; exact h10
   -- {1} vs {1}: not disjoint
-  · exfalso; exact hdisj 1 rfl rfl
+  · exact (hdisj 1 rfl rfl).elim
   -- {1} vs univ: not disjoint
-  · exfalso; exact hdisj 1 rfl (Set.mem_univ _)
+  · exact (hdisj 1 rfl (Set.mem_univ _)).elim
   -- univ vs ∅
   · show sys.ge Set.univ ∅ ↔ _ ≥ _; rw [hmu, hme]
     exact ⟨fun _ => by linarith, fun _ => sys.mono _ _ (Set.empty_subset _)⟩
   -- univ vs {0}: not disjoint
-  · exfalso; exact hdisj 0 (Set.mem_univ _) rfl
+  · exact (hdisj 0 (Set.mem_univ _) rfl).elim
   -- univ vs {1}: not disjoint
-  · exfalso; exact hdisj 1 (Set.mem_univ _) rfl
+  · exact (hdisj 1 (Set.mem_univ _) rfl).elim
   -- univ vs univ: not disjoint
-  · exfalso; exact hdisj 0 (Set.mem_univ _) (Set.mem_univ _)
+  · exact (hdisj 0 (Set.mem_univ _) (Set.mem_univ _)).elim
 
 -- ── Card 2: Main theorem ───────────────────────────
 

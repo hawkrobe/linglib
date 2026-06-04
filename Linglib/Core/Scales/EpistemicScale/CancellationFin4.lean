@@ -134,14 +134,8 @@ private lemma cmpVec_mergeCmp {n : ℕ} (c d : Finset (Fin n) × Finset (Fin n))
     cmpVec (mergeCmp c d) i = cmpVec c i + cmpVec d i := by
   have h1 : i ∈ c.1 → i ∉ d.1 := fun h => Finset.disjoint_left.mp hpos h
   have h2 : i ∈ c.2 → i ∉ d.2 := fun h => Finset.disjoint_left.mp hneg h
-  by_cases hc1 : i ∈ c.1 <;> by_cases hc2 : i ∈ c.2 <;>
-    by_cases hd1 : i ∈ d.1 <;> by_cases hd2 : i ∈ d.2 <;>
-    first
-      | exact absurd hd1 (h1 hc1)
-      | exact absurd hd2 (h2 hc2)
-      | (simp only [cmpVec, mergeCmp, Finset.mem_sdiff, Finset.mem_union, hc1, hc2, hd1, hd2,
-          or_true, or_false, and_true, and_false, not_true, not_false_iff, if_true,
-          if_false] <;> omega)
+  simp only [cmpVec, mergeCmp, Finset.mem_sdiff, Finset.mem_union]
+  split_ifs <;> simp_all
 
 /-- `mergeCmp` of two valid comparisons is valid, given the disjointness conditions.
     Uses `ge_generalized_merge` then Axiom A to reach disjoint normal form. -/
@@ -219,8 +213,7 @@ private lemma null_from_pair (sys : EpistemicSystemFA (Fin 4))
   -- strict coordinate i₀ ∈ (B \ C) ∪ (D \ A)
   have hmem : i₀ ∈ B \ C ∨ i₀ ∈ D \ A := by
     simp only [cmpVec, Finset.mem_sdiff] at hlt ⊢
-    by_cases hiA : i₀ ∈ A <;> by_cases hiB : i₀ ∈ B <;>
-      by_cases hiC : i₀ ∈ C <;> by_cases hiD : i₀ ∈ D <;> simp_all
+    split_ifs at hlt <;> simp_all
   rcases hmem with hm | hm
   · exact ⟨i₀, sys.trans _ _ _ hBC (sys.mono {i₀} ↑(B \ C)
       (by rw [Set.singleton_subset_iff]; exact Finset.mem_coe.mpr hm))⟩
@@ -288,10 +281,9 @@ private lemma cvSumList_filter_ne_empty (L : List (Finset (Fin 4) × Finset (Fin
     pair with the reversed target is mono-domination (excluded), a g-merge pair inside
     `L` is excluded by `hnogm`, leaving a g-merge with the reversed target.
     Verified true for all families (expert proof + exhaustive ≤5-circuit check). -/
-private lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
+private lemma v1_tailored
     (L : List (Finset (Fin 4) × Finset (Fin 4)))
     (hdisj : ∀ c ∈ L, Disjoint c.1 c.2)
-    (hvalid : ∀ c ∈ L, sys.ge ↑c.1 ↑c.2)
     {vpos vneg : Finset (Fin 4)}
     (hvpvn : Disjoint vpos vneg)
     (hsum : ∀ i, cvSumList L i = cmpVec (vpos, vneg) i)
@@ -447,16 +439,16 @@ private lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
   · -- the reversed target anti-dominated by `c'` is mono-domination, excluded
     exfalso
     refine hnotdom c' (List.mem_of_mem_filter hc') ?_ ?_
-    · rw [posSupport_toQVec (hdisj' c' (Or.inr hc')),
-        negSupport_toQVec (hdisj' _ (Or.inl rfl))] at had2; exact had2
-    · rw [posSupport_toQVec (hdisj' _ (Or.inl rfl)),
-        negSupport_toQVec (hdisj' c' (Or.inr hc'))] at had1; exact had1
+    · rwa [posSupport_toQVec (hdisj' c' (Or.inr hc')),
+        negSupport_toQVec (hdisj' _ (Or.inl rfl))] at had2
+    · rwa [posSupport_toQVec (hdisj' _ (Or.inl rfl)),
+        negSupport_toQVec (hdisj' c' (Or.inr hc'))] at had1
   · exfalso
     refine hnotdom c (List.mem_of_mem_filter hc) ?_ ?_
-    · rw [posSupport_toQVec (hdisj' c (Or.inr hc)),
-        negSupport_toQVec (hdisj' _ (Or.inl rfl))] at had1; exact had1
-    · rw [posSupport_toQVec (hdisj' _ (Or.inl rfl)),
-        negSupport_toQVec (hdisj' c (Or.inr hc))] at had2; exact had2
+    · rwa [posSupport_toQVec (hdisj' c (Or.inr hc)),
+        negSupport_toQVec (hdisj' _ (Or.inl rfl))] at had1
+    · rwa [posSupport_toQVec (hdisj' _ (Or.inl rfl)),
+        negSupport_toQVec (hdisj' c (Or.inr hc))] at had2
   · -- both from `L`: the null pair
     refine Or.inl ⟨c, List.mem_of_mem_filter hc, c', List.mem_of_mem_filter hc',
       fun i => ?_, ?_⟩
@@ -488,17 +480,11 @@ private lemma recombine (sys : EpistemicSystemFA (Fin 4))
   have dvc2 : ∀ x, x ∈ vpos → x ∉ c.2 := fun x h => Finset.disjoint_left.mp hrc2 h
   have dc : ∀ x, x ∈ c.1 → x ∉ c.2 := fun x h => Finset.disjoint_left.mp hcd h
   have hdp : Disjoint p c.1 := by
-    rw [Finset.disjoint_left]; intro x hxp hxc1
-    rw [hp, Finset.mem_union, Finset.mem_sdiff, Finset.mem_sdiff] at hxp
-    rcases hxp with ⟨_, hn⟩ | ⟨hxc2, _⟩
-    · exact hn hxc1
-    · exact dc x hxc1 hxc2
+    rw [hp, Finset.disjoint_union_left]
+    exact ⟨Finset.sdiff_disjoint, Disjoint.mono_left Finset.sdiff_subset hcd.symm⟩
   have hdq : Disjoint q c.2 := by
-    rw [Finset.disjoint_left]; intro x hxq hxc2
-    rw [hq, Finset.mem_union, Finset.mem_sdiff, Finset.mem_sdiff] at hxq
-    rcases hxq with ⟨_, hn⟩ | ⟨hxc1, _⟩
-    · exact hn hxc2
-    · exact dc x hxc1 hxc2
+    rw [hq, Finset.disjoint_union_left]
+    exact ⟨Finset.sdiff_disjoint, Disjoint.mono_left Finset.sdiff_subset hcd⟩
   have hmerge := mergeCmp_valid sys (c := (p, q)) (d := c) hX hc hdp hdq
   have e1 : (mergeCmp (p, q) c).1 = vpos := by
     apply Finset.ext; intro x
@@ -510,8 +496,7 @@ private lemma recombine (sys : EpistemicSystemFA (Fin 4))
     have h1 := dvv x; have h2 := dvc1 x; have h3 := dvc2 x; have h4 := dc x
     simp only [mergeCmp, hp, hq, Finset.mem_sdiff, Finset.mem_union]
     tauto
-  rw [e1, e2] at hmerge
-  exact hmerge
+  rwa [e1, e2] at hmerge
 
 /-- **Merge-to-single**: on a no-null Fin 4 system, any valid family of disjoint
     comparisons whose vector-sum equals a single comparison vector `(vpos, vneg)`
@@ -539,7 +524,7 @@ private theorem merge_to_single (sys : EpistemicSystemFA (Fin 4))
       push_neg at hdom
       by_cases hgm : ∃ c d rest, L.Perm (c :: d :: rest) ∧ Disjoint c.1 d.1 ∧ Disjoint c.2 d.2
       case neg =>
-        rcases v1_tailored sys L hdisj hvalid hvpvn hsum hne hdom hgm with
+        rcases v1_tailored L hdisj hvpvn hsum hne hdom hgm with
           ⟨c, hcL, d, hdL, hle, i0, hlt⟩ | ⟨c, hcL, hrc1, hrc2⟩
         · -- null pair → null atom → contradicts hnull
           obtain ⟨i, hi⟩ := null_from_pair sys (hvalid c hcL) (hvalid d hdL)
@@ -562,7 +547,7 @@ private theorem merge_to_single (sys : EpistemicSystemFA (Fin 4))
             simp only [cmpVec, Finset.mem_union, Finset.mem_sdiff]
             by_cases h1v : i ∈ vpos <;> by_cases h2v : i ∈ vneg <;>
               by_cases h3v : i ∈ c.1 <;> by_cases h4v : i ∈ c.2 <;>
-              simp_all <;> omega
+              simp_all
           have hpq : Disjoint ((vpos \ c.1) ∪ (c.2 \ vneg)) ((vneg \ c.2) ∪ (c.1 \ vpos)) := by
             rw [Finset.disjoint_left]; intro x hxp hxq
             have a1 : x ∈ vpos → x ∉ vneg := fun h => Finset.disjoint_left.mp hvpvn h
@@ -688,10 +673,7 @@ private theorem exists_balanced_list (sys : EpistemicSystemFA (Fin 4))
     have hdk : D / wc.weight.den = k := by
       rw [hk]; exact Nat.mul_div_cancel_left k wc.weight.den_pos
     have hnumpos : 0 < wc.weight.num := Rat.num_pos.mpr wc.weight_pos
-    have hkpos : 0 < k := by
-      rcases Nat.eq_zero_or_pos k with h0 | h
-      · rw [h0, Nat.mul_zero] at hk; omega
-      · exact h
+    have hkpos : 0 < k := Nat.pos_of_ne_zero (by rintro rfl; rw [Nat.mul_zero] at hk; omega)
     have hmz : 0 ≤ wc.weight.num * (D / wc.weight.den : ℕ) := by
       rw [hdk]; positivity
     rw [hmult]
@@ -707,10 +689,7 @@ private theorem exists_balanced_list (sys : EpistemicSystemFA (Fin 4))
     have hdk : D / wc.weight.den = k := by
       rw [hk]; exact Nat.mul_div_cancel_left k wc.weight.den_pos
     have hnumpos : 0 < wc.weight.num := Rat.num_pos.mpr wc.weight_pos
-    have hkpos : 0 < k := by
-      rcases Nat.eq_zero_or_pos k with h0 | h
-      · rw [h0, Nat.mul_zero] at hk; omega
-      · exact h
+    have hkpos : 0 < k := Nat.pos_of_ne_zero (by rintro rfl; rw [Nat.mul_zero] at hk; omega)
     rw [hmult]
     simp only
     rw [hdk]
@@ -836,14 +815,13 @@ def extendFA (sys : EpistemicSystemFA (Fin 3)) : EpistemicSystemFA (Fin 4) where
     · -- the new world sits in `A \ B`: both sides true by dominance
       exact iff_of_true (Or.inl ⟨ha, hb⟩) (Or.inl ⟨⟨ha, hb⟩, fun h => hb h.1⟩)
     · -- the new world sits in `B \ A`: both sides false
-      have hab : Fin.last 3 ∉ A \ B := fun h => ha h.1
-      constructor
+      refine iff_of_false ?_ ?_
       · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
-        · exact absurd h3 ha
-        · exact absurd (hiff.mpr hb) ha
+        · exact ha h3
+        · exact ha (hiff.mpr hb)
       · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
-        · exact absurd h3 hab
-        · exact absurd (hiff.mpr ⟨hb, ha⟩) hab
+        · exact ha h3.1
+        · exact ha (hiff.mpr ⟨hb, ha⟩).1
     · -- the new world is absent everywhere; restriction additivity again
       have hab : Fin.last 3 ∉ A \ B := fun h => ha h.1
       have hba : Fin.last 3 ∉ B \ A := fun h => hb h.1
