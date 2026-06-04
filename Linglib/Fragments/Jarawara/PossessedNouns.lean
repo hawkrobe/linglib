@@ -2,6 +2,7 @@ import Linglib.Morphology.DM.NominalStructure
 import Linglib.Typology.Possession
 import Linglib.Core.UniversalDependencies
 import Linglib.Features.Gender
+import Linglib.Features.Number
 
 /-!
 # Jarawara Possessed Nouns [adamson-2024] [dixon-2004]
@@ -26,6 +27,8 @@ in Jarawara (Arawan), drawn from [adamson-2024] §3.2 and
 The iPossessable class maps onto the upper portion of the
 cross-linguistic inalienability hierarchy from `Possession.Typology`.
 -/
+
+open Features (Number)
 
 namespace Jarawara
 

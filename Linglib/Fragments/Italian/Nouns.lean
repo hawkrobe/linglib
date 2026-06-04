@@ -107,9 +107,9 @@ structure NP where
     modeled here). -/
 def defNP (n : NounEntry) (num : Number := .sg) : NP :=
   let det := match num, n.gender with
-    | .sg, .feminine => Determiner.la
-    | .sg, _ => Determiner.il        -- masculine is default
-    | .pl, .feminine => Determiner.le
+    | .Sing, .feminine => Determiner.la
+    | .Sing, _ => Determiner.il        -- masculine is default
+    | .Plur, .feminine => Determiner.le
     | _, _ => Determiner.i
   { noun := n, number := num, isBare := false, determiner := some det }
 
@@ -123,9 +123,9 @@ def indefNP (n : NounEntry) : NP :=
 /-- Create a partitive NP (del/della for mass, dei/delle for plural). -/
 def partNP (n : NounEntry) (num : Number := .sg) : NP :=
   let det := match num, n.gender with
-    | .sg, .feminine => Determiner.della
-    | .sg, _ => Determiner.del        -- masculine is default
-    | .pl, .feminine => Determiner.delle
+    | .Sing, .feminine => Determiner.della
+    | .Sing, _ => Determiner.del        -- masculine is default
+    | .Plur, .feminine => Determiner.delle
     | _, _ => Determiner.dei
   { noun := n, number := num, isBare := false, determiner := some det }
 
