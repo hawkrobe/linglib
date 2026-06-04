@@ -1,4 +1,5 @@
 import Linglib.Core.Scales.Scale
+import Linglib.Semantics.Aspect.Dimension
 import Linglib.Features.Aktionsart
 
 /-!
@@ -34,16 +35,21 @@ open Features
     Scales with a maximum (closed, upper-bounded) yield telic VPs;
     scales without a maximum (open, lower-bounded) yield atelic VPs. -/
 structure DegreeAchievementScale where
-  /-- The adjectival base's scale boundedness. -/
-  scaleBoundedness : Boundedness
-  /-- The dimension of change (height, temperature, fullness,...). -/
-  dimension : String
+  /-- The scalar dimension the base adjective measures. Its boundedness is the
+      order-mixin profile of the dimension's degree type, recovered by the derived
+      `scaleBoundedness` below — not stored. -/
+  dimension : ScalarTelicity.Dimension
   /-- Citation form of the base adjective (if deadjectival). -/
   baseAdjective : Option String := none
   deriving Repr, BEq
 
+/-- The base scale's boundedness, as a derived view of the dimension (the scale's
+    shape is read off the dimension's order structure, not stored per verb). -/
+def DegreeAchievementScale.scaleBoundedness (s : DegreeAchievementScale) : Boundedness :=
+  s.dimension.boundedness
+
 instance : Inhabited DegreeAchievementScale where
-  default := { scaleBoundedness := .open_, dimension := "" }
+  default := { dimension := .unspecified }
 
 /-- Derive default telicity from scale boundedness — the central claim of
     [kennedy-levin-2008]. Scales with a maximum → telic; scales without → atelic.
@@ -67,31 +73,23 @@ def DegreeAchievementScale.defaultVendlerClass (s : DegreeAchievementScale) : Ve
 -- ════════════════════════════════════════════════════
 
 section
-variable (d : String) (a : Option String)
+variable (a : Option String)
 
-/-- Closed scaleBoundedness → telic. -/
-theorem closed_scale_telic :
-    (DegreeAchievementScale.mk .closed d a).defaultTelicity = .telic := rfl
+/-- A closed dimension (e.g. *straightness*) → telic. -/
+theorem closed_dimension_telic :
+    (DegreeAchievementScale.mk .straightness a).defaultTelicity = .telic := rfl
 
-/-- Open scaleBoundedness → atelic. -/
-theorem open_scale_atelic :
-    (DegreeAchievementScale.mk .open_ d a).defaultTelicity = .atelic := rfl
+/-- An open dimension (e.g. *width*) → atelic. -/
+theorem open_dimension_atelic :
+    (DegreeAchievementScale.mk .width a).defaultTelicity = .atelic := rfl
 
-/-- Upper-bounded → telic (has max → bounded mΔ). -/
-theorem upperBounded_telic :
-    (DegreeAchievementScale.mk .upperBounded d a).defaultTelicity = .telic := rfl
+/-- A closed dimension → accomplishment. -/
+theorem closed_dimension_accomplishment :
+    (DegreeAchievementScale.mk .straightness a).defaultVendlerClass = .accomplishment := rfl
 
-/-- Lower-bounded → atelic (no max → unbounded mΔ). -/
-theorem lowerBounded_atelic :
-    (DegreeAchievementScale.mk .lowerBounded d a).defaultTelicity = .atelic := rfl
-
-/-- Closed scaleBoundedness → accomplishment. -/
-theorem closed_scale_accomplishment :
-    (DegreeAchievementScale.mk .closed d a).defaultVendlerClass = .accomplishment := rfl
-
-/-- Open scaleBoundedness → activity. -/
-theorem open_scale_activity :
-    (DegreeAchievementScale.mk .open_ d a).defaultVendlerClass = .activity := rfl
+/-- An open dimension → activity. -/
+theorem open_dimension_activity :
+    (DegreeAchievementScale.mk .width a).defaultVendlerClass = .activity := rfl
 
 end
 

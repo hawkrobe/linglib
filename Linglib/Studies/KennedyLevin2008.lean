@@ -30,8 +30,8 @@ telic (accomplishment) verb, an open-scale base an atelic (activity) verb.
   `OrderTop` / `NoMaxOrder` mixins (witness `g_φ = ⊤`), feeding [beavers-2011]'s
   affectedness hierarchy. Here it is instantiated at the dimensions the verbs
   measure — `straighten_telic` (straightness, closed), `widen_atelic` (width,
-  open) — matched to the fragment tags by `straighten_scale_hasMax` /
-  `widen_scale_no_max`. The variable-telicity contrast of [kennedy-levin-2008] §3.3.
+  open) — grounded to the verbs' stored dimensions by `straighten_dimension` /
+  `widen_dimension`. The variable-telicity contrast of [kennedy-levin-2008] §3.3.
 
 ## Implementation notes
 
@@ -343,16 +343,14 @@ theorem widen_atelic :
       Quantized (reachesSome (δ := Dimension.width.degree)) g :=
   width_atelic
 
-/-- The dimension assignments match the fragment's current scale tags:
-    *straighten* closed (`hasMax`), *widen* open (no max). (Phase 3 of the
-    boundedness→mixin migration replaces the tag with the dimension itself.) -/
-theorem straighten_scale_hasMax :
-    straighten.toVerb.degreeAchievementScale.get!.scaleBoundedness.hasMax = true := by
-  decide
+/-- The fragment stores each verb's *dimension* directly (boundedness is derived):
+    *straighten* measures straightness, *widen* width — so `straighten_telic` /
+    `widen_atelic` above apply to the actual lexical entries. -/
+theorem straighten_dimension :
+    straighten.toVerb.degreeAchievementScale.get!.dimension = .straightness := rfl
 
-theorem widen_scale_no_max :
-    widen.toVerb.degreeAchievementScale.get!.scaleBoundedness.hasMax = false := by
-  decide
+theorem widen_dimension :
+    widen.toVerb.degreeAchievementScale.get!.dimension = .width := rfl
 
 /-! #### Telicity at the `AffectednessDegree` level -/
 

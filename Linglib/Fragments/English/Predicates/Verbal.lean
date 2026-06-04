@@ -885,7 +885,7 @@ def crack : VerbEntry := .mkRegular {
   unaccusative := true
   vendlerClass := some .achievement
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "cracking",
+    dimension := .cracking,
     baseAdjective := some "cracked" }
   causative := some .make
   levinClass := some .break_ }
@@ -899,7 +899,7 @@ def dent : VerbEntry := .mkRegular {
   unaccusative := true
   vendlerClass := some .achievement
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "denting",
+    dimension := .denting,
     baseAdjective := some "dented" }
   causative := some .make
   levinClass := some .break_ }
@@ -915,7 +915,7 @@ def scratch : VerbEntry := .mkRegular {
   unaccusative := true
   vendlerClass := some .achievement
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "scratching",
+    dimension := .scratching,
     baseAdjective := some "scratched" }
   causative := some .make
   levinClass := some .break_ }
@@ -2219,7 +2219,7 @@ def clean : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "cleanliness",
+    dimension := .cleanliness,
     baseAdjective := some "clean" }
   verbIncClass := some .sinc
   levinClass := some .clear }
@@ -2686,7 +2686,7 @@ def bend : VerbEntry where
   complementType := .np
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "curvature" }
+    dimension := .curvature }
   causative := some .make
   levinClass := some .bend
 
@@ -2697,7 +2697,7 @@ def boil : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "temperature",
+    dimension := .boiling,
     baseAdjective := some "hot" }
   causative := some .make
   levinClass := some .cooking }
@@ -2711,7 +2711,7 @@ def rust : VerbEntry := .mkRegular {
   unaccusative := true
   vendlerClass := some .activity
   degreeAchievementScale := some {
-    scaleBoundedness := .open_, dimension := "corrosion" }
+    dimension := .corrosion }
   levinClass := some .entitySpecificCoS }
 
 /-- "increase" — Levin 45.6 Calibratable CoS verbs (degree achievements).
@@ -2721,7 +2721,7 @@ def increase : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .activity
   degreeAchievementScale := some {
-    scaleBoundedness := .open_, dimension := "quantity" }
+    dimension := .quantity }
   levinClass := some .calibratableCoS }
 
 -- ════════════════════════════════════════════════════
@@ -2735,7 +2735,7 @@ def straighten : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "straightness",
+    dimension := .straightness,
     baseAdjective := some "straight" }
   levinClass := some .otherCoS }
 
@@ -2746,7 +2746,7 @@ def flatten : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "flatness",
+    dimension := .flatness,
     baseAdjective := some "flat" }
   levinClass := some .otherCoS }
 
@@ -2757,7 +2757,7 @@ def open_ : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "openness",
+    dimension := .openness,
     baseAdjective := some "open" }
   levinClass := some .otherCoS }
 
@@ -2768,7 +2768,7 @@ def lengthen : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .activity
   degreeAchievementScale := some {
-    scaleBoundedness := .open_, dimension := "length",
+    dimension := .length,
     baseAdjective := some "long" }
   levinClass := some .calibratableCoS }
 
@@ -2779,7 +2779,7 @@ def widen : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .activity
   degreeAchievementScale := some {
-    scaleBoundedness := .open_, dimension := "width",
+    dimension := .width,
     baseAdjective := some "wide" }
   levinClass := some .calibratableCoS }
 
@@ -2790,7 +2790,7 @@ def cool : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .activity
   degreeAchievementScale := some {
-    scaleBoundedness := .open_, dimension := "temperature",
+    dimension := .temperature,
     baseAdjective := some "cool" }
   levinClass := some .otherCoS }
 
@@ -2801,7 +2801,7 @@ def warm : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .activity
   degreeAchievementScale := some {
-    scaleBoundedness := .open_, dimension := "temperature",
+    dimension := .temperature,
     baseAdjective := some "warm" }
   levinClass := some .otherCoS }
 

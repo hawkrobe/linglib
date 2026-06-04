@@ -1,5 +1,7 @@
+import Linglib.Semantics.Aspect.Dimension
 import Linglib.Semantics.Degree.MeasureFunction
 import Linglib.Semantics.ArgumentStructure.Affectedness.Hierarchy
+import Linglib.Core.Scales.Bounds
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Order.Max
 import Mathlib.Order.WithBot
@@ -110,24 +112,40 @@ end
 
 /-! ### Dimensions: boundedness as the order structure of the degree type
 
-A *dimension* (what the adjective measures) is the categorical primitive; its
-boundedness is the order-mixin profile of its degree type, read off structurally
-rather than stored. -/
+`Dimension` (in `Semantics/Aspect/Dimension.lean`) is the categorical primitive a
+fragment stores. Its boundedness is *not* stored: each dimension has a degree type
+(`Dimension.degree`) whose order-mixin profile determines it, and
+`hasGreatest_degree_iff_closed` grounds the derived `Dimension.boundedness` view to
+that order structure. -/
 
-/-- Scalar dimensions a degree-achievement verb's base adjective can measure. -/
-inductive Dimension
-  | straightness | fullness | cleanliness
-  | width | length | height
-  | temperature
-  deriving DecidableEq, Repr
+open Core.Scale (Boundedness HasGreatest hasGreatest_of_orderTop not_hasGreatest_of_noMaxOrder)
 
 /-- The degree type for each dimension. Boundedness is structural: closed
     dimensions carry `OrderTop` (`WithTop ℕ`), unbounded-above ones `NoMaxOrder`
     (`ℕ`). The carrier is a computable order-shape, not a real magnitude — only the
     mixin matters. -/
 abbrev Dimension.degree : Dimension → Type
-  | .straightness | .fullness | .cleanliness => WithTop ℕ
-  | .width | .length | .height | .temperature => ℕ
+  | .straightness | .flatness | .openness | .cleanliness | .curvature
+  | .cracking | .denting | .scratching | .boiling => WithTop ℕ
+  | .length | .width | .temperature | .corrosion | .quantity
+  | .unspecified => ℕ
+
+instance (d : Dimension) : LinearOrder d.degree := by cases d <;> exact inferInstance
+
+/-- **Grounding.** The derived `Dimension.boundedness` view agrees with the order
+    structure: a dimension is closed exactly when its degree type has a greatest
+    element. So `boundedness` is not a free-standing table — it tracks `OrderTop` /
+    `NoMaxOrder` on `Dimension.degree`. -/
+theorem hasGreatest_degree_iff_closed (d : Dimension) :
+    HasGreatest d.degree ↔ d.boundedness = .closed := by
+  cases d
+  case straightness | flatness | openness | cleanliness | curvature
+    | cracking | denting | scratching | boiling =>
+      show HasGreatest (WithTop ℕ) ↔ _
+      exact iff_of_true hasGreatest_of_orderTop rfl
+  case length | width | temperature | corrosion | quantity | unspecified =>
+      show HasGreatest ℕ ↔ _
+      exact iff_of_false not_hasGreatest_of_noMaxOrder (by decide)
 
 /-- A closed dimension yields a telic reading (a Quantized witness at `⊤`). -/
 theorem straightness_telic :
