@@ -378,7 +378,7 @@ def MorphFeatures.compatible (f1 f2 : MorphFeatures) : Bool :=
     f.compatible f = true := by
   simp only [MorphFeatures.compatible, beq_self_eq_true, Bool.or_true, Bool.and_true]
 
-private theorem MorphFeatures.compat_clause_comm {α : Type _} [BEq α] [LawfulBEq α]
+private theorem MorphFeatures.compatible_clause_comm {α : Type _} [BEq α] [LawfulBEq α]
     (a b : Option α) :
     (a.isNone || b.isNone || a == b) = (b.isNone || a.isNone || b == a) := by
   cases a <;> cases b <;> simp [beq_iff_eq, eq_comm]
@@ -387,13 +387,13 @@ private theorem MorphFeatures.compat_clause_comm {α : Type _} [BEq α] [LawfulB
 theorem MorphFeatures.compatible_comm (f1 f2 : MorphFeatures) :
     f1.compatible f2 = f2.compatible f1 := by
   unfold MorphFeatures.compatible
-  rw [compat_clause_comm f1.number, compat_clause_comm f1.gender,
-      compat_clause_comm f1.case_, compat_clause_comm f1.definite,
-      compat_clause_comm f1.degree, compat_clause_comm f1.pronType,
-      compat_clause_comm f1.person, compat_clause_comm f1.verbForm,
-      compat_clause_comm f1.tense, compat_clause_comm f1.aspect,
-      compat_clause_comm f1.mood, compat_clause_comm f1.voice,
-      compat_clause_comm f1.polarity]
+  rw [compatible_clause_comm f1.number, compatible_clause_comm f1.gender,
+      compatible_clause_comm f1.case_, compatible_clause_comm f1.definite,
+      compatible_clause_comm f1.degree, compatible_clause_comm f1.pronType,
+      compatible_clause_comm f1.person, compatible_clause_comm f1.verbForm,
+      compatible_clause_comm f1.tense, compatible_clause_comm f1.aspect,
+      compatible_clause_comm f1.mood, compatible_clause_comm f1.voice,
+      compatible_clause_comm f1.polarity]
 
 /-- The information-join of two bundles, field-by-field: keep every committed value
     (left-biased per field, which on `compatible` inputs is symmetric since doubly
