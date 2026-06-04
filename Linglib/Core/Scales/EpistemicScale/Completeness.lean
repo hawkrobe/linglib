@@ -1,20 +1,22 @@
-import Linglib.Core.Scales.EpistemicScale.Defs
-import Linglib.Core.Scales.EpistemicScale.Entailments
 import Linglib.Core.Scales.EpistemicScale.Representability
 import Linglib.Core.Scales.EpistemicScale.CancellationFin4
 
-/-!
-# Epistemic Comparative Likelihood — Main Theorems
+/-! # KPS representation and completeness theorems
 
-[holliday-icard-2013] [halpern-2003] [kraft-pratt-seidenberg-1959] [van-der-hoek-1996]
+The top-level results of [holliday-icard-2013] / [kraft-pratt-seidenberg-1959]:
 
-Re-exports `EpistemicScale.Defs` (axioms, structures, semantics),
-`EpistemicScale.Representability` (KPS counterexample, Fin 0–3 proofs),
-and `EpistemicScale.CancellationFin4` (Fin 4 via Scott cancellation),
-then states the top-level KPS theorems (8a, 8b) and completeness results.
+* `Core.Scale.theorem8a` — for `|W| < 5`, every FA model is representable by a
+  finitely additive probability measure (FA = FP∞ below five worlds).
+* `Core.Scale.theorem8b` — at `|W| = 5`, FA is strictly weaker than FP∞
+  (the KPS counterexample).
+* `Core.Scale.theorem6_completeness`, `theorem2_completeness` — qualitative
+  completeness results ([van-der-hoek-1996]; [halpern-2003] Thm. 7.5.1a).
+* `Core.Scale.axiomA_iff_fa` — Axiom A is equivalent to disjoint-union
+  invariance (finite additivity).
 -/
 
 namespace Core.Scale
+
 
 -- ── Theorem 8 (Kraft, [kraft-pratt-seidenberg-1959]) ───
 
@@ -258,38 +260,5 @@ theorem axiomA_iff_fa {W : Type*} (ge : Set W → Set W → Prop) :
     have h := hFA (A \ B) (B \ A) (A ∩ B) hdA hdB
     rw [hA_eq, hB_eq] at h
     exact h.symm
-
--- ── EpistemicTag + Five Frameworks ──────────────
-
-/-- Binary epistemic classification, parallel to `MereoTag`. -/
-inductive EpistemicTag where
-  | finitelyAdditive
-  | qualitative
-  deriving DecidableEq, Repr
-
-instance : LicensingPipeline EpistemicTag where
-  toBoundedness
-    | .finitelyAdditive => .closed
-    | .qualitative => .open_
-
-theorem epistemicFA_licensed :
-    LicensingPipeline.isLicensed EpistemicTag.finitelyAdditive = true := rfl
-
-theorem epistemicQualitative_blocked :
-    LicensingPipeline.isLicensed EpistemicTag.qualitative = false := rfl
-
-theorem five_frameworks_agree
-    (m : MereoTag) (e : EpistemicTag)
-    (h : LicensingPipeline.toBoundedness m = LicensingPipeline.toBoundedness e) :
-    LicensingPipeline.isLicensed m = LicensingPipeline.isLicensed e :=
-  LicensingPipeline.universal m e h
-
-theorem epistemicFA_eq_qua :
-    LicensingPipeline.isLicensed EpistemicTag.finitelyAdditive =
-    LicensingPipeline.isLicensed MereoTag.qua := rfl
-
-theorem epistemicQualitative_eq_cum :
-    LicensingPipeline.isLicensed EpistemicTag.qualitative =
-    LicensingPipeline.isLicensed MereoTag.cum := rfl
 
 end Core.Scale
