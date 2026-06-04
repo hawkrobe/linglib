@@ -189,7 +189,7 @@ def NounEntry.toWordSg (n : NounEntry) : Word :=
   { form := n.formSg
   , cat := if n.proper then .PROPN else .NOUN
   , features := {
-      number := some .sg
+      number := some .Sing
     , person := if n.proper then some .third else none
     , gender := n.gender.bind (·.toUDGender)
     }
@@ -201,7 +201,7 @@ def NounEntry.toWordPl (n : NounEntry) : Word :=
   { form := (n.formPl.getD (n.formSg ++ "s"))
   , cat := .NOUN
   , features := {
-      number := some .pl
+      number := some .Plur
     }
   }
 

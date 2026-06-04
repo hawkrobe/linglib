@@ -306,7 +306,7 @@ private def see_word : Word := { form :="see", cat := .VERB, valence := some .tr
 private def see_synsem : Synsem :=
   { cat := .VERB, val := { subj := [.NOUN], comps := [.NOUN] } }
 
-private def john_word : Word := { form :="John", cat := .PROPN, features := { number := some .sg }}
+private def john_word : Word := { form :="John", cat := .PROPN, features := { number := some .Sing }}
 private def what_word : Word := { form :="what", cat := .PRON, features := { pronType := some .Int }}
 
 -- Step 1: Gap the complement of "see"

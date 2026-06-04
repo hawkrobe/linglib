@@ -3327,11 +3327,11 @@ def VerbEntry.toWord3sg (v : VerbEntry) : Word :=
   , cat := .VERB
   , valence := some (complementToValence v.complementType)
   , features := {
-      number := some .sg
+      number := some .Sing
       , person := some .third
-      , voice := some .active
-      , verbForm := some .finite
-      , tense := some .present
+      , voice := some .Act
+      , verbForm := some .Fin
+      , tense := some .Pres
     }
   }
 
@@ -3341,8 +3341,8 @@ def VerbEntry.toWordPl (v : VerbEntry) : Word :=
   , cat := .VERB
   , valence := some (complementToValence v.complementType)
   , features := {
-      number := some .pl
-      , tense := some .present
+      number := some .Plur
+      , tense := some .Pres
     }
   }
 
@@ -3352,7 +3352,7 @@ def VerbEntry.toWordBase (v : VerbEntry) : Word :=
   , cat := .VERB
   , valence := some (complementToValence v.complementType)
   , features := {
-      verbForm := some .infinitive
+      verbForm := some .Inf
     }
   }
 
@@ -3362,9 +3362,9 @@ def VerbEntry.toWordPast (v : VerbEntry) : Word :=
   , cat := .VERB
   , valence := some (complementToValence v.complementType)
   , features := {
-      verbForm := some .finite
-      , voice := some .active
-      , tense := some .past
+      verbForm := some .Fin
+      , voice := some .Act
+      , tense := some .Past
     }
   }
 
@@ -3377,7 +3377,7 @@ def VerbEntry.toWordPastPart (v : VerbEntry) : Word :=
   , cat := .VERB
   , valence := some (complementToValence v.complementType)
   , features := {
-      verbForm := some .pastParticiple
+      verbForm := some .Part
     }
   }
 
@@ -3387,7 +3387,7 @@ def VerbEntry.toWordPresPart (v : VerbEntry) : Word :=
   , cat := .VERB
   , valence := some (complementToValence v.complementType)
   , features := {
-      verbForm := some .presParticiple
+      verbForm := some .Part
     }
   }
 
@@ -3512,26 +3512,26 @@ theorem forget_entails_not_complement_derived :
 def VerbEntry.toStem {σ : Type} (v : VerbEntry) : Morphology.Stem σ :=
   { lemma_ := v.form
   , cat := .VERB
-  , baseFeatures := { verbForm := some .infinitive }
+  , baseFeatures := { verbForm := some .Inf }
   , baseValence := some (complementToValence v.complementType)
   , paradigm :=
     [ { category := .agreement .subj, value := "3sg"
       , formRule := λ _ => v.form3sg
       , featureRule := λ f => { f with number := some .Sing
                                      , person := some .third
-                                     , verbForm := some .finite }
+                                     , verbForm := some .Fin }
       , semEffect := id, delegatedSemantics := true }
     , { category := .tense, value := "past"
       , formRule := λ _ => v.formPast
-      , featureRule := λ f => { f with verbForm := some .finite }
+      , featureRule := λ f => { f with verbForm := some .Fin }
       , semEffect := id, delegatedSemantics := true }
     , { category := .tense, value := "pastpart"
       , formRule := λ _ => v.formPastPart
-      , featureRule := λ f => { f with verbForm := some .pastParticiple }
+      , featureRule := λ f => { f with verbForm := some .Part }
       , semEffect := id, delegatedSemantics := true }
     , { category := .aspect, value := "prespart"
       , formRule := λ _ => v.formPresPart
-      , featureRule := λ f => { f with verbForm := some .presParticiple }
+      , featureRule := λ f => { f with verbForm := some .Part }
       , semEffect := id, delegatedSemantics := true }
     ] }
 

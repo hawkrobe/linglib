@@ -226,7 +226,7 @@ def AuxEntry.toWord (a : AuxEntry) : Word :=
   { form := a.form
   , cat := .AUX
   , features := {
-      verbForm := some .finite
+      verbForm := some .Fin
       , person := a.person
       , number := a.number
     }
