@@ -2424,6 +2424,7 @@ import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.Composition
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Semantics.Aspect.DegreeAchievement
+import Linglib.Semantics.Aspect.ScalarTelicity
 import Linglib.Semantics.Aspect.ChangeOfState
 -- Theories: Semantics.Iconic (Iconological Semantics for sign language)
 import Linglib.Semantics.Iconic.Basic
