@@ -1,6 +1,7 @@
 import Linglib.Core.Scales.Scale
 import Linglib.Core.Order.ComparativeProbability.Defs
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Tauto
 
 /-!
 # Epistemic Comparative Likelihood
@@ -140,6 +141,84 @@ instance : ComparativeProbability.IsQualitativeAdditive sys.ge := ⟨sys.additiv
 instance : ComparativeProbability.IsNontrivial sys.ge := ⟨sys.nonTrivial⟩
 
 end EpistemicSystemFA
+
+/-! ### Consequences of the FA axioms -/
+
+/-- **Add common context**: for `C` disjoint from both `X` and `Y`,
+    `X ≿ Y ↔ (X ∪ C) ≿ (Y ∪ C)`. -/
+lemma ge_union_context {W : Type*} (sys : EpistemicSystemFA W) (X Y C : Set W)
+    (hCX : Disjoint C X) (hCY : Disjoint C Y) :
+    sys.ge X Y ↔ sys.ge (X ∪ C) (Y ∪ C) := by
+  rw [sys.additive X Y, sys.additive (X ∪ C) (Y ∪ C)]
+  have hCXl : ∀ x, x ∈ C → x ∉ X := fun x hx => Set.disjoint_left.mp hCX hx
+  have hCYl : ∀ x, x ∈ C → x ∉ Y := fun x hx => Set.disjoint_left.mp hCY hx
+  have e1 : (X ∪ C) \ (Y ∪ C) = X \ Y := by
+    ext x
+    have := hCXl x
+    simp only [Set.mem_diff, Set.mem_union]
+    tauto
+  have e2 : (Y ∪ C) \ (X ∪ C) = Y \ X := by
+    ext x
+    have := hCYl x
+    simp only [Set.mem_diff, Set.mem_union]
+    tauto
+  rw [e1, e2]
+
+/-- **Generalized merge**: two valid comparisons with disjoint left parts and
+    disjoint right parts merge into their union, even with pivot overlaps.
+    Derivation: add context to each side, transit through `X₂ ∪ Y₁`, then
+    restore the pivot `X₂ ∩ Y₁` via Axiom A. -/
+lemma ge_generalized_merge {W : Type*} (sys : EpistemicSystemFA W)
+    {X₁ Y₁ X₂ Y₂ : Set W}
+    (h1 : sys.ge X₁ Y₁) (h2 : sys.ge X₂ Y₂)
+    (hX : Disjoint X₁ X₂) (hY : Disjoint Y₁ Y₂) :
+    sys.ge (X₁ ∪ X₂) (Y₁ ∪ Y₂) := by
+  have hXl : ∀ x, x ∈ X₁ → x ∉ X₂ := fun x hx => Set.disjoint_left.mp hX hx
+  have hYl : ∀ x, x ∈ Y₂ → x ∉ Y₁ := fun x hy2 hy1 => Set.disjoint_left.mp hY hy1 hy2
+  -- context C₁ = X₂ \ Y₁ added to (X₁ ≿ Y₁)
+  have step1 : sys.ge (X₁ ∪ (X₂ \ Y₁)) (Y₁ ∪ (X₂ \ Y₁)) :=
+    (ge_union_context sys X₁ Y₁ (X₂ \ Y₁)
+      (Set.disjoint_left.mpr fun x hx hx1 => hXl x hx1 hx.1)
+      (Set.disjoint_left.mpr fun x hx hxY1 => hx.2 hxY1)).mp h1
+  -- context C₂ = Y₁ \ X₂ added to (X₂ ≿ Y₂)
+  have step2 : sys.ge (X₂ ∪ (Y₁ \ X₂)) (Y₂ ∪ (Y₁ \ X₂)) :=
+    (ge_union_context sys X₂ Y₂ (Y₁ \ X₂)
+      (Set.disjoint_left.mpr fun x hx hx2 => hx.2 hx2)
+      (Set.disjoint_left.mpr fun x hx hxY2 => hYl x hxY2 hx.1)).mp h2
+  have hmid : Y₁ ∪ (X₂ \ Y₁) = X₂ ∪ (Y₁ \ X₂) := by
+    ext x; simp only [Set.mem_union, Set.mem_diff]; tauto
+  rw [hmid] at step1
+  have htrans : sys.ge (X₁ ∪ (X₂ \ Y₁)) (Y₂ ∪ (Y₁ \ X₂)) := sys.trans _ _ _ step1 step2
+  set P : Set W := X₂ ∩ Y₁ with hP
+  have hLHS : X₁ ∪ (X₂ \ Y₁) = (X₁ ∪ X₂) \ P := by
+    ext x
+    have := hXl x
+    simp only [Set.mem_union, Set.mem_diff, hP, Set.mem_inter_iff, not_and]
+    tauto
+  have hRHS : Y₂ ∪ (Y₁ \ X₂) = (Y₁ ∪ Y₂) \ P := by
+    ext x
+    have := hYl x
+    simp only [Set.mem_union, Set.mem_diff, hP, Set.mem_inter_iff, not_and]
+    tauto
+  rw [hLHS, hRHS] at htrans
+  have hPsubX : P ⊆ X₁ ∪ X₂ := Set.inter_subset_left.trans Set.subset_union_right
+  have hPsubY : P ⊆ Y₁ ∪ Y₂ := Set.inter_subset_right.trans Set.subset_union_left
+  have key := (ge_union_context sys ((X₁ ∪ X₂) \ P) ((Y₁ ∪ Y₂) \ P) P
+    (Set.disjoint_left.mpr fun x hxP hxd => hxd.2 hxP)
+    (Set.disjoint_left.mpr fun x hxP hxd => hxd.2 hxP)).mp htrans
+  rwa [Set.diff_union_of_subset hPsubX, Set.diff_union_of_subset hPsubY] at key
+
+/-- **Mono-domination**: a valid comparison `X ≿ Y` with `X ⊆ P` and `Q ⊆ Y`
+    proves `P ≿ Q`. -/
+lemma ge_mono_dominated {W : Type*} (sys : EpistemicSystemFA W)
+    {X Y P Q : Set W} (h : sys.ge X Y) (hXP : X ⊆ P) (hQY : Q ⊆ Y) :
+    sys.ge P Q :=
+  sys.trans _ _ _ (sys.mono X P hXP) (sys.trans _ _ _ h (sys.mono Q Y hQY))
+
+/-- `P ≿ ∅` always (monotonicity). -/
+lemma ge_empty_target {W : Type*} (sys : EpistemicSystemFA W) (P : Set W) :
+    sys.ge P ∅ :=
+  sys.mono ∅ P (Set.empty_subset P)
 
 -- ── GFC Order ([harrison-trainor-holliday-icard-2018] Definition 2.7) ──
 

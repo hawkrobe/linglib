@@ -1117,4 +1117,23 @@ theorem representable_iff_cancellation {n : ℕ} (sys : EpistemicSystemFA (Fin n
   ⟨fun ⟨m, hm⟩ => representable_implies_cancellation m hm,
    cancellation_implies_representable sys⟩
 
+/-- A null atom plus a representability oracle one cardinality down yields
+    cancellation: swap the null atom to position 0 and apply `null_elem_reduce`. -/
+theorem cancellation_of_null_atom {n : ℕ} (sys : EpistemicSystemFA (Fin (n + 2)))
+    {j : Fin (n + 2)} (hj : sys.ge ∅ {j})
+    (sub : ∀ sys' : EpistemicSystemFA (Fin (n + 1)), Representable sys') :
+    Cancellation (n + 2) sys.ge := by
+  set σ := Equiv.swap (0 : Fin (n + 2)) j with hσ
+  have h0 : (transportFA σ sys).ge ∅ {0} := by
+    rw [perm_null_iff]
+    have : σ.symm 0 = j := by simp [hσ]
+    rwa [this]
+  have hnn : ∃ i : Fin (n + 1), ¬(transportFA σ sys).ge ∅ {Fin.succ i} := by
+    obtain ⟨k, hk⟩ := not_all_null (transportFA σ sys)
+    obtain ⟨i, rfl⟩ : ∃ i, Fin.succ i = k :=
+      Fin.exists_succ_eq.mpr fun h => hk (h ▸ h0)
+    exact ⟨i, hk⟩
+  obtain ⟨m, hm⟩ := perm_repr σ sys (null_elem_reduce _ h0 hnn sub)
+  exact representable_implies_cancellation m hm
+
 end Core.Scale

@@ -16,8 +16,6 @@ Scott cancellation, hence is representable by a finitely additive measure
 * `Core.Scale.fa_cancellation_fin4` — FA axioms imply cancellation on `Fin 4`.
 * `Core.Scale.representable_fin4` — every FA system on `Fin 4` is representable.
 * `Core.Scale.no_null_cancellation` — cancellation for systems with no null atoms.
-* `Core.Scale.ge_union_context`, `ge_generalized_merge`, `ge_mono_dominated`,
-  `ge_empty_target` — reusable consequences of the FA axioms (any arity).
 
 ## Implementation notes
 
@@ -32,85 +30,6 @@ itself are private plumbing; only the theorems above are exported.
 -/
 
 namespace Core.Scale
-
-/-- **Add common context** (from Axiom A + the diff-cancellation): for `C` disjoint
-    from both `X` and `Y`, `X ≿ Y ↔ (X ∪ C) ≿ (Y ∪ C)`. -/
-lemma ge_union_context {n : ℕ} (sys : EpistemicSystemFA (Fin n)) (X Y C : Set (Fin n))
-    (hCX : Disjoint C X) (hCY : Disjoint C Y) :
-    sys.ge X Y ↔ sys.ge (X ∪ C) (Y ∪ C) := by
-  rw [sys.additive X Y, sys.additive (X ∪ C) (Y ∪ C)]
-  have hCXl : ∀ x, x ∈ C → x ∉ X := fun x hx => Set.disjoint_left.mp hCX hx
-  have hCYl : ∀ x, x ∈ C → x ∉ Y := fun x hx => Set.disjoint_left.mp hCY hx
-  have e1 : (X ∪ C) \ (Y ∪ C) = X \ Y := by
-    ext x
-    have := hCXl x
-    simp only [Set.mem_diff, Set.mem_union]
-    tauto
-  have e2 : (Y ∪ C) \ (X ∪ C) = Y \ X := by
-    ext x
-    have := hCYl x
-    simp only [Set.mem_diff, Set.mem_union]
-    tauto
-  rw [e1, e2]
-
-/-- **Generalized merge**: two valid comparisons whose left parts are disjoint and
-    whose right parts are disjoint merge into their union — even with pivot overlaps
-    (X₁∩Y₂, X₂∩Y₁ ≠ ∅). The width-2 additivity in full generality.
-    Derivation: add context `X₂\Y₁` to the first and `Y₁\X₂` to the second, transit
-    through `X₂∪Y₁`, then restore the pivot `P = X₂∩Y₁` via Axiom A. -/
-lemma ge_generalized_merge {n : ℕ} (sys : EpistemicSystemFA (Fin n))
-    {X₁ Y₁ X₂ Y₂ : Set (Fin n)}
-    (h1 : sys.ge X₁ Y₁) (h2 : sys.ge X₂ Y₂)
-    (hX : Disjoint X₁ X₂) (hY : Disjoint Y₁ Y₂) :
-    sys.ge (X₁ ∪ X₂) (Y₁ ∪ Y₂) := by
-  have hXl : ∀ x, x ∈ X₁ → x ∉ X₂ := fun x hx => Set.disjoint_left.mp hX hx
-  have hYl : ∀ x, x ∈ Y₂ → x ∉ Y₁ := fun x hy2 hy1 => Set.disjoint_left.mp hY hy1 hy2
-  -- context C₁ = X₂ \ Y₁ added to (X₁ ≿ Y₁)
-  have step1 : sys.ge (X₁ ∪ (X₂ \ Y₁)) (Y₁ ∪ (X₂ \ Y₁)) :=
-    (ge_union_context sys X₁ Y₁ (X₂ \ Y₁)
-      (Set.disjoint_left.mpr fun x hx hx1 => hXl x hx1 hx.1)
-      (Set.disjoint_left.mpr fun x hx hxY1 => hx.2 hxY1)).mp h1
-  -- context C₂ = Y₁ \ X₂ added to (X₂ ≿ Y₂)
-  have step2 : sys.ge (X₂ ∪ (Y₁ \ X₂)) (Y₂ ∪ (Y₁ \ X₂)) :=
-    (ge_union_context sys X₂ Y₂ (Y₁ \ X₂)
-      (Set.disjoint_left.mpr fun x hx hx2 => hx.2 hx2)
-      (Set.disjoint_left.mpr fun x hx hxY2 => hYl x hxY2 hx.1)).mp h2
-  have hmid : Y₁ ∪ (X₂ \ Y₁) = X₂ ∪ (Y₁ \ X₂) := by
-    ext x; simp only [Set.mem_union, Set.mem_diff]; tauto
-  rw [hmid] at step1
-  have htrans : sys.ge (X₁ ∪ (X₂ \ Y₁)) (Y₂ ∪ (Y₁ \ X₂)) := sys.trans _ _ _ step1 step2
-  set P : Set (Fin n) := X₂ ∩ Y₁ with hP
-  have hLHS : X₁ ∪ (X₂ \ Y₁) = (X₁ ∪ X₂) \ P := by
-    ext x
-    have := hXl x
-    simp only [Set.mem_union, Set.mem_diff, hP, Set.mem_inter_iff, not_and]
-    tauto
-  have hRHS : Y₂ ∪ (Y₁ \ X₂) = (Y₁ ∪ Y₂) \ P := by
-    ext x
-    have := hYl x
-    simp only [Set.mem_union, Set.mem_diff, hP, Set.mem_inter_iff, not_and]
-    tauto
-  rw [hLHS, hRHS] at htrans
-  have hPsubX : P ⊆ X₁ ∪ X₂ := Set.inter_subset_left.trans Set.subset_union_right
-  have hPsubY : P ⊆ Y₁ ∪ Y₂ := Set.inter_subset_right.trans Set.subset_union_left
-  have key := (ge_union_context sys ((X₁ ∪ X₂) \ P) ((Y₁ ∪ Y₂) \ P) P
-    (Set.disjoint_left.mpr fun x hxP hxd => hxd.2 hxP)
-    (Set.disjoint_left.mpr fun x hxP hxd => hxd.2 hxP)).mp htrans
-  rwa [Set.diff_union_of_subset hPsubX, Set.diff_union_of_subset hPsubY] at key
-
-/-- **Mono-domination discharge**: a single valid comparison `X ≿ Y` with `X ⊆ P`
-    and `Q ⊆ Y` proves `P ≿ Q` (monotonicity twice + transitivity). Used to discharge
-    the merge-to-single target when one family member already dominates it. -/
-lemma ge_mono_dominated {n : ℕ} (sys : EpistemicSystemFA (Fin n))
-    {X Y P Q : Set (Fin n)} (h : sys.ge X Y) (hXP : X ⊆ P) (hQY : Q ⊆ Y) :
-    sys.ge P Q :=
-  sys.trans _ _ _ (sys.mono X P hXP) (sys.trans _ _ _ h (sys.mono Q Y hQY))
-
-/-- **Trivial-target discharge**: `P ≿ ∅` always (monotonicity, `∅ ⊆ P`). The
-    merge-to-single base case when the target's negative part is empty. -/
-lemma ge_empty_target {n : ℕ} (sys : EpistemicSystemFA (Fin n)) (P : Set (Fin n)) :
-    sys.ge P ∅ :=
-  sys.mono ∅ P (Set.empty_subset P)
 
 /-! ### Merge-to-single infrastructure
 
@@ -944,39 +863,17 @@ private theorem cancellation_extendFA (sys : EpistemicSystemFA (Fin 3))
       exact absurd (Finset.mem_coe.mp h3) (last_notMem_map _)
     · rwa [hL, hR, restrict3_coe_map, restrict3_coe_map] at hge
 
-/-- **Cancellation for Fin 3**, structurally: null atoms reduce to `Fin 2`
+/-- **Cancellation for Fin 3**, structurally: a null atom reduces to `Fin 2`
     representability; the no-null case extends lexicographically into `Fin 4`
     and pulls back through `no_null_cancellation`. -/
 theorem fa_cancellation_fin3 (sys : EpistemicSystemFA (Fin 3)) :
     Cancellation 3 sys.ge := by
-  by_cases h0 : sys.ge ∅ {(0 : Fin 3)}
-  · have hnn : ∃ i : Fin 2, ¬sys.ge ∅ {Fin.succ i} := by
-      by_contra hall
-      push_neg at hall
-      obtain ⟨i, hi⟩ := not_all_null sys
-      fin_cases i
-      · exact hi h0
-      · exact hi (by simpa using hall 0)
-      · exact hi (by simpa using hall 1)
-    obtain ⟨m, hm⟩ := null_elem_reduce sys h0 hnn (fun sys' => representable_fin2 sys')
-    exact representable_implies_cancellation m hm
-  · by_cases h1 : sys.ge ∅ {(1 : Fin 3)}
-    · obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 1) sys
-        (null_elem_reduce (transportFA (Equiv.swap 0 1) sys)
-          ((perm_null_convert _ _ 0 1 (by decide)).mpr h1)
-          ⟨0, fun h => h0 ((perm_null_convert _ _ 1 0 (by decide)).mp h)⟩
-          (fun sys' => representable_fin2 sys'))
-      exact representable_implies_cancellation m hm
-    · by_cases h2 : sys.ge ∅ {(2 : Fin 3)}
-      · obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 2) sys
-          (null_elem_reduce (transportFA (Equiv.swap 0 2) sys)
-            ((perm_null_convert _ _ 0 2 (by decide)).mpr h2)
-            ⟨0, fun h => h1 ((perm_null_convert _ _ 1 1 (by decide)).mp h)⟩
-            (fun sys' => representable_fin2 sys'))
-        exact representable_implies_cancellation m hm
-      · have hnull : ∀ i : Fin 3, ¬sys.ge ∅ {i} := fun i => by fin_cases i <;> assumption
-        exact cancellation_extendFA sys
-          (no_null_cancellation (extendFA sys) (extendFA_no_null sys hnull))
+  by_cases h : ∃ j, sys.ge ∅ {j}
+  · obtain ⟨j, hj⟩ := h
+    exact cancellation_of_null_atom sys hj representable_fin2
+  · push_neg at h
+    exact cancellation_extendFA sys
+      (no_null_cancellation (extendFA sys) (extendFA_no_null sys h))
 
 /-- **Theorem 8a for Fin 3**: every FA system on three elements is representable —
     now *derived from* Scott cancellation, replacing the former measure-by-measure
@@ -984,51 +881,16 @@ theorem fa_cancellation_fin3 (sys : EpistemicSystemFA (Fin 3)) :
 theorem representable_fin3 (sys : EpistemicSystemFA (Fin 3)) : Representable sys :=
   cancellation_implies_representable sys (fa_cancellation_fin3 sys)
 
-/-- Null element `0` on `Fin 4`: cancellation via null reduction to `Fin 3`. -/
-private theorem fa_cancellation_fin4_null0' (sys : EpistemicSystemFA (Fin 4))
-    (h0 : sys.ge ∅ {(0 : Fin 4)})
-    (hnn : ∃ i : Fin 3, ¬sys.ge ∅ {Fin.succ i}) :
-    Cancellation 4 sys.ge := by
-  obtain ⟨m, hm⟩ := null_elem_reduce sys h0 hnn (fun sys' => representable_fin3 sys')
-  exact representable_implies_cancellation m hm
-
 /-- **Theorem 8a (Fin 4), structural**: every FA system on `Fin 4` satisfies
-    cancellation. Null cases reduce to `Fin 3` (existing `null_elem_reduce` machinery);
-    the no-null case is the merge reduction `no_null_cancellation`. Replaces the
-    88-chamber `fa_cancellation_fin4`. -/
+    cancellation. A null atom reduces to `Fin 3`; the no-null case is the merge
+    reduction `no_null_cancellation`. -/
 theorem fa_cancellation_fin4 (sys : EpistemicSystemFA (Fin 4)) :
     Cancellation 4 sys.ge := by
-  by_cases h0 : sys.ge ∅ {(0 : Fin 4)}
-  · exact fa_cancellation_fin4_null0' sys h0 (by
-      by_contra hall; push_neg at hall
-      obtain ⟨i, hi⟩ := not_all_null sys
-      fin_cases i
-      · exact hi h0
-      · exact hi (by simpa using hall 0)
-      · exact hi (by simpa using hall 1)
-      · exact hi (by simpa using hall 2))
-  · by_cases h1 : sys.ge ∅ {(1 : Fin 4)}
-    · obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 1) sys
-        (null_elem_reduce (transportFA (Equiv.swap 0 1) sys)
-          ((perm_null_convert _ _ 0 1 (by decide)).mpr h1)
-          ⟨0, fun h => h0 ((perm_null_convert _ _ 1 0 (by decide)).mp h)⟩
-          (fun sys' => representable_fin3 sys'))
-      exact representable_implies_cancellation m hm
-    · by_cases h2 : sys.ge ∅ {(2 : Fin 4)}
-      · obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 2) sys
-          (null_elem_reduce (transportFA (Equiv.swap 0 2) sys)
-            ((perm_null_convert _ _ 0 2 (by decide)).mpr h2)
-            ⟨0, fun h => h1 ((perm_null_convert _ _ 1 1 (by decide)).mp h)⟩
-            (fun sys' => representable_fin3 sys'))
-        exact representable_implies_cancellation m hm
-      · by_cases h3 : sys.ge ∅ {(3 : Fin 4)}
-        · obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 3) sys
-            (null_elem_reduce (transportFA (Equiv.swap 0 3) sys)
-              ((perm_null_convert _ _ 0 3 (by decide)).mpr h3)
-              ⟨0, fun h => h1 ((perm_null_convert _ _ 1 1 (by decide)).mp h)⟩
-              (fun sys' => representable_fin3 sys'))
-          exact representable_implies_cancellation m hm
-        · exact no_null_cancellation sys (fun i => by fin_cases i <;> assumption)
+  by_cases h : ∃ j, sys.ge ∅ {j}
+  · obtain ⟨j, hj⟩ := h
+    exact cancellation_of_null_atom sys hj representable_fin3
+  · push_neg at h
+    exact no_null_cancellation sys h
 
 /-- **Theorem 8a for Fin 4**: every FA system on 4 elements is representable.
     Via Scott cancellation — see `Cancellation.lean` for the framework. -/

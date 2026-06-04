@@ -553,14 +553,6 @@ theorem perm_null_iff {n : ℕ} (σ : Fin n ≃ Fin n)
   show sys.ge (σ.symm '' ∅) (σ.symm '' {j}) ↔ sys.ge ∅ {σ.symm j}
   simp only [Set.image_empty, Set.image_singleton]
 
-/-- Concrete null pattern conversion: if `σ.symm j = k` then null-at-j in transported
-    system iff null-at-k in original. -/
-theorem perm_null_convert {n : ℕ} (σ : Fin n ≃ Fin n)
-    (sys : EpistemicSystemFA (Fin n)) (j k : Fin n)
-    (hk : σ.symm j = k) :
-    (transportFA σ sys).ge ∅ {j} ↔ sys.ge ∅ {k} := by
-  rw [perm_null_iff, hk]
-
 /-- Representability transports backward along any equivalence. -/
 theorem perm_repr {W α : Type*} (σ : W ≃ α) (sys : EpistemicSystemFA W)
     (h : Representable (transportFA σ sys)) : Representable sys := by
