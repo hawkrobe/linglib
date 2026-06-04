@@ -20,11 +20,11 @@ open Pronoun
 
 /-- *maiṃ* — 1sg. -/
 def maiN : PersonalPronoun :=
-  { form := "maiṃ", person := some .first, number := some .sg }
+  { form := "maiṃ", person := some .first, number := some .Sing }
 
 /-- *asiiṃ* — 1pl. -/
 def asiiN : PersonalPronoun :=
-  { form := "asiiṃ", person := some .first, number := some .pl }
+  { form := "asiiṃ", person := some .first, number := some .Plur }
 
 -- ============================================================================
 -- Second Person (two-level honorific)
@@ -32,11 +32,11 @@ def asiiN : PersonalPronoun :=
 
 /-- *tũ* — 2sg non-honorific. -/
 def tuN : PersonalPronoun :=
-  { form := "tũ", person := some .second, number := some .sg, register := .informal }
+  { form := "tũ", person := some .second, number := some .Sing, register := .informal }
 
 /-- *tusii* — 2sg honorific (also 2pl). -/
 def tusii : PersonalPronoun :=
-  { form := "tusii", person := some .second, number := some .sg, register := .formal }
+  { form := "tusii", person := some .second, number := some .Sing, register := .formal }
 
 -- ============================================================================
 -- Third Person (demonstrative-based)
@@ -44,11 +44,11 @@ def tusii : PersonalPronoun :=
 
 /-- *uh* — 3sg (distal demonstrative). -/
 def uh_sg : PersonalPronoun :=
-  { form := "uh", person := some .third, number := some .sg }
+  { form := "uh", person := some .third, number := some .Sing }
 
 /-- *uh* — 3pl (same form as 3sg in standard Punjabi). -/
 def uh_pl : PersonalPronoun :=
-  { form := "uh", person := some .third, number := some .pl }
+  { form := "uh", person := some .third, number := some .Plur }
 
 -- ============================================================================
 -- Pronoun Lists
@@ -85,8 +85,8 @@ theorem has_all_persons :
 
 /-- Both singular and plural are attested. -/
 theorem has_both_numbers :
-    allPronouns.any (·.number == some .sg) = true ∧
-    allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
+    allPronouns.any (·.number == some .Sing) = true ∧
+    allPronouns.any (·.number == some .Plur) = true := ⟨rfl, rfl⟩
 
 /-- 2nd person pronouns are all second person. -/
 theorem second_person_all_2p :

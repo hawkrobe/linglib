@@ -13,7 +13,7 @@ in the study files that commit to specific values.
 
 - `form` — surface form
 - `qforce` — quantificational force (universal, existential, …)
-- `numberRestriction` — `none` (number-neutral), or `some .sg`/`.pl`/`.du`
+- `numberRestriction` — `none` (number-neutral), or `some .Sing`/`.pl`/`.du`
   (a single grammatical number; `.du` covers items like English *both*
   and French *les deux* whose meaning composition uses the dual core
   concept [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025])

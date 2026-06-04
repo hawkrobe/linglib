@@ -84,13 +84,13 @@ def auxInversionRule : LexRule :=
 def passiveRule : LexRule :=
   { name := "Passive"
     applies := λ e =>
-      e.cat == .VERB && e.features.voice != some Voice.passive &&
+      e.cat == .VERB && e.features.voice != some .Pass &&
       e.argStr.slots.any (·.depType == .obj)
     transform := λ e =>
       let newSlots := e.argStr.slots.filter (·.depType != .obj)
       let withByPhrase := newSlots ++ [⟨.obl, .right, false, some .ADP⟩]
       { e with
-        features := { e.features with voice := some Voice.passive }
+        features := { e.features with voice := some .Pass }
         argStr := { slots := withByPhrase } } }
 
 -- ============================================================================

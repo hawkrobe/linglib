@@ -177,10 +177,10 @@ def ought : AuxEntry where
 
 -- Do-support
 def do_ : AuxEntry where
-  form := "do"; auxType := .doSupport; number := some .pl
+  form := "do"; auxType := .doSupport; number := some .Plur
   negForm := some "don't"; negIrregular := true    -- [dont] not *[dunt]
 def does : AuxEntry where
-  form := "does"; auxType := .doSupport; person := some .third; number := some .sg
+  form := "does"; auxType := .doSupport; person := some .third; number := some .Sing
   negForm := some "doesn't"
 def did : AuxEntry where
   form := "did"; auxType := .doSupport; tense := some .Past
@@ -188,27 +188,27 @@ def did : AuxEntry where
 
 -- Be
 def am : AuxEntry where
-  form := "am"; auxType := .be; person := some .first; number := some .sg
+  form := "am"; auxType := .be; person := some .first; number := some .Sing
   negForm := none                                  -- *amn't: paradigm gap
 def is_ : AuxEntry where
-  form := "is"; auxType := .be; person := some .third; number := some .sg
+  form := "is"; auxType := .be; person := some .third; number := some .Sing
   negForm := some "isn't"
 def are : AuxEntry where
-  form := "are"; auxType := .be; number := some .pl
+  form := "are"; auxType := .be; number := some .Plur
   negForm := some "aren't"
 def was : AuxEntry where
-  form := "was"; auxType := .be; number := some .sg; tense := some .Past
+  form := "was"; auxType := .be; number := some .Sing; tense := some .Past
   negForm := some "wasn't"
 def were : AuxEntry where
-  form := "were"; auxType := .be; number := some .pl; tense := some .Past
+  form := "were"; auxType := .be; number := some .Plur; tense := some .Past
   negForm := some "weren't"
 
 -- Have
 def have_ : AuxEntry where
-  form := "have"; auxType := .have; number := some .pl
+  form := "have"; auxType := .have; number := some .Plur
   negForm := some "haven't"
 def has : AuxEntry where
-  form := "has"; auxType := .have; person := some .third; number := some .sg
+  form := "has"; auxType := .have; person := some .third; number := some .Sing
   negForm := some "hasn't"
 def had : AuxEntry where
   form := "had"; auxType := .have; tense := some .Past

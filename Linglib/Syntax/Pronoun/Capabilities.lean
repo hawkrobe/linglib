@@ -40,8 +40,9 @@ lives in `Features/CoreferenceStatus.lean` — neither is pronoun-specific. Two 
 strength is carrier-uniform (Italian clitics are all `.clitic`; the Mixtec clitic/nonclitic *fields*
 have fixed strengths), so an `α → Strength` accessor would be constant on every carrier — a
 per-*type* fact, not a per-element capability, and it is already served by per-series `def`s +
-`Strength.rank`. A finer *lexical-kind* axis (personal vs relative vs interrogative) is not reducible
-to the A/B/C role and needs a kind enum not worth inventing ahead of a consumer.
+`Strength.rank`. The finer *lexical-kind* axis (personal vs relative vs interrogative vs
+demonstrative) is `Pronoun.pronType` — real UD morphology on the carrier (no invented enum),
+threaded onto the projected word by `toWord`.
 -/
 
 set_option autoImplicit false
@@ -72,23 +73,36 @@ instance : Bound PersonalPronoun := ⟨fun p => p.toPronoun.bindingClass.getD .p
 /-- The canonical morphology source agrees with the mixin: a pro-form's projected word
 classifies (`Binding.bindingClassOf`, reading `Reflex`/`PronType`/category) exactly as the
 carrier's `Bound` class — `Pronoun.toWord` threads the binding morphology faithfully, so the
-surface engine and the capability never diverge. (Excludes a pronoun lexically declared an
-R-expression — a configuration no entry uses — whose surface category `.PRON` would win.) -/
-theorem bindingClassOf_toWord (p : Pronoun) (h : p.bindingClass ≠ some .rExpression) :
+surface engine and the capability never diverge. Two coherence premises, both vacuous for
+every actual entry: the pronoun is not lexically declared an R-expression (its surface
+category `.PRON` would win), and it does not *store* `PronType=Rcp` (reciprocal is derived
+by `toWord` from `bindingClass = .reciprocal`, never stored). -/
+theorem bindingClassOf_toWord (p : Pronoun) (h : p.bindingClass ≠ some .rExpression)
+    (hr : p.pronType = some .Rcp → p.bindingClass = some .reciprocal) :
     Binding.bindingClassOf p.toWord = Bound.source p := by
   show Binding.bindingClassOf p.toWord = some (p.bindingClass.getD .pronoun)
   rcases hb : p.bindingClass with _ | c
-  · simp [Binding.bindingClassOf, Pronoun.toWord, hb]
+  · rcases hp : p.pronType with _ | pt
+    · simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]
+    · cases pt
+      case Rcp => exact absurd ((hr hp).symm.trans hb) (by simp)
+      all_goals (simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]; try decide)
   · cases c with
     | reflexive =>
-      simp [Binding.bindingClassOf, Pronoun.toWord, hb]
-      decide
+      rcases hp : p.pronType with _ | pt
+      · simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]; try decide
+      · cases pt <;> (simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]; try decide)
     | reciprocal =>
-      simp [Binding.bindingClassOf, Pronoun.toWord, hb]
-      decide
+      rcases hp : p.pronType with _ | pt
+      · simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]; try decide
+      · cases pt <;> (simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]; try decide)
     | pronoun =>
-      simp [Binding.bindingClassOf, Pronoun.toWord, hb]
-      decide
+      rcases hp : p.pronType with _ | pt
+      · simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]
+        try decide
+      · cases pt
+        case Rcp => exact absurd ((hr hp).symm.trans hb) (by simp)
+        all_goals (simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]; try decide)
     | rExpression => exact absurd hb h
 
 /-! ### Orthogonal data-mixins: `Deictic`, `Clusive` -/

@@ -21,11 +21,11 @@ open Pronoun
 
 /-- *maiṃ* — 1sg. -/
 def maiN : PersonalPronoun :=
-  { form := "maiṃ", person := some .first, number := some .sg }
+  { form := "maiṃ", person := some .first, number := some .Sing }
 
 /-- *ham* — 1pl. -/
 def ham : PersonalPronoun :=
-  { form := "ham", person := some .first, number := some .pl }
+  { form := "ham", person := some .first, number := some .Plur }
 
 -- ============================================================================
 -- Second Person (three-level honorific)
@@ -33,15 +33,15 @@ def ham : PersonalPronoun :=
 
 /-- *tuu* — 2sg non-honorific (intimate/inferior). -/
 def tuu : PersonalPronoun :=
-  { form := "tuu", person := some .second, number := some .sg, register := .informal }
+  { form := "tuu", person := some .second, number := some .Sing, register := .informal }
 
 /-- *tum* — 2sg honorific (neutral). -/
 def tum : PersonalPronoun :=
-  { form := "tum", person := some .second, number := some .sg, register := .neutral }
+  { form := "tum", person := some .second, number := some .Sing, register := .neutral }
 
 /-- *aap* — 2sg high-honorific (respectful). -/
 def aap : PersonalPronoun :=
-  { form := "aap", person := some .second, number := some .sg, register := .formal }
+  { form := "aap", person := some .second, number := some .Sing, register := .formal }
 
 -- ============================================================================
 -- Third Person (demonstrative-based)
@@ -49,11 +49,11 @@ def aap : PersonalPronoun :=
 
 /-- *vah* — 3sg (distal demonstrative, standard pronoun). -/
 def vah : PersonalPronoun :=
-  { form := "vah", person := some .third, number := some .sg }
+  { form := "vah", person := some .third, number := some .Sing }
 
 /-- *ve* — 3pl (distal demonstrative plural). -/
 def ve : PersonalPronoun :=
-  { form := "ve", person := some .third, number := some .pl }
+  { form := "ve", person := some .third, number := some .Plur }
 
 -- ============================================================================
 -- Pronoun Lists
@@ -94,8 +94,8 @@ theorem has_all_persons :
 
 /-- Both singular and plural are attested. -/
 theorem has_both_numbers :
-    allPronouns.any (·.number == some .sg) = true ∧
-    allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
+    allPronouns.any (·.number == some .Sing) = true ∧
+    allPronouns.any (·.number == some .Plur) = true := ⟨rfl, rfl⟩
 
 /-- 2nd person pronouns are all second person. -/
 theorem second_person_all_2p :

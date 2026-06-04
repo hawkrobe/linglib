@@ -52,15 +52,15 @@ open Features.Register (Level)
 
 /-- 나 *na* — 1sg plain. -/
 def na : PersonalPronoun :=
-  { form := "na", script := some "나", person := some .first, number := some .sg, register := .informal }
+  { form := "na", script := some "나", person := some .first, number := some .Sing, register := .informal }
 
 /-- 저 *jeo* — 1sg humble. -/
 def jeo : PersonalPronoun :=
-  { form := "jeo", script := some "저", person := some .first, number := some .sg, register := .formal }
+  { form := "jeo", script := some "저", person := some .first, number := some .Sing, register := .formal }
 
 /-- 우리 *uri* — 1pl. -/
 def uri : PersonalPronoun :=
-  { form := "uri", script := some "우리", person := some .first, number := some .pl }
+  { form := "uri", script := some "우리", person := some .first, number := some .Plur }
 
 -- ============================================================================
 -- Second Person (T/V)
@@ -68,11 +68,11 @@ def uri : PersonalPronoun :=
 
 /-- 너 *neo* — 2sg plain. -/
 def neo : PersonalPronoun :=
-  { form := "neo", script := some "너", person := some .second, number := some .sg, register := .informal }
+  { form := "neo", script := some "너", person := some .second, number := some .Sing, register := .informal }
 
 /-- 당신 *dangsin* — 2sg polite. -/
 def dangsin : PersonalPronoun :=
-  { form := "dangsin", script := some "당신", person := some .second, number := some .sg, register := .formal }
+  { form := "dangsin", script := some "당신", person := some .second, number := some .Sing, register := .formal }
 
 -- ============================================================================
 -- Third Person
@@ -81,14 +81,14 @@ def dangsin : PersonalPronoun :=
 /-- 그 *geu* (Yale: *ku*) — 3sg masculine, **literary** register.
     76,235 written vs 145 oral tokens ([kwon-lee-2026] fn. 2). -/
 def geu : PersonalPronoun :=
-  { form := "geu", script := some "그", person := some .third, number := some .sg
+  { form := "geu", script := some "그", person := some .third, number := some .Sing
   , gender := some .masculine, register := .formal }
 
 /-- 그녀 *geunyeo* (Yale: *kunye*) — 3sg feminine, **literary** register.
     Compound of *ku* ('that') + *nye* ('female'). 25,085 written vs
     9 oral tokens ([kwon-lee-2026] fn. 2). -/
 def geunyeo : PersonalPronoun :=
-  { form := "geunyeo", script := some "그녀", person := some .third, number := some .sg
+  { form := "geunyeo", script := some "그녀", person := some .third, number := some .Sing
   , gender := some .feminine, register := .formal }
 
 /-- 걔 *gyae* (Yale: *kyay*) — 3sg gender-neutral, **colloquial** pronoun.
@@ -98,13 +98,13 @@ def geunyeo : PersonalPronoun :=
     ([kwon-lee-2026] §5). The overt-pronoun referential form
     tested in [kwon-lee-2026]'s experiments. -/
 def gyae : PersonalPronoun :=
-  { form := "gyae", script := some "걔", person := some .third, number := some .sg
+  { form := "gyae", script := some "걔", person := some .third, number := some .Sing
   , register := .informal }
 
 /-- 그들 *geudeul* — 3pl. Plural of *geu*; literary in register
     (the colloquial plural is the proximal demonstrative + *ai-tul*). -/
 def geudeul : PersonalPronoun :=
-  { form := "geudeul", script := some "그들", person := some .third, number := some .pl
+  { form := "geudeul", script := some "그들", person := some .third, number := some .Plur
   , register := .formal }
 
 -- ============================================================================
@@ -167,8 +167,8 @@ theorem has_all_persons :
 
 /-- Both singular and plural are attested. -/
 theorem has_both_numbers :
-    allPronouns.any (·.number == some .sg) = true ∧
-    allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
+    allPronouns.any (·.number == some .Sing) = true ∧
+    allPronouns.any (·.number == some .Plur) = true := ⟨rfl, rfl⟩
 
 /-- 1st person has plain/humble register distinction. -/
 theorem first_person_humble :

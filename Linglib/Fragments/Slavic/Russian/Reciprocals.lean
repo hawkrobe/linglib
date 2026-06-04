@@ -20,7 +20,7 @@ open Pronoun
 /-- друг друга *drug druga* — reciprocal pronoun 'each other'. -/
 def drugDruga : PersonalPronoun :=
   { form := "drug druga", script := some "друг друга"
-  , person := some .third, number := some .pl }
+  , person := some .third, number := some .Plur }
 
 /-- себя *sebja* — reflexive pronoun (for contrast). -/
 def sebja : PersonalPronoun :=
