@@ -93,25 +93,25 @@ theorem clusive_entries_wellFormed :
 /-- A cell of the SJA Mam pronominal paradigm: the quadripartition
     (1EXCL/1INCL/2/3, Table 4.3) crossed with number, minus the principled
     gap *1SG-inclusive (Table 4.4). -/
-inductive Cell where
+inductive PronCell where
   | firstSg | firstPlExcl | firstPlIncl
   | secondSg | secondPl
   | thirdSg | thirdPl
   deriving DecidableEq, Repr
 
-/-- Cell person, in the API's vocabulary. -/
-def Cell.person : Cell → Features.Person
+/-- PronCell person, in the API's vocabulary. -/
+def PronCell.person : PronCell → Features.Person
   | .firstSg | .firstPlExcl | .firstPlIncl => .first
   | .secondSg | .secondPl => .second
   | .thirdSg | .thirdPl => .third
 
-/-- Cell number, in the API's vocabulary. -/
-def Cell.number : Cell → Features.Number
+/-- PronCell number, in the API's vocabulary. -/
+def PronCell.number : PronCell → Features.Number
   | .firstSg | .secondSg | .thirdSg => .Sing
   | _ => .Plur
 
-/-- Cell clusivity (1PL cells only), in the API's vocabulary. -/
-def Cell.clusivity : Cell → Option Features.Clusivity.Value
+/-- PronCell clusivity (1PL cells only), in the API's vocabulary. -/
+def PronCell.clusivity : PronCell → Option Features.Clusivity.Value
   | .firstPlExcl => some .exclusive
   | .firstPlIncl => some .inclusive
   | _ => none
@@ -128,7 +128,7 @@ structure ScottFeatures where
   deriving DecidableEq, Repr
 
 /-- Feature values per cell — a transcription of Table 4.4. -/
-def Cell.features : Cell → ScottFeatures
+def PronCell.features : PronCell → ScottFeatures
   | .firstSg     => ⟨true,  false, true⟩
   | .firstPlExcl => ⟨true,  false, false⟩
   | .firstPlIncl => ⟨true,  true,  false⟩
@@ -139,24 +139,27 @@ def Cell.features : Cell → ScottFeatures
 
 /-- [±author]/[±participant] values disagree — the condition under which the
     enclitic *=i* is inserted ([noyer-1992]; [scott-2023] §4.3.3). -/
-def Cell.Disagrees (c : Cell) : Prop :=
+def PronCell.Disagrees (c : PronCell) : Prop :=
   c.features.author ≠ c.features.participant
+
+instance : DecidablePred PronCell.Disagrees := fun c => by
+  unfold PronCell.Disagrees; infer_instance
 
 /-- The feature table is faithful to the API-side person values:
     [+author] exactly at first person. -/
-theorem author_iff_first (c : Cell) :
+theorem author_iff_first (c : PronCell) :
     c.features.author = true ↔ c.person = .first := by
-  cases c <;> simp [Cell.features, Cell.person]
+  cases c <;> simp [PronCell.features, PronCell.person]
 
 /-- The feature table is faithful to the API-side number values:
     [+singular] exactly at singular cells. -/
-theorem singular_iff_sing (c : Cell) :
+theorem singular_iff_sing (c : PronCell) :
     c.features.singular = true ↔ c.number = .Sing := by
-  cases c <;> simp [Cell.features, Cell.number]
+  cases c <;> simp [PronCell.features, PronCell.number]
 
 /-- Independent pronoun by cell (Table 4.1 right column; 3SG has no overt
     pronoun). -/
-def independent : Cell → Option PersonalPronoun
+def independent : PronCell → Option PersonalPronoun
   | .firstSg     => some qini
   | .firstPlExcl => some qoy
   | .firstPlIncl => some qo
@@ -169,7 +172,7 @@ def independent : Cell → Option PersonalPronoun
     first-person bases are bled by impoverishment (§4.4), so 1SG/1PL.EXCL
     surface as bare *=i* and 1PL.INCL as ∅; 2nd/3rd are identical to the
     independent series. -/
-def subjPoss : Cell → Option PersonalPronoun
+def subjPoss : PronCell → Option PersonalPronoun
   | .firstSg     => some iDisagr
   | .firstPlExcl => some iDisagr
   | .firstPlIncl => none
@@ -189,21 +192,21 @@ def bearsEnclitic (p : PersonalPronoun) : Bool :=
 /-- Noyer/Scott's disagreement generalization, verified across the whole
     paradigm: a cell's independent form contains *=i* iff its
     [±author]/[±participant] values disagree (Table 4.4 × Table 4.9/4.11). -/
-theorem enclitic_iff_disagrees (c : Cell) :
+theorem enclitic_iff_disagrees (c : PronCell) :
     (independent c).any bearsEnclitic = true ↔ c.Disagrees := by
   cases c <;> decide
 
 /-- Reduction is exactly first-personhood: the subject/possessor form differs
     from the independent form precisely at [+author] cells (Table 4.1;
     the impoverishment rule targets [+author] under agreement, §4.4). -/
-theorem reduction_iff_author (c : Cell) :
+theorem reduction_iff_author (c : PronCell) :
     subjPoss c ≠ independent c ↔ c.features.author = true := by
   cases c <;> decide
 
 /-- What reduction leaves behind is never a base: every reduced (≠ independent)
     cell surfaces as bare *=i* or as ∅ — the enclitic is all that survives
     impoverishment. -/
-theorem reduced_residue (c : Cell) (h : subjPoss c ≠ independent c) :
+theorem reduced_residue (c : PronCell) (h : subjPoss c ≠ independent c) :
     subjPoss c = some iDisagr ∨ subjPoss c = none := by
   cases c <;> simp_all [subjPoss, independent] <;> decide
 

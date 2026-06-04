@@ -287,7 +287,7 @@ theorem enclitic_survives : ¬ (∀ d ∈ encliticDimensions, d.Copied) := by de
     (or ∅ for 1PL.INCL), while everything else keeps its independent
     form. Realization is *selection among the API's `PersonalPronoun`
     entries*, not a separate form classification. -/
-def realizedPronoun (pos : ArgPosition) (c : Cell) : Option PersonalPronoun :=
+def realizedPronoun (pos : ArgPosition) (c : PronCell) : Option PersonalPronoun :=
   if pos.IsPhiAgreed then subjPoss c else independent c
 
 /-- 1SG agent: reduced to the bare disagreement enclitic (base bled by
@@ -327,7 +327,7 @@ theorem first_vs_nonfirst_asymmetry :
 
 /-- The unagreed object position realizes the independent series, for
     every cell — person is irrelevant without the F diacritic. -/
-theorem patient_takes_independent (c : Cell) :
+theorem patient_takes_independent (c : PronCell) :
     realizedPronoun .P c = independent c := by
   cases c <;> decide
 
