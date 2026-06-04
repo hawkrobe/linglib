@@ -14,7 +14,7 @@ projection; `KContext` is the full Kaplanian structure.
 
 -/
 
-namespace Core.Context
+namespace Semantics.Context
 
 open Core (WorldTimeIndex)
 
@@ -92,4 +92,4 @@ def KContext.toReichenbachFrame {W E P T : Type*}
   referenceTime := R
   eventTime := Ev
 
-end Core.Context
+end Semantics.Context

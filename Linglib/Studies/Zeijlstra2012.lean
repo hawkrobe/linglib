@@ -1,5 +1,5 @@
 import Linglib.Core.Time.Reichenbach
-import Linglib.Core.Time.Tense
+import Linglib.Semantics.Tense.GramTense
 import Linglib.Semantics.Tense.Basic
 import Linglib.Syntax.Minimalist.Features
 
@@ -51,7 +51,7 @@ reversing its c-command direction.
 
 namespace Zeijlstra2012
 
-open Core.Time.Tense
+open Semantics.Tense
 open Core.Time.Reichenbach
 open Semantics.Tense
 open Minimalist (FeatureVal GramFeature Interpretability)

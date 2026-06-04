@@ -1,4 +1,4 @@
-import Linglib.Core.Time.Tense
+import Linglib.Semantics.Tense.GramTense
 import Linglib.Core.Time.Reichenbach
 
 /-!
@@ -27,7 +27,7 @@ of a derivation theorem in that theory's file.
 
 namespace Semantics.Tense
 
-open Core.Time.Tense
+open Semantics.Tense
 open Core.Time
 open Core.Time.Reichenbach
 
@@ -437,7 +437,7 @@ theorem simultaneous_satisfies_ulc {Time : Type*} [Preorder Time]
 /-!
 ### TensePronoun Projections onto SOT Frames
 
-The `TensePronoun` type in `Core.Time.Tense` unifies the five views of tense.
+The `TensePronoun` type in `Semantics.Tense` unifies the five views of tense.
 The following theorems show that `simultaneousFrame` and `shiftedFrame`
 are projections of specific tense pronouns — a bound present pronoun gives
 the simultaneous reading; a free past pronoun gives the shifted reading.
@@ -475,7 +475,7 @@ theorem shiftedFrame_from_tense_pronoun {Time : Type*}
 /-- Double-access: present-under-past requires the complement
     to hold at BOTH speech time AND matrix event time.
 
-    This bridges the `doubleAccess` definition from `Core.Time.Tense` to the
+    This bridges the `doubleAccess` definition from `Semantics.Tense` to the
     SOT analysis: the present-under-past frame's R = P (simultaneous),
     and the speech time is independently accessible via indexical rigidity. -/
 theorem doubleAccess_present_under_past {Time : Type*} [LinearOrder Time]

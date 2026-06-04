@@ -21,9 +21,9 @@ End-to-end verification of [schlenker-2003]'s core argument:
 ## Derivation Chain
 
 ```
-Core.Context.Tower (ContextTower, push, origin, innermost)
+Semantics.Context.Tower (ContextTower, push, origin, innermost)
     ↓
-Core.Context.Shifts (attitudeShift)
+Semantics.Context.Shifts (attitudeShift)
     ↓
 Semantics.Reference.Kaplan (pronI_access, origin-reading)
     ↓
@@ -39,7 +39,7 @@ This file: concrete end-to-end verification
 
 namespace Schlenker2003
 
-open Core.Context
+open Semantics.Context
 open Semantics.Attitudes.ContextQuantification
 open Semantics.Attitudes.Doxastic (AccessRel boxAt)
 open Semantics.Reference.ShiftedIndexicals (amharic_pronI)

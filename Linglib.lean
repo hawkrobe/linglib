@@ -217,7 +217,7 @@ import Linglib.Pragmatics.GameTheory
 import Linglib.Pragmatics.SignalingGames
 import Linglib.Features.Evidentiality
 import Linglib.Features.Mirativity
-import Linglib.Core.Epistemicity
+import Linglib.Semantics.Epistemicity
 import Linglib.Features.Logophoricity
 import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Time.Interval.Basic
@@ -231,7 +231,7 @@ import Linglib.Core.Time.Domain
 import Linglib.Core.Time.RelationOrigin
 import Linglib.Core.Time.System
 import Linglib.Core.Time.Reichenbach
-import Linglib.Core.Time.Tense
+import Linglib.Semantics.Tense.GramTense
 import Linglib.Typology.WordOrder
 import Linglib.Typology.Adposition
 import Linglib.Typology.ArgumentStructure
@@ -253,10 +253,10 @@ import Linglib.Typology.Reference
 import Linglib.Typology.TenseAspect
 import Linglib.Typology.Color
 import Linglib.Typology.BodyParts
-import Linglib.Core.Context.Basic
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
-import Linglib.Core.Context.Rich
+import Linglib.Semantics.Context.Basic
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
+import Linglib.Semantics.Context.Rich
 import Linglib.Features.InformationStructure
 import Linglib.Features.Givenness
 import Linglib.Features.Topic
@@ -311,12 +311,12 @@ import Linglib.Core.Scales.Comparison
 import Linglib.Core.Scales.Scale
 import Linglib.Core.Scales.EpistemicScale.Defs
 import Linglib.Core.Scales.EpistemicScale.Entailments
-import Linglib.Core.Scales.EpistemicScale.FinsetBridge
 import Linglib.Core.Scales.EpistemicScale.Conditional
+import Linglib.Core.Scales.EpistemicScale
 import Linglib.Core.Scales.EpistemicScale.Cancellation
-import Linglib.Core.Scales.EpistemicScale.Cancellation88
-import Linglib.Core.Scales.EpistemicScale.CancellationChambers
-import Linglib.Core.Scales.EpistemicScale.CancellationHelpers
+import Linglib.Core.Scales.EpistemicScale.CancellationFin4
+import Linglib.Core.Scales.EpistemicScale.Caratheodory
+import Linglib.Core.Scales.EpistemicScale.SignVectors
 import Linglib.Core.Scales.EpistemicScale.Representability
 import Linglib.Core.Mereology
 import Linglib.Core.Mereotopology
@@ -597,8 +597,6 @@ import Linglib.Data.WALS.Features.F144Y
 import Linglib.Tactics.NonnegOfForall
 import Linglib.Tactics.RSAPredict
 import Linglib.Tactics.OntSort
-import Linglib.Tactics.NgeFS
-import Linglib.Tactics.CancelFin4
 import Linglib.Tactics.ENNRealArith
 -- Paradigms (contract layer between Theories/ and Phenomena/Studies/)
 import Linglib.Paradigms.VisualWorld

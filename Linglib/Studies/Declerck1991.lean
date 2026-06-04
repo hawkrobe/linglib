@@ -798,7 +798,7 @@ section TowerBridge
 
 variable {Time : Type*}
 
-open Core.Context (ContextTower ContextShift KContext)
+open Semantics.Context (ContextTower ContextShift KContext)
 
 /-- Convert a Declercian TO-chain to a list of temporal shifts.
     Each `TOLink` becomes a `temporalShift` with `.temporal` label.
