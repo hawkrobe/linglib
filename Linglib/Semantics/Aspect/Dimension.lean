@@ -1,4 +1,5 @@
 import Linglib.Core.Scales.Defs
+import Linglib.Features.Aktionsart
 
 /-!
 # Scalar dimensions
@@ -18,6 +19,7 @@ targets a bounded `boiling` scale, *cool*/*warm* an open `temperature` one.
 namespace ScalarTelicity
 
 open Core.Scale (Boundedness)
+open Features (Telicity VendlerClass)
 
 /-- The scalar dimension a degree-achievement verb's base adjective measures. -/
 inductive Dimension
@@ -38,5 +40,20 @@ def Dimension.boundedness : Dimension → Boundedness
   | .cracking | .denting | .scratching | .boiling => .closed
   | .length | .width | .temperature | .corrosion | .quantity
   | .unspecified => .open_
+
+/-- Default telicity, derived from the dimension's boundedness (a scale with a
+    maximal degree gives a telic degree achievement). Grounded to the order mixin
+    by `ScalarTelicity.defaultTelicity_telic_iff_hasGreatest`. -/
+def Dimension.defaultTelicity (d : Dimension) : Telicity :=
+  match d.boundedness with
+  | .closed | .upperBounded => .telic
+  | .open_ | .lowerBounded => .atelic
+
+/-- Default Vendler class: degree achievements are dynamic and durative, so a
+    closed scale gives an accomplishment, an open one an activity. -/
+def Dimension.defaultVendlerClass (d : Dimension) : VendlerClass :=
+  match d.boundedness with
+  | .closed | .upperBounded => .accomplishment
+  | .open_ | .lowerBounded => .activity
 
 end ScalarTelicity

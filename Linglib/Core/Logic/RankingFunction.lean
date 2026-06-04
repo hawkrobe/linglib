@@ -58,8 +58,6 @@ probabilities):
 | P(A∩B) = P(A)·P(B|A)         | κ(A∩B) = κ(A) + κ(B|A)          |
 | P(A∩B) = P(A)·P(B) (indep.)  | κ(A∩B) = κ(A) + κ(B) (indep.)   |
 
-See `ConditioningMode.ranking` in `Core/Scales/EpistemicScale/Conditional.lean`
-for the conditioning-mode classification.
 -/
 
 namespace Core.Logic.Ranking
