@@ -111,7 +111,7 @@ structure CliticEntry where
 The clitic is its own bespoke struct — capabilities abstract over it without merging it into
 `Pronoun` (the `FunLike`-over-many-hom-types pattern). Deficiency is deliberately *not* a capability
 here: it is per-series (the whole clitic paradigm is `.clitic`), modelled by `cliticStrength` below
-and `Strength.rank`, not by a per-element accessor. -/
+and the `Strength` order, not by a per-element accessor. -/
 
 /-- A clitic's surface form + φ-features (person/number). -/
 instance : Proform CliticEntry :=
@@ -159,7 +159,10 @@ def si_refl_pl : CliticEntry := { form := "si", person := .third, number := .Plu
 -- § 3: Paradigm and Syncretism
 -- ============================================================================
 
-/-- The full clitic paradigm as a flat list. -/
+/-- The traditional atonic (object) paradigm as a flat list. NB: the series is
+    not strength-homogeneous — [cardinaletti-starke-1999] classify dative
+    *loro* as *weak*, not clitic (not verb-adjacent, never clusters); see
+    `loroDatStrength` below. The rest are clitics proper. -/
 def paradigm : List CliticEntry :=
   [ mi_acc, mi_dat, mi_refl,
     ti_acc, ti_dat, ti_refl,
@@ -251,18 +254,31 @@ theorem has_both_numbers :
 -- § 5: Cardinaletti–Starke deficiency classes
 -- ============================================================================
 
-/-- Italian's two pronoun series instantiate two Cardinaletti–Starke deficiency
-    classes ([cardinaletti-starke-1999]): the strong forms (`allPronouns`)
-    are `.strong`; the object clitics (`paradigm`) are `.clitic`. -/
+/-- Italian's tonic series (`allPronouns`) instantiates the Cardinaletti–Starke
+    `.strong` class ([cardinaletti-starke-1999]). -/
 def strongStrength : Strength := .strong
 
-/-- The object-clitic series is the maximally deficient `.clitic` class. -/
+/-- The object clitics (`paradigm` minus dative *loro*) are the maximally
+    deficient `.clitic` class: verb-adjacent heads that cluster
+    ([cardinaletti-starke-1999]). -/
 def cliticStrength : Strength := .clitic
 
-/-- The clitic series is structurally more deficient than the strong series
-    (lower `Strength.rank`): the deficiency ordering behind their complementary
-    distribution (clitics host-adjacent and unfocusable, strong forms free). -/
-theorem clitics_more_deficient :
-    Strength.rank cliticStrength < Strength.rank strongStrength := by decide
+/-- Dative *loro* is [cardinaletti-starke-1999]'s parade case for separating
+    weak from clitic: deficient (reduced vs *a loro*, no coordination) but a
+    maximal projection — not verb-adjacent, never clustering, bears word
+    stress. -/
+def loroDatStrength : Strength := .weak
+
+/-- The clitic series is structurally more deficient than the strong series:
+    the deficiency ordering behind their complementary distribution (clitics
+    host-adjacent and unfocusable, strong forms free). -/
+theorem clitics_more_deficient : cliticStrength < strongStrength := by decide
+
+/-- The traditional atonic paradigm is not strength-homogeneous: dative *loro*
+    (weak) sits strictly between the clitics and the strong series
+    ([cardinaletti-starke-1999]). -/
+theorem atonic_series_not_homogeneous :
+    cliticStrength < loroDatStrength ∧ loroDatStrength < strongStrength :=
+  ⟨by decide, by decide⟩
 
 end Italian.Pronouns

@@ -125,11 +125,10 @@ def controlledSubjectStrength : Pronoun.Strength := PronounForm.cliticStrength
 
 /-- SMPM's ban on nonclitic controlled subjects (67) realizes the
     Cardinaletti–Starke prediction: the required form is strictly more
-    deficient (lower `Strength.rank`) than the nonclitic strong alternative.
-    Derived from the shared deficiency ranking, not stipulated. -/
+    deficient than the nonclitic strong alternative. Derived from the shared
+    deficiency order, not stipulated. -/
 theorem controlledSubject_is_most_deficient :
-    Pronoun.Strength.rank controlledSubjectStrength
-      < Pronoun.Strength.rank PronounForm.noncliticStrength := by decide
+    controlledSubjectStrength < PronounForm.noncliticStrength := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4: Embedded Clause Typology (table 26)

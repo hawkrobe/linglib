@@ -217,14 +217,13 @@ def strengthToAccessibility : Strength → AccessibilityLevel
   | .clitic => .cliticizedPron
 
 /-- `strengthToAccessibility` is antitone in structural strength: a more
-    deficient pronoun (lower `rank`) marks higher accessibility, so the
-    clitic > weak > strong accessibility ordering follows from the intrinsic
-    deficiency order rather than being restated. -/
+    deficient pronoun (lower in the deficiency order) marks higher
+    accessibility, so the clitic > weak > strong accessibility ordering
+    follows from the intrinsic deficiency order rather than being restated. -/
 theorem strengthToAccessibility_antitone {a b : Strength}
-    (h : a.rank < b.rank) :
+    (h : a < b) :
     (strengthToAccessibility b).rank < (strengthToAccessibility a).rank := by
-  cases a <;> cases b <;>
-    simp_all [Strength.rank, strengthToAccessibility, AccessibilityLevel.rank]
+  cases a <;> cases b <;> revert h <;> decide
 
 /-- All three pronoun strengths coarsen to the same definiteness level. -/
 theorem strength_coarsening_agrees :
