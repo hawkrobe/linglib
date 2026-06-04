@@ -1,4 +1,4 @@
-import Linglib.Core.Context.Tower
+import Linglib.Semantics.Context.Tower
 
 /-!
 # Iconological Semantics

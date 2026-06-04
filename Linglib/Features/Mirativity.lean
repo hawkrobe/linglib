@@ -12,7 +12,7 @@ the evidence?" vs "is the content surprising?").
 
 This module is intentionally separate from `Features.Evidentiality` to reflect
 that independence; bundling structures that combine source, authority, and
-mirativity (e.g. `Core.Epistemicity.EpistemicProfile`) import both.
+mirativity (e.g. `Semantics.Epistemicity.EpistemicProfile`) import both.
 
 -/
 

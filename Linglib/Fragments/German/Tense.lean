@@ -26,7 +26,7 @@ has a PRESENT tense head (indexical-compatible).
 
 namespace German.Tense
 
-open Core.Time.Tense
+open Semantics.Tense
 open Semantics.Tense.SOT.Decomposition
 
 -- ════════════════════════════════════════════════════

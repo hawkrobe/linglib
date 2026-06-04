@@ -37,7 +37,7 @@ In CDRT, these operators compose dynamically:
 -/
 
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Core.Context.Shifts
+import Linglib.Semantics.Context.Shifts
 import Linglib.Semantics.Mood.Categories
 
 namespace Semantics.Mood
@@ -403,23 +403,23 @@ variable {W : Type*} {Time : Type*}
     is entered. The `newWorld` and `newTime` are the coordinates of the
     existentially introduced situation s₁. -/
 def subjShift {E P : Type*} (newWorld : W) (newTime : Time) :
-    Core.Context.ContextShift (Core.Context.KContext W E P Time) where
+    Semantics.Context.ContextShift (Semantics.Context.KContext W E P Time) where
   apply := λ c => { c with world := newWorld, time := newTime }
   label := .mood
 
 /-- Pushing a `subjShift` changes the world to the introduced situation's world. -/
 theorem subjShift_changes_world {E P : Type*}
-    (w : W) (t : Time) (c : Core.Context.KContext W E P Time) :
+    (w : W) (t : Time) (c : Semantics.Context.KContext W E P Time) :
     ((subjShift (E := E) (P := P) w t).apply c).world = w := rfl
 
 /-- Pushing a `subjShift` changes the time to the introduced situation's time. -/
 theorem subjShift_changes_time {E P : Type*}
-    (w : W) (t : Time) (c : Core.Context.KContext W E P Time) :
+    (w : W) (t : Time) (c : Semantics.Context.KContext W E P Time) :
     ((subjShift (E := E) (P := P) w t).apply c).time = t := rfl
 
 /-- Pushing a `subjShift` preserves the agent. -/
 theorem subjShift_preserves_agent {E P : Type*}
-    (w : W) (t : Time) (c : Core.Context.KContext W E P Time) :
+    (w : W) (t : Time) (c : Semantics.Context.KContext W E P Time) :
     ((subjShift (E := E) (P := P) w t).apply c).agent = c.agent := rfl
 
 /-- The tower-based subjunctive: SUBJ holds iff there exists a situation

@@ -1,6 +1,6 @@
 import Linglib.Studies.Abusch1997
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
 import Linglib.Data.Examples.Schema
 
 /-!
@@ -43,9 +43,9 @@ The general-indexicals content of [schlenker-2003] lives at
 ## Derivation Chain
 
 ```
-Core.Context.Tower (ContextTower, push, innermost, origin)
+Semantics.Context.Tower (ContextTower, push, innermost, origin)
     ↓
-Core.Context.Shifts (temporalShift: changes time, preserves agent/world)
+Semantics.Context.Shifts (temporalShift: changes time, preserves agent/world)
     ↓
 This file: tower operations produce the Reichenbach frames in Studies/Abusch1997.lean
     ↓
@@ -66,7 +66,7 @@ Abusch1997 (matrixSaid, embeddedSickSimultaneous, etc.)
 
 namespace Schlenker2004
 
-open Core.Context
+open Semantics.Context
 open Abusch1997
 open Data.Examples (LinguisticExample)
 
@@ -287,7 +287,7 @@ open Abusch1997 in
 theorem schlenker_origin_supports_abusch_double_access
     (p : ℤ → Prop) (h_speech : p (presentAccess.resolve sotTower))
     (h_matrix : p matrixSaid.eventTime) :
-    Core.Time.Tense.doubleAccess p
+    Semantics.Tense.doubleAccess p
       (presentAccess.resolve sotTower) matrixSaid.eventTime :=
   ⟨h_speech, h_matrix⟩
 
@@ -412,10 +412,10 @@ open Abusch1997 in
     agreement apparatus and Abusch's res-movement make different
     predictions — not yet substrate-formalized. -/
 theorem schlenker_abusch_agree_on_simultaneous_value
-    (tp : Core.Time.Tense.TensePronoun)
-    (g : Core.Time.Tense.TemporalAssignment ℤ) :
+    (tp : Semantics.Tense.TensePronoun)
+    (g : Semantics.Tense.TemporalAssignment ℤ) :
     shiftedAccess.resolve sotTower =
-    tp.resolve (Core.Time.Tense.updateTemporal g tp.varIndex matrixSaid.eventTime) := by
+    tp.resolve (Semantics.Tense.updateTemporal g tp.varIndex matrixSaid.eventTime) := by
   show matrixSaid.eventTime = _
   exact (Abusch1997.abusch_derives_simultaneous_via_binding
     tp g matrixSaid).symm

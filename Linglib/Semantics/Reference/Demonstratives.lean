@@ -20,7 +20,7 @@ demonstrative has no content.
 
 -/
 
-import Linglib.Core.Context.Basic
+import Linglib.Semantics.Context.Basic
 import Linglib.Semantics.Reference.Basic
 import Linglib.Semantics.Reference.KaplanLD
 import Linglib.Semantics.Reference.Nominal
@@ -29,7 +29,7 @@ namespace Semantics.Reference.Demonstratives
 
 open Core (Intension)
 open Core.Intension (rigid IsRigid rigid_isRigid)
-open Core.Context (KContext)
+open Semantics.Context (KContext)
 open Semantics.Reference.Basic (ReferringExpression isDirectlyReferential)
 
 /-! ## Demonstrations -/
