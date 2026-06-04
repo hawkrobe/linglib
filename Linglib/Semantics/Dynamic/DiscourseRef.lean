@@ -47,10 +47,11 @@ This separation enables anaphora to indefinites under negation:
 
 -/
 
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Semantics.Dynamic.Connectives.CCP
 import Linglib.Features.MassCount
 import Mathlib.Data.Fintype.Basic
+import Linglib.Morphology.Word
 
 
 

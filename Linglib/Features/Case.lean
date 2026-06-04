@@ -1,7 +1,7 @@
 import Mathlib.Data.Finset.Card
 import Mathlib.Order.Lattice
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 
 /-!
 # Case — Feature Taxonomy

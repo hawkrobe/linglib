@@ -1,9 +1,9 @@
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Mathlib.Order.Bounds.Basic
 import Mathlib.Order.BoundedOrder.Basic
 
 /-!
-# Subsumption and unification for feature bundles
+# Unification: subsumption and joins for feature bundles
 [shieber-1986]
 
 The information ordering of unification-based grammar ([shieber-1986] §3.2), on
@@ -34,8 +34,14 @@ Unification (§3.2.3) is "the most general feature structure `D` such that `D′
 
 ## Implementation notes
 
-Lives apart from `Core/UniversalDependencies.lean` so that the (heavily imported) UD
-vocabulary stays mathlib-free; this file is the one that pays for `Mathlib.Order`.
+Morphology owns the bundle algebra: `MorphFeatures` is the token's morphology (UD's
+Feats column), unification at the ms-word level is the morphology/syntax interface
+operation, and the order's natural in-house consumers are DM's Subset Principle
+(insert an exponent iff `exponent.features ≤ morpheme.features`) and Nanosyntax
+spellout — its dual. Lives apart from `Data/UD/Basic.lean` so the (heavily imported)
+standard mirror stays mathlib-free — this file is the one that pays for
+`Mathlib.Order` — and it is the canonical home for order instances on
+`UD.MorphFeatures`.
 -/
 
 set_option autoImplicit false

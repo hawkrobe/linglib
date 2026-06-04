@@ -11,15 +11,20 @@ These provide theory-neutral lexical categories, morphological annotations,
 and grammatical relations that can be used in Phenomena/ and mapped to/from
 theory-specific categories (CCG.Cat, Minimalism features, DG trees, etc.).
 
+Official site: <https://universaldependencies.org/>
+
 ## Provenance
 
-Lifted from `Core/Lexical/UD.lean` in the cleanup that dissolved
-`Core/Lexical/`. UD is an external typological standard
-([de-marneffe-zeman-2021]); its types are the foundational
-substrate every other layer aliases against (see `Core/Word.lean`).
-The bare `UD` namespace (no `Core.` prefix) is intentional — UD is its
-own external project, and this file is the linglib mirror of its
-v2 surface.
+UD is an external annotation standard ([de-marneffe-zeman-2021]); this file is
+the linglib mirror of its v2 surface, and `Data/UD/` is the standard's area —
+treebank data (CoNLL-U) belongs here beside the vocabulary, paralleling
+`Data/WALS/` (schema + datapoints). Its types are the foundational
+substrate every other layer builds on: `Features/` aliases the feature types
+(`Features.Number := UD.Number`, …) and `Morphology/Word.lean` builds the
+ms-word token over the vocabulary.
+The bare `UD` namespace (no `Data.` prefix) is intentional — UD is its own
+external project. Subsumption-order theory over `MorphFeatures` lives in
+`Morphology/Unification.lean` (mathlib-importing); this file stays mathlib-light.
 -/
 
 namespace UD
@@ -351,7 +356,7 @@ def MorphFeatures.isWh (f : MorphFeatures) : Bool :=
     ([shieber-1986] §3.2.3)? Total over *all* option-valued fields: a conflict in any
     committed feature makes unification fail. (`reflex` needs no clause — a `Bool` slot
     with `false` = absent is always joinable by `||`.) The order-theoretic
-    characterization is proved in `Core/Subsumption.lean`. -/
+    characterization is proved in `Morphology/Unification.lean`. -/
 def MorphFeatures.compatible (f1 f2 : MorphFeatures) : Bool :=
   (f1.number.isNone   || f2.number.isNone   || f1.number == f2.number) &&
   (f1.gender.isNone   || f2.gender.isNone   || f1.gender == f2.gender) &&
@@ -410,7 +415,7 @@ def MorphFeatures.merge (f1 f2 : MorphFeatures) : MorphFeatures where
   polarity := f1.polarity <|> f2.polarity
 
 /-- Unify two feature bundles ([shieber-1986] §3.2.3): the least upper bound in the
-    subsumption order when the bundles are compatible (`Core/Subsumption.lean` proves
+    subsumption order when the bundles are compatible (`Morphology/Unification.lean` proves
     the lub laws), failure (`none`) on conflicting information. -/
 def MorphFeatures.unify (f1 f2 : MorphFeatures) : Option MorphFeatures :=
   if f1.compatible f2 then some (f1.merge f2) else none
@@ -578,59 +583,3 @@ structure DepArc where
   deriving DecidableEq, Repr
 
 end UD
-
--- ============================================================================
--- Word: the CoNLL-U surface token
--- ============================================================================
-
-structure Word where
-  form : String
-  cat : UD.UPOS
-  features : UD.MorphFeatures := {}
-  deriving Repr
-
-/-- Convenience constructor for a featureless word (form + category only). -/
-def Word.mk' (form : String) (cat : UD.UPOS) : Word := { form := form, cat := cat }
-
-/-- The φ-feature subset (person, number, gender) of a word, as a
-    `UD.MorphFeatures` bundle. -/
-def Word.phi (w : Word) : UD.MorphFeatures :=
-  { person := w.features.person, number := w.features.number,
-    gender := w.features.gender }
-
-/-- φ-agreement between two words: their person/number/gender features are
-    compatible (an unspecified feature is a wildcard). A reflexive, symmetric
-    *tolerance* relation on `Word` (not transitive), decided by the shared
-    `UD.MorphFeatures.compatible`. This is the feature-based agreement primitive
-    binding and concord consumers share — no surface-form gender lookup. -/
-def Word.Agree (w1 w2 : Word) : Prop := w1.phi.compatible w2.phi
-
-instance (w1 w2 : Word) : Decidable (Word.Agree w1 w2) := by
-  unfold Word.Agree; infer_instance
-
-@[refl] theorem Word.Agree.refl (w : Word) : Word.Agree w w :=
-  UD.MorphFeatures.compatible_self w.phi
-
-/-- φ-agreement is symmetric — the docstring's "symmetric tolerance relation", as a
-    theorem. (It is *not* transitive: an unspecified feature is a wildcard, so
-    `she ~ they ~ he` while `she ≁ he`.) -/
-@[symm] theorem Word.Agree.symm {w1 w2 : Word} (h : Word.Agree w1 w2) : Word.Agree w2 w1 := by
-  unfold Word.Agree at h ⊢
-  rwa [UD.MorphFeatures.compatible_comm]
-
-
-/-- Derive a passive variant: sets voice to passive. The valence change
-    (detransitivization) is a frame-level fact carried by the passive analysis on
-    `DepTree.frames`, not token data. Composes with `VerbEntry.toWordPastPart`. -/
-def Word.asPassive (w : Word) : Word :=
-  { w with features := { w.features with voice := some .Pass } }
-
-instance : BEq Word where
-  beq w1 w2 := w1.form == w2.form && w1.cat == w2.cat
-
-instance : ToString Word where
-  toString w := w.form
-
-/-- Convert a word list to a readable string. -/
-def wordsToString (ws : List Word) : String :=
-  " ".intercalate (ws.map (·.form))

@@ -1,7 +1,8 @@
 import Linglib.Syntax.DependencyGrammar.Basic
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Data.Examples.Schema
 import Linglib.Syntax.DependencyGrammar.Coordination
+import Linglib.Morphology.Word
 
 /-!
 # CRDC: Conjunct Referential Dependency Constraint

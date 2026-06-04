@@ -1,7 +1,7 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Multiset.Basic
 import Mathlib.Algebra.Free
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Core.Combinatorics.RootedTree.Decorated
 
 /-!

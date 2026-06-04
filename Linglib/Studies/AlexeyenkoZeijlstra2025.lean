@@ -1,4 +1,4 @@
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Data.WALS.Features.F87A
 import Linglib.Syntax.Minimalist.Modification
 import Linglib.Fragments.Greek.StandardModern.AdjAgreement

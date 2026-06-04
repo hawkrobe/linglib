@@ -1,6 +1,6 @@
 import Linglib.Features.InformationStructure
 import Linglib.Core.Logic.Intensional.Premise
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Semantics.Alternatives.AltMeaning
 import Linglib.Semantics.Polarity.Operator
 import Linglib.Semantics.Focus.Interpretation

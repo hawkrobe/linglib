@@ -1,8 +1,9 @@
 import Linglib.Features.Case
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Features.Prominence
 import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Agreement.Paradigm
+import Linglib.Morphology.Word
 
 /-!
 # Shared Mayan Fragment Infrastructure

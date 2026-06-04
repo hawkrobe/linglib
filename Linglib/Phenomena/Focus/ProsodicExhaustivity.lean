@@ -32,7 +32,7 @@ This phenomenon relates to mention-all vs mention-some:
 
 -/
 
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 
 /-!
 ## Connection to RSA Theory

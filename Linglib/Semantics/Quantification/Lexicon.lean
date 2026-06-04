@@ -1,5 +1,6 @@
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Features.Number
+import Linglib.Morphology.Word
 
 /-!
 # Quantifier lexicon — shared structure

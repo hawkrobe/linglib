@@ -1,10 +1,11 @@
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Register
 import Linglib.Features.Prominence
 import Linglib.Features.Clusivity
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Pronoun.Basic
+import Linglib.Morphology.Word
 
 /-!
 # Pronoun capabilities — a mixin tower over pronoun carriers

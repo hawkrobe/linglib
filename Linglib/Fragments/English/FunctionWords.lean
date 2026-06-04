@@ -1,4 +1,5 @@
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
+import Linglib.Morphology.Word
 
 /-!
 # English Miscellaneous Function Words Fragment

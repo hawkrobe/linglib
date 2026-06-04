@@ -1,5 +1,5 @@
 import Linglib.Features.Gender
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Syntax.Pronoun.Basic
 
 /-!
