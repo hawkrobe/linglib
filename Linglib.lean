@@ -138,7 +138,6 @@ import Linglib.Discourse.Scoreboard
 import Linglib.Discourse.AtIssueness
 import Linglib.Features.CoreferenceStatus
 import Linglib.Syntax.Binding.Basic
-import Linglib.Syntax.Binding.Lexical
 import Linglib.Syntax.Binding.Semantics
 import Linglib.Core.CombinationKind
 import Linglib.Semantics.Composition.Combinator

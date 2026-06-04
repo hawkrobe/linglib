@@ -24,7 +24,7 @@ object (`Word`), or a future theory representation; each supplies its own instan
   partial `Features.BindingSource`.
 * `Anaphoric`, `Pronominal`, `Referring` — the Principle A / B / C *type*-markers: a homogeneous
   carrier all of whose elements share one binding class. The typed-view generalization of the
-  element-level `Pronoun.{IsAnaphor, IsPronominal, IsRExpression}`.
+  element-level `Bound.{IsAnaphor, IsPronominal, IsRExpression}`.
 * `Bound.{IsAnaphor, IsPronominal, IsRExpression}` — the same A / B / C partition as *element*
   predicates, generic over any `[Bound α]` carrier.
 * `Deictic`, `Clusive` — orthogonal data-mixins (register / referential person; clusivity).
@@ -93,7 +93,7 @@ class Referring (α : Type*) [Bound α] : Prop where
 
 /-- `a` is a Principle-A anaphor (reflexive or reciprocal) — the A/B/C partition as an *element*
 predicate over any `[Bound α]` carrier (a `Pronoun`, an Italian clitic, a Turkish anaphor, …). The
-generic companion to the per-`Pronoun` `Pronoun.IsAnaphor`. -/
+element-level companion to the carrier-level `Anaphoric` type-marker. -/
 def Bound.IsAnaphor {α : Type*} [Bound α] (a : α) : Prop :=
   Bound.bindingClass a = .reflexive ∨ Bound.bindingClass a = .reciprocal
 

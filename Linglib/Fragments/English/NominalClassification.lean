@@ -1,6 +1,6 @@
 import Linglib.Core.Word
 import Linglib.Features.CoreferenceStatus
-import Linglib.Syntax.Binding.Lexical
+import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Fragments.English.Pronouns
 
 /-!
@@ -45,8 +45,8 @@ def classifyNominal : BindingSource Word := fun w =>
   | some e => e.bindingClass
   | none => if isNominalCat w.cat then some .rExpression else none
 
-/-- Every reflexive entry is a Principle-A anaphor by its declaration — `Pronoun.IsAnaphor`
+/-- Every reflexive entry is a Principle-A anaphor by its declaration — `Bound.IsAnaphor`
 (over `bindingClass`) holds across the `reflexives` lexicon. -/
-theorem reflexives_are_anaphors : ∀ p ∈ English.Pronouns.reflexives, p.IsAnaphor := by decide
+theorem reflexives_are_anaphors : ∀ p ∈ English.Pronouns.reflexives, Bound.IsAnaphor p := by decide
 
 end English.NominalClassification
