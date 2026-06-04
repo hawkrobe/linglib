@@ -2717,6 +2717,7 @@ import Linglib.Studies.Zimmermann2008
 import Linglib.Studies.Owusu2022
 import Linglib.Studies.Bubnov2026
 import Linglib.Studies.Dekier2021
+import Linglib.Studies.DalrympleKaplan2000
 import Linglib.Studies.AhnKocabDavidson2026
 import Linglib.Studies.TenWolde2023
 import Linglib.Studies.FarkasBruce2010
