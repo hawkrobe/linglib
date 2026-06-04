@@ -773,6 +773,261 @@ theorem no_null_cancellation (sys : EpistemicSystemFA (Fin 4))
   obtain ⟨R, hRdisj, hRvalid, hRsum⟩ := exists_balanced_list sys P hvalid hneutral s hsmem
   exact merge_to_single sys hnull R hRdisj hRvalid s.right s.left s.disjoint.symm hRsum
 
+/-! ### Fin 3 via lexicographic extension
+
+A `Fin 3` system with no null atoms extends to a `Fin 4` system by adding a
+*dominant* fourth world: comparisons are decided first by membership of the
+new world, then by the restriction to the original three.  The extension
+preserves the FA axioms and the absence of null atoms, and reflects
+cancellation, so `no_null_cancellation` discharges the no-null case of
+`fa_cancellation_fin3`; null atoms reduce to `theorem8a_fin2`.  Theorem 8a
+for `Fin 3` then *follows from* cancellation — replacing the former
+measure-by-measure case analysis. -/
+
+/-- Restriction of a `Fin 4` proposition to the first three worlds. -/
+private def restrict3 (A : Set (Fin 4)) : Set (Fin 3) := {i | Fin.castSucc i ∈ A}
+
+/-- Lexicographic extension: the new world `Fin.last 3` dominates; ties break
+    by the restriction. -/
+def extendFA (sys : EpistemicSystemFA (Fin 3)) : EpistemicSystemFA (Fin 4) where
+  ge A B := (Fin.last 3 ∈ A ∧ Fin.last 3 ∉ B) ∨
+    ((Fin.last 3 ∈ A ↔ Fin.last 3 ∈ B) ∧ sys.ge (restrict3 A) (restrict3 B))
+  refl _ := Or.inr ⟨Iff.rfl, sys.refl _⟩
+  mono A B hAB := by
+    by_cases hb : Fin.last 3 ∈ B
+    · by_cases ha : Fin.last 3 ∈ A
+      · exact Or.inr ⟨iff_of_true hb ha, sys.mono _ _ fun i hi => hAB hi⟩
+      · exact Or.inl ⟨hb, ha⟩
+    · exact Or.inr ⟨iff_of_false hb (fun h => hb (hAB h)),
+        sys.mono _ _ fun i hi => hAB hi⟩
+  bottom := Or.inl ⟨trivial, fun h => h⟩
+  nonTrivial := by
+    rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
+    · exact h3
+    · exact hiff.mpr trivial
+  total A B := by
+    by_cases ha : Fin.last 3 ∈ A <;> by_cases hb : Fin.last 3 ∈ B
+    · rcases sys.total (restrict3 A) (restrict3 B) with h | h
+      · exact Or.inl (Or.inr ⟨iff_of_true ha hb, h⟩)
+      · exact Or.inr (Or.inr ⟨iff_of_true hb ha, h⟩)
+    · exact Or.inl (Or.inl ⟨ha, hb⟩)
+    · exact Or.inr (Or.inl ⟨hb, ha⟩)
+    · rcases sys.total (restrict3 A) (restrict3 B) with h | h
+      · exact Or.inl (Or.inr ⟨iff_of_false ha hb, h⟩)
+      · exact Or.inr (Or.inr ⟨iff_of_false hb ha, h⟩)
+  trans A B C := by
+    rintro (⟨ha, hnb⟩ | ⟨hab, hge1⟩) (⟨hb, hnc⟩ | ⟨hbc, hge2⟩)
+    · exact absurd hb hnb
+    · exact Or.inl ⟨ha, fun hc => hnb (hbc.mpr hc)⟩
+    · exact Or.inl ⟨hab.mpr hb, hnc⟩
+    · exact Or.inr ⟨hab.trans hbc, sys.trans _ _ _ hge1 hge2⟩
+  additive A B := by
+    by_cases ha : Fin.last 3 ∈ A <;> by_cases hb : Fin.last 3 ∈ B
+    · -- tie on both sides; restriction additivity carries it
+      have hab : Fin.last 3 ∉ A \ B := fun h => h.2 hb
+      have hba : Fin.last 3 ∉ B \ A := fun h => h.2 ha
+      constructor
+      · rintro (⟨-, hnb⟩ | ⟨-, hge⟩)
+        · exact absurd hb hnb
+        · exact Or.inr ⟨iff_of_false hab hba, (sys.additive _ _).mp hge⟩
+      · rintro (⟨h3, -⟩ | ⟨-, hge⟩)
+        · exact absurd h3 hab
+        · exact Or.inr ⟨iff_of_true ha hb, (sys.additive _ _).mpr hge⟩
+    · -- the new world sits in `A \ B`: both sides true by dominance
+      exact iff_of_true (Or.inl ⟨ha, hb⟩) (Or.inl ⟨⟨ha, hb⟩, fun h => hb h.1⟩)
+    · -- the new world sits in `B \ A`: both sides false
+      have hab : Fin.last 3 ∉ A \ B := fun h => ha h.1
+      constructor
+      · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
+        · exact absurd h3 ha
+        · exact absurd (hiff.mpr hb) ha
+      · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
+        · exact absurd h3 hab
+        · exact absurd (hiff.mpr ⟨hb, ha⟩) hab
+    · -- the new world is absent everywhere; restriction additivity again
+      have hab : Fin.last 3 ∉ A \ B := fun h => ha h.1
+      have hba : Fin.last 3 ∉ B \ A := fun h => hb h.1
+      constructor
+      · rintro (⟨h3, -⟩ | ⟨-, hge⟩)
+        · exact absurd h3 ha
+        · exact Or.inr ⟨iff_of_false hab hba, (sys.additive _ _).mp hge⟩
+      · rintro (⟨h3, -⟩ | ⟨-, hge⟩)
+        · exact absurd h3 hab
+        · exact Or.inr ⟨iff_of_false ha hb, (sys.additive _ _).mpr hge⟩
+
+/-- The extension preserves the absence of null atoms. -/
+private lemma extendFA_no_null (sys : EpistemicSystemFA (Fin 3))
+    (hnull : ∀ i : Fin 3, ¬sys.ge ∅ {i}) :
+    ∀ j : Fin 4, ¬(extendFA sys).ge ∅ {j} := by
+  refine Fin.lastCases ?_ ?_
+  · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
+    · exact h3
+    · exact hiff.mpr rfl
+  · intro i
+    rintro (⟨h3, -⟩ | ⟨-, hge⟩)
+    · exact h3
+    · refine hnull i ?_
+      have he : restrict3 {Fin.castSucc i} = {i} := by
+        ext k
+        simp [restrict3, Fin.castSucc_inj, eq_comm]
+      rwa [show restrict3 ∅ = ∅ from rfl, he] at hge
+
+/-- The new world never lies in an embedded finset. -/
+private lemma last_notMem_map (s : Finset (Fin 3)) :
+    Fin.last 3 ∉ s.map Fin.castSuccEmb := by
+  rw [Finset.mem_map]
+  rintro ⟨i, -, hi⟩
+  exact absurd hi (Fin.castSucc_lt_last i).ne
+
+/-- Embedded finsets restrict back to themselves. -/
+private lemma restrict3_coe_map (s : Finset (Fin 3)) :
+    restrict3 ↑(s.map Fin.castSuccEmb) = ↑s := by
+  ext i
+  show Fin.castSuccEmb i ∈ ↑(s.map Fin.castSuccEmb) ↔ _
+  rw [Finset.mem_coe, Finset.mem_map']
+
+/-- Embed a `Fin 3` comparison into `Fin 4` along `Fin.castSucc`. -/
+private def embedComparison (wc : WComparison 3) : WComparison 4 where
+  left := wc.left.map Fin.castSuccEmb
+  right := wc.right.map Fin.castSuccEmb
+  weight := wc.weight
+  disjoint := by
+    rw [Finset.disjoint_map]
+    exact wc.disjoint
+  weight_pos := wc.weight_pos
+
+private lemma comparisonVec_map_last (A B : Finset (Fin 3)) :
+    comparisonVec 4 (A.map Fin.castSuccEmb) (B.map Fin.castSuccEmb) (Fin.last 3) = 0 := by
+  unfold comparisonVec
+  rw [if_neg (last_notMem_map A), if_neg (last_notMem_map B), sub_zero]
+
+private lemma comparisonVec_map_castSucc (A B : Finset (Fin 3)) (i : Fin 3) :
+    comparisonVec 4 (A.map Fin.castSuccEmb) (B.map Fin.castSuccEmb) i.castSucc =
+      comparisonVec 3 A B i := by
+  show ((if Fin.castSuccEmb i ∈ A.map Fin.castSuccEmb then 1 else 0) -
+      (if Fin.castSuccEmb i ∈ B.map Fin.castSuccEmb then 1 else 0) : ℤ) =
+    comparisonVec 3 A B i
+  simp only [Finset.mem_map']
+  rfl
+
+/-- Cancellation transfers back along the lexicographic extension. -/
+private theorem cancellation_extendFA (sys : EpistemicSystemFA (Fin 3))
+    (h : Cancellation 4 (extendFA sys).ge) : Cancellation 3 sys.ge := by
+  intro P hvalid hneutral hstrict
+  refine h (P.map embedComparison) ?_ ?_ ?_
+  · -- validity transfers through the restriction
+    intro wc' hmem
+    obtain ⟨wc, hwcP, rfl⟩ := List.mem_map.mp hmem
+    have hL : (embedComparison wc).left = wc.left.map Fin.castSuccEmb := rfl
+    have hR : (embedComparison wc).right = wc.right.map Fin.castSuccEmb := rfl
+    refine Or.inr ⟨iff_of_false ?_ ?_, ?_⟩
+    · rw [hL]
+      exact fun h3 => last_notMem_map _ (Finset.mem_coe.mp h3)
+    · rw [hR]
+      exact fun h3 => last_notMem_map _ (Finset.mem_coe.mp h3)
+    · rw [hL, hR, restrict3_coe_map, restrict3_coe_map]
+      exact hvalid wc hwcP
+  · -- neutrality: the new coordinate vanishes; the old ones are unchanged
+    refine Fin.lastCases ?_ ?_
+    · simp only [Portfolio.weightedSum, List.map_map]
+      apply List.sum_eq_zero
+      intro x hx
+      obtain ⟨wc, -, rfl⟩ := List.mem_map.mp hx
+      show (embedComparison wc).weight *
+        ((comparisonVec 4 (embedComparison wc).left (embedComparison wc).right
+          (Fin.last 3) : ℤ) : ℚ) = 0
+      rw [show (embedComparison wc).left = wc.left.map Fin.castSuccEmb from rfl,
+        show (embedComparison wc).right = wc.right.map Fin.castSuccEmb from rfl,
+        comparisonVec_map_last]
+      simp
+    · intro i
+      have he : Portfolio.weightedSum (P.map embedComparison) i.castSucc =
+          P.weightedSum i := by
+        simp only [Portfolio.weightedSum, List.map_map]
+        congr 1
+        refine List.map_congr_left fun wc _ => ?_
+        show (embedComparison wc).weight *
+            ((comparisonVec 4 (embedComparison wc).left (embedComparison wc).right
+              i.castSucc : ℤ) : ℚ) =
+          wc.weight * ((comparisonVec 3 wc.left wc.right i : ℤ) : ℚ)
+        rw [show (embedComparison wc).left = wc.left.map Fin.castSuccEmb from rfl,
+          show (embedComparison wc).right = wc.right.map Fin.castSuccEmb from rfl,
+          comparisonVec_map_castSucc,
+          show (embedComparison wc).weight = wc.weight from rfl]
+      rw [he]
+      exact hneutral i
+  · -- strictness transfers
+    obtain ⟨wc, hwcP, hstr⟩ := hstrict
+    refine ⟨embedComparison wc, List.mem_map.mpr ⟨wc, hwcP, rfl⟩, fun hge => hstr ?_⟩
+    have hL : (embedComparison wc).left = wc.left.map Fin.castSuccEmb := rfl
+    have hR : (embedComparison wc).right = wc.right.map Fin.castSuccEmb := rfl
+    rcases hge with ⟨h3, -⟩ | ⟨-, hge⟩
+    · rw [hR] at h3
+      exact absurd (Finset.mem_coe.mp h3) (last_notMem_map _)
+    · rwa [hL, hR, restrict3_coe_map, restrict3_coe_map] at hge
+
+/-- Not every atom of a `Fin 3` FA system can be null. -/
+private theorem not_all_null_fin3 (sys : EpistemicSystemFA (Fin 3))
+    (h0 : sys.ge ∅ {(0 : Fin 3)}) (h1 : sys.ge ∅ {(1 : Fin 3)})
+    (h2 : sys.ge ∅ {(2 : Fin 3)}) : False := by
+  have h01 : sys.ge ∅ ({0, 1} : Set (Fin 3)) := by
+    have : sys.ge {1} ({0, 1} : Set (Fin 3)) := by
+      rw [sys.additive {1} {0, 1}]
+      rw [show ({1} : Set (Fin 3)) \ {0, 1} = ∅ from by ext x; fin_cases x <;> simp_all]
+      rw [show ({0, 1} : Set (Fin 3)) \ {1} = {0} from by ext x; fin_cases x <;> simp_all]
+      exact h0
+    exact sys.trans _ _ _ h1 this
+  exact sys.nonTrivial (sys.trans _ _ _ h2
+    ((sys.additive {2} Set.univ).mpr
+      (by rw [show ({2} : Set (Fin 3)) \ Set.univ = ∅ from by ext x; simp,
+              show (Set.univ : Set (Fin 3)) \ {2} = {0, 1} from by ext x; fin_cases x <;> simp_all]
+          exact h01)))
+
+/-- **Cancellation for Fin 3**, structurally: null atoms reduce to `Fin 2`
+    representability; the no-null case extends lexicographically into `Fin 4`
+    and pulls back through `no_null_cancellation`. -/
+theorem fa_cancellation_fin3 (sys : EpistemicSystemFA (Fin 3)) :
+    Cancellation 3 sys.ge := by
+  by_cases h0 : sys.ge ∅ {(0 : Fin 3)}
+  · have hnn : ∃ i : Fin 2, ¬sys.ge ∅ {Fin.succ i} := by
+      by_contra hall
+      push_neg at hall
+      exact not_all_null_fin3 sys h0 (hall 0) (hall 1)
+    obtain ⟨m, hm⟩ := null_elem_reduce sys h0 hnn (fun sys' => theorem8a_fin2 sys')
+    exact representable_implies_cancellation sys m hm
+  · by_cases h1 : sys.ge ∅ {(1 : Fin 3)}
+    · obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 1) sys
+        (null_elem_reduce (transportFA (Equiv.swap 0 1) sys)
+          ((perm_null_convert _ _ 0 1 (by decide)).mpr h1)
+          ⟨0, fun h => h0 ((perm_null_convert _ _ 1 0 (by decide)).mp h)⟩
+          (fun sys' => theorem8a_fin2 sys'))
+      exact representable_implies_cancellation sys m hm
+    · by_cases h2 : sys.ge ∅ {(2 : Fin 3)}
+      · obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 2) sys
+          (null_elem_reduce (transportFA (Equiv.swap 0 2) sys)
+            ((perm_null_convert _ _ 0 2 (by decide)).mpr h2)
+            ⟨0, fun h => h1 ((perm_null_convert _ _ 1 1 (by decide)).mp h)⟩
+            (fun sys' => theorem8a_fin2 sys'))
+        exact representable_implies_cancellation sys m hm
+      · have hnull : ∀ i : Fin 3, ¬sys.ge ∅ {i} := fun i => by fin_cases i <;> assumption
+        exact cancellation_extendFA sys
+          (no_null_cancellation (extendFA sys) (extendFA_no_null sys hnull))
+
+/-- **Theorem 8a for Fin 3**: every FA system on three elements is representable —
+    now *derived from* Scott cancellation, replacing the former measure-by-measure
+    case analysis. -/
+theorem theorem8a_fin3 (sys : EpistemicSystemFA (Fin 3)) :
+    ∃ m : FinAddMeasure (Fin 3), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
+  cancellation_implies_representable sys (fa_cancellation_fin3 sys)
+
+/-- Null element `0` on `Fin 4`: cancellation via null reduction to `Fin 3`. -/
+private theorem fa_cancellation_fin4_null0' (sys : EpistemicSystemFA (Fin 4))
+    (h0 : sys.ge ∅ {(0 : Fin 4)})
+    (hnn : ∃ i : Fin 3, ¬sys.ge ∅ {Fin.succ i}) :
+    Cancellation 4 sys.ge := by
+  obtain ⟨m, hm⟩ := null_elem_reduce sys h0 hnn (fun sys' => theorem8a_fin3 sys')
+  exact representable_implies_cancellation sys m hm
+
 /-- **Theorem 8a (Fin 4), structural**: every FA system on `Fin 4` satisfies
     cancellation. Null cases reduce to `Fin 3` (existing `null_elem_reduce` machinery);
     the no-null case is the merge reduction `no_null_cancellation`. Replaces the
@@ -780,7 +1035,7 @@ theorem no_null_cancellation (sys : EpistemicSystemFA (Fin 4))
 theorem fa_cancellation_fin4 (sys : EpistemicSystemFA (Fin 4)) :
     Cancellation 4 sys.ge := by
   by_cases h0 : sys.ge ∅ {(0 : Fin 4)}
-  · exact fa_cancellation_fin4_null0 sys h0 (by
+  · exact fa_cancellation_fin4_null0' sys h0 (by
       by_contra hall; push_neg at hall
       exact not_all_null_fin4 sys h0 (hall 0) (hall 1) (hall 2))
   · by_cases h1 : sys.ge ∅ {(1 : Fin 4)}
