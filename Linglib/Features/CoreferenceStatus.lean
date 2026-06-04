@@ -24,9 +24,8 @@ inductive CoreferenceStatus where
 
 /-- The binding-theoretic class of a nominal expression, shared across the
     syntactic frameworks (HPSG, Dependency Grammar, Minimalism) so their
-    `classifyNominal` functions return the same type. The per-language
-    realization (which forms are which) lives in a Fragment helper (e.g.
-    `English.NominalClassification`).
+    binding-class sources return the same type. The canonical source reads the
+    class off a word's own UD morphology (`Binding.bindingClassOf`).
 
     The *binding-distribution* axis (anaphor/pronominal/r-expression, with the
     anaphor class split into reflexive/reciprocal) — orthogonal to a nominal's
@@ -44,9 +43,9 @@ inductive BindingClass where
   deriving Repr, BEq, DecidableEq
 
 /-- A **binding-class source**: *where* an expression's `BindingClass` comes from. Theories
-source it differently — a lexical declaration (`Pronoun.bindingClass`), a form-string
-classifier (`English.NominalClassification.classifyNominal`), a structural sort (HPSG), or the
-syntactic context (minimal-pronoun / DM). The framework-neutral binding engine is polymorphic
+source it differently — a word's own UD morphology (`Binding.bindingClassOf`, the canonical
+language-neutral source), a lexical declaration (`Pronoun.bindingClass`), a structural sort
+(HPSG), or the syntactic context (minimal-pronoun / DM). The framework-neutral binding engine is polymorphic
 over the source: it takes a `BindingSource` and stays agnostic to where the class came from. -/
 abbrev BindingSource (α : Type _) := α → Option BindingClass
 

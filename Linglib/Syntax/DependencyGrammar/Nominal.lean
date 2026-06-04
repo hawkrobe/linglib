@@ -1,37 +1,29 @@
 import Linglib.Core.Word
 import Linglib.Features.CoreferenceStatus
-import Linglib.Fragments.English.NominalClassification
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
-# Shared nominal classification for DG coreference theories
+# Shared English test words for DG coreference theories
 
-Re-exports lexicon-driven nominal classification and φ-feature agreement
-from `Fragments.English.NominalClassification` under the
-`DepGrammar.Nominal` namespace, plus a small bundle of English test words
-consumed by paper-anchored Studies (`Studies/Hudson1990.lean`).
-
-The Fragments → Theory edge here is a known layer-discipline shortcut:
-the binding-substrate API is lexicon-dependent and only English has a
-lexicon implementation so far. A future refactor should hoist the
-classification API to `Features/Binding` (theory-neutral) with per-language
-Fragments providing instances; the test-word lexemes should move to
-`Studies/Hudson1990.lean`.
+A small bundle of English test words consumed by paper-anchored Studies
+(`Studies/Hudson1990.lean`), plus a `BindingClass` re-export. Binding-class
+classification is no longer re-exported here: a word's Principle A/B/C class is read
+off its own UD morphology by the framework- and language-neutral `Binding.bindingClassOf`,
+so no per-language lexicon classifier is needed.
 
 ## Main declarations
 
-* `BindingClass`, `isNominalCat`, `classifyNominal` — re-exported. φ-agreement
-  is `Word.Agree` (Core), not re-exported here.
+* `BindingClass` — re-exported. φ-agreement is `Word.Agree` (Core).
 * `john`, `mary`, `they`, `sees`, `see`, `himself`, `herself`,
   `themselves`, `him`, `her`, `them`, `eachOther` — English test words.
+  Slated for relocation to `Studies/Hudson1990.lean` (auditor finding 2026-06-01).
 -/
 
 namespace DepGrammar.Nominal
 
 export Features (BindingClass)
-export English.NominalClassification (isNominalCat classifyNominal)
 
 /-! ### Shared English test words
 

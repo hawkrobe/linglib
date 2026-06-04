@@ -74,6 +74,21 @@ def SimpleClause.at? (c : SimpleClause) : Pos → Option Word
 def isNominalCat (cat : UD.UPOS) : Bool :=
   cat == .PROPN || cat == .NOUN || cat == .PRON
 
+/-- The canonical, language-neutral binding-class source: a word's Principle A/B/C class read off
+    its own UD morphology (`Reflex`, `PronType`) and category — *no* lexicon and *no* surface-form
+    lookup. Reflexive morphology → anaphor; reciprocal `PronType` → reciprocal anaphor; any other
+    pronoun → pronominal; a proper/common-noun category → R-expression; a non-nominal → `none`.
+    This is the framework- *and* language-neutral default `Features.BindingSource Word`, replacing
+    per-language form-string classifiers ([chomsky-1981]'s A/B/C classes as morphology). -/
+def bindingClassOf : Features.BindingSource Word := fun w =>
+  if w.features.reflex then some .reflexive
+  else match w.features.pronType with
+    | some .Rcp => some .reciprocal
+    | _ =>
+      if w.cat == .PRON then some .pronoun
+      else if isNominalCat w.cat then some .rExpression
+      else none
+
 /-- Parse a surface word list into a simple clause: `[subj, verb, obj]` or
     `[subj, verb]`, requiring nominal subject/object and a verb. -/
 def parseSimpleClause (ws : List Word) : Option SimpleClause :=

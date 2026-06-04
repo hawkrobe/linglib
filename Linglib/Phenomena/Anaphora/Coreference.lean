@@ -21,12 +21,12 @@ namespace Phenomena.Anaphora.Coreference
 
 private def john : Word := ⟨"John", .PROPN, { number := some .sg, person := some .third, gender := some .Masc }⟩
 private def sees : Word := ⟨"sees", .VERB, { valence := some .transitive, number := some .sg, person := some .third }⟩
-private def himself : Word := ⟨"himself", .PRON, { person := some .third, number := some .sg, gender := some .Masc }⟩
+private def himself : Word := ⟨"himself", .PRON, { person := some .third, number := some .sg, gender := some .Masc, reflex := true }⟩
 private def mary : Word := ⟨"Mary", .PROPN, { number := some .sg, person := some .third, gender := some .Fem }⟩
-private def herself : Word := ⟨"herself", .PRON, { person := some .third, number := some .sg, gender := some .Fem }⟩
+private def herself : Word := ⟨"herself", .PRON, { person := some .third, number := some .sg, gender := some .Fem, reflex := true }⟩
 private def they : Word := ⟨"they", .PRON, { person := some .third, number := some .pl, case_ := some .nom }⟩
 private def see : Word := ⟨"see", .VERB, { valence := some .transitive, number := some .pl }⟩
-private def themselves : Word := ⟨"themselves", .PRON, { person := some .third, number := some .pl }⟩
+private def themselves : Word := ⟨"themselves", .PRON, { person := some .third, number := some .pl, reflex := true }⟩
 private def him : Word := ⟨"him", .PRON, { person := some .third, number := some .sg, case_ := some .acc, gender := some .Masc }⟩
 private def her : Word := ⟨"her", .PRON, { person := some .third, number := some .sg, case_ := some .acc, gender := some .Fem }⟩
 private def he : Word := ⟨"he", .PRON, { person := some .third, number := some .sg, case_ := some .nom, gender := some .Masc }⟩
