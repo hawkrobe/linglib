@@ -1,6 +1,6 @@
 import Linglib.Core.Scales.EpistemicScale.Cancellation
-import Linglib.Core.Scales.EpistemicScale.Caratheodory
-import Linglib.Core.Scales.EpistemicScale.SignVectors
+import Linglib.Core.Order.Caratheodory
+import Linglib.Core.Order.SignVectors
 import Mathlib.Data.List.Perm.Basic
 import Mathlib.Tactic.Tauto
 import Mathlib.Tactic.FinCases
