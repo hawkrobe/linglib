@@ -113,7 +113,11 @@ open Features (SurfaceGender)
 def toWord (p : Pronoun) : Word :=
   { form := p.form, cat := .PRON,
     features := { person := p.person, number := p.number, case_ := p.case_,
-                  gender := p.gender.bind (·.toUDGender) } }
+                  gender := p.gender.bind (·.toUDGender),
+                  -- carry the binding-relevant morphology so a projected pro-form's class is
+                  -- read off its own features, not recovered by surface-form lookup
+                  reflex := p.bindingClass == some .reflexive,
+                  pronType := if p.bindingClass == some .reciprocal then some .Rcp else none } }
 
 /-! ### Derived person category and well-formedness ([cysouw-2009]) -/
 

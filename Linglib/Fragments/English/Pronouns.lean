@@ -2,6 +2,7 @@ import Linglib.Core.Word
 import Linglib.Features.Case
 import Linglib.Features.Gender
 import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Syntax.Pronoun.Demonstrative
 
 /-!
@@ -14,9 +15,9 @@ wh-pronouns are bare `Pronoun` shells (φ-features + surface form, no referentia
 denotation of their own).
 
 Each entry declares its `Pronoun.bindingClass`, so a form's binding-theoretic kind
-is the entry's own declaration; the lexicon lists below group them by class.
-`English.NominalClassification.classifyNominal` (a `Features.BindingSource Word`)
-reads that declaration.
+is the entry's own declaration; the lexicon lists below group them by class. `Pronoun.toWord`
+threads this onto the surface word's UD morphology (`Reflex`/`PronType`), where the
+framework-neutral binding engine reads it back via `Binding.bindingClassOf`.
 
 ## Gender ([konnelly-cowper-2020])
 
@@ -120,6 +121,9 @@ def reciprocals : List Pronoun := [eachOther, oneAnother]
 
 /-- Wh-pronouns and wh-adverbs (Principle B pronominals); each declares `bindingClass := .pronoun`. -/
 def whWords : List Pronoun := [who, whom, what, which, where_, when_, why, how]
+
+/-- Every reflexive entry is a Principle-A anaphor by its declaration. -/
+theorem reflexives_are_anaphors : ∀ p ∈ reflexives, Bound.IsAnaphor p := by decide
 
 end English.Pronouns
 

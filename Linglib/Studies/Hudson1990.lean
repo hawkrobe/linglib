@@ -27,7 +27,7 @@ open Phenomena.Anaphora.Coreference
     `CommandRelation` instance (in scope via `open DepGrammar.Coreference`) and
     English's binding-class classifier. `Bool`-valued for `capturesPhenomenonData`. -/
 private def grammaticalForCoreference (ws : List Word) : Bool :=
-  decide (Binding.grammaticalForCoreference classifyNominal ws)
+  decide (Binding.grammaticalForCoreference Binding.bindingClassOf ws)
 
 -- ============================================================================
 -- Capturing the Phenomena Data

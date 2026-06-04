@@ -650,7 +650,6 @@ import Linglib.Fragments.English.Numerals
 import Linglib.Fragments.English.Plurals
 import Linglib.Fragments.English.Reference
 import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.NominalClassification
 import Linglib.Fragments.English.PropositionalLexemes
 import Linglib.Fragments.English.QuestionParticles
 import Linglib.Fragments.English.Scales

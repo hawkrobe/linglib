@@ -135,6 +135,12 @@ structure Features where
   vform : Option VForm := none
   tense : Option Tense := none
   countable : Option MassCount := none  -- for count vs mass nouns
+  /-- Pronoun type (UD `PronType`: personal, reciprocal, interrogative, …). Carried
+      so a pro-form's binding class is read off its own morphology, not its surface form. -/
+  pronType : Option UD.PronType := none
+  /-- Reflexive morphology (UD `Reflex=Yes`). The one binding-relevant feature `PronType`
+      does not encode; distinguishes a reflexive anaphor from a plain personal pronoun. -/
+  reflex : Bool := false
   deriving Repr, DecidableEq
 
 /-- A word: form + category + features. -/

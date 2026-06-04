@@ -2,7 +2,7 @@ import Linglib.Typology.ArgumentStructure
 import Linglib.Studies.Siloni2012
 import Linglib.Data.WALS.Features.F106A
 import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.NominalClassification
+import Linglib.Syntax.Binding.Basic
 import Linglib.Fragments.Swahili.Reciprocals
 
 /-!
@@ -465,8 +465,8 @@ open English.Pronouns in
 theorem english_profile_grounded :
     rp_english.primaryStrategy = .bipartiteNP ∧
     rp_english.valency = .bivalent ∧
-    English.NominalClassification.classifyNominal eachOther.toWord = some .reciprocal ∧
-    English.NominalClassification.classifyNominal eachOther.toWord ≠ some .reflexive := by
+    Binding.bindingClassOf eachOther.toWord = some .reciprocal ∧
+    Binding.bindingClassOf eachOther.toWord ≠ some .reflexive := by
   refine ⟨rfl, rfl, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
