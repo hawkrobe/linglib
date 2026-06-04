@@ -19,10 +19,6 @@ open, mΔ is unbounded → atelic (activity).
 
 This module derives `VendlerClass` from `Boundedness`, connecting to the existing
 `LicensingPipeline` infrastructure in `Core/Scales/Scale.lean`.
-
-- Kennedy, C. & Levin, B. (2007). Measure of change: The adjectival core of
-  degree achievements. In L. McNally & C. Kennedy (eds.), *Adjectives and Adverbs*,
-  156–182. OUP.
 -/
 
 namespace Features.DegreeAchievement
@@ -49,8 +45,8 @@ structure DegreeAchievementScale where
 instance : Inhabited DegreeAchievementScale where
   default := { scaleBoundedness := .open_, dimension := "" }
 
-/-- Derive default telicity from scale boundedness ([kennedy-levin-2008] Thm 1).
-    Scales with a maximum → telic; scales without → atelic.
+/-- Derive default telicity from scale boundedness — the central claim of
+    [kennedy-levin-2008]. Scales with a maximum → telic; scales without → atelic.
 
     The mapping follows `Boundedness.hasMax`:
     - `.closed` (has max) → `.telic`
