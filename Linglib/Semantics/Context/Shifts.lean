@@ -1,4 +1,4 @@
-import Linglib.Core.Context.Tower
+import Linglib.Semantics.Context.Tower
 
 /-!
 # Standard Context Shifts
@@ -13,9 +13,9 @@ These are the building blocks for tower-based composition. An attitude verb push
 `perspectiveShift`, and Kaplan-compliant English attitude verbs push `identityShift`.
 -/
 
-namespace Core.Context
+namespace Semantics.Context
 
-open Core.Context (KContext)
+open Semantics.Context (KContext)
 
 section KContextShifts
 
@@ -137,4 +137,4 @@ theorem push_identityShift_innermost (t : ContextTower (KContext W E P T)) :
 
 end KContextShifts
 
-end Core.Context
+end Semantics.Context

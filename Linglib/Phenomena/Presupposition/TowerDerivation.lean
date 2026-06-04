@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Presupposition.Basic
 import Linglib.Semantics.Presupposition.LocalContext
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
 
 /-!
 # Presupposition: ContextTower Bridge
@@ -14,9 +14,9 @@ computation.
 ## Derivation Chain
 
 ```
-Core.Context.Tower (ContextTower, push, depth)
+Semantics.Context.Tower (ContextTower, push, depth)
     ↓
-Core.Context.Shifts (attitudeShift)
+Semantics.Context.Shifts (attitudeShift)
     ↓
 Semantics.Presupposition.LocalContext (LocalCtx, depth, filtering)
     ↓
@@ -39,7 +39,7 @@ Phenomena.Presupposition.Basic (king example, factive verbs, projection patterns
 
 namespace TowerDerivation
 
-open Core.Context
+open Semantics.Context
 open Semantics.Presupposition.LocalContext
 open Phenomena.Presupposition
 

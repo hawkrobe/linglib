@@ -2,7 +2,7 @@ import Linglib.Semantics.Iconic.Basic
 import Linglib.Semantics.Reference.Monsters
 import Linglib.Phenomena.Iconicity.Basic
 import Linglib.Fragments.ASL.Classifiers
-import Linglib.Core.Context.Shifts
+import Linglib.Semantics.Context.Shifts
 
 /-!
 # Schlenker, Lamberton & Lamberton (2026)
@@ -47,7 +47,7 @@ namespace SchlenkerEtAl2026
 
 open Semantics.Iconic
 open Semantics.Reference.Monsters (IsTowerMonster)
-open Core.Context
+open Semantics.Context
 open ASL (SigningSpace)
 
 -- ════════════════════════════════════════════════════════════════

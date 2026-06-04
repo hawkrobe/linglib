@@ -3,7 +3,7 @@ import Linglib.Features.Evidentiality
 import Linglib.Features.Mirativity
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Semantics.Mood.Basic
-import Linglib.Core.Context.Shifts
+import Linglib.Semantics.Context.Shifts
 
 /-!
 # Tense and Evidence
@@ -292,13 +292,13 @@ variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
     In the tower framework, a hearsay report pushes an evidential shift
     that sets A to the time of the report. -/
 def evidentialTimeShift (acquisitionTime : T) :
-    Core.Context.ContextShift (Core.Context.KContext W E P T) where
+    Semantics.Context.ContextShift (Semantics.Context.KContext W E P T) where
   apply := λ c => { c with time := acquisitionTime }
   label := .evidential
 
 /-- Pushing an evidential shift sets the time to the acquisition time. -/
 @[simp] theorem evidentialTimeShift_sets_time
-    (acquisitionTime : T) (c : Core.Context.KContext W E P T) :
+    (acquisitionTime : T) (c : Semantics.Context.KContext W E P T) :
     ((evidentialTimeShift (W := W) (E := E) (P := P) acquisitionTime).apply c).time =
       acquisitionTime := rfl
 
@@ -309,7 +309,7 @@ def evidentialTimeShift (acquisitionTime : T) :
     This bridges Cumming's frame-level constraint `T ≤ A` to the tower's
     depth-indexed context. -/
 def downstreamAtDepth [Preorder T]
-    (tower : Core.Context.ContextTower (Core.Context.KContext W E P T))
+    (tower : Semantics.Context.ContextTower (Semantics.Context.KContext W E P T))
     (eventTime : T) (depth : ℕ) : Prop :=
   eventTime ≤ (tower.contextAt depth).time
 
@@ -317,18 +317,18 @@ def downstreamAtDepth [Preorder T]
     `downstreamAtDepth` at depth 0 is equivalent to the frame-level
     `downstreamEvidence` constraint. -/
 theorem downstreamAtDepth_root_eq [Preorder T]
-    (c : Core.Context.KContext W E P T)
+    (c : Semantics.Context.KContext W E P T)
     (eventTime : T) :
-    downstreamAtDepth (Core.Context.ContextTower.root c) eventTime 0 ↔
+    downstreamAtDepth (Semantics.Context.ContextTower.root c) eventTime 0 ↔
       eventTime ≤ c.time := by
-  simp only [downstreamAtDepth, Core.Context.ContextTower.root_contextAt]
+  simp only [downstreamAtDepth, Semantics.Context.ContextTower.root_contextAt]
 
 /-- The downstream constraint is preserved by nondecreasing shifts:
     if T ≤ A holds at depth k, and the shift at depth k doesn't decrease
     the time coordinate, then T ≤ A still holds after the shift. -/
 theorem downstream_preserved_by_nondecreasing_shift [Preorder T]
-    (tower : Core.Context.ContextTower (Core.Context.KContext W E P T))
-    (σ : Core.Context.ContextShift (Core.Context.KContext W E P T))
+    (tower : Semantics.Context.ContextTower (Semantics.Context.KContext W E P T))
+    (σ : Semantics.Context.ContextShift (Semantics.Context.KContext W E P T))
     (eventTime : T) (k : ℕ)
     (h_downstream : downstreamAtDepth tower eventTime k)
     (h_nondecreasing : (tower.contextAt k).time ≤ (σ.apply (tower.contextAt k)).time) :

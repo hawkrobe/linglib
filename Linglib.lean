@@ -90,6 +90,7 @@ import Linglib.Core.Order.PreferenceStructure.EffectivePreference
 import Linglib.Core.Order.PreferenceStructure.MaxInducedOrdering
 import Linglib.Core.Order.ComparativeProbability.Defs
 import Linglib.Core.Order.ComparativeProbability.Patterns
+import Linglib.Core.Order.FourierMotzkin
 import Linglib.Core.Logic.RankingFunction
 import Linglib.Core.Logic.SystemZ
 import Linglib.Features.Register
@@ -217,7 +218,7 @@ import Linglib.Pragmatics.GameTheory
 import Linglib.Pragmatics.SignalingGames
 import Linglib.Features.Evidentiality
 import Linglib.Features.Mirativity
-import Linglib.Core.Epistemicity
+import Linglib.Semantics.Epistemicity
 import Linglib.Features.Logophoricity
 import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Time.Interval.Basic
@@ -231,7 +232,7 @@ import Linglib.Core.Time.Domain
 import Linglib.Core.Time.RelationOrigin
 import Linglib.Core.Time.System
 import Linglib.Core.Time.Reichenbach
-import Linglib.Core.Time.Tense
+import Linglib.Semantics.Tense.GramTense
 import Linglib.Typology.WordOrder
 import Linglib.Typology.Adposition
 import Linglib.Typology.ArgumentStructure
@@ -253,10 +254,10 @@ import Linglib.Typology.Reference
 import Linglib.Typology.TenseAspect
 import Linglib.Typology.Color
 import Linglib.Typology.BodyParts
-import Linglib.Core.Context.Basic
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
-import Linglib.Core.Context.Rich
+import Linglib.Semantics.Context.Basic
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
+import Linglib.Semantics.Context.Rich
 import Linglib.Features.InformationStructure
 import Linglib.Features.Givenness
 import Linglib.Features.Topic
@@ -1761,6 +1762,7 @@ import Linglib.Studies.FrankGoodman2012PMF
 import Linglib.Studies.HawkinsGweonGoodman2021
 import Linglib.Studies.Ney2026
 import Linglib.Studies.SikosEtAl2021
+import Linglib.Studies.Pearson2015
 import Linglib.Studies.Percus2000
 import Linglib.Studies.QingFranke2015
 import Linglib.Studies.KursatDegen2021

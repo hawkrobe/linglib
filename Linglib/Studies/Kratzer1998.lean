@@ -2,7 +2,7 @@ import Linglib.Semantics.Tense.SOT.Decomposition
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.German.Tense
 import Linglib.Data.Examples.Schema
-import Linglib.Core.Time.Tense
+import Linglib.Semantics.Tense.GramTense
 
 /-!
 # [kratzer-1998]: More Structural Analogies between Pronouns and Tenses
@@ -53,7 +53,7 @@ judgment.
 namespace Kratzer1998
 
 open Semantics.Tense.SOT.Decomposition
-open Core.Time.Tense
+open Semantics.Tense
 open Data.Examples (LinguisticExample)
 
 -- BEGIN GENERATED EXAMPLES
@@ -518,7 +518,7 @@ theorem german_perfekt_chain :
     theorem just binds them locally for cross-reference. -/
 theorem zero_tense_chain :
     (kratzerZeroTense 1).constraint = GramTense.present ∧
-    Core.Time.Tense.Overtness.fromBinding (kratzerZeroTense 1).mode true = .zero :=
+    Semantics.Tense.Overtness.fromBinding (kratzerZeroTense 1).mode true = .zero :=
   ⟨zero_tense_is_present 1, zero_tense_overtness 1⟩
 
 end KratzerChain

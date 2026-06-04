@@ -1,5 +1,5 @@
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
 
 /-!
 # Person Features as Presuppositions
@@ -33,7 +33,7 @@ the referent is the agent of an embedded context but NOT the actual speaker.
 
 namespace Semantics.Reference.PersonFeatures
 
-open Core.Context
+open Semantics.Context
 
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
 

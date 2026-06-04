@@ -1,4 +1,4 @@
-import Linglib.Core.Context.Basic
+import Linglib.Semantics.Context.Basic
 import Linglib.Core.Logic.Intensional.Rigidity
 
 /-!
@@ -30,7 +30,7 @@ as a reader parameter — `ContextTower C →...` is the enriched meaning type.
 
 -/
 
-namespace Core.Context
+namespace Semantics.Context
 
 -- ════════════════════════════════════════════════════════════════
 -- § Shift Labels
@@ -249,4 +249,4 @@ theorem root_origin_eq_local (ap₁ ap₂ : AccessPattern C R)
 
 end AccessPattern
 
-end Core.Context
+end Semantics.Context

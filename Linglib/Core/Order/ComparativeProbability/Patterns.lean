@@ -6,9 +6,14 @@ import Linglib.Core.Order.ComparativeProbability.Defs
 The intuitively valid (`V1`–`V13`) and invalid (`I1`–`I3`) inference patterns for
 comparative epistemic modals ([holliday-icard-2013], Figure 1; [yalcin-2010]),
 stated for an abstract likelihood relation `r` on a Boolean algebra and proved
-**once** at the weakest axiom hypotheses. Concrete models (measures, world-ordering
-lifts) discharge each pattern by supplying the relevant `ComparativeProbability.*`
-instances, so no per-model reproof is needed.
+**once** at the weakest axiom hypotheses. Models whose relations carry the
+`ComparativeProbability.*` mixins unconditionally (e.g. `FinAddMeasure.inducedGe`)
+discharge each pattern by instance resolution. The world-ordering lifts
+(`Scales/EpistemicScale/Entailments.lean`) instead validate most patterns for
+*arbitrary* world relations — strictly weaker hypotheses than the mixin route,
+which would demand reflexivity, transitivity, and (for the m-lift) finiteness —
+so their `V2`–`V7` proofs are deliberately bespoke; they consume this layer
+exactly where its hypotheses are genuinely required (`V11`/`V12`).
 
 `I1`–`I3` are stated but not proved here: they are *invalid* for additive models
 (refuted by measure counterexamples) yet *valid* for the l-lifting, so their status

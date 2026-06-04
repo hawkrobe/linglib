@@ -40,7 +40,7 @@ constructors). See `Tense/DeRe.lean` docstring for what's deferred
 
 ## Core Mechanisms
 
-1. **Tense as pronoun**: `TensePronoun` (in `Core.Time.Tense`) with
+1. **Tense as pronoun**: `TensePronoun` (in `Semantics.Tense`) with
    variable index, constraint, and binding mode.
 2. **Upper Limit Constraint (ULC)**: stated by [abusch-1997] §7
    ("the now of an epistemic alternative is an upper limit for the
@@ -58,7 +58,7 @@ constructors). See `Tense/DeRe.lean` docstring for what's deferred
    acquaintance-relation machinery (Lewis 1979 / Cresswell-von Stechow
    1982) is not formalized here.
 4. **Eval-time shift via attitude embedding**: the substrate primitives
-   are `Core.Time.Tense.evalTime_shifts_under_embedding` and
+   are `Semantics.Tense.evalTime_shifts_under_embedding` and
    `updateTemporal`. Abusch's "relation transmission" (feature passing
    of relation variables PAST/PRES across embedding) is *not* what this
    file currently captures — we only model the value-level eval-time
@@ -91,7 +91,7 @@ constructors). See `Tense/DeRe.lean` docstring for what's deferred
 
 namespace Abusch1997
 
-open Core.Time.Tense
+open Semantics.Tense
 open Core.Time.Reichenbach
 open Core.Time
 open Semantics.Tense

@@ -82,7 +82,7 @@ intensional precomp infrastructure
 namespace HeimComments1994
 
 open Core (Intension WorldTimeIndex)
-open Core.Context (KContext)
+open Semantics.Context (KContext)
 open Semantics.Tense.DeRe (TemporalDeReReading)
 
 
@@ -103,7 +103,7 @@ abbrev TimeConcept (W T : Type*) := Intension (WorldTimeIndex W T) T
 -- ════════════════════════════════════════════════════════════════
 
 /-- **Substrate-level pullback** of a Heim time-concept along the
-    forgetful projection `Core.Context.KContext.toSituation`. This IS
+    forgetful projection `Semantics.Context.KContext.toSituation`. This IS
     the substrate's intensional pre-composition operator
     `Intension.precomp` instantiated at `g := KContext.toSituation` —
     no new content; the pullback's structural properties transport
