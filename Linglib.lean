@@ -1761,6 +1761,7 @@ import Linglib.Studies.FrankGoodman2012PMF
 import Linglib.Studies.HawkinsGweonGoodman2021
 import Linglib.Studies.Ney2026
 import Linglib.Studies.SikosEtAl2021
+import Linglib.Studies.Pearson2015
 import Linglib.Studies.Percus2000
 import Linglib.Studies.QingFranke2015
 import Linglib.Studies.KursatDegen2021
