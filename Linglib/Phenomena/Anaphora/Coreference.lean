@@ -19,18 +19,18 @@ open Paradigms.AcceptabilityJudgment
 
 namespace Phenomena.Anaphora.Coreference
 
-private def john : Word := ⟨"John", .PROPN, { number := some .sg, person := some .third, gender := some .Masc }⟩
-private def sees : Word := ⟨"sees", .VERB, { valence := some .transitive, number := some .sg, person := some .third }⟩
-private def himself : Word := ⟨"himself", .PRON, { person := some .third, number := some .sg, gender := some .Masc, reflex := true }⟩
-private def mary : Word := ⟨"Mary", .PROPN, { number := some .sg, person := some .third, gender := some .Fem }⟩
-private def herself : Word := ⟨"herself", .PRON, { person := some .third, number := some .sg, gender := some .Fem, reflex := true }⟩
-private def they : Word := ⟨"they", .PRON, { person := some .third, number := some .pl, case_ := some .nom }⟩
-private def see : Word := ⟨"see", .VERB, { valence := some .transitive, number := some .pl }⟩
-private def themselves : Word := ⟨"themselves", .PRON, { person := some .third, number := some .pl, reflex := true }⟩
-private def him : Word := ⟨"him", .PRON, { person := some .third, number := some .sg, case_ := some .acc, gender := some .Masc }⟩
-private def her : Word := ⟨"her", .PRON, { person := some .third, number := some .sg, case_ := some .acc, gender := some .Fem }⟩
-private def he : Word := ⟨"he", .PRON, { person := some .third, number := some .sg, case_ := some .nom, gender := some .Masc }⟩
-private def them : Word := ⟨"them", .PRON, { person := some .third, number := some .pl, case_ := some .acc }⟩
+private def john : Word := { form :="John", cat := .PROPN, features := { number := some .sg, person := some .third, gender := some .Masc }}
+private def sees : Word := { form :="sees", cat := .VERB, valence := some .transitive, features := { number := some .sg, person := some .third }}
+private def himself : Word := { form :="himself", cat := .PRON, features := { person := some .third, number := some .sg, gender := some .Masc, reflex := true }}
+private def mary : Word := { form :="Mary", cat := .PROPN, features := { number := some .sg, person := some .third, gender := some .Fem }}
+private def herself : Word := { form :="herself", cat := .PRON, features := { person := some .third, number := some .sg, gender := some .Fem, reflex := true }}
+private def they : Word := { form :="they", cat := .PRON, features := { person := some .third, number := some .pl, case_ := some .nom }}
+private def see : Word := { form :="see", cat := .VERB, valence := some .transitive, features := { number := some .pl }}
+private def themselves : Word := { form :="themselves", cat := .PRON, features := { person := some .third, number := some .pl, reflex := true }}
+private def him : Word := { form :="him", cat := .PRON, features := { person := some .third, number := some .sg, case_ := some .acc, gender := some .Masc }}
+private def her : Word := { form :="her", cat := .PRON, features := { person := some .third, number := some .sg, case_ := some .acc, gender := some .Fem }}
+private def he : Word := { form :="he", cat := .PRON, features := { person := some .third, number := some .sg, case_ := some .nom, gender := some .Masc }}
+private def them : Word := { form :="them", cat := .PRON, features := { person := some .third, number := some .pl, case_ := some .acc }}
 
 /-- Reflexives require local c-commanding antecedent. -/
 def reflexiveCoreferenceData : PhenomenonData := {
@@ -121,11 +121,11 @@ def complementaryDistributionData : PhenomenonData := {
 -- Reciprocal Coreference Data
 -- ============================================================================
 
-private def sam : Word := ⟨"Sam", .PROPN, { number := some .sg, person := some .third }⟩
-private def pat : Word := ⟨"Pat", .PROPN, { number := some .sg, person := some .third }⟩
-private def and_ : Word := ⟨"and", .CCONJ, {}⟩
-private def saw : Word := ⟨"saw", .VERB, { valence := some .transitive }⟩
-private def eachOther : Word := ⟨"each other", .PRON, { person := some .third, number := some .pl }⟩
+private def sam : Word := { form :="Sam", cat := .PROPN, features := { number := some .sg, person := some .third }}
+private def pat : Word := { form :="Pat", cat := .PROPN, features := { number := some .sg, person := some .third }}
+private def and_ : Word := { form :="and", cat := .CCONJ, features := {}}
+private def saw : Word := { form :="saw", cat := .VERB, valence := some .transitive}
+private def eachOther : Word := { form :="each other", cat := .PRON, features := { person := some .third, number := some .pl }}
 
 /-- Reciprocals require a plural/coordinated antecedent and local binding. -/
 def reciprocalCoreferenceData : PhenomenonData := {

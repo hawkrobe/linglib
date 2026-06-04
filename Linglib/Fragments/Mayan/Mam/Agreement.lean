@@ -440,7 +440,7 @@ theorem setB_3sg : setBExponent.realize (.pn .third .Sing) = some defaultSetB :=
     Elsewhere; [scott-2023] Ch. 4) is theory and stays in the study. -/
 theorem erg_1sg_from_phi :
     setAExponent.realizeFor
-      ⟨"", .PRON, { person := some .first, number := some .sg }⟩ = some "n-/w-" := by
+      { form :="", cat := .PRON, features := { person := some .first, number := some .sg }} = some "n-/w-" := by
   rfl
 
 end Mam

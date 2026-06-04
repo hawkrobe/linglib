@@ -88,7 +88,7 @@ def checkArgStrMatch (t : DepTree) : Bool :=
       match t.words[d.headIdx]?, t.words[d.depIdx]? with
       | some hw, some dw =>
         if hw.cat == UD.UPOS.VERB then
-          hw.features.valence == dw.features.valence
+          hw.valence == dw.valence
         else true
       | _, _ => false
     else true

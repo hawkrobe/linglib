@@ -13,7 +13,7 @@ encode addressee features — and the morphosyntactic expression of honorifics.
 
 -/
 
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 
 namespace Phenomena.Politeness.Honorifics
 

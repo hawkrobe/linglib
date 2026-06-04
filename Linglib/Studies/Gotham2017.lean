@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 
 /-!
 # Copredication: [gotham-2017]'s account + bridge data

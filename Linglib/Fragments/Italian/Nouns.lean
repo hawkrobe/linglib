@@ -1,5 +1,5 @@
 import Linglib.Features.Gender
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 import Linglib.Semantics.Kinds.NominalMappingParameter
 
 /-! # Italian Noun Lexicon Fragment

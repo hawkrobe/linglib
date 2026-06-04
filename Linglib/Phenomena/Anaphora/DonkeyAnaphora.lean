@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 import Linglib.Features.Definiteness
 import Linglib.Core.Nominal.Determiner
 import Linglib.Fragments.German.Definiteness

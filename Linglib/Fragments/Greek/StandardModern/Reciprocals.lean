@@ -28,7 +28,8 @@ def nonactiveVoiceSuffix : MorphRule Bool :=
   { category := .voice
   , value := "nonactive"
   , formRule := fun stem => stem ++ "ome"
-  , featureRule := fun f => { f with valence := some .intransitive }
+  , featureRule := id
+  , valenceRule := fun _ => some .intransitive
   , semEffect := id
   }
 

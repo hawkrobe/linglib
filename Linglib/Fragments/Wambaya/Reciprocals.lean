@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 
 /-!
 # Wambaya Reciprocal Fragment
@@ -24,7 +24,7 @@ namespace Wambaya.Reciprocals
     The gloss value represents the morpheme; surface allomorphs vary
     by auxiliary paradigm. -/
 def rrMorpheme : Word :=
-  ⟨"-ngg-", .PART, {}⟩
+  { form :="-ngg-", cat := .PART, features := {}}
 
 /-- The same morpheme serves both reciprocal and reflexive functions. -/
 def isIdenticalToReflexive : Bool := true

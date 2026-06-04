@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 import Linglib.Typology.ClassifierSystem
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Semantics.Kinds.NominalMappingParameter

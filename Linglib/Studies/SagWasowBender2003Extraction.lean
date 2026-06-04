@@ -133,7 +133,7 @@ theorem absolute_islands_block :
 /-- The gap introduction mechanism correctly removes complements. -/
 theorem gap_removes_complement :
     let see_ss : Synsem := { cat := .VERB, val := { subj := [.NOUN], comps := [.NOUN] } }
-    let see_w : Word := ⟨"see", .VERB, {}⟩
+    let see_w : Word := { form :="see", cat := .VERB, features := {}}
     (gapComplement see_w see_ss 0).map
       (fun p => p.1.synsem.val.comps.isEmpty && p.2.gaps == [.NOUN]) = some true := by
   decide

@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.NormNum
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 import Linglib.Features.ClauseForm
 
 /-!

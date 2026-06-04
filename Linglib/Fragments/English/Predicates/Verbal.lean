@@ -3325,12 +3325,12 @@ def lookup (form : String) : Option VerbEntry :=
 def VerbEntry.toWord3sg (v : VerbEntry) : Word :=
   { form := v.form3sg
   , cat := .VERB
+  , valence := some (complementToValence v.complementType)
   , features := {
-      valence := some (complementToValence v.complementType)
-      , number := some .sg
+      number := some .sg
       , person := some .third
       , voice := some .active
-      , vform := some .finite
+      , verbForm := some .finite
       , tense := some .present
     }
   }
@@ -3339,9 +3339,9 @@ def VerbEntry.toWord3sg (v : VerbEntry) : Word :=
 def VerbEntry.toWordPl (v : VerbEntry) : Word :=
   { form := v.form
   , cat := .VERB
+  , valence := some (complementToValence v.complementType)
   , features := {
-      valence := some (complementToValence v.complementType)
-      , number := some .pl
+      number := some .pl
       , tense := some .present
     }
   }
@@ -3350,9 +3350,9 @@ def VerbEntry.toWordPl (v : VerbEntry) : Word :=
 def VerbEntry.toWordBase (v : VerbEntry) : Word :=
   { form := v.form
   , cat := .VERB
+  , valence := some (complementToValence v.complementType)
   , features := {
-      valence := some (complementToValence v.complementType)
-      , vform := some .infinitive
+      verbForm := some .infinitive
     }
   }
 
@@ -3360,9 +3360,9 @@ def VerbEntry.toWordBase (v : VerbEntry) : Word :=
 def VerbEntry.toWordPast (v : VerbEntry) : Word :=
   { form := v.formPast
   , cat := .VERB
+  , valence := some (complementToValence v.complementType)
   , features := {
-      valence := some (complementToValence v.complementType)
-      , vform := some .finite
+      verbForm := some .finite
       , voice := some .active
       , tense := some .past
     }
@@ -3375,9 +3375,9 @@ def VerbEntry.toWordPast (v : VerbEntry) : Word :=
 def VerbEntry.toWordPastPart (v : VerbEntry) : Word :=
   { form := v.formPastPart
   , cat := .VERB
+  , valence := some (complementToValence v.complementType)
   , features := {
-      valence := some (complementToValence v.complementType)
-      , vform := some .pastParticiple
+      verbForm := some .pastParticiple
     }
   }
 
@@ -3385,9 +3385,9 @@ def VerbEntry.toWordPastPart (v : VerbEntry) : Word :=
 def VerbEntry.toWordPresPart (v : VerbEntry) : Word :=
   { form := v.formPresPart
   , cat := .VERB
+  , valence := some (complementToValence v.complementType)
   , features := {
-      valence := some (complementToValence v.complementType)
-      , vform := some .presParticiple
+      verbForm := some .presParticiple
     }
   }
 
@@ -3512,26 +3512,26 @@ theorem forget_entails_not_complement_derived :
 def VerbEntry.toStem {σ : Type} (v : VerbEntry) : Morphology.Stem σ :=
   { lemma_ := v.form
   , cat := .VERB
-  , baseFeatures := { valence := some (complementToValence v.complementType)
-                    , vform := some .infinitive }
+  , baseFeatures := { verbForm := some .infinitive }
+  , baseValence := some (complementToValence v.complementType)
   , paradigm :=
     [ { category := .agreement .subj, value := "3sg"
       , formRule := λ _ => v.form3sg
       , featureRule := λ f => { f with number := some .Sing
                                      , person := some .third
-                                     , vform := some .finite }
+                                     , verbForm := some .finite }
       , semEffect := id, delegatedSemantics := true }
     , { category := .tense, value := "past"
       , formRule := λ _ => v.formPast
-      , featureRule := λ f => { f with vform := some .finite }
+      , featureRule := λ f => { f with verbForm := some .finite }
       , semEffect := id, delegatedSemantics := true }
     , { category := .tense, value := "pastpart"
       , formRule := λ _ => v.formPastPart
-      , featureRule := λ f => { f with vform := some .pastParticiple }
+      , featureRule := λ f => { f with verbForm := some .pastParticiple }
       , semEffect := id, delegatedSemantics := true }
     , { category := .aspect, value := "prespart"
       , formRule := λ _ => v.formPresPart
-      , featureRule := λ f => { f with vform := some .presParticiple }
+      , featureRule := λ f => { f with verbForm := some .presParticiple }
       , semEffect := id, delegatedSemantics := true }
     ] }
 

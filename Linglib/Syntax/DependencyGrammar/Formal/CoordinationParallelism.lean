@@ -114,7 +114,7 @@ def gappingPreEllipsis : DepTree :=
 /-- ATB extraction: "What did John buy and Mary sell?", symmetric
     extraction of `what` from both conjuncts. -/
 def atbExtraction : DepTree :=
-  { words := [ ⟨"what", .PRON, { wh := true }⟩, Word.mk' "did" .AUX
+  { words := [ { form :="what", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "did" .AUX
              , Word.mk' "John" .PROPN, Word.mk' "buy" .VERB
              , Word.mk' "and" .CCONJ, Word.mk' "Mary" .PROPN
              , Word.mk' "sell" .VERB ]

@@ -33,7 +33,7 @@ the corresponding valency frames.
 ```
 Fragment VerbEntry.complementType ← lexical data (sleep=.none, kick=.np, give=.np_np)
     ↓ complementToValence
-VerbEntry.toWord3sg.features.valence ← intransitive / transitive / ditransitive
+VerbEntry.toWord3sg.valence ← intransitive / transitive / ditransitive
     ↓
 DepTree instances ← concrete parse trees
     ↓
@@ -97,25 +97,25 @@ private def lex_kicked : LexEntry :=
 
 /-- sleep.complementType =.none → intransitive. -/
 theorem sleep_valence_from_fragment :
-    sleeps.features.valence = some .intransitive := rfl
+    sleeps.valence = some .intransitive := rfl
 
 /-- devour.complementType =.np → transitive. -/
 theorem devour_valence_from_fragment :
-    devours.features.valence = some .transitive := rfl
+    devours.valence = some .transitive := rfl
 
 /-- give.complementType =.np_np → ditransitive. -/
 theorem give_valence_from_fragment :
-    gives.features.valence = some .ditransitive := rfl
+    gives.valence = some .ditransitive := rfl
 
 /-- kick.complementType =.np → transitive (active). -/
 theorem kick_valence_from_fragment :
-    kicked.features.valence = some .transitive := rfl
+    kicked.valence = some .transitive := rfl
 
 /-- The passive valence (intransitive) is consistent with the passive rule:
     the rule removes the obj slot from the transitive frame. -/
 theorem passive_valence_consistent :
-    kicked_pass.features.valence = some .intransitive ∧
-    kicked.features.valence = some .transitive ∧
+    kicked_pass.valence = some .intransitive ∧
+    kicked.valence = some .transitive ∧
     passiveRule.applies lex_kicked = true ∧
     (passiveRule.transform lex_kicked).argStr.slots.any (·.depType == .obj) = false :=
   ⟨rfl, rfl, rfl, rfl⟩
@@ -305,7 +305,7 @@ theorem ditrans_verb_obj_catena_not_constituent :
     7. Passive + spurious obj correctly rejected ✗ -/
 theorem valency_derivation_chain :
     -- Fragment grounding
-    kicked.features.valence = some .transitive ∧
+    kicked.valence = some .transitive ∧
     -- Active: frame ✓, subcat ✓
     satisfiesArgStr activeTree 1 argStr_VN = true ∧
     checkVerbSubcat activeTree = true ∧

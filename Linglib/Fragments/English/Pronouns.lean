@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 import Linglib.Features.Case
 import Linglib.Features.Gender
 import Linglib.Syntax.Pronoun.Basic

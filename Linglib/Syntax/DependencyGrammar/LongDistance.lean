@@ -122,7 +122,7 @@ def isLDWellFormed (t : DepTree) (gaps : List (Nat × Nat × GapType)) : Bool :=
   gaps.all λ (fillerIdx, _, _) =>
     match t.words[fillerIdx]? with
     | some w =>
-      w.features.wh || fillerIdx < t.rootIdx ||
+      w.features.isWh || fillerIdx < t.rootIdx ||
         t.deps.any λ d => d.headIdx == fillerIdx && d.depType == .acl
     | none => false
 

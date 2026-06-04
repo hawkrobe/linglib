@@ -1,5 +1,5 @@
 import Linglib.Semantics.Events.Basic
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 import Linglib.Semantics.ArgumentStructure.Linking
 
 /-!

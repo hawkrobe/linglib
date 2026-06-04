@@ -33,29 +33,29 @@ namespace Ross1967
 -- §1. Lexical entries for example sentences
 -- ============================================================================
 
-private def what : Word := ⟨"what", .PRON, { wh := true }⟩
-private def did : Word := ⟨"did", .AUX, {}⟩
-private def john : Word := ⟨"John", .DET, { number := some .sg, person := some .third }⟩
-private def buy : Word := ⟨"buy", .VERB, { valence := some .transitive, number := some .pl }⟩
-private def you : Word := ⟨"you", .DET, { person := some .second, case_ := some .nom }⟩
-private def wonder : Word := ⟨"wonder", .VERB, { valence := some .transitive, number := some .pl }⟩
-private def who : Word := ⟨"who", .PRON, { wh := true }⟩
-private def bought : Word := ⟨"bought", .VERB, { valence := some .transitive, vform := some .finite }⟩
-private def see : Word := ⟨"see", .VERB, { valence := some .transitive, number := some .pl }⟩
-private def met : Word := ⟨"met", .VERB, { valence := some .transitive, vform := some .finite }⟩
-private def man : Word := ⟨"man", .NOUN, { number := some .sg, countable := some .count }⟩
-private def that : Word := ⟨"that", .DET, { number := some .sg }⟩
-private def saw : Word := ⟨"saw", .VERB, { valence := some .transitive, vform := some .finite }⟩
-private def leave : Word := ⟨"leave", .VERB, { valence := some .intransitive, number := some .pl }⟩
-private def before : Word := ⟨"before", .ADP, {}⟩
-private def because : Word := ⟨"because", .SCONJ, {}⟩
-private def books : Word := ⟨"books", .NOUN, { number := some .pl, countable := some .count }⟩
-private def and_ : Word := ⟨"and", .CCONJ, {}⟩
-private def sell : Word := ⟨"sell", .VERB, { valence := some .transitive, number := some .pl }⟩
-private def do_ : Word := ⟨"do", .AUX, { number := some .pl }⟩
-private def the : Word := ⟨"the", .DET, {}⟩
-private def sees : Word := ⟨"sees", .VERB, { valence := some .transitive, number := some .sg, person := some .third }⟩
-private def mary : Word := ⟨"Mary", .DET, { number := some .sg, person := some .third }⟩
+private def what : Word := { form :="what", cat := .PRON, features := { pronType := some .Int }}
+private def did : Word := { form :="did", cat := .AUX, features := {}}
+private def john : Word := { form :="John", cat := .DET, features := { number := some .sg, person := some .third }}
+private def buy : Word := { form :="buy", cat := .VERB, valence := some .transitive, features := { number := some .pl }}
+private def you : Word := { form :="you", cat := .DET, features := { person := some .second, case_ := some .nom }}
+private def wonder : Word := { form :="wonder", cat := .VERB, valence := some .transitive, features := { number := some .pl }}
+private def who : Word := { form :="who", cat := .PRON, features := { pronType := some .Int }}
+private def bought : Word := { form :="bought", cat := .VERB, valence := some .transitive, features := { verbForm := some .finite }}
+private def see : Word := { form :="see", cat := .VERB, valence := some .transitive, features := { number := some .pl }}
+private def met : Word := { form :="met", cat := .VERB, valence := some .transitive, features := { verbForm := some .finite }}
+private def man : Word := { form :="man", cat := .NOUN, features := { number := some .sg }}
+private def that : Word := { form :="that", cat := .DET, features := { number := some .sg }}
+private def saw : Word := { form :="saw", cat := .VERB, valence := some .transitive, features := { verbForm := some .finite }}
+private def leave : Word := { form :="leave", cat := .VERB, valence := some .intransitive, features := { number := some .pl }}
+private def before : Word := { form :="before", cat := .ADP, features := {}}
+private def because : Word := { form :="because", cat := .SCONJ, features := {}}
+private def books : Word := { form :="books", cat := .NOUN, features := { number := some .pl }}
+private def and_ : Word := { form :="and", cat := .CCONJ, features := {}}
+private def sell : Word := { form :="sell", cat := .VERB, valence := some .transitive, features := { number := some .pl }}
+private def do_ : Word := { form :="do", cat := .AUX, features := { number := some .pl }}
+private def the : Word := { form :="the", cat := .DET, features := {}}
+private def sees : Word := { form :="sees", cat := .VERB, valence := some .transitive, features := { number := some .sg, person := some .third }}
+private def mary : Word := { form :="Mary", cat := .DET, features := { number := some .sg, person := some .third }}
 
 -- ============================================================================
 -- §2. Island constraint examples

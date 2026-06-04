@@ -1,4 +1,4 @@
-import Linglib.Core.UD
+import Linglib.Core.UD.Basic
 import Linglib.Core.Valence
 
 /-!
@@ -6,7 +6,8 @@ import Linglib.Core.Valence
 [biberauer-roberts-2014] [dryer-1992]
 
 The lexical unit and its building blocks: morphological feature types (aliased
-to Universal Dependencies), the `Features` bundle, and the `Word` structure.
+to Universal Dependencies) and the `Word` structure. A word's morphology is one
+`UD.MorphFeatures` bundle — there is no separate word-level feature record.
 
 ## Provenance
 
@@ -117,41 +118,32 @@ inductive HeadDirection where
   deriving Repr, DecidableEq
 
 -- ============================================================================
--- Feature Bundle and Word
+-- Word
 -- ============================================================================
 
-/-- Feature bundle for words. Uses aliased UD types. -/
-structure Features where
-  wh : Bool := false
-  finite : Bool := true
-  number : Option Number := none
-  person : Option Person := none
-  case_ : Option UD.Case := none
-  /-- Grammatical gender (UD.Gender). Carried on the word so φ-agreement is
-      feature-based, not recovered from surface form. -/
-  gender : Option UD.Gender := none
-  valence : Option Valence := none
-  voice : Option Voice := none
-  vform : Option VForm := none
-  tense : Option Tense := none
-  countable : Option MassCount := none  -- for count vs mass nouns
-  /-- Pronoun type (UD `PronType`: personal, reciprocal, interrogative, …). Carried
-      so a pro-form's binding class is read off its own morphology, not its surface form. -/
-  pronType : Option UD.PronType := none
-  /-- Reflexive morphology (UD `Reflex=Yes`). The one binding-relevant feature `PronType`
-      does not encode; distinguishes a reflexive anaphor from a plain personal pronoun. -/
-  reflex : Bool := false
-  deriving Repr, DecidableEq
+/-- A word: the surface-token interface between the lexicon and token-level engines —
+    surface form, UD category, and UD morphology (one `UD.MorphFeatures` bundle; there is no
+    separate word-level feature record), plus lexical valence, the one non-morphological
+    property a Fragment-free engine reads off the token (DG subcategorization).
 
-/-- A word: form + category + features. -/
+    **Admission rule**: a property belongs on `Word` iff a Fragment-free token-level engine
+    reads it; otherwise it lives on the typed lexical carrier (`Pronoun`, `NounEntry`, …) and
+    is consumed via the capability mixins. Identity caveat: `BEq` is form + category, so
+    homographs collapse; a CoNLL-U `lemma` field is the known fix, deferred until a consumer
+    needs it. -/
 structure Word where
   form : String
   cat : UD.UPOS
-  features : Features := {}
+  features : UD.MorphFeatures := {}
+  /-- Lexical valence (subcategorization frame) — lexical, not UD morphology; read by the
+      DG engine off the token. TODO: migrate off `Word` by having the DG engine consume
+      subcategorization from the lexical carrier via a capability mixin (as binding did for
+      `bindingClass`), leaving `Word` the pure CoNLL-U token. -/
+  valence : Option Valence := none
   deriving Repr
 
 /-- Convenience constructor for a featureless word (form + category only). -/
-def Word.mk' (form : String) (cat : UD.UPOS) : Word := ⟨form, cat, {}⟩
+def Word.mk' (form : String) (cat : UD.UPOS) : Word := { form := form, cat := cat }
 
 /-- The φ-feature subset (person, number, gender) of a word, as a
     `UD.MorphFeatures` bundle. -/
@@ -176,8 +168,8 @@ instance (w1 w2 : Word) : Decidable (Word.Agree w1 w2) := by
 /-- Derive a passive variant: sets voice to passive, valence to intransitive.
     Used to compose with `VerbEntry.toWordPastPart` for passive constructions. -/
 def Word.asPassive (w : Word) : Word :=
-  { w with features := { w.features with
-      valence := some .intransitive, voice := some Voice.passive } }
+  { w with valence := some .intransitive,
+           features := { w.features with voice := some Voice.passive } }
 
 instance : BEq Word where
   beq w1 w2 := w1.form == w2.form && w1.cat == w2.cat

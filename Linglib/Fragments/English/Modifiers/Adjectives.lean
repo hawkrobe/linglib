@@ -18,7 +18,7 @@ Both share scale type and antonym information, but serve different grammatical f
 
 -/
 
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 import Linglib.Features.PropertyDomain
 import Linglib.Morphology.Exponence
 import Linglib.Morphology.DegreeContainment
