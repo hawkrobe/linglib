@@ -311,7 +311,7 @@ theorem ditrans_verb_obj_catena_not_constituent :
     7. Passive + spurious obj correctly rejected ✗ -/
 theorem valency_derivation_chain :
     -- Fragment grounding
-    kicked.valence = some .transitive ∧
+    English.Predicates.Verbal.kick.valence = .transitive ∧
     -- Active: frame ✓, subcat ✓
     satisfiesArgStr activeTree 1 argStr_VN = true ∧
     checkVerbSubcat activeTree = true ∧
