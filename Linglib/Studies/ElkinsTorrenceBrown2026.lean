@@ -521,7 +521,7 @@ theorem both_probes_unvalued :
 theorem phi_and_oblique_agree_parallel :
     -- φ-Agree pipeline: value person, then number, then spellout
     (applyAgree voiceProbe dp3sg (.phi (.person .third))).bind
-      (λ fb => applyAgree fb dp3sg (.phi (.number .sg))) = some voiceFullyAgreed ∧
+      (λ fb => applyAgree fb dp3sg (.phi (.number .Sing))) = some voiceFullyAgreed ∧
     spellout setAVocab voiceFullyAgreed (some .v) = some "t-" ∧
     -- Oblique-Agree pipeline: value oblique, then spellout
     applyAgree voiceOblProbe [.valued (.oblique true)] (.oblique false) =

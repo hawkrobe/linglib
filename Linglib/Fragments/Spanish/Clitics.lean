@@ -1,4 +1,6 @@
 import Linglib.Core.UniversalDependencies
+import Linglib.Features.Number
+import Linglib.Features.Person
 
 /-!
 # Spanish Clitic Paradigm
@@ -20,6 +22,8 @@ This syncretism drives the availability of stylistic applicatives.
 | 2/3PL | los/las| les/se| se   | ← NOT syncretic
 
 -/
+
+open Features (Number Person)
 
 namespace Spanish.Clitics
 

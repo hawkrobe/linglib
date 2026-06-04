@@ -8,6 +8,8 @@ import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Features.Evidentiality
 import Linglib.Fragments.English.Pronouns
+import Linglib.Features.Number
+import Linglib.Features.Person
 
 /-!
 # Configurational Point-of-View Roles
@@ -34,6 +36,8 @@ c-commands content.
 - **RSA/YoonEtAl2020**: HEARER (structural) ↔ addressee in social utility
 
 -/
+
+open Features (Number Person)
 
 namespace Minimalist.SpeechActs
 

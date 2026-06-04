@@ -232,11 +232,11 @@ theorem person_nesting_from_phi (speaker addressee : E)
     so `phiPresup_nesting` applies to both: the nesting is structural,
     not a per-domain coincidence. -/
 theorem person_number_isomorphism :
-    PhiFeatures.specLevel Features.Person.first =
+    PhiFeatures.specLevel Features.Person.firstF =
       PhiFeatures.specLevel Features.Number.singularF ∧
-    PhiFeatures.specLevel Features.Person.second =
+    PhiFeatures.specLevel Features.Person.secondF =
       PhiFeatures.specLevel Features.Number.dualF ∧
-    PhiFeatures.specLevel Features.Person.third =
+    PhiFeatures.specLevel Features.Person.thirdF =
       PhiFeatures.specLevel Features.Number.pluralF :=
   ⟨rfl, rfl, rfl⟩
 
@@ -338,13 +338,13 @@ theorem gender_nesting_from_phi (isInanimate isFemale : E → Prop)
     all three domains share the phi kernel structure. -/
 theorem gender_person_number_isomorphism :
     PhiFeatures.specLevel Features.Gender.neuterF =
-      PhiFeatures.specLevel Features.Person.first ∧
+      PhiFeatures.specLevel Features.Person.firstF ∧
     PhiFeatures.specLevel Features.Gender.neuterF =
       PhiFeatures.specLevel Features.Number.singularF ∧
     PhiFeatures.specLevel Features.Gender.feminineF =
-      PhiFeatures.specLevel Features.Person.second ∧
+      PhiFeatures.specLevel Features.Person.secondF ∧
     PhiFeatures.specLevel Features.Gender.masculineF =
-      PhiFeatures.specLevel Features.Person.third :=
+      PhiFeatures.specLevel Features.Person.thirdF :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 end GenderPresuppositions

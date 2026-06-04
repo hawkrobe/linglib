@@ -244,8 +244,8 @@ theorem person_hierarchy_is_spec_ordering :
       PhiFeatures.specLevel Features.Person.secondF ∧
     PhiFeatures.specLevel Features.Person.secondF >
       PhiFeatures.specLevel Features.Person.thirdF :=
-  PhiFeatures.specLevel_strict_order Features.Person.first_is_maximal
-    Features.Person.second_is_intermediate Features.Person.third_is_minimal
+  PhiFeatures.specLevel_strict_order Features.Person.firstF_is_maximal
+    Features.Person.secondF_is_intermediate Features.Person.thirdF_is_minimal
 
 /-- The number hierarchy `sg > du > pl` is the *same* specification ordering — the
 structural reflection of the phi kernel, not an identification of the categories. -/

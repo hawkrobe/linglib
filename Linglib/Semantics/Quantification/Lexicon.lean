@@ -1,4 +1,5 @@
 import Linglib.Core.UniversalDependencies
+import Linglib.Features.Number
 
 /-!
 # Quantifier lexicon — shared structure
@@ -22,6 +23,8 @@ in the study files that commit to specific values.
 - `strength` — weak / strong (Barwise & Cooper §4.3 Table II;
   weak determiners pass `there is/are`)
 -/
+
+open Features (Number)
 
 set_option autoImplicit false
 

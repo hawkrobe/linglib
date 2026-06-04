@@ -1,6 +1,8 @@
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Core.UniversalDependencies
+import Linglib.Features.Number
+import Linglib.Features.Person
 
 /-! # Italian Pronoun and Clitic Fragment
 
@@ -27,6 +29,8 @@ and reflexive cases, while 3sg/3pl are not.
 | 2pl    | vi     | vi     | vi   | syncretic
 | 3pl    | li/le  | loro   | si   | NOT syncretic
 -/
+
+open Features (Number Person)
 
 namespace Italian.Pronouns
 

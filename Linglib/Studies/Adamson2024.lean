@@ -519,11 +519,11 @@ def jarawaraPFDerive (poss : Jarawara.Possessor) : Jarawara.PossessedForm :=
   Jarawara.manoForm poss
 
 -- PF pipeline: 1SG possessor → [PARTICIPANT] is MARKED → mano
-theorem jarawara_pf_1sg : jarawaraPFDerive ⟨.first, .sg, none⟩ = .mascForm := rfl
+theorem jarawara_pf_1sg : jarawaraPFDerive ⟨.first, .Sing, none⟩ = .mascForm := rfl
 -- PF pipeline: 3.M.SG → [MASC] survives → mano
-theorem jarawara_pf_3msg : jarawaraPFDerive ⟨.third, .sg, some .masc⟩ = .mascForm := rfl
+theorem jarawara_pf_3msg : jarawaraPFDerive ⟨.third, .Sing, some .masc⟩ = .mascForm := rfl
 -- PF pipeline: 3.M.PL → [MASC] impoverished by [PL] → mani
-theorem jarawara_pf_3mpl : jarawaraPFDerive ⟨.third, .pl, some .masc⟩ = .femForm := rfl
+theorem jarawara_pf_3mpl : jarawaraPFDerive ⟨.third, .Plur, some .masc⟩ = .femForm := rfl
 
 /-- Jarawara iPossessable n has {D} → relational semantic type.
     The n head licenses an iPossessor AND yields relational (π) semantics. -/
