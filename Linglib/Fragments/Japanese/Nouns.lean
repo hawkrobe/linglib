@@ -1,4 +1,4 @@
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Typology.ClassifierSystem
 import Linglib.Fragments.Japanese.Classifier
 import Linglib.Semantics.Kinds.NominalMappingParameter

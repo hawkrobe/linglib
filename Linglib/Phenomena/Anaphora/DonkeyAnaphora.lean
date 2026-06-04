@@ -1,4 +1,4 @@
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Features.Definiteness
 import Linglib.Core.Nominal.Determiner
 import Linglib.Fragments.German.Definiteness

@@ -1,8 +1,9 @@
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Features.Gender
 import Linglib.Morphology.Exponence
 import Linglib.Semantics.Kinds.NominalMappingParameter
 import Linglib.Features.MassCount
+import Linglib.Morphology.Word
 
 /-! # English Noun Lexicon Fragment
 

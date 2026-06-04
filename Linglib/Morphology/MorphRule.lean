@@ -1,6 +1,7 @@
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Core.Valence
 import Linglib.Syntax.Agreement.Controller
+import Linglib.Morphology.Word
 
 /-!
 # Morphological Infrastructure

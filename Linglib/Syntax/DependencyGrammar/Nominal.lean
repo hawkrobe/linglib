@@ -1,8 +1,9 @@
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Features.CoreferenceStatus
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Morphology.Word
 
 /-!
 # Shared English test words for DG coreference theories

@@ -1,8 +1,9 @@
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Features.Number
 import Linglib.Features.Person
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Features.Register
+import Linglib.Morphology.Word
 
 /-!
 # English Auxiliaries Lexicon Fragment

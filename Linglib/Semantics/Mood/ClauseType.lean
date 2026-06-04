@@ -1,7 +1,7 @@
 import Linglib.Semantics.Mood.Basic
 import Linglib.Semantics.Mood.IllocutionaryMood
 import Linglib.Discourse.Roles
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 
 /-!
 # Clause Type: Force × Mood

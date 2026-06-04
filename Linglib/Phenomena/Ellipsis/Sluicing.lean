@@ -47,7 +47,7 @@ Case matching follows from the continuation analysis:
 
 -/
 
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 
 namespace Phenomena.Ellipsis.Sluicing
 

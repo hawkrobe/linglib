@@ -1,5 +1,6 @@
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Features.CoreferenceStatus
+import Linglib.Morphology.Word
 
 /-!
 # Binding principles over a command relation

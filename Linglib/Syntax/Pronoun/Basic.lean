@@ -1,4 +1,4 @@
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Features.Case
 import Linglib.Features.Register
 import Linglib.Features.Prominence
@@ -7,6 +7,7 @@ import Linglib.Features.Clusivity
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Number
 import Linglib.Features.Person
+import Linglib.Morphology.Word
 
 /-!
 # Pronoun

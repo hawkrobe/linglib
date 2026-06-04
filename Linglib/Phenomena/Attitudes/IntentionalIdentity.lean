@@ -1,4 +1,4 @@
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 
 /-!
 # Intentional Identity Data [chatzikyriakidis-etal-2025]

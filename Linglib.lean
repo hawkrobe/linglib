@@ -8,8 +8,8 @@ and their interfaces. See README.md for documentation links.
 import Linglib.Features.Dimension
 import Linglib.Features.Gender
 import Linglib.Core.Valence
-import Linglib.Core.UniversalDependencies
-import Linglib.Core.Subsumption
+import Linglib.Data.UD.Basic
+import Linglib.Morphology.Unification
 import Linglib.Typology.NegativeConcord
 import Linglib.Typology.PolarityItem
 import Linglib.Typology.Negation
@@ -2455,6 +2455,7 @@ import Linglib.Semantics.Lexical.Roots.Closure
 import Linglib.Semantics.Lexical.Roots.SalienceClass
 import Linglib.Morphology.RootTypology
 import Linglib.Morphology.TheorySpace
+import Linglib.Morphology.Word
 import Linglib.Semantics.Spatial.Trace
 import Linglib.Semantics.Events.Adjacency
 import Linglib.Semantics.Events.InitialFinalParts

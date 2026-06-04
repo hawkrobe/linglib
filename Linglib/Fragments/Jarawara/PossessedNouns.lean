@@ -1,6 +1,6 @@
 import Linglib.Morphology.DM.NominalStructure
 import Linglib.Typology.Possession
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Features.Gender
 import Linglib.Features.Number
 

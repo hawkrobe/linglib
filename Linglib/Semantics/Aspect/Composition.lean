@@ -1,5 +1,5 @@
 import Linglib.Features.Aktionsart
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
 import Linglib.Features.MassCount
 
 /-!

@@ -3,7 +3,8 @@ HPSG formalization: typed feature structures, signs, and phrase structure schema
 [pollard-sag-1994], [sag-wasow-bender-2003], [ginzburg-sag-2000].
 -/
 
-import Linglib.Core.UniversalDependencies
+import Linglib.Data.UD.Basic
+import Linglib.Morphology.Word
 
 namespace HPSG
 
