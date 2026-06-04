@@ -1,5 +1,5 @@
 import Linglib.Typology.Extraction
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
 
 /-!
 # Mam Extraction Morphology Fragment [elkins-torrence-brown-2026]

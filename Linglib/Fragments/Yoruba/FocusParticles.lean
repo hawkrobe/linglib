@@ -1,4 +1,5 @@
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
+import Linglib.Typology.WordOrder
 
 /-!
 # Yorùbá Focus Particles [aremu-2026]

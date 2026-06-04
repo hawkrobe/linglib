@@ -12,7 +12,7 @@ Empirical data on focus interpretation effects (association with focus, contrast
 
 -/
 
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
 import Linglib.Features.InformationStructure
 
 open Features.InformationStructure (FIPApplication)

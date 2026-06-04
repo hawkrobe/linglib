@@ -1,6 +1,8 @@
 import Linglib.Features.Case
 import Linglib.Features.Case
 import Linglib.Features.Prominence
+import Linglib.Features.Number
+import Linglib.Features.Person
 
 /-!
 # Shawi Agreement Fragment [clem-deal-2024]
@@ -35,6 +37,8 @@ This file imports only `Core/`. All theoretical analysis — the mapping
 of ergative distribution to a particular Agree configuration — lives in
 `Studies/ClemDeal2024.lean`.
 -/
+
+open Features (Number Person)
 
 namespace Kawapanan.Shawi
 

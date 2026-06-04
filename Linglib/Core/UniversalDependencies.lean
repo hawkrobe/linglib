@@ -547,3 +547,52 @@ structure DepArc where
   deriving DecidableEq, Repr
 
 end UD
+
+-- ============================================================================
+-- Word: the CoNLL-U surface token
+-- ============================================================================
+
+structure Word where
+  form : String
+  cat : UD.UPOS
+  features : UD.MorphFeatures := {}
+  deriving Repr
+
+/-- Convenience constructor for a featureless word (form + category only). -/
+def Word.mk' (form : String) (cat : UD.UPOS) : Word := { form := form, cat := cat }
+
+/-- The φ-feature subset (person, number, gender) of a word, as a
+    `UD.MorphFeatures` bundle. -/
+def Word.phi (w : Word) : UD.MorphFeatures :=
+  { person := w.features.person, number := w.features.number,
+    gender := w.features.gender }
+
+/-- φ-agreement between two words: their person/number/gender features are
+    compatible (an unspecified feature is a wildcard). A reflexive, symmetric
+    *tolerance* relation on `Word` (not transitive), decided by the shared
+    `UD.MorphFeatures.compatible`. This is the feature-based agreement primitive
+    binding and concord consumers share — no surface-form gender lookup. -/
+def Word.Agree (w1 w2 : Word) : Prop := w1.phi.compatible w2.phi
+
+instance (w1 w2 : Word) : Decidable (Word.Agree w1 w2) := by
+  unfold Word.Agree; infer_instance
+
+@[refl] theorem Word.Agree.refl (w : Word) : Word.Agree w w :=
+  UD.MorphFeatures.compatible_self w.phi
+
+
+/-- Derive a passive variant: sets voice to passive. The valence change
+    (detransitivization) is a frame-level fact carried by the passive analysis on
+    `DepTree.frames`, not token data. Composes with `VerbEntry.toWordPastPart`. -/
+def Word.asPassive (w : Word) : Word :=
+  { w with features := { w.features with voice := some .Pass } }
+
+instance : BEq Word where
+  beq w1 w2 := w1.form == w2.form && w1.cat == w2.cat
+
+instance : ToString Word where
+  toString w := w.form
+
+/-- Convert a word list to a readable string. -/
+def wordsToString (ws : List Word) : String :=
+  " ".intercalate (ws.map (·.form))

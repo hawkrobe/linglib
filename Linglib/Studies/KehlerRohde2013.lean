@@ -1,5 +1,5 @@
 import Linglib.Discourse.Coherence
-import Linglib.Core.UD.Basic
+import Linglib.Core.UniversalDependencies
 import Linglib.Discourse.Centering.Rule1
 import Linglib.Discourse.Centering.Instances.GrammaticalRole
 

@@ -1,5 +1,5 @@
 import Linglib.Features.Case
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 import Linglib.Typology.Extraction

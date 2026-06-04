@@ -8,7 +8,7 @@ and their interfaces. See README.md for documentation links.
 import Linglib.Features.Dimension
 import Linglib.Features.Gender
 import Linglib.Core.Valence
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
 import Linglib.Typology.NegativeConcord
 import Linglib.Typology.PolarityItem
 import Linglib.Typology.Negation
@@ -38,7 +38,6 @@ import Linglib.Core.Logic.Team.Closure
 import Linglib.Core.Logic.Team.Definability
 import Linglib.Features.Acceptability
 import Linglib.Semantics.Dynamic.ParameterizedUpdate
-import Linglib.Core.UD.Basic
 import Linglib.Core.Tree
 import Linglib.Features.Coordination
 import Linglib.Core.Logic.Duality
@@ -221,6 +220,7 @@ import Linglib.Features.Evidentiality
 import Linglib.Features.Mirativity
 import Linglib.Semantics.Epistemicity
 import Linglib.Features.Logophoricity
+import Linglib.Features.MassCount
 import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Core.Time.Interval.Generalized

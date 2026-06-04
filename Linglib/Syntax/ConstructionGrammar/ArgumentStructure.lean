@@ -3,7 +3,7 @@ import Linglib.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Core.CombinationKind
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
-import Linglib.Core.UD.Basic
+import Linglib.Core.UniversalDependencies
 
 /-!
 # Argument Structure Constructions

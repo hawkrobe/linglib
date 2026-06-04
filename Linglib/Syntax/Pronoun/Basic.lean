@@ -1,10 +1,12 @@
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
 import Linglib.Features.Case
 import Linglib.Features.Register
 import Linglib.Features.Prominence
 import Linglib.Features.Gender
 import Linglib.Features.Clusivity
 import Linglib.Features.CoreferenceStatus
+import Linglib.Features.Number
+import Linglib.Features.Person
 
 /-!
 # Pronoun
@@ -32,6 +34,8 @@ in as fields of the general `Pronoun`.
   structural account of the order stays in its study file.
 * `Pronoun.AllocutiveEntry` — speaker–addressee (allocutive) markers.
 -/
+
+open Features (Number Person)
 
 set_option autoImplicit false
 

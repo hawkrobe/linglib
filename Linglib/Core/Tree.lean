@@ -1,6 +1,6 @@
 import Mathlib.Data.List.Infix
 import Mathlib.Algebra.Free
-import Linglib.Core.UD.Basic
+import Linglib.Core.UniversalDependencies
 import Linglib.Core.Order.Tree
 
 /-!

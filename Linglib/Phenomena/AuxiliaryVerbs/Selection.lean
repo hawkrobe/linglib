@@ -1,4 +1,4 @@
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
 
 /-!
 # Be/Have Auxiliary Selection in European Perfects

@@ -1,6 +1,7 @@
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Semantics.Reference.Reciprocals
 import Linglib.Semantics.Reference.PluralityLicensing
+import Linglib.Features.Number
 
 /-!
 # Hungarian Reciprocal Fragment
@@ -37,6 +38,8 @@ construction types, while reflexives require morphosyntactic plurality
    subject bound by a matrix coordination forces wide-scope
    (I-)reading. [dalrymple-haug-2024] §2.
 -/
+
+open Features (Number)
 
 namespace Hungarian.Reciprocals
 

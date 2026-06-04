@@ -53,6 +53,14 @@ in their consuming Studies file (`Studies/
 Gibson2025.lean`) until a second framework consumer materialises.
 -/
 
+/-- Head direction of a syntactic construction: head-initial (VO, prepositions,
+head-initial FocP, …) vs head-final. Used for word-order typology and constraints
+like FOFC. Root-named (consumed across Fragments, Studies, Syntax). -/
+inductive HeadDirection where
+  | headInitial
+  | headFinal
+  deriving Repr, DecidableEq
+
 namespace Typology.WordOrder
 
 -- ============================================================================

@@ -240,10 +240,10 @@ open Features.Number (singularF dualF pluralF)
 hierarchy in [bejar-rezac-2009]'s Cyclic Agree and [preminger-2014]'s relativized
 probing. -/
 theorem person_hierarchy_is_spec_ordering :
-    PhiFeatures.specLevel Features.Person.first >
-      PhiFeatures.specLevel Features.Person.second ∧
-    PhiFeatures.specLevel Features.Person.second >
-      PhiFeatures.specLevel Features.Person.third :=
+    PhiFeatures.specLevel Features.Person.firstF >
+      PhiFeatures.specLevel Features.Person.secondF ∧
+    PhiFeatures.specLevel Features.Person.secondF >
+      PhiFeatures.specLevel Features.Person.thirdF :=
   PhiFeatures.specLevel_strict_order Features.Person.first_is_maximal
     Features.Person.second_is_intermediate Features.Person.third_is_minimal
 

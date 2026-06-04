@@ -135,7 +135,7 @@ theorem participant_implies_animate (pf : ProminenceFeatures)
   | false => simp [ProminenceFeatures.wellFormed] at hw
 
 /-- First person is necessarily human and animate. -/
-theorem first_person_is_human_animate :
+theorem firstF_person_is_human_animate :
     ∀ pf : ProminenceFeatures, pf.wellFormed = true →
     pf.hasAuthor = true →
     pf.isHuman = true ∧ pf.isAnimate = true := by
@@ -153,9 +153,9 @@ theorem first_person_is_human_animate :
     This is not a coincidence: they are fragments of the same containment
     hierarchy ([hammerly-2023]). -/
 theorem person_animacy_same_structure :
-    (Features.PhiFeatures.toPair Features.Person.first).wellFormed = true ∧
+    (Features.PhiFeatures.toPair Features.Person.firstF).wellFormed = true ∧
     (Features.PhiFeatures.toPair AnimacyFeatures.human).wellFormed = true ∧
-    (Features.PhiFeatures.toPair Features.Person.third).wellFormed = true ∧
+    (Features.PhiFeatures.toPair Features.Person.thirdF).wellFormed = true ∧
     (Features.PhiFeatures.toPair AnimacyFeatures.inanimate).wellFormed = true :=
   ⟨rfl, rfl, rfl, rfl⟩
 

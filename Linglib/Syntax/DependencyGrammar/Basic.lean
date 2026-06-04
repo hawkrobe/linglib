@@ -1,5 +1,5 @@
 import Mathlib.Data.List.Basic
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
 import Linglib.Core.Valence
 
 /-!

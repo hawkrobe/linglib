@@ -1,6 +1,7 @@
 import Linglib.Features.Gender
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
 import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Features.Number
 
 /-! # Italian Noun Lexicon Fragment
 
@@ -22,6 +23,8 @@ conditioned by gender, number, and phonological context:
 The partitive articles (di + definite article) serve as the obligatory
 indefinite plural — Italian has no bare plural arguments.
 -/
+
+open Features (Number)
 
 namespace Italian.Nouns
 

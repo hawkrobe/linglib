@@ -1,4 +1,4 @@
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
 import Linglib.Data.WALS.Aggregation
 import Linglib.Data.WALS.Features.F46A
 import Linglib.Typology.PolarityItem

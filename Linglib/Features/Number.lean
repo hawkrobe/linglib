@@ -1,4 +1,4 @@
-import Linglib.Core.UD.Basic
+import Linglib.Core.UniversalDependencies
 import Linglib.Features.PrivativePair
 
 /-!
@@ -41,6 +41,10 @@ hierarchy, language data) remains in
 `Studies/Corbett2000.lean`.
 
 -/
+
+/-- Grammatical number — UD's descriptive vocabulary (`UD.Number`: `.Sing`, `.Plur`,
+`.Dual`, …) as the canonical type; the analytical apparatus below is its API. -/
+abbrev Features.Number := UD.Number
 
 namespace Features.Number
 

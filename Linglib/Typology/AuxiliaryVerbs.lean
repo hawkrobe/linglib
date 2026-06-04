@@ -1,4 +1,4 @@
-import Linglib.Core.UD.Basic
+import Linglib.Core.UniversalDependencies
 import Linglib.Morphology.MorphRule
 
 /-!

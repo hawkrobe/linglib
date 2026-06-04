@@ -1,4 +1,4 @@
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
 import Linglib.Features.CoreferenceStatus
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns

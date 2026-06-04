@@ -2,7 +2,7 @@ import Mathlib.Data.Set.Basic
 import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Discourse.CommonGround
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Core.UD.Basic
+import Linglib.Core.UniversalDependencies
 
 /-!
 # Type Theory with Records — Core Foundations
