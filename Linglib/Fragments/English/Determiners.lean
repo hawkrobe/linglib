@@ -39,7 +39,7 @@ def none_ : QuantifierEntry :=
   { form := "none", qforce := .negative, allowsMass := true, monotonicity := .decreasing }
 
 def few : QuantifierEntry :=
-  { form := "few", qforce := .proportional, numberRestriction := some .pl
+  { form := "few", qforce := .proportional, numberRestriction := some .Plur
   , monotonicity := .decreasing }
 
 def some_ : QuantifierEntry :=
@@ -52,7 +52,7 @@ def half : QuantifierEntry :=
 def most : QuantifierEntry :=
   { form := "most"
   , qforce := .proportional
-  , numberRestriction := some .pl
+  , numberRestriction := some .Plur
   , allowsMass := true
   , monotonicity := .increasing
   , strength := .strong  -- B&C Table II: *"There are most cats"
@@ -62,7 +62,7 @@ def most : QuantifierEntry :=
 def all : QuantifierEntry :=
   { form := "all"
   , qforce := .universal
-  , numberRestriction := some .pl
+  , numberRestriction := some .Plur
   , allowsMass := true
   , monotonicity := .increasing
   , strength := .strong  -- B&C Table II: *"There is all cats"
@@ -72,7 +72,7 @@ def all : QuantifierEntry :=
 def every : QuantifierEntry :=
   { form := "every"
   , qforce := .universal
-  , numberRestriction := some .sg
+  , numberRestriction := some .Sing
   , monotonicity := .increasing
   , strength := .strong  -- B&C Table II: *"There is every cat"
   }
@@ -81,7 +81,7 @@ def every : QuantifierEntry :=
 def each : QuantifierEntry :=
   { form := "each"
   , qforce := .universal
-  , numberRestriction := some .sg
+  , numberRestriction := some .Sing
   , monotonicity := .increasing
   , strength := .strong  -- B&C Table II: *"There is each cat"
   }
@@ -90,7 +90,7 @@ def each : QuantifierEntry :=
 def many : QuantifierEntry :=
   { form := "many"
   , qforce := .proportional
-  , numberRestriction := some .pl
+  , numberRestriction := some .Plur
   , monotonicity := .increasing
   }
 
@@ -142,29 +142,29 @@ def the : QuantifierEntry :=
   { form := "the", qforce := .definite, allowsMass := true, strength := .strong }
 
 def this : QuantifierEntry :=
-  { form := "this", qforce := .definite, numberRestriction := some .sg, strength := .strong }
+  { form := "this", qforce := .definite, numberRestriction := some .Sing, strength := .strong }
 
 def that : QuantifierEntry :=
-  { form := "that", qforce := .definite, numberRestriction := some .sg, strength := .strong }
+  { form := "that", qforce := .definite, numberRestriction := some .Sing, strength := .strong }
 
 def these : QuantifierEntry :=
-  { form := "these", qforce := .definite, numberRestriction := some .pl, strength := .strong }
+  { form := "these", qforce := .definite, numberRestriction := some .Plur, strength := .strong }
 
 def those : QuantifierEntry :=
-  { form := "those", qforce := .definite, numberRestriction := some .pl, strength := .strong }
+  { form := "those", qforce := .definite, numberRestriction := some .Plur, strength := .strong }
 
 def a : QuantifierEntry :=
-  { form := "a", qforce := .existential, numberRestriction := some .sg }
+  { form := "a", qforce := .existential, numberRestriction := some .Sing }
 
 def an : QuantifierEntry :=
-  { form := "an", qforce := .existential, numberRestriction := some .sg }
+  { form := "an", qforce := .existential, numberRestriction := some .Sing }
 
 /-- "both" - universal dual, presupposes exactly 2.
     K&S (83a): [_Det each of the two] ⇒ both.
     Compositional denotation `both_sem` lives in
     `Semantics.Quantification.Quantifier`.
 
-    `numberRestriction := some .du` carries the dual core concept
+    `numberRestriction := some .Dual` carries the dual core concept
     ([harbour-2014] `[−atomic, +minimal]`); the cardinality clause
     `|R| ≥ 2` on the denotation side reflects the Harbour
     `dualPredOnLattice` reading
@@ -172,7 +172,7 @@ def an : QuantifierEntry :=
 def both : QuantifierEntry :=
   { form := "both"
   , qforce := .universal
-  , numberRestriction := some .du
+  , numberRestriction := some .Dual
   , monotonicity := .increasing
   , strength := .strong  -- K&S §3.2: definite dets are strong
   }
@@ -184,7 +184,7 @@ def both : QuantifierEntry :=
 def neither : QuantifierEntry :=
   { form := "neither"
   , qforce := .negative
-  , numberRestriction := some .du
+  , numberRestriction := some .Dual
   , monotonicity := .decreasing
   , strength := .strong  -- K&S §3.3: negative strong
   }

@@ -23,11 +23,11 @@ open Features.Register (Level)
 
 /-- *eu* — 1sg. -/
 def eu : PersonalPronoun :=
-  { form := "eu", person := some .first, number := some .sg }
+  { form := "eu", person := some .first, number := some .Sing }
 
 /-- *nós* — 1pl. -/
 def nos : PersonalPronoun :=
-  { form := "nós", person := some .first, number := some .pl }
+  { form := "nós", person := some .first, number := some .Plur }
 
 -- ============================================================================
 -- Second Person (T/V, sg and pl)
@@ -35,19 +35,19 @@ def nos : PersonalPronoun :=
 
 /-- *ti* — 2sg familiar (T form). -/
 def ti : PersonalPronoun :=
-  { form := "ti", person := some .second, number := some .sg, register := .informal }
+  { form := "ti", person := some .second, number := some .Sing, register := .informal }
 
 /-- *vostede* — 2sg formal (V form). -/
 def vostede : PersonalPronoun :=
-  { form := "vostede", person := some .second, number := some .sg, register := .formal }
+  { form := "vostede", person := some .second, number := some .Sing, register := .formal }
 
 /-- *vós* — 2pl familiar. -/
 def vos_pl : PersonalPronoun :=
-  { form := "vós", person := some .second, number := some .pl, register := .informal }
+  { form := "vós", person := some .second, number := some .Plur, register := .informal }
 
 /-- *vostedes* — 2pl formal. -/
 def vostedes : PersonalPronoun :=
-  { form := "vostedes", person := some .second, number := some .pl, register := .formal }
+  { form := "vostedes", person := some .second, number := some .Plur, register := .formal }
 
 -- ============================================================================
 -- Third Person
@@ -55,19 +55,19 @@ def vostedes : PersonalPronoun :=
 
 /-- *el* — 3sg masculine. -/
 def el : PersonalPronoun :=
-  { form := "el", person := some .third, number := some .sg }
+  { form := "el", person := some .third, number := some .Sing }
 
 /-- *ela* — 3sg feminine. -/
 def ela : PersonalPronoun :=
-  { form := "ela", person := some .third, number := some .sg }
+  { form := "ela", person := some .third, number := some .Sing }
 
 /-- *eles* — 3pl masculine. -/
 def eles : PersonalPronoun :=
-  { form := "eles", person := some .third, number := some .pl }
+  { form := "eles", person := some .third, number := some .Plur }
 
 /-- *elas* — 3pl feminine. -/
 def elas : PersonalPronoun :=
-  { form := "elas", person := some .third, number := some .pl }
+  { form := "elas", person := some .third, number := some .Plur }
 
 -- ============================================================================
 -- Pronoun Lists
@@ -114,8 +114,8 @@ theorem has_all_persons :
 
 /-- Both singular and plural are attested. -/
 theorem has_both_numbers :
-    allPronouns.any (·.number == some .sg) = true ∧
-    allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
+    allPronouns.any (·.number == some .Sing) = true ∧
+    allPronouns.any (·.number == some .Plur) = true := ⟨rfl, rfl⟩
 
 /-- 2nd person pronouns are all second person. -/
 theorem second_person_all_2p :

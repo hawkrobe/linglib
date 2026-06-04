@@ -67,6 +67,12 @@ structure Pronoun where
   gender : Option Features.SurfaceGender := none
   /-- Native script form (hangul, kanji, Devanagari, …). -/
   script : Option String := none
+  /-- Pronoun type (UD `PronType`): the pro-form's lexical kind — personal (`Prs`),
+      interrogative (`Int`), relative (`Rel`), demonstrative (`Dem`), … Real UD morphology,
+      threaded onto the projected word by `toWord`; doubles as the lexical-kind axis the
+      capability tower deferred. Reciprocal (`Rcp`) is *not* stored: `toWord` derives it
+      from `bindingClass = .reciprocal`. `none` where unspecified. -/
+  pronType : Option UD.PronType := none
   /-- The binding class this pro-form declares — its `Features.BindingSource Pronoun` value:
       Principle A anaphor (`.reflexive`/`.reciprocal`), B pronominal (`.pronoun`), or C
       R-expression. *One* source of an expression's binding class — the lexical declaration
@@ -84,6 +90,8 @@ structure PersonalPronoun extends Pronoun where
   /-- Personal pronouns are Principle-B pronominals: the *type* fixes the binding class
       ([chomsky-1981]), overriding `Pronoun`'s `none` default so entries needn't restate it. -/
   bindingClass := some .pronoun
+  /-- Personal pronouns are UD `PronType=Prs`; the *type* fixes the morphology. -/
+  pronType := some UD.PronType.Prs
   /-- Register level (formality/honorifics). Binary T/V systems use
       `.informal`/`.formal`; ternary honorific systems (Hindi, Magahi,
       Maithili, Korean) use all three levels. -/
@@ -117,7 +125,8 @@ def toWord (p : Pronoun) : Word :=
                   -- carry the binding-relevant morphology so a projected pro-form's class is
                   -- read off its own features, not recovered by surface-form lookup
                   reflex := p.bindingClass == some .reflexive,
-                  pronType := if p.bindingClass == some .reciprocal then some .Rcp else none } }
+                  pronType := if p.bindingClass == some .reciprocal then some .Rcp
+                              else p.pronType } }
 
 /-! ### Derived person category and well-formedness ([cysouw-2009]) -/
 
@@ -138,7 +147,7 @@ def category (p : Pronoun) : Option Features.Person.Category :=
     mathlib way) so illegal states are catchable without fragmenting the type. -/
 def WellFormed (p : Pronoun) : Prop :=
   p.clusivity ≠ none →
-    p.person = some .first ∧ (p.number = some .du ∨ p.number = some .pl)
+    p.person = some .first ∧ (p.number = some .Dual ∨ p.number = some .Plur)
 
 instance (p : Pronoun) : Decidable p.WellFormed := by
   unfold WellFormed; infer_instance

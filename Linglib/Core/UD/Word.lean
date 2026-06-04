@@ -35,61 +35,23 @@ Types without UD equivalents remain defined here:
 -- Aliased Types (backed by UD)
 -- ============================================================================
 
-/-- Grammatical number. Aliased to UD.Number for cross-linguistic compatibility. -/
+/-- Grammatical number. Aliased to UD.Number; constructors are UD's own
+(`.Sing`, `.Plur`, `.Dual`, …) — there are no lowercase value aliases. -/
 abbrev Number := UD.Number
 
-namespace Number
-/-- Singular (compatibility alias for UD.Number.Sing) -/
-@[match_pattern] abbrev sg : Number := .Sing
-/-- Plural (compatibility alias for UD.Number.Plur) -/
-@[match_pattern] abbrev pl : Number := .Plur
-/-- Dual (compatibility alias for UD.Number.Dual). Used for lexical
-items that morphologically restrict to two-atom domains
-(e.g. English `both`/`neither`, Slovenian dual, Icelandic `hvor`). -/
-@[match_pattern] abbrev du : Number := .Dual
-end Number
-
-/-- Grammatical person. Aliased to UD.Person for cross-linguistic compatibility.
-
-    Constructors are: `.first`, `.second`, `.third`, `.zero`
-    (no compatibility aliases needed - names match) -/
+/-- Grammatical person. Aliased to UD.Person; constructors are UD's own
+(`.first`, `.second`, `.third`, `.zero`). -/
 abbrev Person := UD.Person
 
-/-- Voice: active vs passive. Aliased to UD.Voice. -/
+/-- Voice. Aliased to UD.Voice; constructors are UD's own (`.Act`, `.Pass`, …). -/
 abbrev Voice := UD.Voice
 
-namespace Voice
-/-- Active voice (compatibility alias) -/
-abbrev active : Voice := .Act
-/-- Passive voice (compatibility alias) -/
-abbrev passive : Voice := .Pass
-end Voice
-
-/-- Verb form. Aliased to UD.VerbForm. -/
+/-- Verb form. Aliased to UD.VerbForm; constructors are UD's own
+(`.Fin`, `.Inf`, `.Part`, …). -/
 abbrev VForm := UD.VerbForm
 
-namespace VForm
-/-- Finite (compatibility alias) -/
-abbrev finite : VForm := .Fin
-/-- Infinitive (compatibility alias) -/
-abbrev infinitive : VForm := .Inf
-/-- Past participle (compatibility alias - maps to Part) -/
-abbrev pastParticiple : VForm := .Part
-/-- Present participle (compatibility alias - maps to Part) -/
-abbrev presParticiple : VForm := .Part
-end VForm
-
-/-- Tense. Aliased to UD.Tense. -/
+/-- Tense. Aliased to UD.Tense; constructors are UD's own (`.Past`, `.Pres`, `.Fut`, …). -/
 abbrev Tense := UD.Tense
-
-namespace Tense
-/-- Past tense (compatibility alias) -/
-abbrev past : Tense := .Past
-/-- Present tense (compatibility alias) -/
-abbrev present : Tense := .Pres
-/-- Future tense (compatibility alias) -/
-abbrev future : Tense := .Fut
-end Tense
 
 -- ============================================================================
 -- Types Without UD Equivalents
@@ -161,7 +123,7 @@ instance (w1 w2 : Word) : Decidable (Word.Agree w1 w2) := by
     (detransitivization) is a frame-level fact carried by the passive analysis on
     `DepTree.frames`, not token data. Composes with `VerbEntry.toWordPastPart`. -/
 def Word.asPassive (w : Word) : Word :=
-  { w with features := { w.features with voice := some Voice.passive } }
+  { w with features := { w.features with voice := some .Pass } }
 
 instance : BEq Word where
   beq w1 w2 := w1.form == w2.form && w1.cat == w2.cat

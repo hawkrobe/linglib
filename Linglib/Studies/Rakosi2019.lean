@@ -129,7 +129,7 @@ theorem inclusive_not_anaphor :
 theorem quantified_np_asymmetry :
     reciprocalLicensed quantifiedNP = true ∧
     pluralReflexiveLicensed quantifiedNP = false ∧
-    quantifiedNP.verbAgr = .sg := ⟨rfl, rfl, rfl⟩
+    quantifiedNP.verbAgr = .Sing := ⟨rfl, rfl, rfl⟩
 
 /-- §4: Singular coordinate DPs.
 
@@ -141,7 +141,7 @@ theorem quantified_np_asymmetry :
 theorem coordinate_dp_asymmetry :
     reciprocalLicensed singularCoordinate = true ∧
     pluralReflexiveLicensed singularCoordinate = false ∧
-    singularCoordinate.verbAgr = .sg := ⟨rfl, rfl, rfl⟩
+    singularCoordinate.verbAgr = .Sing := ⟨rfl, rfl, rfl⟩
 
 /-- §5: Collective noun antecedents.
 
@@ -156,7 +156,7 @@ theorem coordinate_dp_asymmetry :
 theorem collective_noun_asymmetry :
     reciprocalLicensed collectiveNoun = true ∧
     pluralReflexiveLicensed collectiveNoun = false ∧
-    collectiveNoun.verbAgr = .sg := ⟨rfl, rfl, rfl⟩
+    collectiveNoun.verbAgr = .Sing := ⟨rfl, rfl, rfl⟩
 
 /-- §6: Bound variable antecedent.
 
@@ -170,7 +170,7 @@ theorem collective_noun_asymmetry :
 theorem bound_variable_asymmetry :
     reciprocalLicensed boundVariable = true ∧
     pluralReflexiveLicensed boundVariable = false ∧
-    boundVariable.verbAgr = .sg := ⟨rfl, rfl, rfl⟩
+    boundVariable.verbAgr = .Sing := ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4: Connection to Formal Semantics
@@ -237,7 +237,7 @@ theorem egymas_no_number_feature :
     *maguk* (PL). The anaphor's number must match the verb's agreement,
     confirming that reflexive licensing is morphosyntactic. -/
 theorem reflexive_number_paradigm :
-    maga.number = some .sg ∧ maguk.number = some .pl := ⟨rfl, rfl⟩
+    maga.number = some .Sing ∧ maguk.number = some .Plur := ⟨rfl, rfl⟩
 
 /-- The morphological invariance of *egymás* predicts it should be
     insensitive to verb agreement number — and it is: reciprocals are

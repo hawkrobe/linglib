@@ -709,11 +709,11 @@ theorem person_geometry_matches_core_features :
     and why it can address multiple addressees, unlike LEI/USTED. -/
 theorem cross_linguistic_number :
     -- LEI is formally singular (§3, (8): "3sg verbal agreement")
-    Italian.Pronouns.lei_formal.number = some .sg ∧
+    Italian.Pronouns.lei_formal.number = some .Sing ∧
     -- USTED is formally singular
-    Spanish.Pronouns.usted.number = some .sg ∧
+    Spanish.Pronouns.usted.number = some .Sing ∧
     -- SIE is formally PLURAL — the typological outlier (§6.2, (45))
-    German.Pronouns.sie_polite.number = some .pl := ⟨rfl, rfl, rfl⟩
+    German.Pronouns.sie_polite.number = some .Plur := ⟨rfl, rfl, rfl⟩
 
 /-- Despite different agreement numbers, all three polite pronouns trigger
     PCC effects identically — confirming that the PCC reads *person*

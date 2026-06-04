@@ -27,7 +27,7 @@ def se : PersonalPronoun :=
 
 /-- l'un l'autre — bipartite reciprocal NP (bivalent strategy). -/
 def lunLautre : PersonalPronoun :=
-  { form := "l'un l'autre", person := some .third, number := some .pl }
+  { form := "l'un l'autre", person := some .third, number := some .Plur }
 
 /-- The bipartite NP form is distinct from the clitic. -/
 theorem bipartite_distinct_from_clitic :

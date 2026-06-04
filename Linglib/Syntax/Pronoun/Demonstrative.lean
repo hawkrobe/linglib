@@ -34,6 +34,8 @@ set_option autoImplicit false
     for a distance-neutral demonstrative like German *dieser*). Carries no separate denotation here;
     its meaning is the deictic `Core.Nominal.Description.demonstrative` over its restrictor. -/
 structure DemonstrativePronoun extends Pronoun where
+  /-- Demonstratives are UD `PronType=Dem`; the *type* fixes the morphology. -/
+  pronType := some UD.PronType.Dem
   /-- The deictic feature (proximal/medial/distal, or `unspecified`). -/
   deixis : Features.Deixis.Feature
   deriving Repr, DecidableEq
