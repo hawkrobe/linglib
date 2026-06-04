@@ -1,4 +1,6 @@
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
+import Linglib.Features.Number
+import Linglib.Features.Person
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Features.Register
 
@@ -46,6 +48,8 @@ To find every claim made about a particular entry, grep for
 `English.Auxiliaries.<entry>` across `Phenomena/` and
 `Theories/`.
 -/
+
+open Features (Number Person)
 
 namespace English.Auxiliaries
 

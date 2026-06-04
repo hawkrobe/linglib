@@ -2,6 +2,7 @@ import Linglib.Semantics.Kinds.NominalMappingParameter
 import Linglib.Semantics.Dynamic.DiscourseRef
 import Linglib.Semantics.Dynamic.Connectives.Defs
 import Linglib.Core.Assignment
+import Linglib.Features.MassCount
 
 /-!
 # Kind Anaphora: Static-Dynamic Bridge

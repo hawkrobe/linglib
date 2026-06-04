@@ -1,5 +1,5 @@
-import Linglib.Core.UD.Basic
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
+import Linglib.Typology.WordOrder
 
 /-! # Clause Chaining Typology [sarvasy-aikhenvald-2025] [foley-r-d-van-valin-1984] [longacre-2007]
 

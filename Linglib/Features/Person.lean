@@ -1,4 +1,4 @@
-import Linglib.Core.UD.Basic
+import Linglib.Core.UniversalDependencies
 import Linglib.Features.Prominence
 import Linglib.Features.PrivativePair
 
@@ -42,6 +42,10 @@ language data) remains in `Phenomena/Agreement/PersonMarkingTypology.lean`.
 
 -/
 
+/-- Grammatical person — UD's descriptive vocabulary (`UD.Person`: `.first`, `.second`,
+`.third`, `.zero`) as the canonical type; the feature theory below is its API. -/
+abbrev Features.Person := UD.Person
+
 namespace Features.Person
 
 -- ============================================================================
@@ -74,13 +78,13 @@ def Features.wellFormed (pf : Features) : Bool :=
 -- ============================================================================
 
 /-- 1st person features: [+participant, +author]. -/
-def first : Features := ⟨true, true⟩
+def firstF : Features := ⟨true, true⟩
 
 /-- 2nd person features: [+participant, −author]. -/
-def second : Features := ⟨true, false⟩
+def secondF : Features := ⟨true, false⟩
 
 /-- 3rd person features: [−participant, −author]. -/
-def third : Features := ⟨false, false⟩
+def thirdF : Features := ⟨false, false⟩
 
 -- ============================================================================
 -- § 3: PersonLevel Bridge
@@ -92,9 +96,9 @@ namespace Features.Prominence
 
 /-- Decompose `PersonLevel` into binary person features. -/
 def PersonLevel.toFeatures : PersonLevel → Features.Person.Features
-  | .first  => Features.Person.first
-  | .second => Features.Person.second
-  | .third  => Features.Person.third
+  | .first  => Features.Person.firstF
+  | .second => Features.Person.secondF
+  | .third  => Features.Person.thirdF
 
 /-- Convert `UD.Person` to `PersonLevel`. The UD `.zero` (impersonal)
     case has no `PersonLevel` analogue; everything else is direct. -/
@@ -114,9 +118,9 @@ open Features.Prominence
 -- § 4: Features Verification
 -- ============================================================================
 
-@[simp] theorem first_wellFormed : first.wellFormed = true := rfl
-@[simp] theorem second_wellFormed : second.wellFormed = true := rfl
-@[simp] theorem third_wellFormed : third.wellFormed = true := rfl
+@[simp] theorem firstF_wellFormed : firstF.wellFormed = true := rfl
+@[simp] theorem secondF_wellFormed : secondF.wellFormed = true := rfl
+@[simp] theorem thirdF_wellFormed : thirdF.wellFormed = true := rfl
 
 /-- The ill-formed combination [−participant, +author] is the only
     combination that violates well-formedness. -/
@@ -150,9 +154,9 @@ instance : Features.PhiFeatures Features where
   roundtrip := fun ⟨_, _⟩ => rfl
 
 /-- The three canonical person values map to the three PrivativePair cells. -/
-@[simp] theorem first_is_maximal : PhiFeatures.toPair first = .maximal := rfl
-@[simp] theorem second_is_intermediate : PhiFeatures.toPair second = .intermediate := rfl
-@[simp] theorem third_is_minimal : PhiFeatures.toPair third = .minimal := rfl
+@[simp] theorem firstF_is_maximal : PhiFeatures.toPair firstF = .maximal := rfl
+@[simp] theorem secondF_is_intermediate : PhiFeatures.toPair secondF = .intermediate := rfl
+@[simp] theorem thirdF_is_minimal : PhiFeatures.toPair thirdF = .minimal := rfl
 
 /-- The `[±participant, ±author]` decomposition **is** the privative pair: an equivalence
 `Features ≃ PrivativePair` ([harbour-2016]'s phi-kernel skeleton as an isomorphism, not a

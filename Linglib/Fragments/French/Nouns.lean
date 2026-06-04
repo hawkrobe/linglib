@@ -1,11 +1,14 @@
 import Linglib.Features.Gender
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
 import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Features.Number
 
 /-! # French Noun Lexicon Fragment
 
 French NP structure with gender. Bare arguments restricted ([chierchia-1998] [-arg, +pred]).
 -/
+
+open Features (Number)
 
 namespace French.Nouns
 
@@ -69,10 +72,10 @@ def frenchMapping : NominalMapping := .predOnly
 
 
 /-- Create a definite NP (le/la/les) -/
-def defNP (n : NounEntry) (num : Number := .sg) : NP :=
+def defNP (n : NounEntry) (num : Number := .Sing) : NP :=
   let det := match num, n.gender with
-    | .sg, .masculine => Determiner.le
-    | .sg, .feminine => Determiner.la
+    | .Sing, .masculine => Determiner.le
+    | .Sing, .feminine => Determiner.la
     | _, _ => Determiner.les      -- plural (and fallback for non-binary number)
   { noun := n, number := num, isBare := false, determiner := some det }
 
@@ -81,21 +84,21 @@ def indefNP (n : NounEntry) : NP :=
   let det := match n.gender with
     | .feminine => Determiner.une
     | _ => Determiner.un  -- masculine is default
-  { noun := n, number := .sg, isBare := false, determiner := some det }
+  { noun := n, number := .Sing, isBare := false, determiner := some det }
 
 /-- Create an indefinite plural NP (des) -/
 def desNP (n : NounEntry) : NP :=
-  { noun := n, number := .pl, isBare := false, determiner := some .des }
+  { noun := n, number := .Plur, isBare := false, determiner := some .des }
 
 /-- Create a partitive NP (du/de la) for mass nouns -/
 def partNP (n : NounEntry) : NP :=
   let det := match n.gender with
     | .feminine => Determiner.dela
     | _ => Determiner.du  -- masculine is default
-  { noun := n, number := .sg, isBare := false, determiner := some det }
+  { noun := n, number := .Sing, isBare := false, determiner := some det }
 
 /-- Create a bare NP (restricted in French) -/
-def bareNP (n : NounEntry) (num : Number := .sg) : NP :=
+def bareNP (n : NounEntry) (num : Number := .Sing) : NP :=
   { noun := n, number := num, isBare := true }
 
 
@@ -152,7 +155,7 @@ example : bareSingularLicensed = false := rfl
 def leChien : NP := defNP chien
 
 /-- "les chiens" (the dogs) -/
-def lesChiens : NP := defNP chien .pl
+def lesChiens : NP := defNP chien .Plur
 
 /-- "un chien" (a dog) -/
 def unChien : NP := indefNP chien

@@ -1,3 +1,5 @@
+import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Features.MassCount
 /-
 # Kind Reference and Number Marking
 
@@ -42,7 +44,6 @@ partition are disjoint) is derived there.
 
 -/
 
-import Linglib.Semantics.Kinds.NominalMappingParameter
 
 namespace Semantics.Kinds.MeaningPreservation
 

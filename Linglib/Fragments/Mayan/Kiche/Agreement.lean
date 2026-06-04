@@ -1,8 +1,9 @@
 import Linglib.Features.Case
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 import Linglib.Typology.Extraction
+import Linglib.Features.Number
 
 /-!
 # K'iche' Agreement Fragment [mondloch-2017]
@@ -69,6 +70,8 @@ K'iche' has two levels of formality for 2nd person: informal and
 formal. The formal forms (laal SG, alaq PL) are syntactically
 postverbal and do not participate in the prefix paradigm.
 -/
+
+open Features (Number)
 
 namespace Kiche
 

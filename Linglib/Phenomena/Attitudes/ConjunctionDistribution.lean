@@ -1,4 +1,4 @@
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
 
 /-! # Conjunction Distribution: Empirical Data
 

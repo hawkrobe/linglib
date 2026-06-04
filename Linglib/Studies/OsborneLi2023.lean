@@ -1,5 +1,5 @@
 import Linglib.Syntax.DependencyGrammar.Basic
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
 import Linglib.Data.Examples.Schema
 import Linglib.Syntax.DependencyGrammar.Coordination
 

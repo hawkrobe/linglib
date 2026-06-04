@@ -1,4 +1,4 @@
-import Linglib.Core.UD.Word
+import Linglib.Core.UniversalDependencies
 import Linglib.Semantics.Quantification.ChoiceFunction
 import Linglib.Semantics.Modality.ModalTypes
 import Mathlib.Data.Rat.Defs
