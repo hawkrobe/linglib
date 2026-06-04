@@ -47,7 +47,7 @@ This separation enables anaphora to indefinites under negation:
 
 -/
 
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 import Linglib.Semantics.Dynamic.Connectives.CCP
 import Mathlib.Data.Fintype.Basic
 

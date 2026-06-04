@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 import Linglib.Features.CoreferenceStatus
 
 /-!
@@ -61,7 +61,7 @@ structure SimpleClause where
   subject : Word
   verb : Word
   object : Option Word
-  semanticPl : Bool := subject.features.number == some .pl
+  semanticPl : Bool := subject.features.number == some .Plur
   deriving Repr
 
 /-- The `Word` at a position, if present. -/

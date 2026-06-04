@@ -135,7 +135,7 @@ def ParadigmSystem.isTransparent {n : Nat} {Form : Type} [BEq Form] [DecidableEq
     `String`-typed surface forms. -/
 def ParadigmSystem.fromStems {σ : Type} (stems : List (Morphology.Stem σ))
     (baseMeaning : σ) (numCells : Nat)
-    (cellExtractor : List (String × Features × σ) → Fin numCells → String) :
+    (cellExtractor : List (String × UD.MorphFeatures × σ) → Fin numCells → String) :
     ParadigmSystem numCells String :=
   let allParadigms := stems.map λ s =>
     let forms := s.allForms baseMeaning

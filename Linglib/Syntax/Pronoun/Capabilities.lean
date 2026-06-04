@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Register
 import Linglib.Features.Prominence

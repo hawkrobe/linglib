@@ -1,5 +1,5 @@
 import Linglib.Features.Aktionsart
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 
 /-!
 # VP-Level Situation Type Composition

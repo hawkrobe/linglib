@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 import Linglib.Features.Acceptability
 import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Typology.PolarityItem

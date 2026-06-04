@@ -31,7 +31,7 @@ open DepGrammar (ArgStr ArgSlot Dir)
 structure LexEntry where
   form : String
   cat : UD.UPOS
-  features : Features
+  features : UD.MorphFeatures
   argStr : ArgStr
   inv : Bool := false
   deriving Repr

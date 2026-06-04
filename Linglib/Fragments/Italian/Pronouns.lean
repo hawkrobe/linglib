@@ -1,6 +1,6 @@
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 
 /-! # Italian Pronoun and Clitic Fragment
 

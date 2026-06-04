@@ -1,5 +1,5 @@
 import Mathlib.Data.List.Basic
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 
 /-!
 # Dependency grammar substrate
@@ -197,7 +197,7 @@ def checkVerbSubcat (t : DepTree) : Bool :=
         let subjCount := countDepsOfType t i .nsubj
         let objCount := countDepsOfType t i .obj
         let iobjCount := countDepsOfType t i .iobj
-        match w.features.valence with
+        match w.valence with
         | some .intransitive => subjCount >= 1 && objCount == 0
         | some .transitive => subjCount >= 1 && objCount == 1
         | some .ditransitive => subjCount >= 1 && objCount == 1 && iobjCount == 1

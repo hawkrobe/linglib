@@ -53,21 +53,21 @@ open DepGrammar DepGrammar.LongDistance DepGrammar.Coordination
 Words: what(0) did(1) John(2) see(3). The wh-word attaches as `obj` of
 the main verb. -/
 def exWhatDidJohnSee : DepTree :=
-  { words := [⟨"what", .PRON, { wh := true }⟩, Word.mk' "did" .AUX,
+  { words := [{ form :="what", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "did" .AUX,
               Word.mk' "John" .PROPN, Word.mk' "see" .VERB]
     deps  := [⟨1, 2, .nsubj⟩, ⟨1, 3, .aux⟩, ⟨1, 0, .obj⟩]
     rootIdx := 1 }
 
 /-- "Who saw Mary?" — subject wh-question (no gap needed). -/
 def exWhoSawMary : DepTree :=
-  { words := [⟨"who", .PRON, { wh := true }⟩, Word.mk' "saw" .VERB,
+  { words := [{ form :="who", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "saw" .VERB,
               Word.mk' "Mary" .PROPN]
     deps  := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩]
     rootIdx := 1 }
 
 /-- "Who did John see?" — object wh-question with `who`. -/
 def exWhoDidJohnSee : DepTree :=
-  { words := [⟨"who", .PRON, { wh := true }⟩, Word.mk' "did" .AUX,
+  { words := [{ form :="who", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "did" .AUX,
               Word.mk' "John" .PROPN, Word.mk' "see" .VERB]
     deps  := [⟨1, 2, .nsubj⟩, ⟨1, 3, .aux⟩, ⟨1, 0, .obj⟩]
     rootIdx := 1 }
@@ -118,7 +118,7 @@ def exJohnWondersIfMarySleeps : DepTree :=
 Words: John(0) wonders(1) what(2) Mary(3) saw(4). -/
 def exJohnWondersWhatMarySaw : DepTree :=
   { words := [Word.mk' "John" .PROPN, Word.mk' "wonders" .VERB,
-              ⟨"what", .PRON, { wh := true }⟩,
+              { form :="what", cat := .PRON, features := { pronType := some .Int }},
               Word.mk' "Mary" .PROPN, Word.mk' "saw" .VERB]
     deps  := [⟨1, 0, .nsubj⟩, ⟨1, 4, .ccomp⟩, ⟨4, 3, .nsubj⟩, ⟨4, 2, .obj⟩]
     rootIdx := 1 }
@@ -187,7 +187,7 @@ def exRNR_enhanced : DepGraph := enhanceSharedDeps exRNR
 
 /-- Object wh-questions have a `[wh]` filler at index 0. -/
 theorem whatDidJohnSee_has_wh :
-    exWhatDidJohnSee.words[0]?.map (·.features.wh) = some true := rfl
+    exWhatDidJohnSee.words[0]?.map (·.features.isWh) = some true := rfl
 
 /-- Subject wh-questions don't need gaps (empty gap list). -/
 theorem whoSawMary_no_gap :

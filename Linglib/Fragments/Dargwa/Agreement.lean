@@ -1,5 +1,5 @@
 import Linglib.Features.Prominence
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 import Linglib.Features.Gender
 
 /-!

@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 import Linglib.Fragments.Mandarin.QuestionParticles
 import Linglib.Semantics.Modality.Kernel
 import Linglib.Features.QParticleLayer

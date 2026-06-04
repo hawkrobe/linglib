@@ -124,7 +124,7 @@ gap degree 1) covers attested data. -/
 
 /-- Minimal crossing tree: arcs `0 → 2` and `1 → 3` cross. -/
 def nonProjectiveTree : DepTree :=
-  { words := [ ⟨"A", .NOUN, {}⟩, ⟨"B", .VERB, {}⟩, ⟨"C", .NOUN, {}⟩, ⟨"D", .VERB, {}⟩ ]
+  { words := [ { form :="A", cat := .NOUN, features := {}}, { form :="B", cat := .VERB, features := {}}, { form :="C", cat := .NOUN, features := {}}, { form :="D", cat := .VERB, features := {}} ]
     deps := [ ⟨0, 2, .obj⟩, ⟨1, 3, .obj⟩ ]
     rootIdx := 0 }
 

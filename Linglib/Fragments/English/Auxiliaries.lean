@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Features.Register
 
@@ -226,7 +226,7 @@ def AuxEntry.toWord (a : AuxEntry) : Word :=
   { form := a.form
   , cat := .AUX
   , features := {
-      finite := true
+      verbForm := some .Fin
       , person := a.person
       , number := a.number
     }

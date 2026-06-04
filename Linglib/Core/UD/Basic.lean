@@ -326,6 +326,10 @@ structure MorphFeatures where
   definite : Option Definite := none
   degree   : Option Degree   := none
   pronType : Option PronType := none
+  /-- Reflexive (UD `Reflex=Yes`); `false` = feature absent. Distinguishes a reflexive
+      anaphor from a plain personal pronoun; not an agreement feature, so not consulted
+      by `compatible`. -/
+  reflex   : Bool            := false
   person   : Option Person   := none
   verbForm : Option VerbForm := none
   tense    : Option Tense    := none
@@ -337,6 +341,11 @@ structure MorphFeatures where
 
 /-- Empty feature bundle -/
 def MorphFeatures.empty : MorphFeatures := {}
+
+/-- Is this bundle wh-marked — an interrogative or relative pro-form? Derived from
+    `pronType` (UD has no standalone wh feature; wh-ness *is* `PronType ∈ {Int, Rel}`). -/
+def MorphFeatures.isWh (f : MorphFeatures) : Bool :=
+  f.pronType == some .Int || f.pronType == some .Rel
 
 /-- Check if two feature bundles are compatible (unify where both specified) -/
 def MorphFeatures.compatible (f1 f2 : MorphFeatures) : Bool :=
@@ -363,6 +372,7 @@ def MorphFeatures.unify (f1 f2 : MorphFeatures) : Option MorphFeatures :=
       definite := f1.definite <|> f2.definite
       degree   := f1.degree   <|> f2.degree
       pronType := f1.pronType <|> f2.pronType
+      reflex   := f1.reflex   || f2.reflex
       person   := f1.person   <|> f2.person
       verbForm := f1.verbForm <|> f2.verbForm
       tense    := f1.tense    <|> f2.tense

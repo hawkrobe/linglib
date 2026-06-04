@@ -1,5 +1,5 @@
 import Linglib.Features.Case
-import Linglib.Core.UD
+import Linglib.Core.UD.Basic
 import Linglib.Features.Prominence
 import Linglib.Syntax.Case.Alignment
 import Linglib.Syntax.Agreement.Paradigm

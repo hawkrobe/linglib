@@ -109,13 +109,15 @@ def matchGovFeature (w : Word) (feat : GovernedFeature) (reqVal : GovernedValue)
     | some .Gen => reqVal = .gen
     | _ => true
   | .VForm =>
-    match w.features.vform with
+    match w.features.verbForm with
     | some .Inf => reqVal = .infinitive
     | some .Part => reqVal = .gerund || reqVal = .participle
     | some .Fin => reqVal = .finite || reqVal = .base
     | _ => true
   | .Finiteness =>
-    if w.features.finite then reqVal = .finite else reqVal = .nonfinite
+    -- finiteness is read off verbForm (no stored finiteness flag); only an explicit
+    -- infinitive counts as nonfinite, matching the old default-finite behavior
+    if w.features.verbForm != some .Inf then reqVal = .finite else reqVal = .nonfinite
   | .Mood => true
 
 /-- A dependency tree satisfies its government requirements when every
@@ -137,33 +139,33 @@ def checkGovernment (t : DepTree) (govReqs : List GovRequirement) : Bool :=
 /-- "She wants to go": `wants(1)` heads `she(0)` (nsubj) and `go(3)`
     (xcomp); `go(3)` heads `to(2)` (mark). -/
 def exSheWantsToGo : DepTree :=
-  { words := [ ⟨"she", .PRON, { case_ := some .Nom }⟩
-             , ⟨"wants", .VERB, { valence := some .transitive }⟩
-             , ⟨"to", .PART, {}⟩
-             , ⟨"go", .VERB, { vform := some .Inf }⟩ ]
+  { words := [ { form :="she", cat := .PRON, features := { case_ := some .Nom }}
+             , { form :="wants", cat := .VERB, valence := some .transitive}
+             , { form :="to", cat := .PART, features := {}}
+             , { form :="go", cat := .VERB, features := { verbForm := some .Inf }} ]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .xcomp⟩, ⟨3, 2, .mark⟩]
     rootIdx := 1 }
 
 /-- "She enjoys swimming": `enjoys(1)` heads `she(0)` (nsubj) and
     `swimming(2)` (xcomp). -/
 def exSheEnjoysSwimming : DepTree :=
-  { words := [ ⟨"she", .PRON, { case_ := some .Nom }⟩
-             , ⟨"enjoys", .VERB, { valence := some .transitive }⟩
-             , ⟨"swimming", .VERB, { vform := some .Part }⟩ ]
+  { words := [ { form :="she", cat := .PRON, features := { case_ := some .Nom }}
+             , { form :="enjoys", cat := .VERB, valence := some .transitive}
+             , { form :="swimming", cat := .VERB, features := { verbForm := some .Part }} ]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .xcomp⟩]
     rootIdx := 1 }
 
 /-- "with him": preposition governs accusative — well-formed. -/
 def exWithHim : DepTree :=
-  { words := [ ⟨"with", .ADP, {}⟩
-             , ⟨"him", .PRON, { case_ := some .Acc }⟩ ]
+  { words := [ { form :="with", cat := .ADP, features := {}}
+             , { form :="him", cat := .PRON, features := { case_ := some .Acc }} ]
     deps := [⟨0, 1, .obj⟩]
     rootIdx := 0 }
 
 /-- "with he": preposition government violation (nominative for accusative). -/
 def exWithHe : DepTree :=
-  { words := [ ⟨"with", .ADP, {}⟩
-             , ⟨"he", .PRON, { case_ := some .Nom }⟩ ]
+  { words := [ { form :="with", cat := .ADP, features := {}}
+             , { form :="he", cat := .PRON, features := { case_ := some .Nom }} ]
     deps := [⟨0, 1, .obj⟩]
     rootIdx := 0 }
 

@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.UD.Word
 import Linglib.Features.Gender
 import Linglib.Morphology.Exponence
 import Linglib.Semantics.Kinds.NominalMappingParameter
@@ -189,8 +189,7 @@ def NounEntry.toWordSg (n : NounEntry) : Word :=
   { form := n.formSg
   , cat := if n.proper then .PROPN else .NOUN
   , features := {
-      number := some .sg
-    , countable := if n.proper then none else some n.countable
+      number := some .Sing
     , person := if n.proper then some .third else none
     , gender := n.gender.bind (·.toUDGender)
     }
@@ -202,8 +201,7 @@ def NounEntry.toWordPl (n : NounEntry) : Word :=
   { form := (n.formPl.getD (n.formSg ++ "s"))
   , cat := .NOUN
   , features := {
-      number := some .pl
-    , countable := some n.countable
+      number := some .Plur
     }
   }
 
@@ -216,7 +214,6 @@ def NounEntry.toStem {α : Type} (n : NounEntry) : Morphology.Stem (α → Bool)
   { lemma_ := n.formSg
   , cat := if n.proper then .PROPN else .NOUN
   , baseFeatures := { number := some .Sing
-                    , countable := if n.proper then none else some n.countable
                     , person := if n.proper then some .third else none }
   , paradigm :=
       if n.countable == .count && !n.proper then
