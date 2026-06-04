@@ -198,7 +198,16 @@ end QualitativeAdditivity
     `dominationLift ge_w A B := ∀ b, b ∈ B → ∃ a, a ∈ A ∧ ge_w a b`,
     i.e. every element of B is dominated by some element of A. The identifier
     `dominationLift` (defined in `Defs`) reflects [halpern-2003]'s completeness
-    result; the lifting operation itself is due to [lewis-1973]. -/
+    result; the lifting operation itself is due to [lewis-1973].
+
+    The `V2`–`V7` proofs below (and their m-lift analogues) are deliberately
+    *not* routed through the abstract `patternV*_of` layer: the lifts validate
+    these patterns for **arbitrary** world relations, whereas the abstract route
+    would require reflexivity and transitivity of `ge_w` (the lift is monotone
+    only given reflexivity, transitive only given transitivity). The abstract
+    layer is consumed exactly where its hypotheses are genuinely needed
+    (`V11`/`V12` for the m-lift, via `matchingLift_isTrans` and
+    `matchingLift_isComplementReversing`). -/
 
 section WorldOrdering
 
@@ -653,6 +662,20 @@ def matchingLift_toGFCPreorder {W : Type*} [Finite W] (ge_w : W → W → Prop)
   mono := matchingLift_axiomT hRefl
   complRev := fun _ _ h => matchingLift_complement_reversal hRefl hTrans h
 
+/-- The m-lift's transitivity, packaged for the abstract pattern layer. -/
+def matchingLift_isTrans {W : Type*} [Finite W] (ge_w : W → W → Prop)
+    (hRefl : ∀ w, ge_w w w)
+    (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
+    IsTrans (Set W) (matchingLift ge_w) :=
+  ⟨(matchingLift_toGFCPreorder ge_w hRefl hTrans).trans⟩
+
+/-- The m-lift's complement reversal, packaged for the abstract pattern layer. -/
+def matchingLift_isComplementReversing {W : Type*} [Finite W] (ge_w : W → W → Prop)
+    (hRefl : ∀ w, ge_w w w)
+    (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
+    IsComplementReversing (matchingLift ge_w) :=
+  ⟨(matchingLift_toGFCPreorder ge_w hRefl hTrans).complRev⟩
+
 /-- V12 is valid for the m-lifting on finite posets (Fact 5 in
     [holliday-icard-2013]): every m-lift is a `GFCPreorder`, so `patternV12_of`
     supplies the pattern. -/
@@ -660,10 +683,8 @@ theorem matchingLift_V12 {W : Type*} [Finite W] (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w)
     (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
     patternV12 (matchingLift ge_w) := by
-  haveI : IsTrans (Set W) (matchingLift ge_w) :=
-    ⟨(matchingLift_toGFCPreorder ge_w hRefl hTrans).trans⟩
-  haveI : IsComplementReversing (matchingLift ge_w) :=
-    ⟨(matchingLift_toGFCPreorder ge_w hRefl hTrans).complRev⟩
+  haveI := matchingLift_isTrans ge_w hRefl hTrans
+  haveI := matchingLift_isComplementReversing ge_w hRefl hTrans
   exact patternV12_of
 
 /-- V11 is valid for the m-lifting on finite posets (Fact 5 in
@@ -672,10 +693,8 @@ theorem matchingLift_V11 {W : Type*} [Finite W] (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w)
     (hTrans : ∀ u v w, ge_w u v → ge_w v w → ge_w u w) :
     patternV11 (matchingLift ge_w) := by
-  haveI : IsTrans (Set W) (matchingLift ge_w) :=
-    ⟨(matchingLift_toGFCPreorder ge_w hRefl hTrans).trans⟩
-  haveI : IsComplementReversing (matchingLift ge_w) :=
-    ⟨(matchingLift_toGFCPreorder ge_w hRefl hTrans).complRev⟩
+  haveI := matchingLift_isTrans ge_w hRefl hTrans
+  haveI := matchingLift_isComplementReversing ge_w hRefl hTrans
   exact patternV11_of
 
 /-- V13 is valid for the m-lifting on finite posets (Fact 5 in
