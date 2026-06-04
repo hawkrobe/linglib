@@ -147,6 +147,16 @@ theorem hasGreatest_degree_iff_closed (d : Dimension) :
       show HasGreatest ℕ ↔ _
       exact iff_of_false not_hasGreatest_of_noMaxOrder (by decide)
 
+/-- **The Kennedy–Levin thesis, as a theorem.** The computable
+    `Dimension.defaultTelicity` table is exactly the order-theoretic fact: a
+    dimension is telic iff its degree type has a greatest element (`OrderTop`). So
+    the telicity a fragment consumes is grounded in the scale's order structure,
+    not stipulated. -/
+theorem defaultTelicity_telic_iff_hasGreatest (d : Dimension) :
+    d.defaultTelicity = .telic ↔ HasGreatest d.degree := by
+  rw [hasGreatest_degree_iff_closed]
+  cases d <;> simp [Dimension.defaultTelicity, Dimension.boundedness]
+
 /-- A closed dimension yields a telic reading (a Quantized witness at `⊤`). -/
 theorem straightness_telic :
     ∃ g : Dimension.straightness.degree,
