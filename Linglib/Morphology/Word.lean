@@ -68,11 +68,26 @@ instance (w1 w2 : Word) : Decidable (Word.Agree w1 w2) := by
   UD.MorphFeatures.compatible_self w.phi
 
 /-- φ-agreement is symmetric — the docstring's "symmetric tolerance relation", as a
-    theorem. (It is *not* transitive: an unspecified feature is a wildcard, so
-    `she ~ they ~ he` while `she ≁ he`.) -/
+    theorem. -/
 @[symm] theorem Word.Agree.symm {w1 w2 : Word} (h : Word.Agree w1 w2) : Word.Agree w2 w1 := by
   unfold Word.Agree at h ⊢
   rwa [UD.MorphFeatures.compatible_comm]
+
+/-- φ-agreement is *not* transitive: an unspecified feature is a wildcard, so
+    underspecified *they* agrees with both *she* and *he* while *she ≁ he*. -/
+theorem Word.Agree.not_transitive :
+    ¬ ∀ w1 w2 w3 : Word, Word.Agree w1 w2 → Word.Agree w2 w3 → Word.Agree w1 w3 := by
+  intro h
+  exact absurd
+    (h ⟨"she", .PRON, { person := some .third, number := some .Sing, gender := some .Fem }⟩
+       ⟨"they", .PRON, { person := some .third }⟩
+       ⟨"he", .PRON, { person := some .third, number := some .Sing, gender := some .Masc }⟩
+       (by decide) (by decide))
+    (by decide)
+
+-- `reflex` is deliberately not an agreement feature: a reflexive-marked token still
+-- agrees with an unmarked one (the φ-projection drops it).
+example : Word.Agree ⟨"sich", .PRON, { reflex := true }⟩ ⟨"Kind", .NOUN, {}⟩ := by decide
 
 /-- Derive a passive variant: sets voice to passive. The valence change
     (detransitivization) is a frame-level fact carried by the passive analysis on
