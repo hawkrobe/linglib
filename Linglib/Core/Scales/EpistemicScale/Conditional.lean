@@ -3,7 +3,7 @@ import Linglib.Core.Scales.EpistemicScale.Defs
 /-!
 # Conditional Plausibility and Probabilistic Update
 
-[halpern-2003] [jeffrey-1965][halpern-2003] axiomatizes conditional plausibility measures,
+[halpern-2003] axiomatizes conditional plausibility measures,
 generalizing Bayesian conditioning, Popper spaces, Jeffrey's rule,
 and imaging under a single algebraic framework (Cond1–Cond4).
 
@@ -32,9 +32,7 @@ each world either survives or is eliminated.
 
 namespace Core.Scale
 
--- ══════════════════════════════════════════════════════════════════════
--- § 1. Conditioning Modes
--- ══════════════════════════════════════════════════════════════════════
+/-! ### Conditioning modes -/
 
 /-- Classification of conditioning modes used across linglib.
 
@@ -51,9 +49,7 @@ inductive ConditioningMode where
   | ranking   -- [spohn-1988]: κ_φ(w) = κ(w) - κ(φ) for φ-worlds
   deriving DecidableEq, Repr
 
--- ══════════════════════════════════════════════════════════════════════
--- § 2. Conditional Probability Measure (Popper Space)
--- ══════════════════════════════════════════════════════════════════════
+/-! ### Conditional probability measure (Popper space) -/
 
 /-- A conditional probability measure: P(A | B) axiomatized directly.
 
@@ -101,9 +97,7 @@ theorem bayes (m : CondMeasure W) (A B : Set W) :
 
 end CondMeasure
 
--- ══════════════════════════════════════════════════════════════════════
--- § 3. Ratio Construction (Halpern Theorem 3.3.1)
--- ══════════════════════════════════════════════════════════════════════
+/-! ### Ratio construction (Halpern Theorem 3.3.1) -/
 
 /-- Construct conditional probability via the ratio P(A|B) = μ(A ∩ B)/μ(B).
 
@@ -150,9 +144,7 @@ noncomputable def FinAddMeasure.toCondMeasure {W : Type*}
     · rw [div_mul_div_comm, mul_comm (m.mu (A ∩ (B ∩ C))), mul_div_mul_left _ _ hBC]
   cond_univ := fun A => by simp [Set.inter_univ, m.total, div_one]
 
--- ══════════════════════════════════════════════════════════════════════
--- § 4. Jeffrey's Rule
--- ══════════════════════════════════════════════════════════════════════
+/-! ### Jeffrey's rule -/
 
 /-- An evidence partition: a finite collection of mutually exclusive,
     exhaustive propositions with new probability assignments. -/
@@ -215,29 +207,17 @@ theorem bayesian_is_jeffrey {W : Type*} (m : CondMeasure W) (B : Set W)
         weights_sum := by simp } A := by
   simp [jeffreyUpdate, List.zip, List.foldl, mul_one]
 
--- ══════════════════════════════════════════════════════════════════════
--- § 5. Bridge: Conditional Plausibility ↔ Epistemic Comparison
--- ══════════════════════════════════════════════════════════════════════
+/-! ### Conditional plausibility and epistemic comparison -/
 
 /-- A conditional measure induces a conditional epistemic comparison:
-    A ≿_B C iff P(A|B) ≥ P(C|B). This conditional comparison satisfies
-    reflexivity and monotonicity (System W axioms) for each fixed B. -/
-theorem condMeasure_systemW_per_evidence {W : Type*}
+    A ≿_B C iff P(A|B) ≥ P(C|B). This conditional comparison is reflexive
+    for each fixed B. -/
+theorem condMeasure_reflexive_per_evidence {W : Type*}
     (m : CondMeasure W) (B : Set W) :
     EpistemicAxiom.R (fun A C => m.condGe A C B) :=
   fun _ => le_refl _
 
-/-- A conditional measure extends to a conditional comparison on
-    propositions: A is conditionally at least as likely as C given B
-    iff P(A|B) ≥ P(C|B). This is the conditional version of
-    `FinAddMeasure.inducedGe`. -/
-def CondMeasure.inducedCondGe {W : Type*} (m : CondMeasure W)
-    (A C B : Set W) : Prop :=
-  m.condMu A B ≥ m.condMu C B
-
--- ══════════════════════════════════════════════════════════════════════
--- § 6. Conditioning Mode Relationships
--- ══════════════════════════════════════════════════════════════════════
+/-! ### Conditioning mode relationships -/
 
 -- **PMF** (BayesianSemantics.lean + `Linglib.Core.Probability.Finite`):
 -- `pmf.probOfSet event` computes P(event) = Σ_θ mass(θ) · 1[event(θ)].
