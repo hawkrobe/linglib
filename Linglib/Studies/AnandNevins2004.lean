@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Reference.DirectReference
 import Linglib.Semantics.Reference.FreeIndirectDiscourse
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
 import Linglib.Semantics.Tense.DeRe
 import Linglib.Data.Examples.Schema
 
@@ -16,9 +16,9 @@ to the direct reference and indexical shift data in
 ## Derivation Chain
 
 ```
-Core.Context.Tower (ContextTower, push, origin, innermost)
+Semantics.Context.Tower (ContextTower, push, origin, innermost)
     ↓
-Core.Context.Shifts (attitudeShift, perspectiveShift, identityShift)
+Semantics.Context.Shifts (attitudeShift, perspectiveShift, identityShift)
     ↓
 Semantics.Reference.FreeIndirectDiscourse (FIDProfile)
     ↓
@@ -45,7 +45,7 @@ open Phenomena.Reference
 
 namespace AnandNevins2004
 
-open Core.Context
+open Semantics.Context
 open Semantics.Reference.FreeIndirectDiscourse
 open Data.Examples (LinguisticExample)
 

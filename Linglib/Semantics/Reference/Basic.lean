@@ -19,7 +19,7 @@ These mechanisms are independent: a term can exhibit any subset.
 -/
 
 import Linglib.Core.Logic.Intensional.Rigidity
-import Linglib.Core.Context.Basic
+import Linglib.Semantics.Context.Basic
 
 namespace Semantics.Reference.Basic
 
@@ -164,7 +164,7 @@ trivial time and position.
 This allows existing code using the two-component context to interoperate
 with the full Kaplanian context. -/
 def Context.toKContext {W E P T : Type*} (c : Context W E) (addr : E) (p : P) (t : T) :
-    Core.Context.KContext W E P T :=
+    Semantics.Context.KContext W E P T :=
   ⟨c.agent, addr, c.world, t, p⟩
 
 end Semantics.Reference.Basic

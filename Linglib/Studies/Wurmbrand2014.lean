@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.Schema
 import Linglib.Core.Time.Reichenbach
-import Linglib.Core.Time.Tense
+import Linglib.Semantics.Tense.GramTense
 import Linglib.Semantics.Tense.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 
@@ -42,7 +42,7 @@ study-local below; the empirical examples are generated from
 
 namespace Wurmbrand2014
 
-open Core.Time.Tense
+open Semantics.Tense
 open Core.Time.Reichenbach
 open Semantics.Tense
 open Data.Examples (LinguisticExample)
