@@ -3,8 +3,8 @@ import Linglib.Core.Assignment
 import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Time.Relation
 import Linglib.Core.Time.Reichenbach
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
 
 /-!
 # Unified Tense Pronoun Architecture
@@ -25,21 +25,20 @@ The existing ad-hoc bridge theorems (`referential_past_decomposition`,
 `ogihara_bound_tense_simultaneous`) become trivial projections from this
 unified type.
 
-## Architecture
+## Implementation notes
 
-This module lives in `Core/` because both `Semantics.Montague/Sentence/Tense/`
-and `Semantics.Intensional/Attitude/` need the shared infrastructure
-(`GramTense`, `SOTParameter`, `TemporalAssignment`, etc.) without a cross-tree
-import.
+The shared grammatical-tense substrate (`GramTense`, `TensePronoun`, …) the `Tense/`
+and `Attitudes/` theories build on. The temporal primitives it imports
+(`Reichenbach`/`Relation`/`WorldTimeIndex`) stay in `Core/`.
 
 -/
 
-namespace Core.Time.Tense
+namespace Semantics.Tense
 
 open Core.Time
 open Core.Time.Reichenbach
 open Core.ReferentialMode (ReferentialMode)
-open Core (Assignment)
+open Core (Assignment WorldTimeIndex)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -422,7 +421,7 @@ into the tower: when the temporal assignment encodes tower time coordinates
 
 section TemporalBridge
 
-open Core.Context (KContext ContextTower ContextShift AccessPattern DepthSpec
+open Semantics.Context (KContext ContextTower ContextShift AccessPattern DepthSpec
   temporalShift)
 
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
@@ -520,4 +519,4 @@ theorem von_stechow_tower_innermost
 
 end TemporalBridge
 
-end Core.Time.Tense
+end Semantics.Tense

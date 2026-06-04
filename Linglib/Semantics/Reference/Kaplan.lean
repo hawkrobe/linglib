@@ -16,15 +16,15 @@ indexicals and the theory of singular propositions ([almog-2014], Ch 2).
 -/
 
 import Linglib.Semantics.Reference.Basic
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
 
 namespace Semantics.Reference.Kaplan
 
 open Core (Intension)
 open Core.Intension (rigid IsRigid rigid_isRigid)
 open Semantics.Reference.Basic
-open Core.Context (KContext)
+open Semantics.Context (KContext)
 
 /-! ## Indexicals -/
 
@@ -149,7 +149,7 @@ are invariant under embedding operators becomes a corollary of `origin_stable`. 
 
 section TowerIndexicals
 
-open Core.Context
+open Semantics.Context
 
 variable {W' : Type*} {E' : Type*} {P' : Type*} {T' : Type*}
 

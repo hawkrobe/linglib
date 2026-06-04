@@ -236,13 +236,13 @@ layers observed cross-linguistically.
 
 (Tower-level corollary; uses the `subjShift`/`temporalShift`
 infrastructure from `Semantics.Modality.Exclusion`.) -/
-theorem pastCF_tower_depth {W E P T : Type*} (c : Core.Context.KContext W E P T)
+theorem pastCF_tower_depth {W E P T : Type*} (c : Semantics.Context.KContext W E P T)
     (w' : W) (t' t'' : T) :
-    (((Core.Context.ContextTower.root c).push
+    (((Semantics.Context.ContextTower.root c).push
         (Semantics.Mood.subjShift w' t')).push
-      (Core.Context.temporalShift t'')).depth = 2 := by
-  simp [Core.Context.ContextTower.push, Core.Context.ContextTower.depth,
-    Core.Context.ContextTower.root]
+      (Semantics.Context.temporalShift t'')).depth = 2 := by
+  simp [Semantics.Context.ContextTower.push, Semantics.Context.ContextTower.depth,
+    Semantics.Context.ContextTower.root]
 
 -- ════════════════════════════════════════════════════════════════
 -- § Datum Structures
@@ -572,7 +572,7 @@ theorem pastCF_exempt_from_ulc {T : Type*} [LE T] (R E : T) :
 -- § ContextTower Bridge
 -- ════════════════════════════════════════════════════════════════
 
-open Core.Context
+open Semantics.Context
 open Semantics.Mood (subjShift)
 
 abbrev CFCtx := KContext Bool Unit Unit ℤ

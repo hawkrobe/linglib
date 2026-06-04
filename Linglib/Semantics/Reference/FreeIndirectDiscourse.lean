@@ -1,5 +1,5 @@
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
 
 /-!
 # Free Indirect Discourse (FID) as Mixed Perspective
@@ -30,7 +30,7 @@ coordinates read from origin vs local.
 
 namespace Semantics.Reference.FreeIndirectDiscourse
 
-open Core.Context
+open Semantics.Context
 
 -- ════════════════════════════════════════════════════════════════
 -- § FID Profile

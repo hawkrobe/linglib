@@ -3,8 +3,8 @@ import Linglib.Fragments.Nungon.MedialVerbs
 import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Korean.MedialVerbs
 import Linglib.Fragments.Turkish.MedialVerbs
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
 
 /-!
 # Clause Chaining
@@ -421,7 +421,7 @@ theorem ds_agreement_universal :
 -- Part II: ContextTower Derivation
 -- ============================================================================
 
-open Core.Context
+open Semantics.Context
 
 -- ============================================================================
 -- § Chain Context Type
