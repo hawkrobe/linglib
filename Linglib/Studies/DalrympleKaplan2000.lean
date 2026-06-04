@@ -54,13 +54,10 @@ open UD (Case)
 
 /-- An indeterminate feature value: the set of atomic values the form can realize
     (eq. 25). Singleton = determinate. -/
-abbrev IndetVal (α : Type _) [DecidableEq α] := Finset α
+abbrev IndetVal (α : Type*) := Finset α
 
 /-- Contextual requirement (eq. 27): the required atom is a member of the value set. -/
-def requires {α : Type _} [DecidableEq α] (c : α) (v : IndetVal α) : Prop := c ∈ v
-
-instance {α : Type _} [DecidableEq α] (c : α) (v : IndetVal α) : Decidable (requires c v) :=
-  inferInstanceAs (Decidable (c ∈ v))
+abbrev requires {α : Type*} [DecidableEq α] (c : α) (v : IndetVal α) : Prop := c ∈ v
 
 /-- German relative pronouns (26): *wer* nominative, *was* syncretic, *wem* dative. -/
 def wer : IndetVal Case := {Case.nom}
@@ -94,24 +91,22 @@ theorem co_ungrammatical : requires Case.acc co ∧ ¬ requires Case.gen co := b
     requirement. -/
 def atomicSatisfies (x : Case) (reqs : List Case) : Prop := ∀ r ∈ reqs, x = r
 
+private theorem not_atomicSatisfies_acc_nom (x : Case) :
+    ¬ atomicSatisfies x [Case.acc, Case.nom] := fun h =>
+  absurd ((h Case.acc (by simp)) ▸ (h Case.nom (by simp))) (by decide)
+
 /-- §3.2 (eq. 24): no single atomic value satisfies both verbs of (17) — transitivity
     of equality would force `NOM = ACC`. -/
-theorem underspecification_fails : ¬ ∃ x : Case, atomicSatisfies x [Case.acc, Case.nom] := by
-  rintro ⟨x, h⟩
-  have hacc := h Case.acc (by simp)
-  have hnom := h Case.nom (by simp)
-  exact absurd (hacc ▸ hnom) (by decide)
+theorem underspecification_fails : ¬ ∃ x : Case, atomicSatisfies x [Case.acc, Case.nom] :=
+  fun ⟨x, h⟩ => not_atomicSatisfies_acc_nom x h
 
 /-- §3.1 (18)–(21): disjunctive specification means *choosing* one disjunct per
     utterance — and every choice from `{NOM, ACC}` fails one of the two requirements.
     The set-based account (`was_satisfies_both`) succeeds where every disjunctive
     resolution fails: that contrast is the paper's argument. -/
 theorem disjunction_collapses :
-    ∀ x ∈ was, ¬ atomicSatisfies x [Case.acc, Case.nom] := by
-  intro x hx h
-  have hacc := h Case.acc (by simp)
-  have hnom := h Case.nom (by simp)
-  exact absurd (hacc ▸ hnom) (by decide)
+    ∀ x ∈ was, ¬ atomicSatisfies x [Case.acc, Case.nom] :=
+  fun x _ => not_atomicSatisfies_acc_nom x
 
 /-! ### §4.4: indeterminate *requirements* (verb-side sets) -/
 
@@ -147,10 +142,9 @@ def toIndet (a : Option Case) : IndetVal Case :=
 
 private theorem univ_ne_singleton (y : Case) : (Finset.univ : Finset Case) ≠ {y} := by
   intro h
-  have h1 : Case.nom ∈ ({y} : Finset Case) := h ▸ Finset.mem_univ _
-  have h2 : Case.acc ∈ ({y} : Finset Case) := h ▸ Finset.mem_univ _
-  rw [Finset.mem_singleton] at h1 h2
-  exact absurd (h1.trans h2.symm) (by decide)
+  have hc : (Finset.univ : Finset Case).card = 1 := by rw [h, Finset.card_singleton]
+  rw [Finset.card_univ] at hc
+  exact absurd hc (by decide)
 
 theorem toIndet_injective : Function.Injective toIndet := by
   intro a b h
@@ -176,11 +170,8 @@ theorem flatLE_iff_toIndet_superset (a b : Option Case) :
     · intro h
       exact absurd (h x rfl) (by simp)
     · intro h
-      exfalso
-      have h1 : Case.nom ∈ ({x} : Finset Case) := h (Finset.mem_univ _)
-      have h2 : Case.acc ∈ ({x} : Finset Case) := h (Finset.mem_univ _)
-      rw [Finset.mem_singleton] at h1 h2
-      exact absurd (h1.trans h2.symm) (by decide)
+      exact absurd (Finset.Subset.antisymm (Finset.subset_univ _) h).symm
+        (univ_ne_singleton x)
   | some x, some z =>
     constructor
     · intro h
@@ -200,9 +191,7 @@ theorem flatLE_iff_toIndet_superset (a b : Option Case) :
 inductive Marker where
   | S
   | H
-  deriving DecidableEq, Repr
-
-instance : Fintype Marker := ⟨{.S, .H}, by intro x; cases x <;> decide⟩
+  deriving DecidableEq, Repr, Fintype
 
 abbrev PersonSet := Finset Marker
 
@@ -247,7 +236,9 @@ theorem jose_y_tu :
 
 /-- Two markers bound the system (§6.3): at most four person values are expressible,
     matching the maximally differentiated (Fula-type) inventory. -/
-theorem two_markers_four_persons : Fintype.card PersonSet = 4 := by decide
+theorem two_markers_four_persons : Fintype.card PersonSet = 4 := by
+  rw [Fintype.card_finset]
+  rfl
 
 /-! ### §6.5: union vs intersection — Sag et al. refuted, De Morgan vindicated -/
 
@@ -279,7 +270,7 @@ inductive GMark where
   | M
   | F
   | N
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 abbrev GenderSet := Finset GMark
 
@@ -302,6 +293,8 @@ theorem icelandic_mixed_is_neuter :
 /-- Slovene (122)/(126)–(127): masc `{F, N}`, fem `{F}`, neut `{N}`, and the
     *conjunction itself* contributes `F ∈ (↑ GENDER)` — deriving the surprising
     `NEUT & NEUT = MASC` (123)–(124). -/
+-- Named (unlike Hindi/Icelandic, stated with bare `∪`) because Slovene resolution is
+-- *not* bare union: the conjunction itself contributes `F` (126).
 def slovResolve (p q : GenderSet) : GenderSet := p ∪ q ∪ {GMark.F}
 
 theorem slovene_neut_neut_is_masc :
