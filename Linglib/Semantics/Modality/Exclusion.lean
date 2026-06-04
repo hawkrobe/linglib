@@ -1,6 +1,6 @@
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
-import Linglib.Core.Context.Rich
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
+import Linglib.Semantics.Context.Rich
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Tense.Basic
 import Linglib.Semantics.Mood.Basic
@@ -57,7 +57,7 @@ indexicals are unaffected by HP/CF shifts.
 
 namespace Semantics.Modality.Exclusion
 
-open Core.Context (KContext ContextTower ContextShift RichContext
+open Semantics.Context (KContext ContextTower ContextShift RichContext
   hpShift xMarkingShift DomainExpanding temporalShift)
 open HistoricalAlternatives (historicalBase)
 open Semantics.Mood (subjShift)
@@ -243,7 +243,7 @@ theorem root_no_modal_exclF (c : KContext W E P T) :
 
 /-- X-marking shift produces modal ExclF on `RichContext` towers.
 
-`xMarkingShift` (from `Core.Context.Rich`) changes both world and
+`xMarkingShift` (from `Semantics.Context.Rich`) changes both world and
 time. When the counterfactual world differs from the origin, the
 resulting tower has modal ExclF.
 
@@ -444,10 +444,10 @@ an HP-shifted O-marked conditional evaluates against the utterance
 time, paralleling the behavior of *seventy-eight years ago* in
 [schlenker-2004]'s HP example. -/
 theorem oMarking_indexicals_at_origin
-    (ap : Core.Context.AccessPattern (KContext W E P T) W)
+    (ap : Semantics.Context.AccessPattern (KContext W E P T) W)
     (hd : ap.depth = .origin)
     (t : ContextTower (KContext W E P T)) (σ : ContextShift (KContext W E P T)) :
     ap.resolve (t.push σ) = ap.resolve t :=
-  Core.Context.AccessPattern.origin_stable ap hd t σ
+  Semantics.Context.AccessPattern.origin_stable ap hd t σ
 
 end Semantics.Modality.Exclusion

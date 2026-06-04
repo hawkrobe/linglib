@@ -1,4 +1,4 @@
-import Linglib.Core.Context.Tower
+import Linglib.Semantics.Context.Tower
 
 /-!
 # Discourse Roles
@@ -16,7 +16,7 @@ classes and direction of fit).
 
 namespace Discourse
 
-open Core.Context
+open Semantics.Context
 
 /-- The two fundamental discourse participants. `.addressee` matches
     `KContext.addressee` (not `.listener` as in `Semantics.Dynamic`). -/

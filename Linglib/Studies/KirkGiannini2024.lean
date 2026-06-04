@@ -379,11 +379,11 @@ no-monster theorem actually CASE-SPLIT on K-G's apparatus rather
 than vacuously hold over an empty list.
 -/
 def kgEmbeddingShifts {W E P T : Type*} :
-    List (Core.Context.ContextShift (Core.Context.KContext W E P T)) :=
-  [Core.Context.identityShift,  -- image of 𝔐
-   Core.Context.identityShift,  -- image of ↓
-   Core.Context.identityShift,  -- image of †
-   Core.Context.identityShift]  -- image of 𝔄
+    List (Semantics.Context.ContextShift (Semantics.Context.KContext W E P T)) :=
+  [Semantics.Context.identityShift,  -- image of 𝔐
+   Semantics.Context.identityShift,  -- image of ↓
+   Semantics.Context.identityShift,  -- image of †
+   Semantics.Context.identityShift]  -- image of 𝔄
 
 /--
 **Bridge to Kaplan's no-monster thesis** (`Semantics/Reference/

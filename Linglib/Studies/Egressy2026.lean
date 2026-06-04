@@ -1,4 +1,4 @@
-import Linglib.Core.Time.Tense
+import Linglib.Semantics.Tense.GramTense
 import Linglib.Core.Time.Reichenbach
 import Linglib.Semantics.Tense.Basic
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
@@ -40,7 +40,7 @@ and temporal adverb diagnostics.
 
 namespace Egressy2026
 
-open Core.Time.Tense
+open Semantics.Tense
 open Core.Time.Reichenbach
 
 

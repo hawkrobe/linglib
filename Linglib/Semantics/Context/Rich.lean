@@ -1,5 +1,5 @@
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
 import Linglib.Features.Evidentiality
 
 /-!
@@ -27,9 +27,9 @@ express:
 
 -/
 
-namespace Core.Context
+namespace Semantics.Context
 
-open Core.Context (KContext ContextTower ContextShift)
+open Semantics.Context (KContext ContextTower ContextShift)
 open Features.Evidentiality
 
 -- ════════════════════════════════════════════════════════════════
@@ -220,4 +220,4 @@ theorem coarseSourceShift_preserves_domain
 
 end RichContextOps
 
-end Core.Context
+end Semantics.Context

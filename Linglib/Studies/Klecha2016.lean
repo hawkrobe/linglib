@@ -71,7 +71,7 @@ open English.Predicates.Verbal (think believe hope pray)
 open Semantics.Tense.Modal.Matrix
   (dox_past_iff dox_npst_iff cir_npst_iff cir_past_iff_false)
 open Semantics.Tense (upperLimitConstraint)
-open Core.Time.Tense (GramTense)
+open Semantics.Tense (GramTense)
 open Semantics.Modality (ModalFlavor)
 open Data.Examples (LinguisticExample)
 
@@ -805,7 +805,7 @@ theorem klecha_covers_hope_future_oriented_reading
 theorem klecha_actualHistoryBase_eq_substrate_metaphysicalAlternatives
     {W : Type*} (history : HistoricalAlternatives W ℤ)
     (concept : Semantics.Tense.DeRe.TimeConcept W Unit Unit ℤ)
-    (matrix : Core.Context.KContext W Unit Unit ℤ) :
+    (matrix : Semantics.Context.KContext W Unit Unit ℤ) :
     let dr : Semantics.Tense.DeRe.TemporalDeReReading W Unit Unit ℤ :=
       ⟨concept, matrix⟩
     dr.metaphysicalAlternatives history =
