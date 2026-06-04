@@ -140,7 +140,7 @@ def checkGovernment (t : DepTree) (govReqs : List GovRequirement) : Bool :=
     (xcomp); `go(3)` heads `to(2)` (mark). -/
 def exSheWantsToGo : DepTree :=
   { words := [ { form :="she", cat := .PRON, features := { case_ := some .Nom }}
-             , { form :="wants", cat := .VERB, valence := some .transitive}
+             , { form :="wants", cat := .VERB}
              , { form :="to", cat := .PART, features := {}}
              , { form :="go", cat := .VERB, features := { verbForm := some .Inf }} ]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .xcomp⟩, ⟨3, 2, .mark⟩]
@@ -150,7 +150,7 @@ def exSheWantsToGo : DepTree :=
     `swimming(2)` (xcomp). -/
 def exSheEnjoysSwimming : DepTree :=
   { words := [ { form :="she", cat := .PRON, features := { case_ := some .Nom }}
-             , { form :="enjoys", cat := .VERB, valence := some .transitive}
+             , { form :="enjoys", cat := .VERB}
              , { form :="swimming", cat := .VERB, features := { verbForm := some .Part }} ]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .xcomp⟩]
     rootIdx := 1 }

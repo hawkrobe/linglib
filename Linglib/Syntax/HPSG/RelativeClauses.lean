@@ -151,7 +151,7 @@ section DerivationExample
 
 Object relative clause: the gap is in object position of "read". -/
 
-private def read_word : Word := { form :="read", cat := .VERB, valence := some .transitive}
+private def read_word : Word := { form :="read", cat := .VERB}
 private def read_synsem : Synsem :=
   { cat := .VERB, val := { subj := [.NOUN], comps := [.NOUN] } }
 
@@ -230,7 +230,7 @@ section SubjectRelative
 
 Subject relative clause: the gap is in subject position. -/
 
-private def saw_word : Word := { form :="saw", cat := .VERB, valence := some .transitive}
+private def saw_word : Word := { form :="saw", cat := .VERB}
 private def saw_synsem : Synsem :=
   { cat := .VERB, val := { subj := [.NOUN], comps := [.NOUN] } }
 

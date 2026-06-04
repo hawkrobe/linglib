@@ -43,12 +43,21 @@ structure Dependency where
   depType : UD.DepRel
   deriving Repr, DecidableEq
 
-/-- A dependency tree for a sentence. -/
+/-- A dependency tree for a sentence. `frames` carries the DG-specific lexical
+    subcategorization premises, aligned with `words` (missing/short = no frame): valence
+    is framework apparatus (like HPSG's ARG-ST), so it lives on DG's tree, not on the
+    shared `Word` token. Frames come from the lexical carrier at tree construction
+    (`Verb.valence`). -/
 structure DepTree where
   words : List Word
   deps : List Dependency
   rootIdx : Nat
+  frames : List (Option Valence) := []
   deriving Repr
+
+/-- The subcategorization frame at position `i`, if one was supplied. -/
+def DepTree.frame (t : DepTree) (i : Nat) : Option Valence :=
+  (t.frames[i]?).getD none
 
 /-- An enhanced dependency graph: like DepTree but allows multiple heads per word.
     Relaxes the unique-heads constraint. -/
@@ -197,7 +206,7 @@ def checkVerbSubcat (t : DepTree) : Bool :=
         let subjCount := countDepsOfType t i .nsubj
         let objCount := countDepsOfType t i .obj
         let iobjCount := countDepsOfType t i .iobj
-        match w.valence with
+        match t.frame i with
         | some .intransitive => subjCount >= 1 && objCount == 0
         | some .transitive => subjCount >= 1 && objCount == 1
         | some .ditransitive => subjCount >= 1 && objCount == 1 && iobjCount == 1
@@ -211,28 +220,32 @@ end SubcategorizationChecking
 section TreeConstructionHelpers
 
 /-- Create a simple SV tree: subject -> verb. -/
-def mkSVTree (subj verb : Word) : DepTree :=
+def mkSVTree (subj verb : Word) (frame : Option Valence := none) : DepTree :=
   { words := [subj, verb]
     deps := [⟨1, 0, .nsubj⟩]
-    rootIdx := 1 }
+    rootIdx := 1
+    frames := [none, frame] }
 
 /-- Create a simple SVO tree: subject -> verb <- object. -/
-def mkSVOTree (subj verb obj : Word) : DepTree :=
+def mkSVOTree (subj verb obj : Word) (frame : Option Valence := none) : DepTree :=
   { words := [subj, verb, obj]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩]
-    rootIdx := 1 }
+    rootIdx := 1
+    frames := [none, frame, none] }
 
 /-- Create Det-N-V tree: det -> noun -> verb. -/
-def mkDetNVTree (det noun verb : Word) : DepTree :=
+def mkDetNVTree (det noun verb : Word) (frame : Option Valence := none) : DepTree :=
   { words := [det, noun, verb]
     deps := [⟨1, 0, .det⟩, ⟨2, 1, .nsubj⟩]
-    rootIdx := 2 }
+    rootIdx := 2
+    frames := [none, none, frame] }
 
 /-- Create a ditransitive tree: subj -> verb <- iobj <- obj. -/
-def mkDitransTree (subj verb iobj obj : Word) : DepTree :=
+def mkDitransTree (subj verb iobj obj : Word) (frame : Option Valence := none) : DepTree :=
   { words := [subj, verb, iobj, obj]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .iobj⟩, ⟨1, 3, .obj⟩]
-    rootIdx := 1 }
+    rootIdx := 1
+    frames := [none, frame, none, none] }
 
 end TreeConstructionHelpers
 

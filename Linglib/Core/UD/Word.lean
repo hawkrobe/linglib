@@ -1,5 +1,4 @@
 import Linglib.Core.UD.Basic
-import Linglib.Core.Valence
 
 /-!
 # Word
@@ -29,7 +28,6 @@ The grammatical-case substrate lives separately at `Linglib/Features/Case.lean`.
 Syntactic categories use `UD.UPOS` directly (the 17 universal POS tags).
 
 Types without UD equivalents remain defined here:
-- `Valence` (argument structure)
 - `HeadDirection` (word-order typology)
 -/
 
@@ -121,25 +119,19 @@ inductive HeadDirection where
 -- Word
 -- ============================================================================
 
-/-- A word: the surface-token interface between the lexicon and token-level engines —
-    surface form, UD category, and UD morphology (one `UD.MorphFeatures` bundle; there is no
-    separate word-level feature record), plus lexical valence, the one non-morphological
-    property a Fragment-free engine reads off the token (DG subcategorization).
+/-- A word: the pure CoNLL-U surface token — surface form, UD category, and UD morphology
+    (one `UD.MorphFeatures` bundle; there is no separate word-level feature record).
 
     **Admission rule**: a property belongs on `Word` iff a Fragment-free token-level engine
-    reads it; otherwise it lives on the typed lexical carrier (`Pronoun`, `NounEntry`, …) and
-    is consumed via the capability mixins. Identity caveat: `BEq` is form + category, so
-    homographs collapse; a CoNLL-U `lemma` field is the known fix, deferred until a consumer
-    needs it. -/
+    reads it off the token's *own* data; otherwise it lives on the typed lexical carrier
+    (`Pronoun`, `NounEntry`, `Verb`, …) or on the consuming framework's own structures
+    (e.g. DG subcategorization premises live on `DepTree.frames`, not here). Identity
+    caveat: `BEq` is form + category, so homographs collapse; a CoNLL-U `lemma` field is
+    the known fix, deferred until a consumer needs it. -/
 structure Word where
   form : String
   cat : UD.UPOS
   features : UD.MorphFeatures := {}
-  /-- Lexical valence (subcategorization frame) — lexical, not UD morphology; read by the
-      DG engine off the token. TODO: migrate off `Word` by having the DG engine consume
-      subcategorization from the lexical carrier via a capability mixin (as binding did for
-      `bindingClass`), leaving `Word` the pure CoNLL-U token. -/
-  valence : Option Valence := none
   deriving Repr
 
 /-- Convenience constructor for a featureless word (form + category only). -/
@@ -165,11 +157,11 @@ instance (w1 w2 : Word) : Decidable (Word.Agree w1 w2) := by
   UD.MorphFeatures.compatible_self w.phi
 
 
-/-- Derive a passive variant: sets voice to passive, valence to intransitive.
-    Used to compose with `VerbEntry.toWordPastPart` for passive constructions. -/
+/-- Derive a passive variant: sets voice to passive. The valence change
+    (detransitivization) is a frame-level fact carried by the passive analysis on
+    `DepTree.frames`, not token data. Composes with `VerbEntry.toWordPastPart`. -/
 def Word.asPassive (w : Word) : Word :=
-  { w with valence := some .intransitive,
-           features := { w.features with voice := some Voice.passive } }
+  { w with features := { w.features with voice := some Voice.passive } }
 
 instance : BEq Word where
   beq w1 w2 := w1.form == w2.form && w1.cat == w2.cat
