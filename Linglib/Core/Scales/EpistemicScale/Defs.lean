@@ -110,6 +110,44 @@ structure EpistemicSystemFA (W : Type*) extends EpistemicSystemF W where
   trans : ∀ A B C : Set W, ge A B → ge B C → ge A C
   additive : EpistemicAxiom.A ge
 
+/-! ### FA systems carry the comparative-probability mixins
+
+The `EpistemicAxiom.*` predicates are the `Set W` spellings of the
+Boolean-algebra-general `ComparativeProbability` mixin classes; the
+instances below make every FA system's relation a comparative-probability
+order, so the validity patterns V1–V13 transfer from
+`ComparativeProbability.Patterns` by instance resolution. -/
+
+theorem isLikelihoodMono_iff_axiomT {W : Type*} {ge : Set W → Set W → Prop} :
+    ComparativeProbability.IsLikelihoodMono ge ↔ EpistemicAxiom.T ge :=
+  ⟨fun h A B hAB => h.mono A B hAB, fun h => ⟨h⟩⟩
+
+theorem isQualitativeAdditive_iff_axiomA {W : Type*} {ge : Set W → Set W → Prop} :
+    ComparativeProbability.IsQualitativeAdditive ge ↔ EpistemicAxiom.A ge :=
+  ⟨fun h => h.qadd, fun h => ⟨h⟩⟩
+
+theorem isNontrivial_iff_axiomBT {W : Type*} {ge : Set W → Set W → Prop} :
+    ComparativeProbability.IsNontrivial ge ↔ EpistemicAxiom.BT ge :=
+  ⟨fun h => h.bot_not_ge_top, fun h => ⟨h⟩⟩
+
+namespace EpistemicSystemFA
+
+variable {W : Type*} (sys : EpistemicSystemFA W)
+
+instance : ComparativeProbability.IsLikelihoodMono sys.ge where
+  mono A B h := sys.mono A B h
+
+instance : IsTrans (Set W) sys.ge where
+  trans A B C := sys.trans A B C
+
+instance : ComparativeProbability.IsQualitativeAdditive sys.ge where
+  qadd A B := sys.additive A B
+
+instance : ComparativeProbability.IsNontrivial sys.ge where
+  bot_not_ge_top := sys.nonTrivial
+
+end EpistemicSystemFA
+
 -- ── GFC Order ([harrison-trainor-holliday-icard-2018] Definition 2.7) ──
 
 /-- A **GFC preorder** on propositions: a preorder on `Set W` that is
@@ -136,19 +174,16 @@ def GFCPreorder.toSystemW {W : Type*} (g : GFCPreorder W) : EpistemicSystemW W w
   refl := g.refl
   mono := g.mono
 
-/-- Every System FA model is a GFC preorder: Axiom A (qualitative additivity)
-    yields complement reversal, since `Bᶜ \ Aᶜ = A \ B` and `Aᶜ \ Bᶜ = B \ A`
-    (`compl_sdiff_compl`). -/
+/-- Every System FA model is a GFC preorder: complement reversal comes from
+    qualitative additivity via the comparative-probability layer
+    (`instComplementReversingOfQualitativeAdditive`). -/
 def EpistemicSystemFA.toGFCPreorder {W : Type*} (sys : EpistemicSystemFA W) :
     GFCPreorder W where
   ge := sys.ge
   refl := sys.refl
   trans := sys.trans
   mono := sys.mono
-  complRev := fun A B hAB => by
-    rw [sys.additive Bᶜ Aᶜ]
-    simp only [compl_sdiff_compl]
-    exact (sys.additive A B).mp hAB
+  complRev := fun A B hAB => ComparativeProbability.complRev A B hAB
 
 -- ── Measure Semantics ───────────────────────────
 
