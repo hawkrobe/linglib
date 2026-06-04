@@ -7,12 +7,12 @@ import Mathlib.Tactic.Linarith
 
 [holliday-icard-2013] [halpern-2003] [van-der-hoek-1996]
 
-Epistemic likelihood scales: the `EpistemicScale` arm of the categorical
-diagram in `Core/Scales/Scale.lean`.
+Epistemic likelihood scales: comparative-likelihood orders on propositions
+(`Set W`), their axiom hierarchy, and their measure semantics.
 
 [holliday-icard-2013] study the logic of "at least as likely as" (≿) on
 propositions, defining a hierarchy of axiom systems (W ⊂ F ⊂ FA) whose
-qualitative additivity axiom is the epistemic counterpart of `AdditiveScale.fa`.
+qualitative additivity axiom is the epistemic counterpart of finite additivity.
 
 **Axiom hierarchy** ([holliday-icard-2013], Figure 3; axioms in Figures 4–6):
 
@@ -23,9 +23,10 @@ qualitative additivity axiom is the epistemic counterpart of `AdditiveScale.fa`.
 | FA     | F + Tot, Tran, A       | Qualitatively additive measures    |
 | FP∞    | FA + Scott cancellation | Finitely additive measures         |
 
-**Bridge**: Axiom A (epistemic qualitative additivity) and `AdditiveScale.fa`
-(mereological finite additivity) are algebraically equivalent — both express
-that a comparison factors through disjoint parts.
+**Bridge**: Axiom A (epistemic qualitative additivity) is equivalent to
+disjoint-augmentation invariance — the same law-shape that `AdditiveScale.fa`
+(`Core/Scales/Comparative.lean`) imposes on degree carriers. The equivalence
+is `axiomA_iff_fa` in `Completeness.lean`.
 
 References:
 - Holliday, W. & Icard, T. (2013). Measure Semantics and Qualitative
@@ -185,8 +186,8 @@ structure FinAddMeasure (W : Type*) where
   mu : Set W → ℚ
   /-- Non-negativity -/
   nonneg : ∀ A, 0 ≤ mu A
-  /-- Finite additivity: μ(A ∪ B) = μ(A) + μ(B) when A ∩ B = ∅ -/
-  additive : ∀ A B, (∀ x, x ∈ A → x ∉ B) → mu (A ∪ B) = mu A + mu B
+  /-- Finite additivity: μ(A ∪ B) = μ(A) + μ(B) for disjoint A, B -/
+  additive : ∀ A B, Disjoint A B → mu (A ∪ B) = mu A + mu B
   /-- Normalization -/
   total : mu Set.univ = 1
 
@@ -209,27 +210,27 @@ theorem inducedGe_axiomT (m : FinAddMeasure W) :
     EpistemicAxiom.T m.inducedGe := by
   intro A B hAB
   show m.mu B ≥ m.mu A
-  rw [(Set.union_diff_cancel hAB).symm, m.additive A (B \ A) (fun _ hx ⟨_, hna⟩ => hna hx)]
+  rw [(Set.union_diff_cancel hAB).symm, m.additive A (B \ A) disjoint_sdiff_self_right]
   exact le_add_of_nonneg_right (m.nonneg (B \ A))
 
 /-- μ(∅) = 0 for any finitely additive measure.
     Follows from additivity: μ(∅ ∪ ∅) = μ(∅) + μ(∅), but ∅ ∪ ∅ = ∅. -/
 theorem mu_empty (m : FinAddMeasure W) : m.mu ∅ = 0 := by
-  have hempty := m.additive ∅ ∅ (fun _ hx => hx.elim)
+  have hempty := m.additive ∅ ∅ disjoint_bot_left
   rw [Set.empty_union] at hempty
   linarith
 
 /-- Subset monotonicity: `A ⊆ B → μ(A) ≤ μ(B)`. -/
 theorem mu_mono (m : FinAddMeasure W) {A B : Set W} (h : A ⊆ B) :
     m.mu A ≤ m.mu B := by
-  have hunion := m.additive A (B \ A) (fun _ hx ⟨_, hna⟩ => hna hx)
+  have hunion := m.additive A (B \ A) disjoint_sdiff_self_right
   rw [Set.union_diff_cancel h] at hunion
   linarith [m.nonneg (B \ A)]
 
 /-- Complement measure: `μ(A) + μ(Aᶜ) = 1`. -/
 theorem mu_compl (m : FinAddMeasure W) (A : Set W) :
     m.mu A + m.mu Aᶜ = 1 := by
-  have hunion := m.additive A Aᶜ (fun _ hx hxc => hxc hx)
+  have hunion := m.additive A Aᶜ disjoint_compl_right
   rw [Set.union_compl_self] at hunion
   linarith [m.total]
 
@@ -239,11 +240,11 @@ theorem mu_qadd (m : FinAddMeasure W) (A B : Set W) :
     m.mu A ≥ m.mu B ↔ m.mu (A \ B) ≥ m.mu (B \ A) := by
   have hmuA : m.mu A = m.mu (A \ B) + m.mu (A ∩ B) := by
     conv_lhs => rw [(Set.diff_union_inter A B).symm]
-    exact m.additive _ _ (fun _ ⟨_, hxnb⟩ ⟨_, hxb⟩ => hxnb hxb)
+    exact m.additive _ _ (Set.disjoint_left.mpr fun _ hx hy => hx.2 hy.2)
   have hmuB : m.mu B = m.mu (B \ A) + m.mu (A ∩ B) := by
     conv_lhs => rw [show B = (B \ A) ∪ (A ∩ B) from by
       rw [Set.inter_comm]; exact (Set.diff_union_inter B A).symm]
-    exact m.additive _ _ (fun _ ⟨_, hxna⟩ ⟨hxa, _⟩ => hxna hxa)
+    exact m.additive _ _ (Set.disjoint_left.mpr fun _ hx hy => hx.2 hy.1)
   rw [hmuA, hmuB]
   exact add_le_add_iff_right (m.mu (A ∩ B))
 
@@ -264,21 +265,6 @@ def toSystemFA (m : FinAddMeasure W) : EpistemicSystemFA W where
   trans := fun _ _ _ hab hbc => le_trans hbc hab
   additive := m.mu_qadd
 
-/-- Extract a world prior from a finitely additive measure by
-    evaluating μ on singletons: prior(w) = μ({w}).
-
-    This bridges the epistemic likelihood representation theorem
-    to RSA's `worldPrior` field. The resulting function maps each
-    world to a non-negative rational, suitable for use as an
-    unnormalized prior. -/
-noncomputable def toWorldPrior (m : FinAddMeasure W) : W → ℚ :=
-  fun w => m.mu {w}
-
-/-- Singleton measures are non-negative. -/
-theorem toWorldPrior_nonneg (m : FinAddMeasure W) (w : W) :
-    0 ≤ m.toWorldPrior w :=
-  m.nonneg {w}
-
 end FinAddMeasure
 
 -- ── Qualitatively Additive Measures ──────────────
@@ -289,17 +275,16 @@ end FinAddMeasure
     condition: μ(A) ≥ μ(B) ↔ μ(A \ B) ≥ μ(B \ A).
 
     [holliday-icard-2013] Theorem 6: System FA is sound and complete
-    with respect to qualitatively additive measure models.
-
-    Note: the paper's definition of qualitatively additive measures includes μ(∅) = 0, but we omit it here
-    because the completeness proof (Theorem 6) constructs a measure with
-    μ(∅) > 0 (belowCount counts ∅ itself via reflexivity). The soundness
-    direction (`toSystemFA`) takes `mu_empty` as an explicit hypothesis. -/
+    with respect to qualitatively additive measure models. The completeness
+    construction (`exists_qualAddMeasure_repr`) realises μ(∅) = 0 by an
+    affine renormalisation of the dominated-set count. -/
 structure QualAddMeasure (W : Type*) where
   /-- The measure function -/
   mu : Set W → ℚ
   /-- Non-negativity -/
   nonneg : ∀ A, 0 ≤ mu A
+  /-- The impossible proposition has measure zero -/
+  mu_empty : mu ∅ = 0
   /-- Normalization -/
   total : mu Set.univ = 1
   /-- Qualitative additivity: μ(A) ≥ μ(B) ↔ μ(A \ B) ≥ μ(B \ A) -/
@@ -313,34 +298,28 @@ variable {W : Type*}
 def inducedGe (m : QualAddMeasure W) (A B : Set W) : Prop :=
   m.mu A ≥ m.mu B
 
-/-- Monotonicity for qualitatively additive measures with μ(∅) = 0:
+/-- Monotonicity for qualitatively additive measures:
     A ⊆ B → μ(B) ≥ μ(A). Follows from qualAdd + μ(∅) = 0 + nonneg. -/
-theorem inducedGe_axiomT (m : QualAddMeasure W) (h_empty : m.mu ∅ = 0) :
+theorem inducedGe_axiomT (m : QualAddMeasure W) :
     EpistemicAxiom.T m.inducedGe := by
   intro A B hAB
   show m.mu B ≥ m.mu A
-  rw [m.qualAdd B A, Set.diff_eq_empty.mpr hAB, h_empty]
+  rw [m.qualAdd B A, Set.diff_eq_empty.mpr hAB, m.mu_empty]
   exact m.nonneg (B \ A)
 
-/-- A qualitatively additive measure with μ(∅) = 0 induces System FA.
+/-- A qualitatively additive measure induces System FA.
     Soundness direction of [holliday-icard-2013] Theorem 6:
-    every qualitatively additive measure model (with μ(∅) = 0) satisfies
-    the FA axioms.
-
-    The `h_empty` hypothesis is needed for monotonicity and non-triviality;
-    it is NOT a field on `QualAddMeasure` because the completeness proof
-    constructs a measure where μ(∅) > 0. -/
-def toSystemFA (m : QualAddMeasure W) (h_empty : m.mu ∅ = 0) :
-    EpistemicSystemFA W where
+    every qualitatively additive measure model satisfies the FA axioms. -/
+def toSystemFA (m : QualAddMeasure W) : EpistemicSystemFA W where
   ge := m.inducedGe
   refl := fun _ => le_refl _
-  mono := m.inducedGe_axiomT h_empty
+  mono := m.inducedGe_axiomT
   bottom := by
     show m.mu Set.univ ≥ m.mu ∅
-    rw [h_empty]; exact m.nonneg Set.univ
+    rw [m.mu_empty]; exact m.nonneg Set.univ
   nonTrivial := by
     show ¬(m.mu ∅ ≥ m.mu Set.univ)
-    rw [h_empty, m.total]; exact not_le.mpr one_pos
+    rw [m.mu_empty, m.total]; exact not_le.mpr one_pos
   total := fun A B => le_total (m.mu B) (m.mu A)
   trans := fun _ _ _ hab hbc => le_trans hbc hab
   additive := m.qualAdd
@@ -350,9 +329,10 @@ end QualAddMeasure
 /-- Every finitely additive measure is qualitatively additive.
     Proof: μ(A) = μ(A \ B) + μ(A ∩ B) and μ(B) = μ(B \ A) + μ(A ∩ B),
     so μ(A) ≥ μ(B) ↔ μ(A \ B) ≥ μ(B \ A). -/
-noncomputable def FinAddMeasure.toQualAdd {W : Type*} (m : FinAddMeasure W) : QualAddMeasure W where
+def FinAddMeasure.toQualAdd {W : Type*} (m : FinAddMeasure W) : QualAddMeasure W where
   mu := m.mu
   nonneg := m.nonneg
+  mu_empty := m.mu_empty
   total := m.total
   qualAdd := m.mu_qadd
 

@@ -6,12 +6,14 @@ import Mathlib.Tactic.IntervalCases
 
 The top-level results of [holliday-icard-2013] / [kraft-pratt-seidenberg-1959]:
 
-* `Core.Scale.theorem8a` — for `|W| < 5`, every FA model is representable by a
-  finitely additive probability measure (FA = FP∞ below five worlds).
-* `Core.Scale.theorem8b` — at `|W| = 5`, FA is strictly weaker than FP∞
-  (the KPS counterexample).
-* `Core.Scale.theorem6_completeness`, `theorem2_completeness` — qualitative
-  completeness results ([van-der-hoek-1996]; [halpern-2003] Thm. 7.5.1a).
+* `Core.Scale.representable_of_card_lt_five` — for `|W| < 5`, every FA model is
+  representable by a finitely additive probability measure (FA = FP∞ below
+  five worlds).
+* `Core.Scale.exists_nonrepresentable_of_five_le_card` — for `|W| ≥ 5`, FA is
+  strictly weaker than FP∞ (the KPS counterexample, padded with null atoms).
+* `Core.Scale.exists_qualAddMeasure_repr`, `exists_dominationLift_repr` —
+  qualitative completeness results ([van-der-hoek-1996]; [halpern-2003]
+  Thm. 7.5.1a).
 * `Core.Scale.axiomA_iff_fa` — Axiom A is equivalent to disjoint-union
   invariance (finite additivity).
 -/
@@ -21,44 +23,32 @@ namespace Core.Scale
 
 -- ── Theorem 8 (Kraft, [kraft-pratt-seidenberg-1959]) ───
 
-set_option maxHeartbeats 1600000 in
-/-- **Theorem 8a**: for |W| < 5,
-    every FA model is representable by a finitely additive probability
-    measure. Below 5 worlds, the logics FA and FP∞ coincide.
-
-    The proof transfers an arbitrary `Fintype W` to `Fin n` via
-    `Fintype.equivFin`, applies the per-cardinality proof for n ∈ {0,1,2,3,4},
-    and transports the resulting measure back. -/
-theorem theorem8a {W : Type*} [Fintype W]
+/-- **Theorem 8a** ([kraft-pratt-seidenberg-1959]; [holliday-icard-2013]
+    Theorem 8): below five worlds every FA system is representable —
+    FA and FP∞ coincide. -/
+theorem representable_of_card_lt_five {W : Type*} [Fintype W]
     (sys : EpistemicSystemFA W) (hcard : Fintype.card W < 5) :
-    ∃ (m : FinAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+    Representable sys := by
   haveI : DecidableEq W := Classical.typeDecidableEq W
   let e := Fintype.equivFin W
-  -- Each `n ∈ {1,2,3,4}` case transports the per-cardinality measure back via `e`.
-  have transfer : ∀ {n} (e : W ≃ Fin n),
-      (∃ m' : FinAddMeasure (Fin n), ∀ A B, (transportFA e sys).ge A B ↔ m'.inducedGe A B) →
-      ∃ m : FinAddMeasure W, ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
-    fun e ⟨m', hm'⟩ => ⟨transportMeasure e m', transfer_repr e sys m' hm'⟩
   set n := Fintype.card W with hn_def
   interval_cases n
-  · -- n = 0: impossible
-    exfalso
-    have : (∅ : Set (Fin 0)) = Set.univ := by ext x; exact Fin.elim0 x
-    exact (transportFA e sys).nonTrivial (this ▸ (transportFA e sys).refl ∅)
-  · exact transfer e (theorem8a_fin1 (transportFA e sys))
-  · exact transfer e (theorem8a_fin2 (transportFA e sys))
-  · exact transfer e (theorem8a_fin3 (transportFA e sys))
-  · exact transfer e (theorem8a_fin4 (transportFA e sys))
+  · exact (no_fa_empty (transportFA e sys)).elim
+  · exact perm_repr e sys (representable_fin1 (transportFA e sys))
+  · exact perm_repr e sys (representable_fin2 (transportFA e sys))
+  · exact perm_repr e sys (representable_fin3 (transportFA e sys))
+  · exact perm_repr e sys (representable_fin4 (transportFA e sys))
 
-/-- **Theorem 8b**: for |W| ≥ 5,
-    FA is strictly weaker than FP∞ — there exists a 5-element type
-    with an FA ordering admitting no finitely additive measure
-    representation. -/
-theorem theorem8b :
-    ∃ (W : Type) (_ : Fintype W) (sys : EpistemicSystemFA W),
-      Fintype.card W = 5 ∧
-      ¬∃ (m : FinAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
-  ⟨Fin 5, inferInstance, kpsSystemFA, Fintype.card_fin 5, kps_not_representable⟩
+/-- **Theorem 8b** ([kraft-pratt-seidenberg-1959] Theorem 8): at every
+    cardinality ≥ 5 some FA system is non-representable, so FA is strictly
+    weaker than FP∞. -/
+theorem exists_nonrepresentable_of_five_le_card {W : Type*} [Fintype W]
+    (hcard : 5 ≤ Fintype.card W) :
+    ∃ sys : EpistemicSystemFA W, ¬Representable sys := by
+  haveI : DecidableEq W := Classical.typeDecidableEq W
+  obtain ⟨sysF, hsysF⟩ := exists_nonrepresentable_fin hcard
+  exact ⟨transportFA (Fintype.equivFin W).symm sysF,
+    fun h => hsysF (perm_repr (Fintype.equivFin W).symm sysF h)⟩
 
 -- ── Completeness (Theorems 2 and 6) ─────────────
 
@@ -118,42 +108,40 @@ private theorem ge_div_iff {a b d : ℚ} (hd : 0 < d) :
   rw [ge_iff_le, ge_iff_le, div_le_div_iff_of_pos_right hd]
 
 /-- **Theorem 6 completeness** ([holliday-icard-2013], Theorem 6; [van-der-hoek-1996]):
-    every EpistemicSystemFA is representable by a **qualitatively additive** measure.
-
-    Construction: define μ(A) = |{S : Finset W | ge A S}| / 2^|W|.
-    Totality + transitivity of ge ensure μ A ≥ μ B ↔ ge A B;
-    qualitative additivity then follows from Axiom A. -/
-theorem theorem6_completeness {W : Type*} [Fintype W]
+    every FA system is representable by a qualitatively additive measure —
+    the dominated-set count, affinely renormalised so μ(∅) = 0 and μ(Ω) = 1. -/
+theorem exists_qualAddMeasure_repr {W : Type*} [Fintype W]
     (sys : EpistemicSystemFA W) :
     ∃ (m : QualAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
   classical
-  let N : ℚ := Fintype.card (Finset W)
-  have hN_pos : (0 : ℚ) < N := Nat.cast_pos.mpr Fintype.card_pos
-  let mu : Set W → ℚ := fun A => (belowCount sys A : ℚ) / N
-  refine ⟨⟨mu, ?nonneg, ?total, ?qualAdd⟩, ?repr⟩
-  case nonneg =>
-    intro A; exact div_nonneg (Nat.cast_nonneg _) (le_of_lt hN_pos)
-  case total =>
-    show (belowCount sys Set.univ : ℚ) / N = 1
-    rw [belowCount_univ]; exact div_self (ne_of_gt hN_pos)
-  case qualAdd =>
+  set E : ℚ := (belowCount sys ∅ : ℚ) with hE
+  set N : ℚ := (Fintype.card (Finset W) : ℚ) with hN
+  have hd : (0 : ℚ) < N - E := by
+    have := belowCount_strict sys ∅ Set.univ sys.nonTrivial
+    rw [belowCount_univ] at this
+    rw [hN, hE]
+    exact sub_pos.mpr (by exact_mod_cast this)
+  -- the affine map t ↦ (t − E)/(N − E) is an order isomorphism
+  have key : ∀ A B : Set W,
+      ((belowCount sys A : ℚ) - E) / (N - E) ≥ ((belowCount sys B : ℚ) - E) / (N - E) ↔
+      sys.ge A B := by
     intro A B
-    show (belowCount sys A : ℚ) / N ≥ (belowCount sys B : ℚ) / N ↔
-         (belowCount sys (A \ B) : ℚ) / N ≥ (belowCount sys (B \ A) : ℚ) / N
-    rw [ge_div_iff hN_pos, ge_div_iff hN_pos]
-    constructor
-    · intro h
-      have hge := (belowCount_iff sys A B).mp (by exact_mod_cast h)
-      exact_mod_cast (belowCount_iff sys (A \ B) (B \ A)).mpr (sys.additive A B |>.mp hge)
-    · intro h
-      have hge := (belowCount_iff sys (A \ B) (B \ A)).mp (by exact_mod_cast h)
-      exact_mod_cast (belowCount_iff sys A B).mpr (sys.additive A B |>.mpr hge)
-  case repr =>
-    intro A B
-    show sys.ge A B ↔ (belowCount sys A : ℚ) / N ≥ (belowCount sys B : ℚ) / N
-    rw [ge_div_iff hN_pos]
-    exact ⟨fun h => by exact_mod_cast (belowCount_iff sys A B).mpr h,
-           fun h => (belowCount_iff sys A B).mp (by exact_mod_cast h)⟩
+    rw [ge_div_iff hd, ge_iff_le, sub_le_sub_iff_right, Nat.cast_le]
+    exact belowCount_iff sys A B
+  have hAle : ∀ A : Set W, E ≤ (belowCount sys A : ℚ) := fun A => by
+    rw [hE, Nat.cast_le]
+    exact belowCount_mono sys A ∅ (sys.mono ∅ A (Set.empty_subset A))
+  refine ⟨⟨fun A => ((belowCount sys A : ℚ) - E) / (N - E),
+    fun A => div_nonneg (sub_nonneg.mpr (hAle A)) hd.le,
+    by simp only [← hE, sub_self, zero_div],
+    ?_, ?_⟩, fun A B => (key A B).symm⟩
+  · show ((belowCount sys Set.univ : ℚ) - E) / (N - E) = 1
+    rw [belowCount_univ, ← hN]
+    exact div_self hd.ne'
+  · intro A B
+    show _ ≥ _ ↔ _ ≥ _
+    rw [key A B, key (A \ B) (B \ A)]
+    exact sys.additive A B
 
 /-- Helper: if ge A {b} for every b ∈ B, then ge A B, given monotonicity (T)
     and right-union (J). Proved by Finset induction on B.toFinset. -/
@@ -190,7 +178,7 @@ private lemma ge_of_forall_singleton {W : Type*} [Fintype W]
     on a single model, without formalizing the syntax or proof system.
 
     Construction: `ge_w u v := sys.ge {u} {v}`. -/
-theorem theorem2_completeness {W : Type*} [Fintype W]
+theorem exists_dominationLift_repr {W : Type*} [Fintype W]
     (sys : EpistemicSystemW W)
     (hTran : ∀ A B C : Set W, sys.ge A B → sys.ge B C → sys.ge A C)
     (hJ : EpistemicAxiom.J sys.ge)

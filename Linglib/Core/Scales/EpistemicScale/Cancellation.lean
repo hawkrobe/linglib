@@ -91,19 +91,13 @@ def Cancellation (n : ℕ) (ge : Set (Fin n) → Set (Fin n) → Prop) : Prop :=
 -- § 3. Easy Direction: representable → cancellation
 -- ═══════════════════════════════════════════════════════════════
 
-private lemma mu_zero {W : Type*} (m : FinAddMeasure W) : m.mu ∅ = 0 := by
-  have h := m.additive ∅ ∅ (fun x hx => hx.elim)
-  rw [Set.empty_union] at h; linarith
-
 private lemma mu_finset_sum {n : ℕ} (m : FinAddMeasure (Fin n))
     (S : Finset (Fin n)) : m.mu ↑S = S.sum (fun i => m.mu {i}) := by
   induction S using Finset.induction_on with
-  | empty => simp [Finset.coe_empty, mu_zero m]
+  | empty => simp [Finset.coe_empty, m.mu_empty]
   | @insert a S ha ih =>
-    have hdisj : ∀ x, x ∈ ({a} : Set (Fin n)) → x ∉ (↑S : Set (Fin n)) := by
-      intro x hx hxS
-      rw [Set.mem_singleton_iff] at hx; subst hx
-      exact ha (Finset.mem_coe.mp hxS)
+    have hdisj : Disjoint ({a} : Set (Fin n)) ↑S :=
+      Set.disjoint_singleton_left.mpr (fun h => ha (Finset.mem_coe.mp h))
     have hins : (↑(insert a S) : Set (Fin n)) = ({a} : Set (Fin n)) ∪ ↑S := by
       rw [Finset.coe_insert]; exact Set.insert_eq a ↑S
     rw [hins, m.additive _ _ hdisj, ih, Finset.sum_insert ha]
@@ -170,10 +164,10 @@ private lemma portfolio_interchange {n : ℕ} (m : FinAddMeasure (Fin n))
     interchange lemma, the value also equals Σᵢ μ({i})·weightedSum(i) = 0
     by neutrality. -/
 theorem representable_implies_cancellation {n : ℕ}
-    (sys : EpistemicSystemFA (Fin n))
+    {ge : Set (Fin n) → Set (Fin n) → Prop}
     (m : FinAddMeasure (Fin n))
-    (hm : ∀ A B, sys.ge A B ↔ m.inducedGe A B) :
-    Cancellation n sys.ge := by
+    (hm : ∀ A B, ge A B ↔ m.inducedGe A B) :
+    Cancellation n ge := by
   intro P hValid hNeutral ⟨wc, hwc_mem, hwc_strict⟩
   -- Define the portfolio valuation function
   let f : WComparison n → ℚ := fun wc => wc.weight * (m.mu ↑wc.left - m.mu ↑wc.right)
@@ -233,7 +227,7 @@ private theorem atomMu_eq_finset_sum {n : ℕ} (p : Fin n → ℚ) (S : Finset (
     then applies the ↔ condition from `feasibleWeights`. -/
 private theorem feasible_to_measure {n : ℕ} (sys : EpistemicSystemFA (Fin n))
     {p : Fin n → ℚ} (hp : p ∈ feasibleWeights n sys) :
-    ∃ m : FinAddMeasure (Fin n), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+    Representable sys := by
   obtain ⟨hnn, hsum, hcompat⟩ := hp
   -- Nonneg: each summand is nonneg
   have h_nonneg : ∀ A, 0 ≤ atomMu p A := by
@@ -244,9 +238,10 @@ private theorem feasible_to_measure {n : ℕ} (sys : EpistemicSystemFA (Fin n))
       rw [Finset.sum_insert has]
       exact add_nonneg (by split <;> [exact hnn a; exact le_refl 0]) ih
   -- Finite additivity via pointwise case split on membership
-  have h_additive : ∀ A B : Set (Fin n), (∀ x, x ∈ A → x ∉ B) →
+  have h_additive : ∀ A B : Set (Fin n), Disjoint A B →
       atomMu p (A ∪ B) = atomMu p A + atomMu p B := by
-    intro A B hdisj
+    intro A B hAB
+    have hdisj : ∀ x ∈ A, x ∉ B := fun x hx => Set.disjoint_left.mp hAB hx
     simp only [atomMu, ← Finset.sum_add_distrib]
     apply Finset.sum_congr rfl
     intro i _
@@ -264,7 +259,7 @@ private theorem feasible_to_measure {n : ℕ} (sys : EpistemicSystemFA (Fin n))
   have hfinDisj : Disjoint (Finset.univ.filter (· ∈ C)) (Finset.univ.filter (· ∈ D)) := by
     rw [Finset.disjoint_left]; intro x hx1 hx2
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx1 hx2
-    exact hdisj x hx1 hx2
+    exact Set.disjoint_left.mp hdisj hx1 hx2
   -- hcompat on filter-finsets, transported to Sets via coercion identity
   have key := hcompat _ _ hfinDisj
   rw [hCeq, hDeq] at key
@@ -303,7 +298,7 @@ private lemma ge_empty_of_all_null {n : ℕ} (sys : EpistemicSystemFA (Fin n))
 
 /-- Not all singletons can be null: ∃ i, ¬sys.ge ∅ {i}. If all were null,
     FA induction gives sys.ge ∅ Set.univ, contradicting nonTrivial. -/
-private theorem not_all_null {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
+theorem not_all_null {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
     ∃ i : Fin n, ¬sys.ge ∅ {i} := by
   by_contra hall; push_neg at hall
   exact sys.nonTrivial (by rw [← Finset.coe_univ]; exact ge_empty_of_all_null sys hall _)
@@ -1111,34 +1106,15 @@ private theorem cancellation_nonempty {n : ℕ} (sys : EpistemicSystemFA (Fin n)
 theorem cancellation_implies_representable {n : ℕ}
     (sys : EpistemicSystemFA (Fin n))
     (hcancel : Cancellation n sys.ge) :
-    ∃ m : FinAddMeasure (Fin n), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+    Representable sys := by
   obtain ⟨p, hp⟩ := cancellation_nonempty sys hcancel
   exact feasible_to_measure sys hp
 
--- ═══════════════════════════════════════════════════════════════
--- § 5. FA → Cancellation for small n
--- ═══════════════════════════════════════════════════════════════
-
-/-- Extend `∅ ≿ S` to `∅ ≿ T` by absorbing one null atom `a`, where
-    `{a} \ T = ∅` and `T \ {a} = S`. -/
-private lemma ge_empty_extend {n : ℕ} (sys : EpistemicSystemFA (Fin n))
-    {a : Fin n} {S T : Set (Fin n)} (hNull : sys.ge ∅ {a}) (hRest : sys.ge ∅ S)
-    (h1 : ({a} : Set (Fin n)) \ T = ∅) (h2 : T \ ({a} : Set (Fin n)) = S) :
-    sys.ge ∅ T :=
-  sys.trans ∅ {a} T hNull ((sys.additive {a} T).mpr (h1 ▸ h2 ▸ hRest))
-
-/-- Not all 4 singletons can be null (non-triviality). -/
-theorem not_all_null_fin4 (sys : EpistemicSystemFA (Fin 4))
-    (h0 : sys.ge ∅ {(0 : Fin 4)}) (h1 : sys.ge ∅ {(1 : Fin 4)})
-    (h2 : sys.ge ∅ {(2 : Fin 4)}) (h3 : sys.ge ∅ {(3 : Fin 4)}) : False := by
-  have h01 : sys.ge ∅ ({0, 1} : Set (Fin 4)) :=
-    ge_empty_extend sys h1 h0
-      (by ext x; fin_cases x <;> simp_all) (by ext x; fin_cases x <;> simp_all)
-  have h012 : sys.ge ∅ ({0, 1, 2} : Set (Fin 4)) :=
-    ge_empty_extend sys h2 h01
-      (by ext x; fin_cases x <;> simp_all) (by ext x; fin_cases x <;> simp_all)
-  exact sys.nonTrivial (ge_empty_extend sys h3 h012
-    (by ext x; simp) (by ext x; fin_cases x <;> simp_all))
-
+/-- **Scott's theorem**: an FA system is representable by a finitely additive
+    measure iff it satisfies the cancellation property. -/
+theorem representable_iff_cancellation {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
+    Representable sys ↔ Cancellation n sys.ge :=
+  ⟨fun ⟨m, hm⟩ => representable_implies_cancellation m hm,
+   cancellation_implies_representable sys⟩
 
 end Core.Scale

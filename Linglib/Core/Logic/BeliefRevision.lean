@@ -189,8 +189,8 @@ private theorem mu_eq_zero_of_singletons {W : Type*} [Fintype W] [DecidableEq W]
   | cons a t ha ih =>
     intro hall
     rw [Finset.coe_cons, Set.insert_eq a ↑t]
-    have hdisj : ∀ x, x ∈ ({a} : Set W) → x ∉ (↑t : Set W) :=
-      fun x hx hxt => ha (Set.mem_singleton_iff.mp hx ▸ Finset.mem_coe.mp hxt)
+    have hdisj : Disjoint ({a} : Set W) ↑t :=
+      Set.disjoint_singleton_left.mpr fun hxt => ha (Finset.mem_coe.mp hxt)
     rw [m.additive {a} ↑t hdisj,
         hall a (Finset.mem_cons_self a t),
         ih (fun w hw => hall w (Finset.mem_cons.mpr (Or.inr hw))),
@@ -215,7 +215,7 @@ open Core.Scale in
 private theorem condMu_compl {W : Type*}
     (m : CondMeasure W) (ψ φ : Set W) :
     m.condMu ψ φ + m.condMu ψᶜ φ = m.condMu Set.univ φ := by
-  have := m.cond_additive ψ ψᶜ φ (fun x hx hxc => hxc hx)
+  have := m.cond_additive ψ ψᶜ φ disjoint_compl_right
   rw [Set.union_compl_self] at this
   exact this.symm
 

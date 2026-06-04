@@ -1,4 +1,6 @@
 import Linglib.Core.Scales.EpistemicScale.Defs
+import Mathlib.Algebra.Order.BigOperators.Group.List
+import Mathlib.Tactic.Ring
 
 /-!
 # Conditional Plausibility and Probabilistic Update
@@ -10,44 +12,21 @@ and imaging under a single algebraic framework (Cond1–Cond4).
 This file formalizes:
 1. **Conditional probability measures** (Popper space axioms P1–P4)
 2. **The ratio construction** (Halpern Thm 3.3.1): FinAddMeasure → CondMeasure
-3. **Jeffrey's rule**: update under uncertain evidence
-4. **Conditioning modes**: classifying the update operations across linglib
+3. **Jeffrey's rule**: update under uncertain evidence, packaged as a
+   finitely additive measure (`jeffreyMeasure`)
 
-## Conditioning Unification
+## Conditioning across linglib
 
-Four conditioning operations in linglib are instances of conditional
-plausibility:
-
-| Module | Operation | Mode |
-|--------|-----------|------|
-| `EpistemicScale/Conditional` | `condMu A B` | Bayesian (ratio) |
-| `BayesianSemantics` | `PMF.condProbSet` | Bayesian (marginalization) |
-| `Dynamic/Core/Update` | `InfoState.update s φ` | Eliminative |
-| `SDS/MeasureTheory` | (placeholder) | Continuous Bayesian |
-
-The eliminative mode is the special case where P(A|B) ∈ {0, 1}:
-each world either survives or is eliminated.
-
+Several conditioning operations elsewhere in linglib are instances of
+conditional plausibility: `PMF.condProbSet` (`BayesianSemantics`) is the same
+ratio construction as `toCondMeasure`; `InfoState.update` (`Dynamic/Core/Update`)
+is the eliminative special case where P(A|B) ∈ {0, 1}; Spohn ranking
+conditionalization ([spohn-1988], `Core/Logic/RankingFunction`) is its
+order-of-magnitude analogue. Bayesian conditioning is the point-partition
+special case of Jeffrey's rule (`bayesian_is_jeffrey`).
 -/
 
 namespace Core.Scale
-
-/-! ### Conditioning modes -/
-
-/-- Classification of conditioning modes used across linglib.
-
-    - **eliminative**: keep only worlds satisfying evidence. The
-      resulting measure is 0/1-valued. (`Dynamic/Core/Update.lean`)
-    - **bayesian**: P(A|B) = P(A ∩ B)/P(B). Standard ratio conditioning.
-      (`BayesianSemantics.lean`, this file)
-    - **jeffrey**: update with uncertain evidence over a partition.
-      Generalizes Bayesian: P'(A) = Σᵢ P(A|Eᵢ) · q(Eᵢ). -/
-inductive ConditioningMode where
-  | eliminative
-  | bayesian
-  | jeffrey
-  | ranking   -- [spohn-1988]: κ_φ(w) = κ(w) - κ(φ) for φ-worlds
-  deriving DecidableEq, Repr
 
 /-! ### Conditional probability measure (Popper space) -/
 
@@ -65,10 +44,12 @@ structure CondMeasure (W : Type*) extends FinAddMeasure W where
   /-- P2: normalization — P(B|B) = 1 for normal B -/
   cond_norm : ∀ B, condMu B B ≠ 0 → condMu B B = 1
   /-- P3: conditional additivity -/
-  cond_additive : ∀ A₁ A₂ B, (∀ x, x ∈ A₁ → x ∉ A₂) →
+  cond_additive : ∀ A₁ A₂ B, Disjoint A₁ A₂ →
     condMu (A₁ ∪ A₂) B = condMu A₁ B + condMu A₂ B
   /-- P4: chain rule — P(A ∩ B | C) = P(A | B ∩ C) · P(B | C) -/
   cond_chain : ∀ A B C, condMu (A ∩ B) C = condMu A (B ∩ C) * condMu B C
+  /-- Conditioning sees only the part inside the evidence: P(A|B) = P(A ∩ B|B) -/
+  cond_inter : ∀ A B, condMu A B = condMu (A ∩ B) B
   /-- Unconditional connection: P(A | Ω) = μ(A) -/
   cond_univ : ∀ A, condMu A Set.univ = mu A
 
@@ -95,6 +76,12 @@ theorem bayes (m : CondMeasure W) (A B : Set W) :
   simp only [Set.inter_univ] at h1 h2
   rw [← h1, ← h2, Set.inter_comm]
 
+/-- For normal `B`, `P(Ω|B) = 1`. -/
+theorem condMu_univ_of_normal (m : CondMeasure W) {B : Set W}
+    (hB : m.condMu B B ≠ 0) : m.condMu Set.univ B = 1 := by
+  rw [m.cond_inter Set.univ B, Set.univ_inter]
+  exact m.cond_norm B hB
+
 end CondMeasure
 
 /-! ### Ratio construction (Halpern Theorem 3.3.1) -/
@@ -117,7 +104,8 @@ noncomputable def FinAddMeasure.toCondMeasure {W : Type*}
     exact div_self fun h => hne (by rw [h, div_zero])
   cond_additive := fun A₁ A₂ B hdisj => by
     rw [Set.union_inter_distrib_right,
-      m.additive (A₁ ∩ B) (A₂ ∩ B) (fun x h1 h2 => hdisj x h1.1 h2.1), add_div]
+      m.additive (A₁ ∩ B) (A₂ ∩ B)
+        (hdisj.mono Set.inter_subset_left Set.inter_subset_left), add_div]
   cond_chain := fun A B C => by
     -- Ratio algebra a/c = (a/b)·(b/c): when μ(B∩C)=0 both sides vanish, else cancel.
     rw [Set.inter_assoc]
@@ -126,12 +114,13 @@ noncomputable def FinAddMeasure.toCondMeasure {W : Type*}
         le_antisymm (hBC ▸ m.mu_mono Set.inter_subset_right) (m.nonneg _)
       simp [hABC, hBC]
     · rw [div_mul_div_comm, mul_comm (m.mu (A ∩ (B ∩ C))), mul_div_mul_left _ _ hBC]
+  cond_inter := fun A B => by rw [Set.inter_assoc, Set.inter_self]
   cond_univ := fun A => by simp [Set.inter_univ, m.total, div_one]
 
 /-! ### Jeffrey's rule -/
 
-/-- An evidence partition: a finite collection of mutually exclusive,
-    exhaustive propositions with new probability assignments. -/
+/-- An evidence partition: pairwise-disjoint cells covering the space, with new
+    probability assignments summing to 1. -/
 structure EvidencePartition (W : Type*) where
   /-- The partition cells -/
   cells : List (Set W)
@@ -139,57 +128,73 @@ structure EvidencePartition (W : Type*) where
   weights : List ℚ
   /-- Cells and weights are aligned -/
   aligned : cells.length = weights.length
+  /-- Cells are pairwise disjoint -/
+  disjointCells : cells.Pairwise Disjoint
+  /-- Cells cover the space -/
+  exhaustive : cells.foldr (· ∪ ·) ∅ = Set.univ
   /-- Weights are non-negative -/
   weights_nonneg : ∀ q ∈ weights, 0 ≤ q
   /-- Weights sum to 1 -/
   weights_sum : weights.sum = 1
 
-/-- Jeffrey's rule: update a conditional measure with uncertain evidence.
-
-    Given a partition {E₁,..., Eₙ} with new probabilities q₁,..., qₙ:
-    P'(A) = Σᵢ P(A | Eᵢ) · qᵢ
-
-    This generalizes Bayesian conditioning: standard conditioning on E
-    is the special case where qₑ = 1 and all other qᵢ = 0.
-
-    [jeffrey-1965], The Logic of Decision; [halpern-2003] §3.4. -/
+/-- Jeffrey's rule ([jeffrey-1965]; [halpern-2003] §3.4): update with uncertain
+    evidence, P'(A) = Σᵢ P(A | Eᵢ) · qᵢ. -/
 def jeffreyUpdate {W : Type*} (m : CondMeasure W)
     (ev : EvidencePartition W) : Set W → ℚ :=
-  fun A =>
-    let pairs := ev.cells.zip ev.weights
-    pairs.foldl (fun acc ⟨E, q⟩ => acc + m.condMu A E * q) 0
-
-/-- Jeffrey's rule preserves non-negativity. -/
-private lemma foldl_condMu_nonneg {W : Type*} (m : CondMeasure W) (A : Set W)
-    (pairs : List (Set W × ℚ)) (acc : ℚ) (hacc : 0 ≤ acc)
-    (hpairs : ∀ p ∈ pairs, 0 ≤ p.2) :
-    0 ≤ pairs.foldl (fun acc ⟨E, q⟩ => acc + m.condMu A E * q) acc := by
-  induction pairs generalizing acc with
-  | nil => simpa using hacc
-  | cons hd t ih =>
-    simp only [List.foldl]
-    apply ih
-    · exact add_nonneg hacc (mul_nonneg (m.cond_nonneg A hd.1)
-        (hpairs hd List.mem_cons_self))
-    · intro p hp; exact hpairs p (List.mem_cons_of_mem _ hp)
+  fun A => ((ev.cells.zip ev.weights).map (fun p => m.condMu A p.1 * p.2)).sum
 
 theorem jeffreyUpdate_nonneg {W : Type*} (m : CondMeasure W)
     (ev : EvidencePartition W) (A : Set W) :
-    0 ≤ jeffreyUpdate m ev A := by
-  unfold jeffreyUpdate
-  apply foldl_condMu_nonneg m A _ 0 (le_refl 0)
-  intro ⟨E, q⟩ hEq
-  exact ev.weights_nonneg q (List.of_mem_zip hEq).2
+    0 ≤ jeffreyUpdate m ev A :=
+  List.sum_nonneg fun x hx => by
+    obtain ⟨p, hp, rfl⟩ := List.mem_map.mp hx
+    exact mul_nonneg (m.cond_nonneg A p.1) (ev.weights_nonneg p.2 (List.of_mem_zip hp).2)
 
-/-- Bayesian conditioning is Jeffrey conditioning with a point partition. -/
-theorem bayesian_is_jeffrey {W : Type*} (m : CondMeasure W) (B : Set W)
-    (_hB : m.condMu B B ≠ 0) (A : Set W) :
+theorem jeffreyUpdate_additive {W : Type*} (m : CondMeasure W)
+    (ev : EvidencePartition W) (A B : Set W) (hAB : Disjoint A B) :
+    jeffreyUpdate m ev (A ∪ B) = jeffreyUpdate m ev A + jeffreyUpdate m ev B := by
+  simp only [jeffreyUpdate]
+  induction ev.cells.zip ev.weights with
+  | nil => simp
+  | cons p l ih =>
+    simp only [List.map_cons, List.sum_cons, ih, m.cond_additive A B p.1 hAB]
+    ring
+
+/-- Jeffrey update is normalized when every cell is normal. -/
+theorem jeffreyUpdate_total {W : Type*} (m : CondMeasure W)
+    (ev : EvidencePartition W) (hnorm : ∀ E ∈ ev.cells, m.condMu E E ≠ 0) :
+    jeffreyUpdate m ev Set.univ = 1 := by
+  simp only [jeffreyUpdate]
+  have hcell : ∀ p ∈ ev.cells.zip ev.weights,
+      m.condMu Set.univ p.1 * p.2 = Prod.snd p := by
+    intro p hp
+    rw [m.condMu_univ_of_normal (hnorm p.1 (List.of_mem_zip hp).1), one_mul]
+  rw [List.map_congr_left hcell, List.map_snd_zip (le_of_eq ev.aligned.symm),
+    ev.weights_sum]
+
+/-- **Jeffrey's rule yields a measure**: for a partition of normal cells, the
+    Jeffrey update is a finitely additive probability measure. -/
+def jeffreyMeasure {W : Type*} (m : CondMeasure W) (ev : EvidencePartition W)
+    (hnorm : ∀ E ∈ ev.cells, m.condMu E E ≠ 0) : FinAddMeasure W where
+  mu := jeffreyUpdate m ev
+  nonneg := jeffreyUpdate_nonneg m ev
+  additive := jeffreyUpdate_additive m ev
+  total := jeffreyUpdate_total m ev hnorm
+
+/-- Bayesian conditioning is Jeffrey conditioning with the partition `{B, Bᶜ}`
+    and weights `1, 0`. -/
+theorem bayesian_is_jeffrey {W : Type*} (m : CondMeasure W) (B A : Set W) :
     m.condMu A B = jeffreyUpdate m
-      { cells := [B], weights := [1],
+      { cells := [B, Bᶜ], weights := [1, 0],
         aligned := rfl,
-        weights_nonneg := fun q hq => by simp [List.mem_singleton.mp hq],
-        weights_sum := by simp } A := by
-  simp [jeffreyUpdate, List.zip, List.foldl, mul_one]
+        disjointCells := List.pairwise_pair.mpr disjoint_compl_right,
+        exhaustive := by
+          rw [List.foldr_cons, List.foldr_cons, List.foldr_nil,
+            Set.union_empty, Set.union_compl_self],
+        weights_nonneg := fun q hq => by
+          rcases List.mem_pair.mp hq with rfl | rfl <;> norm_num,
+        weights_sum := by norm_num } A := by
+  simp [jeffreyUpdate]
 
 /-! ### Conditional plausibility and epistemic comparison -/
 
@@ -200,22 +205,5 @@ theorem condMeasure_reflexive_per_evidence {W : Type*}
     (m : CondMeasure W) (B : Set W) :
     EpistemicAxiom.R (fun A C => m.condGe A C B) :=
   fun _ => le_refl _
-
-/-! ### Conditioning mode relationships -/
-
--- **PMF** (BayesianSemantics.lean + `Linglib.Core.Probability.Finite`):
--- `pmf.probOfSet event` computes P(event) = Σ_θ mass(θ) · 1[event(θ)].
--- Conditioning a `PMF` on evidence B is `pmf.condProbSet B A`, the
--- ratio construction P(A|B) = P(A ∩ B)/P(B); this is the same construction
--- as `(toCondMeasure m).condMu A B`.
---
--- **InfoState.update** (Dynamic/Core/Update.lean): eliminative
--- conditioning — each possibility either survives (P = 1) or is
--- removed (P = 0). Under a uniform distribution, this equals Bayesian
--- conditioning: P(A|φ) = |A ∩ {w | φ w}| / |{w | φ w}|.
---
--- **Jeffrey conditioning**: generalizes Bayesian conditioning.
--- Bayesian conditioning on B is Jeffrey conditioning with the point
--- partition {B} and weight 1 (see `bayesian_is_jeffrey` above).
 
 end Core.Scale

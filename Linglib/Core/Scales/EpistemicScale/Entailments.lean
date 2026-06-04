@@ -58,7 +58,8 @@ private noncomputable def uf3 : FinAddMeasure (Fin 3) where
     (if (2 : Fin 3) ∈ A then (1:ℚ)/3 else 0)
   nonneg := λ A => add_nonneg (add_nonneg
     (by split <;> norm_num) (by split <;> norm_num)) (by split <;> norm_num)
-  additive := λ A B hdisj => by
+  additive := λ A B hAB => by
+    have hdisj : ∀ x ∈ A, x ∉ B := λ x hx => Set.disjoint_left.mp hAB hx
     simp only [Set.mem_union]
     by_cases h0A : (0 : Fin 3) ∈ A <;> by_cases h0B : (0 : Fin 3) ∈ B <;>
     by_cases h1A : (1 : Fin 3) ∈ A <;> by_cases h1B : (1 : Fin 3) ∈ B <;>
@@ -82,14 +83,12 @@ private theorem uf3_mu_2 : uf3.mu {(2 : Fin 3)} = 1/3 := by
   simp only [uf3_mu_eq, Set.mem_singleton_iff, Fin.reduceEq, reduceIte]; norm_num
 
 private theorem uf3_mu_union_12 : uf3.mu ({(1 : Fin 3)} ∪ {2}) = 2/3 := by
-  rw [uf3.additive _ _ (λ x hx hx2 => by
-    rw [Set.mem_singleton_iff] at hx hx2; omega)]
+  rw [uf3.additive _ _ (Set.disjoint_singleton.mpr (by omega))]
   rw [uf3_mu_1, uf3_mu_2]; norm_num
 
 private theorem uf3_mu_pair_01 : uf3.mu ({0, 1} : Set (Fin 3)) = 2/3 := by
   rw [show ({0, 1} : Set (Fin 3)) = {0} ∪ {1} from Set.insert_eq 0 {1}]
-  rw [uf3.additive _ _ (λ x hx hx1 => by
-    rw [Set.mem_singleton_iff] at hx hx1; omega)]
+  rw [uf3.additive _ _ (Set.disjoint_singleton.mpr (by omega))]
   rw [uf3_mu_0, uf3_mu_1]; norm_num
 
 private theorem uf3_mu_compl' (A : Set (Fin 3)) :
@@ -99,14 +98,13 @@ private theorem uf3_mu_compl' (A : Set (Fin 3)) :
 /-- I1 is invalid for measure semantics: with uniform measure on Fin 3,
     {0} ≿ {1} and {0} ≿ {2} but ¬({0} ≿ {1,2}). -/
 theorem measure_not_I1 :
-    ¬∀ (m : FinAddMeasure (Fin 3)), patternI1 m.inducedGe := by
-  intro hall
-  have hI1 := hall uf3 {(0 : Fin 3)} {1} {2}
+    ∃ m : FinAddMeasure (Fin 3), ¬patternI1 m.inducedGe := by
+  refine ⟨uf3, λ hI1 => ?_⟩
   have h01 : uf3.inducedGe {(0 : Fin 3)} {1} := by
     unfold FinAddMeasure.inducedGe; rw [uf3_mu_0, uf3_mu_1]
   have h02 : uf3.inducedGe {(0 : Fin 3)} {2} := by
     unfold FinAddMeasure.inducedGe; rw [uf3_mu_0, uf3_mu_2]
-  have hconc := hI1 h01 h02
+  have hconc := hI1 {(0 : Fin 3)} {1} {2} h01 h02
   unfold FinAddMeasure.inducedGe at hconc
   simp only [Set.sup_eq_union] at hconc
   rw [uf3_mu_0, uf3_mu_union_12] at hconc; linarith
@@ -114,29 +112,27 @@ theorem measure_not_I1 :
 /-- I2 is invalid for measure semantics: with uniform measure on Fin 3,
     {0,1} ≿ {0,1}ᶜ but ¬({0,1} ≿ univ). -/
 theorem measure_not_I2 :
-    ¬∀ (m : FinAddMeasure (Fin 3)), patternI2 m.inducedGe := by
-  intro hall
-  have hI2 := hall uf3 ({0, 1} : Set (Fin 3)) Set.univ
+    ∃ m : FinAddMeasure (Fin 3), ¬patternI2 m.inducedGe := by
+  refine ⟨uf3, λ hI2 => ?_⟩
   have hge : uf3.inducedGe ({0, 1} : Set (Fin 3)) ({0, 1} : Set (Fin 3))ᶜ := by
     unfold FinAddMeasure.inducedGe
     rw [uf3_mu_pair_01, uf3_mu_compl', uf3_mu_pair_01]; linarith
-  have hconc := hI2 hge
+  have hconc := hI2 ({0, 1} : Set (Fin 3)) Set.univ hge
   unfold FinAddMeasure.inducedGe at hconc
   rw [uf3_mu_pair_01, uf3.total] at hconc; linarith
 
 /-- I3 is invalid for measure semantics: with uniform measure on Fin 3,
     Probably({0,1}) but ¬({0,1} ≿ univ). -/
 theorem measure_not_I3 :
-    ¬∀ (m : FinAddMeasure (Fin 3)), patternI3 m.inducedGe := by
-  intro hall
-  have hI3 := hall uf3 ({0, 1} : Set (Fin 3)) Set.univ
+    ∃ m : FinAddMeasure (Fin 3), ¬patternI3 m.inducedGe := by
+  refine ⟨uf3, λ hI3 => ?_⟩
   have hprob : Probably uf3.inducedGe ({0, 1} : Set (Fin 3)) := by
     constructor
     · unfold FinAddMeasure.inducedGe
       rw [uf3_mu_pair_01, uf3_mu_compl', uf3_mu_pair_01]; linarith
     · intro h; unfold FinAddMeasure.inducedGe at h
       rw [uf3_mu_pair_01, uf3_mu_compl', uf3_mu_pair_01] at h; linarith
-  have hconc := hI3 hprob
+  have hconc := hI3 ({0, 1} : Set (Fin 3)) Set.univ hprob
   unfold FinAddMeasure.inducedGe at hconc
   rw [uf3_mu_pair_01, uf3.total] at hconc; linarith
 
@@ -146,22 +142,21 @@ end MeasureSemantics
 
 section QualitativeAdditivity
 
-/-- I1 is invalid for FA: the measure-induced FA system on Fin 3 is a
-    counterexample (every finitely additive measure induces an FA system
-    via `toSystemFA`). -/
-theorem fa_not_I1 : ¬∀ (W : Type) (sys : EpistemicSystemFA W),
-    patternI1 sys.ge :=
-  λ hall => measure_not_I1 λ m => hall (Fin 3) m.toSystemFA
+/-- I1 is invalid for FA: every finitely additive measure induces an FA system
+    via `toSystemFA`, so the measure counterexample transfers. -/
+theorem fa_not_I1 : ∃ (W : Type) (sys : EpistemicSystemFA W), ¬patternI1 sys.ge :=
+  let ⟨m, hm⟩ := measure_not_I1
+  ⟨Fin 3, m.toSystemFA, hm⟩
 
 /-- I2 is invalid for FA. -/
-theorem fa_not_I2 : ¬∀ (W : Type) (sys : EpistemicSystemFA W),
-    patternI2 sys.ge :=
-  λ hall => measure_not_I2 λ m => hall (Fin 3) m.toSystemFA
+theorem fa_not_I2 : ∃ (W : Type) (sys : EpistemicSystemFA W), ¬patternI2 sys.ge :=
+  let ⟨m, hm⟩ := measure_not_I2
+  ⟨Fin 3, m.toSystemFA, hm⟩
 
 /-- I3 is invalid for FA. -/
-theorem fa_not_I3 : ¬∀ (W : Type) (sys : EpistemicSystemFA W),
-    patternI3 sys.ge :=
-  λ hall => measure_not_I3 λ m => hall (Fin 3) m.toSystemFA
+theorem fa_not_I3 : ∃ (W : Type) (sys : EpistemicSystemFA W), ¬patternI3 sys.ge :=
+  let ⟨m, hm⟩ := measure_not_I3
+  ⟨Fin 3, m.toSystemFA, hm⟩
 
 end QualitativeAdditivity
 

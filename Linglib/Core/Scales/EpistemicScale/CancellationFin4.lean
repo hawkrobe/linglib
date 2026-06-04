@@ -14,7 +14,7 @@ Scott cancellation, hence is representable by a finitely additive measure
 ## Main declarations
 
 * `Core.Scale.fa_cancellation_fin4` — FA axioms imply cancellation on `Fin 4`.
-* `Core.Scale.theorem8a_fin4` — every FA system on `Fin 4` is representable.
+* `Core.Scale.representable_fin4` — every FA system on `Fin 4` is representable.
 * `Core.Scale.no_null_cancellation` — cancellation for systems with no null atoms.
 * `Core.Scale.ge_union_context`, `ge_generalized_merge`, `ge_mono_dominated`,
   `ge_empty_target` — reusable consequences of the FA axioms (any arity).
@@ -759,7 +759,7 @@ A `Fin 3` system with no null atoms extends to a `Fin 4` system by adding a
 new world, then by the restriction to the original three.  The extension
 preserves the FA axioms and the absence of null atoms, and reflects
 cancellation, so `no_null_cancellation` discharges the no-null case of
-`fa_cancellation_fin3`; null atoms reduce to `theorem8a_fin2`.  Theorem 8a
+`fa_cancellation_fin3`; null atoms reduce to `representable_fin2`.  Theorem 8a
 for `Fin 3` then *follows from* cancellation — replacing the former
 measure-by-measure case analysis. -/
 
@@ -944,23 +944,6 @@ private theorem cancellation_extendFA (sys : EpistemicSystemFA (Fin 3))
       exact absurd (Finset.mem_coe.mp h3) (last_notMem_map _)
     · rwa [hL, hR, restrict3_coe_map, restrict3_coe_map] at hge
 
-/-- Not every atom of a `Fin 3` FA system can be null. -/
-private theorem not_all_null_fin3 (sys : EpistemicSystemFA (Fin 3))
-    (h0 : sys.ge ∅ {(0 : Fin 3)}) (h1 : sys.ge ∅ {(1 : Fin 3)})
-    (h2 : sys.ge ∅ {(2 : Fin 3)}) : False := by
-  have h01 : sys.ge ∅ ({0, 1} : Set (Fin 3)) := by
-    have : sys.ge {1} ({0, 1} : Set (Fin 3)) := by
-      rw [sys.additive {1} {0, 1}]
-      rw [show ({1} : Set (Fin 3)) \ {0, 1} = ∅ from by ext x; fin_cases x <;> simp_all]
-      rw [show ({0, 1} : Set (Fin 3)) \ {1} = {0} from by ext x; fin_cases x <;> simp_all]
-      exact h0
-    exact sys.trans _ _ _ h1 this
-  exact sys.nonTrivial (sys.trans _ _ _ h2
-    ((sys.additive {2} Set.univ).mpr
-      (by rw [show ({2} : Set (Fin 3)) \ Set.univ = ∅ from by ext x; simp,
-              show (Set.univ : Set (Fin 3)) \ {2} = {0, 1} from by ext x; fin_cases x <;> simp_all]
-          exact h01)))
-
 /-- **Cancellation for Fin 3**, structurally: null atoms reduce to `Fin 2`
     representability; the no-null case extends lexicographically into `Fin 4`
     and pulls back through `no_null_cancellation`. -/
@@ -970,23 +953,27 @@ theorem fa_cancellation_fin3 (sys : EpistemicSystemFA (Fin 3)) :
   · have hnn : ∃ i : Fin 2, ¬sys.ge ∅ {Fin.succ i} := by
       by_contra hall
       push_neg at hall
-      exact not_all_null_fin3 sys h0 (hall 0) (hall 1)
-    obtain ⟨m, hm⟩ := null_elem_reduce sys h0 hnn (fun sys' => theorem8a_fin2 sys')
-    exact representable_implies_cancellation sys m hm
+      obtain ⟨i, hi⟩ := not_all_null sys
+      fin_cases i
+      · exact hi h0
+      · exact hi (by simpa using hall 0)
+      · exact hi (by simpa using hall 1)
+    obtain ⟨m, hm⟩ := null_elem_reduce sys h0 hnn (fun sys' => representable_fin2 sys')
+    exact representable_implies_cancellation m hm
   · by_cases h1 : sys.ge ∅ {(1 : Fin 3)}
     · obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 1) sys
         (null_elem_reduce (transportFA (Equiv.swap 0 1) sys)
           ((perm_null_convert _ _ 0 1 (by decide)).mpr h1)
           ⟨0, fun h => h0 ((perm_null_convert _ _ 1 0 (by decide)).mp h)⟩
-          (fun sys' => theorem8a_fin2 sys'))
-      exact representable_implies_cancellation sys m hm
+          (fun sys' => representable_fin2 sys'))
+      exact representable_implies_cancellation m hm
     · by_cases h2 : sys.ge ∅ {(2 : Fin 3)}
       · obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 2) sys
           (null_elem_reduce (transportFA (Equiv.swap 0 2) sys)
             ((perm_null_convert _ _ 0 2 (by decide)).mpr h2)
             ⟨0, fun h => h1 ((perm_null_convert _ _ 1 1 (by decide)).mp h)⟩
-            (fun sys' => theorem8a_fin2 sys'))
-        exact representable_implies_cancellation sys m hm
+            (fun sys' => representable_fin2 sys'))
+        exact representable_implies_cancellation m hm
       · have hnull : ∀ i : Fin 3, ¬sys.ge ∅ {i} := fun i => by fin_cases i <;> assumption
         exact cancellation_extendFA sys
           (no_null_cancellation (extendFA sys) (extendFA_no_null sys hnull))
@@ -994,8 +981,7 @@ theorem fa_cancellation_fin3 (sys : EpistemicSystemFA (Fin 3)) :
 /-- **Theorem 8a for Fin 3**: every FA system on three elements is representable —
     now *derived from* Scott cancellation, replacing the former measure-by-measure
     case analysis. -/
-theorem theorem8a_fin3 (sys : EpistemicSystemFA (Fin 3)) :
-    ∃ m : FinAddMeasure (Fin 3), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
+theorem representable_fin3 (sys : EpistemicSystemFA (Fin 3)) : Representable sys :=
   cancellation_implies_representable sys (fa_cancellation_fin3 sys)
 
 /-- Null element `0` on `Fin 4`: cancellation via null reduction to `Fin 3`. -/
@@ -1003,8 +989,8 @@ private theorem fa_cancellation_fin4_null0' (sys : EpistemicSystemFA (Fin 4))
     (h0 : sys.ge ∅ {(0 : Fin 4)})
     (hnn : ∃ i : Fin 3, ¬sys.ge ∅ {Fin.succ i}) :
     Cancellation 4 sys.ge := by
-  obtain ⟨m, hm⟩ := null_elem_reduce sys h0 hnn (fun sys' => theorem8a_fin3 sys')
-  exact representable_implies_cancellation sys m hm
+  obtain ⟨m, hm⟩ := null_elem_reduce sys h0 hnn (fun sys' => representable_fin3 sys')
+  exact representable_implies_cancellation m hm
 
 /-- **Theorem 8a (Fin 4), structural**: every FA system on `Fin 4` satisfies
     cancellation. Null cases reduce to `Fin 3` (existing `null_elem_reduce` machinery);
@@ -1015,34 +1001,38 @@ theorem fa_cancellation_fin4 (sys : EpistemicSystemFA (Fin 4)) :
   by_cases h0 : sys.ge ∅ {(0 : Fin 4)}
   · exact fa_cancellation_fin4_null0' sys h0 (by
       by_contra hall; push_neg at hall
-      exact not_all_null_fin4 sys h0 (hall 0) (hall 1) (hall 2))
+      obtain ⟨i, hi⟩ := not_all_null sys
+      fin_cases i
+      · exact hi h0
+      · exact hi (by simpa using hall 0)
+      · exact hi (by simpa using hall 1)
+      · exact hi (by simpa using hall 2))
   · by_cases h1 : sys.ge ∅ {(1 : Fin 4)}
     · obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 1) sys
         (null_elem_reduce (transportFA (Equiv.swap 0 1) sys)
           ((perm_null_convert _ _ 0 1 (by decide)).mpr h1)
           ⟨0, fun h => h0 ((perm_null_convert _ _ 1 0 (by decide)).mp h)⟩
-          (fun sys' => theorem8a_fin3 sys'))
-      exact representable_implies_cancellation sys m hm
+          (fun sys' => representable_fin3 sys'))
+      exact representable_implies_cancellation m hm
     · by_cases h2 : sys.ge ∅ {(2 : Fin 4)}
       · obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 2) sys
           (null_elem_reduce (transportFA (Equiv.swap 0 2) sys)
             ((perm_null_convert _ _ 0 2 (by decide)).mpr h2)
             ⟨0, fun h => h1 ((perm_null_convert _ _ 1 1 (by decide)).mp h)⟩
-            (fun sys' => theorem8a_fin3 sys'))
-        exact representable_implies_cancellation sys m hm
+            (fun sys' => representable_fin3 sys'))
+        exact representable_implies_cancellation m hm
       · by_cases h3 : sys.ge ∅ {(3 : Fin 4)}
         · obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 3) sys
             (null_elem_reduce (transportFA (Equiv.swap 0 3) sys)
               ((perm_null_convert _ _ 0 3 (by decide)).mpr h3)
               ⟨0, fun h => h1 ((perm_null_convert _ _ 1 1 (by decide)).mp h)⟩
-              (fun sys' => theorem8a_fin3 sys'))
-          exact representable_implies_cancellation sys m hm
+              (fun sys' => representable_fin3 sys'))
+          exact representable_implies_cancellation m hm
         · exact no_null_cancellation sys (fun i => by fin_cases i <;> assumption)
 
 /-- **Theorem 8a for Fin 4**: every FA system on 4 elements is representable.
     Via Scott cancellation — see `Cancellation.lean` for the framework. -/
-theorem theorem8a_fin4 (sys : EpistemicSystemFA (Fin 4)) :
-    ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
+theorem representable_fin4 (sys : EpistemicSystemFA (Fin 4)) : Representable sys :=
   cancellation_implies_representable sys (fa_cancellation_fin4 sys)
 
 end Core.Scale
