@@ -182,10 +182,10 @@ theorem no_fourth_person :
 -- § 6: Person Categories (Cysouw)
 -- ============================================================================
 
-/-- The 8 referential person categories ([cysouw-2009], Fig 10.1).
-
-Three singular categories (individual speech act roles) and five group
-categories (attested combinations of participants). -/
+/-- The 8 referential person categories ([cysouw-2009] ch. 3: the three
+singular participants plus the five attested of the seven logical groups
+of Table 3.1 — 1+1 (mass speaking) and 2+2 (present-audience-only) are
+dismissed as not grammaticalized, his §3.4). -/
 inductive Category where
   | s1        -- speaker (1st person singular)
   | s2        -- addressee (2nd person singular)

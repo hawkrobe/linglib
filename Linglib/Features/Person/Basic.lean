@@ -170,9 +170,8 @@ def hierarchyRank : Person → Nat
 /-! ### Person systems -/
 
 /-- A language's person system: the analytical values its paradigms
-    distinguish. Universals over systems await verification against
-    [cysouw-2009]'s survey — only structural predicates are provided
-    here. -/
+    distinguish ([cysouw-2009]; the paradigm-level marking typology is
+    `Features.Clusivity.System`, his Table 3.2). -/
 structure System where
   /-- The person values the system distinguishes. -/
   values : List Person
@@ -199,6 +198,25 @@ theorem tripartition_no_clusivity : ¬tripartition.HasClusivity := by
 
 theorem quadripartition_clusivity : quadripartition.HasClusivity := by
   decide
+
+/-- **Addressee inclusion implication I** at the value level
+    ([cysouw-2009] (3.23), Fig 3.8): a distinguished exclusive requires a
+    distinguished inclusive. The converse fails — only-inclusive systems
+    (his (Pc), Maká) have an inclusive value whose exclusive is covered
+    by the singular morpheme. (Over the common paradigm types; the rare
+    Binandere pattern, his (3.22)/(Pj), is the noted incidental
+    exception.) -/
+def ExclusiveImpliesInclusive (ns : System) : Prop :=
+  .firstExclusive ∈ ns.values → .firstInclusive ∈ ns.values
+
+instance : DecidablePred ExclusiveImpliesInclusive := fun ns => by
+  unfold ExclusiveImpliesInclusive; infer_instance
+
+theorem tripartition_exclImpliesIncl :
+    tripartition.ExclusiveImpliesInclusive := by decide
+
+theorem quadripartition_exclImpliesIncl :
+    quadripartition.ExclusiveImpliesInclusive := by decide
 
 end System
 
