@@ -1,5 +1,5 @@
 import Linglib.Core.Constraint.System
-import Linglib.Core.Order.FeaturePreorder
+import Linglib.Core.Order.PullbackPreorder
 
 /-!
 # Pareto Bridge: Constraint Systems as Feature-Pullback Preorders
@@ -7,17 +7,17 @@ import Linglib.Core.Order.FeaturePreorder
 A `ConstraintSystem Cand (Profile β n)` carries a quantitative violation
 profile per candidate plus a decoder. Forgetting the decoder, two natural
 preorders on candidates emerge — both are instances of the
-`Core.Order.FeaturePreorder` pattern:
+`Core.Order.PullbackPreorder` pattern:
 
 | view                          | feature                      | feature-space order |
 |-------------------------------|------------------------------|---------------------|
-| `paretoFeaturePreorder`       | `score : Cand → Profile β n` | pointwise `≤`       |
-| `qualitativeFeaturePreorder`  | `violatedSet : Cand → Finset (Fin n)` | subset `⊆` |
+| `paretoPullbackPreorder`       | `score : Cand → Profile β n` | pointwise `≤`       |
+| `qualitativePullbackPreorder`  | `violatedSet : Cand → Finset (Fin n)` | subset `⊆` |
 
-Recognising both as `FeaturePreorder` instances means the implication
+Recognising both as `PullbackPreorder` instances means the implication
 "pointwise dominance ⇒ qualitative dominance" is no longer a bespoke
 proof — it is a one-line application of
-`FeaturePreorder.coarsen_via_monotone` with the violated-set extractor as
+`PullbackPreorder.coarsen_via_monotone` with the violated-set extractor as
 the connecting monotone map.
 
 ## The gap (qualitative is strictly weaker)
@@ -36,7 +36,7 @@ deviates from the Pareto frontier of satisfactions.
 
 namespace Core.Constraint
 
-open Core.Order (FeaturePreorder)
+open Core.Order (PullbackPreorder)
 
 namespace ConstraintSystem
 
@@ -46,15 +46,15 @@ variable {Cand : Type*} {β : Type*} {n : Nat}
 -- § 1: Quantitative view — pointwise Pareto on the score profile
 -- ============================================================================
 
-/-- **Pointwise Pareto preorder** as a `FeaturePreorder`: feature is the
+/-- **Pointwise Pareto preorder** as a `PullbackPreorder`: feature is the
     score vector `s.score : Cand → Profile β n`, feature-space order is
     `Pi.preorder` (pointwise `≤`). Read as "`c` is at-most-as-bad-as `c'`
     on every constraint" under the OT/HG "lower is better" convention. -/
-def paretoFeaturePreorder [Preorder β]
+def paretoPullbackPreorder [Preorder β]
     [∀ x y : β, Decidable (x ≤ y)]
     (s : ConstraintSystem Cand (Profile β n)) :
-    FeaturePreorder Cand (Profile β n) :=
-  FeaturePreorder.ofFeature s.score (fun a a' =>
+    PullbackPreorder Cand (Profile β n) :=
+  PullbackPreorder.ofProj s.score (fun a a' =>
     show Decidable (∀ i, s.score a i ≤ s.score a' i) from inferInstance)
 
 -- ============================================================================
@@ -66,17 +66,17 @@ def violatedSet [DecidableEq β] [Zero β]
     (s : ConstraintSystem Cand (Profile β n)) (c : Cand) : Finset (Fin n) :=
   Finset.univ.filter (fun i => s.score c i ≠ 0)
 
-/-- **Qualitative coarsening** as a `FeaturePreorder`: feature is the
+/-- **Qualitative coarsening** as a `PullbackPreorder`: feature is the
     violated-constraint set, feature-space order is `Finset.⊆`.
 
     `c ≤ c'` iff `violatedSet c ⊆ violatedSet c'` — every constraint `c`
     violates, `c'` also violates — equivalently, every constraint `c'`
     satisfies (zero), `c` also satisfies. This is the qualitative Pareto
     backbone underlying `Core.Order.SatisfactionOrdering`. -/
-def qualitativeFeaturePreorder [DecidableEq β] [Zero β]
+def qualitativePullbackPreorder [DecidableEq β] [Zero β]
     (s : ConstraintSystem Cand (Profile β n)) :
-    FeaturePreorder Cand (Finset (Fin n)) :=
-  FeaturePreorder.ofFeature (violatedSet s) (fun _ _ => inferInstance)
+    PullbackPreorder Cand (Finset (Fin n)) :=
+  PullbackPreorder.ofProj (violatedSet s) (fun _ _ => inferInstance)
 
 -- ============================================================================
 -- § 3: The coarsening — pointwise dominance ⇒ qualitative dominance
@@ -103,21 +103,21 @@ theorem violatedSetOf_monotone [PartialOrder β] [Zero β] [DecidableEq β]
 
 /-- **Pointwise dominance implies qualitative dominance** (when zero is
     the minimum value of `β`). A one-line corollary of
-    `FeaturePreorder.coarsen_via_monotone` applied to `violatedSetOf` as
+    `PullbackPreorder.coarsen_via_monotone` applied to `violatedSetOf` as
     the connecting monotone map between the two feature spaces.
 
     The converse fails by design: equal nonzero counts on a violated
     constraint give qualitative equivalence but say nothing about further
     pointwise comparisons. -/
-theorem paretoFeaturePreorder_le_implies_qualitativeFeaturePreorder_le
+theorem paretoPullbackPreorder_le_implies_qualitativePullbackPreorder_le
     [PartialOrder β] [Zero β] [DecidableEq β]
     [∀ x y : β, Decidable (x ≤ y)]
     (s : ConstraintSystem Cand (Profile β n))
     (h_zero_min : ∀ b : β, 0 ≤ b)
-    {c c' : Cand} (h : (s.paretoFeaturePreorder).le c c') :
-    (s.qualitativeFeaturePreorder).le c c' :=
-  FeaturePreorder.coarsen_via_monotone
-    s.paretoFeaturePreorder s.qualitativeFeaturePreorder
+    {c c' : Cand} (h : (s.paretoPullbackPreorder).le c c') :
+    (s.qualitativePullbackPreorder).le c c' :=
+  PullbackPreorder.coarsen_via_monotone
+    s.paretoPullbackPreorder s.qualitativePullbackPreorder
     violatedSetOf (violatedSetOf_monotone h_zero_min)
     (fun _ => rfl) h
 

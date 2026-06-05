@@ -11,7 +11,7 @@ pressures, and attested forms tend to be Pareto-efficient compromises.
 
 **Pareto dominance lives in `Core.Constraint.Pareto`.** This file does
 not redefine it. `CostPair.toProfile` projects a cost pair into
-`Core.Constraint.Profile ℝ 2`, where `paretoFeaturePreorder` answers
+`Core.Constraint.Profile ℝ 2`, where `paretoPullbackPreorder` answers
 "is `a` Pareto-dominated by `b`?" via the substrate.
 
 What this file does contribute is the β-scalarization (`weightedCost`)
@@ -44,7 +44,7 @@ structure CostPair where
 
 /-- Bridge a `CostPair` into the substrate `Core.Constraint.Profile ℝ 2`.
     Pareto dominance and optimality on cost pairs come for free via
-    `Core.Constraint.paretoFeaturePreorder` composed with this function;
+    `Core.Constraint.paretoPullbackPreorder` composed with this function;
     no per-file `dominates` / `isParetoOptimal` redefinition is needed. -/
 def CostPair.toProfile (c : CostPair) : Core.Constraint.Profile ℝ 2 :=
   fun i => match i with | 0 => c.cost₁ | 1 => c.cost₂

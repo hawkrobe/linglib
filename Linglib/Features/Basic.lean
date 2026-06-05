@@ -1,5 +1,5 @@
 import Mathlib.Data.Fintype.Basic
-import Linglib.Core.Order.FeaturePreorder
+import Linglib.Core.Order.PullbackPreorder
 
 /-!
 # Feature bundles
@@ -44,7 +44,7 @@ theories.
   assignment `(t : F) → Option (V t)`, carrying the subsumption
   `PartialOrder` with `⊥` the everywhere-underspecified bundle
 * `BundleLike.subsumptionPreorder` — any representation pulls the
-  subsumption order back along `val`, as a `Core.Order.FeaturePreorder`
+  subsumption order back along `val`, as a `Core.Order.PullbackPreorder`
 
 ## Implementation notes
 
@@ -247,13 +247,13 @@ namespace BundleLike
 variable {B F : Type*} {V : F → Type*} [BundleLike B F V]
 
 /-- Any bundle representation carries the subsumption order pulled back
-along its valuation, packaged as a `Core.Order.FeaturePreorder` into the
+along its valuation, packaged as a `Core.Order.PullbackPreorder` into the
 canonical carrier. Coarsenings between representations (e.g. assembly
 trees to flat bundles) then factor through
-`Core.Order.FeaturePreorder.coarsen_via_monotone`. A `def`, not an
-instance, matching `FeaturePreorder`'s own convention. -/
+`Core.Order.PullbackPreorder.coarsen_via_monotone`. A `def`, not an
+instance, matching `PullbackPreorder`'s own convention. -/
 def subsumptionPreorder [Fintype F] [∀ t, DecidableEq (V t)] :
-    Core.Order.FeaturePreorder B (Features.Bundle F V) :=
-  .ofFeature (λ b => (val b : Features.Bundle F V)) (λ _ _ => inferInstance)
+    Core.Order.PullbackPreorder B (Features.Bundle F V) :=
+  .ofProj (λ b => (val b : Features.Bundle F V)) (λ _ _ => inferInstance)
 
 end BundleLike
