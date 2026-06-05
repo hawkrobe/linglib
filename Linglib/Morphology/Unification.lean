@@ -1,5 +1,6 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.Basic
+import Linglib.Core.Order.PartialUnify
 import Mathlib.Order.Bounds.Basic
 import Mathlib.Order.BoundedOrder.Basic
 
@@ -290,61 +291,6 @@ theorem unify_isLUB {f g u : MorphFeatures} (h : f.unify g = some u) :
       exact merge_le (hv (Set.mem_insert _ _)) (hv (Set.mem_insert_of_mem _ rfl))
   · simp [hc] at h
 
-private theorem orElse_comm_of_clause {α : Type _} [BEq α] [LawfulBEq α]
-    {a b : Option α} (hcl : (a.isNone || b.isNone || a == b) = true) :
-    (a <|> b) = (b <|> a) := by
-  cases a with
-  | none => cases b <;> rfl
-  | some x =>
-    cases b with
-    | none => rfl
-    | some y => simp [clause_of_some_some hcl]
-
-/-- Unification is commutative — a consequence of *total* compatibility: doubly
-committed slots agree, so the per-field left bias washes out. -/
-theorem unify_comm (f g : MorphFeatures) : f.unify g = g.unify f := by
-  unfold unify
-  by_cases hc : f.compatible g = true
-  · have hc2 : g.compatible f = true := compatible_comm f g ▸ hc
-    simp only [hc, hc2, if_true, Option.some.injEq]
-    simp only [compatible, Bool.and_eq_true] at hc
-    obtain ⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨⟨h1, h2⟩, h3⟩, h4⟩, h5⟩, h6⟩, h7⟩, h8⟩, h9⟩, h10⟩, h11⟩, h12⟩, h13⟩ := hc
-    unfold merge
-    simp only [mk.injEq]
-    exact ⟨orElse_comm_of_clause h1, orElse_comm_of_clause h2, orElse_comm_of_clause h3,
-           orElse_comm_of_clause h4, orElse_comm_of_clause h5, orElse_comm_of_clause h6,
-           Bool.or_comm _ _, orElse_comm_of_clause h7, orElse_comm_of_clause h8,
-           orElse_comm_of_clause h9, orElse_comm_of_clause h10, orElse_comm_of_clause h11,
-           orElse_comm_of_clause h12, orElse_comm_of_clause h13⟩
-  · have hc' : ¬ g.compatible f = true := by rwa [compatible_comm g f]
-    simp [hc, hc']
-
-private theorem orElse_self {α : Type _} (a : Option α) : (a <|> a) = a := by
-  cases a <;> rfl
-
-/-- Unification is idempotent (§3.2.3's example law). -/
-@[simp] theorem unify_self (f : MorphFeatures) : f.unify f = some f := by
-  unfold unify
-  simp only [compatible_self, if_true, Option.some.injEq]
-  unfold merge
-  cases f
-  simp only [mk.injEq]
-  exact ⟨orElse_self _, orElse_self _, orElse_self _, orElse_self _, orElse_self _,
-         orElse_self _, Bool.or_self _, orElse_self _, orElse_self _, orElse_self _,
-         orElse_self _, orElse_self _, orElse_self _, orElse_self _⟩
-
-/-- Variables are unification identity elements (§3.2.3's example law): unifying with
-the empty bundle returns the other input. -/
-@[simp] theorem bot_unify (f : MorphFeatures) : (⊥ : MorphFeatures).unify f = some f := by
-  have hb : (⊥ : MorphFeatures).compatible f = true :=
-    compatible_of_le (u := f) bot_le le_rfl
-  unfold unify
-  simp only [hb, if_true, Option.some.injEq]
-  show merge ⊥ f = f
-  unfold merge
-  cases f
-  rfl
-
 /-! ### Generalization: the meet
 
 Shieber's *generalization* (anti-unification): the most specific bundle subsumed by
@@ -431,112 +377,72 @@ instance : SemilatticeInf MorphFeatures :=
 
 /-! ### Unification computes least upper bounds — further laws -/
 
+/-- `MorphFeatures` carries the pairwise-LUB structure of [carpenter-1992]'s
+bounded complete partial order: `unify` is the partial join, with
+`unify_isLUB` and `compatible_iff_bddAbove` supplying the two class
+axioms. The unification laws — commutativity, associativity (with
+failure propagating), `⊥`-identity, idempotence, monotonicity — are
+inherited as one-line corollaries of the generic theorems in
+`Core/Order/PartialUnify.lean`. -/
+instance : PartialUnify MorphFeatures where
+  unify := MorphFeatures.unify
+  isLUB_of_unify_eq_some := unify_isLUB
+  isSome_unify_of_bddAbove {a b} h :=
+    (unify_eq_some_iff a b).mpr h
+
+/-- The instance-projected `unify` is the same function as
+`MorphFeatures.unify`. -/
+@[simp] theorem unify_eq_partialUnify (f g : MorphFeatures) :
+    PartialUnify.unify f g = f.unify g := rfl
+
 /-- Unification succeeds with value `u` exactly when `u` is the least upper bound. -/
 theorem unify_eq_some_iff_isLUB {f g u : MorphFeatures} :
     f.unify g = some u ↔ IsLUB {f, g} u := by
-  refine ⟨unify_isLUB, fun hu => ?_⟩
-  have hc : f.compatible g = true :=
-    compatible_of_le (hu.1 (Set.mem_insert _ _)) (hu.1 (Set.mem_insert_of_mem _ rfl))
-  have hm : f.unify g = some (f.merge g) := by simp [unify, hc]
-  rw [hm, Option.some_inj]
-  exact (unify_isLUB hm).unique hu
+  rw [← unify_eq_partialUnify]
+  exact PartialUnify.unify_eq_some_iff_isLUB
 
-private theorem isLUB_pair_step {f g h v u : MorphFeatures} (hv : IsLUB {f, g} v) :
-    IsLUB {v, h} u ↔ IsLUB ({f, g, h} : Set MorphFeatures) u := by
-  have hub : upperBounds ({v, h} : Set MorphFeatures) = upperBounds {f, g, h} := by
-    ext w
-    constructor
-    · intro hw x hx
-      rcases hx with rfl | rfl | rfl
-      · exact (hv.1 (Set.mem_insert _ _)).trans (hw (Set.mem_insert _ _))
-      · exact (hv.1 (Set.mem_insert_of_mem _ rfl)).trans (hw (Set.mem_insert _ _))
-      · exact hw (Set.mem_insert_of_mem _ rfl)
-    · intro hw x hx
-      rcases hx with rfl | rfl
-      · exact hv.2 fun y hy => by
-          rcases hy with rfl | rfl
-          · exact hw (Set.mem_insert _ _)
-          · exact hw (Set.mem_insert_of_mem _ (Set.mem_insert _ _))
-      · exact hw (Set.mem_insert_of_mem _ (Set.mem_insert_of_mem _ rfl))
-  unfold IsLUB
-  rw [hub]
+/-- Unification is commutative — a consequence of *total* compatibility: doubly
+committed slots agree, so the per-field left bias washes out. -/
+theorem unify_comm (f g : MorphFeatures) : f.unify g = g.unify f := by
+  rw [← unify_eq_partialUnify, ← unify_eq_partialUnify]
+  exact PartialUnify.unify_comm f g
+
+/-- Unification is idempotent (§3.2.3's example law). -/
+@[simp] theorem unify_self (f : MorphFeatures) : f.unify f = some f := by
+  rw [← unify_eq_partialUnify]; exact PartialUnify.unify_self f
+
+/-- Variables are unification identity elements (§3.2.3's example law):
+unifying with the empty bundle returns the other input. -/
+@[simp] theorem bot_unify (f : MorphFeatures) :
+    (⊥ : MorphFeatures).unify f = some f := by
+  rw [← unify_eq_partialUnify]; exact PartialUnify.bot_unify f
 
 /-- Unification is associative, with failure propagating ([shieber-1986] §3.2.3's
 order-independence): both associations compute the lub of all three bundles. -/
 theorem unify_assoc (f g h : MorphFeatures) :
     (f.unify g).bind (·.unify h) = (g.unify h).bind (f.unify ·) := by
-  apply Option.ext
-  intro u
-  simp only [Option.bind_eq_some_iff]
-  constructor
-  · rintro ⟨v, hv, hu⟩
-    have h3 : IsLUB ({f, g, h} : Set MorphFeatures) u :=
-      (isLUB_pair_step (unify_isLUB hv)).mp (unify_isLUB hu)
-    have hgh : g.compatible h = true := by
-      refine compatible_of_le (u := u) ?_ ?_
-      · exact h3.1 (Set.mem_insert_of_mem _ (Set.mem_insert _ _))
-      · exact h3.1 (Set.mem_insert_of_mem _ (Set.mem_insert_of_mem _ rfl))
-    refine ⟨g.merge h, by simp [unify, hgh], ?_⟩
-    have hw : IsLUB ({g, h} : Set MorphFeatures) (g.merge h) :=
-      unify_isLUB (by simp [unify, hgh])
-    rw [unify_eq_some_iff_isLUB]
-    have : IsLUB ({g, h, f} : Set MorphFeatures) u := by
-      have : ({g, h, f} : Set MorphFeatures) = {f, g, h} := by
-        ext x; simp [Set.mem_insert_iff]; tauto
-      rw [this]; exact h3
-    have step := (isLUB_pair_step hw).mpr this
-    have : ({g.merge h, f} : Set MorphFeatures) = {f, g.merge h} := Set.pair_comm _ _
-    rwa [← this]
-  · rintro ⟨w, hw, hu⟩
-    have hu' : IsLUB ({g.merge h, f} : Set MorphFeatures) u := by
-      rw [Set.pair_comm]
-      rw [unify_eq_some_iff_isLUB] at hu
-      have hwm : g.merge h = w := by
-        have : g.unify h = some w := hw
-        have hgh : g.compatible h = true :=
-          compatible_of_le ((unify_isLUB hw).1 (Set.mem_insert _ _))
-            ((unify_isLUB hw).1 (Set.mem_insert_of_mem _ rfl))
-        simpa [unify, hgh] using this
-      rwa [← hwm] at hu
-    have h3 : IsLUB ({g, h, f} : Set MorphFeatures) u := by
-      have hgh : g.compatible h = true :=
-        compatible_of_le ((unify_isLUB hw).1 (Set.mem_insert _ _))
-          ((unify_isLUB hw).1 (Set.mem_insert_of_mem _ rfl))
-      exact (isLUB_pair_step (unify_isLUB (by simp [unify, hgh] :
-        g.unify h = some (g.merge h)))).mp hu'
-    have h3' : IsLUB ({f, g, h} : Set MorphFeatures) u := by
-      have : ({g, h, f} : Set MorphFeatures) = {f, g, h} := by
-        ext x; simp [Set.mem_insert_iff]; tauto
-      rwa [this] at h3
-    have hfg : f.compatible g = true := by
-      refine compatible_of_le (u := u) ?_ ?_
-      · exact h3'.1 (Set.mem_insert _ _)
-      · exact h3'.1 (Set.mem_insert_of_mem _ (Set.mem_insert _ _))
-    refine ⟨f.merge g, by simp [unify, hfg], ?_⟩
-    rw [unify_eq_some_iff_isLUB]
-    exact (isLUB_pair_step (unify_isLUB (by simp [unify, hfg] :
-      f.unify g = some (f.merge g)))).mpr h3'
+  have := PartialUnify.unify_assoc f g h
+  simp only [unify_eq_partialUnify] at this
+  exact this
 
 /-- The empty bundle is a right identity for unification. -/
-@[simp] theorem unify_bot (f : MorphFeatures) : f.unify (⊥ : MorphFeatures) = some f := by
-  rw [unify_comm]; exact bot_unify f
+@[simp] theorem unify_bot (f : MorphFeatures) :
+    f.unify (⊥ : MorphFeatures) = some f := by
+  rw [← unify_eq_partialUnify]; exact PartialUnify.unify_bot f
 
 /-- Unification fails exactly on incompatible inputs. -/
 theorem unify_eq_none_iff (f g : MorphFeatures) :
     f.unify g = none ↔ ¬ Compatible f g := by
-  rw [← compatible_iff_bddAbove]
-  unfold unify
-  by_cases hc : f.compatible g = true <;> simp [hc]
+  rw [← unify_eq_partialUnify]
+  exact PartialUnify.unify_eq_none_iff (a := f) (b := g)
 
 /-- Unification is monotone where defined: shrinking both inputs preserves success and
 shrinks the output. (Unguarded `merge`-monotonicity is false — the guard is needed.) -/
 theorem unify_mono {f₁ f₂ g₁ g₂ u₂ : MorphFeatures} (hf : f₁ ≤ f₂) (hg : g₁ ≤ g₂)
     (h2 : f₂.unify g₂ = some u₂) : ∃ u₁, f₁.unify g₁ = some u₁ ∧ u₁ ≤ u₂ := by
-  have hlub := unify_isLUB h2
-  have hf1 : f₁ ≤ u₂ := hf.trans (hlub.1 (Set.mem_insert _ _))
-  have hg1 : g₁ ≤ u₂ := hg.trans (hlub.1 (Set.mem_insert_of_mem _ rfl))
-  have hc : f₁.compatible g₁ = true := compatible_of_le hf1 hg1
-  exact ⟨f₁.merge g₁, by simp [unify, hc], merge_le hf1 hg1⟩
+  rw [← unify_eq_partialUnify] at h2
+  obtain ⟨u₁, hu₁, hle⟩ := PartialUnify.unify_mono hf hg h2
+  exact ⟨u₁, unify_eq_partialUnify _ _ ▸ hu₁, hle⟩
 
 end UD.MorphFeatures
 
