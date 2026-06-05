@@ -1,5 +1,5 @@
 import Linglib.Core.Mereology
-import Linglib.Features.PrivativePair
+import Linglib.Features.ContainmentPair
 import Linglib.Features.Number
 import Linglib.Features.Person
 import Linglib.Features.Gender
@@ -11,10 +11,10 @@ import Linglib.Semantics.Presupposition.Basic
 
 Phi-features (number, person, definiteness) are **presuppositional partial
 identity functions** on the entity domain, ordered by presuppositional
-strength via `Features.PrivativePair.specLevel`.
+strength via `Features.ContainmentPair.specLevel`.
 
 The core mathematical object is `phiPresup`: a single function that maps
-each `PrivativePair` cell to a `PrProp`, using two predicates (innerP,
+each `ContainmentPair` cell to a `PrProp`, using two predicates (innerP,
 outerP) corresponding to the inner and outer privative features. Since
 the three well-formed cells have 2, 1, and 0 marked features respectively,
 their presuppositions are automatically nested — more marked features =
@@ -50,7 +50,7 @@ set_option autoImplicit false
 namespace Semantics.Presupposition.PhiFeatures
 
 open Mereology (Atom)
-open Features (PrivativePair PhiFeatures)
+open Features (ContainmentPair ContainmentPairLike)
 open Semantics.Presupposition (PrProp)
 
 -- ============================================================================
@@ -59,7 +59,7 @@ open Semantics.Presupposition (PrProp)
 
 /-- Generic presuppositional denotation from a privative feature pair.
 
-    Maps each `PrivativePair` cell to a `PrProp` using two predicates:
+    Maps each `ContainmentPair` cell to a `PrProp` using two predicates:
     `innerP` for [±inner] and `outerP` for [±outer].
 
     | Cell         | outer | inner | Presupposition |
@@ -72,7 +72,7 @@ open Semantics.Presupposition (PrProp)
     implies `outerP`. So maximal's presupposition (innerP) is the
     strongest — no need to separately conjoin outerP. -/
 def phiPresup {E : Type*} (innerP outerP : E → Prop) :
-    PrivativePair → PrProp E
+    ContainmentPair → PrProp E
   | ⟨true, true⟩ => { presup := innerP, assertion := fun _ => True }
   | ⟨true, false⟩ => { presup := outerP, assertion := fun _ => True }
   | ⟨false, _⟩ => { presup := fun _ => True, assertion := fun _ => True }
@@ -81,26 +81,26 @@ def phiPresup {E : Type*} (innerP outerP : E → Prop) :
 
     If innerP → outerP (the containment [+inner] → [+outer]), then
     more specified cells have smaller presuppositional domains. This
-    is the semantic content of `PrivativePair.spec_strict_order` —
+    is the semantic content of `ContainmentPair.spec_strict_order` —
     not a stipulation but a consequence of the algebraic structure. -/
 theorem phiPresup_nesting {E : Type*}
     {innerP outerP : E → Prop} (hContain : ∀ x, innerP x → outerP x)
-    {c₁ c₂ : PrivativePair}
-    (hw₁ : c₁.wellFormed = true) (hw₂ : c₂.wellFormed = true)
+    {c₁ c₂ : ContainmentPair}
+    (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed)
     (hSpec : c₁.specLevel ≥ c₂.specLevel) (x : E)
     (h : (phiPresup innerP outerP c₁).defined x) :
     (phiPresup innerP outerP c₂).defined x := by
-  cases c₁ with | mk o₁ i₁ =>
-  cases c₂ with | mk o₂ i₂ =>
-  cases o₁ <;> cases i₁ <;> cases o₂ <;> cases i₂ <;>
-    simp_all [PrivativePair.wellFormed, PrivativePair.specLevel, Bool.toNat,
-              phiPresup, PrProp.defined]
+  rcases ContainmentPair.classification c₁ hw₁ with rfl | rfl | rfl <;>
+    rcases ContainmentPair.classification c₂ hw₂ with rfl | rfl | rfl <;>
+      simp_all [ContainmentPair.maximal, ContainmentPair.intermediate,
+        ContainmentPair.minimal, ContainmentPair.specLevel, Bool.toNat,
+        phiPresup, PrProp.defined]
 
 /-- All `phiPresup` cells have the same (trivial) assertive content.
     This is the privative-geometric reason why φ-feature competition
     is presuppositional, not at-issue. -/
 theorem phiPresup_same_assertion {E : Type*}
-    (innerP outerP : E → Prop) (c₁ c₂ : PrivativePair) (x : E) :
+    (innerP outerP : E → Prop) (c₁ c₂ : ContainmentPair) (x : E) :
     (phiPresup innerP outerP c₁).assertion x ↔
     (phiPresup innerP outerP c₂).assertion x := by
   cases c₁ with | mk o₁ i₁ =>
@@ -148,19 +148,19 @@ def dualSem {E : Type*} (minimalP : E → Prop) : PrProp E where
 
 -- ── Bridge to Features.Number ─────
 
-/-- Singular features map to the maximal `PrivativePair` cell (specLevel 2). -/
+/-- Singular features map to the maximal `ContainmentPair` cell (specLevel 2). -/
 @[simp] theorem sg_is_maximal_cell :
-    PhiFeatures.toPair Features.Number.singularF = .maximal := rfl
+    ContainmentPairLike.toPair Features.Number.singularF = .maximal := rfl
 
 /-- Plural features map to the minimal cell (specLevel 0). -/
 @[simp] theorem pl_is_minimal_cell :
-    PhiFeatures.toPair Features.Number.pluralF = .minimal := rfl
+    ContainmentPairLike.toPair Features.Number.pluralF = .minimal := rfl
 
 /-- The presuppositional asymmetry tracks specification level:
     singular (specLevel 2) has content; plural (specLevel 0) is vacuous. -/
 theorem presup_strength_tracks_specLevel :
-    PhiFeatures.specLevel Features.Number.singularF >
-    PhiFeatures.specLevel Features.Number.pluralF := by decide
+    ContainmentPairLike.specLevel Features.Number.singularF >
+    ContainmentPairLike.specLevel Features.Number.pluralF := by decide
 
 -- ============================================================================
 -- §3  Person Presuppositions
@@ -215,10 +215,10 @@ theorem thirdSem_eq_phiPresup (speaker addressee : E) :
 
 /-- Person nesting is a corollary of `phiPresup_nesting` — the same
     theorem that derives number nesting also derives person nesting,
-    because both use the same `PrivativePair` structure. -/
+    because both use the same `ContainmentPair` structure. -/
 theorem person_nesting_from_phi (speaker addressee : E)
-    {c₁ c₂ : PrivativePair}
-    (hw₁ : c₁.wellFormed = true) (hw₂ : c₂.wellFormed = true)
+    {c₁ c₂ : ContainmentPair}
+    (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed)
     (hSpec : c₁.specLevel ≥ c₂.specLevel) (x : E)
     (h : (phiPresup (fun x => speaker ≤ x)
                      (fun x => speaker ≤ x ∨ addressee ≤ x) c₁).defined x) :
@@ -228,16 +228,16 @@ theorem person_nesting_from_phi (speaker addressee : E)
 
 /-- Person and number have the same `specLevel` ordering — this is the
     semantic content of [harbour-2016]'s phi kernel isomorphism.
-    Both are `phiPresup` instances over the same `PrivativePair` cells,
+    Both are `phiPresup` instances over the same `ContainmentPair` cells,
     so `phiPresup_nesting` applies to both: the nesting is structural,
     not a per-domain coincidence. -/
 theorem person_number_isomorphism :
-    PhiFeatures.specLevel Features.Person.firstF =
-      PhiFeatures.specLevel Features.Number.singularF ∧
-    PhiFeatures.specLevel Features.Person.secondF =
-      PhiFeatures.specLevel Features.Number.dualF ∧
-    PhiFeatures.specLevel Features.Person.thirdF =
-      PhiFeatures.specLevel Features.Number.pluralF :=
+    ContainmentPairLike.specLevel Features.Person.firstF =
+      ContainmentPairLike.specLevel Features.Number.singularF ∧
+    ContainmentPairLike.specLevel Features.Person.secondF =
+      ContainmentPairLike.specLevel Features.Number.dualF ∧
+    ContainmentPairLike.specLevel Features.Person.thirdF =
+      ContainmentPairLike.specLevel Features.Number.pluralF :=
   ⟨rfl, rfl, rfl⟩
 
 end PersonPresuppositions
@@ -249,7 +249,7 @@ end PersonPresuppositions
 /-!
 ## §3b: Gender Presuppositions ([sauerland-2003] §6)
 
-Gender features [±feminine, ±neuter] form a third `PrivativePair` instance,
+Gender features [±feminine, ±neuter] form a third `ContainmentPair` instance,
 with containment [+neuter] → [+feminine] (see `Features.Gender.Features`).
 
 The presuppositional semantics mirrors number and person:
@@ -301,17 +301,17 @@ def mascSem : PrProp E where
 
 -- ── Bridge to Features.Gender ─────
 
-/-- Neuter features map to the maximal `PrivativePair` cell (specLevel 2). -/
+/-- Neuter features map to the maximal `ContainmentPair` cell (specLevel 2). -/
 @[simp] theorem neut_is_maximal_cell :
-    PhiFeatures.toPair Features.Gender.neuterF = .maximal := rfl
+    ContainmentPairLike.toPair Features.Gender.neuterF = .maximal := rfl
 
 /-- Feminine features map to the intermediate cell (specLevel 1). -/
 @[simp] theorem fem_is_intermediate_cell :
-    PhiFeatures.toPair Features.Gender.feminineF = .intermediate := rfl
+    ContainmentPairLike.toPair Features.Gender.feminineF = .intermediate := rfl
 
 /-- Masculine features map to the minimal cell (specLevel 0). -/
 @[simp] theorem masc_is_minimal_cell :
-    PhiFeatures.toPair Features.Gender.masculineF = .minimal := rfl
+    ContainmentPairLike.toPair Features.Gender.masculineF = .minimal := rfl
 
 /-- Gender domain nesting: dom(Neut) ⊆ dom(Fem) ⊆ dom(Masc).
     Parallels number (sg ⊆ pl) and person (1st ⊆ 3rd). -/
@@ -327,8 +327,8 @@ theorem gender_domain_nesting (isInanimate isFemale : E → Prop)
     to person nesting and number nesting. -/
 theorem gender_nesting_from_phi (isInanimate isFemale : E → Prop)
     (hContain : ∀ x, isInanimate x → isFemale x)
-    {c₁ c₂ : PrivativePair}
-    (hw₁ : c₁.wellFormed = true) (hw₂ : c₂.wellFormed = true)
+    {c₁ c₂ : ContainmentPair}
+    (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed)
     (hSpec : c₁.specLevel ≥ c₂.specLevel) (x : E)
     (h : (phiPresup isInanimate isFemale c₁).defined x) :
     (phiPresup isInanimate isFemale c₂).defined x :=
@@ -337,14 +337,14 @@ theorem gender_nesting_from_phi (isInanimate isFemale : E → Prop)
 /-- Gender, person, and number have the same `specLevel` ordering —
     all three domains share the phi kernel structure. -/
 theorem gender_person_number_isomorphism :
-    PhiFeatures.specLevel Features.Gender.neuterF =
-      PhiFeatures.specLevel Features.Person.firstF ∧
-    PhiFeatures.specLevel Features.Gender.neuterF =
-      PhiFeatures.specLevel Features.Number.singularF ∧
-    PhiFeatures.specLevel Features.Gender.feminineF =
-      PhiFeatures.specLevel Features.Person.secondF ∧
-    PhiFeatures.specLevel Features.Gender.masculineF =
-      PhiFeatures.specLevel Features.Person.thirdF :=
+    ContainmentPairLike.specLevel Features.Gender.neuterF =
+      ContainmentPairLike.specLevel Features.Person.firstF ∧
+    ContainmentPairLike.specLevel Features.Gender.neuterF =
+      ContainmentPairLike.specLevel Features.Number.singularF ∧
+    ContainmentPairLike.specLevel Features.Gender.feminineF =
+      ContainmentPairLike.specLevel Features.Person.secondF ∧
+    ContainmentPairLike.specLevel Features.Gender.masculineF =
+      ContainmentPairLike.specLevel Features.Person.thirdF :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 end GenderPresuppositions
@@ -418,7 +418,7 @@ end DefinitePresuppositions
 ## §5: Semantic Markedness ([wang-r-2023])
 
 A phi-feature value is **semantically unmarked** iff its presupposition is
-vacuous — i.e., it is at the minimal `PrivativePair` cell (specLevel 0).
+vacuous — i.e., it is at the minimal `ContainmentPair` cell (specLevel 0).
 Semantically unmarked values are compatible with a wider range of
 contexts, making them available for pragmatic co-optation (honorification).
 
@@ -428,11 +428,11 @@ This definition is domain-general: it applies uniformly to number
 
 /-- A phi-feature value is semantically unmarked iff its specLevel is 0
     (vacuous presupposition). -/
-def isSemanticUnmarked (c : PrivativePair) : Bool := c.specLevel == 0
+def isSemanticUnmarked (c : ContainmentPair) : Bool := c.specLevel == 0
 
 /-- A phi-feature value is semantically marked iff its specLevel is > 0
     (substantive presupposition). -/
-def isSemanticMarked (c : PrivativePair) : Bool := c.specLevel > 0
+def isSemanticMarked (c : ContainmentPair) : Bool := c.specLevel > 0
 
 /-- The minimal cell is the unique unmarked cell. -/
 @[simp] theorem minimal_is_unmarked : isSemanticUnmarked .minimal = true := rfl
@@ -444,16 +444,13 @@ def isSemanticMarked (c : PrivativePair) : Bool := c.specLevel > 0
 @[simp] theorem intermediate_is_marked : isSemanticMarked .intermediate = true := rfl
 
 /-- Only the minimal cell is unmarked among well-formed cells. -/
-theorem unmarked_iff_minimal (c : PrivativePair) (hw : c.wellFormed = true) :
+theorem unmarked_iff_minimal (c : ContainmentPair) (hw : c.WellFormed) :
     isSemanticUnmarked c = true ↔ c = .minimal := by
-  cases c with | mk o i =>
-  cases o <;> cases i <;>
-    simp_all [isSemanticUnmarked, PrivativePair.specLevel, Bool.toNat,
-              PrivativePair.wellFormed, PrivativePair.minimal]
+  rcases ContainmentPair.classification c hw with rfl | rfl | rfl <;> decide
 
 /-- Unmarked cells have vacuous presuppositions via `phiPresup`. -/
 theorem unmarked_vacuous_presup {E : Type*} (innerP outerP : E → Prop)
-    (c : PrivativePair) (hw : c.wellFormed = true)
+    (c : ContainmentPair) (hw : c.WellFormed)
     (hu : isSemanticUnmarked c = true) (x : E) :
     (phiPresup innerP outerP c).defined x := by
   have hmin := (unmarked_iff_minimal c hw).mp hu
@@ -464,43 +461,37 @@ theorem unmarked_vacuous_presup {E : Type*} (innerP outerP : E → Prop)
 -- ============================================================================
 
 /-- Well-formed cells have specLevel ≤ 2. This follows from the
-    three-cell structure of `PrivativePair` — the maximum is
+    three-cell structure of `ContainmentPair` — the maximum is
     `maximal.specLevel = 2`. -/
-theorem wellFormed_specLevel_le_two (c : PrivativePair)
-    (hw : c.wellFormed = true) : c.specLevel ≤ 2 := by
-  cases c with | mk o i =>
-  cases o <;> cases i <;>
-    simp_all [PrivativePair.specLevel, Bool.toNat, PrivativePair.wellFormed]
+theorem wellFormed_specLevel_le_two (c : ContainmentPair)
+    (hw : c.WellFormed) : c.specLevel ≤ 2 := by
+  rcases ContainmentPair.classification c hw with rfl | rfl | rfl <;> decide
 
 /-- Presuppositional strength = specLevel. Higher specLevel = stronger
     presupposition = smaller domain. -/
-def presupStrength (c : PrivativePair) : Nat := c.specLevel
+def presupStrength (c : ContainmentPair) : Nat := c.specLevel
 
 /-- `c₁` has a weaker presupposition than `c₂`. -/
-def presupWeakerThan (c₁ c₂ : PrivativePair) : Bool :=
+def presupWeakerThan (c₁ c₂ : ContainmentPair) : Bool :=
   c₁.specLevel < c₂.specLevel
 
 /-- `c₁` has a stronger presupposition than `c₂`. -/
-def presupStrongerThan (c₁ c₂ : PrivativePair) : Bool :=
+def presupStrongerThan (c₁ c₂ : ContainmentPair) : Bool :=
   c₁.specLevel > c₂.specLevel
 
 /-- Minimal has the weakest presupposition among all cells. -/
-theorem minimal_weakest (c : PrivativePair) (hw : c.wellFormed = true)
+theorem minimal_weakest (c : ContainmentPair) (hw : c.WellFormed)
     (hne : c ≠ .minimal) :
     presupWeakerThan .minimal c = true := by
-  cases c with | mk o i =>
-  cases o <;> cases i <;>
-    simp_all [presupWeakerThan, PrivativePair.specLevel, Bool.toNat,
-              PrivativePair.wellFormed, PrivativePair.minimal]
+  rcases ContainmentPair.classification c hw with rfl | rfl | rfl <;>
+    first | decide | exact absurd rfl hne
 
 /-- Maximal has the strongest presupposition among all cells. -/
-theorem maximal_strongest (c : PrivativePair) (hw : c.wellFormed = true)
+theorem maximal_strongest (c : ContainmentPair) (hw : c.WellFormed)
     (hne : c ≠ .maximal) :
     presupStrongerThan .maximal c = true := by
-  cases c with | mk o i =>
-  cases o <;> cases i <;>
-    simp_all [presupStrongerThan, PrivativePair.specLevel, Bool.toNat,
-              PrivativePair.wellFormed, PrivativePair.maximal]
+  rcases ContainmentPair.classification c hw with rfl | rfl | rfl <;>
+    first | decide | exact absurd rfl hne
 
 -- ============================================================================
 -- §7  Conceivability Presuppositions ([enguehard-2024])
@@ -563,7 +554,7 @@ def conceivableIn (p : E → Prop) (C : E → Prop) : Prop :=
     conceivable that the presupposition of cell `c` could be satisfied
     by some entity in domain `C`. -/
 def cellConceivableIn (innerP outerP : E → Prop)
-    (c : PrivativePair) (C : E → Prop) : Prop :=
+    (c : ContainmentPair) (C : E → Prop) : Prop :=
   conceivableIn (λ e => (phiPresup innerP outerP c).defined e) C
 
 /-- The minimal cell is always conceivable over any non-empty domain
@@ -578,8 +569,8 @@ theorem minimal_always_conceivable (innerP outerP : E → Prop)
     all less specified cells are too. Mirrors `phiPresup_nesting`. -/
 theorem conceivable_nesting
     {innerP outerP : E → Prop} (hContain : ∀ x, innerP x → outerP x)
-    {c₁ c₂ : PrivativePair}
-    (hw₁ : c₁.wellFormed = true) (hw₂ : c₂.wellFormed = true)
+    {c₁ c₂ : ContainmentPair}
+    (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed)
     (hSpec : c₁.specLevel ≥ c₂.specLevel) (C : E → Prop) :
     cellConceivableIn innerP outerP c₁ C →
     cellConceivableIn innerP outerP c₂ C := by

@@ -1,4 +1,4 @@
-import Linglib.Features.PrivativePair
+import Linglib.Features.ContainmentPair
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Semantics.Presupposition.PhiFeatures
 
@@ -67,7 +67,7 @@ set_option autoImplicit false
 
 namespace Semantics.Presupposition.MaximizePresupposition
 
-open Features (PrivativePair)
+open Features (ContainmentPair)
 open Core.Constraint.OT (NamedConstraint ConstraintFamily mkTableau
               mkTableau_optimal_zero_first mkTableau_optimal_mem)
 open Core.Constraint.Evaluation
@@ -201,12 +201,12 @@ theorem markedness_selects_weakest {C : Type} [DecidableEq C] (candidates : List
 /-!
 ## §3: Phi-Feature Instance
 
-The phi-feature system (`PrivativePair` with `presupStrength = specLevel`)
+The phi-feature system (`ContainmentPair` with `presupStrength = specLevel`)
 is a canonical instance of MP competition:
 
-- **Candidates**: well-formed `PrivativePair` cells (3 cells)
+- **Candidates**: well-formed `ContainmentPair` cells (3 cells)
 - **Strength**: `presupStrength` (= `specLevel`: 0, 1, or 2)
-- **maxStrength**: 2 (= `PrivativePair.maximal.specLevel`)
+- **maxStrength**: 2 (= `ContainmentPair.maximal.specLevel`)
 - **Same assertion**: `phiPresup_same_assertion` — all cells have
   identical (trivially true) at-issue content
 
@@ -215,21 +215,21 @@ connecting the general theorems to `phiPresup`.
 -/
 
 /-- The phi-feature MP constraint: `mpConstraintOf` instantiated with
-    `presupStrength` over `PrivativePair`. -/
-def phiMP : NamedConstraint PrivativePair :=
-  mpConstraintOf PrivativePair.maximal.specLevel presupStrength
+    `presupStrength` over `ContainmentPair`. -/
+def phiMP : NamedConstraint ContainmentPair :=
+  mpConstraintOf ContainmentPair.maximal.specLevel presupStrength
 
 /-- `phiMP` evaluates to `maxSpec - presupStrength`. -/
-theorem phiMP_eval (c : PrivativePair) :
-    phiMP.eval c = PrivativePair.maximal.specLevel - presupStrength c := rfl
+theorem phiMP_eval (c : ContainmentPair) :
+    phiMP.eval c = ContainmentPair.maximal.specLevel - presupStrength c := rfl
 
 /-- The phi-feature markedness constraint: `markednessPenalty` instantiated
     with `presupStrength`. This is the generic form of ToD. -/
-def phiMarkedness : NamedConstraint PrivativePair :=
+def phiMarkedness : NamedConstraint ContainmentPair :=
   markednessPenalty presupStrength
 
 /-- `phiMarkedness` evaluates to `presupStrength`. -/
-theorem phiMarkedness_eval (c : PrivativePair) :
+theorem phiMarkedness_eval (c : ContainmentPair) :
     phiMarkedness.eval c = presupStrength c := rfl
 
 /-- Phi-feature competitors satisfy the **same-assertion condition**:
@@ -238,7 +238,7 @@ theorem phiMarkedness_eval (c : PrivativePair) :
     differed, the competition would be at-issue (scalar implicature),
     not presuppositional. -/
 theorem phi_same_assertion {E : Type*} (innerP outerP : E → Prop) :
-    ∀ c₁ c₂ : PrivativePair, ∀ x : E,
+    ∀ c₁ c₂ : ContainmentPair, ∀ x : E,
       (phiPresup innerP outerP c₁).assertion x ↔
       (phiPresup innerP outerP c₂).assertion x :=
   fun c₁ c₂ x => phiPresup_same_assertion innerP outerP c₁ c₂ x
@@ -249,8 +249,8 @@ theorem phi_same_assertion {E : Type*} (innerP outerP : E → Prop) :
     containment of presuppositional domains. -/
 theorem phi_strength_nesting {E : Type*} {innerP outerP : E → Prop}
     (hContain : ∀ x, innerP x → outerP x)
-    {c₁ c₂ : PrivativePair}
-    (hw₁ : c₁.wellFormed = true) (hw₂ : c₂.wellFormed = true)
+    {c₁ c₂ : ContainmentPair}
+    (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed)
     (hSpec : presupStrength c₁ ≥ presupStrength c₂) (x : E)
     (h : (phiPresup innerP outerP c₁).defined x) :
     (phiPresup innerP outerP c₂).defined x :=
@@ -258,28 +258,28 @@ theorem phi_strength_nesting {E : Type*} {innerP outerP : E → Prop}
 
 /-- MP over phi-features selects the maximal (most marked) cell when
     it is among the candidates. Instantiation of `mp_selects_strongest`
-    to `PrivativePair`.
+    to `ContainmentPair`.
 
     This is the normal-speech pattern: absent any politeness or
     context-sensitivity constraint, MP forces use of the form with the
     strongest presupposition (SG over PL, 1st over 3rd, DEF over INDEF).
     [sauerland-2003] derives the preference for singular from
     exactly this principle. -/
-theorem phi_mp_selects_maximal (candidates : List PrivativePair)
-    (rest : List (NamedConstraint PrivativePair))
+theorem phi_mp_selects_maximal (candidates : List ContainmentPair)
+    (rest : List (NamedConstraint ContainmentPair))
     (hNE : candidates ≠ [])
-    (hWF : ∀ c ∈ candidates, c.wellFormed = true)
-    (hMax : PrivativePair.maximal ∈ candidates) :
+    (hWF : ∀ c ∈ candidates, c.WellFormed)
+    (hMax : ContainmentPair.maximal ∈ candidates) :
     ∀ c ∈ (mkTableau candidates (phiMP :: rest) hNE).optimal,
-      presupStrength c = PrivativePair.maximal.specLevel :=
+      presupStrength c = ContainmentPair.maximal.specLevel :=
   mp_selects_strongest candidates _ presupStrength rest hNE
     (fun c hc => wellFormed_specLevel_le_two c (hWF c hc))
     ⟨.maximal, hMax, rfl⟩
 
 /-- MP and markedness reverse each other over phi-features.
     This is the algebraic core of `tod_reverses_mp` in `Wang2023`. -/
-theorem phi_mp_reverses_markedness (c₁ c₂ : PrivativePair)
-    (hw₁ : c₁.wellFormed = true) (hw₂ : c₂.wellFormed = true) :
+theorem phi_mp_reverses_markedness (c₁ c₂ : ContainmentPair)
+    (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed) :
     phiMarkedness.eval c₁ < phiMarkedness.eval c₂ ↔
     phiMP.eval c₁ > phiMP.eval c₂ :=
   mp_reverses_markedness _ presupStrength c₁ c₂
@@ -306,36 +306,36 @@ well-formed cells.
 /-- `specLevel` is injective on well-formed cells: two well-formed cells
     with the same specLevel are identical. This follows from the three
     well-formed cells having specLevels 0, 1, 2 — all distinct. -/
-theorem specLevel_injective_wf (a b : PrivativePair)
-    (ha : a.wellFormed = true) (hb : b.wellFormed = true)
+theorem specLevel_injective_wf (a b : ContainmentPair)
+    (ha : a.WellFormed) (hb : b.WellFormed)
     (h : a.specLevel = b.specLevel) : a = b := by
-  rcases PrivativePair.classification a ha with rfl | rfl | rfl <;>
-    rcases PrivativePair.classification b hb with rfl | rfl | rfl <;>
-    first | rfl | simp_all [PrivativePair.spec_maximal,
-      PrivativePair.spec_intermediate, PrivativePair.spec_minimal]
+  rcases ContainmentPair.classification a ha with rfl | rfl | rfl <;>
+    rcases ContainmentPair.classification b hb with rfl | rfl | rfl <;>
+    first | rfl | simp_all [ContainmentPair.spec_maximal,
+      ContainmentPair.spec_intermediate, ContainmentPair.spec_minimal]
 
 /-- `presupWeakerThan` is irreflexive. -/
-theorem presupWeakerThan_irrefl (c : PrivativePair) :
+theorem presupWeakerThan_irrefl (c : ContainmentPair) :
     presupWeakerThan c c = false := by
   simp [presupWeakerThan]
 
 /-- `presupWeakerThan` is transitive. -/
-theorem presupWeakerThan_trans (a b c : PrivativePair)
+theorem presupWeakerThan_trans (a b c : ContainmentPair)
     (h₁ : presupWeakerThan a b = true)
     (h₂ : presupWeakerThan b c = true) :
     presupWeakerThan a c = true := by
   simp only [presupWeakerThan, decide_eq_true_eq] at *; omega
 
 /-- `presupWeakerThan` is asymmetric. -/
-theorem presupWeakerThan_asymm (a b : PrivativePair)
+theorem presupWeakerThan_asymm (a b : ContainmentPair)
     (h : presupWeakerThan a b = true) :
     presupWeakerThan b a = false := by
   simp only [presupWeakerThan, decide_eq_true_eq, decide_eq_false_iff_not] at *; omega
 
 /-- `presupWeakerThan` is total on well-formed cells: for distinct
     well-formed cells, either `a < b` or `b < a`. -/
-theorem presupWeakerThan_total (a b : PrivativePair)
-    (ha : a.wellFormed = true) (hb : b.wellFormed = true) (hne : a ≠ b) :
+theorem presupWeakerThan_total (a b : ContainmentPair)
+    (ha : a.WellFormed) (hb : b.WellFormed) (hne : a ≠ b) :
     presupWeakerThan a b = true ∨ presupWeakerThan b a = true := by
   simp only [presupWeakerThan, decide_eq_true_eq]
   have hne' : a.specLevel ≠ b.specLevel :=
@@ -343,13 +343,13 @@ theorem presupWeakerThan_total (a b : PrivativePair)
   omega
 
 /-- `presupStrongerThan` is the converse of `presupWeakerThan`. -/
-theorem strongerThan_iff_not_weakerOrEq (a b : PrivativePair) :
+theorem strongerThan_iff_not_weakerOrEq (a b : ContainmentPair) :
     presupStrongerThan a b = true ↔ presupWeakerThan b a = true := by
   simp [presupStrongerThan, presupWeakerThan, decide_eq_true_eq]
 
 /-- The presuppositional strength ordering is determined by `specLevel`:
     `a` is strictly weaker than `b` iff `a.specLevel < b.specLevel`. -/
-theorem strength_iff_specLevel (a b : PrivativePair) :
+theorem strength_iff_specLevel (a b : ContainmentPair) :
     presupWeakerThan a b = true ↔ a.specLevel < b.specLevel := by
   simp [presupWeakerThan, decide_eq_true_eq]
 

@@ -1,7 +1,7 @@
 import Linglib.Core.Mereology
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.Plurality.Cover
-import Linglib.Features.PrivativePair
+import Linglib.Features.ContainmentPair
 import Linglib.Features.Number
 import Linglib.Features.Person
 import Linglib.Features.Gender
@@ -24,7 +24,7 @@ chapter "The Plural is Semantically Unmarked."
 ## Core Insight
 
 Number features are **presuppositional partial identity functions** on the
-entity domain, ordered by `PrivativePair.specLevel`. The general
+entity domain, ordered by `ContainmentPair.specLevel`. The general
 presuppositional framework (`phiPresup`, `sgSem`, `plSem`, etc.) is in
 `Semantics.Presupposition.PhiFeatures`; this file applies it to
 Sauerland's specific arguments about number semantics.
@@ -54,7 +54,7 @@ namespace Sauerland2003
 open Mereology (Atom AlgClosure isMaximal CUM cum_maximal_unique algClosure_cum)
 open Semantics.Plurality.Algebra (star D)
 open Semantics.Plurality.Cover (IsFinCover algClosure_of_finCover)
-open Features (PrivativePair PhiFeatures)
+open Features (ContainmentPair ContainmentPairLike)
 open Semantics.Presupposition (PrProp)
 open Core.Constraint.OT (NamedConstraint mkTableau)
 open Semantics.Presupposition.PhiFeatures
@@ -87,7 +87,7 @@ Sauerland's principle (46): if F₁ and F₂ are presuppositional features
 that can be inserted in the same syntactic position, their domains must
 stand in a subset relationship.
 
-This is a consequence of the `PrivativePair` structure: the three well-formed
+This is a consequence of the `ContainmentPair` structure: the three well-formed
 cells are linearly ordered by `specLevel`, so their presuppositional domains
 are necessarily nested (atoms ⊂ all entities).
 -/
@@ -106,13 +106,13 @@ theorem sg_domain_strict_subset_pl {E : Type*} [SemilatticeSup E]
     (plSem E).defined (a ⊔ b) ∧ ¬(sgSem E).defined (a ⊔ b) :=
   ⟨trivial, fun hAtom => hne ((hAtom a le_sup_left).trans (hAtom b le_sup_right).symm)⟩
 
-/-- The `specLevel` ordering on `PrivativePair` is the Feature-Subset
+/-- The `specLevel` ordering on `ContainmentPair` is the Feature-Subset
     Principle: more specified cells have strictly smaller presuppositional
     domains. -/
 theorem feature_subset_is_spec_order :
-    PrivativePair.maximal.specLevel > PrivativePair.intermediate.specLevel ∧
-    PrivativePair.intermediate.specLevel > PrivativePair.minimal.specLevel :=
-  PrivativePair.spec_strict_order
+    ContainmentPair.maximal.specLevel > ContainmentPair.intermediate.specLevel ∧
+    ContainmentPair.intermediate.specLevel > ContainmentPair.minimal.specLevel :=
+  ContainmentPair.spec_strict_order
 
 -- ============================================================================
 -- §3  Maximize Presupposition
@@ -161,11 +161,11 @@ theorem sg_strictly_stronger {E : Type*} [PartialOrder E]
     entity-level precondition is that [Sg]'s presupposition (atomicity)
     is satisfied — see `mp_blocks_plural_at_atom`. -/
 theorem mp_selects_sg
-    (rest : List (NamedConstraint PrivativePair))
-    (hNE : [PrivativePair.maximal, .minimal] ≠ []) :
+    (rest : List (NamedConstraint ContainmentPair))
+    (hNE : [ContainmentPair.maximal, .minimal] ≠ []) :
     ∀ c ∈ (mkTableau [.maximal, .minimal]
       (phiMP :: rest) hNE).optimal,
-    presupStrength c = PrivativePair.maximal.specLevel :=
+    presupStrength c = ContainmentPair.maximal.specLevel :=
   phi_mp_selects_maximal _ rest hNE (by decide) (.head _)
 
 /-- **Maximize Presupposition for number**: at an atomic referent,
@@ -692,20 +692,20 @@ which proves that all three cross-linguistic honorific strategies
     three cross-linguistic politeness strategies. -/
 theorem politeness_uses_unmarked :
     -- Plural (number)
-    isSemanticUnmarked (PhiFeatures.toPair Features.Number.pluralF) = true ∧
+    isSemanticUnmarked (ContainmentPairLike.toPair Features.Number.pluralF) = true ∧
     -- 3rd person
-    isSemanticUnmarked (PhiFeatures.toPair Features.Person.thirdF) = true ∧
+    isSemanticUnmarked (ContainmentPairLike.toPair Features.Person.thirdF) = true ∧
     -- Masculine (gender)
-    isSemanticUnmarked (PhiFeatures.toPair Features.Gender.masculineF) = true :=
+    isSemanticUnmarked (ContainmentPairLike.toPair Features.Gender.masculineF) = true :=
   ⟨rfl, rfl, rfl⟩
 
 /-- The three semantically marked phi-values are NOT used for
     politeness — their presuppositions would impose unwanted
     restrictions on the addressee. -/
 theorem marked_not_polite :
-    isSemanticMarked (PhiFeatures.toPair Features.Number.singularF) = true ∧
-    isSemanticMarked (PhiFeatures.toPair Features.Person.firstF) = true ∧
-    isSemanticMarked (PhiFeatures.toPair Features.Gender.neuterF) = true :=
+    isSemanticMarked (ContainmentPairLike.toPair Features.Number.singularF) = true ∧
+    isSemanticMarked (ContainmentPairLike.toPair Features.Person.firstF) = true ∧
+    isSemanticMarked (ContainmentPairLike.toPair Features.Gender.neuterF) = true :=
   ⟨rfl, rfl, rfl⟩
 
 end Sauerland2003

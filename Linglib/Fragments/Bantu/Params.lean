@@ -1,4 +1,4 @@
-import Linglib.Features.PrivativePair
+import Linglib.Features.ContainmentPair
 import Linglib.Features.Prominence
 
 /-!
@@ -49,18 +49,31 @@ namespace Bantu
     These stand in a containment relation: [+Human] entails [+Animate]
     (being human entails being animate). The fourth combination
     [−Animate, +Human] is semantically incoherent and ruled out by
-    `wellFormed`. -/
+    `WellFormed`. -/
 structure AnimacyFeatures where
   isAnimate : Bool
   isHuman : Bool
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 namespace AnimacyFeatures
 
+/-- The `[±Animate, ±Human]` decomposition is carrier-equivalent to the
+    containment pair: `outer` = [±Animate], `inner` = [±Human]. The same
+    mathematical structure as person features (outer = [±participant],
+    inner = [±author]), confirming [hammerly-2023]'s claim that person and
+    animacy features share a common containment architecture. -/
+def featuresEquiv : AnimacyFeatures ≃ Features.ContainmentPair where
+  toFun af := ⟨af.isAnimate, af.isHuman⟩
+  invFun p := ⟨p.outer, p.inner⟩
+  left_inv := fun ⟨_, _⟩ => rfl
+  right_inv := fun ⟨_, _⟩ => rfl
+
+instance : Features.ContainmentPairLike AnimacyFeatures := .ofEquiv featuresEquiv
+
 /-- Well-formedness: [+Human] → [+Animate].
     Being human entails being animate ([halpert-hammerly-2026] fn. 10). -/
-def wellFormed (af : AnimacyFeatures) : Bool :=
-  !af.isHuman || af.isAnimate
+abbrev WellFormed (af : AnimacyFeatures) : Prop :=
+  Features.ContainmentPairLike.WellFormed af
 
 /-- HUMAN = [+Animate, +Human] ≈ class 1/2 -/
 def human : AnimacyFeatures := ⟨true, true⟩
@@ -71,24 +84,13 @@ def inanimate : AnimacyFeatures := ⟨false, false⟩
 
 /-- The fourth combination [−Animate, +Human] violates well-formedness. -/
 theorem illFormed_only :
-    (⟨false, true⟩ : AnimacyFeatures).wellFormed = false := rfl
+    ¬ (⟨false, true⟩ : AnimacyFeatures).WellFormed := by decide
 
-/-- Exactly three well-formed core noun classes.
-    This is an instance of the general `PrivativePair.no_four_way`:
-    any `PhiFeatures` type supports at most 3 well-formed cells. -/
+/-- Exactly three well-formed core noun classes — the carrier count of the
+    containment chain (`ContainmentPair.card_wellFormed`); any
+    `ContainmentPairLike` type supports at most 3 well-formed cells. -/
 theorem exactly_three :
-    ([⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩].filter
-      AnimacyFeatures.wellFormed).length = 3 := by decide
-
-/-- Animacy features instantiate the `PhiFeatures` privative pair:
-    outer = [±Animate], inner = [±Human]. This is the same mathematical
-    structure as person features (outer = [±participant], inner = [±author]),
-    confirming [hammerly-2023]'s claim that person and animacy features
-    share a common containment architecture. -/
-instance : Features.PhiFeatures AnimacyFeatures where
-  toPair af := ⟨af.isAnimate, af.isHuman⟩
-  ofPair p := ⟨p.outer, p.inner⟩
-  roundtrip := fun ⟨_, _⟩ => rfl
+    Fintype.card {af : AnimacyFeatures // af.WellFormed} = 3 := by decide
 
 /-- Bridge to `Features.Prominence.AnimacyLevel`: the three well-formed
     feature bundles map to the three animacy levels used throughout the
@@ -182,13 +184,10 @@ def toFeatures : SemanticCore → AnimacyFeatures
 end SemanticCore
 
 /-- Round-trip: features → core → features is identity for well-formed features. -/
-theorem AnimacyFeatures.roundtrip (af : AnimacyFeatures)
-    (h : af.wellFormed = true) :
-    af.toCoreClass.toFeatures = af := by
-  cases af with | mk a hu =>
-  cases a <;> cases hu <;> simp_all [AnimacyFeatures.wellFormed,
-    AnimacyFeatures.toCoreClass, SemanticCore.toFeatures,
-    AnimacyFeatures.human, AnimacyFeatures.animal, AnimacyFeatures.inanimate]
+theorem AnimacyFeatures.roundtrip :
+    ∀ af : AnimacyFeatures, af.WellFormed →
+      af.toCoreClass.toFeatures = af := by
+  decide
 
 -- ============================================================================
 -- § 1c: Conflation ([halpert-hammerly-2026] §2, (5))

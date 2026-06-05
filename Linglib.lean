@@ -334,7 +334,7 @@ import Linglib.Semantics.Composition.Continuation
 import Linglib.Semantics.Composition.Layered
 import Linglib.Core.CylindricAlgebra
 import Linglib.Core.CylindricAlgebra.DynamicSemantics
-import Linglib.Features.PrivativePair
+import Linglib.Features.ContainmentPair
 import Linglib.Features.Person
 import Linglib.Features.PhiKernel
 import Linglib.Features.Number

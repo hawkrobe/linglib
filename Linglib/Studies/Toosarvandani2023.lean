@@ -680,6 +680,6 @@ theorem zapotec_refines_3way :
 
 /-- All PronType person features are well-formed (no [−participant, +author]). -/
 theorem prontype_features_wellFormed : ∀ p : PronType,
-    p.toPersonFeatures.wellFormed = true := by decide
+    p.toPersonFeatures.WellFormed := by decide
 
 end Toosarvandani2023

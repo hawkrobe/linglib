@@ -57,7 +57,7 @@ is derived from it via `AnimacyFeatures.toCoreClass`.
 
 ## Integration
 
-- `AnimacyFeatures` instantiates `Features.PhiFeatures` (same `PrivativePair`
+- `AnimacyFeatures` instantiates `Features.ContainmentPairLike` (same `ContainmentPair`
   as person features), connecting person and animacy containment
 - `AnimacyFeatures.toAnimacyLevel` bridges to the `Features.Prominence`
   hierarchy used throughout the codebase
@@ -147,17 +147,17 @@ theorem firstF_person_is_human_animate :
            participant_implies_animate ⟨a, h, true, true⟩ hw rfl⟩
   | false => simp [ProminenceFeatures.wellFormed] at hw
 
-/-- Person and animacy features share the `PrivativePair` structure.
-    Both `Features.Person.Features` and `AnimacyFeatures` are `PhiFeatures`
+/-- Person and animacy features share the `ContainmentPair` structure.
+    Both `Features.Person.Features` and `AnimacyFeatures` are `ContainmentPairLike`
     instances — the same three-cell, no-four-way-distinction architecture.
     This is not a coincidence: they are fragments of the same containment
     hierarchy ([hammerly-2023]). -/
 theorem person_animacy_same_structure :
-    (Features.PhiFeatures.toPair Features.Person.firstF).wellFormed = true ∧
-    (Features.PhiFeatures.toPair AnimacyFeatures.human).wellFormed = true ∧
-    (Features.PhiFeatures.toPair Features.Person.thirdF).wellFormed = true ∧
-    (Features.PhiFeatures.toPair AnimacyFeatures.inanimate).wellFormed = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    (Features.ContainmentPairLike.toPair Features.Person.firstF).WellFormed ∧
+    (Features.ContainmentPairLike.toPair AnimacyFeatures.human).WellFormed ∧
+    (Features.ContainmentPairLike.toPair Features.Person.thirdF).WellFormed ∧
+    (Features.ContainmentPairLike.toPair AnimacyFeatures.inanimate).WellFormed :=
+  ⟨by decide, by decide, by decide, by decide⟩
 
 -- ============================================================================
 -- § 2: Core Noun Class Hypothesis Verification
@@ -229,10 +229,10 @@ theorem aa_class1_eq_local : lubukusu_class1 = lubukusu_local_person := rfl
 theorem aa_class7_differs : lubukusu_class1 ≠ lubukusu_class7 := by decide
 
 /-- **Derivation**: AA collapses class 1 and local persons BECAUSE both
-    project [+Human] via `PhiFeatures`. Local persons have [+Participant],
+    project [+Human] via `ContainmentPairLike`. Local persons have [+Participant],
     which entails [+Human] (person features are a subset of the animacy
     hierarchy). Class 1 has [+Human] directly. Both yield the same
-    `PrivativePair` outer value.
+    `ContainmentPair` outer value.
 
     This theorem shows the structural basis: well-formed participants
     must have [+Human], the same outer feature as class 1. -/
