@@ -132,6 +132,203 @@ def ViewpointType.ttTSitRelation {Time : Type*} [LinearOrder Time]
   | .prospective  => tt.isBefore tsit
   | .neutral      => tt.initialOverlap tsit
 
+/-! ### Visibility properties of viewpoints
+
+[smith-1997] §4.1 tabulates four visibility properties per viewpoint: whether
+the initial point of the situation is asserted, whether the final point is
+asserted, whether the viewpoint presents the situation as informationally
+closed, and whether the viewpoint can focus an interval strictly inside the
+situation (the structural source of the imperfective's "preliminary stages"
+reading for punctuals, §4.2.2). Each property derives from `ttTSitRelation`:
+visibility is interval geometry, and Smith's Table 1 re-emerges below as
+iff theorems, not as a stipulated lookup. -/
+
+/-- The viewpoint asserts the situation's initial point: every licensed
+    (`tt`, `tsit`) pair has `tt` containing `tsit.start`. -/
+def ViewpointType.ShowsInitialPoint (v : ViewpointType) : Prop :=
+  ∀ {Time : Type} [LinearOrder Time] {tt tsit : Interval Time},
+    v.ttTSitRelation tt tsit → tt.contains tsit.start
+
+/-- The viewpoint asserts the situation's final point. -/
+def ViewpointType.ShowsFinalPoint (v : ViewpointType) : Prop :=
+  ∀ {Time : Type} [LinearOrder Time] {tt tsit : Interval Time},
+    v.ttTSitRelation tt tsit → tt.contains tsit.finish
+
+/-- The viewpoint presents the situation as informationally closed: the
+    topic time reaches at least the situation time's right endpoint. -/
+def ViewpointType.IsClosed (v : ViewpointType) : Prop :=
+  ∀ {Time : Type} [LinearOrder Time] {tt tsit : Interval Time},
+    v.ttTSitRelation tt tsit → tsit.finish ≤ tt.finish
+
+/-- The viewpoint focuses a topic time strictly inside the situation, the
+    structural source of the imperfective's "preliminary stages" reading
+    for punctual events ([smith-1997] §4.2.2). -/
+def ViewpointType.FocusesPreliminaryStages (v : ViewpointType) : Prop :=
+  ∀ {Time : Type} [LinearOrder Time] {tt tsit : Interval Time},
+    v.ttTSitRelation tt tsit → tt.properSubinterval tsit
+
+namespace ViewpointType
+
+/-- Construct `ttTSitRelation v tt tsit` for a concrete `Interval ℤ` pair using
+    `refine ⟨...⟩ <;> show _ <;> omega`. Each viewpoint's witness comes from
+    the underlying interval relation. -/
+private theorem rel_imperfective :
+    ttTSitRelation .imperfective (⟨1, 2, by omega⟩ : Interval ℤ) ⟨0, 3, by omega⟩ := by
+  refine ⟨⟨?_, ?_⟩, Or.inl ?_⟩
+  · show (0 : ℤ) ≤ 1; omega
+  · show (2 : ℤ) ≤ 3; omega
+  · show (0 : ℤ) < 1; omega
+
+private theorem rel_perfect :
+    ttTSitRelation .perfect (⟨3, 4, by omega⟩ : Interval ℤ) ⟨0, 2, by omega⟩ := by
+  show (2 : ℤ) ≤ 3; omega
+
+private theorem rel_prospective :
+    ttTSitRelation .prospective (⟨0, 1, by omega⟩ : Interval ℤ) ⟨2, 3, by omega⟩ := by
+  show (1 : ℤ) ≤ 2; omega
+
+private theorem rel_neutral_short :
+    ttTSitRelation .neutral (⟨0, 1, by omega⟩ : Interval ℤ) ⟨0, 5, by omega⟩ := by
+  refine ⟨⟨?_, ?_⟩, ?_, ?_⟩
+  · show (0 : ℤ) ≤ 5; omega
+  · show (0 : ℤ) ≤ 1; omega
+  · show (0 : ℤ) ≤ 0; omega
+  · show (0 : ℤ) ≤ 1; omega
+
+private theorem rel_neutral_wide :
+    ttTSitRelation .neutral (⟨0, 10, by omega⟩ : Interval ℤ) ⟨0, 5, by omega⟩ := by
+  refine ⟨⟨?_, ?_⟩, ?_, ?_⟩
+  · show (0 : ℤ) ≤ 5; omega
+  · show (0 : ℤ) ≤ 10; omega
+  · show (0 : ℤ) ≤ 0; omega
+  · show (0 : ℤ) ≤ 10; omega
+
+private theorem rel_perfective_refl :
+    ttTSitRelation .perfective (⟨0, 1, by omega⟩ : Interval ℤ) ⟨0, 1, by omega⟩ := by
+  refine ⟨?_, ?_⟩
+  · show (0 : ℤ) ≤ 0; omega
+  · show (1 : ℤ) ≤ 1; omega
+
+/-- [smith-1997] Table 1, IP column: only perfective and neutral assert the initial point. -/
+theorem showsInitialPoint_iff (v : ViewpointType) :
+    v.ShowsInitialPoint ↔ v = .perfective ∨ v = .neutral := by
+  refine ⟨?_, ?_⟩
+  · intro h
+    cases v with
+    | perfective => exact Or.inl rfl
+    | neutral => exact Or.inr rfl
+    | imperfective =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_imperfective
+        have : (1 : ℤ) ≤ 0 := hC.1
+        omega
+    | perfect =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_perfect
+        have : (3 : ℤ) ≤ 0 := hC.1
+        omega
+    | prospective =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_prospective
+        have : (2 : ℤ) ≤ 1 := hC.2
+        omega
+  · rintro (rfl | rfl)
+    · intro _ _ tt tsit h
+      exact ⟨h.1, le_trans tsit.valid h.2⟩
+    · intro _ _ _ _ h
+      exact h.2
+
+/-- [smith-1997] Table 1, FP column: only perfective asserts the final point. -/
+theorem showsFinalPoint_iff (v : ViewpointType) :
+    v.ShowsFinalPoint ↔ v = .perfective := by
+  refine ⟨?_, ?_⟩
+  · intro h
+    cases v with
+    | perfective => rfl
+    | imperfective =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_imperfective
+        have : (3 : ℤ) ≤ 2 := hC.2
+        omega
+    | perfect =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_perfect
+        have : (3 : ℤ) ≤ 2 := hC.1
+        omega
+    | prospective =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_prospective
+        have : (3 : ℤ) ≤ 1 := hC.2
+        omega
+    | neutral =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_neutral_short
+        have : (5 : ℤ) ≤ 1 := hC.2
+        omega
+  · rintro rfl
+    intro _ _ tt tsit h
+    exact ⟨le_trans h.1 tsit.valid, h.2⟩
+
+/-- [smith-1997] Table 1, Closed column: only perfective and perfect are closed. -/
+theorem isClosed_iff (v : ViewpointType) :
+    v.IsClosed ↔ v = .perfective ∨ v = .perfect := by
+  refine ⟨?_, ?_⟩
+  · intro h
+    cases v with
+    | perfective => exact Or.inl rfl
+    | perfect => exact Or.inr rfl
+    | imperfective =>
+        exfalso
+        have : (3 : ℤ) ≤ 2 := @h ℤ _ _ _ rel_imperfective
+        omega
+    | prospective =>
+        exfalso
+        have : (3 : ℤ) ≤ 1 := @h ℤ _ _ _ rel_prospective
+        omega
+    | neutral =>
+        exfalso
+        have : (5 : ℤ) ≤ 1 := @h ℤ _ _ _ rel_neutral_short
+        omega
+  · rintro (rfl | rfl)
+    · intro _ _ _ _ h
+      exact h.2
+    · intro _ _ tt _ h
+      exact le_trans h tt.valid
+
+/-- [smith-1997] Table 1, Preliminaries column: only the imperfective places
+    the topic time strictly inside the situation. -/
+theorem focusesPreliminaryStages_iff (v : ViewpointType) :
+    v.FocusesPreliminaryStages ↔ v = .imperfective := by
+  refine ⟨?_, ?_⟩
+  · intro h
+    cases v with
+    | imperfective => rfl
+    | perfective =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_perfective_refl
+        -- hC : tt.properSubinterval tt for tt = ⟨0,1,_⟩ — contradicts irreflexivity
+        exact Interval.properSubinterval_irrefl _ hC
+    | perfect =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_perfect
+        have : (4 : ℤ) ≤ 2 := hC.1.2
+        omega
+    | prospective =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_prospective
+        have : (2 : ℤ) ≤ 0 := hC.1.1
+        omega
+    | neutral =>
+        exfalso
+        have hC := @h ℤ _ _ _ rel_neutral_wide
+        have : (10 : ℤ) ≤ 5 := hC.1.2
+        omega
+  · rintro rfl
+    intro _ _ _ _ h
+    exact h
+
+end ViewpointType
+
 -- ════════════════════════════════════════════════════
 -- § Aspect Operators
 -- ════════════════════════════════════════════════════
