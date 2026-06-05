@@ -1172,6 +1172,7 @@ import Linglib.Studies.SadakaneKoizumi1995
 import Linglib.Studies.Baker2015
 import Linglib.Studies.Aissen2003
 import Linglib.Studies.Grimm2011
+import Linglib.Studies.Grimm2018
 import Linglib.Studies.DechaineWiltschko2002
 import Linglib.Studies.DeHoopMalchukov2008
 import Linglib.Studies.Haspelmath2021

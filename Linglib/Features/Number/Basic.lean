@@ -55,7 +55,11 @@ set_option autoImplicit false
     (`Number.toUD`/`Number.fromUD`). -/
 inductive Number where
   /-- Non-committal to cardinality; *outside* the number system
-      (Bayso *lúban* 'lion(s)', Japanese *inu* 'dog(s)'). -/
+      (Bayso *lúban* 'lion(s)', Japanese *inu* 'dog(s)'). Not to be
+      conflated with non-countability: a general form is a
+      value-noncommittal form of a noun that *has* number, whereas a
+      non-countable noun lacks the contrast altogether — a countability-class
+      fact, not a number value ([grimm-2018]; `Studies/Grimm2018.lean`). -/
   | general
   /-- Exactly one (`[+atomic, +minimal]`). -/
   | singular
