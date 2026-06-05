@@ -98,7 +98,7 @@ transitives + K'ichee' fragment + Zulu fragment) to formalize.
   [preminger-2014], [pancheva-zubizarreta-2018]).
 - `Morphology/DM/VocabSimple.lean` —
   the substrate: `Vocabulary`, `VocabEntry`, `makePersonVocab`.
-- `Studies/Scott2023Agreement.lean` — parallel
+- `Studies/Scott2023.lean` — parallel
   application of the same DM/Agree machinery to Mam (where Infl's
   φ-probe is blocked in transitives).
 - `Studies/CoonMateoPedroPreminger2014.lean` —
