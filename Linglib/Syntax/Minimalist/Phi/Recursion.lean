@@ -221,7 +221,7 @@ structure HarbourConfig where
   /-- Whether [±additive] recurses (splitting paucal into paucal +
       greater paucal). Marked `*` on [±additive] in Table 3. -/
   recurseOnAdditive : Bool
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- Well-formedness: feature activation prerequisites.
 
@@ -245,16 +245,19 @@ def HarbourConfig.wellFormed (c : HarbourConfig) : Bool :=
     - [±atomic] alone: singular vs non-singular (= plural)
     - [±minimal] alone: minimal vs non-minimal (= augmented)
     - [±atomic] + [±minimal]: singular, dual, plural (the base partition)
-    - + [±minimal] recursion (with [±atomic]): trial, greater plural
+    - + [±minimal] recursion (with [±atomic]): trial (the residue remains
+      plural)
     - + [±minimal] recursion (without [±atomic]): unit augmented
     - + [±additive]: paucal (+ plural when base is MIN/AUG, since
       [±additive] splits augmented into paucal and plural)
     - + [±additive] recursion: greater paucal
 
-    The list includes superordinate categories (e.g., `.plural` remains
-    alongside `.trial` and `.greaterPlural` when recursion is active,
-    and `.augmented` remains alongside `.paucal` and `.plural`).
-    This is required for the lower-set property. -/
+    Recursion on the plural region (with [±atomic]) adds `.trial`; the
+    residue keeps the label `.plural` — [harbour-2014] Table 3 lists
+    Larike as singular, dual, trial, *plural* (greater plural is reserved
+    for [±additive]-derived values). `.augmented` remains alongside
+    `.paucal` and `.plural` when [±additive] splits it; superordinates are
+    required for the lower-set property. -/
 def HarbourConfig.categories (c : HarbourConfig) : List Number :=
   let base :=
     if c.hasAtomic && c.hasMinimal then [.singular, .dual, .plural]
@@ -263,7 +266,7 @@ def HarbourConfig.categories (c : HarbourConfig) : List Number :=
     else []
   let recursive :=
     if c.recurseOnPlural then
-      if c.hasAtomic then [.trial, .greaterPlural]
+      if c.hasAtomic then [.trial]
       else [.unitAugmented]  -- recursion on augmented without [±atomic]
     else []
   let additive :=
@@ -453,25 +456,28 @@ Key predictions:
 /-- Surface categories: the morphologically distinct number values.
 
     Unlike `categories` (which includes superordinates for the lower-set
-    property), this removes categories that have been split into
-    subcategories by recursion or [±additive]:
+    property), this removes a category that has been split into
+    subcategories by [±additive]:
 
-    - **Plural** is removed when [±minimal] recursion (with [±atomic])
-      splits it into trial + greater plural. The surface "plural" IS
-      greater plural (groups of 4+).
     - **Augmented** is removed when [±additive] (without [±atomic]) splits
-      it into paucal + plural. The surface system is minimal/paucal/plural.
+      it into paucal + plural. The surface system is minimal/paucal/plural
+      (Mebengokre, [harbour-2014] Table 3).
 
-    The resulting counts match [harbour-2014] Table 3 exactly. -/
+    The resulting label sets and counts match [harbour-2014] Table 3. -/
 def HarbourConfig.surfaceCategories (c : HarbourConfig) : List Number :=
   let cats := c.categories
-  -- Plural is split by [±minimal] recursion when [±atomic] is active
-  let removePlural := c.recurseOnPlural && c.hasAtomic
   -- Augmented is split by [±additive] when base is MIN/AUG (no [±atomic])
   let removeAugmented := c.hasAdditive && !c.hasAtomic && c.hasMinimal
-  cats.filter fun cat =>
-    !(removePlural && cat == .plural) &&
-    !(removeAugmented && cat == .augmented)
+  cats.filter fun cat => !(removeAugmented && cat == .augmented)
+
+/-- The `Number.System` a configuration generates: surface values as the
+    inventory. The empty configuration leaves Number⁰ featureless — general
+    number ([harbour-2014] (24); Pirahã, Classical Chinese). -/
+def HarbourConfig.toSystem (c : HarbourConfig) (name : String := "") :
+    Number.System :=
+  { name := name
+    values := c.surfaceCategories
+    hasGeneral := c.surfaceCategories.isEmpty }
 
 /-- [harbour-2014] Table 3 entry: a `HarbourConfig` connected to
     the predicted system size and an example language. -/
@@ -498,7 +504,7 @@ def harbour2014Table3 : List Harbour2014Entry := [
   -- {±minimal*}: minimal, unit augmented, augmented
   ⟨⟨false, true, false, true, false⟩, 3, "Rembarrnga"⟩,
   -- {±minimal, ±atomic}: singular, dual, plural
-  ⟨⟨true, true, false, false, false⟩, 3, "Larike"⟩,
+  ⟨⟨true, true, false, false, false⟩, 3, "Kiowa"⟩,
   -- {±additive, ±atomic}₁: singular, paucal, plural
   ⟨⟨true, false, true, false, false⟩, 3, "Bayso"⟩,
   -- {±additive, ±atomic}₂
