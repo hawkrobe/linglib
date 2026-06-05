@@ -709,7 +709,96 @@ def convexClosureOp {α : Type*} [PartialOrder α] :
   idempotent' := convexClosure_idempotent
 
 -- ════════════════════════════════════════════════════
--- § 15. Conjunctive Parthood (Jago Def 5; [jago-2026])
+-- § 15. Predicate Disjointness and Individuation Perspectives
+-- ════════════════════════════════════════════════════
+
+/-! ### Predicate disjointness and individuation perspectives
+
+A predicate is *overlapping* if two distinct members share a part, and
+*disjoint* otherwise; a maximally disjoint subset is an individuation
+perspective ([landman-2011]'s variants; [landman-2020]'s disjointness
+thesis: counting requires a disjoint base). The null schema unions all
+perspectives ([sutton-filip-2021]). Parameterized over an arbitrary
+overlap relation `ov` (mereologically, `x ⊓ y ≠ ⊥`); graduated from
+`Studies/SuttonFilip2021.lean` on gaining its second consumer
+(`Studies/Landman2020.lean`). -/
+
+section Individuation
+
+variable {α : Type*} (ov : α → α → Prop)
+
+/-- Two distinct members of `P` share a part. -/
+def OverlapPred (P : Set α) : Prop :=
+  ∃ x ∈ P, ∃ y ∈ P, x ≠ y ∧ ov x y
+
+/-- No two distinct members of `P` share a part. -/
+def DisjointPred (P : Set α) : Prop := ¬ OverlapPred ov P
+
+/-- `OverlapPred` is monotone under inclusion. -/
+theorem overlapPred_mono {P Q : Set α} (h : P ⊆ Q)
+    (hP : OverlapPred ov P) : OverlapPred ov Q :=
+  let ⟨x, hx, y, hy, hne, hov⟩ := hP
+  ⟨x, h hx, y, h hy, hne, hov⟩
+
+/-- A subset of a disjoint predicate is disjoint. -/
+theorem DisjointPred.anti {P Q : Set α} (h : P ⊆ Q)
+    (hQ : DisjointPred ov Q) : DisjointPred ov P :=
+  fun hP => hQ (overlapPred_mono ov h hP)
+
+/-- A maximally disjoint subset of `P`: disjoint, and unextendable within
+    `P` — an individuation perspective. -/
+def IsMaxDisjointIn (D P : Set α) : Prop :=
+  D ⊆ P ∧ DisjointPred ov D ∧ ∀ x ∈ P, x ∉ D → OverlapPred ov (insert x D)
+
+/-- The null individuation schema: the union of *all* maximally disjoint
+    subsets — what counts as 'one' under any perspective
+    ([sutton-filip-2021] (32), after [landman-2011]). -/
+def nullSchema (P : Set α) : Set α :=
+  {x | ∃ D, IsMaxDisjointIn ov D P ∧ x ∈ D}
+
+/-- The union of two distinct maximal disjoint subsets overlaps: if `x`
+    distinguishes `D₂` from `D₁`, then `D₁`'s maximality makes
+    `insert x D₁` overlap, and the offending pair lies in `D₁ ∪ D₂`. -/
+theorem overlapPred_union_of_maxDisjoint_ne {D₁ D₂ P : Set α}
+    (h₁ : IsMaxDisjointIn ov D₁ P) (h₂ : IsMaxDisjointIn ov D₂ P)
+    (hne : D₁ ≠ D₂) : OverlapPred ov (D₁ ∪ D₂) := by
+  obtain ⟨x, hx₂, hx₁⟩ | ⟨x, hx₁, hx₂⟩ :
+      (∃ x, x ∈ D₂ ∧ x ∉ D₁) ∨ (∃ x, x ∈ D₁ ∧ x ∉ D₂) := by
+    by_contra hcon
+    push_neg at hcon
+    exact hne (Set.Subset.antisymm hcon.2 hcon.1)
+  · exact overlapPred_mono ov
+      (Set.insert_subset_iff.mpr ⟨Or.inr hx₂, fun a ha => Or.inl ha⟩)
+      (h₁.2.2 x (h₂.1 hx₂) hx₁)
+  · exact overlapPred_mono ov
+      (Set.insert_subset_iff.mpr ⟨Or.inl hx₁, fun a ha => Or.inr ha⟩)
+      (h₂.2.2 x (h₁.1 hx₁) hx₂)
+
+/-- If two distinct maximal disjoint subsets exist, the null schema is
+    overlapping: null-schema counting bases are mass exactly when
+    individuation is perspectival. -/
+theorem overlapPred_nullSchema {D₁ D₂ P : Set α}
+    (h₁ : IsMaxDisjointIn ov D₁ P) (h₂ : IsMaxDisjointIn ov D₂ P)
+    (hne : D₁ ≠ D₂) : OverlapPred ov (nullSchema ov P) :=
+  overlapPred_mono ov
+    (Set.union_subset (fun a ha => ⟨D₁, h₁, ha⟩) (fun a ha => ⟨D₂, h₂, ha⟩))
+    (overlapPred_union_of_maxDisjoint_ne ov h₁ h₂ hne)
+
+/-- A disjoint predicate is its own unique perspective: the null schema
+    returns it unchanged. -/
+theorem nullSchema_eq_of_disjoint {P : Set α} (h : DisjointPred ov P) :
+    nullSchema ov P = P := by
+  ext x
+  constructor
+  · rintro ⟨D, hD, hx⟩
+    exact hD.1 hx
+  · intro hx
+    exact ⟨P, ⟨Set.Subset.rfl, h, fun y hy hny => absurd hy hny⟩, hx⟩
+
+end Individuation
+
+-- ════════════════════════════════════════════════════
+-- § 16. Conjunctive Parthood (Jago Def 5; [jago-2026])
 -- ════════════════════════════════════════════════════
 
 /-- **Down clause** of conjunctive parthood: every element of `p` has a

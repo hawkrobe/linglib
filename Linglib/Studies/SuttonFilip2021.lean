@@ -1,6 +1,7 @@
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Features.Individuation
 import Linglib.Features.MassCount
+import Linglib.Core.Mereology
 
 /-!
 # Sutton & Filip (2021) — The Count/Mass Distinction for Granular Nouns
@@ -41,7 +42,11 @@ lacks one, counts everything — cf. `Grimm2018.yudjaClassify`).
 ## Main declarations
 
 * `OverlapPred`/`IsMaxDisjointIn`/`nullSchema` — the schema machinery over
-  an arbitrary overlap relation.
+  an arbitrary overlap relation. The disjoint-counting-base thesis and the
+  multiple-perspectives ("variants") idea this packages originate with
+  [landman-2011] and [landman-2016]; the chapter's own contribution is the
+  null schema `𝒮₀` and the unified `𝒪`/`𝒮ᵢ` mechanism. The machinery is a
+  graduation candidate when a Landman-anchored study lands.
 * `overlapPred_union_of_maxDisjoint_ne` — the load-bearing generic fact:
   the union of two *distinct* maximal disjoint subsets overlaps. Hence
   `nullSchema`-saturated entries are mass whenever individuation is
@@ -51,8 +56,10 @@ lacks one, counts everything — cf. `Grimm2018.yudjaClassify`).
   graduated individuation scale (`Features/Individuation.lean`), with the
   junction theorems: the count option *ascends* the scale
   (`count_option_monotone`) and the mass option *descends* it
-  (`mass_option_antitone`) — [grimm-2018]'s Table 20 in `[±O, ±S]`
-  clothing.
+  (`mass_option_antitone`). Ordering Table 9.1 by [grimm-2018]'s scale is
+  this study's bridge, not the chapter's (it cites [grimm-2012] and Grimm &
+  Levin 2017, not [grimm-2018]); the theorems show the two frameworks'
+  landscapes coincide.
 * A concrete furniture/rice model on nonempty `Finset`s: *furniture*'s
   identified units overlap (table vs. vanity), *rice*'s grains are disjoint
   in `baspred` yet its counting base overlaps — the accessibility puzzle's
@@ -67,7 +74,7 @@ lacks one, counts everything — cf. `Grimm2018.yudjaClassify`).
 * The cluster/MSSC content of granular `baspred` frames is [grimm-2012]'s
   mereotopology — `Core/Mereotopology.lean`.
 * Their counting condition (cardinality only over disjoint bases, their
-  (A1) and Landman's overlap thesis) is the semantic ground for why
+  (A1), after [landman-2011]'s overlap thesis) is the semantic ground for why
   countability classes, not `Number` values, carry the count/mass
   distinction (`Features/Number/Basic.lean`).
 -/
@@ -78,79 +85,16 @@ namespace SuttonFilip2021
 
 /-! ### Overlap, disjointness, and individuation schemas
 
-Their (16)–(18), stated over an arbitrary overlap relation `ov` (the
-mereological instantiation is `∃ z ≠ ⊥, z ⊑ x ∧ z ⊑ y`; the concrete
-models below use nonempty `Finset` intersection). A predicate is
-*overlapping* if two distinct members overlap; *disjoint* otherwise. -/
+Their (16)–(18): the schema machinery (`Mereology.OverlapPred`,
+`Mereology.IsMaxDisjointIn`, `Mereology.nullSchema` for `𝒮₀`, their (32))
+lives in `Core/Mereology.lean`, shared with [landman-2020]
+(`Studies/Landman2020.lean`), whose disjointness thesis it packages.
+A predicate is *overlapping* if two distinct members overlap (their (17)
+omits the distinctness, under which any inhabited predicate self-overlaps
+via `x ∘ x`; the substrate states the intended reading). -/
 
-variable {α : Type*} (ov : α → α → Prop)
-
-/-- (17): two distinct members of `P` share a part. -/
-def OverlapPred (P : Set α) : Prop :=
-  ∃ x ∈ P, ∃ y ∈ P, x ≠ y ∧ ov x y
-
-/-- (18): `DISJOINT(P) ↔ ¬OVERLAP(P)`. -/
-def DisjointPred (P : Set α) : Prop := ¬ OverlapPred ov P
-
-/-- `OverlapPred` is monotone under inclusion. -/
-theorem overlapPred_mono {P Q : Set α} (h : P ⊆ Q)
-    (hP : OverlapPred ov P) : OverlapPred ov Q :=
-  let ⟨x, hx, y, hy, hne, hov⟩ := hP
-  ⟨x, h hx, y, h hy, hne, hov⟩
-
-/-- A maximally disjoint subset of `P`: disjoint, and unextendable within
-    `P` (Landman's individuation perspectives; the range of the schemas
-    `𝒮ᵢ`). -/
-def IsMaxDisjointIn (D P : Set α) : Prop :=
-  D ⊆ P ∧ DisjointPred ov D ∧ ∀ x ∈ P, x ∉ D → OverlapPred ov (insert x D)
-
-/-- The null individuation schema `𝒮₀` ((32)): the union of *all*
-    maximally disjoint subsets — what counts as 'one' under any
-    perspective. -/
-def nullSchema (P : Set α) : Set α :=
-  {x | ∃ D, IsMaxDisjointIn ov D P ∧ x ∈ D}
-
-/-- **The union of two distinct maximal disjoint subsets overlaps.** The
-    generic fact behind mass-hood by perspectival individuation: if `x`
-    distinguishes `D₂` from `D₁`, then `D₁`'s maximality makes
-    `insert x D₁` overlap, and the offending pair lies in `D₁ ∪ D₂`. -/
-theorem overlapPred_union_of_maxDisjoint_ne {D₁ D₂ P : Set α}
-    (h₁ : IsMaxDisjointIn ov D₁ P) (h₂ : IsMaxDisjointIn ov D₂ P)
-    (hne : D₁ ≠ D₂) : OverlapPred ov (D₁ ∪ D₂) := by
-  obtain ⟨x, hx₂, hx₁⟩ | ⟨x, hx₁, hx₂⟩ :
-      (∃ x, x ∈ D₂ ∧ x ∉ D₁) ∨ (∃ x, x ∈ D₁ ∧ x ∉ D₂) := by
-    by_contra hcon
-    push_neg at hcon
-    exact hne (Set.Subset.antisymm hcon.2 hcon.1)
-  · exact overlapPred_mono ov
-      (Set.insert_subset_iff.mpr ⟨Or.inr hx₂, fun a ha => Or.inl ha⟩)
-      (h₁.2.2 x (h₂.1 hx₂) hx₁)
-  · exact overlapPred_mono ov
-      (Set.insert_subset_iff.mpr ⟨Or.inl hx₁, fun a ha => Or.inr ha⟩)
-      (h₂.2.2 x (h₁.1 hx₁) hx₂)
-
-/-- If individuation is perspectival — two distinct maximal disjoint
-    subsets exist — the null schema yields an overlapping counting base:
-    `𝒮₀`-saturated entries are mass ((32) and their §9.4.3). -/
-theorem overlapPred_nullSchema {D₁ D₂ P : Set α}
-    (h₁ : IsMaxDisjointIn ov D₁ P) (h₂ : IsMaxDisjointIn ov D₂ P)
-    (hne : D₁ ≠ D₂) : OverlapPred ov (nullSchema ov P) :=
-  overlapPred_mono ov
-    (Set.union_subset (fun a ha => ⟨D₁, h₁, ha⟩) (fun a ha => ⟨D₂, h₂, ha⟩))
-    (overlapPred_union_of_maxDisjoint_ne ov h₁ h₂ hne)
-
-/-- For an already-disjoint predicate there is exactly one perspective:
-    the null schema returns the predicate itself. Prototypical objects
-    (*cat*) are therefore stably count — `(𝒮ᵢ(𝒪(cat)))` does not vary
-    with `i` (their §9.4.3). -/
-theorem nullSchema_eq_of_disjoint {P : Set α} (h : DisjointPred ov P) :
-    nullSchema ov P = P := by
-  ext x
-  constructor
-  · rintro ⟨D, hD, hx⟩
-    exact hD.1 hx
-  · intro hx
-    refine ⟨P, ⟨Set.Subset.rfl, h, fun y hy hny => absurd hy hny⟩, hx⟩
+open Mereology (OverlapPred DisjointPred IsMaxDisjointIn nullSchema
+  overlapPred_nullSchema)
 
 /-! ### The `[±O, ±S]` categorization and Table 9.1
 

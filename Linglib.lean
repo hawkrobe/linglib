@@ -1236,6 +1236,7 @@ import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Data
 import Linglib.Studies.Storment2026
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 import Linglib.Studies.Adger2003
+import Linglib.Studies.Landman2020
 import Linglib.Studies.Levin1993
 import Linglib.Studies.Osborne2019
 import Linglib.Phenomena.ArgumentStructure.TheoryComparison
