@@ -2226,7 +2226,6 @@ import Linglib.Syntax.Minimalist.SmallClause
 import Linglib.Syntax.Minimalist.Copula
 import Linglib.Syntax.Minimalist.Cascade
 import Linglib.Syntax.Minimalist.DegreeMovement
-import Linglib.Morphology.DM.Fission
 import Linglib.Morphology.FragmentGrammars.CFGFragment
 import Linglib.Morphology.FragmentGrammars.MultinomialPCFG
 import Linglib.Morphology.FragmentGrammars.DMPCFG
