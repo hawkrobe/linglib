@@ -1,4 +1,5 @@
 import Linglib.Data.UD.Basic
+import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person
 
 /-!
@@ -48,6 +49,9 @@ structure CliticEntry where
   number : UD.Number
   case_ : CliticCase
   deriving Repr, BEq
+
+/-- A clitic bears its φ-slot's number (`HasNumber`). -/
+instance : HasNumber CliticEntry := ⟨fun c => Number.fromUD c.number⟩
 
 -- ============================================================================
 -- § 3: Paradigm Data

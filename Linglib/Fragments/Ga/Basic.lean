@@ -1,3 +1,4 @@
+import Linglib.Features.Number.Basic
 import Linglib.Features.Gender
 import Linglib.Features.Person
 
@@ -50,6 +51,11 @@ inductive Person where | first | second | third
 
 inductive Number where | sg | pl
   deriving DecidableEq, Repr
+
+/-- Ga's two-value system in the canonical inventory. -/
+def Number.toNumber : Number → _root_.Number
+  | .sg => .singular
+  | .pl => .plural
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2: Pronoun Paradigm

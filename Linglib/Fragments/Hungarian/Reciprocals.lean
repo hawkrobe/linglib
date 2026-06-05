@@ -2,6 +2,7 @@ import Linglib.Syntax.Pronoun.Basic
 import Linglib.Semantics.Reference.Reciprocals
 import Linglib.Semantics.Reference.PluralityLicensing
 import Linglib.Data.UD.Basic
+import Linglib.Features.Number.Capabilities
 
 /-!
 # Hungarian Reciprocal Fragment
@@ -79,6 +80,9 @@ structure AntecedentConfig where
   /-- Verb agreement number -/
   verbAgr : UD.Number
   deriving Repr
+
+/-- An antecedent configuration bears its verb-agreement number (`HasNumber`). -/
+instance : HasNumber AntecedentConfig := ⟨fun c => Number.fromUD c.verbAgr⟩
 
 /-- §3: Quantified NPs. Hungarian quantified NPs are morphologically
     singular (no -ek suffix) and trigger 3SG verb agreement.

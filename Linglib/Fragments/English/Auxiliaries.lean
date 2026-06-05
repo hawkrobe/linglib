@@ -1,4 +1,5 @@
 import Linglib.Data.UD.Basic
+import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Features.Register
@@ -98,6 +99,9 @@ structure AuxEntry where
       [u∃-MOD], checked by a single silent [i∃-MOD] operator. -/
   interpretability : Option ModalInterpretability := none
   deriving Repr, BEq
+
+/-- An auxiliary bears its agreement number (`HasNumber`). -/
+instance : HasNumber AuxEntry := ⟨fun a => a.number.bind Number.fromUD⟩
 
 -- Modals (no agreement). Modal meanings follow [kratzer-1981], [palmer-2001].
 -- Each uses cartesianProduct with singleton force (fixed force, variable flavor).

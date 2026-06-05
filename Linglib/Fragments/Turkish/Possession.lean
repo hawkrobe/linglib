@@ -1,3 +1,4 @@
+import Linglib.Features.Number.Basic
 import Linglib.Typology.Possession
 
 /-!
@@ -57,6 +58,11 @@ inductive PossPerson where
 inductive PossNumber where
   | sg | pl
   deriving DecidableEq, Repr
+
+/-- The possessive paradigm's number dimension, canonically. -/
+def PossNumber.toNumber : PossNumber → Number
+  | .sg => .singular
+  | .pl => .plural
 
 /-- Possessive suffix forms (after consonant-final stems). -/
 def possSuffix : PossPerson → PossNumber → String

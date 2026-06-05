@@ -1,3 +1,4 @@
+import Linglib.Features.Number.Basic
 import Linglib.Typology.RelativeClause.Basic
 import Linglib.Typology.RelativeClause.WALS
 import Linglib.Fragments.Swahili.Basic
@@ -126,6 +127,11 @@ inductive RelPerson where | first | second | third
 /-- Number feature in the Swahili relativization paradigm. -/
 inductive RelGramNum where | sg | pl
   deriving DecidableEq, Repr
+
+/-- The relativization paradigm's number dimension, canonically. -/
+def RelGramNum.toNumber : RelGramNum → Number
+  | .sg => .singular
+  | .pl => .plural
 
 /-- Full pronoun form. -/
 def fullPronoun : RelPerson → RelGramNum → String

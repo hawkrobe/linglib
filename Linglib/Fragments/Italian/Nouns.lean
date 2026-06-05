@@ -1,5 +1,6 @@
 import Linglib.Features.Gender
 import Linglib.Data.UD.Basic
+import Linglib.Features.Number.Capabilities
 import Linglib.Semantics.Kinds.NominalMappingParameter
 
 /-! # Italian Noun Lexicon Fragment
@@ -94,6 +95,9 @@ structure NP where
   /-- The determiner (if not bare) -/
   determiner : Option Determiner := none
   deriving Repr, BEq
+
+/-- An NP bears the number of its `number` slot (`HasNumber`). -/
+instance : HasNumber NP := ⟨fun np => Number.fromUD np.number⟩
 
 -- ============================================================================
 -- § 6: NP Constructors

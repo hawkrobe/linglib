@@ -1,6 +1,7 @@
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Data.UD.Basic
+import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person
 
 /-! # Italian Pronoun and Clitic Fragment
@@ -104,6 +105,9 @@ structure CliticEntry where
   number : UD.Number
   case_ : CliticCase
   deriving Repr, BEq
+
+/-- A clitic bears its φ-slot's number (`HasNumber`). -/
+instance : HasNumber CliticEntry := ⟨fun c => Number.fromUD c.number⟩
 
 /-! ### Clitics as capability carriers (`Proform` / `Bound`)
 

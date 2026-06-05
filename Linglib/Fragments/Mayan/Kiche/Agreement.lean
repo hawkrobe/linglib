@@ -1,5 +1,6 @@
 import Linglib.Features.Case
 import Linglib.Data.UD.Basic
+import Linglib.Features.Number.Capabilities
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 import Linglib.Typology.Extraction
@@ -92,6 +93,9 @@ structure PhiFeatures where
   number : UD.Number
   formality : Formality
   deriving DecidableEq, Repr
+
+/-- A K'iche' φ-bundle bears its number slot (`HasNumber`). -/
+instance : HasNumber PhiFeatures := ⟨fun φ => Number.fromUD φ.number⟩
 
 /-- Shorthand for informal phi features. -/
 abbrev phi (p : Features.Prominence.PersonLevel) (n : UD.Number) : PhiFeatures :=

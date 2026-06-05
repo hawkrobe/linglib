@@ -1,3 +1,4 @@
+import Linglib.Features.Number.Capabilities
 import Linglib.Features.Case
 import Linglib.Features.Case
 import Linglib.Features.Prominence
@@ -56,6 +57,11 @@ inductive Number where
   | aug   -- augmented (≈ plural)
   deriving DecidableEq, Repr
 
+/-- Shawi's minimal/augmented values in the canonical inventory. -/
+def Number.toNumber : Number → _root_.Number
+  | .min => .minimal
+  | .aug => .augmented
+
 /-- Inclusivity dimension orthogonal to PersonLevel; only relevant for
     1st person (1INCL vs 1EXCL). -/
 inductive Clusivity where
@@ -71,6 +77,9 @@ structure Phi where
   clusivity : Clusivity
   number    : Number
   deriving DecidableEq, Repr
+
+/-- A Shawi φ-bundle bears its min/aug value canonically (`HasNumber`). -/
+instance : HasNumber Phi := ⟨fun φ => some φ.number.toNumber⟩
 
 -- ============================================================================
 -- § 2: Subject agreement (Table 1, indicative)

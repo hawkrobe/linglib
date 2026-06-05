@@ -1,5 +1,6 @@
 import Linglib.Typology.Complementation
 import Linglib.Data.UD.Basic
+import Linglib.Features.Number.Capabilities
 
 /-!
 # Nez Perce Clausal Embedding Inventory
@@ -293,6 +294,9 @@ structure RelativePronoun where
   number : UD.Number
   forms : List String  -- multiple if idiolectal variation
   deriving Repr
+
+/-- A relative pronoun bears its number slot (`HasNumber`). -/
+instance : HasNumber RelativePronoun := ⟨fun rp => Number.fromUD rp.number⟩
 
 def rp_nom_sg : RelativePronoun := ⟨.Nom, .Sing, ["yox̂"]⟩
 def rp_nom_pl : RelativePronoun := ⟨.Nom, .Plur, ["yox̂me"]⟩
