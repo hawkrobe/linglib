@@ -1,19 +1,20 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.Prominence
-import Linglib.Features.PrivativePair
+import Linglib.Features.ContainmentPair
 
 /-!
 # Person
-[harbour-2016] [harley-ritter-2002] [ackema-neeleman-2018]
-[cysouw-2009] [siewierska-2004]
+[harley-ritter-2002] [adger-harbour-2008] [ackema-neeleman-2018]
+[harbour-2016] [cysouw-2009] [siewierska-2004]
 
 Two components of the person API:
 
-**§ 1–4: Person Features** ([harbour-2016], [harley-ritter-2002]; the
-privative-feature decomposition, with [ackema-neeleman-2018]'s
-function-valued alternative). The typological *category* inventory (§5+) is
-[cysouw-2009]'s, *derived* from these features — not their source.
-Decomposition of person into binary privative features:
+**§ 1–4: Person Features** ([harley-ritter-2002]'s dependency organization,
+in the bivalent presentation surveyed by [adger-harbour-2008]; with
+[ackema-neeleman-2018]'s function-valued alternative). The typological
+*category* inventory (§5+) is [cysouw-2009]'s, *derived* from these
+features — not their source.
+Decomposition of person into two bivalent features:
 - **[±participant]**: whether the referent includes a speech-act participant
   (speaker or addressee). 1st and 2nd person are [+participant]; 3rd person
   is [−participant].
@@ -21,7 +22,12 @@ Decomposition of person into binary privative features:
   [+author]; 2nd and 3rd are [−author].
 
 These features form a containment hierarchy: [+author] → [+participant].
-An author (speaker) is necessarily a participant.
+An author (speaker) is necessarily a participant. The hierarchy is carried
+as the cooccurrence filter inherited from `Features.ContainmentPair` — the
+descriptive convention of the feature-geometric tradition. [harbour-2016]
+ch. 9 rejects the filter: in his calculus `+author(−participant(π))` is the
+quadripartition *exclusive*, not ill-formed — see
+`Features/ContainmentPair.lean` and `Studies/Harbour2016.lean`.
 
 This decomposition is shared across theoretical frameworks:
 - Minimalism: [preminger-2014], [bejar-rezac-2009]
@@ -52,26 +58,22 @@ namespace Features.Person
 -- § 1: Person Features
 -- ============================================================================
 
-/-- Binary person features: [±participant, ±author].
+/-- Bivalent person features: [±participant, ±author].
 
     These two features suffice for the three-way person distinction:
     - 1st person: [+participant, +author]
     - 2nd person: [+participant, −author]
     - 3rd person: [−participant, −author]
 
-    The fourth combination [−participant, +author] is ill-formed:
-    an author (speaker) is necessarily a speech-act participant. -/
+    The fourth combination [−participant, +author] is cut by the
+    containment filter (`WellFormed`): an author (speaker) is necessarily
+    a speech-act participant. -/
 structure Features where
   /-- [+participant]: referent includes a speech-act participant (1P or 2P). -/
   hasParticipant : Bool
   /-- [+author]: referent includes the speaker (1P only for singulars). -/
   hasAuthor : Bool
-  deriving DecidableEq, Repr
-
-/-- Well-formedness: [+author] → [+participant].
-    An author (speaker) is necessarily a participant. -/
-def Features.wellFormed (pf : Features) : Bool :=
-  !pf.hasAuthor || pf.hasParticipant
+  deriving DecidableEq, Repr, Fintype
 
 -- ============================================================================
 -- § 2: Canonical Person Feature Bundles
@@ -115,63 +117,63 @@ namespace Features.Person
 open Features.Prominence
 
 -- ============================================================================
--- § 4: Features Verification
+-- § 4: ContainmentPair Presentation
 -- ============================================================================
 
-@[simp] theorem firstF_wellFormed : firstF.wellFormed = true := rfl
-@[simp] theorem secondF_wellFormed : secondF.wellFormed = true := rfl
-@[simp] theorem thirdF_wellFormed : thirdF.wellFormed = true := rfl
+/-- The `[±participant, ±author]` decomposition is carrier-equivalent to
+the containment pair: `outer` = participant, `inner` = author. One edge of
+the φ-feature iso-web (`Features/PhiKernel.lean`). -/
+def featuresEquiv : Features ≃ ContainmentPair where
+  toFun f := ⟨f.hasParticipant, f.hasAuthor⟩
+  invFun p := ⟨p.outer, p.inner⟩
+  left_inv := fun ⟨_, _⟩ => rfl
+  right_inv := fun ⟨_, _⟩ => rfl
 
-/-- The ill-formed combination [−participant, +author] is the only
-    combination that violates well-formedness. -/
-theorem illFormed_only : (⟨false, true⟩ : Features).wellFormed = false := rfl
+instance : ContainmentPairLike Features := .ofEquiv featuresEquiv
 
-/-- There are exactly 3 well-formed feature combinations (= 3 persons). -/
-theorem exactly_three_wellFormed :
-    ([⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩].filter
-      Features.wellFormed).length = 3 := by decide
+/-- The three canonical person values land on the three well-formed cells. -/
+@[simp] theorem firstF_is_maximal :
+    ContainmentPairLike.toPair firstF = .maximal := rfl
+@[simp] theorem secondF_is_intermediate :
+    ContainmentPairLike.toPair secondF = .intermediate := rfl
+@[simp] theorem thirdF_is_minimal :
+    ContainmentPairLike.toPair thirdF = .minimal := rfl
+
+/-- Well-formedness: [+author] → [+participant] — an author is necessarily
+    a participant. The geometry-tradition containment filter, inherited
+    from `ContainmentPair.WellFormed` through the presentation. -/
+abbrev Features.WellFormed (pf : Features) : Prop :=
+  ContainmentPairLike.WellFormed pf
+
+@[simp] theorem firstF_wellFormed : firstF.WellFormed := by decide
+@[simp] theorem secondF_wellFormed : secondF.WellFormed := by decide
+@[simp] theorem thirdF_wellFormed : thirdF.WellFormed := by decide
+
+/-- The filtered combination [−participant, +author] is the only one that
+    violates containment. -/
+theorem illFormed_only : ¬ (⟨false, true⟩ : Features).WellFormed := by decide
+
+/-- Exactly 3 well-formed feature combinations (= 3 persons) — the carrier
+    count of the containment chain (`ContainmentPair.card_wellFormed`). -/
+theorem card_wellFormed :
+    Fintype.card {pf : Features // pf.WellFormed} = 3 := by decide
 
 /-- All person levels yield well-formed features. -/
 theorem PersonLevel.toFeatures_wellFormed (p : PersonLevel) :
-    p.toFeatures.wellFormed = true := by cases p <;> rfl
+    p.toFeatures.WellFormed := by cases p <;> decide
 
 /-- PersonLevel.isSAP = Features.hasParticipant. -/
 theorem PersonLevel.isSAP_eq_participant (p : PersonLevel) :
     p.isSAP = p.toFeatures.hasParticipant := by cases p <;> rfl
 
--- ============================================================================
--- § 5: PhiFeatures Instance
--- ============================================================================
-
-/-- Person features are a `PhiFeatures` instance:
-    outer = hasParticipant, inner = hasAuthor.
-
-    All shared properties (`no_four_way`, `specLevel`, `wellFormed`,
-    `injective`) are inherited by construction. -/
-instance : Features.PhiFeatures Features where
-  toPair f := ⟨f.hasParticipant, f.hasAuthor⟩
-  ofPair p := ⟨p.outer, p.inner⟩
-  roundtrip := fun ⟨_, _⟩ => rfl
-
-/-- The three canonical person values map to the three PrivativePair cells. -/
-@[simp] theorem firstF_is_maximal : PhiFeatures.toPair firstF = .maximal := rfl
-@[simp] theorem secondF_is_intermediate : PhiFeatures.toPair secondF = .intermediate := rfl
-@[simp] theorem thirdF_is_minimal : PhiFeatures.toPair thirdF = .minimal := rfl
-
-/-- The `[±participant, ±author]` decomposition **is** the privative pair: an equivalence
-`Features ≃ PrivativePair` ([harbour-2016]'s phi-kernel skeleton as an isomorphism, not a
-one-directional embedding). -/
-def featuresEquiv : Features ≃ PrivativePair :=
-  PhiFeatures.toEquiv fun p => by cases p; rfl
-
-/-- No 4-way singular person distinction (inherited from `PhiFeatures`). -/
+/-- No 4-way singular person distinction (inherited from
+    `ContainmentPairLike.no_four_way`). -/
 theorem no_fourth_person :
     ∀ (a b c d : Features),
-      a.wellFormed = true → b.wellFormed = true →
-      c.wellFormed = true → d.wellFormed = true →
+      a.WellFormed → b.WellFormed → c.WellFormed → d.WellFormed →
       a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False :=
   fun a b c d ha hb hc hd =>
-    Features.PhiFeatures.no_four_way a b c d ha hb hc hd
+    ContainmentPairLike.no_four_way a b c d ha hb hc hd
 
 -- ============================================================================
 -- § 6: Person Categories (Cysouw)
@@ -323,7 +325,7 @@ theorem toFeatures_participant_iff_sap (p : Category) :
 
 /-- All 8 categories yield well-formed features. -/
 theorem toFeatures_wellFormed (p : Category) :
-    p.toFeatures.wellFormed = true := by cases p <;> rfl
+    p.toFeatures.WellFormed := by cases p <;> decide
 
 -- ============================================================================
 -- § 9: Category ↔ PersonLevel Bridge

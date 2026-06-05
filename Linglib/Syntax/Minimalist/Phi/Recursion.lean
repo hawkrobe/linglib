@@ -67,17 +67,17 @@ structure Region where
   /-- The base number features defining this region. -/
   base : Features
   /-- The base features must be well-formed. -/
-  base_wf : base.wellFormed = true
+  base_wf : base.WellFormed
   /-- The region must be non-atomic: atoms cannot be recursed. -/
   base_nonatomic : base.isAtomic = false
   deriving DecidableEq
 
 /-- The plural region: [−atomic, −minimal]. Groups of 3 or more. -/
-def pluralRegion : Region := ⟨pluralF, rfl, rfl⟩
+def pluralRegion : Region := ⟨pluralF, by decide, rfl⟩
 
 /-- The non-singular (dual) region: [−atomic, +minimal]. Minimal
     non-atoms (pairs). -/
-def dualRegion : Region := ⟨dualF, rfl, rfl⟩
+def dualRegion : Region := ⟨dualF, by decide, rfl⟩
 
 -- ============================================================================
 -- § 2: Recursive Number Categories
@@ -175,7 +175,7 @@ theorem unitAug_presupposes_dual : unitAugmented.region.base = dualF := rfl
 /-- The base partition is a prerequisite for any recursion: every
     recursive category's base region is a well-formed base number. -/
 theorem recursion_presupposes_base (r : RecursiveNumber) :
-    r.region.base.wellFormed = true := r.region.base_wf
+    r.region.base.WellFormed := r.region.base_wf
 
 /-- Base categories of recursive numbers map to Corbett categories. -/
 theorem recursion_base_categories :

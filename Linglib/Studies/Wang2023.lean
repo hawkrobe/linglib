@@ -1,4 +1,4 @@
-import Linglib.Features.PrivativePair
+import Linglib.Features.ContainmentPair
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Semantics.Presupposition.MaximizePresupposition
@@ -26,17 +26,17 @@ ToD reverses Maximize Presupposition ([heim-1991]): where MP!
 prefers the strongest available presupposition (= most marked form),
 ToD prefers the weakest (= least marked = semantically unmarked). The
 semantically unmarked values — plural, 3rd person, indefinite — are
-precisely those at `PrivativePair.minimal` (specLevel 0), with vacuous
+precisely those at `ContainmentPair.minimal` (specLevel 0), with vacuous
 presuppositions.
 
 No dedicated [HON] feature is needed. The attested patterns are derived
-from the same `PrivativePair` structure that governs ordinary phi-feature
+from the same `ContainmentPair` structure that governs ordinary phi-feature
 semantics, plus a single pragmatic constraint (ToD).
 
 ## Architecture
 
 This file connects three layers:
-- `Features.PrivativePair`: the algebraic structure (specLevel ordering)
+- `Features.ContainmentPair`: the algebraic structure (specLevel ordering)
 - `Semantics.Presupposition.PhiFeatures`: presuppositional
   denotations, semantic markedness, and presuppositional strength ordering
 - `Core.Constraint.OT`: constraint evaluation and factorial typology
@@ -50,14 +50,14 @@ This file connects three layers:
 5. [iHON] eliminability — bridge to [alok-bhalla-2026]
 6. Bridges to `Honorifics.lean` and phi-feature denotations
 7. General structural theorem: ToD >> MP! selects unmarked for ANY candidate set
-8. HonLevel ↔ PrivativePair bridge — `PhiFeatures HonLevel` instance
+8. HonLevel ↔ ContainmentPair bridge — `ContainmentPairLike HonLevel` instance
 -/
 
 set_option autoImplicit false
 
 namespace Wang2023
 
-open Features (PrivativePair PhiFeatures)
+open Features (ContainmentPair ContainmentPairLike)
 open Core.Constraint.OT (NamedConstraint ConstraintFamily mkTableau
               mkFactorialOptima mkFactorialTypologySize)
 open Semantics.Presupposition.PhiFeatures (isSemanticUnmarked presupStrength
@@ -93,10 +93,10 @@ inductive HonStrategy where
   | indefinite   -- Use indefinite for definite referent (Ainu DP)
   deriving DecidableEq, Repr
 
-/-- Map each strategy to the PrivativePair cell that is recruited.
+/-- Map each strategy to the ContainmentPair cell that is recruited.
     The key empirical generalization: all three strategies map to the
     same cell — `.minimal` (specLevel 0). -/
-def honStrategyCell : HonStrategy → PrivativePair
+def honStrategyCell : HonStrategy → ContainmentPair
   | .plural      => .minimal  -- PL = specLevel 0
   | .thirdPerson => .minimal  -- 3rd = specLevel 0
   | .indefinite  => .minimal  -- INDEF = specLevel 0
@@ -159,43 +159,43 @@ ToD IS the presuppositional strength ordering.
 /-- ToD constraint: penalizes presuppositional strength.
     Defined as `presupStrength` — ToD literally IS the strength
     ordering from `PhiFeatures`, applied as an OT penalty. -/
-def todConstraint : NamedConstraint PrivativePair :=
+def todConstraint : NamedConstraint ContainmentPair :=
   { name := "ToD"
   , family := .markedness
   , eval := presupStrength }
 
 /-- MP! constraint: penalizes failure to maximize presupposition.
     Violation count = maxSpecLevel − presupStrength.
-    `PrivativePair.spec_maximal` proves maxSpecLevel = 2. -/
-def mpConstraint : NamedConstraint PrivativePair :=
+    `ContainmentPair.spec_maximal` proves maxSpecLevel = 2. -/
+def mpConstraint : NamedConstraint ContainmentPair :=
   { name := "MP!"
   , family := .faithfulness
-  , eval := fun c => PrivativePair.maximal.specLevel - presupStrength c }
+  , eval := fun c => ContainmentPair.maximal.specLevel - presupStrength c }
 
 /-- ToD's evaluation IS `presupStrength` — not a reimplementation. -/
-theorem tod_eval_eq_presupStrength (c : PrivativePair) :
+theorem tod_eval_eq_presupStrength (c : ContainmentPair) :
     todConstraint.eval c = presupStrength c := rfl
 
 /-- ToD prefers exactly the presuppositionally weaker cell.
     This is the bridge between OT evaluation and the `presupWeakerThan`
     ordering from `PhiFeatures`: fewer ToD violations ↔ weaker presupposition. -/
-theorem tod_prefers_weaker (c₁ c₂ : PrivativePair) :
+theorem tod_prefers_weaker (c₁ c₂ : ContainmentPair) :
     todConstraint.eval c₁ < todConstraint.eval c₂ ↔
     presupWeakerThan c₁ c₂ = true := by
   simp [todConstraint, presupStrength, presupWeakerThan]
 
 /-- ToD and MP! impose opposite orderings on well-formed cells:
     ToD prefers c₁ iff MP! prefers c₂. -/
-theorem tod_reverses_mp (c₁ c₂ : PrivativePair)
-    (hw₁ : c₁.wellFormed = true) (hw₂ : c₂.wellFormed = true) :
+theorem tod_reverses_mp (c₁ c₂ : ContainmentPair)
+    (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed) :
     todConstraint.eval c₁ < todConstraint.eval c₂ ↔
     mpConstraint.eval c₁ > mpConstraint.eval c₂ := by
   have h₁ := wellFormed_specLevel_le_two c₁ hw₁
   have h₂ := wellFormed_specLevel_le_two c₂ hw₂
   show presupStrength c₁ < presupStrength c₂ ↔
-       PrivativePair.maximal.specLevel - presupStrength c₁ >
-       PrivativePair.maximal.specLevel - presupStrength c₂
-  simp only [presupStrength, PrivativePair.spec_maximal]; omega
+       ContainmentPair.maximal.specLevel - presupStrength c₁ >
+       ContainmentPair.maximal.specLevel - presupStrength c₂
+  simp only [presupStrength, ContainmentPair.spec_maximal]; omega
 
 /-- ToD prefers the minimal (unmarked) cell: it has 0 violations. -/
 theorem tod_minimal_zero : todConstraint.eval .minimal = 0 := rfl
@@ -212,14 +212,14 @@ theorem mpConstraint_eq_phiMP :
 /-- `todConstraint.eval` equals `markednessPenalty presupStrength`.eval.
     ToD is an instance of the general markedness penalty from
     `MaximizePresupposition`. -/
-theorem todConstraint_eval_eq_markednessPenalty (c : PrivativePair) :
+theorem todConstraint_eval_eq_markednessPenalty (c : ContainmentPair) :
     todConstraint.eval c =
     (Semantics.Presupposition.MaximizePresupposition.markednessPenalty presupStrength).eval c := rfl
 
 /-- `tod_reverses_mp` is a corollary of the general
     `mp_reverses_markedness` theorem from `MaximizePresupposition`. -/
-theorem tod_reverses_mp_from_general (c₁ c₂ : PrivativePair)
-    (hw₁ : c₁.wellFormed = true) (hw₂ : c₂.wellFormed = true) :
+theorem tod_reverses_mp_from_general (c₁ c₂ : ContainmentPair)
+    (hw₁ : c₁.WellFormed) (hw₂ : c₂.WellFormed) :
     todConstraint.eval c₁ < todConstraint.eval c₂ ↔
     mpConstraint.eval c₁ > mpConstraint.eval c₂ :=
   Semantics.Presupposition.MaximizePresupposition.phi_mp_reverses_markedness c₁ c₂ hw₁ hw₂
@@ -238,7 +238,7 @@ recruitment of unmarked values for honorification.
 -/
 
 /-- Binary candidate set: {maximal, minimal}. -/
-def binaryCandidates : List PrivativePair := [.maximal, .minimal]
+def binaryCandidates : List ContainmentPair := [.maximal, .minimal]
 
 private theorem binaryCandidates_ne : binaryCandidates ≠ [] := by
   simp [binaryCandidates]
@@ -250,10 +250,10 @@ private theorem binaryCandidates_ne : binaryCandidates ≠ [] := by
     (`all_strategies_use_minimal`) is DERIVED, not stipulated.
     It follows from the interaction of two independently motivated
     constraints (ToD from politeness, MP! from presupposition theory)
-    evaluated over the `PrivativePair` structure from [harbour-2016]. -/
+    evaluated over the `ContainmentPair` structure from [harbour-2016]. -/
 theorem tod_mp_selects_minimal :
     (mkTableau binaryCandidates [todConstraint, mpConstraint]
-      binaryCandidates_ne).optimal = {PrivativePair.minimal} := by
+      binaryCandidates_ne).optimal = {ContainmentPair.minimal} := by
   native_decide
 
 /-- Converse: MP! >> ToD selects the maximal (marked) cell.
@@ -261,7 +261,7 @@ theorem tod_mp_selects_minimal :
     This is the standard Maximize Presupposition from [heim-1991]. -/
 theorem mp_tod_selects_maximal :
     (mkTableau binaryCandidates [mpConstraint, todConstraint]
-      binaryCandidates_ne).optimal = {PrivativePair.maximal} := by
+      binaryCandidates_ne).optimal = {ContainmentPair.maximal} := by
   native_decide
 
 /-- The optimal candidate under ToD >> MP! is semantically unmarked. -/
@@ -304,7 +304,7 @@ The factorial typology over {SToD, WToD, MP!} with candidates
 -/
 
 /-- Ternary candidate set: {maximal, intermediate, minimal}. -/
-def ternaryCandidates : List PrivativePair :=
+def ternaryCandidates : List ContainmentPair :=
   [.maximal, .intermediate, .minimal]
 
 private theorem ternaryCandidates_ne : ternaryCandidates ≠ [] := by
@@ -313,16 +313,16 @@ private theorem ternaryCandidates_ne : ternaryCandidates ≠ [] := by
 /-- Weak ToD: penalizes only the most marked form (specLevel = max).
     Tolerates intermediate marking, unlike `todConstraint` which
     penalizes all marked forms proportionally. -/
-def wtodConstraint : NamedConstraint PrivativePair :=
+def wtodConstraint : NamedConstraint ContainmentPair :=
   { name := "WToD"
   , family := .markedness
   , eval := fun c =>
-      if presupStrength c == PrivativePair.maximal.specLevel then 1 else 0 }
+      if presupStrength c == ContainmentPair.maximal.specLevel then 1 else 0 }
 
 /-- SToD has the same eval function as todConstraint: both penalize
     by `presupStrength`. The ternary case uses `todConstraint` directly
     rather than defining a separate `stodConstraint`. -/
-theorem stod_eval_eq_tod (c : PrivativePair) :
+theorem stod_eval_eq_tod (c : ContainmentPair) :
     todConstraint.eval c = presupStrength c := rfl
 
 /-- WToD >> MP! >> SToD selects the intermediate (dual) cell.
@@ -330,7 +330,7 @@ theorem stod_eval_eq_tod (c : PrivativePair) :
 theorem wtod_mp_stod_selects_dual :
     (mkTableau ternaryCandidates
       [wtodConstraint, mpConstraint, todConstraint]
-      ternaryCandidates_ne).optimal = {PrivativePair.intermediate} := by
+      ternaryCandidates_ne).optimal = {ContainmentPair.intermediate} := by
   native_decide
 
 /-- SToD >> MP! >> WToD selects the minimal (plural) cell.
@@ -338,7 +338,7 @@ theorem wtod_mp_stod_selects_dual :
 theorem stod_mp_wtod_selects_plural :
     (mkTableau ternaryCandidates
       [todConstraint, mpConstraint, wtodConstraint]
-      ternaryCandidates_ne).optimal = {PrivativePair.minimal} := by
+      ternaryCandidates_ne).optimal = {ContainmentPair.minimal} := by
   native_decide
 
 /-- MP! >> SToD >> WToD selects the maximal (singular) cell.
@@ -346,7 +346,7 @@ theorem stod_mp_wtod_selects_plural :
 theorem mp_stod_wtod_selects_singular :
     (mkTableau ternaryCandidates
       [mpConstraint, todConstraint, wtodConstraint]
-      ternaryCandidates_ne).optimal = {PrivativePair.maximal} := by
+      ternaryCandidates_ne).optimal = {ContainmentPair.maximal} := by
   native_decide
 
 /-- Factorial typology: {SToD (= todConstraint), WToD, MP!} with 3
@@ -363,9 +363,9 @@ theorem no_unattested_ternary_pattern :
     (mkFactorialOptima ternaryCandidates
       [todConstraint, wtodConstraint, mpConstraint]
       ternaryCandidates_ne).all
-    (fun opt => opt == {PrivativePair.maximal} ||
-                opt == {PrivativePair.intermediate} ||
-                opt == {PrivativePair.minimal}) = true := by
+    (fun opt => opt == {ContainmentPair.maximal} ||
+                opt == {ContainmentPair.intermediate} ||
+                opt == {ContainmentPair.minimal}) = true := by
   native_decide
 
 -- ============================================================================
@@ -397,7 +397,7 @@ locus, embeddability) is orthogonal — [iHON] may play a role in the
     3. All attested strategies target the minimal cell -/
 theorem ihon_redundant_for_recruitment :
     (mkTableau binaryCandidates [todConstraint, mpConstraint]
-      binaryCandidates_ne).optimal = {PrivativePair.minimal} ∧
+      binaryCandidates_ne).optimal = {ContainmentPair.minimal} ∧
     isSemanticUnmarked .minimal = true ∧
     (∀ s : HonStrategy, honStrategyCell s = .minimal) :=
   ⟨by native_decide, rfl, fun s => by cases s <;> rfl⟩
@@ -431,13 +431,13 @@ section DomainBridges
     which is `plSem` — the PrProp with vacuous presupposition.
     `pl_is_minimal_cell` (PhiFeatures) proves `pluralF` maps to `.minimal`. -/
 theorem plural_strategy_is_plSem :
-    honStrategyCell .plural = PhiFeatures.toPair Features.Number.pluralF :=
+    honStrategyCell .plural = ContainmentPairLike.toPair Features.Number.pluralF :=
   rfl
 
 /-- The 3rd-person strategy targets the minimal PERSON cell,
     which is `thirdSem` — the PrProp with vacuous presupposition. -/
 theorem thirdPerson_strategy_is_third :
-    honStrategyCell .thirdPerson = PhiFeatures.toPair Features.Person.thirdF :=
+    honStrategyCell .thirdPerson = ContainmentPairLike.toPair Features.Person.thirdF :=
   rfl
 
 /-- Both strategies target cells whose presuppositional denotations
@@ -487,7 +487,7 @@ end AllocutiveBridges
 
 The binary-case theorem (`tod_mp_selects_minimal`) uses `native_decide` over
 a fixed 2-element candidate set. Here we prove the **general** result: for
-ANY non-empty set of well-formed `PrivativePair` candidates that includes
+ANY non-empty set of well-formed `ContainmentPair` candidates that includes
 `.minimal`, ToD >> MP! selects `.minimal` as the unique winner.
 
 This is the structural backbone of [wang-r-2023]'s analysis: the
@@ -508,11 +508,11 @@ open Core.Constraint.Evaluation (Tableau buildViolationProfile)
 
 /-- Every optimal candidate under ToD >> MP! is `.minimal`. The proof:
     `optimal_zero_first` gives `todConstraint.eval c = 0`, i.e.
-    `presupStrength c = 0`. A case split on `PrivativePair`'s fields
+    `presupStrength c = 0`. A case split on `ContainmentPair`'s fields
     shows `.minimal` is the only well-formed cell with specLevel 0. -/
-theorem tod_mp_only_minimal (candidates : List PrivativePair)
-    (hWF : ∀ c ∈ candidates, c.wellFormed = true)
-    (hMin : PrivativePair.minimal ∈ candidates)
+theorem tod_mp_only_minimal (candidates : List ContainmentPair)
+    (hWF : ∀ c ∈ candidates, c.WellFormed)
+    (hMin : ContainmentPair.minimal ∈ candidates)
     (hNE : candidates ≠ []) :
     ∀ c ∈ (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal,
       c = .minimal := by
@@ -520,18 +520,17 @@ theorem tod_mp_only_minimal (candidates : List PrivativePair)
   have hZero := mkTableau_optimal_zero_first candidates todConstraint [mpConstraint] hNE
     ⟨.minimal, hMin, rfl⟩ c hc
   have hcWF := hWF c (mkTableau_optimal_mem candidates _ hNE c hc)
-  cases c with | mk o i =>
-  cases o <;> cases i
+  rcases ContainmentPair.classification c hcWF with rfl | rfl | rfl
+  · exact absurd hZero (by decide)
+  · exact absurd hZero (by decide)
   · rfl
-  all_goals simp_all [PrivativePair.wellFormed, todConstraint, presupStrength,
-                       PrivativePair.specLevel, Bool.toNat]
 
 /-- `.minimal` is in the optimal set: its profile `[0, maxSpec]` is
     lexicographically ≤ every profile `[k, maxSpec - k]` for k : Nat. -/
-theorem tod_mp_minimal_is_optimal (candidates : List PrivativePair)
-    (hMin : PrivativePair.minimal ∈ candidates)
+theorem tod_mp_minimal_is_optimal (candidates : List ContainmentPair)
+    (hMin : ContainmentPair.minimal ∈ candidates)
     (hNE : candidates ≠ []) :
-    PrivativePair.minimal ∈
+    ContainmentPair.minimal ∈
       (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal := by
   rw [Tableau.mem_optimal_iff]
   refine ⟨List.mem_toFinset.mpr hMin, fun c' _ => ?_⟩
@@ -541,11 +540,11 @@ theorem tod_mp_minimal_is_optimal (candidates : List PrivativePair)
   apply not_lt.mp
   intro ⟨i, hlt_eq, hlt⟩
   -- i is the first position where c' < minimal; all j < i have c' j = minimal j
-  have h0 : todConstraint.eval PrivativePair.minimal = 0 := rfl
-  have h2 : mpConstraint.eval PrivativePair.minimal = 2 := rfl
+  have h0 : todConstraint.eval ContainmentPair.minimal = 0 := rfl
+  have h2 : mpConstraint.eval ContainmentPair.minimal = 2 := rfl
   -- `toLex f i` reduces to `f i` definitionally
   change ([todConstraint, mpConstraint].get i).eval c' <
-         ([todConstraint, mpConstraint].get i).eval PrivativePair.minimal at hlt
+         ([todConstraint, mpConstraint].get i).eval ContainmentPair.minimal at hlt
   match i with
   | ⟨0, _⟩ =>
     -- i = 0: c'.eval < minimal.eval on ToD, but minimal has 0 violations
@@ -555,13 +554,13 @@ theorem tod_mp_minimal_is_optimal (candidates : List PrivativePair)
     -- i = 1: c' agrees on constraint 0, has fewer on constraint 1
     have hc'_tod : todConstraint.eval c' = 0 := by
       have := hlt_eq ⟨0, Nat.zero_lt_succ _⟩ (show (⟨0, _⟩ : Fin 2) < ⟨1, _⟩ from Nat.zero_lt_one)
-      change todConstraint.eval c' = todConstraint.eval PrivativePair.minimal at this
+      change todConstraint.eval c' = todConstraint.eval ContainmentPair.minimal at this
       simp [h0] at this; exact this
     have hc'_mp : mpConstraint.eval c' = 2 := by
       simp only [mpConstraint, todConstraint, presupStrength] at hc'_tod ⊢
-      simp only [PrivativePair.spec_maximal]; omega
+      simp only [ContainmentPair.spec_maximal]; omega
     simp only [List.get] at hlt
-    change mpConstraint.eval c' < mpConstraint.eval PrivativePair.minimal at hlt
+    change mpConstraint.eval c' < mpConstraint.eval ContainmentPair.minimal at hlt
     rw [hc'_mp, h2] at hlt
     exact lt_irrefl _ hlt
 
@@ -571,11 +570,11 @@ theorem tod_mp_minimal_is_optimal (candidates : List PrivativePair)
     core result — the recruitment of semantically unmarked values is a
     necessary consequence of presuppositional competition under ToD
     dominance, regardless of candidate set size or composition. -/
-theorem tod_mp_general (candidates : List PrivativePair)
-    (hWF : ∀ c ∈ candidates, c.wellFormed = true)
-    (hMin : PrivativePair.minimal ∈ candidates)
+theorem tod_mp_general (candidates : List ContainmentPair)
+    (hWF : ∀ c ∈ candidates, c.WellFormed)
+    (hMin : ContainmentPair.minimal ∈ candidates)
     (hNE : candidates ≠ []) :
-    PrivativePair.minimal ∈
+    ContainmentPair.minimal ∈
       (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal ∧
     ∀ c ∈ (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal,
       c = .minimal :=
@@ -585,17 +584,17 @@ theorem tod_mp_general (candidates : List PrivativePair)
 end GeneralTheorem
 
 -- ============================================================================
--- §8  HonLevel ↔ PrivativePair Bridge
+-- §8  HonLevel ↔ ContainmentPair Bridge
 -- ============================================================================
 
 /-!
-## §8: HonLevel ↔ PrivativePair Bridge
+## §8: HonLevel ↔ ContainmentPair Bridge
 
 [alok-bhalla-2026]'s `HonLevel` (nh/h/hh) is isomorphic to
-`PrivativePair` (minimal/intermediate/maximal). This `PhiFeatures`
-instance makes the correspondence structural: `HonLevel` inherits
-`specLevel`, `wellFormed`, `no_four_way`, and all presuppositional
-machinery from `PrivativePair` by construction.
+`ContainmentPair` (minimal/intermediate/maximal). This
+`ContainmentPairLike` instance makes the correspondence structural:
+`HonLevel` inherits `specLevel`, `WellFormed`, `no_four_way`, and all
+presuppositional machinery from `ContainmentPair` by construction.
 
 The mapping:
 - `nh`  ↔ `.minimal`       (specLevel 0 — unmarked, weakest presupposition)
@@ -603,7 +602,7 @@ The mapping:
 - `hh`  ↔ `.maximal`       (specLevel 2 — most marked, strongest presupposition)
 
 This makes `ihon_redundant_for_recruitment` structurally precise:
-`HonLevel` values are literally `PrivativePair` cells, so the
+`HonLevel` values are literally `ContainmentPair` cells, so the
 `tod_mp_general` result from §7 applies directly to `HonLevel`
 candidates.
 -/
@@ -612,72 +611,71 @@ section HonLevelBridge
 
 open Minimalist (HonLevel)
 
-instance : PhiFeatures HonLevel where
+instance : ContainmentPairLike HonLevel where
   toPair
     | .nh => .minimal
     | .h  => .intermediate
     | .hh => .maximal
-  ofPair
-    | ⟨true, true⟩  => .hh
-    | ⟨true, false⟩ => .h
-    | ⟨false, _⟩    => .nh
-  roundtrip a := by cases a <;> rfl
+  toPair_injective a b h := by
+    cases a <;> cases b <;>
+      simp_all [ContainmentPair.minimal, ContainmentPair.intermediate,
+        ContainmentPair.maximal]
 
-/-- All `HonLevel` values are well-formed as `PrivativePair` cells. -/
-theorem honLevel_all_wellFormed : ∀ l : HonLevel, PhiFeatures.wellFormed l = true :=
-  fun l => by cases l <;> rfl
+/-- All `HonLevel` values are well-formed as `ContainmentPair` cells. -/
+theorem honLevel_all_wellFormed : ∀ l : HonLevel, ContainmentPairLike.WellFormed l :=
+  fun l => by cases l <;> decide
 
 /-- `specLevel` values: nh = 0, h = 1, hh = 2. -/
 theorem honLevel_specLevel :
-    PhiFeatures.specLevel HonLevel.nh = 0 ∧
-    PhiFeatures.specLevel HonLevel.h = 1 ∧
-    PhiFeatures.specLevel HonLevel.hh = 2 :=
+    ContainmentPairLike.specLevel HonLevel.nh = 0 ∧
+    ContainmentPairLike.specLevel HonLevel.h = 1 ∧
+    ContainmentPairLike.specLevel HonLevel.hh = 2 :=
   ⟨rfl, rfl, rfl⟩
 
 /-- `nh` maps to `.minimal` — the cell ToD selects. -/
-theorem nh_maps_to_minimal : PhiFeatures.toPair HonLevel.nh = PrivativePair.minimal := rfl
+theorem nh_maps_to_minimal : ContainmentPairLike.toPair HonLevel.nh = ContainmentPair.minimal := rfl
 
 /-- `hh` maps to `.maximal` — the cell MP! selects. -/
-theorem hh_maps_to_maximal : PhiFeatures.toPair HonLevel.hh = PrivativePair.maximal := rfl
+theorem hh_maps_to_maximal : ContainmentPairLike.toPair HonLevel.hh = ContainmentPair.maximal := rfl
 
 /-- The `HonLevel → specLevel` map is injective: distinct levels have
     distinct specification levels. This means the 3-way honorific distinction
-    saturates the `PrivativePair` structure — no finer distinctions are possible. -/
+    saturates the `ContainmentPair` structure — no finer distinctions are possible. -/
 theorem honLevel_specLevel_injective :
-    ∀ a b : HonLevel, PhiFeatures.specLevel a = PhiFeatures.specLevel b → a = b :=
-  fun a b h => by cases a <;> cases b <;> first | rfl | (simp [PhiFeatures.specLevel,
-    PhiFeatures.toPair, PrivativePair.specLevel, PrivativePair.maximal,
-    PrivativePair.intermediate, PrivativePair.minimal] at h)
+    ∀ a b : HonLevel, ContainmentPairLike.specLevel a = ContainmentPairLike.specLevel b → a = b :=
+  fun a b h => by cases a <;> cases b <;> first | rfl | (simp [ContainmentPairLike.specLevel,
+    ContainmentPairLike.toPair, ContainmentPair.specLevel, ContainmentPair.maximal,
+    ContainmentPair.intermediate, ContainmentPair.minimal] at h)
 
 /-- `HonLevel` is **fully discriminatory**: distinct levels ↔ distinct specLevels.
     The forward direction (`≠ → specLevel ≠`) is the contrapositive of injectivity;
     the reverse (`specLevel ≠ → ≠`) is trivial. -/
 theorem honLevel_eq_discriminatory_power :
-    ∀ a b : HonLevel, a ≠ b ↔ PhiFeatures.specLevel a ≠ PhiFeatures.specLevel b :=
+    ∀ a b : HonLevel, a ≠ b ↔ ContainmentPairLike.specLevel a ≠ ContainmentPairLike.specLevel b :=
   fun a b => ⟨fun h heq => h (honLevel_specLevel_injective a b heq),
-              fun h heq => h (congrArg PhiFeatures.specLevel heq)⟩
+              fun h heq => h (congrArg ContainmentPairLike.specLevel heq)⟩
 
-/-- **Structural [iHON] eliminability.** The `PhiFeatures HonLevel`
+/-- **Structural [iHON] eliminability.** The `ContainmentPairLike HonLevel`
     instance means `tod_mp_general` applies directly to `HonLevel`
     candidates (via `toPair`): ToD >> MP! selects `nh` (= `.minimal`)
     as the unique winner whenever `nh` is among the candidates.
 
     Combined with `ihon_redundant_for_recruitment`, this shows [iHON]
     is not just empirically redundant but *structurally* so: `HonLevel`
-    IS `PrivativePair`, and `PrivativePair` + ToD already determines
+    IS `ContainmentPair`, and `ContainmentPair` + ToD already determines
     the recruitment pattern. -/
 theorem ihon_structurally_redundant :
-    -- (1) HonLevel is a PrivativePair instance
-    PhiFeatures.toPair HonLevel.nh = .minimal ∧
-    PhiFeatures.toPair HonLevel.hh = .maximal ∧
+    -- (1) HonLevel is a ContainmentPair instance
+    ContainmentPairLike.toPair HonLevel.nh = .minimal ∧
+    ContainmentPairLike.toPair HonLevel.hh = .maximal ∧
     -- (2) All HonLevel values are well-formed
-    (∀ l : HonLevel, PhiFeatures.wellFormed l = true) ∧
+    (∀ l : HonLevel, ContainmentPairLike.WellFormed l) ∧
     -- (3) tod_mp_general applies: nh wins under ToD >> MP!
-    (∀ (candidates : List PrivativePair)
-       (_ : ∀ c ∈ candidates, c.wellFormed = true)
-       (_ : PrivativePair.minimal ∈ candidates)
+    (∀ (candidates : List ContainmentPair)
+       (_ : ∀ c ∈ candidates, c.WellFormed)
+       (_ : ContainmentPair.minimal ∈ candidates)
        (hNE : candidates ≠ []),
-       PrivativePair.minimal ∈
+       ContainmentPair.minimal ∈
          (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal ∧
        ∀ c ∈ (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal,
          c = .minimal) :=

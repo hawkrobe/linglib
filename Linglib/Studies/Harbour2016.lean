@@ -227,32 +227,32 @@ features *share*: both are **operations** (not predicates), both are **bivalent*
 both have **freely-ordered composition**. It is **not** a `1 ↔ sg` / `2 ↔ du` / `3 ↔ pl`
 identification — §9.5.1 stresses that the two families' values *denote differently*
 (person's `±` are `⊕`/`⊖` on the person lattices; number's `+` is the identity map and
-`−` a type-flexible `¬`). What they share at the level of the abstract `PrivativePair`
+`−` a type-flexible `¬`). What they share at the level of the abstract `ContainmentPair`
 carrier is the **containment hierarchy**: the person hierarchy `1 > 2 > 3` and the number
 hierarchy `sg > du > pl` are both the specification ordering `maximal > intermediate >
 minimal`. -/
 
-open Features (PhiFeatures)
+open Features (ContainmentPairLike)
 open Features.Number (singularF dualF pluralF)
 
-/-- The person hierarchy `1 > 2 > 3` is the specification ordering of `PrivativePair`
+/-- The person hierarchy `1 > 2 > 3` is the specification ordering of `ContainmentPair`
 (maximal > intermediate > minimal), connecting [harbour-2016]'s lattice approach to the
 hierarchy in [bejar-rezac-2009]'s Cyclic Agree and [preminger-2014]'s relativized
 probing. -/
 theorem person_hierarchy_is_spec_ordering :
-    PhiFeatures.specLevel Features.Person.firstF >
-      PhiFeatures.specLevel Features.Person.secondF ∧
-    PhiFeatures.specLevel Features.Person.secondF >
-      PhiFeatures.specLevel Features.Person.thirdF :=
-  PhiFeatures.specLevel_strict_order Features.Person.firstF_is_maximal
+    ContainmentPairLike.specLevel Features.Person.firstF >
+      ContainmentPairLike.specLevel Features.Person.secondF ∧
+    ContainmentPairLike.specLevel Features.Person.secondF >
+      ContainmentPairLike.specLevel Features.Person.thirdF :=
+  ContainmentPairLike.specLevel_strict_order Features.Person.firstF_is_maximal
     Features.Person.secondF_is_intermediate Features.Person.thirdF_is_minimal
 
 /-- The number hierarchy `sg > du > pl` is the *same* specification ordering — the
 structural reflection of the phi kernel, not an identification of the categories. -/
 theorem number_hierarchy_is_spec_ordering :
-    PhiFeatures.specLevel singularF > PhiFeatures.specLevel dualF ∧
-    PhiFeatures.specLevel dualF > PhiFeatures.specLevel pluralF :=
-  PhiFeatures.specLevel_strict_order Features.Number.singular_is_maximal
+    ContainmentPairLike.specLevel singularF > ContainmentPairLike.specLevel dualF ∧
+    ContainmentPairLike.specLevel dualF > ContainmentPairLike.specLevel pluralF :=
+  ContainmentPairLike.specLevel_strict_order Features.Number.singular_is_maximal
     Features.Number.dual_is_intermediate Features.Number.plural_is_minimal
 
 /-! ### Bridge to Cyclic Agree ([bejar-rezac-2009]) -/
@@ -260,13 +260,13 @@ theorem number_hierarchy_is_spec_ordering :
 open Minimalist.CyclicAgree (personSpec)
 open Features.Prominence (PersonLevel)
 
-/-- The person hierarchy from `PrivativePair.specLevel` agrees with the segment-count
+/-- The person hierarchy from `ContainmentPair.specLevel` agrees with the segment-count
 hierarchy of [bejar-rezac-2009]'s Cyclic Agree: in the standard geometry, `specLevel + 1
 = segment count` (1st: 2/[π, participant, speaker]; 2nd: 1/[π, participant]; 3rd: 0/[π]).
 The person hierarchy is *one* hierarchy in two formalizations — featural (spec level) and
 configurational (probe depth). -/
 theorem specLevel_agrees_with_segments (p : PersonLevel) :
-    PhiFeatures.specLevel p.toFeatures + 1 = (personSpec .standard p).length := by
+    ContainmentPairLike.specLevel p.toFeatures + 1 = (personSpec .standard p).length := by
   cases p <;> rfl
 
 /-! ### Bridge to Corbett (2000): attested number systems are generable ([harbour-2014])

@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.PrivativePair
+import Linglib.Features.ContainmentPair
 
 /-!
 # Number
@@ -24,7 +24,12 @@ values organized along two orthogonal dimensions:
 These features form a containment hierarchy: [+atomic] → [+minimal].
 An atom is necessarily a minimal element of any lattice region it belongs to.
 
-This containment parallels person features: [+author] → [+participant].
+This containment parallels person features ([+author] → [+participant]),
+but with an asymmetry worth marking: number's filter is a *theorem* of the
+lattice semantics (§8 — atoms are minimal; [harbour-2016] ch. 9.5 notes the
+odd cooccurrence is contradictory for `±atomic` "by the logic of the
+system"), whereas person's filter is a descriptive convention the same
+chapter rejects. See `Features/ContainmentPair.lean`.
 
 The three well-formed combinations yield the three basic number values:
 - **singular**: [+atomic, +minimal] — atoms (singletons)
@@ -194,26 +199,22 @@ theorem roundtrip_fromUD_toUD :
 -- § 4: Number Features
 -- ============================================================================
 
-/-- Binary number features: [±atomic, ±minimal].
+/-- Bivalent number features: [±atomic, ±minimal].
 
     These two features suffice for the three basic number distinctions:
     - singular: [+atomic, +minimal]
     - dual:     [−atomic, +minimal]
     - plural:   [−atomic, −minimal]
 
-    The fourth combination [+atomic, −minimal] is ill-formed:
-    an atom is necessarily a minimal element of any lattice region. -/
+    The fourth combination [+atomic, −minimal] is cut by the containment
+    filter (`WellFormed`): an atom is necessarily a minimal element of any
+    lattice region (a theorem of the semantics — §8). -/
 structure Features where
   /-- [+atomic]: referent is an atom (singleton individual). -/
   isAtomic : Bool
   /-- [+minimal]: referent is a minimal element of the relevant lattice region. -/
   isMinimal : Bool
-  deriving DecidableEq, Repr
-
-/-- Well-formedness: [+atomic] → [+minimal].
-    An atom (singleton) is necessarily a minimal element. -/
-def Features.wellFormed (nf : Features) : Bool :=
-  !nf.isAtomic || nf.isMinimal
+  deriving DecidableEq, Repr, Fintype
 
 /-- Singular features: [+atomic, +minimal]. -/
 def singularF : Features := ⟨true, true⟩
@@ -253,55 +254,63 @@ def Features.fromCategory : Category → Option Features
   | _         => none
 
 -- ============================================================================
--- § 6: PhiFeatures Instance
+-- § 6: ContainmentPair Presentation
 -- ============================================================================
 
-/-- Number features are a `PhiFeatures` instance:
-    outer = isMinimal, inner = isAtomic.
+/-- The `[±atomic, ±minimal]` decomposition is carrier-equivalent to the
+containment pair: `outer` = minimal, `inner` = atomic. The containment
+[+atomic] → [+minimal] maps to [+inner] → [+outer], unifying the structure
+with person features — one edge of the φ-feature iso-web
+(`Features/PhiKernel.lean`). -/
+def featuresEquiv : Features ≃ ContainmentPair where
+  toFun f := ⟨f.isMinimal, f.isAtomic⟩
+  invFun p := ⟨p.inner, p.outer⟩
+  left_inv := fun ⟨_, _⟩ => rfl
+  right_inv := fun ⟨_, _⟩ => rfl
 
-    The containment [+atomic] → [+minimal] maps to PrivativePair's
-    [+inner] → [+outer], unifying the structure with person features.
-    All shared properties are inherited by construction. -/
-instance : Features.PhiFeatures Features where
-  toPair f := ⟨f.isMinimal, f.isAtomic⟩
-  ofPair p := ⟨p.inner, p.outer⟩
-  roundtrip := fun ⟨_, _⟩ => rfl
+instance : ContainmentPairLike Features := .ofEquiv featuresEquiv
 
-/-- The three canonical number values map to the three PrivativePair cells. -/
-@[simp] theorem singular_is_maximal : PhiFeatures.toPair singularF = .maximal := rfl
-@[simp] theorem dual_is_intermediate : PhiFeatures.toPair dualF = .intermediate := rfl
-@[simp] theorem plural_is_minimal : PhiFeatures.toPair pluralF = .minimal := rfl
+/-- The three canonical number values land on the three well-formed cells. -/
+@[simp] theorem singular_is_maximal :
+    ContainmentPairLike.toPair singularF = .maximal := rfl
+@[simp] theorem dual_is_intermediate :
+    ContainmentPairLike.toPair dualF = .intermediate := rfl
+@[simp] theorem plural_is_minimal :
+    ContainmentPairLike.toPair pluralF = .minimal := rfl
 
-/-- The `[±atomic, ±minimal]` decomposition **is** the privative pair: an equivalence
-`Features ≃ PrivativePair` (the number half of [harbour-2016]'s phi-kernel skeleton). -/
-def featuresEquiv : Features ≃ PrivativePair :=
-  PhiFeatures.toEquiv fun p => by cases p; rfl
+/-- Well-formedness: [+atomic] → [+minimal] — an atom is necessarily a
+    minimal element. Inherited from `ContainmentPair.WellFormed` through
+    the presentation; for number this filter is a theorem of the lattice
+    semantics (§8), not a stipulation. -/
+abbrev Features.WellFormed (nf : Features) : Prop :=
+  ContainmentPairLike.WellFormed nf
 
-/-- No 4-way base number distinction (inherited from `PhiFeatures`). -/
+/-- No 4-way base number distinction (inherited from
+    `ContainmentPairLike.no_four_way`). -/
 theorem no_fourth_base_number :
     ∀ (a b c d : Features),
-      a.wellFormed = true → b.wellFormed = true →
-      c.wellFormed = true → d.wellFormed = true →
+      a.WellFormed → b.WellFormed → c.WellFormed → d.WellFormed →
       a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False :=
   fun a b c d ha hb hc hd =>
-    Features.PhiFeatures.no_four_way a b c d ha hb hc hd
+    ContainmentPairLike.no_four_way a b c d ha hb hc hd
 
 -- ============================================================================
 -- § 7: Features Verification
 -- ============================================================================
 
-@[simp] theorem singular_wellFormed : singularF.wellFormed = true := rfl
-@[simp] theorem dual_wellFormed : dualF.wellFormed = true := rfl
-@[simp] theorem plural_wellFormed : pluralF.wellFormed = true := rfl
+@[simp] theorem singular_wellFormed : singularF.WellFormed := by decide
+@[simp] theorem dual_wellFormed : dualF.WellFormed := by decide
+@[simp] theorem plural_wellFormed : pluralF.WellFormed := by decide
 
-/-- The ill-formed combination [+atomic, −minimal] is the only
-    combination that violates well-formedness. -/
-theorem illFormed_only : (⟨true, false⟩ : Features).wellFormed = false := rfl
+/-- The filtered combination [+atomic, −minimal] is the only one that
+    violates containment. -/
+theorem illFormed_only : ¬ (⟨true, false⟩ : Features).WellFormed := by decide
 
-/-- There are exactly 3 well-formed feature combinations (= 3 base numbers). -/
-theorem exactly_three_wellFormed :
-    ([⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩].filter
-      Features.wellFormed).length = 3 := by decide
+/-- Exactly 3 well-formed feature combinations (= 3 base numbers) — the
+    carrier count of the containment chain
+    (`ContainmentPair.card_wellFormed`). -/
+theorem card_wellFormed :
+    Fintype.card {nf : Features // nf.WellFormed} = 3 := by decide
 
 /-- Round-trip: fromCategory ∘ toCategory = some for all well-formed features. -/
 theorem roundtrip_fromCategory_toCategory :
@@ -309,17 +318,14 @@ theorem roundtrip_fromCategory_toCategory :
       (λ f => f.toCategory.bind Features.fromCategory == some f) = true := by
   decide
 
-/-- toCategory returns none for the ill-formed bundle. -/
+/-- toCategory returns none for the filtered bundle. -/
 theorem illFormed_toCategory_none :
     (⟨true, false⟩ : Features).toCategory = none := rfl
 
 /-- Containment: [+atomic] → [+minimal] for all well-formed features. -/
-theorem atomic_implies_minimal (f : Features) (hw : f.wellFormed = true) :
-    f.isAtomic = true → f.isMinimal = true := by
-  intro ha
-  simp [Features.wellFormed] at hw
-  simp [ha] at hw
-  exact hw
+theorem atomic_implies_minimal :
+    ∀ f : Features, f.WellFormed → f.isAtomic = true → f.isMinimal = true := by
+  decide
 
 -- ============================================================================
 -- § 8: Lattice-Theoretic Grounding
@@ -387,13 +393,13 @@ def latticeToFeatures {D : Type} [DecidableEq D]
     Every branch of `latticeToFeatures` produces a well-formed bundle. -/
 theorem latticeToFeatures_wellFormed {D : Type} [DecidableEq D]
     (join : D → D → D) (domain : List D) (x : D) :
-    (latticeToFeatures join domain x).wellFormed = true := by
+    (latticeToFeatures join domain x).WellFormed := by
   simp only [latticeToFeatures]
   split
-  · rfl
+  · exact singular_wellFormed
   · split
-    · rfl
-    · rfl
+    · exact dual_wellFormed
+    · exact plural_wellFormed
 
 /-- Powerset lattice with 2 atoms: {0}=1, {1}=2, {0,1}=3. -/
 private def ps2Domain : List Nat := [1, 2, 3]

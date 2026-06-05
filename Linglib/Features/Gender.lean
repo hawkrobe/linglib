@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.PrivativePair
+import Linglib.Features.ContainmentPair
 
 /-!
 # Surface Gender
@@ -92,34 +92,30 @@ The three well-formed combinations yield the three gender values:
 - **masculine**: [−feminine, −neuter] — minimal (vacuous/default)
 
 This parallels person [±author] ⊂ [±participant] and number
-[±atomic] ⊂ [±minimal]. All three are instances of `PhiFeatures`.
+[±atomic] ⊂ [±minimal]. All three are `ContainmentPairLike` presentations
+of the same containment skeleton (`Features/ContainmentPair.lean`).
 
 For the morphosyntactic (DM) analysis, see
 `Morphology.DM.Categorizer.GenderFeature`. -/
 
 namespace Gender
 
-/-- Binary gender features: [±feminine, ±neuter].
+/-- Bivalent gender features: [±feminine, ±neuter].
 
     These two features suffice for the three-way gender distinction:
     - neuter:    [+feminine, +neuter]
     - feminine:  [+feminine, −neuter]
     - masculine: [−feminine, −neuter]
 
-    The fourth combination [−feminine, +neuter] is ill-formed:
-    a neuter entity necessarily triggers feminine agreement
-    ([+neuter] → [+feminine] in the feature geometry). -/
+    The fourth combination [−feminine, +neuter] is cut by the containment
+    filter (`WellFormed`): a neuter entity necessarily triggers feminine
+    agreement ([+neuter] → [+feminine] in the feature geometry). -/
 structure Features where
   /-- [+feminine]: referent triggers feminine (or neuter) agreement. -/
   isFeminine : Bool
   /-- [+neuter]: referent triggers neuter agreement. -/
   isNeuter : Bool
-  deriving DecidableEq, Repr
-
-/-- Well-formedness: [+neuter] → [+feminine].
-    Neuter entails feminine in the feature geometry. -/
-def Features.wellFormed (gf : Features) : Bool :=
-  !gf.isNeuter || gf.isFeminine
+  deriving DecidableEq, Repr, Fintype
 
 /-- Neuter features: [+feminine, +neuter]. -/
 def neuterF : Features := ⟨true, true⟩
@@ -130,51 +126,59 @@ def feminineF : Features := ⟨true, false⟩
 /-- Masculine features: [−feminine, −neuter]. -/
 def masculineF : Features := ⟨false, false⟩
 
-/-- Gender features are a `PhiFeatures` instance:
-    outer = isFeminine, inner = isNeuter.
+/-- The `[±feminine, ±neuter]` decomposition is carrier-equivalent to the
+containment pair: `outer` = feminine, `inner` = neuter. The containment
+[+neuter] → [+feminine] maps to [+inner] → [+outer], unifying the
+structure with person and number — one edge of the φ-feature iso-web
+(`Features/PhiKernel.lean`). -/
+def featuresEquiv : Features ≃ ContainmentPair where
+  toFun f := ⟨f.isFeminine, f.isNeuter⟩
+  invFun p := ⟨p.outer, p.inner⟩
+  left_inv := fun ⟨_, _⟩ => rfl
+  right_inv := fun ⟨_, _⟩ => rfl
 
-    The containment [+neuter] → [+feminine] maps to PrivativePair's
-    [+inner] → [+outer], unifying the structure with person and number.
-    All shared properties are inherited by construction. -/
-instance : Features.PhiFeatures Features where
-  toPair f := ⟨f.isFeminine, f.isNeuter⟩
-  ofPair p := ⟨p.outer, p.inner⟩
-  roundtrip := fun ⟨_, _⟩ => rfl
+instance : ContainmentPairLike Features := .ofEquiv featuresEquiv
 
-/-- The three canonical gender values map to the three PrivativePair cells. -/
-@[simp] theorem neuter_is_maximal : PhiFeatures.toPair neuterF = .maximal := rfl
-@[simp] theorem feminine_is_intermediate : PhiFeatures.toPair feminineF = .intermediate := rfl
-@[simp] theorem masculine_is_minimal : PhiFeatures.toPair masculineF = .minimal := rfl
+/-- The three canonical gender values land on the three well-formed cells. -/
+@[simp] theorem neuter_is_maximal :
+    ContainmentPairLike.toPair neuterF = .maximal := rfl
+@[simp] theorem feminine_is_intermediate :
+    ContainmentPairLike.toPair feminineF = .intermediate := rfl
+@[simp] theorem masculine_is_minimal :
+    ContainmentPairLike.toPair masculineF = .minimal := rfl
 
-/-- No 4-way gender distinction (inherited from `PhiFeatures`). -/
+/-- Well-formedness: [+neuter] → [+feminine] — neuter entails feminine in
+    the feature geometry. Inherited from `ContainmentPair.WellFormed`
+    through the presentation. -/
+abbrev Features.WellFormed (gf : Features) : Prop :=
+  ContainmentPairLike.WellFormed gf
+
+/-- No 4-way gender distinction (inherited from
+    `ContainmentPairLike.no_four_way`). -/
 theorem no_fourth_gender :
     ∀ (a b c d : Features),
-      a.wellFormed = true → b.wellFormed = true →
-      c.wellFormed = true → d.wellFormed = true →
+      a.WellFormed → b.WellFormed → c.WellFormed → d.WellFormed →
       a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False :=
   fun a b c d ha hb hc hd =>
-    Features.PhiFeatures.no_four_way a b c d ha hb hc hd
+    ContainmentPairLike.no_four_way a b c d ha hb hc hd
 
-@[simp] theorem neuter_wellFormed : neuterF.wellFormed = true := rfl
-@[simp] theorem feminine_wellFormed : feminineF.wellFormed = true := rfl
-@[simp] theorem masculine_wellFormed : masculineF.wellFormed = true := rfl
+@[simp] theorem neuter_wellFormed : neuterF.WellFormed := by decide
+@[simp] theorem feminine_wellFormed : feminineF.WellFormed := by decide
+@[simp] theorem masculine_wellFormed : masculineF.WellFormed := by decide
 
-/-- The ill-formed combination [−feminine, +neuter] is the only
-    combination that violates well-formedness. -/
-theorem illFormed_only : (⟨false, true⟩ : Features).wellFormed = false := rfl
+/-- The filtered combination [−feminine, +neuter] is the only one that
+    violates containment. -/
+theorem illFormed_only : ¬ (⟨false, true⟩ : Features).WellFormed := by decide
 
-/-- There are exactly 3 well-formed feature combinations (= 3 genders). -/
-theorem exactly_three_wellFormed :
-    ([⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩].filter
-      Features.wellFormed).length = 3 := by decide
+/-- Exactly 3 well-formed feature combinations (= 3 genders) — the carrier
+    count of the containment chain (`ContainmentPair.card_wellFormed`). -/
+theorem card_wellFormed :
+    Fintype.card {gf : Features // gf.WellFormed} = 3 := by decide
 
 /-- Containment: [+neuter] → [+feminine] for all well-formed features. -/
-theorem neuter_implies_feminine (f : Features) (hw : f.wellFormed = true) :
-    f.isNeuter = true → f.isFeminine = true := by
-  intro hn
-  simp [Features.wellFormed] at hw
-  simp [hn] at hw
-  exact hw
+theorem neuter_implies_feminine :
+    ∀ f : Features, f.WellFormed → f.isNeuter = true → f.isFeminine = true := by
+  decide
 
 -- ── Bridge to SurfaceGender ──
 

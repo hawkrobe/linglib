@@ -5,30 +5,38 @@ import Linglib.Features.Number
 # The Phi Kernel
 [harbour-2016]
 
-Every `Features.PhiFeatures` instance is equivalent to `PrivativePair` (`PhiFeatures.toEquiv`),
-so any two are equivalent through that hub. `phiKernelEquiv` is the person/number edge,
-`Person.Features ≃ Number.Features`; `Gender.Features`, Bantu animacy, and honorific level join
-the same web for the same reason. The maps are of feature *carriers* (the bivalent two-feature
-bundle).
+Person and number features share a carrier skeleton: each is a bivalent
+pair under containment, so `Person.Features ≃ Number.Features` through the
+`ContainmentPair` hub (`phiKernelEquiv`). `Gender.Features`, Bantu animacy,
+and honorific level join the same web via their `ContainmentPairLike`
+presentations.
 
-[harbour-2016] singles this edge out as explanatorily central and names it the **phi kernel**
-(Ch. 9); the emphasis is Harbour's, the equivalence the generic class fact. The two domains'
-feature *values* denote differently — person's `±` are the operations `⊕`/`⊖` on the person
-lattices, number's `+` the identity and `−` a type-flexible `¬` (§9.5.1) — so this equates
-carriers, not denotations.
+[harbour-2016] (ch. 9, "The Form of the Phi Kernel") draws the
+person/number parallel, but locates it elsewhere than this carrier
+equivalence: his kernel commonalities are that features denote
+*operations* richer than first-order predicates (§9.2 — order of
+composition matters), that neither order of composition nor cooccurrence
+is extrinsically constrained (§9.3–9.4), and that both families are
+*bivalent* with semantically active `−` values (§9.5: person's `±` denote
+`⊕`/`⊖` on person lattices, number's `+` the identity and `−` a
+type-flexible `¬`). That calculus lives at `Syntax/Minimalist/Phi/` and
+`Studies/Harbour2016.lean`. `phiKernelEquiv` formalizes the *descriptive*
+residue of the parallel — same two-feature containment carrier — and
+equates carriers, not denotations.
 
 ## Main declarations
 
-* `phiKernelEquiv` — `Person.Features ≃ Number.Features`, composing each domain's `featuresEquiv`
-  through the `PrivativePair` hub.
+* `phiKernelEquiv` — `Person.Features ≃ Number.Features`, composing each
+  domain's `featuresEquiv` through the `ContainmentPair` hub.
 -/
 
 namespace Features
 
-/-- Person and number feature bundles are the same privative-pair skeleton, composed through
-the `PrivativePair` hub: `1st ↔ singular`, `2nd ↔ dual`, `3rd ↔ plural`. One edge of the
-generic φ-feature iso-web; [harbour-2016] singles it out as the **phi kernel** (Ch. 9).
-Equates carriers, not denotations (§9.5.1). -/
+/-- Person and number feature carriers are the same containment-pair
+skeleton, composed through the `ContainmentPair` hub: `1st ↔ singular`,
+`2nd ↔ dual`, `3rd ↔ plural`. One edge of the φ-feature iso-web; equates
+carriers, not denotations ([harbour-2016] §9.5.1 — the two domains'
+feature values denote differently). -/
 def phiKernelEquiv : Person.Features ≃ Number.Features :=
   Person.featuresEquiv.trans Number.featuresEquiv.symm
 
