@@ -156,4 +156,18 @@ theorem dual_plural_partition (P : D → Prop) (x : D)
   · rintro ⟨hmin, -, hnmin⟩
     exact hnmin hmin
 
+/-! ### Decidability
+
+On finite carriers the feature predicates are decidable, so concrete
+classifications (`Features/Number/Decomposition.lean`) are kernel-checked
+by `decide`. -/
+
+instance {P : D → Prop} [Fintype D] [DecidableEq D] [DecidableLE D]
+    [DecidablePred P] (x : D) : Decidable (minimalIn P x) :=
+  decidable_of_iff (P x ∧ ∀ y, P y → y ≤ x → y = x) Iff.rfl
+
+instance {Q : D → Prop} [Fintype D] [DecidablePred Q] (x : D) :
+    Decidable (additiveIn Q x) :=
+  decidable_of_iff (Q x ∧ ∀ y, Q y → Q (x ⊔ y)) Iff.rfl
+
 end Number

@@ -132,43 +132,33 @@ def System.resolve (ns : System) (a b : Number) : Number :=
 
 /-! ### Lattice verification
 
-The canonical resolution is verified against a concrete 3-atom
-powerset lattice. Atoms: {a}=1, {b}=2, {c}=4. Pairs: {a,b}=3,
-{a,c}=5, {b,c}=6. Triple: {a,b,c}=7. Join = bitwise OR.
+The canonical resolution is verified against the 3-atom powerset lattice
+(`Number.ps3`: nonempty subsets of `Fin 3`, join = union).
+`Number.latticeToFeatures` classifies elements by lattice position;
+`resolve` is the union pushed through the classification. -/
 
-`Number.latticeToFeatures` classifies elements by lattice position:
-atoms → singular, minimal non-atoms → dual, non-minimal non-atoms →
-plural. -/
-
-/-- Atom 1 ⊔ Atom 2 = 3, which is dual (minimal non-atom).
+/-- Atom ⊔ atom is a pair, which is dual (minimal non-atom).
     Lattice grounding: `resolve sg sg = du`. -/
 theorem lattice_atom_join_dual :
-    latticeToFeatures bitmaskJoin ps3Domain (bitmaskJoin 1 2) = dualF := by
+    latticeToFeatures ps3 ({0} ∪ {1} : Finset (Fin 3)) = dualF := by
   decide
 
-/-- Atom 4 ⊔ Pair 3 = 7, which is plural (non-minimal non-atom).
-    Lattice grounding: `resolve sg du = trial` (plural in
-    base system, trial with recursion). -/
+/-- Atom ⊔ pair is the triple, which is plural (non-minimal non-atom).
+    Lattice grounding: `resolve sg du = trial` (plural in the base
+    system, trial with recursion). -/
 theorem lattice_atom_pair_plural :
-    latticeToFeatures bitmaskJoin ps3Domain (bitmaskJoin 4 3) = pluralF := by
+    latticeToFeatures ps3 ({2} ∪ {0, 1} : Finset (Fin 3)) = pluralF := by
   decide
 
-/-- The derived `resolve` agrees with the powerset lattice:
-    join in the concrete lattice, then classify via `latticeToFeatures`,
-    matches `resolve` applied to the classified inputs.
-
-    - atom(1) is singular, atom(2) is singular → join=3 is dual
-    - atom(1) is singular, pair(6) is dual → join=7 is plural (= trial with recursion)
-
-    This is the structural proof that `resolve` is the lattice join
-    pushed through `latticeToFeatures`, not a stipulation. -/
+/-- The derived `resolve` agrees with the powerset lattice: join in the
+    concrete lattice, then classify via `latticeToFeatures`, matches
+    `resolve` applied to the classified inputs — the structural proof
+    that `resolve` is the lattice join pushed through the
+    classification, not a stipulation. -/
 theorem lattice_grounding_agrees :
-    -- sg ⊔ sg → du: atom(1) ⊔ atom(2) = pair(3), classified as dual
-    latticeToFeatures bitmaskJoin ps3Domain (bitmaskJoin 1 2) = dualF ∧
-    -- sg ⊔ du → trial/plural: atom(4) ⊔ pair(3) = triple(7), classified as plural
-    -- (plural in the base 3-atom lattice; trial under Harbour's recursion)
-    latticeToFeatures bitmaskJoin ps3Domain (bitmaskJoin 4 3) = pluralF := by
-  decide
+    latticeToFeatures ps3 ({0} ∪ {1} : Finset (Fin 3)) = dualF ∧
+    latticeToFeatures ps3 ({2} ∪ {0, 1} : Finset (Fin 3)) = pluralF :=
+  ⟨lattice_atom_join_dual, lattice_atom_pair_plural⟩
 
 /-! ### System-dependent predictions -/
 
