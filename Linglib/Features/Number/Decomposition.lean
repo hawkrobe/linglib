@@ -1,4 +1,5 @@
 import Linglib.Features.Number.Basic
+import Linglib.Features.Number.Interp
 import Linglib.Features.ContainmentPair
 
 /-!
@@ -197,6 +198,16 @@ by a join operation and a finite domain, making the lattice-theoretic
 grounding computationally verifiable. They are the `Bool` counterparts
 of `Mereology.Atom` and minimality-in-region. -/
 
+/-! The decidable layer below mirrors the general lattice semantics of
+`Features/Number/Interp.lean` on finite, list-enumerated domains: the
+`Bool`-valued `isAtom` is domain-relative minimality (`Number.minimalIn
+(· ∈ domain)` — `isAtom_iff_minimalIn`), `isMinimalNonAtom` mirrors
+minimality over the non-atoms (`isMinimalNonAtom_iff_minimalIn`), and
+`isJoinCompleteIn` mirrors `Number.additiveIn`
+(`isJoinCompleteIn_iff_additiveIn`). `Interp`'s `Mereology.Atom` is
+global minimality; the two agree when the domain enumerates a
+downward-closed region of `D⁺`. -/
+
 /-- Powerset lattice join (bitwise OR). Atoms are powers of 2;
     sums are bitwise OR of their atoms. Used across the lattice
     sections below and by `Number.resolve` for lattice verification. -/
@@ -226,6 +237,53 @@ def isMinimalNonAtom {D : Type} [DecidableEq D]
   let nonAtoms := domain.filter (! isAtom join domain ·)
   nonAtoms.contains x &&
   nonAtoms.all fun y => y == x || !(joinLE join y x)
+
+/-- The `Bool` atom test is domain-relative minimality: the decidable
+    mirror of `Number.minimalIn (· ∈ domain)` for the lattice join. -/
+theorem isAtom_iff_minimalIn {D : Type} [SemilatticeSup D] [DecidableEq D]
+    (domain : List D) (x : D) :
+    isAtom (· ⊔ ·) domain x = true ↔ minimalIn (· ∈ domain) x := by
+  simp only [isAtom, joinLE, minimalIn, Bool.and_eq_true, List.contains_iff,
+    List.all_eq_true, Bool.or_eq_true, beq_iff_eq, Bool.not_eq_true',
+    beq_eq_false_iff_ne, ne_eq]
+  refine and_congr_right fun _ => ?_
+  constructor
+  · intro h y hy hyx
+    rcases h y hy with rfl | hn
+    · rfl
+    · exact absurd (sup_eq_right.mpr hyx) hn
+  · intro h y hy
+    by_cases hyx : y ≤ x
+    · exact Or.inl (h y hy hyx)
+    · exact Or.inr fun he => hyx (sup_eq_right.mp he)
+
+/-- The `Bool` minimal-non-atom test mirrors `Number.minimalIn` over the
+    domain's non-atoms — the region `interp` assigns to the dual. -/
+theorem isMinimalNonAtom_iff_minimalIn {D : Type} [SemilatticeSup D]
+    [DecidableEq D] (domain : List D) (x : D) :
+    isMinimalNonAtom (· ⊔ ·) domain x = true ↔
+      minimalIn (fun y => y ∈ domain ∧ ¬minimalIn (· ∈ domain) y) x := by
+  have hmem : ∀ y : D,
+      (y ∈ domain.filter (! isAtom (· ⊔ ·) domain ·)) ↔
+        (y ∈ domain ∧ ¬minimalIn (· ∈ domain) y) := by
+    intro y
+    rw [List.mem_filter, Bool.not_eq_true', ← isAtom_iff_minimalIn,
+      Bool.not_eq_true]
+  simp only [isMinimalNonAtom, joinLE, minimalIn, Bool.and_eq_true,
+    List.contains_iff, List.all_eq_true, Bool.or_eq_true, beq_iff_eq,
+    Bool.not_eq_true', beq_eq_false_iff_ne, ne_eq]
+  rw [and_congr_left fun _ => hmem x]
+  refine and_congr_right fun _ => ?_
+  constructor
+  · intro h y hy hyx
+    rcases h y ((hmem y).mpr hy) with rfl | hn
+    · rfl
+    · exact absurd (sup_eq_right.mpr hyx) hn
+  · intro h y hy
+    by_cases hyx : y ≤ x
+    · exact Or.inl (h y ((hmem y).mp hy) hyx)
+    · exact Or.inr fun he => hyx (sup_eq_right.mp he)
+
 
 /-- Convert lattice membership to number features using join structure.
     Atoms → singular, minimal non-atoms → dual, others → plural. -/
@@ -309,6 +367,16 @@ def isJoinCompleteIn {D : Type} [DecidableEq D]
 def isRegionJoinComplete {D : Type} [DecidableEq D]
     (join : D → D → D) (region : List D) : Bool :=
   region.all fun x => isJoinCompleteIn join region x
+
+/-- The `Bool` join-completeness test mirrors `Number.additiveIn` on the
+    enumerated region. -/
+theorem isJoinCompleteIn_iff_additiveIn {D : Type} [SemilatticeSup D]
+    [DecidableEq D] (region : List D) (x : D) :
+    isJoinCompleteIn (· ⊔ ·) region x = true ↔
+      additiveIn (· ∈ region) x := by
+  simp only [isJoinCompleteIn, additiveIn, Bool.and_eq_true,
+    List.contains_iff, List.all_eq_true]
+
 
 /-! ### Additive feature — powerset lattice examples
 

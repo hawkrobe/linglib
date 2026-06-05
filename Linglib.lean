@@ -341,6 +341,7 @@ import Linglib.Features.PhiKernel
 import Linglib.Features.Number.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Features.Number.Decomposition
+import Linglib.Features.Number.Interp
 import Linglib.Features.Number.Resolve
 import Linglib.Core.CoreConcept
 import Linglib.Morphology.MorphRule

@@ -22,6 +22,11 @@ Key distinctions:
 WALS Feature 80A records verbal number and suppletion across 193
 languages. 159 have no verbal number; 34 have singular-plural pairs
 (with or without suppletion); 7 have sg-du-pl triples.
+
+Semantically, verbal number is the nominal operator at the event lattice:
+`Number.interp` (`Features/Number/Interp.lean`) is domain-polymorphic over
+any join-semilattice, so event-plurality readings are `interp` applied to
+event predicates rather than individual predicates.
 -/
 
 namespace VerbalNumber

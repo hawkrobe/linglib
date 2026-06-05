@@ -1,4 +1,5 @@
 import Linglib.Features.Number.Decomposition
+import Linglib.Features.Number.Interp
 import Linglib.Core.Mereology
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.UpperLower.Basic
@@ -340,87 +341,11 @@ theorem sixteen_wellformed_configs :
               HarbourConfig.mk a m d r ra
     (allConfigs.filter HarbourConfig.wellFormed).length = 16 := by decide
 
--- ============================================================================
--- § 11: Lattice-Grounded Feature Predicates
--- ============================================================================
-
-/-! ### Lattice-Grounded Feature Predicates
-[harbour-2014]
-
-The three number features are predicates on a join-semilattice of
-individuals:
-- **(20)** [±atomic] = λx. (¬)atom(x) — IS `Mereology.Atom`
-- **(21)** [±minimal] = λP λx. (¬)∃y(P(y) ∧ y ⊏ x), presupposing P(x)
-- **(10)** [±additive] = λP λx. (¬)∀y(Q(y) → Q(x ⊔ y)), presupposing Q(x)
-
-[+additive] IS cumulativity restricted to a subregion: the set of
-[+additive] elements is CUM. This connects number to aspect/telicity
-([harbour-2014] §4.4): mass nouns satisfy [+additive], telic
-predicates satisfy [−additive]. -/
-
-section LatticeFeatures
-
-variable {D : Type*} [SemilatticeSup D]
-
-/-- [+minimal] in region P: x is a minimal element of P under ≤.
-    [harbour-2014] (21): x has no proper P-part below it. -/
-def minimalInPred (P : D → Prop) (x : D) : Prop :=
-  P x ∧ ∀ y, P y → y ≤ x → y = x
-
-/-- [+additive] in region Q: x is join-complete in Q.
-    [harbour-2014] (10): ∀y ∈ Q, x ⊔ y ∈ Q. -/
-def additiveInPred (Q : D → Prop) (x : D) : Prop :=
-  Q x ∧ ∀ y, Q y → Q (x ⊔ y)
-
-/-- The [+additive] region is CUM: joining two [+additive] elements
-    gives another [+additive] element.
-
-    This is the formal link between number and aspect/telicity
-    ([harbour-2014] §4.4): mass nouns are [+additive] (cumulative),
-    telic predicates are [−additive] (quantized), and the features
-    governing both are the same. -/
-theorem additive_region_cum (Q : D → Prop)
-    (x y : D) (hx : additiveInPred Q x) (hy : additiveInPred Q y) :
-    additiveInPred Q (x ⊔ y) := by
-  refine ⟨hx.2 y hy.1, fun z hz => ?_⟩
-  rw [sup_assoc]
-  exact hx.2 (y ⊔ z) (hy.2 z hz)
-
-/-- Atoms are trivially minimal in any region containing them.
-    Grounding of [+atomic] → [+minimal] in lattice theory: atoms
-    have no proper parts, so they are minimal everywhere.
-
-    **Consequence for recursion** ([harbour-2014] §4.2):
-    [±minimal] applied to a region of atoms selects ALL of them
-    ([+minimal]) or NONE ([−minimal] = ∅). Feature recursion on
-    an all-atom region adds no information, which is why [±atomic]
-    cannot undergo meaningful feature recursion. -/
-theorem atoms_all_minimal (P : D → Prop)
-    (hAllAtoms : ∀ x, P x → Mereology.Atom x)
-    (x : D) (hPx : P x) :
-    minimalInPred P x :=
-  ⟨hPx, fun y _ hle => hAllAtoms x hPx y hle⟩
-
-/-- The [−minimal] complement of an all-atom region is empty:
-    no atom fails to be minimal. This is the formal reason
-    [±atomic] cannot recurse ([harbour-2014] §4.2). -/
-theorem atoms_no_nonminimal (P : D → Prop)
-    (hAllAtoms : ∀ x, P x → Mereology.Atom x)
-    (x : D) :
-    ¬(P x ∧ ¬minimalInPred P x) :=
-  fun ⟨hPx, hNonMin⟩ => hNonMin (atoms_all_minimal P hAllAtoms x hPx)
-
-/-- The [+additive] subregion is cumulative (`Mereology.CUM`).
-    This is the formal content of [harbour-2014] §4.4:
-    [+additive] IS cumulativity restricted to a subregion.
-    The number-aspect connection runs through exactly this identity:
-    mass nouns are [+additive] (CUM), telic predicates are [−additive]
-    (not CUM). -/
-theorem additive_subregion_is_cum (Q : D → Prop) :
-    Mereology.CUM (fun x => additiveInPred Q x) :=
-  fun x y hx hy => additive_region_cum Q x y hx hy
-
-end LatticeFeatures
+/-! The lattice-grounded feature predicates — [harbour-2014]'s (20)
+`[±atomic]`, (21) `[±minimal]`, (10) `[±additive]` as predicates over a
+join-semilattice, with the CUM identity for the number–aspect nexus —
+graduated to `Features/Number/Interp.lean` (`Number.minimalIn`,
+`Number.additiveIn`, `Number.additive_subregion_is_cum`). -/
 
 -- ============================================================================
 -- § 12: Surface Categories and Typological Predictions
