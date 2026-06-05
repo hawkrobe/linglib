@@ -1,6 +1,6 @@
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Data.Fintype.BigOperators
-import Mathlib.Data.Set.Defs
+import Linglib.Core.Logic.FactorsThroughOn
 import Linglib.Data.UD.Basic
 
 /-!
@@ -29,8 +29,10 @@ carrier in all but name. This file encodes the carrier directly, the way
   vocabulary, exactly as `UD.Number`/`UD.Person` are for `Number`/`Person`.
 * `Gender.System` — a language's gender system over its own carrier `G` of
   controller genders: a partial comparative labeling and a morphosyntactic
-  default. [kramer-2015]'s two-class minimum (def (7i), p. 70) is the mathlib
-  typeclass `Nontrivial G` (`Gender.System.two_le_count`).
+  default. The gender count is `Fintype.card G`, and [kramer-2015]'s
+  two-class minimum (def (7i), p. 70) is the mathlib typeclass
+  `Nontrivial G` — one agreement pattern for all nouns is the absence of a
+  system, not a one-gender system.
 * `Gender.Faithful` — distinct genders are distinguished by some agreement
   target: injectivity of per-gender agreement behavior. Yields
   `Gender.Faithful.card_le_pow`: a language whose agreement shows `f` forms
@@ -54,8 +56,7 @@ carrier in all but name. This file encodes the carrier directly, the way
 * **Locus-neutral.** `System` makes no claim about where gender sits in the
   nominal spine (n vs Num vs D); locus claims are study content.
 * Languages lacking gender — the majority ([kramer-2015] §11.2.4) — declare
-  no `System`. A single agreement class is no system, hence `Nontrivial G`
-  wherever the two-class minimum matters.
+  no `System`.
 * Feature decompositions of the labels, interpretation, and resolution are
   separate modules; fragments' fine-grained gender enums are `System`
   carriers, and their ad-hoc label maps are the `label` field.
@@ -111,7 +112,8 @@ def fromUD : UD.Gender → Gender
   cases u <;> rfl
 
 /-- Labels with a UD realization round-trip. -/
-theorem fromUD_toUD : ∀ {g : Gender} {u : UD.Gender}, g.toUD = some u → fromUD u = g := by
+theorem fromUD_of_toUD_eq_some :
+    ∀ {g : Gender} {u : UD.Gender}, g.toUD = some u → fromUD u = g := by
   decide
 
 /-! ### Gender systems
@@ -122,40 +124,22 @@ enum). The comparative labels above enter only through the partial `label`
 field — the carrier itself is not constrained to fit them, which is what
 accommodates Bantu-scale inventories that no label vocabulary covers. -/
 
-section System
-
 variable {G : Type*}
 
 /-- A language's gender system over its own carrier `G` of controller
-    genders ([corbett-1991]; [kramer-2015] def (7)).
+    genders ([corbett-1991]; [kramer-2015]).
 
-    Languages without gender agreement declare no `System`; the two-class
-    minimum is the hypothesis `Nontrivial G` on consumers that need it. -/
+    The gender count is `Fintype.card G`; the two-class minimum is the
+    hypothesis `Nontrivial G` on consumers that need it. Languages without
+    gender agreement declare no `System`. -/
 structure System (G : Type*) where
   /-- Partial comparative labeling of the controller genders. Bantu-style
       classes typically map to `none` outside a human/animate core. -/
   label : G → Option Gender
   /-- The morphosyntactic default: the gender realized when there are no
-      gender features to agree with (clausal subjects, ineffable conflicts).
-      Per-system data, not derivable: feminine defaults are attested
-      ([kramer-2015] §11.2.3). -/
+      gender features to agree with. Per-system data, not derivable
+      ([kramer-2015]: feminine defaults are attested). -/
   default : G
-
-namespace System
-
-/-- The number of controller genders — [corbett-1991]'s gender count
-    (WALS feature 30A; `Typology.GenderProfile.rawGenderCount` drift sentry). -/
-def count (_S : System G) [Fintype G] : ℕ := Fintype.card G
-
-/-- [kramer-2015]'s two-class minimum (def (7i)): a gender system sorts nouns
-    into *two or more* classes. One agreement pattern for all nouns is the
-    absence of a system, not a one-gender system. -/
-theorem two_le_count (S : System G) [Fintype G] [Nontrivial G] : 2 ≤ S.count :=
-  Fintype.one_lt_card
-
-end System
-
-end System
 
 /-! ### Agreement faithfulness
 
@@ -171,13 +155,14 @@ strict-Agree vs loose-covariation definitions of gender-hood differ
 
 section Faithful
 
-variable {G T F : Type*}
+variable {T F : Type*}
 
 /-- A carrier `G` of controller genders is faithful to agreement evidence
     `agr` when distinct genders are distinguished by some target's form.
 
-    An `abbrev` so that `Function.Injective`'s decidability instances apply:
-    concrete fragments discharge faithfulness by `decide`. -/
+    An `abbrev` so that `Function.Injective`'s decidability instance (under
+    `[Fintype G]`, `[DecidableEq T]`, `[DecidableEq F]`) applies: concrete
+    fragments discharge faithfulness by `decide`. -/
 abbrev Faithful (agr : G → T → F) : Prop :=
   Function.Injective agr
 
@@ -186,25 +171,25 @@ abbrev Faithful (agr : G → T → F) : Prop :=
 theorem Faithful.card_le_pow [Fintype G] [Fintype T] [Fintype F] [DecidableEq T]
     {agr : G → T → F} (h : Faithful agr) :
     Fintype.card G ≤ Fintype.card F ^ Fintype.card T := by
-  simpa [Fintype.card_fun] using Fintype.card_le_of_injective agr h
+  rw [← Fintype.card_fun]
+  exact Fintype.card_le_of_injective agr h
 
 end Faithful
 
 /-! ### Assigned systems and the semantic core
 
-The assigned tier adds the noun-level assignment function — the canonical
-gender principle that each noun has a single gender value
+The assigned tier adds the noun-level assignment function — the Canonical
+Gender Principle that each noun has a single gender value
 ([corbett-fedden-2016]) is its functionality. [kramer-2015]'s (7ii) lives
 here: no attested system assigns gender completely randomly or completely
 formally; some nonempty core of animate nouns is assigned by interpretation. -/
 
 section Assigned
 
-variable {N G T F : Type*} {σ : Type*}
+variable {N T F σ : Type*}
 
 /-- A gender system together with its assignment: every noun of `N` gets
-    exactly one controller gender ([corbett-fedden-2016]'s Canonical Gender
-    Principle as functionality). Paradigm-only fragments stay at the
+    exactly one controller gender. Paradigm-only fragments stay at the
     `System` tier. -/
 structure System.Assigned (N G : Type*) extends System G where
   /-- Gender assignment. -/
@@ -214,13 +199,11 @@ namespace System.Assigned
 
 variable (S : System.Assigned N G)
 
-/-- [kramer-2015] def (7ii) (after Dahl): the assignment has a *semantic
-    core* — a nonempty set of (animate) nouns on which a semantic
-    classification `sem` determines gender: core nouns alike under `sem` get
-    the same gender. Arbitrary assignment is permitted off the core. -/
+/-- The assignment has a *semantic core*: a nonempty set of nouns on which a
+    semantic classification `sem` determines gender ([kramer-2015], after
+    Dahl). Arbitrary assignment is permitted off the core. -/
 def SemanticCore (core : Set N) (sem : N → σ) : Prop :=
-  core.Nonempty ∧
-    ∀ ⦃a⦄, a ∈ core → ∀ ⦃b⦄, b ∈ core → sem a = sem b → S.assign a = S.assign b
+  core.Nonempty ∧ Function.FactorsThroughOn S.assign sem core
 
 /-- The system mediates noun-level agreement evidence `nounAgr` via the
     per-gender behavior `agr`: a noun's agreement behavior is its gender's. -/
@@ -229,8 +212,7 @@ def Mediates (nounAgr : N → T → F) (agr : G → T → F) : Prop :=
 
 /-- The Hockett–Corbett definition of gender, derived rather than stipulated:
     if agreement is mediated by gender and the carrier is faithful, then
-    gender assignment factors through observable agreement behavior — genders
-    are recoverable as classes of agreement behavior. -/
+    gender assignment factors through observable agreement behavior. -/
 theorem assign_factorsThrough {nounAgr : N → T → F} {agr : G → T → F}
     (med : S.Mediates nounAgr agr) (faith : Faithful agr) :
     Function.FactorsThrough S.assign nounAgr :=
