@@ -518,9 +518,10 @@ end MorphFeatureType
 
 namespace MorphFeatures
 
-/-- The valuation: project each slot, normalizing `reflex : Bool` to
-`Option Unit`. -/
-def val (f : MorphFeatures) : (t : MorphFeatureType) → Option (MorphFeatureType.Val t)
+/-- The valuation: project each slot as a `Flat` value, normalizing
+`reflex : Bool` to a privative `Flat Unit`. -/
+def val (f : MorphFeatures) :
+    (t : MorphFeatureType) → Flat (MorphFeatureType.Val t)
   | .number   => f.number
   | .gender   => f.gender
   | .case_    => f.case_
@@ -536,7 +537,8 @@ def val (f : MorphFeatures) : (t : MorphFeatureType) → Option (MorphFeatureTyp
   | .voice    => f.voice
   | .polarity => f.polarity
 
-instance : BundleLike MorphFeatures MorphFeatureType MorphFeatureType.Val where
+instance : BundleLike MorphFeatures MorphFeatureType
+    (fun t => Flat (MorphFeatureType.Val t)) where
   val := MorphFeatures.val
 
 private theorem reflex_eq_of_val_reflex_eq {b1 b2 : Bool}
