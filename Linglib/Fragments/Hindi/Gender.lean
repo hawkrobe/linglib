@@ -16,9 +16,6 @@ open Typology.Gender
 def genderTypology : GenderProfile :=
   .fromWALS "Hindi-Urdu" "hin"
     (rawGenderCount := 2)
-    (genderCountFb := .two)
-    (basisFb := .sexBased)
-    (assignmentFb := .semanticAndFormal)
     (agreementTargets := [.attributive, .predicate, .verb])
     (semanticBases := [.sex])
     (attestedSurfaceGenders := [.masculine, .feminine])

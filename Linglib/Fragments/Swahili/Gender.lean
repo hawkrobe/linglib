@@ -23,9 +23,6 @@ open Typology.Gender
 def genderTypology : GenderProfile :=
   .fromWALS "Swahili" "swh"
     (rawGenderCount := 7)
-    (genderCountFb := .fivePlus)
-    (basisFb := .nonSexBased)
-    (assignmentFb := .semanticAndFormal)
     (agreementTargets := [.attributive, .predicate, .relativePronoun,
                           .personalPronoun, .verb])
     (semanticBases := [.humanness, .animacy, .shape])

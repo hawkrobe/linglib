@@ -196,9 +196,6 @@ open Typology.Gender
 def genderTypology : GenderProfile :=
   .fromWALS "Russian" "rus"
     (rawGenderCount := 3)
-    (genderCountFb := .three)
-    (basisFb := .sexBased)
-    (assignmentFb := .semanticAndFormal)
     (agreementTargets := [.attributive, .predicate, .relativePronoun,
                           .personalPronoun, .verb])
     (semanticBases := [.sex])

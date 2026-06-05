@@ -23,9 +23,6 @@ open Typology.Gender
 def genderTypology : GenderProfile :=
   .fromWALS "Dyirbal" "dbl"
     (rawGenderCount := 4)
-    (genderCountFb := .four)
-    (basisFb := .sexBased)
-    (assignmentFb := .semanticOnly)
     (agreementTargets := [.attributive])
     (semanticBases := [.sex, .animacy, .shape])
 

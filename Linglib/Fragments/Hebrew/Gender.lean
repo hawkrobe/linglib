@@ -16,9 +16,6 @@ open Typology.Gender
 def genderTypology : GenderProfile :=
   .fromWALS "Hebrew" "heb"
     (rawGenderCount := 2)
-    (genderCountFb := .two)
-    (basisFb := .sexBased)
-    (assignmentFb := .semanticAndFormal)
     (agreementTargets := [.attributive, .predicate, .verb])
     (semanticBases := [.sex])
     (attestedSurfaceGenders := [.masculine, .feminine])

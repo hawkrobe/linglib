@@ -25,9 +25,6 @@ open Typology.Gender
 def genderTypology : GenderProfile :=
   .fromWALS "Archi" "aqc"
     (rawGenderCount := 4)
-    (genderCountFb := .four)
-    (basisFb := .sexBased)
-    (assignmentFb := .semanticOnly)
     (agreementTargets := [.predicate, .verb])
     (semanticBases := [.rationality, .sex, .animacy])
 

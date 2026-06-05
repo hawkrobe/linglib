@@ -23,9 +23,6 @@ open Typology.Gender
 def genderTypology : GenderProfile :=
   .fromWALS "Zulu" "zul"
     (rawGenderCount := 8)
-    (genderCountFb := .fivePlus)
-    (basisFb := .nonSexBased)
-    (assignmentFb := .semanticAndFormal)
     (agreementTargets := [.attributive, .predicate, .relativePronoun,
                           .personalPronoun, .verb])
     (semanticBases := [.humanness, .animacy, .shape])

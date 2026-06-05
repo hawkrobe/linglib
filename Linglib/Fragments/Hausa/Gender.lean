@@ -162,9 +162,6 @@ open Typology.Gender
 def genderTypology : GenderProfile :=
   .fromWALS "Hausa" "hau"
     (rawGenderCount := 2)
-    (genderCountFb := .two)
-    (basisFb := .sexBased)
-    (assignmentFb := .semanticAndFormal)
     (agreementTargets := [.attributive, .personalPronoun, .verb])
     (semanticBases := [.sex])
     (attestedSurfaceGenders := [.masculine, .feminine])
