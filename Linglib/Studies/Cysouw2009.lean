@@ -699,4 +699,72 @@ theorem finnish_singular_distinct_from_fragment :
     let sg := (Finnish.Negation.negParadigm.filter (·.number == "sg")).map (·.form)
     sg.eraseDups.length = 3 := by decide
 
+/-! ### The Category × Number junction (ch. 6: cardinality as restriction)
+
+Ch. 6 redefines pronominal number: the eight referential categories are
+*unmarked* for number — a group is defined by the KIND of its
+participants, not their quantity (Figs 6.1–6.2) — so a group's number
+coordinate in the canonical inventory is `Number.general`. Number
+marking proper is *restriction* of group reference: restricted 1+3 is
+the traditional dual, and restricted 1+2+3 is the traditional "trial" =
+McKay's unit augmented (§6.2 with its footnote on the etic/emic split;
+our `Number.unitAugmented`). Higher restricted numbers grammaticalize
+from numerals and become paucals (§6.4: true trials are extremely rare,
+true quadrals unattested — Sursurunga's "quadral" is a greater paucal,
+our `Number.greaterPaucal`, following Corbett).
+
+So Cysouw himself **rejects** factoring the categories through
+person × number — the junction below is *our* representational bridge
+between the two canonical inventories, not his analysis. It works
+because the inventories carry his distinctions natively: the group/
+restricted contrast is `general` vs the restricted values, and the one
+genuinely ambiguous cell — 1+2, referentially identical to its own
+restriction (Fig 6.3), aligned three ways by attested paradigms
+(Figs 6.4–6.5: with the duals, Maori (6.1); with the inclusive group,
+Umpila (6.2); with the singulars as emically MINIMAL, Fig 6.5) — gets
+McKay's emic coordinate `(firstInclusive, minimal)`, the analysis our
+API already assigns Tagalog *kata*. -/
+
+/-- The (person, number) coordinates of each referential category:
+    singular participants are `singular`, groups are `general`
+    (number-unmarked, ch. 6's central claim), and the inclusive cells
+    carry the minimal/augmented coordinates (McKay's emic labels). -/
+def categoryToPersonNumber : Category → Person × Number
+  | .s1 => (.first, .singular)
+  | .s2 => (.second, .singular)
+  | .s3 => (.third, .singular)
+  | .minIncl => (.firstInclusive, .minimal)
+  | .augIncl => (.firstInclusive, .augmented)
+  | .excl => (.firstExclusive, .general)
+  | .secondGrp => (.second, .general)
+  | .thirdGrp => (.third, .general)
+
+/-- The compatible pairs: the image of the eight categories in
+    `Person × Number`. -/
+def compatiblePairs : List (Person × Number) :=
+  Category.all.map categoryToPersonNumber
+
+/-- **The junction**: the coordinates are injective — the eight
+    referential categories embed into `Person × Number`, so the two
+    canonical inventories compose without loss. -/
+theorem categoryToPersonNumber_injective :
+    compatiblePairs.Nodup := by decide
+
+/-- The person coordinate is the established person projection. -/
+theorem categoryToPersonNumber_fst (c : Category) :
+    (categoryToPersonNumber c).1 = c.person := by
+  cases c <;> rfl
+
+/-- Exactly the group categories are number-unmarked (`general`):
+    ch. 6's claim that groups are defined by kind, not quantity, holds
+    of the coordinates by construction — except at the inclusive cells,
+    where the 1+2 vs 1+2+3 contrast is itself quantificational
+    (minimal vs augmented), which is why 1+2 is the ambiguous
+    category. -/
+theorem general_iff_nonInclusive_group (c : Category) :
+    (categoryToPersonNumber c).2 = .general ↔
+      (c.IsGroup ∧ ¬c.IsInclusive) := by
+  cases c <;> simp [categoryToPersonNumber, Category.IsGroup,
+    Category.IsInclusive]
+
 end Cysouw2009
