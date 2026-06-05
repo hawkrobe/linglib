@@ -223,6 +223,41 @@ theorem partsIn_injOn {Z : Set B} (hZ : DisjointPred mOverlap Z)
     what `partsIn_injOn` certifies as sufficient). -/
 noncomputable def card (Z : Set B) (x : B) : ℕ := (partsIn Z x).ncard
 
+/-! ### Exact numbers: the junction with [harbour-2014]
+
+[harbour-2014] (30) characterizes the exact number values over a
+generating set of atoms as cardinality classes — singular `|x| = 1`,
+dual `|x| = 2`, trial `|x| = 3` — with (31) the successor-like function
+that extends them. This book's `card` certifies precisely that counting:
+over a disjoint base, the cardinality of a sum is the number of
+generators summed. Two frameworks formalized from their own primary
+sources, agreeing on one counting operation by theorem. -/
+
+/-- Over a disjoint base, the Landman cardinality of a sum is the number
+    of generators summed — [harbour-2014]'s (30) cardinality classes are
+    `card`-classes. -/
+theorem card_sSup {Z Y : Set B} (hZ : DisjointPred mOverlap Z)
+    (hbot : ⊥ ∉ Z) (hY : Y ⊆ Z) : card Z (sSup Y) = Y.ncard := by
+  rw [card, partsIn_sSup hZ hbot hY]
+
+/-- A generator counts as one (Harbour's singular: `|x| = 1`). -/
+theorem card_self {Z : Set B} (hZ : DisjointPred mOverlap Z)
+    (hbot : ⊥ ∉ Z) {z : B} (hz : z ∈ Z) : card Z z = 1 := by
+  have h := card_sSup hZ hbot (Set.singleton_subset_iff.mpr hz)
+  rw [sSup_singleton] at h
+  rw [h, Set.ncard_singleton]
+
+/-- A sum of two distinct generators counts as two (Harbour's dual:
+    `|x| = 2` — the value `Number.interp` assigns the minimal
+    non-atoms). -/
+theorem card_pair {Z : Set B} (hZ : DisjointPred mOverlap Z)
+    (hbot : ⊥ ∉ Z) {z₁ z₂ : B} (h₁ : z₁ ∈ Z) (h₂ : z₂ ∈ Z)
+    (hne : z₁ ≠ z₂) : card Z (z₁ ⊔ z₂) = 2 := by
+  have h := card_sSup hZ hbot (Y := {z₁, z₂}) (by
+    rintro y (rfl | rfl) <;> assumption)
+  rw [sSup_pair] at h
+  rw [h, Set.ncard_pair hne]
+
 /-! ### I-sets and count – mass – neat – mess (his §6.1) -/
 
 /-- An i-set: a body and a base that generates it under sum

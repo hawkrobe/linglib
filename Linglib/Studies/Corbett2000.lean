@@ -186,6 +186,12 @@ theorem all_augmented_implies_minimal :
 theorem all_unitAug_implies_augmented :
     ∀ ns ∈ allNumberSystems, ns.UnitAugImpliesAugmented := by decide
 
+/-- Every system the book records satisfies the *full* Table-1 universal
+    set ([harbour-2014]) — all eleven implications, not only the five
+    originally checked above. -/
+theorem allNumberSystems_wellFormed :
+    ∀ ns ∈ allNumberSystems, ns.WellFormed := by decide
+
 /-! ### Animacy Hierarchy and Number Marking (Ch 3) -/
 
 open Features.Prominence (AnimacyRank)
