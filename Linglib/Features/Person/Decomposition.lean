@@ -182,10 +182,10 @@ theorem no_fourth_person :
 -- § 6: Person Categories (Cysouw)
 -- ============================================================================
 
-/-- The 8 referential person categories ([cysouw-2009], Fig 10.1).
-
-Three singular categories (individual speech act roles) and five group
-categories (attested combinations of participants). -/
+/-- The 8 referential person categories ([cysouw-2009] ch. 3: the three
+singular participants plus the five attested of the seven logical groups
+of Table 3.1 — 1+1 (mass speaking) and 2+2 (present-audience-only) are
+dismissed as not grammaticalized, his §3.4). -/
 inductive Category where
   | s1        -- speaker (1st person singular)
   | s2        -- addressee (2nd person singular)
@@ -289,6 +289,23 @@ theorem ud_conflates_incl_excl :
     Category.toUDPersonNumber .augIncl =
     Category.toUDPersonNumber .excl := rfl
 
+/-- The [cysouw-2009] category a (canonical person, UD number) pair
+    realizes. Clusivity rides on the person value, so no third argument is
+    needed: singulars ignore clusivity, first-person non-singulars without
+    it (plain `first`) are a syncretism (`none`), and second/third
+    non-singulars map to the group categories. -/
+def Category.ofPersonNumber : Person → UD.Number → Option Category
+  | .first, .Sing | .firstInclusive, .Sing | .firstExclusive, .Sing =>
+      some .s1
+  | .second, .Sing => some .s2
+  | .third, .Sing => some .s3
+  | .firstInclusive, .Dual => some .minIncl
+  | .firstInclusive, .Plur => some .augIncl
+  | .firstExclusive, .Dual | .firstExclusive, .Plur => some .excl
+  | .second, .Dual | .second, .Plur => some .secondGrp
+  | .third, .Dual | .third, .Plur => some .thirdGrp
+  | _, _ => none
+
 /-- The person coordinate of each referential category — the projection
     the canonical inventory recovers losslessly where UD cannot:
     `minIncl`/`augIncl` ↦ `firstInclusive`, `excl` ↦ `firstExclusive`.
@@ -315,6 +332,17 @@ theorem person_includesSpeaker_iff (c : Category) :
     from exclusive. -/
 theorem person_separates_clusivity :
     Category.augIncl.person ≠ Category.excl.person := by decide
+
+/-- `ofPersonNumber` inverts the person projection: every category is
+    recovered from its own coordinates. -/
+theorem ofPersonNumber_person (c : Category) :
+    ∀ pn, c.toUDPersonNumber = some pn →
+      Category.ofPersonNumber c.person pn.2 = some c := by
+  cases c <;>
+    (intro pn hpn
+     simp only [Category.toUDPersonNumber, Option.some.injEq] at hpn
+     subst hpn
+     rfl)
 
 -- ============================================================================
 -- § 8: Category ↔ Features Bridge

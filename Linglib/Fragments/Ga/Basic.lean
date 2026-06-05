@@ -47,6 +47,12 @@ namespace Ga
 inductive Person where | first | second | third
   deriving DecidableEq, Repr
 
+/-- Ga's three-way person in the canonical inventory. -/
+def Person.toPerson : Person → _root_.Person
+  | .first => .first
+  | .second => .second
+  | .third => .third
+
 inductive Number where | sg | pl
   deriving DecidableEq, Repr
 

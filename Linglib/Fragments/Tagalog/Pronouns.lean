@@ -95,17 +95,17 @@ def siya   : PersonalPronoun := { form := "siya",   person := some .third,  numb
 def niya   : PersonalPronoun := { form := "niya",   person := some .third,  number := some .Sing, case_ := some .Gen }
 def kaniya : PersonalPronoun := { form := "kaniya", person := some .third,  number := some .Sing, case_ := some .Dat }
 -- 1st dual inclusive (minimal inclusive): *kata*
-def kata   : PersonalPronoun := { form := "kata",   person := some .first,  number := some .Dual, clusivity := some .inclusive, case_ := some .Nom }
-def nita   : PersonalPronoun := { form := "nita",   person := some .first,  number := some .Dual, clusivity := some .inclusive, case_ := some .Gen }
-def kanita : PersonalPronoun := { form := "kanita", person := some .first,  number := some .Dual, clusivity := some .inclusive, case_ := some .Dat }
+def kata   : PersonalPronoun := { form := "kata",   person := some .firstInclusive,  number := some .Dual, case_ := some .Nom }
+def nita   : PersonalPronoun := { form := "nita",   person := some .firstInclusive,  number := some .Dual, case_ := some .Gen }
+def kanita : PersonalPronoun := { form := "kanita", person := some .firstInclusive,  number := some .Dual, case_ := some .Dat }
 -- 1st plural inclusive (augmented inclusive): *tayo*
-def tayo   : PersonalPronoun := { form := "tayo",   person := some .first,  number := some .Plur, clusivity := some .inclusive, case_ := some .Nom }
-def natin  : PersonalPronoun := { form := "natin",  person := some .first,  number := some .Plur, clusivity := some .inclusive, case_ := some .Gen }
-def atin   : PersonalPronoun := { form := "atin",   person := some .first,  number := some .Plur, clusivity := some .inclusive, case_ := some .Dat }
+def tayo   : PersonalPronoun := { form := "tayo",   person := some .firstInclusive,  number := some .Plur, case_ := some .Nom }
+def natin  : PersonalPronoun := { form := "natin",  person := some .firstInclusive,  number := some .Plur, case_ := some .Gen }
+def atin   : PersonalPronoun := { form := "atin",   person := some .firstInclusive,  number := some .Plur, case_ := some .Dat }
 -- 1st plural exclusive: *kami*
-def kami   : PersonalPronoun := { form := "kami",   person := some .first,  number := some .Plur, clusivity := some .exclusive, case_ := some .Nom }
-def namin  : PersonalPronoun := { form := "namin",  person := some .first,  number := some .Plur, clusivity := some .exclusive, case_ := some .Gen }
-def amin   : PersonalPronoun := { form := "amin",   person := some .first,  number := some .Plur, clusivity := some .exclusive, case_ := some .Dat }
+def kami   : PersonalPronoun := { form := "kami",   person := some .firstExclusive,  number := some .Plur, case_ := some .Nom }
+def namin  : PersonalPronoun := { form := "namin",  person := some .firstExclusive,  number := some .Plur, case_ := some .Gen }
+def amin   : PersonalPronoun := { form := "amin",   person := some .firstExclusive,  number := some .Plur, case_ := some .Dat }
 -- 2nd plural
 def kayo   : PersonalPronoun := { form := "kayo",   person := some .second, number := some .Plur, case_ := some .Nom }
 def ninyo  : PersonalPronoun := { form := "ninyo",  person := some .second, number := some .Plur, case_ := some .Gen }
@@ -134,14 +134,14 @@ theorem angSeries_categories_match :
 /-- Tagalog marks inclusive/exclusive in the first-person plural: *tayo* is
     inclusive, *kami* exclusive — read off the object's `clusivity` field. -/
 theorem incl_excl_distinct :
-    tayo.clusivity = some .inclusive ∧ kami.clusivity = some .exclusive := ⟨rfl, rfl⟩
+    tayo.person = some .firstInclusive ∧ kami.person = some .firstExclusive := ⟨rfl, rfl⟩
 
 /-- The minimal-augmented property: a dual inclusive *kata* (1+2) alongside the
     plural inclusive *tayo* — what makes Tagalog minimal-augmented rather than
     plain inclusive/exclusive ([cysouw-2009]). -/
 theorem minimal_augmented :
-    kata.number = some .Dual ∧ kata.clusivity = some .inclusive ∧
-    tayo.number = some .Plur ∧ tayo.clusivity = some .inclusive := ⟨rfl, rfl, rfl, rfl⟩
+    kata.number = some .Dual ∧ kata.person = some .firstInclusive ∧
+    tayo.number = some .Plur ∧ tayo.person = some .firstInclusive := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- Cross-substrate consistency: the inventory contains a minimal-inclusive
     (dual inclusive) form iff the language commits to the minimal-augmented

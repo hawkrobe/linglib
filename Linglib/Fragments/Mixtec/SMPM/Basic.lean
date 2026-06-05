@@ -86,12 +86,12 @@ def cl1sg : PersonalPronoun :=
     strength := some .clitic }
 
 def cl1plIncl : PersonalPronoun :=
-  { form := "=(y)é", person := some .first, number := some .Plur,
-    clusivity := some .inclusive, strength := some .clitic }
+  { form := "=(y)é", person := some .firstInclusive, number := some .Plur,
+     strength := some .clitic }
 
 def cl1plExcl : PersonalPronoun :=
-  { form := "=ndú", person := some .first, number := some .Plur,
-    clusivity := some .exclusive, strength := some .clitic }
+  { form := "=ndú", person := some .firstExclusive, number := some .Plur,
+     strength := some .clitic }
 
 def cl2sg : PersonalPronoun :=
   { form := "=ú", person := some .second, number := some .Sing,
@@ -143,8 +143,8 @@ def str1sg : PersonalPronoun :=
     strength := some .strong }
 
 def str1plExcl : PersonalPronoun :=
-  { form := "ndú'ú", person := some .first, number := some .Plur,
-    clusivity := some .exclusive, strength := some .strong }
+  { form := "ndú'ú", person := some .firstExclusive, number := some .Plur,
+     strength := some .strong }
 
 def str2sg : PersonalPronoun :=
   { form := "yô'o", person := some .second, number := some .Sing,
@@ -182,8 +182,7 @@ theorem series_homogeneous :
 /-- Paired variants share their φ-features — the two series differ in
     deficiency class, not in person/number/clusivity content. -/
 theorem pairs_share_phi : ∀ pr ∈ localPairs, ∀ s ∈ pr.2,
-    pr.1.person = s.person ∧ pr.1.number = s.number ∧
-    pr.1.clusivity = s.clusivity := by decide
+    pr.1.person = s.person ∧ pr.1.number = s.number := by decide
 
 /-- Within each pair, the clitic is strictly more deficient — derived from
     the shared deficiency order, not stipulated. -/

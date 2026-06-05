@@ -30,95 +30,119 @@ set_option autoImplicit false
 
 namespace Features.Clusivity
 
-/-- Cysouw 2009 typology of pronominal clusivity systems.
-
-The cuts: (a) is incl/excl distinguished at all? (b) is the inclusive
-itself further split into minimal vs augmented? -/
+/-- The five common marking types of the first person complex
+    ([cysouw-2009] Table 3.2; the attested-and-common five of the
+    fifteen possible patterns, his Fig 3.1–3.2). Classified by which of
+    the categories 1+2, 1+2+3, 1+3 receive specialized morphemes. The
+    five rare attested patterns ((Pf)–(Pj), his §3.6.6) are not
+    represented. -/
 inductive System where
-  /-- No clusivity distinction; 1pl is one category (English *we*,
-      German *wir*, Standard Mandarin *wǒmen*). -/
-  | noClusivity
-  /-- Plain incl/excl: separate 1pl forms for 1+2(+3) vs 1+3
-      (Indonesian *kita*/*kami*, Tok Pisin *yumi*/*mipela*,
-      Mandarin colloquial *zánmen*/*wǒmen*). -/
-  | inclExcl
-  /-- Minimal-augmented: inclusive further splits into minimal (1+2 only,
-      surfaces as a 1-dual-inclusive form) vs augmented (1+2+others); the
-      exclusive remains a single category. Tagalog *kata*/*tayo*/*kami*
-      (per [schachter-otanes-1972] Chart 7), many Australian
-      languages. -/
+  /-- (Pb) No-we: none of 1+2, 1+2+3, 1+3 marked by a specialized
+      morpheme (English verbal inflection; Pirahã, which lacks group
+      marking altogether). -/
+  | noWe
+  /-- (Pa) Unified-we: all three categories marked by the same
+      specialized morpheme (English *we*, German *wir*). -/
+  | unifiedWe
+  /-- (Pc) Only-inclusive: 1+2 and 1+2+3 share a specialized inclusive
+      morpheme; 1+3 is marked by the first-person singular morpheme,
+      not a specialized one (Maká). -/
+  | onlyInclusive
+  /-- (Pd) Inclusive/exclusive: inclusive (1+2, 1+2+3) and exclusive
+      (1+3) each get a specialized morpheme (Apalai; Indonesian
+      *kita*/*kami*). -/
+  | inclusiveExclusive
+  /-- (Pe) Minimal/augmented: all three categories get separate
+      specialized morphemes (Tagalog *kata*/*tayo*/*kami* per
+      [schachter-otanes-1972] Chart 7; Ilocano *ta*/*tayo*/*mi*, his
+      Fig 3.5–3.6). -/
   | minimalAugmented
-  /-- Unit-augmented: minimal-augmented plus a separate 1+2+1 form
-      ("we two and one other"); rare (e.g. Rembarrnga). -/
-  | unitAugmented
-  /-- No grammatical number distinction in pronouns at all (Pirahã *ti*
-      'I/we'); the clusivity question is moot. -/
-  | numberIndifferent
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 namespace System
 
-/-- The 1st-person `Person.Category` distinctions a system
-    grammatically encodes. Captures Cysouw 2009's typology operationally:
-    `.noClusivity` collapses 1+2 and 1+3 into a single 1pl
-    (modeled here by listing only `.augIncl`, since `.augIncl` is the
-    closest catch-all for collapsed first-person plural); `.inclExcl`
-    distinguishes them; `.minimalAugmented` and `.unitAugmented` further
-    split inclusive into minimal (`.minIncl`) vs augmented (`.augIncl`).
-    `.numberIndifferent` languages have no plural form, so only `.s1`. -/
-def distinguishedCategories : System → List Person.Category
-  | .noClusivity        => [.augIncl]                     -- single 1pl form
-  | .inclExcl           => [.augIncl, .excl]              -- 1+2(+3) vs 1+3
-  | .minimalAugmented   => [.minIncl, .augIncl, .excl]    -- + 1+2 minimal
-  | .unitAugmented      => [.minIncl, .augIncl, .excl]    -- + 1+2+1 not in Category
-  | .numberIndifferent  => []                             -- no 1pl distinction
+/-! Fig 3.10's nested questions: each type answers one more question
+positively than its predecessor, which is exactly why the types form
+the First Person Hierarchy (3.26). -/
 
-/-- A system grammatically distinguishes inclusive from exclusive iff
-    its first-person inventory contains an exclusive category. Derived
-    from `distinguishedCategories` (was a stipulated pattern-match before
-    the 0.230.544 audit). -/
-def hasInclExcl (s : System) : Bool :=
-  s.distinguishedCategories.contains .excl
+/-- Some specialized 'we' morpheme exists. -/
+def specializedWe : System → Bool
+  | .noWe => false
+  | _ => true
 
-/-- A system distinguishes minimal-inclusive from augmented-inclusive iff
-    its first-person inventory contains the minimal-inclusive category. -/
-def hasMinimalAugmented (s : System) : Bool :=
-  s.distinguishedCategories.contains .minIncl
+/-- The inclusive (1+2, 1+2+3) has marking distinct from the
+    exclusive. -/
+def specializedInclusive : System → Bool
+  | .noWe | .unifiedWe => false
+  | _ => true
+
+/-- The exclusive (1+3) has its own specialized morpheme. -/
+def specializedExclusive : System → Bool
+  | .inclusiveExclusive | .minimalAugmented => true
+  | _ => false
+
+/-- The inclusive is split: separate morphemes for 1+2 and 1+2+3. -/
+def splitInclusive : System → Bool
+  | .minimalAugmented => true
+  | _ => false
+
+/-- A system grammatically distinguishes inclusive from exclusive. -/
+abbrev hasInclExcl (s : System) : Bool := s.specializedExclusive
+
+/-- A system distinguishes minimal from augmented inclusive. -/
+abbrev hasMinimalAugmented (s : System) : Bool := s.splitInclusive
+
+/-- **Addressee inclusion implication I** ([cysouw-2009] (3.23),
+    Fig 3.8): a specialized exclusive requires a specialized inclusive.
+    The converse fails — only-inclusive systems are the witness. (Over
+    the common types; the rare Binandere pattern, his (3.22)/(Pj), is
+    the noted incidental exception.) -/
+theorem exclusive_implies_inclusive :
+    ∀ s : System, s.specializedExclusive → s.specializedInclusive := by
+  decide
+
+theorem not_inclusive_implies_exclusive :
+    ¬ ∀ s : System, s.specializedInclusive → s.specializedExclusive := by
+  decide
+
+/-- **Addressee inclusion implication II** ([cysouw-2009] (3.24),
+    Fig 3.9): a split inclusive requires a specialized exclusive
+    (disregarding the rare (Pf)/(Pg) patterns, his §3.6.6). -/
+theorem splitInclusive_implies_exclusive :
+    ∀ s : System, s.splitInclusive → s.specializedExclusive := by
+  decide
+
+/-- Position in the **First Person Hierarchy** ([cysouw-2009] (3.26)):
+    no-we > unified-we > only-inclusive > inclusive/exclusive >
+    minimal/augmented (rank counts the Fig 3.10 questions answered
+    positively). -/
+def hierarchyRank : System → Nat
+  | .noWe => 0
+  | .unifiedWe => 1
+  | .onlyInclusive => 2
+  | .inclusiveExclusive => 3
+  | .minimalAugmented => 4
+
+/-- The hierarchy is exactly the nesting of Fig 3.10's questions: each
+    of the four predicates is monotone in hierarchy rank, so each type's
+    profile extends its predecessor's by one positive answer. -/
+theorem hierarchy_is_question_nesting :
+    ∀ s t : System, s.hierarchyRank ≤ t.hierarchyRank →
+      (s.specializedWe → t.specializedWe = true) ∧
+      (s.specializedInclusive → t.specializedInclusive = true) ∧
+      (s.specializedExclusive → t.specializedExclusive = true) ∧
+      (s.splitInclusive → t.splitInclusive = true) := by
+  decide
 
 end System
 
-/-! ### Per-referent clusivity value -/
-
-/-- The clusivity value of a *referent*: whether a non-singular first-person
-    form includes the addressee. This is the framework-neutral per-pronoun
-    feature (the `Pronoun` object carries `Option Value`); it is `none` where
-    clusivity is unmarked (English *we*) or inapplicable (non-first-person).
-    Contrast `System`, which classifies a *language*. -/
-inductive Value where
-  /-- Inclusive: includes the addressee (1+2, optionally +others). -/
-  | inclusive
-  /-- Exclusive: excludes the addressee (1+others). -/
-  | exclusive
-  deriving DecidableEq, Repr, BEq
-
-open Person (Category)
-
-/-- The [cysouw-2009] `Person.Category` a person + number +
-    clusivity triple realizes. Singulars ignore clusivity; clusivity-marked
-    first-person non-singulars split inclusive (`.minIncl` dual / `.augIncl`
-    plural) from `.excl`. A clusivity-*neutral* first-person plural (English
-    *we*) is a syncretism over those cells, so it has no single category
-    (`none`). This is the bridge from the neutral φ-features to the typological
-    inventory. -/
-def categoryOf : UD.Person → UD.Number → Option Value → Option Category
-  | .first,  .Sing, _               => some .s1
-  | .second, .Sing, _               => some .s2
-  | .third,  .Sing, _               => some .s3
-  | .first,  .Dual, some .inclusive => some .minIncl
-  | .first,  .Plur, some .inclusive => some .augIncl
-  | .first,  _,     some .exclusive => some .excl
-  | .second, .Plur, _               => some .secondGrp
-  | .third,  .Plur, _               => some .thirdGrp
-  | _,       _,     _               => none
+/-! The per-referent clusivity `Value` (inclusive/exclusive) and the
+`categoryOf` bridge were dissolved into the canonical person inventory:
+clusivity is a person-value distinction (`Person.firstInclusive` /
+`Person.firstExclusive`, `Features/Person/Basic.lean`), and the category
+bridge is `Person.Category.ofPersonNumber`
+(`Features/Person/Decomposition.lean`). This file keeps the
+paradigm-level `System` typology, which classifies how a language's
+pronoun paradigm carves the person–number space. -/
 
 end Features.Clusivity

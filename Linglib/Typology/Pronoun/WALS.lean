@@ -383,17 +383,16 @@ end Pronoun
 
 namespace Pronoun
 
-/-- WALS Ch 39 image of a Cysouw clusivity system (`Features.Clusivity.System`):
-    WALS Ch 39 collapses Cysouw's `.inclExcl`, `.minimalAugmented`, and
-    `.unitAugmented` into the single value `.inclusiveExclusive`. The
-    function is therefore many-to-one: given a WALS Ch 39 value, the
-    Cysouw value is underdetermined. -/
+/-- WALS Ch 39 image of a Cysouw first-person-complex type
+    (`Features.Clusivity.System`): WALS Ch 39 (Cysouw's own chapter)
+    collapses the minimal/augmented split, so the map is many-to-one —
+    given a WALS value, the paradigm type is underdetermined. -/
 def InclusiveExclusive.fromClusivity : Features.Clusivity.System → InclusiveExclusive
-  | .noClusivity        => .noDistinction
-  | .inclExcl           => .inclusiveExclusive
-  | .minimalAugmented   => .inclusiveExclusive
-  | .unitAugmented      => .inclusiveExclusive
-  | .numberIndifferent  => .weEqualsI
+  | .noWe                => .noWe
+  | .unifiedWe           => .noDistinction
+  | .onlyInclusive       => .onlyInclusive
+  | .inclusiveExclusive  => .inclusiveExclusive
+  | .minimalAugmented    => .inclusiveExclusive
 
 end Pronoun
 

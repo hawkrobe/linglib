@@ -2,6 +2,7 @@ import Linglib.Morphology.DM.NominalStructure
 import Linglib.Typology.Possession
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
+import Linglib.Features.Person.Capabilities
 import Linglib.Features.Gender
 
 /-!
@@ -166,6 +167,15 @@ structure Possessor where
 
 /-- A possessor bears its φ-number (`HasNumber`). -/
 instance : HasNumber Possessor := ⟨fun p => Number.fromUD p.number⟩
+
+/-- Jarawara's local person in the canonical inventory. -/
+def Person.toPerson : Person → _root_.Person
+  | .first => .first
+  | .second => .second
+  | .third => .third
+
+/-- A possessor bears its φ-person (`HasPerson`). -/
+instance : HasPerson Possessor := ⟨fun p => some p.person.toPerson⟩
 
 /-- Possessed noun form: "masculine" (mano) or "feminine" (mani).
     These labels follow [dixon-2004]'s terminology; they reflect
