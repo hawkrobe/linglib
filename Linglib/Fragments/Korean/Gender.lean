@@ -16,7 +16,11 @@ def genderTypology : GenderProfile :=
   .fromWALS "Korean" "kor"
     (rawGenderCount := 0)
 
-example : genderTypology.iso639 = "kor" ∧ genderTypology.name = "Korean" :=
-  ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "kor" := rfl
+
+theorem genderTypology_name : genderTypology.name = "Korean" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
 
 end Korean.Gender

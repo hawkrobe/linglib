@@ -32,10 +32,11 @@ substrate-extension pattern. Fragment-importable.
 
 ## Theory-laden caveats
 
-- **`GenderCount.fivePlus` is a single bin** for systems with 5+ noun
-  classes. The boundary between "gender" (2-3) and "noun class" (4+) is
-  conventional, not categorical ([corbett-1991]). Bantu languages
-  with ~15 classes and Fula with ~20 are both `.fivePlus`.
+- **`GenderCount.fivePlus` is a single bin** for systems with 5+ genders.
+  The boundary between "gender" (2-3) and "noun class" (4+) is
+  conventional, not categorical ([corbett-1991]). Raw counts are
+  controller genders, not morphological classes: Swahili has 7 genders
+  over ~15 traditional noun classes; Fula has ~20 genders.
 - **`SemanticBasis` lists 5 dimensions** (sex, animacy, humanness, shape,
   rationality); other classifications (e.g. Aikhenvald 2003 noun-classifier
   semantics) cut differently.
@@ -134,7 +135,10 @@ structure GenderProfile where
   iso639 : String
   /-- Ch 30: number of genders (WALS bin). -/
   genderCount : GenderCount
-  /-- Actual number of gender / noun class categories. -/
+  /-- Number of controller genders: sets of nouns taking the same
+      agreements, typically singular/plural pairings ([corbett-1991] §6.3).
+      For Bantu this counts genders like 1/2 — *not* the larger
+      traditional noun-class inventory (Swahili: 7 genders, ~15 classes). -/
   rawGenderCount : Nat
   /-- Ch 31: sex-based or non-sex-based. -/
   basis : GenderBasis

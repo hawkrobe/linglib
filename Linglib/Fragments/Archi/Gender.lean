@@ -31,7 +31,11 @@ def genderTypology : GenderProfile :=
     (agreementTargets := [.predicate, .verb])
     (semanticBases := [.rationality, .sex, .animacy])
 
-example : genderTypology.iso639 = "aqc" ∧ genderTypology.name = "Archi" :=
-  ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "aqc" := rfl
+
+theorem genderTypology_name : genderTypology.name = "Archi" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
 
 end Archi.Gender
