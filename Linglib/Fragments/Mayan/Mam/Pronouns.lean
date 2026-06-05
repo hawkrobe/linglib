@@ -63,14 +63,12 @@ def qini : PersonalPronoun :=
     (base *qo* [+author,−sg] + enclitic; glottalization from the enclitic,
     her fn. 7). -/
 def qoy : PersonalPronoun :=
-  { form := "qoy", person := some .first, number := some .Plur,
-    clusivity := some .exclusive }
+  { form := "qoy", person := some .firstExclusive, number := some .Plur, }
 
 /-- *qo* — 1PL inclusive independent pronoun; monomorphemic (1INCL's
     [+author,+participant] values *agree*, so no enclitic). -/
 def qo : PersonalPronoun :=
-  { form := "qo", person := some .first, number := some .Plur,
-    clusivity := some .inclusive }
+  { form := "qo", person := some .firstInclusive, number := some .Plur, }
 
 /-- *qi* — 2PL pronoun, both series; bimorphemic *q+=i* (§4.3.3.2).
     Word-vs-enclitic status left open by Scott (p. 163). -/
@@ -110,11 +108,14 @@ def PronCell.number : PronCell → UD.Number
   | .firstSg | .secondSg | .thirdSg => .Sing
   | _ => .Plur
 
-/-- PronCell clusivity (1PL cells only), in the API's vocabulary. -/
-def PronCell.clusivity : PronCell → Option Features.Clusivity.Value
-  | .firstPlExcl => some .exclusive
-  | .firstPlIncl => some .inclusive
-  | _ => none
+/-- PronCell person in the canonical inventory: clusivity rides on the
+    person value. -/
+def PronCell.toPerson : PronCell → Person
+  | .firstSg => .first
+  | .firstPlExcl => .firstExclusive
+  | .firstPlIncl => .firstInclusive
+  | .secondSg | .secondPl => .second
+  | .thirdSg | .thirdPl => .third
 
 /-- [scott-2023]'s bivalent φ-features (Table 4.4, after [harbour-2016]):
     [±author], [±participant], [±singular]. Fragment-local because the

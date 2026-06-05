@@ -1,4 +1,5 @@
 import Linglib.Features.Number.Capabilities
+import Linglib.Features.Person.Capabilities
 import Linglib.Features.Case
 import Linglib.Features.Case
 import Linglib.Features.Prominence
@@ -79,6 +80,14 @@ structure Phi where
 
 /-- A Shawi φ-bundle bears its min/aug value canonically (`HasNumber`). -/
 instance : HasNumber Phi := ⟨fun φ => some φ.number.toNumber⟩
+
+/-- A Shawi φ-bundle bears its analytical person: the local
+    (level, clusivity) pair recovers the quadripartition cell. -/
+instance : HasPerson Phi :=
+  ⟨fun φ => some (match φ.person, φ.clusivity with
+    | .first, .incl => .firstInclusive
+    | .first, .excl => .firstExclusive
+    | l, _ => Person.ofPersonLevel l)⟩
 
 -- ============================================================================
 -- § 2: Subject agreement (Table 1, indicative)

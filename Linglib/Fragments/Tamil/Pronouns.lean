@@ -26,11 +26,11 @@ def naan : PersonalPronoun :=
 
 /-- *naam* — 1pl inclusive (speaker + addressee). -/
 def naam : PersonalPronoun :=
-  { form := "naam", person := some .first, number := some .Plur, clusivity := some .inclusive }
+  { form := "naam", person := some .firstInclusive, number := some .Plur }
 
 /-- *naangaL* — 1pl exclusive (speaker + others, not addressee). -/
 def naangaL : PersonalPronoun :=
-  { form := "naangaL", person := some .first, number := some .Plur, clusivity := some .exclusive }
+  { form := "naangaL", person := some .firstExclusive, number := some .Plur }
 
 -- ============================================================================
 -- Second Person (two-level honorific)
@@ -102,9 +102,11 @@ theorem has_both_numbers :
     allPronouns.any (·.number == some .Sing) = true ∧
     allPronouns.any (·.number == some .Plur) = true := ⟨rfl, rfl⟩
 
-/-- Tamil has inclusive/exclusive distinction in 1pl. -/
+/-- Tamil has the inclusive/exclusive distinction in 1pl — carried on the
+    person values themselves. -/
 theorem has_incl_excl :
-    (allPronouns.filter (fun p => p.person == some .first && p.number == some .Plur)).length = 2 := rfl
+    allPronouns.any (·.person == some .firstInclusive) = true ∧
+    allPronouns.any (·.person == some .firstExclusive) = true := ⟨rfl, rfl⟩
 
 /-- 2nd person pronouns are all second person. -/
 theorem second_person_all_2p :

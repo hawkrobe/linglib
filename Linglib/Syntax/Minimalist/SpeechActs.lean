@@ -261,8 +261,8 @@ theorem seat_of_knowledge_interrogative {W E P T : Type*} (ctx : KContext W E P 
     1st person → SPEAKER (Spec-SAP)
     2nd person → HEARER (complement of SA)
     3rd person / zero → neither (referential, not a discourse role) -/
-def personToRole : UD.Person → Option PRole
-  | .first  => some .speaker
+def personToRole : Person → Option PRole
+  | .first | .firstInclusive | .firstExclusive => some .speaker
   | .second => some .hearer
   | .third  => none
   | .zero   => none
@@ -292,7 +292,7 @@ theorem third_person_no_role :
 
 /-- Discourse role is determined entirely by person feature. -/
 theorem discourse_role_from_person (p : PersonalPronoun)
-    (per : UD.Person) (hp : p.person = some per) :
+    (per : Person) (hp : p.person = some per) :
     pronounDiscourseRole p = personToRole per := by
   simp [pronounDiscourseRole, hp]
 

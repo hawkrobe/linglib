@@ -110,17 +110,13 @@ end Pronoun.Strength
 structure Pronoun where
   /-- Surface form (romanization or orthographic). -/
   form : String
-  /-- Grammatical person (UD.Person via Core.Word abbrev). -/
-  person : Option UD.Person := none
+  /-- Grammatical person — the canonical analytical inventory (root
+      `Person`). Clusivity is carried as a person value: Tagalog *tayo* =
+      `firstInclusive`, *kami* = `firstExclusive`; English *we* = plain
+      `first` ([cysouw-2009]). -/
+  person : Option Person := none
   /-- Grammatical number. -/
   number : Option UD.Number := none
-  /-- Clusivity (inclusive/exclusive) of a first-person non-singular form — the
-      inclusive/exclusive split of the 1st-person plural/dual. A φ-feature borne
-      by any such pro-form (personal, possessive, reflexive), like `gender`;
-      `none` where unmarked (English *we*) or inapplicable. Distinguishes
-      Tagalog *tayo* (incl) / *kami* (excl) and *natin* (our.incl) / *namin*
-      (our.excl). [cysouw-2009] -/
-  clusivity : Option Features.Clusivity.Value := none
   /-- Grammatical case. -/
   case_ : Option Features.Case := none
   /-- Grammatical gender. For 3rd-person pronouns in gendered languages
@@ -189,7 +185,8 @@ open Features (SurfaceGender)
     surface as adverbs) stay in the relevant fragment. -/
 def toWord (p : Pronoun) : Word :=
   { form := p.form, cat := .PRON,
-    features := { person := p.person, number := p.number, case_ := p.case_,
+    features := { person := p.person.map Person.toUD, number := p.number,
+                  case_ := p.case_,
                   gender := p.gender.bind (·.toUDGender),
                   -- carry the binding-relevant morphology so a projected pro-form's class is
                   -- read off its own features, not recovered by surface-form lookup
@@ -199,14 +196,15 @@ def toWord (p : Pronoun) : Word :=
 
 /-! ### Derived person category and well-formedness ([cysouw-2009]) -/
 
-/-- The [cysouw-2009] `Category` this pronoun's person + number + clusivity
-    realizes, when fully specified — the neutral typological view of its
+/-- The [cysouw-2009] `Category` this pronoun's person + number realizes,
+    when fully specified — the neutral typological view of its
     person-reference, *derived* (not stored). `none` when person/number is
-    underspecified, or for a clusivity-unmarked first-person plural (a syncretism
-    over `.minIncl`/`.augIncl`/`.excl`, e.g. English *we*). -/
+    underspecified, or for a clusivity-unmarked first-person plural (plain
+    `first`, a syncretism over `.minIncl`/`.augIncl`/`.excl`, e.g. English
+    *we*). -/
 def category (p : Pronoun) : Option Person.Category :=
   match p.person, p.number with
-  | some per, some num => Features.Clusivity.categoryOf per num p.clusivity
+  | some per, some num => Person.Category.ofPersonNumber per num
   | _, _ => none
 
 /-- Well-formedness of a pronoun's φ-features: clusivity is borne only by a
@@ -215,8 +213,8 @@ def category (p : Pronoun) : Option Person.Category :=
     person-value type tower would have enforced, carried as a *predicate* (the
     mathlib way) so illegal states are catchable without fragmenting the type. -/
 def WellFormed (p : Pronoun) : Prop :=
-  p.clusivity ≠ none →
-    p.person = some .first ∧ (p.number = some .Dual ∨ p.number = some .Plur)
+  ∀ per, p.person = some per → per.MarksClusivity →
+    p.number = some .Dual ∨ p.number = some .Plur
 
 instance (p : Pronoun) : Decidable p.WellFormed := by
   unfold WellFormed; infer_instance

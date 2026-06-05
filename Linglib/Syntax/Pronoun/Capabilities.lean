@@ -31,7 +31,7 @@ object (`Word`), or a future theory representation; each supplies its own instan
 * `bindingClassOf_toWord` — the faithfulness certificate: the binding engine's canonical
   morphology source (`Binding.bindingClassOf`) agrees with the `Bound` mixin on every
   projected pro-form, so the surface engine and the carrier capability never diverge.
-* `Deictic`, `Clusive` — orthogonal data-mixins (register / referential person; clusivity).
+* `Deictic` — orthogonal data-mixin (register / referential person).
 
 ## Implementation notes
 
@@ -123,15 +123,10 @@ theorem numberOf_toWord (p : Pronoun) :
 
 /-! ### The person axis: `HasPerson` instances and faithfulness -/
 
-/-- A pronoun's analytical person: the (UD person, clusivity) field pair
-recovers the quadripartition cell — Tagalog *kami* = `firstExclusive` —
-so consumers unify on root `Person` before any carrier retype. -/
-instance : HasPerson Pronoun :=
-  ⟨fun p => p.person.map fun ud =>
-    match ud, p.clusivity with
-    | .first, some .inclusive => .firstInclusive
-    | .first, some .exclusive => .firstExclusive
-    | ud, _ => Person.fromUD ud⟩
+/-- A pronoun bears its analytical person directly — the carrier field is
+root-`Person`-typed, clusivity included (Tagalog *kami* =
+`firstExclusive`). -/
+instance : HasPerson Pronoun := ⟨fun p => p.person⟩
 
 instance : HasPerson PersonalPronoun :=
   ⟨fun p => HasPerson.personOf p.toPronoun⟩
@@ -142,17 +137,13 @@ explicit rather than silent. -/
 theorem personOf_toWord (p : Pronoun) :
     HasPerson.personOf p.toWord =
       (HasPerson.personOf p).map Person.coarsen := by
-  show p.person.map Person.fromUD =
-    (p.person.map _).map Person.coarsen
+  show (p.person.map Person.toUD).map Person.fromUD =
+    p.person.map Person.coarsen
   cases p.person with
   | none => rfl
-  | some ud =>
-    cases ud <;> cases hc : p.clusivity <;>
-      first
-        | rfl
-        | (rename_i v; cases v <;> rfl)
+  | some per => exact congrArg some (Person.fromUD_toUD per)
 
-/-! ### Orthogonal data-mixins: `Deictic`, `Clusive` -/
+/-! ### Orthogonal data-mixin: `Deictic` -/
 
 /-- A deictic carrier exposes register and — when it diverges from agreement person — referential
 person, the features specific to personal/referential pronouns ([adamson-zompi-2025]). -/
@@ -164,11 +155,3 @@ class Deictic (α : Type*) [Proform α] where
 
 instance : Deictic PersonalPronoun :=
   ⟨PersonalPronoun.register, PersonalPronoun.referentialPerson⟩
-
-/-- A carrier that may mark clusivity (inclusive/exclusive on a 1st-person non-singular form;
-[cysouw-2009]). -/
-class Clusive (α : Type*) [Proform α] where
-  /-- Clusivity value, `none` where unmarked or inapplicable. -/
-  clusivity : α → Option Features.Clusivity.Value
-
-instance : Clusive Pronoun := ⟨Pronoun.clusivity⟩
