@@ -17,6 +17,7 @@ import Linglib.Typology.Negation
 import Linglib.Features.ClauseForm
 import Linglib.Features.Clusivity
 import Linglib.Features.Indefinite
+import Linglib.Features.Individuation
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Syntax.Pronoun.Demonstrative
@@ -2635,6 +2636,7 @@ import Linglib.Studies.BarLev2021
 import Linglib.Studies.Enguehard2024
 import Linglib.Studies.Magri2014
 import Linglib.Studies.Sauerland2003
+import Linglib.Studies.SuttonFilip2021
 import Linglib.Phenomena.Plurals.VerbalNumber
 import Linglib.Studies.Gajewski2002
 import Linglib.Studies.Gajewski2011

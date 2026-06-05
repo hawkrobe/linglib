@@ -1,4 +1,5 @@
 import Mathlib.Order.Interval.Set.OrdConnected
+import Linglib.Features.Individuation
 import Linglib.Features.MassCount
 import Linglib.Features.Number.Basic
 import Linglib.Features.Prominence
@@ -67,41 +68,12 @@ set_option autoImplicit false
 namespace Grimm2018
 
 
-/-! ### The scale of individuation -/
+/-! ### The scale of individuation
 
-/-- Individuation types ([grimm-2018] (17)/(19)): equivalence classes of
-    nominal descriptions by individuation properties, from entities with no
-    perceptible minimal units to fully independent individuals. The
-    mereotopological content of the middle types (units clumped together
-    vs. connected but separable) is the `SelfConnected` apparatus of
-    `Core/Mereotopology.lean`. -/
-inductive IndividuationType where
-  /-- No perceptible minimal units (liquids, substances: *water*). -/
-  | substance
-  /-- Perceptible units, typically not separated from one another
-      (*rice*, *sand*). -/
-  | granularAggregate
-  /-- Perceptible units, separated but spatially or functionally connected
-      (*ants*, *cherries*). -/
-  | collectiveAggregate
-  /-- Independent, free-standing units (*dog*, *chair*). -/
-  | individualEntity
-  deriving DecidableEq, Repr, Fintype
-
-namespace IndividuationType
-
-/-- Numeric embedding preserving the individuation order. -/
-def toNat : IndividuationType → Nat
-  | .substance => 0
-  | .granularAggregate => 1
-  | .collectiveAggregate => 2
-  | .individualEntity => 3
-
-instance : LinearOrder IndividuationType :=
-  LinearOrder.lift' toNat
-    (fun a b h => by cases a <;> cases b <;> simp_all [toNat])
-
-end IndividuationType
+`IndividuationType` — the scale substance < granular aggregate <
+collective aggregate < individual ([grimm-2018] (17)/(19)) — lives in
+`Features/Individuation.lean`, shared with [sutton-filip-2021]'s
+count/mass lexicalization options (`Studies/SuttonFilip2021.lean`). -/
 
 /-! ### The order-preservation thesis
 
