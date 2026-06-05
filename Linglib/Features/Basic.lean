@@ -14,7 +14,7 @@ assignment over a feature space, an attribute-value structure, a
 hierarchical tree whose root label is the flat bundle. They agree about
 what a bundle *says*: which features it specifies, with which values.
 `BundleLike` captures that shared observation language — a single
-valuation `val : B → (t : F) → Option (V t)` — so that specification,
+valuation `val : B → (t : F) → S t` — so that specification,
 subsumption, and the information order are stated once and inherited by
 every representation.
 
@@ -25,13 +25,18 @@ itself carry theoretical content. Representations whose valuation is
 injective opt into `LawfulBundleLike` and get extensionality and the
 subsumption partial order.
 
-Both parameters are fully general. The feature space `F` is data, not a
-built-in inventory, so per-language and per-theory feature sets are
-choices of `F`. The value family `V` covers the standard ontologies:
-`V t := Unit` is privative, `V t := Bool` is bivalent `[±F]`, any enum
-gives multivalent features, a mode-tagged product recovers
-valued/unvalued distinctions, and `V t := ℚ` recovers gradient feature
-theories.
+All three parameters are fully general. The feature space `F` is data,
+not a built-in inventory, so per-language and per-theory feature sets
+are choices of `F`. The slot family `S : F → Type*` is the per-feature
+information space — it carries its own order, so each slot may be (a)
+`Flat (V t)` for a single atom from an enum `V t` (the determinate
+case: privative if `V t := Unit`, bivalent if `V t := Bool`,
+multivalent for an enum, mode-tagged products for valued/unvalued
+distinctions, `ℚ` for gradient theories); or (b) `(Finset α)ᵒᵈ` for
+indeterminate values in the sense of [dalrymple-kaplan-2000]; or (c)
+some richer order for layered or hierarchical features. The lattice
+theory is proved once at the Pi level and inherited by every choice of
+`S`.
 
 ## Main declarations
 
@@ -83,80 +88,78 @@ instantiates `BundleLike` in its own file.
 
 universe u v
 
-/-- `BundleLike B F V`: `B` presents feature bundles over the feature
-space `F`, with values of feature `t` drawn from `V t`. The single
-primitive is the valuation: which value, if any, a bundle assigns to
-each feature. -/
-class BundleLike (B : Type*) (F : outParam Type*) (V : outParam (F → Type*)) where
-  /-- The value, if any, that the bundle assigns to feature `t`. -/
-  val : B → (t : F) → Option (V t)
+/-- `BundleLike B F S`: `B` presents feature bundles over the feature
+space `F`, with slot `t` taking values in the order space `S t`. The
+single primitive is the valuation: a function reading off the slot
+value at each feature.
+
+The slot type `S t` carries its own order. The canonical flat-atomic
+slot is `Flat (V t)` for an atom enum `V t`; richer slot orders
+(`Finset α` for indeterminacy in the sense of [dalrymple-kaplan-2000],
+nested attribute spaces for UD layered features) are obtained by
+choosing different `S`. -/
+class BundleLike (B : Type*) (F : outParam Type*) (S : outParam (F → Type*)) where
+  /-- The value the bundle assigns to feature `t`. -/
+  val : B → (t : F) → S t
 
 /-- An extensional bundle representation: bundles with the same valuation
 are equal. Structured representations whose internal organization
 outruns their valuation are deliberately not lawful. -/
-class LawfulBundleLike (B : Type*) {F : Type*} {V : F → Type*}
-    [BundleLike B F V] : Prop where
-  val_injective : Function.Injective (BundleLike.val (B := B) (F := F) (V := V))
+class LawfulBundleLike (B : Type*) {F : Type*} {S : F → Type*}
+    [BundleLike B F S] : Prop where
+  val_injective : Function.Injective (BundleLike.val (B := B) (F := F) (S := S))
 
 namespace BundleLike
 
-variable {B F : Type*} {V : F → Type*} [BundleLike B F V]
+variable {B F : Type*} {S : F → Type*} [BundleLike B F S]
 
 /-- Extensionality for lawful representations. -/
 @[ext]
 theorem ext [LawfulBundleLike B] {b₁ b₂ : B}
-    (h : ∀ t, val (V := V) b₁ t = val b₂ t) : b₁ = b₂ :=
+    (h : ∀ t, val (S := S) b₁ t = val b₂ t) : b₁ = b₂ :=
   LawfulBundleLike.val_injective (funext h)
 
-/-- `b` specifies feature `t` (assigns it some value). -/
-def Specifies (b : B) (t : F) : Prop :=
-  ∃ v, val b t = some v
+/-- `b` specifies feature `t` (assigns it more than the slot's bottom
+information). For flat slots this coincides with "the slot is `some`";
+for richer slots (set-valued indeterminacy) it means "the slot has not
+been left at `Finset.univ`" (in the order dual where superset = less
+determinate). Only `Bot` is required; the order is not. -/
+def Specifies [∀ t, Bot (S t)] (b : B) (t : F) : Prop :=
+  val (S := S) b t ≠ ⊥
 
-instance (b : B) (t : F) : Decidable (Specifies b t) :=
-  decidable_of_iff _ Option.isSome_iff_exists
+instance [∀ t, Bot (S t)] [∀ t, DecidableEq (S t)]
+    (b : B) (t : F) : Decidable (Specifies (S := S) b t) :=
+  inferInstanceAs (Decidable (val (S := S) b t ≠ ⊥))
 
-/-- Subsumption: `b₁` subsumes into `b₂` when every feature `b₁`
-specifies is specified by `b₂` with the same value. The information
-order of the feature-structure literature ([shieber-1986]): `b₂` is at
-least as specified as `b₁`. -/
+section Order
+
+variable [∀ t, PartialOrder (S t)]
+
+/-- Subsumption: pointwise ≤ on slots — `b₂` is at least as specified as
+`b₁` ([shieber-1986] §3.2.2; [carpenter-1992] Definition 2.1). For flat
+slots this is `Option.FlatLE`; for set-valued slots it is the
+indeterminacy order ([dalrymple-kaplan-2000]: superset = less
+determinate). -/
 def Subsumes (b₁ b₂ : B) : Prop :=
-  ∀ t (v : V t), val b₁ t = some v → val b₂ t = some v
+  ∀ t, val (S := S) b₁ t ≤ val b₂ t
 
-theorem subsumes_refl (b : B) : Subsumes b b :=
-  λ _ _ h => h
+theorem subsumes_refl (b : B) : Subsumes (S := S) b b :=
+  λ _ => le_rfl
 
-theorem subsumes_trans {b₁ b₂ b₃ : B} (h₁₂ : Subsumes b₁ b₂)
-    (h₂₃ : Subsumes b₂ b₃) : Subsumes b₁ b₃ :=
-  λ t v hv => h₂₃ t v (h₁₂ t v hv)
+theorem subsumes_trans {b₁ b₂ b₃ : B}
+    (h₁₂ : Subsumes (S := S) b₁ b₂) (h₂₃ : Subsumes b₂ b₃) :
+    Subsumes (S := S) b₁ b₃ :=
+  λ t => le_trans (h₁₂ t) (h₂₃ t)
 
-/-- On a lawful representation, subsumption is antisymmetric. -/
+/-- On a lawful representation with partial slot orders, subsumption is
+antisymmetric. -/
 theorem subsumes_antisymm [LawfulBundleLike B] {b₁ b₂ : B}
-    (h₁ : Subsumes b₁ b₂) (h₂ : Subsumes b₂ b₁) : b₁ = b₂ :=
-  ext λ t => by
-    cases hv : val (V := V) b₁ t with
-    | some v => exact (h₁ t v hv).symm
-    | none =>
-      cases hw : val (V := V) b₂ t with
-      | some w => exact hv ▸ h₂ t w hw
-      | none => rfl
+    (h₁ : Subsumes (S := S) b₁ b₂) (h₂ : Subsumes b₂ b₁) : b₁ = b₂ :=
+  ext λ t => le_antisymm (h₁ t) (h₂ t)
 
-/-- Disjunctive characterization of subsumption; the decidable form. -/
-theorem subsumes_iff_forall_eq {b₁ b₂ : B} :
-    Subsumes b₁ b₂ ↔
-      ∀ t, val (V := V) b₁ t = none ∨ val b₁ t = val b₂ t := by
-  constructor
-  · intro h t
-    cases hv : val (V := V) b₁ t with
-    | none => exact .inl rfl
-    | some v => exact .inr (h t v hv).symm
-  · intro h t v hv
-    rcases h t with h' | h'
-    · rw [hv] at h'; exact absurd h' (Option.some_ne_none v)
-    · rw [← h', hv]
-
-instance [Fintype F] [∀ t, DecidableEq (V t)] (b₁ b₂ : B) :
-    Decidable (Subsumes b₁ b₂) :=
-  decidable_of_iff _ subsumes_iff_forall_eq.symm
+instance [Fintype F] [∀ t, DecidableLE (S t)] (b₁ b₂ : B) :
+    Decidable (Subsumes (S := S) b₁ b₂) :=
+  inferInstanceAs (Decidable (∀ t, val b₁ t ≤ val b₂ t))
 
 /-- The subsumption partial order on a lawful representation. Not an
 instance: a representation may carry its own canonical order. -/
@@ -166,6 +169,8 @@ def partialOrder [LawfulBundleLike B] : PartialOrder B where
   le_refl := subsumes_refl
   le_trans _ _ _ := subsumes_trans
   le_antisymm _ _ := subsumes_antisymm
+
+end Order
 
 end BundleLike
 
@@ -185,7 +190,7 @@ namespace Bundle
 
 variable {F : Type u} {V : F → Type v}
 
-instance : BundleLike (Bundle F V) F V :=
+instance : BundleLike (Bundle F V) F (λ t => Flat (V t)) :=
   ⟨λ b => b⟩
 
 instance : LawfulBundleLike (Bundle F V) :=
@@ -195,14 +200,15 @@ instance : LawfulBundleLike (Bundle F V) :=
 `BundleLike.Subsumes`. -/
 theorem le_iff_subsumes {b₁ b₂ : Bundle F V} :
     b₁ ≤ b₂ ↔ BundleLike.Subsumes b₁ b₂ :=
-  ⟨λ h t v => h t v, λ h t v => h t v⟩
+  Iff.rfl
 
 instance [Fintype F] [∀ t, DecidableEq (V t)] (b₁ b₂ : Bundle F V) :
     Decidable (b₁ ≤ b₂) :=
   inferInstanceAs (Decidable (∀ t, b₁ t ≤ b₂ t))
 
 @[simp]
-theorem val_bot (t : F) : BundleLike.val (⊥ : Bundle F V) t = none :=
+theorem val_bot (t : F) :
+    BundleLike.val (⊥ : Bundle F V) t = (none : Flat (V t)) :=
   rfl
 
 /-- The bundle specifying exactly one feature. -/
@@ -211,29 +217,29 @@ def single [DecidableEq F] (t : F) (v : V t) : Bundle F V :=
 
 @[simp]
 theorem val_single_self [DecidableEq F] (t : F) (v : V t) :
-    BundleLike.val (single t v) t = some v := by
+    BundleLike.val (single t v) t = (some v : Flat (V t)) := by
   simp [single, BundleLike.val]
 
 @[simp]
 theorem val_single_of_ne [DecidableEq F] {s t : F} (h : s ≠ t) (v : V t) :
-    BundleLike.val (single t v) s = none := by
+    BundleLike.val (single t v) s = (none : Flat (V s)) := by
   simp only [single, BundleLike.val, Function.update_of_ne h]
   rfl
 
 @[simp]
 theorem not_specifies_bot (t : F) : ¬ BundleLike.Specifies (⊥ : Bundle F V) t :=
-  λ ⟨_, hv⟩ => by simp at hv
+  λ hv => hv rfl
 
 @[simp]
 theorem specifies_single [DecidableEq F] {s t : F} (v : V t) :
     BundleLike.Specifies (single t v) s ↔ s = t := by
   constructor
-  · intro ⟨w, hw⟩
-    by_contra h
-    rw [val_single_of_ne h] at hw
-    exact Option.some_ne_none w hw.symm
+  · intro h
+    by_contra hne
+    exact h (val_single_of_ne hne v)
   · rintro rfl
-    exact ⟨v, val_single_self s v⟩
+    intro h
+    exact Option.some_ne_none v (val_single_self s v ▸ h)
 
 end Bundle
 
@@ -241,16 +247,18 @@ end Features
 
 namespace BundleLike
 
-variable {B F : Type*} {V : F → Type*} [BundleLike B F V]
+variable {B F : Type*} {S : F → Type*} [BundleLike B F S]
 
-/-- Any bundle representation carries the subsumption order pulled back
-along its valuation, packaged as a `Core.Order.PullbackPreorder` into the
-canonical carrier. Coarsenings between representations (e.g. assembly
-trees to flat bundles) then factor through
+/-- Any bundle representation with a finite signature carries the
+subsumption order pulled back along its valuation into the Pi
+`(t : F) → S t`, packaged as a `Core.Order.PullbackPreorder`.
+Coarsenings between representations factor through
 `Core.Order.PullbackPreorder.coarsen_via_monotone`. A `def`, not an
 instance, matching `PullbackPreorder`'s own convention. -/
-def subsumptionPreorder [Fintype F] [∀ t, DecidableEq (V t)] :
-    Core.Order.PullbackPreorder B (Features.Bundle F V) :=
-  .ofProj (λ b => (val b : Features.Bundle F V)) (λ _ _ => inferInstance)
+def subsumptionPreorder [Fintype F] [∀ t, PartialOrder (S t)]
+    [∀ t, DecidableLE (S t)] :
+    Core.Order.PullbackPreorder B ((t : F) → S t) :=
+  .ofProj (λ b => (val (S := S) b : (t : F) → S t)) fun a a' =>
+    inferInstanceAs (Decidable (∀ t, val a t ≤ val a' t))
 
 end BundleLike
