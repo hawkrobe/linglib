@@ -3,6 +3,7 @@ import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Finset.NAry
 import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Features.Person.Decomposition
+import Linglib.Features.Person.Interp
 import Linglib.Features.Number.Decomposition
 import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.Phi.Recursion
@@ -164,6 +165,19 @@ theorem quad_disjoint :
 
 /-- The quadripartition has four cells. -/
 theorem quad_card : (cellsOf quadRaws).card = 4 := by decide
+
+/-- **The calculus certifies the canonical inventory**: over the
+    referent lattice, the four quadripartition cells are exactly the
+    regions `Person.interp` assigns to the four quadripartition values
+    (speaker `0`, addressee `1`). The generative system and the
+    analytical inventory (`Features/Person/Basic.lean`) agree cell by
+    cell. -/
+theorem quad_cells_are_interp_regions :
+    ∀ s ∈ ℒπ,
+      (s ∈ inclusive ↔ Person.region (0 : Ω) 1 .firstInclusive s) ∧
+      (s ∈ exclusive ↔ Person.region (0 : Ω) 1 .firstExclusive s) ∧
+      (s ∈ secondP ↔ Person.region (0 : Ω) 1 .second s) ∧
+      (s ∈ thirdP ↔ Person.region (0 : Ω) 1 .third s) := by decide
 
 /-! #### Standard tripartition — participant composes outermost ([harbour-2016] §4.3.4) -/
 

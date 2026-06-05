@@ -339,6 +339,7 @@ import Linglib.Features.ContainmentPair
 import Linglib.Features.Person.Basic
 import Linglib.Features.Person.Capabilities
 import Linglib.Features.Person.Decomposition
+import Linglib.Features.Person.Interp
 import Linglib.Features.Person.Resolve
 import Linglib.Features.PhiKernel
 import Linglib.Features.Number.Basic

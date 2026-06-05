@@ -1,5 +1,6 @@
 import Linglib.Morphology.Unification
 import Linglib.Features.Person.Decomposition
+import Linglib.Features.Person.Resolve
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Card
 import Mathlib.Data.Fintype.Powerset
@@ -233,6 +234,29 @@ theorem english_table :
 theorem jose_y_tu :
     resolve eng3 eng2 = eng2 ∧ resolve eng3 eng2 ≠ eng1 := by
   constructor <;> decide
+
+/-! ### The substrate bridge: `Person.resolve` is marker-set union -/
+
+/-- The marker sets of the canonical quadripartition values — the Fula
+    encoding (87). Plain `first` underdetermines clusivity (their §6.2
+    English collapse picks `{S, H}` by stipulation), and `zero` is
+    outside the system, so both map to `none`. -/
+def markerSetOf : Person → Option PersonSet
+  | .firstExclusive => some fula1exc
+  | .firstInclusive => some fula1inc
+  | .second => some fula2
+  | .third => some fula3
+  | _ => none
+
+/-- The substrate's canonical resolution is the paper's union (77)/(93):
+    on the quadripartition, `Person.resolve` commutes with the marker
+    encoding — the same grounding `Person.resolve_profile` states
+    intrinsically, here in the paper's own vocabulary. -/
+theorem person_resolve_is_union :
+    ∀ p q : Person, ∀ sp sq : PersonSet,
+      markerSetOf p = some sp → markerSetOf q = some sq →
+      markerSetOf (Person.resolve p q) = some (resolve sp sq) := by
+  decide
 
 /-- Two markers bound the system (§6.3): at most four person values are expressible,
     matching the maximally differentiated (Fula-type) inventory. -/
