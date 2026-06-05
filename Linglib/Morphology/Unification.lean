@@ -1,4 +1,5 @@
 import Linglib.Data.UD.Basic
+import Linglib.Features.Basic
 import Mathlib.Order.Bounds.Basic
 import Mathlib.Order.BoundedOrder.Basic
 
@@ -56,55 +57,41 @@ about morphological feature combination this file is a sibling of `DM/` and
 
 Morphology owns the bundle algebra: `MorphFeatures` is the token's morphology (UD's
 Feats column), and unification at the ms-word level is the morphology/syntax interface
-operation. A natural in-house consumer is the *matching clause* of DM's Subset
-Principle (an exponent is insertable iff `exponent.features ≤ morpheme.features`);
-the competition clause — most-specified-wins — is separate `argmax` machinery, already
-implemented in `Morphology/DM/VocabularyInsertion.lean`. (Nanosyntax's Superset
-Principle is *not* a consumer: it matches by containment of syntactic trees, see
-`Nanosyntax/TreeSpellout.lean`'s `NanoTree.contains`, not by an order on flat
-bundles.) Lives apart from `Data/UD/Basic.lean` so the (heavily imported) standard
-mirror stays mathlib-free — this file is the one that pays for `Mathlib.Order` — and
-it is the canonical home for order instances on `UD.MorphFeatures`.
+operation. The *matching clause* of DM's Subset Principle (an exponent is insertable
+iff `exponent.features ≤ morpheme.features`) *could* consume `≤` directly, but the
+existing `Morphology/DM/VocabularyInsertion.lean` matches by `List`-subset on `[BEq F]`
+rather than `MorphFeatures.≤`; bridging is left for a future PR. The competition
+clause — most-specified-wins — is separate `argmax` machinery already implemented in
+that same file. (Nanosyntax's Superset Principle is *not* a consumer: it matches by
+containment of syntactic trees, see `Nanosyntax/TreeSpellout.lean`'s `NanoTree.contains`,
+not by an order on flat bundles.) Lives apart from `Data/UD/Basic.lean` so the
+(heavily imported) standard mirror stays mathlib-free — this file is the one that
+pays for `Mathlib.Order` — and it is the canonical home for order instances on
+`UD.MorphFeatures`.
+
+The non-distributivity of the subsumption lattice is a documented
+obstruction (`MorphFeatures.not_distrib_witness`): any ≥3-value slot
+(here, `Case`) makes the per-slot lattice the diamond Mₙ, modular but
+*not* distributive ([carpenter-1992] p. 15, eq. (4), notes this
+explicitly: "our partial orders are *not* required to be distributive
+(and in fact, are not even required to be modular)"). This matters for
+generalization-then-unification reorderings in paradigm-induction
+learners.
 -/
 
 set_option autoImplicit false
 
-/-! ### The flat order on one feature slot -/
+/-! ### The flat order on one feature slot
 
-/-- The flat information order on an atomic feature slot ([shieber-1986] §3.2.2):
-`none` (no information) is below everything; distinct atoms are incomparable. Stated
-as preservation of commitment: every committed value persists upward. -/
-def Option.FlatLE {α : Type _} (a b : Option α) : Prop :=
-  ∀ x : α, a = some x → b = some x
-
-namespace Option.FlatLE
-
-variable {α : Type _} {a b c : Option α}
-
-protected theorem refl (a : Option α) : a.FlatLE a := fun _ h => h
-
-protected theorem trans (h1 : a.FlatLE b) (h2 : b.FlatLE c) : a.FlatLE c :=
-  fun x hx => h2 x (h1 x hx)
-
-protected theorem antisymm (h1 : a.FlatLE b) (h2 : b.FlatLE a) : a = b := by
-  cases a with
-  | some x => exact (h1 x rfl).symm
-  | none =>
-    cases b with
-    | none => rfl
-    | some y => exact absurd (h2 y rfl) (by simp)
-
-theorem none_le (b : Option α) : Option.FlatLE none b := fun _ h => nomatch h
-
-instance [DecidableEq α] : Decidable (a.FlatLE b) :=
-  match a, b with
-  | none, _ => .isTrue (fun _ h => nomatch h)
-  | some x, some y =>
-    if h : x = y then .isTrue (fun _ hx => by simpa [h] using hx)
-    else .isFalse (fun hle => h (Option.some.inj (hle x rfl)).symm)
-  | some x, none => .isFalse (fun hle => nomatch hle x rfl)
-
-end Option.FlatLE
+`Option.FlatLE` is the slot-level subsumption relation ([shieber-1986]
+§3.2.2: `none` below everything, distinct atoms incomparable). The
+definition and its `refl`/`trans`/`antisymm`/`none_le` API live in
+`Linglib/Core/Order/Flat.lean`, where they also carry the bundled
+`PartialOrder`/`OrderBot`/`SemilatticeInf`/`PartialUnify` instances on
+the order-carrying alias `Flat α`. Re-exported here under their
+original names for backward compatibility with this file's own proofs
+and consumers.
+-/
 
 namespace UD.MorphFeatures
 
@@ -552,3 +539,131 @@ theorem unify_mono {f₁ f₂ g₁ g₂ u₂ : MorphFeatures} (hf : f₁ ≤ f�
   exact ⟨f₁.merge g₁, by simp [unify, hc], merge_le hf1 hg1⟩
 
 end UD.MorphFeatures
+
+/-! ## `BundleLike` instance: `MorphFeatures` as a feature bundle
+
+`MorphFeatures` realizes the `BundleLike` interface ([carpenter-1992]'s
+abstract feature structure over a fixed signature): the 14-case index
+`MorphFeatureType` is the signature, and the value family
+`MorphFeatureType.Val` is per-slot. Each value space is itself a finite
+enum, so the slot order coincides with `Flat`. The reflex flag is
+normalized at the valuation: `false ↦ none`, `true ↦ some ()` — the
+privative `V t := Unit` case of [shieber-1986]'s atomic-feature
+fragment, matching the file docstring's intent ("`reflex = false`
+= feature absent").
+
+This makes `MorphFeatures` `LawfulBundleLike` (the valuation is
+injective on bundles), which means the
+`PartialOrder`/`OrderBot`/`SemilatticeInf`/`PartialUnify` instances
+proved above can in principle be derived from the shared
+`Features.Bundle` stack via `Function.Injective.partialOrder` /
+`Injective.semilatticeInf` and friends. That derivation is left for a
+future PR; this file's hand-rolled stack stays in place to keep the
+existing API (`unify_isLUB`, `unify_comm`, `unify_assoc`, …) stable for
+its consumers. -/
+
+namespace UD
+
+/-- The 14-case feature-type index for `MorphFeatures` — the signature
+of UD's Feats column treated as a fixed finite type family. -/
+inductive MorphFeatureType where
+  | number | gender | case_ | definite | degree | pronType
+  | reflex
+  | person | verbForm | tense | aspect | mood | voice | polarity
+  deriving DecidableEq, Repr, Fintype
+
+namespace MorphFeatureType
+
+/-- Per-slot value space. The reflex slot is privative (`Unit`); all
+other slots take their concrete UD enum. -/
+def Val : MorphFeatureType → Type
+  | .number   => Number
+  | .gender   => Gender
+  | .case_    => Case
+  | .definite => Definite
+  | .degree   => Degree
+  | .pronType => PronType
+  | .reflex   => Unit
+  | .person   => Person
+  | .verbForm => VerbForm
+  | .tense    => Tense
+  | .aspect   => Aspect
+  | .mood     => Mood
+  | .voice    => Voice
+  | .polarity => Polarity
+
+instance : ∀ t, DecidableEq (Val t)
+  | .number   => inferInstanceAs (DecidableEq Number)
+  | .gender   => inferInstanceAs (DecidableEq Gender)
+  | .case_    => inferInstanceAs (DecidableEq Case)
+  | .definite => inferInstanceAs (DecidableEq Definite)
+  | .degree   => inferInstanceAs (DecidableEq Degree)
+  | .pronType => inferInstanceAs (DecidableEq PronType)
+  | .reflex   => inferInstanceAs (DecidableEq Unit)
+  | .person   => inferInstanceAs (DecidableEq Person)
+  | .verbForm => inferInstanceAs (DecidableEq VerbForm)
+  | .tense    => inferInstanceAs (DecidableEq Tense)
+  | .aspect   => inferInstanceAs (DecidableEq Aspect)
+  | .mood     => inferInstanceAs (DecidableEq Mood)
+  | .voice    => inferInstanceAs (DecidableEq Voice)
+  | .polarity => inferInstanceAs (DecidableEq Polarity)
+
+end MorphFeatureType
+
+namespace MorphFeatures
+
+/-- The valuation: project each slot, normalizing `reflex : Bool` to
+`Option Unit`. -/
+def val (f : MorphFeatures) : (t : MorphFeatureType) → Option (MorphFeatureType.Val t)
+  | .number   => f.number
+  | .gender   => f.gender
+  | .case_    => f.case_
+  | .definite => f.definite
+  | .degree   => f.degree
+  | .pronType => f.pronType
+  | .reflex   => if f.reflex then some () else none
+  | .person   => f.person
+  | .verbForm => f.verbForm
+  | .tense    => f.tense
+  | .aspect   => f.aspect
+  | .mood     => f.mood
+  | .voice    => f.voice
+  | .polarity => f.polarity
+
+instance : BundleLike MorphFeatures MorphFeatureType MorphFeatureType.Val where
+  val := MorphFeatures.val
+
+private theorem reflex_eq_of_val_reflex_eq {b1 b2 : Bool}
+    (h : (if b1 then some () else none) = (if b2 then some () else none)) :
+    b1 = b2 := by
+  cases b1 <;> cases b2 <;> simp_all
+
+/-- The valuation is injective: a `MorphFeatures` bundle is determined
+by its per-slot assignments (with `reflex` reconstructed from
+`Option Unit`). -/
+theorem val_injective : Function.Injective MorphFeatures.val := by
+  intro f g h
+  cases f; cases g
+  simp only [mk.injEq]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · exact congrFun h .number
+  · exact congrFun h .gender
+  · exact congrFun h .case_
+  · exact congrFun h .definite
+  · exact congrFun h .degree
+  · exact congrFun h .pronType
+  · exact reflex_eq_of_val_reflex_eq (congrFun h .reflex)
+  · exact congrFun h .person
+  · exact congrFun h .verbForm
+  · exact congrFun h .tense
+  · exact congrFun h .aspect
+  · exact congrFun h .mood
+  · exact congrFun h .voice
+  · exact congrFun h .polarity
+
+instance : LawfulBundleLike MorphFeatures :=
+  ⟨val_injective⟩
+
+end MorphFeatures
+
+end UD

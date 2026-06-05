@@ -75,7 +75,7 @@ do not exist. Corrected:
   `worldSatisfactionOrdering`. The Pasternak §5 integration is a
   composition with the new `MentalStateHomogeneity` discipline, not
   fresh substrate.
-- DOG (eq. 87): `Core.Order.FeaturePreorder.coarsen_via_monotone`
+- DOG (eq. 87): `Core.Order.PullbackPreorder.coarsen_via_monotone`
   provides the lattice operation Pasternak's fineness ordering needs.
 - Mandarin `duo`/`hen duo (de)` (§3.2): requires Fragment entries in
   `Fragments/Mandarin/`; substrate side carries through unchanged.
@@ -431,7 +431,7 @@ Pasternak's vertical altitude axis `K` (PDF p.288) extends rather than
 replaces the substrate's `Event.Mereology Time` preorder. A
 `Semantics/Events/VerticalDimension.lean` add-on with
 `κ : Event Time → Set Altitude` plus the DOG fineness lattice (which can
-consume `Core.Order.FeaturePreorder.coarsen_via_monotone`) is a clean
+consume `Core.Order.PullbackPreorder.coarsen_via_monotone`) is a clean
 follow-up. Out of scope here because it is not load-bearing for §1–§6.
 
 ### §5 `want` / `wish` / `regret` semantics

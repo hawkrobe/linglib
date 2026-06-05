@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Syntax.Minimalist.Checking
-import Linglib.Core.Order.FeaturePreorder
+import Linglib.Core.Order.PullbackPreorder
 import Mathlib.Data.DFinsupp.WellFounded
 
 /-!
@@ -44,12 +44,12 @@ use the `economy_winner_of_pair` helper.
 
 `DerivationCost` is a 4-Nat record. Its preorder is the pullback of
 `Pi.preorder` on `Fin 4 → Nat` through `DerivationCost.profile`,
-realized via `Core.Order.FeaturePreorder.ofFeature`. Same shape as
-`Core/Constraint/Pareto.lean`'s `paretoFeaturePreorder` (used for OT/HG
+realized via `Core.Order.PullbackPreorder.ofProj`. Same shape as
+`Core/Constraint/Pareto.lean`'s `paretoPullbackPreorder` (used for OT/HG
 candidate comparison); the OT side wraps in `ConstraintSystem` with
 candidate set + decoder, but Minimalist economy needs neither, so we
 register `Preorder DerivationCost` directly. `coarsen_via_monotone` from
-`Core/Order/FeaturePreorder.lean` is then available for free.
+`Core/Order/PullbackPreorder.lean` is then available for free.
 
 ## Removed (for git history)
 
@@ -80,7 +80,7 @@ namespace DerivationCost
 
 /-- The 4-vector projection: `profile c i` is the i-th cost dimension
     (0 = lexicalItems, 1 = mergeOps, 2 = agreeOps, 3 = ellipsisOps).
-    Feature map for the `Core.Order.FeaturePreorder` instance. -/
+    Feature map for the `Core.Order.PullbackPreorder` instance. -/
 def profile (c : DerivationCost) : Fin 4 → Nat
   | ⟨0, _⟩ => c.lexicalItems
   | ⟨1, _⟩ => c.mergeOps
@@ -92,17 +92,17 @@ def profile (c : DerivationCost) : Fin 4 → Nat
 @[simp] theorem profile_two (c : DerivationCost) : c.profile 2 = c.agreeOps := rfl
 @[simp] theorem profile_three (c : DerivationCost) : c.profile 3 = c.ellipsisOps := rfl
 
-/-- Cost-comparison preorder via `FeaturePreorder.ofFeature` pullback
+/-- Cost-comparison preorder via `PullbackPreorder.ofProj` pullback
     through `profile`, with `Pi.preorder` (pointwise ≤) on the
     `Fin 4 → Nat` feature space.
 
     See module docstring § "Architectural realization" for the parallel
-    with `Core/Constraint/Pareto.lean`'s `paretoFeaturePreorder`. -/
-def featurePreorder : Core.Order.FeaturePreorder DerivationCost (Fin 4 → Nat) :=
-  Core.Order.FeaturePreorder.ofFeature profile (fun a a' =>
+    with `Core/Constraint/Pareto.lean`'s `paretoPullbackPreorder`. -/
+def pullbackPreorder : Core.Order.PullbackPreorder DerivationCost (Fin 4 → Nat) :=
+  Core.Order.PullbackPreorder.ofProj profile (fun a a' =>
     decidable_of_iff (∀ i, a.profile i ≤ a'.profile i) Iff.rfl)
 
-instance : Preorder DerivationCost := featurePreorder.toPreorder
+instance : Preorder DerivationCost := pullbackPreorder.toPreorder
 
 end DerivationCost
 
@@ -129,7 +129,7 @@ section EconomyComparison
 
 /-- Componentwise Pareto: `c1` is at-least-as-economical as `c2` iff every
     cost dimension is no worse. Linguistic-named alias for the underlying
-    `Preorder.le` from `DerivationCost.featurePreorder`.
+    `Preorder.le` from `DerivationCost.pullbackPreorder`.
 
     NB: this is **not** a flat sum. Earlier revisions used `totalOps :=
     mergeOps + agreeOps + ellipsisOps` followed by 2-tuple
@@ -159,7 +159,7 @@ def strictlyMoreEconomical (c1 c2 : DerivationCost) : Prop :=
 instance (c1 c2 : DerivationCost) : Decidable (strictlyMoreEconomical c1 c2) := by
   unfold strictlyMoreEconomical; infer_instance
 
-/-- The linguistic alias agrees with `≤` from the `FeaturePreorder` pullback
+/-- The linguistic alias agrees with `≤` from the `PullbackPreorder` pullback
     componentwise. Tagged `@[simp]` so consumers can rewrite freely between
     the linguistic and order-theoretic forms. -/
 @[simp] theorem atLeastAsEconomical_iff_le (c1 c2 : DerivationCost) :
@@ -210,7 +210,7 @@ theorem profile_injective : Function.Injective profile := by
 
 /-- Order embedding of `DerivationCost` into the 4-vector Pareto preorder
     on `Fin 4 → Nat`. `map_rel_iff'` is `Iff.rfl` because the
-    `Preorder DerivationCost` instance is `featurePreorder.toPreorder =
+    `Preorder DerivationCost` instance is `pullbackPreorder.toPreorder =
     Preorder.lift profile` (`≤` is *definitionally* `profile a ≤
     profile b`). -/
 def profileEmbedding : DerivationCost ↪o (Fin 4 → Nat) where

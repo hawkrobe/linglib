@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Constraint.Pareto
-import Linglib.Core.Order.FeaturePreorder
+import Linglib.Core.Order.PullbackPreorder
 import Linglib.Core.Order.Satisfaction
 import Linglib.Core.Scales.Roundness
 import Linglib.Fragments.English.NumeralModifiers
@@ -34,7 +34,7 @@ matching the codebase's standard violation-profile abstraction. Profile
 indices fix the constraint order: 0 = INFO, 1 = Granularity, 2 = QSIMP,
 3 = NSAL.
 
-Two preorders on profiles are exposed, both as `Core.Order.FeaturePreorder`
+Two preorders on profiles are exposed, both as `Core.Order.PullbackPreorder`
 instances so they fit the schema established in `Core/Constraint/Pareto.lean`:
 
 | view              | feature                          | feature-space order |
@@ -43,7 +43,7 @@ instances so they fit the schema established in `Core/Constraint/Pareto.lean`:
 | `qualPreorder`    | `violatedSetOf : … → Finset (Fin 4)` | subset `⊆` |
 
 `paretoPreorder_le_implies_qualPreorder_le` is a one-line application of
-`FeaturePreorder.coarsen_via_monotone` with `violatedSetOf` as the
+`PullbackPreorder.coarsen_via_monotone` with `violatedSetOf` as the
 connecting monotone map. The legacy criterion-based view via
 `SatisfactionOrdering` is preserved as `cumminsOrdering`.
 
@@ -67,7 +67,7 @@ namespace Cummins2015
 
 open Core.Roundness
 open Core.Constraint (Profile)
-open Core.Order (FeaturePreorder SatisfactionOrdering)
+open Core.Order (PullbackPreorder SatisfactionOrdering)
 open Semantics.Numerals.Precision
 
 -- ============================================================================
@@ -167,36 +167,36 @@ def violationProfile (c : NumeralCandidate) (admittedCount : Nat) : ViolationPro
   | 3 => nsalViolations c.numeral
 
 -- ============================================================================
--- § 4: Pareto + qualitative FeaturePreorders
+-- § 4: Pareto + qualitative PullbackPreorders
 -- ============================================================================
 
-/-- **Pointwise Pareto preorder on violation profiles** as a `FeaturePreorder`
+/-- **Pointwise Pareto preorder on violation profiles** as a `PullbackPreorder`
     with the identity feature: `v ≤ v'` iff every component of `v` is `≤` the
     corresponding component of `v'`. The partial-order *backbone* that lex-OT
     extends; lex breaks ties using the constraint ranking. -/
-def paretoPreorder : FeaturePreorder ViolationProfile ViolationProfile :=
-  FeaturePreorder.ofFeature id (fun a a' =>
+def paretoPreorder : PullbackPreorder ViolationProfile ViolationProfile :=
+  PullbackPreorder.ofProj id (fun a a' =>
     show Decidable (∀ i, a i ≤ a' i) from inferInstance)
 
-/-- **Qualitative coarsening as a `FeaturePreorder`**: feature is the set of
+/-- **Qualitative coarsening as a `PullbackPreorder`**: feature is the set of
     violated constraint indices, feature-space order is `Finset.⊆`. The
     underlying preorder is identical in extension to `cumminsOrdering`'s, but
     presented as a feature pullback so the same `coarsen_via_monotone` schema
     applies. -/
-def qualPreorder : FeaturePreorder ViolationProfile (Finset (Fin 4)) :=
-  FeaturePreorder.ofFeature
+def qualPreorder : PullbackPreorder ViolationProfile (Finset (Fin 4)) :=
+  PullbackPreorder.ofProj
     Core.Constraint.ConstraintSystem.violatedSetOf
     (fun _ _ => inferInstance)
 
 /-- **Pointwise dominance ⇒ qualitative dominance.** A one-line corollary of
-    `FeaturePreorder.coarsen_via_monotone` with the violated-index extractor
+    `PullbackPreorder.coarsen_via_monotone` with the violated-index extractor
     as the connecting monotone map — identical in shape to
-    `paretoFeaturePreorder_le_implies_qualitativeFeaturePreorder_le` in
+    `paretoPullbackPreorder_le_implies_qualitativePullbackPreorder_le` in
     `Core/Constraint/Pareto.lean`. -/
 theorem paretoPreorder_le_implies_qualPreorder_le
     {v v' : ViolationProfile} (h : paretoPreorder.le v v') :
     qualPreorder.le v v' :=
-  FeaturePreorder.coarsen_via_monotone
+  PullbackPreorder.coarsen_via_monotone
     paretoPreorder qualPreorder
     Core.Constraint.ConstraintSystem.violatedSetOf
     (Core.Constraint.ConstraintSystem.violatedSetOf_monotone (fun _ => Nat.zero_le _))
