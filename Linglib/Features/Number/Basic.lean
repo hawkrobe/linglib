@@ -206,11 +206,13 @@ this order (`Minimalist.Phi.Recursion.categories_isLowerSet`, from
 
 Three independent branches:
 ```
-[±atomic] branch:        trial   greaterPlural
-                           \        /
-                            dual
-                           /    \
-                     singular    plural
+[±atomic] branch:    trial    greaterPlural
+                       |        /
+                      dual     /
+                       |      /
+                   singular  /
+                       |    /
+                    plural
 
 [±minimal] branch:       unitAugmented
                               |
@@ -236,11 +238,13 @@ are incomparable; under specification sg > pl. -/
 /-- The markedness ordering on number values. -/
 def markednessLE (a b : Number) : Prop :=
   a = b ∨ match a, b with
-  -- [±atomic] branch: singular ≤ dual ≤ {trial, greaterPlural};
-  -- plural ≤ dual ≤ {trial, greaterPlural}
-  | .singular, .dual | .singular, .trial | .singular, .greaterPlural => True
-  | .plural, .dual | .plural, .trial | .plural, .greaterPlural => True
-  | .dual, .trial | .dual, .greaterPlural => True
+  -- [±atomic] branch ([harbour-2014] Table 1: TR → DU, DU → SG, SG → PL):
+  -- plural ≤ singular ≤ dual ≤ trial; greaterPlural requires singular and
+  -- plural but NOT dual (Table 1: GR.PL → PL/AUG; Fula is sg/pl/grpl)
+  | .singular, .dual | .singular, .trial => True
+  | .plural, .singular | .plural, .dual | .plural, .trial => True
+  | .plural, .greaterPlural => True
+  | .dual, .trial => True
   -- Approximative branch: plural ≤ paucal ≤ greaterPaucal
   | .plural, .paucal | .plural, .greaterPaucal => True
   | .paucal, .greaterPaucal => True
@@ -329,13 +333,41 @@ instance (ns : System) (v : Number) : Decidable (ns.IsObligatory v) := by
 
 /-! #### Implicational universals ([greenberg-1963], [corbett-2000] §2.3.1) -/
 
-/-- Trial implies dual: no language has trial without dual. -/
+/-- Trial implies dual ([harbour-2014] Table 1: TR → DU). -/
 def TrialImpliesDual (ns : System) : Prop :=
   .trial ∈ ns.values → .dual ∈ ns.values
 
-/-- Dual implies plural. -/
+/-- Dual implies singular ([harbour-2014] Table 1: DU → SG). -/
+def DualImpliesSingular (ns : System) : Prop :=
+  .dual ∈ ns.values → .singular ∈ ns.values
+
+/-- Singular implies plural ([harbour-2014] Table 1: SG → PL). -/
+def SingularImpliesPlural (ns : System) : Prop :=
+  .singular ∈ ns.values → .plural ∈ ns.values
+
+/-- Dual implies plural ([greenberg-1966], [corbett-2000] §2.3.1; the
+    composition of DU → SG and SG → PL). -/
 def DualImpliesPlural (ns : System) : Prop :=
   .dual ∈ ns.values → .plural ∈ ns.values
+
+/-- Minimal implies augmented or plural ([harbour-2014] Table 1:
+    MIN → AUG/PL). -/
+def MinimalImpliesAugmentedOrPlural (ns : System) : Prop :=
+  .minimal ∈ ns.values → .augmented ∈ ns.values ∨ .plural ∈ ns.values
+
+/-- Paucal implies plural ([harbour-2014] Table 1: PC → PL). -/
+def PaucalImpliesPlural (ns : System) : Prop :=
+  .paucal ∈ ns.values → .plural ∈ ns.values
+
+/-- Greater paucal implies paucal ([harbour-2014] Table 1: GR.PC → PC). -/
+def GreaterPaucalImpliesPaucal (ns : System) : Prop :=
+  .greaterPaucal ∈ ns.values → .paucal ∈ ns.values
+
+/-- Greater plural implies plural or augmented ([harbour-2014] Table 1:
+    GR.PL → PL/AUG) — disjunctive, so it is a `System` predicate, not a
+    markedness-order edge. -/
+def GreaterPluralImpliesPluralOrAugmented (ns : System) : Prop :=
+  .greaterPlural ∈ ns.values → .plural ∈ ns.values ∨ .augmented ∈ ns.values
 
 /-- Plural implies singular or minimal ([harbour-2014] Table 1:
     PL → SG/MIN). Plural requires a "base" value — either singular
@@ -354,8 +386,20 @@ def UnitAugImpliesAugmented (ns : System) : Prop :=
 
 instance (ns : System) : Decidable ns.TrialImpliesDual := by
   unfold TrialImpliesDual; infer_instance
+instance (ns : System) : Decidable ns.DualImpliesSingular := by
+  unfold DualImpliesSingular; infer_instance
+instance (ns : System) : Decidable ns.SingularImpliesPlural := by
+  unfold SingularImpliesPlural; infer_instance
 instance (ns : System) : Decidable ns.DualImpliesPlural := by
   unfold DualImpliesPlural; infer_instance
+instance (ns : System) : Decidable ns.MinimalImpliesAugmentedOrPlural := by
+  unfold MinimalImpliesAugmentedOrPlural; infer_instance
+instance (ns : System) : Decidable ns.PaucalImpliesPlural := by
+  unfold PaucalImpliesPlural; infer_instance
+instance (ns : System) : Decidable ns.GreaterPaucalImpliesPaucal := by
+  unfold GreaterPaucalImpliesPaucal; infer_instance
+instance (ns : System) : Decidable ns.GreaterPluralImpliesPluralOrAugmented := by
+  unfold GreaterPluralImpliesPluralOrAugmented; infer_instance
 instance (ns : System) : Decidable ns.PluralImpliesSingularOrMinimal := by
   unfold PluralImpliesSingularOrMinimal; infer_instance
 instance (ns : System) : Decidable ns.AugmentedImpliesMinimal := by
@@ -363,12 +407,15 @@ instance (ns : System) : Decidable ns.AugmentedImpliesMinimal := by
 instance (ns : System) : Decidable ns.UnitAugImpliesAugmented := by
   unfold UnitAugImpliesAugmented; infer_instance
 
-/-- A well-formed number system satisfies all implicational universals.
-    Any Fragment-recorded system discharges this by `decide`. -/
+/-- A well-formed number system satisfies all implicational universals
+    ([harbour-2014] Table 1). Any Fragment-recorded system discharges this
+    by `decide`. -/
 def WellFormed (ns : System) : Prop :=
-  ns.TrialImpliesDual ∧ ns.DualImpliesPlural ∧
-  ns.PluralImpliesSingularOrMinimal ∧ ns.AugmentedImpliesMinimal ∧
-  ns.UnitAugImpliesAugmented
+  ns.TrialImpliesDual ∧ ns.DualImpliesSingular ∧ ns.SingularImpliesPlural ∧
+  ns.DualImpliesPlural ∧ ns.PluralImpliesSingularOrMinimal ∧
+  ns.MinimalImpliesAugmentedOrPlural ∧ ns.AugmentedImpliesMinimal ∧
+  ns.UnitAugImpliesAugmented ∧ ns.PaucalImpliesPlural ∧
+  ns.GreaterPaucalImpliesPaucal ∧ ns.GreaterPluralImpliesPluralOrAugmented
 
 instance (ns : System) : Decidable ns.WellFormed := by
   unfold WellFormed; infer_instance
