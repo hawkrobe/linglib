@@ -1,3 +1,4 @@
+import Mathlib.Data.Fintype.Powerset
 import Linglib.Features.Number.Basic
 import Linglib.Features.Number.Interp
 import Linglib.Features.ContainmentPair
@@ -184,363 +185,233 @@ theorem atomic_implies_minimal :
 Number features grounded in a join-semilattice of individuals.
 
 [link-1983] models the domain of individuals as a join-semilattice
-⟨D, ⊔⟩. Number categories correspond to lattice predicates:
-- **singular** = atoms (no proper part)
-- **dual** = minimal non-atoms (join of exactly 2 atoms)
-- **plural** = non-minimal non-atoms
+⟨D, ⊔⟩. Number categories correspond to the lattice predicates of
+`Features/Number/Interp.lean`:
+- **singular** = domain-minimal elements (the atoms),
+- **dual** = minimal non-atoms (`minimalNonAtomIn`),
+- **plural** = the rest.
 
-The containment [+atomic] → [+minimal] is a *theorem* of lattice
-theory, not a stipulation: atoms have no proper parts, so they are
-trivially minimal in any sublattice region (`Mereology.Atom`).
+The containment `[+atomic] → [+minimal]` is a *theorem* of lattice
+theory (`Number.singular_subset_minimal`), not a stipulation. On finite
+carriers the predicates are decidable (instances in `Interp.lean`), so
+every concrete classification below is kernel-checked by `decide`:
+domains are `Finset (Fin n)` powerset lattices with join = union.
+Minimality is domain-relative (`minimalIn (· ∈ domain)`), agreeing with
+the global `Mereology.Atom` when the domain is downward closed
+in `D⁺`. -/
 
-The decidable functions `isAtom` and `isMinimalNonAtom` are parameterized
-by a join operation and a finite domain, making the lattice-theoretic
-grounding computationally verifiable. They are the `Bool` counterparts
-of `Mereology.Atom` and minimality-in-region. -/
+section Lattice
 
-/-! The decidable layer below mirrors the general lattice semantics of
-`Features/Number/Interp.lean` on finite, list-enumerated domains: the
-`Bool`-valued `isAtom` is domain-relative minimality (`Number.minimalIn
-(· ∈ domain)` — `isAtom_iff_minimalIn`), `isMinimalNonAtom` mirrors
-minimality over the non-atoms (`isMinimalNonAtom_iff_minimalIn`), and
-`isJoinCompleteIn` mirrors `Number.additiveIn`
-(`isJoinCompleteIn_iff_additiveIn`). `Interp`'s `Mereology.Atom` is
-global minimality; the two agree when the domain enumerates a
-downward-closed region of `D⁺`. -/
+variable {D : Type*} [SemilatticeSup D]
 
-/-- Powerset lattice join (bitwise OR). Atoms are powers of 2;
-    sums are bitwise OR of their atoms. Used across the lattice
-    sections below and by `Number.resolve` for lattice verification. -/
-def bitmaskJoin (a b : Nat) : Nat := Nat.lor a b
+/-- The minimal non-atoms of `domain`: minimal among its non-minimal
+    elements — the dual's region ([harbour-2014] `[−atomic, +minimal]`). -/
+def minimalNonAtomIn (domain : D → Prop) : D → Prop :=
+  minimalIn fun y => domain y ∧ ¬minimalIn domain y
 
-/-- Ordering induced by join: a ≤ b iff a ⊔ b = b.
-    In a join-semilattice, this is the canonical partial order. -/
-private def joinLE {D : Type} [DecidableEq D]
-    (join : D → D → D) (a b : D) : Bool :=
-  join a b == b
+/-- A minimal non-atom is not domain-minimal. -/
+theorem not_minimalIn_of_minimalNonAtomIn {domain : D → Prop} {x : D}
+    (h : minimalNonAtomIn domain x) : ¬minimalIn domain x := h.1.2
 
-/-- An element is an atom in a domain under the join-induced ordering:
-    x ∈ domain and no element other than x is below it.
-    Decidable counterpart of `Mereology.Atom` (∀ y, y ≤ x → y = x),
-    parameterized by a concrete join operation and finite domain. -/
-def isAtom {D : Type} [DecidableEq D]
-    (join : D → D → D) (domain : List D) (x : D) : Bool :=
-  domain.contains x &&
-  domain.all fun y => y == x || !(joinLE join y x)
+/-- A region is join-complete: every element is `[+additive]` in it —
+    `Mereology.CUM` restricted to the region ([harbour-2014] (11),
+    complement completeness). -/
+def RegionAdditive (Q : D → Prop) : Prop := ∀ x, Q x → additiveIn Q x
 
-/-- An element is a minimal non-atom: not an atom, and no non-atom in
-    the domain is strictly below it in the join-induced ordering.
-    For number: minimal non-atoms are duals (pairs of exactly 2 atoms).
-    Non-minimal non-atoms are plurals (groups of 3+). -/
-def isMinimalNonAtom {D : Type} [DecidableEq D]
-    (join : D → D → D) (domain : List D) (x : D) : Bool :=
-  let nonAtoms := domain.filter (! isAtom join domain ·)
-  nonAtoms.contains x &&
-  nonAtoms.all fun y => y == x || !(joinLE join y x)
+variable [Fintype D] [DecidableEq D] [DecidableLE D]
 
-/-- The `Bool` atom test is domain-relative minimality: the decidable
-    mirror of `Number.minimalIn (· ∈ domain)` for the lattice join. -/
-theorem isAtom_iff_minimalIn {D : Type} [SemilatticeSup D] [DecidableEq D]
-    (domain : List D) (x : D) :
-    isAtom (· ⊔ ·) domain x = true ↔ minimalIn (· ∈ domain) x := by
-  simp only [isAtom, joinLE, minimalIn, Bool.and_eq_true, List.contains_iff,
-    List.all_eq_true, Bool.or_eq_true, beq_iff_eq, Bool.not_eq_true',
-    beq_eq_false_iff_ne, ne_eq]
-  refine and_congr_right fun _ => ?_
-  constructor
-  · intro h y hy hyx
-    rcases h y hy with rfl | hn
-    · rfl
-    · exact absurd (sup_eq_right.mpr hyx) hn
-  · intro h y hy
-    by_cases hyx : y ≤ x
-    · exact Or.inl (h y hy hyx)
-    · exact Or.inr fun he => hyx (sup_eq_right.mp he)
+instance {domain : D → Prop} [DecidablePred domain] (x : D) :
+    Decidable (minimalNonAtomIn domain x) := by
+  unfold minimalNonAtomIn
+  infer_instance
 
-/-- The `Bool` minimal-non-atom test mirrors `Number.minimalIn` over the
-    domain's non-atoms — the region `interp` assigns to the dual. -/
-theorem isMinimalNonAtom_iff_minimalIn {D : Type} [SemilatticeSup D]
-    [DecidableEq D] (domain : List D) (x : D) :
-    isMinimalNonAtom (· ⊔ ·) domain x = true ↔
-      minimalIn (fun y => y ∈ domain ∧ ¬minimalIn (· ∈ domain) y) x := by
-  have hmem : ∀ y : D,
-      (y ∈ domain.filter (! isAtom (· ⊔ ·) domain ·)) ↔
-        (y ∈ domain ∧ ¬minimalIn (· ∈ domain) y) := by
-    intro y
-    rw [List.mem_filter, Bool.not_eq_true', ← isAtom_iff_minimalIn,
-      Bool.not_eq_true]
-  simp only [isMinimalNonAtom, joinLE, minimalIn, Bool.and_eq_true,
-    List.contains_iff, List.all_eq_true, Bool.or_eq_true, beq_iff_eq,
-    Bool.not_eq_true', beq_eq_false_iff_ne, ne_eq]
-  rw [and_congr_left fun _ => hmem x]
-  refine and_congr_right fun _ => ?_
-  constructor
-  · intro h y hy hyx
-    rcases h y ((hmem y).mpr hy) with rfl | hn
-    · rfl
-    · exact absurd (sup_eq_right.mpr hyx) hn
-  · intro h y hy
-    by_cases hyx : y ≤ x
-    · exact Or.inl (h y ((hmem y).mp hy) hyx)
-    · exact Or.inr fun he => hyx (sup_eq_right.mp he)
+instance {Q : D → Prop} [DecidablePred Q] :
+    Decidable (RegionAdditive Q) := by
+  unfold RegionAdditive
+  infer_instance
 
-
-/-- Convert lattice membership to number features using join structure.
-    Atoms → singular, minimal non-atoms → dual, others → plural. -/
-def latticeToFeatures {D : Type} [DecidableEq D]
-    (join : D → D → D) (domain : List D) (x : D) : Features :=
-  if isAtom join domain x then singularF
-  else if isMinimalNonAtom join domain x then dualF
+/-- Classify a lattice element by position: domain-minimal → singular,
+    minimal non-atom → dual, otherwise → plural. -/
+def latticeToFeatures (domain : D → Prop) [DecidablePred domain]
+    (x : D) : Features :=
+  if minimalIn domain x then singularF
+  else if minimalNonAtomIn domain x then dualF
   else pluralF
 
-/-- Containment follows from lattice structure: atoms always get
-    [+minimal], so [+atomic] → [+minimal] holds by construction.
-    Every branch of `latticeToFeatures` produces a well-formed bundle. -/
-theorem latticeToFeatures_wellFormed {D : Type} [DecidableEq D]
-    (join : D → D → D) (domain : List D) (x : D) :
-    (latticeToFeatures join domain x).WellFormed := by
-  simp only [latticeToFeatures]
+/-- Every branch of `latticeToFeatures` produces a well-formed bundle:
+    `[+atomic] → [+minimal]` holds by construction. -/
+theorem latticeToFeatures_wellFormed (domain : D → Prop)
+    [DecidablePred domain] (x : D) :
+    (latticeToFeatures domain x).WellFormed := by
+  unfold latticeToFeatures
   split
   · exact singular_wellFormed
   · split
     · exact dual_wellFormed
     · exact plural_wellFormed
 
-/-- Powerset lattice with 2 atoms: {0}=1, {1}=2, {0,1}=3. -/
-private def ps2Domain : List Nat := [1, 2, 3]
+end Lattice
+
+/-! ### Powerset lattice examples -/
+
+/-- The 2-atom powerset domain: nonempty subsets of `Fin 2`. -/
+private def ps2 (s : Finset (Fin 2)) : Prop := s.Nonempty
+
+private instance : DecidablePred ps2 := fun s =>
+  inferInstanceAs (Decidable s.Nonempty)
 
 theorem ex_atom_is_singular :
-    latticeToFeatures bitmaskJoin ps2Domain 1 = singularF := by decide
+    latticeToFeatures ps2 {0} = singularF := by decide
 theorem ex_atom_is_singular' :
-    latticeToFeatures bitmaskJoin ps2Domain 2 = singularF := by decide
+    latticeToFeatures ps2 {1} = singularF := by decide
 theorem ex_pair_is_dual :
-    latticeToFeatures bitmaskJoin ps2Domain 3 = dualF := by decide
+    latticeToFeatures ps2 {0, 1} = dualF := by decide
 
-/-- Powerset lattice with 3 atoms: {0}=1, {1}=2, {2}=4.
-    Pairs (3,5,6) are minimal non-atoms → dual.
-    Triple (7) is non-minimal non-atom → plural.
-    This demonstrates that `isMinimalNonAtom` correctly distinguishes
-    duals from plurals in a non-trivial lattice (the 2-atom domain
-    above has only one non-atom and cannot show this). -/
-def ps3Domain : List Nat := [1, 2, 4, 3, 5, 6, 7]
+/-- The 3-atom powerset domain: nonempty subsets of `Fin 3`. Pairs are
+    minimal non-atoms → dual; the triple is non-minimal → plural (the
+    2-atom domain has a single non-atom and cannot show the split). -/
+def ps3 (s : Finset (Fin 3)) : Prop := s.Nonempty
+
+instance : DecidablePred ps3 := fun s =>
+  inferInstanceAs (Decidable s.Nonempty)
 
 theorem ps3_atom_is_singular :
-    latticeToFeatures bitmaskJoin ps3Domain 1 = singularF := by decide
+    latticeToFeatures ps3 {0} = singularF := by decide
 theorem ps3_pair_is_dual :
-    latticeToFeatures bitmaskJoin ps3Domain 3 = dualF := by decide
+    latticeToFeatures ps3 {0, 1} = dualF := by decide
 theorem ps3_pair_is_dual' :
-    latticeToFeatures bitmaskJoin ps3Domain 5 = dualF := by decide
+    latticeToFeatures ps3 {0, 2} = dualF := by decide
 theorem ps3_triple_is_plural :
-    latticeToFeatures bitmaskJoin ps3Domain 7 = pluralF := by decide
+    latticeToFeatures ps3 {0, 1, 2} = pluralF := by decide
 
 /-! ### The additive feature
 [harbour-2014]
 
-[±additive] is the third number feature, characterizing
-join-completeness within a lattice region. Applied to the non-atomic
-region, it separates:
-- [+additive] = "abundance" (plural/greater plural) — join-complete
-- [−additive] = "paucity" (paucal/greater paucal) — not join-complete
+`[±additive]` is the third number feature, characterizing
+join-completeness within a lattice region (`Number.additiveIn`).
+Applied to the non-atomic region, it separates:
+- `[+additive]` = "abundance" (plural/greater plural) — join-complete
+- `[−additive]` = "paucity" (paucal/greater paucal) — not join-complete
 
 The boundary is fixed by sociosemantic convention, subject to:
-- **Complement completeness** ((11)): the [+additive] subregion must
-  be join-complete.
+- **Complement completeness** ((11)): the `[+additive]` subregion must
+  be join-complete (`RegionAdditive`).
 - **Fungibility** ((12)): the boundary must be permutation-invariant
-  (horizontal cuts by cardinality, not identity of atoms).
+  (horizontal cuts by cardinality, not identity of atoms) — which is why
+  the regions below are defined by `Finset.card`.
 
-**Connection to CUM**: [+additive] IS cumulativity restricted to a
-subregion. The link between number and aspect/telicity
-([harbour-2014] §4.4) runs through exactly this connection:
-mass nouns satisfy [+additive] (cumulative), count nouns satisfy
-[−additive] (quantized). -/
+**Connection to CUM**: `[+additive]` IS cumulativity restricted to a
+subregion (`Number.additive_subregion_is_cum`). The link between number
+and aspect/telicity ([harbour-2014] §4.4) runs through exactly this
+connection: mass nouns satisfy `[+additive]` (cumulative), count nouns
+`[−additive]` (quantized). -/
 
-/-- An element is join-complete in a region under a given join operation.
-    [harbour-2014] (10): [+additive](x) ⟺ x ∈ Q ∧ ∀y ∈ Q, x ⊔ y ∈ Q. -/
-def isJoinCompleteIn {D : Type} [DecidableEq D]
-    (join : D → D → D) (region : List D) (x : D) : Bool :=
-  region.contains x &&
-  region.all fun y => region.contains (join x y)
-
-/-- A region is globally join-complete: every element is [+additive].
-    Decidable counterpart of `Mereology.CUM` restricted to the region:
-    CUM(Q) ⇔ ∀x,y ∈ Q, x ⊔ y ∈ Q. -/
-def isRegionJoinComplete {D : Type} [DecidableEq D]
-    (join : D → D → D) (region : List D) : Bool :=
-  region.all fun x => isJoinCompleteIn join region x
-
-/-- The `Bool` join-completeness test mirrors `Number.additiveIn` on the
-    enumerated region. -/
-theorem isJoinCompleteIn_iff_additiveIn {D : Type} [SemilatticeSup D]
-    [DecidableEq D] (region : List D) (x : D) :
-    isJoinCompleteIn (· ⊔ ·) region x = true ↔
-      additiveIn (· ∈ region) x := by
-  simp only [isJoinCompleteIn, additiveIn, Bool.and_eq_true,
-    List.contains_iff, List.all_eq_true]
-
-
-/-! ### Additive feature — powerset lattice examples
-
-Paucal vs plural on a powerset lattice (join = bitwise OR). Atoms
-encoded as powers of 2; sums as bitwise OR of their atoms.
-
-With 3 atoms, the non-atomic region is entirely join-complete, so
-[±additive] draws no distinction — paucal requires a richer lattice.
-
-With 5 atoms, the "paucal" region (2–3 atoms) is NOT join-complete:
-two small sums can join to exceed "a few." The "plural" region
-(≥ 4 atoms) IS join-complete, satisfying complement completeness. -/
-
-/-- Non-atoms in the 3-atom powerset. Atoms: {0}=1, {1}=2, {2}=4.
-    Non-atoms: {0,1}=3, {0,2}=5, {1,2}=6, {0,1,2}=7. -/
-private def ps3NonAtoms : List Nat := [3, 5, 6, 7]
-
-/-- With 3 atoms, the entire non-atomic region is join-complete.
-    [±additive] is vacuous — no paucal/plural split possible. -/
+/-- With 3 atoms the entire non-atomic region is join-complete:
+    `[±additive]` is vacuous — a paucal/plural split needs a richer
+    lattice. -/
 theorem ps3_nonAtoms_joinComplete :
-    isRegionJoinComplete bitmaskJoin ps3NonAtoms = true := by decide
+    RegionAdditive (fun s : Finset (Fin 3) => 2 ≤ s.card) := by decide
 
-/-- "Paucal" region in a 5-atom powerset: elements with 2–3 atoms.
-    Atoms: 1, 2, 4, 8, 16.
-    Dyads (C(5,2)=10): 3, 5, 6, 9, 10, 12, 17, 18, 20, 24.
-    Triads (C(5,3)=10): 7, 11, 13, 14, 19, 21, 22, 25, 26, 28. -/
-private def ps5Paucal : List Nat :=
-  [3, 5, 6, 9, 10, 12, 17, 18, 20, 24,
-   7, 11, 13, 14, 19, 21, 22, 25, 26, 28]
-
-/-- "Plural" region in a 5-atom powerset: elements with ≥ 4 atoms.
-    Tetrads (C(5,4)=5): 15, 23, 27, 29, 30. Pentad: 31. -/
-private def ps5Plural : List Nat := [15, 23, 27, 29, 30, 31]
-
-/-- The paucal region is NOT join-complete: {0,1}=3 ⊔ {2,3}=12 =
-    {0,1,2,3}=15 has 4 atoms and escapes the region. -/
+/-- The "paucal" region of the 5-atom powerset (2–3 atoms) is NOT
+    join-complete: {0,1} ⊔ {2,3} has four atoms and escapes the
+    region. -/
 theorem ps5_paucal_not_joinComplete :
-    isRegionJoinComplete bitmaskJoin ps5Paucal = false := by decide
+    ¬ RegionAdditive
+      (fun s : Finset (Fin 5) => 2 ≤ s.card ∧ s.card ≤ 3) := by decide
 
-/-- The plural region IS join-complete: joining two large sums stays
-    large. Satisfies complement completeness ([harbour-2014] (11)). -/
+/-- The "plural" region (≥ 4 atoms) IS join-complete: joining two large
+    sums stays large. Satisfies complement completeness
+    ([harbour-2014] (11)). -/
 theorem ps5_plural_joinComplete :
-    isRegionJoinComplete bitmaskJoin ps5Plural = true := by decide
+    RegionAdditive (fun s : Finset (Fin 5) => 4 ≤ s.card) := by decide
 
-/-- The paucal/plural asymmetry: the [+additive] region is join-complete,
-    the [−additive] region is not. This is the formal content of the
-    approximative number distinction ([harbour-2014] §3). -/
+/-- The paucal/plural asymmetry: the `[+additive]` region is
+    join-complete, the `[−additive]` region is not — the formal content
+    of the approximative number distinction ([harbour-2014] §3). -/
 theorem ps5_additive_asymmetry :
-    isRegionJoinComplete bitmaskJoin ps5Plural = true ∧
-    isRegionJoinComplete bitmaskJoin ps5Paucal = false :=
+    RegionAdditive (fun s : Finset (Fin 5) => 4 ≤ s.card) ∧
+    ¬ RegionAdditive
+      (fun s : Finset (Fin 5) => 2 ≤ s.card ∧ s.card ≤ 3) :=
   ⟨ps5_plural_joinComplete, ps5_paucal_not_joinComplete⟩
 
 /-! ### DUAL as predicate modifier
 [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
 
-The paper proposes (eq 39 in §4.2.1, derived from Harbour features
-in §8 eq 98b) that the core concept DUAL has a predicate-modification
+The paper proposes (eq 39 in §4.2.1, derived from Harbour features in §8
+eq 98b) that the core concept DUAL has a predicate-modification
 semantics:
 
   ⟦DUAL⟧ = λP.λx. P(x) ∧ |{y : atom(y) ∧ y ⊑ x}| = 2
 
 In a join-semilattice, "exactly 2 atomic parts below x" coincides with
-"x is a minimal non-atom" — already formalized as `isMinimalNonAtom`.
-The bridge is therefore a one-line composition: filter P by the dual
-lattice predicate.
+"x is a minimal non-atom" (`minimalNonAtomIn`). The bridge is therefore
+a one-line composition: restrict P by the dual lattice predicate.
 
 This connects the Harbour feature bundle `dualF = ⟨isAtomic := false,
 isMinimal := true⟩` to the predicate modifier required by the paper's
 Indirect Alternative analysis: *les deux* lexicalizes the predicate
-modifier `dualPredOnLattice _ _ verres` ('cup'), which is what blocks
+modifier `dualPredOnLattice _ verres` ('cup'), which is what blocks
 *tous les NP.dual*. See `Studies/JereticEtAl2025.lean`. -/
 
+section DualPred
+
+variable {D : Type*} [SemilatticeSup D]
+
 /-- ⟦DUAL⟧ as a predicate modifier on a join-semilattice domain
-([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025] eq 39).
+    ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025] eq 39):
+    `P x`, and `x` has exactly two atomic parts — i.e. is a minimal
+    non-atom of the domain. -/
+def dualPredOnLattice (domain P : D → Prop) (x : D) : Prop :=
+  P x ∧ minimalNonAtomIn domain x
 
-Given a property `P` over individuals and an element `x`, `dualPredOnLattice`
-holds of `x` iff `P x` and `x` has exactly 2 atomic parts. The latter is
-witnessed by `isMinimalNonAtom`, since in a join-semilattice the minimal
-non-atoms are precisely the joins of two atoms. -/
-def dualPredOnLattice {D : Type} [DecidableEq D]
-    (join : D → D → D) (domain : List D)
-    (P : D → Bool) (x : D) : Bool :=
-  P x && isMinimalNonAtom join domain x
+instance {domain P : D → Prop} [Fintype D] [DecidableEq D]
+    [DecidableLE D] [DecidablePred domain] [DecidablePred P] (x : D) :
+    Decidable (dualPredOnLattice domain P x) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
-/-- `dualPredOnLattice P` strictly refines `P`: the dual reading
-of `P` is a subset of `P`. -/
-theorem dualPredOnLattice_refines {D : Type} [DecidableEq D]
-    (join : D → D → D) (domain : List D)
-    (P : D → Bool) (x : D) :
-    dualPredOnLattice join domain P x = true → P x = true := by
-  simp only [dualPredOnLattice, Bool.and_eq_true]
-  exact And.left
+/-- `dualPredOnLattice P` refines `P`: the dual reading of `P` is a
+    subset of `P`. -/
+theorem dualPredOnLattice_refines {domain P : D → Prop} {x : D}
+    (h : dualPredOnLattice domain P x) : P x := h.1
 
-/-- The dual reading of a property holds of `x` iff `P x` and `x` is a
-minimal non-atom in the domain. -/
-theorem dualPredOnLattice_iff {D : Type} [DecidableEq D]
-    (join : D → D → D) (domain : List D)
-    (P : D → Bool) (x : D) :
-    dualPredOnLattice join domain P x = true ↔
-    P x = true ∧ isMinimalNonAtom join domain x = true := by
-  simp only [dualPredOnLattice, Bool.and_eq_true]
-
-/-- An element classified as a minimal non-atom is, by construction, not
-an atom. This is a structural fact about `isMinimalNonAtom`: it filters
-to the non-atom region of the domain before testing minimality. -/
-theorem not_atom_of_isMinimalNonAtom {D : Type} [DecidableEq D]
-    (join : D → D → D) (domain : List D) (x : D)
-    (h : isMinimalNonAtom join domain x = true) :
-    isAtom join domain x = false := by
-  unfold isMinimalNonAtom at h
-  rw [Bool.and_eq_true] at h
-  have hMem : x ∈ domain.filter (! isAtom join domain ·) := by
-    have := h.1
-    simp only [List.contains_iff_exists_mem_beq, beq_iff_eq] at this
-    obtain ⟨y, hy, rfl⟩ := this
-    exact hy
-  rw [List.mem_filter] at hMem
-  simpa using hMem.2
-
-/-- **Bridge**: the lattice predicate `isMinimalNonAtom` IS the condition
-`latticeToFeatures` uses to assign `dualF`. So `dualPredOnLattice`
-factors as `P x ∧ latticeToFeatures … x = dualF`.
-
-This grounds the paper's predicate-modifier semantics
-([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025] eq 39)
-in the existing Harbour feature decomposition (the feature bundle above):
-DUAL is *not* a separate primitive but the same conditions used to
-classify a lattice element as `[−atomic, +minimal]`. -/
-theorem dualPredOnLattice_eq_via_features {D : Type} [DecidableEq D]
-    (join : D → D → D) (domain : List D)
-    (P : D → Bool) (x : D) :
-    dualPredOnLattice join domain P x = true ↔
-    P x = true ∧ latticeToFeatures join domain x = dualF := by
-  rw [dualPredOnLattice_iff]
-  refine and_congr_right (fun _ => ?_)
+/-- **Bridge**: the dual lattice predicate IS the condition
+    `latticeToFeatures` uses to assign `dualF`, so `dualPredOnLattice`
+    factors as `P x ∧ latticeToFeatures … x = dualF`. DUAL is *not* a
+    separate primitive but the same condition that classifies a lattice
+    element as `[−atomic, +minimal]`
+    ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025] eq 39). -/
+theorem dualPredOnLattice_eq_via_features [Fintype D] [DecidableEq D]
+    [DecidableLE D] (domain : D → Prop) [DecidablePred domain]
+    (P : D → Prop) (x : D) :
+    dualPredOnLattice domain P x ↔
+      P x ∧ latticeToFeatures domain x = dualF := by
+  unfold dualPredOnLattice latticeToFeatures
+  refine and_congr_right fun _ => ?_
   constructor
-  · -- isMinimalNonAtom → latticeToFeatures = dualF
-    intro hMin
-    have hNotAtom : isAtom join domain x = false :=
-      not_atom_of_isMinimalNonAtom join domain x hMin
-    unfold latticeToFeatures
-    simp [hNotAtom, hMin]
-  · -- latticeToFeatures = dualF → isMinimalNonAtom
-    intro hF
-    unfold latticeToFeatures at hF
-    by_cases ha : isAtom join domain x = true
-    · simp [ha, singularF, dualF] at hF
-    · simp only [ha] at hF
-      by_cases hm : isMinimalNonAtom join domain x = true
-      · exact hm
-      · simp only [hm] at hF
-        simp [pluralF, dualF] at hF
+  · intro hMin
+    rw [if_neg (not_minimalIn_of_minimalNonAtomIn hMin), if_pos hMin]
+  · intro hF
+    by_cases hm : minimalNonAtomIn domain x
+    · exact hm
+    · exfalso
+      by_cases ha : minimalIn domain x
+      · rw [if_pos ha] at hF
+        exact absurd hF (by decide)
+      · rw [if_neg ha, if_neg hm] at hF
+        exact absurd hF (by decide)
 
-/-- On the 3-atom powerset, the dual reading of "is a non-atom"
-selects the three pairs (3, 5, 6) and excludes the triple (7). -/
+end DualPred
+
+/-- On the 3-atom powerset, the dual reading of the trivial property
+    selects the three pairs and excludes the triple. -/
 theorem ps3_dual_pairs_satisfy :
-    dualPredOnLattice bitmaskJoin ps3Domain (fun _ => true) 3 = true ∧
-    dualPredOnLattice bitmaskJoin ps3Domain (fun _ => true) 5 = true ∧
-    dualPredOnLattice bitmaskJoin ps3Domain (fun _ => true) 6 = true := by
-  decide
+    dualPredOnLattice ps3 (fun _ => True) {0, 1} ∧
+    dualPredOnLattice ps3 (fun _ => True) {0, 2} ∧
+    dualPredOnLattice ps3 (fun _ => True) {1, 2} := by decide
 
-/-- Triples (≥3 atomic parts) fail the dual predicate. -/
+/-- Triples (≥ 3 atomic parts) fail the dual predicate. -/
 theorem ps3_dual_triple_excluded :
-    dualPredOnLattice bitmaskJoin ps3Domain (fun _ => true) 7 = false := by
-  decide
+    ¬ dualPredOnLattice ps3 (fun _ => True) ({0, 1, 2} : Finset (Fin 3))
+    := by decide
 
 end Number
