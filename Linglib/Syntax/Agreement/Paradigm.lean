@@ -68,7 +68,7 @@ def Cell.isSAP (c : Cell) : Bool :=
 /-- The person level of a cell, on the `Person` scale
     (an unspecified or 0-person cell maps to `.third`). Adapts a φ-cell to
     consumers that reason on person prominence (decomposition, indexing). -/
-def Cell.toPersonLevel (c : Cell) : Person :=
+def Cell.toPerson (c : Cell) : Person :=
   match c.person with
   | some .first => .first
   | some .second => .second
