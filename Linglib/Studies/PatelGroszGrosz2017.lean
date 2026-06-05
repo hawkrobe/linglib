@@ -46,7 +46,7 @@ The contributions are made *true by construction* on shared substrate:
 The paper is German-focused (Bavarian in §5.3, passing Portuguese/French/Hebrew).
 The earlier ~11-language table, a five-context licensing inventory, and a Finnish
 "counterexample" had no basis in the text and were removed. *Minimize DP!* as a
-genuine node-count order (over `Pareto.lean`/`FeaturePreorder`) is left as a `Todo`.
+genuine node-count order (over `Pareto.lean`/`PullbackPreorder`) is left as a `Todo`.
 The §3 corpus finding — that gender mismatches (e.g. neuter *Mädchen*/*Ehepaar* with
 a non-neuter pronoun) are *equally* available for PER and DEM, PG&G's argument
 against a [±NP] split — is recorded in prose, as formalizing it needs antecedent

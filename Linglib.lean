@@ -5,6 +5,7 @@ A Lean 4 library for formal linguistics, covering semantics, pragmatics,
 and their interfaces. See README.md for documentation links.
 -/
 -- Core
+import Linglib.Features.Basic
 import Linglib.Features.Dimension
 import Linglib.Features.Gender
 import Linglib.Core.Valence
@@ -82,7 +83,9 @@ import Linglib.Core.Order.Normality
 import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Core.Order.Plausibility
 import Linglib.Core.Order.Satisfaction
-import Linglib.Core.Order.FeaturePreorder
+import Linglib.Core.Order.PartialUnify
+import Linglib.Core.Order.Flat
+import Linglib.Core.Order.PullbackPreorder
 import Linglib.Core.Order.SetPreimage
 import Linglib.Core.Order.Ortholattice
 import Linglib.Core.Order.PreferenceStructure
