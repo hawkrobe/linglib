@@ -14,7 +14,8 @@ subjects and all transitive clauses require overt objects.
 ## Coverage
 
 - Morpho-aspectual system: completive, continuous, irrealis
-- Pronoun paradigm: person × number × gender, clitic vs nonclitic
+- Pronoun paradigm ((4), (5), (61), (62)): `PersonalPronoun` entries in two
+  series, clitic vs non-clitic, with per-entry C&S `strength`
 - Embedded clause typology (three-way: finite, tensed subj., untensed subj.)
 - Complement-taking predicate classification by clause type selected
 -/
@@ -42,16 +43,10 @@ inductive Aspect where
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════════════════
--- § 2: Person, Number, Gender
+-- § 2: Gender
 -- ════════════════════════════════════════════════════════════════
 
-inductive Person where | first | second | third
-  deriving DecidableEq, Repr
-
-inductive Clusivity where | incl | excl
-  deriving DecidableEq, Repr
-
-/-- Grammatical genders for nonlocal (3rd person) pronouns (table 5).
+/-- Grammatical genders for nonlocal (3rd person) pronouns ((5)).
 
     SMPM distinguishes six genders in the singular and two in the
     plural. There is no number distinction for most nonlocal pronouns:
@@ -78,58 +73,134 @@ def Gender.toSurfaceGender : Gender → Features.SurfaceGender
 -- § 3: Pronoun Paradigm
 -- ════════════════════════════════════════════════════════════════
 
-/-- A pronoun form: clitic and (optional) nonclitic variant.
+/-! ### Clitic series ((4), (61))
 
-    SMPM distinguishes clitic and nonclitic pronouns
-    ([cardinaletti-starke-1999]). Clitics cannot be coordinated,
-    cannot occur on their own, and may have impersonal readings.
-    Nonclitic forms can bear focus (e.g., with *íntàà* 'only'). The two
-    variants instantiate two of Cardinaletti–Starke's deficiency classes,
-    routed through the shared `Pronoun.Strength` type below. -/
-structure PronounForm where
-  clitic : String
-  nonclitic : Option String  -- `none` if no distinct nonclitic form exists
-  deriving Repr, DecidableEq
+SMPM distinguishes clitic and non-clitic pronouns ([cardinaletti-starke-1999],
+cited at [ostrove-2026] (63)): clitics cannot be coordinated (63a), cannot
+occur on their own (63b), may have impersonal readings (63c), and cannot bear
+focus ((65), with *íntàà* 'only'; speaker comment at (66)). Each entry
+declares the C&S class on the shared `Pronoun.strength` field. -/
 
-/-- The Cardinaletti–Starke deficiency class of the `clitic` field: the
-    maximally deficient `.clitic` class. -/
-def PronounForm.cliticStrength : Pronoun.Strength := .clitic
+def cl1sg : PersonalPronoun :=
+  { form := "=ì", person := some .first, number := some .Sing,
+    strength := some .clitic }
 
-/-- The deficiency class of the `nonclitic` field, where present: the full
-    `.strong` form (focusable, coordinable). -/
-def PronounForm.noncliticStrength : Pronoun.Strength := .strong
+def cl1plIncl : PersonalPronoun :=
+  { form := "=(y)é", person := some .first, number := some .Plur,
+    clusivity := some .inclusive, strength := some .clitic }
 
-/-- Local person clitic pronouns (tables 4, 61). -/
-def pron1sg     : PronounForm := ⟨"=ì",    some "yù'u"⟩
-def pron2sg     : PronounForm := ⟨"=ú",    some "yô'o"⟩
-def pron1plIncl : PronounForm := ⟨"=(y)é", none⟩
-def pron1plExcl : PronounForm := ⟨"=ndú",  some "ndú'ú"⟩
-def pron2pl     : PronounForm := ⟨"=ndó",  some "ndó'ó"⟩
+def cl1plExcl : PersonalPronoun :=
+  { form := "=ndú", person := some .first, number := some .Plur,
+    clusivity := some .exclusive, strength := some .clitic }
 
-/-- Nonlocal (3rd person) singular clitic forms (table 5). -/
-def pron3sgNeutral : String := "=ñà"
-def pron3sgFem     : String := "=ñá"
-def pron3sgMasc    : String := "=rà"
-def pron3sgLiq     : String := "=rá"
-def pron3sgWd      : String := "=tún"
-def pron3sgAml     : String := "=rí"
+def cl2sg : PersonalPronoun :=
+  { form := "=ú", person := some .second, number := some .Sing,
+    strength := some .clitic }
 
-/-- Nonlocal plural clitic forms (table 5). -/
-def pron3plNeutral : String := "=nà"
-def pron3plFem     : String := "=ná"
+def cl2pl : PersonalPronoun :=
+  { form := "=ndó", person := some .second, number := some .Plur,
+    strength := some .clitic }
 
-/-- The Cardinaletti–Starke deficiency class required of a controlled subject
-    in an untensed subjunctive: the clitic (most deficient). Nonclitic (strong)
-    forms are ungrammatical in this position (67). -/
-def controlledSubjectStrength : Pronoun.Strength := PronounForm.cliticStrength
+/-- Surface form of the nonlocal (3rd person) clitic for each gender ((5);
+    the neutral has a prevocalic allomorph *=(y)à*). -/
+def Gender.cliticForm : Gender → String
+  | .neutral => "=ñà"
+  | .fem     => "=ñá"
+  | .masc    => "=rà"
+  | .liq     => "=rá"
+  | .wd      => "=tún"
+  | .aml     => "=rí"
 
-/-- SMPM's ban on nonclitic controlled subjects (67) realizes the
-    Cardinaletti–Starke prediction: the required form is strictly more
-    deficient (lower `Strength.rank`) than the nonclitic strong alternative.
-    Derived from the shared deficiency ranking, not stipulated. -/
+/-- Nonlocal (3rd person) clitic by gender ((5)). `number := none`: most
+    nonlocal pronouns make no number distinction (*=rà* 'he, they (all-male
+    group)'); the API gender is derived via `Gender.toSurfaceGender`. -/
+def cl3 (g : Gender) : PersonalPronoun :=
+  { form := g.cliticForm, person := some .third,
+    gender := some g.toSurfaceGender, strength := some .clitic }
+
+/-- *=nà* — nonlocal plural, neutral ((5)). -/
+def cl3plNeutral : PersonalPronoun :=
+  { form := "=nà", person := some .third, number := some .Plur,
+    gender := some .common, strength := some .clitic }
+
+/-- *=ná* — nonlocal plural, feminine ((5)). -/
+def cl3plFem : PersonalPronoun :=
+  { form := "=ná", person := some .third, number := some .Plur,
+    gender := some .feminine, strength := some .clitic }
+
+/-! ### Non-clitic series ((4), (62))
+
+Focusable and coordinable ((64)–(66)) — the C&S `.strong` class. (62) has a
+gap: 1PL.INCL and the nonlocal persons lack dedicated non-clitic forms;
+'strengthening' strategies fill the gap phrasally — clitic + demonstrative
+(*yé yo'o* 'we (INCL) here', *=ra kan* 'he there' in (65b)) or the definite
+article *mí* (*mí =rà* 'himself', also the reflexive, §7 below; cf.
+McCloskey & Hale 1984 on Irish). Being phrasal, they are not lexical
+entries here. -/
+
+def str1sg : PersonalPronoun :=
+  { form := "yù'u", person := some .first, number := some .Sing,
+    strength := some .strong }
+
+def str1plExcl : PersonalPronoun :=
+  { form := "ndú'ú", person := some .first, number := some .Plur,
+    clusivity := some .exclusive, strength := some .strong }
+
+def str2sg : PersonalPronoun :=
+  { form := "yô'o", person := some .second, number := some .Sing,
+    strength := some .strong }
+
+def str2pl : PersonalPronoun :=
+  { form := "ndó'ó", person := some .second, number := some .Plur,
+    strength := some .strong }
+
+/-! ### Series structure -/
+
+/-- The clitic series ((4), (5), (61)). -/
+def cliticSeries : List PersonalPronoun :=
+  [cl1sg, cl1plIncl, cl1plExcl, cl2sg, cl2pl,
+   cl3 .neutral, cl3 .fem, cl3 .masc, cl3 .liq, cl3 .wd, cl3 .aml,
+   cl3plNeutral, cl3plFem]
+
+/-- The non-clitic series ((4), (62)). -/
+def strongSeries : List PersonalPronoun :=
+  [str1sg, str1plExcl, str2sg, str2pl]
+
+/-- The local-person clitic/non-clitic pairs ((61)–(62)); `none` marks the
+    (62) gap (1PL.INCL, filled only by phrasal strengthening). -/
+def localPairs : List (PersonalPronoun × Option PersonalPronoun) :=
+  [(cl1sg, some str1sg), (cl1plIncl, none), (cl1plExcl, some str1plExcl),
+   (cl2sg, some str2sg), (cl2pl, some str2pl)]
+
+/-- Both series are strength-homogeneous — the per-series C&S facts, now
+    per-entry data on the shared field. -/
+theorem series_homogeneous :
+    (∀ p ∈ cliticSeries, p.strength = some .clitic) ∧
+    (∀ p ∈ strongSeries, p.strength = some .strong) := by
+  constructor <;> decide
+
+/-- Paired variants share their φ-features — the two series differ in
+    deficiency class, not in person/number/clusivity content. -/
+theorem pairs_share_phi : ∀ pr ∈ localPairs, ∀ s ∈ pr.2,
+    pr.1.person = s.person ∧ pr.1.number = s.number ∧
+    pr.1.clusivity = s.clusivity := by decide
+
+/-- Within each pair, the clitic is strictly more deficient — derived from
+    the shared deficiency order, not stipulated. -/
+theorem pairs_deficiency_contrast : ∀ pr ∈ localPairs, ∀ s ∈ pr.2,
+    ∀ a ∈ pr.1.strength, ∀ b ∈ s.strength, a < b := by decide
+
+/-- The Cardinaletti–Starke class required of a controlled subject in an
+    untensed subjunctive: the clitic (most deficient). Non-clitic forms —
+    including strengthened *mí =rà* — are sharply ungrammatical there ((67)). -/
+def controlledSubjectStrength : Pronoun.Strength := .clitic
+
+/-- SMPM's ban on non-clitic controlled subjects ((67)) realizes the
+    Cardinaletti–Starke prediction: the required class sits strictly below
+    every non-clitic entry's declared class in the deficiency order. -/
 theorem controlledSubject_is_most_deficient :
-    Pronoun.Strength.rank controlledSubjectStrength
-      < Pronoun.Strength.rank PronounForm.noncliticStrength := by decide
+    ∀ p ∈ strongSeries, ∀ s ∈ p.strength,
+      controlledSubjectStrength < s := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4: Embedded Clause Typology (table 26)

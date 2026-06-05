@@ -40,8 +40,9 @@ lives in `Features/CoreferenceStatus.lean` — neither is pronoun-specific. Two 
 ([cardinaletti-starke-1999] `Pronoun.Strength`) is *per-series*, not per-element: every carrier's
 strength is carrier-uniform (Italian clitics are all `.clitic`; the Mixtec clitic/nonclitic *fields*
 have fixed strengths), so an `α → Strength` accessor would be constant on every carrier — a
-per-*type* fact, not a per-element capability, and it is already served by per-series `def`s +
-`Strength.rank`. The finer *lexical-kind* axis (personal vs relative vs interrogative vs
+per-*type* fact, not a per-element capability. It is served by the `Pronoun.strength` field
+(series-level, `none` when not homogeneous) and the `Strength` linear order, not by a class.
+The finer *lexical-kind* axis (personal vs relative vs interrogative vs
 demonstrative) is `Pronoun.pronType` — real UD morphology on the carrier (no invented enum),
 threaded onto the projected word by `toWord`.
 -/
