@@ -1,7 +1,7 @@
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Typology.Pronoun.WALS
 import Linglib.Features.Clusivity
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 
 /-!
 # Tagalog pronoun profile (WALS Chs 39, 40, 44–48)
@@ -80,7 +80,7 @@ def clusivitySystem : Features.Clusivity.System := .minimalAugmented
     Table 12.2 lists alongside *katá* is a separate 1sg.GEN+2sg.NOM portmanteau
     ([schachter-otanes-1972] p. 89), not a 1du.in pronoun. -/
 
-open Features.Person (Category)
+open Person (Category)
 
 -- 1st singular
 def ako    : PersonalPronoun := { form := "ako",    person := some .first,  number := some .Sing, case_ := some .Nom }

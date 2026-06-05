@@ -1,4 +1,4 @@
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 
 /-!
 # Clusivity systems — typology of inclusive/exclusive distinctions
@@ -58,7 +58,7 @@ inductive System where
 
 namespace System
 
-/-- The 1st-person `Features.Person.Category` distinctions a system
+/-- The 1st-person `Person.Category` distinctions a system
     grammatically encodes. Captures Cysouw 2009's typology operationally:
     `.noClusivity` collapses 1+2 and 1+3 into a single 1pl
     (modeled here by listing only `.augIncl`, since `.augIncl` is the
@@ -66,7 +66,7 @@ namespace System
     distinguishes them; `.minimalAugmented` and `.unitAugmented` further
     split inclusive into minimal (`.minIncl`) vs augmented (`.augIncl`).
     `.numberIndifferent` languages have no plural form, so only `.s1`. -/
-def distinguishedCategories : System → List Features.Person.Category
+def distinguishedCategories : System → List Person.Category
   | .noClusivity        => [.augIncl]                     -- single 1pl form
   | .inclExcl           => [.augIncl, .excl]              -- 1+2(+3) vs 1+3
   | .minimalAugmented   => [.minIncl, .augIncl, .excl]    -- + 1+2 minimal
@@ -101,9 +101,9 @@ inductive Value where
   | exclusive
   deriving DecidableEq, Repr, BEq
 
-open Features.Person (Category)
+open Person (Category)
 
-/-- The [cysouw-2009] `Features.Person.Category` a person + number +
+/-- The [cysouw-2009] `Person.Category` a person + number +
     clusivity triple realizes. Singulars ignore clusivity; clusivity-marked
     first-person non-singulars split inclusive (`.minIncl` dual / `.augIncl`
     plural) from `.excl`. A clusivity-*neutral* first-person plural (English

@@ -2,6 +2,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Features.Prominence
 import Linglib.Morphology.Word
 import Linglib.Features.Number.Capabilities
+import Linglib.Features.Person.Capabilities
 
 /-!
 # Agreement paradigms — the descriptive realization table
@@ -79,6 +80,8 @@ def Cell.isPlural (c : Cell) : Bool := c.number == some .Plur
 /-- A cell bears the number its UD slot ingests (`Number.fromUD`); an
     undistinguished slot leaves the cell unvalued (wildcard). -/
 instance : HasNumber Cell := ⟨fun c => c.number.bind Number.fromUD⟩
+
+instance : HasPerson Cell := ⟨fun c => c.person.map Person.fromUD⟩
 
 /-- The basic 3-person × {singular, plural} inventory of φ-cells — the cells a
     person/number agreement paradigm ranges over. -/

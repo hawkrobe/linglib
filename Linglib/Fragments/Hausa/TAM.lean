@@ -1,4 +1,4 @@
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 import Linglib.Features.Gender
 
 /-!
@@ -45,7 +45,7 @@ that pattern).
 
 namespace Hausa.Inflection
 
-open Features.Person
+open Person
 open Features (SurfaceGender)
 
 -- ============================================================================
@@ -99,7 +99,7 @@ inductive Mode where
 
 /-- The subject slot of the PAC. Hausa makes a 2sg / 3sg gender
     distinction (M vs F), absent in the plural and 1st person.
-    We use `Features.Person.Category` for the singular/group cut and add
+    We use `Person.Category` for the singular/group cut and add
     a `gender` field that is empty (`none`) outside the 2sg/3sg cells. -/
 structure Subject where
   person : Category

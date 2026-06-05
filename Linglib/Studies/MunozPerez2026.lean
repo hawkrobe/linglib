@@ -248,7 +248,7 @@ open Morphology.DM
 open Spanish.PersonFeatures
 open Spanish.Predicates
 open Spanish.Clitics
-open Features.Person
+open Person
 
 /-- The Spanish-specific realization output of Fission: two clitic
     positions. Cl₁ surfaces person features (`me`/`te`), Cl₂ is

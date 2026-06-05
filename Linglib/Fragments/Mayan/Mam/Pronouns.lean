@@ -30,7 +30,7 @@ her §4.3.3) realizes *disagreeing* values of [±author]/[±participant] —
 Feature values follow her Table 4.4 (p. 183). NB the convention:
 Harbour's [±participant] "functions more like a [+/−hearer] or
 [+/−addressee] feature" (p. 182), so 1EXCL is [−participant] — this
-deliberately diverges from `Features.Person.Features`, whose `wellFormed`
+deliberately diverges from `Person.Features`, whose `wellFormed`
 invariant (author → participant) encodes the speech-act-participant
 convention; hence the fragment-local `ScottFeatures`.
 
@@ -100,7 +100,7 @@ inductive PronCell where
   deriving DecidableEq, Repr
 
 /-- PronCell person, in the API's vocabulary. -/
-def PronCell.person : PronCell → Features.Person
+def PronCell.person : PronCell → UD.Person
   | .firstSg | .firstPlExcl | .firstPlIncl => .first
   | .secondSg | .secondPl => .second
   | .thirdSg | .thirdPl => .third
@@ -119,7 +119,7 @@ def PronCell.clusivity : PronCell → Option Features.Clusivity.Value
 /-- [scott-2023]'s bivalent φ-features (Table 4.4, after [harbour-2016]):
     [±author], [±participant], [±singular]. Fragment-local because the
     participant convention (≈ [±hearer]: 1EXCL is [−participant]) is
-    incompatible with `Features.Person.Features`' author → participant
+    incompatible with `Person.Features`' author → participant
     invariant. -/
 structure ScottFeatures where
   author : Bool

@@ -1,4 +1,4 @@
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 
 /-!
 # Person Feature Decomposition for Spanish Clitics
@@ -19,7 +19,7 @@ the Fission-specific combination with [±singular].
 
 namespace Spanish.PersonFeatures
 
-open Features.Person
+open Person
 
 -- ============================================================================
 -- § 1: Fission Applicability

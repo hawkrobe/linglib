@@ -6,7 +6,7 @@ import Linglib.Features.Prominence
 import Linglib.Features.Gender
 import Linglib.Features.Clusivity
 import Linglib.Features.CoreferenceStatus
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 import Linglib.Morphology.Word
 
 /-!
@@ -37,7 +37,6 @@ in as fields of the general `Pronoun`.
 * `Pronoun.AllocutiveEntry` — speaker–addressee (allocutive) markers.
 -/
 
-open Features (Person)
 
 set_option autoImplicit false
 
@@ -112,7 +111,7 @@ structure Pronoun where
   /-- Surface form (romanization or orthographic). -/
   form : String
   /-- Grammatical person (UD.Person via Core.Word abbrev). -/
-  person : Option Person := none
+  person : Option UD.Person := none
   /-- Grammatical number. -/
   number : Option UD.Number := none
   /-- Clusivity (inclusive/exclusive) of a first-person non-singular form — the
@@ -205,7 +204,7 @@ def toWord (p : Pronoun) : Word :=
     person-reference, *derived* (not stored). `none` when person/number is
     underspecified, or for a clusivity-unmarked first-person plural (a syncretism
     over `.minIncl`/`.augIncl`/`.excl`, e.g. English *we*). -/
-def category (p : Pronoun) : Option Features.Person.Category :=
+def category (p : Pronoun) : Option Person.Category :=
   match p.person, p.number with
   | some per, some num => Features.Clusivity.categoryOf per num p.clusivity
   | _, _ => none

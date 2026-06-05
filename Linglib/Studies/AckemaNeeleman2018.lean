@@ -1,4 +1,4 @@
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 
 /-!
 # Ackema & Neeleman (2018): Features of Person
@@ -17,7 +17,7 @@ the pronoun object or its consumers are committed to. A&N's PROX/DIST geometry
 is one of several competing decompositions (cf. [harbour-2016]'s
 `Studies/Harbour2016.lean`); the widely-adopted, framework-neutral
 representation is person + number + clusivity, encapsulated typologically by
-[cysouw-2009]'s `Features.Person.Category`. The deliverable here is
+[cysouw-2009]'s `Person.Category`. The deliverable here is
 therefore `specToCategory`: a *converter* from an A&N feature structure to that
 neutral inventory. A consumer that wants the feature geometry imports it;
 everyone else uses the neutral category.
@@ -49,12 +49,12 @@ on a layer they are undefined, which is what bounds the inventory.
   incoherent and the output space is finite, so no nonattested person is
   generated.
 * `specToCategory` + `inventory_distinct` — the converter to the neutral
-  `Features.Person.Category`, faithful on the seven attested persons.
+  `Person.Category`, faithful on the seven attested persons.
 -/
 
 namespace AckemaNeeleman2018
 
-open Features.Person (Category)
+open Person (Category)
 
 /-! ### The person space and the two features -/
 

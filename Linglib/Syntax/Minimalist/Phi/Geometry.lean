@@ -1,4 +1,4 @@
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 
 /-!
 # Person Feature Geometry [harley-ritter-2002] [bejar-rezac-2003]
@@ -48,7 +48,7 @@ alignment systems ([pancheva-zubizarreta-2018] §2.1 (11)).
 
 ## Relationship to Core PersonFeatures
 
-`DecomposedPerson` extends `Features.Person.Features`
+`DecomposedPerson` extends `Person.Features`
 (the framework-neutral [±participant, ±author] decomposition) with
 the Minimalism-specific [±proximate] feature. The two-feature core
 is shared across all theoretical frameworks; `[±proximate]` is
@@ -88,7 +88,7 @@ open Features.Prominence
     geometry, extended with `[±proximate]` from
     [pancheva-zubizarreta-2018].
 
-    Extends `Features.Person.Features` (the framework-neutral
+    Extends `Person.Features` (the framework-neutral
     [±participant, ±author] core) with the Minimalism-specific
     [±proximate] feature:
 
@@ -105,7 +105,7 @@ open Features.Prominence
     [−participant]. We encode this as `Bool` for computational
     convenience; the well-formedness constraint `wellFormed`
     ensures the privative entailments are maintained. -/
-structure DecomposedPerson extends Features.Person.Features where
+structure DecomposedPerson extends Person.Features where
   /-- Bears [proximate]? SAPs inherently; 3P contextually. -/
   hasProximate : Bool
   deriving DecidableEq, Repr

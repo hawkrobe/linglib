@@ -1,7 +1,7 @@
 import Linglib.Fragments.Bantu.Params
 import Linglib.Fragments.Xhosa.Basic
 import Linglib.Fragments.Swahili.Basic
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 import Linglib.Morphology.DM.Categorizer
 
 /-!
@@ -72,7 +72,7 @@ is derived from it via `AnimacyFeatures.toCoreClass`.
 namespace HalpertHammerly2026
 
 open Bantu
-open Features.Person (Features)
+open Person (Features)
 open Features.Prominence (PersonLevel)
 
 -- ============================================================================
@@ -101,7 +101,7 @@ def ProminenceFeatures.wellFormed (pf : ProminenceFeatures) : Bool :=
 
 /-- Extract the person projection. -/
 def ProminenceFeatures.personFeatures (pf : ProminenceFeatures) :
-    Features.Person.Features :=
+    Person.Features :=
   ⟨pf.hasParticipant, pf.hasAuthor⟩
 
 /-- Extract the animacy projection. -/
@@ -148,14 +148,14 @@ theorem firstF_person_is_human_animate :
   | false => simp [ProminenceFeatures.wellFormed] at hw
 
 /-- Person and animacy features share the `ContainmentPair` structure.
-    Both `Features.Person.Features` and `AnimacyFeatures` are `ContainmentPairLike`
+    Both `Person.Features` and `AnimacyFeatures` are `ContainmentPairLike`
     instances — the same three-cell, no-four-way-distinction architecture.
     This is not a coincidence: they are fragments of the same containment
     hierarchy ([hammerly-2023]). -/
 theorem person_animacy_same_structure :
-    (Features.ContainmentPairLike.toPair Features.Person.firstF).WellFormed ∧
+    (Features.ContainmentPairLike.toPair Person.firstF).WellFormed ∧
     (Features.ContainmentPairLike.toPair AnimacyFeatures.human).WellFormed ∧
-    (Features.ContainmentPairLike.toPair Features.Person.thirdF).WellFormed ∧
+    (Features.ContainmentPairLike.toPair Person.thirdF).WellFormed ∧
     (Features.ContainmentPairLike.toPair AnimacyFeatures.inanimate).WellFormed :=
   ⟨by decide, by decide, by decide, by decide⟩
 

@@ -1,7 +1,7 @@
 import Linglib.Core.Mereology
 import Linglib.Features.ContainmentPair
 import Linglib.Features.Number.Decomposition
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 import Linglib.Features.Gender
 import Linglib.Semantics.Presupposition.Basic
 
@@ -232,11 +232,11 @@ theorem person_nesting_from_phi (speaker addressee : E)
     so `phiPresup_nesting` applies to both: the nesting is structural,
     not a per-domain coincidence. -/
 theorem person_number_isomorphism :
-    ContainmentPairLike.specLevel Features.Person.firstF =
+    ContainmentPairLike.specLevel Person.firstF =
       ContainmentPairLike.specLevel Number.singularF ∧
-    ContainmentPairLike.specLevel Features.Person.secondF =
+    ContainmentPairLike.specLevel Person.secondF =
       ContainmentPairLike.specLevel Number.dualF ∧
-    ContainmentPairLike.specLevel Features.Person.thirdF =
+    ContainmentPairLike.specLevel Person.thirdF =
       ContainmentPairLike.specLevel Number.pluralF :=
   ⟨rfl, rfl, rfl⟩
 
@@ -338,13 +338,13 @@ theorem gender_nesting_from_phi (isInanimate isFemale : E → Prop)
     all three domains share the phi kernel structure. -/
 theorem gender_person_number_isomorphism :
     ContainmentPairLike.specLevel Features.Gender.neuterF =
-      ContainmentPairLike.specLevel Features.Person.firstF ∧
+      ContainmentPairLike.specLevel Person.firstF ∧
     ContainmentPairLike.specLevel Features.Gender.neuterF =
       ContainmentPairLike.specLevel Number.singularF ∧
     ContainmentPairLike.specLevel Features.Gender.feminineF =
-      ContainmentPairLike.specLevel Features.Person.secondF ∧
+      ContainmentPairLike.specLevel Person.secondF ∧
     ContainmentPairLike.specLevel Features.Gender.masculineF =
-      ContainmentPairLike.specLevel Features.Person.thirdF :=
+      ContainmentPairLike.specLevel Person.thirdF :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 end GenderPresuppositions

@@ -3,7 +3,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.DeriveFintype
 import Linglib.Features.Logophoricity
 import Linglib.Features.Empathy
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 import Linglib.Fragments.Spanish.Clitics
 
 /-!

@@ -2,7 +2,8 @@ import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
-import Linglib.Features.Person
+import Linglib.Features.Person.Capabilities
+import Linglib.Features.Person.Decomposition
 
 /-! # Italian Pronoun and Clitic Fragment
 
@@ -30,7 +31,6 @@ and reflexive cases, while 3sg/3pl are not.
 | 3pl    | li/le  | loro   | si   | NOT syncretic
 -/
 
-open Features (Person)
 
 namespace Italian.Pronouns
 
@@ -101,13 +101,15 @@ inductive CliticCase where
 /-- A single clitic form in the paradigm. -/
 structure CliticEntry where
   form : String
-  person : Person
+  person : UD.Person
   number : UD.Number
   case_ : CliticCase
   deriving Repr, BEq
 
 /-- A clitic bears its φ-slot's number (`HasNumber`). -/
 instance : HasNumber CliticEntry := ⟨fun c => Number.fromUD c.number⟩
+
+instance : HasPerson CliticEntry := ⟨fun c => some (Person.fromUD c.person)⟩
 
 /-! ### Clitics as capability carriers (`Proform` / `Bound`)
 
@@ -182,18 +184,18 @@ example : Bound.IsAnaphor si_refl := by decide
 example : Bound.IsPronominal lo_cl := by decide
 
 /-- Look up the form for a given person, number, and case in the paradigm. -/
-def lookupForm (p : Person) (n : UD.Number) (c : CliticCase) : Option String :=
+def lookupForm (p : UD.Person) (n : UD.Number) (c : CliticCase) : Option String :=
   (paradigm.find? (fun e => e.person == p && e.number == n && e.case_ == c)).map (·.form)
 
 /-- Are two clitic cases syncretic for a given person/number combination?
     DERIVED from the paradigm data. -/
-def isSyncretic (p : Person) (n : UD.Number) (c1 c2 : CliticCase) : Bool :=
+def isSyncretic (p : UD.Person) (n : UD.Number) (c1 c2 : CliticCase) : Bool :=
   match lookupForm p n c1, lookupForm p n c2 with
   | some f1, some f2 => f1 == f2
   | _, _ => false
 
 /-- DAT/REFL syncretism for a given person/number. -/
-def datReflSyncretic (p : Person) (n : UD.Number) : Bool :=
+def datReflSyncretic (p : UD.Person) (n : UD.Number) : Bool :=
   isSyncretic p n .dative .reflexive
 
 -- ============================================================================
