@@ -41,7 +41,11 @@ lacks one, counts everything — cf. `Grimm2018.yudjaClassify`).
 ## Main declarations
 
 * `OverlapPred`/`IsMaxDisjointIn`/`nullSchema` — the schema machinery over
-  an arbitrary overlap relation.
+  an arbitrary overlap relation. The disjoint-counting-base thesis and the
+  multiple-perspectives ("variants") idea this packages originate with
+  [landman-2011] and [landman-2016]; the chapter's own contribution is the
+  null schema `𝒮₀` and the unified `𝒪`/`𝒮ᵢ` mechanism. The machinery is a
+  graduation candidate when a Landman-anchored study lands.
 * `overlapPred_union_of_maxDisjoint_ne` — the load-bearing generic fact:
   the union of two *distinct* maximal disjoint subsets overlaps. Hence
   `nullSchema`-saturated entries are mass whenever individuation is
@@ -51,8 +55,10 @@ lacks one, counts everything — cf. `Grimm2018.yudjaClassify`).
   graduated individuation scale (`Features/Individuation.lean`), with the
   junction theorems: the count option *ascends* the scale
   (`count_option_monotone`) and the mass option *descends* it
-  (`mass_option_antitone`) — [grimm-2018]'s Table 20 in `[±O, ±S]`
-  clothing.
+  (`mass_option_antitone`). Ordering Table 9.1 by [grimm-2018]'s scale is
+  this study's bridge, not the chapter's (it cites [grimm-2012] and Grimm &
+  Levin 2017, not [grimm-2018]); the theorems show the two frameworks'
+  landscapes coincide.
 * A concrete furniture/rice model on nonempty `Finset`s: *furniture*'s
   identified units overlap (table vs. vanity), *rice*'s grains are disjoint
   in `baspred` yet its counting base overlaps — the accessibility puzzle's
@@ -67,7 +73,7 @@ lacks one, counts everything — cf. `Grimm2018.yudjaClassify`).
 * The cluster/MSSC content of granular `baspred` frames is [grimm-2012]'s
   mereotopology — `Core/Mereotopology.lean`.
 * Their counting condition (cardinality only over disjoint bases, their
-  (A1) and Landman's overlap thesis) is the semantic ground for why
+  (A1), after [landman-2011]'s overlap thesis) is the semantic ground for why
   countability classes, not `Number` values, carry the count/mass
   distinction (`Features/Number/Basic.lean`).
 -/
@@ -85,7 +91,9 @@ models below use nonempty `Finset` intersection). A predicate is
 
 variable {α : Type*} (ov : α → α → Prop)
 
-/-- (17): two distinct members of `P` share a part. -/
+/-- (17): two distinct members of `P` share a part. (Their formula omits
+    distinctness, under which any inhabited predicate self-overlaps via
+    `x ∘ x`; we state the intended reading.) -/
 def OverlapPred (P : Set α) : Prop :=
   ∃ x ∈ P, ∃ y ∈ P, x ≠ y ∧ ov x y
 
@@ -99,8 +107,8 @@ theorem overlapPred_mono {P Q : Set α} (h : P ⊆ Q)
   ⟨x, h hx, y, h hy, hne, hov⟩
 
 /-- A maximally disjoint subset of `P`: disjoint, and unextendable within
-    `P` (Landman's individuation perspectives; the range of the schemas
-    `𝒮ᵢ`). -/
+    `P` ([landman-2011]'s variants — individuation perspectives; the range
+    of the schemas `𝒮ᵢ`). -/
 def IsMaxDisjointIn (D P : Set α) : Prop :=
   D ⊆ P ∧ DisjointPred ov D ∧ ∀ x ∈ P, x ∉ D → OverlapPred ov (insert x D)
 
