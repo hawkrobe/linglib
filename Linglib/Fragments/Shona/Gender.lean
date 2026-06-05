@@ -4,7 +4,8 @@ import Linglib.Typology.Gender
 # Shona Gender
 [corbett-1991] [corbett-2013]
 
-Bantu noun-class system. Carstens 2026 cites 8 active gender classes.
+Bantu noun-class system. [carstens-2026] cites 8 active genders
+(controller genders); only 1/2 and 7/8 are interpretable.
 -/
 
 namespace Shona.Gender
@@ -22,10 +23,15 @@ def genderTypology : GenderProfile :=
                           .personalPronoun, .verb])
     (semanticBases := [.humanness])
 
-example : genderTypology.iso639 = "sna" ∧ genderTypology.name = "Shona" :=
-  ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "sna" := rfl
 
-/-- Shona is a noun-class system (Bantu, 8 classes per [carstens-2026]). -/
-example : genderTypology.IsNounClassSystem := by decide
+theorem genderTypology_name : genderTypology.name = "Shona" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
+
+/-- Shona is a noun-class system (Bantu, 8 genders per [carstens-2026]). -/
+theorem isNounClassSystem_genderTypology :
+    genderTypology.IsNounClassSystem := by decide
 
 end Shona.Gender

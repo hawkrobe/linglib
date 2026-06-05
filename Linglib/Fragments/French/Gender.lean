@@ -23,11 +23,16 @@ def genderTypology : GenderProfile :=
     (semanticBases := [.sex])
     (attestedSurfaceGenders := [.masculine, .feminine])
 
-example : genderTypology.iso639 = "fra" ∧ genderTypology.name = "French" :=
-  ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "fra" := rfl
+
+theorem genderTypology_name : genderTypology.name = "French" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
 
 /-- French is in [corbett-1991]'s "canonical" cell:
     sex-based, 2-or-3 gender, semantic + formal. -/
-example : genderTypology.IsCanonicalGender := by decide
+theorem isCanonicalGender_genderTypology :
+    genderTypology.IsCanonicalGender := by decide
 
 end French.Gender

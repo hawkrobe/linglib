@@ -22,7 +22,11 @@ def genderTypology : GenderProfile :=
   .fromWALS "Georgian" "kat"
     (rawGenderCount := 0)
 
-example : genderTypology.iso639 = "kat" ∧ genderTypology.name = "Georgian" :=
-  ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "kat" := rfl
+
+theorem genderTypology_name : genderTypology.name = "Georgian" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
 
 end Georgian.Gender

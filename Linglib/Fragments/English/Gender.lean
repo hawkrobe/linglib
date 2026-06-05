@@ -28,7 +28,11 @@ def genderTypology : GenderProfile :=
     (semanticBases := [.sex])
     (attestedSurfaceGenders := [.masculine, .feminine, .neuter])
 
-example : genderTypology.iso639 = "eng" ∧ genderTypology.name = "English" :=
-  ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "eng" := rfl
+
+theorem genderTypology_name : genderTypology.name = "English" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
 
 end English.Gender

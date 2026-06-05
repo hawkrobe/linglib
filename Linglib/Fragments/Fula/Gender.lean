@@ -4,15 +4,16 @@ import Linglib.Typology.Gender
 # Fula Gender
 [corbett-1991] [corbett-2013]
 
-~20+ noun classes (Atlantic, Niger-Congo). One of the richest class systems
-in Africa. Sample maximum in Corbett's 22-language exemplar.
+"About twenty genders, depending on the dialect" ([corbett-1991] §7.1.1)
+— one of the richest gender systems in Africa (Atlantic, Niger-Congo).
+Sample maximum in Corbett's 22-language exemplar.
 -/
 
 namespace Fula.Gender
 
 open Typology.Gender
 
-/-- Fula gender typology: 20-class Atlantic, semantic + formal. -/
+/-- Fula gender typology: ~20 genders (Atlantic), semantic + formal. -/
 def genderTypology : GenderProfile :=
   .fromWALS "Fula" "ful"
     (rawGenderCount := 20)
@@ -22,10 +23,15 @@ def genderTypology : GenderProfile :=
     (agreementTargets := [.attributive, .predicate, .personalPronoun, .verb])
     (semanticBases := [.humanness, .animacy, .shape])
 
-example : genderTypology.iso639 = "ful" ∧ genderTypology.name = "Fula" :=
-  ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "ful" := rfl
 
-/-- Fula is a noun-class system (20+ classes per [corbett-1991]). -/
-example : genderTypology.IsNounClassSystem := by decide
+theorem genderTypology_name : genderTypology.name = "Fula" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
+
+/-- Fula is a noun-class system (~20 genders per [corbett-1991]). -/
+theorem isNounClassSystem_genderTypology :
+    genderTypology.IsNounClassSystem := by decide
 
 end Fula.Gender
