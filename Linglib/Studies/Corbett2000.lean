@@ -1,7 +1,7 @@
 import Linglib.Fragments.English.Plurals
 import Linglib.Fragments.Japanese.Plurals
 import Linglib.Syntax.Minimalist.Agreement.CoordinateResolution
-import Linglib.Features.Number
+import Linglib.Features.Number.Resolve
 import Linglib.Syntax.Agreement.Basic
 import Linglib.Semantics.Kinds.NominalMappingParameter
 
@@ -53,79 +53,56 @@ Formalizes the core typological framework from:
 
 namespace Corbett2000
 
--- Number categories, predicates, and UD bridges are in `Features/Number.lean`.
--- We alias `NumberValue` here for backward compatibility within this file.
-open Features.Number
-
-abbrev NumberValue := Category
+-- The number value space, `Number.System`, `Number.Stage`, and the
+-- implicational universals live in `Features/Number/Basic.lean`;
+-- resolution in `Features/Number/Resolve.lean`. This file records the
+-- book's language data and predictions over that substrate.
 
 /-! ### Number Systems (Ch 2, §2.3) -/
-
-/-- A number system specifies the values available in a language,
-    which are obligatory vs facultative, and whether general number exists. -/
-structure NumberSystem where
-  name : String
-  /-- Values available within the number system -/
-  values : List NumberValue
-  /-- Whether the language has general number (a form outside the system) -/
-  hasGeneral : Bool := false
-  /-- Values whose use is optional (facultative) -/
-  facultative : List NumberValue := []
-  deriving DecidableEq
-
-/-- Number of values in the system. -/
-def NumberSystem.size (ns : NumberSystem) : Nat := ns.values.length
-
-/-- Whether a value is obligatory (present and not facultative). -/
-def NumberSystem.IsObligatory (ns : NumberSystem) (v : NumberValue) : Prop :=
-  v ∈ ns.values ∧ v ∉ ns.facultative
-
-instance (ns : NumberSystem) (v : NumberValue) : Decidable (ns.IsObligatory v) := by
-  unfold NumberSystem.IsObligatory; infer_instance
 
 -- Language number systems
 
 /-- English: obligatory sg–pl, no general number. -/
-def englishNS : NumberSystem :=
+def englishNS : Number.System :=
   { name := "English", values := [.singular, .plural] }
 
 /-- Russian: obligatory sg–pl, no general number. -/
-def russianNS : NumberSystem :=
+def russianNS : Number.System :=
   { name := "Russian", values := [.singular, .plural] }
 
 /-- Upper Sorbian: sg–dual–pl, all obligatory. -/
-def upperSorbianNS : NumberSystem :=
+def upperSorbianNS : Number.System :=
   { name := "Upper Sorbian", values := [.singular, .dual, .plural] }
 
 /-- Bayso (Cushitic): sg–paucal–pl within the system; general form *lúban*
     'lion(s)' exists outside it. Four controller values total. -/
-def baysoNS : NumberSystem :=
+def baysoNS : Number.System :=
   { name := "Bayso"
     values := [.singular, .paucal, .plural]
     hasGeneral := true }
 
 /-- Slovene: sg–dual–pl, but the dual is facultative (plural substitutes). -/
-def sloveneNS : NumberSystem :=
+def sloveneNS : Number.System :=
   { name := "Slovene"
     values := [.singular, .dual, .plural]
     facultative := [.dual] }
 
 /-- Larike (Central Moluccan): sg–dual–trial–pl, dual and trial both
     facultative (plural can substitute for either). -/
-def larikeNS : NumberSystem :=
+def larikeNS : Number.System :=
   { name := "Larike"
     values := [.singular, .dual, .trial, .plural]
     facultative := [.dual, .trial] }
 
 /-- Lihir (Oceanic): sg–dual–trial–paucal–pl, five values — the richest
     well-documented system. -/
-def lihirNS : NumberSystem :=
+def lihirNS : Number.System :=
   { name := "Lihir"
     values := [.singular, .dual, .trial, .paucal, .plural] }
 
 /-- Japanese: sg–pl within the system, but general number exists
     (bare *inu* 'dog(s)' is non-committal). -/
-def japaneseNS : NumberSystem :=
+def japaneseNS : Number.System :=
   { name := "Japanese"
     values := [.singular, .plural]
     hasGeneral := true }
@@ -139,34 +116,34 @@ def japaneseNS : NumberSystem :=
     with the same-complexity plural alternative — see
     `Studies/BaleKhanjian2014.lean`. Korean (Kim 2005)
     and Turkish (Bliss 2004) pattern alike per BK 2014 §2.3 and fn 14. -/
-def westernArmenianNS : NumberSystem :=
+def westernArmenianNS : Number.System :=
   { name := "Western Armenian"
     values := [.singular, .plural]
     hasGeneral := true }
 
 /-- Pirahã (Mura): no number category at all. -/
-def pirahaNS : NumberSystem :=
+def pirahaNS : Number.System :=
   { name := "Pirahã", values := [] }
 
 /-- Winnebago (Siouan): minimal–augmented, two values. {±minimal} only
     ([harbour-2014] Table 3). -/
-def winnebagoNS : NumberSystem :=
+def winnebagoNS : Number.System :=
   { name := "Winnebago", values := [.minimal, .augmented] }
 
 /-- Rembarrnga (Australian): minimal–unit augmented–augmented, three values.
     {±minimal*} — feature recursion on [±minimal] without [±atomic]
     ([harbour-2014] Table 3). -/
-def rembarrnganS : NumberSystem :=
+def rembarrnganS : Number.System :=
   { name := "Rembarrnga"
     values := [.minimal, .unitAugmented, .augmented] }
 
 /-- Mebengokre (Jê): minimal–paucal–plural, three values.
     {±additive, ±minimal} ([harbour-2014] Table 3). -/
-def mebengokreNS : NumberSystem :=
+def mebengokreNS : Number.System :=
   { name := "Mebengokre"
     values := [.minimal, .paucal, .plural] }
 
-def allNumberSystems : List NumberSystem :=
+def allNumberSystems : List Number.System :=
   [englishNS, russianNS, upperSorbianNS, baysoNS, sloveneNS,
    larikeNS, lihirNS, japaneseNS, westernArmenianNS, pirahaNS,
    winnebagoNS, rembarrnganS, mebengokreNS]
@@ -191,42 +168,8 @@ theorem slovene_dual_facultative :
 theorem larike_both_facultative :
     .dual ∈ larikeNS.facultative ∧ .trial ∈ larikeNS.facultative := by decide
 
--- Implicational universals ([greenberg-1963], Corbett §2.3.1)
-
-/-- Trial implies dual: no language has trial without dual. -/
-def NumberSystem.TrialImpliesDual (ns : NumberSystem) : Prop :=
-  .trial ∈ ns.values → .dual ∈ ns.values
-
-/-- Dual implies plural. -/
-def NumberSystem.DualImpliesPlural (ns : NumberSystem) : Prop :=
-  .dual ∈ ns.values → .plural ∈ ns.values
-
-/-- Plural implies singular or minimal ([harbour-2014] Table 1:
-    PL → SG/MIN). Plural requires a "base" category — either singular
-    (from [±atomic]) or minimal (from [±minimal]). -/
-def NumberSystem.PluralImpliesSingularOrMinimal (ns : NumberSystem) : Prop :=
-  .plural ∈ ns.values →
-    .singular ∈ ns.values ∨ .minimal ∈ ns.values ∨ ns.values = []
-
-/-- Augmented implies minimal ([harbour-2014] Table 1: AUG → MIN). -/
-def NumberSystem.AugmentedImpliesMinimal (ns : NumberSystem) : Prop :=
-  .augmented ∈ ns.values → .minimal ∈ ns.values
-
-/-- Unit augmented implies augmented ([harbour-2014] Table 1:
-    U.AUG → AUG). -/
-def NumberSystem.UnitAugImpliesAugmented (ns : NumberSystem) : Prop :=
-  .unitAugmented ∈ ns.values → .augmented ∈ ns.values
-
-instance (ns : NumberSystem) : Decidable ns.TrialImpliesDual := by
-  unfold NumberSystem.TrialImpliesDual; infer_instance
-instance (ns : NumberSystem) : Decidable ns.DualImpliesPlural := by
-  unfold NumberSystem.DualImpliesPlural; infer_instance
-instance (ns : NumberSystem) : Decidable ns.PluralImpliesSingularOrMinimal := by
-  unfold NumberSystem.PluralImpliesSingularOrMinimal; infer_instance
-instance (ns : NumberSystem) : Decidable ns.AugmentedImpliesMinimal := by
-  unfold NumberSystem.AugmentedImpliesMinimal; infer_instance
-instance (ns : NumberSystem) : Decidable ns.UnitAugImpliesAugmented := by
-  unfold NumberSystem.UnitAugImpliesAugmented; infer_instance
+-- Implicational universals ([greenberg-1963], Corbett §2.3.1) — the
+-- predicates live on `Number.System`; here they are checked on the data.
 
 theorem all_trial_implies_dual :
     ∀ ns ∈ allNumberSystems, ns.TrialImpliesDual := by decide
@@ -410,11 +353,11 @@ theorem no_attributive_only_semantic :
     The target system is typically a subset of the controller system. -/
 structure ControllerTargetSystem where
   name : String
-  controllerValues : List NumberValue
-  targetValues : List NumberValue
+  controllerValues : List Number
+  targetValues : List Number
   /-- Number appearing when controller lacks specification (§6.1.2).
       Most languages default to singular; Tsez defaults to plural. -/
-  defaultNumber : NumberValue := .singular
+  defaultNumber : Number := .singular
   deriving DecidableEq
 
 /-- Whether controller and target systems differ in size. -/
@@ -457,11 +400,11 @@ theorem english_no_mismatch : ¬ englishCT.HasMismatch := by decide
 structure IndividuationProfile where
   name : String
   /-- Number values available at each hierarchy position -/
-  valuesAt : AnimacyRank → List NumberValue
+  valuesAt : AnimacyRank → List Number
   /-- Minor number values: restricted to a closed class of nouns (e.g.,
       Hebrew dual for body-part nouns, Maltese dual). Constraints IV–VII
       govern the distribution of minor numbers. -/
-  minorValues : List NumberValue := []
+  minorValues : List Number := []
 
 /-- **Constraint II** (Corbett Ch 4): if trial exists at position X, then dual
     exists at X and at all positions higher on the animacy hierarchy. -/
@@ -535,41 +478,24 @@ inductive ResolutionStrategy where
   | closestConjunct
   deriving DecidableEq, Repr
 
-/-- The result of resolving two number values under semantic resolution.
-
-    Note: this function produces `.trial` for `sg + du` unconditionally.
-    In languages without trial, the result is meaningless — use
-    `semanticResolveIn` for language-sensitive resolution. -/
-def NumberValue.semanticResolve (a b : NumberValue) : NumberValue :=
-  match a, b with
-  | .singular, .singular => .plural  -- 1 + 1 > 1
-  | .singular, .dual     => .trial   -- 1 + 2 = 3 (in languages with trial)
-  | .dual, .singular     => .trial
-  | _, _ => .plural                   -- default: conjunction yields plural
-
-/-- Language-sensitive semantic resolution: if the raw result is not in
-    the language's number system, fall back to plural. -/
-def NumberValue.semanticResolveIn (ns : NumberSystem) (a b : NumberValue) : NumberValue :=
-  let raw := NumberValue.semanticResolve a b
-  if ns.values.contains raw then raw else .plural
-
-/-- Semantic resolution: sg + sg → pl. -/
+/-- Semantic resolution in English ({sg, pl}): sg + sg → pl — the
+    lattice-canonical dual coarsens to plural (`Number.System.resolve`,
+    `Features/Number/Resolve.lean`). -/
 theorem sg_sg_resolves_pl :
-    NumberValue.semanticResolve .singular .singular = .plural := rfl
+    englishNS.resolve .singular .singular = .plural := by decide
 
-/-- Semantic resolution: sg + du → tri (in languages with trial). -/
-theorem sg_du_resolves_tri :
-    NumberValue.semanticResolve .singular .dual = .trial := rfl
+/-- In Upper Sorbian (which has dual), sg + sg resolves to dual: the
+    lattice-canonical result survives uncoarsened ([corbett-2000] §6.3). -/
+theorem sg_sg_resolves_du_with_dual :
+    upperSorbianNS.resolve .singular .singular = .dual := by decide
 
 /-- In languages without trial, sg + du resolves to pl. -/
 theorem sg_du_resolves_pl_without_trial :
-    NumberValue.semanticResolveIn englishNS .singular .dual = .plural := by
-  decide
+    englishNS.resolve .singular .dual = .plural := by decide
 
 /-- In Larike (which has trial), sg + du keeps trial. -/
 theorem sg_du_resolves_tri_with_trial :
-    NumberValue.semanticResolveIn larikeNS .singular .dual = .trial := by
-  decide
+    larikeNS.resolve .singular .dual = .trial := by decide
 
 /-! ### Bridges to AnimacyRank, Fragment plurality profiles -/
 
@@ -582,7 +508,7 @@ theorem animacy_rank_ordering_consistent :
     AnimacyRank.higherAnimal.toNat > AnimacyRank.discreteInanimate.toNat := by
   decide
 
-/-- Bridge: English `NumberSystem` matches the English plurality profile in
+/-- Bridge: English `Number.System` matches the English plurality profile in
     `English.Plurals` — both record a 2-value obligatory system. -/
 theorem english_matches_plurals_typology :
     englishNS.size = 2 ∧
@@ -608,38 +534,23 @@ theorem bayso_general_with_system :
     baysoNS.size = 3 := by
   decide
 
-/-! ### Bridge to Cysouw NumberStage (Features.Number) -/
+/-! ### Bridge to Cysouw `Number.Stage` -/
 
-open Features.Number (NumberStage)
-
-/-- Map a Corbett NumberSystem to Cysouw's NumberStage hierarchy by
-    counting the number of non-general values in the system.
-    - 0–1 values → N1 (undifferentiated)
-    - 2 values → N2 (basic sg/pl opposition)
-    - 3 values (has dual or paucal) → N3
-    - 4+ values → N4 -/
-def NumberSystem.toNumberStage (ns : NumberSystem) : NumberStage :=
-  match ns.size with
-  | 0 | 1 => .N1
-  | 2 => .N2
-  | 3 => .N3
-  | _ => .N4
-
-theorem piraha_N1 : pirahaNS.toNumberStage = .N1 := by decide
-theorem english_N2 : englishNS.toNumberStage = .N2 := by decide
-theorem russian_N2 : russianNS.toNumberStage = .N2 := by decide
-theorem japanese_N2 : japaneseNS.toNumberStage = .N2 := by decide
-theorem upperSorbian_N3 : upperSorbianNS.toNumberStage = .N3 := by decide
-theorem larike_N4 : larikeNS.toNumberStage = .N4 := by decide
+theorem piraha_N1 : pirahaNS.toStage = .N1 := by decide
+theorem english_N2 : englishNS.toStage = .N2 := by decide
+theorem russian_N2 : russianNS.toStage = .N2 := by decide
+theorem japanese_N2 : japaneseNS.toStage = .N2 := by decide
+theorem upperSorbian_N3 : upperSorbianNS.toStage = .N3 := by decide
+theorem larike_N4 : larikeNS.toStage = .N4 := by decide
 
 /-- Corbett's implicational hierarchy (trial → dual → plural → singular) is
     consistent with Cysouw's N-stages: a system at stage Nₖ has exactly k
     number oppositions, matching `size` = k for k ≤ 4. -/
 theorem numberStage_consistent_with_size :
-    pirahaNS.size = 0 ∧ pirahaNS.toNumberStage = .N1 ∧
-    englishNS.size = 2 ∧ englishNS.toNumberStage = .N2 ∧
-    upperSorbianNS.size = 3 ∧ upperSorbianNS.toNumberStage = .N3 ∧
-    larikeNS.size = 4 ∧ larikeNS.toNumberStage = .N4 := by
+    pirahaNS.size = 0 ∧ pirahaNS.toStage = .N1 ∧
+    englishNS.size = 2 ∧ englishNS.toStage = .N2 ∧
+    upperSorbianNS.size = 3 ∧ upperSorbianNS.toStage = .N3 ∧
+    larikeNS.size = 4 ∧ larikeNS.toStage = .N4 := by
   decide
 
 /-! ### Bridge to Chierchia (1998) Nominal Mapping Parameter -/
@@ -692,23 +603,6 @@ instance : DecidablePred PluralInterpretation.IncludesSingleton :=
 /-- The compositional (pre-pragmatic) interpretation is always inclusive. -/
 theorem compositional_plural_is_inclusive :
     PluralInterpretation.inclusive.IncludesSingleton := trivial
-
-/-! ### Bridge to Unified Coordinate Resolution -/
-
-open Minimalist.Agreement.CoordinateResolution
-
-/-- Corbett's `semanticResolveIn` agrees with the lattice-grounded
-    `numberResolveIn` for any system containing `.plural`.
-
-    `numberResolveIn` computes the canonical lattice join (sg+sg→du)
-    then coarsens to the target system. `semanticResolveIn` computes
-    semantic summation (sg+sg→pl) then coarsens. For {sg,pl} systems,
-    these agree because the coarsening step absorbs the difference
-    (du→pl = pl→pl). -/
-theorem numberResolveIn_eq_semanticResolveIn (a b : NumberValue) :
-    numberResolveIn englishNS.values a b
-    = some (NumberValue.semanticResolveIn englishNS a b) := by
-  cases a <;> cases b <;> decide
 
 /-! ### Minor Number Constraints IV–VII (Ch 4) -/
 
@@ -834,7 +728,7 @@ theorem associative_requires_human :
       p.minAnimacy.toNat ≥ AnimacyRank.human.toNat := by decide
 
 /-- Bridge: Japanese has both associative plural (here) and general number
-    (from the NumberSystem), reflecting the interaction between the two. -/
+    (from the Number.System), reflecting the interaction between the two. -/
 theorem japanese_associative_with_general :
     japaneseNS.hasGeneral = true ∧
     japaneseAssoc.sameAsAdditive = false := by
@@ -855,9 +749,9 @@ structure CountMassNumberInteraction where
   /-- Does the language allow mass nouns to inflect for number? -/
   massNounsInflect : Bool
   /-- Number system for count nouns -/
-  countSystem : NumberSystem
+  countSystem : Number.System
   /-- Number system for mass nouns (often smaller or empty) -/
-  massSystem : NumberSystem
+  massSystem : Number.System
   deriving DecidableEq
 
 /-- English: count nouns inflect obligatorily, mass nouns do not

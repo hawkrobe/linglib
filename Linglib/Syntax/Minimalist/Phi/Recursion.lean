@@ -1,4 +1,4 @@
-import Linglib.Features.Number
+import Linglib.Features.Number.Decomposition
 import Linglib.Core.Mereology
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.UpperLower.Basic
@@ -40,11 +40,11 @@ Recursion on **non-singular** (the [−atomic] region, before the base
 
 The implicational universals (trial → dual → plural → singular, etc.) are
 not stipulated — they are a theorem of the feature geometry. The generated
-categories form a **lower set** in the markedness partial order on
-`Category`: if a marked category is generated, all less-marked categories
-it presupposes are also generated (§ 8).
+values form a **lower set** in the markedness partial order on `Number`
+(`Number.instPartialOrder`, `Features/Number/Basic.lean`): if a marked value
+is generated, all less-marked values it presupposes are also generated (§ 8).
 
-This is a lattice-theoretic property: the partial order on categories is
+This is a lattice-theoretic property: the partial order on values is
 the presupposition ordering, and the `IsLowerSet` formulation (Mathlib)
 captures all implicational universals in a single statement.
 
@@ -52,7 +52,7 @@ captures all implicational universals in a single statement.
 
 namespace Minimalist.Phi.Recursion
 
-open Features.Number
+open Number (Features singularF dualF pluralF)
 
 -- ============================================================================
 -- § 1: Recursion Regions
@@ -113,7 +113,7 @@ def unitAugmented : RecursiveNumber := ⟨dualRegion, true⟩
 def augmented : RecursiveNumber := ⟨dualRegion, false⟩
 
 -- ============================================================================
--- § 3: Mapping to Corbett Categories
+-- § 3: Mapping to Corbett Values
 -- ============================================================================
 
 /-- Map recursive features to [corbett-2000]'s number categories.
@@ -121,7 +121,7 @@ def augmented : RecursiveNumber := ⟨dualRegion, false⟩
     Recursion target determines the category:
     - On the plural region ([−atomic, −minimal]): trial / greater plural
     - On the non-singular region ([−atomic, +minimal]): unit augmented / augmented -/
-def RecursiveNumber.toCategory (r : RecursiveNumber) : Category :=
+def RecursiveNumber.toNumber (r : RecursiveNumber) : Number :=
   if r.region.base.isMinimal then
     -- Recursion on the non-singular ([−atomic, +minimal]) region
     if r.isMinimalInRegion then .unitAugmented else .augmented
@@ -129,10 +129,10 @@ def RecursiveNumber.toCategory (r : RecursiveNumber) : Category :=
     -- Recursion on the plural ([−atomic, −minimal]) region
     if r.isMinimalInRegion then .trial else .greaterPlural
 
-theorem trial_toCategory : trial.toCategory = .trial := rfl
-theorem greaterPlural_toCategory : greaterPlural.toCategory = .greaterPlural := rfl
-theorem unitAugmented_toCategory : unitAugmented.toCategory = .unitAugmented := rfl
-theorem augmented_toCategory : augmented.toCategory = .augmented := rfl
+theorem trial_toNumber : trial.toNumber = .trial := rfl
+theorem greaterPlural_toNumber : greaterPlural.toNumber = .greaterPlural := rfl
+theorem unitAugmented_toNumber : unitAugmented.toNumber = .unitAugmented := rfl
+theorem augmented_toNumber : augmented.toNumber = .augmented := rfl
 
 -- ============================================================================
 -- § 4: Impossibility of Singular Recursion
@@ -157,9 +157,9 @@ theorem no_singular_recursion : ¬∃ (r : Region), r.base = singularF := by
 /-- Each recursion yields exactly 2 new categories: the [+minimal] and
     [−minimal] subregions are always distinct. -/
 theorem recursion_yields_two (reg : Region) :
-    (⟨reg, true⟩ : RecursiveNumber).toCategory ≠
-    (⟨reg, false⟩ : RecursiveNumber).toCategory := by
-  simp only [RecursiveNumber.toCategory]
+    (⟨reg, true⟩ : RecursiveNumber).toNumber ≠
+    (⟨reg, false⟩ : RecursiveNumber).toNumber := by
+  simp only [RecursiveNumber.toNumber]
   have := reg.base_nonatomic
   cases ha : reg.base.isAtomic <;> cases hm : reg.base.isMinimal <;> simp_all
 
@@ -177,10 +177,10 @@ theorem unitAug_presupposes_dual : unitAugmented.region.base = dualF := rfl
 theorem recursion_presupposes_base (r : RecursiveNumber) :
     r.region.base.WellFormed := r.region.base_wf
 
-/-- Base categories of recursive numbers map to Corbett categories. -/
+/-- Base regions of recursive numbers map to Corbett values. -/
 theorem recursion_base_categories :
-    trial.region.base.toCategory = some .plural ∧
-    unitAugmented.region.base.toCategory = some .dual := ⟨rfl, rfl⟩
+    trial.region.base.toNumber = some .plural ∧
+    unitAugmented.region.base.toNumber = some .dual := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 6: Only Two Recursion Regions
@@ -198,76 +198,6 @@ theorem only_two_regions (r : Region) : r.base = dualF ∨ r.base = pluralF := b
   · exact Or.inl rfl  -- false, true → dualF
   · simp at hna  -- true, false → contradiction
   · simp at hna  -- true, true → contradiction
-
--- ============================================================================
--- § 7: Markedness Partial Order on Categories
--- ============================================================================
-
-/-! The markedness ordering on number categories, derived from
-    [harbour-2014]'s feature geometry and [corbett-2000]'s
-    implicational hierarchy. `a ≤ b` means b presupposes a: every
-    number system containing b also contains a.
-
-    Three independent branches:
-    ```
-    [±atomic] branch:        trial   greaterPlural
-                               \        /
-                                dual
-                               /    \
-                         singular    plural
-
-    [±minimal] branch:       unitAugmented
-                                  |
-                              augmented
-                                  |
-                               minimal
-
-    Approximative branch:    greaterPaucal    globalPlural
-                                  |               |
-                                paucal          plural
-    ```
-    The [±atomic] branch (singular, dual, trial, greaterPlural) and
-    [±minimal] branch (minimal, augmented, unitAugmented) are INDEPENDENT:
-    singular and minimal never cooccur; they arise from different feature
-    activations. Plural spans both branches: it appears in [±atomic]
-    systems as [−atomic] and in [±additive, ±minimal] systems as [+additive].
-
-    `general` is isolated (incomparable with all in-system categories). -/
-
-/-- The markedness ordering on number categories as a decidable relation. -/
-def markednessLE (a b : Category) : Bool :=
-  a == b || match a, b with
-  -- [±atomic] branch: singular ≤ dual ≤ {trial, greaterPlural}
-  -- plural ≤ dual ≤ {trial, greaterPlural}
-  | .singular, .dual | .singular, .trial | .singular, .greaterPlural => true
-  | .plural, .dual | .plural, .trial | .plural, .greaterPlural => true
-  | .dual, .trial | .dual, .greaterPlural => true
-  -- Approximative branch: plural ≤ paucal ≤ greaterPaucal
-  | .plural, .paucal | .plural, .greaterPaucal => true
-  | .paucal, .greaterPaucal => true
-  -- [±minimal] branch: minimal ≤ augmented ≤ unitAugmented
-  | .minimal, .augmented | .minimal, .unitAugmented => true
-  | .augmented, .unitAugmented => true
-  -- globalPlural: plural ≤ globalPlural
-  | .plural, .globalPlural => true
-  | _, _ => false
-
-instance : LE Category where
-  le a b := markednessLE a b = true
-
-instance : DecidableRel (fun (a b : Category) => a ≤ b) :=
-  fun a b => show Decidable (markednessLE a b = true) from inferInstance
-
-instance : Fintype Category where
-  elems := {.general, .singular, .dual, .trial, .paucal,
-            .plural, .greaterPaucal, .greaterPlural,
-            .minimal, .augmented, .unitAugmented, .globalPlural}
-  complete x := by cases x <;> simp [Finset.mem_insert, Finset.mem_singleton]
-
-instance : PartialOrder Category where
-  le_refl a := by cases a <;> decide
-  le_trans a b c := by cases a <;> cases b <;> cases c <;> decide
-  le_antisymm a b := by cases a <;> cases b <;> decide
 
 -- ============================================================================
 -- § 8: Harbour Configuration Space
@@ -325,7 +255,7 @@ def HarbourConfig.wellFormed (c : HarbourConfig) : Bool :=
     alongside `.trial` and `.greaterPlural` when recursion is active,
     and `.augmented` remains alongside `.paucal` and `.plural`).
     This is required for the lower-set property. -/
-def HarbourConfig.categories (c : HarbourConfig) : List Category :=
+def HarbourConfig.categories (c : HarbourConfig) : List Number :=
   let base :=
     if c.hasAtomic && c.hasMinimal then [.singular, .dual, .plural]
     else if c.hasAtomic then [.singular, .plural]
@@ -371,7 +301,7 @@ def HarbourConfig.categories (c : HarbourConfig) : List Category :=
     a lower set in the markedness partial order: if `b` is generated and
     `a ≤ b`, then `a` is also generated. -/
 theorem categories_lowerSet (c : HarbourConfig) (hw : c.wellFormed = true)
-    (a b : Category) (hab : a ≤ b) (hb : c.categories.contains b = true) :
+    (a b : Number) (hab : a ≤ b) (hb : c.categories.contains b = true) :
     c.categories.contains a = true := by
   obtain ⟨ca, cm, cd, cr, cra⟩ := c
   revert hw hab hb
@@ -380,7 +310,7 @@ theorem categories_lowerSet (c : HarbourConfig) (hw : c.wellFormed = true)
 
 /-- The lower set property stated via Mathlib's `IsLowerSet`. -/
 theorem categories_isLowerSet (c : HarbourConfig) (hw : c.wellFormed = true) :
-    IsLowerSet {cat : Category | c.categories.contains cat = true} :=
+    IsLowerSet {cat : Number | c.categories.contains cat = true} :=
   fun a b hab ha => categories_lowerSet c hw b a hab ha
 
 -- ============================================================================
@@ -533,7 +463,7 @@ Key predictions:
       it into paucal + plural. The surface system is minimal/paucal/plural.
 
     The resulting counts match [harbour-2014] Table 3 exactly. -/
-def HarbourConfig.surfaceCategories (c : HarbourConfig) : List Category :=
+def HarbourConfig.surfaceCategories (c : HarbourConfig) : List Number :=
   let cats := c.categories
   -- Plural is split by [±minimal] recursion when [±atomic] is active
   let removePlural := c.recurseOnPlural && c.hasAtomic

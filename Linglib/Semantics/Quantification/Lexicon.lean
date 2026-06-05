@@ -1,5 +1,4 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.Number
 import Linglib.Morphology.Word
 
 /-!
@@ -25,7 +24,6 @@ in the study files that commit to specific values.
   weak determiners pass `there is/are`)
 -/
 
-open Features (Number)
 
 set_option autoImplicit false
 
@@ -57,7 +55,7 @@ inductive Strength where
 structure QuantifierEntry where
   form : String
   qforce : QForce
-  numberRestriction : Option Number := none
+  numberRestriction : Option UD.Number := none
   allowsMass : Bool := false
   monotonicity : Monotonicity := .increasing
   strength : Strength := .weak

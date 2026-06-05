@@ -3,7 +3,6 @@ import Linglib.Data.UD.Basic
 import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 import Linglib.Typology.Extraction
-import Linglib.Features.Number
 
 /-!
 # K'iche' Agreement Fragment [mondloch-2017]
@@ -71,7 +70,6 @@ formal. The formal forms (laal SG, alaq PL) are syntactically
 postverbal and do not participate in the prefix paradigm.
 -/
 
-open Features (Number)
 
 namespace Kiche
 
@@ -91,12 +89,12 @@ inductive Formality where
     Formality is K'iche'-specific. -/
 structure PhiFeatures where
   person : Features.Prominence.PersonLevel
-  number : Number
+  number : UD.Number
   formality : Formality
   deriving DecidableEq, Repr
 
 /-- Shorthand for informal phi features. -/
-abbrev phi (p : Features.Prominence.PersonLevel) (n : Number) : PhiFeatures :=
+abbrev phi (p : Features.Prominence.PersonLevel) (n : UD.Number) : PhiFeatures :=
   ⟨p, n, .informal⟩
 
 -- ============================================================================

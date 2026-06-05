@@ -1,7 +1,6 @@
 import Linglib.Features.Case
 import Linglib.Data.UD.Basic
 import Linglib.Features.Prominence
-import Linglib.Features.Number
 
 /-!
 # Feature Infrastructure for Minimalist Agree
@@ -47,7 +46,6 @@ for probes.
 
 -/
 
-open Features (Number)
 
 namespace Minimalist
 
@@ -60,7 +58,7 @@ open Features.Prominence
 /-- Phi-features (agreement features). -/
 inductive PhiFeature where
   | person : PersonLevel → PhiFeature
-  | number : Number → PhiFeature      -- grammatical number (UD.Number)
+  | number : UD.Number → PhiFeature      -- grammatical number (UD.Number)
   | gender : Nat → PhiFeature        -- language-specific encoding
   deriving Repr, DecidableEq
 

@@ -1,7 +1,6 @@
 import Linglib.Features.Case
 import Linglib.Features.Case
 import Linglib.Features.Prominence
-import Linglib.Features.Number
 import Linglib.Features.Person
 
 /-!
@@ -38,7 +37,7 @@ of ergative distribution to a particular Agree configuration — lives in
 `Studies/ClemDeal2024.lean`.
 -/
 
-open Features (Number Person)
+open Features (Person)
 
 namespace Kawapanan.Shawi
 

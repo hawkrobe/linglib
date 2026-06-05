@@ -2,7 +2,7 @@ import Linglib.Core.Mereology
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.Plurality.Cover
 import Linglib.Features.ContainmentPair
-import Linglib.Features.Number
+import Linglib.Features.Number.Decomposition
 import Linglib.Features.Person
 import Linglib.Features.Gender
 import Linglib.Semantics.Presupposition.Basic
@@ -692,7 +692,7 @@ which proves that all three cross-linguistic honorific strategies
     three cross-linguistic politeness strategies. -/
 theorem politeness_uses_unmarked :
     -- Plural (number)
-    isSemanticUnmarked (ContainmentPairLike.toPair Features.Number.pluralF) = true ∧
+    isSemanticUnmarked (ContainmentPairLike.toPair Number.pluralF) = true ∧
     -- 3rd person
     isSemanticUnmarked (ContainmentPairLike.toPair Features.Person.thirdF) = true ∧
     -- Masculine (gender)
@@ -703,7 +703,7 @@ theorem politeness_uses_unmarked :
     politeness — their presuppositions would impose unwanted
     restrictions on the addressee. -/
 theorem marked_not_polite :
-    isSemanticMarked (ContainmentPairLike.toPair Features.Number.singularF) = true ∧
+    isSemanticMarked (ContainmentPairLike.toPair Number.singularF) = true ∧
     isSemanticMarked (ContainmentPairLike.toPair Features.Person.firstF) = true ∧
     isSemanticMarked (ContainmentPairLike.toPair Features.Gender.neuterF) = true :=
   ⟨rfl, rfl, rfl⟩

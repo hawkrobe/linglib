@@ -106,7 +106,7 @@ def PronCell.person : PronCell → Features.Person
   | .thirdSg | .thirdPl => .third
 
 /-- PronCell number, in the API's vocabulary. -/
-def PronCell.number : PronCell → Features.Number
+def PronCell.number : PronCell → UD.Number
   | .firstSg | .secondSg | .thirdSg => .Sing
   | _ => .Plur
 

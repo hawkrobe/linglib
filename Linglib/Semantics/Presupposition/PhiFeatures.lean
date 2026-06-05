@@ -1,6 +1,6 @@
 import Linglib.Core.Mereology
 import Linglib.Features.ContainmentPair
-import Linglib.Features.Number
+import Linglib.Features.Number.Decomposition
 import Linglib.Features.Person
 import Linglib.Features.Gender
 import Linglib.Semantics.Presupposition.Basic
@@ -146,21 +146,21 @@ def dualSem {E : Type*} (minimalP : E → Prop) : PrProp E where
 @[simp] theorem plSem_eq_phiPresup {E : Type*} (innerP outerP : E → Prop) :
     phiPresup innerP outerP .minimal = plSem E := rfl
 
--- ── Bridge to Features.Number ─────
+-- ── Bridge to Number ─────
 
 /-- Singular features map to the maximal `ContainmentPair` cell (specLevel 2). -/
 @[simp] theorem sg_is_maximal_cell :
-    ContainmentPairLike.toPair Features.Number.singularF = .maximal := rfl
+    ContainmentPairLike.toPair Number.singularF = .maximal := rfl
 
 /-- Plural features map to the minimal cell (specLevel 0). -/
 @[simp] theorem pl_is_minimal_cell :
-    ContainmentPairLike.toPair Features.Number.pluralF = .minimal := rfl
+    ContainmentPairLike.toPair Number.pluralF = .minimal := rfl
 
 /-- The presuppositional asymmetry tracks specification level:
     singular (specLevel 2) has content; plural (specLevel 0) is vacuous. -/
 theorem presup_strength_tracks_specLevel :
-    ContainmentPairLike.specLevel Features.Number.singularF >
-    ContainmentPairLike.specLevel Features.Number.pluralF := by decide
+    ContainmentPairLike.specLevel Number.singularF >
+    ContainmentPairLike.specLevel Number.pluralF := by decide
 
 -- ============================================================================
 -- §3  Person Presuppositions
@@ -233,11 +233,11 @@ theorem person_nesting_from_phi (speaker addressee : E)
     not a per-domain coincidence. -/
 theorem person_number_isomorphism :
     ContainmentPairLike.specLevel Features.Person.firstF =
-      ContainmentPairLike.specLevel Features.Number.singularF ∧
+      ContainmentPairLike.specLevel Number.singularF ∧
     ContainmentPairLike.specLevel Features.Person.secondF =
-      ContainmentPairLike.specLevel Features.Number.dualF ∧
+      ContainmentPairLike.specLevel Number.dualF ∧
     ContainmentPairLike.specLevel Features.Person.thirdF =
-      ContainmentPairLike.specLevel Features.Number.pluralF :=
+      ContainmentPairLike.specLevel Number.pluralF :=
   ⟨rfl, rfl, rfl⟩
 
 end PersonPresuppositions
@@ -340,7 +340,7 @@ theorem gender_person_number_isomorphism :
     ContainmentPairLike.specLevel Features.Gender.neuterF =
       ContainmentPairLike.specLevel Features.Person.firstF ∧
     ContainmentPairLike.specLevel Features.Gender.neuterF =
-      ContainmentPairLike.specLevel Features.Number.singularF ∧
+      ContainmentPairLike.specLevel Number.singularF ∧
     ContainmentPairLike.specLevel Features.Gender.feminineF =
       ContainmentPairLike.specLevel Features.Person.secondF ∧
     ContainmentPairLike.specLevel Features.Gender.masculineF =

@@ -1,5 +1,4 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.Number
 import Linglib.Features.Person
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Features.Register
@@ -50,7 +49,7 @@ To find every claim made about a particular entry, grep for
 `Theories/`.
 -/
 
-open Features (Number Person)
+open Features (Person)
 
 namespace English.Auxiliaries
 
@@ -71,7 +70,7 @@ structure AuxEntry where
   auxType : AuxType
   /-- Person/number agreement -/
   person : Option Person := none
-  number : Option Number := none
+  number : Option UD.Number := none
   /-- Morphological tense. `none` for base forms (modals like *can*, *will*).
       Note: "past" modals (*could*, *would*) carry `Past` as a morphological
       feature even when semantically non-past (counterfactual, polite). -/

@@ -1,7 +1,6 @@
 import Linglib.Features.Prominence
 import Linglib.Data.UD.Basic
 import Linglib.Features.Gender
-import Linglib.Features.Number
 
 /-!
 # Dargwa (Tanti) Agreement [sumbatova-2021]
@@ -36,7 +35,6 @@ The 2SG marker is identical across the clitic set (*=de*) and past
 tense (*=de*), creating a homophony that is typologically unusual.
 -/
 
-open Features (Number)
 
 namespace Dargwa.Agreement
 
@@ -105,7 +103,7 @@ inductive MarkerSet where
     **Clitic set** ("Dargic type"): =da covers 1SG, 1PL, and 2PL
     (ex. 34a: "I, we, you(PL) am, are doing"); =de is 2SG only.
     Table 4.21 confirms: "person clitics: 2SG =de, 1SG/PL, 2PL =da". -/
-def personMarker : MarkerSet → PersonLevel → Number → Option String
+def personMarker : MarkerSet → PersonLevel → UD.Number → Option String
   -- Clitic set: =da for {1SG, 1PL, 2PL}, =de for {2SG}, none for {3}
   | .clitic,   .first,  _   => some "=da"
   | .clitic,   .second, .Sing => some "=de"

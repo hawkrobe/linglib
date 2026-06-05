@@ -1,7 +1,7 @@
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Semantics.Reference.Reciprocals
 import Linglib.Semantics.Reference.PluralityLicensing
-import Linglib.Features.Number
+import Linglib.Data.UD.Basic
 
 /-!
 # Hungarian Reciprocal Fragment
@@ -39,7 +39,6 @@ construction types, while reflexives require morphosyntactic plurality
    (I-)reading. [dalrymple-haug-2024] §2.
 -/
 
-open Features (Number)
 
 namespace Hungarian.Reciprocals
 
@@ -78,7 +77,7 @@ structure AntecedentConfig where
   /-- Semantically plural (denotes multiple individuals) -/
   semanticPl : Bool
   /-- Verb agreement number -/
-  verbAgr : Number
+  verbAgr : UD.Number
   deriving Repr
 
 /-- §3: Quantified NPs. Hungarian quantified NPs are morphologically

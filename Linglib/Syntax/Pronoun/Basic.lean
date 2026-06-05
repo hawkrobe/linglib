@@ -6,7 +6,6 @@ import Linglib.Features.Prominence
 import Linglib.Features.Gender
 import Linglib.Features.Clusivity
 import Linglib.Features.CoreferenceStatus
-import Linglib.Features.Number
 import Linglib.Features.Person
 import Linglib.Morphology.Word
 
@@ -19,7 +18,7 @@ structure (the morphosyntactic core every pronoun type shares), the
 allocutive markers, and [cardinaletti-starke-1999]'s `Strength` deficiency
 classification.
 
-Cross-categorial features a pronoun carries — `Person`, `Number`, `Gender`,
+Cross-categorial features a pronoun carries — person, number, gender,
 `Case` — are not redefined here; they live under `Features/` and are composed
 in as fields of the general `Pronoun`.
 
@@ -38,7 +37,7 @@ in as fields of the general `Pronoun`.
 * `Pronoun.AllocutiveEntry` — speaker–addressee (allocutive) markers.
 -/
 
-open Features (Number Person)
+open Features (Person)
 
 set_option autoImplicit false
 
@@ -115,7 +114,7 @@ structure Pronoun where
   /-- Grammatical person (UD.Person via Core.Word abbrev). -/
   person : Option Person := none
   /-- Grammatical number. -/
-  number : Option Number := none
+  number : Option UD.Number := none
   /-- Clusivity (inclusive/exclusive) of a first-person non-singular form — the
       inclusive/exclusive split of the 1st-person plural/dual. A φ-feature borne
       by any such pro-form (personal, possessive, reflexive), like `gender`;

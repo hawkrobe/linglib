@@ -1,4 +1,5 @@
 import Linglib.Data.UD.Basic
+import Linglib.Features.Number.Capabilities
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Register
 import Linglib.Features.Prominence
@@ -106,6 +107,18 @@ theorem bindingClassOf_toWord (p : Pronoun) (h : p.bindingClass ≠ some .rExpre
         case Rcp => exact absurd ((hr hp).symm.trans hb) (by simp)
         all_goals (simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]; try decide)
     | rExpression => exact absurd hb h
+
+/-! ### The number axis: `HasNumber` instances and faithfulness -/
+
+/-- A pronoun bears the number its φ-slot ingests (`Number.fromUD`). -/
+instance : HasNumber Pronoun := ⟨fun p => p.number.bind Number.fromUD⟩
+instance : HasNumber PersonalPronoun := ⟨fun p => HasNumber.numberOf p.toPronoun⟩
+
+/-- Projecting a pronoun to a `Word` preserves its number: the mixin reads
+the same value off the carrier and off the projected token (`Pronoun.toWord`
+threads `number` faithfully). -/
+theorem numberOf_toWord (p : Pronoun) :
+    HasNumber.numberOf p.toWord = HasNumber.numberOf p := rfl
 
 /-! ### Orthogonal data-mixins: `Deictic`, `Clusive` -/
 
