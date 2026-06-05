@@ -18,7 +18,11 @@ def genderTypology : GenderProfile :=
   .fromWALS "Quechua (Cusco)" "quz"
     (rawGenderCount := 0)
 
-example : genderTypology.iso639 = "quz" ∧ genderTypology.name = "Quechua (Cusco)" :=
-  ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "quz" := rfl
+
+theorem genderTypology_name : genderTypology.name = "Quechua (Cusco)" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
 
 end Quechua.Gender

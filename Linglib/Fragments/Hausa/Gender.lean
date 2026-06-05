@@ -162,18 +162,20 @@ open Typology.Gender
 def genderTypology : GenderProfile :=
   .fromWALS "Hausa" "hau"
     (rawGenderCount := 2)
-    (genderCountFb := .two)
-    (basisFb := .sexBased)
-    (assignmentFb := .semanticAndFormal)
     (agreementTargets := [.attributive, .personalPronoun, .verb])
     (semanticBases := [.sex])
     (attestedSurfaceGenders := [.masculine, .feminine])
 
-example : genderTypology.iso639 = "hau" ∧ genderTypology.name = "Hausa" :=
-  ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "hau" := rfl
+
+theorem genderTypology_name : genderTypology.name = "Hausa" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
 
 /-- Hausa is in [corbett-1991]'s "canonical" cell (2-gender,
     sex-based, semantic + formal). -/
-example : genderTypology.IsCanonicalGender := by decide
+theorem isCanonicalGender_genderTypology :
+    genderTypology.IsCanonicalGender := by decide
 
 end Hausa.Gender

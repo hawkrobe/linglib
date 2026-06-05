@@ -16,17 +16,19 @@ open Typology.Gender
 def genderTypology : GenderProfile :=
   .fromWALS "Hindi-Urdu" "hin"
     (rawGenderCount := 2)
-    (genderCountFb := .two)
-    (basisFb := .sexBased)
-    (assignmentFb := .semanticAndFormal)
     (agreementTargets := [.attributive, .predicate, .verb])
     (semanticBases := [.sex])
     (attestedSurfaceGenders := [.masculine, .feminine])
 
-example : genderTypology.iso639 = "hin" ∧ genderTypology.name = "Hindi-Urdu" :=
-  ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "hin" := rfl
+
+theorem genderTypology_name : genderTypology.name = "Hindi-Urdu" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
 
 /-- Hindi-Urdu is in [corbett-1991]'s "canonical" cell. -/
-example : genderTypology.IsCanonicalGender := by decide
+theorem isCanonicalGender_genderTypology :
+    genderTypology.IsCanonicalGender := by decide
 
 end Hindi.Gender

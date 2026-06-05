@@ -133,17 +133,19 @@ open Typology.Gender
 def genderTypology : GenderProfile :=
   .fromWALS "German" "deu"
     (rawGenderCount := 3)
-    (genderCountFb := .three)
-    (basisFb := .sexBased)
-    (assignmentFb := .semanticAndFormal)
     (agreementTargets := [.attributive, .predicate, .relativePronoun, .personalPronoun])
     (semanticBases := [.sex])
     (attestedSurfaceGenders := [.masculine, .feminine, .neuter])
 
-example : genderTypology.iso639 = "deu" ∧ genderTypology.name = "German" :=
-  ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "deu" := rfl
+
+theorem genderTypology_name : genderTypology.name = "German" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
 
 /-- German is in [corbett-1991]'s "canonical" cell. -/
-example : genderTypology.IsCanonicalGender := by decide
+theorem isCanonicalGender_genderTypology :
+    genderTypology.IsCanonicalGender := by decide
 
 end German.Gender

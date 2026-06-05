@@ -23,9 +23,15 @@ def genderTypology : GenderProfile :=
     (semanticBases := [.sex])
     (attestedSurfaceGenders := [.masculine, .feminine, .neuter])
 
-example : genderTypology.iso639 = "lat" ∧ genderTypology.name = "Latin" := ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "lat" := rfl
+
+theorem genderTypology_name : genderTypology.name = "Latin" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
 
 /-- Latin is in [corbett-1991]'s "canonical" cell. -/
-example : genderTypology.IsCanonicalGender := by decide
+theorem isCanonicalGender_genderTypology :
+    genderTypology.IsCanonicalGender := by decide
 
 end Latin.Gender

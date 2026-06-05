@@ -23,13 +23,14 @@ open Typology.Gender
 def genderTypology : GenderProfile :=
   .fromWALS "Dyirbal" "dbl"
     (rawGenderCount := 4)
-    (genderCountFb := .four)
-    (basisFb := .sexBased)
-    (assignmentFb := .semanticOnly)
     (agreementTargets := [.attributive])
     (semanticBases := [.sex, .animacy, .shape])
 
-example : genderTypology.iso639 = "dbl" ∧ genderTypology.name = "Dyirbal" :=
-  ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "dbl" := rfl
+
+theorem genderTypology_name : genderTypology.name = "Dyirbal" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
 
 end Dyirbal.Gender

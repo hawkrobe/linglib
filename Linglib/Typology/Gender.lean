@@ -32,10 +32,11 @@ substrate-extension pattern. Fragment-importable.
 
 ## Theory-laden caveats
 
-- **`GenderCount.fivePlus` is a single bin** for systems with 5+ noun
-  classes. The boundary between "gender" (2-3) and "noun class" (4+) is
-  conventional, not categorical ([corbett-1991]). Bantu languages
-  with ~15 classes and Fula with ~20 are both `.fivePlus`.
+- **`GenderCount.fivePlus` is a single bin** for systems with 5+ genders.
+  The boundary between "gender" (2-3) and "noun class" (4+) is
+  conventional, not categorical ([corbett-1991]). Raw counts are
+  controller genders, not morphological classes: Swahili has 7 genders
+  over ~15 traditional noun classes; Fula has ~20 genders.
 - **`SemanticBasis` lists 5 dimensions** (sex, animacy, humanness, shape,
   rationality); other classifications (e.g. Aikhenvald 2003 noun-classifier
   semantics) cut differently.
@@ -58,9 +59,7 @@ private abbrev ch30 := Data.WALS.F30A.allData
 private abbrev ch31 := Data.WALS.F31A.allData
 private abbrev ch32 := Data.WALS.F32A.allData
 
--- ============================================================================
--- §1. Substrate enums
--- ============================================================================
+/-! ### Substrate enums -/
 
 /-- Number of gender / noun class distinctions in a language (WALS Ch 30). -/
 inductive GenderCount where
@@ -120,9 +119,7 @@ inductive SemanticBasis where
   | rationality
   deriving DecidableEq, BEq, Repr
 
--- ============================================================================
--- §2. GenderProfile (Fragment-side joint)
--- ============================================================================
+/-! ### GenderProfile (Fragment-side joint) -/
 
 /-- A language's gender profile combining WALS Chs 30/31/32 + extra fields
     (raw count, agreement targets per [corbett-1991]'s Agreement
@@ -134,7 +131,10 @@ structure GenderProfile where
   iso639 : String
   /-- Ch 30: number of genders (WALS bin). -/
   genderCount : GenderCount
-  /-- Actual number of gender / noun class categories. -/
+  /-- Number of controller genders: sets of nouns taking the same
+      agreements, typically singular/plural pairings ([corbett-1991] §6.3).
+      For Bantu this counts genders like 1/2 — *not* the larger
+      traditional noun-class inventory (Swahili: 7 genders, ~15 classes). -/
   rawGenderCount : Nat
   /-- Ch 31: sex-based or non-sex-based. -/
   basis : GenderBasis
@@ -157,9 +157,7 @@ structure GenderProfile where
   attestedSurfaceGenders : List Features.SurfaceGender := []
   deriving Repr, DecidableEq
 
--- ============================================================================
--- §3. Helper predicates
--- ============================================================================
+/-! ### Helper predicates -/
 
 namespace GenderProfile
 
@@ -240,9 +238,7 @@ def lowestAgreementTarget (p : GenderProfile) : Option AgreementTarget :=
 
 end GenderProfile
 
--- ============================================================================
--- §4. WALS converters
--- ============================================================================
+/-! ### WALS converters -/
 
 /-- WALS Ch 30A → `GenderCount`. -/
 def fromWALS30A : Data.WALS.F30A.GenderCount → GenderCount
@@ -265,9 +261,7 @@ def fromWALS32A :
   | .semantic          => .semanticOnly
   | .semanticAndFormal => .semanticAndFormal
 
--- ============================================================================
--- §5. WALS Lookup Helpers + Smart Constructor
--- ============================================================================
+/-! ### WALS Lookup Helpers + Smart Constructor -/
 
 def walsGenderCount (iso : String) : Option GenderCount :=
   (Data.WALS.F30A.lookupISO iso).map (fromWALS30A ·.value)
@@ -280,7 +274,8 @@ def walsAssignment (iso : String) : Option AssignmentSystem :=
 
 /-- Build a `GenderProfile` from an ISO 639-3 code via WALS lookups for
     Chs 30/31/32. The three required-field fallbacks (`genderCountFb`,
-    `basisFb`, `assignmentFb`) fire only when WALS is silent for that ISO.
+    `basisFb`, `assignmentFb`) fire only when WALS is silent for that ISO;
+    omit them for WALS-covered languages (dead arguments otherwise).
     The `rawGenderCount`, `agreementTargets`, `semanticBases`, and
     `attestedSurfaceGenders` fields are paper-stipulated per [corbett-1991]
     — they are not derivable from any WALS chapter and must be passed
@@ -303,9 +298,7 @@ def GenderProfile.fromWALS
   , semanticBases
   , attestedSurfaceGenders }
 
--- ============================================================================
--- §6. WALS distribution facts
--- ============================================================================
+/-! ### WALS distribution facts -/
 
 /-! Earlier revisions of this file carried five aggregate-count theorems on
     the full WALS Ch 30/31/32 corpora (`ch30_no_gender_modal`,

@@ -51,7 +51,7 @@ semanticBases, attestedSurfaceGenders) are local per-language commitments.
 - **5+ noun classes** (Swahili, Zulu, Fula — 3 languages).
 
 The sample includes Bantu noun-class systems (Swahili, Zulu) and Fula
-(20+ classes), the Australian 4-class system Dyirbal, and the
+(~20 genders), the Australian 4-class system Dyirbal, and the
 Nakh-Daghestanian 4-gender system Archi (sex-based at the rational tier,
 non-rational genders by animacy), alongside the canonical European
 sex-based 2/3 systems and English's pronominal gender.

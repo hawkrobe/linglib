@@ -24,10 +24,15 @@ def genderTypology : GenderProfile :=
     (semanticBases := [.sex])
     (attestedSurfaceGenders := [.masculine, .feminine])
 
-example : genderTypology.iso639 = "gle" ∧ genderTypology.name = "Irish" :=
-  ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "gle" := rfl
+
+theorem genderTypology_name : genderTypology.name = "Irish" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
 
 /-- Irish is in [corbett-1991]'s "canonical" cell. -/
-example : genderTypology.IsCanonicalGender := by decide
+theorem isCanonicalGender_genderTypology :
+    genderTypology.IsCanonicalGender := by decide
 
 end Irish.Gender

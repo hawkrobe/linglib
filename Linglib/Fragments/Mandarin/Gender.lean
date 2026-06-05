@@ -16,7 +16,11 @@ def genderTypology : GenderProfile :=
   .fromWALS "Mandarin Chinese" "cmn"
     (rawGenderCount := 0)
 
-example : genderTypology.iso639 = "cmn" ∧ genderTypology.name = "Mandarin Chinese" :=
-  ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "cmn" := rfl
+
+theorem genderTypology_name : genderTypology.name = "Mandarin Chinese" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
 
 end Mandarin.Gender

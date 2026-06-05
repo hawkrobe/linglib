@@ -16,17 +16,19 @@ open Typology.Gender
 def genderTypology : GenderProfile :=
   .fromWALS "Hebrew" "heb"
     (rawGenderCount := 2)
-    (genderCountFb := .two)
-    (basisFb := .sexBased)
-    (assignmentFb := .semanticAndFormal)
     (agreementTargets := [.attributive, .predicate, .verb])
     (semanticBases := [.sex])
     (attestedSurfaceGenders := [.masculine, .feminine])
 
-example : genderTypology.iso639 = "heb" ∧ genderTypology.name = "Hebrew" :=
-  ⟨rfl, rfl⟩
+theorem genderTypology_iso639 : genderTypology.iso639 = "heb" := rfl
+
+theorem genderTypology_name : genderTypology.name = "Hebrew" := rfl
+
+theorem isRawCountConsistent_genderTypology :
+    genderTypology.IsRawCountConsistent := by decide
 
 /-- Hebrew is in [corbett-1991]'s "canonical" cell. -/
-example : genderTypology.IsCanonicalGender := by decide
+theorem isCanonicalGender_genderTypology :
+    genderTypology.IsCanonicalGender := by decide
 
 end Hebrew.Gender
