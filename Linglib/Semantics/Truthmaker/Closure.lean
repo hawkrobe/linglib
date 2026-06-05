@@ -18,7 +18,7 @@ Closures are not redefined here — they are imported from
 - `Mereology.algClosureOp : ClosureOperator (α → Prop)` bundles it.
 - `Mereology.convexClosure P` is `P^∼` (Jago: convex under parthood).
 - `Mereology.convexClosureOp : ClosureOperator (Set α)` bundles it.
-- `Mereology.IsConvex` is the convex predicate.
+- `Set.OrdConnected` is the convex predicate (via `Mereology.convexClosure`).
 - The regular closure `P^*` is `convexClosure (AlgClosure P)`.
 
 This file provides the **truthmaker-flavored vocabulary** (`IsClosed`,
@@ -64,17 +64,18 @@ section Convex
 variable {S : Type*} [PartialOrder S]
 
 /-- A proposition is **convex** iff it lies between any two of its
-    members in the partial order. Re-export of `Mereology.IsConvex`. -/
-abbrev IsConvex (p : TMProp S) : Prop := Mereology.IsConvex p
+    members in the partial order — mathlib's `Set.OrdConnected`, in
+    Jago's vocabulary. -/
+abbrev IsConvex (p : TMProp S) : Prop := Set.OrdConnected p
 
 /-- Convex closure of a `TMProp`. Re-export of `Mereology.convexClosure`
     (recall `Set α = α → Prop = TMProp α` definitionally). -/
 abbrev convexClose (p : TMProp S) : TMProp S := convexClosure p
 
 /-- The convex closure of `p` is convex. Re-export of
-    `Mereology.IsConvex.convexClosure`. -/
+    `Mereology.ordConnected_convexClosure`. -/
 theorem isConvex_convexClose (p : TMProp S) : IsConvex (convexClose p) :=
-  Mereology.IsConvex.convexClosure p
+  Mereology.ordConnected_convexClosure p
 
 end Convex
 

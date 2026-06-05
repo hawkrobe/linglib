@@ -565,33 +565,12 @@ first-person plural, there must lie a [−additive] first-person paucal.
 This nonconvex cut violates the general requirement that basic meanings
 be convex ([gaerdenfors-2004]).
 
-The formalization connects to `Mereology.convexClosure` (Core/Mereology.lean §13):
-a nonconvex region under `convexClosure` strictly expands, witnessing
-elements that "should" be in the region but aren't. -/
-
-section Convexity
-
-variable {D : Type*} [PartialOrder D]
-
-/-- A region is convex in a lattice: between any two members, all
-    intermediaries are also members. [harbour-2014] (33). -/
-def isConvex (L : Set D) : Prop :=
-  ∀ a b c : D, a ∈ L → b ∈ L → a ≤ c → c ≤ b → c ∈ L
-
-/-- Convex regions are fixed points of convex closure: Conv(L) = L. -/
-theorem convex_iff_closure_eq (L : Set D) :
-    isConvex L ↔ Mereology.convexClosure L = L := by
-  constructor
-  · intro hconv
-    ext c; constructor
-    · rintro ⟨a, ha, b, hb, hac, hcb⟩
-      exact hconv a b c ha hb hac hcb
-    · exact fun hc => Mereology.subset_convexClosure L hc
-  · intro heq a b c ha hb hac hcb
-    have : c ∈ Mereology.convexClosure L := ⟨a, ha, b, hb, hac, hcb⟩
-    rwa [heq] at this
-
-end Convexity
+Convexity here is mathlib's `Set.OrdConnected`: a region is convex iff it
+is a fixed point of `Mereology.convexClosure`
+(`Mereology.ordConnected_iff_convexClosure_eq`) — the same predicate that
+states [grimm-2018]'s no-discontinuous-category condition on countability
+classes (`Studies/Grimm2018.lean`), so Harbour's and Grimm's convexity
+requirements are the same predicate. -/
 
 -- ============================================================================
 -- § 14: Axiom of Extension
