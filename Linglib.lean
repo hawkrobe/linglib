@@ -11,6 +11,8 @@ import Linglib.Features.Gender
 import Linglib.Features.Gender.Basic
 import Linglib.Features.Gender.Capabilities
 import Linglib.Features.Gender.Decomposition
+import Linglib.Features.Gender.Interp
+import Linglib.Features.Gender.Resolve
 import Linglib.Core.Valence
 import Linglib.Data.UD.Basic
 import Linglib.Morphology.Unification
