@@ -3,7 +3,7 @@ import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.Plurality.Cover
 import Linglib.Features.ContainmentPair
 import Linglib.Features.Number.Decomposition
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 import Linglib.Features.Gender
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Phenomena.Plurals.Multiplicity
@@ -694,7 +694,7 @@ theorem politeness_uses_unmarked :
     -- Plural (number)
     isSemanticUnmarked (ContainmentPairLike.toPair Number.pluralF) = true ∧
     -- 3rd person
-    isSemanticUnmarked (ContainmentPairLike.toPair Features.Person.thirdF) = true ∧
+    isSemanticUnmarked (ContainmentPairLike.toPair Person.thirdF) = true ∧
     -- Masculine (gender)
     isSemanticUnmarked (ContainmentPairLike.toPair Features.Gender.masculineF) = true :=
   ⟨rfl, rfl, rfl⟩
@@ -704,7 +704,7 @@ theorem politeness_uses_unmarked :
     restrictions on the addressee. -/
 theorem marked_not_polite :
     isSemanticMarked (ContainmentPairLike.toPair Number.singularF) = true ∧
-    isSemanticMarked (ContainmentPairLike.toPair Features.Person.firstF) = true ∧
+    isSemanticMarked (ContainmentPairLike.toPair Person.firstF) = true ∧
     isSemanticMarked (ContainmentPairLike.toPair Features.Gender.neuterF) = true :=
   ⟨rfl, rfl, rfl⟩
 

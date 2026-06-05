@@ -2,7 +2,7 @@ import Mathlib.Data.Finset.Card
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Finset.NAry
 import Mathlib.Data.Finset.Lattice.Fold
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 import Linglib.Features.Number.Decomposition
 import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.Phi.Recursion
@@ -48,7 +48,7 @@ being stipulated:
 * `Examples` — the concrete three-element ontology `{i, u, o} = Fin 3`, where the
   partition cells live and the derived theorems are `decide`-checked.
 * `signOf` — Harbour's `±author`/`±participant` *signs* for a Cysouw `Category`
-  (theory-laden; cf. the neutral `Features.Person.Category.toFeatures`).
+  (theory-laden; cf. the neutral `Person.Category.toFeatures`).
 
 ## Main results (all *derived*, none stipulated)
 
@@ -240,12 +240,12 @@ open Number (singularF dualF pluralF)
 hierarchy in [bejar-rezac-2009]'s Cyclic Agree and [preminger-2014]'s relativized
 probing. -/
 theorem person_hierarchy_is_spec_ordering :
-    ContainmentPairLike.specLevel Features.Person.firstF >
-      ContainmentPairLike.specLevel Features.Person.secondF ∧
-    ContainmentPairLike.specLevel Features.Person.secondF >
-      ContainmentPairLike.specLevel Features.Person.thirdF :=
-  ContainmentPairLike.specLevel_strict_order Features.Person.firstF_is_maximal
-    Features.Person.secondF_is_intermediate Features.Person.thirdF_is_minimal
+    ContainmentPairLike.specLevel Person.firstF >
+      ContainmentPairLike.specLevel Person.secondF ∧
+    ContainmentPairLike.specLevel Person.secondF >
+      ContainmentPairLike.specLevel Person.thirdF :=
+  ContainmentPairLike.specLevel_strict_order Person.firstF_is_maximal
+    Person.secondF_is_intermediate Person.thirdF_is_minimal
 
 /-- The number hierarchy `sg > du > pl` is the *same* specification ordering — the
 structural reflection of the phi kernel, not an identification of the categories. -/
@@ -330,18 +330,18 @@ theorem bridge_configs_wellFormed :
 
 /-! ### Harbour's sign decomposition of the Cysouw categories ([harbour-2016] Table 4.3)
 
-The neutral `Features.Person.Category.toFeatures` underdetermines the group categories
+The neutral `Person.Category.toFeatures` underdetermines the group categories
 (`excl`/`minIncl`/`augIncl` all `⟨true,true⟩`). Harbour's **operational signs** distinguish
 them; that distinction is *this theory's* commitment, derived from the partition above. A
-dedicated `Sign` carrier is used rather than `Features.Person.Features`, because the
+dedicated `Sign` carrier is used rather than `Person.Features`, because the
 exclusive's `+author −participant` is exactly the combination the neutral type's `wellFormed`
 invariant (SAP containment: author ⟹ participant) rejects — for operations, not SAP-membership
 predicates, that invariant does not apply ([harbour-2016] Ch. 9). -/
 
-open Features.Person (Category)
+open Person (Category)
 
 /-- A Harbour `±author`/`±participant` sign — bivalent feature *values* ([harbour-2016]
-Ch. 9), distinct from the SAP-membership `Features.Person.Features`. -/
+Ch. 9), distinct from the SAP-membership `Person.Features`. -/
 structure Sign where
   author : Bool
   participant : Bool

@@ -34,8 +34,8 @@ view that `Pronoun.Strength`'s docstring flags as orthogonal.
 ## Implementation notes
 
 The φP layer is the locus of the person/number/gender φ-features modelled in
-`Features.Person` etc.; `hasPhiLayer` marks which categories project it. A full
-federation of the φ-internal geometry to `Features.Person` is left to follow-up.
+`UD.Person` etc.; `hasPhiLayer` marks which categories project it. A full
+federation of the φ-internal geometry to `UD.Person` is left to follow-up.
 -/
 
 namespace DechaineWiltschko2002
@@ -58,7 +58,7 @@ def Category.hasDLayer : Category → Bool
   | .proNP => false
 
 /-- Whether the category projects a φP layer — the locus of the person/number/
-    gender φ-features (cf. `Features.Person`). A bare `proNP` has none. -/
+    gender φ-features (cf. `UD.Person`). A bare `proNP` has none. -/
 def Category.hasPhiLayer : Category → Bool
   | .proDP => true
   | .prophiP => true

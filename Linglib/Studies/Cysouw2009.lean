@@ -1,4 +1,4 @@
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 import Linglib.Features.Number.Basic
 import Linglib.Fragments.Finnish.Negation
 
@@ -39,7 +39,7 @@ sharing a class are homophonous (marked by the same form).
 
 namespace Cysouw2009
 
-open Features.Person
+open Person
 
 -- ============================================================================
 -- §2: Paradigmatic Structure

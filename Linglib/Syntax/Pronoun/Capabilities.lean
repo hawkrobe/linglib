@@ -1,5 +1,6 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
+import Linglib.Features.Person.Capabilities
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Register
 import Linglib.Features.Prominence
@@ -119,6 +120,37 @@ the same value off the carrier and off the projected token (`Pronoun.toWord`
 threads `number` faithfully). -/
 theorem numberOf_toWord (p : Pronoun) :
     HasNumber.numberOf p.toWord = HasNumber.numberOf p := rfl
+
+/-! ### The person axis: `HasPerson` instances and faithfulness -/
+
+/-- A pronoun's analytical person: the (UD person, clusivity) field pair
+recovers the quadripartition cell — Tagalog *kami* = `firstExclusive` —
+so consumers unify on root `Person` before any carrier retype. -/
+instance : HasPerson Pronoun :=
+  ⟨fun p => p.person.map fun ud =>
+    match ud, p.clusivity with
+    | .first, some .inclusive => .firstInclusive
+    | .first, some .exclusive => .firstExclusive
+    | ud, _ => Person.fromUD ud⟩
+
+instance : HasPerson PersonalPronoun :=
+  ⟨fun p => HasPerson.personOf p.toPronoun⟩
+
+/-- Projecting a pronoun to a `Word` coarsens its person: `Word` carries
+UD realization, which has no clusivity — the mixin makes the loss
+explicit rather than silent. -/
+theorem personOf_toWord (p : Pronoun) :
+    HasPerson.personOf p.toWord =
+      (HasPerson.personOf p).map Person.coarsen := by
+  show p.person.map Person.fromUD =
+    (p.person.map _).map Person.coarsen
+  cases p.person with
+  | none => rfl
+  | some ud =>
+    cases ud <;> cases hc : p.clusivity <;>
+      first
+        | rfl
+        | (rename_i v; cases v <;> rfl)
 
 /-! ### Orthogonal data-mixins: `Deictic`, `Clusive` -/
 

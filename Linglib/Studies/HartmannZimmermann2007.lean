@@ -184,7 +184,7 @@ def exSitu_selective : FocusUtterance :=
 /-- Ex-situ + contrastive focus (paper eq. 27):
     *cî kawài akèe ta yî* 'it is only EATING that is going on.'
     Approximated with 3sg.M relative completive — paper uses the 4sg
-    impersonal *akèe* which `Features.Person.Category` does not yet expose. -/
+    impersonal *akèe* which `Person.Category` does not yet expose. -/
 def exSitu_contrastive : FocusUtterance :=
   mkExSituUtt cmp_3sm_R .masculine true (fun _ => rfl) .contrastive
 

@@ -5,7 +5,7 @@ import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Spanish.Pronouns
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.German.Pronouns
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 import Linglib.Studies.Deal2024
 
 /-!
@@ -680,7 +680,7 @@ theorem all_fragments_grounded :
 -- § 16: Person Category Bridge — Unifying Person Decompositions
 -- ============================================================================
 
-open Features.Person in
+open Person in
 /-- The [±participant] decomposition in `Core/Person/Category.lean`
     (operating on `Category`) is the same decomposition as
     `Phi.Geometry.decomposePerson` (operating on `PersonLevel`).

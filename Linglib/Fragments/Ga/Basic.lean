@@ -1,6 +1,6 @@
 import Linglib.Features.Number.Basic
 import Linglib.Features.Gender
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 
 /-!
 # Gã Fragment
@@ -37,8 +37,6 @@ independent morphological argumentation ([pollock-1989]'s
 diagnostic requires a free Neg head; Gã `-ee` and `-ko` appear
 suffixal) that is orthogonal to the OC story.
 -/
-
-open Features (Person)
 
 namespace Ga
 

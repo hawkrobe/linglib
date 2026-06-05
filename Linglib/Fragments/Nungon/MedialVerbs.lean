@@ -1,5 +1,6 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
+import Linglib.Features.Person.Capabilities
 
 /-!
 # Nungon Medial Verb Morphology [sarvasy-2017]
@@ -77,6 +78,8 @@ structure PersonNumber where
 
 /-- A person/number index bears its number slot (`HasNumber`). -/
 instance : HasNumber PersonNumber := ⟨fun pn => Number.fromUD pn.number⟩
+
+instance : HasPerson PersonNumber := ⟨fun pn => some (Person.fromUD pn.person)⟩
 
 /-- A DS suffix entry: form + person/number it indexes. -/
 structure DSSuffix where

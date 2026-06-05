@@ -5,7 +5,7 @@ import Mathlib.Data.Finset.NAry
 import Mathlib.Data.Finset.Prod
 import Mathlib.Data.Finset.Erase
 import Mathlib.Data.Fintype.Basic
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 import Linglib.Syntax.Minimalist.Phi.Lattice
 
 /-!
@@ -49,7 +49,7 @@ with first- and second-person plural pronouns.
 - §6 Structural properties of the PCC condition
 - §7 Denotation ↔ PCC correspondence
 - §8 Heterogeneity and SINGULAR/PLURAL composition order
-- §9 Bridges to `Features.Person` and `Features.Prominence`
+- §9 Bridges to `UD.Person` and `Features.Prominence`
 
 ## Note on absolute vs relative PCC
 
@@ -634,7 +634,7 @@ theorem wrong_order_produces_plural :
       oplus (speakerDen zd) (singularFilter (participantDen zd)) := by decide
 
 -- ============================================================================
--- § 9: Bridges to Features.Person / Features.Prominence
+-- § 9: Bridges to UD.Person / Features.Prominence
 -- ============================================================================
 
 /-- Map PronType to the coarser 3-way person distinction in
@@ -651,7 +651,7 @@ theorem pcc_person_refinement : ∀ p1 p2 : PronType,
   decide
 
 /-- Map PronType to binary person features (±participant, ±author). -/
-def PronType.toPersonFeatures : PronType → Features.Person.Features
+def PronType.toPersonFeatures : PronType → Person.Features
   | .first  => ⟨true, true⟩
   | .second => ⟨true, false⟩
   | _       => ⟨false, false⟩

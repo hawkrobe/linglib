@@ -1,5 +1,5 @@
 import Linglib.Morphology.Unification
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Card
 import Mathlib.Data.Fintype.Powerset
@@ -310,13 +310,13 @@ either marker is participanthood. The map collapses exactly the inclusive/exclus
 distinction — Fula's `{S}` and `{S, H}` land on the same binary value — which is the
 formal content of §6.2's "fewer pronominal distinctions". -/
 
-open Features.Person in
+open Person in
 /-- Project a marker set onto the binary decomposition. -/
-def toBinary (p : PersonSet) : Features.Person.Features :=
+def toBinary (p : PersonSet) : Person.Features :=
   { hasParticipant := Marker.S ∈ p ∨ Marker.H ∈ p
     hasAuthor := Marker.S ∈ p }
 
-open Features.Person in
+open Person in
 theorem toBinary_values :
     toBinary fula1exc = firstF ∧ toBinary fula1inc = firstF ∧
     toBinary fula2 = secondF ∧ toBinary fula3 = thirdF := by
