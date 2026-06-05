@@ -57,11 +57,11 @@ def egymas : PersonalPronoun :=
     Unlike *egymás*, the reflexive inflects for number:
     *magá-t* (SG.ACC) vs. *maguk-at* (PL.ACC). -/
 def maga : PersonalPronoun :=
-  { form := "maga", person := some .third, number := some .Sing }
+  { form := "maga", person := some .third, number := some .singular }
 
 /-- *maguk* — reflexive pronoun (3PL form). -/
 def maguk : PersonalPronoun :=
-  { form := "maguk", person := some .third, number := some .Plur }
+  { form := "maguk", person := some .third, number := some .plural }
 
 -- ════════════════════════════════════════════════════════════════
 -- Antecedent Constructions ([rakosi-2019] §§3-6)
@@ -181,7 +181,7 @@ theorem egymas_invariable : egymas.number = none := rfl
 
 /-- The reflexive DOES inflect for number. -/
 theorem reflexive_inflects :
-    maga.number = some .Sing ∧ maguk.number = some .Plur := ⟨rfl, rfl⟩
+    maga.number = some .singular ∧ maguk.number = some .plural := ⟨rfl, rfl⟩
 
 /-- When the local antecedent is a singular bound pronoun, only the
     wide-scope (I-)reading is available.

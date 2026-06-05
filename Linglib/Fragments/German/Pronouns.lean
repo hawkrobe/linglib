@@ -37,11 +37,11 @@ open Features.Register (Level)
 
 /-- *ich* — 1sg. -/
 def ich : PersonalPronoun :=
-  { form := "ich", person := some .first, number := some .Sing }
+  { form := "ich", person := some .first, number := some .singular }
 
 /-- *du* — 2sg familiar (T form). -/
 def du : PersonalPronoun :=
-  { form := "du", person := some .second, number := some .Sing, register := .informal }
+  { form := "du", person := some .second, number := some .singular, register := .informal }
 
 /-- *Sie* — polite 2nd person (V form, triggers 3pl agreement).
     Unlike Italian LEI (3sg.f) and Spanish USTED (3sg), German SIE uses
@@ -49,32 +49,32 @@ def du : PersonalPronoun :=
     is 2nd. Can refer to singular or plural addressees.
     [adamson-zompi-2025] -/
 def sie_polite : PersonalPronoun :=
-  { form := "Sie", person := some .third, number := some .Plur, register := .formal,
+  { form := "Sie", person := some .third, number := some .plural, register := .formal,
     referentialPerson := some .second }
 
 /-- *er* — 3sg masculine. -/
 def er : PersonalPronoun :=
-  { form := "er", person := some .third, number := some .Sing }
+  { form := "er", person := some .third, number := some .singular }
 
 /-- *sie* — 3sg feminine. -/
 def sie_f : PersonalPronoun :=
-  { form := "sie", person := some .third, number := some .Sing }
+  { form := "sie", person := some .third, number := some .singular }
 
 /-- *es* — 3sg neuter. -/
 def es : PersonalPronoun :=
-  { form := "es", person := some .third, number := some .Sing }
+  { form := "es", person := some .third, number := some .singular }
 
 /-- *wir* — 1pl. -/
 def wir : PersonalPronoun :=
-  { form := "wir", person := some .first, number := some .Plur }
+  { form := "wir", person := some .first, number := some .plural }
 
 /-- *ihr* — 2pl familiar. -/
 def ihr : PersonalPronoun :=
-  { form := "ihr", person := some .second, number := some .Plur, register := .informal }
+  { form := "ihr", person := some .second, number := some .plural, register := .informal }
 
 /-- *sie* — 3pl. -/
 def sie_pl : PersonalPronoun :=
-  { form := "sie", person := some .third, number := some .Plur }
+  { form := "sie", person := some .third, number := some .plural }
 
 def allPronouns : List PersonalPronoun :=
   [ich, du, sie_polite, er, sie_f, es, wir, ihr, sie_pl]
@@ -94,7 +94,7 @@ theorem sie_polite_dual_person :
     sie_polite.referentialPerson = some .second := ⟨rfl, rfl⟩
 
 /-- SIE uses 3pl, unlike Italian LEI (3sg) and Spanish USTED (3sg). -/
-theorem sie_is_plural : sie_polite.number = some .Plur := rfl
+theorem sie_is_plural : sie_polite.number = some .plural := rfl
 
 /-- All three persons are attested. -/
 theorem has_all_persons :

@@ -2,6 +2,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Features.Person.Basic
 import Linglib.Features.Prominence
 import Linglib.Features.ContainmentPair
+import Linglib.Features.Number.Basic
 
 /-!
 # Person
@@ -278,21 +279,26 @@ theorem ud_conflates_incl_excl :
     Category.toUDPersonNumber .augIncl =
     Category.toUDPersonNumber .excl := rfl
 
-/-- The [cysouw-2009] category a (canonical person, UD number) pair
-    realizes. Clusivity rides on the person value, so no third argument is
-    needed: singulars ignore clusivity, first-person non-singulars without
-    it (plain `first`) are a syncretism (`none`), and second/third
-    non-singulars map to the group categories. -/
-def Category.ofPersonNumber : Person → UD.Number → Option Category
-  | .first, .Sing | .firstInclusive, .Sing | .firstExclusive, .Sing =>
-      some .s1
-  | .second, .Sing => some .s2
-  | .third, .Sing => some .s3
-  | .firstInclusive, .Dual => some .minIncl
-  | .firstInclusive, .Plur => some .augIncl
-  | .firstExclusive, .Dual | .firstExclusive, .Plur => some .excl
-  | .second, .Dual | .second, .Plur => some .secondGrp
-  | .third, .Dual | .third, .Plur => some .thirdGrp
+/-- The [cysouw-2009] category a (person, number) coordinate pair
+    realizes, over the canonical inventories. Clusivity rides on the
+    person value; the minimal/augmented coordinates give the
+    minimal/augmented inclusives directly (Tagalog *kata* =
+    `(firstInclusive, minimal)` ↦ `minIncl`, the junction coordinates of
+    `Studies/Cysouw2009.lean`); the Maori-type dual alignment maps there
+    too; plain `first` non-singulars are a syncretism (`none`). -/
+def Category.ofPersonNumber : Person → Number → Option Category
+  | .first, .singular | .firstInclusive, .singular
+  | .firstExclusive, .singular => some .s1
+  | .second, .singular => some .s2
+  | .third, .singular => some .s3
+  | .firstInclusive, .minimal | .firstInclusive, .dual => some .minIncl
+  | .firstInclusive, .augmented | .firstInclusive, .plural
+  | .firstInclusive, .general => some .augIncl
+  | .firstExclusive, .dual | .firstExclusive, .plural
+  | .firstExclusive, .general | .firstExclusive, .augmented => some .excl
+  | .second, .dual | .second, .plural | .second, .general =>
+      some .secondGrp
+  | .third, .dual | .third, .plural | .third, .general => some .thirdGrp
   | _, _ => none
 
 /-- The person coordinate of each referential category — the projection
@@ -323,15 +329,18 @@ theorem person_separates_clusivity :
     Category.augIncl.person ≠ Category.excl.person := by decide
 
 /-- `ofPersonNumber` inverts the person projection: every category is
-    recovered from its own coordinates. -/
+    recovered from its coordinates at some number value. -/
 theorem ofPersonNumber_person (c : Category) :
-    ∀ pn, c.toUDPersonNumber = some pn →
-      Category.ofPersonNumber c.person pn.2 = some c := by
-  cases c <;>
-    (intro pn hpn
-     simp only [Category.toUDPersonNumber, Option.some.injEq] at hpn
-     subst hpn
-     rfl)
+    ∃ n, Category.ofPersonNumber c.person n = some c := by
+  cases c
+  · exact ⟨.singular, rfl⟩
+  · exact ⟨.singular, rfl⟩
+  · exact ⟨.singular, rfl⟩
+  · exact ⟨.minimal, rfl⟩
+  · exact ⟨.augmented, rfl⟩
+  · exact ⟨.general, rfl⟩
+  · exact ⟨.general, rfl⟩
+  · exact ⟨.general, rfl⟩
 
 -- ============================================================================
 -- § 8: Category ↔ Features Bridge

@@ -57,28 +57,28 @@ def iDisagr : PersonalPronoun :=
 /-- *qini* — 1SG independent pronoun; bimorphemic *qin+=i* (base *qin*
     [+author,+sg] + disagreement enclitic, Table 4.9). -/
 def qini : PersonalPronoun :=
-  { form := "qini", person := some .first, number := some .Sing }
+  { form := "qini", person := some .first, number := some .singular }
 
 /-- *qoy* — 1PL exclusive independent pronoun; bimorphemic *qo'+=y*
     (base *qo* [+author,−sg] + enclitic; glottalization from the enclitic,
     her fn. 7). -/
 def qoy : PersonalPronoun :=
-  { form := "qoy", person := some .firstExclusive, number := some .Plur, }
+  { form := "qoy", person := some .firstExclusive, number := some .plural, }
 
 /-- *qo* — 1PL inclusive independent pronoun; monomorphemic (1INCL's
     [+author,+participant] values *agree*, so no enclitic). -/
 def qo : PersonalPronoun :=
-  { form := "qo", person := some .firstInclusive, number := some .Plur, }
+  { form := "qo", person := some .firstInclusive, number := some .plural, }
 
 /-- *qi* — 2PL pronoun, both series; bimorphemic *q+=i* (§4.3.3.2).
     Word-vs-enclitic status left open by Scott (p. 163). -/
 def qi : PersonalPronoun :=
-  { form := "qi", person := some .second, number := some .Plur }
+  { form := "qi", person := some .second, number := some .plural }
 
 /-- *qa* — 3PL pronoun, both series; also the generic plural marker of the
     language (her (42)–(44)). Word-vs-enclitic status left open. -/
 def qa : PersonalPronoun :=
-  { form := "qa", person := some .third, number := some .Plur }
+  { form := "qa", person := some .third, number := some .plural }
 
 /-- The clusivity-marked entries satisfy the API's well-formedness invariant
     (clusivity only on 1st-person non-singular). -/

@@ -111,15 +111,20 @@ theorem bindingClassOf_toWord (p : Pronoun) (h : p.bindingClass ≠ some .rExpre
 
 /-! ### The number axis: `HasNumber` instances and faithfulness -/
 
-/-- A pronoun bears the number its φ-slot ingests (`Number.fromUD`). -/
-instance : HasNumber Pronoun := ⟨fun p => p.number.bind Number.fromUD⟩
+/-- A pronoun bears its analytical number directly — the carrier field is
+root-`Number`-typed. -/
+instance : HasNumber Pronoun := ⟨fun p => p.number⟩
 instance : HasNumber PersonalPronoun := ⟨fun p => HasNumber.numberOf p.toPronoun⟩
 
-/-- Projecting a pronoun to a `Word` preserves its number: the mixin reads
-the same value off the carrier and off the projected token (`Pronoun.toWord`
-threads `number` faithfully). -/
+/-- Projecting a pronoun to a `Word` realizes its number through UD: the
+round-trip is identity exactly on UD-expressible values — the
+minimal/augmented values are lost to realization (`Number.toUD` is
+partial), the number analogue of `personOf_toWord`'s coarsening. -/
 theorem numberOf_toWord (p : Pronoun) :
-    HasNumber.numberOf p.toWord = HasNumber.numberOf p := rfl
+    HasNumber.numberOf p.toWord =
+      p.number.bind fun n => n.toUD.bind Number.fromUD := by
+  show (p.number.bind Number.toUD).bind Number.fromUD = _
+  cases p.number <;> rfl
 
 /-! ### The person axis: `HasPerson` instances and faithfulness -/
 
