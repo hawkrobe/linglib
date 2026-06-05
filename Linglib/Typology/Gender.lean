@@ -59,9 +59,7 @@ private abbrev ch30 := Data.WALS.F30A.allData
 private abbrev ch31 := Data.WALS.F31A.allData
 private abbrev ch32 := Data.WALS.F32A.allData
 
--- ============================================================================
--- §1. Substrate enums
--- ============================================================================
+/-! ### Substrate enums -/
 
 /-- Number of gender / noun class distinctions in a language (WALS Ch 30). -/
 inductive GenderCount where
@@ -121,9 +119,7 @@ inductive SemanticBasis where
   | rationality
   deriving DecidableEq, BEq, Repr
 
--- ============================================================================
--- §2. GenderProfile (Fragment-side joint)
--- ============================================================================
+/-! ### GenderProfile (Fragment-side joint) -/
 
 /-- A language's gender profile combining WALS Chs 30/31/32 + extra fields
     (raw count, agreement targets per [corbett-1991]'s Agreement
@@ -161,9 +157,7 @@ structure GenderProfile where
   attestedSurfaceGenders : List Features.SurfaceGender := []
   deriving Repr, DecidableEq
 
--- ============================================================================
--- §3. Helper predicates
--- ============================================================================
+/-! ### Helper predicates -/
 
 namespace GenderProfile
 
@@ -244,9 +238,7 @@ def lowestAgreementTarget (p : GenderProfile) : Option AgreementTarget :=
 
 end GenderProfile
 
--- ============================================================================
--- §4. WALS converters
--- ============================================================================
+/-! ### WALS converters -/
 
 /-- WALS Ch 30A → `GenderCount`. -/
 def fromWALS30A : Data.WALS.F30A.GenderCount → GenderCount
@@ -269,9 +261,7 @@ def fromWALS32A :
   | .semantic          => .semanticOnly
   | .semanticAndFormal => .semanticAndFormal
 
--- ============================================================================
--- §5. WALS Lookup Helpers + Smart Constructor
--- ============================================================================
+/-! ### WALS Lookup Helpers + Smart Constructor -/
 
 def walsGenderCount (iso : String) : Option GenderCount :=
   (Data.WALS.F30A.lookupISO iso).map (fromWALS30A ·.value)
@@ -284,7 +274,8 @@ def walsAssignment (iso : String) : Option AssignmentSystem :=
 
 /-- Build a `GenderProfile` from an ISO 639-3 code via WALS lookups for
     Chs 30/31/32. The three required-field fallbacks (`genderCountFb`,
-    `basisFb`, `assignmentFb`) fire only when WALS is silent for that ISO.
+    `basisFb`, `assignmentFb`) fire only when WALS is silent for that ISO;
+    omit them for WALS-covered languages (dead arguments otherwise).
     The `rawGenderCount`, `agreementTargets`, `semanticBases`, and
     `attestedSurfaceGenders` fields are paper-stipulated per [corbett-1991]
     — they are not derivable from any WALS chapter and must be passed
@@ -307,9 +298,7 @@ def GenderProfile.fromWALS
   , semanticBases
   , attestedSurfaceGenders }
 
--- ============================================================================
--- §6. WALS distribution facts
--- ============================================================================
+/-! ### WALS distribution facts -/
 
 /-! Earlier revisions of this file carried five aggregate-count theorems on
     the full WALS Ch 30/31/32 corpora (`ch30_no_gender_modal`,

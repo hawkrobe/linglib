@@ -21,9 +21,6 @@ open Typology.Gender
 def genderTypology : GenderProfile :=
   .fromWALS "English" "eng"
     (rawGenderCount := 3)
-    (genderCountFb := .three)
-    (basisFb := .sexBased)
-    (assignmentFb := .semanticOnly)
     (agreementTargets := [.personalPronoun])
     (semanticBases := [.sex])
     (attestedSurfaceGenders := [.masculine, .feminine, .neuter])

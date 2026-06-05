@@ -16,9 +16,6 @@ open Typology.Gender
 def genderTypology : GenderProfile :=
   .fromWALS "Shona" "sna"
     (rawGenderCount := 8)
-    (genderCountFb := .fivePlus)
-    (basisFb := .nonSexBased)
-    (assignmentFb := .semanticAndFormal)
     (agreementTargets := [.attributive, .predicate, .relativePronoun,
                           .personalPronoun, .verb])
     (semanticBases := [.humanness])
