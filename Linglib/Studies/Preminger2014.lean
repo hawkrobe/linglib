@@ -118,22 +118,22 @@ open Agreement
 /-- Bears [+participant]? Derived from [harley-ritter-2002]'s
     feature geometry via `decomposePerson` (Phi/Geometry.lean). -/
 def IsParticipant (c : Agreement.Cell) : Prop :=
-  (decomposePerson c.toPersonLevel).hasParticipant = true
+  (decomposePerson c.toPerson).hasParticipant = true
 
 instance : DecidablePred IsParticipant := fun c =>
-  inferInstanceAs (Decidable ((decomposePerson c.toPersonLevel).hasParticipant = true))
+  inferInstanceAs (Decidable ((decomposePerson c.toPerson).hasParticipant = true))
 
 /-- Bears [+author]? -/
 def IsAuthor (c : Agreement.Cell) : Prop :=
-  (decomposePerson c.toPersonLevel).hasAuthor = true
+  (decomposePerson c.toPerson).hasAuthor = true
 
 instance : DecidablePred IsAuthor := fun c =>
-  inferInstanceAs (Decidable ((decomposePerson c.toPersonLevel).hasAuthor = true))
+  inferInstanceAs (Decidable ((decomposePerson c.toPerson).hasAuthor = true))
 
 /-- Convert a person-number cell to a PhiFeature list for the Agree
     infrastructure. -/
 def toPhiFeatures (c : Agreement.Cell) : List PhiFeature :=
-  [.person c.toPersonLevel, .number (if c.isPlural then .Plur else .Sing)]
+  [.person c.toPerson, .number (if c.isPlural then .Plur else .Sing)]
 
 -- ============================================================================
 -- § 2: DM Vocabulary Insertion ([halle-marantz-1993])
@@ -159,7 +159,7 @@ def setBVocab : Vocabulary :=
     on the cell's person + number features. NOT a salience scale —
     see module docstring. -/
 def afRank (c : Agreement.Cell) : Nat :=
-  probeResolutionRank c.toPersonLevel c.isPlural
+  probeResolutionRank c.toPerson c.isPlural
 
 /-- Person restriction ([preminger-2014] (25)): at most one core
     argument can bear [+participant]. Derives from the Person

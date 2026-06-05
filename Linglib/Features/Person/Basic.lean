@@ -1,5 +1,4 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.Prominence
 
 /-!
 # Person — the canonical inventory
@@ -27,9 +26,8 @@ capability mixin (`Features/Person/Capabilities.lean`), unified
 resolution (`Features/Person/Resolve.lean`), feature decomposition and
 the Cysouw categories (`Features/Person/Decomposition.lean`).
 
-`Features.Prominence.PersonLevel` (the 1/2/3 prominence type used by
-probes and scales) is scheduled to dissolve into projections on this
-type; `toPersonLevel` is the bridge.
+The prominence scale over this inventory (`Person.prominence`, the
+dissolved `Person`'s role) lives in `Features/Prominence.lean`.
 -/
 
 set_option autoImplicit false
@@ -66,16 +64,20 @@ def IncludesSpeaker : Person → Prop
   | .first | .firstInclusive | .firstExclusive => True
   | _ => False
 
-instance : DecidablePred IncludesSpeaker := fun p => by
-  unfold IncludesSpeaker; cases p <;> infer_instance
+instance : DecidablePred IncludesSpeaker := fun p =>
+  match p with
+  | .first | .firstInclusive | .firstExclusive => isTrue trivial
+  | .second | .third | .zero => isFalse fun h => h
 
 /-- The value marks clusivity (a quadripartition cell). -/
 def MarksClusivity : Person → Prop
   | .firstInclusive | .firstExclusive => True
   | _ => False
 
-instance : DecidablePred MarksClusivity := fun p => by
-  unfold MarksClusivity; cases p <;> infer_instance
+instance : DecidablePred MarksClusivity := fun p =>
+  match p with
+  | .firstInclusive | .firstExclusive => isTrue trivial
+  | .first | .second | .third | .zero => isFalse fun h => h
 
 /-- Speech-act participant: speaker or addressee included. `zero` is
     not a participant value. -/
@@ -83,8 +85,10 @@ def IsSAP : Person → Prop
   | .third | .zero => False
   | _ => True
 
-instance : DecidablePred IsSAP := fun p => by
-  unfold IsSAP; cases p <;> infer_instance
+instance : DecidablePred IsSAP := fun p =>
+  match p with
+  | .first | .firstInclusive | .firstExclusive | .second => isTrue trivial
+  | .third | .zero => isFalse fun h => h
 
 /-! ### Coarsening
 
@@ -134,29 +138,6 @@ theorem fromUD_toUD (p : Person) : fromUD p.toUD = p.coarsen := by
 /-- UD conflates the clusivity values under `Person=1`. -/
 theorem ud_conflates_clusivity :
     Person.firstInclusive.toUD = Person.firstExclusive.toUD := rfl
-
-/-! ### Prominence bridge
-
-`Features.Prominence.PersonLevel` is the legacy 1/2/3 hierarchy type
-(probes, prominence scales); it dissolves into this projection. -/
-
-/-- Project to the three-way prominence level; `zero` is outside the
-    hierarchy. -/
-def toPersonLevel : Person → Option Features.Prominence.PersonLevel
-  | .first | .firstInclusive | .firstExclusive => some .first
-  | .second => some .second
-  | .third => some .third
-  | .zero => none
-
-/-- Embed a prominence level as an analytical value. -/
-def ofPersonLevel : Features.Prominence.PersonLevel → Person
-  | .first => .first
-  | .second => .second
-  | .third => .third
-
-@[simp] theorem toPersonLevel_ofPersonLevel
-    (l : Features.Prominence.PersonLevel) :
-    (ofPersonLevel l).toPersonLevel = some l := by cases l <;> rfl
 
 /-- The person hierarchy 1 < 2 < 3 ([zwicky-1977]; resolution in
     coordination, [corbett-2006]). Clusivity-marked firsts share rank 0

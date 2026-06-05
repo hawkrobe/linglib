@@ -75,7 +75,7 @@ grounding: the same 3-level hierarchy (human > animate > inanimate)
 governs both phenomena, with no possibility of drift between separate
 definitions.
 
-The same pattern holds for `DefinitenessLevel` and `PersonLevel` — all
+The same pattern holds for `DefinitenessLevel` and `Person` — all
 three prominence scales are defined once in `Features.Prominence` and
 imported by every downstream module. -/
 

@@ -45,7 +45,8 @@ machinery as a separate follow-up.
 
 namespace ClemDeal2024
 
-open Features.Prominence (PersonLevel)
+open Minimalist (decomposePerson)
+
 open Deal2024 (DealGrammar isLicit strictlyDescending dpBears
   sd_off_diagonal_iff_outranks)
 open Kawapanan.Shawi (ObjectPosition ObjectSyntax Phi mustBeHigh
@@ -79,7 +80,7 @@ theorem shawi_is_strictly_descending :
     return `true` vacuously — local-person objects never occupy the
     low position (`mustBeHigh` is `true` for them), so this case is
     structurally inaccessible. -/
-def objectVisible : PersonLevel → ObjectPosition → Bool
+def objectVisible : Person → ObjectPosition → Bool
   | .third, .low => false
   | _, _         => true
 
@@ -91,7 +92,7 @@ def objectVisible : PersonLevel → ObjectPosition → Bool
     2. The probe must successfully Agree with the subject as a
        *second* goal — exactly Deal-2024's `isLicit` for the strictly
        descending grammar. -/
-def predictsErgative (subj obj : PersonLevel) (pos : ObjectPosition) : Bool :=
+def predictsErgative (subj obj : Person) (pos : ObjectPosition) : Bool :=
   objectVisible obj pos && isLicit shawiGrammar subj obj
 
 -- ============================================================================
@@ -102,7 +103,7 @@ def predictsErgative (subj obj : PersonLevel) (pos : ObjectPosition) : Bool :=
     reaches the subject — ergative is impossible regardless of the
     subject's features or the object's position. [clem-deal-2024]
     (7a–b), (14a–b), §3 derivation in (15). -/
-theorem erg_with_1p_obj_blocked (subj : PersonLevel) (pos : ObjectPosition) :
+theorem erg_with_1p_obj_blocked (subj : Person) (pos : ObjectPosition) :
     predictsErgative subj .first pos = false := by
   cases subj <;> cases pos <;> rfl
 
@@ -110,21 +111,21 @@ theorem erg_with_1p_obj_blocked (subj : PersonLevel) (pos : ObjectPosition) :
     triggering dynamic narrowing. The subject is then visible as G2
     only if it bears [PART] — i.e., is itself local-person.
     [clem-deal-2024] §3.2, (16). -/
-theorem erg_with_2p_obj_iff_subj_part (subj : PersonLevel) :
+theorem erg_with_2p_obj_iff_subj_part (subj : Person) :
     predictsErgative subj .second .high = dpBears subj .part := by
   cases subj <;> rfl
 
 /-- 3P high object: lacks [SPKR] *and* lacks [PART], so the probe
     neither halts nor narrows. The subject is visible as G2 regardless
     of its features. [clem-deal-2024] (8), (19). -/
-theorem erg_with_3p_obj_high_always (subj : PersonLevel) :
+theorem erg_with_3p_obj_high_always (subj : Person) :
     predictsErgative subj .third .high = true := by
   cases subj <;> rfl
 
 /-- 3P low object: invisible to v. The probe finds only the subject as
     G1; no goal-flag bundle reaches the subject. [clem-deal-2024]
     (24). -/
-theorem erg_with_3p_obj_low_blocked (subj : PersonLevel) :
+theorem erg_with_3p_obj_low_blocked (subj : Person) :
     predictsErgative subj .third .low = false := by
   cases subj <;> rfl
 
@@ -139,8 +140,10 @@ theorem erg_with_3p_obj_low_blocked (subj : PersonLevel) :
     Shawi's hierarchy effect is exactly the one that fell out of
     Deal-2024 on independent grounds. -/
 theorem erg_off_diagonal_iff_subj_outranks_obj
-    (subj obj : PersonLevel) (h_neq : subj ≠ obj) :
-    predictsErgative subj obj .high = true ↔ subj.rank > obj.rank := by
+    (subj obj : Person)
+    (h_neq : decomposePerson subj ≠ decomposePerson obj) :
+    predictsErgative subj obj .high = true ↔
+      subj.prominence > obj.prominence := by
   have h_vis : objectVisible obj .high = true := by cases obj <;> rfl
   unfold predictsErgative
   rw [h_vis, Bool.true_and]
@@ -175,7 +178,7 @@ example : -- row g low (3→3 low): absent
     predictsErgative .third .third .low = false := rfl
 
 /-- Optionality is exactly the `(✓)` cells: 1→3, 2→3, 3→3. -/
-theorem optionality_only_with_3p_object (subj obj : PersonLevel) :
+theorem optionality_only_with_3p_object (subj obj : Person) :
     (predictsErgative subj obj .high ≠ predictsErgative subj obj .low) →
     obj = .third := by
   cases obj <;> cases subj <;> decide
@@ -189,22 +192,16 @@ theorem optionality_only_with_3p_object (subj obj : PersonLevel) :
     Reason: `objectVisible` is `true` for any non-3P object regardless
     of position. -/
 theorem local_object_position_irrelevant
-    (subj obj : PersonLevel) (h : obj ≠ .third) (pos : ObjectPosition) :
+    (subj obj : Person) (h : obj.IsSAP) (pos : ObjectPosition) :
     predictsErgative subj obj pos = isLicit shawiGrammar subj obj := by
-  cases obj
-  · rfl
-  · rfl
-  · exact absurd rfl h
+  cases obj <;> first | rfl | exact h.elim
 
 /-- Bookkeeping: for any local-person object, the Fragment-level
     `mustBeHigh` constraint forces the high position, which is exactly
     what the probe-visibility analysis presupposes. -/
-theorem local_object_must_be_high (p : PersonLevel) (h : p ≠ .third) :
+theorem local_object_must_be_high (p : Person) (h : p.IsSAP) :
     mustBeHigh p = true := by
-  cases p
-  · rfl
-  · rfl
-  · exact absurd rfl h
+  cases p <;> first | rfl | exact h.elim
 
 -- ============================================================================
 -- § 7: Counterexamples to configurational case (paper §4.1)
@@ -216,7 +213,7 @@ theorem local_object_must_be_high (p : PersonLevel) (h : p ≠ .third) :
     value the case feature of NP1 as ergative unless NP2 has already
     been marked for case." Predicts ergative for *every* transitive
     subject. -/
-def configurationalRulePredictsErg (_subj _obj : PersonLevel) : Bool := true
+def configurationalRulePredictsErg (_subj _obj : Person) : Bool := true
 
 /-- The simple rule overgenerates 2→1: it predicts `-ri` on a 2P
     subject with a 1P object, but Shawi disallows it
@@ -238,8 +235,8 @@ theorem configurational_rule_overgenerates_3_to_1 :
     analysis predicts the absence because a low 3P object is invisible
     to the probe, so the subject is G1 rather than G2 — no goal
     flagging, no ergative. -/
-def augmentedConfigRulePredictsErg (subj obj : PersonLevel) : Bool :=
-  decide (subj.rank ≥ obj.rank)
+def augmentedConfigRulePredictsErg (subj obj : Person) : Bool :=
+  decide (subj.prominence ≥ obj.prominence)
 
 theorem augmented_config_rule_overgenerates_3_3_low :
     augmentedConfigRulePredictsErg .third .third = true ∧
@@ -255,7 +252,9 @@ theorem augmented_config_rule_overgenerates_3_3_low :
     ergative — a high-object subject that outranks the object forces
     the object out of postverbal position (to OSV or *pro*-drop). -/
 theorem outranking_subj_blocks_postverbal_obj
-    (subj obj : PersonLevel) (h_neq : subj ≠ obj) (h_rank : subj.rank > obj.rank) :
+    (subj obj : Person)
+    (h_neq : decomposePerson subj ≠ decomposePerson obj)
+    (h_rank : subj.prominence > obj.prominence) :
     objectSyntaxLicit (predictsErgative subj obj .high) .overtPostverbal = false := by
   have h_erg : predictsErgative subj obj .high = true :=
     (erg_off_diagonal_iff_subj_outranks_obj subj obj h_neq).mpr h_rank
@@ -265,7 +264,7 @@ theorem outranking_subj_blocks_postverbal_obj
 /-- The fronted (OSV) and *pro*-drop options remain licit regardless
     of whether the subject bears `-ri`. -/
 theorem fronted_and_prodropped_always_licit
-    (subj obj : PersonLevel) (pos : ObjectPosition) :
+    (subj obj : Person) (pos : ObjectPosition) :
     objectSyntaxLicit (predictsErgative subj obj pos) .overtFronted = true ∧
     objectSyntaxLicit (predictsErgative subj obj pos) .proDropped = true :=
   ⟨rfl, rfl⟩
@@ -286,15 +285,17 @@ theorem fronted_and_prodropped_always_licit
     *without* ergative is not) is structurally true here only by
     construction; deriving it requires the goal-flagging machinery
     flagged in "Follow-ups". -/
-def oagrOnSAvailable : PersonLevel → PersonLevel → ObjectPosition → Bool :=
+def oagrOnSAvailable : Person → Person → ObjectPosition → Bool :=
   predictsErgative
 
 /-- Inheriting the hierarchy bridge: OAgr-on-S is available off the
     diagonal iff the subject outranks the object — same pattern as
     `-ri` itself. -/
 theorem oagrOnS_off_diagonal_iff_subj_outranks_obj
-    (subj obj : PersonLevel) (h_neq : subj ≠ obj) :
-    oagrOnSAvailable subj obj .high = true ↔ subj.rank > obj.rank :=
+    (subj obj : Person)
+    (h_neq : decomposePerson subj ≠ decomposePerson obj) :
+    oagrOnSAvailable subj obj .high = true ↔
+      subj.prominence > obj.prominence :=
   erg_off_diagonal_iff_subj_outranks_obj subj obj h_neq
 
 -- ============================================================================
@@ -313,7 +314,7 @@ theorem shawi_licit_count :
     `isLicit` on the strictly-descending grammar — Shawi inherits the
     Deal-2024 typology wholesale once we condition on "object visible
     to v". -/
-theorem high_object_matches_deal2024 (subj obj : PersonLevel) :
+theorem high_object_matches_deal2024 (subj obj : Person) :
     predictsErgative subj obj .high = isLicit shawiGrammar subj obj := by
   cases obj <;> rfl
 

@@ -70,7 +70,7 @@ open Agreement
 
 -- Person-number combinations for Kaqchikel agreement paradigms come from
 -- the canonical φ-cell `Agreement.Cell` (six cells: three persons × two
--- numbers). Projections `.toPersonLevel`, `.isPlural`, and the inventory
+-- numbers). Projections `.toPerson`, `.isPlural`, and the inventory
 -- `Agreement.Cell.pnCells` live in `Syntax/Agreement/Paradigm.lean`.
 
 -- ============================================================================

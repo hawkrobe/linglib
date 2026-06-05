@@ -256,7 +256,7 @@ def applyAgree (probeFeats goalFeats : FeatureBundle) (ftype : FeatureVal) :
 
     T has [uφ], subject DP has [φ] → T gets valued φ.
     The `.third` value on person probes is a conventional placeholder —
-    `sameType` ignores the specific `PersonLevel` value, matching any
+    `sameType` ignores the specific `Person` value, matching any
     `.person _` against any `.person _`. -/
 structure TAgree where
   tHead : SyntacticObject

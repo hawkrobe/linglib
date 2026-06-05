@@ -53,7 +53,6 @@ not addressee reference per se.
 
 namespace AdamsonZompi2025
 
-open Features.Prominence (PersonLevel)
 open Minimalist (DecomposedPerson decomposePerson)
 open Minimalist.PConstraint (PCCGrammar IsLicit weakGrammar strongGrammar
   IsInherentlyProximate)
@@ -77,12 +76,12 @@ open Minimalist.PConstraint (PCCGrammar IsLicit weakGrammar strongGrammar
 
     For ordinary (non-polite) pronouns, both layers coincide. -/
 structure DualPersonFeatures where
-  agreementPerson : PersonLevel
-  interpretablePerson : PersonLevel
+  agreementPerson : Person
+  interpretablePerson : Person
   deriving DecidableEq, Repr
 
 /-- Ordinary pronoun: both layers are the same person. -/
-def DualPersonFeatures.ordinary (p : PersonLevel) : DualPersonFeatures :=
+def DualPersonFeatures.ordinary (p : Person) : DualPersonFeatures :=
   ⟨p, p⟩
 
 -- ============================================================================
@@ -134,9 +133,10 @@ def imposter : DualPersonFeatures := .ordinary .third
 
     Note: the person values here are the values the PCC *reads* — the
     central question of the paper is whether these are agreement person
-    or interpretable person. -/
-def weakPCC (ioPerson doPerson : PersonLevel) : Bool :=
-  !(ioPerson == .third && doPerson.isSAP)
+    or interpretable person. "3rd person" is `[−participant]` (non-SAP),
+    which over the full inventory includes the impersonal. -/
+def weakPCC (ioPerson doPerson : Person) : Bool :=
+  !(!decide ioPerson.IsSAP && decide doPerson.IsSAP)
 
 /-- The **Strong PCC**: in a ditransitive clitic cluster, the DO must be
     3rd person. Some Italian speakers have the Strong PCC (§2, p. 5),
@@ -144,11 +144,11 @@ def weakPCC (ioPerson doPerson : PersonLevel) : Bool :=
 
     The Strong PCC entails the Weak PCC: anything banned under the Weak
     PCC is also banned under the Strong PCC. -/
-def strongPCC (_ioPerson doPerson : PersonLevel) : Bool :=
-  doPerson == .third
+def strongPCC (_ioPerson doPerson : Person) : Bool :=
+  !decide doPerson.IsSAP
 
 /-- Strong PCC entails Weak PCC. -/
-theorem strong_entails_weak (io do_ : PersonLevel) :
+theorem strong_entails_weak (io do_ : Person) :
     strongPCC io do_ = true → weakPCC io do_ = true := by
   cases io <;> cases do_ <;> decide
 
@@ -185,8 +185,8 @@ theorem strong_1_2 : strongPCC .first .second = false := rfl
 structure CliticJudgment where
   label : String
   ok : Bool
-  ioPerson : PersonLevel
-  doPerson : PersonLevel
+  ioPerson : Person
+  doPerson : Person
   deriving Repr
 
 -- Standard PCC data (§2, (1)–(3))
@@ -269,7 +269,7 @@ theorem lei_banned_under_both_variants :
     strongPCC .third lei.interpretablePerson = false := ⟨rfl, rfl⟩
 
 /-- For ordinary pronouns (no mismatch), both accounts agree. -/
-theorem ordinary_accounts_agree (p : PersonLevel) :
+theorem ordinary_accounts_agree (p : Person) :
     morphosyntacticPrediction (.ordinary p) =
     syntacticosemanticPrediction (.ordinary p) := rfl
 
@@ -294,7 +294,7 @@ theorem ordinary_accounts_agree (p : PersonLevel) :
 
     We model the Fancy Constraint as reading the same interpretable person
     features as the PCC. -/
-def fancyConstraint (causeePerson : PersonLevel) : Bool :=
+def fancyConstraint (causeePerson : Person) : Bool :=
   -- Causee must be 3rd person (non-participant) when co-occurring
   -- with another argument
   causeePerson == .third
@@ -354,7 +354,7 @@ inductive ResolvedNumber where
   deriving DecidableEq, Repr
 
 def resolvedAgreement (d : DualPersonFeatures) : ResolvedNumber :=
-  if d.interpretablePerson.isSAP then .pl2 else .pl3
+  if decide d.interpretablePerson.IsSAP then .pl2 else .pl3
 
 /-- LEI + 3sg → 2PL resolved agreement ((30)). -/
 theorem lei_resolved_2pl : resolvedAgreement lei = .pl2 := rfl
@@ -394,12 +394,12 @@ theorem lei_agreement_not_participant :
 /-- The Weak PCC reduces to: if IO is [−participant], then DO must be
     [−participant]. Equivalently: ¬(IO lacks [participant] ∧ DO has
     [participant]). -/
-def pccViaParticipant (ioPerson doPerson : PersonLevel) : Bool :=
+def pccViaParticipant (ioPerson doPerson : Person) : Bool :=
   !(!((decomposePerson ioPerson).hasParticipant) &&
      (decomposePerson doPerson).hasParticipant)
 
 /-- `pccViaParticipant` is extensionally equivalent to `weakPCC`. -/
-theorem pcc_participant_equivalence (io do_ : PersonLevel) :
+theorem pcc_participant_equivalence (io do_ : Person) :
     weakPCC io do_ = pccViaParticipant io do_ := by
   cases io <;> cases do_ <;> rfl
 
@@ -413,13 +413,13 @@ theorem pcc_participant_equivalence (io do_ : PersonLevel) :
 
     The Weak PCC (P-Uniqueness inactive) produces the same judgments as
     our `weakPCC` function. -/
-theorem pconstraint_matches_weakPCC (io do_ : PersonLevel) :
+theorem pconstraint_matches_weakPCC (io do_ : Person) :
     IsLicit weakGrammar io do_ ↔ weakPCC io do_ = true := by
   cases io <;> cases do_ <;> decide
 
 /-- The Strong PCC (P-Uniqueness active) produces the same judgments as
     our `strongPCC` function. -/
-theorem pconstraint_matches_strongPCC (io do_ : PersonLevel) :
+theorem pconstraint_matches_strongPCC (io do_ : Person) :
     IsLicit strongGrammar io do_ ↔ strongPCC io do_ = true := by
   cases io <;> cases do_ <;> decide
 
@@ -618,7 +618,7 @@ theorem german_fragment_sie_dual :
     source) are sensitive to interpretable person, so polite pronouns
     trigger them. Assumed-identity effects (exponence-based source) are
     sensitive to formal features, so polite pronouns do NOT trigger them. -/
-def assumedIdentityEffect (formalPerson : PersonLevel) (copulaForm3rd : Bool) : Bool :=
+def assumedIdentityEffect (formalPerson : Person) (copulaForm3rd : Bool) : Bool :=
   -- Exponence-based: reads formal/agreement person.
   -- Effect is ameliorated when copula form is syncretic between
   -- 1st/3rd person (past tense *war*), supporting an exponence account.
@@ -683,7 +683,7 @@ theorem all_fragments_grounded :
 open Person in
 /-- The [±participant] decomposition in `Core/Person/Category.lean`
     (operating on `Category`) is the same decomposition as
-    `Phi.Geometry.decomposePerson` (operating on `PersonLevel`).
+    `Phi.Geometry.decomposePerson` (operating on `Person`).
 
     This theorem bridges the two: for all singular Categories,
     `toFeatures.hasParticipant` equals `decomposePerson.hasParticipant`. -/

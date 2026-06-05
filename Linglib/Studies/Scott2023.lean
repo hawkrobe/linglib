@@ -178,7 +178,7 @@ open Agreement
 
 /-- PhiFeature list per Mam person-number cell. -/
 def mamToPhiFeatures (c : Agreement.Cell) : List PhiFeature :=
-  [.person c.toPersonLevel, .number (if c.isPlural then .Plur else .Sing)]
+  [.person c.toPerson, .number (if c.isPlural then .Plur else .Sing)]
 
 /-- Set A (ERG) vocabulary entries: φ-features on Voice (.v)
     yield the morphological exponent ([scott-2023] Table 2.8).

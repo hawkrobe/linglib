@@ -169,7 +169,7 @@ structure PersonalPronoun extends Pronoun where
       resolved agreement). For ordinary pronouns, leave as `none` —
       referential person coincides with formal person.
       [adamson-zompi-2025] -/
-  referentialPerson : Option Features.Prominence.PersonLevel := none
+  referentialPerson : Option Person := none
   deriving Repr, BEq, DecidableEq
 
 namespace Pronoun
