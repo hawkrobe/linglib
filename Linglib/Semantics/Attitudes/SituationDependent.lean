@@ -1,5 +1,5 @@
 import Linglib.Core.WorldTimeIndex
-import Linglib.Core.Time.Tense
+import Linglib.Semantics.Tense.GramTense
 import Linglib.Semantics.Attitudes.Doxastic
 
 /-!
@@ -49,8 +49,8 @@ abbrev BAgentAccessRel (W E : Type*) := AccessRel W E
 -- ════════════════════════════════════════════════════════════════
 
 -- Situation-dependent proposition type (von Stechow's s(it), Prop-valued).
--- Re-exported from `Core.Time.Tense` (the canonical definition).
-export Core.Time.Tense (SitProp)
+-- Re-exported from `Semantics.Tense` (the canonical definition).
+export Semantics.Tense (SitProp)
 
 /-- Situation-dependent accessibility relation: Dox_y(w,t) = {(w',t') |...}.
 

@@ -1,6 +1,7 @@
 import Linglib.Features.Case
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
 import Linglib.Features.Prominence
+import Linglib.Features.Number
 
 /-!
 # Feature Infrastructure for Minimalist Agree
@@ -45,6 +46,8 @@ Use `.person .third` and `.number .sg` as conventional placeholders
 for probes.
 
 -/
+
+open Features (Number)
 
 namespace Minimalist
 

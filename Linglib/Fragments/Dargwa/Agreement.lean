@@ -1,6 +1,7 @@
 import Linglib.Features.Prominence
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
 import Linglib.Features.Gender
+import Linglib.Features.Number
 
 /-!
 # Dargwa (Tanti) Agreement [sumbatova-2021]
@@ -34,6 +35,8 @@ Three person-marker sets distribute across TAM paradigms:
 The 2SG marker is identical across the clitic set (*=de*) and past
 tense (*=de*), creating a homophony that is typologically unusual.
 -/
+
+open Features (Number)
 
 namespace Dargwa.Agreement
 
@@ -105,29 +108,29 @@ inductive MarkerSet where
 def personMarker : MarkerSet → PersonLevel → Number → Option String
   -- Clitic set: =da for {1SG, 1PL, 2PL}, =de for {2SG}, none for {3}
   | .clitic,   .first,  _   => some "=da"
-  | .clitic,   .second, .sg => some "=de"
+  | .clitic,   .second, .Sing => some "=de"
   | .clitic,   .second, _   => some "=da"    -- 2PL patterns with 1st person
   | .clitic,   .third,  _   => none          -- 3rd unmarked
   -- Irrealis set
-  | .irrealis, .first,  .sg => some "-d"
+  | .irrealis, .first,  .Sing => some "-d"
   | .irrealis, .first,  _   => some "-haˁ"   -- (> -he)
-  | .irrealis, .second, .sg => some "-t:"    -- (> -t)
+  | .irrealis, .second, .Sing => some "-t:"    -- (> -t)
   | .irrealis, .second, _   => some "-t:-a"
   | .irrealis, .third,  _   => none
   -- Optative set
   | .optative, .first,  _   => some "-a"
-  | .optative, .second, .sg => some "-e"
+  | .optative, .second, .Sing => some "-e"
   | .optative, .second, _   => some "-a"     -- + -ja allocutive
   | .optative, .third,  _   => none
 
 /-- 3rd person is unmarked in all paradigm sets. -/
 theorem third_unmarked :
-    personMarker .clitic   .third .sg = none ∧
-    personMarker .clitic   .third .pl = none ∧
-    personMarker .irrealis .third .sg = none ∧
-    personMarker .irrealis .third .pl = none ∧
-    personMarker .optative .third .sg = none ∧
-    personMarker .optative .third .pl = none := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    personMarker .clitic   .third .Sing = none ∧
+    personMarker .clitic   .third .Plur = none ∧
+    personMarker .irrealis .third .Sing = none ∧
+    personMarker .irrealis .third .Plur = none ∧
+    personMarker .optative .third .Sing = none ∧
+    personMarker .optative .third .Plur = none := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 3: Agreement Control
@@ -212,9 +215,9 @@ theorem thematic_suffix_tracks_controller :
     distinct marker (=de). This is the typologically rare opposition
     described in the abstract: "2SG versus {1SG, 1PL, 2PL}". -/
 theorem dargic_type_clitic :
-    personMarker .clitic .first .sg = personMarker .clitic .first .pl ∧
-    personMarker .clitic .first .pl = personMarker .clitic .second .pl ∧
-    personMarker .clitic .second .sg ≠ personMarker .clitic .first .sg := by
+    personMarker .clitic .first .Sing = personMarker .clitic .first .Plur ∧
+    personMarker .clitic .first .Plur = personMarker .clitic .second .Plur ∧
+    personMarker .clitic .second .Sing ≠ personMarker .clitic .first .Sing := by
   refine ⟨rfl, rfl, ?_⟩; decide
 
 /-- SAP always wins over 3rd person. -/

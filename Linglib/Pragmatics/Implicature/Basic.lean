@@ -1,5 +1,6 @@
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
 import Linglib.Semantics.Entailment.Polarity
+import Linglib.Morphology.Word
 
 /-!
 # Neo-Gricean Pragmatics: Basic Definitions

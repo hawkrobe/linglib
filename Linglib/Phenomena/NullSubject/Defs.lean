@@ -1,4 +1,4 @@
-import Linglib.Core.UD
+import Linglib.Data.UD.Basic
 
 /-!
 # Subject-Context Vocabulary

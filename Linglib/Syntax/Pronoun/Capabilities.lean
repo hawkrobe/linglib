@@ -1,9 +1,11 @@
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Register
 import Linglib.Features.Prominence
 import Linglib.Features.Clusivity
+import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Pronoun.Basic
+import Linglib.Morphology.Word
 
 /-!
 # Pronoun capabilities — a mixin tower over pronoun carriers
@@ -20,27 +22,29 @@ object (`Word`), or a future theory representation; each supplies its own instan
 ## Main declarations
 
 * `Proform` — the spine: a carrier exposes a surface `form` and agreement `phi`-features.
-* `Bound` — the binding axis: a carrier's total `Features.BindingClass`, the typed companion to the
-  partial `Features.BindingSource`.
-* `Anaphoric`, `Pronominal`, `Referring` — the Principle A / B / C *type*-markers: a homogeneous
-  carrier all of whose elements share one binding class. The typed-view generalization of the
-  element-level `Pronoun.{IsAnaphor, IsPronominal, IsRExpression}`.
-* `Bound.{IsAnaphor, IsPronominal, IsRExpression}` — the same A / B / C partition as *element*
-  predicates, generic over any `[Bound α]` carrier.
+* `instance Bound Pronoun` / `Bound PersonalPronoun` — the pronoun carriers' binding-axis
+  instances. The `Bound` *class* (with `Anaphoric`/`Pronominal`/`Referring` and the
+  `Bound.Is*` element predicates) is theory-neutral and lives beside its partial companion
+  `Features.BindingSource` in `Features/CoreferenceStatus.lean`.
+* `bindingClassOf_toWord` — the faithfulness certificate: the binding engine's canonical
+  morphology source (`Binding.bindingClassOf`) agrees with the `Bound` mixin on every
+  projected pro-form, so the surface engine and the carrier capability never diverge.
 * `Deictic`, `Clusive` — orthogonal data-mixins (register / referential person; clusivity).
 
 ## Implementation notes
 
 Capabilities live near their domain (mathlib-style: `ContinuousMul` is in `Topology`, not
 `Algebra`). The word-class-neutral `Indefinite` capability (`[Indefinite α]`, Haspelmath
-function-coverage) therefore lives in `Features/Indefinite.lean`, not here — indefiniteness is not
-pronoun-specific. Two further axes are deferred, each for a principled reason. *Deficiency*
+function-coverage) therefore lives in `Features/Indefinite.lean`, and the binding axis `Bound`
+lives in `Features/CoreferenceStatus.lean` — neither is pronoun-specific. Two further axes are deferred, each for a principled reason. *Deficiency*
 ([cardinaletti-starke-1999] `Pronoun.Strength`) is *per-series*, not per-element: every carrier's
 strength is carrier-uniform (Italian clitics are all `.clitic`; the Mixtec clitic/nonclitic *fields*
 have fixed strengths), so an `α → Strength` accessor would be constant on every carrier — a
-per-*type* fact, not a per-element capability, and it is already served by per-series `def`s +
-`Strength.rank`. A finer *lexical-kind* axis (personal vs relative vs interrogative) is not reducible
-to the A/B/C role and needs a kind enum not worth inventing ahead of a consumer.
+per-*type* fact, not a per-element capability. It is served by the `Pronoun.strength` field
+(series-level, `none` when not homogeneous) and the `Strength` linear order, not by a class.
+The finer *lexical-kind* axis (personal vs relative vs interrogative vs
+demonstrative) is `Pronoun.pronType` — real UD morphology on the carrier (no invented enum),
+threaded onto the projected word by `toWord`.
 -/
 
 set_option autoImplicit false
@@ -61,56 +65,47 @@ instance : Proform Pronoun := ⟨Pronoun.form, fun p => p.toWord.phi⟩
 instance : Proform PersonalPronoun :=
   ⟨fun p => p.toPronoun.form, fun p => p.toPronoun.toWord.phi⟩
 
-/-! ### The binding axis: `Bound` and the Principle A/B/C type-markers -/
-
-/-- A carrier whose every element carries a (total) `Features.BindingClass` — its Principle A/B/C
-role. The typed companion to `Features.BindingSource` (`α → Option BindingClass`, the *partial*
-source the framework-neutral binding engine consumes): `Bound` is the case where the kind fixes the
-class for the whole carrier. -/
-class Bound (α : Type*) where
-  /-- The Principle A anaphor / B pronominal / C R-expression class. -/
-  bindingClass : α → Features.BindingClass
+/-! ### The pronoun carriers' `Bound` instances, and the faithfulness certificate -/
 
 /-- A bare `Pronoun`'s declared class, defaulting an undeclared φ-shell to Principle-B `.pronoun`
 ([chomsky-1981]'s elsewhere case for a pro-form). -/
 instance : Bound Pronoun := ⟨fun p => p.bindingClass.getD .pronoun⟩
 instance : Bound PersonalPronoun := ⟨fun p => p.toPronoun.bindingClass.getD .pronoun⟩
 
-/-- Principle-A carrier: every element is an anaphor (reflexive or reciprocal). -/
-class Anaphoric (α : Type*) [Bound α] : Prop where
-  isAnaphor : ∀ a : α, Bound.bindingClass a = .reflexive ∨ Bound.bindingClass a = .reciprocal
-
-/-- Principle-B carrier: every element is a pronominal. -/
-class Pronominal (α : Type*) [Bound α] : Prop where
-  isPronominal : ∀ a : α, Bound.bindingClass a = .pronoun
-
-/-- Principle-C carrier: every element is a referring expression (an R-expression — proper name,
-full NP). Named for the adjectival parallel with `Anaphoric`/`Pronominal`. -/
-class Referring (α : Type*) [Bound α] : Prop where
-  isReferring : ∀ a : α, Bound.bindingClass a = .rExpression
-
-/-! ### Binding-class element predicates (generic over `[Bound α]`) -/
-
-/-- `a` is a Principle-A anaphor (reflexive or reciprocal) — the A/B/C partition as an *element*
-predicate over any `[Bound α]` carrier (a `Pronoun`, an Italian clitic, a Turkish anaphor, …). The
-generic companion to the per-`Pronoun` `Pronoun.IsAnaphor`. -/
-def Bound.IsAnaphor {α : Type*} [Bound α] (a : α) : Prop :=
-  Bound.bindingClass a = .reflexive ∨ Bound.bindingClass a = .reciprocal
-
-/-- `a` is a Principle-B pronominal. -/
-def Bound.IsPronominal {α : Type*} [Bound α] (a : α) : Prop :=
-  Bound.bindingClass a = .pronoun
-
-/-- `a` is a Principle-C R-expression. -/
-def Bound.IsRExpression {α : Type*} [Bound α] (a : α) : Prop :=
-  Bound.bindingClass a = .rExpression
-
-instance {α : Type*} [Bound α] (a : α) : Decidable (Bound.IsAnaphor a) := by
-  unfold Bound.IsAnaphor; infer_instance
-instance {α : Type*} [Bound α] (a : α) : Decidable (Bound.IsPronominal a) := by
-  unfold Bound.IsPronominal; infer_instance
-instance {α : Type*} [Bound α] (a : α) : Decidable (Bound.IsRExpression a) := by
-  unfold Bound.IsRExpression; infer_instance
+/-- The canonical morphology source agrees with the mixin: a pro-form's projected word
+classifies (`Binding.bindingClassOf`, reading `Reflex`/`PronType`/category) exactly as the
+carrier's `Bound` class — `Pronoun.toWord` threads the binding morphology faithfully, so the
+surface engine and the capability never diverge. Two coherence premises, both vacuous for
+every actual entry: the pronoun is not lexically declared an R-expression (its surface
+category `.PRON` would win), and it does not *store* `PronType=Rcp` (reciprocal is derived
+by `toWord` from `bindingClass = .reciprocal`, never stored). -/
+theorem bindingClassOf_toWord (p : Pronoun) (h : p.bindingClass ≠ some .rExpression)
+    (hr : p.pronType = some .Rcp → p.bindingClass = some .reciprocal) :
+    Binding.bindingClassOf p.toWord = Bound.source p := by
+  show Binding.bindingClassOf p.toWord = some (p.bindingClass.getD .pronoun)
+  rcases hb : p.bindingClass with _ | c
+  · rcases hp : p.pronType with _ | pt
+    · simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]
+    · cases pt
+      case Rcp => exact absurd ((hr hp).symm.trans hb) (by simp)
+      all_goals (simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]; try decide)
+  · cases c with
+    | reflexive =>
+      rcases hp : p.pronType with _ | pt
+      · simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]; try decide
+      · cases pt <;> (simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]; try decide)
+    | reciprocal =>
+      rcases hp : p.pronType with _ | pt
+      · simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]; try decide
+      · cases pt <;> (simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]; try decide)
+    | pronoun =>
+      rcases hp : p.pronType with _ | pt
+      · simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]
+        try decide
+      · cases pt
+        case Rcp => exact absurd ((hr hp).symm.trans hb) (by simp)
+        all_goals (simp [Binding.bindingClassOf, Pronoun.toWord, hb, hp]; try decide)
+    | rExpression => exact absurd hb h
 
 /-! ### Orthogonal data-mixins: `Deictic`, `Clusive` -/
 

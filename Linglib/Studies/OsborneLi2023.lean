@@ -1,7 +1,8 @@
 import Linglib.Syntax.DependencyGrammar.Basic
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
 import Linglib.Data.Examples.Schema
 import Linglib.Syntax.DependencyGrammar.Coordination
+import Linglib.Morphology.Word
 
 /-!
 # CRDC: Conjunct Referential Dependency Constraint
@@ -422,9 +423,9 @@ CRDC's contribution from other determinants of acceptability. -/
 /-- Tree for "Max and Lucie talked about him."
     `Max(0) and(1) Lucie(2) talked(3) about(4) him(5)`. -/
 def ex2a_tree : DepTree :=
-  { words := [ ⟨"Max", .PROPN, {}⟩, ⟨"and", .CCONJ, {}⟩
-             , ⟨"Lucie", .PROPN, {}⟩, ⟨"talked", .VERB, {}⟩
-             , ⟨"about", .ADP, {}⟩, ⟨"him", .PRON, {}⟩ ]
+  { words := [ { form :="Max", cat := .PROPN, features := {}}, { form :="and", cat := .CCONJ, features := {}}
+             , { form :="Lucie", cat := .PROPN, features := {}}, { form :="talked", cat := .VERB, features := {}}
+             , { form :="about", cat := .ADP, features := {}}, { form :="him", cat := .PRON, features := {}} ]
     deps  := [ ⟨3, 0, .nsubj⟩, ⟨0, 1, .cc⟩, ⟨0, 2, .conj⟩
              , ⟨3, 5, .obl⟩, ⟨5, 4, .case_⟩ ]
     rootIdx := 3 }
@@ -434,8 +435,8 @@ theorem ex2a_predicts_questionable :
 
 /-- Tree for "Max talked about himself." — non-coordinate baseline. -/
 def ex9a_tree : DepTree :=
-  { words := [ ⟨"Max", .PROPN, {}⟩, ⟨"talked", .VERB, {}⟩
-             , ⟨"about", .ADP, {}⟩, ⟨"himself", .PRON, {}⟩ ]
+  { words := [ { form :="Max", cat := .PROPN, features := {}}, { form :="talked", cat := .VERB, features := {}}
+             , { form :="about", cat := .ADP, features := {}}, { form :="himself", cat := .PRON, features := {}} ]
     deps  := [ ⟨1, 0, .nsubj⟩, ⟨1, 3, .obl⟩, ⟨3, 2, .case_⟩ ]
     rootIdx := 1 }
 
@@ -447,8 +448,8 @@ theorem ex9a_predicts_acceptable :
     Condition B, not the CRDC; here we record only that the CRDC is
     silent. -/
 def ex9b_tree : DepTree :=
-  { words := [ ⟨"Max", .PROPN, {}⟩, ⟨"talked", .VERB, {}⟩
-             , ⟨"about", .ADP, {}⟩, ⟨"him", .PRON, {}⟩ ]
+  { words := [ { form :="Max", cat := .PROPN, features := {}}, { form :="talked", cat := .VERB, features := {}}
+             , { form :="about", cat := .ADP, features := {}}, { form :="him", cat := .PRON, features := {}} ]
     deps  := [ ⟨1, 0, .nsubj⟩, ⟨1, 3, .obl⟩, ⟨3, 2, .case_⟩ ]
     rootIdx := 1 }
 
@@ -460,10 +461,10 @@ theorem ex9b_crdc_silent :
     `John` is a full valent. CRDC's permitted direction (conjunct
     anaphor of full antecedent). -/
 def ex24a_tree : DepTree :=
-  { words := [ ⟨"John", .PROPN, {}⟩, ⟨"talked", .VERB, {}⟩
-             , ⟨"about", .ADP, {}⟩, ⟨"himself", .PRON, {}⟩
-             , ⟨"and", .CCONJ, {}⟩, ⟨"his", .PRON, {}⟩
-             , ⟨"mother", .NOUN, {}⟩ ]
+  { words := [ { form :="John", cat := .PROPN, features := {}}, { form :="talked", cat := .VERB, features := {}}
+             , { form :="about", cat := .ADP, features := {}}, { form :="himself", cat := .PRON, features := {}}
+             , { form :="and", cat := .CCONJ, features := {}}, { form :="his", cat := .PRON, features := {}}
+             , { form :="mother", cat := .NOUN, features := {}} ]
     deps  := [ ⟨1, 0, .nsubj⟩, ⟨1, 3, .obl⟩, ⟨3, 2, .case_⟩
              , ⟨3, 4, .cc⟩, ⟨3, 6, .conj⟩, ⟨6, 5, .nmod⟩ ]
     rootIdx := 1 }
@@ -477,9 +478,9 @@ theorem ex24a_predicts_acceptable :
     `both...and` strengthening; the CRDC alone predicts
     `.questionable`. -/
 def ex5a_tree : DepTree :=
-  { words := [ ⟨"Both", .CCONJ, {}⟩, ⟨"John", .PROPN, {}⟩
-             , ⟨"and", .CCONJ, {}⟩, ⟨"Mary", .PROPN, {}⟩
-             , ⟨"love", .VERB, {}⟩, ⟨"him", .PRON, {}⟩ ]
+  { words := [ { form :="Both", cat := .CCONJ, features := {}}, { form :="John", cat := .PROPN, features := {}}
+             , { form :="and", cat := .CCONJ, features := {}}, { form :="Mary", cat := .PROPN, features := {}}
+             , { form :="love", cat := .VERB, features := {}}, { form :="him", cat := .PRON, features := {}} ]
     deps  := [ ⟨4, 1, .nsubj⟩, ⟨1, 0, .cc⟩, ⟨1, 2, .cc⟩
              , ⟨1, 3, .conj⟩, ⟨4, 5, .obj⟩ ]
     rootIdx := 4 }
@@ -493,10 +494,10 @@ theorem ex5a_predicts_questionable :
     coord. Permitted direction; the CRDC is silent on `him↔John`
     co-valuation because `him` is a conjunct valent (not a full valent). -/
 def ex28d_tree : DepTree :=
-  { words := [ ⟨"John", .PROPN, {}⟩, ⟨"expected", .VERB, {}⟩
-             , ⟨"Mary", .PROPN, {}⟩, ⟨"and", .CCONJ, {}⟩
-             , ⟨"him", .PRON, {}⟩, ⟨"to", .PART, {}⟩
-             , ⟨"leave", .VERB, {}⟩, ⟨"soon", .ADV, {}⟩ ]
+  { words := [ { form :="John", cat := .PROPN, features := {}}, { form :="expected", cat := .VERB, features := {}}
+             , { form :="Mary", cat := .PROPN, features := {}}, { form :="and", cat := .CCONJ, features := {}}
+             , { form :="him", cat := .PRON, features := {}}, { form :="to", cat := .PART, features := {}}
+             , { form :="leave", cat := .VERB, features := {}}, { form :="soon", cat := .ADV, features := {}} ]
     deps  := [ ⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩, ⟨2, 3, .cc⟩
              , ⟨2, 4, .conj⟩, ⟨1, 6, .xcomp⟩, ⟨6, 5, .mark⟩
              , ⟨6, 7, .advmod⟩ ]

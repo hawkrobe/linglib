@@ -28,7 +28,7 @@ def sich : PersonalPronoun :=
 
 /-- einander — dedicated reciprocal pronoun. -/
 def einander : PersonalPronoun :=
-  { form := "einander", person := some .third, number := some .pl }
+  { form := "einander", person := some .third, number := some .Plur }
 
 /-- The dedicated reciprocal form is distinct from the reflexive. -/
 theorem einander_distinct_from_sich :

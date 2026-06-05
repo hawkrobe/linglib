@@ -34,7 +34,7 @@ For a sentence S with embedded clause φ at position i:
 -/
 
 import Linglib.Semantics.Presupposition.Context
-import Linglib.Core.Context.Tower
+import Linglib.Semantics.Context.Tower
 
 namespace Semantics.Presupposition.LocalContext
 
@@ -280,15 +280,15 @@ theorem negation_depth_matches_tower_push (lc : LocalCtx W) :
     one attitude shift (the belief operator). The tower has depth 1,
     matching the local context depth after one embedding. -/
 def beliefTower {C : Type*} (rootCtx : C)
-    (attShift : Core.Context.ContextShift C) :
-    Core.Context.ContextTower C :=
-  (Core.Context.ContextTower.root rootCtx).push attShift
+    (attShift : Semantics.Context.ContextShift C) :
+    Semantics.Context.ContextTower C :=
+  (Semantics.Context.ContextTower.root rootCtx).push attShift
 
 /-- The belief tower has depth 1. -/
 theorem beliefTower_depth {C : Type*} (rootCtx : C)
-    (attShift : Core.Context.ContextShift C) :
+    (attShift : Semantics.Context.ContextShift C) :
     (beliefTower rootCtx attShift).depth = 1 := by
-  simp only [beliefTower, Core.Context.ContextTower.push_depth,
-             Core.Context.ContextTower.root_depth]
+  simp only [beliefTower, Semantics.Context.ContextTower.push_depth,
+             Semantics.Context.ContextTower.root_depth]
 
 end Semantics.Presupposition.LocalContext

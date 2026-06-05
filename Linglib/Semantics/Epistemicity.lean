@@ -1,6 +1,6 @@
 import Linglib.Features.Evidentiality
 import Linglib.Features.Mirativity
-import Linglib.Core.Context.Tower
+import Linglib.Semantics.Context.Tower
 
 /-!
 # Epistemic Profile Layer
@@ -35,11 +35,11 @@ extension respectively) and are left for future work.
 
 -/
 
-namespace Core.Epistemicity
+namespace Semantics.Epistemicity
 
 open Features.Evidentiality
 open Features.Mirativity
-open Core.Context
+open Semantics.Context
 
 /-- Epistemic authority: WHO has privileged access to the propositional content.
     Egophoric systems ([tournadre-2008], [floyd-2018], Gawne & Spronck glossary 2)
@@ -104,4 +104,4 @@ theorem epistemicAuthority_shift_invariant {W E P T : Type*} [DecidableEq E]
     epistemicAuthority (tower.push σ) knower = epistemicAuthority tower knower := by
   simp only [epistemicAuthority, ContextTower.push_origin]; rfl
 
-end Core.Epistemicity
+end Semantics.Epistemicity

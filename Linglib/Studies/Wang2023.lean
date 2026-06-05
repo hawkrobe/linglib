@@ -437,7 +437,7 @@ theorem plural_strategy_is_plSem :
 /-- The 3rd-person strategy targets the minimal PERSON cell,
     which is `thirdSem` — the PrProp with vacuous presupposition. -/
 theorem thirdPerson_strategy_is_third :
-    honStrategyCell .thirdPerson = PhiFeatures.toPair Features.Person.third :=
+    honStrategyCell .thirdPerson = PhiFeatures.toPair Features.Person.thirdF :=
   rfl
 
 /-- Both strategies target cells whose presuppositional denotations

@@ -1,4 +1,5 @@
 import Linglib.Core.Scales.Scale
+import Linglib.Semantics.Aspect.Dimension
 import Linglib.Features.Aktionsart
 
 /-!
@@ -19,10 +20,6 @@ open, mΔ is unbounded → atelic (activity).
 
 This module derives `VendlerClass` from `Boundedness`, connecting to the existing
 `LicensingPipeline` infrastructure in `Core/Scales/Scale.lean`.
-
-- Kennedy, C. & Levin, B. (2007). Measure of change: The adjectival core of
-  degree achievements. In L. McNally & C. Kennedy (eds.), *Adjectives and Adverbs*,
-  156–182. OUP.
 -/
 
 namespace Features.DegreeAchievement
@@ -38,64 +35,57 @@ open Features
     Scales with a maximum (closed, upper-bounded) yield telic VPs;
     scales without a maximum (open, lower-bounded) yield atelic VPs. -/
 structure DegreeAchievementScale where
-  /-- The adjectival base's scale boundedness. -/
-  scaleBoundedness : Boundedness
-  /-- The dimension of change (height, temperature, fullness,...). -/
-  dimension : String
+  /-- The scalar dimension the base adjective measures. Its boundedness is the
+      order-mixin profile of the dimension's degree type, recovered by the derived
+      `scaleBoundedness` below — not stored. -/
+  dimension : ScalarTelicity.Dimension
   /-- Citation form of the base adjective (if deadjectival). -/
   baseAdjective : Option String := none
   deriving Repr, BEq
 
+/-- The base scale's boundedness, as a derived view of the dimension (the scale's
+    shape is read off the dimension's order structure, not stored per verb). -/
+def DegreeAchievementScale.scaleBoundedness (s : DegreeAchievementScale) : Boundedness :=
+  s.dimension.boundedness
+
 instance : Inhabited DegreeAchievementScale where
-  default := { scaleBoundedness := .open_, dimension := "" }
+  default := { dimension := .unspecified }
 
-/-- Derive default telicity from scale boundedness ([kennedy-levin-2008] Thm 1).
-    Scales with a maximum → telic; scales without → atelic.
+/-- Derive default telicity from scale boundedness — the central claim of
+    [kennedy-levin-2008]. Scales with a maximum → telic; scales without → atelic.
 
-    The mapping follows `Boundedness.hasMax`:
-    - `.closed` (has max) → `.telic`
-    - `.upperBounded` (has max) → `.telic`
-    - `.open_` (no max) → `.atelic`
-    - `.lowerBounded` (no max) → `.atelic` -/
+    Delegates to `Dimension.defaultTelicity` — a scale with a maximal degree gives
+    a telic verb — grounded to the order mixin in `ScalarTelicity`. -/
 def DegreeAchievementScale.defaultTelicity (s : DegreeAchievementScale) : Telicity :=
-  if s.scaleBoundedness.hasMax then .telic else .atelic
+  s.dimension.defaultTelicity
 
-/-- Derive default VendlerClass from scale boundedness.
-    All degree achievements are dynamic and durative, so:
-    telic → accomplishment, atelic → activity. -/
+/-- Default Vendler class, delegating to `Dimension.defaultVendlerClass`:
+    closed scale → accomplishment, open → activity. -/
 def DegreeAchievementScale.defaultVendlerClass (s : DegreeAchievementScale) : VendlerClass :=
-  if s.scaleBoundedness.hasMax then .accomplishment else .activity
+  s.dimension.defaultVendlerClass
 
 -- ════════════════════════════════════════════════════
 -- § Theorems
 -- ════════════════════════════════════════════════════
 
 section
-variable (d : String) (a : Option String)
+variable (a : Option String)
 
-/-- Closed scaleBoundedness → telic. -/
-theorem closed_scale_telic :
-    (DegreeAchievementScale.mk .closed d a).defaultTelicity = .telic := rfl
+/-- A closed dimension (e.g. *straightness*) → telic. -/
+theorem closed_dimension_telic :
+    (DegreeAchievementScale.mk .straightness a).defaultTelicity = .telic := rfl
 
-/-- Open scaleBoundedness → atelic. -/
-theorem open_scale_atelic :
-    (DegreeAchievementScale.mk .open_ d a).defaultTelicity = .atelic := rfl
+/-- An open dimension (e.g. *width*) → atelic. -/
+theorem open_dimension_atelic :
+    (DegreeAchievementScale.mk .width a).defaultTelicity = .atelic := rfl
 
-/-- Upper-bounded → telic (has max → bounded mΔ). -/
-theorem upperBounded_telic :
-    (DegreeAchievementScale.mk .upperBounded d a).defaultTelicity = .telic := rfl
+/-- A closed dimension → accomplishment. -/
+theorem closed_dimension_accomplishment :
+    (DegreeAchievementScale.mk .straightness a).defaultVendlerClass = .accomplishment := rfl
 
-/-- Lower-bounded → atelic (no max → unbounded mΔ). -/
-theorem lowerBounded_atelic :
-    (DegreeAchievementScale.mk .lowerBounded d a).defaultTelicity = .atelic := rfl
-
-/-- Closed scaleBoundedness → accomplishment. -/
-theorem closed_scale_accomplishment :
-    (DegreeAchievementScale.mk .closed d a).defaultVendlerClass = .accomplishment := rfl
-
-/-- Open scaleBoundedness → activity. -/
-theorem open_scale_activity :
-    (DegreeAchievementScale.mk .open_ d a).defaultVendlerClass = .activity := rfl
+/-- An open dimension → activity. -/
+theorem open_dimension_activity :
+    (DegreeAchievementScale.mk .width a).defaultVendlerClass = .activity := rfl
 
 end
 
@@ -103,22 +93,24 @@ end
     degree achievements are always dynamic and durative. -/
 theorem default_vendler_is_dynamic (s : DegreeAchievementScale) :
     s.defaultVendlerClass = .accomplishment ∨ s.defaultVendlerClass = .activity := by
-  simp only [DegreeAchievementScale.defaultVendlerClass]
-  cases h : s.scaleBoundedness.hasMax <;> simp
+  simp only [DegreeAchievementScale.defaultVendlerClass,
+    ScalarTelicity.Dimension.defaultVendlerClass]
+  cases s.dimension.boundedness <;> simp
 
 /-- defaultTelicity agrees with the telicity of defaultVendlerClass. -/
 theorem telicity_vendler_agree (s : DegreeAchievementScale) :
     s.defaultVendlerClass.telicity = s.defaultTelicity := by
-  simp only [DegreeAchievementScale.defaultVendlerClass, DegreeAchievementScale.defaultTelicity]
-  cases h : s.scaleBoundedness.hasMax <;> simp [VendlerClass.telicity]
+  simp only [DegreeAchievementScale.defaultVendlerClass, DegreeAchievementScale.defaultTelicity,
+    ScalarTelicity.Dimension.defaultVendlerClass, ScalarTelicity.Dimension.defaultTelicity]
+  cases s.dimension.boundedness <;> simp [VendlerClass.telicity]
 
 -- ════════════════════════════════════════════════════
 -- § LicensingPipeline instance
 -- ════════════════════════════════════════════════════
 
-/-- LicensingPipeline instance for DegreeAchievementScale:
-    maps through scaleBoundedness directly. hasMax → closed, else open. -/
+/-- LicensingPipeline instance: a degree-achievement scale's boundedness is its
+    dimension's (a derived view, no stored flag). -/
 instance : LicensingPipeline DegreeAchievementScale where
-  toBoundedness s := if s.scaleBoundedness.hasMax then .closed else .open_
+  toBoundedness s := s.scaleBoundedness
 
 end Features.DegreeAchievement

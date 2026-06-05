@@ -94,7 +94,7 @@ def classifyDisplacement (d : Dependency) : DisplacementDir :=
 /-- **Wh-fronting**: "What did you eat?". The catena `{what(0), eat(3)}` is
     risen — connected via `obj` but `did(1), you(2)` intervene. -/
 def whFrontingTree : DepTree :=
-  { words := [ ⟨"what", .PRON, { wh := true }⟩, Word.mk' "did" .AUX
+  { words := [ { form :="what", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "did" .AUX
              , Word.mk' "you" .PRON, Word.mk' "eat" .VERB ]
     deps := [⟨3, 2, .nsubj⟩, ⟨3, 0, .obj⟩, ⟨3, 1, .aux⟩]
     rootIdx := 3 }

@@ -1,5 +1,6 @@
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Morphology.MorphRule
+import Linglib.Typology.WordOrder
 
 /-!
 # Syntactic Modification via Feature Composition

@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
 import Linglib.Syntax.Minimalist.Agree
 import Linglib.Typology.Complementation
 import Linglib.Fragments.Tigrinya.ClausePrefixes

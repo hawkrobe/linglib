@@ -68,7 +68,7 @@ catena whose rising catena violates the corresponding island constraint. -/
 
 /-- DG tree for the left-branch island *"Whose do you like house?". -/
 def islandLeftBranch : DepTree :=
-  { words := [ ⟨"whose", .DET, { wh := true }⟩, Word.mk' "do" .AUX
+  { words := [ { form :="whose", cat := .DET, features := { pronType := some .Int }}, Word.mk' "do" .AUX
              , Word.mk' "you" .PRON, Word.mk' "like" .VERB
              , Word.mk' "house" .NOUN ]
     deps := [ ⟨1, 3, .ccomp⟩, ⟨1, 2, .nsubj⟩
@@ -78,7 +78,7 @@ def islandLeftBranch : DepTree :=
 /-- DG tree for the subject island *"Which car did the driver of ignore the light?"
 ([osborne-2019], §9.7, ex. 48). -/
 def islandSubject : DepTree :=
-  { words := [ ⟨"which", .DET, { wh := true }⟩, Word.mk' "car" .NOUN
+  { words := [ { form :="which", cat := .DET, features := { pronType := some .Int }}, Word.mk' "car" .NOUN
              , Word.mk' "did" .AUX, Word.mk' "the" .DET
              , Word.mk' "driver" .NOUN, Word.mk' "of" .ADP
              , Word.mk' "ignore" .VERB, Word.mk' "the" .DET
@@ -92,7 +92,7 @@ def islandSubject : DepTree :=
 /-- DG tree for the adjunct island *"What do they argue before cleaning?"
 ([osborne-2019], §9.8, ex. 50b/59, simplified). -/
 def islandAdjunct : DepTree :=
-  { words := [ ⟨"what", .PRON, { wh := true }⟩, Word.mk' "do" .AUX
+  { words := [ { form :="what", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "do" .AUX
              , Word.mk' "they" .PRON, Word.mk' "argue" .VERB
              , Word.mk' "before" .SCONJ, Word.mk' "cleaning" .VERB ]
     deps := [ ⟨1, 3, .ccomp⟩, ⟨1, 2, .nsubj⟩
@@ -102,7 +102,7 @@ def islandAdjunct : DepTree :=
 /-- DG tree for the wh-island *"Which judge might they inquire surprised?"
 ([osborne-2019], §9.9, ex. 61b', simplified). -/
 def islandWhIsland : DepTree :=
-  { words := [ ⟨"which", .DET, { wh := true }⟩, Word.mk' "judge" .NOUN
+  { words := [ { form :="which", cat := .DET, features := { pronType := some .Int }}, Word.mk' "judge" .NOUN
              , Word.mk' "might" .AUX, Word.mk' "they" .PRON
              , Word.mk' "inquire" .VERB, Word.mk' "surprised" .VERB ]
     deps := [ ⟨2, 4, .ccomp⟩, ⟨2, 3, .nsubj⟩
@@ -113,7 +113,7 @@ def islandWhIsland : DepTree :=
 /-- DG tree for the specified-NP island ??"Who did you find those pictures of?"
 ([osborne-2019], §9.6, ex. 36b). -/
 def islandSpecifiedNP : DepTree :=
-  { words := [ ⟨"who", .PRON, { wh := true }⟩, Word.mk' "did" .AUX
+  { words := [ { form :="who", cat := .PRON, features := { pronType := some .Int }}, Word.mk' "did" .AUX
              , Word.mk' "you" .PRON, Word.mk' "find" .VERB
              , Word.mk' "those" .DET, Word.mk' "pictures" .NOUN
              , Word.mk' "of" .ADP ]

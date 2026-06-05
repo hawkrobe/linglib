@@ -1,4 +1,4 @@
-import Linglib.Core.Time.Tense
+import Linglib.Semantics.Tense.GramTense
 import Linglib.Semantics.Modality.TemporalConstraint
 
 /-!
@@ -40,7 +40,7 @@ readings (§5.3) are likewise out of scope.
 
 namespace Semantics.Tense.Modal.Matrix
 
-open Core.Time.Tense (GramTense)
+open Semantics.Tense (GramTense)
 open Semantics.Modality (ModalBaseKind)
 open Semantics.Modality.TemporalConstraint (attitudeTemporalConstraint)
 

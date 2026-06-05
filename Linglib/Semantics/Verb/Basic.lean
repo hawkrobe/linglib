@@ -212,3 +212,8 @@ def Verb.canTakeNominalComplement (v : Verb) : Bool :=
 def lookupSense (verbs : List Verb) (form : String) (tag : SenseTag := .default) :
     Option Verb :=
   verbs.find? (λ v => v.form == form && v.senseTag == tag)
+
+/-- A verb's syntactic valence, derived from its complement type
+    (`complementToValence`) — the lexical subcategorization frame DG trees
+    carry as `DepTree.frames` premises. -/
+def Verb.valence (v : Verb) : Valence := complementToValence v.complementType

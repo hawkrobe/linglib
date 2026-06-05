@@ -1,4 +1,4 @@
-import Linglib.Core.Context.Rich
+import Linglib.Semantics.Context.Rich
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Mood.Basic
 
@@ -35,7 +35,7 @@ namespace Semantics.Tense.ConditionalShift
 open Core (WorldTimeIndex)
 
 open Core.Time
-open Core.Context (RichContext KContext ContextTower ContextShift
+open Semantics.Context (RichContext KContext ContextTower ContextShift
   hpShift DomainExpanding)
 open HistoricalAlternatives
 open Semantics.Mood

@@ -1,5 +1,5 @@
 import Linglib.Discourse.CommonGround
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
 
 /-!
 # Romero & Han (2004): Negative Yes/No Questions and Epistemic Bias

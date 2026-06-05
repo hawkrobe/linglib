@@ -64,10 +64,10 @@ structure Relativizer where
   modifiesCat : UD.UPOS := .NOUN
 
 /-- Standard English relativizers. -/
-def relThat : Relativizer := { word := ⟨"that", .SCONJ, {}⟩ }
-def relWho : Relativizer := { word := ⟨"who", .PRON, { wh := true }⟩ }
-def relWhich : Relativizer := { word := ⟨"which", .PRON, { wh := true }⟩ }
-def relWhom : Relativizer := { word := ⟨"whom", .PRON, { wh := true }⟩ }
+def relThat : Relativizer := { word := { form :="that", cat := .SCONJ, features := {}} }
+def relWho : Relativizer := { word := { form :="who", cat := .PRON, features := { pronType := some .Rel }} }
+def relWhich : Relativizer := { word := { form :="which", cat := .PRON, features := { pronType := some .Rel }} }
+def relWhom : Relativizer := { word := { form :="whom", cat := .PRON, features := { pronType := some .Rel }} }
 
 /-- The `RelativeClause.NPRelType` this relativizer realizes: a `wh`-pronoun
     (who/which/whom) is a relative pronoun; the complementizer "that"/∅ leaves
@@ -151,7 +151,7 @@ section DerivationExample
 
 Object relative clause: the gap is in object position of "read". -/
 
-private def read_word : Word := ⟨"read", .VERB, { valence := some .transitive }⟩
+private def read_word : Word := { form :="read", cat := .VERB}
 private def read_synsem : Synsem :=
   { cat := .VERB, val := { subj := [.NOUN], comps := [.NOUN] } }
 
@@ -176,7 +176,7 @@ private def read_slash : SlashValue :=
 #guard read_sign.synsem.val.comps == []
 
 -- Step 2: Head-Subject with "John"
-private def john_word : Word := ⟨"John", .PROPN, {}⟩
+private def john_word : Word := { form :="John", cat := .PROPN, features := {}}
 private def john_sign : Sign := .word john_word { cat := .PROPN }
 
 private def clause_tracked : TrackedSign :=
@@ -206,7 +206,7 @@ example : relClause.realization = { position := .directObject, npRel := .gap } :
 -- We clear the slash in the relative clause result.
 
 -- Step 4: Head-Modifier with "book"
-private def book_word : Word := ⟨"book", .NOUN, {}⟩
+private def book_word : Word := { form :="book", cat := .NOUN, features := {}}
 private def book_sign : Sign := .word book_word { cat := .NOUN }
 
 -- The relative clause can modify a noun
@@ -230,7 +230,7 @@ section SubjectRelative
 
 Subject relative clause: the gap is in subject position. -/
 
-private def saw_word : Word := ⟨"saw", .VERB, { valence := some .transitive }⟩
+private def saw_word : Word := { form :="saw", cat := .VERB}
 private def saw_synsem : Synsem :=
   { cat := .VERB, val := { subj := [.NOUN], comps := [.NOUN] } }
 
@@ -251,7 +251,7 @@ private def who_relClause : RelClauseDerivation :=
 #guard who_relClause.isMod
 #guard who_relClause.result.sign.synsem.mod == some .NOUN
 
-private def boy_word : Word := ⟨"boy", .NOUN, {}⟩
+private def boy_word : Word := { form :="boy", cat := .NOUN, features := {}}
 private def boy_sign : Sign := .word boy_word { cat := .NOUN }
 
 private def modified_boy : Option Sign :=

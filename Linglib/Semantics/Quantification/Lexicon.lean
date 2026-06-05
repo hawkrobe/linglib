@@ -1,4 +1,6 @@
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
+import Linglib.Features.Number
+import Linglib.Morphology.Word
 
 /-!
 # Quantifier lexicon — shared structure
@@ -13,7 +15,7 @@ in the study files that commit to specific values.
 
 - `form` — surface form
 - `qforce` — quantificational force (universal, existential, …)
-- `numberRestriction` — `none` (number-neutral), or `some .sg`/`.pl`/`.du`
+- `numberRestriction` — `none` (number-neutral), or `some .Sing`/`.pl`/`.du`
   (a single grammatical number; `.du` covers items like English *both*
   and French *les deux* whose meaning composition uses the dual core
   concept [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025])
@@ -22,6 +24,8 @@ in the study files that commit to specific values.
 - `strength` — weak / strong (Barwise & Cooper §4.3 Table II;
   weak determiners pass `there is/are`)
 -/
+
+open Features (Number)
 
 set_option autoImplicit false
 

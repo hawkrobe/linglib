@@ -1,5 +1,6 @@
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
 import Linglib.Features.Prominence
+import Linglib.Morphology.Word
 
 /-!
 # Agreement paradigms — the descriptive realization table

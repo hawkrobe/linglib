@@ -1,5 +1,5 @@
 import Linglib.Typology.Complementation
-import Linglib.Core.UD
+import Linglib.Data.UD.Basic
 
 /-!
 # Nez Perce Clausal Embedding Inventory

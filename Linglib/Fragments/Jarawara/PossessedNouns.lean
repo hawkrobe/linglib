@@ -1,7 +1,8 @@
 import Linglib.Morphology.DM.NominalStructure
 import Linglib.Typology.Possession
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
 import Linglib.Features.Gender
+import Linglib.Features.Number
 
 /-!
 # Jarawara Possessed Nouns [adamson-2024] [dixon-2004]
@@ -26,6 +27,8 @@ in Jarawara (Arawan), drawn from [adamson-2024] §3.2 and
 The iPossessable class maps onto the upper portion of the
 cross-linguistic inalienability hierarchy from `Possession.Typology`.
 -/
+
+open Features (Number)
 
 namespace Jarawara
 
@@ -196,7 +199,7 @@ def Possessor.isParticipant (p : Possessor) : Bool :=
     [MASC] is deleted when [PL] or [PARTICIPANT] is present. -/
 def Possessor.mascSurvivesImpoverishment (p : Possessor) : Bool :=
   match p.gender with
-  | some .masc => !p.isParticipant && p.number == .sg
+  | some .masc => !p.isParticipant && p.number == .Sing
   | _          => false
 
 /-- Whether any MARKED feature remains after impoverishment.
@@ -210,18 +213,18 @@ def manoForm (p : Possessor) : PossessedForm :=
   if p.hasMarkedFeature then .mascForm else .femForm
 
 /-- Table 5/6 verification: each possessor combination. -/
-theorem mano_1sg : manoForm ⟨.first, .sg, none⟩ = .mascForm := rfl
-theorem mano_2sg : manoForm ⟨.second, .sg, none⟩ = .mascForm := rfl
-theorem mano_1pl : manoForm ⟨.first, .pl, none⟩ = .mascForm := rfl
-theorem mano_2pl : manoForm ⟨.second, .pl, none⟩ = .mascForm := rfl
-theorem mano_3m_sg : manoForm ⟨.third, .sg, some .masc⟩ = .mascForm := rfl
-theorem mano_3f_sg : manoForm ⟨.third, .sg, some .fem⟩ = .femForm := rfl
-theorem mano_3pl : manoForm ⟨.third, .pl, none⟩ = .femForm := rfl
+theorem mano_1sg : manoForm ⟨.first, .Sing, none⟩ = .mascForm := rfl
+theorem mano_2sg : manoForm ⟨.second, .Sing, none⟩ = .mascForm := rfl
+theorem mano_1pl : manoForm ⟨.first, .Plur, none⟩ = .mascForm := rfl
+theorem mano_2pl : manoForm ⟨.second, .Plur, none⟩ = .mascForm := rfl
+theorem mano_3m_sg : manoForm ⟨.third, .Sing, some .masc⟩ = .mascForm := rfl
+theorem mano_3f_sg : manoForm ⟨.third, .Sing, some .fem⟩ = .femForm := rfl
+theorem mano_3pl : manoForm ⟨.third, .Plur, none⟩ = .femForm := rfl
 /-- 3.M.PL: [MASC] is deleted by impoverishment in context of [PL],
     and 3rd person is not [PARTICIPANT], so no MARKED feature remains. -/
-theorem mano_3m_pl : manoForm ⟨.third, .pl, some .masc⟩ = .femForm := rfl
+theorem mano_3m_pl : manoForm ⟨.third, .Plur, some .masc⟩ = .femForm := rfl
 /-- 3.F.PL: no [MASC], 3rd person not [PARTICIPANT] → elsewhere. -/
-theorem mano_3f_pl : manoForm ⟨.third, .pl, some .fem⟩ = .femForm := rfl
+theorem mano_3f_pl : manoForm ⟨.third, .Plur, some .fem⟩ = .femForm := rfl
 
 -- ============================================================================
 -- § 3: Free vs Possessed Forms (Table 4; [dixon-2004] p. 312)

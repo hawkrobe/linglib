@@ -5,6 +5,7 @@ import Linglib.Phenomena.TenseAspect.Diagnostics
 import Linglib.Fragments.English.TenseAspect
 import Linglib.Fragments.French.TenseAspect
 import Linglib.Fragments.Mandarin.TenseAspect
+import Linglib.Features.MassCount
 
 /-!
 # The parameter of aspect

@@ -9858,6 +9858,21 @@
   validated = {true},
   sources   = {Phenomena/ArgumentStructure/Studies/Beavers2010.lean}
 }
+
+@article{beavers-2011,
+  author    = {Beavers, John},
+  year      = {2011},
+  title     = {On Affectedness},
+  journal   = {Natural Language \& Linguistic Theory},
+  volume    = {29},
+  number    = {2},
+  pages     = {335--370},
+  publisher = {Springer},
+  subfield  = {semantics/argument-structure},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Semantics/ArgumentStructure/Affectedness/Hierarchy.lean}
+}
 @book{sneddon-1996,
   author    = {Sneddon, James Neil},
   year      = {1996},
@@ -14029,15 +14044,15 @@
 @article{munoz-perez-2026,
   author    = {Mu\~{n}oz P\'{e}rez, Carlos},
   year      = {2026},
-  title     = {Stylistic Applicatives: A Lens into the Nature of Anticausative {SE}},
-  journal   = {Glossa},
+  title     = {Stylistic applicatives: A lens into the nature of anticausative {SE}},
+  journal   = {Glossa: a journal of general linguistics},
   volume    = {11},
   number    = {1},
   doi       = {10.16995/glossa.17369},
-  subfield  = {semantics/compositional},
+  subfield  = {morphology},
   validated = {true},
   role      = {cited},
-  sources   = {Fragments/Spanish/Clitics.lean;Fragments/Spanish/PersonFeatures.lean;Fragments/Spanish/Predicates.lean;Phenomena/Causatives/Compare.lean;Phenomena/Causatives/Studies/MunozPerez2026/Bridge.lean;Phenomena/Causatives/Studies/MunozPerez2026/Data.lean;Morphology/DM/Fission.lean;Syntax/Minimalist/Core/Applicative.lean;Syntax/Minimalist/Core/Voice.lean}
+  sources   = {Fragments/Spanish/Clitics.lean;Fragments/Spanish/PersonFeatures.lean;Fragments/Spanish/Predicates.lean;Studies/MunozPerez2026.lean;Morphology/DM/Fission.lean;Syntax/Minimalist/Applicative.lean;Syntax/Minimalist/Voice.lean}
 }
 @incollection{kaplan-bresnan-1982,
   author    = {Kaplan, Ronald M. and Bresnan, Joan},
@@ -15405,6 +15420,49 @@
   validated = {true},
   sources   = {Phenomena/FillerGap/Studies/Steedman2000CrossSerial.lean;Phenomena/WordOrder/CrossSerial.lean}
 }% REF: Huang, C.-T. J. (1982). Logical Relations in Chinese and the Theory of Grammar.
+@book{shieber-1986,
+  author    = {Shieber, Stuart M.},
+  year      = {1986},
+  title     = {An Introduction to Unification-Based Approaches to Grammar},
+  publisher = {CSLI Publications},
+  address   = {Stanford, California},
+  series    = {CSLI Lecture Notes},
+  note      = {Reissued 2003, Microtome Publishing, Brookline, Massachusetts},
+  url       = {http://nrs.harvard.edu/urn-3:HUL.InstRepos:11576719},
+  subfield  = {syntax},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Morphology/Unification.lean;Features/Basic.lean}
+}% REF: Shieber (1985) "Evidence against the Context-Freeness of Natural Language"
+@book{carpenter-1992,
+  author    = {Carpenter, Bob},
+  year      = {1992},
+  title     = {The Logic of Typed Feature Structures: With Applications to Unification Grammars, Logic Programs and Constraint Resolution},
+  publisher = {Cambridge University Press},
+  address   = {Cambridge},
+  series    = {Cambridge Tracts in Theoretical Computer Science},
+  volume    = {32},
+  isbn      = {0-521-41932-8},
+  subfield  = {syntax},
+  role      = {cited},
+  validated = {true},
+  sources   = {Core/Order/PartialUnify.lean;Morphology/Unification.lean}
+}
+@article{dalrymple-kaplan-2000,
+  author    = {Dalrymple, Mary and Kaplan, Ronald M.},
+  year      = {2000},
+  title     = {Feature Indeterminacy and Feature Resolution},
+  journal   = {Language},
+  volume    = {76},
+  number    = {4},
+  pages     = {759--798},
+  doi       = {10.2307/417199},
+  url       = {https://www.jstor.org/stable/417199},
+  subfield  = {syntax},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Studies/DalrympleKaplan2000.lean}
+}% REF: Shieber (1985) "Evidence against the Context-Freeness of Natural Language"
 @article{shieber-1985,
   author    = {Shieber, Stuart M.},
   year      = {1985},
@@ -23881,9 +23939,14 @@
   year      = {2012},
   title     = {Morphotactics: Basque Auxiliaries and the Structure of Spellout},
   publisher = {Springer},
+  address   = {Dordrecht},
+  series    = {Studies in Natural Language and Linguistic Theory},
+  volume    = {86},
+  isbn      = {978-94-007-3888-1},
+  doi       = {10.1007/978-94-007-3889-8},
   subfield  = {morphology},
   role      = {cited},
-  sources   = {Morphology/DM/Impoverishment.lean;Morphology/DM/Metathesis.lean;Morphology/DM/PostsyntacticDerivation.lean;Phenomena/Allomorphy/Studies/Middleton2026.lean}
+  sources   = {Fragments/Basque/Postsyntax.lean;Morphology/DM/Fission.lean;Morphology/DM/Impoverishment.lean;Morphology/DM/LinearPostsyntax.lean;Studies/Middleton2026.lean}
 }
 
 @phdthesis{bonet-1991,
@@ -32067,4 +32130,76 @@
   subfield  = {semantics/numerals},
   role      = {cited},
   sources   = {Semantics/Numerals/Basic.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  semantics/reference — logophoricity & de se
+
+@article{pearson-2015,
+  author    = {Pearson, Hazel},
+  year      = {2015},
+  title     = {The interpretation of the logophoric pronoun in {E}we},
+  journal   = {Natural Language Semantics},
+  volume    = {23},
+  number    = {2},
+  pages     = {77--118},
+  doi       = {10.1007/s11050-015-9112-1},
+  subfield  = {semantics/reference},
+  role      = {formalized},
+  sources   = {Studies/Pearson2015.lean}
+}
+
+@inproceedings{percus-sauerland-2003,
+  author    = {Percus, Orin and Sauerland, Uli},
+  year      = {2003},
+  title     = {On the {LF}s of attitude reports},
+  booktitle = {Proceedings of Sinn und Bedeutung 7},
+  subfield  = {semantics/reference},
+  role      = {cited}
+}
+
+@article{charlow-sharvit-2014,
+  author    = {Charlow, Simon and Sharvit, Yael},
+  year      = {2014},
+  title     = {Bound `de re' pronouns and the {LF}s of attitude reports},
+  journal   = {Semantics and Pragmatics},
+  volume    = {7},
+  subfield  = {semantics/reference},
+  role      = {cited}
+}
+
+@incollection{chierchia-1990,
+  author    = {Chierchia, Gennaro},
+  year      = {1990},
+  title     = {Anaphora and attitudes de se},
+  booktitle = {Semantics and Contextual Expression},
+  editor    = {Bartsch, Renate and van Benthem, Johan and van Emde Boas, Peter},
+  publisher = {Foris},
+  address   = {Dordrecht},
+  subfield  = {semantics/reference},
+  role      = {foundational}
+}
+
+@article{cetnarowska-2004,
+  author    = {Cetnarowska, Bo{\.z}ena},
+  year      = {2004},
+  title     = {The scale of pronominal strength in {Polish}: An {OT} analysis of unstressed and weak pronouns},
+  journal   = {Pozna{\'n} Studies in Contemporary Linguistics},
+  volume    = {39},
+  pages     = {39--57},
+  subfield  = {syntax/clitics},
+  role      = {cited}
+}
+
+@article{jung-migdalski-2022,
+  author    = {Jung, Hakyung and Migdalski, Krzysztof},
+  year      = {2022},
+  title     = {Toward a four-way pronoun hierarchy: A view from {Slavic}},
+  journal   = {Journal of Slavic Linguistics},
+  volume    = {30},
+  number    = {FASL 29 extra issue},
+  pages     = {1--11},
+  doi       = {10.1353/jsl.2022.a923070},
+  subfield  = {syntax/clitics},
+  role      = {cited}
 }

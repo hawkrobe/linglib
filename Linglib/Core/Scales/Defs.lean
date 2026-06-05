@@ -135,6 +135,38 @@ theorem universal {α β : Type*} [LicensingPipeline α] [LicensingPipeline β]
 
 end LicensingPipeline
 
+/-- Binary epistemic classification, parallel to `MereoTag`: finitely additive
+    scales are closed (endpoint standards licensed), qualitative scales open. -/
+inductive EpistemicTag where
+  | finitelyAdditive
+  | qualitative
+  deriving DecidableEq, Repr
+
+instance : LicensingPipeline EpistemicTag where
+  toBoundedness
+    | .finitelyAdditive => .closed
+    | .qualitative => .open_
+
+theorem epistemicFA_licensed :
+    LicensingPipeline.isLicensed EpistemicTag.finitelyAdditive = true := rfl
+
+theorem epistemicQualitative_blocked :
+    LicensingPipeline.isLicensed EpistemicTag.qualitative = false := rfl
+
+theorem five_frameworks_agree
+    (m : MereoTag) (e : EpistemicTag)
+    (h : LicensingPipeline.toBoundedness m = LicensingPipeline.toBoundedness e) :
+    LicensingPipeline.isLicensed m = LicensingPipeline.isLicensed e :=
+  LicensingPipeline.universal m e h
+
+theorem epistemicFA_eq_qua :
+    LicensingPipeline.isLicensed EpistemicTag.finitelyAdditive =
+    LicensingPipeline.isLicensed MereoTag.qua := rfl
+
+theorem epistemicQualitative_eq_cum :
+    LicensingPipeline.isLicensed EpistemicTag.qualitative =
+    LicensingPipeline.isLicensed MereoTag.cum := rfl
+
 -- ════════════════════════════════════════════════════
 -- § 1d. Scale Polarity
 -- ════════════════════════════════════════════════════

@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
 import Linglib.Semantics.Quantification.Lexicon
 
 /-!
@@ -32,7 +32,7 @@ alternative *les deux* (`les_deux`). -/
 def tous : QuantifierEntry :=
   { form := "tous"
   , qforce := .universal
-  , numberRestriction := some .pl
+  , numberRestriction := some .Plur
   , allowsMass := true
   , monotonicity := .increasing
   , strength := .strong
@@ -42,7 +42,7 @@ def tous : QuantifierEntry :=
 def chaque : QuantifierEntry :=
   { form := "chaque"
   , qforce := .universal
-  , numberRestriction := some .sg
+  , numberRestriction := some .Sing
   , monotonicity := .increasing
   , strength := .strong
   }
@@ -54,7 +54,7 @@ See JereticEtAl2025 §5.2. -/
 def aucun : QuantifierEntry :=
   { form := "aucun"
   , qforce := .negative
-  , numberRestriction := some .sg
+  , numberRestriction := some .Sing
   , monotonicity := .decreasing
   , strength := .strong
   }
@@ -65,7 +65,7 @@ expression that serves as an indirect alternative for the unpronounceable
 def les_deux : QuantifierEntry :=
   { form := "les deux"
   , qforce := .definite
-  , numberRestriction := some .du
+  , numberRestriction := some .Dual
   , monotonicity := .nonMonotone
   , strength := .strong
   }
@@ -74,7 +74,7 @@ def les_deux : QuantifierEntry :=
 def quelques : QuantifierEntry :=
   { form := "quelques"
   , qforce := .existential
-  , numberRestriction := some .pl
+  , numberRestriction := some .Plur
   , monotonicity := .increasing
   }
 
@@ -82,14 +82,14 @@ def quelques : QuantifierEntry :=
 def un : QuantifierEntry :=
   { form := "un"
   , qforce := .existential
-  , numberRestriction := some .sg
+  , numberRestriction := some .Sing
   }
 
 /-- *les* — definite plural article. -/
 def les : QuantifierEntry :=
   { form := "les"
   , qforce := .definite
-  , numberRestriction := some .pl
+  , numberRestriction := some .Plur
   , allowsMass := true
   , strength := .strong
   }
@@ -103,7 +103,7 @@ times') is more complex than *toujours*. -/
 def toujours : QuantifierEntry :=
   { form := "toujours"
   , qforce := .universal
-  , numberRestriction := some .pl
+  , numberRestriction := some .Plur
   , monotonicity := .increasing
   , strength := .strong
   }

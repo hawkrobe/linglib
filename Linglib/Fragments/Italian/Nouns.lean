@@ -1,6 +1,7 @@
 import Linglib.Features.Gender
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
 import Linglib.Semantics.Kinds.NominalMappingParameter
+import Linglib.Features.Number
 
 /-! # Italian Noun Lexicon Fragment
 
@@ -22,6 +23,8 @@ conditioned by gender, number, and phonological context:
 The partitive articles (di + definite article) serve as the obligatory
 indefinite plural — Italian has no bare plural arguments.
 -/
+
+open Features (Number)
 
 namespace Italian.Nouns
 
@@ -102,11 +105,11 @@ structure NP where
     Uses `il` for masculine singular and `la` for feminine singular
     (the lo/gli allomorphs are phonologically conditioned and not
     modeled here). -/
-def defNP (n : NounEntry) (num : Number := .sg) : NP :=
+def defNP (n : NounEntry) (num : Number := .Sing) : NP :=
   let det := match num, n.gender with
-    | .sg, .feminine => Determiner.la
-    | .sg, _ => Determiner.il        -- masculine is default
-    | .pl, .feminine => Determiner.le
+    | .Sing, .feminine => Determiner.la
+    | .Sing, _ => Determiner.il        -- masculine is default
+    | .Plur, .feminine => Determiner.le
     | _, _ => Determiner.i
   { noun := n, number := num, isBare := false, determiner := some det }
 
@@ -115,19 +118,19 @@ def indefNP (n : NounEntry) : NP :=
   let det := match n.gender with
     | .feminine => Determiner.una
     | _ => Determiner.un  -- masculine is default
-  { noun := n, number := .sg, isBare := false, determiner := some det }
+  { noun := n, number := .Sing, isBare := false, determiner := some det }
 
 /-- Create a partitive NP (del/della for mass, dei/delle for plural). -/
-def partNP (n : NounEntry) (num : Number := .sg) : NP :=
+def partNP (n : NounEntry) (num : Number := .Sing) : NP :=
   let det := match num, n.gender with
-    | .sg, .feminine => Determiner.della
-    | .sg, _ => Determiner.del        -- masculine is default
-    | .pl, .feminine => Determiner.delle
+    | .Sing, .feminine => Determiner.della
+    | .Sing, _ => Determiner.del        -- masculine is default
+    | .Plur, .feminine => Determiner.delle
     | _, _ => Determiner.dei
   { noun := n, number := num, isBare := false, determiner := some det }
 
 /-- Create a bare NP (restricted in Italian). -/
-def bareNP (n : NounEntry) (num : Number := .sg) : NP :=
+def bareNP (n : NounEntry) (num : Number := .Sing) : NP :=
   { noun := n, number := num, isBare := true }
 
 -- ============================================================================
@@ -223,7 +226,7 @@ def unGatto : NP := indefNP gatto
 def delVino : NP := partNP vino
 
 /-- "dei libri" (some books, partitive plural) -/
-def deiLibri : NP := partNP libro .pl
+def deiLibri : NP := partNP libro .Plur
 
 example : ilLibro.isBare = false := rfl
 example : ilLibro.determiner = some .il := rfl

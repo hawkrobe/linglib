@@ -1,7 +1,8 @@
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
 import Linglib.Features.Case
 import Linglib.Features.Gender
 import Linglib.Syntax.Pronoun.Basic
+import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Syntax.Pronoun.Demonstrative
 
 /-!
@@ -14,9 +15,9 @@ wh-pronouns are bare `Pronoun` shells (φ-features + surface form, no referentia
 denotation of their own).
 
 Each entry declares its `Pronoun.bindingClass`, so a form's binding-theoretic kind
-is the entry's own declaration; the lexicon lists below group them by class.
-`English.NominalClassification.classifyNominal` (a `Features.BindingSource Word`)
-reads that declaration.
+is the entry's own declaration; the lexicon lists below group them by class. `Pronoun.toWord`
+threads this onto the surface word's UD morphology (`Reflex`/`PronType`), where the
+framework-neutral binding engine reads it back via `Binding.bindingClassOf`.
 
 ## Gender ([konnelly-cowper-2020])
 
@@ -38,29 +39,29 @@ open Features (SurfaceGender)
 /-! ### Personal pronouns (`PersonalPronoun`) -/
 
 -- First person (no gender feature). `bindingClass := some .pronoun` is the PersonalPronoun default.
-def i : PersonalPronoun := { form := "I", person := some .first, number := some .sg, case_ := some .nom }
-def me : PersonalPronoun := { form := "me", person := some .first, number := some .sg, case_ := some .acc }
-def we : PersonalPronoun := { form := "we", person := some .first, number := some .pl, case_ := some .nom }
-def us : PersonalPronoun := { form := "us", person := some .first, number := some .pl, case_ := some .acc }
+def i : PersonalPronoun := { form := "I", person := some .first, number := some .Sing, case_ := some .nom }
+def me : PersonalPronoun := { form := "me", person := some .first, number := some .Sing, case_ := some .acc }
+def we : PersonalPronoun := { form := "we", person := some .first, number := some .Plur, case_ := some .nom }
+def us : PersonalPronoun := { form := "us", person := some .first, number := some .Plur, case_ := some .acc }
 
 -- Second person (no gender feature)
-def you : PersonalPronoun := { form := "you", person := some .second, number := some .sg }
-def you_pl : PersonalPronoun := { form := "you", person := some .second, number := some .pl }
+def you : PersonalPronoun := { form := "you", person := some .second, number := some .Sing }
+def you_pl : PersonalPronoun := { form := "you", person := some .second, number := some .Plur }
 
 -- Third person
-def he : PersonalPronoun := { form := "he", person := some .third, number := some .sg, case_ := some .nom, gender := some .masculine }
-def him : PersonalPronoun := { form := "him", person := some .third, number := some .sg, case_ := some .acc, gender := some .masculine }
-def she : PersonalPronoun := { form := "she", person := some .third, number := some .sg, case_ := some .nom, gender := some .feminine }
-def her : PersonalPronoun := { form := "her", person := some .third, number := some .sg, case_ := some .acc, gender := some .feminine }
-def it : PersonalPronoun := { form := "it", person := some .third, number := some .sg, gender := some .neuter }
-def they : PersonalPronoun := { form := "they", person := some .third, number := some .pl, case_ := some .nom }
-def them : PersonalPronoun := { form := "them", person := some .third, number := some .pl, case_ := some .acc }
+def he : PersonalPronoun := { form := "he", person := some .third, number := some .Sing, case_ := some .nom, gender := some .masculine }
+def him : PersonalPronoun := { form := "him", person := some .third, number := some .Sing, case_ := some .acc, gender := some .masculine }
+def she : PersonalPronoun := { form := "she", person := some .third, number := some .Sing, case_ := some .nom, gender := some .feminine }
+def her : PersonalPronoun := { form := "her", person := some .third, number := some .Sing, case_ := some .acc, gender := some .feminine }
+def it : PersonalPronoun := { form := "it", person := some .third, number := some .Sing, gender := some .neuter }
+def they : PersonalPronoun := { form := "they", person := some .third, number := some .Plur, case_ := some .nom }
+def them : PersonalPronoun := { form := "them", person := some .third, number := some .Plur, case_ := some .acc }
 
 -- Third-person singular *they* ([arnold-2026], [balhorn-2004]): same
 -- phonological form and gender-neutral feature as plural *they*, with singular
 -- number. Covers both underspecified and personal singular *they*.
-def they_sg : PersonalPronoun := { form := "they", person := some .third, number := some .sg, case_ := some .nom }
-def them_sg : PersonalPronoun := { form := "them", person := some .third, number := some .sg, case_ := some .acc }
+def they_sg : PersonalPronoun := { form := "they", person := some .third, number := some .Sing, case_ := some .nom }
+def them_sg : PersonalPronoun := { form := "them", person := some .third, number := some .Sing, case_ := some .acc }
 
 /-! ### Reflexive, reciprocal, and wh pronouns (bare `Pronoun`)
 
@@ -68,27 +69,27 @@ These are not referential pronouns; they carry φ-features and a surface form bu
 no denotation of their own. Their binding-theoretic kind is the `bindingClass`
 each declares (tagged per list below). -/
 
-def myself : Pronoun := { form := "myself", person := some .first, number := some .sg, bindingClass := some .reflexive }
-def yourself : Pronoun := { form := "yourself", person := some .second, number := some .sg, bindingClass := some .reflexive }
-def himself : Pronoun := { form := "himself", person := some .third, number := some .sg, gender := some .masculine, bindingClass := some .reflexive }
-def herself : Pronoun := { form := "herself", person := some .third, number := some .sg, gender := some .feminine, bindingClass := some .reflexive }
-def itself : Pronoun := { form := "itself", person := some .third, number := some .sg, gender := some .neuter, bindingClass := some .reflexive }
-def ourselves : Pronoun := { form := "ourselves", person := some .first, number := some .pl, bindingClass := some .reflexive }
-def yourselves : Pronoun := { form := "yourselves", person := some .second, number := some .pl, bindingClass := some .reflexive }
-def themselves : Pronoun := { form := "themselves", person := some .third, number := some .pl, bindingClass := some .reflexive }
-def themself : Pronoun := { form := "themself", person := some .third, number := some .sg, bindingClass := some .reflexive }
+def myself : Pronoun := { form := "myself", person := some .first, number := some .Sing, bindingClass := some .reflexive }
+def yourself : Pronoun := { form := "yourself", person := some .second, number := some .Sing, bindingClass := some .reflexive }
+def himself : Pronoun := { form := "himself", person := some .third, number := some .Sing, gender := some .masculine, bindingClass := some .reflexive }
+def herself : Pronoun := { form := "herself", person := some .third, number := some .Sing, gender := some .feminine, bindingClass := some .reflexive }
+def itself : Pronoun := { form := "itself", person := some .third, number := some .Sing, gender := some .neuter, bindingClass := some .reflexive }
+def ourselves : Pronoun := { form := "ourselves", person := some .first, number := some .Plur, bindingClass := some .reflexive }
+def yourselves : Pronoun := { form := "yourselves", person := some .second, number := some .Plur, bindingClass := some .reflexive }
+def themselves : Pronoun := { form := "themselves", person := some .third, number := some .Plur, bindingClass := some .reflexive }
+def themself : Pronoun := { form := "themself", person := some .third, number := some .Sing, bindingClass := some .reflexive }
 
 def eachOther : Pronoun := { form := "each other", bindingClass := some .reciprocal }
 def oneAnother : Pronoun := { form := "one another", bindingClass := some .reciprocal }
 
-def who : Pronoun := { form := "who", bindingClass := some .pronoun }
-def whom : Pronoun := { form := "whom", case_ := some .acc, bindingClass := some .pronoun }
-def what : Pronoun := { form := "what", bindingClass := some .pronoun }
-def which : Pronoun := { form := "which", bindingClass := some .pronoun }
-def where_ : Pronoun := { form := "where", bindingClass := some .pronoun }
-def when_ : Pronoun := { form := "when", bindingClass := some .pronoun }
-def why : Pronoun := { form := "why", bindingClass := some .pronoun }
-def how : Pronoun := { form := "how", bindingClass := some .pronoun }
+def who : Pronoun := { form := "who", pronType := some .Int, bindingClass := some .pronoun }
+def whom : Pronoun := { form := "whom", case_ := some .acc, pronType := some .Int, bindingClass := some .pronoun }
+def what : Pronoun := { form := "what", pronType := some .Int, bindingClass := some .pronoun }
+def which : Pronoun := { form := "which", pronType := some .Int, bindingClass := some .pronoun }
+def where_ : Pronoun := { form := "where", pronType := some .Int, bindingClass := some .pronoun }
+def when_ : Pronoun := { form := "when", pronType := some .Int, bindingClass := some .pronoun }
+def why : Pronoun := { form := "why", pronType := some .Int, bindingClass := some .pronoun }
+def how : Pronoun := { form := "how", pronType := some .Int, bindingClass := some .pronoun }
 
 /-! ### Demonstrative pronouns (`DemonstrativePronoun`)
 
@@ -96,10 +97,10 @@ Genuine deictic demonstratives — a two-way proximal/distal distance system ([m
 Unlike German *der* (a strong-article personal pronoun, see [patel-grosz-grosz-2017]), these encode
 a real spatial contrast, so they are `Demonstrative` carriers. -/
 
-def this_ : DemonstrativePronoun := { form := "this", person := some .third, number := some .sg, deixis := .proximal }
-def that_ : DemonstrativePronoun := { form := "that", person := some .third, number := some .sg, deixis := .distal }
-def these : DemonstrativePronoun := { form := "these", person := some .third, number := some .pl, deixis := .proximal }
-def those : DemonstrativePronoun := { form := "those", person := some .third, number := some .pl, deixis := .distal }
+def this_ : DemonstrativePronoun := { form := "this", person := some .third, number := some .Sing, deixis := .proximal }
+def that_ : DemonstrativePronoun := { form := "that", person := some .third, number := some .Sing, deixis := .distal }
+def these : DemonstrativePronoun := { form := "these", person := some .third, number := some .Plur, deixis := .proximal }
+def those : DemonstrativePronoun := { form := "those", person := some .third, number := some .Plur, deixis := .distal }
 
 /-- The four English demonstrative pronouns. -/
 def demonstratives : List DemonstrativePronoun := [this_, that_, these, those]
@@ -120,6 +121,13 @@ def reciprocals : List Pronoun := [eachOther, oneAnother]
 
 /-- Wh-pronouns and wh-adverbs (Principle B pronominals); each declares `bindingClass := .pronoun`. -/
 def whWords : List Pronoun := [who, whom, what, which, where_, when_, why, how]
+
+/-- Every reflexive entry is a Principle-A anaphor by its declaration. -/
+theorem reflexives_are_anaphors : ∀ p ∈ reflexives, Bound.IsAnaphor p := by decide
+
+/-- Every wh-word projects as wh-marked: the entry's `PronType=Int` reaches the surface
+word's morphology (`UD.MorphFeatures.isWh`) through `Pronoun.toWord`. -/
+theorem whWords_project_isWh : ∀ p ∈ whWords, p.toWord.features.isWh := by decide
 
 end English.Pronouns
 

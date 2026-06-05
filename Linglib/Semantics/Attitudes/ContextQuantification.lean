@@ -1,5 +1,5 @@
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Reference.ShiftedIndexicals
 
@@ -33,7 +33,7 @@ cannot capture.
 
 namespace Semantics.Attitudes.ContextQuantification
 
-open Core.Context
+open Semantics.Context
 open Semantics.Attitudes.Doxastic (AccessRel boxAt)
 
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}

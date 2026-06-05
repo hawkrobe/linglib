@@ -1,6 +1,6 @@
 import Linglib.Core.Scales.EpistemicScale.Cancellation
-import Linglib.Core.Scales.EpistemicScale.Caratheodory
-import Linglib.Core.Scales.EpistemicScale.SignVectors
+import Linglib.Core.Order.Caratheodory
+import Linglib.Core.Order.SignVectors
 import Mathlib.Data.List.Perm.Basic
 import Mathlib.Tactic.Tauto
 import Mathlib.Tactic.FinCases
@@ -14,10 +14,8 @@ Scott cancellation, hence is representable by a finitely additive measure
 ## Main declarations
 
 * `Core.Scale.fa_cancellation_fin4` — FA axioms imply cancellation on `Fin 4`.
-* `Core.Scale.theorem8a_fin4` — every FA system on `Fin 4` is representable.
+* `Core.Scale.representable_fin4` — every FA system on `Fin 4` is representable.
 * `Core.Scale.no_null_cancellation` — cancellation for systems with no null atoms.
-* `Core.Scale.ge_union_context`, `ge_generalized_merge`, `ge_mono_dominated`,
-  `ge_empty_target` — reusable consequences of the FA axioms (any arity).
 
 ## Implementation notes
 
@@ -32,85 +30,6 @@ itself are private plumbing; only the theorems above are exported.
 -/
 
 namespace Core.Scale
-
-/-- **Add common context** (from Axiom A + the diff-cancellation): for `C` disjoint
-    from both `X` and `Y`, `X ≿ Y ↔ (X ∪ C) ≿ (Y ∪ C)`. -/
-lemma ge_union_context {n : ℕ} (sys : EpistemicSystemFA (Fin n)) (X Y C : Set (Fin n))
-    (hCX : Disjoint C X) (hCY : Disjoint C Y) :
-    sys.ge X Y ↔ sys.ge (X ∪ C) (Y ∪ C) := by
-  rw [sys.additive X Y, sys.additive (X ∪ C) (Y ∪ C)]
-  have hCXl : ∀ x, x ∈ C → x ∉ X := fun x hx => Set.disjoint_left.mp hCX hx
-  have hCYl : ∀ x, x ∈ C → x ∉ Y := fun x hx => Set.disjoint_left.mp hCY hx
-  have e1 : (X ∪ C) \ (Y ∪ C) = X \ Y := by
-    ext x
-    have := hCXl x
-    simp only [Set.mem_diff, Set.mem_union]
-    tauto
-  have e2 : (Y ∪ C) \ (X ∪ C) = Y \ X := by
-    ext x
-    have := hCYl x
-    simp only [Set.mem_diff, Set.mem_union]
-    tauto
-  rw [e1, e2]
-
-/-- **Generalized merge**: two valid comparisons whose left parts are disjoint and
-    whose right parts are disjoint merge into their union — even with pivot overlaps
-    (X₁∩Y₂, X₂∩Y₁ ≠ ∅). The width-2 additivity in full generality.
-    Derivation: add context `X₂\Y₁` to the first and `Y₁\X₂` to the second, transit
-    through `X₂∪Y₁`, then restore the pivot `P = X₂∩Y₁` via Axiom A. -/
-lemma ge_generalized_merge {n : ℕ} (sys : EpistemicSystemFA (Fin n))
-    {X₁ Y₁ X₂ Y₂ : Set (Fin n)}
-    (h1 : sys.ge X₁ Y₁) (h2 : sys.ge X₂ Y₂)
-    (hX : Disjoint X₁ X₂) (hY : Disjoint Y₁ Y₂) :
-    sys.ge (X₁ ∪ X₂) (Y₁ ∪ Y₂) := by
-  have hXl : ∀ x, x ∈ X₁ → x ∉ X₂ := fun x hx => Set.disjoint_left.mp hX hx
-  have hYl : ∀ x, x ∈ Y₂ → x ∉ Y₁ := fun x hy2 hy1 => Set.disjoint_left.mp hY hy1 hy2
-  -- context C₁ = X₂ \ Y₁ added to (X₁ ≿ Y₁)
-  have step1 : sys.ge (X₁ ∪ (X₂ \ Y₁)) (Y₁ ∪ (X₂ \ Y₁)) :=
-    (ge_union_context sys X₁ Y₁ (X₂ \ Y₁)
-      (Set.disjoint_left.mpr fun x hx hx1 => hXl x hx1 hx.1)
-      (Set.disjoint_left.mpr fun x hx hxY1 => hx.2 hxY1)).mp h1
-  -- context C₂ = Y₁ \ X₂ added to (X₂ ≿ Y₂)
-  have step2 : sys.ge (X₂ ∪ (Y₁ \ X₂)) (Y₂ ∪ (Y₁ \ X₂)) :=
-    (ge_union_context sys X₂ Y₂ (Y₁ \ X₂)
-      (Set.disjoint_left.mpr fun x hx hx2 => hx.2 hx2)
-      (Set.disjoint_left.mpr fun x hx hxY2 => hYl x hxY2 hx.1)).mp h2
-  have hmid : Y₁ ∪ (X₂ \ Y₁) = X₂ ∪ (Y₁ \ X₂) := by
-    ext x; simp only [Set.mem_union, Set.mem_diff]; tauto
-  rw [hmid] at step1
-  have htrans : sys.ge (X₁ ∪ (X₂ \ Y₁)) (Y₂ ∪ (Y₁ \ X₂)) := sys.trans _ _ _ step1 step2
-  set P : Set (Fin n) := X₂ ∩ Y₁ with hP
-  have hLHS : X₁ ∪ (X₂ \ Y₁) = (X₁ ∪ X₂) \ P := by
-    ext x
-    have := hXl x
-    simp only [Set.mem_union, Set.mem_diff, hP, Set.mem_inter_iff, not_and]
-    tauto
-  have hRHS : Y₂ ∪ (Y₁ \ X₂) = (Y₁ ∪ Y₂) \ P := by
-    ext x
-    have := hYl x
-    simp only [Set.mem_union, Set.mem_diff, hP, Set.mem_inter_iff, not_and]
-    tauto
-  rw [hLHS, hRHS] at htrans
-  have hPsubX : P ⊆ X₁ ∪ X₂ := Set.inter_subset_left.trans Set.subset_union_right
-  have hPsubY : P ⊆ Y₁ ∪ Y₂ := Set.inter_subset_right.trans Set.subset_union_left
-  have key := (ge_union_context sys ((X₁ ∪ X₂) \ P) ((Y₁ ∪ Y₂) \ P) P
-    (Set.disjoint_left.mpr fun x hxP hxd => hxd.2 hxP)
-    (Set.disjoint_left.mpr fun x hxP hxd => hxd.2 hxP)).mp htrans
-  rwa [Set.diff_union_of_subset hPsubX, Set.diff_union_of_subset hPsubY] at key
-
-/-- **Mono-domination discharge**: a single valid comparison `X ≿ Y` with `X ⊆ P`
-    and `Q ⊆ Y` proves `P ≿ Q` (monotonicity twice + transitivity). Used to discharge
-    the merge-to-single target when one family member already dominates it. -/
-lemma ge_mono_dominated {n : ℕ} (sys : EpistemicSystemFA (Fin n))
-    {X Y P Q : Set (Fin n)} (h : sys.ge X Y) (hXP : X ⊆ P) (hQY : Q ⊆ Y) :
-    sys.ge P Q :=
-  sys.trans _ _ _ (sys.mono X P hXP) (sys.trans _ _ _ h (sys.mono Q Y hQY))
-
-/-- **Trivial-target discharge**: `P ≿ ∅` always (monotonicity, `∅ ⊆ P`). The
-    merge-to-single base case when the target's negative part is empty. -/
-lemma ge_empty_target {n : ℕ} (sys : EpistemicSystemFA (Fin n)) (P : Set (Fin n)) :
-    sys.ge P ∅ :=
-  sys.mono ∅ P (Set.empty_subset P)
 
 /-! ### Merge-to-single infrastructure
 
@@ -134,14 +53,7 @@ private lemma cmpVec_mergeCmp {n : ℕ} (c d : Finset (Fin n) × Finset (Fin n))
     cmpVec (mergeCmp c d) i = cmpVec c i + cmpVec d i := by
   have h1 : i ∈ c.1 → i ∉ d.1 := fun h => Finset.disjoint_left.mp hpos h
   have h2 : i ∈ c.2 → i ∉ d.2 := fun h => Finset.disjoint_left.mp hneg h
-  by_cases hc1 : i ∈ c.1 <;> by_cases hc2 : i ∈ c.2 <;>
-    by_cases hd1 : i ∈ d.1 <;> by_cases hd2 : i ∈ d.2 <;>
-    first
-      | exact absurd hd1 (h1 hc1)
-      | exact absurd hd2 (h2 hc2)
-      | (simp only [cmpVec, mergeCmp, Finset.mem_sdiff, Finset.mem_union, hc1, hc2, hd1, hd2,
-          or_true, or_false, and_true, and_false, not_true, not_false_iff, if_true,
-          if_false] <;> omega)
+  simp only [cmpVec, mergeCmp, Finset.mem_sdiff, Finset.mem_union]; split_ifs <;> simp_all
 
 /-- `mergeCmp` of two valid comparisons is valid, given the disjointness conditions.
     Uses `ge_generalized_merge` then Axiom A to reach disjoint normal form. -/
@@ -188,15 +100,13 @@ private lemma null_from_pair (sys : EpistemicSystemFA (Fin 4))
     ∃ i, sys.ge (∅ : Set (Fin 4)) {i} := by
   -- A ⊆ D and C ⊆ B (membership facts from disjointness)
   have hAD : A ⊆ D := by
-    intro a ha
-    by_contra haD
+    intro a ha; by_contra haD
     have := hle a
     simp only [cmpVec, if_pos ha, if_neg (Finset.disjoint_left.mp hABd ha), if_neg haD,
       sub_zero] at this
     split_ifs at this <;> omega
   have hCB : C ⊆ B := by
-    intro c hc
-    by_contra hcB
+    intro c hc; by_contra hcB
     have := hle c
     simp only [cmpVec, if_pos hc, if_neg (Finset.disjoint_left.mp hCDd hc), if_neg hcB,
       sub_zero] at this
@@ -211,16 +121,13 @@ private lemma null_from_pair (sys : EpistemicSystemFA (Fin 4))
       Finset.sdiff_eq_empty_iff_subset.mpr hCB, Finset.coe_empty] at hax
   -- symmetric: ge A D, ge A C, ge A D? -> ge ∅ (D \ A)
   have hAC : sys.ge ↑A ↑C := sys.trans _ _ _ hAB (sys.mono ↑C ↑B (Finset.coe_subset.mpr hCB))
-  have hAD_ge : sys.ge ↑A ↑D := sys.trans _ _ _ hAC hCD
   have hDA : sys.ge (∅ : Set (Fin 4)) ↑(D \ A) := by
-    have hax := (sys.additive ↑A ↑D).mp hAD_ge
+    have hax := (sys.additive ↑A ↑D).mp (sys.trans _ _ _ hAC hCD)
     rwa [← Finset.coe_sdiff, ← Finset.coe_sdiff,
       Finset.sdiff_eq_empty_iff_subset.mpr hAD, Finset.coe_empty] at hax
   -- strict coordinate i₀ ∈ (B \ C) ∪ (D \ A)
   have hmem : i₀ ∈ B \ C ∨ i₀ ∈ D \ A := by
-    simp only [cmpVec, Finset.mem_sdiff] at hlt ⊢
-    by_cases hiA : i₀ ∈ A <;> by_cases hiB : i₀ ∈ B <;>
-      by_cases hiC : i₀ ∈ C <;> by_cases hiD : i₀ ∈ D <;> simp_all
+    simp only [cmpVec, Finset.mem_sdiff] at hlt ⊢; split_ifs at hlt <;> simp_all
   rcases hmem with hm | hm
   · exact ⟨i₀, sys.trans _ _ _ hBC (sys.mono {i₀} ↑(B \ C)
       (by rw [Set.singleton_subset_iff]; exact Finset.mem_coe.mpr hm))⟩
@@ -235,31 +142,25 @@ private def toQVec (c : Finset (Fin 4) × Finset (Fin 4)) : Fin 4 → ℚ :=
 
 private lemma toQVec_apply (c : Finset (Fin 4) × Finset (Fin 4)) (k : Fin 4) :
     toQVec c k = (if k ∈ c.1 then (1 : ℚ) else 0) - (if k ∈ c.2 then 1 else 0) := by
-  simp only [toQVec, cmpVec]
-  split_ifs <;> norm_num
+  simp only [toQVec, cmpVec]; split_ifs <;> norm_num
 
 private lemma posSupport_toQVec {c : Finset (Fin 4) × Finset (Fin 4)} (hc : Disjoint c.1 c.2) :
     SignVec.posSupport (toQVec c) = c.1 := by
   ext k
   rw [SignVec.mem_posSupport, toQVec_apply]
   by_cases h1 : k ∈ c.1 <;> by_cases h2 : k ∈ c.2 <;>
-    first
-      | exact absurd h2 (Finset.disjoint_left.mp hc h1)
-      | norm_num [h1, h2]
+    first | exact absurd h2 (Finset.disjoint_left.mp hc h1) | norm_num [h1, h2]
 
 private lemma negSupport_toQVec {c : Finset (Fin 4) × Finset (Fin 4)} (hc : Disjoint c.1 c.2) :
     SignVec.negSupport (toQVec c) = c.2 := by
   ext k
   rw [SignVec.mem_negSupport, toQVec_apply]
   by_cases h1 : k ∈ c.1 <;> by_cases h2 : k ∈ c.2 <;>
-    first
-      | exact absurd h2 (Finset.disjoint_left.mp hc h1)
-      | norm_num [h1, h2]
+    first | exact absurd h2 (Finset.disjoint_left.mp hc h1) | norm_num [h1, h2]
 
 private lemma cmpVec_swap (A B : Finset (Fin 4)) (i : Fin 4) :
     cmpVec (B, A) i = -cmpVec (A, B) i := by
-  simp only [cmpVec]
-  ring
+  simp only [cmpVec]; ring
 
 /-- Comparisons with both parts empty contribute nothing to the vector sum. -/
 private lemma cvSumList_filter_ne_empty (L : List (Finset (Fin 4) × Finset (Fin 4)))
@@ -288,10 +189,9 @@ private lemma cvSumList_filter_ne_empty (L : List (Finset (Fin 4) × Finset (Fin
     pair with the reversed target is mono-domination (excluded), a g-merge pair inside
     `L` is excluded by `hnogm`, leaving a g-merge with the reversed target.
     Verified true for all families (expert proof + exhaustive ≤5-circuit check). -/
-private lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
+private lemma v1_tailored
     (L : List (Finset (Fin 4) × Finset (Fin 4)))
     (hdisj : ∀ c ∈ L, Disjoint c.1 c.2)
-    (hvalid : ∀ c ∈ L, sys.ge ↑c.1 ↑c.2)
     {vpos vneg : Finset (Fin 4)}
     (hvpvn : Disjoint vpos vneg)
     (hsum : ∀ i, cvSumList L i = cmpVec (vpos, vneg) i)
@@ -308,25 +208,20 @@ private lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
   by_cases hemp : ∃ c ∈ L, c.1 = ∅ ∧ c.2.Nonempty
   · obtain ⟨c, hcL, hc1, k, hk⟩ := hemp
     refine Or.inl ⟨c, hcL, c, hcL, fun i => ?_, k, ?_⟩
-    · simp only [cmpVec, hc1, if_neg (Finset.notMem_empty i)]
-      split_ifs <;> omega
-    · simp only [cmpVec, hc1, if_neg (Finset.notMem_empty k), if_pos hk]
-      omega
+    · simp only [cmpVec, hc1, if_neg (Finset.notMem_empty i)]; split_ifs <;> omega
+    · simp only [cmpVec, hc1, if_neg (Finset.notMem_empty k), if_pos hk]; omega
   -- Step B: the right disjunct as an escape hatch
   by_cases hrd : ∃ c ∈ L, Disjoint vneg c.1 ∧ Disjoint vpos c.2
   · exact Or.inr hrd
   have h0 : ∀ c ∈ L, c.1 = ∅ → c.2 = ∅ := by
-    intro c hc h1
-    by_contra h2
+    intro c hc h1; by_contra h2
     exact hemp ⟨c, hc, h1, Finset.nonempty_iff_ne_empty.mpr h2⟩
   -- Step C: the balanced ℚ sign-vector family on `L′ ∪ {reversed target}`
   set L' := L.filter (fun c => c.1 ≠ ∅) with hL'
   set l : List (Fin 4 → ℚ) := ((vneg, vpos) :: L').map toQVec with hl
   set S : Finset (Fin 4 → ℚ) := l.toFinset with hS
   have hfil : ∀ i, cvSumList L' i = cvSumList L i := by
-    intro i
-    rw [hL']
-    exact cvSumList_filter_ne_empty L h0 i
+    intro i; rw [hL']; exact cvSumList_filter_ne_empty L h0 i
   have hmem_shape : ∀ v ∈ S, ∃ c, (c = (vneg, vpos) ∨ c ∈ L') ∧ toQVec c = v := by
     intro v hv
     rw [hS, List.mem_toFinset, hl, List.mem_map] at hv
@@ -339,30 +234,25 @@ private lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
   have hsign : ∀ v ∈ S, ∀ i, v i = -1 ∨ v i = 0 ∨ v i = 1 := by
     intro v hv i
     obtain ⟨c, _, rfl⟩ := hmem_shape v hv
-    rw [toQVec_apply]
-    split_ifs <;> norm_num
+    rw [toQVec_apply]; split_ifs <;> norm_num
   have hposne : ∀ v ∈ S, ∃ i, v i = 1 := by
     intro v hv
     obtain ⟨c, hc, rfl⟩ := hmem_shape v hv
     rcases hc with rfl | hc
     · obtain ⟨k, hk⟩ := hne
       refine ⟨k, ?_⟩
-      rw [toQVec_apply, if_pos hk, if_neg (Finset.disjoint_right.mp hvpvn hk)]
-      norm_num
+      rw [toQVec_apply, if_pos hk, if_neg (Finset.disjoint_right.mp hvpvn hk)]; norm_num
     · have hcL : c ∈ L := List.mem_of_mem_filter hc
       have hc1 : c.1 ≠ ∅ := by simpa using List.of_mem_filter hc
       obtain ⟨k, hk⟩ := Finset.nonempty_iff_ne_empty.mpr hc1
       refine ⟨k, ?_⟩
-      rw [toQVec_apply, if_pos hk, if_neg (Finset.disjoint_left.mp (hdisj c hcL) hk)]
-      norm_num
+      rw [toQVec_apply, if_pos hk, if_neg (Finset.disjoint_left.mp (hdisj c hcL) hk)]; norm_num
   have hSne : S.Nonempty := by
     refine ⟨toQVec (vneg, vpos), ?_⟩
     rw [hS, List.mem_toFinset, hl]
     exact List.mem_map.mpr ⟨(vneg, vpos), List.mem_cons.mpr (Or.inl rfl), rfl⟩
   have hdQ : ∀ v ∈ S, 0 < ((l.count v : ℕ) : ℚ) := by
-    intro v hv
-    rw [hS, List.mem_toFinset] at hv
-    exact_mod_cast List.count_pos_iff.mpr hv
+    intro v hv; rw [hS, List.mem_toFinset] at hv; exact_mod_cast List.count_pos_iff.mpr hv
   have hbal : ∑ v ∈ S, ((l.count v : ℕ) : ℚ) • v = 0 := by
     funext i
     rw [Finset.sum_apply]
@@ -372,14 +262,10 @@ private lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
       List.map_map]
     simp only [Function.comp_def, List.map_cons, List.sum_cons]
     have hLs : (L'.map (fun c => toQVec c i)).sum = ((cvSumList L' i : ℤ) : ℚ) := by
-      simp only [toQVec, cvSumList]
-      rw [Int.cast_list_sum, List.map_map]
-      rfl
+      simp only [toQVec, cvSumList]; rw [Int.cast_list_sum, List.map_map]; rfl
     rw [hLs, hfil i, hsum i]
     simp only [toQVec]
-    rw [cmpVec_swap]
-    push_cast
-    ring
+    rw [cmpVec_swap]; push_cast; ring
   -- no-g-merge transfers to the vector family
   have hSnogm : ∀ v ∈ S, ∀ w ∈ S, v ≠ w →
       ¬(Disjoint (SignVec.posSupport v) (SignVec.posSupport w) ∧ Disjoint (SignVec.negSupport v) (SignVec.negSupport w)) := by
@@ -394,12 +280,11 @@ private lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
     · exact hrd ⟨c, List.mem_of_mem_filter hc, hg1.symm, hg2.symm⟩
     · have hcc' : c ≠ c' := fun he => hvw (by rw [he])
       have hcL : c ∈ L := List.mem_of_mem_filter hc
-      have hc'L : c' ∈ L := List.mem_of_mem_filter hc'
       have hp1 := List.perm_cons_erase hcL
-      have hc'e : c' ∈ L.erase c := (List.mem_erase_of_ne (Ne.symm hcc')).mpr hc'L
+      have hc'e : c' ∈ L.erase c :=
+        (List.mem_erase_of_ne (Ne.symm hcc')).mpr (List.mem_of_mem_filter hc')
       have hp2 := List.perm_cons_erase hc'e
-      exact hnogm ⟨c, c', (L.erase c).erase c',
-        hp1.trans (List.Perm.cons c hp2), hg1, hg2⟩
+      exact hnogm ⟨c, c', (L.erase c).erase c', hp1.trans (List.Perm.cons c hp2), hg1, hg2⟩
   -- Carathéodory pivot, then the finite core
   obtain ⟨S', hS'S, hS'ne, hS'card, d', hd', hsum'⟩ :=
     Caratheodory.exists_posdep_card_le_five S (fun v => ((l.count v : ℕ) : ℚ)) hdQ hSne hbal
@@ -419,26 +304,19 @@ private lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
     rcases eq_or_ne (w i) 1 with h2 | h2
     · rw [h2, hps' i h2]; norm_num
     rcases hsign v hvS i with h | h | h <;> rcases hsign w hwS i with h' | h' | h' <;>
-      first
-        | exact absurd h h1
-        | exact absurd h' h2
-        | (rw [h, h']; norm_num)
+      first | exact absurd h h1 | exact absurd h' h2 | (rw [h, h']; norm_num)
   have hvstrict : ∃ i, v i + w i < 0 := by
     by_contra hall
     push_neg at hall
     have heq : ∀ i, w i = -v i := fun i =>
       le_antisymm (by have := hvle i; linarith) (by have := hall i; linarith)
     refine hSnogm v hvS w hwS hvw ⟨?_, ?_⟩
-    · rw [Finset.disjoint_left]
-      intro k hk hk'
+    · rw [Finset.disjoint_left]; intro k hk hk'
       rw [SignVec.mem_posSupport] at hk hk'
-      rw [heq k, hk] at hk'
-      norm_num at hk'
-    · rw [Finset.disjoint_left]
-      intro k hk hk'
+      rw [heq k, hk] at hk'; norm_num at hk'
+    · rw [Finset.disjoint_left]; intro k hk hk'
       rw [SignVec.mem_negSupport] at hk hk'
-      rw [heq k, hk] at hk'
-      norm_num at hk'
+      rw [heq k, hk] at hk'; norm_num at hk'
   -- map the pair back to comparisons
   obtain ⟨c, hc, rfl⟩ := hmem_shape v hvS
   obtain ⟨c', hc', rfl⟩ := hmem_shape w hwS
@@ -447,26 +325,22 @@ private lemma v1_tailored (sys : EpistemicSystemFA (Fin 4))
   · -- the reversed target anti-dominated by `c'` is mono-domination, excluded
     exfalso
     refine hnotdom c' (List.mem_of_mem_filter hc') ?_ ?_
-    · rw [posSupport_toQVec (hdisj' c' (Or.inr hc')),
-        negSupport_toQVec (hdisj' _ (Or.inl rfl))] at had2; exact had2
-    · rw [posSupport_toQVec (hdisj' _ (Or.inl rfl)),
-        negSupport_toQVec (hdisj' c' (Or.inr hc'))] at had1; exact had1
+    · rwa [posSupport_toQVec (hdisj' c' (Or.inr hc')),
+        negSupport_toQVec (hdisj' _ (Or.inl rfl))] at had2
+    · rwa [posSupport_toQVec (hdisj' _ (Or.inl rfl)),
+        negSupport_toQVec (hdisj' c' (Or.inr hc'))] at had1
   · exfalso
     refine hnotdom c (List.mem_of_mem_filter hc) ?_ ?_
-    · rw [posSupport_toQVec (hdisj' c (Or.inr hc)),
-        negSupport_toQVec (hdisj' _ (Or.inl rfl))] at had1; exact had1
-    · rw [posSupport_toQVec (hdisj' _ (Or.inl rfl)),
-        negSupport_toQVec (hdisj' c (Or.inr hc))] at had2; exact had2
+    · rwa [posSupport_toQVec (hdisj' c (Or.inr hc)),
+        negSupport_toQVec (hdisj' _ (Or.inl rfl))] at had1
+    · rwa [posSupport_toQVec (hdisj' _ (Or.inl rfl)),
+        negSupport_toQVec (hdisj' c (Or.inr hc))] at had2
   · -- both from `L`: the null pair
     refine Or.inl ⟨c, List.mem_of_mem_filter hc, c', List.mem_of_mem_filter hc',
       fun i => ?_, ?_⟩
-    · have h := hvle i
-      simp only [toQVec] at h
-      exact_mod_cast h
+    · have h := hvle i; simp only [toQVec] at h; exact_mod_cast h
     · obtain ⟨i, hi⟩ := hvstrict
-      refine ⟨i, ?_⟩
-      simp only [toQVec] at hi
-      exact_mod_cast hi
+      refine ⟨i, ?_⟩; simp only [toQVec] at hi; exact_mod_cast hi
 
 /-- **Recombine** (case 4 of the merge recursion): if a member `c` is valid, the
     reversed target `r = (vneg, vpos)` generalized-merges `c` (`Disjoint vneg c.1`,
@@ -488,30 +362,21 @@ private lemma recombine (sys : EpistemicSystemFA (Fin 4))
   have dvc2 : ∀ x, x ∈ vpos → x ∉ c.2 := fun x h => Finset.disjoint_left.mp hrc2 h
   have dc : ∀ x, x ∈ c.1 → x ∉ c.2 := fun x h => Finset.disjoint_left.mp hcd h
   have hdp : Disjoint p c.1 := by
-    rw [Finset.disjoint_left]; intro x hxp hxc1
-    rw [hp, Finset.mem_union, Finset.mem_sdiff, Finset.mem_sdiff] at hxp
-    rcases hxp with ⟨_, hn⟩ | ⟨hxc2, _⟩
-    · exact hn hxc1
-    · exact dc x hxc1 hxc2
+    rw [hp, Finset.disjoint_union_left]
+    exact ⟨Finset.sdiff_disjoint, Disjoint.mono_left Finset.sdiff_subset hcd.symm⟩
   have hdq : Disjoint q c.2 := by
-    rw [Finset.disjoint_left]; intro x hxq hxc2
-    rw [hq, Finset.mem_union, Finset.mem_sdiff, Finset.mem_sdiff] at hxq
-    rcases hxq with ⟨_, hn⟩ | ⟨hxc1, _⟩
-    · exact hn hxc2
-    · exact dc x hxc1 hxc2
+    rw [hq, Finset.disjoint_union_left]
+    exact ⟨Finset.sdiff_disjoint, Disjoint.mono_left Finset.sdiff_subset hcd⟩
   have hmerge := mergeCmp_valid sys (c := (p, q)) (d := c) hX hc hdp hdq
   have e1 : (mergeCmp (p, q) c).1 = vpos := by
-    apply Finset.ext; intro x
+    refine Finset.ext fun x => ?_
     have h1 := dvv x; have h2 := dvc1 x; have h3 := dvc2 x; have h4 := dc x
-    simp only [mergeCmp, hp, hq, Finset.mem_sdiff, Finset.mem_union]
-    tauto
+    simp only [mergeCmp, hp, hq, Finset.mem_sdiff, Finset.mem_union]; tauto
   have e2 : (mergeCmp (p, q) c).2 = vneg := by
-    apply Finset.ext; intro x
+    refine Finset.ext fun x => ?_
     have h1 := dvv x; have h2 := dvc1 x; have h3 := dvc2 x; have h4 := dc x
-    simp only [mergeCmp, hp, hq, Finset.mem_sdiff, Finset.mem_union]
-    tauto
-  rw [e1, e2] at hmerge
-  exact hmerge
+    simp only [mergeCmp, hp, hq, Finset.mem_sdiff, Finset.mem_union]; tauto
+  rwa [e1, e2] at hmerge
 
 /-- **Merge-to-single**: on a no-null Fin 4 system, any valid family of disjoint
     comparisons whose vector-sum equals a single comparison vector `(vpos, vneg)`
@@ -539,7 +404,7 @@ private theorem merge_to_single (sys : EpistemicSystemFA (Fin 4))
       push_neg at hdom
       by_cases hgm : ∃ c d rest, L.Perm (c :: d :: rest) ∧ Disjoint c.1 d.1 ∧ Disjoint c.2 d.2
       case neg =>
-        rcases v1_tailored sys L hdisj hvalid hvpvn hsum hne hdom hgm with
+        rcases v1_tailored L hdisj hvpvn hsum hne hdom hgm with
           ⟨c, hcL, d, hdL, hle, i0, hlt⟩ | ⟨c, hcL, hrc1, hrc2⟩
         · -- null pair → null atom → contradicts hnull
           obtain ⟨i, hi⟩ := null_from_pair sys (hvalid c hcL) (hvalid d hdL)
@@ -561,14 +426,12 @@ private theorem merge_to_single (sys : EpistemicSystemFA (Fin 4))
             have a4 : i ∈ c.1 → i ∉ c.2 := fun h => Finset.disjoint_left.mp (hdisj c hcL) h
             simp only [cmpVec, Finset.mem_union, Finset.mem_sdiff]
             by_cases h1v : i ∈ vpos <;> by_cases h2v : i ∈ vneg <;>
-              by_cases h3v : i ∈ c.1 <;> by_cases h4v : i ∈ c.2 <;>
-              simp_all <;> omega
+              by_cases h3v : i ∈ c.1 <;> by_cases h4v : i ∈ c.2 <;> simp_all
           have hpq : Disjoint ((vpos \ c.1) ∪ (c.2 \ vneg)) ((vneg \ c.2) ∪ (c.1 \ vpos)) := by
             rw [Finset.disjoint_left]; intro x hxp hxq
             have a1 : x ∈ vpos → x ∉ vneg := fun h => Finset.disjoint_left.mp hvpvn h
             have a4 : x ∈ c.1 → x ∉ c.2 := fun h => Finset.disjoint_left.mp (hdisj c hcL) h
-            simp only [Finset.mem_union, Finset.mem_sdiff] at hxp hxq
-            tauto
+            simp only [Finset.mem_union, Finset.mem_sdiff] at hxp hxq; tauto
           have hdisj' : ∀ x ∈ L.erase c, Disjoint x.1 x.2 :=
             fun x hx => hdisj x (List.mem_of_mem_erase hx)
           have hvalid' : ∀ x ∈ L.erase c, sys.ge ↑x.1 ↑x.2 :=
@@ -593,10 +456,8 @@ private theorem merge_to_single (sys : EpistemicSystemFA (Fin 4))
         · exact hvalid x (hrestsub x hx)
       have hsum' : ∀ i, cvSumList (mergeCmp c d :: rest) i = cmpVec (vpos, vneg) i := by
         intro i
-        rw [cvSumList_cons, cmpVec_mergeCmp c d hpd hnd i, ← hsum i,
-            cvSumList_perm hperm i]
-        simp only [cvSumList_cons]
-        omega
+        rw [cvSumList_cons, cmpVec_mergeCmp c d hpd hnd i, ← hsum i, cvSumList_perm hperm i]
+        simp only [cvSumList_cons]; omega
       exact merge_to_single sys hnull (mergeCmp c d :: rest) hdisj' hvalid' vpos vneg hvpvn hsum'
   · -- trivial-target discharge: vneg = ∅
     rw [Finset.not_nonempty_iff_eq_empty] at hne
@@ -635,16 +496,13 @@ private lemma cvSumList_replicate {n : ℕ} (m : ℕ) (c : Finset (Fin n) × Fin
 private lemma weight_mul_den (q : ℚ) : q * (q.den : ℚ) = (q.num : ℚ) := by
   have h := Rat.num_div_den q
   have hd : (q.den : ℚ) ≠ 0 := by exact_mod_cast q.den_ne_zero
-  rw [div_eq_iff hd] at h
-  exact h.symm
+  rw [div_eq_iff hd] at h; exact h.symm
 
 private lemma den_prod_pos (P : List (WComparison 4)) :
     0 < (P.map (fun wc => wc.weight.den)).prod := by
   induction P with
   | nil => simp
-  | cons a P ih =>
-    simp only [List.map_cons, List.prod_cons]
-    exact Nat.mul_pos a.weight.den_pos ih
+  | cons a P ih => simp only [List.map_cons, List.prod_cons]; exact Nat.mul_pos a.weight.den_pos ih
 
 /-- Casting the integer multiplicities back to `ℚ` recovers `D · weightedSum`. -/
 private lemma cleared_sum_eq (P : Portfolio 4) (i : Fin 4) (D : ℕ)
@@ -678,8 +536,7 @@ private theorem exists_balanced_list (sys : EpistemicSystemFA (Fin 4))
   have hDpos : 0 < D := hD ▸ den_prod_pos P
   have hdvd : ∀ wc, List.Mem wc P → wc.weight.den ∣ D := by
     intro wc hwc
-    rw [hD]
-    exact List.dvd_prod (by simp only [List.mem_map]; exact ⟨wc, hwc, rfl⟩)
+    rw [hD]; exact List.dvd_prod (by simp only [List.mem_map]; exact ⟨wc, hwc, rfl⟩)
   set mult : WComparison 4 → ℕ :=
     fun wc => (wc.weight.num * (D / wc.weight.den : ℕ)).toNat with hmult
   have hcast : ∀ wc, List.Mem wc P → ((mult wc : ℤ) : ℚ) = wc.weight * (D : ℚ) := by
@@ -688,18 +545,11 @@ private theorem exists_balanced_list (sys : EpistemicSystemFA (Fin 4))
     have hdk : D / wc.weight.den = k := by
       rw [hk]; exact Nat.mul_div_cancel_left k wc.weight.den_pos
     have hnumpos : 0 < wc.weight.num := Rat.num_pos.mpr wc.weight_pos
-    have hkpos : 0 < k := by
-      rcases Nat.eq_zero_or_pos k with h0 | h
-      · rw [h0, Nat.mul_zero] at hk; omega
-      · exact h
-    have hmz : 0 ≤ wc.weight.num * (D / wc.weight.den : ℕ) := by
-      rw [hdk]; positivity
-    rw [hmult]
-    simp only
-    rw [Int.toNat_of_nonneg hmz, hdk]
-    push_cast
-    rw [hk]
-    push_cast
+    have hkpos : 0 < k := Nat.pos_of_ne_zero (by rintro rfl; rw [Nat.mul_zero] at hk; omega)
+    have hmz : 0 ≤ wc.weight.num * (D / wc.weight.den : ℕ) := by rw [hdk]; positivity
+    rw [hmult]; simp only
+    rw [Int.toNat_of_nonneg hmz, hdk]; push_cast
+    rw [hk]; push_cast
     rw [← mul_assoc, weight_mul_den]
   have hmultpos : ∀ wc, List.Mem wc P → 1 ≤ mult wc := by
     intro wc hwc
@@ -707,13 +557,8 @@ private theorem exists_balanced_list (sys : EpistemicSystemFA (Fin 4))
     have hdk : D / wc.weight.den = k := by
       rw [hk]; exact Nat.mul_div_cancel_left k wc.weight.den_pos
     have hnumpos : 0 < wc.weight.num := Rat.num_pos.mpr wc.weight_pos
-    have hkpos : 0 < k := by
-      rcases Nat.eq_zero_or_pos k with h0 | h
-      · rw [h0, Nat.mul_zero] at hk; omega
-      · exact h
-    rw [hmult]
-    simp only
-    rw [hdk]
+    have hkpos : 0 < k := Nat.pos_of_ne_zero (by rintro rfl; rw [Nat.mul_zero] at hk; omega)
+    rw [hmult]; simp only; rw [hdk]
     have hp : 0 < wc.weight.num * (k : ℤ) := by positivity
     omega
   set Lfull : List (Finset (Fin 4) × Finset (Fin 4)) :=
@@ -724,43 +569,30 @@ private theorem exists_balanced_list (sys : EpistemicSystemFA (Fin 4))
     obtain ⟨wc, hwc, hc⟩ := hc
     exact ⟨wc, hwc, List.eq_of_mem_replicate hc⟩
   have hLdisj : ∀ c ∈ Lfull, Disjoint c.1 c.2 := by
-    intro c hc
-    obtain ⟨wc, _, rfl⟩ := hmemLfull c hc
-    exact wc.disjoint
+    intro c hc; obtain ⟨wc, _, rfl⟩ := hmemLfull c hc; exact wc.disjoint
   have hLvalid : ∀ c ∈ Lfull, sys.ge ↑c.1 ↑c.2 := by
-    intro c hc
-    obtain ⟨wc, hwc, rfl⟩ := hmemLfull c hc
-    exact hvalid wc hwc
+    intro c hc; obtain ⟨wc, hwc, rfl⟩ := hmemLfull c hc; exact hvalid wc hwc
   have hLsum : ∀ i, cvSumList Lfull i = 0 := by
     intro i
     have hstep : cvSumList Lfull i =
         (P.map (fun wc => (mult wc : ℤ) * cmpVec (wc.left, wc.right) i)).sum := by
       rw [hLfull, cvSumList_flatMap]
-      congr 1
-      apply List.map_congr_left
-      intro wc _
-      rw [cvSumList_replicate]
+      exact congrArg _ (List.map_congr_left fun wc _ => cvSumList_replicate _ _ _)
     have hzero : ((cvSumList Lfull i : ℤ) : ℚ) = 0 := by
       rw [hstep, cleared_sum_eq P i D mult hcast, hneutral i, mul_zero]
     exact_mod_cast hzero
   have hsLfull : (s.left, s.right) ∈ Lfull := by
     rw [hLfull, List.mem_flatMap]
     exact ⟨s, hsmem, List.mem_replicate.mpr ⟨by have := hmultpos s hsmem; omega, rfl⟩⟩
-  refine ⟨Lfull.erase (s.left, s.right), ?_, ?_, ?_⟩
-  · intro c hc
-    exact hLdisj c (List.mem_of_mem_erase hc)
-  · intro c hc
-    exact hLvalid c (List.mem_of_mem_erase hc)
-  · intro i
-    have hperm := List.perm_cons_erase hsLfull
-    have h1 : cvSumList Lfull i
-        = cmpVec (s.left, s.right) i + cvSumList (Lfull.erase (s.left, s.right)) i := by
-      rw [cvSumList_perm hperm i, cvSumList_cons]
-    have h2 : cvSumList (Lfull.erase (s.left, s.right)) i = - cmpVec (s.left, s.right) i := by
-      have := hLsum i; omega
-    rw [h2]
-    simp only [cmpVec]
-    split_ifs <;> omega
+  refine ⟨Lfull.erase (s.left, s.right), fun c hc => hLdisj c (List.mem_of_mem_erase hc),
+    fun c hc => hLvalid c (List.mem_of_mem_erase hc), fun i => ?_⟩
+  have hperm := List.perm_cons_erase hsLfull
+  have h1 : cvSumList Lfull i
+      = cmpVec (s.left, s.right) i + cvSumList (Lfull.erase (s.left, s.right)) i := by
+    rw [cvSumList_perm hperm i, cvSumList_cons]
+  have h2 : cvSumList (Lfull.erase (s.left, s.right)) i = - cmpVec (s.left, s.right) i := by
+    have := hLsum i; omega
+  rw [h2]; simp only [cmpVec]; split_ifs <;> omega
 
 /-- **No-null case** of Theorem 8a (Fin 4): when no atom is null, every valid neutral
     portfolio is non-strict, via the merge reduction `merge_to_single`. -/
@@ -773,43 +605,217 @@ theorem no_null_cancellation (sys : EpistemicSystemFA (Fin 4))
   obtain ⟨R, hRdisj, hRvalid, hRsum⟩ := exists_balanced_list sys P hvalid hneutral s hsmem
   exact merge_to_single sys hnull R hRdisj hRvalid s.right s.left s.disjoint.symm hRsum
 
+/-! ### Fin 3 via lexicographic extension
+
+A `Fin 3` system with no null atoms extends to a `Fin 4` system by adding a
+*dominant* fourth world: comparisons are decided first by membership of the
+new world, then by the restriction to the original three.  The extension
+preserves the FA axioms and the absence of null atoms, and reflects
+cancellation, so `no_null_cancellation` discharges the no-null case of
+`fa_cancellation_fin3`; null atoms reduce to `representable_fin2`.  Theorem 8a
+for `Fin 3` then *follows from* cancellation — replacing the former
+measure-by-measure case analysis. -/
+
+/-- Restriction of a `Fin 4` proposition to the first three worlds. -/
+private def restrict3 (A : Set (Fin 4)) : Set (Fin 3) := {i | Fin.castSucc i ∈ A}
+
+/-- Lexicographic extension: the new world `Fin.last 3` dominates; ties break
+    by the restriction. -/
+def extendFA (sys : EpistemicSystemFA (Fin 3)) : EpistemicSystemFA (Fin 4) where
+  ge A B := (Fin.last 3 ∈ A ∧ Fin.last 3 ∉ B) ∨
+    ((Fin.last 3 ∈ A ↔ Fin.last 3 ∈ B) ∧ sys.ge (restrict3 A) (restrict3 B))
+  refl _ := Or.inr ⟨Iff.rfl, sys.refl _⟩
+  mono A B hAB := by
+    by_cases hb : Fin.last 3 ∈ B
+    · by_cases ha : Fin.last 3 ∈ A
+      · exact Or.inr ⟨iff_of_true hb ha, sys.mono _ _ fun i hi => hAB hi⟩
+      · exact Or.inl ⟨hb, ha⟩
+    · exact Or.inr ⟨iff_of_false hb fun h => hb (hAB h), sys.mono _ _ fun i hi => hAB hi⟩
+  bottom := Or.inl ⟨trivial, fun h => h⟩
+  nonTrivial := by
+    rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
+    · exact h3
+    · exact hiff.mpr trivial
+  total A B := by
+    by_cases ha : Fin.last 3 ∈ A <;> by_cases hb : Fin.last 3 ∈ B
+    · rcases sys.total (restrict3 A) (restrict3 B) with h | h
+      · exact Or.inl (Or.inr ⟨iff_of_true ha hb, h⟩)
+      · exact Or.inr (Or.inr ⟨iff_of_true hb ha, h⟩)
+    · exact Or.inl (Or.inl ⟨ha, hb⟩)
+    · exact Or.inr (Or.inl ⟨hb, ha⟩)
+    · rcases sys.total (restrict3 A) (restrict3 B) with h | h
+      · exact Or.inl (Or.inr ⟨iff_of_false ha hb, h⟩)
+      · exact Or.inr (Or.inr ⟨iff_of_false hb ha, h⟩)
+  trans A B C := by
+    rintro (⟨ha, hnb⟩ | ⟨hab, hge1⟩) (⟨hb, hnc⟩ | ⟨hbc, hge2⟩)
+    · exact absurd hb hnb
+    · exact Or.inl ⟨ha, fun hc => hnb (hbc.mpr hc)⟩
+    · exact Or.inl ⟨hab.mpr hb, hnc⟩
+    · exact Or.inr ⟨hab.trans hbc, sys.trans _ _ _ hge1 hge2⟩
+  additive A B := by
+    by_cases ha : Fin.last 3 ∈ A <;> by_cases hb : Fin.last 3 ∈ B
+    · -- tie on both sides; restriction additivity carries it
+      have hab : Fin.last 3 ∉ A \ B := fun h => h.2 hb
+      have hba : Fin.last 3 ∉ B \ A := fun h => h.2 ha
+      constructor
+      · rintro (⟨-, hnb⟩ | ⟨-, hge⟩)
+        · exact absurd hb hnb
+        · exact Or.inr ⟨iff_of_false hab hba, (sys.additive _ _).mp hge⟩
+      · rintro (⟨h3, -⟩ | ⟨-, hge⟩)
+        · exact absurd h3 hab
+        · exact Or.inr ⟨iff_of_true ha hb, (sys.additive _ _).mpr hge⟩
+    · -- the new world sits in `A \ B`: both sides true by dominance
+      exact iff_of_true (Or.inl ⟨ha, hb⟩) (Or.inl ⟨⟨ha, hb⟩, fun h => hb h.1⟩)
+    · -- the new world sits in `B \ A`: both sides false
+      refine iff_of_false ?_ ?_
+      · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
+        · exact ha h3
+        · exact ha (hiff.mpr hb)
+      · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
+        · exact ha h3.1
+        · exact ha (hiff.mpr ⟨hb, ha⟩).1
+    · -- the new world is absent everywhere; restriction additivity again
+      have hab : Fin.last 3 ∉ A \ B := fun h => ha h.1
+      have hba : Fin.last 3 ∉ B \ A := fun h => hb h.1
+      constructor
+      · rintro (⟨h3, -⟩ | ⟨-, hge⟩)
+        · exact absurd h3 ha
+        · exact Or.inr ⟨iff_of_false hab hba, (sys.additive _ _).mp hge⟩
+      · rintro (⟨h3, -⟩ | ⟨-, hge⟩)
+        · exact absurd h3 hab
+        · exact Or.inr ⟨iff_of_false ha hb, (sys.additive _ _).mpr hge⟩
+
+/-- The extension preserves the absence of null atoms. -/
+private lemma extendFA_no_null (sys : EpistemicSystemFA (Fin 3))
+    (hnull : ∀ i : Fin 3, ¬sys.ge ∅ {i}) :
+    ∀ j : Fin 4, ¬(extendFA sys).ge ∅ {j} := by
+  refine Fin.lastCases ?_ ?_
+  · rintro (⟨h3, -⟩ | ⟨hiff, -⟩)
+    · exact h3
+    · exact hiff.mpr rfl
+  · intro i
+    rintro (⟨h3, -⟩ | ⟨-, hge⟩)
+    · exact h3
+    · refine hnull i ?_
+      have he : restrict3 {Fin.castSucc i} = {i} := by
+        ext k; simp [restrict3, Fin.castSucc_inj, eq_comm]
+      rwa [show restrict3 ∅ = ∅ from rfl, he] at hge
+
+/-- The new world never lies in an embedded finset. -/
+private lemma last_notMem_map (s : Finset (Fin 3)) :
+    Fin.last 3 ∉ s.map Fin.castSuccEmb := by
+  rw [Finset.mem_map]; rintro ⟨i, -, hi⟩; exact absurd hi (Fin.castSucc_lt_last i).ne
+
+/-- Embedded finsets restrict back to themselves. -/
+private lemma restrict3_coe_map (s : Finset (Fin 3)) :
+    restrict3 ↑(s.map Fin.castSuccEmb) = ↑s := by
+  ext i
+  show Fin.castSuccEmb i ∈ ↑(s.map Fin.castSuccEmb) ↔ _
+  rw [Finset.mem_coe, Finset.mem_map']
+
+/-- Embed a `Fin 3` comparison into `Fin 4` along `Fin.castSucc`. -/
+private def embedComparison (wc : WComparison 3) : WComparison 4 where
+  left := wc.left.map Fin.castSuccEmb
+  right := wc.right.map Fin.castSuccEmb
+  weight := wc.weight
+  disjoint := by rw [Finset.disjoint_map]; exact wc.disjoint
+  weight_pos := wc.weight_pos
+
+private lemma comparisonVec_map_last (A B : Finset (Fin 3)) :
+    comparisonVec 4 (A.map Fin.castSuccEmb) (B.map Fin.castSuccEmb) (Fin.last 3) = 0 := by
+  unfold comparisonVec
+  rw [if_neg (last_notMem_map A), if_neg (last_notMem_map B), sub_zero]
+
+private lemma comparisonVec_map_castSucc (A B : Finset (Fin 3)) (i : Fin 3) :
+    comparisonVec 4 (A.map Fin.castSuccEmb) (B.map Fin.castSuccEmb) i.castSucc =
+      comparisonVec 3 A B i := by
+  show ((if Fin.castSuccEmb i ∈ A.map Fin.castSuccEmb then 1 else 0) -
+      (if Fin.castSuccEmb i ∈ B.map Fin.castSuccEmb then 1 else 0) : ℤ) =
+    comparisonVec 3 A B i
+  simp only [Finset.mem_map']; rfl
+
+/-- Cancellation transfers back along the lexicographic extension. -/
+private theorem cancellation_extendFA (sys : EpistemicSystemFA (Fin 3))
+    (h : Cancellation 4 (extendFA sys).ge) : Cancellation 3 sys.ge := by
+  intro P hvalid hneutral hstrict
+  refine h (P.map embedComparison) ?_ ?_ ?_
+  · -- validity transfers through the restriction
+    intro wc' hmem
+    obtain ⟨wc, hwcP, rfl⟩ := List.mem_map.mp hmem
+    have hL : (embedComparison wc).left = wc.left.map Fin.castSuccEmb := rfl
+    have hR : (embedComparison wc).right = wc.right.map Fin.castSuccEmb := rfl
+    refine Or.inr ⟨iff_of_false ?_ ?_, ?_⟩
+    · rw [hL]; exact fun h3 => last_notMem_map _ (Finset.mem_coe.mp h3)
+    · rw [hR]; exact fun h3 => last_notMem_map _ (Finset.mem_coe.mp h3)
+    · rw [hL, hR, restrict3_coe_map, restrict3_coe_map]; exact hvalid wc hwcP
+  · -- neutrality: the new coordinate vanishes; the old ones are unchanged
+    refine Fin.lastCases ?_ ?_
+    · simp only [Portfolio.weightedSum, List.map_map]
+      apply List.sum_eq_zero
+      intro x hx
+      obtain ⟨wc, -, rfl⟩ := List.mem_map.mp hx
+      show (embedComparison wc).weight *
+        ((comparisonVec 4 (embedComparison wc).left (embedComparison wc).right
+          (Fin.last 3) : ℤ) : ℚ) = 0
+      rw [show (embedComparison wc).left = wc.left.map Fin.castSuccEmb from rfl,
+        show (embedComparison wc).right = wc.right.map Fin.castSuccEmb from rfl,
+        comparisonVec_map_last]
+      simp
+    · intro i
+      have he : Portfolio.weightedSum (P.map embedComparison) i.castSucc =
+          P.weightedSum i := by
+        simp only [Portfolio.weightedSum, List.map_map]
+        refine congrArg _ (List.map_congr_left fun wc _ => ?_)
+        show (embedComparison wc).weight *
+            ((comparisonVec 4 (embedComparison wc).left (embedComparison wc).right
+              i.castSucc : ℤ) : ℚ) =
+          wc.weight * ((comparisonVec 3 wc.left wc.right i : ℤ) : ℚ)
+        rw [show (embedComparison wc).left = wc.left.map Fin.castSuccEmb from rfl,
+          show (embedComparison wc).right = wc.right.map Fin.castSuccEmb from rfl,
+          comparisonVec_map_castSucc,
+          show (embedComparison wc).weight = wc.weight from rfl]
+      rw [he]; exact hneutral i
+  · -- strictness transfers
+    obtain ⟨wc, hwcP, hstr⟩ := hstrict
+    refine ⟨embedComparison wc, List.mem_map.mpr ⟨wc, hwcP, rfl⟩, fun hge => hstr ?_⟩
+    have hL : (embedComparison wc).left = wc.left.map Fin.castSuccEmb := rfl
+    have hR : (embedComparison wc).right = wc.right.map Fin.castSuccEmb := rfl
+    rcases hge with ⟨h3, -⟩ | ⟨-, hge⟩
+    · rw [hR] at h3; exact absurd (Finset.mem_coe.mp h3) (last_notMem_map _)
+    · rwa [hL, hR, restrict3_coe_map, restrict3_coe_map] at hge
+
+/-- **Cancellation for Fin 3**, structurally: a null atom reduces to `Fin 2`
+    representability; the no-null case extends lexicographically into `Fin 4`
+    and pulls back through `no_null_cancellation`. -/
+theorem fa_cancellation_fin3 (sys : EpistemicSystemFA (Fin 3)) :
+    Cancellation 3 sys.ge := by
+  by_cases h : ∃ j, sys.ge ∅ {j}
+  · obtain ⟨j, hj⟩ := h
+    exact cancellation_of_null_atom sys hj representable_fin2
+  · push_neg at h
+    exact cancellation_extendFA sys
+      (no_null_cancellation (extendFA sys) (extendFA_no_null sys h))
+
+/-- **Theorem 8a for Fin 3**: every FA system on three elements is representable —
+    now *derived from* Scott cancellation, replacing the former measure-by-measure
+    case analysis. -/
+theorem representable_fin3 (sys : EpistemicSystemFA (Fin 3)) : Representable sys :=
+  cancellation_implies_representable sys (fa_cancellation_fin3 sys)
+
 /-- **Theorem 8a (Fin 4), structural**: every FA system on `Fin 4` satisfies
-    cancellation. Null cases reduce to `Fin 3` (existing `null_elem_reduce` machinery);
-    the no-null case is the merge reduction `no_null_cancellation`. Replaces the
-    88-chamber `fa_cancellation_fin4`. -/
+    cancellation. A null atom reduces to `Fin 3`; the no-null case is the merge
+    reduction `no_null_cancellation`. -/
 theorem fa_cancellation_fin4 (sys : EpistemicSystemFA (Fin 4)) :
     Cancellation 4 sys.ge := by
-  by_cases h0 : sys.ge ∅ {(0 : Fin 4)}
-  · exact fa_cancellation_fin4_null0 sys h0 (by
-      by_contra hall; push_neg at hall
-      exact not_all_null_fin4 sys h0 (hall 0) (hall 1) (hall 2))
-  · by_cases h1 : sys.ge ∅ {(1 : Fin 4)}
-    · obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 1) sys
-        (null_elem_reduce (transportFA (Equiv.swap 0 1) sys)
-          ((perm_null_convert _ _ 0 1 (by decide)).mpr h1)
-          ⟨0, fun h => h0 ((perm_null_convert _ _ 1 0 (by decide)).mp h)⟩
-          (fun sys' => theorem8a_fin3 sys'))
-      exact representable_implies_cancellation sys m hm
-    · by_cases h2 : sys.ge ∅ {(2 : Fin 4)}
-      · obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 2) sys
-          (null_elem_reduce (transportFA (Equiv.swap 0 2) sys)
-            ((perm_null_convert _ _ 0 2 (by decide)).mpr h2)
-            ⟨0, fun h => h1 ((perm_null_convert _ _ 1 1 (by decide)).mp h)⟩
-            (fun sys' => theorem8a_fin3 sys'))
-        exact representable_implies_cancellation sys m hm
-      · by_cases h3 : sys.ge ∅ {(3 : Fin 4)}
-        · obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 3) sys
-            (null_elem_reduce (transportFA (Equiv.swap 0 3) sys)
-              ((perm_null_convert _ _ 0 3 (by decide)).mpr h3)
-              ⟨0, fun h => h1 ((perm_null_convert _ _ 1 1 (by decide)).mp h)⟩
-              (fun sys' => theorem8a_fin3 sys'))
-          exact representable_implies_cancellation sys m hm
-        · exact no_null_cancellation sys (fun i => by fin_cases i <;> assumption)
+  by_cases h : ∃ j, sys.ge ∅ {j}
+  · obtain ⟨j, hj⟩ := h
+    exact cancellation_of_null_atom sys hj representable_fin3
+  · push_neg at h
+    exact no_null_cancellation sys h
 
 /-- **Theorem 8a for Fin 4**: every FA system on 4 elements is representable.
     Via Scott cancellation — see `Cancellation.lean` for the framework. -/
-theorem theorem8a_fin4 (sys : EpistemicSystemFA (Fin 4)) :
-    ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
+theorem representable_fin4 (sys : EpistemicSystemFA (Fin 4)) : Representable sys :=
   cancellation_implies_representable sys (fa_cancellation_fin4 sys)
 
 end Core.Scale

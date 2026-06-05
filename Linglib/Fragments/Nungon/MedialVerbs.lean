@@ -1,4 +1,4 @@
-import Linglib.Core.UD
+import Linglib.Data.UD.Basic
 
 /-!
 # Nungon Medial Verb Morphology [sarvasy-2017]

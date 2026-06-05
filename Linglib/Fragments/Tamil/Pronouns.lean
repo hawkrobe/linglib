@@ -22,15 +22,15 @@ open Pronoun
 
 /-- *naan* — 1sg. -/
 def naan : PersonalPronoun :=
-  { form := "naan", person := some .first, number := some .sg }
+  { form := "naan", person := some .first, number := some .Sing }
 
 /-- *naam* — 1pl inclusive (speaker + addressee). -/
 def naam : PersonalPronoun :=
-  { form := "naam", person := some .first, number := some .pl, clusivity := some .inclusive }
+  { form := "naam", person := some .first, number := some .Plur, clusivity := some .inclusive }
 
 /-- *naangaL* — 1pl exclusive (speaker + others, not addressee). -/
 def naangaL : PersonalPronoun :=
-  { form := "naangaL", person := some .first, number := some .pl, clusivity := some .exclusive }
+  { form := "naangaL", person := some .first, number := some .Plur, clusivity := some .exclusive }
 
 -- ============================================================================
 -- Second Person (two-level honorific)
@@ -38,11 +38,11 @@ def naangaL : PersonalPronoun :=
 
 /-- *nii* — 2sg non-honorific. -/
 def nii : PersonalPronoun :=
-  { form := "nii", person := some .second, number := some .sg, register := .informal }
+  { form := "nii", person := some .second, number := some .Sing, register := .informal }
 
 /-- *niingaL* — 2sg honorific (also 2pl). -/
 def niingaL : PersonalPronoun :=
-  { form := "niingaL", person := some .second, number := some .sg, register := .formal }
+  { form := "niingaL", person := some .second, number := some .Sing, register := .formal }
 
 -- ============================================================================
 -- Third Person
@@ -50,19 +50,19 @@ def niingaL : PersonalPronoun :=
 
 /-- *avan* — 3sg masculine. -/
 def avan : PersonalPronoun :=
-  { form := "avan", person := some .third, number := some .sg }
+  { form := "avan", person := some .third, number := some .Sing }
 
 /-- *avaL* — 3sg feminine. -/
 def avaL : PersonalPronoun :=
-  { form := "avaL", person := some .third, number := some .sg }
+  { form := "avaL", person := some .third, number := some .Sing }
 
 /-- *avar* — 3sg honorific. -/
 def avar : PersonalPronoun :=
-  { form := "avar", person := some .third, number := some .sg, register := .formal }
+  { form := "avar", person := some .third, number := some .Sing, register := .formal }
 
 /-- *avarkaL* — 3pl (human). -/
 def avarkaL : PersonalPronoun :=
-  { form := "avarkaL", person := some .third, number := some .pl }
+  { form := "avarkaL", person := some .third, number := some .Plur }
 
 -- ============================================================================
 -- Pronoun Lists
@@ -99,12 +99,12 @@ theorem has_all_persons :
 
 /-- Both singular and plural are attested. -/
 theorem has_both_numbers :
-    allPronouns.any (·.number == some .sg) = true ∧
-    allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
+    allPronouns.any (·.number == some .Sing) = true ∧
+    allPronouns.any (·.number == some .Plur) = true := ⟨rfl, rfl⟩
 
 /-- Tamil has inclusive/exclusive distinction in 1pl. -/
 theorem has_incl_excl :
-    (allPronouns.filter (fun p => p.person == some .first && p.number == some .pl)).length = 2 := rfl
+    (allPronouns.filter (fun p => p.person == some .first && p.number == some .Plur)).length = 2 := rfl
 
 /-- 2nd person pronouns are all second person. -/
 theorem second_person_all_2p :

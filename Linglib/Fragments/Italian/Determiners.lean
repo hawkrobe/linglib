@@ -36,21 +36,21 @@ def ogni : ItalianQuantifierEntry :=
   , qforce := .universal
   , monotonicity := .increasing
   , strength := .strong
-  , numberRestriction := some .sg }
+  , numberRestriction := some .Sing }
 
 /-- *qualche* — some (invariant, singular, existential). -/
 def qualche : ItalianQuantifierEntry :=
   { form := "qualche"
   , qforce := .existential
   , monotonicity := .increasing
-  , numberRestriction := some .sg }
+  , numberRestriction := some .Sing }
 
 /-- *nessuno* — no one (masculine, singular, negative concord). -/
 def nessuno : ItalianQuantifierEntry :=
   { form := "nessuno"
   , qforce := .negative
   , monotonicity := .decreasing
-  , numberRestriction := some .sg
+  , numberRestriction := some .Sing
   , gender := some .masculine }
 
 /-- *nessuna* — no one (feminine, singular, negative concord). -/
@@ -58,7 +58,7 @@ def nessuna : ItalianQuantifierEntry :=
   { form := "nessuna"
   , qforce := .negative
   , monotonicity := .decreasing
-  , numberRestriction := some .sg
+  , numberRestriction := some .Sing
   , gender := some .feminine }
 
 /-- *tutti* — all (masculine, plural, universal). -/
@@ -67,7 +67,7 @@ def tutti : ItalianQuantifierEntry :=
   , qforce := .universal
   , monotonicity := .increasing
   , strength := .strong
-  , numberRestriction := some .pl
+  , numberRestriction := some .Plur
   , gender := some .masculine }
 
 /-- *tutte* — all (feminine, plural, universal). -/
@@ -76,7 +76,7 @@ def tutte : ItalianQuantifierEntry :=
   , qforce := .universal
   , monotonicity := .increasing
   , strength := .strong
-  , numberRestriction := some .pl
+  , numberRestriction := some .Plur
   , gender := some .feminine }
 
 /-- *alcuni* — some (masculine, plural, existential). -/
@@ -84,7 +84,7 @@ def alcuni : ItalianQuantifierEntry :=
   { form := "alcuni"
   , qforce := .existential
   , monotonicity := .increasing
-  , numberRestriction := some .pl
+  , numberRestriction := some .Plur
   , gender := some .masculine }
 
 /-- *alcune* — some (feminine, plural, existential). -/
@@ -92,7 +92,7 @@ def alcune : ItalianQuantifierEntry :=
   { form := "alcune"
   , qforce := .existential
   , monotonicity := .increasing
-  , numberRestriction := some .pl
+  , numberRestriction := some .Plur
   , gender := some .feminine }
 
 /-- *molti* — many (masculine, plural, proportional). -/
@@ -100,7 +100,7 @@ def molti : ItalianQuantifierEntry :=
   { form := "molti"
   , qforce := .proportional
   , monotonicity := .increasing
-  , numberRestriction := some .pl
+  , numberRestriction := some .Plur
   , gender := some .masculine }
 
 /-- *molte* — many (feminine, plural, proportional). -/
@@ -108,7 +108,7 @@ def molte : ItalianQuantifierEntry :=
   { form := "molte"
   , qforce := .proportional
   , monotonicity := .increasing
-  , numberRestriction := some .pl
+  , numberRestriction := some .Plur
   , gender := some .feminine }
 
 /-- *pochi* — few (masculine, plural, proportional, decreasing). -/
@@ -116,7 +116,7 @@ def pochi : ItalianQuantifierEntry :=
   { form := "pochi"
   , qforce := .proportional
   , monotonicity := .decreasing
-  , numberRestriction := some .pl
+  , numberRestriction := some .Plur
   , gender := some .masculine }
 
 /-- *poche* — few (feminine, plural, proportional, decreasing). -/
@@ -124,7 +124,7 @@ def poche : ItalianQuantifierEntry :=
   { form := "poche"
   , qforce := .proportional
   , monotonicity := .decreasing
-  , numberRestriction := some .pl
+  , numberRestriction := some .Plur
   , gender := some .feminine }
 
 /-- All Italian quantifier entries. -/

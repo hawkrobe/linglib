@@ -2,7 +2,6 @@ import Linglib.Syntax.HPSG.Coreference
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.NominalClassification
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Paradigms.AcceptabilityJudgment
 
@@ -36,7 +35,7 @@ open Phenomena.Anaphora.Coreference
     instance (in scope via `open HPSG.Coreference`) and English's binding-class
     classifier. `Bool`-valued for `capturesPhenomenonData`. -/
 private def grammaticalForCoreference (ws : List Word) : Bool :=
-  decide (Binding.grammaticalForCoreference English.NominalClassification.classifyNominal ws)
+  decide (Binding.grammaticalForCoreference Binding.bindingClassOf ws)
 
 /-- Coverage of a `PhenomenonData` set under HPSG binding. -/
 def capturesCoreferenceData (phenom : PhenomenonData) : Bool :=

@@ -694,7 +694,7 @@ theorem politeness_uses_unmarked :
     -- Plural (number)
     isSemanticUnmarked (PhiFeatures.toPair Features.Number.pluralF) = true ∧
     -- 3rd person
-    isSemanticUnmarked (PhiFeatures.toPair Features.Person.third) = true ∧
+    isSemanticUnmarked (PhiFeatures.toPair Features.Person.thirdF) = true ∧
     -- Masculine (gender)
     isSemanticUnmarked (PhiFeatures.toPair Features.Gender.masculineF) = true :=
   ⟨rfl, rfl, rfl⟩
@@ -704,7 +704,7 @@ theorem politeness_uses_unmarked :
     restrictions on the addressee. -/
 theorem marked_not_polite :
     isSemanticMarked (PhiFeatures.toPair Features.Number.singularF) = true ∧
-    isSemanticMarked (PhiFeatures.toPair Features.Person.first) = true ∧
+    isSemanticMarked (PhiFeatures.toPair Features.Person.firstF) = true ∧
     isSemanticMarked (PhiFeatures.toPair Features.Gender.neuterF) = true :=
   ⟨rfl, rfl, rfl⟩
 

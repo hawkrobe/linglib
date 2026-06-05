@@ -1,5 +1,6 @@
 import Linglib.Data.WALS.Features.F85A
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
+import Linglib.Typology.WordOrder
 
 /-!
 # Adposition typology: shared substrate type

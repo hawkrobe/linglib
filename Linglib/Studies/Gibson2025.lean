@@ -1,6 +1,8 @@
 import Linglib.Syntax.DependencyGrammar.Formal.HarmonicOrder
 import Linglib.Data.WALS.Features.F95A
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
+import Linglib.Typology.WordOrder
+import Linglib.Morphology.Word
 
 /-!
 # Gibson 2025: DLM and the Head-Direction Generalization

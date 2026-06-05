@@ -16,24 +16,24 @@ A lens into the nature of anticausative SE" (*Glossa* 11(1)).
 ## Main declarations
 
 * `Judgment`, `CliticPattern`, `DativeCliticPerson` — empirical data types
-* `spanishFissionRule` — instantiation of the generic Fission framework
-  (`Morphology.DM.Fission`) with Chilean-Spanish-specific data
+* `spanishFissionRule` — instantiation of the generic
+  `Morphology.DM.FissionRule` with Chilean-Spanish-specific data
 * `voice_semantically_vacuous` — re-export of
   `Minimalist.nonThematic_no_semantics`
 * `three_way_synonymy_from_vacuity`,
   `fission_person_restriction`, `stylLE_requires_inchoative`,
-  `unmarked_blocks_stylLE` — bridge theorems for the paper's five
-  predictions
+  `unmarked_blocks_stylLE` — bridge theorems for the empirical
+  properties of stylistic LE the Fission analysis accounts for
 
 ## Implementation notes
 
 Acceptability follows the project-canonical `Features.Acceptability`
-six-level taxonomy. Paper-internal `*` maps to `.unacceptable`, `??`
-maps to `.marginal`, and the unmarked judgment maps to `.ok`.
+six-level taxonomy. Paper-internal `*` maps to `.unacceptable` and the
+unmarked judgment maps to `.ok`.
 
 ## Key data points
 
-1. **Three-way synonymy** (exx. 7–10): For marked anticausatives with
+1. **Three-way synonymy** (exx. 7–12): For marked anticausatives with
    1SG/2SG dative, three clitic patterns are interchangeable:
    - SE + CL_dat: *se me rompió* "it broke on me"
    - CL_dat + LE: *me le rompió*
@@ -123,6 +123,9 @@ def caer_se_me : Judgment :=
 def caer_me_le : Judgment :=
   { exNumber := "9b", verb := "caer", pattern := .cl_le,
     dativePerson := .first_sg, acceptability := .ok }
+def caer_se_me_le : Judgment :=
+  { exNumber := "9c", verb := "caer", pattern := .se_cl_le,
+    dativePerson := .first_sg, acceptability := .ok }
 
 /-- *morir* "die" with 1SG dative. -/
 def morir_se_me : Judgment :=
@@ -130,6 +133,9 @@ def morir_se_me : Judgment :=
     dativePerson := .first_sg, acceptability := .ok }
 def morir_me_le : Judgment :=
   { exNumber := "10b", verb := "morir", pattern := .cl_le,
+    dativePerson := .first_sg, acceptability := .ok }
+def morir_se_me_le : Judgment :=
+  { exNumber := "10c", verb := "morir", pattern := .se_cl_le,
     dativePerson := .first_sg, acceptability := .ok }
 
 /-! ### Negative controls (exx. 13b, 14b)
@@ -238,7 +244,7 @@ theorem negative_controls_unacceptable :
 /-! ### Spanish Fission instantiation -/
 
 open Minimalist
-open Morphology.DM.Fission
+open Morphology.DM
 open Spanish.PersonFeatures
 open Spanish.Predicates
 open Spanish.Clitics
@@ -257,40 +263,41 @@ structure FissionOutput where
 /-- The stylistic applicative Fission rule for Chilean Spanish
     ([munoz-perez-2026] rule 55).
 
-    Instantiates the generic Fission framework
-    (`Morphology.DM.Fission`) with Spanish-specific data:
+    Instantiates the generic `Morphology.DM.FissionRule` with
+    Spanish-specific data:
     - Context: inchoative verbal-head sequence (vGO ⌒ vBE)
-    - Person: [+PART, +SING] (1SG or 2SG)
+    - Bundle: [+PART, +SING] person (1SG or 2SG)
     - Realization: Cl₁ = me/te (from [±AUTHOR]), Cl₂ = le (invariable) -/
 def spanishFissionRule : FissionRule Category (List VerbHead) FissionOutput where
   contextOk := fun heads => isInchoative heads = true
   decContext := fun heads => inferInstanceAs (Decidable (isInchoative heads = true))
-  personOk := IsFissionApplicable
-  decPerson := inferInstance
+  bundleOk := IsFissionApplicable
+  decBundle := inferInstance
   realize := fun p => {
     cl1Form := if p.toFeatures.hasAuthor then "me" else "te"
     cl2Form := "le"
   }
 
-/-- Muñoz [munoz-perez-2026]: Non-thematic Voice must be overtly
-    marked by a reflexive-like element at PF. The Fission rule licenses
-    only 1SG/2SG (`me`/`te`); the 1PL form `nos` is correctly excluded
-    because Fission does not apply to plurals. -/
-def spanishAnticausativePF : PFMarkingCondition FissionOutput where
-  satisfied := fun out => out.cl1Form = "me" ∨ out.cl1Form = "te" ∨ out.cl1Form = "se"
-  decSatisfied := fun _ => inferInstance
+/-- [munoz-perez-2026]'s PF condition (rule 58): the non-thematic
+    VoiceP projection must be overtly marked on the verb by a
+    *reflexive clitic*. `se` is the directly-merged reflexive; `me`/`te`
+    count because they are DAT-REFL syncretic (the paper's table 59)
+    and syncretic elements are indistinguishable for PF purposes.
+    (1PL `nos` is also syncretic but is filtered upstream: Fission
+    requires [+SING], so `nos le` is never generated.) -/
+def AnticausativePF (out : FissionOutput) : Prop :=
+  out.cl1Form = "me" ∨ out.cl1Form = "te" ∨ out.cl1Form = "se"
+
+instance : DecidablePred AnticausativePF := fun out =>
+  inferInstanceAs
+    (Decidable (out.cl1Form = "me" ∨ out.cl1Form = "te" ∨ out.cl1Form = "se"))
 
 /-- Apply the Spanish stylistic applicative Fission rule. -/
 def applySpanishFission (p : Category) (heads : List VerbHead) :
     Option FissionOutput :=
-  applyFission spanishFissionRule p heads
+  spanishFissionRule.apply p heads
 
-/-- Check whether the Spanish Fission output satisfies the anticausative
-    PF marking condition, making overt SE optional. -/
-def spanishFissionSatisfiesPF (p : Category) (heads : List VerbHead) : Bool :=
-  fissionSatisfiesPF spanishFissionRule spanishAnticausativePF p heads
-
-/-! ### Person restriction (Prediction 1) -/
+/-! ### Person restriction (paper §3.1) -/
 
 /-- Fission applies only to 1SG and 2SG.
     DERIVED from [+PARTICIPANT, +SINGULAR] feature condition. -/
@@ -315,7 +322,7 @@ theorem person_restriction_matches_data :
     person_3sg.acceptability = .unacceptable := by
   refine ⟨?_, rfl, ?_, rfl, ?_, rfl⟩ <;> decide
 
-/-! ### Inchoative requirement (Prediction 2) -/
+/-! ### Inchoative requirement (the context of rule 55) -/
 
 /-- Stylistic LE requires inchoative context (vGO ∧ vBE).
     DERIVED from Fission's structural context condition. -/
@@ -331,7 +338,7 @@ theorem stylLE_verbs_inchoative :
     (Spanish.Predicates.munozVerbs.filter (·.licensesStylLE)).all
       (fun v => isInchoative v.verbHead) = true := by decide
 
-/-! ### Marking restriction (Prediction 3) -/
+/-! ### Marking restriction -/
 
 /-- Unmarked anticausatives block stylistic LE.
     DERIVED from the verb fragment: mejorar is unmarked and blocks LE. -/
@@ -355,15 +362,19 @@ theorem blocking_verbs_all_unmarked :
     (Spanish.Predicates.munozVerbs.filter (!·.licensesStylLE)).all
       (fun v => v.anticausativeMarking == .unmarked) = true := by decide
 
-/-! ### SE-optionality (Prediction 4) -/
+/-! ### SE-optionality (the PF condition, rule 58) -/
 
 /-- When Fission applies, the output clitic satisfies the PF
     marking condition (syncretic with reflexive), making SE optional. -/
 theorem se_optional_1sg :
-    spanishFissionSatisfiesPF .s1 [.vCAUSE, .vGO, .vBE] = true := by decide
+    ∃ out, applySpanishFission .s1 [.vCAUSE, .vGO, .vBE] = some out ∧
+      AnticausativePF out :=
+  ⟨{ cl1Form := "me", cl2Form := "le" }, by decide, by decide⟩
 
 theorem se_optional_2sg :
-    spanishFissionSatisfiesPF .s2 [.vCAUSE, .vGO, .vBE] = true := by decide
+    ∃ out, applySpanishFission .s2 [.vCAUSE, .vGO, .vBE] = some out ∧
+      AnticausativePF out :=
+  ⟨{ cl1Form := "te", cl2Form := "le" }, by decide, by decide⟩
 
 /-- The DAT-REFL syncretism that enables SE-optionality is present
     for exactly the persons where Fission applies. -/
@@ -372,7 +383,7 @@ theorem syncretism_aligns_with_fission :
     datReflSyncretic .second .Sing = true ∧
     datReflSyncretic .third .Sing = false := ⟨rfl, rfl, rfl⟩
 
-/-! ### Three-way synonymy (Prediction 5) -/
+/-! ### Three-way synonymy -/
 
 /-- Re-export of `Minimalist.nonThematic_no_semantics` in the Muñoz-Pérez
     frame. SE is purely a PF marker — its presence or absence is
@@ -381,8 +392,9 @@ theorem voice_semantically_vacuous :
     ¬ Minimalist.voiceAnticausative.HasSemantics :=
   Minimalist.nonThematic_no_semantics
 
-/-- The empirical three-way synonymy follows: since Voice has no
-    semantics, adding or removing SE doesn't change meaning. -/
+/-- The empirical three-way synonymy is consistent with Voice
+    vacuity: the three `.ok` judgments co-hold with the proof that
+    Voice has no semantics (the judgments are data, not derived). -/
 theorem three_way_synonymy_from_vacuity :
     romper_se_me.acceptability = .ok ∧
     romper_me_le.acceptability = .ok ∧
@@ -433,7 +445,10 @@ K-G's reflexivization analysis predicts that every alternating verb
 has SE in its anticausative form (cumulation of A and P spelled out as
 SE). The verb-level predicate `KoontzGarboden2009.kgPredictsSEMarked`
 formalises this chain. *mejorar* "improve" alternates while remaining
-unmarked, falsifying the prediction. -/
+unmarked, falsifying the prediction. The paper's footnote 7 notes that
+[koontz-garboden-2009]'s own implementation restricts reflexivization
+to SE-marked anticausatives, so the *mejorar* argument bites most
+directly against the null-reflexive extension ([chierchia-2004]). -/
 
 /-- Refutation of [koontz-garboden-2009]: *mejorar* alternates but
     is unmarked (no SE), against K-G's prediction that reflexivization

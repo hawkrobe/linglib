@@ -4,9 +4,10 @@ import Linglib.Features.Case
 # Caha Containment Order on Case
 [caha-2009] [mcfadden-2018]
 
-The canonical order on `Features.Case`: state-of-the-art syntax
-(configurational case + nanosyntactic spellout) assumes Caha's
-containment as the default. Each case on the hierarchy literally
+Caha's containment order on `Features.Case`, as a **scoped** instance
+(`open scoped Syntax.Case.Caha` to use `≤`): theoretical orders are borne
+by features as opt-in commitments, not as global instances on the UD
+annotation enums — the annotation substrate default is order-free. Each case on the hierarchy literally
 *contains* the representations of all cases below it:
 
     [[[[[ NOM ] ACC ] GEN ] DAT ] LOC ]
@@ -17,8 +18,8 @@ That silence is the theoretical content: Caha's hierarchy is silent on
 those cases, and the `PartialOrder` structure preserves the silence.
 
 Other orders (Blake's typological frequency in `Features/Case.lean`,
-per-language syncretism graphs) live as named `def`s used locally via
-`letI` rather than as competing instances on `Case`.
+per-language syncretism graphs) likewise live as named `def`s or scoped
+instances rather than competing global instances on `Case`.
 -/
 
 open Features (Case)
@@ -109,12 +110,7 @@ def cahaLE (c₁ c₂ : Case) : Prop := c₁ = c₂ ∨ cahaLT c₁ c₂
 instance : DecidableRel cahaLE := fun _ _ =>
   inferInstanceAs (Decidable (_ ∨ _))
 
-instance : LE Case := ⟨cahaLE⟩
-
-instance (c₁ c₂ : Case) : Decidable (c₁ ≤ c₂) :=
-  inferInstanceAs (Decidable (cahaLE c₁ c₂))
-
-theorem cahaLE_refl (c : Case) : c ≤ c := Or.inl rfl
+theorem cahaLE_refl (c : Case) : cahaLE c c := Or.inl rfl
 
 theorem cahaLT_trans {a b c : Case} : cahaLT a b → cahaLT b c → cahaLT a c := by
   unfold cahaLT
@@ -122,7 +118,7 @@ theorem cahaLT_trans {a b c : Case} : cahaLT a b → cahaLT b c → cahaLT a c :
     cases hc : containmentRank c <;> simp_all
   exact lt_trans
 
-theorem cahaLE_trans (a b c : Case) : a ≤ b → b ≤ c → a ≤ c := by
+theorem cahaLE_trans (a b c : Case) : cahaLE a b → cahaLE b c → cahaLE a c := by
   intro hab hbc
   rcases hab with rfl | hab
   · exact hbc
@@ -130,7 +126,7 @@ theorem cahaLE_trans (a b c : Case) : a ≤ b → b ≤ c → a ≤ c := by
   · exact Or.inr hab
   exact Or.inr (cahaLT_trans hab hbc)
 
-theorem cahaLE_antisymm (a b : Case) : a ≤ b → b ≤ a → a = b := by
+theorem cahaLE_antisymm (a b : Case) : cahaLE a b → cahaLE b a → a = b := by
   intro hab hba
   rcases hab with rfl | hab
   · rfl
@@ -141,12 +137,31 @@ theorem cahaLE_antisymm (a b : Case) : a ≤ b → b ≤ a → a = b := by
     unfold cahaLT
     cases ha : containmentRank a <;> simp_all)
 
-instance : Preorder Case where
+/-! ### The Caha order as scoped instances
+
+A feature bears its theoretical order as an opt-in commitment
+(`open scoped Syntax.Case.Caha`), never as a global instance on the
+annotation enum. -/
+
+namespace Caha
+
+scoped instance instLECaha : LE Case := ⟨cahaLE⟩
+
+scoped instance (c₁ c₂ : Case) : Decidable (c₁ ≤ c₂) :=
+  inferInstanceAs (Decidable (cahaLE c₁ c₂))
+
+scoped instance instPreorderCaha : Preorder Case where
+  toLE := instLECaha
   le_refl := cahaLE_refl
   le_trans _ _ _ := cahaLE_trans _ _ _
 
-instance : PartialOrder Case where
+scoped instance : PartialOrder Case where
+  toPreorder := instPreorderCaha
   le_antisymm _ _ := cahaLE_antisymm _ _
+
+end Caha
+
+open scoped Caha
 
 /-- A case is **nonnominative** iff its representation contains ACC's, i.e.
     `(.acc : Case) ≤ c` in the Caha order. [mcfadden-2018] argues this is

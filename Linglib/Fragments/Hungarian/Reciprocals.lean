@@ -1,6 +1,7 @@
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Semantics.Reference.Reciprocals
 import Linglib.Semantics.Reference.PluralityLicensing
+import Linglib.Features.Number
 
 /-!
 # Hungarian Reciprocal Fragment
@@ -38,6 +39,8 @@ construction types, while reflexives require morphosyntactic plurality
    (I-)reading. [dalrymple-haug-2024] §2.
 -/
 
+open Features (Number)
+
 namespace Hungarian.Reciprocals
 
 open Pronoun
@@ -54,11 +57,11 @@ def egymas : PersonalPronoun :=
     Unlike *egymás*, the reflexive inflects for number:
     *magá-t* (SG.ACC) vs. *maguk-at* (PL.ACC). -/
 def maga : PersonalPronoun :=
-  { form := "maga", person := some .third, number := some .sg }
+  { form := "maga", person := some .third, number := some .Sing }
 
 /-- *maguk* — reflexive pronoun (3PL form). -/
 def maguk : PersonalPronoun :=
-  { form := "maguk", person := some .third, number := some .pl }
+  { form := "maguk", person := some .third, number := some .Plur }
 
 -- ════════════════════════════════════════════════════════════════
 -- Antecedent Constructions ([rakosi-2019] §§3-6)
@@ -87,7 +90,7 @@ def quantifiedNP : AntecedentConfig :=
   { name := "Quantified NP (két/három/néhány + SG noun)"
     syntacticPl := false
     semanticPl := true
-    verbAgr := .sg }
+    verbAgr := .Sing }
 
 /-- §4: Singular coordinate DPs. Two conjoined singular NPs can
     trigger either SG or PL agreement from the left periphery.
@@ -98,7 +101,7 @@ def singularCoordinate : AntecedentConfig :=
   { name := "Singular coordinate DP (X és Y + 3SG verb)"
     syntacticPl := false
     semanticPl := true
-    verbAgr := .sg }
+    verbAgr := .Sing }
 
 /-- §5: Collective nouns. Hungarian collective nouns never trigger
     plural agreement (\*voltak for *személyzet*).
@@ -108,7 +111,7 @@ def collectiveNoun : AntecedentConfig :=
   { name := "Collective noun (személyzet, család, pár)"
     syntacticPl := false
     semanticPl := true
-    verbAgr := .sg }
+    verbAgr := .Sing }
 
 /-- §6: Bound variable antecedent. Embedded pro-dropped SG subject
     bound by matrix coordination. Forces wide-scope (I-)reading.
@@ -118,7 +121,7 @@ def boundVariable : AntecedentConfig :=
   { name := "Bound singular pro-drop (coordination in matrix)"
     syntacticPl := false
     semanticPl := true
-    verbAgr := .sg }
+    verbAgr := .Sing }
 
 /-- Standard plural antecedent (baseline).
     Ex: "A gyerek-ek látták egymás-t a tükörben." -/
@@ -126,7 +129,7 @@ def pluralAntecedent : AntecedentConfig :=
   { name := "Plural NP (standard)"
     syntacticPl := true
     semanticPl := true
-    verbAgr := .pl }
+    verbAgr := .Plur }
 
 /-- All four singular-antecedent constructions from [rakosi-2019]. -/
 def singularConstructions : List AntecedentConfig :=
@@ -175,7 +178,7 @@ theorem egymas_invariable : egymas.number = none := rfl
 
 /-- The reflexive DOES inflect for number. -/
 theorem reflexive_inflects :
-    maga.number = some .sg ∧ maguk.number = some .pl := ⟨rfl, rfl⟩
+    maga.number = some .Sing ∧ maguk.number = some .Plur := ⟨rfl, rfl⟩
 
 /-- When the local antecedent is a singular bound pronoun, only the
     wide-scope (I-)reading is available.

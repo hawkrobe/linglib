@@ -89,6 +89,33 @@ theorem open_scale_unlicensable [NoMaxOrder α] [NoMinOrder α]
   · obtain ⟨y, hy⟩ := NoMaxOrder.exists_gt x
     exact ⟨y, hy, le_trans hx (le_of_lt hy)⟩
 
+/-! ### Order-theoretic boundedness primitives
+
+Whether a scale has a greatest degree, stated *structurally* via mathlib's
+`OrderTop` / `NoMaxOrder` mixins rather than as stored data — the order-theoretic
+facts that telicity and licensing derive from (see `Semantics/Aspect/ScalarTelicity.lean`). -/
+
+/-- "Has a greatest element", as a proposition — usable when an `OrderTop`
+    instance is not in hand (e.g. under a quantifier). -/
+def HasGreatest (β : Type*) [LE β] : Prop := ∃ m : β, ∀ x : β, x ≤ m
+
+theorem hasGreatest_of_orderTop {β : Type*} [LE β] [OrderTop β] : HasGreatest β :=
+  ⟨⊤, fun _ => le_top⟩
+
+theorem not_hasGreatest_of_noMaxOrder {β : Type*} [Preorder β] [NoMaxOrder β] :
+    ¬ HasGreatest β := by
+  rintro ⟨m, hm⟩
+  obtain ⟨c, hc⟩ := exists_gt m
+  exact absurd (hm c) (not_le_of_gt hc)
+
+/-- `OrderTop` and `NoMaxOrder` are mutually exclusive — the rigorous sense in
+    which a scale either has a greatest degree or does not. (Not in Mathlib.) -/
+theorem not_noMaxOrder_of_orderTop {β : Type*} [Preorder β] [OrderTop β] :
+    ¬ NoMaxOrder β := by
+  intro h
+  obtain ⟨c, hc⟩ := h.exists_gt ⊤
+  exact absurd (lt_of_lt_of_le hc le_top) (lt_irrefl ⊤)
+
 -- ════════════════════════════════════════════════════
 -- § 6b. Order-Sensitive MAX ([rett-2026])
 -- ════════════════════════════════════════════════════

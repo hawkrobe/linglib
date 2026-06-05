@@ -1,4 +1,5 @@
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
+import Linglib.Morphology.Word
 
 /-!
 # English Complementizers Lexicon Fragment

@@ -2,7 +2,7 @@ import Linglib.Fragments.English.Tense
 import Linglib.Fragments.Korean.Evidentials
 import Linglib.Fragments.Slavic.Bulgarian.Evidentials
 import Linglib.Semantics.Modality.Kernel
-import Linglib.Core.Epistemicity
+import Linglib.Semantics.Epistemicity
 import Mathlib.Data.Fin.Basic
 
 /-!
@@ -311,7 +311,7 @@ theorem direct_evidence_blocks_both :
 
 -- ── § Epistemic authority bridge ──
 
-open Core.Epistemicity
+open Semantics.Epistemicity
 open Features.Evidentiality
 
 /-- Strong assertions (ego + direct) correspond to settling kernels.

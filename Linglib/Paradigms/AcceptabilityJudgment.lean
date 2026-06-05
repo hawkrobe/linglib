@@ -1,8 +1,9 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.NormNum
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
 import Linglib.Features.ClauseForm
+import Linglib.Morphology.Word
 
 /-!
 # Acceptability Judgment Paradigm

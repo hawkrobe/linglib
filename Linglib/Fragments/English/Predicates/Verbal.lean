@@ -885,7 +885,7 @@ def crack : VerbEntry := .mkRegular {
   unaccusative := true
   vendlerClass := some .achievement
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "cracking",
+    dimension := .cracking,
     baseAdjective := some "cracked" }
   causative := some .make
   levinClass := some .break_ }
@@ -899,7 +899,7 @@ def dent : VerbEntry := .mkRegular {
   unaccusative := true
   vendlerClass := some .achievement
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "denting",
+    dimension := .denting,
     baseAdjective := some "dented" }
   causative := some .make
   levinClass := some .break_ }
@@ -915,7 +915,7 @@ def scratch : VerbEntry := .mkRegular {
   unaccusative := true
   vendlerClass := some .achievement
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "scratching",
+    dimension := .scratching,
     baseAdjective := some "scratched" }
   causative := some .make
   levinClass := some .break_ }
@@ -2219,7 +2219,7 @@ def clean : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "cleanliness",
+    dimension := .cleanliness,
     baseAdjective := some "clean" }
   verbIncClass := some .sinc
   levinClass := some .clear }
@@ -2686,7 +2686,7 @@ def bend : VerbEntry where
   complementType := .np
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "curvature" }
+    dimension := .curvature }
   causative := some .make
   levinClass := some .bend
 
@@ -2697,7 +2697,7 @@ def boil : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "temperature",
+    dimension := .boiling,
     baseAdjective := some "hot" }
   causative := some .make
   levinClass := some .cooking }
@@ -2711,7 +2711,7 @@ def rust : VerbEntry := .mkRegular {
   unaccusative := true
   vendlerClass := some .activity
   degreeAchievementScale := some {
-    scaleBoundedness := .open_, dimension := "corrosion" }
+    dimension := .corrosion }
   levinClass := some .entitySpecificCoS }
 
 /-- "increase" — Levin 45.6 Calibratable CoS verbs (degree achievements).
@@ -2721,7 +2721,7 @@ def increase : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .activity
   degreeAchievementScale := some {
-    scaleBoundedness := .open_, dimension := "quantity" }
+    dimension := .quantity }
   levinClass := some .calibratableCoS }
 
 -- ════════════════════════════════════════════════════
@@ -2735,7 +2735,7 @@ def straighten : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "straightness",
+    dimension := .straightness,
     baseAdjective := some "straight" }
   levinClass := some .otherCoS }
 
@@ -2746,7 +2746,7 @@ def flatten : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "flatness",
+    dimension := .flatness,
     baseAdjective := some "flat" }
   levinClass := some .otherCoS }
 
@@ -2757,7 +2757,7 @@ def open_ : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
-    scaleBoundedness := .closed, dimension := "openness",
+    dimension := .openness,
     baseAdjective := some "open" }
   levinClass := some .otherCoS }
 
@@ -2768,7 +2768,7 @@ def lengthen : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .activity
   degreeAchievementScale := some {
-    scaleBoundedness := .open_, dimension := "length",
+    dimension := .length,
     baseAdjective := some "long" }
   levinClass := some .calibratableCoS }
 
@@ -2779,7 +2779,7 @@ def widen : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .activity
   degreeAchievementScale := some {
-    scaleBoundedness := .open_, dimension := "width",
+    dimension := .width,
     baseAdjective := some "wide" }
   levinClass := some .calibratableCoS }
 
@@ -2790,7 +2790,7 @@ def cool : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .activity
   degreeAchievementScale := some {
-    scaleBoundedness := .open_, dimension := "temperature",
+    dimension := .temperature,
     baseAdjective := some "cool" }
   levinClass := some .otherCoS }
 
@@ -2801,7 +2801,7 @@ def warm : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .activity
   degreeAchievementScale := some {
-    scaleBoundedness := .open_, dimension := "temperature",
+    dimension := .temperature,
     baseAdjective := some "warm" }
   levinClass := some .otherCoS }
 
@@ -3326,12 +3326,11 @@ def VerbEntry.toWord3sg (v : VerbEntry) : Word :=
   { form := v.form3sg
   , cat := .VERB
   , features := {
-      valence := some (complementToValence v.complementType)
-      , number := some .sg
+      number := some .Sing
       , person := some .third
-      , voice := some .active
-      , vform := some .finite
-      , tense := some .present
+      , voice := some .Act
+      , verbForm := some .Fin
+      , tense := some .Pres
     }
   }
 
@@ -3340,9 +3339,8 @@ def VerbEntry.toWordPl (v : VerbEntry) : Word :=
   { form := v.form
   , cat := .VERB
   , features := {
-      valence := some (complementToValence v.complementType)
-      , number := some .pl
-      , tense := some .present
+      number := some .Plur
+      , tense := some .Pres
     }
   }
 
@@ -3351,8 +3349,7 @@ def VerbEntry.toWordBase (v : VerbEntry) : Word :=
   { form := v.form
   , cat := .VERB
   , features := {
-      valence := some (complementToValence v.complementType)
-      , vform := some .infinitive
+      verbForm := some .Inf
     }
   }
 
@@ -3361,10 +3358,9 @@ def VerbEntry.toWordPast (v : VerbEntry) : Word :=
   { form := v.formPast
   , cat := .VERB
   , features := {
-      valence := some (complementToValence v.complementType)
-      , vform := some .finite
-      , voice := some .active
-      , tense := some .past
+      verbForm := some .Fin
+      , voice := some .Act
+      , tense := some .Past
     }
   }
 
@@ -3376,8 +3372,7 @@ def VerbEntry.toWordPastPart (v : VerbEntry) : Word :=
   { form := v.formPastPart
   , cat := .VERB
   , features := {
-      valence := some (complementToValence v.complementType)
-      , vform := some .pastParticiple
+      verbForm := some .Part
     }
   }
 
@@ -3386,8 +3381,7 @@ def VerbEntry.toWordPresPart (v : VerbEntry) : Word :=
   { form := v.formPresPart
   , cat := .VERB
   , features := {
-      valence := some (complementToValence v.complementType)
-      , vform := some .presParticiple
+      verbForm := some .Part
     }
   }
 
@@ -3512,26 +3506,26 @@ theorem forget_entails_not_complement_derived :
 def VerbEntry.toStem {σ : Type} (v : VerbEntry) : Morphology.Stem σ :=
   { lemma_ := v.form
   , cat := .VERB
-  , baseFeatures := { valence := some (complementToValence v.complementType)
-                    , vform := some .infinitive }
+  , baseFeatures := { verbForm := some .Inf }
+  , baseValence := some (complementToValence v.complementType)
   , paradigm :=
     [ { category := .agreement .subj, value := "3sg"
       , formRule := λ _ => v.form3sg
       , featureRule := λ f => { f with number := some .Sing
                                      , person := some .third
-                                     , vform := some .finite }
+                                     , verbForm := some .Fin }
       , semEffect := id, delegatedSemantics := true }
     , { category := .tense, value := "past"
       , formRule := λ _ => v.formPast
-      , featureRule := λ f => { f with vform := some .finite }
+      , featureRule := λ f => { f with verbForm := some .Fin }
       , semEffect := id, delegatedSemantics := true }
     , { category := .tense, value := "pastpart"
       , formRule := λ _ => v.formPastPart
-      , featureRule := λ f => { f with vform := some .pastParticiple }
+      , featureRule := λ f => { f with verbForm := some .Part }
       , semEffect := id, delegatedSemantics := true }
     , { category := .aspect, value := "prespart"
       , formRule := λ _ => v.formPresPart
-      , featureRule := λ f => { f with vform := some .presParticiple }
+      , featureRule := λ f => { f with verbForm := some .Part }
       , semEffect := id, delegatedSemantics := true }
     ] }
 

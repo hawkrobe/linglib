@@ -5,7 +5,7 @@ import Linglib.Syntax.Minimalist.ClauseSpine
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Agree
 import Linglib.Morphology.DM.VocabSimple
-import Linglib.Studies.Scott2023Agreement
+import Linglib.Studies.Scott2023
 
 /-!
 # Oblique Extraction in Mayan
@@ -141,7 +141,7 @@ Fragments," these belong with the paper that anchors them
 [scott-2023] for the antipassive). The Fragment file retains only
 the theory-neutral `mamVoiceSystem : VoiceSystemProfile`.
 
-`Studies/Scott2023Agreement.lean` consumes `mamVoice` and
+`Studies/Scott2023.lean` consumes `mamVoice` and
 `eqYaVocab` from this file via cross-Studies import. -/
 
 /-- Mam agentive Voice head with [uOblique] probe.
@@ -521,7 +521,7 @@ theorem both_probes_unvalued :
 theorem phi_and_oblique_agree_parallel :
     -- φ-Agree pipeline: value person, then number, then spellout
     (applyAgree voiceProbe dp3sg (.phi (.person .third))).bind
-      (λ fb => applyAgree fb dp3sg (.phi (.number .sg))) = some voiceFullyAgreed ∧
+      (λ fb => applyAgree fb dp3sg (.phi (.number .Sing))) = some voiceFullyAgreed ∧
     spellout setAVocab voiceFullyAgreed (some .v) = some "t-" ∧
     -- Oblique-Agree pipeline: value oblique, then spellout
     applyAgree voiceOblProbe [.valued (.oblique true)] (.oblique false) =

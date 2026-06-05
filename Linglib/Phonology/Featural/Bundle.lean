@@ -53,7 +53,7 @@ The value type `V` is parametric:
 
 - `Core/StringHom.lean` (Kleisli morphisms of `Option`) is exactly the
   type of tier-projection homomorphisms `Tier F V → Tier F' V'`.
-- `Core/Order/FeaturePreorder.lean` gives the satisfaction preorder on
+- `Core/Order/PullbackPreorder.lean` gives the satisfaction preorder on
   bundles when `V` carries an order.
 - `Phonology/Autosegmental/Tier.lean` (already present) collects
   tier-rule infrastructure that the bundle algebra slots into.

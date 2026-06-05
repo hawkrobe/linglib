@@ -1,5 +1,7 @@
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
+import Linglib.Core.Valence
 import Linglib.Syntax.Agreement.Controller
+import Linglib.Morphology.Word
 
 /-!
 # Morphological Infrastructure
@@ -306,7 +308,12 @@ structure MorphRule (σ : Type) where
   /-- How the surface form changes -/
   formRule : String → String
   /-- How morphosyntactic features change -/
-  featureRule : Features → Features
+  featureRule : UD.MorphFeatures → UD.MorphFeatures
+  /-- How lexical valence changes — `id` except for valence-changing morphology
+      (reciprocal, passive, causative affixes), where subcategorization change is the
+      rule's whole point. Valence is lexical, not UD morphology, so it is its own
+      effect channel rather than a `featureRule` component. -/
+  valenceRule : Option Valence → Option Valence := fun v => v
   /-- Semantic effect (`id` when meaning is delegated to a higher layer) -/
   semEffect : σ → σ
   /-- Is the word-level semantic contribution delegated to a higher
@@ -323,22 +330,26 @@ structure Stem (σ : Type) where
   /-- Syntactic category -/
   cat : UD.UPOS
   /-- Base morphosyntactic features -/
-  baseFeatures : Features := {}
+  baseFeatures : UD.MorphFeatures := {}
+  /-- Base lexical valence (subcategorization) — lexical, beside the morphology. -/
+  baseValence : Option Valence := none
   /-- Available inflectional rules -/
   paradigm : List (MorphRule σ)
 
 variable {σ : Type}
 
-/-- Apply a morphological rule to generate an inflected form + meaning. -/
+/-- Apply a morphological rule to generate an inflected form + meaning. Threads
+    morphology only; a rule's `valenceRule` acts on `Stem.baseValence` at the consumer
+    that builds `Word`s. -/
 def Stem.inflect (s : Stem σ) (rule : MorphRule σ) (baseMeaning : σ) :
-    String × Features × σ :=
+    String × UD.MorphFeatures × σ :=
   ( rule.formRule s.lemma_
   , rule.featureRule s.baseFeatures
   , rule.semEffect baseMeaning )
 
 /-- Generate all forms in the paradigm (base + inflected). -/
 def Stem.allForms (s : Stem σ) (baseMeaning : σ) :
-    List (String × Features × σ) :=
+    List (String × UD.MorphFeatures × σ) :=
   (s.lemma_, s.baseFeatures, baseMeaning) ::
     s.paradigm.map (s.inflect · baseMeaning)
 

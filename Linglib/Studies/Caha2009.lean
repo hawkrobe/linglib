@@ -57,11 +57,12 @@ Ch. 6), and Hungarian (GEN-less, dative-as-possessor syncretism per
 namespace Caha2009
 
 open Features (Case)
+open scoped Syntax.Case.Caha
 
 /-! ## Caha containment-respect predicate
 
 Does an inventory respect Caha's containment hierarchy? True iff `inv`
-is downward-closed under the canonical `PartialOrder Case` (Caha
+is downward-closed under the scoped Caha order (`Syntax.Case.Caha`;
 containment) defined in `Core/Case/Order.lean`: whenever `c ∈ inv` and
 `d ≤ c`, then `d ∈ inv`. Off-hierarchy cases (ERG, ABS, INST, COM, …)
 impose no constraint — in the Caha order they only have `c ≤ c`, so

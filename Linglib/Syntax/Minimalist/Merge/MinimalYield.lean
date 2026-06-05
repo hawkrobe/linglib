@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.Merge.External
 import Linglib.Syntax.Minimalist.Merge.Internal
-import Linglib.Core.Order.FeaturePreorder
+import Linglib.Core.Order.PullbackPreorder
 import Mathlib.Order.OrderDual
 
 /-!
@@ -102,9 +102,9 @@ The two `MinimalYieldWeak` conditions are exactly a Pareto comparison
 on the `(b₀ᵒᵈ, α)` signature: `noDivergence` reverses the order on `b₀`
 (smaller is "better"), `noInfoLoss` keeps `α` in the natural direction
 (larger is "better"). Wrapping the relation as a
-`Core.Order.FeaturePreorder` exposes this Pareto structure: same shape
-as `Minimalist.DerivationCost.featurePreorder` (4-d cost) and
-`Core.Constraint.ConstraintSystem.paretoFeaturePreorder` (OT/HG
+`Core.Order.PullbackPreorder` exposes this Pareto structure: same shape
+as `Minimalist.DerivationCost.pullbackPreorder` (4-d cost) and
+`Core.Constraint.ConstraintSystem.paretoPullbackPreorder` (OT/HG
 violation profile).
 
 Reflexivity (`MYWeak F F`) and transitivity (`MYWeak F F' → MYWeak F' F'' →
@@ -130,18 +130,18 @@ def MinimalYieldSignature (F : TraceForest α β) : ℕᵒᵈ × ℕ :=
   ⟨fun ⟨h_b, h_a⟩ => ⟨h_b, h_a⟩,
    fun ⟨h_b, h_a⟩ => ⟨h_b, h_a⟩⟩
 
-/-- `MinimalYieldWeak` packaged as a `Core.Order.FeaturePreorder` over
+/-- `MinimalYieldWeak` packaged as a `Core.Order.PullbackPreorder` over
     `TraceForest α β`, with feature space `ℕᵒᵈ × ℕ` (Pareto pullback
     via `MinimalYieldSignature`). Same shape as
-    `Minimalist.DerivationCost.featurePreorder`.
+    `Minimalist.DerivationCost.pullbackPreorder`.
 
     Note: not registered as a `Preorder TraceForest` instance because
     `TraceForest = Multiset` already carries other order structures
     (multiset ⊆); use `.toPreorder` explicitly when chain reasoning is
     needed. -/
-def minimalYieldWeakFeaturePreorder :
-    Core.Order.FeaturePreorder (TraceForest α β) (ℕᵒᵈ × ℕ) :=
-  Core.Order.FeaturePreorder.ofFeature MinimalYieldSignature
+def minimalYieldWeakPullbackPreorder :
+    Core.Order.PullbackPreorder (TraceForest α β) (ℕᵒᵈ × ℕ) :=
+  Core.Order.PullbackPreorder.ofProj MinimalYieldSignature
     (fun _ _ => inferInstance)
 
 /-! ## §1: EM Case 1 satisfies MinimalYield (MCB Prop 1.6.4 EM row)

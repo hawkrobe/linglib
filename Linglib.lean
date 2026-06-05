@@ -5,10 +5,12 @@ A Lean 4 library for formal linguistics, covering semantics, pragmatics,
 and their interfaces. See README.md for documentation links.
 -/
 -- Core
+import Linglib.Features.Basic
 import Linglib.Features.Dimension
 import Linglib.Features.Gender
 import Linglib.Core.Valence
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
+import Linglib.Morphology.Unification
 import Linglib.Typology.NegativeConcord
 import Linglib.Typology.PolarityItem
 import Linglib.Typology.Negation
@@ -38,7 +40,6 @@ import Linglib.Core.Logic.Team.Closure
 import Linglib.Core.Logic.Team.Definability
 import Linglib.Features.Acceptability
 import Linglib.Semantics.Dynamic.ParameterizedUpdate
-import Linglib.Core.UD
 import Linglib.Core.Tree
 import Linglib.Features.Coordination
 import Linglib.Core.Logic.Duality
@@ -82,7 +83,9 @@ import Linglib.Core.Order.Normality
 import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Core.Order.Plausibility
 import Linglib.Core.Order.Satisfaction
-import Linglib.Core.Order.FeaturePreorder
+import Linglib.Core.Order.PartialUnify
+import Linglib.Core.Order.Flat
+import Linglib.Core.Order.PullbackPreorder
 import Linglib.Core.Order.SetPreimage
 import Linglib.Core.Order.Ortholattice
 import Linglib.Core.Order.PreferenceStructure
@@ -90,6 +93,9 @@ import Linglib.Core.Order.PreferenceStructure.EffectivePreference
 import Linglib.Core.Order.PreferenceStructure.MaxInducedOrdering
 import Linglib.Core.Order.ComparativeProbability.Defs
 import Linglib.Core.Order.ComparativeProbability.Patterns
+import Linglib.Core.Order.Caratheodory
+import Linglib.Core.Order.FourierMotzkin
+import Linglib.Core.Order.SignVectors
 import Linglib.Core.Logic.RankingFunction
 import Linglib.Core.Logic.SystemZ
 import Linglib.Features.Register
@@ -135,7 +141,6 @@ import Linglib.Discourse.Scoreboard
 import Linglib.Discourse.AtIssueness
 import Linglib.Features.CoreferenceStatus
 import Linglib.Syntax.Binding.Basic
-import Linglib.Syntax.Binding.Lexical
 import Linglib.Syntax.Binding.Semantics
 import Linglib.Core.CombinationKind
 import Linglib.Semantics.Composition.Combinator
@@ -217,8 +222,9 @@ import Linglib.Pragmatics.GameTheory
 import Linglib.Pragmatics.SignalingGames
 import Linglib.Features.Evidentiality
 import Linglib.Features.Mirativity
-import Linglib.Core.Epistemicity
+import Linglib.Semantics.Epistemicity
 import Linglib.Features.Logophoricity
+import Linglib.Features.MassCount
 import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Core.Time.Interval.Generalized
@@ -231,7 +237,7 @@ import Linglib.Core.Time.Domain
 import Linglib.Core.Time.RelationOrigin
 import Linglib.Core.Time.System
 import Linglib.Core.Time.Reichenbach
-import Linglib.Core.Time.Tense
+import Linglib.Semantics.Tense.GramTense
 import Linglib.Typology.WordOrder
 import Linglib.Typology.Adposition
 import Linglib.Typology.ArgumentStructure
@@ -253,10 +259,10 @@ import Linglib.Typology.Reference
 import Linglib.Typology.TenseAspect
 import Linglib.Typology.Color
 import Linglib.Typology.BodyParts
-import Linglib.Core.Context.Basic
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
-import Linglib.Core.Context.Rich
+import Linglib.Semantics.Context.Basic
+import Linglib.Semantics.Context.Tower
+import Linglib.Semantics.Context.Shifts
+import Linglib.Semantics.Context.Rich
 import Linglib.Features.InformationStructure
 import Linglib.Features.Givenness
 import Linglib.Features.Topic
@@ -312,11 +318,9 @@ import Linglib.Core.Scales.Scale
 import Linglib.Core.Scales.EpistemicScale.Defs
 import Linglib.Core.Scales.EpistemicScale.Entailments
 import Linglib.Core.Scales.EpistemicScale.Conditional
-import Linglib.Core.Scales.EpistemicScale
 import Linglib.Core.Scales.EpistemicScale.Cancellation
 import Linglib.Core.Scales.EpistemicScale.CancellationFin4
-import Linglib.Core.Scales.EpistemicScale.Caratheodory
-import Linglib.Core.Scales.EpistemicScale.SignVectors
+import Linglib.Core.Scales.EpistemicScale.Completeness
 import Linglib.Core.Scales.EpistemicScale.Representability
 import Linglib.Core.Mereology
 import Linglib.Core.Mereotopology
@@ -650,7 +654,6 @@ import Linglib.Fragments.English.Numerals
 import Linglib.Fragments.English.Plurals
 import Linglib.Fragments.English.Reference
 import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.NominalClassification
 import Linglib.Fragments.English.PropositionalLexemes
 import Linglib.Fragments.English.QuestionParticles
 import Linglib.Fragments.English.Scales
@@ -1080,6 +1083,7 @@ import Linglib.Fragments.Swedish.QuestionParticles
 import Linglib.Fragments.Mayan.Params
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
 import Linglib.Fragments.Mayan.Mam.Agreement
+import Linglib.Fragments.Mayan.Mam.Pronouns
 import Linglib.Fragments.Mayan.Mam.ExtractionMorphology
 import Linglib.Fragments.Kawapanan.Shawi.Basic
 import Linglib.Fragments.Mixtec.SMPM.Basic
@@ -1220,7 +1224,6 @@ import Linglib.Studies.CoonMateoPedroPreminger2014
 import Linglib.Studies.Imanishi2014
 import Linglib.Studies.Imanishi2020
 import Linglib.Studies.Bohnemeyer2004
-import Linglib.Studies.Scott2023Ergativity
 import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
 import Linglib.Phenomena.ArgumentStructure.Subcategorization
@@ -1556,6 +1559,7 @@ import Linglib.Studies.TrinhHaida2015
 import Linglib.Studies.Yalcin2007
 import Linglib.Studies.Mandelkern2019
 import Linglib.Studies.KlinedinstRothschild2012
+import Linglib.Studies.HollidayIcard2013
 import Linglib.Studies.HollidayMandelkern2024
 import Linglib.Studies.Haspelmath1997
 import Linglib.Studies.AlonsoOvalleMenendezBenito2010
@@ -1761,6 +1765,7 @@ import Linglib.Studies.FrankGoodman2012PMF
 import Linglib.Studies.HawkinsGweonGoodman2021
 import Linglib.Studies.Ney2026
 import Linglib.Studies.SikosEtAl2021
+import Linglib.Studies.Pearson2015
 import Linglib.Studies.Percus2000
 import Linglib.Studies.QingFranke2015
 import Linglib.Studies.KursatDegen2021
@@ -1900,7 +1905,6 @@ import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.Combinators
 import Linglib.Syntax.CCG.Interface
 import Linglib.Studies.Cysouw2009
-import Linglib.Studies.Scott2023Agreement
 import Linglib.Phenomena.Agreement.DifferentialIndexing
 import Linglib.Studies.Aissen2003Agreement
 import Linglib.Studies.PrasertsonSmithCulbertson2026
@@ -2224,7 +2228,6 @@ import Linglib.Syntax.Minimalist.SmallClause
 import Linglib.Syntax.Minimalist.Copula
 import Linglib.Syntax.Minimalist.Cascade
 import Linglib.Syntax.Minimalist.DegreeMovement
-import Linglib.Morphology.DM.Fission
 import Linglib.Morphology.FragmentGrammars.CFGFragment
 import Linglib.Morphology.FragmentGrammars.MultinomialPCFG
 import Linglib.Morphology.FragmentGrammars.DMPCFG
@@ -2421,7 +2424,9 @@ import Linglib.Semantics.Tense.ConditionalShift
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.Composition
 import Linglib.Semantics.Aspect.SubintervalProperty
+import Linglib.Semantics.Aspect.Dimension
 import Linglib.Semantics.Aspect.DegreeAchievement
+import Linglib.Semantics.Aspect.ScalarTelicity
 import Linglib.Semantics.Aspect.ChangeOfState
 -- Theories: Semantics.Iconic (Iconological Semantics for sign language)
 import Linglib.Semantics.Iconic.Basic
@@ -2451,6 +2456,7 @@ import Linglib.Semantics.Lexical.Roots.Closure
 import Linglib.Semantics.Lexical.Roots.SalienceClass
 import Linglib.Morphology.RootTypology
 import Linglib.Morphology.TheorySpace
+import Linglib.Morphology.Word
 import Linglib.Semantics.Spatial.Trace
 import Linglib.Semantics.Events.Adjacency
 import Linglib.Semantics.Events.InitialFinalParts
@@ -2712,6 +2718,7 @@ import Linglib.Studies.Zimmermann2008
 import Linglib.Studies.Owusu2022
 import Linglib.Studies.Bubnov2026
 import Linglib.Studies.Dekier2021
+import Linglib.Studies.DalrympleKaplan2000
 import Linglib.Studies.AhnKocabDavidson2026
 import Linglib.Studies.TenWolde2023
 import Linglib.Studies.FarkasBruce2010

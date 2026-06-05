@@ -1,7 +1,8 @@
 import Mathlib.Data.List.Infix
 import Mathlib.Algebra.Free
-import Linglib.Core.UD
+import Linglib.Data.UD.Basic
 import Linglib.Core.Order.Tree
+import Linglib.Morphology.Word
 
 /-!
 # Trees

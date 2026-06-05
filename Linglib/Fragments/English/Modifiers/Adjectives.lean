@@ -18,11 +18,12 @@ Both share scale type and antonym information, but serve different grammatical f
 
 -/
 
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
 import Linglib.Features.PropertyDomain
 import Linglib.Morphology.Exponence
 import Linglib.Morphology.DegreeContainment
 import Linglib.Semantics.Gradability.Basic
+import Linglib.Morphology.Word
 
 namespace English.Modifiers.Adjectives
 

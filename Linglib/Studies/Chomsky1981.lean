@@ -2,7 +2,6 @@ import Linglib.Syntax.Minimalist.Coreference
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.NominalClassification
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Paradigms.AcceptabilityJudgment
 
@@ -41,7 +40,7 @@ open Phenomena.Anaphora.Coreference
     `CommandRelation` instance (in scope via `open Minimalist.Coreference`) and
     English's binding-class classifier. -/
 private abbrev grammaticalForCoreference (ws : List Word) : Prop :=
-  Binding.grammaticalForCoreference English.NominalClassification.classifyNominal ws
+  Binding.grammaticalForCoreference Binding.bindingClassOf ws
 
 /-- Coverage of a `PhenomenonData` set under Minimalist binding theory.
 

@@ -32,12 +32,14 @@ come from Mathlib for free, giving us Link's semilattice directly.
 
 -/
 
+import Linglib.Features.MassCount
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.UpperLower.Basic
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
 import Linglib.Core.Mereology
 import Linglib.Core.Logic.Intensional.Rigidity
+import Linglib.Morphology.Word
 
 
 

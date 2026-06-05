@@ -1,0 +1,207 @@
+import Mathlib.Order.Bounds.Image
+import Mathlib.Data.Fintype.Basic
+
+/-!
+# Partial unification: computable pairwise least upper bounds
+
+`PartialUnify α` equips a partial order with a computable partial join:
+`unify a b` returns the least upper bound of `{a, b}` when the pair is
+bounded above, and `none` otherwise. This is the pairwise face of
+bounded completeness — [carpenter-1992]'s setting for unification
+domains (Definition 2.1: an inheritance hierarchy is a finite bounded
+complete partial order), with the join taken as primitive because
+"joins correspond to unifications" (p. 13). Carpenter notes the
+equivalence this file exploits: "a finite BCPO is nothing more nor less
+than a finite meet semilattice", presented through its joins.
+
+The laws of unification — idempotence, commutativity,
+associativity-with-failure, `⊥` as identity, guarded monotonicity —
+are proved here once, from least-upper-bound uniqueness; carriers
+(feature slots, bundles, attribute-value records) supply only `unify`
+and the two axioms.
+
+Adjoining a top element to make the join total is a *derived*
+presentation ([carpenter-1992] p. 16 attributes it to Aït-Kaci and
+Smolka), not the primitive; this file deliberately does not take it.
+
+## Main declarations
+
+* `PartialUnify` — the class
+* `PartialUnify.unify_eq_some_iff_isLUB`,
+  `PartialUnify.isSome_unify_iff_bddAbove` — characterizations
+* `PartialUnify.unify_comm`, `unify_assoc`, `unify_self`, `bot_unify`,
+  `unify_mono` — the unification laws
+* the Pi instance: pointwise unification over a `Fintype` index
+-/
+
+/-- A computable partial join on a partial order: `unify a b` is `some`
+of the least upper bound of `{a, b}` when the pair is bounded above,
+and `none` otherwise — the pairwise face of [carpenter-1992]'s bounded
+completeness, with the join as the primitive operation. -/
+class PartialUnify (α : Type*) [PartialOrder α] where
+  /-- The partial join. -/
+  unify : α → α → Option α
+  /-- A successful unification is a least upper bound. -/
+  isLUB_of_unify_eq_some : ∀ {a b c : α}, unify a b = some c → IsLUB {a, b} c
+  /-- Unification succeeds on bounded-above pairs. -/
+  isSome_unify_of_bddAbove :
+    ∀ {a b : α}, BddAbove ({a, b} : Set α) → (unify a b).isSome
+
+namespace PartialUnify
+
+theorem mem_upperBounds_pair {α : Type*} [Preorder α] {u a b : α} :
+    u ∈ upperBounds ({a, b} : Set α) ↔ a ≤ u ∧ b ≤ u := by
+  simp [upperBounds_insert, upperBounds_singleton]
+
+variable {α : Type*} [PartialOrder α] [PartialUnify α] {a b c u : α}
+
+theorem isSome_unify_iff_bddAbove :
+    (unify a b).isSome ↔ BddAbove ({a, b} : Set α) := by
+  refine ⟨λ h => ?_, isSome_unify_of_bddAbove⟩
+  obtain ⟨c, hc⟩ := Option.isSome_iff_exists.mp h
+  exact ⟨c, (isLUB_of_unify_eq_some hc).1⟩
+
+theorem unify_eq_some_iff_isLUB :
+    unify a b = some c ↔ IsLUB {a, b} c := by
+  refine ⟨isLUB_of_unify_eq_some, λ h => ?_⟩
+  obtain ⟨d, hd⟩ :=
+    Option.isSome_iff_exists.mp (isSome_unify_of_bddAbove ⟨c, h.1⟩)
+  rw [hd, Option.some_inj]
+  exact (isLUB_of_unify_eq_some hd).unique h
+
+theorem unify_eq_none_iff :
+    unify a b = none ↔ ¬ BddAbove ({a, b} : Set α) := by
+  rw [← isSome_unify_iff_bddAbove]
+  cases unify a b <;> simp
+
+theorem unify_comm (a b : α) : unify a b = unify b a := by
+  have hpair : ({b, a} : Set α) = {a, b} := Set.pair_comm b a
+  cases hab : unify a b with
+  | some c =>
+    symm
+    rw [unify_eq_some_iff_isLUB, hpair]
+    exact isLUB_of_unify_eq_some hab
+  | none =>
+    symm
+    rw [unify_eq_none_iff, hpair]
+    exact unify_eq_none_iff.mp hab
+
+@[simp]
+theorem unify_self (a : α) : unify a a = some a := by
+  rw [unify_eq_some_iff_isLUB, Set.pair_eq_singleton]
+  exact isLUB_singleton
+
+@[simp]
+theorem bot_unify [OrderBot α] (a : α) : unify (⊥ : α) a = some a := by
+  rw [unify_eq_some_iff_isLUB]
+  exact ⟨mem_upperBounds_pair.mpr ⟨bot_le, le_rfl⟩,
+    λ u hu => (mem_upperBounds_pair.mp hu).2⟩
+
+@[simp]
+theorem unify_bot [OrderBot α] (a : α) : unify a (⊥ : α) = some a := by
+  rw [unify_comm]; exact bot_unify a
+
+omit [PartialUnify α] in
+/-- Glueing pairwise LUBs: if `v` is the LUB of `{a, b}`, then LUBs of
+`{v, c}` are exactly LUBs of `{a, b, c}`. -/
+theorem isLUB_pair_step {a b c v u : α} (hv : IsLUB {a, b} v) :
+    IsLUB {v, c} u ↔ IsLUB ({a, b, c} : Set α) u := by
+  have hub : upperBounds ({v, c} : Set α) = upperBounds {a, b, c} := by
+    ext w
+    constructor
+    · intro hw x hx
+      rcases hx with rfl | rfl | rfl
+      · exact (hv.1 (Set.mem_insert _ _)).trans (hw (Set.mem_insert _ _))
+      · exact (hv.1 (Set.mem_insert_of_mem _ rfl)).trans (hw (Set.mem_insert _ _))
+      · exact hw (Set.mem_insert_of_mem _ rfl)
+    · intro hw x hx
+      rcases hx with rfl | rfl
+      · exact hv.2 λ y hy => by
+          rcases hy with rfl | rfl
+          · exact hw (Set.mem_insert _ _)
+          · exact hw (Set.mem_insert_of_mem _ (Set.mem_insert _ _))
+      · exact hw (Set.mem_insert_of_mem _ (Set.mem_insert_of_mem _ rfl))
+  unfold IsLUB
+  rw [hub]
+
+theorem bind_unify_left_eq_some_iff {u : α} :
+    (unify a b).bind (unify · c) = some u ↔ IsLUB ({a, b, c} : Set α) u := by
+  rw [Option.bind_eq_some_iff]
+  constructor
+  · rintro ⟨v, hv, hu⟩
+    exact (isLUB_pair_step (isLUB_of_unify_eq_some hv)).mp
+      (isLUB_of_unify_eq_some hu)
+  · intro h
+    have hab : BddAbove ({a, b} : Set α) := by
+      refine ⟨u, mem_upperBounds_pair.mpr ⟨?_, ?_⟩⟩
+      · exact h.1 (Set.mem_insert _ _)
+      · exact h.1 (Set.mem_insert_of_mem _ (Set.mem_insert _ _))
+    obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp (isSome_unify_of_bddAbove hab)
+    refine ⟨v, hv, ?_⟩
+    rw [unify_eq_some_iff_isLUB]
+    exact (isLUB_pair_step (isLUB_of_unify_eq_some hv)).mpr h
+
+/-- Unification is associative, with failure propagating: both
+associations compute the least upper bound of all three elements. -/
+theorem unify_assoc (a b c : α) :
+    (unify a b).bind (unify · c) = (unify b c).bind (unify a ·) := by
+  have hset : ({b, c, a} : Set α) = {a, b, c} := by
+    ext x; simp [Set.mem_insert_iff]; tauto
+  have hcomm : (unify b c).bind (unify a ·) = (unify b c).bind (unify · a) := by
+    apply congrArg
+    funext v
+    exact unify_comm a v
+  apply Option.ext
+  intro u
+  rw [hcomm, bind_unify_left_eq_some_iff, bind_unify_left_eq_some_iff, hset]
+
+/-- Unification is monotone where defined: shrinking both inputs
+preserves success and shrinks the output. -/
+theorem unify_mono {a₁ a₂ b₁ b₂ u₂ : α} (ha : a₁ ≤ a₂) (hb : b₁ ≤ b₂)
+    (h₂ : unify a₂ b₂ = some u₂) : ∃ u₁, unify a₁ b₁ = some u₁ ∧ u₁ ≤ u₂ := by
+  have hlub := isLUB_of_unify_eq_some h₂
+  have hub : u₂ ∈ upperBounds ({a₁, b₁} : Set α) :=
+    mem_upperBounds_pair.mpr
+      ⟨ha.trans (hlub.1 (Set.mem_insert _ _)),
+       hb.trans (hlub.1 (Set.mem_insert_of_mem _ rfl))⟩
+  obtain ⟨u₁, hu₁⟩ :=
+    Option.isSome_iff_exists.mp (isSome_unify_of_bddAbove ⟨u₂, hub⟩)
+  exact ⟨u₁, hu₁, (isLUB_of_unify_eq_some hu₁).2 hub⟩
+
+/-! ### Pointwise unification on Pi types -/
+
+section Pi
+
+variable {F : Type*} {S : F → Type*} [∀ t, PartialOrder (S t)]
+  [∀ t, PartialUnify (S t)] [Fintype F]
+
+instance : PartialUnify ((t : F) → S t) where
+  unify f g :=
+    if h : ∀ t, (unify (f t) (g t)).isSome then
+      some (λ t => (unify (f t) (g t)).get (h t))
+    else none
+  isLUB_of_unify_eq_some := by
+    intro f g u hu
+    by_cases h : ∀ t, (unify (f t) (g t)).isSome
+    · rw [dif_pos h, Option.some_inj] at hu
+      rw [isLUB_pi]
+      intro t
+      rw [Set.image_pair]
+      have : unify (f t) (g t) = some (u t) := by
+        rw [← hu]; exact (Option.some_get (h t)).symm
+      exact isLUB_of_unify_eq_some this
+    · rw [dif_neg h] at hu
+      exact absurd hu (by simp)
+  isSome_unify_of_bddAbove := by
+    intro f g hbdd
+    obtain ⟨w, hw⟩ := hbdd
+    have hfw : f ≤ w := hw (Set.mem_insert _ _)
+    have hgw : g ≤ w := hw (Set.mem_insert_of_mem _ rfl)
+    have h : ∀ t, (unify (f t) (g t)).isSome := λ t =>
+      isSome_unify_of_bddAbove ⟨w t, mem_upperBounds_pair.mpr ⟨hfw t, hgw t⟩⟩
+    rw [dif_pos h]
+    rfl
+
+end Pi
+
+end PartialUnify

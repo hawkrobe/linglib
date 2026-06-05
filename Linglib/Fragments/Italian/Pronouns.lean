@@ -1,6 +1,8 @@
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities
-import Linglib.Core.Word
+import Linglib.Data.UD.Basic
+import Linglib.Features.Number
+import Linglib.Features.Person
 
 /-! # Italian Pronoun and Clitic Fragment
 
@@ -28,6 +30,8 @@ and reflexive cases, while 3sg/3pl are not.
 | 3pl    | li/le  | loro   | si   | NOT syncretic
 -/
 
+open Features (Number Person)
+
 namespace Italian.Pronouns
 
 open Pronoun
@@ -39,11 +43,11 @@ open Features.Register (Level)
 
 /-- *io* — 1sg. -/
 def io : PersonalPronoun :=
-  { form := "io", person := some .first, number := some .sg }
+  { form := "io", person := some .first, number := some .Sing }
 
 /-- *tu* — 2sg familiar (T form). -/
 def tu : PersonalPronoun :=
-  { form := "tu", person := some .second, number := some .sg, register := .informal }
+  { form := "tu", person := some .second, number := some .Sing, register := .informal }
 
 /-- *Lei* — polite 2sg (V form). Formally 3rd person: triggers 3sg verbal
     agreement, patterns with 3sg.f clitics, binds 3rd person reflexive *si*.
@@ -51,32 +55,32 @@ def tu : PersonalPronoun :=
     2PL resolved agreement in coordination.
     [adamson-zompi-2025] -/
 def lei_formal : PersonalPronoun :=
-  { form := "Lei", person := some .third, number := some .sg, register := .formal,
+  { form := "Lei", person := some .third, number := some .Sing, register := .formal,
     referentialPerson := some .second }
 
 /-- *lui* — 3sg masculine. -/
 def lui : PersonalPronoun :=
-  { form := "lui", person := some .third, number := some .sg }
+  { form := "lui", person := some .third, number := some .Sing }
 
 /-- *lei* — 3sg feminine. -/
 def lei : PersonalPronoun :=
-  { form := "lei", person := some .third, number := some .sg }
+  { form := "lei", person := some .third, number := some .Sing }
 
 /-- *noi* — 1pl. -/
 def noi : PersonalPronoun :=
-  { form := "noi", person := some .first, number := some .pl }
+  { form := "noi", person := some .first, number := some .Plur }
 
 /-- *voi* — 2pl (familiar; also used as general 2pl in modern Italian). -/
 def voi : PersonalPronoun :=
-  { form := "voi", person := some .second, number := some .pl, register := .informal }
+  { form := "voi", person := some .second, number := some .Plur, register := .informal }
 
 /-- *Loro* — 2pl formal (archaic, largely replaced by *voi*). -/
 def loro_formal : PersonalPronoun :=
-  { form := "Loro", person := some .second, number := some .pl, register := .formal }
+  { form := "Loro", person := some .second, number := some .Plur, register := .formal }
 
 /-- *loro* — 3pl. -/
 def loro : PersonalPronoun :=
-  { form := "loro", person := some .third, number := some .pl }
+  { form := "loro", person := some .third, number := some .Plur }
 
 def secondPersonPronouns : List PersonalPronoun := [tu, lei_formal]
 
@@ -107,7 +111,7 @@ structure CliticEntry where
 The clitic is its own bespoke struct — capabilities abstract over it without merging it into
 `Pronoun` (the `FunLike`-over-many-hom-types pattern). Deficiency is deliberately *not* a capability
 here: it is per-series (the whole clitic paradigm is `.clitic`), modelled by `cliticStrength` below
-and `Strength.rank`, not by a per-element accessor. -/
+and the `Strength` order, not by a per-element accessor. -/
 
 /-- A clitic's surface form + φ-features (person/number). -/
 instance : Proform CliticEntry :=
@@ -155,7 +159,10 @@ def si_refl_pl : CliticEntry := { form := "si", person := .third, number := .Plu
 -- § 3: Paradigm and Syncretism
 -- ============================================================================
 
-/-- The full clitic paradigm as a flat list. -/
+/-- The traditional atonic (object) paradigm as a flat list. NB: the series is
+    not strength-homogeneous — [cardinaletti-starke-1999] classify dative
+    *loro* as *weak*, not clitic (not verb-adjacent, never clusters); see
+    `loroDatStrength` below. The rest are clitics proper. -/
 def paradigm : List CliticEntry :=
   [ mi_acc, mi_dat, mi_refl,
     ti_acc, ti_dat, ti_refl,
@@ -240,25 +247,38 @@ theorem has_all_persons :
 
 /-- Both singular and plural are attested. -/
 theorem has_both_numbers :
-    allPronouns.any (·.number == some .sg) = true ∧
-    allPronouns.any (·.number == some .pl) = true := ⟨rfl, rfl⟩
+    allPronouns.any (·.number == some .Sing) = true ∧
+    allPronouns.any (·.number == some .Plur) = true := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 5: Cardinaletti–Starke deficiency classes
 -- ============================================================================
 
-/-- Italian's two pronoun series instantiate two Cardinaletti–Starke deficiency
-    classes ([cardinaletti-starke-1999]): the strong forms (`allPronouns`)
-    are `.strong`; the object clitics (`paradigm`) are `.clitic`. -/
+/-- Italian's tonic series (`allPronouns`) instantiates the Cardinaletti–Starke
+    `.strong` class ([cardinaletti-starke-1999]). -/
 def strongStrength : Strength := .strong
 
-/-- The object-clitic series is the maximally deficient `.clitic` class. -/
+/-- The object clitics (`paradigm` minus dative *loro*) are the maximally
+    deficient `.clitic` class: verb-adjacent heads that cluster
+    ([cardinaletti-starke-1999]). -/
 def cliticStrength : Strength := .clitic
 
-/-- The clitic series is structurally more deficient than the strong series
-    (lower `Strength.rank`): the deficiency ordering behind their complementary
-    distribution (clitics host-adjacent and unfocusable, strong forms free). -/
-theorem clitics_more_deficient :
-    Strength.rank cliticStrength < Strength.rank strongStrength := by decide
+/-- Dative *loro* is [cardinaletti-starke-1999]'s parade case for separating
+    weak from clitic: deficient (reduced vs *a loro*, no coordination) but a
+    maximal projection — not verb-adjacent, never clustering, bears word
+    stress. -/
+def loroDatStrength : Strength := .weak
+
+/-- The clitic series is structurally more deficient than the strong series:
+    the deficiency ordering behind their complementary distribution (clitics
+    host-adjacent and unfocusable, strong forms free). -/
+theorem clitics_more_deficient : cliticStrength < strongStrength := by decide
+
+/-- The traditional atonic paradigm is not strength-homogeneous: dative *loro*
+    (weak) sits strictly between the clitics and the strong series
+    ([cardinaletti-starke-1999]). -/
+theorem atonic_series_not_homogeneous :
+    cliticStrength < loroDatStrength ∧ loroDatStrength < strongStrength :=
+  ⟨by decide, by decide⟩
 
 end Italian.Pronouns

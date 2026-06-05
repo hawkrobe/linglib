@@ -2,7 +2,7 @@ import Linglib.Semantics.Tense.Evidential
 import Linglib.Discourse.IllocutionaryForce
 import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment.Basic
-import Linglib.Core.Context.Basic
+import Linglib.Semantics.Context.Basic
 import Linglib.Morphology.Exponence
 
 /-!

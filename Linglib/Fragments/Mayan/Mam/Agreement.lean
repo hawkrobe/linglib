@@ -1,5 +1,6 @@
 import Linglib.Features.Case
 import Linglib.Features.Prominence
+import Linglib.Fragments.Mayan.Mam.Pronouns
 import Linglib.Fragments.Mayan.Params
 import Linglib.Syntax.Agreement.Paradigm
 import Linglib.Typology.Extraction
@@ -178,7 +179,7 @@ instance : DecidablePred ArgPosition.IsPhiAgreed := fun p => by
     Non-first person pronouns are NOT reduced — their subj/poss forms
     are identical to their independent forms (Table 4.25, p. 200).
     Whether actual reduction occurs depends on person (see
-    `derivePronounForm`), but only agreed-with positions are eligible. -/
+    `realizedPronoun`), but only agreed-with positions are eligible. -/
 def ArgPosition.CanBeReduced (pos : ArgPosition) : Prop :=
   pos.IsPhiAgreed
 
@@ -236,142 +237,99 @@ example : Features.Case.IsValidInventory caseInventory := by decide
 -- § 6: Pronoun Internal Structure ([scott-2023], ch. 4)
 -- ============================================================================
 
-/-- Person features relevant for pronoun reduction.
-
-    Scott decomposes person into binary features following
-    [harbour-2016] (Table 4.3-4.4):
-    - [±author]: distinguishes 1st from non-1st
-    - [±participant]: distinguishes local (1st/2nd) from 3rd
-    - [±singular]: number
-
-    Agreement (Set A and Set B) copies only [±author] and [±singular]
-    (Tables 4.7-4.8). It does NOT copy [±participant].
-
-    The =i enclitic is the **disagreement enclitic** — it realizes
-    *disagreeing* values of [±author] and [±participant] (ex. 59,
-    adapting [noyer-1992] / [harbour-2016]):
-    - 1SG/1PL.EXCL: [+author, -participant] → disagree → =i
-    - 2SG/2PL: [-author, +participant] → disagree → =i
-    - 1PL.INCL: [+author, +participant] → agree → no =i
-    - 3SG/3PL: [-author, -participant] → agree → no =i -/
-inductive PersonFeature where
-  | person      -- person category (1st/2nd/3rd)
-  | number      -- number category (sg/pl)
-  | participant -- [±participant]: local (1st/2nd) vs non-local (3rd)
+/-- φ-dimensions of the SJA Mam pronominal system ([scott-2023] Table 4.4,
+    adopting [harbour-2016]'s bivalent features): [±author], [±participant],
+    [±singular]. Per-cell *values* live in `Mam.ScottFeatures`
+    (`Fragments/Mayan/Mam/Pronouns.lean`, where the disagreement
+    distribution of the =i enclitic is verified); this enum names the
+    *dimensions*, for the redundancy calculus below. -/
+inductive PhiDimension where
+  | author
+  | participant
+  | singular
   deriving DecidableEq, Repr
 
-/-- The pronominal base morpheme's features. -/
-def baseFeatures : List PersonFeature := [.person, .number]
+/-- Dimensions referenced by Set A/Set B agreement vocabulary items: only
+    [±author] and [±singular] (Tables 4.7-4.8) — agreement never copies
+    [±participant]. -/
+def agreedDimensions : List PhiDimension := [.author, .singular]
 
-/-- The =i enclitic's feature: [participant]. -/
-def encliticFeature : PersonFeature := .participant
+/-- Dimensions realized by the pronominal base morphemes *qin*
+    [+author,+sg] and *qo* [+author,−sg] (Table 4.10). -/
+def baseDimensions : List PhiDimension := [.author, .singular]
 
-/-- Features that agreement morphology copies (person and number only). -/
-def agreedFeatures : List PersonFeature := [.person, .number]
+/-- Dimensions whose disagreement the =i enclitic realizes
+    ([noyer-1992]; [scott-2023] §4.3.3): [±author] and [±participant]. -/
+def encliticDimensions : List PhiDimension := [.author, .participant]
 
-/-- A feature is redundantly expressed by agreement iff agreement copies it. -/
-def isRedundant (f : PersonFeature) : Bool :=
-  agreedFeatures.any (· == f)
+/-- A dimension is copied back to the probe by agreement. -/
+def PhiDimension.Copied (d : PhiDimension) : Prop := d ∈ agreedDimensions
 
-/-- A morpheme is deleted when ALL its features are redundantly expressed
-    by agreement. -/
-def allRedundant (feats : List PersonFeature) : Bool :=
-  feats.all isRedundant
+instance : DecidablePred PhiDimension.Copied := fun d => by
+  unfold PhiDimension.Copied; infer_instance
 
-/-- The pronominal base is deleted: [person, number] are both copied by
-    agreement, making the base fully redundant. -/
-theorem base_is_redundant : allRedundant baseFeatures = true := by native_decide
+/-- The pronominal base is fully redundant under agreement: every dimension
+    it realizes is copied — the configuration in which impoverishment bleeds
+    base insertion (§4.4). -/
+theorem base_is_redundant : ∀ d ∈ baseDimensions, d.Copied := by decide
 
-/-- The =i enclitic survives: [participant] is NOT copied by agreement. -/
-theorem enclitic_survives : isRedundant encliticFeature = false := by native_decide
+/-- The =i enclitic is not fully redundant: [±participant] is never copied
+    by agreement — so the enclitic survives reduction. -/
+theorem enclitic_survives : ¬ (∀ d ∈ encliticDimensions, d.Copied) := by decide
 
-/-- Pronoun realization after impoverishment ([scott-2023], §4.4.3).
+/-- Pronoun realization by argument position ([scott-2023], her (3)/(8):
+    nominative alignment of reduction). φ-agreed positions (A, S — and
+    possessors) take the subject/possessor series; the unagreed object
+    position takes the independent series. The impoverishment rule
+    (ex. 84/94) `[±singular] → ∅ / [+author]^F` targets [+author] features
+    bearing the agreed-with diacritic F, bleeding insertion of the bases
+    *qin*/*qo* — so agreed-with first person surfaces as bare *=i*
+    (or ∅ for 1PL.INCL), while everything else keeps its independent
+    form. Realization is *selection among the API's `PersonalPronoun`
+    entries*, not a separate form classification. -/
+def realizedPronoun (pos : ArgPosition) (c : PronCell) : Option PersonalPronoun :=
+  if pos.IsPhiAgreed then subjPoss c else independent c
 
-    - `reduced`: 1st person agreed-with — impoverishment deletes
-      [±singular] in the context of [+author]^F, bleeding insertion of
-      pronominal base morphemes *qin*/*qo*. Only =i remains.
-    - `full`: unreduced — the full independent pronoun form. This
-      covers 2nd/3rd person subj/poss (which ARE identical to their
-      independent forms, Table 4.25), as well as all object pronouns
-      (which are not agreed-with and thus not eligible for reduction). -/
-inductive PronounForm where
-  | reduced -- 1st person agreed-with: base deleted, only =i remains
-  | full    -- full independent pronoun (all other cases)
-  deriving DecidableEq, Repr
-
-/-- Is this person 1st (= [+author])? Only [+author] persons are
-    eligible for the impoverishment rule (84) that deletes [±singular]
-    and bleeds base morpheme insertion. -/
-def isFirstPerson : Features.Prominence.PersonLevel → Prop
-  | .first => True
-  | _      => False
-
-instance : DecidablePred isFirstPerson := fun p => by
-  cases p <;> unfold isFirstPerson <;> infer_instance
-
-/-- Derive pronoun form from agreement status and person.
-
-    The impoverishment rule (ex. 84/94) targets [+author] features
-    that bear the F diacritic (indicating agreement has occurred):
-    `[+/−singular] → ∅ / [+author]^F`
-
-    This deletes [±singular] from 1st person agreed-with pronouns,
-    bleeding insertion of *qin* ([+author,+singular]) and *qo*
-    ([+author,−singular]). Only =i remains.
-
-    For 2nd/3rd person, the rule does not apply (they are [-author]),
-    so their subj/poss forms equal their independent forms (Table 4.25).
-    For unagreed-with positions (objects), there is no F diacritic,
-    so impoverishment does not apply regardless of person. -/
-def derivePronounForm (pos : ArgPosition) (person : Features.Prominence.PersonLevel) :
-    PronounForm :=
-  if pos.IsPhiAgreed then
-    if isFirstPerson person then .reduced
-    else .full  -- 2nd/3rd: subj/poss = independent form (no reduction)
-  else .full
-
-/-- 1st person agent: reduced (base deleted, only =i remains). -/
+/-- 1SG agent: reduced to the bare disagreement enclitic (base bled by
+    impoverishment). -/
 theorem first_A_reduced :
-    derivePronounForm .A .first = .reduced := rfl
+    realizedPronoun .A .firstSg = some iDisagr := by decide
 
-/-- 3rd person agent: full independent form (impoverishment does not
-    apply to [-author]). -/
-theorem third_A_full :
-    derivePronounForm .A .third = .full := rfl
-
-/-- 2nd person agent: full independent form (=i IS the independent
-    2SG pronoun, not a reduction). -/
-theorem second_A_full :
-    derivePronounForm .A .second = .full := rfl
-
-/-- 1st person patient: full pronoun (no agreement → no F diacritic). -/
-theorem first_P_full :
-    derivePronounForm .P .first = .full := rfl
-
-/-- 3rd person patient: full pronoun (no agreement → no F diacritic). -/
-theorem third_P_full :
-    derivePronounForm .P .third = .full := rfl
-
-/-- 1st person intransitive S: reduced (Set B agreement triggers
-    impoverishment, deleting base). -/
+/-- 1SG intransitive subject: likewise reduced (Set B agreement). -/
 theorem first_S_reduced :
-    derivePronounForm .S .first = .reduced := rfl
+    realizedPronoun .S .firstSg = some iDisagr := by decide
 
-/-- 3rd person intransitive S: full independent form. -/
-theorem third_S_full :
-    derivePronounForm .S .third = .full := rfl
+/-- 1SG patient: the full independent pronoun *qini* (no agreement → no
+    F diacritic → no impoverishment). -/
+theorem first_P_full :
+    realizedPronoun .P .firstSg = some qini := by decide
 
-/-- Key asymmetry: for agreed-with positions, 1st person is reduced
-    while 2nd/3rd retain full independent forms. This follows from the
-    impoverishment rule targeting [+author] only. -/
+/-- 2SG agent: unreduced — *=i* IS the independent 2SG form (Scott's
+    fn. 2), so the agreed-with cell coincides with the independent one. -/
+theorem second_A_unreduced :
+    realizedPronoun .A .secondSg = independent .secondSg := by decide
+
+/-- 3PL agent: full *qa* (impoverishment does not apply to [−author]). -/
+theorem third_A_full :
+    realizedPronoun .A .thirdPl = some qa := by decide
+
+/-- The nominative-alignment contrast: the same 1SG argument is *=i* as
+    agent but *qini* as patient. -/
+theorem first_A_vs_P :
+    realizedPronoun .A .firstSg ≠ realizedPronoun .P .firstSg := by decide
+
+/-- Agreed-with first person differs from agreed-with third person — the
+    impoverishment rule targets [+author] only. -/
 theorem first_vs_nonfirst_asymmetry :
-    (derivePronounForm .A .first ≠ derivePronounForm .A .third) ∧
-    (derivePronounForm .S .first ≠ derivePronounForm .S .third) := by
+    realizedPronoun .A .firstSg ≠ realizedPronoun .A .thirdSg ∧
+    realizedPronoun .S .firstSg ≠ realizedPronoun .S .thirdSg := by
   exact ⟨by decide, by decide⟩
 
-/-- For unagreed-with positions, person is irrelevant: all get full pronouns. -/
-theorem patient_person_irrelevant :
-    derivePronounForm .P .first = derivePronounForm .P .third := rfl
+/-- The unagreed object position realizes the independent series, for
+    every cell — person is irrelevant without the F diacritic. -/
+theorem patient_takes_independent (c : PronCell) :
+    realizedPronoun .P c = independent c := by
+  cases c <;> decide
 
 -- ============================================================================
 -- § 7: Mayan Absolutive Parameter
@@ -440,7 +398,7 @@ theorem setB_3sg : setBExponent.realize (.pn .third .Sing) = some defaultSetB :=
     Elsewhere; [scott-2023] Ch. 4) is theory and stays in the study. -/
 theorem erg_1sg_from_phi :
     setAExponent.realizeFor
-      ⟨"", .PRON, { person := some .first, number := some .sg }⟩ = some "n-/w-" := by
+      { form :="", cat := .PRON, features := { person := some .first, number := some .Sing }} = some "n-/w-" := by
   rfl
 
 end Mam

@@ -367,12 +367,12 @@ theorem smpm_copy_cannot_bear_focus :
     (copyControlProfile smpmCopyControlType).copyCanBearFocus = false := rfl
 
 /-- The clitic requirement, derived from the fragment and routed through the
-    Cardinaletti–Starke deficiency ranking: the required controlled-subject form
-    is strictly more deficient (lower `Strength.rank`) than the nonclitic strong
-    alternative. -/
+    Cardinaletti–Starke deficiency order: the required controlled-subject
+    class is strictly more deficient than every entry of the non-clitic
+    series ((67)). -/
 theorem smpm_controlled_must_be_clitic :
-    Pronoun.Strength.rank Mixtec.SMPM.controlledSubjectStrength
-      < Pronoun.Strength.rank Mixtec.SMPM.PronounForm.noncliticStrength :=
+    ∀ p ∈ Mixtec.SMPM.strongSeries, ∀ s ∈ p.strength,
+      Mixtec.SMPM.controlledSubjectStrength < s :=
   Mixtec.SMPM.controlledSubject_is_most_deficient
 
 -- ════════════════════════════════════════════════════════════════
