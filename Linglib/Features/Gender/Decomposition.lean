@@ -3,20 +3,23 @@ import Linglib.Features.Gender.Basic
 
 /-!
 # Gender — feature decompositions of the labels
-[smith-2015] [kramer-2015] [adamson-anagnostopoulou-2025] [hammerly-2019]
+[smith-2015] [smith-2021] [kramer-2015] [adamson-anagnostopoulou-2025]
+[hammerly-2019]
 
 Rival feature analyses of gender values. None is baked into `Gender.System`
 — the carrier is analysis-neutral, and each scheme here is a presentation a
 study can adopt or refute.
 
-* **The split-feature architecture** ([smith-2015]): a grammatical feature
-  has two halves — `uF` legible to morphology, `iF` legible to semantics —
-  which "in general match up" but "can be distinct or one can be missing
-  altogether". `SplitFeature V` encodes this for any value vocabulary.
-  [kramer-2015]'s interpretability classification falls out as the special
-  cases (`IsNatural`, `IsArbitrary`), and *hybrid* values
-  (`IsHybrid` — [smith-2015]'s committee-type mismatches, BCS hybrid nouns)
-  are exactly what the special cases cannot represent.
+* **The split-feature architecture** ([smith-2015]; book version
+  [smith-2021]): a grammatical feature has two halves — `uF` legible to
+  morphology, `iF` legible to semantics — which "in general match up" but
+  "can be distinct or one can be missing altogether". `SplitFeature V`
+  encodes this for any value vocabulary. [kramer-2015]'s interpretability
+  classification falls out as the special cases (`IsNatural`,
+  `IsArbitrary`), and *hybrid* values (`IsHybrid` — [smith-2021]'s
+  mismatch zoo: committee-type collectives for number, Russian
+  profession nouns for gender, Hebrew be'alim, Chichewa heroes) are
+  exactly what the special cases cannot represent.
 * **Kramer's gender calculus** ([kramer-2015]): gender features on the
   nominalizing head n, drawn from `KramerN` = {plain, i[±FEM], u[±FEM]}.
   Natural and arbitrary gender differ only in interpretability and receive
