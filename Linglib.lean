@@ -8,6 +8,7 @@ and their interfaces. See README.md for documentation links.
 import Linglib.Features.Basic
 import Linglib.Features.Dimension
 import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Core.Valence
 import Linglib.Data.UD.Basic
 import Linglib.Morphology.Unification
