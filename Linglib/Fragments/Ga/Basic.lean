@@ -1,6 +1,5 @@
+import Linglib.Features.Number.Basic
 import Linglib.Features.Gender
-import Linglib.Data.UD.Basic
-import Linglib.Features.Number
 import Linglib.Features.Person
 
 /-!
@@ -39,7 +38,7 @@ diagnostic requires a free Neg head; Gã `-ee` and `-ko` appear
 suffixal) that is orthogonal to the OC story.
 -/
 
-open Features (Number Person)
+open Features (Person)
 
 namespace Ga
 
@@ -52,6 +51,11 @@ inductive Person where | first | second | third
 
 inductive Number where | sg | pl
   deriving DecidableEq, Repr
+
+/-- Ga's two-value system in the canonical inventory. -/
+def Number.toNumber : Number → _root_.Number
+  | .sg => .singular
+  | .pl => .plural
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2: Pronoun Paradigm

@@ -1,21 +1,12 @@
-import Linglib.Data.UD.Basic
+import Linglib.Features.Number.Basic
 import Linglib.Features.ContainmentPair
 
 /-!
-# Number
-[corbett-2000] [harbour-2014]
+# Number — the Harbour feature decomposition and its lattice grounding
+[harbour-2014] [link-1983]
 
-Two components of the number API:
+Binary feature decomposition of the number values ([harbour-2014]):
 
-**§ 1–3: Number Categories** ([corbett-2000]). Eight analytical number
-values organized along two orthogonal dimensions:
-- **System membership**: general number is *outside* the number system (a form
-  non-committal to cardinality); all others are within it.
-- **Determinacy**: values whose cardinality boundary is fixed (singular=1,
-  dual=2, trial=3) vs those whose boundary varies by context (paucal ≈ 2–6,
-  greater plural ≈ abundance).
-
-**§ 4–6: Number Features** ([harbour-2014]). Binary feature decomposition:
 - **[±atomic]**: whether the referent is an atom (singleton) or a non-atom
   (plurality). Singular is [+atomic]; dual and plural are [−atomic].
 - **[±minimal]**: whether the referent is a minimal element of the relevant
@@ -26,10 +17,11 @@ An atom is necessarily a minimal element of any lattice region it belongs to.
 
 This containment parallels person features ([+author] → [+participant]),
 but with an asymmetry worth marking: number's filter is a *theorem* of the
-lattice semantics (§8 — atoms are minimal; [harbour-2016] ch. 9.5 notes the
-odd cooccurrence is contradictory for `±atomic` "by the logic of the
-system"), whereas person's filter is a descriptive convention the same
-chapter rejects. See `Features/ContainmentPair.lean`.
+lattice semantics (the grounding sections below — atoms are minimal;
+[harbour-2016] ch. 9.5 notes the odd cooccurrence is contradictory for
+`±atomic` "by the logic of the system"), whereas person's filter is a
+descriptive convention the same chapter rejects. See
+`Features/ContainmentPair.lean`.
 
 The three well-formed combinations yield the three basic number values:
 - **singular**: [+atomic, +minimal] — atoms (singletons)
@@ -37,167 +29,32 @@ The three well-formed combinations yield the three basic number values:
 - **plural**: [−atomic, −minimal] — non-minimal non-atoms (triads and up)
 
 Trial, unit augmented, and augmented arise from **feature recursion**
-(reapplying [±minimal] to subregions), which is theory-layer material.
-The approximative numbers (paucal, greater paucal, greater plural) require
-the additional feature [±additive], also theory-layer.
+(reapplying [±minimal] to subregions; `Syntax/Minimalist/Phi/Recursion.lean`).
+The approximative numbers require the additional feature [±additive] (§ on
+the additive feature below).
 
-The full typological machinery (number systems, animacy profiles, agreement
-hierarchy, language data) remains in
-`Studies/Corbett2000.lean`.
+## Main declarations
 
+* `Number.Features` — the [±atomic, ±minimal] bundle, with the containment
+  filter `Features.WellFormed` and the `ContainmentPairLike` presentation
+  unifying it with the person skeleton
+  (`featuresEquiv : Features ≃ ContainmentPair`).
+* `Number.latticeToFeatures` — classify a lattice element as
+  singular/dual/plural by its position.
+* `Number.isJoinCompleteIn` / `Number.isRegionJoinComplete` — the
+  [±additive] feature ([harbour-2014]): join-completeness within a region.
+* `Number.dualPredOnLattice` — ⟦DUAL⟧ as a predicate modifier
+  ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]), grounded in
+  the feature decomposition by `dualPredOnLattice_eq_via_features`.
 -/
 
-/-- Grammatical number — UD's descriptive vocabulary (`UD.Number`: `.Sing`, `.Plur`,
-`.Dual`, …) as the canonical type; the analytical apparatus below is its API. -/
-abbrev Features.Number := UD.Number
+set_option autoImplicit false
 
-namespace Features.Number
+namespace Number
 
--- ============================================================================
--- § 1: Number Categories
--- ============================================================================
+open _root_.Features (ContainmentPair ContainmentPairLike)
 
-/-- Number categories in [corbett-2000]'s inventory.
-
-    Two orthogonal classifications:
-    - **System membership**: general is *outside* the number system; all others
-      are within it.
-    - **Determinacy**: values whose cardinality boundary is fixed (singular=1,
-      dual=2, trial=3) vs those whose boundary varies by context (paucal ≈ 2–6,
-      greater plural ≈ all/abundance). -/
-inductive Category where
-  | general        -- non-committal, outside the number system
-  | singular       -- exactly one ([+atomic, +minimal])
-  | dual           -- exactly two ([−atomic, +minimal])
-  | trial          -- exactly three (recursive [+minimal] on plural region)
-  | paucal         -- a few (indeterminate, [−additive])
-  | plural         -- more than one (residual, [−atomic] or [+additive])
-  | greaterPaucal  -- indeterminate, larger than paucal ([−additive]*)
-  | greaterPlural  -- abundance / totality (recursive [−minimal] on plural)
-  | minimal        -- [+minimal] without [±atomic] — includes atoms AND
-                    -- minimal non-atoms; distinct from singular
-  | augmented      -- [−minimal] without [±atomic] — complement of minimal
-  | unitAugmented  -- recursive [+minimal] on augmented region — minimal
-                    -- non-minimal; distinct from dual
-  | globalPlural   -- recursive [+additive] on [+additive] region (tentative)
-  deriving DecidableEq, Repr
-
-namespace Category
-
-/-- A number category is determinate iff its cardinality boundary is fixed.
-    Minimal and unit augmented are indeterminate: they depend on the
-    composition of the group, not a fixed cardinality. -/
-def isDeterminate : Category → Prop
-  | .singular | .dual | .trial => True
-  | _ => False
-
-instance : DecidablePred isDeterminate := fun c => by
-  cases c <;> unfold isDeterminate <;> infer_instance
-
-/-- A number category participates in the number system (is not general). -/
-def isInSystem : Category → Prop
-  | .general => False
-  | _ => True
-
-instance : DecidablePred isInSystem := fun c => by
-  cases c <;> unfold isInSystem <;> infer_instance
-
-/-- Exact referent-set cardinality for determinate number categories.
-
-    Singular denotes exactly 1 individual (atom), dual exactly 2 (pair),
-    trial exactly 3 (triple). All other categories — plural, paucal,
-    greaterPlural, minimal, augmented — have indeterminate or
-    context-dependent cardinality and return `none`.
-
-    Used by `CoordinateResolution.canonicalResolve` to derive resolution
-    from cardinality addition: |A ⊔ B| = |A| + |B| for disjoint sets. -/
-def exactCard : Category → Option Nat
-  | .singular => some 1
-  | .dual     => some 2
-  | .trial    => some 3
-  | _         => none
-
-/-- Whether a category belongs to the [±minimal] number system (without
-    [±atomic]). In such systems, minimal = atoms ∪ minimal non-atoms,
-    and augmented = everything else. Returns `none` for categories
-    outside the MIN/AUG system. -/
-def isMinAug : Category → Prop
-  | .minimal | .augmented => True
-  | _ => False
-
-instance : DecidablePred isMinAug := fun c => by
-  cases c <;> unfold isMinAug <;> infer_instance
-
-/-- Map a referent-set cardinality back to the finest determinate category.
-    1 → singular, 2 → dual, 3 → trial, 4+ → greaterPlural. -/
-def fromCard : Nat → Category
-  | 1 => .singular
-  | 2 => .dual
-  | 3 => .trial
-  | _ => .greaterPlural
-
-/-- `fromCard` inverts `exactCard` for determinate categories. -/
-theorem fromCard_singular : fromCard 1 = .singular := rfl
-theorem fromCard_dual : fromCard 2 = .dual := rfl
-theorem fromCard_trial : fromCard 3 = .trial := rfl
-
-end Category
-
--- ============================================================================
--- § 2: UD Bridges
--- ============================================================================
-
-/-- Map analytical number categories to UD.Number (general has no UD equivalent).
-    Minimal, augmented, unit augmented, and global plural have no UD representation. -/
-def Category.toUD : Category → Option UD.Number
-  | .general        => none
-  | .singular       => some .Sing
-  | .dual           => some .Dual
-  | .trial          => some .Tri
-  | .paucal         => some .Pauc
-  | .plural         => some .Plur
-  | .greaterPaucal  => some .Grpa
-  | .greaterPlural  => some .Grpl
-  | .minimal        => none
-  | .augmented      => none
-  | .unitAugmented  => none
-  | .globalPlural   => none
-
-/-- Map UD.Number to analytical number categories (partial).
-
-    Seven core categories round-trip cleanly. Three UD values have no analytical
-    equivalent:
-    - `Inv` (inverse number): marks the *unexpected* number for a given noun —
-      plural for some nouns, singular for others. Not a fixed cardinality.
-    - `Coll` (collective): denotes a group-as-unit (Russian *листва* 'foliage'),
-      distinct from general number which is non-committal to cardinality.
-    - `Count` (count form): a special form after numerals (Hungarian, Welsh),
-      not equivalent to singular (exactly one). -/
-def Category.fromUD : UD.Number → Option Category
-  | .Sing  => some .singular
-  | .Plur  => some .plural
-  | .Dual  => some .dual
-  | .Tri   => some .trial
-  | .Pauc  => some .paucal
-  | .Grpa  => some .greaterPaucal
-  | .Grpl  => some .greaterPlural
-  | .Inv   => none
-  | .Coll  => none
-  | .Count => none
-
--- ============================================================================
--- § 3: Category Verification
--- ============================================================================
-
-/-- Round-trip: fromUD ∘ toUD = id for all in-system categories. -/
-theorem roundtrip_fromUD_toUD :
-    [Category.singular, .dual, .trial, .paucal, .plural,
-     .greaterPaucal, .greaterPlural].all
-      (λ v => v.toUD.bind Category.fromUD == some v) = true := by decide
-
--- ============================================================================
--- § 4: Number Features
--- ============================================================================
+/-! ### The feature bundle -/
 
 /-- Bivalent number features: [±atomic, ±minimal].
 
@@ -225,37 +82,33 @@ def dualF : Features := ⟨false, true⟩
 /-- Plural features: [−atomic, −minimal]. -/
 def pluralF : Features := ⟨false, false⟩
 
--- ============================================================================
--- § 5: Features ↔ Category Bridge
--- ============================================================================
+/-! ### Features ↔ value bridge -/
 
-/-- Map number features to Corbett's analytical number categories.
+/-- Map a feature bundle to the number value it realizes.
 
-    The three well-formed base feature bundles map to three of
-    [corbett-2000]'s eight categories. The remaining (trial,
+    The three well-formed base bundles map to three of
+    [corbett-2000]'s values. The remaining (trial,
     paucal, etc.) arise from feature recursion and [±additive], which
     require compositional machinery beyond the base feature pair. -/
-def Features.toCategory : Features → Option Category
+def Features.toNumber : Features → Option Number
   | ⟨true, true⟩   => some .singular
   | ⟨false, true⟩  => some .dual
   | ⟨false, false⟩ => some .plural
   | ⟨true, false⟩  => none  -- ill-formed
 
-/-- Map Corbett's number categories to base features (partial).
+/-- Map a number value to its base feature bundle (partial).
 
-    Only the three categories derivable from the base [±atomic, ±minimal]
+    Only the three values derivable from the base [±atomic, ±minimal]
     system have feature equivalents. Trial, paucal, minimal, augmented,
     and the rest require feature recursion, [±additive], or different
     feature activation patterns. -/
-def Features.fromCategory : Category → Option Features
+def Features.ofNumber : Number → Option Features
   | .singular => some singularF
   | .dual     => some dualF
   | .plural   => some pluralF
   | _         => none
 
--- ============================================================================
--- § 6: ContainmentPair Presentation
--- ============================================================================
+/-! ### The `ContainmentPairLike` presentation -/
 
 /-- The `[±atomic, ±minimal]` decomposition is carrier-equivalent to the
 containment pair: `outer` = minimal, `inner` = atomic. The containment
@@ -294,9 +147,7 @@ theorem no_fourth_base_number :
   fun a b c d ha hb hc hd =>
     ContainmentPairLike.no_four_way a b c d ha hb hc hd
 
--- ============================================================================
--- § 7: Features Verification
--- ============================================================================
+/-! ### Verification -/
 
 @[simp] theorem singular_wellFormed : singularF.WellFormed := by decide
 @[simp] theorem dual_wellFormed : dualF.WellFormed := by decide
@@ -312,26 +163,22 @@ theorem illFormed_only : ¬ (⟨true, false⟩ : Features).WellFormed := by deci
 theorem card_wellFormed :
     Fintype.card {nf : Features // nf.WellFormed} = 3 := by decide
 
-/-- Round-trip: fromCategory ∘ toCategory = some for all well-formed features. -/
-theorem roundtrip_fromCategory_toCategory :
+/-- Round-trip: `ofNumber ∘ toNumber = some` for all well-formed features. -/
+theorem roundtrip_ofNumber_toNumber :
     [singularF, dualF, pluralF].all
-      (λ f => f.toCategory.bind Features.fromCategory == some f) = true := by
+      (λ f => f.toNumber.bind Features.ofNumber == some f) = true := by
   decide
 
-/-- toCategory returns none for the filtered bundle. -/
-theorem illFormed_toCategory_none :
-    (⟨true, false⟩ : Features).toCategory = none := rfl
+/-- `toNumber` returns none for the filtered bundle. -/
+theorem illFormed_toNumber_none :
+    (⟨true, false⟩ : Features).toNumber = none := rfl
 
 /-- Containment: [+atomic] → [+minimal] for all well-formed features. -/
 theorem atomic_implies_minimal :
     ∀ f : Features, f.WellFormed → f.isAtomic = true → f.isMinimal = true := by
   decide
 
--- ============================================================================
--- § 8: Lattice-Theoretic Grounding
--- ============================================================================
-
-/-! ### Lattice-Theoretic Grounding
+/-! ### Lattice-theoretic grounding
 
 Number features grounded in a join-semilattice of individuals.
 
@@ -351,8 +198,8 @@ grounding computationally verifiable. They are the `Bool` counterparts
 of `Mereology.Atom` and minimality-in-region. -/
 
 /-- Powerset lattice join (bitwise OR). Atoms are powers of 2;
-    sums are bitwise OR of their atoms. Used across §§8–10 and
-    by `CoordinateResolution` for lattice verification. -/
+    sums are bitwise OR of their atoms. Used across the lattice
+    sections below and by `Number.resolve` for lattice verification. -/
 def bitmaskJoin (a b : Nat) : Nat := Nat.lor a b
 
 /-- Ordering induced by join: a ≤ b iff a ⊔ b = b.
@@ -428,11 +275,7 @@ theorem ps3_pair_is_dual' :
 theorem ps3_triple_is_plural :
     latticeToFeatures bitmaskJoin ps3Domain 7 = pluralF := by decide
 
--- ============================================================================
--- § 9: The Additive Feature
--- ============================================================================
-
-/-! ### The Additive Feature
+/-! ### The additive feature
 [harbour-2014]
 
 [±additive] is the third number feature, characterizing
@@ -467,11 +310,7 @@ def isRegionJoinComplete {D : Type} [DecidableEq D]
     (join : D → D → D) (region : List D) : Bool :=
   region.all fun x => isJoinCompleteIn join region x
 
--- ============================================================================
--- § 10: Additive Feature — Powerset Lattice Examples
--- ============================================================================
-
-/-! ### Powerset Lattice Examples
+/-! ### Additive feature — powerset lattice examples
 
 Paucal vs plural on a powerset lattice (join = bitwise OR). Atoms
 encoded as powers of 2; sums as bitwise OR of their atoms.
@@ -521,10 +360,6 @@ theorem ps5_additive_asymmetry :
     isRegionJoinComplete bitmaskJoin ps5Plural = true ∧
     isRegionJoinComplete bitmaskJoin ps5Paucal = false :=
   ⟨ps5_plural_joinComplete, ps5_paucal_not_joinComplete⟩
-
--- ============================================================================
--- § 11: DUAL Core Concept — Predicate-Modification Denotation
--- ============================================================================
 
 /-! ### DUAL as predicate modifier
 [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]
@@ -599,7 +434,7 @@ factors as `P x ∧ latticeToFeatures … x = dualF`.
 
 This grounds the paper's predicate-modifier semantics
 ([jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025] eq 39)
-in the existing Harbour feature decomposition (Number.lean §§4-5):
+in the existing Harbour feature decomposition (the feature bundle above):
 DUAL is *not* a separate primitive but the same conditions used to
 classify a lattice element as `[−atomic, +minimal]`. -/
 theorem dualPredOnLattice_eq_via_features {D : Type} [DecidableEq D]
@@ -621,10 +456,10 @@ theorem dualPredOnLattice_eq_via_features {D : Type} [DecidableEq D]
     unfold latticeToFeatures at hF
     by_cases ha : isAtom join domain x = true
     · simp [ha, singularF, dualF] at hF
-    · simp only [ha, if_false, Bool.not_eq_true] at hF
+    · simp only [ha] at hF
       by_cases hm : isMinimalNonAtom join domain x = true
       · exact hm
-      · simp only [hm, if_false, Bool.not_eq_true] at hF
+      · simp only [hm] at hF
         simp [pluralF, dualF] at hF
 
 /-- On the 3-atom powerset, the dual reading of "is a non-atom"
@@ -640,27 +475,4 @@ theorem ps3_dual_triple_excluded :
     dualPredOnLattice bitmaskJoin ps3Domain (fun _ => true) 7 = false := by
   decide
 
--- ============================================================================
--- § 4: Number Opposition Stages ([cysouw-2009], Fig 10.8)
--- ============================================================================
-
-/-- Number opposition stages ([cysouw-2009], Fig 10.8).
-    A coarsening over the eight [corbett-2000] number values into a
-    four-step hierarchy of typological "richness", from no number marking
-    (N₁) to full number marking with restricted groups (N₃/N₄).
-
-    Used by both [cysouw-2009] (paradigmatic person-marking) and
-    [corbett-2000] (`NumberSystem.toNumberStage` bridge in
-    `Studies/Corbett2000.lean`). -/
-inductive NumberStage where
-  /-- Undifferentiated number marking (singular = group unmarked). -/
-  | N1
-  /-- Singular vs group (basic number opposition). -/
-  | N2
-  /-- Restricted group (dual/trial) distinguished from unrestricted. -/
-  | N3
-  /-- Small group (paucal) additionally distinguished. -/
-  | N4
-  deriving DecidableEq, Repr
-
-end Features.Number
+end Number

@@ -1,5 +1,5 @@
 import Linglib.Features.Person
-import Linglib.Features.Number
+import Linglib.Features.Number.Decomposition
 
 /-!
 # The Phi Kernel

@@ -1,4 +1,5 @@
 import Linglib.Data.UD.Basic
+import Linglib.Features.Number.Capabilities
 
 /-!
 # Word — the morphosyntactic word (ms-word) token
@@ -84,6 +85,21 @@ theorem Word.Agree.not_transitive :
        ⟨"he", .PRON, { person := some .third, number := some .Sing, gender := some .Masc }⟩
        (by decide) (by decide))
     (by decide)
+
+/-- A word bears the number its UD morphology ingests (`Number.fromUD`). -/
+instance : HasNumber Word := ⟨fun w => w.features.number.bind Number.fromUD⟩
+
+/-- The φ-projection preserves `numberOf`: a word and its `phi` bundle bear
+    the same number — the defeq `Word.Agree.hasNumber_compatible` relies on. -/
+@[simp] theorem Word.numberOf_phi (w : Word) :
+    HasNumber.numberOf w.phi = HasNumber.numberOf w := rfl
+
+/-- φ-agreement entails number compatibility: the `HasNumber` mixin never
+    diverges from the agreement engine on `Word`. -/
+theorem Word.Agree.hasNumber_compatible {w1 w2 : Word} (h : w1.Agree w2) :
+    HasNumber.Compatible w1 w2 :=
+  fun na ha nb hb =>
+    UD.MorphFeatures.compatible_hasNumber (f1 := w1.phi) (f2 := w2.phi) h na ha nb hb
 
 -- `reflex` is deliberately not an agreement feature: a reflexive-marked token still
 -- agrees with an unmarked one (the φ-projection drops it).

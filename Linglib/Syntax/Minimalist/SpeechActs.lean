@@ -8,7 +8,6 @@ import Linglib.Discourse.Intentionality
 import Linglib.Discourse.Commitment.Basic
 import Linglib.Features.Evidentiality
 import Linglib.Fragments.English.Pronouns
-import Linglib.Features.Number
 import Linglib.Features.Person
 
 /-!
@@ -37,7 +36,7 @@ c-commands content.
 
 -/
 
-open Features (Number Person)
+open Features (Person)
 
 namespace Minimalist.SpeechActs
 

@@ -1,3 +1,4 @@
+import Linglib.Features.Number.Basic
 import Linglib.Typology.Possession
 
 /-!
@@ -81,6 +82,11 @@ inductive FiPossPerson where | first | second | third
 
 inductive FiPossNumber where | sg | pl
   deriving DecidableEq, Repr
+
+/-- The possessive paradigm's number dimension, canonically. -/
+def FiPossNumber.toNumber : FiPossNumber → Number
+  | .sg => .singular
+  | .pl => .plural
 
 def possSuffix : FiPossPerson → FiPossNumber → String
   | .first,  .sg => "-ni"

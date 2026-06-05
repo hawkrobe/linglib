@@ -431,7 +431,7 @@ section DomainBridges
     which is `plSem` — the PrProp with vacuous presupposition.
     `pl_is_minimal_cell` (PhiFeatures) proves `pluralF` maps to `.minimal`. -/
 theorem plural_strategy_is_plSem :
-    honStrategyCell .plural = ContainmentPairLike.toPair Features.Number.pluralF :=
+    honStrategyCell .plural = ContainmentPairLike.toPair Number.pluralF :=
   rfl
 
 /-- The 3rd-person strategy targets the minimal PERSON cell,

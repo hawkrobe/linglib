@@ -1,5 +1,5 @@
 import Linglib.Core.CoreConcept
-import Linglib.Features.Number
+import Linglib.Features.Number.Decomposition
 import Linglib.Core.Tree
 import Linglib.Semantics.Quantification.Lexicon
 import Linglib.Semantics.Alternatives.Source
@@ -54,10 +54,10 @@ The prediction is computed via:
 
 ## Connection to linglib infrastructure
 
-- `Features.Number.dualPredOnLattice` is the predicate-modification
+- `Number.dualPredOnLattice` is the predicate-modification
   denotation of DUAL (paper eq 39 / §8 eq 98b), grounded in the
   existing Harbour `dualF = ⟨−atomic, +minimal⟩` and bridged via
-  `Features.Number.dualPredOnLattice_eq_via_features`.
+  `Number.dualPredOnLattice_eq_via_features`.
 - `Alternatives.Indirect.indirectFrom` lifts an indirect alternative
   into an `AlternativeSource`, plugging into the
   `Alternatives.Structural.violatesMP` competition operator.

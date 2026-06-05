@@ -1,4 +1,5 @@
 import Linglib.Data.UD.Basic
+import Linglib.Features.Number.Capabilities
 import Linglib.Semantics.Kinds.NominalMappingParameter
 
 /-!
@@ -30,6 +31,13 @@ inductive NPNumber where
   | sg | pl | mass
   deriving DecidableEq, Repr
 
+/-- Dutch NP number in the canonical inventory; mass NPs bear no
+    count-number value. -/
+def NPNumber.toNumber : NPNumber → Option Number
+  | .sg => some .singular
+  | .pl => some .plural
+  | .mass => none
+
 /-- Scrambling position in the Dutch middle field. -/
 inductive ScramblingPosition where
   | unscrambled
@@ -44,6 +52,9 @@ structure NP where
   determiner : Option String := none
   position : Option ScramblingPosition := none
   deriving Repr, BEq
+
+/-- A Dutch NP bears its number slot canonically (`HasNumber`). -/
+instance : HasNumber NP := ⟨fun np => np.number.toNumber⟩
 
 def NP.isBarePlural (np : NP) : Bool :=
   np.isBare && np.number == .pl

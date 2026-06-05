@@ -33,7 +33,7 @@ correspond to conceptual primitives independently motivated in the
 literature, with a denotation defined elsewhere in linglib. -/
 inductive Id where
   /-- Number-feature dual: predicate-modifier "and has exactly 2
-  atomic parts"; denotation in `Features.Number.dualPredOnLattice`. -/
+  atomic parts"; denotation in `Number.dualPredOnLattice`. -/
   | dual
   /-- Number-feature trial. Mentioned in [harbour-2014] as
   morphologically stable but rare. Denotation TBD. -/

@@ -20,7 +20,7 @@ the linglib mirror of its v2 surface, and `Data/UD/` is the standard's area —
 treebank data (CoNLL-U) belongs here beside the vocabulary, paralleling
 `Data/WALS/` (schema + datapoints). Its types are the foundational
 substrate every other layer builds on: `Features/` aliases the feature types
-(`Features.Number := UD.Number`, …) and `Morphology/Word.lean` builds the
+(e.g. `Number.fromUD`/`Number.toUD`, …) and `Morphology/Word.lean` builds the
 ms-word token over the vocabulary.
 The bare `UD` namespace (no `Data.` prefix) is intentional — UD is its own
 external project. Subsumption-order theory over `MorphFeatures` lives in

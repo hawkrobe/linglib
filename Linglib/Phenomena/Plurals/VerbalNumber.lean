@@ -1,4 +1,4 @@
-import Linglib.Features.Number
+import Linglib.Features.Number.Basic
 import Linglib.Data.WALS.Features.F80A
 
 /-!
@@ -26,7 +26,6 @@ languages. 159 have no verbal number; 34 have singular-plural pairs
 
 namespace VerbalNumber
 
-open Features.Number (Category)
 
 -- ============================================================================
 -- § 1: Verbal Number Types
@@ -51,7 +50,7 @@ structure VerbalNumberProfile where
   /-- Whether the language uses suppletion (distinct stems for sg/pl). -/
   hasSuppletion : Bool
   /-- Number values distinguished on the verb. -/
-  verbValues : List Category
+  verbValues : List Number
   deriving BEq
 
 -- ============================================================================

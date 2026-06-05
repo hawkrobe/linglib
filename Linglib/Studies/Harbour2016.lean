@@ -3,7 +3,7 @@ import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Finset.NAry
 import Mathlib.Data.Finset.Lattice.Fold
 import Linglib.Features.Person
-import Linglib.Features.Number
+import Linglib.Features.Number.Decomposition
 import Linglib.Syntax.Minimalist.CyclicAgree
 import Linglib.Syntax.Minimalist.Phi.Recursion
 import Linglib.Syntax.Minimalist.Phi.Lattice
@@ -233,7 +233,7 @@ hierarchy `sg > du > pl` are both the specification ordering `maximal > intermed
 minimal`. -/
 
 open Features (ContainmentPairLike)
-open Features.Number (singularF dualF pluralF)
+open Number (singularF dualF pluralF)
 
 /-- The person hierarchy `1 > 2 > 3` is the specification ordering of `ContainmentPair`
 (maximal > intermediate > minimal), connecting [harbour-2016]'s lattice approach to the
@@ -252,8 +252,8 @@ structural reflection of the phi kernel, not an identification of the categories
 theorem number_hierarchy_is_spec_ordering :
     ContainmentPairLike.specLevel singularF > ContainmentPairLike.specLevel dualF ∧
     ContainmentPairLike.specLevel dualF > ContainmentPairLike.specLevel pluralF :=
-  ContainmentPairLike.specLevel_strict_order Features.Number.singular_is_maximal
-    Features.Number.dual_is_intermediate Features.Number.plural_is_minimal
+  ContainmentPairLike.specLevel_strict_order Number.singular_is_maximal
+    Number.dual_is_intermediate Number.plural_is_minimal
 
 /-! ### Bridge to Cyclic Agree ([bejar-rezac-2009]) -/
 

@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.Number
+import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person
 import Linglib.Semantics.Modality.ModalTypes
 import Linglib.Features.Register
@@ -50,7 +50,7 @@ To find every claim made about a particular entry, grep for
 `Theories/`.
 -/
 
-open Features (Number Person)
+open Features (Person)
 
 namespace English.Auxiliaries
 
@@ -71,7 +71,7 @@ structure AuxEntry where
   auxType : AuxType
   /-- Person/number agreement -/
   person : Option Person := none
-  number : Option Number := none
+  number : Option UD.Number := none
   /-- Morphological tense. `none` for base forms (modals like *can*, *will*).
       Note: "past" modals (*could*, *would*) carry `Past` as a morphological
       feature even when semantically non-past (counterfactual, polite). -/
@@ -99,6 +99,9 @@ structure AuxEntry where
       [u∃-MOD], checked by a single silent [i∃-MOD] operator. -/
   interpretability : Option ModalInterpretability := none
   deriving Repr, BEq
+
+/-- An auxiliary bears its agreement number (`HasNumber`). -/
+instance : HasNumber AuxEntry := ⟨fun a => a.number.bind Number.fromUD⟩
 
 -- Modals (no agreement). Modal meanings follow [kratzer-1981], [palmer-2001].
 -- Each uses cartesianProduct with singleton force (fixed force, variable flavor).

@@ -1,7 +1,7 @@
 import Linglib.Features.Gender
 import Linglib.Data.UD.Basic
+import Linglib.Features.Number.Capabilities
 import Linglib.Semantics.Kinds.NominalMappingParameter
-import Linglib.Features.Number
 
 /-! # Italian Noun Lexicon Fragment
 
@@ -24,7 +24,6 @@ The partitive articles (di + definite article) serve as the obligatory
 indefinite plural — Italian has no bare plural arguments.
 -/
 
-open Features (Number)
 
 namespace Italian.Nouns
 
@@ -89,13 +88,16 @@ inductive Determiner where
 structure NP where
   /-- The underlying noun -/
   noun : NounEntry
-  /-- Number -/
-  number : Number
+  /-- Grammatical number. -/
+  number : UD.Number
   /-- Is this a bare NP (no determiner)? -/
   isBare : Bool
   /-- The determiner (if not bare) -/
   determiner : Option Determiner := none
   deriving Repr, BEq
+
+/-- An NP bears the number of its `number` slot (`HasNumber`). -/
+instance : HasNumber NP := ⟨fun np => Number.fromUD np.number⟩
 
 -- ============================================================================
 -- § 6: NP Constructors
@@ -105,7 +107,7 @@ structure NP where
     Uses `il` for masculine singular and `la` for feminine singular
     (the lo/gli allomorphs are phonologically conditioned and not
     modeled here). -/
-def defNP (n : NounEntry) (num : Number := .Sing) : NP :=
+def defNP (n : NounEntry) (num : UD.Number := .Sing) : NP :=
   let det := match num, n.gender with
     | .Sing, .feminine => Determiner.la
     | .Sing, _ => Determiner.il        -- masculine is default
@@ -121,7 +123,7 @@ def indefNP (n : NounEntry) : NP :=
   { noun := n, number := .Sing, isBare := false, determiner := some det }
 
 /-- Create a partitive NP (del/della for mass, dei/delle for plural). -/
-def partNP (n : NounEntry) (num : Number := .Sing) : NP :=
+def partNP (n : NounEntry) (num : UD.Number := .Sing) : NP :=
   let det := match num, n.gender with
     | .Sing, .feminine => Determiner.della
     | .Sing, _ => Determiner.del        -- masculine is default
@@ -130,7 +132,7 @@ def partNP (n : NounEntry) (num : Number := .Sing) : NP :=
   { noun := n, number := num, isBare := false, determiner := some det }
 
 /-- Create a bare NP (restricted in Italian). -/
-def bareNP (n : NounEntry) (num : Number := .Sing) : NP :=
+def bareNP (n : NounEntry) (num : UD.Number := .Sing) : NP :=
   { noun := n, number := num, isBare := true }
 
 -- ============================================================================

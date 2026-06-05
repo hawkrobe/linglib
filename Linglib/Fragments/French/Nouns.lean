@@ -1,14 +1,13 @@
 import Linglib.Features.Gender
 import Linglib.Data.UD.Basic
+import Linglib.Features.Number.Capabilities
 import Linglib.Semantics.Kinds.NominalMappingParameter
-import Linglib.Features.Number
 
 /-! # French Noun Lexicon Fragment
 
 French NP structure with gender. Bare arguments restricted ([chierchia-1998] [-arg, +pred]).
 -/
 
-open Features (Number)
 
 namespace French.Nouns
 
@@ -49,13 +48,16 @@ French NPs require determiners in most contexts.
 structure NP where
   /-- The underlying noun -/
   noun : NounEntry
-  /-- Number -/
-  number : Number
+  /-- Grammatical number. -/
+  number : UD.Number
   /-- Is this a bare NP (no determiner)? -/
   isBare : Bool
   /-- The determiner (if not bare) -/
   determiner : Option Determiner := none
   deriving Repr, BEq
+
+/-- An NP bears the number of its `number` slot (`HasNumber`). -/
+instance : HasNumber NP := ⟨fun np => Number.fromUD np.number⟩
 
 
 /--
@@ -72,7 +74,7 @@ def frenchMapping : NominalMapping := .predOnly
 
 
 /-- Create a definite NP (le/la/les) -/
-def defNP (n : NounEntry) (num : Number := .Sing) : NP :=
+def defNP (n : NounEntry) (num : UD.Number := .Sing) : NP :=
   let det := match num, n.gender with
     | .Sing, .masculine => Determiner.le
     | .Sing, .feminine => Determiner.la
@@ -98,7 +100,7 @@ def partNP (n : NounEntry) : NP :=
   { noun := n, number := .Sing, isBare := false, determiner := some det }
 
 /-- Create a bare NP (restricted in French) -/
-def bareNP (n : NounEntry) (num : Number := .Sing) : NP :=
+def bareNP (n : NounEntry) (num : UD.Number := .Sing) : NP :=
   { noun := n, number := num, isBare := true }
 
 

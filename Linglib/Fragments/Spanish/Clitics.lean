@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.Number
+import Linglib.Features.Number.Capabilities
 import Linglib.Features.Person
 
 /-!
@@ -23,7 +23,7 @@ This syncretism drives the availability of stylistic applicatives.
 
 -/
 
-open Features (Number Person)
+open Features (Person)
 
 namespace Spanish.Clitics
 
@@ -46,9 +46,12 @@ inductive CliticCase where
 structure CliticEntry where
   form : String
   person : Person
-  number : Number
+  number : UD.Number
   case_ : CliticCase
   deriving Repr, BEq
+
+/-- A clitic bears its φ-slot's number (`HasNumber`). -/
+instance : HasNumber CliticEntry := ⟨fun c => Number.fromUD c.number⟩
 
 -- ============================================================================
 -- § 3: Paradigm Data
@@ -94,20 +97,20 @@ def paradigm : List CliticEntry :=
     los, las, les_dat, se_refl_pl ]
 
 /-- Look up the form for a given person, number, and case in the paradigm. -/
-def lookupForm (p : Person) (n : Number) (c : CliticCase) : Option String :=
+def lookupForm (p : Person) (n : UD.Number) (c : CliticCase) : Option String :=
   (paradigm.find? (fun e => e.person == p && e.number == n && e.case_ == c)).map (·.form)
 
 /-- Are two clitic cases syncretic for a given person/number combination?
     DERIVED from the paradigm data: syncretism holds iff the looked-up
     forms are identical (and both exist). -/
-def isSyncretic (p : Person) (n : Number) (c1 c2 : CliticCase) : Bool :=
+def isSyncretic (p : Person) (n : UD.Number) (c1 c2 : CliticCase) : Bool :=
   match lookupForm p n c1, lookupForm p n c2 with
   | some f1, some f2 => f1 == f2
   | _, _ => false
 
 /-- The set of person/number combinations where DAT and REFL are syncretic.
     This is the key condition for SE-optionality. -/
-def datReflSyncretic (p : Person) (n : Number) : Bool :=
+def datReflSyncretic (p : Person) (n : UD.Number) : Bool :=
   isSyncretic p n .dative .reflexive
 
 -- ============================================================================

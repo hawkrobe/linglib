@@ -1,5 +1,5 @@
 import Linglib.Features.Person
-import Linglib.Features.Number
+import Linglib.Features.Number.Basic
 import Linglib.Fragments.Finnish.Negation
 
 /-!
@@ -627,14 +627,13 @@ theorem independent_more_explicit :
 -- §16: Number Opposition Hierarchy (Fig 10.8)
 -- ============================================================================
 
-/-! `NumberStage` (Cysouw Fig 10.8) lives in `Features/Number.lean` —
+/-! `Number.Stage` (Cysouw Fig 10.8) lives in `Features/Number/Basic.lean` —
     promoted to substrate because both [cysouw-2009] and
     [corbett-2000] consume it. -/
 
-open Features.Number (NumberStage)
 
 /-- Classify a paradigm's number stage by checking singular/group opposition. -/
-def ParadigmaticStructure.numberStage (s : ParadigmaticStructure) : NumberStage :=
+def ParadigmaticStructure.numberStage (s : ParadigmaticStructure) : Number.Stage :=
   -- Check if there's any singular ≠ group distinction at all
   let hasSgGrpOpposition := Category.all.filter (decide ·.IsSingular) |>.any λ sg =>
     Category.all.filter (decide ·.IsGroup) |>.any λ grp =>
@@ -678,7 +677,7 @@ theorem piraha_P1 : piraha.personStage = .P1 := by decide
 /-- Position in Cysouw's cognitive map (Fig 10.6), combining
     the number-of-forms-for-'we' with the paradigm type. -/
 structure CognitiveMapPosition where
-  numberStage : NumberStage
+  numberStage : Number.Stage
   personStage : PersonStage
   singularType : SingularType
   firstPersonComplexType : FirstPersonComplexType

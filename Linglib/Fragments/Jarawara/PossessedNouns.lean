@@ -1,8 +1,8 @@
 import Linglib.Morphology.DM.NominalStructure
 import Linglib.Typology.Possession
 import Linglib.Data.UD.Basic
+import Linglib.Features.Number.Capabilities
 import Linglib.Features.Gender
-import Linglib.Features.Number
 
 /-!
 # Jarawara Possessed Nouns [adamson-2024] [dixon-2004]
@@ -28,7 +28,6 @@ The iPossessable class maps onto the upper portion of the
 cross-linguistic inalienability hierarchy from `Possession.Typology`.
 -/
 
-open Features (Number)
 
 namespace Jarawara
 
@@ -161,9 +160,12 @@ def PossGender.toSurfaceGender : PossGender → Features.SurfaceGender
     for first person plural. -/
 structure Possessor where
   person : Person
-  number : Number
+  number : UD.Number
   gender : Option PossGender := none  -- only for 3rd person
   deriving DecidableEq, Repr
+
+/-- A possessor bears its φ-number (`HasNumber`). -/
+instance : HasNumber Possessor := ⟨fun p => Number.fromUD p.number⟩
 
 /-- Possessed noun form: "masculine" (mano) or "feminine" (mani).
     These labels follow [dixon-2004]'s terminology; they reflect
