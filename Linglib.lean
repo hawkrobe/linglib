@@ -83,6 +83,8 @@ import Linglib.Core.Order.Normality
 import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Core.Order.Plausibility
 import Linglib.Core.Order.Satisfaction
+import Linglib.Core.Order.PartialUnify
+import Linglib.Core.Order.Flat
 import Linglib.Core.Order.PullbackPreorder
 import Linglib.Core.Order.SetPreimage
 import Linglib.Core.Order.Ortholattice

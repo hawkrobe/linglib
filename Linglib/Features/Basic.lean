@@ -1,4 +1,5 @@
 import Mathlib.Data.Fintype.Basic
+import Linglib.Core.Order.Flat
 import Linglib.Core.Order.PullbackPreorder
 
 /-!
@@ -48,13 +49,18 @@ theories.
 
 ## Implementation notes
 
-`Features.Bundle` is a `def`, not an `abbrev`, on the `WithBot`
-precedent: it is the same underlying type as the dependent Pi
-`(t : F) → Option (V t)` but carries the subsumption order as *the*
-order, and a reducible synonym would leak that instance onto bare Pi
-types. Pi-level instances that are wanted (`DecidableEq`) are
-transferred explicitly. `Features.Bundle` is unrelated to mathlib's
-fiber-bundle `Bundle` namespace; qualify when both are in scope.
+`Features.Bundle` is an `abbrev` over the Pi type of `Flat` slots
+(`Core/Order/Flat.lean`): the reducibility barrier sits at `Flat`, so
+the subsumption order does not leak onto bare `Option`-valued Pi types,
+while mathlib's Pi instances supply the whole order stack — the
+subsumption `PartialOrder`, `OrderBot` (`⊥` = everywhere
+underspecified), `SemilatticeInf` (generalization/anti-unification),
+and the partial join `PartialUnify` (unification). This is the bounded
+complete partial order of the unification tradition ([carpenter-1992]
+Definition 2.1; "a finite BCPO is nothing more nor less than a finite
+meet semilattice", presented through its joins). `Features.Bundle` is
+unrelated to mathlib's fiber-bundle `Bundle` namespace; qualify when
+both are in scope.
 
 Instances live with their carriers, not here: this file imports only
 `Core` and mathlib, and e.g. the phonological partial-assignment carrier
@@ -64,16 +70,13 @@ instantiates `BundleLike` in its own file.
 
 * Instantiate at the existing carriers: `Phonology/Featural/Bundle.lean`
   (lawful; its `FeatureBundle F V` is definitionally
-  `Features.Bundle F (λ _ => V)`), `Data/UD/Basic.lean`'s
-  `MorphFeatures` (a flat attribute-value record; deriving its
-  hand-rolled `Subsumes` from `BundleLike.Subsumes` collapses
-  `Morphology/Unification.lean`'s parallel order proofs), and the
-  Minimalist `FeatureBundle` (lawful only after the planned
-  list-to-assignment retype).
-* Unification: the partial meet/join `Bundle.unify : Bundle F V →
-  Bundle F V → Option (Bundle F V)` (defined where valuations are
-  compatible), characterized as the join in the subsumption order —
-  the algebra the unification-grammar tradition is actually about.
+  `Features.Bundle F (λ _ => V)`) and the Minimalist `FeatureBundle`
+  (lawful only after the planned list-to-assignment retype).
+* Per-slot generality: `Bundle` fixes the flat slot order. UD-practice
+  pressure (multivalued features as `Finset`-superset slots, layered
+  features as a nested index) is accommodated by working with
+  `(t : F) → S t` for other slot orders `S`; the `PartialUnify` Pi
+  instance is already stated at that generality.
 * A hierarchical assembly-tree carrier with the flattening valuation —
   `BundleLike` but not `LawfulBundleLike`.
 -/
@@ -169,12 +172,14 @@ end BundleLike
 namespace Features
 
 /-- The canonical extensional feature bundle: a partial assignment of
-values to features. Underspecification is `none`; at most one value per
-feature holds by construction. A `def` rather than an `abbrev` so that
-the subsumption order below does not leak onto bare Pi types (see the
-module docstring). -/
-def Bundle (F : Type u) (V : F → Type v) : Type max u v :=
-  (t : F) → Option (V t)
+values to features, as a Pi type of `Flat` slots. Underspecification is
+`none`; at most one value per feature holds by construction. The order
+stack — subsumption `PartialOrder`, `OrderBot`, `SemilatticeInf`,
+`PartialUnify` — is inherited from the slots through mathlib's Pi
+instances (the reducibility barrier lives at `Flat`, see the module
+docstring). -/
+abbrev Bundle (F : Type u) (V : F → Type v) : Type max u v :=
+  (t : F) → Flat (V t)
 
 namespace Bundle
 
@@ -186,23 +191,15 @@ instance : BundleLike (Bundle F V) F V :=
 instance : LawfulBundleLike (Bundle F V) :=
   ⟨λ _ _ h => h⟩
 
-instance [Fintype F] [∀ t, DecidableEq (V t)] : DecidableEq (Bundle F V) :=
-  inferInstanceAs (DecidableEq ((t : F) → Option (V t)))
-
-/-- The subsumption (information) partial order: `b₁ ≤ b₂` iff `b₂`
-specifies everything `b₁` does, with the same values. -/
-instance : PartialOrder (Bundle F V) :=
-  BundleLike.partialOrder
+/-- The Pi subsumption order agrees with the interface-level
+`BundleLike.Subsumes`. -/
+theorem le_iff_subsumes {b₁ b₂ : Bundle F V} :
+    b₁ ≤ b₂ ↔ BundleLike.Subsumes b₁ b₂ :=
+  ⟨λ h t v => h t v, λ h t v => h t v⟩
 
 instance [Fintype F] [∀ t, DecidableEq (V t)] (b₁ b₂ : Bundle F V) :
     Decidable (b₁ ≤ b₂) :=
-  inferInstanceAs (Decidable (BundleLike.Subsumes b₁ b₂))
-
-/-- The everywhere-underspecified bundle is the bottom of the
-subsumption order. -/
-instance : OrderBot (Bundle F V) where
-  bot := λ _ => none
-  bot_le _ _ _ h := absurd h (Option.some_ne_none _).symm
+  inferInstanceAs (Decidable (∀ t, b₁ t ≤ b₂ t))
 
 @[simp]
 theorem val_bot (t : F) : BundleLike.val (⊥ : Bundle F V) t = none :=
