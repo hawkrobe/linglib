@@ -5,7 +5,7 @@ import Linglib.Syntax.Minimalist.ClauseSpine
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.Agree
 import Linglib.Morphology.DM.VocabSimple
-import Linglib.Studies.Scott2023Agreement
+import Linglib.Studies.Scott2023
 
 /-!
 # Oblique Extraction in Mayan
@@ -141,7 +141,7 @@ Fragments," these belong with the paper that anchors them
 [scott-2023] for the antipassive). The Fragment file retains only
 the theory-neutral `mamVoiceSystem : VoiceSystemProfile`.
 
-`Studies/Scott2023Agreement.lean` consumes `mamVoice` and
+`Studies/Scott2023.lean` consumes `mamVoice` and
 `eqYaVocab` from this file via cross-Studies import. -/
 
 /-- Mam agentive Voice head with [uOblique] probe.

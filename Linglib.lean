@@ -1083,6 +1083,7 @@ import Linglib.Fragments.Swedish.QuestionParticles
 import Linglib.Fragments.Mayan.Params
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
 import Linglib.Fragments.Mayan.Mam.Agreement
+import Linglib.Fragments.Mayan.Mam.Pronouns
 import Linglib.Fragments.Mayan.Mam.ExtractionMorphology
 import Linglib.Fragments.Kawapanan.Shawi.Basic
 import Linglib.Fragments.Mixtec.SMPM.Basic
@@ -1223,7 +1224,6 @@ import Linglib.Studies.CoonMateoPedroPreminger2014
 import Linglib.Studies.Imanishi2014
 import Linglib.Studies.Imanishi2020
 import Linglib.Studies.Bohnemeyer2004
-import Linglib.Studies.Scott2023Ergativity
 import Linglib.Phenomena.ArgumentStructure.DativeAlternation
 import Linglib.Phenomena.ArgumentStructure.Passive
 import Linglib.Phenomena.ArgumentStructure.Subcategorization
@@ -1905,7 +1905,6 @@ import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.CCG.Combinators
 import Linglib.Syntax.CCG.Interface
 import Linglib.Studies.Cysouw2009
-import Linglib.Studies.Scott2023Agreement
 import Linglib.Phenomena.Agreement.DifferentialIndexing
 import Linglib.Studies.Aissen2003Agreement
 import Linglib.Studies.PrasertsonSmithCulbertson2026
