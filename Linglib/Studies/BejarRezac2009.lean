@@ -39,17 +39,16 @@ second-cycle information: *m-* appears when valued on cycle I (IA=1P),
 
 namespace BejarRezac2009
 
-open Features.Prominence (PersonLevel)
 open Minimalist.CyclicAgree
 open Agreement
 
 -- ============================================================================
--- § 1: φ-cell → PersonLevel Bridge
+-- § 1: φ-cell → Person Bridge
 -- ============================================================================
 
 /-- Person level of a φ-cell (`Agreement.Cell`). Basque and Georgian share the
     same person→level map. -/
-def toLevel (c : Cell) : PersonLevel :=
+def toLevel (c : Cell) : Person :=
   match c.person with
   | some .first => .first
   | some .second => .second
@@ -59,9 +58,9 @@ def toLevel (c : Cell) : PersonLevel :=
 -- § 2: Basque — pIsIndexed Matches Inverse Context
 -- ============================================================================
 
-/-- Basque `pIsIndexed` agrees with `PersonLevel.isSAP` under the bridge. -/
+/-- Basque `pIsIndexed` agrees with `Person.isSAP` under the bridge. -/
 theorem basque_indexed_eq_sap : ∀ c ∈ Cell.pnCells,
-    Basque.Agreement.pIsIndexed c = (toLevel c).isSAP := by decide
+    Basque.Agreement.pIsIndexed c = decide (toLevel c).IsSAP := by decide
 
 /-- Per-cell verification: each Basque φ-cell's indexing status matches the
     cyclic agree prediction. -/
@@ -94,15 +93,15 @@ theorem basque_p3sg_not_indexed :
     controls → agreement tracks the subject, not the object → not indexed. -/
 theorem basque_indexed_iff_always_inverse : ∀ c ∈ Cell.pnCells,
     (Basque.Agreement.pIsIndexed c = true ↔
-     ∀ ea : PersonLevel, basque.isInverse ea (toLevel c) = true) := by decide
+     ∀ ea : Person, basque.isInverse ea (toLevel c) = true) := by decide
 
 -- ============================================================================
 -- § 3: Georgian — isIndexed Matches Inverse Context
 -- ============================================================================
 
-/-- Georgian `isIndexed` agrees with `PersonLevel.isSAP` under the bridge. -/
+/-- Georgian `isIndexed` agrees with `Person.isSAP` under the bridge. -/
 theorem georgian_indexed_eq_sap : ∀ c ∈ Cell.pnCells,
-    Georgian.Agreement.isIndexed c = (toLevel c).isSAP := by decide
+    Georgian.Agreement.isIndexed c = decide (toLevel c).IsSAP := by decide
 
 /-- Per-cell verification: Georgian 1sg object prefix *m-* exists iff inverse. -/
 theorem georgian_1sg_prefix_and_inverse :
@@ -125,7 +124,7 @@ theorem georgian_3sg_no_prefix_and_direct :
     split in object agreement. -/
 theorem georgian_indexed_iff_always_inverse : ∀ c ∈ Cell.pnCells,
     (Georgian.Agreement.isIndexed c = true ↔
-     ∀ ea : PersonLevel, basque.isInverse ea (toLevel c) = true) := by decide
+     ∀ ea : Person, basque.isInverse ea (toLevel c) = true) := by decide
 
 -- ============================================================================
 -- § 4: Georgian Second-Cycle Morphology
@@ -196,8 +195,8 @@ theorem basque_georgian_same_system :
 /-- The differential P indexing pattern is identical for all six
     person-number φ-cells across both languages. -/
 theorem cross_linguistic_uniformity :
-    (∀ c ∈ Cell.pnCells, Basque.Agreement.pIsIndexed c = (toLevel c).isSAP) ∧
-    (∀ c ∈ Cell.pnCells, Georgian.Agreement.isIndexed c = (toLevel c).isSAP) :=
+    (∀ c ∈ Cell.pnCells, Basque.Agreement.pIsIndexed c = decide (toLevel c).IsSAP) ∧
+    (∀ c ∈ Cell.pnCells, Georgian.Agreement.isIndexed c = decide (toLevel c).IsSAP) :=
   ⟨basque_indexed_eq_sap, georgian_indexed_eq_sap⟩
 
 end BejarRezac2009

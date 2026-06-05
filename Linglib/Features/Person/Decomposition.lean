@@ -91,33 +91,15 @@ def secondF : Features := ⟨true, false⟩
 /-- 3rd person features: [−participant, −author]. -/
 def thirdF : Features := ⟨false, false⟩
 
--- ============================================================================
--- § 3: PersonLevel Bridge
--- ============================================================================
-
-end Person
-
-namespace Features.Prominence
-
-/-- Decompose `PersonLevel` into binary person features. -/
-def PersonLevel.toFeatures : PersonLevel → Person.Features
-  | .first  => Person.firstF
-  | .second => Person.secondF
-  | .third  => Person.thirdF
-
-/-- Convert `UD.Person` to `PersonLevel`. The UD `.zero` (impersonal)
-    case has no `PersonLevel` analogue; everything else is direct. -/
-def PersonLevel.ofUDPerson : UD.Person → Option PersonLevel
-  | .first  => some .first
-  | .second => some .second
-  | .third  => some .third
-  | .zero   => none
-
-end Features.Prominence
-
-namespace Person
-
-open Features.Prominence
+/-- Decompose a person value into the binary features. The
+    quadripartition cells share `firstF` (the two-feature system
+    underdetermines clusivity — see `Category.toFeatures`); the
+    impersonal `zero` has no featural decomposition. -/
+def toFeatures : Person → Option Features
+  | .first | .firstInclusive | .firstExclusive => some firstF
+  | .second => some secondF
+  | .third => some thirdF
+  | .zero => none
 
 -- ============================================================================
 -- § 4: ContainmentPair Presentation
@@ -161,13 +143,20 @@ theorem illFormed_only : ¬ (⟨false, true⟩ : Features).WellFormed := by deci
 theorem card_wellFormed :
     Fintype.card {pf : Features // pf.WellFormed} = 3 := by decide
 
-/-- All person levels yield well-formed features. -/
-theorem PersonLevel.toFeatures_wellFormed (p : PersonLevel) :
-    p.toFeatures.WellFormed := by cases p <;> decide
+/-- Every defined decomposition is well-formed. -/
+theorem toFeatures_wellFormed (p : Person) :
+    ∀ f, p.toFeatures = some f → f.WellFormed := by
+  cases p <;> intro f hf <;>
+    simp only [toFeatures, Option.some.injEq, reduceCtorEq] at hf <;>
+    subst hf <;> decide
 
-/-- PersonLevel.isSAP = Features.hasParticipant. -/
-theorem PersonLevel.isSAP_eq_participant (p : PersonLevel) :
-    p.isSAP = p.toFeatures.hasParticipant := by cases p <;> rfl
+/-- `IsSAP` is featural participanthood. -/
+theorem isSAP_iff_participant (p : Person) :
+    ∀ f, p.toFeatures = some f →
+      (p.IsSAP ↔ f.hasParticipant = true) := by
+  cases p <;> intro f hf <;>
+    simp only [toFeatures, Option.some.injEq, reduceCtorEq] at hf <;>
+    subst hf <;> simp [IsSAP, firstF, secondF, thirdF]
 
 /-- No 4-way singular person distinction (inherited from
     `ContainmentPairLike.no_four_way`). -/
@@ -382,36 +371,28 @@ theorem toFeatures_participant_iff_sap (p : Category) :
   cases p <;> simp [Category.toFeatures, Category.IncludesSpeaker, Category.IncludesAddressee]
 
 /-- All 8 categories yield well-formed features. -/
-theorem toFeatures_wellFormed (p : Category) :
+theorem Category.toFeatures_wellFormed (p : Category) :
     p.toFeatures.WellFormed := by cases p <;> decide
 
 -- ============================================================================
--- § 9: Category ↔ PersonLevel Bridge
+-- § 9: Category ↔ Person Bridge
 -- ============================================================================
 
-/-- Map singular Category to PersonLevel (the canonical three-way
-    person distinction used by Phi.Geometry, DifferentialIndexing, etc.).
-    Group categories map to `none` — they encode number distinctions that
-    PersonLevel does not capture. -/
-def Category.toPersonLevel : Category → Option Features.Prominence.PersonLevel
-  | .s1 => some .first
-  | .s2 => some .second
-  | .s3 => some .third
-  | _   => none
+/-- The singular Category of a tripartition person value. -/
+def Category.ofSingularPerson : Person → Option Category
+  | .first  => some .s1
+  | .second => some .s2
+  | .third  => some .s3
+  | _ => none
 
-/-- Map PersonLevel to singular Category. -/
-def Category.fromPersonLevel : Features.Prominence.PersonLevel → Category
-  | .first  => .s1
-  | .second => .s2
-  | .third  => .s3
-
-/-- Round-trip: PersonLevel → Category → PersonLevel is identity. -/
-theorem personLevel_roundtrip (p : Features.Prominence.PersonLevel) :
-    (Category.fromPersonLevel p).toPersonLevel = some p := by
-  cases p <;> rfl
+/-- Round-trip: singular categories are recovered from their person
+    projection. -/
+theorem singular_category_roundtrip (c : Category) (h : c.IsSingular) :
+    Category.ofSingularPerson c.person = some c := by
+  rcases h with rfl | rfl | rfl <;> rfl
 
 /-- includesSpeaker on Category = hasParticipant ∧ hasAuthor on
-    PersonLevel for singular categories: speaker (s1) = [+participant,
+    Person for singular categories: speaker (s1) = [+participant,
     +author], addressee (s2) = [+participant, −author], other (s3) =
     [−participant, −author]. This unifies the Category decomposition
     in `Spanish/PersonFeatures.lean` with `Phi.Geometry.decomposePerson`. -/
@@ -426,7 +407,7 @@ theorem includesAddressee_iff_participant_not_author :
     ¬ Category.s3.IncludesAddressee := by decide
 
 /-- SAP (speech-act participant) = `IncludesSpeaker ∨ IncludesAddressee`
-    for singular categories. This matches `PersonLevel.isSAP`. -/
+    for singular categories. This matches `Person.isSAP`. -/
 theorem singular_sap_match :
     (Category.s1.IncludesSpeaker ∨ Category.s1.IncludesAddressee) ∧
     (Category.s2.IncludesSpeaker ∨ Category.s2.IncludesAddressee) ∧
@@ -436,14 +417,12 @@ theorem singular_sap_match :
 -- § 10: Category Consistency
 -- ============================================================================
 
-/-- Singular categories: Category.toFeatures agrees with
-    PersonLevel.toFeatures via the PersonLevel bridge. -/
-theorem s1_features_match :
-    Category.s1.toFeatures = Features.Prominence.PersonLevel.first.toFeatures := rfl
-theorem s2_features_match :
-    Category.s2.toFeatures = Features.Prominence.PersonLevel.second.toFeatures := rfl
-theorem s3_features_match :
-    Category.s3.toFeatures = Features.Prominence.PersonLevel.third.toFeatures := rfl
+/-- Singular categories: `Category.toFeatures` agrees with the person
+    decomposition through the person projection. -/
+theorem singular_features_match :
+    ∀ c : Category, c.IsSingular →
+      some c.toFeatures = c.person.toFeatures := by
+  rintro c (rfl | rfl | rfl) <;> rfl
 
 -- ============================================================================
 -- § 11: Epistemic Authority ([bickel-nichols-2001])

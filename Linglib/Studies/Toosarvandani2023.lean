@@ -639,7 +639,7 @@ theorem wrong_order_produces_plural :
 
 /-- Map PronType to the coarser 3-way person distinction in
     `Features.Prominence`. All third-person animacy subtypes collapse. -/
-def PronType.toPersonLevel : PronType → Features.Prominence.PersonLevel
+def PronType.toPersonLevel : PronType → Person
   | .first  => .first
   | .second => .second
   | _       => .third
@@ -647,7 +647,7 @@ def PronType.toPersonLevel : PronType → Features.Prominence.PersonLevel
 /-- PCC respects person prominence: when subject is strictly more prominent
     in person (not just animacy), PCC is licit. -/
 theorem pcc_person_refinement : ∀ p1 p2 : PronType,
-    p1.toPersonLevel.rank > p2.toPersonLevel.rank → pccLicit p1 p2 = true := by
+    p1.toPersonLevel.prominence > p2.toPersonLevel.prominence → pccLicit p1 p2 = true := by
   decide
 
 /-- Map PronType to binary person features (±participant, ±author). -/
@@ -657,7 +657,7 @@ def PronType.toPersonFeatures : PronType → Person.Features
   | _       => ⟨false, false⟩
 
 /-- The two independent decompositions of person agree:
-    PronType → PersonFeatures and PronType → PersonLevel → Features. -/
+    PronType → PersonFeatures and PronType → Person → Features. -/
 theorem person_features_consistent : ∀ p : PronType,
     p.toPersonFeatures = p.toPersonLevel.toFeatures := by decide
 

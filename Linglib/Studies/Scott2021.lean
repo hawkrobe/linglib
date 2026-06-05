@@ -58,7 +58,6 @@ namespace Scott2021
 
 open Core Swahili
 open Minimalist (FeatureBundle FeatureVal PhiFeature)
-open Features.Prominence (PersonLevel)
 
 -- ============================================================================
 -- § 1: DP-Internal Categories
@@ -228,7 +227,7 @@ def hasPerson (fb : FeatureBundle) : Bool :=
     | _ => false
 
 /-- Helper: extract the person level if present. -/
-def getPerson (fb : FeatureBundle) : Option PersonLevel :=
+def getPerson (fb : FeatureBundle) : Option Person :=
   fb.findSome? fun f => match f with
     | .valued (.phi (.person p)) => some p
     | _ => none

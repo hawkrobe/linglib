@@ -65,10 +65,10 @@ def Cell.pn (p : UD.Person) (n : UD.Number) : Cell :=
 def Cell.isSAP (c : Cell) : Bool :=
   c.person == some .first || c.person == some .second
 
-/-- The person level of a cell, on the `Features.Prominence.PersonLevel` scale
+/-- The person level of a cell, on the `Person` scale
     (an unspecified or 0-person cell maps to `.third`). Adapts a φ-cell to
     consumers that reason on person prominence (decomposition, indexing). -/
-def Cell.toPersonLevel (c : Cell) : Features.Prominence.PersonLevel :=
+def Cell.toPersonLevel (c : Cell) : Person :=
   match c.person with
   | some .first => .first
   | some .second => .second

@@ -56,7 +56,7 @@ specific to [pancheva-zubizarreta-2018]'s P-Constraint.
 
 ## Person Type
 
-`decomposePerson` takes `Features.Prominence.PersonLevel` (`.first |
+`decomposePerson` takes `Person` (`.first |
 .second |.third`) — the canonical person type shared across the
 library — rather than a raw `Nat`. This eliminates meaningless
 person values and grounds the decomposition in the same type used
@@ -128,10 +128,12 @@ def DecomposedPerson.wellFormed (dp : DecomposedPerson) : Bool :=
 
     3rd person is [-proximate] by default; contextual [+proximate]
     marking is handled by the P-Constraint evaluation. -/
-def decomposePerson : PersonLevel → DecomposedPerson
-  | .first  => { hasParticipant := true,  hasAuthor := true,  hasProximate := true }
+def decomposePerson : Person → DecomposedPerson
+  | .first | .firstInclusive | .firstExclusive =>
+      { hasParticipant := true,  hasAuthor := true,  hasProximate := true }
   | .second => { hasParticipant := true,  hasAuthor := false, hasProximate := true }
-  | .third  => { hasParticipant := false, hasAuthor := false, hasProximate := false }
+  | .third | .zero =>
+      { hasParticipant := false, hasAuthor := false, hasProximate := false }
 
 -- ============================================================================
 -- § 3: Probe Targets
@@ -156,7 +158,7 @@ inductive ProbeTarget where
 
     A DP with person value `person` and number `isPlural` is visible
     to the probe iff it bears the probe's target feature. -/
-def probeVisible (target : ProbeTarget) (person : PersonLevel) (isPlural : Bool) : Bool :=
+def probeVisible (target : ProbeTarget) (person : Person) (isPlural : Bool) : Bool :=
   match target with
   | .participant => (decomposePerson person).hasParticipant
   | .plural => isPlural
@@ -181,7 +183,7 @@ def probeVisible (target : ProbeTarget) (person : PersonLevel) (isPlural : Bool)
     See module docstring for why this is a convenience encoding,
     not an endorsement of the salience-scale analyses
     [preminger-2014] Ch. 7 argues against. -/
-def probeResolutionRank (person : PersonLevel) (isPlural : Bool) : Nat :=
+def probeResolutionRank (person : Person) (isPlural : Bool) : Nat :=
   if (decomposePerson person).hasParticipant then 2
   else if isPlural then 1
   else 0
@@ -191,16 +193,18 @@ def probeResolutionRank (person : PersonLevel) (isPlural : Bool) : Nat :=
 -- ============================================================================
 
 /-- All person values yield well-formed decompositions. -/
-theorem all_decompositions_wellFormed (p : PersonLevel) :
+theorem all_decompositions_wellFormed (p : Person) :
     (decomposePerson p).wellFormed = true := by
   cases p <;> rfl
 
 /-- `decomposePerson` is consistent with the framework-neutral
-    `PersonLevel.toFeatures`: the [±participant, ±author] core of
+    `Person.toFeatures`: the [±participant, ±author] core of
     the Minimalist decomposition agrees with Core Person.Features. -/
-theorem decomposePerson_toFeatures_eq (p : PersonLevel) :
-    (decomposePerson p).toFeatures = p.toFeatures := by
-  cases p <;> rfl
+theorem decomposePerson_toFeatures_eq (p : Person) :
+    ∀ f, p.toFeatures = some f → (decomposePerson p).toFeatures = f := by
+  cases p <;> intro f hf <;>
+    simp only [Person.toFeatures, Option.some.injEq, reduceCtorEq] at hf <;>
+    subst hf <;> rfl
 
 /-- Rank is monotone in the probe hierarchy: any DP visible to π⁰
     (rank 2) outranks any DP visible only to #⁰ (rank 1), which

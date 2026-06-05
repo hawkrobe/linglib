@@ -272,16 +272,18 @@ theorem number_hierarchy_is_spec_ordering :
 /-! ### Bridge to Cyclic Agree ([bejar-rezac-2009]) -/
 
 open Minimalist.CyclicAgree (personSpec)
-open Features.Prominence (PersonLevel)
 
 /-- The person hierarchy from `ContainmentPair.specLevel` agrees with the segment-count
 hierarchy of [bejar-rezac-2009]'s Cyclic Agree: in the standard geometry, `specLevel + 1
 = segment count` (1st: 2/[π, participant, speaker]; 2nd: 1/[π, participant]; 3rd: 0/[π]).
 The person hierarchy is *one* hierarchy in two formalizations — featural (spec level) and
 configurational (probe depth). -/
-theorem specLevel_agrees_with_segments (p : PersonLevel) :
-    ContainmentPairLike.specLevel p.toFeatures + 1 = (personSpec .standard p).length := by
-  cases p <;> rfl
+theorem specLevel_agrees_with_segments (p : Person) :
+    ∀ f, p.toFeatures = some f →
+      ContainmentPairLike.specLevel f + 1 = (personSpec .standard p).length := by
+  cases p <;> intro f hf <;>
+    simp only [Person.toFeatures, Option.some.injEq, reduceCtorEq] at hf <;>
+    subst hf <;> rfl
 
 /-! ### Bridge to Corbett (2000): attested number systems are generable ([harbour-2014])
 

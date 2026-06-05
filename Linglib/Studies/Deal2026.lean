@@ -604,7 +604,6 @@ needed to formalise Deal's 1st vs 3rd person split. The disjunctive shape
 here is faithful to the framework but currently distinguishes only
 "person-feature-present" vs "no-feature-encountered-T." -/
 
-open Features.Prominence (PersonLevel)
 
 /-- *ke*'s satisfaction condition: matched by any φ-feature (collapsed by
     `sameType` regardless of person value), or by encountering the TP head. -/

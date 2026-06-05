@@ -2,6 +2,7 @@ import Linglib.Features.Number.Resolve
 import Linglib.Features.Prominence
 import Linglib.Syntax.Minimalist.Agreement.GenderResolution
 import Linglib.Syntax.Minimalist.Phi.Recursion
+import Linglib.Features.Person.Resolve
 
 /-!
 # Coordinate Agreement Resolution
@@ -60,7 +61,6 @@ open Minimalist.Agreement.GenderResolution (AnnotatedFeature)
 
 namespace Minimalist.Agreement.CoordinateResolution
 
-open Features.Prominence (PersonLevel)
 
 -- ============================================================================
 -- § 1: Resolution Operations
@@ -131,19 +131,18 @@ theorem resolution_closure_table3 :
 
 /-- Person resolution: most marked wins ([noyer-1997]).
 
-    1st > 2nd > 3rd. The person with the higher prominence rank
-    determines the resolved person on &P. This follows from person
-    features being privative: [+participant] subsumes [−participant],
-    and [+author] subsumes [−author]. Resolution always succeeds. -/
-def personResolve : PersonLevel → PersonLevel → Option PersonLevel
-  | .first,  _       => some .first
-  | _,       .first  => some .first
-  | .second, _       => some .second
-  | _,       .second => some .second
-  | .third,  .third  => some .third
+    1st > 2nd > 3rd. **Derived, not stipulated**: Noyer's privative
+    resolution is the canonical referent-union resolution
+    (`Person.resolve`, `Features/Person/Resolve.lean`) coarsened to the
+    tripartition — the `[±author, ±participant]` system cannot represent
+    the clusivity the canonical inclusive output carries
+    (`Person.resolveIn_tripartition_min` is the hierarchy fact).
+    Resolution always succeeds. -/
+def personResolve (p q : Person) : Option Person :=
+  some (Person.resolve p q).coarsen
 
 /-- Person resolution operation. -/
-def personOp : ResolutionOp PersonLevel := ⟨personResolve⟩
+def personOp : ResolutionOp Person := ⟨personResolve⟩
 
 -- ============================================================================
 -- § 4: Percolation and Annotated Resolution
@@ -175,7 +174,7 @@ theorem number_total (system : List Number) (a b : Number) :
     ((numberOp system).resolve a b).isSome = true := rfl
 
 /-- Person resolution always succeeds. -/
-theorem person_total (p₁ p₂ : PersonLevel) :
+theorem person_total (p₁ p₂ : Person) :
     (personResolve p₁ p₂).isSome = true := by
   cases p₁ <;> cases p₂ <;> rfl
 
@@ -208,7 +207,7 @@ theorem number_comm (system : List Number) (a b : Number) :
   simp only [numberOp, Number.resolveIn_comm]
 
 /-- Person resolution is commutative (both directions yield max). -/
-theorem person_comm (p₁ p₂ : PersonLevel) :
+theorem person_comm (p₁ p₂ : Person) :
     personResolve p₁ p₂ = personResolve p₂ p₁ := by
   cases p₁ <;> cases p₂ <;> rfl
 
@@ -221,7 +220,7 @@ theorem person_comm (p₁ p₂ : PersonLevel) :
     agreement is a gender phenomenon, not a number or person one. -/
 theorem gender_only_fallible :
     (∀ system a b, ((numberOp system).resolve a b).isSome = true) ∧
-    (∀ p₁ p₂ : PersonLevel, (personResolve p₁ p₂).isSome = true) ∧
+    (∀ p₁ p₂ : Person, (personResolve p₁ p₂).isSome = true) ∧
     (∃ g₁ g₂ : GenderResolution.FeatureBundle Bool,
       (GenderResolution.resolve g₁ g₂).isSome = false) :=
   ⟨number_total, person_total, ⟨[⟨true, .interpretable⟩], [⟨false, .interpretable⟩], rfl⟩⟩
@@ -232,13 +231,13 @@ theorem gender_only_fallible :
 
 /-- A phi-feature bundle for a single conjunct DP. -/
 structure PhiBundle (G : Type) where
-  person : AnnotatedFeature PersonLevel
+  person : AnnotatedFeature Person
   number : AnnotatedFeature Number
   gender : GenderResolution.FeatureBundle G
 
 /-- Resolved phi-features for a conjoined DP (&P). -/
 structure PhiResolved (G : Type) where
-  person : Option PersonLevel
+  person : Option Person
   number : Option Number
   gender : Option (List G)
 

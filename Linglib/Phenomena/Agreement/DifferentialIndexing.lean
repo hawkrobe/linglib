@@ -52,7 +52,7 @@ open Features.Prominence
     participants (SAP: 1st/2nd person) and non-participants (3rd person).
     This mirrors [preminger-2014]'s [±participant] feature decomposition.
 
-    This is coarser than `Features.Prominence.PersonLevel` (1st > 2nd > 3rd),
+    This is coarser than `Person` (1st > 2nd > 3rd),
     which is needed for scenario splits. The binary split suffices for
     indexing because indexing does not distinguish 1st from 2nd. -/
 inductive IndexingPersonLevel where

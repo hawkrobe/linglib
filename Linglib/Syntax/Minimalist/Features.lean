@@ -25,18 +25,18 @@ Interpretability is determined by the combination of feature type and
 host category: person on N is +Interpretable, person on T is
 –Interpretable. `isInterpretableOn` encodes this mapping.
 
-## Design Decision: `PersonLevel` replaces `Nat`
+## Design Decision: `Person` replaces `Nat`
 
-`PhiFeature.person` uses `Features.Prominence.PersonLevel` (`.first |.second
+`PhiFeature.person` uses `Person` (`.first |.second
 |.third`) rather than a raw `Nat`. This eliminates the possibility of
 meaningless person values (e.g., `person 47`) and grounds the feature
 inventory in the same canonical type used across the library:
 
-- `Features.Prominence.PersonLevel` — framework-agnostic person hierarchy
+- `Person` — framework-agnostic person hierarchy
 - `Phi.Geometry.DecomposedPerson` — [preminger-2014]'s [±participant,
-  ±author] decomposition, now mapping from `PersonLevel`
+  ±author] decomposition, now mapping from `Person`
 - `DifferentialIndexing.IndexingPersonLevel` — [just-2024]'s SAP/3rd
-  binary split, bridged to `PersonLevel`
+  binary split, bridged to `Person`
 
 For unvalued (probe) features, the value is irrelevant —
 `FeatureVal.sameType` matches any `.person _` against any `.person _`
@@ -57,7 +57,7 @@ open Features.Prominence
 
 /-- Phi-features (agreement features). -/
 inductive PhiFeature where
-  | person : PersonLevel → PhiFeature
+  | person : Person → PhiFeature
   | number : UD.Number → PhiFeature      -- grammatical number (UD.Number)
   | gender : Nat → PhiFeature        -- language-specific encoding
   deriving Repr, DecidableEq

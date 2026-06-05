@@ -73,7 +73,6 @@ namespace HalpertHammerly2026
 
 open Bantu
 open Person (Features)
-open Features.Prominence (PersonLevel)
 
 -- ============================================================================
 -- § 1: Person–Animacy Containment Bridge

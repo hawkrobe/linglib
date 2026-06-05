@@ -46,7 +46,6 @@ that PCC effects diagnose *interpretable* (not agreement) person.
 
 namespace PanchevaZubizarreta2018
 
-open Features.Prominence (PersonLevel)
 open Features.Logophoricity (LogophoricRole pointOfViewPrinciple)
 open Minimalist (DecomposedPerson decomposePerson)
 open Minimalist.PConstraint
@@ -84,13 +83,13 @@ theorem positiveFeatureCount_values :
 
 /-- **The Person Hierarchy is derived, not stipulated** (paper §2.1, p. 1296:
     "We seek to derive it from more fundamental principles"). The order
-    induced by `PersonLevel.rank` (1P > 2P > 3P) coincides with the order
+    induced by `Person.prominence` (1P > 2P > 3P) coincides with the order
     induced by the count of positive features in the decomposition.
 
     Note: The two functions are not pointwise equal (3 vs 2, 2 vs 1, 0 vs 0)
     because `rank` collapses the SAP/non-SAP gap, but the orders match. -/
-theorem personHierarchy_from_features (p q : PersonLevel) :
-    p.rank ≤ q.rank ↔
+theorem personHierarchy_from_features (p q : Person) :
+    p.prominence ≤ q.prominence ↔
     positiveFeatureCount (decomposePerson p) ≤
     positiveFeatureCount (decomposePerson q) := by
   cases p <;> cases q <;> decide
@@ -237,7 +236,7 @@ theorem family_logophoric_assignments :
     yields an Appl domain that semantically satisfies the P-Constraint.
     The four parametric clauses in (12) are not free-standing stipulations:
     they are precisely the conditions on IO-as-POV consistency. -/
-theorem isLicit_imp_io_pov (g : PCCGrammar) (io do_ : PersonLevel) :
+theorem isLicit_imp_io_pov (g : PCCGrammar) (io do_ : Person) :
     IsLicit g io do_ → PConstraintSatisfied g ⟨io, do_, io⟩ := by
   rintro (h | ⟨hprom, hrest⟩)
   · exact Or.inl h
@@ -246,7 +245,7 @@ theorem isLicit_imp_io_pov (g : PCCGrammar) (io do_ : PersonLevel) :
 /-- Conversely, if any Appl domain over ⟨io, do_⟩ with IO as POV center
     satisfies the P-Constraint, the combination is licit. Together with
     `isLicit_imp_io_pov`, this characterizes `IsLicit` semantically. -/
-theorem io_pov_imp_isLicit (g : PCCGrammar) (io do_ : PersonLevel) :
+theorem io_pov_imp_isLicit (g : PCCGrammar) (io do_ : Person) :
     PConstraintSatisfied g ⟨io, do_, io⟩ → IsLicit g io do_ := by
   rintro (h | ⟨_, hprom, hrest⟩)
   · exact Or.inl h
@@ -264,20 +263,20 @@ theorem pov_principle_at_io_attitude_grammar :
 --
 -- Where Fragment clitic data exists (Italian, Spanish), the PCC
 -- predictions are derived from the actual fragment forms via
--- `PersonLevel.ofUDPerson`. For French, Catalan, Kambera, Bulgarian no
+-- `Person.ofUDPerson`. For French, Catalan, Kambera, Bulgarian no
 -- ditransitive-clitic fragment is yet defined in linglib, so the
 -- predictions cite paper examples but read directly off the parameter
 -- settings. Adding `Fragments/{French,Catalan,Bulgarian}/Pronouns.lean`
 -- would let those theorems be similarly grounded.
 -- ============================================================================
 
-open Features.Prominence (PersonLevel)
 
-/-- Helper: extract a `PersonLevel` from a clitic entry whose `person`
+/-- Helper: extract a `Person` from a clitic entry whose `person`
     field is a `UD.Person`. Returns `none` only on `.zero` (impersonal),
     which object clitics never bear. -/
-private def cliticLevel? (p : UD.Person) : Option PersonLevel :=
-  PersonLevel.ofUDPerson p
+private def cliticLevel? : UD.Person → Option Person
+  | .zero => none
+  | p => some (Person.fromUD p)
 
 -- ── Italian (Romance, weak ∼ strong PCC variation per [adamson-zompi-2025]) ──
 

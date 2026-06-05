@@ -44,7 +44,6 @@ This study file connects [deal-2024]'s framework to both:
 
 namespace Deal2024
 
-open Features.Prominence (PersonLevel)
 open Minimalist (decomposePerson)
 open Minimalist.PConstraint (IsLicit strongGrammar ultraStrongGrammar
   weakGrammar meFirstGrammar)
@@ -69,7 +68,7 @@ inductive PersonFeature where
   deriving DecidableEq, Repr
 
 /-- Does a DP of person level `p` bear feature `f`? -/
-def dpBears (p : PersonLevel) (f : PersonFeature) : Bool :=
+def dpBears (p : Person) (f : PersonFeature) : Bool :=
   match f with
   | .phi  => true
   | .part => (decomposePerson p).hasParticipant
@@ -143,7 +142,7 @@ structure DealGrammar where
     3. If narrowing occurred, IO must bear the narrowed feature to be
        visible to the probe. If IO is invisible → **illicit**.
     4. If no narrowing, IO is always visible → **licit**. -/
-def isLicit (g : DealGrammar) (io do_ : PersonLevel) : Bool :=
+def isLicit (g : DealGrammar) (io do_ : Person) : Bool :=
   let doSatisfies := match g.satisfaction with
     | none => false
     | some f => dpBears do_ f
@@ -253,7 +252,7 @@ theorem sd_3_2 : isLicit strictlyDescending .third .second = false := rfl
 -- § 11: Verification — No PCC
 -- ============================================================================
 
-theorem nopcc_all_licit (io do_ : PersonLevel) :
+theorem nopcc_all_licit (io do_ : Person) :
     isLicit noPCC io do_ = true := by
   cases io <;> cases do_ <;> rfl
 
@@ -263,7 +262,7 @@ theorem nopcc_all_licit (io do_ : PersonLevel) :
 
 /-- Count licit combinations (out of 9 = 3×3). -/
 def licitCount (g : DealGrammar) : Nat :=
-  let ps : List PersonLevel := [.first, .second, .third]
+  let ps : List Person := [.first, .second, .third]
   (ps.flatMap (λ io => ps.filter (λ do_ => isLicit g io do_))).length
 
 theorem strong_licit_count : licitCount strong = 3 := by native_decide
@@ -278,12 +277,12 @@ theorem nopcc_licit_count : licitCount noPCC = 9 := by native_decide
 
 /-- Strong entails Me-first: anything licit under Strong is licit under
     Me-first. (Strong has SAT:[PART] ⊇ SAT:[SPKR].) -/
-theorem strong_entails_mefirst (io do_ : PersonLevel) :
+theorem strong_entails_mefirst (io do_ : Person) :
     isLicit strong io do_ = true → isLicit meFirst io do_ = true := by
   cases io <;> cases do_ <;> decide
 
 /-- Strong entails Weak: anything licit under Strong is licit under Weak. -/
-theorem strong_entails_weak (io do_ : PersonLevel) :
+theorem strong_entails_weak (io do_ : Person) :
     isLicit strong io do_ = true → isLicit weak io do_ = true := by
   cases io <;> cases do_ <;> decide
 
@@ -292,17 +291,17 @@ theorem strong_entails_weak (io do_ : PersonLevel) :
 -- ============================================================================
 
 /-- Deal's Strong PCC matches P&Z's Strong PCC on all 9 cells. -/
-theorem strong_matches_pz (io do_ : PersonLevel) :
+theorem strong_matches_pz (io do_ : Person) :
     isLicit strong io do_ = true ↔ IsLicit strongGrammar io do_ := by
   cases io <;> cases do_ <;> decide
 
 /-- Deal's Weak PCC matches P&Z's Weak PCC on all 9 cells. -/
-theorem weak_matches_pz (io do_ : PersonLevel) :
+theorem weak_matches_pz (io do_ : Person) :
     isLicit weak io do_ = true ↔ IsLicit weakGrammar io do_ := by
   cases io <;> cases do_ <;> decide
 
 /-- Deal's Me-first PCC matches P&Z's Me-first PCC on all 9 cells. -/
-theorem mefirst_matches_pz (io do_ : PersonLevel) :
+theorem mefirst_matches_pz (io do_ : Person) :
     isLicit meFirst io do_ = true ↔ IsLicit meFirstGrammar io do_ := by
   cases io <;> cases do_ <;> decide
 
@@ -346,14 +345,14 @@ theorem sd_ultra_discrepancy_2_2 :
 
     This bridges the two frameworks: "the probe is satisfied" (Deal) ↔
     "no active residue remains" (B&R). -/
-theorem residue_empty_iff_bears_part (p : PersonLevel) :
+theorem residue_empty_iff_bears_part (p : Person) :
     (activeResidue partialProbe (personSpec .standard p)).isEmpty =
     dpBears p .part := by
   cases p <;> native_decide
 
 /-- The converse direction: a DP that does NOT bear [PART] leaves
     non-empty residue — the probe continues to the next cycle. -/
-theorem residue_nonempty_iff_lacks_part (p : PersonLevel) :
+theorem residue_nonempty_iff_lacks_part (p : Person) :
     (!(activeResidue partialProbe (personSpec .standard p)).isEmpty) =
     !dpBears p .part := by
   cases p <;> native_decide
@@ -369,7 +368,7 @@ theorem residue_nonempty_iff_lacks_part (p : PersonLevel) :
     and [ADDR] geometrically entail [PART], any DP that would trigger
     dynamic interaction via [SPKR]↑ or [PART]↑ also satisfies SAT:[PART].
     Therefore, dynamic interaction is irrelevant when SAT = [PART]. -/
-theorem sat_part_absorbs_dynint (dyn : DynInteraction) (io do_ : PersonLevel) :
+theorem sat_part_absorbs_dynint (dyn : DynInteraction) (io do_ : Person) :
     isLicit ⟨some .part, dyn⟩ io do_ = isLicit strong io do_ := by
   cases dyn <;> cases io <;> cases do_ <;> rfl
 
@@ -426,7 +425,7 @@ theorem ad_licit_count : licitCount aDescending = 5 := by native_decide
 
     Attested in Shapsug Adyghe, varieties of Swiss German, Czech,
     and Slovenian. -/
-def reverseLicit (g : DealGrammar) (io do_ : PersonLevel) : Bool :=
+def reverseLicit (g : DealGrammar) (io do_ : Person) : Bool :=
   isLicit g do_ io
 
 /-- Reverse strictly descending PCC (Shapsug Adyghe): DO must outrank IO
@@ -444,33 +443,38 @@ theorem rsd_1_2_bad : reverseLicit reverseSD .first .second = false := rfl
 -- § 19: Characterization Theorems (Table (1), (2a-d))
 -- ============================================================================
 
-/-- Strong PCC (2a): DO must be 3P. Any IO is licit with a 3P DO;
-    any SAP DO is illicit regardless of IO. -/
-theorem strong_iff_3p_do (io do_ : PersonLevel) :
-    isLicit strong io do_ = true ↔ do_ = .third := by
-  cases io <;> cases do_ <;> simp [isLicit, strong, dpBears, decomposePerson]
+/-- Strong PCC (2a): DO must be 3P — i.e. `[−participant]`, which over
+    the full inventory is exactly non-SAP. Any IO is licit with a
+    non-SAP DO; any SAP DO is illicit regardless of IO. -/
+theorem strong_iff_3p_do (io do_ : Person) :
+    isLicit strong io do_ = true ↔ ¬do_.IsSAP := by
+  cases io <;> cases do_ <;> simp [isLicit, strong, dpBears, decomposePerson,
+    Person.IsSAP]
 
-/-- Weak PCC (2b): if IO is 3P, DO must be 3P. Equivalently: the only
-    illicit cells are ⟨3P IO, SAP DO⟩. -/
-theorem weak_illicit_iff (io do_ : PersonLevel) :
-    isLicit weak io do_ = false ↔ io = .third ∧ do_.isSAP = true := by
+/-- Weak PCC (2b): if IO is 3P (`[−participant]`), DO must be 3P.
+    Equivalently: the only illicit cells are ⟨non-SAP IO, SAP DO⟩. -/
+theorem weak_illicit_iff (io do_ : Person) :
+    isLicit weak io do_ = false ↔ ¬io.IsSAP ∧ do_.IsSAP := by
   cases io <;> cases do_ <;> simp [isLicit, weak, dpBears, decomposePerson,
-    PersonLevel.isSAP]
+    Person.IsSAP]
 
 /-- Me-first PCC (2c): if 1P is present, it must be IO. Equivalently:
     DO cannot be 1P. -/
-theorem mefirst_iff_not_1p_do (io do_ : PersonLevel) :
+theorem mefirst_iff_not_1p_do (io do_ : Person) :
     isLicit meFirst io do_ = true ↔ dpBears do_ .spkr = false := by
   cases io <;> cases do_ <;> simp [isLicit, meFirst, dpBears, decomposePerson]
 
-/-- Strictly descending PCC (2d): IO must outrank DO on 1 > 2 > 3.
-    For the 6 non-diagonal cells, this is exactly the pattern.
-    (Diagonal cells: ⟨3,3⟩ and ⟨2,2⟩ are licit; ⟨1,1⟩ is illicit
-    because SAT:[SPKR] fires.) -/
-theorem sd_off_diagonal_iff_outranks (io do_ : PersonLevel) (h : io ≠ do_) :
-    isLicit strictlyDescending io do_ = true ↔ io.rank > do_.rank := by
+/-- Strictly descending PCC (2d): IO must outrank DO on 1 > 2 > 3
+    (prominence). For featurally distinct cells, this is exactly the
+    pattern. (Featurally identical cells — ⟨3,3⟩, ⟨2,2⟩, and the cells
+    the two-feature system conflates — are licit except ⟨1,1⟩, where
+    SAT:[SPKR] fires.) -/
+theorem sd_off_diagonal_iff_outranks (io do_ : Person)
+    (h : decomposePerson io ≠ decomposePerson do_) :
+    isLicit strictlyDescending io do_ = true ↔
+      io.prominence > do_.prominence := by
   cases io <;> cases do_ <;> simp_all [isLicit, strictlyDescending, dpBears,
-    decomposePerson, PersonLevel.rank]
+    decomposePerson, Person.prominence]
 
 -- ============================================================================
 -- § 20: Additional Entailment
@@ -479,7 +483,7 @@ theorem sd_off_diagonal_iff_outranks (io do_ : PersonLevel) (h : io ≠ do_) :
 /-- Strong entails strictly descending: anything licit under Strong
     is licit under SD. (Strong bans all SAP DOs; SD bans only 1P DOs
     and ⟨3P IO, SAP DO⟩.) -/
-theorem strong_entails_sd (io do_ : PersonLevel) :
+theorem strong_entails_sd (io do_ : Person) :
     isLicit strong io do_ = true → isLicit strictlyDescending io do_ = true := by
   cases io <;> cases do_ <;> decide
 
@@ -492,7 +496,7 @@ theorem strong_entails_sd (io do_ : PersonLevel) :
     person features are not independently stipulated but derived from the
     same privative geometry used by [pancheva-zubizarreta-2018]'s
     `satisfiesProminence` and [bejar-rezac-2009]'s `personSpec`. -/
-theorem dpBears_grounded_in_decomposePerson (p : PersonLevel) :
+theorem dpBears_grounded_in_decomposePerson (p : Person) :
     dpBears p .part = (decomposePerson p).hasParticipant ∧
     dpBears p .spkr = (decomposePerson p).hasAuthor := by
   cases p <;> exact ⟨rfl, rfl⟩

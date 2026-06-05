@@ -151,7 +151,7 @@ class Deictic (α : Type*) [Proform α] where
   /-- Register level (T/V, honorific tiers). -/
   register : α → Features.Register.Level
   /-- Referential person when it diverges from formal/agreement person; `none` otherwise. -/
-  referentialPerson : α → Option Features.Prominence.PersonLevel
+  referentialPerson : α → Option Person
 
 instance : Deictic PersonalPronoun :=
   ⟨PersonalPronoun.register, PersonalPronoun.referentialPerson⟩

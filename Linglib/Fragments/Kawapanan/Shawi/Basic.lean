@@ -42,7 +42,6 @@ of ergative distribution to a particular Agree configuration — lives in
 
 namespace Kawapanan.Shawi
 
-open Features.Prominence (PersonLevel)
 
 -- ============================================================================
 -- § 1: Number system
@@ -62,7 +61,7 @@ def Number.toNumber : Number → _root_.Number
   | .min => .minimal
   | .aug => .augmented
 
-/-- Inclusivity dimension orthogonal to PersonLevel; only relevant for
+/-- Inclusivity dimension orthogonal to Person; only relevant for
     1st person (1INCL vs 1EXCL). -/
 inductive Clusivity where
   | excl
@@ -73,7 +72,7 @@ inductive Clusivity where
 /-- A φ-feature bundle for a Shawi argument. Field order matches the
     `subjectMarkers` / `objectMarkers` row layout: person, clusivity, number. -/
 structure Phi where
-  person    : PersonLevel
+  person    : Person
   clusivity : Clusivity
   number    : Number
   deriving DecidableEq, Repr
@@ -87,7 +86,7 @@ instance : HasPerson Phi :=
   ⟨fun φ => some (match φ.person, φ.clusivity with
     | .first, .incl => .firstInclusive
     | .first, .excl => .firstExclusive
-    | l, _ => Person.ofPersonLevel l)⟩
+    | l, _ => l)⟩
 
 -- ============================================================================
 -- § 2: Subject agreement (Table 1, indicative)
@@ -96,7 +95,7 @@ instance : HasPerson Phi :=
 /-- Subject agreement suffixes, indicative mood ([clem-deal-2024]
     Table 1, after Hart 1988, Barraza de García 2005, Ulloa to appear).
     Glottal stop is written `'`; optional `(a)` reflects source variation. -/
-def subjectMarkers : List (PersonLevel × Clusivity × Number × Option String) :=
+def subjectMarkers : List (Person × Clusivity × Number × Option String) :=
   [ (.first,  .excl, .min, some "-(a)we")
   , (.first,  .excl, .aug, some "-ai")
   , (.first,  .incl, .min, some "-e'")
@@ -113,7 +112,7 @@ def subjectMarkers : List (PersonLevel × Clusivity × Number × Option String) 
 /-- Object agreement suffixes ([clem-deal-2024] Table 2). 3rd person
     objects show no overt agreement (`∅`); we encode this directly with
     `none` rather than an empty-string sentinel. -/
-def objectMarkers : List (PersonLevel × Clusivity × Number × Option String) :=
+def objectMarkers : List (Person × Clusivity × Number × Option String) :=
   [ (.first,  .excl, .min, some "-ku")
   , (.first,  .excl, .aug, some "-kui")
   , (.first,  .incl, .min, some "-(n)pu'")
@@ -126,7 +125,7 @@ def objectMarkers : List (PersonLevel × Clusivity × Number × Option String) :
 /-- Lookup an agreement suffix; returns `none` if the row is absent or
     the cell itself is null (3rd-person object). -/
 def lookupMarker
-    (paradigm : List (PersonLevel × Clusivity × Number × Option String))
+    (paradigm : List (Person × Clusivity × Number × Option String))
     (φ : Phi) : Option String :=
   (paradigm.find? (λ ⟨p, c, n, _⟩ =>
       p == φ.person && c == φ.clusivity && n == φ.number)).bind (·.2.2.2)
@@ -163,10 +162,10 @@ inductive ObjectPosition where
 
 /-- Local-person (1/2) objects obligatorily move to the high position
     ([clem-deal-2024] §3.2). 3rd-person objects may but need not. -/
-def mustBeHigh : PersonLevel → Bool
-  | .first  => true
+def mustBeHigh : Person → Bool
+  | .first | .firstInclusive | .firstExclusive => true
   | .second => true
-  | .third  => false
+  | .third | .zero => false
 
 -- ============================================================================
 -- § 6: External syntax of the object

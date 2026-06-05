@@ -86,10 +86,10 @@ inductive Formality where
   deriving DecidableEq, Repr
 
 /-- A person/number/formality specification. Uses canonical
-    `Features.Prominence.PersonLevel` for cross-language compatibility;
+    `Person` for cross-language compatibility;
     Formality is K'iche'-specific. -/
 structure PhiFeatures where
-  person : Features.Prominence.PersonLevel
+  person : Person
   number : UD.Number
   formality : Formality
   deriving DecidableEq, Repr
@@ -98,7 +98,7 @@ structure PhiFeatures where
 instance : HasNumber PhiFeatures := ⟨fun φ => Number.fromUD φ.number⟩
 
 /-- Shorthand for informal phi features. -/
-abbrev phi (p : Features.Prominence.PersonLevel) (n : UD.Number) : PhiFeatures :=
+abbrev phi (p : Person) (n : UD.Number) : PhiFeatures :=
   ⟨p, n, .informal⟩
 
 -- ============================================================================
@@ -119,7 +119,9 @@ def setBMarker : PhiFeatures → String
   | ⟨.second, .Sing, .formal⟩   => "la"
   | ⟨.second, .Plur, .formal⟩   => "alaq"
   -- Non-binary number falls through to plural; formal non-2nd is Ø
-  | ⟨.first,  _, .informal⟩   => "oj-"
+  | ⟨.first,  _, .informal⟩ | ⟨.firstInclusive, _, .informal⟩
+  | ⟨.firstExclusive, _, .informal⟩ => "oj-"
+  | ⟨.zero, _, .informal⟩ => "∅"  -- no zero-person cell in the paradigm
   | ⟨.second, _, .informal⟩   => "ix-"
   | ⟨.third,  _, .informal⟩   => "ee-"
   | ⟨_, _, .formal⟩            => "Ø"
@@ -141,7 +143,9 @@ def setAPreC : PhiFeatures → String
   | ⟨.third,  .Plur, .informal⟩ => "ki-"
   | ⟨.second, .Sing, .formal⟩   => "la"
   | ⟨.second, .Plur, .formal⟩   => "alaq"
-  | ⟨.first,  _, .informal⟩   => "qa-"
+  | ⟨.first,  _, .informal⟩ | ⟨.firstInclusive, _, .informal⟩
+  | ⟨.firstExclusive, _, .informal⟩ => "qa-"
+  | ⟨.zero, _, .informal⟩ => "∅"  -- no zero-person cell in the paradigm
   | ⟨.second, _, .informal⟩   => "i-"
   | ⟨.third,  _, .informal⟩   => "ki-"
   | ⟨_, _, .formal⟩            => "Ø"
@@ -157,7 +161,9 @@ def setAPreV : PhiFeatures → String
   | ⟨.third,  .Plur, .informal⟩ => "k-"
   | ⟨.second, .Sing, .formal⟩   => "la"
   | ⟨.second, .Plur, .formal⟩   => "alaq"
-  | ⟨.first,  _, .informal⟩   => "q-"
+  | ⟨.first,  _, .informal⟩ | ⟨.firstInclusive, _, .informal⟩
+  | ⟨.firstExclusive, _, .informal⟩ => "q-"
+  | ⟨.zero, _, .informal⟩ => "∅"  -- no zero-person cell in the paradigm
   | ⟨.second, _, .informal⟩   => "iw-"
   | ⟨.third,  _, .informal⟩   => "k-"
   | ⟨_, _, .formal⟩            => "Ø"
@@ -337,7 +343,9 @@ def independentPronoun : PhiFeatures → String
   | ⟨.third,  .Plur, .informal⟩ => "a're'"
   | ⟨.second, .Sing, .formal⟩   => "laal"
   | ⟨.second, .Plur, .formal⟩   => "alaq"
-  | ⟨.first,  _, .informal⟩   => "oj"
+  | ⟨.first,  _, .informal⟩ | ⟨.firstInclusive, _, .informal⟩
+  | ⟨.firstExclusive, _, .informal⟩ => "oj"
+  | ⟨.zero, _, .informal⟩ => "∅"  -- no zero-person cell in the paradigm
   | ⟨.second, _, .informal⟩   => "ix"
   | ⟨.third,  _, .informal⟩   => "a're'"
   | ⟨_, _, .formal⟩            => "are'"

@@ -1,5 +1,6 @@
 import Mathlib.Order.Nat
 import Mathlib.Tactic.DeriveFintype
+import Linglib.Features.Person.Basic
 
 /-!
 # Prominence Scales and Differential Argument Marking [just-2024] [haspelmath-2021]
@@ -215,37 +216,34 @@ theorem definiteness_rank_bounded (d : DefinitenessLevel) : d.rank ≤ 4 := by
 -- § 4: Person Scale ([haspelmath-2021], §6)
 -- ============================================================================
 
-/-- Person prominence scale.
-    1st > 2nd > 3rd. SAP (speech-act participants, 1st/2nd) are more
-    prominent than 3rd person. -/
-inductive PersonLevel where
-  | first
-  | second
-  | third
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
-/-- Numeric rank on the person scale: 1st (2) > 2nd (1) > 3rd (0). -/
-def PersonLevel.rank : PersonLevel → Nat
-  | .first  => 2
+/-- Numeric rank on the person prominence scale: 1st (2) > 2nd (1) >
+    3rd (0) ([haspelmath-2021] §6). Stated over the canonical `Person`
+    inventory (the dissolved `Person`'s role): clusivity-marked
+    firsts rank with `first`; the impersonal `zero` is `[−participant]`
+    and is placed with third person (a linglib convention — the scale's
+    source does not discuss impersonals). -/
+def _root_.Person.prominence : Person → Nat
+  | .first | .firstInclusive | .firstExclusive => 2
   | .second => 1
-  | .third  => 0
+  | .third | .zero => 0
 
-/-- All person levels. -/
-def PersonLevel.all : List PersonLevel := [.first, .second, .third]
+/-- The three-way prominence scale carrier: the tripartition values. -/
+abbrev personScaleLevels : List Person := Person.System.tripartition.values
 
-/-- Whether a person level is a speech-act participant (SAP = local). -/
-def PersonLevel.isSAP : PersonLevel → Bool
-  | .first  => true
-  | .second => true
-  | .third  => false
+/-- Prominence separates the tripartition: on `first`/`second`/`third`
+    the rank function is injective. -/
+theorem person_prominence_injective :
+    ∀ a ∈ personScaleLevels, ∀ b ∈ personScaleLevels,
+      a.prominence = b.prominence → a = b := by decide
 
-/-- Distinct person levels have distinct ranks — the rank function is injective. -/
-theorem person_rank_injective (a b : PersonLevel) (h : a.rank = b.rank) : a = b := by
-  cases a <;> cases b <;> simp_all [PersonLevel.rank]
+/-- Person prominence ranks are bounded: 0 ≤ rank ≤ 2. -/
+theorem person_prominence_bounded (p : Person) : p.prominence ≤ 2 := by
+  cases p <;> simp [Person.prominence]
 
-/-- Person ranks are bounded: 0 ≤ rank ≤ 2. -/
-theorem person_rank_bounded (p : PersonLevel) : p.rank ≤ 2 := by
-  cases p <;> simp [PersonLevel.rank]
+/-- Prominence tracks SAP-hood: rank ≥ 1 iff speech-act participant. -/
+theorem prominence_pos_iff_sap (p : Person) :
+    1 ≤ p.prominence ↔ p.IsSAP := by
+  cases p <;> simp [Person.prominence, Person.IsSAP]
 
 -- ============================================================================
 -- § 5: Argument Role and Marking Channel ([haspelmath-2021], §2–5)
@@ -496,9 +494,9 @@ theorem animacy_mirror_image (cutoff : AnimacyLevel) :
     flagging or indexing. -/
 structure Scenario where
   /-- Person of the A argument -/
-  aPerson : PersonLevel
+  aPerson : Person
   /-- Person of the P argument -/
-  pPerson : PersonLevel
+  pPerson : Person
   deriving DecidableEq, Repr
 
 /-- Whether a scenario is "downstream": A has higher
@@ -506,42 +504,42 @@ structure Scenario where
     association predicts high-rank roles (A) to have high-prominence referents.
     Downstream scenarios tend to get the shortest coding. -/
 def Scenario.isDownstream (s : Scenario) : Bool :=
-  s.aPerson.rank > s.pPerson.rank
+  s.aPerson.prominence > s.pPerson.prominence
 
 /-- Whether a scenario is "upstream": P has higher
     person rank than A. This is the "unusual" direction — against the
     role-reference association. Upstream scenarios tend to get the longest
     coding. -/
 def Scenario.isUpstream (s : Scenario) : Bool :=
-  s.aPerson.rank < s.pPerson.rank
+  s.aPerson.prominence < s.pPerson.prominence
 
 /-- Whether a scenario is "balanced": A and P have the same person rank
     (e.g., 3→3). Intermediate coding predicted. -/
 def Scenario.isBalanced (s : Scenario) : Bool :=
-  s.aPerson.rank == s.pPerson.rank
+  s.aPerson.prominence == s.pPerson.prominence
 
 /-- Whether a scenario is "local": both arguments are SAP (1st or 2nd).
     Local scenarios (1↔2) are frequent and tend to get short coding. -/
 def Scenario.isLocal (s : Scenario) : Bool :=
-  s.aPerson.isSAP && s.pPerson.isSAP
+  decide s.aPerson.IsSAP && decide s.pPerson.IsSAP
 
 /-- Whether a scenario is "direct": SAP acts on 3rd person.
     A subtype of downstream scenarios. -/
 def Scenario.isDirect (s : Scenario) : Bool :=
-  s.aPerson.isSAP && !s.pPerson.isSAP
+  decide s.aPerson.IsSAP && !decide s.pPerson.IsSAP
 
 /-- Whether a scenario is "inverse": 3rd person acts on SAP.
     A subtype of upstream scenarios. -/
 def Scenario.isInverse (s : Scenario) : Bool :=
-  !s.aPerson.isSAP && s.pPerson.isSAP
+  !decide s.aPerson.IsSAP && decide s.pPerson.IsSAP
 
 /-- Whether a scenario is "non-local": 3rd person acts on 3rd person.
     A subtype of balanced scenarios. -/
 def Scenario.isNonlocal (s : Scenario) : Bool :=
-  !s.aPerson.isSAP && !s.pPerson.isSAP
+  !decide s.aPerson.IsSAP && !decide s.pPerson.IsSAP
 
 /-- All 9 person-pair scenarios. Explicit literal so `decide` reduces;
-    the equivalent `(PersonLevel.all.map λ a => PersonLevel.all.map λ p => ⟨a, p⟩).flatten`
+    the equivalent map over `personScaleLevels` pairs
     typechecks but defeats kernel-level `decide` over `Scenario.all.all (...)`. -/
 def Scenario.all : List Scenario :=
   [⟨.first, .first⟩,  ⟨.first, .second⟩,  ⟨.first, .third⟩,
@@ -595,7 +593,7 @@ def Scenario.frequencyClass (s : Scenario) : Nat :=
 /-- Gradient upstream degree: how far P's rank exceeds A's.
     Uses Nat saturating subtraction (negative → 0). -/
 def Scenario.upstreamDegree (s : Scenario) : Nat :=
-  s.pPerson.rank - s.aPerson.rank
+  s.pPerson.prominence - s.aPerson.prominence
 
 theorem downstream_frequency_class :
     (⟨.first, .third⟩ : Scenario).frequencyClass = 2 := rfl

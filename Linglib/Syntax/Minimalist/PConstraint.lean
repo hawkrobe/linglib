@@ -46,7 +46,6 @@ its `Decidable` instance directly; for proofs about specific cells, prefer
 
 namespace Minimalist.PConstraint
 
-open Features.Prominence (PersonLevel)
 open Minimalist (DecomposedPerson decomposePerson)
 
 -- ============================================================================
@@ -138,31 +137,31 @@ def pg3Grammar : PCCGrammar := { prominence := .author }
 
 /-- A DP is *inherently* [+PROXIMATE] iff it is a SAP ([pancheva-zubizarreta-2018]
     (11)). Third person can only be [+PROXIMATE] contextually. -/
-def IsInherentlyProximate (p : PersonLevel) : Prop :=
+def IsInherentlyProximate (p : Person) : Prop :=
   (decomposePerson p).hasProximate = true
 
-instance (p : PersonLevel) : Decidable (IsInherentlyProximate p) :=
+instance (p : Person) : Decidable (IsInherentlyProximate p) :=
   inferInstanceAs (Decidable (_ = true))
 
 /-- A DP inherently satisfies a P-Prominence setting. -/
-def SatisfiesProminence (s : PProminence) (p : PersonLevel) : Prop :=
+def SatisfiesProminence (s : PProminence) (p : Person) : Prop :=
   match s with
   | .proximate   => (decomposePerson p).hasProximate = true
   | .participant => (decomposePerson p).hasParticipant = true
   | .author      => (decomposePerson p).hasAuthor = true
 
-instance (s : PProminence) (p : PersonLevel) :
+instance (s : PProminence) (p : Person) :
     Decidable (SatisfiesProminence s p) := by
   cases s <;> exact inferInstanceAs (Decidable (_ = true))
 
 /-- **Clause (12a) — Domain.** When the domain is restricted and no [+author]
     DP is present, the P-Constraint does not apply. -/
-def DomainExempt (g : PCCGrammar) (io do_ : PersonLevel) : Prop :=
+def DomainExempt (g : PCCGrammar) (io do_ : Person) : Prop :=
   g.restrictedDomain = true ∧
     (decomposePerson io).hasAuthor = false ∧
     (decomposePerson do_).hasAuthor = false
 
-instance (g : PCCGrammar) (io do_ : PersonLevel) :
+instance (g : PCCGrammar) (io do_ : Person) :
     Decidable (DomainExempt g io do_) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
@@ -170,32 +169,32 @@ instance (g : PCCGrammar) (io do_ : PersonLevel) :
     requirement, either inherently or — for `.proximate` only — by
     contextual marking when paired with another non-proximate 3P
     ([pancheva-zubizarreta-2018] §4.1.4). -/
-def IOSatisfiesProminence (g : PCCGrammar) (io do_ : PersonLevel) : Prop :=
+def IOSatisfiesProminence (g : PCCGrammar) (io do_ : Person) : Prop :=
   SatisfiesProminence g.prominence io ∨
     (g.prominence = .proximate ∧
      ¬ SatisfiesProminence g.prominence io ∧
      ¬ SatisfiesProminence g.prominence do_)
 
-instance (g : PCCGrammar) (io do_ : PersonLevel) :
+instance (g : PCCGrammar) (io do_ : Person) :
     Decidable (IOSatisfiesProminence g io do_) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
 /-- **Clause (12c) — P-Uniqueness.** The DO does not also inherently satisfy
     the prominence requirement. (Contextual proximate-marking on the IO
     does not propagate to the DO.) -/
-def UniquenessSatisfied (g : PCCGrammar) (do_ : PersonLevel) : Prop :=
+def UniquenessSatisfied (g : PCCGrammar) (do_ : Person) : Prop :=
   ¬ SatisfiesProminence g.prominence do_
 
-instance (g : PCCGrammar) (do_ : PersonLevel) :
+instance (g : PCCGrammar) (do_ : Person) :
     Decidable (UniquenessSatisfied g do_) :=
   inferInstanceAs (Decidable (¬ _))
 
 /-- **Clause (12d) — P-Primacy.** When P-Uniqueness would block, a [+author]
     IO rescues. -/
-def PrimacyRescues (g : PCCGrammar) (io : PersonLevel) : Prop :=
+def PrimacyRescues (g : PCCGrammar) (io : Person) : Prop :=
   g.primacy = true ∧ (decomposePerson io).hasAuthor = true
 
-instance (g : PCCGrammar) (io : PersonLevel) : Decidable (PrimacyRescues g io) :=
+instance (g : PCCGrammar) (io : Person) : Decidable (PrimacyRescues g io) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 -- ============================================================================
@@ -208,14 +207,14 @@ instance (g : PCCGrammar) (io : PersonLevel) : Decidable (PrimacyRescues g io) :
     - Domain-exempt configurations are vacuously licit.
     - Otherwise, the IO must satisfy P-Prominence; and either
       P-Uniqueness is inactive, or it is satisfied, or P-Primacy rescues. -/
-def IsLicit (g : PCCGrammar) (io do_ : PersonLevel) : Prop :=
+def IsLicit (g : PCCGrammar) (io do_ : Person) : Prop :=
   DomainExempt g io do_ ∨
     (IOSatisfiesProminence g io do_ ∧
       (g.uniqueness = false ∨
        UniquenessSatisfied g do_ ∨
        PrimacyRescues g io))
 
-instance (g : PCCGrammar) (io do_ : PersonLevel) :
+instance (g : PCCGrammar) (io do_ : Person) :
     Decidable (IsLicit g io do_) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
@@ -223,16 +222,23 @@ instance (g : PCCGrammar) (io do_ : PersonLevel) :
 -- § 6: Enumeration via `Finset`
 -- ============================================================================
 
-/-- The set of person combinations the grammar predicts to be licit. -/
-def licitFinset (g : PCCGrammar) : Finset (PersonLevel × PersonLevel) :=
-  Finset.univ.filter fun p => IsLicit g p.1 p.2
+/-- The prediction domain: PCC varieties are stated over 1/2/3 clitic
+    combinations (the tripartition; clusivity-marked and impersonal
+    clitics are outside the paper's typology). -/
+def cliticPairs : Finset (Person × Person) :=
+  ({.first, .second, .third} ×ˢ {.first, .second, .third})
+
+/-- The set of person combinations the grammar predicts to be licit
+    (within the paper's domain). -/
+def licitFinset (g : PCCGrammar) : Finset (Person × Person) :=
+  cliticPairs.filter fun p => IsLicit g p.1 p.2
 
 /-- Cardinality of the licit set (out of 9 total combinations). -/
 def licitCount (g : PCCGrammar) : ℕ := (licitFinset g).card
 
 @[simp]
-theorem mem_licitFinset (g : PCCGrammar) (p : PersonLevel × PersonLevel) :
-    p ∈ licitFinset g ↔ IsLicit g p.1 p.2 := by
+theorem mem_licitFinset (g : PCCGrammar) (p : Person × Person) :
+    p ∈ licitFinset g ↔ p ∈ cliticPairs ∧ IsLicit g p.1 p.2 := by
   simp [licitFinset]
 
 -- ============================================================================
@@ -264,16 +270,17 @@ instance (g₁ g₂ : PCCGrammar) : Decidable (g₁ ≤ g₂) :=
 
 /-- Entailment in unfolded form: every licit cell of `g₁` is licit in `g₂`. -/
 theorem le_iff_isLicit_imp (g₁ g₂ : PCCGrammar) :
-    g₁ ≤ g₂ ↔ ∀ io do_ : PersonLevel, IsLicit g₁ io do_ → IsLicit g₂ io do_ := by
+    g₁ ≤ g₂ ↔ ∀ io do_ : Person, (io, do_) ∈ cliticPairs →
+      IsLicit g₁ io do_ → IsLicit g₂ io do_ := by
   constructor
-  · intro h io do_ hlic
-    have : (io, do_) ∈ licitFinset g₁ := by simp [hlic]
-    have := h this
-    simpa using this
+  · intro h io do_ hmem hlic
+    have h1 : (io, do_) ∈ licitFinset g₁ :=
+      (mem_licitFinset _ _).mpr ⟨hmem, hlic⟩
+    exact ((mem_licitFinset _ _).mp (h h1)).2
   · intro h p hp
     rcases p with ⟨io, do_⟩
-    simp at hp ⊢
-    exact h io do_ hp
+    rw [mem_licitFinset] at hp ⊢
+    exact ⟨hp.1, h io do_ hp.1 hp.2⟩
 
 -- ============================================================================
 -- § 9: Semantic Grounding — the P-Constraint over Appl Domains
@@ -285,11 +292,11 @@ theorem le_iff_isLicit_imp (g₁ g₂ : PCCGrammar) :
     center; in the unmarked case this is the IO at the phase edge. -/
 structure ApplDomain where
   /-- The indirect-object argument introduced by Appl. -/
-  io : PersonLevel
+  io : Person
   /-- The direct-object argument inside VP. -/
-  do_ : PersonLevel
+  do_ : Person
   /-- The DP selected as point-of-view center within the phase. -/
-  povCenter : PersonLevel
+  povCenter : Person
   deriving DecidableEq, Repr
 
 /-- The IO is the canonical POV-center candidate ([pancheva-zubizarreta-2018]
@@ -322,7 +329,7 @@ instance (g : PCCGrammar) (a : ApplDomain) :
     which IO-as-POV-center is consistent with the interpretable person
     feature on Appl. -/
 theorem isLicit_iff_exists_appl_satisfying
-    (g : PCCGrammar) (io do_ : PersonLevel) :
+    (g : PCCGrammar) (io do_ : Person) :
     IsLicit g io do_ ↔
       ∃ a : ApplDomain, a.io = io ∧ a.do_ = do_ ∧ PConstraintSatisfied g a := by
   constructor

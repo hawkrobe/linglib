@@ -52,7 +52,6 @@ explicitly.
 
 namespace CharnavelMateu2015
 
-open Features.Prominence (PersonLevel)
 
 -- ============================================================================
 -- § 1: Logophoric Centers (paper §3.5.2, eq. 53)

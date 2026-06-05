@@ -80,7 +80,6 @@ not the others.
 
 namespace Minimalist.CyclicAgree
 
-open Features.Prominence (PersonLevel)
 open Minimalist (DecomposedPerson decomposePerson)
 
 -- ============================================================================
@@ -116,9 +115,9 @@ inductive Geometry where
 /-- The person specification for a given person value under a geometry.
 
     Returns the list of segments a DP of this person bears. -/
-def personSpec (geom : Geometry) : PersonLevel → List Segment
-  | .third  => [.pi]
-  | .first  => match geom with
+def personSpec (geom : Geometry) : Person → List Segment
+  | .third | .zero => [.pi]
+  | .first | .firstInclusive | .firstExclusive => match geom with
     | .standard  => [.pi, .participant, .speaker]
     | .addressee => [.pi, .participant]
   | .second => match geom with
@@ -126,7 +125,7 @@ def personSpec (geom : Geometry) : PersonLevel → List Segment
     | .addressee => [.pi, .participant, .addressee]
 
 /-- The most specified person under a given geometry. -/
-def mostSpecified : Geometry → PersonLevel
+def mostSpecified : Geometry → Person
   | .standard  => .first
   | .addressee => .second
 
@@ -211,7 +210,7 @@ inductive Controller where
     Returns `true` iff the EA matches at least one segment that the
     IA left unmatched. -/
 def eaAgrees (geom : Geometry) (probe : ProbeArticulation)
-    (ea ia : PersonLevel) : Bool :=
+    (ea ia : Person) : Bool :=
   let residue := activeResidue probe (personSpec geom ia)
   let residueAfterEA := activeResidue residue (personSpec geom ea)
   residueAfterEA.length < residue.length
@@ -223,24 +222,24 @@ def eaAgrees (geom : Geometry) (probe : ProbeArticulation)
     segment; otherwise IA controls (either it fully checked the
     probe, or it left residue the EA couldn't match). -/
 def agreementController (geom : Geometry) (probe : ProbeArticulation)
-    (ea ia : PersonLevel) : Controller :=
+    (ea ia : Person) : Controller :=
   if eaAgrees geom probe ea ia then .ea else .ia
 
 /-- The person value that the core agreement slot realizes. -/
 def agreementValue (geom : Geometry) (probe : ProbeArticulation)
-    (ea ia : PersonLevel) : PersonLevel :=
+    (ea ia : Person) : Person :=
   match agreementController geom probe ea ia with
   | .ea => ea
   | .ia => ia
 
 /-- Convenience: controller using an `AgreementSystem`. -/
 def AgreementSystem.controller (sys : AgreementSystem)
-    (ea ia : PersonLevel) : Controller :=
+    (ea ia : Person) : Controller :=
   agreementController sys.geometry sys.probe ea ia
 
 /-- Convenience: agreement value using an `AgreementSystem`. -/
 def AgreementSystem.value (sys : AgreementSystem)
-    (ea ia : PersonLevel) : PersonLevel :=
+    (ea ia : Person) : Person :=
   agreementValue sys.geometry sys.probe ea ia
 
 -- ============================================================================
@@ -257,7 +256,7 @@ def AgreementSystem.value (sys : AgreementSystem)
 
     Returns `(cycleI, cycleII)` — the segments deactivated on each cycle. -/
 def cycleSegments (geom : Geometry) (probe : ProbeArticulation)
-    (ea ia : PersonLevel) : ProbeArticulation × ProbeArticulation :=
+    (ea ia : Person) : ProbeArticulation × ProbeArticulation :=
   let iaSpec := personSpec geom ia
   let cycleI := probe.filter (fun s => iaSpec.contains s)
   let residue := activeResidue probe iaSpec
@@ -271,7 +270,7 @@ def cycleSegments (geom : Geometry) (probe : ProbeArticulation)
     one segment. This is the configuration that creates second-cycle
     morphological effects in languages like Georgian and Nishnaabemwin. -/
 def hasSecondCycleEffect (geom : Geometry) (probe : ProbeArticulation)
-    (ea ia : PersonLevel) : Bool :=
+    (ea ia : Person) : Bool :=
   let (c1, c2) := cycleSegments geom probe ea ia
   !c1.isEmpty && !c2.isEmpty
 
@@ -286,17 +285,17 @@ def hasSecondCycleEffect (geom : Geometry) (probe : ProbeArticulation)
     Inverse contexts trigger PLC violations on the EA's π-features,
     requiring repair strategies (added probe or R-Case). -/
 def isInverseContext (geom : Geometry) (probe : ProbeArticulation)
-    (ea ia : PersonLevel) : Bool :=
+    (ea ia : Person) : Bool :=
   !eaAgrees geom probe ea ia
 
 /-- Direct context: the EA Agrees with at least one residue segment. -/
 def isDirectContext (geom : Geometry) (probe : ProbeArticulation)
-    (ea ia : PersonLevel) : Bool :=
+    (ea ia : Person) : Bool :=
   eaAgrees geom probe ea ia
 
 /-- Convenience: inverse using an `AgreementSystem`. -/
 def AgreementSystem.isInverse (sys : AgreementSystem)
-    (ea ia : PersonLevel) : Bool :=
+    (ea ia : Person) : Bool :=
   isInverseContext sys.geometry sys.probe ea ia
 
 -- ============================================================================
@@ -316,14 +315,14 @@ def AgreementSystem.isInverse (sys : AgreementSystem)
     Returns `true` if the EA is person-licensed (its π-features were
     checked by the core probe on cycle II). -/
 def eaIsLicensed (geom : Geometry) (probe : ProbeArticulation)
-    (ea ia : PersonLevel) : Bool :=
+    (ea ia : Person) : Bool :=
   eaAgrees geom probe ea ia
 
 /-- PLC violation: EA is NOT person-licensed. Exactly characterizes
     inverse contexts — this is the paper's key insight connecting
     syntactic derivation to morphological repair. -/
 theorem plc_violation_iff_inverse (geom : Geometry) (probe : ProbeArticulation)
-    (ea ia : PersonLevel) :
+    (ea ia : Person) :
     eaIsLicensed geom probe ea ia = false ↔
     isInverseContext geom probe ea ia = true := by
   simp [eaIsLicensed, isInverseContext]
@@ -347,7 +346,7 @@ inductive RepairStrategy where
 /-- Does a given EA→IA combination require repair under this system?
 
     Repair is needed iff the context is inverse. -/
-def needsRepair (sys : AgreementSystem) (ea ia : PersonLevel) : Bool :=
+def needsRepair (sys : AgreementSystem) (ea ia : Person) : Bool :=
   sys.isInverse ea ia
 
 -- ============================================================================
@@ -356,7 +355,7 @@ def needsRepair (sys : AgreementSystem) (ea ia : PersonLevel) : Bool :=
 
 /-- In the standard geometry, a person value has [participant] as a segment
     iff `DecomposedPerson.hasParticipant` is true. -/
-theorem std_participant_matches_decomposed (p : PersonLevel) :
+theorem std_participant_matches_decomposed (p : Person) :
     (personSpec .standard p).contains .participant =
     (decomposePerson p).hasParticipant := by
   cases p <;> decide
@@ -388,17 +387,17 @@ theorem std_second_entails_third :
 -- ============================================================================
 
 /-- Flat probe: IA always fully checks the probe, regardless of person. -/
-theorem flat_no_residue (geom : Geometry) (ia : PersonLevel) :
+theorem flat_no_residue (geom : Geometry) (ia : Person) :
     activeResidue flatProbe (personSpec geom ia) = [] := by
   cases ia <;> cases geom <;> decide
 
 /-- Flat probe: IA always controls — no PH effects. -/
-theorem flat_ia_controls (geom : Geometry) (ea ia : PersonLevel) :
+theorem flat_ia_controls (geom : Geometry) (ea ia : Person) :
     agreementController geom flatProbe ea ia = .ia := by
   cases ea <;> cases ia <;> cases geom <;> decide
 
 /-- Flat probe: all contexts are inverse (no EA agreement). -/
-theorem flat_all_inverse (geom : Geometry) (ea ia : PersonLevel) :
+theorem flat_all_inverse (geom : Geometry) (ea ia : Person) :
     isInverseContext geom flatProbe ea ia = true := by
   cases ea <;> cases ia <;> cases geom <;> decide
 
@@ -410,7 +409,7 @@ section PartialProbe
 
 /-- Partial probe: same behavior in both geometries, since [participant]
     is geometry-independent. -/
-theorem partial_geometry_invariant (ea ia : PersonLevel) :
+theorem partial_geometry_invariant (ea ia : Person) :
     agreementValue .standard partialProbe ea ia =
     agreementValue .addressee partialProbe ea ia := by
   cases ea <;> cases ia <;> decide
@@ -432,15 +431,15 @@ theorem basque_2_3 : basque.value .second .third = .second := by decide
 theorem basque_3_3 : basque.value .third .third = .third := by decide
 
 /-- Basque: SAP IA → inverse context (agreement displacement to IA). -/
-theorem basque_sap_ia_inverse (ea : PersonLevel) :
+theorem basque_sap_ia_inverse (ea : Person) :
     basque.isInverse ea .first = true ∧
     basque.isInverse ea .second = true := by
   constructor <;> cases ea <;> decide
 
 /-- Basque: 3P IA + SAP EA → direct context (EA controls). -/
-theorem basque_3p_ia_direct (ea : PersonLevel) (h : ea ≠ .third) :
+theorem basque_3p_ia_direct (ea : Person) (h : ea.IsSAP) :
     isDirectContext .standard partialProbe ea .third = true := by
-  cases ea <;> simp_all <;> decide
+  cases ea <;> simp_all [Person.IsSAP] <;> decide
 
 /-- Basque: 3P IA + 3P EA → inverse (neither fully checks). -/
 theorem basque_3_3_inverse : basque.isInverse .third .third = true := by
@@ -471,7 +470,7 @@ theorem nish_2_3 : nishnaabemwin.value .second .third = .second := by decide
 theorem nish_3_3 : nishnaabemwin.value .third .third = .third := by decide
 
 /-- Nishnaabemwin: 2P IA → always inverse (2nd is most specified). -/
-theorem nish_2p_ia_inverse (ea : PersonLevel) :
+theorem nish_2p_ia_inverse (ea : Person) :
     nishnaabemwin.isInverse ea .second = true := by
   cases ea <;> decide
 
@@ -503,7 +502,7 @@ theorem georgian_1_3_second_cycle :
   decide
 
 /-- Georgian: when IA is SAP, no second cycle (IA fully checks). -/
-theorem georgian_no_second_cycle_sap_ia (ea : PersonLevel) :
+theorem georgian_no_second_cycle_sap_ia (ea : Person) :
     hasSecondCycleEffect .standard partialProbe ea .first = false ∧
     hasSecondCycleEffect .standard partialProbe ea .second = false := by
   constructor <;> cases ea <;> decide
@@ -532,7 +531,7 @@ theorem nish_2_1_cycle_segments :
     against personSpec(p), applying the same filter again removes nothing,
     so `eaAgrees` returns false. -/
 theorem same_person_ia_controls (geom : Geometry) (probe : ProbeArticulation)
-    (p : PersonLevel) :
+    (p : Person) :
     agreementController geom probe p p = .ia := by
   simp only [agreementController]
   -- eaAgrees returns Bool; show it's false so `if` takes else branch
@@ -570,7 +569,7 @@ theorem most_specified_controls_vs_third_addr :
 /-- The direct/inverse split exhaustively partitions the paradigm:
     every EA→IA combination is either direct or inverse, never both. -/
 theorem direct_inverse_exhaustive (geom : Geometry) (probe : ProbeArticulation)
-    (ea ia : PersonLevel) :
+    (ea ia : Person) :
     (isDirectContext geom probe ea ia = true) ≠
     (isInverseContext geom probe ea ia = true) := by
   simp only [isDirectContext, isInverseContext]
@@ -597,7 +596,7 @@ theorem direct_inverse_exhaustive (geom : Geometry) (probe : ProbeArticulation)
 
     So `pIsIndexed` ↔ the IA controls (the agreement slot shows the
     object's features) ↔ inverse context. -/
-theorem partial_probe_sap_ia_is_inverse (ea : PersonLevel) :
+theorem partial_probe_sap_ia_is_inverse (ea : Person) :
     isInverseContext .standard partialProbe ea .first = true ∧
     isInverseContext .standard partialProbe ea .second = true := by
   constructor <;> cases ea <;> decide
@@ -619,10 +618,10 @@ theorem partial_probe_3p_ia_sap_ea_is_direct :
     produce direct contexts (when EA is SAP).
 
     This theorem proves the key direction: SAP IA → inverse (indexed). -/
-theorem sap_ia_indexed_via_inverse (p : PersonLevel) (h : p ≠ .third) :
-    ∀ ea : PersonLevel,
+theorem sap_ia_indexed_via_inverse (p : Person) (h : p.IsSAP) :
+    ∀ ea : Person,
       isInverseContext .standard partialProbe ea p = true := by
-  intro ea; cases p <;> cases ea <;> simp_all <;> decide
+  intro ea; cases p <;> cases ea <;> simp_all [Person.IsSAP] <;> decide
 
 -- ============================================================================
 -- § 18: Inverse Context Counts
@@ -630,7 +629,7 @@ theorem sap_ia_indexed_via_inverse (p : PersonLevel) (h : p ≠ .third) :
 
 /-- Count inverse contexts in a 3×3 paradigm. -/
 def inverseCount (sys : AgreementSystem) : Nat :=
-  let ps : List PersonLevel := [.first, .second, .third]
+  let ps : List Person := [.first, .second, .third]
   (ps.flatMap (λ ea => ps.filter (λ ia => sys.isInverse ea ia))).length
 
 /-- Swahili (flat): all 9 cells are inverse (no PH sensitivity). -/

@@ -38,7 +38,6 @@ tense (*=de*), creating a homophony that is typologically unusual.
 
 namespace Dargwa.Agreement
 
-open Features.Prominence (PersonLevel)
 
 -- ============================================================================
 -- § 1: Gender System
@@ -103,20 +102,26 @@ inductive MarkerSet where
     **Clitic set** ("Dargic type"): =da covers 1SG, 1PL, and 2PL
     (ex. 34a: "I, we, you(PL) am, are doing"); =de is 2SG only.
     Table 4.21 confirms: "person clitics: 2SG =de, 1SG/PL, 2PL =da". -/
-def personMarker : MarkerSet → PersonLevel → UD.Number → Option String
+def personMarker : MarkerSet → Person → UD.Number → Option String
   -- Clitic set: =da for {1SG, 1PL, 2PL}, =de for {2SG}, none for {3}
-  | .clitic,   .first,  _   => some "=da"
+  -- (clusivity-marked firsts pattern with first; impersonal unmarked)
+  | _,         .zero,   _   => none
+  | .clitic,   .first,  _ | .clitic, .firstInclusive, _
+  | .clitic,   .firstExclusive, _ => some "=da"
   | .clitic,   .second, .Sing => some "=de"
   | .clitic,   .second, _   => some "=da"    -- 2PL patterns with 1st person
   | .clitic,   .third,  _   => none          -- 3rd unmarked
   -- Irrealis set
-  | .irrealis, .first,  .Sing => some "-d"
-  | .irrealis, .first,  _   => some "-haˁ"   -- (> -he)
+  | .irrealis, .first,  .Sing | .irrealis, .firstInclusive, .Sing
+  | .irrealis, .firstExclusive, .Sing => some "-d"
+  | .irrealis, .first,  _ | .irrealis, .firstInclusive, _
+  | .irrealis, .firstExclusive, _ => some "-haˁ"   -- (> -he)
   | .irrealis, .second, .Sing => some "-t:"    -- (> -t)
   | .irrealis, .second, _   => some "-t:-a"
   | .irrealis, .third,  _   => none
   -- Optative set
-  | .optative, .first,  _   => some "-a"
+  | .optative, .first,  _ | .optative, .firstInclusive, _
+  | .optative, .firstExclusive, _ => some "-a"
   | .optative, .second, .Sing => some "-e"
   | .optative, .second, _   => some "-a"     -- + -ja allocutive
   | .optative, .third,  _   => none
@@ -150,7 +155,7 @@ inductive GenderController where
     If one core argument is a SAP and the other is not, the verb
     agrees with the SAP regardless of case. If both are SAPs,
     agreement is with the absolutive. -/
-def personAgreementController (aPerson pPerson : PersonLevel) : PersonLevel :=
+def personAgreementController (aPerson pPerson : Person) : Person :=
   match aPerson, pPerson with
   | .first,  .third  => .first     -- SAP wins
   | .second, .third  => .second    -- SAP wins
@@ -168,13 +173,13 @@ def personAgreementController (aPerson pPerson : PersonLevel) : PersonLevel :=
     *-i* when A is SAP (1st/2nd) and P is 3rd — the configuration where
     A outranks P in the person hierarchy (1, 2 > 3).
     *-u* otherwise (both SAP, or A is 3rd). -/
-def thematicSuffix (aPerson pPerson : PersonLevel) : String :=
-  if aPerson.isSAP && !pPerson.isSAP then "-i" else "-u"
+def thematicSuffix (aPerson pPerson : Person) : String :=
+  if decide aPerson.IsSAP && !decide pPerson.IsSAP then "-i" else "-u"
 
 /-- Intransitive thematic suffix: *-u* for SAP subjects,
     *-ar* / *-an* for 3rd person subjects. -/
-def intransitiveThematicSuffix (sPerson : PersonLevel) : String :=
-  if sPerson.isSAP then "-u" else "-ar"
+def intransitiveThematicSuffix (sPerson : Person) : String :=
+  if decide sPerson.IsSAP then "-u" else "-ar"
 
 /-- The thematic suffix *-i* marks the same configuration that the
     person agreement hierarchy resolves to the A-argument: SAP acting
@@ -232,11 +237,10 @@ theorem both_sap_absolutive_wins :
 
 /-- The "SAP wins" rule directly reflects the person prominence hierarchy:
     SAP (1st/2nd) > 3rd. This is the same hierarchy formalized in
-    `Features.Prominence.PersonLevel`. -/
+    `Person`. -/
 theorem sap_hierarchy_from_prominence :
-    PersonLevel.first.isSAP = true ∧
-    PersonLevel.second.isSAP = true ∧
-    PersonLevel.third.isSAP = false := ⟨rfl, rfl, rfl⟩
+    Person.first.IsSAP ∧ Person.second.IsSAP ∧ ¬Person.third.IsSAP := by
+  decide
 
 /-- Masculine and feminine prefixes are distinct. -/
 theorem gender_prefixes_distinct :

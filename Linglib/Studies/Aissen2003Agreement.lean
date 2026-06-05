@@ -53,12 +53,12 @@ open Kaqchikel
 /-! Just's binary person split (SAP vs 3rd) is exactly Preminger's
     [±participant] feature decomposition. -/
 
-/-- Map a PersonLevel to Just's IndexingPersonLevel.
+/-- Map a Person to Just's IndexingPersonLevel.
     1st/2nd → SAP, 3rd → third. -/
-def personToLevel : PersonLevel → IndexingPersonLevel
-  | .first  => .sap
+def personToLevel : Person → IndexingPersonLevel
+  | .first | .firstInclusive | .firstExclusive => .sap
   | .second => .sap
-  | .third  => .third
+  | .third | .zero => .third
 
 /-- personToLevel agrees with decomposePerson on the participant split:
     SAP ↔ [+participant], third ↔ [−participant]. -/
