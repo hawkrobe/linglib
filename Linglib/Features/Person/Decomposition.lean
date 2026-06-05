@@ -1,4 +1,5 @@
 import Linglib.Data.UD.Basic
+import Linglib.Features.Person.Basic
 import Linglib.Features.Prominence
 import Linglib.Features.ContainmentPair
 
@@ -38,6 +39,10 @@ The Minimalist-specific extension [±proximate]
 ([pancheva-zubizarreta-2018]) is added in
 `Syntax/Minimalist/Phi/Geometry.lean`.
 
+The canonical analytical inventory (root `Person`) lives in
+`Features/Person/Basic.lean`; this file is its feature decomposition
+and referential-category layer.
+
 **§ 5–9: Person Categories** ([cysouw-2009]). The 8 referential person
 categories from Cysouw's paradigmatic framework. Three singular categories
 (individual speech act roles) and five group categories (attested
@@ -48,11 +53,9 @@ language data) remains in `Phenomena/Agreement/PersonMarkingTypology.lean`.
 
 -/
 
-/-- Grammatical person — UD's descriptive vocabulary (`UD.Person`: `.first`, `.second`,
-`.third`, `.zero`) as the canonical type; the feature theory below is its API. -/
-abbrev Features.Person := UD.Person
+open Features (ContainmentPair ContainmentPairLike)
 
-namespace Features.Person
+namespace Person
 
 -- ============================================================================
 -- § 1: Person Features
@@ -92,15 +95,15 @@ def thirdF : Features := ⟨false, false⟩
 -- § 3: PersonLevel Bridge
 -- ============================================================================
 
-end Features.Person
+end Person
 
 namespace Features.Prominence
 
 /-- Decompose `PersonLevel` into binary person features. -/
-def PersonLevel.toFeatures : PersonLevel → Features.Person.Features
-  | .first  => Features.Person.firstF
-  | .second => Features.Person.secondF
-  | .third  => Features.Person.thirdF
+def PersonLevel.toFeatures : PersonLevel → Person.Features
+  | .first  => Person.firstF
+  | .second => Person.secondF
+  | .third  => Person.thirdF
 
 /-- Convert `UD.Person` to `PersonLevel`. The UD `.zero` (impersonal)
     case has no `PersonLevel` analogue; everything else is direct. -/
@@ -112,7 +115,7 @@ def PersonLevel.ofUDPerson : UD.Person → Option PersonLevel
 
 end Features.Prominence
 
-namespace Features.Person
+namespace Person
 
 open Features.Prominence
 
@@ -286,6 +289,33 @@ theorem ud_conflates_incl_excl :
     Category.toUDPersonNumber .augIncl =
     Category.toUDPersonNumber .excl := rfl
 
+/-- The person coordinate of each referential category — the projection
+    the canonical inventory recovers losslessly where UD cannot:
+    `minIncl`/`augIncl` ↦ `firstInclusive`, `excl` ↦ `firstExclusive`.
+    (The number coordinate is `toUDPersonNumber`'s second component; the
+    full `Category ≃ compatible (Person × Number)` junction is the
+    planned phase-2 theorem.) -/
+def Category.person : Category → Person
+  | .s1        => .first
+  | .s2        => .second
+  | .s3        => .third
+  | .minIncl   => .firstInclusive
+  | .augIncl   => .firstInclusive
+  | .excl      => .firstExclusive
+  | .secondGrp => .second
+  | .thirdGrp  => .third
+
+/-- The person projection tracks speaker inclusion. -/
+theorem person_includesSpeaker_iff (c : Category) :
+    c.person.IncludesSpeaker ↔ c.IncludesSpeaker := by
+  cases c <;> simp [Category.person, Person.IncludesSpeaker,
+    Category.IncludesSpeaker]
+
+/-- Unlike UD realization, the person projection separates inclusive
+    from exclusive. -/
+theorem person_separates_clusivity :
+    Category.augIncl.person ≠ Category.excl.person := by decide
+
 -- ============================================================================
 -- § 8: Category ↔ Features Bridge
 -- ============================================================================
@@ -406,4 +436,4 @@ inductive EpistemicAuthority where
   | disjunct    -- speaker lacks epistemic authority
   deriving DecidableEq, Repr
 
-end Features.Person
+end Person

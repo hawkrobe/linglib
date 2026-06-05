@@ -1,4 +1,4 @@
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 import Linglib.Features.Number.Decomposition
 
 /-!

@@ -1,5 +1,6 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
+import Linglib.Features.Person.Capabilities
 
 /-!
 # Word — the morphosyntactic word (ms-word) token
@@ -88,6 +89,8 @@ theorem Word.Agree.not_transitive :
 
 /-- A word bears the number its UD morphology ingests (`Number.fromUD`). -/
 instance : HasNumber Word := ⟨fun w => w.features.number.bind Number.fromUD⟩
+
+instance : HasPerson Word := ⟨fun w => w.features.person.map Person.fromUD⟩
 
 /-- The φ-projection preserves `numberOf`: a word and its `phi` bundle bear
     the same number — the defeq `Word.Agree.hasNumber_compatible` relies on. -/

@@ -1,5 +1,6 @@
 import Linglib.Morphology.Unification
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
+import Linglib.Features.Person.Resolve
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.Card
 import Mathlib.Data.Fintype.Powerset
@@ -234,6 +235,29 @@ theorem jose_y_tu :
     resolve eng3 eng2 = eng2 ∧ resolve eng3 eng2 ≠ eng1 := by
   constructor <;> decide
 
+/-! ### The substrate bridge: `Person.resolve` is marker-set union -/
+
+/-- The marker sets of the canonical quadripartition values — the Fula
+    encoding (87). Plain `first` underdetermines clusivity (their §6.2
+    English collapse picks `{S, H}` by stipulation), and `zero` is
+    outside the system, so both map to `none`. -/
+def markerSetOf : Person → Option PersonSet
+  | .firstExclusive => some fula1exc
+  | .firstInclusive => some fula1inc
+  | .second => some fula2
+  | .third => some fula3
+  | _ => none
+
+/-- The substrate's canonical resolution is the paper's union (77)/(93):
+    on the quadripartition, `Person.resolve` commutes with the marker
+    encoding — the same grounding `Person.resolve_profile` states
+    intrinsically, here in the paper's own vocabulary. -/
+theorem person_resolve_is_union :
+    ∀ p q : Person, ∀ sp sq : PersonSet,
+      markerSetOf p = some sp → markerSetOf q = some sq →
+      markerSetOf (Person.resolve p q) = some (resolve sp sq) := by
+  decide
+
 /-- Two markers bound the system (§6.3): at most four person values are expressible,
     matching the maximally differentiated (Fula-type) inventory. -/
 theorem two_markers_four_persons : Fintype.card PersonSet = 4 := by
@@ -310,13 +334,13 @@ either marker is participanthood. The map collapses exactly the inclusive/exclus
 distinction — Fula's `{S}` and `{S, H}` land on the same binary value — which is the
 formal content of §6.2's "fewer pronominal distinctions". -/
 
-open Features.Person in
+open Person in
 /-- Project a marker set onto the binary decomposition. -/
-def toBinary (p : PersonSet) : Features.Person.Features :=
+def toBinary (p : PersonSet) : Person.Features :=
   { hasParticipant := Marker.S ∈ p ∨ Marker.H ∈ p
     hasAuthor := Marker.S ∈ p }
 
-open Features.Person in
+open Person in
 theorem toBinary_values :
     toBinary fula1exc = firstF ∧ toBinary fula1inc = firstF ∧
     toBinary fula2 = secondF ∧ toBinary fula3 = thirdF := by

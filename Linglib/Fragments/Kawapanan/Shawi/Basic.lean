@@ -2,7 +2,7 @@ import Linglib.Features.Number.Capabilities
 import Linglib.Features.Case
 import Linglib.Features.Case
 import Linglib.Features.Prominence
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 
 /-!
 # Shawi Agreement Fragment [clem-deal-2024]
@@ -38,7 +38,6 @@ of ergative distribution to a particular Agree configuration — lives in
 `Studies/ClemDeal2024.lean`.
 -/
 
-open Features (Person)
 
 namespace Kawapanan.Shawi
 

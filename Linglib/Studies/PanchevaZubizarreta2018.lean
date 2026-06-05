@@ -1,6 +1,6 @@
 import Linglib.Syntax.Minimalist.PConstraint
 import Linglib.Features.Logophoricity
-import Linglib.Features.Person
+import Linglib.Features.Person.Decomposition
 import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Spanish.Clitics
 import Linglib.Studies.CharnavelMateu2015
