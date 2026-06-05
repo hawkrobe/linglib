@@ -1,6 +1,7 @@
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Features.Individuation
 import Linglib.Features.MassCount
+import Linglib.Core.Mereology
 
 /-!
 # Sutton & Filip (2021) — The Count/Mass Distinction for Granular Nouns
@@ -84,81 +85,16 @@ namespace SuttonFilip2021
 
 /-! ### Overlap, disjointness, and individuation schemas
 
-Their (16)–(18), stated over an arbitrary overlap relation `ov` (the
-mereological instantiation is `∃ z ≠ ⊥, z ⊑ x ∧ z ⊑ y`; the concrete
-models below use nonempty `Finset` intersection). A predicate is
-*overlapping* if two distinct members overlap; *disjoint* otherwise. -/
+Their (16)–(18): the schema machinery (`Mereology.OverlapPred`,
+`Mereology.IsMaxDisjointIn`, `Mereology.nullSchema` for `𝒮₀`, their (32))
+lives in `Core/Mereology.lean`, shared with [landman-2020]
+(`Studies/Landman2020.lean`), whose disjointness thesis it packages.
+A predicate is *overlapping* if two distinct members overlap (their (17)
+omits the distinctness, under which any inhabited predicate self-overlaps
+via `x ∘ x`; the substrate states the intended reading). -/
 
-variable {α : Type*} (ov : α → α → Prop)
-
-/-- (17): two distinct members of `P` share a part. (Their formula omits
-    distinctness, under which any inhabited predicate self-overlaps via
-    `x ∘ x`; we state the intended reading.) -/
-def OverlapPred (P : Set α) : Prop :=
-  ∃ x ∈ P, ∃ y ∈ P, x ≠ y ∧ ov x y
-
-/-- (18): `DISJOINT(P) ↔ ¬OVERLAP(P)`. -/
-def DisjointPred (P : Set α) : Prop := ¬ OverlapPred ov P
-
-/-- `OverlapPred` is monotone under inclusion. -/
-theorem overlapPred_mono {P Q : Set α} (h : P ⊆ Q)
-    (hP : OverlapPred ov P) : OverlapPred ov Q :=
-  let ⟨x, hx, y, hy, hne, hov⟩ := hP
-  ⟨x, h hx, y, h hy, hne, hov⟩
-
-/-- A maximally disjoint subset of `P`: disjoint, and unextendable within
-    `P` ([landman-2011]'s variants — individuation perspectives; the range
-    of the schemas `𝒮ᵢ`). -/
-def IsMaxDisjointIn (D P : Set α) : Prop :=
-  D ⊆ P ∧ DisjointPred ov D ∧ ∀ x ∈ P, x ∉ D → OverlapPred ov (insert x D)
-
-/-- The null individuation schema `𝒮₀` ((32)): the union of *all*
-    maximally disjoint subsets — what counts as 'one' under any
-    perspective. -/
-def nullSchema (P : Set α) : Set α :=
-  {x | ∃ D, IsMaxDisjointIn ov D P ∧ x ∈ D}
-
-/-- **The union of two distinct maximal disjoint subsets overlaps.** The
-    generic fact behind mass-hood by perspectival individuation: if `x`
-    distinguishes `D₂` from `D₁`, then `D₁`'s maximality makes
-    `insert x D₁` overlap, and the offending pair lies in `D₁ ∪ D₂`. -/
-theorem overlapPred_union_of_maxDisjoint_ne {D₁ D₂ P : Set α}
-    (h₁ : IsMaxDisjointIn ov D₁ P) (h₂ : IsMaxDisjointIn ov D₂ P)
-    (hne : D₁ ≠ D₂) : OverlapPred ov (D₁ ∪ D₂) := by
-  obtain ⟨x, hx₂, hx₁⟩ | ⟨x, hx₁, hx₂⟩ :
-      (∃ x, x ∈ D₂ ∧ x ∉ D₁) ∨ (∃ x, x ∈ D₁ ∧ x ∉ D₂) := by
-    by_contra hcon
-    push_neg at hcon
-    exact hne (Set.Subset.antisymm hcon.2 hcon.1)
-  · exact overlapPred_mono ov
-      (Set.insert_subset_iff.mpr ⟨Or.inr hx₂, fun a ha => Or.inl ha⟩)
-      (h₁.2.2 x (h₂.1 hx₂) hx₁)
-  · exact overlapPred_mono ov
-      (Set.insert_subset_iff.mpr ⟨Or.inl hx₁, fun a ha => Or.inr ha⟩)
-      (h₂.2.2 x (h₁.1 hx₁) hx₂)
-
-/-- If individuation is perspectival — two distinct maximal disjoint
-    subsets exist — the null schema yields an overlapping counting base:
-    `𝒮₀`-saturated entries are mass ((32) and their §9.4.3). -/
-theorem overlapPred_nullSchema {D₁ D₂ P : Set α}
-    (h₁ : IsMaxDisjointIn ov D₁ P) (h₂ : IsMaxDisjointIn ov D₂ P)
-    (hne : D₁ ≠ D₂) : OverlapPred ov (nullSchema ov P) :=
-  overlapPred_mono ov
-    (Set.union_subset (fun a ha => ⟨D₁, h₁, ha⟩) (fun a ha => ⟨D₂, h₂, ha⟩))
-    (overlapPred_union_of_maxDisjoint_ne ov h₁ h₂ hne)
-
-/-- For an already-disjoint predicate there is exactly one perspective:
-    the null schema returns the predicate itself. Prototypical objects
-    (*cat*) are therefore stably count — `(𝒮ᵢ(𝒪(cat)))` does not vary
-    with `i` (their §9.4.3). -/
-theorem nullSchema_eq_of_disjoint {P : Set α} (h : DisjointPred ov P) :
-    nullSchema ov P = P := by
-  ext x
-  constructor
-  · rintro ⟨D, hD, hx⟩
-    exact hD.1 hx
-  · intro hx
-    refine ⟨P, ⟨Set.Subset.rfl, h, fun y hy hny => absurd hy hny⟩, hx⟩
+open Mereology (OverlapPred DisjointPred IsMaxDisjointIn nullSchema
+  overlapPred_nullSchema)
 
 /-! ### The `[±O, ±S]` categorization and Table 9.1
 
