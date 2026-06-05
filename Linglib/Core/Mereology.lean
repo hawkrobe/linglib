@@ -5,6 +5,8 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 import Mathlib.Order.Closure
+import Mathlib.Order.Interval.Set.OrdConnected
+import Mathlib.Order.UpperLower.Closure
 import Mathlib.Order.Hom.Lattice
 
 /-!
@@ -652,35 +654,48 @@ def FakeMass {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
 def convexClosure {α : Type*} [PartialOrder α] (S : Set α) : Set α :=
   { c | ∃ a ∈ S, ∃ b ∈ S, a ≤ c ∧ c ≤ b }
 
+/-- `convexClosure` is mathlib's order-convex hull: the intersection of the
+    upper and lower closures. The construction is consumed, not
+    re-stipulated (same discipline as `Core/Logic/Team/Closure.lean`). -/
+theorem convexClosure_eq_upperClosure_inter_lowerClosure {α : Type*}
+    [PartialOrder α] (S : Set α) :
+    convexClosure S = ↑(upperClosure S) ∩ ↑(lowerClosure S) := by
+  ext c
+  simp only [convexClosure, Set.mem_setOf_eq, Set.mem_inter_iff,
+    SetLike.mem_coe, mem_upperClosure, mem_lowerClosure]
+  tauto
+
 /-- S ⊆ convexClosure S. -/
 theorem subset_convexClosure {α : Type*} [PartialOrder α] (S : Set α) :
     S ⊆ convexClosure S :=
   fun x hx => ⟨x, hx, x, hx, le_refl x, le_refl x⟩
-
-/-- convexClosure is idempotent: Conv(Conv(S)) = Conv(S).
-    If c ∈ Conv(Conv(S)), then a₁ ≤ c ≤ b₂ for some a₁, b₂ ∈ S. -/
-theorem convexClosure_idempotent {α : Type*} [PartialOrder α] (S : Set α) :
-    convexClosure (convexClosure S) = convexClosure S := by
-  ext c; constructor
-  · rintro ⟨a, ⟨a₁, ha₁, a₂, _, ha₁a, _⟩, b, ⟨_, _, b₂, hb₂, _, hbb₂⟩, hac, hcb⟩
-    exact ⟨a₁, ha₁, b₂, hb₂, le_trans ha₁a (le_trans hac (le_refl c)),
-           le_trans (le_refl c) (le_trans hcb hbb₂)⟩
-  · exact fun hc => subset_convexClosure _ hc
 
 /-- Convex closure is monotone: S ⊆ T → Conv(S) ⊆ Conv(T). -/
 theorem convexClosure_mono {α : Type*} [PartialOrder α] {S T : Set α}
     (h : S ⊆ T) : convexClosure S ⊆ convexClosure T :=
   fun _ ⟨a, ha, b, hb, hac, hcb⟩ => ⟨a, h ha, b, h hb, hac, hcb⟩
 
-/-- A set is **convex** under the partial order: every element between
-    two members is itself a member. The fixed-point of `convexClosure`. -/
-def IsConvex {α : Type*} [PartialOrder α] (S : Set α) : Prop :=
-  ∀ ⦃s u : α⦄, s ∈ S → u ∈ S → ∀ ⦃t : α⦄, s ≤ t → t ≤ u → t ∈ S
+/-- The convex closure is order-convex: an intersection of an upper and a
+    lower set (`IsUpperSet.ordConnected`, `IsLowerSet.ordConnected`). -/
+theorem ordConnected_convexClosure {α : Type*} [PartialOrder α] (S : Set α) :
+    (convexClosure S).OrdConnected := by
+  rw [convexClosure_eq_upperClosure_inter_lowerClosure]
+  exact ((upperClosure S).upper.ordConnected).inter
+    ((lowerClosure S).lower.ordConnected)
 
-theorem IsConvex.convexClosure {α : Type*} [PartialOrder α] (S : Set α) :
-    IsConvex (convexClosure S) := by
-  rintro s u ⟨a, ha, _, _, hale, _⟩ ⟨_, _, b, hb, _, hleb⟩ t hst htu
-  exact ⟨a, ha, b, hb, le_trans hale hst, le_trans htu hleb⟩
+/-- A set is order-convex (`Set.OrdConnected`) iff it is a fixed point of
+    `convexClosure` — [kriz-spector-2021] def. 21 and [harbour-2014] (33)
+    are mathlib's `ordConnected_iff_upperClosure_inter_lowerClosure` in
+    closure form. -/
+theorem ordConnected_iff_convexClosure_eq {α : Type*} [PartialOrder α]
+    (S : Set α) : S.OrdConnected ↔ convexClosure S = S := by
+  rw [convexClosure_eq_upperClosure_inter_lowerClosure]
+  exact ordConnected_iff_upperClosure_inter_lowerClosure
+
+/-- convexClosure is idempotent: a corollary of its order-convexity. -/
+theorem convexClosure_idempotent {α : Type*} [PartialOrder α] (S : Set α) :
+    convexClosure (convexClosure S) = convexClosure S :=
+  (ordConnected_iff_convexClosure_eq _).mp (ordConnected_convexClosure S)
 
 /-- `convexClosure` as a mathlib `ClosureOperator (Set α)`.
     Sibling to `algClosureOp`. -/
