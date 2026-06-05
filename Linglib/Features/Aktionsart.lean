@@ -175,6 +175,19 @@ theorem telic_classes (c : VendlerClass) :
     c.telicity = .telic ↔ (c = .achievement ∨ c = .accomplishment) := by
   cases c <;> simp [VendlerClass.telicity]
 
+namespace VendlerClass
+
+/-- A Vendler class has internal stages iff it is both dynamic and durative.
+    [smith-1997] Ch. 4: the progressive focuses internal stages, so classes
+    without them (states, punctuals) resist the progressive. -/
+def HasInternalStages (c : VendlerClass) : Prop :=
+  c.dynamicity = .dynamic ∧ c.duration = .durative
+
+instance (c : VendlerClass) : Decidable c.HasInternalStages :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+end VendlerClass
+
 -- ════════════════════════════════════════════════════
 -- § 3. AspectualProfile (bundled binary features)
 -- ════════════════════════════════════════════════════

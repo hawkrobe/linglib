@@ -331,4 +331,54 @@ theorem binary_collapses_clusivity :
   · simp [toBinary, fula1exc, fula1inc]
   · decide
 
+/-! ### BundleLike with `Finset` slots: the generic substrate accommodates indeterminacy
+
+A multi-feature indeterminacy bundle is just a Pi type with `Finset` slots,
+ordered superset-first (more determinate = smaller set). `BundleLike`'s
+slot type family `S : F → Type*` (parameter `S` carrying its own
+order) covers this case without any new generic machinery: `S t :=
+(Finset (V t))ᵒᵈ`. The `BundleLike.Subsumes` order then reads, per slot,
+`b₁ t ≤ b₂ t` in the order dual — i.e. `(b₂ t).1 ⊆ (b₁ t).1` — which is
+exactly the §4 (eq. 25) information-as-set-of-possibilities convention.
+
+This is the structural payoff: a feature-space tweak (Finset slots
+instead of Flat slots), not a re-development of the lattice theory. -/
+
+/-- An indeterminacy bundle: each slot holds a `Finset` of possible
+atomic values, ordered superset-first via `Finset`'s order dual. -/
+abbrev IndetBundle (F : Type*) (V : F → Type*) : Type _ :=
+  (t : F) → (Finset (V t))ᵒᵈ
+
+namespace IndetBundle
+
+variable {F : Type*} {V : F → Type*}
+
+instance : BundleLike (IndetBundle F V) F
+    (fun t => (Finset (V t))ᵒᵈ) :=
+  ⟨fun b => b⟩
+
+instance : LawfulBundleLike (IndetBundle F V) :=
+  ⟨fun _ _ h => h⟩
+
+end IndetBundle
+
+/-! Concrete witness: a 1-feature Case-indeterminacy bundle. We
+exhibit two bundles — *was* {NOM, ACC} and *wer* {NOM} — and confirm
+that `wer` subsumes (is more determinate than) `was`, via the
+generic `BundleLike.Subsumes`. -/
+
+/-- A single-feature Case bundle. -/
+abbrev CaseBundle := IndetBundle Unit (fun _ => Case)
+
+def wasBundle : CaseBundle := fun _ => OrderDual.toDual was
+def werBundle : CaseBundle := fun _ => OrderDual.toDual wer
+
+/-- *wer* {NOM} is more determinate than *was* {NOM, ACC}: their
+subsumption in the generic `BundleLike` order matches set-superset on
+the slot. -/
+theorem wer_subsumes_was : BundleLike.Subsumes wasBundle werBundle := by
+  intro _
+  show wer ⊆ was
+  decide
+
 end DalrympleKaplan2000
