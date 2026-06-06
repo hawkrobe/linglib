@@ -121,7 +121,7 @@ namespace LoGuercio2025
 
 open Pragmatics.Expressives
 open Alternatives.Structural
-open Core.Tree
+open Syntax
 open Data.Examples (LinguisticExample)
 
 -- BEGIN GENERATED EXAMPLES

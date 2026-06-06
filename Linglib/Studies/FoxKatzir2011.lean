@@ -203,10 +203,10 @@ subset of our `formalAlternatives`.
     with contextually salient material, enabling examples like
     Matsumoto's "warm"/"a little bit more than warm" (ex. 36). -/
 def substitutionSourceFC {C W : Type}
-    (lexicon : List (Core.Tree.Tree C W))
-    (φ : Core.Tree.Tree C W)
-    (salient : List (Core.Tree.Tree C W)) :
-    List (Core.Tree.Tree C W) :=
+    (lexicon : List (Syntax.Tree C W))
+    (φ : Syntax.Tree C W)
+    (salient : List (Syntax.Tree C W)) :
+    List (Syntax.Tree C W) :=
   lexicon ++ φ.subtrees ++ salient
 
 /-- Structural alternatives with contextual extension (definition 37).
@@ -216,10 +216,10 @@ def substitutionSourceFC {C W : Type}
     When `salient = []`, this reduces to [katzir-2007]'s original
     `structuralAlternatives` (modulo the focus restriction; see above). -/
 def formalAlternatives {C W : Type}
-    (lex : List (Core.Tree.Tree C W))
-    (φ : Core.Tree.Tree C W)
-    (salient : List (Core.Tree.Tree C W)) :
-    Set (Core.Tree.Tree C W) :=
+    (lex : List (Syntax.Tree C W))
+    (φ : Syntax.Tree C W)
+    (salient : List (Syntax.Tree C W)) :
+    Set (Syntax.Tree C W) :=
   {ψ | Alternatives.Structural.atMostAsComplex
     (substitutionSourceFC lex φ salient) ψ φ}
 

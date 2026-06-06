@@ -1,124 +1,80 @@
 import Mathlib.Data.List.Infix
 import Mathlib.Algebra.Free
-import Linglib.Data.UD.Basic
 import Linglib.Core.Order.Tree
-import Linglib.Morphology.Word
 
 /-!
-# Trees
+# Constituency Trees
 
-Unified tree type parameterized by node labels (`C`) and terminal content (`W`).
+The **constituency tree and LF interface format** of the Syntax layer:
+one tree type, parameterized by node labels (`C`) and terminal content
+(`W`), shared by the frameworks whose structures *are* constituency
+trees — not by all of syntax. The library has two structural hubs:
 
-## `Tree C W` — The Y-Model Tree
+1. **`Syntax.Tree` (this file)** — for constituency: H&K composition
+   reads it (LF), Katzir structural operations transform it (PF),
+   Minimalist derivations project *down* to it at Spell-Out.
+2. **`Core.Order.TreeOrder` + the B&P command library** — the genuinely
+   framework-agnostic layer, where non-constituency frameworks connect
+   via their own node types (HPSG signs, DG word-indices, Minimalist
+   syntactic objects), each with its own dominance order.
 
-N-ary branching with categories on every node. Supports both:
+Frameworks whose structures are **not** trees do not and cannot
+instantiate this type: CCG derivations are proof trees (nodes are rule
+applications); HPSG signs are reentrant feature structures (structure
+sharing has no tree representation); dependency structures are
+head-indexed graphs; multidominance objects are nonplanar (which is why
+`Syntax/Minimalist/` keeps its own `SyntacticObject` and only projects
+to `Tree` at the interface).
+
+## `Syntax.Tree C W`
+
+N-ary branching with categories on every node. Read by both interfaces:
 - **Compositional interpretation** (LF): `interp`/`evalTree`
-  in `Composition/Tree.lean` — type-driven, ignores categories
+  in `Semantics/Composition/Tree.lean` — type-driven, ignores categories
 - **Structural operations** (PF): [katzir-2007] `StructOp` (substitution,
-  deletion, contraction) in `Alternatives/Structural.lean` — category-aware
+  deletion, contraction) in `Semantics/Alternatives/Structural.lean` —
+  category-aware
 
-Parameterized by category type `C` (UD tags, CCG categories, feature
-bundles, `Unit` for unlabeled, ...) and terminal type `W`.
+The generic core is `terminal`/`node` with the pluggable category
+parameter `C` (UD tags, feature bundles, `Unit` for unlabeled, ...).
+The `trace` and `bind` constructors encode the **trace-theoretic / QR**
+analysis of movement specifically ([heim-kratzer-1998] Ch. 5): indexed
+traces plus λ-binders. Rival representations of movement are *not*
+expressible on this type — copy theory needs a side-car chain relation
+over `TreePath`s, and multidominance needs the nonplanar
+`SyntacticObject` (`Syntax/Minimalist/Multidominance.lean`). Frameworks
+without movement simply never construct these cases. Binder–trace
+well-formedness (each `bind n` binding a matching `trace n`) is a
+predicate to be imposed, not a type guarantee; `bind`'s category label
+is recorded for uniformity but is not consulted by `interp` or
+`StructOp`.
 
 ### Instantiations
 
 - `Tree Unit String` — category-free, for H&K composition. Use convenience
   constructors `.leaf`, `.bin`, `.un`, `.tr`, `.binder`.
-- `Tree Cat String` — UD-grounded categories, for Katzir structural alternatives.
-- `Tree Unit LIToken` — bare phrase structure, for Minimalist syntax
-  (categories inside `LIToken`, not on nodes).
-
-## `Cat` — Default Category System
-
-Grounded in Universal Dependencies UPOS. Word-level categories via
-`head : UPOS → Cat`, phrasal via `proj : UPOS → Cat`, plus `S` and `CP`.
+- `Tree Cat String` — UD-grounded categories (`Syntax/Tree/Cat.lean`),
+  for Katzir structural alternatives.
+- `Tree Unit LIToken` — bare phrase structure projected from Minimalist
+  syntax at Spell-Out via `FreeMagma.toTree` (categories inside the
+  token, not on nodes).
 
 ## `TreePath` and `Tree.toTreeOrder`
 
 A `TreePath` is a list of child indices identifying a subtree position.
 The forgetful map `Tree.toTreeOrder` extracts the dominance partial order
 from any `Tree C W` as a `Core.Order.TreeOrder TreePath`, making the
-B&P command-relation library (`Linglib.Core.Order.Command`) applicable
-to concrete trees regardless of category type.
+B&P command-relation library (`Linglib.Core.Order.Command`,
+[barker-pullum-1990]) applicable to concrete trees regardless of
+category type.
 -/
 
-namespace Core.Tree
+namespace Syntax
 
--- ════════════════════════════════════════════════════════════════════
--- §1  Default Category System (UD-grounded)
--- ════════════════════════════════════════════════════════════════════
+/-! ### The tree type -/
 
-open UD
-
-/-- Default syntactic category system grounded in Universal Dependencies
-UPOS ([de-marneffe-zeman-2021]).
-
-- `head pos` — word-level (terminal): wraps a UPOS tag directly
-- `proj pos` — maximal X-bar projection of a UPOS head
-- `S` — sentence/clause (not a projection of a single lexical head)
-- `CP` — complementizer phrase
-
-Phrasal categories are derived systematically: NP = `proj .NOUN`,
-VP = `proj .VERB`, DP = `proj .DET`, ConjP = `proj .CCONJ`, etc.
-
-This is one possible instantiation of `Tree`'s `C` parameter.
-Framework-specific category systems (CCG functors, Minimalist
-feature bundles, etc.) can be used instead. -/
-inductive Cat where
-  | head : UPOS → Cat
-  | proj : UPOS → Cat
-  | S
-  | CP
-  deriving DecidableEq, Repr
-
-instance : Inhabited Cat := ⟨.S⟩
-
-instance : BEq Cat := ⟨λ a b => decide (a = b)⟩
-
-instance : LawfulBEq Cat where
-  eq_of_beq h := of_decide_eq_true h
-  rfl := decide_eq_true rfl
-
--- ── Abbreviations ──────────────────────────────────────────────────
--- Short names matching traditional notation. Each abbreviation is
--- marked @[match_pattern] so it can be used in pattern position.
-
-namespace Cat
-
--- Word-level (heads / terminals)
-@[match_pattern] abbrev N     : Cat := .head .NOUN
-@[match_pattern] abbrev V     : Cat := .head .VERB
-@[match_pattern] abbrev Det   : Cat := .head .DET
-@[match_pattern] abbrev Adj   : Cat := .head .ADJ
-@[match_pattern] abbrev Adv   : Cat := .head .ADV
-@[match_pattern] abbrev P     : Cat := .head .ADP
-@[match_pattern] abbrev Conj  : Cat := .head .CCONJ
-@[match_pattern] abbrev Neg   : Cat := .head .PART
-@[match_pattern] abbrev C     : Cat := .head .SCONJ
-@[match_pattern] abbrev Num   : Cat := .head .NUM
-@[match_pattern] abbrev Pron  : Cat := .head .PRON
-@[match_pattern] abbrev Aux   : Cat := .head .AUX
-
--- Phrasal (maximal projections)
-@[match_pattern] abbrev NP    : Cat := .proj .NOUN
-@[match_pattern] abbrev VP    : Cat := .proj .VERB
-@[match_pattern] abbrev DP    : Cat := .proj .DET
-@[match_pattern] abbrev PP    : Cat := .proj .ADP
-@[match_pattern] abbrev AdjP  : Cat := .proj .ADJ
-@[match_pattern] abbrev AdvP  : Cat := .proj .ADV
-@[match_pattern] abbrev ConjP : Cat := .proj .CCONJ
-@[match_pattern] abbrev NegP  : Cat := .proj .PART
-@[match_pattern] abbrev NumP  : Cat := .proj .NUM
-
-end Cat
-
-
--- ════════════════════════════════════════════════════════════════════
--- §2  Unified Tree Type
--- ════════════════════════════════════════════════════════════════════
-
-/-- Framework-neutral tree, parameterized by node label type `C`
-and terminal word type `W`.
+/-- Constituency tree, parameterized by node label type `C` and terminal
+word type `W`.
 
 - `terminal c w` — leaf carrying category `c` and word `w`
 - `node c cs` — internal node with category `c` and children `cs`
@@ -155,9 +111,7 @@ variable {C W : Type}
 @[match_pattern] abbrev tr (n : Nat) : Tree Unit W := .trace n ()
 @[match_pattern] abbrev binder (n : Nat) (body : Tree Unit W) : Tree Unit W := .bind n () body
 
--- ════════════════════════════════════════════════════════════════════
--- §3  Basic Accessors
--- ════════════════════════════════════════════════════════════════════
+/-! ### Basic accessors -/
 
 /-- Category label of the root node. Total: every constructor carries
 a category (including `bind`, where it labels the result of PA). -/
@@ -167,9 +121,7 @@ def cat : Tree C W → C
   | .trace _ c => c
   | .bind _ c _ => c
 
--- ════════════════════════════════════════════════════════════════════
--- §4  Structural Equality
--- ════════════════════════════════════════════════════════════════════
+/-! ### Structural equality -/
 
 /-- Structural equality for trees (mutual recursion through List). -/
 def beq [BEq C] [BEq W] : Tree C W → Tree C W → Bool
@@ -246,9 +198,7 @@ end
 
 instance [DecidableEq C] [DecidableEq W] : DecidableEq (Tree C W) := decEq
 
--- ════════════════════════════════════════════════════════════════════
--- §5  Size
--- ════════════════════════════════════════════════════════════════════
+/-! ### Size -/
 
 /-- Number of nodes in the tree. -/
 def size : Tree C W → Nat
@@ -273,9 +223,7 @@ where
   | [] => 0
   | t :: ts => leafCount t + leafCountList ts
 
--- ════════════════════════════════════════════════════════════════════
--- §5b  Binary-Tree Recursor (for `Tree Unit W`)
--- ════════════════════════════════════════════════════════════════════
+/-! ### Binary-tree recursor (for `Tree Unit W`) -/
 
 /-- Custom recursor for binary trees over `Tree Unit W`. The default
 `induction` tactic refuses nested inductives like `Tree`; this recursor
@@ -306,9 +254,7 @@ def binRec {W : Type} {motive : Tree Unit W → Sort*}
 termination_by t => t.size
 decreasing_by all_goals (simp only [Tree.size, Tree.size.sizeList]; omega)
 
--- ════════════════════════════════════════════════════════════════════
--- §6  Subtrees
--- ════════════════════════════════════════════════════════════════════
+/-! ### Subtrees -/
 
 /-- All subtrees including self (pre-order traversal). -/
 def subtrees : Tree C W → List (Tree C W)
@@ -321,9 +267,7 @@ where
   | [] => []
   | t :: ts => subtrees t ++ subtreesList ts
 
--- ════════════════════════════════════════════════════════════════════
--- §7  Category Queries
--- ════════════════════════════════════════════════════════════════════
+/-! ### Category queries -/
 
 /-- Whether a category appears anywhere in the tree. -/
 def containsCat [BEq C] (target : C) : Tree C W → Bool
@@ -336,9 +280,7 @@ where
   | [] => false
   | t :: ts => containsCat target t || containsCatList target ts
 
--- ════════════════════════════════════════════════════════════════════
--- §8  Leaf Substitution
--- ════════════════════════════════════════════════════════════════════
+/-! ### Leaf substitution -/
 
 /-- Substitute all terminals of category `c` carrying word `target`
 with `replacement`. This is the most common structural operation:
@@ -360,9 +302,7 @@ where
 
 end Tree
 
--- ════════════════════════════════════════════════════════════════════
--- §9  TreePath and Forgetful Map to TreeOrder
--- ════════════════════════════════════════════════════════════════════
+/-! ### TreePath and the forgetful map to TreeOrder -/
 
 /-- A path from the root of a tree, encoded as a list of child indices.
 
@@ -435,28 +375,26 @@ def toTreeOrder (t : Tree C W) : Core.Order.TreeOrder TreePath where
 
 end Tree
 
-end Core.Tree
+end Syntax
 
--- ════════════════════════════════════════════════════════════════════
--- §10  FreeMagma → Tree forgetful map
--- ════════════════════════════════════════════════════════════════════
+/-! ### FreeMagma → Tree forgetful map -/
 
 namespace FreeMagma
 
-/-- Forgetful map from a free magma to a binary `Core.Tree.Tree Unit α`.
+/-- Forgetful map from a free magma to a binary `Syntax.Tree Unit α`.
 
 The image lives in a strict subset of `Tree Unit α`: only `.terminal ()`
 (from `.of`) and the binary `.node () [_, _]` (from `.mul`) are produced;
 the n-ary `.node`, `.trace`, and `.bind` constructors are never used.
 
-By composition with `Core.Tree.Tree.toTreeOrder`, every `FreeMagma α`
-inherits a `Core.Order.TreeOrder Core.Tree.TreePath`, making B&P's
+By composition with `Syntax.Tree.toTreeOrder`, every `FreeMagma α`
+inherits a `Core.Order.TreeOrder Syntax.TreePath`, making B&P's
 framework-agnostic command-relation library
 (`Linglib.Core.Order.Command`) directly applicable.
 
-Universe note: capped at `α : Type` because `Core.Tree.Tree` is monomorphic
+Universe note: capped at `α : Type` because `Syntax.Tree` is monomorphic
 in `Type 0`; sufficient for `LIToken`-indexed `SyntacticObject`. -/
-def toTree {α : Type} : FreeMagma α → Core.Tree.Tree Unit α
+def toTree {α : Type} : FreeMagma α → Syntax.Tree Unit α
   | .of a => .terminal () a
   | .mul l r => .node () [l.toTree, r.toTree]
 

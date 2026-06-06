@@ -1,4 +1,4 @@
-import Linglib.Core.Tree
+import Linglib.Syntax.Tree.Basic
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Semantics.Composition.LexEntry
@@ -168,7 +168,7 @@ def interpBinary {F : Frame} {M : Type → Type} [Applicative M]
 
 /-! ### Tree interpretation -/
 
-open Core.Tree
+open Syntax
 
 section TreeInterp
 

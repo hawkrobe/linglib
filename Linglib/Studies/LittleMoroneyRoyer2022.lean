@@ -1,6 +1,6 @@
 import Linglib.Typology.ClassifierSystem
 import Linglib.Core.Mereology
-import Linglib.Core.Tree
+import Linglib.Syntax.Tree.Cat
 import Linglib.Core.Logic.Assignment
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Semantics.Composition.Tree
@@ -51,7 +51,7 @@ open Typology
 open Core.Logic.Intensional (Frame Ty)
 open Semantics.Montague (LexEntry Lexicon)
 open Semantics.Composition.Tree (interp)
-open Core.Tree (Tree)
+open Syntax (Tree)
 
 abbrev chol := Chol.classifierSystem
 abbrev shan := Shan.classifierSystem

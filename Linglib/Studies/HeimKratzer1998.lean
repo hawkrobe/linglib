@@ -1,3 +1,4 @@
+import Linglib.Syntax.Tree.Cat
 import Linglib.Semantics.Composition.Tree
 import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Semantics.Composition.ToyDomain
@@ -53,7 +54,7 @@ namespace HeimKratzer1998
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
 open Semantics.Montague
-open Core.Tree
+open Syntax
 open Semantics.Composition.Tree
 open Semantics.Quantification.Quantifier
 

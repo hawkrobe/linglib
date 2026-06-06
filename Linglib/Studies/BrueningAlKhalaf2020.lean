@@ -1,6 +1,6 @@
 import Linglib.Typology.WordOrder
 import Linglib.Features.Coordination
-import Linglib.Core.Tree
+import Linglib.Syntax.Tree.Cat
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Fragments.English.WordOrder
 import Mathlib.Data.Finset.Basic
@@ -47,8 +47,8 @@ DP-first (~77%), supporting bottom-up accounts instead.
 namespace BrueningAlKhalaf2020
 
 open Features.Coordination
-open Core.Tree (Cat)
-open Core.Tree.Cat (NP VP AdjP AdvP PP)
+open Syntax (Cat)
+open Syntax.Cat (NP VP AdjP AdvP PP)
 open Typology.WordOrder
 
 -- ============================================================================
@@ -288,7 +288,7 @@ inductive Supercategory where
   deriving DecidableEq, Repr
 
 /-- Categories belonging to each supercategory, grounded in the `Cat`
-    category system from `Core.Tree`. The inclusion order on `Finset Cat`
+    category system from `Syntax`. The inclusion order on `Finset Cat`
     gives the lattice structure: `Supercategory.cats .pred` and
     `Supercategory.cats .mod` are elements ordered by ⊆. -/
 def Supercategory.cats : Supercategory → Finset Cat

@@ -1,3 +1,4 @@
+import Linglib.Syntax.Tree.Cat
 import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Composition.ToyDomain
 import Linglib.Semantics.Quantification.Quantifier
@@ -34,7 +35,7 @@ from being generated, licensing the scalar implicature.
 
 namespace Katzir2007
 
-open Core.Tree
+open Syntax
 open Semantics.Composition.Tree
 open Semantics.Montague (toyModel ToyEntity)
 open Semantics.Montague.ToyLexicon (sleeps_sem)

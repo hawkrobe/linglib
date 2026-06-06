@@ -1,5 +1,5 @@
 import Linglib.Typology.RelativeClause.Basic
-import Linglib.Core.Tree
+import Linglib.Syntax.Tree.Cat
 import Linglib.Fragments.Swahili.Relativization
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Syntax.Minimalist.Features
@@ -42,7 +42,7 @@ Following [landau-2006] and [van-urk-2018]:
 Pronouns: [DP D [NumP Num [nP n_anim [PersP Pers:x]]]]
 Lexical DPs: [DP D [NumP Num [nP n/n_anim [√P √]]]]
 
-Modeled using `Core.Tree DPCat String` with Minimalism-grounded
+Modeled using `Syntax DPCat String` with Minimalism-grounded
 categories (D, Num, n, Pers).
 
 ## Vocabulary Insertion (FeatureBundle-Based)
@@ -79,7 +79,7 @@ instance : Inhabited DPCat := ⟨.D⟩
 -- § 2: Tree-Based DP Structure
 -- ============================================================================
 
-open Core.Tree (Tree)
+open Syntax (Tree)
 
 /-- 1SG pronoun *mi*: [DP D [NumP Num:sg [nP n_anim [PersP 1]]]]
     [scott-2021]. -/

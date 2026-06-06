@@ -1,6 +1,6 @@
 import Mathlib.Logic.Relation
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Tree
+import Linglib.Syntax.Tree.Cat
 import Linglib.Semantics.Alternatives.Source
 
 /-!
@@ -42,7 +42,7 @@ structural operations. For φ = "John ate some of the cake":
 
 ## Tree Type
 
-Uses the unified `Tree C W` from `Core.Tree`. All definitions are
+Uses the unified `Tree C W` from `Syntax`. All definitions are
 parameterized over the category type `C`, so they work with UD-grounded
 `Cat`, framework-specific categories, or any `C` with `BEq`/`DecidableEq`.
 
@@ -58,7 +58,7 @@ parameterized over the category type `C`, so they work with UD-grounded
 
 namespace Alternatives.Structural
 
-open Core.Tree
+open Syntax
 open Tree
 
 -- ═══════════════════════════════════════════════════════════════════════

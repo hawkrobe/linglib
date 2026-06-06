@@ -1,5 +1,5 @@
 import Linglib.Features.Number.Decomposition
-import Linglib.Core.Tree
+import Linglib.Syntax.Tree.Cat
 import Linglib.Semantics.Quantification.Lexicon
 import Linglib.Semantics.Alternatives.Source
 import Linglib.Semantics.Alternatives.Indirect
@@ -513,7 +513,7 @@ with the silent witness *tous_DUAL V*.
 
 section WorkedExample
 
-open Core.Tree
+open Syntax
 open Alternatives Alternatives.Structural
 
 /-- Two domains: a 2-cup world (`w2`) and a 3-cup world (`w3`).
