@@ -1,6 +1,6 @@
 import Mathlib.Data.List.Basic
 import Linglib.Data.UD.Basic
-import Linglib.Core.Valence
+import Linglib.Features.Complementation
 import Linglib.Morphology.Word
 
 /-!
@@ -33,48 +33,6 @@ Dependencies v2). [hudson-2010], [gibson-2025].
 
 namespace DepGrammar
 
-/-! ### Dependencies and trees -/
-
-section DependenciesAndTrees
-
-/-- A dependency: directed edge from head to dependent.
-    Uses UD.DepRel for the relation label. -/
-structure Dependency where
-  headIdx : Nat
-  depIdx : Nat
-  depType : UD.DepRel
-  deriving Repr, DecidableEq
-
-/-- A dependency tree for a sentence. `frames` carries the DG-specific lexical
-    subcategorization premises, aligned with `words` (missing/short = no frame): valence
-    is framework apparatus (like HPSG's ARG-ST), so it lives on DG's tree, not on the
-    shared `Word` token. Frames come from the lexical carrier at tree construction
-    (`Verb.valence`). -/
-structure DepTree where
-  words : List Word
-  deps : List Dependency
-  rootIdx : Nat
-  frames : List (Option Valence) := []
-  deriving Repr
-
-/-- The subcategorization frame at position `i`, if one was supplied. -/
-def DepTree.frame (t : DepTree) (i : Nat) : Option Valence :=
-  (t.frames[i]?).getD none
-
-/-- An enhanced dependency graph: like DepTree but allows multiple heads per word.
-    Relaxes the unique-heads constraint. -/
-structure DepGraph where
-  words : List Word
-  deps : List Dependency
-  rootIdx : Nat
-  deriving Repr
-
-/-- Every DepTree is trivially a DepGraph. -/
-def DepTree.toGraph (t : DepTree) : DepGraph :=
-  { words := t.words, deps := t.deps, rootIdx := t.rootIdx }
-
-end DependenciesAndTrees
-
 section ArgumentStructure
 
 /-- Direction of a dependent relative to head. -/
@@ -94,9 +52,51 @@ structure ArgSlot where
 /-- Argument structure: what dependents a word requires/allows. -/
 structure ArgStr where
   slots : List ArgSlot
-  deriving Repr
+  deriving Repr, DecidableEq
 
 end ArgumentStructure
+
+/-! ### Dependencies and trees -/
+
+section DependenciesAndTrees
+
+/-- A dependency: directed edge from head to dependent.
+    Uses UD.DepRel for the relation label. -/
+structure Dependency where
+  headIdx : Nat
+  depIdx : Nat
+  depType : UD.DepRel
+  deriving Repr, DecidableEq
+
+/-- A dependency tree for a sentence. `frames` carries the DG-specific lexical
+    argument-structure premises, aligned with `words` (missing/short = no frame):
+    the frame is framework apparatus (like HPSG's ARG-ST), so it lives on DG's
+    tree, not on the shared `Word` token. Frames come from the lexical carrier at
+    tree construction (`complementToArgStr` applied to a verb's `complementType`). -/
+structure DepTree where
+  words : List Word
+  deps : List Dependency
+  rootIdx : Nat
+  frames : List (Option ArgStr) := []
+  deriving Repr
+
+/-- The argument-structure frame at position `i`, if one was supplied. -/
+def DepTree.frame (t : DepTree) (i : Nat) : Option ArgStr :=
+  (t.frames[i]?).getD none
+
+/-- An enhanced dependency graph: like DepTree but allows multiple heads per word.
+    Relaxes the unique-heads constraint. -/
+structure DepGraph where
+  words : List Word
+  deps : List Dependency
+  rootIdx : Nat
+  deriving Repr
+
+/-- Every DepTree is trivially a DepGraph. -/
+def DepTree.toGraph (t : DepTree) : DepGraph :=
+  { words := t.words, deps := t.deps, rootIdx := t.rootIdx }
+
+end DependenciesAndTrees
 
 section StandardArgStr
 
@@ -120,14 +120,14 @@ def argStr_VPassive : ArgStr :=
   { slots := [⟨.nsubj, .left, true, some .DET⟩,
               ⟨.obl, .right, false, some .ADP⟩] }  -- by-phrase is optional
 
-/-- Map Valence to the corresponding standard DG argument structure.
-    Returns `none` for valences without a standard frame
-    (clausal, copular, dative, locative). -/
-def valenceToArgStr : Valence → Option ArgStr
-  | .intransitive => some argStr_V0
-  | .transitive => some argStr_VN
-  | .ditransitive => some argStr_VNN
-  | _ => none  -- clausal/copular/dative/locative: no standard frame
+/-- Map a complement type to the corresponding standard DG argument structure.
+    Returns `none` for frames without a standard schema: clause-embedding
+    types take xcomp/ccomp, not obj, and `.np_pp` has no fixture here. -/
+def complementToArgStr : ComplementType → Option ArgStr
+  | .none => some argStr_V0
+  | .np => some argStr_VN
+  | .np_np => some argStr_VNN
+  | _ => Option.none
 
 end StandardArgStr
 
@@ -193,64 +193,6 @@ def checkDetNounAgr (t : DepTree) : Bool :=
 
 end AgreementChecking
 
-section SubcategorizationChecking
-
-/-- Count dependents of a given type for a head. -/
-def countDepsOfType (t : DepTree) (headIdx : Nat) (dtype : UD.DepRel) : Nat :=
-  t.deps.filter (λ d => d.headIdx == headIdx && d.depType == dtype) |>.length
-
-/-- Check if verb has correct argument structure. -/
-def checkVerbSubcat (t : DepTree) : Bool :=
-  List.range t.words.length |>.all λ i =>
-    match t.words[i]? with
-    | some w =>
-      if w.cat == UD.UPOS.VERB then
-        let subjCount := countDepsOfType t i .nsubj
-        let objCount := countDepsOfType t i .obj
-        let iobjCount := countDepsOfType t i .iobj
-        match t.frame i with
-        | some .intransitive => subjCount >= 1 && objCount == 0
-        | some .transitive => subjCount >= 1 && objCount == 1
-        | some .ditransitive => subjCount >= 1 && objCount == 1 && iobjCount == 1
-        | some .clausal | some .copular | some .dative | some .locative => true
-        | none => true
-      else true
-    | none => true
-
-end SubcategorizationChecking
-
-section TreeConstructionHelpers
-
-/-- Create a simple SV tree: subject -> verb. -/
-def mkSVTree (subj verb : Word) (frame : Option Valence := none) : DepTree :=
-  { words := [subj, verb]
-    deps := [⟨1, 0, .nsubj⟩]
-    rootIdx := 1
-    frames := [none, frame] }
-
-/-- Create a simple SVO tree: subject -> verb <- object. -/
-def mkSVOTree (subj verb obj : Word) (frame : Option Valence := none) : DepTree :=
-  { words := [subj, verb, obj]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩]
-    rootIdx := 1
-    frames := [none, frame, none] }
-
-/-- Create Det-N-V tree: det -> noun -> verb. -/
-def mkDetNVTree (det noun verb : Word) (frame : Option Valence := none) : DepTree :=
-  { words := [det, noun, verb]
-    deps := [⟨1, 0, .det⟩, ⟨2, 1, .nsubj⟩]
-    rootIdx := 2
-    frames := [none, none, frame] }
-
-/-- Create a ditransitive tree: subj -> verb <- iobj <- obj. -/
-def mkDitransTree (subj verb iobj obj : Word) (frame : Option Valence := none) : DepTree :=
-  { words := [subj, verb, iobj, obj]
-    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .iobj⟩, ⟨1, 3, .obj⟩]
-    rootIdx := 1
-    frames := [none, frame, none, none] }
-
-end TreeConstructionHelpers
-
 section ArgStrSatisfaction
 
 /-- Check if a dependency tree satisfies an argument structure -/
@@ -274,6 +216,64 @@ def satisfiesArgStr (t : DepTree) (headIdx : Nat) (argStr : ArgStr) : Bool :=
           | .right => d.depIdx > headIdx
         else true
 
+/-- Core argument relations governed by lexical frames. -/
+def coreArgRels : List UD.DepRel := [.nsubj, .obj, .iobj]
+
+/-- Every core-argument dependent of `headIdx` is licensed by a slot of
+    `argStr` — the closed-world half of frame checking (`satisfiesArgStr`
+    only checks that required slots are filled). -/
+def coreArgsLicensed (t : DepTree) (headIdx : Nat) (argStr : ArgStr) : Bool :=
+  t.deps.all λ d =>
+    if d.headIdx == headIdx && coreArgRels.contains d.depType then
+      argStr.slots.any (·.depType == d.depType)
+    else true
+
+/-- Check each verb's dependents against its lexical frame: required slots
+    filled in the right direction (`satisfiesArgStr`) and no unlicensed core
+    arguments (`coreArgsLicensed`). Verbs without a frame are skipped. -/
+def checkVerbSubcat (t : DepTree) : Bool :=
+  List.range t.words.length |>.all λ i =>
+    match t.words[i]? with
+    | some w =>
+      if w.cat == UD.UPOS.VERB then
+        match t.frame i with
+        | some a => satisfiesArgStr t i a && coreArgsLicensed t i a
+        | none => true
+      else true
+    | none => true
+
 end ArgStrSatisfaction
+
+section TreeConstructionHelpers
+
+/-- Create a simple SV tree: subject -> verb. -/
+def mkSVTree (subj verb : Word) (frame : Option ArgStr := none) : DepTree :=
+  { words := [subj, verb]
+    deps := [⟨1, 0, .nsubj⟩]
+    rootIdx := 1
+    frames := [none, frame] }
+
+/-- Create a simple SVO tree: subject -> verb <- object. -/
+def mkSVOTree (subj verb obj : Word) (frame : Option ArgStr := none) : DepTree :=
+  { words := [subj, verb, obj]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩]
+    rootIdx := 1
+    frames := [none, frame, none] }
+
+/-- Create Det-N-V tree: det -> noun -> verb. -/
+def mkDetNVTree (det noun verb : Word) (frame : Option ArgStr := none) : DepTree :=
+  { words := [det, noun, verb]
+    deps := [⟨1, 0, .det⟩, ⟨2, 1, .nsubj⟩]
+    rootIdx := 2
+    frames := [none, none, frame] }
+
+/-- Create a ditransitive tree: subj -> verb <- iobj <- obj. -/
+def mkDitransTree (subj verb iobj obj : Word) (frame : Option ArgStr := none) : DepTree :=
+  { words := [subj, verb, iobj, obj]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .iobj⟩, ⟨1, 3, .obj⟩]
+    rootIdx := 1
+    frames := [none, frame, none, none] }
+
+end TreeConstructionHelpers
 
 end DepGrammar

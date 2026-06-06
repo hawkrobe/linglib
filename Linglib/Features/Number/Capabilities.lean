@@ -1,3 +1,4 @@
+import Linglib.Core.Order.Flat
 import Linglib.Features.Number.Basic
 
 /-!
@@ -49,24 +50,25 @@ namespace HasNumber
 variable {α : Type*} {β : Type*} [HasNumber α] [HasNumber β]
 
 /-- Number compatibility between two (possibly heterogeneous) carriers:
-    valued numbers must coincide; an unvalued carrier is a wildcard.
+    the slot values are compatible in the flat information order (`Compat`)
+    — valued numbers must coincide; an unvalued carrier is a wildcard.
     The number axis of φ-agreement (`UD.MorphFeatures.compatible`). -/
 def Compatible (a : α) (b : β) : Prop :=
-  ∀ na ∈ numberOf a, ∀ nb ∈ numberOf b, na = nb
+  Compat (α := Flat Number) (numberOf a) (numberOf b)
 
 instance (a : α) (b : β) : Decidable (Compatible a b) := by
   unfold Compatible; infer_instance
 
 theorem compatible_comm {a : α} {b : β} (h : Compatible a b) :
     Compatible b a :=
-  fun nb hb na ha => (h na ha nb hb).symm
+  h.symm
 
 /-- An unvalued carrier is compatible with everything. -/
 theorem compatible_of_none {a : α} (h : numberOf a = none) (b : β) :
     Compatible a b := by
-  intro na ha
-  rw [h] at ha
-  exact absurd ha (Option.not_mem_none _)
+  unfold Compatible
+  rw [h]
+  exact bot_compat _
 
 end HasNumber
 
@@ -76,13 +78,15 @@ end HasNumber
 theorem UD.MorphFeatures.compatible_hasNumber {f1 f2 : UD.MorphFeatures}
     (h : f1.compatible f2 = true) :
     HasNumber.Compatible f1 f2 := by
+  unfold HasNumber.Compatible
+  rw [Flat.compat_iff]
   intro na ha nb hb
   have hn : (f1.number.isNone || f2.number.isNone || f1.number == f2.number)
       = true := by
     unfold UD.MorphFeatures.compatible at h
     simp only [Bool.and_eq_true] at h
     tauto
-  simp only [HasNumber.numberOf, Option.mem_def] at ha hb
+  simp only [HasNumber.numberOf] at ha hb
   rcases h1 : f1.number with _ | u1
   · rw [h1] at ha
     exact absurd ha (Option.not_mem_none _)

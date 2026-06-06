@@ -1,4 +1,4 @@
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Typology.Gender
 
 /-!
@@ -13,7 +13,7 @@ correlate of feminine gender.
 
 The Fragment commits to two empirical fields per entry:
 
-- `attestedGender : SurfaceGender` — the agreement-trigger fact
+- `attestedGender : Gender` — the agreement-trigger fact
   (which gender determiners, possessive linkers, TAM clitics, and
   pronouns realize when referring to this noun). Verified against
   [newman-2000] Ch. 31 (pp. 201–215).
@@ -59,7 +59,6 @@ fields; Hausa is the pilot for theory-neutral Fragment-layer encoding.
 
 namespace Hausa.Gender
 
-open Features (SurfaceGender)
 
 /-- A Hausa noun: surface form, gloss, and two empirical gender fields.
     No commitment to any specific theoretical framework — the DM
@@ -71,7 +70,7 @@ structure Noun where
   /-- The agreement-trigger fact: what gender does this noun realize
       on agreeing elements (determiners, pronouns, TAM clitics)?
       Verified against [newman-2000] Ch. 31. -/
-  attestedGender : SurfaceGender
+  attestedGender : Gender
   /-- True iff the gender is semantically motivated by the referent's
       biological sex (humans, sex-paired animals like *kāzā/zàkarā*).
       False for inanimates and unsexed animals. -/
@@ -83,7 +82,7 @@ namespace Noun
 /-- The noun's surface gender — the agreement-trigger fact stored
     directly in the entry. Alias for `attestedGender` to make
     `n.gender` read naturally at consumer sites. -/
-abbrev gender (n : Noun) : SurfaceGender := n.attestedGender
+abbrev gender (n : Noun) : Gender := n.attestedGender
 
 /-- The *-ā* suffix diagnostic. Tone-tolerant: a trailing combining
     diacritic (e.g. low-tone grave on *kadā̀*) does not block the match,
@@ -164,7 +163,7 @@ def genderTypology : GenderProfile :=
     (rawGenderCount := 2)
     (agreementTargets := [.attributive, .personalPronoun, .verb])
     (semanticBases := [.sex])
-    (attestedSurfaceGenders := [.masculine, .feminine])
+    (attestedGenders := [.masculine, .feminine])
 
 theorem genderTypology_iso639 : genderTypology.iso639 = "hau" := rfl
 

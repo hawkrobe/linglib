@@ -33,7 +33,7 @@ and deictic uses (his §2.1.1); binding is the external β-operator
 
 Number values beyond singular/plural (dual, trial, …) and the non-sex-based
 surface genders contribute the vacuous cell here; the principled route is the
-`Number.fromUD`/`Features.Gender.Features.fromSurfaceGender`
+`Number.fromUD`/`Gender.Features.fromGender`
 bridges plus `ContainmentPairLike.toPair`, deferred until a study needs them.
 -/
 
@@ -61,8 +61,8 @@ def PersonalPronoun.phiPresup {E : Type*} [PartialOrder E] (e : PersonalPronoun)
       | _            => PrProp.top)
     (PrProp.and
       (match e.number with
-        | some .Sing => sgSem E
-        | some .Plur => plSem E
+        | some .singular => sgSem E
+        | some .plural => plSem E
         | _          => PrProp.top)
       (match e.gender with
         | some .feminine  => femSem isFemale
@@ -102,7 +102,7 @@ theorem interpPronoun_eq_iLookup {F : Frame} (i : ℕ) (g : Assignment F.Entity)
 /-- A 3rd-person plural feminine entry (Spanish *ellas*), used to exercise
 the φ-feature presupposition. -/
 private def ellas : PersonalPronoun :=
-  { form := "ellas", person := some .third, number := some .Plur,
+  { form := "ellas", person := some .third, number := some .plural,
     gender := some .feminine }
 
 /-- Negative: a feminine pronoun is undefined of a non-feminine referent. -/

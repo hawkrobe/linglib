@@ -1,4 +1,4 @@
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Semantics.Kinds.NominalMappingParameter
@@ -28,7 +28,6 @@ indefinite plural — Italian has no bare plural arguments.
 namespace Italian.Nouns
 
 open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
-open Features (SurfaceGender)
 
 -- ============================================================================
 -- § 2: Noun Entry
@@ -41,7 +40,7 @@ structure NounEntry where
   /-- Plural form -/
   formPl : Option String := none
   /-- Grammatical gender -/
-  gender : SurfaceGender
+  gender : Gender
   /-- Is this a count noun? -/
   countable : Bool := true
   /-- Is this a proper name? -/

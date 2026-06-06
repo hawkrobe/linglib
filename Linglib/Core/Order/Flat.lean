@@ -165,6 +165,27 @@ instance [DecidableEq α] : PartialUnify (Flat α) where
           if x = y then some (some x) else none from rfl, if_pos hxy]
       rfl
 
+/-- Slot compatibility, characterized: committed values must coincide;
+    an uncommitted slot is a wildcard. -/
+theorem compat_iff [DecidableEq α] {a b : Flat α} :
+    Compat a b ↔ ∀ x : α, a = some x → ∀ y : α, b = some y → x = y := by
+  rw [compat_iff_isSome_unify]
+  show (Flat.unify a b).isSome = true ↔ _
+  match a, b with
+  | none, b =>
+    exact iff_of_true rfl (λ x hx => nomatch hx)
+  | some x, none =>
+    exact iff_of_true rfl (λ x' _ y hy => nomatch hy)
+  | some x, some y =>
+    show (if x = y then some (some x : Flat α) else none).isSome = true ↔ _
+    by_cases hxy : x = y
+    · subst hxy
+      exact iff_of_true (by rw [if_pos rfl]; rfl)
+        (λ x' hx' y' hy' =>
+          (Option.some.inj hx').symm.trans (Option.some.inj hy'))
+    · rw [if_neg hxy]
+      exact iff_of_false (by simp) (λ h => hxy (h x rfl y rfl))
+
 /-! ### The flat lattice is non-distributive
 
 A flat slot with three distinct atoms, lifted with a top, is the

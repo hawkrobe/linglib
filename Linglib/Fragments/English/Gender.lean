@@ -23,7 +23,7 @@ def genderTypology : GenderProfile :=
     (rawGenderCount := 3)
     (agreementTargets := [.personalPronoun])
     (semanticBases := [.sex])
-    (attestedSurfaceGenders := [.masculine, .feminine, .neuter])
+    (attestedGenders := [.masculine, .feminine, .neuter])
 
 theorem genderTypology_iso639 : genderTypology.iso639 = "eng" := rfl
 

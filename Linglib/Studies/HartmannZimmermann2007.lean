@@ -82,7 +82,6 @@ open Hausa.Inflection
    cmp_1sg_G cont_1sg_R fut_1sg subj_3sm)
 open Hausa.Tone (polarOf)
 open Phonology.Autosegmental.RegisterTier (TRN)
-open Features (SurfaceGender)
 
 /-! ## Pragmatic focus types (paper §1.2, after Uhmann 1991) -/
 
@@ -151,14 +150,14 @@ Ex-situ × all four pragmatic types, then in-situ × all four. -/
 /-- Smart constructor for an ex-situ focus utterance. The proof
     obligation `pac.tam.HasRelativeForm → pac.mode = .relative` is
     threaded explicitly (no tactic default). -/
-private def mkExSituUtt (pac : PAC) (g : SurfaceGender) (sg : Bool)
+private def mkExSituUtt (pac : PAC) (g : Gender) (sg : Bool)
     (h : pac.tam.HasRelativeForm → pac.mode = .relative)
     (pT : PragType) (foc : Focused := .nonSubject) :
     FocusUtterance :=
   ⟨mkExSitu pac g sg true h, pT, foc⟩
 
 /-- Smart constructor for an in-situ focus utterance. -/
-private def mkInSituUtt (pac : PAC) (g : SurfaceGender) (sg : Bool)
+private def mkInSituUtt (pac : PAC) (g : Gender) (sg : Bool)
     (pT : PragType) (foc : Focused := .nonSubject) :
     FocusUtterance :=
   ⟨mkInSitu pac g sg, pT, foc⟩

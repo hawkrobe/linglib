@@ -237,7 +237,7 @@ theorem egymas_no_number_feature :
     *maguk* (PL). The anaphor's number must match the verb's agreement,
     confirming that reflexive licensing is morphosyntactic. -/
 theorem reflexive_number_paradigm :
-    maga.number = some .Sing ∧ maguk.number = some .Plur := ⟨rfl, rfl⟩
+    maga.number = some .singular ∧ maguk.number = some .plural := ⟨rfl, rfl⟩
 
 /-- The morphological invariance of *egymás* predicts it should be
     insensitive to verb agreement number — and it is: reciprocals are

@@ -7,8 +7,12 @@ and their interfaces. See README.md for documentation links.
 -- Core
 import Linglib.Features.Basic
 import Linglib.Features.Dimension
-import Linglib.Features.Gender
-import Linglib.Core.Valence
+import Linglib.Features.Gender.Basic
+import Linglib.Features.Gender.Capabilities
+import Linglib.Features.Gender.Decomposition
+import Linglib.Features.Gender.Interp
+import Linglib.Features.Gender.Resolve
+import Linglib.Features.Complementation
 import Linglib.Data.UD.Basic
 import Linglib.Morphology.Unification
 import Linglib.Typology.NegativeConcord
@@ -1179,6 +1183,7 @@ import Linglib.Studies.Baker2015
 import Linglib.Studies.Aissen2003
 import Linglib.Studies.Grimm2011
 import Linglib.Studies.Grimm2018
+import Linglib.Studies.GrimmDocekal2021
 import Linglib.Studies.DechaineWiltschko2002
 import Linglib.Studies.DeHoopMalchukov2008
 import Linglib.Studies.Haspelmath2021
@@ -1274,8 +1279,6 @@ import Linglib.Studies.Anderson2006
 import Linglib.Studies.Olivier2026
 import Linglib.Studies.Sorace2000
 import Linglib.Typology.AuxiliaryVerbs
-import Linglib.Studies.Charlow2021.Data
-import Linglib.Studies.Charlow2021.CumulativeReadings
 import Linglib.Studies.Cumming2026
 import Linglib.Studies.Lakoff1970
 import Linglib.Studies.Moon2026
@@ -1626,7 +1629,6 @@ import Linglib.Phenomena.Plurals.Projection
 import Linglib.Studies.HaslingerEtAl2025
 import Linglib.Studies.HaslingerHienEtAl2025
 import Linglib.Studies.QingEtAl2025
-import Linglib.Studies.Charlow2021.Compare
 import Linglib.Studies.Champollion2017
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Studies.TieuEtAl2020
@@ -2118,11 +2120,7 @@ import Linglib.Semantics.Dynamic.CDRT.Fragment
 import Linglib.Semantics.Dynamic.PPCDRT.Defs
 import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
-import Linglib.Studies.Charlow2021.Basic
-import Linglib.Studies.Charlow2021.UpdateTheoretic
-import Linglib.Studies.Charlow2021.HigherOrder
-import Linglib.Studies.Charlow2021.SubtypePolymorphism
-import Linglib.Studies.Charlow2021.PostSuppositional
+import Linglib.Studies.Charlow2021
 import Linglib.Studies.KeshetAbney2024.Basic
 import Linglib.Studies.KeshetAbney2024.Bridges
 import Linglib.Studies.KeshetAbney2024.Composition
@@ -2351,7 +2349,6 @@ import Linglib.Semantics.Quantification.Possessive
 import Linglib.Semantics.Quantification.UnifiedUniversal
 import Linglib.Semantics.Quantification.ONEModifiers
 import Linglib.Semantics.Quantification.ChoiceFunction
-import Linglib.Semantics.Quantification.Cumulativity
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Pragmatics.Expressives.OutlookMarker
 import Linglib.Semantics.Quotation.Mixed

@@ -20,7 +20,6 @@ within nP can condition gender; features outside nP cannot.
 namespace Italian.NumberGender
 
 open Morphology.DM
-open Features (SurfaceGender)
 
 -- ============================================================================
 -- § 1: Plural Classes
@@ -60,13 +59,13 @@ structure NumberGenderNoun where
   formSg : String
   formPl : String
   gloss : String
-  sgGender : SurfaceGender
+  sgGender : Gender
   pluralClass : PluralClass
   deriving DecidableEq, Repr
 
 /-- Plural gender: -a plurals are always feminine; regular plurals
     preserve the singular gender. -/
-def NumberGenderNoun.plGender (n : NumberGenderNoun) : SurfaceGender :=
+def NumberGenderNoun.plGender (n : NumberGenderNoun) : Gender :=
   match n.pluralClass with
   | .aPlural => .feminine
   | .regular => n.sgGender

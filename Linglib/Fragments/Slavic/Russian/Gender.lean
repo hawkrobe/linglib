@@ -1,4 +1,4 @@
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Typology.Gender
 
 /-!
@@ -13,7 +13,7 @@ and partly by morphological declension class.
 
 The Fragment carries empirical fields per entry:
 
-- `attestedGender : SurfaceGender` — the agreement-trigger fact
+- `attestedGender : Gender` — the agreement-trigger fact
   (verified against [wade-2020]). Three values for Russian:
   masculine, feminine, neuter.
 - `isNaturalGender : Bool` — whether the gender comes from the
@@ -49,7 +49,6 @@ Class III neuter group.
 
 namespace Russian.Gender
 
-open Features (SurfaceGender)
 
 -- ============================================================================
 -- § 1: Declension Classes ([wade-2020])
@@ -77,7 +76,7 @@ structure RussianNoun where
   form : String
   gloss : String
   /-- Empirical agreement-trigger fact ([wade-2020]). -/
-  attestedGender : SurfaceGender
+  attestedGender : Gender
   /-- True iff the gender comes from biological sex of the referent.
       For *vrač* 'doctor' (hybrid) the morphological gender is encoded
       here as masculine; the hybrid female-referent agreement lives in
@@ -90,7 +89,7 @@ structure RussianNoun where
 
 namespace RussianNoun
 
-abbrev gender (n : RussianNoun) : SurfaceGender := n.attestedGender
+abbrev gender (n : RussianNoun) : Gender := n.attestedGender
 
 end RussianNoun
 
@@ -199,7 +198,7 @@ def genderTypology : GenderProfile :=
     (agreementTargets := [.attributive, .predicate, .relativePronoun,
                           .personalPronoun, .verb])
     (semanticBases := [.sex])
-    (attestedSurfaceGenders := [.masculine, .feminine, .neuter])
+    (attestedGenders := [.masculine, .feminine, .neuter])
 
 theorem genderTypology_iso639 : genderTypology.iso639 = "rus" := rfl
 
