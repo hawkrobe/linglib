@@ -144,18 +144,6 @@ French uniquely transparent: the grammaticalization of EN is visible
 in the form of the negator itself.
 -/
 
-/-- An expletive negation marker and its trigger context. -/
-structure ENTriggerNegator where
-  /-- The trigger class label (from [jin-koenig-2021] Table 5) -/
-  triggerClass : String
-  /-- French lexical trigger -/
-  triggerForm : String
-  /-- EN negator form -/
-  enNegatorForm : String
-  /-- Whether the EN is highly entrenched (grammaticalized) -/
-  highEntrenchment : Bool
-  deriving Repr, BEq
-
 /-- *ne* alone is the dedicated EN marker (grammaticalized). -/
 def enMarker : String := neClitic
 
@@ -163,26 +151,26 @@ def enMarker : String := neClitic
     and §6.1–6.4. -/
 def enTriggerNegators : List ENTriggerNegator :=
   [ { triggerClass := "FEAR", triggerForm := "avoir peur"
-    , enNegatorForm := "ne", highEntrenchment := true }
+    , enNegatorForm := "ne", highEntrenchment := some true }
   , { triggerClass := "AVOID", triggerForm := "éviter"
-    , enNegatorForm := "ne", highEntrenchment := true }
+    , enNegatorForm := "ne", highEntrenchment := some true }
   , { triggerClass := "BEFORE", triggerForm := "avant que"
-    , enNegatorForm := "ne", highEntrenchment := true }
+    , enNegatorForm := "ne", highEntrenchment := some true }
   , { triggerClass := "UNLESS", triggerForm := "à moins que"
-    , enNegatorForm := "ne", highEntrenchment := true }
+    , enNegatorForm := "ne", highEntrenchment := some true }
   , { triggerClass := "DENY", triggerForm := "nier"
-    , enNegatorForm := "ne", highEntrenchment := true }
+    , enNegatorForm := "ne", highEntrenchment := some true }
   , { triggerClass := "COMPARATIVES", triggerForm := "que (than)"
-    , enNegatorForm := "ne", highEntrenchment := true }
+    , enNegatorForm := "ne", highEntrenchment := some true }
   , { triggerClass := "REGRET", triggerForm := "regretter"
-    , enNegatorForm := "ne (pas)", highEntrenchment := false }
+    , enNegatorForm := "ne (pas)", highEntrenchment := some false }
   , { triggerClass := "FORGET", triggerForm := "oublier"
-    , enNegatorForm := "ne pas", highEntrenchment := false } ]
+    , enNegatorForm := "ne pas", highEntrenchment := some false } ]
 
 /-- High-entrenchment EN uses the dedicated *ne* alone;
     low-entrenchment EN uses *ne...pas* (the standard negator). -/
 theorem high_entrenchment_uses_ne_alone :
-    (enTriggerNegators.filter (·.highEntrenchment)).all
+    (enTriggerNegators.filter (·.highEntrenchment == some true)).all
       (·.enNegatorForm == "ne") = true := by decide
 
 /-- French EN marker = preverbal *ne* = same clitic as in standard
