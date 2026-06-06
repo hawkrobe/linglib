@@ -57,9 +57,6 @@ namespace Semantics.Composition.MaybeMonad
 open Core.Duality (Truth3 Prop3)
 open Semantics.Presupposition (PrProp)
 
--- ════════════════════════════════════════════════════════════════
--- §1 Connectives on Option Bool
--- ════════════════════════════════════════════════════════════════
 
 /-! ### §1 Connectives on `Option Bool`
 
@@ -133,9 +130,6 @@ private theorem foldl_meetWK_none {α : Type} (ys : List α) (φ : α → Option
 
 end Connectives
 
--- ════════════════════════════════════════════════════════════════
--- §2 The Intensional-Presuppositional Monad Iₚ
--- ════════════════════════════════════════════════════════════════
 
 /-! ### §2 The monad `Iₚ`
 
@@ -162,9 +156,6 @@ abbrev Iₚ (I : Type) := ReaderT I Option
 
 end IMonad
 
--- ════════════════════════════════════════════════════════════════
--- §3 Monad Laws for Iₚ
--- ════════════════════════════════════════════════════════════════
 
 /-! ### §3 Monad laws
 
@@ -176,9 +167,6 @@ no scope; Grove fn. 13), and Associativity makes cyclic scope-taking
 (roll-up pied-piping) sound (the presuppositional analog of
 [charlow-2020]'s ASSOCIATIVITY theorem for the set monad). -/
 
--- ════════════════════════════════════════════════════════════════
--- §4 Semantic Operations
--- ════════════════════════════════════════════════════════════════
 
 /-! ### §4 Evaluation and presuppositional universal
 
@@ -247,9 +235,6 @@ theorem forallP_undef {α : Type} (xs : List α) (φ : α → Option Bool)
 
 end Operations
 
--- ════════════════════════════════════════════════════════════════
--- §5 Attitude Verb Semantics
--- ════════════════════════════════════════════════════════════════
 
 /-! ### §5 `believe` via doxastic accessibility
 
@@ -274,9 +259,6 @@ def believe (dox : E → W → W → Bool) (worlds : List W)
 
 end AttitudeVerbs
 
--- ════════════════════════════════════════════════════════════════
--- §6 Bridges
--- ════════════════════════════════════════════════════════════════
 
 /-! ### §6 Bridges to existing linglib types
 
