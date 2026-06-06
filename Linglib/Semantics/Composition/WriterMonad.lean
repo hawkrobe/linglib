@@ -1,4 +1,4 @@
-import Mathlib.Data.List.Basic
+import Mathlib.Control.Monad.Writer
 
 /-!
 # Writer Monad for Compositional Side-Effects
@@ -10,6 +10,12 @@ side-effect information during compositional interpretation:
 - **M** (the functor): maps a type `A` to paired values `A × List P`
 - **η** (unit/pure): lifts a value with an empty log
 - **⋆** (bind): sequences computations, combining their logs
+
+The carrier is mathlib's `Writer (List P) A` (= `WriterT (List P) Id A`),
+whose `Monad` instance comes from mathlib's `[EmptyCollection ω] [Append ω]`
+instance for `WriterT`. This file adds the domain-named surface
+(`Writer.mk`/`val`/`log`/`tell`), projection simp lemmas, and the
+`LawfulMonad` instance for list logs.
 
 This pattern unifies several linglib constructions:
 
@@ -29,132 +35,81 @@ dynamic GQs, with the log monoid `(Update S, dseq, test ⊤)` in place of
 `List P`.
 -/
 
-namespace Semantics.Composition.WriterMonad
-
-/-- The Writer monad: a value paired with an accumulated log.
-
-    In [giorgolo-asudeh-2012]'s notation, `Writer P A` is `M(A)`,
-    where the second component is a collection of logged items of type `P`,
-    represented as a `List` for computability. -/
-structure Writer (P : Type*) (A : Type*) where
-  /-- The at-issue value -/
-  val : A
-  /-- Accumulated side-effect log -/
-  log : List P
+universe u
 
 namespace Writer
 
-variable {P A B C : Type*}
+variable {ω : Type u} {P A B : Type u}
 
--- ════════════════════════════════════════════════════
--- § Extensionality
--- ════════════════════════════════════════════════════
+/-- Construct a Writer computation from a value and a log. -/
+protected def mk (a : A) (w : ω) : Writer ω A := WriterT.mk (a, w)
+
+/-- The at-issue value of a Writer computation. -/
+def val (m : Writer ω A) : A := m.run.1
+
+/-- The accumulated side-effect log of a Writer computation. -/
+def log (m : Writer ω A) : ω := m.run.2
 
 @[ext]
-theorem ext {m₁ m₂ : Writer P A}
-    (hv : m₁.val = m₂.val) (hl : m₁.log = m₂.log) : m₁ = m₂ := by
-  cases m₁; cases m₂; simp_all
+protected theorem ext {m₁ m₂ : Writer ω A}
+    (hv : m₁.val = m₂.val) (hl : m₁.log = m₂.log) : m₁ = m₂ :=
+  WriterT.ext _ _ (Prod.ext_iff.mpr ⟨hv, hl⟩)
 
--- ════════════════════════════════════════════════════
--- § Core Operations: η, ⋆, tell
--- ════════════════════════════════════════════════════
+@[simp] theorem val_mk (a : A) (w : ω) : (Writer.mk a w).val = a := rfl
 
-/-- **η** (unit): lift a pure value with an empty log.
+@[simp] theorem log_mk (a : A) (w : ω) : (Writer.mk a w).log = w := rfl
 
-    Ordinary lexical items are η-lifted:
-    `⟦john⟧ = η(j)`, `⟦likes⟧ = η(λyλx.like(x,y))` -/
-def pure (a : A) : Writer P A := ⟨a, []⟩
+/-- **tell** (write): log a single item. Used by CI-contributing expressions
+to add propositions to the side-issue dimension; in [giorgolo-asudeh-2012]:
+`write(t) = ⟨⊥, {t}⟩`. (`PUnit` rather than `Unit` keeps it
+universe-polymorphic; at `Type 0` they coincide.) -/
+def tell (p : P) : Writer (List P) PUnit := Writer.mk PUnit.unit [p]
 
-/-- **⋆** (bind): sequence computations, combining logs.
+/-! ### Projection lemmas for list logs -/
 
-    `⟨x, P⟩ ⋆ f = ⟨π₁(f x), P ++ π₂(f x)⟩`
+@[simp] theorem val_pure (a : A) : (pure a : Writer (List P) A).val = a := rfl
 
-    The function `f` receives only the value `x`, not the log `P`.
-    This enforces [potts-2005]'s restriction: side-issue content
-    (in the log) is invisible to subsequent at-issue computation. -/
-def bind (m : Writer P A) (f : A → Writer P B) : Writer P B :=
-  ⟨(f m.val).val, m.log ++ (f m.val).log⟩
+@[simp] theorem log_pure (a : A) : (pure a : Writer (List P) A).log = [] := rfl
 
-/-- **map**: apply a function to the value, preserving the log. -/
-def map (f : A → B) (m : Writer P A) : Writer P B :=
-  ⟨f m.val, m.log⟩
+@[simp] theorem val_bind (m : Writer (List P) A) (f : A → Writer (List P) B) :
+    (m >>= f).val = (f m.val).val := rfl
 
-/-- **tell** (write): log a single item.
+@[simp] theorem log_bind (m : Writer (List P) A) (f : A → Writer (List P) B) :
+    (m >>= f).log = m.log ++ (f m.val).log := rfl
 
-    Used by CI-contributing expressions to add propositions to the
-    side-issue dimension. In [giorgolo-asudeh-2012]:
-    `write(t) = ⟨⊥, {t}⟩` -/
-def tell (p : P) : Writer P Unit := ⟨(), [p]⟩
+@[simp] theorem val_map (f : A → B) (m : Writer (List P) A) :
+    (f <$> m).val = f m.val := rfl
 
--- ════════════════════════════════════════════════════
--- § Monadic Application
--- ════════════════════════════════════════════════════
+@[simp] theorem log_map (f : A → B) (m : Writer (List P) A) :
+    (f <$> m).log = m.log := rfl
 
-/-- Monadic application (⊸-elimination in Glue).
+@[simp] theorem val_tell (p : P) : (tell p).val = PUnit.unit := rfl
 
-    `A(f)(x) = f ⋆ λg. x ⋆ λy. η(g y)`
+@[simp] theorem log_tell (p : P) : (tell p).log = [p] := rfl
 
-    Both function and argument may carry side-effects;
-    all side-effects are combined in the result. -/
-def app (mf : Writer P (A → B)) (mx : Writer P A) : Writer P B :=
-  mf.bind λ f => mx.bind λ x => Writer.pure (f x)
+/-! ### Monad laws
 
--- ════════════════════════════════════════════════════
--- § Simp Lemmas
--- ════════════════════════════════════════════════════
+The `Monad (Writer (List P))` instance is mathlib's
+`[EmptyCollection ω] [Append ω]` instance for `WriterT`; the laws hold
+because `(List P, ++, [])` is a monoid. -/
 
-@[simp] theorem pure_val (a : A) :
-    (Writer.pure (P := P) a).val = a := rfl
-@[simp] theorem pure_log (a : A) :
-    (Writer.pure (P := P) a).log = [] := rfl
-@[simp] theorem bind_val (m : Writer P A) (f : A → Writer P B) :
-    (m.bind f).val = (f m.val).val := rfl
-@[simp] theorem bind_log (m : Writer P A) (f : A → Writer P B) :
-    (m.bind f).log = m.log ++ (f m.val).log := rfl
-@[simp] theorem tell_val (p : P) :
-    (Writer.tell p).val = () := rfl
-@[simp] theorem tell_log (p : P) :
-    (Writer.tell p).log = [p] := rfl
-@[simp] theorem map_val (f : A → B) (m : Writer P A) :
-    (m.map f).val = f m.val := rfl
-@[simp] theorem map_log (f : A → B) (m : Writer P A) :
-    (m.map f).log = m.log := rfl
+instance : LawfulMonad (Writer (List P)) := LawfulMonad.mk' (Writer (List P))
+  (id_map := λ _ => rfl)
+  (pure_bind := λ _ _ => rfl)
+  (bind_assoc := λ _ _ _ => Writer.ext rfl (List.append_assoc ..))
+  (bind_pure_comp := λ _ _ => Writer.ext rfl (List.append_nil _))
 
--- ════════════════════════════════════════════════════
--- § Monad Laws
--- ════════════════════════════════════════════════════
-
-/-- Left identity: `η(a) ⋆ f = f a` -/
-theorem bind_pure_left (a : A) (f : A → Writer P B) :
-    (Writer.pure a).bind f = f a := by
-  ext <;> simp
-
-/-- Right identity: `m ⋆ η = m` -/
-theorem bind_pure_right (m : Writer P A) :
-    m.bind Writer.pure = m := by
-  ext <;> simp
-
-/-- Associativity: `(m ⋆ f) ⋆ g = m ⋆ (λa. f a ⋆ g)` -/
-theorem bind_assoc (m : Writer P A) (f : A → Writer P B)
-    (g : B → Writer P C) :
-    (m.bind f).bind g = m.bind (λ a => (f a).bind g) := by
-  ext <;> simp [List.append_assoc]
-
--- ════════════════════════════════════════════════════
--- § Log Monotonicity
--- ════════════════════════════════════════════════════
+/-! ### Log monotonicity -/
 
 /-- The log only grows: bind's output log extends the input log. -/
-theorem log_grows (m : Writer P A) (f : A → Writer P B) :
-    ∃ suffix, (m.bind f).log = m.log ++ suffix :=
+theorem log_grows (m : Writer (List P) A) (f : A → Writer (List P) B) :
+    ∃ suffix, (m >>= f).log = m.log ++ suffix :=
   ⟨(f m.val).log, rfl⟩
 
-/-- Side-effects are permanent: once logged, a proposition stays in the log. -/
-theorem tell_persists (m : Writer P A) (f : A → Writer P B)
-    (p : P) (h : p ∈ m.log) : p ∈ (m.bind f).log := by
-  simp only [bind_log, List.mem_append]
+/-- Side-effects are permanent: once logged, an item stays in the log. -/
+theorem tell_persists (m : Writer (List P) A) (f : A → Writer (List P) B)
+    (p : P) (h : p ∈ m.log) : p ∈ (m >>= f).log := by
+  simp only [log_bind, List.mem_append]
   exact Or.inl h
 
 end Writer
-
-end Semantics.Composition.WriterMonad

@@ -28,14 +28,15 @@ linglib infrastructure:
 | Effect | Paper name | Type | linglib type |
 |--------|-----------|------|-------------|
 | Scope | C | `(α → ρ) → ρ` | `Cont R A` |
-| CI / supplementation | W | `α × List P` | `Writer P A` |
+| CI / supplementation | W | `α × List P` | `Writer (List P) A` |
 | Input (binding) | R | `ι → α` | `Reader` (Binding.lean) |
 | Output (antecedents) | W | `α × ι` | `Prod` |
 | Indeterminacy | S | `{α}` | `α → Prop` (SetMonad.lean) |
 
 ## Organization
 
-- **§1** Lean typeclass instances for `Cont` and `Writer`
+- **§1** Typeclass instances (now supplied by mathlib's `WriterT` and
+  `Composition/Continuation.lean`)
 - **§2** Meta-combinators: F̄, F̃, A, J (the paper's core contribution)
 - **§3** Generalized Application and hierarchy theorems
 - **§4** The W ⊣ R adjunction for binding
@@ -57,7 +58,6 @@ Omitted: Ū/Ũ (Unit Left/Right) are trivial wrappers around `pure`;
 namespace Semantics.Composition.Effects
 
 open Semantics.Composition.Continuation
-open Semantics.Composition.WriterMonad
 open Semantics.Composition.Tree
 open Semantics.Composition.QuantifierComposition
 open Pragmatics.Expressives
@@ -73,63 +73,11 @@ open Semantics.Montague
 
 /-! ### §1 Typeclass instances for existing types
 
-Register `Functor`, `Applicative`, and `Monad` instances for linglib's
-`Writer P` type, delegating to existing operations. The `Cont R` instances
-live with the type in `Composition/Continuation.lean`.
-
-Note: `Writer P` requires `P : Type` (not universe-polymorphic) for Lean's
-`Monad` class. -/
-
-section WriterInstances
-
-variable {P : Type}
-
-instance : Functor (Writer P) where
-  map f m := Writer.map f m
-
-instance : Pure (Writer P) where
-  pure a := Writer.pure a
-
-instance : Bind (Writer P) where
-  bind m f := Writer.bind m f
-
-instance : Seq (Writer P) where
-  seq mf mx := Writer.app mf (mx ())
-
-instance : Monad (Writer P) where
-
-private theorem append_nil_right {α : Type} (l₁ l₂ : List α) :
-    l₁ ++ l₂ = l₁ ++ (l₂ ++ []) := by simp
-
-instance : LawfulFunctor (Writer P) where
-  map_const := rfl
-  id_map _ := Writer.ext rfl rfl
-  comp_map _ _ _ := rfl
-
-instance : LawfulApplicative (Writer P) where
-  seqLeft_eq a b := by cases a; cases b; exact Writer.ext rfl rfl
-  seqRight_eq a b := by
-    cases a; cases b; exact Writer.ext rfl (append_nil_right _ _)
-  pure_seq _ _ := Writer.ext rfl (List.append_nil _)
-  map_pure _ _ := rfl
-  seq_pure _ _ := Writer.ext rfl (List.append_nil _)
-  seq_assoc f g x := by
-    cases f; cases g; cases x
-    simp only [Functor.map, Writer.map, Seq.seq, Writer.app, Writer.bind, Writer.pure,
-      Writer.mk.injEq]
-    exact ⟨rfl, by simp [List.append_assoc]⟩
-
-instance : LawfulMonad (Writer P) where
-  bind_pure_comp _ _ := Writer.ext rfl (List.append_nil _)
-  bind_map f x := by
-    cases f; cases x; exact Writer.ext rfl (append_nil_right _ _)
-  pure_bind _ _ := Writer.ext rfl rfl
-  bind_assoc x f g := by
-    cases x
-    simp only [Bind.bind, Writer.bind, Writer.mk.injEq]
-    exact ⟨trivial, by simp [List.append_assoc]⟩
-
-end WriterInstances
+The W effect is mathlib's `Writer (List P)` (= `WriterT (List P) Id`), whose
+`Functor`/`Applicative`/`Monad` instances come from mathlib, with
+`LawfulMonad` and the `val`/`log`/`tell` surface in
+`Composition/WriterMonad.lean`. The `Cont R` instances live with the
+type in `Composition/Continuation.lean`. -/
 
 -- ════════════════════════════════════════════════════════════════════
 -- §2 Meta-Combinators
@@ -335,7 +283,7 @@ itself via `▷(x) = ⟨x, x⟩` and the sentence body uses the bound variable,
 the co-unit ε yields the **W combinator** `W κ x = κ x x` from
 `Binding.lean`.
 
-Note: the paper's W (product) is distinct from linglib's `Writer P A`
+Note: the paper's W (product) is distinct from `Writer (List P) A`
 (accumulating list log). The product W models single-referent storage;
 the `Writer` models CI accumulation. -/
 
@@ -476,14 +424,14 @@ section EffectOps
 variable {R : Type} {P : Type} {α : Type}
 
 /-- Log a CI proposition as a side-effect. Alias for `Writer.tell`. -/
-def aside (p : P) : Writer P Unit := Writer.tell p
+def aside (p : P) : Writer (List P) Unit := Writer.tell p
 
 /-- Handle the scope effect by evaluating with the identity continuation.
     Alias for `Cont.lower`. -/
 def handleScope (m : Cont R R) : R := Cont.lower m
 
 /-- Handle CI effects by extracting the value and accumulated log. -/
-def handleCI (m : Writer P α) : α × List P := (m.val, m.log)
+def handleCI (m : Writer (List P) α) : α × List P := (m.val, m.log)
 
 end EffectOps
 
@@ -499,15 +447,8 @@ effect-driven architecture. -/
 
 section WriterBridge
 
-variable {P A B : Type}
-
-/-- `Writer.app` is applicative application (⊛) for the Writer monad.
-
-    This connects `WriterMonad.lean`'s monadic application to the
-    effect hierarchy. -/
-theorem writer_app_is_seq (mf : Writer P (A → B)) (mx : Writer P A) :
-    Writer.app mf mx = (mf <*> mx) := by
-  exact Writer.ext rfl rfl
+-- `Writer`'s monadic application IS `<*>` (mathlib's `WriterT` instance),
+-- so no bridge theorem is needed for the W effect.
 
 /-- Lowering a Cont is handling the scope effect. -/
 theorem cont_lower_is_handleScope {R : Type} (m : Cont R R) :
@@ -519,21 +460,21 @@ section CIBridge
 
 variable {W : Type}
 
-/-- A `TwoDimProp` embeds into a `Writer (W → Prop) (W → Prop)`:
+/-- A `TwoDimProp` embeds into a `Writer (List (W → Prop)) (W → Prop)`:
     the at-issue content is the value, the CI is the log.
 
     This connects [potts-2005]'s two-dimensional semantics to
     Writer effect (their W constructor
     in Table 2). -/
-def twoDimToWriter (p : TwoDimProp W) : Writer (W → Prop) (W → Prop) :=
-  ⟨p.atIssue, [p.ci]⟩
+def twoDimToWriter (p : TwoDimProp W) : Writer (List (W → Prop)) (W → Prop) :=
+  Writer.mk p.atIssue ([p.ci])
 
 -- ────────────────────────────────────────────────────
 -- CI projection universality
 -- ────────────────────────────────────────────────────
 
-/-- **CI projection universality.** Any operation that acts via
-    `Writer.map` (i.e., transforms the value but leaves the log untouched)
+/-- **CI projection universality.** Any operation that acts via `<$>`
+    (i.e., transforms the value but leaves the log untouched)
     automatically preserves all CI content.
 
     This is the general principle behind CI projection through negation,
@@ -543,8 +484,8 @@ def twoDimToWriter (p : TwoDimProp W) : Writer (W → Prop) (W → Prop) :=
 
     Specializes to `twoDim_neg_ci_via_writer` when `f = fun p w => !p w`. -/
 theorem ci_projection_universal {W A B : Type}
-    (f : A → B) (m : Writer (W → Prop) A) :
-    (Writer.map f m).log = m.log := rfl
+    (f : A → B) (m : Writer (List (W → Prop)) A) :
+    (f <$> m).log = m.log := rfl
 
 /-- CI projection through negation follows from the Writer architecture:
     `map` transforms the value but leaves the log untouched. -/
@@ -573,17 +514,17 @@ theorem twoDim_neg_val_via_writer (p : TwoDimProp W) :
 
     For multi-CI Writers (e.g., "that bastard John met that jerk Pete"
     with two CI entries), this conjoins all CIs into at-issue content. -/
-def runCIWriter {W : Type} (m : Writer (W → Prop) (W → Prop)) : TwoDimProp W :=
+def runCIWriter {W : Type} (m : Writer (List (W → Prop)) (W → Prop)) : TwoDimProp W :=
   { atIssue := λ w => m.log.foldl (λ acc ci => acc ∧ ci w) (m.val w)
   , ci := λ _ => True }
 
 /-- Running a CI Writer consumes the log: the result has trivial CI. -/
-theorem runCIWriter_trivial_ci {W : Type} (m : Writer (W → Prop) (W → Prop)) (w : W) :
+theorem runCIWriter_trivial_ci {W : Type} (m : Writer (List (W → Prop)) (W → Prop)) (w : W) :
     (runCIWriter m).ci w ↔ True := Iff.rfl
 
 /-- Running a Writer with an empty log preserves the value unchanged. -/
 theorem runCIWriter_empty_log {W : Type} (val : W → Prop) (w : W) :
-    (runCIWriter ⟨val, []⟩).atIssue w = val w := rfl
+    (runCIWriter (Writer.mk val ([]))).atIssue w = val w := rfl
 
 /-- Running a Writer with a trivially-true log entry preserves the
     value unchanged.
@@ -591,7 +532,7 @@ theorem runCIWriter_empty_log {W : Type} (val : W → Prop) (w : W) :
     Pure quotation = clearing the log to `[λ _ => True]`. Running
     such a Writer recovers the original at-issue content. -/
 theorem runCIWriter_trivial_log {W : Type} (val : W → Prop) (w : W) :
-    (runCIWriter ⟨val, [λ _ => True]⟩).atIssue w ↔ val w := by
+    (runCIWriter (Writer.mk val ([λ _ => True]))).atIssue w ↔ val w := by
   simp [runCIWriter]
 
 -- ────────────────────────────────────────────────────
@@ -627,9 +568,9 @@ theorem runCIWriter_twoDim_fn {W : Type} (p : TwoDimProp W) :
     Follows from `List.foldl_append`. -/
 theorem runCIWriter_log_append {W : Type}
     (val : W → Prop) (cis₁ cis₂ : List (W → Prop)) (w : W) :
-    (runCIWriter ⟨val, cis₁ ++ cis₂⟩).atIssue w =
+    (runCIWriter (Writer.mk val (cis₁ ++ cis₂))).atIssue w =
     cis₂.foldl (λ acc ci => acc ∧ ci w)
-      ((runCIWriter ⟨val, cis₁⟩).atIssue w) := by
+      ((runCIWriter (Writer.mk val cis₁)).atIssue w) := by
   simp [runCIWriter, List.foldl_append]
 
 /-- **Idempotency.** Running, re-embedding, and running again = running once.
@@ -641,7 +582,7 @@ theorem runCIWriter_log_append {W : Type}
     This is the retraction property: `runCIWriter ∘ twoDimToWriter` is
     idempotent on the image of `runCIWriter`. -/
 theorem runCIWriter_idempotent {W : Type}
-    (m : Writer (W → Prop) (W → Prop)) (w : W) :
+    (m : Writer (List (W → Prop)) (W → Prop)) (w : W) :
     (runCIWriter (twoDimToWriter (runCIWriter m))).atIssue w ↔
     (runCIWriter m).atIssue w := by
   simp [runCIWriter, twoDimToWriter]
