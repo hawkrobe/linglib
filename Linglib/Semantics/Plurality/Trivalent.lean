@@ -15,7 +15,7 @@ as a subset-universal proposition `λ w => ∀ a ∈ z, P a w` for some
 sub-plurality `z ⊆ x`. This captures K&S's predictions in monotonic
 contexts but is **not** their actual `Cand_x`: K&S build candidates from
 convex closures of sub-plurality bundles (substrate at
-`Core.Mereology.convexClosure`), yielding generalised-quantifier candidates
+`Mereology.convexClosure`), yielding generalised-quantifier candidates
 that pattern with [schwarzschild-1996]-style covers and
 [brisson-1998]'s ill-fitting covers but diverge in non-monotonic
 contexts. For the cases formalised here the two predictions coincide; the
@@ -53,7 +53,7 @@ The bivalent bridge to [kriz-2016]'s `addressesIssue` is proved in
 
 * Replace `candidateProp` with K&S's faithful `Cand_x` (def. 21 in
   [kriz-spector-2021] — UNVERIFIED definition number) via
-  `Core.Mereology.convexClosure`. Current simplification matches K&S
+  `Mereology.convexClosure`. Current simplification matches K&S
   predictions only in monotonic contexts; non-monotonic cases (e.g. the
   "exactly one student read the books" example, see
   `Studies/KrizSpector2021.lean`) require the enriched generalised

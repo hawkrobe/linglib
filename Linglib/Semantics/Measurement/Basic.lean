@@ -1,4 +1,4 @@
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Core.Scales.Scale
 import Linglib.Semantics.Entailment.Extremum
 import Linglib.Features.Dimension
@@ -375,11 +375,11 @@ theorem extensive_measureFn_qmod_qua
     {E : Type*} [inst : SemilatticeSup E]
     {μ : MeasureFn E}
     (hExt : MeasureFn.IsExtensive μ)
-    {R : E → Prop} {n : ℚ} (hn : 0 < n) :
+    {R : E → Prop} {n : ℚ} (_hn : 0 < n) :
     Mereology.QUA (Mereology.QMOD R μ.apply n) := by
   intro x y ⟨_, hx_eq⟩ hlt ⟨_, hy_eq⟩
   have hExt' : @Mereology.ExtMeasure E inst μ.apply := hExt
-  have hμ_qua := @Mereology.extMeasure_qua E inst μ.apply hExt' n hn
+  have hμ_qua := @Mereology.extMeasure_qua E inst μ.apply hExt' n
   exact hμ_qua x y hx_eq hlt hy_eq
 
 /-- **Bridge to QMOD.** Scontras's `applyNumeral` and Krifka's `QMOD` check the

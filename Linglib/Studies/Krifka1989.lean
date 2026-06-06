@@ -89,10 +89,10 @@ open Phenomena.TenseAspect.Diagnostics
     weight). -/
 theorem qmod_qua {α : Type*} [SemilatticeSup α]
     {R : α → Prop} {μ : α → ℚ} [hμ : ExtMeasure α μ]
-    {n : ℚ} (hn : 0 < n) :
+    {n : ℚ} (_hn : 0 < n) :
     QUA (QMOD R μ n) := by
   intro x y ⟨_, hx_eq⟩ hlt ⟨_, hy_eq⟩
-  have hμ_qua := extMeasure_qua (μ := μ) n hn
+  have hμ_qua := extMeasure_qua (μ := μ) n
   exact hμ_qua x y hx_eq hlt hy_eq
 
 /-- A CUM mass noun combined with QMOD (via an extensive measure)

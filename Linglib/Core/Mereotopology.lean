@@ -1,13 +1,13 @@
 import Mathlib.Topology.Connected.Basic
 import Mathlib.Topology.Order.Lattice
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 
 /-!
 # Mereotopology
 [casati-varzi-1999] [grimm-2012] [krifka-2021]
 
 Mereotopological infrastructure grounded in Mathlib's `TopologicalSpace`,
-`IsConnected`, and `closure`. Extends `Core/Mereology.lean` (algebraic
+`IsConnected`, and `closure`. Extends `Core/Order/Mereology.lean` (algebraic
 parthood, overlap, CUM/DIV/QUA) with topological structure (connection,
 self-connection, touch).
 
