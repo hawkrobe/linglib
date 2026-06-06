@@ -143,7 +143,6 @@ import Linglib.Discourse.AtIssueness
 import Linglib.Features.CoreferenceStatus
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
-import Linglib.Core.CombinationKind
 import Linglib.Semantics.Composition.Combinator
 import Linglib.Features.ScopeTypes
 import Linglib.Typology.Extraction
@@ -2000,7 +1999,7 @@ import Linglib.Studies.KuhlmannKollerSatta2015
 import Linglib.Syntax.CCG.Scope
 import Linglib.Syntax.CCG.Intonation
 -- Cross-theory comparisons (distributed into theory directories)
-import Linglib.Syntax.Mueller2013
+import Linglib.Studies.Mueller2013
 import Linglib.Syntax.Minimalist.CategorialFeatures
 -- Phenomenon-level comparisons (moved from Comparisons/)
 import Linglib.Studies.BarkerPullum1990
@@ -2228,7 +2227,6 @@ import Linglib.Syntax.Minimalist.Economy
 import Linglib.Syntax.Minimalist.Modification
 import Linglib.Syntax.Minimalist.Scope
 import Linglib.Syntax.Minimalist.TraceInterpretation
-import Linglib.Syntax.Minimalist.CombinationSchemata
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Syntax.Minimalist.HeadFunction
