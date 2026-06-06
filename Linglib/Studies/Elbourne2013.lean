@@ -414,18 +414,18 @@ theorem english_demonstratives_are_definite :
 -- φ-feature content is stated.
 theorem it_entry_classification :
     English.Pronouns.it.person = some .third ∧
-    English.Pronouns.it.number = some .Sing :=
+    English.Pronouns.it.number = some .singular :=
   ⟨rfl, rfl⟩
 
 theorem he_entry_classification :
     English.Pronouns.he.person = some .third ∧
-    English.Pronouns.he.number = some .Sing ∧
+    English.Pronouns.he.number = some .singular ∧
     English.Pronouns.he.case_ = some .nom :=
   ⟨rfl, rfl, rfl⟩
 
 theorem she_entry_classification :
     English.Pronouns.she.person = some .third ∧
-    English.Pronouns.she.number = some .Sing ∧
+    English.Pronouns.she.number = some .singular ∧
     English.Pronouns.she.case_ = some .nom :=
   ⟨rfl, rfl, rfl⟩
 

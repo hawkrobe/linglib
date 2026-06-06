@@ -1,3 +1,4 @@
+import Mathlib.Algebra.Group.Defs
 import Mathlib.Tactic.TypeStar
 import Mathlib.Tactic.ByContra
 import Mathlib.Tactic.Use
@@ -229,6 +230,19 @@ theorem dseq_test (D : Update S) (C : Condition S) (hC : ∀ i, C i) :
     exact hD
   · intro hD
     exact ⟨j, hD, rfl, hC j⟩
+
+/-- `Update S` is a monoid under dynamic conjunction `⨟` with the trivial
+test as unit (`dseq_assoc`, `test_dseq`, `dseq_test`). Scoped because
+`Update S` is an abbreviation for `S → S → Prop`: a global instance would
+attach `*`/`1` to the bare function type. Activate with
+`open scoped Semantics.Dynamic.Core.DynProp`; mathlib's
+`WriterT (Update S) Id` then gets `Monad`/`LawfulMonad` for free. -/
+scoped instance : Monoid (Update S) where
+  mul := dseq
+  one := test (λ _ => True)
+  mul_assoc := dseq_assoc
+  one_mul D := test_dseq _ D (λ _ => trivial)
+  mul_one D := dseq_test D _ (λ _ => trivial)
 
 /-- Double negation for tests. -/
 theorem dneg_dneg_test (C : Condition S) :

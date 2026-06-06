@@ -23,7 +23,7 @@ open Pronoun
 
     Each part inflects independently for case.  -/
 def hvorAnnad : PersonalPronoun :=
-  { form := "hvor...annad", person := some .third, number := some .Plur }
+  { form := "hvor...annad", person := some .third, number := some .plural }
 
 /-- sig — reflexive pronoun (for contrast). -/
 def sig : PersonalPronoun :=

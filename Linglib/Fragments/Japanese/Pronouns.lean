@@ -23,21 +23,21 @@ open Features.Register (Level)
 
 /-- 私 *watashi* — 1sg neutral/polite. -/
 def watashi : PersonalPronoun :=
-  { form := "watashi", script := some "私", person := some .first, number := some .Sing, register := .formal }
+  { form := "watashi", script := some "私", person := some .first, number := some .singular, register := .formal }
 
 /-- 僕 *boku* — 1sg informal, masculine-associated via register
     (no inherent gender feature; cf. [ochs-1992]). -/
 def boku : PersonalPronoun :=
-  { form := "boku", script := some "僕", person := some .first, number := some .Sing, register := .informal }
+  { form := "boku", script := some "僕", person := some .first, number := some .singular, register := .informal }
 
 /-- 俺 *ore* — 1sg male very informal. Strongly indexes masculine identity
     through assertive/coarse interactional stance ([ochs-1992]). -/
 def ore : PersonalPronoun :=
-  { form := "ore", script := some "俺", person := some .first, number := some .Sing, register := .informal }
+  { form := "ore", script := some "俺", person := some .first, number := some .singular, register := .informal }
 
 /-- 私たち *watashitachi* — 1pl. -/
 def watashitachi : PersonalPronoun :=
-  { form := "watashitachi", script := some "私たち", person := some .first, number := some .Plur }
+  { form := "watashitachi", script := some "私たち", person := some .first, number := some .plural }
 
 -- ============================================================================
 -- Second Person (T/V)
@@ -45,11 +45,11 @@ def watashitachi : PersonalPronoun :=
 
 /-- 君 *kimi* — 2sg plain. -/
 def kimi : PersonalPronoun :=
-  { form := "kimi", script := some "君", person := some .second, number := some .Sing, register := .informal }
+  { form := "kimi", script := some "君", person := some .second, number := some .singular, register := .informal }
 
 /-- あなた *anata* — 2sg polite. -/
 def anata : PersonalPronoun :=
-  { form := "anata", script := some "あなた", person := some .second, number := some .Sing, register := .formal }
+  { form := "anata", script := some "あなた", person := some .second, number := some .singular, register := .formal }
 
 -- ============================================================================
 -- Third Person
@@ -57,15 +57,15 @@ def anata : PersonalPronoun :=
 
 /-- 彼 *kare* — 3sg masculine. -/
 def kare : PersonalPronoun :=
-  { form := "kare", script := some "彼", person := some .third, number := some .Sing }
+  { form := "kare", script := some "彼", person := some .third, number := some .singular }
 
 /-- 彼女 *kanojo* — 3sg feminine. -/
 def kanojo : PersonalPronoun :=
-  { form := "kanojo", script := some "彼女", person := some .third, number := some .Sing }
+  { form := "kanojo", script := some "彼女", person := some .third, number := some .singular }
 
 /-- 彼ら *karera* — 3pl. -/
 def karera : PersonalPronoun :=
-  { form := "karera", script := some "彼ら", person := some .third, number := some .Plur }
+  { form := "karera", script := some "彼ら", person := some .third, number := some .plural }
 
 -- ============================================================================
 -- Reciprocal Pronoun
@@ -76,7 +76,7 @@ def karera : PersonalPronoun :=
     NP/argument reciprocal strategy (reciprocal pronoun), unlike
     languages that mark reciprocity on the verb. -/
 def otagai : PersonalPronoun :=
-  { form := "otagai", script := some "互い", person := some .third, number := some .Plur }
+  { form := "otagai", script := some "互い", person := some .third, number := some .plural }
 
 -- ============================================================================
 -- Pronoun Lists
@@ -126,8 +126,8 @@ theorem has_all_persons :
 
 /-- Both singular and plural are attested. -/
 theorem has_both_numbers :
-    allPronouns.any (·.number == some .Sing) = true ∧
-    allPronouns.any (·.number == some .Plur) = true := ⟨rfl, rfl⟩
+    allPronouns.any (·.number == some .singular) = true ∧
+    allPronouns.any (·.number == some .plural) = true := ⟨rfl, rfl⟩
 
 /-- 1st person has register-based distinction. -/
 theorem first_person_register :

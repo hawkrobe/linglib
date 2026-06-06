@@ -78,14 +78,14 @@ article strength; which series a form belongs to is recorded here (the `weak`/`s
 split of `PronounSystem`), not in the theory-neutral `PersonalPronoun` schema. -/
 
 -- Weak series (PER): the uniqueness/weak article.
-def er  : PersonalPronoun := { form := "er",  person := some .third, number := some .Sing, gender := some .masculine }
-def sie : PersonalPronoun := { form := "sie", person := some .third, number := some .Sing, gender := some .feminine }
-def es  : PersonalPronoun := { form := "es",  person := some .third, number := some .Sing, gender := some .neuter }
+def er  : PersonalPronoun := { form := "er",  person := some .third, number := some .singular, gender := some .masculine }
+def sie : PersonalPronoun := { form := "sie", person := some .third, number := some .singular, gender := some .feminine }
+def es  : PersonalPronoun := { form := "es",  person := some .third, number := some .singular, gender := some .neuter }
 
 -- Strong series ("DEM"): the same core plus the strong-article anaphoric index.
-def der : PersonalPronoun := { form := "der", person := some .third, number := some .Sing, gender := some .masculine }
-def die : PersonalPronoun := { form := "die", person := some .third, number := some .Sing, gender := some .feminine }
-def das : PersonalPronoun := { form := "das", person := some .third, number := some .Sing, gender := some .neuter }
+def der : PersonalPronoun := { form := "der", person := some .third, number := some .singular, gender := some .masculine }
+def die : PersonalPronoun := { form := "die", person := some .third, number := some .singular, gender := some .feminine }
+def das : PersonalPronoun := { form := "das", person := some .third, number := some .singular, gender := some .neuter }
 
 /-- A language's 3rd-person pronoun system as PG&G analyze it: the weak (PER) and
     strong ("DEM") article series, the article inventory (source of `articleType`),

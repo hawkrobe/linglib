@@ -83,37 +83,37 @@ def clusivitySystem : Features.Clusivity.System := .minimalAugmented
 open Person (Category)
 
 -- 1st singular
-def ako    : PersonalPronoun := { form := "ako",    person := some .first,  number := some .Sing, case_ := some .Nom }
-def ko     : PersonalPronoun := { form := "ko",     person := some .first,  number := some .Sing, case_ := some .Gen }
-def akin   : PersonalPronoun := { form := "akin",   person := some .first,  number := some .Sing, case_ := some .Dat }
+def ako    : PersonalPronoun := { form := "ako",    person := some .first,  number := some .singular, case_ := some .Nom }
+def ko     : PersonalPronoun := { form := "ko",     person := some .first,  number := some .singular, case_ := some .Gen }
+def akin   : PersonalPronoun := { form := "akin",   person := some .first,  number := some .singular, case_ := some .Dat }
 -- 2nd singular
-def ikaw   : PersonalPronoun := { form := "ikaw",   person := some .second, number := some .Sing, case_ := some .Nom }
-def mo     : PersonalPronoun := { form := "mo",     person := some .second, number := some .Sing, case_ := some .Gen }
-def iyo    : PersonalPronoun := { form := "iyo",    person := some .second, number := some .Sing, case_ := some .Dat }
+def ikaw   : PersonalPronoun := { form := "ikaw",   person := some .second, number := some .singular, case_ := some .Nom }
+def mo     : PersonalPronoun := { form := "mo",     person := some .second, number := some .singular, case_ := some .Gen }
+def iyo    : PersonalPronoun := { form := "iyo",    person := some .second, number := some .singular, case_ := some .Dat }
 -- 3rd singular
-def siya   : PersonalPronoun := { form := "siya",   person := some .third,  number := some .Sing, case_ := some .Nom }
-def niya   : PersonalPronoun := { form := "niya",   person := some .third,  number := some .Sing, case_ := some .Gen }
-def kaniya : PersonalPronoun := { form := "kaniya", person := some .third,  number := some .Sing, case_ := some .Dat }
+def siya   : PersonalPronoun := { form := "siya",   person := some .third,  number := some .singular, case_ := some .Nom }
+def niya   : PersonalPronoun := { form := "niya",   person := some .third,  number := some .singular, case_ := some .Gen }
+def kaniya : PersonalPronoun := { form := "kaniya", person := some .third,  number := some .singular, case_ := some .Dat }
 -- 1st dual inclusive (minimal inclusive): *kata*
-def kata   : PersonalPronoun := { form := "kata",   person := some .firstInclusive,  number := some .Dual, case_ := some .Nom }
-def nita   : PersonalPronoun := { form := "nita",   person := some .firstInclusive,  number := some .Dual, case_ := some .Gen }
-def kanita : PersonalPronoun := { form := "kanita", person := some .firstInclusive,  number := some .Dual, case_ := some .Dat }
+def kata   : PersonalPronoun := { form := "kata",   person := some .firstInclusive,  number := some .dual, case_ := some .Nom }
+def nita   : PersonalPronoun := { form := "nita",   person := some .firstInclusive,  number := some .dual, case_ := some .Gen }
+def kanita : PersonalPronoun := { form := "kanita", person := some .firstInclusive,  number := some .dual, case_ := some .Dat }
 -- 1st plural inclusive (augmented inclusive): *tayo*
-def tayo   : PersonalPronoun := { form := "tayo",   person := some .firstInclusive,  number := some .Plur, case_ := some .Nom }
-def natin  : PersonalPronoun := { form := "natin",  person := some .firstInclusive,  number := some .Plur, case_ := some .Gen }
-def atin   : PersonalPronoun := { form := "atin",   person := some .firstInclusive,  number := some .Plur, case_ := some .Dat }
+def tayo   : PersonalPronoun := { form := "tayo",   person := some .firstInclusive,  number := some .plural, case_ := some .Nom }
+def natin  : PersonalPronoun := { form := "natin",  person := some .firstInclusive,  number := some .plural, case_ := some .Gen }
+def atin   : PersonalPronoun := { form := "atin",   person := some .firstInclusive,  number := some .plural, case_ := some .Dat }
 -- 1st plural exclusive: *kami*
-def kami   : PersonalPronoun := { form := "kami",   person := some .firstExclusive,  number := some .Plur, case_ := some .Nom }
-def namin  : PersonalPronoun := { form := "namin",  person := some .firstExclusive,  number := some .Plur, case_ := some .Gen }
-def amin   : PersonalPronoun := { form := "amin",   person := some .firstExclusive,  number := some .Plur, case_ := some .Dat }
+def kami   : PersonalPronoun := { form := "kami",   person := some .firstExclusive,  number := some .plural, case_ := some .Nom }
+def namin  : PersonalPronoun := { form := "namin",  person := some .firstExclusive,  number := some .plural, case_ := some .Gen }
+def amin   : PersonalPronoun := { form := "amin",   person := some .firstExclusive,  number := some .plural, case_ := some .Dat }
 -- 2nd plural
-def kayo   : PersonalPronoun := { form := "kayo",   person := some .second, number := some .Plur, case_ := some .Nom }
-def ninyo  : PersonalPronoun := { form := "ninyo",  person := some .second, number := some .Plur, case_ := some .Gen }
-def inyo   : PersonalPronoun := { form := "inyo",   person := some .second, number := some .Plur, case_ := some .Dat }
+def kayo   : PersonalPronoun := { form := "kayo",   person := some .second, number := some .plural, case_ := some .Nom }
+def ninyo  : PersonalPronoun := { form := "ninyo",  person := some .second, number := some .plural, case_ := some .Gen }
+def inyo   : PersonalPronoun := { form := "inyo",   person := some .second, number := some .plural, case_ := some .Dat }
 -- 3rd plural
-def sila   : PersonalPronoun := { form := "sila",   person := some .third,  number := some .Plur, case_ := some .Nom }
-def nila   : PersonalPronoun := { form := "nila",   person := some .third,  number := some .Plur, case_ := some .Gen }
-def kanila : PersonalPronoun := { form := "kanila", person := some .third,  number := some .Plur, case_ := some .Dat }
+def sila   : PersonalPronoun := { form := "sila",   person := some .third,  number := some .plural, case_ := some .Nom }
+def nila   : PersonalPronoun := { form := "nila",   person := some .third,  number := some .plural, case_ := some .Gen }
+def kanila : PersonalPronoun := { form := "kanila", person := some .third,  number := some .plural, case_ := some .Dat }
 
 /-- The Tagalog independent-pronoun inventory (all three case series). -/
 def pronouns : List PersonalPronoun :=
@@ -140,8 +140,8 @@ theorem incl_excl_distinct :
     plural inclusive *tayo* — what makes Tagalog minimal-augmented rather than
     plain inclusive/exclusive ([cysouw-2009]). -/
 theorem minimal_augmented :
-    kata.number = some .Dual ∧ kata.person = some .firstInclusive ∧
-    tayo.number = some .Plur ∧ tayo.person = some .firstInclusive := ⟨rfl, rfl, rfl, rfl⟩
+    kata.number = some .dual ∧ kata.person = some .firstInclusive ∧
+    tayo.number = some .plural ∧ tayo.person = some .firstInclusive := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- Cross-substrate consistency: the inventory contains a minimal-inclusive
     (dual inclusive) form iff the language commits to the minimal-augmented
