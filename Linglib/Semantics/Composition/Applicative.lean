@@ -34,9 +34,6 @@ set_option autoImplicit false
 
 namespace Semantics.Composition.Applicative
 
--- ════════════════════════════════════════════════════════════════
--- §1 Reader Applicative
--- ════════════════════════════════════════════════════════════════
 
 /-! ### Reader applicative
 
@@ -75,9 +72,6 @@ theorem reader_composition (u : E → B → C) (v : E → A → B) (w : E → A)
 
 end ReaderApplicative
 
--- ════════════════════════════════════════════════════════════════
--- §2 Composed Applicatives
--- ════════════════════════════════════════════════════════════════
 
 /-! ### Composed applicative functors
 
@@ -125,9 +119,6 @@ theorem composed_composition (u : E₁ → E₂ → B → C)
 
 end ComposedApplicatives
 
--- ════════════════════════════════════════════════════════════════
--- §3 Variable-Free Semantics
--- ════════════════════════════════════════════════════════════════
 
 /-! ### Variable-free semantics as Reader Entity
 
@@ -170,9 +161,6 @@ theorem vf_she_saw_her_composed (saw : E → E → Bool) :
 
 end VariableFree
 
--- ════════════════════════════════════════════════════════════════
--- §4 Set Applicative
--- ════════════════════════════════════════════════════════════════
 
 /-! ### Set applicative
 
@@ -237,9 +225,6 @@ theorem set_composition (u : Set (B → C)) (v : Set (A → B))
 
 end SetApplicative
 
--- ════════════════════════════════════════════════════════════════
--- §5 Continuation Applicative
--- ════════════════════════════════════════════════════════════════
 
 /-! ### Continuation applicative
 
@@ -265,9 +250,6 @@ theorem cont_ap_eq (m : Cont R (A → B)) (n : Cont R A) :
 
 end ContinuationApplicative
 
--- ════════════════════════════════════════════════════════════════
--- §6 Typed Assignment Family
--- ════════════════════════════════════════════════════════════════
 
 /-! ### Typed assignment family Gᵣ
 

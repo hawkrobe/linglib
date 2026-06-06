@@ -36,9 +36,6 @@ namespace Semantics.Composition.SetMonad
 
 open Semantics.Composition.Applicative (setPure setAp)
 
--- ════════════════════════════════════════════════════════════════
--- §1 Set Monad Operations
--- ════════════════════════════════════════════════════════════════
 
 /-! ### §1 Set monad operations
 
@@ -87,9 +84,6 @@ def setMap (f : A → B) (m : Set A) : Set B := f <$> m
 
 end Operations
 
--- ════════════════════════════════════════════════════════════════
--- §2 Monad Laws
--- ════════════════════════════════════════════════════════════════
 
 /-! ### §2 Monad laws
 
@@ -128,9 +122,6 @@ theorem set_associativity (m : Set A) (f : A → Set B) (g : B → Set C) :
 
 end MonadLaws
 
--- ════════════════════════════════════════════════════════════════
--- §3 Closure Operators
--- ════════════════════════════════════════════════════════════════
 
 /-! ### §3 Closure operators
 
@@ -156,9 +147,6 @@ def existsClosure (m : Prop → Prop) : Prop := ∃ p, m p ∧ p
 
 end Closure
 
--- ════════════════════════════════════════════════════════════════
--- §4 Bridge to Applicative.lean
--- ════════════════════════════════════════════════════════════════
 
 /-! ### §4 Bridge to Applicative.lean
 
@@ -194,9 +182,6 @@ theorem setAp_from_setBind (m : Set (A → B)) (n : Set A) :
 
 end ApplicativeBridge
 
--- ════════════════════════════════════════════════════════════════
--- §5 LIFT Decomposition
--- ════════════════════════════════════════════════════════════════
 
 /-! ### §5 LIFT decomposition
 
@@ -239,9 +224,6 @@ theorem lift_eq_A_eta (domain : List F.Entity) (j : F.Entity)
 
 end LiftDecomposition
 
--- ════════════════════════════════════════════════════════════════
--- §6 Higher-Order Alternative Sets
--- ════════════════════════════════════════════════════════════════
 
 /-! ### §6 Higher-order alternative sets
 
