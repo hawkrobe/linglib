@@ -86,6 +86,7 @@ import Linglib.Core.Logic.BeliefRevision
 import Linglib.Core.Order.Tree
 import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.Branching
+import Linglib.Core.Order.Positions
 import Linglib.Core.Order.Command
 import Linglib.Core.Order.Normality
 import Linglib.Core.Order.SimilarityOrdering
