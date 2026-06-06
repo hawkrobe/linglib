@@ -2,7 +2,6 @@ import Linglib.Semantics.Composition.Continuation
 import Linglib.Semantics.Composition.WriterMonad
 import Linglib.Semantics.Composition.SetMonad
 import Linglib.Semantics.Composition.Tree
-import Linglib.Semantics.Composition.QuantifierComposition
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Reference.Binding
@@ -59,7 +58,6 @@ namespace Semantics.Composition.Effects
 
 open Semantics.Composition.Continuation
 open Semantics.Composition.Tree
-open Semantics.Composition.QuantifierComposition
 open Pragmatics.Expressives
 open Semantics.Quantification.Quantifier
 open Semantics.Reference.Binding
@@ -678,7 +676,7 @@ theorem inverse_scope_via_cont :
   | _ => exact absurd (by assumption : person_sem _) id
 
 /-- The two scope orderings via Cont yield genuinely different readings,
-    matching `scope_readings_differ` from `QuantifierComposition.lean`. -/
+    matching `HeimKratzer1998.scope_readings_differ`. -/
 theorem cont_scope_readings_differ :
     (handleScope (gqAsCont (every_sem person_sem) |>.bind
       (λ x => gqAsCont (some_sem person_sem) |>.bind

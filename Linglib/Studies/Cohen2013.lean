@@ -1,4 +1,3 @@
-import Linglib.Semantics.Composition.PredicateTransfer
 import Linglib.Semantics.Genericity.Generics
 import Linglib.Semantics.Composition.Scope
 import Linglib.Semantics.Quantification.CovertQuantifier
@@ -55,7 +54,7 @@ The paper's key argument flows through the Partee-Rooth SHIFT operator:
 ## Formalization Strategy
 
 We verify Cohen's scope predictions using finite models, with definitions
-built directly on `transferGen` and `gamma` from `PredicateTransfer.lean`:
+built directly on `transferGen` and `gamma` from (below):
 
 1. **Storks / nesting areas**: T_g applied locally vs globally gives
    different truth conditions → generics are scopally ambiguous
@@ -64,7 +63,7 @@ built directly on `transferGen` and `gamma` from `PredicateTransfer.lean`:
    which is unavailable because the type mismatch is at the verb level
 3. **Scope hierarchy**: overt > predicateTransfer > typeShift
 
-These connect to `PredicateTransfer.lean` (T_g, γ, SHIFT, `QuantifierSource`),
+These connect to (below) (T_g, γ, SHIFT, `QuantifierSource`),
 `Generics.lean` (traditionalGEN), `CovertQuantifier.lean` (shared `covertQ`),
 and `Scope.lean` (ScopeConfig). A local 3-cell `Occasion` enum (below) supplies
 the habitual-side domain.
@@ -72,9 +71,101 @@ the habitual-side domain.
 
 namespace Cohen2013
 
-open Semantics.Composition.PredicateTransfer
 open Semantics.Quantification.CovertQuantifier
 open Semantics.Scope (ScopeConfig)
+
+/-! ### Reinterpretation mechanisms ([cohen-2013], [nunberg-1995])
+
+Two mechanisms that introduce covert quantifiers into logical form with
+different scope consequences: **Predicate Transfer** (T_g, [nunberg-1995]),
+pragmatically triggered and applicable at any composition level (→ scope
+ambiguity except in opaque contexts), and **habitual type-shift** (γ,
+[cohen-2013]), semantically triggered by type mismatch and applied
+locally (→ narrow scope only). Same quantifier (GEN), different
+scope behavior driven by the introducing mechanism.
+
+The argument for γ's locality goes through the Partee-Rooth SHIFT operator:
+since SHIFT does not commute with negation (`shift_neg_noncommutative`),
+neither does γ — so γ must apply before negation, i.e., locally. -/
+
+/-- Predicate Transfer for generics ([nunberg-1995]): transforms a
+kind-level predicate into a quantified predicate over instances of the kind.
+`T_g(P) = λx. gen_y[C(y,x)][P(y)]`, where `C(y,x)` says y is an instance of
+kind x. When `P(∩pandas)` is pragmatically anomalous (kinds don't eat —
+individuals do), Predicate Transfer applies, yielding
+`gen_y[C(y, ∩pandas)][P(y)]`. -/
+def transferGen {Kind Ind : Type}
+    (gen : (Ind → Bool) → (Ind → Bool) → Bool)
+    (instanceOf : Ind → Kind → Bool)
+    (P : Ind → Bool) : Kind → Bool :=
+  fun x => gen (fun y => instanceOf y x) P
+
+/-- Partee-Rooth SHIFT: lift an extensional transitive verb to take a
+generalized quantifier as its object argument. `SHIFT(V) = λQ.λx.Q(λy.V(x,y))`.
+[partee-rooth-1983] propose this to resolve type mismatches between
+extensional and intensional transitive verbs. [cohen-2013] §13.3.1 uses
+SHIFT's non-commutativity with negation to argue type-shifts must be
+LOCAL — see `shift_neg_noncommutative`. -/
+def SHIFT {E : Type} (V : E → E → Bool) : ((E → Bool) → Bool) → E → Bool :=
+  fun Q x => Q (fun y => V x y)
+
+/-- SHIFT does not commute with negation. For `V(x,y) = y`, `Q(P) = P true ∨ P false`,
+`x = true`: LHS `!Q(λy.y) = !(true ∨ false) = false`; RHS
+`Q(λy.¬y) = false ∨ true = true`. This non-commutativity ([cohen-2013] §13.3.1)
+forces type-shifts to apply LOCALLY (before negation) — the argument
+carries over to γ. -/
+theorem shift_neg_noncommutative :
+    ∃ (V : Bool → Bool → Bool) (Q : (Bool → Bool) → Bool) (x : Bool),
+    !(SHIFT V Q x) ≠ SHIFT (fun a b => !(V a b)) Q x :=
+  ⟨fun _ y => y, fun P => P true || P false, true, by decide⟩
+
+/-- γ: type-shift turning an eventive predicate (property of intervals)
+into a stative one (property of moments). `γP = λt. gen_e[e ≤ int(t)][P(e)]`.
+Triggered by the present-tense / eventive-verb type mismatch, which forces
+γ to fire at the verb level (locally). Locality is why habituals take
+narrow scope. Like SHIFT, γ does not commute with other operators — see
+`gamma_noncommutative` for the concrete instance. -/
+def gamma {Interval Moment : Type}
+    (gen : (Interval → Bool) → (Interval → Bool) → Bool)
+    (containedIn : Interval → Moment → Bool)
+    (P : Interval → Bool) : Moment → Bool :=
+  fun t => gen (fun e => containedIn e t) P
+
+/-- The mechanism introducing a covert quantifier; determines its scope
+behavior ([cohen-2013] §13.4). -/
+inductive QuantifierSource where
+  /-- Pragmatic; can apply at any composition level. -/
+  | predicateTransfer
+  /-- Semantic; applies locally at the type-mismatch site. -/
+  | typeShift
+  /-- Phonologically realized (always, usually, often, …). -/
+  | overt
+  deriving DecidableEq, Repr
+
+/-- Type-shifted elements take narrow scope only (local application);
+Predicate Transfer and overt quantifiers can take wide scope. -/
+def QuantifierSource.canTakeWideScope : QuantifierSource → Bool
+  | .predicateTransfer => true
+  | .typeShift => false
+  | .overt => true
+
+/-- Predicate Transfer cannot scope out of opaque (intensional) contexts —
+it requires the property's intension, unavailable outside an attitude verb's
+scope. Overt quantifiers can (de re readings); type-shifts are already local. -/
+def QuantifierSource.canScopeOutOfOpaque : QuantifierSource → Bool
+  | .predicateTransfer => false
+  | .typeShift => false
+  | .overt => true
+
+/-- Strict scope-freedom ordering: overt > predicateTransfer > typeShift. -/
+theorem scope_freedom_ordering :
+    (QuantifierSource.overt.canTakeWideScope = true ∧
+     QuantifierSource.overt.canScopeOutOfOpaque = true) ∧
+    (QuantifierSource.predicateTransfer.canTakeWideScope = true ∧
+     QuantifierSource.predicateTransfer.canScopeOutOfOpaque = false) ∧
+    (QuantifierSource.typeShift.canTakeWideScope = false ∧
+     QuantifierSource.typeShift.canScopeOutOfOpaque = false) :=
+  ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
 -- ============================================================================
 -- §13.2: Scopal Data
@@ -161,7 +252,7 @@ def barePluralInHabitual : ScopeDatum :=
 Initial LF: ∃x(nesting-area(x) ∧ have(∩storks, x))
 
 This is anomalous: kinds don't have nesting areas — individuals do.
-So Predicate Transfer applies (T_g from `PredicateTransfer.lean`),
+So Predicate Transfer applies (T_g from (below)),
 with two options depending on the level of application:
 
 - **Local T_g** (on the verb `have`):
@@ -247,7 +338,7 @@ end GenericScope
 Cohen's argument for habitual narrow scope flows through the Partee-Rooth
 SHIFT operator ([partee-rooth-1983]):
 
-1. `shift_neg_noncommutative` (in `PredicateTransfer.lean`) proves that
+1. `shift_neg_noncommutative` (in (below)) proves that
    SHIFT does not commute with negation: ¬SHIFT(V) ≠ SHIFT(¬V).
 
 2. γ is a type-shift (it resolves a type mismatch between eventive predicates
@@ -364,7 +455,7 @@ end HabitualScope
 
     overt > predicateTransfer > typeShift
 
-    in scope freedom. `QuantifierSource` in `PredicateTransfer.lean`
+    in scope freedom. `QuantifierSource` in (below)
     encodes this hierarchy. -/
 theorem scope_hierarchy :
     QuantifierSource.overt.canTakeWideScope = true ∧

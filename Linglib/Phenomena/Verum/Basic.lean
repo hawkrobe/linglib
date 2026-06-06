@@ -1,4 +1,4 @@
-import Linglib.Semantics.Composition.Layered
+import Linglib.Semantics.ContentLayer
 import Linglib.Semantics.Highlighting
 
 /-!
@@ -62,7 +62,7 @@ shared `VerumOperator` abstraction; the disagreement lives in the
 
 namespace Phenomena.Verum.Basic
 
-open Semantics.Composition.Layered (BiLayered)
+open Semantics.ContentLayer (BiLayered)
 open Semantics.Highlighting (HighlightingContext)
 
 /-- Cross-linguistic strategy types for verum marking
