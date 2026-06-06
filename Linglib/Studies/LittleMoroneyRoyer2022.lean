@@ -1,7 +1,7 @@
 import Linglib.Typology.ClassifierSystem
 import Linglib.Core.Mereology
 import Linglib.Core.Tree
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Semantics.Composition.Tree
 import Linglib.Studies.Chierchia1998

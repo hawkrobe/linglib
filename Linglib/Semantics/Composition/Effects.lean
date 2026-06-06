@@ -346,7 +346,7 @@ theorem adj_binding_agrees_with_hk {F : Frame} (n : Nat)
     (binder : F.Entity) (g : Core.Assignment F.Entity) :
     adj_ε (body binder, binder) = body (g[n ↦ binder] n) (g[n ↦ binder] n) := by
   show body binder binder = body (g[n ↦ binder] n) (g[n ↦ binder] n)
-  simp only [update_same]
+  simp only [Function.update_self]
 
 end WRAdjunction
 
@@ -797,7 +797,7 @@ theorem binding_C_agrees_with_hk (g : Core.Assignment toyModel.Entity) :
   show ToyLexicon.sees_sem ToyEntity.john ToyEntity.john =
        ToyLexicon.sees_sem (g[1 ↦ ToyEntity.john] 1)
                            (g[1 ↦ ToyEntity.john] 1)
-  simp only [update_same]
+  simp only [Function.update_self]
 
 /-- C and H&K agree for Mary as well: `C(<) ▷(m) (λi. sees i) = sees m m`. -/
 theorem binding_C_agrees_with_hk_mary (g : Core.Assignment toyModel.Entity) :
@@ -808,7 +808,7 @@ theorem binding_C_agrees_with_hk_mary (g : Core.Assignment toyModel.Entity) :
   show ToyLexicon.sees_sem ToyEntity.mary ToyEntity.mary =
        ToyLexicon.sees_sem (g[2 ↦ ToyEntity.mary] 2)
                            (g[2 ↦ ToyEntity.mary] 2)
-  simp only [update_same]
+  simp only [Function.update_self]
 
 end BindingBridge
 

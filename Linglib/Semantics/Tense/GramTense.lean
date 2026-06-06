@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Intensional.Rigidity
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Time.Relation
 import Linglib.Core.Time.Reichenbach
@@ -156,18 +156,16 @@ abbrev TenseInterpretation := Core.ReferentialMode.ReferentialMode
 -- ════════════════════════════════════════════════════════════════
 
 /-! Temporal assignment functions are the temporal instantiation of
-`Core.Assignment` (`Assignment Time = ℕ → Time`). All algebraic properties
-(`Assignment.update_at`, `update_ne`, `update_overwrite`, `update_self`) are
-inherited from the generic infrastructure. -/
+`Core.Assignment` (`Assignment Time = ℕ → Time`). All update laws are mathlib's `Function.update` lemmas. -/
 
 /-- Temporal assignment function: maps variable indices to times.
     The temporal analogue of H&K's `Assignment` (`ℕ → Entity`). -/
 abbrev TemporalAssignment (Time : Type*) := Assignment Time
 
-/-- Modified temporal assignment `g[n ↦ t]`. Specializes `Assignment.update`. -/
+/-- Modified temporal assignment `g[n ↦ t]`. Specializes `Function.update`. -/
 abbrev updateTemporal {Time : Type*} (g : TemporalAssignment Time)
     (n : ℕ) (t : Time) : TemporalAssignment Time :=
-  g.update n t
+  Function.update g n t
 
 /-- Temporal variable denotation: ⟦tₙ⟧^g = g(n). -/
 abbrev interpTense {Time : Type*} (n : ℕ) (g : TemporalAssignment Time) : Time :=
@@ -181,7 +179,7 @@ abbrev interpTense {Time : Type*} (n : ℕ) (g : TemporalAssignment Time) : Time
 abbrev temporalLambdaAbs {Time α : Type*} (n : ℕ)
     (body : TemporalAssignment Time → α) :
     TemporalAssignment Time → Time → α :=
-  λ g t => body (g.update n t)
+  λ g t => body (Function.update g n t)
 
 /-- Project a situation assignment to a temporal assignment.
     This is the formal bridge between situation semantics and tense semantics:
@@ -203,7 +201,7 @@ theorem situation_temporal_commutes {W Time : Type*}
 theorem zeroTense_receives_binder_time {Time : Type*}
     (g : TemporalAssignment Time) (n : ℕ) (binderTime : Time) :
     interpTense n (updateTemporal g n binderTime) = binderTime :=
-  Assignment.update_at g n binderTime
+  Function.update_self n binderTime g
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -316,7 +314,7 @@ theorem evalTime_root_is_speech {Time : Type*}
 theorem evalTime_shifts_under_embedding {Time : Type*}
     (tp : TensePronoun) (g : TemporalAssignment Time) (matrixEventTime : Time) :
     tp.evalTime (updateTemporal g tp.evalTimeIndex matrixEventTime) = matrixEventTime :=
-  Assignment.update_at g tp.evalTimeIndex matrixEventTime
+  Function.update_self tp.evalTimeIndex matrixEventTime g
 
 /-- Resolving a bound tense under binding yields the binder time. -/
 theorem TensePronoun.bound_resolve_eq_binder {Time : Type*}
@@ -496,7 +494,7 @@ theorem von_stechow_tower
     (g : TemporalAssignment T) (t : ContextTower (KContext W E P T))
     (newTime : T) :
     updateTemporal g t.depth newTime t.depth = newTime :=
-  Assignment.update_at g t.depth newTime
+  Function.update_self t.depth newTime g
 
 /-- Under faithful encoding, layers below the push point are preserved. -/
 theorem von_stechow_tower_preserves
@@ -505,8 +503,8 @@ theorem von_stechow_tower_preserves
     (hFaithful : towerFaithful g t)
     (k : ℕ) (hk : k < t.depth) :
     updateTemporal g t.depth newTime k = (t.contextAt k).time := by
-  simp only [updateTemporal, Assignment.update]
-  rw [if_neg (Nat.ne_of_lt hk)]
+  simp only [updateTemporal]
+  rw [Function.update_of_ne (Nat.ne_of_lt hk)]
   exact hFaithful k
 
 /-- Pushing a temporal shift assigns `newTime` to the new depth in

@@ -35,12 +35,12 @@ theorem destructive_preserves_truth {E : Type*}
     subst hk; subst hh
     exact ⟨⟨d₁, by simpa using hP⟩, ⟨d₂, by simpa using hQ⟩⟩
   · rintro ⟨⟨x, hPx⟩, ⟨y, hQy⟩⟩
-    exact ⟨(g.update 6 x).update 6 y, g.update 6 x,
+    exact ⟨Function.update (Function.update g 6 x) 6 y, Function.update g 6 x,
       ⟨x, rfl, by simpa⟩, y, rfl, by simpa⟩
 
 /-- Static ↑: evaluates truth, discards modified assignment (Table 1, row 1). -/
 def staticExists {E : Type*} (x : Nat) (body : Assignment E → Prop) : DPLRel E :=
-  DPLRel.atom (λ g => ∃ d : E, body (Assignment.update g x d))
+  DPLRel.atom (λ g => ∃ d : E, body (Function.update g x d))
 
 /-- Dynamic ↑: retains modified assignment (Table 1, row 2). -/
 def dynamicExists {E : Type*} (x : Nat) (body : Assignment E → Prop) : DPLRel E :=
@@ -57,7 +57,7 @@ theorem dynamic_changes_assignment {E : Type*} [Nontrivial E] :
     ∃ (x : Nat) (body : Assignment E → Prop) (g h : Assignment E),
       dynamicExists x body g h ∧ g ≠ h := by
   obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
-  refine ⟨0, λ _ => True, λ _ => e₁, Assignment.update (λ _ => e₁) 0 e₂, ?_⟩
+  refine ⟨0, λ _ => True, λ _ => e₁, Function.update (λ _ => e₁) 0 e₂, ?_⟩
   constructor
   · exact ⟨e₂, rfl, trivial⟩
   · intro heq; exact hne (congr_fun heq 0 |>.symm ▸ by simp)
@@ -70,7 +70,7 @@ theorem static_dynamic_same_truth {E : Type*}
   constructor
   · rintro ⟨h, heq, d, hbody⟩
     subst heq
-    exact ⟨g.update x d, d, rfl, hbody⟩
+    exact ⟨Function.update g x d, d, rfl, hbody⟩
   · rintro ⟨_, d, _, hbody⟩
     exact ⟨g, rfl, d, hbody⟩
 
@@ -94,14 +94,14 @@ theorem antisymmetry_fails {E : Type*} [Nontrivial E] :
     ∃ (g h : Assignment E), g ≠ h ∧ reachable g h ∧ reachable h g := by
   obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
   let g : Assignment E := λ _ => e₁
-  let h : Assignment E := Assignment.update g 0 e₂
+  let h : Assignment E := Function.update g 0 e₂
   refine ⟨g, h, ?_, ?_, ?_⟩
   · intro heq; exact hne (by simpa using congr_fun heq 0)
   · exact ⟨DPLRel.exists_ 0 (DPLRel.atom (λ g' => g' 0 = e₂)),
            e₂, rfl, by simp⟩
   · refine ⟨DPLRel.exists_ 0 (DPLRel.atom (λ g' => g' 0 = e₁)),
             e₁, ?_, by simp⟩
-    funext n; dsimp [h, g, Assignment.update]; split <;> rfl
+    simp [h, g]
 
 /-- Non-distributive negation (28): removes from s points that survive φ. -/
 def stateNeg {W E : Type*} (φ : StateCCP W E) : StateCCP W E :=

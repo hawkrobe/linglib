@@ -334,7 +334,7 @@ import Linglib.Semantics.Attitudes.ContentIndividual
 import Linglib.Core.Agent.BToM
 import Linglib.Core.Agent.Emotion
 import Linglib.Semantics.Spatial.Path
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 import Linglib.Semantics.Composition.Continuation
 import Linglib.Core.CylindricAlgebra
 import Linglib.Core.CylindricAlgebra.DynamicSemantics

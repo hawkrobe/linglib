@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Intensional.Frame
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 import Linglib.Core.CylindricAlgebra
 
 /-!
@@ -12,8 +12,9 @@ built on `Core.Logic.Intensional.Frame`.
 
 ## Main definitions
 
-- `Assignment` (from `Core/Assignment.lean`) instantiated at
-  `F.Entity` for entity pronouns and `F.Index` for situation pronouns
+- `Assignment` (from `Core/Logic/Assignment.lean`) instantiated at
+  `F.Entity` for entity pronouns and `F.Index` for situation pronouns;
+  the `g[n ↦ x]` notation for `Function.update` is declared here
 - `DenotG` — assignment-relative denotations
 - `applyG`, `lambdaAbsG`, `constDenot` — composition with assignments
 - Applicative functor laws ([charlow-2018])
@@ -24,30 +25,11 @@ namespace Core.Logic.Intensional.Variables
 
 open Core.Logic.Intensional
 
-scoped notation:max g "[" n " ↦ " x "]" => Assignment.update g n x
-
-@[simp]
-theorem update_same {F : Frame} (g : Assignment F.Entity) (n : ℕ) (x : F.Entity)
-    : g[n ↦ x] n = x :=
-  Assignment.update_at g n x
-
-@[simp]
-theorem update_other {F : Frame} (g : Assignment F.Entity) (n i : ℕ) (x : F.Entity)
-    (h : i ≠ n) : g[n ↦ x] i = g i :=
-  Assignment.update_ne g x h
-
-theorem update_update_same {F : Frame} (g : Assignment F.Entity) (n : ℕ)
-    (x y : F.Entity) : g[n ↦ x][n ↦ y] = g[n ↦ y] :=
-  Assignment.update_overwrite g n x y
-
-theorem update_update_comm {F : Frame} (g : Assignment F.Entity) (n₁ n₂ : ℕ)
-    (x₁ x₂ : F.Entity) (h : n₁ ≠ n₂)
-    : g[n₁ ↦ x₁][n₂ ↦ x₂] = g[n₂ ↦ x₂][n₁ ↦ x₁] :=
-  Assignment.update_comm g x₁ x₂ h
-
-theorem update_self {F : Frame} (g : Assignment F.Entity) (n : ℕ)
-    : g[n ↦ g n] = g :=
-  Assignment.update_self g n
+/-- Heim-Kratzer assignment-modification notation: `g[n ↦ x]` is
+`Function.update g n x`. The `Function.update_*` lemmas (`update_self`,
+`update_of_ne`, `update_idem`, `update_comm`, `update_eq_self`) are the
+update laws. -/
+scoped notation:max g "[" n " ↦ " x "]" => Function.update g n x
 
 /-- Denotation depending on assignment function. -/
 def DenotG (F : Frame) (ty : Ty) := Assignment F.Entity → F.Denot ty
@@ -190,7 +172,7 @@ theorem existsClosure_bot (n : Nat) :
 /-- **C₂**: φ implies its existential closure. -/
 theorem le_existsClosure (n : Nat) (φ : Assignment F.Entity → Prop) (g : Assignment F.Entity) :
     φ g → existsClosure n φ g :=
-  fun h => ⟨g n, by rw [update_self]; exact h⟩
+  fun h => ⟨g n, by rw [Function.update_eq_self]; exact h⟩
 
 /-- **C₅**: `Dnn = ⊤` (reflexivity of equality). -/
 theorem diag_refl (n : Nat) :
@@ -207,10 +189,10 @@ theorem resolve_eq_existsClosure_diag (κ l : Nat) (φ : Assignment F.Entity →
     resolve κ l φ g ↔ existsClosure κ (fun g' => diag κ l g' ∧ φ g') g := by
   simp only [resolve, existsClosure, diag]; constructor
   · intro hφ
-    exact ⟨g l, by simp [update_other g κ l (g l) (Ne.symm h)], hφ⟩
+    exact ⟨g l, by simp [Function.update_of_ne (Ne.symm h) (g l) g], hφ⟩
   · rintro ⟨x, hd, hφ⟩
     have : x = g l := by
-      rw [update_same, update_other g κ l x (Ne.symm h)] at hd; exact hd
+      rw [Function.update_self, Function.update_of_ne (Ne.symm h) x g] at hd; exact hd
     subst this; exact hφ
 
 /-- Lambda abstraction at n is the "integrand" of existential closure. -/
@@ -248,9 +230,8 @@ parameter handed to an interpretation function.
 Type-theoretically this is the dual of entity binding under `Ty.intens`:
 where entity pronouns are interpreted relative to `Assignment F.Entity := ℕ → F.Entity`,
 situation pronouns are interpreted relative to `SitAssignment F := ℕ → F.Index`.
-Both reuse `Core.Assignment` at different instantiations, so
-the update lemmas (`update_at`, `update_ne`, `update_overwrite`, `update_comm`,
-`update_self`) come for free. -/
+Both reuse `Core.Assignment` at different instantiations, so mathlib's
+`Function.update` lemmas apply to both. -/
 
 /-- Situation assignment: maps situation-pronoun indices to frame indices.
     Reuses `Assignment` at type `F.Index`. -/

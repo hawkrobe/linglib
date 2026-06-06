@@ -350,9 +350,9 @@ live in `Core/CylindricAlgebra/DynamicSemantics.lean`.
 /-- DPL dref: projection function for variable n. -/
 def dref {E : Type*} (n : Nat) : Dref (Assignment E) E := λ g => g n
 
-/-- DPL extend is `Assignment.update`. -/
+/-- DPL extend is `Function.update`. -/
 abbrev extend {E : Type*} (g : Assignment E) (n : Nat) (e : E) : Assignment E :=
-  g.update n e
+  Function.update g n e
 
 theorem extend_at {E : Type*} (g : Assignment E) (n : Nat) (e : E) :
     dref n (extend g n e) = e := by simp [dref, extend]

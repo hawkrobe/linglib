@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Intensional.Rigidity
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 import Linglib.Semantics.Tense.GramTense
 import Linglib.Semantics.Context.Tower
 import Linglib.Fragments.English.Predicates.Verbal
@@ -66,13 +66,13 @@ abbrev interpSitVar {W Time : Type*} (n : ℕ) (g : SituationAssignment W Time) 
 /-- Modified situation assignment g[n -> s]. -/
 abbrev updateSitVar {W Time : Type*} (g : SituationAssignment W Time)
     (n : ℕ) (s : WorldTimeIndex W Time) : SituationAssignment W Time :=
-  g.update n s
+  Function.update g n s
 
 /-- Situation lambda abstraction: bind a situation variable. -/
 abbrev sitLambdaAbs {W Time α : Type*} (n : ℕ)
     (body : SituationAssignment W Time → α) :
     SituationAssignment W Time → WorldTimeIndex W Time → α :=
-  λ g s => body (g.update n s)
+  λ g s => body (Function.update g n s)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -161,13 +161,13 @@ instance {W Time : Type*}
 theorem sitVar_receives_binder_value {W Time : Type*}
     (g : SituationAssignment W Time) (n : ℕ) (s : WorldTimeIndex W Time) :
     interpSitVar n (updateSitVar g n s) = s :=
-  Assignment.update_at g n s
+  Function.update_self n s g
 
 theorem sitVar_other_unaffected {W Time : Type*}
     (g : SituationAssignment W Time) (n i : ℕ) (s : WorldTimeIndex W Time)
     (h : i ≠ n) :
     interpSitVar i (updateSitVar g n s) = interpSitVar i g :=
-  Assignment.update_ne g s h
+  Function.update_of_ne h s g
 
 
 -- ════════════════════════════════════════════════════════════════

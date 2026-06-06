@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 import Linglib.Core.WorldTimeIndex
 import Linglib.Semantics.Dynamic.DiscourseRef
 
@@ -252,7 +252,7 @@ def dynIntroduce {W Time : Type*}
     ∃ g s s',
       (g, s) ∈ c ∧
       s' ∈ gen s ∧
-      gs'.1 = g.update v s' ∧
+      gs'.1 = Function.update g v s' ∧
       gs'.2 = s' }
 
 /-- After `dynIntroduce gen v`, looking up `v` in the assignment always
@@ -266,7 +266,7 @@ theorem dynIntroduce_binds_current {W Time : Type*}
     gs.1 v = gs.2 := by
   unfold dynIntroduce at h
   obtain ⟨g, _, s', _, _, h_upd, h_eq⟩ := h
-  rw [h_upd, h_eq]; simp only [Assignment.update_at]
+  rw [h_upd, h_eq]; simp only [Function.update_self]
 
 /-- Every output entry of `dynIntroduce` has its current situation drawn
 from `gen` applied to some input situation. -/

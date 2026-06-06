@@ -217,7 +217,7 @@ theorem reconstruction_predicate
       g x =
     likes (mom x) x := by
   simp only [lambdaAbsG, momIntension, applyG, constDenot, interpPronoun,
-             update_same]
+             Function.update_self]
 
 /-- The reconstruction predicate is assignment-independent. -/
 theorem reconstruction_independent
@@ -232,7 +232,7 @@ theorem reconstruction_independent
               (interpPronoun n)) g₂ := by
   funext x
   simp only [lambdaAbsG, momIntension, applyG, constDenot, interpPronoun,
-             update_same]
+             Function.update_self]
 
 end BindingReconstruction
 
