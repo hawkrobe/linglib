@@ -33,7 +33,7 @@ and deictic uses (his §2.1.1); binding is the external β-operator
 
 Number values beyond singular/plural (dual, trial, …) and the non-sex-based
 surface genders contribute the vacuous cell here; the principled route is the
-`Number.fromUD`/`Features.Gender.Features.fromSurfaceGender`
+`Number.fromUD`/`Gender.Features.fromGender`
 bridges plus `ContainmentPairLike.toPair`, deferred until a study needs them.
 -/
 

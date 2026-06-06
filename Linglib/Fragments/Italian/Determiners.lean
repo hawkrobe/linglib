@@ -1,4 +1,4 @@
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Semantics.Quantification.Lexicon
 
 /-! # Italian Determiners (Quantifiers)
@@ -20,14 +20,13 @@ Italian quantifiers agree in gender and/or number with their NP:
 
 namespace Italian.Determiners
 
-open Features (SurfaceGender)
 open Semantics.Quantification.Lexicon
   (QuantifierEntry QForce Monotonicity Strength)
 
 /-- Italian quantifier entry: shared `QuantifierEntry` + gender. -/
 structure ItalianQuantifierEntry extends QuantifierEntry where
   /-- Gender agreement (none = invariant) -/
-  gender : Option SurfaceGender := none
+  gender : Option Gender := none
   deriving Repr
 
 /-- *ogni* — every (invariant, singular, universal). -/

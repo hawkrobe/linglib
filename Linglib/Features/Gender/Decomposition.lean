@@ -1,4 +1,5 @@
 import Mathlib.Data.Fintype.Card
+import Linglib.Features.ContainmentPair
 import Linglib.Features.Gender.Basic
 
 /-!
@@ -35,10 +36,12 @@ study can adopt or refute.
 * `SplitFeature` is φ-generic (its motivating mismatch, *committee*
   uF:SG × iF:PL, is a number value): it lives here until a second feature
   module consumes it, then hoists to a shared file.
-* The bivalent [±feminine, ±neuter] presentation ([sauerland-2003]) and its
-  `ContainmentPairLike` instance currently live in `Features/Gender.lean`
-  (`Features.Gender.Features`) and migrate here when `SurfaceGender`
-  consumers are swept to the root `Gender` type.
+* The bivalent [±feminine, ±neuter] presentation ([sauerland-2003]):
+  `Gender.Features`, a `ContainmentPairLike` label scheme for sex-based
+  three-gender systems — one edge of the φ-feature iso-web
+  (`Features/PhiKernel.lean`), parallel to `Person.Features` and
+  `Number.Features`. Its `no_fourth_gender` is a claim about this scheme,
+  not about gender writ large (Fula has 20 controller genders).
 * [hammerly-2019] rejects both interpretability schemes (masculine = bare
   GENDER node, no masculine feature; natural/arbitrary derived at LF, not
   represented) — a single-paper analysis, so it belongs in
@@ -47,6 +50,8 @@ study can adopt or refute.
 -/
 
 set_option autoImplicit false
+
+open Features (ContainmentPair ContainmentPairLike)
 
 namespace Gender
 
@@ -108,6 +113,113 @@ theorem IsHybrid.not_isNatural {s : SplitFeature V} (h : s.IsHybrid) :
   exact hne ((Option.some.inj hu').symm.trans (Option.some.inj hi'))
 
 end SplitFeature
+
+/-! ### The bivalent presentation: [±feminine, ±neuter]
+
+[sauerland-2003]'s decomposition of sex-based gender:
+**[±feminine]** (feminine and neuter are [+feminine]) and **[±neuter]**
+(only neuter is [+neuter]), with the containment [+neuter] → [+feminine]:
+neuter is the most specified gender (like singular for number, 1st for
+person) and masculine the least. The three well-formed combinations are the
+three genders of a sex-based system; the scheme parallels person
+[±author] ⊂ [±participant] and number [±atomic] ⊂ [±minimal] — all three are
+`ContainmentPairLike` presentations of the same skeleton
+(`Features/ContainmentPair.lean`). -/
+
+/-- Bivalent gender features: [±feminine, ±neuter] ([sauerland-2003]).
+
+    The three well-formed combinations yield the three sex-based genders:
+    neuter [+feminine, +neuter], feminine [+feminine, −neuter],
+    masculine [−feminine, −neuter]. -/
+structure Features where
+  /-- [+feminine]: referent triggers feminine (or neuter) agreement. -/
+  isFeminine : Bool
+  /-- [+neuter]: referent triggers neuter agreement. -/
+  isNeuter : Bool
+  deriving DecidableEq, Repr, Fintype
+
+/-- Neuter features: [+feminine, +neuter]. -/
+def neuterF : Features := ⟨true, true⟩
+
+/-- Feminine features: [+feminine, −neuter]. -/
+def feminineF : Features := ⟨true, false⟩
+
+/-- Masculine features: [−feminine, −neuter]. -/
+def masculineF : Features := ⟨false, false⟩
+
+/-- The `[±feminine, ±neuter]` decomposition is carrier-equivalent to the
+    containment pair: `outer` = feminine, `inner` = neuter — one edge of the
+    φ-feature iso-web (`Features/PhiKernel.lean`). -/
+def featuresEquiv : Features ≃ ContainmentPair where
+  toFun f := ⟨f.isFeminine, f.isNeuter⟩
+  invFun p := ⟨p.outer, p.inner⟩
+  left_inv := fun ⟨_, _⟩ => rfl
+  right_inv := fun ⟨_, _⟩ => rfl
+
+instance : ContainmentPairLike Features := .ofEquiv featuresEquiv
+
+/-- The three canonical gender values land on the three well-formed cells. -/
+@[simp] theorem neuter_is_maximal :
+    ContainmentPairLike.toPair neuterF = .maximal := rfl
+@[simp] theorem feminine_is_intermediate :
+    ContainmentPairLike.toPair feminineF = .intermediate := rfl
+@[simp] theorem masculine_is_minimal :
+    ContainmentPairLike.toPair masculineF = .minimal := rfl
+
+/-- Well-formedness: [+neuter] → [+feminine] — neuter entails feminine in
+    the feature geometry, inherited from `ContainmentPair.WellFormed`. -/
+abbrev Features.WellFormed (gf : Features) : Prop :=
+  ContainmentPairLike.WellFormed gf
+
+/-- No 4-way distinction *within this scheme* (inherited from
+    `ContainmentPairLike.no_four_way`) — a claim about the sex-based
+    bivalent presentation, not about gender systems writ large. -/
+theorem no_fourth_gender :
+    ∀ (a b c d : Features),
+      a.WellFormed → b.WellFormed → c.WellFormed → d.WellFormed →
+      a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False :=
+  fun a b c d ha hb hc hd =>
+    ContainmentPairLike.no_four_way a b c d ha hb hc hd
+
+@[simp] theorem neuter_wellFormed : neuterF.WellFormed := by decide
+@[simp] theorem feminine_wellFormed : feminineF.WellFormed := by decide
+@[simp] theorem masculine_wellFormed : masculineF.WellFormed := by decide
+
+/-- The filtered combination [−feminine, +neuter] is the only one that
+    violates containment. -/
+theorem illFormed_only : ¬ (⟨false, true⟩ : Features).WellFormed := by decide
+
+/-- Exactly 3 well-formed feature combinations (= 3 genders) — the carrier
+    count of the containment chain (`ContainmentPair.card_wellFormed`). -/
+theorem card_wellFormed :
+    Fintype.card {gf : Features // gf.WellFormed} = 3 := by decide
+
+/-- Containment: [+neuter] → [+feminine] for all well-formed features. -/
+theorem neuter_implies_feminine :
+    ∀ f : Features, f.WellFormed → f.isNeuter = true → f.isFeminine = true := by
+  decide
+
+/-- Map gender features to the comparative labels. -/
+def Features.toGender : Features → Option Gender
+  | ⟨true, true⟩   => some .neuter
+  | ⟨true, false⟩  => some .feminine
+  | ⟨false, false⟩ => some .masculine
+  | ⟨false, true⟩  => none  -- ill-formed
+
+/-- Map comparative labels to gender features (partial — only sex-based
+    labels have feature equivalents). -/
+def Features.fromGender : Gender → Option Features
+  | .neuter    => some neuterF
+  | .feminine  => some feminineF
+  | .masculine => some masculineF
+  | _          => none
+
+/-- Round-trip: `fromGender ∘ toGender = some` for all well-formed
+    features. -/
+theorem roundtrip_fromGender_toGender :
+    [neuterF, feminineF, masculineF].all
+      (λ f => f.toGender.bind Features.fromGender == some f) = true := by
+  decide
 
 /-! ### Kramer's gender calculus and its three-gender bound -/
 

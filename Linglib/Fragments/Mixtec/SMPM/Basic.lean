@@ -1,4 +1,4 @@
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Syntax.Pronoun.Basic
 
@@ -64,7 +64,7 @@ inductive Gender where
     Only fem/masc map directly; the remaining four genders
     (neutral, liquid, wooden, animal) are language-specific
     noun class distinctions without cross-linguistic surface equivalents. -/
-def Gender.toSurfaceGender : Gender → Features.SurfaceGender
+def Gender.toGender : Gender → _root_.Gender
   | .fem  => .feminine
   | .masc => .masculine
   | _     => .common  -- neutral/liq/wd/aml: no sex-based distinction
@@ -113,10 +113,10 @@ def Gender.cliticForm : Gender → String
 
 /-- Nonlocal (3rd person) clitic by gender ((5)). `number := none`: most
     nonlocal pronouns make no number distinction (*=rà* 'he, they (all-male
-    group)'); the API gender is derived via `Gender.toSurfaceGender`. -/
+    group)'); the API gender is derived via `Gender.toGender`. -/
 def cl3 (g : Gender) : PersonalPronoun :=
   { form := g.cliticForm, person := some .third,
-    gender := some g.toSurfaceGender, strength := some .clitic }
+    gender := some g.toGender, strength := some .clitic }
 
 /-- *=nà* — nonlocal plural, neutral ((5)). -/
 def cl3plNeutral : PersonalPronoun :=

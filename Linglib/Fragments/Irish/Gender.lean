@@ -22,7 +22,7 @@ def genderTypology : GenderProfile :=
     (assignmentFb := .semanticAndFormal)
     (agreementTargets := [.attributive, .personalPronoun])
     (semanticBases := [.sex])
-    (attestedSurfaceGenders := [.masculine, .feminine])
+    (attestedGenders := [.masculine, .feminine])
 
 theorem genderTypology_iso639 : genderTypology.iso639 = "gle" := rfl
 

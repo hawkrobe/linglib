@@ -1,4 +1,4 @@
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Typology.Gender
 
 /-!
@@ -18,7 +18,7 @@ of referent.
 
 The Fragment carries two empirical fields per entry:
 
-- `attestedGender : SurfaceGender` — the agreement-trigger fact
+- `attestedGender : Gender` — the agreement-trigger fact
   (verified against [butt-benjamin-2019] §1.2-1.3).
 - `isNaturalGender : Bool` — whether the gender is semantically
   motivated by the referent's biological sex. False for inanimates,
@@ -44,7 +44,6 @@ textbook-consensus genders documented in [butt-benjamin-2019].
 
 namespace Spanish.Gender
 
-open Features (SurfaceGender)
 
 -- ============================================================================
 -- § 1: Spanish Noun (theory-neutral schema)
@@ -57,7 +56,7 @@ structure SpanishNoun where
   form : String
   gloss : String
   /-- Empirical agreement-trigger fact ([butt-benjamin-2019]). -/
-  attestedGender : SurfaceGender
+  attestedGender : Gender
   /-- True iff the gender is semantically motivated by the referent's
       biological sex. False for inanimates, for non-natural-gender
       animals, and for the [butt-benjamin-2019] §1.2.11 common-gender
@@ -69,7 +68,7 @@ structure SpanishNoun where
 namespace SpanishNoun
 
 /-- Surface gender alias for ergonomic consumer access. -/
-abbrev gender (n : SpanishNoun) : SurfaceGender := n.attestedGender
+abbrev gender (n : SpanishNoun) : Gender := n.attestedGender
 
 end SpanishNoun
 
@@ -171,7 +170,7 @@ def genderTypology : GenderProfile :=
     (rawGenderCount := 2)
     (agreementTargets := [.attributive, .predicate, .personalPronoun])
     (semanticBases := [.sex])
-    (attestedSurfaceGenders := [.masculine, .feminine])
+    (attestedGenders := [.masculine, .feminine])
 
 theorem genderTypology_iso639 : genderTypology.iso639 = "spa" := rfl
 

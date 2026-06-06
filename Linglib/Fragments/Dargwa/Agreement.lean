@@ -1,6 +1,6 @@
 import Linglib.Features.Prominence
 import Linglib.Data.UD.Basic
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 
 /-!
 # Dargwa (Tanti) Agreement [sumbatova-2021]
@@ -58,7 +58,7 @@ inductive PlGender where
   deriving DecidableEq, Repr
 
 /-- Bridge to cross-linguistic surface gender. -/
-def SgGender.toSurfaceGender : SgGender → Features.SurfaceGender
+def SgGender.toGender : SgGender → Gender
   | .masculine => .masculine
   | .feminine  => .feminine
   | .neuter    => .neuter

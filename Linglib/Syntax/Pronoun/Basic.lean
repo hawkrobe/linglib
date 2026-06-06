@@ -3,7 +3,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Features.Case
 import Linglib.Features.Register
 import Linglib.Features.Prominence
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Features.Clusivity
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Person.Decomposition
@@ -122,7 +122,7 @@ structure Pronoun where
   /-- Grammatical gender. For 3rd-person pronouns in gendered languages
       (French il/elle, German er/sie/es, …). 1st/2nd-person pronouns and
       languages without pronominal gender leave this `none`. -/
-  gender : Option Features.SurfaceGender := none
+  gender : Option Gender := none
   /-- Native script form (hangul, kanji, Devanagari, …). -/
   script : Option String := none
   /-- Pronoun type (UD `PronType`): the pro-form's lexical kind — personal (`Prs`),
@@ -175,7 +175,6 @@ structure PersonalPronoun extends Pronoun where
 namespace Pronoun
 
 open Features.Register (Level)
-open Features (SurfaceGender)
 
 /-! ### Realization as a `Word` -/
 
@@ -187,7 +186,7 @@ def toWord (p : Pronoun) : Word :=
   { form := p.form, cat := .PRON,
     features := { person := p.person.map Person.toUD, number := p.number,
                   case_ := p.case_,
-                  gender := p.gender.bind (·.toUDGender),
+                  gender := p.gender.bind (·.toUD),
                   -- carry the binding-relevant morphology so a projected pro-form's class is
                   -- read off its own features, not recovered by surface-form lookup
                   reflex := p.bindingClass == some .reflexive,

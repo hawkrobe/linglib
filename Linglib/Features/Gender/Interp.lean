@@ -36,10 +36,9 @@ lexical gender are partially distinct facets ([hammerly-2019]; also
   of an inference is distinct from a trivial one — that distinction *is*
   [sudo-spathas-2020]'s typology. `InferenceLocus` is its Boolean shadow,
   derived by `GenderInferences.locus`, never stipulated separately.
-* The discourse-knowledge layer (`Features.GenderInfo`, known/unspecified)
-  currently lives in `Features/Gender.lean` and migrates here when
-  `SurfaceGender` consumers are swept to the root `Gender` type; its
-  re-grounding target is this typology.
+* `GenderInfo` is the discourse-knowledge layer (what participants know
+  about a referent's gender), distinct from both dimensions of lexical
+  content; its eventual re-grounding target is this typology.
 -/
 
 set_option autoImplicit false
@@ -135,3 +134,37 @@ end GenderInferences
 end Inferences
 
 end Gender
+
+/-! ### Discourse-level gender knowledge -/
+
+/-- Gender knowledge state for a discourse referent.
+
+    Distinct from the comparative `Gender` label a noun's agreement class
+    carries: `GenderInfo` describes what the discourse participants know or
+    assume about a referent's gender. Motivated by [arnold-2026]'s
+    observation that singular *they* is licensed by two inversely correlated
+    pragmatic conditions: one requiring an underspecified discourse
+    representation, the other requiring knowledge that the referent's
+    pronouns are *they/them*. See also [newman-1992], [newman-1998], and
+    [camilliere-etal-2021]. -/
+inductive GenderInfo where
+  /-- Gender is known to discourse participants and matches a
+      morphosyntactic agreement class.
+      Example: "my sister" → `.known .feminine` -/
+  | known : Gender → GenderInfo
+  /-- Gender is unknown, irrelevant, or not elaborated in the discourse.
+      Example: "every student", "someone", "the clerk" (in passing). -/
+  | unspecified : GenderInfo
+  deriving DecidableEq, Repr, BEq
+
+/-- Lift a comparative gender label to discourse-level knowledge. -/
+def Gender.toGenderInfo (g : Gender) : GenderInfo := .known g
+
+/-- Extract the gender label, if known. -/
+def GenderInfo.toGender : GenderInfo → Option Gender
+  | .known g => some g
+  | .unspecified => none
+
+/-- Round-trip: known gender survives the coarsening. -/
+theorem GenderInfo.roundtrip_known (g : Gender) :
+    g.toGenderInfo.toGender = some g := rfl
