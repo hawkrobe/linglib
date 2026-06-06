@@ -2320,7 +2320,7 @@ import Linglib.Semantics.Composition.WriterMonad
 import Linglib.Semantics.Composition.SetMonad
 import Linglib.Semantics.Composition.Applicative
 import Linglib.Semantics.Composition.Effects
-import Linglib.Semantics.Composition.MaybeMonad
+
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Composition.Coercion
 import Linglib.Semantics.Entailment.Polarity
