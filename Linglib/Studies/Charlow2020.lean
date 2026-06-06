@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Functor
-import Linglib.Semantics.Composition.Applicative
+import Linglib.Studies.Charlow2018
 import Linglib.Semantics.Composition.TypeShifting
 
 /-!
@@ -33,7 +33,7 @@ pied-piping*, §4.3.
 * monad laws (Left/Right Identity + ASSOCIATIVITY) inherited from
   mathlib's `LawfulMonad Set`
 * `existsClosure` — Charlow's `↓` (eq. 19): `m^↓ := ⊤ ∈ m`
-* bridges to `Applicative.lean` (`setPure`/`setAp`): the applicative
+* bridges to `Studies/Charlow2018.lean` (`setPure`/`setAp`): the applicative
   presentation is strictly weaker than the monad
 * `lift_eq_A_eta` — LIFT decomposition (eq. 28):
   `A ∘ η = LIFT` on entities (Partee 1986's triangle, extended)
@@ -66,7 +66,7 @@ set_option autoImplicit false
 
 namespace Charlow2020
 
-open Semantics.Composition.Applicative (setPure setAp)
+open Charlow2018 (setPure setAp)
 
 /-! ## Part I — Apparatus -/
 
@@ -158,7 +158,7 @@ extensional `∃ p, m p ∧ p` (existence of a true member), avoiding
 equal to `True`. -/
 def existsClosure (m : Prop → Prop) : Prop := ∃ p, m p ∧ p
 
-/-! ### §4 Bridge to `Composition/Applicative.lean`
+/-! ### §4 Bridge to `Studies/Charlow2018.lean`
 
 The set applicative (`setPure`, `setAp`) — point-wise composition — is
 strictly weaker than the monadic bind: the former is derivable from the
@@ -170,7 +170,7 @@ section ApplicativeBridge
 
 variable {A B : Type}
 
-/-- `eta` and `setPure` (from `Applicative.lean`) are the same operation. -/
+/-- `eta` and `setPure` (from `Studies/Charlow2018.lean`) are the same operation. -/
 theorem eta_eq_setPure (x : A) : eta x = setPure x := rfl
 
 /-- Standard monad-to-applicative derivation:
@@ -179,7 +179,7 @@ agrees with the derived applicative from the set monad. -/
 theorem setAp_from_setBind (m : Set (A → B)) (n : Set A) :
     setAp m n = setBind m (fun f => setBind n (fun x => eta (f x))) := by
   ext b
-  simp only [Semantics.Composition.Applicative.mem_setAp, mem_setBind, mem_eta]
+  simp only [Charlow2018.mem_setAp, mem_setBind, mem_eta]
   aesop
 
 end ApplicativeBridge
