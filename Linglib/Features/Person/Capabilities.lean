@@ -50,3 +50,31 @@ theorem compatible_of_none {a : α} {b : β} (h : personOf a = none) :
   exact absurd hp (by simp)
 
 end HasPerson
+
+/-- φ-compatibility entails person compatibility: the `HasPerson` mixin
+    never diverges from the unification-based agreement engine
+    (`UD.MorphFeatures.compatible`) — the person analogue of
+    `UD.MorphFeatures.compatible_hasNumber`. -/
+theorem UD.MorphFeatures.compatible_hasPerson {f1 f2 : UD.MorphFeatures}
+    (h : f1.compatible f2 = true) :
+    HasPerson.Compatible f1 f2 := by
+  intro pa pb ha hb
+  have hp : (f1.person.isNone || f2.person.isNone || f1.person == f2.person)
+      = true := by
+    unfold UD.MorphFeatures.compatible at h
+    simp only [Bool.and_eq_true] at h
+    tauto
+  simp only [HasPerson.personOf] at ha hb
+  rcases h1 : f1.person with _ | u1
+  · rw [h1] at ha
+    exact absurd ha (by simp)
+  · rcases h2 : f2.person with _ | u2
+    · rw [h2] at hb
+      exact absurd hb (by simp)
+    · rw [h1] at ha
+      rw [h2] at hb
+      rw [h1, h2] at hp
+      simp only [Option.isNone_some, Bool.false_or, beq_iff_eq,
+        Option.some.injEq] at hp
+      simp only [Option.map_some, Option.some.injEq] at ha hb
+      rw [← ha, ← hb, hp]

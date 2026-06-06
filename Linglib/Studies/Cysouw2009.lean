@@ -656,19 +656,33 @@ inductive PersonStage where
   | P4  -- minimal inclusive vs augmented inclusive distinguished
   deriving DecidableEq, Repr
 
-/-- Classify a paradigm's person differentiation stage. -/
+/-- Classify a paradigm's person differentiation stage, per the Fig 10.9
+    tree as instantiated by Fig 10.7's columns: the only-inclusive and
+    inclusive/exclusive types both sit at P3 (an inclusive–exclusive
+    opposition is present either way); paradigms with an undifferentiated
+    first person complex (no-we, unified-we) are P2 when the non-first
+    non-singulars are differentiated and P1 under vertical homophony
+    (P0 when the singulars are undifferentiated too). (Corrected against
+    the source: a previous revision placed unified-we at P1 and
+    only-inclusive at P2, one stage below Fig 10.7's columns.) -/
 def ParadigmaticStructure.personStage (s : ParadigmaticStructure) : PersonStage :=
   match s.firstPersonComplexType with
-  | .Pb => if s.singularType == .Se then .P0 else .P1
-  | .Pa => .P1  -- all non-singular first person unified
-  | .Pc => .P2  -- inclusive specialized but not exclusive
+  | .Pa | .Pb =>
+    if s.homophonous .secondGrp .thirdGrp then
+      if s.singularType == .Se then .P0 else .P1
+    else .P2
+  | .Pc => .P3  -- inclusive specialized: incl/excl opposition present
   | .Pd => .P3  -- inclusive vs exclusive
   | .Pe => .P4  -- min.incl vs aug.incl vs excl
 
 theorem ilocano_P4 : ilocano.personStage = .P4 := by decide
 theorem mandara_P3 : mandara.personStage = .P3 := by decide
-theorem english_pron_P1 : englishPronouns.personStage = .P1 := by decide
-theorem piraha_P1 : piraha.personStage = .P1 := by decide
+/-- English pronouns are unified-we with differentiated *you*/*they*:
+    column P2 of Fig 10.7. -/
+theorem english_pron_P2 : englishPronouns.personStage = .P2 := by decide
+/-- Pirahã is no-we with non-singular reference via the (distinct)
+    singular forms: P2, with Fig 10.7's no-we column. -/
+theorem piraha_P2 : piraha.personStage = .P2 := by decide
 
 -- ============================================================================
 -- §18: Cognitive Map Summary
