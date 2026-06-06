@@ -1,4 +1,4 @@
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Core.Scales.Scale
 import Mathlib.Algebra.Order.Archimedean.Basic
 import Mathlib.Algebra.Order.Field.Rat
@@ -7,7 +7,7 @@ import Mathlib.Algebra.Order.Field.Rat
 # Mereology ↔ Scale Bridge
 [champollion-2017] [kennedy-2007] [krifka-1989] [krifka-1998] [rouillard-2026]
 
-Cross-pillar connection between `Core/Mereology.lean` (CUM/QUA/ExtMeasure)
+Cross-pillar connection between `Core/Order/Mereology.lean` (CUM/QUA/ExtMeasure)
 and `Core/Scale.lean` (ComparativeScale/Boundedness/MIP/degree properties).
 
 The two pillars are independently motivated:
@@ -141,7 +141,7 @@ theorem singleton_qua_closed (n : ℚ) :
   ⟨singleton_qua n, rfl⟩
 
 /-- ExtMeasure singletons `{x | μ(x) = n}` are QUA and correspond to
-    closed scales. Combines `extMeasure_qua'` (mereological) with the
+    closed scales. Combines `extMeasure_qua` (mereological) with the
     boundedness annotation (scale-theoretic).
 
     This is the measure-theoretic version of `singleton_qua_closed`:
@@ -150,7 +150,7 @@ theorem singleton_qua_closed (n : ℚ) :
 theorem extMeasure_singleton_closed {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} [hμ : ExtMeasure α μ] (n : ℚ) :
     QUA (fun x => μ x = n) ∧ quaBoundedness = Core.Scale.Boundedness.closed :=
-  ⟨extMeasure_qua' n, rfl⟩
+  ⟨extMeasure_qua n, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 4. CUM Sum Extensibility

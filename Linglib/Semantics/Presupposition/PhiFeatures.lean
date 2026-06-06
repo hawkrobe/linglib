@@ -1,4 +1,4 @@
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Features.ContainmentPair
 import Linglib.Features.Number.Decomposition
 import Linglib.Features.Person.Decomposition

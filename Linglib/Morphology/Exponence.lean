@@ -161,7 +161,7 @@ def singularNounRule {α : Type} (atomPred : α → Bool) :
 /-- Plural rule for nouns (regular: append -s).
 
     Semantics: `pred ↦ closurePred pred ∧ ¬Atom`
-    where `closurePred` is Link's algebraic closure (from `Core/Mereology.lean`).
+    where `closurePred` is Link's algebraic closure (from `Core/Order/Mereology.lean`).
 
     This makes "dogs" true of plural individuals (sums of dogs). -/
 def pluralNounRule {α : Type}

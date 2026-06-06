@@ -1,4 +1,4 @@
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Typology.ClassifierSystem
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
 import Linglib.Features.MassCount
@@ -10,7 +10,7 @@ import Linglib.Features.MassCount
 Compositional interpretation of the nominal extended projection
 via mereological predicates. Bridges the syntactic spine
 N(F0) → n(F1) → Q(F2) → Num(F3) → D(F4) from `ExtendedProjection`
-to the CUM/QUA distinction from `Core/Mereology`.
+to the CUM/QUA distinction from `Core/Order/Mereology`.
 
 ## Core Thesis
 
@@ -504,7 +504,7 @@ A full formal comparison belongs in `Theories/Comparisons/`.
 /-! ### Bridge to [krifka-1998] / Mereology
 
 Borer's individuation connects directly to Krifka's event mereology
-already formalized in `Core/Mereology`:
+already formalized in `Core/Order/Mereology`:
 
 - `Div` on the nominal domain produces QUA predicates
 - QUA nominal arguments create telic (QUA) VPs via `qua_pullback`
@@ -513,7 +513,7 @@ already formalized in `Core/Mereology`:
   is QUA, and QUA pulls back through the eat-theme homomorphism
 
 The composition `qua_pullback (θ : Event → Entity) (div_qua P)` is
-already supported by `Core/Mereology` §8.
+already supported by `Core/Order/Mereology` §8.
 -/
 
 end Borer2005

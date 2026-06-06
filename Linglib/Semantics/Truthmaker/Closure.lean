@@ -12,7 +12,7 @@ satisfy three closure conditions:
 - **Regular (`P^*`)**: both closed and convex.
 
 Closures are not redefined here — they are imported from
-`Core/Mereology.lean`:
+`Core/Order/Mereology.lean`:
 
 - `Mereology.AlgClosure P` is `P^⊔` (Jago: closed under fusion).
 - `Mereology.algClosureOp : ClosureOperator (α → Prop)` bundles it.
@@ -93,7 +93,7 @@ def IsRegular (p : TMProp S) : Prop := IsClosed p ∧ IsConvex p
 
 /-- Regular closure: convexify the algebraic closure.
     `regularClose p = (p^⊔)^∼` — composition of the two closure
-    operators of `Core/Mereology.lean`. -/
+    operators of `Core/Order/Mereology.lean`. -/
 def regularClose (p : TMProp S) : TMProp S :=
   convexClose (AlgClosure p)
 

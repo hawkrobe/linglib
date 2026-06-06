@@ -1,5 +1,5 @@
 import Linglib.Core.Mereotopology
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Studies.Borer2005
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Studies.Filip2012
@@ -106,7 +106,7 @@ structure Recipe (α : Type*) (n : ℕ) where
     is 5:2:1.5 whether made with 50ml, 20ml, 15ml or with 100ml,
     40ml, 30ml of the respective ingredients.
 
-    Uses `ExtMeasure.μ` from `Core/Mereology.lean`. -/
+    Uses `ExtMeasure.μ` from `Core/Order/Mereology.lean`. -/
 def RatioHolds {n : ℕ} (μ : α → ℚ) (recipe : Recipe α n)
     (parts : Fin n → α) : Prop :=
   ∀ i j, μ (parts i) * recipe.ratios j = μ (parts j) * recipe.ratios i

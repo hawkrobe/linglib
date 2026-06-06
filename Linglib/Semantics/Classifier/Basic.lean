@@ -1,4 +1,4 @@
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Typology.ClassifierSystem
 import Linglib.Semantics.Plurality.Algebra
 
@@ -8,7 +8,7 @@ import Linglib.Semantics.Plurality.Algebra
 
 Unified compositional semantics for classifier constructions, connecting
 the typological vocabulary in `Typology` to the mereological
-infrastructure in `Core.Mereology` and the materialization homomorphism
+infrastructure in `Mereology` and the materialization homomorphism
 in `Semantics.Plurality.Algebra`.
 
 ## Two Semantic Strategies

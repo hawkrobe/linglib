@@ -1,5 +1,5 @@
 import Linglib.Semantics.Quantification.DomainRestriction
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -126,7 +126,7 @@ def heightToDDRP {E : Type*} (zone : E → VerticalHeight) : HeightDDRP E where
 
     ⟦arc⟧ = λx: ¬Atom(x). x
 
-    This uses `Mereology.Atom` from `Core/Mereology.lean`. The at-issue
+    This uses `Mereology.Atom` from `Core/Order/Mereology.lean`. The at-issue
     content is the identity — arc contributes only a presupposition, not
     assertoric content. -/
 def arcPresup (E : Type*) [PartialOrder E] : PrProp E where
