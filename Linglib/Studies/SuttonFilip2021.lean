@@ -72,7 +72,8 @@ lacks one, counts everything — cf. `Grimm2018.yudjaClassify`).
 * `MassCount` records the *outcome* of categorization
   (`Categorization.massCount`); the `[±O, ±S]` features are its analysis.
 * The cluster/MSSC content of granular `baspred` frames is [grimm-2012]'s
-  mereotopology — `Core/Mereotopology.lean`.
+  mereotopology ([casati-varzi-1999] self-connection), not formalized
+  here.
 * Their counting condition (cardinality only over disjoint bases, their
   (A1), after [landman-2011]'s overlap thesis) is the semantic ground for why
   countability classes, not `Number` values, carry the count/mass

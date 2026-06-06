@@ -43,7 +43,7 @@ open Set
 
     Reflexivity (`a ≤ a`), antisymmetry, and transitivity of dominance
     are inherited from `PartialOrder` and are not restipulated here. -/
-structure TreeOrder (Node : Type) [PartialOrder Node] where
+structure TreeOrder (Node : Type*) [PartialOrder Node] where
   /-- The set of nodes that belong to this tree. -/
   nodes : Set Node
   /-- The designated root node. -/
@@ -61,7 +61,7 @@ structure TreeOrder (Node : Type) [PartialOrder Node] where
     Definitionally equal to `<` on the underlying partial order via
     `lt_iff_le_and_ne`, but kept as a named `And` so destructuring with
     `.1`/`.2` works in proofs. -/
-def TreeOrder.properDom {Node : Type} [PartialOrder Node]
+def TreeOrder.properDom {Node : Type*} [PartialOrder Node]
     (_T : TreeOrder Node) (a b : Node) : Prop :=
   a ≤ b ∧ a ≠ b
 
@@ -69,7 +69,7 @@ def TreeOrder.properDom {Node : Type} [PartialOrder Node]
     ([barker-pullum-1990] Definition 2).
 
     `UB(a, P) = {b | b properly dominates a ∧ b ∈ P}`. -/
-def upperBounds {Node : Type} [PartialOrder Node]
+def upperBounds {Node : Type*} [PartialOrder Node]
     (T : TreeOrder Node) (a : Node) (P : Set Node) : Set Node :=
   {b | T.properDom b a ∧ b ∈ P}
 
