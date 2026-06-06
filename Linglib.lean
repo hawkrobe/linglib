@@ -330,7 +330,6 @@ import Linglib.Core.Scales.EpistemicScale.CancellationFin4
 import Linglib.Core.Scales.EpistemicScale.Completeness
 import Linglib.Core.Scales.EpistemicScale.Representability
 import Linglib.Core.Order.Mereology
-import Linglib.Core.Mereotopology
 import Linglib.Core.Scales.MereoDim
 import Linglib.Semantics.Attitudes.ContentIndividual
 import Linglib.Core.Agent.BToM

@@ -1,5 +1,6 @@
 import Linglib.Core.Order.TreePath
 import Linglib.Core.Order.Tree
+import Mathlib.Algebra.Free
 
 /-!
 # `Branching`: the rose-tree interface
@@ -134,11 +135,22 @@ def size (t : T) : Nat :=
 termination_by sizeOf t
 decreasing_by exact FiniteBranching.sizeOf_children hc
 
+/-- Attach-free unfolding of `size`, for concrete computation. -/
+theorem size_def (t : T) :
+    size t = 1 + ((children t).map size).sum := by
+  rw [size, List.attach_map_val]
+
 /-- All subtrees including self, pre-order. -/
 def subtrees (t : T) : List T :=
   t :: (children t).attach.flatMap (fun ⟨c, hc⟩ => subtrees c)
 termination_by sizeOf t
 decreasing_by exact FiniteBranching.sizeOf_children hc
+
+/-- Attach-free unfolding of `subtrees`, for concrete computation. -/
+theorem subtrees_def (t : T) :
+    subtrees t = t :: (children t).flatMap subtrees := by
+  rw [subtrees]
+  simp [List.flatMap_def]
 
 theorem self_mem_subtrees (t : T) : t ∈ subtrees t := by
   rw [subtrees]; exact List.mem_cons_self ..
@@ -179,6 +191,34 @@ def yield (t : T) : List W :=
 termination_by sizeOf t
 decreasing_by exact FiniteBranching.sizeOf_children hc
 
+/-- Attach-free unfolding of `yield`, for concrete computation. -/
+theorem yield_def (t : T) :
+    yield t = (content? t).toList ++ (children t).flatMap yield := by
+  rw [yield]
+  simp [List.flatMap_def]
+
 end Branching
+
+/-! ### Instance: `FreeMagma`
+
+Mathlib's free magma is the binary rose tree (bare phrase structure in
+the Minimalist reading); the instance lives here because mathlib types
+take their instances in the class's home file. The bespoke
+`FreeMagma.toTree` bridge in `Syntax/Tree/Basic.lean` becomes one of
+two routes to the position machinery — this instance is the direct one. -/
+
+instance {α : Type*} : Branching (FreeMagma α) where
+  children
+    | .of _ => []
+    | .mul l r => [l, r]
+
+instance {α : Type*} : FiniteBranching (FreeMagma α) where
+  sizeOf_children {c t} hc := by
+    cases t with
+    | of _ => simp [Branching.children] at hc
+    | mul l r =>
+      simp only [Branching.children, List.mem_cons, List.not_mem_nil, or_false] at hc
+      have hmul : sizeOf (FreeMagma.mul l r) = 1 + sizeOf l + sizeOf r := rfl
+      rcases hc with rfl | rfl <;> omega
 
 end Core.Order
