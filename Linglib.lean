@@ -115,7 +115,7 @@ import Linglib.Semantics.Questions.Partition.Lattice
 import Linglib.Semantics.Questions.Partition.Cells
 import Linglib.Semantics.Questions.Partition.Binary
 import Linglib.Semantics.Questions.Partition.Negativity
-import Linglib.Phenomena.Negation.ExpletiveNegation
+import Linglib.Typology.Negation.ExpletiveNegation
 import Linglib.Features.Polarity
 import Linglib.Phenomena.Polarity.PolarityPartition
 import Linglib.Features.PropertyDomain
@@ -1577,7 +1577,6 @@ import Linglib.Studies.AlonsoOvalleMenendezBenito2010
 import Linglib.Studies.AlonsoOvalleRoyer2024
 import Linglib.Studies.KratzerShimoyama2002
 import Linglib.Phenomena.Negation.Basic
-import Linglib.Fragments.Italian.ExpletiveNegation
 import Linglib.Studies.JinKoenig2021
 import Linglib.Studies.Rett2026
 import Linglib.Studies.Tsiakmakis2025

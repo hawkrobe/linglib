@@ -1,5 +1,5 @@
 import Linglib.Typology.Negation
-import Linglib.Phenomena.Negation.ExpletiveNegation
+import Linglib.Typology.Negation.ExpletiveNegation
 
 /-!
 # Zarma-Sonrai: Negation and Expletive Negation Markers
@@ -180,7 +180,7 @@ def enNegatorForAspect : ENAspect → String
 theorem fear_uses_ipfv_neg : enNegatorForAspect .ipfv = "si" := rfl
 theorem delay_uses_pfv_neg : enNegatorForAspect .pfv = "batu" := rfl
 
-open Phenomena.Negation.ExpletiveNegation (ENBlockingReason)
+open Typology.Negation (ENBlockingReason)
 
 /-- Why WITHOUT and TOO…TO do not trigger EN in Zarma-Sonrai.
 
