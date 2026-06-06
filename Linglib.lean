@@ -12,7 +12,7 @@ import Linglib.Features.Gender.Capabilities
 import Linglib.Features.Gender.Decomposition
 import Linglib.Features.Gender.Interp
 import Linglib.Features.Gender.Resolve
-import Linglib.Core.Valence
+import Linglib.Features.Complementation
 import Linglib.Data.UD.Basic
 import Linglib.Morphology.Unification
 import Linglib.Typology.NegativeConcord
