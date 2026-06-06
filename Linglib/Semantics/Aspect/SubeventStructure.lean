@@ -45,7 +45,7 @@ consumable by IMPF/PRFV/PERF. Key results:
 
 namespace Semantics.Aspect.SubeventStructure
 
-open Core.Time
+open Core.Order
 open Features
 
 /-! ### Subevent Phases -/

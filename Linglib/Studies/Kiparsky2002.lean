@@ -1,7 +1,7 @@
 import Linglib.Semantics.Aspect.SubeventStructure
 import Linglib.Semantics.Aspect.Basic
-import Linglib.Core.Time.Interval.Basic
-import Linglib.Core.Time.Reichenbach
+import Linglib.Core.Order.Interval
+import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Tense.Compositional
 
 /-!
@@ -60,8 +60,8 @@ files consume it). Verified against the Kiparsky 2002 PDF: the
 
 namespace Kiparsky2002
 
-open Core.Time
-open Core.Time.Reichenbach
+open Core.Order
+open Semantics.Tense.Reichenbach
 open Features
 open Semantics.Aspect
 open Semantics.Aspect.SubeventStructure

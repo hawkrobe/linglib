@@ -56,8 +56,8 @@ open Features
 open Semantics.Tense.TemporalConnectives
 open English.TemporalExpressions
 open Phenomena.TemporalConnectives.AspectInteractionData
-open Core.Time
-open Core.Time.Interval
+open Core.Order
+open Core.Order.Interval
 
 -- ============================================================================
 -- § 1: Telicity Sensitivity Pattern

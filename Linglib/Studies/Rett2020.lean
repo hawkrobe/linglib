@@ -42,8 +42,8 @@ linguistically. *after* and *while* are not ambidirectional.
 
 namespace Semantics.Tense.TemporalConnectives
 
-open Core.Time
-open Core.Time.Interval
+open Core.Order
+open Core.Order.Interval
 open Features
 open Features.ChangeOfState
 open Core.Scale (maxOnScale isAmbidirectional maxOnScale_singleton
@@ -362,8 +362,8 @@ Scenarios 7–10 verify [heinamaki-1974] Chs. 6, 8, 9 for *since*, *by*, *till*.
 
 namespace Rett2020.Examples
 
-open Core.Time
-open Core.Time.Interval
+open Core.Order
+open Core.Order.Interval
 open Semantics.Tense.TemporalConnectives
 
 -- ============================================================================

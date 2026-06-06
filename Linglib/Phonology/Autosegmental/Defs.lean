@@ -1,4 +1,4 @@
-import Linglib.Core.Time.Interval.Basic
+import Linglib.Core.Order.Interval
 import Linglib.Phonology.Featural.Features
 import Linglib.Phonology.Featural.Geometry
 import Mathlib.Data.Set.Pairwise.Basic
@@ -212,7 +212,7 @@ associations produce a chain melody₂.finish < melody₁.start ≤ timing₁.fi
 < timing₂.start ≤ melody₂.finish — a contradiction. Crossing is therefore
 logically impossible for valid associations.
 
-This section formalizes the derivation using `Core.Time.Interval` for
+This section formalizes the derivation using `Core.Order.Interval` for
 temporal intervals and its `precedes`/`overlaps` relations.
 -/
 
@@ -220,7 +220,7 @@ section NoCrossing
 
 variable {T : Type*} [LinearOrder T]
 
-open Core.Time (Interval)
+open Core.Order (Interval)
 
 /-- A position on an autosegmental tier, occupying a temporal interval. -/
 structure TierPosition (T : Type*) [LinearOrder T] where

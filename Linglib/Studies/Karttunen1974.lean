@@ -42,8 +42,8 @@ punctual form is morphologically *before*, confirming Karttunen's analysis.
 
 namespace Semantics.Tense.TemporalConnectives
 
-open Core.Time
-open Core.Time.Interval
+open Core.Order
+open Core.Order.Interval
 
 variable {Time : Type*} [LinearOrder Time]
 

@@ -40,7 +40,7 @@ namespace Semantics.Tense.TenseAspectComposition
 
 open Core (WorldTimeIndex)
 
-open Core.Time
+open Core.Order
 open Semantics.Aspect
 
 variable {W Time : Type*} [LinearOrder Time]

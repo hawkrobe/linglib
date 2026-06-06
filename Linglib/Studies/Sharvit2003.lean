@@ -1,5 +1,5 @@
 import Linglib.Data.Examples.Schema
-import Linglib.Core.Time.Reichenbach
+import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Tense.Basic
 
 /-!
@@ -44,7 +44,7 @@ contrast as separate Lean defs would be vacuous.
 
 namespace Sharvit2003
 
-open Core.Time.Reichenbach
+open Semantics.Tense.Reichenbach
 open Semantics.Tense
 open Data.Examples (LinguisticExample)
 

@@ -1,5 +1,5 @@
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Core.Time.Reichenbach
+import Linglib.Semantics.Tense.Reichenbach
 import Linglib.Semantics.Context.Basic
 import Linglib.Semantics.Tense.Basic
 
@@ -38,7 +38,7 @@ Tenses are presupposition triggers anchored to π:
 
 namespace Semantics.Tense.Perspective
 
-open Core.Time.Reichenbach
+open Semantics.Tense.Reichenbach
 open Semantics.Presupposition
 open Semantics.Context (KContext)
 open Semantics.Tense

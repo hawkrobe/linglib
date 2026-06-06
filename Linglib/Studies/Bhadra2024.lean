@@ -230,7 +230,6 @@ theorem pc_roots_allow_restitutive_again :
 
 section CompositionalVRO
 
-open Core.Time
 
 variable {Entity State Time : Type*} [LinearOrder Time]
 
@@ -553,7 +552,6 @@ theorem break_end_to_end :
 
 section CompositionalExamples
 
-open Core.Time
 /-- VRO for "fold": PFC verb with multi-membered outcome set.
     The parchment can end up in any of several states after folding.
     Outcome set = {slightlyCreased, folded, tightlyFolded} (3 members).
@@ -653,7 +651,6 @@ end CompositionalExamples
 
 section StressTests
 
-open Core.Time
 /-- Event from t=0 to t=5 (the base event, e.g. folding). -/
 private def ev₁ : Event ℤ where
   runtime := ⟨0, 5, by omega⟩

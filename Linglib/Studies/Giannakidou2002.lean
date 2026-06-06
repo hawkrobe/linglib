@@ -66,8 +66,8 @@ strict/non-strict distinction and the non-strict version connects cleanly to
 
 namespace Giannakidou2002
 
-open Core.Time
-open Core.Time.Interval
+open Core.Order
+open Core.Order.Interval
 open Semantics.Aspect
 open Semantics.Tense.TemporalConnectives
 

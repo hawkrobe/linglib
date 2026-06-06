@@ -34,7 +34,6 @@ situation-dependent types natively, with backward-compat wrappers.
 namespace Semantics.Attitudes.SituationDependent
 
 open Core (WorldTimeIndex)
-open Core.Time
 open Semantics.Attitudes.Doxastic
   (Veridicality DoxasticPredicate AccessRel boxAt veridicalityHolds)
 

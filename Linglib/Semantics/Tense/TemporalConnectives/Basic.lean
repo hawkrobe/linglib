@@ -1,5 +1,5 @@
 import Linglib.Core.Scales.Scale
-import Linglib.Core.Time.Interval.Basic
+import Linglib.Core.Order.Interval
 
 /-!
 # Temporal Connective Infrastructure
@@ -27,8 +27,8 @@ Level 1: Set Time (point sets)
 
 namespace Semantics.Tense.TemporalConnectives
 
-open Core.Time
-open Core.Time.Interval
+open Core.Order
+open Core.Order.Interval
 
 variable {Time : Type*} [LinearOrder Time]
 

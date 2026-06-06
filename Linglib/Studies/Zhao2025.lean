@@ -38,7 +38,7 @@ namespace Zhao2025
 
 open Features
 open Mandarin.AspectComparison
-open Core.Time
+open Semantics.Aspect
 
 /-- `le` requires anti-AtomDist (a lexical-entry fact). -/
 theorem le_requires_anti_atomDist : le.requiresAntiAtomDist = true := rfl

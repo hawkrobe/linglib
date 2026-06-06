@@ -18,7 +18,7 @@ Generic mereological definitions (`CUM`, `DIV`, `QUA`, `Atom`, `AlgClosure`,
 
 namespace Semantics.Events.CEM
 
-open Core.Time
+open Core.Order
 open Features
 open _root_.Mereology
 

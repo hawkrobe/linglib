@@ -1,5 +1,5 @@
 import Linglib.Semantics.Causation.Psych
-import Linglib.Core.Time.Interval.Basic
+import Linglib.Core.Order.Interval
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Conditionals.Counterfactual
 
@@ -36,7 +36,7 @@ The fourth uses `universalCounterfactual` from `Counterfactual.lean`.
 
 namespace Semantics.Causation.PsychLink
 
-open Core.Time (Interval)
+open Core.Order (Interval)
 open Semantics.Causation.Psych (CausalSource)
 open Core.Order (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual (universalCounterfactual)

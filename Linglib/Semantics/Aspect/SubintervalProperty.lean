@@ -24,7 +24,7 @@ particular analysis.
 
 namespace Semantics.Aspect.SubintervalProperty
 
-open Core.Time
+open Core.Order Semantics.Aspect
 open Semantics.Aspect
 
 variable {W Time : Type*} [LinearOrder Time]

@@ -41,7 +41,7 @@ Present and for the Past. In D. Beaver, S. Kaufmann, B. Clark, & L. Casillas
 
 namespace Condoravdi2002
 
-open Core.Time
+open Core.Order
 open Features (Dynamicity)
 open Semantics.Aspect
 open HistoricalAlternatives

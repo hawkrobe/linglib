@@ -2,22 +2,29 @@ import Mathlib.Data.Int.Order.Basic
 import Linglib.Core.Scales.Scale
 
 /-!
-# Temporal intervals
+# Intervals on a linear order
 
 [allen-1983] [kamp-reyle-1993] [klein-1994]
-[pancheva-2003] [rouillard-2026] [sagey-1986]
-[smith-1997]
+[pancheva-2003] [sagey-1986] [smith-1997]
 
 The basic interval type and its relational algebra: containment,
 subinterval, overlap, precedence, meets, plus the nuclear cluster
 needed by aspectual semantics (proper subinterval, final subinterval,
-initial overlap, isAfter/isBefore).
+initial overlap, isAfter/isBefore). Consumed as the time axis by tense,
+aspect, and event semantics, and as the timing tier by autosegmental
+phonology ([sagey-1986]).
 
-Open/closed boundary distinctions and generalized intervals
-([rouillard-2026]) live in `Generalized.lean`.
+Generalized intervals with open/closed boundaries ([rouillard-2026])
+live with their consuming study in `Studies/Rouillard2026.lean`.
+
+Mathlib correspondence: `Interval` is `Mathlib.Order.Interval.Basic`'s
+`NonemptyInterval` (`contains` = `∈`, `subinterval` = `≤`,
+`properSubinterval` = `<`, `point` = `pure`). TODO: migrate to
+`NonemptyInterval` and keep only the relational vocabulary
+(`overlaps`/`precedes`/`meets`/...) that mathlib lacks.
 -/
 
-namespace Core.Time
+namespace Core.Order
 
 /-- Temporal interval: a pair of times [start, finish] with start ≤ finish.
     Following standard interval semantics. -/
@@ -213,4 +220,4 @@ instance : Core.Scale.LicensingPipeline BoundaryType where
 
 end Interval
 
-end Core.Time
+end Core.Order

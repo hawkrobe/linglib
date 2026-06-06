@@ -45,7 +45,7 @@ puzzle (where they actually diverge).
 namespace Ogihara1996
 
 open Semantics.Tense
-open Core.Time.Reichenbach
+open Semantics.Tense.Reichenbach
 open Semantics.Tense
 open Semantics.Tense.SOT.Ambiguity (PastReading)
 open Data.Examples (LinguisticExample)

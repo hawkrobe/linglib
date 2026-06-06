@@ -44,7 +44,6 @@ namespace Semantics.Mood
 
 open Core (WorldTimeIndex)
 
-open Core.Time
 open HistoricalAlternatives
 
 

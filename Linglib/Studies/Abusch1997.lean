@@ -92,8 +92,7 @@ constructors). See `Tense/DeRe.lean` docstring for what's deferred
 namespace Abusch1997
 
 open Semantics.Tense
-open Core.Time.Reichenbach
-open Core.Time
+open Semantics.Tense.Reichenbach
 open Semantics.Tense
 open Data.Examples (LinguisticExample)
 
