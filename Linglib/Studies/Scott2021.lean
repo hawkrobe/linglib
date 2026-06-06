@@ -1,5 +1,5 @@
 import Linglib.Typology.RelativeClause.Basic
-import Linglib.Core.Tree
+import Linglib.Syntax.Tree.Cat
 import Linglib.Fragments.Swahili.Relativization
 import Linglib.Morphology.DM.VocabularyInsertion
 import Linglib.Syntax.Minimalist.Features
@@ -42,7 +42,7 @@ Following [landau-2006] and [van-urk-2018]:
 Pronouns: [DP D [NumP Num [nP n_anim [PersP Pers:x]]]]
 Lexical DPs: [DP D [NumP Num [nP n/n_anim [√P √]]]]
 
-Modeled using `Core.Tree DPCat String` with Minimalism-grounded
+Modeled using `Syntax DPCat String` with Minimalism-grounded
 categories (D, Num, n, Pers).
 
 ## Vocabulary Insertion (FeatureBundle-Based)
@@ -79,7 +79,7 @@ instance : Inhabited DPCat := ⟨.D⟩
 -- § 2: Tree-Based DP Structure
 -- ============================================================================
 
-open Core.Tree (Tree)
+open Syntax (Tree)
 
 /-- 1SG pronoun *mi*: [DP D [NumP Num:sg [nP n_anim [PersP 1]]]]
     [scott-2021]. -/
@@ -181,8 +181,8 @@ theorem delete_persP_idempotent : deletePersP pronTreeCl1 = pronTreeCl1 := rfl
 def terminalToFeature : DPCat → String → Option FeatureVal
   | .Pers, "1" => some (.phi (.person .first))
   | .Pers, "2" => some (.phi (.person .second))
-  | .Num, "sg" => some (.phi (.number .Sing))
-  | .Num, "pl" => some (.phi (.number .Plur))
+  | .Num, "sg" => some (.phi (.number .singular))
+  | .Num, "pl" => some (.phi (.number .plural))
   | .n, "anim" => some (.phi (.gender 1))
   | _, _ => none
 
@@ -206,14 +206,14 @@ end
     (Order follows depth-first tree traversal.) -/
 theorem features_1sg :
     extractFeatures pronTree1sg =
-    [.valued (.phi (.number .Sing)),
+    [.valued (.phi (.number .singular)),
      .valued (.phi (.gender 1)),
      .valued (.phi (.person .first))] := by decide
 
 /-- After PersP deletion, features are: [number:sg, gender:anim] — no person. -/
 theorem features_after_deletion :
     extractFeatures (deletePersP pronTree1sg) =
-    [.valued (.phi (.number .Sing)),
+    [.valued (.phi (.number .singular)),
      .valued (.phi (.gender 1))] := by decide
 
 -- ============================================================================
@@ -235,7 +235,7 @@ def getPerson (fb : FeatureBundle) : Option Person :=
 /-- Helper: is the number singular? -/
 def isSg (fb : FeatureBundle) : Bool :=
   fb.any fun f => match f with
-    | .valued (.phi (.number .Sing)) => true
+    | .valued (.phi (.number .singular)) => true
     | _ => false
 
 /-- Helper: does the bundle contain animacy? -/

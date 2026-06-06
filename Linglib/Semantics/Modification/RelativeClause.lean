@@ -1,6 +1,5 @@
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Variables
-import Linglib.Semantics.Composition.Abstraction
 import Linglib.Semantics.Modification.Basic
 
 /-!
@@ -38,7 +37,6 @@ until a study reifies it.
 namespace RelativeClause
 
 open Core.Logic.Intensional Core.Logic.Intensional.Variables
-open Semantics.Composition.Abstraction (predicateAbstraction)
 open Modifier (intersective intersective_comm)
 
 /--
@@ -58,7 +56,7 @@ def denote {F : Frame} (n : ℕ)
     (headNoun : DenotG F (.e ⇒ .t))
     (relClauseBody : DenotG F .t)
     : DenotG F (.e ⇒ .t) :=
-  fun g => intersective (predicateAbstraction n relClauseBody g) (headNoun g)
+  fun g => intersective (lambdaAbsG n relClauseBody g) (headNoun g)
 
 /-- Head and relative clause modify symmetrically: the head noun and the
     gap-abstracted clause intersect in either order (intersective modification is
@@ -68,9 +66,9 @@ theorem denote_comm {F : Frame} (n : ℕ)
     (relClauseBody : DenotG F .t)
     (g : Core.Assignment F.Entity)
     : denote n headNoun relClauseBody g =
-      intersective (headNoun g) (predicateAbstraction n relClauseBody g) := by
-  show intersective (predicateAbstraction n relClauseBody g) (headNoun g) =
-       intersective (headNoun g) (predicateAbstraction n relClauseBody g)
+      intersective (headNoun g) (lambdaAbsG n relClauseBody g) := by
+  show intersective (lambdaAbsG n relClauseBody g) (headNoun g) =
+       intersective (headNoun g) (lambdaAbsG n relClauseBody g)
   exact intersective_comm _ _
 
 end RelativeClause

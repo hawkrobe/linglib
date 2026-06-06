@@ -21,11 +21,11 @@ open Pronoun
 
 /-- *hum* — 1sg. -/
 def hum : PersonalPronoun :=
-  { form := "hum", person := some .first, number := some .Sing }
+  { form := "hum", person := some .first, number := some .singular }
 
 /-- *hum sab* — 1pl. -/
 def humSab : PersonalPronoun :=
-  { form := "hum sab", person := some .first, number := some .Plur }
+  { form := "hum sab", person := some .first, number := some .plural }
 
 -- ============================================================================
 -- Second Person (three-level honorific)
@@ -33,15 +33,15 @@ def humSab : PersonalPronoun :=
 
 /-- *tõ* — 2sg non-honorific. -/
 def toN : PersonalPronoun :=
-  { form := "tõ", person := some .second, number := some .Sing, register := .informal }
+  { form := "tõ", person := some .second, number := some .singular, register := .informal }
 
 /-- *ahã* — 2sg honorific. -/
 def ahaN : PersonalPronoun :=
-  { form := "ahã", person := some .second, number := some .Sing, register := .neutral }
+  { form := "ahã", person := some .second, number := some .singular, register := .neutral }
 
 /-- *apne* — 2sg high-honorific. -/
 def apne : PersonalPronoun :=
-  { form := "apne", person := some .second, number := some .Sing, register := .formal }
+  { form := "apne", person := some .second, number := some .singular, register := .formal }
 
 -- ============================================================================
 -- Third Person (honorific-sensitive)
@@ -49,15 +49,15 @@ def apne : PersonalPronoun :=
 
 /-- *ũ* — 3sg non-honorific (distal). -/
 def uN : PersonalPronoun :=
-  { form := "ũ", person := some .third, number := some .Sing, register := .informal }
+  { form := "ũ", person := some .third, number := some .singular, register := .informal }
 
 /-- *o* — 3sg honorific. -/
 def o : PersonalPronoun :=
-  { form := "o", person := some .third, number := some .Sing, register := .neutral }
+  { form := "o", person := some .third, number := some .singular, register := .neutral }
 
 /-- *ũ sab* — 3pl. -/
 def uNSab : PersonalPronoun :=
-  { form := "ũ sab", person := some .third, number := some .Plur }
+  { form := "ũ sab", person := some .third, number := some .plural }
 
 -- ============================================================================
 -- Pronoun Lists
@@ -98,8 +98,8 @@ theorem has_all_persons :
 
 /-- Both singular and plural are attested. -/
 theorem has_both_numbers :
-    allPronouns.any (·.number == some .Sing) = true ∧
-    allPronouns.any (·.number == some .Plur) = true := ⟨rfl, rfl⟩
+    allPronouns.any (·.number == some .singular) = true ∧
+    allPronouns.any (·.number == some .plural) = true := ⟨rfl, rfl⟩
 
 /-- 2nd person pronouns are all second person. -/
 theorem second_person_all_2p :

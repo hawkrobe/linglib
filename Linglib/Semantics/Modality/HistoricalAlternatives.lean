@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.Defs.LinearOrder
-import Linglib.Core.WorldTimeIndex
+import Linglib.Core.Logic.Intensional.WorldTimeIndex
 
 /-!
 # Historical Alternatives

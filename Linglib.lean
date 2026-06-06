@@ -7,8 +7,12 @@ and their interfaces. See README.md for documentation links.
 -- Core
 import Linglib.Features.Basic
 import Linglib.Features.Dimension
-import Linglib.Features.Gender
-import Linglib.Core.Valence
+import Linglib.Features.Gender.Basic
+import Linglib.Features.Gender.Capabilities
+import Linglib.Features.Gender.Decomposition
+import Linglib.Features.Gender.Interp
+import Linglib.Features.Gender.Resolve
+import Linglib.Features.Complementation
 import Linglib.Data.UD.Basic
 import Linglib.Morphology.Unification
 import Linglib.Typology.NegativeConcord
@@ -41,7 +45,8 @@ import Linglib.Core.Logic.Team.Closure
 import Linglib.Core.Logic.Team.Definability
 import Linglib.Features.Acceptability
 import Linglib.Semantics.Dynamic.ParameterizedUpdate
-import Linglib.Core.Tree
+import Linglib.Syntax.Tree.Basic
+import Linglib.Syntax.Tree.Cat
 import Linglib.Features.Coordination
 import Linglib.Core.Logic.Duality
 import Linglib.Core.Logic.Quantification
@@ -115,7 +120,7 @@ import Linglib.Semantics.Questions.Partition.Lattice
 import Linglib.Semantics.Questions.Partition.Cells
 import Linglib.Semantics.Questions.Partition.Binary
 import Linglib.Semantics.Questions.Partition.Negativity
-import Linglib.Phenomena.Negation.ExpletiveNegation
+import Linglib.Typology.Negation.ExpletiveNegation
 import Linglib.Features.Polarity
 import Linglib.Phenomena.Polarity.PolarityPartition
 import Linglib.Features.PropertyDomain
@@ -143,7 +148,6 @@ import Linglib.Discourse.AtIssueness
 import Linglib.Features.CoreferenceStatus
 import Linglib.Syntax.Binding.Basic
 import Linglib.Syntax.Binding.Semantics
-import Linglib.Core.CombinationKind
 import Linglib.Semantics.Composition.Combinator
 import Linglib.Features.ScopeTypes
 import Linglib.Typology.Extraction
@@ -225,7 +229,7 @@ import Linglib.Features.Mirativity
 import Linglib.Semantics.Epistemicity
 import Linglib.Features.Logophoricity
 import Linglib.Features.MassCount
-import Linglib.Core.WorldTimeIndex
+import Linglib.Core.Logic.Intensional.WorldTimeIndex
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Core.Time.Interval.Generalized
 import Linglib.Core.Time.Boundedness
@@ -293,7 +297,7 @@ import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.WeaklyDeterministic
-import Linglib.Core.StringHom
+import Linglib.Core.Computability.StringHom
 import Linglib.Features.VerbCluster
 import Linglib.Features.Case
 import Linglib.Syntax.Case.Order
@@ -329,11 +333,10 @@ import Linglib.Semantics.Attitudes.ContentIndividual
 import Linglib.Core.Agent.BToM
 import Linglib.Core.Agent.Emotion
 import Linglib.Semantics.Spatial.Path
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 import Linglib.Semantics.Composition.Continuation
-import Linglib.Semantics.Composition.Layered
-import Linglib.Core.CylindricAlgebra
-import Linglib.Core.CylindricAlgebra.DynamicSemantics
+import Linglib.Core.Logic.CylindricAlgebra
+import Linglib.Core.Logic.CylindricAlgebra.DynamicSemantics
 import Linglib.Features.ContainmentPair
 import Linglib.Features.Person.Basic
 import Linglib.Features.Person.Capabilities
@@ -346,7 +349,6 @@ import Linglib.Features.Number.Capabilities
 import Linglib.Features.Number.Decomposition
 import Linglib.Features.Number.Interp
 import Linglib.Features.Number.Resolve
-import Linglib.Core.CoreConcept
 import Linglib.Morphology.MorphRule
 import Linglib.Morphology.Paradigm
 import Linglib.Semantics.Quantification.BinominalDefs
@@ -373,7 +375,6 @@ import Linglib.Core.Inheritance.Basic
 import Linglib.Core.Inheritance.Choice
 import Linglib.Core.Inheritance.Default
 import Linglib.Core.Inheritance.Order
-import Linglib.Core.Prototype
 import Linglib.Morphology.MorphProfile
 import Linglib.Morphology.ConsonantalRoot
 import Linglib.Morphology.Exponence
@@ -1156,6 +1157,8 @@ import Linglib.Studies.SlomanBarbeyHotaling2009
 import Linglib.Studies.SpalekMcNally2026
 import Linglib.Studies.AckemaNeeleman2018
 import Linglib.Studies.AlstottAravind2026
+import Linglib.Studies.Asudeh2022
+import Linglib.Studies.HeimKratzer1998
 import Linglib.Semantics.Focus.PolarityLevel
 import Linglib.Studies.AlstottAravind2026TemporalConnectives
 import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
@@ -1178,6 +1181,7 @@ import Linglib.Studies.Baker2015
 import Linglib.Studies.Aissen2003
 import Linglib.Studies.Grimm2011
 import Linglib.Studies.Grimm2018
+import Linglib.Studies.GrimmDocekal2021
 import Linglib.Studies.DechaineWiltschko2002
 import Linglib.Studies.DeHoopMalchukov2008
 import Linglib.Studies.Haspelmath2021
@@ -1273,8 +1277,6 @@ import Linglib.Studies.Anderson2006
 import Linglib.Studies.Olivier2026
 import Linglib.Studies.Sorace2000
 import Linglib.Typology.AuxiliaryVerbs
-import Linglib.Studies.Charlow2021.Data
-import Linglib.Studies.Charlow2021.CumulativeReadings
 import Linglib.Studies.Cumming2026
 import Linglib.Studies.Lakoff1970
 import Linglib.Studies.Moon2026
@@ -1576,7 +1578,6 @@ import Linglib.Studies.AlonsoOvalleMenendezBenito2010
 import Linglib.Studies.AlonsoOvalleRoyer2024
 import Linglib.Studies.KratzerShimoyama2002
 import Linglib.Phenomena.Negation.Basic
-import Linglib.Fragments.Italian.ExpletiveNegation
 import Linglib.Studies.JinKoenig2021
 import Linglib.Studies.Rett2026
 import Linglib.Studies.Tsiakmakis2025
@@ -1626,7 +1627,6 @@ import Linglib.Phenomena.Plurals.Projection
 import Linglib.Studies.HaslingerEtAl2025
 import Linglib.Studies.HaslingerHienEtAl2025
 import Linglib.Studies.QingEtAl2025
-import Linglib.Studies.Charlow2021.Compare
 import Linglib.Studies.Champollion2017
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Studies.TieuEtAl2020
@@ -1999,7 +1999,7 @@ import Linglib.Studies.KuhlmannKollerSatta2015
 import Linglib.Syntax.CCG.Scope
 import Linglib.Syntax.CCG.Intonation
 -- Cross-theory comparisons (distributed into theory directories)
-import Linglib.Syntax.Mueller2013
+import Linglib.Studies.Mueller2013
 import Linglib.Syntax.Minimalist.CategorialFeatures
 -- Phenomenon-level comparisons (moved from Comparisons/)
 import Linglib.Studies.BarkerPullum1990
@@ -2118,11 +2118,7 @@ import Linglib.Semantics.Dynamic.CDRT.Fragment
 import Linglib.Semantics.Dynamic.PPCDRT.Defs
 import Linglib.Semantics.Dynamic.PPCDRT.Anaphora
 import Linglib.Semantics.Dynamic.PPCDRT.Cumulativity
-import Linglib.Studies.Charlow2021.Basic
-import Linglib.Studies.Charlow2021.UpdateTheoretic
-import Linglib.Studies.Charlow2021.HigherOrder
-import Linglib.Studies.Charlow2021.SubtypePolymorphism
-import Linglib.Studies.Charlow2021.PostSuppositional
+import Linglib.Studies.Charlow2021
 import Linglib.Studies.KeshetAbney2024.Basic
 import Linglib.Studies.KeshetAbney2024.Bridges
 import Linglib.Studies.KeshetAbney2024.Composition
@@ -2227,7 +2223,6 @@ import Linglib.Syntax.Minimalist.Economy
 import Linglib.Syntax.Minimalist.Modification
 import Linglib.Syntax.Minimalist.Scope
 import Linglib.Syntax.Minimalist.TraceInterpretation
-import Linglib.Syntax.Minimalist.CombinationSchemata
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Derivation
 import Linglib.Syntax.Minimalist.HeadFunction
@@ -2317,19 +2312,15 @@ import Linglib.Semantics.Reference.Binding
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Minimalist.LongDistanceAgree
 import Linglib.Semantics.Composition.Tree
-import Linglib.Semantics.Composition.QuantifierComposition
-import Linglib.Semantics.Composition.Glue
 import Linglib.Semantics.Composition.WriterMonad
-import Linglib.Semantics.Composition.SetMonad
-import Linglib.Semantics.Composition.Applicative
+
+
 import Linglib.Semantics.Composition.Effects
-import Linglib.Semantics.Composition.LexiconBuilder
-import Linglib.Semantics.Composition.MaybeMonad
+
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Composition.Coercion
 import Linglib.Semantics.Entailment.Polarity
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Composition.PredicateTransfer
 import Linglib.Semantics.Composition.Scope
 import Linglib.Phenomena.Entailment.MontagueTruthConditions
 import Linglib.Studies.AhnZhu2025
@@ -2351,7 +2342,6 @@ import Linglib.Semantics.Quantification.Possessive
 import Linglib.Semantics.Quantification.UnifiedUniversal
 import Linglib.Semantics.Quantification.ONEModifiers
 import Linglib.Semantics.Quantification.ChoiceFunction
-import Linglib.Semantics.Quantification.Cumulativity
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Pragmatics.Expressives.OutlookMarker
 import Linglib.Semantics.Quotation.Mixed
@@ -2363,10 +2353,9 @@ import Linglib.Semantics.Probabilistic.ConditionalAssertability
 import Linglib.Semantics.Probabilistic.PrototypeTheory
 import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.ScaleCat
-import Linglib.Semantics.Composition.SyntaxInterface
 import Linglib.Studies.Borer2005
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
-import Linglib.Semantics.Composition.Abstraction
+
 import Linglib.Semantics.Modification.Basic
 import Linglib.Semantics.Modification.RelativeClause
 import Linglib.Semantics.Quantification.CovertQuantifier

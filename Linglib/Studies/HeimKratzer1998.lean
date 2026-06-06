@@ -1,3 +1,4 @@
+import Linglib.Syntax.Tree.Cat
 import Linglib.Semantics.Composition.Tree
 import Linglib.Core.Logic.Intensional.Variables
 import Linglib.Semantics.Composition.ToyDomain
@@ -5,13 +6,15 @@ import Linglib.Semantics.Composition.LexEntry
 import Linglib.Semantics.Quantification.Quantifier
 
 /-!
-# Quantifier Composition via Predicate Abstraction
+# [heim-kratzer-1998]: Type-Driven Composition of Quantifiers
 
-Demonstrates that `interp` composes quantificational sentences
-end-to-end: lexicon → syntax tree (with QR traces and binders) →
-truth conditions.
+End-to-end verification that the H&K engine (`Composition/Tree.lean`)
+composes quantificational sentences as advertised in Ch. 5: lexicon →
+QR-syntax tree (with traces and binders) → truth conditions. The engine
+implements TN/NN/FA/IFA/PM/PA; this file feeds it the textbook examples
+and checks the predictions over a toy model.
 
-## H&K Pipeline ([heim-kratzer-1998] Ch. 5)
+## H&K Pipeline (Ch. 5)
 
 After Quantifier Raising moves a DP to a higher position, it leaves a
 trace `tₙ` and creates a binder node `n`. Predicate Abstraction (PA)
@@ -31,34 +34,31 @@ Evaluated as:
 5. `⟦every student⟧ = every'(student')` (FA)
 6. `⟦S⟧ = every'(student')(λx. sleeps'(x))` (FA)
 
-## Scope Ambiguity
+## Scope ambiguity
 
-"Everybody loves somebody" yields two readings from two QR structures:
-- Surface scope (∀>∃): every person scopes above some person
-- Inverse scope (∃>∀): some person scopes above every person
+"Everybody loves somebody" yields two readings from two QR structures —
+surface scope (∀>∃) and inverse scope (∃>∀) — that differ only in which
+quantifier is raised higher. `scope_readings_differ` certifies that the
+two trees compute genuinely distinct propositions in the toy model.
 
-The two trees differ only in which quantifier is raised higher.
+## Note on `Prop`-valued `.t`
 
-## Note on Prop-valued `.t`
-
-With `interpTy .t = Prop`, the compositional semantics produces `Prop`-valued
-truth conditions directly. Theorems verify these truth conditions at the `Prop`
-level rather than via `evalTree` (which requires a blanket `Decidable` instance
-for `∀ (p : Prop), Decidable p`).
+With `interpTy .t = Prop`, the engine produces `Prop`-valued truth
+conditions directly. Theorems verify these at the `Prop` level rather
+than via `evalTree` (which would demand a blanket
+`Decidable (∀ p : Prop, p)` instance).
 -/
 
-namespace Semantics.Composition.QuantifierComposition
+namespace HeimKratzer1998
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Variables
 open Semantics.Montague
-open Core.Tree
+open Syntax
 open Semantics.Composition.Tree
 open Semantics.Quantification.Quantifier
 
--- ════════════════════════════════════════════════════════════════════
--- § Model and Lexicon
--- ════════════════════════════════════════════════════════════════════
+/-! ### Model and lexicon -/
 
 def quantLex : Lexicon toyModel := λ word =>
   match word with
@@ -73,9 +73,7 @@ def quantLex : Lexicon toyModel := λ word =>
 
 def g₀ : Core.Assignment toyModel.Entity := λ _ => .john
 
--- ════════════════════════════════════════════════════════════════════
--- § Basic: "Every student sleeps"
--- ════════════════════════════════════════════════════════════════════
+/-! ### "Every student sleeps" -/
 
 /-- QR tree: `[S [DP every student] [1 [S t₁ sleeps]]]` -/
 def tree_everyStudentSleeps : Tree Unit String :=
@@ -99,11 +97,9 @@ theorem some_student_sleeps_true :
     some_sem student_sem ToyLexicon.sleeps_sem :=
   ⟨ToyEntity.john, trivial, trivial⟩
 
--- ════════════════════════════════════════════════════════════════════
--- § Scope Ambiguity: "Every person sees some person"
--- ════════════════════════════════════════════════════════════════════
+/-! ### Scope ambiguity: "Every person sees some person"
 
-/-! Two QR structures yield two scope readings. The trees differ only in
+Two QR structures yield two scope readings. The trees differ only in
 which quantifier occupies the higher position. -/
 
 /-- Surface scope (∀>∃):
@@ -170,13 +166,11 @@ theorem scope_readings_differ : surfaceScopeProp ≠ inverseScopeProp := by
   intro h
   exact inverse_scope_false (h ▸ surface_scope_true)
 
--- ════════════════════════════════════════════════════════════════════
--- § Unified Tree: Same Sentence with UD Categories
--- ════════════════════════════════════════════════════════════════════
+/-! ### Unified tree: the same sentence with UD categories
 
-/-! The same QR tree built as `Tree Cat String` — carrying real UD-grounded
-categories on every node. `interp` ignores the categories and produces
-identical truth conditions to the category-free `Tree Unit String` version. -/
+The QR tree as `Tree Cat String` — carrying real UD-grounded categories
+on every node. `interp` ignores the categories and produces identical
+truth conditions to the category-free `Tree Unit String` version. -/
 
 /-- QR tree with UD categories:
 `[S [DP [Det every] [N student]] [1 [S [t₁:NP] [VP sleeps]]]]` -/
@@ -186,4 +180,4 @@ def synTree_everyStudentSleeps : Tree Cat String :=
      .bind 1 .S
        (.node .S (.trace 1 .NP :: .node .VP (.terminal .V "sleeps" :: []) :: [])) :: [])
 
-end Semantics.Composition.QuantifierComposition
+end HeimKratzer1998

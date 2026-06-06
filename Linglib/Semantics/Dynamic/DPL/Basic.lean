@@ -344,15 +344,15 @@ theorem forall_isTest {E : Type*} (x : Nat) (φ : DPLRel E) (g h : Nat → E)
 DPL embeds directly into Dynamic Ty2 with `S = Assignment E = Nat → E`.
 DPL assignments ARE Dynamic Ty2 assignments; DPL relations ARE Update meanings.
 The cylindric algebra bridges (`closure(∃) = cylindrify`, `closure(=) = diagonal`)
-live in `Core/CylindricAlgebra/DynamicSemantics.lean`.
+live in `Core/Logic/CylindricAlgebra/DynamicSemantics.lean`.
 -/
 
 /-- DPL dref: projection function for variable n. -/
 def dref {E : Type*} (n : Nat) : Dref (Assignment E) E := λ g => g n
 
-/-- DPL extend is `Assignment.update`. -/
+/-- DPL extend is `Function.update`. -/
 abbrev extend {E : Type*} (g : Assignment E) (n : Nat) (e : E) : Assignment E :=
-  g.update n e
+  Function.update g n e
 
 theorem extend_at {E : Type*} (g : Assignment E) (n : Nat) (e : E) :
     dref n (extend g n e) = e := by simp [dref, extend]
@@ -392,7 +392,11 @@ theorem neg_eq_test_dneg {E : Type*} (φ : DPLRel E) :
 
 theorem exists_eq {E : Type*} (x : Nat) (φ : DPLRel E) :
     toDRS (DPLRel.exists_ x φ) = λ g h => ∃ d : E, toDRS φ (extend g x d) h := by
-  rfl
+  have hup : ∀ (g : Assignment E) (d : E),
+      (fun n => if n = x then d else g n) = Function.update g x d := fun g d => by
+    funext n; simp [Function.update_apply]
+  funext g h
+  exact propext (exists_congr fun d => by rw [hup g d]; exact Iff.rfl)
 
 /-- **DPL implication = test of dynamic implication.** -/
 theorem impl_eq_test_dimpl {E : Type*} (φ ψ : DPLRel E) :

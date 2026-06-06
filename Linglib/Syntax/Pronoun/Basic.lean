@@ -3,7 +3,7 @@ import Linglib.Data.UD.Basic
 import Linglib.Features.Case
 import Linglib.Features.Register
 import Linglib.Features.Prominence
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Features.Clusivity
 import Linglib.Features.CoreferenceStatus
 import Linglib.Features.Person.Decomposition
@@ -115,14 +115,16 @@ structure Pronoun where
       `firstInclusive`, *kami* = `firstExclusive`; English *we* = plain
       `first` ([cysouw-2009]). -/
   person : Option Person := none
-  /-- Grammatical number. -/
-  number : Option UD.Number := none
+  /-- Grammatical number — the canonical analytical inventory (root
+      `Number`); UD realization via `Number.toUD` (partial: the
+      minimal/augmented values have no UD tag). -/
+  number : Option Number := none
   /-- Grammatical case. -/
   case_ : Option Features.Case := none
   /-- Grammatical gender. For 3rd-person pronouns in gendered languages
       (French il/elle, German er/sie/es, …). 1st/2nd-person pronouns and
       languages without pronominal gender leave this `none`. -/
-  gender : Option Features.SurfaceGender := none
+  gender : Option Gender := none
   /-- Native script form (hangul, kanji, Devanagari, …). -/
   script : Option String := none
   /-- Pronoun type (UD `PronType`): the pro-form's lexical kind — personal (`Prs`),
@@ -175,7 +177,6 @@ structure PersonalPronoun extends Pronoun where
 namespace Pronoun
 
 open Features.Register (Level)
-open Features (SurfaceGender)
 
 /-! ### Realization as a `Word` -/
 
@@ -185,9 +186,10 @@ open Features (SurfaceGender)
     surface as adverbs) stay in the relevant fragment. -/
 def toWord (p : Pronoun) : Word :=
   { form := p.form, cat := .PRON,
-    features := { person := p.person.map Person.toUD, number := p.number,
+    features := { person := p.person.map Person.toUD,
+                  number := p.number.bind Number.toUD,
                   case_ := p.case_,
-                  gender := p.gender.bind (·.toUDGender),
+                  gender := p.gender.bind (·.toUD),
                   -- carry the binding-relevant morphology so a projected pro-form's class is
                   -- read off its own features, not recovered by surface-form lookup
                   reflex := p.bindingClass == some .reflexive,
@@ -214,7 +216,8 @@ def category (p : Pronoun) : Option Person.Category :=
     mathlib way) so illegal states are catchable without fragmenting the type. -/
 def WellFormed (p : Pronoun) : Prop :=
   ∀ per, p.person = some per → per.MarksClusivity →
-    p.number = some .Dual ∨ p.number = some .Plur
+    p.number = some .dual ∨ p.number = some .plural ∨
+    p.number = some .minimal ∨ p.number = some .augmented
 
 instance (p : Pronoun) : Decidable p.WellFormed := by
   unfold WellFormed; infer_instance

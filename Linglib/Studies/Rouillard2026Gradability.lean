@@ -6,7 +6,7 @@ import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Core.Time.Boundedness
-import Linglib.Core.WorldTimeIndex
+import Linglib.Core.Logic.Intensional.WorldTimeIndex
 
 /-!
 # Cross-Domain Licensing Agreement Bridge

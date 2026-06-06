@@ -1,6 +1,6 @@
 import Mathlib.Computability.ContextFreeGrammar
 import Mathlib.Computability.DFA
-import Linglib.Core.StringHom
+import Linglib.Core.Computability.StringHom
 import Linglib.Core.Computability.ContextFreeGrammar.Map
 import Linglib.Core.Computability.ContextFreeGrammar.InterRegular
 

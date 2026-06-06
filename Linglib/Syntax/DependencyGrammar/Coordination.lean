@@ -79,7 +79,7 @@ def checkCatMatch (t : DepTree) : Bool :=
       | _, _ => false
     else true
 
-/-- For verbal `conj` edges, conjuncts have matching `valence`. Coarse
+/-- For verbal `conj` edges, conjuncts have matching frames. Coarse
 heuristic — does not handle clausal coordination (`ccomp` / `xcomp`) or
 finer subcategorization. -/
 def checkArgStrMatch (t : DepTree) : Bool :=

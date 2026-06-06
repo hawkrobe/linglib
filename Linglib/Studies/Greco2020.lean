@@ -1,9 +1,8 @@
 import Linglib.Syntax.Minimalist.Phase
 import Linglib.Syntax.Minimalist.ExtendedProjection.Basic
-import Linglib.Phenomena.Negation.ExpletiveNegation
+import Linglib.Typology.Negation.ExpletiveNegation
 import Linglib.Semantics.Negation.CzechNegation
 import Linglib.Semantics.Negation.Defs
-import Linglib.Fragments.Italian.ExpletiveNegation
 import Linglib.Typology.Negation
 import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.Spanish.Negation
@@ -51,11 +50,13 @@ the representation [CP ... [X° non] ... [FocP [TP ...] Foc° ...]]:
 
 ## Connections
 
-- `Core.Negation` — framework-agnostic EN types (ENType, ENStrength, PolarityLicensing)
+- `Typology.Negation` — framework-agnostic EN types (ENType, ENStrength, PolarityLicensing)
 - `Minimalist.NegScope` — merge position, scope, classification chain (defined below)
-- `Italian.ExpletiveNegation` — Italian Table 1 data
+- `ENEnvironment` (below) — the eleven Italian EN environments of Tables 1–2
 - `Typology.Negation.NegationProfile.negIsHead` — head status
 - `Minimalist.fValue` / `isCPArea` — f-value classification
+- `Italian.Negation.enTriggerNegators` — the consensus EN trigger inventory
+  ([jin-koenig-2021]); Greco's construction-level classification is finer-grained
 
 ## Neg-Merge-Position Apparatus (relocated from `Minimalism/NegScope.lean`)
 
@@ -71,12 +72,10 @@ paper picks them up.
 namespace Minimalist.NegScope
 
 open Minimalist (Cat fValue isCPArea)
-open Phenomena.Negation.ExpletiveNegation (ENType ENStrength PolarityLicensing PolarityClass
+open Typology.Negation (ENType ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile)
 
--- ════════════════════════════════════════════════════
--- § 1. Neg merge position
--- ════════════════════════════════════════════════════
+/-! ### Neg merge position -/
 
 /-- Where a negation head is merged in the extended projection.
 
@@ -125,9 +124,7 @@ instance : LinearOrder NegMergePosition :=
   LinearOrder.lift' NegMergePosition.toNat
     (fun a b h => by cases a <;> cases b <;> simp_all [NegMergePosition.toNat])
 
--- ════════════════════════════════════════════════════
--- § 2. Bridge: merge position → EN type
--- ════════════════════════════════════════════════════
+/-! ### Bridge: merge position → EN type -/
 
 /-- CP-area negation is non-truth-conditional (high EN).
     TP-area negation is truth-conditional (low EN). -/
@@ -135,9 +132,7 @@ def NegMergePosition.toENType : NegMergePosition → ENType
   | .tp => .low   -- Can scope → truth-conditional
   | .cp => .high  -- Cannot scope → non-truth-conditional
 
--- ════════════════════════════════════════════════════
--- § 3. Bridge: merge position → EN strength + polarity
--- ════════════════════════════════════════════════════
+/-! ### Bridge: merge position → EN strength + polarity -/
 
 /-- Merge position determines EN strength. -/
 def NegMergePosition.toENStrength : NegMergePosition → ENStrength
@@ -204,10 +199,6 @@ theorem merge_position_licensing (pos : NegMergePosition) :
     scopeToLicensing pos.scopesIntoVP = pos.polarityProfile := by
   cases pos <;> rfl
 
--- ════════════════════════════════════════════════════
--- § 4. The classification chain
--- ════════════════════════════════════════════════════
-
 /-! ### All classifications are in bijection
 
 `NegMergePosition`, `ENType`, `ENStrength`, and `Bool` (via `scopesIntoVP`)
@@ -240,10 +231,6 @@ theorem high_en_is_strong (pos : NegMergePosition)
     pos.toENStrength = .strong := by
   cases pos <;> simp_all [NegMergePosition.toENType, NegMergePosition.toENStrength]
 
--- ════════════════════════════════════════════════════
--- § 5. F-value grounding
--- ════════════════════════════════════════════════════
-
 /-! ### Grounding scope in the extended projection
 
 The TP/CP distinction in `NegMergePosition` is not stipulated — it
@@ -273,10 +260,6 @@ theorem fin_is_cp_boundary : isCPArea .Fin = true := by decide
 
 /-- The f-value boundary: CP area is strictly above standard NegP. -/
 theorem cp_area_above_neg : fValue .Fin > fValue .Neg := by decide
-
--- ════════════════════════════════════════════════════
--- § 6. Bridge: Czech NegPosition → NegMergePosition
--- ════════════════════════════════════════════════════
 
 /-! ### Coarsening Czech three-way negation
 [stankova-2025]
@@ -335,10 +318,8 @@ namespace Greco2020
 
 open Minimalist (Cat fValue isCPArea)
 open Minimalist.NegScope (NegMergePosition)
-open Phenomena.Negation.ExpletiveNegation (ENStrength PolarityLicensing PolarityClass
-           weakENProfile strongENProfile)
-open Italian.ExpletiveNegation (ENEnvironment)
-open Typology.Negation (NegationProfile)
+open Typology.Negation (ENStrength PolarityLicensing PolarityClass
+           weakENProfile strongENProfile NegationProfile)
 
 /-- Italian negation profile (re-exported from Fragments for local use). -/
 private abbrev italian : NegationProfile := Italian.Negation.negationProfile
@@ -347,9 +328,59 @@ private abbrev spanish : NegationProfile := Spanish.Negation.negationProfile
 /-- French negation profile (re-exported from Fragments for local use). -/
 private abbrev french : NegationProfile := French.Negation.negationProfile
 
--- ════════════════════════════════════════════════════
--- § 1. Greco's four factors for surprise negation
--- ════════════════════════════════════════════════════
+/-! ### Tables 1–2: the eleven Italian EN environments
+
+[greco-2020] Table 1 (p. 779) classifies ten Italian EN clause types by
+four polarity diagnostics (weak NPIs, strong NPIs, not-also conjunctions,
+N-words); Table 2 (p. 818) adds Snegs as the eleventh row. The rows are
+uniform within each strength class: weak environments license weak NPIs
+and N-words only, strong environments license nothing. The weak/strong
+taxonomy itself predates the paper (it is credited there to the author's
+earlier work); Table 2's contribution is placing Snegs in the strong class. -/
+
+/-- The eleven Italian EN construction types of [greco-2020] Tables 1–2. -/
+inductive ENEnvironment where
+  | untilClauses
+  | whoKnowsClauses
+  | unlessClauses
+  | indirectInterrogatives
+  | comparativeClauses
+  | negativeExclamatives
+  | rhetoricalQuestions
+  | notThatClauses
+  | ratherThanClauses
+  | beforeClauses
+  | snegs
+  deriving DecidableEq, Repr
+
+/-- Tables 1–2 classification: the empirical weak/strong assignment. -/
+def ENEnvironment.strength : ENEnvironment → ENStrength
+  | .untilClauses           => .weak
+  | .whoKnowsClauses        => .weak
+  | .unlessClauses          => .weak
+  | .indirectInterrogatives => .weak
+  | .comparativeClauses     => .weak
+  | .negativeExclamatives   => .strong
+  | .rhetoricalQuestions    => .strong
+  | .notThatClauses         => .strong
+  | .ratherThanClauses      => .strong
+  | .beforeClauses          => .strong
+  | .snegs                  => .strong
+
+/-- Each environment's polarity fingerprint, via its strength class
+    (Table 1's rows are uniform within each class). -/
+def ENEnvironment.licensing (e : ENEnvironment) : PolarityLicensing :=
+  e.strength.profile
+
+/-- The table agrees with the merge-position theory: each environment's
+    licensing is exactly what `polarityProfile` predicts for the merge
+    position corresponding to its strength. -/
+theorem licensing_matches_merge_theory (e : ENEnvironment) :
+    (NegMergePosition.equivENStrength.symm e.strength).polarityProfile
+      = e.licensing := by
+  cases e <;> rfl
+
+/-! ### Greco's four factors for surprise negation -/
 
 /-- [greco-2020]: four necessary conditions for surprise negation.
     (i) a negative morpheme α, (ii) α is a syntactic head (X°),
@@ -388,9 +419,7 @@ def spanishSnegConditions : SnegConditions :=
 theorem spanish_no_snegs :
     spanishSnegConditions.yieldsSnegs = false := by decide
 
--- ════════════════════════════════════════════════════
--- § 2. Cross-linguistic predictions — connect to NegationProfile
--- ════════════════════════════════════════════════════
+/-! ### Cross-linguistic predictions — connect to NegationProfile -/
 
 /-- Sneg attestation datum: links a language's negation profile to
     whether surprise negation is attested. -/
@@ -433,16 +462,10 @@ theorem italian_snegs_from_profile :
 theorem spanish_snegs_from_profile :
     spanishSnegs.negIsHead = spanish.negIsHead := rfl
 
--- ════════════════════════════════════════════════════
--- § 3. Phase theory connection
--- ════════════════════════════════════════════════════
+/-! ### Phase theory connection -/
 
 /-- NegP and T share the same f-value (both F2, inflectional domain). -/
 theorem neg_t_same_fvalue : fValue .Neg = fValue .T := by decide
-
--- ════════════════════════════════════════════════════
--- § 4. The Sneg representation and its two structural primitives
--- ════════════════════════════════════════════════════
 
 /-! ### Derived predictions from [CP ... [X° non] ... [FocP [TP ...] Foc° ...]]
 
@@ -486,9 +509,7 @@ theorem vp_transferred (s : SnegRepresentation) : s.vpTransferred = true := by
 theorem focp_occupied (s : SnegRepresentation) : s.focPOccupied = true := by
   simp [SnegRepresentation.focPOccupied, s.tpFocused_eq]
 
--- ════════════════════════════════════════════════════
--- § 5. Category A: consequences of vP transfer
--- ════════════════════════════════════════════════════
+/-! ### Category A: consequences of vP transfer -/
 
 /-! Predictions that follow from the vP complement being transferred.
     In each case, the blocked operation requires negation to scope into
@@ -521,9 +542,7 @@ theorem sneg_not_downward_entailing (s : SnegRepresentation) :
     s.isDownwardEntailing = false := by
   simp [SnegRepresentation.isDownwardEntailing, vp_transferred s]
 
--- ════════════════════════════════════════════════════
--- § 6. Category B: consequences of FocP occupancy
--- ════════════════════════════════════════════════════
+/-! ### Category B: consequences of FocP occupancy -/
 
 /-! Predictions that follow from TP filling [Spec, FocP].
     In each case, the blocked operation requires access to FocP,
@@ -573,9 +592,7 @@ theorem snegs_license_ee (s : SnegRepresentation) :
 theorem snegs_allow_topics (s : SnegRepresentation) :
     s.allowsTopics = true := rfl
 
--- ════════════════════════════════════════════════════
--- § 7. Parameterized predictions (FocP-derived)
--- ════════════════════════════════════════════════════
+/-! ### Parameterized predictions (FocP-derived) -/
 
 /-- **Prediction 4** ([greco-2020] §4.2.4, (26)–(27)): Snegs answer
     propositional questions but NOT entity questions.
@@ -617,10 +634,6 @@ theorem preverbal_subject_topicalized (s : SnegRepresentation) :
     s.subjectIsTopicalized .preverbal = true := by
   simp [SnegRepresentation.subjectIsTopicalized, focp_occupied s]
 
--- ════════════════════════════════════════════════════
--- § 8. PPIs — consequence of vP transfer
--- ════════════════════════════════════════════════════
-
 /-! ### PPI licensing ([greco-2020] §2.3 (24), [giannakidou-2011])
 
 Snegs CAN host PPIs like *già* ("already"), despite containing a
@@ -630,10 +643,6 @@ is outside negation's scope — it has already "escaped" by PIC. -/
 /-- PPIs survive because vP has been transferred. -/
 theorem ppi_survives_in_sneg (s : SnegRepresentation) :
     s.vpTransferred = true := vp_transferred s
-
--- ════════════════════════════════════════════════════
--- § 9. Ethical Dative disambiguates Sneg from SN
--- ════════════════════════════════════════════════════
 
 /-! ### Ethical Dative interaction ([greco-2020] §2.2 (13))
 
@@ -653,10 +662,6 @@ def snegWithED : EDDisambiguation :=
   , negInterpretation := .cp
   , ed_forces_sneg := λ _ => rfl }
 
--- ════════════════════════════════════════════════════
--- § 10. Cross-linguistic variation: four Sneg factors
--- ════════════════════════════════════════════════════
-
 /-! ### Parametric variation ([greco-2020] §4.2.9)
 
 Snegs require the conspiracy of four factors. Blocking any one prevents
@@ -674,10 +679,6 @@ def frenchSnegConditions : SnegConditions :=
 
 theorem french_no_snegs :
     frenchSnegConditions.yieldsSnegs = false := by decide
-
--- ════════════════════════════════════════════════════
--- § 11. Sneg ≠ NRQ ≠ ENE: three strong EN constructions
--- ════════════════════════════════════════════════════
 
 /-! ### Differentiation from NRQs and ENEs ([greco-2020] §3)
 

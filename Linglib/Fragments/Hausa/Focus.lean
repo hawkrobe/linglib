@@ -1,6 +1,6 @@
 import Linglib.Fragments.Hausa.TAM
 import Linglib.Fragments.Hausa.Tone
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 
 /-!
 # Hausa Focus and the Stabilizer *nē/cē* — mathlib-style
@@ -39,7 +39,6 @@ namespace Hausa.Focus
 open Hausa.Inflection (TAM Mode Subject PAC)
 open Hausa.Tone (polarOf)
 open Phonology.Autosegmental.RegisterTier (TRN)
-open Features (SurfaceGender)
 
 -- ============================================================================
 -- § 1: Focus Strategy
@@ -73,7 +72,7 @@ def Stabilizer.form : Stabilizer → String
 /-- Pick the stabilizer for a focused constituent of the given gender
     and number. The *cē* allomorph appears iff the focus is feminine
     AND singular. -/
-def stabilizerFor (g : SurfaceGender) (singular : Bool) : Stabilizer :=
+def stabilizerFor (g : Gender) (singular : Bool) : Stabilizer :=
   match g, singular with
   | .feminine, true => .cee
   | _, _            => .nee
@@ -92,7 +91,7 @@ structure FocusConfig where
   /-- The focus strategy. -/
   strategy : Strategy
   /-- The gender of the focused constituent (determines *nē* vs *cē*). -/
-  focusG   : SurfaceGender
+  focusG   : Gender
   /-- Whether the focused constituent is singular. -/
   focusSG  : Bool
   /-- Whether a stabilizer surfaces (optional in ex-situ; absent in-situ). -/
@@ -131,20 +130,20 @@ instance (c : FocusConfig) : Decidable c.Licensed := by
 /-- Smart constructor for an in-situ focus configuration. Always
     licensed; defaults to no stabilizer (in-situ focus carries no
     morphological reflex). -/
-def mkInSitu (pac : PAC) (focusG : SurfaceGender) (focusSG : Bool) : FocusConfig :=
+def mkInSitu (pac : PAC) (focusG : Gender) (focusSG : Bool) : FocusConfig :=
   ⟨pac, .inSitu, focusG, focusSG, false⟩
 
 /-- Smart constructor for an ex-situ focus configuration. Takes a proof
     that if the TAM admits a Relative form, the PAC's mode is Relative;
     licensing then follows immediately (see `mkExSitu_licensed`). -/
-def mkExSitu (pac : PAC) (focusG : SurfaceGender) (focusSG : Bool)
+def mkExSitu (pac : PAC) (focusG : Gender) (focusSG : Bool)
     (hasStab : Bool := true)
     (_ : pac.tam.HasRelativeForm → pac.mode = .relative) : FocusConfig :=
   ⟨pac, .exSitu, focusG, focusSG, hasStab⟩
 
 /-- A FocusConfig built by `mkExSitu` is licensed: the proof obligation
     threaded through the smart constructor *is* the witness. -/
-theorem mkExSitu_licensed (p : PAC) (g : SurfaceGender) (sg : Bool)
+theorem mkExSitu_licensed (p : PAC) (g : Gender) (sg : Bool)
     (hs : Bool) (h : p.tam.HasRelativeForm → p.mode = .relative) :
     (mkExSitu p g sg hs h).Licensed := h
 
@@ -178,7 +177,7 @@ def focusConfigs : List FocusConfig := [exSitu_fem_relCmp, inSitu_any]
 
 /-- **Stabilizer agreement.** The *cē* allomorph appears exactly with
     feminine-singular focus; everything else takes *nē*. -/
-theorem stabilizer_iff_FSG (g : SurfaceGender) (sg : Bool) :
+theorem stabilizer_iff_FSG (g : Gender) (sg : Bool) :
     stabilizerFor g sg = .cee ↔ g = .feminine ∧ sg = true := by
   cases g <;> cases sg <;> simp [stabilizerFor]
 

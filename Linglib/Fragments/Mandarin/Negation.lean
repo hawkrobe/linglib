@@ -184,35 +184,23 @@ def buyaoParticle : String := "búyào"
 /-- Mandarin deontic negation 'shouldn't' (used as EN for REGRET/COMPLAIN). -/
 def bugaiParticle : String := "bùgāi"
 
-/-- An expletive negation marker and its trigger context. -/
-structure ENTriggerNegator where
-  /-- The trigger class label (from [jin-koenig-2021] Table 5) -/
-  triggerClass : String
-  /-- Mandarin trigger lexical item -/
-  triggerForm : String
-  /-- EN negator form (pinyin) -/
-  enNegatorForm : String
-  /-- EN negator gloss -/
-  enNegatorGloss : String
-  deriving Repr, BEq
-
-/-- EN trigger-negator pairings from [jin-koenig-2021], Table 5
-    and §6.1–6.4. -/
+/-- EN trigger-negator pairings (pinyin forms) from [jin-koenig-2021],
+    Table 5 and §6.1–6.4. -/
 def enTriggerNegators : List ENTriggerNegator :=
   [ { triggerClass := "FEAR", triggerForm := "pà"
-    , enNegatorForm := "bié", enNegatorGloss := "don't (imperative)" }
+    , enNegatorForm := "bié", enNegatorGloss := some "don't (imperative)" }
   , { triggerClass := "AVOID", triggerForm := "bìmiǎn"
-    , enNegatorForm := "bù/méi(yǒu)", enNegatorGloss := "NEG (general/perfective)" }
+    , enNegatorForm := "bù/méi(yǒu)", enNegatorGloss := some "NEG (general/perfective)" }
   , { triggerClass := "REGRET", triggerForm := "hòuhuǐ"
-    , enNegatorForm := "bùgāi", enNegatorGloss := "shouldn't (deontic)" }
+    , enNegatorForm := "bùgāi", enNegatorGloss := some "shouldn't (deontic)" }
   , { triggerClass := "COMPLAIN", triggerForm := "bàoyuan"
-    , enNegatorForm := "bùgāi", enNegatorGloss := "shouldn't (deontic)" }
+    , enNegatorForm := "bùgāi", enNegatorGloss := some "shouldn't (deontic)" }
   , { triggerClass := "DENY", triggerForm := "fǒurèn"
-    , enNegatorForm := "bù", enNegatorGloss := "NEG (general)" }
+    , enNegatorForm := "bù", enNegatorGloss := some "NEG (general)" }
   , { triggerClass := "BEFORE", triggerForm := "yǐqián"
-    , enNegatorForm := "bù", enNegatorGloss := "NEG (general)" }
+    , enNegatorForm := "bù", enNegatorGloss := some "NEG (general)" }
   , { triggerClass := "ALMOST", triggerForm := "chàdiǎnr"
-    , enNegatorForm := "méi", enNegatorGloss := "NEG (perfective)" } ]
+    , enNegatorForm := "méi", enNegatorGloss := some "NEG (perfective)" } ]
 
 /-- FEAR triggers use imperative negators, not the standard
     *bù* or *méi*. This connects to the desiderative semantics:

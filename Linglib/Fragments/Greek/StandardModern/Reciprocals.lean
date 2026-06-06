@@ -29,7 +29,7 @@ def nonactiveVoiceSuffix : MorphRule Bool :=
   , value := "nonactive"
   , formRule := fun stem => stem ++ "ome"
   , featureRule := id
-  , valenceRule := fun _ => some .intransitive
+  , valenceRule := fun _ => some ComplementType.none
   , semEffect := id
   }
 

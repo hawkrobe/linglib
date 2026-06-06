@@ -44,7 +44,7 @@ impossibility of sideward/downward movement.
   embedding `SyntacticObject → SynGraph` is not built — it would have to
   pick `Quot.out` or a stipulated planar representative, neither of which
   is consumer-callable cleanly.
-- `Core.Tree C W`: n-ary tree for compositional interpretation, not a
+- `Syntax C W`: n-ary tree for compositional interpretation, not a
   syntactic structure type.
 -/
 

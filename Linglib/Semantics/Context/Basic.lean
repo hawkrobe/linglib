@@ -1,4 +1,4 @@
-import Linglib.Core.WorldTimeIndex
+import Linglib.Core.Logic.Intensional.WorldTimeIndex
 import Linglib.Core.Time.Reichenbach
 
 /-!

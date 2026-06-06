@@ -1,5 +1,5 @@
 import Linglib.Syntax.Agreement.Basic
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Data.WALS.Features.F30A
 import Linglib.Data.WALS.Features.F31A
 import Linglib.Data.WALS.Features.F32A
@@ -147,14 +147,14 @@ structure GenderProfile where
   agreementTargets : List AgreementTarget
   /-- Semantic dimensions organising the system. -/
   semanticBases : List SemanticBasis
-  /-- Bridge to the lexical-layer `Features.SurfaceGender` taxonomy: the
+  /-- Bridge to the lexical-layer `Gender` taxonomy: the
       surface gender values attested in this language. Defaults to `[]` for
       noun-class systems (Bantu, Mixtec, Dyirbal) whose per-class agreement
       doesn't map onto the Indo-European `masculine/feminine/neuter/common`
       scheme; per-Fragment files for those languages retain a fine-grained
-      `Gender` type and provide their own `Features.SurfaceGender` bridge
+      `Gender` type and provide their own `Gender` bridge
       via a `.primary` function. -/
-  attestedSurfaceGenders : List Features.SurfaceGender := []
+  attestedGenders : List Gender := []
   deriving Repr, DecidableEq
 
 /-! ### Helper predicates -/
@@ -277,7 +277,7 @@ def walsAssignment (iso : String) : Option AssignmentSystem :=
     `basisFb`, `assignmentFb`) fire only when WALS is silent for that ISO;
     omit them for WALS-covered languages (dead arguments otherwise).
     The `rawGenderCount`, `agreementTargets`, `semanticBases`, and
-    `attestedSurfaceGenders` fields are paper-stipulated per [corbett-1991]
+    `attestedGenders` fields are paper-stipulated per [corbett-1991]
     — they are not derivable from any WALS chapter and must be passed
     explicitly. -/
 def GenderProfile.fromWALS
@@ -285,7 +285,7 @@ def GenderProfile.fromWALS
     (rawGenderCount : Nat)
     (agreementTargets : List AgreementTarget := [])
     (semanticBases : List SemanticBasis := [])
-    (attestedSurfaceGenders : List Features.SurfaceGender := [])
+    (attestedGenders : List Gender := [])
     (genderCountFb : GenderCount := .none)
     (basisFb : GenderBasis := .noGender)
     (assignmentFb : AssignmentSystem := .noGender) : GenderProfile :=
@@ -296,7 +296,7 @@ def GenderProfile.fromWALS
   , assignment := (walsAssignment iso).getD assignmentFb
   , agreementTargets
   , semanticBases
-  , attestedSurfaceGenders }
+  , attestedGenders }
 
 /-! ### WALS distribution facts -/
 

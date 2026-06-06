@@ -1,5 +1,5 @@
 import Linglib.Typology.Negation
-import Linglib.Phenomena.Negation.ExpletiveNegation
+import Linglib.Typology.Negation.ExpletiveNegation
 
 /-!
 # Januubi Arabic: Negation and Expletive Negation Markers
@@ -127,7 +127,7 @@ def allExamples : List ENExample :=
 
 /-! ### Structural Constraints on EN -/
 
-open Phenomena.Negation.ExpletiveNegation (ENBlockingReason)
+open Typology.Negation (ENBlockingReason)
 
 /-- Why REGRET does not trigger EN in Januubi: Januubi speakers disprefer
     modal operators in complement clauses, and REGRET-class EN requires

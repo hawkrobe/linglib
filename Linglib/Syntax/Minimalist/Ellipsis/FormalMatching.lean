@@ -2,7 +2,6 @@ import Linglib.Syntax.Minimalist.ExtendedProjection.Properties
 import Linglib.Syntax.Minimalist.Voice
 import Linglib.Syntax.Minimalist.SmallClause
 import Linglib.Syntax.Minimalist.Labeling
-import Linglib.Syntax.Minimalist.CombinationSchemata
 
 /-!
 # Sluicing: Syntactic Isomorphism Condition

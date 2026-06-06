@@ -1,4 +1,4 @@
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Typology.Gender
 import Linglib.Studies.Corbett1991
 import Linglib.Morphology.DM.Categorizer
@@ -955,7 +955,6 @@ In Set 2 languages (Maa, Wari'), the same logic yields feminine as default:
 
 The polarity of the u-feature determines which gender is arbitrary vs default. -/
 
-open Features (SurfaceGender)
 
 -- Set 1 (Spanish) derivation chain — uses DM bridge (CatHead.surfaceGenderSet1)
 
@@ -1121,7 +1120,7 @@ The key VI patterns from [kramer-2015]:
 /-- A VI gender-class assignment: maps each n-head to a surface gender
     class (encoded as Nat). Two n-heads yielding the same Nat surface
     as the same gender. -/
-def NInventory.computeSurfaceGenders (inv : NInventory)
+def NInventory.computeGenders (inv : NInventory)
     (viMap : CatHead → Nat) : Nat :=
   (inv.nHeads.map viMap).eraseDups.length
 
@@ -1145,41 +1144,41 @@ def viThreeGender (ch : CatHead) : Nat :=
 
 -- Set 1 verification
 theorem spanish_vi_derived :
-    spanishNs.computeSurfaceGenders viSet1 = spanishNs.surfaceGenders := by native_decide
+    spanishNs.computeGenders viSet1 = spanishNs.surfaceGenders := by native_decide
 
 theorem amharic_vi_derived :
-    amharicNs.computeSurfaceGenders viSet1 = amharicNs.surfaceGenders := by native_decide
+    amharicNs.computeGenders viSet1 = amharicNs.surfaceGenders := by native_decide
 
 theorem hausa_vi_derived :
-    hausaNs.computeSurfaceGenders viSet1 = hausaNs.surfaceGenders := by native_decide
+    hausaNs.computeGenders viSet1 = hausaNs.surfaceGenders := by native_decide
 
 -- Set 2 verification
 theorem maa_vi_derived :
-    maaNs.computeSurfaceGenders viSet2 = maaNs.surfaceGenders := by native_decide
+    maaNs.computeGenders viSet2 = maaNs.surfaceGenders := by native_decide
 
 -- 3-gender verification
 theorem russian_vi_derived :
-    russianNs.computeSurfaceGenders viThreeGender = russianNs.surfaceGenders := by native_decide
+    russianNs.computeGenders viThreeGender = russianNs.surfaceGenders := by native_decide
 
 theorem mangarayi_vi_derived :
-    mangarayiNs.computeSurfaceGenders viThreeGender =
+    mangarayiNs.computeGenders viThreeGender =
       mangarayiNs.surfaceGenders := by native_decide
 
 theorem lavukaleve_vi_derived :
-    lavukaleveNs.computeSurfaceGenders viThreeGender =
+    lavukaleveNs.computeGenders viThreeGender =
       lavukaleveNs.surfaceGenders := by native_decide
 
 /-- Dieri: same 3-n inventory as Mangarayi but 2 surface genders under
     Set 1 VI (where plain n → masculine, not neuter). -/
 theorem dieri_vi_derived :
-    dieriNs.computeSurfaceGenders viSet1 = dieriNs.surfaceGenders := by native_decide
+    dieriNs.computeGenders viSet1 = dieriNs.surfaceGenders := by native_decide
 
 /-- The Dieri vs Mangarayi contrast: same n-heads, different VI → different
     surface gender counts. This is now DERIVED, not stipulated. -/
 theorem dieri_mangarayi_vi_contrast :
     dieriNs.nHeads = mangarayiNs.nHeads ∧
-    dieriNs.computeSurfaceGenders viSet1 ≠
-      mangarayiNs.computeSurfaceGenders viThreeGender := ⟨rfl, by native_decide⟩
+    dieriNs.computeGenders viSet1 ≠
+      mangarayiNs.computeGenders viThreeGender := ⟨rfl, by native_decide⟩
 
 -- ============================================================================
 -- § 15: Hausa Phonological-Assignment Refutation ([kramer-2020] §3.3.1)
@@ -1250,14 +1249,14 @@ namespace Predictors
 /-- Naive Corbett-style phonological-assignment rule
     ([corbett-1991] §3.2.2): nouns ending in *-ā* are feminine,
     others are masculine. This is what Kramer's §3.3.1 refutes. -/
-def corbettPhonological (n : Noun) : Features.SurfaceGender :=
+def corbettPhonological (n : Noun) : Gender :=
   if n.EndsInAa then .feminine else .masculine
 
 /-- Newman/Kramer structural rule: the noun's surface gender is the
     morphosyntactically encoded fact (Newman: lexical+overt-char;
     Kramer: VI realization on n head). At the empirical level, both
     reduce to the attested agreement-trigger fact. -/
-def newmanKramerStructural (n : Noun) : Features.SurfaceGender :=
+def newmanKramerStructural (n : Noun) : Gender :=
   n.attestedGender
 
 end Predictors

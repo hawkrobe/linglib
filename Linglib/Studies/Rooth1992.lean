@@ -407,7 +407,7 @@ theorem bridge_qa_incongruent :
 open Core.Logic.Intensional
 -- (open removed: Assignment alias eliminated upstream)
 open Semantics.Montague (Lexicon)
-open Core.Tree
+open Syntax
 open Semantics.Composition.Tree
 
 /-- Entity domain for the focus model. -/

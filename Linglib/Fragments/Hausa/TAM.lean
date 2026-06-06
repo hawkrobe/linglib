@@ -1,5 +1,5 @@
 import Linglib.Features.Person.Decomposition
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 
 /-!
 # Hausa TAM and the Person-Aspect-Complex (PAC) — mathlib-style
@@ -46,7 +46,6 @@ that pattern).
 namespace Hausa.Inflection
 
 open Person
-open Features (SurfaceGender)
 
 -- ============================================================================
 -- § 1: TAM Inventory ([newman-2000] ch. 70)
@@ -103,7 +102,7 @@ inductive Mode where
     a `gender` field that is empty (`none`) outside the 2sg/3sg cells. -/
 structure Subject where
   person : Category
-  gender : Option SurfaceGender
+  gender : Option Gender
   deriving DecidableEq, Repr
 
 namespace Subject

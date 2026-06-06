@@ -49,7 +49,7 @@ theorem hk_bs_reflexive_equiv {F : Frame} (n : Nat)
     (body : F.Entity → F.Entity → Prop)
     (binder : F.Entity) (g : Core.Assignment F.Entity) :
     body (g[n ↦ binder] n) (g[n ↦ binder] n) = W body binder := by
-  simp only [W, update_same]
+  simp only [W, Function.update_self]
 
 section CategoricalPerspective
 
@@ -166,7 +166,7 @@ theorem binding_eq_resolve {F : Frame} (κ l : Nat)
 theorem binding_establishes_diagonal {F : Frame} (κ l : Nat)
     (g : Core.Assignment F.Entity) (h : κ ≠ l) :
     diag κ l (g[κ ↦ g l]) := by
-  simp [diag, update_same, update_other g κ l (g l) (Ne.symm h)]
+  simp [diag, Function.update_of_ne (Ne.symm h) (g l) g]
 
 end CylindricAlgebra
 

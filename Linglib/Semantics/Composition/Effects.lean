@@ -1,8 +1,7 @@
 import Linglib.Semantics.Composition.Continuation
 import Linglib.Semantics.Composition.WriterMonad
-import Linglib.Semantics.Composition.SetMonad
+import Mathlib.Data.Set.Functor
 import Linglib.Semantics.Composition.Tree
-import Linglib.Semantics.Composition.QuantifierComposition
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Quantification.Quantifier
 import Linglib.Semantics.Reference.Binding
@@ -28,14 +27,15 @@ linglib infrastructure:
 | Effect | Paper name | Type | linglib type |
 |--------|-----------|------|-------------|
 | Scope | C | `(α → ρ) → ρ` | `Cont R A` |
-| CI / supplementation | W | `α × List P` | `Writer P A` |
+| CI / supplementation | W | `α × List P` | `Writer (List P) A` |
 | Input (binding) | R | `ι → α` | `Reader` (Binding.lean) |
 | Output (antecedents) | W | `α × ι` | `Prod` |
-| Indeterminacy | S | `{α}` | `α → Prop` (SetMonad.lean) |
+| Indeterminacy | S | `{α}` | `α → Prop` (mathlib's `Set`; details in `Studies/Charlow2020.lean`) |
 
 ## Organization
 
-- **§1** Lean typeclass instances for `Cont` and `Writer`
+- **§1** Typeclass instances (now supplied by mathlib's `WriterT` and
+  `Composition/Continuation.lean`)
 - **§2** Meta-combinators: F̄, F̃, A, J (the paper's core contribution)
 - **§3** Generalized Application and hierarchy theorems
 - **§4** The W ⊣ R adjunction for binding
@@ -57,9 +57,7 @@ Omitted: Ū/Ũ (Unit Left/Right) are trivial wrappers around `pure`;
 namespace Semantics.Composition.Effects
 
 open Semantics.Composition.Continuation
-open Semantics.Composition.WriterMonad
 open Semantics.Composition.Tree
-open Semantics.Composition.QuantifierComposition
 open Pragmatics.Expressives
 open Semantics.Quantification.Quantifier
 open Semantics.Reference.Binding
@@ -73,63 +71,11 @@ open Semantics.Montague
 
 /-! ### §1 Typeclass instances for existing types
 
-Register `Functor`, `Applicative`, and `Monad` instances for linglib's
-`Writer P` type, delegating to existing operations. The `Cont R` instances
-live with the type in `Composition/Continuation.lean`.
-
-Note: `Writer P` requires `P : Type` (not universe-polymorphic) for Lean's
-`Monad` class. -/
-
-section WriterInstances
-
-variable {P : Type}
-
-instance : Functor (Writer P) where
-  map f m := Writer.map f m
-
-instance : Pure (Writer P) where
-  pure a := Writer.pure a
-
-instance : Bind (Writer P) where
-  bind m f := Writer.bind m f
-
-instance : Seq (Writer P) where
-  seq mf mx := Writer.app mf (mx ())
-
-instance : Monad (Writer P) where
-
-private theorem append_nil_right {α : Type} (l₁ l₂ : List α) :
-    l₁ ++ l₂ = l₁ ++ (l₂ ++ []) := by simp
-
-instance : LawfulFunctor (Writer P) where
-  map_const := rfl
-  id_map _ := Writer.ext rfl rfl
-  comp_map _ _ _ := rfl
-
-instance : LawfulApplicative (Writer P) where
-  seqLeft_eq a b := by cases a; cases b; exact Writer.ext rfl rfl
-  seqRight_eq a b := by
-    cases a; cases b; exact Writer.ext rfl (append_nil_right _ _)
-  pure_seq _ _ := Writer.ext rfl (List.append_nil _)
-  map_pure _ _ := rfl
-  seq_pure _ _ := Writer.ext rfl (List.append_nil _)
-  seq_assoc f g x := by
-    cases f; cases g; cases x
-    simp only [Functor.map, Writer.map, Seq.seq, Writer.app, Writer.bind, Writer.pure,
-      Writer.mk.injEq]
-    exact ⟨rfl, by simp [List.append_assoc]⟩
-
-instance : LawfulMonad (Writer P) where
-  bind_pure_comp _ _ := Writer.ext rfl (List.append_nil _)
-  bind_map f x := by
-    cases f; cases x; exact Writer.ext rfl (append_nil_right _ _)
-  pure_bind _ _ := Writer.ext rfl rfl
-  bind_assoc x f g := by
-    cases x
-    simp only [Bind.bind, Writer.bind, Writer.mk.injEq]
-    exact ⟨trivial, by simp [List.append_assoc]⟩
-
-end WriterInstances
+The W effect is mathlib's `Writer (List P)` (= `WriterT (List P) Id`), whose
+`Functor`/`Applicative`/`Monad` instances come from mathlib, with
+`LawfulMonad` and the `val`/`log`/`tell` surface in
+`Composition/WriterMonad.lean`. The `Cont R` instances live with the
+type in `Composition/Continuation.lean`. -/
 
 -- ════════════════════════════════════════════════════════════════════
 -- §2 Meta-Combinators
@@ -335,7 +281,7 @@ itself via `▷(x) = ⟨x, x⟩` and the sentence body uses the bound variable,
 the co-unit ε yields the **W combinator** `W κ x = κ x x` from
 `Binding.lean`.
 
-Note: the paper's W (product) is distinct from linglib's `Writer P A`
+Note: the paper's W (product) is distinct from `Writer (List P) A`
 (accumulating list log). The product W models single-referent storage;
 the `Writer` models CI accumulation. -/
 
@@ -400,7 +346,7 @@ theorem adj_binding_agrees_with_hk {F : Frame} (n : Nat)
     (binder : F.Entity) (g : Core.Assignment F.Entity) :
     adj_ε (body binder, binder) = body (g[n ↦ binder] n) (g[n ↦ binder] n) := by
   show body binder binder = body (g[n ↦ binder] n) (g[n ↦ binder] n)
-  simp only [update_same]
+  simp only [Function.update_self]
 
 end WRAdjunction
 
@@ -476,16 +422,39 @@ section EffectOps
 variable {R : Type} {P : Type} {α : Type}
 
 /-- Log a CI proposition as a side-effect. Alias for `Writer.tell`. -/
-def aside (p : P) : Writer P Unit := Writer.tell p
+def aside (p : P) : Writer (List P) Unit := Writer.tell p
 
 /-- Handle the scope effect by evaluating with the identity continuation.
     Alias for `Cont.lower`. -/
 def handleScope (m : Cont R R) : R := Cont.lower m
 
 /-- Handle CI effects by extracting the value and accumulated log. -/
-def handleCI (m : Writer P α) : α × List P := (m.val, m.log)
+def handleCI (m : Writer (List P) α) : α × List P := (m.val, m.log)
 
 end EffectOps
+
+section PredAbsInstances
+
+/-! #### PA capability under effects
+
+`Tree.PredAbs` records which effects admit Predicate Abstraction. The
+negative instances are theoretical content, not bookkeeping: they state
+in the type system that QR/PA-style binding is unavailable under these
+effects, so scope and binding must come from effect sequencing instead
+(`bind`-order, the W ⊣ R adjunction of §4). -/
+
+/-- Scope effects do not support Predicate Abstraction: a distributor
+`(Entity → Cont R α) → Cont R (Entity → α)` would have to run one
+continuation at every entity simultaneously. Binding under scope arises
+from `bind`-order instead (§7). -/
+instance {R : Type} (F : Frame) : Tree.PredAbs (Cont R) F := ⟨none⟩
+
+/-- CI effects do not support Predicate Abstraction: the log of
+`⟦β⟧^{g[n↦x]}` may vary with `x`, so no log-respecting distributor
+exists. CI content composes around abstraction, not through it. -/
+instance {ω : Type} (F : Frame) : Tree.PredAbs (Writer ω) F := ⟨none⟩
+
+end PredAbsInstances
 
 -- ════════════════════════════════════════════════════════════════════
 -- §6 Bridge Theorems
@@ -499,15 +468,8 @@ effect-driven architecture. -/
 
 section WriterBridge
 
-variable {P A B : Type}
-
-/-- `Writer.app` is applicative application (⊛) for the Writer monad.
-
-    This connects `WriterMonad.lean`'s monadic application to the
-    effect hierarchy. -/
-theorem writer_app_is_seq (mf : Writer P (A → B)) (mx : Writer P A) :
-    Writer.app mf mx = (mf <*> mx) := by
-  exact Writer.ext rfl rfl
+-- `Writer`'s monadic application IS `<*>` (mathlib's `WriterT` instance),
+-- so no bridge theorem is needed for the W effect.
 
 /-- Lowering a Cont is handling the scope effect. -/
 theorem cont_lower_is_handleScope {R : Type} (m : Cont R R) :
@@ -519,21 +481,21 @@ section CIBridge
 
 variable {W : Type}
 
-/-- A `TwoDimProp` embeds into a `Writer (W → Prop) (W → Prop)`:
+/-- A `TwoDimProp` embeds into a `Writer (List (W → Prop)) (W → Prop)`:
     the at-issue content is the value, the CI is the log.
 
     This connects [potts-2005]'s two-dimensional semantics to
     Writer effect (their W constructor
     in Table 2). -/
-def twoDimToWriter (p : TwoDimProp W) : Writer (W → Prop) (W → Prop) :=
-  ⟨p.atIssue, [p.ci]⟩
+def twoDimToWriter (p : TwoDimProp W) : Writer (List (W → Prop)) (W → Prop) :=
+  Writer.mk p.atIssue ([p.ci])
 
 -- ────────────────────────────────────────────────────
 -- CI projection universality
 -- ────────────────────────────────────────────────────
 
-/-- **CI projection universality.** Any operation that acts via
-    `Writer.map` (i.e., transforms the value but leaves the log untouched)
+/-- **CI projection universality.** Any operation that acts via `<$>`
+    (i.e., transforms the value but leaves the log untouched)
     automatically preserves all CI content.
 
     This is the general principle behind CI projection through negation,
@@ -543,8 +505,8 @@ def twoDimToWriter (p : TwoDimProp W) : Writer (W → Prop) (W → Prop) :=
 
     Specializes to `twoDim_neg_ci_via_writer` when `f = fun p w => !p w`. -/
 theorem ci_projection_universal {W A B : Type}
-    (f : A → B) (m : Writer (W → Prop) A) :
-    (Writer.map f m).log = m.log := rfl
+    (f : A → B) (m : Writer (List (W → Prop)) A) :
+    (f <$> m).log = m.log := rfl
 
 /-- CI projection through negation follows from the Writer architecture:
     `map` transforms the value but leaves the log untouched. -/
@@ -573,17 +535,17 @@ theorem twoDim_neg_val_via_writer (p : TwoDimProp W) :
 
     For multi-CI Writers (e.g., "that bastard John met that jerk Pete"
     with two CI entries), this conjoins all CIs into at-issue content. -/
-def runCIWriter {W : Type} (m : Writer (W → Prop) (W → Prop)) : TwoDimProp W :=
+def runCIWriter {W : Type} (m : Writer (List (W → Prop)) (W → Prop)) : TwoDimProp W :=
   { atIssue := λ w => m.log.foldl (λ acc ci => acc ∧ ci w) (m.val w)
   , ci := λ _ => True }
 
 /-- Running a CI Writer consumes the log: the result has trivial CI. -/
-theorem runCIWriter_trivial_ci {W : Type} (m : Writer (W → Prop) (W → Prop)) (w : W) :
+theorem runCIWriter_trivial_ci {W : Type} (m : Writer (List (W → Prop)) (W → Prop)) (w : W) :
     (runCIWriter m).ci w ↔ True := Iff.rfl
 
 /-- Running a Writer with an empty log preserves the value unchanged. -/
 theorem runCIWriter_empty_log {W : Type} (val : W → Prop) (w : W) :
-    (runCIWriter ⟨val, []⟩).atIssue w = val w := rfl
+    (runCIWriter (Writer.mk val ([]))).atIssue w = val w := rfl
 
 /-- Running a Writer with a trivially-true log entry preserves the
     value unchanged.
@@ -591,7 +553,7 @@ theorem runCIWriter_empty_log {W : Type} (val : W → Prop) (w : W) :
     Pure quotation = clearing the log to `[λ _ => True]`. Running
     such a Writer recovers the original at-issue content. -/
 theorem runCIWriter_trivial_log {W : Type} (val : W → Prop) (w : W) :
-    (runCIWriter ⟨val, [λ _ => True]⟩).atIssue w ↔ val w := by
+    (runCIWriter (Writer.mk val ([λ _ => True]))).atIssue w ↔ val w := by
   simp [runCIWriter]
 
 -- ────────────────────────────────────────────────────
@@ -627,9 +589,9 @@ theorem runCIWriter_twoDim_fn {W : Type} (p : TwoDimProp W) :
     Follows from `List.foldl_append`. -/
 theorem runCIWriter_log_append {W : Type}
     (val : W → Prop) (cis₁ cis₂ : List (W → Prop)) (w : W) :
-    (runCIWriter ⟨val, cis₁ ++ cis₂⟩).atIssue w =
+    (runCIWriter (Writer.mk val (cis₁ ++ cis₂))).atIssue w =
     cis₂.foldl (λ acc ci => acc ∧ ci w)
-      ((runCIWriter ⟨val, cis₁⟩).atIssue w) := by
+      ((runCIWriter (Writer.mk val cis₁)).atIssue w) := by
   simp [runCIWriter, List.foldl_append]
 
 /-- **Idempotency.** Running, re-embedding, and running again = running once.
@@ -641,7 +603,7 @@ theorem runCIWriter_log_append {W : Type}
     This is the retraction property: `runCIWriter ∘ twoDimToWriter` is
     idempotent on the image of `runCIWriter`. -/
 theorem runCIWriter_idempotent {W : Type}
-    (m : Writer (W → Prop) (W → Prop)) (w : W) :
+    (m : Writer (List (W → Prop)) (W → Prop)) (w : W) :
     (runCIWriter (twoDimToWriter (runCIWriter m))).atIssue w ↔
     (runCIWriter m).atIssue w := by
   simp [runCIWriter, twoDimToWriter]
@@ -737,7 +699,7 @@ theorem inverse_scope_via_cont :
   | _ => exact absurd (by assumption : person_sem _) id
 
 /-- The two scope orderings via Cont yield genuinely different readings,
-    matching `scope_readings_differ` from `QuantifierComposition.lean`. -/
+    matching `HeimKratzer1998.scope_readings_differ`. -/
 theorem cont_scope_readings_differ :
     (handleScope (gqAsCont (every_sem person_sem) |>.bind
       (λ x => gqAsCont (some_sem person_sem) |>.bind
@@ -752,6 +714,29 @@ theorem cont_scope_readings_differ :
   exact hI hS
 
 end ScopeBridge
+
+section TreeEngine
+
+/-! #### The tree engine under effects
+
+`Tree.interp` is polymorphic over the effect functor: the same type-driven
+engine that implements H&K at `M = Id` lifts through any `[Applicative M]`.
+At the FA mode that lifting is literally the meta-combinator **A** — a
+framework-level identity, no toy lexicon required. Worked tree-level
+derivations at `M = Cont` (scope) and `M = Writer` (CI) live in
+`Studies/BumfordCharlow2024.lean` alongside the toy-model demonstrations. -/
+
+/-- The engine's FA mode applies the function daughter to the argument
+through `Applicative`'s `<*>`. With `aApp_eq_structuredApp_fa`, this
+composes into "FA = meta-combinator **A** at forward application": the
+H&K engine and the effect calculus share one application operation. -/
+theorem tryFA_function_left {F : Frame} {M : Type → Type} [Applicative M]
+    {σ τ : Ty} (f : M (F.Denot (σ ⇒ τ))) (a : M (F.Denot σ)) :
+    Tree.tryFA ⟨σ ⇒ τ, f⟩ (⟨σ, a⟩ : Tree.TypedDenot F M) =
+      some ⟨τ, f <*> a⟩ := by
+  simp [Tree.tryFA]
+
+end TreeEngine
 
 section BindingBridge
 
@@ -812,7 +797,7 @@ theorem binding_C_agrees_with_hk (g : Core.Assignment toyModel.Entity) :
   show ToyLexicon.sees_sem ToyEntity.john ToyEntity.john =
        ToyLexicon.sees_sem (g[1 ↦ ToyEntity.john] 1)
                            (g[1 ↦ ToyEntity.john] 1)
-  simp only [update_same]
+  simp only [Function.update_self]
 
 /-- C and H&K agree for Mary as well: `C(<) ▷(m) (λi. sees i) = sees m m`. -/
 theorem binding_C_agrees_with_hk_mary (g : Core.Assignment toyModel.Entity) :
@@ -823,7 +808,7 @@ theorem binding_C_agrees_with_hk_mary (g : Core.Assignment toyModel.Entity) :
   show ToyLexicon.sees_sem ToyEntity.mary ToyEntity.mary =
        ToyLexicon.sees_sem (g[2 ↦ ToyEntity.mary] 2)
                            (g[2 ↦ ToyEntity.mary] 2)
-  simp only [update_same]
+  simp only [Function.update_self]
 
 end BindingBridge
 
@@ -990,7 +975,7 @@ end BindingUnification
 
 The **indeterminacy** effect — labeled `S` in's
 Table 2 — is the set monad `(S, η, ⫝̸)` from [charlow-2020],
-formalized in `SetMonad.lean`.
+formalized in `Studies/Charlow2020.lean`.
 
 | Effect | η (pure) | ⫝̸ (bind) | Linguistic use |
 |---|---|---|---|
@@ -1009,29 +994,33 @@ the paper) or the Binder Roof Constraint (§6.4). The monad can. -/
 
 section IndeterminacyBridge
 
-open Semantics.Composition.SetMonad
+attribute [local instance] Set.monad
 
-/-- The set monad's η is the indeterminacy effect's `pure` — mathlib's
-    `Set` singleton `{x}`. -/
-theorem indeterminacy_pure_is_eta {A : Type} (x : A) :
-    eta x = fun y => y = x := rfl
+/-- The set monad's `pure` is the indeterminacy effect's `pure` — the
+    singleton `{x}`, which as a `Set α = α → Prop` is `fun y => y = x`. -/
+theorem indeterminacy_pure_is_singleton {A : Type} (x : A) :
+    (pure x : Set A) = fun y => y = x := by
+  ext y; exact Iff.rfl
 
-/-- The set monad's ⫝̸ is the indeterminacy effect's `bind` — mathlib's
-    `Set` monad bind. -/
-theorem indeterminacy_bind_is_setBind {A B : Type}
-    (m : A → Prop) (f : A → B → Prop) :
-    setBind m f = fun b => ∃ a, m a ∧ f a b := by
-  funext b; exact propext (setBind_apply m f b)
+/-- The set monad's `>>=` is the indeterminacy effect's `bind` — for
+    `m : Set A` (= `A → Prop`) and `f : A → Set B`, the result at `b`
+    is `∃ a, m a ∧ f a b`. -/
+theorem indeterminacy_bind_is_seq {A B : Type}
+    (m : Set A) (f : A → Set B) :
+    m >>= f = {b | ∃ a, m a ∧ f a b} := by
+  ext b
+  simp only [Set.bind_def, Set.mem_iUnion, Set.mem_setOf_eq, exists_prop]
+  rfl
 
-/-- **Indeterminacy obeys ASSOCIATIVITY.** Re-export from `SetMonad.lean`.
-
-    This is the property that distinguishes the full monad from the mere
-    applicative: `(m ⫝̸ f) ⫝̸ g = m ⫝̸ (λx. f x ⫝̸ g)`. Without it,
-    indefinites cannot iteratively scope out of nested islands. -/
+/-- **Indeterminacy obeys ASSOCIATIVITY** — the property [charlow-2020]
+    leans on to derive exceptional scope. Mathlib's `bind_assoc` for
+    `Set`. Distinguishes the full monad from the mere applicative;
+    without it, indefinites cannot iteratively scope out of nested
+    islands ([charlow-2020] eq. 34, Figure 7). -/
 theorem indeterminacy_associativity {A B C : Type}
-    (m : A → Prop) (f : A → B → Prop) (g : B → C → Prop) :
-    setBind (setBind m f) g = setBind m (fun a => setBind (f a) g) :=
-  set_associativity m f g
+    (m : Set A) (f : A → Set B) (g : B → Set C) :
+    (m >>= f) >>= g = m >>= (fun a => f a >>= g) :=
+  bind_assoc m f g
 
 end IndeterminacyBridge
 

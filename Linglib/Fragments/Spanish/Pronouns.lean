@@ -37,11 +37,11 @@ open Features.Register (Level)
 
 /-- *yo* — 1sg. -/
 def yo : PersonalPronoun :=
-  { form := "yo", person := some .first, number := some .Sing }
+  { form := "yo", person := some .first, number := some .singular }
 
 /-- *tú* — 2sg familiar (T form). -/
 def tu : PersonalPronoun :=
-  { form := "tú", person := some .second, number := some .Sing, register := .informal }
+  { form := "tú", person := some .second, number := some .singular, register := .informal }
 
 /-- *usted* — polite 2sg (V form, triggers 3sg agreement).
     Agreement person is 3rd, interpretable person is 2nd. Triggers PCC
@@ -49,33 +49,33 @@ def tu : PersonalPronoun :=
     ([rezac-2011], [adamson-zompi-2025] §6.1).
     [adamson-zompi-2025] -/
 def usted : PersonalPronoun :=
-  { form := "usted", person := some .third, number := some .Sing, register := .formal,
+  { form := "usted", person := some .third, number := some .singular, register := .formal,
     referentialPerson := some .second }
 
 /-- *él* — 3sg masculine. -/
 def el : PersonalPronoun :=
-  { form := "él", person := some .third, number := some .Sing }
+  { form := "él", person := some .third, number := some .singular }
 
 /-- *ella* — 3sg feminine. -/
 def ella : PersonalPronoun :=
-  { form := "ella", person := some .third, number := some .Sing }
+  { form := "ella", person := some .third, number := some .singular }
 
 /-- *nosotros* — 1pl. -/
 def nosotros : PersonalPronoun :=
-  { form := "nosotros", person := some .first, number := some .Plur }
+  { form := "nosotros", person := some .first, number := some .plural }
 
 /-- *vosotros* — 2pl familiar (Peninsular). -/
 def vosotros : PersonalPronoun :=
-  { form := "vosotros", person := some .second, number := some .Plur, register := .informal }
+  { form := "vosotros", person := some .second, number := some .plural, register := .informal }
 
 /-- *ustedes* — 2pl formal / general (triggers 3pl agreement). -/
 def ustedes : PersonalPronoun :=
-  { form := "ustedes", person := some .third, number := some .Plur, register := .formal,
+  { form := "ustedes", person := some .third, number := some .plural, register := .formal,
     referentialPerson := some .second }
 
 /-- *ellos* — 3pl masculine. -/
 def ellos : PersonalPronoun :=
-  { form := "ellos", person := some .third, number := some .Plur }
+  { form := "ellos", person := some .third, number := some .plural }
 
 def allPronouns : List PersonalPronoun :=
   [yo, tu, usted, el, ella, nosotros, vosotros, ustedes, ellos]

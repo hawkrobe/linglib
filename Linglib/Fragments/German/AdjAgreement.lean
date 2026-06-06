@@ -24,7 +24,7 @@ def predFeatures : List MAGFeatureType := []
 
 /-- German attributive adjectives carry φ + κ (strong endings). -/
 def attrFeatures : List MAGFeatureType :=
-  [ .phi (.number .Plur), .phi (.number .Sing)
+  [ .phi (.number .plural), .phi (.number .singular)
   , .phi (.gender 0), .phi (.gender 1), .phi (.gender 2)
   , .kappa .nom, .kappa .acc, .kappa .dat, .kappa .gen ]
 

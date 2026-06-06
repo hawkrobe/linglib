@@ -1,4 +1,4 @@
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Syntax.Pronoun.Basic
 
@@ -64,7 +64,7 @@ inductive Gender where
     Only fem/masc map directly; the remaining four genders
     (neutral, liquid, wooden, animal) are language-specific
     noun class distinctions without cross-linguistic surface equivalents. -/
-def Gender.toSurfaceGender : Gender → Features.SurfaceGender
+def Gender.toGender : Gender → _root_.Gender
   | .fem  => .feminine
   | .masc => .masculine
   | _     => .common  -- neutral/liq/wd/aml: no sex-based distinction
@@ -82,23 +82,23 @@ focus ((65), with *íntàà* 'only'; speaker comment at (66)). Each entry
 declares the C&S class on the shared `Pronoun.strength` field. -/
 
 def cl1sg : PersonalPronoun :=
-  { form := "=ì", person := some .first, number := some .Sing,
+  { form := "=ì", person := some .first, number := some .singular,
     strength := some .clitic }
 
 def cl1plIncl : PersonalPronoun :=
-  { form := "=(y)é", person := some .firstInclusive, number := some .Plur,
+  { form := "=(y)é", person := some .firstInclusive, number := some .plural,
      strength := some .clitic }
 
 def cl1plExcl : PersonalPronoun :=
-  { form := "=ndú", person := some .firstExclusive, number := some .Plur,
+  { form := "=ndú", person := some .firstExclusive, number := some .plural,
      strength := some .clitic }
 
 def cl2sg : PersonalPronoun :=
-  { form := "=ú", person := some .second, number := some .Sing,
+  { form := "=ú", person := some .second, number := some .singular,
     strength := some .clitic }
 
 def cl2pl : PersonalPronoun :=
-  { form := "=ndó", person := some .second, number := some .Plur,
+  { form := "=ndó", person := some .second, number := some .plural,
     strength := some .clitic }
 
 /-- Surface form of the nonlocal (3rd person) clitic for each gender ((5);
@@ -113,19 +113,19 @@ def Gender.cliticForm : Gender → String
 
 /-- Nonlocal (3rd person) clitic by gender ((5)). `number := none`: most
     nonlocal pronouns make no number distinction (*=rà* 'he, they (all-male
-    group)'); the API gender is derived via `Gender.toSurfaceGender`. -/
+    group)'); the API gender is derived via `Gender.toGender`. -/
 def cl3 (g : Gender) : PersonalPronoun :=
   { form := g.cliticForm, person := some .third,
-    gender := some g.toSurfaceGender, strength := some .clitic }
+    gender := some g.toGender, strength := some .clitic }
 
 /-- *=nà* — nonlocal plural, neutral ((5)). -/
 def cl3plNeutral : PersonalPronoun :=
-  { form := "=nà", person := some .third, number := some .Plur,
+  { form := "=nà", person := some .third, number := some .plural,
     gender := some .common, strength := some .clitic }
 
 /-- *=ná* — nonlocal plural, feminine ((5)). -/
 def cl3plFem : PersonalPronoun :=
-  { form := "=ná", person := some .third, number := some .Plur,
+  { form := "=ná", person := some .third, number := some .plural,
     gender := some .feminine, strength := some .clitic }
 
 /-! ### Non-clitic series ((4), (62))
@@ -139,19 +139,19 @@ McCloskey & Hale 1984 on Irish). Being phrasal, they are not lexical
 entries here. -/
 
 def str1sg : PersonalPronoun :=
-  { form := "yù'u", person := some .first, number := some .Sing,
+  { form := "yù'u", person := some .first, number := some .singular,
     strength := some .strong }
 
 def str1plExcl : PersonalPronoun :=
-  { form := "ndú'ú", person := some .firstExclusive, number := some .Plur,
+  { form := "ndú'ú", person := some .firstExclusive, number := some .plural,
      strength := some .strong }
 
 def str2sg : PersonalPronoun :=
-  { form := "yô'o", person := some .second, number := some .Sing,
+  { form := "yô'o", person := some .second, number := some .singular,
     strength := some .strong }
 
 def str2pl : PersonalPronoun :=
-  { form := "ndó'ó", person := some .second, number := some .Plur,
+  { form := "ndó'ó", person := some .second, number := some .plural,
     strength := some .strong }
 
 /-! ### Series structure -/

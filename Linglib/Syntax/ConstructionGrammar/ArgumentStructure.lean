@@ -1,7 +1,6 @@
 import Linglib.Syntax.ConstructionGrammar.Basic
 import Linglib.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
-import Linglib.Core.CombinationKind
 import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 import Linglib.Data.UD.Basic
 
@@ -9,27 +8,20 @@ import Linglib.Data.UD.Basic
 # Argument Structure Constructions
 [goldberg-1995] [goldberg-shirtz-2025]
 
-CxG's argument structure constructions and their decomposition
-into Müller's three universal schemata.
+CxG's argument structure constructions: explicit slot structure, full
+compositionality, polysemy families, and verb–construction fusion.
 
-[mueller-2013] argues "both directions right": the three universal schemata
-capture *fully abstract* constructions (ditransitive, caused-motion, resultative),
-but *partially open* and *lexically specified* constructions are irreducible
-phrasal patterns that only CxG can capture.
-
-## Key claims
-
-1. Fully abstract constructions decompose into sequences of Head-Complement
-   and Head-Specifier steps
-2. Partially open constructions (PAL, let alone, WXDY) are irreducible —
-   they cannot be decomposed into the three schemata
-3. This is CxG's unique contribution: phrasal constructions beyond the schemata
+Fully abstract constructions without pragmatic functions are fully
+compositional (`isFullyCompositional`); partially open constructions
+(PAL, let alone, WXDY) are irreducible phrasal patterns that only CxG
+can capture. The decomposition of fully abstract constructions into
+[mueller-2013]'s three universal combination schemata lives in
+`Studies/Mueller2013.lean` (`Mueller2013.decompose`).
 
 -/
 
 namespace ConstructionGrammar
 
-open Core
 open Semantics.Lexical
 
 /-! ## Construction slots and argument frames -/
@@ -158,23 +150,7 @@ def conative : ArgStructureConstruction :=
       , ⟨.ADP, "target", false⟩ ]     -- Obl_at
   , hasHead := by native_decide }
 
-/-! ## Decomposition into combination schemata -/
-
-/-- Decompose a fully abstract construction into a sequence of combination steps.
-
-For a construction with slots [Subj, V, Obj1, Obj2]:
-1. V + Obj2 → V' (Head-Complement)
-2. V' + Obj1 → V'' (Head-Complement)
-3. Subj + V'' → S (Head-Specifier)
-
-The head slot determines which combinations are complements vs specifier. -/
-def decompose (asc : ArgStructureConstruction) : List CombinationKind :=
-  let nonHeadSlots := asc.slots.filter (!·.isHead)
-  -- Subject (first non-head slot) maps to Head-Specifier,
-  -- all other non-head slots map to Head-Complement
-  nonHeadSlots.zipIdx.map λ ⟨_, i⟩ =>
-    if i == 0 then .headSpecifier  -- first non-head = specifier (subject)
-    else .headComplement           -- later non-heads = complements
+/-! ## Full compositionality -/
 
 /-- A construction is fully compositional if it has specificity `fullyAbstract`
 and no construction-specific pragmatic function.
@@ -188,26 +164,6 @@ def isFullyCompositional (c : Construction) : Bool :=
   c.specificity == .fullyAbstract && c.pragmaticFunction.isNone
 
 /-! ## Core theorems -/
-
-/-- Ditransitive decomposes into Head-Specifier + Head-Complement + Head-Complement.
-
-The ditransitive [Subj V Obj1 Obj2] decomposes as:
-1. V + Obj2 → V' (Head-Complement)
-2. V' + Obj1 → V'' (Head-Complement)
-3. Subj + V'' → S (Head-Specifier) -/
-theorem ditransitive_decomposes :
-    decompose ditransitive = [.headSpecifier, .headComplement, .headComplement] := by
-  native_decide
-
-/-- Caused-motion decomposes into Head-Specifier + Head-Complement + Head-Complement. -/
-theorem causedMotion_decomposes :
-    decompose causedMotion = [.headSpecifier, .headComplement, .headComplement] := by
-  native_decide
-
-/-- Resultative decomposes into Head-Specifier + Head-Complement + Head-Complement. -/
-theorem resultative_decomposes :
-    decompose resultative = [.headSpecifier, .headComplement, .headComplement] := by
-  native_decide
 
 /-- Fully abstract constructions without pragmatic functions are fully compositional. -/
 theorem fullyAbstract_isFullyCompositional (c : Construction)
@@ -234,29 +190,6 @@ NPI licensing requirements. These semantic/pragmatic properties cannot
 be derived from Head-Complement + Head-Specifier + Head-Filler. -/
 theorem let_alone_irreducible :
     isFullyCompositional Studies.FillmoreKayOConnor1988.letAloneConstruction = false := by
-  native_decide
-
-/-- Müller's "both directions right" (§3): the three schemata handle
-fully abstract constructions, but CxG's phrasal constructions are irreducible.
-
-This formalizes the biconditional:
-- Fully abstract → fully compositional (covered by universal schemata)
-- There exist constructions that are not fully compositional (requires CxG) -/
-theorem both_directions_right :
-    -- Fully abstract constructions without pragmatic functions are fully compositional
-    (∀ c : Construction, c.specificity = .fullyAbstract →
-      c.pragmaticFunction = none →
-      isFullyCompositional c = true) ∧
-    -- There exist constructions that are not fully compositional
-    (∃ c : Construction, isFullyCompositional c = false) := by
-  constructor
-  · intro c hspec hprag
-    exact fullyAbstract_isFullyCompositional c hspec hprag
-  · exact ⟨Studies.GoldbergShirtz2025.palConstruction, pal_irreducible⟩
-
-/-- Conative decomposes into Head-Specifier + Head-Complement. -/
-theorem conative_decomposes :
-    decompose conative = [.headSpecifier, .headComplement] := by
   native_decide
 
 /-! ## Polysemy families ([goldberg-1995] §3.3.2, I_P links)
@@ -338,13 +271,6 @@ to violate because it follows from the definition, not from a proof. -/
 theorem PolysemyFamily.extension_slots (f : PolysemyFamily)
     (ext : String × String × List String) :
     (f.extensionConstruction ext).slots = f.slots := rfl
-
-/-- All members decompose identically (same slots → same decomposition). -/
-theorem PolysemyFamily.all_same_decomposition (f : PolysemyFamily)
-    (ext : String × String × List String) :
-    decompose (f.extensionConstruction ext) =
-    decompose f.centralConstruction := by
-  simp [decompose, extensionConstruction, centralConstruction]
 
 /-! ## Ditransitive polysemy network ([goldberg-1995] pp. 75–77)
 

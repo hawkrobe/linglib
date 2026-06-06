@@ -1,4 +1,4 @@
-import Linglib.Core.Valence
+import Linglib.Features.Complementation
 import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Features.Aktionsart
@@ -17,7 +17,8 @@ import Linglib.Semantics.Lexical.LevinClassProfiles
 /-! # Verb entry — core type
 
 Framework-agnostic types for verb semantics: the selectional/inflectional enums
-(`ComplementType`, `VoiceType`, …) and the `Verb` structure that bundles the
+(`VoiceType`, `SenseTag`, …; complementation enums live in
+`Features/Complementation.lean`) and the `Verb` structure that bundles the
 semantic fields shared across languages.
 
 `Verb` is the **semantic spine** of a verb entry. Its fields are organised
@@ -133,65 +134,6 @@ inductive SenseTag where
   | stative       -- Stative reading of a polysemous verb (e.g., *suivre* 'follow' positional)
   deriving DecidableEq, Repr
 
-/--
-Complement type that the verb selects.
-
-- Finite: "that" clauses ("John knows that Mary left")
-- Infinitival: "to" complements ("John managed to leave")
-- Gerund: "-ing" complements ("John stopped smoking")
-- NP: Direct object ("John kicked the ball")
-- None: Intransitive ("John slept")
--/
-inductive ComplementType where
-  | none            -- Intransitive
-  | np              -- Transitive with NP object
-  | np_np           -- Ditransitive: "give X Y"
-  | np_pp           -- NP + PP: "put X on Y"
-  | finiteClause    -- "that" clause
-  | infinitival     -- "to" VP
-  | gerund          -- "-ing" VP
-  | smallClause     -- "consider X happy"
-  | question        -- Embedded question "wonder who"
-  deriving DecidableEq, Repr
-
-/-- Is this complement type finite (i.e., does it contain a tense head)?
-
-    Finite complements (.finiteClause,.question) have independent tense
-    morphology; non-finite complements (.infinitival,.gerund,.smallClause)
-    do not. -/
-def ComplementType.isFinite : ComplementType → Bool
-  | .finiteClause | .question => true
-  | _ => false
-
-/-- Is this complement type a nominal (DP) argument?
-
-    Nominal complements project DP: the verb selects a noun phrase
-    in object position. Relevant to c-selection in coordination:
-    a verb that only selects nominal complements cannot independently
-    license a CP conjunct ([schwarzer-2026]). -/
-def ComplementType.isNominal : ComplementType → Bool
-  | .np | .np_np | .np_pp => true
-  | _ => false
-
-/-- Is this complement type a clausal (CP) argument?
-
-    Clausal complements project CP or reduced clausal structure.
-    This covers finite clauses (*dass*-clauses), infinitivals,
-    gerunds, small clauses, and embedded questions. -/
-def ComplementType.isClausal : ComplementType → Bool
-  | .finiteClause | .infinitival | .gerund | .smallClause | .question => true
-  | _ => false
-
-/--
-Control type for verbs with infinitival complements.
--/
-inductive ControlType where
-  | subjectControl  -- "John tried to leave" (John = leaver)
-  | objectControl   -- "John persuaded Mary to leave" (Mary = leaver)
-  | raising         -- "John seems to be happy" (no theta role for matrix subject)
-  | none            -- Not applicable
-  deriving DecidableEq, Repr
-
 /-- Interpretation of an implicit (unexpressed) argument.
 
     Cross-linguistic: applies to any argument position where the verb allows
@@ -202,18 +144,6 @@ inductive ImplicitInterp where
   | indef   -- Existentially bound: unspecified "someone/something"
   | def     -- Pragmatically recoverable definite
   deriving DecidableEq, Repr
-
-/-- Map complement type to syntactic valence.
-    Clause-embedding types (.finiteClause,.infinitival,.gerund,.question,
-.smallClause) map to `.clausal` — they take xcomp/ccomp, not obj.
-    `checkVerbSubcat` skips `.clausal` verbs (their frames require
-    different validation than NP-argument counting). -/
-def complementToValence : ComplementType → Valence
-  | .none => .intransitive
-  | .np => .transitive
-  | .np_np => .ditransitive
-  | .np_pp => .locative
-  | _ => .clausal
 
 /-! ### Field facets
 

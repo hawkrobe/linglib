@@ -43,14 +43,14 @@ premise multiset. Each multiset has exactly one normal-form proof.
 This module connects Glue to:
 - `ScopeConfig` from `Montague/Scope.lean`
 - `interp`-based QR composition from `Composition/Tree.lean`
-- `QuantifierComposition.lean` for the same scope example via H&K
+- `Studies/HeimKratzer1998.lean` for the same scope example via H&K
 
 The bridge theorem `glue_qr_agree` proves that Glue proof search and
 QR tree interpretation yield the same truth values on the canonical
 scope example.
 -/
 
-namespace Semantics.Composition.Glue
+namespace Asudeh2022
 
 open Core.Logic.Intensional
 open Semantics.Montague
@@ -126,10 +126,15 @@ def GlueProof.usedPremises (numPremises : Nat) : GlueProof → List Nat
   | .lolliE f a => f.usedPremises numPremises ++ a.usedPremises numPremises
   | .lolliI _ body => body.usedPremises numPremises
 
-/-- A proof is resource-correct if every premise is used exactly once. -/
+/-- A proof is resource-correct if every premise is used exactly once.
+Frequency-based formulation: for each premise index `i ∈ [0, numPremises)`,
+`usedPremises` contains `i` exactly once. Avoids `mergeSort`, which the
+kernel cannot reduce within `decide`'s heartbeat budget. -/
 def GlueProof.isResourceCorrect (numPremises : Nat) (p : GlueProof)
     : Bool :=
-  (p.usedPremises numPremises).mergeSort (· ≤ ·) == List.range numPremises
+  let used := p.usedPremises numPremises
+  (List.range numPremises).all (fun i => used.count i == 1)
+    && used.length == numPremises
 
 -- ════════════════════════════════════════════════════════════════════
 -- § Substructural Logic Hierarchy ([asudeh-2022], §3)
@@ -245,10 +250,10 @@ def alexLikesBlakeProof : GlueProof :=
 
 theorem alex_likes_blake_typechecks :
     alexLikesBlakeProof.check alexLikesBlakePremises = some l_ := by
-  native_decide
+  decide
 
 theorem alex_likes_blake_resource_correct :
-    alexLikesBlakeProof.isResourceCorrect 3 = true := by native_decide
+    alexLikesBlakeProof.isResourceCorrect 3 = true := by decide
 
 /-- Argument reordering: the same proof works regardless of premise order,
     because the Glue logic is commutative ([asudeh-2022], §2). -/
@@ -263,11 +268,11 @@ def alexLikesBlakeReorderedProof : GlueProof :=
 
 theorem reordered_typechecks :
     alexLikesBlakeReorderedProof.check alexLikesBlakeReordered = some l_ := by
-  native_decide
+  decide
 
 theorem reordered_resource_correct :
     alexLikesBlakeReorderedProof.isResourceCorrect 3 = true := by
-  native_decide
+  decide
 
 end AlexLikesBlake
 
@@ -338,19 +343,19 @@ def inverseProof : GlueProof :=
 
 /-- Surface proof type-checks to l. -/
 theorem surface_typechecks :
-    surfaceProof.check surfacePremises = some l_ := by native_decide
+    surfaceProof.check surfacePremises = some l_ := by decide
 
 /-- Inverse proof type-checks to l. -/
 theorem inverse_typechecks :
-    inverseProof.check inversePremises = some l_ := by native_decide
+    inverseProof.check inversePremises = some l_ := by decide
 
 /-- Surface proof uses each premise exactly once. -/
 theorem surface_resource_correct :
-    surfaceProof.isResourceCorrect 3 = true := by native_decide
+    surfaceProof.isResourceCorrect 3 = true := by decide
 
 /-- Inverse proof uses each premise exactly once. -/
 theorem inverse_resource_correct :
-    inverseProof.isResourceCorrect 3 = true := by native_decide
+    inverseProof.isResourceCorrect 3 = true := by decide
 
 end EveryLovesSome
 
@@ -428,7 +433,7 @@ theorem glue_inverse_false : ¬glue_inverse_meaning := by
     engine. -/
 
 open Semantics.Scope
-open Core.Tree
+open Syntax
 open Semantics.Composition.Tree
 open Core.Logic.Intensional.Variables
 
@@ -584,4 +589,4 @@ theorem glue_no_syntactic_operation :
 theorem interpretive_requires_syntactic_operation :
     requiresSyntacticOperation .interpretive = true := rfl
 
-end Semantics.Composition.Glue
+end Asudeh2022

@@ -271,6 +271,28 @@ structure NegationProfile where
   enAttested : Option Bool := none
   deriving Repr
 
+/-! ### Expletive negation triggers -/
+
+/-- An expletive-negation trigger and the negator it licenses.
+
+    Trigger classes are the [jin-koenig-2021] Table 5 labels (FEAR,
+    BEFORE, UNLESS, THAN, ...). The Fragment-side joint: EN-attesting
+    `Fragments/{Lang}/Negation.lean` files expose
+    `def enTriggerNegators : List ENTriggerNegator`. -/
+structure ENTriggerNegator where
+  /-- The trigger class label (from [jin-koenig-2021] Table 5). -/
+  triggerClass : String
+  /-- The language's lexical trigger. -/
+  triggerForm : String
+  /-- The EN negator form. -/
+  enNegatorForm : String
+  /-- Gloss for the EN negator, when it differs from standard negation. -/
+  enNegatorGloss : Option String := none
+  /-- Whether the EN use is highly entrenched (grammaticalized),
+      when the source classifies it. -/
+  highEntrenchment : Option Bool := none
+  deriving Repr, BEq, DecidableEq
+
 /-! ### WALS converters -/
 
 /-- WALS Ch 112A → `NegMorphemeType`. -/

@@ -38,19 +38,8 @@ abbrev Assignment (E : Type*) := VarIdx → E
 /-- A witness sequence maps pronoun indices to entities -/
 abbrev WitnessSeq (E : Type*) := PronIdx → E
 
-/-- Update an assignment at a single variable: g[i ↦ e] -/
-def Assignment.update {E : Type*} (g : Assignment E) (i : VarIdx) (e : E) : Assignment E :=
-  λ j => if j = i then e else g j
-
-notation g "[" i " ↦ " e "]" => Assignment.update g i e
-
-@[simp]
-theorem Assignment.update_same {E : Type*} (g : Assignment E) (i : VarIdx) (e : E) :
-    (g[i ↦ e]) i = e := by simp [Assignment.update]
-
-@[simp]
-theorem Assignment.update_other {E : Type*} (g : Assignment E) (i j : VarIdx) (e : E) (h : j ≠ i) :
-    (g[i ↦ e]) j = g j := by simp [Assignment.update, h]
+/-- Assignment-update notation `g[i ↦ e]` for mathlib's `Function.update`. -/
+notation g "[" i " ↦ " e "]" => Function.update g i e
 
 /-- A model provides predicate interpretations -/
 structure Model (E : Type*) where
@@ -199,7 +188,7 @@ theorem Formula.sat_resolve {E : Type*} [Nonempty E]
         have := hnoCapture i hi
         simp only [domain] at this
         exact λ heq => this (by rw [heq]; exact Finset.mem_insert_self j _)
-      simp only [Assignment.update, if_neg hne]
+      simp only [Function.update_of_ne hne]
       exact hcompat i hi
     have hnoCapture' : ∀ i ∈ φ.range, ρ i ∉ φ.domain := by
       intro i hi
@@ -328,7 +317,7 @@ theorem obs5_relevance {E : Type*} [Nonempty E] (M : Model E)
     intro e
     apply ih
     · intro x hx
-      simp only [Assignment.update]
+      simp only [Function.update_apply]
       split
       · rfl
       · rename_i hne
@@ -444,7 +433,7 @@ theorem evalTerm_eq_Term_eval (g : MergedAssignment E) (t : Term) :
 theorem extend_fst_eq_update (g : MergedAssignment E) (x : VarIdx) (e : E) :
     (splitAssignment (extend g x e)).1 = (splitAssignment g).1[x ↦ e] := by
   ext n
-  simp only [splitAssignment, extend, Assignment.update]
+  simp only [splitAssignment, extend, Function.update_apply]
 
 theorem extend_snd_eq (g : MergedAssignment E) (x : VarIdx) (e : E) :
     (splitAssignment (extend g x e)).2 = (splitAssignment g).2 := by

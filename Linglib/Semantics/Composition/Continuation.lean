@@ -56,9 +56,6 @@ def Cont.lower (m : Cont A A) : A := m id
     ``` -/
 abbrev Tower (C : Type u) (B : Type v) (A : Type w) := (A → B) → C
 
--- ════════════════════════════════════════════════════
--- § Monad instance
--- ════════════════════════════════════════════════════
 
 /-! The continuation monad's laws (left/right identity, associativity, and the
 functor laws) are exactly those of `LawfulMonad`, so we register `Cont R` as a

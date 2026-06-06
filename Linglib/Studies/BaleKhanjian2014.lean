@@ -1,5 +1,5 @@
 import Mathlib.Data.Fintype.Powerset
-import Linglib.Core.Tree
+import Linglib.Syntax.Tree.Cat
 import Linglib.Semantics.Alternatives.Structural
 import Linglib.Fragments.Armenian.ClassifierSystem
 
@@ -77,7 +77,7 @@ with classifiers).
 - A toy 3-boy domain with both general-number and strict-plural denotations
   (per eq. 9).
 - The four syntactic structures (eqs. 21, 20, 32a, 32b) as `Tree Cat String`,
-  reusing `Core.Tree`.
+  reusing `Syntax`.
 - Two structural-complexity theorems via `Tree.size`: indefinite plural
   is *strictly larger* than indefinite singular (no Katzir competition);
   definite plural is *equal in size* to definite singular (Katzir
@@ -113,7 +113,7 @@ set_option autoImplicit false
 
 namespace BaleKhanjian2014
 
-open Core.Tree
+open Syntax
 
 -- ============================================================================
 -- §1: Toy domain (eq. 9)

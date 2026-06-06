@@ -270,4 +270,97 @@ theorem modal_implicature_denial :
     = [.implicature] := by
   native_decide
 
+/-! ### `BiLayered`: 2-layer ⟨A, N⟩ Prop-valued sibling
+
+A `Prop`-valued 2-layer sibling of `LayeredProp` ([martinez-vera-2026],
+inheriting the percolation discipline of [potts-2005] and the at-issue
+proposal / appositive imposition split of [anderbois-brasoveanu-henderson-2015]):
+the at-issue layer is the proffered content, the not-at-issue layer
+backgrounds presuppositions, conventional implicatures, and evidential
+commitments — collapsing `LayeredProp`'s `presupposition` and
+`implicature` layers into a single `notAtIssue`. The substrate stays
+propositional (`W → Prop`) because the consumers (verum studies,
+evidential illocution, biased polar questions) operate over `Set W`.
+
+| Rule | When to use | At-issue layer | Not-at-issue layer |
+|------|-------------|----------------|--------------------|
+| I    | β has trivial NAI; α brings NAI | `α.A β.A` | `α.N β.A` |
+| II   | both α and β bring NAI | `α.A β.A` | `α.N β.A ∧ β.N` |
+| III  | α is illocutionary, takes the full ⟨A, N⟩ pair | (full pair handed to α) | (full pair handed to α) |
+-/
+
+/-- A 2-layer ⟨A, N⟩ proposition. Trivially-true `notAtIssue` is the
+default — most expressions add no not-at-issue content, so the empty
+case should be cheap to construct. -/
+@[ext]
+structure BiLayered (W : Type*) where
+  /-- Proffered, at-issue content. -/
+  atIssue : W → Prop
+  /-- Backgrounded, not-at-issue content. Defaults to trivially true. -/
+  notAtIssue : W → Prop := fun _ => True
+
+namespace BiLayered
+
+variable {W : Type*}
+
+/-- Lift a single proposition to a `BiLayered` with trivial NAI. -/
+def ofProp (p : W → Prop) : BiLayered W :=
+  { atIssue := p }
+
+@[simp] theorem ofProp_atIssue (p : W → Prop) :
+    (ofProp p : BiLayered W).atIssue = p := rfl
+
+@[simp] theorem ofProp_notAtIssue (p : W → Prop) :
+    (ofProp p : BiLayered W).notAtIssue = fun _ => True := rfl
+
+end BiLayered
+
+variable {W : Type*}
+
+/-- [martinez-vera-2026] Composition rule I: β has empty NAI; α brings
+NAI. The new at-issue layer is `α.A β.A`; the new NAI is `α.N β.A`. -/
+def composeI (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W) :
+    BiLayered W :=
+  { atIssue := atFn β.atIssue, notAtIssue := naiFn β.atIssue }
+
+/-- [martinez-vera-2026] Composition rule II: both α and β bring NAI.
+The new NAI accumulates `α.N β.A ∧ β.N`. -/
+def composeII (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W) :
+    BiLayered W :=
+  { atIssue := atFn β.atIssue
+  , notAtIssue := fun w => naiFn β.atIssue w ∧ β.notAtIssue w }
+
+/-- [martinez-vera-2026] Composition rule III: an illocutionary operator
+takes the full ⟨A, N⟩ pair from β and returns a new pair. -/
+def composeIII (op : BiLayered W → BiLayered W) (β : BiLayered W) : BiLayered W :=
+  op β
+
+@[simp] theorem composeI_atIssue (atFn naiFn : (W → Prop) → (W → Prop))
+    (β : BiLayered W) : (composeI atFn naiFn β).atIssue = atFn β.atIssue := rfl
+
+@[simp] theorem composeI_notAtIssue (atFn naiFn : (W → Prop) → (W → Prop))
+    (β : BiLayered W) : (composeI atFn naiFn β).notAtIssue = naiFn β.atIssue := rfl
+
+@[simp] theorem composeII_atIssue (atFn naiFn : (W → Prop) → (W → Prop))
+    (β : BiLayered W) : (composeII atFn naiFn β).atIssue = atFn β.atIssue := rfl
+
+@[simp] theorem composeII_notAtIssue (atFn naiFn : (W → Prop) → (W → Prop))
+    (β : BiLayered W) :
+    (composeII atFn naiFn β).notAtIssue =
+      fun w => naiFn β.atIssue w ∧ β.notAtIssue w := rfl
+
+@[simp] theorem composeIII_apply (op : BiLayered W → BiLayered W)
+    (β : BiLayered W) : composeIII op β = op β := rfl
+
+/-- Composition I subsumes Composition II when β.N is trivially true:
+the extra `∧ True` conjunct collapses. The formal sense in which
+rule II generalises rule I. -/
+theorem composeI_eq_composeII_on_trivial_naiFn {W : Type*}
+    (atFn naiFn : (W → Prop) → (W → Prop)) (β : BiLayered W)
+    (hβ : β.notAtIssue = fun _ => True) :
+    composeI atFn naiFn β = composeII atFn naiFn β := by
+  ext w
+  · rfl
+  · simp [composeI, composeII, hβ]
+
 end Semantics.ContentLayer

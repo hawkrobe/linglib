@@ -51,7 +51,7 @@ open Features.Logophoricity
     logophoric pronoun. The reciprocal reading arises from the combination
     of REFL *ē* + RECIP *ɔ̄ŋ*. -/
 def logPl : PersonalPronoun :=
-  { form := "mɔ̄", person := some .third, number := some .Plur }
+  { form := "mɔ̄", person := some .third, number := some .plural }
 
 /-- Wan reflexive marker *ē* (REFL). Combines with reciprocal marker
     *ɔ̄ŋ* to form the reciprocal construction. -/
@@ -61,7 +61,7 @@ def refl : PersonalPronoun :=
 /-- Wan reciprocal marker *ɔ̄ŋ* (RECIP). Appears after reflexive *ē*
     to yield the reciprocal reading. -/
 def recip : PersonalPronoun :=
-  { form := "ɔ̄ŋ", person := some .third, number := some .Plur }
+  { form := "ɔ̄ŋ", person := some .third, number := some .plural }
 
 /-- Wan 3pl ordinary (non-logophoric) pronoun *à* (low tone).
     In (32): "wì mù tēŋ tú gé **à** ɔ̄ŋ lɔ̄ lé"
@@ -73,7 +73,7 @@ def recip : PersonalPronoun :=
     pronoun. The 3PL pronoun is *à* (grave accent), tonally distinct
     from copula *á* (acute accent) in (28). -/
 def ordinaryPl : PersonalPronoun :=
-  { form := "à", person := some .third, number := some .Plur }
+  { form := "à", person := some .third, number := some .plural }
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2: Logophoric Properties
