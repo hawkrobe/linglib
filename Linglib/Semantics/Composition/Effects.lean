@@ -435,6 +435,29 @@ def handleCI (m : Writer (List P) α) : α × List P := (m.val, m.log)
 
 end EffectOps
 
+section PredAbsInstances
+
+/-! #### PA capability under effects
+
+`Tree.PredAbs` records which effects admit Predicate Abstraction. The
+negative instances are theoretical content, not bookkeeping: they state
+in the type system that QR/PA-style binding is unavailable under these
+effects, so scope and binding must come from effect sequencing instead
+(`bind`-order, the W ⊣ R adjunction of §4). -/
+
+/-- Scope effects do not support Predicate Abstraction: a distributor
+`(Entity → Cont R α) → Cont R (Entity → α)` would have to run one
+continuation at every entity simultaneously. Binding under scope arises
+from `bind`-order instead (§7). -/
+instance {R : Type} (F : Frame) : Tree.PredAbs (Cont R) F := ⟨none⟩
+
+/-- CI effects do not support Predicate Abstraction: the log of
+`⟦β⟧^{g[n↦x]}` may vary with `x`, so no log-respecting distributor
+exists. CI content composes around abstraction, not through it. -/
+instance {ω : Type} (F : Frame) : Tree.PredAbs (Writer ω) F := ⟨none⟩
+
+end PredAbsInstances
+
 -- ════════════════════════════════════════════════════════════════════
 -- §6 Bridge Theorems
 -- ════════════════════════════════════════════════════════════════════
@@ -693,6 +716,29 @@ theorem cont_scope_readings_differ :
   exact hI hS
 
 end ScopeBridge
+
+section TreeEngine
+
+/-! #### The tree engine under effects
+
+`Tree.interp` is polymorphic over the effect functor: the same type-driven
+engine that implements H&K at `M = Id` lifts through any `[Applicative M]`.
+At the FA mode that lifting is literally the meta-combinator **A** — a
+framework-level identity, no toy lexicon required. Worked tree-level
+derivations at `M = Cont` (scope) and `M = Writer` (CI) live in
+`Studies/BumfordCharlow2024.lean` alongside the toy-model demonstrations. -/
+
+/-- The engine's FA mode applies the function daughter to the argument
+through `Applicative`'s `<*>`. With `aApp_eq_structuredApp_fa`, this
+composes into "FA = meta-combinator **A** at forward application": the
+H&K engine and the effect calculus share one application operation. -/
+theorem tryFA_function_left {F : Frame} {M : Type → Type} [Applicative M]
+    {σ τ : Ty} (f : M (F.Denot (σ ⇒ τ))) (a : M (F.Denot σ)) :
+    Tree.tryFA ⟨σ ⇒ τ, f⟩ (⟨σ, a⟩ : Tree.TypedDenot F M) =
+      some ⟨τ, f <*> a⟩ := by
+  simp [Tree.tryFA]
+
+end TreeEngine
 
 section BindingBridge
 
