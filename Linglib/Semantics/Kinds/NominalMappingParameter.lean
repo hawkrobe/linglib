@@ -37,7 +37,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.UpperLower.Basic
 import Linglib.Data.UD.Basic
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Morphology.Word
 
@@ -127,7 +127,7 @@ mass extensions are closed under union and subset.
 def IsMass (P : Property World Atom) : Prop :=
   ∀ w (x : Individual Atom), x ∈ P w ↔ ∀ a ∈ x, Individual.atom a ∈ P w
 
--- Bridge Theorems to Core/Mereology
+-- Bridge Theorems to Core/Order/Mereology
 
 section MereologyBridge
 
@@ -148,7 +148,7 @@ theorem isMass_cum (P : Property World Atom) (hMass : IsMass World Atom P) (w : 
 
 end MereologyBridge
 
--- Plural Closure (Link's *P via Core/Mereology.AlgClosure)
+-- Plural Closure (Link's *P via Core/Order/Mereology.AlgClosure)
 
 /--
 Plural closure of a property: close extensions under join (⊔) at each world.

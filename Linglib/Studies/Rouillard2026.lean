@@ -110,7 +110,7 @@ variable {W Time : Type*} [LinearOrder Time]
     are additive, hence any interval can be padded or trimmed to any
     target measure within a one-sided bound.
 
-    Mathlib correspondence: `Core.Mereology.ExtMeasure` is ℚ-valued and
+    Mathlib correspondence: `Mereology.ExtMeasure` is ℚ-valued and
     requires `[SemilatticeSup α]` on the carrier. Intervals are not
     join-semilattices (disjoint intervals cannot be joined into an
     interval), so `ExtMeasure` does not apply directly. `TimeMeasure`
@@ -293,7 +293,7 @@ theorem upwardMonotone_hasIsLeast_of_witness {W : Type*}
     level (matching Rouillard's Table 1) without claiming a structural
     derivation through the MIP at this level of substrate generality. A
     follow-up rebuild on ℚ-valued time-measure substrate (paralleling
-    `Core.Mereology.ExtMeasure`) would let the collapse argument
+    `Mereology.ExtMeasure`) would let the collapse argument
     discharge end-to-end. -/
 theorem no_smallest_open_PTS_geometric [DenselyOrdered Time]
     (rt : Interval Time) (ptsGI : GInterval Time)

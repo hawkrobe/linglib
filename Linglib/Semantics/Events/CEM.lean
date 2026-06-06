@@ -1,4 +1,4 @@
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Core.Scales.MereoDim
 import Linglib.Semantics.Events.Basic
 import Linglib.Features.Aktionsart
@@ -8,12 +8,12 @@ import Linglib.Features.Aktionsart
 [bach-1986] [champollion-2017]
 
 Event-specific mereological infrastructure built on top of the generic
-`Core.Mereology` definitions. Specializes `CUM`, `QUA`, `IsSumHom`, etc.
+`Mereology` definitions. Specializes `CUM`, `QUA`, `IsSumHom`, etc.
 to event structures with `EventCEM`, thematic role homomorphisms, and
 Vendler class bridges.
 
 Generic mereological definitions (`CUM`, `DIV`, `QUA`, `Atom`, `AlgClosure`,
-`IsSumHom`, `Overlap`, `ExtMeasure`, `QMOD`) live in `Core.Mereology`.
+`IsSumHom`, `Overlap`, `ExtMeasure`, `QMOD`) live in `Mereology`.
 -/
 
 namespace Semantics.Events.CEM
@@ -23,7 +23,7 @@ open Features
 open _root_.Mereology
 
 -- Generic mereological vocabulary (CUM/QUA/AlgClosure/QMOD/ExtMeasure
--- /MereoDim/LaxMeasureSquare/...) lives in `Core.Mereology` and
+-- /MereoDim/LaxMeasureSquare/...) lives in `Mereology` and
 -- `Core.Scales.MereoDim`. Consumers do `open Mereology` to bring it
 -- into scope rather than relying on re-exports here.
 

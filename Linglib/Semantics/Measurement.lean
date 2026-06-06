@@ -1,4 +1,4 @@
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Core.Scales.MereoDim
 import Linglib.Features.Aktionsart
 import Linglib.Semantics.Gradability.StatesBased

@@ -1,4 +1,4 @@
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 
 /-!
 # Nominal Reference Predicates (Mass / Count / Bare Plural)
@@ -19,7 +19,7 @@ the Krifka–Link–Champollion algebraic semantics tradition.
 
 ## Implementation notes
 
-Thin re-exports of `Core/Mereology.lean` primitives under nominal-
+Thin re-exports of `Core/Order/Mereology.lean` primitives under nominal-
 reference names. The `CUM`/`QUA` definitional criteria are classical
 ([krifka-1989] §1) and widely known to be inadequate for the
 modern mass/count picture — [chierchia-1998] argues mass nouns
@@ -55,7 +55,7 @@ abbrev CountNoun {α : Type*} [PartialOrder α] (P : α → Prop) : Prop := QUA 
 abbrev BarePlural {α : Type*} [SemilatticeSup α] (P : α → Prop) : α → Prop :=
   AlgClosure P
 
-/-- Bare plurals are cumulative (reuses `algClosure_cum` from `Core/Mereology.lean`). -/
+/-- Bare plurals are cumulative (reuses `algClosure_cum` from `Core/Order/Mereology.lean`). -/
 theorem barePlural_cum {α : Type*} [SemilatticeSup α] {P : α → Prop} :
     CUM (BarePlural P) :=
   algClosure_cum

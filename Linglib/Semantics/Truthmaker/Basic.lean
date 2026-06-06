@@ -1,11 +1,11 @@
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Core.Logic.Bilateral.Defs
 import Mathlib.Order.UpperLower.Basic
 import Mathlib.Order.UpperLower.CompleteLattice
 
 /-! # Truthmaker Semantics [fine-2017] [bondarenko-elliott-2026] [jago-2026]
 
-State-based propositions grounded in `Core/Mereology.lean`. Propositions are
+State-based propositions grounded in `Core/Order/Mereology.lean`. Propositions are
 sets of *verifying states*, where states form a join-semilattice (the same
 `SemilatticeSup` infrastructure used for events and plural individuals).
 

@@ -1,6 +1,6 @@
 import Mathlib.Logic.Relation
 import Mathlib.Data.Finset.Lattice.Fold
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Features.Individuation
 
 /-!
@@ -58,7 +58,7 @@ Their §3.5 extends [krifka-1995b]'s kind-based semantics with
 * **`maxClusters_disjointPred`** — distinct maximal clusters never
   overlap: the *-oje* counting base is disjoint, so aggregate counting
   is certified by exactly the disjointness that [landman-2020]'s
-  counting theorems require (`Core/Mereology.DisjointPred`; cf.
+  counting theorems require (`Mereology.DisjointPred`; cf.
   `Studies/Landman2020.lean`).
 * **`ojeSem_determinate`** — the (64) semantics fixes the cardinality of
   maximal clusters uniquely: the formal content of *\*tři dvoje klíče*
