@@ -13,7 +13,7 @@ monadic (type ⟨1,1⟩) ones:
 
 These capture the semantic content of multi-quantifier sentences at the
 model-theoretic level, complementing linglib's syntactic scope mechanisms
-in `Semantics/Composition/Scope.lean` and `QuantifierComposition.lean`.
+in `Semantics/Composition/Scope.lean` and `Studies/HeimKratzer1998.lean`.
 -/
 
 namespace Core.Quantification.Polyadic

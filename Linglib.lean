@@ -336,7 +336,6 @@ import Linglib.Core.Agent.Emotion
 import Linglib.Semantics.Spatial.Path
 import Linglib.Core.Assignment
 import Linglib.Semantics.Composition.Continuation
-import Linglib.Semantics.Composition.Layered
 import Linglib.Core.CylindricAlgebra
 import Linglib.Core.CylindricAlgebra.DynamicSemantics
 import Linglib.Features.ContainmentPair
@@ -1161,6 +1160,8 @@ import Linglib.Studies.SlomanBarbeyHotaling2009
 import Linglib.Studies.SpalekMcNally2026
 import Linglib.Studies.AckemaNeeleman2018
 import Linglib.Studies.AlstottAravind2026
+import Linglib.Studies.Asudeh2022
+import Linglib.Studies.HeimKratzer1998
 import Linglib.Semantics.Focus.PolarityLevel
 import Linglib.Studies.AlstottAravind2026TemporalConnectives
 import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
@@ -2315,19 +2316,15 @@ import Linglib.Semantics.Reference.Binding
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Minimalist.LongDistanceAgree
 import Linglib.Semantics.Composition.Tree
-import Linglib.Semantics.Composition.QuantifierComposition
-import Linglib.Semantics.Composition.Glue
 import Linglib.Semantics.Composition.WriterMonad
 import Linglib.Semantics.Composition.SetMonad
 import Linglib.Semantics.Composition.Applicative
 import Linglib.Semantics.Composition.Effects
-import Linglib.Semantics.Composition.LexiconBuilder
 import Linglib.Semantics.Composition.MaybeMonad
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Composition.Coercion
 import Linglib.Semantics.Entailment.Polarity
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Composition.PredicateTransfer
 import Linglib.Semantics.Composition.Scope
 import Linglib.Phenomena.Entailment.MontagueTruthConditions
 import Linglib.Studies.AhnZhu2025
@@ -2360,7 +2357,6 @@ import Linglib.Semantics.Probabilistic.ConditionalAssertability
 import Linglib.Semantics.Probabilistic.PrototypeTheory
 import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.ScaleCat
-import Linglib.Semantics.Composition.SyntaxInterface
 import Linglib.Studies.Borer2005
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 import Linglib.Semantics.Composition.Abstraction
