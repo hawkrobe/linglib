@@ -45,7 +45,7 @@ structure SemLexEntry (F : Frame) where
   sem : F.Denot (catToTy cat)
 
 /-- Semantic lexicon for the toy model -/
-def semLexicon : List (SemLexEntry toyModel) := [
+def semLexicon : List (SemLexEntry toyFrame) := [
   -- Proper names: NP (type e)
   ⟨"John", NP, ToyEntity.john⟩,
   ⟨"Mary", NP, ToyEntity.mary⟩,
@@ -74,11 +74,11 @@ def semLexicon : List (SemLexEntry toyModel) := [
 -- Syntactically: John:NP  sleeps:S\NP  ⇒  S
 -- Semantically: sleeps_sem(john_sem) : t
 
-def john_sem' : toyModel.Denot (catToTy NP) := ToyEntity.john
-def sleeps_sem' : toyModel.Denot (catToTy IV) := ToyLexicon.sleeps_sem
+def john_sem' : toyFrame.Denot (catToTy NP) := ToyEntity.john
+def sleeps_sem' : toyFrame.Denot (catToTy IV) := ToyLexicon.sleeps_sem
 
 -- The semantic derivation mirrors the syntactic one
-def john_sleeps_sem : toyModel.Denot (catToTy S) :=
+def john_sleeps_sem : toyFrame.Denot (catToTy S) :=
   sleeps_sem' john_sem'
 
 -- Example: "John sees Mary"
@@ -93,34 +93,34 @@ def john_sleeps_sem : toyModel.Denot (catToTy S) :=
 --   sees_sem(mary) : e → t
 --   (sees_sem(mary))(john) : t
 
-def sees_sem' : toyModel.Denot (catToTy TV) := ToyLexicon.sees_sem
-def mary_sem' : toyModel.Denot (catToTy NP) := ToyEntity.mary
+def sees_sem' : toyFrame.Denot (catToTy TV) := ToyLexicon.sees_sem
+def mary_sem' : toyFrame.Denot (catToTy NP) := ToyEntity.mary
 
 -- Step 1: sees Mary
-def sees_mary_sem : toyModel.Denot (catToTy IV) :=
+def sees_mary_sem : toyFrame.Denot (catToTy IV) :=
   sees_sem' mary_sem'  -- function application
 
 -- Step 2: John (sees Mary)
-def john_sees_mary_sem : toyModel.Denot (catToTy S) :=
+def john_sees_mary_sem : toyFrame.Denot (catToTy S) :=
   sees_mary_sem john_sem'  -- function application
 
 -- Example: "Mary sees John"
 
-def mary_sees_john_sem : toyModel.Denot (catToTy S) :=
+def mary_sees_john_sem : toyFrame.Denot (catToTy S) :=
   (sees_sem' john_sem') mary_sem'
 
 -- Example: "John eats pizza"
 
-def eats_sem' : toyModel.Denot (catToTy TV) := ToyLexicon.eats_sem
-def pizza_sem' : toyModel.Denot (catToTy NP) := ToyEntity.pizza
+def eats_sem' : toyFrame.Denot (catToTy TV) := ToyLexicon.eats_sem
+def pizza_sem' : toyFrame.Denot (catToTy NP) := ToyEntity.pizza
 
-def john_eats_pizza_sem : toyModel.Denot (catToTy S) :=
+def john_eats_pizza_sem : toyFrame.Denot (catToTy S) :=
   (eats_sem' pizza_sem') john_sem'
 
 -- Truth Conditions from CCG Derivations
 
 /-- A sentence is true if its meaning holds. -/
-def sentenceTrue (meaning : toyModel.Denot .t) : Prop :=
+def sentenceTrue (meaning : toyFrame.Denot .t) : Prop :=
   meaning
 
 -- Derivation-Driven Semantic Composition
@@ -197,8 +197,8 @@ theorem composition_is_application {F : Frame} {σ τ : Ty}
 /--
 For a lexical entry, we can always extract its meaning.
 -/
-theorem lexical_has_meaning (entry : SemLexEntry toyModel) :
-    ∃ (meaning : toyModel.Denot (catToTy entry.cat)), meaning = entry.sem :=
+theorem lexical_has_meaning (entry : SemLexEntry toyFrame) :
+    ∃ (meaning : toyFrame.Denot (catToTy entry.cat)), meaning = entry.sem :=
   ⟨entry.sem, rfl⟩
 
 /--
@@ -216,23 +216,23 @@ theorem combination_has_meaning {F : Frame} {x y : Cat}
 /-- The complete derivation of "John sees Mary" preserving types -/
 theorem john_sees_mary_typed_derivation :
     -- 1. sees : (S\NP)/NP has type e → e → t
-    let sees_ty : toyModel.Denot (catToTy TV) := ToyLexicon.sees_sem
+    let sees_ty : toyFrame.Denot (catToTy TV) := ToyLexicon.sees_sem
     -- 2. Mary : NP has type e
-    let mary_ty : toyModel.Denot (catToTy NP) := ToyEntity.mary
+    let mary_ty : toyFrame.Denot (catToTy NP) := ToyEntity.mary
     -- 3. sees Mary : S\NP has type e → t
-    let sees_mary_ty : toyModel.Denot (catToTy IV) := sees_ty mary_ty
+    let sees_mary_ty : toyFrame.Denot (catToTy IV) := sees_ty mary_ty
     -- 4. John : NP has type e
-    let john_ty : toyModel.Denot (catToTy NP) := ToyEntity.john
+    let john_ty : toyFrame.Denot (catToTy NP) := ToyEntity.john
     -- 5. John sees Mary : S has type t
-    let result : toyModel.Denot (catToTy S) := sees_mary_ty john_ty
+    let result : toyFrame.Denot (catToTy S) := sees_mary_ty john_ty
     -- The result is the expected truth value
     result := trivial
 
 /-- The derivation of "Mary sleeps" preserving types -/
 theorem mary_sleeps_typed_derivation :
-    let sleeps_ty : toyModel.Denot (catToTy IV) := ToyLexicon.sleeps_sem
-    let mary_ty : toyModel.Denot (catToTy NP) := ToyEntity.mary
-    let result : toyModel.Denot (catToTy S) := sleeps_ty mary_ty
+    let sleeps_ty : toyFrame.Denot (catToTy IV) := ToyLexicon.sleeps_sem
+    let mary_ty : toyFrame.Denot (catToTy NP) := ToyEntity.mary
+    let result : toyFrame.Denot (catToTy S) := sleeps_ty mary_ty
     ¬result := id
 
 -- THE HOMOMORPHISM PRINCIPLE
@@ -285,7 +285,7 @@ structure Interp (F : Frame) where
 def SemLexicon (F : Frame) := String → Cat → Option (Interp F)
 
 /-- The toy semantic lexicon -/
-def toySemLexicon : SemLexicon toyModel := λ word cat =>
+def toySemLexicon : SemLexicon toyFrame := λ word cat =>
   match word, cat with
   -- Proper names
   | "John", .atom .NP => some ⟨NP, ToyEntity.john⟩
@@ -311,8 +311,8 @@ Interpret a CCG derivation, computing its meaning from the lexicon.
 
 Returns `none` if the derivation is ill-formed or uses unknown words.
 -/
-def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyModel)
-    : Option (Interp toyModel) :=
+def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyFrame)
+    : Option (Interp toyFrame) :=
   match d with
   | .lex entry => lex entry.form entry.cat
 
@@ -325,7 +325,7 @@ def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyModel)
           if h : c2 = y then
             -- m1 : catToTy y ⇒ catToTy x
             -- m2 : catToTy c2 = catToTy y
-            let m2' : toyModel.Denot (catToTy y) := h ▸ m2
+            let m2' : toyFrame.Denot (catToTy y) := h ▸ m2
             some ⟨x, m1 m2'⟩
           else none
       | _ => none
@@ -339,7 +339,7 @@ def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyModel)
           if h : c1 = y then
             -- m2 : catToTy y ⇒ catToTy x
             -- m1 : catToTy c1 = catToTy y
-            let m1' : toyModel.Denot (catToTy y) := h ▸ m1
+            let m1' : toyFrame.Denot (catToTy y) := h ▸ m1
             some ⟨x, m2 m1'⟩
           else none
       | _ => none
@@ -355,7 +355,7 @@ def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyModel)
             -- m1 : catToTy y1 → catToTy x
             -- m2 : catToTy z → catToTy y2
             -- B m1 m2 : catToTy z → catToTy x
-            let m2' : toyModel.Denot (catToTy z ⇒ catToTy y1) :=
+            let m2' : toyFrame.Denot (catToTy z ⇒ catToTy y1) :=
               h ▸ m2
             some ⟨x / z, B m1 m2'⟩
           else none
@@ -372,7 +372,7 @@ def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyModel)
             -- m1 : catToTy z → catToTy y1
             -- m2 : catToTy y2 → catToTy x
             -- B m2 m1 : catToTy z → catToTy x
-            let m1' : toyModel.Denot (catToTy z ⇒ catToTy y2) :=
+            let m1' : toyFrame.Denot (catToTy z ⇒ catToTy y2) :=
               h ▸ m1
             some ⟨x \ z, B m2 m1'⟩
           else none
@@ -406,15 +406,15 @@ def DerivStep.interp (d : DerivStep) (lex : SemLexicon toyModel)
         let ty := catToTy c1
         -- Only conjoinable types can be coordinated
         if ty.isConjoinable then
-          let m2' : toyModel.Denot (catToTy c1) := h ▸ m2
-          some ⟨c1, genConj ty toyModel m1 m2'⟩
+          let m2' : toyFrame.Denot (catToTy c1) := h ▸ m2
+          some ⟨c1, genConj ty toyFrame m1 m2'⟩
         else none
       else none
 
 -- INTERPRETATION EXAMPLES
 
 /-- Helper to extract meaning from interpretation result -/
-def getMeaning (result : Option (Interp toyModel)) : Option Prop :=
+def getMeaning (result : Option (Interp toyFrame)) : Option Prop :=
   match result with
   | some ⟨.atom .S, m⟩ => some m
   | _ => none
@@ -524,7 +524,7 @@ Extract the meaning of a coordination derivation as a function.
 For an S/NP derivation (like "John likes and Mary hates"),
 the meaning is a predicate on entities.
 -/
-def getPredicateMeaning (result : Option (Interp toyModel))
+def getPredicateMeaning (result : Option (Interp toyFrame))
     : Option (ToyEntity → Prop) :=
   match result with
   | some ⟨.rslash (.atom .S) (.atom .NP), m⟩ => some m

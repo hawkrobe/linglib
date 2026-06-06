@@ -217,7 +217,7 @@ private def kfWorlds : List KFWorld := [.kingBald, .kingHairy, .noKing1, .noKing
     Corresponds to the standard propositional-denial reading of (30). -/
 theorem kf_propositional_denial :
     offensiveLayers kfProp (λ w => w == .kingHairy) kfWorlds = [.atIssue] := by
-  native_decide
+  decide
 
 /-- Presuppositional denial: correction "no king exists" conflicts with
     both `pr` and `fr`.
@@ -231,7 +231,7 @@ theorem kf_propositional_denial :
 theorem kf_presuppositional_denial :
     offensiveLayers kfProp (λ w => w == .noKing1 || w == .noKing2) kfWorlds
     = [.presupposition, .atIssue] := by
-  native_decide
+  decide
 
 /-! ### Example 2: Possibility → Necessity (29)
 
@@ -268,7 +268,7 @@ private def modalWorlds : List ModalW := [.possNotNec, .nec]
 theorem modal_implicature_denial :
     offensiveLayers modalProp (λ w => w == .nec) modalWorlds
     = [.implicature] := by
-  native_decide
+  decide
 
 /-! ### `BiLayered`: 2-layer ⟨A, N⟩ Prop-valued sibling
 

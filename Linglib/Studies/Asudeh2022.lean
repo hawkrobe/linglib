@@ -366,7 +366,7 @@ end EveryLovesSome
 /-! The Glue logic tells us *how* to compose meanings but not *what*
     the meanings are. The meaning terms are ordinary Montague-style
     denotations. We connect Glue proofs to truth conditions by
-    evaluating them over the same `toyModel` used by
+    evaluating them over the same `toyFrame` used by
     `QuantifierComposition.lean`.
 
     The toy model has no `love` predicate, so we use `sees_sem` as
@@ -438,15 +438,15 @@ open Semantics.Composition.Tree
 open Core.Logic.Intensional.Variables
 
 /-- Lexicon for the QR bridge (matching QuantifierComposition). -/
-private def bridgeLex : Lexicon toyModel := λ word =>
+private def bridgeLex : Lexicon toyFrame := λ word =>
   match word with
-  | "every" => some ⟨Ty.det, (every_sem : toyModel.Denot Ty.det)⟩
-  | "some" => some ⟨Ty.det, (some_sem : toyModel.Denot Ty.det)⟩
+  | "every" => some ⟨Ty.det, (every_sem : toyFrame.Denot Ty.det)⟩
+  | "some" => some ⟨Ty.det, (some_sem : toyFrame.Denot Ty.det)⟩
   | "person" => some ⟨.e ⇒ .t, person_sem⟩
   | "sees" => some ⟨.e ⇒ .e ⇒ .t, ToyLexicon.sees_sem⟩
   | _ => none
 
-private def g₀ : Core.Assignment toyModel.Entity := λ _ => .john
+private def g₀ : Core.Assignment toyFrame.Entity := λ _ => .john
 
 /-- Surface scope QR tree (∀>∃):
     `[S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees t₂]]]]]]` -/
