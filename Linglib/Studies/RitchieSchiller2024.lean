@@ -91,8 +91,8 @@ def SpatialScene (E : Type*) := E → SpatialScale
     Monotonicity and top-totality follow from the ordering on `SpatialScale`. -/
 def sceneToDDRP {E : Type*} (scene : SpatialScene E) : DDRP SpatialScale E where
   region s := λ e => scene e ≤ s
-  monotone {s₁ s₂} h _ hr := by exact le_trans hr h
-  top_total e := by show scene e ≤ ⊤; exact le_top
+  monotone _ _ h _ hr := le_trans hr h
+  top_total := Set.eq_univ_of_forall λ e => by show scene e ≤ ⊤; exact le_top
 
 /-- The dinner-party scene: b1,b2 peripersonal, b3 action, b4 vista. -/
 def dinnerScene : SpatialScene Entity

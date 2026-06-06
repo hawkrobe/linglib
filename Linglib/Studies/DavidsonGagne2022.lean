@@ -22,7 +22,7 @@ structure.
 
 1. **Height = domain size** (§5.2): Vertical ordering on loci corresponds to
    mereological part-hood on domains. Formalized via `HeightDDRP` as a
-   `NestedRestriction`, giving all monotonicity theorems free.
+   `DDRP`, giving all monotonicity theorems free.
 
 2. **Monotonicity contrast** (§4): ALL and NONE are ↓MON in the restrictor
    (smaller domain → easier to satisfy), SOME is ↑MON (larger domain →
@@ -40,7 +40,7 @@ structure.
 
 5. **Structural parallel to cognitive DDRPs** (§5): ASL height (overt,
    modality-specific) and [ritchie-schiller-2024]'s spatial heuristics
-   (covert, modality-general) are both instances of `NestedRestriction` — the
+   (covert, modality-general) are both instances of `DDRP` — the
    same abstract nesting structure produces the same formal predictions.
 
 ## Compositional Grounding
@@ -301,20 +301,21 @@ def heightRestrictedAll (ddrp : HeightDDRP Entity) (h : VerticalHeight)
   ∀ e : Entity, (ddrp.region h) e → S e
 
 -- ============================================================================
--- §9. Bridge: Height ≅ Spatial Scale (NestedRestriction Unification)
+-- §9. Bridge: Height ≅ Spatial Scale (DDRP Unification)
 -- ============================================================================
 
 /-! Both [davidson-gagne-2022]'s height-based domain restriction and
     [ritchie-schiller-2024]'s cognitive DDRP framework instantiate
-    `Core.NestedRestriction`: a monotone family of predicates indexed by
-    an ordered scale. The scale source differs — physical signing height
-    (ASL, overt) vs. cognitive spatial proximity (spoken language, covert) —
-    but the formal structure is identical.
+    `DDRP`: a monotone family of predicates indexed by an ordered scale.
+    The scale source differs — physical signing height (ASL, overt) vs.
+    cognitive spatial proximity (spoken language, covert) — but the formal
+    structure is identical.
 
-    This means the monotonicity theorems proved once in `NestedRestriction`
-    (`forall_nesting`, `exists_nesting`) give correct predictions for BOTH
-    the cognitive heuristic theory (SpatialScale) and the ASL height theory
-    (VerticalHeight) with zero duplication. -/
+    This means the nesting theorems proved once for `DDRP`
+    (`DDRP.every_nesting`, `DDRP.some_nesting`, `DDRP.no_nesting`) give
+    correct predictions for BOTH the cognitive heuristic theory
+    (SpatialScale) and the ASL height theory (VerticalHeight) with zero
+    duplication. -/
 
 /-- Any entity in a height-DDRP region is also in the corresponding
     spatial-DDRP region when domains are aligned (i.e., the height zone
@@ -330,7 +331,7 @@ theorem height_spatial_compose
     e ∈ spatialDDRP.region .peripersonal :=
   align e h
 
-/-- The nesting property is uniform across all `NestedRestriction` instances:
+/-- The nesting property is uniform across all `DDRP` instances:
     height-DDRP nesting and spatial-DDRP nesting are both instances of the
     same abstract monotonicity. This is the formal content of the claim
     that ASL height and cognitive spatial heuristics are "the same structure." -/
@@ -344,8 +345,8 @@ theorem uniform_nesting
     -- Spatial nesting: peripersonal ⊆ action
     (∀ e, e ∈ spatialDDRP.region .peripersonal →
           e ∈ spatialDDRP.region .action) :=
-  ⟨λ e h => heightDDRP.monotone (by decide) e h,
-   λ e h => spatialDDRP.monotone (by decide) e h⟩
+  ⟨λ _ h => heightDDRP.monotone (by decide) h,
+   λ _ h => spatialDDRP.monotone (by decide) h⟩
 
 -- ============================================================================
 -- §10. Cross-Linguistic Support

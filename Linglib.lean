@@ -162,7 +162,6 @@ import Linglib.Core.Causal.SEM.Defs
 import Linglib.Core.Causal.SEM.Basic
 import Linglib.Core.Causal.SEM.Bool
 import Linglib.Core.Causal.SEM.Counterfactual
-import Linglib.Core.NestedRestriction
 import Linglib.Semantics.Lexical.Roots.RootFeatures
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes

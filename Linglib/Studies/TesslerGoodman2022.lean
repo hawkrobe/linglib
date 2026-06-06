@@ -3,7 +3,7 @@ import Linglib.Semantics.Degree.Kennedy
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Phenomena.Gradability.ComparisonClass
-import Linglib.Core.NestedRestriction
+import Linglib.Semantics.Quantification.DomainRestriction
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
@@ -639,15 +639,17 @@ listener's posterior. The generics model infers which θ is pragmatically
 optimal. Same RSA machinery applied to different latent variables. -/
 
 -- ============================================================================
--- § 14. Comparison Class as NestedRestriction
+-- § 14. Comparison Class as Nested Domain Restriction
 -- ============================================================================
 
-/-! The comparison class hierarchy is structurally a `NestedRestriction`:
+/-! The comparison class hierarchy is structurally a `DDRP`:
 subordinate (restricted) ⊆ superordinate (unrestricted). Going from subordinate
 to superordinate widens the reference population.
 
 This connects comparison class inference to the same nesting pattern used
 by [ritchie-schiller-2024]'s domain restriction possibilities. -/
+
+open Semantics.Quantification.DomainRestriction (DDRP)
 
 private def ComparisonClass.toFin : ComparisonClass → Fin 2
   | .subordinate => 0
@@ -669,30 +671,19 @@ def isTypical (k : Kind) (h : Height) : Bool :=
   heightWeight k h > 0
 
 /-- The comparison class hierarchy as a nested restriction on heights. -/
-def compClassRestriction (k : Kind) : Core.NestedRestriction ComparisonClass Height where
+def compClassRestriction (k : Kind) : DDRP ComparisonClass Height where
   region
     | .subordinate => λ h => isTypical k h = true
     | .superordinate => Set.univ
-  monotone {s₁ s₂} h d hr := by
+  monotone s₁ s₂ h d hr := by
     cases s₁ <;> cases s₂ <;> simp_all [Set.mem_univ]
     · exact absurd h (by decide)
-  top_total _ := Set.mem_univ _
+  top_total := rfl
 
 /-- Nesting: subordinate ⊆ superordinate for all kinds. -/
 theorem compClass_nesting (k : Kind) (h : Height) :
     h ∈ (compClassRestriction k).region .subordinate →
     h ∈ (compClassRestriction k).region .superordinate :=
-  (compClassRestriction k).subset_of_le (by decide) h
-
-/-- Bridge to `Core.TwoLevel`: the study-local `ComparisonClass` is
-    isomorphic to the generic two-level nesting type. -/
-def ComparisonClass.toTwoLevel : ComparisonClass → Core.TwoLevel
-  | .subordinate => .restricted
-  | .superordinate => .full
-
-/-- The isomorphism preserves order. -/
-theorem ComparisonClass.toTwoLevel_monotone {a b : ComparisonClass}
-    (h : a ≤ b) : a.toTwoLevel ≤ b.toTwoLevel := by
-  revert h; cases a <;> cases b <;> decide
+  λ hr => (compClassRestriction k).monotone (by decide) hr
 
 end TesslerGoodman2022
