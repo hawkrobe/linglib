@@ -1,4 +1,4 @@
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Typology.Gender
 
 /-!
@@ -32,7 +32,6 @@ diagnostic for any theory in which suffixes can override semantics.
 
 namespace German.Gender
 
-open Features (SurfaceGender)
 
 -- ============================================================================
 -- § 1: Derivational Suffixes
@@ -44,7 +43,7 @@ open Features (SurfaceGender)
 structure DerivationalSuffix where
   form : String
   /-- Gender this suffix always assigns, regardless of the base. -/
-  assignedGender : SurfaceGender
+  assignedGender : Gender
   deriving DecidableEq, Repr
 
 def schaft : DerivationalSuffix := ⟨"-schaft", .feminine⟩
@@ -69,7 +68,7 @@ structure DerivedNoun where
 
 namespace DerivedNoun
 
-abbrev gender (n : DerivedNoun) : SurfaceGender := n.suffix.assignedGender
+abbrev gender (n : DerivedNoun) : Gender := n.suffix.assignedGender
 
 end DerivedNoun
 
@@ -135,7 +134,7 @@ def genderTypology : GenderProfile :=
     (rawGenderCount := 3)
     (agreementTargets := [.attributive, .predicate, .relativePronoun, .personalPronoun])
     (semanticBases := [.sex])
-    (attestedSurfaceGenders := [.masculine, .feminine, .neuter])
+    (attestedGenders := [.masculine, .feminine, .neuter])
 
 theorem genderTypology_iso639 : genderTypology.iso639 = "deu" := rfl
 

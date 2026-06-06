@@ -1,4 +1,4 @@
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Interp
 import Linglib.Morphology.RootTypology
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.Features
@@ -774,7 +774,7 @@ theorem voice_introduces_external_arg :
 -- § 6: Surface Gender Bridge ([kramer-2020] §3; [kramer-2015] Chs 5-7)
 -- ============================================================================
 
-/-! The bridge between DM phi-features on n and descriptive `SurfaceGender`
+/-! The bridge between DM phi-features on n and descriptive `Gender`
 is mediated by Vocabulary Insertion (VI). Different VI systems yield
 different surface genders from the same underlying features.
 
@@ -788,12 +788,11 @@ Three VI patterns are attested ([kramer-2015] Chs 5-7):
 For animacy-based systems (Teop, Algonquian), [+ANIM] → animate,
 [−ANIM]/none → inanimate (2 genders). -/
 
-open Features (SurfaceGender)
 
 /-- Set 1 VI: [+FEM] → feminine, else → masculine.
     Default gender: masculine (plain n has no [+FEM]).
     Languages: Amharic, Spanish. ([kramer-2015] Ch 6) -/
-def CatHead.surfaceGenderSet1 (ch : CatHead) : SurfaceGender :=
+def CatHead.surfaceGenderSet1 (ch : CatHead) : Gender :=
   match ch.phi.gender with
   | some gf => if gf.val == ⟨.fem, .pos⟩ then .feminine else .masculine
   | none    => .masculine
@@ -801,21 +800,21 @@ def CatHead.surfaceGenderSet1 (ch : CatHead) : SurfaceGender :=
 /-- Set 2 VI: [−FEM] → masculine, else → feminine.
     Default gender: feminine (plain n has no [−FEM]).
     Languages: Maa, Wari'. ([kramer-2015] Ch 6) -/
-def CatHead.surfaceGenderSet2 (ch : CatHead) : SurfaceGender :=
+def CatHead.surfaceGenderSet2 (ch : CatHead) : Gender :=
   match ch.phi.gender with
   | some gf => if gf.val == ⟨.fem, .neg⟩ then .masculine else .feminine
   | none    => .feminine
 
 /-- Three-gender VI: [+FEM] → feminine, [−FEM] → masculine, none → neuter.
     Languages: Russian, Mangarayi, Lavukaleve. ([kramer-2015] Ch 7) -/
-def CatHead.surfaceGenderThree (ch : CatHead) : SurfaceGender :=
+def CatHead.surfaceGenderThree (ch : CatHead) : Gender :=
   match ch.phi.gender with
   | some gf => if gf.val == ⟨.fem, .pos⟩ then .feminine else .masculine
   | none    => .neuter
 
 /-- Animacy VI: [+ANIM] → animate, else → inanimate.
     Languages: Teop, Algonquian, Lealao Chinantec. ([kramer-2015] Ch 5) -/
-def CatHead.surfaceGenderAnimacy (ch : CatHead) : SurfaceGender :=
+def CatHead.surfaceGenderAnimacy (ch : CatHead) : Gender :=
   match ch.phi.gender with
   | some gf => if gf.val.dim == .anim && gf.val.pol == .pos
                then .animate else .inanimate
@@ -860,11 +859,10 @@ theorem set1_set2_default_contrast :
 -- § 7: Composed Morphisms: DM → Discourse
 -- ============================================================================
 
-open Features (GenderInfo)
 
 /-- Composed morphism: DM categorizer → discourse-level gender knowledge.
 
-    The chain `CatHead → SurfaceGender → GenderInfo` composes the structural
+    The chain `CatHead → Gender → GenderInfo` composes the structural
     mechanism (how gender is encoded on *n*) with the discourse layer (what
     participants know about a referent's gender). A noun whose categorizer head
     determines a surface gender always yields `.known g` at the discourse level.

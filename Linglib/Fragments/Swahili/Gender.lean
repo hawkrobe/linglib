@@ -10,9 +10,9 @@ noun classes; the locative classes 16/17/18 are minor target genders,
 not controller genders ([corbett-1991] §6.3.3). Semantic + formal
 assignment via prefixes, with concord on all five `AgreementTarget`
 positions (Swahili concord also reaches numerals, possessives, and
-demonstratives, which the enum does not model). `attestedSurfaceGenders`
+demonstratives, which the enum does not model). `attestedGenders`
 stays `[]`: noun-class agreement doesn't map onto the Indo-European
-`SurfaceGender` scheme.
+`Gender` scheme.
 -/
 
 namespace Swahili.Gender

@@ -1,4 +1,4 @@
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Data.UD.Basic
 import Linglib.Features.Number.Capabilities
 import Linglib.Semantics.Kinds.NominalMappingParameter
@@ -12,7 +12,6 @@ French NP structure with gender. Bare arguments restricted ([chierchia-1998] [-a
 namespace French.Nouns
 
 open Semantics.Kinds.NMP (BlockingPrinciple NominalMapping)
-open Features (SurfaceGender)
 
 /--
 A lexical entry for a French noun.
@@ -25,7 +24,7 @@ structure NounEntry where
   /-- Plural form -/
   formPl : Option String := none
   /-- Grammatical gender -/
-  gender : SurfaceGender
+  gender : Gender
   /-- Is this a count noun? -/
   countable : Bool := true
   /-- Is this a proper name? -/

@@ -2,7 +2,7 @@ import Linglib.Core.Mereology
 import Linglib.Features.ContainmentPair
 import Linglib.Features.Number.Decomposition
 import Linglib.Features.Person.Decomposition
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Decomposition
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -250,7 +250,7 @@ end PersonPresuppositions
 ## §3b: Gender Presuppositions ([sauerland-2003] §6)
 
 Gender features [±feminine, ±neuter] form a third `ContainmentPair` instance,
-with containment [+neuter] → [+feminine] (see `Features.Gender.Features`).
+with containment [+neuter] → [+feminine] (see `Gender.Features`).
 
 The presuppositional semantics mirrors number and person:
 - **neuter** (maximal, specLevel 2): presupposes inanimate
@@ -303,15 +303,15 @@ def mascSem : PrProp E where
 
 /-- Neuter features map to the maximal `ContainmentPair` cell (specLevel 2). -/
 @[simp] theorem neut_is_maximal_cell :
-    ContainmentPairLike.toPair Features.Gender.neuterF = .maximal := rfl
+    ContainmentPairLike.toPair Gender.neuterF = .maximal := rfl
 
 /-- Feminine features map to the intermediate cell (specLevel 1). -/
 @[simp] theorem fem_is_intermediate_cell :
-    ContainmentPairLike.toPair Features.Gender.feminineF = .intermediate := rfl
+    ContainmentPairLike.toPair Gender.feminineF = .intermediate := rfl
 
 /-- Masculine features map to the minimal cell (specLevel 0). -/
 @[simp] theorem masc_is_minimal_cell :
-    ContainmentPairLike.toPair Features.Gender.masculineF = .minimal := rfl
+    ContainmentPairLike.toPair Gender.masculineF = .minimal := rfl
 
 /-- Gender domain nesting: dom(Neut) ⊆ dom(Fem) ⊆ dom(Masc).
     Parallels number (sg ⊆ pl) and person (1st ⊆ 3rd). -/
@@ -337,13 +337,13 @@ theorem gender_nesting_from_phi (isInanimate isFemale : E → Prop)
 /-- Gender, person, and number have the same `specLevel` ordering —
     all three domains share the phi kernel structure. -/
 theorem gender_person_number_isomorphism :
-    ContainmentPairLike.specLevel Features.Gender.neuterF =
+    ContainmentPairLike.specLevel Gender.neuterF =
       ContainmentPairLike.specLevel Person.firstF ∧
-    ContainmentPairLike.specLevel Features.Gender.neuterF =
+    ContainmentPairLike.specLevel Gender.neuterF =
       ContainmentPairLike.specLevel Number.singularF ∧
-    ContainmentPairLike.specLevel Features.Gender.feminineF =
+    ContainmentPairLike.specLevel Gender.feminineF =
       ContainmentPairLike.specLevel Person.secondF ∧
-    ContainmentPairLike.specLevel Features.Gender.masculineF =
+    ContainmentPairLike.specLevel Gender.masculineF =
       ContainmentPairLike.specLevel Person.thirdF :=
   ⟨rfl, rfl, rfl, rfl⟩
 

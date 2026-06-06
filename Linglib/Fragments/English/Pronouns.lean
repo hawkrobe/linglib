@@ -1,6 +1,6 @@
 import Linglib.Data.UD.Basic
 import Linglib.Features.Case
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities
 import Linglib.Syntax.Pronoun.Demonstrative
@@ -21,7 +21,7 @@ framework-neutral binding engine reads it back via `Binding.bindingClassOf`.
 
 ## Gender ([konnelly-cowper-2020])
 
-Gender is stored directly as `PersonalPronoun.gender : Option SurfaceGender`:
+Gender is stored directly as `PersonalPronoun.gender : Option Gender`:
 *he*/*she*/*it* carry `.masculine`/`.feminine`/`.neuter`; singular *they* — the
 Elsewhere/least-specified spellout — and 1st/2nd person carry **no** gender
 feature (`none`). Per [konnelly-cowper-2020], *they*'s gender-neutrality is
@@ -34,7 +34,6 @@ file, not on this cross-linguistic schema.
 
 namespace English.Pronouns
 
-open Features (SurfaceGender)
 
 /-! ### Personal pronouns (`PersonalPronoun`) -/
 
