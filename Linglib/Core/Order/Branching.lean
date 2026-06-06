@@ -20,12 +20,13 @@ precedence and planarity are real structure that mathlib's
 `Quiver`/`Digraph`/`SimpleGraph` forget, so those are forgetful shadows
 of this class, not its basis.
 
-**No well-foundedness is required here.** The path machinery recurses
-on the *path* (structurally decreasing `List Nat`), not on `T`, so
-this class is law-free on the carrier and still theorem-rich; carriers
-with infinite depth are admissible. Recursion *on the carrier* (size,
-subtree enumeration, yield) needs the `FiniteBranching` mixin (future
-work, phase 2).
+**No well-foundedness is required for the base class.** The path
+machinery recurses on the *path* (structurally decreasing `List Nat`),
+not on `T`, so `Branching` is law-free on the carrier and still
+theorem-rich; carriers with infinite depth are admissible. Recursion
+*on the carrier* (`size`, `subtrees`, `yield`, `inductionOn`) needs
+the `FiniteBranching` mixin below, whose one law — children strictly
+decrease `sizeOf` — concrete inductives discharge by `cases` + `omega`.
 
 Known instance candidates across the library (2026-06-06 audit):
 `Syntax.Tree` (constituency), `NanoTree` (Nanosyntax features),
@@ -105,6 +106,78 @@ def toTreeOrder (t : T) : TreeOrder TreePath where
   root_in_nodes := bot_mem_validPaths t
   root_le_all := fun _ _ => List.nil_prefix
   ancestor_connected := fun _ _ _ h₁ h₂ => TreePath.prefix_or_prefix h₁ h₂
+
+end Branching
+
+/-! ### `FiniteBranching`: the recursion mixin
+
+Recursion *on the carrier* (size, subtree enumeration, yield,
+induction) is not definable from `Branching` alone: Lean cannot see
+structural decrease through a class field. The mixin supplies the
+missing law — children strictly decrease `sizeOf` — which concrete
+inductive carriers discharge by `cases` + `omega` over their
+auto-derived `SizeOf`. -/
+
+/-- A `Branching` carrier whose children strictly decrease `sizeOf`.
+Unlocks carrier recursion: `size`, `subtrees`, `yield`, `inductionOn`. -/
+class FiniteBranching (T : Type*) [SizeOf T] extends Branching T where
+  /-- Children are `sizeOf`-smaller than their parent. -/
+  sizeOf_children : ∀ {c t : T}, c ∈ Branching.children t → sizeOf c < sizeOf t
+
+namespace Branching
+
+variable {T : Type*} [SizeOf T] [FiniteBranching T]
+
+/-- Number of nodes. -/
+def size (t : T) : Nat :=
+  1 + ((children t).attach.map (fun ⟨c, hc⟩ => size c)).sum
+termination_by sizeOf t
+decreasing_by exact FiniteBranching.sizeOf_children hc
+
+/-- All subtrees including self, pre-order. -/
+def subtrees (t : T) : List T :=
+  t :: (children t).attach.flatMap (fun ⟨c, hc⟩ => subtrees c)
+termination_by sizeOf t
+decreasing_by exact FiniteBranching.sizeOf_children hc
+
+theorem self_mem_subtrees (t : T) : t ∈ subtrees t := by
+  rw [subtrees]; exact List.mem_cons_self ..
+
+/-- Strong induction over a `FiniteBranching` carrier: prove `motive t`
+from `motive` on all children. -/
+theorem inductionOn {motive : T → Prop} (t : T)
+    (ih : ∀ t, (∀ c ∈ children t, motive c) → motive t) : motive t := by
+  induction ht : sizeOf t using Nat.strong_induction_on generalizing t with
+  | _ n ihn =>
+    subst ht
+    exact ih t fun c hc =>
+      ihn (sizeOf c) (FiniteBranching.sizeOf_children hc) c rfl
+
+end Branching
+
+/-! ### `HasContent` and yield
+
+Separate class because not every rose-tree carrier has terminal
+content (Nanosyntax trees carry features on every node; CFG derivation
+trees distinguish terminal from nonterminal types). -/
+
+/-- Carriers whose nodes may carry pronounceable terminal content. -/
+class HasContent (T : Type*) (W : outParam Type*) where
+  /-- Terminal content, if any. -/
+  content? : T → Option W
+
+export HasContent (content?)
+
+namespace Branching
+
+variable {T W : Type*} [SizeOf T] [FiniteBranching T] [HasContent T W]
+
+/-- Terminal yield, left to right: the frontier string. The most basic
+tree-to-string map — linear precedence lives over it. -/
+def yield (t : T) : List W :=
+  (content? t).toList ++ (children t).attach.flatMap (fun ⟨c, hc⟩ => yield c)
+termination_by sizeOf t
+decreasing_by exact FiniteBranching.sizeOf_children hc
 
 end Branching
 
