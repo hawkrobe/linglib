@@ -15,7 +15,7 @@ grammatical countability classes by order-preserving maps;
 same notional classes (granulars are the pivotal type: count as English
 *lentil*, mass as English *rice* or Czech *čočka*). The mereotopological
 content of the middle types (units clumped together vs. connected but
-separable) is the `SelfConnected` apparatus of `Core/Mereotopology.lean`.
+separable) is self-connection in the sense of [casati-varzi-1999].
 -/
 
 set_option autoImplicit false

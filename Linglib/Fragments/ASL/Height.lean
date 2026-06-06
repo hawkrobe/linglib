@@ -220,9 +220,8 @@ theorem arc_low_contradictory {E : Type*} [PartialOrder E]
     design payoff: `domainPresup` and `Set.Iic` are structurally
     aligned by construction, not by accident.
 
-    `Set.Iic` is Mathlib's principal down-set, also used as
-    `Mereotopology.parts` in `Core/Mereotopology.lean`. Key lemmas
-    from Mathlib that apply directly:
+    `Set.Iic` is Mathlib's principal down-set — mereologically, the
+    parts of an entity. Key lemmas from Mathlib that apply directly:
     - `Set.Iic_subset_Iic`: `Set.Iic a ⊆ Set.Iic b ↔ a ≤ b`
     - `Set.Iic_top`: `Set.Iic ⊤ = Set.univ`
     - `Set.mem_Iic`: `x ∈ Set.Iic b ↔ x ≤ b` -/
