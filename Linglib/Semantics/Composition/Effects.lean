@@ -1,6 +1,6 @@
 import Linglib.Semantics.Composition.Continuation
 import Linglib.Semantics.Composition.WriterMonad
-import Linglib.Semantics.Composition.SetMonad
+import Mathlib.Data.Set.Functor
 import Linglib.Semantics.Composition.Tree
 import Linglib.Pragmatics.Expressives.Basic
 import Linglib.Semantics.Quantification.Quantifier
@@ -30,7 +30,7 @@ linglib infrastructure:
 | CI / supplementation | W | `α × List P` | `Writer (List P) A` |
 | Input (binding) | R | `ι → α` | `Reader` (Binding.lean) |
 | Output (antecedents) | W | `α × ι` | `Prod` |
-| Indeterminacy | S | `{α}` | `α → Prop` (SetMonad.lean) |
+| Indeterminacy | S | `{α}` | `α → Prop` (mathlib's `Set`; details in `Studies/Charlow2020.lean`) |
 
 ## Organization
 
@@ -975,7 +975,7 @@ end BindingUnification
 
 The **indeterminacy** effect — labeled `S` in's
 Table 2 — is the set monad `(S, η, ⫝̸)` from [charlow-2020],
-formalized in `SetMonad.lean`.
+formalized in `Studies/Charlow2020.lean`.
 
 | Effect | η (pure) | ⫝̸ (bind) | Linguistic use |
 |---|---|---|---|
@@ -994,29 +994,33 @@ the paper) or the Binder Roof Constraint (§6.4). The monad can. -/
 
 section IndeterminacyBridge
 
-open Semantics.Composition.SetMonad
+attribute [local instance] Set.monad
 
-/-- The set monad's η is the indeterminacy effect's `pure` — mathlib's
-    `Set` singleton `{x}`. -/
-theorem indeterminacy_pure_is_eta {A : Type} (x : A) :
-    eta x = fun y => y = x := rfl
+/-- The set monad's `pure` is the indeterminacy effect's `pure` — the
+    singleton `{x}`, which as a `Set α = α → Prop` is `fun y => y = x`. -/
+theorem indeterminacy_pure_is_singleton {A : Type} (x : A) :
+    (pure x : Set A) = fun y => y = x := by
+  ext y; exact Iff.rfl
 
-/-- The set monad's ⫝̸ is the indeterminacy effect's `bind` — mathlib's
-    `Set` monad bind. -/
-theorem indeterminacy_bind_is_setBind {A B : Type}
+/-- The set monad's `>>=` is the indeterminacy effect's `bind` — for
+    `m : Set A` (= `A → Prop`) and `f : A → Set B`, the result at `b`
+    is `∃ a, m a ∧ f a b`. -/
+theorem indeterminacy_bind_is_seq {A B : Type}
     (m : A → Prop) (f : A → B → Prop) :
-    setBind m f = fun b => ∃ a, m a ∧ f a b := by
-  funext b; exact propext (setBind_apply m f b)
+    ((m : Set A) >>= f) = fun b => ∃ a, m a ∧ f a b := by
+  ext b
+  simp only [Set.bind_def, Set.mem_iUnion, exists_prop]
+  rfl
 
-/-- **Indeterminacy obeys ASSOCIATIVITY.** Re-export from `SetMonad.lean`.
-
-    This is the property that distinguishes the full monad from the mere
-    applicative: `(m ⫝̸ f) ⫝̸ g = m ⫝̸ (λx. f x ⫝̸ g)`. Without it,
-    indefinites cannot iteratively scope out of nested islands. -/
+/-- **Indeterminacy obeys ASSOCIATIVITY** — the property [charlow-2020]
+    leans on to derive exceptional scope. Mathlib's `bind_assoc` for
+    `Set`. Distinguishes the full monad from the mere applicative;
+    without it, indefinites cannot iteratively scope out of nested
+    islands ([charlow-2020] eq. 34, Figure 7). -/
 theorem indeterminacy_associativity {A B C : Type}
-    (m : A → Prop) (f : A → B → Prop) (g : B → C → Prop) :
-    setBind (setBind m f) g = setBind m (fun a => setBind (f a) g) :=
-  set_associativity m f g
+    (m : Set A) (f : A → Set B) (g : B → Set C) :
+    (m >>= f) >>= g = m >>= (fun a => f a >>= g) :=
+  bind_assoc m f g
 
 end IndeterminacyBridge
 
