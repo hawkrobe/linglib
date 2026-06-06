@@ -1,44 +1,128 @@
-import Linglib.Core.CombinationKind
-import Linglib.Syntax.Minimalist.CombinationSchemata
 import Linglib.Syntax.Minimalist.Labeling
 import Linglib.Syntax.HPSG.HeadFiller
 import Linglib.Syntax.HPSG.LexicalRules
 import Linglib.Syntax.CCG.Basic
 import Linglib.Syntax.DependencyGrammar.Formal.NonProjective
 import Linglib.Syntax.ConstructionGrammar.ArgumentStructure
+import Linglib.Syntax.ConstructionGrammar.Resultatives
 
 /-!
 # [mueller-2013]: Unifying Everything
 [mueller-2013]
 
-Cross-theory comparison formalizing Müller's central thesis: Minimalism, HPSG,
-CCG, Construction Grammar, and Dependency Grammar converge on three universal
-combination schemata (Head-Complement, Head-Specifier, Head-Filler).
+Cross-theory comparison formalizing Müller's central thesis (pp. 921, 942):
+once the problems with Chomskyan labeling and specifier/complement
+determination are fixed, a minimalist theory "is equivalent to a
+head-driven phrase structure grammar containing the head-filler schema,
+the head-specifier schema, and the head-complement schema (only)" —
+and, since phrasal constructions like Jackendoff's N-P-N are irreducible,
+"both research directions are right to a certain extent: there is need for
+(constraint-based versions of) Move and Merge and there is need for special
+phrasal constructions" (p. 920).
+
+`CombinationKind` is the paper's three-way combination vocabulary.
+Müller's own convergence partners are Minimalism (Chomsky 2008, 2013;
+Stabler's MG), HPSG, categorial grammar, and Construction Grammar; the
+dependency-grammar mapping in §1 below is a linglib-side extension in the
+same spirit (Müller mentions dependency grammar only in connection with
+label-free syntax, not as a convergence partner).
 
 ## Structure
 
 - §1. Classification functions: map each theory's operations to `CombinationKind`
-- §2. Labeling convergence: head determines category of result
+- §2. Labeling convergence: head determines category of result (§2.1)
 - §3. External Merge ↔ Head-Complement ↔ Application
 - §4. Internal Merge ↔ Head-Filler ↔ Composition
-- §5. Coordination diagnostic: same category required
+- §5. Coordination diagnostic: same category required (§1, §2.2)
 - §6. Directional MG ≈ CCG (placeholder)
-- §7. Both directions right: need Merge AND phrasal constructions
+- §7. Both directions right: decomposable vs. irreducible constructions (§3)
 - §8. Concrete cross-theory examples
-- §9. Labeling failures: free relatives + coordination
-- §10. Monovalent verb serialization problem
-- §11. Iterable valence operations
+- §9. Labeling failures: free relatives + coordination (§2.1)
+- §10. Monovalent verb serialization problem (§2.3)
+- §11. Iterable valence operations (§1)
 
 -/
 
-namespace Comparisons.Mueller2013
+namespace Mueller2013
 
-open Core
+/-! ## The three combination schemata -/
+
+/-- Three universal combination schemata shared across syntactic theories.
+
+[mueller-2013] (pp. 921, 942) argues that a minimalist theory with fixed
+labeling is equivalent to an HPSG containing exactly the Head-Complement,
+Head-Specifier, and Head-Filler schemata; directional MG corresponds to
+categorial application (p. 938), and CxG's fully abstract constructions
+decompose into these schemata (§3). -/
+inductive CombinationKind where
+  /-- Head combines with its complement (selected argument).
+      Minimalism: External Merge with selection (first-merged elements are
+      complements, Chomsky 2008:146 apud Müller §2.2); HPSG:
+      Head-Complement Schema; CCG: forward/backward application;
+      DG: core dependency (obj, det,...). -/
+  | headComplement
+  /-- Head combines with its specifier (non-selected argument).
+      Minimalism: External Merge of later-merged elements (§2.2); HPSG:
+      Head-Subject Schema; CCG: backward application (subject may be
+      type-raised); DG: subject dependency. -/
+  | headSpecifier
+  /-- Filler combines with a gapped structure (long-distance dependency).
+      Minimalism: Internal Merge — Stabler's `im` corresponds to the HPSG
+      Head-Filler Schema (Pollard & Sag 1994:164 apud Müller p. 939);
+      CCG: harmonic composition (primarily; composition also serves other
+      functions like heavy NP shift); DG: non-projective dependency. -/
+  | headFiller
+  deriving Repr, DecidableEq
 
 /-! ## §1. Classification Functions
 
 Lightweight mappers from each theory's combination operations to the
 theory-neutral `CombinationKind`. -/
+
+/-! ### Minimalist classification -/
+
+section MinimalistClassification
+
+open Minimalist
+
+/-- Classify an External Merge under head function `h`. -/
+noncomputable def classifyExternalMerge (h : HeadFunction) (a b : SyntacticObject) :
+    CombinationKind :=
+  if selects h a b ∨ selects h b a then
+    .headComplement
+  else
+    .headSpecifier
+
+/-- Classify an Internal Merge (head-function-independent: IM is always
+    Head-Filler regardless of which side projects). -/
+def classifyInternalMerge : CombinationKind := .headFiller
+
+/-- External Merge with selection is Head-Complement (under any `h`). -/
+theorem selection_implies_headComplement
+    (h : HeadFunction) (a b : SyntacticObject) (hs : selects h a b) :
+    classifyExternalMerge h a b = .headComplement := by
+  simp [classifyExternalMerge, hs]
+
+/-- External Merge without selection is Head-Specifier (under any `h`). -/
+theorem no_selection_implies_headSpecifier
+    (h : HeadFunction) (a b : SyntacticObject)
+    (ha : ¬ selects h a b) (hb : ¬ selects h b a) :
+    classifyExternalMerge h a b = .headSpecifier := by
+  simp [classifyExternalMerge, ha, hb]
+
+/-- Internal Merge is always Head-Filler. -/
+theorem internal_merge_is_headFiller :
+    classifyInternalMerge = .headFiller := rfl
+
+/-- The classification is exhaustive (under any `h`). -/
+theorem classify_external_exhaustive
+    (h : HeadFunction) (a b : SyntacticObject) :
+    classifyExternalMerge h a b = .headComplement ∨
+    classifyExternalMerge h a b = .headSpecifier := by
+  unfold classifyExternalMerge
+  by_cases hs : selects h a b ∨ selects h b a <;> simp [hs]
+
+end MinimalistClassification
 
 /-! ### CCG classification -/
 
@@ -65,7 +149,8 @@ def classifyCCGDerivStep : CCG.DerivStep → Option CombinationKind
 /-- Classify an HPSG schema application as one of the three schemata.
 
     [mueller-2013]'s three universal schemata are Head-Complement,
-    Head-Subject, and Head-Filler. HPSG's fourth schema, Head-Modifier
+    Head-Specifier, and Head-Filler (p. 921); HPSG's Head-Subject Schema
+    instantiates Head-Specifier. HPSG's fourth schema, Head-Modifier
     (adjunction), falls outside this classification — Müller does not
     include adjunction in the convergence claim. -/
 def classifyHPSGSchema : HPSG.HPSGSchema → Option CombinationKind
@@ -74,7 +159,11 @@ def classifyHPSGSchema : HPSG.HPSGSchema → Option CombinationKind
   | .headFiller _ => some .headFiller
   | .headMod _ => none
 
-/-! ### Dependency Grammar classification -/
+/-! ### Dependency Grammar classification
+
+A linglib-side extension: Müller does not treat dependency grammar as a
+convergence partner (it appears only in his discussion of label-free
+syntax). The mapping follows the same logic as the others. -/
 
 /-- Classify a UD dependency relation as one of the three schemata.
 
@@ -85,16 +174,6 @@ def classifyDepType : UD.DepRel → CombinationKind
   | .nsubj => .headSpecifier
   | .csubj => .headSpecifier
   | _ => .headComplement
-
-/-! ### CxG classification -/
-
-/-- Classify whether a CxG construction is fully compositional.
-
-Fully abstract constructions without pragmatic function decompose into
-sequences of Head-Complement and Head-Specifier steps. Other constructions
-are irreducible phrasal patterns. -/
-def classifyCxGFullyCompositional (c : ConstructionGrammar.Construction) : Bool :=
-  ConstructionGrammar.isFullyCompositional c
 
 /-! ## §2. Labeling Convergence (Müller §2.1)
 
@@ -207,10 +286,11 @@ theorem labeling_convergence :
   · intro x y; simp [CCG.forwardApp]
   · intro x y; simp [CCG.backwardApp]
 
-/-! ## §3. External Merge ↔ Head-Complement ↔ Application (§2.1–2.2)
+/-! ## §3. External Merge ↔ Head-Complement ↔ Application (§2.2–2.3)
 
 All theories implement the head-complement combination:
-- Minimalism: External Merge where one SO selects the other
+- Minimalism: External Merge where one SO selects the other (first-merged
+  elements are complements, Chomsky 2008:146 apud Müller §2.2)
 - HPSG: Head-Complement Schema (head word combines with complements)
 - CCG: Forward/backward application (functor consumes argument)
 - DG: Core dependency relations (obj, det, comp,...) -/
@@ -221,7 +301,7 @@ theorem external_merge_is_head_complement :
     -- Minimalism: Ext Merge with selection = headComplement
     (∀ (h : Minimalist.HeadFunction) (a b : Minimalist.SyntacticObject),
       Minimalist.selects h a b →
-      Minimalist.classifyExternalMerge h a b = .headComplement) ∧
+      classifyExternalMerge h a b = .headComplement) ∧
     -- HPSG: HeadCompRule = headComplement
     (∀ r : HPSG.HeadCompRule,
       classifyHPSGSchema (.headComp r) = some .headComplement) ∧
@@ -231,7 +311,7 @@ theorem external_merge_is_head_complement :
     -- DG: obj dep = headComplement
     (classifyDepType .obj = .headComplement) := by
   refine ⟨?_, ?_, ?_, ?_⟩
-  · intro h a b hs; exact Minimalist.selection_implies_headComplement h a b hs
+  · intro h a b hs; exact selection_implies_headComplement h a b hs
   · intro _; rfl
   · intro _ _; rfl
   · rfl
@@ -242,21 +322,22 @@ theorem external_merge_is_head_specifier :
     -- Minimalism: Ext Merge without selection = headSpecifier
     (∀ (h : Minimalist.HeadFunction) (a b : Minimalist.SyntacticObject),
       ¬ Minimalist.selects h a b → ¬ Minimalist.selects h b a →
-      Minimalist.classifyExternalMerge h a b = .headSpecifier) ∧
+      classifyExternalMerge h a b = .headSpecifier) ∧
     -- HPSG: HeadSubjRule = headSpecifier
     (∀ r : HPSG.HeadSubjRule,
       classifyHPSGSchema (.headSubj r) = some .headSpecifier) ∧
     -- DG: subj dep = headSpecifier
     (classifyDepType .nsubj = .headSpecifier) := by
   refine ⟨?_, ?_, ?_⟩
-  · intro h a b ha hb; exact Minimalist.no_selection_implies_headSpecifier h a b ha hb
+  · intro h a b ha hb; exact no_selection_implies_headSpecifier h a b ha hb
   · intro _; rfl
   · rfl
 
 /-! ## §4. Internal Merge ↔ Head-Filler ↔ Composition (§2.3)
 
 All theories handle long-distance dependencies via the third schema:
-- Minimalism: Internal Merge (re-merge of a contained element)
+- Minimalism: Internal Merge — Stabler's `im` (Müller's 28) corresponds
+  to the HPSG Head-Filler Schema (Pollard & Sag 1994:164, p. 939)
 - HPSG: Head-Filler Schema (filler XP + S[SLASH {XP}])
 - CCG: Forward/backward composition (enables extraction)
 - DG: Non-projective (crossing) dependencies -/
@@ -264,7 +345,7 @@ All theories handle long-distance dependencies via the third schema:
 /-- Internal Merge / Head-Filler / Composition across theories. -/
 theorem internal_merge_is_head_filler :
     -- Minimalism: Internal Merge = headFiller
-    (Minimalist.classifyInternalMerge = .headFiller) ∧
+    (classifyInternalMerge = .headFiller) ∧
     -- HPSG: HeadFillerRule = headFiller
     (∀ r : HPSG.HeadFillerRule,
       classifyHPSGSchema (.headFiller r) = some .headFiller) ∧
@@ -285,10 +366,13 @@ theorem dg_nonproj_is_filler_gap :
     DepGrammar.hasFillerGap DepGrammar.nonProjectiveTree = true := by
   native_decide
 
-/-! ## §5. Coordination Diagnostic (§2.2)
+/-! ## §5. Coordination Diagnostic (§1, §2.2)
 
-Coordination requires matching categories across all theories. This
-is a *diagnostic* for whether two expressions have the same category. -/
+Coordination requires matching categories: "two constituents that have
+compatible syntactic properties can be coordinated and ... the result of
+the coordination is an object that has the syntactic properties of the
+linguistic objects that are coordinated" (p. 924). This is a *diagnostic*
+for whether two expressions have the same category. -/
 
 /-- CCG coordination requires matching categories. -/
 theorem ccg_coordination_same_cat (c1 c2 : CCG.Cat) :
@@ -320,8 +404,10 @@ theorem hpsg_lexrule_enables_coordination (rule : HPSG.LexicalRule)
 
 /-! ## §6. Directional MG ≈ CCG (§2.3)
 
-Stabler's directional Minimalist Grammar uses features =x (looking right)
-and x= (looking left), which correspond directly to CCG's X/Y and X\Y.
+Stabler's directional Minimalist Grammar marks the position of an argument
+relative to its head together with the selection feature: =x (argument to
+the right) and x= (argument to the left), which "corresponds to forward and
+backward application" in categorial grammar (Müller's 33, p. 938).
 
 This formal correspondence is not yet formalized because directional MG
 is not in the codebase. -/
@@ -335,39 +421,80 @@ is not in the codebase. -/
 /-! ## §7. Both Directions Right (§3)
 
 Müller's conclusion: the three universal schemata handle fully abstract
-constructions, but Construction Grammar's phrasal constructions are
-irreducible — they cannot be decomposed into the three schemata.
+constructions, but phrasal constructions (his examples: Jackendoff's N-P-N,
+verbless directives) are irreducible — they cannot be decomposed into the
+three schemata. "Both research directions are right to a certain extent"
+(p. 920): we need BOTH Merge/schemata AND constructions.
 
-"Both directions right": we need BOTH Merge/schemata AND constructions. -/
+`decompose` maps a fully abstract argument-structure construction to its
+sequence of schema steps; the irreducibility witness is the *let alone*
+construction ([fillmore-kay-oconnor-1988] — era-appropriate for a 2013
+paper; see `ConstructionGrammar.pal_irreducible` for a later-discovered
+witness making the same point). -/
 
-/-- Concrete examples: fully abstract constructions decompose. -/
+/-- Decompose a fully abstract construction into a sequence of combination steps.
+
+For a construction with slots [Subj, V, Obj1, Obj2]:
+1. V + Obj2 → V' (Head-Complement)
+2. V' + Obj1 → V'' (Head-Complement)
+3. Subj + V'' → S (Head-Specifier)
+
+The head slot determines which combinations are complements vs specifier. -/
+def decompose (asc : ConstructionGrammar.ArgStructureConstruction) :
+    List CombinationKind :=
+  let nonHeadSlots := asc.slots.filter (!·.isHead)
+  -- Subject (first non-head slot) maps to Head-Specifier,
+  -- all other non-head slots map to Head-Complement
+  nonHeadSlots.zipIdx.map λ ⟨_, i⟩ =>
+    if i == 0 then .headSpecifier  -- first non-head = specifier (subject)
+    else .headComplement           -- later non-heads = complements
+
+/-- Ditransitive decomposes into Head-Specifier + Head-Complement + Head-Complement.
+
+The ditransitive [Subj V Obj1 Obj2] decomposes as:
+1. V + Obj2 → V' (Head-Complement)
+2. V' + Obj1 → V'' (Head-Complement)
+3. Subj + V'' → S (Head-Specifier) -/
 theorem ditransitive_decomposes :
-    ConstructionGrammar.decompose ConstructionGrammar.ditransitive =
-      [.headSpecifier, .headComplement, .headComplement] :=
-  ConstructionGrammar.ditransitive_decomposes
+    decompose ConstructionGrammar.ditransitive =
+      [.headSpecifier, .headComplement, .headComplement] := by
+  decide
 
+/-- Caused-motion decomposes into Head-Specifier + Head-Complement + Head-Complement. -/
 theorem causedMotion_decomposes :
-    ConstructionGrammar.decompose ConstructionGrammar.causedMotion =
-      [.headSpecifier, .headComplement, .headComplement] :=
-  ConstructionGrammar.causedMotion_decomposes
+    decompose ConstructionGrammar.causedMotion =
+      [.headSpecifier, .headComplement, .headComplement] := by
+  decide
 
-/-- Concrete examples: phrasal constructions are irreducible. -/
-theorem pal_irreducible :
-    ConstructionGrammar.isFullyCompositional
-      ConstructionGrammar.Studies.GoldbergShirtz2025.palConstruction = false :=
-  ConstructionGrammar.pal_irreducible
+/-- Resultative decomposes into Head-Specifier + Head-Complement + Head-Complement. -/
+theorem resultative_decomposes :
+    decompose ConstructionGrammar.resultative =
+      [.headSpecifier, .headComplement, .headComplement] := by
+  decide
 
-theorem let_alone_irreducible :
-    ConstructionGrammar.isFullyCompositional
-      ConstructionGrammar.Studies.FillmoreKayOConnor1988.letAloneConstruction = false :=
-  ConstructionGrammar.let_alone_irreducible
+/-- Conative decomposes into Head-Specifier + Head-Complement. -/
+theorem conative_decomposes :
+    decompose ConstructionGrammar.conative =
+      [.headSpecifier, .headComplement] := by
+  decide
+
+/-- All members of a polysemy family decompose identically
+    (same slots → same decomposition). -/
+theorem polysemyFamily_all_same_decomposition
+    (f : ConstructionGrammar.PolysemyFamily)
+    (ext : String × String × List String) :
+    decompose (f.extensionConstruction ext) =
+    decompose f.centralConstruction := by
+  simp [decompose, ConstructionGrammar.PolysemyFamily.extensionConstruction,
+    ConstructionGrammar.PolysemyFamily.centralConstruction]
 
 /-- Both directions right: the three schemata AND phrasal constructions are needed.
 
 1. Fully abstract constructions without pragmatic functions are fully
    compositional — decomposable into Head-Complement and Head-Specifier steps.
 2. There exist constructions that are not fully compositional — they cannot
-   be captured by the three schemata alone, requiring CxG's phrasal patterns. -/
+   be captured by the three schemata alone, requiring CxG's phrasal patterns
+   (witness: *let alone*, [fillmore-kay-oconnor-1988]). -/
 theorem both_directions_right :
     -- Direction 1: fully abstract constructions are fully compositional
     (∀ c : ConstructionGrammar.Construction,
@@ -377,7 +504,49 @@ theorem both_directions_right :
     -- Direction 2: there exist non-fully-compositional constructions
     (∃ c : ConstructionGrammar.Construction,
       ConstructionGrammar.isFullyCompositional c = false) :=
-  ConstructionGrammar.both_directions_right
+  ⟨ConstructionGrammar.fullyAbstract_isFullyCompositional,
+   ⟨_, ConstructionGrammar.let_alone_irreducible⟩⟩
+
+/-! ### Resultative family decomposition
+
+[goldberg-jackendoff-2004]'s four resultative subconstructions, viewed
+through the schema decomposition (the chronologically later paper's
+apparatus applied to the earlier paper's constructions). -/
+
+section ResultativeFamily
+
+open ConstructionGrammar.Resultatives
+
+/-- All four resultative subconstructions are fully compositional. -/
+theorem allResultativesFullyCompositional :
+    resultativeFamily.all (λ c =>
+      ConstructionGrammar.isFullyCompositional c.construction) = true := by
+  decide
+
+/-- Causative subconstructions decompose like the parent resultative. -/
+theorem causative_decompose_like_parent :
+    decompose causativePropertyConstruction =
+      decompose ConstructionGrammar.resultative ∧
+    decompose causativePathConstruction =
+      decompose ConstructionGrammar.resultative := by
+  constructor <;> decide
+
+/-- Noncausative subconstructions decompose into fewer combination steps. -/
+theorem noncausative_fewer_steps :
+    (decompose noncausativePropertyConstruction).length <
+    (decompose causativePropertyConstruction).length ∧
+    (decompose noncausativePathConstruction).length <
+    (decompose causativePathConstruction).length := by
+  constructor <;> decide
+
+/-- Decomposition length reflects transitivity: causative subconstructions
+    have three combination steps, noncausative two. -/
+theorem decomposition_reflects_transitivity :
+    (decompose causativePropertyConstruction).length = 3 ∧
+    (decompose noncausativePropertyConstruction).length = 2 := by
+  constructor <;> decide
+
+end ResultativeFamily
 
 /-! ## §8. Concrete Cross-Theory Examples
 
@@ -398,9 +567,9 @@ example : classifyDepType .nsubj = .headSpecifier := rfl
     (under any head function `h`). -/
 theorem min_external_exhaustive
     (h : Minimalist.HeadFunction) (a b : Minimalist.SyntacticObject) :
-    Minimalist.classifyExternalMerge h a b = .headComplement ∨
-    Minimalist.classifyExternalMerge h a b = .headSpecifier :=
-  Minimalist.classify_external_exhaustive h a b
+    classifyExternalMerge h a b = .headComplement ∨
+    classifyExternalMerge h a b = .headSpecifier :=
+  classify_external_exhaustive h a b
 
 /-- The three primary HPSG schemata map to the three universal schemata;
     Head-Modifier (adjunction) falls outside the classification. -/
@@ -422,11 +591,16 @@ theorem hpsg_headMod_not_classified (r : HPSG.HeadModRule) :
 
 /-! ## §9. Labeling Failures (§2.1)
 
-Müller shows that Chomsky's labeling algorithm fails in two ways:
+Müller shows that Chomsky's labeling algorithm (his 14a/14b, from Chomsky
+2008:145) fails in two ways:
 
-1. **Free relatives**: rules 14a and 14b give contradictory labels (D vs V)
-2. **Coordination of phrases**: neither rule applies (neither daughter is
-   an LI, neither selects the other)
+1. **Free relatives**: 14a and 14b give contradictory labels for
+   *what you wrote* (Müller's 16–17: a DP-like object via 14a, a clausal
+   one via 14b), and complex free-relative phrases (his 18–19) defeat
+   both rules
+2. **Coordination of phrases**: labeling requires raising one conjunct
+   (his 15), which makes wrong predictions for coordinations of two
+   singular NPs (his fn. 13)
 
 Note: The free relative SO `freeRelSO` models the surface structure
 {what, [wrote ___]} without explicitly modeling Internal Merge — "what"
@@ -443,20 +617,54 @@ remain documented in `Labeling.lean`'s docstrings and in §10 below. -/
 
 /-! ## §10. Monovalent Verb Serialization Problem (§2.3)
 
-Merge classifies a monovalent verb's sole argument as a complement,
-yielding wrong linearization ("*Sleeps Max" instead of "Max sleeps"). -/
+In Stabler's non-directional MG, external Merge (Müller's 27, from
+Stabler 2010:402) treats a monovalent verb's sole argument as a complement
+and serializes it to the right of the head, yielding "*Sleeps Max" instead
+of "Max sleeps" (Müller's 30). Stabler's fix — combining monovalent verbs
+with a nonovert object (Veenstra 1998:61, 124) — is "both stipulative and
+entirely ad hoc, being motivated only by the wish to have uniform
+structures" (p. 937). -/
 
-/-! Theorem `monovalent_verb_serialization_problem` removed for the
-same reason — its `monovalent_classified_as_complement` component in
-`CombinationSchemata.lean` required `decide` to reduce
-`classifyExternalMerge`, which doesn't happen in the kernel. The
-linearization claim (`monovalent_wrong_linearization`) and Müller's
-argument both stand in their original locations. -/
+section MonovalentVerbProblem
+
+open Minimalist
+
+/-- "sleeps" — a monovalent verb (category V, selects D). -/
+def sleepsToken : LIToken := ⟨.simple .V [.D] (phonForm := "sleeps"), 200⟩
+
+/-- "Max" — a proper name (category D, no selectional features). -/
+def maxToken : LIToken := ⟨.simple .D [] (phonForm := "Max"), 201⟩
+
+/-! Theorem `monovalent_classified_as_complement` — that
+`classifyExternalMerge sleepsToken maxToken = .headComplement` (V
+selects D, so the argument is a complement) — was removed because its
+`decide`-based proof does not reduce in the kernel. The Müller argument
+(Stabler's linearization yields "*Sleeps Max" instead of "Max sleeps",
+requiring an ad hoc empty object) stands in the section docstring above. -/
+
+/-- Left-to-right linearization of merge(sleeps, Max) gives "sleeps Max".
+    This is the wrong order for English — it should be "Max sleeps".
+
+    TODO Phase 2: `phonYield` is `Quot.out`-based after the FreeCommMagma
+    migration; `decide` no longer reduces. Re-prove with parameterized
+    linearization. -/
+theorem monovalent_wrong_linearization :
+    HeadFunction.leftSpine.phonYield (merge (.leaf sleepsToken) (.leaf maxToken))
+      = ["sleeps", "Max"] := by
+  sorry
+
+/-- The desired order differs from the linearization. -/
+theorem monovalent_desired_order_differs :
+    ["Max", "sleeps"] ≠
+      HeadFunction.leftSpine.phonYield (merge (.leaf sleepsToken) (.leaf maxToken)) := by
+  sorry
+
+end MonovalentVerbProblem
 
 /-! ## §11. Iterable Valence Operations (§1)
 
 Lexical rules compose freely, capturing double passivization (Turkish,
-Lithuanian) without phrasal machinery. -/
+Özkaragöz 1986; Lithuanian, Timberlake 1982) without phrasal machinery. -/
 
 /-- Any chain of lexical rules preserves head features. -/
 theorem valence_iteration_works :
@@ -476,11 +684,11 @@ theorem valence_iteration_works :
 | Head-Modifier | — | HeadMod | — | — | — | Not in 3 schemata |
 | Labeling | selector proj | HFP | functor result | head | — | Proved |
 | Coordination | same cat | same cat | same cat | — | — | Proved |
-| Labeling failure (FR) | 14a≠14b | — | — | — | — | Proved |
-| Labeling failure (coord) | no rule applies | — | — | — | — | Proved |
-| Monovalent verb | *Sleeps Max | — | — | — | — | Proved |
+| Labeling failure (FR) | 14a≠14b | — | — | — | — | Documented |
+| Labeling failure (coord) | no rule applies | — | — | — | — | Documented |
+| Monovalent verb | *Sleeps Max | — | — | — | — | Sorry (Phase 2) |
 | Valence iteration | — | double passive | — | — | — | Proved |
-| Directional MG ≈ CCG | =x ≈ X/Y | — | — | — | — | Sorry |
+| Directional MG ≈ CCG | =x ≈ X/Y | — | — | — | — | Not formalized |
 | Both directions right | — | — | — | — | abstract ∨ phrasal | Proved |
 
 Note: CCG has no separate Head-Specifier mechanism. Subject combination uses
@@ -489,4 +697,4 @@ in the classification. The subject/complement distinction is syntactic, not
 combinatory, in CCG.
 -/
 
-end Comparisons.Mueller2013
+end Mueller2013

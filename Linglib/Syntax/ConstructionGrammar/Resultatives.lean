@@ -643,17 +643,9 @@ theorem noncausative_are_intransitive :
     noncausativePathConstruction.slots.length = 3 := by
   constructor <;> native_decide
 
-/-- Causative subconstructions decompose like the parent resultative. -/
-theorem causative_match_parent :
-    decompose causativePropertyConstruction = decompose resultative ∧
-    decompose causativePathConstruction = decompose resultative := by
-  constructor <;> native_decide
-
-/-- Noncausative subconstructions have one fewer decomposition step. -/
-theorem noncausative_fewer_steps :
-    (decompose noncausativePropertyConstruction).length <
-    (decompose causativePropertyConstruction).length := by
-  native_decide
+/-! Schema-decomposition theorems for the subconstruction family
+(`causative_decompose_like_parent`, `noncausative_fewer_steps`) live with
+[mueller-2013]'s decomposition apparatus in `Studies/Mueller2013.lean`. -/
 
 /-! ## Verb–construction fusion (integration with ArgumentStructure.lean) -/
 

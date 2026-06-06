@@ -312,6 +312,41 @@ def terminalNodes (h : HeadFunction) (so : SyntacticObject) :
 
 end HeadFunction
 
+/-! ### Selection -/
+
+/-- LIToken-level c-selection: `selector` selects `selected` iff
+    `selector`'s outermost selectional feature equals `selected`'s outer
+    category. Pure LIToken relation; no SO structure involved. -/
+def LIToken.selects (selector selected : LIToken) : Prop :=
+  selector.item.outerSel.head? = some selected.item.outerCat
+
+instance (lt1 lt2 : LIToken) : Decidable (LIToken.selects lt1 lt2) := by
+  unfold LIToken.selects; infer_instance
+
+/-- SO-level c-selection parameterised over a head function:
+    `a` selects `b` (under `h`) iff `h`'s head-leaf for `a` selects
+    `h`'s head-leaf for `b`. -/
+def selects (h : HeadFunction) (a b : SyntacticObject) : Prop :=
+  (h.head a).selects (h.head b)
+
+noncomputable instance (h : HeadFunction) (a b : SyntacticObject) :
+    Decidable (selects h a b) := by
+  unfold selects; classical infer_instance
+
+/-- Head Feature Principle (MCB §1.13.6 / Minimalist analogue): under
+    any head function `h` and the externalize choice it supplies,
+    `h.head (.node a b)` is one of `h.head a` or `h.head b`.
+
+    TODO: with `headAt h so := leftmostLeafPlanar (h.section_.σ so)`,
+    proving this requires reasoning about what `h.section_.σ (a*b)`
+    looks like — concretely, that it's some planar tree whose leftmost
+    leaf descends from either `a` or `b`. This needs a coherence lemma
+    about how externalize interacts with binary nodes, which is part of
+    the Tier A cascade. -/
+theorem head_node_eq_daughter (h : HeadFunction) (a b : SyntacticObject) :
+    h.head (.node a b) = h.head a ∨ h.head (.node a b) = h.head b := by
+  sorry
+
 -- ============================================================================
 -- § 4.5: Planar-leaf structural lemmas (substrate for §5 coherence proofs)
 -- ============================================================================

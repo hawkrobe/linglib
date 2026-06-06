@@ -29,9 +29,9 @@ Sections:
    motivated paths converge on `.make`.
 4. **Aspect**: bounded RP telicizes activity → accomplishment.
 5. **ChangeOfState**: constructional BECOME maps to `CoSType.inception`.
-6. **Compositional decomposition**: subconstructions decompose into
-   universal schemata (`isFullyCompositional`).
-7. **Cross-linguistic typological parameters**: `ResultativeRealization`,
+   (Schema decomposition of the subconstruction family lives with
+   [mueller-2013]'s apparatus in `Studies/Mueller2013.lean`.)
+6. **Cross-linguistic typological parameters**: `ResultativeRealization`,
    `ResultOrientation`. Mandarin-specific phase-complement morpheme data
    (`PhaseComplement` enum + `cosType`) lives in
    `Mandarin.Resultatives`.
@@ -200,33 +200,6 @@ theorem inception_presupposes_not_prior {W : Type*} (P : W → Prop) (w : W) :
 /-- Inception asserts P after. -/
 theorem inception_asserts_result {W : Type*} (P : W → Prop) :
     resultStateAssertion .inception P = P := rfl
-
-/-! ## Compositional decomposition -/
-
-/-- All four subconstructions are fully compositional. -/
-theorem allResultativesFullyCompositional :
-    resultativeFamily.all (λ c =>
-      isFullyCompositional c.construction) = true := by
-  decide
-
-/-- Causative subconstructions decompose like the parent resultative. -/
-theorem causative_decompose_like_parent :
-    decompose causativePropertyConstruction = decompose resultative ∧
-    decompose causativePathConstruction = decompose resultative := by
-  constructor <;> decide
-
-/-- Noncausative subconstructions decompose into fewer combination steps. -/
-theorem noncausative_fewer_steps :
-    (decompose noncausativePropertyConstruction).length <
-    (decompose causativePropertyConstruction).length ∧
-    (decompose noncausativePathConstruction).length <
-    (decompose causativePathConstruction).length := by
-  constructor <;> decide
-
-theorem decomposition_reflects_transitivity :
-    (decompose causativePropertyConstruction).length = 3 ∧
-    (decompose noncausativePropertyConstruction).length = 2 := by
-  constructor <;> decide
 
 /-! ## Cross-linguistic Resultative Parameters
 
