@@ -433,7 +433,7 @@ theorem glue_inverse_false : ¬glue_inverse_meaning := by
     engine. -/
 
 open Semantics.Scope
-open Core.Tree
+open Syntax
 open Semantics.Composition.Tree
 open Core.Logic.Intensional.Variables
 

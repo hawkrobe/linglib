@@ -45,7 +45,8 @@ import Linglib.Core.Logic.Team.Closure
 import Linglib.Core.Logic.Team.Definability
 import Linglib.Features.Acceptability
 import Linglib.Semantics.Dynamic.ParameterizedUpdate
-import Linglib.Core.Tree
+import Linglib.Syntax.Tree.Basic
+import Linglib.Syntax.Tree.Cat
 import Linglib.Features.Coordination
 import Linglib.Core.Logic.Duality
 import Linglib.Core.Logic.Quantification

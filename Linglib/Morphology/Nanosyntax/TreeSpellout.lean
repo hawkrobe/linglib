@@ -36,7 +36,7 @@ namespace Morphology.Nanosyntax
 -- §1: NanoTree
 -- ============================================================================
 
-/-- A nanosyntactic feature tree. Simpler than `Core.Tree` — no
+/-- A nanosyntactic feature tree. Simpler than `Syntax` — no
     traces, no binding, no category/word split. Just labeled nodes
     with an ordered list of daughters.
 

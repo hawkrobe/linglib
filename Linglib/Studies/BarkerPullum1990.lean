@@ -1,4 +1,4 @@
-import Linglib.Core.Tree
+import Linglib.Syntax.Tree.Cat
 import Linglib.Core.Order.Tree
 import Linglib.Core.Order.Command
 import Mathlib.Data.Set.Basic
@@ -54,8 +54,8 @@ inductive Dir where | L | R
 /-- Address = path from root -/
 abbrev Address := List Dir
 
-open Core.Tree (Tree)
-open Core.Tree.Tree (leaf bin)
+open Syntax (Tree)
+open Syntax.Tree (leaf bin)
 
 /-- Get subtree at address (binary branching only) -/
 def atAddr {W : Type} : Tree Unit W → Address → Option (Tree Unit W)
