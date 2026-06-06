@@ -321,6 +321,32 @@ instance {C W : Type} : Core.Order.Branching (Tree C W) where
     | .trace _ _ => []
     | .bind _ _ body => [body]
 
+/-- Children strictly decrease `sizeOf`, unlocking the generic
+recursion API (`Branching.size`, `subtrees`, `yield`, `inductionOn`). -/
+instance {C W : Type} : Core.Order.FiniteBranching (Tree C W) where
+  sizeOf_children {c t} hc := by
+    cases t with
+    | terminal _ _ => simp [Core.Order.Branching.children] at hc
+    | node _ cs =>
+      simp only [Core.Order.Branching.children] at hc
+      have := List.sizeOf_lt_of_mem hc
+      simp only [Tree.node.sizeOf_spec]
+      omega
+    | trace _ _ => simp [Core.Order.Branching.children] at hc
+    | bind _ _ body =>
+      simp only [Core.Order.Branching.children, List.mem_singleton] at hc
+      subst hc
+      simp only [Tree.bind.sizeOf_spec]
+      omega
+
+/-- Terminal content: the word at a `terminal`; traces, binders, and
+internal nodes are contentless, so `Branching.yield` computes the
+frontier string. -/
+instance {C W : Type} : Core.Order.HasContent (Tree C W) W where
+  content?
+    | .terminal _ w => some w
+    | _ => none
+
 end Syntax
 
 /-! ### FreeMagma → Tree forgetful map -/

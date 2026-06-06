@@ -207,6 +207,50 @@ def IsSister (p q : TreePath) : Prop := p ≠ q ∧ p.parent = q.parent
 theorem isSister_symm {p q : TreePath} (h : IsSister p q) : IsSister q p :=
   ⟨h.1.symm, h.2.symm⟩
 
+/-! ### Linear precedence
+
+The PF-side order that dominance forgets: `p` precedes `q` iff their
+paths diverge at some common prefix with `p` taking an earlier branch.
+Defined only between dominance-incomparable positions
+(`Precedes.not_le`, `Precedes.not_ge`) — a node neither precedes nor
+follows its ancestors, the ID/LP division of labor. -/
+
+/-- `p` linearly precedes `q`: at some shared position `r`, `p`
+continues into an earlier child than `q`. -/
+def Precedes (p q : TreePath) : Prop :=
+  ∃ (r : List Nat) (i j : Nat), i < j ∧
+    (r ++ [i]) <+: p.toList ∧ (r ++ [j]) <+: q.toList
+
+namespace Precedes
+
+/-- Two extensions of the same position by single indices that are both
+prefixes of one path carry the same index. -/
+private theorem branch_unique {r : List Nat} {i j : Nat} {l : List Nat}
+    (hi : (r ++ [i]) <+: l) (hj : (r ++ [j]) <+: l) : i = j := by
+  have hcomp := List.prefix_or_prefix_of_prefix hi hj
+  have hlen : (r ++ [i]).length = (r ++ [j]).length := by simp
+  rcases hcomp with h | h
+  · simpa using List.append_inj_right (h.eq_of_length hlen) rfl
+  · simpa using (List.append_inj_right (h.eq_of_length hlen.symm) rfl).symm
+
+theorem irrefl (p : TreePath) : ¬ Precedes p p := by
+  rintro ⟨r, i, j, hij, hi, hj⟩
+  exact absurd (branch_unique hi hj) (Nat.ne_of_lt hij)
+
+/-- Precedence excludes dominance. -/
+theorem not_le {p q : TreePath} (h : Precedes p q) : ¬ p ≤ q := by
+  rintro hle
+  obtain ⟨r, i, j, hij, hi, hj⟩ := h
+  exact absurd (branch_unique (hi.trans hle) hj) (Nat.ne_of_lt hij)
+
+/-- Precedence excludes being dominated. -/
+theorem not_ge {p q : TreePath} (h : Precedes p q) : ¬ q ≤ p := by
+  rintro hle
+  obtain ⟨r, i, j, hij, hi, hj⟩ := h
+  exact absurd (branch_unique hi (hj.trans hle)) (Nat.ne_of_lt hij)
+
+end Precedes
+
 end TreePath
 
 end Core.Order
