@@ -12,7 +12,7 @@ import Linglib.Features.Gender.Capabilities
 import Linglib.Features.Gender.Decomposition
 import Linglib.Features.Gender.Interp
 import Linglib.Features.Gender.Resolve
-import Linglib.Core.Valence
+import Linglib.Features.Complementation
 import Linglib.Data.UD.Basic
 import Linglib.Morphology.Unification
 import Linglib.Typology.NegativeConcord
@@ -119,7 +119,7 @@ import Linglib.Semantics.Questions.Partition.Lattice
 import Linglib.Semantics.Questions.Partition.Cells
 import Linglib.Semantics.Questions.Partition.Binary
 import Linglib.Semantics.Questions.Partition.Negativity
-import Linglib.Phenomena.Negation.ExpletiveNegation
+import Linglib.Typology.Negation.ExpletiveNegation
 import Linglib.Features.Polarity
 import Linglib.Phenomena.Polarity.PolarityPartition
 import Linglib.Features.PropertyDomain
@@ -336,7 +336,6 @@ import Linglib.Core.Agent.Emotion
 import Linglib.Semantics.Spatial.Path
 import Linglib.Core.Assignment
 import Linglib.Semantics.Composition.Continuation
-import Linglib.Semantics.Composition.Layered
 import Linglib.Core.CylindricAlgebra
 import Linglib.Core.CylindricAlgebra.DynamicSemantics
 import Linglib.Features.ContainmentPair
@@ -1161,6 +1160,8 @@ import Linglib.Studies.SlomanBarbeyHotaling2009
 import Linglib.Studies.SpalekMcNally2026
 import Linglib.Studies.AckemaNeeleman2018
 import Linglib.Studies.AlstottAravind2026
+import Linglib.Studies.Asudeh2022
+import Linglib.Studies.HeimKratzer1998
 import Linglib.Semantics.Focus.PolarityLevel
 import Linglib.Studies.AlstottAravind2026TemporalConnectives
 import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
@@ -1580,7 +1581,6 @@ import Linglib.Studies.AlonsoOvalleMenendezBenito2010
 import Linglib.Studies.AlonsoOvalleRoyer2024
 import Linglib.Studies.KratzerShimoyama2002
 import Linglib.Phenomena.Negation.Basic
-import Linglib.Fragments.Italian.ExpletiveNegation
 import Linglib.Studies.JinKoenig2021
 import Linglib.Studies.Rett2026
 import Linglib.Studies.Tsiakmakis2025
@@ -2316,19 +2316,15 @@ import Linglib.Semantics.Reference.Binding
 import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Minimalist.LongDistanceAgree
 import Linglib.Semantics.Composition.Tree
-import Linglib.Semantics.Composition.QuantifierComposition
-import Linglib.Semantics.Composition.Glue
 import Linglib.Semantics.Composition.WriterMonad
 import Linglib.Semantics.Composition.SetMonad
 import Linglib.Semantics.Composition.Applicative
 import Linglib.Semantics.Composition.Effects
-import Linglib.Semantics.Composition.LexiconBuilder
 import Linglib.Semantics.Composition.MaybeMonad
 import Linglib.Semantics.Composition.TypeShifting
 import Linglib.Semantics.Composition.Coercion
 import Linglib.Semantics.Entailment.Polarity
 import Linglib.Semantics.Modality.HistoricalAlternatives
-import Linglib.Semantics.Composition.PredicateTransfer
 import Linglib.Semantics.Composition.Scope
 import Linglib.Phenomena.Entailment.MontagueTruthConditions
 import Linglib.Studies.AhnZhu2025
@@ -2361,7 +2357,6 @@ import Linglib.Semantics.Probabilistic.ConditionalAssertability
 import Linglib.Semantics.Probabilistic.PrototypeTheory
 import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.ScaleCat
-import Linglib.Semantics.Composition.SyntaxInterface
 import Linglib.Studies.Borer2005
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
 import Linglib.Semantics.Composition.Abstraction

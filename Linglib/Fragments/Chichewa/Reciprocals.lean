@@ -24,7 +24,7 @@ def reciprocalAffix : MorphRule Bool :=
   , value := "reciprocal"
   , formRule := fun stem => stem ++ "an"
   , featureRule := id
-  , valenceRule := fun _ => some .intransitive
+  , valenceRule := fun _ => some ComplementType.none
   , semEffect := id
   }
 
@@ -34,7 +34,7 @@ def reflexivePrefix : MorphRule Bool :=
   , value := "reflexive"
   , formRule := fun stem => "dzi" ++ stem
   , featureRule := id
-  , valenceRule := fun _ => some .intransitive
+  , valenceRule := fun _ => some ComplementType.none
   , semEffect := id
   }
 

@@ -13,23 +13,25 @@ adverb hierarchy.
 
 ## Sibling files
 
-Italian negation is distributed across four coordinated files. This file
-holds only the operator (the marker + system). The other axes:
+Italian negation is distributed across three coordinated files. This file
+holds the operator (the marker + system) and the EN trigger inventory.
+The other axes:
 
 - `Fragments/Italian/PolarityItems.lean` — lexical reactives: n-words
   (*nessuno*, *niente*, *mai*, *neanche/nemmeno/neppure*), the formal NPI
   *alcuno*, the emphatic reinforcer *mica*, the FCIs *qualsiasi/qualunque*.
   The operator/lexical-reactive split is documented in
   `Core/Lexical/NegMarker.lean`.
-- `Fragments/Italian/ExpletiveNegation.lean` — the 11 environments where
-  *non* appears vacuously (Greco 2020): *temere/dubitare* complements,
-  *prima che*, *a meno che*, comparative *quanto*, etc. Distinct axis from
-  standard sentential negation.
+- the EN trigger inventory (this file, below) — the eight [jin-koenig-2021]
+  trigger classes attested for Italian, with their lexical triggers.
+  Distinct axis from standard sentential negation. The finer
+  construction-level weak/strong classification of Italian EN
+  environments ([greco-2020] Tables 1–2) lives in `Studies/Greco2020.lean`.
 - `Fragments/Italian/PolarityMarking.lean` — sentence-level polarity
   strategies (emphatic affirmation, focus particles).
 
 Bias-conditioned *non₂* (the non-truth-functional comparative *non* of
-Napoli & Nespor 1976) surfaces obliquely via the `pur` and `affatto`
+[napoli-nespor-1976]) surfaces obliquely via the `pur` and `affatto`
 entries in `PolarityItems.lean`.
 -/
 
@@ -51,6 +53,48 @@ def non : NegMarkerEntry :=
     et al. via `NegationSystem.ofISO` — never hand-encoded. -/
 def negationSystem : NegationSystem :=
   NegationSystem.ofISO "ita" [non]
+
+/-! ## Expletive Negation
+[jin-koenig-2021]
+
+The eight EN trigger classes attested for Italian in [jin-koenig-2021]'s
+722-language survey (Table 3, Italic row), each with its lexical trigger.
+Unlike French — whose grammaticalized EN marker is bare *ne*, distinct
+from standard *ne...pas* — Italian uses the standard negator *non* for
+every EN environment, so EN and standard negation are string-identical
+([greco-2020] exploits exactly this ambiguity for Snegs).
+
+Note the cross-Romance contrast visible in the survey: Italian's row has
+DOUBT (*dubitare*) but, unlike French, no FEAR class.
+-/
+
+/-- EN trigger-negator pairings from [jin-koenig-2021] Table 3
+    (Italic section). -/
+def enTriggerNegators : List ENTriggerNegator :=
+  [ { triggerClass := "BEFORE", triggerForm := "prima che"
+    , enNegatorForm := "non" }
+  , { triggerClass := "DOUBT", triggerForm := "dubitare"
+    , enNegatorForm := "non" }
+  , { triggerClass := "HARDLY", triggerForm := "appena"
+    , enNegatorForm := "non" }
+  , { triggerClass := "NEARLY", triggerForm := "per poco"
+    , enNegatorForm := "non" }
+  , { triggerClass := "THAN", triggerForm := "di quanto"
+    , enNegatorForm := "non" }
+  , { triggerClass := "UNLESS", triggerForm := "a meno che"
+    , enNegatorForm := "non" }
+  , { triggerClass := "UNTIL", triggerForm := "finché, fino a"
+    , enNegatorForm := "non" }
+    -- J&K Table 3 prints the WITHOUT trigger as "senza que" (a typo
+    -- carried from their source, per their fn. 5); *senza che* is the
+    -- Italian form.
+  , { triggerClass := "WITHOUT", triggerForm := "senza che"
+    , enNegatorForm := "non" } ]
+
+/-- Every Italian EN environment uses the standard negator: the EN
+    negator form coincides with the `non` marker entry. -/
+theorem en_negator_is_standard :
+    enTriggerNegators.all (·.enNegatorForm == non.form) = true := by decide
 
 /-- Italian negation profile (WALS Ch 112-115 + Greco/JinKoenig fields). -/
 def negationProfile : Typology.Negation.NegationProfile :=

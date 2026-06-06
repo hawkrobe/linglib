@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Core.Valence
+import Linglib.Features.Complementation
 import Linglib.Syntax.Agreement.Controller
 import Linglib.Morphology.Word
 
@@ -309,11 +309,12 @@ structure MorphRule (σ : Type) where
   formRule : String → String
   /-- How morphosyntactic features change -/
   featureRule : UD.MorphFeatures → UD.MorphFeatures
-  /-- How lexical valence changes — `id` except for valence-changing morphology
-      (reciprocal, passive, causative affixes), where subcategorization change is the
-      rule's whole point. Valence is lexical, not UD morphology, so it is its own
-      effect channel rather than a `featureRule` component. -/
-  valenceRule : Option Valence → Option Valence := fun v => v
+  /-- How the lexical frame changes — `id` except for valency-changing
+      morphology (reciprocal, passive, causative affixes; [dixon-aikhenvald-2000]),
+      where the frame change is the rule's whole point. The frame is lexical,
+      not UD morphology, so it is its own effect channel rather than a
+      `featureRule` component. -/
+  valenceRule : Option ComplementType → Option ComplementType := fun v => v
   /-- Semantic effect (`id` when meaning is delegated to a higher layer) -/
   semEffect : σ → σ
   /-- Is the word-level semantic contribution delegated to a higher
@@ -331,15 +332,15 @@ structure Stem (σ : Type) where
   cat : UD.UPOS
   /-- Base morphosyntactic features -/
   baseFeatures : UD.MorphFeatures := {}
-  /-- Base lexical valence (subcategorization) — lexical, beside the morphology. -/
-  baseValence : Option Valence := none
+  /-- Base lexical frame (complement selection) — lexical, beside the morphology. -/
+  baseFrame : Option ComplementType := none
   /-- Available inflectional rules -/
   paradigm : List (MorphRule σ)
 
 variable {σ : Type}
 
 /-- Apply a morphological rule to generate an inflected form + meaning. Threads
-    morphology only; a rule's `valenceRule` acts on `Stem.baseValence` at the consumer
+    morphology only; a rule's `valenceRule` acts on `Stem.baseFrame` at the consumer
     that builds `Word`s. -/
 def Stem.inflect (s : Stem σ) (rule : MorphRule σ) (baseMeaning : σ) :
     String × UD.MorphFeatures × σ :=

@@ -1,7 +1,6 @@
 import Linglib.Pragmatics.Bias
 import Linglib.Studies.Rett2026
 import Linglib.Studies.Tsiakmakis2025
-import Linglib.Fragments.Italian.ExpletiveNegation
 import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Semantics.Mood.Basic
 
