@@ -75,7 +75,7 @@ def believesR : AttWorld → AttWorld → Prop
   | _, .actual => False
 
 /-- Bool-valued mirror of `believesR` for downstream code that needs
-    decidable accessibility (e.g., `MaybeMonad.believe`). -/
+    decidable accessibility (e.g., `Grove2022.believe`). -/
 def believesRBool : AttWorld → AttWorld → Bool
   | _, .believed => true
   | _, .actual => false
