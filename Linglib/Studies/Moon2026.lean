@@ -1,8 +1,8 @@
-import Linglib.Core.Mereotopology
 import Linglib.Core.Order.Mereology
 import Linglib.Studies.Borer2005
 import Linglib.Semantics.Aspect.Incremental
 import Linglib.Studies.Filip2012
+import Mathlib.Topology.Connected.Basic
 import Mathlib.Algebra.Order.Ring.Unbundled.Rat
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
@@ -10,7 +10,7 @@ import Mathlib.Tactic.FinCases
 
 /-!
 # Moon 2026: Countability and Measured Parts in Mixed Drink Nouns
-[moon-2026] [filip-2012]
+[moon-2026] [filip-2012] [casati-varzi-1999] [krifka-2021]
 
 Mixed drink nouns (*martini*, *cappuccino*) are count despite denoting
 liquids. Moon proposes that their countability derives from a MEASURED
@@ -53,8 +53,8 @@ This is built from:
 | ⊕ (sum) | `⊔` (`SemilatticeSup`) |
 | O (overlap) | `Mereology.Overlap` |
 | μ (measure) | `ExtMeasure.μ` |
-| SC (self-connection) | `Mereotopology.SelfConnected` = `IsConnected (Set.Iic x)` |
-| CONNECTED LIQUID | `Mereotopology.ConnectedLiquid` |
+| SC (self-connection) | `SelfConnected` (§ 0) = `IsConnected (Set.Iic x)` |
+| CONNECTED LIQUID | `ConnectedLiquid` (§ 0) |
 | QUA/CUM | `Mereology.QUA` / `Mereology.CUM` |
 
 ## Key Empirical Claims
@@ -71,7 +71,87 @@ This is built from:
 
 namespace Moon2026
 
-open Mereology Mereotopology
+open Mereology
+
+-- ════════════════════════════════════════════════════
+-- § 0. Mereotopological Substrate
+-- ════════════════════════════════════════════════════
+
+/-! ### Mereotopological substrate
+
+[casati-varzi-1999] take connection as a mereotopological *primitive*.
+Here spatial structure is instead a `TopologicalSpace` *independent* of
+the parthood order (contra `OrderTopology`), respecting their position
+that spatial arrangement is irreducible to parthood: entities may share
+parts without being adjacent, and may touch without sharing parts.
+Self-connection is `IsConnected` of the principal downset `Set.Iic x` —
+the parts of x, viewed as the region x occupies.
+
+The payoff is a category invisible to pure mereology. In a bare
+`SemilatticeSup`, ¬CUM for non-singleton predicates comes from QUA
+(`qua_cum_incompatible`). With independent topology the two decouple:
+join can disconnect two connected entities placed apart
+(`connectivity_breaks_cum`), while proper parts can stay connected, so
+**¬CUM ∧ ¬QUA** predicates exist (`connectivity_middle_ground`). Mixed
+drink nouns live in exactly this gap: disconnected margaritas are not a
+margarita (¬CUM), but half a margarita with preserved ratios still is
+one (¬QUA).
+-/
+
+/-- Self-connected ([casati-varzi-1999] def 20b): the parts of `x` — the
+    principal downset `Set.Iic x` — form a topologically connected set.
+    An atom is trivially self-connected; a scattered aggregate (separate
+    shots of tequila and lime juice at a bar) is not. -/
+def SelfConnected {α : Type*} [Preorder α] [TopologicalSpace α] (x : α) : Prop :=
+  IsConnected (Set.Iic x)
+
+/-- Phase of matter, [krifka-2021]'s trichotomy: solids retain shape,
+    granulars are aggregates of discrete solid pieces (rice, sand),
+    liquids have parts in constant internal motion. The distinction
+    drives count/mass behavior of substance nouns: solids and granulars
+    individuate by shape or grain boundaries; liquids lack internal
+    boundaries except via ingredient structure (mixed drinks). -/
+inductive Phase where
+  | solid
+  | granular
+  | liquid
+  deriving DecidableEq, Repr, BEq
+
+/-- Connected liquid (Moon's def 23, following [krifka-2021]):
+    self-connected with every part in liquid phase. The temporal
+    parameter of the paper's definition is omitted (static
+    mereotopology). -/
+def ConnectedLiquid {α : Type*} [PartialOrder α] [TopologicalSpace α]
+    (phase : α → Phase) (x : α) : Prop :=
+  SelfConnected x ∧ ∀ y ≤ x, phase y = .liquid
+
+theorem ConnectedLiquid.selfConnected {α : Type*} [PartialOrder α]
+    [TopologicalSpace α] {phase : α → Phase} {x : α}
+    (h : ConnectedLiquid phase x) : SelfConnected x :=
+  h.1
+
+/-- Any predicate entailing self-connectivity fails CUM when two
+    instances have a disconnected join — the *topological* source of
+    non-cumulativity, orthogonal to the algebraic one (QUA,
+    `qua_cum_incompatible`). -/
+theorem connectivity_breaks_cum {α : Type*} [SemilatticeSup α]
+    [TopologicalSpace α] {P : α → Prop}
+    (hConn : ∀ x, P x → SelfConnected x)
+    {x y : α} (hx : P x) (hy : P y)
+    (hDisc : ¬ SelfConnected (x ⊔ y)) :
+    ¬ CUM P :=
+  fun hCum => hDisc (hConn _ (hCum x y hx hy))
+
+/-- ¬CUM ∧ ¬QUA from connectivity: the middle ground between mass and
+    standard count that pure mereology cannot express. -/
+theorem connectivity_middle_ground {α : Type*} [SemilatticeSup α]
+    [TopologicalSpace α] {P : α → Prop}
+    (hConn : ∀ x, P x → SelfConnected x)
+    {a b : α} (ha : P a) (hb : P b)
+    (hDisc : ¬ SelfConnected (a ⊔ b))
+    {x y : α} (hx : P x) (hy : P y) (hlt : y < x) :
+    ¬ CUM P ∧ ¬ QUA P :=
+  ⟨connectivity_breaks_cum hConn ha hb hDisc, fun hQ => hQ x y hx hlt hy⟩
 
 -- ════════════════════════════════════════════════════
 -- § 1. Mixed Drink Recipe
@@ -565,7 +645,7 @@ theorem mixedDrink_not_qua {n : ℕ}
 
 /-! ### Mixed drinks as an instance of topological non-cumulativity
 
-The general principle (`Mereotopology.connectivity_middle_ground`)
+The general principle (`connectivity_middle_ground`, § 0)
 states that ANY predicate entailing self-connectivity occupies the
 ¬CUM ∧ ¬QUA middle ground given appropriate witnesses. Mixed drink
 denotations are an instance: `ConnectedLiquid` entails `SelfConnected`,
