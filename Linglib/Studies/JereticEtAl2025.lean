@@ -1,6 +1,5 @@
-import Linglib.Core.CoreConcept
 import Linglib.Features.Number.Decomposition
-import Linglib.Core.Tree
+import Linglib.Syntax.Tree.Cat
 import Linglib.Semantics.Quantification.Lexicon
 import Linglib.Semantics.Alternatives.Source
 import Linglib.Semantics.Alternatives.Indirect
@@ -82,7 +81,50 @@ set_option autoImplicit false
 
 namespace JereticEtAl2025
 
-open Core.CoreConcept
+/-! ### Core-concept registry
+
+A *core concept* is a conceptual primitive universally available to every
+language's grammar, regardless of whether any lexical item realizes it.
+From [chemla-2007] (anti-duality of French *tous* despite French lacking a
+lexical *both*), generalized to "conceptual alternatives" by
+[buccola-kriz-chemla-2018]; this paper refines it: core concepts feed
+competition only when an *indirect* alternative — a pronounceable expression
+equivalent to the unpronounceable core-concept structure — is available
+(`Semantics/Alternatives/Indirect.lean`). Denotations live where their
+semantic content does (e.g. `dualPredOnLattice` in `Features/Number.lean`
+for `dual`). -/
+
+namespace CoreConcept
+
+/-- The registered core concepts: conceptual primitives independently
+motivated in the literature, with denotations defined elsewhere in linglib. -/
+inductive Id where
+  /-- Number-feature dual: predicate-modifier "and has exactly 2
+  atomic parts"; denotation in `Number.dualPredOnLattice`. -/
+  | dual
+  /-- Number-feature trial. Mentioned in [harbour-2014] as
+  morphologically stable but rare. Denotation TBD. -/
+  | trial
+  /-- Universal quantifier core concept. Lexicalized as `all`/`tous`
+  cross-linguistically. -/
+  | universal
+  /-- Existential quantifier core concept. Lexicalized as `some`/
+  `quelques`. -/
+  | existential
+  deriving DecidableEq, Repr
+
+/-- A lexicon (any list of lexical tokens of type `Tok`) lexicalizes a
+core concept iff some entry realizes it. The realization relation
+`realizes` is supplied by the caller — typically a per-language
+predicate that inspects the lexical entry's denotation: English
+`realizes both Id.dual = True`, French `realizes _ Id.dual = False`. -/
+def Lexicalizes {Tok : Type} (lex : List Tok)
+    (realizes : Tok → Id → Prop) (c : Id) : Prop :=
+  ∃ tok ∈ lex, realizes tok c
+
+end CoreConcept
+
+open CoreConcept
 open Semantics.Quantification.Lexicon (QuantifierEntry)
 
 -- ============================================================================
@@ -471,7 +513,7 @@ with the silent witness *tous_DUAL V*.
 
 section WorkedExample
 
-open Core.Tree
+open Syntax
 open Alternatives Alternatives.Structural
 
 /-- Two domains: a 2-cup world (`w2`) and a 3-cup world (`w3`).

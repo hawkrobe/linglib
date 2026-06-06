@@ -1,4 +1,4 @@
-import Linglib.Core.CylindricAlgebra
+import Linglib.Core.Logic.CylindricAlgebra
 import Linglib.Semantics.Dynamic.DPL.Basic
 import Linglib.Semantics.Dynamic.CDRT.Basic
 
@@ -50,8 +50,12 @@ and cylindric set algebra ([groenendijk-stokhof-1991]). -/
 theorem dpl_closure_exists_eq_cylindrify {E : Type*} (x : Nat) (φ : DPLRel E) :
     closure (toDRS (DPLRel.exists_ x φ)) =
     cylindrify x (closure (toDRS φ)) := by
+  have hup : ∀ (g : Assignment E) (d : E),
+      (fun n => if n = x then d else g n) = Function.update g x d := fun g d => by
+    funext n; simp [Function.update_apply]
   ext g; simp only [closure, toDRS, DPLRel.exists_, cylindrify]
-  exact ⟨fun ⟨h, d, hφ⟩ => ⟨d, h, hφ⟩, fun ⟨d, h, hφ⟩ => ⟨h, d, hφ⟩⟩
+  exact ⟨fun ⟨h, d, hφ⟩ => ⟨d, h, hup g d ▸ hφ⟩,
+         fun ⟨d, h, hφ⟩ => ⟨h, d, (hup g d).symm ▸ hφ⟩⟩
 
 /-- **DPL identity test = diagonal element.**
 
@@ -97,9 +101,9 @@ theorem cdrt_new_seq_eq_cylindrify {E : Type*} (n : Nat) (φ : DProp E) :
   ext g; simp only [closure, toDRS, DProp.seq, DProp.new, cylindrify]
   constructor
   · rintro ⟨o, k, ⟨e, rfl⟩, hφ⟩
-    exact ⟨e, o, by convert hφ using 2⟩
+    exact ⟨e, o, by convert hφ using 2; simp [Function.update_apply]⟩
   · rintro ⟨e, o, hφ⟩
-    exact ⟨o, _, ⟨e, rfl⟩, by convert hφ using 2⟩
+    exact ⟨o, _, ⟨e, rfl⟩, by convert hφ using 2; simp [Function.update_apply]⟩
 
 /-- CDRT equality condition on drefs = diagonal element. -/
 theorem cdrt_eq_dref_eq_diagonal {E : Type*} (i j : Nat) :

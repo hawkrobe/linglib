@@ -1,4 +1,7 @@
-import Linglib.Semantics.Composition.QuantifierComposition
+import Linglib.Syntax.Tree.Cat
+import Linglib.Semantics.Composition.Tree
+import Linglib.Semantics.Composition.ToyDomain
+import Linglib.Semantics.Quantification.Quantifier
 
 /-!
 # Katzir 2007: Structurally-Defined Alternatives (End-to-End)
@@ -32,9 +35,8 @@ from being generated, licensing the scalar implicature.
 
 namespace Katzir2007
 
-open Core.Tree
+open Syntax
 open Semantics.Composition.Tree
-open Semantics.Composition.QuantifierComposition
 open Semantics.Montague (toyModel ToyEntity)
 open Semantics.Montague.ToyLexicon (sleeps_sem)
 open Semantics.Quantification.Quantifier (some_sem every_sem student_sem)

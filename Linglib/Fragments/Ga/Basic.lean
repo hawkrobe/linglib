@@ -1,5 +1,5 @@
 import Linglib.Features.Number.Basic
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Features.Person.Decomposition
 
 /-!

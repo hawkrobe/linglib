@@ -43,11 +43,11 @@ open Features.Register (Level)
 
 /-- *io* — 1sg. -/
 def io : PersonalPronoun :=
-  { form := "io", person := some .first, number := some .Sing }
+  { form := "io", person := some .first, number := some .singular }
 
 /-- *tu* — 2sg familiar (T form). -/
 def tu : PersonalPronoun :=
-  { form := "tu", person := some .second, number := some .Sing, register := .informal }
+  { form := "tu", person := some .second, number := some .singular, register := .informal }
 
 /-- *Lei* — polite 2sg (V form). Formally 3rd person: triggers 3sg verbal
     agreement, patterns with 3sg.f clitics, binds 3rd person reflexive *si*.
@@ -55,32 +55,32 @@ def tu : PersonalPronoun :=
     2PL resolved agreement in coordination.
     [adamson-zompi-2025] -/
 def lei_formal : PersonalPronoun :=
-  { form := "Lei", person := some .third, number := some .Sing, register := .formal,
+  { form := "Lei", person := some .third, number := some .singular, register := .formal,
     referentialPerson := some .second }
 
 /-- *lui* — 3sg masculine. -/
 def lui : PersonalPronoun :=
-  { form := "lui", person := some .third, number := some .Sing }
+  { form := "lui", person := some .third, number := some .singular }
 
 /-- *lei* — 3sg feminine. -/
 def lei : PersonalPronoun :=
-  { form := "lei", person := some .third, number := some .Sing }
+  { form := "lei", person := some .third, number := some .singular }
 
 /-- *noi* — 1pl. -/
 def noi : PersonalPronoun :=
-  { form := "noi", person := some .first, number := some .Plur }
+  { form := "noi", person := some .first, number := some .plural }
 
 /-- *voi* — 2pl (familiar; also used as general 2pl in modern Italian). -/
 def voi : PersonalPronoun :=
-  { form := "voi", person := some .second, number := some .Plur, register := .informal }
+  { form := "voi", person := some .second, number := some .plural, register := .informal }
 
 /-- *Loro* — 2pl formal (archaic, largely replaced by *voi*). -/
 def loro_formal : PersonalPronoun :=
-  { form := "Loro", person := some .second, number := some .Plur, register := .formal }
+  { form := "Loro", person := some .second, number := some .plural, register := .formal }
 
 /-- *loro* — 3pl. -/
 def loro : PersonalPronoun :=
-  { form := "loro", person := some .third, number := some .Plur }
+  { form := "loro", person := some .third, number := some .plural }
 
 def secondPersonPronouns : List PersonalPronoun := [tu, lei_formal]
 
@@ -252,8 +252,8 @@ theorem has_all_persons :
 
 /-- Both singular and plural are attested. -/
 theorem has_both_numbers :
-    allPronouns.any (·.number == some .Sing) = true ∧
-    allPronouns.any (·.number == some .Plur) = true := ⟨rfl, rfl⟩
+    allPronouns.any (·.number == some .singular) = true ∧
+    allPronouns.any (·.number == some .plural) = true := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 5: Cardinaletti–Starke deficiency classes

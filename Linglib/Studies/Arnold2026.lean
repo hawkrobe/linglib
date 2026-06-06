@@ -1,4 +1,4 @@
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Interp
 import Linglib.Discourse.CommonGround
 import Linglib.Features.Accessibility
 import Linglib.Fragments.English.Pronouns
@@ -41,7 +41,7 @@ We model the distinction using three components:
 - `DiscourseElaboration`: how developed the referent's discourse
   representation is (underspecified vs. elaborated)
 - `PronounSet`: what personal pronouns the referent uses (if known)
-- `Features.GenderInfo`: what gender information is available in the discourse
+- `GenderInfo`: what gender information is available in the discourse
 
 The licensing conditions are predicates over these types, and the central
 claim — that the two kinds of singular *they* are licensed by inversely
@@ -61,7 +61,6 @@ set_option autoImplicit false
 
 namespace Arnold2026
 
-open Features (GenderInfo SurfaceGender)
 open Features (DiscourseElaboration AccessibilityLevel)
 
 -- ============================================================================

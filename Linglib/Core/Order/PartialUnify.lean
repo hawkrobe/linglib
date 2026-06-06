@@ -205,3 +205,56 @@ instance : PartialUnify ((t : F) → S t) where
 end Pi
 
 end PartialUnify
+
+/-! ### Compatibility
+
+The consistency relation of unification: two elements are compatible when
+they have a common upper bound — equivalently (`compat_iff_isSome_unify`),
+when they unify. On feature carriers this is the agreement relation
+([carpenter-1992]; [shieber-1986]'s "compatible"). -/
+
+section Compat
+
+variable {α β : Type*}
+
+/-- Two elements are compatible: bounded above — the consistency relation
+    of unification. An `abbrev` so the `BddAbove` API applies directly. -/
+abbrev Compat [Preorder α] (a b : α) : Prop :=
+  BddAbove ({a, b} : Set α)
+
+/-- A common upper bound witnesses compatibility. -/
+theorem Compat.of_le [Preorder α] {a b u : α} (ha : a ≤ u) (hb : b ≤ u) :
+    Compat a b :=
+  ⟨u, PartialUnify.mem_upperBounds_pair.mpr ⟨ha, hb⟩⟩
+
+theorem Compat.symm [Preorder α] {a b : α} (h : Compat a b) : Compat b a := by
+  obtain ⟨u, hu⟩ := h
+  obtain ⟨ha, hb⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+  exact Compat.of_le hb ha
+
+theorem compat_self [Preorder α] (a : α) : Compat a a :=
+  Compat.of_le le_rfl le_rfl
+
+/-- `⊥` is a wildcard: compatible with everything. -/
+theorem bot_compat [Preorder α] [OrderBot α] (a : α) : Compat (⊥ : α) a :=
+  Compat.of_le bot_le le_rfl
+
+theorem compat_bot [Preorder α] [OrderBot α] (a : α) : Compat a (⊥ : α) :=
+  Compat.of_le le_rfl bot_le
+
+/-- Monotone maps preserve compatibility. -/
+theorem Monotone.compat [Preorder α] [Preorder β] {f : α → β}
+    (hf : Monotone f) {a b : α} (h : Compat a b) : Compat (f a) (f b) := by
+  obtain ⟨u, hu⟩ := h
+  obtain ⟨ha, hb⟩ := PartialUnify.mem_upperBounds_pair.mp hu
+  exact Compat.of_le (hf ha) (hf hb)
+
+/-- Compatibility is decided by unification. -/
+theorem compat_iff_isSome_unify [PartialOrder α] [PartialUnify α] {a b : α} :
+    Compat a b ↔ (PartialUnify.unify a b).isSome :=
+  PartialUnify.isSome_unify_iff_bddAbove.symm
+
+instance [PartialOrder α] [PartialUnify α] (a b : α) : Decidable (Compat a b) :=
+  decidable_of_iff _ PartialUnify.isSome_unify_iff_bddAbove
+
+end Compat

@@ -18,28 +18,26 @@ phenomena, grounded in the English Fragment lexicon.
 ## Three-Way Connection
 
 ```
-Fragments/English/Predicates/Verbal (complementType → valence)
+Fragments/English/Predicates/Verbal (complementType → ArgStr frame)
     ↓ ↑
 DG ArgStr / LexRule / checkVerbSubcat ↔ Phenomena/ArgumentStructure data
 ```
 
-Verb valence is DERIVED from each Fragment entry's `complementType` field
-via `complementToValence`, not stipulated independently. The DG analysis
-then verifies that trees built with these Fragment-derived words satisfy
-the corresponding valency frames.
+Each verb's DG frame is DERIVED from its Fragment entry's `complementType`
+field via `complementToArgStr`, not stipulated independently. The DG
+analysis then verifies that trees built with these Fragment-derived words
+satisfy the corresponding valency frames.
 
 ## Derivation Chain
 
 ```
 Fragment VerbEntry.complementType ← lexical data (sleep=.none, kick=.np, give=.np_np)
-    ↓ complementToValence
-Verb.valence (Fragment complementType) → DepTree.frames premises
+    ↓ complementToArgStr
+ArgStr frames (argStr_V0/VN/VNN) → DepTree.frames premises
     ↓
 DepTree instances ← concrete parse trees
     ↓
-satisfiesArgStr (ArgStr frames) ← frame satisfaction
-    ↓
-checkVerbSubcat ← subcategorization verification
+satisfiesArgStr / checkVerbSubcat ← frame satisfaction + subcat verification
     ↓
 passiveRule (LexRule) ← valency change derivation
     ↓
@@ -56,7 +54,7 @@ open DepGrammar WordGrammar Catena
 
 -- ============================================================================
 -- §1: Words from the Fragment Lexicon
--- Valence is DERIVED from each VerbEntry's complementType, not stipulated.
+-- Each frame is DERIVED from a VerbEntry's complementType, not stipulated.
 -- ============================================================================
 
 -- Nouns (from Fragments/English/Nouns.lean)
@@ -92,29 +90,29 @@ private def lex_kicked : LexEntry :=
 
 -- ============================================================================
 -- §2: Fragment Grounding Theorems
--- The Fragment's complementType determines the DG valence.
+-- The Fragment's complementType determines the DG frame.
 -- ============================================================================
 
-/-- sleep.complementType =.none → intransitive. -/
-theorem sleep_valence_from_fragment :
-    English.Predicates.Verbal.sleep.valence = .intransitive := rfl
+/-- sleep.complementType =.none → intransitive frame (V0). -/
+theorem sleep_frame_from_fragment :
+    complementToArgStr English.Predicates.Verbal.sleep.complementType = some argStr_V0 := rfl
 
-/-- devour.complementType =.np → transitive. -/
-theorem devour_valence_from_fragment :
-    English.Predicates.Verbal.devour.valence = .transitive := rfl
+/-- devour.complementType =.np → transitive frame (VN). -/
+theorem devour_frame_from_fragment :
+    complementToArgStr English.Predicates.Verbal.devour.complementType = some argStr_VN := rfl
 
-/-- give.complementType =.np_np → ditransitive. -/
-theorem give_valence_from_fragment :
-    English.Predicates.Verbal.give.valence = .ditransitive := rfl
+/-- give.complementType =.np_np → ditransitive frame (VNN). -/
+theorem give_frame_from_fragment :
+    complementToArgStr English.Predicates.Verbal.give.complementType = some argStr_VNN := rfl
 
-/-- kick.complementType =.np → transitive (active). -/
-theorem kick_valence_from_fragment :
-    English.Predicates.Verbal.kick.valence = .transitive := rfl
+/-- kick.complementType =.np → transitive frame (VN, active). -/
+theorem kick_frame_from_fragment :
+    complementToArgStr English.Predicates.Verbal.kick.complementType = some argStr_VN := rfl
 
-/-- The passive frame (intransitive, as carried on `passiveTree.frames`) is consistent
-    with the passive rule: the rule removes the obj slot from kick's transitive frame. -/
+/-- The passive frame carried on `passiveTree.frames` is consistent with the
+    passive rule: the rule removes the obj slot from kick's transitive frame. -/
 theorem passive_valence_consistent :
-    English.Predicates.Verbal.kick.valence = .transitive ∧
+    complementToArgStr English.Predicates.Verbal.kick.complementType = some argStr_VN ∧
     passiveRule.applies lex_kicked = true ∧
     (passiveRule.transform lex_kicked).argStr.slots.any (·.depType == .obj) = false :=
   ⟨rfl, rfl, rfl⟩
@@ -125,31 +123,36 @@ theorem passive_valence_consistent :
 
 /-- "John sleeps" — intransitive, no object.
     Matches `Subcategorization.data` pair 1. -/
-def intransTree := mkSVTree john sleeps (some English.Predicates.Verbal.sleep.valence)
+def intransTree :=
+  mkSVTree john sleeps (complementToArgStr English.Predicates.Verbal.sleep.complementType)
 
 /-- "John devours pizza" — transitive with object.
     Matches `Subcategorization.data` pair 3. -/
-def transTree := mkSVOTree john devours pizza (some English.Predicates.Verbal.devour.valence)
+def transTree :=
+  mkSVOTree john devours pizza (complementToArgStr English.Predicates.Verbal.devour.complementType)
 
 /-- "John gives Mary book" — ditransitive with two objects.
     Matches `Subcategorization.data` pair 5. -/
 def ditransTree :=
-  mkDitransTree john gives mary book (some English.Predicates.Verbal.give.valence)
+  mkDitransTree john gives mary book
+    (complementToArgStr English.Predicates.Verbal.give.complementType)
 
 /-- "John kicked the ball" — active transitive (for passive derivation). -/
 def activeTree : DepTree :=
   { words := [john, kicked, the_, ball]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 3, .obj⟩, ⟨3, 2, .det⟩]
     rootIdx := 1
-    frames := [none, some English.Predicates.Verbal.kick.valence, none, none] }
+    frames := [none, complementToArgStr English.Predicates.Verbal.kick.complementType,
+               none, none] }
 
-/-- "The ball was kicked" — short passive; the passive analysis detransitivizes
-    kick's frame. Matches `Passive.data` pair 1. -/
+/-- "The ball was kicked" — short passive; the passive analysis derives
+    `argStr_VPassive` from kick's transitive frame (`passive_frame_matches`).
+    Matches `Passive.data` pair 1. -/
 def passiveTree : DepTree :=
   { words := [the_, ball, was_, kicked_pass]
     deps := [⟨1, 0, .det⟩, ⟨3, 1, .nsubj⟩, ⟨3, 2, .auxPass⟩]
     rootIdx := 3
-    frames := [none, none, none, some .intransitive] }
+    frames := [none, none, none, some argStr_VPassive] }
 
 /-- "The ball was kicked by John" — long passive with agent by-phrase. -/
 def longPassiveTree : DepTree :=
@@ -157,7 +160,7 @@ def longPassiveTree : DepTree :=
     deps := [⟨1, 0, .det⟩, ⟨3, 1, .nsubj⟩, ⟨3, 2, .auxPass⟩,
              ⟨3, 5, .obl⟩, ⟨5, 4, .case_⟩]
     rootIdx := 3
-    frames := [none, none, none, some .intransitive, none, none] }
+    frames := [none, none, none, some argStr_VPassive, none, none] }
 
 -- ============================================================================
 -- §4: Ungrammatical Trees
@@ -169,11 +172,13 @@ def intrans_with_obj : DepTree :=
   { words := [john, sleeps, book]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .obj⟩]
     rootIdx := 1
-    frames := [none, some English.Predicates.Verbal.sleep.valence, none] }
+    frames := [none, complementToArgStr English.Predicates.Verbal.sleep.complementType,
+               none] }
 
 /-- "*John devours" — transitive missing required object.
     Matches `Subcategorization.data` pair 3. -/
-def trans_no_obj := mkSVTree john devours (some English.Predicates.Verbal.devour.valence)
+def trans_no_obj :=
+  mkSVTree john devours (complementToArgStr English.Predicates.Verbal.devour.complementType)
 
 /-- "*John gives Mary" — ditransitive missing direct object.
     Matches `Subcategorization.data` pair 5. -/
@@ -181,7 +186,8 @@ def ditrans_no_obj : DepTree :=
   { words := [john, gives, mary]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .iobj⟩]
     rootIdx := 1
-    frames := [none, some English.Predicates.Verbal.give.valence, none] }
+    frames := [none, complementToArgStr English.Predicates.Verbal.give.complementType,
+               none] }
 
 /-- "*The ball was kicked the ball" — passive with spurious object.
     Matches `Passive.data` pair 1. -/
@@ -190,7 +196,7 @@ def passive_with_obj : DepTree :=
     deps := [⟨1, 0, .det⟩, ⟨3, 1, .nsubj⟩, ⟨3, 2, .auxPass⟩,
              ⟨3, 5, .obj⟩, ⟨5, 4, .det⟩]
     rootIdx := 3
-    frames := [none, none, none, some .intransitive, none, none] }
+    frames := [none, none, none, some argStr_VPassive, none, none] }
 
 -- ============================================================================
 -- LEVEL 1: Valency Frame Satisfaction
@@ -221,7 +227,7 @@ theorem trans_noobj_not_VN :
 
 -- ============================================================================
 -- LEVEL 2: Subcategorization Verification
--- checkVerbSubcat validates each verb against its Fragment-derived valence
+-- checkVerbSubcat validates each verb against its Fragment-derived frame
 -- ============================================================================
 
 -- Grammatical trees pass
@@ -302,7 +308,7 @@ theorem ditrans_verb_obj_catena_not_constituent :
 /-- **Full valency derivation chain**: from Fragment lexicon through DG
     theory to grammaticality predictions.
 
-    1. Fragment kick.complementType =.np → valence = transitive
+    1. Fragment kick.complementType =.np → transitive frame (argStr_VN)
     2. Active tree satisfies transitive frame (argStr_VN) ✓
     3. checkVerbSubcat validates the active tree ✓
     4. Passive rule applies and removes obj slot ✓
@@ -311,7 +317,7 @@ theorem ditrans_verb_obj_catena_not_constituent :
     7. Passive + spurious obj correctly rejected ✗ -/
 theorem valency_derivation_chain :
     -- Fragment grounding
-    English.Predicates.Verbal.kick.valence = .transitive ∧
+    complementToArgStr English.Predicates.Verbal.kick.complementType = some argStr_VN ∧
     -- Active: frame ✓, subcat ✓
     satisfiesArgStr activeTree 1 argStr_VN = true ∧
     checkVerbSubcat activeTree = true ∧
@@ -332,11 +338,11 @@ theorem valency_derivation_chain :
 /-- DG subcategorization predictions match all data pairs in
     `Phenomena.ArgumentStructure.Subcategorization.data`:
 
-    | Data pair | Grammatical          | Ungrammatical         | Valence      |
-    |-----------|---------------------|-----------------------|--------------|
-    | 1         | "John sleeps"       | "*John sleeps book"   | intransitive |
-    | 3         | "John devours pizza"| "*John devours"       | transitive   |
-    | 5         | "John gives Mary …" | "*John gives Mary"    | ditransitive | -/
+    | Data pair | Grammatical          | Ungrammatical         | Frame      |
+    |-----------|---------------------|-----------------------|------------|
+    | 1         | "John sleeps"       | "*John sleeps book"   | argStr_V0  |
+    | 3         | "John devours pizza"| "*John devours"       | argStr_VN  |
+    | 5         | "John gives Mary …" | "*John gives Mary"    | argStr_VNN | -/
 theorem subcategorization_data_match :
     checkVerbSubcat intransTree = true ∧
     checkVerbSubcat intrans_with_obj = false ∧
@@ -361,18 +367,16 @@ theorem passive_data_match :
 
 ```
 Fragments/English/Predicates/Verbal
-    sleep.complementType =.none → valence =.intransitive
-    devour.complementType =.np → valence =.transitive
-    kick.complementType =.np → valence =.transitive
-    give.complementType =.np_np → valence =.ditransitive
-        ↓ VerbEntry.toWord3sg / complementToValence
-DepTree instances (words carry Fragment-derived valence)
-        ↓ satisfiesArgStr
-argStr_V0 / argStr_VN / argStr_VNN / argStr_VPassive
-        ↓ checkVerbSubcat
+    sleep.complementType =.none → argStr_V0
+    devour.complementType =.np → argStr_VN
+    kick.complementType =.np → argStr_VN
+    give.complementType =.np_np → argStr_VNN
+        ↓ VerbEntry.toWord3sg / complementToArgStr
+DepTree instances (trees carry Fragment-derived frames)
+        ↓ satisfiesArgStr / checkVerbSubcat
 grammatical ✓ / ungrammatical ✗
         ↓ passiveRule.transform
-obj removed → intransitive surface valence
+obj removed → argStr_VPassive surface frame
         ↓ matches
 Phenomena.ArgumentStructure.Subcategorization.data
 Phenomena.ArgumentStructure.Passive.data
@@ -380,7 +384,7 @@ Phenomena.ArgumentStructure.Passive.data
 
 Each level is independently verifiable by `rfl` or `native_decide`.
 The chain is cumulative: changing a Fragment verb's `complementType`
-propagates through valence, trees, verification, and breaks exactly
+propagates through frames, trees, verification, and breaks exactly
 the affected theorems.
 -/
 

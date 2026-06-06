@@ -1,7 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Channel
-import Linglib.Core.Prototype
 import Linglib.Studies.DaleReiter1995
 
 /-!
@@ -138,6 +137,24 @@ def typicalityφ (bareTarget : ℚ) : Utterance → World → ℚ
 -- §3. Stored Knowledge: Prototype and bareEffectiveness
 -- ============================================================================
 
+/-- A prototype: a category with graded typicality (`ℚ`) over instances;
+higher values = more prototypical. Encodes the paper's "stored object
+knowledge" (color typicality). -/
+structure Prototype (α : Type) where
+  category : α
+  typicality : α → ℚ
+
+namespace Prototype
+
+/-- `a` is strictly more typical than `b` in `proto`. -/
+def MoreTypical {α : Type} (proto : Prototype α) (a b : α) : Prop :=
+  proto.typicality b < proto.typicality a
+
+instance {α : Type} (proto : Prototype α) : DecidableRel proto.MoreTypical :=
+  fun _ _ => inferInstanceAs (Decidable (_ < _))
+
+end Prototype
+
 /-- Colors of the target banana. -/
 inductive BananaColor where
   | yellow  -- typical
@@ -147,7 +164,7 @@ inductive BananaColor where
 /-- Stored knowledge: yellow is the prototypical banana color.
     These values encode the contrast that drives color mention —
     a blue banana violates stored expectations. -/
-def bananaPrototype : Core.Prototype BananaColor where
+def bananaPrototype : Prototype BananaColor where
   category := .yellow
   typicality
     | .yellow => 9/10

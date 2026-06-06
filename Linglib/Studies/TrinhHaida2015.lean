@@ -54,8 +54,8 @@ licenses.
 
 namespace TrinhHaida2015
 
-open Core.Tree (Tree Cat)
-open Core.Tree.Cat
+open Syntax (Tree Cat)
+open Syntax.Cat
 open Alternatives.Symmetric (isSymmetric)
 open Exhaustification (innocent predToFinset altsFromPreds)
 

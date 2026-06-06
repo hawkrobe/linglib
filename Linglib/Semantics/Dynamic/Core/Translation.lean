@@ -19,7 +19,7 @@ Core uses:
 -/
 
 import Linglib.Semantics.Dynamic.Core.Update
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 
 namespace Semantics.Dynamic.Core
 

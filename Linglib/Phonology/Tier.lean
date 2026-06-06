@@ -1,4 +1,4 @@
-import Linglib.Core.StringHom
+import Linglib.Core.Computability.StringHom
 import Linglib.Phonology.Autosegmental.GrammaticalTone
 
 /-!
@@ -8,7 +8,7 @@ import Linglib.Phonology.Autosegmental.GrammaticalTone
 
 Phonology-specific tier constructors built on `Core.Tier`. The generic
 operations (`apply`, `id`, `byClass`, `total`, monoid-hom laws) live in
-`Core/StringHom.lean`; this module only adds the canonical phonological
+`Core/Computability/StringHom.lean`; this module only adds the canonical phonological
 projections that downstream phonology files need.
 -/
 

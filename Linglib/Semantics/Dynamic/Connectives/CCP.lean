@@ -31,7 +31,7 @@ input state rather than filtering per-element.
 -/
 
 import Linglib.Semantics.Dynamic.Connectives.Defs
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 import Mathlib.Data.Set.Basic
 import Mathlib.Algebra.Group.Defs
 
@@ -414,13 +414,9 @@ theorem updateFromSat_monotone {P φ : Type*} (sat : P → φ → Prop) (ψ : φ
 
 -- ═══ Assignment & State Infrastructure ═══
 
--- Re-export Assignment type and its namespace members so downstream code
--- can write `Assignment E`, `Assignment.update`, `g.update n e`, etc.
+-- Re-export the Assignment type so downstream code can write `Assignment E`
+-- (updates are mathlib's `Function.update`).
 export _root_.Core (Assignment)
-
-namespace Assignment
-export _root_.Core.Assignment (update update_at update_ne update_overwrite update_comm)
-end Assignment
 
 -- ═══ Possibility & InfoState ═══
 
@@ -444,9 +440,9 @@ def agreeOn (p q : Possibility W E) (vars : Set Nat) : Prop :=
 /-- Same world, possibly different assignment. -/
 def sameWorld (p q : Possibility W E) : Prop := p.world = q.world
 
-/-- Extend an assignment at a single variable, using `Assignment.update`. -/
+/-- Extend an assignment at a single variable, using `Function.update`. -/
 def extend (p : Possibility W E) (x : Nat) (e : E) : Possibility W E :=
-  { p with assignment := p.assignment.update x e }
+  { p with assignment := Function.update p.assignment x e }
 
 @[simp]
 theorem extend_at (p : Possibility W E) (x : Nat) (e : E) :

@@ -40,11 +40,11 @@ for the full admissibility conditions.
 
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Syntax.Minimalist.HeadFunction
-import Linglib.Core.Tree
+import Linglib.Syntax.Tree.Cat
 
 namespace Minimalist
 
-open Core.Tree
+open Syntax
 
 /-! ## LF branch of Spell-Out -/
 

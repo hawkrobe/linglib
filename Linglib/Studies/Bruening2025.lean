@@ -39,8 +39,8 @@ proving c-selection is not reducible to s-selection.
 namespace Bruening2025
 
 open BrueningAlKhalaf2020
-open Core.Tree (Cat)
-open Core.Tree.Cat (NP AdvP AdjP)
+open Syntax (Cat)
+open Syntax.Cat (NP AdvP AdjP)
 
 -- ============================================================================
 -- § 1: Experiment Data Structure

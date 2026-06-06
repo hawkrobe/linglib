@@ -133,7 +133,7 @@ instance : DecidablePred IsAuthor := fun c =>
 /-- Convert a person-number cell to a PhiFeature list for the Agree
     infrastructure. -/
 def toPhiFeatures (c : Agreement.Cell) : List PhiFeature :=
-  [.person c.toPerson, .number (if c.isPlural then .Plur else .Sing)]
+  [.person c.toPerson, .number (if c.isPlural then .plural else .singular)]
 
 -- ============================================================================
 -- § 2: DM Vocabulary Insertion ([halle-marantz-1993])

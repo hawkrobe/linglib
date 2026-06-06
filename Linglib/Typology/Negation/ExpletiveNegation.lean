@@ -5,30 +5,30 @@ import Mathlib.Data.Fintype.Prod
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# Core Negation Types
+# Expletive Negation Typology
 
-Framework-agnostic types for negation phenomena shared across
-fragments and phenomena layers.
+Pre-Fragment typological substrate for expletive negation (EN):
+framework-agnostic classification types that Fragments and Studies
+import to type their per-language EN data.
 
-## Expletive Negation Classification
-
-Two orthogonal classifications of expletive negation (EN):
+Two orthogonal classifications:
 
 - `ENType` (high/low) — [rett-2026]'s position-based classification
 - `ENStrength` (weak/strong) — [greco-2020]'s polarity-based classification
 - `PolarityClass` / `PolarityLicensing` — polarity-sensitive element classes
   and their licensing profiles
 
-These types are framework-agnostic: they classify EN constructions by
-their empirical properties without committing to a syntactic analysis.
-The syntactic derivation (from merge position in the extended projection)
-lives in `Greco2020` under
-`namespace Minimalist.NegScope`.
+These types classify EN constructions by their empirical properties
+without committing to a syntactic analysis. The syntactic derivation
+(from merge position in the extended projection) lives in
+`Studies/Greco2020.lean` under `namespace Minimalist.NegScope`.
 -/
 
-namespace Phenomena.Negation.ExpletiveNegation
+namespace Typology.Negation
 
 open Typology.PolarityItem (PolarityType)
+
+/-! ### EN blocking reasons -/
 
 /-- Cross-linguistic reasons why a trigger class may not license
     expletive negation in a particular language ([jin-koenig-2021] §7). -/
@@ -41,9 +41,7 @@ inductive ENBlockingReason where
   | analyticNegation
   deriving DecidableEq, Repr
 
--- ════════════════════════════════════════════════════
--- § 2. EN type classification
--- ════════════════════════════════════════════════════
+/-! ### EN type classification -/
 
 /-- Two syntactic types of expletive negation ([rett-2026]).
 
@@ -78,9 +76,7 @@ instance : LinearOrder ENType :=
   LinearOrder.lift' ENType.toNat
     (fun a b h => by cases a <;> cases b <;> simp_all [ENType.toNat])
 
--- ════════════════════════════════════════════════════
--- § 3. EN strength classification
--- ════════════════════════════════════════════════════
+/-! ### EN strength classification -/
 
 /-- [greco-2020] §2.1: EN constructions divide into two classes
     based on co-occurrence with polarity-sensitive elements.
@@ -116,18 +112,16 @@ instance : LinearOrder ENStrength :=
   LinearOrder.lift' ENStrength.toNat
     (fun a b h => by cases a <;> cases b <;> simp_all [ENStrength.toNat])
 
--- ════════════════════════════════════════════════════
--- § 4. Polarity classes and licensing profiles
--- ════════════════════════════════════════════════════
+/-! ### Polarity classes and licensing profiles -/
 
 /-- The four classes of polarity-sensitive elements tested by
     [greco-2020] Table 1. Each EN environment either licenses
     or rejects each class, giving a four-bit fingerprint. -/
 inductive PolarityClass where
-  | weakNPI      -- weak NPIs: *alcuno*, *qualche*, *any*
-  | strongNPI    -- strong NPIs: minimizers like *muovere un dito*
+  | weakNPI      -- weak NPIs: *alzare un dito* 'lift a finger', *mai* 'ever'
+  | strongNPI    -- strong NPIs: *affatto* 'at all'
   | notAlsoConj  -- *e neanche* / *not ... also* conjunctions
-  | nWord        -- N-words: *nessuno*, *niente*, *mai*
+  | nWord        -- N-words: *nessuno* 'nobody'
   deriving DecidableEq, Repr
 
 -- ── PolarityClass: Fintype ──
@@ -170,6 +164,12 @@ def weakENProfile : PolarityLicensing :=
 /-- Strong EN environments license NONE of the four polarity classes. -/
 def strongENProfile : PolarityLicensing :=
   { weakNPIs := false, strongNPIs := false, notAlsoConj := false, nWords := false }
+
+/-- The licensing profile determined by an EN strength class
+    ([greco-2020] Table 1: rows are uniform within each class). -/
+def ENStrength.profile : ENStrength → PolarityLicensing
+  | .weak => weakENProfile
+  | .strong => strongENProfile
 
 /-- Strong EN rejects ALL polarity classes (universally quantified). -/
 theorem strongEN_rejects_all (c : PolarityClass) :
@@ -234,9 +234,7 @@ instance : OrderTop PolarityLicensing where
 /-- Strong EN (⊥) ≤ weak EN in the licensing lattice. -/
 theorem strongEN_le_weakEN : strongENProfile ≤ weakENProfile := by decide
 
--- ════════════════════════════════════════════════════
--- § 5. Bridge: PolarityClass ↔ PolarityType
--- ════════════════════════════════════════════════════
+/-! ### Bridge: PolarityClass ↔ PolarityType -/
 
 /-- Partial map from PolarityClass to PolarityType.
     Two of the four Greco classes correspond directly to PolarityType
@@ -270,4 +268,4 @@ def PolarityLicensing.licensesType (p : PolarityLicensing) (t : PolarityType) :
     Option Bool :=
   (PolarityClass.fromPolarityType? t).map p.licenses
 
-end Phenomena.Negation.ExpletiveNegation
+end Typology.Negation

@@ -1,4 +1,4 @@
-import Mathlib.Init
+import Mathlib.Logic.Function.Basic
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -11,9 +11,15 @@ substrate shared by extensional Heim-Kratzer composition, DPL-style register
 state, CDRT, Charlow continuations, and trivalent partial-valuation systems.
 
 `Assignment E := ℕ → E` is **pre-intensional** — pure Tarski variable mapping —
-so it lives at the top of `Core` rather than inside `Core.Logic.Intensional`.
+so it lives in `Core/Logic/` rather than inside `Core/Logic/Intensional/`.
 The intensional substrate (`Frame`, `SitAssignment F := Assignment F.Index`,
 `DenotGS`) builds on this in `Core/Logic/Intensional/`.
+
+Pointwise update of a total assignment is mathlib's `Function.update`
+(no parallel API here): `Function.update_self`, `Function.update_of_ne`,
+`Function.update_idem`, `Function.update_comm`, and `Function.update_eq_self`
+are the update laws. The Heim-Kratzer notation `g[n ↦ x]` is declared in
+`Core/Logic/Intensional/Variables.lean`.
 
 ## When to use `Assignment E` vs raw `Nat → E`
 
@@ -56,35 +62,11 @@ namespace Core
     `E`. Instantiated at `F.Entity` for entity pronouns (Heim & Kratzer
     1998), at `F.Index` for situation pronouns (Hanink 2021 / Bondarenko 2023),
     at `Time` for temporal variables, and at any other carrier whenever a
-    framework needs Tarski-style variable interpretation. -/
+    framework needs Tarski-style variable interpretation.
+
+    Pointwise update `g[n↦d]` is `Function.update g n d`; mathlib's
+    `Function.update_*` lemmas apply directly. -/
 abbrev Assignment (E : Type*) := Nat → E
-
-namespace Assignment
-
-/-- Pointwise update `g[n↦d]`: set register `n` to `d`, leaving all other
-    registers fixed. -/
-def update {E : Type*} (g : Assignment E) (n : Nat) (d : E) : Assignment E :=
-  λ m => if m = n then d else g m
-
-@[simp] theorem update_at {E : Type*} (g : Assignment E) (n : Nat) (d : E) :
-    (g.update n d) n = d := by simp [update]
-
-@[simp] theorem update_ne {E : Type*} (g : Assignment E) {n m : Nat} (d : E)
-    (h : m ≠ n) : (g.update n d) m = g m := by simp [update, h]
-
-@[simp] theorem update_overwrite {E : Type*} (g : Assignment E) (n : Nat) (x y : E) :
-    (g.update n x).update n y = g.update n y := by
-  funext m; simp [update]; split <;> rfl
-
-theorem update_comm {E : Type*} (g : Assignment E) {n m : Nat} (x y : E)
-    (h : n ≠ m) : (g.update n x).update m y = (g.update m y).update n x := by
-  funext k; simp [update]; by_cases hn : k = n <;> by_cases hm : k = m <;> simp_all
-
-@[simp] theorem update_self {E : Type*} (g : Assignment E) (n : Nat) :
-    g.update n (g n) = g := by
-  funext i; simp [update]; intro h; exact congrArg g h.symm
-
-end Assignment
 
 -- ════════════════════════════════════════════════════════════════
 -- Partial Assignments
@@ -106,32 +88,31 @@ variable {D : Type*}
 /-- A partial assignment that values no variables. -/
 def empty : PartialAssign D := λ _ => none
 
-/-- Update a partial assignment at index `n`. -/
+/-- Update a partial assignment at index `n`: `Function.update` with the
+    value wrapped in `some`. -/
 def update (g : PartialAssign D) (n : Nat) (d : D) : PartialAssign D :=
-  λ m => if m = n then some d else g m
+  Function.update g n (some d)
 
 /-- Whether variable `n` is valued by `g`. -/
 def valued (g : PartialAssign D) (n : Nat) : Bool :=
   (g n).isSome
 
 @[simp] theorem update_at (g : PartialAssign D) (n : Nat) (d : D) :
-    (g.update n d) n = some d := by simp [update]
+    (g.update n d) n = some d := by
+  simp [update]
 
 @[simp] theorem update_ne (g : PartialAssign D) {n m : Nat} (d : D)
-    (h : m ≠ n) : (g.update n d) m = g m := by simp [update, h]
+    (h : m ≠ n) : (g.update n d) m = g m := by
+  simp [update, h]
 
 /-- Updating a partial assignment at `n` to its existing value is a no-op:
 `g.update n a = g` whenever `g n = some a`. The partial-assignment analogue
-of `Assignment.update_self` for total assignments above; needed by formalisations
-that recover the witness as `g(x).get` (e.g., Mandelkern's bounded theory
-§5.6 atomic bound-equivalence proofs). -/
+of `Function.update_eq_self`; needed by formalisations that recover the
+witness as `g(x).get` (e.g., Mandelkern's bounded theory §5.6 atomic
+bound-equivalence proofs). -/
 theorem update_self {g : PartialAssign D} {n : Nat} {a : D}
     (h : g n = some a) : g.update n a = g := by
-  funext m
-  show (if m = n then some a else g m) = g m
-  by_cases hm : m = n
-  · rw [if_pos hm, hm, h]
-  · rw [if_neg hm]
+  rw [update, ← h]; exact Function.update_eq_self n g
 
 @[simp] theorem valued_update_at (g : PartialAssign D) (n : Nat) (d : D) :
     (g.update n d).valued n = true := by simp [update, valued]

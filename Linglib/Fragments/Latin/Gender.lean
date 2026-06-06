@@ -21,7 +21,7 @@ def genderTypology : GenderProfile :=
     (assignmentFb := .semanticAndFormal)
     (agreementTargets := [.attributive, .predicate, .relativePronoun, .personalPronoun])
     (semanticBases := [.sex])
-    (attestedSurfaceGenders := [.masculine, .feminine, .neuter])
+    (attestedGenders := [.masculine, .feminine, .neuter])
 
 theorem genderTypology_iso639 : genderTypology.iso639 = "lat" := rfl
 

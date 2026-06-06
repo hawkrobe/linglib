@@ -36,7 +36,7 @@ This study file holds Corbett's cross-linguistic generalisations on the
 `Fragments/{Lang}/Gender.lean` as `genderTypology : GenderProfile` —
 constructed via `GenderProfile.fromWALS` so WALS Chs 30/31/32 are
 auto-pulled and the editorial fields (rawGenderCount, agreementTargets,
-semanticBases, attestedSurfaceGenders) are local per-language commitments.
+semanticBases, attestedGenders) are local per-language commitments.
 
 ## Sample composition
 
@@ -240,18 +240,18 @@ theorem canonical_gender_attested :
     latin.IsCanonicalGender ∧ romanian.IsCanonicalGender ∧
     hindiUrdu.IsCanonicalGender := by decide
 
-/-! ### SurfaceGender bridge -/
+/-! ### Gender bridge -/
 
 /-- Every 2- or 3-gender sex-based language in the sample exposes the
-    appropriate `Features.SurfaceGender` values via the
-    `attestedSurfaceGenders` bridge field. Connects the typology layer
+    appropriate `Gender` values via the
+    `attestedGenders` bridge field. Connects the typology layer
     to the per-noun lexical layer. -/
 theorem surface_gender_bridge_populated :
     ∀ p ∈ allProfiles,
       (p.genderCount = .two ∧ p.basis = .sexBased →
-        p.attestedSurfaceGenders.length = 2) ∧
+        p.attestedGenders.length = 2) ∧
       (p.genderCount = .three ∧ p.basis = .sexBased →
-        p.attestedSurfaceGenders.length = 3) := by decide
+        p.attestedGenders.length = 3) := by decide
 
 /-! ### ISO code sanity (drift sentry) -/
 

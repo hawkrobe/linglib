@@ -1,5 +1,5 @@
 import Mathlib.Data.Set.Insert
-import Linglib.Semantics.Composition.Layered
+import Linglib.Semantics.ContentLayer
 import Linglib.Semantics.Highlighting
 import Linglib.Features.Evidentiality
 import Linglib.Discourse.Roles
@@ -84,7 +84,7 @@ in `Fragments/Quechua/SaraguroKichwa/Evidentiality.lean`.
 
 namespace MartinezVera2026
 
-open Semantics.Composition.Layered (BiLayered)
+open Semantics.ContentLayer (BiLayered)
 open Semantics.Highlighting (HighlightingContext Highlighted AddressesQUD addSalient)
 open Features.Evidentiality (CoarseSource)
 open Discourse (DiscourseRole)

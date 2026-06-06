@@ -1846,7 +1846,7 @@ open Core.Logic.Intensional (Frame)
 open Semantics.Montague (Lexicon)
 open Semantics.Composition.Tree
 open Semantics.Quantification.CovertQuantifier (genThreshold dist dpp)
-open Core.Tree
+open Syntax
 
 /-- Demo entity domain: three individual lions plus the lion-kind
     (the maximal sum ∩lions_{s₀}, treated as a fourth entity). -/

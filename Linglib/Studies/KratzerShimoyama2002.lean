@@ -1,4 +1,4 @@
-import Linglib.Semantics.Composition.SetMonad
+import Mathlib.Data.Set.Functor
 import Linglib.Semantics.Exhaustification.FreeChoice
 import Linglib.Fragments.Japanese.Determiners
 import Linglib.Fragments.German.ModalIndefinites
@@ -26,8 +26,9 @@ movement.
 1. **Hamblin operators** (§2): The four sentential operators over
    propositional alternative sets.
 2. **Pointwise FA = Set applicative** (§3): K&S's Hamblin FA is exactly
-   the set applicative from [charlow-2020], already formalized in
-   `Applicative.lean`.
+   mathlib's `Set.seq` — the structure [charlow-2018] later identifies
+   as the Set applicative (the connection is drawn from the newer
+   paper's side, in `Studies/Charlow2018.lean`, per chronology).
 3. **GQ as special case** (§2): Determiner quantification falls out
    when alternatives are individuals — `[∃]({P(x) : x ∈ A}) ↔ ∃x∈A, P(x)`.
 4. **Singleton collapse**: When alternatives are a singleton (ordinary
@@ -43,7 +44,7 @@ movement.
 
 ## Integration Points
 
-- §3 Hamblin FA bridges to `setAp` (`Composition/Applicative.lean`)
+- §3 Hamblin FA bridges to mathlib's `Set.seq` (`hamblinFA_eq_seq`)
 - Singleton collapse bridges Hamblin modals to Kripke semantics
 - §8 free choice bridges to `free_choice_forward`
   (`Exhaustification/FreeChoice.lean`)
@@ -55,8 +56,13 @@ set_option autoImplicit false
 
 namespace KratzerShimoyama2002
 
-open Semantics.Composition.SetMonad (eta)
-open Semantics.Composition.Applicative (setAp)
+/-- Local singleton-set helper: Hamblin alternative sets denote `α → Prop`,
+so a singleton "set of alternatives" `{p}` is the constant `fun q => q = p`.
+This is mathlib's `Set.singleton`/`pure`, named locally for paper fidelity
+(K&S 2002 used `{·}` for the singleton-alternative-set; the original
+`Composition/SetMonad.lean` exported it as `eta`, since dissolved into
+`Studies/Charlow2020.lean` — too new to import from a 2002 paper). -/
+private abbrev singletonAlt {α : Type} (p : α) : α → Prop := fun q => q = p
 
 -- ════════════════════════════════════════════════════════════════
 -- Part I: Hamblin Alternative Semantics Generalized (§2-3)
@@ -81,11 +87,14 @@ abbrev HamblinDen (α : Type) := α → Prop
 def hamblinFA {A B : Type} (funSet : HamblinDen (A → B)) (argSet : HamblinDen A) : HamblinDen B :=
   fun b => ∃ f, funSet f ∧ ∃ x, argSet x ∧ f x = b
 
-/-- **Bridge**: Hamblin FA = the set applicative from `Applicative.lean`. -/
-theorem hamblinFA_eq_setAp {A B : Type} (m : HamblinDen (A → B)) (n : HamblinDen A) :
-    hamblinFA m n = setAp m n := by
+/-- **Bridge**: Hamblin FA = mathlib's `Set.seq` (the Set applicative's
+`<*>`). The identification of this structure as an applicative functor
+is [charlow-2018]'s §3.3 observation; the bridge is stated here against
+mathlib's neutral infrastructure to respect chronology. -/
+theorem hamblinFA_eq_seq {A B : Type} (m : HamblinDen (A → B)) (n : HamblinDen A) :
+    hamblinFA m n = Set.seq m n := by
   funext b
-  simp only [hamblinFA, Semantics.Composition.Applicative.setAp_apply]
+  exact propext Set.mem_seq_iff.symm
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -218,7 +227,7 @@ def dare : HamblinDen Person := fun _ => True
 
 /-- `⟦nemutta⟧` = singleton set containing the sleep predicate. -/
 def sleptPred (slept : Person → Prop) : HamblinDen (Person → Prop) :=
-  eta slept
+  singletonAlt slept
 
 /-- `⟦dare nemutta⟧` = {slept(a), slept(b), slept(c)} via Hamblin FA. -/
 def dareNemutta (slept : Person → Prop) : HamblinDen Prop :=
@@ -299,7 +308,7 @@ def distribReq (R : HamblinAccessRel W) (A : HamblinDen (W → Prop)) (w : W) : 
     This is the paper's core architectural claim: ordinary semantics
     is the special case where all denotations are singletons. -/
 theorem hamblinPoss_singleton (R : HamblinAccessRel W) (p : W → Prop) (w : W) :
-    hamblinPoss R (eta p) w ↔ ∃ w', R w w' ∧ p w' := by
+    hamblinPoss R (singletonAlt p) w ↔ ∃ w', R w w' ∧ p w' := by
   constructor
   · rintro ⟨w', hw', q, rfl, hq⟩; exact ⟨w', hw', hq⟩
   · rintro ⟨w', hw', hp⟩; exact ⟨w', hw', p, rfl, hp⟩
@@ -307,7 +316,7 @@ theorem hamblinPoss_singleton (R : HamblinAccessRel W) (p : W → Prop) (w : W) 
 /-- **Singleton collapse for necessity**: when alternatives are a singleton,
     Hamblin necessity reduces to standard Kripke necessity. -/
 theorem hamblinNec_singleton (R : HamblinAccessRel W) (p : W → Prop) (w : W) :
-    hamblinNec R (eta p) w ↔ ∀ w', R w w' → p w' := by
+    hamblinNec R (singletonAlt p) w ↔ ∀ w', R w w' → p w' := by
   constructor
   · intro h w' hw'; obtain ⟨_, rfl, hq⟩ := h w' hw'; exact hq
   · intro h w' hw'; exact ⟨p, rfl, h w' hw'⟩

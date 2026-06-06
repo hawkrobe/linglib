@@ -101,8 +101,7 @@ instance : HasPerson Word := ⟨fun w => w.features.person.map Person.fromUD⟩
     diverges from the agreement engine on `Word`. -/
 theorem Word.Agree.hasNumber_compatible {w1 w2 : Word} (h : w1.Agree w2) :
     HasNumber.Compatible w1 w2 :=
-  fun na ha nb hb =>
-    UD.MorphFeatures.compatible_hasNumber (f1 := w1.phi) (f2 := w2.phi) h na ha nb hb
+  UD.MorphFeatures.compatible_hasNumber (f1 := w1.phi) (f2 := w2.phi) h
 
 -- `reflex` is deliberately not an agreement feature: a reflexive-marked token still
 -- agrees with an unmarked one (the φ-projection drops it).

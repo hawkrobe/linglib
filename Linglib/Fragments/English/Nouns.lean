@@ -1,5 +1,5 @@
 import Linglib.Data.UD.Basic
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Basic
 import Linglib.Morphology.Exponence
 import Linglib.Semantics.Kinds.NominalMappingParameter
 import Linglib.Features.MassCount
@@ -40,7 +40,7 @@ structure NounEntry where
   proper : Bool := false
   /-- Lexical gender, where known (proper names, gendered common nouns) — the
       single source for a name's gender, read into the `Word` by `toWordSg`. -/
-  gender : Option Features.SurfaceGender := none
+  gender : Option Gender := none
   deriving Repr, BEq
 
 /-- Number marking on an English NP -/
@@ -193,7 +193,7 @@ def NounEntry.toWordSg (n : NounEntry) : Word :=
   , features := {
       number := some .Sing
     , person := if n.proper then some .third else none
-    , gender := n.gender.bind (·.toUDGender)
+    , gender := n.gender.bind (·.toUD)
     }
   }
 

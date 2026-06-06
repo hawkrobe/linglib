@@ -4,7 +4,7 @@ import Linglib.Semantics.Plurality.Cover
 import Linglib.Features.ContainmentPair
 import Linglib.Features.Number.Decomposition
 import Linglib.Features.Person.Decomposition
-import Linglib.Features.Gender
+import Linglib.Features.Gender.Decomposition
 import Linglib.Semantics.Presupposition.Basic
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Semantics.Presupposition.PhiFeatures
@@ -696,7 +696,7 @@ theorem politeness_uses_unmarked :
     -- 3rd person
     isSemanticUnmarked (ContainmentPairLike.toPair Person.thirdF) = true ∧
     -- Masculine (gender)
-    isSemanticUnmarked (ContainmentPairLike.toPair Features.Gender.masculineF) = true :=
+    isSemanticUnmarked (ContainmentPairLike.toPair Gender.masculineF) = true :=
   ⟨rfl, rfl, rfl⟩
 
 /-- The three semantically marked phi-values are NOT used for
@@ -705,7 +705,7 @@ theorem politeness_uses_unmarked :
 theorem marked_not_polite :
     isSemanticMarked (ContainmentPairLike.toPair Number.singularF) = true ∧
     isSemanticMarked (ContainmentPairLike.toPair Person.firstF) = true ∧
-    isSemanticMarked (ContainmentPairLike.toPair Features.Gender.neuterF) = true :=
+    isSemanticMarked (ContainmentPairLike.toPair Gender.neuterF) = true :=
   ⟨rfl, rfl, rfl⟩
 
 end Sauerland2003

@@ -18,7 +18,7 @@ def genderTypology : GenderProfile :=
     (rawGenderCount := 2)
     (agreementTargets := [.attributive, .predicate, .verb])
     (semanticBases := [.sex])
-    (attestedSurfaceGenders := [.masculine, .feminine])
+    (attestedGenders := [.masculine, .feminine])
 
 theorem genderTypology_iso639 : genderTypology.iso639 = "hin" := rfl
 

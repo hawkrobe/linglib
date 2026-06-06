@@ -57,7 +57,7 @@ open DepGrammar DepGrammar.EnhancedDependencies
 private abbrev john := English.Nouns.john.toWordSg
 private abbrev mary := English.Nouns.mary.toWordSg
 
--- Control/raising verbs (valence derived from complementType via complementToValence)
+-- Control/raising verbs (clausal complementType; no NP frame via complementToArgStr)
 private abbrev manages := English.Predicates.Verbal.manage.toWord3sg
 private abbrev persuaded := English.Predicates.Verbal.persuade.toWordPast
 private abbrev seems := English.Predicates.Verbal.seem.toWord3sg

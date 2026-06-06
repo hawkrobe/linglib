@@ -3507,7 +3507,7 @@ def VerbEntry.toStem {σ : Type} (v : VerbEntry) : Morphology.Stem σ :=
   { lemma_ := v.form
   , cat := .VERB
   , baseFeatures := { verbForm := some .Inf }
-  , baseValence := some (complementToValence v.complementType)
+  , baseFrame := some v.complementType
   , paradigm :=
     [ { category := .agreement .subj, value := "3sg"
       , formRule := λ _ => v.form3sg

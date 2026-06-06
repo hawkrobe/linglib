@@ -1,4 +1,4 @@
-import Linglib.Semantics.Composition.Layered
+import Linglib.Semantics.ContentLayer
 import Linglib.Semantics.Highlighting
 import Linglib.Phenomena.Verum.Basic
 
@@ -55,7 +55,7 @@ Adjacent studies the substrate is shared with:
 
 namespace Hohle1992
 
-open Semantics.Composition.Layered (BiLayered)
+open Semantics.ContentLayer (BiLayered)
 open Semantics.Highlighting (HighlightingContext Highlighted addSalient)
 
 variable {W : Type*}

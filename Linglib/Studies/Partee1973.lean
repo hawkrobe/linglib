@@ -47,8 +47,8 @@ instantiations of the generic `Core.Assignment` infrastructure:
 |----------------------------------|---------------------------|---------------------------|
 | `Assignment D` (ℕ → D)           | `Assignment m` (ℕ → Ent)  | `TemporalAssignment Time` |
 | `g n`                            | `interpPronoun n g`       | `interpTense n g`         |
-| `Assignment.update g n d`        | `Assignment.update g n x` | `updateTemporal g n t`    |
-| `λ g d => body (g.update n d)`   | `lambdaAbsG n body`       | `temporalLambdaAbs n body`|
+| `Function.update g n d`          | `Function.update g n x`   | `updateTemporal g n t`    |
+| `λ g d => body (Function.update g n d)`   | `lambdaAbsG n body`       | `temporalLambdaAbs n body`|
 
 The algebraic structure is identical: Partee's insight is that the SAME
 referential mechanism operates over different domains.

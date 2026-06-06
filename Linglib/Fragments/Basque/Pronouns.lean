@@ -21,11 +21,11 @@ open Features.Register (Level)
 
 /-- *ni* — 1sg. -/
 def ni : PersonalPronoun :=
-  { form := "ni", person := some .first, number := some .Sing }
+  { form := "ni", person := some .first, number := some .singular }
 
 /-- *gu* — 1pl. -/
 def gu : PersonalPronoun :=
-  { form := "gu", person := some .first, number := some .Plur }
+  { form := "gu", person := some .first, number := some .plural }
 
 -- ============================================================================
 -- Second Person (T/V)
@@ -33,15 +33,15 @@ def gu : PersonalPronoun :=
 
 /-- *hi* — 2sg familiar (T form). -/
 def hi : PersonalPronoun :=
-  { form := "hi", person := some .second, number := some .Sing, register := .informal }
+  { form := "hi", person := some .second, number := some .singular, register := .informal }
 
 /-- *zu* — 2sg formal (V form). -/
 def zu : PersonalPronoun :=
-  { form := "zu", person := some .second, number := some .Sing, register := .formal }
+  { form := "zu", person := some .second, number := some .singular, register := .formal }
 
 /-- *zuek* — 2pl. -/
 def zuek : PersonalPronoun :=
-  { form := "zuek", person := some .second, number := some .Plur }
+  { form := "zuek", person := some .second, number := some .plural }
 
 -- ============================================================================
 -- Third Person
@@ -49,11 +49,11 @@ def zuek : PersonalPronoun :=
 
 /-- *hura* — 3sg. -/
 def hura : PersonalPronoun :=
-  { form := "hura", person := some .third, number := some .Sing }
+  { form := "hura", person := some .third, number := some .singular }
 
 /-- *haiek* — 3pl. -/
 def haiek : PersonalPronoun :=
-  { form := "haiek", person := some .third, number := some .Plur }
+  { form := "haiek", person := some .third, number := some .plural }
 
 -- ============================================================================
 -- Pronoun Lists
@@ -107,8 +107,8 @@ theorem has_all_persons :
 
 /-- Both singular and plural are attested. -/
 theorem has_both_numbers :
-    allPronouns.any (·.number == some .Sing) = true ∧
-    allPronouns.any (·.number == some .Plur) = true := ⟨rfl, rfl⟩
+    allPronouns.any (·.number == some .singular) = true ∧
+    allPronouns.any (·.number == some .plural) = true := ⟨rfl, rfl⟩
 
 /-- 2nd person pronouns are all second person. -/
 theorem second_person_all_2p :
