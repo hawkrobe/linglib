@@ -24,7 +24,9 @@ The Writer monad enforces [potts-2005]'s flow restriction structurally:
 content can flow into side-issue computations, but side-issue content cannot
 leak back into at-issue computation.
 
-See `PostSuppositional.lean` for the same pattern applied to dynamic GQs.
+See `Studies/Charlow2021.lean` (`PostSupp`) for the same pattern applied to
+dynamic GQs, with the log monoid `(Update S, dseq, test ⊤)` in place of
+`List P`.
 -/
 
 namespace Semantics.Composition.WriterMonad
