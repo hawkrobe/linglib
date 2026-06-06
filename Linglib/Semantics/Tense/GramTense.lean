@@ -1,6 +1,6 @@
 import Linglib.Core.Logic.Intensional.Rigidity
 import Linglib.Core.Assignment
-import Linglib.Core.WorldTimeIndex
+import Linglib.Core.Logic.Intensional.WorldTimeIndex
 import Linglib.Core.Time.Relation
 import Linglib.Core.Time.Reichenbach
 import Linglib.Semantics.Context.Tower

@@ -1,6 +1,6 @@
 import Linglib.Core.Causal.SEM.Bool
 import Linglib.Core.Causal.SEM.Counterfactual
-import Linglib.Core.WorldTimeIndex
+import Linglib.Core.Logic.Intensional.WorldTimeIndex
 import Mathlib.Logic.Relation
 
 /-!

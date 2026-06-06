@@ -1,5 +1,5 @@
 import Mathlib.Computability.ContextFreeGrammar
-import Linglib.Core.StringHom
+import Linglib.Core.Computability.StringHom
 
 /-!
 # Closure of `IsContextFree` under string homomorphism

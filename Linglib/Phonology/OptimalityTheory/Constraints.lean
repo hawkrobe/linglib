@@ -1,6 +1,6 @@
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Core.Constraint.Weighted
-import Linglib.Core.StringHom
+import Linglib.Core.Computability.StringHom
 import Linglib.Core.Computability.Subregular.ForbiddenPairs
 
 /-!

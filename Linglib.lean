@@ -230,7 +230,7 @@ import Linglib.Features.Mirativity
 import Linglib.Semantics.Epistemicity
 import Linglib.Features.Logophoricity
 import Linglib.Features.MassCount
-import Linglib.Core.WorldTimeIndex
+import Linglib.Core.Logic.Intensional.WorldTimeIndex
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Core.Time.Interval.Generalized
 import Linglib.Core.Time.Boundedness
@@ -298,7 +298,7 @@ import Linglib.Core.Computability.Subregular.Function.ISL
 import Linglib.Core.Computability.Subregular.Function.OSL
 import Linglib.Core.Computability.Subregular.Function.Subsequential
 import Linglib.Core.Computability.Subregular.Function.WeaklyDeterministic
-import Linglib.Core.StringHom
+import Linglib.Core.Computability.StringHom
 import Linglib.Features.VerbCluster
 import Linglib.Features.Case
 import Linglib.Syntax.Case.Order
@@ -336,8 +336,8 @@ import Linglib.Core.Agent.Emotion
 import Linglib.Semantics.Spatial.Path
 import Linglib.Core.Assignment
 import Linglib.Semantics.Composition.Continuation
-import Linglib.Core.CylindricAlgebra
-import Linglib.Core.CylindricAlgebra.DynamicSemantics
+import Linglib.Core.Logic.CylindricAlgebra
+import Linglib.Core.Logic.CylindricAlgebra.DynamicSemantics
 import Linglib.Features.ContainmentPair
 import Linglib.Features.Person.Basic
 import Linglib.Features.Person.Capabilities
@@ -350,7 +350,6 @@ import Linglib.Features.Number.Capabilities
 import Linglib.Features.Number.Decomposition
 import Linglib.Features.Number.Interp
 import Linglib.Features.Number.Resolve
-import Linglib.Core.CoreConcept
 import Linglib.Morphology.MorphRule
 import Linglib.Morphology.Paradigm
 import Linglib.Semantics.Quantification.BinominalDefs
@@ -377,7 +376,6 @@ import Linglib.Core.Inheritance.Basic
 import Linglib.Core.Inheritance.Choice
 import Linglib.Core.Inheritance.Default
 import Linglib.Core.Inheritance.Order
-import Linglib.Core.Prototype
 import Linglib.Morphology.MorphProfile
 import Linglib.Morphology.ConsonantalRoot
 import Linglib.Morphology.Exponence

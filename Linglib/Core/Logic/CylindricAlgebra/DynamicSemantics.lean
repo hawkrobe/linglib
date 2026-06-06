@@ -1,4 +1,4 @@
-import Linglib.Core.CylindricAlgebra
+import Linglib.Core.Logic.CylindricAlgebra
 import Linglib.Semantics.Dynamic.DPL.Basic
 import Linglib.Semantics.Dynamic.CDRT.Basic
 

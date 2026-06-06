@@ -1,6 +1,6 @@
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Assignment
-import Linglib.Core.CylindricAlgebra
+import Linglib.Core.Logic.CylindricAlgebra
 
 /-!
 # Variable Binding and Assignment Functions
