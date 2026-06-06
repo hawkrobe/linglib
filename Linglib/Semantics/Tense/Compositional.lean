@@ -32,8 +32,7 @@ namespace Semantics.Tense
 
 open Core (WorldTimeIndex)
 
-open Core.Time
-open Core.Time.Reichenbach
+open Semantics.Tense.Reichenbach
 
 
 /--

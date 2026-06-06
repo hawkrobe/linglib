@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Intensional.WorldTimeIndex
-import Linglib.Core.Time.Reichenbach
+import Linglib.Semantics.Tense.Reichenbach
 
 /-!
 # Kaplanian Context of Utterance
@@ -86,7 +86,7 @@ def KContext.shiftWorldTime {W E P T : Type*} (c : KContext W E P T)
     default, [kiparsky-2002]); R and E are supplied per clause. -/
 def KContext.toReichenbachFrame {W E P T : Type*}
     (c : KContext W E P T) (R Ev : T) :
-    Core.Time.Reichenbach.ReichenbachFrame T where
+    Semantics.Tense.Reichenbach.ReichenbachFrame T where
   speechTime := c.time
   perspectiveTime := c.time  -- root clause default: P = S
   referenceTime := R

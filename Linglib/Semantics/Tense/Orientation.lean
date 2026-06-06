@@ -32,7 +32,7 @@ Declerck → {utterance, situation, perspective, sub n}) live with the
 respective framework files.
 -/
 
-namespace Core.Time
+namespace Semantics.Tense
 
 /-- The universal vocabulary of orientation times in modern tense theory.
     See the module docstring for the framework-mapping and citations. -/
@@ -52,4 +52,4 @@ inductive Orientation where
   | sub (n : Nat)
   deriving DecidableEq, Repr, Inhabited
 
-end Core.Time
+end Semantics.Tense

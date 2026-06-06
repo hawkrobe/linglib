@@ -165,7 +165,7 @@ status: the evidential restricts the context set directly (≈ presupposition),
 while the assertion commits the speaker to p via DECL (72).
 -/
 
-open Core.Time
+open Core.Order
 open Semantics.Presupposition
 open Semantics.Tense.Evidential
 open Bulgarian.Evidentials

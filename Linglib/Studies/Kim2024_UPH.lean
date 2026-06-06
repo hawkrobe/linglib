@@ -54,7 +54,7 @@ namespace Kim2024_UPH
 open Minimalist
 open Semantics.Causation.Psych
 open Semantics.Causation.PsychLink
-open Core.Time (Interval)
+open Core.Order (Interval)
 open English.Predicates.Verbal
 open Phenomena.PsychVerbs
 open SolstadBott2022

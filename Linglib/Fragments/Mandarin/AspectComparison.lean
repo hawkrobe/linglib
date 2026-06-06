@@ -1,4 +1,4 @@
-import Linglib.Core.Time.AtomDist
+import Linglib.Semantics.Aspect.AtomDist
 
 /-!
 # Mandarin Cross-Domain Particles [zhao-2025]
@@ -18,14 +18,14 @@ guo has no such presupposition.
 
 ## Cross-Module Connections
 
-- `Core.Time`: ATOM-DIST and antiAtomDistLicensed
+- `Semantics.Aspect`: ATOM-DIST and antiAtomDistLicensed
 - `Mandarin.Particles`: existing Mandarin particle pattern
 
 -/
 
 namespace Mandarin.AspectComparison
 
-open Core.Time
+open Core.Order Semantics.Aspect
 
 -- ════════════════════════════════════════════════════
 -- § 1. Cross-Domain Particle Entries

@@ -55,7 +55,7 @@ Goldsmith-style index-NCC to Sagey-style interval-NCC by construction.
 
 namespace Phonology.Autosegmental
 
-open Core.Time (Interval)
+open Core.Order (Interval)
 
 /-! ### Candidate-level crossing predicate -/
 

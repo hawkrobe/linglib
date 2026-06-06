@@ -1,5 +1,5 @@
-import Linglib.Core.Time.Domain
-import Linglib.Core.Time.System
+import Linglib.Semantics.Tense.Domain
+import Linglib.Semantics.Tense.System
 
 /-!
 # Reichenbach's Temporal Framework
@@ -20,7 +20,7 @@ Tense relates R to P; Aspect relates E to R.
 
 `ReichenbachFrame` is the four-slot point-time record used throughout
 linglib's tense modules. The `toDomain` builder lifts it to a generic
-`Core.Time.Domain` (central = S, sub-TOs = [P, R, E], all as point
+`Semantics.Tense.Domain` (central = S, sub-TOs = [P, R, E], all as point
 intervals via `TO.point`). The `*_iff_relatedByName` bridge theorems
 re-express each Boolean predicate (`isPast`, `isPerfect`, …) as a
 `Domain.relatedByName` query against named atom-sets from the Allen
@@ -31,10 +31,10 @@ existing four-field record — downstream call sites continue to use
 work with `f.toDomain` and `relatedByName`.
 -/
 
-namespace Core.Time.Reichenbach
+namespace Semantics.Tense.Reichenbach
 
-open Core.Time (Domain NamedTO TO Orientation)
-open Core.Time.AllenRelation (precedesSet equalSet)
+open Core.Order
+open Core.Order.AllenRelation (precedesSet equalSet)
 
 /--
 Reichenbach's temporal parameters for tense/aspect analysis,
@@ -150,17 +150,17 @@ def toDomain (f : ReichenbachFrame Time) : Domain Time Orientation :=
 /-- Helper: for point intervals at times `s` and `t`, `precedesSet`
     holds iff `s < t`. -/
 private theorem point_precedes_iff (s t : Time) :
-    Core.Time.AllenRelation.holdsIn precedesSet (TO.point s) (TO.point t) ↔ s < t := by
+    Core.Order.AllenRelation.holdsIn precedesSet (TO.point s) (TO.point t) ↔ s < t := by
   unfold precedesSet
-  rw [Core.Time.AllenRelation.holdsIn_singleton]
+  rw [Core.Order.AllenRelation.holdsIn_singleton]
   rfl
 
 /-- Helper: for point intervals at times `s` and `t`, `equalSet`
     holds iff `s = t`. -/
 private theorem point_equal_iff (s t : Time) :
-    Core.Time.AllenRelation.holdsIn equalSet (TO.point s) (TO.point t) ↔ s = t := by
+    Core.Order.AllenRelation.holdsIn equalSet (TO.point s) (TO.point t) ↔ s = t := by
   unfold equalSet
-  rw [Core.Time.AllenRelation.holdsIn_singleton]
+  rw [Core.Order.AllenRelation.holdsIn_singleton]
   refine ⟨fun ⟨h, _⟩ => h, fun h => ⟨h, h⟩⟩
 
 /-- `isPast` is exactly `topic precedes perspective` in the Allen
@@ -256,8 +256,8 @@ end ReichenbachFrame
 -- § TenseSystem and AspectSystem Instances
 -- ════════════════════════════════════════════════════
 
-/-! Reichenbach as a `Core.Time.TenseSystem` (anchor = P, situation = R)
-    and `Core.Time.AspectSystem` (event = E, reference = R) instance.
+/-! Reichenbach as a `TenseSystem` (anchor = P, situation = R)
+    and `AspectSystem` (event = E, reference = R) instance.
     The instances commit Reichenbach to the `Orientation` role
     vocabulary so generic Domain-level tooling (e.g.
     `relatedByName`-driven analyses) can dispatch over any tense or
@@ -266,15 +266,15 @@ end ReichenbachFrame
     (`*_iff_relatedByName`) show how they project into the algebra. -/
 
 instance reichenbachFrame_tenseSystem {Time : Type*} [LinearOrder Time] :
-    Core.Time.TenseSystem (ReichenbachFrame Time) Time Orientation where
+    TenseSystem (ReichenbachFrame Time) Time Orientation where
   toDomain := ReichenbachFrame.toDomain
   anchor := .perspective
   situation := .topic
 
 instance reichenbachFrame_aspectSystem {Time : Type*} [LinearOrder Time] :
-    Core.Time.AspectSystem (ReichenbachFrame Time) Time Orientation where
+    AspectSystem (ReichenbachFrame Time) Time Orientation where
   toDomain := ReichenbachFrame.toDomain
   event := .situation
   reference := .topic
 
-end Core.Time.Reichenbach
+end Semantics.Tense.Reichenbach

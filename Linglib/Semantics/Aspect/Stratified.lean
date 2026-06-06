@@ -78,7 +78,7 @@ namespace Semantics.Aspect.Stratified
 
 open Semantics.Events.CEM
 open _root_.Mereology
-open Core.Time
+open Core.Order
 open Features
 
 /-! ### Stratified Reference ([champollion-2017] eq. 16/17) -/

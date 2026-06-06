@@ -13,7 +13,7 @@ analyses (`MBTProfile.toRelation` in Huijsmans 2025) — each domain
 provides a name for one shape from the same partition.
 -/
 
-namespace Core.Time
+namespace Core.Order
 
 /-- Temporal relation type for tense operators.
     Relates two times (typically event time and reference/speech time).
@@ -45,4 +45,4 @@ instance {Time : Type*} [LinearOrder Time] [DecidableEq Time]
 
 end Relation
 
-end Core.Time
+end Core.Order

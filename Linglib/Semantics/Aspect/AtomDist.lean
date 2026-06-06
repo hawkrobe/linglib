@@ -1,4 +1,4 @@
-import Linglib.Core.Time.Interval.Basic
+import Linglib.Core.Order.Interval
 
 /-!
 # Atomic distributivity
@@ -26,7 +26,9 @@ The `antiAtomDistLicensed` predicate is the licensing condition for
 Mandarin perfective particles in [zhao-2025] (le, méi-yǒu).
 -/
 
-namespace Core.Time
+namespace Semantics.Aspect
+
+open Core.Order
 
 /-- An event quantifier: a predicate on event predicates.
     V(P) holds iff "there is an event satisfying P" according to V's
@@ -76,4 +78,4 @@ def ofPred {Event : Type*} (P : Event → Prop) : EvQuant Event :=
 
 end EvQuant
 
-end Core.Time
+end Semantics.Aspect

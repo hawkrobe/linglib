@@ -1,6 +1,6 @@
 import Linglib.Semantics.Aspect.Basic
 import Linglib.Semantics.Aspect.SubintervalProperty
-import Linglib.Core.Time.Interval.Basic
+import Linglib.Core.Order.Interval
 import Linglib.Semantics.Tense.TemporalAdverbials
 import Linglib.Studies.IatridouEtAl2001
 import Linglib.Studies.Kiparsky2002
@@ -49,7 +49,7 @@ framework but has not been line-by-line cross-checked against IZ
 
 namespace IatridouZeijlstra2021
 
-open Core.Time
+open Core.Order Semantics.Tense
 open Semantics.Aspect
 open Semantics.Aspect.SubintervalProperty
 open Semantics.Tense.TemporalAdverbials (PTSConstraint AdverbialType)

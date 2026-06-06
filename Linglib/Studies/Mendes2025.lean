@@ -38,7 +38,6 @@ files: `dynSUBJ`/`dynIND` from `Semantics/Mood/Dynamic.lean`
 namespace Mendes2025
 
 open Core (Assignment WorldTimeIndex)
-open Core.Time
 open HistoricalAlternatives
 open Semantics.Dynamic.Core
 open Semantics.Tense

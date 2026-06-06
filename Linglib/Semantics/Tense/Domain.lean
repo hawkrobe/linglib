@@ -1,5 +1,5 @@
-import Linglib.Core.Time.Allen
-import Linglib.Core.Time.Orientation
+import Linglib.Core.Order.AllenRelation
+import Linglib.Semantics.Tense.Orientation
 
 /-!
 # Temporal Domains
@@ -32,7 +32,9 @@ or sector classification. `Domain` is the substrate; the
 domain-shaped theories build on top.
 -/
 
-namespace Core.Time
+namespace Semantics.Tense
+
+open Core.Order
 
 -- ════════════════════════════════════════════════════
 -- § Times of Orientation
@@ -207,4 +209,4 @@ def ofReichenbachPoints (S P R E : Time) : Domain Time Orientation where
 
 end Domain
 
-end Core.Time
+end Semantics.Tense

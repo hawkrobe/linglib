@@ -1,4 +1,4 @@
-import Linglib.Core.Time.Interval.Basic
+import Linglib.Core.Order.Interval
 import Mathlib.Tactic.Order
 
 /-!
@@ -45,13 +45,13 @@ pair `(r, s)`, the set of relations consistent with `i r j ∧ j s k`. We
 provide identity laws and the principal compositions used by tense theory;
 the full table is left as a TODO.
 
-`Core.Time.Relation` (in `Time.lean`) is the **point** analogue (operating
+`Core.Order.Relation` (in `Relation.lean`) is the **point** analogue (operating
 on `Time × Time`); on point intervals it collapses to `{precedes, equal,
 precededBy}` (the only three Allen relations consistent with zero-length
 intervals).
 -/
 
-namespace Core.Time
+namespace Core.Order
 
 -- ════════════════════════════════════════════════════
 -- § The Thirteen Atoms
@@ -611,4 +611,4 @@ theorem allenRel_mem_iff_holdsIn (i j : Interval Time)
 
 end Interval
 
-end Core.Time
+end Core.Order

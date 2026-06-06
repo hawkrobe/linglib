@@ -209,7 +209,7 @@ section NoCrossing
 
 open Phonology.Autosegmental (Association TierPosition
   validAssociation crosses no_crossing)
-open Core.Time (Interval)
+open Core.Order (Interval)
 
 /-- Helper: build a ℤ interval. -/
 private def mkI (s f : ℤ) (h : s ≤ f := by omega) : Interval ℤ := ⟨s, f, h⟩

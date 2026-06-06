@@ -46,7 +46,6 @@ namespace Cruse1973
 open Semantics.ArgumentStructure
 open Semantics.Causation.CoerciveImplication
 open Features (Causative)
-open Core.Time
 open Features
 open Semantics.Lexical
 open Phenomena.TenseAspect.Diagnostics

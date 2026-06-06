@@ -1,5 +1,5 @@
 import Linglib.Semantics.Tense.GramTense
-import Linglib.Core.Time.Reichenbach
+import Linglib.Semantics.Tense.Reichenbach
 
 /-!
 # Tense Theory Infrastructure: Shared Types
@@ -28,8 +28,7 @@ of a derivation theorem in that theory's file.
 namespace Semantics.Tense
 
 open Semantics.Tense
-open Core.Time
-open Core.Time.Reichenbach
+open Semantics.Tense.Reichenbach
 
 
 -- ════════════════════════════════════════════════════════════════

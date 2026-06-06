@@ -23,7 +23,7 @@ of the veridicality contrast.
 
 namespace Semantics.Tense.TemporalConnectives
 
-open Core.Time
+open Core.Order
 
 variable {Time : Type*} [LinearOrder Time]
 
@@ -273,8 +273,8 @@ while the event-level version requires entire-runtime precedence (`-precedence).
 
 namespace Semantics.Tense.TemporalConnectives
 
-open Core.Time
-open Core.Time.Interval
+open Core.Order
+open Core.Order.Interval
 
 variable {Time : Type*} [LinearOrder Time]
 

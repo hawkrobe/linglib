@@ -1,5 +1,5 @@
 import Mathlib.Order.Basic
-import Linglib.Core.Time.Interval.Basic
+import Linglib.Core.Order.Interval
 import Linglib.Tactics.OntSort
 import Linglib.Features.Aktionsart
 
@@ -43,7 +43,7 @@ sortless construction sites default to `.dynamic`.
 * [liefke-2024] §4.3 (manner ontology)
 -/
 
-open Core.Time
+open Core.Order
 open Features
 
 /-- An event: a temporal individual with ontological sort. -/

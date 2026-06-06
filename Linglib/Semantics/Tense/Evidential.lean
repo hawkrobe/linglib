@@ -54,8 +54,8 @@ classification in `Features.Evidentiality`. `EPCondition.IsNonfuture` and
 
 namespace Semantics.Tense.Evidential
 
-open Core.Time
-open Core.Time.Reichenbach
+open Core.Order
+open Semantics.Tense.Reichenbach
 open Semantics.Tense
 open Features.Evidentiality
 open Features.Mirativity
@@ -94,11 +94,11 @@ inductive EPCondition where
   deriving DecidableEq, Repr
 
 /-- Underlying point-relation: `EPCondition` is a domain-flavored selector
-    over the abstract `Core.Time.Relation` partition. The evidential
+    over the abstract `Core.Order.Relation` partition. The evidential
     vocabulary (downstream/prospective/…) maps onto the abstract
     before/after/… partition; the slot pair is
     `(eventTime, acquisitionTime)`. -/
-def EPCondition.toRelation : EPCondition → Core.Time.Relation
+def EPCondition.toRelation : EPCondition → Core.Order.Relation
   | .downstream       => .notAfter
   | .strictDownstream => .before
   | .contemporaneous  => .overlapping
@@ -236,7 +236,7 @@ theorem EPCondition.nonfuture_implies_downstream
     (ep : EPCondition) (f : EvidentialFrame ℤ)
     (h_nf : ep.IsNonfuture) (h_ep : ep.toConstraint f) :
     downstreamEvidence f := by
-  simp only [toConstraint, toRelation, Core.Time.Relation.eval] at h_ep
+  simp only [toConstraint, toRelation, Core.Order.Relation.eval] at h_ep
   cases ep with
   | downstream => exact h_ep
   | strictDownstream => exact le_of_lt h_ep

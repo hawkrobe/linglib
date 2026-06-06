@@ -1,6 +1,6 @@
 import Linglib.Data.Examples.Schema
-import Linglib.Core.Time.Reichenbach
-import Linglib.Core.Time.Boundedness
+import Linglib.Semantics.Tense.Reichenbach
+import Linglib.Semantics.Aspect.Boundedness
 import Linglib.Semantics.Tense.Basic
 
 /-!
@@ -42,7 +42,7 @@ fulltext).
 
 namespace Declerck1991
 
-open Core.Time.Reichenbach
+open Semantics.Tense.Reichenbach
 open Semantics.Tense (shiftedFrame)
 open Data.Examples (LinguisticExample)
 
@@ -226,8 +226,9 @@ end Examples
 
 namespace TOChain
 
-open Core.Time (Relation Domain NamedTO TO Orientation)
-open Core.Time.Reichenbach (ReichenbachFrame)
+open Core.Order (Relation)
+open Semantics.Tense (Domain NamedTO TO Orientation)
+open Semantics.Tense.Reichenbach (ReichenbachFrame)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -255,7 +256,7 @@ inductive TimeSphere where
 -- § TO-Chain Architecture
 -- ════════════════════════════════════════════════════════════════
 
-/-- A single link in a TO chain: a `Core.Time.Orientation`-labelled
+/-- A single link in a TO chain: a `Semantics.Tense.Orientation`-labelled
     Time of Orientation related to the next TO inward by a temporal
     relation.
 
@@ -866,11 +867,11 @@ theorem conditionalPerfect_tower_depth (t0 to2 to3 toSit : Time) {E P : Type*}
 end TowerBridge
 
 -- ════════════════════════════════════════════════════════════════
--- § Domain Bridge: TO-Chain as Core.Time.Domain
+-- § Domain Bridge: TO-Chain as Semantics.Tense.Domain
 -- ════════════════════════════════════════════════════════════════
 
 /-! Re-express `DeclercianSchema` via the framework-agnostic
-    `Core.Time.Domain` substrate (central TO + list of sub-TOs, with
+    `Semantics.Tense.Domain` substrate (central TO + list of sub-TOs, with
     Allen relations computed on demand from the underlying linear
     order). The `toDomain` builder lifts the chain structure into a
     `Domain Time Orientation` whose central TO is the utterance
@@ -888,7 +889,7 @@ section DomainBridge
 
 variable {Time : Type*} [LinearOrder Time]
 
-/-- The schema as a `Core.Time.Domain` over the universal
+/-- The schema as a `Semantics.Tense.Domain` over the universal
     `Orientation` role vocabulary: central = `.utterance` (T₀, the
     temporal zero-point), sub-TOs = `.perspective` (TO₁) followed by
     every chain link as a point interval.
@@ -1038,9 +1039,9 @@ theorem preterit_presentPerfect_differ_zone {Time : Type*} (t0 toSit : Time) :
 -- § TenseSystem and AspectSystem Instances
 -- ════════════════════════════════════════════════════════════════
 
-/-! Declerck's `DeclercianSchema` as a `Core.Time.TenseSystem`
+/-! Declerck's `DeclercianSchema` as a `Semantics.Tense.TenseSystem`
     (anchor = `.perspective` for TO₁, situation = `.situation` for
-    TO_sit) and `Core.Time.AspectSystem` instance. The aspect instance
+    TO_sit) and `Semantics.Tense.AspectSystem` instance. The aspect instance
     collapses event and reference roles both to `.situation` —
     Declerck's universal `TS = TO_sit` principle means E = R always
     holds, so any predicate of the form "event equals reference" is
@@ -1050,13 +1051,13 @@ theorem preterit_presentPerfect_differ_zone {Time : Type*} (t0 toSit : Time) :
     — exactly Declerck's claim. -/
 
 instance declercianSchema_tenseSystem {Time : Type*} [LinearOrder Time] :
-    Core.Time.TenseSystem (DeclercianSchema Time) Time Orientation where
+    Semantics.Tense.TenseSystem (DeclercianSchema Time) Time Orientation where
   toDomain := DeclercianSchema.toDomain
   anchor := .perspective
   situation := .situation
 
 instance declercianSchema_aspectSystem {Time : Type*} [LinearOrder Time] :
-    Core.Time.AspectSystem (DeclercianSchema Time) Time Orientation where
+    Semantics.Tense.AspectSystem (DeclercianSchema Time) Time Orientation where
   toDomain := DeclercianSchema.toDomain
   event := .situation
   reference := .situation
@@ -1319,7 +1320,7 @@ theorem hadLeftIsPerfect :
     letter.* (unbounded) and *John drank whisky.* (unbounded) vs
     *John drank five glasses of whisky.* (bounded). -/
 
-open Core.Time (SituationBoundedness)
+open Semantics.Aspect (SituationBoundedness)
 
 /-- "He arrived." — bounded (achievement). -/
 def arrivedFrame : ReichenbachFrame ℤ where
