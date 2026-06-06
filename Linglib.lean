@@ -2317,7 +2317,7 @@ import Linglib.Syntax.Minimalist.MinimalPronoun
 import Linglib.Syntax.Minimalist.LongDistanceAgree
 import Linglib.Semantics.Composition.Tree
 import Linglib.Semantics.Composition.WriterMonad
-import Linglib.Semantics.Composition.SetMonad
+
 import Linglib.Semantics.Composition.Applicative
 import Linglib.Semantics.Composition.Effects
 
