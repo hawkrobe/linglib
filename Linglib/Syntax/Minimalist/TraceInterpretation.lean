@@ -1,7 +1,6 @@
 import Linglib.Syntax.Minimalist.Basic
 import Linglib.Core.Logic.Intensional.Frame
 import Linglib.Core.Logic.Intensional.Variables
-import Linglib.Semantics.Composition.Abstraction
 
 /-!
 # Trace Interpretation
@@ -31,7 +30,6 @@ detected via `isTrace so`.
 namespace Minimalist
 
 open Core.Logic.Intensional Core.Logic.Intensional.Variables
-open Semantics.Composition.Abstraction
 
 -- ============================================================================
 -- Trace Interpretation (H&K Ch. 5, 7)
@@ -62,7 +60,7 @@ Returns the predicate λx. ⟦body(t_n := x)⟧
 -/
 def interpMovement {F : Frame} (n : ℕ)
     (bodyWithTrace : DenotG F .t) : DenotG F (.e ⇒ .t) :=
-  predicateAbstraction n bodyWithTrace
+  lambdaAbsG n bodyWithTrace
 
 -- ============================================================================
 -- Connection to Syntactic Objects

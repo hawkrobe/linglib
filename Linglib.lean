@@ -2359,7 +2359,7 @@ import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.ScaleCat
 import Linglib.Studies.Borer2005
 import Linglib.Semantics.ArgumentStructure.VoiceSemantics
-import Linglib.Semantics.Composition.Abstraction
+
 import Linglib.Semantics.Modification.Basic
 import Linglib.Semantics.Modification.RelativeClause
 import Linglib.Semantics.Quantification.CovertQuantifier
