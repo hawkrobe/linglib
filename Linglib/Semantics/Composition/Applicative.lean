@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Functor
 import Linglib.Semantics.Composition.Continuation
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 
 /-!
 # Applicative Functors in Natural Language Semantics

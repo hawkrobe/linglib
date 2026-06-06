@@ -208,7 +208,7 @@ theorem temporal_shift_parasitic_on_modal {W Time : Type*} [Preorder Time]
   use g, s₀
   -- Helper: gs.1 sfVar = s₁
   have h_sit : gs.1 sfVar = s₁ := by
-    rw [h_upd]; simp only [Assignment.update_at]
+    rw [h_upd]; simp only [Function.update_self]
   refine ⟨hc, ?_, ?_, ?_⟩
   -- 1. gs.1 sfVar = s₁ ∈ historicalBase history s₀
   · rw [h_sit]
@@ -397,7 +397,7 @@ theorem derivation_in_historical_base
   constructor
   · exact ⟨g, hc⟩
   · have h_sit : gs.1 sfVar = s₁ := by
-      rw [h_upd]; simp only [Assignment.update_at]
+      rw [h_upd]; simp only [Function.update_self]
     rw [h_sit]
     exact h_hist
 
@@ -770,8 +770,8 @@ theorem subjIndChain_singleton {W Time : Type*} [LE Time]
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj (Set.mem_singleton_iff.mp h_ctx)
     exact ⟨s₁, h_hist, h_eq ▸ hP, h_eq ▸ hQ⟩
   · rintro ⟨s₁, h_hist, hP, hQ⟩
-    refine ⟨(g.update v s₁, s₁), ⟨⟨⟨g, s₀, s₁, rfl, h_hist, rfl, rfl⟩, hP⟩, ?_⟩, hQ⟩
-    simp only [Assignment.update_at]
+    refine ⟨(Function.update g v s₁, s₁), ⟨⟨⟨g, s₀, s₁, rfl, h_hist, rfl, rfl⟩, hP⟩, ?_⟩, hQ⟩
+    simp only [Function.update_self]
 
 /--
 The dynamic pipeline entails the static conditional (`conditionalSF`).

@@ -1,4 +1,4 @@
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 import Mathlib.Data.Set.Basic
 
 /-!

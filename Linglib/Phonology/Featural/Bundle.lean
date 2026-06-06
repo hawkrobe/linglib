@@ -94,7 +94,7 @@ def empty : FeatureBundle F V := fun _ => none
 
 /-- A bundle that specifies a single feature `f` with value `v` and
     leaves everything else underspecified. Defined via `Function.update`
-    so that `Function.update_same`/`update_noteq` lemmas apply. -/
+    so that `Function.update_self` and `Function.update_of_ne` lemmas apply. -/
 def single [DecidableEq F] (f : F) (v : V) : FeatureBundle F V :=
   Function.update empty f (some v)
 

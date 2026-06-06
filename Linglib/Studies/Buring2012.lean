@@ -64,13 +64,13 @@ theorem she_undefined_of_non_female (scope : F.Entity → PUnit → Prop)
   fun hp => h hp.1.2.2
 
 /-- A bound pronoun has the same denotation as a free one: binding is the
-external assignment update `g.update i b`, and the *unchanged* selector then
+external assignment update `Function.update g i b`, and the *unchanged* selector then
 returns the binder `b`. Büring §3 — there is no separate "bound pronoun"
 lexeme; the lexical entry is identical, binding lives in the assignment. -/
 theorem she_bound_reading (b : F.Entity) :
-    (she.denote i spk adr isFemale isInanimate).selector (g.update i b) ⟨⟩
+    (she.denote i spk adr isFemale isInanimate).selector (Function.update g i b) ⟨⟩
       = some b := by
-  simp only [PersonalPronoun.denote, interpPronoun, Assignment.update_at]
+  simp only [PersonalPronoun.denote, interpPronoun, Function.update_self]
 
 /-- Epicene *they* ([arnold-2026]) carries no gender presupposition: its
 denotation is defined of a referent regardless of gender — the structural

@@ -1,4 +1,4 @@
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 
 /-!
 # Mandelkern (2022) — Witnesses: the bounded theory of (in)definites

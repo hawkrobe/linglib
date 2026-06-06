@@ -1,4 +1,4 @@
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 import Mathlib.Order.BooleanAlgebra.Defs
 
 /-!
@@ -40,7 +40,7 @@ The bridge modules in `Core/Logic/CylindricAlgebra/` prove algebraic identities
 
 ### Unproved connections (same algebra, bridges not yet formalized)
 
-These frameworks use `Assignment.update` internally, so their
+These frameworks use `Function.update` internally, so their
 quantificational operations are instances of cylindrification by the
 same argument — the bridge theorems just haven't been written yet.
 
@@ -65,7 +65,7 @@ The cylindric axioms (C1–C7) hold for any `D`; only the base type differs.
 | [partee-1973] tense | `Time` | `λt. φ(g[n↦t])` | `cylindrify n φ` over temporal assignments |
 | [percus-2000] situations | `Situation` | `λs. φ(g[n↦s])` | `cylindrify n φ` over situation assignments |
 | [heim-kratzer-1998] | `Entity` | `λx. φ(g[n↦x])` | `cylindrify n φ` over entity assignments |
-| [abusch-1997] tense | `Time` | temporal `Assignment.update` | `cylindrify n φ` over temporal assignments |
+| [abusch-1997] tense | `Time` | temporal `Function.update` | `cylindrify n φ` over temporal assignments |
 
 ### Structural parallels (not assignment-based)
 
@@ -93,6 +93,7 @@ over a different carrier.
 namespace Core.CylindricAlgebra
 
 open Core (Assignment)
+open Function
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Abstract Cylindric Algebra (HMT Def 1.1.1)
@@ -139,16 +140,13 @@ the value at slot `n`, leaving all other slots fixed.
 
 In cylindric algebra notation, `cₙ(p)(g) = ∃e. p(g[n↦e])`. -/
 def cylindrify (n : Nat) (p : Assignment E → Prop) : Assignment E → Prop :=
-  fun g => ∃ e, p (g.update n e)
+  fun g => ∃ e, p (update g n e)
 
 /-- A predicate is *cylindrification-closed* at register `n` if
 abstracting over `n` doesn't change the predicate: `cₙ(p) = p`.
 This means `p` doesn't depend on register `n`. -/
 def cylClosed (n : Nat) (p : Assignment E → Prop) : Prop :=
   cylindrify n p = p
-
-private theorem update_self (g : Assignment E) (n : Nat) : g.update n (g n) = g := by
-  funext m; by_cases h : m = n <;> simp [Assignment.update, h]
 
 /-- If `p` is invariant on `B` and `n ∉ B`, then `p` is
 cylindrification-closed at `n`. Invariance on `B` implies
@@ -157,11 +155,11 @@ theorem cylClosed_of_invariantOn {p : Assignment E → Prop} {B : List Nat} {n :
     (hinv : invariantOn p B) (hn : n ∉ B) : cylClosed n p := by
   ext g; simp only [cylindrify]; constructor
   · rintro ⟨e, he⟩
-    exact (hinv (g.update n e) g (fun m hm => by
-      simp [Assignment.update, show m ≠ n from fun h => hn (h ▸ hm)])).mp he
+    exact (hinv (update g n e) g (fun m hm =>
+      update_of_ne (show m ≠ n from fun h => hn (h ▸ hm)) e g)).mp he
   · intro hg
-    exact ⟨g n, (hinv g (g.update n (g n)) (fun m hm => by
-      simp [Assignment.update, show m ≠ n from fun h => hn (h ▸ hm)])).mp hg⟩
+    exact ⟨g n, (hinv g (update g n (g n)) (fun m hm =>
+      (update_of_ne (show m ≠ n from fun h => hn (h ▸ hm)) (g n) g).symm)).mp hg⟩
 
 /-- `invariantOn p []` is equivalent to `WeakestPrecondition.isProper`:
 the predicate takes the same value everywhere. -/
@@ -190,7 +188,7 @@ theorem cylindrify_bot (n : Nat) :
 Proof: witness the current value at register `n`. -/
 theorem le_cylindrify (n : Nat) (p : Assignment E → Prop) (g : Assignment E) :
     p g → cylindrify n p g :=
-  fun h => ⟨g n, by rw [update_self]; exact h⟩
+  fun h => ⟨g n, by rw [update_eq_self]; exact h⟩
 
 /-- **C3**: Cylindrification distributes over conjunction with
 a cylindrified factor. `cₙ(p ∧ cₙ(q)) = cₙ(p) ∧ cₙ(q)`. -/
@@ -199,9 +197,9 @@ theorem cylindrify_inter_cylindrify (n : Nat) (p q : Assignment E → Prop) :
     fun g => cylindrify n p g ∧ cylindrify n q g := by
   ext g; simp only [cylindrify]; constructor
   · rintro ⟨e, hp, e', hq⟩
-    exact ⟨⟨e, hp⟩, ⟨e', by rw [Assignment.update_overwrite] at hq; exact hq⟩⟩
+    exact ⟨⟨e, hp⟩, ⟨e', by rw [update_idem] at hq; exact hq⟩⟩
   · rintro ⟨⟨e₁, hp⟩, ⟨e₂, hq⟩⟩
-    exact ⟨e₁, hp, e₂, by rw [Assignment.update_overwrite]; exact hq⟩
+    exact ⟨e₁, hp, e₂, by rw [update_idem]; exact hq⟩
 
 /-- **C4**: Cylindrifications commute. `cₙ(cₘ(p)) = cₘ(cₙ(p))`. -/
 theorem cylindrify_comm (n m : Nat) (p : Assignment E → Prop) :
@@ -209,12 +207,12 @@ theorem cylindrify_comm (n m : Nat) (p : Assignment E → Prop) :
   ext g; simp only [cylindrify]; constructor
   · rintro ⟨e₁, e₂, hp⟩
     by_cases h : n = m
-    · subst h; exact ⟨e₁, e₂, by rw [Assignment.update_overwrite] at hp ⊢; exact hp⟩
-    · exact ⟨e₂, e₁, by rw [← Assignment.update_comm g e₁ e₂ h]; exact hp⟩
+    · subst h; exact ⟨e₁, e₂, by rw [update_idem] at hp ⊢; exact hp⟩
+    · exact ⟨e₂, e₁, by rw [← update_comm h e₁ e₂ g]; exact hp⟩
   · rintro ⟨e₂, e₁, hp⟩
     by_cases h : n = m
-    · subst h; exact ⟨e₂, e₁, by rw [Assignment.update_overwrite] at hp ⊢; exact hp⟩
-    · exact ⟨e₁, e₂, by rw [Assignment.update_comm g e₁ e₂ h]; exact hp⟩
+    · subst h; exact ⟨e₂, e₁, by rw [update_idem] at hp ⊢; exact hp⟩
+    · exact ⟨e₁, e₂, by rw [update_comm h e₁ e₂ g]; exact hp⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Diagonal Elements on Assignments
@@ -248,17 +246,17 @@ theorem diagonal_cyl (κ l m : Nat) (hκl : κ ≠ l) (hκm : κ ≠ m) :
       (fun (g : Assignment E) => diagonal l κ g ∧ diagonal κ m g) := by
   ext g; constructor
   · intro (h : g l = g m)
-    show ∃ e, (g.update κ e) l = (g.update κ e) κ ∧
-              (g.update κ e) κ = (g.update κ e) m
+    show ∃ e, (update g κ e) l = (update g κ e) κ ∧
+              (update g κ e) κ = (update g κ e) m
     refine ⟨g l, ?_, ?_⟩
-    · rw [Assignment.update_ne g (g l) (Ne.symm hκl), Assignment.update_at]
-    · rw [Assignment.update_at, Assignment.update_ne g (g l) (Ne.symm hκm)]; exact h
+    · rw [update_of_ne (Ne.symm hκl), update_self]
+    · rw [update_self, update_of_ne (Ne.symm hκm)]; exact h
   · rintro ⟨e, h₁, h₂⟩
-    have hl : (g.update κ e) l = g l := Assignment.update_ne g e (Ne.symm hκl)
-    have hm : (g.update κ e) m = g m := Assignment.update_ne g e (Ne.symm hκm)
-    calc g l = (g.update κ e) l := hl.symm
-      _ = (g.update κ e) κ := h₁
-      _ = (g.update κ e) m := h₂
+    have hl : (update g κ e) l = g l := update_of_ne (Ne.symm hκl) e g
+    have hm : (update g κ e) m = g m := update_of_ne (Ne.symm hκm) e g
+    calc g l = (update g κ e) l := hl.symm
+      _ = (update g κ e) κ := h₁
+      _ = (update g κ e) m := h₂
       _ = g m := hm
 
 /-- **C₇**: Substitution is functional.
@@ -274,12 +272,12 @@ theorem cyl_diag_compl (κ l : Nat) (p : Assignment E → Prop) (hκl : κ ≠ l
   · rintro ⟨⟨e₁, hd₁, hp₁⟩, ⟨e₂, hd₂, hp₂⟩⟩
     simp only [diagonal] at hd₁ hd₂
     have he₁ : e₁ = g l := by
-      have h1 : (g.update κ e₁) κ = e₁ := Assignment.update_at g κ e₁
-      have h2 : (g.update κ e₁) l = g l := Assignment.update_ne g e₁ (Ne.symm hκl)
+      have h1 : (update g κ e₁) κ = e₁ := update_self κ e₁ g
+      have h2 : (update g κ e₁) l = g l := update_of_ne (Ne.symm hκl) e₁ g
       rw [h1, h2] at hd₁; exact hd₁
     have he₂ : e₂ = g l := by
-      have h1 : (g.update κ e₂) κ = e₂ := Assignment.update_at g κ e₂
-      have h2 : (g.update κ e₂) l = g l := Assignment.update_ne g e₂ (Ne.symm hκl)
+      have h1 : (update g κ e₂) κ = e₂ := update_self κ e₂ g
+      have h2 : (update g κ e₂) l = g l := update_of_ne (Ne.symm hκl) e₂ g
       rw [h1, h2] at hd₂; exact hd₂
     subst he₁; subst he₂
     exact hp₂ hp₁
@@ -304,7 +302,7 @@ def substitute (κ l : Nat) (p : Assignment E → Prop) : Assignment E → Prop 
 /-- Direct (semantic) substitution: evaluate `p` with register κ
 reading from register l. -/
 def directSubst (κ l : Nat) (p : Assignment E → Prop) : Assignment E → Prop :=
-  fun g => p (g.update κ (g l))
+  fun g => p (update g κ (g l))
 
 /-- Algebraic substitution equals direct substitution (HMT §1.5).
 
@@ -320,12 +318,12 @@ theorem substitute_eq_directSubst (κ l : Nat) (p : Assignment E → Prop)
   ext g; simp only [substitute, directSubst, cylindrify, diagonal]; constructor
   · rintro ⟨e, hd, hp⟩
     have heq : e = g l := by
-      have h1 := Assignment.update_at g κ e
-      have h2 := Assignment.update_ne g e (Ne.symm h : l ≠ κ)
+      have h1 := update_self κ e g
+      have h2 := update_of_ne (Ne.symm h : l ≠ κ) e g
       rw [h1, h2] at hd; exact hd
     subst heq; exact hp
   · intro hp
-    exact ⟨g l, by simp [Assignment.update_ne g (g l) (Ne.symm h : l ≠ κ)], hp⟩
+    exact ⟨g l, by simp [update_of_ne (Ne.symm h : l ≠ κ) (g l) g], hp⟩
 
 /-- Self-substitution is cylindrification. `σ^κ_κ(x) = cκ(x)`. -/
 theorem substitute_self (κ : Nat) (p : Assignment E → Prop) :
@@ -348,14 +346,14 @@ theorem substitute_invariant (κ l : Nat) (p : Assignment E → Prop)
   · intro hp
     -- From p g, derive cylindrify κ p g
     have hcg : cylindrify κ p g := le_cylindrify κ p g hp
-    -- cylindrify κ p (g.update κ (g l)) ↔ p (g.update κ (g l)) by cylClosed
-    -- cylindrify κ p (g.update κ (g l)) = ∃ e, p ((g.update κ (g l)).update κ e)
-    -- = ∃ e, p (g.update κ e)  (by update_overwrite)
+    -- cylindrify κ p (update g κ (g l)) ↔ p (update g κ (g l)) by cylClosed
+    -- cylindrify κ p (update g κ (g l)) = ∃ e, p (update (update g κ (g l)) κ e)
+    -- = ∃ e, p (update g κ e)  (by update_idem)
     -- = cylindrify κ p g
-    suffices cylindrify κ p (g.update κ (g l)) from (congr_fun hcyl _).mp this
+    suffices cylindrify κ p (update g κ (g l)) from (congr_fun hcyl _).mp this
     simp only [cylindrify]
     obtain ⟨e, he⟩ := hcg
-    exact ⟨e, by rwa [Assignment.update_overwrite]⟩
+    exact ⟨e, by rwa [update_idem]⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 7. Derived Cylindric Algebra Theorems (HMT §1.2)
@@ -386,9 +384,9 @@ theorem cylindrify_idem (κ : Nat) (p : Assignment E → Prop) :
     cylindrify κ (cylindrify κ p) = cylindrify κ p := by
   ext g; simp only [cylindrify]; constructor
   · rintro ⟨_, e₂, hp⟩
-    exact ⟨e₂, by rwa [Assignment.update_overwrite] at hp⟩
+    exact ⟨e₂, by rwa [update_idem] at hp⟩
   · rintro ⟨e, hp⟩
-    exact ⟨g κ, e, by rwa [Assignment.update_overwrite]⟩
+    exact ⟨g κ, e, by rwa [update_idem]⟩
 
 /-- HMT Corollary 1.2.4: `cylClosed κ p ↔ p = cκ(q)` for some q. -/
 theorem cylClosed_iff_range (κ : Nat) (p : Assignment E → Prop) :

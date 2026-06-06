@@ -1076,13 +1076,13 @@ private theorem dpl_dne_fails_anaphora {E : Type*} [Nontrivial E] :
   obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
   refine ⟨0, fun g h => g = h, fun heq => hne ?_⟩
   let g₀ : Assignment E := fun _ => e₁
-  have hrhs : existsAt 0 (fun (g h : Assignment E) => g = h) g₀ (g₀.update 0 e₂) :=
+  have hrhs : existsAt 0 (fun (g h : Assignment E) => g = h) g₀ (Function.update g₀ 0 e₂) :=
     (existsAt_iff _ _ _ _).mpr ⟨e₂, rfl⟩
   rw [← heq] at hrhs
   calc e₁
       = g₀ 0 := rfl
-    _ = (g₀.update 0 e₂) 0 := congr_fun hrhs.1 0
-    _ = e₂ := Assignment.update_at g₀ 0 e₂
+    _ = (Function.update g₀ 0 e₂) 0 := congr_fun hrhs.1 0
+    _ = e₂ := Function.update_self 0 e₂ g₀
 
 /--
 The contrast: DPL negation blocks anaphora (test), PIP negation allows it

@@ -217,7 +217,7 @@ theorem dynSUBJ_singleton_eq {W Time : Type*} [LE Time]
     (g : Assignment (WorldTimeIndex W Time))
     (s₀ : WorldTimeIndex W Time) :
     dynSUBJ history v ({(g, s₀)} : SitContext W Time) =
-    { gs | ∃ s₁ ∈ historicalBase history s₀, gs = (g.update v s₁, s₁) } := by
+    { gs | ∃ s₁ ∈ historicalBase history s₀, gs = (Function.update g v s₁, s₁) } := by
   apply Set.ext; intro gs
   unfold dynSUBJ dynIntroduce
   constructor
@@ -249,12 +249,12 @@ theorem dynSUBJ_realizes_SUBJ {W Time : Type*} [LE Time]
   · rintro ⟨gs, ⟨g', s₀', s₁, h_ctx, h_hist, h_upd, h_eq⟩, h_P⟩
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj (Set.mem_singleton_iff.mp h_ctx)
     have h_sit : gs.1 v = s₁ := by
-      rw [h_upd]; simp only [Assignment.update_at]
+      rw [h_upd]; simp only [Function.update_self]
     exact ⟨s₁, h_hist, h_sit ▸ h_P⟩
   · rintro ⟨s₁, h_hist, h_P⟩
-    refine ⟨(g.update v s₁, s₁), ?_, ?_⟩
+    refine ⟨(Function.update g v s₁, s₁), ?_, ?_⟩
     · exact ⟨g, s₀, s₁, rfl, h_hist, rfl, rfl⟩
-    · simp only [Assignment.update_at]; exact h_P
+    · simp only [Function.update_self]; exact h_P
 
 /--
 IND is identity after SUBJ on the same variable.

@@ -152,7 +152,7 @@ theorem trace_indices_independent {F : Frame} (n₁ n₂ : ℕ) (h : n₁ ≠ n�
     (x : F.Entity) (g : Core.Assignment F.Entity)
     : interpTrace n₁ (g[n₂ ↦ x]) = interpTrace n₁ g := by
   simp only [interpTrace, interpPronoun]
-  exact update_other g n₂ n₁ x h
+  exact Function.update_of_ne h x g
 
 /--
 Predicate abstraction creates the right binding:
@@ -162,6 +162,6 @@ theorem abstraction_binds_correct_variable {F : Frame} (n : ℕ)
     (g : Core.Assignment F.Entity) (x : F.Entity)
     : interpTrace n (g[n ↦ x]) = x := by
   simp only [interpTrace, interpPronoun]
-  exact update_same g n x
+  exact Function.update_self n x g
 
 end Minimalist

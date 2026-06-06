@@ -110,7 +110,7 @@ variable {Var Domain : Type*} [DecidableEq Var] [Fintype Var]
     else `g(y)`. -/
 def Assignment.update (g : Assignment Var Domain) (x : Var) (d : Domain) :
     Assignment Var Domain :=
-  fun y => if y = x then some d else g y
+  Function.update g x (some d)
 
 /-- Update an index's assignment. Aloni & van Ormondt §4 Definition 4.4:
     `i[x/d] := ⟨wᵢ, gᵢ[x/d]⟩`. -/

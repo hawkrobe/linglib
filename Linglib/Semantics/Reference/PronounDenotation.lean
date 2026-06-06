@@ -2,7 +2,7 @@ import Linglib.Syntax.Pronoun.Basic
 import Linglib.Semantics.Reference.Nominal
 import Linglib.Semantics.Presupposition.PhiFeatures
 import Linglib.Core.Logic.Intensional.Variables
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
 import Linglib.Core.Nominal.Interpret
 

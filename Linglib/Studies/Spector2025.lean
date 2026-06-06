@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Truth3
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 
 /-!
 # Spector 2025: Trivalence and Transparency
@@ -620,7 +620,7 @@ Key changes from the simplified system:
 -/
 
 -- ════════════════════════════════════════════════════════════════
--- §6.0: PluralAssign substrate now lives in `Linglib.Core.Assignment`
+-- §6.0: PluralAssign substrate now lives in `Linglib.Core.Logic.Assignment`
 -- [van-den-berg-1996] [nouwen-2003] [brasoveanu-2008]
 -- ════════════════════════════════════════════════════════════════
 

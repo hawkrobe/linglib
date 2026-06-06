@@ -1,4 +1,4 @@
-import Linglib.Core.Assignment
+import Linglib.Core.Logic.Assignment
 import Linglib.Semantics.Dynamic.Connectives.Defs
 
 /-!
@@ -43,7 +43,7 @@ variable {E : Type*}
 
 /-- The "open file card n" operation: `g[n↦?]` non-deterministically. -/
 def randomAssignAt (n : Nat) : Update (Assignment E) :=
-  fun g h => ∃ d : E, h = g.update n d
+  fun g h => ∃ d : E, h = Function.update g n d
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. Dynamic Existential at a Nat Index
@@ -58,13 +58,13 @@ def existsAt (n : Nat) (φ : Update (Assignment E)) : Update (Assignment E) :=
 @[simp] theorem existsAt_eq_dseq (n : Nat) (φ : Update (Assignment E)) :
     existsAt n φ = dseq (randomAssignAt n) φ := rfl
 
-/-- Direct unfolding: `existsAt n φ g h ↔ ∃ d : E, φ (g.update n d) h`. -/
+/-- Direct unfolding: `existsAt n φ g h ↔ ∃ d : E, φ (Function.update g n d) h`. -/
 theorem existsAt_iff (n : Nat) (φ : Update (Assignment E)) (g h : Assignment E) :
-    existsAt n φ g h ↔ ∃ d : E, φ (g.update n d) h := by
+    existsAt n φ g h ↔ ∃ d : E, φ (Function.update g n d) h := by
   simp only [existsAt, dseq, randomAssignAt]
   constructor
   · rintro ⟨k, ⟨d, rfl⟩, hφ⟩; exact ⟨d, hφ⟩
-  · rintro ⟨d, hφ⟩; exact ⟨g.update n d, ⟨d, rfl⟩, hφ⟩
+  · rintro ⟨d, hφ⟩; exact ⟨Function.update g n d, ⟨d, rfl⟩, hφ⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Dynamic Universal at a Nat Index
@@ -76,16 +76,16 @@ DPL/Muskens reduction `∀ ≈ ¬∃¬`. -/
 def forallAt (n : Nat) (φ : Update (Assignment E)) : Update (Assignment E) :=
   test (dneg (existsAt n (test (dneg φ))))
 
-/-- Direct truth condition: `forallAt n φ g h ↔ g = h ∧ ∀ d, ∃ k, φ (g.update n d) k`. -/
+/-- Direct truth condition: `forallAt n φ g h ↔ g = h ∧ ∀ d, ∃ k, φ (Function.update g n d) k`. -/
 theorem forallAt_iff (n : Nat) (φ : Update (Assignment E)) (g h : Assignment E) :
-    forallAt n φ g h ↔ g = h ∧ ∀ d : E, ∃ k, φ (g.update n d) k := by
+    forallAt n φ g h ↔ g = h ∧ ∀ d : E, ∃ k, φ (Function.update g n d) k := by
   simp only [forallAt, test, dneg, existsAt, dseq, randomAssignAt]
   constructor
   · rintro ⟨rfl, hneg⟩
     refine ⟨rfl, fun d => ?_⟩
     by_contra hne
     push_neg at hne
-    exact hneg ⟨g.update n d, ⟨g.update n d, ⟨d, rfl⟩, rfl, fun ⟨k, hφ⟩ => hne k hφ⟩⟩
+    exact hneg ⟨Function.update g n d, ⟨Function.update g n d, ⟨d, rfl⟩, rfl, fun ⟨k, hφ⟩ => hne k hφ⟩⟩
   · rintro ⟨rfl, hall⟩
     refine ⟨rfl, ?_⟩
     rintro ⟨_, ⟨_, ⟨d, rfl⟩, rfl, hneg⟩⟩

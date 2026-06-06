@@ -406,7 +406,7 @@ variable {W E : Type*}
 world–assignment pair in the context, non-deterministically extend the
 assignment at position `v` with an entity satisfying `P`. -/
 def Evar_u (v : ℕ) (P : E → Prop) : StateCCP W E :=
-  λ s => {p | ∃ q ∈ s, p.1 = q.1 ∧ ∃ (x : E), P x ∧ p.2 = q.2.update v x}
+  λ s => {p | ∃ q ∈ s, p.1 = q.1 ∧ ∃ (x : E), P x ∧ p.2 = Function.update q.2 v x}
 
 /-- Mereological maximization at the state level (eq. 78): apply `K`, then
 retain only output pairs whose `v`-value is maximal **across the entire
@@ -494,16 +494,16 @@ theorem CardTest_u_distributive [PartialOrder E] [Fintype E]
     exact ⟨hi, hcard⟩
 
 /-- `Evar_u v P` is idempotent, because
-`(g.update v x).update v y = g.update v y`. -/
+`Function.update (Function.update g v x) v y = Function.update g v y`. -/
 private theorem evar_u_idempotent (v : ℕ) (P : E → Prop) (s : State W E) :
     Evar_u v P (Evar_u v P s) = Evar_u v P s := by
   ext ⟨w, g⟩; simp only [Evar_u, Set.mem_setOf_eq]; constructor
   · intro ⟨q₁, hq₁, hw₁, y, hPy, hg₁⟩
     obtain ⟨q₂, hq₂s, hw₂, x, _, hg₂⟩ := hq₁
-    exact ⟨q₂, hq₂s, hw₂ ▸ hw₁, y, hPy, by rw [hg₁, hg₂, Core.Assignment.update_overwrite]⟩
+    exact ⟨q₂, hq₂s, hw₂ ▸ hw₁, y, hPy, by rw [hg₁, hg₂, Function.update_idem]⟩
   · intro ⟨q, hqs, hw, x, hPx, hg⟩
-    exact ⟨⟨q.1, q.2.update v x⟩, ⟨q, hqs, rfl, x, hPx, rfl⟩, hw, x, hPx,
-           by rw [hg, Core.Assignment.update_overwrite]⟩
+    exact ⟨⟨q.1, Function.update q.2 v x⟩, ⟨q, hqs, rfl, x, hPx, rfl⟩, hw, x, hPx,
+           by rw [hg, Function.update_idem]⟩
 
 /-- Congruence for `isMaximal`: pointwise-equivalent predicates give
 equivalent maximality. -/
@@ -521,11 +521,11 @@ private theorem evar_u_vvals (v : ℕ) (P : E → Prop) (s : State W E) (y : E)
   simp only [Evar_u, Set.mem_setOf_eq]
   constructor
   · rintro ⟨⟨_, _⟩, ⟨_, _, _, x, hPx, hg⟩, hv⟩
-    rw [hg, Core.Assignment.update_at] at hv; rwa [← hv]
+    rw [hg, Function.update_self] at hv; rwa [← hv]
   · intro hPy
     obtain ⟨⟨w₀, g₀⟩, hw₀⟩ := hs
-    exact ⟨⟨w₀, g₀.update v y⟩, ⟨⟨w₀, g₀⟩, hw₀, rfl, y, hPy, rfl⟩,
-           Core.Assignment.update_at g₀ v y⟩
+    exact ⟨⟨w₀, Function.update g₀ v y⟩, ⟨⟨w₀, g₀⟩, hw₀, rfl, y, hPy, rfl⟩,
+           Function.update_self v y g₀⟩
 
 /-- The `v`-values after `Evar_u v P {i}` are exactly `{x | P x}`. -/
 private theorem evar_u_vvals_single (v : ℕ) (P : E → Prop)
@@ -534,10 +534,10 @@ private theorem evar_u_vvals_single (v : ℕ) (P : E → Prop)
   simp only [Evar_u, Set.mem_setOf_eq]
   constructor
   · rintro ⟨⟨_, _⟩, ⟨_, _, _, x, hPx, hg⟩, hv⟩
-    rw [hg, Core.Assignment.update_at] at hv; rwa [← hv]
+    rw [hg, Function.update_self] at hv; rwa [← hv]
   · intro hPy
-    exact ⟨⟨i.1, i.2.update v y⟩, ⟨i, rfl, rfl, y, hPy, rfl⟩,
-           Core.Assignment.update_at i.2 v y⟩
+    exact ⟨⟨i.1, Function.update i.2 v y⟩, ⟨i, rfl, rfl, y, hPy, rfl⟩,
+           Function.update_self v y i.2⟩
 
 /-- The composed "exactly n" pipeline is distributive despite containing the
 non-distributive `Mvar_u`: `Evar_u` normalizes the `v`-values to `{x | P x}`
