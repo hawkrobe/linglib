@@ -60,10 +60,10 @@ open Semantics.Quantification.Quantifier
 
 /-! ### Model and lexicon -/
 
-def quantLex : Lexicon toyModel := λ word =>
+def quantLex : Lexicon toyFrame := λ word =>
   match word with
-  | "every" => some ⟨Ty.det, (every_sem : toyModel.Denot Ty.det)⟩
-  | "some" => some ⟨Ty.det, (some_sem : toyModel.Denot Ty.det)⟩
+  | "every" => some ⟨Ty.det, (every_sem : toyFrame.Denot Ty.det)⟩
+  | "some" => some ⟨Ty.det, (some_sem : toyFrame.Denot Ty.det)⟩
   | "student" => some ⟨.e ⇒ .t, student_sem⟩
   | "person" => some ⟨.e ⇒ .t, person_sem⟩
   | "sleeps" => some ⟨.e ⇒ .t, ToyLexicon.sleeps_sem⟩
@@ -71,7 +71,7 @@ def quantLex : Lexicon toyModel := λ word =>
   | "sees" => some ⟨.e ⇒ .e ⇒ .t, ToyLexicon.sees_sem⟩
   | _ => none
 
-def g₀ : Core.Assignment toyModel.Entity := λ _ => .john
+def g₀ : Core.Assignment toyFrame.Entity := λ _ => .john
 
 /-! ### "Every student sleeps" -/
 

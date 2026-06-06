@@ -629,17 +629,17 @@ theorem gq_cont_roundtrip {F : Frame} (gq : (F.Entity → Prop) → Prop) :
     contAsGQ (gqAsCont gq) = gq := rfl
 
 /-- `every_sem` applied to a restrictor is a `Cont Prop Entity` value. -/
-def every_as_cont (restrictor : toyModel.Entity → Prop) :
-    Cont Prop toyModel.Entity :=
+def every_as_cont (restrictor : toyFrame.Entity → Prop) :
+    Cont Prop toyFrame.Entity :=
   gqAsCont (every_sem restrictor)
 
 /-- `some_sem` applied to a restrictor is a `Cont Prop Entity` value. -/
-def some_as_cont (restrictor : toyModel.Entity → Prop) :
-    Cont Prop toyModel.Entity :=
+def some_as_cont (restrictor : toyFrame.Entity → Prop) :
+    Cont Prop toyFrame.Entity :=
   gqAsCont (some_sem restrictor)
 
 /-- Lowering a scope-taking quantifier = applying it to the scope. -/
-theorem scope_lower_eq_gq_id (restrictor scope' : toyModel.Entity → Prop) :
+theorem scope_lower_eq_gq_id (restrictor scope' : toyFrame.Entity → Prop) :
     handleScope (gqAsCont (every_sem restrictor) |>.bind
       (λ x => Cont.pure (scope' x))) =
     every_sem restrictor scope' := rfl
@@ -789,7 +789,7 @@ theorem john_sees_himself_via_C :
 
     This connects adjunction mechanism
     to [heim-kratzer-1998]'s predicate abstraction. -/
-theorem binding_C_agrees_with_hk (g : Core.Assignment toyModel.Entity) :
+theorem binding_C_agrees_with_hk (g : Core.Assignment toyFrame.Entity) :
     counitApp ba' (store ToyEntity.john)
       (λ i => ToyLexicon.sees_sem i) =
     ToyLexicon.sees_sem (g[1 ↦ ToyEntity.john] 1)
@@ -800,7 +800,7 @@ theorem binding_C_agrees_with_hk (g : Core.Assignment toyModel.Entity) :
   simp only [Function.update_self]
 
 /-- C and H&K agree for Mary as well: `C(<) ▷(m) (λi. sees i) = sees m m`. -/
-theorem binding_C_agrees_with_hk_mary (g : Core.Assignment toyModel.Entity) :
+theorem binding_C_agrees_with_hk_mary (g : Core.Assignment toyFrame.Entity) :
     counitApp ba' (store ToyEntity.mary)
       (λ i => ToyLexicon.sees_sem i) =
     ToyLexicon.sees_sem (g[2 ↦ ToyEntity.mary] 2)

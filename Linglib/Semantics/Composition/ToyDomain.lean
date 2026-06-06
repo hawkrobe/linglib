@@ -19,9 +19,6 @@ inductive ToyEntity where
 
 def toyFrame : Frame := { Entity := ToyEntity, Index := Unit }
 
-/-- Backward-compatible alias. -/
-abbrev toyModel := toyFrame
-
 namespace ToyLexicon
 
 open ToyEntity

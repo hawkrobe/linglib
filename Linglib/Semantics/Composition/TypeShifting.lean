@@ -31,7 +31,7 @@ namespace Semantics.Composition.TypeShifting
 
 open Core.Logic.Intensional
 open Core.Logic.Intensional.Conjunction (typeRaise)
-open Semantics.Montague (toyModel ToyEntity)
+open Semantics.Montague (toyFrame ToyEntity)
 
 variable {F : Frame}
 
@@ -387,7 +387,7 @@ theorem BE_A_id (domain : List F.Entity) (P : F.Denot Ty.et)
     `A(BE(⟦every⟧(P)))(Q) = ∃x[P(x) ∧ Q(x)]` — existential, not universal.
     Verified on the toy model. -/
 private def toyDomain₁ : List ToyEntity := [.john, .mary, .pizza]
-private def toyEvery : toyModel.Denot Ty.ett := fun P => ∀ x ∈ toyDomain₁, P x
+private def toyEvery : toyFrame.Denot Ty.ett := fun P => ∀ x ∈ toyDomain₁, P x
 
 /-- For non-principal GQs, the round-trip changes truth conditions.
     `every(⊤) = True` but `A(BE(every))(⊤) = False` — the round-trip
@@ -410,9 +410,9 @@ open Semantics.Montague.ToyLexicon (john_sem)
 
 private def toyDomain₂ : List ToyEntity := [.john, .mary, .pizza, .book]
 
-example : lift (F := toyModel) john_sem Semantics.Montague.ToyLexicon.sleeps_sem :=
+example : lift (F := toyFrame) john_sem Semantics.Montague.ToyLexicon.sleeps_sem :=
   show Semantics.Montague.ToyLexicon.sleeps_sem john_sem from trivial
-example : BE (F := toyModel) (lift john_sem) = ident john_sem :=
+example : BE (F := toyFrame) (lift john_sem) = ident john_sem :=
   BE_lift_eq_ident john_sem
 
 end ToyExamples

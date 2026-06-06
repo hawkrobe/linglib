@@ -37,7 +37,7 @@ namespace Katzir2007
 
 open Syntax
 open Semantics.Composition.Tree
-open Semantics.Montague (toyModel ToyEntity)
+open Semantics.Montague (toyFrame ToyEntity)
 open Semantics.Montague.ToyLexicon (sleeps_sem)
 open Semantics.Quantification.Quantifier (some_sem every_sem student_sem)
 
@@ -106,14 +106,14 @@ cannot be generated from L(φ) = lexicon ∪ subtrees(φ) because
 the source tree φ contains neither category. -/
 
 /-- φ contains no ConjP anywhere in its structure. -/
-theorem no_conjp : φ.containsCat Cat.ConjP = false := by native_decide
+theorem no_conjp : φ.containsCat Cat.ConjP = false := by decide
 
 /-- φ contains no NegP anywhere in its structure. -/
-theorem no_negp : φ.containsCat Cat.NegP = false := by native_decide
+theorem no_negp : φ.containsCat Cat.NegP = false := by decide
 
 /-- None of φ's subtrees contain ConjP either. -/
 theorem subtrees_lack_conjp :
-    φ.subtrees.all (λ t => !t.containsCat Cat.ConjP) = true := by native_decide
+    φ.subtrees.all (λ t => !t.containsCat Cat.ConjP) = true := by decide
 
 -- Therefore: "some but not all students sleep" requires introducing
 -- ConjP and NegP structure not available in L(φ), so it is not a

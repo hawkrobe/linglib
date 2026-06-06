@@ -75,7 +75,7 @@ open Core.Duality (Truth3)
 open Aristotelian (Square SquareRelations)
 open Semantics.Quantification.Quantifier
 open Core.Logic.Intensional (Frame)
-open Semantics.Montague (toyModel ToyEntity)
+open Semantics.Montague (toyFrame ToyEntity)
 
 -- ════════════════════════════════════════════════════════════════
 -- §2–3. Conditional Assertion as PrProp
@@ -365,7 +365,7 @@ theorem i_conversion_equitrue {m : Frame} [Fintype m.Entity]
 theorem i_conversion_not_equiassertive :
     ∃ (m : Frame) (_ : Fintype m.Entity) (C B : m.Entity → Bool),
     ((restrictedExists C B).presup () ∧ ¬(restrictedExists B C).presup ()) := by
-  refine ⟨toyModel, inferInstance,
+  refine ⟨toyFrame, inferInstance,
     (λ x => match x with | .john => true | _ => false),
     (λ _ => false), ?_⟩
   simp only [restrictedExists]
