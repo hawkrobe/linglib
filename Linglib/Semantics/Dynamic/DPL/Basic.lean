@@ -344,7 +344,7 @@ theorem forall_isTest {E : Type*} (x : Nat) (φ : DPLRel E) (g h : Nat → E)
 DPL embeds directly into Dynamic Ty2 with `S = Assignment E = Nat → E`.
 DPL assignments ARE Dynamic Ty2 assignments; DPL relations ARE Update meanings.
 The cylindric algebra bridges (`closure(∃) = cylindrify`, `closure(=) = diagonal`)
-live in `Core/CylindricAlgebra/DynamicSemantics.lean`.
+live in `Core/Logic/CylindricAlgebra/DynamicSemantics.lean`.
 -/
 
 /-- DPL dref: projection function for variable n. -/

@@ -1,6 +1,6 @@
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Assignment
-import Linglib.Core.WorldTimeIndex
+import Linglib.Core.Logic.Intensional.WorldTimeIndex
 import Linglib.Semantics.Dynamic.DiscourseRef
 
 /-!

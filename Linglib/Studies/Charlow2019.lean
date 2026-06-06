@@ -11,7 +11,7 @@ are retained.
 import Linglib.Semantics.Dynamic.DPL.Basic
 import Linglib.Semantics.Dynamic.Connectives.CCP
 import Linglib.Semantics.Dynamic.Effects.HasFiberedLookup
-import Linglib.Core.CylindricAlgebra
+import Linglib.Core.Logic.CylindricAlgebra
 
 namespace Semantics.Dynamic.Charlow2019
 
@@ -311,7 +311,7 @@ non-interreducible theorems in their respective files. -/
 -- Charlow's `staticExists` / `dynamicExists` predicates have an
 -- algebraic interpretation: both reduce to `cylindrify` from
 -- `Core.CylindricAlgebra`. These bridges previously lived in
--- `Linglib/Core/CylindricAlgebra/DynamicSemantics.lean`, but a Core
+-- `Linglib/Core/Logic/CylindricAlgebra/DynamicSemantics.lean`, but a Core
 -- file importing from Studies inverted the substrate→Phenomena arrow.
 -- They live here now: a Studies file importing the Core substrate it
 -- depends on is layering-legal.
