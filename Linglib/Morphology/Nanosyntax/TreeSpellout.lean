@@ -1,4 +1,5 @@
 import Linglib.Morphology.Nanosyntax.Basic
+import Linglib.Core.Order.Branching
 
 /-!
 # Nanosyntax: Tree-Based Spellout
@@ -294,3 +295,36 @@ theorem chain_contains_iff_ge {F : Type} [DecidableEq F] (feat : Nat → F)
     exact decide_or_iff (by omega)
 
 end Morphology.Nanosyntax
+
+/-! ### Rose-tree interface instances
+
+`NanoTree` joins the `Core.Order.Branching` tower. The structural
+`size`/`beq`/`contains` above remain the kernel-computable
+specializations ([file-level generality discipline]: WF-derived
+generics do not kernel-reduce, so `rfl`-style spell-out evaluations
+need the structural forms). -/
+
+namespace Morphology.Nanosyntax.NanoTree
+
+instance {F : Type} : Core.Order.Branching (NanoTree F) where
+  children
+    | .leaf _ => []
+    | .node _ cs => cs
+
+@[simp] theorem branching_children_leaf {F : Type} (f : F) :
+    Core.Order.Branching.children (NanoTree.leaf f) = [] := rfl
+
+@[simp] theorem branching_children_node {F : Type} (f : F) (cs : List (NanoTree F)) :
+    Core.Order.Branching.children (NanoTree.node f cs) = cs := rfl
+
+instance {F : Type} : Core.Order.FiniteBranching (NanoTree F) where
+  sizeOf_children {c t} hc := by
+    cases t with
+    | leaf _ => simp at hc
+    | node f cs =>
+      simp only [branching_children_node] at hc
+      have := List.sizeOf_lt_of_mem hc
+      simp only [NanoTree.node.sizeOf_spec]
+      omega
+
+end Morphology.Nanosyntax.NanoTree

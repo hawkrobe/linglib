@@ -1,6 +1,7 @@
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Nat.Basic
 import Mathlib.Logic.Equiv.Defs
+import Linglib.Core.Order.Branching
 
 set_option autoImplicit false
 
@@ -293,3 +294,27 @@ instance [Inhabited α] : Inhabited (Planar α) :=
 end Planar
 
 end RootedTree
+
+/-! ### Rose-tree interface instances
+
+`Planar` joins the `Core.Order.Branching` tower: Gorn-address
+machinery, the dominance order, and the B&P command bridge come
+generically from the `children` projection. -/
+
+namespace RootedTree.Planar
+
+instance {α : Type*} : Core.Order.Branching (Planar α) := ⟨Planar.children⟩
+
+@[simp] theorem branching_children {α : Type*} (t : Planar α) :
+    Core.Order.Branching.children t = t.children := rfl
+
+instance {α : Type*} : Core.Order.FiniteBranching (Planar α) where
+  sizeOf_children {c t} hc := by
+    cases t with
+    | node a cs =>
+      simp only [branching_children, Planar.children] at hc
+      have := List.sizeOf_lt_of_mem hc
+      simp only [Planar.node.sizeOf_spec]
+      omega
+
+end RootedTree.Planar

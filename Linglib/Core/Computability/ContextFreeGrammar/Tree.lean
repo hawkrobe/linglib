@@ -1,5 +1,6 @@
 import Mathlib.Computability.ContextFreeGrammar
 import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
+import Linglib.Core.Order.Branching
 
 /-!
 # Derivation Trees for Context-Free Grammars
@@ -1098,5 +1099,40 @@ theorem validFor_derives {T : Type*} {g : ContextFreeGrammar T}
        ContextFreeRule.Rewrites.input_output⟩).trans
       (derives_yieldList children (fun c hc => validFor_derives c (hchildren c hc)))
 termination_by t
+
+end CFGTree
+
+/-! ### Rose-tree interface instances
+
+`CFGTree.Pos` is the Gorn address — exactly
+`Core.Order.TreePath.toList` — so the generic
+`Core.Order.Branching.subtreeAt` walks the same positions as
+`subtreeAt?`. The structural `size`/`height`/`yield` above remain the
+kernel-computable specializations of the generic API. -/
+
+namespace CFGTree
+
+variable {T N : Type*}
+
+instance : Core.Order.Branching (CFGTree T N) where
+  children
+    | .leaf _ => []
+    | .node _ cs => cs
+
+@[simp] theorem branching_children_leaf (t : T) :
+    Core.Order.Branching.children (CFGTree.leaf (N := N) t) = [] := rfl
+
+@[simp] theorem branching_children_node (nt : N) (cs : List (CFGTree T N)) :
+    Core.Order.Branching.children (CFGTree.node nt cs) = cs := rfl
+
+instance : Core.Order.FiniteBranching (CFGTree T N) where
+  sizeOf_children {c t} hc := by
+    cases t with
+    | leaf _ => simp at hc
+    | node nt cs =>
+      simp only [branching_children_node] at hc
+      have := List.sizeOf_lt_of_mem hc
+      simp only [CFGTree.node.sizeOf_spec]
+      omega
 
 end CFGTree

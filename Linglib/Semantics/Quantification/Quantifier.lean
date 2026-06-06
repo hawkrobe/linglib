@@ -27,7 +27,7 @@ witness type.
 namespace Semantics.Quantification.Quantifier
 
 open Core.Logic.Intensional
-open Semantics.Montague (toyModel ToyEntity)
+open Semantics.Montague (toyFrame ToyEntity)
 open Core.Quantification
 
 export Core.Quantification
@@ -100,28 +100,28 @@ instance : Fintype ToyEntity where
   elems := {.john, .mary, .pizza, .book}
   complete := fun x => by cases x <;> simp
 
-/-- Bridge: `toyModel.Entity = ToyEntity` is definitional but opaque to
+/-- Bridge: `toyFrame.Entity = ToyEntity` is definitional but opaque to
     instance search. -/
-instance : Fintype toyModel.Entity :=
+instance : Fintype toyFrame.Entity :=
   show Fintype ToyEntity by infer_instance
 
 /-! ### Toy lexicon -/
 
 section ToyLexicon
 
-def student_sem : toyModel.Denot (.e ⇒ .t) :=
+def student_sem : toyFrame.Denot (.e ⇒ .t) :=
   λ x => match x with
     | .john => True
     | .mary => True
     | _ => False
 
-def person_sem : toyModel.Denot (.e ⇒ .t) :=
+def person_sem : toyFrame.Denot (.e ⇒ .t) :=
   λ x => match x with
     | .john => True
     | .mary => True
     | _ => False
 
-def thing_sem : toyModel.Denot (.e ⇒ .t) :=
+def thing_sem : toyFrame.Denot (.e ⇒ .t) :=
   λ _ => True
 
 instance : DecidablePred student_sem :=
