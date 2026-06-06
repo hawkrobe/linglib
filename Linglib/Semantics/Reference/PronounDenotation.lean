@@ -61,8 +61,8 @@ def PersonalPronoun.phiPresup {E : Type*} [PartialOrder E] (e : PersonalPronoun)
       | _            => PrProp.top)
     (PrProp.and
       (match e.number with
-        | some .Sing => sgSem E
-        | some .Plur => plSem E
+        | some .singular => sgSem E
+        | some .plural => plSem E
         | _          => PrProp.top)
       (match e.gender with
         | some .feminine  => femSem isFemale
@@ -102,7 +102,7 @@ theorem interpPronoun_eq_iLookup {F : Frame} (i : ℕ) (g : Assignment F.Entity)
 /-- A 3rd-person plural feminine entry (Spanish *ellas*), used to exercise
 the φ-feature presupposition. -/
 private def ellas : PersonalPronoun :=
-  { form := "ellas", person := some .third, number := some .Plur,
+  { form := "ellas", person := some .third, number := some .plural,
     gender := some .feminine }
 
 /-- Negative: a feminine pronoun is undefined of a non-feminine referent. -/

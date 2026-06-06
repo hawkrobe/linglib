@@ -52,7 +52,6 @@ side-effect, and monad transformers compose them modularly.
 
 namespace GiorgoloAsudeh2012
 
-open Semantics.Composition.WriterMonad (Writer)
 
 -- ════════════════════════════════════════════════════
 -- § Model
@@ -93,7 +92,7 @@ def PresupProp.eval : PresupProp → Bool
 -- § Two-Channel Architecture (Monad Transformer, Appendix A)
 -- ════════════════════════════════════════════════════
 
-/-- Two-channel meaning: flattened `Writer Presup (Writer CI A)`.
+/-- Two-channel meaning: flattened `Writer (List Presup) (Writer (List CI) A)`.
 
     The outer Writer carries presuppositions; the inner carries
     conventional implicatures. Figure 1's result type is:
@@ -138,25 +137,27 @@ def check (p : Presup) : TwoChannel CI Presup Unit := ⟨(), [], [p]⟩
 end TwoChannel
 
 -- ════════════════════════════════════════════════════
--- § Isomorphism: TwoChannel ≅ Writer Presup (Writer CI A)
+-- § Isomorphism: TwoChannel ≅ Writer (List Presup) (Writer (List CI) A)
 -- ════════════════════════════════════════════════════
 
 section NestedIso
-variable {CI Presup A : Type*}
+-- A single universe: mathlib's `Writer ω α` requires `ω` and `α` in the
+-- same universe, and the nesting chains all three parameters together.
+universe u
+variable {CI Presup A : Type u}
 
-def ofNestedWriter (m : Writer Presup (Writer CI A)) : TwoChannel CI Presup A :=
+def ofNestedWriter (m : Writer (List Presup) (Writer (List CI) A)) : TwoChannel CI Presup A :=
   ⟨m.val.val, m.val.log, m.log⟩
 
-def toNestedWriter (m : TwoChannel CI Presup A) : Writer Presup (Writer CI A) :=
-  ⟨⟨m.val, m.ciLog⟩, m.presupLog⟩
+def toNestedWriter (m : TwoChannel CI Presup A) : Writer (List Presup) (Writer (List CI) A) :=
+  Writer.mk (Writer.mk m.val m.ciLog) m.presupLog
 
 theorem nested_roundtrip (m : TwoChannel CI Presup A) :
     ofNestedWriter (toNestedWriter m) = m := by
   cases m; rfl
 
-theorem nested_roundtrip_inv (m : Writer Presup (Writer CI A)) :
-    toNestedWriter (ofNestedWriter m) = m := by
-  rcases m with ⟨⟨_, _⟩, _⟩; rfl
+theorem nested_roundtrip_inv (m : Writer (List Presup) (Writer (List CI) A)) :
+    toNestedWriter (ofNestedWriter m) = m := rfl
 
 end NestedIso
 

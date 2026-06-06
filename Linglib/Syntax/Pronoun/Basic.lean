@@ -115,8 +115,10 @@ structure Pronoun where
       `firstInclusive`, *kami* = `firstExclusive`; English *we* = plain
       `first` ([cysouw-2009]). -/
   person : Option Person := none
-  /-- Grammatical number. -/
-  number : Option UD.Number := none
+  /-- Grammatical number — the canonical analytical inventory (root
+      `Number`); UD realization via `Number.toUD` (partial: the
+      minimal/augmented values have no UD tag). -/
+  number : Option Number := none
   /-- Grammatical case. -/
   case_ : Option Features.Case := none
   /-- Grammatical gender. For 3rd-person pronouns in gendered languages
@@ -184,7 +186,8 @@ open Features.Register (Level)
     surface as adverbs) stay in the relevant fragment. -/
 def toWord (p : Pronoun) : Word :=
   { form := p.form, cat := .PRON,
-    features := { person := p.person.map Person.toUD, number := p.number,
+    features := { person := p.person.map Person.toUD,
+                  number := p.number.bind Number.toUD,
                   case_ := p.case_,
                   gender := p.gender.bind (·.toUD),
                   -- carry the binding-relevant morphology so a projected pro-form's class is
@@ -213,7 +216,8 @@ def category (p : Pronoun) : Option Person.Category :=
     mathlib way) so illegal states are catchable without fragmenting the type. -/
 def WellFormed (p : Pronoun) : Prop :=
   ∀ per, p.person = some per → per.MarksClusivity →
-    p.number = some .Dual ∨ p.number = some .Plur
+    p.number = some .dual ∨ p.number = some .plural ∨
+    p.number = some .minimal ∨ p.number = some .augmented
 
 instance (p : Pronoun) : Decidable p.WellFormed := by
   unfold WellFormed; infer_instance
