@@ -1,4 +1,4 @@
-import Linglib.Core.WorldTimeIndex
+import Linglib.Core.Logic.Intensional.WorldTimeIndex
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Mood.IllocutionaryMood
 import Linglib.Semantics.Mood.POSW

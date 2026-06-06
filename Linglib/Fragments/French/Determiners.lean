@@ -17,7 +17,7 @@ gap relative to English: French has no lexical dual universal
 quantifier (no counterpart of `both`). The expression `les deux` is the
 nearest equivalent and is encoded here, with `numberRestriction := some
 .du`, marking that — unlike `tous`, which is plural-restricted — it
-realizes the dual core concept (`Core.CoreConcept.Id.dual`).
+realizes the dual core concept (`JereticEtAl2025.CoreConcept.Id.dual`).
 -/
 
 namespace French.Determiners

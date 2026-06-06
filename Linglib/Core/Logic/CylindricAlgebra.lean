@@ -23,9 +23,9 @@ algebraic source.
 
 ## Connections across the library
 
-### Proved bridges (`Core/CylindricAlgebra/`)
+### Proved bridges (`Core/Logic/CylindricAlgebra/`)
 
-The bridge modules in `Core/CylindricAlgebra/` prove algebraic identities
+The bridge modules in `Core/Logic/CylindricAlgebra/` prove algebraic identities
 (not analogies) between framework-specific operations and cylindric ops.
 
 | Framework | Operation | = Cylindric | Bridge |
