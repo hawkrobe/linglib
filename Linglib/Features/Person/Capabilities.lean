@@ -1,3 +1,4 @@
+import Linglib.Core.Order.Flat
 import Linglib.Features.Person.Basic
 
 /-!
@@ -32,22 +33,25 @@ namespace HasPerson
 
 variable {α β : Type*} [HasPerson α] [HasPerson β]
 
-/-- Two carriers are person-compatible: if both mark person, the values
-    agree. Unmarked carriers are compatible with everything. -/
+/-- Two carriers are person-compatible: the slot values are compatible in
+    the flat information order (`Compat`) — if both mark person, the values
+    agree; unmarked carriers are wildcards. -/
 def Compatible (a : α) (b : β) : Prop :=
-  ∀ p q, personOf a = some p → personOf b = some q → p = q
+  Compat (α := Flat Person) (personOf a) (personOf b)
 
 instance (a : α) (b : β) : Decidable (Compatible a b) := by
   unfold Compatible
   infer_instance
 
 theorem compatible_comm {a : α} {b : β} (h : Compatible a b) :
-    Compatible b a := fun p q hp hq => (h q p hq hp).symm
+    Compatible b a :=
+  h.symm
 
-theorem compatible_of_none {a : α} {b : β} (h : personOf a = none) :
-    Compatible a b := fun p _ hp _ => by
-  rw [h] at hp
-  exact absurd hp (by simp)
+theorem compatible_of_none {a : α} (h : personOf a = none) (b : β) :
+    Compatible a b := by
+  unfold Compatible
+  rw [h]
+  exact bot_compat _
 
 end HasPerson
 
@@ -58,7 +62,9 @@ end HasPerson
 theorem UD.MorphFeatures.compatible_hasPerson {f1 f2 : UD.MorphFeatures}
     (h : f1.compatible f2 = true) :
     HasPerson.Compatible f1 f2 := by
-  intro pa pb ha hb
+  unfold HasPerson.Compatible
+  rw [Flat.compat_iff]
+  intro pa ha pb hb
   have hp : (f1.person.isNone || f2.person.isNone || f1.person == f2.person)
       = true := by
     unfold UD.MorphFeatures.compatible at h
@@ -76,5 +82,6 @@ theorem UD.MorphFeatures.compatible_hasPerson {f1 f2 : UD.MorphFeatures}
       rw [h1, h2] at hp
       simp only [Option.isNone_some, Bool.false_or, beq_iff_eq,
         Option.some.injEq] at hp
-      simp only [Option.map_some, Option.some.injEq] at ha hb
-      rw [← ha, ← hb, hp]
+      simp only [Option.map_some] at ha hb
+      subst hp
+      exact (Option.some.inj ha).symm.trans (Option.some.inj hb)
