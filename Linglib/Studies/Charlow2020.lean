@@ -179,7 +179,7 @@ agrees with the derived applicative from the set monad. -/
 theorem setAp_from_setBind (m : Set (A → B)) (n : Set A) :
     setAp m n = setBind m (fun f => setBind n (fun x => eta (f x))) := by
   ext b
-  simp only [Applicative.mem_setAp, mem_setBind, mem_eta]
+  simp only [Semantics.Composition.Applicative.mem_setAp, mem_setBind, mem_eta]
   aesop
 
 end ApplicativeBridge

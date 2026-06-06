@@ -313,8 +313,10 @@ theorem evalTime_root_is_speech {Time : Type*}
     event time). This is how attitude verbs "transmit" their event time. -/
 theorem evalTime_shifts_under_embedding {Time : Type*}
     (tp : TensePronoun) (g : TemporalAssignment Time) (matrixEventTime : Time) :
-    tp.evalTime (updateTemporal g tp.evalTimeIndex matrixEventTime) = matrixEventTime :=
-  Function.update_self tp.evalTimeIndex matrixEventTime g
+    tp.evalTime (updateTemporal g tp.evalTimeIndex matrixEventTime) = matrixEventTime := by
+  show interpTense tp.evalTimeIndex
+    (updateTemporal g tp.evalTimeIndex matrixEventTime) = matrixEventTime
+  exact zeroTense_receives_binder_time g tp.evalTimeIndex matrixEventTime
 
 /-- Resolving a bound tense under binding yields the binder time. -/
 theorem TensePronoun.bound_resolve_eq_binder {Time : Type*}

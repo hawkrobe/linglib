@@ -106,7 +106,7 @@ def assign3 (a b c : Person) : PartialAssign Person :=
   rfl
 
 @[simp] theorem assign2_u₂ (a b : Person) : assign2 a b u₂ = some b := by
-  simp only [assign2, PartialAssign.update, u₂, if_true]
+  simp only [assign2, PartialAssign.update, u₂, Function.update_self]
 
 @[simp] theorem assign3_u₁ (a b c : Person) : assign3 a b c u₁ = some a := by
   simp only [assign3, assign2, PartialAssign.update, u₁, u₂, u₃]
@@ -117,7 +117,7 @@ def assign3 (a b c : Person) : PartialAssign Person :=
   rfl
 
 @[simp] theorem assign3_u₃ (a b c : Person) : assign3 a b c u₃ = some c := by
-  simp only [assign3, PartialAssign.update, u₃, if_true]
+  simp only [assign3, PartialAssign.update, u₃, Function.update_self]
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Narrow Scope (paper §3, eq 49–50)

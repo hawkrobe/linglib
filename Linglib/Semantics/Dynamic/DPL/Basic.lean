@@ -392,7 +392,11 @@ theorem neg_eq_test_dneg {E : Type*} (φ : DPLRel E) :
 
 theorem exists_eq {E : Type*} (x : Nat) (φ : DPLRel E) :
     toDRS (DPLRel.exists_ x φ) = λ g h => ∃ d : E, toDRS φ (extend g x d) h := by
-  rfl
+  have hup : ∀ (g : Assignment E) (d : E),
+      (fun n => if n = x then d else g n) = Function.update g x d := fun g d => by
+    funext n; simp [Function.update_apply]
+  funext g h
+  exact propext (exists_congr fun d => by rw [hup g d]; exact Iff.rfl)
 
 /-- **DPL implication = test of dynamic implication.** -/
 theorem impl_eq_test_dimpl {E : Type*} (φ ψ : DPLRel E) :

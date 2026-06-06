@@ -22,6 +22,11 @@ open Semantics.Dynamic.Core
 def trueAt {E : Type*} (K : DPLRel E) (g : Assignment E) : Prop :=
   ∃ h, K g h
 
+/-- `DPLRel.exists_`'s inline pointwise update equals `Function.update`. -/
+private theorem update_eq_ite {E : Type*} (g : Assignment E) (x : Nat) (d : E) :
+    (fun n => if n = x then d else g n) = Function.update g x d := by
+  funext n; simp [Function.update_apply]
+
 /-- Destructive update preserves truth conditions (§4). -/
 theorem destructive_preserves_truth {E : Type*}
     (P Q : E → Prop) (g : Assignment E) :
@@ -36,7 +41,8 @@ theorem destructive_preserves_truth {E : Type*}
     exact ⟨⟨d₁, by simpa using hP⟩, ⟨d₂, by simpa using hQ⟩⟩
   · rintro ⟨⟨x, hPx⟩, ⟨y, hQy⟩⟩
     exact ⟨Function.update (Function.update g 6 x) 6 y, Function.update g 6 x,
-      ⟨x, rfl, by simpa⟩, y, rfl, by simpa⟩
+      ⟨x, update_eq_ite g 6 x, by simpa⟩,
+      y, update_eq_ite (Function.update g 6 x) 6 y, by simpa⟩
 
 /-- Static ↑: evaluates truth, discards modified assignment (Table 1, row 1). -/
 def staticExists {E : Type*} (x : Nat) (body : Assignment E → Prop) : DPLRel E :=
@@ -59,7 +65,7 @@ theorem dynamic_changes_assignment {E : Type*} [Nontrivial E] :
   obtain ⟨e₁, e₂, hne⟩ := exists_pair_ne E
   refine ⟨0, λ _ => True, λ _ => e₁, Function.update (λ _ => e₁) 0 e₂, ?_⟩
   constructor
-  · exact ⟨e₂, rfl, trivial⟩
+  · exact ⟨e₂, update_eq_ite _ 0 e₂, trivial⟩
   · intro heq; exact hne (congr_fun heq 0 |>.symm ▸ by simp)
 
 /-- Static and dynamic agree on truth conditions (§4, §7). -/
@@ -70,9 +76,10 @@ theorem static_dynamic_same_truth {E : Type*}
   constructor
   · rintro ⟨h, heq, d, hbody⟩
     subst heq
-    exact ⟨Function.update g x d, d, rfl, hbody⟩
+    exact ⟨Function.update g x d, d, update_eq_ite g x d,
+      (update_eq_ite g x d).symm ▸ hbody⟩
   · rintro ⟨_, d, _, hbody⟩
-    exact ⟨g, rfl, d, hbody⟩
+    exact ⟨g, rfl, d, update_eq_ite g x d ▸ hbody⟩
 
 /-- Reachable: h is reachable from g via some DPL formula (Charlow's (24)). -/
 def reachable {E : Type*} (g h : Assignment E) : Prop :=
@@ -98,10 +105,11 @@ theorem antisymmetry_fails {E : Type*} [Nontrivial E] :
   refine ⟨g, h, ?_, ?_, ?_⟩
   · intro heq; exact hne (by simpa using congr_fun heq 0)
   · exact ⟨DPLRel.exists_ 0 (DPLRel.atom (λ g' => g' 0 = e₂)),
-           e₂, rfl, by simp⟩
+           e₂, update_eq_ite g 0 e₂, by simp⟩
   · refine ⟨DPLRel.exists_ 0 (DPLRel.atom (λ g' => g' 0 = e₁)),
             e₁, ?_, by simp⟩
-    simp [h, g]
+    funext n
+    by_cases hn : n = 0 <;> simp [hn, g, h, Function.update_apply]
 
 /-- Non-distributive negation (28): removes from s points that survive φ. -/
 def stateNeg {W E : Type*} (φ : StateCCP W E) : StateCCP W E :=
