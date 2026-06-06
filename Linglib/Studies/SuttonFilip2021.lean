@@ -1,7 +1,7 @@
 import Mathlib.Data.Fintype.Powerset
 import Linglib.Features.Individuation
 import Linglib.Features.MassCount
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 
 /-!
 # Sutton & Filip (2021) — The Count/Mass Distinction for Granular Nouns
@@ -87,7 +87,7 @@ namespace SuttonFilip2021
 
 Their (16)–(18): the schema machinery (`Mereology.OverlapPred`,
 `Mereology.IsMaxDisjointIn`, `Mereology.nullSchema` for `𝒮₀`, their (32))
-lives in `Core/Mereology.lean`, shared with [landman-2020]
+lives in `Core/Order/Mereology.lean`, shared with [landman-2020]
 (`Studies/Landman2020.lean`), whose disjointness thesis it packages.
 A predicate is *overlapping* if two distinct members overlap (their (17)
 omits the distinctness, under which any inhabited predicate self-overlaps

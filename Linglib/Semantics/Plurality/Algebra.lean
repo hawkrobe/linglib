@@ -1,4 +1,4 @@
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 
 /-!
 # Link 1983: The Logical Analysis of Plurals and Mass Terms
@@ -29,7 +29,7 @@ later simplification, not Link 1983's actual ontology; see
 Link's `*` IS `Mereology.AlgClosure`; Link's cumulative reference IS
 `Mereology.CUM`; Link's atom IS `Mereology.Atom`. The notation in this
 file (`star`, `IsDistr`, etc.) is preserved for paper-faithful
-legibility but is definitionally identical to the `Core/Mereology.lean`
+legibility but is definitionally identical to the `Core/Order/Mereology.lean`
 substrate. Materialization homomorphism `Materialization` corresponds to
 mathlib's `SupHom` and could be folded into it (Todo).
 

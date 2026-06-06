@@ -301,17 +301,10 @@ class ExtMeasure (α : Type*) [SemilatticeSup α]
       We axiomatize it directly since `SemilatticeSup` lacks complementation. -/
   strict_mono : ∀ (x y : α), y < x → μ y < μ x
 
-/-- Measure phrases create QUA predicates: {x : μ(x) = n} is QUA
-    whenever μ is an extensive measure.
-    [krifka-1998] §2.2: "two kilograms of flour" is QUA because
-    no proper part of a 2kg entity also weighs 2kg. -/
-theorem extMeasure_qua {α : Type*} [SemilatticeSup α]
-    {μ : α → ℚ} [hμ : ExtMeasure α μ] (n : ℚ) (_hn : 0 < n) :
-    QUA (fun x => μ x = n) := by
-  intro x y hx hlt hy
-  have hsm := hμ.strict_mono x y hlt
-  rw [hy, hx] at hsm
-  exact absurd hsm (lt_irrefl _)
+/-! Measure phrases create QUA predicates: `{x : μ(x) = n}` is QUA whenever
+μ is an extensive measure ([krifka-1998] §2.2: "two kilograms of flour" is
+QUA because no proper part of a 2kg entity also weighs 2kg). The theorem
+`extMeasure_qua` is stated in §9 below, derived via `qua_pullback`. -/
 
 -- ════════════════════════════════════════════════════
 -- § 6. QMOD: Quantizing Modification ([krifka-1989])
@@ -485,19 +478,15 @@ theorem singleton_qua {α : Type*} [PartialOrder α]
   subst hx; subst hy
   exact absurd hlt (lt_irrefl _)
 
-/-- `extMeasure_qua` derived from `qua_pullback` + `singleton_qua`.
-    This shows that `extMeasure_qua` is a special case of QUA pullback:
+/-- Measure phrases create QUA predicates: `{x : μ(x) = n}` is QUA
+    whenever μ is an extensive measure ([krifka-1998] §2.2).
+    A special case of QUA pullback:
 
       {x | μ(x) = n} = (· = n) ∘ μ
 
-    and QUA pulls back along the StrictMono map μ.
-
-    Note: unlike the original `extMeasure_qua`, this derivation does not
-    require `0 < n`. The positivity hypothesis was an artifact of the
-    direct proof; the pullback route is strictly more general.
-
-    The original `extMeasure_qua` is preserved for backward compatibility. -/
-theorem extMeasure_qua' {α : Type*} [SemilatticeSup α]
+    and QUA pulls back along the StrictMono map μ. No positivity
+    hypothesis on `n` is needed — the pullback route is fully general. -/
+theorem extMeasure_qua {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} [hμ : ExtMeasure α μ] (n : ℚ) :
     QUA (fun x => μ x = n) :=
   qua_pullback (extMeasure_strictMono hμ) (singleton_qua n)
@@ -865,50 +854,5 @@ theorem subserves {α : Type*} [Preorder α] {q p : α → Prop}
     (h : IsContentPart q p) : Subserves q p := h.2
 
 end IsContentPart
-
--- ════════════════════════════════════════════════════
--- § 16. Strict-Part Reflection and Preservation
---      (paper [bondarenko-elliott-2026] eqs. 53/54)
--- ════════════════════════════════════════════════════
-
-/-- **Strict-part reflection** for a partial function.
-    A partial map `f : α → Option β` *reflects* proper parthood when
-    every proper sub-image `q' < f(x)` is the image of some proper
-    sub-input `x' < x`. Generic reusable formulation; specialized in
-    `Studies/BondarenkoElliott2026.lean` to MSI
-    (Mapping to Sub-parts of the Input). -/
-def StrictPartReflecting {α β : Type*} [Preorder α] [Preorder β]
-    (f : α → Option β) : Prop :=
-  ∀ ⦃x q q'⦄, f x = some q → q' < q → ∃ x', x' < x ∧ f x' = some q'
-
-/-- **Strict-part preservation** for a partial function.
-    A partial map `f : α → Option β` *preserves* proper parthood when
-    every proper sub-input `x' < x` (with `f x` defined) yields a proper
-    sub-image of `f(x)`. Generic reusable formulation; specialized in
-    `Studies/BondarenkoElliott2026.lean` to MSO
-    (Mapping to Sub-parts of the Output). -/
-def StrictPartPreserving {α β : Type*} [Preorder α] [Preorder β]
-    (f : α → Option β) : Prop :=
-  ∀ ⦃x x' qx⦄, x' < x → f x = some qx → ∃ qx', qx' < qx ∧ f x' = some qx'
-
--- ════════════════════════════════════════════════════
--- § 17. IsContentPart counterexample helper
--- ════════════════════════════════════════════════════
-
-/-- A singleton `{q}` is **not** a conjunctive part of `p` whenever some
-    `q' ∈ p` lacks `q` as a sub-element (i.e., `¬ q ≤ q'`). The Down
-    clause of `IsContentPart` requires every `p`-element to have a
-    `{q}`-element below it; with only `q` available, `q ≤ q'` must hold
-    for every `q' ∈ p`.
-
-    Used for paper [bondarenko-elliott-2026] eq. 95 to discriminate
-    classical entailment from conjunctive parthood. -/
-theorem not_isContentPart_of_singleton_not_le {α : Type*} [Preorder α]
-    {q : α} {p : α → Prop} {q' : α} (hq' : p q') (h : ¬ q ≤ q') :
-    ¬ IsContentPart (· = q) p := by
-  intro ⟨hd, _⟩
-  obtain ⟨t, ht, hle⟩ := hd q' hq'
-  -- ht : t = q (from singleton membership), so q ≤ q' would follow
-  exact h (ht ▸ hle)
 
 end Mereology

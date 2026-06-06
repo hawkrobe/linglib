@@ -1,5 +1,6 @@
 import Linglib.Semantics.Quantification.Quantifier
-import Linglib.Core.NestedRestriction
+import Mathlib.Order.BoundedOrder.Basic
+import Mathlib.Order.Fin.Basic
 
 /-!
 # Quantifier Domain Restriction
@@ -222,7 +223,9 @@ instance : OrderBot SpatialScale where
   bot := .peripersonal
   bot_le a := by cases a <;> decide
 
-/-- Default Domain Restriction Possibilities (DDRPs).
+/-- Default Domain Restriction Possibilities (DDRPs) — a monotone family of
+    candidate domain restrictors indexed by an ordered scale, with the top of
+    the scale unrestricted.
 
     Given a perceptual scene, cognitive heuristics generate nested spatial
     regions that induce candidate domain restrictors. The nesting reflects
@@ -231,13 +234,16 @@ instance : OrderBot SpatialScale where
 
     Parameterized by a scale type `S` with a preorder and top element,
     enabling reuse for non-spatial heuristics. `SpatialScale` is the
-    canonical instantiation.
-
-    Now an alias for `Core.NestedRestriction.NestedRestriction`, which
-    extracts the shared nesting structure used by both domain restriction
-    and comparison class inference. -/
-abbrev DDRP (S E : Type*) [Preorder S] [OrderTop S] :=
-  Core.NestedRestriction S E
+    canonical instantiation; the same nesting structure is instantiated by
+    ASL signing height (`HeightDDRP`, [davidson-gagne-2022]) and comparison
+    class inference ([tessler-goodman-2022]). -/
+structure DDRP (S E : Type*) [Preorder S] [OrderTop S] where
+  /-- Each scale level induces a candidate restrictor on the domain. -/
+  region : S → Set E
+  /-- Nesting: smaller scale ⊆ larger scale. -/
+  monotone : Monotone region
+  /-- The top scale is unrestricted. -/
+  top_total : region ⊤ = Set.univ
 
 /-- The candidate domain restrictors: one per scale level.
     DDRPs constrain the candidate set to a small, structured menu —
@@ -257,7 +263,7 @@ theorem DDRP.every_nesting {S : Type*} [Preorder S] [OrderTop S]
     {s₁ s₂ : S} (h : s₁ ≤ s₂) :
     every_restricted (d.region s₂) R Sc →
     every_restricted (d.region s₁) R Sc :=
-  λ hev => every_restricted_anti_mono (d.monotone h) hev
+  λ hev => every_restricted_anti_mono (λ _ hx => d.monotone h hx) hev
 
 /-- General ⟦some⟧ nesting (reversed direction): truth under a smaller scale
     entails truth under any larger scale. Dual of `every_nesting`.
@@ -268,7 +274,7 @@ theorem DDRP.some_nesting {S : Type*} [Preorder S] [OrderTop S]
     {s₁ s₂ : S} (h : s₁ ≤ s₂) :
     some_restricted (d.region s₁) R Sc →
     some_restricted (d.region s₂) R Sc :=
-  λ hso => some_restricted_mono (d.monotone h) hso
+  λ hso => some_restricted_mono (λ _ hx => d.monotone h hx) hso
 
 /-- General ⟦no⟧ nesting: truth under a larger scale entails truth under
     any smaller scale. Same direction as ⟦every⟧ (both are restrictor ↓MON).
@@ -279,6 +285,6 @@ theorem DDRP.no_nesting {S : Type*} [Preorder S] [OrderTop S]
     {s₁ s₂ : S} (h : s₁ ≤ s₂) :
     no_restricted (d.region s₂) R Sc →
     no_restricted (d.region s₁) R Sc :=
-  λ hno => no_restricted_anti_mono (d.monotone h) hno
+  λ hno => no_restricted_anti_mono (λ _ hx => d.monotone h hx) hno
 
 end Semantics.Quantification.DomainRestriction

@@ -168,7 +168,6 @@ import Linglib.Core.Causal.SEM.Defs
 import Linglib.Core.Causal.SEM.Basic
 import Linglib.Core.Causal.SEM.Bool
 import Linglib.Core.Causal.SEM.Counterfactual
-import Linglib.Core.NestedRestriction
 import Linglib.Semantics.Lexical.Roots.RootFeatures
 import Linglib.Features.Aktionsart
 import Linglib.Features.Attitudes
@@ -329,7 +328,7 @@ import Linglib.Core.Scales.EpistemicScale.Cancellation
 import Linglib.Core.Scales.EpistemicScale.CancellationFin4
 import Linglib.Core.Scales.EpistemicScale.Completeness
 import Linglib.Core.Scales.EpistemicScale.Representability
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Core.Mereotopology
 import Linglib.Core.Scales.MereoDim
 import Linglib.Semantics.Attitudes.ContentIndividual

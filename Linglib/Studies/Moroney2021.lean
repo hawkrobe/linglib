@@ -1,5 +1,5 @@
 import Linglib.Features.Definiteness
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Core.Nominal.Determiner
 import Linglib.Core.Nominal.DeterminerLicensing
 import Linglib.Core.Nominal.Description

@@ -1,5 +1,5 @@
-import Linglib.Core.NestedRestriction
-import Linglib.Core.Mereology
+import Linglib.Semantics.Quantification.DomainRestriction
+import Linglib.Core.Order.Mereology
 import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -22,8 +22,8 @@ structure).
 ## Architecture
 
 `VerticalHeight` is a 3-level linear order (low < neutral < high) that
-instantiates `Core.NestedRestriction`. This gives all monotonicity and
-nesting theorems from `DomainRestriction.lean` for free.
+instantiates `DDRP` from `DomainRestriction.lean`. This gives all
+monotonicity and nesting theorems there for free.
 
 The presuppositional denotations of IX-arc follow the phi-feature pattern
 from `PhiFeatures.lean`: height marking is a presuppositional partial
@@ -95,16 +95,16 @@ instance : OrderBot VerticalHeight where
 
 /-- Height-indexed domain restrictor for ASL signing space.
 
-    A `HeightDDRP E` is a `NestedRestriction` parameterized by `VerticalHeight`:
-    each height level maps to a domain predicate, with higher height giving a
-    superset. This is the third instance of `NestedRestriction` in linglib,
-    alongside `SpatialScale` ([ritchie-schiller-2024]) and `TwoLevel`
-    (comparison class inference, [tessler-goodman-2022]).
+    A `HeightDDRP E` is a `DDRP` parameterized by `VerticalHeight`: each
+    height level maps to a domain predicate, with higher height giving a
+    superset. The same nesting structure is instantiated by `SpatialScale`
+    ([ritchie-schiller-2024]) and by comparison class inference
+    ([tessler-goodman-2022]).
 
-    All nesting and monotonicity theorems from `NestedRestriction` —
-    `forall_nesting`, `exists_nesting`, and the derived `DDRP.every_nesting`,
-    `DDRP.some_nesting`, `DDRP.no_nesting` — apply automatically. -/
-abbrev HeightDDRP (E : Type*) := Core.NestedRestriction VerticalHeight E
+    The nesting theorems `DDRP.every_nesting`, `DDRP.some_nesting`, and
+    `DDRP.no_nesting` apply automatically. -/
+abbrev HeightDDRP (E : Type*) :=
+  Semantics.Quantification.DomainRestriction.DDRP VerticalHeight E
 
 /-- Construct a height-indexed DDRP from a height assignment function.
 
@@ -114,8 +114,8 @@ abbrev HeightDDRP (E : Type*) := Core.NestedRestriction VerticalHeight E
     entities visible at height ≤ h. -/
 def heightToDDRP {E : Type*} (zone : E → VerticalHeight) : HeightDDRP E where
   region h := λ e => zone e ≤ h
-  monotone {h₁ h₂} hle _ hr := by exact le_trans hr hle
-  top_total e := by show zone e ≤ ⊤; exact le_top
+  monotone _ _ hle _ hr := le_trans hr hle
+  top_total := Set.eq_univ_of_forall λ e => by show zone e ≤ ⊤; exact le_top
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Presuppositional Denotations
@@ -126,7 +126,7 @@ def heightToDDRP {E : Type*} (zone : E → VerticalHeight) : HeightDDRP E where
 
     ⟦arc⟧ = λx: ¬Atom(x). x
 
-    This uses `Mereology.Atom` from `Core/Mereology.lean`. The at-issue
+    This uses `Mereology.Atom` from `Core/Order/Mereology.lean`. The at-issue
     content is the identity — arc contributes only a presupposition, not
     assertoric content. -/
 def arcPresup (E : Type*) [PartialOrder E] : PrProp E where

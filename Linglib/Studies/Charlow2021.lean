@@ -1,7 +1,7 @@
 import Linglib.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Semantics.Dynamic.Connectives.CCP
 import Linglib.Semantics.Composition.Continuation
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Mathlib.Control.Monad.Writer
 import Mathlib.Data.List.Sublists
 

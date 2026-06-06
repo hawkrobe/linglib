@@ -1,4 +1,4 @@
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Semantics.Plurality.Algebra
 import Linglib.Semantics.Plurality.Cover
 import Linglib.Features.ContainmentPair

@@ -1,4 +1,4 @@
-import Linglib.Core.Mereology
+import Linglib.Core.Order.Mereology
 import Linglib.Semantics.Truthmaker.Inexact
 import Linglib.Semantics.Truthmaker.Entailment
 import Linglib.Studies.Pasternak2019
@@ -70,9 +70,9 @@ The contrast in (2) follows.
   paper** — captures Sharvit's empirical contrast in (2).
 - `believes_closure_under_conjunction` (§6.1, eq. 79) — summation
   closure on believings + content-of-sum-is-meet ⇒ closure under ∧.
-- `Mereology.not_isContentPart_of_singleton_not_le` (§6.3, eq. 95) —
-  generic Mereology lemma; the paper's discriminating witness for
-  conjunctive parthood (Jago Def 5) is a one-line application.
+- `not_isContentPart_of_singleton_not_le` (§6.3, eq. 95) — the paper's
+  discriminating witness for conjunctive parthood (Jago Def 5) is a
+  one-line application.
 - `believes_does_not_always_close_under_intersection` — cross-framework:
   B&E's mereological `Believes` does NOT close under conjunction the way
   Hintikka's `boxAt` does, witnessed by a non-believings-closed model.
@@ -125,30 +125,20 @@ section Constraints
 variable {V E W : Type*} [Preorder V] [Preorder E]
 
 /-- **MSI** — *Mapping to Sub-parts of the Input* (paper eq. 44).
-    A content function preserves proper informational parthood:
-    every proper part `p' <_BE CONT(x)` is the content of some proper sub-`x`.
-
-    See `MSI_iff_strictPartReflecting` for the identification with the
-    generic `Mereology.StrictPartReflecting` (instantiated at the
-    `OrderDual` of `Set W`'s subset order, since paper eq. 43 uses the
-    flipped convention `p' <_BE p` iff `p ⊊ p'`). -/
+    A content function *reflects* proper informational parthood:
+    every proper part `p' <_BE CONT(x)` is the content of some proper
+    sub-`x`. (Paper eq. 43 uses the flipped convention `p' <_BE p` iff
+    `p ⊊ p'`, hence `propLT`.) -/
 def MSI (CONT : V → Option (Set W)) : Prop :=
   ∀ ⦃x p p'⦄, CONT x = some p → propLT p' p →
     ∃ x', x' < x ∧ CONT x' = some p'
 
 /-- **MSO** — *Mapping to Sub-parts of the Output* (paper eq. 48).
-    A theme function preserves proper sub-eventualities:
-    every proper sub-`e` has a corresponding proper sub-`THEME(e)`.
-
-    Equivalent to `Mereology.StrictPartPreserving` (the relationship is
-    `Iff.rfl` since both use the standard `<` on `E`). -/
+    A theme function *preserves* proper sub-eventualities:
+    every proper sub-`e` has a corresponding proper sub-`THEME(e)`. -/
 def MSO (THEME : V → Option E) : Prop :=
   ∀ ⦃e e' te⦄, e' < e → THEME e = some te →
     ∃ x', x' < te ∧ THEME e' = some x'
-
-/-- MSO is exactly `Mereology.StrictPartPreserving`. -/
-theorem MSO_iff_strictPartPreserving (THEME : V → Option E) :
-    MSO THEME ↔ Mereology.StrictPartPreserving THEME := Iff.rfl
 
 /-- **TECM** — *Theme-Event Content Matching* (paper eqs. 59, 65).
     For `believe`-class predicates `P`, the content of an event equals
@@ -647,6 +637,19 @@ being a philosopher").
 section ConjunctiveParthoodDemo
 variable {W : Type*}
 
+/-- A singleton `{q}` is **not** a conjunctive part of `p` whenever some
+    `q' ∈ p` lacks `q` as a sub-element (i.e., `¬ q ≤ q'`). The Down
+    clause of `Mereology.IsContentPart` requires every `p`-element to
+    have a `{q}`-element below it; with only `q` available, `q ≤ q'`
+    must hold for every `q' ∈ p`. -/
+theorem not_isContentPart_of_singleton_not_le {α : Type*} [Preorder α]
+    {q : α} {p : α → Prop} {q' : α} (hq' : p q') (h : ¬ q ≤ q') :
+    ¬ Mereology.IsContentPart (· = q) p := by
+  intro ⟨hd, _⟩
+  obtain ⟨t, ht, hle⟩ := hd q' hq'
+  -- ht : t = q (from singleton membership), so q ≤ q' would follow
+  exact h (ht ▸ hle)
+
 /-- **§6.3 discriminating witness** (paper eq. 95). Given three
     propositions `p₁` (linguist), `p₂` (philosopher), `p₃` (American
     linguist) with the natural entailment relations, the alternative
@@ -656,14 +659,14 @@ variable {W : Type*}
     What fails: the **second conjunct of paper eq. 94** ("every `p' ∈ Q'`
     has some `p ∈ Q` with `p ⊆ p'`"). Take `p₂ ∈ Q' = {p₁, p₂}`; the
     only candidate `p ∈ Q = {p₃}` is `p₃` itself, but `p₃ ⊆ p₂` is
-    false. The proof is a one-line application of the generic
-    `Mereology.not_isContentPart_of_singleton_not_le`. -/
+    false. The proof is a one-line application of
+    `not_isContentPart_of_singleton_not_le`. -/
 theorem conjunctive_parthood_blocks_disj_intro
     (p₁ p₂ p₃ : Set W)
     (_h_p3_p1 : p₃ ⊆ p₁)        -- "American linguist" ⊆ "linguist"
     (h_not_p3_p2 : ¬ p₃ ⊆ p₂) :  -- "American linguist" ⊄ "philosopher"
     ¬ Mereology.IsContentPart (· = p₃) ({p₁, p₂} : Set (Set W)) :=
-  Mereology.not_isContentPart_of_singleton_not_le
+  not_isContentPart_of_singleton_not_le
     (q := p₃) (p := ({p₁, p₂} : Set (Set W)))
     (Set.mem_insert_iff.mpr (Or.inr rfl)) h_not_p3_p2
 
