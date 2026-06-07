@@ -69,6 +69,7 @@ set_option autoImplicit false
 namespace Blutner2000
 
 open Core.Optimization.Evaluation
+open Phonology.Constraint
 
 -- ============================================================================
 -- § 1: Projection Sites

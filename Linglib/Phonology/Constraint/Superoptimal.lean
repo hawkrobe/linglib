@@ -20,7 +20,7 @@ more blockers ⇒ fewer survivors). Its square is monotone, so mathlib's
     superoptimalSet pairs profile := (superoptimalSetStepSq pairs profile).gfp
 
 (Renamed from `superoptimalSet` to `superoptimal` once the legacy list-based
-`superoptimal` in `Evaluation.lean` is retired.)
+`superoptimal` in `Core/Optimization/Evaluation.lean` is retired.)
 
 Mathlib's GFP API (`isGreatest_gfp`, `le_gfp`, `gfp_le`, `map_gfp`,
 Park induction) immediately applies. Per-paper consumers prove
@@ -28,10 +28,12 @@ Park induction) immediately applies. Per-paper consumers prove
 (§4 below): a fixed point of the unsquared step that absorbs every non-S
 pair via blocking. The maximality direction goes through
 `Set.Finite.exists_minimalFor`-based minimum-profile descent, anchored in
-the `LexProfile` preorder from `Evaluation.lean`.
+the `LexProfile` preorder from `Core/Optimization/Evaluation.lean`.
 -/
 
-namespace Core.Optimization.Evaluation
+namespace Phonology.Constraint
+
+open Core.Optimization.Evaluation
 
 variable {F M : Type*}
 
@@ -119,7 +121,7 @@ def superoptimalSetStepSq (pairs : Set (F × M)) (profile : F × M → List Nat)
     `IsParkWitness` (§4 below).
 
     Renamed from `superoptimalSet` to `superoptimal` once the legacy
-    list-based `superoptimal` in `Evaluation.lean` is retired. -/
+    list-based `superoptimal` in `Core/Optimization/Evaluation.lean` is retired. -/
 noncomputable def superoptimalSet (pairs : Set (F × M))
     (profile : F × M → List Nat) : Set (F × M) :=
   (superoptimalSetStepSq pairs profile).gfp
@@ -475,4 +477,4 @@ theorem strongOptimal_subset_superoptimal
   rw [← superoptimal_coe_eq_set _ _ h_converged] at hp_gfp
   rwa [Finset.mem_coe] at hp_gfp
 
-end Core.Optimization.Evaluation
+end Phonology.Constraint

@@ -181,7 +181,6 @@ import Linglib.Semantics.Verb.Basic
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Optimization.Profile
 import Linglib.Phonology.Constraint.Weighted
-import Linglib.Core.Optimization.Evaluation
 import Linglib.Phonology.Constraint.Superoptimal
 import Linglib.Phonology.Constraint.OT.Basic
 import Linglib.Phonology.Constraint.OT.ERC
@@ -2701,6 +2700,7 @@ import Linglib.Studies.TesslerGoodman2022
 import Linglib.Studies.Horn1984
 import Linglib.Studies.Kennedy2007Licensing
 import Linglib.Studies.Morzycki2009
+import Linglib.Studies.Rouillard2026
 import Linglib.Studies.DAmbrosioHedden2024
 import Linglib.Studies.Sassoon2013
 import Linglib.Studies.Solt2018Multidim
