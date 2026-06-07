@@ -4,7 +4,7 @@ import Linglib.Core.Logic.Quantification.Basic
 
 /-!
 # Choice Functions for Indefinite Determiners
-[reinhart-1997] [kratzer-1998] [winter-1997]
+[reinhart-1997] [kratzer-1998-pseudoscope] [winter-1997]
 
 Choice functions provide an alternative to existential quantification for
 the semantics of indefinite NPs. A choice function selects a single
@@ -69,10 +69,10 @@ def cfIndefSem {E : Type*} (f : CF E) (nounProp : E → Prop) : E :=
 
 /-- A situation-indexed (skolemized) choice function.
 
-    [kratzer-1998] introduced contextually-given CFs with pronoun-like
-    skolem indices (individual arguments); [owusu-2022] adds a situation
-    index shared by the CF and its NP argument, and [mirrazi-2024] a
-    world index. [owusu-2022]'s entry:
+    [kratzer-1998-pseudoscope] introduced contextually-given CFs with
+    pronoun-like skolem indices (individual arguments); [owusu-2022] adds
+    a situation index shared by the CF and its NP argument, and
+    [mirrazi-2024] a world index. [owusu-2022]'s entry:
 
     ⟦bí⟧ = λs.λP : CH(f_s). f_s(P(s))
 
@@ -130,16 +130,21 @@ def IndefType.canPseudoDeDicto (t : IndefType) (hasWorldVar : Bool) : Bool :=
 
 /-! ### Scope via Situation Binding -/
 
-/-- When the situation variable is bound to the resource situation
-    (not shifted by an intensional operator), the CF yields wide scope.
+/-- The wide-scope (∃ > ¬) reading of a CF-indefinite under negation,
+    ⟦¬[bí N VP]⟧ = ¬VP(f(N)), is *specific*: a correct CF selects a
+    restrictor member, so ¬VP(f(N)) entails the witnessed
+    ∃x[N(x) ∧ ¬VP(x)] — without entailing the narrow-scope
+    ¬∃x[N(x) ∧ VP(x)] (the readings diverge whenever `N` is not
+    `VP`-uniform). Contrast ⟦¬[wani N VP]⟧ = ¬∃x[N(x) ∧ VP(x)]. -/
+theorem cf_wide_scope_specific {E : Type*} (f : CF E) (hf : f.isCorrect)
+    {N VP : E → Prop} (hN : ∃ x, N x) (h : ¬ VP (f N)) :
+    ∃ x, N x ∧ ¬ VP x :=
+  ⟨f N, hf N hN, h⟩
 
-    This is the key structural property that distinguishes CF-based
-    indefinites (Akan *bí*) from ∃-based indefinites (Hausa *wani*):
-    negation is not an intensional operator, so it cannot shift the
-    situation variable, forcing wide scope.
-
-    ⟦¬[bí N VP]⟧ = ¬VP(f_{s₀}(N))  — wide scope: ∃ > ¬
-    ⟦¬[wani N VP]⟧ = ¬∃x[N(x) ∧ VP(x)]  — narrow scope: ¬ > ∃ -/
+/-- A correct CF's output satisfies `VP` whenever every restrictor member
+    does — the degenerate case in which the wide (∃ > ¬) and narrow
+    (¬ > ∃) readings coincide. The CF-essential content of the wide-scope
+    reading is `cf_wide_scope_specific`. -/
 theorem cf_wide_scope_under_negation {E : Type*}
     (f : CF E) (hf : f.isCorrect)
     (N : E → Prop) (VP : E → Prop)
