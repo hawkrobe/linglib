@@ -4,7 +4,7 @@ import Linglib.Core.Logic.Quantification.Basic
 
 /-!
 # Choice Functions for Indefinite Determiners
-[reinhart-1997] [kratzer-1998] [winter-1997]
+[reinhart-1997] [kratzer-1998-pseudoscope] [winter-1997]
 
 Choice functions provide an alternative to existential quantification for
 the semantics of indefinite NPs. A choice function selects a single
@@ -38,10 +38,11 @@ the actual world (de re). This is captured by connecting `SkolemCF` to
 [zimmermann-2008] analyses Hausa *wani/wata* as a standard
 ∃-quantifier, predicting flexible scope via QR.
 
-[owusu-2022] analyses Akan *bí* as a skolemized choice function
-with a situation parameter (`SkolemCF`), explaining why *bí* takes
-obligatory wide scope under negation: the choice function is evaluated
-relative to the resource situation, which negation cannot shift.
+[owusu-2022] analyses Akan *bí* as an unambiguous choice function whose
+situation pronoun ties the CF and the NP to a single index (`SkolemCF`),
+explaining why *bí* takes obligatory wide scope under negation: the
+contextually-given CF is fixed before negation applies, and negation
+binds no situation variable that could shift it.
 -/
 
 namespace Semantics.Quantification.ChoiceFunction
@@ -68,10 +69,12 @@ def cfIndefSem {E : Type*} (f : CF E) (nounProp : E → Prop) : E :=
 
 /-- A situation-indexed (skolemized) choice function.
 
-    [kratzer-1998]: the CF is parameterized by a situation `s`,
-    making the selected individual depend on the evaluation situation.
+    [kratzer-1998-pseudoscope] introduced contextually-given CFs with
+    pronoun-like skolem indices (individual arguments); [owusu-2022] adds
+    a situation index shared by the CF and its NP argument, and
+    [mirrazi-2024] a world index. [owusu-2022]'s entry:
 
-    ⟦bí⟧ = λs.λP. CH(f_s). f_s(P(s))
+    ⟦bí⟧ = λs.λP : CH(f_s). f_s(P(s))
 
     Scope is determined by the binding site of `s`:
     - `s` bound by a higher operator → wide scope
@@ -102,8 +105,8 @@ def SkolemCF.isCorrect {S E : Type*} (f : SkolemCF S E) : Prop :=
     force wide scope (∃ > ¬) because negation cannot shift the situation
     variable.
 
-    Cross-linguistic evidence: Hausa *wani/wata* (∃) vs Akan *bí* (CF).
-    [zimmermann-2026] §3.3. -/
+    Cross-linguistic evidence: Hausa *wani/wata* (∃) vs Akan *bí* (CF)
+    ([zimmermann-2026]). -/
 inductive IndefType where
   | existential    -- ∃-quantifier: scope via QR (wide + narrow)
   | choiceFunction -- Choice function: scope via situation binding
@@ -127,16 +130,21 @@ def IndefType.canPseudoDeDicto (t : IndefType) (hasWorldVar : Bool) : Bool :=
 
 /-! ### Scope via Situation Binding -/
 
-/-- When the situation variable is bound to the resource situation
-    (not shifted by an intensional operator), the CF yields wide scope.
+/-- The wide-scope (∃ > ¬) reading of a CF-indefinite under negation,
+    ⟦¬[bí N VP]⟧ = ¬VP(f(N)), is *specific*: a correct CF selects a
+    restrictor member, so ¬VP(f(N)) entails the witnessed
+    ∃x[N(x) ∧ ¬VP(x)] — without entailing the narrow-scope
+    ¬∃x[N(x) ∧ VP(x)] (the readings diverge whenever `N` is not
+    `VP`-uniform). Contrast ⟦¬[wani N VP]⟧ = ¬∃x[N(x) ∧ VP(x)]. -/
+theorem cf_wide_scope_specific {E : Type*} (f : CF E) (hf : f.isCorrect)
+    {N VP : E → Prop} (hN : ∃ x, N x) (h : ¬ VP (f N)) :
+    ∃ x, N x ∧ ¬ VP x :=
+  ⟨f N, hf N hN, h⟩
 
-    This is the key structural property that distinguishes CF-based
-    indefinites (Akan *bí*) from ∃-based indefinites (Hausa *wani*):
-    negation is not an intensional operator, so it cannot shift the
-    situation variable, forcing wide scope.
-
-    ⟦¬[bí N VP]⟧ = ¬VP(f_{s₀}(N))  — wide scope: ∃ > ¬
-    ⟦¬[wani N VP]⟧ = ¬∃x[N(x) ∧ VP(x)]  — narrow scope: ¬ > ∃ -/
+/-- A correct CF's output satisfies `VP` whenever every restrictor member
+    does — the degenerate case in which the wide (∃ > ¬) and narrow
+    (¬ > ∃) readings coincide. The CF-essential content of the wide-scope
+    reading is `cf_wide_scope_specific`. -/
 theorem cf_wide_scope_under_negation {E : Type*}
     (f : CF E) (hf : f.isCorrect)
     (N : E → Prop) (VP : E → Prop)

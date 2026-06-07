@@ -1,9 +1,7 @@
 import Linglib.Syntax.Pronoun.Basic
 import Linglib.Syntax.Pronoun.Capabilities
-import Linglib.Data.UD.Basic
-import Linglib.Features.Number.Capabilities
-import Linglib.Features.Person.Capabilities
 import Linglib.Features.Person.Decomposition
+import Linglib.Fragments.Romance.Clitics
 
 /-! # Italian Pronoun and Clitic Fragment
 
@@ -91,41 +89,11 @@ def allPronouns : List PersonalPronoun :=
 -- § 2: Clitic Paradigm
 -- ============================================================================
 
-/-- The three-way case distinction for Italian clitics. -/
-inductive CliticCase where
-  | accusative
-  | dative
-  | reflexive
-  deriving DecidableEq, Repr
+open Romance.Clitics (CliticEntry CliticCase)
 
-/-- A single clitic form in the paradigm. -/
-structure CliticEntry where
-  form : String
-  person : UD.Person
-  number : UD.Number
-  case_ : CliticCase
-  deriving Repr, BEq
-
-/-- A clitic bears its φ-slot's number (`HasNumber`). -/
-instance : HasNumber CliticEntry := ⟨fun c => Number.fromUD c.number⟩
-
-instance : HasPerson CliticEntry := ⟨fun c => some (Person.fromUD c.person)⟩
-
-/-! ### Clitics as capability carriers (`Proform` / `Bound`)
-
-The clitic is its own bespoke struct — capabilities abstract over it without merging it into
-`Pronoun` (the `FunLike`-over-many-hom-types pattern). Deficiency is deliberately *not* a capability
-here: it is per-series (the whole clitic paradigm is `.clitic`), modelled by `cliticStrength` below
-and the `Strength` order, not by a per-element accessor. -/
-
-/-- A clitic's surface form + φ-features (person/number). -/
-instance : Proform CliticEntry :=
-  ⟨CliticEntry.form, fun c => { person := some c.person, number := some c.number }⟩
-
-/-- Binding class from the clitic's case: a reflexive clitic (*si*, *mi* …) is a Principle-A
-    anaphor; an accusative/dative object clitic is a Principle-B pronominal. -/
-instance : Bound CliticEntry :=
-  ⟨fun c => match c.case_ with | .reflexive => .reflexive | _ => .pronoun⟩
+/-! Schema and capability instances (`Proform`/`Bound`/`HasPerson`/
+`HasNumber`/`HasCase`) are the shared Romance clitic schema
+(`Fragments/Romance/Clitics.lean`). -/
 
 -- 1sg clitics
 def mi_acc : CliticEntry := { form := "mi", person := .first, number := .Sing, case_ := .accusative }
@@ -184,19 +152,17 @@ example : Bound.IsAnaphor si_refl := by decide
 example : Bound.IsPronominal lo_cl := by decide
 
 /-- Look up the form for a given person, number, and case in the paradigm. -/
-def lookupForm (p : UD.Person) (n : UD.Number) (c : CliticCase) : Option String :=
-  (paradigm.find? (fun e => e.person == p && e.number == n && e.case_ == c)).map (·.form)
+def lookupForm : UD.Person → UD.Number → CliticCase → Option String :=
+  Romance.Clitics.lookupForm paradigm
 
 /-- Are two clitic cases syncretic for a given person/number combination?
-    DERIVED from the paradigm data. -/
-def isSyncretic (p : UD.Person) (n : UD.Number) (c1 c2 : CliticCase) : Bool :=
-  match lookupForm p n c1, lookupForm p n c2 with
-  | some f1, some f2 => f1 == f2
-  | _, _ => false
+    Derived from the paradigm data. -/
+def isSyncretic : UD.Person → UD.Number → CliticCase → CliticCase → Bool :=
+  Romance.Clitics.isSyncretic paradigm
 
 /-- DAT/REFL syncretism for a given person/number. -/
-def datReflSyncretic (p : UD.Person) (n : UD.Number) : Bool :=
-  isSyncretic p n .dative .reflexive
+def datReflSyncretic : UD.Person → UD.Number → Bool :=
+  Romance.Clitics.datReflSyncretic paradigm
 
 -- ============================================================================
 -- § 4: Verification Theorems
