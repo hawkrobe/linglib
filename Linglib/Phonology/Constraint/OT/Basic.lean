@@ -17,7 +17,8 @@ families, named constraints, `mkTableau` for building tableaux from ranked
 constraint lists, and factorial typology computation.
 -/
 
-namespace Core.Optimization.OT
+namespace Phonology.Constraint.OT
+
 
 open Core.Optimization.Evaluation
 
@@ -346,4 +347,4 @@ def mkFactorialTypologySize {C : Type*} [DecidableEq C]
     (h : candidates ≠ [] := by decide) : Nat :=
   (mkFactorialOptima candidates constraints h).length
 
-end Core.Optimization.OT
+end Phonology.Constraint.OT

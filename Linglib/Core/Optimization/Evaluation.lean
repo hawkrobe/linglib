@@ -8,58 +8,38 @@ import Mathlib.Algebra.Order.Monoid.Defs
 import Mathlib.Algebra.Tropical.Basic
 
 /-!
-# Constraint Evaluation
-[erlewine-2016] [kratzer-1991]
+# Lexicographic and subset-inclusion orders on `Nat`-valued profiles
 
-Unified framework for constraint-based candidate evaluation, supporting
-two comparison modes:
+Two comparison relations on lists / functions to `ℕ`:
 
-1. **Lexicographic** (Optimality Theory): constraints are strictly ranked;
-   the first constraint where candidates differ determines the winner.
-   Used in phonology ([prince-smolensky-1993]/2004) and syntactic
-   competition.
-
-2. **Subset inclusion** (Satisfaction ordering): a candidate is at least
-   as good as another iff it satisfies every criterion the other satisfies.
-   Used in [kratzer-1991]'s modal semantics (see `SatisfactionOrdering.lean`).
-
-Both select optimal candidates from a set. They differ in comparison:
-`LexLE` yields a total preorder (OT always picks a winner); `SatLE` yields
-a preorder (incomparable candidates possible, as in Kratzer's semantics).
+1. **Lexicographic** (`LexLE`): yields a total preorder on `List Nat`
+   and a `LinearOrder` on the fixed-length `Lex (Fin n → Nat)`.
+2. **Subset inclusion** (`SatLE`): yields a preorder where
+   incomparable elements are possible.
 
 ## Architecture
 
-Each comparison is a decidable Prop relation (`LexLE`, `SatLE`, `LexLT`).
-`Decidable` instances are defined by structural recursion, delegating to
-standard combinators (`And.decidable`, `Or.decidable`). `Tableau C n`
-provides the Finset-based OT tableau with `ViolationProfile n` profiles;
-study files use `mkTableau` (in `Core.Optimization.OT`) for concrete evaluation.
+`LexLE`, `SatLE`, `LexLT` are decidable `Prop` relations defined by
+structural recursion, delegating to standard combinators
+(`And.decidable`, `Or.decidable`). `Tableau C n` packages a finite
+candidate set with a `Fin n → Nat`-valued score, exposing the
+non-empty lex-min set via `Finset.exists_min_image`.
 
-## Algebraic Structure — Violation Semiring
+## Algebraic structure — ordered additive monoid
 
-Following [riggle-2009], violation profiles form a **commutative
-semiring** (the "violation semiring") with two operations:
+`Lex (Fin n → Nat)` carries:
 
-- **⊎ (merge)**: componentwise addition of violation counts — combining
-  violations from multiple constraints. This is the `AddCommMonoid`.
-- **⊗ (choose winner)**: `min` under harmonic inequality — selecting the
-  more harmonic candidate. This is `min` from the `LinearOrder`.
+- **`AddCommMonoid`** — componentwise addition.
+- **`LinearOrder`** — the lex order.
+- **`IsOrderedAddMonoid`** — additive monotonicity: adding the same
+  vector to both sides preserves the lex order.
+- **`IsOrderedCancelAddMonoid`** — strict version of the above.
 
-The compatibility axiom (`add_le_add_left`) is Riggle's **distributivity**:
-adding violations to both candidates preserves which one wins. This is
-the structural property that makes OT optimization decomposable — every
-subpath of an optimal path is itself optimal (Dijkstra's principle).
+Together these say: `Lex (Fin n → Nat)` is a standard mathlib ordered
+commutative monoid. Equivalently, the tropical (min-plus) semiring
+view via `Mathlib.Algebra.Tropical.Basic`.
 
-`ViolationProfile n` carries a `LinearOrder` (the ⊗ operation), an
-`AddCommMonoid` (the ⊎ operation), and `IsOrderedAddMonoid` (the
-compatibility axiom). Together, these encode Riggle's violation semiring
-as a standard mathlib ordered monoid.
-
-Different OT variants correspond to different ordered monoids on the
-same carrier: classical OT uses lexicographic order; Harmonic Grammar
-uses weighted-sum order (the standard tropical semiring).
-
-## Order Instances
+## Variable-length vs fixed-length
 
 **Variable-length** (`LexProfile`, `SatProfile`): wrap `List Nat` with
 `Preorder` instances. These are the weakest correct structures — `LexLE`
@@ -67,26 +47,21 @@ on variable-length lists is a preorder but not a partial order
 (trailing-zero ambiguity).
 
 **Fixed-length** (`ViolationProfile n`, `SatViolationProfile n`): wrap
-`Fin n → Nat` with full `LinearOrder` (lexicographic) or `Preorder`
-(satisfaction). Fixing the length eliminates the trailing-zero ambiguity,
-upgrading `LexLE` to a linear order: reflexive, transitive,
-**antisymmetric**, and **total**.
+`Fin n → Nat` with full `LinearOrder` (lex) or `Preorder` (subset).
+Fixing the length eliminates trailing-zero ambiguity, upgrading `LexLE`
+to a linear order.
 
-`Tableau C n` is a `Finset`-based OT tableau with `ViolationProfile n`
-profiles. Optimality always exists via `Finset.exists_min_image`.
+`Tableau C n` always has a non-empty lex-min set via
+`Finset.exists_min_image`.
 
-## Connection to SatisfactionOrdering
+## Connection to `SatisfactionOrdering`
 
-`Core.SatisfactionOrdering.SatisfactionOrdering` is the special case where
-violations are binary (0 = satisfied, ≥1 = violated) and comparison uses
-subset inclusion (`SatLE`). A `SatisfactionOrdering` with criteria
-[c₁,..., cₙ] induces the profile `fun a => [if satisfies a c₁ then 0
-else 1,..., if satisfies a cₙ then 0 else 1]`, and `atLeastAsGood`
-coincides with `SatLE` on this profile.
-
+`Core.SatisfactionOrdering.SatisfactionOrdering` is the binary case
+(`0` = "satisfied", `≥ 1` = "violated") with subset-inclusion comparison.
 -/
 
 namespace Core.Optimization.Evaluation
+
 
 -- ============================================================================
 -- § 1: Prop Relations

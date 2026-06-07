@@ -1,59 +1,45 @@
 import Linglib.Core.Agent.RationalAction
 
 /-!
-# Decoders — From Scored Candidates to Probability Distributions
+# Decoders — from scored candidates to probability distributions
 [mcfadden-1974]
 
-A `Decoder` is the *choice* component of a constraint-based grammar.
-Given a finite set of candidates, each carrying a score, a decoder
-returns a probability distribution over those candidates:
+A `Decoder` maps a finite set of candidates carrying real-valued scores
+to a probability distribution over those candidates:
 
 ```
   scored candidates  --[Decoder]-->  P : Cand → ℝ
 ```
 
-Different constraint frameworks correspond to different decoders. This
-table shows how the major OT/HG-family frameworks all instantiate the
-same `Decoder` interface, varying only the score type and the choice rule:
+This file exposes the `Decoder` interface and three foundational
+instances: `argminDecoder` (uniform over `LexProfile`-lex-minimizers),
+`argmaxDecoder` (uniform over `ℝ`-maximizers), and `softmaxDecoder α`
+(`exp(α·s) / Z` over `ℝ`-scores).
 
-| Framework         | Score type           | Decoder                       |
-|-------------------|----------------------|-------------------------------|
-| OT                | `LexProfile Nat n`   | argmin (uniform over winners) |
-| HG                | `ℝ` (harmony)        | argmax (uniform over winners) |
-| MaxEnt            | `ℝ` (harmony)        | softmax (Gumbel-noise argmax) |
-| Normal MaxEnt     | `ℝ` (harmony)        | probit (Gaussian-noise argmax)|
-| NHG               | `ℝ` (harmony)        | weight-perturbed argmax       |
-| Stochastic OT     | `LexProfile Nat n`   | ranking-perturbed argmin      |
-
-The unifying principle is McFadden's Random Utility Model
-([mcfadden-1974]): every stochastic decoder is "argmax after a
-noise kernel applied to the scores". The noise distribution determines
-the choice rule (Gumbel ⇒ softmax, Gaussian ⇒ probit, point-mass ⇒
-deterministic argmax). Noise-kernel-based decoders live in a sibling
-file; here we just expose the `Decoder` interface and the three
-foundational instances.
+The unifying principle is McFadden's Random Utility Model: every
+stochastic decoder is "argmax after a noise kernel applied to the
+scores". The noise distribution determines the choice rule (Gumbel ⇒
+softmax, Gaussian ⇒ probit, point-mass ⇒ deterministic argmax).
+Noise-kernel-based decoders live in `NoiseKernel.lean`.
 
 ## Zero-temperature bridge
 
-`softmaxDecoder α` interpolates between MaxEnt-style soft optimization
-and OT-style hard optimization: as `α → ∞`, the softmax distribution
-concentrates on the unique maximizer (when one exists), recovering
-`argmaxDecoder`. This is the formal statement of the OT-as-MaxEnt-limit
-correspondence and is captured by `softmax_argmax_limit` in
+`softmaxDecoder α` interpolates between soft and hard optimization: as
+`α → ∞`, the softmax distribution concentrates on the unique maximizer
+(when one exists), recovering `argmaxDecoder` — `softmax_argmax_limit` in
 `Core.Agent.RationalAction`.
 
-## Semiring connection (deferred)
+## Semiring connection
 
-For *deterministic* (point-mass noise) decoders, the resulting
-algebraic structure on scores is a semiring:
+For *deterministic* (point-mass noise) decoders, the algebraic structure
+on scores is a semiring:
 
   - `argmaxDecoder` over `ℝ`         ↔  max-plus semiring
   - `argminDecoder` over `Tropical R` ↔  min-plus (tropical) semiring
   - `softmaxDecoder` over `ℝ`         ↔  log-sum-exp ("warped") semiring
 
 The zero-temperature limit `softmax → argmax` is precisely the semiring
-homomorphism `log-sum-exp → max` in the limit `α → ∞`. A separate
-`Semiring.lean` file will make these bridges precise.
+homomorphism `log-sum-exp → max` in the limit `α → ∞`; see `Semiring.lean`.
 -/
 
 namespace Core.Optimization
@@ -96,11 +82,11 @@ class IsProb (d : Decoder Cand Score) : Prop where
 end Decoder
 
 -- ============================================================================
--- § 2: Softmax Decoder (MaxEnt)
+-- § 2: Softmax decoder
 -- ============================================================================
 
 open scoped Classical in
-/-- The MaxEnt decoder: softmax over real-valued scores at temperature `α`.
+/-- The softmax decoder: softmax over real-valued scores at temperature `α`.
 
     `decode cands score c = exp(α · score(c)) / Σ_{c' ∈ cands} exp(α · score(c'))`
     when `c ∈ cands`, and `0` otherwise.
@@ -114,35 +100,30 @@ noncomputable def softmaxDecoder {Cand : Type*} (α : ℝ) : Decoder Cand ℝ wh
     else 0
 
 -- ============================================================================
--- § 3: Argmax / Argmin Decoders (HG, OT)
+-- § 3: Argmax / argmin decoders
 -- ============================================================================
 
 open scoped Classical in
-/-- The HG-style decoder: uniform distribution over the maximizers of
-    `score` on `cands`. Deterministic (Dirac on the unique winner) when
-    the maximum is achieved by exactly one candidate.
+/-- The argmax decoder: uniform distribution over the maximizers of
+    `score` on `cands`. Deterministic (Dirac on the unique maximizer)
+    when the maximum is achieved by exactly one candidate.
 
-    Used by deterministic HG (with `Score = ℝ` and `score = harmonyScoreR`)
-    and is the `α → ∞` limit of `softmaxDecoder` (see `softmax_argmax_limit`). -/
+    The `α → ∞` limit of `softmaxDecoder` (see `softmax_argmax_limit`). -/
 noncomputable def argmaxDecoder {Cand : Type*} {Score : Type*} [LinearOrder Score] :
     Decoder Cand Score where
   decode cands score := fun c =>
-    let winners := cands.filter (fun c' => ∀ c'' ∈ cands, score c'' ≤ score c')
-    if c ∈ winners then (winners.card : ℝ)⁻¹ else 0
+    let optima := cands.filter (fun c' => ∀ c'' ∈ cands, score c'' ≤ score c')
+    if c ∈ optima then (optima.card : ℝ)⁻¹ else 0
 
 open scoped Classical in
-/-- The OT-style decoder: uniform distribution over the minimizers of
-    `score` on `cands`.
-
-    For Optimality Theory, instantiate with `Score = LexProfile Nat n`,
-    so that the lexicographic minimum on the violation-count profile
-    selects the optimal candidate(s). With a strict total ranking and a
-    single optimum, this is a Dirac on the OT winner. -/
+/-- The argmin decoder: uniform distribution over the minimizers of
+    `score` on `cands`. Instantiate `Score = LexProfile Nat n` for
+    lex-min on integer cost vectors; with a single optimum, Dirac on it. -/
 noncomputable def argminDecoder {Cand : Type*} {Score : Type*} [LinearOrder Score] :
     Decoder Cand Score where
   decode cands score := fun c =>
-    let winners := cands.filter (fun c' => ∀ c'' ∈ cands, score c' ≤ score c'')
-    if c ∈ winners then (winners.card : ℝ)⁻¹ else 0
+    let optima := cands.filter (fun c' => ∀ c'' ∈ cands, score c' ≤ score c'')
+    if c ∈ optima then (optima.card : ℝ)⁻¹ else 0
 
 -- ============================================================================
 -- § 4: Probability Properties

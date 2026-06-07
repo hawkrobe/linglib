@@ -1,4 +1,4 @@
-import Linglib.Core.Optimization.OT.Basic
+import Linglib.Phonology.Constraint.OT.Basic
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Rat.Cast.Order
 
@@ -12,7 +12,7 @@ The shared foundation for any constraint framework that assigns numerical
 - Noisy HG [boersma-pater-2016]
 - Normal MaxEnt [flemming-2021]
 
-A `WeightedConstraint C` extends `NamedConstraint C` (from `Core.Optimization.OT`)
+A `WeightedConstraint C` extends `NamedConstraint C` (from `Phonology.Constraint.OT`)
 with a rational `weight`. The `harmonyScore` of a candidate is the negated
 weighted sum of its violations: `H(c) = -Σⱼ wⱼ · Cⱼ(c)`.
 
@@ -22,9 +22,10 @@ modules in `Core.Optimization.*` consume them; framework-specific wrappers
 (MaxEnt, NHG, ...) live in their respective theory directories.
 -/
 
-namespace Core.Optimization
+namespace Phonology.Constraint
 
-open Core.Optimization.OT
+
+open Phonology.Constraint.OT
 
 -- ============================================================================
 -- § 1: Weighted Constraints
@@ -115,4 +116,4 @@ theorem harmonyScoreR_lt_of_dominates {C : Type*}
     harmonyScoreR constraints b < harmonyScoreR constraints a :=
   (harmonyScoreR_lt_iff_harmonyScore_lt _ _ _).mpr h
 
-end Core.Optimization
+end Phonology.Constraint

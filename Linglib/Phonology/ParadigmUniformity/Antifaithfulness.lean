@@ -1,5 +1,5 @@
 import Linglib.Phonology.OptimalityTheory.Correspondence
-import Linglib.Core.Optimization.OT.Basic
+import Linglib.Phonology.Constraint.OT.Basic
 
 /-!
 # Antifaithfulness — Alderete 2001
@@ -47,7 +47,7 @@ counts pairs where they *differ*. Together they partition the edge:
 namespace Phonology.ParadigmUniformity.Antifaithfulness
 
 open Phonology.Correspondence (Corr)
-open Core.Optimization.OT (NamedConstraint ConstraintFamily)
+open Phonology.Constraint.OT (NamedConstraint ConstraintFamily)
 
 variable {Role : Type*} {α : Type*}
 

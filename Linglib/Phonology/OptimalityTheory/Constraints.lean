@@ -1,5 +1,5 @@
-import Linglib.Core.Optimization.OT.Basic
-import Linglib.Core.Optimization.Weighted
+import Linglib.Phonology.Constraint.OT.Basic
+import Linglib.Phonology.Constraint.Weighted
 import Linglib.Core.Computability.StringHom
 import Linglib.Core.Computability.Subregular.ForbiddenPairs
 
@@ -45,7 +45,8 @@ Binary constraints use a `Bool` predicate; gradient constraints use a
 
 namespace Phonology.Constraints
 
-open Core.Optimization.OT
+open Phonology.Constraint
+open Phonology.Constraint.OT
 
 -- ============================================================================
 -- § 1: Faithfulness Constraint Constructors
@@ -138,12 +139,12 @@ theorem mkIntegrity_is_faithfulness {C : Type} (name : String)
     (mkIntegrity name P).family = .faithfulness := rfl
 
 -- ============================================================================
--- § 2: Markedness Constraint Constructors (re-exported from Core.Optimization.OT)
+-- § 2: Markedness Constraint Constructors (re-exported from Phonology.Constraint.OT)
 -- ============================================================================
 
--- `mkMark`, `mkFaith`, `mkMarkGrad`, `mkFaithGrad` are defined in `Core.Optimization.OT`.
+-- `mkMark`, `mkFaith`, `mkMarkGrad`, `mkFaithGrad` are defined in `Phonology.Constraint.OT`.
 -- Re-export them so `open Phonology.Constraints` includes them.
-export Core.Optimization.OT (mkMark mkFaith mkMarkGrad mkFaithGrad)
+export Phonology.Constraint.OT (mkMark mkFaith mkMarkGrad mkFaithGrad)
 
 -- ============================================================================
 -- § 2b: Forbidden-Pair Markedness (OCP, sibilant-harmony, …)
@@ -354,7 +355,7 @@ theorem mkMaxCtx_bounded {C : Type} (name : String)
 -- § 5: Weighted Constraint Constructors
 -- ============================================================================
 
-open Core.Optimization
+open Phonology.Constraint
 
 /-- Build a weighted MAX constraint with a given weight. -/
 def mkMaxW {C : Type} (name : String) (P : C → Prop) [DecidablePred P] (w : ℚ) :

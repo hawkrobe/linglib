@@ -22,12 +22,8 @@ emphasises the analogy with the classical limit of quantum mechanics:
 the smooth, fluctuation-tolerant semiring becomes a sharp, "winner takes
 all" semiring.
 
-For us, the linguistic content is the bridge from MaxEnt (soft / gradient)
-constraint frameworks to HG (deterministic / gradient) — and, composed
-with the existing exponential-separation bridge V → T from
-`ViolationSemiring.lean`, the bridge from MaxEnt all the way to OT
-(deterministic / categorical). See `Constraint/Deformation.lean` for the
-linguistic-theoretic packaging.
+The linguistic-framework packaging of this limit lives in
+`Phonology/Constraint/Dequantization/{OTLimit,Deformation}.lean`.
 
 ## Proof outline
 
