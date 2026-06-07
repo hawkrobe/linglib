@@ -199,6 +199,7 @@ import Linglib.Core.Optimization.Decoder
 import Linglib.Core.Optimization.NoiseKernel
 import Linglib.Core.Optimization.System
 import Linglib.Core.Optimization.Evaluation
+import Linglib.Phonology.Constraint.OT.Aliases
 import Linglib.Phonology.Constraint.System
 import Linglib.Core.Optimization.Pareto
 import Linglib.Core.Optimization.Semiring

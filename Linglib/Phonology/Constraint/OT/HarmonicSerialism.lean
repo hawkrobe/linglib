@@ -61,6 +61,7 @@ namespace Phonology.Constraint.OT
 
 
 open Core.Optimization.Evaluation
+open Phonology.Constraint.OT
 
 -- ============================================================================
 -- § 1: HSDerivation Specification
@@ -165,7 +166,7 @@ theorem converged_of_singleton_gen (D : HSDerivation C) (c : C)
   rw [dif_pos (Finset.singleton_nonempty c)]
   -- Tableau with a singleton candidate set: optimal = {c}
   ext x
-  simp only [Tableau.optimal, tableauFor, Finset.mem_filter, Finset.mem_singleton]
+  simp only [LexMinProblem.lexMins, tableauFor, Finset.mem_filter, Finset.mem_singleton]
   refine ⟨fun ⟨hx, _⟩ => hx, fun hx => ⟨hx, ?_⟩⟩
   intro c' hc'; subst hc'; subst hx; rfl
 

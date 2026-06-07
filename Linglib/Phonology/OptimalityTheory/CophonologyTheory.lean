@@ -50,7 +50,7 @@ namespace Phonology.CophonologyTheory
 
 open Morphology.DM.VI (VocabItem)
 open Phonology.Constraint.OT (NamedConstraint mkTableau mkTableau_optimal_zero_first mkTableau_optimal_mem)
-open Core.Optimization.Evaluation (Tableau)
+open Phonology.Constraint.OT (Tableau)
 
 -- ============================================================================
 -- § 1: Cophonological Vocabulary Item

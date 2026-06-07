@@ -1,4 +1,5 @@
 import Linglib.Core.Optimization.Evaluation
+import Linglib.Phonology.Constraint.OT.Aliases
 import Mathlib.Computability.Language
 
 /-!
@@ -22,8 +23,6 @@ namespace Phonology.Constraint.OT
 
 open Core.Optimization.Evaluation
 
--- ============================================================================
--- § 1: Named Constraints
 -- ============================================================================
 
 /-- Constraint families in OT. -/

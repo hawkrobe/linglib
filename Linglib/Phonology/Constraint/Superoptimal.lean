@@ -1,4 +1,5 @@
 import Linglib.Core.Optimization.Evaluation
+import Linglib.Phonology.Constraint.OT.Aliases
 import Mathlib.Order.FixedPoints
 import Mathlib.Order.Preorder.Finite
 /-!
@@ -28,7 +29,7 @@ Park induction) immediately applies. Per-paper consumers prove
 (§4 below): a fixed point of the unsquared step that absorbs every non-S
 pair via blocking. The maximality direction goes through
 `Set.Finite.exists_minimalFor`-based minimum-profile descent, anchored in
-the `LexProfile` preorder from `Core/Optimization/Evaluation.lean`.
+the `LexNatList` preorder from `Core/Optimization/Evaluation.lean`.
 -/
 
 namespace Phonology.Constraint
@@ -170,7 +171,7 @@ structure IsParkWitness (pairs : Set (F × M)) (profile : F × M → List Nat)
       is unblocked by `T` (no `S`-element blocks it by `unblocked`; no
       smaller `T \ S`-element blocks it by minimality), hence in `F(T)`,
       contradicting `p ∈ F²(T)`. Descent terminates by
-      `Set.Finite.exists_minimalFor` against the `LexProfile` preorder. -/
+      `Set.Finite.exists_minimalFor` against the `LexNatList` preorder. -/
 theorem superoptimalSet_eq_of_witness {pairs : Set (F × M)}
     {profile : F × M → List Nat} {S : Set (F × M)} (h_finite : pairs.Finite)
     (h : IsParkWitness pairs profile S) :
@@ -195,12 +196,12 @@ theorem superoptimalSet_eq_of_witness {pairs : Set (F × M)}
     have hT_pairs : T ⊆ pairs := fun p hp => (hT hp).1
     by_contra h_TS
     -- Pick a profile-minimum element of T \ S using mathlib's canonical
-    -- `Set.Finite.exists_minimalFor` against the `LexProfile` preorder.
+    -- `Set.Finite.exists_minimalFor` against the `LexNatList` preorder.
     obtain ⟨p₀, hp₀_T, hp₀_notS⟩ := Set.not_subset.mp h_TS
     have h_diff_finite : (T \ S).Finite :=
       h_finite.subset (fun x hx => hT_pairs hx.1)
     obtain ⟨p, ⟨hp_T, hp_notS⟩, hp_min⟩ :=
-      h_diff_finite.exists_minimalFor (fun x => LexProfile.mk (profile x))
+      h_diff_finite.exists_minimalFor (fun x => LexNatList.mk (profile x))
         (T \ S) ⟨p₀, hp₀_T, hp₀_notS⟩
     have hp_pairs : p ∈ pairs := hT_pairs hp_T
     -- p is blocked by S (closure).

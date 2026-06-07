@@ -21,7 +21,7 @@ Two comparison relations on lists / functions to `ℕ`:
 
 `LexLE`, `SatLE`, `LexLT` are decidable `Prop` relations defined by
 structural recursion, delegating to standard combinators
-(`And.decidable`, `Or.decidable`). `Tableau C n` packages a finite
+(`And.decidable`, `Or.decidable`). `LexMinProblem C n` packages a finite
 candidate set with a `Fin n → Nat`-valued score, exposing the
 non-empty lex-min set via `Finset.exists_min_image`.
 
@@ -41,23 +41,20 @@ view via `Mathlib.Algebra.Tropical.Basic`.
 
 ## Variable-length vs fixed-length
 
-**Variable-length** (`LexProfile`, `SatProfile`): wrap `List Nat` with
-`Preorder` instances. These are the weakest correct structures — `LexLE`
-on variable-length lists is a preorder but not a partial order
-(trailing-zero ambiguity).
+**Variable-length** (`LexNatList`): wraps `List Nat` with `Preorder`
+instances. Weakest correct structure — `LexLE` on variable-length lists
+is a preorder but not a partial order (trailing-zero ambiguity).
 
-**Fixed-length** (`ViolationProfile n`, `SatViolationProfile n`): wrap
-`Fin n → Nat` with full `LinearOrder` (lex) or `Preorder` (subset).
-Fixing the length eliminates trailing-zero ambiguity, upgrading `LexLE`
-to a linear order.
-
-`Tableau C n` always has a non-empty lex-min set via
-`Finset.exists_min_image`.
+**Fixed-length** (`Lex (Fin n → Nat)`, accessed as `LexProfile Nat n`):
+full `LinearOrder` (lex). Fixing the length eliminates trailing-zero
+ambiguity, upgrading `LexLE` to a linear order. `LexMinProblem C n`
+always has a non-empty lex-min set via `Finset.exists_min_image`.
 
 ## Connection to `SatisfactionOrdering`
 
 `Core.Order.SatisfactionOrdering` is the binary case
-(`0` = "satisfied", `≥ 1` = "violated") with subset-inclusion comparison.
+(`0`/`≥ 1` interpreted as "satisfied" / "not") with subset-inclusion
+comparison.
 -/
 
 namespace Core.Optimization.Evaluation
@@ -361,151 +358,84 @@ theorem satLE_not_antisymm :
 
 
 -- ============================================================================
--- ============================================================================
--- § 10: LexProfile — Variable-Length Lexicographic Preorder
+-- § 10: LexNatList — Variable-Length Lexicographic Preorder
 -- ============================================================================
 
-/-- Violation profile ordered by lexicographic ≤ (lex order).
+/-- `List Nat` wrapped to carry the `LexLE`-`Preorder` instance.
 
-    Wraps `List Nat` so that `≤` means `LexLE` — the standard
-    comparison where the first differing constraint determines the winner.
-    This is a `Preorder` (reflexive, transitive) but not a `PartialOrder`
-    on `List Nat`: trailing zeros are invisible (`LexLE [] [0]` and
-    `LexLE [0] []` both hold). For a `LinearOrder` on fixed-length profiles,
-    use `ViolationProfile n`. -/
-structure LexProfile where
-  profile : List Nat
+    The bare `List Nat` doesn't carry a `Preorder` from `LexLE` (mathlib
+    leaves it ambiguous); this thin wrapper provides one. Only a
+    `Preorder` — not a `PartialOrder` — since trailing zeros are invisible
+    (`LexLE [] [0]` and `LexLE [0] []` both hold). For a `LinearOrder`,
+    use fixed-length `Lex (Fin n → Nat)` (aka `LexProfile Nat n`). -/
+structure LexNatList where
+  value : List Nat
   deriving DecidableEq, Repr
 
-instance : LE LexProfile where le a b := LexLE a.profile b.profile
-instance : LT LexProfile where lt a b := LexLE a.profile b.profile ∧ ¬ LexLE b.profile a.profile
+instance : LE LexNatList where le a b := LexLE a.value b.value
+instance : LT LexNatList where lt a b := LexLE a.value b.value ∧ ¬ LexLE b.value a.value
 
-instance : Preorder LexProfile where
-  le_refl a := lexLE_refl a.profile
-  le_trans a b c := lexLE_trans a.profile b.profile c.profile
+instance : Preorder LexNatList where
+  le_refl a := lexLE_refl a.value
+  le_trans a b c := lexLE_trans a.value b.value c.value
 
-instance (a b : LexProfile) : Decidable (a ≤ b) :=
-  instDecidableLexLE a.profile b.profile
+instance (a b : LexNatList) : Decidable (a ≤ b) :=
+  instDecidableLexLE a.value b.value
 
-instance (a b : LexProfile) : Decidable (a < b) :=
-  inferInstanceAs (Decidable (LexLE a.profile b.profile ∧ ¬ LexLE b.profile a.profile))
+instance (a b : LexNatList) : Decidable (a < b) :=
+  inferInstanceAs (Decidable (LexLE a.value b.value ∧ ¬ LexLE b.value a.value))
 
-/-- `LexProfile.≤` is definitionally `LexLE`. -/
-theorem LexProfile.le_iff (a b : LexProfile) :
-    a ≤ b ↔ LexLE a.profile b.profile := Iff.rfl
+/-- `LexNatList.≤` is definitionally `LexLE`. -/
+theorem LexNatList.le_iff (a b : LexNatList) :
+    a ≤ b ↔ LexLE a.value b.value := Iff.rfl
 
-/-- `LexProfile.<` is definitionally `LexLT`. -/
-theorem LexProfile.lt_iff (a b : LexProfile) :
-    a < b ↔ LexLT a.profile b.profile := Iff.rfl
+/-- `LexNatList.<` is definitionally `LexLT`. -/
+theorem LexNatList.lt_iff (a b : LexNatList) :
+    a < b ↔ LexLT a.value b.value := Iff.rfl
 
-/-- `LexLE` is total on equal-length profiles, expressed via `LexProfile`. -/
-theorem LexProfile.le_total (a b : LexProfile)
-    (h : a.profile.length = b.profile.length) :
+/-- `LexLE` is total on equal-length values, expressed via `LexNatList`. -/
+theorem LexNatList.le_total (a b : LexNatList)
+    (h : a.value.length = b.value.length) :
     a ≤ b ∨ b ≤ a :=
-  lexLE_total a.profile b.profile h
+  lexLE_total a.value b.value h
+
 
 -- ============================================================================
--- § 11: SatProfile — Variable-Length Satisfaction Preorder
+-- § 12: Instances on `Lex (Fin n → Nat)`
 -- ============================================================================
 
-/-- Violation profile ordered by satisfaction ≤ (Kratzer ordering).
-
-    Wraps `List Nat` so that `≤` means `SatLE` — a candidate is at least
-    as good as another iff it satisfies every constraint the other satisfies.
-    This is a `Preorder` (reflexive, transitive) but neither antisymmetric
-    (non-zero values are interchangeable) nor total (incomparable candidates
-    are possible). -/
-structure SatProfile where
-  profile : List Nat
-  deriving DecidableEq, Repr
-
-instance : LE SatProfile where le a b := SatLE a.profile b.profile
-instance : LT SatProfile where lt a b := SatLE a.profile b.profile ∧ ¬ SatLE b.profile a.profile
-
-instance : Preorder SatProfile where
-  le_refl a := satLE_refl a.profile
-  le_trans a b c := satLE_trans a.profile b.profile c.profile
-
-instance (a b : SatProfile) : Decidable (a ≤ b) :=
-  instDecidableSatLE a.profile b.profile
-
-instance (a b : SatProfile) : Decidable (a < b) :=
-  inferInstanceAs (Decidable (SatLE a.profile b.profile ∧ ¬ SatLE b.profile a.profile))
-
-/-- `SatProfile.≤` is definitionally `SatLE`. -/
-theorem SatProfile.le_iff (a b : SatProfile) :
-    a ≤ b ↔ SatLE a.profile b.profile := Iff.rfl
-
-/-- `SatLE` is NOT total: incomparable candidates are possible. -/
-theorem SatProfile.not_le_total :
-    ¬∀ (a b : SatProfile), a ≤ b ∨ b ≤ a := by
-  intro h
-  exact satLE_not_total fun a b => h ⟨a⟩ ⟨b⟩
-
--- ============================================================================
--- § 12: ViolationProfile n — Fixed-Length Lexicographic Linear Order
--- ============================================================================
-
-/-- Fixed-length cost vector: `n` coordinates, each holding a natural
-    number of violations.
-
-    Defined as `Lex (Fin n → Nat)` — mathlib's type synonym that equips
-    Pi-types with lexicographic ordering. The three layers of structure are:
-
-    - **`LinearOrder`**: from `Pi.Lex` — lexicographic comparison
-      (`min` = the ⊗, choose winner)
-    - **`AddCommMonoid`**: componentwise addition
-      (the ⊎, merge violations)
-    - **`IsOrderedCancelAddMonoid`**: compatibility — adding violations
-      preserves the lex order (additive monotonicity / Dijkstra's
-      principle)
-
-    Unlike `LexProfile` (which wraps `List Nat` and is only a `Preorder`),
-    `ViolationProfile n` is a full `LinearOrder`: reflexive, transitive,
-    **antisymmetric**, and **total**. The linear order guarantees that every
-    non-empty candidate set has a unique minimum (= the lex-min). -/
-abbrev ViolationProfile (n : Nat) := Lex (Fin n → Nat)
-
--- The linear order comes from mathlib's Pi.Lex:
--- Pi.Lex (· < ·) (· < ·) a b ↔ ∃ i, (∀ j < i, a j = b j) ∧ a i < b i
-
--- Extensionality for ViolationProfile (Lex has no @[ext] instance)
-private theorem vp_ext {n : Nat} {a b : ViolationProfile n}
+/-- Extensionality helper for `Lex (Fin n → Nat)` (mathlib's `Lex`
+    deliberately has no `@[ext]`). -/
+private theorem lexFin_ext {n : Nat} {a b : Lex (Fin n → Nat)}
     (h : ∀ i, a i = b i) : a = b :=
   show toLex (ofLex a) = toLex (ofLex b) from congrArg toLex (funext h)
 
-/-- Pointwise addition on `ViolationProfile n` reduces componentwise. -/
-theorem ViolationProfile.add_apply {n : Nat}
-    (a b : ViolationProfile n) (i : Fin n) :
+/-- Pointwise addition on `Lex (Fin n → Nat)` reduces componentwise. -/
+theorem lexFinNat_add_apply {n : Nat}
+    (a b : Lex (Fin n → Nat)) (i : Fin n) :
     (a + b) i = a i + b i := rfl
 
-/-- The zero `ViolationProfile n` is pointwise zero. -/
-theorem ViolationProfile.zero_apply {n : Nat} (i : Fin n) :
-    (0 : ViolationProfile n) i = 0 := rfl
+/-- The zero `Lex (Fin n → Nat)` is pointwise zero. -/
+theorem lexFinNat_zero_apply {n : Nat} (i : Fin n) :
+    (0 : Lex (Fin n → Nat)) i = 0 := rfl
 
 -- `AddCommMonoid` is NOT lifted automatically (Lex deliberately strips
 -- algebraic instances — mathlib's PiLex.lean has `assert_not_exists Monoid`).
 -- We prove the axioms manually; Lean picks up `instAddLex`/`instZeroLex`
 -- as parent instances, so there is no instance diamond.
-instance (n : Nat) : AddCommMonoid (ViolationProfile n) where
-  add_assoc a b c := vp_ext fun i => Nat.add_assoc ..
-  zero_add a := vp_ext fun i => Nat.zero_add ..
-  add_zero a := vp_ext fun i => Nat.add_zero ..
-  add_comm a b := vp_ext fun i => Nat.add_comm ..
+instance (n : Nat) : AddCommMonoid (Lex (Fin n → Nat)) where
+  add_assoc a b c := lexFin_ext fun i => Nat.add_assoc ..
+  zero_add a := lexFin_ext fun i => Nat.zero_add ..
+  add_zero a := lexFin_ext fun i => Nat.add_zero ..
+  add_comm a b := lexFin_ext fun i => Nat.add_comm ..
   nsmul := nsmulRec
 
-/-- `ViolationProfile n` is an ordered additive commutative monoid:
-    componentwise addition of violations preserves the lexicographic
-    ordering. This is tropical semiring view (cf. [riggle-2009]) — the
-    `AddCommMonoid` is the ⊎ (merge) operation, and `min` from the
-    `LinearOrder` is the ⊗ (choose winner) operation. Distributivity
-    of ⊗ over ⊎ is exactly `add_le_add_left`.
-
-    The proof works by transferring the lex existential witness: if
-    `a < b` at position `i` with all earlier positions equal, then
-    `a + c < b + c` at the same position `i` (Nat addition preserves
-    strict inequality). -/
-instance (n : Nat) : IsOrderedAddMonoid (ViolationProfile n) where
+/-- `Lex (Fin n → Nat)` is an ordered additive commutative monoid:
+    componentwise addition preserves the lexicographic ordering. The
+    proof transfers the lex existential witness: if `a < b` at position
+    `i` with all earlier positions equal, then `a + c < b + c` at the
+    same position. -/
+instance (n : Nat) : IsOrderedAddMonoid (Lex (Fin n → Nat)) where
   add_le_add_left a b hab c := by
     rcases eq_or_lt_of_le hab with rfl | hlt
     · exact le_refl _
@@ -515,13 +445,11 @@ instance (n : Nat) : IsOrderedAddMonoid (ViolationProfile n) where
         fun j hj => show a j + c j = b j + c j by rw [hpre j hj],
         Nat.add_lt_add_right hi (c i)⟩
 
-/-- Left cancellation for lexicographic ≤: if `a + b ≤ a + c` then `b ≤ c`.
-    This strengthens the ordered monoid to an ordered **cancel** monoid,
-    which is needed for the tropical semiring derivation. -/
-instance (n : Nat) : IsOrderedCancelAddMonoid (ViolationProfile n) where
+/-- Left cancellation for lexicographic ≤. -/
+instance (n : Nat) : IsOrderedCancelAddMonoid (Lex (Fin n → Nat)) where
   le_of_add_le_add_left a b c hab := by
     rcases eq_or_lt_of_le hab with heq | hlt
-    · exact le_of_eq (vp_ext fun i => Nat.add_left_cancel (congrFun heq i))
+    · exact le_of_eq (lexFin_ext fun i => Nat.add_left_cancel (congrFun heq i))
     · apply le_of_lt
       obtain ⟨i, hpre, hi⟩ := hlt
       exact ⟨i,
@@ -529,30 +457,31 @@ instance (n : Nat) : IsOrderedCancelAddMonoid (ViolationProfile n) where
         Nat.lt_of_add_lt_add_left hi⟩
 
 -- ============================================================================
--- § 12a: Decidable Ordering on ViolationProfile
+-- § 12a: Decidable Ordering on `Lex (Fin n → Nat)`
 -- ============================================================================
 
-/-- Lexicographic ≤ on `Fin n → Nat`, defined by recursion on `n`.
-    This computable relation is the decision procedure for `≤` on
-    `ViolationProfile n` (see `vpLE_iff_le`). -/
-def vpLE : (n : Nat) → (Fin n → Nat) → (Fin n → Nat) → Prop
+/-- Recursive computable lex-≤ on `Fin n → Nat` (decision procedure for the
+    noncomputable `Pi.Lex` order). -/
+private def lexFinNatLE : (n : Nat) → (Fin n → Nat) → (Fin n → Nat) → Prop
   | 0, _, _ => True
-  | _ + 1, a, b => a 0 < b 0 ∨ (a 0 = b 0 ∧ vpLE _ (a ∘ Fin.succ) (b ∘ Fin.succ))
+  | _ + 1, a, b => a 0 < b 0 ∨ (a 0 = b 0 ∧ lexFinNatLE _ (a ∘ Fin.succ) (b ∘ Fin.succ))
 
-instance instDecidableVpLE : (n : Nat) → (a b : Fin n → Nat) → Decidable (vpLE n a b)
+private instance instDecidableLexFinNatLE :
+    (n : Nat) → (a b : Fin n → Nat) → Decidable (lexFinNatLE n a b)
   | 0, _, _ => isTrue trivial
   | _ + 1, a, b =>
-    have : Decidable (vpLE _ (a ∘ Fin.succ) (b ∘ Fin.succ)) :=
-      instDecidableVpLE _ _ _
-    inferInstanceAs (Decidable (a 0 < b 0 ∨ (a 0 = b 0 ∧ vpLE _ _ _)))
+    have : Decidable (lexFinNatLE _ (a ∘ Fin.succ) (b ∘ Fin.succ)) :=
+      instDecidableLexFinNatLE _ _ _
+    inferInstanceAs (Decidable (a 0 < b 0 ∨ (a 0 = b 0 ∧ lexFinNatLE _ _ _)))
 
-/-- `vpLE n a b` is equivalent to the negation of `Pi.Lex (· < ·) (· < ·) b a`.
-
-    Proof: by induction on `n`. At each step, the recursive structure of
-    `vpLE` (head comparison + tail recursion) mirrors the existential
-    structure of `Pi.Lex` (first differing position). -/
-private theorem vpLE_iff_not_lt : (n : Nat) → (a b : Fin n → Nat) →
-    vpLE n a b ↔ ¬ (∃ i : Fin n, (∀ j : Fin n, j < i → b j = a j) ∧ b i < a i)
+/-- `lexFinNatLE` is the negation of `Pi.Lex (· < ·) (· < ·) b a`. Proof
+    by induction on `n`: the recursive structure of `lexFinNatLE`
+    (head + tail) mirrors the existential structure of `Pi.Lex` (first
+    differing position). -/
+private theorem lexFinNatLE_iff_not_lt :
+    (n : Nat) → (a b : Fin n → Nat) →
+    lexFinNatLE n a b ↔
+      ¬ (∃ i : Fin n, (∀ j : Fin n, j < i → b j = a j) ∧ b i < a i)
   | 0, _, _ => by
     constructor
     · intro _ ⟨i, _, _⟩; exact i.elim0
@@ -568,12 +497,12 @@ private theorem vpLE_iff_not_lt : (n : Nat) → (a b : Fin n → Nat) →
         · exact absurd hlt (Nat.not_lt.mpr (le_of_eq h_head_eq))
         · exact absurd ⟨j,
             fun k hk => hpre k.succ (Fin.succ_lt_succ_iff.mpr hk), hlt⟩
-            ((vpLE_iff_not_lt n (a ∘ Fin.succ) (b ∘ Fin.succ)).mp h_tail)
+            ((lexFinNatLE_iff_not_lt n (a ∘ Fin.succ) (b ∘ Fin.succ)).mp h_tail)
     · intro hno
       rcases Nat.lt_trichotomy (a 0) (b 0) with hlt | heq | hgt
       · exact Or.inl hlt
       · right; exact ⟨heq,
-          (vpLE_iff_not_lt n (a ∘ Fin.succ) (b ∘ Fin.succ)).mpr fun ⟨j, hp, hl⟩ =>
+          (lexFinNatLE_iff_not_lt n (a ∘ Fin.succ) (b ∘ Fin.succ)).mpr fun ⟨j, hp, hl⟩ =>
             hno ⟨j.succ,
               fun k hk => by
                 rcases Fin.eq_zero_or_eq_succ k with rfl | ⟨k', rfl⟩
@@ -583,60 +512,45 @@ private theorem vpLE_iff_not_lt : (n : Nat) → (a b : Fin n → Nat) →
       · exact absurd ⟨(0 : Fin (n + 1)),
           fun j hj => absurd hj (Fin.not_lt_zero j), hgt⟩ hno
 
-/-- **Bridge theorem**: `vpLE` is equivalent to `≤` on `ViolationProfile n`.
-
-    This connects the computable recursive comparison (`vpLE`, defined by
-    structural recursion on `n`) to the algebraic `LinearOrder` on
-    `ViolationProfile n` (derived from `Pi.Lex`). The bridge enables
-    decidable ≤ on `ViolationProfile n` (see `instDecidableVpProfileLE`),
-    which in turn makes `Tableau.optimal` computable. -/
-theorem vpLE_iff_le {n : Nat} (a b : ViolationProfile n) :
-    vpLE n a b ↔ a ≤ b := by
+/-- Bridge: `lexFinNatLE` agrees with `≤` on `Lex (Fin n → Nat)`. -/
+theorem lexFinNatLE_iff_le {n : Nat} (a b : Lex (Fin n → Nat)) :
+    lexFinNatLE n a b ↔ a ≤ b := by
   rw [show a ≤ b ↔ ¬ (b < a) from not_lt.symm]
-  exact vpLE_iff_not_lt n a b
+  exact lexFinNatLE_iff_not_lt n a b
 
-/-- Decidable `≤` on `ViolationProfile n`, via `vpLE`.
-
-    This makes `ViolationProfile n` computationally comparable despite
-    the `LinearOrder` being noncomputable (from `Pi.Lex`). With this
-    instance, `Tableau.optimal` becomes computable: study files can use
-    `by decide` to verify the lex-min set on `Tableau C n`. -/
-instance instDecidableVpProfileLE {n : Nat} (a b : ViolationProfile n) :
+/-- Decidable `≤` on `Lex (Fin n → Nat)`. The `LinearOrder` from `Pi.Lex`
+    is noncomputable, but this instance provides decidable comparison via
+    the recursive `lexFinNatLE`, making downstream `by decide` work. -/
+instance instDecidableLexFinNatProfileLE {n : Nat} (a b : Lex (Fin n → Nat)) :
     Decidable (a ≤ b) :=
-  decidable_of_iff (vpLE n a b) (vpLE_iff_le a b)
+  decidable_of_iff (lexFinNatLE n a b) (lexFinNatLE_iff_le a b)
 
-/-- Decidable `<` on `ViolationProfile n`, from decidable `≤`. -/
-instance instDecidableVpProfileLT {n : Nat} (a b : ViolationProfile n) :
+/-- Decidable `<` on `Lex (Fin n → Nat)`. -/
+instance instDecidableLexFinNatProfileLT {n : Nat} (a b : Lex (Fin n → Nat)) :
     Decidable (a < b) :=
   decidable_of_iff (¬ b ≤ a) (@not_le _ _ b a)
 
 -- ============================================================================
--- § 12b: buildViolationProfile
+-- § 12b: Smart constructor for `Lex (Fin n → Nat)` from atom-wise functions
 -- ============================================================================
 
-/-- Build a `ViolationProfile n` from `n` constraint evaluation functions.
-
-    Given constraints as `Fin n → C → Nat` (constraint `i` evaluated on
-    candidate `c` yields the `i`-th coordinate `constraints i c`), produce
-    the fixed-length cost vector for `c`.
-
-    This is the bridge between the study-file workflow (define individual
-    constraint functions) and the algebraic `Tableau C n` infrastructure. -/
-def buildViolationProfile {C : Type*} {n : Nat}
-    (constraints : Fin n → C → Nat) (c : C) : ViolationProfile n :=
-  toLex fun i => constraints i c
+/-- Build a `Lex (Fin n → Nat)` from `n` atom-wise evaluation functions.
+    Given atoms as `Fin n → C → Nat`, produce the lex-comparable
+    fixed-length vector for `c : C`. -/
+def lexFinNatOf {C : Type*} {n : Nat}
+    (atoms : Fin n → C → Nat) (c : C) : Lex (Fin n → Nat) :=
+  toLex fun i => atoms i c
 
 -- ============================================================================
--- § 12c: Tropical Semiring Derivation ((tropical semiring view; cf. [riggle-2009]))
+-- § 12c: Tropical Semiring Derivation
 -- ============================================================================
 
-/-- `WithTop (ViolationProfile n)` is a `LinearOrderedAddCommMonoidWithTop`:
-    it extends the ordered cancel monoid with a top element (`V^∞` in
-    notation) that absorbs addition. This is the final prerequisite for the
-    tropical semiring — mathlib's `Tropical` wrapper then gives us
-    `CommSemiring (Tropical (WithTop (ViolationProfile n)))` for free. -/
+/-- `WithTop (Lex (Fin n → Nat))` is a `LinearOrderedAddCommMonoidWithTop`:
+    it extends the ordered cancel monoid with an absorbing top element.
+    Prerequisite for the tropical semiring: mathlib's `Tropical` wrapper
+    then provides `CommSemiring` automatically. -/
 noncomputable instance (n : Nat) :
-    LinearOrderedAddCommMonoidWithTop (WithTop (ViolationProfile n)) where
+    LinearOrderedAddCommMonoidWithTop (WithTop (Lex (Fin n → Nat))) where
   top_add' := WithTop.top_add
   isAddLeftRegular_of_ne_top := by
     intro x hx a b hab
@@ -662,150 +576,89 @@ noncomputable instance (n : Nat) :
             (le_of_add_le_add_left (le_of_eq h))
             (le_of_add_le_add_left (le_of_eq h.symm)))
 
-/-- The standard tropical semiring on cost vectors: for any `n`,
-    `Tropical (WithTop (ViolationProfile n))` is automatically a
-    `CommSemiring` where:
-
-    - **Tropical addition** (`⊕`) = `min` under harmonic inequality —
-      choosing the more harmonic candidate (the ⊗)
-    - **Tropical multiplication** (`⊗`) = componentwise `+` of coordinate
-      counts — merging violations from multiple constraints (the ⊎)
-    - **Additive identity** (`0`) = `⊤` (V^∞) — the infinitely bad candidate
-      that loses to everything
-    - **Multiplicative identity** (`1`) = the zero profile — the perfect
-      candidate with no violations
-
-    This is *derived*, not stipulated: we define `ViolationProfile n` as
-    `Lex (Fin n → Nat)` with `LinearOrder` (from Pi.Lex), `AddCommMonoid`
-    (componentwise), and `IsOrderedCancelAddMonoid` (compatibility), then
-    `WithTop` adds the absorbing top element, and mathlib's `Tropical`
-    wrapper provides the semiring structure automatically via `inferInstance`. -/
+/-- The tropical semiring on `Lex (Fin n → Nat)`:
+    `Tropical (WithTop (Lex (Fin n → Nat)))` is a `CommSemiring` where
+    addition is `min` (under the lex order) and multiplication is
+    componentwise `+`. Derived, not stipulated. Linguistic packaging:
+    `Phonology/Constraint/Dequantization/ViolationSemiring.lean` after
+    [riggle-2009]. -/
 noncomputable example (n : Nat) :
-    CommSemiring (Tropical (WithTop (ViolationProfile n))) :=
+    CommSemiring (Tropical (WithTop (Lex (Fin n → Nat)))) :=
   inferInstance
 
--- ============================================================================
--- § 13: SatViolationProfile n — Fixed-Length Satisfaction Preorder
--- ============================================================================
-
-/-- Pointwise satisfaction ≤ on `Fin n → Nat`: `a ≤ b` iff every constraint
-    that `b` satisfies (has 0 violations), `a` also satisfies.
-
-    This is a `Preorder` but not a `PartialOrder`: non-zero values are
-    interchangeable (e.g., `[1] ≤ [2]` and `[2] ≤ [1]` both hold). -/
-def svpLE {n : Nat} (a b : Fin n → Nat) : Prop :=
-  ∀ i : Fin n, b i = 0 → a i = 0
-
-instance {n : Nat} (a b : Fin n → Nat) : Decidable (svpLE a b) :=
-  Fintype.decidableForallFintype
-
-/-- Fixed-length cost vector ordered by subset-inclusion ≤
-    (Kratzer ordering). `a ≤ b` iff `a` satisfies every constraint that `b`
-    satisfies. -/
-@[ext]
-structure SatViolationProfile (n : Nat) where
-  val : Fin n → Nat
-  deriving DecidableEq
-
-instance (n : Nat) : LE (SatViolationProfile n) where le a b := svpLE a.val b.val
-instance (n : Nat) : LT (SatViolationProfile n) where lt a b := a ≤ b ∧ ¬ b ≤ a
-
-instance (n : Nat) : Preorder (SatViolationProfile n) where
-  le_refl a := fun _ h => h
-  le_trans a b c hab hbc := fun i hi => hab i (hbc i hi)
-
-instance {n : Nat} (a b : SatViolationProfile n) : Decidable (a ≤ b) :=
-  inferInstanceAs (Decidable (svpLE a.val b.val))
-
-instance {n : Nat} (a b : SatViolationProfile n) : Decidable (a < b) :=
-  inferInstanceAs (Decidable (a ≤ b ∧ ¬ b ≤ a))
 
 -- ============================================================================
--- § 14: Lex-min problem (`Tableau`)
+-- § 14: LexMinProblem — finite candidate set with a lex-comparable score
 -- ============================================================================
 
-/-- A finite candidate set with a `Fin n → Nat`-valued cost vector.
-
-    Uses `Finset C` for the candidate set (guaranteeing finiteness and
-    deduplication) and `ViolationProfile n` for fixed-length profiles with
-    decidable `LinearOrder`. -/
-structure Tableau (C : Type*) [DecidableEq C] (n : Nat) where
+/-- A finite candidate set `C` with a `Fin n → Nat`-valued score and a
+    nonemptiness witness. The lex-min set is nonempty
+    (`exists_lexMin`), computable (`lexMins`), and accessible via the
+    `IsLexMin` predicate. -/
+structure LexMinProblem (C : Type*) [DecidableEq C] (n : Nat) where
   candidates : Finset C
-  profile : C → ViolationProfile n
+  profile : C → Lex (Fin n → Nat)
   nonempty : candidates.Nonempty
 
 variable {C : Type*} [DecidableEq C] {n : Nat}
 
-/-- A candidate is optimal iff it belongs to the candidate set and its
-    profile is ≤ every other candidate's profile. -/
-def Tableau.IsOptimal (t : Tableau C n) (c : C) : Prop :=
+/-- A candidate is a lex-minimizer iff it's in the candidate set and its
+    score is ≤ every other candidate's score. -/
+def LexMinProblem.IsLexMin (t : LexMinProblem C n) (c : C) : Prop :=
   c ∈ t.candidates ∧ ∀ c' ∈ t.candidates, t.profile c ≤ t.profile c'
 
-/-- **Every tableau has an optimal candidate.** This is the structural
-    guarantee: the `LinearOrder` on `ViolationProfile n` ensures
-    a minimum always exists in any non-empty finite set.
-
-    Proof delegates to `Finset.exists_min_image` — the general fact that
-    a linear-ordered image of a non-empty finset has a minimum. -/
-theorem Tableau.exists_optimal (t : Tableau C n) : ∃ c, t.IsOptimal c := by
+/-- **Every problem has a lex-minimizer.** Delegates to
+    `Finset.exists_min_image` — the linear-ordered image of a nonempty
+    finset has a minimum. -/
+theorem LexMinProblem.exists_lexMin (t : LexMinProblem C n) :
+    ∃ c, t.IsLexMin c := by
   obtain ⟨c, hc_mem, hc_min⟩ := Finset.exists_min_image t.candidates t.profile t.nonempty
   exact ⟨c, hc_mem, hc_min⟩
 
-/-- Set of optimal candidates. Computable via `instDecidableVpProfileLE`:
-    the `Finset.filter` tests `∀ c' ∈ candidates, profile c ≤ profile c'`
-    using the decidable ≤ on `ViolationProfile n`. Study files can verify
-    the lex-min set with `by decide` on concrete tableaux. -/
-def Tableau.optimal (t : Tableau C n) : Finset C :=
+/-- The set of lex-minimizers. Computable via `instDecidableLexFinNatProfileLE`;
+    consumers can use `by decide` to verify lex-mins on concrete problems. -/
+def LexMinProblem.lexMins (t : LexMinProblem C n) : Finset C :=
   t.candidates.filter fun c =>
     ∀ c' ∈ t.candidates, t.profile c ≤ t.profile c'
 
-/-- `c ∈ t.optimal` iff `t.IsOptimal c`. -/
-theorem Tableau.mem_optimal_iff (t : Tableau C n) (c : C) :
-    c ∈ t.optimal ↔ t.IsOptimal c := by
-  simp only [Tableau.optimal, Finset.mem_filter, Tableau.IsOptimal]
+/-- `c ∈ t.lexMins` iff `t.IsLexMin c`. -/
+theorem LexMinProblem.mem_lexMins_iff (t : LexMinProblem C n) (c : C) :
+    c ∈ t.lexMins ↔ t.IsLexMin c := by
+  simp only [LexMinProblem.lexMins, Finset.mem_filter, LexMinProblem.IsLexMin]
 
-/-- The optimal set is always non-empty: the lex-min set is non-empty. -/
-theorem Tableau.optimal_nonempty (t : Tableau C n) : t.optimal.Nonempty := by
-  obtain ⟨c, hc⟩ := t.exists_optimal
-  exact ⟨c, (t.mem_optimal_iff c).mpr hc⟩
+/-- The lex-min set is always nonempty. -/
+theorem LexMinProblem.lexMins_nonempty (t : LexMinProblem C n) : t.lexMins.Nonempty := by
+  obtain ⟨c, hc⟩ := t.exists_lexMin
+  exact ⟨c, (t.mem_lexMins_iff c).mpr hc⟩
 
-/-- Optimal candidates belong to the candidate set. -/
-theorem Tableau.optimal_subset (t : Tableau C n) (c : C) :
-    c ∈ t.optimal → c ∈ t.candidates :=
-  fun hc => ((t.mem_optimal_iff c).mp hc).1
+/-- Lex-minimizers belong to the candidate set. -/
+theorem LexMinProblem.lexMins_subset (t : LexMinProblem C n) (c : C) :
+    c ∈ t.lexMins → c ∈ t.candidates :=
+  fun hc => ((t.mem_lexMins_iff c).mp hc).1
 
 -- ============================================================================
 -- § 14a: Computable Finset Predicates
 -- ============================================================================
 
-/-- Check a Bool predicate for all elements of a Finset.
-
-    Computable via `Finset.decidableBAll` — avoids noncomputable
-    `Finset.toList`. Use this to verify properties of optimal candidates
-    in `native_decide` proofs. -/
+/-- Check a Bool predicate for all elements of a Finset. Computable via
+    `Finset.decidableBAll` — avoids noncomputable `Finset.toList`. -/
 def Finset.checkAll {α : Type} [DecidableEq α]
     (s : Finset α) (p : α → Bool) : Bool :=
   decide (∀ c ∈ s, p c = true)
 
-/-- Check a Bool predicate for some element of a Finset.
-
-    Computable via `Finset.decidableBEx` — avoids noncomputable
-    `Finset.toList`. -/
+/-- Check a Bool predicate for some element of a Finset. -/
 def Finset.checkAny {α : Type} [DecidableEq α]
     (s : Finset α) (p : α → Bool) : Bool :=
   decide (∃ c ∈ s, p c = true)
 
 -- ============================================================================
--- § 15: ViolationProfile Component Lemmas
+-- § 15: Component lemma on `Lex (Fin n → Nat)`
 -- ============================================================================
 
-/-- If `a ≤ b` lexicographically, then the first component satisfies
-    `a 0 ≤ b 0`. Extracting the first component is the algebraic
-    backbone of `isOptimal_zero_first`: if the first constraint has
-    0 violations for any candidate, all optimal candidates must also
-    have 0 violations on it. -/
-theorem ViolationProfile.le_apply_zero {n : Nat}
-    {a b : ViolationProfile (n + 1)} (h : a ≤ b) : a 0 ≤ b 0 := by
+/-- If `a ≤ b` lex-wise, then their first components satisfy
+    `a 0 ≤ b 0`. -/
+theorem lexFinNat_le_apply_zero {n : Nat}
+    {a b : Lex (Fin (n + 1) → Nat)} (h : a ≤ b) : a 0 ≤ b 0 := by
   by_contra hgt
   push Not at hgt
   exact absurd (show b < a from

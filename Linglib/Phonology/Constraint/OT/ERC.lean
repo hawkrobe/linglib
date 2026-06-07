@@ -1,4 +1,5 @@
 import Linglib.Core.Optimization.Evaluation
+import Linglib.Phonology.Constraint.OT.Aliases
 import Mathlib.GroupTheory.Perm.Basic
 
 /-!

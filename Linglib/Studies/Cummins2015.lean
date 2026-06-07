@@ -191,7 +191,7 @@ def qualPreorder : PullbackPreorder ViolationProfile (Finset (Fin 4)) :=
 /-- **Pointwise dominance ⇒ qualitative dominance.** A one-line corollary of
     `PullbackPreorder.coarsen_via_monotone` with the violated-index extractor
     as the connecting monotone map — identical in shape to
-    `paretoPullbackPreorder_le_implies_qualitativePullbackPreorder_le` in
+    `paretoPullbackPreorder_le_implies_supportPullbackPreorder_le` in
     `Core/Optimization/Pareto.lean`. -/
 theorem paretoPreorder_le_implies_qualPreorder_le
     {v v' : ViolationProfile} (h : paretoPreorder.le v v') :

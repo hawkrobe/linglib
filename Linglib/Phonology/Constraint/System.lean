@@ -73,7 +73,7 @@ noncomputable def maxEntSystem {Cand : Type*}
 -- § 2: Tableau Bridge
 -- ============================================================================
 
-/-! `Core.Optimization.Evaluation.Tableau` is the established study-file API for
+/-! `Phonology.Constraint.OT.Tableau` is the established study-file API for
 OT (used by `mkTableau ... .optimal = {winner}` patterns). The bridge below
 shows that `Tableau` is a special case of `ConstraintSystem`: the OT score
 `profile : C → ViolationProfile n` is exactly a `LexProfile Nat n`-valued
@@ -83,6 +83,7 @@ score (definitionally), and `Tableau.optimal` is exactly the support of the
 `ConstraintSystem.predict` view via `tableauSystem`. -/
 
 open Core.Optimization.Evaluation
+open Phonology.Constraint.OT
 
 /-- An OT tableau viewed as a generic `ConstraintSystem`. The score type
     `LexProfile Nat n` is definitionally `ViolationProfile n`, so the
@@ -105,7 +106,7 @@ theorem tableauSystem_predict_eq {C : Type*} [DecidableEq C] {n : Nat}
   have hfilter : t.optimal = (t.candidates.filter
       (fun c' => ∀ c'' ∈ t.candidates, t.profile c' ≤ t.profile c'')) := by
     ext x
-    simp only [Finset.mem_filter, Tableau.optimal]
+    simp only [Finset.mem_filter, LexMinProblem.lexMins]
   show argminDecoder.decode t.candidates t.profile c = _
   unfold argminDecoder
   simp only
