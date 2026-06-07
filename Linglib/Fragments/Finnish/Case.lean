@@ -1,6 +1,7 @@
 import Linglib.Features.Case.Basic
 import Linglib.Diachronic.CaseGrammaticalization
 import Linglib.Morphology.Case.Allomorphy
+import Linglib.Syntax.Case.Order
 open Morphology.Case.Allomorphy
 
 /-!
@@ -45,15 +46,19 @@ namespace Finnish.Case
     abessive added to Case; internal/external local pairs collapsed):
     - NOM →.nom, ACC →.acc (pronoun/total-object accusative)
     - GEN →.gen, PART →.part
-    - INE/ADE →.loc, ELA/ABL →.abl, ILL/ALL →.all
+    - the 6 local cases as *distinct* cells: INE/ELA/ILL (interior),
+      ADE/ABL/ALL (exterior) — via the shared `Region × PathDir`
+      decomposition (`Syntax/Case/Order.lean`)
     - ESS →.ess, TRANSL →.transl, ABESS →.abess
     - INSTR →.inst, COM →.com -/
 def caseInventory : Finset Case :=
-  {.nom, .acc, .gen, .part, .loc, .abl, .all, .ess, .transl, .abess, .inst, .com}
+  {.nom, .acc, .gen, .part, .ine, .ade, .ela, .abl, .ill, .all,
+   .ess, .transl, .abess, .inst, .com}
 
-/-- Finnish's mapped inventory **fails** strict contiguity: GEN (rank 5)
-    and LOC (rank 3) have no DAT (rank 4) between them. Finnish uses
-    allative for recipient function instead of a dedicated dative.
+/-- Finnish's inventory **fails** strict contiguity: the spatial tier
+    (rank ≤ 2) and GEN/core (rank ≥ 5) have no LOC (rank 3) or DAT
+    (rank 4) between them. Finnish uses allative for recipient function
+    instead of a dedicated dative.
 
     This illustrates Blake's hedge: the hierarchy holds "usually" but
     languages like Finnish fill the dative slot with a local case
@@ -113,22 +118,34 @@ structure LocalCase where
   coreCase : Case
   deriving DecidableEq, Repr, Inhabited
 
-/-- The 3×2 local case matrix.
+/-- The Finnish directional dimension as the shared `Case.PathDir`
+    (static = the locative Place base). -/
+def Direction.toPathDir : Direction → Case.PathDir
+  | .static => .place
+  | .source => .source
+  | .goal => .goal
 
-    |           | Internal     | External     |
-    |-----------|-------------|-------------|
+/-- The Finnish location type as the shared `Case.Region`. -/
+def LocationType.toRegion : LocationType → Case.Region
+  | .internal => .interior
+  | .external => .exterior
+
+/-- The 3×2 local case matrix, mapping each cell to its *distinct* `Case`
+    via the shared `Region × PathDir` decomposition
+    (`Syntax/Case/Order.lean`) — no longer collapsing internal/external
+    (cf. the deleted `static_collapses_to_loc`).
+
+    |           | Internal      | External      |
+    |-----------|---------------|---------------|
     | Static    | inessive -ssA | adessive -llA |
     | Source    | elative -stA  | ablative -ltA |
-    | Goal      | illative -Vn  | allative -lle |
-
-    Case collapses each row into a single value (static →.loc,
-    source →.abl, goal →.all). The matrix reveals the full structure. -/
+    | Goal      | illative -Vn  | allative -lle | -/
 def localCaseMatrix : Direction → LocationType → LocalCase
-  | .static, .internal => ⟨"inessive",  "-ssA", .static, .internal, .loc⟩
-  | .static, .external => ⟨"adessive",  "-llA", .static, .external, .loc⟩
-  | .source, .internal => ⟨"elative",   "-stA", .source, .internal, .abl⟩
+  | .static, .internal => ⟨"inessive",  "-ssA", .static, .internal, .ine⟩
+  | .static, .external => ⟨"adessive",  "-llA", .static, .external, .ade⟩
+  | .source, .internal => ⟨"elative",   "-stA", .source, .internal, .ela⟩
   | .source, .external => ⟨"ablative",  "-ltA", .source, .external, .abl⟩
-  | .goal,   .internal => ⟨"illative",  "-Vn",  .goal,   .internal, .all⟩
+  | .goal,   .internal => ⟨"illative",  "-Vn",  .goal,   .internal, .ill⟩
   | .goal,   .external => ⟨"allative",  "-lle", .goal,   .external, .all⟩
 
 /-- All 6 local cases as a flat list. -/
@@ -140,21 +157,19 @@ def allLocalCases : List LocalCase :=
   , localCaseMatrix .goal   .internal
   , localCaseMatrix .goal   .external ]
 
-/-- Case collapses each direction row: both internal and external
-    static cases map to.loc. -/
-theorem static_collapses_to_loc :
-    (localCaseMatrix .static .internal).coreCase =
-    (localCaseMatrix .static .external).coreCase := rfl
+/-- Each cell's `Case` is exactly what the shared `Case.toCase`
+    decomposition builds from its `Region × PathDir` coordinates — the
+    matrix is the shared spatial decomposition, not a private table. -/
+theorem coreCase_eq_toCase (d : Direction) (l : LocationType) :
+    some (localCaseMatrix d l).coreCase =
+      Case.toCase l.toRegion d.toPathDir := by
+  cases d <;> cases l <;> rfl
 
-/-- Both source cases map to.abl. -/
-theorem source_collapses_to_abl :
-    (localCaseMatrix .source .internal).coreCase =
-    (localCaseMatrix .source .external).coreCase := rfl
-
-/-- Both goal cases map to.all. -/
-theorem goal_collapses_to_all :
-    (localCaseMatrix .goal .internal).coreCase =
-    (localCaseMatrix .goal .external).coreCase := rfl
+/-- The 6 local cases are 6 *distinct* `Case` cells — the faithful
+    decomposition keeps internal and external apart (the lossy collapse
+    of the old `*_collapses_to_*` theorems is gone). -/
+theorem localCases_distinct :
+    (allLocalCases.map LocalCase.coreCase).Nodup := by decide
 
 /-- All 6 local cases appear in the full Finnish inventory. -/
 theorem localCases_subset_inventory :

@@ -1191,6 +1191,7 @@ import Linglib.Studies.Haspelmath2021
 import Linglib.Studies.Karlsson2017
 import Linglib.Studies.Woolford1997
 import Linglib.Studies.Marantz1991
+import Linglib.Studies.Pantcheva2011
 import Linglib.Studies.Pesetsky2013
 import Linglib.Studies.BakerVinokurova2010
 import Linglib.Studies.Comrie1989
