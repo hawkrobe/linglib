@@ -1,3 +1,6 @@
+import Mathlib.Tactic.DeriveFintype
+import Mathlib.Order.UpperLower.Basic
+import Mathlib.Order.Interval.Set.OrdConnected
 import Linglib.Features.Definiteness
 import Linglib.Typology.Extraction
 
@@ -69,7 +72,7 @@ inductive AHPosition where
   /-- Object of comparison: the least accessible position
       ("the person [that I am taller than _]"). -/
   | objComparison
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- Numeric rank of a position on the Accessibility Hierarchy.
     Higher rank = more accessible = more languages can relativize it. -/
@@ -80,6 +83,14 @@ def AHPosition.rank : AHPosition → Nat
   | .oblique        => 3
   | .genitive       => 2
   | .objComparison  => 1
+
+/-- The accessibility order on `AHPosition` (the scale mixin): `p₁ ≤ p₂` iff
+    `p₁` is no more accessible than `p₂`. Lets HC₂ continuity and the PRC be
+    stated through mathlib's `Set.OrdConnected` / `IsUpperSet` rather than
+    bespoke rank arithmetic. -/
+instance : LinearOrder AHPosition :=
+  LinearOrder.lift' AHPosition.rank
+    (fun a b h => by cases a <;> cases b <;> simp_all [AHPosition.rank])
 
 /-- Position p1 is at least as accessible as p2 on the hierarchy. -/
 def AHPosition.atLeastAsAccessible (p1 p2 : AHPosition) : Prop :=

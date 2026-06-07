@@ -175,6 +175,20 @@ theorem prc_verified :
 theorem every_language_has_primary :
     ∀ markers ∈ allSamples, ∃ m ∈ markers, m.IsPrimary := by decide
 
+/-- **The PRC is order upward-closure**: in any PRC-satisfying language, a
+    primary marker's coverage is an `IsUpperSet` on the `AHPosition` scale
+    order. Keenan & Comrie's Primary Relativization Constraint *is* the
+    order-theoretic "upper set" property — the same `IsUpperSet` that
+    `Core.Order.Markedness` uses for differential-marking cutoffs — rather
+    than a bespoke rank predicate. -/
+theorem isUpperSet_of_satisfiesPRC {markers : List Marker} (h : SatisfiesPRC markers)
+    {m : Marker} (hm : m ∈ markers) (hp : m.IsPrimary) :
+    IsUpperSet {p : AHPosition | m.Covers p} := by
+  intro a b hab ha
+  rcases eq_or_lt_of_le hab with rfl | hlt
+  · exact ha
+  · exact h m hm hp a (by cases a <;> decide) ha b (by cases b <;> decide) hlt
+
 -- ============================================================================
 -- § 4: Cross-Linguistic Patterns
 -- ============================================================================
