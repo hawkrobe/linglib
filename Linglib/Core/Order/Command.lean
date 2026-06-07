@@ -331,42 +331,12 @@ theorem mate_intersection {Node : Type} [PartialOrder Node] (T : TreeOrder Node)
   tauto
 
 /-- **Descent** ([barker-pullum-1990] Theorem 5) restated:
-    `C_P` is closed under descent on the second argument. -/
+    `C_P` is closed under descent on the second argument. (The genuinely
+    distinct **Theorem 7, Constituency** — every command domain is the
+    cone of a single node, proved via the CAC — is not yet formalized.) -/
 theorem command_descent' {Node : Type} [PartialOrder Node] (T : TreeOrder Node) (P : Set Node) :
     ∀ a b c, (a, b) ∈ commandRelation T P → b ≤ c → (a, c) ∈ commandRelation T P :=
   command_descent T P
-
-/-- **Constituency** ([barker-pullum-1990] Theorem 7, p. 30): every
-command domain `C_P(a, ·)` (restricted to tree nodes) is the cone of a
-single node — Reinhart's "first branching node" rendered
-order-theoretically. The witness is the greatest element of
-`UB(a, P)`, which exists when `UB` is nonempty (the CAC makes `UB`
-a chain, so "greatest" is well-defined); when `UB(a, P)` is empty,
-`C_P(a, ·)` is universal on the tree and the witness is the root.
-
-Stated as: `∃ x, ∀ b ∈ T.nodes, (a, b) ∈ commandRelation T P ↔ x ≤ b`.
-The hypothesis `hmax` asks for the greatest element when `UB` is
-nonempty — a one-line consequence of finiteness, which B&P assume but
-which we state explicitly here so the theorem holds for the abstract
-`TreeOrder` (which need not be finite).
-
-The "first branching node" reading: when `P = branchingNodes T`, the
-greatest element of `UB(a, P)` is the lowest branching ancestor of `a`,
-and Reinhart's c-command domain is exactly its cone. -/
-theorem command_constituency {Node : Type} [PartialOrder Node]
-    (T : TreeOrder Node) (P : Set Node) (a : Node)
-    (hmax : (upperBounds T a P).Nonempty →
-      ∃ x ∈ upperBounds T a P, ∀ y ∈ upperBounds T a P, y ≤ x) :
-    ∃ x, ∀ b ∈ T.nodes, (a, b) ∈ commandRelation T P ↔ x ≤ b := by
-  by_cases hne : (upperBounds T a P).Nonempty
-  · obtain ⟨x, hxUB, hxmax⟩ := hmax hne
-    refine ⟨x, fun b hb => ?_⟩
-    refine ⟨fun haCb => haCb x hxUB, fun hxb y hyUB => ?_⟩
-    exact le_trans (hxmax y hyUB) hxb
-  · refine ⟨T.root, fun b hb => ?_⟩
-    rw [Set.not_nonempty_iff_eq_empty] at hne
-    refine ⟨fun _ => T.root_le_all b hb, fun _ y hyUB => ?_⟩
-    exact absurd hyUB (Set.eq_empty_iff_forall_notMem.mp hne y)
 
 /-- **Embeddability** (simple form): if `x` properly dominates `a`, then commands
     transfer through that upper bound. -/
