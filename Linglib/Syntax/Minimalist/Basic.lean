@@ -1126,7 +1126,7 @@ instance decAsymCCommandsIn (root x y : SyntacticObject) :
 
 /-! ## Note on Barker-Pullum command relations
 
-An earlier draft of this file recast `cCommandsIn` as B&P K-command
+An earlier draft of this file recast `cCommandsIn` as B&P c-command
 (`Core.Order.commandRelation` over `FreeMagma.toTree`'s tree-order),
 aiming to inherit B&P's antitonicity / intersection theorems "for
 free" in the same lattice as HPSG `o-command` and DG `d-command`.
@@ -1162,8 +1162,8 @@ private abbrev sisterDivergenceTree : SyntacticObject :=
     (SyntacticObject.leaf ⟨.simple .V [], 1⟩ * SyntacticObject.leaf ⟨.simple .D [], 2⟩)
 
 /-- **B&P command ≠ sister-form c-command on `FreeMagma`.** On the bare
-    tree `a * (b * c)`, leaf `a` *does* B&P K-command the root
-    (`Core.Order.kCommand` over the dominance order: the only branching
+    tree `a * (b * c)`, leaf `a` *does* B&P c-command the root
+    (`Core.Order.cCommand` over the dominance order: the only branching
     strict ancestor of `a` is the root, which dominates everything, so
     the defining universal holds), yet sister-form `cCommandsIn` rejects
     `(a, root)` (`a`'s sister `b * c` does not contain the root). The two
@@ -1171,11 +1171,11 @@ private abbrev sisterDivergenceTree : SyntacticObject :=
     the note above ([barker-pullum-1990], [reinhart-1976]). -/
 theorem bp_command_ne_sister_cCommand :
     (⟨[0]⟩, ⟨[]⟩) ∈
-      Core.Order.kCommand (Core.Order.Branching.toTreeOrder bpDivergenceTree) ∧
+      Core.Order.cCommand (Core.Order.Branching.toTreeOrder bpDivergenceTree) ∧
     ¬ cCommandsIn sisterDivergenceTree
         (SyntacticObject.leaf ⟨.simple .D [], 0⟩) sisterDivergenceTree := by
   refine ⟨?_, by decide⟩
-  rw [Core.Order.kCommand, Core.Order.Branching.mem_commandRelation_toTreeOrder_iff]
+  rw [Core.Order.cCommand, Core.Order.Branching.mem_commandRelation_toTreeOrder_iff]
   intro x hx hne _
   rw [List.mem_map] at hx
   obtain ⟨l, hl, rfl⟩ := hx
