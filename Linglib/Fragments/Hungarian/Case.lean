@@ -1,5 +1,5 @@
 import Linglib.Features.Case.Basic
-import Linglib.Features.Case.Basic
+import Linglib.Syntax.Case.Order
 /-!
 # Hungarian Case Inventory [kenesei-vago-fenyvesi-1998] [rounds-2001] [caha-2008]
 
@@ -40,21 +40,19 @@ This Fragment exposes a 9-element `Finset Case` capturing the
 broad case-functions that participate in Blake's hierarchy:
 
 - **Grammatical**: NOM (∅), ACC (-t), DAT (-nak / -nek)
-- **Local — 3 × 3 matrix collapsed to direction only**:
-    - static (→ `.loc`): inessive (-ban / -ben), adessive (-nál / -nél),
-      superessive (-n / -on / -en / -ön)
-    - source (→ `.abl`): elative (-ból / -ből), ablative (-tól / -től),
-      delative (-ról / -ről)
-    - goal   (→ `.all`): illative (-ba / -be), allative
-      (-hoz / -hez / -höz), sublative (-ra / -re)
+- **Local — the full 3 × 3 matrix**, as distinct cells via the shared
+  `Region × PathDir` decomposition (`Syntax/Case/Order.lean`):
+    - interior: inessive (-ban / -ben → `.ine`), elative
+      (-ból / -ből → `.ela`), illative (-ba / -be → `.ill`)
+    - exterior: adessive (-nál / -nél → `.ade`), ablative
+      (-tól / -től → `.abl`), allative (-hoz → `.all`)
+    - surface: superessive (-n / -on → `.sup`), delative
+      (-ról / -ről → `.del`), sublative (-ra / -re → `.sub`)
 - **Other**: INST (-val / -vel), COM (= INS-form per [kenesei-vago-fenyvesi-1998];
   separate Finset element here), CAUS (-ért, "causal-final")
 
-**What `Case` can express but this inventory omits**:
+**What `Case` still omits**:
 
-- `.sup`, `.sub`, `.del` (the surface-series spatial cells) would
-  preserve Hungarian's surface-row local cases distinctly rather than
-  collapsing to the direction-only triple.
 - `.ess` (essive-modal -ul / -ül), `.transl` (translative -vá / -vé),
   `.ter` (terminative -ig), `.tem` (temporal -kor) — all attested in
   both grammars, omitted here.
@@ -68,12 +66,27 @@ broad case-functions that participate in Blake's hierarchy:
 
 namespace Hungarian.Case
 
-/-- Hungarian case inventory: 9-element sample of `Case`. The
-    omission of `.gen` reflects the descriptive-grammar consensus
-    ([kenesei-vago-fenyvesi-1998], [rounds-2001]) and
+/-- Hungarian case inventory. The 9 local cases are now distinct cells
+    (the full 3 × 3 surface/interior/exterior × static/source/goal
+    matrix). The omission of `.gen` reflects the descriptive-grammar
+    consensus ([kenesei-vago-fenyvesi-1998], [rounds-2001]) and
     [caha-2008] §5 — Hungarian has no morphological genitive. -/
 def caseInventory : Finset Case :=
-  {.nom, .acc, .dat, .loc, .abl, .all, .inst, .com, .caus}
+  {.nom, .acc, .dat, .ine, .ade, .sup, .ela, .abl, .del, .ill, .all, .sub,
+   .inst, .com, .caus}
+
+/-- Hungarian's 9 local cases as `Region × PathDir` coordinates — the
+    full 3 × 3 matrix the shared decomposition makes expressible. -/
+def localCases : List (Case.Region × Case.PathDir) :=
+  [ (.interior, .place), (.exterior, .place), (.surface, .place),
+    (.interior, .source), (.exterior, .source), (.surface, .source),
+    (.interior, .goal), (.exterior, .goal), (.surface, .goal) ]
+
+/-- All 9 local cases project to *distinct* `Case` cells — the surface
+    series (`.sup`/`.del`/`.sub`) is preserved, not collapsed to the
+    direction-only triple. -/
+theorem localCases_distinct :
+    (localCases.filterMap (fun rd => Case.toCase rd.1 rd.2)).Nodup := by decide
 
 /-- Hungarian fails Blake's strict contiguity at rank 5 (GEN), since
     the inventory has DAT (rank 4) without GEN. Parallels Finnish's

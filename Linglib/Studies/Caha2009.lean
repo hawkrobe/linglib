@@ -204,12 +204,17 @@ theorem ukrainian_respectsCaha :
 theorem dargwa_not_respectsCaha :
     ¬ RespectsCahaContainment Dargwa.Case.caseInventory := by decide
 
-/-- Finnish has no dedicated dative — the allative (-lle) covers
-    recipient function ([blake-1994] Ch. 6, ALL → DAT extension;
-    [karlsson-2017] confirms). The inventory has rank 4 (LOC)
-    without rank 3 (DAT). -/
-theorem finnish_not_respectsCaha :
-    ¬ RespectsCahaContainment Finnish.Case.caseInventory := by decide
+/-- Finnish *respects* nominal Caha containment — vacuously. Under the
+    faithful spatial decomposition (`Syntax/Case/Order.lean`), Finnish's
+    locatives are the off-chain spatial cells (INE/ELA/ILL, ADE/ABL/ALL,
+    on the orthogonal *directional* containment, not the nominal one), so
+    its only on-nominal-chain cases are NOM/ACC/GEN — downward-closed.
+    The richness Finnish shows is on the directional dimension
+    ([pantcheva-2011]); on the nominal chain it has no LOC-without-DAT
+    gap. (Its allative-for-dative recipient function lives in
+    `Finnish.Case.allative_extends_to_dative`.) -/
+theorem finnish_respectsCaha :
+    RespectsCahaContainment Finnish.Case.caseInventory := by decide
 
 /-- Hungarian has no morphological genitive — both standard reference
     grammars ([kenesei-vago-fenyvesi-1998] §1.10, [rounds-2001]
